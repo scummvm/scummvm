@@ -425,203 +425,206 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 	int16 teamCharItemId = getEquippedExclusiveType(_teamCharId[teamCharId], 9, true);
 	if (teamCharItemId == 0x7FFF)
 		teamCharItemId = 0x3F;
-	int16 monsterGroupNumber = _teamNextAttack[teamCharId];
-	if (monsterGroupNumber == 0x64)
-		monsterGroupNumber = 0;
+	int16 minMonsterGroupId = _teamNextAttack[teamCharId];
+	if (minMonsterGroupId == 0x64)
+		minMonsterGroupId = 0;
 
-	if (monsterGroupNumber == -1)
+	if (minMonsterGroupId == -1)
 		return;
-	int16 var58;
+	
+	int16 maxMonsterGroupId;
 	if (_items[teamCharItemId]._range == 4)
-		var58 = 5;
+		maxMonsterGroupId = 5;
 	else
-		var58 = monsterGroupNumber + 1;
+		maxMonsterGroupId = minMonsterGroupId + 1;
 
-	int16 var54;
-	int16 teamMemberId;
+	int16 minTeamMemberId;
+	int16 maxTeamMemberId;
 	if (_items[teamCharItemId]._range < 3) {
-		teamMemberId = getWeakestMobster(monsterGroupNumber);
-		var54 = teamMemberId + 1;
+		minTeamMemberId = getWeakestMobster(minMonsterGroupId);
+		maxTeamMemberId = minTeamMemberId + 1;
 	} else {
-		teamMemberId = 0;
-		var54 = 9;
+		minTeamMemberId = 0;
+		maxTeamMemberId = 9;
 	}
 
-	if (teamMemberId != -1) {
-		bool var6E = true;
-		for (int16 groupId = monsterGroupNumber; groupId < var58; ++groupId) {
-			if (_teamMonsterIdArray[groupId] == -1)
-				continue;
+	if (minTeamMemberId == -1)
+		return;
 
-			for (int16 ctrMobsterId = teamMemberId; ctrMobsterId < var54; ++ctrMobsterId) {
-				if (isMonsterActive(groupId, ctrMobsterId) && var6E) {
-					bool noticedFl;
-					if (!checkMonsterMovementType(groupId, true)) {
-						setMapMonsterAggressivenessAndMovementType(groupId, 9, true);
-						_unk2C8AA += 500;
-						noticedFl = true;
-					} else
-						noticedFl = false;
+	bool var6E = true;
+	for (int16 groupId = minMonsterGroupId; groupId < maxMonsterGroupId; ++groupId) {
+		if (_teamMonsterIdArray[groupId] == -1)
+			continue;
 
-					int16 var76 = getRandom(_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._maxDamageAbsorption);
-					int16 ennemyPronoun = _npcBuf[_teamCharId[teamCharId]].getPronoun();
-					int16 monsterId = _teamMonsterIdArray[groupId];
-					int16 characterPronoun = kEncounters[_mapMonsters[_techId][monsterId]._monsterRef]._nameArticle;
-					int16 charScore = getCharacterScore(_teamCharId[teamCharId], teamCharItemId);
-					int16 hitPointsBefore = _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId];
-					int16 hitCount = 0;
-					int16 originalDamage = 0;
-					int16 damagePointsAbsorbed = 0;
-					int16 attackSpeed = _items[teamCharItemId]._attacks * _npcBuf[_teamCharId[teamCharId]]._speed;
+		for (int16 ctrMobsterId = minTeamMemberId; ctrMobsterId < maxTeamMemberId; ++ctrMobsterId) {
+			if (!isMonsterActive(groupId, ctrMobsterId) || !var6E)
+				return;
 
-					// Action A - Loop var84 - Start
-					for (int var84 = 0; var84 < attackSpeed; ++var84) {
-						if (getRandom(100) < charScore) {
-							++hitCount;
-							if (!hasAdequateDefense(_teamMonsterIdArray[groupId], _items[teamCharItemId]._attackType)) {
-								int16 var7C = getRandom(_items[teamCharItemId]._damage);
-								int16 varInt = var7C - var76;
-								if (varInt > 0) {
-									originalDamage += varInt;
-									damagePointsAbsorbed += var76;
-								} else {
-									damagePointsAbsorbed += var7C;
-								}
-							}
-						}
-					}
-					// Action A - Loop var84 - End
+			bool noticedFl;
+			if (!checkMonsterMovementType(groupId, true)) {
+				setMapMonsterAggressivenessAndMovementType(groupId, 9, true);
+				_unk2C8AA += 500;
+				noticedFl = true;
+			} else
+				noticedFl = false;
 
-					if (originalDamage < 0)
-						originalDamage = 0;
+			int16 randomDamageAbsorbed = getRandom(_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._maxDamageAbsorption);
+			int16 ennemyPronoun = _npcBuf[_teamCharId[teamCharId]].getPronoun();
+			int16 monsterId = _teamMonsterIdArray[groupId];
+			int16 characterPronoun = kEncounters[_mapMonsters[_techId][monsterId]._monsterRef]._nameArticle;
+			int16 charScore = getCharacterScore(_teamCharId[teamCharId], teamCharItemId);
+			int16 hitPointsBefore = _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId];
+			int16 hitCount = 0;
+			int16 originalDamage = 0;
+			int16 damagePointsAbsorbed = 0;
+			int16 attackSpeed = _items[teamCharItemId]._attacks * _npcBuf[_teamCharId[teamCharId]]._speed;
 
-					int16 hitPoints = originalDamage + damagePointsAbsorbed;
-
-					if (!checkSpecialItemsOnCurrentPlace(teamCharItemId))
-						hitCount = 0;
-
-					if (hitCount > 0) {
-						_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] -= originalDamage;
-						if (hitCount > 1) {
-							_attackBuffer = Common::String::format("%d times ", hitCount);
+			// Action A - Loop var84 - Start
+			for (int var84 = 0; var84 < attackSpeed; ++var84) {
+				if (getRandom(100) < charScore) {
+					++hitCount;
+					if (!hasAdequateDefense(_teamMonsterIdArray[groupId], _items[teamCharItemId]._attackType)) {
+						int16 var7C = getRandom(_items[teamCharItemId]._damage);
+						int16 varInt = var7C - randomDamageAbsorbed;
+						if (varInt > 0) {
+							originalDamage += varInt;
+							damagePointsAbsorbed += randomDamageAbsorbed;
 						} else {
-							_attackBuffer = "";
+							damagePointsAbsorbed += var7C;
 						}
 					}
-					int16 verbId = (3 * _items[teamCharItemId]._attackType + 1) + getRandom(3) - 1;
-					if (characterPronoun == 2) {
-						_characterNamePt1 = "The ";
-					} else {
-						_characterNamePt1 = "";
-					}
-
-					if (ennemyPronoun == 2) {
-						_enemyNamePt1 = "The ";
-					} else {
-						_enemyNamePt1 = "";
-					}
-
-					_characterNamePt2 = kEncounters[_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._monsterRef]._name;
-					_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
-					_nameBuffer = _items[teamCharItemId]._name;
-					if (checkSpecialItemsOnCurrentPlace(teamCharItemId)) {
-						// Action A - Check damages - Start
-						if (hitCount == 0) {
-							_messageToBePrinted = Common::String::format("%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
-						} else if (hitPoints <= 0) {
-							_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
-						} else if (hitPoints == 1) {
-							_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
-							if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] <= 0) {
-								getDeathTypeDescription(groupId, teamCharId + 1000);
-								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
-							} else {
-								_messageToBePrinted += "!";
-							}
-						} else {
-							_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str(), hitPoints);
-							if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] <= 0) {
-								getDeathTypeDescription(groupId, teamCharId + 1000);
-								getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
-							} else {
-								_messageToBePrinted += "!";
-							}
-						}
-						// Action A - Check damages - End
-
-						// Action A - Add reaction text - Start
-						if (hitCount != 0 && originalDamage > 0 && getRandom(100) <= 35 && _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
-							if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] - 5 <= originalDamage) {
-								addReactionText(kEfhReactionReels);
-							} else if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 8) {
-								addReactionText(kEfhReactionCriesOut);
-							} else if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 4) {
-								addReactionText(kEfhReactionFalters);
-							} else if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 2) {
-								addReactionText(kEfhReactionWinces);
-							} else if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 3) {
-								// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it. Looks like an original bug
-								addReactionText(kEfhReactionScreams);
-							} else if (hitPointsBefore / 8 >= originalDamage) {
-								addReactionText(kEfhReactionChortles);
-							} else if (originalDamage == 0 && getRandom(100) < 35) {
-								// CHECKME: "originalDamage == 0" is always false as it's checked beforehand. Looks like another original bug
-								addReactionText(kEfhReactionLaughs);
-							}
-						}
-						// Action A - Add reaction text - End
-
-						// Action A - Add armor absorb text - Start
-						if (var76 && hitCount && _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
-							if (damagePointsAbsorbed <= 1)
-								_messageToBePrinted += Common::String::format("  %s%s's armor absorbs 1 point!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
-							else
-								_messageToBePrinted += Common::String::format("  %s%s's armor absorbs %d points!", _characterNamePt1.c_str(), _characterNamePt2.c_str(), damagePointsAbsorbed);
-						}
-						// Action A - Add armor absorb text - End
-
-						if (noticedFl)
-							_messageToBePrinted += Common::String("  Your actions do not go un-noticed...");
-
-						// Action A - Check item durability - Start
-						int16 npcId = _teamCharId[teamCharId];
-
-						// get equipped inventory slot with exclusiveType == 9
-						uint16 exclusiveInventoryId = getEquippedExclusiveType(npcId, 9, false);
-						if (exclusiveInventoryId != 0x7FFF && _npcBuf[npcId]._inventory[exclusiveInventoryId].getUsesLeft() != 0x7F) {
-							int16 usesLeft = _npcBuf[npcId]._inventory[exclusiveInventoryId].getUsesLeft();
-							--usesLeft;
-							if (usesLeft <= 0) {
-								_messageToBePrinted += Common::String::format("  * %s%s's %s breaks!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), _nameBuffer.c_str());
-								setCharacterObjectToBroken(npcId, exclusiveInventoryId);
-								var6E = false;
-							} else {
-								_npcBuf[npcId]._inventory[exclusiveInventoryId]._stat1 = (_npcBuf[npcId]._inventory[exclusiveInventoryId]._stat1 & 80) + usesLeft;
-							}
-						}
-						// Action A - Check item durability - End
-
-						// Action A - Check effect - Start
-						if (_items[teamCharItemId]._specialEffect == 1 && _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
-							if (getRandom(100) < 35) {
-								_teamMonsterEffects[groupId]._effect[ctrMobsterId] = 1;
-								_teamMonsterEffects[groupId]._duration[ctrMobsterId] = getRandom(10);
-								_messageToBePrinted += Common::String::format("  %s%s falls asleep!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
-							}
-						} else if (_items[teamCharItemId]._specialEffect == 2 && _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
-							_teamMonsterEffects[groupId]._effect[ctrMobsterId] = 2;
-							_teamMonsterEffects[groupId]._duration[ctrMobsterId] = getRandom(10);
-							_messageToBePrinted += Common::String::format("  %s%s is frozen!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
-						}
-						// Action A - Check effect - End
-					} else {
-						_messageToBePrinted = Common::String::format("%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
-					}
-
-					genericGenerateSound(_items[teamCharItemId]._attackType, hitCount);
-					displayBoxWithText(_messageToBePrinted, 1, 2, true);
 				}
 			}
+			// Action A - Loop var84 - End
+
+			if (originalDamage < 0)
+				originalDamage = 0;
+
+			int16 hitPoints = originalDamage + damagePointsAbsorbed;
+
+			if (!checkSpecialItemsOnCurrentPlace(teamCharItemId))
+				hitCount = 0;
+
+			if (hitCount > 0) {
+				_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] -= originalDamage;
+				if (hitCount > 1) {
+					_attackBuffer = Common::String::format("%d times ", hitCount);
+				} else {
+					_attackBuffer = "";
+				}
+			}
+			int16 verbId = (3 * _items[teamCharItemId]._attackType + 1) + getRandom(3) - 1;
+			if (characterPronoun == 2) {
+				_characterNamePt1 = "The ";
+			} else {
+				_characterNamePt1 = "";
+			}
+
+			if (ennemyPronoun == 2) {
+				_enemyNamePt1 = "The ";
+			} else {
+				_enemyNamePt1 = "";
+			}
+
+			_characterNamePt2 = kEncounters[_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._monsterRef]._name;
+			_enemyNamePt2 = _npcBuf[_teamCharId[teamCharId]]._name;
+			_nameBuffer = _items[teamCharItemId]._name;
+			if (checkSpecialItemsOnCurrentPlace(teamCharItemId)) {
+				// Action A - Check damages - Start
+				if (hitCount == 0) {
+					_messageToBePrinted = Common::String::format("%s%s %s at %s%s with %s %s, but misses!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
+				} else if (hitPoints <= 0) {
+					_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s, but does no damage!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
+				} else if (hitPoints == 1) {
+					_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for 1 point", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
+					if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] <= 0) {
+						getDeathTypeDescription(groupId, teamCharId + 1000);
+						getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
+					} else {
+						_messageToBePrinted += "!";
+					}
+				} else {
+					_messageToBePrinted = Common::String::format("%s%s %s %s%s %swith %s %s for %d points", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kAttackVerbs[verbId], _characterNamePt1.c_str(), _characterNamePt2.c_str(), _attackBuffer.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str(), hitPoints);
+					if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] <= 0) {
+						getDeathTypeDescription(groupId, teamCharId + 1000);
+						getXPAndSearchCorpse(_teamCharId[teamCharId], _enemyNamePt1, _enemyNamePt2, _teamMonsterIdArray[groupId]);
+					} else {
+						_messageToBePrinted += "!";
+					}
+				}
+				// Action A - Check damages - End
+
+				// Action A - Add reaction text - Start
+				if (hitCount != 0 && originalDamage > 0 && getRandom(100) <= 35 && _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
+					if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] - 5 <= originalDamage) {
+						addReactionText(kEfhReactionReels);
+					} else if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 8) {
+						addReactionText(kEfhReactionCriesOut);
+					} else if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 4) {
+						addReactionText(kEfhReactionFalters);
+					} else if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 2) {
+						addReactionText(kEfhReactionWinces);
+					} else if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] < hitPointsBefore / 3) {
+						// CHECKME: Doesn't make any sense to check /3 after /2... I don't get it. Looks like an original bug
+						addReactionText(kEfhReactionScreams);
+					} else if (hitPointsBefore / 8 >= originalDamage) {
+						addReactionText(kEfhReactionChortles);
+					} else if (originalDamage == 0 && getRandom(100) < 35) {
+						// CHECKME: "originalDamage == 0" is always false as it's checked beforehand. Looks like another original bug
+						addReactionText(kEfhReactionLaughs);
+					}
+				}
+				// Action A - Add reaction text - End
+
+				// Action A - Add armor absorb text - Start
+				if (randomDamageAbsorbed && hitCount && _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
+					if (damagePointsAbsorbed <= 1)
+						_messageToBePrinted += Common::String::format("  %s%s's armor absorbs 1 point!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+					else
+						_messageToBePrinted += Common::String::format("  %s%s's armor absorbs %d points!", _characterNamePt1.c_str(), _characterNamePt2.c_str(), damagePointsAbsorbed);
+				}
+				// Action A - Add armor absorb text - End
+
+				if (noticedFl)
+					_messageToBePrinted += Common::String("  Your actions do not go un-noticed...");
+
+				// Action A - Check item durability - Start
+				int16 npcId = _teamCharId[teamCharId];
+
+				// get equipped inventory slot with exclusiveType == 9
+				uint16 exclusiveInventoryId = getEquippedExclusiveType(npcId, 9, false);
+				if (exclusiveInventoryId != 0x7FFF && _npcBuf[npcId]._inventory[exclusiveInventoryId].getUsesLeft() != 0x7F) {
+					int16 usesLeft = _npcBuf[npcId]._inventory[exclusiveInventoryId].getUsesLeft();
+					--usesLeft;
+					if (usesLeft <= 0) {
+						_messageToBePrinted += Common::String::format("  * %s%s's %s breaks!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), _nameBuffer.c_str());
+						setCharacterObjectToBroken(npcId, exclusiveInventoryId);
+						var6E = false;
+					} else {
+						_npcBuf[npcId]._inventory[exclusiveInventoryId]._stat1 = (_npcBuf[npcId]._inventory[exclusiveInventoryId]._stat1 & 80) + usesLeft;
+					}
+				}
+				// Action A - Check item durability - End
+
+				// Action A - Check effect - Start
+				if (_items[teamCharItemId]._specialEffect == 1 && _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
+					if (getRandom(100) < 35) {
+						_teamMonsterEffects[groupId]._effect[ctrMobsterId] = 1;
+						_teamMonsterEffects[groupId]._duration[ctrMobsterId] = getRandom(10);
+						_messageToBePrinted += Common::String::format("  %s%s falls asleep!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+					}
+				} else if (_items[teamCharItemId]._specialEffect == 2 && _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0) {
+					_teamMonsterEffects[groupId]._effect[ctrMobsterId] = 2;
+					_teamMonsterEffects[groupId]._duration[ctrMobsterId] = getRandom(10);
+					_messageToBePrinted += Common::String::format("  %s%s is frozen!", _characterNamePt1.c_str(), _characterNamePt2.c_str());
+				}
+				// Action A - Check effect - End
+			} else {
+				_messageToBePrinted = Common::String::format("%s%s tries to use %s %s, but it doesn't work!", _enemyNamePt1.c_str(), _enemyNamePt2.c_str(), kPossessive[ennemyPronoun], _nameBuffer.c_str());
+			}
+
+			genericGenerateSound(_items[teamCharItemId]._attackType, hitCount);
+			displayBoxWithText(_messageToBePrinted, 1, 2, true);
 		}
 	}
 }
