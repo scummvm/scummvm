@@ -56,7 +56,13 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	g_debugger = new Debugger();
 	setDebugger(g_debugger);
 
-	_dirSeparator = ':';
+	// parseOptions depends on the _dirSeparator
+	_version = getDescriptionVersion();
+	if (getPlatform() == Common::kPlatformWindows && _version >= 400) {
+		_dirSeparator = '\\';
+	} else {
+		_dirSeparator = ':';
+	}
 
 	parseOptions();
 
@@ -82,7 +88,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_cursorWindow = nullptr;
 	_lingo = nullptr;
 	_clipBoard = nullptr;
-	_version = getDescriptionVersion();
 	_fixStageSize = false;
 	_fixStageRect = Common::Rect();
 	_wmMode = 0;
