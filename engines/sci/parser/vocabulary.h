@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_SCICORE_VOCABULARY_H
-#define SCI_SCICORE_VOCABULARY_H
+#ifndef SCI_PARSER_VOCABULARY_H
+#define SCI_PARSER_VOCABULARY_H
 
 #include "common/str.h"
 #include "common/hashmap.h"
@@ -440,4 +440,4 @@ int said(const byte *spec, bool verbose);
 
 } // End of namespace Sci
 
-#endif // SCI_SCICORE_VOCABULARY_H
+#endif // SCI_PARSER_VOCABULARY_H
