@@ -250,8 +250,7 @@ void ImmortalEngine::appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &fi
 
 				link = hash >> 1;
 
-				  ptk[prev] = (link << 8) | (ptk[prev] & kMaskLow);
-				//start[prev] = ((link >> 4) & kMaskLast) | start[prev];      // Yikes this statement is gross
+				ptk[prev] = (link << 8) | (ptk[prev] & kMaskLow);
 				start[prev] |= (link >> 4) & kMaskLast;
 				found = true;
 			}
@@ -260,29 +259,3 @@ void ImmortalEngine::appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &fi
 }
 
 } // namespace immortal
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
