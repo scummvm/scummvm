@@ -118,22 +118,3 @@ void Room::cycleSetIndex(int c, int f) {
 
 
 } // namespace Immortal
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

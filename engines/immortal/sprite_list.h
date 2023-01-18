@@ -297,16 +297,3 @@ enum SpriteName {
 } // namespace immortal
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

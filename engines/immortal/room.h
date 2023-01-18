@@ -228,18 +228,3 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 } // namespace immortal
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

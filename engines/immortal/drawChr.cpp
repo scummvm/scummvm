@@ -43,17 +43,4 @@ void ImmortalEngine::drawURHC(int chr, int x, int y) {}
 void ImmortalEngine::drawLLHC(int chr, int x, int y) {}
 void ImmortalEngine::drawLRHC(int chr, int x, int y) {}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 } // namespace immortal
