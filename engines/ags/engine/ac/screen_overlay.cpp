@@ -35,11 +35,12 @@ Bitmap *ScreenOverlay::GetImage() const {
 		_pic.get();
 }
 
-void ScreenOverlay::SetImage(Shared::Bitmap *pic) {
+void ScreenOverlay::SetImage(Shared::Bitmap *pic, int offx, int offy) {
 	_flags &= ~kOver_SpriteReference;
 	_pic.reset(pic);
 	_sprnum = -1;
-	offsetX = offsetY = 0;
+	offsetX = offx;
+	offsetY = offy;
 	scaleWidth = scaleHeight = 0;
 	const auto *img = GetImage();
 	if (img) {
@@ -49,11 +50,12 @@ void ScreenOverlay::SetImage(Shared::Bitmap *pic) {
 	MarkChanged();
 }
 
-void ScreenOverlay::SetSpriteNum(int sprnum) {
+void ScreenOverlay::SetSpriteNum(int sprnum, int offx, int offy) {
 	_flags |= kOver_SpriteReference;
 	_pic.reset();
 	_sprnum = sprnum;
-	offsetX = offsetY = 0;
+	offsetX = offx;
+	offsetY = offy;
 	scaleWidth = scaleHeight = 0;
 	const auto *img = GetImage();
 	if (img) {
