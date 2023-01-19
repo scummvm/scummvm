@@ -549,7 +549,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 #endif
 
 
-void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked, bool handeleMouseWheel) {
+void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked, bool handleMouseWheel) {
 	bool validKey = false;
 
 	if (waitTime && waitTime != -1) {
@@ -571,7 +571,7 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 					   ks.keycode != Common::KEYCODE_RALT    &&
 					   !(ks.keycode == Common::KEYCODE_s && ks.hasFlags(Common::KBD_ALT));
 
-			if (validKey || leftBtnClicked || rightBtnClicked || (handeleMouseWheel && _mouseWheelFlag))
+			if (validKey || leftBtnClicked || rightBtnClicked || (handleMouseWheel && _mouseWheelFlag))
 				return;
 
 			if (shouldQuit())
@@ -586,7 +586,7 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 			}
 		}
 	} else {
-		while (!validKey && !leftBtnClicked && !rightBtnClicked && !(handeleMouseWheel && _mouseWheelFlag)) {
+		while (!validKey && !leftBtnClicked && !rightBtnClicked && !(handleMouseWheel && _mouseWheelFlag)) {
 			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
 
 			if (_game.version > 2 && _game.version < 7 && (_guiCursorAnimCounter++ & 16)) {

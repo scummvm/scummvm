@@ -725,7 +725,7 @@ protected:
 	virtual void queryQuit(bool returnToLauncher);
 	virtual void queryRestart();
 	virtual const char *getGUIString(int stringId);
-	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked, bool handeleMouseWheel = false);
+	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked, bool handleMouseWheel = false);
 	virtual int getGUIStringHeight(const char *str);
 	virtual int getGUIStringWidth(const char *str);
 	virtual void drawGUIText(const char *buttonString, Common::Rect *clipRect, int textXPos, int textYPos, int textColor, bool centerFlag);
