@@ -462,8 +462,8 @@ void AnimationTracker::checkWeaponHit() {
 
 
 	Box abox = a->getWorldBox();
-	abox.MoveAbs(_x, _y, _z);
-	abox.MoveRel(Direction_XFactor(_dir) * 32 * range, Direction_YFactor(_dir) * 32 * range, 0);
+	abox.moveTo(_x, _y, _z);
+	abox.translate(Direction_XFactor(_dir) * 32 * range, Direction_YFactor(_dir) * 32 * range, 0);
 
 #ifdef WATCHACTOR
 	if (a->getObjId() == watchactor) {
@@ -489,7 +489,7 @@ void AnimationTracker::checkWeaponHit() {
 
 		Box ibox = item->getWorldBox();
 
-		if (abox.Overlaps(ibox)) {
+		if (abox.overlaps(ibox)) {
 			hit = itemid;
 #ifdef WATCHACTOR
 			if (a->getObjId() == watchactor) {
