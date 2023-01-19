@@ -45,12 +45,12 @@ public:
 	void draw() override;
 	void addEntity(Entity *entity);
 	bool removeEntity(Entity *entity);
-	void addSurface(BaseSurface *surface);
-	bool removeSurface(BaseSurface *surface);
+	void addSurface(const Common::SharedPtr<BaseSurface> &surface);
+	bool removeSurface(const Common::SharedPtr<BaseSurface> &surface);
 	void printSurfaces(Console *con);
 	Sprite *addSprite(Sprite *sprite);
 	void removeSprite(Sprite *sprite);
-	void setSurfacePriority(BaseSurface *surface, int priority);
+	void setSurfacePriority(const Common::SharedPtr<BaseSurface> &surface, int priority);
 	void setSpriteSurfacePriority(Sprite *sprite, int priority);
 	void deleteSprite(Sprite **sprite);
 	Background *addBackground(Background *background);
@@ -168,7 +168,7 @@ public:
 protected:
 	Module *_parentModule;
 	Common::Array<Entity*> _entities;
-	Common::Array<BaseSurface*> _surfaces;
+	Common::Array<Common::SharedPtr<BaseSurface>> _surfaces;
 
 	Klaymen *_klaymen;
 	Background *_background;

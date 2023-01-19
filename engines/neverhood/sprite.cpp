@@ -46,10 +46,6 @@ Sprite::Sprite(NeverhoodEngine *vm, int objectPriority)
 	SetMessageHandler(&Sprite::handleMessage);
 }
 
-Sprite::~Sprite() {
-	delete _surface;
-}
-
 void Sprite::updateBounds() {
 	if (_doDeltaX) {
 		_collisionBounds.x1 = _x - _collisionBoundsOffset.x - _collisionBoundsOffset.width + 1;
@@ -94,7 +90,7 @@ void Sprite::loadDataResource(uint32 fileHash) {
 }
 
 void Sprite::createSurface(int surfacePriority, int16 width, int16 height) {
-	_surface = new BaseSurface(_vm, surfacePriority, width, height, "sprite");
+	_surface.reset(new BaseSurface(_vm, surfacePriority, width, height, "sprite"));
 }
 
 int16 Sprite::defFilterY(int16 y) {
@@ -187,13 +183,13 @@ void StaticSprite::updatePosition() {
 // AnimatedSprite
 
 AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, int objectPriority)
-	: Sprite(vm, objectPriority), _animResource(vm), _subtitleSurface(vm, this) {
+	: Sprite(vm, objectPriority), _animResource(vm), _subtitleSurface(new AnimatedSpriteSubtitles(vm, this)) {
 
 	init();
 }
 
 AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y)
-	: Sprite(vm, 1100), _animResource(vm), _subtitleSurface(vm, this) {
+	: Sprite(vm, 1100), _animResource(vm), _subtitleSurface(new AnimatedSpriteSubtitles(vm, this)) {
 
 	init();
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -372,10 +368,10 @@ void AnimatedSprite::updatePosition() {
 	}
 
 	int subCenterX = _surface->getDrawRect().x + _surface->getDrawRect().width / 2;
-	_subtitleSurface.getDrawRect().x = MAX(subCenterX - kSubtitleWidth / 2, 0);
-	_subtitleSurface.getDrawRect().width = kSubtitleWidth;
-	_subtitleSurface.getDrawRect().y = MIN(_surface->getDrawRect().y + _surface->getDrawRect().height + 1, 480 - (SubtitlePlayer::kSubtitleCharHeight - 1));
-	_subtitleSurface.getDrawRect().height = SubtitlePlayer::kSubtitleCharHeight;
+	_subtitleSurface->getDrawRect().x = MAX(subCenterX - kSubtitleWidth / 2, 0);
+	_subtitleSurface->getDrawRect().width = kSubtitleWidth;
+	_subtitleSurface->getDrawRect().y = MIN(_surface->getDrawRect().y + _surface->getDrawRect().height + 1, 480 - (SubtitlePlayer::kSubtitleCharHeight - 1));
+	_subtitleSurface->getDrawRect().height = SubtitlePlayer::kSubtitleCharHeight;
 
 	if (_needRefresh) {
 		_surface->drawAnimResource(_animResource, _currFrameIndex, _doDeltaX, _doDeltaY, _drawOffset.width, _drawOffset.height);
@@ -442,16 +438,16 @@ void AnimatedSprite::updateFrameInfo() {
 
 void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
 	NDimensions dimensions = _animResource.loadSpriteDimensions(fileHash);
-	_surface = new BaseSurface(_vm, surfacePriority, dimensions.width, dimensions.height, "animated sprite");
+	_surface.reset(new BaseSurface(_vm, surfacePriority, dimensions.width, dimensions.height, "animated sprite"));
 }
 
-void AnimatedSprite::createShadowSurface1(BaseSurface *shadowSurface, uint32 fileHash, int surfacePriority) {
+void AnimatedSprite::createShadowSurface1(const Common::SharedPtr<BaseSurface> &shadowSurface, uint32 fileHash, int surfacePriority) {
 	NDimensions dimensions = _animResource.loadSpriteDimensions(fileHash);
-	_surface = new ShadowSurface(_vm, surfacePriority, dimensions.width, dimensions.height, shadowSurface);
+	_surface.reset(new ShadowSurface(_vm, surfacePriority, dimensions.width, dimensions.height, shadowSurface));
 }
 
-void AnimatedSprite::createShadowSurface(BaseSurface *shadowSurface, int16 width, int16 height, int surfacePriority) {
-	_surface = new ShadowSurface(_vm, surfacePriority, width, height, shadowSurface);
+void AnimatedSprite::createShadowSurface(const Common::SharedPtr<BaseSurface> &shadowSurface, int16 width, int16 height, int surfacePriority) {
+	_surface.reset(new ShadowSurface(_vm, surfacePriority, width, height, shadowSurface));
 }
 
 void AnimatedSprite::startAnimation(uint32 fileHash, int16 plFirstFrameIndex, int16 plLastFrameIndex) {

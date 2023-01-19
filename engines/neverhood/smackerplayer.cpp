@@ -152,9 +152,9 @@ SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash,
 	SetUpdateHandler(&SmackerPlayer::update);
 
 	if (_doubleSurface) {
-		_smackerSurface = new SmackerDoubleSurface(_vm);
+		_smackerSurface.reset(new SmackerDoubleSurface(_vm));
 	} else {
-		_smackerSurface = new SmackerSurface(_vm);
+		_smackerSurface.reset(new SmackerSurface(_vm));
 	}
 
 	open(fileHash, flag);
@@ -162,8 +162,7 @@ SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash,
 
 SmackerPlayer::~SmackerPlayer() {
 	close();
-	delete _smackerSurface;
-	_smackerSurface = nullptr;
+	_smackerSurface.reset();
 }
 
 void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {

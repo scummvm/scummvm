@@ -36,7 +36,7 @@ SsCommonTrackShadowBackground::SsCommonTrackShadowBackground(NeverhoodEngine *vm
 	loadSprite(fileHash, kSLFDefDrawOffset | kSLFDefPosition, 0);
 }
 
-AsCommonCarShadow::AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index)
+AsCommonCarShadow::AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, const Common::SharedPtr<BaseSurface> &shadowSurface, uint index)
 	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index), _animFileHash(0) {
 
 	SetUpdateHandler(&AsCommonCarShadow::update);
@@ -70,7 +70,7 @@ void AsCommonCarShadow::updateShadow() {
 	setDoDeltaX(_asCar->isDoDeltaX() ? 1 : 0);
 }
 
-AsCommonCarConnectorShadow::AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index)
+AsCommonCarConnectorShadow::AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, const Common::SharedPtr<BaseSurface> &shadowSurface, uint index)
 	: AnimatedSprite(vm, 1100), _asCar(asCar), _index(index) {
 
 	SetUpdateHandler(&AsCommonCarConnectorShadow::update);
@@ -85,7 +85,7 @@ void AsCommonCarConnectorShadow::update() {
 	AnimatedSprite::update();
 }
 
-AsCommonCarTrackShadow::AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex)
+AsCommonCarTrackShadow::AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, const Common::SharedPtr<BaseSurface> &shadowSurface, int16 frameIndex)
 	: AnimatedSprite(vm, 1100), _asCar(asCar) {
 
 	SetUpdateHandler(&AsCommonCarTrackShadow::update);

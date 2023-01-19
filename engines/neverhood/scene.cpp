@@ -87,7 +87,7 @@ void Scene::draw() {
 		if (_smackerPlayer->getSurface())
 			_smackerPlayer->getSurface()->draw();
 	} else {
-		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
+		for (Common::Array<Common::SharedPtr<BaseSurface>>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++)
 			(*iter)->draw();
 	}
 }
@@ -116,10 +116,10 @@ bool Scene::removeEntity(Entity *entity) {
 	return false;
 }
 
-void Scene::addSurface(BaseSurface *surface) {
+void Scene::addSurface(const Common::SharedPtr<BaseSurface> &surface) {
 	if (surface) {
 		int index = 0, insertIndex = -1;
-		for (Common::Array<BaseSurface*>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++) {
+		for (Common::Array<Common::SharedPtr<BaseSurface>>::iterator iter = _surfaces.begin(); iter != _surfaces.end(); iter++) {
 			if ((*iter)->getPriority() > surface->getPriority()) {
 				insertIndex = index;
 				break;
@@ -133,9 +133,9 @@ void Scene::addSurface(BaseSurface *surface) {
 	}
 }
 
-bool Scene::removeSurface(BaseSurface *surface) {
+bool Scene::removeSurface(const Common::SharedPtr<BaseSurface> &surface) {
 	for (uint index = 0; index < _surfaces.size(); index++) {
-		if (_surfaces[index] == surface) {
+		if (_surfaces[index].get() == surface.get()) {
 			_surfaces.remove_at(index);
 			return true;
 		}
@@ -167,7 +167,7 @@ void Scene::removeSprite(Sprite *sprite) {
 	removeEntity(sprite);
 }
 
-void Scene::setSurfacePriority(BaseSurface *surface, int priority) {
+void Scene::setSurfacePriority(const Common::SharedPtr<BaseSurface> &surface, int priority) {
 	surface->setPriority(priority);
 	if (removeSurface(surface))
 		addSurface(surface);
