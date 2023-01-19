@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-19 16:30+0000\n"
+"POT-Creation-Date: 2023-01-19 18:41+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -7712,19 +7712,19 @@ msgstr "Eskuinera hegan egin"
 msgid "Fly to lower right"
 msgstr "Behera eta eskuinera hegan egin"
 
-#: engines/scumm/input.cpp:1271
+#: engines/scumm/input.cpp:1275
 msgid "Snap scroll on"
 msgstr "Heldutako korritze barra gaituta"
 
-#: engines/scumm/input.cpp:1273
+#: engines/scumm/input.cpp:1277
 msgid "Snap scroll off"
 msgstr "Heldutako korritze barra desgaituta"
 
-#: engines/scumm/input.cpp:1286
+#: engines/scumm/input.cpp:1290
 msgid "Music volume: "
 msgstr "Musika: "
 
-#: engines/scumm/input.cpp:1303
+#: engines/scumm/input.cpp:1307
 msgid "Subtitle speed: "
 msgstr "Azpitit. abiadura: "
 
