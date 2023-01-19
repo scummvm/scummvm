@@ -241,7 +241,8 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(
 			f == kSupportsChangingOptionsDuringRuntime &&
 			Common::String(_game.guioptions).contains(GUIO_AUDIO_OVERRIDE)
-		);
+		) ||
+		(f == kSupportsQuitDialogOverride && _useOriginalGUI);
 }
 
 
