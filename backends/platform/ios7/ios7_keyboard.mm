@@ -28,7 +28,7 @@
 - (void)setEnablesReturnKeyAutomatically:(BOOL)val;
 @end
 
-@interface TextInputHandler : UITextField<UITabBarDelegate> {
+@interface TextInputHandler : UITextField<UITabBarDelegate, UITextInput> {
 	SoftKeyboard *softKeyboard;
 	UITabBar *toolbar;
 	UIScrollView *scrollView;
@@ -145,6 +145,34 @@
 	[toolbar release];
 	[scrollView release];
 	[super dealloc];
+}
+
+/* There's a difference between UITextFields and UITextViews that the
+ * delegate function textView:shouldChangeTextInRange:replacementText:
+ * is called when pressing the backward button on a keyboard also when
+ * the textView is empty. This is not the case for UITextFields, the
+ * function textField:shouldChangeTextInRange:replacementText: is not
+ * called if the textField is empty which is problematic in the cases
+ * where there's already text in the open dialog (e.g. the save dialog
+ * when the user wants to overwrite an existing slot). There's currently
+ * no possibility to propagate existing text elements from dialog into
+ * the textField. To be able to handle the cases where the user wants to
+ * delete existing texts when the textField is empty the inputView has
+ * to implement the UITextInput protocol function deleteBackward that is
+ * called every time the backward key is pressed. */
+-(void)deleteBackward {
+	if ([self hasText]) {
+		/* If the textField has text the backward key presses will be
+		 * forwarded to the EventManager in the delegate function
+		 * textField:shouldChangeTextInRange:replacementText:
+		 * call the super class to delete characters in the textField */
+		[super deleteBackward];
+	} else {
+		/* Forward the key press to the EventManager also in the cases
+		 * where the textField is empty to remove prefilled characters
+		 * in dialogs. */
+		[softKeyboard handleKeyPress:'\b'];
+	}
 }
 
 -(void)selectUITabBarItem:(UITapGestureRecognizer *)recognizer {
