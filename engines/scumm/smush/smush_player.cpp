@@ -1603,6 +1603,9 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 			_smushTracksNeedInit = false;
 			for (int i = 0; i < SMUSH_MAX_TRACKS; i++) {
 				_smushDispatch[i].fadeRemaining = 0;
+				_smushDispatch[i].fadeVolume = 0;
+				_smushDispatch[i].fadeSampleRate = 0;
+				_smushDispatch[i].elapsedAudio = 0;
 				_smushDispatch[i].audioLength = 0;
 			}
 		}
