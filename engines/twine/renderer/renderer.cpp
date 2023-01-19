@@ -1871,7 +1871,7 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 angleX, int32 angleY
 	// restart at the beginning of the renderTable
 	RenderCommand *renderCmds = _renderCmds;
 	const int32 numOfPrimitives = animModel(&_modelData, bodyData, renderCmds, renderAngle, renderPos, modelRect);
-	if (renderObjectIso(numOfPrimitives, bodyData, &renderCmds, &_modelData, modelRect)) {
+	if (!renderObjectIso(numOfPrimitives, bodyData, &renderCmds, &_modelData, modelRect)) {
 		modelRect.right = -1;
 		modelRect.bottom = -1;
 		modelRect.left = -1;
