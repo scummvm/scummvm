@@ -88,6 +88,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Inherit the Earth kann nun direkt mit den Dateien des Disketten-Installationsprogramms gespielt werden.
    - Unterstützung für die Amiga-Versionen (AGA/ECS, Retail/Demo, Englisch/Deutsch) von Inherit the Earth hinzugefügt.
 
+ SCI:
+   - Verbesserte Text-Darstellung in den Macintosh-Versionen der Spiele.
+   - Unterstützung für Casio MT-540, CT-460 und CSM-1-MIDI-Geräte für alle
+     SCI0-Spiele hinzugefügt, welche die genannten Geräte unterstützen.
+
  SCUMM:
    - Unterstützung von CGA-, CGA Composite-, CGA schwarz/weiß- und Herkules-Grafikmodi
      für die SCUMM 1-Versionen von Zak McKracken und Maniac Mansion hinzugefügt.
@@ -166,6 +171,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehlerkorrekturen für mehrere Abstürze in Clouds of Xeen.
    - Shops werden nun erst nach der Verabschiedung verlassen.
    - Die Karte wird nun nicht mehr neu geladen, wenn die Erstellung eines Charakters abgeschlossen ist.
+   - Die Logik, nach der die Wolken in Swords of Xeen fallen, wurde korrigiert.
+   - Fehlerkorrektur für das GateMaster-Monster in der Underworld-Map.
 
  3DS-Portierung:
    - Der Relocation-Parser wurde um Unterstützung für PREL31, welches von neuen Compilern verwendet wird, erweitert.
