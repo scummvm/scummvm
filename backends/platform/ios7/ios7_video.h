@@ -50,7 +50,6 @@ uint getSizeNextPOT(uint size);
 	Common::List<InternalEvent> _events;
 	NSLock *_eventLock;
 	SoftKeyboard *_keyboardView;
-	BOOL _keyboardVisible;
 	Common::List<GameController*> _controllers;
 
 	UIBackgroundTaskIdentifier _backgroundSaveStateTask;

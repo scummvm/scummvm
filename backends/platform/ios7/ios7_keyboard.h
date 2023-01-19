@@ -41,6 +41,7 @@
 
 - (void)showKeyboard;
 - (void)hideKeyboard;
+- (BOOL)isKeyboardShown;
 
 @end
 

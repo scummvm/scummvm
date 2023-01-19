@@ -625,5 +625,9 @@ void OSystem_iOS7::setShowKeyboard(bool show) {
 }
 
 bool OSystem_iOS7::isKeyboardShown() const {
-	return [[iOS7AppDelegate iPhoneView] isKeyboardShown];
+	__block bool isShown = false;
+	execute_on_main_thread(^{
+		isShown = [[iOS7AppDelegate iPhoneView] isKeyboardShown];
+	});
+	return isShown;
 }

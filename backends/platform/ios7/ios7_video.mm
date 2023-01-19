@@ -468,7 +468,6 @@ uint getSizeNextPOT(uint size) {
 	[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 
 	_keyboardView = nil;
-	_keyboardVisible = NO;
 	_screenTexture = 0;
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
@@ -935,16 +934,14 @@ uint getSizeNextPOT(uint size) {
 
 - (void)showKeyboard {
 	[_keyboardView showKeyboard];
-	_keyboardVisible = YES;
 }
 
 - (void)hideKeyboard {
 	[_keyboardView hideKeyboard];
-	_keyboardVisible = NO;
 }
 
 - (BOOL)isKeyboardShown {
-	return _keyboardVisible;
+	return [_keyboardView isKeyboardShown];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
