@@ -124,10 +124,10 @@ protected:
 
 class ShadowSurface : public BaseSurface {
 public:
-	ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, BaseSurface *shadowSurface);
+	ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, const Common::SharedPtr<BaseSurface> &shadowSurface);
 	void draw() override;
 protected:
-	BaseSurface *_shadowSurface;
+	Common::SharedPtr<BaseSurface> _shadowSurface;
 };
 
 class FontSurface : public BaseSurface {
@@ -136,7 +136,7 @@ public:
 	FontSurface(NeverhoodEngine *vm, uint32 fileHash, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);
 	~FontSurface() override;
 	void drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr);
-	void drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen = -1);
+	void drawString(const Common::SharedPtr<BaseSurface> &destSurface, int16 x, int16 y, const byte *string, int stringLen = -1);
 	int16 getStringWidth(const byte *string, int stringLen);
 	uint16 getCharWidth() const { return _charWidth; }
 	uint16 getCharHeight() const { return _charHeight; }

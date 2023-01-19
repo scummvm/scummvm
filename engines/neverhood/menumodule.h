@@ -123,19 +123,19 @@ protected:
 class TextLabelWidget : public Widget {
 public:
 	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-		int baseObjectPriority, int baseSurfacePriority,
-		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);
+			int baseObjectPriority, int baseSurfacePriority,
+			const byte *string, int stringLen, const Common::SharedPtr<BaseSurface> &drawSurface, int16 tx, int16 ty, const Common::SharedPtr<FontSurface> &fontSurface);
 	void initialize() override;
 	int16 getWidth() override;
 	int16 getHeight() override;
 	void drawString(int maxStringLength);
 	void clear();
 	void setString(const byte *string, int stringLen);
-	FontSurface *getFontSurface() const { return _fontSurface; }
+	Common::SharedPtr<FontSurface> getFontSurface() const { return _fontSurface; }
 protected:
-	BaseSurface *_drawSurface;
+	Common::SharedPtr<BaseSurface> _drawSurface;
 	int16 _tx, _ty;
-	FontSurface *_fontSurface;
+	Common::SharedPtr<FontSurface> _fontSurface;
 	const byte *_string;
 	int _stringLen;
 };
@@ -143,7 +143,7 @@ protected:
 class TextEditWidget : public Widget {
 public:
 	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-		int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect);
+		int maxStringLength, const Common::SharedPtr<FontSurface> &fontSurface, uint32 fileHash, const NRect &rect);
 	~TextEditWidget() override;
 	void onClick() override;
 	void initialize() override;
@@ -168,7 +168,7 @@ protected:
 	int _cursorPos;
 	int _cursorTicks;
 	Common::String _entryString;
-	FontSurface *_fontSurface;
+	Common::SharedPtr<FontSurface> _fontSurface;
 	TextLabelWidget *_textLabelWidget;
 	BaseSurface *_cursorSurface;
 	uint32 _cursorFileHash;
@@ -182,7 +182,7 @@ protected:
 class SavegameListBox : public Widget {
 public:
 	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-		SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
+		SavegameList *savegameList, const Common::SharedPtr<FontSurface> &fontSurface, uint32 bgFileHash, const NRect &rect);
 	void onClick() override;
 	void initialize() override;
 	void buildItems();
@@ -201,7 +201,7 @@ protected:
 	int _firstVisibleItem;
 	int _lastVisibleItem;
 	SavegameList *_savegameList;
-	FontSurface *_fontSurface;
+	Common::SharedPtr<FontSurface> _fontSurface;
 	uint _currIndex;
 	int _maxVisibleItemsCount;
 };
@@ -215,7 +215,6 @@ public:
 		uint32 listBoxBackgroundFileHash, int16 listBoxX, int16 listBoxY, const NRect &listBoxRect,
 		uint32 textEditBackgroundFileHash, uint32 textEditCursorFileHash, int16 textEditX, int16 textEditY, const NRect &textEditRect,
 		uint32 textFileHash1, uint32 textFileHash2);
-	~GameStateMenu() override;
 	NPoint getMousePos();
 	virtual void setCurrWidget(Widget *newWidget);
 	virtual Widget *getCurrWidget() { return _currWidget; }
@@ -223,7 +222,7 @@ public:
 protected:
 	Widget *_currWidget;
 	SavegameList *_savegameList;
-	FontSurface *_fontSurface;
+	Common::SharedPtr<FontSurface> _fontSurface;
 	SavegameListBox *_listBox;
 	TextEditWidget *_textEditWidget;
 	Common::String _savegameDescription;

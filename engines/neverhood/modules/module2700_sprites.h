@@ -35,7 +35,7 @@ public:
 
 class AsCommonCarShadow : public AnimatedSprite {
 public:
-	AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, BaseSurface *shadowSurface, uint index);
+	AsCommonCarShadow(NeverhoodEngine *vm, AnimatedSprite *asCar, const Common::SharedPtr<BaseSurface> &shadowSurface, uint index);
 protected:
 	uint _index;
 	AnimatedSprite *_asCar;
@@ -46,7 +46,7 @@ protected:
 
 class AsCommonCarConnectorShadow : public AnimatedSprite {
 public:
-	AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, uint index);
+	AsCommonCarConnectorShadow(NeverhoodEngine *vm, Sprite *asCar, const Common::SharedPtr<BaseSurface> &shadowSurface, uint index);
 protected:
 	uint _index;
 	Sprite *_asCar;
@@ -55,7 +55,7 @@ protected:
 
 class AsCommonCarTrackShadow : public AnimatedSprite {
 public:
-	AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, BaseSurface *shadowSurface, int16 frameIndex);
+	AsCommonCarTrackShadow(NeverhoodEngine *vm, Sprite *asCar, const Common::SharedPtr<BaseSurface> &shadowSurface, int16 frameIndex);
 protected:
 	Sprite *_asCar;
 	void update();

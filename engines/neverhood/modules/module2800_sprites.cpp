@@ -1329,7 +1329,6 @@ KmScene2806::KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 
 	if (needsLargeSurface) {
 		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
-		delete _surface;
 		createSurface(1000, dimensions.width, dimensions.height);
 		loadSound(3, 0x58E0C341);
 		loadSound(4, 0x40A00342);
@@ -1389,7 +1388,6 @@ KmScene2809::KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16
 
 	if (needsLargeSurface) {
 		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
-		delete _surface;
 		createSurface(1000, dimensions.width, dimensions.height);
 		loadSound(3, 0x58E0C341);
 		loadSound(4, 0x40A00342);

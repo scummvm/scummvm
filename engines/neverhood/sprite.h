@@ -54,10 +54,9 @@ const int16 kDefPosition = -32768;
 class Sprite : public Entity {
 public:
 	Sprite(NeverhoodEngine *vm, int objectPriority);
-	~Sprite() override;
 	void init() {}
-	BaseSurface *getSurface() { return _surface; }
-	virtual BaseSurface *getSubtitleSurface() { return nullptr; }
+	Common::SharedPtr<BaseSurface> getSurface() { return _surface; }
+	virtual Common::SharedPtr<BaseSurface> getSubtitleSurface() { return nullptr; }
 	void updateBounds();
 	void setDoDeltaX(int type);
 	void setDoDeltaY(int type);
@@ -87,7 +86,7 @@ protected:
 	Common::String _spriteUpdateCbName; // For debugging purposes
 	int16 (Sprite::*_filterXCb)(int16);
 	int16 (Sprite::*_filterYCb)(int16);
-	BaseSurface *_surface;
+	Common::SharedPtr<BaseSurface> _surface;
 	int16 _x, _y;
 	bool _doDeltaX, _doDeltaY;
 	bool _needRefresh;
@@ -151,7 +150,7 @@ public:
 	int16 getFrameIndex(uint32 frameHash) { return _animResource.getFrameIndex(frameHash); }
 	void setNewHashListIndex(int value) { _newStickFrameIndex = value; }
 	void startAnimation(uint32 fileHash, int16 plFirstFrameIndex, int16 plLastFrameIndex);
-	BaseSurface *getSubtitleSurface() override { return &_subtitleSurface; }
+	Common::SharedPtr<BaseSurface> getSubtitleSurface() override { return _subtitleSurface; }
 protected:
 	class AnimatedSpriteSubtitles : public BaseSurface {
 	public:
@@ -162,7 +161,7 @@ protected:
 	};
 	
 	static const int kSubtitleWidth = 320;
-	AnimatedSpriteSubtitles _subtitleSurface;
+	Common::SharedPtr<AnimatedSpriteSubtitles> _subtitleSurface;
 	typedef void (AnimatedSprite::*AnimationCb)();
 	Common::ScopedPtr<SubtitlePlayer> _subtitles;
 	AnimResource _animResource;
@@ -190,8 +189,8 @@ protected:
 	void updateFrameIndex();
 	void updateFrameInfo();
 	void createSurface1(uint32 fileHash, int surfacePriority);
-	void createShadowSurface1(BaseSurface *shadowSurface, uint32 fileHash, int surfacePriority);
-	void createShadowSurface(BaseSurface *shadowSurface, int16 width, int16 height, int surfacePriority);
+	void createShadowSurface1(const Common::SharedPtr<BaseSurface> &shadowSurface, uint32 fileHash, int surfacePriority);
+	void createShadowSurface(const Common::SharedPtr<BaseSurface> &shadowSurface, int16 width, int16 height, int surfacePriority);
 	void stopAnimation();
 	void startAnimationByHash(uint32 fileHash, uint32 plFirstFrameHash, uint32 plLastFrameHash);
 	void nextAnimationByHash(uint32 fileHash2, uint32 plFirstFrameHash, uint32 plLastFrameHash);

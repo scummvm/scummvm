@@ -137,7 +137,7 @@ void BaseSurface::copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, N
 
 // ShadowSurface
 
-ShadowSurface::ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, BaseSurface *shadowSurface)
+	ShadowSurface::ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, const Common::SharedPtr<BaseSurface> &shadowSurface)
 	: BaseSurface(vm, priority, width, height, "shadow"), _shadowSurface(shadowSurface) {
 	// Empty
 }
@@ -182,13 +182,14 @@ void FontSurface::drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr)
 	destSurface->copyFrom(_surface, x, y, sourceRect);
 }
 
-void FontSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen) {
+void FontSurface::drawString(const Common::SharedPtr<BaseSurface> &destSurface, int16 x, int16 y, const byte *string, int stringLen) {
+	BaseSurface *destSurfaceRaw = destSurface.get();
 
 	if (stringLen < 0)
 		stringLen = strlen((const char*)string);
 
 	for (; stringLen > 0; --stringLen, ++string) {
-		drawChar(destSurface, x, y, *string);
+		drawChar(destSurfaceRaw, x, y, *string);
 		x += _tracking ? (*_tracking)[*string - _firstChar].x : _charWidth;
 	}
 

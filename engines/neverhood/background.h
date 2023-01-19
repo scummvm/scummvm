@@ -33,13 +33,12 @@ class Background : public Entity {
 public:
 	Background(NeverhoodEngine *vm, int objectPriority);
 	Background(NeverhoodEngine *vm, uint32 fileHash, int objectPriority, int surfacePriority);
-	~Background() override;
-	BaseSurface *getSurface() { return _surface; }
+	Common::SharedPtr<BaseSurface> getSurface() { return _surface; }
 	void createSurface(int surfacePriority, int16 width, int16 height);
 	void load(uint32 fileHash);
 	SpriteResource& getSpriteResource() { return _spriteResource; }
 protected:
-	BaseSurface *_surface;
+	Common::SharedPtr<BaseSurface> _surface;
 	SpriteResource _spriteResource;
 };
 

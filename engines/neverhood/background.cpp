@@ -39,12 +39,8 @@ Background::Background(NeverhoodEngine *vm, uint32 fileHash, int objectPriority,
 
 }
 
-Background::~Background() {
-	delete _surface;
-}
-
 void Background::createSurface(int surfacePriority, int16 width, int16 height) {
-	_surface = new BaseSurface(_vm, surfacePriority, width, height, "background");
+	_surface .reset(new BaseSurface(_vm, surfacePriority, width, height, "background"));
 	_surface->setTransparent(false);
 	_spriteResource.getPosition().x = width;
 	_spriteResource.getPosition().y = height;

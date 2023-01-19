@@ -577,7 +577,7 @@ uint32 Widget::handleMessage(int messageNum, const MessageParam &param, Entity *
 
 TextLabelWidget::TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 	int baseObjectPriority, int baseSurfacePriority,
-	const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface)
+	const byte *string, int stringLen, const Common::SharedPtr<BaseSurface> &drawSurface, int16 tx, int16 ty, const Common::SharedPtr<FontSurface> &fontSurface)
 	: Widget(vm, x, y, parentScene,	baseObjectPriority, baseSurfacePriority),
 	_string(string), _stringLen(stringLen), _drawSurface(drawSurface), _tx(tx), _ty(ty), _fontSurface(fontSurface) {
 
@@ -613,7 +613,7 @@ void TextLabelWidget::setString(const byte *string, int stringLen) {
 }
 
 TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-	int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect)
+	int maxStringLength, const Common::SharedPtr<FontSurface> &fontSurface, uint32 fileHash, const NRect &rect)
 	: Widget(vm, x, y, parentScene,	1000, 1000),
 	_maxStringLength(maxStringLength), _fontSurface(fontSurface), _fileHash(fileHash), _rect(rect),
 	_cursorSurface(nullptr), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0),
@@ -803,7 +803,7 @@ uint32 TextEditWidget::handleMessage(int messageNum, const MessageParam &param, 
 }
 
 SavegameListBox::SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
-	SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect)
+	SavegameList *savegameList, const Common::SharedPtr<FontSurface> &fontSurface, uint32 bgFileHash, const NRect &rect)
 	: Widget(vm, x, y, parentScene,	1000, 1000),
 	_savegameList(savegameList), _fontSurface(fontSurface), _bgFileHash(bgFileHash), _rect(rect),
 	_maxStringLength(0), _firstVisibleItem(0), _lastVisibleItem(0), _currIndex(0) {
@@ -944,7 +944,7 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 
 	bool isSave = (textEditCursorFileHash != 0);
 
-	_fontSurface = new FontSurface(_vm, fontFileHash, 32, 7, 32, 11, 17);
+	_fontSurface.reset(new FontSurface(_vm, fontFileHash, 32, 7, 32, 11, 17));
 
 	if (!ConfMan.getBool("originalsaveload")) {
 		Common::String saveDesc;
@@ -992,10 +992,6 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&GameStateMenu::handleMessage);
-}
-
-GameStateMenu::~GameStateMenu() {
-	delete _fontSurface;
 }
 
 NPoint GameStateMenu::getMousePos() {
