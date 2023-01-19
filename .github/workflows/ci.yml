@@ -42,7 +42,11 @@ jobs:
         uses: lukka/run-vcpkg@v7
         id: runvcpkg
         with:
-          vcpkgGitCommitId: fd766eba2b4cf59c7123d46189be373e2cee959d
+          # temporary hack until create_project / vcpkg incompatibility is resolved.
+          # use a fork of vcpkg with the previous working setup from March 2022
+          # with the the January 2023 fix for msys-libtool's url cherry-picked.
+          vcpkgGitURL: 'https://github.com/sluicebox/vcpkg.git'
+          vcpkgGitCommitId: f28c1edaffcb027da40b120112c89033d4303dcc
           vcpkgTriplet: '${{ matrix.triplet }}'
           vcpkgArguments: '${{ matrix.vcpkgPackages }}'
 #      - name: Upload libs
