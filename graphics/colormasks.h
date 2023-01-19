@@ -314,9 +314,9 @@ struct ColorMasks<-8888> {
 		kLow4Bits   = (15 << kRedShift) | (15 << kGreenShift) | (15 << kBlueShift) | (15 << kAlphaShift),
 
 		kLowBitsMask = kLowBits,
-		kHighBitsMask = ~kLowBits,
+		kHighBitsMask = (uint) ~kLowBits,
 		qlowBits = kLow2Bits,
-		qhighBits = ~kLow2Bits
+		qhighBits = (uint) ~kLow2Bits
 	};
 
 	typedef uint32 PixelType;
