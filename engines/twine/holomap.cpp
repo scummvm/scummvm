@@ -448,7 +448,7 @@ int32 Holomap::searchNextArrow(int32 currentLocation, int32 dir) const {
 	return -1;
 }
 
-void Holomap::drawListPos(int xRot, int yRot, int zRot, bool lower) {
+void Holomap::drawListPos(int xRot, int yRot, int zRot, bool pos) {
 	int n = 0;
 	DrawListStruct drawListArray[NUM_LOCATIONS];
 	for (int locationIdx = 0; locationIdx < NUM_LOCATIONS; ++locationIdx) {
@@ -466,14 +466,14 @@ void Holomap::drawListPos(int xRot, int yRot, int zRot, bool lower) {
 		const IVec3 &destPos3 = _engine->_renderer->worldRotatePoint(m);
 		const IVec3 &destPos4 = _engine->_renderer->worldRotatePoint(m1);
 
-		bool visible;
-		if (lower) {
-			visible = destPos3.z <= destPos4.z;
+		if (!pos) {
+			if (destPos4.z > destPos3.z) {
+				continue;
+			}
 		} else {
-			visible = destPos4.z <= destPos3.z;
-		}
-		if (!visible) {
-			continue;
+			if (destPos4.z < destPos3.z) {
+				continue;
+			}
 		}
 		uint8 flags = _engine->_gameState->_holomapFlags[locationIdx] & HOLOMAP_ARROW;
 		if (locationIdx == _engine->_scene->_currentSceneIdx) {
