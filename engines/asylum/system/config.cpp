@@ -48,6 +48,7 @@ ConfigurationManager::ConfigurationManager() {
 	ConfMan.registerDefault("music_status", true);
 	ConfMan.registerDefault("reverse_stereo", false);
 	ConfMan.registerDefault("performance", 4);
+	ConfMan.registerDefault("animations_speed", 1);
 	ConfMan.registerDefault("key_showVersion", 'v');
 	ConfMan.registerDefault("key_quickLoad", 'L');
 	ConfMan.registerDefault("key_quickSave", 'S');
@@ -76,6 +77,7 @@ ConfigurationManager::ConfigurationManager() {
 
 	gammaLevel = 0;
 	performance = 0;
+	animationsSpeed = 1;
 
 	keyShowVersion = 'v';
 	keyQuickLoad = 'L';
@@ -108,6 +110,7 @@ void ConfigurationManager::read() {
 	musicStatus   = ConfMan.getBool("music_status");
 	reverseStereo = ConfMan.getBool("reverse_stereo");
 	performance   = ConfMan.getInt("performance");
+	animationsSpeed  = ConfMan.getInt("animations_speed");
 
 	// Misc options
 	showSceneLoading = ConfMan.getBool("show_scene_loading");
@@ -146,6 +149,7 @@ void ConfigurationManager::write() {
 	ConfMan.setBool("music_status", musicStatus);
 	ConfMan.setBool("reverse_stereo", reverseStereo);
 	ConfMan.setInt("performance", performance);
+	ConfMan.setInt("animations_speed", animationsSpeed);
 
 	// Misc Options
 	ConfMan.setBool("show_scene_loading", showSceneLoading);

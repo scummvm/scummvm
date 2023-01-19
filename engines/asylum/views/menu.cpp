@@ -1507,6 +1507,50 @@ void Menu::updateSettings() {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Animations speed
+	const char *animationsSpeed;
+	switch (_vm->getLanguage()) {
+	case Common::DE_DEU:
+		animationsSpeed = "Animationen Geschwindigkeit";
+		break;
+	case Common::ES_ESP:
+		animationsSpeed = "Velocidad de animaciones";
+		break;
+	case Common::FR_FRA:
+		animationsSpeed = "Vitesse d'animations";
+		break;
+	case Common::IT_ITA:
+		animationsSpeed = "Velocità di animazioni";
+		break;
+	case Common::PL_POL:
+		animationsSpeed = "Szybkość animacji";
+		break;
+	case Common::RU_RUS:
+		animationsSpeed = "\x91\xaa\xae\xe0\xae\xe1\xe2\xec\x20\xa0\xad\xa8\xac\xa0\xe6\xa8\xa9";
+		break;
+	default:
+		animationsSpeed = "Animations speed";
+		break;
+	}
+
+	getText()->loadFont(kFontYellow);
+	getText()->draw(Common::Point(320, 209), animationsSpeed);
+
+	switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < 209 || cursor.y > 233);
+	getText()->setPosition(Common::Point(350, 209));
+	getText()->draw("-");
+
+	switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < 209 || cursor.y > 233);
+	getText()->setPosition(Common::Point(sizeMinus + 360, 209));
+	getText()->draw("+");
+
+	getText()->setPosition(Common::Point(sizeMinus + sizePlus + 365, 209));
+	getText()->loadFont(kFontYellow);
+
+	for (int i = 1; i <= Config.animationsSpeed; i++)
+		getText()->drawChar(']');
+
+	//////////////////////////////////////////////////////////////////////////
 	// Back to main menu
 	switchFont(cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1437))) || cursor.y < 340 || cursor.y > (340 + 24));
 	getText()->setPosition(Common::Point(300, 340));
@@ -2270,6 +2314,28 @@ void Menu::clickSettings() {
 
 		Config.gammaLevel += 1;
 		getScreen()->setGammaLevel(MAKE_RESOURCE(kResourcePackShared, 17));
+
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Animations speed minus
+	if (cursor.x >= 350 && cursor.x <= (sizeMinus + 350) && cursor.y >= 209 && cursor.y <= 233) {
+		if (Config.animationsSpeed == 1)
+			return;
+
+		Config.animationsSpeed--;
+
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Animations speed plus
+	if (cursor.x >= (sizeMinus + 360) && cursor.x <= (sizeMinus + sizePlus + 360) && cursor.y >= 209 && cursor.y <= 233) {
+		if (Config.animationsSpeed == 9)
+			return;
+
+		Config.animationsSpeed++;
 
 		return;
 	}

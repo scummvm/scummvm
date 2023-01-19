@@ -413,7 +413,7 @@ bool Scene::update() {
 			getSharedData()->setEventUpdate(getSharedData()->getEventUpdate() ^ 1);
 
 			getSharedData()->setFlag(kFlagRedraw, false);
-			getSharedData()->setNextScreenUpdate(ticks + 55);
+			getSharedData()->setNextScreenUpdate(ticks + 55 / Config.animationsSpeed);
 			++_vm->screenUpdateCount;
 		}
 	}

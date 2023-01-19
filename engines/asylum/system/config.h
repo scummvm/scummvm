@@ -55,6 +55,7 @@ public:
 	bool musicStatus; // On or Off
 	bool reverseStereo;
 	int  performance;    ///< performance only affects sound: perf > 0 ? 22050hz/16bit : 11025hz/8bit
+	int  animationsSpeed;
 	char keyShowVersion;
 	char keyQuickSave;
 	char keyQuickLoad;
