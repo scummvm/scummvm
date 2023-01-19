@@ -25,14 +25,14 @@
 #include "file.h"
 #include "swords.h"
 
-#define MONSTERS_COUNT 150
+#define MONSTERS_COUNT 151
 
 extern void NORETURN_PRE error(const char *s, ...);
 
 void writeSwordsData(const char *swordsDatName) {
 	Common::File f;
 	Common::MemFile monsters;
-	const int size = MONSTERS_COUNT * 61;
+	const int size = MONSTERS_COUNT * 60;
 	const int32 offset = 0x44200;
 	byte buffer[size];
 
