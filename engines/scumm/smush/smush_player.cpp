@@ -522,7 +522,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 				}
 			} else {
 				// There's an old sound running: switch the stream from the old one to the new one
-				_imuseDigital->diMUSESwitchStream(curSoundId, bufId + DIMUSE_SMUSH_SOUNDID, bufId == 2 ? 1000 : 150, 0, 0);
+				_imuseDigital->diMUSESwitchStream(curSoundId, bufId + DIMUSE_SMUSH_SOUNDID, bufId == DIMUSE_BUFFER_MUSIC ? 1000 : 150, 0, 0);
 			}
 
 			_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, DIMUSE_P_VOLUME, volume);
