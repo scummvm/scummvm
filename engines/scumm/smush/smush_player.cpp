@@ -1686,7 +1686,7 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 
 				fadeMixStartingPoint = 0;
 				while (fadeRemaining) {
-					fadeInFrameCount = (fadeRemaining < engineBaseFeedSize / 2) ? fadeRemaining : engineBaseFeedSize / 2;
+					fadeInFrameCount = (fadeRemaining < engineBaseFeedSize / 4) ? fadeRemaining : engineBaseFeedSize / 4;
 
 					if (fadeInFrameCount == maxFadeChunkSize) {
 						fadeFeedSize = feedSize;
@@ -1745,8 +1745,8 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 								if (_smushDispatch[i].volumeStep < 16)
 									_smushDispatch[i].volumeStep++;
 
-								if (mixInFrameCount > engineBaseFeedSize / 2)
-									mixInFrameCount = engineBaseFeedSize / 2;
+								if (mixInFrameCount > engineBaseFeedSize / 4)
+									mixInFrameCount = engineBaseFeedSize / 4;
 
 								_smushTracks[i].state = TRK_STATE_PLAYING;
 
@@ -1760,8 +1760,8 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 
 								_smushTracks[i].state = TRK_STATE_ENDING;
 
-								if (mixInFrameCount > engineBaseFeedSize / 2)
-									mixInFrameCount = engineBaseFeedSize / 2;
+								if (mixInFrameCount > engineBaseFeedSize / 4)
+									mixInFrameCount = engineBaseFeedSize / 4;
 
 								_smushDispatch[i].audioRemaining -= mixInFrameCount;
 								_smushDispatch[i].currentOffset += mixInFrameCount;
