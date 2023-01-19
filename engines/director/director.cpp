@@ -239,6 +239,11 @@ Common::Error DirectorEngine::run() {
 		_machineType = 256; // IBM PC-type machine
 
 	Common::Error err = _currentWindow->loadInitialMovie();
+
+	// Exit gracefully when run with buildbot
+	if (debugChannelSet(-1, kDebugFewFramesOnly) && err.getCode() == Common::kNoGameDataFoundError)
+		return Common::kNoError;
+
 	if (err.getCode() != Common::kNoError)
 		return err;
 
