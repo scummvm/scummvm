@@ -715,7 +715,18 @@ void Interface::startFalling(bool flag) {
 	_falling = FALL_START;
 	draw3d(false);
 
-	if (flag && (!ccNum || party._fallMaze != 0)) {
+	if (!flag && g_vm->getGameID() == GType_Swords) {
+		if (party._mazeId != 52) {
+			party._mazeId = 49;
+			party._mazePosition = Common::Point(7, 0);
+		} else if (party._mazePosition.x == 8 && party._mazePosition.y == 7) {
+			party._mazeId = 78;
+			party._mazePosition = Common::Point(8, 2);
+		} else {
+			party._mazeId = 22;
+			party._mazePosition = Common::Point(7, 9);
+		}
+	} else if (flag && (!ccNum || g_vm->getGameID() == GType_Swords || party._fallMaze != 0)) {
 		party._mazeId = party._fallMaze;
 		party._mazePosition = party._fallPosition;
 	} else if (!ccNum) {
