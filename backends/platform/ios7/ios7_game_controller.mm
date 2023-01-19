@@ -117,7 +117,30 @@
 }
 
 - (void)handleJoystickButtonAction:(int)button isPressed:(bool)pressed {
-	[view addEvent:InternalEvent(pressed ? kInputJoystickButtonDown : kInputJoystickButtonUp, button, 0)];
+	bool addEvent = true;
+	if (button == Common::JOYSTICK_BUTTON_A) {
+		if (_firstButtonPressed) {
+			if (pressed) {
+				addEvent = false;
+			}
+		}
+		_firstButtonPressed = pressed;
+	} else if (button == Common::JOYSTICK_BUTTON_B) {
+		if (_secondButtonPressed) {
+			if (pressed) {
+				addEvent = false;
+			}
+		}
+		_secondButtonPressed = pressed;
+	}
+	// Do not send button presses if keyboard is shown because if e.g.
+	// the "Do you want to quit?" dialog is shown the wait for user
+	// input will end (treating the button push as a mouse click) while
+	// the user tried to select the "y" or "n" character on the tvOS
+	// keyboard.
+	if (addEvent && ![view isKeyboardShown]) {
+		[view addEvent:InternalEvent(pressed ? kInputJoystickButtonDown : kInputJoystickButtonUp, button, 0)];
+	}
 }
 
 @end
