@@ -813,7 +813,9 @@ int ScummEngine::getInternalGUIControlFromCoordinates(int x, int y) {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 	if (isUsingOriginalGUI()) {
-		if (_game.version == 8 && !(_game.features & GF_DEMO)) {
+		if (_game.version == 8 && !(_game.features & GF_DEMO) &&
+			(ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit"))) {
+
 			int boxWidth, strWidth;
 			int ctrlId;
 			char yesLabelPtr[512];
@@ -1507,19 +1509,23 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 		localizedYesKey = msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1];
 		msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';
 
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
-
 		// "Are you sure you want to quit?  (Y/N)"
 		Common::KeyState ks;
-		if (_game.version > 4) {
-			ks = showBannerAndPause(0, -1, msgLabelPtr);
-		} else if (_game.version < 3) {
-			ks = printMessageAndPause(msgLabelPtr, 0, -1, true);
-		} else {
-			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
-		}
+		if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) {
+			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
-		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+			if (_game.version > 4) {
+				ks = showBannerAndPause(0, -1, msgLabelPtr);
+			} else if (_game.version < 3) {
+				ks = printMessageAndPause(msgLabelPtr, 0, -1, true);
+			} else {
+				ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
+			}
+
+			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		} else {
+			ks = Common::KeyCode(localizedYesKey);
+		}
 
 		if (tolower(localizedYesKey) == ks.ascii || toupper(localizedYesKey) == ks.ascii ||
 			(ks.keycode == Common::KEYCODE_c && ks.hasFlags(Common::KBD_CTRL)) ||
