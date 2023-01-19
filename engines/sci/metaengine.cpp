@@ -55,7 +55,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "camelot",         "arthur",          GID_CAMELOT,          false, SCI_VERSION_NONE },
 	{ "castlebrain",     "brain",           GID_CASTLEBRAIN,      false, SCI_VERSION_1_LATE },	// Amiga is SCI1 middle, PC SCI1 late
 	{ "chest",           "archive",         GID_CHEST,            true,  SCI_VERSION_NONE },
-	{ "christmas1988",   "demo",            GID_CHRISTMAS1988,    false, SCI_VERSION_NONE },
+	{ "christmas1988",   "demo",            GID_CHRISTMAS1988,    false, SCI_VERSION_0_EARLY },
 	{ "christmas1990",   "card",            GID_CHRISTMAS1990,    false, SCI_VERSION_1_EARLY },
 	{ "christmas1992",   "card",            GID_CHRISTMAS1992,    false, SCI_VERSION_1_1 },
 	{ "cnick-kq",        "",                GID_CNICK_KQ,         false, SCI_VERSION_NONE },	// Sierra ID is "hoyle3", distinguished by resource count
@@ -149,6 +149,7 @@ static const DemoIdEntry s_demoIdTable[] = {
 	{ "ll5",       "lsl5" },
 	{ "hq",        "qfg1" },	// QFG1 SCI0/EGA
 	{ "hq2demo",   "qfg2" },
+	{ "demo",      "rama" },
 	{ "sq1demo",   "sq1sci" },
 	{ nullptr,      nullptr }
 };
