@@ -253,6 +253,10 @@ void ScummEngine::parseEvent(Common::Event event) {
 		break;
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 	case Common::EVENT_QUIT:
+		// Some backends send a key stroke event and the quit
+		// event which was triggered by the keystroke. Clear the key.
+		clearClickedStatus();
+
 		if (isUsingOriginalGUI() &&
 			_game.platform != Common::kPlatformSegaCD &&
 			_game.platform != Common::kPlatformNES) {
