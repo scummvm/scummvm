@@ -378,6 +378,7 @@ private:
 	void handleFight_lastAction_D(int16 teamCharId);
 	void handleFight_lastAction_H(int16 teamCharId);
 	bool handleFight_lastAction_U(int16 teamCharId);
+	void handleFight_MobstersAttack(int groupId);
 	bool isTPK();
 	bool isMonsterAlreadyFighting(int16 monsterId, int16 teamMonsterId);
 	void createOpponentList(int16 monsterTeamId);
@@ -619,7 +620,6 @@ private:
 
 	int16 _regenCounter;
 };
-
 
 } // End of namespace Efh
 
