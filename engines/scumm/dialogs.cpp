@@ -1048,7 +1048,10 @@ GUI::CheckboxWidget *ScummOptionsContainerWidget::createEnhancementsCheckbox(Gui
 }
 
 GUI::CheckboxWidget *ScummOptionsContainerWidget::createOriginalGUICheckbox(GuiObject *boss, const Common::String &name) {
-	return new GUI::CheckboxWidget(boss, name, _("Enable the original GUI and Menu"), _("Allow the game to use the in-engine graphical interface and the original save/load menu."));
+	return new GUI::CheckboxWidget(boss, name,
+		_("Enable the original GUI and Menu"),
+		_("Allow the game to use the in-engine graphical interface and the original save/load menu. Use it together with the \"Ask for confirmation on exit\" for a more complete experience.")
+	);
 }
 
 void ScummOptionsContainerWidget::updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value) {
