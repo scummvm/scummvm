@@ -456,4 +456,7 @@
 	[inputView endEditing:YES];
 }
 
+- (BOOL)isKeyboardShown {
+	return [inputView isFirstResponder];
+}
 @end
