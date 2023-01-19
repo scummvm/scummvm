@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-19 18:41+0000\n"
+"POT-Creation-Date: 2023-01-19 21:51+0000\n"
 "PO-Revision-Date: 2023-01-15 13:59+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4596,8 +4596,8 @@ msgstr "El fantraductor desea que su traducción no sea incorporada en ScummVM."
 #: engines/mohawk/detection_tables.h:2492
 #: engines/mohawk/detection_tables.h:3562
 #: engines/mohawk/detection_tables.h:3577 engines/myst3/detection.cpp:142
-#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5193
-#: engines/sci/detection_tables.h:5201 engines/sherlock/detection_tables.h:223
+#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5201
+#: engines/sci/detection_tables.h:5209 engines/sherlock/detection_tables.h:223
 #: engines/stark/detection.cpp:319 engines/teenagent/detection.cpp:117
 #: engines/toltecs/detection.cpp:210 engines/trecision/detection.cpp:201
 #: engines/zvision/detection_tables.h:127
@@ -6930,7 +6930,7 @@ msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Se ha detectado un juego incompleto. Faltan datos por copiar de todos los CD."
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:369
 msgid "(Autosave)"
 msgstr "(Autoguardado)"
 
@@ -6976,7 +6976,7 @@ msgstr ""
 "No se puede reproducir un vídeo a %d bpp en un sistema con un límite de "
 "profundidad de color de 8 bpp"
 
-#: engines/sci/metaengine.cpp:300
+#: engines/sci/metaengine.cpp:301
 msgid "SCI32 support not compiled in"
 msgstr "No se ha incluido el soporte para SCI32."
 

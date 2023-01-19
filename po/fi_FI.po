@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-19 18:41+0000\n"
+"POT-Creation-Date: 2023-01-19 21:51+0000\n"
 "PO-Revision-Date: 2023-01-01 19:47+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4569,8 +4569,8 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:2492
 #: engines/mohawk/detection_tables.h:3562
 #: engines/mohawk/detection_tables.h:3577 engines/myst3/detection.cpp:142
-#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5193
-#: engines/sci/detection_tables.h:5201 engines/sherlock/detection_tables.h:223
+#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5201
+#: engines/sci/detection_tables.h:5209 engines/sherlock/detection_tables.h:223
 #: engines/stark/detection.cpp:319 engines/teenagent/detection.cpp:117
 #: engines/toltecs/detection.cpp:210 engines/trecision/detection.cpp:201
 #: engines/zvision/detection_tables.h:127
@@ -6847,7 +6847,7 @@ msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Vaillinainen peli havaittu. Sinun täytyy kopioida data kaikilta CD-levyiltä."
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:369
 msgid "(Autosave)"
 msgstr "(Autom. tallennus)"
 
@@ -6891,7 +6891,7 @@ msgstr ""
 "%d-bittistä videota ei voida toistaa järjestelmällä jonka maksimi värisyvyys "
 "on 8-bittinen"
 
-#: engines/sci/metaengine.cpp:300
+#: engines/sci/metaengine.cpp:301
 msgid "SCI32 support not compiled in"
 msgstr "SCI32-tukea ei ole käännetty mukaan"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-19 18:41+0000\n"
+"POT-Creation-Date: 2023-01-19 21:51+0000\n"
 "PO-Revision-Date: 2023-01-18 11:36+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4563,8 +4563,8 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:2492
 #: engines/mohawk/detection_tables.h:3562
 #: engines/mohawk/detection_tables.h:3577 engines/myst3/detection.cpp:142
-#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5193
-#: engines/sci/detection_tables.h:5201 engines/sherlock/detection_tables.h:223
+#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5201
+#: engines/sci/detection_tables.h:5209 engines/sherlock/detection_tables.h:223
 #: engines/stark/detection.cpp:319 engines/teenagent/detection.cpp:117
 #: engines/toltecs/detection.cpp:210 engines/trecision/detection.cpp:201
 #: engines/zvision/detection_tables.h:127
@@ -6874,7 +6874,7 @@ msgstr ""
 "Ufullstendig spill oppdaget. Du må kopiere spilldata fra alle CD-ene til "
 "spillet."
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:369
 msgid "(Autosave)"
 msgstr "(Automatisk lagring)"
 
@@ -6920,7 +6920,7 @@ msgstr ""
 "Kan ikke avspille video i %dbpp på et system med en maksimal fargedybde på "
 "8bpp"
 
-#: engines/sci/metaengine.cpp:300
+#: engines/sci/metaengine.cpp:301
 msgid "SCI32 support not compiled in"
 msgstr "SCI32-støtte er ikke innkompilert"
 
