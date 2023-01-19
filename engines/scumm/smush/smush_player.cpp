@@ -1701,6 +1701,8 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 						fadeVolume = _smushDispatch[i].fadeRemaining * _smushDispatch[i].fadeVolume * _smushTrackVols[0] / (SMUSH_FADE_SIZE * 127);
 						fadePan = _smushTracks[i].pan;
 
+						debug(5, "SmushPlayer::processDispatches(): fading dispatch %d, volume %d", i, fadeVolume);
+
 						sendAudioToDiMUSE(
 							&_smushTracks[i].fadeBuf[SMUSH_FADE_SIZE - _smushDispatch[i].fadeRemaining],
 							fadeMixStartingPoint,
@@ -1745,8 +1747,10 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 
 							if (mixInFrameCount + _smushDispatch[i].audioRemaining <= _smushTracks[i].availableSize) {
 								// Fade-in until full volume is reached
-								if (_smushDispatch[i].volumeStep < 16)
+								if (_smushDispatch[i].volumeStep < 16) {
 									_smushDispatch[i].volumeStep++;
+									debug(5, "SmushPlayer::processDispatches(): fading track %d, volume step %d", i, _smushDispatch[i].volumeStep);
+								}
 
 								if (mixInFrameCount > engineBaseFeedSize / 4)
 									mixInFrameCount = engineBaseFeedSize / 4;
@@ -1758,8 +1762,10 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 								speechIsPlaying = !speechIsPlaying ? (_smushTracks[i].flags & TRK_TYPE_MASK) == IS_SPEECH : true;
 							} else {
 								// Fade-out until silent
-								if (_smushDispatch[i].volumeStep)
+								if (_smushDispatch[i].volumeStep) {
 									_smushDispatch[i].volumeStep--;
+									debug(5, "SmushPlayer::processDispatches(): fading track %d, volume step %d", i, _smushDispatch[i].volumeStep);
+								}
 
 								_smushTracks[i].state = TRK_STATE_ENDING;
 
