@@ -160,9 +160,12 @@ FreescapeEngine::~FreescapeEngine() {
 		delete _border;
 	}
 
-	delete _borderTexture;
-	delete _uiTexture;
-	delete _titleTexture;
+
+	if (_gfx->_isAccelerated) {
+		delete _borderTexture;
+		delete _uiTexture;
+		delete _titleTexture;
+	}
 
 	for (auto &it : _areaMap) {
 		delete it._value;
