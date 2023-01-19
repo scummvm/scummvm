@@ -116,6 +116,8 @@ struct Quirk {
     // game window takes up the full screen, and only the splash is windowed.
     { "kidsbox", Common::kPlatformMacintosh, &quirk640x480Desktop },
 	{ "lzone", Common::kPlatformWindows, &quirkLzone },
+	{ "mamauta1", Common::kPlatformMacintosh, &quirk640x480Desktop },
+	{ "mamauta1", Common::kPlatformWindows, &quirk640x480Desktop },
 	{ "mcluhan", Common::kPlatformWindows, &quirkMcLuhan },
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
