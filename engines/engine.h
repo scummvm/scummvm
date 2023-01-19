@@ -300,7 +300,12 @@ public:
 		 *
 		 * This enables the help button in the main menu.
 		 */
-		 kSupportsHelp
+		 kSupportsHelp,
+
+		/**
+		 * The engine provides overrides to the quit and exit to launcher dialogs.
+		 */
+		kSupportsQuitDialogOverride,
 	};
 
 
