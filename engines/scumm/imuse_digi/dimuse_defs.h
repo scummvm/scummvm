@@ -51,7 +51,7 @@ namespace Scumm {
 #define DIMUSE_GROUP_MUSICEFF  4
 #define DIMUSE_BUFFER_SPEECH   1
 #define DIMUSE_BUFFER_MUSIC    2
-#define DIMUSE_BUFFER_SMUSH    3
+#define DIMUSE_BUFFER_SFX      3
 
 #define DIMUSE_TIMER_BASE_RATE_HZ       50
 #define DIMUSE_TIMER_BASE_RATE_USEC     20000  // 1000000 / 50Hz

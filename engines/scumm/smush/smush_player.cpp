@@ -453,16 +453,16 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 		b.read(dataBuffer, bsize);
 
 		switch (userId) {
-		case 1:
-			bufId = 1;
+		case TRK_USERID_SPEECH:
+			bufId = DIMUSE_BUFFER_SPEECH;
 			volume = 127;
 			break;
-		case 2:
-			bufId = 2;
+		case TRK_USERID_MUSIC:
+			bufId = DIMUSE_BUFFER_MUSIC;
 			volume = 127;
 			break;
-		case 3:
-			bufId = 3;
+		case TRK_USERID_SFX:
+			bufId = DIMUSE_BUFFER_SFX;
 			volume = 127;
 			break;
 		default:
@@ -473,7 +473,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 				bufId = DIMUSE_BUFFER_MUSIC;
 				volume = 2 * userId - 400;
 			} else if (userId >= 300 && userId <= 363) {
-				bufId = DIMUSE_BUFFER_SMUSH;
+				bufId = DIMUSE_BUFFER_SFX;
 				volume = 2 * userId - 600;
 			} else {
 				free(dataBuffer);
@@ -1830,7 +1830,7 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 		code = _smushDispatch[idx].headerPtr;
 
 		switch (code[0]) {
-		case 1: // Init
+		case SAUD_OP_INIT:
 			_smushDispatch[idx].audioLength = 0;
 			buf = _smushDispatch[idx].headerPtr;
 			_smushDispatch[idx].audioRemaining = READ_BE_UINT32(buf + 2);
@@ -1850,20 +1850,21 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 				_smushDispatch[idx].currentOffset -= chunk;
 			}
 			break;
-		case 2:   //
-		case 8:	  //
-		case 9:	  // Compare params
-		case 0xA: //
-		case 0xB: //
+
+		case SAUD_OP_UPDATE_HEADER:
+		case SAUD_OP_COMPARE_GT:
+		case SAUD_OP_COMPARE_LT:
+		case SAUD_OP_COMPARE_EQ:
+		case SAUD_OP_COMPARE_NE:
 			subcode = code[4];
 			switch (subcode) {
-			case 0xFF:
+			case SAUD_VALUEID_ALL_VOLS:
 				value = _smushTrackVols[0];
 				break;
-			case 0xFE:
+			case SAUD_VALUEID_TRK_VOL:
 				value = _smushTracks[idx].volume;
 				break;
-			case 0xFD:
+			case SAUD_VALUEID_TRK_PAN:
 				value = _smushTracks[idx].pan;
 				break;
 			default:
@@ -1872,21 +1873,21 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 			}
 
 			switch (code[0]) {
-			case 2:
+			case SAUD_OP_UPDATE_HEADER:
 				if (value || (subcode == 0)) {
 					_smushDispatch[idx].headerPtr = &code[READ_BE_UINT16(&code[2])];
 				}
 				break;
-			case 8:
+			case SAUD_OP_COMPARE_GT:
 				value = value > code[5];
 				break;
-			case 9:
+			case SAUD_OP_COMPARE_LT:
 				value = value < code[5];
 				break;
-			case 0xA:
+			case SAUD_OP_COMPARE_EQ:
 				value = value == code[5];
 				break;
-			case 0xB:
+			case SAUD_OP_COMPARE_NE:
 				value = value != code[5];
 				break;
 			default:
@@ -1898,14 +1899,14 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 			} else {
 				_smushDispatch[idx].headerPtr = &code[READ_BE_UINT16(&code[2])];
 			}
-
 			break;
-		case 3: // Set params
+
+		case SAUD_OP_SET_PARAM:
 			switch (code[2]) {
-			case 0xFF:
+			case SAUD_VALUEID_ALL_VOLS:
 				_smushTrackVols[0] = code[3];
 				break;
-			case 0xFE:
+			case SAUD_VALUEID_TRK_VOL:
 				_smushTracks[idx].volume = code[3];
 				mixVolume = (_smushTrackVols[0] * _smushTracks[idx].volume) / 127;
 
@@ -1913,7 +1914,7 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 				if ((_smushTracks[idx].flags & TRK_TYPE_MASK) == IS_BKG_MUSIC && isChanActive(CHN_SPEECH))
 					mixVolume = (mixVolume * _gainReductionMultiplier) >> 8;
 				break;
-			case 0xFD:
+			case SAUD_VALUEID_TRK_PAN:
 				_smushTracks[idx].pan = code[3];
 				break;
 			default:
@@ -1922,15 +1923,16 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 			}
 			_smushDispatch[idx].headerPtr = &code[code[1] + 2];
 			break;
-		case 4: // Increment params
+
+		case SAUD_OP_INCR_PARAM:
 			switch (code[2]) {
-			case 0xFF:
+			case SAUD_VALUEID_ALL_VOLS:
 				_smushTrackVols[0] += code[3];
 				break;
-			case 0xFE:
+			case SAUD_VALUEID_TRK_VOL:
 				_smushTracks[idx].volume += code[3];
 				break;
-			case 0xFD:
+			case SAUD_VALUEID_TRK_PAN:
 				_smushTracks[idx].pan += code[3];
 				break;
 			default:
@@ -1939,7 +1941,8 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 			}
 			_smushDispatch[idx].headerPtr = &code[code[1] + 2];
 			break;
-		case 6: // Set offset
+
+		case SAUD_OP_SET_OFFSET:
 			_smushDispatch[idx].audioLength = 0;
 			buf = _smushDispatch[idx].headerPtr;
 			_smushDispatch[idx].audioRemaining = READ_BE_UINT32(buf + 2);
@@ -1960,7 +1963,8 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 				_smushDispatch[idx].currentOffset -= chunk;
 			}
 			break;
-		case 7: // Set audio length
+
+		case SAUD_OP_SET_LENGTH:
 			if (!_smushDispatch[idx].audioLength) {
 				_smushDispatch[idx].audioLength = READ_BE_UINT32(&code[6]);
 				_smushDispatch[idx].elapsedAudio = 0;
@@ -1995,8 +1999,8 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 					_smushDispatch[idx].currentOffset -= chunk;
 				}
 			}
-
 			break;
+
 		default:
 			_smushTracks[idx].state = TRK_STATE_INACTIVE;
 			_smushTracks[idx].groupId = GRP_MASTER;

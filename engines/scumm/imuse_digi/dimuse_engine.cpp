@@ -112,7 +112,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, int sampleRate, Audio::Mixer *
 		_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_MUSIC, 220000, 22000, 44000);
 	}
 
-	_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SMUSH, 198000, 0, 0);
+	_filesHandler->allocSoundBuffer(DIMUSE_BUFFER_SFX, 198000, 0, 0);
 
 	if (_mixer->getOutputBufSize() != 0) {
 		// Let's find the optimal value for the maximum number of streams which can stay in the queue at once;
@@ -147,7 +147,7 @@ IMuseDigital::~IMuseDigital() {
 	_vm->getTimerManager()->removeTimerProc(timer_handler);
 	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SPEECH);
 	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_MUSIC);
-	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SMUSH);
+	_filesHandler->deallocSoundBuffer(DIMUSE_BUFFER_SFX);
 	cmdsDeinit();
 	diMUSETerminate();
 	delete _internalMixer;
@@ -563,7 +563,7 @@ void IMuseDigital::stopSMUSHAudio() {
 					// remaining cases. This fixes instances in which exiting from a cutscene leaves both
 					// DiMUSE streams locked, with speech consequently unable to play and a "WARNING: three
 					// streams in use" message from streamerProcessStreams()
-					if (bufSize == 193900 || foundSoundId == DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_SMUSH)
+					if (bufSize == 193900 || foundSoundId == DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_SFX)
 						diMUSEStopSound(foundSoundId);
 				}
 
