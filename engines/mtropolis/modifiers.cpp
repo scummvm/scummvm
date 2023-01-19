@@ -2314,7 +2314,7 @@ bool ReturnModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState ReturnModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	warning("Return modifier not implemented");
+	runtime->addSceneStateTransition(HighLevelSceneTransition(nullptr, HighLevelSceneTransition::kTypeReturn, false, false));
 	return kVThreadReturn;
 }
 
