@@ -147,8 +147,11 @@ void SoundClipWaveBase::poll() {
 
 int SoundClipWaveBase::play() {
 	if (_soundType != Audio::Mixer::kPlainSoundType) {
-		_mixer->playStream(_soundType, &_soundHandle, _stream,
-			-1, _vol255, 0, DisposeAfterUse::NO);
+		if (_stream->getRate() < 131072)  // maximum accepted value in audio/rate.cpp
+			_mixer->playStream(_soundType, &_soundHandle, _stream,
+							   -1, _vol255, 0, DisposeAfterUse::NO);
+		else
+			warning("Invalid sound clip sample ratio: %d! Skipping", _stream->getRate());
 	} else {
 		_waitingToPlay = true;
 	}
