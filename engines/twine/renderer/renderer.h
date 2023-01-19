@@ -186,28 +186,27 @@ private:
 	ComputedVertex _clippedPolygonVertices1[128];
 	ComputedVertex _clippedPolygonVertices2[128];
 
-	int32 _polyTabSize = 0;
-	int16 *_polyTab = nullptr; // also _tabVerticG
-	int16 *_colorProgressionBuffer = nullptr;
 	int16* _tabVerticG = nullptr;
-	int16* _tabx0 = nullptr; // also TabCoulG
-	int16* _taby0 = nullptr; // also TabCoulD
-	int16* _taby1 = nullptr;
-	int16* _tabx1 = nullptr;
 	int16* _tabVerticD = nullptr;
+	int16* _tabCoulG = nullptr;
+	int16* _tabCoulD = nullptr;
+	int16* _taby0 = nullptr;
+	int16* _taby1 = nullptr;
+	int16* _tabx0 = nullptr; // also _tabCoulG
+	int16* _tabx1 = nullptr; // also _tabCoulD
 
 	bool _isUsingIsoProjection = false;
 
-	void svgaPolyCopper(int vtop, int32 vsize, uint16 color) const;
-	void svgaPolyBopper(int vtop, int32 vsize, uint16 color) const;
-	void svgaPolyTriste(int vtop, int32 vsize, uint16 color) const;
-	void svgaPolyTele(int vtop, int32 vsize, uint16 color) const;
-	void svgaPolyTrans(int vtop, int32 vsize, uint16 color) const;
-	void svgaPolyTrame(int vtop, int32 vsize, uint16 color) const;
-	void svgaPolyGouraud(int vtop, int32 vsize) const;
-	void svgaPolyDith(int vtop, int32 vsize) const;
-	void svgaPolyMarbre(int vtop, int32 vsize, uint16 color) const;
-	void svgaPolyTriche(int vtop, int32 vsize, uint16 color) const;
+	void svgaPolyCopper(int16 vtop, int16 vbottom, uint16 color) const;
+	void svgaPolyBopper(int16 vtop, int16 vbottom, uint16 color) const;
+	void svgaPolyTriste(int16 vtop, int16 vbottom, uint16 color) const;
+	void svgaPolyTele(int16 vtop, int16 vbottom, uint16 color) const;
+	void svgaPolyTrans(int16 vtop, int16 vbottom, uint16 color) const;
+	void svgaPolyTrame(int16 vtop, int16 vbottom, uint16 color) const;
+	void svgaPolyGouraud(int16 vtop, int16 vbottom) const;
+	void svgaPolyDith(int16 vtop, int16 vbottom) const;
+	void svgaPolyMarbre(int16 vtop, int16 vbottom, uint16 color) const;
+	void svgaPolyTriche(int16 vtop, int16 vbottom, uint16 color) const;
 	bool computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices, int &vtop, int &vbottom);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
@@ -244,7 +243,7 @@ public:
 		return longWorldRot(vec.x, vec.y, vec.z);
 	}
 
-	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color);
+	void fillVertices(int16 vtop, int16 vbottom, uint8 renderType, uint16 color);
 	void renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices, int vtop, int vbottom);
 
 	inline IVec3 &projectPositionOnScreen(const IVec3& pos) { // ProjettePoint

@@ -41,24 +41,32 @@ Renderer::Renderer(TwinEEngine *engine) : _engine(engine) {
 }
 
 Renderer::~Renderer() {
-	free(_polyTab);
-	free(_colorProgressionBuffer);
+	free(_tabVerticG);
+	free(_tabVerticD);
+	free(_tabCoulG);
+	free(_tabCoulD);
+	free(_taby0);
+	free(_taby1);
 }
 
 void Renderer::init(int32 w, int32 h) {
-	_polyTabSize = _engine->height() * 6;
-	_polyTab = (int16 *)malloc(_polyTabSize * sizeof(int16));
-	_colorProgressionBuffer = (int16 *)malloc(_polyTabSize * sizeof(int16));
+	size_t size = _engine->height() * sizeof(int16);
 
-	memset(_polyTab, 0, sizeof(_polyTabSize * sizeof(int16)));
-	memset(_colorProgressionBuffer, 0, sizeof(_polyTabSize * sizeof(int16)));
+	_tabVerticG = (int16 *)malloc(size);
+	memset(_tabVerticG, 0, size);
+	_tabVerticD = (int16 *)malloc(size);
+	memset(_tabVerticD, 0, size);
+	_tabCoulG = (int16 *)malloc(size);
+	memset(_tabCoulG, 0, size);
+	_tabCoulD = (int16 *)malloc(size);
+	memset(_tabCoulD, 0, size);
+	_taby0 = (int16 *)malloc(size);
+	memset(_taby0, 0, size);
+	_taby1 = (int16 *)malloc(size);
+	memset(_taby1, 0, size);
 
-	_tabVerticG = &_polyTab[_engine->height() * 0];
-	_tabVerticD = &_polyTab[_engine->height() * 1];
-	_tabx0 = &_polyTab[_engine->height() * 2];
-	_tabx1 = &_polyTab[_engine->height() * 3];
-	_taby0 = &_polyTab[_engine->height() * 4];
-	_taby1 = &_polyTab[_engine->height() * 5];
+	_tabx0 = _tabCoulG;
+	_tabx1 = _tabCoulD;
 }
 
 IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) { // ProjettePoint
@@ -704,12 +712,6 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabP
 }
 
 bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices, int &vtop, int &vbottom) {
-	const int16 *polyTabBegin = _polyTab;
-	const int16 *polyTabEnd = &_polyTab[_polyTabSize - 1];
-	const int16 *colProgressBufStart = _colorProgressionBuffer;
-	const int16 *colProgressBufEnd = &_colorProgressionBuffer[_polyTabSize - 1];
-	const int screenHeight = _engine->height();
-
 	assert(numVertices < ARRAYSIZE(_clippedPolygonVertices1));
 	for (int i = 0; i < numVertices; ++i) {
 		_clippedPolygonVertices1[i] = vertices[i];
@@ -722,103 +724,110 @@ bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices,
 		return false;
 	}
 
-	const ComputedVertex *clippedVertices = offTabPoly[0];
-	uint8 vertexParam1 = clippedVertices[numVertices - 1].intensity;
-	int16 currentVertexX = clippedVertices[numVertices - 1].x;
-	int16 currentVertexY = clippedVertices[numVertices - 1].y;
+	ComputedVertex *pTabPoly = offTabPoly[0];
+	ComputedVertex *p0;
+	ComputedVertex *p1;
+	int16 *pVertic;
+	int16 *pCoul;
+	int32 incY;
+	int32 dx, dy, x, y, dc;
+	int32 step, reminder;
 
-	for (int32 nVertex = 0; nVertex < numVertices; nVertex++) {
-		const int16 oldVertexY = currentVertexY;
-		const int16 oldVertexX = currentVertexX;
-		const uint8 oldVertexParam = vertexParam1;
+	for (; numVertices > 0; --numVertices, pTabPoly++) {
+		pCoul = NULL;
+		p0 = pTabPoly;
+		p1 = p0 + 1;
 
-		vertexParam1 = clippedVertices[nVertex].intensity;
-		const uint8 vertexParam2 = vertexParam1;
-		currentVertexX = clippedVertices[nVertex].x;
-		currentVertexY = clippedVertices[nVertex].y;
-
-		// drawLine(oldVertexX,oldVertexY,currentVertexX,currentVertexY,255);
-
-		if (currentVertexY == oldVertexY) {
+		dy = p1->y - p0->y;
+		if (dy == 0) {
+			// forget same Y points
 			continue;
-		}
-
-		const int8 up = currentVertexY < oldVertexY;
-		int8 direction = up ? -1 : 1;
-
-		const int16 vsize = ABS(currentVertexY - oldVertexY);
-		const int16 hsize = ABS(currentVertexX - oldVertexX);
-
-		int16 cvalue;
-		int16 cdelta;
-		int16 ypos;
-		float xpos;
-		if (direction * oldVertexX > direction * currentVertexX) { // if we are going up right
-			xpos = currentVertexX;
-			ypos = currentVertexY;
-			cvalue = (vertexParam2 * 256) + ((oldVertexParam - vertexParam2) * 256) % vsize;
-			cdelta = ((oldVertexParam - vertexParam2) * 256) / vsize;
-			direction = -direction; // we will draw by going down the tab
-		} else {
-			xpos = oldVertexX;
-			ypos = oldVertexY;
-			cvalue = (oldVertexParam * 256) + ((vertexParam2 - oldVertexParam) * 256) % vsize;
-			cdelta = ((vertexParam2 - oldVertexParam) * 256) / vsize;
-		}
-		const int32 polyTabIndex = ypos + (up ? screenHeight : 0);
-		int16 *outPtr = &_polyTab[polyTabIndex]; // outPtr is the output ptr in the renderTab
-
-		float slope = (float)hsize / (float)vsize;
-		slope = up ? -slope : slope;
-
-		for (int16 i = 0; i <= vsize; i++) {
-			if (outPtr >= polyTabBegin && outPtr <= polyTabEnd) {
-				*outPtr = xpos;
+		} else if (dy > 0) {
+			// Y descend donc buffer gauche
+			if (p0->x <= p1->x) {
+				incY = 1;
+			} else {
+				p0 = p1;
+				p1 = pTabPoly;
+				incY = -1;
 			}
-			outPtr += direction;
-			xpos += slope;
+
+			pVertic = &_tabVerticG[p0->y];
+
+			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
+				pCoul = &_tabCoulG[p0->y];
+			}
+		} else if (dy < 0) {
+			dy = -dy;
+
+			if (p0->x <= p1->x) {
+				p0 = p1;
+				p1 = pTabPoly;
+				incY = 1;
+			} else {
+				incY = -1;
+			}
+
+			pVertic = &_tabVerticD[p0->y];
+
+			if (polyRenderType >= POLYGONTYPE_GOURAUD) {
+				pCoul = &_tabCoulD[p0->y];
+			}
 		}
 
-		if (polyRenderType >= POLYGONTYPE_GOURAUD) { // we must compute the color progression
-			int16 *outPtr2 = &_colorProgressionBuffer[polyTabIndex];
+		dx = (p1->x - p0->x) << 16;
 
-			for (int16 i = 0; i <= vsize; i++) {
-				if (outPtr2 >= colProgressBufStart && outPtr2 <= colProgressBufEnd) {
-					*outPtr2 = cvalue;
-				}
-				outPtr2 += direction;
-				cvalue += cdelta;
+		step = dx / dy;
+		reminder = ((dx % dy) >> 1) + 0x7FFF;
+
+		dx = step >> 16; // recup partie haute division (entier)
+		step &= 0xFFFF;  // conserve partie basse (mantisse)
+		x = p0->x;
+
+		for (y = dy; y >= 0; --y) {
+			*pVertic = (int16)x;
+			pVertic += incY;
+			x += dx;
+			reminder += step;
+			if (reminder & 0xFFFF0000) {
+				x += reminder >> 16;
+				reminder &= 0xFFFF;
+			}
+		}
+
+		if (pCoul) {
+			dc = (p1->intensity - p0->intensity) << 8;
+			step = dc / dy;
+			reminder = ((((dc % dy) >> 1) + 0x7F) & 0xFF) | (p0->intensity << 8);
+
+			for (y = dy; y >= 0; --y) {
+				*pCoul = (int16)reminder;
+				pCoul += incY;
+				reminder += step;
 			}
 		}
 	}
+
 	return true;
 }
 
-void Renderer::svgaPolyCopper(int vtop, int32 vsize, uint16 color) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
+void Renderer::svgaPolyCopper(int16 vtop, int16 Ymax, uint16 color) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-
-	int32 renderLoop = vsize;
-	if (vtop < 0) {
-		out += screenWidth * ABS(vtop);
-		renderLoop -= ABS(vtop);
-	}
-	if (renderLoop > screenHeight) {
-		renderLoop = screenHeight;
-	}
+	int16 xMin, xMax;
+	int16 y = vtop;
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, y);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
 	int32 sens = 1;
 
-	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 xMin = ptr1[0];
-		int16 xMax = ptr1[screenHeight];
-
-		ptr1++;
-		uint8 *pDest = out + xMin;
+	for (; y <= Ymax; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		pDest = pDestLine + xMin;
 
 		for (; xMin <= xMax; xMin++) {
-			*pDest++ = (uint8)color;
+			*pDest++ = (byte)color;
 		}
 
 		color += sens;
@@ -828,34 +837,29 @@ void Renderer::svgaPolyCopper(int vtop, int32 vsize, uint16 color) const {
 				color += sens;
 			}
 		}
-		out += screenWidth;
+
+		pDestLine += screenWidth;
 	}
 }
 
-void Renderer::svgaPolyBopper(int vtop, int32 vsize, uint16 color) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
+void Renderer::svgaPolyBopper(int16 vtop, int16 Ymax, uint16 color) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-	int32 renderLoop = vsize;
-	if (vtop < 0) {
-		out += screenWidth * ABS(vtop);
-		renderLoop -= ABS(vtop);
-	}
-	if (renderLoop > screenHeight) {
-		renderLoop = screenHeight;
-	}
+	int16 xMin, xMax;
+	int16 y = vtop;
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, y);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
 	int32 sens = 1;
 	int32 line = 2;
-	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 xMin = ptr1[0];
-		int16 xMax = ptr1[screenHeight];
-		ptr1++;
 
-		uint8 *pDest = out + xMin;
+	for (; y <= Ymax; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		pDest = pDestLine + xMin;
 
 		for (; xMin <= xMax; xMin++) {
-			*pDest++ = (uint8)color;
+			*pDest++ = (byte)color;
 		}
 
 		line--;
@@ -869,373 +873,256 @@ void Renderer::svgaPolyBopper(int vtop, int32 vsize, uint16 color) const {
 				}
 			}
 		}
-		out += screenWidth;
+
+		pDestLine += screenWidth;
 	}
 }
 
-void Renderer::svgaPolyTriste(int vtop, int32 vsize, uint16 color) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
+void Renderer::svgaPolyTriste(int16 vtop, int16 Ymax, uint16 color) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-	int32 renderLoop = vsize;
-	if (vtop < 0) {
-		out += screenWidth * ABS(vtop);
-		renderLoop -= ABS(vtop);
-	}
-	if (renderLoop > screenHeight) {
-		renderLoop = screenHeight;
-	}
-	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		const int16 start = ptr1[0];
-		const int16 stop = ptr1[screenHeight];
-		ptr1++;
-		const int32 hsize = stop - start;
+	int16 xMin, xMax;
+	int16 y = vtop;
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
 
-		for (int32 j = start; j <= hsize + start; j++) {
-			if (j >= 0 && j < screenWidth) {
-				out[j] = color;
-			}
+	for (; y <= Ymax; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		pDest = pDestLine + xMin;
+
+		for (; xMin <= xMax; xMin++) {
+			*pDest++ = (byte)color;
 		}
-		out += screenWidth;
+
+		pDestLine += screenWidth;
 	}
 }
 
+#define ROL8(x,b) (byte)(((x) << (b)) | ((x) >> (8 - (b))))
 #define ROL16(x, b) (((x) << (b)) | ((x) >> (16 - (b))))
 
-void Renderer::svgaPolyTele(int vtop, int32 vsize, uint16 color) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
+void Renderer::svgaPolyTele(int16 vtop, int16 Ymax, uint16 color) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-
-	int32 renderLoop = vsize;
-	if (vtop < 0) {
-		out += screenWidth * ABS(vtop);
-		renderLoop -= ABS(vtop);
-	}
-	if (renderLoop > screenHeight) {
-		renderLoop = screenHeight;
-	}
-
-	uint16 acc = 17371;
-	color &= 0xFF;
+	int16 xMin, xMax;
+	int16 y = vtop;
+	int16 acc = 17371;
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
 	uint16 col;
-	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 xMin = ptr1[0];
-		int16 xMax = ptr1[screenHeight];
-		++ptr1;
-		uint8 *pDest = out + xMin;
+
+	color &= 0xFF;
+
+	for (; y <= Ymax; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		pDest = pDestLine + xMin;
 		col = xMin;
 
 		for (; xMin <= xMax; xMin++) {
 			col = ((col + acc) & 0xFF03) + (uint16)color;
 			acc = ROL16(acc, 2) + 1;
 
-			*pDest++ = (uint8)col;
+			*pDest++ = (byte)col;
 		}
-		out += screenWidth;
+
+		pDestLine += screenWidth;
 	}
 }
 
-void Renderer::svgaPolyTrans(int vtop, int32 vsize, uint16 color) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
+void Renderer::svgaPolyTrans(int16 vtop, int16 Ymax, uint16 color) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
+	int16 xMin, xMax;
+	int16 y = vtop;
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
 
-	do {
-		int16 start = ptr1[0];
-		int16 stop = ptr1[screenHeight];
+	color &= 0xF0;
 
-		ptr1++;
-		int32 hsize = stop - start;
+	for (; y <= Ymax; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		pDest = pDestLine + xMin;
 
-		if (hsize >= 0) {
-			hsize++;
-			uint8 *out2 = start + out;
-			*out2 = (*(out2)&0x0F) | color;
-			out2++;
+		for (; xMin <= xMax; xMin++) {
+			*pDest = (byte)color | (*pDest & 0x0F);
+			pDest++;
 		}
-		out += screenWidth;
-	} while (--vsize);
+
+		pDestLine += screenWidth;
+	}
 }
 
 // Used e.g for the legs of the horse or the ears of most characters
-void Renderer::svgaPolyTrame(int vtop, int32 vsize, uint16 color) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
+void Renderer::svgaPolyTrame(int16 vtop, int16 Ymax, uint16 color) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-
-	int32 renderLoop = vsize;
-	if (vtop < 0) {
-		out += screenWidth * ABS(vtop);
-		renderLoop -= ABS(vtop);
-	}
-	if (renderLoop > screenHeight) {
-		renderLoop = screenHeight;
-	}
+	int16 xMin, xMax;
+	int16 y = vtop;
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
 	int32 pair = 0;
-	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 start = ptr1[0];
-		int16 stop = ptr1[screenHeight];
-		ptr1++;
-		uint8 *out2 = start + out;
-		stop = ((stop - start) + 1) / 2;
-		if (stop > 0) {
+
+	for (; y <= Ymax; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		pDest = pDestLine + xMin;
+
+		xMax = ((xMax - xMin) + 1) / 2;
+		if (xMax > 0) {
 			pair ^= 1; // paire/impair
-			if ((start & 1) ^ pair) {
-				out2++;
+			if ((xMin & 1) ^ pair) {
+				pDest++;
 			}
 
-			for (; stop > 0; stop--) {
-				*out2 = color;
-				out2 += 2;
+			for (; xMax > 0; xMax--) {
+				*pDest = (byte)color;
+				pDest += 2;
 			}
 		}
 
-		out += screenWidth;
+		pDestLine += screenWidth;
 	}
 }
 
-void Renderer::svgaPolyGouraud(int vtop, int32 vsize) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
-	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
+void Renderer::svgaPolyGouraud(int16 vtop, int16 Ymax) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-	int32 renderLoop = vsize;
-	if (vtop < 0) {
-		out += screenWidth * ABS(vtop);
-		renderLoop -= ABS(vtop);
-	}
-	if (renderLoop > screenHeight) {
-		renderLoop = screenHeight;
-	}
-	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		uint16 startColor = ptr2[0];
-		const uint16 stopColor = ptr2[screenHeight];
+	int16 xMin, xMax;
+	int16 y = vtop;
+	int16 start, end, step;
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, y);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
+	int16 *pCoulG = &_tabCoulG[y];
+	int16 *pCoulD = &_tabCoulD[y];
 
-		int16 colorDiff = stopColor - startColor;
+	for (; y <= Ymax; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		start = *pCoulG++;
+		end = *pCoulD++;
+		pDest = pDestLine + xMin;
 
-		const int16 stop = ptr1[screenHeight];
-		const int16 start = ptr1[0];
+		xMax -= xMin;
 
-		ptr1++;
-		uint8 *out2 = start + out;
-		int32 hsize = stop - start;
-
-		ptr2++;
-
-		if (hsize == 0) {
-			if (start >= 0 && start < screenWidth) {
-				*out2 = ((startColor + stopColor) / 2) / 256; // average of the 2 colors
+		if (xMax == 0) {
+			*pDest = (byte)((end + start) >> 9);
+		} else if (xMax <= 2) {
+			pDest[xMax--] = (byte)(end >> 8);
+			if (xMax) {
+				pDest[xMax--] = (byte)((end + start) >> 9);
 			}
-		} else if (hsize == 1) {
-			if (start >= 1 && start < screenWidth - 1) {
-				*(out2 + 1) = stopColor / 256;
-			}
+			*pDest = (byte)(start >> 8);
+		} else {
+			step = (end - start) / xMax;
 
-			if (start >= 0 && start < screenWidth) {
-				*out2 = startColor / 256;
+			for (; xMax >= 0; xMax--) {
+				*pDest++ = (byte)(start >> 8);
+				start += step;
 			}
-		} else if (hsize == 2) {
-			if (start >= 2 && start < screenWidth - 2) {
-				*(out2 + 2) = stopColor / 256;
-			}
-
-			if (start >= 1 && start < screenWidth - 1) {
-				*(out2 + 1) = ((startColor + stopColor) / 2) / 256; // average of the 2 colors
-			}
-
-			if (start >= 0 && start < screenWidth) {
-				*out2 = startColor / 256;
-			}
-		} else if (hsize > 0) {
-			int32 currentXPos = start;
-			colorDiff /= hsize;
-			hsize++;
-
-			if (hsize % 2) {
-				if (currentXPos >= 0 && currentXPos < screenWidth) {
-					*out2 = startColor / 256;
-				}
-				++out2;
-				++currentXPos;
-				startColor += colorDiff;
-			}
-			hsize /= 2;
-
-			do {
-				for (int i = 0; i < 2; ++i) {
-					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*out2 = startColor / 256;
-					}
-					++out2;
-					++currentXPos;
-					startColor += colorDiff;
-				}
-			} while (--hsize);
 		}
-		out += screenWidth;
+
+		pDestLine += screenWidth;
 	}
 }
 
 // used for the most of the heads of the characters and the horse body
-void Renderer::svgaPolyDith(int vtop, int32 vsize) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
-	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
+void Renderer::svgaPolyDith(int16 vtop, int16 Ymax) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
+	int16 xMin, xMax;
+	int16 y = vtop;
+	int16 start, end, step, delta, impair;
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, y);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
+	int16 *pCoulG = &_tabCoulG[y];
+	int16 *pCoulD = &_tabCoulD[y];
 
-	int32 renderLoop = vsize;
-	if (vtop < 0) {
-		out += screenWidth * ABS(vtop);
-		renderLoop -= ABS(vtop);
-	}
-	if (renderLoop > screenHeight) {
-		renderLoop = screenHeight;
-	}
-	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 stop = ptr1[screenHeight];
-		int16 start = ptr1[0];
-		ptr1++;
-		int32 hsize = stop - start;
-		if (hsize < 0) {
-			out += screenWidth;
-			continue;
-		}
-		uint16 startColor = ptr2[0];
-		uint16 stopColor = ptr2[screenHeight];
-		int32 currentXPos = start;
+	for (; y <= Ymax; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		start = *pCoulG++;
+		end = *pCoulD++;
+		pDest = pDestLine + xMin;
 
-		uint8 *out2 = start + out;
-		ptr2++;
+		xMax -= xMin;
+		delta = end - start;
 
-		if (hsize == 0) {
-			if (currentXPos >= 0 && currentXPos < screenWidth) {
-				*out2 = (uint8)(((startColor + stopColor) / 2) / 256); // average of the 2 colors
+		if (xMax == 0) {
+			// rcr ax,1
+			*pDest = (byte)(((int32)end + start) >> 9);
+		} else if (xMax <= 2) {
+			step = start;
+
+			if (xMax == 2) // if( !(xMax & 1) )
+			{
+				delta = (delta >> 1) | (delta & 0x8000); // sar ax,1
+				step &= 0xFF;
+				step = start + ROL8(step, 1);
+				*pDest++ = (byte)(step >> 8);
+				start += delta;
 			}
+
+			step = start + (step & 0xFF);
+			*pDest++ = (byte)(step >> 8);
+
+			start += delta;
+			step &= 0xFF;
+			step = start + ROL8(step, 1);
+			*pDest = (byte)(step >> 8);
 		} else {
-			int16 colorSize = stopColor - startColor;
-			if (hsize == 1) {
-				uint16 currentColor = startColor;
-				hsize++;
-				hsize /= 2;
+			delta /= xMax;
+			step = start;
+			impair = xMax & 1;
+			xMax = (xMax + 1) >> 1;
 
-				currentColor &= 0xFF;
-				currentColor += startColor;
-				if (currentXPos >= 0 && currentXPos < screenWidth) {
-					*out2 = currentColor / 256;
-				}
+			if (!impair) {
+				step &= 0xFF;
+				step = start + ROL8(step, xMax & 7);
+				*pDest++ = (byte)(step >> 8);
+				start += delta;
+			}
 
-				currentColor &= 0xFF;
-				startColor += colorSize;
-				currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-				currentColor += startColor;
-
-				currentXPos++;
-				if (currentXPos >= 0 && currentXPos < screenWidth) {
-					*(out2 + 1) = currentColor / 256;
-				}
-			} else if (hsize == 2) {
-				uint16 currentColor = startColor;
-				hsize++;
-				hsize /= 2;
-
-				currentColor &= 0xFF;
-				colorSize /= 2;
-				currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-				currentColor += startColor;
-				if (currentXPos >= 0 && currentXPos < screenWidth) {
-					*out2 = currentColor / 256;
-				}
-
-				out2++;
-				currentXPos++;
-				startColor += colorSize;
-
-				currentColor &= 0xFF;
-				currentColor += startColor;
-
-				if (currentXPos >= 0 && currentXPos < screenWidth) {
-					*out2 = currentColor / 256;
-				}
-
-				currentColor &= 0xFF;
-				startColor += colorSize;
-				currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-				currentColor += startColor;
-
-				currentXPos++;
-				if (currentXPos >= 0 && currentXPos < screenWidth) {
-					*(out2 + 1) = currentColor / 256;
-				}
-			} else {
-				uint16 currentColor = startColor;
-				colorSize /= hsize;
-				hsize++;
-
-				if (hsize % 2) {
-					hsize /= 2;
-					currentColor &= 0xFF;
-					currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-					currentColor += startColor;
-					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*out2 = currentColor / 256;
-					}
-					out2++;
-					currentXPos++;
-				} else {
-					hsize /= 2;
-				}
-
-				do {
-					currentColor &= 0xFF;
-					currentColor += startColor;
-					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*out2 = currentColor / 256;
-					}
-					currentXPos++;
-					currentColor &= 0xFF;
-					startColor += colorSize;
-					currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-					currentColor += startColor;
-					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2 + 1) = currentColor / 256;
-					}
-					currentXPos++;
-					out2 += 2;
-					startColor += colorSize;
-				} while (--hsize);
+			for (; xMax > 0; xMax--) {
+				step &= 0xFF;
+				step += start;
+				*pDest++ = (byte)(step >> 8);
+				start += delta;
+				step &= 0xFF;
+				step = start + ROL8(step, xMax & 7);
+				*pDest++ = (byte)(step >> 8);
+				start += delta;
 			}
 		}
-		out += screenWidth;
+
+		pDestLine += screenWidth;
 	}
 }
 
-void Renderer::svgaPolyMarbre(int vtop, int32 vsize, uint16 color) const {
+void Renderer::svgaPolyMarbre(int16 vtop, int16 Ymax, uint16 color) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
-
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	int16 *ptr1 = &_polyTab[vtop];
-
 	int16 xMin, xMax;
 	int16 y = vtop;
-	uint8 *pDestLine = out;
-	uint8 *pDest;
-	int16 *pVerticG = ptr1;
-	int16 *pVerticD = &ptr1[screenHeight];
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, y);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
 
+	// color contains 2 colors: 0xFF start, 0xFF00 end
 	uint16 start = (color & 0xFF) << 8;
 	uint16 end = color & 0xFF00;
 	uint16 delta = end - start + 1; // delta intensity
 	int32 step, dc;
 
-	for (; y <= vsize; y++) {
+	for (; y <= Ymax; y++) {
 		xMin = *pVerticG++;
 		xMax = *pVerticD++;
 		pDest = pDestLine + xMin;
@@ -1243,13 +1130,13 @@ void Renderer::svgaPolyMarbre(int vtop, int32 vsize, uint16 color) const {
 		dc = xMax - xMin;
 		if (dc == 0) {
 			// just one
-			*pDest++ = (uint8)(end >> 8);
+			*pDest++ = (byte)(end >> 8);
 		} else if (dc > 0) {
 			step = delta / (dc + 1);
 			color = start;
 
 			for (; xMin <= xMax; xMin++) {
-				*pDest++ = (uint8)(color >> 8);
+				*pDest++ = (byte)(color >> 8);
 				color += step;
 			}
 		}
@@ -1258,85 +1145,78 @@ void Renderer::svgaPolyMarbre(int vtop, int32 vsize, uint16 color) const {
 	}
 }
 
-void Renderer::svgaPolyTriche(int vtop, int32 vsize, uint16 color) const {
-	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
-	const int16 *ptr1 = &_polyTab[vtop];
-	const int16 *ptr2 = &_colorProgressionBuffer[vtop];
+void Renderer::svgaPolyTriche(int16 vtop, int16 Ymax, uint16 color) const {
 	const int screenWidth = _engine->width();
-	const int screenHeight = _engine->height();
+	int16 xMin, xMax;
+	int16 y = vtop;
+	byte *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, y);
+	byte *pDest;
+	int16 *pVerticG = &_tabVerticG[y];
+	int16 *pVerticD = &_tabVerticD[y];
+	int16 *pCoulG = &_tabCoulG[y];
 
-	int32 renderLoop = vsize;
-	if (vtop < 0) {
-		out += screenWidth * ABS(vtop);
-		renderLoop -= ABS(vtop);
-	}
-	if (renderLoop > screenHeight) {
-		renderLoop = screenHeight;
-	}
-	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 xMin = MAX<int16>(0, ptr1[0]);
-		const int16 xMax = MIN<int16>((int16)(screenWidth - 1), ptr1[screenHeight]);
-		uint8 *pDest = out + xMin;
+	for (; y <= Ymax; y++) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		pDest = pDestLine + xMin;
 
-		color = (*ptr2++) >> 8;
+		color = (*pCoulG++) >> 8;
 		for (; xMin <= xMax; xMin++) {
-			*pDest++ = color;
+			*pDest++ = (byte)color;
 		}
-		++ptr1;
 
-		out += screenWidth;
+		pDestLine += screenWidth;
 	}
 }
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices, int vtop, int vbottom) {
 	if (computePoly(polygon.renderType, vertices, polygon.numVertices, vtop, vbottom)) {
-		const int32 vsize = vbottom - vtop + 1;
-		fillVertices(vtop, vsize, polygon.renderType, polygon.colorIndex);
+		fillVertices(vtop, vbottom, polygon.renderType, polygon.colorIndex);
 	}
 }
 
-void Renderer::fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color) {
+void Renderer::fillVertices(int16 vtop, int16 vbottom, uint8 renderType, uint16 color) {
 	switch (renderType) {
 	case POLYGONTYPE_FLAT:
-		svgaPolyTriste(vtop, vsize, color);
+		svgaPolyTriste(vtop, vbottom, color);
 		break;
 	case POLYGONTYPE_TELE:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			svgaPolyTriste(vtop, vsize, color);
+			svgaPolyTriste(vtop, vbottom, color);
 		} else {
-			svgaPolyTele(vtop, vsize, color);
+			svgaPolyTele(vtop, vbottom, color);
 		}
 		break;
 	case POLYGONTYPE_COPPER:
-		svgaPolyCopper(vtop, vsize, color);
+		svgaPolyCopper(vtop, vbottom, color);
 		break;
 	case POLYGONTYPE_BOPPER:
-		svgaPolyBopper(vtop, vsize, color);
+		svgaPolyBopper(vtop, vbottom, color);
 		break;
 	case POLYGONTYPE_TRANS:
-		svgaPolyTrans(vtop, vsize, color);
+		svgaPolyTrans(vtop, vbottom, color);
 		break;
 	case POLYGONTYPE_TRAME: // raster
-		svgaPolyTrame(vtop, vsize, color);
+		svgaPolyTrame(vtop, vbottom, color);
 		break;
 	case POLYGONTYPE_GOURAUD:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			svgaPolyTriche(vtop, vsize, color);
+			svgaPolyTriche(vtop, vbottom, color);
 		} else {
-			svgaPolyGouraud(vtop, vsize);
+			svgaPolyGouraud(vtop, vbottom);
 		}
 		break;
 	case POLYGONTYPE_DITHER:
 		if (_engine->_cfgfile.PolygonDetails == 0) {
-			svgaPolyTriche(vtop, vsize, color);
+			svgaPolyTriche(vtop, vbottom, color);
 		} else if (_engine->_cfgfile.PolygonDetails == 1) {
-			svgaPolyGouraud(vtop, vsize);
+			svgaPolyGouraud(vtop, vbottom);
 		} else {
-			svgaPolyDith(vtop, vsize);
+			svgaPolyDith(vtop, vbottom);
 		}
 		break;
 	case POLYGONTYPE_MARBLE:
-		svgaPolyMarbre(vtop, vsize, color);
+		svgaPolyMarbre(vtop, vbottom, color);
 		break;
 	default:
 		warning("RENDER WARNING: Unsupported render type %d", renderType);
@@ -1375,9 +1255,6 @@ bool Renderer::computeSphere(int32 x, int32 y, int32 radius, int &vtop, int &vbo
 		int32 r = 0;
 		int32 acc = -radius;
 
-		int16 *start = _polyTab;
-		int16 *end = &_polyTab[_engine->height()];
-
 		while (r <= radius) {
 			int32 x1 = x - radius;
 			if (x1 < cleft) {
@@ -1391,14 +1268,14 @@ bool Renderer::computeSphere(int32 x, int32 y, int32 radius, int &vtop, int &vbo
 
 			int32 ny = y - r;
 			if ((ny >= ctop) && (ny <= cbottom)) {
-				start[ny] = (int16)x1;
-				end[ny] = (int16)x2;
+				_tabVerticG[ny] = (int16)x1;
+				_tabVerticD[ny] = (int16)x2;
 			}
 
 			ny = y + r;
 			if ((ny >= ctop) && (ny <= cbottom)) {
-				start[ny] = (int16)x1;
-				end[ny] = (int16)x2;
+				_tabVerticG[ny] = (int16)x1;
+				_tabVerticD[ny] = (int16)x2;
 			}
 
 			if (acc < 0) {
@@ -1416,14 +1293,14 @@ bool Renderer::computeSphere(int32 x, int32 y, int32 radius, int &vtop, int &vbo
 
 					ny = y - radius;
 					if ((ny >= ctop) && (ny <= cbottom)) {
-						start[ny] = (int16)x1;
-						end[ny] = (int16)x2;
+						_tabVerticG[ny] = (int16)x1;
+						_tabVerticD[ny] = (int16)x2;
 					}
 
 					ny = y + radius;
 					if ((ny >= ctop) && (ny <= cbottom)) {
-						start[ny] = (int16)x1;
-						end[ny] = (int16)x2;
+						_tabVerticG[ny] = (int16)x1;
+						_tabVerticD[ny] = (int16)x2;
 					}
 
 					--radius;
@@ -1487,9 +1364,6 @@ uint8 *Renderer::prepareLines(const Common::Array<BodyLine> &lines, int32 &numOf
 }
 
 uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
-	const int16 maxHeight = _engine->height() - 1;
-	const int16 maxWidth = _engine->width() - 1;
-
 	for (const BodyPolygon &polygon : polygons) {
 		const uint8 materialType = polygon.materialType;
 		const uint8 numVertices = polygon.indices.size();
@@ -1520,8 +1394,8 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->intensity = shadeValue;
-				vertex->x = clamp(point->x, 0, maxWidth);
-				vertex->y = clamp(point->y, 0, maxHeight);
+				vertex->x = point->x;
+				vertex->y = point->y;
 				destinationPolygon->top = MIN<int16>(destinationPolygon->top, vertex->y);
 				destinationPolygon->bottom = MAX<int16>(destinationPolygon->bottom, vertex->y);
 				zMax = MAX(zMax, point->z);
@@ -1545,11 +1419,11 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->intensity = destinationPolygon->colorIndex;
-				vertex->x = clamp(point->x, 0, maxWidth);
-				vertex->y = clamp(point->y, 0, maxHeight);
+				vertex->x = point->x;
+				vertex->y = point->y;
 				destinationPolygon->top = MIN<int16>(destinationPolygon->top, vertex->y);
 				destinationPolygon->bottom = MAX<int16>(destinationPolygon->bottom, vertex->y);
-				zMax = MAX(zMax, point->z);
+				zMax = MAX<int16>(zMax, point->z);
 				++vertex;
 			}
 		}
@@ -1624,8 +1498,6 @@ bool Renderer::renderObjectIso(const BodyData &bodyData, RenderCommand **renderC
 				radius = (sphere->radius * _lFactorX) / delta;
 			}
 
-			radius += 3;
-
 			if (sphere->x + radius > modelRect.right) {
 				modelRect.right = sphere->x + radius;
 			}
@@ -1642,13 +1514,10 @@ bool Renderer::renderObjectIso(const BodyData &bodyData, RenderCommand **renderC
 				modelRect.top = sphere->y - radius;
 			}
 
-			radius -= 3;
-
 			int vtop = -1;
 			int vbottom = -1;
 			if (computeSphere(sphere->x, sphere->y, radius, vtop, vbottom)) {
-				const int32 vsize = vbottom - vtop;
-				fillVertices(sphere->y - radius, vsize, sphere->polyRenderType, sphere->color);
+				fillVertices(vtop, vbottom, sphere->polyRenderType, sphere->color);
 			}
 			break;
 		}
