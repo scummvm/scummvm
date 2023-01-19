@@ -151,9 +151,9 @@ private:
 
 	ModelData _modelData;
 
-	int32 animModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
+	void animModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
 	bool computeSphere(int32 x, int32 y, int32 radius, int &vtop, int &vbottom);
-	bool renderObjectIso(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect); // RenderObjetIso
+	bool renderObjectIso(const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect); // RenderObjetIso
 	IVec3 longInverseRot(int32 x, int32 y, int32 z);
 	inline IVec3 getCameraAnglePositions(const IVec3 &vec) {
 		return longInverseRot(vec.x, vec.y, vec.z);

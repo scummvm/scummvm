@@ -1575,7 +1575,8 @@ const Renderer::RenderCommand *Renderer::depthSortRenderCommands(int32 numOfPrim
 	return _renderCmds;
 }
 
-bool Renderer::renderObjectIso(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect) {
+bool Renderer::renderObjectIso(const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect) {
+	int32 numOfPrimitives = 0;
 	uint8 *renderBufferPtr = _renderCoordinatesBuffer;
 	renderBufferPtr = preparePolygons(bodyData.getPolygons(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
 	renderBufferPtr = prepareLines(bodyData.getLines(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
@@ -1660,7 +1661,7 @@ bool Renderer::renderObjectIso(int32 numOfPrimitives, const BodyData &bodyData, 
 	return true;
 }
 
-int32 Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect) {
+void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect) {
 	const int32 numVertices = bodyData.getNumVertices();
 	const int32 numBones = bodyData.getNumBones();
 
@@ -1834,7 +1835,6 @@ int32 Renderer::animModel(ModelData *modelData, const BodyData &bodyData, Render
 			++lightMatrix;
 		} while (--numOfPrimitives);
 	}
-	return numOfPrimitives;
 }
 
 bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const BodyData &bodyData, Common::Rect &modelRect) {
@@ -1870,8 +1870,8 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 angleX, int32 angleY
 	}
 	// restart at the beginning of the renderTable
 	RenderCommand *renderCmds = _renderCmds;
-	const int32 numOfPrimitives = animModel(&_modelData, bodyData, renderCmds, renderAngle, renderPos, modelRect);
-	if (!renderObjectIso(numOfPrimitives, bodyData, &renderCmds, &_modelData, modelRect)) {
+	animModel(&_modelData, bodyData, renderCmds, renderAngle, renderPos, modelRect);
+	if (!renderObjectIso(bodyData, &renderCmds, &_modelData, modelRect)) {
 		modelRect.right = -1;
 		modelRect.bottom = -1;
 		modelRect.left = -1;
