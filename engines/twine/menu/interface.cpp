@@ -28,114 +28,119 @@ namespace TwinE {
 
 Interface::Interface(TwinEEngine *engine) : _engine(engine) {}
 
-const int32 INSIDE = 0; // 0000
-const int32 LEFT = 1;   // 0001
-const int32 RIGHT = 2;  // 0010
-const int32 TOP = 4;    // 0100
-const int32 BOTTOM = 8; // 1000
-
-int32 Interface::checkClipping(int32 x, int32 y) const {
-	int32 code = INSIDE;
-	if (x < _clip.left) {
-		code |= LEFT;
-	} else if (x > _clip.right) {
-		code |= RIGHT;
-	}
-	if (y < _clip.top) {
-		code |= TOP;
-	} else if (y > _clip.bottom) {
-		code |= BOTTOM;
-	}
-	return code;
-}
-
-bool Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor) {
-	// draw line from left to right
-	if (startWidth > endWidth) {
-		SWAP(endWidth, startWidth);
-		SWAP(endHeight, startHeight);
+bool Interface::drawLine(int32 x0, int32 y0, int32 x1, int32 y1, uint8 color) {
+	// always from left to right
+	if (x0 > x1) {
+		SWAP(x0, x1);
+		SWAP(y0, y1);
 	}
 
-	// Perform proper clipping (CohenSutherland algorithm)
-	int32 outcode0 = checkClipping(startWidth, startHeight);
-	int32 outcode1 = checkClipping(endWidth, endHeight);
+	const int32 cright = _clip.right;
+	const int32 cleft = _clip.left;
+	const int32 cbottom = _clip.bottom;
+	const int32 ctop = _clip.top;
 
-	while ((outcode0 | outcode1) != INSIDE) {
-		if ((outcode0 & outcode1) != INSIDE && outcode0 != INSIDE) {
-			return false; // Reject lines which are behind one clipping plane
+	uint16 clipFlags;
+	do {
+		if (x0 > cright || x1 < cleft) {
+			return false;
 		}
 
-		// At least one endpoint is outside the clip rectangle; pick it.
-		const int32 outcodeOut = outcode0 ? outcode0 : outcode1;
+		int32 dx = x1 - x0;
+		int32 dy = y1 - y0;
 
-		int32 x = 0;
-		int32 y = 0;
-		if (outcodeOut & TOP) { // point is above the clip rectangle
-			x = startWidth + (int)((endWidth - startWidth) * (float)(_clip.top - startHeight) / (float)(endHeight - startHeight));
-			y = _clip.top;
-		} else if (outcodeOut & BOTTOM) { // point is below the clip rectangle
-			x = startWidth + (int)((endWidth - startWidth) * (float)(_clip.bottom - startHeight) / (float)(endHeight - startHeight));
-			y = _clip.bottom;
-		} else if (outcodeOut & RIGHT) { // point is to the right of clip rectangle
-			y = startHeight + (int)((endHeight - startHeight) * (float)(_clip.right - startWidth) / (float)(endWidth - startWidth));
-			x = _clip.right;
-		} else if (outcodeOut & LEFT) { // point is to the left of clip rectangle
-			y = startHeight + (int)((endHeight - startHeight) * (float)(_clip.left - startWidth) / (float)(endWidth - startWidth));
-			x = _clip.left;
+		clipFlags = 0;
+
+		if (x0 < cleft) {
+			clipFlags |= 0x100;
 		}
 
-		// Clip the point
-		if (outcodeOut == outcode0) {
-			startWidth = x;
-			startHeight = y;
-			outcode0 = checkClipping(startWidth, startHeight);
-		} else {
-			endWidth = x;
-			endHeight = y;
-			outcode1 = checkClipping(endWidth, endHeight);
+		if (y0 < ctop) {
+			clipFlags |= 0x800;
+		} else if (y0 > cbottom) {
+			clipFlags |= 0x400;
 		}
-	}
 
-	int32 pitch = _engine->width();
-	endWidth -= startWidth;
-	endHeight -= startHeight;
-	if (endHeight < 0) {
-		pitch = -pitch;
-		endHeight = -endHeight;
-	}
+		if (x1 > cright) {
+			clipFlags |= 0x2;
+		}
 
-	uint8 *out = (uint8*)_engine->_frontVideoBuffer.getBasePtr(startWidth, startHeight);
-	_engine->_frontVideoBuffer.addDirtyRect(Common::Rect(startWidth, startHeight, startWidth + endWidth, startHeight + endHeight));
+		if (y1 < ctop) {
+			clipFlags |= 0x8;
+		} else if (y1 > cbottom) {
+			clipFlags |= 0x4;
+		}
 
-	if (endWidth < endHeight) { // significant slope
-		SWAP(endWidth, endHeight);
-		const int16 var2 = endWidth << 1;
-		startHeight = endWidth;
-		endHeight <<= 1;
-		endWidth++;
-		do {
-			*out = lineColor;
-			startHeight -= endHeight;
-			if (startHeight > 0) {
-				out += pitch;
-			} else {
-				startHeight += var2;
-				out += pitch + 1;
+		if (clipFlags & (clipFlags >> 8)) {
+			return false;
+		}
+
+		if (clipFlags) {
+			if (clipFlags & 0x100) {
+				y0 += ((cleft - x0) * dy) / dx;
+				x0 = cleft;
+			} else if (clipFlags & 0x800) {
+				x0 += ((ctop - y0) * dx) / dy;
+				y0 = ctop;
+			} else if (clipFlags & 0x400) {
+				x0 += ((cbottom - y0) * dx) / dy;
+				y0 = cbottom;
+			} else if (clipFlags & 0x2) {
+				y1 = (((cright - x0) * dy) / dx) + y0;
+				x1 = cright;
+			} else if (clipFlags & 0x8) {
+				x1 = (((ctop - y0) * dx) / dy) + x0;
+				y1 = ctop;
+			} else if (clipFlags & 0x4) {
+				x1 = (((cbottom - y0) * dx) / dy) + x0;
+				y1 = cbottom;
 			}
-		} while (--endWidth);
-	} else { // reduced slope
-		const int16 var2 = endWidth << 1;
-		startHeight = endWidth;
-		endHeight <<= 1;
-		endWidth++;
+		}
+	} while (clipFlags);
+
+	int16 lineOffset = (int16)_engine->width();
+	x1 -= x0;
+	y1 -= y0;
+	if (y1 < 0) {
+		lineOffset = -lineOffset;
+		y1 = -y1;
+	}
+
+	byte *out = (byte *)_engine->_frontVideoBuffer.getBasePtr(x0, y0);
+
+	if (x1 < y1) {
+		// vertical
+		SWAP(x1, y1);
+
+		int32 dy = x1 << 1;
+		y0 = x1;
+		y1 <<= 1;
+		x1++;
+
 		do {
-			*out++ = lineColor;
-			startHeight -= endHeight;
-			if (startHeight < 0) {
-				startHeight += var2;
-				out += pitch;
+			*out = color;
+			y0 -= y1;
+			out += lineOffset;
+			if (y0 < 0) {
+				y0 += dy;
+				out++;
 			}
-		} while (--endWidth);
+		} while (--x1);
+	} else {
+		// horizontal
+		int32 dy = x1 << 1;
+		y0 = x1;
+		y1 <<= 1;
+		x1++;
+
+		do {
+			*out++ = color;
+			y0 -= y1;
+			if (y0 < 0) {
+				y0 += dy;
+				out += lineOffset;
+			}
+		} while (--x1);
 	}
 	return true;
 }
