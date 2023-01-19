@@ -188,7 +188,6 @@ private:
 
 	int32 _polyTabSize = 0;
 	int16 *_polyTab = nullptr; // also _tabVerticG
-	int16 *_colorProgressionBuffer = nullptr;
 	int16* _tabVerticG = nullptr;
 	int16* _tabx0 = nullptr; // also TabCoulG
 	int16* _taby0 = nullptr; // also TabCoulD
