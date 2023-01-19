@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-18 20:43+0000\n"
+"POT-Creation-Date: 2023-01-19 16:30+0000\n"
 "PO-Revision-Date: 2023-01-18 11:36+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6569,11 +6569,11 @@ msgid "Repeat actual useful hint by Willie"
 msgstr "Gjenta de tipsene fra Willie som faktisk er hendige"
 
 #. I18N: NHC is a file extension
-#: engines/neverhood/dialogs.cpp:83
+#: engines/neverhood/dialogs.cpp:90
 msgid "NHC replacement:"
 msgstr "NHC-erstatning:"
 
-#: engines/neverhood/dialogs.cpp:89
+#: engines/neverhood/dialogs.cpp:96
 msgid "<original>"
 msgstr "<opprinnelig>"
 
