@@ -5010,6 +5010,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_RAMA_DEMO },
 
+	// RAMA - English DOS/Windows Demo
+	// Executable scanning reports "2.100.002", VERSION file reports "00.001.000"
+	{"rama", "Demo", {
+		{"resmap.001", 0, "13f48e8f8a8860f832589b4657107011", 1459},
+		{"ressci.001", 0, "2a45964695196795837b434588003a40", 2318114},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_RAMA_DEMO },
+
 	// RAMA - English DOS/Windows (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.100.000"
 	{"rama", "", {
