@@ -54,12 +54,14 @@ distribution.
 
 #define MPASSERT assert
 
-//#define DEBUG_PATH
-//#define DEBUG_PATH_DEEP
-//#define TRACK_COLLISION
-//#define DEBUG_CACHING
+//#define TETRAEDGE_MICROPATHER_DEBUG
+//#define TETRAEDGE_MICROPATHER_DEBUG_PATH
+//#define TETRAEDGE_MICROPATHER_DEBUG_PATH_DEEP
+//#define TETRAEDGE_MICROPATHER_TRACK_COLLISION
+//#define TETRAEDGE_MICROPATHER_DEBUG_CACHING
+//#define TETRAEDGE_MICROPATHER_STRESS
 
-//#ifdef DEBUG_CACHING
+//#ifdef TETRAEDGE_MICROPATHER_DEBUG_CACHING
 //#include "../grinliz/gldebug.h"
 //#endif
 
@@ -75,9 +77,9 @@ class OpenQueue
 		graph = _graph;
 		sentinel = (PathNode*) sentinelMem;
 		sentinel->InitSentinel();
-		#ifdef DEBUG
-			sentinel->CheckList();
-		#endif
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
+		sentinel->CheckList();
+#endif
 	}
 	~OpenQueue()	{}
 
@@ -103,7 +105,7 @@ void OpenQueue::Push( PathNode* pNode )
 	MPASSERT( pNode->inOpen == 0 );
 	MPASSERT( pNode->inClosed == 0 );
 
-#ifdef DEBUG_PATH_DEEP
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH_DEEP
 	debug( "Open Push: " );
 	graph->PrintStateInfo( pNode->state );
 	debug( " total=%.1f\n", pNode->totalCost );
@@ -123,7 +125,7 @@ void OpenQueue::Push( PathNode* pNode )
 		iter = iter->next;
 	}
 	MPASSERT( pNode->inOpen );	// make sure this was actually added.
-#ifdef DEBUG
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
 	sentinel->CheckList();
 #endif
 }
@@ -133,7 +135,7 @@ PathNode* OpenQueue::Pop()
 	MPASSERT( sentinel->next != sentinel );
 	PathNode* pNode = sentinel->next;
 	pNode->Unlink();
-#ifdef DEBUG
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
 	sentinel->CheckList();
 #endif
 
@@ -141,7 +143,7 @@ PathNode* OpenQueue::Pop()
 	MPASSERT( pNode->inOpen == 1 );
 	pNode->inOpen = 0;
 
-#ifdef DEBUG_PATH_DEEP
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH_DEEP
 	debug( "Open Pop: " );
 	graph->PrintStateInfo( pNode->state );
 	debug( " total=%.1f\n", pNode->totalCost );
@@ -152,7 +154,7 @@ PathNode* OpenQueue::Pop()
 
 void OpenQueue::Update( PathNode* pNode )
 {
-#ifdef DEBUG_PATH_DEEP
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH_DEEP
 	debug( "Open Update: " );
 	graph->PrintStateInfo( pNode->state );
 	debug( " total=%.1f\n", pNode->totalCost );
@@ -176,7 +178,7 @@ void OpenQueue::Update( PathNode* pNode )
 			it = it->next;
 
 		it->AddBefore( pNode );
-#ifdef DEBUG
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
 		sentinel->CheckList();
 #endif
 	}
@@ -191,25 +193,25 @@ class ClosedSet
 
 	void Add( PathNode* pNode )
 	{
-		#ifdef DEBUG_PATH_DEEP
-			debug( "Closed add: " );
-			graph->PrintStateInfo( pNode->state );
-			debug( " total=%.1f\n", pNode->totalCost );
-		#endif
-		#ifdef DEBUG
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH_DEEP
+		debug( "Closed add: " );
+		graph->PrintStateInfo( pNode->state );
+		debug( " total=%.1f\n", pNode->totalCost );
+#endif
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
 		MPASSERT( pNode->inClosed == 0 );
 		MPASSERT( pNode->inOpen == 0 );
-		#endif
+#endif
 		pNode->inClosed = 1;
 	}
 
 	void Remove( PathNode* pNode )
 	{
-		#ifdef DEBUG_PATH_DEEP
-			debug( "Closed remove: " );
-			graph->PrintStateInfo( pNode->state );
-			debug( " total=%.1f\n", pNode->totalCost );
-		#endif
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH_DEEP
+		debug( "Closed remove: " );
+		graph->PrintStateInfo( pNode->state );
+		debug( " total=%.1f\n", pNode->totalCost );
+#endif
 		MPASSERT( pNode->inClosed == 1 );
 		MPASSERT( pNode->inOpen == 0 );
 
@@ -226,7 +228,7 @@ class ClosedSet
 PathNodePool::PathNodePool( unsigned _allocate, unsigned _typicalAdjacent )
 	: firstBlock( 0 ),
 	  blocks( 0 ),
-#if defined( MICROPATHER_STRESS )
+#ifdef TETRAEDGE_MICROPATHER_STRESS
 	  allocate( 32 ),
 #else
 	  allocate( _allocate ),
@@ -243,14 +245,14 @@ PathNodePool::PathNodePool( unsigned _allocate, unsigned _typicalAdjacent )
 	// Want the behavior that if the actual number of states is specified, the cache
 	// will be at least that big.
 	hashShift = 3;	// 8 (only useful for stress testing)
-#if !defined( MICROPATHER_STRESS )
+#ifndef TETRAEDGE_MICROPATHER_STRESS
 	while( HashSize() < allocate )
 		++hashShift;
 #endif
 	hashTable = (PathNode**)calloc( HashSize(), sizeof(PathNode*) );
 
 	blocks = firstBlock = NewBlock();
-//	debug( "HashSize=%d allocate=%d\n", HashSize(), allocate );
+	//debug( "HashSize=%d allocate=%d\n", HashSize(), allocate );
 	totalCollide = 0;
 }
 
@@ -261,7 +263,7 @@ PathNodePool::~PathNodePool()
 	free( firstBlock );
 	free( cache );
 	free( hashTable );
-#ifdef TRACK_COLLISION
+#ifdef TETRAEDGE_MICROPATHER_TRACK_COLLISION
 	debug( "Total collide=%d HashSize=%d HashShift=%d\n", totalCollide, HashSize(), hashShift );
 #endif
 }
@@ -291,7 +293,7 @@ void PathNodePool::GetCache( int start, int nNodes, NodeCost* nodes ) {
 
 void PathNodePool::Clear()
 {
-#ifdef TRACK_COLLISION
+#ifdef TETRAEDGE_MICROPATHER_TRACK_COLLISION
 	// Collision tracking code.
 	int collide=0;
 	for( unsigned i=0; i<HashSize(); ++i ) {
@@ -592,13 +594,13 @@ void MicroPather::GoalReached( PathNode* node, void* start, void* end, Common::A
 		pathCache->Add( path, costVec );
 	}
 
-	#ifdef DEBUG_PATH
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH
 	debug( "Path: " );
 	int counter=0;
-	#endif
+#endif
 	for ( unsigned k=0; k<path.size(); ++k )
 	{
-		#ifdef DEBUG_PATH
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH
 		graph->PrintStateInfo( path[k] );
 		debug( " " );
 		++counter;
@@ -607,11 +609,11 @@ void MicroPather::GoalReached( PathNode* node, void* start, void* end, Common::A
 			debug( "\n" );
 			counter = 0;
 		}
-		#endif
+#endif
 	}
-	#ifdef DEBUG_PATH
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH
 	debug( "Cost=%.1f Checksum %d\n", node->costFromStart, checksum );
-	#endif
+#endif
 }
 
 
@@ -628,7 +630,7 @@ void MicroPather::GetNodeNeighbors( PathNode* node, Common::Array< NodeCost >* p
 		stateCostVec.resize( 0 );
 		graph->AdjacentCost( node->state, &stateCostVec );
 
-		#ifdef DEBUG
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
 		{
 			// If this assert fires, you have passed a state
 			// as its own neighbor state. This is impossible --
@@ -636,7 +638,7 @@ void MicroPather::GetNodeNeighbors( PathNode* node, Common::Array< NodeCost >* p
 			for ( unsigned i=0; i<stateCostVec.size(); ++i )
 				MPASSERT( stateCostVec[i].state != node->state );
 		}
-		#endif
+#endif
 
 		pNodeCost->resize( stateCostVec.size() );
 		node->numAdjacent = stateCostVec.size();
@@ -680,8 +682,7 @@ void MicroPather::GetNodeNeighbors( PathNode* node, Common::Array< NodeCost >* p
 }
 
 
-#ifdef DEBUG
-/*
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
 void MicroPather::DumpStats()
 {
 	int hashTableEntries = 0;
@@ -698,7 +699,6 @@ void MicroPather::DumpStats()
 			  pathNodeCount,
 			  frame );
 }
-*/
 #endif
 
 
@@ -817,7 +817,7 @@ void PathCache::AddItem( const Item& item )
 		if ( mem[index].Empty() ) {
 			mem[index] = item;
 			++nItems;
-#ifdef DEBUG_CACHING
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_CACHING
 			GLOUTPUT(( "Add: start=%x next=%x end=%x\n", item.start, item.next, item.end ));
 #endif
 			break;
@@ -882,13 +882,13 @@ int MicroPather::Solve( void* startNode, void* endNode, Common::Array< void* >* 
 	// can easily be a left over path  from a previous call.
 	path->clear();
 
-	#ifdef DEBUG_PATH
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH
 	debug( "Path: " );
 	graph->PrintStateInfo( startNode );
 	debug( " --> " );
 	graph->PrintStateInfo( endNode );
 	debug( " min cost=%f\n", graph->LeastCostEstimate( startNode, endNode ) );
-	#endif
+#endif
 
 	*cost = 0.0f;
 
@@ -898,14 +898,14 @@ int MicroPather::Solve( void* startNode, void* endNode, Common::Array< void* >* 
 	if ( pathCache ) {
 		int cacheResult = pathCache->Solve( startNode, endNode, path, cost );
 		if ( cacheResult == SOLVED || cacheResult == NO_SOLUTION ) {
-		#ifdef DEBUG_CACHING
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_CACHING
 			GLOUTPUT(( "PathCache hit. result=%s\n", cacheResult == SOLVED ? "solved" : "no_solution" ));
-		#endif
+#endif
 			return cacheResult;
 		}
-		#ifdef DEBUG_CACHING
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_CACHING
 		GLOUTPUT(( "PathCache miss\n" ));
-		#endif
+#endif
 	}
 
 	++frame;
@@ -931,9 +931,9 @@ int MicroPather::Solve( void* startNode, void* endNode, Common::Array< void* >* 
 		{
 			GoalReached( node, startNode, endNode, path );
 			*cost = node->costFromStart;
-			#ifdef DEBUG_PATH
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH
 			DumpStats();
-			#endif
+#endif
 			return SOLVED;
 		}
 		else
@@ -982,9 +982,9 @@ int MicroPather::Solve( void* startNode, void* endNode, Common::Array< void* >* 
 			}
 		}
 	}
-	#ifdef DEBUG_PATH
+#ifdef TETRAEDGE_MICROPATHER_DEBUG_PATH
 	DumpStats();
-	#endif
+#endif
 	if ( pathCache ) {
 		// Could add a bunch more with a little tracking.
 		pathCache->AddNoSolution( endNode, &startNode, 1 );
@@ -1086,7 +1086,7 @@ int MicroPather::SolveForNearStates( void* startState, Common::Array< StateCost 
 			near->push_back( sc );
 		}
 	}
-#ifdef DEBUG
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
 	for( unsigned i=0; i<near->size(); ++i ) {
 		for( unsigned k=i+1; k<near->size(); ++k ) {
 			MPASSERT( (*near)[i].state != (*near)[k].state );
@@ -1096,7 +1096,3 @@ int MicroPather::SolveForNearStates( void* startState, Common::Array< StateCost 
 
 	return SOLVED;
 }
-
-
-
-

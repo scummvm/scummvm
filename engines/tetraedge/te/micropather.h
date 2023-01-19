@@ -192,7 +192,7 @@ namespace micropather
 			prev->next = addThis;
 			prev = addThis;
 		}
-		#ifdef DEBUG
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
 		void CheckList()
 		{
 			MPASSERT( totalCost == FLT_MAX );
@@ -201,7 +201,7 @@ namespace micropather
 				MPASSERT( it->totalCost <= it->next->totalCost );
 			}
 		}
-		#endif
+#endif
 
 		void CalcTotalCost() {
 			if ( costFromStart < FLT_MAX && estToGoal < FLT_MAX )
@@ -450,9 +450,9 @@ namespace micropather
 
 		void GetNodeNeighbors(	PathNode* node, Common::Array< NodeCost >* neighborNode );
 
-		#ifdef DEBUG
-		//void DumpStats();
-		#endif
+#ifdef TETRAEDGE_MICROPATHER_DEBUG
+		void DumpStats();
+#endif
 
 		PathNodePool			pathNodePool;
 		Common::Array< StateCost >	stateCostVec;	// local to Solve, but put here to reduce memory allocation
