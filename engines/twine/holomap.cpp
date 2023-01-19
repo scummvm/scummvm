@@ -209,7 +209,7 @@ void Holomap::computeGlobeProj() {
 	for (int32 alpha = -LBAAngles::ANGLE_90; alpha <= LBAAngles::ANGLE_90; alpha += LBAAngles::ANGLE_11_25) {
 		for (int32 beta = 0; beta < LBAAngles::ANGLE_11_25; ++beta) {
 			IVec3 *vec = &_holomapSurface[holomapSurfaceArrayIdx++];
-			const IVec3 &destPos = _engine->_renderer->longWorldRot(vec->x, vec->y, vec->z);
+			const IVec3 &destPos = _engine->_renderer->worldRotatePoint(*vec);
 			if (alpha != LBAAngles::ANGLE_90) {
 				_holomapSort[holomapSortArrayIdx].z = (int16)destPos.z;
 				_holomapSort[holomapSortArrayIdx].projectedPosIdx = _projectedSurfaceIndex;
@@ -221,7 +221,7 @@ void Holomap::computeGlobeProj() {
 			++_projectedSurfaceIndex;
 		}
 		IVec3 *vec = &_holomapSurface[holomapSurfaceArrayIdx++];
-		const IVec3 &destPos = _engine->_renderer->longWorldRot(vec->x, vec->y, vec->z);
+		const IVec3 &destPos = _engine->_renderer->worldRotatePoint(*vec);
 		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(destPos);
 		_projectedSurfacePositions[_projectedSurfaceIndex].x1 = projPos.x;
 		_projectedSurfacePositions[_projectedSurfaceIndex].y1 = projPos.y;
@@ -256,7 +256,7 @@ void Holomap::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
 			textureCoordinates[1].y = (int16)pos2.y2;
 			textureCoordinates[2].x = (int16)pos3.x2;
 			textureCoordinates[2].y = (int16)pos3.y2;
-			_engine->_renderer->renderHolomapVertices(vertexCoordinates, textureCoordinates, holomapImage, holomapImageSize);
+			_engine->_renderer->asmTexturedTriangleNoClip(vertexCoordinates, textureCoordinates, holomapImage, holomapImageSize);
 		}
 		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 0 + SURFACE_POS_OFFSET];
 		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 1 + SURFACE_POS_OFFSET];
@@ -275,7 +275,7 @@ void Holomap::drawHoloMap(uint8 *holomapImage, uint32 holomapImageSize) {
 			textureCoordinates[1].y = (int16)pos5.y2;
 			textureCoordinates[2].x = (int16)pos6.x2;
 			textureCoordinates[2].y = (int16)pos6.y2;
-			_engine->_renderer->renderHolomapVertices(vertexCoordinates, textureCoordinates, holomapImage, holomapImageSize);
+			_engine->_renderer->asmTexturedTriangleNoClip(vertexCoordinates, textureCoordinates, holomapImage, holomapImageSize);
 		}
 	}
 }

@@ -216,7 +216,7 @@ private:
 
 	void flipMatrix();
 
-	void renderHolomapPolygons(int32 top, int32 bottom, uint8 *holomapImage, uint32 holomapImageSize);
+	void fillTextPolyNoClip(int32 top, int32 bottom, const uint8 *holomapImage, uint32 holomapImageSize);
 	void fillHolomapTriangle(int16 *pDest, int32 x1, int32 y1, int32 x2, int32 y2);
 	void fillHolomapTriangles(const ComputedVertex &vertex1, const ComputedVertex &vertex2, const ComputedVertex &texCoord1, const ComputedVertex &texCoord2, int32 &top, int32 &bottom);
 
@@ -284,7 +284,7 @@ public:
 	 */
 	void draw3dObject(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 cameraZoom);
 
-	void renderHolomapVertices(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize);
+	void asmTexturedTriangleNoClip(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], const uint8 *holomapImage, uint32 holomapImageSize);
 };
 
 inline void Renderer::setCameraRotation(int32 x, int32 y, int32 z) {

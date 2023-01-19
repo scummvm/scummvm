@@ -1858,57 +1858,62 @@ void Renderer::fillHolomapTriangles(const ComputedVertex &vertex0, const Compute
 	}
 }
 
-void Renderer::renderHolomapVertices(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], uint8 *holomapImage, uint32 holomapImageSize) {
+void Renderer::asmTexturedTriangleNoClip(const ComputedVertex vertexCoordinates[3], const ComputedVertex textureCoordinates[3], const uint8 *holomapImage, uint32 holomapImageSize) {
 	int32 lymin = SCENE_SIZE_MAX;
 	int32 lymax = SCENE_SIZE_MIN;
 	fillHolomapTriangles(vertexCoordinates[0], vertexCoordinates[1], textureCoordinates[0], textureCoordinates[1], lymin, lymax);
 	fillHolomapTriangles(vertexCoordinates[1], vertexCoordinates[2], textureCoordinates[1], textureCoordinates[2], lymin, lymax);
 	fillHolomapTriangles(vertexCoordinates[2], vertexCoordinates[0], textureCoordinates[2], textureCoordinates[0], lymin, lymax);
-	renderHolomapPolygons(lymin, lymax, holomapImage, holomapImageSize);
+	fillTextPolyNoClip(lymin, lymax, holomapImage, holomapImageSize);
 }
 
-void Renderer::renderHolomapPolygons(int32 ymin, int32 ymax, uint8 *holomapImage, uint32 holomapImageSize) {
-	if (ymin < 0 || ymin >= _engine->_frontVideoBuffer.h) {
+void Renderer::fillTextPolyNoClip(int32 yMin, int32 yMax, const uint8 *holomapImage, uint32 holomapImageSize) {
+	if (yMin < 0 || yMin >= _engine->_frontVideoBuffer.h) {
 		return;
 	}
-	uint8 *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, ymin);
+	const int screenWidth = _engine->width();
+	uint8 *pDestLine = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, yMin);
 
-	const int16 *pVerticG = _tabVerticG + ymin;
-	const int16 *pVerticD = _tabVerticD + ymin;
-	const uint16 *pu0 = (const uint16 *)(_tabx0 + ymin);
-	const uint16 *pv0 = (const uint16 *)(_taby0 + ymin);
-	const uint16 *pu1 = (const uint16 *)(_tabx1 + ymin);
-	const uint16 *pv1 = (const uint16 *)(_taby1 + ymin);
+	const int16 *pVerticG = &_tabVerticG[yMin];
+	const int16 *pVerticD = &_tabVerticD[yMin];
+	const uint16 *pU0 = (const uint16 *)&_tabx0[yMin];
+	const uint16 *pV0 = (const uint16 *)&_taby0[yMin];
+	const uint16 *pU1 = (const uint16 *)&_tabx1[yMin];
+	const uint16 *pV1 = (const uint16 *)&_taby1[yMin];
+	byte *pDest;
+	int32 ustep, vstep;
+	int16 xMin, xMax;
+	uint32 u0, v0, u1, v1, idx;
+	int32 u, v;
 
-	int32 yHeight = ymax - ymin;
-	while (yHeight > -1) {
-		int32 u;
-		int32 v;
-		const int16 xmin = *pVerticG++;
-		const int16 xmax = *pVerticD++;
-		const uint32 u0 = u = *pu0++;
-		const uint32 v0 = v = *pv0++;
-		const uint32 u1 = *pu1++;
-		const uint32 v1 = *pv1++;
-		const int16 width = xmax - xmin;
-		if (width > 0) {
-			uint8 *pixelBufPtr = pDestLine + xmin;
+	yMax -= yMin;
 
-			int32 ustep = ((int32)u1 - (int32)u0 + 1) / width;
-			int32 vstep = ((int32)v1 - (int32)v0 + 1) / width;
+	for (; yMax >= 0; yMax--) {
+		xMin = *pVerticG++;
+		xMax = *pVerticD++;
+		xMax -= xMin;
 
-			for (int16 i = 0; i < width; ++i) {
-				// u0 & 0xFF00 is the x position on the image * 256
-				// v0 & 0xFF00 is the y position on the image * 256
-				const uint32 idx = ((u >> 8) & 0xff) | (v & 0xff00);
-				assert(idx < holomapImageSize);
-				*pixelBufPtr++ = holomapImage[idx];
+		u = u0 = *pU0++;
+		v = v0 = *pV0++;
+		u1 = *pU1++;
+		v1 = *pV1++;
+
+		if (xMax > 0) {
+			pDest = pDestLine + xMin;
+
+			ustep = ((int32)u1 - (int32)u0 + 1) / xMax;
+			vstep = ((int32)v1 - (int32)v0 + 1) / xMax;
+
+			for (; xMax > 0; xMax--) {
+				idx = ((u >> 8) & 0xFF) | (v & 0xFF00); // u0&0xFF00=column*256, v0&0xFF00 = line*256
+				*pDest++ = holomapImage[idx];
+
 				u += ustep;
 				v += vstep;
 			}
 		}
-		pDestLine += _engine->_frontVideoBuffer.pitch;
-		--yHeight;
+
+		pDestLine += screenWidth;
 	}
 }
 
