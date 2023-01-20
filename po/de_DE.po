@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-20 09:03+0000\n"
-"PO-Revision-Date: 2023-01-19 17:24+0000\n"
+"PO-Revision-Date: 2023-01-20 13:18+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -7211,17 +7211,14 @@ msgid "Enable the original GUI and Menu"
 msgstr "Aktiviere originale Benutzeroberfläche und Menü"
 
 #: engines/scumm/dialogs.cpp:1053
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
 msgstr ""
 "Erlaube dem Spiel die Benutzeroberfläche und das originale Menü zum "
-"Speichern und Laden zu verwenden."
+"Speichern und Laden zu verwenden. Verwende die Option zusammen mit \"Beim "
+"Verlassen um Bestätigung bitten\" für eine optimale Benutzererfahrung."
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
@@ -7906,17 +7903,14 @@ msgstr ""
 "Audio-Dateien, sofern diese verfügbar sind."
 
 #: engines/scumm/metaengine.cpp:667
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Erlaube dem Spiel die Benutzeroberfläche und das originale Menü zum "
-"Speichern und Laden zu verwenden."
+"Speichern und Laden zu verwenden.\t\tVerwende die Option zusammen mit \"Beim "
+"Verlassen um Bestätigung bitten\" für eine optimale Benutzererfahrung."
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Enable low latency audio mode"
@@ -7928,6 +7922,9 @@ msgid ""
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
+"Erlaube dem Spiel, die Audiowiedergabe auf Kosten der Genauigkeit mit "
+"niedriger Lantenz durchzuführen.\t\tDieses Feature sollte nur dann aktiviert "
+"werden, wenn du während des Spiels auf Wiedergabeprobleme stößt."
 
 #: engines/scumm/scumm.cpp:263
 msgid ""
