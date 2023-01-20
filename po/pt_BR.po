@@ -7166,8 +7166,8 @@ msgid ""
 "for a more complete experience."
 msgstr ""
 "Permite que o jogo use a interface gráfica da engine e o menu salvar/"
-"carregar originais. Utilize em conjunto com \"Solicitar confirmação ao sair\""
-" para uma experiência mais completa."
+"carregar originais. Utilize em conjunto com \"Solicitar confirmação ao sair"
+"\" para uma experiência mais completa."
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
