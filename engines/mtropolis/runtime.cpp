@@ -5237,6 +5237,12 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 }
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
+	EventIDs::EventID eventID = dispatch->getMsg()->getEvent().eventType;
+
+	// 0 is normally not produced and is invalid, 1 is "None" and is an invalid message
+	if (eventID == 1 || eventID == 0)
+		return;
+
 #ifndef DISABLE_TEXT_CONSOLE
 	const int msgDebugLevel = 3;
 
@@ -5315,7 +5321,7 @@ void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dis
 				break;
 
 			case EventIDs::kMotionStarted:
-				extType = "Motion Ended";
+				extType = "Motion Started";
 				break;
 			case EventIDs::kMotionEnded:
 				extType = "Motion Started";

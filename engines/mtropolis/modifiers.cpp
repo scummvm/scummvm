@@ -139,10 +139,10 @@ VThreadState BehaviorModifier::consumeMessage(Runtime *runtime, const Common::Sh
 			DisableTaskData *disableTask = runtime->getVThread().pushTask("BehaviorModifier::disableTask", this, &BehaviorModifier::disableTask);
 			disableTask->runtime = runtime;
 
-			SwitchTaskData *taskData = runtime->getVThread().pushTask("BehaviorModifier::switchTask", this, &BehaviorModifier::switchTask);
-			taskData->targetState = false;
-			taskData->eventID = EventIDs::kParentDisabled;
-			taskData->runtime = runtime;
+			SwitchTaskData *switchTask = runtime->getVThread().pushTask("BehaviorModifier::switchTask", this, &BehaviorModifier::switchTask);
+			switchTask->targetState = false;
+			switchTask->eventID = EventIDs::kParentDisabled;
+			switchTask->runtime = runtime;
 		}
 		if (_enableWhen.respondsTo(msg->getEvent())) {
 			SwitchTaskData *taskData = runtime->getVThread().pushTask("BehaviorModifier::switchTask", this, &BehaviorModifier::switchTask);
@@ -825,7 +825,14 @@ PathMotionModifier::PointDef::PointDef() : frame(0), useFrame(false) {
 
 PathMotionModifier::PathMotionModifier()
 	: _reverse(false), _loop(false), _alternate(false),
-	  _startAtBeginning(false), _frameDurationTimes10Million(0) {
+	  _startAtBeginning(false), _frameDurationDUSec(1), _isAlternatingDirection(false), _lastPointTimeDUSec(0), _currentPointIndex(0) {
+}
+
+PathMotionModifier::~PathMotionModifier() {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
 }
 
 bool PathMotionModifier::load(ModifierLoaderContext &context, const Data::PathMotionModifier &data) {
@@ -840,7 +847,10 @@ bool PathMotionModifier::load(ModifierLoaderContext &context, const Data::PathMo
 	_alternate = ((data.flags & Data::PathMotionModifier::kFlagAlternate) != 0);
 	_startAtBeginning = ((data.flags & Data::PathMotionModifier::kFlagStartAtBeginning) != 0);
 
-	_frameDurationTimes10Million = data.frameDurationTimes10Million;
+	_frameDurationDUSec = data.frameDurationTimes10Million;
+
+	if (_frameDurationDUSec == 0)
+		_frameDurationDUSec = 1; // Maybe set this to 1/60?  It seems like subframe movement is possible though.
 
 	_points.resize(data.numPoints);
 
@@ -849,7 +859,7 @@ bool PathMotionModifier::load(ModifierLoaderContext &context, const Data::PathMo
 		PointDef &outPoint = _points[i];
 
 		outPoint.frame = inPoint.frame;
-		outPoint.useFrame = ((inPoint.frameFlags & Data::PathMotionModifier::PointDef::kFrameFlagPlaySequentially) != 0);
+		outPoint.useFrame = ((inPoint.frameFlags & Data::PathMotionModifier::PointDef::kFrameFlagPlaySequentially) == 0);
 		if (!inPoint.point.toScummVMPoint(outPoint.point))
 			return false;
 
@@ -870,17 +880,19 @@ bool PathMotionModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState PathMotionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (_executeWhen.respondsTo(msg->getEvent())) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-		if (Debugger *debugger = runtime->debugGetDebugger())
-			debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to execute, but this isn't implemented yet");
-#endif
-		_incomingData = msg->getValue();
+	if (_terminateWhen.respondsTo(msg->getEvent())) {
+		TerminateTaskData *terminateTask = runtime->getVThread().pushTask("PathMotionModifier::terminateTask", this, &PathMotionModifier::terminateTask);
+		terminateTask->runtime = runtime;
 
 		return kVThreadReturn;
 	}
-	if (_terminateWhen.respondsTo(msg->getEvent())) {
-		disable(runtime);
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+		ExecuteTaskData *executeTask = runtime->getVThread().pushTask("PathMotionModifier::executeTask", this, &PathMotionModifier::executeTask);
+		executeTask->runtime = runtime;
+
+		_incomingData = msg->getValue();
+		_triggerSource = msg->getSource();
+
 		return kVThreadReturn;
 	}
 
@@ -888,22 +900,258 @@ VThreadState PathMotionModifier::consumeMessage(Runtime *runtime, const Common::
 }
 
 void PathMotionModifier::disable(Runtime *runtime) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-	if (Debugger *debugger = runtime->debugGetDebugger())
-		debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to terminate, but this isn't implemented yet");
-#endif
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
+}
+
+void PathMotionModifier::linkInternalReferences(ObjectLinkingScope *scope) {
+	for (PointDef &point : _points)
+		point.sendSpec.linkInternalReferences(scope);
+}
+
+void PathMotionModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	for (PointDef &point : _points)
+		point.sendSpec.visitInternalReferences(visitor);
+}
+
+VThreadState PathMotionModifier::executeTask(const ExecuteTaskData &taskData) {
+	if (_points.size() == 0)
+		return kVThreadError;
+
+	Runtime *runtime = taskData.runtime;
+
+	uint64 timeMSec = runtime->getPlayTime();
+
+	uint prevPointIndex = _currentPointIndex;
+	uint newPointIndex = _reverse ? _points.size() - 1 : 0;
+
+	_lastPointTimeDUSec = timeMSec * 10000u;
+	_isAlternatingDirection = false;
+
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
+
+	scheduleNextAdvance(runtime, _lastPointTimeDUSec);
+
+	ChangePointsTaskData *changePointsTask = runtime->getVThread().pushTask("PathMotionModifier::changePoints", this, &PathMotionModifier::changePointsTask);
+	changePointsTask->runtime = runtime;
+	changePointsTask->prevPoint = (_startAtBeginning ? prevPointIndex : newPointIndex);
+	changePointsTask->newPoint = newPointIndex;
+	changePointsTask->isTerminal = (_loop == false && _points.size() == 1);
+
+	SendMessageToParentTaskData *sendMessageToParentTask = runtime->getVThread().pushTask("PathMotionModifier::sendMessageToParent", this, &PathMotionModifier::sendMessageToParentTask);
+	sendMessageToParentTask->runtime = runtime;
+	sendMessageToParentTask->eventID = EventIDs::kMotionStarted;
+
+	return kVThreadReturn;
+}
+
+VThreadState PathMotionModifier::changePointsTask(const ChangePointsTaskData &taskData) {
+	Runtime *runtime = taskData.runtime;
+
+	_currentPointIndex = taskData.newPoint;
+
+	// TODO: Figure out if this is the correct order.  These are pushed tasks so order is reversed: We set position first,
+	// then set cel, then fire the message if any.  I don't think the cel or position change have side effects.
+	if (_points[_currentPointIndex].sendSpec.destination != kMessageDestNone) {
+		TriggerMessageTaskData *triggerMessageTask = runtime->getVThread().pushTask("PathMotionModifier::triggerMessage", this, &PathMotionModifier::triggerMessageTask);
+		triggerMessageTask->runtime = runtime;
+		triggerMessageTask->pointIndex = _currentPointIndex;
+	}
+
+	// However, we DO need to fire Motion Ended events BEFORE we fire the last point's message.
+	if (taskData.isTerminal) {
+		SendMessageToParentTaskData *sendToParentTask = runtime->getVThread().pushTask("PathMotionModifier::sendMessageToParent", this, &PathMotionModifier::sendMessageToParentTask);
+		sendToParentTask->runtime = runtime;
+		sendToParentTask->eventID = EventIDs::kMotionEnded;
+	}
+
+	if (_points[_currentPointIndex].useFrame) {
+		ChangeCelTaskData *changeCelTask = runtime->getVThread().pushTask("PathMotionModifier::changeCel", this, &PathMotionModifier::changeCelTask);
+		changeCelTask->runtime = runtime;
+		changeCelTask->pointIndex = _currentPointIndex;
+	}
+
+	Common::Point positionDelta = _points[taskData.newPoint].point - _points[taskData.prevPoint].point;
+	if (positionDelta != Common::Point(0, 0)) {
+		ChangePositionTaskData *changePositionTask = runtime->getVThread().pushTask("PathMotionModifier::changePosition", this, &PathMotionModifier::changePositionTask);
+		changePositionTask->runtime = runtime;
+		changePositionTask->positionDelta = positionDelta;
+	}
+
+	return kVThreadReturn;
+}
+
+VThreadState PathMotionModifier::triggerMessageTask(const TriggerMessageTaskData &taskData) {
+	_points[taskData.pointIndex].sendSpec.sendFromMessenger(taskData.runtime, this, _triggerSource.lock().get(), _incomingData, nullptr);
+
+	return kVThreadReturn;
+}
+
+VThreadState PathMotionModifier::sendMessageToParentTask(const SendMessageToParentTaskData &taskData) {
+	Structural *owner = this->findStructuralOwner();
+
+	if (owner) {
+		Common::SharedPtr<MessageProperties> props(new MessageProperties(Event(taskData.eventID, 0), DynamicValue(), this->getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(props, owner, true, true, false));
+
+		// Send immediately
+		taskData.runtime->sendMessageOnVThread(dispatch);
+	}
+
+	return kVThreadReturn;
+}
+
+VThreadState PathMotionModifier::changeCelTask(const ChangeCelTaskData &taskData) {
+	if (_points[taskData.pointIndex].useFrame) {
+		Structural *structural = findStructuralOwner();
+
+		if (structural) {
+			MiniscriptThread thread(taskData.runtime, nullptr, nullptr, nullptr, this);
+			DynamicValueWriteProxy proxy;
+
+			MiniscriptInstructionOutcome writeRefOutcome = structural->writeRefAttribute(&thread, proxy, "cel");
+			if (writeRefOutcome == kMiniscriptInstructionOutcomeContinue) {
+				DynamicValue cel;
+				cel.setInt(_points[taskData.pointIndex].frame + 1);
+				(void) proxy.pod.ifc->write(&thread, cel, proxy.pod.objectRef, proxy.pod.ptrOrOffset);
+			}
+		}
+	}
+
+	return kVThreadReturn;
+}
+
+VThreadState PathMotionModifier::changePositionTask(const ChangePositionTaskData &taskData) {
+	Structural *structural = findStructuralOwner();
+
+	if (structural && structural->isElement() && static_cast<Element *>(structural)->isVisual()) {
+		VisualElement *visual = static_cast<VisualElement *>(structural);
+		VisualElement::OffsetTranslateTaskData *offsetTranslateTask = taskData.runtime->getVThread().pushTask("VisualElement::offsetTranslate", visual, &VisualElement::offsetTranslateTask);
+		offsetTranslateTask->dx = taskData.positionDelta.x;
+		offsetTranslateTask->dy = taskData.positionDelta.y;
+	}
+
+	return kVThreadReturn;
+}
+
+VThreadState PathMotionModifier::advanceFrameTask(const AdvanceFrameTaskData &taskData) {
+	// Check what the new time will be and if it's in the future.  This also handles the case where the current time was changed
+	// due to a triggered message re-executing the modifier: In that case, this will prevent any subframe advances that would have happened.
+	uint64 newTime = _lastPointTimeDUSec + _frameDurationDUSec;
+	if (newTime >= taskData.terminationTimeDUSec)
+		return kVThreadReturn;
+
+	_lastPointTimeDUSec = newTime;
+
+	bool isPlayingForward = (_reverse == _isAlternatingDirection);
+	bool isAtLastPoint = isPlayingForward ? (_currentPointIndex == _points.size() - 1) : (_currentPointIndex == 0);
+
+	if (isAtLastPoint) {
+		// If this isn't looping, we're done
+		if (_loop == false) {
+			if (_scheduledEvent) {
+				_scheduledEvent->cancel();
+				_scheduledEvent.reset();
+			}
+			return kVThreadReturn;
+		}
+
+		// Otherwise, check for alternation and trigger it
+		if (_alternate) {
+			isPlayingForward = !isPlayingForward;
+			_isAlternatingDirection = !_isAlternatingDirection;
+		}
+	}
+
+	uint prevPointIndex = _currentPointIndex;
+
+	// If the path only has one point, we still act like it's advancing, messages
+	uint nextPointIndex = 0;
+	if (isPlayingForward) {
+		nextPointIndex = _currentPointIndex + 1;
+		if (nextPointIndex > _points.size())
+			nextPointIndex = 0;
+	} else {
+		if (_currentPointIndex == 0)
+			nextPointIndex = _points.size() - 1;
+		else
+			nextPointIndex = _currentPointIndex - 1;
+	}
+
+	bool isTerminal = false;
+	if (!_loop) {
+		isTerminal = isPlayingForward ? (nextPointIndex == _points.size() - 1) : (nextPointIndex == 0);
+		if (isTerminal && _scheduledEvent) {
+			_scheduledEvent->cancel();
+			_scheduledEvent.reset();
+		}
+	}
+
+	// Push the next frame advance for this advancement
+	AdvanceFrameTaskData *advanceFrameTask = taskData.runtime->getVThread().pushTask("PathMotionModifier::advanceFrame", this, &PathMotionModifier::advanceFrameTask);
+	advanceFrameTask->runtime = taskData.runtime;
+	advanceFrameTask->terminationTimeDUSec = taskData.terminationTimeDUSec;
+
+	// Push this frame advance
+	ChangePointsTaskData *changePointsTask = taskData.runtime->getVThread().pushTask("PathMotionModifier::changePoints", this, &PathMotionModifier::changePointsTask);
+	changePointsTask->runtime = taskData.runtime;
+	changePointsTask->prevPoint = prevPointIndex;
+	changePointsTask->newPoint = nextPointIndex;
+	changePointsTask->isTerminal = isTerminal;
+
+	return kVThreadReturn;
+}
+
+void PathMotionModifier::scheduleNextAdvance(Runtime *runtime, uint64 startingFromTimeDUSec) {
+	assert(_scheduledEvent.get() == nullptr);
+
+	uint64 nextFrameTimeMSec = (startingFromTimeDUSec + _frameDurationDUSec + 9999u) / 10000u;
+	_scheduledEvent = runtime->getScheduler().scheduleMethod<PathMotionModifier, &PathMotionModifier::advance>(nextFrameTimeMSec, this);
+}
+
+void PathMotionModifier::advance(Runtime *runtime) {
+	_scheduledEvent.reset();
+
+	uint64 currentTimeDUSec = runtime->getPlayTime() * 10000u;
+
+	uint64 framesToAdvance = (currentTimeDUSec - _lastPointTimeDUSec) / _frameDurationDUSec;
+	uint64 nextFrameDUSec = _lastPointTimeDUSec + framesToAdvance * _frameDurationDUSec;
+
+	// Schedule the next advance now, since the advance may be cancelled by a message triggered by one of the advances
+	scheduleNextAdvance(runtime, nextFrameDUSec);
+
+	AdvanceFrameTaskData *advanceFrameTask = runtime->getVThread().pushTask("PathMotionModifier::advanceFrame", this, &PathMotionModifier::advanceFrameTask);
+	advanceFrameTask->runtime = runtime;
+	advanceFrameTask->terminationTimeDUSec = currentTimeDUSec;
+}
+
+VThreadState PathMotionModifier::terminateTask(const TerminateTaskData &taskData) {
+	if (_scheduledEvent) {
+		SendMessageToParentTaskData *sendToParentTask = taskData.runtime->getVThread().pushTask("PathMotionModifier::endMotion", this, &PathMotionModifier::sendMessageToParentTask);
+		sendToParentTask->runtime = taskData.runtime;
+		sendToParentTask->eventID = EventIDs::kMotionEnded;
+	}
+
+	disable(taskData.runtime);
+
+	return kVThreadReturn;
 }
 
 Common::SharedPtr<Modifier> PathMotionModifier::shallowClone() const {
 	Common::SharedPtr<PathMotionModifier> clone(new PathMotionModifier(*this));
 	clone->_incomingData = DynamicValue();
+	clone->_scheduledEvent.reset();
 	return clone;
 }
 
 const char *PathMotionModifier::getDefaultName() const {
 	return "Path Motion Modifier";
 }
-
 
 SimpleMotionModifier::SimpleMotionModifier() : _motionType(kMotionTypeIntoScene), _directionFlags(0), _steps(0), _delayMSecTimes4800(0) {
 }

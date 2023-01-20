@@ -353,12 +353,16 @@ private:
 class PathMotionModifier : public Modifier {
 public:
 	PathMotionModifier();
+	~PathMotionModifier();
 
 	bool load(ModifierLoaderContext &context, const Data::PathMotionModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 	void disable(Runtime *runtime) override;
+
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Path Motion Modifier"; }
@@ -376,6 +380,74 @@ private:
 		MessengerSendSpec sendSpec;
 	};
 
+	struct ExecuteTaskData {
+		ExecuteTaskData() : runtime(nullptr) {}
+
+		Runtime *runtime;
+	};
+
+	struct TerminateTaskData {
+		TerminateTaskData() : runtime(nullptr) {}
+
+		Runtime *runtime;
+	};
+
+	struct ChangePointsTaskData {
+		ChangePointsTaskData() : runtime(nullptr), prevPoint(0), newPoint(0), isTerminal(false) {}
+
+		Runtime *runtime;
+		uint prevPoint;
+		uint newPoint;
+		bool isTerminal;
+	};
+
+	struct TriggerMessageTaskData {
+		TriggerMessageTaskData() : runtime(nullptr), pointIndex(0) {}
+
+		Runtime *runtime;
+		uint pointIndex;
+	};
+
+	struct SendMessageToParentTaskData {
+		SendMessageToParentTaskData() : runtime(nullptr), eventID(EventIDs::kNothing) {}
+
+		Runtime *runtime;
+		EventIDs::EventID eventID;
+	};
+
+	struct ChangeCelTaskData {
+		ChangeCelTaskData() : runtime(nullptr), pointIndex(0) {}
+
+		Runtime *runtime;
+		uint pointIndex;
+	};
+
+	struct ChangePositionTaskData {
+		ChangePositionTaskData() : runtime(nullptr) {}
+
+		Runtime *runtime;
+		Common::Point positionDelta;
+	};
+
+	struct AdvanceFrameTaskData {
+		AdvanceFrameTaskData() : runtime(nullptr), terminationTimeDUSec(0) {}
+
+		Runtime *runtime;
+		uint64 terminationTimeDUSec;
+	};
+
+	VThreadState executeTask(const ExecuteTaskData &taskData);
+	VThreadState terminateTask(const TerminateTaskData &taskData);
+	VThreadState changePointsTask(const ChangePointsTaskData &taskData);
+	VThreadState triggerMessageTask(const TriggerMessageTaskData &taskData);
+	VThreadState sendMessageToParentTask(const SendMessageToParentTaskData &taskData);
+	VThreadState changeCelTask(const ChangeCelTaskData &taskData);
+	VThreadState changePositionTask(const ChangePositionTaskData &taskData);
+	VThreadState advanceFrameTask(const AdvanceFrameTaskData &taskData);
+
+	void scheduleNextAdvance(Runtime *runtime, uint64 startingFromTimeDUSec);
+	void advance(Runtime *runtime);
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 
@@ -387,11 +459,17 @@ private:
 	bool _alternate;
 	bool _startAtBeginning;
 
-	uint32 _frameDurationTimes10Million;
+	uint64 _frameDurationDUSec;
 
 	Common::Array<PointDef> _points;
 
 	DynamicValue _incomingData;
+
+	Common::WeakPtr<RuntimeObject> _triggerSource;
+	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
+	bool _isAlternatingDirection;
+	uint _currentPointIndex;
+	uint64 _lastPointTimeDUSec;
 };
 
 class SimpleMotionModifier : public Modifier {

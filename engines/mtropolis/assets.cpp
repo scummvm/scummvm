@@ -787,12 +787,11 @@ const Common::Array<int> &MovieAsset::getDamagedFrames() const {
 }
 
 
-CachedImage::CachedImage() : _colorDepth(kColorDepthModeInvalid), _isOptimized(false) {
+CachedImage::CachedImage() : _colorDepth(kColorDepthModeInvalid) {
 }
 
 void CachedImage::resetSurface(ColorDepthMode colorDepth, const Common::SharedPtr<Graphics::ManagedSurface> &surface) {
 	_optimizedSurface.reset();
-	_isOptimized = false;
 
 	_colorDepth = colorDepth;
 	_surface = surface;

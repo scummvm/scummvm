@@ -243,7 +243,6 @@ private:
 	Common::SharedPtr<Graphics::ManagedSurface> _optimizedSurface;
 
 	ColorDepthMode _colorDepth;
-	bool _isOptimized;
 };
 
 class ImageAsset : public Asset {
