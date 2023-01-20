@@ -672,7 +672,8 @@ static const ExtraGuiOption enableOriginalGUI = {
 
 static const ExtraGuiOption enableLowLatencyAudio = {
 	_s("Enable low latency audio mode"),
-	_s("Allows the game to use low latency audio, at the cost of sound accuracy."),
+	_s("Allows the game to use low latency audio, at the cost of sound accuracy. \
+		It is recommended to enable this feature only if you incur in audio latency issues during normal gameplay."),
 	"dimuse_low_latency_mode",
 	false,
 	0,
