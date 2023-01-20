@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-20 02:45+0000\n"
-"PO-Revision-Date: 2023-01-15 13:59+0000\n"
+"PO-Revision-Date: 2023-01-20 10:31+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1131,10 +1131,8 @@ msgid "the filtering setting could not be changed"
 msgstr "no se ha podido cambiar el filtrado"
 
 #: gui/options.cpp:842
-#, fuzzy
-#| msgid "the fullscreen setting could not be changed"
 msgid "the vsync setting could not be changed"
-msgstr "no se ha podido cambiar el ajuste de pantalla completa"
+msgstr "no se ha podido cambiar el ajuste de la sincronía vertical"
 
 #: gui/options.cpp:859
 msgid "the shader could not be changed"
@@ -6919,11 +6917,11 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_options.h:255
 msgid "Casio MT-540"
-msgstr ""
+msgstr "Casio MT-540"
 
 #: engines/sci/detection_options.h:259
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "Casio CT-460/CSM-1"
 
 #: engines/sci/detection_tables.h:4492
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -7895,6 +7893,9 @@ msgid ""
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
+"Permite el uso de audio a baja latencia a costa de sacrificar fidelidad "
+"sonora. \t\tSe recomienda activar esta opción únicamente si sufres problemas "
+"de latencia de audio durante una partida normal."
 
 #: engines/scumm/scumm.cpp:263
 msgid ""
