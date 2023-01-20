@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-19 21:51+0000\n"
+"POT-Creation-Date: 2023-01-20 00:28+0000\n"
 "PO-Revision-Date: 2023-01-19 11:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -7690,8 +7690,10 @@ msgstr "低遅延オーディオを有効化"
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
-"Allows the game to use low latency audio, at the cost of sound accuracy."
-msgstr "オーディオが低遅延になりますが、正確さは低下します。"
+"Allows the game to use low latency audio, at the cost of sound accuracy. \t"
+"\tIt is recommended to enable this feature only if you incur in audio "
+"latency issues during normal gameplay."
+msgstr ""
 
 #: engines/scumm/scumm.cpp:263
 msgid ""
@@ -9195,6 +9197,10 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid ""
+#~ "Allows the game to use low latency audio, at the cost of sound accuracy."
+#~ msgstr "オーディオが低遅延になりますが、正確さは低下します。"
 
 #~ msgctxt "lowres"
 #~ msgid "Misc"

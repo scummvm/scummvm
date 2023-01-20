@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-19 21:51+0000\n"
+"POT-Creation-Date: 2023-01-20 00:28+0000\n"
 "PO-Revision-Date: 2023-01-15 18:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7800,10 +7800,10 @@ msgstr "Ввімкнути режим низької затримки звуку
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
-"Allows the game to use low latency audio, at the cost of sound accuracy."
+"Allows the game to use low latency audio, at the cost of sound accuracy. \t"
+"\tIt is recommended to enable this feature only if you incur in audio "
+"latency issues during normal gameplay."
 msgstr ""
-"Дозволяє грі використовувати аудіо з низькою затримкою за рахунок точного "
-"відтворення."
 
 #: engines/scumm/scumm.cpp:263
 msgid ""
@@ -9320,6 +9320,12 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid ""
+#~ "Allows the game to use low latency audio, at the cost of sound accuracy."
+#~ msgstr ""
+#~ "Дозволяє грі використовувати аудіо з низькою затримкою за рахунок точного "
+#~ "відтворення."
 
 #~ msgctxt "lowres"
 #~ msgid "Misc"

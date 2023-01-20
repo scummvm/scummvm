@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-19 21:51+0000\n"
+"POT-Creation-Date: 2023-01-20 00:28+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -7351,7 +7351,9 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
-"Allows the game to use low latency audio, at the cost of sound accuracy."
+"Allows the game to use low latency audio, at the cost of sound accuracy. \t"
+"\tIt is recommended to enable this feature only if you incur in audio "
+"latency issues during normal gameplay."
 msgstr ""
 
 #: engines/scumm/scumm.cpp:263

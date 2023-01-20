@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-19 21:51+0000\n"
+"POT-Creation-Date: 2023-01-20 00:28+0000\n"
 "PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -7677,7 +7677,9 @@ msgstr "הפעלת מצב ניפוי התקלים"
 
 #: engines/scumm/metaengine.cpp:675
 msgid ""
-"Allows the game to use low latency audio, at the cost of sound accuracy."
+"Allows the game to use low latency audio, at the cost of sound accuracy. \t"
+"\tIt is recommended to enable this feature only if you incur in audio "
+"latency issues during normal gameplay."
 msgstr ""
 
 #: engines/scumm/scumm.cpp:263
