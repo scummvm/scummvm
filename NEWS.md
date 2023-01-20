@@ -129,11 +129,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed Roland MT-32 support in Sam & Max.
    - Implemented original GUI and save menus for LucasArts games (DOS, Windows,
      Amiga, Macintosh, FM-Towns, SegaCD, Atari ST, NES and Commodore 64 versions).
+     Also activate the general "Ask for confirmation on exit" option for a more
+     authentic '90s experience!
    - Fixed minor timing issues for the SMUSH video engine, mostly affecting
      Full Throttle.
    - Added a low latency audio mode to Full Throttle, The Dig and The Curse of
      Monkey Island; this can improve audio performance expecially in non-desktop
-     devices.
+     devices, but it is also a little less accurate than the original.
    - Implemented reloading CD audio for Monkey Island 1 and Loom (CD versions),
      when reloading a save state.
 
