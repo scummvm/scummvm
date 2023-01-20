@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-20 09:03+0000\n"
+"POT-Creation-Date: 2023-01-20 13:14+0000\n"
 "PO-Revision-Date: 2023-01-20 10:31+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -245,9 +245,10 @@ msgstr "Descarga completada, se ha(n) descargado %d paquete(s) nuevo(s), %s %S"
 
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:385
 #: gui/gui-manager.cpp:162 gui/unknown-game-dialog.cpp:53
-#: engines/nancy/dialogs.cpp:313 engines/scumm/help.cpp:123
-#: engines/scumm/help.cpp:138 engines/scumm/help.cpp:163
-#: engines/scumm/help.cpp:189 engines/scumm/help.cpp:207
+#: backends/platform/android/options.cpp:358 engines/nancy/dialogs.cpp:313
+#: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
+#: engines/scumm/help.cpp:163 engines/scumm/help.cpp:189
+#: engines/scumm/help.cpp:207
 msgid "Close"
 msgstr "Cerrar"
 
@@ -328,8 +329,8 @@ msgstr ""
 #: gui/options.cpp:1616 gui/options.cpp:1630 gui/options.cpp:2035
 #: gui/options.cpp:2443 gui/options.cpp:2496 gui/options.cpp:2711
 #: gui/options.cpp:3171 audio/null.cpp:40
-#: backends/platform/android/options.cpp:112
-#: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
+#: backends/platform/android/options.cpp:137
+#: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:62
 msgid "<default>"
 msgstr "<por defecto>"
 
@@ -3822,48 +3823,53 @@ msgstr "Modo aumentado desactivado. Reactivando modo de arrastre..."
 msgid "Magnify Mode Off"
 msgstr "Modo aumentado desactivado"
 
-#: backends/platform/android/options.cpp:93
+#: backends/platform/android/options.cpp:118
 msgid "Show On-screen control"
 msgstr "Mostrar controles en pantalla"
 
-#: backends/platform/android/options.cpp:94
+#: backends/platform/android/options.cpp:119
 msgid "Choose the preferred touch mode:"
 msgstr "Selecciona el modo táctil que prefieres:"
 
-#: backends/platform/android/options.cpp:96
+#: backends/platform/android/options.cpp:121
 msgid "In menus"
 msgstr "Dentro de menús"
 
-#: backends/platform/android/options.cpp:98
-#: backends/platform/android/options.cpp:116
-#: backends/platform/android/options.cpp:117
+#: backends/platform/android/options.cpp:123
+#: backends/platform/android/options.cpp:141
+#: backends/platform/android/options.cpp:142
 msgid "Touchpad emulation"
 msgstr "Emulación de pantalla táctil"
 
-#: backends/platform/android/options.cpp:99
-#: backends/platform/android/options.cpp:119
-#: backends/platform/android/options.cpp:120
+#: backends/platform/android/options.cpp:124
+#: backends/platform/android/options.cpp:144
+#: backends/platform/android/options.cpp:145
 msgid "Direct mouse"
 msgstr "Control directo de ratón"
 
-#: backends/platform/android/options.cpp:100
-#: backends/platform/android/options.cpp:122
-#: backends/platform/android/options.cpp:123
+#: backends/platform/android/options.cpp:125
+#: backends/platform/android/options.cpp:147
+#: backends/platform/android/options.cpp:148
 msgid "Gamepad emulation"
 msgstr "Emulación de mando"
 
-#: backends/platform/android/options.cpp:106
+#: backends/platform/android/options.cpp:131
 msgid "In 2D games"
 msgstr "En juegos 2D"
 
-#: backends/platform/android/options.cpp:108
+#: backends/platform/android/options.cpp:133
 msgid "In 3D games"
 msgstr "En juegos 3D"
 
-#. I18N: Show a button to revoke Storage Access Framework permissions for Android
-#: backends/platform/android/options.cpp:128
-msgid "Show SAF revoke permissions overlay button"
-msgstr "Mostrar botón superpuesto para revocar permisos del SAF"
+#: backends/platform/android/options.cpp:152
+msgid "Forget SAF authorization"
+msgstr ""
+
+#: backends/platform/android/options.cpp:359
+#, fuzzy
+#| msgid "~R~emove Game"
+msgid "Remove"
+msgstr "E~l~iminar juego"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -9454,6 +9460,9 @@ msgstr ""
 "Necesitarás todas las fuentes del paquete que prefieras, por ejemplo, "
 "LiberationMono, LiberationSans y LiberationSerif, o FreeMono, FreeSans y "
 "FreeSerif respectivamente."
+
+#~ msgid "Show SAF revoke permissions overlay button"
+#~ msgstr "Mostrar botón superpuesto para revocar permisos del SAF"
 
 #~ msgid ""
 #~ "Allows the game to use low latency audio, at the cost of sound accuracy."
