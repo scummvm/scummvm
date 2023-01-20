@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-20 09:03+0000\n"
-"PO-Revision-Date: 2023-01-15 18:34+0000\n"
+"PO-Revision-Date: 2023-01-20 11:57+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1129,10 +1129,8 @@ msgid "the filtering setting could not be changed"
 msgstr "не вдалося змінити режим фільтрування"
 
 #: gui/options.cpp:842
-#, fuzzy
-#| msgid "the fullscreen setting could not be changed"
 msgid "the vsync setting could not be changed"
-msgstr "не вдалося змінити режим повного екрану"
+msgstr "не вдалося змінити режим vsync"
 
 #: gui/options.cpp:859
 msgid "the shader could not be changed"
@@ -6840,11 +6838,11 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_options.h:255
 msgid "Casio MT-540"
-msgstr ""
+msgstr "Casio MT-540"
 
 #: engines/sci/detection_options.h:259
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "Casio MT-540 / CSM-1"
 
 #: engines/sci/detection_tables.h:4492
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -7112,17 +7110,14 @@ msgid "Enable the original GUI and Menu"
 msgstr "Ввімкнути оригінальні GUI та меню"
 
 #: engines/scumm/dialogs.cpp:1053
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
 msgstr ""
 "Вмикає використання грою ориґінального графічного інтерфейсу та меню "
-"зберігання/завантаження."
+"зберігання/завантаження. Використовуйте його разом з \"Запитувати "
+"підтвердження виходу\" для більш логічної повединки."
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
@@ -7800,17 +7795,14 @@ msgstr ""
 "доступне."
 
 #: engines/scumm/metaengine.cpp:667
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Вмикає використання грою ориґінального графічного інтерфейсу та меню "
-"зберігання/завантаження."
+"зберігання/завантаження. \t\tВикористовуйте його разом з \"Запитувати "
+"підтвердження виходу\" для більш логічної повединки."
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Enable low latency audio mode"
@@ -7822,6 +7814,9 @@ msgid ""
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
+"Дозволяє грі використовувати аудіо з низькою затримкою, за рахунок точності "
+"відтворення. \t\tРекомендуємо вмикати цю опцію тільки в разі, якщо ви "
+"зтикаєтесь з затримками звуку під час гри."
 
 #: engines/scumm/scumm.cpp:263
 msgid ""
