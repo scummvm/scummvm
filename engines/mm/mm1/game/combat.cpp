@@ -988,7 +988,7 @@ void Combat::iterateMonsters1Inner() {
 			isEnd = true;
 	}
 	if (!isEnd)
-		isEnd = ((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
+		isEnd = (int)((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
@@ -1072,7 +1072,7 @@ void Combat::iterateMonsters2Inner() {
 			isEnd = true;
 	}
 	if (!isEnd)
-		isEnd = ((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
+		isEnd = (int)((int)_remainingMonsters.size() + _destMonsterNum - _spellMonsterCount) < 0;
 
 	if (!isEnd) {
 		// Move to next iteration after display timeout
@@ -1222,7 +1222,7 @@ bool Combat::divineIntervention() {
 
 	_divineInterventionUsed = true;
 	int age = (int)c._level + 5;
-	if (c._level > 255)
+	if (age > 255)
 		return false;
 
 	c._age = age;
@@ -1404,7 +1404,7 @@ bool Combat::acidRain() {
 }
 
 void Combat::fingerOfDeath() {
-	Common::String line1 = Common::String::format("|%s| %s",
+	Common::String line1 = Common::String::format("%s %s",
 		g_globals->_currCharacter->_name,
 		STRING["spells.casts_spell"].c_str());
 
@@ -1420,7 +1420,8 @@ void Combat::fingerOfDeath() {
 	}
 	removeMonster();
 
-	Common::String line2 = Common::String::format("|%s| %s",
+	Common::String line2 = Common::String::format("%s %s",
+		monsterName.c_str(),
 		kills ? STRING["spells.char_effects.7"].c_str() :
 		STRING["monster_spells.not_affected"].c_str()
 	);
@@ -1435,7 +1436,7 @@ void Combat::fingerOfDeath() {
 }
 
 void Combat::disintegration() {
-	Common::String line1 = Common::String::format("|%s| %s",
+	Common::String line1 = Common::String::format("%s %s",
 		g_globals->_currCharacter->_name,
 		STRING["spells.casts_spell"].c_str());
 
@@ -1450,7 +1451,8 @@ void Combat::disintegration() {
 	}
 	removeMonster();
 
-	Common::String line2 = Common::String::format("|%s| %s",
+	Common::String line2 = Common::String::format("%s %s",
+		monsterName.c_str(),
 		kills ? STRING["spells.char_effects.disintegrated"].c_str() :
 		STRING["monster_spells.not_affected"].c_str()
 	);
