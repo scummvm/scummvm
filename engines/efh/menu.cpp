@@ -694,7 +694,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				return objectId;
 			}
 
-			if (sub22293(_mapPosX, _mapPosY, charId, itemId, 2, -1)) {
+			if (handleInteractionText(_mapPosX, _mapPosY, charId, itemId, 2, -1)) {
 				_statusMenuActive = false;
 				return -1;
 			}
@@ -717,7 +717,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						displayStringInSmallWindowWithBorder("Not a Combat Option !", true, charId, windowId, menuId, curMenuLine);
 					} else {
 						removeObject(charId, objectId);
-						if (sub22293(_mapPosX, _mapPosY, charId, itemId, 3, -1)) {
+						if (handleInteractionText(_mapPosX, _mapPosY, charId, itemId, 3, -1)) {
 							_statusMenuActive = false;
 							return -1;
 						}
@@ -807,7 +807,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						return 0x7D00;
 					}
 
-					if (sub22293(_mapPosX, _mapPosY, charId, itemId, 1, -1)) {
+					if (handleInteractionText(_mapPosX, _mapPosY, charId, itemId, 1, -1)) {
 						_statusMenuActive = false;
 						return -1;
 					}
@@ -820,7 +820,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			objectId = _menuStatItemArr[selectedLine];
 			if (gameMode == 2) {
 				displayStringInSmallWindowWithBorder("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
-			} else if (sub22293(_mapPosX, _mapPosY, charId, objectId, 4, -1)) {
+			} else if (handleInteractionText(_mapPosX, _mapPosY, charId, objectId, 4, -1)) {
 				_statusMenuActive = false;
 				return -1;
 			}

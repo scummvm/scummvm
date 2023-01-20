@@ -2103,8 +2103,8 @@ void EfhEngine::displayImp1Text(int16 textId) {
 	displayAnimFrames(0xFE, true);
 }
 
-bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId) {
-	debugC(3, kDebugEngine, "sub22293 %d-%d %d %d %d %d", mapPosX, mapPosY, charId, itemId, arg8, imageSetId);
+bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId) {
+	debugC(3, kDebugEngine, "handleInteractionText %d-%d %d %d %d %d", mapPosX, mapPosY, charId, itemId, arg8, imageSetId);
 
 	int16 tileId = findMapSpecialTileIndex(mapPosX, mapPosY);
 
@@ -2148,7 +2148,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 				for (uint var2 = 0; var2 < 39; ++var2) {
 					// CHECKME : the whole loop doesn't make much sense as it's using var6 instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
 					// Also, 39 correspond to the size of activeScore + passiveScore + infoScore + the 2 remaining bytes of the struct
-					warning("sub22293 - _activeScore[%d]", var6);
+					warning("handleInteractionText - _activeScore[%d]", var6);
 					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapSpecialTiles[_techId][tileId]._triggerId) {
 						displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 						return true;
@@ -2165,7 +2165,7 @@ bool EfhEngine::sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemI
 		int16 var6 = _mapSpecialTiles[_techId][tileId]._field3;
 		if (var6 >= 0x78 && var6 <= 0xEF) {
 			var6 -= 0x78;
-			warning("sub22293 - _activeScore[%d]", var6);
+			warning("handleInteractionText - _activeScore[%d]", var6);
 			// The 2 checks on var6 are useless, as [0x78..0xEF] - 0x78 => [0x00..0x77]
 			if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapSpecialTiles[_techId][tileId]._triggerId <= _npcBuf[charId]._activeScore[itemId]) {
 				displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
@@ -2198,7 +2198,7 @@ int8 EfhEngine::checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4) {
 	tileFactId += curTileInfo % 72;
 
 	if (arg4) {
-		sub22293(mapPosX, mapPosY, -1, 0x7FFF, 0, tileFactId);
+		handleInteractionText(mapPosX, mapPosY, -1, 0x7FFF, 0, tileFactId);
 	}
 
 	if (_word2C880) {
