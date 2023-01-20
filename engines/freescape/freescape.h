@@ -178,6 +178,7 @@ public:
 	bool _shootMode;
 	bool _noClipMode;
 	void processInput();
+	void resetInput();
 	void generateDemoInput();
 	virtual void pressedKey(const int keycode);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);

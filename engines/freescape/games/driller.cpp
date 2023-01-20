@@ -222,6 +222,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 280;
+		_pitch = 0;
 	} else if (areaID == 127) {
 		assert(entranceID == 0);
 		_yaw = 90;
@@ -242,10 +243,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentArea->_skyColor = 0;
 	_currentArea->_usualBackgroundColor = 0;
 
-	if (areaID != _startArea || entranceID != _startEntrance) {
-		g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
-		rotate(0, 0);
-	}
+	resetInput();
 }
 
 void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset) {
@@ -719,10 +717,10 @@ void DrillerEngine::processBorder() {
 		while (entry->areaId) {
 
 			if (entry->palette == kDrillerCGAPaletteRedGreen) {
-				_borderCGAByArea[entry->areaId] = borderTextureRedGreen; 
+				_borderCGAByArea[entry->areaId] = borderTextureRedGreen;
 				_paletteCGAByArea[entry->areaId] = (byte *)kDrillerCGAPaletteRedGreenData;
 			} else if (entry->palette == kDrillerCGAPalettePinkBlue) {
-				_borderCGAByArea[entry->areaId] = _borderTexture; 
+				_borderCGAByArea[entry->areaId] = _borderTexture;
 				_paletteCGAByArea[entry->areaId] = (byte *)kDrillerCGAPalettePinkBlueData;
 			} else
 				error("Invalid CGA palette to use");

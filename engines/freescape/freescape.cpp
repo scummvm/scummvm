@@ -336,6 +336,16 @@ void FreescapeEngine::drawFrame() {
 
 void FreescapeEngine::pressedKey(const int keycode) {}
 
+void FreescapeEngine::resetInput() {
+	_shootMode = false;
+	centerCrossair();
+	g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
+	g_system->getEventManager()->purgeMouseEvents();
+	g_system->getEventManager()->purgeKeyboardEvents();
+	rotate(0, 0);
+}
+
+
 void FreescapeEngine::processInput() {
 	float currentFrame = g_system->getMillis();
 	float deltaTime = 20.0;
@@ -512,7 +522,6 @@ Common::Error FreescapeEngine::run() {
 
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");
-	centerCrossair();
 	if (saveSlot == -1)
 		titleScreen();
 	loadBorder(); // Border is load unmodified
@@ -529,7 +538,7 @@ Common::Error FreescapeEngine::run() {
 	bool endGame = false;
 	// Draw first frame
 
-	rotate(0, 0);
+	resetInput();
 	drawFrame();
 	_gfx->flipBuffer();
 	g_system->updateScreen();
