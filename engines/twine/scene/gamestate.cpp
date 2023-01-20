@@ -102,7 +102,7 @@ void GameState::initHeroVars() {
 
 void GameState::initEngineVars() {
 	debug(2, "Init engine variables");
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 
 	_engine->_scene->_alphaLight = LBAAngles::ANGLE_315;
 	_engine->_scene->_betaLight = LBAAngles::ANGLE_334;
@@ -349,7 +349,7 @@ void GameState::doFoundObj(InventoryItems item) {
 	_engine->_music->stopMusic();
 	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
 
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 	_engine->_text->initItemFoundText(item);
 	_engine->_text->initDialogueBox();
 
@@ -372,7 +372,7 @@ void GameState::doFoundObj(InventoryItems item) {
 	int16 itemAngle = LBAAngles::ANGLE_0;
 	for (;;) {
 		FrameMarker frame(_engine, 66);
-		_engine->_interface->resetClip();
+		_engine->_interface->unsetClip();
 		_engine->_redraw->_currNumOfRedrawBox = 0;
 		_engine->_redraw->blitBackgroundAreas();
 		_engine->_interface->drawTransparentBox(boxRect, 4);
@@ -385,7 +385,7 @@ void GameState::doFoundObj(InventoryItems item) {
 
 		_engine->_menu->drawRectBorders(boxRect);
 		_engine->_redraw->addRedrawArea(boxRect);
-		_engine->_interface->resetClip();
+		_engine->_interface->unsetClip();
 		init3DGame();
 
 		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, bodyData, &_engine->_scene->_sceneHero->_animTimerData)) {
@@ -401,7 +401,7 @@ void GameState::doFoundObj(InventoryItems item) {
 		_engine->_redraw->addRedrawArea(modelRect);
 
 		if (textState == ProgressiveTextState::ContinueRunning) {
-			_engine->_interface->resetClip();
+			_engine->_interface->unsetClip();
 			textState = _engine->_text->updateProgressiveText();
 		} else {
 			_engine->_text->fadeInRemainingChars();
@@ -443,7 +443,7 @@ void GameState::doFoundObj(InventoryItems item) {
 	_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
 
 	_engine->_scene->_sceneHero->_animTimerData = tmpAnimTimer;
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 }
 
 void GameState::processGameChoices(TextId choiceIdx) {
@@ -528,7 +528,7 @@ void GameState::processGameoverAnimation() {
 
 	_engine->delaySkip(2000);
 
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 	_engine->restoreFrontBuffer();
 	init3DGame();
 

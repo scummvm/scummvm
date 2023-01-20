@@ -36,7 +36,7 @@ class TwinEEngine;
 class Interface {
 private:
 	TwinEEngine *_engine;
-	Common::Rect _savedClip;
+	Common::Rect _memoClip;
 
 public:
 	Interface(TwinEEngine *engine);
@@ -67,9 +67,9 @@ public:
 	void drawFilledRect(const Common::Rect &rect, uint8 colorIndex);
 
 	bool setClip(const Common::Rect &rect);
-	void saveClip(); // saveTextWindow
-	void loadClip(); // loadSavedTextWindow
-	void resetClip();
+	void memoClip(); // saveTextWindow
+	void restoreClip(); // loadSavedTextWindow
+	void unsetClip();
 };
 
 } // namespace TwinE

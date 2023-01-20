@@ -1771,7 +1771,7 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 	} else {
 		affObjetIso(0, y, 0, LBAAngles::ANGLE_0, angle, LBAAngles::ANGLE_0, bodyData, dummy);
 	}
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 }
 
 void Renderer::draw3dObject(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 cameraZoom) {

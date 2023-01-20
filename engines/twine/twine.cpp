@@ -597,7 +597,7 @@ void TwinEEngine::initAll() {
 	_scene->_sceneHero = _scene->getActor(OWN_ACTOR_SCENE_INDEX);
 
 	// Set clip to fullscreen by default, allows main menu to render properly after load
-	_interface->resetClip();
+	_interface->unsetClip();
 
 	// getting configuration file
 	initConfigurations();

@@ -339,7 +339,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 	addRedrawArea(_engine->_interface->_clip);
 
 	_engine->_debugScene->drawClip(renderRect);
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 }
 
 void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw) {
@@ -360,7 +360,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	}
 
 	if (!_engine->_renderer->affObjetIso(delta.x, delta.y, delta.z, LBAAngles::ANGLE_0, actor->_beta, LBAAngles::ANGLE_0, _engine->_resources->_bodyData[actor->_body], renderRect)) {
-		_engine->_interface->resetClip();
+		_engine->_interface->unsetClip();
 		return;
 	}
 
@@ -384,7 +384,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 		_engine->_debugScene->drawClip(_engine->_interface->_clip);
 	}
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 }
 
 void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
@@ -444,7 +444,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
-		_engine->_interface->resetClip();
+		_engine->_interface->unsetClip();
 	}
 }
 
@@ -482,7 +482,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 
 		// show clipping area
 		//drawRectBorders(renderRect);
-		_engine->_interface->resetClip();
+		_engine->_interface->unsetClip();
 	}
 }
 
@@ -617,7 +617,7 @@ void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool b
 			processDrawListExtras(drawCmd);
 		}
 
-		_engine->_interface->resetClip();
+		_engine->_interface->unsetClip();
 	}
 }
 
@@ -689,7 +689,7 @@ void Redraw::renderOverlays() {
 
 				addRedrawArea(_engine->_interface->_clip);
 
-				_engine->_interface->resetClip();
+				_engine->_interface->unsetClip();
 				break;
 			}
 			case OverlayType::koNumberRange: {
@@ -714,7 +714,7 @@ void Redraw::renderOverlays() {
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
 				addRedrawArea(_engine->_interface->_clip);
-				_engine->_interface->resetClip();
+				_engine->_interface->unsetClip();
 				break;
 			}
 			case OverlayType::koInventoryItem: {
@@ -730,7 +730,7 @@ void Redraw::renderOverlays() {
 				_engine->_menu->drawRectBorders(rect);
 				addRedrawArea(rect);
 				_engine->_gameState->init3DGame();
-				_engine->_interface->resetClip();
+				_engine->_interface->unsetClip();
 				break;
 			}
 			case OverlayType::koText: {
@@ -755,7 +755,7 @@ void Redraw::renderOverlays() {
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
 				addRedrawArea(_engine->_interface->_clip);
-				_engine->_interface->resetClip();
+				_engine->_interface->unsetClip();
 				break;
 			}
 			}
@@ -796,7 +796,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	int32 tmp_projPosX = _projPosScreen.x;
 	int32 tmp_projPosY = _projPosScreen.y;
 
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 
 	if (bgRedraw) {
 		_engine->freezeTime(false);
@@ -836,7 +836,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	renderOverlays();
 	renderText();
 
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 
 	// need to be here to fade after drawing all actors in scene
 	if (_engine->_scene->_needChangeScene == SCENE_CEILING_GRID_FADE_2) {
@@ -892,7 +892,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 
 	if (_engine->_interface->setClip(renderRect)) {
 		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
-		_engine->_interface->resetClip();
+		_engine->_interface->unsetClip();
 	}
 }
 

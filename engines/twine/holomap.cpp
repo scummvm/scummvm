@@ -288,15 +288,13 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	_engine->_text->drawText(x, y, title);
 }
 
-void Holomap::drawHoloObj(const IVec3 &angle, int32 x, int32 y) {
-	_engine->_renderer->setAngleCamera(x, y, 0);
-	const IVec3 &destPos = _engine->_renderer->longWorldRot(0, 0, 1000);
-	_engine->_renderer->setPosCamera(0, 0, 0);
-	_engine->_renderer->setBaseRotation(angle);
-	_engine->_renderer->setCameraRotation(0, 0, distance(zDistanceTrajectory));
-	_engine->_interface->resetClip();
+void Holomap::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta) {
+	_engine->_renderer->setAngleCamera(alpha, beta, 0);
+	const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000));
+	_engine->_renderer->setFollowCamera(0, 0, 0, angle.x, angle.y, angle.z, distance(zDistanceTrajectory));
+	_engine->_interface->unsetClip();
 	Common::Rect dirtyRect;
-	_engine->_renderer->renderIsoModel(destPos, x, y, LBAAngles::ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
+	_engine->_renderer->renderIsoModel(m, alpha, beta, LBAAngles::ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
 	_engine->copyBlockPhys(dirtyRect);
 }
 
@@ -336,7 +334,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	}
 
 	_engine->exitSceneryView();
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 	_engine->_screens->clearScreen();
 
 	initHoloDatas();
@@ -425,7 +423,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	_engine->_screens->clearScreen();
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
 	_engine->_gameState->init3DGame();
-	_engine->_interface->loadClip();
+	_engine->_interface->restoreClip();
 
 	_engine->_text->initSceneTextBank();
 	_engine->_input->enableKeyMap(mainKeyMapId);
@@ -520,7 +518,7 @@ void Holomap::holoMap() {
 
 	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBA);
 	_engine->_sound->stopSamples();
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 	_engine->_screens->clearScreen();
 	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBA);
 
@@ -618,7 +616,7 @@ void Holomap::holoMap() {
 			const Common::Rect &rect = _engine->centerOnScreenX(scale(300), 0, scale(330));
 			// clip reduces the bad effect of https://bugs.scummvm.org/ticket/12074
 			// but it's not part of the original code
-			_engine->_interface->saveClip();
+			_engine->_interface->memoClip();
 			_engine->_interface->setClip(rect);
 			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 			_engine->_renderer->setInverseAngleCamera(xRot, yRot, 0);
@@ -628,7 +626,7 @@ void Holomap::holoMap() {
 			_engine->_renderer->setCameraRotation(0, 0, distance(ZOOM_BIG_HOLO));
 			drawHoloMap(holomapImagePtr, holomapImageSize);
 			drawListPos(xRot, yRot, 0, true);
-			_engine->_interface->loadClip();
+			_engine->_interface->restoreClip();
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 			if (automove) {
 				// draw cursor
@@ -656,7 +654,7 @@ void Holomap::holoMap() {
 	_engine->_scene->_betaLight = betaLightTmp;
 
 	_engine->_gameState->init3DGame();
-	_engine->_interface->loadClip();
+	_engine->_interface->restoreClip();
 
 	_engine->_input->enableKeyMap(mainKeyMapId);
 	_engine->_text->initSceneTextBank();

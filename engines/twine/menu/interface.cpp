@@ -196,15 +196,15 @@ bool Interface::setClip(const Common::Rect &rect) {
 	return true;
 }
 
-void Interface::saveClip() {
-	_savedClip = _clip;
+void Interface::memoClip() {
+	_memoClip = _clip;
 }
 
-void Interface::loadClip() {
-	_clip = _savedClip;
+void Interface::restoreClip() {
+	_clip = _memoClip;
 }
 
-void Interface::resetClip() {
+void Interface::unsetClip() {
 	_clip = _engine->rect();
 }
 

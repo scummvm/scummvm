@@ -971,7 +971,7 @@ void Menu::drawKeys(int32 left, int32 top) {
 }
 
 void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 	const int16 height = 80;
 	const Common::Rect rect(left, top, left + width, top + height);
 	drawRectBorders(rect);
@@ -1035,8 +1035,8 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 		drawRectBorders(boxRectCopy);
 	}
 
-	_engine->_interface->saveClip();
-	_engine->_interface->resetClip();
+	_engine->_interface->memoClip();
+	_engine->_interface->unsetClip();
 
 	if (behaviour == _engine->_actor->_heroBehaviour) {
 		const int titleOffset = 10;
@@ -1067,7 +1067,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 
 	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, *_behaviourEntity, _moveMenu);
 
-	_engine->_interface->loadClip();
+	_engine->_interface->restoreClip();
 }
 
 void Menu::prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour) {
@@ -1217,7 +1217,7 @@ void Menu::drawItem(int32 left, int32 top, int32 item) {
 		_itemAngle[item] += LBAAngles::ANGLE_2;
 		_engine->_interface->setClip(rect);
 		_engine->_renderer->draw3dObject(itemX, itemY, _engine->_resources->_inventoryTable[item], _itemAngle[item], 15000);
-		_engine->_interface->resetClip();
+		_engine->_interface->unsetClip();
 		if (item == InventoryItems::kGasItem) {
 			_engine->_text->setFontColor(COLOR_WHITE);
 			const Common::String &inventoryNumGas = Common::String::format("%d", _engine->_gameState->_inventoryNumGas);
@@ -1236,7 +1236,7 @@ void Menu::drawInventoryItems(int32 left, int32 top) {
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
 		drawItem(left, top, item);
 	}
-	_engine->_interface->resetClip();
+	_engine->_interface->unsetClip();
 }
 
 void Menu::processInventoryMenu() {

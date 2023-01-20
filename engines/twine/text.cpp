@@ -659,11 +659,11 @@ bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 
 bool Text::drawTextProgressive(TextId index, bool playVox, bool loop) {
 	_engine->exitSceneryView();
-	_engine->_interface->saveClip();
-	_engine->_interface->resetClip();
+	_engine->_interface->memoClip();
+	_engine->_interface->unsetClip();
 	_engine->saveFrontBuffer();
 	const bool aborted = displayText(index, _engine->_cfgfile.FlagDisplayText, playVox, loop);
-	_engine->_interface->loadClip();
+	_engine->_interface->restoreClip();
 	return aborted;
 }
 
