@@ -126,8 +126,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      in den anderen Sprachen).
    - Verbesserte Unterstützung der hebräischen Versionen der Spiele von Humongous Entertainment.
    - Unterstützung für Roland MT-32 in Sam & Max korrigiert.
-   - Unterstützung für die originale Benutzeroberfläche und die Speicher-Menüs von LucasArts-Spielen hinzugefügt (DOS, Windows, Amiga, Macintosh, FM-Towns, Atari ST, Sega CD, NES- und Commodore 64-Versionen).
-   - Unterstützung für die originale Benutzeroberfläche für die SegaCD-Version von MI1 hinzugefügt.
+   - Unterstützung für die originale Benutzeroberfläche und die Speicher-Menüs
+     von LucasArts-Spielen hinzugefügt (DOS, Windows, Amiga, Macintosh,
+     FM-Towns, Atari ST, Sega CD, NES- und Commodore 64-Versionen).
+     Aktiviere ebenfalls die Option "Beim Verlassen um Bestätigung bitten" für
+     eine noch authentischere Spielerfahrung!
    - Einige kleinere Timing-Probleme in der SMUSH-Video-Engine korrigiert, die hauptsächlich
      Full Throttle betreffen.
    - Audiomodus mit niedriger Latenz für Full Throttle, The Dig und The Curse of Monkey Island
