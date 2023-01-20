@@ -69,6 +69,8 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 	_groundColor = 255;
 	_usualBackgroundColor = 255;
 	_underFireBackgroundColor = 255;
+	_inkColor = 255;
+	_paperColor = 255;
 
 	_gasPocketRadius = 0;
 
