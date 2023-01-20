@@ -36,21 +36,21 @@ ENet::ENet() {
 ENet::~ENet() {
 	if (_initialized) {
 		// Deinitialize the library.
-		debug(1, "ENet: Deinitalizing.");
+		debug(1, "ENet: Deinitializing.");
 		enet_deinitialize();
 	}
 }
 
-bool ENet::initalize() {
+bool ENet::initialize() {
 	if (ENet::_initialized) {
 		return true;
 	}
 
 	if (enet_initialize() != 0) {
-		warning("ENet: ENet library failed to initalize");
+		warning("ENet: ENet library failed to initialize");
 		return false;
 	}
-	debug(1, "ENet: Initalized.");
+	debug(1, "ENet: Initialized.");
 	_initialized = true;
 	return true;
 }
@@ -70,9 +70,14 @@ Host *ENet::createHost(Common::String address, int port, int numClients, int num
 	return new Host(_host);
 }
 
-Host *ENet::connectToHost(Common::String address, int port, int timeout, int numChannels, int incBand, int outBand) {
+Host *ENet::connectToHost(Common::String hostAddress, int hostPort, Common::String address, int port, int timeout, int numChannels, int incBand, int outBand) {
+	ENetAddress enetHostAddress;
+	// NOTE: 0.0.0.0 returns ENET_HOST_ANY normally.
+	enet_address_set_host(&enetHostAddress, hostAddress.c_str());
+	enetHostAddress.port = hostPort;
+
 	// NOTE: Number of channels must match with the server's.
-	ENetHost *enetHost = enet_host_create(nullptr, 1, numChannels, incBand, outBand);
+	ENetHost *enetHost = enet_host_create(&enetHostAddress, 1, numChannels, incBand, outBand);
 	if (enetHost == nullptr) {
 		warning("ENet: An error occured when trying to create client host");
 		return nullptr;
@@ -96,7 +101,13 @@ Host *ENet::connectToHost(Common::String address, int port, int timeout, int num
 		return new Host(enetHost, enetPeer);
 	}
 	warning("ENet: Connection to %s:%d failed", address.c_str(), port);
+	enet_peer_reset(enetPeer);
+	enet_host_destroy(enetHost);
 	return nullptr;
+}
+
+Host *ENet::connectToHost(Common::String address, int port, int timeout, int numChannels, int incBand, int outBand) {
+	return connectToHost("0.0.0.0", 0, address, port, timeout, numChannels, incBand, outBand);
 }
 
 Socket *ENet::createSocket(Common::String address, int port) {
