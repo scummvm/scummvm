@@ -134,7 +134,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Einige kleinere Timing-Probleme in der SMUSH-Video-Engine korrigiert, die hauptsächlich
      Full Throttle betreffen.
    - Audiomodus mit niedriger Latenz für Full Throttle, The Dig und The Curse of Monkey Island
-     hinzugefügt. Dieser Modus kann die Audio-Performance gerade auf mobilen Geräten verbessern.
+     hinzugefügt. Dieser Modus kann die Audio-Performance gerade auf mobilen Geräten verbessern,
+     ist allerdings auch etwas weniger genau als die ursprüngliche Wiedergabe.
    - Die CD-Audiowiedergabe wird in den CD-Versionen von Monkey Island 1 und Loom
      nach dem Laden eines Spielstands nun korrekt fortgesetzt.
 
