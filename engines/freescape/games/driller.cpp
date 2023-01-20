@@ -543,19 +543,30 @@ void DrillerEngine::loadAssetsFullGame() {
 		if (!file.isOpen())
 			error("Failed to open driller.zx.extracted");
 
-		loadMessagesFixedSize(&file, 0x20e4, 14, 20);
+		if (_variant & GF_ZX_DISC)
+			loadMessagesFixedSize(&file, 0x2164, 14, 20);
+		else
+			loadMessagesFixedSize(&file, 0x20e4, 14, 20);
 
 		if (_variant & GF_ZX_RETAIL)
 			loadFonts(&file, 0x62ca);
-		if (_variant & GF_ZX_BUDGET)
+		else if (_variant & GF_ZX_BUDGET)
 			loadFonts(&file, 0x5aa8);
+		else if (_variant & GF_ZX_DISC)
+			loadFonts(&file, 0x63f0);
 
-		loadGlobalObjects(&file, 0x1c93);
+		if (_variant & GF_ZX_DISC)
+			loadGlobalObjects(&file, 0x1d13);
+		else
+			loadGlobalObjects(&file, 0x1c93);
 
 		if (_variant & GF_ZX_RETAIL)
 			load8bitBinary(&file, 0x642c, 4);
 		else if (_variant & GF_ZX_BUDGET)
 			load8bitBinary(&file, 0x5c0a, 4);
+		else if (_variant & GF_ZX_DISC)
+			load8bitBinary(&file, 0x6552, 4);
+
 		else
 			error("Unknown ZX spectrum variant");
 	} else if (isCPC()) {
