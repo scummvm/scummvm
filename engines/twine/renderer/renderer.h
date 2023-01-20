@@ -239,9 +239,7 @@ public:
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 	IVec3 longWorldRot(int32 x, int32 y, int32 z);
 
-	inline IVec3 worldRotatePoint(const IVec3& vec) {
-		return longWorldRot(vec.x, vec.y, vec.z);
-	}
+	IVec3 worldRotatePoint(const IVec3& vec);
 
 	void fillVertices(int16 vtop, int16 vbottom, uint8 renderType, uint16 color);
 	void renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices, int vtop, int vbottom);

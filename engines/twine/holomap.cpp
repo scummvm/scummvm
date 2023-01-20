@@ -454,9 +454,8 @@ void Holomap::drawListPos(int xRot, int yRot, int zRot, bool pos) {
 			continue;
 		}
 		const Location &loc = _locations[locationIdx];
-		const IVec3 &cameraRot = _engine->_renderer->setAngleCamera(loc.angleX, loc.angleY, 0);
-		IVec3 m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000 + loc.size));
-		m.x = cameraRot.x;
+		_engine->_renderer->setAngleCamera(loc.angleX, loc.angleY, 0);
+		const IVec3 &m = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1000 + loc.size));
 		const IVec3 &m1 = _engine->_renderer->worldRotatePoint(IVec3(0, 0, 1500));
 		_engine->_renderer->setInverseAngleCamera(xRot, yRot, zRot);
 		_engine->_renderer->setCameraRotation(0, 0, distance(ZOOM_BIG_HOLO));

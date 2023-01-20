@@ -165,11 +165,18 @@ IVec3 Renderer::setAngleCamera(int32 x, int32 y, int32 z) {
 	return _cameraRot;
 }
 
-IVec3 Renderer::longWorldRot(int32 x, int32 y, int32 z) {
-	const int32 vx = (_matrixWorld.row1.x * x + _matrixWorld.row1.y * y + _matrixWorld.row1.z * z) / SCENE_SIZE_HALF;
-	const int32 vy = (_matrixWorld.row2.x * x + _matrixWorld.row2.y * y + _matrixWorld.row2.z * z) / SCENE_SIZE_HALF;
-	const int32 vz = (_matrixWorld.row3.x * x + _matrixWorld.row3.y * y + _matrixWorld.row3.z * z) / SCENE_SIZE_HALF;
+IVec3 Renderer::worldRotatePoint(const IVec3& vec) {
+	const int32 vx = (_matrixWorld.row1.x * vec.x + _matrixWorld.row1.y * vec.y + _matrixWorld.row1.z * vec.z) / SCENE_SIZE_HALF;
+	const int32 vy = (_matrixWorld.row2.x * vec.x + _matrixWorld.row2.y * vec.y + _matrixWorld.row2.z * vec.z) / SCENE_SIZE_HALF;
+	const int32 vz = (_matrixWorld.row3.x * vec.x + _matrixWorld.row3.y * vec.y + _matrixWorld.row3.z * vec.z) / SCENE_SIZE_HALF;
 	return IVec3(vx, vy, vz);
+}
+
+IVec3 Renderer::longWorldRot(int32 x, int32 y, int32 z) {
+	const int64 vx = ((int64)_matrixWorld.row1.x * (int64)x + (int64)_matrixWorld.row1.y * (int64)y + (int64)_matrixWorld.row1.z * (int64)z) / SCENE_SIZE_HALF;
+	const int64 vy = ((int64)_matrixWorld.row2.x * (int64)x + (int64)_matrixWorld.row2.y * (int64)y + (int64)_matrixWorld.row2.z * (int64)z) / SCENE_SIZE_HALF;
+	const int64 vz = ((int64)_matrixWorld.row3.x * (int64)x + (int64)_matrixWorld.row3.y * (int64)y + (int64)_matrixWorld.row3.z * (int64)z) / SCENE_SIZE_HALF;
+	return IVec3((int32)vx, (int32)vy, (int32)vz);
 }
 
 IVec3 Renderer::longInverseRot(int32 x, int32 y, int32 z) {
