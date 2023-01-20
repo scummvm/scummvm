@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-20 13:14+0000\n"
-"PO-Revision-Date: 2023-01-20 13:18+0000\n"
+"PO-Revision-Date: 2023-01-20 14:24+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -3855,13 +3855,11 @@ msgstr "In 3D-Spielen"
 
 #: backends/platform/android/options.cpp:152
 msgid "Forget SAF authorization"
-msgstr ""
+msgstr "Vergesse SAF-Autorisation"
 
 #: backends/platform/android/options.cpp:359
-#, fuzzy
-#| msgid "~R~emove Game"
 msgid "Remove"
-msgstr "Spiel ~e~ntfernen"
+msgstr "Entfernen"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
