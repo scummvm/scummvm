@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-20 02:45+0000\n"
+"POT-Creation-Date: 2023-01-20 09:03+0000\n"
 "PO-Revision-Date: 2023-01-19 05:03+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -7213,11 +7213,11 @@ msgstr "Essai"
 msgid "Expert"
 msgstr "Expert"
 
-#: engines/scumm/dialogs.cpp:1047 engines/scumm/metaengine.cpp:647
+#: engines/scumm/dialogs.cpp:1047 engines/scumm/metaengine.cpp:648
 msgid "Enable game-specific enhancements"
 msgstr "Activer les améliorations spécifiques au jeu"
 
-#: engines/scumm/dialogs.cpp:1047 engines/scumm/metaengine.cpp:648
+#: engines/scumm/dialogs.cpp:1047 engines/scumm/metaengine.cpp:649
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -7225,23 +7225,28 @@ msgstr ""
 "Permet à ScummVM d'apporter de petites améliorations au jeu, généralement "
 "basées sur d'autres versions du même jeu."
 
-#: engines/scumm/dialogs.cpp:1051 engines/scumm/metaengine.cpp:665
+#: engines/scumm/dialogs.cpp:1052 engines/scumm/metaengine.cpp:666
 msgid "Enable the original GUI and Menu"
 msgstr "Activer le menu et l'interface d'origine"
 
-#: engines/scumm/dialogs.cpp:1051 engines/scumm/metaengine.cpp:666
+#: engines/scumm/dialogs.cpp:1053
+#, fuzzy
+#| msgid ""
+#| "Allow the game to use the in-engine graphical interface and the original "
+#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
-"save/load menu."
+"save/load menu. Use it together with the \"Ask for confirmation on exit\" "
+"for a more complete experience."
 msgstr ""
 "Permet au jeu d'utiliser l'interface graphique du moteur et le menu "
 "sauvegarder/charger d'origine."
 
-#: engines/scumm/dialogs.cpp:1072
+#: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
 msgstr "Timing de l'ouverture :"
 
-#: engines/scumm/dialogs.cpp:1076
+#: engines/scumm/dialogs.cpp:1079
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -7249,11 +7254,11 @@ msgstr ""
 "Lorsque des musiques de remplacement sont utilisées, ajuste le moment où "
 "l'ouverture passe à la scène avec les logos Lucasfilm et Loom."
 
-#: engines/scumm/dialogs.cpp:1159
+#: engines/scumm/dialogs.cpp:1162
 msgid "Playback Adjust:"
 msgstr "Ajustement du son :"
 
-#: engines/scumm/dialogs.cpp:1163
+#: engines/scumm/dialogs.cpp:1166
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -7262,11 +7267,11 @@ msgstr ""
 "départ du son de cette valeur. Utilisez cette option si vous entendez "
 "souvent des parties de sons incorrects."
 
-#: engines/scumm/dialogs.cpp:1242
+#: engines/scumm/dialogs.cpp:1245
 msgid "Intro Adjust:"
 msgstr "Ajustement de l'Intro :"
 
-#: engines/scumm/dialogs.cpp:1246
+#: engines/scumm/dialogs.cpp:1249
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -7277,11 +7282,11 @@ msgstr ""
 "vous n'êtes pas satisfait de la façon dont la musique se synchronise avec "
 "l'intro."
 
-#: engines/scumm/dialogs.cpp:1255
+#: engines/scumm/dialogs.cpp:1258
 msgid "Outlook Adjust:"
 msgstr "Ajustement de l'accompagnement :"
 
-#: engines/scumm/dialogs.cpp:1259
+#: engines/scumm/dialogs.cpp:1262
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -7827,7 +7832,7 @@ msgstr "Volume Musique : "
 msgid "Subtitle speed: "
 msgstr "Vitesse des ST : "
 
-#: engines/scumm/metaengine.cpp:357
+#: engines/scumm/metaengine.cpp:358
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -7837,38 +7842,38 @@ msgstr ""
 "éviter le piratage.\n"
 "La version complète peut être achetée sur l'iTunes Store."
 
-#: engines/scumm/metaengine.cpp:454
+#: engines/scumm/metaengine.cpp:455
 msgid "HE v71+ support is not compiled in"
 msgstr "La prise en charge de HE V71+ n'a pas été activée dans cette version"
 
-#: engines/scumm/metaengine.cpp:478
+#: engines/scumm/metaengine.cpp:479
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr ""
 "La prise en charge de SCUMM V7-8 n'a pas été activée dans cette version"
 
-#: engines/scumm/metaengine.cpp:593
+#: engines/scumm/metaengine.cpp:594
 msgid "Show Object Line"
 msgstr "Afficher la barre d'objets"
 
-#: engines/scumm/metaengine.cpp:594
+#: engines/scumm/metaengine.cpp:595
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Afficher le nom des objets en bas de l'écran"
 
-#: engines/scumm/metaengine.cpp:602
+#: engines/scumm/metaengine.cpp:603
 msgid "Use NES Classic Palette"
 msgstr "Utiliser la palette NES Classique"
 
-#: engines/scumm/metaengine.cpp:603
+#: engines/scumm/metaengine.cpp:604
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "Utilise une palette de couleurs plus neutre qui reproduit au plus près la "
 "NES Classique"
 
-#: engines/scumm/metaengine.cpp:611
+#: engines/scumm/metaengine.cpp:612
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "Rogner la hauteur des jeux FM-TOWNS à 200 pixels"
 
-#: engines/scumm/metaengine.cpp:612
+#: engines/scumm/metaengine.cpp:613
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -7877,11 +7882,11 @@ msgstr ""
 "hauteur standard de 200 pixels, ce qui permet d'utiliser la \"correction du "
 "rapport d'aspect\""
 
-#: engines/scumm/metaengine.cpp:620
+#: engines/scumm/metaengine.cpp:621
 msgid "Play simplified music"
 msgstr "Jouer la musique simplifiée"
 
-#: engines/scumm/metaengine.cpp:621
+#: engines/scumm/metaengine.cpp:622
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
@@ -7889,19 +7894,19 @@ msgstr ""
 "Cette musique était vraisemblablement destinée aux Macs bas de gamme, et "
 "n'utilise qu'un seul canal."
 
-#: engines/scumm/metaengine.cpp:629
+#: engines/scumm/metaengine.cpp:630
 msgid "Enable smooth scrolling"
 msgstr "Activer le défilement fluide"
 
-#: engines/scumm/metaengine.cpp:630
+#: engines/scumm/metaengine.cpp:631
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(au lieu du défilement normal par pas de 8 pixels)"
 
-#: engines/scumm/metaengine.cpp:638
+#: engines/scumm/metaengine.cpp:639
 msgid "Allow semi-smooth scrolling"
 msgstr "Permettre un défilement semi-fluide"
 
-#: engines/scumm/metaengine.cpp:639
+#: engines/scumm/metaengine.cpp:640
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
@@ -7909,11 +7914,11 @@ msgstr ""
 "Permet au défilement d'être moins fluide pendant le mouvement rapide de la "
 "caméra pendant l'intro."
 
-#: engines/scumm/metaengine.cpp:656
+#: engines/scumm/metaengine.cpp:657
 msgid "Load modded audio"
 msgstr "Charger de l'audio modifié"
 
-#: engines/scumm/metaengine.cpp:657
+#: engines/scumm/metaengine.cpp:658
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -7921,11 +7926,24 @@ msgstr ""
 "Remplace la musique, les effets sonores et les clips vocaux par des fichiers "
 "audio modifiés, s'ils sont disponibles."
 
-#: engines/scumm/metaengine.cpp:674
+#: engines/scumm/metaengine.cpp:667
+#, fuzzy
+#| msgid ""
+#| "Allow the game to use the in-engine graphical interface and the original "
+#| "save/load menu."
+msgid ""
+"Allow the game to use the in-engine graphical interface and the original "
+"save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
+"\" for a more complete experience."
+msgstr ""
+"Permet au jeu d'utiliser l'interface graphique du moteur et le menu "
+"sauvegarder/charger d'origine."
+
+#: engines/scumm/metaengine.cpp:676
 msgid "Enable low latency audio mode"
 msgstr "Activer le mode audio à faible latence"
 
-#: engines/scumm/metaengine.cpp:675
+#: engines/scumm/metaengine.cpp:677
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
