@@ -103,7 +103,9 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (bitsPerPixel == 8) {
 		for (int y = 0; y < _surface->h; y++) {
 			for (int x = 0; x < _surface->w; x++) {
-				*(byte *)_surface->getBasePtr(x, y) = 255 - *(byte *)_surface->getBasePtr(x, y);
+				// We're not su[pposed to modify the image that is coming from the decoder
+				// However, in this case, we know what we're doing.
+				*Common::remove_const<byte *>::type(_surface->getBasePtr(x, y)) = 255 - *(const byte *)_surface->getBasePtr(x, y);
 			}
 		}
 	}
