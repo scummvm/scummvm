@@ -1836,6 +1836,19 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
 
+	// Transpose from game palette to RGB332 (overlay palette)
+	if (_videoMode.isHwPalette) {
+		byte *p = (byte *)(_tmpscreen->pixels) + _maxExtraPixels * _tmpscreen->pitch + _maxExtraPixels * _tmpscreen->format->BytesPerPixel;
+		int pitchSkip = _tmpscreen->pitch - _videoMode.screenWidth;
+		for (int y = 0; y < _videoMode.screenHeight; y++) {
+			for (int x = 0; x < _videoMode.screenWidth; x++, p++) {
+				const SDL_Color &col = _currentPalette[*p];
+				*p = (col.r & 0xe0) | ((col.g >> 3) & 0x1c) | ((col.b >> 6) & 0x03);
+			}
+			p += pitchSkip;
+		}
+	}
+
 	_scaler->scale((byte *)(_tmpscreen->pixels) + _maxExtraPixels * _tmpscreen->pitch + _maxExtraPixels * _tmpscreen->format->BytesPerPixel, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, 0, 0);
 
