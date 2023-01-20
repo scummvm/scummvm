@@ -269,8 +269,9 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 		if (!md5Prefix.empty())
 			md5Prefix += ":";
 
+		Common::Path filepath(strchr(filenames[i].c_str(), ':') + 1);
 		report += Common::String::format("  {\"%s\", 0, \"%s%s\", %lld},\n",
-			Common::punycode_encodefilename(Common::U32String(strchr(filenames[i].c_str(), ':') + 1)).c_str(), // Skip the md5 prefix
+			filepath.punycodeEncode().toString().c_str(), // Skip the md5 prefix
 			md5Prefix.c_str(), file.md5.c_str(), (long long)file.size);
 	}
 
