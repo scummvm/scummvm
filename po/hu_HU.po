@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-20 13:14+0000\n"
-"PO-Revision-Date: 2023-01-20 10:31+0000\n"
+"PO-Revision-Date: 2023-01-20 14:25+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -3823,13 +3823,11 @@ msgstr "3D játékokban"
 
 #: backends/platform/android/options.cpp:152
 msgid "Forget SAF authorization"
-msgstr ""
+msgstr "Felejtsd el a SAF-engedélyt"
 
 #: backends/platform/android/options.cpp:359
-#, fuzzy
-#| msgid "~R~emove Game"
 msgid "Remove"
-msgstr "Játék törlése"
+msgstr "Eltávolít"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -7107,17 +7105,14 @@ msgid "Enable the original GUI and Menu"
 msgstr "Eredeti GUI és Menü engedélyezése"
 
 #: engines/scumm/dialogs.cpp:1053
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
 msgstr ""
 "Engedélyezi a motoron belüli grafikus felület és az eredeti mentés/töltés "
-"menü használatát."
+"menü használatát. A teljesebb élmény érdekében használd a „Kérj "
+"visszaigazolást kilépéskor” funkcióval együtt."
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
@@ -7796,17 +7791,14 @@ msgstr ""
 "hangfájlokra, ha rendelkezésre állnak."
 
 #: engines/scumm/metaengine.cpp:667
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Engedélyezi a motoron belüli grafikus felület és az eredeti mentés/töltés "
-"menü használatát."
+"menü használatát. A teljesebb élmény érdekében használd a „Kérj "
+"visszaigazolást kilépéskor” funkcióval együtt."
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Enable low latency audio mode"
