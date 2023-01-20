@@ -158,8 +158,6 @@ void Window::probeMacBinary(MacArchive *archive) {
 				warning("Couldn't find score with name: %s", sname.c_str());
 			}
 			delete name;
-
-
 		}
 	}
 
