@@ -333,7 +333,7 @@ void GameState::doFoundObj(InventoryItems item) {
 	}
 	const int32 itemZ = (_engine->_scene->_sceneHero->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
 
-	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
+	_engine->_grid->drawOverBrick(itemX, itemY, itemZ);
 
 	IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(bodyPos);
 	projPos.y -= 150;
@@ -397,7 +397,7 @@ void GameState::doFoundObj(InventoryItems item) {
 
 		_engine->_renderer->renderIsoModel(bodyPos, LBAAngles::ANGLE_0, LBAAngles::ANGLE_45, LBAAngles::ANGLE_0, bodyData, modelRect);
 		_engine->_interface->setClip(modelRect);
-		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
+		_engine->_grid->drawOverBrick(itemX, itemY, itemZ);
 		_engine->_redraw->addRedrawArea(modelRect);
 
 		if (textState == ProgressiveTextState::ContinueRunning) {

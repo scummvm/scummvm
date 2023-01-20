@@ -146,8 +146,8 @@ public:
 	/** Number of redraw regions in the screen */
 	int32 _numOfRedrawBox = 0;
 
-	int _sceneryViewX = 0;
-	int _sceneryViewY = 0;
+	int _sceneryViewX = 0; // xmin
+	int _sceneryViewY = 0; // ymin
 
 	OverlayListStruct overlayList[OVERLAY_MAX_ENTRIES];
 

@@ -136,7 +136,7 @@ public:
 	 * Get shadow position
 	 * @param pos Shadow coordinates
 	 */
-	IVec3 getShadowPosition(const IVec3 &pos);
+	IVec3 getShadow(const IVec3 &pos);
 
 	/**
 	 * Set actor safe angle

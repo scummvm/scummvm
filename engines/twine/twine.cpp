@@ -1004,7 +1004,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						if (!_actor->_cropBottomScreen) {
 							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 						}
-						const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->posObj() - _grid->_camera);
+						const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->posObj() - _grid->_worldCube);
 						actor->_controlMode = ControlMode::kNoMove;
 						actor->setLife(-1);
 						_actor->_cropBottomScreen = projPos.y;

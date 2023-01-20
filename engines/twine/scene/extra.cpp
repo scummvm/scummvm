@@ -656,7 +656,7 @@ void Extra::gereExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->posObj(), OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
+					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_worldCube);
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, projPos.x, projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
@@ -689,7 +689,7 @@ void Extra::gereExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->posObj(), OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
+					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_worldCube);
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, projPos.x, projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
@@ -837,7 +837,7 @@ void Extra::gereExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, extra->pos);
 
 				if (extra->info1 > 1) {
-					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_camera);
+					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_worldCube);
 					const int16 fontColor = COLOR_158;
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, projPos.x, projPos.y, fontColor, OverlayPosType::koNormal, 2);
 				}
