@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-20 20:17+0000\n"
-"PO-Revision-Date: 2023-01-20 10:31+0000\n"
+"PO-Revision-Date: 2023-01-20 20:40+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -3863,13 +3863,11 @@ msgstr "En juegos 3D"
 
 #: backends/platform/android/options.cpp:152
 msgid "Forget SAF authorization"
-msgstr ""
+msgstr "Olvidar autorización del SAF"
 
 #: backends/platform/android/options.cpp:359
-#, fuzzy
-#| msgid "~R~emove Game"
 msgid "Remove"
-msgstr "E~l~iminar juego"
+msgstr "Eliminar"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -7200,17 +7198,14 @@ msgid "Enable the original GUI and Menu"
 msgstr "Activar menú e interfaz originales"
 
 #: engines/scumm/dialogs.cpp:1053
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
 msgstr ""
 "Permite al juego utilizar la interfaz gráfica interna y los menús originales "
-"para guardar y cargar."
+"para guardar y cargar. Activar junto con «Confirmar al salir» para una "
+"experiencia más completa."
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
@@ -7895,17 +7890,14 @@ msgstr ""
 "modificados de audio en caso de que estén disponibles."
 
 #: engines/scumm/metaengine.cpp:667
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Permite al juego utilizar la interfaz gráfica interna y los menús originales "
-"para guardar y cargar."
+"para guardar y cargar. \t\tActivar junto con «Confirmar al salir» para una "
+"experiencia más completa."
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Enable low latency audio mode"
