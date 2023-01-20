@@ -60,6 +60,7 @@ public:
 	int getPreviousModuleNum() { return _moduleNum; }
 
 	void createModule(int moduleNum, int which);
+	static byte parseCrystalColor(char colorLetter);
 protected:
 	int _moduleNum;
 	Entity *_prevChildObject;

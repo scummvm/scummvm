@@ -119,6 +119,38 @@ bool NeverhoodEngine::loadgame(const char *filename) {
 
 	_gameVars->loadState(in);
 
+	// If user has changed NHC it may have changed the correct solution for
+	// crystal puzzle. If it did and it was already solved, changed solors to the new solution
+	// if it wasn't solved, just let the code do full reinit.
+	if (_gameVars->getGlobalVar(V_CRYSTAL_COLORS_INIT)) {
+		TextResource textResource(this);
+		const char *textStart, *textEnd;
+		bool colorsChanged = false, colorsAreCorrect = true;
+		textResource.load(0x46691611);
+		textStart = textResource.getString(0, textEnd);
+		byte newCorrectColorNum[5];
+		for (uint index = 0; index < 5; index++) {
+			newCorrectColorNum[index] = GameModule::parseCrystalColor(textStart[index]);
+		}
+		for (uint index = 0; index < 5; index++) {
+			if (_gameVars->getSubVar(VA_GOOD_CRYSTAL_COLORS, index) != newCorrectColorNum[index]) {
+				colorsChanged = true;
+			}
+			if (_gameVars->getSubVar(VA_GOOD_CRYSTAL_COLORS, index) != _gameVars->getSubVar(VA_CURR_CRYSTAL_COLORS, index)) {
+				colorsAreCorrect = false;
+			}
+		}
+		if (colorsChanged && colorsAreCorrect) {
+			for (uint index = 0; index < 5; index++) {
+				_gameVars->setSubVar(VA_GOOD_CRYSTAL_COLORS, index, newCorrectColorNum[index]);
+				_gameVars->setSubVar(VA_CURR_CRYSTAL_COLORS, index, newCorrectColorNum[index]);
+			}
+		}
+		if (colorsChanged && !colorsAreCorrect) {
+			_gameVars->setGlobalVar(V_CRYSTAL_COLORS_INIT, 0);
+		}
+	}
+
 	_gameState.sceneNum = _gameVars->getGlobalVar(V_CURRENT_SCENE);
 	_gameState.which = _gameVars->getGlobalVar(V_CURRENT_SCENE_WHICH);
 

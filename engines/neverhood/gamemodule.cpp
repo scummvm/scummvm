@@ -292,6 +292,24 @@ void GameModule::initCubeSymbolsPuzzle() {
 	}
 }
 
+byte GameModule::parseCrystalColor(char colorLetter) {
+	switch (colorLetter) {
+	case 'B':
+		return 4;
+	case 'G':
+		return 3;
+	case 'O':
+		return 1;
+	case 'R':
+		return 0;
+	case 'V':
+		return 5;
+	case 'Y':
+		return 2;
+	default:
+		return 0;
+	}
+}
 void GameModule::initCrystalColorsPuzzle() {
 	if (!getGlobalVar(V_CRYSTAL_COLORS_INIT)) {
 		TextResource textResource(_vm);
@@ -300,29 +318,7 @@ void GameModule::initCrystalColorsPuzzle() {
 		textStart = textResource.getString(0, textEnd);
 		for (uint index = 0; index < 5; index++) {
 			char colorLetter = (byte)textStart[index];
-			byte correctColorNum = 0, misalignedColorNum;
-			switch (colorLetter) {
-			case 'B':
-				correctColorNum = 4;
-				break;
-			case 'G':
-				correctColorNum = 3;
-				break;
-			case 'O':
-				correctColorNum = 1;
-				break;
-			case 'R':
-				correctColorNum = 0;
-				break;
-			case 'V':
-				correctColorNum = 5;
-				break;
-			case 'Y':
-				correctColorNum = 2;
-				break;
-			default:
-				break;
-			}
+			byte correctColorNum = parseCrystalColor(colorLetter), misalignedColorNum;
 			do {
 				misalignedColorNum = _vm->_rnd->getRandomNumber(6 - 1);
 			} while (misalignedColorNum == correctColorNum);
