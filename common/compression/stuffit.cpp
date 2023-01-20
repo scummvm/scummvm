@@ -32,6 +32,7 @@
 #include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/crc.h"
 
 namespace Common {
 
@@ -62,6 +63,7 @@ private:
 		uint32 uncompressedSize;
 		uint32 compressedSize;
 		uint32 offset;
+		uint16 crc;
 	};
 
 	Common::SeekableReadStream *_stream;
@@ -140,37 +142,47 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream) {
 
 	_stream->skip(7); // unknown
 
-	while (_stream->pos() < _stream->size() && !_stream->eos() && _stream->pos() < archiveSize) {
-		byte resForkCompression = _stream->readByte();
-		byte dataForkCompression = _stream->readByte();
+	Common::CRC16 crc;
 
-		byte fileNameLength = _stream->readByte();
+	while (_stream->pos() < _stream->size() && !_stream->eos() && _stream->pos() < archiveSize) {
+		byte header[112];
+		_stream->read(header, sizeof(header));
+		Common::MemoryReadStream headStream(header, sizeof(header));
+		byte resForkCompression = headStream.readByte();
+		byte dataForkCompression = headStream.readByte();
+
+		byte fileNameLength = headStream.readByte();
 		Common::String name;
 
 		if (fileNameLength > 63)
 			error("File name length too long in stuffit archive: %d at 0x%x", fileNameLength, (int) (_stream->pos() - 3));
 
 		for (byte i = 0; i < fileNameLength; i++)
-			name += (char)_stream->readByte();
+			name += (char)headStream.readByte();
 
 		// Skip remaining bytes
-		_stream->skip(63 - fileNameLength);
+		headStream.skip(63 - fileNameLength);
 
 		MacFinderInfo finfo;
 
-		_stream->read(finfo.type, 4);
-		_stream->read(finfo.creator, 4);
-		finfo.flags = _stream->readUint16BE();
-		/* uint32 creationDate = */ _stream->readUint32BE();
-		/* uint32 modificationDate = */ _stream->readUint32BE();
-		uint32 resForkUncompressedSize = _stream->readUint32BE();
-		uint32 dataForkUncompressedSize = _stream->readUint32BE();
-		uint32 resForkCompressedSize = _stream->readUint32BE();
-		uint32 dataForkCompressedSize = _stream->readUint32BE();
-		/* uint16 resForkCRC = */ _stream->readUint16BE();
-		/* uint16 dataForkCRC = */ _stream->readUint16BE();
-		_stream->skip(6); // unknown
-		/* uint16 headerCRC = */ _stream->readUint16BE();
+		headStream.read(finfo.type, 4);
+		headStream.read(finfo.creator, 4);
+		finfo.flags = headStream.readUint16BE();
+		/* uint32 creationDate = */ headStream.readUint32BE();
+		/* uint32 modificationDate = */ headStream.readUint32BE();
+		uint32 resForkUncompressedSize = headStream.readUint32BE();
+		uint32 dataForkUncompressedSize = headStream.readUint32BE();
+		uint32 resForkCompressedSize = headStream.readUint32BE();
+		uint32 dataForkCompressedSize = headStream.readUint32BE();
+		uint16 resForkCRC = headStream.readUint16BE();
+		uint16 dataForkCRC = headStream.readUint16BE();
+		headStream.skip(6); // unknown
+		uint16 headerCRC = headStream.readUint16BE();
+
+		uint16 actualHeaderCRC = crc.crcFast(header, sizeof(header) - 2);
+
+		if (actualHeaderCRC != headerCRC)
+			error ("Header CRC mismatch: %04x vs %04x", actualHeaderCRC, headerCRC);
 
 		// Ignore directories for now
 		if (dataForkCompression == 32 || dataForkCompression == 33)
@@ -186,6 +198,7 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream) {
 			entry.uncompressedSize = dataForkUncompressedSize;
 			entry.compressedSize = dataForkCompressedSize;
 			entry.offset = _stream->pos() + resForkCompressedSize;
+			entry.crc = dataForkCRC;
 			_map[name] = entry;
 
 			debug(0, "StuffIt file '%s', Compression = %d", name.c_str(), entry.compression);
@@ -202,6 +215,7 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream) {
 			entry.uncompressedSize = resForkUncompressedSize;
 			entry.compressedSize = resForkCompressedSize;
 			entry.offset = _stream->pos();
+			entry.crc = resForkCRC;
 			_map[name] = entry;
 
 			debug(0, "StuffIt file '%s', Compression = %d", name.c_str(), entry.compression);
@@ -272,6 +286,12 @@ Common::SharedArchiveContents StuffItArchive::readContentsForPath(const Common::
 	default:
 		error("Unhandled StuffIt compression %d", entry.compression);
 		return Common::SharedArchiveContents();
+	}
+
+	uint16 actualCRC = Common::CRC16().crcFast(uncompressedBlock, entry.uncompressedSize);
+
+	if (actualCRC != entry.crc) {
+		error("CRC mismatch: %04x vs %04x", actualCRC, entry.crc);
 	}
 
 	return Common::SharedArchiveContents(uncompressedBlock, entry.uncompressedSize);
