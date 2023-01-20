@@ -34,8 +34,9 @@ public:
 	ENet();
 	~ENet();
 
-	bool initalize();
+	bool initialize();
 	Host *createHost(Common::String address, int port, int numClients, int numChannels = 1, int incBand = 0, int outBand = 0);
+	Host *connectToHost(Common::String hostAddress, int hostPort, Common::String address, int port, int timeout = 5000, int numChannels = 1, int incBand = 0, int outBand = 0);
 	Host *connectToHost(Common::String address, int port, int timeout = 5000, int numChannels = 1, int incBand = 0, int outBand = 0);
 	Socket *createSocket(Common::String address, int port);
 private:

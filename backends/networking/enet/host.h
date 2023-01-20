@@ -49,6 +49,7 @@ public:
 
 	uint8 service(int timeout = 0);
 
+	bool connectPeer(Common::String address, int port, int timeout = 5000, int numChannels = 1);
 	void disconnectPeer(int peerIndex);
 
 	bool send(const char *data, int peerIndex, int channel = 0, bool reliable = true);

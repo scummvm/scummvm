@@ -67,6 +67,29 @@ uint8 Host::service(int timeout) {
 	return event.type;
 }
 
+bool Host::connectPeer(Common::String address, int port, int timeout, int numChannels) {
+	ENetAddress enetAddress;
+	if (address == "255.255.255.255") {
+		enetAddress.host = ENET_HOST_BROADCAST;
+	} else {
+		// NOTE: 0.0.0.0 returns ENET_HOST_ANY normally.
+		enet_address_set_host(&enetAddress, address.c_str());
+	}
+	enetAddress.port = port;
+
+	// Connect to server address
+	ENetPeer *enetPeer = enet_host_connect(_host, &enetAddress, numChannels, 0);
+
+	ENetEvent event;
+	if (enet_host_service(_host, &event, timeout) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
+		debug(1, "ENet: Connection to %s:%d succeeded.", address.c_str(), port);
+		return true;
+	}
+	warning("ENet: Connection to %s:%d failed", address.c_str(), port);
+	enet_peer_reset(enetPeer);
+	return false;
+}
+
 void Host::disconnectPeer(int peerIndex) {
 	// calling _later will ensure that all the queued packets are sent before disconnecting.
 	enet_peer_disconnect_later(&_host->peers[peerIndex], 0);
