@@ -604,13 +604,13 @@ Common::Error HadeschEngine::run() {
 				// TODO: make equivalents for mobile devices. Keyboard is
 				// used for 4 things:
 				//
-				// * Skipping cutscenes (press space)
+				// * Skipping cutscenes (press space or escape. In original: only space).
 				// * Entering name.
 				//      Original requires a non-empty name. We allow an
 				//      empty name.
 				// * Optional save name
 				// * Cheats
-				if (event.kbd.keycode == Common::KEYCODE_SPACE)
+				if (event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					stopVideo = true;
 				if ((event.kbd.ascii >= 'a' && event.kbd.ascii <= 'z')
 				    || (event.kbd.ascii >= '0' && event.kbd.ascii <= '9')) {
