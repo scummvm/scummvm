@@ -19,7 +19,7 @@ EXTRAC_TEXT_RESOURCE_TUPLE_LIST = [
 	(9, "ScummVM", ""),
 	(10, "Westwood Studios", ""),
 	(11, "ix", ""),
-	(12, "jakejakejake1234", ""),
+	(12, "Jarrod O'Rafferty", ""),
 	(13, "Sean Leong (JakeSteven1980)", ""),
 	(14, ":...:", "REQUIRED")
  ]
