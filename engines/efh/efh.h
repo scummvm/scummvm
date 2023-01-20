@@ -356,7 +356,7 @@ private:
 	bool handleTalk(int16 monsterId, int16 arg2, int16 itemId);
 	void startTalkMenu(int16 monsterId);
 	void displayImp1Text(int16 textId);
-	bool sub22293(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
+	bool handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
 	int8 checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4);
 	void computeInitiatives();
 	void redrawScreenForced();
