@@ -3052,7 +3052,10 @@ void LB::b_cast(int nargs) {
 
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
-	CastMemberID memberID = d.asMemberID(kCastText);
+	// FIXME: Check with later versions of director
+	//        The kCastText check version breaks Phibos and Yokai Ningen Bem.
+	// CastMemberID memberID = d.asMemberID(kCastText);
+	CastMemberID memberID = d.asMemberID();
 	CastMember *cast = g_director->getCurrentMovie()->getCastMember(memberID);
 
 	if (cast) {
