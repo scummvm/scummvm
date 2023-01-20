@@ -174,17 +174,6 @@ static eAGSMouseButton mgetbutton() {
 	else if (butis & MouseBitMiddle)
 		return kMouseMiddle;
 	return kMouseNone;
-
-	// TODO: presumably this was a hack for 1-button Mac mouse;
-	// is this still necessary?
-	// find an elegant way to reimplement this; e.g. allow to configure key->mouse mappings?!
-#define AGS_SIMULATE_RIGHT_CLICK (AGS_PLATFORM_OS_MACOS)
-#if defined (AGS_SIMULATE_RIGHT_CLICK__FIXME)
-	// j Ctrl-left click should be right-click
-	if (ags_iskeypressed(__allegro_KEY_LCONTROL) || ags_iskeypressed(__allegro_KEY_RCONTROL)) {
-		toret = RIGHT;
-	}
-#endif
 }
 
 bool ags_misbuttondown(eAGSMouseButton but) {
