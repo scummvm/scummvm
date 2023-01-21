@@ -37,22 +37,17 @@ namespace TwinE {
 
 /** Actors move structure */
 struct ActorMoveStruct {
-	int16 from = 0;
-	int16 to = 0;
-	int16 numOfStep = 0;
-	int32 timeOfChange = 0;
+	int16 startValue = 0;
+	int16 endValue = 0;
+	int16 timeValue = 0;
+	int32 memoTicks = 0;
 
 	/**
 	 * Get actor real angle
 	 * @param time engine time used for interpolation
 	 */
-	int32 getRealAngle(int32 time);
-
-	/**
-	 * Get actor step
-	 * @param time engine time used for interpolation
-	 */
-	int32 getRealValue(int32 time);
+	int16 getRealValueFromTime(int32 time);
+	int16 getRealAngle(int32 time);
 };
 
 /** Actors animation timer structure */

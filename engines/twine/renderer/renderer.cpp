@@ -1739,7 +1739,7 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 angleX, int32 angleY
 	return true;
 }
 
-void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData, ActorMoveStruct &move) {
+void Renderer::drawObj3D(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData, ActorMoveStruct &move) {
 	int32 boxLeft = rect.left;
 	int32 boxTop = rect.top;
 	int32 boxRight = rect.right;
@@ -1752,15 +1752,12 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 
 	Common::Rect dummy;
 	if (angle == -1) {
-		const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
-		if (move.numOfStep == 0) {
-			_engine->_movements->initRealAngle(newAngle, newAngle - LBAAngles::ANGLE_90, LBAAngles::ANGLE_17, &move);
+		angle = move.getRealAngle(_engine->timerRef);
+		if (move.timeValue == 0) {
+			_engine->_movements->initRealAngle(angle, angle - LBAAngles::ANGLE_90, LBAAngles::ANGLE_17, &move);
 		}
-		affObjetIso(0, y, 0, LBAAngles::ANGLE_0, newAngle, LBAAngles::ANGLE_0, bodyData, dummy);
-	} else {
-		affObjetIso(0, y, 0, LBAAngles::ANGLE_0, angle, LBAAngles::ANGLE_0, bodyData, dummy);
 	}
-	_engine->_interface->unsetClip();
+	affObjetIso(0, y, 0, LBAAngles::ANGLE_0, angle, LBAAngles::ANGLE_0, bodyData, dummy);
 }
 
 void Renderer::draw3dObject(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 cameraZoom) {

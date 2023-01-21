@@ -148,7 +148,7 @@ int32 ScriptMove::mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 		return 0;
 	}
 	engine->_scene->_currentScriptValue = angle;
-	if (ctx.actor->_moveAngle.numOfStep == 0) {
+	if (ctx.actor->_moveAngle.timeValue == 0) {
 		engine->_movements->initRealAngleConst(ctx.actor->_beta, angle, ctx.actor->_speed, &ctx.actor->_moveAngle);
 	}
 	if (ctx.actor->_beta == angle) {
@@ -361,12 +361,12 @@ int32 ScriptMove::mWAIT_NUM_SECOND(TwinEEngine *engine, MoveScriptContext &ctx) 
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NUM_SECOND(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
-		currentTime = engine->_lbaTime + engine->toSeconds(numSeconds);
+		currentTime = engine->timerRef + engine->toSeconds(numSeconds);
 		ctx.stream.rewind(4);
 		ctx.stream.writeSint32LE(currentTime);
 	}
 
-	if (engine->_lbaTime < currentTime) {
+	if (engine->timerRef < currentTime) {
 		ctx.undo(5);
 		return 1;
 	}
@@ -577,7 +577,7 @@ int32 ScriptMove::mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 		return 0;
 	}
 	engine->_scene->_currentScriptValue = angle;
-	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->_moveAngle.numOfStep == 0) {
+	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->_moveAngle.timeValue == 0) {
 		engine->_scene->_currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), engine->_scene->_sceneHero->posObj());
 		engine->_movements->initRealAngleConst(ctx.actor->_beta, engine->_scene->_currentScriptValue, ctx.actor->_speed, &ctx.actor->_moveAngle);
 		ctx.stream.rewind(2);
@@ -608,7 +608,7 @@ int32 ScriptMove::mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	engine->_scene->_currentScriptValue = val2;
 
-	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->_moveAngle.numOfStep == 0) {
+	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->_moveAngle.timeValue == 0) {
 		if (engine->getRandomNumber() & 1) {
 			const int32 newAngle = ctx.actor->_beta + LBAAngles::ANGLE_90 + (ABS(val1) >> 1);
 			engine->_scene->_currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));

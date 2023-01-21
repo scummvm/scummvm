@@ -122,11 +122,11 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 		lastKeyFramePtr = keyFrame;
 		remainingFrameTime = keyFrameLength;
 	}
-	const int32 deltaTime = _engine->_lbaTime - remainingFrameTime;
+	const int32 deltaTime = _engine->timerRef - remainingFrameTime;
 	if (deltaTime >= keyFrameLength) {
 		copyKeyFrameToState(keyFrame, bodyData, numOfBonesInAnim);
 		animTimerDataPtr->ptr = keyFrame;
-		animTimerDataPtr->time = _engine->_lbaTime;
+		animTimerDataPtr->time = _engine->timerRef;
 		return true;
 	}
 
@@ -186,7 +186,7 @@ void Animations::setAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyD
 	_processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
 
 	animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
-	animTimerDataPtr->time = _engine->_lbaTime;
+	animTimerDataPtr->time = _engine->timerRef;
 
 	const int16 numBones = bodyData.getNumBones();
 
@@ -206,7 +206,7 @@ void Animations::stockInterAnim(const BodyData &bodyData, AnimTimerDataStruct *a
 	if (_animKeyframeBufIdx >= ARRAYSIZE(_animKeyframeBuf)) {
 		_animKeyframeBufIdx = 0;
 	}
-	animTimerDataPtr->time = _engine->_lbaTime;
+	animTimerDataPtr->time = _engine->timerRef;
 	KeyFrame *keyframe = &_animKeyframeBuf[_animKeyframeBufIdx++];
 	animTimerDataPtr->ptr = keyframe;
 	copyStateToKeyFrame(keyframe, bodyData);
@@ -238,7 +238,7 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 		remainingFrameTime = keyFrameLength;
 	}
 
-	const int32 deltaTime = _engine->_lbaTime - remainingFrameTime;
+	const int32 deltaTime = _engine->timerRef - remainingFrameTime;
 
 	_currentStep.x = keyFrame->x;
 	_currentStep.y = keyFrame->y;
@@ -250,7 +250,7 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 
 	if (deltaTime >= keyFrameLength) {
 		animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
-		animTimerDataPtr->time = _engine->_lbaTime;
+		animTimerDataPtr->time = _engine->timerRef;
 		return true;
 	}
 
@@ -483,9 +483,9 @@ void Animations::doAnim(int32 actorIdx) {
 
 		if (!actor->_dynamicFlags.bIsFalling) {
 			if (actor->_speed) {
-				int32 xAxisRotation = actor->_moveAngle.getRealValue(_engine->_lbaTime);
+				int32 xAxisRotation = actor->_moveAngle.getRealValueFromTime(_engine->timerRef);
 				if (!xAxisRotation) {
-					if (actor->_moveAngle.to > 0) {
+					if (actor->_moveAngle.endValue > 0) {
 						xAxisRotation = 1;
 					} else {
 						xAxisRotation = -1;

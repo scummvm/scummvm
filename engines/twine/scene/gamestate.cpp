@@ -429,7 +429,7 @@ void GameState::doFoundObj(InventoryItems item) {
 
 		_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry);
 
-		_engine->_lbaTime++;
+		_engine->timerRef++;
 	}
 
 	while (_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry)) {
@@ -481,7 +481,7 @@ void GameState::processGameChoices(TextId choiceIdx) {
 }
 
 void GameState::processGameoverAnimation() {
-	const int32 tmpLbaTime = _engine->_lbaTime;
+	const int32 tmpLbaTime = _engine->timerRef;
 
 	_engine->exitSceneryView();
 	// workaround to fix hero redraw after drowning
@@ -500,27 +500,27 @@ void GameState::processGameoverAnimation() {
 	_engine->_sound->stopSamples();
 	_engine->_music->stopMidiMusic(); // stop fade music
 	_engine->_renderer->setProjection(_engine->width() / 2, _engine->height() / 2, 128, 200, 200);
-	int32 startLbaTime = _engine->_lbaTime;
+	int32 startLbaTime = _engine->timerRef;
 	const Common::Rect &rect = _engine->centerOnScreen(_engine->width() / 2, _engine->height() / 2);
 	_engine->_interface->setClip(rect);
 
 	int32 zoom = 50000;
 	Common::Rect dummy;
-	while (!_engine->_input->toggleAbortAction() && (_engine->_lbaTime - startLbaTime) <= _engine->toSeconds(10)) {
+	while (!_engine->_input->toggleAbortAction() && (_engine->timerRef - startLbaTime) <= _engine->toSeconds(10)) {
 		FrameMarker frame(_engine, 66);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {
 			return;
 		}
 
-		zoom = _engine->_collision->clampedLerp(40000, 3200, _engine->toSeconds(10), _engine->_lbaTime - startLbaTime);
-		const int32 angle = _engine->_screens->lerp(1, LBAAngles::ANGLE_360, _engine->toSeconds(2), (_engine->_lbaTime - startLbaTime) % _engine->toSeconds(2));
+		zoom = _engine->_collision->clampedLerp(40000, 3200, _engine->toSeconds(10), _engine->timerRef - startLbaTime);
+		const int32 angle = _engine->_screens->lerp(1, LBAAngles::ANGLE_360, _engine->toSeconds(2), (_engine->timerRef - startLbaTime) % _engine->toSeconds(2));
 
 		_engine->blitWorkToFront(rect);
 		_engine->_renderer->setFollowCamera(0, 0, 0, 0, -angle, 0, zoom);
 		_engine->_renderer->affObjetIso(0, 0, 0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, LBAAngles::ANGLE_0, gameOverPtr, dummy);
 
-		_engine->_lbaTime++;
+		_engine->timerRef++;
 	}
 
 	_engine->_sound->playSample(Samples::Explode);
@@ -534,7 +534,7 @@ void GameState::processGameoverAnimation() {
 	_engine->restoreFrontBuffer();
 	init3DGame();
 
-	_engine->_lbaTime = tmpLbaTime;
+	_engine->timerRef = tmpLbaTime;
 }
 
 void GameState::giveUp() {

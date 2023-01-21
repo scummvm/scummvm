@@ -86,12 +86,12 @@ int32 ScriptMoveV2::mWAIT_NB_DIZIEME(TwinEEngine *engine, MoveScriptContext &ctx
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
-		currentTime = engine->_lbaTime + engine->toSeconds(numSeconds) / 10;
+		currentTime = engine->timerRef + engine->toSeconds(numSeconds) / 10;
 		ctx.stream.rewind(4);
 		ctx.stream.writeSint32LE(currentTime);
 	}
 
-	if (engine->_lbaTime < currentTime) {
+	if (engine->timerRef < currentTime) {
 		ctx.undo(5);
 		return 1;
 	}
@@ -108,12 +108,12 @@ int32 ScriptMoveV2::mWAIT_NB_DIZIEME_RND(TwinEEngine *engine, MoveScriptContext 
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NB_DIZIEME(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
-		currentTime = engine->_lbaTime + engine->toSeconds(numSeconds) / 10;
+		currentTime = engine->timerRef + engine->toSeconds(numSeconds) / 10;
 		ctx.stream.rewind(4);
 		ctx.stream.writeSint32LE(currentTime);
 	}
 
-	if (engine->_lbaTime < currentTime) {
+	if (engine->timerRef < currentTime) {
 		ctx.undo(5);
 		return 1;
 	}
@@ -130,12 +130,12 @@ int32 ScriptMoveV2::mWAIT_NB_SECOND_RND(TwinEEngine *engine, MoveScriptContext &
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::WAIT_NB_SECOND_RND(%i, %i)", (int)numSeconds, currentTime);
 
 	if (currentTime == 0) {
-		currentTime = engine->_lbaTime + engine->toSeconds(numSeconds);
+		currentTime = engine->timerRef + engine->toSeconds(numSeconds);
 		ctx.stream.rewind(4);
 		ctx.stream.writeSint32LE(currentTime);
 	}
 
-	if (engine->_lbaTime < currentTime) {
+	if (engine->timerRef < currentTime) {
 		ctx.undo(5);
 		return 1;
 	}

@@ -1065,7 +1065,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 		_engine->_interface->drawFilledRect(boxRect, COLOR_BLACK);
 	}
 
-	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, *_behaviourEntity, _moveMenu);
+	_engine->_renderer->drawObj3D(boxRect, -600, angle, *_behaviourEntity, _moveMenu);
 
 	_engine->_interface->restoreClip();
 }
@@ -1137,7 +1137,7 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 		const int animIdx = _engine->_actor->_heroAnimIdx[(byte)_engine->_actor->_heroBehaviour];
 		_engine->_animations->setAnimObjet(_behaviourAnimState[(byte)_engine->_actor->_heroBehaviour], _engine->_resources->_animData[animIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->_heroBehaviour]);
 
-		int32 tmpTime = _engine->_lbaTime;
+		int32 tmpTime = _engine->timerRef;
 
 #if 0
 		ScopedCursor scopedCursor(_engine);
@@ -1187,10 +1187,10 @@ void Menu::processBehaviourMenu(bool behaviourMenu) {
 
 			drawBehaviour(left, top, _engine->_actor->_heroBehaviour, -1, true);
 
-			_engine->_lbaTime++;
+			_engine->timerRef++;
 		}
 
-		_engine->_lbaTime = tmpTime;
+		_engine->timerRef = tmpTime;
 
 		_engine->_gameState->init3DGame();
 	}

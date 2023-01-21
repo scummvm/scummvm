@@ -646,7 +646,7 @@ int TwinEEngine::getRandomNumber(uint max) {
 
 void TwinEEngine::freezeTime(bool pause) {
 	if (_isTimeFreezed == 0) {
-		_saveFreezedTime = _lbaTime;
+		_saveFreezedTime = timerRef;
 		if (pause)
 			_pauseToken = pauseEngine();
 	}
@@ -656,7 +656,7 @@ void TwinEEngine::freezeTime(bool pause) {
 void TwinEEngine::unfreezeTime() {
 	--_isTimeFreezed;
 	if (_isTimeFreezed == 0) {
-		_lbaTime = _saveFreezedTime;
+		timerRef = _saveFreezedTime;
 		if (_pauseToken.isActive()) {
 			_pauseToken.clear();
 		}
@@ -756,6 +756,7 @@ void TwinEEngine::processInventoryAction() {
 		penguin->_pos.z += destPos.z;
 
 		penguin->_beta = _scene->_sceneHero->_beta;
+		debug("penguin angle: %i", penguin->_beta);
 
 		if (_collision->checkValidObjPos(_scene->_mecaPenguinIdx)) {
 			penguin->setLife(kActorMaxLife);
@@ -765,7 +766,7 @@ void TwinEEngine::processInventoryAction() {
 			penguin->setBrickShape(ShapeType::kNone);
 			_movements->initRealAngleConst(penguin->_beta, penguin->_beta, penguin->_speed, &penguin->_moveAngle);
 			_gameState->removeItem(InventoryItems::kiPenguin);
-			penguin->_delayInMillis = _lbaTime + toSeconds(30);
+			penguin->_delayInMillis = timerRef + toSeconds(30);
 		}
 		break;
 	}
@@ -953,7 +954,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	}
 
-	_loopActorStep = _loopMovePtr.getRealValue(_lbaTime);
+	_loopActorStep = _loopMovePtr.getRealValueFromTime(timerRef);
 	if (!_loopActorStep) {
 		_loopActorStep = 1;
 	}
@@ -1126,7 +1127,7 @@ bool TwinEEngine::gameEngineLoop() {
 		if (runGameEngine()) {
 			return true;
 		}
-		_lbaTime++;
+		timerRef++;
 		if (shouldQuit()) {
 			break;
 		}

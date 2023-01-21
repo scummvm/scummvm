@@ -276,7 +276,7 @@ public:
 	/**
 	 * @param angle A value of @c -1 means that the model is automatically rotated
 	 */
-	void renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData, ActorMoveStruct &move);
+	void drawObj3D(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData, ActorMoveStruct &move);
 
 	/**
 	 * @brief Render an inventory item

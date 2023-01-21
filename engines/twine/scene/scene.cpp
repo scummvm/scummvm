@@ -648,7 +648,7 @@ void Scene::playSceneMusic() {
 }
 
 void Scene::processEnvironmentSound() {
-	if (_engine->_lbaTime < _sampleAmbienceTime) {
+	if (_engine->timerRef < _sampleAmbienceTime) {
 		return;
 	}
 	int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
@@ -676,7 +676,7 @@ void Scene::processEnvironmentSound() {
 	}
 
 	// compute next ambiance timer
-	_sampleAmbienceTime = _engine->_lbaTime + _engine->toSeconds(_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay);
+	_sampleAmbienceTime = _engine->timerRef + _engine->toSeconds(_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay);
 }
 
 void Scene::processZoneExtraBonus(ZoneStruct *zone) {

@@ -369,41 +369,38 @@ void ActorStruct::loadModel(int32 modelIndex, bool lba1) {
 	}
 }
 
-int32 ActorMoveStruct::getRealAngle(int32 time) {
-	if (numOfStep) {
-		const int32 timePassed = time - timeOfChange;
+int16 ActorMoveStruct::getRealValueFromTime(int32 time) {
+	if (timeValue) {
+		const int32 delta = time - memoTicks;
 
-		if (timePassed >= numOfStep) { // rotation is finished
-			numOfStep = 0;
-			return to;
+		if (delta >= timeValue) { // rotation is finished
+			timeValue = 0;
+			return endValue;
 		}
 
-		int32 remainingAngle = NormalizeAngle(to - from);
-		remainingAngle *= timePassed;
-		remainingAngle /= numOfStep;
-		remainingAngle += from;
+		int32 t = ((endValue - startValue) * delta) / timeValue;
+		t += startValue;
 
-		return remainingAngle;
+		return (int16)t;
 	}
 
-	return to;
+	return endValue;
 }
 
-int32 ActorMoveStruct::getRealValue(int32 time) {
-	if (!numOfStep) {
-		return to;
+int16 ActorMoveStruct::getRealAngle(int32 time) {
+	if (timeValue) {
+		int32 delta = time - memoTicks;
+		if (delta < timeValue) {
+			int32 t = NormalizeAngle(endValue - startValue);
+			t = (t * delta) / timeValue;
+			t += startValue;
+			return (int16)t;
+		}
+
+		timeValue = 0;
 	}
 
-	if (time - timeOfChange >= numOfStep) {
-		numOfStep = 0;
-		return to;
-	}
-
-	int32 tempStep = to - from;
-	tempStep *= time - timeOfChange;
-	tempStep /= numOfStep;
-
-	return tempStep + from;
+	return endValue;
 }
 
 bool ActorStruct::isAttackAnimationActive() const {

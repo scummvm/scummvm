@@ -179,7 +179,7 @@ void Redraw::addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 i
 			overlay->y = y;
 			overlay->info1 = info1;
 			overlay->posType = posType;
-			overlay->lifeTime = _engine->_lbaTime + _engine->toSeconds(lifeTime);
+			overlay->lifeTime = _engine->timerRef + _engine->toSeconds(lifeTime);
 			break;
 		}
 	}
@@ -285,16 +285,16 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 			continue;
 		}
 		if (extra->type & ExtraType::TIME_IN) {
-			if (_engine->_lbaTime - extra->spawnTime > 35) {
-				extra->spawnTime = _engine->_lbaTime;
+			if (_engine->timerRef - extra->spawnTime > 35) {
+				extra->spawnTime = _engine->timerRef;
 				extra->type &= ~ExtraType::TIME_IN;
 				_engine->_sound->playSample(Samples::ItemPopup, 1, extra->pos);
 			}
 			continue;
 		}
 		if ((extra->type & ExtraType::TIME_OUT) && (extra->type & ExtraType::FLASH)) {
-			if (_engine->_lbaTime >= extra->spawnTime + extra->payload.lifeTime - _engine->toSeconds(3)) {
-				if ((_engine->_lbaTime + extra->spawnTime) & 8) {
+			if (_engine->timerRef >= extra->spawnTime + extra->payload.lifeTime - _engine->toSeconds(3)) {
+				if ((_engine->timerRef + extra->spawnTime) & 8) {
 					continue;
 				}
 			}
@@ -641,7 +641,7 @@ void Redraw::renderOverlays() {
 			// process position overlay
 			switch (overlay->posType) {
 			case OverlayPosType::koNormal:
-				if (_engine->_lbaTime >= overlay->lifeTime) {
+				if (_engine->timerRef >= overlay->lifeTime) {
 					overlay->info0 = -1;
 					continue;
 				}
@@ -654,7 +654,7 @@ void Redraw::renderOverlays() {
 				overlay->x = projPos.x;
 				overlay->y = projPos.y;
 
-				if (_engine->_lbaTime >= overlay->lifeTime) {
+				if (_engine->timerRef >= overlay->lifeTime) {
 					overlay->info0 = -1;
 					continue;
 				}
@@ -706,7 +706,7 @@ void Redraw::renderOverlays() {
 				break;
 			}
 			case OverlayType::koNumberRange: {
-				const int32 range = _engine->_collision->clampedLerp(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->_lbaTime - 50);
+				const int32 range = _engine->_collision->clampedLerp(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->timerRef - 50);
 
 				char text[10];
 				Common::sprintf_s(text, "%d", range);
@@ -781,12 +781,12 @@ void Redraw::setRenderText(const Common::String &text) {
 	if (_text.empty()) {
 		_textDisappearTime = -1;
 	} else {
-		_textDisappearTime = _engine->_lbaTime + _engine->toSeconds(1);
+		_textDisappearTime = _engine->timerRef + _engine->toSeconds(1);
 	}
 }
 
 void Redraw::renderText() {
-	if (_textDisappearTime <= _engine->_lbaTime) {
+	if (_textDisappearTime <= _engine->timerRef) {
 		return;
 	}
 	if (_text.empty()) {

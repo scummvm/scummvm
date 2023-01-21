@@ -115,7 +115,7 @@ int32 Extra::addExtraExplode(int32 x, int32 y, int32 z) {
 		extra->pos.y = y;
 		extra->pos.z = z;
 		extra->payload.lifeTime = 40;
-		extra->spawnTime = _engine->_lbaTime;
+		extra->spawnTime = _engine->timerRef;
 		extra->strengthOfHit = 0;
 		return i;
 	}
@@ -145,7 +145,7 @@ void Extra::initFly(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x,
 	extra->destPos.z = destPos.z;
 
 	extra->angle = extraAngle;
-	extra->spawnTime = _engine->_lbaTime;
+	extra->spawnTime = _engine->timerRef;
 }
 
 int32 Extra::initSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) {
@@ -178,7 +178,7 @@ int32 Extra::initSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) {
 			extra->pos.z = z;
 
 			extra->strengthOfHit = 0;
-			extra->spawnTime = _engine->_lbaTime;
+			extra->spawnTime = _engine->timerRef;
 			extra->payload.lifeTime = 5;
 		}
 		return i;
@@ -264,7 +264,7 @@ int32 Extra::throwExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteI
 		initFly(extra, xAngle, yAngle, xRotPoint, extraAngle);
 
 		extra->strengthOfHit = strengthOfHit;
-		extra->spawnTime = _engine->_lbaTime;
+		extra->spawnTime = _engine->timerRef;
 		extra->payload.actorIdx = actorIdx;
 		extra->info1 = 0;
 
@@ -438,10 +438,10 @@ void Extra::affSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &renderRec
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
-		aff2DShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->_lbaTime * 32) & LBAAngles::ANGLE_270, 4, renderRect);
+		aff2DShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->timerRef * 32) & LBAAngles::ANGLE_270, 4, renderRect);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
-		int32 zoom = 1 + _engine->_lbaTime - extra->spawnTime;
+		int32 zoom = 1 + _engine->timerRef - extra->spawnTime;
 
 		if (zoom > 32) {
 			zoom = 32;
@@ -473,7 +473,7 @@ void Extra::bounceExtra(ExtraListStruct *extra, int32 x, int32 y, int32 z) {
 	extra->pos.z = z;
 	extra->lastPos.z = z;
 
-	extra->spawnTime = _engine->_lbaTime;
+	extra->spawnTime = _engine->timerRef;
 }
 
 void Extra::gereExtras() {
@@ -488,7 +488,7 @@ void Extra::gereExtras() {
 		}
 		// process extra life time
 		if (extra->type & ExtraType::TIME_OUT) {
-			if (extra->payload.lifeTime + extra->spawnTime <= _engine->_lbaTime) {
+			if (extra->payload.lifeTime + extra->spawnTime <= _engine->timerRef) {
 				extra->sprite = -1;
 				continue;
 			}
@@ -498,7 +498,7 @@ void Extra::gereExtras() {
 			extra->sprite = -1;
 			continue;
 		}
-		const int32 deltaT = _engine->_lbaTime - extra->spawnTime;
+		const int32 deltaT = _engine->timerRef - extra->spawnTime;
 
 		if (extra->type & ExtraType::EXPLOSION) {
 			extra->sprite = _engine->_collision->clampedLerp(SPRITEHQR_EXPLOSION_FIRST_FRAME, 100, 30, deltaT);
@@ -547,7 +547,7 @@ void Extra::gereExtras() {
 		}
 
 		if (extra->type & ExtraType::WAIT_SOME_TIME) {
-			if (_engine->_lbaTime - extra->spawnTime > 40) {
+			if (_engine->timerRef - extra->spawnTime > 40) {
 				extra->type &= ~ExtraType::WAIT_SOME_TIME;
 			}
 			continue;
@@ -579,7 +579,7 @@ void Extra::gereExtras() {
 			}
 
 			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.y, 0, currentExtraY, _engine->_movements->_targetActorDistance);
-			int32 pos = extra->trackActorMove.getRealAngle(_engine->_lbaTime);
+			int32 pos = extra->trackActorMove.getRealValueFromTime(_engine->timerRef);
 			if (!pos) {
 				pos = 1;
 			}
@@ -628,7 +628,7 @@ void Extra::gereExtras() {
 				continue;
 			}
 			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.y, 0, extraKey->pos.y, _engine->_movements->_targetActorDistance);
-			int32 pos = extra->trackActorMove.getRealAngle(_engine->_lbaTime);
+			int32 pos = extra->trackActorMove.getRealValueFromTime(_engine->timerRef);
 
 			if (!pos) {
 				pos = 1;

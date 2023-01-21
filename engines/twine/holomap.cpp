@@ -299,8 +299,8 @@ void Holomap::drawHoloObj(const IVec3 &angle, int32 alpha, int32 beta) {
 }
 
 void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
-	const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
-	if (move.numOfStep == 0) {
+	const int16 newAngle = move.getRealAngle(_engine->timerRef);
+	if (move.timeValue == 0) {
 		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, 500, &move);
 	}
 
@@ -364,7 +364,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	BodyData bodyData;
 	bodyData.loadFromHQR(Resources::HQR_RESS_FILE, data->getModel(), _engine->isLBA1());
 	uint frameNumber = 0;
-	int32 frameTime = _engine->_lbaTime;
+	int32 frameTime = _engine->timerRef;
 	int16 trajAnimFrameIdx = 0;
 
 	int32 waterPaletteChangeTimer = 0;
@@ -377,13 +377,13 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			break;
 		}
 
-		if (!fadeInPalette && waterPaletteChangeTimer < _engine->_lbaTime) {
+		if (!fadeInPalette && waterPaletteChangeTimer < _engine->timerRef) {
 			// animate the water surface
 			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_paletteHolomap[3 * _holomapPaletteIndex++]);
 			if (_holomapPaletteIndex == NUM_HOLOMAPCOLORS) {
 				_holomapPaletteIndex = 0;
 			}
-			waterPaletteChangeTimer = _engine->_lbaTime + 3;
+			waterPaletteChangeTimer = _engine->timerRef + 3;
 		}
 
 		renderHolomapVehicle(frameNumber, move, animTimerData, bodyData, animData);
@@ -395,8 +395,8 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 		// animate the path from point 1 to point 2 by rendering a point model on each position
 		// on the globe every 40 timeunits
-		if (frameTime + 40 <= _engine->_lbaTime) {
-			frameTime = _engine->_lbaTime;
+		if (frameTime + 40 <= _engine->timerRef) {
+			frameTime = _engine->timerRef;
 			int32 modelX;
 			int32 modelY;
 			if (trajAnimFrameIdx < data->numAnimFrames) {
@@ -417,7 +417,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			fadeInPalette = false;
 			//_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBACustom);
 		}
-		++_engine->_lbaTime;
+		++_engine->timerRef;
 	}
 
 	_engine->_screens->clearScreen();
@@ -540,7 +540,7 @@ void Holomap::holoMap() {
 	int32 currentLocation = _engine->_scene->_currentSceneIdx;
 	_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 
-	int32 time = _engine->_lbaTime;
+	int32 time = _engine->timerRef;
 	int32 xRot = _locations[currentLocation].angleX;
 	int32 yRot = _locations[currentLocation].angleY;
 	bool automove = false;
@@ -560,7 +560,7 @@ void Holomap::holoMap() {
 			if (nextLocation != -1 && currentLocation != nextLocation) {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
-				time = _engine->_lbaTime;
+				time = _engine->timerRef;
 				automove = true;
 			}
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
@@ -568,7 +568,7 @@ void Holomap::holoMap() {
 			if (nextLocation != -1 && currentLocation != nextLocation) {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
-				time = _engine->_lbaTime;
+				time = _engine->timerRef;
 				automove = true;
 			}
 		}
@@ -576,37 +576,37 @@ void Holomap::holoMap() {
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
 			xRot += LBAAngles::ANGLE_2;
 			automove = true;
-			time = _engine->_lbaTime;
+			time = _engine->timerRef;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
 			xRot -= LBAAngles::ANGLE_2;
 			automove = true;
-			time = _engine->_lbaTime;
+			time = _engine->timerRef;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
 			yRot += LBAAngles::ANGLE_2;
 			automove = true;
-			time = _engine->_lbaTime;
+			time = _engine->timerRef;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
 			yRot -= LBAAngles::ANGLE_2;
 			automove = true;
-			time = _engine->_lbaTime;
+			time = _engine->timerRef;
 		}
 
 		if (automove) {
-			const int32 dt = _engine->_lbaTime - time;
+			const int32 dt = _engine->timerRef - time;
 			xRot = _engine->_collision->clampedLerp(ClampAngle(xRot), _locations[currentLocation].angleX, 75, dt);
 			yRot = _engine->_collision->clampedLerp(ClampAngle(yRot), _locations[currentLocation].angleY, 75, dt);
 			redraw = true;
 		}
 
-		if (!fadeInPalette && waterPaletteChangeTimer < _engine->_lbaTime) {
+		if (!fadeInPalette && waterPaletteChangeTimer < _engine->timerRef) {
 			// animate the water surface
 			_engine->setPalette(HOLOMAP_PALETTE_INDEX, NUM_HOLOMAPCOLORS, &_paletteHolomap[3 * _holomapPaletteIndex++]);
 			if (_holomapPaletteIndex == NUM_HOLOMAPCOLORS) {
 				_holomapPaletteIndex = 0;
 			}
-			waterPaletteChangeTimer = _engine->_lbaTime + 3;
+			waterPaletteChangeTimer = _engine->timerRef + 3;
 			redraw = true;
 		}
 
@@ -638,7 +638,7 @@ void Holomap::holoMap() {
 			automove = false;
 		}
 
-		++_engine->_lbaTime;
+		++_engine->timerRef;
 
 		if (fadeInPalette) {
 			fadeInPalette = false;
