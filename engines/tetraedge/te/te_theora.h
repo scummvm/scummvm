@@ -62,6 +62,7 @@ private:
 	Video::TheoraDecoder *_decoder;
 
 	Common::Path _path;
+	bool _hitEnd;
 
 };
 

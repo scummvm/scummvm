@@ -25,7 +25,7 @@
 
 namespace Tetraedge {
 
-TeTheora::TeTheora() {
+TeTheora::TeTheora() : _hitEnd(false) {
 	_decoder = new Video::TheoraDecoder();
 }
 
@@ -98,16 +98,25 @@ float TeTheora::frameRate() {
 }
 
 bool TeTheora::update(unsigned long i, TeImage &imgout) {
+	if (_decoder->getCurFrame() > (int)i && !_path.empty()) {
+		// rewind.. no good way to do that, but it should
+		// only happen on loop.
+		load(_path);
+	}
+
 	// TODO: Should this seek to frame i? Currently just continues.
 	const Graphics::Surface *frame = nullptr;
-	while (_decoder->getCurFrame() < (int)i && !_decoder->endOfVideo())
+	while (_decoder->getCurFrame() <= (int)i && !_decoder->endOfVideo())
 		frame = _decoder->decodeNextFrame();
+
+	_hitEnd = _decoder->endOfVideo();
 
 	if (frame && frame->getPixels()) {
 		//debug("TeTheora: %s %ld", _path.toString().c_str(), i);
 		imgout.copyFrom(*frame);
 		return true;
-	} else if (isAtEnd() && !_path.empty()) {
+	} else if (_hitEnd && !_path.empty()) {
+		// Loop to the start.
 		load(_path);
 		frame = _decoder->decodeNextFrame();
 		if (frame) {
@@ -119,7 +128,7 @@ bool TeTheora::update(unsigned long i, TeImage &imgout) {
 }
 
 bool TeTheora::isAtEnd() {
-	return _decoder->endOfVideo();
+	return _hitEnd;
 }
 
 void TeTheora::setColorKeyActivated(bool val) {
