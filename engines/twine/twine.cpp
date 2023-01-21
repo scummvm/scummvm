@@ -751,7 +751,7 @@ void TwinEEngine::processInventoryAction() {
 
 		const IVec3 &destPos = _movements->rotate(0, 800, _scene->_sceneHero->_beta);
 
-		penguin->_pos = _scene->_sceneHero->_pos;
+		penguin->_pos = _scene->_sceneHero->posObj();
 		penguin->_pos.x += destPos.x;
 		penguin->_pos.z += destPos.z;
 

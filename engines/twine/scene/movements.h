@@ -176,12 +176,12 @@ public:
 	}
 
 	/**
-	 * Rotate actor with a given angle
-	 * @param x Actor current X coordinate
-	 * @param z Actor current Z coordinate
+	 * Calculate offset for the side and forward distances by the given angle of an actor
+	 * @param side Actor current X coordinate
+	 * @param forward Actor current Z coordinate
 	 * @param angle Actor angle to rotate
 	 */
-	IVec3 rotate(int32 x, int32 z, int32 angle);
+	IVec3 rotate(int32 side, int32 forward, int32 angle);
 
 	/**
 	 * Move actor around the scene
