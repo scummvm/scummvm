@@ -836,10 +836,10 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 	DrawListStruct drawList[NUM_MAX_ACTORS + EXTRA_MAX_ENTRIES]; // ListTri[MAX_OBJECTS + MAX_EXTRAS]
 	int32 drawListPos = fillActorDrawingList(drawList, bgRedraw);
 	drawListPos = fillExtraDrawingList(drawList, drawListPos);
-	sortDrawingList(drawList, drawListPos);
 
 	_currNumOfRedrawBox = 0;
 	correctZLevels(drawList, drawListPos);
+	sortDrawingList(drawList, drawListPos);
 	processDrawList(drawList, drawListPos, bgRedraw);
 
 	if (_engine->_cfgfile.Debug) {
