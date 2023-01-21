@@ -350,9 +350,9 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Arr
 void Renderer::transRotList(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec, const IVec3 &destPos) {
 	for (int32 i = 0; i < numPoints; ++i) {
 		const BodyVertex &vertex = vertices[i + firstPoint];
-		const int32 tmpX = vertex.x + angleVec.x;
-		const int32 tmpY = vertex.y + angleVec.y;
-		const int32 tmpZ = vertex.z + angleVec.z;
+		const int16 tmpX = (int16)(vertex.x + angleVec.x);
+		const int16 tmpY = (int16)(vertex.y + angleVec.y);
+		const int16 tmpZ = (int16)(vertex.z + angleVec.z);
 
 		destPoints->x = ((translationMatrix->row1.x * tmpX + translationMatrix->row1.y * tmpY + translationMatrix->row1.z * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
 		destPoints->y = ((translationMatrix->row2.x * tmpX + translationMatrix->row2.y * tmpY + translationMatrix->row2.z * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
