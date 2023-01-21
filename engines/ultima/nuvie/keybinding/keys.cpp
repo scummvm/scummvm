@@ -596,9 +596,12 @@ void KeyBinder::ParseLine(char *line) {
 }
 
 void KeyBinder::LoadFromFileInternal(const char *filename) {
-	Common::ReadStream *keyfile;
+	Common::ReadStream *keyfile = nullptr;
 
 	openFile(keyfile, filename);
+	if (!keyfile)
+		::error("Keybinder: can't open file %s", filename);
+
 	char temp[1024]; // 1024 should be long enough
 	while (!keyfile->eos()) {
 		strgets(temp, 1024, keyfile);
