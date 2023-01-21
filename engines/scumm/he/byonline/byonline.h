@@ -174,6 +174,9 @@ private:
 	void gameStarted(int hoster, int player, int playerNameArray);
 	void gameFinished();
 
+	void downloadFile(int directoryArray, int filenameArray);
+	void handleFileResp(Common::String fileContent, int error, Common::String message);
+
 protected:
 	TCPsocket _socket;
 	SDLNet_SocketSet _socketSet; // For checking for activity

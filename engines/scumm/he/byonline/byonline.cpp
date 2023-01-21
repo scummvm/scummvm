@@ -24,6 +24,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+// #include "common/fs.h"
 
 #include "scumm/he/intern_he.h"
 
@@ -273,6 +274,11 @@ void BYOnline::processLine(Common::String line) {
 			Common::JSONArray userTeam = root["user"]->asArray();
 			Common::JSONArray opponentTeam = root["opponent"]->asArray();
 			handleTeams(userTeam, opponentTeam, (int)error, message);
+		} else if (command == "download_file") {
+			long long int error = root["error"]->asIntegerNumber();
+			Common::String message = root["message"]->asString();
+			Common::String fileContent = root["content"]->asString();
+			handleFileResp(fileContent, error, message);
 		}
 	}
 }
@@ -365,8 +371,7 @@ int32 BYOnline::dispatch(int op, int numArgs, int32 *args) {
 		res = answerPhone(args[0]);
 		break;
 	case OP_NET_DOWNLOAD_FILE:
-		// TODO
-		_vm->writeVar(135, 1);
+		downloadFile(args[0], args[1]);
 		break;
 	case OP_NET_CHECK_INTERNET_STATUS:
 		res = 1;
@@ -569,6 +574,24 @@ void BYOnline::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponen
 
 	// Write a one to var747 to indicate that Prince Rupert teams should be pulled from arrays 748 and 749
 	_vm->writeVar(747, 1);
+}
+
+void handleFileResp(Common::String fileContent, int error, Common::String message) {
+	Common::FSNode gameDataDir(ConfMan.get("path"));
+	Common::String gameDataDirString = gameDataDir.getPath();
+
+	Common::FSNode downloadsChild = gameDataDir.getChild("downloads");
+
+	// TODO: Make sure downloads directory exists. Maybe use dir name from directoryArray
+	// instead of assuming (game path)/downloads/
+
+	Common::FSNode outputFile = downloadsChild.getChild(filename);
+	Common::OutSaveFile *outFile = new Common::OutSaveFile(outputFile.createWriteStream());
+
+	outFile->write(fileContent, sizeof(fileContent));
+	outFile->finalize();
+
+	_vm->writeVar(135, 1);
 }
 
 void BYOnline::setProfile(Common::String field, int32 value) {
@@ -1054,6 +1077,20 @@ void BYOnline::gameFinished() {
 	gameFinishedRequest.setVal("cmd", new Common::JSONValue("game_finished"));
 
 	sendWithVersion(gameFinishedRequest);
+}
+
+void BYOnline::downloadFile(int directoryArray, int filenameArray) {
+	char saveDirectory[64];
+	_vm->getStringFromArray(directoryArray, saveDirectory, sizeof(saveDirectory));
+
+	char filename[16];
+	_vm->getStringFromArray(filenameArray, filename, sizeof(filename));
+
+	Common::JSONObject downloadFileRequest;
+	downloadFileRequest.setVal("cmd", new Common::JSONValue("download_file"));
+	downloadFileRequest.setVal("filename", new Common::JSONValue(filename));
+
+	sendWithVersion(downloadFileRequest);
 }
 
 }
