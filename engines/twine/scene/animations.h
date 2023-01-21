@@ -52,9 +52,9 @@ private:
 	KeyFrame _animKeyframeBuf[32];
 
 	/** Rotation by anim and not by engine */
-	int16 _processRotationByAnim = 0; // AnimMasterRot
+	int16 _animMasterRot = 0; // AnimMasterRot
 	/** Last rotation angle */
-	int16 _processLastRotationAngle = 0; // processActorVar6
+	int16 _animStepBeta = 0; // AnimStepBeta
 
 	/** Current step coordinates */
 	IVec3 _currentStep;
@@ -81,7 +81,7 @@ public:
 	 * @param bodyData Body model data
 	 * @param animTimerDataPtr Animation time data
 	 */
-	bool setModelAnimation(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
+	bool doSetInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Get entity anim index (This is taken from File3D entities)

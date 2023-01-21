@@ -24,14 +24,13 @@
 
 namespace TwinE {
 
-bool AnimData::loadBoneFrame(KeyFrame &keyframe, Common::SeekableReadStream &stream) {
+void AnimData::loadBoneFrame(KeyFrame &keyframe, Common::SeekableReadStream &stream) {
 	BoneFrame boneframe;
 	boneframe.type = (BoneType)stream.readSint16LE();
 	boneframe.x = stream.readSint16LE();
 	boneframe.y = stream.readSint16LE();
 	boneframe.z = stream.readSint16LE();
 	keyframe.boneframes.push_back(boneframe);
-	return boneframe.type != 0;
 }
 
 void AnimData::loadKeyFrames(Common::SeekableReadStream &stream) {
@@ -41,6 +40,12 @@ void AnimData::loadKeyFrames(Common::SeekableReadStream &stream) {
 		keyframe.x = stream.readSint16LE();
 		keyframe.y = stream.readSint16LE();
 		keyframe.z = stream.readSint16LE();
+
+		keyframe.animMasterRot = stream.readSint16LE();
+		keyframe.animStepAlpha = stream.readSint16LE();
+		keyframe.animStepBeta = stream.readSint16LE();
+		keyframe.animStepGamma = stream.readSint16LE();
+		stream.seek(-8, SEEK_CUR);
 
 		for (uint16 j = 0U; j < _numBoneframes; ++j) {
 			loadBoneFrame(keyframe, stream);

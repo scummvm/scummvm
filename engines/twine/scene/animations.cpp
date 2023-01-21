@@ -95,7 +95,7 @@ int16 Animations::patchInterStep(int32 deltaTime, int32 keyFrameLength, int16 ne
 	return computedPos;
 }
 
-bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::doSetInterAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr) {
 	if (!bodyData.isAnimated()) {
 		return false;
 	}
@@ -105,8 +105,8 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 	_currentStep.y = keyFrame->y;
 	_currentStep.z = keyFrame->z;
 
-	_processRotationByAnim = keyFrame->boneframes[0].type;
-	_processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
+	_animMasterRot = keyFrame->animMasterRot;
+	_animStepBeta = ToAngle(keyFrame->animStepBeta);
 
 	const int16 numBones = bodyData.getNumBones();
 
@@ -130,7 +130,7 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 		return true;
 	}
 
-	_processLastRotationAngle = (_processLastRotationAngle * deltaTime) / keyFrameLength;
+	_animStepBeta = (_animStepBeta * deltaTime) / keyFrameLength;
 
 	if (numOfBonesInAnim <= 1) {
 		return false;
@@ -182,8 +182,8 @@ void Animations::setAnimObjet(int32 keyframeIdx, const AnimData &animData, BodyD
 	_currentStep.y = keyFrame->y;
 	_currentStep.z = keyFrame->z;
 
-	_processRotationByAnim = keyFrame->boneframes[0].type;
-	_processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
+	_animMasterRot = keyFrame->animMasterRot;
+	_animStepBeta = ToAngle(keyFrame->animStepBeta);
 
 	animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
 	animTimerDataPtr->time = _engine->timerRef;
@@ -244,9 +244,8 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 	_currentStep.y = keyFrame->y;
 	_currentStep.z = keyFrame->z;
 
-	const BoneFrame &boneFrame = keyFrame->boneframes[0];
-	_processRotationByAnim = boneFrame.type;
-	_processLastRotationAngle = ToAngle(boneFrame.y);
+	_animMasterRot = keyFrame->animMasterRot;
+	_animStepBeta = ToAngle(keyFrame->animStepBeta);
 
 	if (deltaTime >= keyFrameLength) {
 		animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
@@ -254,7 +253,7 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 		return true;
 	}
 
-	_processLastRotationAngle = (_processLastRotationAngle * deltaTime) / keyFrameLength;
+	_animStepBeta = (_animStepBeta * deltaTime) / keyFrameLength;
 	_currentStep.x = (_currentStep.x * deltaTime) / keyFrameLength;
 	_currentStep.y = (_currentStep.y * deltaTime) / keyFrameLength;
 	_currentStep.z = (_currentStep.z * deltaTime) / keyFrameLength;
@@ -570,14 +569,14 @@ void Animations::doAnim(int32 actorIdx) {
 				keyFramePassed = verifyAnimAtKeyframe(actor->_frame, animData, &actor->_animTimerData);
 			}
 
-			if (_processRotationByAnim) {
+			if (_animMasterRot) {
 				actor->_dynamicFlags.bIsRotationByAnim = 1;
 			} else {
 				actor->_dynamicFlags.bIsRotationByAnim = 0;
 			}
 
-			actor->_beta = ClampAngle(actor->_beta + _processLastRotationAngle - actor->_animStepBeta);
-			actor->_animStepBeta = _processLastRotationAngle;
+			actor->_beta = ClampAngle(actor->_beta + _animStepBeta - actor->_animStepBeta);
+			actor->_animStepBeta = _animStepBeta;
 
 			const IVec2 &destPos = _engine->_renderer->rotate(_currentStep.x, _currentStep.z, actor->_beta);
 

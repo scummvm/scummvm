@@ -360,7 +360,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->_anim >= 0) {
 		const AnimData &animData = _engine->_resources->_animData[actor->_anim];
-		_engine->_animations->setModelAnimation(actor->_frame, animData, _engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
+		_engine->_animations->doSetInterAnimObjet(actor->_frame, animData, _engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
 	}
 
 	const IVec3 &delta = actor->posObj() - _engine->_grid->_worldCube;

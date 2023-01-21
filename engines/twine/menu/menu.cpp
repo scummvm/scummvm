@@ -1021,7 +1021,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 
 	uint currentAnimState = _behaviourAnimState[(byte)behaviour];
 
-	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, *_behaviourEntity, &_behaviourAnimData[(byte)behaviour])) {
+	if (_engine->_animations->doSetInterAnimObjet(currentAnimState, currentAnimData, *_behaviourEntity, &_behaviourAnimData[(byte)behaviour])) {
 		currentAnimState++; // keyframe
 		if (currentAnimState >= currentAnimData.getNumKeyframes()) {
 			currentAnimState = currentAnimData.getLoopFrame();

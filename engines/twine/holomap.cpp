@@ -303,7 +303,7 @@ void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, Ani
 		_engine->_movements->initRealAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, 500, &move);
 	}
 
-	if (_engine->_animations->setModelAnimation(frameNumber, animData, bodyData, &animTimerData)) {
+	if (_engine->_animations->doSetInterAnimObjet(frameNumber, animData, bodyData, &animTimerData)) {
 		frameNumber++;
 		if (frameNumber >= animData.getNumKeyframes()) {
 			frameNumber = animData.getLoopFrame();

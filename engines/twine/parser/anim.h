@@ -47,6 +47,10 @@ struct KeyFrame {
 	int16 x = 0;
 	int16 y = 0;
 	int16 z = 0;
+	int16 animMasterRot = 0;
+	int16 animStepAlpha = 0;
+	int16 animStepBeta = 0;
+	int16 animStepGamma = 0;
 	Common::Array<BoneFrame> boneframes;
 };
 
@@ -54,7 +58,7 @@ class AnimData : public Parser {
 private:
 	Common::Array<KeyFrame> _keyframes;
 
-	bool loadBoneFrame(KeyFrame &keyframe, Common::SeekableReadStream &stream);
+	void loadBoneFrame(KeyFrame &keyframe, Common::SeekableReadStream &stream);
 	void loadKeyFrames(Common::SeekableReadStream &stream);
 
 	uint16 _numKeyframes;
