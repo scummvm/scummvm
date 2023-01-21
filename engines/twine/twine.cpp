@@ -749,11 +749,11 @@ void TwinEEngine::processInventoryAction() {
 	case kiPenguin: {
 		ActorStruct *penguin = _scene->getActor(_scene->_mecaPenguinIdx);
 
-		const IVec3 &destPos = _movements->rotate(0, 800, _scene->_sceneHero->_beta);
+		const IVec2 &destPos = _renderer->rotate(0, 800, _scene->_sceneHero->_beta);
 
 		penguin->_pos = _scene->_sceneHero->posObj();
 		penguin->_pos.x += destPos.x;
-		penguin->_pos.z += destPos.z;
+		penguin->_pos.z += destPos.y;
 
 		penguin->_beta = _scene->_sceneHero->_beta;
 		debug("penguin angle: %i", penguin->_beta);

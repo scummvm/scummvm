@@ -231,7 +231,14 @@ public:
 	void init(int32 w, int32 h);
 
 	void setCameraRotation(int32 x, int32 y, int32 z);
-	IVec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
+
+	/**
+	 * Calculate offset for the side and forward distances by the given angle of an actor
+	 * @param side Actor current X coordinate
+	 * @param forward Actor current Z coordinate
+	 * @param angle Actor angle to rotate
+	 */
+	IVec2 rotate(int32 side, int32 forward, int32 angle) const;
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 	IVec3 longWorldRot(int32 x, int32 y, int32 z);

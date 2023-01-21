@@ -312,14 +312,14 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 	}
 
 	if (actor->_dynamicFlags.bIsHitting) {
-		const IVec3 &destPos = _engine->_movements->rotate(0, 200, actor->_beta);
+		const IVec2 &destPos = _engine->_renderer->rotate(0, 200, actor->_beta);
 		mins = processActor + actor->_boundingBox.mins;
 		mins.x += destPos.x;
-		mins.z += destPos.z;
+		mins.z += destPos.y;
 
 		maxs = processActor + actor->_boundingBox.maxs;
 		maxs.x += destPos.x;
-		maxs.z += destPos.z;
+		maxs.z += destPos.y;
 
 		for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);

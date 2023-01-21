@@ -220,16 +220,16 @@ void Renderer::setFollowCamera(int32 transPosX, int32 transPosY, int32 transPosZ
 	_cameraPos = longInverseRot(_cameraRot.x, _cameraRot.y, _cameraRot.z);
 }
 
-IVec3 Renderer::getHolomapRotation(const int32 x, const int32 y, const int32 angle) const {
+IVec2 Renderer::rotate(int32 side, int32 forward, int32 angle) const {
 	if (angle) {
 		const int32 nSin = sinTab[ClampAngle(angle)];
 		const int32 nCos = sinTab[ClampAngle((angle + LBAAngles::ANGLE_90))];
 
-		const int32 x0 = ((x * nCos) + (y * nSin)) >> 14;
-		const int32 y0 = ((y * nCos) - (x * nSin)) >> 14;
-		return IVec3(x0, y0, 0);
+		const int32 x0 = ((side * nCos) + (forward * nSin)) >> 14;
+		const int32 y0 = ((forward * nCos) - (side * nSin)) >> 14;
+		return IVec2(x0, y0);
 	}
-	return IVec3(x, y, 0);
+	return IVec2(side, forward);
 }
 
 void Renderer::rotMatIndex2(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix, const IVec3 &angleVec) {

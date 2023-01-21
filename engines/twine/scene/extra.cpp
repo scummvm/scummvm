@@ -135,14 +135,14 @@ void Extra::initFly(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x,
 
 	extra->lastPos = extra->pos;
 
-	IVec3 destPos = _engine->_movements->rotate(x, 0, xAngle);
+	IVec2 destPos = _engine->_renderer->rotate(x, 0, xAngle);
 
-	extra->destPos.y = -destPos.z;
+	extra->destPos.y = -destPos.y;
 
-	destPos = _engine->_movements->rotate(0, destPos.x, yAngle);
+	destPos = _engine->_renderer->rotate(0, destPos.x, yAngle);
 
 	extra->destPos.x = destPos.x;
-	extra->destPos.z = destPos.z;
+	extra->destPos.z = destPos.y;
 
 	extra->angle = extraAngle;
 	extra->spawnTime = _engine->timerRef;
@@ -403,10 +403,10 @@ void Extra::aff2DShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 col
 
 	_engine->clearScreenMinMax(renderRect);
 
-	IVec3 destPos = _engine->_movements->rotate(shapeX, shapeZ, angle);
+	IVec2 destPos = _engine->_renderer->rotate(shapeX, shapeZ, angle);
 
 	const int32 computedX = destPos.x + x;
-	const int32 computedY = destPos.z + y;
+	const int32 computedY = destPos.y + y;
 
 	_engine->adjustScreenMax(renderRect, computedX, computedY);
 
@@ -421,10 +421,10 @@ void Extra::aff2DShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 col
 		const int32 oldComputedX = currentX;
 		const int32 oldComputedY = currentY;
 
-		destPos = _engine->_movements->rotate(shapeX, shapeZ, angle);
+		destPos = _engine->_renderer->rotate(shapeX, shapeZ, angle);
 
 		currentX = destPos.x + x;
-		currentY = destPos.z + y;
+		currentY = destPos.y + y;
 
 		_engine->adjustScreenMax(renderRect, currentX, currentY);
 		_engine->_interface->drawLine(oldComputedX, oldComputedY, currentX, currentY, color);
@@ -584,12 +584,12 @@ void Extra::gereExtras() {
 				pos = 1;
 			}
 
-			IVec3 destPos = _engine->_movements->rotate(pos, 0, angle2);
-			extra->pos.y -= destPos.z;
+			IVec2 destPos = _engine->_renderer->rotate(pos, 0, angle2);
+			extra->pos.y -= destPos.y;
 
-			destPos = _engine->_movements->rotate(0, destPos.x, tmpAngle);
+			destPos = _engine->_renderer->rotate(0, destPos.x, tmpAngle);
 			extra->pos.x += destPos.x;
-			extra->pos.z += destPos.z;
+			extra->pos.z += destPos.y;
 
 			_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, extra->destPos.z, LBAAngles::ANGLE_17, &extra->trackActorMove);
 
@@ -634,12 +634,12 @@ void Extra::gereExtras() {
 				pos = 1;
 			}
 
-			IVec3 destPos = _engine->_movements->rotate(pos, 0, angle2);
-			extra->pos.y -= destPos.z;
+			IVec2 destPos = _engine->_renderer->rotate(pos, 0, angle2);
+			extra->pos.y -= destPos.y;
 
-			destPos = _engine->_movements->rotate(0, destPos.x, tmpAngle);
+			destPos = _engine->_renderer->rotate(0, destPos.x, tmpAngle);
 			extra->pos.x += destPos.x;
-			extra->pos.z += destPos.z;
+			extra->pos.z += destPos.y;
 
 			_engine->_movements->setActorAngle(LBAAngles::ANGLE_0, extra->destPos.z, LBAAngles::ANGLE_17, &extra->trackActorMove);
 

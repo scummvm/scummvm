@@ -129,16 +129,6 @@ int32 Movements::getAngle(int32 x0, int32 z0, int32 x1, int32 z1) {
 	return ClampAngle(angle);
 }
 
-IVec3 Movements::rotate(int32 side, int32 forward, int32 angle) {
-	if (angle) {
-		const double radians = AngleToRadians(angle);
-		const int32 vx = (int32)((side * cos(radians) + forward * sin(radians)));
-		const int32 vz = (int32)((forward * cos(radians) - side * sin(radians)));
-		return IVec3(vx, 0, vz);
-	}
-	return IVec3(side, 0, forward);
-}
-
 void Movements::initRealAngleConst(int32 start, int32 end, int32 duration, ActorMoveStruct *movePtr) const { // ManualRealAngle
 	const int16 cstart = ClampAngle(start);
 	const int16 cend = ClampAngle(end);

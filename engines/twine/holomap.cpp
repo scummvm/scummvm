@@ -158,8 +158,8 @@ void Holomap::computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream)
 		holomapSurfaceStream->seek(-1, SEEK_CUR);
 		for (int beta = 0; beta < LBAAngles::ANGLE_360; beta += LBAAngles::ANGLE_11_25) {
 			const int32 normal = 1000 + holomapSurfaceStream->readByte() * 2;
-			const IVec3 &rotVec = _engine->_renderer->getHolomapRotation(normal, 0, alpha);
-			const IVec3 &rotVec2 = _engine->_renderer->getHolomapRotation(rotVec.x, 0, beta);
+			const IVec2 &rotVec = _engine->_renderer->rotate(normal, 0, alpha);
+			const IVec2 &rotVec2 = _engine->_renderer->rotate(rotVec.x, 0, beta);
 			const IVec3 &rotVec3 = _engine->_renderer->worldRotatePoint(IVec3(rotVec2.x, rotVec.y, rotVec2.y));
 
 			_holomapSurface[holomapSurfaceArrayIdx].x = rotVec3.x;
@@ -168,8 +168,8 @@ void Holomap::computeCoorGlobe(Common::SeekableReadStream *holomapSurfaceStream)
 			++holomapSurfaceArrayIdx;
 		}
 		const int32 normal = 1000 + rot * 2;
-		const IVec3 &rotVec = _engine->_renderer->getHolomapRotation(normal, 0, alpha);
-		const IVec3 &rotVec2 = _engine->_renderer->getHolomapRotation(rotVec.x, 0, 0);
+		const IVec2 &rotVec = _engine->_renderer->rotate(normal, 0, alpha);
+		const IVec2 &rotVec2 = _engine->_renderer->rotate(rotVec.x, 0, 0);
 		const IVec3 &rotVec3 = _engine->_renderer->worldRotatePoint(IVec3(rotVec2.x, rotVec.y, rotVec2.y));
 		_holomapSurface[holomapSurfaceArrayIdx].x = rotVec3.x;
 		_holomapSurface[holomapSurfaceArrayIdx].y = rotVec3.y;
