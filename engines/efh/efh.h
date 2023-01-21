@@ -22,6 +22,8 @@
 #ifndef EFH_H
 #define EFH_H
 
+#include "audio/softsynth/pcspk.h"
+#include "audio/mixer.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/events.h"
@@ -619,6 +621,9 @@ private:
 	InitiativeStruct _initiatives[8];
 
 	int16 _regenCounter;
+
+	Audio::PCSpeaker *_speakerStream;
+	Audio::SoundHandle _speakerHandle;
 };
 
 } // End of namespace Efh
