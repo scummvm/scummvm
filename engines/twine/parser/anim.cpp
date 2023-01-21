@@ -26,7 +26,7 @@ namespace TwinE {
 
 bool AnimData::loadBoneFrame(KeyFrame &keyframe, Common::SeekableReadStream &stream) {
 	BoneFrame boneframe;
-	boneframe.type = stream.readSint16LE();
+	boneframe.type = (BoneType)stream.readSint16LE();
 	boneframe.x = stream.readSint16LE();
 	boneframe.y = stream.readSint16LE();
 	boneframe.z = stream.readSint16LE();

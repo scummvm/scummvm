@@ -173,7 +173,7 @@ private:
 
 	IMatrix3x3 _matrixWorld;
 	IMatrix3x3 _matricesTable[30 + 1];
-	IVec3 _normalLight; // NormalXLight
+	IVec3 _normalLight; // NormalXLight, NormalYLight, NormalZLight
 	IVec3 _cameraRot;
 
 	RenderCommand _renderCmds[1000];

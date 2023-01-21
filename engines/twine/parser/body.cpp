@@ -61,7 +61,7 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		const int16 basePoint = stream.readSint16LE() / 6;
 		const int16 baseElementOffset = stream.readSint16LE();
 		BoneFrame boneframe;
-		boneframe.type = stream.readSint16LE();
+		boneframe.type = (BoneType)stream.readSint16LE();
 		boneframe.x = stream.readSint16LE();
 		boneframe.y = stream.readSint16LE();
 		boneframe.z = stream.readSint16LE();

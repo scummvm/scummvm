@@ -385,9 +385,9 @@ void Renderer::translateGroup(IMatrix3x3 *targetMatrix, const Common::Array<Body
 void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	const int32 normalUnit = 64;
 	const IVec3 renderAngle(angleX, angleY, angleZ);
-	IMatrix3x3 matrix;
-	rotMatIndex2(&matrix, &_matrixWorld, renderAngle);
-	_normalLight = rot(matrix, 0, 0, normalUnit - 5);
+	IMatrix3x3 rotationMatrix;
+	rotMatIndex2(&rotationMatrix, &_matrixWorld, renderAngle);
+	_normalLight = rot(rotationMatrix, 0, 0, normalUnit - 5);
 }
 
 int16 Renderer::leftClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices) {
@@ -1537,7 +1537,7 @@ bool Renderer::renderObjectIso(const BodyData &bodyData, RenderCommand **renderC
 	return true;
 }
 
-void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect) {
+void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &poswr, Common::Rect &modelRect) {
 	const int32 numVertices = bodyData.getNumVertices();
 	const int32 numBones = bodyData.getNumBones();
 
@@ -1559,10 +1559,12 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 			const BodyBone &bone = bodyData.getBone(boneIdx);
 			const BoneFrame *boneData = bodyData.getBoneState(boneIdx);
 
-			if (boneData->type == 0) {
+			if (boneData->type == BoneType::TYPE_ROTATE) {
 				processRotatedElement(modelMatrix, vertices, boneData->x, boneData->y, boneData->z, bone, modelData);
-			} else if (boneData->type == 1) {
+			} else if (boneData->type == BoneType::TYPE_TRANSLATE) {
 				translateGroup(modelMatrix, vertices, boneData->x, boneData->y, boneData->z, bone, modelData);
+			} else if (boneData->type == BoneType::TYPE_ZOOM) {
+				// unsupported type
 			}
 
 			++modelMatrix;
@@ -1577,13 +1579,13 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 
 	if (_isUsingIsoProjection) {
 		do {
-			const int32 coX = pointPtr->x + renderPos.x;
-			const int32 coY = pointPtr->y + renderPos.y;
-			const int32 coZ = -(pointPtr->z + renderPos.z);
+			const int32 coX = pointPtr->x + poswr.x;
+			const int32 coY = pointPtr->y + poswr.y;
+			const int32 coZ = -(pointPtr->z + poswr.z);
 
-			pointPtrDest->x = (coX + coZ) * 24 / ISO_SCALE + _projectionCenter.x;
-			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / ISO_SCALE + _projectionCenter.y;
-			pointPtrDest->z = coZ - coX - coY;
+			pointPtrDest->x = (int16)((coX + coZ) * 24 / ISO_SCALE + _projectionCenter.x);
+			pointPtrDest->y = (int16)((((coX - coZ) * 12) - coY * 30) / ISO_SCALE + _projectionCenter.y);
+			pointPtrDest->z = (int16)(coZ - coX - coY);
 
 			if (pointPtrDest->x < modelRect.left) {
 				modelRect.left = pointPtrDest->x;
@@ -1604,16 +1606,16 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 		} while (--numOfPrimitives);
 	} else {
 		do {
-			int32 coZ = _kFactor - (pointPtr->z + renderPos.z);
+			int32 coZ = _kFactor - (pointPtr->z + poswr.z);
 			if (coZ <= 0) {
 				coZ = 0x7FFFFFFF;
 			}
 
-			int32 coX = (((pointPtr->x + renderPos.x) * _lFactorX) / coZ) + _projectionCenter.x;
+			int32 coX = (((pointPtr->x + poswr.x) * _lFactorX) / coZ) + _projectionCenter.x;
 			if (coX > 0xFFFF) {
 				coX = 0x7FFF;
 			}
-			pointPtrDest->x = coX;
+			pointPtrDest->x = (int16)coX;
 			if (pointPtrDest->x < modelRect.left) {
 				modelRect.left = pointPtrDest->x;
 			}
@@ -1621,11 +1623,11 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 				modelRect.right = pointPtrDest->x;
 			}
 
-			int32 coY = _projectionCenter.y - (((pointPtr->y + renderPos.y) * _lFactorY) / coZ);
+			int32 coY = _projectionCenter.y - (((pointPtr->y + poswr.y) * _lFactorY) / coZ);
 			if (coY > 0xFFFF) {
 				coY = 0x7FFF;
 			}
-			pointPtrDest->y = coY;
+			pointPtrDest->y = (int16)coY;
 			if (pointPtrDest->y < modelRect.top) {
 				modelRect.top = pointPtrDest->y;
 			}
@@ -1636,7 +1638,7 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 			if (coZ > 0xFFFF) {
 				coZ = 0x7FFF;
 			}
-			pointPtrDest->z = coZ;
+			pointPtrDest->z = (int16)coZ;
 
 			pointPtr++;
 			pointPtrDest++;
@@ -1644,7 +1646,7 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 		} while (--numOfPrimitives);
 	}
 
-	int32 numNormals = bodyData.getNormals().size();
+	int32 numNormals = (int32)bodyData.getNormals().size();
 
 	if (numNormals) { // process normal data
 		uint16 *currentShadeDestination = (uint16 *)modelData->normalTable;
@@ -1652,8 +1654,8 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 
 		numOfPrimitives = numBones;
 
-		int shadeIndex = 0;
-		int boneIdx = 0;
+		int16 shadeIndex = 0;
+		int16 boneIdx = 0;
 		do { // for each element
 			numNormals = bodyData.getBone(boneIdx).numNormals;
 
@@ -1702,13 +1704,13 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 alpha, int32 beta, i
 	modelRect.right = SCENE_SIZE_MIN;
 	modelRect.bottom = SCENE_SIZE_MIN;
 
-	IVec3 renderPos;
+	IVec3 poswr; // PosXWr, PosYWr, PosZWr
 	if (!_isUsingIsoProjection) {
-		renderPos = longWorldRot(x, y, z) - _cameraRot;
+		poswr = longWorldRot(x, y, z) - _cameraRot;
 	} else {
-		renderPos.x = x;
-		renderPos.y = y;
-		renderPos.z = z;
+		poswr.x = x;
+		poswr.y = y;
+		poswr.z = z;
 	}
 
 	if (!bodyData.isAnimated()) {
@@ -1723,7 +1725,7 @@ bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 alpha, int32 beta, i
 	}
 	// restart at the beginning of the renderTable
 	RenderCommand *renderCmds = _renderCmds;
-	animModel(&_modelData, bodyData, renderCmds, renderAngle, renderPos, modelRect);
+	animModel(&_modelData, bodyData, renderCmds, renderAngle, poswr, modelRect);
 	if (!renderObjectIso(bodyData, &renderCmds, &_modelData, modelRect)) {
 		modelRect.right = -1;
 		modelRect.bottom = -1;
