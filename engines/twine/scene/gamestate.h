@@ -70,6 +70,8 @@ private:
 	 */
 	// TODO: why not NUM_GAME_FLAGS?
 	uint8 _gameStateFlags[256];
+	// only lba1 - lba2 uses 253 gameflag
+	int16 _gameChapter = 0;
 
 public:
 	GameState(TwinEEngine *engine);
@@ -93,8 +95,8 @@ public:
 	 * 14: - still looking for plans
 	 * 15: The final showdown - "good day"
 	 */
-	// TODO: this is 253 gameflag in lba2
-	int16 _gameChapter = 0;
+	void setChapter(int16 chapter);
+	int16 getChapter() const;
 
 	/** Magic ball type index */
 	int16 _magicBall = 0;

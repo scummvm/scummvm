@@ -430,8 +430,8 @@ bool TwinEConsole::doChangeChapter(int argc, const char **argv) {
 		debugPrintf("Expected to get a chapter index as first parameter\n");
 		return true;
 	}
-	debugPrintf("Old chapter was: %i\n", _engine->_gameState->_gameChapter);
-	_engine->_gameState->_gameChapter = (int16)atoi(argv[1]);
+	debugPrintf("Old chapter was: %i\n", _engine->_gameState->getChapter());
+	_engine->_gameState->setChapter(atoi(argv[1]));
 	return true;
 }
 

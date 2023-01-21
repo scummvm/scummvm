@@ -134,7 +134,7 @@ void GameState::initEngineVars() {
 	_magicLevelIdx = 0;
 	_usingSabre = false;
 
-	_gameChapter = 0;
+	setChapter(0);
 
 	_engine->_scene->_sceneTextBank = TextBankId::Options_and_menus;
 	_engine->_scene->_currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
@@ -181,7 +181,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		setGameFlag(i, file->readByte());
 	}
 	_engine->_scene->_needChangeScene = file->readByte(); // scene index
-	_gameChapter = file->readByte();
+	setChapter(file->readByte());
 
 	_engine->_actor->_heroBehaviour = (HeroBehaviourType)file->readByte();
 	_engine->_actor->_previousHeroBehaviour = _engine->_actor->_heroBehaviour;
@@ -249,7 +249,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 		file->writeByte(hasGameFlag(i));
 	}
 	file->writeByte(sceneIdx);
-	file->writeByte(_gameChapter);
+	file->writeByte(getChapter());
 	file->writeByte((byte)_engine->_actor->_heroBehaviour);
 	file->writeByte(_engine->_scene->_sceneHero->_lifePoint);
 	file->writeSint16LE(_goldPieces);
@@ -279,6 +279,21 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(0);
 
 	return true;
+}
+
+void GameState::setChapter(int16 chapter) {
+	if (_engine->isLBA1()) {
+		_gameChapter = chapter;
+		return;
+	}
+	setGameFlag(253, chapter);
+}
+
+int16 GameState::getChapter() const {
+	if (_engine->isLBA1()) {
+		return _gameChapter;
+	}
+	return _gameStateFlags[253];
 }
 
 void GameState::setGameFlag(uint8 index, uint8 value) {

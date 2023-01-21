@@ -316,7 +316,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		break;
 	case kcCHAPTER:
 		debugCN(3, kDebugLevels::kDebugScripts, "chapter(");
-		engine->_scene->_currentScriptValue = engine->_gameState->_gameChapter;
+		engine->_scene->_currentScriptValue = engine->_gameState->getChapter();
 		break;
 	case kcDISTANCE_3D: {
 		int32 targetActorIdx;
@@ -1214,8 +1214,8 @@ int32 ScriptLife::lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 int32 ScriptLife::lINC_CHAPTER(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::INC_CHAPTER()");
-	engine->_gameState->_gameChapter++;
-	debug("Switched chapter to %i", engine->_gameState->_gameChapter);
+	engine->_gameState->setChapter(engine->_gameState->getChapter() + 1);
+	debug("Switched chapter to %i", engine->_gameState->getChapter());
 	return 0;
 }
 
