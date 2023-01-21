@@ -232,33 +232,34 @@ IVec2 Renderer::rotate(int32 side, int32 forward, int32 angle) const {
 	return IVec2(side, forward);
 }
 
-void Renderer::rotMatIndex2(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix, const IVec3 &angleVec) {
+void Renderer::rotMatIndex2(IMatrix3x3 *pDest, const IMatrix3x3 *pSrc, const IVec3 &angleVec) {
 	IMatrix3x3 matrix1;
 	IMatrix3x3 matrix2;
+	const int32 lAlpha = angleVec.x;
+	const int32 lBeta = angleVec.y;
+	const int32 lGamma = angleVec.z;
 
-	if (angleVec.x) {
-		int32 angle = angleVec.x;
-		int32 nSin = sinTab[ClampAngle(angle)];
-		int32 nCos = sinTab[ClampAngle(angle + LBAAngles::ANGLE_90)];
+	if (lAlpha) {
+		int32 nSin = sinTab[ClampAngle(lAlpha)];
+		int32 nCos = sinTab[ClampAngle(lAlpha + LBAAngles::ANGLE_90)];
 
-		matrix1.row1.x = currentMatrix->row1.x;
-		matrix1.row2.x = currentMatrix->row2.x;
-		matrix1.row3.x = currentMatrix->row3.x;
+		matrix1.row1.x = pSrc->row1.x;
+		matrix1.row2.x = pSrc->row2.x;
+		matrix1.row3.x = pSrc->row3.x;
 
-		matrix1.row1.y = (currentMatrix->row1.z * nSin + currentMatrix->row1.y * nCos) / SCENE_SIZE_HALF;
-		matrix1.row1.z = (currentMatrix->row1.z * nCos - currentMatrix->row1.y * nSin) / SCENE_SIZE_HALF;
-		matrix1.row2.y = (currentMatrix->row2.z * nSin + currentMatrix->row2.y * nCos) / SCENE_SIZE_HALF;
-		matrix1.row2.z = (currentMatrix->row2.z * nCos - currentMatrix->row2.y * nSin) / SCENE_SIZE_HALF;
-		matrix1.row3.y = (currentMatrix->row3.z * nSin + currentMatrix->row3.y * nCos) / SCENE_SIZE_HALF;
-		matrix1.row3.z = (currentMatrix->row3.z * nCos - currentMatrix->row3.y * nSin) / SCENE_SIZE_HALF;
+		matrix1.row1.y = (pSrc->row1.z * nSin + pSrc->row1.y * nCos) / SCENE_SIZE_HALF;
+		matrix1.row1.z = (pSrc->row1.z * nCos - pSrc->row1.y * nSin) / SCENE_SIZE_HALF;
+		matrix1.row2.y = (pSrc->row2.z * nSin + pSrc->row2.y * nCos) / SCENE_SIZE_HALF;
+		matrix1.row2.z = (pSrc->row2.z * nCos - pSrc->row2.y * nSin) / SCENE_SIZE_HALF;
+		matrix1.row3.y = (pSrc->row3.z * nSin + pSrc->row3.y * nCos) / SCENE_SIZE_HALF;
+		matrix1.row3.z = (pSrc->row3.z * nCos - pSrc->row3.y * nSin) / SCENE_SIZE_HALF;
 	} else {
-		matrix1 = *currentMatrix;
+		matrix1 = *pSrc;
 	}
 
-	if (angleVec.z) {
-		int32 angle = angleVec.z;
-		int32 nSin = sinTab[ClampAngle(angle)];
-		int32 nCos = sinTab[ClampAngle(angle + LBAAngles::ANGLE_90)];
+	if (lGamma) {
+		int32 nSin = sinTab[ClampAngle(lGamma)];
+		int32 nCos = sinTab[ClampAngle(lGamma + LBAAngles::ANGLE_90)];
 
 		matrix2.row1.z = matrix1.row1.z;
 		matrix2.row2.z = matrix1.row2.z;
@@ -274,24 +275,23 @@ void Renderer::rotMatIndex2(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentM
 		matrix2 = matrix1;
 	}
 
-	if (angleVec.y) {
-		int32 angle = angleVec.y;
-		int32 nSin = sinTab[ClampAngle(angle)];
-		int32 nCos = sinTab[ClampAngle(angle + LBAAngles::ANGLE_90)];
+	if (lBeta) {
+		int32 nSin = sinTab[ClampAngle(lBeta)];
+		int32 nCos = sinTab[ClampAngle(lBeta + LBAAngles::ANGLE_90)];
 
-		targetMatrix->row1.y = matrix2.row1.y;
-		targetMatrix->row2.y = matrix2.row2.y;
-		targetMatrix->row3.y = matrix2.row3.y;
+		pDest->row1.y = matrix2.row1.y;
+		pDest->row2.y = matrix2.row2.y;
+		pDest->row3.y = matrix2.row3.y;
 
-		targetMatrix->row1.x = (matrix2.row1.x * nCos - matrix2.row1.z * nSin) / SCENE_SIZE_HALF;
-		targetMatrix->row1.z = (matrix2.row1.x * nSin + matrix2.row1.z * nCos) / SCENE_SIZE_HALF;
-		targetMatrix->row2.x = (matrix2.row2.x * nCos - matrix2.row2.z * nSin) / SCENE_SIZE_HALF;
-		targetMatrix->row2.z = (matrix2.row2.x * nSin + matrix2.row2.z * nCos) / SCENE_SIZE_HALF;
+		pDest->row1.x = (matrix2.row1.x * nCos - matrix2.row1.z * nSin) / SCENE_SIZE_HALF;
+		pDest->row1.z = (matrix2.row1.x * nSin + matrix2.row1.z * nCos) / SCENE_SIZE_HALF;
+		pDest->row2.x = (matrix2.row2.x * nCos - matrix2.row2.z * nSin) / SCENE_SIZE_HALF;
+		pDest->row2.z = (matrix2.row2.x * nSin + matrix2.row2.z * nCos) / SCENE_SIZE_HALF;
 
-		targetMatrix->row3.x = (matrix2.row3.x * nCos - matrix2.row3.z * nSin) / SCENE_SIZE_HALF;
-		targetMatrix->row3.z = (matrix2.row3.x * nSin + matrix2.row3.z * nCos) / SCENE_SIZE_HALF;
+		pDest->row3.x = (matrix2.row3.x * nCos - matrix2.row3.z * nSin) / SCENE_SIZE_HALF;
+		pDest->row3.z = (matrix2.row3.x * nSin + matrix2.row3.z * nCos) / SCENE_SIZE_HALF;
 	} else {
-		*targetMatrix = matrix2;
+		*pDest = matrix2;
 	}
 }
 
