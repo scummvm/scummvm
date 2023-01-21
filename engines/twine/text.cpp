@@ -458,7 +458,7 @@ void Text::processTextLine() {
 	_progressiveTextBufferPtr = _progressiveTextBuffer;
 }
 
-void Text::renderContinueReadingTriangle() {
+void Text::renderContinueReadingTriangle() { // AffFleche
 	const int32 border = 3;
 	const int32 size = 21;
 	const int16 color = 136;
@@ -485,7 +485,7 @@ void Text::renderContinueReadingTriangle() {
 	polygon.numVertices = ARRAYSIZE(vertices);
 	polygon.colorIndex = _dialTextStopColor;
 	polygon.renderType = POLYGONTYPE_FLAT;
-	_engine->_renderer->renderPolygons(polygon, vertices, top, bottom);
+	_engine->_renderer->renderPolygons(polygon, vertices);
 
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
@@ -529,7 +529,7 @@ void Text::fadeInRemainingChars() {
 	--_fadeInCharactersPos;
 }
 
-ProgressiveTextState Text::updateProgressiveText() {
+ProgressiveTextState Text::updateProgressiveText() { // NextDialCar
 	if (!_hasValidTextHandle) {
 		return ProgressiveTextState::End;
 	}
@@ -672,7 +672,7 @@ void Text::setFontParameters(int32 spaceBetween, int32 charSpace) {
 	_dialCharSpace = charSpace;
 }
 
-void Text::setFontCrossColor(int32 color) {
+void Text::setFontCrossColor(int32 color) { // TestCoulDial
 	_dialTextStepSize = -1;
 	_dialTextBufferSize = 14;
 	_dialTextStartColor = color * 16;
@@ -683,7 +683,7 @@ void Text::setFontColor(int32 color) {
 	_dialTextColor = color;
 }
 
-void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) {
+void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) { // CoulDial
 	_dialTextStartColor = startColor;
 	_dialTextStopColor = stopColor;
 	_dialTextStepSize = stepSize;

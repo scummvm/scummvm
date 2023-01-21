@@ -380,10 +380,6 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	_normalLight = rot(matrix, 0, 0, normalUnit - 5);
 }
 
-static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
-	return x < a ? a : (x > b ? b : x);
-}
-
 int16 Renderer::leftClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices) {
 	const Common::Rect &clip = _engine->_interface->_clip;
 	ComputedVertex *pTabPolyClip = offTabPoly[1];
@@ -624,36 +620,33 @@ int16 Renderer::bottomClip(int16 polyRenderType, ComputedVertex** offTabPoly, in
 	return newNbPoints;
 }
 
-int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices, int &vtop, int &vbottom) {
-	const Common::Rect &clip = _engine->_interface->_clip;
-	if (clip.isEmpty()) {
-		return numVertices;
-	}
+int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices, int16 &ymin, int16 &ymax) {
+	int16 xmin = SCENE_SIZE_MAX;
+	int16 xmax = SCENE_SIZE_MIN;
 
-	int32 minsx = SCENE_SIZE_MAX;
-	int32 maxsx = SCENE_SIZE_MIN;
-	int32 minsy = SCENE_SIZE_MAX;
-	int32 maxsy = SCENE_SIZE_MIN;
+	ymin = SCENE_SIZE_MAX;
+	ymax = SCENE_SIZE_MIN;
 
 	ComputedVertex* pTabPoly = offTabPoly[0];
 	for (int32 i = 0; i < numVertices; i++) {
-		if (pTabPoly[i].x < minsx) {
-			minsx = pTabPoly[i].x;
+		if (pTabPoly[i].x < xmin) {
+			xmin = pTabPoly[i].x;
 		}
-		if (pTabPoly[i].x > maxsx) {
-			maxsx = pTabPoly[i].x;
+		if (pTabPoly[i].x > xmax) {
+			xmax = pTabPoly[i].x;
 		}
-		if (pTabPoly[i].y < minsy) {
-			minsy = pTabPoly[i].y;
+		if (pTabPoly[i].y < ymin) {
+			ymin = pTabPoly[i].y;
 		}
-		if (pTabPoly[i].y > maxsy) {
-			maxsy = pTabPoly[i].y;
+		if (pTabPoly[i].y > ymax) {
+			ymax = pTabPoly[i].y;
 		}
 	}
 
+	const Common::Rect &clip = _engine->_interface->_clip;
 	// no vertices
-	if (minsy > maxsy || maxsx < clip.left || minsx > clip.right || maxsy < clip.top || minsy > clip.bottom) {
-		debug(10, "Clipped %i:%i:%i:%i, clip rect(%i:%i:%i:%i)", minsx, minsy, maxsx, maxsy, clip.left, clip.top, clip.right, clip.bottom);
+	if (ymin > ymax || xmax < clip.left || xmin > clip.right || ymax < clip.top || ymin > clip.bottom) {
+		debug(10, "Clipped %i:%i:%i:%i, clip rect(%i:%i:%i:%i)", xmin, ymin, xmax, ymax, clip.left, clip.top, clip.right, clip.bottom);
 		return 0;
 	}
 
@@ -662,7 +655,7 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabP
 	bool hasBeenClipped = false;
 
 	int32 clippedNumVertices = numVertices;
-	if (minsx < clip.left) {
+	if (xmin < clip.left) {
 		clippedNumVertices = leftClip(polyRenderType, offTabPoly, clippedNumVertices);
 		if (!clippedNumVertices) {
 			return 0;
@@ -671,7 +664,7 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabP
 		hasBeenClipped = true;
 	}
 
-	if (maxsx > clip.right) {
+	if (xmax > clip.right) {
 		clippedNumVertices = rightClip(polyRenderType, offTabPoly, clippedNumVertices);
 		if (!clippedNumVertices) {
 			return 0;
@@ -680,7 +673,7 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabP
 		hasBeenClipped = true;
 	}
 
-	if (minsy < clip.top) {
+	if (ymin < clip.top) {
 		clippedNumVertices = topClip(polyRenderType, offTabPoly, clippedNumVertices);
 		if (!clippedNumVertices) {
 			return 0;
@@ -689,7 +682,7 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabP
 		hasBeenClipped = true;
 	}
 
-	if (maxsy > clip.bottom) {
+	if (ymax > clip.bottom) {
 		clippedNumVertices = bottomClip(polyRenderType, offTabPoly, clippedNumVertices);
 		if (!clippedNumVertices) {
 			return 0;
@@ -699,31 +692,28 @@ int32 Renderer::computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabP
 	}
 
 	if (hasBeenClipped) {
-		minsy = 32767;
-		maxsy = -32768;
+		ymin = 32767;
+		ymax = -32768;
 
 		for (int32 i = 0; i < clippedNumVertices; i++) {
-			if (offTabPoly[0][i].y < minsy) {
-				minsy = offTabPoly[0][i].y;
+			if (offTabPoly[0][i].y < ymin) {
+				ymin = offTabPoly[0][i].y;
 			}
 
-			if (offTabPoly[0][i].y > maxsy) {
-				maxsy = offTabPoly[0][i].y;
+			if (offTabPoly[0][i].y > ymax) {
+				ymax = offTabPoly[0][i].y;
 			}
 		}
 
-		if (minsy >= maxsy) {
+		if (ymin >= ymax) {
 			return 0;
 		}
 	}
 
-	vtop = minsy;
-	vbottom = maxsy;
-
 	return clippedNumVertices;
 }
 
-bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices, int &vtop, int &vbottom) {
+bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices, int16 &vtop, int16 &vbottom) {
 	assert(numVertices < ARRAYSIZE(_clippedPolygonVertices1));
 	for (int i = 0; i < numVertices; ++i) {
 		_clippedPolygonVertices1[i] = vertices[i];
@@ -1181,7 +1171,8 @@ void Renderer::svgaPolyTriche(int16 vtop, int16 Ymax, uint16 color) const {
 	}
 }
 
-void Renderer::renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices, int vtop, int vbottom) {
+void Renderer::renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices) {
+	int16 vtop, vbottom;
 	if (computePoly(polygon.renderType, vertices, polygon.numVertices, vtop, vbottom)) {
 		fillVertices(vtop, vbottom, polygon.renderType, polygon.colorIndex);
 	}
@@ -1385,8 +1376,6 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 
 		CmdRenderPolygon *destinationPolygon = (CmdRenderPolygon *)(void*)renderBufferPtr;
 		destinationPolygon->numVertices = numVertices;
-		destinationPolygon->top = SCENE_SIZE_MAX;
-		destinationPolygon->bottom = SCENE_SIZE_MIN;
 
 		renderBufferPtr += sizeof(CmdRenderPolygon);
 
@@ -1396,7 +1385,7 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 		ComputedVertex *vertex = vertices;
 
 		if (materialType >= MAT_GOURAUD) {
-			destinationPolygon->renderType = polygon.materialType - (MAT_GOURAUD - POLYGONTYPE_GOURAUD);
+			destinationPolygon->renderType = polygon.materialType - (MAT_GOURAUD - MAT_FLAT);
 			destinationPolygon->colorIndex = polygon.intensity;
 
 			for (int16 idx = 0; idx < numVertices; ++idx) {
@@ -1408,8 +1397,6 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 				vertex->intensity = shadeValue;
 				vertex->x = point->x;
 				vertex->y = point->y;
-				destinationPolygon->top = MIN<int16>(destinationPolygon->top, vertex->y);
-				destinationPolygon->bottom = MAX<int16>(destinationPolygon->bottom, vertex->y);
 				zMax = MAX(zMax, point->z);
 				++vertex;
 			}
@@ -1433,8 +1420,6 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 				vertex->intensity = destinationPolygon->colorIndex;
 				vertex->x = point->x;
 				vertex->y = point->y;
-				destinationPolygon->top = MIN<int16>(destinationPolygon->top, vertex->y);
-				destinationPolygon->bottom = MAX<int16>(destinationPolygon->bottom, vertex->y);
 				zMax = MAX<int16>(zMax, point->z);
 				++vertex;
 			}
@@ -1492,7 +1477,7 @@ bool Renderer::renderObjectIso(const BodyData &bodyData, RenderCommand **renderC
 		case RENDERTYPE_DRAWPOLYGON: {
 			const CmdRenderPolygon *header = (const CmdRenderPolygon *)(const void*)pointer;
 			ComputedVertex *vertices = (ComputedVertex *)(void*)(pointer + sizeof(CmdRenderPolygon));
-			renderPolygons(*header, vertices, header->top, header->bottom);
+			renderPolygons(*header, vertices);
 			break;
 		}
 		case RENDERTYPE_DRAWSPHERE: {

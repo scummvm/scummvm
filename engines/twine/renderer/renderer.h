@@ -69,8 +69,6 @@ struct CmdRenderPolygon {
 	uint8 renderType = 0;
 	uint8 numVertices = 0;
 	int16 colorIndex = 0; // intensity
-	int16 top = 0;
-	int16 bottom = 0;
 	// followed by Vertex array
 };
 
@@ -208,7 +206,7 @@ private:
 	void svgaPolyDith(int16 vtop, int16 vbottom) const;
 	void svgaPolyMarbre(int16 vtop, int16 vbottom, uint16 color) const;
 	void svgaPolyTriche(int16 vtop, int16 vbottom, uint16 color) const;
-	bool computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices, int &vtop, int &vbottom);
+	bool computePoly(int16 polyRenderType, const ComputedVertex *vertices, int32 numVertices, int16 &vtop, int16 &vbottom);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
 	uint8 *preparePolygons(const Common::Array<BodyPolygon>& polygons, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
@@ -225,7 +223,7 @@ private:
 	int16 rightClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
 	int16 topClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
 	int16 bottomClip(int16 polyRenderType, ComputedVertex** offTabPoly, int32 numVertices);
-	int32 computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices, int &vtop, int &vbottom);
+	int32 computePolyMinMax(int16 polyRenderType, ComputedVertex **offTabPoly, int32 numVertices, int16 &vtop, int16 &vbottom);
 public:
 	Renderer(TwinEEngine *engine);
 	~Renderer();
@@ -241,7 +239,7 @@ public:
 	IVec3 worldRotatePoint(const IVec3& vec);
 
 	void fillVertices(int16 vtop, int16 vbottom, uint8 renderType, uint16 color);
-	void renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices, int vtop, int vbottom);
+	void renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices);
 
 	inline IVec3 projectPoint(const IVec3& pos) { // ProjettePoint
 		return projectPoint(pos.x, pos.y, pos.z);
