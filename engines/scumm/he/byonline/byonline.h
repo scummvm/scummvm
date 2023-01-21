@@ -175,7 +175,7 @@ private:
 	void gameFinished();
 
 	void downloadFile(int directoryArray, int filenameArray);
-	void handleFileResp(Common::String fileContent, int error, Common::String message);
+	void handleFileResp(Common::String filename, Common::String fileContent, int error, Common::String message);
 
 protected:
 	TCPsocket _socket;

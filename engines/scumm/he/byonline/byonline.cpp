@@ -274,11 +274,13 @@ void BYOnline::processLine(Common::String line) {
 			Common::JSONArray userTeam = root["user"]->asArray();
 			Common::JSONArray opponentTeam = root["opponent"]->asArray();
 			handleTeams(userTeam, opponentTeam, (int)error, message);
-		} else if (command == "download_file") {
+		} else if (command == "file") {
 			long long int error = root["error"]->asIntegerNumber();
 			Common::String message = root["message"]->asString();
+			Common::String filename = root["filename"]->asString();
 			Common::String fileContent = root["content"]->asString();
-			handleFileResp(fileContent, error, message);
+			
+			handleFileResp(filename, fileContent, error, message);
 		}
 	}
 }
@@ -576,7 +578,7 @@ void BYOnline::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponen
 	_vm->writeVar(747, 1);
 }
 
-void handleFileResp(Common::String fileContent, int error, Common::String message) {
+void BYOnline::handleFileResp(Common::String filename, Common::String fileContent, int error, Common::String message) {
 	Common::FSNode gameDataDir(ConfMan.get("path"));
 	Common::String gameDataDirString = gameDataDir.getPath();
 
@@ -588,7 +590,10 @@ void handleFileResp(Common::String fileContent, int error, Common::String messag
 	Common::FSNode outputFile = downloadsChild.getChild(filename);
 	Common::OutSaveFile *outFile = new Common::OutSaveFile(outputFile.createWriteStream());
 
-	outFile->write(fileContent, sizeof(fileContent));
+	static const char fileContentArr[fileContent.size() + 1];
+	strcpy(fileContentArr, fileContent.c_str());
+
+	outFile->write(fileContentArr, sizeof(fileContentArr));
 	outFile->finalize();
 
 	_vm->writeVar(135, 1);
