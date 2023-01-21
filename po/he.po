@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-20 20:17+0000\n"
-"PO-Revision-Date: 2022-10-27 02:33+0000\n"
+"PO-Revision-Date: 2023-01-22 04:34+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -213,20 +213,18 @@ msgstr "שגיאה %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "רשימת צלמיות בהורדה..."
+msgstr "רשימת % בהורדה..."
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
 msgstr "ניקוי המטמון"
 
 #: gui/downloadpacksdialog.cpp:251
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "רשימת צלמיות בהורדה... %d רשומות"
+msgstr "רשימת % בהורדה... %d רשומות"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
@@ -257,21 +255,16 @@ msgstr "שגיאה: לא נקבע נתיב לצלמיות"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:427
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "אין חבילות צלמיות חדשות זמינות"
+msgstr "אין % חדשות זמינות"
 
 #: gui/downloadpacksdialog.cpp:463
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "icon files. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
-msgstr ""
-"יוסרו %s %s של נתונים, ואיתם יימחקו כל קבצי הצלמיות שכבר ירדו, האם להמשיך?"
+msgstr "יוסרו %s %s של נתונים, ואיתם יימחקו כל %S שכבר ירדו, האם להמשיך?"
 
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
@@ -1124,10 +1117,8 @@ msgid "the filtering setting could not be changed"
 msgstr "לא ניתן לשנות הגדרת סינון"
 
 #: gui/options.cpp:842
-#, fuzzy
-#| msgid "the fullscreen setting could not be changed"
 msgid "the vsync setting could not be changed"
-msgstr "לא ניתן לשנות הגדרת מסך מלא"
+msgstr "לא ניתן לשנות הגדרת סנכרון"
 
 #: gui/options.cpp:859
 msgid "the shader could not be changed"
@@ -1207,16 +1198,12 @@ msgid "Shader Path:"
 msgstr "נתיב סוכך:"
 
 #: gui/options.cpp:1599
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "בדיקת עדכונים:"
+msgstr "עדכון"
 
 #: gui/options.cpp:1599
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "בדיקת עדכונים..."
+msgstr "בדיקת עדכונים של חבילות סוככים"
 
 #: gui/options.cpp:1605 backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Fullscreen mode"
@@ -1574,20 +1561,16 @@ msgid "GUI renderer:"
 msgstr "מעבד GUI:"
 
 #: gui/options.cpp:2478
-#, fuzzy
-#| msgid "Always return to the launcher when leaving a game"
 msgid "Return to the launcher when leaving a game"
-msgstr "תמיד חזור למסך הרצת המשחקים בעת יציאה ממשחק"
+msgstr "חזרה מסך הרצת המשחקים בעת יציאה ממשחק"
 
 #: gui/options.cpp:2479
-#, fuzzy
-#| msgid ""
-#| "Always return to the launcher when leaving a game instead of closing "
-#| "ScummVM."
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
-msgstr "תמיד לחזור למסך הרצת המשחקים בעת יציאה ממשחק במקום לסגור את ScummVM."
+msgstr ""
+"חזרה למסך הרצת המשחקים בעת יציאה ממשחק במקום לסגור את ScummVM. (תכונה זו "
+"אינה נתמכת בכל המשחקים)."
 
 #: gui/options.cpp:2486
 msgid "Ask for confirmation on exit"
@@ -1635,10 +1618,8 @@ msgid "Update Icons"
 msgstr "עדכון צלמיות"
 
 #: gui/options.cpp:2541
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "בדיקת עדכונים..."
+msgstr "בדיקת עדכונים עבור חבילות צלמיות"
 
 #: gui/options.cpp:2548
 msgid "Autosave:"
@@ -1651,11 +1632,11 @@ msgstr "שמירה אוטומטית:"
 
 #: gui/options.cpp:2561
 msgid "Random seed:"
-msgstr ""
+msgstr "גרעין אקראי:"
 
 #: gui/options.cpp:2561
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "גרעין לאתחול כל מחוללי המספרים"
 
 #: gui/options.cpp:2571
 msgid "Enable Discord integration"
@@ -1974,11 +1955,11 @@ msgstr "בחר תיקיה עבור שורש מנהל הקבצים"
 
 #: gui/options.cpp:3133
 msgid "icon packs"
-msgstr ""
+msgstr "חבילות"
 
 #: gui/options.cpp:3144
 msgid "shader packs"
-msgstr ""
+msgstr "חבילות"
 
 #: gui/options.cpp:3266
 msgid ""
@@ -2200,15 +2181,15 @@ msgstr "נא להזין תיאור עבור משבצת %d:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "יש לבחור סוכך מהרשימה להלן (או לבחור קובץ במקום)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "לבחור קובץ במקום..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "בחירת סוכך מתוך מערכת הקבצים"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
@@ -3793,13 +3774,11 @@ msgstr "במשחקי תלת-ממד"
 
 #: backends/platform/android/options.cpp:152
 msgid "Forget SAF authorization"
-msgstr ""
+msgstr "שכיחת הזדהות"
 
 #: backends/platform/android/options.cpp:359
-#, fuzzy
-#| msgid "~R~emove Game"
 msgid "Remove"
-msgstr "ה~ס~רת משחק"
+msgstr ""
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -4154,7 +4133,7 @@ msgstr "אין לדמות תופעות לוואי של NTSC לטקסט"
 
 #: engines/agi/detection_tables.h:310
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
-msgstr ""
+msgstr "משחקי AGI ישנים עבור מחשבי Tandy Color אינם נתמכים עדיין."
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4583,12 +4562,12 @@ msgstr "במהלכת סרטון הפתיחה, הצגת הכתוביות במהל
 
 #: engines/bladerunner/metaengine.cpp:111
 msgid "Fix credits for voice actors"
-msgstr ""
+msgstr "תיקון כתוביות עבור מדבבים"
 
 #: engines/bladerunner/metaengine.cpp:112
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
-msgstr ""
+msgstr "עדכון כתוביות הסיום לכתוביות מתוקנות עבור המדבבים"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
@@ -4735,10 +4714,8 @@ msgid "Skip support"
 msgstr "דלג על התמיכה"
 
 #: engines/buried/metaengine.cpp:41
-#, fuzzy
-#| msgid "Allow text and cutscenes to be skipped"
 msgid "Allow cutscenes to be skipped"
-msgstr "אפשור דילוג על טקסטים וסרטוני מעבר"
+msgstr "אפשור דילוג על רטוני מעבר"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4779,10 +4756,8 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "שימוש בהמרת טקסט לדיבור כדי לקרוא טקסט במשחק (אם זמינה)"
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
-#| msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgid "Enable Text to Speech for Objects and Options"
-msgstr "הפעלת המרת טקסט לדיבור עבור עצמים, אפשרויות וציטוטים מהתנ\"ך"
+msgstr "הפעלת המרת טקסט לדיבור עבור עצמים אפשרויות"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -4931,7 +4906,7 @@ msgstr "הפעלת המרת טקסט לדיבור עבור עצמים, אפשר�
 
 #: engines/freescape/metaengine.cpp:35
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "צלילים מוקלטים"
 
 #: engines/freescape/metaengine.cpp:36
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
