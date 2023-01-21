@@ -84,6 +84,7 @@ void OSystem_iOS7::engineInit() {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 	});
+	[[iOS7AppDelegate iPhoneView] setIsInGame:YES];
 }
 
 void OSystem_iOS7::engineDone() {
@@ -92,6 +93,7 @@ void OSystem_iOS7::engineDone() {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 	});
+	[[iOS7AppDelegate iPhoneView] setIsInGame:NO];
 }
 
 void OSystem_iOS7::initVideoContext() {
