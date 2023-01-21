@@ -60,6 +60,12 @@
 			// Map button X to button B because B is mapped to left button
 			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_B isPressed:pressed];
 		};
+
+		if (@available(iOS 13.0, tvOS 13.0, *)) {
+			_controller.microGamepad.buttonMenu.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
+				[self handleMainMenu:pressed];
+			};
+		}
 	}
 #endif
 	if (_controller.extendedGamepad != nil) {
@@ -116,6 +122,14 @@
 		_controller.extendedGamepad.rightShoulder.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
 			[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_RIGHT_SHOULDER isPressed:pressed];
 		};
+
+#ifdef __IPHONE_13_0
+		if (@available(iOS 13.0, tvOS 13.0, *)) {
+			_controller.extendedGamepad.buttonMenu.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
+				[self handleMainMenu:pressed];
+			};
+		}
+#endif
 	}
 }
 

@@ -124,6 +124,8 @@ uint getSizeNextPOT(uint size);
 - (void)hideKeyboard;
 - (BOOL)isKeyboardShown;
 
+- (void)handleMainMenuKey;
+
 - (void)applicationSuspend;
 - (void)applicationResume;
 

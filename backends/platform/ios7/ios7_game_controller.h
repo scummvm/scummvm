@@ -50,6 +50,7 @@ typedef enum {
 - (void)handleJoystickAxisMotionX:(int)x andY:(int)y forJoystick:(GameControllerJoystick)joystick;
 - (void)handleJoystickButtonAction:(int)button isPressed:(bool)pressed;
 
+- (void)handleMainMenu:(BOOL)pressed;
 @end
 
 #endif /* BACKENDS_PLATFORM_IOS7_IOS7_GAME_CONTROLLER_H */
