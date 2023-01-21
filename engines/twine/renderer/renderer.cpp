@@ -142,28 +142,39 @@ IVec3 Renderer::setInverseAngleCamera(int32 x, int32 y, int32 z) {
 	return _cameraRot;
 }
 
-IVec3 Renderer::setAngleCamera(int32 x, int32 y, int32 z) {
-	const double Xradians = (double)((LBAAngles::ANGLE_90 - x) % LBAAngles::ANGLE_360) * 2 * M_PI / LBAAngles::ANGLE_360;
-	const double Yradians = (double)((LBAAngles::ANGLE_90 - y) % LBAAngles::ANGLE_360) * 2 * M_PI / LBAAngles::ANGLE_360;
-	const double Zradians = (double)((LBAAngles::ANGLE_90 - z) % LBAAngles::ANGLE_360) * 2 * M_PI / LBAAngles::ANGLE_360;
+IVec3 Renderer::setAngleCamera(int32 alpha, int32 beta, int32 gamma) {
+	const int32 cAlpha = ClampAngle(alpha);
+	const int32 cBeta = ClampAngle(beta);
+	const int32 cGamma = ClampAngle(gamma);
+	const int32 cAlpha2 = ClampAngle(alpha + LBAAngles::ANGLE_90);
+	const int32 cBeta2 = ClampAngle(beta + LBAAngles::ANGLE_90);
+	const int32 cGamma2 = ClampAngle(gamma + LBAAngles::ANGLE_90);
+	const int16 sinus1 = sinTab[cAlpha];
+	const int16 cosinus1 = sinTab[cAlpha2];
+	int16 sinus2 = sinTab[cGamma];
+	int16 cosinus2 = sinTab[cGamma2];
 
-	_matrixWorld.row1.x = (int32)(sin(Zradians) * sin(Yradians) * SCENE_SIZE_HALFF);
-	_matrixWorld.row1.y = (int32)(-cos(Zradians) * SCENE_SIZE_HALFF);
-	_matrixWorld.row1.z = (int32)(sin(Zradians) * cos(Yradians) * SCENE_SIZE_HALFF);
-	_matrixWorld.row2.x = (int32)(cos(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
-	_matrixWorld.row2.y = (int32)(sin(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
-	_matrixWorld.row3.x = (int32)(cos(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
-	_matrixWorld.row3.y = (int32)(sin(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
+	_matrixWorld.row1.x = cosinus2;
+	_matrixWorld.row1.y = -sinus2;
+	_matrixWorld.row2.x = (sinus2 * cosinus1) * SCENE_SIZE_HALF;
+	_matrixWorld.row2.y = (cosinus2 * cosinus1) * SCENE_SIZE_HALF;
+	_matrixWorld.row3.x = (sinus2 * sinus1) * SCENE_SIZE_HALF;
+	_matrixWorld.row3.y = (cosinus2 * sinus1) * SCENE_SIZE_HALF;
 
-	int32 matrixElem = _matrixWorld.row2.x;
+	sinus2 = sinTab[cBeta];
+	cosinus2 = sinTab[cBeta2];
 
-	_matrixWorld.row2.x = (int32)(sin(Yradians) * matrixElem + SCENE_SIZE_HALFF * cos(Yradians) * cos(Xradians));
-	_matrixWorld.row2.z = (int32)(cos(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Yradians) * cos(Xradians));
+	int32 x = _matrixWorld.row1.x;
+	_matrixWorld.row1.x = (cosinus2 * x) * SCENE_SIZE_HALF;
+	_matrixWorld.row1.z = (sinus2 * x) * SCENE_SIZE_HALF;
 
-	matrixElem = _matrixWorld.row3.x;
+	x = _matrixWorld.row2.x;
+	_matrixWorld.row2.x = ((cosinus2 * x) + (sinus2 * sinus1)) * SCENE_SIZE_HALF;
+	_matrixWorld.row2.z = ((sinus2 * x) - (cosinus2 * sinus1)) * SCENE_SIZE_HALF;
 
-	_matrixWorld.row3.x = (int32)(sin(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Xradians) * cos(Yradians));
-	_matrixWorld.row3.z = (int32)(cos(Yradians) * matrixElem + SCENE_SIZE_HALFF * sin(Xradians) * sin(Yradians));
+	x = _matrixWorld.row3.x;
+	_matrixWorld.row3.x = ((cosinus2 * x) - (sinus2 * cosinus1)) * SCENE_SIZE_HALF;
+	_matrixWorld.row3.z = ((cosinus2 * cosinus1) + (sinus2 * x)) * SCENE_SIZE_HALF;
 
 	_cameraRot = longWorldRot(_cameraPos.x, _cameraPos.y, _cameraPos.z);
 
