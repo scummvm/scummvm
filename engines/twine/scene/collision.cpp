@@ -187,7 +187,7 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 	IVec3 &processActor = actor->_processActor;
 	const IVec3 &previousActor = actor->_previousActor;
 
-	const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(processActor, actorTest->posObj());
+	const int32 newAngle = _engine->_movements->getAngle(processActor, actorTest->posObj());
 
 	// protect against chain reactions
 	if (actorTest->_staticFlags.bCanBePushed && !actor->_staticFlags.bCanBePushed) {

@@ -135,7 +135,7 @@ struct BonusParameter {
  */
 class ActorStruct {
 private:
-	ShapeType _brickShape = ShapeType::kNone; // field_3
+	ShapeType _col = ShapeType::kNone; // collision
 	bool _brickCausesDamage = false; // TODO: this is a bitmask with multiple values in the original source
 
 	EntityData _entityData;
@@ -143,9 +143,9 @@ public:
 	StaticFlagsStruct _staticFlags;
 	DynamicFlagsStruct _dynamicFlags;
 
-	inline ShapeType brickShape() const { return _brickShape; }
-	inline void setBrickShape(ShapeType shapeType) {
-		_brickShape = shapeType;
+	inline ShapeType brickShape() const { return _col; }
+	inline void setCollision(ShapeType shapeType) {
+		_col = shapeType;
 		_brickCausesDamage = false;
 	}
 	inline void setBrickCausesDamage() { _brickCausesDamage = true; }
@@ -227,7 +227,7 @@ public:
 	uint8 _brickSound = 0U; // CodeJeu
 
 	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
-	ActorMoveStruct _moveAngle;
+	ActorMoveStruct realAngle;
 	AnimTimerDataStruct _animTimerData;
 };
 

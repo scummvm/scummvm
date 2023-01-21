@@ -211,8 +211,8 @@ void Renderer::setFollowCamera(int32 transPosX, int32 transPosY, int32 transPosZ
 
 IVec3 Renderer::getHolomapRotation(const int32 x, const int32 y, const int32 angle) const {
 	if (angle) {
-		const int32 nSin = lba1ShadeAngleTable[ClampAngle(angle)];
-		const int32 nCos = lba1ShadeAngleTable[ClampAngle((angle + LBAAngles::ANGLE_90))];
+		const int32 nSin = sinTab[ClampAngle(angle)];
+		const int32 nCos = sinTab[ClampAngle((angle + LBAAngles::ANGLE_90))];
 
 		const int32 x0 = ((x * nCos) + (y * nSin)) >> 14;
 		const int32 y0 = ((y * nCos) - (x * nSin)) >> 14;
@@ -227,9 +227,9 @@ void Renderer::rotMatIndex2(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentM
 
 	if (angleVec.x) {
 		int32 angle = angleVec.x;
-		int32 angleVar2 = lba1ShadeAngleTable[ClampAngle(angle)];
+		int32 angleVar2 = sinTab[ClampAngle(angle)];
 		angle += LBAAngles::ANGLE_90;
-		int32 angleVar1 = lba1ShadeAngleTable[ClampAngle(angle)];
+		int32 angleVar1 = sinTab[ClampAngle(angle)];
 
 		matrix1.row1.x = currentMatrix->row1.x;
 		matrix1.row2.x = currentMatrix->row2.x;
@@ -247,9 +247,9 @@ void Renderer::rotMatIndex2(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentM
 
 	if (angleVec.z) {
 		int32 angle = angleVec.z;
-		int32 angleVar2 = lba1ShadeAngleTable[ClampAngle(angle)];
+		int32 angleVar2 = sinTab[ClampAngle(angle)];
 		angle += LBAAngles::ANGLE_90;
-		int32 angleVar1 = lba1ShadeAngleTable[ClampAngle(angle)];
+		int32 angleVar1 = sinTab[ClampAngle(angle)];
 
 		matrix2.row1.z = matrix1.row1.z;
 		matrix2.row2.z = matrix1.row2.z;
@@ -267,9 +267,9 @@ void Renderer::rotMatIndex2(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentM
 
 	if (angleVec.y) {
 		int32 angle = angleVec.y;
-		int32 angleVar2 = lba1ShadeAngleTable[ClampAngle(angle)];
+		int32 angleVar2 = sinTab[ClampAngle(angle)];
 		angle += LBAAngles::ANGLE_90;
-		int32 angleVar1 = lba1ShadeAngleTable[ClampAngle(angle)];
+		int32 angleVar1 = sinTab[ClampAngle(angle)];
 
 		targetMatrix->row1.y = matrix2.row1.y;
 		targetMatrix->row2.y = matrix2.row2.y;

@@ -349,7 +349,7 @@ void Animations::processAnimActions(int32 actorIdx) { // GereAnimAction
 		case ActionType::ACTION_THROW_3D_ALPHA:
 			if (action.animFrame == actor->_frame) {
 				const int32 distance = getDistance2D(actor->posObj(), _engine->_scene->_sceneHero->posObj());
-				const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->_pos.y, 0, _engine->_scene->_sceneHero->_pos.y, distance);
+				const int32 newAngle = _engine->_movements->getAngle(actor->_pos.y, 0, _engine->_scene->_sceneHero->_pos.y, distance);
 
 				const IVec3 &destPos = _engine->_movements->rotate(action.distanceX, action.distanceZ, actor->_beta);
 
@@ -483,9 +483,9 @@ void Animations::doAnim(int32 actorIdx) {
 
 		if (!actor->_dynamicFlags.bIsFalling) {
 			if (actor->_speed) {
-				int32 xAxisRotation = actor->_moveAngle.getRealValueFromTime(_engine->timerRef);
+				int32 xAxisRotation = actor->realAngle.getRealValueFromTime(_engine->timerRef);
 				if (!xAxisRotation) {
-					if (actor->_moveAngle.endValue > 0) {
+					if (actor->realAngle.endValue > 0) {
 						xAxisRotation = 1;
 					} else {
 						xAxisRotation = -1;
@@ -501,7 +501,7 @@ void Animations::doAnim(int32 actorIdx) {
 				processActor.x = actor->_pos.x + destPos.x;
 				processActor.z = actor->_pos.z + destPos.z;
 
-				_engine->_movements->setActorAngle(LBAAngles::LBAAngles::ANGLE_0, actor->_speed, LBAAngles::LBAAngles::ANGLE_17, &actor->_moveAngle);
+				_engine->_movements->setActorAngle(LBAAngles::LBAAngles::ANGLE_0, actor->_speed, LBAAngles::LBAAngles::ANGLE_17, &actor->realAngle);
 
 				if (actor->_dynamicFlags.bIsSpriteMoving) {
 					if (actor->_doorWidth) { // open door
@@ -717,7 +717,7 @@ void Animations::doAnim(int32 actorIdx) {
 		}
 
 		brickShape = _engine->_grid->worldColBrick(processActor);
-		actor->setBrickShape(brickShape);
+		actor->setCollision(brickShape);
 
 		if (brickShape != ShapeType::kNone) {
 			if (brickShape == ShapeType::kSolid) {

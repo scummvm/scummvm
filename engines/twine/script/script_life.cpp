@@ -223,7 +223,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		}
 
 		if (ABS(targetActor->_pos.y - ctx.actor->_pos.y) < 1500) {
-			newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), targetActor->posObj());
+			newAngle = engine->_movements->getAngle(ctx.actor->posObj(), targetActor->posObj());
 			if (ABS(engine->_movements->_targetActorDistance) > MAX_TARGET_ACTOR_DISTANCE) {
 				engine->_movements->_targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
 			}
@@ -435,7 +435,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			break;
 		}
-		int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), otherActor->posObj());
+		int32 angle = engine->_movements->getAngle(ctx.actor->posObj(), otherActor->posObj());
 		engine->_scene->_currentScriptValue = ClampAngle(ctx.actor->_beta - angle);
 		if (engine->_scene->_currentScriptValue > LBAAngles::ANGLE_180) {
 			engine->_scene->_currentScriptValue = LBAAngles::ANGLE_360 - engine->_scene->_currentScriptValue;
@@ -450,7 +450,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			break;
 		}
-		int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(otherActor->posObj(), ctx.actor->posObj());
+		int32 angle = engine->_movements->getAngle(otherActor->posObj(), ctx.actor->posObj());
 		engine->_scene->_currentScriptValue = ClampAngle(otherActor->_beta - angle);
 		if (engine->_scene->_currentScriptValue > LBAAngles::ANGLE_180) {
 			engine->_scene->_currentScriptValue = LBAAngles::ANGLE_360 - engine->_scene->_currentScriptValue;
@@ -465,7 +465,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 			engine->_scene->_currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 			break;
 		}
-		int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(), otherActor->posObj());
+		int32 angle = engine->_movements->getAngle(ctx.actor->posObj(), otherActor->posObj());
 		engine->_scene->_currentScriptValue = ClampAngle(ctx.actor->_beta - angle);
 		if (engine->_scene->_currentScriptValue > LBAAngles::ANGLE_180) {
 			engine->_scene->_currentScriptValue = LBAAngles::ANGLE_360 - engine->_scene->_currentScriptValue;
@@ -530,7 +530,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		}
 
 		if (ABS(otherActor->posObj().y - ctx.actor->posObj().y) < 1500) {
-			int32 angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->posObj(),
+			int32 angle = engine->_movements->getAngle(ctx.actor->posObj(),
 																				otherActor->posObj());
 			angle = ClampAngle(ctx.actor->_beta - angle + LBAAngles::ANGLE_90);
 

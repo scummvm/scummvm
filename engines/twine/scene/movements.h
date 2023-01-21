@@ -117,6 +117,7 @@ private:
 	 * This is true if the player hits the action button. E.g. in the second prison scene when you hide in the waste.
 	 */
 	bool _actionNormal = false;
+	void manualRealAngle(ActorStruct *actor);
 
 public:
 	Movements(TwinEEngine *engine);
@@ -169,10 +170,10 @@ public:
 	 * @param x2 Actor 2 X
 	 * @param z2 Actor 2 Z
 	 */
-	int32 getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2);
+	int32 getAngle(int32 x1, int32 z1, int32 x2, int32 z2);
 
-	inline int32 getAngleAndSetTargetActorDistance(const IVec3& v1, const IVec3 &v2) {
-		return getAngleAndSetTargetActorDistance(v1.x, v1.z, v2.x, v2.z);
+	inline int32 getAngle(const IVec3& v1, const IVec3 &v2) {
+		return getAngle(v1.x, v1.z, v2.x, v2.z);
 	}
 
 	/**
