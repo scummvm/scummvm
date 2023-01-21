@@ -225,6 +225,10 @@ bool ScummVMRendererGraphicsDriver::DoesSupportVsyncToggle() {
 }
 
 bool ScummVMRendererGraphicsDriver::SetVsync(bool enabled) {
+	if (_mode.Vsync == enabled) {
+		return _mode.Vsync;
+	}
+
 	if (g_system->hasFeature(OSystem::kFeatureVSync)) {
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureVSync, enabled);
