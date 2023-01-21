@@ -129,7 +129,7 @@ void Renderer::setIsoProjection(int32 x, int32 y, int32 scale) {
 	_isUsingIsoProjection = true;
 }
 
-void Renderer::flipMatrix() {
+void Renderer::flipMatrix() { // FlipMatrice
 	SWAP(_matrixWorld.row1.y, _matrixWorld.row2.x);
 	SWAP(_matrixWorld.row1.z, _matrixWorld.row3.x);
 	SWAP(_matrixWorld.row2.z, _matrixWorld.row3.y);
@@ -318,10 +318,11 @@ void Renderer::rotList(const Common::Array<BodyVertex> &vertices, int32 firstPoi
 	}
 }
 
-void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex> &vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData) {
+// RotateGroupe
+void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex> &vertices, int32 alpha, int32 beta, int32 gamma, const BodyBone &bone, ModelData *modelData) {
 	const int32 firstPoint = bone.firstVertex;
 	const int32 numOfPoints = bone.numVertices;
-	const IVec3 renderAngle(rotX, rotY, rotZ);
+	const IVec3 renderAngle(alpha, beta, gamma);
 
 	const IMatrix3x3 *currentMatrix;
 	IVec3 destPos;
@@ -346,7 +347,7 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Arr
 	rotList(vertices, firstPoint, numOfPoints, &modelData->computedPoints[firstPoint], targetMatrix, destPos);
 }
 
-void Renderer::applyPointsTranslation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec, const IVec3 &destPos) {
+void Renderer::transRotList(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec, const IVec3 &destPos) {
 	for (int32 i = 0; i < numPoints; ++i) {
 		const BodyVertex &vertex = vertices[i + firstPoint];
 		const int32 tmpX = vertex.x + angleVec.x;
@@ -361,6 +362,7 @@ void Renderer::applyPointsTranslation(const Common::Array<BodyVertex> &vertices,
 	}
 }
 
+// TranslateGroupe
 void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex> &vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData) {
 	IVec3 renderAngle;
 	renderAngle.x = rotX;
@@ -380,7 +382,7 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::
 		*targetMatrix = _matricesTable[matrixIndex];
 	}
 
-	applyPointsTranslation(vertices, bone.firstVertex, bone.numVertices, &modelData->computedPoints[bone.firstVertex], targetMatrix, renderAngle, destPos);
+	transRotList(vertices, bone.firstVertex, bone.numVertices, &modelData->computedPoints[bone.firstVertex], targetMatrix, renderAngle, destPos);
 }
 
 void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
@@ -1691,11 +1693,11 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 	}
 }
 
-bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const BodyData &bodyData, Common::Rect &modelRect) {
+bool Renderer::affObjetIso(int32 x, int32 y, int32 z, int32 alpha, int32 beta, int32 gamma, const BodyData &bodyData, Common::Rect &modelRect) {
 	IVec3 renderAngle;
-	renderAngle.x = angleX;
-	renderAngle.y = angleY;
-	renderAngle.z = angleZ;
+	renderAngle.x = alpha;
+	renderAngle.y = beta;
+	renderAngle.z = gamma;
 
 	// model render size reset
 	modelRect.left = SCENE_SIZE_MAX;
