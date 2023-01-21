@@ -75,6 +75,58 @@ void Movements::setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle,
 }
 
 int32 Movements::getAngle(int32 x0, int32 z0, int32 x1, int32 z1) {
+#if 1
+	int32 difZ = z1 - z0;
+	const int32 newZ = difZ * difZ;
+
+	int32 difX = x1 - x0;
+	const int32 newX = difX * difX;
+
+	bool flag;
+	// Exchange X and Z
+	if (newX < newZ) {
+		const int32 tmpEx = difX;
+		difX = difZ;
+		difZ = tmpEx;
+
+		flag = true;
+	} else {
+		flag = false;
+	}
+
+	_targetActorDistance = (int32)sqrt((float)(newX + newZ));
+
+	if (!_targetActorDistance) {
+		return 0;
+	}
+
+	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / _targetActorDistance;
+
+	int32 startAngle = LBAAngles::ANGLE_0;
+	//	stopAngle  = LBAAngles::ANGLE_90;
+	const int16 *shadeAngleTab3(&sinTab[LBAAngles::ANGLE_135]);
+	while (shadeAngleTab3[startAngle] > destAngle) {
+		startAngle++;
+	}
+
+	if (shadeAngleTab3[startAngle] != destAngle) {
+		if ((shadeAngleTab3[startAngle - 1] + shadeAngleTab3[startAngle]) / 2 <= destAngle) {
+			startAngle--;
+		}
+	}
+
+	int32 finalAngle = LBAAngles::ANGLE_45 + startAngle;
+
+	if (difX <= 0) {
+		finalAngle = -finalAngle;
+	}
+
+	if (flag) {
+		finalAngle = -finalAngle + LBAAngles::ANGLE_90;
+	}
+
+	return ClampAngle(finalAngle);
+#else
 	z1 -= z0;
 	x1 -= x0;
 	const int32 x2 = x1 * x1;
@@ -127,6 +179,7 @@ int32 Movements::getAngle(int32 x0, int32 z0, int32 x1, int32 z1) {
 	}
 
 	return ClampAngle(angle);
+#endif
 }
 
 void Movements::initRealAngleConst(int32 start, int32 end, int32 duration, ActorMoveStruct *movePtr) const { // ManualRealAngle
