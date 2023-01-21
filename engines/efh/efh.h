@@ -256,8 +256,6 @@ public:
 
 	const ADGameDescription *_gameDescription;
 
-	void syncSoundSettings() override;
-
 	// metaengine.cpp
 	void initGame(const ADGameDescription *gd);
 	uint32 getFeatures() const;
