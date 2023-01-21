@@ -60,7 +60,7 @@ int32 Animations::searchAnim(AnimationTypes animIdx, int32 actorIdx) {
 	return bodyAnimIndex;
 }
 
-int16 Animations::applyAnimStepRotation(int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1) const {
+int16 Animations::patchInterAngle(int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1) const {
 	const int16 lastAngle = ClampAngle(lastAngle1);
 	const int16 newAngle = ClampAngle(newAngle1);
 
@@ -82,7 +82,7 @@ int16 Animations::applyAnimStepRotation(int32 deltaTime, int32 keyFrameLength, i
 	return ClampAngle(computedAngle);
 }
 
-int16 Animations::applyAnimStepTranslation(int32 deltaTime, int32 keyFrameLength, int16 newPos, int16 lastPos) const {
+int16 Animations::patchInterStep(int32 deltaTime, int32 keyFrameLength, int16 newPos, int16 lastPos) const {
 	int16 distance = newPos - lastPos;
 
 	int16 computedPos;
@@ -145,16 +145,16 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 
 		boneState->type = boneFrame.type;
 		switch (boneFrame.type) {
-		case 0:
-			boneState->x = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			boneState->y = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			boneState->z = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+		case BoneType::TYPE_ROTATE:
+			boneState->x = patchInterAngle(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
+			boneState->y = patchInterAngle(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
+			boneState->z = patchInterAngle(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
 			break;
-		case 1:
-		case 2:
-			boneState->x = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			boneState->y = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			boneState->z = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+		case BoneType::TYPE_TRANSLATE:
+		case BoneType::TYPE_ZOOM:
+			boneState->x = patchInterStep(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
+			boneState->y = patchInterStep(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
+			boneState->z = patchInterStep(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
 			break;
 		default:
 			error("Unsupported animation rotation mode %d", boneFrame.type);
