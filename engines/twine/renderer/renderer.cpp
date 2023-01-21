@@ -196,10 +196,10 @@ IVec3 Renderer::longWorldRot(int32 x, int32 y, int32 z) {
 }
 
 IVec3 Renderer::longInverseRot(int32 x, int32 y, int32 z) {
-	const int32 vx = (_matrixWorld.row1.x * x + _matrixWorld.row2.x * y + _matrixWorld.row3.x * z) / SCENE_SIZE_HALF;
-	const int32 vy = (_matrixWorld.row1.y * x + _matrixWorld.row2.y * y + _matrixWorld.row3.y * z) / SCENE_SIZE_HALF;
-	const int32 vz = (_matrixWorld.row1.z * x + _matrixWorld.row2.z * y + _matrixWorld.row3.z * z) / SCENE_SIZE_HALF;
-	return IVec3(vx, vy, vz);
+	const int64 vx = ((int64)_matrixWorld.row1.x * (int64)x + (int64)_matrixWorld.row2.x * (int64)y + (int64)_matrixWorld.row3.x * (int64)z) / SCENE_SIZE_HALF;
+	const int64 vy = ((int64)_matrixWorld.row1.y * (int64)x + (int64)_matrixWorld.row2.y * (int64)y + (int64)_matrixWorld.row3.y * (int64)z) / SCENE_SIZE_HALF;
+	const int64 vz = ((int64)_matrixWorld.row1.z * (int64)x + (int64)_matrixWorld.row2.z * (int64)y + (int64)_matrixWorld.row3.z * (int64)z) / SCENE_SIZE_HALF;
+	return IVec3((int32)vx, (int32)vy, (int32)vz);
 }
 
 IVec3 Renderer::rot(const IMatrix3x3 &matrix, int32 x, int32 y, int32 z) {
