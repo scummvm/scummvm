@@ -532,6 +532,31 @@ void TwinEEngine::queueMovie(const char *filename) {
 	_queuedFlaMovie = filename;
 }
 
+void TwinEEngine::adjustScreenMax(Common::Rect &rect, int16 x, int16 y) {
+	if (x < rect.left) {
+		rect.left = x;
+	}
+
+	if (x > rect.right) {
+		rect.right = x;
+	}
+
+	if (y < rect.top) {
+		rect.top = y;
+	}
+
+	if (y > rect.bottom) {
+		rect.bottom = y;
+	}
+}
+
+void TwinEEngine::clearScreenMinMax(Common::Rect &rect) {
+	rect.left = 0x7D00; // SCENE_SIZE_MAX
+	rect.right = -0x7D00;
+	rect.top = 0x7D00;
+	rect.bottom = -0x7D00;
+}
+
 void TwinEEngine::playIntro() {
 	_input->enableKeyMap(cutsceneKeyMapId);
 	// Display company logo
@@ -1004,7 +1029,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 						if (!_actor->_cropBottomScreen) {
 							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 						}
-						const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->posObj() - _grid->_worldCube);
+						const IVec3 &projPos = _renderer->projectPoint(actor->posObj() - _grid->_worldCube);
 						actor->_controlMode = ControlMode::kNoMove;
 						actor->setLife(-1);
 						_actor->_cropBottomScreen = projPos.y;

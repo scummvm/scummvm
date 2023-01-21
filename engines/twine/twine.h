@@ -328,6 +328,9 @@ public:
 
 	void queueMovie(const char *filename);
 
+	void clearScreenMinMax(Common::Rect &rect);
+	void adjustScreenMax(Common::Rect &rect, int16 x, int16 y);
+
 	/**
 	 * @return A random value between [0-max)
 	 */

@@ -215,14 +215,14 @@ void Holomap::computeGlobeProj() {
 				_holomapSort[holomapSortArrayIdx].projectedPosIdx = _projectedSurfaceIndex;
 				++holomapSortArrayIdx;
 			}
-			const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(destPos);
+			const IVec3 &projPos = _engine->_renderer->projectPoint(destPos);
 			_projectedSurfacePositions[_projectedSurfaceIndex].x1 = projPos.x;
 			_projectedSurfacePositions[_projectedSurfaceIndex].y1 = projPos.y;
 			++_projectedSurfaceIndex;
 		}
 		IVec3 *vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 		const IVec3 &destPos = _engine->_renderer->worldRotatePoint(*vec);
-		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(destPos);
+		const IVec3 &projPos = _engine->_renderer->projectPoint(destPos);
 		_projectedSurfacePositions[_projectedSurfaceIndex].x1 = projPos.x;
 		_projectedSurfacePositions[_projectedSurfaceIndex].y1 = projPos.y;
 		++_projectedSurfaceIndex;

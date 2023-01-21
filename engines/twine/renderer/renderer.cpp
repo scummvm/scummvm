@@ -69,19 +69,24 @@ void Renderer::init(int32 w, int32 h) {
 	_tabx1 = _tabCoulD;
 }
 
-IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) { // ProjettePoint
+void Renderer::projIso(IVec3 &pos, int32 x, int32 y, int32 z) {
+	pos.x = (int16)((((x - z) * 24) / ISO_SCALE) + _projectionCenter.x);
+	pos.y = (int16)(((((x + z) * 12) - (y * 30)) / ISO_SCALE) + _projectionCenter.y);
+	pos.z = 0;
+}
+
+IVec3 Renderer::projectPoint(int32 cX, int32 cY, int32 cZ) { // ProjettePoint
+	IVec3 pos;
 	if (_isUsingIsoProjection) {
-		_projPos.x = ((cX - cZ) * 24) / ISO_SCALE + _projectionCenter.x;
-		_projPos.y = (((cX + cZ) * 12) - cY * 30) / ISO_SCALE + _projectionCenter.y;
-		_projPos.z = cZ - cY - cX;
-		return _projPos;
+		projIso(pos, cX, cY, cZ);
+		return pos;
 	}
 
 	if (_cameraRot.z - cZ < 0) {
-		_projPos.x = 0;
-		_projPos.y = 0;
-		_projPos.z = 0;
-		return _projPos;
+		pos.x = 0;
+		pos.y = 0;
+		pos.z = 0;
+		return pos;
 	}
 
 	cX -= _cameraRot.x;
@@ -93,10 +98,10 @@ IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) { // Proj
 		posZ = 0x7FFF;
 	}
 
-	_projPos.x = (cX * _lFactorX) / posZ + _projectionCenter.x;
-	_projPos.y = (-cY * _lFactorY) / posZ + _projectionCenter.y;
-	_projPos.z = posZ;
-	return _projPos;
+	pos.x = (cX * _lFactorX) / posZ + _projectionCenter.x;
+	pos.y = (-cY * _lFactorY) / posZ + _projectionCenter.y;
+	pos.z = posZ;
+	return pos;
 }
 
 void Renderer::setProjection(int32 x, int32 y, int32 kfact, int32 lfactx, int32 lfacty) {
@@ -1575,13 +1580,12 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 	const I16Vec3 *pointPtr = &modelData->computedPoints[0];
 	I16Vec3 *pointPtrDest = &modelData->flattenPoints[0];
 
-	if (_isUsingIsoProjection) { // use standard projection
+	if (_isUsingIsoProjection) {
 		do {
 			const int32 coX = pointPtr->x + renderPos.x;
 			const int32 coY = pointPtr->y + renderPos.y;
 			const int32 coZ = -(pointPtr->z + renderPos.z);
 
-			// TODO: use projectPositionOnScreen()
 			pointPtrDest->x = (coX + coZ) * 24 / ISO_SCALE + _projectionCenter.x;
 			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / ISO_SCALE + _projectionCenter.y;
 			pointPtrDest->z = coZ - coX - coY;
@@ -1605,61 +1609,39 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 		} while (--numOfPrimitives);
 	} else {
 		do {
-			int32 coX = pointPtr->x + renderPos.x;
-			int32 coY = pointPtr->y + renderPos.y;
-			int32 coZ = -(pointPtr->z + renderPos.z);
-
-			coZ += _kFactor;
-
+			int32 coZ = _kFactor - (pointPtr->z + renderPos.z);
 			if (coZ <= 0) {
 				coZ = 0x7FFFFFFF;
 			}
 
-			// X projection
-			{
-				coX = _projectionCenter.x + ((coX * _lFactorX) / coZ);
-
-				if (coX > 0xFFFF) {
-					coX = 0x7FFF;
-				}
-
-				pointPtrDest->x = coX;
-
-				if (pointPtrDest->x < modelRect.left) {
-					modelRect.left = pointPtrDest->x;
-				}
-
-				if (pointPtrDest->x > modelRect.right) {
-					modelRect.right = pointPtrDest->x;
-				}
+			int32 coX = (((pointPtr->x + renderPos.x) * _lFactorX) / coZ) + _projectionCenter.x;
+			if (coX > 0xFFFF) {
+				coX = 0x7FFF;
+			}
+			pointPtrDest->x = coX;
+			if (pointPtrDest->x < modelRect.left) {
+				modelRect.left = pointPtrDest->x;
+			}
+			if (pointPtrDest->x > modelRect.right) {
+				modelRect.right = pointPtrDest->x;
 			}
 
-			// Y projection
-			{
-				coY = _projectionCenter.y + ((-coY * _lFactorY) / coZ);
-
-				if (coY > 0xFFFF) {
-					coY = 0x7FFF;
-				}
-
-				pointPtrDest->y = coY;
-
-				if (pointPtrDest->y < modelRect.top) {
-					modelRect.top = pointPtrDest->y;
-				}
-				if (pointPtrDest->y > modelRect.bottom) {
-					modelRect.bottom = pointPtrDest->y;
-				}
+			int32 coY = _projectionCenter.y - (((pointPtr->y + renderPos.y) * _lFactorY) / coZ);
+			if (coY > 0xFFFF) {
+				coY = 0x7FFF;
+			}
+			pointPtrDest->y = coY;
+			if (pointPtrDest->y < modelRect.top) {
+				modelRect.top = pointPtrDest->y;
+			}
+			if (pointPtrDest->y > modelRect.bottom) {
+				modelRect.bottom = pointPtrDest->y;
 			}
 
-			// Z projection
-			{
-				if (coZ > 0xFFFF) {
-					coZ = 0x7FFF;
-				}
-
-				pointPtrDest->z = coZ;
+			if (coZ > 0xFFFF) {
+				coZ = 0x7FFF;
 			}
+			pointPtrDest->z = coZ;
 
 			pointPtr++;
 			pointPtrDest++;

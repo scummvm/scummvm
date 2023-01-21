@@ -210,7 +210,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 		// no redraw required
 		if (actor->_staticFlags.bIsBackgrounded && !flagflip) {
 			// get actor position on screen
-			const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->posObj() - _engine->_grid->_worldCube);
+			const IVec3 &projPos = _engine->_renderer->projectPoint(actor->posObj() - _engine->_grid->_worldCube);
 			// check if actor is visible on screen, otherwise don't display it
 			if (projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine)) {
 				actor->_dynamicFlags.bIsDrawn = 1;
@@ -222,7 +222,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 			continue;
 		}
 		// get actor position on screen
-		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->posObj() - _engine->_grid->_worldCube);
+		const IVec3 &projPos = _engine->_renderer->projectPoint(actor->posObj() - _engine->_grid->_worldCube);
 
 		if ((actor->_staticFlags.bUsesClipping && projPos.x > -112 && projPos.x < _engine->width() + 112 && projPos.y > -50 && projPos.y < _engine->height() + 171) ||
 		    ((!actor->_staticFlags.bUsesClipping) && projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine))) {
@@ -299,7 +299,7 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 				}
 			}
 		}
-		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_worldCube);
+		const IVec3 &projPos = _engine->_renderer->projectPoint(extra->pos - _engine->_grid->_worldCube);
 
 		if (projPos.x > VIEW_X0 && projPos.x < VIEW_X1(_engine) && projPos.y > VIEW_Y0 && projPos.y < VIEW_Y1(_engine)) {
 			const int16 tmpVal = extra->pos.x - _engine->_grid->_worldCube.x + extra->pos.z - _engine->_grid->_worldCube.z;
@@ -327,7 +327,7 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 
 void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 	// get actor position on screen
-	const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(drawCmd.x - _engine->_grid->_worldCube.x, drawCmd.y - _engine->_grid->_worldCube.y, drawCmd.z - _engine->_grid->_worldCube.z);
+	const IVec3 &projPos = _engine->_renderer->projectPoint(drawCmd.x - _engine->_grid->_worldCube.x, drawCmd.y - _engine->_grid->_worldCube.y, drawCmd.z - _engine->_grid->_worldCube.z);
 
 	int32 spriteWidth = _engine->_resources->_spriteShadowPtr.surface(drawCmd.offset).w;
 	int32 spriteHeight = _engine->_resources->_spriteShadowPtr.surface(drawCmd.offset).h;
@@ -408,7 +408,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	const uint8 *spritePtr = _engine->_resources->_spriteTable[actor->_body];
 
 	// get actor position on screen
-	const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->posObj() - _engine->_grid->_worldCube);
+	const IVec3 &projPos = _engine->_renderer->projectPoint(actor->posObj() - _engine->_grid->_worldCube);
 
 	const int32 spriteWidth = spriteData.surface().w;
 	const int32 spriteHeight = spriteData.surface().h;
@@ -465,11 +465,11 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 	int32 extraIdx = drawCmd.actorIdx;
 	ExtraListStruct *extra = &_engine->_extra->_extraList[extraIdx];
 
-	const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_worldCube);
+	const IVec3 &projPos = _engine->_renderer->projectPoint(extra->pos - _engine->_grid->_worldCube);
 
 	Common::Rect renderRect;
 	if (extra->sprite & EXTRA_SPECIAL_MASK) {
-		_engine->_extra->drawExtraSpecial(extraIdx, projPos.x, projPos.y, renderRect);
+		_engine->_extra->affSpecial(extraIdx, projPos.x, projPos.y, renderRect);
 	} else {
 		const SpriteData &spritePtr = _engine->_resources->_spriteData[extra->sprite];
 		const int32 spriteWidth = spritePtr.surface().w;
@@ -649,7 +649,7 @@ void Redraw::renderOverlays() {
 			case OverlayPosType::koFollowActor: {
 				ActorStruct *actor2 = _engine->_scene->getActor(overlay->info1);
 
-				const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor2->_pos.x - _engine->_grid->_worldCube.x, actor2->_pos.y + actor2->_boundingBox.maxs.y - _engine->_grid->_worldCube.y, actor2->_pos.z - _engine->_grid->_worldCube.z);
+				const IVec3 &projPos = _engine->_renderer->projectPoint(actor2->_pos.x - _engine->_grid->_worldCube.x, actor2->_pos.y + actor2->_boundingBox.maxs.y - _engine->_grid->_worldCube.y, actor2->_pos.z - _engine->_grid->_worldCube.z);
 
 				overlay->x = projPos.x;
 				overlay->y = projPos.y;
@@ -819,7 +819,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // AffScene
 		_engine->_screens->clearScreen();
 
 		_engine->_grid->redrawGrid();
-		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(-_engine->_grid->_worldCube);
+		const IVec3 &projPos = _engine->_renderer->projectPoint(-_engine->_grid->_worldCube);
 		_projPosScreen.x = projPos.x;
 		_projPosScreen.y = projPos.y;
 
@@ -881,7 +881,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	// get actor position on screen
-	const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->_pos.x - _engine->_grid->_worldCube.x, actor->_pos.y + actor->_boundingBox.maxs.y - _engine->_grid->_worldCube.y, actor->_pos.z - _engine->_grid->_worldCube.z);
+	const IVec3 &projPos = _engine->_renderer->projectPoint(actor->_pos.x - _engine->_grid->_worldCube.x, actor->_pos.y + actor->_boundingBox.maxs.y - _engine->_grid->_worldCube.y, actor->_pos.z - _engine->_grid->_worldCube.z);
 
 	if (actorIdx != _bubbleActor) {
 		_bubbleSpriteIndex = _bubbleSpriteIndex ^ 1;

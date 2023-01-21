@@ -394,106 +394,64 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 	}
 }
 
-void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size, Common::Rect &renderRect) {
+void Extra::aff2DShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 zoom, Common::Rect &renderRect) {
 	int shapeDataIndex = 0;
-	int16 shapeX = shapeTable.data[shapeDataIndex].x * size / 16;
-	int16 shapeZ = shapeTable.data[shapeDataIndex].z * size / 16;
+	int16 shapeX = shapeTable.data[shapeDataIndex].x * zoom / 16;
+	int16 shapeZ = shapeTable.data[shapeDataIndex].z * zoom / 16;
 
 	++shapeDataIndex;
 
-	renderRect.left = 0x7D00; // SCENE_SIZE_MAX
-	renderRect.right = -0x7D00;
-	renderRect.top = 0x7D00;
-	renderRect.bottom = -0x7D00;
+	_engine->clearScreenMinMax(renderRect);
 
 	IVec3 destPos = _engine->_movements->rotate(shapeX, shapeZ, angle);
 
 	const int32 computedX = destPos.x + x;
 	const int32 computedY = destPos.z + y;
 
-	if (computedX < renderRect.left) {
-		renderRect.left = computedX;
-	}
-
-	if (computedX > renderRect.right) {
-		renderRect.right = computedX;
-	}
-
-	if (computedY < renderRect.top) {
-		renderRect.top = computedY;
-	}
-
-	if (computedY > renderRect.bottom) {
-		renderRect.bottom = computedY;
-	}
+	_engine->adjustScreenMax(renderRect, computedX, computedY);
 
 	int32 currentX = computedX;
 	int32 currentY = computedY;
 
 	for (int32 numEntries = 1; numEntries < shapeTable.n; ++numEntries) {
-		shapeX = shapeTable.data[shapeDataIndex].x * size / 16;
-		shapeZ = shapeTable.data[shapeDataIndex].z * size / 16;
+		shapeX = shapeTable.data[shapeDataIndex].x * zoom / 16;
+		shapeZ = shapeTable.data[shapeDataIndex].z * zoom / 16;
 		++shapeDataIndex;
 
 		const int32 oldComputedX = currentX;
 		const int32 oldComputedY = currentY;
-
-		_engine->_renderer->_projPos.x = currentX;
-		_engine->_renderer->_projPos.y = currentY;
 
 		destPos = _engine->_movements->rotate(shapeX, shapeZ, angle);
 
 		currentX = destPos.x + x;
 		currentY = destPos.z + y;
 
-		if (currentX < renderRect.left) {
-			renderRect.left = currentX;
-		}
-
-		if (currentX > renderRect.right) {
-			renderRect.right = currentX;
-		}
-
-		if (currentY < renderRect.top) {
-			renderRect.top = currentY;
-		}
-
-		if (currentY > renderRect.bottom) {
-			renderRect.bottom = currentY;
-		}
-
-		_engine->_renderer->_projPos.x = currentX;
-		_engine->_renderer->_projPos.y = currentY;
-
+		_engine->adjustScreenMax(renderRect, currentX, currentY);
 		_engine->_interface->drawLine(oldComputedX, oldComputedY, currentX, currentY, color);
-
-		currentX = _engine->_renderer->_projPos.x;
-		currentY = _engine->_renderer->_projPos.y;
 	}
-
-	_engine->_renderer->_projPos.x = currentX;
-	_engine->_renderer->_projPos.y = currentY;
 	_engine->_interface->drawLine(currentX, currentY, computedX, computedY, color);
 }
 
-void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &renderRect) {
+void Extra::affSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &renderRect) {
 	ExtraListStruct *extra = &_extraList[extraIdx];
 	ExtraSpecialType specialType = (ExtraSpecialType)(extra->sprite & (EXTRA_SPECIAL_MASK - 1));
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
-		drawSpecialShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->_lbaTime * 32) & LBAAngles::ANGLE_270, 4, renderRect);
+		aff2DShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->_lbaTime * 32) & LBAAngles::ANGLE_270, 4, renderRect);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
-		int32 cloudTime = 1 + _engine->_lbaTime - extra->spawnTime;
+		int32 zoom = 1 + _engine->_lbaTime - extra->spawnTime;
 
-		if (cloudTime > 32) {
-			cloudTime = 32;
+		if (zoom > 32) {
+			zoom = 32;
 		}
 
-		drawSpecialShape(explodeCloudShape, x, y, COLOR_WHITE, LBAAngles::ANGLE_0, cloudTime, renderRect);
+		aff2DShape(explodeCloudShape, x, y, COLOR_WHITE, LBAAngles::ANGLE_0, zoom, renderRect);
 		break;
 	}
+	case ExtraSpecialType::kFountain:
+		break;
 	}
 }
 
@@ -656,7 +614,7 @@ void Extra::gereExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->posObj(), OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_worldCube);
+					const IVec3 &projPos = _engine->_renderer->projectPoint(extraKey->pos - _engine->_grid->_worldCube);
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, projPos.x, projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
@@ -689,7 +647,7 @@ void Extra::gereExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->posObj(), OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_worldCube);
+					const IVec3 &projPos = _engine->_renderer->projectPoint(extraKey->pos - _engine->_grid->_worldCube);
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, projPos.x, projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
@@ -837,7 +795,7 @@ void Extra::gereExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, extra->pos);
 
 				if (extra->info1 > 1) {
-					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_worldCube);
+					const IVec3 &projPos = _engine->_renderer->projectPoint(extra->pos - _engine->_grid->_worldCube);
 					const int16 fontColor = COLOR_158;
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, projPos.x, projPos.y, fontColor, OverlayPosType::koNormal, 2);
 				}

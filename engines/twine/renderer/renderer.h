@@ -151,6 +151,7 @@ private:
 
 	ModelData _modelData;
 
+	// AnimNuage
 	void animModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
 	bool computeSphere(int32 x, int32 y, int32 radius, int &vtop, int &vbottom);
 	bool renderObjectIso(const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect); // RenderObjetIso
@@ -231,8 +232,6 @@ public:
 
 	void init(int32 w, int32 h);
 
-	IVec3 _projPos;
-
 	void setCameraRotation(int32 x, int32 y, int32 z);
 	IVec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
 
@@ -244,11 +243,13 @@ public:
 	void fillVertices(int16 vtop, int16 vbottom, uint8 renderType, uint16 color);
 	void renderPolygons(const CmdRenderPolygon &polygon, ComputedVertex *vertices, int vtop, int vbottom);
 
-	inline IVec3 &projectPositionOnScreen(const IVec3& pos) { // ProjettePoint
-		return projectPositionOnScreen(pos.x, pos.y, pos.z);
+	inline IVec3 projectPoint(const IVec3& pos) { // ProjettePoint
+		return projectPoint(pos.x, pos.y, pos.z);
 	}
 
-	IVec3 &projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
+	void projIso(IVec3 &pos, int32 x, int32 y, int32 z);
+
+	IVec3 projectPoint(int32 cX, int32 cY, int32 cZ);
 
 	void setFollowCamera(int32 transPosX, int32 transPosY, int32 transPosZ, int32 cameraAlpha, int32 cameraBeta, int32 cameraGamma, int32 cameraZoom);
 	void setPosCamera(int32 x, int32 y, int32 z);

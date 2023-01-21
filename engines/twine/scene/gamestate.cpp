@@ -46,6 +46,8 @@
 #include "twine/text.h"
 #include "twine/twine.h"
 
+#define SIZE_FOUND_OBJ 130
+
 namespace TwinE {
 
 GameState::GameState(TwinEEngine *engine) : _engine(engine) {
@@ -335,13 +337,13 @@ void GameState::doFoundObj(InventoryItems item) {
 
 	_engine->_grid->drawOverBrick(itemX, itemY, itemZ);
 
-	IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(bodyPos);
+	IVec3 projPos = _engine->_renderer->projectPoint(bodyPos);
 	projPos.y -= 150;
 
-	const int32 boxTopLeftX = projPos.x - 65;
-	const int32 boxTopLeftY = projPos.y - 65;
-	const int32 boxBottomRightX = projPos.x + 65;
-	const int32 boxBottomRightY = projPos.y + 65;
+	const int32 boxTopLeftX = projPos.x - (SIZE_FOUND_OBJ / 2);
+	const int32 boxTopLeftY = projPos.y - (SIZE_FOUND_OBJ / 2);
+	const int32 boxBottomRightX = projPos.x + (SIZE_FOUND_OBJ / 2);
+	const int32 boxBottomRightY = projPos.y + (SIZE_FOUND_OBJ / 2);
 	const Common::Rect boxRect(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
 	_engine->_sound->playSample(Samples::BigItemFound);
 
@@ -381,7 +383,7 @@ void GameState::doFoundObj(InventoryItems item) {
 
 		itemAngle += LBAAngles::ANGLE_2;
 
-		_engine->_renderer->draw3dObject(_engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, _engine->_resources->_inventoryTable[item], itemAngle, 10000);
+		_engine->_renderer->draw3dObject(projPos.x, projPos.y, _engine->_resources->_inventoryTable[item], itemAngle, 10000);
 
 		_engine->_menu->drawRectBorders(boxRect);
 		_engine->_redraw->addRedrawArea(boxRect);
