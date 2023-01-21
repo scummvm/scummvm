@@ -1082,7 +1082,11 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)handleMainMenuKey {
-	[self addEvent:InternalEvent(kInputMainMenu, 0, 0)];
+	if ([self isInGame]) {
+		[self addEvent:InternalEvent(kInputMainMenu, 0, 0)];
+	} else {
+		[[UIApplication sharedApplication] performSelector:@selector(suspend)];
+	}
 }
 
 - (void)applicationSuspend {
