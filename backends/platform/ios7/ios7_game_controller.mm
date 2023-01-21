@@ -143,4 +143,9 @@
 	}
 }
 
+- (void)handleMainMenu:(BOOL)pressed {
+	if (!pressed) { // released
+		[view handleMainMenuKey];
+	}
+}
 @end
