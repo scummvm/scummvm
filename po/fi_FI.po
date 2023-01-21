@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-20 20:17+0000\n"
-"PO-Revision-Date: 2023-01-01 19:47+0000\n"
+"PO-Revision-Date: 2023-01-22 04:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -215,20 +215,18 @@ msgstr "VIRHE %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Ladataan ikonilistaa..."
+msgstr "Ladatataan %S listaa..."
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
 msgstr "Tyhjennä välimuisti"
 
 #: gui/downloadpacksdialog.cpp:251
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Ladataan ikonilistaa... %d kappaletta"
+msgstr "Ladatataan %S listaa... %d alkiota"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
@@ -259,22 +257,18 @@ msgstr "VIRHE: Ikonipolkua ei ole asetettu"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:427
-#, fuzzy, c-format
-#| msgid "No new icons packs available"
+#, c-format
 msgid "No new %S available"
-msgstr "Uusia ikonipaketteja ei ole saatavilla"
+msgstr "Uusia %S ei ole saatavilla"
 
 #: gui/downloadpacksdialog.cpp:463
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "icon files. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Olet poistamassa %s %s dataa, sisältäen kaikki aiemmin ladatut "
-"ikonitiedostot. Haluatko jatkaa?"
+"Olet poistamassa %s %s dataa, sisältäen kaikki aiemmin ladatut %S. Haluatko "
+"jatkaa?"
 
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
@@ -1134,10 +1128,8 @@ msgid "the filtering setting could not be changed"
 msgstr "Suodatusasetusta ei voitu muuttaa"
 
 #: gui/options.cpp:842
-#, fuzzy
-#| msgid "the fullscreen setting could not be changed"
 msgid "the vsync setting could not be changed"
-msgstr "kokoruututilaa ei voitu muuttaa"
+msgstr "vsync-asetusta ei voitu muuttaa"
 
 #: gui/options.cpp:859
 msgid "the shader could not be changed"
@@ -1217,16 +1209,12 @@ msgid "Shader Path:"
 msgstr "Sävytinkansio:"
 
 #: gui/options.cpp:1599
-#, fuzzy
-#| msgid "Update check:"
 msgid "Update Shaders"
-msgstr "Päivitystarkistus:"
+msgstr "Päivitä sävyttimet"
 
 #: gui/options.cpp:1599
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of shader packs"
-msgstr "Tarkista päivitykset..."
+msgstr "Tarkista sävytinpakettien päivitykset"
 
 #: gui/options.cpp:1605 backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Fullscreen mode"
@@ -1610,7 +1598,7 @@ msgstr ""
 
 #: gui/options.cpp:2486
 msgid "Ask for confirmation on exit"
-msgstr "Varmista että ohjelma halutaan sulkea"
+msgstr "Varmista että peli tai ohjelma halutaan sulkea"
 
 #: gui/options.cpp:2487
 msgid "Ask for permission when closing ScummVM or leaving a game."
@@ -1655,10 +1643,8 @@ msgid "Update Icons"
 msgstr "Päivitä ikonit"
 
 #: gui/options.cpp:2541
-#, fuzzy
-#| msgid "Check for Updates..."
 msgid "Check for updates of icon packs"
-msgstr "Tarkista päivitykset..."
+msgstr "Tarkista ikonipakettien päivitykset"
 
 #: gui/options.cpp:2548
 msgid "Autosave:"
@@ -1671,11 +1657,11 @@ msgstr "Autom. tallennus:"
 
 #: gui/options.cpp:2561
 msgid "Random seed:"
-msgstr ""
+msgstr "Satunnaisuuden alustusarvo:"
 
 #: gui/options.cpp:2561
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "Satunnaislukugeneraattorien alustusarvo"
 
 #: gui/options.cpp:2571
 msgid "Enable Discord integration"
@@ -2011,11 +1997,11 @@ msgstr "Valitse /root/ hakemisto tiedostonhallinnalle"
 
 #: gui/options.cpp:3133
 msgid "icon packs"
-msgstr ""
+msgstr "ikonipaketit"
 
 #: gui/options.cpp:3144
 msgid "shader packs"
-msgstr ""
+msgstr "sävytinpaketit"
 
 #: gui/options.cpp:3266
 msgid ""
@@ -2237,15 +2223,15 @@ msgstr "Anna kuvaus tallennukselle numero %d:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "Valitse sävytin allaolevasta listasta (tai valitse tiedosto)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Valitse tiedosto..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Valitse sävytin tiedostojärjestelmästä"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
@@ -3842,13 +3828,11 @@ msgstr "3D-peleissä"
 
 #: backends/platform/android/options.cpp:152
 msgid "Forget SAF authorization"
-msgstr ""
+msgstr "Unohda SAF-autorisaatio"
 
 #: backends/platform/android/options.cpp:359
-#, fuzzy
-#| msgid "~R~emove Game"
 msgid "Remove"
-msgstr "P~o~ista peli"
+msgstr "Poista"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -5048,16 +5032,12 @@ msgid "Sensors will not shoot the player"
 msgstr "Sensorit eivät ammu pelaajaa"
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable falling"
-msgstr "Tallennusvalikko pois päältä"
+msgstr "Estä putoaminen"
 
 #: engines/freescape/metaengine.cpp:91
-#, fuzzy
-#| msgid "Player ammo will never decrease."
 msgid "Player cannot fall over edges"
-msgstr "Pelaajan ammukset eivät vähene."
+msgstr "Pelaaja ei voi pudota kielekkeiltä"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -6842,11 +6822,11 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_options.h:255
 msgid "Casio MT-540"
-msgstr ""
+msgstr "Casio MT-540"
 
 #: engines/sci/detection_options.h:259
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:4492
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -7114,17 +7094,15 @@ msgid "Enable the original GUI and Menu"
 msgstr "Käytä alkuperäistä käyttöliittymää ja valikkoa"
 
 #: engines/scumm/dialogs.cpp:1053
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
 msgstr ""
 "Salli pelin käyttää pelimoottorin sisäistä graafista käyttöliittymää sekä "
-"alkuperäistä tallennus/latausvalikkoa."
+"alkuperäistä tallennus/latausvalikkoa. Käytä tätä yhdessä 'Varmista että "
+"peli tai ohjelma halutaan sulkea'-asetuksen kanssa saadaksesi "
+"kokonaisvaltaisemman kokemuksen."
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
@@ -7802,23 +7780,19 @@ msgstr ""
 "niitä on saatavilla."
 
 #: engines/scumm/metaengine.cpp:667
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Salli pelin käyttää pelimoottorin sisäistä graafista käyttöliittymää sekä "
-"alkuperäistä tallennus/latausvalikkoa."
+"alkuperäistä tallennus/latausvalikkoa. \t\tKäytä tätä yhdessä 'Varmista että "
+"peli tai ohjelma halutaan sulkea'-asetuksen kanssa saadaksesi "
+"kokonaisvaltaisemman kokemuksen."
 
 #: engines/scumm/metaengine.cpp:676
-#, fuzzy
-#| msgid "Enable the debug mode"
 msgid "Enable low latency audio mode"
-msgstr "Debug-tila päälle"
+msgstr "Matalalatenssinen audio"
 
 #: engines/scumm/metaengine.cpp:677
 msgid ""
@@ -7826,6 +7800,9 @@ msgid ""
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
+"Sallii pelin käyttää matalalatenssista audiota äänentarkkuuden "
+"kustannuksella. \t\tSuosittelemme tätä asetusta vain jos huomaat viivettä "
+"pelin äänissä normaalissa pelitilanteessa."
 
 #: engines/scumm/scumm.cpp:263
 msgid ""
