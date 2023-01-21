@@ -524,7 +524,7 @@ Common::Error Ultima8Engine::startupGame() {
 		_audioMixer->openMidiOutput();
 
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
-	if (saveSlot == -1)
+	if (saveSlot == -1 && ConfMan.hasKey("lastSave"))
 		saveSlot = ConfMan.getInt("lastSave");
 
 	newGame(saveSlot);
