@@ -48,42 +48,46 @@ void MenuOptions::newGame() {
 	_engine->_music->stopMusic();
 	_engine->_sound->stopSamples();
 
-	int32 tmpFlagDisplayText = _engine->_cfgfile.FlagDisplayText;
-	_engine->_cfgfile.FlagDisplayText = true;
+	if (_engine->isLBA1()) {
+		int32 tmpFlagDisplayText = _engine->_cfgfile.FlagDisplayText;
+		_engine->_cfgfile.FlagDisplayText = true;
 
-	// intro screen 1 - twinsun
-	_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 15, 16));
+		// intro screen 1 - twinsun
+		_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 15, 16));
 
-	_engine->_text->_drawTextBoxBackground = false;
-	_engine->_text->_renderTextTriangle = true;
+		_engine->_text->_drawTextBoxBackground = false;
+		_engine->_text->_renderTextTriangle = true;
 
-	_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
-	_engine->_text->textClipFull();
-	_engine->_text->setFontCrossColor(COLOR_WHITE);
+		_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
+		_engine->_text->textClipFull();
+		_engine->_text->setFontCrossColor(COLOR_WHITE);
 
-	bool aborted = _engine->_text->drawTextProgressive(TextId::kIntroText1);
+		bool aborted = _engine->_text->drawTextProgressive(TextId::kIntroText1);
 
-	// intro screen 2
-	if (!aborted) {
-		_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 17, 18));
-		aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText2);
+		// intro screen 2
+		if (!aborted) {
+			_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 17, 18));
+			aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText2);
+
+			if (!aborted) {
+				_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 19, 20));
+				aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText3);
+			}
+		}
+		_engine->_cfgfile.FlagDisplayText = tmpFlagDisplayText;
+
+		_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
+		_engine->_screens->clearScreen();
 
 		if (!aborted) {
-			_engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 19, 20));
-			aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText3);
+			_engine->_music->playMidiMusic(1);
+			_engine->_movie->playMovie(FLA_INTROD);
 		}
+
+		_engine->_text->textClipSmall();
+	} else {
+		_engine->_movie->playMovie(ACF_INTRO);
 	}
-	_engine->_cfgfile.FlagDisplayText = tmpFlagDisplayText;
-
-	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
-	_engine->_screens->clearScreen();
-
-	if (!aborted) {
-		_engine->_music->playMidiMusic(1);
-		_engine->_movie->playMovie(FLA_INTROD);
-	}
-
-	_engine->_text->textClipSmall();
 	_engine->_screens->clearScreen();
 
 	_engine->_text->_drawTextBoxBackground = true;

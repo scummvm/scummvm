@@ -93,6 +93,7 @@ public:
 	 * 14: - still looking for plans
 	 * 15: The final showdown - "good day"
 	 */
+	// TODO: this is 253 gameflag in lba2
 	int16 _gameChapter = 0;
 
 	/** Magic ball type index */
@@ -128,7 +129,7 @@ public:
 	 */
 	uint8 _inventoryFlags[NUM_INVENTORY_ITEMS];
 
-	uint8 _holomapFlags[NUM_LOCATIONS]; // GV14
+	uint8 _holomapFlags[NUM_LOCATIONS];
 
 	char _sceneName[30] {};
 

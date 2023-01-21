@@ -198,11 +198,11 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_engine->_scene->_sceneHero->_genBody = (BodyType)file->readByte();
 
 	const byte numHolomapFlags = file->readByte(); // number of holomap locations
-	if (numHolomapFlags != NUM_LOCATIONS) {
-		warning("Failed to load holomapflags. Got %u, expected %i", numHolomapFlags, NUM_LOCATIONS);
+	if (numHolomapFlags != _engine->numLocations()) {
+		warning("Failed to load holomapflags. Got %u, expected %i", numHolomapFlags, _engine->numLocations());
 		return false;
 	}
-	file->read(_holomapFlags, NUM_LOCATIONS);
+	file->read(_holomapFlags, _engine->numLocations());
 
 	setGas(file->readByte());
 
@@ -265,8 +265,8 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte((uint8)_engine->_scene->_sceneHero->_genBody);
 
 	// number of holomap locations
-	file->writeByte(NUM_LOCATIONS);
-	file->write(_holomapFlags, NUM_LOCATIONS);
+	file->writeByte(_engine->numLocations());
+	file->write(_holomapFlags, _engine->numLocations());
 
 	file->writeByte(_inventoryNumGas);
 

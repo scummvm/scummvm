@@ -288,14 +288,14 @@ bool TwinEConsole::doPrintInventoryFlag(int argc, const char **argv) {
 
 bool TwinEConsole::doPrintHolomapFlag(int argc, const char **argv) {
 	if (argc <= 1) {
-		for (int i = 0; i < NUM_LOCATIONS; ++i) {
+		for (int i = 0; i < _engine->numLocations(); ++i) {
 			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->_holomapFlags[i]);
 		}
 		return true;
 	}
 
-	const uint8 idx = atoi(argv[1]);
-	if (idx < NUM_LOCATIONS) {
+	const uint16 idx = atoi(argv[1]);
+	if (idx < _engine->numLocations()) {
 		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->_holomapFlags[idx]);
 	}
 

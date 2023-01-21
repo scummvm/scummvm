@@ -407,6 +407,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// LBA2.EXE
 	// 4 Sep 2004 at 18:44
 	TWINE_DETECTION_ENTRY("lba2", "CD Original European Version", AD_ENTRY1s("LBA2.EXE", "ba915d65b3c7a743a87804f73f29675b", 616448), Common::kPlatformDOS, ADGF_UNSTABLE),
+	TWINE_DETECTION_ENTRY("lba2", "CD Original European Version", AD_ENTRY1s("text.hqr", "dafcec7d9f1b2ab4a12d478786eb0f61", 443010), Common::kPlatformDOS, ADGF_UNSTABLE),
 
 	AD_TABLE_END_MARKER
 };

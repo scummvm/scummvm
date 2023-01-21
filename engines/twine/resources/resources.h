@@ -64,6 +64,8 @@ namespace TwinE {
 #define FLA_THEEND "the_end"
 #define FLA_BATEAU "bateau"
 
+#define ACF_INTRO "INTRO"
+
 #define FILE3DHQR_HERONORMAL 0
 #define FILE3DHQR_HEROATHLETIC 1
 #define FILE3DHQR_HEROAGGRESSIVE 2

@@ -39,6 +39,7 @@
 #include "twine/scene/actor.h"
 #include "twine/script/script_life.h"
 #include "twine/script/script_move.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
@@ -262,6 +263,11 @@ public:
 	bool isAndroid() const { return _platform == Common::Platform::kPlatformAndroid; };
 	const char *getGameId() const;
 	Common::Language getGameLang() const;
+
+	inline int numLocations() const {
+		const int maxLocations = isLBA1() ? 150 : NUM_LOCATIONS;
+		return maxLocations;
+	}
 
 	bool unlockAchievement(const Common::String &id);
 

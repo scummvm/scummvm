@@ -29,7 +29,7 @@
 /** Number of colors used in the game */
 #define NUMOFCOLORS 256
 
-#define NUM_LOCATIONS 150
+#define NUM_LOCATIONS 334 /* 150 for lba1 */
 
 #define NUM_INVENTORY_ITEMS 28
 /**

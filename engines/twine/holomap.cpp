@@ -85,8 +85,8 @@ bool Holomap::loadLocations() {
 
 	Common::MemoryReadStream stream(locationsPtr, locationsSize, DisposeAfterUse::YES);
 	_numLocations = locationsSize / 8;
-	if (_numLocations > NUM_LOCATIONS) {
-		warning("Amount of locations (%i) exceeds the maximum of %i", _numLocations, NUM_LOCATIONS);
+	if (_numLocations > _engine->numLocations()) {
+		warning("Amount of locations (%i) exceeds the maximum of %i", _numLocations, _engine->numLocations());
 		return false;
 	}
 
@@ -432,11 +432,12 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 int32 Holomap::searchNextArrow(int32 currentLocation, int32 dir) const {
 	const int32 idx = currentLocation;
+	const int maxLocations = _engine->numLocations();
 	for (int32 i = currentLocation + dir; i != idx; i += dir) {
 		if (i < 0) {
-			i = NUM_LOCATIONS - 1;
+			i = maxLocations - 1;
 		} else {
-			i %= NUM_LOCATIONS;
+			i %= maxLocations;
 		}
 		if ((_engine->_gameState->_holomapFlags[i] & HOLOMAP_ACTIVE) != 0u) {
 			return i;
