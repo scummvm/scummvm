@@ -121,6 +121,8 @@ typedef struct {
 - (void)hideKeyboard;
 - (BOOL)isKeyboardShown;
 
+- (void)handleMainMenuKey;
+
 - (void)applicationSuspend;
 - (void)applicationResume;
 
