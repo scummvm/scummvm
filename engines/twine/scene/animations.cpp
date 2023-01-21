@@ -602,7 +602,7 @@ void Animations::doAnim(int32 actorIdx) {
 				if (numKeyframe == (int16)animData.getNumKeyframes()) {
 					actor->_dynamicFlags.bIsHitting = 0;
 
-					if (actor->_flagAnim == AnimType::kAnimationTypeLoop) {
+					if (actor->_flagAnim == AnimType::kAnimationTypeRepeat) {
 						actor->_frame = animData.getLoopFrame();
 					} else {
 						actor->_genAnim = actor->_nextGenAnim;
@@ -615,7 +615,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 						actor->_ptrAnimAction = _currentActorAnimExtraPtr;
 
-						actor->_flagAnim = AnimType::kAnimationTypeLoop;
+						actor->_flagAnim = AnimType::kAnimationTypeRepeat;
 						actor->_frame = 0;
 						actor->_strengthOfHit = 0;
 					}
@@ -779,10 +779,10 @@ void Animations::doAnim(int32 actorIdx) {
 							if (fallHeight <= (2 * SIZE_BRICK_Y) && actor->_genAnim == AnimationTypes::kForward) {
 								actor->_dynamicFlags.bWasWalkingBeforeFalling = 1;
 							} else {
-								initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
+								initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
 							}
 						} else {
-							initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
+							initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
 						}
 					}
 				}

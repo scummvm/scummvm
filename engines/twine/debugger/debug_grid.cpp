@@ -110,7 +110,7 @@ void DebugGrid::applyCellingGrid() {
 			_engine->_scene->_needChangeScene = SCENE_CEILING_GRID_FADE_2; // tricky to make the fade
 		} else if (grid->_useCellingGrid == 1) {
 			grid->_useCellingGrid = -1;
-			grid->createGridMap();
+			grid->copyMapToCube();
 			_engine->_redraw->_firstTime = true;
 			debug("Disable Celling Grid index: %d", grid->_cellingGridIdx);
 			_engine->_scene->_needChangeScene = SCENE_CEILING_GRID_FADE_2; // tricky to make the fade

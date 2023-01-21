@@ -288,7 +288,7 @@ enum class AnimationTypes {
 };
 
 enum class AnimType {
-	kAnimationTypeLoop = 0,
+	kAnimationTypeRepeat = 0,
 	kAnimationThen = 1,
 	// play animation and let animExtra follow as next animation
 	// if there is already a next animation set - replace the value

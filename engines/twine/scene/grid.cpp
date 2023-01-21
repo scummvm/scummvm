@@ -336,7 +336,7 @@ void Grid::loadGridBricks() {
 	}
 }
 
-void Grid::createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) {
+void Grid::decompColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) { // DecompColonne
 	Common::MemoryReadStream stream(gridEntry, gridEntrySize);
 	Common::MemoryWriteStream outstream(dest, destSize);
 	int32 brickCount = stream.readByte();
@@ -393,7 +393,7 @@ void Grid::createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize,
 	} while (--brickCount);
 }
 
-void Grid::createGridMap() {
+void Grid::copyMapToCube() {
 	int32 blockOffset = 0;
 
 	for (int32 z = 0; z < SIZE_CUBE_Z; z++) {
@@ -401,13 +401,13 @@ void Grid::createGridMap() {
 
 		for (int32 x = 0; x < SIZE_CUBE_X; x++) {
 			const int32 gridOffset = READ_LE_UINT16(_currentGrid + 2 * (x + gridIdx));
-			createGridColumn(_currentGrid + gridOffset, _currentGridSize - gridOffset, _bufCube + blockOffset, _blockBufferSize - blockOffset);
+			decompColumn(_currentGrid + gridOffset, _currentGridSize - gridOffset, _bufCube + blockOffset, _blockBufferSize - blockOffset);
 			blockOffset += 2 * SIZE_CUBE_Y;
 		}
 	}
 }
 
-void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) {
+void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) { // MixteMapToCube
 	int32 currGridOffset = 0;
 	int32 blockOffset = 0;
 
@@ -442,12 +442,12 @@ bool Grid::initGrid(int32 index) {
 
 	createGridMask();
 
-	createGridMap();
+	copyMapToCube();
 
 	return true;
 }
 
-bool Grid::initCellingGrid(int32 index) {
+bool Grid::initCellingGrid(int32 index) { // IncrustGrm
 	uint8 *gridPtr = nullptr;
 
 	// load grids from file

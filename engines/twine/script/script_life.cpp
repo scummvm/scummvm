@@ -839,7 +839,7 @@ int32 ScriptLife::lBODY_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 int32 ScriptLife::lANIM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ANIM(%i)", (int)animIdx);
-	engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx);
+	engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeRepeat, AnimationTypes::kStanding, ctx.actorIdx);
 	return 0;
 }
 
@@ -851,7 +851,7 @@ int32 ScriptLife::lANIM_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const AnimationTypes otherAnimIdx = (AnimationTypes)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ANIM_OBJ(%i, %i)", (int)otherActorIdx, (int)otherAnimIdx);
-	engine->_animations->initAnim(otherAnimIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, otherActorIdx);
+	engine->_animations->initAnim(otherAnimIdx, AnimType::kAnimationTypeRepeat, AnimationTypes::kStanding, otherActorIdx);
 	return 0;
 }
 
@@ -919,7 +919,7 @@ int32 ScriptLife::lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	// if we are in sporty mode, we might have triggered a jump with the special action binding
 	// see https://bugs.scummvm.org/ticket/13676 for more details.
 	if (ctx.actor->isJumpAnimationActive()) {
-		engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
+		engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 	}
 
 	engine->_text->drawTextProgressive(textIdx);
@@ -1005,7 +1005,7 @@ int32 ScriptLife::lSET_BEHAVIOUR(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const HeroBehaviourType behavior = (HeroBehaviourType)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_BEHAVIOUR(%i)", (int)behavior);
 
-	engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
+	engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 	engine->_actor->setBehaviour(behavior);
 
 	return 0;
@@ -1752,7 +1752,7 @@ int32 ScriptLife::lGRM_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
 	if (engine->_grid->_cellingGridIdx != -1) {
 		engine->_grid->_useCellingGrid = -1;
 		engine->_grid->_cellingGridIdx = -1;
-		engine->_grid->createGridMap();
+		engine->_grid->copyMapToCube();
 		engine->_redraw->redrawEngineActions(true);
 	}
 
@@ -1952,7 +1952,7 @@ int32 ScriptLife::lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	ctx.actor->_genAnim = AnimationTypes::kAnimNone;
 	ctx.actor->_anim = -1;
-	engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx);
+	engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeRepeat, AnimationTypes::kStanding, ctx.actorIdx);
 
 	return 0;
 }

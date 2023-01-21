@@ -712,7 +712,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 	bool tmpCellingGrid = false;
 
 	if (IS_HERO(actorIdx)) {
-		_currentActorInZone = false;
+		_flagClimbing = false;
 	}
 
 	for (int32 z = 0; z < _sceneNumZones; z++) {
@@ -753,7 +753,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 					tmpCellingGrid = true;
 					if (_engine->_grid->_useCellingGrid != zone->num) {
 						if (zone->num != -1) {
-							_engine->_grid->createGridMap();
+							_engine->_grid->copyMapToCube();
 						}
 
 						_engine->_grid->_useCellingGrid = zone->num;
@@ -787,11 +787,11 @@ void Scene::checkZoneSce(int32 actorIdx) {
 
 					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.z <= SCENE_SIZE_MAX) {
 						if (_engine->_grid->worldColBrick(destPos.x, actor->_pos.y + SIZE_BRICK_Y, destPos.z) != ShapeType::kNone) {
-							_currentActorInZone = true;
-							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
+							_flagClimbing = true;
+							if (actor->_pos.y >= (zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
-								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder
+								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder
 							}
 						}
 					}
@@ -804,7 +804,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 	if (!tmpCellingGrid && actorIdx == _currentlyFollowedActor && _engine->_grid->_useCellingGrid != -1) {
 		_engine->_grid->_useCellingGrid = -1;
 		_engine->_grid->_cellingGridIdx = -1;
-		_engine->_grid->createGridMap();
+		_engine->_grid->copyMapToCube();
 		_engine->_redraw->_firstTime = true;
 	}
 }

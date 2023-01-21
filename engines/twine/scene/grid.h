@@ -128,7 +128,7 @@ private:
 	 * @param gridEntry current grid index
 	 * @param dest destination block buffer
 	 */
-	void createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize);
+	void decompColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize);
 	/**
 	 * Load grid bricks according with block librarie usage
 	 */
@@ -270,7 +270,7 @@ public:
 	const BlockDataEntry* getBlockPointer(int32 blockIdx, int32 tmpBrickIdx) const;
 
 	/** Create grid map from current grid to block library buffer */
-	void createGridMap();
+	void copyMapToCube();
 
 	/**
 	 * Initialize grid (background scenearios)

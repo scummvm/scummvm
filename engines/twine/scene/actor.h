@@ -222,7 +222,7 @@ public:
 	int32 _anim = -1;
 	int32 _doorWidth = 0;
 	int32 _frame = 0;
-	AnimType _flagAnim = AnimType::kAnimationTypeLoop;
+	AnimType _flagAnim = AnimType::kAnimationTypeRepeat;
 	int32 _spriteActorRotation = 0;
 	uint8 _brickSound = 0U; // CodeJeu
 

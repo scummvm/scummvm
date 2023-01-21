@@ -80,7 +80,7 @@ int32 ScriptMove::mBODY(TwinEEngine *engine, MoveScriptContext &ctx) {
 int32 ScriptMove::mANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "MOVE::ANIM(%i)", (int)animIdx);
-	if (engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx)) {
+	if (engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeRepeat, AnimationTypes::kStanding, ctx.actorIdx)) {
 		return 0;
 	}
 	ctx.undo(1);

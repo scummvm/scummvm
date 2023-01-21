@@ -126,9 +126,9 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	initBody(bodyIdx, OWN_ACTOR_SCENE_INDEX);
 
 	sceneHero->_genAnim = AnimationTypes::kAnimNone;
-	sceneHero->_flagAnim = AnimType::kAnimationTypeLoop;
+	sceneHero->_flagAnim = AnimType::kAnimationTypeRepeat;
 
-	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
+	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
 }
 
 void Actor::initSpriteActor(int32 actorIdx) {
@@ -248,10 +248,10 @@ void Actor::initActor(int16 actorIdx) {
 		initBody(actor->_genBody, actorIdx);
 
 		actor->_anim = -1;
-		actor->_flagAnim = AnimType::kAnimationTypeLoop;
+		actor->_flagAnim = AnimType::kAnimationTypeRepeat;
 
 		if (actor->_body != -1) {
-			_engine->_animations->initAnim(actor->_genAnim, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
+			_engine->_animations->initAnim(actor->_genAnim, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
 		}
 
 		_engine->_movements->initRealAngle(actor->_beta, actor->_beta, LBAAngles::ANGLE_0, &actor->realAngle);

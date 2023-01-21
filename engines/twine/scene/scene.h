@@ -185,7 +185,7 @@ public:
 	/** Current followed actor in scene */
 	int16 _currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
 	/** Current actor in zone - climbing a ladder */
-	bool _currentActorInZone = false;
+	bool _flagClimbing = false;
 	bool _enableEnhancements = false;
 	/** Current actor manipulated in scripts */
 	int16 _currentScriptValue = 0;
