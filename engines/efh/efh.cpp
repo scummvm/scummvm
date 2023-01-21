@@ -271,17 +271,10 @@ void EfhEngine::initialize() {
 void EfhEngine::songDelay(int delay) {
 	debug("songDelay %ld", delay);
 
-	int remainingDelay = delay * kDefaultNoteDuration;
-	Common::KeyCode input = Common::KEYCODE_INVALID;
-	Common::Event event;
-	while (input == Common::KEYCODE_INVALID && remainingDelay > 0 && !shouldQuit()) {
-		_system->delayMillis(20);
-		remainingDelay -= 20;
-
-		_system->getEventManager()->pollEvent(event);
-		if (event.type == Common::EVENT_KEYUP) {
-			input = event.kbd.keycode;
-		}
+	int remainingDelay = delay;
+	while (remainingDelay > 0 && !shouldQuit()) {
+		remainingDelay -= 10;
+		_system->delayMillis(10);
 	}
 }
 
@@ -292,41 +285,46 @@ void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
 Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 	debug("playSong");
 
-	return Common::KEYCODE_INVALID;
-	
 	Common::KeyCode inputChar = Common::KEYCODE_INVALID;
-	int32 totalDelay = 0;
+	int totalDelay = 0;
 
+	int8 stopFl;
 	uint8 varC = *buffer++;
-	int8 stopFl = *buffer & 0x3F;
-	while (stopFl != 0) {
-		int32 delay = stopFl * varC * 0x2200 / 1000;
-		if (*buffer > 0x7F)
-			delay /= 2;
-		if (*buffer & 0x40)
-			delay = (delay * 2) / 3;
-		int8 frequencyIndex = *++buffer & 0xF;
-		++buffer;
+	Common::Event event;
+	do {
+		stopFl = *buffer & 0x3F;
+		if (stopFl != 0) {
+			int delay = stopFl * varC * 0x2200 / 1000;
 
-		if (frequencyIndex > 0x7F)
-			totalDelay += delay;
-		else if (frequencyIndex == 0)
-			songDelay(delay);
-		else {
-			playNote(frequencyIndex, totalDelay + delay);
-			totalDelay = 0;
+			if (*buffer > 0x7F)
+				delay /= 2;
+
+			if (*buffer & 0x40)
+				delay = (delay * 2) / 3;
+
+			++buffer;
+			uint8 frequencyIndex = *buffer;
+			++buffer;
+
+			if (frequencyIndex > 0x7F)
+				totalDelay += delay;
+			else if (frequencyIndex == 0)
+				songDelay(delay);
+			else {
+				playNote(frequencyIndex, totalDelay + delay);
+				totalDelay = 0;
+			}
 		}
 
 		songDelay(10);
-		Common::Event event;
 		_system->getEventManager()->pollEvent(event);
 		if (event.type == Common::EVENT_KEYUP) {
 			inputChar = event.kbd.keycode;
+			// Hack, sometimes there's a ghost event after the 2nd note
+			if (inputChar == Common::KEYCODE_ESCAPE || inputChar == Common::KEYCODE_RETURN)
+				stopFl = 0;
 		}
-
-		if (inputChar != Common::KEYCODE_INVALID)
-			stopFl = 0;
-	}
+	} while (stopFl != 0);
 	
 	return inputChar;
 }

@@ -62,7 +62,7 @@ struct Encounter {
 	uint8 _nameArticle;
 };
 
-#define kDefaultNoteDuration 616;
+#define kDefaultNoteDuration 616
 
 extern const uint8 kFontWidthArray[96];
 extern const uint8 kFontExtraLinesArray[96];
