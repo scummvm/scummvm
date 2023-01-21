@@ -54,12 +54,6 @@ EfhEngine::~EfhEngine() {
 	delete _vgaGraphicsStruct2;
 }
 
-void EfhEngine::syncSoundSettings() {
-	Engine::syncSoundSettings();
-
-	warning("TODO: _sound->syncVolume();");
-}
-
 Common::Error EfhEngine::run() {
 	debug("run");
 
@@ -70,11 +64,13 @@ Common::Error EfhEngine::run() {
 	_mainSurface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	initPalette();
-/*
+
 	// Setup mixer
 	syncSoundSettings();
-	_soundHandler->init();
-*/
+
+	// Sometimes a ghost key event stops the intro, so we ass a short delay and purge the keyboard events
+	_system->delayMillis(100);
+	_system->getEventManager()->purgeKeyboardEvents();
 
 	initEngine();
 	drawGameScreenAndTempText(true);
