@@ -734,9 +734,9 @@ bool Renderer::computePoly(int16 polyRenderType, const ComputedVertex *vertices,
 	ComputedVertex *pTabPoly = offTabPoly[0];
 	ComputedVertex *p0;
 	ComputedVertex *p1;
-	int16 *pVertic;
+	int16 *pVertic = nullptr;
 	int16 *pCoul;
-	int32 incY;
+	int32 incY = -1;
 	int32 dx, dy, x, y, dc;
 	int32 step, reminder;
 
