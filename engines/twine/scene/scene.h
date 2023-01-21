@@ -156,7 +156,7 @@ public:
 	~Scene();
 
 	int32 _needChangeScene = LBA1SceneId::Citadel_Island_Prison;
-	int32 _currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
+	int32 _currentSceneIdx = LBA1SceneId::Citadel_Island_Prison; // NumCube
 	int32 _previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 
 	int32 _planet = -1;
