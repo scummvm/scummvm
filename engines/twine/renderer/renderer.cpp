@@ -363,7 +363,7 @@ void Renderer::transRotList(const Common::Array<BodyVertex> &vertices, int32 fir
 }
 
 // TranslateGroupe
-void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex> &vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData) {
+void Renderer::translateGroup(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex> &vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData) {
 	IVec3 renderAngle;
 	renderAngle.x = rotX;
 	renderAngle.y = rotY;
@@ -1565,7 +1565,7 @@ void Renderer::animModel(ModelData *modelData, const BodyData &bodyData, RenderC
 			if (boneData->type == 0) {
 				processRotatedElement(modelMatrix, vertices, boneData->x, boneData->y, boneData->z, bone, modelData);
 			} else if (boneData->type == 1) {
-				processTranslatedElement(modelMatrix, vertices, boneData->x, boneData->y, boneData->z, bone, modelData);
+				translateGroup(modelMatrix, vertices, boneData->x, boneData->y, boneData->z, bone, modelData);
 			}
 
 			++modelMatrix;
