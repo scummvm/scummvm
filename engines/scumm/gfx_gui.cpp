@@ -1750,7 +1750,7 @@ void ScummEngine::restoreCursorPostMenu() {
 		setCursorFromBuffer(_curGrabbedCursor, _curCursorWidth, _curCursorHeight, _curCursorWidth, true);
 		free(_curGrabbedCursor);
 		_curGrabbedCursor = nullptr;
-	} else if (_game.version == 6) {
+	} else if (_game.version == 6 && _game.id != GID_TENTACLE) {
 		setCursorHotspot(_curCursorHotspotX, _curCursorHotspotY);
 		_cursor.width = _curCursorWidth;
 		_cursor.height = _curCursorHeight;
