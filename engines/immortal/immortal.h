@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef IMMORTAL_IMMORTAL_H
-#define IMMORTAL_IMMORTAL_H
+#ifndef IMMORTAL_H
+#define IMMORTAL_H
 
 // Audio is only handled in kernal, therefore it is only needed here
 #include "audio/mixer.h"
