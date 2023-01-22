@@ -78,6 +78,11 @@ struct soundFx {
 	byte *data;
 };
 
+class SizedPCSpeaker : public Audio::PCSpeaker {
+public:
+	bool endOfStream() { return (_commandQueue->size() == 0); }
+};
+
 class FreescapeEngine : public Engine {
 
 public:
@@ -261,11 +266,14 @@ public:
 	// Sound
 	Audio::SoundHandle _soundFxHandle;
 	Audio::SoundHandle _musicHandle;
+	Freescape::SizedPCSpeaker *_speaker;
+
 	bool _usePrerecordedSounds;
 	void playSound(int index, bool sync);
 	void playWav(const Common::String filename);
 	void playMusic(const Common::String filename);
 	void queueSoundConst(double hzFreq, int duration, bool sync);
+	void playSilence(int duration);
 	void playSoundConst(double hzFreq, int duration, bool sync);
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
 	void playTeleporter(int totalIters, bool sync);
