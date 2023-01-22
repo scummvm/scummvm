@@ -209,6 +209,9 @@ Common::Error EfhEngine::run() {
 		case Common::KEYCODE_3:
 			generateSound(15);
 			break;
+		case Common::KEYCODE_4:
+			generateSound(5);
+			break;
 		default:
 			if (retVal != Common::KEYCODE_INVALID)
 				warning("Main Loop: Unhandled input %d", retVal);
@@ -286,7 +289,7 @@ void EfhEngine::songDelay(int delay) {
 
 void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
 	debug("playNote %d %d", frequencyIndex, totalDelay);
-	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 0x1234DD / kSoundFrequency [frequencyIndex], -1);
+	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 0x1234DD / kSoundFrequency[frequencyIndex], -1);
 	songDelay(totalDelay);
 	_speakerStream->stop();
 }
