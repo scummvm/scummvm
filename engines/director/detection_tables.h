@@ -3595,6 +3595,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 								   "Int_1.Dir",	 "6210e24521f440ebd600d869c473444e", 5951298, 404),
 	WINGAME2_l("draculassecret", "", "Dracula.exe", 	  "033eed030a848f54a8f1671f50c616e9", 772925,
 									 "Dracula/INT_1.DIR", "bac609d9496142c8393a68435c25660d", 9387886, Common::FR_FRA, 404),
+	MACGAME2_l("draculassecret", "", "Draculas Hemmelighet", "r:21cbec653e96e4c1bb6377d44050095e", 483490,
+									 "Int_1.Dir",			 "d:45d782f0cb6bf4023f026024e27f3fa2", 6001656, Common::NB_NOR, 404),
+	WINGAME2_l("draculassecret", "", "Dracula.exe", 	  "000d7509cd6459b35f271598ac8255f7", 800583,
+									 "Dracula/INT_1.DIR", "45d782f0cb6bf4023f026024e27f3fa2", 6001656, Common::NB_NOR, 404),
 	WINGAME2_l("draculassecret", "", "secret.exe",		  "b24fbaf90985cdb79132eda2ee5b73d2", 1132985,
 									 "Dracula/Int_1.Dir", "f2357c8e4b94e87b9d53018ecb9f1ed6", 5699816, Common::NL_NLD, 404), // original release
 	MACGAME2_l("draculassecret", "", "Secret.PPC",  "b147d31ed577b9bbd3af764f178bb71c", 57832,
