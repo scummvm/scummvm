@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-22 14:48+0000\n"
-"PO-Revision-Date: 2023-01-22 21:57+0000\n"
+"PO-Revision-Date: 2023-01-22 21:58+0000\n"
 "Last-Translator: Jennifer McMurray <mcmurray.jennifer@gmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7928,17 +7928,14 @@ msgstr ""
 "audio modifiés, s'ils sont disponibles."
 
 #: engines/scumm/metaengine.cpp:667
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Permet au jeu d'utiliser l'interface graphique du moteur et le menu "
-"sauvegarder/charger d'origine."
+"sauvegarder/charger d'origine. \t\tUtilisez-le avec le \"Demander une "
+"confirmation à la sortie\" pour une expérience plus complète."
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Enable low latency audio mode"
