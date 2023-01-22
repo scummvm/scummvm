@@ -55,7 +55,7 @@ void EfhEngine::generateSound1(int arg0, int arg2, int duration) {
 }
 
 void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
-	warning("STUB: generateSound2 %d %d %d", startFreq, endFreq, speed);
+	debugC(3, kDebugEngine, "generateSound2 %d %d %d", startFreq, endFreq, speed);
 
 	if (startFreq < 19)
 		startFreq = 19;
@@ -64,6 +64,7 @@ void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
 		endFreq = 19;
 
 	int delta;
+	// The original is using -/+1 but it takes ages even with speed / 10, so I switched to -/+5
 	if (startFreq > endFreq)
 		delta = -5;
 	else
@@ -77,6 +78,8 @@ void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
 
 	do {
 		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, curFreq, -1);
+		// The original is just looping, making the sound improperly timed as the length of a loop is directly related to the speed of the CPU
+		// Dividing by 10 is just a guess based on how it sounds. I suspect it may be still too much
 		songDelay(speed / 10);
 		_speakerStream->stop();
 		curFreq += delta;
@@ -90,7 +93,19 @@ void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
 }
 
 void EfhEngine::generateSound3() {
-	warning("STUB: generateSound3");
+	debugC(3, kDebugEngine, "generateSound3");
+	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
+					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
+	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 88, -1);
+	// The original makes me think the delay is so short it's not possible to hear. So that delay is guessed (and short)
+	songDelay(30);
+	_speakerStream->stop();
+
+	_mixer->stopHandle(_speakerHandle);
+	delete _speakerStream;
+	_speakerStream = nullptr;
 }
 
 void EfhEngine::generateSound4(int arg0) {
