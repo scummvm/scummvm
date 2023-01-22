@@ -762,6 +762,21 @@ MADS
    * - Filippos Karapetis
      -
 
+MM (Xeen)
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Paul Gilbert
+     -
+   * - Benoit Pierre
+     -
+   * - David Goldsmith
+     - (Xeen analysis)
+   * - Matt Taylor
+     - (Xeen analysis)
+
 Mohawk
 ^^^^^^
 
@@ -1395,21 +1410,6 @@ Wintermute
      -
    * - Tobia Tesan
      -
-
-Xeen
-^^^^
-
-.. list-table::
-   :widths: 35 65
-
-   * - Paul Gilbert
-     -
-   * - Benoit Pierre
-     -
-   * - David Goldsmith
-     - (analysis)
-   * - Matt Taylor
-     - (analysis)
 
 Z-Vision
 ^^^^^^^^
