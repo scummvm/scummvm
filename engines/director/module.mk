@@ -54,6 +54,7 @@ MODULE_OBJS = \
 	lingo/xlibs/dpwqtw.o \
 	lingo/xlibs/draw.o \
 	lingo/xlibs/ednox.o \
+	lingo/xlibs/fedracul.o \
 	lingo/xlibs/fileexists.o \
 	lingo/xlibs/fileio.o \
 	lingo/xlibs/findfolder.o \
