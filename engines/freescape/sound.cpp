@@ -177,7 +177,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 		if (_usePrerecordedSounds) {
 			// TODO
 		} else {
-			// TODO
+			playSilence(1);
 		}
 		break;
 
@@ -221,8 +221,8 @@ void FreescapeEngine::playSound(int index, bool sync) {
 		break;
 	}
 }
-
 void FreescapeEngine::playWav(const Common::String filename) {
+
 	Common::SeekableReadStream *s = _dataBundle->createReadStreamForMember(filename);
 	assert(s);
 	Audio::AudioStream *stream = Audio::makeWAVStream(s, DisposeAfterUse::YES);
@@ -235,7 +235,7 @@ void FreescapeEngine::playMusic(const Common::String filename) {
 	if (stream) {
 		Audio::LoopingAudioStream *loop = new Audio::LoopingAudioStream(stream, 0);
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loop);
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume / 4);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxChannelVolume / 10);
 	}
 }
 
@@ -257,17 +257,29 @@ void FreescapeEngine::playSoundFx(int index, bool sync) {
 	}
 }
 
-void FreescapeEngine::playSoundConst(double hzFreq, int duration, bool sync) {
-	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
-	speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * duration);
-	speaker->setVolume(50);
+void FreescapeEngine::playSilence(int duration) {
+	while (!_speaker->endOfStream())
+		g_system->delayMillis(10);
+
+	_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0, 1000 * 10 * duration);
 	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, speaker);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+}
+
+void FreescapeEngine::playSoundConst(double hzFreq, int duration, bool sync) {
+	while (!_speaker->endOfStream())
+		g_system->delayMillis(10);
+
+	_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * duration);
+	_mixer->stopHandle(_soundFxHandle);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 8, 0, DisposeAfterUse::NO);
 }
 
 void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync) {
+	while (!_speaker->endOfStream())
+		g_system->delayMillis(10);
+
 	// Play a PC speaker sweep between sound frequencies, using constant wavelength increment.
-	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
 
 	// The wavelength step-per-milliseconds value, or wlStepPerMS, describes how
 	// many PIT counter increments occur per millisecond.  This unusual metric is actually
@@ -309,16 +321,16 @@ void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double
 	int hzCounts = (int)((inv2 - inv1) / wlStep);
 	while (hzCounts-- >= 0) {
 		float hzFreq = (1193180.0 / inv1);
-		speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * 10 * resolution);
+		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * 10 * resolution);
 		inv1 += wlStep;
 	}
-	speaker->setVolume(50);
 	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, speaker);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 8, 0, DisposeAfterUse::NO);
 }
 
 void FreescapeEngine::playTeleporter(int totalIters, bool sync) {
-	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
+	while (!_speaker->endOfStream())
+		g_system->delayMillis(10);
 
 	// Play FreeScape DOS teleporter-like effect, which is ascending arpeggio.
 	// Length of effect is variable; provide total number of iterations.
@@ -339,7 +351,7 @@ void FreescapeEngine::playTeleporter(int totalIters, bool sync) {
 	// Loop over iterations
 	for (i = 0; i < totalIters; i++) {
 		float hzFreq = 1193180.0 / fBase;
-		speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * 10 * 21);
+		_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * 10 * 21);
 
 		if (stepCycle <= 1) {
 			// Ascending first two portions of cycle
@@ -351,9 +363,8 @@ void FreescapeEngine::playTeleporter(int totalIters, bool sync) {
 			stepCycle = 0;
 		}
 	}
-	speaker->setVolume(50);
 	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, speaker);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 8, 0, DisposeAfterUse::NO);
 }
 
 void FreescapeEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {
