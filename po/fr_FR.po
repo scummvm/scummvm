@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-22 14:48+0000\n"
-"PO-Revision-Date: 2023-01-19 05:03+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2023-01-22 21:57+0000\n"
+"Last-Translator: Jennifer McMurray <mcmurray.jennifer@gmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -3873,13 +3873,11 @@ msgstr "Dans les jeux 3D"
 
 #: backends/platform/android/options.cpp:152
 msgid "Forget SAF authorization"
-msgstr ""
+msgstr "Oublier l'autorisation de SAF"
 
 #: backends/platform/android/options.cpp:359
-#, fuzzy
-#| msgid "~R~emove Game"
 msgid "Remove"
-msgstr "~S~upprimer"
+msgstr "Supprimer"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -7236,17 +7234,14 @@ msgid "Enable the original GUI and Menu"
 msgstr "Activer le menu et l'interface d'origine"
 
 #: engines/scumm/dialogs.cpp:1053
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
 msgstr ""
 "Permet au jeu d'utiliser l'interface graphique du moteur et le menu "
-"sauvegarder/charger d'origine."
+"sauvegarder/charger d'origine. Utilisez-le avec le \"Demander une "
+"confirmation à la sortie\" pour une expérience plus complète."
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
