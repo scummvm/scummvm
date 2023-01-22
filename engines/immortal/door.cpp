@@ -60,40 +60,65 @@ void ImmortalEngine::doorNew(SDoor door) {
 	_doors.push_back(d);
 }
 
-
+/* TODO
+ * Not implemented yet
+ */
 int ImmortalEngine::findDoorTop(int x, int y) {
 	return 0;
 }
 
+/* TODO
+ * Not implemented yet
+ */
 int ImmortalEngine::findDoor(int x, int y) {
 	return 0;
 }
 
+/* TODO
+ * Not implemented yet
+ */
 bool ImmortalEngine::doLockStuff(int d, MonsterID m, int top) {
 	return true;
 }
 
+/* TODO
+ * Not implemented yet
+ */
 bool ImmortalEngine::inDoorTop(int x, int y, MonsterID m) {
 	return true;
 }
 
+/* TODO
+ * Not implemented yet
+ */
 bool ImmortalEngine::inDoor(int x, int y, MonsterID m) {
 	return true;
 }
 
+/* TODO
+ * Not implemented yet
+ */
 int ImmortalEngine::doorDoStep(MonsterID m, int d, int index) {
 	return 0;
 }
 
+/* TODO
+ * Not implemented yet
+ */
 int ImmortalEngine::doorSetOn(int d) {
 	return 0;
 }
 
+/* TODO
+ * Not implemented yet
+ */
 int ImmortalEngine::doorComeOut(MonsterID m) {
 	return 0;
 }
 
-// These functions are not yet implemented
+/* TODO
+ * These functions are not yet implemented
+ */
 void ImmortalEngine::doorSetLadders(MonsterID m) {}
 void ImmortalEngine::doorDrawAll() {}
 void ImmortalEngine::doorOnDoorMat() {}
