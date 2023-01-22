@@ -1,6 +1,12 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.8.0 (XXXX-XX-XX)
+
+ Xeen:
+   - Die Engine "xeen" wurde für Might & Magic zu "mm" umbenannt.
+
+
 #### 2.7.0 (DD.MM.YYYY)
 
  Neue Spiele:
