@@ -265,6 +265,7 @@ public:
 	void playSound(int index, bool sync);
 	void playWav(const Common::String filename);
 	void playMusic(const Common::String filename);
+	void queueSoundConst(double hzFreq, int duration, bool sync);
 	void playSoundConst(double hzFreq, int duration, bool sync);
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
 	void playTeleporter(int totalIters, bool sync);
