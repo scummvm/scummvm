@@ -389,13 +389,14 @@ void ImmortalEngine::printChr(char c) {
 	}
 
 	switch (c) {
-		case 'm':
-		case 'w':
-		case 'M':
-		case 'W':
-			_penX += 8;
-		default:
-			break;
+	case 'm':
+	case 'w':
+	case 'M':
+	case 'W':
+		_penX += 8;
+		// fall through
+	default:
+		break;
 	}
 
 	if ((((c >= 'A') && (c <= 'Z'))) || ((c == kGaugeOn) || (c == kGaugeOff))) {
@@ -403,17 +404,19 @@ void ImmortalEngine::printChr(char c) {
 	}
 
 	switch (c) {
-		case 'i':
-			_penX -= 3;
-			break;
-		case 'j':
-		case 't':
-			_penX -= 2;
-			break;
-		case 'l':
-			_penX -= 4;
-		default:
-			break;
+	case 'i':
+		_penX -= 3;
+		break;
+	case 'j':
+		// fall through
+	case 't':
+		_penX -= 2;
+		break;
+	case 'l':
+		_penX -= 4;
+		// fall through
+	default:
+		break;
 	}
 
 	uint16 x = _penX + kScreenLeft;
@@ -1003,27 +1006,30 @@ void ImmortalEngine::fixPause() {
 
 	// This is a nasty bit of code isn't it? It's accurate to the source though :D
 	switch (_playing) {
-		case kSongText:
-		case kSongMaze:
-			if (_themePaused) {
-				musicUnPause(_themeID);
-				break;
-			}
-		default:
-			musicPause(_themeID);
+	case kSongText:
+		// fall through
+	case kSongMaze:
+		if (_themePaused) {
+			musicUnPause(_themeID);
 			break;
+		}
+		// fall through
+	default:
+		musicPause(_themeID);
+		break;
 	}
 
 	// Strictly speaking this should probably be a single function called twice, but the source writes out both so I will too
 	switch (_playing) {
-		case kSongCombat:
-			if (_themePaused) {
-				musicUnPause(_combatID);
-				break;
-			}
-		default:
-			musicPause(_combatID);
+	case kSongCombat:
+		if (_themePaused) {
+			musicUnPause(_combatID);
 			break;
+		}
+		// fall through
+	default:
+		musicPause(_combatID);
+		break;
 	}
 
 }

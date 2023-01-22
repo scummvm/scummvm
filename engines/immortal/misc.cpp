@@ -93,104 +93,108 @@ bool ImmortalEngine::textSub(Str s, FadeType f, int n) {
 
 	while (done == false) {
 		switch (text[index]) {
-			case '@':
-			case '=':
-			case char(0):
-				done = true;
-				// This is so the while loop can be a little cleaner
-				index--;
-				break;
-			case '&':
-				textCR();
-				break;
-			case '$':
-				printByte(n);
+		case '@':
+		case '=':
+		case char(0):
+			done = true;
+			// This is so the while loop can be a little cleaner
+			index--;
+			break;
+		case '&':
+			textCR();
+			break;
+		case '$':
+			printByte(n);
+			copyToScreen();
+			break;
+		case '_':
+			myFadeIn();
+			_slowText = 1;
+			break;
+		case '<':
+			_slowText = 0;
+			break;
+		case '>':
+			_formatted = 0;
+			break;
+		case '\\':
+			normalFadeOut();
+			break;
+		case '/':
+			slowFadeOut();
+			break;
+		case '|':
+			normalFadeIn();
+			break;
+		case '}':
+			_formatted = 1;
+			break;
+		case ']':
+			myDelay(40);
+			break;
+		case '{':
+			index++;
+			myDelay(text[index]);
+			break;
+		case '*':
+			textPageBreak(text, index);
+			break;
+		case '[':
+			textAutoPageBreak();
+			break;
+		case '#':
+			index++;
+			drawIcon(text[index]);
+			break;
+		case '~':
+			text = _strPtrs[(int)text[index + 1]];
+			index = -1;
+			break;
+		case '^':
+			center();
+			break;
+		case '%':
+			return yesNo();
+		case '+':
+			chr = 0x27;
+			break;
+		case '(':
+			chr = 0x60;
+			break;
+		default:
+			chr = text[index];
+			_collumn++;
+			if (chr == ' ') {
+				if (text[index + 1] == '~') {
+					text = _strPtrs[(int)text[index + 2]];
+					index = -1;
+				}
+				textDoSpace(text, index);
+			
+			} else {
+				printChr(chr);
+				// We need this to show up now, not when the frame ends, so we have to update the screen here
 				copyToScreen();
-				break;
-			case '_':
-				myFadeIn();
-				_slowText = 1;
-				break;
-			case '<':
-				_slowText = 0;
-				break;
-			case '>':
-				_formatted = 0;
-				break;
-			case '\\':
-				normalFadeOut();
-				break;
-			case '/':
-				slowFadeOut();
-				break;
-			case '|':
-				normalFadeIn();
-				break;
-			case '}':
-				_formatted = 1;
-				break;
-			case ']':
-				myDelay(40);
-				break;
-			case '{':
-				index++;
-				myDelay(text[index]);
-				break;
-			case '*':
-				textPageBreak(text, index);
-				break;
-			case '[':
-				textAutoPageBreak();
-				break;
-			case '#':
-				index++;
-				drawIcon(text[index]);
-				break;
-			case '~':
-				text = _strPtrs[(int)text[index + 1]];
-				index = -1;
-				break;
-			case '^':
-				center();
-				break;
-			case '%':
-				return yesNo();
-			case '+':
-				chr = 0x27;
-				break;
-			case '(':
-				chr = 0x60;
-				break;
-			default:
-				chr = text[index];
-				_collumn++;
-				if (chr == ' ') {
-					if (text[index + 1] == '~') {
-						text = _strPtrs[(int)text[index + 2]];
-						index = -1;
-					}
-					textDoSpace(text, index);
-				
-				} else {
-					printChr(chr);
-					// We need this to show up now, not when the frame ends, so we have to update the screen here
-					copyToScreen();
-					if (_slowText != 0) {
-						myDelay(5);
-						switch (chr) {
-							case '?':
-							case ':':
-								myDelay(13);
-							case '.':
-								myDelay(13);
-							case ',':
-								myDelay(13);
-							default:
-								break;
-						}
+				if (_slowText != 0) {
+					myDelay(5);
+					switch (chr) {
+					case '?':
+						// fall through
+					case ':':
+						myDelay(13);
+						// fall through
+					case '.':
+						myDelay(13);
+						// fall through
+					case ',':
+						myDelay(13);
+						// fall through
+					default:
+						break;
 					}
 				}
-				break;
+			}
+			break;
 		}
 		if (index == 0xFF) {
 			debug("String too long!");
@@ -272,14 +276,19 @@ void ImmortalEngine::textDoSpace(Common::String s, int index) {
 		while (foundEnd == false) {
 			index++;
 			switch (s[index]) {
-				case '=':
-				case '@':
-				case '%':
-				case '[':
-				case ' ':
-					foundEnd = true;
-				default:
-					break;
+			case '=':
+				// fall through
+			case '@':
+				// fall through
+			case '%':
+				// fall through
+			case '[':
+				// fall through
+			case ' ':
+				foundEnd = true;
+				// fall through
+			default:
+				break;
 			}
 		}
 		if (((index - start) + _collumn) >= kMaxCollumns) {
@@ -383,14 +392,16 @@ void ImmortalEngine::myDelay(int j) {
 
 		// Otherwise, we delay by different amounts based on what's held down
 		switch (type) {
-			case 1:
-				Utilities::delay4(1);
-				break;
-			case 0:
-				Utilities::delay(1);
-			case 2:
-			default:
-				break;
+		case 1:
+			Utilities::delay4(1);
+			break;
+		case 0:
+			Utilities::delay(1);
+			// fall through
+		case 2:
+			// fall through
+		default:
+			break;
 		}
 
 		j--;

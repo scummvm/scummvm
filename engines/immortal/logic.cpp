@@ -150,16 +150,17 @@ void ImmortalEngine::trapKeys() {
 	 */
 	getInput();
 	switch (_pressedAction) {
-		case kActionDBGStep:
-			_singleStep = true;
-			break;
-		case kActionRestart:
-			gameOver();
-			break;
-		case kActionSound:
-			toggleSound();
-		default:
-			break;
+	case kActionDBGStep:
+		_singleStep = true;
+		break;
+	case kActionRestart:
+		gameOver();
+		break;
+	case kActionSound:
+		toggleSound();
+		// fall through
+	default:
+		break;
 	}
 }
 
@@ -170,13 +171,16 @@ int ImmortalEngine::keyOrButton() {
 	while (button == 0) {
 		getInput();
 		switch (_pressedAction) {
-			case kActionKey:
-				button = _pressedAction;
-			case kActionFire:
-			case kActionButton:
-				button = 13;
-			default:
-				break;
+		case kActionKey:
+			button = _pressedAction;
+			break;
+		case kActionFire:
+			// fall through
+		case kActionButton:
+			button = 13;
+			// fall through
+		default:
+			break;
 		}
 	}
 	return button;
@@ -348,43 +352,43 @@ bool ImmortalEngine::fromOldGame() {
 
 	// This would have been much more clean as a set of tables instead of a long branching tree
 	switch (_certificate[kCertLevel]) {
-		case 1:
-			if ((certInv & 2) != 0) {
-				//room.makeObject(3, 0, kSporesFrame, sporesType);
-			}
+	case 1:
+		if ((certInv & 2) != 0) {
+			//room.makeObject(3, 0, kSporesFrame, sporesType);
+		}
 
-			if ((certInv & 4) != 0) {
-				//room.makeObject(3, 0, kSporesFrame, wowCharmType);
-			}
+		if ((certInv & 4) != 0) {
+			//room.makeObject(3, 0, kSporesFrame, wowCharmType);
+		}
 
-			break;
-		case 4:
-			if ((certInv & 2) != 0) {
-				//room.makeObject(3, kIsInvisible, kSporesFrame, coffeeType);
-			}
+		break;
+	case 4:
+		if ((certInv & 2) != 0) {
+			//room.makeObject(3, kIsInvisible, kSporesFrame, coffeeType);
+		}
 
-			break;
-		case 3:
-			if ((certInv & 1) != 0) {
-				//room.makeObject(3, kIsRunning, kRingFrame, faceRingType);
-			}
+		break;
+	case 3:
+		if ((certInv & 1) != 0) {
+			//room.makeObject(3, kIsRunning, kRingFrame, faceRingType);
+		}
 
-			break;
-		case 7:
-			if ((certInv & 1) != 0) {
-				//room.makeObject(6, kUsesFireButton, kSporesFrame, bronzeType);
-			}
+		break;
+	case 7:
+		if ((certInv & 1) != 0) {
+			//room.makeObject(6, kUsesFireButton, kSporesFrame, bronzeType);
+		}
 
-			if ((certInv & 2) != 0) {
-				//room.makeObject(3, 0, kSporesFrame, tractorType);
-			}
+		if ((certInv & 2) != 0) {
+			//room.makeObject(3, 0, kSporesFrame, tractorType);
+		}
 
-			if ((certInv & 4) != 0) {
-				//room.makeObject(3, 0, kSporesFrame, antiType);
-			}
-
-		default:
-			break;
+		if ((certInv & 4) != 0) {
+			//room.makeObject(3, 0, kSporesFrame, antiType);
+		}
+		// fall through
+	default:
+		break;
 	}
 	levelNew(_level);
 	return true;
@@ -434,46 +438,46 @@ void ImmortalEngine::makeCertificate() {
 
 	// The lo byte of the inventory is used for items that only exist on a specific level, and are removed after
 	switch (_certificate[kCertLevel]) {
-		case 1:
-			if (true/*room.monster[kPlayerID].hasObject(sporesType)*/) {
-				_certificate[kCertInvLo] |= 2;
-			}
+	case 1:
+		if (true/*room.monster[kPlayerID].hasObject(sporesType)*/) {
+			_certificate[kCertInvLo] |= 2;
+		}
 
-			if (true/*room.monster[kPlayerID].hasObject(wowCharmType)*/) {
-				_certificate[kCertInvLo] |= 4;
-			}
+		if (true/*room.monster[kPlayerID].hasObject(wowCharmType)*/) {
+			_certificate[kCertInvLo] |= 4;
+		}
+		// fall through
+	case 3:
+		if (true/*room.monster[kPlayerID].hasObject(faceRingType)*/) {
+			_certificate[kCertInvLo] |= 1;
+		}
+		// fall through
+	case 4:
+		if (true/*room.monster[kPlayerID].hasObject(coffeeType)*/) {
+			_certificate[kCertInvLo] |= 2;
+		}
+		// fall through
+	case 7:
+		if (true/*room.monster[kPlayerID].hasObject(bronzeType)*/) {
+			_certificate[kCertInvLo] |= 1;
+		}
 
-		case 3:
-			if (true/*room.monster[kPlayerID].hasObject(faceRingType)*/) {
-				_certificate[kCertInvLo] |= 1;
-			}
+		if (true/*room.monster[kPlayerID].hasObject(tractorType)*/) {
+			_certificate[kCertInvLo] |= 2;
+		}
 
-		case 4:
-			if (true/*room.monster[kPlayerID].hasObject(coffeeType)*/) {
-				_certificate[kCertInvLo] |= 2;
-			}
-
-		case 7:
-			if (true/*room.monster[kPlayerID].hasObject(bronzeType)*/) {
-				_certificate[kCertInvLo] |= 1;
-			}
-
-			if (true/*room.monster[kPlayerID].hasObject(tractorType)*/) {
-				_certificate[kCertInvLo] |= 2;
-			}
-
-			if (true/*room.monster[kPlayerID].hasObject(antiType)*/) {
-				_certificate[kCertInvLo] |= 4;
-			}
-
-		default:
-			_lastCertLen = 13;
-			uint8 checksum[4];
-			calcCheckSum(_lastCertLen, checksum);
-			_certificate[0] = checksum[0];
-			_certificate[1] = checksum[1];
-			_certificate[2] = checksum[2];
-			_certificate[3] = checksum[3];
+		if (true/*room.monster[kPlayerID].hasObject(antiType)*/) {
+			_certificate[kCertInvLo] |= 4;
+		}
+		// fall through
+	default:
+		_lastCertLen = 13;
+		uint8 checksum[4];
+		calcCheckSum(_lastCertLen, checksum);
+		_certificate[0] = checksum[0];
+		_certificate[1] = checksum[1];
+		_certificate[2] = checksum[2];
+		_certificate[3] = checksum[3];
 	}
 }
 
