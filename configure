@@ -3647,9 +3647,7 @@ if test -n "$_host"; then
 					_16bit=no
 					_highres=no
 					# Scaling is handled by IPU
-					_build_aspect=no
 					_build_scalers=no
-					_host=opendingux-rs90
 					;;
 				*)
 					echo "WARNING: Unknown OpenDingux target"
