@@ -486,7 +486,7 @@ int ImmortalEngine::loadUniv(char mazeNum) {
 	debug("Size of maze CNM: %ld", mazeCNM->size());
 
 	// The logical CNM contains the contents of mazeN.CNM, with every entry being bitshifted left once
-	_logicalCNM = (uint16 *) malloc(mazeCNM->size());
+	_logicalCNM = (uint16 *)malloc(mazeCNM->size());
 	mazeCNM->seek(0);
 	mazeCNM->read(_logicalCNM, mazeCNM->size());
 	for (int i = 0; i < (mazeCNM->size()); i++) {
