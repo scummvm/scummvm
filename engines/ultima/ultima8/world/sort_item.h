@@ -22,6 +22,7 @@
 #ifndef ULTIMA8_WORLD_SORTITEM_H
 #define ULTIMA8_WORLD_SORTITEM_H
 
+#include "common/str.h"
 #include "ultima/ultima8/misc/common_types.h"
 
 namespace Ultima {
@@ -341,8 +342,8 @@ inline bool SortItem::below(const SortItem &si2) const {
 	// Specialist z flat handling
 	if (si1._flat && si2._flat) {
 		// Differing z is easy for flats
-		if (si1._zTop != si2._zTop)
-			return si1._zTop < si2._zTop;
+		if (si1._z != si2._z)
+			return si1._z < si2._z;
 
 		// Equal z
 
@@ -381,21 +382,31 @@ inline bool SortItem::below(const SortItem &si2) const {
 		}
 
 		// Clearly in z
-		if (si1._zTop <= si2._z)
+		if (si1._z < si2._z && si1._zTop <= si2._z)
 			return true;
 
-		if (si1._z >= si2._zTop)
+		if (si1._z > si2._z && si1._z >= si2._zTop)
 			return false;
+
+		// Overlapping z-bottom check
+		// If an object's base (z-bottom) is higher another's, it should be rendered after.
+		// This check must be on the z-bottom and not the z-top because two objects with the
+		// same z-position may have different heights (think of a mouse sorting vs the Avatar).
+		if (si1._z != si2._z)
+			return si1._z < si2._z;
+
+		// Equal z
+
+		// Flat always gets drawn before
+		if (si1._flat != si2._flat)
+			return si1._flat > si2._flat;
+
+		// Trans always gets drawn after
+		if (si1._trans != si2._trans)
+			return si1._trans < si2._trans;
 	}
 
 	// Are overlapping in all 3 dimentions if we come here
-
-	// Overlapping z-bottom check
-	// If an object's base (z-bottom) is higher another's, it should be rendered after.
-	// This check must be on the z-bottom and not the z-top because two objects with the
-	// same z-position may have different heights (think of a mouse sorting vs the Avatar).
-	if (si1._z != si2._z)
-		return si1._z < si2._z;
 
 	// Land always gets drawn first
 	if (si1._land != si2._land)
