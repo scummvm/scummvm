@@ -483,7 +483,7 @@ private:
 
 	// Sound
 	void generateSound1(int arg0, int arg2, int duration);
-	void generateSound2(int startFreq, int endFreq, int arg4);
+	void generateSound2(int startFreq, int endFreq, int speed);
 	void generateSound3();
 	void generateSound4(int arg0);
 	void generateSound5(int arg0);
@@ -504,6 +504,7 @@ private:
 	Common::KeyCode getInputBlocking();
 	void setNumLock();
 	bool getValidationFromUser();
+	uint32 ROR(uint32 val, uint8 shiftVal);
 
 	uint8 _videoMode;
 	uint8 _bufferCharBM[128];

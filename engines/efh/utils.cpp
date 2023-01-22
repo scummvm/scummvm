@@ -295,4 +295,8 @@ bool EfhEngine::getValidationFromUser() {
 	return false;
 }
 
+uint32 EfhEngine::ROR(uint32 val, uint8 shiftVal) {
+	return val >> shiftVal | val << (32 - shiftVal);
+}
+
 } // End of namespace Efh

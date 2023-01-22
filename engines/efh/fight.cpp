@@ -525,6 +525,7 @@ void EfhEngine::handleFight_MobstersAttack(int groupId) {
 				int16 hitCount = 0;
 				int16 originalDamage = 0;
 				int16 damagePointsAbsorbed = 0;
+
 				int16 var64 = _mapMonsters[_techId][_teamMonsterIdArray[groupId]]._npcId * _items[monsterWeaponItemId]._attacks;
 				for (int var84 = 0; var84 < var64; ++var84) {
 					// handleFight - Loop var84 on var64 (objectId) - Start
