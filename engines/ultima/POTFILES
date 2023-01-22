@@ -2,10 +2,10 @@ engines/ultima/metaengine.cpp
 engines/ultima/shared/early/ultima_early.cpp
 engines/ultima/shared/engine/ultima.cpp
 engines/ultima/shared/engine/data_archive.cpp
-engines/ultima/ultima4/meta_engine.cpp
+engines/ultima/ultima4/metaengine.cpp
 engines/ultima/nuvie/nuvie.cpp
-engines/ultima/nuvie/meta_engine.cpp
+engines/ultima/nuvie/metaengine.cpp
 engines/ultima/nuvie/save/save_game.cpp
-engines/ultima/ultima8/meta_engine.cpp
+engines/ultima/ultima8/metaengine.cpp
 engines/ultima/ultima8/ultima8.cpp
 engines/ultima/ultima8/gumps/u8_save_gump.cpp

@@ -35,7 +35,7 @@
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/meta_engine.h"
+#include "ultima/ultima8/metaengine.h"
 
 #include "engines/dialogs.h"
 #include "common/translation.h"

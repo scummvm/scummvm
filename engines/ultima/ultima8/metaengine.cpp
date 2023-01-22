@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/ultima8/meta_engine.h"
+#include "ultima/ultima8/metaengine.h"
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/ultima8.h"
 #include "common/translation.h"

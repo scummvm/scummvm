@@ -66,7 +66,7 @@
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/views/dungeonview.h"
-#include "ultima/ultima4/meta_engine.h"
+#include "ultima/ultima4/metaengine.h"
 #include "common/savefile.h"
 #include "common/system.h"
 

@@ -93,7 +93,7 @@
 #include "ultima/ultima8/audio/cru_music_process.h"
 #include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
-#include "ultima/ultima8/meta_engine.h"
+#include "ultima/ultima8/metaengine.h"
 
 #include "ultima/shared/engine/data_archive.h"
 

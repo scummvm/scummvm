@@ -218,9 +218,9 @@ MODULE_OBJS := \
 	ultima4/views/textview.o \
 	ultima4/views/tileview.o \
 	ultima4/views/view.o \
-	ultima4/meta_engine.o \
+	ultima4/metaengine.o \
 	ultima4/ultima4.o \
-	nuvie/meta_engine.o \
+	nuvie/metaengine.o \
 	nuvie/nuvie.o \
 	nuvie/actors/actor.o \
 	nuvie/actors/actor_manager.o \
@@ -377,7 +377,7 @@ MODULE_OBJS := \
 	nuvie/views/sun_moon_strip_widget.o \
 	nuvie/views/view.o \
 	nuvie/views/view_manager.o \
-	ultima8/meta_engine.o \
+	ultima8/metaengine.o \
 	ultima8/ultima8.o \
 	ultima8/audio/audio_channel.o \
 	ultima8/audio/audio_mixer.o \

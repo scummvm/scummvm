@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/nuvie/meta_engine.h"
+#include "ultima/nuvie/metaengine.h"
 #include "common/translation.h"
 
 namespace Ultima {

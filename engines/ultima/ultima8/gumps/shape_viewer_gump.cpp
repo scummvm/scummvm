@@ -43,7 +43,7 @@
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/usecode/usecode.h"
 
-#include "ultima/ultima8/meta_engine.h"
+#include "ultima/ultima8/metaengine.h"
 
 namespace Ultima {
 namespace Ultima8 {

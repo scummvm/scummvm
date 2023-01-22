@@ -21,7 +21,7 @@
 
 #include "ultima/ultima4/controllers/read_dir_controller.h"
 #include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/meta_engine.h"
+#include "ultima/ultima4/metaengine.h"
 
 namespace Ultima {
 namespace Ultima4 {

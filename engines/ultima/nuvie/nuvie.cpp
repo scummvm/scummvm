@@ -20,7 +20,7 @@
  */
 
 #include "ultima/nuvie/nuvie.h"
-#include "ultima/nuvie/meta_engine.h"
+#include "ultima/nuvie/metaengine.h"
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/nuvie_defs.h"

@@ -29,11 +29,11 @@
 #include "common/translation.h"
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/meta_engine.h"
-#include "ultima/nuvie/meta_engine.h"
+#include "ultima/ultima4/metaengine.h"
+#include "ultima/nuvie/metaengine.h"
 #include "ultima/nuvie/nuvie.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/meta_engine.h"
+#include "ultima/ultima8/metaengine.h"
 
 #include "ultima/metaengine.h"
 

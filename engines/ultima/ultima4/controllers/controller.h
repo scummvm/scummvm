@@ -22,7 +22,7 @@
 #ifndef ULTIMA4_CONTROLLERS_CONTROLLER_H
 #define ULTIMA4_CONTROLLERS_CONTROLLER_H
 
-#include "ultima/ultima4/meta_engine.h"
+#include "ultima/ultima4/metaengine.h"
 
 namespace Ultima {
 namespace Ultima4 {
