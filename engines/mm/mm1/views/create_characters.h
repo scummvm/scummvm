@@ -96,7 +96,7 @@ public:
 	CreateCharacters() : TextView("CreateCharacters") {}
 	virtual ~CreateCharacters() {}
 
-	bool msgFocus(const FocusMessage &msg) {
+	bool msgFocus(const FocusMessage &msg) override {
 		_newChar.reroll();
 		return true;
 	}

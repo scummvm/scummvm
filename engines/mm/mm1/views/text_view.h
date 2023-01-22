@@ -95,7 +95,7 @@ protected:
 	/**
 	 * Called when an active timeout countdown expired
 	 */
-	virtual void timeout();
+	virtual void timeout() override;
 
 	void drawGraphic(int gfxNum);
 
