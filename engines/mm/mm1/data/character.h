@@ -202,10 +202,6 @@ enum CharFlags13 {
 	CHARFLAG13_80 = 0x80
 };
 
-enum CharFlags14 {
-	CHARFLAG14_80 = 0x80
-};
-
 class Inventory {
 public:
 	struct Entry {

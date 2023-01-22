@@ -151,7 +151,7 @@ void Map18::special07() {
 		Character &c = g_globals->_party[i];
 		g_globals->_currCharacter = &c;
 
-		if (c._flags[14] & CHARFLAG14_80)
+		if (c._flags[13] & CHARFLAG13_80)
 			hasWonGame = true;
 	}
 
