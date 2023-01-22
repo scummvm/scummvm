@@ -54,9 +54,6 @@ public:
 		return "(c)1990 Will Harvey & Electronic Arts";
 	}
 
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
-	}
 };
 
 #endif

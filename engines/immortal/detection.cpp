@@ -33,11 +33,6 @@
 #include "immortal/detection.h"
 #include "immortal/detection_tables.h"
 
-const DebugChannelDef ImmortalMetaEngineDetection::debugFlagList[] = {
-	{ Immortal::kDebugTest, "Test", "Test debug channel" },
-	DEBUG_CHANNEL_END
-};
-
 ImmortalMetaEngineDetection::ImmortalMetaEngineDetection() : AdvancedMetaEngineDetection(Immortal::gameDescriptions,
 	sizeof(ADGameDescription), Immortal::immortalGames) {
 }
