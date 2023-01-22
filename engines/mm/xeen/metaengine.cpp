@@ -20,7 +20,7 @@
  */
 
 #include "common/system.h"
-#include "mm/xeen/meta_engine.h"
+#include "mm/xeen/metaengine.h"
 #include "mm/xeen/events.h"
 #include "mm/xeen/saves.h"
 

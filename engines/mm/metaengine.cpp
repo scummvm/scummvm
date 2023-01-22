@@ -31,7 +31,7 @@
 #include "mm/detection.h"
 #include "mm/mm1/mm1.h"
 #include "mm/xeen/xeen.h"
-#include "mm/xeen/meta_engine.h"
+#include "mm/xeen/metaengine.h"
 #include "mm/xeen/worldofxeen/worldofxeen.h"
 #include "mm/xeen/swordsofxeen/swordsofxeen.h"
 

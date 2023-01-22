@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/meta_engine.h"
+#include "mm/mm1/metaengine.h"
 #include "mm/mm1/mm1.h"
 #include "common/translation.h"
 #include "backends/keymapper/action.h"

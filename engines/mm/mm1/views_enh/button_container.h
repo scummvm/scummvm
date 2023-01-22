@@ -28,7 +28,7 @@
 #include "mm/xeen/sprites.h"
 #include "mm/mm1/views/text_view.h"
 #include "mm/mm1/events.h"
-#include "mm/mm1/meta_engine.h"
+#include "mm/mm1/metaengine.h"
 
 namespace MM {
 namespace MM1 {

@@ -1,7 +1,7 @@
 MODULE := engines/mm
 
 MODULE_OBJS := \
-	meta_engine.o \
+	metaengine.o \
 	utils/bitmap_font.o \
 	utils/engine_data.o \
 	utils/strings.o \
@@ -11,7 +11,7 @@ MODULE_OBJS := \
 	mm1/events.o \
 	mm1/globals.o \
 	mm1/messages.o \
-	mm1/meta_engine.o \
+	mm1/metaengine.o \
 	mm1/mm1.o \
 	mm1/sound.o \
 	mm1/data/active_spells.o \
@@ -214,7 +214,7 @@ MODULE_OBJS := \
 	xeen/dialogs/dialogs_spells.o \
 	xeen/dialogs/dialogs_whowill.o \
 	xeen/dialogs/please_wait.o \
-	xeen/meta_engine.o \
+	xeen/metaengine.o \
 	xeen/character.o \
 	xeen/combat.o \
 	xeen/cutscenes.o \

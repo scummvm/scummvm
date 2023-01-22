@@ -21,7 +21,7 @@
 
 #include "mm/mm1/views/game.h"
 #include "mm/mm1/globals.h"
-#include "mm/mm1/meta_engine.h"
+#include "mm/mm1/metaengine.h"
 
 namespace MM {
 namespace MM1 {
