@@ -199,6 +199,16 @@ Common::Error EfhEngine::run() {
 			displayLowStatusScreen(true);
 
 		} break;
+		// debug cases to test sound
+		case Common::KEYCODE_1:
+			generateSound(13);
+			break;
+		case Common::KEYCODE_2:
+			generateSound(14);
+			break;
+		case Common::KEYCODE_3:
+			generateSound(15);
+			break;
 		default:
 			if (retVal != Common::KEYCODE_INVALID)
 				warning("Main Loop: Unhandled input %d", retVal);
@@ -267,10 +277,10 @@ void EfhEngine::initialize() {
 void EfhEngine::songDelay(int delay) {
 	debug("songDelay %ld", delay);
 
-	int remainingDelay = delay;
+	int remainingDelay = delay / 2;
 	while (remainingDelay > 0 && !shouldQuit()) {
-		remainingDelay -= 10;
-		_system->delayMillis(10);
+		remainingDelay -= 3;
+		_system->delayMillis(3);
 	}
 }
 
