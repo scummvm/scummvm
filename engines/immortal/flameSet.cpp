@@ -133,16 +133,16 @@ int Room::flameGetCyc(Flame *f, int first) {
 	// Why is this not indexed further? ie. LDA patternTable,x : STA $00 : LDA ($00),y instead of a branch tree?
 	// Pretty sure CPX 3 times is more than a single LDA (dp),y
 	switch (f->_p) {
-		case 0:
-			return cycleNew(flamePatA[r]);
-		case 1:
-			return cycleNew(flamePatB[r]);
-		case 2:
-			return cycleNew(flamePatC[r]);
-		case 3:
-			return cycleNew(flamePatD[r]);
-		default:
-			return 0;
+	case 0:
+		return cycleNew(flamePatA[r]);
+	case 1:
+		return cycleNew(flamePatB[r]);
+	case 2:
+		return cycleNew(flamePatC[r]);
+	case 3:
+		return cycleNew(flamePatD[r]);
+	default:
+		return 0;
 	}
 }
 
