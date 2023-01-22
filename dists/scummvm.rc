@@ -112,7 +112,7 @@ ultima.dat             FILE    "dists/engine-data/ultima.dat"
 #if PLUGIN_ENABLED_STATIC(WINTERMUTE)
 wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
 #endif
-#if PLUGIN_ENABLED_STATIC(XEEN)
+#if PLUGIN_ENABLED_STATIC(MM)
 mm.dat                 FILE    "dists/engine-data/mm.dat"
 #endif
 #if PLUGIN_ENABLED_STATIC(AGI)
