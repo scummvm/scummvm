@@ -25,12 +25,68 @@ namespace Efh {
 
 void EfhEngine::generateSound1(int arg0, int arg2, int duration) {
 	warning("STUB: generateSound1 %d %d %d", arg0, arg2, duration);
+
+	if (arg0 < 19)
+		arg0 = 19;
+
+	if (arg2 < 19)
+		arg2 = 19;
+
+	uint32 var2 = 0;
+	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
+					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
+	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 0x1234DE / arg2, -1);
+	songDelay(10);
+	_speakerStream->stop();
+
+	for (int i = 0; i < duration; ++i) {
+		var2 = ROR(var2 + 0x9248, 3);
+		uint32 val = var2 * (arg2 - arg0);
+		
+		
+	}
+	
+
+	_mixer->stopHandle(_speakerHandle);
+	delete _speakerStream;
+	_speakerStream = nullptr;
 }
 
-void EfhEngine::generateSound2(int startFreq, int endFreq, int arg4) {
-	warning("STUB: generateSound2 %d %d %d", startFreq, endFreq, arg4);
+void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
+	warning("STUB: generateSound2 %d %d %d", startFreq, endFreq, speed);
 
-	// Arg4 doesn't seem to be used.
+	if (startFreq < 19)
+		startFreq = 19;
+
+	if (endFreq < 19)
+		endFreq = 19;
+
+	int delta;
+	if (startFreq > endFreq)
+		delta = -5;
+	else
+		delta = 5;
+
+	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
+					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
+	int curFreq = startFreq;
+
+	do {
+		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, curFreq, -1);
+		songDelay(speed / 10);
+		_speakerStream->stop();
+		curFreq += delta;
+	} while (curFreq < endFreq && !shouldQuit());
+	
+
+	_mixer->stopHandle(_speakerHandle);
+	delete _speakerStream;
+	_speakerStream = nullptr;
+
 }
 
 void EfhEngine::generateSound3() {
@@ -46,6 +102,8 @@ void EfhEngine::generateSound5(int arg0) {
 }
 
 void EfhEngine::generateSound(int16 soundType) {
+	warning("generateSound %d", soundType);
+
 	switch (soundType) {
 	case 5:
 		generateSound3();
