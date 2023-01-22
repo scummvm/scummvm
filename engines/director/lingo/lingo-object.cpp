@@ -51,6 +51,7 @@
 #include "director/lingo/xlibs/ednox.h"
 #include "director/lingo/xlibs/fedracul.h"
 #include "director/lingo/xlibs/feimasks.h"
+#include "director/lingo/xlibs/feiprefs.h"
 #include "director/lingo/xlibs/fileexists.h"
 #include "director/lingo/xlibs/fileio.h"
 #include "director/lingo/xlibs/findfolder.h"
@@ -170,6 +171,7 @@ static struct XLibProto {
 	{ Ednox::fileNames,					Ednox::open,				Ednox::close,				kXObj,					300 },	// D3
 	{ FEDraculXObj::fileNames,			FEDraculXObj::open,			FEDraculXObj::close,		kXObj,					400 },	// D4
 	{ FEIMasksXObj::fileNames,			FEIMasksXObj::open,			FEIMasksXObj::close,		kXObj,					400 },	// D4
+	{ FEIPrefsXObj::fileNames,			FEIPrefsXObj::open,			FEIPrefsXObj::close,		kXObj,					400 },	// D4
 	{ FileExists::fileNames,			FileExists::open,			FileExists::close,			kXObj,					300 },	// D3
 	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
 	{ FindFolder::fileNames,			FindFolder::open,			FindFolder::close,			kXObj,					300 },	// D3
