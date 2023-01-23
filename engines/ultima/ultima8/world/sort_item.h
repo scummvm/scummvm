@@ -212,8 +212,7 @@ struct SortItem {
 		}
 	};
 
-	//Std::vector<SortItem *>   _depends;    // All this Items dependencies (i.e. all objects behind)
-	//Std::list<SortItem *> _depends;    // All this Items dependencies (i.e. all objects behind)
+	// All this Items dependencies (i.e. all objects behind)
 	DependsList _depends;
 
 	// Functions

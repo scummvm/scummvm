@@ -186,22 +186,22 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 
 		// Attempt to find which is infront
 		if (si->below(*si2)) {
-			// si2 occludes si (us)
 			if (si2->_occl && si2->occludes(*si)) {
 				// No need to do any more checks, this isn't visible
 				si->_occluded = true;
 				break;
+			} else {
+				// si1 is behind si2, so add it to si2's dependency list
+				si2->_depends.insert_sorted(si);
 			}
-
-			// si1 is behind si2, so add it to si2's dependency list
-			si2->_depends.insert_sorted(si);
 		} else {
-			// ss occludes si2. Sadly, we can't remove it from the list.
-			if (si->_occl && si->occludes(*si2))
+			if (si->_occl && si->occludes(*si2)) {
+				// Occluded, but we can't remove it from the list
 				si2->_occluded = true;
-			// si2 is behind si1, so add it to si1's dependency list
-			else
-				si->_depends.push_back(si2);
+			} else {
+				// si2 is behind si1, so add it to si1's dependency list
+				si->_depends.insert_sorted(si2);
+			}
 		}
 	}
 
