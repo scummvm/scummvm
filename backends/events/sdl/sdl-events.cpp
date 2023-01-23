@@ -81,12 +81,14 @@ SdlEventSource::SdlEventSource()
 	if (joystick_num >= 0) {
 		// Initialize SDL joystick subsystem
 		if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
-			error("Could not initialize SDL: %s", SDL_GetError());
+			warning("Could not initialize SDL joystick: %s", SDL_GetError());
+			return;
 		}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) == -1) {
-			error("Could not initialize SDL: %s", SDL_GetError());
+			warning("Could not initialize SDL game controller: %s", SDL_GetError());
+			return;
 		}
 		loadGameControllerMappingFile();
 #endif
