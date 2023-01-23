@@ -22,7 +22,7 @@
 #include "common/scummsys.h"
 
 // RiscOS uses its own plugin provider and SDL one doesn't work
-#if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND) && !defined(RISCOS)
+#if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)
 
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
