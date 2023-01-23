@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-22 14:48+0000\n"
-"PO-Revision-Date: 2023-01-11 22:34+0000\n"
+"PO-Revision-Date: 2023-01-24 05:34+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -263,15 +263,12 @@ msgid "No new %S available"
 msgstr "No hi ha nou %S disponible"
 
 #: gui/downloadpacksdialog.cpp:463
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "icon files. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %s of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Esteu a punt d'eliminar %s %s de dades, suprimint tots els fitxers d'icones "
+"Esteu a punt d'eliminar %s %s de dades, suprimint tots els fitxers %S "
 "baixats prèviament. Voleu continuar?"
 
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
@@ -1138,10 +1135,8 @@ msgid "the filtering setting could not be changed"
 msgstr "no s'han pogut canviar els ajustos de filtratge"
 
 #: gui/options.cpp:842
-#, fuzzy
-#| msgid "the fullscreen setting could not be changed"
 msgid "the vsync setting could not be changed"
-msgstr "no s'ha pogut canviar l'ajust de pantalla completa"
+msgstr "no s'ha pogut canviar la configuració de sincronització vertical"
 
 #: gui/options.cpp:859
 msgid "the shader could not be changed"
@@ -3867,10 +3862,8 @@ msgid "Forget SAF authorization"
 msgstr ""
 
 #: backends/platform/android/options.cpp:359
-#, fuzzy
-#| msgid "~R~emove Game"
 msgid "Remove"
-msgstr "~S~uprimeix Joc"
+msgstr "Suprimeix"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
