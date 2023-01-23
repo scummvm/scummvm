@@ -23,29 +23,34 @@
 
 namespace Efh {
 
-void EfhEngine::generateSound1(int arg0, int arg2, int duration) {
-	warning("STUB: generateSound1 %d %d %d", arg0, arg2, duration);
+void EfhEngine::generateSound1(int lowFreq, int highFreq, int duration) {
+	debugC(3, kDebugEngine, "generateSound1 %d %d %d - suspicious code", lowFreq, highFreq, duration);
 
-	if (arg0 < 19)
-		arg0 = 19;
+	if (lowFreq < 19)
+		lowFreq = 19;
 
-	if (arg2 < 19)
-		arg2 = 19;
+	if (highFreq < 19)
+		highFreq = 19;
 
-	uint32 var2 = 0;
+	uint16 var2 = 0;
+	duration /= 20;
+
 	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
-	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 0x1234DE / arg2, -1);
+	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, highFreq, -1);
 	songDelay(10);
-	_speakerStream->stop();
+	_speakerStream->stop();		
+
 
 	for (int i = 0; i < duration; ++i) {
 		var2 = ROR(var2 + 0x9248, 3);
-		uint32 val = var2 * (arg2 - arg0);
+		int val = (var2 * (highFreq - lowFreq)) >> 16;
 		
-		
+		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, lowFreq + val, -1);
+		songDelay(10);
+		_speakerStream->stop();		
 	}
 	
 
@@ -108,16 +113,22 @@ void EfhEngine::generateSound3() {
 	_speakerStream = nullptr;
 }
 
-void EfhEngine::generateSound4(int arg0) {
-	warning("STUB: generateSound4 %d", arg0);
+void EfhEngine::generateSound4(int repeat) {
+	debugC(3, kDebugEngine, "generateSound4 %d", repeat);
+	for (int i = 0; i < repeat; ++i)
+		//It looks identical, so I'm reusing generateSound1
+		generateSound1(256, 4096, 10);
 }
 
-void EfhEngine::generateSound5(int arg0) {
-	warning("STUB: generateSound5 %d", arg0);
+void EfhEngine::generateSound5(int repeat) {
+	debugC(3, kDebugEngine, "generateSound5 %d", repeat);
+	for (int i = 0; i < repeat; ++i)
+		//It looks identical, so I'm reusing generateSound2
+		generateSound2(256, 4096, 10);
 }
 
 void EfhEngine::generateSound(int16 soundType) {
-	warning("generateSound %d", soundType);
+	debugC(3, kDebugEngine, "generateSound %d", soundType);
 
 	switch (soundType) {
 	case 5:
@@ -146,12 +157,14 @@ void EfhEngine::generateSound(int16 soundType) {
 		generateSound4(1);
 		break;
 	default:
-		// Not implemented because not used by the engine
+		debug("generateSound %d - Not implemented because not used by the engine", soundType);
 		break;
 	}
 }
 
 void EfhEngine::genericGenerateSound(int16 soundType, int16 repeatCount) {
+	debugC(3, kDebugEngine, "genericGenerateSound %d %d", soundType, repeatCount);
+
 	if (repeatCount <= 0)
 		return;
 

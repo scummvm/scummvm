@@ -212,6 +212,12 @@ Common::Error EfhEngine::run() {
 		case Common::KEYCODE_4:
 			generateSound(5);
 			break;
+		case Common::KEYCODE_5:
+			generateSound(10);
+			break;
+		case Common::KEYCODE_6:
+			generateSound1(20, 888, 3000);
+			break;
 		default:
 			if (retVal != Common::KEYCODE_INVALID)
 				warning("Main Loop: Unhandled input %d", retVal);
