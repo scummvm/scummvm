@@ -146,6 +146,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->setCustomEngineActionEvent(kAsylumActionShowMenu);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_Y");
+	act->allowKbdRepeats();
 	engineKeyMap->addAction(act);
 
 	act = new Action("INVENTORY", _("Open character inventory"));
