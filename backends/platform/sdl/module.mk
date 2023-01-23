@@ -4,6 +4,13 @@ MODULE_OBJS := \
 	sdl.o \
 	sdl-window.o
 
+ifdef KOLIBRIOS
+MODULE_OBJS += \
+	kolibrios/kolibrios-main.o \
+	kolibrios/kolibrios.o \
+	kolibrios/sdl-stubs.o
+endif
+
 ifdef POSIX
 MODULE_OBJS += \
 	posix/posix-main.o \

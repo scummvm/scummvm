@@ -42,7 +42,7 @@ struct hqx_parameters {
 
 extern "C" {
 
-#if !defined(_WIN32) && !defined(MACOSX) && !defined(__OS2__)
+#if !defined(_WIN32) && !defined(MACOSX) && !defined(__OS2__) && !defined(KOLIBRIOS)
 #define hq2x_16 _hq2x_16
 #define hq3x_16 _hq3x_16
 #endif
