@@ -243,14 +243,14 @@ protected:
 	void handleEvent_applicationRestoreState();
 	void handleEvent_applicationClearState();
 
-	bool handleEvent_mouseDown(Common::Event &event, int x, int y);
-	bool handleEvent_mouseUp(Common::Event &event, int x, int y);
+	bool handleEvent_touchFirstDown(Common::Event &event, int x, int y);
+	bool handleEvent_touchFirstUp(Common::Event &event, int x, int y);
 
-	bool handleEvent_secondMouseDown(Common::Event &event, int x, int y);
-	bool handleEvent_secondMouseUp(Common::Event &event, int x, int y);
+	bool handleEvent_touchSecondDown(Common::Event &event, int x, int y);
+	bool handleEvent_touchSecondUp(Common::Event &event, int x, int y);
 
-	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
-	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);
+	bool handleEvent_touchFirstDragged(Common::Event &event, int x, int y);
+	bool handleEvent_touchSecondDragged(Common::Event &event, int x, int y);
 
 	void rebuildSurface();
 };

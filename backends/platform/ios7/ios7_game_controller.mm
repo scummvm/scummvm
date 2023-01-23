@@ -62,11 +62,11 @@
 	[view setPointerPosition:point];
 
 	if (_firstButtonPressed) {
-		[view addEvent:InternalEvent(kInputMouseDragged, x, y)];
+		[view addEvent:InternalEvent(kInputTouchFirstDragged, x, y)];
 	} else if (_secondButtonPressed) {
-		[view addEvent:InternalEvent(kInputMouseSecondDragged, x, y)];
+		[view addEvent:InternalEvent(kInputTouchSecondDragged, x, y)];
 	} else {
-		[view addEvent:InternalEvent(kInputMouseDragged, x, y)];
+		[view addEvent:InternalEvent(kInputTouchFirstDragged, x, y)];
 	}
 }
 
@@ -84,20 +84,20 @@
 	case kGameControllerMouseButtonLeft:
 		if (pressed) {
 			_firstButtonPressed = YES;
-			[view addEvent:InternalEvent(kInputMouseDown, x, y)];
+			[view addEvent:InternalEvent(kInputTouchFirstDown, x, y)];
 		} else {
 			_firstButtonPressed = NO;
-			[view addEvent:InternalEvent(kInputMouseUp, x, y)];
+			[view addEvent:InternalEvent(kInputTouchFirstUp, x, y)];
 		}
 		break;
 
 	case kGameControllerMouseButtonRight:
 		if (pressed) {
 			_secondButtonPressed = YES;
-			[view addEvent:InternalEvent(kInputMouseSecondDown, x, y)];
+			[view addEvent:InternalEvent(kInputTouchSecondDown, x, y)];
 		} else {
 			_secondButtonPressed = NO;
-			[view addEvent:InternalEvent(kInputMouseSecondUp, x, y)];
+			[view addEvent:InternalEvent(kInputTouchSecondUp, x, y)];
 		}
 		break;
 
