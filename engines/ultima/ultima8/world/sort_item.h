@@ -182,7 +182,7 @@ struct SortItem {
 
 			for (Node *n = list; n != nullptr; n = n->_next) {
 				// Get the insert point... which is before the first item that has higher z than us
-				if (other->ListLessThan(n->val)) {
+				if (other->listLessThan(*(n->val))) {
 					nn->_next = n;
 					nn->_prev = n->_prev;
 					n->_prev = nn;
@@ -231,8 +231,11 @@ struct SortItem {
 	inline bool below(const SortItem &si2) const;
 
 	// Comparison for the sorted lists
-	inline bool ListLessThan(const SortItem *other) const {
-		return _z < other->_z || (_z == other->_z && _flat && !other->_flat);
+	inline bool listLessThan(const SortItem &si2) const {
+		const SortItem &si1 = *this;
+		if (si1._z != si2._z)
+			return si1._z < si2._z;
+		return si1._flat > si2._flat;
 	}
 
 	Common::String dumpInfo() const;

@@ -177,7 +177,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	SortItem *addpoint = nullptr;
 	for (SortItem *si2 = _items; si2 != nullptr; si2 = si2->_next) {
 		// Get the insert point... which is before the first item that has higher z than us
-		if (!addpoint && si->ListLessThan(si2))
+		if (!addpoint && si->listLessThan(*si2))
 			addpoint = si2;
 
 		// Doesn't overlap
