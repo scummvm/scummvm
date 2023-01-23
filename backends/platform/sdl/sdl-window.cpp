@@ -51,6 +51,9 @@ SdlWindow::SdlWindow() :
 #elif defined(MAEMO)
 	// All supported Maemo devices have a display resolution of 800x480
 	_desktopRes = Common::Rect(800, 480);
+#elif defined(KOLIBRIOS)
+	// TODO: Use kolibriOS call to determine this.
+	_desktopRes = Common::Rect(640, 480);
 #else
 #error Unable to detect screen resolution
 #endif
