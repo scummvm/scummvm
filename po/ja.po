@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-22 14:48+0000\n"
-"PO-Revision-Date: 2023-01-20 10:31+0000\n"
+"PO-Revision-Date: 2023-01-23 06:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3801,13 +3801,11 @@ msgstr "3Dゲームで"
 
 #: backends/platform/android/options.cpp:152
 msgid "Forget SAF authorization"
-msgstr ""
+msgstr "SAFの認証を忘却"
 
 #: backends/platform/android/options.cpp:359
-#, fuzzy
-#| msgid "~R~emove Game"
 msgid "Remove"
-msgstr "ゲームを削除(~R~)"
+msgstr "削除"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -7012,15 +7010,11 @@ msgid "Enable the original GUI and Menu"
 msgstr "オリジナルGUIとメニューを有効化"
 
 #: engines/scumm/dialogs.cpp:1053
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
-msgstr "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。"
+msgstr "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。「終了時に確認」と併用すると、より完全な体験が可能です。"
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
@@ -7696,15 +7690,11 @@ msgid ""
 msgstr "可能なら、BGM・SE・スピーチクリップを改造ファイルに置き換えて下さい。"
 
 #: engines/scumm/metaengine.cpp:667
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
-msgstr "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。"
+msgstr "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。\t\t「終了時に確認」と併用すると、より完全な体験が可能です。"
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Enable low latency audio mode"
