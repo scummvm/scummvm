@@ -148,10 +148,6 @@ MODULE_OBJS += \
 	mutex/sdl/sdl-mutex.o \
 	timer/sdl/sdl-timer.o
 
-ifdef KOLIBRIOS
-MODULE_OBJS += plugins/kolibrios/kolibrios-provider.o
-endif
-
 ifndef RISCOS
 ifndef KOLIBRIOS
 MODULE_OBJS += plugins/sdl/sdl-provider.o
@@ -188,11 +184,7 @@ MODULE_OBJS += \
 	fs/kolibrios/kolibrios-fs.o \
 	fs/kolibrios/kolibrios-fs-factory.o \
 	fs/posix/posix-iostream.o \
-	fs/posix-drives/posix-drives-fs.o \
-	fs/posix-drives/posix-drives-fs-factory.o \
-	fs/chroot/chroot-fs-factory.o \
-	fs/chroot/chroot-fs.o \
-	plugins/posix/posix-provider.o \
+	plugins/kolibrios/kolibrios-provider.o \
 	saves/kolibrios/kolibrios-saves.o
 endif
 
