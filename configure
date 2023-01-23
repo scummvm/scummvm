@@ -557,6 +557,9 @@ get_system_exe_extension() {
 	gph-linux)
 		_exeext=".gph"
 		;;
+	kolibrios | kos32)
+		_exeext=".dll"
+		;;
 	mingw* | *os2-emx)
 		_exeext=".exe"
 		;;
@@ -835,6 +838,7 @@ Special configuration feature:
                                            iphone for Apple iPhone (iOS <= 6)
                                            ios7 for Apple iPhone / iPad (iOS >= 7)
                                            ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
+                                           kos32 for Kolibri OS
                                            maemo for Nokia Maemo
                                            miyoo for 1st generation Miyoo
                                            miyoomini for Miyoo Mini
@@ -1627,6 +1631,11 @@ ios7-arm64)
 	_host_cpu=aarch64
 	_host_alias=arm64-apple-darwin11
 	;;
+kos32)
+	_host_os=kolibrios
+	_host_cpu=i686
+	_host_alias=kos32
+	;;
 maemo)
 	_host_os=maemo
 	_host_cpu=arm
@@ -1846,6 +1855,24 @@ emscripten)
 		echo "Please set EMSDK in your environment. export EMSDK=<path to emscripten sdk>"
 		exit 1
 	fi
+	;;
+kolibrios)
+	if test -z "$KOS32_SDK_DIR" || test -z "$KOS32_AUTOBUILD"; then
+		echo "Please set KOS32_SDK_DIR and KOS32_AUTOBUILD in your environment. export KOS32_SDK_DIR=<path to KOS32 SDK> and export KOS32_AUTOBUILD=<path to KOS32 build>"
+		exit 1
+	fi
+	_as="${KOS32_AUTOBUILD}/bin/kos32-as"
+	_ar="${KOS32_AUTOBUILD}/bin/kos32-ar cr"
+	_ranlib="${KOS32_AUTOBUILD}/bin/kos32-ar -s"
+	_strip="${KOS32_AUTOBUILD}/bin/kos32-strip"
+	if test -z "$CXX"; then
+		CXX="${KOS32_AUTOBUILD}/bin/kos32-g++"
+	fi
+	append_var DEFINES "-U__WIN32__ -U_Win32 -U_WIN32 -U__MINGW32__ -UWIN32 -DKOLIBRIOS=1 -D_POSIX_C_SOURCE=1 -D_XOPEN_SOURCE=1"
+	append_var CXXFLAGS "-I${KOS32_SDK_DIR}/sources/newlib/libc/include -I${KOS32_SDK_DIR}/sources/libstdc++-v3/include -fno-ident -fomit-frame-pointer"
+	# Final executable will be a DLL but for tests we need to stick to a standard binary because DLLs having a main function trigger a build failure
+	# We will add the -shared option at the end
+	append_var LDFLAGS "-specs=$_srcdir/backends/platform/sdl/kolibrios/kolibrios.spec"
 	;;
 n64)
 	if test -z "$N64SDK"; then
@@ -2191,7 +2218,7 @@ if test "$have_gcc" = yes ; then
 	case $_host_os in
 	# newlib-based system include files suppress non-C89 function
 	# declarations under __STRICT_ANSI__, undefine it
-	3ds | android | gamecube | psp | switch | wii)
+	3ds | android | gamecube | kolibrios | psp | switch | wii)
 		std_variant=gnu++
 		pedantic=no
 		;;
@@ -3486,6 +3513,35 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_timidity=no
 			;;
+		kos32)
+			# neither pkg-config nor *-config work, so we setup everything manually
+			_pkgconfig=/bin/false
+			_pkg_config=no
+
+			ZLIB_CFLAGS="-I${KOS32_SDK_DIR}/sources/zlib"
+			if test "$_png" != no; then
+				PNG_CFLAGS="-I${KOS32_SDK_DIR}/sources/libpng"
+				PNG_LIBS="-lpng16 -lz"
+				_png=yes
+			fi
+			JPEG_CFLAGS="-I${KOS32_SDK_DIR}/sources/libjpeg"
+
+			FREETYPE2_STATIC_LIBS="-lfreetype"
+			FREETYPE2_CFLAGS="-I${KOS32_SDK_DIR}/sources/freetype/include"
+			_freetype_found="true"
+
+			SDL_CFLAGS="-I${KOS32_SDK_DIR}/sources/SDL-1.2.2_newlib/include"
+			SDL_LIBS="-lSDLn -lsound"
+			_sdl=yes
+			_sdlversion=1.2.2
+			_backend="kolibrios"
+
+			_timidity=no
+			add_line_to_config_mk 'KOLIBRIOS = 1'
+			add_line_to_config_mk 'KOS32_AUTOBUILD = '"${KOS32_AUTOBUILD}"
+			add_line_to_config_mk 'KOS32_SDK_DIR = '"${KOS32_SDK_DIR}"
+			_port_mk="backends/platform/sdl/kolibrios/kolibrios.mk"
+			;;
 		m68k-atari-mint)
 			_seq_midi=no
 			_timidity=no
@@ -3828,6 +3884,10 @@ case $_backend in
 			append_var CXXFLAGS "-isysroot $SDKROOT -I$SDKROOT/usr/include/c++/4.2.1 -F$SDKROOT/System/Library/Frameworks"
 		fi
 		;;
+	kolibrios)
+		_sdl=yes
+		append_var MODULES "backends/platform/sdl"
+		;;
 	maemo)
 		append_var DEFINES "-DMAEMO"
 		append_var LIBS "-lX11"
@@ -3909,7 +3969,6 @@ case $_backend in
 		exit 1
 		;;
 esac
-
 
 append_var MODULES "backends/platform/$_backend"
 
@@ -4044,7 +4103,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dingux | dc | ds | gph | iphone | ios7 | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
+	3ds | android | dingux | dc | ds | gph | iphone | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -4117,7 +4176,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
+	amigaos* | dreamcast | ds | gamecube | kolibrios | mingw* | morphos | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
 	3ds | android | beos* | bsd* | cygwin* | darwin* | dragonfly* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | serenity* | solaris* | sunos* | switch | uclinux*)
@@ -4401,6 +4460,16 @@ PLUGIN_EXTRA_DEPS =
 PLUGIN_LDFLAGS  += -shared -static-libgcc
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
+'
+		;;
+	kolibrios)
+		_plugin_suffix=".svm.dll"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS   = $(EXECUTABLE)
+PLUGIN_LDFLAGS      += -specs=$(srcdir)/backends/platform/sdl/kolibrios/kolibrios.spec -mdll -Wl,-q,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms -Wl,--enable-auto-import ./libscummvm.a
+PRE_OBJS_FLAGS      := -Wl,--whole-archive
+POST_OBJS_FLAGS     := -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
 		;;
 
@@ -5918,7 +5987,7 @@ if test "$_have_x86" = yes ; then
 				darwin*)
 					append_var NASMFLAGS "-f macho"
 				;;
-				mingw*)
+				mingw* | kolibrios)
 					append_var NASMFLAGS "-f win32"
 				;;
 				os2-emx*)
@@ -6453,6 +6522,12 @@ case $_host_os in
 		if test "${LDFLAGS#*-s USE_ZLIB=1}" != "$LDFLAGS"; then
 			LIBS=`echo ${LIBS} | sed 's/-lz//g'`
 		fi
+		;;
+	kolibrios)
+		# In reality we will build a DLL
+		append_var LDFLAGS "-shared"
+		# kos32 toolchain only has libpng16
+		LIBS=`echo ${LIBS} | sed 's/-lpng //g'`
 		;;
 	mingw*)
 		if test "$_windows_unicode" = yes; then
