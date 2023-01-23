@@ -7014,7 +7014,9 @@ msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
-msgstr "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。「終了時に確認」と併用すると、より完全な体験が可能です。"
+msgstr ""
+"エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。「終了"
+"時に確認」と併用すると、より完全な体験が可能です。"
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
@@ -7694,7 +7696,9 @@ msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
-msgstr "エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。\t\t「終了時に確認」と併用すると、より完全な体験が可能です。"
+msgstr ""
+"エンジン内のGUIとオリジナルのセーブ/ロードメニューを使用可能にします。\t"
+"\t「終了時に確認」と併用すると、より完全な体験が可能です。"
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Enable low latency audio mode"
