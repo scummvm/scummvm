@@ -2222,11 +2222,18 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 				curSlot = _mainMenuSavegameLabel + (isLoomVga ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
 				if (canWriteGame(curSlot)) {
 					restoreCursorPostMenu();
+
+					// Temporarily restore the shake effect to save it...
+					setShake(_shakeTempSavedState);
+
 					if (saveState(curSlot - 1, false, dummyString)) {
+						setShake(0);
 						saveCursorPreMenu();
 						_saveScriptParam = GAME_PROPER_SAVE;
 						drawMainMenuControls();
 						return true;
+					} else {
+						setShake(0);
 					}
 				} else {
 					convertMessageToString((const byte *)getGUIString(gsGameNotSaved), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
