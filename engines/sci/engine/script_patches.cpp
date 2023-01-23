@@ -7980,6 +7980,63 @@ static const uint16 longbowPatchGreenManForestSweepFix[] = {
 	PATCH_END
 };
 
+// In Longbow 1.0, when a monk opens the abbey door, clicking Walk interrupts
+//  the monkAtDoor script and prevents ego from entering.
+//
+// We fix this by calling HandsOff as Sierra did in later versions.
+//
+// Applies to: English PC Floppy 1.0
+// Responsible method: monkLeaves:doit
+static const uint16 longbowSignatureAbbeyDoorFix[] = {
+	SIG_MAGICDWORD,
+	0x36,                           // push
+	0x35, 0x02,                     // ldi 02
+	0x12,                           // and
+	0x30, SIG_UINT16(0x001a),       // bnt 001a
+	SIG_ADDTOOFFSET(+18),
+	0x72, SIG_UINT16(0x0510),       // lofsa monkAtDoor
+	0x36,                           // push
+	SIG_END
+};
+
+static const uint16 longbowPatchAbbeyDoorFix[] = {
+	0x7a,                           // push2
+	0x12,                           // and
+	0x31, 0x1d,                     // bnt 1d
+	0x76,                           // push0
+	0x45, 0x03, 0x00,               // callb proc0_3 [ HandsOff ]
+	PATCH_GETORIGINALBYTES(7, 18),
+	0x74, PATCH_UINT16(0x0510),     // lofss monkAtDoor
+	PATCH_END
+};
+
+// When entering the abbey in Longbow 1.0, clicking too quickly on the map
+//  breaks the game. The room is missing a HandsOff call to prevent the player
+//  from interrupting ego's initial motion. When this happens, the room script
+//  never completes and ego can never leave the map.
+//
+// We fix this by calling HandsOff as Sierra did in later versions.
+//
+// Applies to: English PC Floppy 1.0
+// Responsible method: rm450:init
+static const uint16 longbowSignatureAbbeyMapFix[] = {
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x0754),       // lofsa arrived [ already in accumulator ]
+	0x4a, 0x06,                     // send 06 [ arrived client: self ]
+	SIG_ADDTOOFFSET(+7),
+	0x30, SIG_UINT16(0x0005),       // bnt 0005
+	SIG_END
+};
+
+static const uint16 longbowPatchAbbeyMapFix[] = {
+	0x4a, 0x06,                     // send 06 [ arrived client: self ]
+	0x76,                           // push0
+	0x45, 0x03, 0x00,               // callb proc0_3 [ HandsOff ]
+	PATCH_GETORIGINALBYTES(5, 7),
+	0x31, 0x05,                     // bnt 05
+	PATCH_END
+};
+
 // After rescuing Fulk in the Amiga version, rescueOfFulk stores the boat speed
 //  in a temporary variable during one state and expects it to still be there in
 //  a later state, which only worked by accident in Sierra's interpreter. This
@@ -8219,6 +8276,8 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   320, "day 8 archer pathfinding workaround",         1, longbowSignatureArcherPathfinding,       longbowPatchArcherPathfinding },
 	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,              longbowPatchCobblerHut },
 	{  true,   422, "marian messages fix",                         1, longbowSignatureMarianMessagesFix,       longbowPatchMarianMessagesFix },
+	{  true,   440, "abbey door fix",                              1, longbowSignatureAbbeyDoorFix,            longbowPatchAbbeyDoorFix },
+	{  true,   450, "abbey map fix",                               1, longbowSignatureAbbeyMapFix,             longbowPatchAbbeyMapFix },
 	{  true,   490, "hedge maze music",                            1, longbowSignatureHedgeMazeMusic,          longbowPatchHedgeMazeMusic },
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,             longbowPatchAmigaPubFix },
 	{  true,   600, "amiga fulk rescue fix",                       1, longbowSignatureAmigaFulkRescue,         longbowPatchAmigaFulkRescue },
