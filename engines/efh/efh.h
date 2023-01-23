@@ -482,11 +482,11 @@ private:
 	int16 script_parse(Common::String str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool scriptExecuteFlag);
 
 	// Sound
-	void generateSound1(int arg0, int arg2, int duration);
+	void generateSound1(int lowFreq, int highFreq, int duration);
 	void generateSound2(int startFreq, int endFreq, int speed);
 	void generateSound3();
-	void generateSound4(int arg0);
-	void generateSound5(int arg0);
+	void generateSound4(int repeat);
+	void generateSound5(int repeat);
 	void generateSound(int16 soundType);
 	void genericGenerateSound(int16 soundType, int16 repeatCount);
 
