@@ -71,10 +71,11 @@ _loadedFromBin(false), _gridWorldY(0.0), _gridOffsetSomething(5.0f, 5.0f), _grid
 }
 
 TeFreeMoveZone::~TeFreeMoveZone() {
-	if (_camera) {
+	if (_camera)
 		_camera->onViewportChangedSignal().remove(this, &TeFreeMoveZone::onViewportChanged);
-	}
+
 	delete _micropather;
+	delete _graph;
 }
 
 float TeFreeMoveZone::bordersDistance() const {
@@ -194,10 +195,12 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 	const TeVector2s32 projectedStart = projectOnAStarGrid(startpt);
 	const TeVector2s32 projectedEnd = projectOnAStarGrid(endpt);
 	const int xsize = _graph->_size._x;
+	char *graphData = _graph->_flags.data();
 	float cost = 0;
 	// Passing an int to void*, yuck? but it's what the original does..
 	Common::Array<void *> path;
-	int pathResult = _micropather->Solve((void *)(xsize * projectedStart._y + projectedStart._x), (void *)(xsize * projectedEnd._y + projectedEnd._x), &path, &cost);
+	int pathResult = _micropather->Solve(graphData + xsize * projectedStart._y + projectedStart._x,
+			graphData + xsize * projectedEnd._y + projectedEnd._x, &path, &cost);
 
 	TeIntrusivePtr<TeBezierCurve> retval;
 
@@ -208,7 +211,7 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 		int i = 1;
 		for (auto pathpt : path) {
 			// each path point is an array offset
-			int offset = static_cast<int>(reinterpret_cast<size_t>(pathpt));
+			int offset = (char *)pathpt - graphData;
 			points[i] = TeVector2s32(offset % xsize, offset / xsize);
 			i++;
 		}
@@ -422,9 +425,8 @@ void TeFreeMoveZone::preUpdateGrid() {
 	updateTransformedVertices();
 	updatePickMesh();
 	updateBorders();
-	if (_loadedFromBin) {
+	if (_loadedFromBin)
 		calcGridMatrix();
-	}
 
 	TeMatrix4x4 gridInverse = _gridMatrix;
 	gridInverse.inverse();
@@ -433,11 +435,11 @@ void TeFreeMoveZone::preUpdateGrid() {
 	if (_transformedVerticies.empty() || _pickMesh.empty()) {
 		debug("[TeFreeMoveZone::buildAStar] %s have no mesh or is entierly occluded", name().c_str());
 	} else {
-		if (!_loadedFromBin) {
+		if (!_loadedFromBin)
 			newVec = _transformedVerticies[_pickMesh[0]];
-		} else {
+		else
 			newVec = gridInverse * _freeMoveZoneVerticies[_pickMesh[0]];
-		}
+
 		_someGridVec1.setX(newVec.x());
 		_someGridVec1.setY(newVec.z());
 
@@ -709,8 +711,9 @@ void TeFreeMoveZone::updateTransformedVertices() {
 /*========*/
 
 float TeFreeMoveZoneGraph::LeastCostEstimate(void *stateStart, void *stateEnd) {
-	int startInt = static_cast<int>(reinterpret_cast<size_t>(stateStart));
-	int endInt = static_cast<int>(reinterpret_cast<size_t>(stateEnd));
+	char *dataStart = _flags.data();
+	int startInt = (char *)stateStart - dataStart;
+	int endInt = (char *)stateEnd - dataStart;
 	int starty = startInt / _size._x;
 	int endy = endInt / _size._x;
 	TeVector2s32 start(startInt - starty * _size._x, starty);
@@ -719,7 +722,8 @@ float TeFreeMoveZoneGraph::LeastCostEstimate(void *stateStart, void *stateEnd) {
 }
 
 void TeFreeMoveZoneGraph::AdjacentCost(void *state, Common::Array<micropather::StateCost> *adjacent) {
-	int stateInt = static_cast<int>(reinterpret_cast<size_t>(state));
+	char *flagStart = _flags.data();
+	int stateInt = (char *)state - flagStart;
 	int stateY = stateInt / _size._x;
 	const TeVector2s32 statept(stateInt - stateY * _size._x, stateY);
 
@@ -727,42 +731,42 @@ void TeFreeMoveZoneGraph::AdjacentCost(void *state, Common::Array<micropather::S
 	TeVector2s32 pt;
 
 	pt = TeVector2s32(statept._x - 1, statept._y);
-	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.state = flagStart + _size._x * pt._y + pt._x;
 	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x - 1, statept._y + 1);
-	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.state = flagStart + _size._x * pt._y + pt._x;
 	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x, statept._y + 1);
-	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.state = flagStart + _size._x * pt._y + pt._x;
 	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x + 1, statept._y + 1);
-	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.state = flagStart + _size._x * pt._y + pt._x;
 	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x + 1, statept._y);
-	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.state = flagStart + _size._x * pt._y + pt._x;
 	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x + 1, statept._y - 1);
-	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.state = flagStart + _size._x * pt._y + pt._x;
 	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x, statept._y - 1);
-	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.state = flagStart + _size._x * pt._y + pt._x;
 	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 
 	pt = TeVector2s32(statept._x - 1, statept._y - 1);
-	cost.state = reinterpret_cast<void *>(_size._x * pt._y + pt._x);
+	cost.state = flagStart + _size._x * pt._y + pt._x;
 	cost.cost = costForPoint(pt);
 	adjacent->push_back(cost);
 }
