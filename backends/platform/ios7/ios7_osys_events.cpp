@@ -60,6 +60,26 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 				return false;
 			break;
 
+		case kInputMouseLeftButtonDown:
+			handleEvent_mouseLeftButtonDown(event, internalEvent.value1, internalEvent.value2);
+			break;
+
+		case kInputMouseLeftButtonUp:
+			handleEvent_mouseLeftButtonUp(event, internalEvent.value1, internalEvent.value2);
+			break;
+
+		case kInputMouseRightButtonDown:
+			handleEvent_mouseRightButtonDown(event, internalEvent.value1, internalEvent.value2);
+			break;
+
+		case kInputMouseRightButtonUp:
+			handleEvent_mouseRightButtonUp(event, internalEvent.value1, internalEvent.value2);
+			break;
+
+		case kInputMouseDelta:
+			handleEvent_mouseDelta(event, internalEvent.value1, internalEvent.value2);
+			break;
+
 		case kInputOrientationChanged:
 			handleEvent_orientationChanged(internalEvent.value1);
 			return false;
@@ -306,6 +326,57 @@ bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, in
 
 bool OSystem_iOS7::handleEvent_touchSecondDragged(Common::Event &event, int x, int y) {
 	return false;
+}
+
+void OSystem_iOS7::handleEvent_mouseLeftButtonDown(Common::Event &event, int x, int y) {
+	event.type = Common::EVENT_LBUTTONDOWN;
+	event.mouse.x = _videoContext->mouseX;
+	event.mouse.y = _videoContext->mouseY;
+}
+
+void OSystem_iOS7::handleEvent_mouseLeftButtonUp(Common::Event &event, int x, int y) {
+	event.type = Common::EVENT_LBUTTONUP;
+	event.mouse.x = _videoContext->mouseX;
+	event.mouse.y = _videoContext->mouseY;
+}
+
+void OSystem_iOS7::handleEvent_mouseRightButtonDown(Common::Event &event, int x, int y) {
+	event.type = Common::EVENT_RBUTTONDOWN;
+	event.mouse.x = _videoContext->mouseX;
+	event.mouse.y = _videoContext->mouseY;
+}
+
+void OSystem_iOS7::handleEvent_mouseRightButtonUp(Common::Event &event, int x, int y) {
+	event.type = Common::EVENT_RBUTTONUP;
+	event.mouse.x = _videoContext->mouseX;
+	event.mouse.y = _videoContext->mouseY;
+}
+
+void OSystem_iOS7::handleEvent_mouseDelta(Common::Event &event, int deltaX, int deltaY) {
+	int mouseNewPosX = (int)(_videoContext->mouseX - deltaX);
+	int mouseNewPosY = (int)(_videoContext->mouseY - deltaY);
+
+	int widthCap = _videoContext->overlayInGUI ? _videoContext->overlayWidth : _videoContext->screenWidth;
+	int heightCap = _videoContext->overlayInGUI ? _videoContext->overlayHeight : _videoContext->screenHeight;
+
+	// Make sure the mouse position is valid
+	if (mouseNewPosX < 0)
+		mouseNewPosX = 0;
+	else if (mouseNewPosX > widthCap)
+		mouseNewPosX = widthCap;
+	if (mouseNewPosY < 0)
+		mouseNewPosY = 0;
+	else if (mouseNewPosY > heightCap)
+		mouseNewPosY = heightCap;
+
+	event.type = Common::EVENT_MOUSEMOVE;
+	event.relMouse.x = deltaX;
+	event.relMouse.y = deltaY;
+	event.mouse.x = mouseNewPosX;
+	event.mouse.y = mouseNewPosY;
+
+	// Move the mouse on screen
+	warpMouse(mouseNewPosX, mouseNewPosY);
 }
 
 void  OSystem_iOS7::handleEvent_orientationChanged(int orientation) {

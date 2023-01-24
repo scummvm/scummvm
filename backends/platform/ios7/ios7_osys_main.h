@@ -252,6 +252,12 @@ protected:
 	bool handleEvent_touchFirstDragged(Common::Event &event, int x, int y);
 	bool handleEvent_touchSecondDragged(Common::Event &event, int x, int y);
 
+	void handleEvent_mouseLeftButtonDown(Common::Event &event, int x, int y);
+	void handleEvent_mouseLeftButtonUp(Common::Event &event, int x, int y);
+	void handleEvent_mouseRightButtonDown(Common::Event &event, int x, int y);
+	void handleEvent_mouseRightButtonUp(Common::Event &event, int x, int y);
+	void handleEvent_mouseDelta(Common::Event &event, int deltaX, int deltaY);
+
 	void rebuildSurface();
 };
 
