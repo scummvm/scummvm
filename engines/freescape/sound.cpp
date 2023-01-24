@@ -32,15 +32,13 @@ namespace Freescape {
 const double kFreescapeSweepTuneFactor = 10.0;
 
 void FreescapeEngine::playSound(int index, bool sync) {
-	// if (!_mixer->isSoundHandleActive(_soundFxHandle))
-	//	_mixer->stopHandle(_soundFxHandle);
-
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
 	if (isAmiga() || isAtariST()) {
 		playSoundFx(index, sync);
+		_syncSound = sync;
 		return;
 	}
-
+	waitForSounds();
 	switch (index) {
 	case 1:
 		if (_usePrerecordedSounds) {
@@ -62,7 +60,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 			playWav("fsDOS_stairDown.wav");
 			//_system->delayMillis(50);
 		} else {
-			playSoundConst(220, 50, sync);
+			queueSoundConst(220, 50);
 			playSoundConst(185, 50, sync);
 		}
 		break;
@@ -71,7 +69,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 			playWav("fsDOS_stairUp.wav");
 			//_system->delayMillis(50);
 		} else {
-			playSoundConst(220, 50, sync);
+			queueSoundConst(220, 50);
 			playSoundConst(340, 50, sync);
 		}
 		break;
@@ -167,8 +165,8 @@ void FreescapeEngine::playSound(int index, bool sync) {
 			playWav("fsDOS_successJingle.wav");
 			//_system->delayMillis(50);
 		} else {
-			playSoundConst(587.330, 250, sync);
-			playSoundConst(740, 175, sync);
+			queueSoundConst(587.330, 250);
+			queueSoundConst(740, 175);
 			playSoundConst(880, 450, sync);
 		}
 		break;
@@ -177,7 +175,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 		if (_usePrerecordedSounds) {
 			// TODO
 		} else {
-			playSilence(1);
+			playSilence(1, sync);
 		}
 		break;
 
@@ -186,7 +184,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 			playWav("fsDOS_badJingle.wav");
 			//_system->delayMillis(50);
 		} else {
-			playSoundConst(65, 150, sync);
+			queueSoundConst(65, 150);
 			playSoundConst(44, 400, sync);
 		}
 		break;
@@ -220,6 +218,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 		debugC(1, kFreescapeDebugMedia, "Unexpected sound %d", index);
 		break;
 	}
+	_syncSound = sync;
 }
 void FreescapeEngine::playWav(const Common::String filename) {
 
@@ -257,28 +256,36 @@ void FreescapeEngine::playSoundFx(int index, bool sync) {
 	}
 }
 
-void FreescapeEngine::playSilence(int duration) {
+void FreescapeEngine::stopAllSounds() {
+	_speaker->stop();
+	_mixer->stopHandle(_soundFxHandle);
+}
+
+void FreescapeEngine::waitForSounds() {
 	while (!_speaker->endOfStream())
 		g_system->delayMillis(10);
+}
 
+bool FreescapeEngine::isPlayingSound() {
+	return (!_speaker->endOfStream());
+}
+
+void FreescapeEngine::playSilence(int duration, bool sync) {
 	_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0, 1000 * 10 * duration);
 	_mixer->stopHandle(_soundFxHandle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
+void FreescapeEngine::queueSoundConst(double hzFreq, int duration) {
+	_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * 10 * duration);
+}
 void FreescapeEngine::playSoundConst(double hzFreq, int duration, bool sync) {
-	while (!_speaker->endOfStream())
-		g_system->delayMillis(10);
-
-	_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * duration);
+	queueSoundConst(hzFreq, duration);
 	_mixer->stopHandle(_soundFxHandle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume / 8, 0, DisposeAfterUse::NO);
 }
 
 void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync) {
-	while (!_speaker->endOfStream())
-		g_system->delayMillis(10);
-
 	// Play a PC speaker sweep between sound frequencies, using constant wavelength increment.
 
 	// The wavelength step-per-milliseconds value, or wlStepPerMS, describes how
@@ -329,9 +336,6 @@ void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double
 }
 
 void FreescapeEngine::playTeleporter(int totalIters, bool sync) {
-	while (!_speaker->endOfStream())
-		g_system->delayMillis(10);
-
 	// Play FreeScape DOS teleporter-like effect, which is ascending arpeggio.
 	// Length of effect is variable; provide total number of iterations.
 

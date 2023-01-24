@@ -268,12 +268,16 @@ public:
 	Audio::SoundHandle _musicHandle;
 	Freescape::SizedPCSpeaker *_speaker;
 
+	bool _syncSound;
 	bool _usePrerecordedSounds;
+	void waitForSounds();
+	void stopAllSounds();
+	bool isPlayingSound();
 	void playSound(int index, bool sync);
 	void playWav(const Common::String filename);
 	void playMusic(const Common::String filename);
-	void queueSoundConst(double hzFreq, int duration, bool sync);
-	void playSilence(int duration);
+	void queueSoundConst(double hzFreq, int duration);
+	void playSilence(int duration, bool sync);
 	void playSoundConst(double hzFreq, int duration, bool sync);
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
 	void playTeleporter(int totalIters, bool sync);
