@@ -54,18 +54,15 @@
 	_mouse = (GCMouse*)notification.object;
 
 	_mouse.mouseInput.mouseMovedHandler = ^(GCMouseInput * _Nonnull mouse, float deltaX, float deltaY) {
-		CGPoint newPosition = [[self view] pointerPosition];
-		newPosition.x += deltaX;
-		newPosition.y += 0-deltaY;
-		[self handlePointerMoveTo:newPosition];
+		[[self view] addEvent:InternalEvent(kInputMouseDelta, (int)-deltaX, (int)deltaY)];
 	};
 
 	_mouse.mouseInput.leftButton.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
-		[self handleMouseButtonAction:kGameControllerMouseButtonLeft isPressed:pressed at:[[self view] pointerPosition]];
+		[[self view] addEvent:InternalEvent(pressed ? kInputMouseLeftButtonDown : kInputMouseLeftButtonUp, 0, 0)];
 	};
 
 	_mouse.mouseInput.rightButton.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
-		[self handleMouseButtonAction:kGameControllerMouseButtonRight isPressed:pressed at:[[self view] pointerPosition]];
+		[[self view] addEvent:InternalEvent(pressed ? kInputMouseRightButtonDown : kInputMouseRightButtonUp, 0, 0)];
 	};
 #endif
 }
