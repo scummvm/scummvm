@@ -159,6 +159,8 @@ Common::Error Cellphone::syncState(Common::Serializer &s) {
 	Common::Array<Common::String> numbers = _addedNumbers;
 	uint numElems = numbers.size();
 	s.syncAsUint32LE(numElems);
+	if (numElems > 1000)
+		error("Unexpected number of elems syncing cellphone");
 	numbers.resize(numElems);
 	for (uint i = 0; i < numElems; i++) {
 		s.syncString(numbers[i]);
@@ -166,6 +168,7 @@ Common::Error Cellphone::syncState(Common::Serializer &s) {
 	if (s.isLoading()) {
 		if (!_addedNumbers.empty())
 			leave();
+
 		for (auto num : numbers)
 			addNumber(num);
 	}

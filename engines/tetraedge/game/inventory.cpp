@@ -500,6 +500,9 @@ bool Inventory::updateLayout() {
 Common::Error Inventory::syncState(Common::Serializer &s) {
 	uint nitems = _invObjects.size();
 	s.syncAsUint32LE(nitems);
+	if (nitems > 1000)
+		error("Unexpected number of elems syncing inventory");
+
 	if (s.isLoading()) {
 #ifdef TETRAEDGE_DEBUG_SAVELOAD
 		debug("Inventory::syncState: --- Loading %d inventory items: ---", nitems);
