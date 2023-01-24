@@ -1489,8 +1489,8 @@ void OpenGLGraphicsManager::recalculateDisplayAreas() {
 	                          _gameDrawRect.width(),
 	                          _gameDrawRect.height());
 
-	_shakeOffsetScaled = Common::Point(_gameScreenShakeXOffset * _gameDrawRect.width() / _currentState.gameWidth,
-		_gameScreenShakeYOffset * _gameDrawRect.height() / _currentState.gameHeight);
+	_shakeOffsetScaled = Common::Point(_gameScreenShakeXOffset * _gameDrawRect.width() / (int)_currentState.gameWidth,
+		_gameScreenShakeYOffset * _gameDrawRect.height() / (int)_currentState.gameHeight);
 
 	// Update the cursor position to adjust for new display area.
 	setMousePosition(_cursorX, _cursorY);
