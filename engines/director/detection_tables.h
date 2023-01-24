@@ -2038,7 +2038,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("dungeonstreet", "", "DungeonStreet", "3c96b93ed2a98b1e7e2eb609a3e1cc21", 397281, Common::JA_JPN, 311),
 
 	// Original filename is 東脳スタート
-	MACGAME1_l("easternmind", "", "xn--zckm1a5qp59wok6a", "276bee761e48a6fd709df77d5c2f60dd", 395037, Common::JA_JPN, 313),
+	MACGAME1_l("easternmind", "", "xn--zckm1a5qp59wok6a", "276bee761e48a6fd709df77d5c2f60dd", 394781, Common::JA_JPN, 313),
 
 	// Original filename is '人生の法則'
 	// Windows version is not Director.
@@ -3301,6 +3301,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is Chine Crisis /demo
 	MACDEMO1_l("chinacrisis", "Demo", "Chine Crisis -demo", "b06606b4d174b85d41b265bd366959d6", 288158, Common::JA_JPN, 402),
 
+	MACGAME1("chopsuey", "", "Chop8", "01be45e7241194dad07938e7059b88e3", 481254, 404),
 	WINGAME1("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 404),
 
 	MACGAME1_l("choroli", "", "The Trip Of Choroli", "953c7bda965b8ee1ddb01e9120186412", 484021, Common::JA_JPN, 404),
