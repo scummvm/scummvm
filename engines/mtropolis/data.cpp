@@ -740,7 +740,7 @@ DataReadErrorCode PresentationSettings::load(DataReader &reader) {
 AssetCatalog::AssetInfoRev4Fields::AssetInfoRev4Fields() : assetType(0), flags2(0) {
 }
 
-AssetCatalog::AssetInfo::AssetInfo() : flags1(0), nameLength(0), alwaysZero(0), unknown1(0), filePosition(0) {
+AssetCatalog::AssetInfo::AssetInfo() : flags1(0), nameLength(0), alwaysZero(0), streamID(0), filePosition(0) {
 }
 
 AssetCatalog::AssetCatalog() : persistFlags(0), totalNameSizePlus22(0), unknown1{0, 0, 0, 0}, numAssets(0), haveRev4Fields(false) {
@@ -762,7 +762,7 @@ DataReadErrorCode AssetCatalog::load(DataReader& reader) {
 
 	for (size_t i = 0; i < numAssets; i++) {
 		AssetInfo &asset = assets[i];
-		if (!reader.readU32(asset.flags1) || !reader.readU16(asset.nameLength) || !reader.readU16(asset.alwaysZero) || !reader.readU32(asset.unknown1) || !reader.readU32(asset.filePosition))
+		if (!reader.readU32(asset.flags1) || !reader.readU16(asset.nameLength) || !reader.readU16(asset.alwaysZero) || !reader.readU32(asset.streamID) || !reader.readU32(asset.filePosition))
 			return kDataReadErrorReadFailed;
 
 		if (_revision >= 4) {

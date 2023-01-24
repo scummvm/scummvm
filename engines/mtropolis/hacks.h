@@ -51,6 +51,7 @@ struct Hacks {
 	bool ignoreMismatchedProjectNameInObjectLookups;
 	bool removeQuickTimeEdits;
 	bool ignoreMToonMaintainRateFlag;
+	bool allowAssetsFromOtherScenes;
 	bool mtiVariableReferencesHack;
 	bool mtiSceneReturnHack;
 

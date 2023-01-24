@@ -7143,6 +7143,60 @@ Common::WeakPtr<Asset> Project::getAssetByID(uint32 assetID) const {
 	return desc->asset;
 }
 
+void Project::forceLoadAsset(uint32 assetID, Common::Array<Common::SharedPtr<Asset> > &outHoldAssets) {
+	AssetDesc *assetDesc = _assetsByID[assetID];
+	uint32 streamID = assetDesc->streamID;
+
+	size_t streamIndex = streamID - 1;
+
+	const StreamDesc &streamDesc = _streams[streamIndex];
+	uint segmentIndex = streamDesc.segmentIndex;
+
+	openSegmentStream(segmentIndex);
+
+	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
+	Data::DataReader reader(streamDesc.pos, stream, _projectFormat);
+
+	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
+
+	reader.seek(assetDesc->filePosition - streamDesc.pos);
+
+	Common::SharedPtr<Data::DataObject> dataObject;
+	Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
+
+	if (!dataObject) {
+		error("Failed to force-load asset data object");
+	}
+
+	Data::DataObjectTypes::DataObjectType dataObjectType = dataObject->getType();
+
+	if (!Data::DataObjectTypes::isAsset(dataObjectType)) {
+		error("Failed to force-load asset, the data object at the expected position wasn't an asset");
+	}
+
+	AssetDefLoaderContext assetDefLoader;
+	loadAssetDef(streamIndex, assetDefLoader, *dataObject.get());
+
+	assignAssets(assetDefLoader.assets, getRuntime()->getHacks());
+
+	outHoldAssets = Common::move(assetDefLoader.assets);
+}
+
+bool Project::getAssetIDByName(const Common::String &assetName, uint32 &outAssetID) const {
+	for (uint32 assetID = 0; assetID < _assetsByID.size(); assetID++) {
+		const AssetDesc *assetDesc = _assetsByID[assetID];
+		if (!assetDesc)
+			continue;
+
+		if (caseInsensitiveEqual(assetName, assetDesc->name)) {
+			outAssetID = assetID;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 size_t Project::getSegmentForStreamIndex(size_t streamIndex) const {
 	return _streams[streamIndex].segmentIndex;
 }
@@ -7384,6 +7438,9 @@ void Project::loadAssetCatalog(const Data::AssetCatalog &assetCatalog) {
 				assetDesc.typeCode = assetInfo.rev4Fields.assetType;
 			else
 				assetDesc.typeCode = 0;
+
+			assetDesc.streamID = assetInfo.streamID;
+			assetDesc.filePosition = assetInfo.filePosition;
 
 			_assetsByID[assetDesc.id] = &assetDesc;
 			if (!assetDesc.name.empty())

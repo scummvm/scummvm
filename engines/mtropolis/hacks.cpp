@@ -41,6 +41,7 @@ Hacks::Hacks() {
 	midiVolumeScale = 256;
 	minTransitionDuration = 0;
 	ignoreMToonMaintainRateFlag = false;
+	allowAssetsFromOtherScenes = false;
 	mtiVariableReferencesHack = false;
 	mtiSceneReturnHack = false;
 }
@@ -1030,6 +1031,9 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// Anyway, there are two possible solutions to this: Lock the clock to 60Hz, or ignore the flag.
 	// Given that the flag should not be set, we ignore the flag.
 	hacks.ignoreMToonMaintainRateFlag = true;
+
+	// Needed for piano, the sound assets are in B10 : Notes but the piano is in B10 : Piano
+	hacks.allowAssetsFromOtherScenes = true;
 
 	// MTI initializes variables in a way that doesn't seem to match mTropolis behavior in any explicable way:
 	//

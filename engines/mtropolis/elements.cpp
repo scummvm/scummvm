@@ -2122,6 +2122,9 @@ MiniscriptInstructionOutcome SoundElement::writeRefAttribute(MiniscriptThread *t
 	} else if (attrib == "balance") {
 		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetBalance, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "asset") {
+		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetAsset, true>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return NonVisualElement::writeRefAttribute(thread, writeProxy, attrib);
@@ -2331,6 +2334,53 @@ MiniscriptInstructionOutcome SoundElement::scriptSetBalance(MiniscriptThread *th
 
 	setBalance(asInteger);
 	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome SoundElement::scriptSetAsset(MiniscriptThread *thread, const DynamicValue &value) {
+	DynamicValue derefValue = value.dereference();
+
+	if (derefValue.getType() != DynamicValueTypes::kString) {
+		thread->error("Tried to set a sound element's asset to something that wasn't a string");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	stopPlayer();
+
+	Project *project = thread->getRuntime()->getProject();
+
+	uint32 assetID = 0;
+	if (!project->getAssetIDByName(derefValue.getString(), assetID)) {
+		warning("Sound element references asset '%s' but the asset ID couldn't be resolved", derefValue.getString().c_str());
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	Common::Array<Common::SharedPtr<Asset> > forceLoadedAssets;
+
+	Common::SharedPtr<Asset> asset = project->getAssetByID(assetID).lock();
+
+	if (!asset) {
+		if (thread->getRuntime()->getHacks().allowAssetsFromOtherScenes) {
+			project->forceLoadAsset(assetID, forceLoadedAssets);
+			asset = project->getAssetByID(assetID).lock();
+		}
+	}
+
+	if (!asset) {
+		warning("Sound element references asset '%s' but the asset isn't loaded!", derefValue.getString().c_str());
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (asset->getAssetType() != kAssetTypeAudio) {
+		warning("Sound element assigned an asset that isn't audio");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	_cachedAudio = static_cast<AudioAsset *>(asset.get())->loadAndCacheAudio(getRuntime());
+	_metadata = static_cast<AudioAsset *>(asset.get())->getMetadata();
+	_assetID = asset->getAssetID();
+
+	return kMiniscriptInstructionOutcomeContinue;
+
 }
 
 void SoundElement::setLoop(bool loop) {

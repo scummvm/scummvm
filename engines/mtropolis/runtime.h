@@ -2391,6 +2391,9 @@ public:
 
 	Common::String getAssetNameByID(uint32 assetID) const;
 	Common::WeakPtr<Asset> getAssetByID(uint32 assetID) const;
+	bool getAssetIDByName(const Common::String &assetName, uint32 &outAssetID) const;
+	void forceLoadAsset(uint32 assetID, Common::Array<Common::SharedPtr<Asset> > &outHoldAssets);
+
 	size_t getSegmentForStreamIndex(size_t streamIndex) const;
 	void openSegmentStream(int segmentIndex);
 	void closeSegmentStream(int segmentIndex);
@@ -2467,6 +2470,8 @@ private:
 		AssetDesc();
 
 		uint32 typeCode;
+		uint32 streamID;
+		uint32 filePosition;
 		size_t id;
 		Common::String name;
 

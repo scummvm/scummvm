@@ -502,7 +502,7 @@ struct AssetCatalog : public DataObject {
 		uint32 flags1;
 		uint16 nameLength;
 		uint16 alwaysZero;
-		uint32 unknown1;	 // Possibly scene ID
+		uint32 streamID;
 		uint32 filePosition; // Contains a static value in Obsidian
 
 		AssetInfoRev4Fields rev4Fields;
