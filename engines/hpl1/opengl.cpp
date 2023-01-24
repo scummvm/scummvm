@@ -32,19 +32,19 @@ namespace Hpl1 {
 static const char* getErrorString(const GLenum code) {
 	switch (code) {
 	case GL_INVALID_ENUM:
-		return "invalid enum";
+		return "GL_INVALID_ENUM";
 	case GL_INVALID_VALUE:
-		return "invalid value";
+		return "GL_INVALID_VALUE";
 	case GL_INVALID_OPERATION:
-		return "invalid operation";
+		return "GL_INVALID_OPERATION";
 	}
 	return "unrecognized error";
 }
 
-void checkOGLErrors(const char *function, const int line) {
+void checkOGLErrors(const char *function, const char *file, int line) {
 	GLenum code;
 	while((code = glGetError()) != GL_NO_ERROR)
-		logError(kDebugOpenGL, "Opengl error: \'%s\' in function %s - %d\n", getErrorString(code), function, line);
+		logError(kDebugOpenGL, "Opengl error: \'%s\' in function %s (%s:%d)\n", getErrorString(code), function, file, line);
 }
 
 

@@ -37,14 +37,14 @@ struct Surface;
 
 namespace Hpl1 {
 
-void checkOGLErrors(const char *function, int line);
+void checkOGLErrors(const char *function, const char *file, int line);
 
 Common::ScopedPtr<Graphics::Surface> createGLViewportScreenshot();
 
 }
 
-#define GL_CHECK(x) {x; ::Hpl1::checkOGLErrors(__func__, __LINE__);}
-#define GL_CHECK_FN() {::Hpl1::checkOGLErrors(__func__, __LINE__);}
+#define GL_CHECK(x) {x; ::Hpl1::checkOGLErrors(__func__, __FILE__, __LINE__);}
+#define GL_CHECK_FN() {::Hpl1::checkOGLErrors(__func__, __FILE__, __LINE__);}
 
 #endif // USE_OPENGL
 #endif // HPL1_OPENGL_H
