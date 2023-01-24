@@ -42,6 +42,7 @@ void TeLightOpenGL::disable(uint lightno) {
 }
 
 void TeLightOpenGL::enable(uint lightno) {
+	// Note: original casts to float and compares to 0.01, but that's the same?
 	if (_colDiffuse.r() == 0 && _colDiffuse.g() == 0 && _colDiffuse.b() == 0)
 		glDisable(_toGlLight(lightno));
 	else
@@ -95,21 +96,15 @@ void TeLightOpenGL::update(uint lightno) {
 	}
 
 	if (_type == LightTypeDirectional) {
-		float cosx = cosf(_positionRadial.getX());
-		float cosy = cosf(_positionRadial.getY());
-		float sinx = sinf(_positionRadial.getX());
-		float siny = sinf(_positionRadial.getY());
-		const float pos[4] = {cosx * cosy, siny, sinx * cosy, 0.0f};
-		glLightfv(glLight, GL_POSITION, pos);
+		const TeVector3f32 dirv = directionVector();
+		const float dir[4] = {dirv.x(), dirv.y(), dirv.z(), 0.0f};
+		glLightfv(glLight, GL_POSITION, dir);
 	}
 
 	if (_type == LightTypeSpot) {
-		float cosx = cosf(_positionRadial.getX());
-		float cosy = cosf(_positionRadial.getY());
-		float sinx = sinf(_positionRadial.getX());
-		float siny = sinf(_positionRadial.getY());
-		const float pos[4] = {cosx * cosy, siny, sinx * cosy, 0.0f};
-		glLightfv(glLight, GL_SPOT_DIRECTION, pos);
+		const TeVector3f32 dirv = directionVector();
+		const float dir[4] = {dirv.x(), dirv.y(), dirv.z(), 0.0f};
+		glLightfv(glLight, GL_SPOT_DIRECTION, dir);
 		glLightf(glLight, GL_SPOT_CUTOFF, (_cutoff * 180.0) / M_PI);
 		glLightf(glLight, GL_SPOT_EXPONENT, _exponent);
 	} else {

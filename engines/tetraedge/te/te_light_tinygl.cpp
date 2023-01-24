@@ -95,21 +95,15 @@ void TeLightTinyGL::update(uint lightno) {
 	}
 
 	if (_type == LightTypeDirectional) {
-		float cosx = cosf(_positionRadial.getX());
-		float cosy = cosf(_positionRadial.getY());
-		float sinx = sinf(_positionRadial.getX());
-		float siny = sinf(_positionRadial.getY());
-		const float pos[4] = {cosx * cosy, siny, sinx * cosy, 0.0f};
-		tglLightfv(glLight, TGL_POSITION, pos);
+		const TeVector3f32 dirv = directionVector();
+		const float dir[4] = {dirv.x(), dirv.y(), dirv.z(), 0.0f};
+		tglLightfv(glLight, TGL_POSITION, dir);
 	}
 
 	if (_type == LightTypeSpot) {
-		float cosx = cosf(_positionRadial.getX());
-		float cosy = cosf(_positionRadial.getY());
-		float sinx = sinf(_positionRadial.getX());
-		float siny = sinf(_positionRadial.getY());
-		const float pos[4] = {cosx * cosy, siny, sinx * cosy, 0.0f};
-		tglLightfv(glLight, TGL_SPOT_DIRECTION, pos);
+		const TeVector3f32 dirv = directionVector();
+		const float dir[4] = {dirv.x(), dirv.y(), dirv.z(), 0.0f};
+		tglLightfv(glLight, TGL_SPOT_DIRECTION, dir);
 		tglLightf(glLight, TGL_SPOT_CUTOFF, (_cutoff * 180.0) / M_PI);
 		tglLightf(glLight, TGL_SPOT_EXPONENT, _exponent);
 	} else {
