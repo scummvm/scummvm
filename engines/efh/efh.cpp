@@ -48,6 +48,9 @@ int8 InvObject::getUsesLeft() {
 }
 
 EfhEngine::~EfhEngine() {
+	_mainSurface->free();
+	delete _mainSurface;
+	
 	delete _rnd;
 	delete _graphicsStruct;
 	delete _vgaGraphicsStruct1;
