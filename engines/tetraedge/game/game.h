@@ -123,6 +123,9 @@ public:
 	bool loadPlayerCharacter(const Common::String &name);
 	bool loadScene(const Common::String &name);
 
+	// Not in original. Load unlocked artwork from ScummVM config.
+	void loadUnlockedArtwork();
+
 	bool onAnswered(const Common::String &val);
 	bool onCallNumber(Common::String val);
 	bool onCharacterAnimationFinished(const Common::String &val);

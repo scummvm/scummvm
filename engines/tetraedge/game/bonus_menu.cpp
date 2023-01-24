@@ -24,6 +24,7 @@
 #include "common/textconsole.h"
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
+#include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_input_mgr.h"
 
 namespace Tetraedge {
@@ -49,7 +50,18 @@ void BonusMenu::enter(const Common::String &scriptName) {
 		SaveButton *saveBtn = new SaveButton(btn, btnNoStr);
 		_saveButtons.push_back(saveBtn);
 
-		// TODO: Finish this.
+		TeVector3f32 mainWinSz = g_engine->getApplication()->getMainWindow().size();
+		if (g_engine->getCore()->fileFlagSystemFlag("definition") == "SD")
+			mainWinSz = mainWinSz / 3.0f;
+		else
+			mainWinSz = mainWinSz / 4.0f;
+		mainWinSz.z() = 1.0f;
+		saveBtn->setSize(mainWinSz);
+		for (Te3DObject2 *child : saveBtn->childList()) {
+			child->setSize(mainWinSz);
+		}
+
+		// TODO: Finish this (lines 170-186)
 
 		btnNo++;
 	}
