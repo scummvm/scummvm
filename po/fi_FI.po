@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-22 14:48+0000\n"
+"POT-Creation-Date: 2023-01-24 08:04+0000\n"
 "PO-Revision-Date: 2023-01-22 04:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2804,7 +2804,7 @@ msgid "Default game keymap"
 msgstr "Oletusnäppäinasetukset"
 
 #: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
-#: engines/asylum/metaengine.cpp:157 engines/hdb/metaengine.cpp:207
+#: engines/asylum/metaengine.cpp:158 engines/hdb/metaengine.cpp:207
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
@@ -2818,7 +2818,7 @@ msgid "Middle Click"
 msgstr "Keskiklikkaus"
 
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
-#: engines/asylum/metaengine.cpp:163 engines/parallaction/metaengine.cpp:120
+#: engines/asylum/metaengine.cpp:164 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "Oikea klikkaus"
@@ -4477,7 +4477,7 @@ msgstr "Vaihda Olmeciin"
 msgid "Bring up the In-Game Menu"
 msgstr "Avaa pelin sisäinen valikko"
 
-#: engines/asylum/metaengine.cpp:151
+#: engines/asylum/metaengine.cpp:152
 msgid "Open character inventory"
 msgstr "Avaa hahmon inventorio"
 
