@@ -59,7 +59,7 @@ struct SAVED_DATA {
 	uint32		SavedTune[3];			// Music
 	bool		bTinselDim;
 	int			SavedScrollFocus;
-	int			SavedSystemVars[SV_TOPVALID];
+	int			SavedSystemVars[SV_TOPVALID_T3];
 	SOUNDREELS	SavedSoundReels[MAX_SOUNDREELS];
 };
 

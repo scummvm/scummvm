@@ -83,6 +83,8 @@ typedef enum {	SV_DEFAULT_INV,
 		ISV_GHOST_BASE_T2 = 0x2B,
 		ISV_GHOST_COLOR_T2 = 0x2C,
 
+		SV_TOPVALID_T2 = 0x2D,
+
 		SV_SPRITER_SCENE_ID = 0x2F, // Noir, loaded scene
 		ISV_DIVERT_ACTOR_T3 = 0x32,
 		ISV_NO_BLOCKING_T3 = 0x33,
@@ -92,13 +94,14 @@ typedef enum {	SV_DEFAULT_INV,
 		SV_SPRITER_SCALE = 0x37, // Noir, scale used for 3D rendering
 		SV_SPRITER_OVERLAY = 0x38, // Noir, if additional model is loaded
 
-		SV_TOPVALID } SYSVARS;
+		SV_TOPVALID_T3 } SYSVARS;
 
 #define ISV_DIVERT_ACTOR ((TinselVersion == 3) ? ISV_DIVERT_ACTOR_T3 : ISV_DIVERT_ACTOR_T2)
 #define ISV_NO_BLOCKING ((TinselVersion == 3) ? ISV_NO_BLOCKING_T3 : ISV_NO_BLOCKING_T2)
 #define ISV_GHOST_ACTOR ((TinselVersion == 3) ? ISV_GHOST_ACTOR_T3 : ISV_GHOST_ACTOR_T2)
 #define ISV_GHOST_BASE ((TinselVersion == 3) ? ISV_GHOST_BASE_T3 : ISV_GHOST_BASE_T2)
 #define ISV_GHOST_COLOR ((TinselVersion == 3) ? ISV_GHOST_COLOR_T3 : ISV_GHOST_COLOR_T2)
+#define SV_TOPVALID ((TinselVersion == 3) ? SV_TOPVALID_T3 : SV_TOPVALID_T2)
 
 typedef enum {
 

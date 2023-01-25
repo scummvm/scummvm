@@ -42,7 +42,7 @@ extern int NewestSavedGame();
 
 // These vars are reset upon engine destruction
 
-static int g_systemVars[SV_TOPVALID];
+static int g_systemVars[SV_TOPVALID_T3];
 static SCNHANDLE g_systemStrings[SS_MAX_VALID];
 
 //----------------- FUNCTIONS --------------------------------
@@ -57,7 +57,7 @@ void ResetVarsSysVar() {
  */
 
 void InitSysVars() {
-	int initialSystemVars[SV_TOPVALID] = {
+	int initialSystemVars[SV_TOPVALID_T3] = {
 	    INV_1, // Default inventory
 
 	    10,  // Y-offset of Conversation(TOP)
