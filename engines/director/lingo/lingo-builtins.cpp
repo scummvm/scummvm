@@ -3053,7 +3053,9 @@ void LB::b_cast(int nargs) {
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
 	// FIXME: Check with later versions of director
-	//        The kCastText check version breaks Phibos and Yokai Ningen Bem.
+	//        The kCastText check version breaks Phibos, which loads a
+	//        non-kCastText script using this builtin.
+	//        With the kCastText version, Phibos crashes during its intro.
 	// CastMemberID memberID = d.asMemberID(kCastText);
 	CastMemberID memberID = d.asMemberID();
 	CastMember *cast = g_director->getCurrentMovie()->getCastMember(memberID);
