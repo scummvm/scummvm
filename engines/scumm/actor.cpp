@@ -184,6 +184,8 @@ void Actor::initActor(int mode) {
 	_charset = 0;
 	memset(_sound, 0, sizeof(_sound));
 	_targetFacing = _facing;
+	_lastValidX = 0;
+	_lastValidY = 0;
 
 	_shadowMode = 0;
 	_layer = 0;
@@ -1906,12 +1908,37 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 	int box;
 	const int firstValidBox = (_vm->_game.features & GF_SMALL_HEADER) ? 0 : 1;
 
-	abr.x = dstX;
-	abr.y = dstY;
+	// The original v3-4 interpreters register and use the last valid (X,Y) values
+	// for the current actor. During the execution of the current function, if
+	// the routine can't find a bestDist which is smaller than the init value
+	// (0xFFFF), the rest of the code flow just happens to reuse the last valid
+	// coordinates obtained from a previous call of the function.
+	// This sounds like pseudo-undefined behavior caused by an oversight, but we
+	// can get along with it as it appears we actually need this to happen...
+	//
+	// By simulating what v3 and v4 disasms did, we correctly fix bug #2377.
+	// The originals relied on global variables containing the latest valid
+	// coordinates modified in here and in startWalkActor, but registering
+	// the modifications only in here seems to be enough to cover this edge case.
+	//
+	// HE and v5-6 games appear to actually have undefined behavior, since they
+	// create something akin to our AdjustBoxResult structure right inside the
+	// current function, so this means that the coordinates inside it potentially
+	// might never be initialized if bestDist is never modified.
+	// The same thing applies to v7-8, but it's really unlikely that any distance
+	// would end up being higher than 0x7FFFFFFF...
+
+	bool isOldSystem = _vm->_game.version <= 4;
+
+	abr.x = isOldSystem ? _lastValidX : dstX;
+	abr.y = isOldSystem ? _lastValidY : dstY;
 	abr.box = kInvalidBox;
 
-	if (_ignoreBoxes)
+	if (_ignoreBoxes) {
+		abr.x = dstX;
+		abr.y = dstY;
 		return abr;
+	}
 
 	for (int tIdx = 0; tIdx < ARRAYSIZE(thresholdTable); tIdx++) {
 		threshold = thresholdTable[tIdx];
@@ -1941,6 +1968,8 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 			// Check if the point is contained in the box. If it is,
 			// we don't have to search anymore.
 			if (_vm->checkXYInBoxBounds(box, dstX, dstY)) {
+				_lastValidX = dstX;
+				_lastValidY = dstY;
 				abr.x = dstX;
 				abr.y = dstY;
 				abr.box = box;
@@ -1952,6 +1981,8 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 
 			// Check if the box is closer than the previous boxes.
 			if (tmpDist < bestDist) {
+				_lastValidX = tmpX;
+				_lastValidY = tmpY;
 				abr.x = tmpX;
 				abr.y = tmpY;
 

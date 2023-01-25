@@ -108,6 +108,7 @@ public:
 	byte _moving;
 	bool _ignoreBoxes;
 	byte _forceClip;
+	uint16 _lastValidX, _lastValidY;
 
 	byte _initFrame;
 	byte _walkFrame;
