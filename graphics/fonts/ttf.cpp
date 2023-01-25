@@ -906,6 +906,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 
 	Common::File f;
 	if (!f.open(filename, *archive)) {
+		delete archive;
 		return nullptr;
 	}
 
