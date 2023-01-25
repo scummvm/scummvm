@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-01-24 08:04+0000\n"
+"POT-Creation-Date: 2023-01-24 22:02+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2597,7 +2597,7 @@ msgstr "~N~ávrat do Spouštěče"
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:914
 #: engines/pegasus/pegasus.cpp:406 engines/prince/saveload.cpp:54
-#: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1079
+#: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1073
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3765
@@ -2621,7 +2621,7 @@ msgstr "Uložit hru:"
 #: engines/parallaction/metaengine.cpp:133
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:406
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
-#: engines/sci/engine/kfile.cpp:1079 engines/sherlock/scalpel/scalpel.cpp:1249
+#: engines/sci/engine/kfile.cpp:1073 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3765
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
@@ -4371,7 +4371,7 @@ msgstr ""
 #: engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:927
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
-#: engines/sci/engine/kfile.cpp:1209 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sci/engine/kfile.cpp:1203 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3859
 #: engines/zvision/file/save_manager.cpp:61
@@ -4391,7 +4391,7 @@ msgstr "Obnovit hru:"
 #: engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:927
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:746
-#: engines/sci/engine/kfile.cpp:1209 engines/sherlock/scalpel/scalpel.cpp:1262
+#: engines/sci/engine/kfile.cpp:1203 engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3859
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
