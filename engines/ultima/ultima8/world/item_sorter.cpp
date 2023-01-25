@@ -43,7 +43,8 @@ namespace Ultima8 {
 
 ItemSorter::ItemSorter(int capacity) :
 	_shapes(nullptr), _clipWindow(0, 0, 0, 0), _items(nullptr), _itemsTail(nullptr),
-	_itemsUnused(nullptr), _painted(nullptr), _sortLimit(0), _camSx(0), _camSy(0) {
+	_itemsUnused(nullptr), _painted(nullptr), _camSx(0), _camSy(0),
+	_sortLimit(0), _sortLimitChanged(false) {
 	int i = capacity;
 	while (i--) _itemsUnused = new SortItem(_itemsUnused);
 }
@@ -83,9 +84,17 @@ void ItemSorter::BeginDisplayList(const Rect &clipWindow, int32 camx, int32 camy
 	_painted = nullptr;
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
-	_camSx = (camx - camy) / 4;
+	int32 camSx = (camx - camy) / 4;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	_camSy = (camx + camy) / 8 - camz;
+	int32 camSy = (camx + camy) / 8 - camz;
+
+	if (camSx != _camSx || camSy != _camSy) {
+		_camSx = camSx;
+		_camSy = camSy;
+
+		// Reset sort limit debugging on camera move
+		_sortLimit = 0;
+	}
 }
 
 void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 frame_num, uint32 flags, uint32 ext_flags, uint16 itemNum) {
@@ -288,8 +297,8 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 	SortItem::DependsList::iterator end = si->_depends.end();
 	while (it != end) {
 		if ((*it)->_order == -2) {
-			//warning("cycle in paint dependency graph %d -> %d -> ... -> %d",
-			//		si->_shapeNum, (*it)->_shapeNum, si->_shapeNum);
+			debugC(kDebugObject, "Cycle in paint dependency graph %d -> %d -> ... -> %d",
+					si->_shapeNum, (*it)->_shapeNum, si->_shapeNum);
 			break;
 		}
 		else if ((*it)->_order == -1) {
@@ -298,9 +307,6 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 		}
 		++it;
 	}
-
-	// Set our painting _order based on previously painted item
-	si->_order = _painted ? _painted->_order + 1 : 0;
 
 	// Now paint us!
 	if (surf) {
@@ -339,18 +345,21 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 		}
 	}
 
-	if (_sortLimit) {
-		if (si->_order == _sortLimit) {
-			if (!_painted || _painted->_itemNum != si->_itemNum) {
-				debugC(kDebugObject, "SortItem: %s", si->dumpInfo().c_str());
-				if (_painted && si->overlap(_painted)) {
-					debugC(kDebugObject, "Overlaps: %s", _painted->dumpInfo().c_str());
-				}
-			}
+	// Set our painting _order based on previously painted item
+	si->_order = _painted ? _painted->_order + 1 : 0;
 
-			_painted = si;
-			return true;
+	if (_sortLimit && si->_order == _sortLimit) {
+		if (_sortLimitChanged) {
+			_sortLimitChanged = false;
+
+			debugC(kDebugObject, "SortItem: %s", si->dumpInfo().c_str());
+			if (_painted && si->overlap(_painted)) {
+				debugC(kDebugObject, "Overlaps: %s", _painted->dumpInfo().c_str());
+			}
 		}
+
+		_painted = si;
+		return true;
 	}
 
 	_painted = si;
@@ -475,6 +484,7 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 
 void ItemSorter::IncSortLimit(int count) {
 	_sortLimit += count;
+	_sortLimitChanged = true;
 	if (_sortLimit < 0)
 		_sortLimit = 0;
 }

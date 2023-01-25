@@ -41,8 +41,9 @@ class ItemSorter {
 	SortItem    *_itemsUnused;
 	SortItem    *_painted;
 
-	int32       _sortLimit;
 	int32       _camSx, _camSy;
+	int32       _sortLimit;
+	bool        _sortLimitChanged;
 
 public:
 	ItemSorter(int capacity);
