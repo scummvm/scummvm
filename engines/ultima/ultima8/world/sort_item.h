@@ -330,15 +330,15 @@ inline bool SortItem::below(const SortItem &si2) const {
 		return si1._sprite < si2._sprite;
 
 	// Clearly in y?
-	if (si1._yFar < si2._yFar && si1._y <= si2._yFar)
+	if (si1._y <= si2._yFar)
 		return true;
-	if (si1._yFar > si2._yFar && si1._yFar >= si2._y)
+	if (si1._yFar >= si2._y)
 		return false;
 
 	// Clearly in x?
-	if (si1._xLeft < si2._xLeft && si1._x <= si2._xLeft)
+	if (si1._x <= si2._xLeft)
 		return true;
-	if (si1._xLeft > si2._xLeft && si1._xLeft >= si2._x)
+	if (si1._xLeft >= si2._x)
 		return false;
 
 	// Inv items always drawn first if their z-bottom is equal or higher.

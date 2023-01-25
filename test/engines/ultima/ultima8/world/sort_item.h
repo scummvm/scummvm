@@ -186,6 +186,34 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!si2.below(si1));
 	}
 
+	/**
+	 * Overlapping y-flat vs non-flat items
+	 * Test case for rendering issue at MainActor::teleport 41 20063 13887 48
+	 */
+	void test_y_flat_sort() {
+		Ultima::Ultima8::SortItem si1(nullptr);
+		Ultima::Ultima8::SortItem si2(nullptr);
+
+		si1._x = 64;
+		si1._y = 0;
+		si1._z = 16;
+		si1._xLeft = 0;
+		si1._yFar = 0;
+		si1._zTop = 32;
+		si1._solid = true;
+
+		si2._x = 64;
+		si2._y = 64;
+		si2._z = 0;
+		si2._xLeft = 0;
+		si2._yFar = 0;
+		si2._zTop = 40;
+		si2._solid = true;
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
 	/* Overlapping non-flat occludes flat */
 	void test_basic_occludes() {
 		Ultima::Ultima8::SortItem si1(nullptr);
