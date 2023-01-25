@@ -53,8 +53,6 @@ public:
 
 	void ShowCursor(bool abX);
 
-	void SetVsyncActive(bool abX);
-
 	void SetMultisamplingActive(bool abX);
 
 	void SetGammaCorrection(float afX);

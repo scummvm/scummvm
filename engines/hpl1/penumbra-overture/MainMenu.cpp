@@ -1152,7 +1152,6 @@ cMainMenuWidget_Text *gpResolutionText = NULL;
 cMainMenuWidget_Text *gpPostEffectsText = NULL;
 cMainMenuWidget_Text *gpBloomText = NULL;
 cMainMenuWidget_Text *gpMotionBlurText = NULL;
-cMainMenuWidget_Text *gpVSyncText = NULL;
 cMainMenuWidget_Text *gpTextureQualityText = NULL;
 cMainMenuWidget_Text *gpShaderQualityText = NULL;
 cMainMenuWidget_Text *gpShadowsText = NULL;
@@ -1547,23 +1546,6 @@ public:
 		mpInit->mpGame->GetGraphics()->GetRendererPostEffects()->SetMotionBlurActive(!bX);
 
 		gpMotionBlurText->msText = mpInit->mpGame->GetGraphics()->GetRendererPostEffects()->GetMotionBlurActive() ? kTranslate("MainMenu", "On") : kTranslate("MainMenu", "Off");
-	}
-};
-
-//------------------------------------------------------------
-
-class cMainMenuWidget_VSync : public cMainMenuWidget_Button {
-public:
-	cMainMenuWidget_VSync(cInit *apInit, const cVector3f &avPos, const tWString &asText, cVector2f avFontSize, eFontAlign aAlignment)
-		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
-		msTip = kTranslate("MainMenu", "TipGraphicsVSync");
-	}
-
-	void OnMouseDown(eMButton aButton) {
-		mpInit->mbVsync = !mpInit->mbVsync;
-		mpInit->mpGame->GetGraphics()->GetLowLevel()->SetVsyncActive(mpInit->mbVsync);
-
-		gpVSyncText->msText = mpInit->mbVsync ? kTranslate("MainMenu", "On") : kTranslate("MainMenu", "Off");
 	}
 };
 
@@ -3027,9 +3009,6 @@ void cMainMenu::CreateWidgets() {
 	cMainMenuWidget *pMotionBlurButton = hplNew(cMainMenuWidget_MotionBlur, (mpInit, vPos, kTranslate("MainMenu", "Motion Blur:"), 20, eFontAlign_Right));
 	AddWidgetToState(eMainMenuState_OptionsGraphicsAdvanced, pMotionBlurButton);
 	vPos.y += 29;
-	cMainMenuWidget *pVSyncButton = hplNew(cMainMenuWidget_VSync, (mpInit, vPos, kTranslate("MainMenu", "VSync:"), 20, eFontAlign_Right));
-	AddWidgetToState(eMainMenuState_OptionsGraphicsAdvanced, pVSyncButton);
-	vPos.y += 29;
 	cMainMenuWidget *pTextureFilterButton = hplNew(cMainMenuWidget_TextureFilter, (mpInit, vPos, kTranslate("MainMenu", "Texture Filter:"), 20, eFontAlign_Right));
 	AddWidgetToState(eMainMenuState_OptionsGraphicsAdvanced, pTextureFilterButton);
 	vPos.y += 29;
@@ -3069,12 +3048,6 @@ void cMainMenu::CreateWidgets() {
 	gpMotionBlurText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsGraphicsAdvanced, gpMotionBlurText);
 	gpMotionBlurText->SetExtraWidget(pMotionBlurButton);
-
-	vPos.y += 29;
-	sText = mpInit->mbVsync ? kTranslate("MainMenu", "On") : kTranslate("MainMenu", "Off");
-	gpVSyncText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left));
-	AddWidgetToState(eMainMenuState_OptionsGraphicsAdvanced, gpVSyncText);
-	gpVSyncText->SetExtraWidget(pVSyncButton);
 
 	vPos.y += 29;
 	sText = kTranslate("MainMenu", gvTextureFilter[mpInit->mpGame->GetResources()->GetMaterialManager()->GetTextureFilter()]);

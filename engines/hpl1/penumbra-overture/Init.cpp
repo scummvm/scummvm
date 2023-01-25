@@ -165,7 +165,6 @@ bool cInit::Init(tString saveToLoad) {
 	mvScreenSize.x = getIntConfig("screen-width", 800);
 	mvScreenSize.y = getIntConfig("screen-height", 600);
 	mbFullScreen = ConfMan.getBool("fullscreen");
-	mbVsync = ConfMan.getBool("vsync");
 	mbLogResources = false;
 	mbDebugInteraction = false;
 
@@ -254,8 +253,6 @@ bool cInit::Init(tString saveToLoad) {
 
 	// Make sure hardware is really used.
 	mbUseSoundHardware = mpGame->GetSound()->GetLowLevel()->IsHardwareAccelerated();
-
-	mpGame->GetGraphics()->GetLowLevel()->SetVsyncActive(mbVsync);
 
 	mbShowPreMenu = getBoolConfig("show_pre_menu", true);
 	mbShowIntro = getBoolConfig("show_intro", true);
