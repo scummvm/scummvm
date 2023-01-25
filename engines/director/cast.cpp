@@ -765,29 +765,29 @@ void Cast::loadSoundData(int key, SoundCastMember *soundCast) {
 		sndData = _castArchive->getResource(tag, sndId);
 	}
 
-	if (sndData != nullptr) {
-		if (sndData->size() == 0) {
-			// audio file is linked, load from the filesystem
-			Common::String filename = _castsInfo[key]->fileName;
+	if (sndData == nullptr || sndData->size() == 0) {
+		// audio file is linked, load from the filesystem
+		Common::String filename = _castsInfo[key]->fileName;
 
-			if (!_castsInfo[key]->directory.empty())
-				filename = _castsInfo[key]->directory + g_director->_dirSeparator + _castsInfo[key]->fileName;
+		if (!_castsInfo[key]->directory.empty())
+			filename = _castsInfo[key]->directory + g_director->_dirSeparator + _castsInfo[key]->fileName;
 
-			AudioFileDecoder *audio = new AudioFileDecoder(filename);
-			soundCast->_audio = audio;
-		} else {
-			SNDDecoder *audio = new SNDDecoder();
-			audio->loadStream(*sndData);
-			soundCast->_audio = audio;
-			soundCast->_size = sndData->size();
-			if (_version < kFileVer400) {
-				// The looping flag wasn't added to sound cast members until D4.
-				// In older versions, always loop sounds that contain a loop start and end.
-				soundCast->_looping = audio->hasLoopBounds();
-			}
+		warning("Filename is: %s", filename.c_str());
+
+		AudioFileDecoder *audio = new AudioFileDecoder(filename);
+		soundCast->_audio = audio;
+	} else {
+		SNDDecoder *audio = new SNDDecoder();
+		audio->loadStream(*sndData);
+		soundCast->_audio = audio;
+		soundCast->_size = sndData->size();
+		if (_version < kFileVer400) {
+			// The looping flag wasn't added to sound cast members until D4.
+			// In older versions, always loop sounds that contain a loop start and end.
+			soundCast->_looping = audio->hasLoopBounds();
 		}
-		delete sndData;
 	}
+	delete sndData;
 }
 
 void Cast::loadCastMemberData() {
