@@ -287,7 +287,7 @@ static void syncSoundReel(Common::Serializer &s, SOUNDREELS &sr) {
 	s.syncAsSint32LE(sr.actorCol);
 }
 
-static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd, int numInterp) {
+static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd, int numInterp, int numSystemVars) {
 	s.syncAsUint32LE(sd.SavedSceneHandle);
 	s.syncAsUint32LE(sd.SavedBgroundHandle);
 	for (int i = 0; i < MAX_MOVERS; ++i)
@@ -335,7 +335,7 @@ static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd, int numInterp) 
 			s.syncAsUint32LE(sd.SavedTune[i]);
 		s.syncAsByte(sd.bTinselDim);
 		s.syncAsSint32LE(sd.SavedScrollFocus);
-		for (int i = 0; i < SV_TOPVALID; ++i)
+		for (int i = 0; i < numSystemVars; ++i)
 			s.syncAsSint32LE(sd.SavedSystemVars[i]);
 		for (int i = 0; i < MAX_SOUNDREELS; ++i)
 			syncSoundReel(s, sd.SavedSoundReels[i]);
@@ -447,7 +447,7 @@ char *ListEntry(int i, letype which) {
 		return NULL;
 }
 
-static bool DoSync(Common::Serializer &s, int numInterp) {
+static bool DoSync(Common::Serializer &s, int numInterp, int numSystemVars) {
 	int	sg = 0;
 
 	if (TinselVersion >= 2) {
@@ -459,8 +459,7 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 			_vm->_dialogs->holdItem(INV_NOICON);
 	}
 
-
-	syncSavedData(s, *g_srsd, numInterp);
+	syncSavedData(s, *g_srsd, numInterp, numSystemVars);
 	syncGlobInfo(s);		// Glitter globals
 	_vm->_dialogs->syncInvInfo(s); // Inventory data
 
@@ -489,7 +488,7 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 	if (*g_SaveSceneSsCount != 0) {
 		SAVED_DATA *sdPtr = g_SaveSceneSsData;
 		for (int i = 0; i < *g_SaveSceneSsCount; ++i, ++sdPtr)
-			syncSavedData(s, *sdPtr, numInterp);
+			syncSavedData(s, *sdPtr, numInterp, numSystemVars);
 
 		// Flag that there is a saved scene to return to. Note that in this context 'saved scene'
 		// is a stored scene to return to from another scene, such as from the Summoning Book close-up
@@ -529,23 +528,52 @@ static bool DoRestore() {
 	// for pre 1.5 savegames, and if that fails, a second time for 1.5 savegames
 	int numInterpreters = hdr.numInterpreters;
 	int32 currentPos = f->pos();
-	for (int tryNumber = 0; tryNumber < ((hdr.ver >= 2) ? 1 : 2); ++tryNumber) {
-		// If it's the second loop iteration, try with the 1.5 savegame number of interpreter contexts
+	int numberOfTries = ((hdr.ver >= 2) ? 1 : 2);
+	int numSystemVars = SV_TOPVALID; // Appropriate for both Noir and DW2
+	for (int tryNumber = 0; tryNumber < numberOfTries; ++tryNumber) {
 		if (tryNumber == 1) {
 			f->seek(currentPos);
-			numInterpreters = 80;
+			// If it's the second loop iteration, try with the 1.5 savegame number of interpreter contexts
+			if (hdr.ver < 2) {
+				numInterpreters = 80;
+			}
 		}
 
 		// Load the savegame data
-		if (DoSync(s, numInterpreters))
+		bool successfullSync = DoSync(s, numInterpreters, numSystemVars);
+
+		uint32 id = f->readSint32LE();
+
+		int remaining = f->size() - f->pos();
+		// BUG #13897: Older savegames won't run on ScummVM 2.6.x
+		// The reason being that the system vars for Noir were added increasing the SV_TOPVALID value,
+		// which also affected DW2 unintentionally, creating some v3 savegames that had additional data
+		// stored there. To properly load these savegames, we'll have to try again, with the knowledge
+		// that we have to skip this data.
+		if (hdr.id == DW2_SAVEGAME_ID && hdr.ver == 3 && remaining != 0) {
+			if (tryNumber == 0) {
+				numberOfTries++;
+				// Make the second attempt read the Noir amount of sys-vars, so that the problematic
+				// savegames can be loaded.
+				numSystemVars = SV_TOPVALID_T3;
+			}
+			continue;
+		}
+
+		if (successfullSync) {
+			if (id != (uint32)0xFEEDFACE) {
+				error("Incompatible saved game");
+			}
+
 			// Data load was successful (or likely), so break out of loop
 			break;
+		}
 	}
 
-	uint32 id = f->readSint32LE();
-	if (id != (uint32)0xFEEDFACE)
-		error("Incompatible saved game");
-
+	int remainingBytes = f->size() - f->pos();
+	if (remainingBytes != 0) {
+		error("%d bytes of savegame not read", remainingBytes);
+	}
 	bool failed = (f->eos() || f->err());
 
 	delete f;
@@ -628,7 +656,7 @@ static void DoSave() {
 		return;
 	}
 
-	DoSync(s, hdr.numInterpreters);
+	DoSync(s, hdr.numInterpreters, SV_TOPVALID);
 
 	// Write out the special Id for Discworld savegames
 	f->writeUint32LE(0xFEEDFACE);
