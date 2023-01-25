@@ -404,16 +404,17 @@ void Combat::selectTreasure() {
 }
 
 void Combat::selectTreasure2(int count) {
-	static const byte TREASURES_ARR1[6] = { 1, 61, 86, 121, 156, 171 };
-	static const byte TREASURES_ARR2[6] = { 12, 5, 7, 7, 3, 12 };
-	int idx;
-
 	_treasureFlags[count - 1] = true;
 
-	idx = getRandomNumber(0, 5);
+	int idx = getRandomNumber(0, 5);
+
 	// FIXME: Should these be used instead of _val1 class variable?
-	//byte val1 = TREASURES_ARR1[idx];
-	//byte val2 = TREASURES_ARR2[idx];
+#if 0
+	static const byte TREASURES_ARR1[6] = { 1, 61, 86, 121, 156, 171 };
+	static const byte TREASURES_ARR2[6] = { 12, 5, 7, 7, 3, 12 };
+	byte val1 = TREASURES_ARR1[idx];
+	byte val2 = TREASURES_ARR2[idx];
+#endif
 
 	for (idx = 0; idx < count; ++idx)
 		_val1 += _allowFight;
