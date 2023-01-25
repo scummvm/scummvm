@@ -272,23 +272,23 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 			int16 damagePointsAbsorbed = 0;
 			int16 attackSpeed = _items[teamCharItemId]._attacks * _npcBuf[_teamCharId[teamCharId]]._speed;
 
-			// Action A - Loop var84 - Start
-			for (int var84 = 0; var84 < attackSpeed; ++var84) {
+			// Action A - Loop attackCounter - Start
+			for (int attackCounter = 0; attackCounter < attackSpeed; ++attackCounter) {
 				if (getRandom(100) < charScore) {
 					++hitCount;
 					if (!hasAdequateDefense(_teamMonsterIdArray[groupId], _items[teamCharItemId]._attackType)) {
-						int16 var7C = getRandom(_items[teamCharItemId]._damage);
-						int16 varInt = var7C - randomDamageAbsorbed;
-						if (varInt > 0) {
-							originalDamage += varInt;
+						int16 randomDamage = getRandom(_items[teamCharItemId]._damage);
+						int16 residualDamage = randomDamage - randomDamageAbsorbed;
+						if (residualDamage > 0) {
+							originalDamage += residualDamage;
 							damagePointsAbsorbed += randomDamageAbsorbed;
 						} else {
-							damagePointsAbsorbed += var7C;
+							damagePointsAbsorbed += randomDamage;
 						}
 					}
 				}
 			}
-			// Action A - Loop var84 - End
+			// Action A - Loop attackCounter - End
 
 			if (originalDamage < 0)
 				originalDamage = 0;
@@ -513,7 +513,7 @@ void EfhEngine::handleFight_MobstersAttack(int groupId) {
 			if (minTeamMemberId == -1)
 				continue;
 
-			// handleFight - Loop on var7E - Start
+			// handleFight - Loop on targetId - Start
 			for (int16 targetId = minTeamMemberId; targetId < maxTeamMemberId; ++targetId) {
 				if (_teamCharId[targetId] == -1 || !isTeamMemberStatusNormal(targetId))
 					continue;
@@ -667,7 +667,7 @@ void EfhEngine::handleFight_MobstersAttack(int groupId) {
 				genericGenerateSound(_items[monsterWeaponItemId]._attackType, hitCount);
 				displayBoxWithText(_messageToBePrinted, 1, 2, true);
 			}
-			// handleFight - Loop on var7E - End
+			// handleFight - Loop on targetId - End
 		} else if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[ctrMobsterId] > 0 && _teamMonsterEffects[groupId]._effect[ctrMobsterId] > 0) {
 			--_teamMonsterEffects[groupId]._duration[ctrMobsterId];
 			if (_teamMonsterEffects[groupId]._duration[ctrMobsterId] <= 0) {
@@ -1598,8 +1598,8 @@ void EfhEngine::addNewOpponents(int16 monsterId) {
 	}
 
 	if (teamMonsterId != -1) {
-		// addNewOpponents - loop var2 - Start
-		for (int var2 = 1; var2 < 3; ++var2) {
+		// addNewOpponents - loop distCtr - Start
+		for (int distCtr = 1; distCtr < 3; ++distCtr) {
 			if (teamMonsterId >= 5)
 				break;
 
@@ -1620,7 +1620,7 @@ void EfhEngine::addNewOpponents(int16 monsterId) {
 						if (!monsterActiveFound)
 							continue;
 
-						if (computeMonsterGroupDistance(ctrMapMonsterId) > var2)
+						if (computeMonsterGroupDistance(ctrMapMonsterId) > distCtr)
 							continue;
 
 						if (isMonsterAlreadyFighting(ctrMapMonsterId, teamMonsterId))
@@ -1641,7 +1641,7 @@ void EfhEngine::addNewOpponents(int16 monsterId) {
 				}
 			}
 		}
-		// addNewOpponents - loop var2 - End
+		// addNewOpponents - loop distCtr - End
 	}
 
 	if (teamMonsterId == -1 || teamMonsterId > 4)
