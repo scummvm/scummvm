@@ -329,6 +329,21 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._sprite != si2._sprite)
 		return si1._sprite < si2._sprite;
 
+	// Inv items always drawn first if their z-bottom is equal or higher.
+	// This is a bit of a hack as 2 places in Crusader there are keycards
+	// on tables but their z position is the bottom z of the table.
+	if (si1._invitem) {
+		if (si1._z >= si2._z)
+			return false;
+	}
+
+	// Clearly in z with at least one non-flat?
+	if (si1._z < si2._z && si1._zTop <= si2._z)
+		return true;
+
+	if (si1._z > si2._z && si1._z >= si2._zTop)
+		return false;
+
 	// Clearly in y?
 	if (si1._y <= si2._yFar)
 		return true;
@@ -339,21 +354,6 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._x <= si2._xLeft)
 		return true;
 	if (si1._xLeft >= si2._x)
-		return false;
-
-	// Inv items always drawn first if their z-bottom is equal or higher.
-	// This is a bit of a hack as 2 places in Crusader there are keycards
-	// on tables but their z position is the bottom z of the table.
-	if (si1._invitem) {
-		if (si1._z >= si2._z)
-			return false;
-	}
-
-	// Clearly in z?
-	if (si1._z < si2._z && si1._zTop <= si2._z)
-		return true;
-
-	if (si1._z > si2._z && si1._z >= si2._zTop)
 		return false;
 
 	// Overlapping z-bottom check
