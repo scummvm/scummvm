@@ -2704,6 +2704,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is ~LEGEND OF PSY•S CITY~
 	// English translation by Skye Sonomura (HomeStarRunnerTron)
 	MACGAME1_l("the7colors", "", "xn--~LEGEND OF PSYS CITY~-up9l", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 383745, Common::JA_JPN, 300),
+	// Alternate filename variation
+	MACGAME1_l("the7colors", "", "xn--~LEGEND OF PSYS CITY~-u558i", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 383745, Common::JA_JPN, 300),
 	MACGAME1("the7colors", "", "T7C-R!", "d84feae6ba35340857f46c9cbd6bd1a6", 398725, 300),
 	MACGAME1_l("the7colors", "No CD Yo! 6/21/15 hack", "xn--~LEGEND OF PSYS CITY~-u558i", "a6e50f2b8f294640a1d0cbe91a73e81c", 392267, Common::JA_JPN, 300),
 
@@ -4287,7 +4289,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("madtg", "1996 Demo", "MADTG.EXE", "f53afbe0ae5126fa04adce4952a84b7f", 5867859, 404),
 
 	// German 16bit version is unconfirmed (Trac #13225)
-	MACGAME1("majestic", "", "Majestic", "01be45e7241194dad07938e7059b88e3", 483774, 400),
+	MACGAME1("majestic", "", "Majestic", "01be45e7241194dad07938e7059b88e3", 483518, 400),
 	WINGAME1("majestic", "", "MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba", 23437631, 400),
 	WINGAME1_l("majestic", "",  "Maj16.exe", "65ef7246e9ab04aff59fb734e9551727", 23688481, Common::DE_DEU, 400),
 	WINGAME1t_l("majestic", "", "Maj32.exe", "d1cced6eff47da53845679d05b5d2bf3", 24166899, Common::DE_DEU, 400),
