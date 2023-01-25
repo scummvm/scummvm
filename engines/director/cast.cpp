@@ -1535,6 +1535,10 @@ Common::String Cast::formatCastSummary(int castId = -1) {
 			*it, castTypeToString(castMember->_type).c_str(),
 			castMemberInfo ? castMemberInfo->name.c_str() : ""
 		);
+
+		if (castMemberInfo && !castMemberInfo->fileName.empty())
+			result += ", filename=\"" + castMemberInfo->directory + g_director->_dirSeparator + castMemberInfo->fileName + "\"";
+
 		if (!info.empty()) {
 			result += ", ";
 			result += info;
