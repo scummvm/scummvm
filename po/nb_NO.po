@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-24 22:02+0000\n"
-"PO-Revision-Date: 2023-01-18 11:36+0000\n"
+"PO-Revision-Date: 2023-01-25 18:50+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -3836,13 +3836,11 @@ msgstr "I 3D-spill"
 
 #: backends/platform/android/options.cpp:152
 msgid "Forget SAF authorization"
-msgstr ""
+msgstr "Glem SAF-godkjenning"
 
 #: backends/platform/android/options.cpp:359
-#, fuzzy
-#| msgid "~R~emove Game"
 msgid "Remove"
-msgstr "~F~jern spill"
+msgstr "Fjern"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -6868,11 +6866,11 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_options.h:255
 msgid "Casio MT-540"
-msgstr ""
+msgstr "Casio MT-540"
 
 #: engines/sci/detection_options.h:259
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:4492
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -7145,17 +7143,14 @@ msgid "Enable the original GUI and Menu"
 msgstr "Bruk opprinnelig grensesnitt og meny"
 
 #: engines/scumm/dialogs.cpp:1053
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
 "for a more complete experience."
 msgstr ""
 "Lar spillet bruke spillmotorens grafiske grensesnitt og den opprinnelige "
-"menyen for lagring og innlasting av spill."
+"menyen for lagring og innlasting av spill. Bruk sammen med «Be om "
+"bekreftelse ved avslutting» for å få en mer autentisk opplevelse."
 
 #: engines/scumm/dialogs.cpp:1075
 msgid "Overture Timing:"
@@ -7838,17 +7833,14 @@ msgstr ""
 "tilgjengelig."
 
 #: engines/scumm/metaengine.cpp:667
-#, fuzzy
-#| msgid ""
-#| "Allow the game to use the in-engine graphical interface and the original "
-#| "save/load menu."
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 "Lar spillet bruke spillmotorens grafiske grensesnitt og den opprinnelige "
-"menyen for lagring og innlasting av spill."
+"menyen for lagring og innlasting av spill. Bruk sammen med «Be om "
+"bekreftelse ved avslutting» for å få en mer autentisk opplevelse."
 
 #: engines/scumm/metaengine.cpp:676
 msgid "Enable low latency audio mode"
@@ -7860,6 +7852,9 @@ msgid ""
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
+"Lar spillet bruke lyd med lav forsinkelse, på bekostning av lydpresisjon. "
+"Det er anbefalt at du kun bruker denne funksjonen hvis du opplever problemer "
+"med forsinket lyd under ordinær spilling."
 
 #: engines/scumm/scumm.cpp:263
 msgid ""
