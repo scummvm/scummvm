@@ -125,7 +125,7 @@ void Map01::special08() {
 			Game::Encounter &enc = g_globals->_encounters;
 			enc.clearMonsters();
 
-			uint count = getRandomNumber(4) + 4;
+			uint count = g_events->getRandomNumber(4) + 4;
 			enc.addMonster(6, 12);
 			for (uint i = 0; i < count; ++i)
 				enc.addMonster(4, 9);

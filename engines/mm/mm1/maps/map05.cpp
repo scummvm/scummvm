@@ -97,8 +97,9 @@ void Map05::special06() {
 		send(SoundMessage(
 			0, 1, STRING[!hasFlag() ? "maps.map05.man1" : "maps.map05.man2"],
 			[]() {
-				if (addScroll()) {
-					addFlag();
+				Map05 &map = *static_cast<Map05 *>(g_maps->_currentMap);
+				if (map.addScroll()) {
+					map.addFlag();
 					g_events->send(InfoMessage(0, 1, STRING["maps.map05.man3"]));
 				}
 			}

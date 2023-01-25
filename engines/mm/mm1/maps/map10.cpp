@@ -90,7 +90,7 @@ void Map10::special01() {
 			} else if (ks.keycode == Common::KEYCODE_n) {
 				g_events->send(SoundMessage(STRING["maps.map10.ranalou3"]));
 				g_maps->_mapPos = Common::Point(15, 0);
-				updateGame();
+				g_maps->_currentMap->updateGame();
 			}
 		}
 	));

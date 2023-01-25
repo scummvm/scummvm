@@ -129,7 +129,7 @@ void Map09::special08() {
 				SoundMessage msg(
 					STRING["maps.map09.shrine2"],
 					[]() {
-						g_globals->_treasure._items[2] = getRandomNumber(26) + 120;
+						g_globals->_treasure._items[2] = g_events->getRandomNumber(26) + 120;
 						g_globals->_treasure.setGold(120);
 						g_events->addAction(KEYBIND_SEARCH);
 					}
