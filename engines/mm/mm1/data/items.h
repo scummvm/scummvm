@@ -119,19 +119,19 @@ struct ItemsArray : public Common::Array<Item>, public TextParser {
 
 inline bool isWeapon(byte id) {
 	return id >= 1 && id <= 60;
-};
+}
 inline bool isMissile(byte id) {
 	return id >= 61 && id <= 85;
-};
+}
 inline bool isTwoHanded(byte id) {
 	return id >= 86 && id <= 120;
-};
+}
 inline bool isArmor(byte id) {
 	return id >= 121 && id <= 155;
-};
+}
 inline bool isShield(byte id) {
 	return id >= 156 && id <= 170;
-};
+}
 
 extern ItemCategory getItemCategory(byte itemId);
 
