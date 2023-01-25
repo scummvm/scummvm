@@ -249,10 +249,14 @@ void Subtitles::setFont(const char *fontname, int height) {
 	if (file.open(fontname)) {
 		_font = Graphics::loadTTFFont(file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
 	}
+
+	if (!_font) {
+		_font = Graphics::loadTTFFontFromArchive(fontname, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
+	}
 #endif
 
 	if (!_font) {
-		warning("Cannot load font %s directly", fontname);
+		debug(1, "Cannot load font %s directly", fontname);
 		_font = FontMan.getFontByName(fontname);
 	}
 
