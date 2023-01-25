@@ -164,9 +164,10 @@ void Map11::selectDial(int dialIndex) {
 		[](const Common::KeyState &ks) {
 			if (ks.keycode >= Common::KEYCODE_a &&
 					ks.keycode <= Common::KEYCODE_z) {
+				Map11 &map = *static_cast<Map11 *>(g_maps->_currentMap);
 				g_events->close();
-				static_cast<Map11 *>(g_maps->_currentMap)->setDialChar(ks.ascii);
-				none160();
+				map.setDialChar(ks.ascii);
+				map.none160();
 			}
 		}
 	));
