@@ -1,3 +1,4 @@
+-- single arg variant, return type
 put ilk(10)
 put ilk(20.0)
 put ilk("Macromedia")
@@ -5,3 +6,12 @@ put ilk(point(10, 20))
 put ilk(ilk(10))
 set x = point(10, 20)
 put ilk(x)
+
+-- two arg variant, return if type matches
+put ilk(10, #integer)
+put ilk("Macromedia", #string)
+set x = list(1,2,3)
+put ilk(x, #list)
+put ilk(x, #linearlist)
+put ilk(x, #integer)
+

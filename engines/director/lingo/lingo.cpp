@@ -1161,16 +1161,16 @@ bool Datum::isCastRef() const {
 	return (type == CASTREF || type == FIELDREF);
 }
 
-const char *Datum::type2str(bool isk) const {
+const char *Datum::type2str(bool ilk) const {
 	static char res[20];
 
-	switch (isk ? u.i : type) {
+	switch (type) {
 	case ARGC:
 		return "ARGC";
 	case ARGCNORET:
 		return "ARGCNORET";
 	case ARRAY:
-		return "ARRAY";
+		return ilk ? "linearlist" : "ARRAY";
 	case CASTREF:
 		return "CASTREF";
 	case CHUNKREF:
@@ -1178,33 +1178,33 @@ const char *Datum::type2str(bool isk) const {
 	case FIELDREF:
 		return "FIELDREF";
 	case FLOAT:
-		return isk ? "#float" : "FLOAT";
+		return ilk ? "float" : "FLOAT";
 	case GLOBALREF:
 		return "GLOBALREF";
 	case INT:
-		return isk ? "#integer" : "INT";
+		return ilk ? "integer" : "INT";
 	case LOCALREF:
 		return "LOCALREF";
 	case MENUREF:
 		return "MENUREF";
 	case OBJECT:
-		return isk ? "#object" : "OBJECT";
+		return ilk ? "object" : "OBJECT";
 	case PARRAY:
-		return "PARRAY";
+		return ilk ? "proplist" : "PARRAY";
 	case POINT:
-		return isk ? "#point" : "POINT";
+		return ilk ? "point" : "POINT";
 	case PROPREF:
 		return "PROPREF";
 	case RECT:
-		return "RECT";
+		return ilk ? "rect" : "RECT";
 	case STRING:
-		return isk ? "#string" : "STRING";
+		return ilk ? "string" : "STRING";
 	case SYMBOL:
-		return isk ? "#symbol" : "SYMBOL";
+		return ilk ? "symbol" : "SYMBOL";
 	case VARREF:
 		return "VARREF";
 	case VOID:
-		return isk ? "#void" : "VOID";
+		return ilk ? "void" : "VOID";
 	default:
 		snprintf(res, 20, "-- (%d) --", type);
 		return res;
