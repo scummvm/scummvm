@@ -347,6 +347,8 @@ static const uint16 sig_uninitread_sq1_1[] = {
 // Workarounds for uninitialized reads for parameters
 //    gameID,           room,script,lvl,          object-name, method-name,       local-call-signature, index-range,  workaround
 const SciWorkaroundEntry uninitializedReadForParamWorkarounds[] = {
+	{ GID_ALL,            -1,   990, -1,            "Restore", "doit",                         nullptr,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When opening original restore dialog in SCI16 games
+	{ GID_ALL,            -1, 64990, -1,            "Restore", "doit",                         nullptr,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When opening original restore dialog in SCI32 games
 	{ GID_GK1,            -1,    12, -1,          "GKIconbar", "showInvItem",                  nullptr,     1,     1,{ WORKAROUND_FAKE,   1 } }, // When showing the icon bar containing an inventory item
 	{ GID_HOYLE5,         -1,    15, -1,               "Hand", "add",                          nullptr,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When the game adds cards to your hand in any mini-game
 	{ GID_HOYLE5,        700,   730,  0,              nullptr, "runningSuit",                  nullptr,     2,     2,{ WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
@@ -364,6 +366,7 @@ const SciWorkaroundEntry uninitializedReadForParamWorkarounds[] = {
 // Workarounds for uninitialized reads for temporary variables
 //    gameID,           room,script,lvl,          object-name, method-name,       local-call-signature, index-range,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
+	{ GID_ALL,            -1,   990,  0,            "Restore", "doit",                         nullptr,   364,   364, { WORKAROUND_FAKE,   0 } }, // When pressing Restore button in original restore dialog when list is empty
 	{ GID_CAMELOT,        40,    40,  0,               "Rm40", "handleEvent",                  nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when looking at the ground at the pool of Siloam - bug #6401
 	{ GID_CASTLEBRAIN,   280,   280,  0,         "programmer", "dispatchEvent",                nullptr,     0,     0, { WORKAROUND_FAKE, 0xf } }, // pressing 'q' on the computer screen in the robot room, and closing the help dialog that pops up (bug #5143). Moves the cursor to the view with the ID returned (in this case, the robot hand)
 	{ GID_CASTLEBRAIN,   320,   325,  0,               "word", "dispatchEvent",                nullptr,    14,    15, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle, temp 14 and 15 - bug #9783
@@ -527,7 +530,6 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",                         nullptr,     1,     1, { WORKAROUND_FAKE,   0 } }, // accessing the inventory
 	{ GID_QFG2,           -1,    79,  0,        "TryToMoveTo", "onTarget",                     nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when throwing pot at air elemental, happens when client coordinates are the same as airElemental coordinates. happened to me right after room change - bug #6859
 	{ GID_QFG2,           -1,   701, -1,              "Alley", "at",                           nullptr,     0,     0, { WORKAROUND_FAKE,   0 } }, // when walking inside the alleys in the town - bug #5019 & #5106
-	{ GID_QFG2,           -1,   990,  0,            "Restore", "doit",                         nullptr,   364,   364, { WORKAROUND_FAKE,   0 } }, // when pressing enter in restore dialog w/o any saved games present
 	{ GID_QFG2,          260,   260,  0,             "abdulS", "changeState",    sig_uninitread_qfg2_1,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Abdul is about to enter the house (where you have to hide in the wardrobe), bug #5153, temps 1 and 2
 	{ GID_QFG2,          260,   260,  0,            "jabbarS", "changeState",    sig_uninitread_qfg2_1,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Jabbar is about to enter the house (where you have to hide in the wardrobe), bug #5164, temps 1 and 2
 	{ GID_QFG2,          500,   500,  0,   "lightNextCandleS", "changeState",                  nullptr,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // Inside the last room, while Ad Avis performs the ritual to summon the genie - bug #5566
@@ -1170,7 +1172,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 				bool objectNameMatches = (workaround->objectName == nullptr) ||
 										 (workaround->objectName == searchObjectName);
 
-				if (workaround->gameId == gameId
+				if (((workaround->gameId == GID_ALL) || (workaround->gameId == gameId))
 						&& ((workaround->scriptNr == -1) || (workaround->scriptNr == curScriptNr))
 						&& ((workaround->roomNr == -1) || (workaround->roomNr == curRoomNumber))
 						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
