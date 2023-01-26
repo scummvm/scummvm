@@ -220,6 +220,9 @@ struct SortItem {
 	// Calculate screenspace box bounds at center point from worldspace bounds
 	inline void calculateBoxBounds(int32 sx, int32 sy);
 
+	// Check if the given point is inside the screenpace bounds.
+	inline bool contains(int32 sx, int32 sy) const;
+
 	// Screenspace check to see if this overlaps si2
 	inline bool overlap(const SortItem &si2) const;
 
@@ -255,6 +258,40 @@ inline void SortItem::calculateBoxBounds(int32 sx, int32 sy) {
 	_sxBot = (_x - _y) / 4 - sx;
 	// Screenspace bounding box bottom extent  (RNB y coord)
 	_syBot = (_x + _y) / 8 - _z - sy;
+}
+
+inline bool SortItem::contains(int32 sx, int32 sy) const {
+	const int point_top_diff[2] = { _sxTop - sx, _syTop - sy };
+	const int point_bot_diff[2] = { _sxBot - sx, _syBot - sy };
+
+	// This function is a bit of a hack. It uses dot products between
+	// points and the lines. Nothing is normalized since that isn't
+	// important
+
+	// 'normal' of top  left line ( 2,-1) of the bounding box
+	const int32 dot_top_left = point_top_diff[0] + point_top_diff[1] * 2;
+
+	// 'normal' of top right line ( 2, 1) of the bounding box
+	const int32 dot_top_right = -point_top_diff[0] + point_top_diff[1] * 2;
+
+	// 'normal' of bot  left line (-2,-1) of the bounding box
+	const int32 dot_bot_left = point_bot_diff[0] - point_bot_diff[1] * 2;
+
+	// 'normal' of bot right line (-2, 1) of the bounding box
+	const int32 dot_bot_right = -point_bot_diff[0] - point_bot_diff[1] * 2;
+
+	const bool right_clear = _sxRight < sx;
+	const bool left_clear = _sxLeft > sx;
+	const bool top_left_clear = dot_top_left > 0;
+	const bool top_right_clear = dot_top_right > 0;
+	const bool bot_left_clear = dot_bot_left > 0;
+	const bool bot_right_clear = dot_bot_right > 0;
+
+	const bool clear = right_clear || left_clear ||
+					   (bot_right_clear || bot_left_clear) ||
+					   (top_right_clear || top_left_clear);
+
+	return !clear;
 }
 
 inline bool SortItem::overlap(const SortItem &si2) const {

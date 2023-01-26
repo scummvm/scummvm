@@ -11,7 +11,6 @@
  *  * overlapping in various dimensions
  *  * flat (z == zTop) items with various flags
  *  * special case for crusader inventory items
- *  * items that are flat in x or y (what should these do?)
  */
 class U8SortItemTestSuite : public CxxTest::TestSuite {
 	public:
@@ -296,5 +295,45 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		// FIXME: This case fails here currently
 		//TS_ASSERT(!si1.occludes(si2));
 		TS_ASSERT(!si2.occludes(si1));
+	}
+
+	void test_basic_contains() {
+		Ultima::Ultima8::SortItem si1(nullptr);
+
+		si1._xLeft = 0;
+		si1._yFar = 0;
+		si1._z  = 0;
+		si1._y = 128;
+		si1._x  = 128;
+		si1._zTop = 16;
+
+		si1.calculateBoxBounds(0, 0);
+
+		// Inside bounds
+		TS_ASSERT(si1.contains(si1._sxBot, si1._syBot - 1));
+		TS_ASSERT(si1.contains(si1._sxTop, si1._syTop + 1));
+		TS_ASSERT(si1.contains(si1._sxLeft + 1, (si1._syTop + si1._syBot) / 2));
+		TS_ASSERT(si1.contains(si1._sxRight - 1, (si1._syTop + si1._syBot) / 2));
+		TS_ASSERT(si1.contains((si1._sxLeft + si1._sxRight) / 2, (si1._syTop + si1._syBot) / 2));
+
+		// Currently inclusive of all edges
+		TS_ASSERT(si1.contains(si1._sxBot, si1._syBot));
+		TS_ASSERT(si1.contains(si1._sxTop, si1._syTop));
+		TS_ASSERT(si1.contains(si1._sxLeft, (si1._syTop + si1._syBot) / 2));
+		TS_ASSERT(si1.contains(si1._sxRight, (si1._syTop + si1._syBot) / 2));
+
+		// Outside bounds
+		TS_ASSERT(!si1.contains(si1._sxBot, si1._syBot + 1));
+		TS_ASSERT(!si1.contains(si1._sxTop, si1._syTop - 1));
+		TS_ASSERT(!si1.contains(si1._sxLeft - 1, (si1._syTop + si1._syBot) / 2));
+		TS_ASSERT(!si1.contains(si1._sxRight + 1, (si1._syTop + si1._syBot) / 2));
+		TS_ASSERT(!si1.contains(si1._sxLeft, si1._syTop));
+		TS_ASSERT(!si1.contains(si1._sxLeft, si1._syBot));
+		TS_ASSERT(!si1.contains(si1._sxRight, si1._syTop));
+		TS_ASSERT(!si1.contains(si1._sxRight, si1._syBot));
+		TS_ASSERT(!si1.contains(si1._sxBot + 1, si1._syBot));
+		TS_ASSERT(!si1.contains(si1._sxBot - 1, si1._syBot));
+		TS_ASSERT(!si1.contains(si1._sxTop + 1, si1._syTop));
+		TS_ASSERT(!si1.contains(si1._sxTop - 1, si1._syTop));
 	}
 };
