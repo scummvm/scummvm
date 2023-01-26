@@ -22,11 +22,11 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1(nullptr);
 		Ultima::Ultima8::SortItem si2(nullptr);
 
-		si1._yFar = 0;
-		si1._y = 10;
-		si2._yFar = 20;
-		si2._y = 30;
-		si1._x = si2._x = 10;
+		Ultima::Ultima8::Box b1(0, 10, 0, 10, 10, 0);
+		Ultima::Ultima8::Box b2(0, 30, 0, 10, 10, 0);
+		si1.setBoxBounds(b1, 0, 0);
+		si2.setBoxBounds(b2, 0, 0);
+
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
 	}
@@ -36,10 +36,11 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1(nullptr);
 		Ultima::Ultima8::SortItem si2(nullptr);
 
-		si1._y = si2._y = 10;
-		si1._x = 10;
-		si2._xLeft = 20;
-		si2._x = 30;
+		Ultima::Ultima8::Box b1(10, 0, 0, 10, 10, 0);
+		Ultima::Ultima8::Box b2(30, 0, 0, 10, 10, 0);
+		si1.setBoxBounds(b1, 0, 0);
+		si2.setBoxBounds(b2, 0, 0);
+
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
 	}
@@ -49,10 +50,11 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1(nullptr);
 		Ultima::Ultima8::SortItem si2(nullptr);
 
-		si1._x = si2._x = si1._y = si2._y = 10;
-		si1._zTop = 10;
-		si2._z = 20;
-		si2._zTop = 30;
+		Ultima::Ultima8::Box b1(10, 10, 0, 10, 10, 10);
+		Ultima::Ultima8::Box b2(10, 10, 20, 10, 10, 10);
+		si1.setBoxBounds(b1, 0, 0);
+		si2.setBoxBounds(b2, 0, 0);
+
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
 	}
@@ -62,13 +64,14 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1(nullptr);
 		Ultima::Ultima8::SortItem si2(nullptr);
 
-		si2._sprite = true;
-		TS_ASSERT(si1.below(si2));
-		TS_ASSERT(!si2.below(si1));
+		Ultima::Ultima8::Box b1(0, 0, 10, 10, 10, 10);
+		Ultima::Ultima8::Box b2(0, 0, 0, 10, 10, 10);
+		si1.setBoxBounds(b1, 0, 0);
+		si2.setBoxBounds(b2, 0, 0);
+		TS_ASSERT(!si1.below(si2));
+		TS_ASSERT(si2.below(si1));
 
-		si2._x = si2._xLeft = si1._y = si2._yFar = 10;
-		si2._z = 20;
-		si2._zTop = 30;
+		si2._sprite = true;
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
 	}
@@ -78,7 +81,10 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1(nullptr);
 		Ultima::Ultima8::SortItem si2(nullptr);
 
-		si1._x = si2._x = si1._y = si2._y = 10;
+		Ultima::Ultima8::Box b1(0, 0, 0, 10, 10, 0);
+		Ultima::Ultima8::Box b2(0, 0, 0, 10, 10, 0);
+		si1.setBoxBounds(b1, 0, 0);
+		si2.setBoxBounds(b2, 0, 0);
 
 		si1._flat = true;
 		si2._flat = true;
@@ -133,23 +139,16 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 		// Land always gets drawn below
 		// MainActor::teleport 6 7642 19776 48
-		si1._x = 128;
-		si1._y = 32;
-		si1._z = 0;
-		si1._xLeft = 0;
-		si1._yFar = 0;
-		si1._zTop = 8;
+		Ultima::Ultima8::Box b1(36, 0, 0, 128, 32, 8);
+		si1.setBoxBounds(b1, 0, 0);
 		si1._occl = true;
 		si1._roof = true;
 		si1._land = true;
 
-		si2._x = 92;
-		si2._y = 64;
-		si2._z = 0;
-		si2._xLeft = 28;
-		si2._yFar = 0;
-		si2._zTop = 40;
+		Ultima::Ultima8::Box b2(0, 32, 0, 120, 64, 40);
+		si2.setBoxBounds(b2, 0, 0);
 		si2._solid = true;
+
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
 	}
@@ -163,20 +162,12 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1(nullptr);
 		Ultima::Ultima8::SortItem si2(nullptr);
 
-		si1._x = 32;
-		si1._y = 96;
-		si1._z = 0;
-		si1._xLeft = 0;
-		si1._yFar = 0;
-		si1._zTop = 40;
+		Ultima::Ultima8::Box b1(17407, 16127, 48, 32, 96, 40);
+		si1.setBoxBounds(b1, 0, 0);
 		si1._solid = true;
 
-		si2._x = 32;
-		si2._y = 160;
-		si2._z = 0;
-		si2._xLeft = 0;
-		si2._yFar = 32;
-		si2._zTop = 40;
+		Ultima::Ultima8::Box b2(17407, 16191, 48, 32, 128, 40);
+		si2.setBoxBounds(b2, 0, 0);
 		si2._trans = true;
 		si2._solid = true;
 		si2._land = true;
@@ -193,20 +184,12 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1(nullptr);
 		Ultima::Ultima8::SortItem si2(nullptr);
 
-		si1._x = 64;
-		si1._y = 0;
-		si1._z = 16;
-		si1._xLeft = 0;
-		si1._yFar = 0;
-		si1._zTop = 32;
+		Ultima::Ultima8::Box b1(64, 0, 16, 64, 0, 16);
+		si1.setBoxBounds(b1, 0, 0);
 		si1._solid = true;
 
-		si2._x = 64;
-		si2._y = 64;
-		si2._z = 0;
-		si2._xLeft = 0;
-		si2._yFar = 0;
-		si2._zTop = 40;
+		Ultima::Ultima8::Box b2(64, 64, 0, 64, 64, 40);
+		si2.setBoxBounds(b2, 0, 0);
 		si2._solid = true;
 
 		TS_ASSERT(si1.below(si2));
@@ -221,21 +204,13 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1(nullptr);
 		Ultima::Ultima8::SortItem si2(nullptr);
 
-		si1._x = 129;
-		si1._y = 32;
-		si1._z = 0;
-		si1._xLeft = 65;
-		si1._yFar = 0;
-		si1._zTop = 24;
+		Ultima::Ultima8::Box b1(129, 32, 0, 64, 64, 24);
+		si1.setBoxBounds(b1, 0, 0);
 		si1._anim = true;
 		si1._solid = true;
 
-		si2._x = 64;
-		si2._y = 69;
-		si2._z = 24;
-		si2._xLeft = 0;
-		si2._yFar = 5;
-		si2._zTop = 64;
+		Ultima::Ultima8::Box b2(64, 69, 24, 64, 64, 40);
+		si2.setBoxBounds(b2, 0, 0);
 		si2._solid = true;
 
 		TS_ASSERT(si1.below(si2));
