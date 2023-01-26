@@ -151,7 +151,7 @@ void Map29::special03() {
 		STRING["maps.map29.attack"],
 		[]() {
 			Game::Encounter &enc = g_globals->_encounters;
-			int monsterCount = getRandomNumber(5) + 6;
+			int monsterCount = g_events->getRandomNumber(5) + 6;
 			g_maps->clearSpecial();
 
 			enc.clearMonsters();
