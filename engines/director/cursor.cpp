@@ -23,6 +23,7 @@
 #include "graphics/wincursor.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/cursor.h"
 #include "director/movie.h"
 #include "director/castmember.h"
@@ -175,25 +176,17 @@ void Cursor::readFromResource(Datum resourceId) {
 	default:
 		bool readSuccessful = false;
 
-		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
-			MacArchive *arch = (MacArchive *)it->_value;
-			Common::SeekableReadStreamEndian *cursorStream = nullptr;
-			if (arch->hasResource(MKTAG('C', 'U', 'R', 'S'), resourceId.asInt()))
-				cursorStream = arch->getResource(MKTAG('C', 'U', 'R', 'S'), resourceId.asInt());
-
-			if (!cursorStream && arch->hasResource(MKTAG('C', 'R', 'S', 'R'), resourceId.asInt()))
-				cursorStream = arch->getResource(MKTAG('C', 'R', 'S', 'R'), resourceId.asInt());
-
-			if (cursorStream && readFromStream(*((Common::SeekableReadStream *)cursorStream), false, 0)) {
-				_usePalette = true;
-				_keyColor = 0xff;
-				readSuccessful = true;
-
-				resetCursor(Graphics::kMacCursorCustom, false, resourceId);
-				delete cursorStream;
+		Cast *cast = g_director->getCurrentMovie()->getCast();
+		if (cast && cast->getArchive()) {
+			readSuccessful = readFromArchive(cast->getArchive(), resourceId.asInt());
+			if (readSuccessful)
 				break;
-			}
-			delete cursorStream;
+		}
+
+		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
+			readSuccessful = readFromArchive(it->_value, resourceId.asInt());
+			if (readSuccessful)
+				break;
 		}
 
 		// TODO: figure out where to read custom cursor in windows platform
@@ -221,6 +214,26 @@ void Cursor::readFromResource(Datum resourceId) {
 		if (!readSuccessful)
 			readBuiltinType(resourceId.asInt() & 0x7f);
 	}
+}
+
+bool Cursor::readFromArchive(Archive *archive, uint16 resourceId) {
+	bool readSuccessful = false;
+	Common::SeekableReadStreamEndian *cursorStream = nullptr;
+	if (archive->hasResource(MKTAG('C', 'U', 'R', 'S'), resourceId))
+		cursorStream = archive->getResource(MKTAG('C', 'U', 'R', 'S'), resourceId);
+
+	if (!cursorStream && archive->hasResource(MKTAG('C', 'R', 'S', 'R'), resourceId))
+		cursorStream = archive->getResource(MKTAG('C', 'R', 'S', 'R'), resourceId);
+
+	if (cursorStream && readFromStream(*((Common::SeekableReadStream *)cursorStream), false, 0)) {
+		_usePalette = true;
+		_keyColor = 0xff;
+		readSuccessful = true;
+
+		resetCursor(Graphics::kMacCursorCustom, false, resourceId);
+	}
+	delete cursorStream;
+	return readSuccessful;
 }
 
 void Cursor::resetCursor(Graphics::MacCursorType type, bool shouldClear, Datum resId) {

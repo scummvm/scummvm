@@ -34,6 +34,7 @@ class MacCursor;
 
 namespace Director {
 
+class Archive;
 struct CursorRef;
 
 class Cursor : public Graphics::MacCursor {
@@ -45,6 +46,7 @@ class Cursor : public Graphics::MacCursor {
 	void readFromCast(Datum casts);
 	void readFromResource(Datum resourceId);
 	void readBuiltinType(Datum resourceId);
+	bool readFromArchive(Archive *archive, uint16 resourceId);
 
 	bool isEmpty() {return Datum(0).equalTo(_cursorResId);}
 	bool operator==(const Cursor &c);
