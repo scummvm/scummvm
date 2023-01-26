@@ -383,6 +383,10 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	uint32 startPos = stream->pos();
 	stream->readUint32LE(); // unknown (always 0?)
 
+	Common::DumpFile out;
+
+	_stream = stream;
+
 	while ((uint32)stream->pos() < startPos + cftcSize) {
 		uint32 tag = convertTagToUppercase(stream->readUint32BE());
 
@@ -412,19 +416,21 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			}
 		}
 
-		stream->seek(startResPos);
-
 		debug(3, "Found RIFF resource '%s' %d: %d @ 0x%08x (0x%08x)", tag2str(tag), id, size, offset, startOffset + offset);
 
-		ResourceMap &resMap = _types[tag];
-		Resource &res = resMap[id];
+		Resource &res = _types[tag][id];
+		res.index = id;
 		res.offset = offset;
 		res.size = size;
 		res.name = name;
 		res.tag = tag;
+
+		if (ConfMan.getBool("dump_scripts"))
+			dumpChunk(res, out);
+
+		stream->seek(startResPos);
 	}
 
-	_stream = stream;
 	return true;
 }
 
