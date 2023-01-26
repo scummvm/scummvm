@@ -195,7 +195,7 @@ void Map12::setPolyhedron(int polyIndex) {
 			msg,
 			[]() {
 				static_cast<Map12 *>(g_maps->_currentMap)->spinPolyhedron(0);
-				updateGame();
+				g_maps->_currentMap->updateGame();
 			}
 		));
 
@@ -206,9 +206,9 @@ void Map12::setPolyhedron(int polyIndex) {
 				if (ks.keycode >= Common::KEYCODE_0 &&
 						ks.keycode <= Common::KEYCODE_9) {
 					g_events->close();
-					static_cast<Map12 *>(g_maps->_currentMap)->spinPolyhedron(
-						ks.ascii | 0x80);
-					none160();
+					Map12 &map = *static_cast<Map12 *>(g_maps->_currentMap);
+					map.spinPolyhedron(ks.ascii | 0x80);
+					map.none160();
 				}	
 			}
 		));

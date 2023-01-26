@@ -96,11 +96,11 @@ void Map32::special02() {
 				if (ks.keycode == Common::KEYCODE_y) {
 					g_events->close();
 					map[VAL2] = 0xff;
-					updateGame();
+					map.updateGame();
 				} else if (ks.keycode == Common::KEYCODE_n) {
 					g_events->close();
 					map[VAL2]++;
-					updateGame();
+					map.updateGame();
 				}
 			}
 		));

@@ -90,7 +90,7 @@ void Map14::special00() {
 
 					// Note: The original seems to be backwards
 					if (ks.keycode == Common::KEYCODE_n &&
-							getRandomNumber(3) == 3) {
+							g_events->getRandomNumber(3) == 3) {
 						g_maps->_mapPos = Common::Point(15, 10);
 					} else {
 						map[VAL1]++;

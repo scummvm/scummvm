@@ -110,7 +110,7 @@ void Map30::special03() {
 					MAX((int)c._age._base - 20, 18);
 			}
 
-			none160();
+			g_maps->_currentMap->none160();
 		}
 	));
 }

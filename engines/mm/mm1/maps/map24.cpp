@@ -61,7 +61,7 @@ void Map24::special01() {
 			Map24 &map = *static_cast<Map24 *>(g_maps->_currentMap);
 			if (!map.addItem(MAP_OF_DESERT_ID)) {
 				g_maps->clearSpecial();
-				none160();
+				map.none160();
 			}
 		}
 	);
@@ -145,7 +145,7 @@ void Map24::special09() {
 			c._backpack[1]._id = PIRATES_MAP_B_ID;
 
 			g_maps->clearSpecial();
-			none160();
+			g_maps->_currentMap->none160();
 		}
 	));
 }

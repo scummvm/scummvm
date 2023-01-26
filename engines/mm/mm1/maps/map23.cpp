@@ -116,7 +116,7 @@ void Map23::special08() {
 		[]() {
 			g_maps->_mapPos = Common::Point(
 				getRandomNumber(15), getRandomNumber(15));
-			updateGame();
+			g_maps->_currentMap->updateGame();
 		}
 	));
 }

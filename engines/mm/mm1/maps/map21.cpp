@@ -136,12 +136,12 @@ void Map21::special02() {
 
 				g_events->send(SoundMessage(STRING["maps.map21.not_enough_gold"]));
 				g_maps->_mapPos.y++;
-				updateGame();
+				g_maps->_currentMap->updateGame();
 
 			} else if (ks.keycode == Common::KEYCODE_n) {
 				g_events->close();
 				g_maps->_mapPos.y++;
-				updateGame();
+				g_maps->_currentMap->updateGame();
 			}
 		}
 	));

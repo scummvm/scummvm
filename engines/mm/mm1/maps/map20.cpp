@@ -142,7 +142,7 @@ void Map20::special03() {
 				[](const Common::KeyState &ks) {
 					if (ks.keycode == Common::KEYCODE_0) {
 						g_events->focusedView()->close();
-						none160();
+						g_maps->_currentMap->none160();
 					} else if (ks.keycode == Common::KEYCODE_2) {
 						g_events->focusedView()->close();
 						g_events->send(SoundMessage(

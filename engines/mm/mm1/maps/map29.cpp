@@ -115,7 +115,7 @@ void Map29::special01() {
 				if (ks.keycode == Common::KEYCODE_y) {
 					g_events->close();
 					g_maps->_mapPos = Common::Point(12, 12);
-					updateGame();
+					g_maps->_currentMap->updateGame();
 				} else if (ks.keycode == Common::KEYCODE_n) {
 					Game::Encounter &enc = g_globals->_encounters;
 					Map29 &map = *static_cast<Map29 *>(g_maps->_currentMap);
@@ -208,7 +208,7 @@ void Map29::begone() {
 	g_maps->_mapPos.y = 7;
 	SoundMessage msg(STRING["maps.map29.begone"],
 		[]() {
-			updateGame();
+			g_maps->_currentMap->updateGame();
 		}
 	);
 	msg._delaySeconds = 2;

@@ -181,7 +181,7 @@ void Map15::special06() {
 					STRING["maps.map15.percella2"],
 					[]() {
 						g_maps->_mapPos = Common::Point(14, 2);
-						updateGame();
+						g_maps->_currentMap->updateGame();
 					}
 				);
 				msg._delaySeconds = 5;

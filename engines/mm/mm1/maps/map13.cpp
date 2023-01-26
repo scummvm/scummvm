@@ -148,7 +148,7 @@ void Map13::special10() {
 			0, 1, STRING["maps.map13.snake_pit"],
 			[]() {
 				static_cast<Map13 *>(g_maps->_currentMap)->encounter(
-					getRandomNumber(3) + 10, 14, 1);
+					g_events->getRandomNumber(3) + 10, 14, 1);
 			}
 		);
 		msg._delaySeconds = 2;

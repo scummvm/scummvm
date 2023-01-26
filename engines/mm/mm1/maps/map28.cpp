@@ -120,7 +120,7 @@ void Map28::special() {
 						g_events->send(SoundMessage(STRING["maps.map28.poof"]));
 						g_maps->_mapPos = Common::Point(
 							getRandomNumber(15), getRandomNumber(15));
-						updateGame();
+						map.updateGame();
 						break;
 
 					default:
