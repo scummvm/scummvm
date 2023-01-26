@@ -65,6 +65,10 @@ protected:
 private:
 	bool _isPortable;
 	bool detectPortableConfigFile();
+
+#if defined(USE_JPEG)
+	void initializeJpegLibraryForWin95();
+#endif
 };
 
 #endif
