@@ -1642,15 +1642,12 @@ void Inter_v1::o1_drawLine(OpFuncParams &params) {
 
 void Inter_v1::o1_strToLong(OpFuncParams &params) {
 	char str[20];
-	int16 strVar;
-	int16 destVar;
-	int32 res;
 
-	strVar = _vm->_game->_script->readVarIndex();
+	uint16 strVar = _vm->_game->_script->readVarIndex();
 	Common::strlcpy(str, GET_VARO_STR(strVar), 20);
-	res = atoi(str);
+	int32 res = atoi(str);
 
-	destVar = _vm->_game->_script->readVarIndex();
+	uint16 destVar = _vm->_game->_script->readVarIndex();
 	WRITE_VAR_OFFSET(destVar, res);
 }
 
