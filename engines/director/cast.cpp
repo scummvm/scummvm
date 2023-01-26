@@ -772,8 +772,6 @@ void Cast::loadSoundData(int key, SoundCastMember *soundCast) {
 		if (!_castsInfo[key]->directory.empty())
 			filename = _castsInfo[key]->directory + g_director->_dirSeparator + _castsInfo[key]->fileName;
 
-		warning("Filename is: %s", filename.c_str());
-
 		AudioFileDecoder *audio = new AudioFileDecoder(filename);
 		soundCast->_audio = audio;
 	} else {
