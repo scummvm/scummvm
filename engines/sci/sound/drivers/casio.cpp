@@ -201,7 +201,7 @@ void MidiDriver_Casio::playSwitch(bool play) {
 	_playSwitch = play;
 	if (!_playSwitch)
 		stopAllNotes(0xFF, 0xFF);
-};
+}
 
 void MidiDriver_Casio::noteOn(byte outputChannel, byte note, byte velocity, int8 source) {
 	if (velocity == 0) {
