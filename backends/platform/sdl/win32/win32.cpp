@@ -80,6 +80,10 @@ void OSystem_Win32::init() {
 	_dialogManager = new Win32DialogManager((SdlWindow_Win32*)_window);
 #endif
 
+#if defined(USE_JPEG)
+	initializeJpegLibraryForWin95();
+#endif
+
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
 }
@@ -500,5 +504,23 @@ void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 AudioCDManager *OSystem_Win32::createAudioCDManager() {
 	return createWin32AudioCDManager();
 }
+
+// libjpeg-turbo uses SSE instructions that error on at least some Win95 machines.
+// These can be disabled with an environment variable. Fixes bug #13643
+#if defined(USE_JPEG)
+void OSystem_Win32::initializeJpegLibraryForWin95() {
+	OSVERSIONINFO versionInfo;
+	ZeroMemory(&versionInfo, sizeof(versionInfo));
+	versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+	GetVersionEx(&versionInfo);
+
+	// Is Win95?
+	if (versionInfo.dwMajorVersion == 4 && versionInfo.dwMinorVersion == 0) {
+		// Disable SSE instructions in libjpeg-turbo.
+		// This limits detected extensions to 3DNOW and MMX.
+		_tputenv(TEXT("JSIMD_FORCE3DNOW=1"));
+	}
+}
+#endif
 
 #endif
