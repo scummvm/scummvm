@@ -406,28 +406,25 @@ void Combat::selectTreasure() {
 void Combat::selectTreasure2(int count) {
 	_treasureFlags[count - 1] = true;
 
+	// Select item base and step offset
 	int idx = getRandomNumber(0, 5);
 
-	// FIXME: Should these be used instead of _val1 class variable?
-#if 0
 	static const byte TREASURES_ARR1[6] = { 1, 61, 86, 121, 156, 171 };
 	static const byte TREASURES_ARR2[6] = { 12, 5, 7, 7, 3, 12 };
-	byte val1 = TREASURES_ARR1[idx];
-	byte val2 = TREASURES_ARR2[idx];
-#endif
+	byte itemId = TREASURES_ARR1[idx];
+	byte rndCount = TREASURES_ARR2[idx];
 
 	for (idx = 0; idx < count; ++idx)
-		_val1 += _allowFight;
-
-	_val1 += getRandomNumber(_allowFight) - 1;
+		itemId += rndCount;
+	itemId += getRandomNumber(rndCount) - 1;
 
 	auto &treasure = g_globals->_treasure;
 	if (!treasure._items[0])
-		treasure._items[0] = _val1;
+		treasure._items[0] = itemId;
 	else if (!treasure._items[1])
-		treasure._items[1] = _val1;
+		treasure._items[1] = itemId;
 	else if (!treasure._items[2])
-		treasure._items[2] = _val1;
+		treasure._items[2] = itemId;
 }
 
 void Combat::nextRound() {
