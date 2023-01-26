@@ -93,13 +93,6 @@ void cEffect_Underwater::Reset() {
 
 cEffect_ShakeScreen::cEffect_ShakeScreen(cInit *apInit) {
 	mpInit = apInit;
-
-	if (mpInit->mbHasHaptics) {
-		mpForce = mpInit->mpGame->GetHaptic()->GetLowLevel()->CreateSinusWaveForce(
-			cVector3f(0, 1, 0), 0.1f, 5);
-	} else {
-		mpForce = NULL;
-	}
 }
 
 cEffect_ShakeScreen::~cEffect_ShakeScreen() {
@@ -159,15 +152,6 @@ void cEffect_ShakeScreen::Update(float afTimeStep) {
 	mvAdd.x = cMath::RandRectf(-fLargest, fLargest);
 	mvAdd.y = cMath::RandRectf(-fLargest, fLargest);
 	mvAdd.z = cMath::RandRectf(-fLargest, fLargest);
-
-	if (mpForce) {
-		if (mlstShakes.empty() == false) {
-			mpForce->SetActive(true);
-			mpForce->SetAmp(fLargest * 12);
-		} else {
-			mpForce->SetActive(false);
-		}
-	}
 }
 
 void cEffect_ShakeScreen::Reset() {

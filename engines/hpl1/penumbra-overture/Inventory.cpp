@@ -31,7 +31,6 @@
 #include "hpl1/penumbra-overture/GameItem.h"
 #include "hpl1/penumbra-overture/GameItemType.h"
 #include "hpl1/penumbra-overture/GameMessageHandler.h"
-#include "hpl1/penumbra-overture/HapticGameCamera.h"
 #include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/Notebook.h"
 #include "hpl1/penumbra-overture/Player.h"
@@ -126,10 +125,7 @@ cInventory::cInventory(cInit *apInit) : iUpdateable("Inventory") {
 	mvItemTypes[eGameItemType_GlowStick] = hplNew(cGameItemType_GlowStick, (mpInit));
 	mvItemTypes[eGameItemType_Flare] = hplNew(cGameItemType_Flare, (mpInit));
 	mvItemTypes[eGameItemType_Painkillers] = hplNew(cGameItemType_Painkillers, (mpInit));
-	if (mpInit->mbHasHaptics)
-		mvItemTypes[eGameItemType_WeaponMelee] = hplNew(cGameItemType_WeaponMeleeHaptX, (mpInit));
-	else
-		mvItemTypes[eGameItemType_WeaponMelee] = hplNew(cGameItemType_WeaponMelee, (mpInit));
+	mvItemTypes[eGameItemType_WeaponMelee] = hplNew(cGameItemType_WeaponMelee, (mpInit));
 	mvItemTypes[eGameItemType_Throw] = hplNew(cGameItemType_Throw, (mpInit));
 
 	Reset();
@@ -1041,18 +1037,12 @@ void cInventory::SetActive(bool abX) {
 	mbActive = abX;
 
 	if (mbActive) {
-		if (mpInit->mbHasHaptics)
-			mpInit->mpPlayer->GetHapticCamera()->SetActive(false);
-
 		mLastCrossHairState = mpInit->mpPlayer->GetCrossHairState();
 
 		mvMousePos = cVector2f(400, 300);
 		mpInit->mpPlayer->SetCrossHairPos(mvMousePos);
 		mpInit->mpPlayer->SetCrossHairState(eCrossHairState_Pointer);
 	} else {
-		if (mpInit->mbHasHaptics)
-			mpInit->mpPlayer->GetHapticCamera()->SetActive(true);
-
 		mpInit->mpPlayer->SetCrossHairState(mLastCrossHairState);
 		mbMessageActive = false;
 	}

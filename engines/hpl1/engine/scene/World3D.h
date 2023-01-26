@@ -50,7 +50,6 @@ class cPhysics;
 class cScene;
 class cSystem;
 class cAI;
-class cHaptic;
 
 class iCamera;
 class cCamera3D;
@@ -180,8 +179,7 @@ kSaveData_BaseClass(cWorld3D) {
 class cWorld3D {
 public:
 	cWorld3D(tString asName, cGraphics *apGraphics, cResources *apResources, cSound *apSound,
-			 cPhysics *apPhysics, cScene *apScene, cSystem *apSystem, cAI *apAI,
-			 cHaptic *apHaptic);
+			 cPhysics *apPhysics, cScene *apScene, cSystem *apSystem, cAI *apAI);
 	~cWorld3D();
 
 	tString GetName() { return msName; }
@@ -207,7 +205,6 @@ public:
 	cResources *GetResources() { return mpResources; }
 	cSound *GetSound() { return mpSound; }
 	cSystem *GetSystem() { return mpSystem; }
-	cHaptic *GetHaptic() { return mpHaptic; }
 
 	iEntity3D *CreateEntity(const tString &asName, const cMatrixf &a_mtxTransform,
 							const tString &asFile, bool abLoadReferences);
@@ -339,7 +336,6 @@ private:
 	cScene *mpScene;
 	cSystem *mpSystem;
 	cAI *mpAI;
-	cHaptic *mpHaptic;
 
 	iPhysicsWorld *mpPhysicsWorld;
 	bool mbAutoDeletePhysicsWorld;

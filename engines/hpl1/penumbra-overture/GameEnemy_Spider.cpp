@@ -179,8 +179,6 @@ void cGameEnemyState_Spider_Hunt::OnEnterState(iGameEnemyState *apPrevState) {
 
 	// Setup body
 	float fMul = 1.0f;
-	if (mpInit->mbHasHaptics)
-		fMul = 0.6f;
 
 	mpEnemy->SetupBody();
 	if (mpInit->mDifficulty == eGameDifficulty_Easy)

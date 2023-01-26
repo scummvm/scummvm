@@ -212,7 +212,6 @@ void cEntityLoader_GameObject::AfterLoad(TiXmlElement *apRootElem, const cMatrix
 	pObject->SetParticleSystems(mvParticleSystems);
 	pObject->SetSoundEntities(mvSoundEntities);
 	pObject->SetLights(mvLights);
-	pObject->SetHapticShapes(mvHapticShapes);
 
 	///////////////////////////////////
 	// Load game properties
@@ -321,29 +320,17 @@ void cEntityLoader_GameObject::AfterLoad(TiXmlElement *apRootElem, const cMatrix
 
 		// Push mode
 		if (pObject->mInteractMode == eObjectInteractMode_Push) {
-			if (mpInit->mbHasHaptics == false)
-				pObject->mfMaxInteractDist = cString::ToFloat(pGameElem->Attribute("MaxInteractDist"), mpInit->mpPlayer->GetMaxPushDist());
+			pObject->mfMaxInteractDist = cString::ToFloat(pGameElem->Attribute("MaxInteractDist"), mpInit->mpPlayer->GetMaxPushDist());
 			pObject->mbHasInteraction = true;
 		}
 		// Move Mode
 		else if (pObject->mInteractMode == eObjectInteractMode_Move) {
-			if (mpInit->mbHasHaptics) {
-				pObject->mInteractMode = eObjectInteractMode_Grab;
-				pObject->mbPickAtPoint = true;
-				if (mpInit->mbHasHaptics == false)
-					pObject->mfMaxInteractDist = cString::ToFloat(pGameElem->Attribute("MaxInteractDist"), mpInit->mpPlayer->GetMaxGrabDist());
-				pObject->mbHasInteraction = true;
-				pObject->mbIsMover = true;
-			} else {
-				if (mpInit->mbHasHaptics == false)
-					pObject->mfMaxInteractDist = cString::ToFloat(pGameElem->Attribute("MaxInteractDist"), mpInit->mpPlayer->GetMaxMoveDist());
-				pObject->mbHasInteraction = true;
-			}
+			pObject->mfMaxInteractDist = cString::ToFloat(pGameElem->Attribute("MaxInteractDist"), mpInit->mpPlayer->GetMaxMoveDist());
+			pObject->mbHasInteraction = true;
 		}
 		// Grab Mode
 		else if (pObject->mInteractMode == eObjectInteractMode_Grab) {
-			if (mpInit->mbHasHaptics == false)
-				pObject->mfMaxInteractDist = cString::ToFloat(pGameElem->Attribute("MaxInteractDist"), mpInit->mpPlayer->GetMaxGrabDist());
+			pObject->mfMaxInteractDist = cString::ToFloat(pGameElem->Attribute("MaxInteractDist"), mpInit->mpPlayer->GetMaxGrabDist());
 			pObject->mbHasInteraction = true;
 		}
 
@@ -472,9 +459,6 @@ void cGameObject::OnPlayerInteract() {
 		(pStickArea && pStickArea->GetCanDeatch() == false)) {
 		return;
 	}
-
-	if (mpInit->mbHasHaptics && mpInit->mpPlayer->mbProxyTouching == false)
-		return;
 
 	switch (mInteractMode) {
 	case eObjectInteractMode_Push:

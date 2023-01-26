@@ -61,7 +61,7 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cScene::cScene(cGraphics *apGraphics, cResources *apResources, cSound *apSound, cPhysics *apPhysics,
-			   cSystem *apSystem, cAI *apAI, cHaptic *apHaptic)
+			   cSystem *apSystem, cAI *apAI)
 	: iUpdateable("HPL_Scene") {
 	mpGraphics = apGraphics;
 	mpResources = apResources;
@@ -69,7 +69,6 @@ cScene::cScene(cGraphics *apGraphics, cResources *apResources, cSound *apSound, 
 	mpPhysics = apPhysics;
 	mpSystem = apSystem;
 	mpAI = apAI;
-	mpHaptic = apHaptic;
 
 	mpCollider2D = hplNew(cCollider2D, ());
 	mpCurrentWorld2D = NULL;
@@ -416,7 +415,7 @@ cWorld3D *cScene::LoadWorld3D(const tString &asFile, bool abLoadScript, tWorldLo
 
 cWorld3D *cScene::CreateWorld3D(const tString &asName) {
 	cWorld3D *pWorld = hplNew(cWorld3D, (asName, mpGraphics, mpResources, mpSound, mpPhysics, this,
-										 mpSystem, mpAI, mpHaptic));
+										 mpSystem, mpAI));
 
 	mlstWorld3D.push_back(pWorld);
 

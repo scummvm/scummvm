@@ -27,7 +27,6 @@
 
 #include "hpl1/penumbra-overture/NumericalPanel.h"
 
-#include "hpl1/penumbra-overture/HapticGameCamera.h"
 #include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/Player.h"
 
@@ -301,9 +300,6 @@ void cNumericalPanel::SetActive(bool abX) {
 	mbActive = abX;
 
 	if (mbActive) {
-		if (mpInit->mbHasHaptics)
-			mpInit->mpPlayer->GetHapticCamera()->SetActive(false);
-
 		mpInit->mpGame->GetInput()->BecameTriggerd("RightClick");
 		mpInit->mpGame->GetInput()->BecameTriggerd("LeftClick");
 
@@ -314,9 +310,6 @@ void cNumericalPanel::SetActive(bool abX) {
 
 		mvDigits.clear();
 	} else {
-		if (mpInit->mbHasHaptics)
-			mpInit->mpPlayer->GetHapticCamera()->SetActive(true);
-
 		mpInit->mpPlayer->SetCrossHairState(mLastCrossHairState);
 		mpInit->mpPlayer->SetCrossHairPos(cVector2f(400, 300));
 	}

@@ -59,8 +59,6 @@ class cPlayerAmbientLight;
 
 class cPlayerBodyCallback;
 
-class cHapticGameCamera;
-
 typedef Common::Array<iPlayerState *> tPlayerStateVec;
 typedef tPlayerStateVec::iterator tPlayerStateVecIt;
 
@@ -312,8 +310,6 @@ public:
 
 	cPlayerHidden *GetHidden() { return mpHidden; }
 
-	cHapticGameCamera *GetHapticCamera() { return mpHapticCamera; }
-
 	float GetHeightAdd() { return mfHeightAdd; }
 	void SetHeightAdd(float afX) { mfHeightAdd = afX; }
 
@@ -383,7 +379,6 @@ private:
 	cGraphics *mpGraphics;
 	cResources *mpResources;
 	cGraphicsDrawer *mpGfxDrawer;
-	iLowLevelHaptic *mpLowLevelHaptic;
 
 	FontData *mpFont;
 
@@ -394,8 +389,6 @@ private:
 	cCamera3D *mpCamera;
 	float mfLookSpeed;
 	float mfCameraHeightAdd;
-
-	cHapticGameCamera *mpHapticCamera;
 
 	cVector3f mvSize;
 	float mfCrouchHeight;
@@ -429,9 +422,6 @@ private:
 	iPhysicsBody *mpPushBody;
 
 	Common::Array<cGfxObject *> mvCrossHairs;
-
-	iHapticForce *mpDamageForce;
-	iHapticForce *mpDamageDirForce;
 
 	cVector2f mvMaxPushHeadMovement;
 	cVector2f mvMinPushHeadMovement;

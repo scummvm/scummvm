@@ -80,9 +80,6 @@
 #include "hpl1/engine/ai/AINodeGenerator.h"
 #include "hpl1/engine/ai/AStar.h"
 
-#include "hpl1/engine/haptic/Haptic.h"
-#include "hpl1/engine/haptic/LowLevelHaptic.h"
-
 namespace hpl {
 
 //////////////////////////////////////////////////////////////////////////
@@ -92,8 +89,7 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cWorld3D::cWorld3D(tString asName, cGraphics *apGraphics, cResources *apResources, cSound *apSound,
-				   cPhysics *apPhysics, cScene *apScene, cSystem *apSystem, cAI *apAI,
-				   cHaptic *apHaptic) {
+				   cPhysics *apPhysics, cScene *apScene, cSystem *apSystem, cAI *apAI) {
 	mpGraphics = apGraphics;
 	mpResources = apResources;
 	mpSound = apSound;
@@ -101,7 +97,6 @@ cWorld3D::cWorld3D(tString asName, cGraphics *apGraphics, cResources *apResource
 	mpScene = apScene;
 	mpSystem = apSystem;
 	mpAI = apAI;
-	mpHaptic = apHaptic;
 
 	mpRootNode = hplNew(cNode3D, ());
 
@@ -122,11 +117,6 @@ cWorld3D::cWorld3D(tString asName, cGraphics *apGraphics, cResources *apResource
 //-----------------------------------------------------------------------
 
 cWorld3D::~cWorld3D() {
-	if (cHaptic::GetIsUsed()) {
-		// mpHaptic->GetLowLevel()->DestroyAllShapes();
-		// Not so good to do it here..
-	}
-
 	STLDeleteAll(mlstMeshEntities);
 	STLDeleteAll(mlstLights);
 	STLDeleteAll(mlstBillboards);

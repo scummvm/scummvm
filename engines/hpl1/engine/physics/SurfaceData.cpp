@@ -73,8 +73,6 @@ cSurfaceData::cSurfaceData(const tString &asName, cPhysics *apPhysics, cResource
 	mfMaxScrapeFreqSpeed = 3;
 	mfMiddleScrapeSpeed = 2;
 	msScrapeSoundName = "";
-
-	mpHapticSurface = NULL;
 }
 
 //-----------------------------------------------------------------------

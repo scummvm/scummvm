@@ -139,8 +139,6 @@ void cDemoEndText::SetActive(bool abX) {
 		mpInit->mpGame->GetUpdater()->SetContainer("DemoEndText");
 		mpInit->mpGame->GetScene()->SetDrawScene(false);
 		mpInit->mpGame->GetScene()->SetUpdateMap(false);
-		if (mpInit->mbHasHaptics)
-			mpInit->mpGame->GetHaptic()->GetLowLevel()->SetUpdateShapes(false);
 		mpInit->mpButtonHandler->ChangeState(eButtonHandlerState_DemoEndText);
 
 		for (int i = 0; i < 3; ++i) {

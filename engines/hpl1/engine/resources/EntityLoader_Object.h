@@ -48,7 +48,6 @@ class cBillboard;
 class cBeam;
 class cSoundEntity;
 class iLight3D;
-class iHapticShape;
 
 class cEntityLoader_Object : public iEntity3DLoader {
 public:
@@ -76,8 +75,6 @@ protected:
 
 	Common::Array<iPhysicsBody *> mvBodies;
 	Common::Array<iPhysicsJoint *> mvJoints;
-
-	Common::Array<iHapticShape *> mvHapticShapes;
 
 	Common::Array<iLight3D *> mvLights;
 	Common::Array<cParticleSystem3D *> mvParticleSystems;

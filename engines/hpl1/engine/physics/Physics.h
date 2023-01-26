@@ -29,7 +29,6 @@
 #define HPL_Physics_H
 
 #include "hpl1/engine/game/Updateable.h"
-#include "hpl1/engine/haptic/HapticTypes.h"
 #include "hpl1/engine/physics/PhysicsMaterial.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/list.h"
@@ -42,8 +41,6 @@ class iPhysicsWorld;
 class cSurfaceData;
 class cWorld3D;
 class cResources;
-class iHapticSurface;
-class cHaptic;
 
 //------------------------------------------------
 
@@ -81,7 +78,7 @@ public:
 
 	cSurfaceData *CreateSurfaceData(const tString &asName);
 	cSurfaceData *GetSurfaceData(const tString &asName);
-	bool LoadSurfaceData(const tString &asFile, cHaptic *apHaptic = NULL);
+	bool LoadSurfaceData(const tString &asFile);
 
 	iLowLevelPhysics *GetLowLevel() { return mpLowLevelPhysics; }
 
@@ -102,8 +99,6 @@ public:
 	bool GetDebugLog() { return mbLog; }
 
 private:
-	eHapticSurfaceType GetHapticSurface(const char *apName);
-
 	ePhysicsMaterialCombMode GetCombMode(const char *apName);
 
 	void UpdateImpactCounts(float afTimeStep);

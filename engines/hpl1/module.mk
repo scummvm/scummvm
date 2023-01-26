@@ -91,8 +91,6 @@ MODULE_OBJS := \
 	engine/gui/WidgetSlider.o \
 	engine/gui/WidgetTextBox.o \
 	engine/gui/WidgetWindow.o \
-	engine/haptic/Haptic.o \
-	engine/haptic/LowLevelHaptic.o \
 	engine/impl/CGProgram.o \
 	engine/impl/CharacterBodyNewton.o \
 	engine/impl/CollideShapeNewton.o \
@@ -129,7 +127,6 @@ MODULE_OBJS := \
 	engine/impl/tinyXML/tinyxmlerror.o \
 	engine/impl/tinyXML/tinyxmlparser.o \
 	engine/input/Action.o \
-	engine/input/ActionHaptic.o \
 	engine/input/ActionKeyboard.o \
 	engine/input/ActionMouseButton.o \
 	engine/input/Input.o \
@@ -263,7 +260,6 @@ MODULE_OBJS := \
 	penumbra-overture/GameSwingDoor.o \
 	penumbra-overture/GameTypes.o \
 	penumbra-overture/GraphicsHelper.o \
-	penumbra-overture/HapticGameCamera.o \
 	penumbra-overture/HudModel_Throw.o \
 	penumbra-overture/HudModel_Weapon.o \
 	penumbra-overture/Init.o \
@@ -278,11 +274,8 @@ MODULE_OBJS := \
 	penumbra-overture/PlayerHands.o \
 	penumbra-overture/PlayerHelper.o \
 	penumbra-overture/PlayerState_Interact.o \
-	penumbra-overture/PlayerState_InteractHaptX.o \
 	penumbra-overture/PlayerState_Misc.o \
-	penumbra-overture/PlayerState_MiscHaptX.o \
 	penumbra-overture/PlayerState_Weapon.o \
-	penumbra-overture/PlayerState_WeaponHaptX.o \
 	penumbra-overture/PreMenu.o \
 	penumbra-overture/RadioHandler.o \
 	penumbra-overture/SaveHandler.o \

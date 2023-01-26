@@ -28,7 +28,6 @@
 #include "hpl1/penumbra-overture/Notebook.h"
 
 #include "hpl1/penumbra-overture/EffectHandler.h"
-#include "hpl1/penumbra-overture/HapticGameCamera.h"
 #include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/Inventory.h"
 #include "hpl1/penumbra-overture/Player.h"
@@ -1051,9 +1050,6 @@ void cNotebook::SetBookType(eNotebookType aType) {
 void cNotebook::SetActive(bool abX) {
 	mbActive = abX;
 	if (mbActive) {
-		if (mpInit->mbHasHaptics)
-			mpInit->mpPlayer->GetHapticCamera()->SetActive(false);
-
 		mLastCrossHairState = mpInit->mpPlayer->GetCrossHairState();
 
 		if (mpInit->mpInventory->IsActive()) {
@@ -1070,9 +1066,6 @@ void cNotebook::SetActive(bool abX) {
 		mStateMachine.ChangeState(eNotebookState_Front);
 		mvBookTypes[0].mfAlpha = 1;
 	} else {
-		if (mpInit->mbHasHaptics)
-			mpInit->mpPlayer->GetHapticCamera()->SetActive(true);
-
 		if (mbInventoryWasActive) {
 			mpInit->mpInventory->SetActive(true);
 			mpInit->mpInventory->SetMousePos(mvMousePos);

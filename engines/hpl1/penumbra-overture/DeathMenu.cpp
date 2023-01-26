@@ -28,7 +28,6 @@
 #include "hpl1/penumbra-overture/DeathMenu.h"
 
 #include "hpl1/penumbra-overture/GraphicsHelper.h"
-#include "hpl1/penumbra-overture/HapticGameCamera.h"
 #include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/MainMenu.h"
 #include "hpl1/penumbra-overture/MapHandler.h"
@@ -290,9 +289,6 @@ void cDeathMenu::SetActive(bool abX) {
 	mbActive = abX;
 
 	if (mbActive) {
-		if (mpInit->mbHasHaptics)
-			mpInit->mpPlayer->GetHapticCamera()->SetActive(false);
-
 		mLastCrossHairState = mpInit->mpPlayer->GetCrossHairState();
 
 		mpInit->mpPlayer->SetCrossHairPos(mvMousePos);
@@ -309,9 +305,6 @@ void cDeathMenu::SetActive(bool abX) {
 		// Back to Main
 		mlstButtons.push_back(hplNew(cDeathMenuButton_BackToMain, (mpInit, cVector2f(400, 350), kTranslate("DeathMenu", "BackToMainMenu"))));
 	} else {
-		if (mpInit->mbHasHaptics)
-			mpInit->mpPlayer->GetHapticCamera()->SetActive(true);
-
 		mpInit->mpPlayer->SetCrossHairState(mLastCrossHairState);
 		mpInit->mpPlayer->SetCrossHairPos(cVector2f(400, 300));
 	}

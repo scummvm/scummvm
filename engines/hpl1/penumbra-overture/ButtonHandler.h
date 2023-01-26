@@ -73,7 +73,6 @@ private:
 
 	cInput *mpInput;
 	iLowLevelGraphics *mpLowLevelGraphics;
-	iLowLevelHaptic *mpLowLevelHaptic;
 
 	cPlayer *mpPlayer;
 

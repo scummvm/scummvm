@@ -41,7 +41,6 @@ class cPhysics;
 class iPhysicsWorld;
 class iPhysicsBody;
 class cResources;
-class iHapticSurface;
 
 //----------------------------------------
 
@@ -155,9 +154,6 @@ public:
 	 */
 	cSurfaceImpactData *GetHitDataFromSpeed(float afSpeed);
 
-	iHapticSurface *GetHapticSurface() { return mpHapticSurface; }
-	void SetHapticSurface(iHapticSurface *apSurface) { mpHapticSurface = apSurface; }
-
 protected:
 	cResources *mpResources;
 	cPhysics *mpPhysics;
@@ -199,8 +195,6 @@ protected:
 	tSurfaceImpactDataVec mvImpactData;
 
 	tSurfaceImpactDataVec mvHitData;
-
-	iHapticSurface *mpHapticSurface;
 };
 
 }     // namespace hpl

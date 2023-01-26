@@ -90,8 +90,6 @@ iPhysicsBody::iPhysicsBody(const tString &asName, iPhysicsWorld *apWorld, iColli
 
 	mpUserData = NULL;
 
-	mpHapticShape = NULL;
-
 	mbPushedByCharacterGravity = false;
 
 	mbIsCharacter = false;

@@ -31,7 +31,6 @@
 #include "hpl1/penumbra-overture/GameMessageHandler.h"
 #include "hpl1/penumbra-overture/GameMusicHandler.h"
 #include "hpl1/penumbra-overture/GraphicsHelper.h"
-#include "hpl1/penumbra-overture/HapticGameCamera.h"
 #include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/MainMenu.h"
 #include "hpl1/penumbra-overture/MapHandler.h"
@@ -121,11 +120,6 @@ void cCredits::OnDraw() {
 //-----------------------------------------------------------------------
 
 void cCredits::Update(float afTimeStep) {
-	// Make sure haptics is off
-	if (mpInit->mbHasHaptics) {
-		mpInit->mpGame->GetHaptic()->GetLowLevel()->StopAllForces();
-	}
-
 	mfYPos -= afTimeStep * 30;
 	cMusicHandler *pMusicHandler = mpInit->mpGame->GetSound()->GetMusicHandler();
 
@@ -175,11 +169,6 @@ void cCredits::SetActive(bool abX) {
 		mpInit->mpGame->GetUpdater()->SetContainer("Credits");
 		mpInit->mpGame->GetScene()->SetDrawScene(false);
 		mpInit->mpGame->GetScene()->SetUpdateMap(false);
-		if (mpInit->mbHasHaptics) {
-			mpInit->mpGame->GetHaptic()->GetLowLevel()->SetUpdateShapes(false);
-			mpInit->mpGame->GetHaptic()->GetLowLevel()->StopAllForces();
-			mpInit->mpPlayer->GetHapticCamera()->SetActive(false);
-		}
 		mpInit->mpButtonHandler->ChangeState(eButtonHandlerState_Credits);
 
 		mpInit->mpGame->GetSound()->GetMusicHandler()->Play("penumbra_music_E1_E", 1, 0.3f, false);

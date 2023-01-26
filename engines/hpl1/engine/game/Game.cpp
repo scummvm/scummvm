@@ -198,15 +198,8 @@ void cGame::GameInit(LowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars) 
 	Log(" Creating gui module\n");
 	mpGui = hplNew(cGui, ());
 
-	Log(" Creating haptic module\n");
-#ifdef INCLUDE_HAPTIC
-	mpHaptic = mpGameSetup->CreateHaptic();
-#else
-	mpHaptic = NULL;
-#endif
-
 	Log(" Creating scene module\n");
-	mpScene = mpGameSetup->createScene(mpGraphics, mpResources, mpSound, mpPhysics, mpSystem, mpAI, mpHaptic);
+	mpScene = mpGameSetup->createScene(mpGraphics, mpResources, mpSound, mpPhysics, mpSystem, mpAI);
 
 	Log("--------------------------------------------------------\n\n");
 
@@ -246,10 +239,6 @@ void cGame::GameInit(LowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars) 
 	// Init Gui
 	mpGui->Init(mpResources, mpGraphics, mpSound, mpScene);
 
-	// Init haptic
-	if (mpHaptic)
-		mpHaptic->Init(mpResources);
-
 	Log("Initializing Game Module\n");
 	Log("--------------------------------------------------------\n");
 	// Create the updatehandler
@@ -264,8 +253,6 @@ void cGame::GameInit(LowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars) 
 	mpUpdater->AddGlobalUpdate(mpAI);
 	mpUpdater->AddGlobalUpdate(mpGui);
 	mpUpdater->AddGlobalUpdate(mpResources);
-	if (mpHaptic)
-		mpUpdater->AddGlobalUpdate(mpHaptic);
 
 	// Setup the "default" updater container
 	mpUpdater->AddContainer("Default");
@@ -307,8 +294,6 @@ cGame::~cGame() {
 
 	hplDelete(mpGui);
 	hplDelete(mpScene);
-	if (mpHaptic)
-		hplDelete(mpHaptic);
 	hplDelete(mpInput);
 	hplDelete(mpSound);
 	hplDelete(mpGraphics);
@@ -530,12 +515,6 @@ cAI *cGame::GetAI() {
 
 cGui *cGame::GetGui() {
 	return mpGui;
-}
-
-//-----------------------------------------------------------------------
-
-cHaptic *cGame::GetHaptic() {
-	return mpHaptic;
 }
 
 //-----------------------------------------------------------------------

@@ -29,7 +29,6 @@
 #include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
 #include "hpl1/engine/impl/MouseSDL.h"
-#include "hpl1/engine/haptic/LowLevelHaptic.h"
 #include "hpl1/graphics.h"
 
 namespace hpl {
@@ -54,7 +53,6 @@ LowLevelGameSetup::LowLevelGameSetup() {
 	_lowLevelResources = hplNew(LowLevelResources, (_lowLevelGraphics));
 	_lowLevelSound = hplNew(cLowLevelSoundOpenAL, ());
 	_lowLevelPhysics = hplNew(cLowLevelPhysicsNewton, ());
-	_lowLevelHaptic = nullptr;
 }
 
 LowLevelGameSetup::~LowLevelGameSetup() {
@@ -72,14 +70,11 @@ LowLevelGameSetup::~LowLevelGameSetup() {
 	hplDelete(_lowLevelSystem);
 	Log("Graphics\n");
 	hplDelete(_lowLevelGraphics);
-	Log("Haptic\n");
-	if (_lowLevelHaptic)
-		hplDelete(_lowLevelHaptic);
 }
 
 cScene *LowLevelGameSetup::createScene(cGraphics *graphics, cResources *resources, cSound *sound,
-									   cPhysics *physics, cSystem *system, cAI *ai, cHaptic *haptic) {
-	return hplNew(cScene, (graphics, resources, sound, physics, system, ai, haptic));
+									   cPhysics *physics, cSystem *system, cAI *ai) {
+	return hplNew(cScene, (graphics, resources, sound, physics, system, ai));
 }
 
 cResources *LowLevelGameSetup::createResources(cGraphics *graphics) {
@@ -108,10 +103,6 @@ cPhysics *LowLevelGameSetup::createPhysics() {
 
 cAI *LowLevelGameSetup::createAi() {
 	return hplNew(cAI, ());
-}
-
-cHaptic *LowLevelGameSetup::createHaptic() {
-	return hplNew(cHaptic, (_lowLevelHaptic));
 }
 
 } // namespace hpl

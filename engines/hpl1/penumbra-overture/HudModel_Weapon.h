@@ -146,9 +146,6 @@ private:
 	cMeleeRayCallback mRayCallback;
 
 	Common::Array<cMeleeWeaponAttack> mvAttacks;
-
-	iLowLevelHaptic *mpLowLevelHaptic;
-	iHapticForce *mpHHitForce;
 };
 
 //-------------------------------------------

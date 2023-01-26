@@ -30,7 +30,6 @@
 
 #include "hpl1/engine/ai/AI.h"
 #include "hpl1/engine/graphics/Graphics.h"
-#include "hpl1/engine/haptic/Haptic.h"
 #include "hpl1/engine/input/Input.h"
 #include "hpl1/engine/physics/Physics.h"
 #include "hpl1/engine/resources/Resources.h"
@@ -50,11 +49,10 @@ public:
 	cGraphics *createGraphics();
 	cResources *createResources(cGraphics *graphics);
 	cScene *createScene(cGraphics *graphics, cResources *resources, cSound *sound,
-								cPhysics *physics, cSystem *system, cAI *ai, cHaptic *haptic);
+								cPhysics *physics, cSystem *system, cAI *ai);
 	cSound *createSound();
 	cPhysics *createPhysics();
 	cAI *createAi();
-	cHaptic *createHaptic();
 private:
 	LowLevelSystem *_lowLevelSystem;
 	iLowLevelGraphics *_lowLevelGraphics;
@@ -62,7 +60,6 @@ private:
 	LowLevelResources *_lowLevelResources;
 	iLowLevelSound *_lowLevelSound;
 	iLowLevelPhysics *_lowLevelPhysics;
-	iLowLevelHaptic *_lowLevelHaptic;
 };
 
 }     // namespace hpl

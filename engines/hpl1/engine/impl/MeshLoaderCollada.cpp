@@ -67,11 +67,6 @@
 #include "hpl1/engine/physics/PhysicsWorld.h"
 #include "hpl1/engine/physics/SurfaceData.h"
 
-#include "hpl1/engine/haptic/Haptic.h"
-#include "hpl1/engine/haptic/HapticShape.h"
-#include "hpl1/engine/haptic/HapticSurface.h"
-#include "hpl1/engine/haptic/LowLevelHaptic.h"
-
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 
 #include "hpl1/engine/math/Math.h"
@@ -1446,24 +1441,6 @@ cMeshEntity *cMeshLoaderCollada::CreateStaticMeshEntity(cColladaNode *apNode, cW
 			pBody->SetMaterial(pPhysicsMat);
 		}
 
-		// Haptic creation
-		if (cHaptic::GetIsUsed()) {
-			cHaptic *pHaptic = apWorld->GetHaptic();
-			iHapticShape *pHShape = NULL;
-
-			pHShape = pHaptic->GetLowLevel()->CreateMeshShape(pBody->GetName(), pVtxBuffer);
-			if (bDrawn)
-				pHShape->SetSubMeshEntity(pEntity->GetSubMeshEntity(0));
-
-			pBody->SetHapticShape(pHShape);
-
-			if (pPhysicsMat) {
-				iHapticSurface *pHapticSurface = pPhysicsMat->GetSurfaceData()->GetHapticSurface();
-				if (pHapticSurface)
-					pHShape->SetSurface(pHapticSurface);
-			}
-		}
-
 		if (bDrawn == false) {
 			hplDelete(pVtxBuffer);
 		}
@@ -1581,12 +1558,6 @@ cColliderEntity *cMeshLoaderCollada::CreateStaticCollider(cColladaNode *apNode, 
 		pBody->SetCollide(false);
 	else
 		pBody->SetCollide(true);
-
-	// Haptic creation
-	if (cHaptic::GetIsUsed()) {
-		cHaptic *pHaptic = apWorld->GetHaptic();
-		/* iHapticShape *pHShape = */(void)pHaptic->GetLowLevel()->CreateShapeFromPhysicsBody(apNode->msName, pBody);
-	}
 
 	return apWorld->CreateColliderEntity(apNode->msName, pBody);
 }

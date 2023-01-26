@@ -45,7 +45,6 @@ class cScene;
 class cSound;
 class cPhysics;
 class cAI;
-class cHaptic;
 class cGui;
 
 class cFPSCounter {
@@ -167,12 +166,6 @@ public:
 	 */
 	cGui *GetGui();
 
-	/**
-	 *
-	 * \return A pointer to the haptic
-	 */
-	cHaptic *GetHaptic();
-
 	void ResetLogicTimer();
 	void SetUpdatesPerSec(int alUpdatesPerSec);
 	int GetUpdatesPerSec();
@@ -224,7 +217,6 @@ private:
 	cSound *mpSound;
 	cPhysics *mpPhysics;
 	cAI *mpAI;
-	cHaptic *mpHaptic;
 	cGui *mpGui;
 };
 

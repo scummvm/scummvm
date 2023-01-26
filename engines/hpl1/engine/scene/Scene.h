@@ -45,7 +45,6 @@ class cResources;
 class cSystem;
 class cSound;
 class cPhysics;
-class cHaptic;
 class cCollider2D;
 class iCamera;
 class cCamera2D;
@@ -62,7 +61,7 @@ typedef tWorld3DList::iterator tWorld3DListIt;
 class cScene : public iUpdateable {
 public:
 	cScene(cGraphics *apGraphics, cResources *apResources, cSound *apSound, cPhysics *apPhysics,
-		   cSystem *apSystem, cAI *apAI, cHaptic *apHaptic);
+		   cSystem *apSystem, cAI *apAI);
 	~cScene();
 
 	void Reset();
@@ -141,7 +140,6 @@ private:
 	cPhysics *mpPhysics;
 	cSystem *mpSystem;
 	cAI *mpAI;
-	cHaptic *mpHaptic;
 
 	cCollider2D *mpCollider2D;
 

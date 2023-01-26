@@ -157,8 +157,6 @@ void cMapLoadText::SetActive(bool abX) {
 		mpInit->mpGame->GetUpdater()->SetContainer("MapLoadText");
 		mpInit->mpGame->GetScene()->SetDrawScene(false);
 		mpInit->mpGame->GetScene()->SetUpdateMap(false);
-		if (mpInit->mbHasHaptics)
-			mpInit->mpGame->GetHaptic()->GetLowLevel()->SetUpdateShapes(false);
 		mpInit->mpButtonHandler->ChangeState(eButtonHandlerState_MapLoadText);
 
 		mpBack = mpInit->mpGame->GetResources()->GetTextureManager()->Create2D("other_load_text_back.jpg", false);
@@ -178,8 +176,6 @@ void cMapLoadText::SetActive(bool abX) {
 		mpInit->mpGame->GetUpdater()->SetContainer("Default");
 		mpInit->mpGame->GetScene()->SetDrawScene(true);
 		mpInit->mpGame->GetScene()->SetUpdateMap(true);
-		if (mpInit->mbHasHaptics)
-			mpInit->mpGame->GetHaptic()->GetLowLevel()->SetUpdateShapes(true);
 		mpInit->mpButtonHandler->ChangeState(eButtonHandlerState_Game);
 	}
 }

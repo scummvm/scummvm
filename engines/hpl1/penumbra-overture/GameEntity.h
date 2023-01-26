@@ -179,10 +179,6 @@ public:
 	void SetBeams(Common::Array<cBeam *> &avBeams) { mvBeams = avBeams; }
 	void SetSoundEntities(Common::Array<cSoundEntity *> &avSoundEntities) { mvSoundEntities = avSoundEntities; }
 
-	size_t GetHapticShapeNum() { return mvHapticShapes.size(); }
-	iHapticShape *GetHapticShape(size_t alNum) { return mvHapticShapes[alNum]; }
-	void SetHapticShapes(Common::Array<iHapticShape *> &avShapes) { mvHapticShapes = avShapes; }
-
 	void DestroyLight(iLight3D *apLight);
 	void DestroyParticleSystem(cParticleSystem3D *apPS);
 	void DestroyBillboard(cBillboard *apBillboard);
@@ -318,8 +314,6 @@ protected:
 
 	Common::Array<iPhysicsBody *> mvBodies;
 	Common::Array<iPhysicsJoint *> mvJoints;
-
-	Common::Array<iHapticShape *> mvHapticShapes;
 
 	Common::Array<iLight3D *> mvLights;
 	Common::Array<cParticleSystem3D *> mvParticleSystems;

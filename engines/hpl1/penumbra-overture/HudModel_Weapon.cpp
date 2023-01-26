@@ -76,14 +76,6 @@ bool cMeleeRayCallback::OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apPa
 
 cHudModel_WeaponMelee::cHudModel_WeaponMelee() : iHudModel(ePlayerHandType_WeaponMelee) {
 	ResetExtraData();
-
-	if (gpInit->mbHasHaptics) {
-		mpLowLevelHaptic = gpInit->mpGame->GetHaptic()->GetLowLevel();
-		mpHHitForce = mpLowLevelHaptic->CreateSinusWaveForce(cVector3f(0, 1, 0), 0.63f, 5);
-		mpHHitForce->SetActive(false);
-	} else {
-		mpLowLevelHaptic = NULL;
-	}
 }
 
 //-----------------------------------------------------------------------
@@ -696,14 +688,6 @@ void cHudModel_WeaponMelee::Attack() {
 	// Play hit sound
 	if (bHit) {
 		PlaySound(mvAttacks[mlCurrentAttack].msHitSound);
-
-		if (mpInit->mbHasHaptics) {
-			if (mpHHitForce->IsActive())
-				mpHHitForce->SetActive(false);
-
-			mpHHitForce->SetActive(true);
-			mpHHitForce->SetTimeControl(false, 0.3f, 0.2f, 0, 0.1f);
-		}
 	}
 
 	mpInit->mbWeaponAttacking = false;

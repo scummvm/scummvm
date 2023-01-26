@@ -42,7 +42,6 @@ class cSoundEntity;
 class iPhysicsJoint;
 class cPhysicsContactData;
 class iCharacterBody;
-class iHapticShape;
 
 //------------------------------------------
 
@@ -264,9 +263,6 @@ public:
 	void AddAttachedCharacter(iCharacterBody *apChar);
 	void RemoveAttachedCharacter(iCharacterBody *apChar);
 
-	iHapticShape *GetHapticShape() { return mpHapticShape; }
-	void SetHapticShape(iHapticShape *apShape) { mpHapticShape = apShape; }
-
 	iPhysicsWorld *GetWorld() { return mpWorld; }
 
 	void DisableAfterSimulation() { mbDisableAfterSimulation = true; }
@@ -325,8 +321,6 @@ protected:
 	bool mbHasCollision;
 
 	tPhysicsBodyCallbackList mlstBodyCallbacks;
-
-	iHapticShape *mpHapticShape;
 
 	void *mpUserData;
 

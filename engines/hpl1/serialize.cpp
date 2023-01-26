@@ -52,7 +52,6 @@
 #include "hpl1/penumbra-overture/FadeHandler.h"
 #include "hpl1/penumbra-overture/GameMusicHandler.h"
 #include "hpl1/penumbra-overture/GraphicsHelper.h"
-#include "hpl1/penumbra-overture/HapticGameCamera.h"
 #include "hpl1/penumbra-overture/Inventory.h"
 #include "hpl1/penumbra-overture/MapLoadText.h"
 #include "hpl1/penumbra-overture/Notebook.h"
