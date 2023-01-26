@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/rect.h"
+#include "ultima/ultima8/misc/box.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -216,8 +217,8 @@ struct SortItem {
 
 	// Functions
 
-	// Calculate screenspace box bounds at center point from worldspace bounds
-	inline void calculateBoxBounds(int32 sx, int32 sy);
+	// Set worldspace bounds and calculate screenspace at center point
+	inline void setBoxBounds(const Box &box, int32 sx, int32 sy);
 
 	// Check if the given point is inside the screenpace bounds.
 	inline bool contains(int32 sx, int32 sy) const;
@@ -242,7 +243,14 @@ struct SortItem {
 	Common::String dumpInfo() const;
 };
 
-inline void SortItem::calculateBoxBounds(int32 sx, int32 sy) {
+inline void SortItem::setBoxBounds(const Box& box, int32 sx, int32 sy) {
+	_x = box._x;
+	_y = box._y;
+	_z = box._z;
+	_xLeft = _x - box._xd;
+	_yFar = _y - box._yd;
+	_zTop = _z + box._zd;
+
 	// Screenspace bounding box left extent    (LNT x coord)
 	_sxLeft = (_xLeft - _y) / 4 - sx;
 	// Screenspace bounding box right extent   (RFT x coord)
@@ -257,6 +265,12 @@ inline void SortItem::calculateBoxBounds(int32 sx, int32 sy) {
 	_sxBot = (_x - _y) / 4 - sx;
 	// Screenspace bounding box bottom extent  (RNB y coord)
 	_syBot = (_x + _y) / 8 - _z - sy;
+
+	// Screenspace rect - replace with shape frame calculations
+	_sr.left = _sxLeft;
+	_sr.top = _syTop;
+	_sr.right = _sxRight;
+	_sr.bottom = _syBot;
 }
 
 inline bool SortItem::contains(int32 sx, int32 sy) const {

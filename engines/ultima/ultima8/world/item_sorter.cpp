@@ -130,16 +130,10 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	info->getFootpadWorld(xd, yd, zd, flags & Item::FLG_FLIPPED);
 
 	// Worldspace bounding box
-	si->_x = x;
-	si->_y = y;
-	si->_z = z;
-	si->_xLeft = si->_x - xd;
-	si->_yFar = si->_y - yd;
-	si->_zTop = si->_z + zd;
+	Box box(x, y, z, xd, yd, zd);
+	si->setBoxBounds(box, _camSx, _camSy);
 
-	si->calculateBoxBounds(_camSx, _camSy);
-
-	// Real Screenspace coords
+	// Real Screenspace from shape frame
 	si->_sr.left = si->_sxBot - frame->_xoff;
 	si->_sr.top = si->_syBot - frame->_yoff;
 	si->_sr.right = si->_sr.left + frame->_width;
