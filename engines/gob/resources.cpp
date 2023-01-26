@@ -177,7 +177,7 @@ bool Resources::load(const Common::String &fileName) {
 	}
 
 	if (!hasTOTRes && !hasEXTRes)
-		return false;
+		return true;
 
 	if (!loadTOTTextTable(_fileBase)) {
 		unload();
