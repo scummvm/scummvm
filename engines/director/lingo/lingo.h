@@ -175,7 +175,7 @@ struct Datum {	/* interpreter stack type */
 	bool isVarRef() const;
 	bool isCastRef() const;
 
-	const char *type2str(bool isk = false) const;
+	const char *type2str(bool ilk = false) const;
 
 	int equalTo(Datum &d, bool ignoreCase = false) const;
 	CompareResult compareTo(Datum &d) const;

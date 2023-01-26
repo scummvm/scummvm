@@ -1689,8 +1689,42 @@ void LB::b_floatP(int nargs) {
 }
 
 void LB::b_ilk(int nargs) {
-	Datum d = g_lingo->pop();
-	Datum res(Common::String(d.type2str(true)));
+	Datum res(0);
+	if (nargs == 1) {
+		// Single-argument mode returns the type of the item as a symbol.
+		// D4 is inconsistent about what types this variant is allowed to work with; e.g. #integer is fine,
+		// but #proplist is not. For now, give a response for all types.
+		Datum item = g_lingo->pop();
+		res = Datum(Common::String(item.type2str(true)));
+		res.type = SYMBOL;
+		g_lingo->push(res);
+		return;
+	}
+
+	if (nargs > 2) {
+		warning("b_ilk: dropping %d extra args", nargs - 2);
+		g_lingo->dropStack(nargs - 2);
+	}
+
+	// Two argument mode checks the type of the item against a symbol.
+	Datum type = g_lingo->pop();
+	Datum item = g_lingo->pop();
+	if (type.type != SYMBOL) {
+		warning("b_ilk: expected a symbol for second arg");
+	} else {
+		Common::String typeCopy = type.asString();
+
+		// A special case is #list, which is the equivalent of checking the item type is one of #linearlist,
+		// #proplist, #point and #rect.
+		if (typeCopy.equalsIgnoreCase("list")) {
+			res.u.i = item.type == ARRAY ? 1 : 0;
+			res.u.i |= item.type == PARRAY ? 1 : 0;
+			res.u.i |= item.type == POINT ? 1 : 0;
+			res.u.i |= item.type == RECT ? 1 : 0;
+		} else {
+			res.u.i = typeCopy.equalsIgnoreCase(item.type2str(true)) ? 1 : 0;
+		}
+	}
 	g_lingo->push(res);
 }
 
