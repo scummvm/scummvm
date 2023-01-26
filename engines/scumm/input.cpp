@@ -1378,11 +1378,14 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 	// The original interpreters allowed the usage of the Enter key as a substitute for left mouse click,
 	// and the Tab key as a substitute for right click; while v7-8 games handle this substitution via
-	// scripts, we have to do this manually for the other games.
-	if (_mouseAndKeyboardStat == Common::KEYCODE_RETURN && _cursor.state > 0 && _game.version <= 6) {
-		_mouseAndKeyboardStat = MBS_LEFT_CLICK;
-	} else if (_mouseAndKeyboardStat == Common::KEYCODE_TAB && _cursor.state > 0 && _game.version >= 4 && _game.version <= 6) {
-		_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
+	// scripts, we have to do this manually for the other games.  We don't want to do this for (later)
+	// HE games, since they can sometimes have scripts that accept Enter and Tab keys.
+	if (_game.heversion < 71) {
+		if (_mouseAndKeyboardStat == Common::KEYCODE_RETURN && _cursor.state > 0 && _game.version <= 6) {
+			_mouseAndKeyboardStat = MBS_LEFT_CLICK;
+		} else if (_mouseAndKeyboardStat == Common::KEYCODE_TAB && _cursor.state > 0 && _game.version >= 4 && _game.version <= 6) {
+			_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
+		}
 	}
 }
 
