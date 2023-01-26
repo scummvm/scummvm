@@ -132,8 +132,11 @@ public:
 	};
 
 	Symbol getMethod(const Common::String &methodName) override {
+		Symbol sym;
+
 		if (_disposed) {
-			error("Method '%s' called on disposed object <%s>", methodName.c_str(), asString().c_str());
+			warning("Method '%s' called on disposed object <%s>, returning VOID", methodName.c_str(), asString().c_str());
+			return sym;
 		}
 
 		Common::String methodId;
@@ -143,8 +146,6 @@ public:
 			methodId = methodName;
 		}
 
-
-		Symbol sym;
 		if (_methods && _methods->contains(methodId)) {
 			sym = (*_methods)[methodId];
 			sym.target = this;
