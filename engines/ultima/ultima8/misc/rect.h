@@ -72,6 +72,11 @@ struct Rect {
 		return (left <= x) && (x < right) && (top <= y) && (y < bottom);
 	}
 
+	// Check if the given Rect is contained inside this rectangle.
+	bool contains(const Rect &r) const {
+		return (left <= r.left) && (r.right <= right) && (top <= r.top) && (r.bottom <= bottom);
+	}
+
 	// Move the Rect (Relative)
 	void translate(int32 dx, int32 dy) {
 		left += dx;

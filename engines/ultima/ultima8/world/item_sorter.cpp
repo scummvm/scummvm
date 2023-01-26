@@ -140,18 +140,18 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->calculateBoxBounds(_camSx, _camSy);
 
 	// Real Screenspace coords
-	si->_sx = si->_sxBot - frame->_xoff;   // Left
-	si->_sy = si->_syBot - frame->_yoff;   // Top
-	si->_sx2 = si->_sx + frame->_width;    // Right
-	si->_sy2 = si->_sy + frame->_height;   // Bottom
+	si->_sr.left = si->_sxBot - frame->_xoff;
+	si->_sr.top = si->_syBot - frame->_yoff;
+	si->_sr.right = si->_sr.left + frame->_width;
+	si->_sr.bottom = si->_sr.top + frame->_height;
 
 	// Do Clipping here
-	int16 clipped = CheckClipped(Rect(si->_sx, si->_sy, si->_sx2, si->_sy2));
-	if (clipped < 0)
+	if (!_clipWindow.intersects(si->_sr)) {
 		// Clipped away entirely - don't add to the list.
 		return;
+	}
 
-	si->_clipped = (clipped != 0);
+	si->_clipped = !_clipWindow.contains(si->_sr);
 
 	// These help out with sorting. We calc them now, so it will be faster
 	si->_fbigsq = (xd == 128 && yd == 128) || (xd == 256 && yd == 256) || (xd == 512 && yd == 512);
@@ -388,11 +388,8 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 
 		for (it = _itemsTail; it != nullptr; it = it->_prev) {
 			if (!(it->_flags & (Item::FLG_DISPOSABLE | Item::FLG_FAST_ONLY)) && !it->_fixed) {
-
-				if (!it->_itemNum) continue;
-
-				// Doesn't Overlap
-				if (x < it->_sx || x >= it->_sx2 || y < it->_sy || y >= it->_sy2) continue;
+				if (!it->_itemNum || !it->contains(x, y))
+					continue;
 
 				// Now check the _frame itself
 				const ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
@@ -418,10 +415,8 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 
 	if (!selected) {
 		for (it = _items; it != nullptr; it = it->_next) {
-			if (!it->_itemNum) continue;
-
-			// Doesn't Overlap
-			if (x < it->_sx || x >= it->_sx2 || y < it->_sy || y >= it->_sy2) continue;
+			if (!it->_itemNum || !it->contains(x, y))
+				continue;
 
 			// Now check the _frame itself
 			const ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
@@ -487,25 +482,6 @@ void ItemSorter::IncSortLimit(int count) {
 	_sortLimitChanged = true;
 	if (_sortLimit < 0)
 		_sortLimit = 0;
-}
-
-//
-// int16 ItemSorter::CheckClipped(Rect &r)
-//
-// Desc: Check for a clipped rectangle
-// Returns: -1 if off screen,
-//           0 if not clipped,
-//           1 if clipped
-//
-int16 ItemSorter::CheckClipped(const Rect &c) const {
-	Rect r = c;
-	r.clip(_clipWindow);
-
-	// Clipped away to the void
-	if (r.isEmpty())
-		return -1;
-	else if (r == c) return 0;
-	else return 1;
 }
 
 } // End of namespace Ultima8

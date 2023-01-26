@@ -281,16 +281,16 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si2.calculateBoxBounds(0, 0);
 
 		// ShapeFrame (240:1)
-		si1._sx = si1._sxBot - 32;
-		si1._sy = si1._syBot - 48;
-		si1._sx2 = si1._sx + 65;
-		si1._sy2 = si1._sy + 48;
+		si1._sr.left = si1._sxBot - 32;
+		si1._sr.top = si1._syBot - 48;
+		si1._sr.right = si1._sr.left + 65;
+		si1._sr.bottom = si1._sr.top + 48;
 
 		// ShapeFrame (301:1)
-		si2._sx = si2._sxBot - 31;
-		si2._sy = si2._syBot - 31;
-		si2._sx2 = si2._sx + 62;
-		si2._sy2 = si2._sy + 32;
+		si2._sr.left = si2._sxBot - 31;
+		si2._sr.top = si2._syBot - 31;
+		si2._sr.right = si2._sr.left + 62;
+		si2._sr.bottom = si2._sr.top + 32;
 
 		// FIXME: This case fails here currently
 		//TS_ASSERT(!si1.occludes(si2));

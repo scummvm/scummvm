@@ -70,10 +70,6 @@ public:
 
 private:
 	bool PaintSortItem(RenderSurface *surf, SortItem *si);
-
-	//! Check Clipped. -1 if off screen, 0 if not clipped, 1 if clipped
-	int16 CheckClipped(const Rect &) const;
-
 };
 
 } // End of namespace Ultima8

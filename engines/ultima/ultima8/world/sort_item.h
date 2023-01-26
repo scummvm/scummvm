@@ -24,6 +24,7 @@
 
 #include "common/str.h"
 #include "ultima/ultima8/misc/common_types.h"
+#include "ultima/ultima8/misc/rect.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -39,8 +40,8 @@ class Shape;
 struct SortItem {
 	SortItem(SortItem *n) : _next(n), _prev(nullptr), _itemNum(0),
 			_shape(nullptr), _order(-1), _depends(), _shapeNum(0),
-			_frame(0), _flags(0), _extFlags(0), _sx(0), _sy(0),
-			_sx2(0), _sy2(0), _x(0), _y(0), _z(0), _xLeft(0),
+			_frame(0), _flags(0), _extFlags(0), _sr(),
+			_x(0), _y(0), _z(0), _xLeft(0),
 			_yFar(0), _zTop(0), _sxLeft(0), _sxRight(0), _sxTop(0),
 			_syTop(0), _sxBot(0), _syBot(0),_fbigsq(false), _flat(false),
 			_occl(false), _solid(false), _draw(false), _roof(false),
@@ -59,9 +60,7 @@ struct SortItem {
 	uint32                  _flags;     // Item flags
 	uint32                  _extFlags;  // Item extended flags
 
-	int                     _sx, _sx2;  // Screenspace X coords
-	int                     _sy, _sy2;  // Screenspace Y coords
-
+	Rect                    _sr; // Screenspace rect for shape frame
 	/*
 	            Bounding Box layout
 
