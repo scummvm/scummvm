@@ -757,6 +757,8 @@ void cGameEnemy_Spider::ShowPlayer(const cVector3f &avPlayerFeetPos) {
 //-----------------------------------------------------------------------
 
 bool cGameEnemy_Spider::MoveToPos(const cVector3f &avFeetPos) {
+// FIXME: Code identical in each branch. Development leftover?
+#if 0
 	if (mlCurrentState == STATE_IDLE || mlCurrentState == STATE_PATROL) {
 		// SetTempPosition(avFeetPos);
 		// ChangeState(STATE_INVESTIGATE);
@@ -765,6 +767,9 @@ bool cGameEnemy_Spider::MoveToPos(const cVector3f &avFeetPos) {
 	} else {
 		return false;
 	}
+#else
+	return false;
+#endif
 }
 
 //-----------------------------------------------------------------------

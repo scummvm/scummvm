@@ -1288,6 +1288,8 @@ void cGameEnemyState_Dog_BreakDoor::OnUpdate(float afTimeStep) {
 
 				cGameSwingDoor *pDoor = mpInit->mpAttackHandler->GetLastSwingDoor();
 				if (pDoor) {
+// FIXME: Code identical in each branch. Development leftover?
+#if 0
 					/////////////////////////////
 					// The door is unbreakable
 					if (pDoor->GetToughness() - mpEnemyDog->mlBreakDoorStrength >= 4) {
@@ -1311,6 +1313,9 @@ void cGameEnemyState_Dog_BreakDoor::OnUpdate(float afTimeStep) {
 					else {
 						mpEnemy->AddDoorBreakCount(2);
 					}
+#else
+					mpEnemy->AddDoorBreakCount(2);
+#endif
 				}
 			}
 			mbAttacked = true;
@@ -1527,6 +1532,8 @@ void cGameEnemyState_Dog_KnockDown::OnUpdate(float afTimeStep) {
 void cGameEnemyState_Dog_KnockDown::OnAnimationOver(const tString &asName) {
 	iCharacterBody *pCharBody = mpEnemy->GetMover()->GetCharBody();
 
+// FIXME: Code identical in each branch. Development leftover?
+#if 0
 	if (mpEnemy->CheckForTeamMate(mpEnemyDog->mfCallBackupRange * 1.5f, false) &&
 		mpEnemy->CheckForTeamMate(14, true) == false) {
 		pCharBody->SetActive(true);
@@ -1536,6 +1543,10 @@ void cGameEnemyState_Dog_KnockDown::OnAnimationOver(const tString &asName) {
 		// mpEnemy->ChangeState(STATE_HUNT);
 		mpEnemy->ChangeState(STATE_FLEE);
 	}
+#else
+	pCharBody->SetActive(true);
+	mpEnemy->ChangeState(STATE_FLEE);
+#endif
 }
 
 //-----------------------------------------------------------------------
