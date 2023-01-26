@@ -111,7 +111,7 @@ private:
 	 * Load the map's overlay file
 	 */
 	void loadOverlay();
-protected:
+public:
 	/**
 	 * Divides all the party's Hp in half
 	 */
