@@ -45,6 +45,7 @@ namespace Sci {
 #define GAMEOPTION_TTS                      GUIO_GAMEOPTIONS17
 
 enum SciGameId {
+	GID_ALL,
 	GID_ASTROCHICKEN,
 	GID_CAMELOT,
 	GID_CASTLEBRAIN,
