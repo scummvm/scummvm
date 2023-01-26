@@ -65,7 +65,7 @@ void Map28::special() {
 					g_maps->clearSpecial();
 					map[VAL1]++;
 
-					int val = getRandomNumber(10);
+					int val = g_events->getRandomNumber(10);
 					switch (val) {
 					case 1:
 						g_events->send(SoundMessage(STRING["maps.map28.nothing"]));
@@ -119,7 +119,8 @@ void Map28::special() {
 					case 8:
 						g_events->send(SoundMessage(STRING["maps.map28.poof"]));
 						g_maps->_mapPos = Common::Point(
-							getRandomNumber(15), getRandomNumber(15));
+							g_events->getRandomNumber(15),
+							g_events->getRandomNumber(15));
 						map.updateGame();
 						break;
 
@@ -146,21 +147,21 @@ void Map28::special00() {
 				switch (ks.keycode) {
 				case Common::KEYCODE_a:
 					g_events->close();
-					g_globals->_treasure.setGold((getRandomNumber(8) + 8) * 256);
+					g_globals->_treasure.setGold((g_events->getRandomNumber(8) + 8) * 256);
 					g_maps->clearSpecial();
 					g_events->addAction(KEYBIND_SEARCH);
 					break;
 
 				case Common::KEYCODE_b:
 					g_events->close();
-					g_globals->_treasure.setGems(getRandomNumber(50) + 200);
+					g_globals->_treasure.setGems(g_events->getRandomNumber(50) + 200);
 					g_maps->clearSpecial();
 					g_events->addAction(KEYBIND_SEARCH);
 					break;
 
 				case Common::KEYCODE_c:
 					g_events->close();
-					g_globals->_treasure._items[2] = getRandomNumber(22) + 196;
+					g_globals->_treasure._items[2] = g_events->getRandomNumber(22) + 196;
 					g_maps->clearSpecial();
 					g_events->addAction(KEYBIND_SEARCH);
 					break;

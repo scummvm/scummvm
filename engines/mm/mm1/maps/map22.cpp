@@ -117,8 +117,8 @@ void Map22::special02() {
 					16, 2, STRING["maps.map22.ambush"],
 					[]() {
 						Game::Encounter &enc = g_globals->_encounters;
-						int monsterCount = getRandomNumber(3);
-						int idx = getRandomNumber(5) - 1;
+						int monsterCount = g_events->getRandomNumber(3);
+						int idx = g_events->getRandomNumber(5) - 1;
 						const int id1 = MONSTER_ID1[idx];
 						const int id2 = MONSTER_ID2[idx];
 

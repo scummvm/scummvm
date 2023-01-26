@@ -115,7 +115,8 @@ void Map23::special08() {
 		STRING["maps.map23.column"],
 		[]() {
 			g_maps->_mapPos = Common::Point(
-				getRandomNumber(15), getRandomNumber(15));
+				g_events->getRandomNumber(15),
+				g_events->getRandomNumber(15));
 			g_maps->_currentMap->updateGame();
 		}
 	));

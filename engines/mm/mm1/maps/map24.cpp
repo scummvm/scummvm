@@ -87,7 +87,7 @@ void Map24::special02() {
 				Game::Encounter &enc = g_globals->_encounters;
 				map[VAL1]++;
 
-				int monsterCount = getRandomNumber(4) + 3;
+				int monsterCount = g_events->getRandomNumber(4) + 3;
 				enc.clearMonsters();
 				enc.addMonster(6, 8);
 				for (int i = 1; i < monsterCount; ++i)
@@ -109,7 +109,7 @@ void Map24::special03() {
 		STRING["maps.map24.wyverns"],
 		[]() {
 			Game::Encounter &enc = g_globals->_encounters;
-			int monsterCount = getRandomNumber(4) + 3;
+			int monsterCount = g_events->getRandomNumber(4) + 3;
 			enc.clearMonsters();
 			for (int i = 1; i < monsterCount; ++i)
 				enc.addMonster(14, 7);

@@ -66,7 +66,7 @@ void Map47::special01() {
 		STRING["maps.map47.gong"],
 		[]() {
 			Map47 &map = *static_cast<Map47 *>(g_maps->_currentMap);
-			int toneNum = getRandomNumber(6);
+			int toneNum = g_events->getRandomNumber(6);
 			if (toneNum < 4) {
 				g_events->send(SoundMessage(STRING[
 					Common::String::format("maps.map47.tones.%d", toneNum)]));
