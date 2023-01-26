@@ -74,7 +74,7 @@ void Map25::special() {
 					STRING["maps.map25.pirates"],
 					[]() {
 						Game::Encounter &enc = g_globals->_encounters;
-						int monsterCount = getRandomNumber(8) + 4;
+						int monsterCount = g_events->getRandomNumber(8) + 4;
 						enc.clearMonsters();
 						for (int i = 0; i < monsterCount; ++i)
 							enc.addMonster(12, 12);
@@ -174,7 +174,7 @@ void Map25::nativesAttack() {
 		STRING["maps.map25.natives"],
 		[]() {
 			Game::Encounter &enc = g_globals->_encounters;
-			int monsterCount = getRandomNumber(6) + 7;
+			int monsterCount = g_events->getRandomNumber(6) + 7;
 			enc.clearMonsters();
 			for (int i = 0; i < monsterCount; ++i)
 				enc.addMonster(9, 12);

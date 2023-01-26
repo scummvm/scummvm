@@ -198,7 +198,7 @@ void Map23::fountain() {
 		[]() {
 			for (uint i = 0; i < g_globals->_party.size(); ++i) {
 				Character &c = g_globals->_party[i];
-				int attrNum = getRandomNumber(8) - 1;
+				int attrNum = g_events->getRandomNumber(8) - 1;
 				c.getAttribute(attrNum)._current = 30;
 			}
 
