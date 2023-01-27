@@ -274,6 +274,9 @@ inline void SortItem::setBoxBounds(const Box& box, int32 sx, int32 sy) {
 }
 
 inline bool SortItem::contains(int32 sx, int32 sy) const {
+	if (!_sr.contains(sx, sy))
+		return false;
+
 	const int point_top_diff[2] = { _sxTop - sx, _syTop - sy };
 	const int point_bot_diff[2] = { _sxBot - sx, _syBot - sy };
 
@@ -308,6 +311,9 @@ inline bool SortItem::contains(int32 sx, int32 sy) const {
 }
 
 inline bool SortItem::overlap(const SortItem &si2) const {
+	if (!_sr.intersects(si2._sr))
+		return false;
+
 	const int point_top_diff[2] = { _sxTop - si2._sxBot, _syTop - si2._syBot };
 	const int point_bot_diff[2] = { _sxBot - si2._sxTop, _syBot - si2._syTop };
 
@@ -342,6 +348,9 @@ inline bool SortItem::overlap(const SortItem &si2) const {
 }
 
 inline bool SortItem::occludes(const SortItem &si2) const {
+	if (!_sr.contains(si2._sr))
+		return false;
+
 	const int point_top_diff[2] = { _sxTop - si2._sxTop, _syTop - si2._syTop };
 	const int point_bot_diff[2] = { _sxBot - si2._sxBot, _syBot - si2._syBot };
 

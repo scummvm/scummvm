@@ -256,8 +256,7 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si2._sr.right = si2._sr.left + 62;
 		si2._sr.bottom = si2._sr.top + 32;
 
-		// FIXME: This case fails here currently
-		//TS_ASSERT(!si1.occludes(si2));
+		TS_ASSERT(!si1.occludes(si2));
 		TS_ASSERT(!si2.occludes(si1));
 	}
 
@@ -274,11 +273,13 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(si1.contains(si1._sxRight - 1, (si1._syTop + si1._syBot) / 2));
 		TS_ASSERT(si1.contains((si1._sxLeft + si1._sxRight) / 2, (si1._syTop + si1._syBot) / 2));
 
-		// Currently inclusive of all edges
-		TS_ASSERT(si1.contains(si1._sxBot, si1._syBot));
+		// Inclusive of left and top
 		TS_ASSERT(si1.contains(si1._sxTop, si1._syTop));
 		TS_ASSERT(si1.contains(si1._sxLeft, (si1._syTop + si1._syBot) / 2));
-		TS_ASSERT(si1.contains(si1._sxRight, (si1._syTop + si1._syBot) / 2));
+
+		// Exclusive of right and bottom
+		TS_ASSERT(!si1.contains(si1._sxBot, si1._syBot));
+		TS_ASSERT(!si1.contains(si1._sxRight, (si1._syTop + si1._syBot) / 2));
 
 		// Outside bounds
 		TS_ASSERT(!si1.contains(si1._sxBot, si1._syBot + 1));
