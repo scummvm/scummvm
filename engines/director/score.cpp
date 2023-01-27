@@ -298,7 +298,7 @@ void Score::step() {
 		g_director->_framesRan++;
 	}
 
-	if (debugChannelSet(-1, kDebugFewFramesOnly) && g_director->_framesRan > 9) {
+	if (debugChannelSet(-1, kDebugFewFramesOnly) && g_director->_framesRan > kFewFamesMaxCounter) {
 		warning("Score::startLoop(): exiting due to debug few frames only");
 		_playState = kPlayStopped;
 		return;

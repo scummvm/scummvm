@@ -345,7 +345,7 @@ bool Window::step() {
 		}
 	}
 
-	if (debugChannelSet(-1, kDebugFewFramesOnly) && g_director->_framesRan > 9)
+	if (debugChannelSet(-1, kDebugFewFramesOnly) && g_director->_framesRan > kFewFamesMaxCounter)
 		return false;
 
 	// prepare next movie
