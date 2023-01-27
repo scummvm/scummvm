@@ -461,6 +461,8 @@ Archive *Window::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) 
 		warning("Window::loadEXERIFX(): Failed to load RIFX from EXE");
 		delete result;
 		result = nullptr;
+		delete stream;
+		stream = nullptr;
 	}
 	return result;
 }
