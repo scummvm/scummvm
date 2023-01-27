@@ -285,9 +285,6 @@ private:
 	bool _saveAuthorized;
 
 	void initialize();
-	void songDelay(int delay);
-	void playNote(int frequencyIndex, int totalDelay);
-	Common::KeyCode playSong(uint8 *buffer);
 	void playIntro();
 	void initEngine();
 	void initMapMonsters();
@@ -482,6 +479,9 @@ private:
 	int16 script_parse(Common::String str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool scriptExecuteFlag);
 
 	// Sound
+	void songDelay(int delay);
+	void playNote(int frequencyIndex, int totalDelay);
+	Common::KeyCode playSong(uint8 *buffer);
 	void generateSound1(int lowFreq, int highFreq, int duration);
 	void generateSound2(int startFreq, int endFreq, int speed);
 	void generateSound3();
