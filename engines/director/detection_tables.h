@@ -1926,11 +1926,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("henachoco05", "", "yaken", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 	WINGAME1_l("henachoco05", "", "YAKEN.EXE", "1f9b0ef872de7b84063a53b2a1083c60", 2103629, Common::JA_JPN, 400),
 
-	// German 16bit version is unconfirmed (Trac #13225)
+	// German release is D5
 	MACGAME1("majestic", "", "Majestic", "01be45e7241194dad07938e7059b88e3", 483518, 400),
 	WINGAME1("majestic", "", "MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba", 23437631, 400),
-	WINGAME1_l("majestic", "",  "Maj16.exe", "65ef7246e9ab04aff59fb734e9551727", 23688481, Common::DE_DEU, 400),
-	WINGAME1t_l("majestic", "", "Maj32.exe", "d1cced6eff47da53845679d05b5d2bf3", 24166899, Common::DE_DEU, 400),
 
 	PIPGAME1_l("nemurenu", "", "Sleepless", "5ac60d4dafefa00dd8060b6a4f9c4c4c", 48184, Common::JA_JPN, 404),
 
@@ -5936,6 +5934,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("madcc12", "Demo",		 "MAD12.EXE",  "842014a812b454620f64b860fd7211f0", 932335, 501),
 	WINDEMO1("madcc12", "Slideshow", "SLIDES.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1192485, 501),
 	WINDEMO1("madccpk", "Demo",		 "MADPK.EXE",  "842014a812b454620f64b860fd7211f0", 932303, 501),
+
+	// English hybrid version is D4
+	// Bugreport #14065
+	WINGAME1_l("majestic", "16-bit",  "Maj16.exe", "65ef7246e9ab04aff59fb734e9551727", 23688481, Common::DE_DEU, 501),
+	WINGAME1t_l("majestic", "32-bit", "Maj32.exe", "d1cced6eff47da53845679d05b5d2bf3", 24166899, Common::DE_DEU, 501),
 
 	WINGAME1_l("maria", "", "MARIA1.EXE", "3460ad87d2ba57104e2810a77b53c220", 6727617, Common::JA_JPN, 500),
 
