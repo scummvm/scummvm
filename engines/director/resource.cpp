@@ -260,6 +260,7 @@ Archive *Window::loadEXE(const Common::String movie) {
 		Common::WinResources *exe = Common::WinResources::createFromEXE(movie);
 		if (!exe) {
 			warning("Window::loadEXE(): Failed to open EXE '%s'", g_director->getEXEName().c_str());
+			delete exeStream;
 			return nullptr;
 		}
 
