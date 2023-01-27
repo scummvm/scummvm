@@ -159,9 +159,9 @@ bool Host::sendRawData(Common::String address, int port, const char *data) {
 	int sentLength = enet_socket_send(_host->socket, &enetAddress, &_buffer, 1);
 	if (sentLength < 0)
 		return false;
-	
+
 	return true;
 
 }
-	
+
 } // End of namespace Networking
