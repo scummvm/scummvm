@@ -398,6 +398,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 
 				if (!path.empty()) {
 					((DigitalVideoCastMember *)nextSprite->_cast)->loadVideo(pathMakeRelative(path, true, false));
+					_movieTime = 0;
 					((DigitalVideoCastMember *)nextSprite->_cast)->startVideo(this);
 				}
 			} else if (nextSprite->_cast->_type == kCastFilmLoop) {
