@@ -46,6 +46,8 @@
 	I mGetLogicalPage
 	I mGetLogicalRAM
 	I mGetLowMemory
+
+	USED BY: Chop Suey (win)
  */
 
 #include "director/director.h"
@@ -67,6 +69,7 @@ static MethodProto xlibMethods[] = {
 	{ "new",					MemoryXObj::m_new,			0,	0,	300 },	// D3
 	{ "Clear",					MemoryXObj::m_clear,		0,	0,	300 },	// D3
 	{ "Purge",					MemoryXObj::m_purge,		0,	0,	400 },	// D4
+	{ "GetVM",					MemoryXObj::m_getVM,		0,  0,  300 },  // D3
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -98,6 +101,10 @@ void MemoryXObj::m_clear(int nargs) {
 }
 
 void MemoryXObj::m_purge(int nargs) {
+}
+
+void MemoryXObj::m_getVM(int nargs) {
+	g_lingo->push(Datum(0)); // At least Chop Suey Win requires 0 bytes Virtual Memory for running
 }
 
 } // End of namespace Director
