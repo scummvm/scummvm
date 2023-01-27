@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/random.h"
 #include "efh/efh.h"
@@ -60,19 +61,19 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 			++curPtr;
 	} while (*curPtr != 0x60 && counter <= target);
 
-#ifdef debug
-// Dump the decompressed IMP file
-	Common::DumpFile dump;
-	if (!techMapFl) {
-		dump.open("imp2_unc.dump");
-		dump.write(_imp2, curPtr - _imp2);
-	} else {
-		dump.open("imp1_unc.dump");
-		dump.write(_imp1, curPtr - _imp1);
+	if (ConfMan.getBool("dump_scripts")) {
+		// Dump the decompressed IMP file
+		Common::DumpFile dump;
+		if (!techMapFl) {
+			dump.open("imp2_unc.dump");
+			dump.write(_imp2, curPtr - _imp2);
+		} else {
+			dump.open("imp1_unc.dump");
+			dump.write(_imp1, curPtr - _imp1);
+		}
+		dump.flush();
+		dump.close();
 	}
-	dump.flush();
-	dump.close();
-#endif
 }
 
 void EfhEngine::loadImageSet(int16 imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer) {
