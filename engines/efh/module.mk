@@ -8,11 +8,11 @@ MODULE_OBJS = \
 	graphics.o \
 	init.o \
 	menu.o \
+	metaengine.o \
 	savegames.o \
 	script.o \
 	sound.o \
-	utils.o \
-	metaengine.o
+	utils.o
 
 MODULE_DIRS += \
 	engines/efh
