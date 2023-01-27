@@ -23,6 +23,78 @@
 
 namespace Efh {
 
+void EfhEngine::songDelay(int delay) {
+	debugC(3, kDebugEngine, "songDelay %ld", delay);
+
+	int remainingDelay = delay / 2;
+	while (remainingDelay > 0 && !shouldQuit()) {
+		remainingDelay -= 3;
+		_system->delayMillis(3);
+	}
+}
+
+void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
+	debugC(3, kDebugEngine, "playNote %d %d", frequencyIndex, totalDelay);
+	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 0x1234DD / kSoundFrequency[frequencyIndex], -1);
+	songDelay(totalDelay);
+	_speakerStream->stop();
+}
+
+Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
+	debugC(3, kDebugEngine, "playSong");
+
+	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
+					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
+	Common::KeyCode inputChar = Common::KEYCODE_INVALID;
+	int totalDelay = 0;
+
+	int8 stopFl;
+	uint8 varC = *buffer++;
+	Common::Event event;
+	do {
+		stopFl = *buffer & 0x3F;
+		if (stopFl != 0) {
+			int delay = stopFl * varC * 0x2200 / 1000;
+
+			if (*buffer > 0x7F)
+				delay /= 2;
+
+			if (*buffer & 0x40)
+				delay = (delay * 2) / 3;
+
+			++buffer;
+			uint8 frequencyIndex = *buffer;
+			++buffer;
+
+			if (frequencyIndex > 0x7F)
+				totalDelay += delay;
+			else if (frequencyIndex == 0)
+				songDelay(delay);
+			else {
+				playNote(frequencyIndex, totalDelay + delay);
+				totalDelay = 0;
+			}
+		}
+
+		songDelay(10);
+		_system->getEventManager()->pollEvent(event);
+		if (event.type == Common::EVENT_KEYUP) {
+			inputChar = event.kbd.keycode;
+			// Hack, sometimes there's a ghost event after the 2nd note
+			if (inputChar == Common::KEYCODE_ESCAPE || inputChar == Common::KEYCODE_RETURN)
+				stopFl = 0;
+		}
+	} while (stopFl != 0);
+
+	_mixer->stopHandle(_speakerHandle);
+	delete _speakerStream;
+	_speakerStream = nullptr;
+
+	return inputChar;
+}
+
 void EfhEngine::generateSound1(int lowFreq, int highFreq, int duration) {
 	debugC(3, kDebugEngine, "generateSound1 %d %d %d - suspicious code", lowFreq, highFreq, duration);
 
