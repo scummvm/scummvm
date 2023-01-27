@@ -11,7 +11,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Obsidian.
    - Added support for Pink Panther: Passport to Peril.
    - Added support for Pink Panther: Hokus Pokus Pink.
-   - Added support for Driller/Space Station Oblivion (DOS/EGA, Amiga and AtariST versions).
+   - Added support for Driller/Space Station Oblivion (DOS/EGA/CGA, Amiga, AtariST, ZX Spectrum and Amstrad CPC versions).
    - Added support for Halls of the Dead: Faery Tale Adventure II.
 
  New platforms:
