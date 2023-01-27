@@ -80,7 +80,7 @@ struct soundFx {
 
 class SizedPCSpeaker : public Audio::PCSpeaker {
 public:
-	bool endOfStream() const override { return (_commandQueue->size() == 0); }
+	bool endOfStream() const override { return !isPlaying(); }
 };
 
 class FreescapeEngine : public Engine {
@@ -269,6 +269,7 @@ public:
 	Freescape::SizedPCSpeaker *_speaker;
 
 	bool _syncSound;
+	bool _firstSound;
 	bool _usePrerecordedSounds;
 	void waitForSounds();
 	void stopAllSounds();
