@@ -645,7 +645,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 
 		int frameRate = CLIP<int>(_frames[frameId]->_palette.speed, 1, 30);
 		int frameDelay = 1000/60;
-		int fadeFrames = fadeColorFrames[frameRate - 1];
+		int fadeFrames = kFadeColorFrames[frameRate - 1];
 		byte calcPal[768];
 
 		if (_frames[frameId]->_palette.normal) {
@@ -676,10 +676,10 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 			byte *fadePal = nullptr;
 			if (_frames[frameId]->_palette.fadeToBlack) {
 				// Fade everything except color index 0 to black
-				fadePal = blackPalette;
+				fadePal = kBlackPalette;
 			} else if (_frames[frameId]->_palette.fadeToWhite) {
 				// Fade everything except color index 255 to white
-				fadePal = whitePalette;
+				fadePal = kWhitePalette;
 			} else {
 				// Shouldn't reach here
 				return false;
@@ -831,10 +831,10 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 				byte *fadePal = nullptr;
 				if (_frames[frameId]->_palette.fadeToBlack) {
 					// Fade everything except color index 0 to black
-					fadePal = blackPalette;
+					fadePal = kBlackPalette;
 				} else if (_frames[frameId]->_palette.fadeToWhite) {
 					// Fade everything except color index 255 to white
-					fadePal = whitePalette;
+					fadePal = kWhitePalette;
 				} else {
 					// Shouldn't reach here
 					return;
@@ -874,17 +874,17 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 				byte *fadePal = nullptr;
 				if (_frames[frameId]->_palette.fadeToBlack) {
 					// Fade everything except color index 0 to black
-					fadePal = blackPalette;
+					fadePal = kBlackPalette;
 				} else if (_frames[frameId]->_palette.fadeToWhite) {
 					// Fade everything except color index 255 to white
-					fadePal = whitePalette;
+					fadePal = kWhitePalette;
 				} else {
 					// Shouldn't reach here
 					return;
 				}
 				int frameRate = CLIP<int>(_frames[frameId]->_palette.speed, 1, 30);
 				int frameDelay = 1000/60;
-				int fadeFrames = fadeColorFrames[frameRate - 1];
+				int fadeFrames = kFadeColorFrames[frameRate - 1];
 
 				// Wait for a fixed time
 				g_director->setPalette(fadePal, 256);
