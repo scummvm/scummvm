@@ -66,6 +66,7 @@ MODULE_OBJS = \
 	lingo/xlibs/orthoplayxobj.o \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/popupmenuxobj.o \
+	lingo/xlibs/porta.o \
 	lingo/xlibs/qtmovie.o \
 	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/serialportxobj.o \
