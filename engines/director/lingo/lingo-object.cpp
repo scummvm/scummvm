@@ -42,6 +42,7 @@
 #include "director/lingo/xlibs/barakeobj.h"
 #include "director/lingo/xlibs/cdromxobj.h"
 #include "director/lingo/xlibs/darkenscreen.h"
+#include "director/lingo/xlibs/developerStack.h"
 #include "director/lingo/xlibs/ednox.h"
 #include "director/lingo/xlibs/fileexists.h"
 #include "director/lingo/xlibs/fileio.h"
@@ -173,6 +174,7 @@ static struct XLibProto {
 	{ RearWindowXObj::fileNames,		RearWindowXObj::open,		RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ RegisterComponent::fileNames,		RegisterComponent::open,	RegisterComponent::close,	kXObj,					400 },	// D4
 	{ SerialPortXObj::fileNames,		SerialPortXObj::open,		SerialPortXObj::close,		kXObj,					200 },	// D2
+	{ DeveloperStack::fileNames,		DeveloperStack::open,		DeveloperStack::close,		kXObj,					300 },	// D3
 	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
 	{ SpaceMgr::fileNames,				SpaceMgr::open,				SpaceMgr::close,			kXObj,					400 },	// D4
 	{ VolumeList::fileNames,			VolumeList::open,			VolumeList::close,			kXObj,					300 },	// D3
@@ -407,7 +409,7 @@ bool ScriptContext::setProp(const Common::String &propName, const Datum &value) 
 			return _properties["ancestor"].u.obj->setProp(propName, value);
 		}
 	} else if (_objType == kFactoryObj) {
-		// D3 style anonymous objects/factories, set whatever properties you like 
+		// D3 style anonymous objects/factories, set whatever properties you like
 		_properties[propName] = value;
 		return true;
 	}

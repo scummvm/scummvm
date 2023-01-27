@@ -45,6 +45,7 @@ MODULE_OBJS = \
 	lingo/xlibs/barakeobj.o \
 	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/darkenscreen.o \
+	lingo/xlibs/developerStack.o \
 	lingo/xlibs/ednox.o \
 	lingo/xlibs/fileexists.o \
 	lingo/xlibs/fileio.o \
