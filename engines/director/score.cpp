@@ -81,8 +81,6 @@ Score::Score(Movie *movie) {
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
-
-	_framesRan = 0; // used by kDebugFewFramesOnly and kDebugScreenshot
 }
 
 Score::~Score() {
@@ -296,11 +294,11 @@ void Score::step() {
 	update();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(-1, kDebugScreenshot)) {
-		warning("Score::startLoop(): ran frame %0d", _framesRan);
-		_framesRan++;
+		warning("Score::startLoop(): ran frame %0d", g_director->_framesRan);
+		g_director->_framesRan++;
 	}
 
-	if (debugChannelSet(-1, kDebugFewFramesOnly) && _framesRan > 9) {
+	if (debugChannelSet(-1, kDebugFewFramesOnly) && g_director->_framesRan > 9) {
 		warning("Score::startLoop(): exiting due to debug few frames only");
 		_playState = kPlayStopped;
 		return;
@@ -993,7 +991,7 @@ void Score::screenShot() {
 	Common::String currentPath = _vm->getCurrentPath().c_str();
 	Common::replace(currentPath, Common::String(g_director->_dirSeparator), "-"); // exclude dir separator from screenshot filename prefix
 	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), _movie->getMacName().c_str());
-	Common::String filename = dumpScriptName(prefix.c_str(), kMovieScript, _framesRan, "png");
+	Common::String filename = dumpScriptName(prefix.c_str(), kMovieScript, g_director->_framesRan, "png");
 
 	Common::DumpFile screenshotFile;
 	if (screenshotFile.open(filename)) {

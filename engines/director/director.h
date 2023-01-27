@@ -284,6 +284,8 @@ private:
 public:
 	int _tickBaseline;
 	Common::String _traceLogFile;
+
+	uint16 _framesRan = 0; // used by kDebugFewFramesOnly
 };
 
 // An extension of MacPlotData for interfacing with inks and patterns without

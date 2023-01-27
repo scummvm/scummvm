@@ -2726,10 +2726,10 @@ void LB::b_updateStage(int nargs) {
 	g_director->draw();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
-		score->_framesRan++;
-			warning("LB::b_updateStage(): ran frame %0d", score->_framesRan);
+		g_director->_framesRan++;
+		warning("LB::b_updateStage(): ran frame %0d", g_director->_framesRan);
 
-		if (score->_framesRan > 9) {
+		if (g_director->_framesRan > 9) {
 			warning("b_updateStage(): exiting due to debug few frames only");
 			score->_playState = kPlayStopped;
 		}

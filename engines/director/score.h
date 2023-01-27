@@ -161,8 +161,6 @@ public:
 
 	int _numChannelsDisplayed;
 
-	uint16 _framesRan; // used by kDebugFewFramesOnly
-
 private:
 	DirectorEngine *_vm;
 	Lingo *_lingo;

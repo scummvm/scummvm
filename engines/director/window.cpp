@@ -345,6 +345,9 @@ bool Window::step() {
 		}
 	}
 
+	if (debugChannelSet(-1, kDebugFewFramesOnly) && g_director->_framesRan > 9)
+		return false;
+
 	// prepare next movie
 	if (!_nextMovie.movie.empty()) {
 		if (!loadNextMovie())
