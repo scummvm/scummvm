@@ -889,7 +889,7 @@ void EfhEngine::tryToggleEquipped(int16 charId, int16 objectId, int16 windowId, 
 }
 
 int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, int16 menuId, int16 curMenuLine, int16 gameMode) {
-	debug("useObject %d %d %d %d %d %s", charId, objectId, teamMonsterId, menuId, curMenuLine, gameMode == 3 ? "Combat" : "Normal");
+	debugC(3, kDebugEngine, "useObject %d %d %d %d %d %s", charId, objectId, teamMonsterId, menuId, curMenuLine, gameMode == 3 ? "Combat" : "Normal");
 
 	Common::String buffer1 = "";
 
