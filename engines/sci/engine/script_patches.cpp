@@ -4914,6 +4914,49 @@ static const SciScriptPatcherEntry kq1Signatures[] = {
 };
 
 // ===========================================================================
+// King's Quest IV
+
+// In early versions of KQ4, Game:replay has a typo that crashes when restoring
+//  a game that was saved while a modeless dialog was on screen. The script
+//  attempts to dispose of the current dialog if one exist, but it pushes an
+//  invalid property to the stack instead of the dispose selector.
+//
+// We fix this by restoring the broken Dialog:dispose call. It's unclear if this
+//  buggy script ever executed in the original; KQ4:save disposes of modeless
+//  dialogs before displaying the save dialog. But the ScummVM save dialog patch
+//  overrides KQ4:save, so our saves can still contain a dialog.
+//
+// Applies to: PC 1.000.106, PC 1.000.111
+// Responsible method: Game:replay
+static const uint16 kq4SignatureRestoreFix1[] = {
+	SIG_MAGICDWORD,
+	0x66, SIG_UINT16(0x4854),        // pTos ????
+	0x76,                            // push0
+	0x4a, 0x04,                      // send 04
+	SIG_END
+};
+
+static const uint16 kq4PatchRestoreFix1[] = {
+	0x38, PATCH_SELECTOR16(dispose), // pushi dispose
+	PATCH_END
+};
+
+// same as above but for PC 1.000.111
+static const uint16 kq4SignatureRestoreFix2[] = {
+	0x30, SIG_UINT16(0x0005),        // bnt 0005
+	SIG_MAGICDWORD,
+	0x67, 0x00,                      // pTos ????
+	0x76,                            // push0
+	0x4a, 0x04,                      // send 04
+	SIG_END
+};
+
+static const uint16 kq4PatchRestoreFix2[] = {
+	0x31, 0x06,                      // bnt 06
+	0x38, PATCH_SELECTOR16(dispose), // pushi dispose
+	PATCH_END
+};
+
 // In KQ4 1.000.111, falling down the lower stairs in room 90 sends a message to
 //  a non-object, which also crashes the original. It appears that the fragment
 //  of code which instantiated the Sound object was accidentally deleted from
@@ -5077,6 +5120,8 @@ static const SciScriptPatcherEntry kq4Signatures[] = {
 	{  true,    90, "fall down stairs",                            1, kq4SignatureFallDownStairs,               kq4PatchFallDownStairs },
 	{  true,    98, "disable speed test",                          1, sci0EarlySpeedTestSignature,              sci0EarlySpeedTestPatch },
 	{  true,    99, "disable speed test",                          1, sci0EarlySpeedTestSignature,              sci0EarlySpeedTestPatch },
+	{  true,   994, "restore fix",                                 1, kq4SignatureRestoreFix1,                  kq4PatchRestoreFix1 },
+	{  true,   994, "restore fix",                                 1, kq4SignatureRestoreFix2,                  kq4PatchRestoreFix2 },
 	{  true,   994, "ride unicorn at night",                       1, kq4SignatureUnicornNightRide,             kq4PatchUnicornNightRide },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
