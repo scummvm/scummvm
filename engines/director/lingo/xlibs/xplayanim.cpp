@@ -53,7 +53,7 @@ void XPlayAnim::b_xplayanim(int nargs) {
 	int x = g_lingo->pop().asInt();
 	Common::String filename = g_lingo->pop().asString();
 
-	debugN(5, "LB::b_xPlayAnim: x: %i y: %i", x, y);
+	debug(5, "LB::b_xPlayAnim: x: %i y: %i", x, y);
 	Video::PacoDecoder *video = new Video::PacoDecoder();
 	bool result = video->loadFile(Common::Path(filename, g_director->_dirSeparator));
 	if (!result) {
