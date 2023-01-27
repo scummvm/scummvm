@@ -162,10 +162,10 @@ void TeRendererTinyGL::renderTransparentMeshes() {
 	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
 	tglEnableClientState(TGL_COLOR_ARRAY);
 
-	tglVertexPointer(3, TGL_FLOAT, 12, _transparentMeshVertexes.data());
-	tglNormalPointer(TGL_FLOAT, 12, _transparentMeshNormals.data());
-	tglTexCoordPointer(2, TGL_FLOAT, 8, _transparentMeshCoords.data());
-	tglColorPointer(4, TGL_UNSIGNED_BYTE, 4, _transparentMeshColors.data());
+	tglVertexPointer(3, TGL_FLOAT, sizeof(TeVector3f32), _transparentMeshVertexes.data());
+	tglNormalPointer(TGL_FLOAT, sizeof(TeVector3f32), _transparentMeshNormals.data());
+	tglTexCoordPointer(2, TGL_FLOAT, sizeof(TeVector2f32), _transparentMeshCoords.data());
+	tglColorPointer(4, TGL_UNSIGNED_BYTE, sizeof(TeColor), _transparentMeshColors.data());
 
 	TeMaterial lastMaterial;
 	TeMatrix4x4 lastMatrix;
@@ -287,16 +287,16 @@ void TeRendererTinyGL::setViewport(int x, int y, int w, int h) {
 
 void TeRendererTinyGL::shadowMode(enum ShadowMode mode) {
 	_shadowMode = mode;
-	if (mode == ShadowMode0) {
+	if (mode == ShadowModeNone) {
 		tglDisable(TGL_CULL_FACE);
 		tglShadeModel(TGL_SMOOTH);
 		return;
 	}
 
-	if (mode == ShadowMode1) {
+	if (mode == ShadowModeCreating) {
 		tglEnable(TGL_CULL_FACE);
 		tglCullFace(TGL_BACK);
-	} else { // ShadowMode2
+	} else { // ShadowModeDrawing
 		tglDisable(TGL_CULL_FACE);
 	}
 	tglEnable(TGL_BLEND);
@@ -308,7 +308,7 @@ void TeRendererTinyGL::shadowMode(enum ShadowMode mode) {
 void TeRendererTinyGL::applyMaterial(const TeMaterial &m) {
 	//debug("TeMaterial::apply (%s)", dump().c_str());
 	//static const float constColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	if (_shadowMode == TeRenderer::ShadowMode0) {
+	if (_shadowMode == TeRenderer::ShadowModeNone) {
 		if (m._enableLights)
 			TeLightTinyGL::enableAll();
 		else
@@ -360,7 +360,7 @@ void TeRendererTinyGL::applyMaterial(const TeMaterial &m) {
 		tglMaterialfv(TGL_FRONT_AND_BACK, TGL_DIFFUSE, diffuse);
 
 		setCurrentColor(m._diffuseColor);
-	} else if (_shadowMode == TeRenderer::ShadowMode1) {
+	} else if (_shadowMode == TeRenderer::ShadowModeCreating) {
 		// NOTE: Diverge from original here, it sets 255.0 but the
 		// colors should be scaled -1.0 .. 1.0.
 		static const float fullColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };

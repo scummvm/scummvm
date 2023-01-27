@@ -56,7 +56,7 @@ void TeMeshOpenGL::draw() {
 	debug("   worldRot   %s", worldRotation().dump().c_str());
 	*/
 
-	if (renderer->shadowMode() != TeRenderer::ShadowMode1) {
+	if (renderer->shadowMode() != TeRenderer::ShadowModeCreating) {
 		if (_faceCounts.empty()) {
 			if (hasAlpha(0) && _shouldDraw) {
 				renderer->addTransparentMesh(*this, 0, 0, 0);
@@ -90,15 +90,15 @@ void TeMeshOpenGL::draw() {
 	if (!_colors.empty())
 		glEnableClientState(GL_COLOR_ARRAY);
 
-	glVertexPointer(3, GL_FLOAT, 12, verticies.data());
+	glVertexPointer(3, GL_FLOAT, sizeof(TeVector3f32), verticies.data());
 	if (!normals.empty())
-		glNormalPointer(GL_FLOAT, 12, normals.data());
+		glNormalPointer(GL_FLOAT, sizeof(TeVector3f32), normals.data());
 
-	if (!_uvs.empty() && renderer->shadowMode() != TeRenderer::ShadowMode2)
-		glTexCoordPointer(2, GL_FLOAT, 8, _uvs.data());
+	if (!_uvs.empty() && renderer->shadowMode() != TeRenderer::ShadowModeDrawing)
+		glTexCoordPointer(2, GL_FLOAT, sizeof(TeVector2f32), _uvs.data());
 
 	if (!_colors.empty())
-		glColorPointer(4, GL_UNSIGNED_BYTE, 4, _colors.data());
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(TeColor), _colors.data());
 
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, _gltexEnvMode);
 	if (renderer->scissorEnabled()) {
@@ -125,7 +125,7 @@ void TeMeshOpenGL::draw() {
 		for (uint i = 0; i < _materials.size(); i++) {
 			if (!_faceCounts[i])
 				continue;
-			if (!hasAlpha(i) || renderer->shadowMode() == TeRenderer::ShadowMode1 || !_shouldDraw) {
+			if (!hasAlpha(i) || renderer->shadowMode() == TeRenderer::ShadowModeCreating || !_shouldDraw) {
 				renderer->applyMaterial(_materials[i]);
 				glDrawElements(_glMeshMode, _faceCounts[i] * 3, GL_UNSIGNED_SHORT, _indexes.data() + totalFaceCount * 3);
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);

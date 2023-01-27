@@ -155,10 +155,10 @@ void TeRendererOpenGL::renderTransparentMeshes() {
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	glVertexPointer(3, GL_FLOAT, 12, _transparentMeshVertexes.data());
-	glNormalPointer(GL_FLOAT, 12, _transparentMeshNormals.data());
-	glTexCoordPointer(2, GL_FLOAT, 8, _transparentMeshCoords.data());
-	glColorPointer(4, GL_UNSIGNED_BYTE, 4, _transparentMeshColors.data());
+	glVertexPointer(3, GL_FLOAT, sizeof(TeVector3f32), _transparentMeshVertexes.data());
+	glNormalPointer(GL_FLOAT, sizeof(TeVector3f32), _transparentMeshNormals.data());
+	glTexCoordPointer(2, GL_FLOAT, sizeof(TeVector2f32), _transparentMeshCoords.data());
+	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(TeColor), _transparentMeshColors.data());
 
 	TeMaterial lastMaterial;
 	TeMatrix4x4 lastMatrix;
@@ -276,16 +276,16 @@ void TeRendererOpenGL::setViewport(int x, int y, int w, int h) {
 
 void TeRendererOpenGL::shadowMode(enum ShadowMode mode) {
 	_shadowMode = mode;
-	if (mode == ShadowMode0) {
+	if (mode == ShadowModeNone) {
 		glDisable(GL_CULL_FACE);
 		glShadeModel(GL_SMOOTH);
 		return;
 	}
 
-	if (mode == ShadowMode1) {
+	if (mode == ShadowModeCreating) {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-	} else { // ShadowMode2
+	} else { // ShadowModeDrawing
 		glDisable(GL_CULL_FACE);
 	}
 	glEnable(GL_BLEND);
@@ -297,7 +297,7 @@ void TeRendererOpenGL::shadowMode(enum ShadowMode mode) {
 void TeRendererOpenGL::applyMaterial(const TeMaterial &m) {
 	//debug("TeMaterial::apply (%s)", dump().c_str());
 	static const float constColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	if (_shadowMode == TeRenderer::ShadowMode0) {
+	if (_shadowMode == TeRenderer::ShadowModeNone) {
 		if (m._enableLights)
 			TeLightOpenGL::enableAll();
 		else
@@ -345,7 +345,7 @@ void TeRendererOpenGL::applyMaterial(const TeMaterial &m) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
 
 		setCurrentColor(m._diffuseColor);
-	} else if (_shadowMode == TeRenderer::ShadowMode1) {
+	} else if (_shadowMode == TeRenderer::ShadowModeCreating) {
 		// NOTE: Diverge from original here, it sets 255.0 but the
 		// colors should be scaled -1.0 .. 1.0.
 		static const float fullColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };

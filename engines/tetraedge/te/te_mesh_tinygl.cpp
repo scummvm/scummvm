@@ -55,7 +55,7 @@ void TeMeshTinyGL::draw() {
 	debug("   worldRot   %s", worldRotation().dump().c_str());
 	*/
 
-	if (renderer->shadowMode() != TeRenderer::ShadowMode1) {
+	if (renderer->shadowMode() != TeRenderer::ShadowModeCreating) {
 		if (_faceCounts.empty()) {
 			if (hasAlpha(0) && _shouldDraw) {
 				renderer->addTransparentMesh(*this, 0, 0, 0);
@@ -89,15 +89,15 @@ void TeMeshTinyGL::draw() {
 	if (!_colors.empty())
 		tglEnableClientState(TGL_COLOR_ARRAY);
 
-	tglVertexPointer(3, TGL_FLOAT, 12, verticies.data());
+	tglVertexPointer(3, TGL_FLOAT, sizeof(TeVector3f32), verticies.data());
 	if (!normals.empty())
-		tglNormalPointer(TGL_FLOAT, 12, normals.data());
+		tglNormalPointer(TGL_FLOAT, sizeof(TeVector3f32), normals.data());
 
-	if (!_uvs.empty() && renderer->shadowMode() != TeRenderer::ShadowMode2)
-		tglTexCoordPointer(2, TGL_FLOAT, 8, _uvs.data());
+	if (!_uvs.empty() && renderer->shadowMode() != TeRenderer::ShadowModeDrawing)
+		tglTexCoordPointer(2, TGL_FLOAT, sizeof(TeVector2f32), _uvs.data());
 
 	if (!_colors.empty())
-		tglColorPointer(4, TGL_UNSIGNED_BYTE, 4, _colors.data());
+		tglColorPointer(4, TGL_UNSIGNED_BYTE, sizeof(TeColor), _colors.data());
 
 	// TODO: not supported in TGL
 	//tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, _gltexEnvMode);
@@ -128,7 +128,7 @@ void TeMeshTinyGL::draw() {
 		for (uint i = 0; i < _materials.size(); i++) {
 			if (!_faceCounts[i])
 				continue;
-			if (!hasAlpha(i) || renderer->shadowMode() == TeRenderer::ShadowMode1 || !_shouldDraw) {
+			if (!hasAlpha(i) || renderer->shadowMode() == TeRenderer::ShadowModeCreating || !_shouldDraw) {
 				renderer->applyMaterial(_materials[i]);
 				tglDrawElements(_glMeshMode, _faceCounts[i] * 3, TGL_UNSIGNED_SHORT, _indexes.data() + totalFaceCount * 3);
 				tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);

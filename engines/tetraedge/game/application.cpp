@@ -432,9 +432,9 @@ void Application::performRender() {
 	if (_drawShadows && game->running() && game->scene()._character
 			&& game->scene().shadowLightNo() != -1
 			&& game->scene().charactersShadow() != nullptr) {
-		renderer->shadowMode(TeRenderer::ShadowMode1);
+		renderer->shadowMode(TeRenderer::ShadowModeCreating);
 		game->scene().charactersShadow()->createTexture(&game->scene());
-		renderer->shadowMode(TeRenderer::ShadowMode0);
+		renderer->shadowMode(TeRenderer::ShadowModeNone);
 	}
 
 	drawBack();
@@ -448,9 +448,9 @@ void Application::performRender() {
 			TeIntrusivePtr<TeCamera> currentCamera = game->scene().currentCamera();
 			if (currentCamera) {
 				currentCamera->apply();
-				renderer->shadowMode(TeRenderer::ShadowMode2);
+				renderer->shadowMode(TeRenderer::ShadowModeDrawing);
 				game->scene().charactersShadow()->draw(&game->scene());
-				renderer->shadowMode(TeRenderer::ShadowMode0);
+				renderer->shadowMode(TeRenderer::ShadowModeNone);
 			}
 		}
 		game->draw();
