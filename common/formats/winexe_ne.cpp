@@ -185,7 +185,14 @@ bool NEResources::readResourceTable(uint32 offset) {
 
 		uint16 resCount = _exe->readUint16LE();
 
+		debug(2, "%d resources in table", resCount);
+
 		_exe->skip(4); // reserved
+
+		if (resCount > 256) {
+			warning("NEResources::readResourceTable(): resource table looks malformed, %d entries > 256", resCount);
+			resCount = 256;
+		}
 
 		for (int i = 0; i < resCount; i++) {
 			Resource res;
@@ -233,8 +240,16 @@ String NEResources::getResourceString(SeekableReadStream &exe, uint32 offset) {
 	uint8 length = exe.readByte();
 
 	String string;
-	for (uint16 i = 0; i < length; i++)
-		string += (char)exe.readByte();
+	for (uint16 i = 0; i < length; i++) {
+		char b = (char)exe.readByte();
+
+		// Do not read beyond end of string
+		if (!b) {
+			break;
+		}
+
+		string += b;
+	}
 
 	exe.seek(curPos);
 	return string;
