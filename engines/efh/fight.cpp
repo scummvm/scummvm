@@ -775,9 +775,9 @@ void EfhEngine::getDeathTypeDescription(int16 victimId, int16 attackerId) {
 			else
 				deathType = _items[exclusiveItemId]._attackType + 1;
 		}
-	} else if (_teamMonsterIdArray[attackerId] == -1)
+	} else if (_teamMonsterIdArray[attackerId] == -1) {
 		deathType = 0;
-	else {
+	} else {
 		int16 itemId = _mapMonsters[_techId][_teamMonsterIdArray[attackerId]]._weaponItemId;
 		deathType = _items[itemId]._attackType + 1;
 	}
