@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "efh/efh.h"
 
 namespace Efh {
@@ -88,18 +89,16 @@ void EfhEngine::rImageFile(Common::String filename, uint8 *targetBuffer, uint8 *
 	debugC(1, kDebugUtils, "rImageFile %s", filename.c_str());
 	readFileToBuffer(filename, packedBuffer);
 
-#ifndef debug
-	uncompressBuffer(packedBuffer, targetBuffer);
-#else
 	uint32 size = uncompressBuffer(packedBuffer, targetBuffer);
-	// dump a decompressed image file
-	Common::DumpFile dump;
-	dump.open(filename + ".dump");
-	dump.write(targetBuffer, size);
-	dump.flush();
-	dump.close();
-	// End of dump
-#endif
+	if (ConfMan.getBool("dump_scripts")) {
+		// dump a decompressed image file
+		Common::DumpFile dump;
+		dump.open(filename + ".dump");
+		dump.write(targetBuffer, size);
+		dump.flush();
+		dump.close();
+		// End of dump
+	}
 
 	// TODO: Refactoring: once uncompressed, the container contains for each image its width, its height, and raw data (4 Bpp)
 	// => Write a class to handle that more properly
