@@ -43,7 +43,7 @@ void TeVisualFade::animateBlackFade() {
 	_fadeCurveAnim.setCurve(curve);
 	_fadeCurveAnim._duration = 2000.0;
 	_fadeCurveAnim._callbackObj = &_fadeCaptureSprite;
-	_fadeCurveAnim._callbackMethod = &Te3DObject2::setColor;
+	_fadeCurveAnim._callbackMethod = &TeSpriteLayout::setColor;
 	_fadeCurveAnim.play();
 
 	_blackFadeSprite.setVisible(true);
@@ -53,7 +53,7 @@ void TeVisualFade::animateBlackFade() {
 	_blackFadeCurveAnim.setCurve(curve);
 	_blackFadeCurveAnim._duration = 2000.0;
 	_blackFadeCurveAnim._callbackObj = &_blackFadeSprite;
-	_blackFadeCurveAnim._callbackMethod = &Te3DObject2::setColor;
+	_blackFadeCurveAnim._callbackMethod = &TeSpriteLayout::setColor;
 	_blackFadeCurveAnim.play();
 }
 
@@ -69,7 +69,7 @@ void TeVisualFade::animateFade() {
 	_fadeCurveAnim.setCurve(curve);
 	_fadeCurveAnim._duration = 400.0;
 	_fadeCurveAnim._callbackObj = &_fadeCaptureSprite;
-	_fadeCurveAnim._callbackMethod = &Te3DObject2::setColor;
+	_fadeCurveAnim._callbackMethod = &TeSpriteLayout::setColor;
 	_fadeCurveAnim.play();
 }
 

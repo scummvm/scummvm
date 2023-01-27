@@ -48,15 +48,15 @@ public:
 	bool fading() const { return _fadeCurveAnim._runTimer.running(); }
 	bool blackFading() const { return _blackFadeCurveAnim._runTimer.running(); }
 
-	TeCurveAnim2<Te3DObject2, TeColor> blackFadeCurveAnim() { return _blackFadeCurveAnim; }
+	TeCurveAnim2<TeSpriteLayout, TeColor> blackFadeCurveAnim() { return _blackFadeCurveAnim; }
 
 	TeIntrusivePtr<Te3DTexture> texture() { return _texturePtr; }
 
 private:
 
 	TeIntrusivePtr<Te3DTexture> _texturePtr;
-	TeCurveAnim2<Te3DObject2, TeColor> _fadeCurveAnim;
-	TeCurveAnim2<Te3DObject2, TeColor> _blackFadeCurveAnim;
+	TeCurveAnim2<TeSpriteLayout, TeColor> _fadeCurveAnim;
+	TeCurveAnim2<TeSpriteLayout, TeColor> _blackFadeCurveAnim;
 	TeImage _image;
 
 };
