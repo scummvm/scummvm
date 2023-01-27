@@ -644,6 +644,10 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 		PaletteV4 *destPal = g_director->getPalette(resolvePaletteId(currentPalette));
 
 		int frameRate = CLIP<int>(_frames[frameId]->_palette.speed, 1, 30);
+
+		if (debugChannelSet(-1, kDebugFewFramesOnly))
+			frameRate = 30;
+
 		int frameDelay = 1000/60;
 		int fadeFrames = kFadeColorFrames[frameRate - 1];
 		byte calcPal[768];
@@ -755,6 +759,10 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 	int speed = _frames[frameId]->_palette.speed;
 	if (speed == 0)
 		return;
+
+	if (debugChannelSet(-1, kDebugFewFramesOnly))
+		speed = 30;
+
 	// 30 (the maximum) is actually unbounded
 	int delay = speed == 30 ? 10 : 1000 / speed;
 	if (_frames[frameId]->_palette.colorCycling) {
@@ -883,6 +891,10 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 					return;
 				}
 				int frameRate = CLIP<int>(_frames[frameId]->_palette.speed, 1, 30);
+
+				if (debugChannelSet(-1, kDebugFewFramesOnly))
+					frameRate = 30;
+
 				int frameDelay = 1000/60;
 				int fadeFrames = kFadeColorFrames[frameRate - 1];
 
