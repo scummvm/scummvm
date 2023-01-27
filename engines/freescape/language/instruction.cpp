@@ -69,7 +69,7 @@ Token::Type FCLInstruction::getType() {
 void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided) {
 	assert(obj != nullptr);
 	if (!obj->_conditionSource.empty()) {
-		stopAllSounds();
+		_firstSound = true;
 		_objExecutingCodeSize = obj->getSize();
 		debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
 		executeCode(obj->_condition, shot, collided);
@@ -190,6 +190,9 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
+	if (_firstSound)
+		stopAllSounds();
+	_firstSound = false;
 	uint16 index = instruction._source;
 	bool sync = instruction._additional;
 	debugC(1, kFreescapeDebugCode, "Playing sound %d", index);

@@ -98,6 +98,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_noClipMode = false;
 	_forceEndGame = false;
 	_syncSound = false;
+	_firstSound = false;
 	_playerHeightNumber = 1;
 	_angleRotationIndex = 0;
 

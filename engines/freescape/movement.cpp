@@ -70,8 +70,8 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 }
 
 void FreescapeEngine::shoot() {
-	//_mixer->stopHandle(_soundFxHandle);
 	playSound(1, false);
+	g_system->delayMillis(2);
 	_shootingFrames = 4;
 
 	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
@@ -235,7 +235,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 				return;
 			}
 			_position.set(_position.x(), positionY - fallen, _position.z());
-			if (isPlayingSound())
+			if (!isPlayingSound())
 				playSound(3, false);
 		}
 		debugC(1, kFreescapeDebugCode, "Runing effects:");
