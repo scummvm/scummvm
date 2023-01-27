@@ -85,6 +85,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Private:
    - Allow playing mac version directly from installer CD.
+   - Added support for Japanese/Mac version
 
  Queen:
    - Added option for using a better font in Hebrew version.
