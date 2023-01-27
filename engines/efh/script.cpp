@@ -55,7 +55,7 @@ uint8 *EfhEngine::script_getNumber(uint8 *srcBuffer, int16 *retBuf) {
 }
 
 int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 posY, int16 maxX, int16 maxY, bool scriptExecuteFlag) {
-	debug("script_parse stringBuffer %d-%d %d-%d %s", posX, posY, maxX, maxY, scriptExecuteFlag ? "True" : "False");
+	debugC(3, kDebugScript, "script_parse stringBuffer %d-%d %d-%d %s", posX, posY, maxX, maxY, scriptExecuteFlag ? "True" : "False");
 	debugC(6, kDebugScript, "%s", stringBuffer.c_str());
 
 	bool doneFlag = false;

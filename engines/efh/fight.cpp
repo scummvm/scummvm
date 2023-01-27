@@ -78,7 +78,7 @@ void EfhEngine::initFight(int16 monsterId) {
 }
 
 bool EfhEngine::handleFight(int16 monsterId) {
-	debug("handleFight %d", monsterId);
+	debugC(3, kDebugFight, "handleFight %d", monsterId);
 
 	_ongoingFightFl = true;
 
@@ -210,7 +210,7 @@ void EfhEngine::handleFight_checkEndEffect(int16 charId) {
 }
 
 void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
-	debug("handleFight_lastAction_A %d", teamCharId);
+	debugC(3, kDebugFight, "handleFight_lastAction_A %d", teamCharId);
 
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
@@ -486,7 +486,7 @@ bool EfhEngine::handleFight_lastAction_U(int16 teamCharId) {
 void EfhEngine::handleFight_MobstersAttack(int groupId) {
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
-	debug("handleFight_MobstersAttack %d", groupId);
+	debugC(3, kDebugFight, "handleFight_MobstersAttack %d", groupId);
 	
 	// handleFight - Loop on mobsterId - Start
 	for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {

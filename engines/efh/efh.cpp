@@ -58,8 +58,6 @@ EfhEngine::~EfhEngine() {
 }
 
 Common::Error EfhEngine::run() {
-	debug("run");
-
 	initialize();
 	initGraphics(320, 200);
 
@@ -2480,7 +2478,7 @@ void EfhEngine::checkProtection() {
 }
 
 void EfhEngine::loadEfhGame() {
-	debug("loadEfhGame");
+	debugC(2, kDebugEngine, "loadEfhGame");
 
 	// The original used a loop to check for the presence of the savegame on the current floppy.
 	// When the savegame wasn't found, it was displaying a screen asking for Disk 1 and was setting a flag used
