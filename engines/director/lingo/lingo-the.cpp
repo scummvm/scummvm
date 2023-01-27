@@ -1072,8 +1072,12 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheRomanLingo:
 		g_lingo->_romanLingo = bool(d.asInt());
-		warning("BUILDBOT: the romanLingo is set to %d", g_lingo->_romanLingo);
-		setTheEntitySTUB(kTheRomanLingo);
+
+		// Catching when we set to Japanese
+		if (!g_lingo->_romanLingo) {
+			warning("BUILDBOT: the romanLingo is set to %d", g_lingo->_romanLingo);
+			setTheEntitySTUB(kTheRomanLingo);
+		}
 		break;
 	case kTheScummvmVersion:
 		// Allow director version change: used for testing version differences via the lingo tests.
