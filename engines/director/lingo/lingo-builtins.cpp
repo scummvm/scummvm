@@ -2979,8 +2979,8 @@ void LB::b_sound(int nargs) {
 		soundManager->stopSound(firstArg.u.i);
 	} else if (verb.u.s->equalsIgnoreCase("fadeIn")) {
 		if (nargs > 2) {
-			TYPECHECK(secondArg, INT);
-			ticks = secondArg.u.i;
+			TYPECHECK2(secondArg, INT, FLOAT);
+			ticks = secondArg.asInt();
 		} else {
 			ticks = 15 * (60 / score->_currentFrameRate);
 		}
@@ -2991,14 +2991,14 @@ void LB::b_sound(int nargs) {
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("fadeOut")) {
 		if (nargs > 2) {
-			TYPECHECK(secondArg, INT);
-			ticks = secondArg.u.i;
+			TYPECHECK2(secondArg, INT, FLOAT);
+			ticks = secondArg.asInt();
 		} else {
 			ticks = 15 * (60 / score->_currentFrameRate);
 		}
 
-		TYPECHECK(firstArg, INT);
-		soundManager->registerFade(firstArg.u.i, false, ticks);
+		TYPECHECK2(firstArg, INT, FLOAT);
+		soundManager->registerFade(firstArg.asInt(), false, ticks);
 		score->_activeFade = firstArg.u.i;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("playFile")) {
