@@ -428,16 +428,16 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._flat != si2._flat)
 		return si1._flat > si2._flat;
 
-	// Animated always gets drawn after
-	if (si1._anim != si2._anim)
-		return si1._anim < si2._anim;
-
 	// Trans always gets drawn after
 	if (si1._trans != si2._trans)
 		return si1._trans < si2._trans;
 
 	// Specialist z flat handling
 	if (si1._flat && si2._flat) {
+		// Animated always gets drawn after
+		if (si1._anim != si2._anim)
+			return si1._anim < si2._anim;
+
 		// Draw always gets drawn first
 		if (si1._draw != si2._draw)
 			return si1._draw > si2._draw;
@@ -455,9 +455,9 @@ inline bool SortItem::below(const SortItem &si2) const {
 			return si1._fbigsq > si2._fbigsq;
 	}
 
-	// Land always gets drawn first
-	if (si1._land != si2._land)
-		return si1._land > si2._land;
+	// Disabled: Land always gets drawn first
+	//if (si1._land != si2._land)
+	//	return si1._land > si2._land;
 
 	// Land always gets drawn before roof
 	if (si1._land && si2._land && si1._roof != si2._roof)

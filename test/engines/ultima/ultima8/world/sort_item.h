@@ -217,6 +217,49 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!si2.below(si1));
 	}
 
+	/**
+	 * Overlapping non-flat items - rule not yet known
+	 * Test case for rendering issue at MainActor::teleport 3 20747 2227 0
+	 * This looks like a possible rendering test easter egg in the original game
+	 */
+	void test_anim_easter_egg() {
+		Ultima::Ultima8::SortItem si1(nullptr);
+		Ultima::Ultima8::SortItem si2(nullptr);
+
+		Ultima::Ultima8::Box b1(20735, 1919, 0, 64, 64, 16);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._anim = true;
+
+		Ultima::Ultima8::Box b2(20799, 1919, 0, 128, 32, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._solid = true;
+		si2._occl = true;
+		si2._land = true;
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
+	 * Test case for rendering armor of flames spell
+	 */
+	void test_armor_of_flames_sort() {
+		Ultima::Ultima8::SortItem si1(nullptr);
+		Ultima::Ultima8::SortItem si2(nullptr);
+
+		Ultima::Ultima8::Box b1(13655, 5111, 8, 64, 64, 16);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._solid = true;
+
+		Ultima::Ultima8::Box b2(13655, 5111, 8, 96, 96, 72);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._anim = true;
+		si2._trans = true;
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
 	/* Overlapping non-flat occludes flat */
 	void test_basic_occludes() {
 		Ultima::Ultima8::SortItem si1(nullptr);
