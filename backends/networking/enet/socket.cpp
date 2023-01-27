@@ -54,7 +54,7 @@ bool Socket::send(Common::String address, int port, const char *data) {
 	int sentLength = enet_socket_send(_socket, &enetAddress, &buffer, 1);
 	if (sentLength < 0)
 		return false;
-	
+
 	return true;
 }
 
@@ -75,7 +75,7 @@ bool Socket::receive() {
 
 	if (receivedLength == 0)
 		return false;
-	
+
 	_recentData = Common::String((const char*)data, receivedLength);
 
 	char hostName[15];

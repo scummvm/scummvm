@@ -41,7 +41,7 @@ public:
 private:
 	bool _initialized;
 };
-	
+
 } // End of namespace Networking
 
 
