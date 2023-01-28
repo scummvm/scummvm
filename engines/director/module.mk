@@ -77,6 +77,7 @@ MODULE_OBJS = \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
 	lingo/xlibs/spacemgr.o \
+	lingo/xlibs/unittest.o \
 	lingo/xlibs/videodiscxobj.o \
 	lingo/xlibs/volumelist.o \
 	lingo/xlibs/widgetxobj.o \
