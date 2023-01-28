@@ -36,9 +36,11 @@ public:
 
 	class SaveButton : public TeLayout {
 	public:
-		SaveButton(TeButtonLayout *btn, const Common::String &name);
+		SaveButton(TeButtonLayout *btn, const Common::String &name, BonusMenu *owner);
 		bool onLoadSave();
 		Common::String path() const;
+
+		BonusMenu *_menu;
 	};
 
 	virtual void enter() override;

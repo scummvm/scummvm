@@ -48,7 +48,7 @@ void BonusMenu::enter(const Common::String &scriptName) {
 		TeButtonLayout *btn = buttonLayout(btnNoStr);
 		if (!btn)
 			break;
-		SaveButton *saveBtn = new SaveButton(btn, btnNoStr);
+		SaveButton *saveBtn = new SaveButton(btn, btnNoStr, this);
 		_saveButtons.push_back(saveBtn);
 
 		TeVector3f32 mainWinSz = g_engine->getApplication()->getMainWindow().size();
@@ -64,8 +64,8 @@ void BonusMenu::enter(const Common::String &scriptName) {
 
 		if (btn->childCount() <= 4)
 			error("expected save button to have >4 children");
-		const Common::String &artName = btn->child(4)->name();
-		btn->setEnable(g_engine->getGame()->unlockedArtwork().getValOrDefault(artName, false));
+		const Common::String artName = btn->child(4)->name();
+		btn->setEnable(g_engine->getGame()->isArtworkUnlocked(artName));
 
 		btnNo++;
 	}
@@ -224,7 +224,7 @@ bool BonusMenu::onSlideButtonDown() {
 	return false;
 }
 
-BonusMenu::SaveButton::SaveButton(TeButtonLayout *btn, const Common::String &name) {
+BonusMenu::SaveButton::SaveButton(TeButtonLayout *btn, const Common::String &name, BonusMenu *owner) : _menu(owner) {
 	setName(name);
 	btn->setEnable(true);
 	addChild(btn);
@@ -236,7 +236,16 @@ Common::String BonusMenu::SaveButton::path() const {
 }
 
 bool BonusMenu::SaveButton::onLoadSave() {
-	error("TODO: implement BonusMenu::SaveButton::onLoadSave");
+	_menu->buttonLayoutChecked("menu")->setVisible(false);
+	TeSpriteLayout *pic = _menu->spriteLayoutChecked("fullScreenPicture");
+	const Common::String picName = child(0)->child(4)->name();
+	pic->load(picName);
+
+	TeSpriteLayout *picLayout = _menu->spriteLayoutChecked("fullScreenPictureLayout");
+	g_engine->getApplication()->frontLayout().addChild(picLayout);
+	picLayout->setVisible(true);
+
+	return false;
 }
 
 } // end namespace Tetraedge

@@ -202,7 +202,8 @@ public:
 	Common::RandomSource &randomSource() { return _randomSource; }
 	void setLoadName(const Common::String &loadName) { _loadName = loadName; }
 	bool hasLoadName() const { return !_loadName.empty(); }
-	const Common::HashMap<Common::String, bool> unlockedArtwork() const { return _unlockedArtwork; }
+	bool isArtworkUnlocked(const Common::String &name) const;
+	static Common::String artworkConfName(const Common::String &name);
 
 private:
 	bool _luaShowOwnerError;

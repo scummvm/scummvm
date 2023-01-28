@@ -102,15 +102,30 @@ bool Game::addAnimToSet(const Common::String &anim) {
 	return false;
 }
 
-void Game::addArtworkUnlocked(const Common::String &name, bool notify) {
-	if (_unlockedArtwork.contains(name))
-		return;
+/*static*/
+Common::String Game::artworkConfName(const Common::String &name) {
 	Common::String configName = Common::String::format("artwork_%s", name.c_str());
-	ConfMan.setBool(configName, true);
-	_unlockedArtwork[name] = true;
-	if (notify) {
-		_notifier.push("BONUS!", "Inventory/Objects/VPapierCrayon.png");
+	for (uint i = 0; i < configName.size(); i++) {
+		if (configName[i] == '/' || configName[i] == '.')
+			configName.setChar('_', i);
 	}
+	return configName;
+}
+
+void Game::addArtworkUnlocked(const Common::String &name, bool notify) {
+	const Common::String configName = artworkConfName(name);
+	if (_unlockedArtwork.contains(configName))
+		return;
+	ConfMan.setBool(configName, true);
+	ConfMan.flushToDisk();
+	_unlockedArtwork[configName] = true;
+	if (notify)
+		_notifier.push("BONUS!", "Inventory/Objects/VPapierCrayon.png");
+}
+
+bool Game::isArtworkUnlocked(const Common::String &name) const {
+	const Common::String configName = artworkConfName(name);
+	return _unlockedArtwork.getValOrDefault(configName, false);
 }
 
 void Game::addNoScale2Child(TeLayout *layout) {
@@ -812,7 +827,7 @@ void Game::loadUnlockedArtwork() {
 	Common::ConfigManager::Domain *domain = ConfMan.getActiveDomain();
 	for (auto &val : *domain) {
 		if (val._key.substr(0, 8) == "artwork_") {
-			_unlockedArtwork[val._key.substr(8)] = true;
+			_unlockedArtwork[val._key] = true;
 		}
 	}
 }
