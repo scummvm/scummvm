@@ -538,7 +538,7 @@ Common::SeekableReadStream *ScummEngine::openSaveFileForReading(int slot, bool c
 	return _saveFileMan->openForLoading(fileName);
 }
 
-Common::WriteStream *ScummEngine::openSaveFileForWriting(int slot, bool compat, Common::String &fileName) {
+Common::SeekableWriteStream *ScummEngine::openSaveFileForWriting(int slot, bool compat, Common::String &fileName) {
 	fileName = makeSavegameName(slot, compat);
 	return _saveFileMan->openForSaving(fileName);
 }

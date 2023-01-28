@@ -63,6 +63,7 @@ using GUI::Dialog;
 namespace Common {
 class SeekableReadStream;
 class WriteStream;
+class SeekableWriteStream;
 }
 namespace Graphics {
 class FontSJIS;
@@ -889,7 +890,7 @@ protected:
 	void copyHeapSaveGameToFile(int slot, const char *saveName);
 	bool changeSavegameName(int slot, char *newName);
 	virtual Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
-	virtual Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
+	virtual Common::SeekableWriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
 
 	Common::String makeSavegameName(int slot, bool temporary) const {
 		return makeSavegameName(_targetName, slot, temporary);
