@@ -141,6 +141,8 @@ GLuint Shader::createDirectShader(size_t shaderSourcesCount, const char *const *
 
 		_error = Common::String::format("Could not compile shader %s: %s", name.c_str(), log);
 		warning("Shader::createDirectShader(): %s", _error.c_str());
+
+		delete[] log;
 		return 0;
 	}
 
