@@ -64,10 +64,14 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1(nullptr);
 		Ultima::Ultima8::SortItem si2(nullptr);
 
-		Ultima::Ultima8::Box b1(0, 0, 10, 10, 10, 10);
-		Ultima::Ultima8::Box b2(0, 0, 0, 10, 10, 10);
+		Ultima::Ultima8::Box b1(59454, 49246, 80, 32, 160, 16);
+		Ultima::Ultima8::Box b2(59440, 49144, 63, 32, 32, 63);
 		si1.setBoxBounds(b1, 0, 0);
 		si2.setBoxBounds(b2, 0, 0);
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
 		TS_ASSERT(!si1.below(si2));
 		TS_ASSERT(si2.below(si1));
 
@@ -218,7 +222,7 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	/**
-	 * Overlapping non-flat items - rule not yet known
+	 * Overlapping non-flat items - animated vs occluding
 	 * Test case for rendering issue at MainActor::teleport 3 20747 2227 0
 	 * This looks like a possible rendering test easter egg in the original game
 	 */

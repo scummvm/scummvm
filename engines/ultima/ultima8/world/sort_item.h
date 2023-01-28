@@ -235,8 +235,12 @@ struct SortItem {
 	// Comparison for the sorted lists
 	inline bool listLessThan(const SortItem &si2) const {
 		const SortItem &si1 = *this;
+		if (si1._sprite != si2._sprite)
+			return si1._sprite < si2._sprite;
+
 		if (si1._z != si2._z)
 			return si1._z < si2._z;
+
 		return si1._flat > si2._flat;
 	}
 
