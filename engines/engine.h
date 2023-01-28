@@ -688,6 +688,8 @@ public:
 	void push(const Common::String target, const int slot = -1);
 	/** Pop the last game loaded into the chained games manager. */
 	bool pop(Common::String &target, int &slot);
+	/** Returns true if the chained games manager has no elements in the queue. */
+	bool empty() { return _chainedGames.empty(); }
 };
 
 /** Convenience shortcut for accessing the chained games manager. */
