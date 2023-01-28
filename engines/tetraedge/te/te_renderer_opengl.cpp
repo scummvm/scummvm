@@ -96,7 +96,8 @@ void TeRendererOpenGL::init(uint width, uint height) {
 	glDepthMask(GL_TRUE);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// Note: original doesn't separate but blends are nicer that way.
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthFunc(GL_LEQUAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
 	glClearDepth(1.0);
@@ -289,7 +290,8 @@ void TeRendererOpenGL::shadowMode(enum ShadowMode mode) {
 		glDisable(GL_CULL_FACE);
 	}
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// Note: original doesn't separate but blends are nicer that way.
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glShadeModel(GL_FLAT);
 	TeLightOpenGL::disableAll();
 }
