@@ -863,7 +863,7 @@ void Inter_v7::o7_loadImage() {
 
 	int16 right  = left + width  - 1;
 	int16 bottom = top  + height - 1;
-	destSprite->blit(*image, left, top, right, bottom, x, y, transp);
+	destSprite->blit(*image, left, top, right, bottom, x, y, (transp == 0) ? -1 : 0);
 }
 
 void Inter_v7::o7_setVolume() {
