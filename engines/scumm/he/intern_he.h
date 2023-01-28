@@ -31,7 +31,7 @@
 
 namespace Common {
 class SeekableReadStream;
-class WriteStream;
+class SeekableWriteStream;
 }
 
 namespace Scumm {
@@ -50,7 +50,7 @@ protected:
 
 public:
 	Common::SeekableReadStream *_hInFileTable[17];
-	Common::WriteStream *_hOutFileTable[17];
+	Common::SeekableWriteStream *_hOutFileTable[17];
 
 	Common::Rect _actorClipOverride;	// HE specific
 
@@ -91,14 +91,14 @@ protected:
 
 	Common::SeekableReadStream *openFileForReading(const byte *fileName);
 	Common::SeekableReadStream *openSaveFileForReading(const byte *fileName);
-	Common::WriteStream *openSaveFileForWriting(const byte *fileName);
-	Common::WriteStream *openSaveFileForAppending(const byte *fileName);
+	Common::SeekableWriteStream *openSaveFileForWriting(const byte *fileName);
+	Common::SeekableWriteStream *openSaveFileForAppending(const byte *fileName);
 	void deleteSaveFile(const byte *fileName);
 	void renameSaveFile(const byte *from, const byte *to);
 	void pauseEngineIntern(bool pause) override;
 
 	Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName) override;
-	Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName) override;
+	Common::SeekableWriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName) override;
 
 	/* HE version 60 script opcodes */
 	void o60_setState();

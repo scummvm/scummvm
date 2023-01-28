@@ -208,8 +208,9 @@ Common::SeekableReadStream *ScummEngine_v60he::openSaveFileForReading(const byte
 	return _saveFileMan->openForLoading(convertSavePathOld(fileName));
 }
 
-Common::WriteStream *ScummEngine_v60he::openSaveFileForWriting(const byte *fileName) {
-	return _saveFileMan->openForSaving(convertSavePath(fileName));
+Common::SeekableWriteStream *ScummEngine_v60he::openSaveFileForWriting(const byte *fileName) {
+	// HACK: Disable compression for Moonbase.  Fixes custom map saving.
+	return _saveFileMan->openForSaving(convertSavePath(fileName), _game.id != GID_MOONBASE);
 }
 
 void ScummEngine_v60he::deleteSaveFile(const byte *fileName) {
@@ -235,7 +236,7 @@ void ScummEngine_v60he::renameSaveFile(const byte *from, const byte *to) {
 	_saveFileMan->renameSavefile(convertSavePath(from), toName);
 }
 
-Common::WriteStream *ScummEngine_v60he::openSaveFileForAppending(const byte *fileName) {
+Common::SeekableWriteStream *ScummEngine_v60he::openSaveFileForAppending(const byte *fileName) {
 	Common::SeekableReadStream *initialFile = openSaveFileForReading(fileName);
 	byte *initialData = nullptr;
 	uint32 initialDataSize = 0;
@@ -251,7 +252,7 @@ Common::WriteStream *ScummEngine_v60he::openSaveFileForAppending(const byte *fil
 		delete initialFile;
 	}
 
-	Common::WriteStream *output = openSaveFileForWriting(fileName);
+	Common::SeekableWriteStream *output = openSaveFileForWriting(fileName);
 
 	if (!output) {
 		delete[] initialData;
@@ -289,7 +290,7 @@ Common::SeekableReadStream *ScummEngine_v60he::openSaveFileForReading(int slot, 
 	return ScummEngine::openSaveFileForReading(slot, compat, fileName);
 }
 
-Common::WriteStream *ScummEngine_v60he::openSaveFileForWriting(int slot, bool compat, Common::String &fileName) {
+Common::SeekableWriteStream *ScummEngine_v60he::openSaveFileForWriting(int slot, bool compat, Common::String &fileName) {
 	if (slot == 255) {
 		// HACK: Allow custom filenames for save game system in HE Games
 		fileName = convertSavePath((const byte *)_saveLoadFileName.c_str());
@@ -1045,21 +1046,28 @@ void ScummEngine_v60he::o60_seekFilePos() {
 
 	if (slot == -1)
 		return;
-
-	assert(_hInFileTable[slot]);
-	switch (mode) {
+	
+	int whence;
+	switch(mode) {
 	case 1:
-		_hInFileTable[slot]->seek(offset, SEEK_SET);
+		whence = SEEK_SET;
 		break;
 	case 2:
-		_hInFileTable[slot]->seek(offset, SEEK_CUR);
+		whence = SEEK_CUR;
 		break;
 	case 3:
-		_hInFileTable[slot]->seek(offset, SEEK_END);
+		whence = SEEK_END;
 		break;
 	default:
 		error("o60_seekFilePos: default case %d", mode);
 	}
+
+	if (_hInFileTable[slot])
+		_hInFileTable[slot]->seek(offset, whence);
+	else if (_hOutFileTable[slot])
+		_hOutFileTable[slot]->seek(offset, whence);
+	else
+		error("o60_seekFilePos: file slot %d not loaded", slot);
 }
 
 void ScummEngine_v60he::o60_readFilePos() {
