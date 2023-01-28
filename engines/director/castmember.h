@@ -125,6 +125,7 @@ public:
 	~BitmapCastMember();
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;
 
+	bool isModified() override;
 	void createMatte(Common::Rect &bbox);
 	Graphics::Surface *getMatte(Common::Rect &bbox);
 	void copyStretchImg(Graphics::Surface *surface, const Common::Rect &bbox, const byte *pal = 0);
@@ -145,6 +146,7 @@ public:
 	uint16 _flags2;
 	uint16 _bytes;
 	int _clut;
+	int _ditheredTargetClut;
 
 	uint16 _bitsPerPixel;
 

@@ -103,6 +103,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_flags2 = 0;
 	_regX = _regY = 0;
 	_clut = 0;
+	_ditheredTargetClut = 0;
 	_bitsPerPixel = 0;
 
 	if (version < kFileVer400) {
@@ -211,6 +212,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Image::ImageDecode
 	_img = img;
 	_ditheredImg = nullptr;
 	_clut = -1;
+	_ditheredTargetClut = 0;
 	_initialRect = Common::Rect(0, 0, img->getSurface()->w, img->getSurface()->h);
 	_pitch = img->getSurface()->pitch;
 	_bitsPerPixel = img->getSurface()->format.bytesPerPixel * 8;
@@ -253,6 +255,7 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 		_ditheredImg->free();
 		delete _ditheredImg;
 		_ditheredImg = nullptr;
+		_ditheredTargetClut = 0;
 	}
 
 	if (dstBpp == 1) {
@@ -278,8 +281,10 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 			if (!currentPaletteId)
 				currentPaletteId = cast->_defaultPalette;
 			PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
-			if (!currentPalette)
-				currentPalette = g_director->getPalette(kClutSystemMac);
+			if (!currentPalette) {
+				currentPaletteId = kClutSystemMac;
+				currentPalette = g_director->getPalette(currentPaletteId);
+			}
 			int castPaletteId = score->resolvePaletteId(_clut);
 			if (!castPaletteId)
 				castPaletteId = cast->_defaultPalette;
@@ -323,9 +328,12 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 				break;
 			}
 
-			// Finally, the first and last colours in the palette are special. No matter what the palette remap
-			// does, we need to scrub those to be the same.
 			if (_ditheredImg) {
+				// Save the palette ID so we can check if a redraw is required
+				_ditheredTargetClut = currentPaletteId;
+
+				// Finally, the first and last colours in the palette are special. No matter what the palette remap
+				// does, we need to scrub those to be the same.
 				const Graphics::Surface *src = _img->getSurface();
 				for (int y = 0; y < src->h; y++) {
 					for (int x = 0; x < src->w; x++) {
@@ -393,6 +401,37 @@ void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::
 	} else {
 		surface->copyFrom(*srcSurf);
 	}
+}
+
+bool BitmapCastMember::isModified() {
+	// Check for palette changes.
+	// If a bitmap has a custom palette assigned to it, createWidget()
+	// will dither the image so that it fits within the current palette.
+	// When the score palette changes, we need to flag that the widget needs
+	// to be recreated.
+	if (_clut) {
+		Movie *movie = g_director->getCurrentMovie();
+		Cast *cast = movie->getCast();
+		Score *score = movie->getScore();
+		int currentPaletteId = score->resolvePaletteId(score->getCurrentPalette());
+		if (!currentPaletteId)
+			currentPaletteId = cast->_defaultPalette;
+		PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
+		if (!currentPalette) {
+			currentPaletteId = kClutSystemMac;
+			currentPalette = g_director->getPalette(currentPaletteId);
+		}
+		int castPaletteId = score->resolvePaletteId(_clut);
+		if (!castPaletteId)
+			castPaletteId = cast->_defaultPalette;
+
+		if (currentPaletteId == castPaletteId) {
+			return _ditheredTargetClut != 0;
+		} else {
+			return _ditheredTargetClut != currentPaletteId;
+		}
+	}
+	return false;
 }
 
 void BitmapCastMember::createMatte(Common::Rect &bbox) {
