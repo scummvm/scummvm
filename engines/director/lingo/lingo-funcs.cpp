@@ -342,7 +342,7 @@ void Lingo::func_beep(int repeats) {
 	for (int r = 1; r <= repeats; r++) {
 		_vm->getCurrentWindow()->getSoundManager()->systemBeep();
 		if (r < repeats)
-			g_system->delayMillis(400);
+			g_director->delayMillis(400);
 	}
 }
 

@@ -275,7 +275,7 @@ Common::Error DirectorEngine::run() {
 		}
 
 		draw();
-		_system->delayMillis(10);
+		g_director->delayMillis(10);
 	}
 
 	return Common::kNoError;

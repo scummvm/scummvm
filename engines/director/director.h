@@ -223,6 +223,8 @@ public:
 	// game-quirks.cpp
 	void gameQuirks(const char *target, Common::Platform platform);
 
+	void delayMillis(uint32 delay);
+
 public:
 	RandomState _rnd;
 	Graphics::MacWindowManager *_wm;

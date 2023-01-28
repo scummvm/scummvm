@@ -670,7 +670,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 					g_director->setPalette(resolvePaletteId(currentPalette));
 					return true;
 				}
-				g_system->delayMillis(frameDelay);
+				g_director->delayMillis(frameDelay);
 			}
 
 		} else {
@@ -704,7 +704,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 					g_director->setPalette(resolvePaletteId(currentPalette));
 					return true;
 				}
-				g_system->delayMillis(frameDelay);
+				g_director->delayMillis(frameDelay);
 			}
 		}
 	}
@@ -792,7 +792,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 						g_director->setPalette(resolvePaletteId(currentPalette));
 						return;
 					}
-					g_system->delayMillis(delay);
+					g_director->delayMillis(delay);
 				}
 				if (_frames[frameId]->_palette.autoReverse) {
 					for (int j = 0; j < steps; j++) {
@@ -803,7 +803,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 							g_director->setPalette(resolvePaletteId(currentPalette));
 							return;
 						}
-						g_system->delayMillis(delay);
+						g_director->delayMillis(delay);
 					}
 				}
 			}
@@ -907,7 +907,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 						g_director->setPalette(resolvePaletteId(currentPalette));
 						return;
 					}
-					g_system->delayMillis(frameDelay);
+					g_director->delayMillis(frameDelay);
 				}
 
 				for (int i = 0; i < fadeFrames; i++) {
@@ -925,7 +925,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 						g_director->setPalette(resolvePaletteId(currentPalette));
 						return;
 					}
-					g_system->delayMillis(frameDelay);
+					g_director->delayMillis(frameDelay);
 				}
 
 			}

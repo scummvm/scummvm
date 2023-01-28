@@ -1211,4 +1211,11 @@ int compareStrings(const Common::String &s1, const Common::String &s2) {
 	return c1 - c2;
 }
 
+void DirectorEngine::delayMillis(uint32 delay) {
+	if (debugChannelSet(-1, kDebugFast))
+		return;
+
+	_system->delayMillis(delay);
+}
+
 } // End of namespace Director

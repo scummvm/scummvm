@@ -571,7 +571,7 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 
 		uint32 endTime = g_system->getMillis();
 		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_system->delayMillis(MAX(0, diff));
+		g_director->delayMillis(MAX(0, diff));
 
 		g_lingo->executePerFrameHook(t.frame, i);
 	}
@@ -773,7 +773,7 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 
 		uint32 endTime = g_system->getMillis();
 		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_system->delayMillis(MAX(0, diff));
+		g_director->delayMillis(MAX(0, diff));
 	}
 }
 
@@ -879,7 +879,7 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 
 		uint32 endTime = g_system->getMillis();
 		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_system->delayMillis(MAX(0, diff));
+		g_director->delayMillis(MAX(0, diff));
 	}
 }
 
@@ -1052,7 +1052,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 
 		uint32 endTime = g_system->getMillis();
 		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_system->delayMillis(MAX(0, diff));
+		g_director->delayMillis(MAX(0, diff));
 
 		if (_vm->processEvents(true)) {
 			exitTransition(t, i, nextFrame, clipRect);
@@ -1101,7 +1101,7 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 
 		uint32 endTime = g_system->getMillis();
 		int diff = (int)t.stepDuration - (int)(endTime - startTime);
-		g_system->delayMillis(MAX(0, diff));
+		g_director->delayMillis(MAX(0, diff));
 
 		if (_vm->processEvents(true)) {
 			exitTransition(t, i, nextFrame, clipRect);

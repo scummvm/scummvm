@@ -103,7 +103,7 @@ void XPlayAnim::b_xplayanim(int nargs) {
 		}
 
 		g_system->updateScreen();
-		g_system->delayMillis(10);
+		g_director->delayMillis(10);
 
 	}
 	if (frame != nullptr)
