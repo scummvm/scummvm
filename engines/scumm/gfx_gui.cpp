@@ -1511,7 +1511,7 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 
 		// "Are you sure you want to quit?  (Y/N)"
 		Common::KeyState ks;
-		if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) {
+		if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit") && ChainedGamesMan.empty()) {
 			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 			if (_game.version > 4) {
