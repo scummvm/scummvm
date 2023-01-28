@@ -122,23 +122,24 @@ extern int yydebug;
     tDATE = 323,                   /* tDATE  */
     tLAST = 324,                   /* tLAST  */
     tMENU = 325,                   /* tMENU  */
-    tMENUITEM = 326,               /* tMENUITEM  */
-    tMENUITEMS = 327,              /* tMENUITEMS  */
-    tNUMBER = 328,                 /* tNUMBER  */
-    tTHE = 329,                    /* tTHE  */
-    tTIME = 330,                   /* tTIME  */
-    tSOUND = 331,                  /* tSOUND  */
-    tSPRITE = 332,                 /* tSPRITE  */
-    tINTERSECTS = 333,             /* tINTERSECTS  */
-    tWITHIN = 334,                 /* tWITHIN  */
-    tTELL = 335,                   /* tTELL  */
-    tPROPERTY = 336,               /* tPROPERTY  */
-    tON = 337,                     /* tON  */
-    tMETHOD = 338,                 /* tMETHOD  */
-    tENDIF = 339,                  /* tENDIF  */
-    tENDREPEAT = 340,              /* tENDREPEAT  */
-    tENDTELL = 341,                /* tENDTELL  */
-    tASSERTERROR = 342             /* tASSERTERROR  */
+    tMENUS = 326,                  /* tMENUS  */
+    tMENUITEM = 327,               /* tMENUITEM  */
+    tMENUITEMS = 328,              /* tMENUITEMS  */
+    tNUMBER = 329,                 /* tNUMBER  */
+    tTHE = 330,                    /* tTHE  */
+    tTIME = 331,                   /* tTIME  */
+    tSOUND = 332,                  /* tSOUND  */
+    tSPRITE = 333,                 /* tSPRITE  */
+    tINTERSECTS = 334,             /* tINTERSECTS  */
+    tWITHIN = 335,                 /* tWITHIN  */
+    tTELL = 336,                   /* tTELL  */
+    tPROPERTY = 337,               /* tPROPERTY  */
+    tON = 338,                     /* tON  */
+    tMETHOD = 339,                 /* tMETHOD  */
+    tENDIF = 340,                  /* tENDIF  */
+    tENDREPEAT = 341,              /* tENDREPEAT  */
+    tENDTELL = 342,                /* tENDTELL  */
+    tASSERTERROR = 343             /* tASSERTERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -162,7 +163,7 @@ union YYSTYPE
 	Director::Node *node;
 	Director::NodeList *nodelist;
 
-#line 166 "engines/director/lingo/lingo-gr.h"
+#line 167 "engines/director/lingo/lingo-gr.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -174,7 +175,7 @@ typedef union YYSTYPE YYSTYPE;
 extern YYSTYPE yylval;
 
 
-//int yyparse (void);
+int yyparse (void);
 
 
 #endif /* !YY_YY_ENGINES_DIRECTOR_LINGO_LINGO_GR_H_INCLUDED  */

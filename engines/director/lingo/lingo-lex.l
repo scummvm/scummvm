@@ -213,6 +213,7 @@ lines		{ count(); return tLINES; }
 long		{ count(); return tLONG; }
 macro		{ count(); return tMACRO; }
 menu		{ count(); return tMENU; }
+menus		{ count(); return tMENUS; }
 menuItem	{ count(); return tMENUITEM;}
 menuItems	{ count(); return tMENUITEMS; }
 method		{ count(); return tMETHOD; }

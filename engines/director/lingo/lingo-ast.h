@@ -147,7 +147,8 @@ enum NumberOfType {
 	kNumberOfWords,
 	kNumberOfItems,
 	kNumberOfLines,
-	kNumberOfMenuItems
+	kNumberOfMenuItems,
+	kNumberOfMenus,
 };
 
 /* NodeVisitor */

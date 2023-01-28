@@ -137,7 +137,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS
 %token tCHAR tCHARS tITEM tITEMS tLINE tLINES tWORD tWORDS
 %token tABBREVIATED tABBREV tABBR tLONG tSHORT
-%token tDATE tLAST tMENU tMENUITEM tMENUITEMS tNUMBER tTHE tTIME
+%token tDATE tLAST tMENU tMENUS tMENUITEM tMENUITEMS tNUMBER tTHE tTIME
 %token tSOUND tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tMETHOD tENDIF tENDREPEAT tENDTELL
 %token tASSERTERROR
@@ -719,6 +719,7 @@ thenumberof:
 	| tTHE tNUMBER tOF tITEMS inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfItems, $simpleexpr); }
 	| tTHE tNUMBER tOF tLINES inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfLines, $simpleexpr); }
 	| tTHE tNUMBER tOF tMENUITEMS inof menu		{ $$ = new TheNumberOfNode(kNumberOfMenuItems, $menu); }
+	| tTHE tNUMBER tOF tMENUS					{ $$ = new TheNumberOfNode(kNumberOfMenus, nullptr); }
 	;
 
 inof: tIN | tOF ;
@@ -743,7 +744,7 @@ list: '[' exprlist ']'			{ $$ = new ListNode($exprlist); }
 // keyless expressions, which will be compiled as equivalent to the
 // proppair <index>: <expr>.
 proplist: proppair[item]				{
-		NodeList *list = new NodeList; 
+		NodeList *list = new NodeList;
 		list->push_back($item);
 		$$ = list; }
 	| proplist[prev] ',' proppair[item]	{
@@ -845,7 +846,7 @@ exprlist: /* empty */						{ $$ = new NodeList; }
 	;
 
 nonemptyexprlist: expr[item]				{
-		NodeList *list = new NodeList; 
+		NodeList *list = new NodeList;
 		list->push_back($item);
 		$$ = list; }
 	| nonemptyexprlist[prev] ',' expr[item]	{

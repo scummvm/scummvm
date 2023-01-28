@@ -1418,6 +1418,12 @@ bool LingoCompiler::visitTheNumberOfNode(TheNumberOfNode *node) {
 			codeInt(kTheNumber);
 		}
 		break;
+	case kNumberOfMenus:
+		codeInt(0); // Put dummy id
+		code1(LC::c_theentitypush);
+		codeInt(kTheMenus);
+		codeInt(kTheNumber);
+		break;
 	}
 	return true;
 }
