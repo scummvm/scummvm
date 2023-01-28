@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 #include "tetraedge/tetraedge.h"
+#include "tetraedge/game/application.h"
 #include "tetraedge/te/te_visual_fade.h"
 #include "tetraedge/te/te_renderer.h"
 
@@ -107,9 +108,8 @@ void TeVisualFade::init() {
 	// create an image the size of the window, no palette, format 6.
 	Common::SharedPtr<TePalette> nullpal;
 	_image.destroy();
-	// TODO: should this get actual window size instead of default?
-	_image.createImg(g_engine->getDefaultScreenWidth(),
-			g_engine->getDefaultScreenHeight(), nullpal, TeImage::RGBA8);
+	const TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
+	_image.createImg((int)winSize.x(), (int)winSize.y(), nullpal, TeImage::RGBA8);
 	_texturePtr->load(_image);
 	g_engine->getRenderer()->enableTexture();
 	_texturePtr->load(_image);
