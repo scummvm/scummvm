@@ -56,7 +56,8 @@ void TeImage::createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pa
 									  Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	Graphics::ManagedSurface::create(xsize, ysize, pxformat);
-	Graphics::ManagedSurface::fillRect(Common::Rect(0, 0, xsize, ysize), 0);
+	if (teformat == TeImage::RGBA8)
+		Graphics::ManagedSurface::fillRect(Common::Rect(0, 0, xsize, ysize), 0);
 }
 
 void TeImage::deserialize(Common::ReadStream &stream) {
