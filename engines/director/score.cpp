@@ -645,7 +645,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 
 		int frameRate = CLIP<int>(_frames[frameId]->_palette.speed, 1, 30);
 
-		if (debugChannelSet(-1, kDebugFewFramesOnly))
+		if (debugChannelSet(-1, kDebugFast))
 			frameRate = 30;
 
 		int frameDelay = 1000/60;
@@ -760,7 +760,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 	if (speed == 0)
 		return;
 
-	if (debugChannelSet(-1, kDebugFewFramesOnly))
+	if (debugChannelSet(-1, kDebugFast))
 		speed = 30;
 
 	// 30 (the maximum) is actually unbounded
@@ -776,7 +776,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 			g_director->draw();
 		} else {
 			// Short circuit for few frames renderer
-			if (debugChannelSet(-1, kDebugFewFramesOnly)) {
+			if (debugChannelSet(-1, kDebugFast)) {
 				g_director->setPalette(resolvePaletteId(currentPalette));
 				return;
 			}
@@ -870,8 +870,8 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 			_paletteTransitionIndex++;
 			_paletteTransitionIndex %= frameCount;
 		} else {
-			// Short circuit for few frames renderer
-			if (debugChannelSet(-1, kDebugFewFramesOnly)) {
+			// Short circuit for fast renderer
+			if (debugChannelSet(-1, kDebugFast)) {
 				g_director->setPalette(resolvePaletteId(currentPalette));
 				return;
 			}
@@ -892,7 +892,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 				}
 				int frameRate = CLIP<int>(_frames[frameId]->_palette.speed, 1, 30);
 
-				if (debugChannelSet(-1, kDebugFewFramesOnly))
+				if (debugChannelSet(-1, kDebugFast))
 					frameRate = 30;
 
 				int frameDelay = 1000/60;
