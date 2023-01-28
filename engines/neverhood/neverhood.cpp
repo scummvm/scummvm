@@ -68,9 +68,16 @@ Common::Error NeverhoodEngine::run() {
 	initGraphics(640, 480);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::String extraPath(ConfMan.get("extrapath"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "language");
+
+	if(!extraPath.empty()) {
+		const Common::FSNode extraDir(extraPath);
+		SearchMan.addSubDirectoryMatching(extraDir, "data");
+		SearchMan.addSubDirectoryMatching(extraDir, "language");
+	}
 
 	_isSaveAllowed = false;
 
