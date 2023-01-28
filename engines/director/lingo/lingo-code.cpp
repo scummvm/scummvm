@@ -1557,10 +1557,25 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	Datum target = funcSym.target;
 
 	if (funcSym.type == VOIDSYM) {
-		if (funcSym.name)
+		if (funcSym.name) {
+			// Lingo was also treating all 'the' entities as functions
+			if (g_lingo->_theEntities.contains(*funcSym.name) && nargs == 0) {
+				warning("Calling builtin '%s' as a function", funcSym.name->c_str());
+
+				TheEntity *entity = g_lingo->_theEntities[*funcSym.name];
+				Datum id;
+				id.u.i = 0;
+				id.type = VOID;
+
+				g_lingo->push(g_lingo->getTheEntity(entity->entity, id, 0));
+
+				return;
+			}
+
 			g_lingo->lingoError("Call to undefined handler '%s'. Dropping %d stack items", funcSym.name->c_str(), nargs);
-		else
+		} else {
 			g_lingo->lingoError("Call to undefined handler. Dropping %d stack items", nargs);
+		}
 
 		for (int i = 0; i < nargs; i++)
 			g_lingo->pop();
