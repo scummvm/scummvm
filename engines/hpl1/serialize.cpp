@@ -64,10 +64,10 @@
 
 namespace Hpl1 {
 
-#define SERIALIZE(klass, parent) serializeTempClasses[++nSerializeTempClasses] = cSerializeSavedClass(#klass, #parent, klass::mpSerialize_MemberFields, sizeof(klass), []() { return static_cast<iSerializable *>(new klass()); })
-#define SERIALIZE_BASE(klass) serializeTempClasses[++nSerializeTempClasses] = cSerializeSavedClass(#klass, "", klass::mpSerialize_MemberFields, sizeof(klass), []() { return static_cast<iSerializable *>(new klass()); })
-#define SERIALIZE_VIRTUAL(klass, parent) serializeTempClasses[++nSerializeTempClasses] = cSerializeSavedClass(#klass, #parent, klass::mpSerialize_MemberFields, sizeof(klass), nullptr)
-#define SERIALIZE_BASE_VIRTUAL(klass) serializeTempClasses[++nSerializeTempClasses] = cSerializeSavedClass(#klass, "", klass::mpSerialize_MemberFields, sizeof(klass), nullptr)
+#define SERIALIZE(klass, parent) serializeTempClasses[nSerializeTempClasses++] = cSerializeSavedClass(#klass, #parent, klass::mpSerialize_MemberFields, sizeof(klass), []() { return static_cast<iSerializable *>(new klass()); })
+#define SERIALIZE_BASE(klass) serializeTempClasses[nSerializeTempClasses++] = cSerializeSavedClass(#klass, "", klass::mpSerialize_MemberFields, sizeof(klass), []() { return static_cast<iSerializable *>(new klass()); })
+#define SERIALIZE_VIRTUAL(klass, parent) serializeTempClasses[nSerializeTempClasses++] = cSerializeSavedClass(#klass, #parent, klass::mpSerialize_MemberFields, sizeof(klass), nullptr)
+#define SERIALIZE_BASE_VIRTUAL(klass) serializeTempClasses[nSerializeTempClasses++] = cSerializeSavedClass(#klass, "", klass::mpSerialize_MemberFields, sizeof(klass), nullptr)
 
 using namespace hpl;
 
