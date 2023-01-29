@@ -352,6 +352,10 @@ public:
 	int _countdown;
 	int _ticks;
 	int _lastTick;
+	int _lastMinute;
+
+	void getTimeFromCountdown(int &seconds, int &minutes, int &hours);
+	void updateTimeVariables();
 
 	// Cheats
 	bool _useExtendedTimer;
@@ -416,6 +420,7 @@ private:
 	void addDrill(const Math::Vector3d position, bool gasFound);
 	bool checkDrill(const Math::Vector3d position);
 	void removeDrill(Area *area);
+	void addSkanner(Area *area);
 
 	void loadAssetsDemo();
 	void loadAssetsFullGame();

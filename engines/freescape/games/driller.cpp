@@ -219,6 +219,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		_sensors = _currentArea->getSensors();
 	}
 	_lastPosition = _position;
+	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		_yaw = 280;
@@ -804,11 +805,10 @@ void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), _renderMode == Common::kRenderCGA ? 44 : 46, 153, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 238, 129, front, back, surface);
 
-	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d", hours), 208, 8, front, back, surface);
-	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
 	drawStringInSurface(Common::String::format("%02d", minutes), 230, 8, front, back, surface);
-	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
 	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, front, back, surface);
 
 	Common::String message;
@@ -877,11 +877,10 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 44, 156, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 239, 132, front, back, surface);
 
-	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d", hours), 209, 11, front, back, surface);
-	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
 	drawStringInSurface(Common::String::format("%02d", minutes), 232, 11, front, back, surface);
-	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
 	drawStringInSurface(Common::String::format("%02d", seconds), 254, 11, front, back, surface);
 
 	Common::String message;
@@ -950,11 +949,10 @@ void DrillerEngine::drawC64UI(Graphics::Surface *surface) {
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 44, 156, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 240, 128, front, back, surface);
 
-	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d", hours), 209, 11, front, back, surface);
-	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
 	drawStringInSurface(Common::String::format("%02d", minutes), 232, 11, front, back, surface);
-	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
 	drawStringInSurface(Common::String::format("%02d", seconds), 254, 11, front, back, surface);
 
 	Common::String message;
@@ -1024,11 +1022,10 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 65, 157, front, back, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 217, 133, white, back, surface);
 
-	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d", hours), 187, 12, front, back, surface);
-	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
 	drawStringInSurface(Common::String::format("%02d", minutes), 209, 12, front, back, surface);
-	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
 	drawStringInSurface(Common::String::format("%02d", seconds), 232, 12, front, back, surface);
 
 	Common::String message;
@@ -1099,11 +1096,10 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	drawStringInSurface(_currentArea->_name, 188, 185, yellow, black, surface);
 	drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
-	int hours = _countdown <= 0 ? 0 : _countdown / 3600;
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
 	drawStringInSurface(Common::String::format("%02d:", hours), 208, 7, yellow, black, surface);
-	int minutes = _countdown <= 0 ? 0 : (_countdown - hours * 3600) / 60;
 	drawStringInSurface(Common::String::format("%02d:", minutes), 230, 7, yellow, black, surface);
-	int seconds = _countdown <= 0 ? 0 : _countdown - hours * 3600 - minutes * 60;
 	drawStringInSurface(Common::String::format("%02d", seconds), 254, 7, yellow, black, surface);
 
 	Common::String message;
@@ -1492,6 +1488,33 @@ bool DrillerEngine::checkDrill(const Math::Vector3d position) {
 }
 
 
+void DrillerEngine::addSkanner(Area *area) {
+	debug("area: %d", area->getAreaID());
+	GeometricObject *obj = nullptr;
+	int16 id;
+
+	id = 248;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = (GeometricObject *)obj->duplicate();
+	area->addObject(obj);
+
+	id = 249;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = (GeometricObject *)obj->duplicate();
+	area->addObject(obj);
+
+	id = 250;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+	assert(obj);
+	obj = (GeometricObject *)obj->duplicate();
+	area->addObject(obj);
+}
+
 void DrillerEngine::addDrill(const Math::Vector3d position, bool gasFound) {
 	// int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
 	GeometricObject *obj = nullptr;
@@ -1606,6 +1629,7 @@ void DrillerEngine::initGameState() {
 			removeDrill(it._value);
 		_drillStatusByArea[it._key] = kDrillerNoRig;
 		if (it._key != 255) {
+			addSkanner(it._value);
 			_drillMaxScoreByArea[it._key] = (10 + _rnd->getRandomNumber(89)) * 1000;
 		}
 		_drillSuccessByArea[it._key] = 0;
@@ -1624,7 +1648,7 @@ void DrillerEngine::initGameState() {
 	_playerHeight = _playerHeights[_playerHeightNumber];
 	removeTimers();
 	startCountdown(_initialCountdown);
-
+	_lastMinute = 0;
 	_demoIndex = 0;
 	_demoEvents.clear();
 }
