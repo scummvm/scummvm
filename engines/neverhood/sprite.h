@@ -155,15 +155,19 @@ protected:
 	class AnimatedSpriteSubtitles : public BaseSurface {
 	public:
 		void draw() override;
-		AnimatedSpriteSubtitles(NeverhoodEngine *vm, AnimatedSprite *backRef);
+		AnimatedSpriteSubtitles(NeverhoodEngine *vm);
+		void setFrameIndex(int currFrameIndex, int lastFrameIndex);
+		void setHash(uint32 fileHash);
+		void updatePosition(const NDrawRect &parentDrawRect);
 	private:
-		AnimatedSprite *_backref;
+		Common::ScopedPtr<SubtitlePlayer> _subtitles;
+		int _currFrameIndex;
+		int _subCenterX;
 	};
 	
 	static const int kSubtitleWidth = 320;
 	Common::SharedPtr<AnimatedSpriteSubtitles> _subtitleSurface;
 	typedef void (AnimatedSprite::*AnimationCb)();
-	Common::ScopedPtr<SubtitlePlayer> _subtitles;
 	AnimResource _animResource;
 	uint32 _currAnimFileHash, _newAnimFileHash, _nextAnimFileHash;
 	int16 _currFrameIndex, _lastFrameIndex;
