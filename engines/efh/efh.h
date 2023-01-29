@@ -290,7 +290,7 @@ private:
 	void initMapMonsters();
 	void loadMapArrays(int idx);
 	void saveAnimImageSetId();
-	int16 getEquipmentDefense(int16 charId, bool flag);
+	int16 getEquipmentDefense(int16 charId);
 	uint16 getEquippedExclusiveType(int16 charId, int16 exclusiveType, bool flag);
 	void displayLowStatusScreen(bool flag);
 	void loadImageSetToTileBank(int16 tileBankId, int16 imageSetId);
