@@ -49,3 +49,7 @@ void MiyooMiniGraphicsManager::updateScreen(SDL_Rect *dirtyRectList, int actualD
 	SDL_UpdateRects(_realHwScreen, actualDirtyRects, _dirtyRectList);
 }
 
+void MiyooMiniGraphicsManager::getDefaultResolution(uint &w, uint &h) {
+	w = 640;
+	h = 480;
+}

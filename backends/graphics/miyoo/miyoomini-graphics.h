@@ -31,6 +31,7 @@ public:
 	void initGraphicsSurface() override;
 	void unloadGFXMode() override;
 	void updateScreen(SDL_Rect *dirtyRectList, int actualDirtyRects) override;
+	void getDefaultResolution(uint &w, uint &h) override;
 
 private:
 	SDL_Surface *_realHwScreen;

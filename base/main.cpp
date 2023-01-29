@@ -351,7 +351,7 @@ static void setupGraphics(OSystem &system) {
 		system.setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
 		system.setShader(ConfMan.get("shader"));
 
-#ifdef OPENDINGUX
+#if defined(OPENDINGUX) || defined(MIYOO) || defined(MIYOOMINI)
 		// 0, 0 means "autodetect" but currently only SDL supports
 		// it and really useful only on Opendingux. When more platforms
 		// support it we will switch to it.
