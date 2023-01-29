@@ -633,27 +633,27 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 	}
 
 	if (drawMonstersFl) {
-		for (uint var16 = 0; var16 < 64; ++var16) {
-			if ((_largeMapFlag && _mapMonsters[_techId][var16]._fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[_techId][var16]._fullPlaceId == _fullPlaceId)){
+		for (uint monsterId = 0; monsterId < 64; ++monsterId) {
+			if ((_largeMapFlag && _mapMonsters[_techId][monsterId]._fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[_techId][monsterId]._fullPlaceId == _fullPlaceId)) {
 				bool var4 = false;
-				int16 posX = _mapMonsters[_techId][var16]._posX;
-				int16 posY = _mapMonsters[_techId][var16]._posY;
+				int16 posX = _mapMonsters[_techId][monsterId]._posX;
+				int16 posY = _mapMonsters[_techId][monsterId]._posY;
 
 				if (posX < minX || posX > maxX || posY < minY || posY > maxY)
 					continue;
 
 				for (uint counterY = 0; counterY < 9 && !var4; ++counterY) {
-					if (_mapMonsters[_techId][var16]._hitPoints[counterY] > 0)
+					if (_mapMonsters[_techId][monsterId]._hitPoints[counterY] > 0)
 						var4 = true;
 				}
 
 				if (!var4)
 					continue;
 
-				int16 var6 = 148 + kEncounters[_mapMonsters[_techId][var16]._monsterRef]._animId;
-				int16 var1 = _mapMonsters[_techId][var16]._possessivePronounSHL6 & 0x3F;
+				int16 var6 = 148 + kEncounters[_mapMonsters[_techId][monsterId]._monsterRef]._animId;
+				int16 var1 = _mapMonsters[_techId][monsterId]._possessivePronounSHL6 & 0x3F;
 
-				if (var1 == 0x3F && isNpcATeamMember(_mapMonsters[_techId][var16]._npcId))
+				if (var1 == 0x3F && isNpcATeamMember(_mapMonsters[_techId][monsterId]._npcId))
 					continue;
 
 				int16 drawPosX = 128 + (posX - minX) * 16;
