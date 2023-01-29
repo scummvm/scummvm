@@ -340,7 +340,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 
 		case 20:
 			detokenisedStream += "SETVAR ";
-			detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
+			detokenisedStream += Common::String::format("(v%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
 			bytePointer += 2;
 			numberOfArguments = 0;
 			break;
