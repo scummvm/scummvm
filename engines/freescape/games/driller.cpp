@@ -1494,6 +1494,10 @@ void DrillerEngine::addSkanner(Area *area) {
 	int16 id;
 
 	id = 248;
+	// If first object is already added, do not re-add any
+	if (area->objectWithID(id) != nullptr)
+		return;
+
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
