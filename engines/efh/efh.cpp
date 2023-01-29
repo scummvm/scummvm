@@ -2093,16 +2093,16 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 			}
 		// original makes a useless check on (_mapSpecialTile[tileId]._field3 > 0x7F)
 		} else if (_mapSpecialTiles[_techId][tileId]._field3 <= 0x77) {
-			int16 var6 = _mapSpecialTiles[_techId][tileId]._field3;
+			int16 scoreId = _mapSpecialTiles[_techId][tileId]._field3;
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamCharId[counter] == -1)
 					continue;
 
 				for (uint var2 = 0; var2 < 39; ++var2) {
-					// CHECKME : the whole loop doesn't make much sense as it's using var6 instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
+					// CHECKME : the whole loop doesn't make much sense as it's using scoreId instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
 					// Also, 39 correspond to the size of activeScore + passiveScore + infoScore + the 2 remaining bytes of the struct
-					warning("handleInteractionText - _activeScore[%d]", var6);
-					if (_npcBuf[_teamCharId[counter]]._activeScore[var6] >= _mapSpecialTiles[_techId][tileId]._triggerId) {
+					warning("handleInteractionText - _activeScore[%d]", scoreId);
+					if (_npcBuf[_teamCharId[counter]]._activeScore[scoreId] >= _mapSpecialTiles[_techId][tileId]._triggerId) {
 						displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 						return true;
 					}
