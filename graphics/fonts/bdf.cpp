@@ -397,16 +397,16 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			byte *bitmap = loadCharacter(stream, encoding, advance, box);
 
 			// Ignore all characters above 255.
-			if (encoding < -1 || encoding >= font.numCharacters) {
+			if (encoding < 0 || encoding >= font.numCharacters) {
 				delete[] bitmap;
-				encoding = -1;
+				continue;
 			}
 
 			// Calculate the max advance
-			if (encoding != -1 && advance > font.maxAdvance)
+			if (advance > font.maxAdvance)
 				font.maxAdvance = advance;
 
-			if (!bitmap && encoding != -1) {
+			if (!bitmap) {
 				warning("BdfFont::loadFont: Character %d invalid", encoding);
 				freeBitmaps(bitmaps, font.numCharacters);
 				delete[] bitmaps;
@@ -417,11 +417,9 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				return 0;
 			}
 
-			if (encoding != -1) {
-				bitmaps[encoding] = bitmap;
-				advances[encoding] = advance;
-				boxes[encoding] = box;
-			}
+			bitmaps[encoding] = bitmap;
+			advances[encoding] = advance;
+			boxes[encoding] = box;
 		} else if (line.hasPrefix("FAMILY_NAME \"")) {
 			if (familyName != nullptr) {
 				warning("BdfFont::loadFont: Duplicated FAMILY_NAME");
