@@ -60,6 +60,7 @@ public:
 	dgInt32 GetCount() const;
 	dgInt32 GetMaxCount() const;
 	const OBJECT &operator[](dgInt32 i) const;
+	OBJECT &operator[](dgInt32 i);
 	dgInt32 Find(OBJECT &obj);
 	dgInt32 Find(KEY key);
 
@@ -199,6 +200,12 @@ dgInt32 dgHeapBase<OBJECT, KEY>::Find(KEY key) {
 
 template <class OBJECT, class KEY>
 const OBJECT &dgHeapBase<OBJECT, KEY>::operator[](dgInt32 i) const {
+	NEWTON_ASSERT(i <= m_curCount);
+	return m_pool[i].m_obj;
+}
+
+template <class OBJECT, class KEY>
+OBJECT &dgHeapBase<OBJECT, KEY>::operator[](dgInt32 i) {
 	NEWTON_ASSERT(i <= m_curCount);
 	return m_pool[i].m_obj;
 }

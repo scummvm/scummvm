@@ -30,7 +30,6 @@
 //////////////////////////////////////////////////////////////////////
 
 dgInt32 dgCollisionChamferCylinder::m_shapeRefCount = 0;
-dgVector dgCollisionChamferCylinder::m_shapesDirs[DG_MAX_CHAMFERCYLINDER_DIR_COUNT];
 dgConvexSimplexEdge dgCollisionChamferCylinder::m_edgeArray[(4 * DG_CHAMFERCYLINDER_SLICES + 2) * DG_CHAMFERCYLINDER_BRAKES];
 
 dgCollisionChamferCylinder::dgCollisionChamferCylinder(
@@ -109,15 +108,6 @@ void dgCollisionChamferCylinder::Init(dgFloat32 radius, dgFloat32 height) {
 	if (!m_shapeRefCount) {
 		dgPolyhedra polyhedra(m_allocator);
 		dgInt32 wireframe[DG_CHAMFERCYLINDER_SLICES + 10];
-
-		for (dgInt32 i = 0; i < DG_MAX_CHAMFERCYLINDER_DIR_COUNT; i++) {
-			dgMatrix matrix(
-			    dgPitchMatrix(
-			        dgFloat32(dgPI2 * i) / DG_MAX_CHAMFERCYLINDER_DIR_COUNT));
-			m_shapesDirs[i] = matrix.RotateVector(
-			                      dgVector(dgFloat32(0.0f), dgFloat32(1.0f), dgFloat32(0.0f),
-			                               dgFloat32(0.0f)));
-		}
 
 		dgInt32 index = 0;
 		for (dgInt32 j = 0; j < DG_CHAMFERCYLINDER_SLICES; j++) {

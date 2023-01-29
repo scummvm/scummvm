@@ -1507,7 +1507,7 @@ dgIntersectStatus dgAABBPolygonSoup::CalculateAllFaceEdgeNormals(void *context, 
 
 	AdjacentdFaces adjacentFaces;
 	adjacentFaces.m_count = indexCount;
-	adjacentFaces.m_index = (dgInt32 *) indexArray;
+	adjacentFaces.m_index = const_cast<dgInt32 *>(indexArray);
 	{
 		dgVector n(&polygon[indexArray[indexCount] * stride]);
 		dgVector p(&polygon[indexArray[0] * stride]);

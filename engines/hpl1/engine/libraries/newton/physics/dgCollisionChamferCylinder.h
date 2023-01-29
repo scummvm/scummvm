@@ -26,7 +26,6 @@
 
 #define DG_CHAMFERCYLINDER_SLICES         4
 #define DG_CHAMFERCYLINDER_BRAKES         8
-#define DG_MAX_CHAMFERCYLINDER_DIR_COUNT  8
 
 
 class dgCollisionChamferCylinder: public dgCollisionConvex {
@@ -76,7 +75,6 @@ private:
 	dgVector m_vertex[DG_CHAMFERCYLINDER_BRAKES * (DG_CHAMFERCYLINDER_SLICES + 1)];
 	static dgInt32 m_shapeRefCount;
 	static dgConvexSimplexEdge m_edgeArray[];
-	static dgVector m_shapesDirs[];
 
 	friend class dgWorld;
 };
