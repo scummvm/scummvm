@@ -1498,6 +1498,7 @@ void DrillerEngine::addSkanner(Area *area) {
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = (GeometricObject *)obj->duplicate();
+	obj->makeInvisible();
 	area->addObject(obj);
 
 	id = 249;
@@ -1505,6 +1506,7 @@ void DrillerEngine::addSkanner(Area *area) {
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = (GeometricObject *)obj->duplicate();
+	obj->makeInvisible();
 	area->addObject(obj);
 
 	id = 250;
@@ -1512,6 +1514,7 @@ void DrillerEngine::addSkanner(Area *area) {
 	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = (GeometricObject *)obj->duplicate();
+	obj->makeInvisible();
 	area->addObject(obj);
 }
 
