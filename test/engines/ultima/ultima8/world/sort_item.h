@@ -6,11 +6,6 @@
  *
  * Be aware that the x and y coordinates go opposite to what you might expect,
  * see the notes in sort_item.h
- *
- * Still TODO tests:
- *  * overlapping in various dimensions
- *  * flat (z == zTop) items with various flags
- *  * special case for crusader inventory items
  */
 class U8SortItemTestSuite : public CxxTest::TestSuite {
 	public:
@@ -76,6 +71,31 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(si2.below(si1));
 
 		si2._sprite = true;
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
+	 * Inventory items can have a z at the same z of the surface below them
+	 * Test case for keycard rendering issue at MainActor::teleport 9 34174 41502 0
+	 */
+	void test_inv_item_sort() {
+		Ultima::Ultima8::SortItem si1(nullptr);
+		Ultima::Ultima8::SortItem si2(nullptr);
+
+		Ultima::Ultima8::Box b1(34142, 41150, 0, 256, 64, 8);
+		si1.setBoxBounds(b1, 0, 0);
+		si2._solid = true;
+		si2._land = true;
+
+		Ultima::Ultima8::Box b2(34110, 41118, 0, 64, 64, 0);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._flat = true;
+		si2._invitem = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
 	}

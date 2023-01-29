@@ -421,10 +421,7 @@ inline bool SortItem::below(const SortItem &si2) const {
 	// Are overlapping in all 3 dimensions if we come here
 
 	// Inv items always drawn after
-	// 2 places in Crusader have keycards on tables
-	// but their z position is the bottom z of the table.
-	// TODO: Find these cases and add unit test
-	if (si1._invitem != si2._invitem) 
+	if (si1._invitem != si2._invitem)
 		return si1._invitem < si2._invitem;
 
 	// Flat always gets drawn before
