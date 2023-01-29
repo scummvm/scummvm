@@ -111,6 +111,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 
 		case 0:
 			detokenisedStream += "NOP ";
+			currentInstruction = FCLInstruction(Token::NOP);
 			break; // NOP
 		case 1:    // add three-byte value to score
 		{
@@ -180,6 +181,8 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			currentInstruction.setDestination(1);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
+			bytePointer++;
+			numberOfArguments = 0;
 			break;
 		case 10:
 			detokenisedStream += "SUBVAR (1, v";
@@ -188,7 +191,8 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			currentInstruction.setDestination(1);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
-			break;
+			bytePointer++;
+			numberOfArguments = 0;
 			break;
 
 		case 11: // end condition if a variable doesn't have a particular value
@@ -347,6 +351,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 
 		case 35:
 			detokenisedStream += "SCREEN (";
+			currentInstruction = FCLInstruction(Token::SCREEN);
 			break;
 
 		case 44:
@@ -394,6 +399,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			}
 
 			detokenisedStream += ")";
+			assert(currentInstruction.getType() != Token::UNKNOWN);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
 		}
