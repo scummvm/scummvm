@@ -142,6 +142,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_countdown = 0;
 	_ticks = 0;
 	_lastTick = -1;
+	_lastMinute = -1;
 	_frameLimiter = nullptr;
 	_vsyncEnabled = false;
 
@@ -497,6 +498,18 @@ void FreescapeEngine::processInput() {
 	}
 }
 
+void FreescapeEngine::updateTimeVariables() {
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+
+	if (_lastMinute != minutes) {
+		_lastMinute = minutes;
+		_gameStateVars[0x1e] += 1;
+		_gameStateVars[0x1f] += 1;
+		executeLocalGlobalConditions(false, true); // Only execute "on collision" room/global conditions
+	}
+}
+
 Common::Error FreescapeEngine::run() {
 	_vsyncEnabled = g_system->getFeatureState(OSystem::kFeatureVSync);
 	_frameLimiter = new Graphics::FrameLimiter(g_system, ConfMan.getInt("engine_speed"));
@@ -550,6 +563,7 @@ Common::Error FreescapeEngine::run() {
 	g_system->updateScreen();
 
 	while (!shouldQuit()) {
+		updateTimeVariables();
 		if (endGame) {
 			initGameState();
 			gotoArea(_startArea, _startEntrance);
@@ -826,6 +840,17 @@ Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadS
 	surface->copyFrom(*decoder.getSurface());
 	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette());
 	return surface;
+}
+
+void FreescapeEngine::getTimeFromCountdown(int &seconds, int &minutes, int &hours) {
+	int countdown = _countdown;
+	int h = countdown <= 0 ? 0 : countdown / 3600;
+	int m = countdown <= 0 ? 0 : (countdown - h * 3600) / 60;
+	int s = countdown <= 0 ? 0 : countdown - h * 3600 - m * 60;
+
+	seconds = s;
+	minutes = m;
+	hours = h;
 }
 
 static void countdownCallback(void *refCon) {
