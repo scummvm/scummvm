@@ -1213,11 +1213,11 @@ void DrillerEngine::drawInfoMenu() {
 	drawStringInSurface(Common::String::format("%13s : %d", "total sectors", 18), 84, 73, front, black, surface);
 	drawStringInSurface(Common::String::format("%13s : %d", "safe sectors", _gameStateVars[32]), 84, 81, front, black, surface);
 
-	if (isDOS()) {
+	if (isDOS() || isCPC()) {
 		drawStringInSurface("l-load s-save esc-terminate", 53, 97, front, black, surface);
 		drawStringInSurface("t-toggle sound on/off", 76, 105, front, black, surface);
 	} else if (isSpectrum()) {
-		drawStringInSurface("l-load s-save 1-abort", 53, 97, front, black, surface);
+		drawStringInSurface("l-load s-save 1-abort", 76, 97, front, black, surface);
 		drawStringInSurface("any other key-continue", 76, 105, front, black, surface);
 	}
 
@@ -1247,7 +1247,7 @@ void DrillerEngine::drawInfoMenu() {
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_t) {
 					// TODO
-				} else if (isDOS() && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				} else if ((isDOS() || isCPC()) && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_forceEndGame = true;
 					cont = false;
 				} else if (isSpectrum() && event.kbd.keycode == Common::KEYCODE_1) {
