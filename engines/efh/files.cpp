@@ -322,6 +322,11 @@ void EfhEngine::loadNPCS() {
  * This is required in order to implement a clean savegame feature
  */
 void EfhEngine::preLoadMaps() {
+	Common::DumpFile dump;
+	if (ConfMan.getBool("dump_scripts")) {
+		dump.open("efhMaps.dump");
+	}
+
 	for (int idx = 0; idx < 19; ++idx) {
 		Common::String fileName = Common::String::format("tech.%d", idx);
 		readFileToBuffer(fileName, _hiResImageBuf);
@@ -344,6 +349,14 @@ void EfhEngine::preLoadMaps() {
 			_mapSpecialTiles[idx][i]._triggerId = mapSpecialTilePtr[9 * i + 4];
 			_mapSpecialTiles[idx][i]._field5_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 5]);
 			_mapSpecialTiles[idx][i]._field7_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 7]);
+
+			if (ConfMan.getBool("dump_scripts") && _mapSpecialTiles[idx][i]._placeId != 0xFF) {
+				// dump a decoded version of the maps
+				Common::String buffer = Common::String::format("[%d][%d] _ placeId: 0x%02X _pos: %d, %d _field3: 0x%02X (%d), triggerId: %d, _field5/7: %d %d\n"
+					, idx, i, _mapSpecialTiles[idx][i]._placeId, _mapSpecialTiles[idx][i]._posX, _mapSpecialTiles[idx][i]._posX, _mapSpecialTiles[idx][i]._field3
+					, _mapSpecialTiles[idx][i]._field3, _mapSpecialTiles[idx][i]._triggerId, _mapSpecialTiles[idx][i]._field5_textId, _mapSpecialTiles[idx][i]._field7_textId);
+				dump.write(buffer.c_str(), buffer.size());
+			}
 		}
 
 		uint8 *mapMonstersPtr = &_mapArr[idx][902];
@@ -368,8 +381,11 @@ void EfhEngine::preLoadMaps() {
 			for (int j = 0; j < 64; ++j)
 				_mapGameMaps[idx][i][j] = *mapPtr++;
 		}
-		
+	}
 
+	if (ConfMan.getBool("dump_scripts")) {
+		dump.flush();
+		dump.close();
 	}
 }
 
