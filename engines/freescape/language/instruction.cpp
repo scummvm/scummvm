@@ -104,6 +104,8 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		debugC(1, kFreescapeDebugCode, "Executing ip: %d in code with size: %d", ip, codeSize);
 		switch (instruction.getType()) {
 		default:
+			if (!isCastle())
+				error("Instruction %x at ip: %d not implemented!", instruction.getType(), ip);
 			break;
 		case Token::COLLIDEDQ:
 			if (collided)
