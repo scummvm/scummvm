@@ -24,6 +24,7 @@
 
 #include "engines/engine.h"
 
+#include "common/events.h"
 #include "common/platform.h"
 #include "common/queue.h"
 #include "common/rect.h"
@@ -31,13 +32,10 @@
 
 #include "audio/mixer.h"
 
-#include "video/3do_decoder.h"
+#include "video/video_decoder.h"
+#include "image/image_decoder.h"
 
 struct ADGameDescription;
-
-namespace Image {
-class ImageDecoder;
-}
 
 namespace Graphics {
 struct Surface;
@@ -88,10 +86,23 @@ public:
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
 
-private:
+protected:
+	virtual void readTables() = 0;
+	virtual void postSceneBitmaps() = 0;
+	virtual bool handlePlatformJoyButton(int button) { return false; }
+	virtual bool handlePlatformKeyDown(int button) { return false; }
+	virtual void loadImage(const Common::String &name);
+	virtual void startGraphics() = 0;
+	void blitImageSurface(Graphics::Surface *screen, const Graphics::Surface *surface);
+	virtual void blitImage(Graphics::Surface *screen);
+	virtual void handleEvent(const Common::Event &event);
+	virtual int getSceneNumb(const Common::String &sName);
+	virtual void preActions() {}
+
 	static const int kMaxName = 13 + 1;
 	static const int kMaxBitmaps = 2000;
 	static const int kMaxScene = 100;
+	void initTables();
 
 	struct {
 		int  _duration;
@@ -99,11 +110,12 @@ private:
 	} _bitmaps[kMaxBitmaps];
 
 	Scene _scenes[kMaxScene];
+	int	 _totScene;
+	long _totScore;
 
 	Image::ImageDecoder *_image;
-	Image::ImageDecoder *_ctrlHelpImage;
 	Console *_console;
-
+	Video::VideoDecoder *_videoDecoder;
 	bool _showScoreFl;
 	bool _setDurationFl;
 	bool _leftButtonDownFl;
@@ -112,16 +124,8 @@ private:
 	int	 _curSceneIdx, _prvSceneIdx;
 	int	 _curBitmapIdx;
 	int	 _curChoice;
-	int	 _totScene;
-	long _totScore;
 	int _screenW, _screenH;
-	int _kbdHiLite;
-	int _mouseHiLite;
-	int _hiLite;
-	bool _hiLiteEnabled;
-	bool _cheatEnabled;
-	int _cheatFSM;
-	bool _leftShoulderPressed;
+	bool _quit;
 
 	enum Action {
 		Redraw,
@@ -134,13 +138,9 @@ private:
 	Common::Queue<Action> _actions;
 	Graphics::Surface *_compositeSurface;
 
-	void loadImage(const Common::String &name);
-	void loadMikeDecision(const Common::String &dirname, const Common::String &baseFilename, uint num);
 	void drawScreen();
-	void updateHiLite();
 
 	Audio::SoundHandle _soundHandle;
-	Video::ThreeDOMovieDecoder *_videoDecoder;
 
 	void playSound(const Common::String &name);
 	void stopSound();
@@ -152,17 +152,53 @@ private:
 	void processTimer();
 	static void onTimer(void *arg);
 
-	void initTables();
-	void readTablesPC(const Common::String &fileName);
-		void readTables3DO(const Common::String &fileName);
-	int getSceneNumb(const Common::String &sName);
 	int getMouseHiLite();
+};
 
+class PlumbersGame3DO : public PlumbersGame {
+public:
+	PlumbersGame3DO(OSystem *syst, const ADGameDescription *gameDesc);
+
+protected:
+	void readTables() override;
+	void postSceneBitmaps() override;
+	void startGraphics() override;
+	void handleEvent(const Common::Event &event) override;
+	void blitImage(Graphics::Surface *screen) override;
+	int getSceneNumb(const Common::String &sName) override;
+	void preActions() override;
+
+private:
+	void skipVideo();
+	void loadMikeDecision(const Common::String &dirname, const Common::String &baseFilename, uint num);
 	void joyUp();
 	void joyDown();
 	void joyA();
-	void skipVideo();
+	void updateHiLite();
+
+	bool _cheatEnabled;
+	int _cheatFSM;
+	bool _leftShoulderPressed;
+	int _kbdHiLite;
+	int _mouseHiLite;
+	int _hiLite;
+	Image::ImageDecoder *_ctrlHelpImage;
 };
+
+class PlumbersGameWindows : public PlumbersGame {
+public:
+	PlumbersGameWindows(OSystem *syst, const ADGameDescription *gameDesc);
+
+protected:
+	void readTables() override;
+	void postSceneBitmaps() override;
+	void loadImage(const Common::String &name) override;
+	void startGraphics() override;
+
+private:
+	bool _halfSize;
+};
+
 } // End of namespace Plumbers
 
 #endif
