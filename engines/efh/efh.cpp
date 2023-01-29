@@ -784,6 +784,10 @@ void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 	for (int var4 = teamMemberId; var4 < 2; ++var4) {
 		_teamCharId[var4] = _teamCharId[var4 + 1];
 		_teamCharId[var4 + 1] = -1;
+
+		// The original isn't doing that, resulting in losing its altered status and remaining duration
+		_teamCharStatus[var4]._status = _teamCharStatus[var4 + 1]._status;
+		_teamCharStatus[var4]._duration = _teamCharStatus[var4 + 1]._duration;
 	}
 
 	refreshTeamSize();
