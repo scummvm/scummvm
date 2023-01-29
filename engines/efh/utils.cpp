@@ -300,4 +300,10 @@ uint32 EfhEngine::ROR(uint32 val, uint8 shiftVal) {
 	return val >> shiftVal | val << (32 - shiftVal);
 }
 
+Common::String EfhEngine::getArticle(int pronoun) {
+	if (pronoun == 2)
+		return "The ";
+
+	return "";
+}
 } // End of namespace Efh
