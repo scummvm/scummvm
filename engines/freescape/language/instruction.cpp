@@ -171,6 +171,9 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		case Token::SPFX:
 			executeSPFX(instruction);
 			break;
+		case Token::SCREEN:
+			// TODO
+			break;
 		case Token::BITNOTEQ:
 			if (executeEndIfBitNotEqual(instruction))
 				ip = codeSize;
