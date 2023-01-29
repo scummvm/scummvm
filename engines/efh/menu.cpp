@@ -289,7 +289,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 	buffer1 = Common::String::format("Speed: %d", _npcBuf[npcId]._speed);
 	setTextPos(146, 45);
 	displayStringAtTextPos(buffer1);
-	buffer1 = Common::String::format("Defense: %d", getEquipmentDefense(npcId, false));
+	buffer1 = Common::String::format("Defense: %d", getEquipmentDefense(npcId));
 	setTextPos(146, 54);
 	displayStringAtTextPos(buffer1);
 	buffer1 = Common::String::format("Hit Points: %d", _npcBuf[npcId]._hitPoints);

@@ -498,7 +498,7 @@ void EfhEngine::handleFight_MobstersAttack(int groupId) {
 				if (_teamCharId[targetId] == -1 || !isTeamMemberStatusNormal(targetId))
 					continue;
 
-				int16 randomDefense = getRandom(getEquipmentDefense(_teamCharId[targetId], false));
+				int16 randomDefense = getRandom(getEquipmentDefense(_teamCharId[targetId]));
 
 				int16 enemyPronoun = kEncounters[_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._monsterRef]._nameArticle;
 				int16 characterPronoun = _npcBuf[_teamCharId[targetId]].getPronoun();

@@ -454,13 +454,14 @@ void EfhEngine::initMapMonsters() {
 	debugC(3, kDebugEngine, "initMapMonsters");
 
 	for (uint monsterId = 0; monsterId < 64; ++monsterId) {
-		if (_mapMonsters[_techId][monsterId]._fullPlaceId == 0xFF)
+		MapMonster *curMons = &_mapMonsters[_techId][monsterId];
+		if (curMons->_fullPlaceId == 0xFF)
 			continue;
 
 		for (uint counter = 0; counter < 9; ++counter)
-			_mapMonsters[_techId][monsterId]._hitPoints[counter] = 0;
+			curMons->_hitPoints[counter] = 0;
 
-		uint8 groupSize = _mapMonsters[_techId][monsterId]._groupSize;
+		uint8 groupSize = curMons->_groupSize;
 		if (groupSize == 0)
 			groupSize = getRandom(10) - 1;
 
@@ -469,17 +470,15 @@ void EfhEngine::initMapMonsters() {
 		
 		for (uint counter = 0; counter < groupSize; ++counter) {
 			uint rand100 = getRandom(100);
-			uint16 pictureRef = kEncounters[_mapMonsters[_techId][monsterId]._monsterRef]._pictureRef;
+			uint16 pictureRef = kEncounters[curMons->_monsterRef]._pictureRef;
+			uint16 delta = getRandom(pictureRef / 2);
 
-			if (rand100 <= 25) {
-				uint16 delta = getRandom(pictureRef / 2);
-				_mapMonsters[_techId][monsterId]._hitPoints[counter] = pictureRef - delta;
-			} else if (rand100 <= 75) {
-				_mapMonsters[_techId][monsterId]._hitPoints[counter] = pictureRef;
-			} else {
-				uint16 delta = getRandom(pictureRef / 2);
-				_mapMonsters[_techId][monsterId]._hitPoints[counter] = pictureRef + delta;
-			}
+			if (rand100 <= 25)
+				curMons->_hitPoints[counter] = pictureRef - delta;
+			else if (rand100 <= 75)
+				curMons->_hitPoints[counter] = pictureRef;
+			else
+				curMons->_hitPoints[counter] = pictureRef + delta;
 		}
 	}
 }
@@ -495,32 +494,26 @@ void EfhEngine::saveAnimImageSetId() {
 	_animImageSetId = 0xFF;
 }
 
-int16 EfhEngine::getEquipmentDefense(int16 charId, bool flag) {
-	debugC(2, kDebugGraphics, "getEquipmentDefense %d %s", charId, flag ? "True" : "False");
-	// TODO: flag is always false, remove it when refactoring
+int16 EfhEngine::getEquipmentDefense(int16 charId) {
+	debugC(2, kDebugGraphics, "getEquipmentDefense %d %s", charId);
 
 	int16 altDef = 0;
-	int16 totalDef = 0;
+
 	for (int i = 0; i < 10; ++i) {
-		if (_npcBuf[charId]._inventory[i]._ref == 0x7FFF)
+		InvObject *curInvObj = &_npcBuf[charId]._inventory[i];
+
+		if (curInvObj->_ref == 0x7FFF || !curInvObj->isEquipped())
 			continue;
 
-		if (!_npcBuf[charId]._inventory[i].isEquipped())
-			continue;
-
-		int16 curDef = _npcBuf[charId]._inventory[i]._curHitPoints;
+		int16 curDef = curInvObj->_curHitPoints;
 		if (curDef == 0xFF)
-			curDef = _items[_npcBuf[charId]._inventory[i]._ref]._defense;
+			curDef = _items[curInvObj->_ref]._defense;
 
 		if (curDef <= 0)
 			continue;
 
-		totalDef += curDef;
 		altDef += (curDef / 8) + 1;
 	}
-
-	if (flag)
-		return totalDef;
 
 	return altDef;
 }
@@ -529,10 +522,12 @@ uint16 EfhEngine::getEquippedExclusiveType(int16 charId, int16 exclusiveType, bo
 	debugC(2, kDebugEngine, "getEquippedExclusiveType %d %d %s", charId, exclusiveType, flag ? "True" : "False");
 
 	for (int i = 0; i < 10; ++i) {
-		if (!_npcBuf[charId]._inventory[i].isEquipped())
+		InvObject *curInvObj = &_npcBuf[charId]._inventory[i];
+
+		if (!curInvObj->isEquipped())
 			continue;
 
-		int16 curItemId = _npcBuf[charId]._inventory[i]._ref;
+		int16 curItemId = curInvObj->_ref;
 
 		if (_items[curItemId]._exclusiveType != exclusiveType)
 			continue;
@@ -634,31 +629,31 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 
 	if (drawMonstersFl) {
 		for (uint monsterId = 0; monsterId < 64; ++monsterId) {
-			if ((_largeMapFlag && _mapMonsters[_techId][monsterId]._fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[_techId][monsterId]._fullPlaceId == _fullPlaceId)) {
-				bool var4 = false;
-				int16 posX = _mapMonsters[_techId][monsterId]._posX;
-				int16 posY = _mapMonsters[_techId][monsterId]._posY;
+			MapMonster *curMapMons = &_mapMonsters[_techId][monsterId];
+			if ((_largeMapFlag && curMapMons->_fullPlaceId == 0xFE) || (!_largeMapFlag && curMapMons->_fullPlaceId == _fullPlaceId)) {
+				int16 posX = curMapMons->_posX;
+				int16 posY = curMapMons->_posY;
 
 				if (posX < minX || posX > maxX || posY < minY || posY > maxY)
 					continue;
 
-				for (uint counterY = 0; counterY < 9 && !var4; ++counterY) {
-					if (_mapMonsters[_techId][monsterId]._hitPoints[counterY] > 0)
-						var4 = true;
+				bool groupAliveFl = false;
+				for (uint counterY = 0; counterY < 9 && !groupAliveFl; ++counterY) {
+					if (curMapMons->_hitPoints[counterY] > 0)
+						groupAliveFl = true;
 				}
 
-				if (!var4)
+				if (!groupAliveFl)
 					continue;
 
-				int16 var6 = 148 + kEncounters[_mapMonsters[_techId][monsterId]._monsterRef]._animId;
-				int16 var1 = _mapMonsters[_techId][monsterId]._possessivePronounSHL6 & 0x3F;
+				int16 imageSetIdx = 148 + kEncounters[curMapMons->_monsterRef]._animId;
 
-				if (var1 == 0x3F && isNpcATeamMember(_mapMonsters[_techId][monsterId]._npcId))
+				if ((curMapMons->_possessivePronounSHL6 & 0x3F) == 0x3F && isNpcATeamMember(curMapMons->_npcId))
 					continue;
 
 				int16 drawPosX = 128 + (posX - minX) * 16;
 				drawPosY = 8 + (posY - minY) * 16;
-				displayRawDataAtPos(_imageSetSubFilesArray[var6], drawPosX, drawPosY);
+				displayRawDataAtPos(_imageSetSubFilesArray[imageSetIdx], drawPosX, drawPosY);
 			}
 		}
 	}
@@ -713,7 +708,7 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 				Common::String buffer = _npcBuf[charId]._name;
 				setTextPos(16, textPosY);
 				displayStringAtTextPos(buffer);
-				buffer = Common::String::format("%d", getEquipmentDefense(charId, false));
+				buffer = Common::String::format("%d", getEquipmentDefense(charId));
 				displayCenteredString(buffer, 104, 128, textPosY);
 				buffer = Common::String::format("%d", _npcBuf[charId]._hitPoints);
 				displayCenteredString(buffer, 144, 176, textPosY);
@@ -757,9 +752,11 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 
 void EfhEngine::removeObject(int16 charId, int16 objectId) {
 	debugC(6, kDebugEngine, "removeObject %d %d", charId, objectId);
-	_npcBuf[charId]._inventory[objectId]._ref = 0x7FFF;
-	_npcBuf[charId]._inventory[objectId]._stat1 = 0;
-	_npcBuf[charId]._inventory[objectId]._curHitPoints = 0;
+
+	InvObject *curInvObj = &_npcBuf[charId]._inventory[objectId];
+	curInvObj->_ref = 0x7FFF;
+	curInvObj->_stat1 = 0;
+	curInvObj->_curHitPoints = 0;
 }
 
 void EfhEngine::totalPartyKill() {
