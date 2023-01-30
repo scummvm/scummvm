@@ -98,6 +98,7 @@ void Credits::enter(bool returnToOptions) {
 		_curveAnim._callbackObj = bgchild;
 		_curveAnim._callbackMethod = &TeLayout::setColor;
 		_curveAnim.play();
+		bgchild->setVisible(true);
 		const Common::String bgAnimName = bgchild->name() + "Anim";
 		bgPosAnim = _gui.layoutPositionLinearAnimation(bgAnimName);
 		if (!bgPosAnim)
@@ -144,13 +145,14 @@ bool Credits::onBackgroundAnimFinished() {
 		_curveAnim._callbackObj = bgchild;
 		_curveAnim._callbackMethod = &TeLayout::setColor;
 		_curveAnim.play();
+		bgchild->setVisible(true);
 		const Common::String bgAnimName = bgchild->name() + "Anim";
-		TeCurveAnim2<TeLayout, TeVector3f32> *bgposanim = _gui.layoutPositionLinearAnimation(bgAnimName);
-		if (!bgposanim)
+		TeCurveAnim2<TeLayout, TeVector3f32> *bgPosAnim = _gui.layoutPositionLinearAnimation(bgAnimName);
+		if (!bgPosAnim)
 			error("Couldn't find bg position anim %s", bgAnimName.c_str());
-		bgposanim->_callbackObj = bgchild;
-		bgposanim->_callbackMethod = &TeLayout::setPosition;
-		bgposanim->play();
+		bgPosAnim->_callbackObj = bgchild;
+		bgPosAnim->_callbackMethod = &TeLayout::setPosition;
+		bgPosAnim->play();
 	}
 	return false;
 }
