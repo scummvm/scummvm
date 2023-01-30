@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-01-24 22:02+0000\n"
-"PO-Revision-Date: 2023-01-20 14:25+0000\n"
+"PO-Revision-Date: 2023-01-30 12:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -218,7 +218,7 @@ msgstr "HIBA %d: %s"
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
 #, c-format
 msgid "Downloading %S list..."
-msgstr "%S lista letöltése"
+msgstr "%S lista letöltése..."
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
@@ -4929,7 +4929,7 @@ msgstr ""
 "Csak az STR és XA fájlokat szabad kicsomagolnia a speciális módszerrel. A "
 "többit általában a játék CD-jérõl kell átmásolni.\n"
 "\n"
-"  Nézd meg %s"
+" Nézd meg %s"
 
 #: engines/dragons/metaengine.cpp:137
 msgid "Action"
