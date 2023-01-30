@@ -36,7 +36,17 @@ class dgPlane;
 DG_MSC_VECTOR_ALIGMENT
 class dgSphere: public dgMatrix {
 public:
-	dgSphere();
+	constexpr dgSphere() : dgMatrix(
+							   dgVector(dgFloat32(1.0f), dgFloat32(0.0f), dgFloat32(0.0f),
+										dgFloat32(0.0f)),
+							   dgVector(dgFloat32(0.0f), dgFloat32(1.0f), dgFloat32(0.0f),
+										dgFloat32(0.0f)),
+							   dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(1.0f),
+										dgFloat32(0.0f)),
+							   dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
+										dgFloat32(1.0f))),
+						   m_size(0, 0, 0, 0) {
+	}
 //	dgSphere (const dgQuaternion &quat, const dgVector &position, const dgVector dim = dgVector(0, 0, 0, 0));
 //	dgSphere (const dgMatrix &matrix, const dgVector dim = dgVector(0, 0, 0, 0));
 

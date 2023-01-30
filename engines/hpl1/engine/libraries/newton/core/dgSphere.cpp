@@ -25,7 +25,7 @@
 #include "dgSphere.h"
 #include "dgMatrix.h"
 
-static dgSphere identitySphere;
+constexpr static dgSphere identitySphere;
 const dgSphere &GetIdentitySphere() {
 	return identitySphere;
 }
@@ -354,12 +354,6 @@ static void Statistics(dgSphere &sphere, dgVector &eigenValues,
  sphere.EigenVectors(eigenValues);
  }
  */
-}
-
-dgSphere::dgSphere() :
-	dgMatrix(dgGetIdentityMatrix()), m_size(0, 0, 0, 0) {
-//	NEWTON_ASSERT (0);
-//	planeTest = FrontTest;
 }
 
 dgSphere::dgSphere(const dgQuaternion &quat, const dgVector &position,
