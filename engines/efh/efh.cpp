@@ -292,7 +292,7 @@ void EfhEngine::playIntro() {
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
 
 	// Load animations on previous picture with GF
-	loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
+	loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	readImpFile(100, false);
 	Common::KeyCode lastInput = getLastCharAfterAnimCount(8);
 	if (lastInput == Common::KEYCODE_ESCAPE)
@@ -388,7 +388,7 @@ void EfhEngine::initEngine() {
 	saveAnimImageSetId();
 
 	// Load Title Screen, skip if loading a savegame from launcher
-	loadImageSet(11, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
+	loadImageSet(11, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	if (_loadSaveSlot == -1) {
 		displayFctFullScreen();
 		displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
@@ -420,7 +420,7 @@ void EfhEngine::initEngine() {
 	loadNPCS();
 
 	// Load picture room with girlfriend
-	loadImageSet(62, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
+	loadImageSet(62, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	fileName = "titlsong";
 	readFileToBuffer(fileName, _titleSong);
 	setDefaultNoteDuration();
@@ -430,7 +430,7 @@ void EfhEngine::initEngine() {
 		playIntro();
 	}
 
-	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _hiResImageBuf);
+	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	readImpFile(99, false);
 	_introDoneFl = true;
 	restoreAnimImageSetId();
@@ -783,11 +783,13 @@ void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 
 	for (int var4 = teamMemberId; var4 < 2; ++var4) {
 		_teamCharId[var4] = _teamCharId[var4 + 1];
-		_teamCharId[var4 + 1] = -1;
 
 		// The original isn't doing that, resulting in losing its altered status and remaining duration
 		_teamCharStatus[var4]._status = _teamCharStatus[var4 + 1]._status;
 		_teamCharStatus[var4]._duration = _teamCharStatus[var4 + 1]._duration;
+		//
+
+		_teamCharId[var4 + 1] = -1;
 	}
 
 	refreshTeamSize();
@@ -2462,7 +2464,7 @@ void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
 		_mapBitmapRefArr[_techId]._setId2 = setId;
 
 	int16 ptrIndex = bankId * 72;
-	loadImageSet(setId, _tileBank[bankId], &_imageSetSubFilesArray[ptrIndex], _hiResImageBuf);
+	loadImageSet(setId, _tileBank[bankId], &_imageSetSubFilesArray[ptrIndex], _decompBuf);
 }
 
 void EfhEngine::restoreAnimImageSetId() {
