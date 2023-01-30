@@ -25,7 +25,6 @@
 #include "dgStdafx.h"
 #include "dgCRC.h"
 #include "dgRef.h"
-#include "dgRtti.h"
 
 #include "common/util.h"
 
@@ -75,7 +74,6 @@ protected:
 private:
 	inline void Clear();
 
-	dgAddRtti(dgRef);
 	dgBaseNode *parent;
 	dgBaseNode *child;
 	dgBaseNode *sibling;

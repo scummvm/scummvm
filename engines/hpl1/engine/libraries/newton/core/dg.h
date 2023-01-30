@@ -26,7 +26,6 @@
 
 #include "dgRef.h"
 #include "dgCRC.h"
-#include "dgRtti.h"
 #include "dgList.h"
 #include "dgTree.h"
 #include "dgNode.h"

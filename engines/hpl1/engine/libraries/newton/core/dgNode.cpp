@@ -22,8 +22,6 @@
 #include "dgStdafx.h"
 #include "dgNode.h"
 
-dgInitRtti(dgBaseNode);
-
 dgBaseNode::dgBaseNode(const dgBaseNode &clone) :
 	dgRef(clone) {
 	dgBaseNode *obj;

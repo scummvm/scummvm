@@ -24,7 +24,6 @@
 
 #include "dgStdafx.h"
 #include "dgCRC.h"
-#include "dgRtti.h"
 #include "dgDebug.h"
 #include "dgMemory.h"
 
@@ -59,8 +58,6 @@ public:
 	DG_CLASS_ALLOCATOR(allocator)
 
 	virtual dgRef *CreateClone()   const;
-	virtual dgUnsigned32 GetTypeId() const;
-	virtual bool IsType(dgUnsigned32 typeId) const;
 
 	bool GetUserFlag0() const;
 	bool GetUserFlag1() const;
@@ -78,8 +75,6 @@ public:
 
 	void AttachRef(dgRef **oldRef, dgRef *newRef);
 
-
-	bool IsTypeByName(const char *typeName) const;
 	static dgUnsigned32 GetRttiType();
 
 protected:
@@ -87,7 +82,6 @@ protected:
 
 private:
 	dgUnsigned32 m_id;
-	static dgRtti m_rtti;
 };
 
 
@@ -144,23 +138,6 @@ inline dgInt32 dgRef::Release() {
 inline dgRef *dgRef::CreateClone() const {
 	NEWTON_ASSERT(0);
 	return NULL;
-}
-
-
-inline dgUnsigned32 dgRef::GetTypeId() const {
-	return m_rtti.GetTypeId();
-}
-
-inline bool dgRef::IsType(dgUnsigned32 typeId) const {
-	return m_rtti.IsTypeID(typeId);
-}
-
-inline dgUnsigned32 dgRef::GetRttiType() {
-	return m_rtti.GetTypeId();
-}
-
-inline bool dgRef::IsTypeByName(const char *typeName) const {
-	return IsType(dgCRC(typeName, (dgInt32) strlen(typeName)));
 }
 
 

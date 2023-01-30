@@ -24,8 +24,6 @@
 #include "dgList.h"
 #include "dgTree.h"
 
-dgRtti dgRef::m_rtti("dgRef");
-
 void dgRef::AttachRef(dgRef **oldObj, dgRef *newObj) {
 	if (*oldObj) {
 		(*oldObj)->Release();
