@@ -268,11 +268,11 @@ Graphics::RendererType TetraedgeEngine::preferredRendererType() const {
 	// Currently no difference between shaders and otherwise for this engine.
 	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders)
 		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	
+
 	if (matchingRendererType == 0) {
 		error("No supported renderer available.");
 	}
-	
+
 	return matchingRendererType;
 }
 

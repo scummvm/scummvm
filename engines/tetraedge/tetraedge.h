@@ -125,7 +125,7 @@ public:
 	bool onKeyUp(const Common::KeyState &state);
 
 	static Common::StringArray splitString(const Common::String &text, char c);
-	
+
 	/* Pick the renderer type to use.
 	   Currently will only return kRendererTypeOpenGL or kRendererTypeTinyGL */
 	Graphics::RendererType preferredRendererType() const;

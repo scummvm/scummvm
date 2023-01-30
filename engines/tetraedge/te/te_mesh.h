@@ -43,7 +43,7 @@ class TeModelVertexAnimation;
 class TeMesh : public Te3DObject2 {
 public:
 	TeMesh();
-	
+
 	virtual ~TeMesh() {};
 
 	enum Mode {
