@@ -30,6 +30,7 @@ namespace Tetraedge {
 class TeITextLayout {
 public:
 	TeITextLayout();
+	virtual ~TeITextLayout() {}
 
 	virtual void setText(const Common::String &val) = 0;
 	virtual void setInterLine(float val) = 0;
