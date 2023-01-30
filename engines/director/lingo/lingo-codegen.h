@@ -35,7 +35,7 @@ public:
 
 	ScriptContext *compileAnonymous(const Common::U32String &code);
 	ScriptContext *compileLingo(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, const Common::String &scriptName, bool anonyomous = false);
-	ScriptContext *compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName, uint16 version);
+	ScriptContext *compileLingoV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, LingoArchive *archive, const Common::String &archName, uint16 version);
 
 	int code1(inst code) { _currentAssembly->push_back(code); return _currentAssembly->size() - 1; }
 	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }

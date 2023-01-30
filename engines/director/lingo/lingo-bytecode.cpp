@@ -947,7 +947,7 @@ void LC::cb_zeropush() {
 	g_lingo->push(d);
 }
 
-ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName, uint16 version) {
+ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, LingoArchive *archive, const Common::String &archName, uint16 version) {
 	if (stream.size() < 0x5c) {
 		warning("Lscr header too small");
 		return nullptr;
@@ -974,7 +974,14 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	/* uint32 length = */ stream.readUint32();
 	/* uint32 length2 = */ stream.readUint32();
 	uint16 codeStoreOffset = stream.readUint16();
-	uint16 scriptId = stream.readUint16() + 1;
+
+	/* uint16 scriptId = */ stream.readUint16() /* + 1 */;
+	// This field *should* match the script's index in Lctx, but this
+	// is unreliable. (e.g. script 261 in DATA/LEVEL1.DIR in betterd-win
+	// has this field incorrectly set to 263 instead of 261.)
+	// Thus, ignore it and simply use the script's index in Lctx.
+	uint16 scriptId = lctxIndex;
+
 	// unk2
 	for (uint32 i = 0; i < 0x10; i++) {
 		stream.readByte();
@@ -1605,7 +1612,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 }
 
 void LingoArchive::addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName, uint16 version) {
-	ScriptContext *ctx = g_lingo->_compiler->compileLingoV4(stream, this, archName, version);
+	ScriptContext *ctx = g_lingo->_compiler->compileLingoV4(stream, lctxIndex, this, archName, version);
 	if (ctx) {
 		lctxContexts[lctxIndex] = ctx;
 		*ctx->_refCount += 1;
