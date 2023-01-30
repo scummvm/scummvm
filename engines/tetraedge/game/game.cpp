@@ -263,7 +263,7 @@ bool Game::changeWarp2(const Common::String &zone, const Common::String &scene, 
 
 	_forGui.unload();
 	_prevSceneName = _currentScene;
-	if (fadeFlag)
+	if (!fadeFlag)
 		g_engine->getApplication()->fade();
 
 	return initWarp(zone, scene, false);
