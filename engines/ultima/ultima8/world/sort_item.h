@@ -231,8 +231,15 @@ struct SortItem {
 	inline bool below(const SortItem &si2) const;
 
 	// Comparison for the sorted lists
-	inline bool ListLessThan(const SortItem *other) const {
-		return _z < other->_z || (_z == other->_z && _flat && !other->_flat);
+	inline bool ListLessThan(const SortItem *si2) const {
+		const SortItem &si1 = *this;
+		if (si1._sprite != si2->_sprite)
+			return si1._sprite < si2->_sprite;
+
+		if (si1._z != si2->_z)
+			return si1._z < si2->_z;
+
+		return si1._flat > si2->_flat;
 	}
 
 	Common::String dumpInfo() const;
@@ -327,6 +334,13 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._sprite != si2._sprite)
 		return si1._sprite < si2._sprite;
 
+	// Clearly in z and lower is non-flat?
+	if (si1._z < si2._z && si1._zTop <= si2._z)
+		return true;
+
+	if (si1._z > si2._z && si1._z >= si2._zTop)
+		return false;
+
 	// Clearly in y?
 	if (si1._y <= si2._yFar)
 		return true;
@@ -339,21 +353,32 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._xLeft >= si2._x)
 		return false;
 
+	// Overlapping z-bottom check
+	// If an object's base (z-bottom) is higher another's, it should be rendered after.
+	// This check must be on the z-bottom and not the z-top because two objects with the
+	// same z-position may have different heights (think of a mouse sorting vs the Avatar).
+	if (si1._z != si2._z)
+		return si1._z < si2._z;
+
+	// Are overlapping in all 3 dimensions if we come here
+
+	// Inv items always drawn after
+	if (si1._invitem != si2._invitem)
+		return si1._invitem < si2._invitem;
+
+	// Flat always gets drawn before
+	if (si1._flat != si2._flat)
+		return si1._flat > si2._flat;
+
+	// Trans always gets drawn after
+	if (si1._trans != si2._trans)
+		return si1._trans < si2._trans;
+
 	// Specialist z flat handling
 	if (si1._flat && si2._flat) {
-		// Differing z is easy for flats
-		if (si1._z != si2._z)
-			return si1._z < si2._z;
-
-		// Equal z
-
 		// Animated always gets drawn after
 		if (si1._anim != si2._anim)
 			return si1._anim < si2._anim;
-
-		// Trans always gets drawn after
-		if (si1._trans != si2._trans)
-			return si1._trans < si2._trans;
 
 		// Draw always gets drawn first
 		if (si1._draw != si2._draw)
@@ -371,46 +396,10 @@ inline bool SortItem::below(const SortItem &si2) const {
 		if (si1._fbigsq != si2._fbigsq)
 			return si1._fbigsq > si2._fbigsq;
 	}
-	// Mixed, or non flat
-	else {
-		// Inv items always drawn first if their z-bottom is equal or higher.
-		// This is a bit of a hack as 2 places in Crusader there are keycards
-		// on tables but their z position is the bottom z of the table.
-		if (si1._invitem) {
-			if (si1._z >= si2._z)
-				return false;
-		}
 
-		// Clearly in z
-		if (si1._z < si2._z && si1._zTop <= si2._z)
-			return true;
-
-		if (si1._z > si2._z && si1._z >= si2._zTop)
-			return false;
-
-		// Overlapping z-bottom check
-		// If an object's base (z-bottom) is higher another's, it should be rendered after.
-		// This check must be on the z-bottom and not the z-top because two objects with the
-		// same z-position may have different heights (think of a mouse sorting vs the Avatar).
-		if (si1._z != si2._z)
-			return si1._z < si2._z;
-
-		// Equal z
-
-		// Flat always gets drawn before
-		if (si1._flat != si2._flat)
-			return si1._flat > si2._flat;
-
-		// Trans always gets drawn after
-		if (si1._trans != si2._trans)
-			return si1._trans < si2._trans;
-	}
-
-	// Are overlapping in all 3 dimentions if we come here
-
-	// Land always gets drawn first
-	if (si1._land != si2._land)
-		return si1._land > si2._land;
+	// Disabled: Land always gets drawn first
+	//if (si1._land != si2._land)
+	//	return si1._land > si2._land;
 
 	// Land always gets drawn before roof
 	if (si1._land && si2._land && si1._roof != si2._roof)
