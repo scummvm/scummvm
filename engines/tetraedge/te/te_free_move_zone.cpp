@@ -209,24 +209,21 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 
 	if (pathResult == micropather::MicroPather::SOLVED || pathResult == micropather::MicroPather::START_END_SAME) {
 		Common::Array<TeVector2s32> points;
-		points.resize(path.size() + 2);
 
-		int i = 1;
 		for (auto pathpt : path) {
 			// each path point is an array offset
 			int offset = (char *)pathpt - graphData;
-			points[i] = TeVector2s32(offset % xsize, offset / xsize);
-			i++;
+			points.push_back(TeVector2s32(offset % xsize, offset / xsize));
 		}
 
 		Common::Array<TeVector3f32> pts3d;
-		// Skip first and last points, we will use the exact values.
-		for (uint j = 1; j < points.size() - 1; j++) {
-			pts3d.push_back(transformAStarGridInWorldSpace(points[j]));
+		// Skip first and last points and use the exact start/end values.
+		pts3d.push_back(startpt);
+		for (uint i = 1; i < points.size() - 1; i++) {
+			pts3d.push_back(transformAStarGridInWorldSpace(points[i]));
 		}
+		pts3d.push_back(endpt);
 
-		pts3d.front() = startpt;
-		pts3d.back() = endpt;
 		removeInsignificantPoints(pts3d);
 		retval = new TeBezierCurve();
 		retval->setControlPoints(pts3d);
