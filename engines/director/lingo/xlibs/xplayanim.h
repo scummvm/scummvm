@@ -20,7 +20,7 @@
  */
 
 /*************************************
- * 
+ *
  * Xobject to play PACo video files
  *
  * USED IN:
@@ -28,8 +28,8 @@
  *
  *************************************/
 
-#ifndef DIRECTOR_LINGO_XLIBS_XPLAYANIMXOBJ_H
-#define DIRECTOR_LINGO_XLIBS_XPLAYANIMXOBJ_H
+#ifndef DIRECTOR_LINGO_XLIBS_XPLAYANIM_H
+#define DIRECTOR_LINGO_XLIBS_XPLAYANIM_H
 
 namespace Director {
 
