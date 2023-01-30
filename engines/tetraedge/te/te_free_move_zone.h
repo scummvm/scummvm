@@ -128,10 +128,9 @@ private:
 	Common::Array<TeVector3f32> _transformedVerticies;
 	Common::Array<uint> _borders;
 
-	// TODO: Find better names..
-	TeVector2f32 _gridOffsetSomething;
-	TeVector2f32 _someGridVec1;
-	TeVector2f32 _someGridVec2;
+	TeVector2f32 _gridSquareSize;
+	TeVector2f32 _gridTopLeft;
+	TeVector2f32 _gridBottomRight;
 	TeMatrix4x4 _gridMatrix;
 	TeMatrix4x4 _inverseWorldTransform;
 

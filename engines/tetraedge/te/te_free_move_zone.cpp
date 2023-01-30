@@ -65,7 +65,7 @@ class TeFreeMoveZoneGraph : micropather::Graph {
 
 TeFreeMoveZone::TeFreeMoveZone() : _actzones(nullptr), _blockers(nullptr), _rectBlockers(nullptr),
 _transformedVerticiesDirty(true), _bordersDirty(true), _pickMeshDirty(true), _projectedPointsDirty(true),
-_loadedFromBin(false), _gridWorldY(0.0), _gridOffsetSomething(5.0f, 5.0f), _gridDirty(true)
+_loadedFromBin(false), _gridWorldY(0.0), _gridSquareSize(5.0f, 5.0f), _gridDirty(true)
 {
 	_graph = new TeFreeMoveZoneGraph();
 	_graph->_bordersDistance = 2048.0f;
@@ -86,8 +86,8 @@ float TeFreeMoveZone::bordersDistance() const {
 }
 
 TeVector2s32 TeFreeMoveZone::aStarResolution() const {
-	TeVector2f32 diff = (_someGridVec2 - _someGridVec1);
-	TeVector2s32 retval = TeVector2s32(diff / _gridOffsetSomething) + TeVector2s32(1, 1);
+	TeVector2f32 diff = (_gridBottomRight - _gridTopLeft);
+	TeVector2s32 retval = TeVector2s32(diff / _gridSquareSize) + TeVector2s32(1, 1);
 	if (retval._x > 2000)
 		retval._x = 200;
 	if (retval._y > 2000)
@@ -112,13 +112,13 @@ void TeFreeMoveZone::buildAStar() {
 					_graph->_flags[_graph->_size._x * y + x] = 1;
 				} else {
 					if (!hasCellBorderIntersection(TeVector2s32(x, y))) {
-						const float gridOffX = _gridOffsetSomething.getX();
-						const float gridOffY = _gridOffsetSomething.getY();
+						const float gridSquareX = _gridSquareSize.getX();
+						const float gridSquareY = _gridSquareSize.getY();
 						TeVector3f32 vout;
 						float fout;
-						TeVector3f32 gridPt(x * gridOffX + _someGridVec1.getX() + gridOffX * 0.5,
+						TeVector3f32 gridPt(x * gridSquareX + _gridTopLeft.getX() + gridSquareX / 2,
 										1000000.0,
-										gridOffY * 0.5 + y * gridOffY + _someGridVec1.getY());
+										y * gridSquareY + _gridTopLeft.getY() + gridSquareY / 2);
 						bool doesIntersect = intersect(gridPt, TeVector3f32(0.0, -1.0, 0.0), vout, fout, true, nullptr);
 						if (!doesIntersect)
 							doesIntersect = intersect(gridPt, TeVector3f32(0.0, 1.0, 0.0), vout, fout, true, nullptr);
@@ -220,8 +220,9 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 		}
 
 		Common::Array<TeVector3f32> pts3d;
-		for (auto &pt : points) {
-			pts3d.push_back(transformAStarGridInWorldSpace(pt));
+		// Skip first and last points, we will use the exact values.
+		for (uint i = 1; i < points.size() - 1; i++) {
+			pts3d.push_back(transformAStarGridInWorldSpace(points[i]));
 		}
 
 		pts3d.front() = startpt;
@@ -245,7 +246,7 @@ void TeFreeMoveZone::deserialize(Common::ReadStream &stream, TeFreeMoveZone &des
 			Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones) {
 	dest.clear();
 	TePickMesh2::deserialize(stream, dest);
-	TeVector2f32::deserialize(stream, dest._gridOffsetSomething);
+	TeVector2f32::deserialize(stream, dest._gridSquareSize);
 	dest._transformedVerticiesDirty = (stream.readByte() != 0);
 	dest._bordersDirty = (stream.readByte() != 0);
 	dest._pickMeshDirty = (stream.readByte() != 0);
@@ -259,13 +260,13 @@ void TeFreeMoveZone::deserialize(Common::ReadStream &stream, TeFreeMoveZone &des
 
 	TeOBP::deserialize(stream, dest._obp);
 
-	TeVector2f32::deserialize(stream, dest._someGridVec1);
-	TeVector2f32::deserialize(stream, dest._someGridVec2);
+	TeVector2f32::deserialize(stream, dest._gridTopLeft);
+	TeVector2f32::deserialize(stream, dest._gridBottomRight);
 	dest._gridWorldY = stream.readFloatLE();
 
 	dest._graph->deserialize(stream);
 	if (dest.name().contains("19000")) {
-		dest._gridOffsetSomething = TeVector2f32(2.0, 2.0);
+		dest._gridSquareSize = TeVector2f32(2.0f, 2.0f);
 		dest._gridDirty = true;
 	}
 	dest._blockers = blockers;
@@ -336,16 +337,16 @@ static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &
 byte TeFreeMoveZone::hasBlockerIntersection(const TeVector2s32 &pt) {
 	TeVector2f32 borders[4];
 
-	const float gridOffsetX = _gridOffsetSomething.getX();
-	const float gridOffsetY = _gridOffsetSomething.getX();
-	borders[0] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
-							  pt._y * gridOffsetY + _someGridVec1.getY());
-	borders[1] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
-							  pt._y * gridOffsetY + _someGridVec1.getY());
-	borders[2] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
-							  pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
-	borders[3] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
-							  pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+	const float gridSquareX = _gridSquareSize.getX();
+	const float gridSquareY = _gridSquareSize.getY();
+	borders[0] = TeVector2f32(pt._x * gridSquareX + _gridTopLeft.getX(),
+							  pt._y * gridSquareY + _gridTopLeft.getY());
+	borders[1] = TeVector2f32(pt._x * gridSquareX + _gridTopLeft.getX() + gridSquareX,
+							  pt._y * gridSquareY + _gridTopLeft.getY());
+	borders[2] = TeVector2f32(pt._x * gridSquareX + _gridTopLeft.getX(),
+							  pt._y * gridSquareY + _gridTopLeft.getY() + gridSquareY);
+	borders[3] = TeVector2f32(pt._x * gridSquareX + _gridTopLeft.getX() + gridSquareX,
+							  pt._y * gridSquareY + _gridTopLeft.getY() + gridSquareY);
 
 	for (uint i = 0; i < _blockers->size(); i++) {
 		const TeBlocker &blocker = (*_blockers)[i];
@@ -375,16 +376,16 @@ byte TeFreeMoveZone::hasBlockerIntersection(const TeVector2s32 &pt) {
 bool TeFreeMoveZone::hasCellBorderIntersection(const TeVector2s32 &pt) {
 	TeVector2f32 borders[4];
 
-	const float gridOffsetX = _gridOffsetSomething.getX();
-	const float gridOffsetY = _gridOffsetSomething.getX();
-	borders[0] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
-							  pt._y * gridOffsetY + _someGridVec1.getY());
-	borders[1] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
-							  pt._y * gridOffsetY + _someGridVec1.getY());
-	borders[2] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX(),
-							  pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
-	borders[3] = TeVector2f32(pt._x * gridOffsetX + _someGridVec1.getX() + gridOffsetX,
-							  pt._y * gridOffsetY + _someGridVec1.getY() + gridOffsetY);
+	const float gridSquareX = _gridSquareSize.getX();
+	const float gridSquareY = _gridSquareSize.getY();
+	borders[0] = TeVector2f32(pt._x * gridSquareX + _gridTopLeft.getX(),
+							  pt._y * gridSquareY + _gridTopLeft.getY());
+	borders[1] = TeVector2f32(pt._x * gridSquareX + _gridTopLeft.getX() + gridSquareX,
+							  pt._y * gridSquareY + _gridTopLeft.getY());
+	borders[2] = TeVector2f32(pt._x * gridSquareX + _gridTopLeft.getX(),
+							  pt._y * gridSquareY + _gridTopLeft.getY() + gridSquareY);
+	borders[3] = TeVector2f32(pt._x * gridSquareX + _gridTopLeft.getX() + gridSquareX,
+							  pt._y * gridSquareY + _gridTopLeft.getY() + gridSquareY);
 
 	int iresult = 0;
 	for (uint border = 0; border < _borders.size() / 2; border++) {
@@ -443,8 +444,8 @@ void TeFreeMoveZone::preUpdateGrid() {
 		else
 			newVec = gridInverse * _freeMoveZoneVerticies[_pickMesh[0]];
 
-		_someGridVec1.setX(newVec.x());
-		_someGridVec1.setY(newVec.z());
+		_gridTopLeft.setX(newVec.x());
+		_gridTopLeft.setY(newVec.z());
 
 		_gridWorldY = newVec.y();
 	}
@@ -456,18 +457,18 @@ void TeFreeMoveZone::preUpdateGrid() {
 		else
 			newVec = gridInverse * _freeMoveZoneVerticies[vertNo];
 
-		if (_someGridVec1.getX() <= newVec.x()) {
-			if (_someGridVec2.getX() < newVec.x())
-				_someGridVec2.setX(newVec.x());
+		if (_gridTopLeft.getX() <= newVec.x()) {
+			if (_gridBottomRight.getX() < newVec.x())
+				_gridBottomRight.setX(newVec.x());
 		} else {
-			_someGridVec1.setX(newVec.x());
+			_gridTopLeft.setX(newVec.x());
 		}
 
-		if (_someGridVec1.getY() <= newVec.z()) {
-			if (_someGridVec2.getY() < newVec.z())
-				_someGridVec2.setY(newVec.z());
+		if (_gridTopLeft.getY() <= newVec.z()) {
+			if (_gridBottomRight.getY() < newVec.z())
+				_gridBottomRight.setY(newVec.z());
 		} else {
-			_someGridVec1.setY(newVec.z());
+			_gridTopLeft.setY(newVec.z());
 		}
 
 		if (newVec.y() < _gridWorldY)
@@ -476,14 +477,14 @@ void TeFreeMoveZone::preUpdateGrid() {
 
 	if (!_loadedFromBin) {
 		if (!name().contains("19000"))
-			_gridOffsetSomething = TeVector2f32(5.0f, 5.0f);
+			_gridSquareSize = TeVector2f32(5.0f, 5.0f);
 		else
-			_gridOffsetSomething = TeVector2f32(2.0f, 2.0f);
+			_gridSquareSize = TeVector2f32(2.0f, 2.0f);
 	} else {
-		const TeVector2f32 gridVecDiff = _someGridVec2 - _someGridVec1;
+		const TeVector2f32 gridVecDiff = _gridBottomRight - _gridTopLeft;
 		float minSide = MIN(gridVecDiff.getX(), gridVecDiff.getY()) / 20.0f;
-		_gridOffsetSomething.setX(minSide);
-		_gridOffsetSomething.setY(minSide);
+		_gridSquareSize.setX(minSide);
+		_gridSquareSize.setY(minSide);
 
 		error("FIXME: Finish preUpdateGrid for loaded-from-bin case.");
 		/*
@@ -499,13 +500,13 @@ void TeFreeMoveZone::preUpdateGrid() {
 }
 
 TeVector2s32 TeFreeMoveZone::projectOnAStarGrid(const TeVector3f32 &pt) {
-	TeVector2f32 otherpt;
+	TeVector2f32 offsetpt;
 	if (!_loadedFromBin) {
-		otherpt = TeVector2f32(pt.x() - _someGridVec1.getX(), pt.z() - _someGridVec1.getY());
+		offsetpt = TeVector2f32(pt.x() - _gridTopLeft.getX(), pt.z() - _gridTopLeft.getY());
 	} else {
 		error("TODO: Implement TeFreeMoveZone::projectOnAStarGrid for _loadedFromBin");
 	}
-	TeVector2f32 projected = otherpt / _gridOffsetSomething;
+	const TeVector2f32 projected = offsetpt / _gridSquareSize;
 	return TeVector2s32((int)projected.getX(), (int)projected.getY());
 }
 
@@ -587,10 +588,10 @@ void TeFreeMoveZone::setVertex(uint offset, const TeVector3f32 &vertex) {
 }
 
 TeVector3f32 TeFreeMoveZone::transformAStarGridInWorldSpace(const TeVector2s32 &gridpt) {
-	float offsety = (float)gridpt._y * _gridOffsetSomething.getY() + _someGridVec1.getY() +
-				_gridOffsetSomething.getY() * 0.5;
-	float offsetx = (float)gridpt._x * _gridOffsetSomething.getX() + _someGridVec1.getX() +
-				_gridOffsetSomething.getX() * 0.5;
+	float offsetx = (float)gridpt._x * _gridSquareSize.getX() + _gridTopLeft.getX() +
+				_gridSquareSize.getX() / 2;
+	float offsety = (float)gridpt._y * _gridSquareSize.getY() + _gridTopLeft.getY() +
+				_gridSquareSize.getY() / 2;
 	if (!_loadedFromBin) {
 		return TeVector3f32(offsetx, _gridWorldY, offsety);
 	} else {
@@ -600,7 +601,7 @@ TeVector3f32 TeFreeMoveZone::transformAStarGridInWorldSpace(const TeVector2s32 &
 }
 
 float TeFreeMoveZone::transformHeightMin(float minval) {
-	TeVector3f32 vec = worldTransformationMatrix() * TeVector3f32(_someGridVec1.getX(), minval, _someGridVec1.getY());
+	TeVector3f32 vec = worldTransformationMatrix() * TeVector3f32(_gridTopLeft.getX(), minval, _gridTopLeft.getY());
 	return vec.y();
 }
 
