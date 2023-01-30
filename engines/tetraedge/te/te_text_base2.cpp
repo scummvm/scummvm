@@ -98,7 +98,8 @@ void TeTextBase2::build() {
 	TeImage img;
 	Common::SharedPtr<TePalette> nullpal;
 	img.createImg(_size._x, _size._y, nullpal, TeImage::RGBA8);
-	img.fill(_globalColor.r(), _globalColor.g(), _globalColor.b(), 0);
+	// fill with transparent white, the global color is applied on the mesh.
+	img.fill(255, 255, 255, 0);
 
 	for (uint i = 0; i < _wrappedLines.size(); i++) {
 		drawLine(img, _wrappedLines[i], lineoffsets[i]);

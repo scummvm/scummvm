@@ -145,6 +145,15 @@ bool Te3DTextureOpenGL::load(const TeImage &img) {
 	} else if (_format == TeImage::RGBA8) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.w, img.h, GL_RGBA, GL_UNSIGNED_BYTE, imgdata);
+		// FIXME: Slight hack.. sometimes artifacts appear because we draw
+		// a (half?)pixel outside the original texture. Clear one more row
+		// of the new texture with 0s to avoid artifacts.
+		if ((int)_texHeight > img.h) {
+			byte *buf = new byte[img.w * 4];
+			memset(buf, 0, img.w * 4);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, img.h, img.w, 1, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+			delete [] buf;
+		}
 	} else {
 		warning("Te3DTexture::load can't send image format %d to GL.", _format);
 	}
