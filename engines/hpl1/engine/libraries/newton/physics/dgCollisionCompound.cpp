@@ -1705,8 +1705,6 @@ dgInt32 dgCollisionCompound::CalculateContactsToCollisionTree(
 
 	while (stack) {
 		dgInt32 treeNodeIsLeaf;
-		dgVector p0;
-		dgVector p1;
 
 		stack--;
 		dgNodeBase *const me = stackPool[stack].m_myNode;

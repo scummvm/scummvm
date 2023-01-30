@@ -39,7 +39,6 @@ dgCollisionEllipse::dgCollisionEllipse(dgMemoryAllocator *const allocator,
 
 dgCollisionEllipse::dgCollisionEllipse(dgWorld *const world,
                                        dgDeserialize deserialization, void *const userData) : dgCollisionSphere(world, deserialization, userData) {
-	dgVector size;
 
 	m_rtti |= dgCollisionEllipse_RTTI;
 	deserialization(userData, &m_scale, sizeof(dgVector));
