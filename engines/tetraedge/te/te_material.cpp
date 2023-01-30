@@ -48,7 +48,7 @@ void TeMaterial::defaultValues() {
 	_emissionColor = TeColor(0, 0, 0, 255);
 	_shininess = 0.0;
 	_enableLights = false;
-	_enableSomethingDefault0 = false;
+	_isShadowTexture = false;
 }
 
 Common::String TeMaterial::dump() const {
@@ -83,7 +83,7 @@ TeMaterial &TeMaterial::operator=(const TeMaterial &other) {
 	_shininess = other._shininess;
 	_mode = other._mode;
 	_enableLights = other._enableLights;
-	_enableSomethingDefault0 = other._enableSomethingDefault0;
+	_isShadowTexture = other._isShadowTexture;
 
 	return *this;
 }

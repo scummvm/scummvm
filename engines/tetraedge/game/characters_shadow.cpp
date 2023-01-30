@@ -58,15 +58,15 @@ void CharactersShadow::createTexture(InGameScene *scene) {
 	renderer->enableTexture();
 	TeLight *light = scene->shadowLight();
 	if (light) {
-		TeQuaternion q1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), light->positionRadial().getX() - M_PI_2);
-		TeQuaternion q2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(1, 0, 0), light->positionRadial().getY());
+		const TeQuaternion q1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), light->positionRadial().getX() - M_PI_2);
+		const TeQuaternion q2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(1, 0, 0), light->positionRadial().getY());
 		_camera->setRotation(q2 * q1);
 		_camera->setPosition(light->position3d());
 	}
 	_camera->setFov((float)(scene->shadowFov() * M_PI / 180.0));
 	_camera->setOrthoPlanes(scene->shadowNearPlane(), scene->shadowFarPlane());
 	_camera->apply();
-	
+
 	createTextureInternal(scene);
 
 	TeCamera::restore();

@@ -123,7 +123,7 @@ void CharactersShadowTinyGL::draw(InGameScene *scene) {
 	for (TeIntrusivePtr<TeModel> model : scene->zoneModels()) {
 		if (model->meshes().size() > 0 && model->meshes()[0]->materials().empty()) {
 			model->meshes()[0]->defaultMaterial(TeIntrusivePtr<Te3DTexture>());
-			model->meshes()[0]->materials()[0]._enableSomethingDefault0 = true;
+			model->meshes()[0]->materials()[0]._isShadowTexture = true;
 			model->meshes()[0]->materials()[0]._diffuseColor = scene->shadowColor();
 		}
 		model->draw();

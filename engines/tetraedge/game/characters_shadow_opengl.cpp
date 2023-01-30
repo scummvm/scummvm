@@ -28,6 +28,13 @@
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_3d_texture_opengl.h"
 
+//#define TETRAEDGE_DUMP_SHADOW_RENDER 1
+
+#ifdef TETRAEDGE_DUMP_SHADOW_RENDER
+#include "image/png.h"
+static int dumpCount = 0;
+#endif
+
 namespace Tetraedge {
 
 void CharactersShadowOpenGL::createInternal() {
@@ -54,6 +61,19 @@ void CharactersShadowOpenGL::createTextureInternal(InGameScene *scene) {
 	glBindTexture(GL_TEXTURE_2D, _glTex);
 	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _texSize, _texSize);
 	renderer->clearBuffer(TeRenderer::ColorAndDepth);
+
+#ifdef TETRAEDGE_DUMP_SHADOW_RENDER
+	Graphics::Surface tex;
+	tex.create(_texSize, _texSize, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.getPixels());
+	Common::DumpFile dumpFile;
+	tex.flipVertical(Common::Rect(tex.w, tex.h));
+	dumpFile.open(Common::String::format("/tmp/rendered-shadow-dump-%04d.png", dumpCount));
+	dumpCount++;
+	Image::writePNG(dumpFile, tex);
+	tex.free();
+	dumpFile.close();
+#endif
 }
 
 void CharactersShadowOpenGL::deleteTexture() {
@@ -118,7 +138,7 @@ void CharactersShadowOpenGL::draw(InGameScene *scene) {
 	for (TeIntrusivePtr<TeModel> model : scene->zoneModels()) {
 		if (model->meshes().size() > 0 && model->meshes()[0]->materials().empty()) {
 			model->meshes()[0]->defaultMaterial(TeIntrusivePtr<Te3DTexture>());
-			model->meshes()[0]->materials()[0]._enableSomethingDefault0 = true;
+			model->meshes()[0]->materials()[0]._isShadowTexture = true;
 			model->meshes()[0]->materials()[0]._diffuseColor = scene->shadowColor();
 		}
 		model->draw();

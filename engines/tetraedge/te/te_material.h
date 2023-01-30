@@ -64,7 +64,7 @@ public:
 	TeColor _specularColor;
 	TeColor _emissionColor;
 	float _shininess;
-	bool _enableSomethingDefault0;
+	bool _isShadowTexture;
 	bool _enableLights;
 };
 

@@ -226,12 +226,13 @@ void InGameScene::convertPathToMesh(TeFreeMoveZone *zone) {
 	model->setPosition(zone->position());
 	model->setRotation(zone->rotation());
 	model->setScale(zone->scale());
-	unsigned long nverticies = zone->verticies().size();
-	model->meshes()[0]->setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
+	unsigned long nverticies = zone->freeMoveZoneVerticies().size();
+	TeMesh *mesh0 = model->meshes()[0].get();
+	mesh0->setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
 	for (uint i = 0; i < nverticies; i++) {
-		model->meshes()[0]->setIndex(i, i);
-		model->meshes()[0]->setVertex(i, zone->verticies()[i]);
-		model->meshes()[0]->setNormal(i, TeVector3f32(0, 0, 1));
+		mesh0->setIndex(i, i);
+		mesh0->setVertex(i, zone->freeMoveZoneVerticies()[i]);
+		mesh0->setNormal(i, TeVector3f32(0, 0, 1));
 	}
 	_zoneModels.push_back(model);
 }

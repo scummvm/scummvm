@@ -72,7 +72,7 @@ bool TeMesh::hasAlpha(uint idx) {
 	bool retval = hasGlobalAlpha;
 	if (idx < _materials.size()) {
 		const TeMaterial &material = _materials[idx];
-		if (material._enableSomethingDefault0) {
+		if (material._isShadowTexture) {
 			retval = false;
 		} else {
 			retval = true;
@@ -157,7 +157,7 @@ void TeMesh::attachMaterial(uint idx, const TeMaterial &src) {
 	TeMaterial &dest = _materials[idx];
 	dest._texture = src._texture;
 	dest._enableLights = src._enableLights;
-	dest._enableSomethingDefault0 = src._enableSomethingDefault0;
+	dest._isShadowTexture = src._isShadowTexture;
 	dest._emissionColor = src._emissionColor;
 	dest._shininess = src._shininess;
 	dest._diffuseColor = src._diffuseColor;

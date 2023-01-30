@@ -184,7 +184,7 @@ void TeRendererOpenGL::renderTransparentMeshes() {
 			glEnable(GL_TEXTURE_2D);
 			_textureEnabled = true;
 		}
-		if (material._enableSomethingDefault0) {
+		if (material._isShadowTexture) {
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 			glDisableClientState(GL_COLOR_ARRAY);
 		}
@@ -207,7 +207,7 @@ void TeRendererOpenGL::renderTransparentMeshes() {
 
 		vertsDrawn += meshProperties._vertexCount;
 
-		if (material._enableSomethingDefault0) {
+		if (material._isShadowTexture) {
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 			glEnableClientState(GL_COLOR_ARRAY);
 		}
@@ -299,7 +299,7 @@ void TeRendererOpenGL::shadowMode(enum ShadowMode mode) {
 void TeRendererOpenGL::applyMaterial(const TeMaterial &m) {
 	//debug("TeMaterial::apply (%s)", dump().c_str());
 	static const float constColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	if (_shadowMode == TeRenderer::ShadowModeNone) {
+	if (_shadowMode == ShadowModeNone) {
 		if (m._enableLights)
 			TeLightOpenGL::enableAll();
 		else
@@ -347,10 +347,10 @@ void TeRendererOpenGL::applyMaterial(const TeMaterial &m) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
 
 		setCurrentColor(m._diffuseColor);
-	} else if (_shadowMode == TeRenderer::ShadowModeCreating) {
-		// NOTE: Diverge from original here, it sets 255.0 but the
-		// colors should be scaled -1.0 .. 1.0.
-		static const float fullColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	} else if (_shadowMode == ShadowModeCreating) {
+		// NOTE: Replicate seeming bug from original here, it sets 255.0 but the
+		// colors should be scaled -1.0 .. 1.0?
+		static const float fullColor[4] = { 255.0f, 255.0f, 255.0f, 255.0f };
 		TeLightOpenGL::disableAll();
 		glDisable(GL_ALPHA_TEST);
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -360,8 +360,7 @@ void TeRendererOpenGL::applyMaterial(const TeMaterial &m) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, fullColor);
 	}
 
-	// TODO: Work out what TeMaterial::_enableSomethingDefault0 actually is.
-	if (!m._enableSomethingDefault0) {
+	if (!m._isShadowTexture) {
 		glDisable(GL_TEXTURE_GEN_S);
 		glDisable(GL_TEXTURE_GEN_T);
 		glDisable(GL_TEXTURE_GEN_R);

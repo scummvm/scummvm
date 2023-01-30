@@ -150,7 +150,8 @@ bool SceneLightsXmlParser::parserCallback_Shadow(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_SourceLight(ParserNode *node) {
-	_shadowLightNo = atof(node->values["number"].c_str());
+	// Note: must be signed, -1 to disable shadows.
+	_shadowLightNo = atoi(node->values["number"].c_str());
 	return true;
 }
 

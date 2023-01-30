@@ -190,7 +190,7 @@ void TeRendererTinyGL::renderTransparentMeshes() {
 			tglEnable(TGL_TEXTURE_2D);
 			_textureEnabled = true;
 		}
-		if (material._enableSomethingDefault0) {
+		if (material._isShadowTexture) {
 			tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
 			tglDisableClientState(TGL_COLOR_ARRAY);
 		}
@@ -216,7 +216,7 @@ void TeRendererTinyGL::renderTransparentMeshes() {
 
 		vertsDrawn += meshProperties._vertexCount;
 
-		if (material._enableSomethingDefault0) {
+		if (material._isShadowTexture) {
 			tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
 			tglEnableClientState(TGL_COLOR_ARRAY);
 		}
@@ -374,8 +374,7 @@ void TeRendererTinyGL::applyMaterial(const TeMaterial &m) {
 		tglMaterialfv(TGL_FRONT_AND_BACK, TGL_EMISSION, fullColor);
 	}
 
-	//warning("TODO: Work out what TeMaterial::_enableSomethingDefault0 actually is.");
-	if (!m._enableSomethingDefault0) {
+	if (!m._isShadowTexture) {
 		tglDisable(TGL_TEXTURE_GEN_S);
 		tglDisable(TGL_TEXTURE_GEN_T);
 		tglDisable(TGL_TEXTURE_GEN_R);
