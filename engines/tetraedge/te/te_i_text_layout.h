@@ -27,7 +27,7 @@
 
 namespace Tetraedge {
 
-class TeITextLayout : public TeLayout {
+class TeITextLayout {
 public:
 	TeITextLayout();
 

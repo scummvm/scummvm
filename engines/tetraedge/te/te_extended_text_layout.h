@@ -25,10 +25,11 @@
 #include "tetraedge/te/te_i_text_layout.h"
 #include "tetraedge/te/te_text_layout.h"
 #include "tetraedge/te/te_scrolling_layout.h"
+#include "tetraedge/te/te_clip_layout.h"
 
 namespace Tetraedge {
 
-class TeExtendedTextLayout : public TeITextLayout {
+class TeExtendedTextLayout : public TeClipLayout, public TeITextLayout {
 public:
 	TeExtendedTextLayout();
 

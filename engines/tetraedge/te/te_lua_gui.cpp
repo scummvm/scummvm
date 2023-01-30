@@ -79,7 +79,7 @@ TeLayout *TeLuaGUI::layout(const Common::String &name) {
 	if (layout)
 		return layout;
 
-	layout = textLayout(name);
+	layout = dynamic_cast<TeLayout *>(textLayout(name));
 	if (layout)
 		return layout;
 

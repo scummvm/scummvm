@@ -31,6 +31,7 @@ class TeClipLayout : public TeLayout {
 public:
 	TeClipLayout();
 
+	virtual void draw() override;
 };
 
 } // end namespace Tetraedge

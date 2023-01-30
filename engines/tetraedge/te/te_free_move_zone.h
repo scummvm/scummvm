@@ -114,6 +114,8 @@ public:
 	static TePickMesh2 *findNearestMesh(TeIntrusivePtr<TeCamera> &camera, const TeVector2s32 &frompt,
 			Common::Array<TePickMesh2*> &pickMeshes, TeVector3f32 *outloc, bool lastHitFirst);
 
+	const Common::Array<TeVector3f32> freeMoveZoneVerticies() const { return _freeMoveZoneVerticies; }
+
 private:
 	TeVector2s32 aStarResolution() const;
 

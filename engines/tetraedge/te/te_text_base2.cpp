@@ -112,6 +112,7 @@ void TeTextBase2::build() {
 	dumpFile.open(Common::String::format("/tmp/rendered-font-dump-%04d.png", dumpCount));
 	dumpCount++;
 	Image::writePNG(dumpFile, img);
+	dumpFile.close();
 #endif
 
 	_mesh->setConf(4, 4, TeMesh::MeshMode_TriangleStrip, 0, 0);
