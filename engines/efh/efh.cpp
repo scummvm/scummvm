@@ -1246,8 +1246,8 @@ void EfhEngine::handleNewRoundEffects() {
 
 	for (int counter = 0; counter < _teamSize; ++counter) {
 		NPCStruct *curNpc = &_npcBuf[_teamCharId[counter]];
-		if (curNpc->_hitPoints < curNpc->_maxHP)
-			++curNpc->_hitPoints = curNpc->_maxHP;
+		if (++curNpc->_hitPoints > curNpc->_maxHP)
+			curNpc->_hitPoints = curNpc->_maxHP;
 	}
 	_regenCounter = 0;
 }
