@@ -34,9 +34,13 @@ class BonusMenu : public TeLuaGUI {
 public:
 	BonusMenu();
 
+	// This is called a "save button", but actually it's used for
+	// bonus artwork in this context.  Bad naming is copied from
+	// the original.
 	class SaveButton : public TeLayout {
 	public:
 		SaveButton(TeButtonLayout *btn, const Common::String &name, BonusMenu *owner);
+		// another confusing name - actually just shows the bonus artwork
 		bool onLoadSave();
 		Common::String path() const;
 
