@@ -23,7 +23,7 @@
 
 namespace Tetraedge {
 
-TeActZone::TeActZone() {
+TeActZone::TeActZone() : _flag1(false), _flag2(false) {
 }
 
 } // end namespace Tetraedge

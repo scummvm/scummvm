@@ -834,7 +834,7 @@ static int tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00(lua_Stat
 static void BlendCharacterAnimation(const Common::String &charname, const Common::String &animname, float blendAmount, bool repeat, bool returnToIdle) {
 	Game *game = g_engine->getGame();
 	Character *c = game->scene().character(charname);
-	bool result = c->blendAnimation(animname, blendAmount, repeat, returnToIdle);
+	bool result = c && c->blendAnimation(animname, blendAmount, repeat, returnToIdle);
 	if (!result) {
 		warning("[BlendCharacterAnimation] Character's animation \"%s\" doesn't exist for the character\"%s\"  ",
 			animname.c_str(), charname.c_str());

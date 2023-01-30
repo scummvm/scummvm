@@ -33,6 +33,9 @@ namespace Tetraedge {
 
 class TeFreeMoveZoneGraph : micropather::Graph {
 	friend class TeFreeMoveZone;
+
+	TeFreeMoveZoneGraph() : _owner(nullptr) {}
+
 	TeVector2s32 _size;
 	Common::Array<char> _flags;
 	float _bordersDistance;

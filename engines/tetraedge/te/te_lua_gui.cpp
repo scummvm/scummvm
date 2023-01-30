@@ -27,7 +27,7 @@
 
 namespace Tetraedge {
 
-TeLuaGUI::TeLuaGUI() {
+TeLuaGUI::TeLuaGUI() : _loaded(false) {
 }
 
 TeButtonLayout *TeLuaGUI::buttonLayout(const Common::String &name) {

@@ -549,12 +549,12 @@ bool InGameScene::load(const Common::Path &path) {
 				error("Improbable number of actzones %d", count);
 			_actZones.resize(count);
 			for (uint i = 0; i < _actZones.size(); i++) {
-				_actZones[i].s1 = Te3DObject2::deserializeString(actzonefile);
-				_actZones[i].s2 = Te3DObject2::deserializeString(actzonefile);
+				_actZones[i]._s1 = Te3DObject2::deserializeString(actzonefile);
+				_actZones[i]._s2 = Te3DObject2::deserializeString(actzonefile);
 				for (int j = 0; j < 4; j++)
-					TeVector2f32::deserialize(actzonefile, _actZones[i].points[j]);
-				_actZones[i].flag1 = (actzonefile.readByte() != 0);
-				_actZones[i].flag2 = true;
+					TeVector2f32::deserialize(actzonefile, _actZones[i]._points[j]);
+				_actZones[i]._flag1 = (actzonefile.readByte() != 0);
+				_actZones[i]._flag2 = true;
 			}
 		}
 	}
@@ -862,7 +862,7 @@ void InGameScene::loadBackground(const Common::Path &path) {
 	bg->disableAutoZ();
 	bg->setZPosition(wincam->orthoNearPlane());
 
-	for (auto layoutEntry : _bgGui.spriteLayouts()) {
+	for (const auto &layoutEntry : _bgGui.spriteLayouts()) {
 		AnimObject *animobj = new AnimObject();
 		animobj->_name = layoutEntry._key;
 		animobj->_layout = layoutEntry._value;

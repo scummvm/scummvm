@@ -414,6 +414,8 @@ void Inventory::selectedObject(InventoryObject *obj) {
 		TeSpriteLayout *selection = _gui.spriteLayoutChecked("selectionSprite");
 		selection->setVisible(obj->worldVisible());
 		TeLayout *parentLayout = dynamic_cast<TeLayout *>(obj->parent());
+		if (!parentLayout)
+			error("Couldn't get parent of object");
 		TeVector3f32 pos = parentLayout->position();
 		pos.z() = selection->position().z();
 		selection->setPosition(pos);

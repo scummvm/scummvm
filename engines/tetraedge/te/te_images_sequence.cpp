@@ -28,7 +28,7 @@
 
 namespace Tetraedge {
 
-TeImagesSequence::TeImagesSequence() : _width(0), _height(0), _curFrame(0) {
+TeImagesSequence::TeImagesSequence() : _width(0), _height(0), _curFrame(0), _frameRate(0) {
 }
 
 TeImagesSequence::~TeImagesSequence() {

@@ -62,6 +62,9 @@ void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
 		const Common::String *cancelButtonLoc = app->loc().value("cancelButton");
 
 		TeTextLayout *textTextLayout = dynamic_cast<TeTextLayout *>(textLayout->child(0));
+		if (!textTextLayout)
+			error("Expected text layout child.");
+
 		textTextLayout->setText(textAttributs + *app->loc().value(textTextLayout->name()));
 
 		if (!okButtonLoc || !cancelButtonLoc) {

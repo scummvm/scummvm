@@ -169,7 +169,7 @@ Common::Error Cellphone::syncState(Common::Serializer &s) {
 		if (!_addedNumbers.empty())
 			leave();
 
-		for (auto num : numbers)
+		for (const auto &num : numbers)
 			addNumber(num);
 	}
 	return Common::kNoError;

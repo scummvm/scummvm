@@ -33,7 +33,8 @@
 namespace Tetraedge {
 
 TeRenderer::TeRenderer() : _textureEnabled(false), _shadowMode(ShadowModeNone), _matrixMode(MM_GL_PROJECTION),
-_numTransparentMeshes(0), _pendingTransparentMeshProperties(0) {
+_numTransparentMeshes(0), _pendingTransparentMeshProperties(0), _currentCamera(nullptr), _scissorEnabled(false),
+_scissorX(0), _scissorY(0), _scissorWidth(0), _scissorHeight(0) {
 }
 
 void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsigned long tricount, unsigned long materialno) {

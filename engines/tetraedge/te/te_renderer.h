@@ -49,7 +49,10 @@ public:
 
 	class TransparentMeshProperties {
 	public:
-		TransparentMeshProperties() : _camera(nullptr), _vertexCount(0), _shouldDraw(false), _scissorEnabled(false), _hasColor(false) {}
+		TransparentMeshProperties() : _camera(nullptr), _vertexCount(0), _shouldDraw(false),
+			_scissorEnabled(false), _hasColor(false), _glTexEnvMode(0), _zOrder(0.0f),
+			_sourceTransparentMesh(0), _scissorX(0), _scissorY(0),
+			_scissorWidth(0), _scissorHeight(0) {}
 
 		TeCamera *_camera;
 		int _vertexCount;

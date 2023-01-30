@@ -111,7 +111,7 @@ void Credits::enter(bool returnToOptions) {
 
 void Credits::leave() {
 	_curveAnim.stop();
-	for (auto anim : _gui.layoutPositionLinearAnimations()) {
+	for (auto &anim : _gui.layoutPositionLinearAnimations()) {
 		anim._value->stop();
 	}
 	if (_gui.loaded()) {

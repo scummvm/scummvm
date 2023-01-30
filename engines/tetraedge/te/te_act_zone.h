@@ -31,11 +31,11 @@ class TeActZone {
 public:
 	TeActZone();
 
-	Common::String s1;
-	Common::String s2;
-	TeVector2f32 points[4];
-	bool flag1;
-	bool flag2;
+	Common::String _s1;
+	Common::String _s2;
+	TeVector2f32 _points[4];
+	bool _flag1;
+	bool _flag2;
 
 private:
 

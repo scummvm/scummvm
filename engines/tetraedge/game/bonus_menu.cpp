@@ -30,7 +30,7 @@
 
 namespace Tetraedge {
 
-BonusMenu::BonusMenu() {
+BonusMenu::BonusMenu() : _pageNo(0) {
 }
 
 void BonusMenu::enter(const Common::String &scriptName) {

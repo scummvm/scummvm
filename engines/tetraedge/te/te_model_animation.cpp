@@ -33,7 +33,7 @@ namespace Tetraedge {
 
 TeModelAnimation::TeModelAnimation() : _firstFrame(-1), _lastFrame(SHRT_MAX),
 _curFrame(0), _curFrameValFresh(false), _repeatNum(0), _finishedSignalPending(false),
-_curFrame2(0), _useNMOArrays(0), _speed(0.0f) {
+_curFrame2(0), _useNMOArrays(0), _speed(0.0f), _numNMOFrames(0) {
 }
 
 int TeModelAnimation::calcCurrentFrame(double millis) {

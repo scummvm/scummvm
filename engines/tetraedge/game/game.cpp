@@ -52,7 +52,8 @@ _sceneCharacterVisibleFromLoad(false), _isCharacterWalking(false),
 _lastCharMoveMousePos(0.0f, 0.0f), _randomSoundFinished(false),
 _previousMousePos(-1, -1), _markersVisible(true), _saveRequested(false),
 _gameLoadState(0), _luaShowOwnerError(false), _score(0), _warped(false),
-_firstInventory(true), _randomSource("SyberiaGameRandom") {
+_firstInventory(true), _randomSource("SyberiaGameRandom"), _frameCounter(0),
+_warpFadeFlag(false), _dialogsTold(0) {
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		_objectsTakenBits[i] = false;
 	}
