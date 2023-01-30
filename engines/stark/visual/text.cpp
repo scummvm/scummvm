@@ -41,9 +41,8 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
 		_bitmap(nullptr),
-		_bgBitmap(nullptr),
-		_color(Color(0, 0, 0)),
-		_backgroundColor(Color(0, 0, 0, 0)),
+		_color(Gfx::Color(0, 0, 0)),
+		_backgroundColor(Gfx::Color(0, 0, 0, 0)),
 		_align(Graphics::kTextAlignLeft),
 		_targetWidth(600),
 		_targetHeight(600),
@@ -73,7 +72,7 @@ void VisualText::setText(const Common::String &text) {
 	}
 }
 
-void VisualText::setColor(const Color &color) {
+void VisualText::setColor(const Gfx::Color &color) {
 	if (_color == color) {
 		return;
 	}
@@ -82,7 +81,7 @@ void VisualText::setColor(const Color &color) {
 	_color = color;
 }
 
-void VisualText::setBackgroundColor(const Color &color) {
+void VisualText::setBackgroundColor(const Gfx::Color &color) {
 	if (color == _backgroundColor) {
 		return;
 	}
@@ -198,7 +197,7 @@ static void multiplyColorWithAlpha(Graphics::Surface *source) {
  *
  * Color space aware version.
  */
-static void blendWithColor(Graphics::Surface *source, const Color &color) {
+static void blendWithColor(Graphics::Surface *source, const Gfx::Color &color) {
 	assert(source->format == Gfx::Driver::getRGBAPixelFormat());
 
 	float sRL = srgbToLinear(color.r / 255.f);

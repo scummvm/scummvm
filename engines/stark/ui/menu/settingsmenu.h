@@ -105,8 +105,8 @@ private:
 	void backHandler();
 
 private:
-	const Color _textColorHovered = Color(0x1E, 0x1E, 0x96);
-	const Color _textColorDefault = Color(0x00, 0x00, 0x00);
+	const Gfx::Color _textColorHovered = Gfx::Color(0x1E, 0x1E, 0x96);
+	const Gfx::Color _textColorDefault = Gfx::Color(0x00, 0x00, 0x00);
 
 	TestSoundManager _soundManager;
 };
@@ -155,7 +155,7 @@ public:
 	void onMouseUp() override;
 
 private:
-	const Color _textColorBgHovered = Color(0xFF, 0xFF, 0xFF);
+	const Gfx::Color _textColorBgHovered = Gfx::Color(0xFF, 0xFF, 0xFF);
 	static const int _maxVolume = 256;
 
 	VisualImageXMG *_sliderImage;

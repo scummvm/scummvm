@@ -159,7 +159,7 @@ void DialogPanel::onRender() {
 void DialogPanel::updateSubtitleVisual() {
 	clearSubtitleVisual();
 
-	Color color = _otherColor;
+	Gfx::Color color = _otherColor;
 	if (_currentSpeech->characterIsApril())
 		color = _aprilColor;
 

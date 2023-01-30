@@ -99,7 +99,7 @@ public:
 	void onScreenChanged() { _text.reset(); }
 
 private:
-	const Color _color = Color(0x68, 0x05, 0x04);
+	const Gfx::Color _color = Gfx::Color(0x68, 0x05, 0x04);
 
 	Common::Point _pos;
 	VisualText _text;
@@ -127,8 +127,8 @@ public:
 	}
 
 private:
-	const Color _textColorApril = Color(0x68, 0x05, 0x04);
-	const Color _textColorNormal = Color(0x1E, 0x1E, 0x96);
+	const Gfx::Color _textColorApril = Gfx::Color(0x68, 0x05, 0x04);
+	const Gfx::Color _textColorNormal = Gfx::Color(0x1E, 0x1E, 0x96);
 
 	Common::Point _namePos, _linePos;
 	VisualText _nameText, _lineText;
@@ -158,8 +158,8 @@ public:
 	void onScreenChanged() override;
 
 private:
-	const Color _textColorHovered = Color(0x1E, 0x1E, 0x96);
-	const Color _textColorDefault = Color(0x00, 0x00, 0x00);
+	const Gfx::Color _textColorHovered = Gfx::Color(0x1E, 0x1E, 0x96);
+	const Gfx::Color _textColorDefault = Gfx::Color(0x00, 0x00, 0x00);
 
 	uint _logIndex, _chapter;
 	int _width, _height;

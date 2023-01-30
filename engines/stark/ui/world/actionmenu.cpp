@@ -57,8 +57,8 @@ ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
 
 	_itemDescription = new VisualText(gfx);
-	_itemDescription->setColor(Color(0xFF, 0xFF, 0xFF));
-	_itemDescription->setBackgroundColor(Color(0x00, 0x00, 0x00, 0x80));
+	_itemDescription->setColor(Gfx::Color(0xFF, 0xFF, 0xFF));
+	_itemDescription->setBackgroundColor(Gfx::Color(0x00, 0x00, 0x00, 0x80));
 	_itemDescription->setFont(FontProvider::kSmallFont);
 	_itemDescription->setTargetWidth(96);
 

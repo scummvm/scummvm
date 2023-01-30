@@ -165,8 +165,8 @@ void Cursor::setMouseHint(const Common::String &hint) {
 		if (!hint.empty()) {
 			_mouseText = new VisualText(_gfx);
 			_mouseText->setText(hint);
-			_mouseText->setColor(Color(0xFF, 0xFF, 0xFF));
-			_mouseText->setBackgroundColor(Color(0x00, 0x00, 0x00, 0x80));
+			_mouseText->setColor(Gfx::Color(0xFF, 0xFF, 0xFF));
+			_mouseText->setBackgroundColor(Gfx::Color(0x00, 0x00, 0x00, 0x80));
 			_mouseText->setFont(FontProvider::kSmallFont);
 			_mouseText->setTargetWidth(96);
 		} else {
