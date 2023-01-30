@@ -21,6 +21,7 @@
 
 #include "engines/stark/gfx/tinyglsurface.h"
 #include "engines/stark/gfx/tinyglbitmap.h"
+#include "engines/stark/gfx/color.h"
 
 #include "graphics/tinygl/tinygl.h"
 
@@ -67,22 +68,79 @@ void TinyGLSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &de
 	}
 
 	transform.sourceRectangle(0, 0, blitImageWidth, blitImageHeight);
-
-	// W/A for 1x1 dimension bitmap
-	// it needs new filled and scaled bitmap based on one pixel color
-	if (blitImageWidth == 1 && blitImageHeight == 1) {
-		auto pixelColor = ((TinyGlBitmap *)const_cast<Bitmap *>(bitmap))->get1x1Color();
-		Graphics::Surface surface;
-		surface.create(width, height, Driver::getRGBAPixelFormat());
-		surface.fillRect(Common::Rect(0, 0, width, height), pixelColor);
-		tglUploadBlitImage(blitImage, surface, 0, false);
-		surface.free();
-	}
-
 	transform.tint(1.0, 1.0 - _fadeLevel, 1.0 - _fadeLevel, 1.0 - _fadeLevel);
 	tglBlit(blitImage, transform);
 
 	_gfx->end2DMode();
+}
+
+void TinyGLSurfaceRenderer::fill(const Color &color, const Common::Point &dest, uint width, uint height) {
+	_gfx->start2DMode();
+
+	SurfaceVertex vertices[4] = {};
+	convertToVertices(vertices, dest, width, height);
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPushMatrix();
+	tglLoadIdentity();
+
+	tglDisable(TGL_TEXTURE_2D);
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+
+	tglVertexPointer(2, TGL_FLOAT, sizeof(SurfaceVertex), &vertices[0].x);
+	tglColor4f((color.r / 255.0f) - _fadeLevel, (color.g / 255.0f) - _fadeLevel, (color.b / 255.0f) - _fadeLevel, color.a / 255.0f);
+
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+
+	tglDisableClientState(TGL_VERTEX_ARRAY);
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglPopMatrix();
+
+	tglMatrixMode(TGL_PROJECTION);
+	tglPopMatrix();
+
+	_gfx->end2DMode();
+}
+
+void TinyGLSurfaceRenderer::convertToVertices(SurfaceVertex *vertices, const Common::Point &dest, uint width, uint height) const {
+	const Math::Vector2d surfaceVertices[] = {
+		// X   Y
+		{ 0.0f, 0.0f },
+		{ 1.0f, 0.0f },
+		{ 0.0f, 1.0f },
+		{ 1.0f, 1.0f },
+	};
+
+	Math::Vector2d verSizeWH;
+	if (_noScalingOverride) {
+		verSizeWH = normalizeCurrentCoordinates(width, height);
+	} else {
+		verSizeWH = normalizeOriginalCoordinates(width, height);
+	}
+	auto verOffsetXY = normalizeOriginalCoordinates(dest.x, dest.y);
+	auto nativeViewport = _gfx->getViewport();
+	auto viewport = Math::Vector2d(nativeViewport.width(), nativeViewport.height());
+
+	for (int32 v = 0; v < 4; v++) {
+		Math::Vector2d pos = verOffsetXY + (surfaceVertices[v] * verSizeWH);
+
+		if (_snapToGrid) {
+			// Align vertex coordinates to the native pixel grid
+			// This ensures text does not get garbled by nearest neighbors scaling
+			pos.setX(floor(pos.getX() * viewport.getX() + 0.5) / viewport.getX());
+			pos.setY(floor(pos.getY() * viewport.getY() + 0.5) / viewport.getY());
+		}
+
+		// position coords
+		vertices[v].x = pos.getX() * 2.0 - 1.0;
+		vertices[v].y = -1.0 * (pos.getY() * 2.0 - 1.0);
+	}
 }
 
 Math::Vector2d TinyGLSurfaceRenderer::normalizeOriginalCoordinates(int x, int y) const {

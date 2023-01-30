@@ -296,29 +296,11 @@ void VisualText::createBitmap() {
 	_bitmap->setSamplingFilter(Gfx::Bitmap::kNearest);
 
 	surface.free();
-
-	// If we have a background color, generate a 1x1px bitmap of that color
-	if (_backgroundColor.a != 0) {
-		surface.create(1, 1, Gfx::Driver::getRGBAPixelFormat());
-
-		uint32 bgColor = surface.format.ARGBToColor(
-		            _backgroundColor.a, _backgroundColor.r, _backgroundColor.g, _backgroundColor.b
-		            );
-
-		surface.fillRect(Common::Rect(surface.w, surface.h), bgColor);
-		multiplyColorWithAlpha(&surface);
-
-		_bgBitmap = _gfx->createBitmap(&surface);
-
-		surface.free();
-	}
 }
 
 void VisualText::freeBitmap() {
 	delete _bitmap;
 	_bitmap = nullptr;
-	delete _bgBitmap;
-	_bgBitmap = nullptr;
 }
 
 void VisualText::render(const Common::Point &position) {
@@ -326,8 +308,8 @@ void VisualText::render(const Common::Point &position) {
 		createBitmap();
 	}
 
-	if (_bgBitmap) {
-		_surfaceRenderer->render(_bgBitmap, position, _bitmap->width(), _bitmap->height());
+	if (_backgroundColor.a != 0) {
+		_surfaceRenderer->fill(_backgroundColor, position, _bitmap->width(), _bitmap->height());
 	}
 
 	_surfaceRenderer->render(_bitmap, position);

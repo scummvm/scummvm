@@ -49,6 +49,7 @@ public:
 	// SurfaceRenderer API
 	void render(const Bitmap *bitmap, const Common::Point &dest) override;
 	void render(const Bitmap *bitmap, const Common::Point &dest, uint width, uint height) override;
+	void fill(const Color &color, const Common::Point &dest, uint width, uint height) override;
 
 private:
 	Math::Vector2d normalizeOriginalCoordinates(int x, int y) const;
@@ -56,6 +57,7 @@ private:
 
 	OpenGLSDriver *_gfx;
 	OpenGL::Shader *_shader;
+	OpenGL::Shader *_shaderFill;
 };
 
 } // End of namespace Gfx

@@ -58,6 +58,7 @@ static const GLfloat fadeVertices[] = {
 
 OpenGLSDriver::OpenGLSDriver() :
 	_surfaceShader(nullptr),
+	_surfaceFillShader(nullptr),
 	_actorShader(nullptr),
 	_fadeShader(nullptr),
 	_shadowShader(nullptr),
@@ -68,6 +69,7 @@ OpenGLSDriver::OpenGLSDriver() :
 OpenGLSDriver::~OpenGLSDriver() {
 	OpenGL::Shader::freeBuffer(_surfaceVBO);
 	OpenGL::Shader::freeBuffer(_fadeVBO);
+	delete _surfaceFillShader;
 	delete _surfaceShader;
 	delete _actorShader;
 	delete _fadeShader;
@@ -82,6 +84,10 @@ void OpenGLSDriver::init() {
 	_surfaceVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(surfaceVertices), surfaceVertices);
 	_surfaceShader->enableVertexAttribute("position", _surfaceVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_surfaceShader->enableVertexAttribute("texcoord", _surfaceVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+
+	static const char* fillAttributes[] = { "position", nullptr };
+	_surfaceFillShader = OpenGL::Shader::fromFiles("stark_surface_fill", fillAttributes);
+	_surfaceFillShader->enableVertexAttribute("position", _surfaceVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
 	static const char* actorAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
 	_actorShader = OpenGL::Shader::fromFiles("stark_actor", actorAttributes);
@@ -212,6 +218,10 @@ OpenGL::Shader *OpenGLSDriver::createActorShaderInstance() {
 
 OpenGL::Shader *OpenGLSDriver::createSurfaceShaderInstance() {
 	return _surfaceShader->clone();
+}
+
+OpenGL::Shader *OpenGLSDriver::createSurfaceFillShaderInstance() {
+	return _surfaceFillShader->clone();
 }
 
 OpenGL::Shader *OpenGLSDriver::createFadeShaderInstance() {

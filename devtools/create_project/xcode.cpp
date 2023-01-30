@@ -1041,6 +1041,8 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/stark/shaders/stark_prop.vertex");
 			files.push_back("engines/stark/shaders/stark_surface.fragment");
 			files.push_back("engines/stark/shaders/stark_surface.vertex");
+			files.push_back("engines/stark/shaders/stark_surface_fill.fragment");
+			files.push_back("engines/stark/shaders/stark_surface_fill.vertex");
 			files.push_back("engines/stark/shaders/stark_fade.fragment");
 			files.push_back("engines/stark/shaders/stark_fade.vertex");
 			files.push_back("engines/stark/shaders/stark_shadow.fragment");

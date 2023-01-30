@@ -1,0 +1,9 @@
+
+OUTPUT
+
+uniform float fadeLevel;
+uniform vec4 color;
+
+void main() {
+	outColor = color + vec4(fadeLevel, fadeLevel, fadeLevel, 0) * color.a;
+}

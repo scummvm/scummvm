@@ -164,6 +164,8 @@ shaders/stark_prop.fragment          FILE    "engines/stark/shaders/stark_prop.f
 shaders/stark_prop.vertex            FILE    "engines/stark/shaders/stark_prop.vertex"
 shaders/stark_surface.fragment       FILE    "engines/stark/shaders/stark_surface.fragment"
 shaders/stark_surface.vertex         FILE    "engines/stark/shaders/stark_surface.vertex"
+shaders/stark_surface_fill.fragment  FILE    "engines/stark/shaders/stark_surface_fill.fragment"
+shaders/stark_surface_fill.vertex    FILE    "engines/stark/shaders/stark_surface_fill.vertex"
 shaders/stark_fade.fragment          FILE    "engines/stark/shaders/stark_fade.fragment"
 shaders/stark_fade.vertex            FILE    "engines/stark/shaders/stark_fade.vertex"
 shaders/stark_shadow.fragment        FILE    "engines/stark/shaders/stark_shadow.fragment"
