@@ -1276,25 +1276,13 @@ void EfhEngine::computeMapAnimation() {
 			if (_currentTileBankImageSetId[0] != 0)
 				continue;
 
-			if (_largeMapFlag) {
-				uint8 curTile = _mapGameMaps[_techId][counterX][counterY];
-				if (curTile >= 1 && curTile <= 0xF) {
-					if (getRandom(100) < 50)
-						_mapGameMaps[_techId][counterX][counterY] += 0xC5;
-				} else if (curTile >= 0xC6 && curTile <= 0xD5) {
-					if (getRandom(100) < 50)
-						_mapGameMaps[_techId][counterX][counterY] -= 0xC5;
-				}
-			} else {
-				uint8 curTile = _curPlace[counterX][counterY];
-				if (curTile >= 1 && curTile <= 0xF) {
-					if (getRandom(100) < 50)
-						_curPlace[counterX][counterY] += 0xC5;
-				} else if (curTile >= 0xC6 && curTile <= 0xD5) {
-					if (getRandom(100) < 50)
-						_curPlace[counterX][counterY] -= 0xC5;
-				}
-			}
+			uint8 *curTile = _largeMapFlag ? &_mapGameMaps[_techId][counterX][counterY] : &_curPlace[counterX][counterY];
+
+			if (*curTile >= 1 && *curTile <= 0xF && getRandom(100) < 50)
+				*curTile += 0xC5;
+			else if (*curTile >= 0xC6 && *curTile <= 0xD5 && getRandom(100) < 50)
+				*curTile -= 0xC5;
+
 		}
 	}
 }
@@ -1320,10 +1308,11 @@ int8 EfhEngine::checkMonsterMoveCollisionAndTileTexture(int16 monsterId) {
 	debugC(3, kDebugEngine,"checkMonsterMoveCollisionAndTileTexture %d", monsterId);
 
 	int16 maxSize = _largeMapFlag ? 63 : 23;
-	if (_mapMonsters[_techId][monsterId]._posX < 0 || _mapMonsters[_techId][monsterId]._posY < 0 || _mapMonsters[_techId][monsterId]._posX > maxSize || _mapMonsters[_techId][monsterId]._posY > maxSize)
+	MapMonster *curMapMonster = &_mapMonsters[_techId][monsterId];
+	if (curMapMonster->_posX < 0 || curMapMonster->_posY < 0 || curMapMonster->_posX > maxSize || curMapMonster->_posY > maxSize)
 		return 0;
 
-	if (_mapMonsters[_techId][monsterId]._posX == _mapPosX && _mapMonsters[_techId][monsterId]._posY == _mapPosY)
+	if (curMapMonster->_posX == _mapPosX && curMapMonster->_posY == _mapPosY)
 		return 0;
 
 	for (int counter = 0; counter < 64; ++counter) {
@@ -1333,43 +1322,43 @@ int8 EfhEngine::checkMonsterMoveCollisionAndTileTexture(int16 monsterId) {
 		if (!checkMapMonsterAvailability(counter))
 			continue;
 
-		if (_mapMonsters[_techId][monsterId]._fullPlaceId == _mapMonsters[_techId][counter]._fullPlaceId
-		 && _mapMonsters[_techId][monsterId]._posX == _mapMonsters[_techId][counter]._posX
-		 && _mapMonsters[_techId][monsterId]._posY == _mapMonsters[_techId][counter]._posY)
+		MapMonster *compMapMonster = &_mapMonsters[_techId][counter];
+		if (curMapMonster->_fullPlaceId == compMapMonster->_fullPlaceId && curMapMonster->_posX == compMapMonster->_posX && curMapMonster->_posY == compMapMonster->_posY)
 			return 0;
 	}
 
-	return checkTileStatus(_mapMonsters[_techId][monsterId]._posX, _mapMonsters[_techId][monsterId]._posY, false);
+	return checkTileStatus(curMapMonster->_posX, curMapMonster->_posY, false);
 }
 
 bool EfhEngine::moveMonsterAwayFromTeam(int16 monsterId) {
 	debugC(6, kDebugEngine, "moveMonsterAwayFromTeam %d", monsterId);
 
-	if (_mapMonsters[_techId][monsterId]._posX < _mapPosX) {
-		--_mapMonsters[_techId][monsterId]._posX;
-		if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
-			--_mapMonsters[_techId][monsterId]._posY;
-		else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
-			++_mapMonsters[_techId][monsterId]._posY;
+	MapMonster *curMapMonster = &_mapMonsters[_techId][monsterId];
+	if (curMapMonster->_posX < _mapPosX) {
+		--curMapMonster->_posX;
+		if (curMapMonster->_posY < _mapPosY)
+			--curMapMonster->_posY;
+		else if (curMapMonster->_posY > _mapPosY)
+			++curMapMonster->_posY;
 
 		return true;
 	}
 
-	if (_mapMonsters[_techId][monsterId]._posX > _mapPosX) {
-		++_mapMonsters[_techId][monsterId]._posX;
-		if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
-			--_mapMonsters[_techId][monsterId]._posY;
-		else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
-			++_mapMonsters[_techId][monsterId]._posY;
+	if (curMapMonster->_posX > _mapPosX) {
+		++curMapMonster->_posX;
+		if (curMapMonster->_posY < _mapPosY)
+			--curMapMonster->_posY;
+		else if (curMapMonster->_posY > _mapPosY)
+			++curMapMonster->_posY;
 
 		return true;
 	}
 
 	// Original checks for posX equality, which is the only possible option at this point => skipped
-	if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
-		--_mapMonsters[_techId][monsterId]._posY;
-	else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
-		++_mapMonsters[_techId][monsterId]._posY;
+	if (curMapMonster->_posY < _mapPosY)
+		--curMapMonster->_posY;
+	else if (curMapMonster->_posY > _mapPosY)
+		++curMapMonster->_posY;
 	else
 		return false;
 
@@ -1379,31 +1368,32 @@ bool EfhEngine::moveMonsterAwayFromTeam(int16 monsterId) {
 bool EfhEngine::moveMonsterTowardsTeam(int16 monsterId) {
 	debugC(6, kDebugEngine, "moveMonsterTowardsTeam %d", monsterId);
 
-	if (_mapMonsters[_techId][monsterId]._posX < _mapPosX) {
-		++_mapMonsters[_techId][monsterId]._posX;
-		if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
-			++_mapMonsters[_techId][monsterId]._posY;
-		else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
-			--_mapMonsters[_techId][monsterId]._posY;
+	MapMonster *curMapMonster = &_mapMonsters[_techId][monsterId];
+	if (curMapMonster->_posX < _mapPosX) {
+		++curMapMonster->_posX;
+		if (curMapMonster->_posY < _mapPosY)
+			++curMapMonster->_posY;
+		else if (curMapMonster->_posY > _mapPosY)
+			--curMapMonster->_posY;
 
 		return true;
 	}
 
-	if (_mapMonsters[_techId][monsterId]._posX > _mapPosX) {
-		--_mapMonsters[_techId][monsterId]._posX;
-		if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
-			++_mapMonsters[_techId][monsterId]._posY;
-		else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
-			--_mapMonsters[_techId][monsterId]._posY;
+	if (curMapMonster->_posX > _mapPosX) {
+		--curMapMonster->_posX;
+		if (curMapMonster->_posY < _mapPosY)
+			++curMapMonster->_posY;
+		else if (curMapMonster->_posY > _mapPosY)
+			--curMapMonster->_posY;
 
 		return true;
 	}
 
 	// Original checks for posX equality, which is the only possible option at this point => skipped
-	if (_mapMonsters[_techId][monsterId]._posY < _mapPosY)
-		++_mapMonsters[_techId][monsterId]._posY;
-	else if (_mapMonsters[_techId][monsterId]._posY > _mapPosY)
-		--_mapMonsters[_techId][monsterId]._posY;
+	if (curMapMonster->_posY < _mapPosY)
+		++curMapMonster->_posY;
+	else if (curMapMonster->_posY > _mapPosY)
+		--curMapMonster->_posY;
 	else
 		return false;
 
@@ -1414,42 +1404,43 @@ bool EfhEngine::moveMonsterGroupOther(int16 monsterId, int16 direction) {
 	debugC(6, kDebugEngine, "moveMonsterGroupOther %d %d", monsterId, direction);
 
 	bool retVal;
+	MapMonster *curMapMonster = &_mapMonsters[_techId][monsterId];
 
 	switch (direction - 1) {
 	case 0:
-		--_mapMonsters[_techId][monsterId]._posY;
+		--curMapMonster->_posY;
 		retVal = true;
 		break;
 	case 1:
-		--_mapMonsters[_techId][monsterId]._posY;
-		++_mapMonsters[_techId][monsterId]._posX;
+		--curMapMonster->_posY;
+		++curMapMonster->_posX;
 		retVal = true;
 		break;
 	case 2:
-		++_mapMonsters[_techId][monsterId]._posX;
+		++curMapMonster->_posX;
 		retVal = true;
 		break;
 	case 3:
-		++_mapMonsters[_techId][monsterId]._posX;
-		++_mapMonsters[_techId][monsterId]._posY;
+		++curMapMonster->_posX;
+		++curMapMonster->_posY;
 		retVal = true;
 		break;
 	case 4:
-		++_mapMonsters[_techId][monsterId]._posY;
+		++curMapMonster->_posY;
 		retVal = true;
 		break;
 	case 5:
-		++_mapMonsters[_techId][monsterId]._posY;
-		--_mapMonsters[_techId][monsterId]._posX;
+		++curMapMonster->_posY;
+		--curMapMonster->_posX;
 		retVal = true;
 		break;
 	case 6:
-		--_mapMonsters[_techId][monsterId]._posX;
+		--curMapMonster->_posX;
 		retVal = true;
 		break;
 	case 7:
-		--_mapMonsters[_techId][monsterId]._posX;
-		--_mapMonsters[_techId][monsterId]._posY;
+		--curMapMonster->_posX;
+		--curMapMonster->_posY;
 		retVal = true;
 		break;
 	default:
@@ -1506,7 +1497,7 @@ bool EfhEngine::checkMonsterMovementType(int16 id, bool teamFlag) {
 	if (teamFlag)
 		monsterId = _teamMonsterIdArray[id];
 
-	if ((_mapMonsters[_techId][monsterId]._additionalInfo & 0xF) >= 8)
+	if ((_mapMonsters[_techId][monsterId]._additionalInfo & 0xF) >= 8) // Check hostility
 		return true;
 
 	if (_unk2C8AA != 0 && (_mapMonsters[_techId][monsterId]._additionalInfo & 0x80) != 0)
@@ -1580,7 +1571,7 @@ void EfhEngine::handleMapMonsterMoves() {
 		int8 monsterMoveType = _mapMonsters[_techId][monsterId]._additionalInfo & 0xF; // 0000 1111
 
 		if (_unk2C8AA != 0 && (_mapMonsters[_techId][monsterId]._additionalInfo & 0x80)) // 1000 0000
-			monsterMoveType = 9;
+			monsterMoveType = 9; // Hostility + Move type 1
 
 		int16 randomModPct = _mapMonsters[_techId][monsterId]._additionalInfo & 0x70; // 0111 0000
 		randomModPct >>= 4; // Max 7 (0111)
