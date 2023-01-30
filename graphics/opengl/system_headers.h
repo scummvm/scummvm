@@ -99,4 +99,8 @@
 #endif
 #endif
 
+#if !defined(GL_TEXTURE_MAX_LEVEL) && defined(GL_TEXTURE_MAX_LEVEL_APPLE)
+	#define GL_TEXTURE_MAX_LEVEL GL_TEXTURE_MAX_LEVEL_APPLE
+#endif
+
 #endif

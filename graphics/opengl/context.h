@@ -117,6 +117,9 @@ public:
 	/** Whether texture coordinate mirrored repeat is available or not. */
 	bool textureMirrorRepeatSupported;
 
+	/** Whether texture max level is available or not. */
+	bool textureMaxLevelSupported;
+
 private:
 	/**
 	 * Returns the native GLSL version supported by the driver.

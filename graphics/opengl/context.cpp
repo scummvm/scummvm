@@ -71,6 +71,7 @@ void Context::reset() {
 	textureEdgeClampSupported = false;
 	textureBorderClampSupported = false;
 	textureMirrorRepeatSupported = false;
+	textureMaxLevelSupported = false;
 }
 
 void Context::initialize(ContextType contextType) {
@@ -186,6 +187,8 @@ void Context::initialize(ContextType contextType) {
 			textureBorderClampSupported = true;
 		} else if (token == "GL_ARB_texture_mirrored_repeat") {
 			textureMirrorRepeatSupported = true;
+		} else if (token == "GL_SGIS_texture_lod" || token == "GL_APPLE_texture_max_level") {
+			textureMaxLevelSupported = true;
 		}
 	}
 
@@ -219,6 +222,7 @@ void Context::initialize(ContextType contextType) {
 		textureEdgeClampSupported = true;
 		// No border clamping in GLES2
 		textureMirrorRepeatSupported = true;
+		// TODO: textureMaxLevelSupported with GLES3
 		debug(5, "OpenGL: GLES2 context initialized");
 	} else if (type == kContextGLES) {
 		// GLES doesn't support shaders natively
@@ -264,10 +268,11 @@ void Context::initialize(ContextType contextType) {
 			glGetIntegerv(GL_MAX_SAMPLES, (GLint *)&multisampleMaxSamples);
 		}
 
-		// OpenGL 1.2 and later always has packed pixels and texture edge clamp support
+		// OpenGL 1.2 and later always has packed pixels, texture edge clamp and texture max level support
 		if (isGLVersionOrHigher(1, 2)) {
 			packedPixelsSupported = true;
 			textureEdgeClampSupported = true;
+			textureMaxLevelSupported = true;
 		}
 		// OpenGL 1.3 adds texture border clamp support
 		if (isGLVersionOrHigher(1, 3)) {
@@ -302,6 +307,7 @@ void Context::initialize(ContextType contextType) {
 	debug(5, "OpenGL: Unpack subimage support: %d", unpackSubImageSupported);
 	debug(5, "OpenGL: OpenGL ES depth 24 support: %d", OESDepth24);
 	debug(5, "OpenGL: Texture edge clamping support: %d", textureEdgeClampSupported);
+	debug(5, "OpenGL: Texture max level support: %d", textureMaxLevelSupported);
 }
 
 int Context::getGLSLVersion() const {
