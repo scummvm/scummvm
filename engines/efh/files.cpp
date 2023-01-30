@@ -169,7 +169,7 @@ void EfhEngine::loadNewPortrait() {
 	findMapFile(_techId);
 	_currentAnimImageSetId = 200 + _unkRelatedToAnimImageSetId;
 	int imageSetId = _unkRelatedToAnimImageSetId + 13;
-	loadImageSet(imageSetId, _portraitBuf, _portraitSubFilesArray, _hiResImageBuf);
+	loadImageSet(imageSetId, _portraitBuf, _portraitSubFilesArray, _decompBuf);
 }
 
 void EfhEngine::loadAnimImageSet() {
@@ -184,7 +184,7 @@ void EfhEngine::loadAnimImageSet() {
 	_currentAnimImageSetId = _animImageSetId;
 
 	int16 animSetId = _animImageSetId + 17;
-	loadImageSet(animSetId, _portraitBuf, _portraitSubFilesArray, _hiResImageBuf);
+	loadImageSet(animSetId, _portraitBuf, _portraitSubFilesArray, _decompBuf);
 }
 
 void EfhEngine::loadHistory() {
@@ -232,8 +232,8 @@ void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
 	if (_fullPlaceId < minPlace || _fullPlaceId > maxPlace || forceReloadFl) {
 		_lastMainPlaceId = _fullPlaceId / 20;
 		Common::String fileName = Common::String::format("places.%d", _lastMainPlaceId);
-		readFileToBuffer(fileName, _hiResImageBuf);
-		uncompressBuffer(_hiResImageBuf, _places);
+		readFileToBuffer(fileName, _decompBuf);
+		uncompressBuffer(_decompBuf, _places);
 	}
 	copyCurrentPlaceToBuffer(_fullPlaceId % 20);
 }
@@ -329,12 +329,12 @@ void EfhEngine::preLoadMaps() {
 
 	for (int idx = 0; idx < 19; ++idx) {
 		Common::String fileName = Common::String::format("tech.%d", idx);
-		readFileToBuffer(fileName, _hiResImageBuf);
-		uncompressBuffer(_hiResImageBuf, _techDataArr[idx]);
+		readFileToBuffer(fileName, _decompBuf);
+		uncompressBuffer(_decompBuf, _techDataArr[idx]);
 
 		fileName = Common::String::format("map.%d", idx);
-		readFileToBuffer(fileName, _hiResImageBuf);
-		uncompressBuffer(_hiResImageBuf, _mapArr[idx]);
+		readFileToBuffer(fileName, _decompBuf);
+		uncompressBuffer(_decompBuf, _mapArr[idx]);
 
 		_mapBitmapRefArr[idx]._setId1 = _mapArr[idx][0];
 		_mapBitmapRefArr[idx]._setId2 = _mapArr[idx][1];

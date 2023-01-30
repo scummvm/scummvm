@@ -516,8 +516,7 @@ private:
 	uint8 _tileBank[3][12000];
 	uint8 _circleImageBuf[40100];
 	uint8 _portraitBuf[25000];
-	uint8 _hiResImageBuf[40100];
-	uint8 _loResImageBuf[40100];
+	uint8 _decompBuf[40100];
 	uint8 _menuBuf[12500];
 	uint8 _windowWithBorderBuf[1500];
 	uint8 _mapArr[19][7000];

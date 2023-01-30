@@ -361,8 +361,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 		memset(_tileBank[i], 0, ARRAYSIZE(_tileBank[i]));
 	memset(_circleImageBuf, 0, ARRAYSIZE(_circleImageBuf));
 	memset(_portraitBuf, 0, ARRAYSIZE(_portraitBuf));
-	memset(_hiResImageBuf, 0, ARRAYSIZE(_hiResImageBuf));
-	memset(_loResImageBuf, 0, ARRAYSIZE(_loResImageBuf));
+	memset(_decompBuf, 0, ARRAYSIZE(_decompBuf));
 	memset(_menuBuf, 0, ARRAYSIZE(_menuBuf));
 	memset(_windowWithBorderBuf, 0, ARRAYSIZE(_windowWithBorderBuf));
 	memset(_places, 0, ARRAYSIZE(_places));

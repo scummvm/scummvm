@@ -476,7 +476,7 @@ void EfhEngine::displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 m
 	debugC(6, kDebugEngine, "displayWindowAndStatusMenu %d %d %d %d", charId, windowId, menuId, curMenuLine);
 
 	for (int counter = 0; counter < 2; ++counter) {
-		displayWindow(_menuBuf, 0, 0, _hiResImageBuf);
+		displayWindow(_menuBuf, 0, 0, _decompBuf);
 		prepareStatusMenu(windowId, menuId, curMenuLine, charId, false);
 
 		if (counter == 0)
@@ -491,7 +491,7 @@ int16 EfhEngine::displayStringInSmallWindowWithBorder(Common::String str, bool d
 
 	for (uint counter = 0; counter < 2; ++counter) {
 		prepareStatusMenu(windowId, menuId, curMenuLine, charId, false);
-		displayWindow(_windowWithBorderBuf, 19, 113, _hiResImageBuf);
+		displayWindow(_windowWithBorderBuf, 19, 113, _decompBuf);
 
 		if (counter == 0) {
 			script_parse(str, 28, 122, 105, 166, false);
