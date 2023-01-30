@@ -24,6 +24,15 @@
 #include "NewtonClass.h"
 #include "NewtonStdAfx.h"
 
+void NewtonInitGlobals() {
+	dgInitMemoryGlobals();
+}
+
+void NewtonDestroyGlobals() {
+	dgDestroyMemoryGlobals();
+}
+
+
 #ifdef _WIN32
 #ifdef _DEBUG
 //#define DG_USED_DEBUG_EXCEPTIONS

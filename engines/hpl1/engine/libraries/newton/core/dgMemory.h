@@ -30,6 +30,10 @@
 
 class dgMemoryAllocator;
 
+void dgInitMemoryGlobals();
+
+void dgDestroyMemoryGlobals();
+
 void *dgApi dgMalloc(size_t size, dgMemoryAllocator *const allocator);
 void  dgApi dgFree(void *const ptr);
 

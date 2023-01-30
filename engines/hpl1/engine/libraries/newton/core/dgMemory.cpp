@@ -58,17 +58,26 @@ public:
 		return mem;
 	}
 
-	static dgGlobalAllocator m_globalAllocator;
+	static dgGlobalAllocator *m_globalAllocator;
 };
 
-dgGlobalAllocator dgGlobalAllocator::m_globalAllocator;
+dgGlobalAllocator *dgGlobalAllocator::m_globalAllocator = nullptr;
+
+void dgInitMemoryGlobals() {
+	dgGlobalAllocator::m_globalAllocator = ::new dgGlobalAllocator();
+}
+
+void dgDestroyMemoryGlobals() {
+	::delete dgGlobalAllocator::m_globalAllocator;
+}
+
 
 dgMemoryAllocator::dgMemoryAllocator() {
 	m_memoryUsed = 0;
 	m_emumerator = 0;
-	SetAllocatorsCallback(dgGlobalAllocator::m_globalAllocator.m_malloc, dgGlobalAllocator::m_globalAllocator.m_free);
+	SetAllocatorsCallback(dgGlobalAllocator::m_globalAllocator->m_malloc, dgGlobalAllocator::m_globalAllocator->m_free);
 	memset(m_memoryDirectory, 0, sizeof(m_memoryDirectory));
-	dgGlobalAllocator::m_globalAllocator.Append(this);
+	dgGlobalAllocator::m_globalAllocator->Append(this);
 }
 
 dgMemoryAllocator::dgMemoryAllocator(dgMemAlloc memAlloc, dgMemFree memFree) {
@@ -79,7 +88,7 @@ dgMemoryAllocator::dgMemoryAllocator(dgMemAlloc memAlloc, dgMemFree memFree) {
 }
 
 dgMemoryAllocator::~dgMemoryAllocator() {
-	dgGlobalAllocator::m_globalAllocator.Remove(this);
+	dgGlobalAllocator::m_globalAllocator->Remove(this);
 	NEWTON_ASSERT(m_memoryUsed == 0);
 }
 
@@ -359,11 +368,11 @@ void dgMemoryAllocator::dgMemoryLeaksTracker::RemoveBlock(void *const ptr) {
 
 // Set the pointer of memory allocation functions
 void dgSetGlobalAllocators(dgMemAlloc malloc, dgMemFree free) {
-	dgGlobalAllocator::m_globalAllocator.SetAllocatorsCallback(malloc, free);
+	dgGlobalAllocator::m_globalAllocator->SetAllocatorsCallback(malloc, free);
 }
 
 dgInt32 dgGetMemoryUsed() {
-	return dgGlobalAllocator::m_globalAllocator.GetMemoryUsed();
+	return dgGlobalAllocator::m_globalAllocator->GetMemoryUsed();
 }
 
 // this can be used by function that allocates large memory pools memory locally on the stack
@@ -371,11 +380,11 @@ dgInt32 dgGetMemoryUsed() {
 // this was using virtual memory on windows but
 // but because of many complaint I changed it to use malloc and free
 void *dgApi dgMallocStack(size_t size) {
-	return dgGlobalAllocator::m_globalAllocator.MallocLow(dgInt32(size));
+	return dgGlobalAllocator::m_globalAllocator->MallocLow(dgInt32(size));
 }
 
 void *dgApi dgMallocAligned(size_t size, dgInt32 align) {
-	return dgGlobalAllocator::m_globalAllocator.MallocLow(dgInt32(size), align);
+	return dgGlobalAllocator::m_globalAllocator->MallocLow(dgInt32(size), align);
 }
 
 // this can be used by function that allocates large memory pools memory locally on the stack
@@ -383,7 +392,7 @@ void *dgApi dgMallocAligned(size_t size, dgInt32 align) {
 // this was using virtual memory on windows but
 // but because of many complaint I changed it to use malloc and free
 void  dgApi dgFreeStack(void *const ptr) {
-	dgGlobalAllocator::m_globalAllocator.FreeLow(ptr);
+	dgGlobalAllocator::m_globalAllocator->FreeLow(ptr);
 }
 
 // general memory allocation for all data in the library

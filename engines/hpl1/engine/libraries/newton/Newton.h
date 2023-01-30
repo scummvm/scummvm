@@ -323,6 +323,10 @@ typedef void (*NewtonConstraintDestructor)(const NewtonJoint *const  me);
 //	typedef void (*NewtonVehicleTireUpdate) (const NewtonJoint* const vehicle, dFloat timestep);
 
 
+void NewtonInitGlobals();
+
+void NewtonDestroyGlobals();
+
 // **********************************************************************************************
 //
 // world control functions

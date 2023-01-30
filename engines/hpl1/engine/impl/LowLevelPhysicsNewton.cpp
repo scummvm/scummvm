@@ -39,11 +39,13 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cLowLevelPhysicsNewton::cLowLevelPhysicsNewton() {
+	NewtonInitGlobals();
 }
 
 //-----------------------------------------------------------------------
 
 cLowLevelPhysicsNewton::~cLowLevelPhysicsNewton() {
+	NewtonDestroyGlobals();
 }
 
 //-----------------------------------------------------------------------
