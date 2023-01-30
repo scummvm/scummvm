@@ -63,6 +63,7 @@ public:
 
 	void refresh();
 	void setCenterButtonsVisibility(bool visible);
+	bool isEntered() const { return _entered; }
 
 private:
 

@@ -132,6 +132,10 @@ Common::String TetraedgeEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+bool TetraedgeEngine::canLoadGameStateCurrently() {
+	return _game && _application && !_application->mainMenu().isEntered();
+}
+
 bool TetraedgeEngine::canSaveGameStateCurrently() {
 	return canSaveAutosaveCurrently() && !_application->isLockCursor();
 }

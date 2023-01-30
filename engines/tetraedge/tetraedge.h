@@ -91,10 +91,7 @@ public:
 			(f == kSupportsReturnToLauncher);
 	};
 
-	bool canLoadGameStateCurrently() override {
-		return true;
-	}
-
+	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	bool canSaveAutosaveCurrently() override;
 
