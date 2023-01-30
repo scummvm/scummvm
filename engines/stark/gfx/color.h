@@ -19,39 +19,32 @@
  *
  */
 
-#ifndef STARK_UI_MENU_DIARY_INDEX_H
-#define STARK_UI_MENU_DIARY_INDEX_H
+#ifndef STARK_GFX_COLOR_H
+#define STARK_GFX_COLOR_H
 
-#include "engines/stark/ui/menu/locationscreen.h"
+#include "common/scummsys.h"
 
 namespace Stark {
+namespace Gfx {
 
-/**
- * The diary index is the in-game menu
- */
-class DiaryIndexScreen : public StaticLocationScreen {
-public:
-	DiaryIndexScreen(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~DiaryIndexScreen();
+struct Color {
+	uint8 r;
+	uint8 g;
+	uint8 b;
+	uint8 a;
 
-	// StaticLocationScreen API
-	void open() override;
+	Color(uint8 red, uint8 green, uint8 blue, uint8 alpha = 0xFF) :
+			r(red), g(green), b(blue), a(alpha) {}
 
-private:
-	void widgetTextColorHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
-	void backHandler();
-	void settingsHandler();
-	void fmvHandler();
-	void loadHandler();
-	void saveHandler();
-	void diaryHandler();
-	void dialogHandler();
-	void quitHandler();
-
-	const Gfx::Color _textColorHovered = Gfx::Color(0x1E, 0x1E, 0x96);
-	const Gfx::Color _textColorDefault = Gfx::Color(0x00, 0x00, 0x00);
+	bool operator==(const Color &color) const {
+		return r == color.r &&
+		       g == color.g &&
+		       b == color.b &&
+		       a == color.a;
+	}
 };
 
+} // End of namespace Gfx
 } // End of namespace Stark
 
- #endif // STARK_UI_MENU_DIARY_INDEX_H
+#endif // STARK_GFX_COLOR_H

@@ -23,7 +23,7 @@
 #define STARK_UI_DIALOG_PANEL_H
 
 #include "engines/stark/ui/window.h"
-#include "engines/stark/visual/text.h"
+#include "engines/stark/gfx/color.h"
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -34,6 +34,7 @@
 namespace Stark {
 
 class VisualImageXMG;
+class VisualText;
 class ClickText;
 
 namespace Resources {
@@ -103,8 +104,8 @@ private:
 	Common::Array<ClickText*> _options;
 	bool _acceptIdleMousePos;
 
-	Color _aprilColor = Color(0xFF, 0xC0, 0x00);
-	Color _otherColor = Color(0xFF, 0x40, 0x40);
+	const Gfx::Color _aprilColor = Gfx::Color(0xFF, 0xC0, 0x00);
+	const Gfx::Color _otherColor = Gfx::Color(0xFF, 0x40, 0x40);
 	static const uint32 _optionsTop = 4;
 	static const uint32 _optionsLeft = 30;
 	static const uint32 _optionsHeight = 80;

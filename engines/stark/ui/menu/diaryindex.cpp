@@ -104,7 +104,7 @@ void DiaryIndexScreen::open() {
 
 void DiaryIndexScreen::widgetTextColorHandler(StaticLocationWidget &widget, const Common::Point &mousePos) {
 	if (widget.isVisible()) {
-		Color textColor = widget.isMouseInside(mousePos) ? _textColorHovered : _textColorDefault;
+		Gfx::Color textColor = widget.isMouseInside(mousePos) ? _textColorHovered : _textColorDefault;
 		widget.setTextColor(textColor);
 	}
 }

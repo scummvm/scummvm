@@ -25,7 +25,7 @@
 
 namespace Stark {
 
-ClickText::ClickText(const Common::String &text, const Color &color) :
+ClickText::ClickText(const Common::String &text, const Gfx::Color &color) :
 		_text(text),
 		_color(color) {
 	_visualPassive = new VisualText(StarkGfx);
@@ -36,7 +36,7 @@ ClickText::ClickText(const Common::String &text, const Color &color) :
 
 	_visualActive = new VisualText(StarkGfx);
 	_visualActive->setText(_text);
-	_visualActive->setColor(Color(0x00, 0x00, 0x00));
+	_visualActive->setColor(Gfx::Color(0x00, 0x00, 0x00));
 	_visualActive->setBackgroundColor(_color);
 	_visualActive->setFont(FontProvider::kBigFont);
 	_visualActive->setTargetWidth(600);

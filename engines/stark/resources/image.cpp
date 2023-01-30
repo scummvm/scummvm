@@ -262,7 +262,7 @@ void ImageStill::printData() {
 
 ImageText::ImageText(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Image(parent, subType, index, name),
-		_color(Color(0, 0, 0)),
+		_color(Gfx::Color(0, 0, 0)),
 		_font(0) {
 }
 

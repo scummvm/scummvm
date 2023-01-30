@@ -24,7 +24,7 @@
 
 #include "engines/stark/stark.h"
 #include "engines/stark/ui/window.h"
-#include "engines/stark/visual/text.h"
+#include "engines/stark/gfx/color.h"
 
 #include "common/keyboard.h"
 #include "common/scummsys.h"
@@ -90,7 +90,7 @@ private:
 	Common::Rect _cancelButtonRect;
 	Common::Rect _messageRect;
 
-	const Color _textColor = Color(0xFF, 0xFF, 0xFF);
+	const Gfx::Color _textColor = Gfx::Color(0xFF, 0xFF, 0xFF);
 
 	ConfirmCallback *_confirmCallback;
 };

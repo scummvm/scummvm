@@ -26,12 +26,13 @@
 #include "common/str.h"
 
 #include "engines/stark/resources/object.h"
-#include "engines/stark/visual/text.h"
+#include "engines/stark/gfx/color.h"
 
 namespace Stark {
 
 class Visual;
 class VisualImageXMG;
+class VisualText;
 namespace Formats {
 class XRCReadStream;
 }
@@ -140,7 +141,7 @@ protected:
 
 	Common::Point _size;
 	Common::String _text;
-	Color _color;
+	Gfx::Color _color;
 	uint32 _font;
 };
 

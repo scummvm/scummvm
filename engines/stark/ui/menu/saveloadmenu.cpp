@@ -93,7 +93,7 @@ void SaveLoadMenuScreen::open() {
 			CLICK_HANDLER(SaveLoadMenuScreen, prevPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
-	_widgets.back()->setTextColor(Color(0, 0, 0));
+	_widgets.back()->setTextColor(Gfx::Color(0, 0, 0));
 	_widgets.back()->setVisible(_page > 0);
 
 	_widgets.push_back(new StaticLocationWidget(
@@ -101,7 +101,7 @@ void SaveLoadMenuScreen::open() {
 			CLICK_HANDLER(SaveLoadMenuScreen, nextPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
-	_widgets.back()->setTextColor(Color(0, 0, 0));
+	_widgets.back()->setTextColor(Gfx::Color(0, 0, 0));
 	_widgets.back()->setVisible(_page < _maxPage);
 
 	loadSaveData(_page);

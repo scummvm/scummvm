@@ -156,8 +156,8 @@ public:
 	bool hasSave() { return _hasSave; }
 
 private:
-	const Color _outlineColor = Color(0x1E, 0x1E, 0x96);
-	const Color _textColor = Color(0x5C, 0x48, 0x3D);
+	const Gfx::Color _outlineColor = Gfx::Color(0x1E, 0x1E, 0x96);
+	const Gfx::Color _textColor = Gfx::Color(0x5C, 0x48, 0x3D);
 
 	int _slot;
 	SaveLoadMenuScreen *_screen;
