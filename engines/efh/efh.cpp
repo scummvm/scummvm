@@ -902,17 +902,19 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 fromCharId) {
 	debugC(3, kDebugEngine, "giveItemTo %d %d %d", charId, objectId, fromCharId);
 
 	for (uint newObjectId = 0; newObjectId < 10; ++newObjectId) {
-		if (_npcBuf[charId]._inventory[newObjectId]._ref != 0x7FFF)
+		InvObject *newInvObj = &_npcBuf[charId]._inventory[newObjectId];
+		if (newInvObj->_ref != 0x7FFF)
 			continue;
 
 		if (fromCharId == 0xFF) {
-			_npcBuf[charId]._inventory[newObjectId]._ref = objectId;
-			_npcBuf[charId]._inventory[newObjectId]._curHitPoints = _items[objectId]._defense;
-			_npcBuf[charId]._inventory[newObjectId]._stat1 = _items[objectId]._uses;
+			newInvObj->_ref = objectId;
+			newInvObj->_curHitPoints = _items[objectId]._defense;
+			newInvObj->_stat1 = _items[objectId]._uses;
 		} else {
-			_npcBuf[charId]._inventory[newObjectId]._ref = _npcBuf[fromCharId]._inventory[objectId]._ref;
-			_npcBuf[charId]._inventory[newObjectId]._curHitPoints = _npcBuf[fromCharId]._inventory[objectId]._curHitPoints;
-			_npcBuf[charId]._inventory[newObjectId]._stat1 = _npcBuf[fromCharId]._inventory[objectId].getUsesLeft(); // not equipped as the upper bit isn't set (0x80)
+			InvObject *fromInvObj = &_npcBuf[fromCharId]._inventory[objectId];
+			newInvObj->_ref = fromInvObj->_ref;
+			newInvObj->_curHitPoints = fromInvObj->_curHitPoints;
+			newInvObj->_stat1 = fromInvObj->getUsesLeft(); // not equipped as the upper bit isn't set (0x80)
 		}
 
 		return true;
@@ -1082,7 +1084,8 @@ int16 EfhEngine::findMapSpecialTileIndex(int16 posX, int16 posY) {
 	uint16 searchPlaceId = _largeMapFlag ? 0xFE : _fullPlaceId;
 	
 	for (uint counter = 0; counter < 100; ++counter) {
-		if (_mapSpecialTiles[_techId][counter]._posX == posX && _mapSpecialTiles[_techId][counter]._posY == posY && _mapSpecialTiles[_techId][counter]._placeId == searchPlaceId)
+		MapSpecialTileStruct *curTile = &_mapSpecialTiles[_techId][counter];
+		if (curTile->_posX == posX && curTile->_posY == posY && curTile->_placeId == searchPlaceId)
 			return counter;
 	}
 
@@ -1106,13 +1109,10 @@ bool EfhEngine::isPosOutOfMap(int16 mapPosX, int16 mapPosY) {
 void EfhEngine::goSouth() {
 	debugC(6,kDebugEngine, "goSouth");
 
-	if (_largeMapFlag) {
-		if (++_mapPosY > 63)
-			_mapPosY = 63;
-	} else {
-		if (++_mapPosY > 23)
-			_mapPosY = 23;
-	}
+	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
+
+	if (++_mapPosY > maxMapBlocks)
+		_mapPosY = maxMapBlocks;
 
 	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
 		_mapPosX = _oldMapPosX;
@@ -1135,13 +1135,10 @@ void EfhEngine::goNorth() {
 void EfhEngine::goEast() {
 	debugC(6, kDebugEngine, "goEast");
 
-	if (_largeMapFlag) {
-		if (++_mapPosX > 63)
-			_mapPosX = 63;
-	} else {
-		if (++_mapPosX > 23)
-			_mapPosX = 23;
-	}
+	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
+
+	if (++_mapPosX > maxMapBlocks)
+		_mapPosX = maxMapBlocks;
 
 	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
 		_mapPosX = _oldMapPosX;
@@ -1184,17 +1181,13 @@ void EfhEngine::goNorthEast() {
 void EfhEngine::goSouthEast() {
 	debugC(6, kDebugEngine, "goSouthEast");
 
-	if (_largeMapFlag) {
-		if (++_mapPosX > 63)
-			_mapPosX = 63;
-	} else if (++_mapPosX > 23)
-		_mapPosX = 23;
+	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
 
-	if (_largeMapFlag) {
-		if (++_mapPosY > 63)
-			_mapPosY = 63;
-	} else if (++_mapPosY > 23)
-		_mapPosY = 23;
+	if (++_mapPosX > maxMapBlocks)
+		_mapPosX = maxMapBlocks;
+
+	if (++_mapPosY > maxMapBlocks)
+		_mapPosY = maxMapBlocks;
 
 	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
 		_mapPosX = _oldMapPosX;
@@ -1223,11 +1216,10 @@ void EfhEngine::goSouthWest() {
 	if (--_mapPosX < 0)
 		_mapPosX = 0;
 
-	if (_largeMapFlag) {
-		if (++_mapPosY > 63)
-			_mapPosY = 63;
-	} else if (++_mapPosY > 23)
-		_mapPosY = 23;
+	int16 maxMapBlocks = _largeMapFlag ? 63 : 23;
+
+	if (++_mapPosY > maxMapBlocks)
+		_mapPosY = maxMapBlocks;
 
 	if (isPosOutOfMap(_mapPosX, _mapPosY)) {
 		_mapPosX = _oldMapPosX;
