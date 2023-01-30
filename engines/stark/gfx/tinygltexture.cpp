@@ -51,7 +51,7 @@ void TinyGlTexture::bind() const {
 }
 
 void TinyGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
-	if (surface->format.bytesPerPixel != 4) {
+	if (surface->format != Driver::getRGBAPixelFormat()) {
 		// Convert the surface to texture format
 		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
 

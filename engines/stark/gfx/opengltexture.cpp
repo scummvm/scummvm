@@ -56,7 +56,7 @@ void OpenGlTexture::bind() const {
 }
 
 void OpenGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
-	if (surface->format.bytesPerPixel != 4) {
+	if (surface->format != Driver::getRGBAPixelFormat()) {
 		// Convert the surface to texture format
 		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
 
@@ -65,8 +65,6 @@ void OpenGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, 
 		convertedSurface->free();
 		delete convertedSurface;
 	} else {
-		assert(surface->format == Driver::getRGBAPixelFormat());
-
 		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 	}
 }
