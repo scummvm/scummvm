@@ -23,6 +23,7 @@
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/credits.h"
+#include "tetraedge/game/game.h"
 #include "tetraedge/game/application.h"
 
 namespace Tetraedge {
@@ -121,10 +122,14 @@ void Credits::leave() {
 		app->frontLayout().removeChild(_gui.layoutChecked("menu"));
 		_timer.stop();
 		_gui.unload();
-		if (_returnToOptions)
+		if (_returnToOptions) {
 			error("TODO: Implement returning to options menu");
-		else
+		} else {
+			// WORKAROUND: Ensure game is left before opening menu to
+			// stop inventory button appearing in menu.
+			g_engine->getGame()->leave(true);
 			app->mainMenu().enter();
+		}
 		app->fade();
 		_curveAnim.onFinished().remove(this, &Credits::onBackgroundAnimFinished);
 	}
