@@ -86,6 +86,7 @@ void InGameScene::addAnchorZone(const Common::String &s1, const Common::String &
 			zone->_loc = d._position;
 		}
 	}
+	_anchorZones.push_back(zone);
 }
 
 bool InGameScene::addMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal) {
@@ -713,7 +714,7 @@ bool InGameScene::loadLights(const Common::Path &path) {
 	debug("Shadow: %s no:%d far:%.02f near:%.02f fov:%.02f", _shadowColor.dump().c_str(), _shadowLightNo, _shadowFarPlane, _shadowNearPlane, _shadowFov);
 	debug("Global: %s", TeLight::globalAmbient().dump().c_str());
 	for (uint i = 0; i < _lights.size(); i++) {
-		debug("%s", _lights[i].dump().c_str());
+		debug("%s", _lights[i]->dump().c_str());
 	}
 	debug("---  end lights  ---");
 #endif
