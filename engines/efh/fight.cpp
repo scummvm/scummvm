@@ -251,7 +251,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 
 			bool noticedFl;
 			if (!checkMonsterMovementType(groupId, true)) {
-				setMapMonsterAggressivenessAndMovementType(groupId, 9, true);
+				setMapMonsterAggressivenessAndMovementType(groupId, 9);
 				_unk2C8AA += 500;
 				noticedFl = true;
 			} else

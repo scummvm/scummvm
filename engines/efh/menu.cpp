@@ -1038,7 +1038,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			displayStringInSmallWindowWithBorder("There is no apparent affect!", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += "  The magic sparkles brilliant hues in the air!";
-			setMapMonsterAggressivenessAndMovementType(teamMonsterId, _items[itemId]._field17_attackTypeDefense, true);
+			setMapMonsterAggressivenessAndMovementType(teamMonsterId, _items[itemId]._field17_attackTypeDefense);
 		}
 		objectUsedFl = true;
 		break;

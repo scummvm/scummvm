@@ -361,7 +361,7 @@ private:
 	uint16 getXPLevel(uint32 xp);
 	bool isItemCursed(int16 itemId);
 	bool hasObjectEquipped(int16 charId, int16 objectId);
-	void setMapMonsterAggressivenessAndMovementType(int16 id, uint8 mask, bool groupFl);
+	void setMapMonsterAggressivenessAndMovementType(int16 id, uint8 mask);
 	bool isMonsterActive(int16 groupId, int16 id);
 	int16 getTileFactId(int16 mapPosX, int16 mapPosY);
 	void setCharacterObjectToBroken(int16 charId, int16 objectId);
