@@ -85,6 +85,21 @@ static const byte MOUSECURSOR_SCI[] = {
 	0,0,0,0,0,0,1,2,2,1,0
 };
 
+static const byte MOUSECURSOR_AMIGA[] = {
+	1,1,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,
+	1,2,2,2,1,0,0,0,
+	1,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,1,0,
+	1,1,1,2,2,1,1,0,
+	0,0,0,1,2,1,0,0,
+	0,0,0,1,2,2,1,0,
+	0,0,0,0,1,2,1,0,
+	0,0,0,0,1,2,2,1,
+	0,0,0,0,0,1,1,0,
+};
+
 static const byte cursorPalette[] = {
 	0, 0, 0,           // Black / Transparent
 	0x80, 0x80, 0x80,  // Gray
@@ -124,7 +139,10 @@ Common::Error PlumbersGame::run() {
 	_console = new Console();
 	setDebugger(_console);
 
-	CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
+	if (_screenW > 320)
+		CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
+	else
+		CursorMan.replaceCursor(MOUSECURSOR_AMIGA, 8, 12, 0, 0, 0);
 	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 	CursorMan.showMouse(true);
 
