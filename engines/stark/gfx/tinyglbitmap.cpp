@@ -28,8 +28,7 @@ namespace Stark {
 namespace Gfx {
 
 TinyGlBitmap::TinyGlBitmap() :
-		Bitmap(),
-		 _1x1Color(0) {
+		Bitmap() {
 	_blitImage = tglGenBlitImage();
 }
 
@@ -51,11 +50,6 @@ void TinyGlBitmap::update(const Graphics::Surface *surface, const byte *palette)
 		convertedSurface->free();
 		delete convertedSurface;
 	} else {
-		// W/A for 1x1 size bitmap
-		// store pixel color used later fo creating scalled bitmap
-		if (_width == 1 && _height == 1) {
-			_1x1Color = surface->getPixel(0, 0);
-		}
 		tglUploadBlitImage(_blitImage, *surface, 0, false);
 	}
 }

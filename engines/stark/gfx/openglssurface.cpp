@@ -23,6 +23,7 @@
 
 #include "engines/stark/gfx/opengls.h"
 #include "engines/stark/gfx/bitmap.h"
+#include "engines/stark/gfx/color.h"
 
 #if defined(USE_OPENGL_SHADERS)
 
@@ -35,9 +36,11 @@ OpenGLSSurfaceRenderer::OpenGLSSurfaceRenderer(OpenGLSDriver *gfx) :
 		SurfaceRenderer(),
 		_gfx(gfx) {
 	_shader = _gfx->createSurfaceShaderInstance();
+	_shaderFill = _gfx->createSurfaceFillShaderInstance();
 }
 
 OpenGLSSurfaceRenderer::~OpenGLSSurfaceRenderer() {
+	delete _shaderFill;
 	delete _shader;
 }
 
@@ -66,6 +69,31 @@ void OpenGLSSurfaceRenderer::render(const Bitmap *bitmap, const Common::Point &d
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	_shader->unbind();
+	_gfx->end2DMode();
+}
+
+void OpenGLSSurfaceRenderer::fill(const Color &color, const Common::Point &dest, uint width, uint height) {
+	// Destination rectangle with given width and height
+	_gfx->start2DMode();
+
+	_shaderFill->use();
+	_shaderFill->setUniform1f("fadeLevel", _fadeLevel);
+	_shaderFill->setUniform1f("snapToGrid", _snapToGrid);
+	_shaderFill->setUniform("verOffsetXY", normalizeOriginalCoordinates(dest.x, dest.y));
+	if (_noScalingOverride) {
+		_shaderFill->setUniform("verSizeWH", normalizeCurrentCoordinates(width, height));
+	} else {
+		_shaderFill->setUniform("verSizeWH", normalizeOriginalCoordinates(width, height));
+	}
+
+	Common::Rect nativeViewport = _gfx->getViewport();
+	_shaderFill->setUniform("viewport", Math::Vector2d(nativeViewport.width(), nativeViewport.height()));
+
+	_shaderFill->setUniform("color", Math::Vector4d(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	_shaderFill->unbind();
 	_gfx->end2DMode();
 }
 

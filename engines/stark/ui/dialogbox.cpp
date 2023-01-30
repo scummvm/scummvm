@@ -46,25 +46,16 @@ static const uint buttonVerticalMargin   = 5;
 
 DialogBox::DialogBox(StarkEngine *vm, Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
+		_background(nullptr),
 		_foreground(nullptr),
 		_confirmCallback(nullptr) {
 	_vm = vm;
 	_surfaceRenderer = gfx->createSurfaceRenderer();
 
-	Graphics::Surface *background = loadBackground();
-	if (!background) {
-		// If we were not able to load the background, fallback to dark blue
-		background = new Graphics::Surface();
-		background->create(256, 256, Gfx::Driver::getRGBAPixelFormat());
-
-		uint32 blue = background->format.RGBToColor(26, 28, 57);
-		background->fillRect(Common::Rect(256, 256), blue);
+	_background = loadBackground(gfx);
+	if (_background) {
+		_background->setSamplingFilter(Gfx::Bitmap::kLinear);
 	}
-	_background = gfx->createBitmap(background);
-	_background->setSamplingFilter(Gfx::Bitmap::kLinear);
-
-	background->free();
-	delete background;
 
 	_messageVisual = new VisualText(gfx);
 	_messageVisual->setColor(_textColor);
@@ -214,7 +205,7 @@ void DialogBox::onKeyPress(const Common::KeyState &keyState) {
 	}
 }
 
-Graphics::Surface *DialogBox::loadBackground() {
+Gfx::Bitmap *DialogBox::loadBackground(Gfx::Driver *gfx) {
 	Common::PEResources *executable = new Common::PEResources();
 	if (!executable->loadFromEXE("game.exe") && !executable->loadFromEXE("game.dll")) {
 		warning("Unable to load 'game.exe' to read the modal dialog background image");
@@ -263,13 +254,17 @@ Graphics::Surface *DialogBox::loadBackground() {
 
 	delete[] bitmapWithHeader;
 
-	return decoder.getSurface()->convertTo(Gfx::Driver::getRGBAPixelFormat(), decoder.getPalette());
+	return gfx->createBitmap(decoder.getSurface(), decoder.getPalette());
 }
 
 void DialogBox::onRender() {
-	uint32 backgroundRepeatX = ceil(_foreground->width() / (float)_background->width());
-	for (uint i = 0; i < backgroundRepeatX; i++) {
-		_surfaceRenderer->render(_background, Common::Point(i * _background->width(), 0));
+	if (_background) {
+		uint32 backgroundRepeatX = ceil(_foreground->width() / (float)_background->width());
+		for (uint i = 0; i < backgroundRepeatX; i++) {
+			_surfaceRenderer->render(_background, Common::Point(i * _background->width(), 0));
+		}
+	} else {
+		_surfaceRenderer->fill(_backgroundColor, Common::Point(0, 0), _foreground->width(), _foreground->height());
 	}
 
 	_surfaceRenderer->render(_foreground, Common::Point(0, 0));

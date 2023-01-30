@@ -42,11 +42,9 @@ public:
 	TinyGL::BlitImage *getBlitImage() const;
 	void update(const Graphics::Surface *surface, const byte *palette = nullptr) override;
 	void setSamplingFilter(SamplingFilter filter) override;
-	uint32 get1x1Color() { return _1x1Color; }
 
 protected:
 	TinyGL::BlitImage *_blitImage;
-	uint32 _1x1Color;
 };
 
 } // End of namespace Gfx

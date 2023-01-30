@@ -69,7 +69,7 @@ protected:
 	void onClick(const Common::Point &pos) override;
 
 private:
-	Graphics::Surface *loadBackground();
+	Gfx::Bitmap *loadBackground(Gfx::Driver *gfx);
 	static void drawBevel(Graphics::Surface *surface, const Common::Rect &rect);
 	static Common::Rect centerRect(const Common::Rect &container, const Common::Rect &size);
 
@@ -91,6 +91,7 @@ private:
 	Common::Rect _messageRect;
 
 	const Gfx::Color _textColor = Gfx::Color(0xFF, 0xFF, 0xFF);
+	const Gfx::Color _backgroundColor = Gfx::Color(26, 28, 57);
 
 	ConfirmCallback *_confirmCallback;
 };

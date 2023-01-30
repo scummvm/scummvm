@@ -74,7 +74,6 @@ private:
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Bitmap *_bitmap;
-	Gfx::Bitmap *_bgBitmap;
 
 	Common::String _text;
 	Gfx::Color _color;
