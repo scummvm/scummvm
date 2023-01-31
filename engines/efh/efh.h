@@ -583,15 +583,15 @@ private:
 
 	int16 _teamMonsterIdArray[5];
 	CharStatus _teamCharStatus[3];
-	int16 _unk2C8AA;
+	int16 _alertDelay;
 	int16 _teamLastAction[3];
 	int16 _teamSize;
 	int16 _word2C872;
-	bool _word2C880;
+	bool _checkTileDisabledByScriptFl;
 	bool _redrawNeededFl;
 	bool _drawHeroOnMapFl;
 	bool _drawMonstersOnMapFl;
-	bool _word2C87A;
+	bool _textBoxDisabledByScriptFl;
 
 	int16 _imageSetSubFilesIdx;
 	int16 _oldImageSetSubFilesIdx;

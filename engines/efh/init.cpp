@@ -303,7 +303,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_fullPlaceId = 0xFF;
 	_guessAnimationAmount = 9;
 	_largeMapFlag = 0xFFFF;
-	_unk2C8AA = 0;
+	_alertDelay = 0;
 	_teamCharId[0] = 0;
 	_teamCharId[1] = _teamCharId[2] = -1;
 
@@ -337,11 +337,11 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_lastMainPlaceId = 0;
 	_tempTextDelay = 0;
 	_tempTextPtr = nullptr;
-	_word2C880 = false;
+	_checkTileDisabledByScriptFl = false;
 	_redrawNeededFl = false;
 	_drawHeroOnMapFl = true;
 	_drawMonstersOnMapFl = true;
-	_word2C87A = false;
+	_textBoxDisabledByScriptFl = false;
 	_dbgForceMonsterBlock = false;
 	_ongoingFightFl = false;
 	_statusMenuActive = false;

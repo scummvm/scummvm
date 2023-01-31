@@ -37,10 +37,11 @@ void EfhEngine::createOpponentList(int16 monsterTeamId) {
 			break;
 
 		for (uint monsterId = 0; monsterId < 64; ++monsterId) {
-			if (_mapMonsters[_techId][monsterId]._fullPlaceId == 0xFF)
+			MapMonster *curMapMonst = &_mapMonsters[_techId][monsterId];
+			if (curMapMonst->_fullPlaceId == 0xFF)
 				continue;
 
-			if (((_mapMonsters[_techId][monsterId]._possessivePronounSHL6 & 0x3F) != 0x3F || isNpcATeamMember(_mapMonsters[_techId][monsterId]._npcId)) && (_mapMonsters[_techId][monsterId]._possessivePronounSHL6 & 0x3F) > 0x3D)
+			if (((curMapMonst->_possessivePronounSHL6 & 0x3F) != 0x3F || isNpcATeamMember(curMapMonst->_npcId)) && (curMapMonst->_possessivePronounSHL6 & 0x3F) > 0x3D)
 				continue;
 
 			if (!checkIfMonsterOnSameLargeMapPlace(monsterId))
@@ -48,7 +49,7 @@ void EfhEngine::createOpponentList(int16 monsterTeamId) {
 
 			bool found = false;
 			for (uint subId = 0; subId < 9; ++subId) {
-				if (_mapMonsters[_techId][monsterId]._hitPoints[subId] > 0) {
+				if (curMapMonst->_hitPoints[subId] > 0) {
 					found = true;
 					break;
 				}
@@ -252,7 +253,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 			bool noticedFl;
 			if (!checkMonsterMovementType(groupId, true)) {
 				setMapMonsterAggressivenessAndMovementType(groupId, 9);
-				_unk2C8AA += 500;
+				_alertDelay += 500;
 				noticedFl = true;
 			} else
 				noticedFl = false;
