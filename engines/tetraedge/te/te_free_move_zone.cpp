@@ -219,7 +219,7 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 		Common::Array<TeVector3f32> pts3d;
 		// Skip first and last points and use the exact start/end values.
 		pts3d.push_back(startpt);
-		for (uint i = 1; i < points.size() - 1; i++) {
+		for (int i = 1; i < (int)points.size() - 1; i++) {
 			pts3d.push_back(transformAStarGridInWorldSpace(points[i]));
 		}
 		pts3d.push_back(endpt);
