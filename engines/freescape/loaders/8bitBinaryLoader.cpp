@@ -528,7 +528,9 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 		if (_useExtendedTimer)
 			_initialCountdown = 359999; // 99:59:59
-	}
+	} else if (isDark())
+		_initialCountdown = 2 * 3600; // 02:00:00
+
 
 	if (isAmiga() || isAtariST())
 		file->seek(offset + 0x190);
