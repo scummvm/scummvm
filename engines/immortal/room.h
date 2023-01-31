@@ -204,7 +204,7 @@ public:
 	bool roomLighted();
 	void lightTorch(uint8 x, uint8 y);
 	void flameFreeAll();
-	void flameSetRoom(Common::Array<SFlame>);
+	void flameSetRoom(Common::Array<SFlame> &allFlames);
 	int flameGetCyc(Flame *f, int first);
 
 	/*
