@@ -104,30 +104,26 @@ void CharactersShadowOpenGL::draw(InGameScene *scene) {
 
 	matrix = matrix * cammatrix;
 
-	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-
 	float f[4];
-	for (uint i = 0; i < 4; i++)
-		f[i] = matrix(i, 0);
 
+	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+	for (uint i = 0; i < 4; i++)
+		f[i] = matrix(0, i);
 	glTexGenfv(GL_S, GL_EYE_PLANE, f);
+
 	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-
 	for (uint i = 0; i < 4; i++)
-		f[i] = matrix(i, 1);
-
+		f[i] = matrix(1, i);
 	glTexGenfv(GL_T, GL_EYE_PLANE, f);
+
 	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-
 	for (uint i = 0; i < 4; i++)
-		f[i] = matrix(i, 2);
-
+		f[i] = matrix(2, i);
 	glTexGenfv(GL_R, GL_EYE_PLANE, f);
+
 	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-
 	for (uint i = 0; i < 4; i++)
-		f[i] = matrix(i, 3);
-
+		f[i] = matrix(3, i);
 	glTexGenfv(GL_Q, GL_EYE_PLANE, f);
 
 	Te3DTextureOpenGL::unbind();
