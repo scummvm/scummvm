@@ -100,9 +100,9 @@ int Host::getPort() {
 
 int Host::getPeerIndexFromHost(Common::String host, int port) {
 	for (int i = 0; i < (int)_host->peerCount; i++) {
-		char _hostName[50];
-		if (enet_address_get_host_ip(&_host->peers[i].address, _hostName, 50) == 0) {
-			if (host == _hostName && port == _host->peers[i].address.port) {
+		char hostName[50];
+		if (enet_address_get_host_ip(&_host->peers[i].address, hostName, 50) == 0) {
+			if (host == hostName && port == _host->peers[i].address.port) {
 				return i;
 			}
 		}
