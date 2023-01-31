@@ -310,37 +310,53 @@ void initGraphicsModes(const Graphics::ModeList &modes) {
 	g_system->initSizeHint(modes);
 }
 
-void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
+/**
+ * Inits any of the modes in "modes". "modes" is in the order of preference.
+ * Return value is index in modes of resulting mode.
+ */
+int initGraphicsAny(const Graphics::ModeWithFormatList &modes) {
+	int candidate = -1;
+	OSystem::TransactionError gfxError = OSystem::kTransactionSizeChangeFailed;
+	int last_width = 0, last_height = 0;
 
-	g_system->beginGFXTransaction();
-
+	for (candidate = 0; candidate < (int)modes.size(); candidate++) {
+		g_system->beginGFXTransaction();
 		initCommonGFX();
 #ifdef USE_RGB_COLOR
-		if (format)
-			g_system->initSize(width, height, format);
+		if (modes[candidate].hasFormat)
+			g_system->initSize(modes[candidate].width, modes[candidate].height, &modes[candidate].format);
 		else {
 			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
-			g_system->initSize(width, height, &bestFormat);
+			g_system->initSize(modes[candidate].width, modes[candidate].height, &bestFormat);
 		}
 #else
-		g_system->initSize(width, height);
+		g_system->initSize(modes[candidate].width, modes[candidate].height);
 #endif
+		last_width = modes[candidate].width;
+		last_height = modes[candidate].height;
 
-	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+		gfxError = g_system->endGFXTransaction();
 
-	if (!splash && !GUI::GuiManager::instance()._launched)
-		splashScreen();
+		if (!splash && !GUI::GuiManager::instance()._launched)
+			splashScreen();
 
-	if (gfxError == OSystem::kTransactionSuccess)
-		return;
+		if (gfxError == OSystem::kTransactionSuccess)
+			return candidate;
+
+		// If error is related to resolution, continue
+		if (gfxError & (OSystem::kTransactionSizeChangeFailed | OSystem::kTransactionFormatNotSupported))
+			continue;
+
+		break;
+	}
 
 	// Error out on size switch failure
 	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
 		Common::U32String message;
-		message = Common::U32String::format(_("Could not switch to resolution '%dx%d'."), width, height);
+		message = Common::U32String::format(_("Could not switch to resolution '%dx%d'."), last_width, last_height);
 
 		GUIErrorMessage(message);
-		error("Could not switch to resolution '%dx%d'.", width, height);
+		error("Could not switch to resolution '%dx%d'.", last_width, last_height);
 	}
 
 	// Just show warnings then these occur:
@@ -383,6 +399,14 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 		GUI::MessageDialog dialog(_("Could not apply filtering setting."));
 		dialog.runModal();
 	}
+
+	return candidate;
+}
+
+void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
+	Graphics::ModeWithFormatList modes;
+	modes.push_back(Graphics::ModeWithFormat(width, height, format));
+	initGraphicsAny(modes);
 }
 
 /**

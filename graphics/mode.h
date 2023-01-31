@@ -44,6 +44,28 @@ struct Mode {
 
 typedef Common::Array<Mode> ModeList;
 
+/**
+ * Represents a hardware video mode with pixel format.
+ */
+struct ModeWithFormat {
+	int16 width; ///< The width in pixels
+	int16 height; ///< The height in pixels
+	bool hasFormat; ///< Whether pixel format is valid
+	Graphics::PixelFormat format; ///< Pixel format
+
+	ModeWithFormat(const int16 w, const int16 h) :
+		width(w), height(h), hasFormat(false) {}
+	ModeWithFormat(const int16 w, const int16 h, const Graphics::PixelFormat &f) :
+		width(w), height(h), hasFormat(true), format(f) {}
+	ModeWithFormat(const int16 w, const int16 h, const Graphics::PixelFormat *f) :
+		width(w), height(h), hasFormat(f != nullptr) {
+		if (f != nullptr)
+			format = *f;
+	}
+};
+
+typedef Common::Array<ModeWithFormat> ModeWithFormatList;
+
 }
 
 #endif
