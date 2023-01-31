@@ -1596,7 +1596,8 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	memset(_cursor, 0xFF, sizeof(byte) * _cursorWidth * _cursorHeight);
 
 	// the transparent color is 0xFF00FF
-	const uint32 colTransparent = _overlayFormat.RGBToColor(0xFF, 0, 0xFF);
+	const uint32 colTransparent = cursor->format.RGBToColor(0xFF, 0, 0xFF);
+	const uint32 alphaMask = cursor->format.ARGBToColor(0x80, 0, 0, 0);
 
 	// Now, scan the bitmap. We have to convert it from 16 bit color mode
 	// to 8 bit mode, and have to create a suitable palette on the fly.
@@ -1617,7 +1618,9 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 			src += cursor->format.bytesPerPixel;
 
 			// Skip transparency
-			if (color == colTransparent)
+			if (color == colTransparent
+			    // Replace with transparent is alpha is present and < 50%
+			    || (alphaMask != 0 && (color & alphaMask) == 0))
 				continue;
 
 			cursor->format.colorToRGB(color, r, g, b);
