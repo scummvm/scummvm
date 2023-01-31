@@ -97,15 +97,32 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 		assert(newPos != -1);
 	}
 
-	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
-	playSound(5, false);
 	_lastPosition = _position;
+	_gameStateVars[0x1f] = 0;
 
+	if (areaID == _startArea && entranceID == _startEntrance) {
+		_yaw = 90;
+		_pitch = 0;
+	}
+
+	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
+	clearTemporalMessages();
+	playSound(5, false);
 	// Ignore sky/ground fields
-	if (_currentArea->getAreaFlags() == 1)
-		_gfx->_keyColor = 0;
-	else
-		_gfx->_keyColor = 255;
+	_gfx->_keyColor = 0;
+	_gfx->setColorRemaps(&_currentArea->_colorRemaps);
+
+	swapPalette(areaID);
+	_currentArea->_skyColor = 0;
+	_currentArea->_usualBackgroundColor = 0;
+
+	resetInput();
+}
+
+void DarkEngine::pressedKey(const int keycode) {
+	if (keycode == Common::KEYCODE_j) {
+		_flyMode = !_flyMode;
+	}
 }
 
 void DarkEngine::drawUI() {
@@ -125,9 +142,9 @@ void DarkEngine::drawUI() {
 	if (_currentAreaMessages.size() == 1) {
 		int score = _gameStateVars[k8bitVariableScore];
 		drawStringInSurface(_currentAreaMessages[0], 112, 177, yellow, black, surface);
-		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 201, 137, yellow, black, surface);
-		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 201, 145, yellow, black, surface);
-		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 201, 153, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 199, 137, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 199, 145, yellow, black, surface);
+		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 199, 153, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%07d", score), 95, 8, yellow, black, surface);
 	}
 

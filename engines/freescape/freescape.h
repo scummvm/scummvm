@@ -439,6 +439,8 @@ public:
 
 	void loadAssets() override;
 	void gotoArea(uint16 areaID, int entranceID) override;
+	void pressedKey(const int keycode) override;
+
 	void drawUI() override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
