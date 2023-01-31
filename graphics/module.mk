@@ -41,6 +41,7 @@ MODULE_OBJS := \
 	primitives.o \
 	renderer.o \
 	scalerplugin.o \
+	scaler/downscaler.o \
 	scaler/thumbnail_intern.o \
 	screen.o \
 	scaler/normal.o \
@@ -55,6 +56,11 @@ MODULE_OBJS := \
 	VectorRendererSpec.o \
 	wincursor.o \
 	yuv_to_rgb.o
+
+ifdef USE_ARM_SCALER_ASM
+MODULE_OBJS += \
+	scaler/downscalerARM.o
+endif
 
 ifdef USE_TINYGL
 MODULE_OBJS += \
@@ -94,7 +100,6 @@ MODULE_OBJS += \
 	scaler/dotmatrix.o \
 	scaler/sai.o \
 	scaler/pm.o \
-	scaler/downscaler.o \
 	scaler/scale2x.o \
 	scaler/scale3x.o \
 	scaler/scalebit.o \
@@ -102,7 +107,6 @@ MODULE_OBJS += \
 
 ifdef USE_ARM_SCALER_ASM
 MODULE_OBJS += \
-	scaler/downscalerARM.o \
 	scaler/scale2xARM.o \
 	scaler/Normal2xARM.o
 endif
