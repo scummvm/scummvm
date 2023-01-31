@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
+#include "graphics/scaler/downscaler.h"
 #include "image/pcx.h"
 
 namespace DreamWeb {
@@ -176,12 +177,17 @@ void DreamWebEngine::showPCX(const Common::String &suffix) {
 	}
 
 	Graphics::Surface *s = g_system->lockScreen();
-	s->fillRect(Common::Rect(640, 480), 0);
+	s->fillRect(Common::Rect(s->w, s->h), 0);
 	const Graphics::Surface *pcxSurface = pcx.getSurface();
 	if (pcxSurface->format.bytesPerPixel != 1)
 		error("Invalid bytes per pixel in PCX surface (%d)", pcxSurface->format.bytesPerPixel);
-	for (uint16 y = 0; y < pcxSurface->h; y++)
-		memcpy((byte *)s->getBasePtr(0, y), pcxSurface->getBasePtr(0, y), pcxSurface->w);
+	if (pcxSurface->w >= s->w * 2)
+		Graphics::downscaleSurfaceByHalf(s, pcxSurface, _mainPal);
+	else {
+		int limitW = MIN(pcxSurface->w, s->w);
+		for (uint16 y = 0; y < pcxSurface->h; y++)
+			memcpy((byte *)s->getBasePtr(0, y), pcxSurface->getBasePtr(0, y), limitW);
+	}
 	g_system->unlockScreen();
 }
 
