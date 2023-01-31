@@ -132,7 +132,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				_oldMapPosX = _mapPosX = scriptNumberArray[1];
 				_oldMapPosY = _mapPosY = scriptNumberArray[2];
 				loadPlacesFile(scriptNumberArray[0], false);
-				_word2C880 = true;
+				_checkTileDisabledByScriptFl = true;
 				_redrawNeededFl = true;
 			}
 			break;
@@ -142,7 +142,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				_largeMapFlag = true;
 				_oldMapPosX = _mapPosX = _techDataId_MapPosX;
 				_oldMapPosY = _mapPosY = _techDataId_MapPosY;
-				_word2C880 = true;
+				_checkTileDisabledByScriptFl = true;
 				_redrawNeededFl = true;
 			}
 			break;
@@ -155,7 +155,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				_oldMapPosY = _mapPosY = scriptNumberArray[2];
 				loadTechMapImp(scriptNumberArray[0]);
 				_largeMapFlag = true;
-				_word2C880 = true;
+				_checkTileDisabledByScriptFl = true;
 				_redrawNeededFl = true;
 				doneFlag = true;
 			}
@@ -168,7 +168,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 
 				_mapPosX = getRandom(rangeX) + scriptNumberArray[0] - 1;
 				_mapPosY = getRandom(rangeY) + scriptNumberArray[1] - 1;
-				_word2C880 = true;
+				_checkTileDisabledByScriptFl = true;
 				_redrawNeededFl = true;
 			}
 			break;
@@ -177,7 +177,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			if (scriptExecuteFlag) {
 				_mapPosX = scriptNumberArray[0];
 				_mapPosY = scriptNumberArray[1];
-				_word2C880 = true;
+				_checkTileDisabledByScriptFl = true;
 				_redrawNeededFl = true;
 			}
 			break;
@@ -308,7 +308,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			break;
 		case 0x11:
 			if (scriptExecuteFlag)
-				_unk2C8AA = 0;
+				_alertDelay = 0;
 			break;
 		case 0x12:
 			// Disable special tile
@@ -321,7 +321,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x13:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (scriptExecuteFlag && _largeMapFlag) {
-				_word2C87A = true;
+				_textBoxDisabledByScriptFl = true;
 				loadPlacesFile(scriptNumberArray[0], false);
 				transitionMap(scriptNumberArray[1], scriptNumberArray[2]);
 				setSpecialTechZone(scriptNumberArray[0], scriptNumberArray[1], scriptNumberArray[2]);
@@ -464,7 +464,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x1F:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (scriptExecuteFlag)
-				_unk2C8AA = scriptNumberArray[0];
+				_alertDelay = scriptNumberArray[0];
 
 			break;
 		case 0x20:

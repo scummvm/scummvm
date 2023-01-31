@@ -70,8 +70,8 @@ int16 EfhEngine::displayBoxWithText(Common::String str, int16 menuType, int16 di
 
 	if (displayOption != 0) {
 		displayFctFullScreen();
-		if (_word2C87A)
-			_word2C87A = false;
+		if (_textBoxDisabledByScriptFl)
+			_textBoxDisabledByScriptFl = false;
 		else {
 			drawColoredRect(minX, minY, maxX, maxY, 0);
 			if (!str.empty())
@@ -983,7 +983,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			displayStringInSmallWindowWithBorder("A serene feeling passes through the air...", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += "  The combat pauses...as there is a moment of forgiveness...";
-			_unk2C8AA = 0;
+			_alertDelay = 0;
 		}
 
 		objectUsedFl = true;

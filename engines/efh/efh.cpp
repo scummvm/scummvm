@@ -265,8 +265,8 @@ Common::Error EfhEngine::run() {
 			}
 		}
 
-		if (_unk2C8AA > 0)
-			--_unk2C8AA;
+		if (_alertDelay > 0)
+			--_alertDelay;
 
 		if (isTPK()) {
 			if (handleDeathMenu())
@@ -1258,7 +1258,7 @@ void EfhEngine::resetGame() {
 	_oldMapPosX = _mapPosX = 31;
 	_oldMapPosY = _mapPosY = 31;
 	_unkRelatedToAnimImageSetId = 0;
-	_unk2C8AA = 0;
+	_alertDelay = 0;
 }
 
 void EfhEngine::computeMapAnimation() {
@@ -1500,7 +1500,7 @@ bool EfhEngine::checkMonsterMovementType(int16 id, bool teamFlag) {
 	if ((curMapMonst->_additionalInfo & 0xF) >= 8) // Check hostility
 		return true;
 
-	if (_unk2C8AA != 0 && (curMapMonst->_additionalInfo & 0x80) != 0)
+	if (_alertDelay != 0 && (curMapMonst->_additionalInfo & 0x80) != 0)
 		return true;
 
 	return false;
@@ -1572,7 +1572,7 @@ void EfhEngine::handleMapMonsterMoves() {
 
 		int8 monsterMoveType = curMapMonst->_additionalInfo & 0xF; // 0000 1111
 
-		if (_unk2C8AA != 0 && (curMapMonst->_additionalInfo & 0x80)) // 1000 0000
+		if (_alertDelay != 0 && (curMapMonst->_additionalInfo & 0x80)) // 1000 0000
 			monsterMoveType = 9; // Hostility + Move type 1
 
 		int16 randomModPct = curMapMonst->_additionalInfo & 0x70; // 0111 0000
@@ -2005,7 +2005,7 @@ void EfhEngine::displayImp1Text(int16 textId) {
 					if (firstChar == 0x5E || firstChar == 0) {
 						if (firstChar == 0x5E) {
 							nextTextId = script_parse(_messageToBePrinted, 0, 0, 319, 199, true);
-							_word2C87A = false;
+							_textBoxDisabledByScriptFl = false;
 						}
 					} else {
 						for (uint counter = 0; counter < 2; ++counter) {
@@ -2144,8 +2144,8 @@ int8 EfhEngine::checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4) {
 		handleInteractionText(mapPosX, mapPosY, -1, 0x7FFF, 0, tileFactId);
 	}
 
-	if (_word2C880) {
-		_word2C880 = false;
+	if (_checkTileDisabledByScriptFl) {
+		_checkTileDisabledByScriptFl = false;
 		return -1;
 	}
 	if (_tileFact[tileFactId]._tileId != 0xFF && !_dbgForceMonsterBlock) {
@@ -2494,7 +2494,7 @@ void EfhEngine::loadEfhGame() {
 
 	_teamSize = f.readSint16LE();
 
-	_unk2C8AA = f.readSint16LE();
+	_alertDelay = f.readSint16LE();
 
 	_word2C872 = f.readSint16LE();
 
