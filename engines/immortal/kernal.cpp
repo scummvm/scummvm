@@ -779,13 +779,19 @@ void ImmortalEngine::loadPalette() {
 	// The palettes are stored at a particular location in the disk, this just grabs them
 	Common::File d;
 	d.open("IMMORTAL.dsk");
-
 	d.seek(kPaletteOffset);
-	d.read(_palDefault, 32);
-	d.read(_palWhite, 32);
-	d.read(_palBlack, 32);
-	d.read(_palDim, 32);
+	
+	// Each palette is stored after each other at this kPaletteOffset in the disk
+	uint16 *pals[4] = {_palDefault, _palWhite, _palBlack, _palDim};
 
+	// So we can just grab 16 colours at a time and store them to the appropriate palette
+	for (int p = 0; p < 4; p++) {
+		for (int i = 0; i < 16; i++) {
+			pals[p][i] = d.readUint16LE();
+		}
+	}
+
+	// And now we are done with the file
 	d.close();
 }
 
