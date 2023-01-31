@@ -34,9 +34,9 @@
  * Usually used as an index into the frame array by subtracting the frame enum first.
  * Here's the movement of data from ROM to RAM:
  * list of Cycles on heap (cyc)
- * 			|
+ *          |
  * list of word pointers in wram to Cycles (cycPtrs)
- * 			|
+ *          |
  * list of lexical pointers as byte indexes into word pointers (cycID -> cyclist)
  */
 
@@ -89,7 +89,7 @@ int Room::cycleGetFrame(int c) {
 	 * STA DP : LDA (DP)
 	 */
 	return g_immortal->_cycPtrs[g_immortal->_cycles[c]._cycList]._frames[g_immortal->_cycles[c]._index];
- }
+}
 
 int Room::cycleGetNumFrames(int c) {
 	// For whatever reason, this is not a property of the cycle, so it has to be re-calculated each time

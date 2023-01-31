@@ -23,7 +23,7 @@
 
 namespace Immortal {
 
-/* 
+/*
  *
  * -----             -----
  * ----- General Use -----

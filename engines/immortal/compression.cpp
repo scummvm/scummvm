@@ -48,8 +48,8 @@ Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *src, int sr
 
 	// The 20k bytes of memory that compression gets allocated to work with for the dictionary and the stack of chars
 	uint16 start[0x4000];                   // Really needs a better name, remember to do this future me
-	uint16   ptk[0x4000];                   // Pointer To Keys? Also needs a better name
-	  byte stack[0x4000];                   // Stack of chars to be stored
+	uint16 ptk[0x4000];                     // Pointer To Keys? Also needs a better name
+	byte   stack[0x4000];                   // Stack of chars to be stored
 
 	// These are the main variables we'll need for this
 	uint16 findEmpty;
@@ -73,8 +73,8 @@ Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *src, int sr
 	}
 
 	finalChar = code;
-	  oldCode = code;
-	   myCode = code;
+	oldCode = code;
+	myCode = code;
 
 	outByte = code & kMaskLow;
 	dstW.writeByte(outByte);                // Take just the lower byte and write it the output
@@ -85,17 +85,17 @@ Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *src, int sr
 		code = getInputCode(carry, src, srcLen, evenOdd); // Get the next code
 		if (carry == true) {
 
-				index = code << 1;
+			index = code << 1;
 			inputCode = code;
-			   myCode = code;
-			
+			myCode = code;
+
 			// Split up the conditional statement to be easier to follow
 			uint16 cond;
 			cond = start[index] & kMaskLast;
 			cond |= ptk[index];
 
 			if ((cond & kMaskHigh) == 0) {  // Empty code
-				  index = topStack;
+				index = topStack;
 				outByte = finalChar & kMaskLow;
 				stack[index] = outByte;
 				topStack++;
@@ -105,9 +105,9 @@ Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *src, int sr
 			// :nextsymbol
 			index = myCode << 1;
 			while (index >= 0x200) {
-				 myCode = start[index] & kMask12Bit;
+				myCode = start[index] & kMask12Bit;
 				outByte = ptk[index] & kMaskLow;
-				  index = topStack;
+				index = topStack;
 				stack[index] = outByte;
 				topStack++;
 				index = myCode << 1;
@@ -115,7 +115,7 @@ Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *src, int sr
 
 			// :singlechar
 			finalChar = (myCode >> 1);
-			  outByte = finalChar & kMaskLow;
+			outByte = finalChar & kMaskLow;
 			dstW.writeByte(outByte);
 
 			// :dump
@@ -126,8 +126,8 @@ Common::SeekableReadStream *ImmortalEngine::unCompress(Common::File *src, int sr
 			}
 
 			topStack = 0;
-				code = getMember(oldCode, finalChar, findEmpty, start, ptk);
-			 oldCode = inputCode;
+			code = getMember(oldCode, finalChar, findEmpty, start, ptk);
+			oldCode = inputCode;
 		}
 
 	}
@@ -142,12 +142,12 @@ void ImmortalEngine::setupDictionary(uint16 start[], uint16 ptk[], uint16 &findE
 	// Clear the whole dictionary
 	for (int i = 0x3FFF; i >= 0; i--) {
 		start[i] = 0;
-		  ptk[i] = 0;
+		ptk[i] = 0;
 	}
 
 	// Set the initial 256 bytes to be value 256, these are the characters without extensions
 	for (int i = 255; i >= 0; i--) {
-		  ptk[i] = 256;
+		ptk[i] = 256;
 	}
 
 	// This shouldn't really be done inside the function, but for the sake of consistency with the source, we will
@@ -177,7 +177,7 @@ int ImmortalEngine::getInputCode(bool &carry, Common::File *src, int &srcLen, ui
 
 uint16 ImmortalEngine::getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint16 start[], uint16 ptk[]) {
 	// This function is effectively void, as the return value is only used in compression
-	
+
 	// k and codeW are local variables with the value of oldCode and finalChar
 
 	uint16 hash;
@@ -194,7 +194,7 @@ uint16 ImmortalEngine::getMember(uint16 codeW, uint16 k, uint16 &findEmpty, uint
 	uint16 b = ptk[hash] & kMaskHigh;
 	if (a | b) {
 		start[hash] = codeW;
-		  ptk[hash] = k | 0x100;
+		ptk[hash] = k | 0x100;
 		return ptk[hash];
 	}
 
@@ -228,7 +228,7 @@ void ImmortalEngine::appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &fi
 	prev = hash;
 	if (hash >= 0x200) {
 		setupDictionary(start, ptk, findEmpty);
-	
+
 	} else {
 		bool found = false;
 		while (found == false) {
@@ -244,9 +244,9 @@ void ImmortalEngine::appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &fi
 			cond |= ptk[hash];
 
 			if ((cond & kMaskHigh) == 0) {
-				  findEmpty = hash;
+				findEmpty = hash;
 				start[hash] = codeW;
-				  ptk[hash] = k | 0x100;
+				ptk[hash] = k | 0x100;
 
 				link = hash >> 1;
 

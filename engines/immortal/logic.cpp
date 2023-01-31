@@ -48,14 +48,14 @@ void ImmortalEngine::restartLogic() {
 	miscInit();
 	cycleFreeAll();
 	levelInit();
-	//roomInit();		<-- will be run in constructor of room
-	//monstInit();		<-- room.initMonsters()		\
-	//objectInit();		<-- room.initObjects()
-	//doorInit();		<-- room.initDoors()		 |- probably all get run from room constructor
-	//sparkInit();		<-- room.initSparks()
-	//bulletInit();		<-- room.initProjectiles()	/
-	//objectInit(); 	<-- again? Odd...
-	//genericSpriteInit();	<-- room.initGenSprites()
+	//roomInit();       <-- will be run in constructor of room
+	//monstInit();      <-- room.initMonsters()     \
+	//objectInit();     <-- room.initObjects()
+	//doorInit();       <-- room.initDoors()         |- probably all get run from room constructor
+	//sparkInit();      <-- room.initSparks()
+	//bulletInit();     <-- room.initProjectiles()  /
+	//objectInit();     <-- again? Odd...
+	//genericSpriteInit();  <-- room.initGenSprites()
 
 	if (fromOldGame() == false) {
 		_level = 0;
@@ -65,12 +65,12 @@ void ImmortalEngine::restartLogic() {
 	_rooms[_currentRoom]->flameInit();
 
 	if (_level != 7) {
-		_themePaused = true;	// and #-1-2 = set both flags for themePaused
+		_themePaused = true;    // and #-1-2 = set both flags for themePaused
 	}
 }
 
 void ImmortalEngine::logic() {
-	trapKeys();							// First thing in any gameloop is to check if we should restart/toggle sound
+	trapKeys();                         // First thing in any gameloop is to check if we should restart/toggle sound
 	_time += 1;
 
 	/* This is actually the main game state loop. I think the best way to translate it
@@ -98,7 +98,7 @@ void ImmortalEngine::logic() {
 			_themePaused = true;
 			_levelOver = false;
 
-			if (_level == (_maxLevels-1)) {
+			if (_level == (_maxLevels - 1)) {
 				textPrint(kStrYouWin, 0);
 
 			} else {
@@ -111,7 +111,7 @@ void ImmortalEngine::logic() {
 		} else {
 
 			// Here's where the gameplay sequence actually happens!
-			doSingleStep();				// Debug step function
+			doSingleStep();             // Debug step function
 			//monstRunAll();
 			//objectRunAll();
 			//doInfiniteHallways();
@@ -158,7 +158,7 @@ void ImmortalEngine::trapKeys() {
 		break;
 	case kActionSound:
 		toggleSound();
-		// fall through
+	// fall through
 	default:
 		break;
 	}
@@ -175,10 +175,10 @@ int ImmortalEngine::keyOrButton() {
 			button = _pressedAction;
 			break;
 		case kActionFire:
-			// fall through
+		// fall through
 		case kActionButton:
 			button = 13;
-			// fall through
+		// fall through
 		default:
 			break;
 		}
@@ -293,13 +293,13 @@ bool ImmortalEngine::fromOldGame() {
 	_dontResetColors = 0;
 	if (_promoting == 1) {
 		_promoting = 0;
-	
+
 	} else {
 
 		do {
 			if (!textPrint(kStrOldGame, 0)) {
 				// They choose not to load an old game
-				return false;			
+				return false;
 			}
 		} while (getCertificate() == true);
 
@@ -318,7 +318,7 @@ bool ImmortalEngine::fromOldGame() {
 	//uint8 hits  = _certificate[kCertHits];
 	//uint8 quick = _certificate[kCertQuickness];
 	//uint8 gold  = (_certificate[kCertGoldHi] << 4) | _certificate[kCertGoldLo];
-	// monstMakePlayer(hits, quick, gold);	<- will become room.makePlayer();
+	// monstMakePlayer(hits, quick, gold);  <- will become room.makePlayer();
 
 	// Create the inventory
 	// room.makeObject(3, kObjIsRunning, 0, goldType);
@@ -326,7 +326,7 @@ bool ImmortalEngine::fromOldGame() {
 	// Hi bits of inventory
 	int certInv = _certificate[kCertInvHi];
 
-	if ((certInv & 1) != 0 ) {
+	if ((certInv & 1) != 0) {
 		if (_level < 2) {
 			//room.makeObject(3, 0, 0, waterType);
 		}
@@ -386,7 +386,7 @@ bool ImmortalEngine::fromOldGame() {
 		if ((certInv & 4) != 0) {
 			//room.makeObject(3, 0, kSporesFrame, antiType);
 		}
-		// fall through
+	// fall through
 	default:
 		break;
 	}
@@ -446,17 +446,17 @@ void ImmortalEngine::makeCertificate() {
 		if (true/*room.monster[kPlayerID].hasObject(wowCharmType)*/) {
 			_certificate[kCertInvLo] |= 4;
 		}
-		// fall through
+	// fall through
 	case 3:
 		if (true/*room.monster[kPlayerID].hasObject(faceRingType)*/) {
 			_certificate[kCertInvLo] |= 1;
 		}
-		// fall through
+	// fall through
 	case 4:
 		if (true/*room.monster[kPlayerID].hasObject(coffeeType)*/) {
 			_certificate[kCertInvLo] |= 2;
 		}
-		// fall through
+	// fall through
 	case 7:
 		if (true/*room.monster[kPlayerID].hasObject(bronzeType)*/) {
 			_certificate[kCertInvLo] |= 1;
@@ -469,7 +469,7 @@ void ImmortalEngine::makeCertificate() {
 		if (true/*room.monster[kPlayerID].hasObject(antiType)*/) {
 			_certificate[kCertInvLo] |= 4;
 		}
-		// fall through
+	// fall through
 	default:
 		_lastCertLen = 13;
 		uint8 checksum[4];
@@ -515,11 +515,11 @@ bool ImmortalEngine::getCertificate() {
 		} else if (k == 0x7f) {
 			// The input was a backspace
 			if (certLen != 0) {
-				certLen--;				// Length is one smaller now
-				backspace();			// move the drawing position back and reprint the '-' char
+				certLen--;              // Length is one smaller now
+				backspace();            // move the drawing position back and reprint the '-' char
 				backspace();
 				printChr('-');
-			}			
+			}
 
 		} else {
 			// The input was a key
@@ -588,7 +588,7 @@ void ImmortalEngine::printCertificate() {
 	 * but grabbing it from a table is faster and doesn't
 	 * use a lot of space (especially if it's used anywhere else)
 	 */
-	char toHex[] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+	char toHex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 	textBeginning(kStrCert, 0);
 	for (int i = 0; i < _lastCertLen; i++) {

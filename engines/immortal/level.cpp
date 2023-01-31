@@ -129,7 +129,7 @@ void ImmortalEngine::levelDrawAll() {
 
 void ImmortalEngine::levelShowRoom(int r, int bX, int bY) {
 	_currentRoom = r;
-	cycleFreeAll();		// This may not be needed, or it may need to be changed slightly
+	cycleFreeAll();     // This may not be needed, or it may need to be changed slightly
 	_rooms[_currentRoom]->flameSetRoom(_allFlames[r]);
 	//univSetRoom(r, bX, bY);
 	//fset, spark, bullet, and door get set to the current room

@@ -23,7 +23,7 @@
 
 namespace Immortal {
 
-/* 
+/*
  *
  * -----                -----
  * ----- Main Functions -----
@@ -39,7 +39,7 @@ void ImmortalEngine::miscInit() {
 void ImmortalEngine::setRandomSeed() {}
 void ImmortalEngine::getRandom() {}
 
-/* 
+/*
  *
  * -----               -----
  * ----- Text Printing -----
@@ -170,7 +170,7 @@ bool ImmortalEngine::textSub(Str s, FadeType f, int n) {
 					index = -1;
 				}
 				textDoSpace(text, index);
-			
+
 			} else {
 				printChr(chr);
 				// We need this to show up now, not when the frame ends, so we have to update the screen here
@@ -179,16 +179,16 @@ bool ImmortalEngine::textSub(Str s, FadeType f, int n) {
 					myDelay(5);
 					switch (chr) {
 					case '?':
-						// fall through
+					// fall through
 					case ':':
 						myDelay(13);
-						// fall through
+					// fall through
 					case '.':
 						myDelay(13);
-						// fall through
+					// fall through
 					case ',':
 						myDelay(13);
-						// fall through
+					// fall through
 					default:
 						break;
 					}
@@ -202,7 +202,7 @@ bool ImmortalEngine::textSub(Str s, FadeType f, int n) {
 		}
 		index++;
 	}
-	
+
 	chr = text[index];
 
 	if (f != kTextFadeIn) {
@@ -277,16 +277,16 @@ void ImmortalEngine::textDoSpace(Common::String s, int index) {
 			index++;
 			switch (s[index]) {
 			case '=':
-				// fall through
+			// fall through
 			case '@':
-				// fall through
+			// fall through
 			case '%':
-				// fall through
+			// fall through
 			case '[':
-				// fall through
+			// fall through
 			case ' ':
 				foundEnd = true;
-				// fall through
+			// fall through
 			default:
 				break;
 			}
@@ -294,7 +294,7 @@ void ImmortalEngine::textDoSpace(Common::String s, int index) {
 		if (((index - start) + _collumn) >= kMaxCollumns) {
 			if (_row < kMaxRows) {
 				textCR();
-			
+
 			} else {
 				textAutoPageBreak();
 			}
@@ -316,7 +316,7 @@ bool ImmortalEngine::yesNo() {
 	if (tyes[_heldDirection] == 0) {
 		noOn();
 		_lastYes = 0;
-	
+
 	} else {
 		yesOn();
 		_lastYes = 1;
@@ -333,7 +333,7 @@ bool ImmortalEngine::yesNo() {
 			standardBeep();
 			if (_lastYes == 0) {
 				noOn();
-			
+
 			} else {
 				yesOn();
 			}
@@ -397,9 +397,9 @@ void ImmortalEngine::myDelay(int j) {
 			break;
 		case 0:
 			Utilities::delay(1);
-			// fall through
+		// fall through
 		case 2:
-			// fall through
+		// fall through
 		default:
 			break;
 		}
@@ -408,7 +408,7 @@ void ImmortalEngine::myDelay(int j) {
 	} while (j != 0);
 }
 
-/* 
+/*
  *
  * -----               -----
  * ----- Input Related -----
@@ -419,11 +419,11 @@ void ImmortalEngine::myDelay(int j) {
 bool ImmortalEngine::buttonPressed() {
 	// Returns false if the button was pressed, but not held or up
 	getInput();
-	
+
 	if (_heldAction == kActionButton) {
 		// Zero just the button0held bit
 		_myButton &= (0xFF - kButton0Held);
-	
+
 	} else if ((_myButton & kButton0Held) == 0) {
 		_myButton |= kButton0Held;
 		return false;
@@ -435,10 +435,10 @@ bool ImmortalEngine::buttonPressed() {
 bool ImmortalEngine::firePressed() {
 	// Returns false if the button was pressed, but not held or up
 	getInput();
-	
+
 	if (_heldAction == kActionFire) {
 		_myButton &= (0xFF - kButton1Held);
-	
+
 	} else if ((_myButton & kButton1Held) == 0) {
 		_myButton |= kButton1Held;
 		return false;
@@ -448,7 +448,7 @@ bool ImmortalEngine::firePressed() {
 }
 
 
-/* 
+/*
  *
  * -----                -----
  * ----- Screen Related -----
@@ -459,9 +459,9 @@ bool ImmortalEngine::firePressed() {
 
 /*
  *
- * -----			   -----
+ * -----               -----
  * ----- Sound Related -----
- * -----			   -----
+ * -----               -----
  *
  */
 

@@ -83,7 +83,7 @@ enum FileExt {
 class ProDOSFile : public Common::ArchiveMember {
 public:
 	ProDOSFile(char name[16], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk);
-	~ProDOSFile() {};											 // File does not need a destructor, because the file it reads from is a pointer to Disk, and Disk has a destructor
+	~ProDOSFile() {};                                            // File does not need a destructor, because the file it reads from is a pointer to Disk, and Disk has a destructor
 
 	// -- These are the Common::ArchiveMember related functions --
 	Common::String getName() const override;                              // Returns _name
@@ -95,12 +95,12 @@ public:
 	void printInfo();
 
 private:
-	  char _name[16];
-	 uint8 _type;                     		// As defined by enum FileType
-	uint16 _blockPtr;                 		// Block index in volume of index block or data
+	char   _name[16];
+	uint8  _type;                           // As defined by enum FileType
+	uint16 _blockPtr;                       // Block index in volume of index block or data
 	uint16 _totalBlocks;
-	uint32 _eof;                      		// End Of File, used generally as size (exception being sparse files)
-	Common::File *_disk;                   	// This is a pointer because it is the same _disk as in ProDosDisk, passed to the file object
+	uint32 _eof;                            // End Of File, used generally as size (exception being sparse files)
+	Common::File *_disk;                    // This is a pointer because it is the same _disk as in ProDosDisk, passed to the file object
 };
 
 /* This class defines the entire disk volume. Upon using the open() method,
@@ -126,76 +126,76 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 private:
-		 byte  _loader1[kBlockSize];        // There's not much reason for these to be needed, but I included them just in case
-		 byte  _loader2[kBlockSize];
-Common::String _name;                       // Name of volume
-  Common::File _disk;                       // The volume file itself
-		  int  _volBlocks;                  // Total blocks in volume
-		 byte *_volBitmap;                  // This can determine if the volume is corrupt as it contains a bit for every block, where 0 = unused, 1 = used
-Common::HashMap<Common::String, Common::SharedPtr<ProDOSFile>> _files; // Hashmap of files in the volume, where key=Path, Value=ProDOSFile
+	byte  _loader1[kBlockSize];        // There's not much reason for these to be needed, but I included them just in case
+	byte  _loader2[kBlockSize];
+	Common::String _name;                       // Name of volume
+	Common::File _disk;                       // The volume file itself
+	int  _volBlocks;                  // Total blocks in volume
+	byte *_volBitmap;                  // This can determine if the volume is corrupt as it contains a bit for every block, where 0 = unused, 1 = used
+	Common::HashMap<Common::String, Common::SharedPtr<ProDOSFile>> _files; // Hashmap of files in the volume, where key=Path, Value=ProDOSFile
 
 	struct Date {
-		 uint8 _day;
-		 uint8 _month;
-		 uint8 _year;
+		uint8 _day;
+		uint8 _month;
+		uint8 _year;
 	};
 
 	struct Time {
-		 uint8 _hour;
-		 uint8 _minute;
+		uint8 _hour;
+		uint8 _minute;
 	};
 
 	struct VolHeader {
-		 uint8 _type;                       // Not really important for a volume header, as this will always be F
-		 uint8 _nameLen;
-		  char _name[16];
-		  byte _reserved[8];                // Extra space reserved for possible future uses, not important
-		  Date _date;
-		  Time _time;
-		 uint8 _ver;
-		 uint8 _minVer;                     // Should pretty much always be 0 as far as I know
-		 uint8 _access;                     // If this ends up useful, there should be an enum for the access values
-		 uint8 _entryLen;                   // Always 27 in ProDOS 1.0
-		 uint8 _entriesPerBlock;            // Always 0D in ProDOS 1.0
+		uint8 _type;                       // Not really important for a volume header, as this will always be F
+		uint8 _nameLen;
+		char _name[16];
+		byte _reserved[8];                // Extra space reserved for possible future uses, not important
+		Date _date;
+		Time _time;
+		uint8 _ver;
+		uint8 _minVer;                     // Should pretty much always be 0 as far as I know
+		uint8 _access;                     // If this ends up useful, there should be an enum for the access values
+		uint8 _entryLen;                   // Always 27 in ProDOS 1.0
+		uint8 _entriesPerBlock;            // Always 0D in ProDOS 1.0
 		uint16 _fileCount;                  // Number of files across all data blocks in this directory
 		uint16 _bitmapPtr;                  // Block pointer to the keyblock of the bitmap for the entire volume
 		uint16 _volBlocks;                  // Blocks in entire volume
 	};
 
 	struct DirHeader {
-		 uint8 _type;
-		 uint8 _nameLen;
-		  char _name[16];
-		  byte _reserved[8];
-		  Date _date;
-		  Time _time;
-		 uint8 _ver;
-		 uint8 _minVer;
-		 uint8 _access;
-		 uint8 _entryLen;
-		 uint8 _entriesPerBlock;
+		uint8 _type;
+		uint8 _nameLen;
+		char _name[16];
+		byte _reserved[8];
+		Date _date;
+		Time _time;
+		uint8 _ver;
+		uint8 _minVer;
+		uint8 _access;
+		uint8 _entryLen;
+		uint8 _entriesPerBlock;
 		uint16 _fileCount;
 		uint16 _parentBlockPtr;             // These values allow ProDOS to navigate back out of a directory, but they aren't really needed by the class to navigate
-		 uint8 _parentEntryIndex;           // Index in the current directory
-		 uint8 _parentEntryLen;             // This is always 27 in ProDOS 1.0
+		uint8 _parentEntryIndex;           // Index in the current directory
+		uint8 _parentEntryLen;             // This is always 27 in ProDOS 1.0
 	};
 
 	struct FileEntry {
-		 uint8 _type;                       // 0 = inactive, 1-3 = file, 4 = pascal area, 14 = subdirectory, 15 = volume directory
-		 uint8 _nameLen;
-		  char _name[16];
-		 uint8 _ext;                        // File extension, uses the enum FileExt
+		uint8 _type;                       // 0 = inactive, 1-3 = file, 4 = pascal area, 14 = subdirectory, 15 = volume directory
+		uint8 _nameLen;
+		char _name[16];
+		uint8 _ext;                        // File extension, uses the enum FileExt
 		uint16 _blockPtr;                   // Block pointer to data for seedling, index block for sapling, or master block for tree
 		uint16 _totalBlocks;                // Really important to remember this is the total *including* the index block
 		uint32 _eof;                        // This is a long (3 bytes, read low to high) value representing the total readable data in a file (unless it's a sparse file, be careful!)
-		  Date _date;
-		  Time _time;
-		 uint8 _ver;
-		 uint8 _minVer;
-		 uint8 _access;
+		Date _date;
+		Time _time;
+		uint8 _ver;
+		uint8 _minVer;
+		uint8 _access;
 		uint16 _varUse;
-		  Date _modDate;
-		  Time _modTime;
+		Date _modDate;
+		Time _modTime;
 		uint16 _dirHeadPtr;                 // Pointer to the key block of the directory that contains this file entry
 	};
 

@@ -111,12 +111,14 @@ int Room::flameGetCyc(Flame *f, int first) {
 	 * This gives us a random entry within the array to start at.
 	 */
 	CycID flamePatA[] = {kCycFNormal0, kCycFNormal1, kCycFNormal2,
-						 kCycFNormal0, kCycFNormal1, kCycFNormal2,
-						 kCycFNormal0, kCycFNormal1, kCycFNormal2,
-						 kCycFNormal0, kCycFNormal1, kCycFNormal2};
+	                     kCycFNormal0, kCycFNormal1, kCycFNormal2,
+	                     kCycFNormal0, kCycFNormal1, kCycFNormal2,
+	                     kCycFNormal0, kCycFNormal1, kCycFNormal2
+	                    };
 	CycID flamePatB[] = {kCycFCandleBurst,   kCycFCandleSway,    kCycFCandleJump,
-						 kCycFCandleLeap,    kCycFCandleFlicker,
-						 kCycFCandleFlicker, kCycFCandleFlicker, kCycFCandleFlicker};
+	                     kCycFCandleLeap,    kCycFCandleFlicker,
+	                     kCycFCandleFlicker, kCycFCandleFlicker, kCycFCandleFlicker
+	                    };
 	CycID flamePatC[] = {kCycFOff};
 	CycID flamePatD[] = {kCycFFlicker0, kCycFFlicker1, kCycFFlicker2};
 

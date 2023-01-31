@@ -38,17 +38,17 @@ struct Image {
 };
 
 struct DataSprite {
-	uint16 _cenX;                      					// These are the base center positions
+	uint16 _cenX;                                       // These are the base center positions
 	uint16 _cenY;
 	uint16 _numImages;
 	Common::Array<Image> _images;
 };
 
 struct Sprite {
-	   int  _image;										// Index of _dSprite._images[]
+	int     _image;                                     // Index of _dSprite._images[]
 	uint16  _X;
 	uint16  _Y;
-	uint16  _on;										// 1 = active
+	uint16  _on;                                        // 1 = active
 	uint16  _priority;
 	DataSprite *_dSprite;
 };

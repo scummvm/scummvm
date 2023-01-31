@@ -70,11 +70,11 @@ namespace Immortal {
 enum InputAction {
 	kActionNothing,
 	kActionKey,
-	kActionRestart,										// Key "R" <-- Debug?
+	kActionRestart,                                     // Key "R" <-- Debug?
 	kActionSound,
 	kActionFire,
-	kActionButton,										// Does this just refer to whatever is not the fire button?
-	kActionDBGStep										// Debug key for moving engine forward one frame at a time
+	kActionButton,                                      // Does this just refer to whatever is not the fire button?
+	kActionDBGStep                                      // Debug key for moving engine forward one frame at a time
 };
 
 enum ButtonHeldMask {
@@ -154,18 +154,18 @@ struct GenericSprite {
 
 // Doors are a property of the level, not the room, they define the connections between rooms
 struct Door {
-	uint8 _x 		   = 0;
-	uint8 _y 		   = 0;
-	uint8 _fromRoom	   = 0;
-	uint8 _toRoom	   = 0;
+	uint8 _x           = 0;
+	uint8 _y           = 0;
+	uint8 _fromRoom    = 0;
+	uint8 _toRoom      = 0;
 	uint8 _busyOnRight = 0;
-	uint8 _on 		   = 0;
+	uint8 _on          = 0;
 };
 
 // Universe is a set of properties for the entire level, nor just the room
 struct Univ {
-	uint16  _rectX 	   = 0;
-	uint16  _rectY 	   = 0;
+	uint16  _rectX     = 0;
+	uint16  _rectY     = 0;
 	uint16  _numAnims  = 0;
 	uint16  _numCols   = 0;
 	uint16  _numRows   = 0;
@@ -199,10 +199,10 @@ public:
 	/* Terrible functions because C doesn't like
 	 * bit manipulation enough
 	 */
-	uint16 xba(uint16 ab);								// This just replicates the XBA command from the 65816, because flipping the byte order is somehow not a common library function???
-	uint16 rol(uint16 ab, int n);						// Rotate bits left by n
-	uint16 ror(uint16 ab, int n);						// Rotate bits right by n
-	uint16 mult16(uint16 a, uint16 b);					// Just avoids using (uint16) everywhere, and is slightly closer to the original
+	uint16 xba(uint16 ab);                              // This just replicates the XBA command from the 65816, because flipping the byte order is somehow not a common library function???
+	uint16 rol(uint16 ab, int n);                       // Rotate bits left by n
+	uint16 ror(uint16 ab, int n);                       // Rotate bits right by n
+	uint16 mult16(uint16 a, uint16 b);                  // Just avoids using (uint16) everywhere, and is slightly closer to the original
 
 	/*
 	 * --- Members ---
@@ -219,239 +219,244 @@ public:
 	const int kMaxCertificate = 16;
 
 	// Screen constants
-	const int    kScreenW__   = 128;					// ??? labeled in source as SCREENWIDTH
-	const int    kScreenH__   = 128;					// ???
+	const int    kScreenW__   = 128;                    // ??? labeled in source as SCREENWIDTH
+	const int    kScreenH__   = 128;                    // ???
 	const int    kViewPortW   = 256;
 	const int    kViewPortH   = 128;
-	const int 	 kScreenSize  = (kResH * kResV) * 2; 	// The size of the screen buffer is (320x200) * 2 byte words
+	const int    kScreenSize  = (kResH *kResV) * 2;     // The size of the screen buffer is (320x200) * 2 byte words
 	const uint16 kScreenLeft  = 32;
 	const uint16 kScreenTop   = 20;
 	const uint8  kTextLeft    = 8;
 	const uint8  kTextTop     = 4;
 	const uint8  kGaugeX      = 0;
-	const uint8  kGaugeY      = -13;					// ???
-	const uint16 kScreenBMW   = 160;					// Screen BitMap Width?
-	const uint16 kChrW 	      = 64;
+	const uint8  kGaugeY      = -13;                    // ???
+	const uint16 kScreenBMW   = 160;                    // Screen BitMap Width?
+	const uint16 kChrW        = 64;
 	const uint16 kChrH        = 32;
 	const uint16 kChrH2       = kChrH * 2;
 	const uint16 kChrH3       = kChrH * 3;
-	const uint16 kChrLen	  = (kChrW / 2) * kChrH;
-	const uint16 kChrBMW	  = kChrW / 2;
+	const uint16 kChrLen      = (kChrW / 2) * kChrH;
+	const uint16 kChrBMW      = kChrW / 2;
 	const uint16 kLCutaway    = 4;
 	const uint16 kLDrawSolid  = 32 * ((3 * 16) + 5);
 
 	const uint16 kChrDy[19] = {kChr0, kChrH, kChrH2, kChrH, kChrH2,
-							   kChrH2, kChrH, kChrH2, kChrH2, kChr0,
-							   kChr0, kChrH2, kChrH, kChrH2, kChrH2,
-							   kChrH2, kChrH, kChrH2, kChrH2};
+	                           kChrH2, kChrH, kChrH2, kChrH2, kChr0,
+	                           kChr0, kChrH2, kChrH, kChrH2, kChrH2,
+	                           kChrH2, kChrH, kChrH2, kChrH2
+	                          };
 
 	const uint16 kChrMask[19] = {kChr0, kChr0,  kChr0,  kChr0,
-								 kChrR, kChrL,  kChr0,  kChrL,
-								 kChrR, kChr0,  kChr0,  kChrLD,
-								 kChr0, kChrR,  kChrLD, kChrRD,
-								 kChr0, kChrRD, kChrL};
+	                             kChrR, kChrL,  kChr0,  kChrL,
+	                             kChrR, kChr0,  kChr0,  kChrLD,
+	                             kChr0, kChrR,  kChrLD, kChrRD,
+	                             kChr0, kChrRD, kChrL
+	                            };
 
 	const uint16 kIsBackground[36] = {1, 0, 0, 0, 0, 0,
-									  0, 0, 0, 1, 1, 0,
-									  0, 0, 0, 0, 0, 0,
-									  0, 0, 0, 0, 0, 0,
-									  0, 0, 0, 0, 0, 0,
-									  0, 0, 0, 0, 0, 0};
+	                                  0, 0, 0, 1, 1, 0,
+	                                  0, 0, 0, 0, 0, 0,
+	                                  0, 0, 0, 0, 0, 0,
+	                                  0, 0, 0, 0, 0, 0,
+	                                  0, 0, 0, 0, 0, 0
+	                                 };
 
 	const uint16 kTBlisterCorners[60] = {7, 1, 1, 1, 1, 1, 5, 3, 1, 1, 1, 1, 1, 3, 5, 3, 5, 1, 1, 1,
-										 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 16, 16, 16, 16, 8,
-										 8, 8, 8, 16, 16, 16, 16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	                                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 16, 16, 16, 16, 8,
+	                                     8, 8, 8, 16, 16, 16, 16, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+	                                    };
 
 	const uint16 kTLogicalCorners[19] = {1, 1, 1, 1, 16, 8, 1, 8,
-										 16, 1, 1, 8, 1, 16, 8, 16,
-										 1, 16, 8};
+	                                     16, 1, 1, 8, 1, 16, 8, 16,
+	                                     1, 16, 8
+	                                    };
 
 	// Disk offsets
-	const int kPaletteOffset    = 21205;				// This is the byte position of the palette data in the disk
+	const int kPaletteOffset    = 21205;                // This is the byte position of the palette data in the disk
 
 	// Sprite constants
-	const uint16 kMaxSpriteW 	= 64;
-	const uint16 kMaxSpriteH 	= 64;
-	const uint16 kSpriteDY		= 32;
-	const uint16 kVSX			= kMaxSpriteW;
-	const uint16 kVSY 			= kSpriteDY;
-	const uint16 kVSBMW		    = (kViewPortW + kMaxSpriteW) / 2;
-	const uint16 kVSLen		    = kVSBMW * (kViewPortH + kMaxSpriteH);
-	const uint16 kVSDY			= 32; 					// difference from top of screen to top of viewport in the virtual screen buffer
+	const uint16 kMaxSpriteW    = 64;
+	const uint16 kMaxSpriteH    = 64;
+	const uint16 kSpriteDY      = 32;
+	const uint16 kVSX           = kMaxSpriteW;
+	const uint16 kVSY           = kSpriteDY;
+	const uint16 kVSBMW         = (kViewPortW + kMaxSpriteW) / 2;
+	const uint16 kVSLen         = kVSBMW * (kViewPortH + kMaxSpriteH);
+	const uint16 kVSDY          = 32;                   // difference from top of screen to top of viewport in the virtual screen buffer
 	const uint16 kMySuperBottom = kVSDY + kViewPortH;
-	const uint16 kSuperBottom 	= 200;
-	const uint16 kMySuperTop	= kVSDY;
-	const uint16 kSuperTop	  	= 0;
-	const uint16 kViewPortSpX	= 32;
-	const uint16 kViewPortSpY	= 0;
-	const uint16 kWizardX 		= 28;					// Common sprite center for some reason
-	const uint16 kWizardY 		= 37;
-	const uint16 kObjectY 		= 24;
-	const uint16 kObjectX 		= 32;
+	const uint16 kSuperBottom   = 200;
+	const uint16 kMySuperTop    = kVSDY;
+	const uint16 kSuperTop      = 0;
+	const uint16 kViewPortSpX   = 32;
+	const uint16 kViewPortSpY   = 0;
+	const uint16 kWizardX       = 28;                   // Common sprite center for some reason
+	const uint16 kWizardY       = 37;
+	const uint16 kObjectY       = 24;
+	const uint16 kObjectX       = 32;
 	const uint16 kObjectHeight  = 48;
-	const uint16 kObjectWidth	= 64;
+	const uint16 kObjectWidth   = 64;
 
 	// Text constants
-	const uint8 kMaxRows 		= 5;
-	const uint8 kMaxCollumns 	= 26;
+	const uint8 kMaxRows        = 5;
+	const uint8 kMaxCollumns    = 26;
 
-	const uint16 kYesNoY		= 88;
-	const uint16 kYesNoX1		= 8;
-	const uint16 kYesNoX2		= 182;
+	const uint16 kYesNoY        = 88;
+	const uint16 kYesNoX1       = 8;
+	const uint16 kYesNoX2       = 182;
 
 	// Asset constants
-	const char kGaugeOn	   	    = 1;					// On uses the sprite at index 1 of the font spriteset
-	const char kGaugeOff        = 0;					// Off uses the sprite at index 0 of the font spriteset
-	const char kGaugeStop       = 1;					// Literally just means the final kGaugeOn char to draw
-	const char kGaugeStart      = 1;					// First kGaugeOn char to draw
+	const char kGaugeOn         = 1;                    // On uses the sprite at index 1 of the font spriteset
+	const char kGaugeOff        = 0;                    // Off uses the sprite at index 0 of the font spriteset
+	const char kGaugeStop       = 1;                    // Literally just means the final kGaugeOn char to draw
+	const char kGaugeStart      = 1;                    // First kGaugeOn char to draw
 
 	// Level constants
-	const int kStoryNull		= 5;
+	const int kStoryNull        = 5;
 	const int kMaxFilesPerLevel = 16;
 	const int kMaxPartInstances = 4;
-	const int kLevelToMaze[8]   = {0,0,1,1,2,2,2,3};
+	const int kLevelToMaze[8]   = {0, 0, 1, 1, 2, 2, 2, 3};
 
-	/* 
+	/*
 	 * 'global' members
 	 */
 
 	// Misc
-	Common::ErrorCode _err;								// If this is not kNoError at any point, the engine will stop
-	uint8 _certificate[16];								// The certificate (password) is basically the inventory/equipment array
-	uint8 _lastCertLen     = 0;
-	 bool _draw 	       = 0;							// Whether the screen should draw this frame
-	  int _zero 	       = 0;							// No idea what this is yet
-	 bool _gameOverFlag    = false;
-	uint8 _gameFlags 	   = 0;							// Bitflag array of event flags, but only two were used (saving ana and saving the king) <-- why is gameOverFlag not in this? Lol
-	 bool _themePaused	   = false;						// In the source, this is actually considered a bit flag array of 2 bits (b0 and b1). However, it only ever checks for non-zero, so it's effectively only 1 bit.
-	  int _titlesShown     = 0;
-	  int _time 		   = 0;
-	  int _promoting       = 0;							// I think promoting means the title stuff
-	 bool _restart 	       = false;
+	Common::ErrorCode _err;                             // If this is not kNoError at any point, the engine will stop
+	uint8 _certificate[16];                             // The certificate (password) is basically the inventory/equipment array
+	uint8 _lastCertLen = 0;
+	bool _draw         = 0;                         // Whether the screen should draw this frame
+	int _zero          = 0;                         // No idea what this is yet
+	bool _gameOverFlag = false;
+	uint8 _gameFlags   = 0;                         // Bitflag array of event flags, but only two were used (saving ana and saving the king) <-- why is gameOverFlag not in this? Lol
+	bool _themePaused  = false;                     // In the source, this is actually considered a bit flag array of 2 bits (b0 and b1). However, it only ever checks for non-zero, so it's effectively only 1 bit.
+	int _titlesShown   = 0;
+	int _time          = 0;
+	int _promoting     = 0;                         // I think promoting means the title stuff
+	bool _restart      = false;
 
 	// Story members
 	Story _stories[8];
 
 	// Level members
-	  int _maxLevels	   = 0;							// This is determined when loading in story files
-	  int _level 	       = 0;
-	 bool _levelOver       = false;
-	  int _count 		   = 0;
-	  int _lastLevelLoaded = 0;
-	  int _lastSongLoaded  = 0;
-	  int _storyLevel 	   = 0;
-	  int _storyX 		   = 0;
-	  int _loadA 		   = 0;
-	  int _loadY 		   = 0;
-	  uint16 _initialX 	   = 0;
-	  uint16 _initialY     = 0;
-	  int _initialBX       = 0;
-	  int _initialBY 	   = 0;
-	  int _dRoomNum 	   = 0;
-	  int _initialRoom	   = 0;
-	  int _currentRoom	   = 0;
-	  int _lastType 	   = 0;
-	  int _roomCellX 	   = 0;
-	  int _roomCellY 	   = 0;
-	Room *_rooms[kMaxRooms];							// Rooms within the level
-	Common::Array<SFlame> _allFlames[kMaxRooms];		// The level needs it's own set of flames so that the flames can be turned on/off permenantly. This is technically more like a hashmap in the source, but it could also be seen as a 2d array, just hashed together in the source
+	int _maxLevels       = 0;                         // This is determined when loading in story files
+	int _level           = 0;
+	bool _levelOver      = false;
+	int _count           = 0;
+	int _lastLevelLoaded = 0;
+	int _lastSongLoaded  = 0;
+	int _storyLevel      = 0;
+	int _storyX          = 0;
+	int _loadA           = 0;
+	int _loadY           = 0;
+	uint16 _initialX     = 0;
+	uint16 _initialY     = 0;
+	int _initialBX       = 0;
+	int _initialBY       = 0;
+	int _dRoomNum        = 0;
+	int _initialRoom     = 0;
+	int _currentRoom     = 0;
+	int _lastType        = 0;
+	int _roomCellX       = 0;
+	int _roomCellY       = 0;
+	Room *_rooms[kMaxRooms];                            // Rooms within the level
+	Common::Array<SFlame> _allFlames[kMaxRooms];        // The level needs it's own set of flames so that the flames can be turned on/off permenantly. This is technically more like a hashmap in the source, but it could also be seen as a 2d array, just hashed together in the source
 
 	// Door members
 	Common::Array<Door> _doors;
-	uint8 _numDoors 	   = 0;
-	uint8 _doorRoom 	   = 0;
+	uint8 _numDoors        = 0;
+	uint8 _doorRoom        = 0;
 	uint8 _doorToNextLevel = 0;
 	uint8 _doorCameInFrom  = 0;
-	uint8 _ladders 		   = 0;
-	uint8 _numLadders 	   = 0;
-	uint8 _ladderInUse	   = 0;
+	uint8 _ladders         = 0;
+	uint8 _numLadders      = 0;
+	uint8 _ladderInUse     = 0;
 	uint8 _secretLadder    = 0;
 	uint8 _secretCount     = 0;
 	uint8 _secretDelta     = 0;
 
 	// Debug members
-	bool _singleStep = false;							// Flag for _singleStep mode
+	bool _singleStep = false;                           // Flag for _singleStep mode
 
 	// Input members
-	int _pressedAction 	  = 0;
-	int _heldAction 	  = 0;
+	int _pressedAction    = 0;
+	int _heldAction       = 0;
 	int _pressedDirection = 0;
-	int _heldDirection 	  = 0;
+	int _heldDirection    = 0;
 
 	// Text printing members
 	uint8 _slowText  = 0;
 	uint8 _formatted = 0;
-	uint8 _collumn 	 = 0;
-	uint8 _row 		 = 0;
-	uint8 _myButton	 = 0;
-	uint8 _lastYes	 = 0;
+	uint8 _collumn   = 0;
+	uint8 _row       = 0;
+	uint8 _myButton  = 0;
+	uint8 _lastYes   = 0;
 
 	// Music members
-	Song _playing;										// Currently playing song
-	int _themeID  = 0;									// Not sure yet tbh
+	Song _playing;                                      // Currently playing song
+	int _themeID  = 0;                                  // Not sure yet tbh
 	int _combatID = 0;
 
 	// Asset members
-	int _numSprites = 0;								// This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
-	DataSprite _dataSprites[kFont + 1];					// All the sprite data, indexed by SpriteName
-		Sprite _sprites[kMaxSprites];					// All the sprites shown on screen
-		 Cycle _cycles[kMaxCycles];
-	Common::Array<Common::String> _strPtrs;				// Str should really be a char array, but inserting frame values will be stupid so it's just a string instead
+	int _numSprites = 0;                                // This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
+	DataSprite _dataSprites[kFont + 1];                 // All the sprite data, indexed by SpriteName
+	Sprite _sprites[kMaxSprites];                   // All the sprites shown on screen
+	Cycle _cycles[kMaxCycles];
+	Common::Array<Common::String> _strPtrs;             // Str should really be a char array, but inserting frame values will be stupid so it's just a string instead
 	Common::Array<Motive>  _motivePtrs;
 	Common::Array<Damage>  _damagePtrs;
-	Common::Array<Use>	   _usePtrs;
+	Common::Array<Use>     _usePtrs;
 	Common::Array<Pickup>  _pickupPtrs;
-	Common::Array<SCycle>  _cycPtrs;					// This is not actually a set of pointers, but it is serving the function of what was called cycPtrs in the source
-	CArray2D<Motive>	   _programPtrs;
+	Common::Array<SCycle>  _cycPtrs;                    // This is not actually a set of pointers, but it is serving the function of what was called cycPtrs in the source
+	CArray2D<Motive>       _programPtrs;
 	Common::Array<ObjType> _objTypePtrs;
 
 	// Universe members in order of their original memory layout
-	uint16 *_logicalCNM;								// As confusing as this is, we get Logical CNM from the .CNM file, and we get the CNM from the .UNV file
+	uint16 *_logicalCNM;                                // As confusing as this is, we get Logical CNM from the .CNM file, and we get the CNM from the .UNV file
 	uint16 *_modCNM;
 	uint16 *_modLogicalCNM;
-	  Univ *_univ;										// Pointer to the struct that contains the universe properties
-	Common::SeekableReadStream *_dataBuffer;			// This contains the CNM and the CBM
-	uint16 *_CNM;										// Stands for CHARACTER NUMBER MAP
-	  byte *_CBM;										// Stands for CHARACTER BIT MAP (?)
-	  byte *_oldCBM;
+	Univ   *_univ;                                      // Pointer to the struct that contains the universe properties
+	Common::SeekableReadStream *_dataBuffer;            // This contains the CNM and the CBM
+	uint16 *_CNM;                                       // Stands for CHARACTER NUMBER MAP
+	byte   *_CBM;                                       // Stands for CHARACTER BIT MAP (?)
+	byte   *_oldCBM;
 
 	uint16  _myCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
 	uint16  _myModCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
 	uint16  _myModLCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
 
 	// Screen members
-	  byte *_screenBuff;								// The final buffer that will transfer to the screen
+	byte *_screenBuff;                                  // The final buffer that will transfer to the screen
 	uint16  _columnX[kViewPortCW + 1];
 	uint16  _columnTop[kViewPortCW + 1];
-	uint16  _columnIndex[kViewPortCW + 1];				// Why the heck is this an entire array, when it's just an index that gets zeroed before it gets used anyway...
+	uint16  _columnIndex[kViewPortCW + 1];              // Why the heck is this an entire array, when it's just an index that gets zeroed before it gets used anyway...
 	uint16  _tIndex[kMaxDrawItems];
 	uint16  _tPriority[kMaxDrawItems];
-	uint16  _viewPortX 	   = 0;
-	uint16  _viewPortY 	   = 0;
-	uint16  _myViewPortX   = 0;							// Probably mirror of viewportX
+	uint16  _viewPortX     = 0;
+	uint16  _viewPortY     = 0;
+	uint16  _myViewPortX   = 0;                         // Probably mirror of viewportX
 	uint16  _myViewPortY   = 0;
-	   int  _lastGauge 	   = 0;							// Mirror for player health, used to update health gauge display
-	uint16  _lastBMW 	   = 0;							// Mirrors used to determine where bitmap width needs to be re-calculated
-	uint16  _lastY 		   = 0;
-	uint16  _lastPoint 	   = 0;
-	uint16  _penX 		   = 0;							// Basically where in the screen we are currently drawing
-	uint16  _penY 		   = 0;
+	int     _lastGauge     = 0;                         // Mirror for player health, used to update health gauge display
+	uint16  _lastBMW       = 0;                         // Mirrors used to determine where bitmap width needs to be re-calculated
+	uint16  _lastY         = 0;
+	uint16  _lastPoint     = 0;
+	uint16  _penX          = 0;                         // Basically where in the screen we are currently drawing
+	uint16  _penY          = 0;
 	uint16  _myUnivPointX  = 0;
 	uint16  _myUnivPointY  = 0;
-	   int  _num2DrawItems = 0;
+	int     _num2DrawItems = 0;
 	Graphics::Surface *_mainSurface;
-GenericSprite _genSprites[6];
+	GenericSprite _genSprites[6];
 
 	// Palette members
-	   int _dontResetColors = 0;						// Not sure yet
-	  bool _usingNormal  	= 0;						// Whether the palette is using normal
-	  bool _dim 			= 0;						// Whether the palette is dim
+	int  _dontResetColors = 0;                          // Not sure yet
+	bool _usingNormal     = 0;                          // Whether the palette is using normal
+	bool _dim             = 0;                          // Whether the palette is dim
 	uint16 _palUniv[16];
 	uint16 _palDefault[16];
 	uint16 _palWhite[16];
 	uint16 _palBlack[16];
 	uint16 _palDim[16];
-	  byte _palRGB[48];									// Palette that ScummVM actually uses, which is an RGB conversion of the original
+	byte _palRGB[48];                                   // Palette that ScummVM actually uses, which is an RGB conversion of the original
 
 
 	/*
@@ -464,34 +469,34 @@ GenericSprite _genSprites[6];
 	 */
 
 	// Screen
-	void clearScreen();									// Draws a black rectangle on the screen buffer but only inside the frame
-	void whiteScreen();									// Draws a white rectanlge on the screen buffer (but does not do anything with resetColors)
-	void rect(int x, int y, int w, int h);				// Draws a solid rectangle at x,y with size w,h. Also shadows for blit?
-	void backspace();									// Moves draw position back and draws empty rect in place of char
+	void clearScreen();                                 // Draws a black rectangle on the screen buffer but only inside the frame
+	void whiteScreen();                                 // Draws a white rectanlge on the screen buffer (but does not do anything with resetColors)
+	void rect(int x, int y, int w, int h);              // Draws a solid rectangle at x,y with size w,h. Also shadows for blit?
+	void backspace();                                   // Moves draw position back and draws empty rect in place of char
 	void printByte(int b);
 	void printChr(char c);
-	void loadWindow();									// Gets the window.bm file
-	void drawUniv();									// Draw the background, add the sprites, determine draw order, draw the sprites
-	void copyToScreen();								// If draw is 0, just check input, otherwise also copy the screen buffer to the scummvm surface and update screen
-	void mungeBM();										// Put together final bitmap?
-	void blit();										// Will probably want this to be it's own function
-	void blit40();										// Uses macro blit 40 times
+	void loadWindow();                                  // Gets the window.bm file
+	void drawUniv();                                    // Draw the background, add the sprites, determine draw order, draw the sprites
+	void copyToScreen();                                // If draw is 0, just check input, otherwise also copy the screen buffer to the scummvm surface and update screen
+	void mungeBM();                                     // Put together final bitmap?
+	void blit();                                        // Will probably want this to be it's own function
+	void blit40();                                      // Uses macro blit 40 times
 	void sBlit();
 	void scroll();
-	void makeMyCNM();									// ?
-	void drawBGRND();									// Draw floor parts of leftmask rightmask and maskers
-	void addRows();										// Add rows to drawitem array
+	void makeMyCNM();                                   // ?
+	void drawBGRND();                                   // Draw floor parts of leftmask rightmask and maskers
+	void addRows();                                     // Add rows to drawitem array
 	void addSprite(uint16 vpX, uint16 vpY, SpriteName s, int img, uint16 x, uint16 y, uint16 p);
-	void addSprites();									// Add all active sprites that are in the viewport, into a list that will be sorted by priority
-	void sortDrawItems();								// Sort said items
-	void drawItems();									// Draw the items over the background
+	void addSprites();                                  // Add all active sprites that are in the viewport, into a list that will be sorted by priority
+	void sortDrawItems();                               // Sort said items
+	void drawItems();                                   // Draw the items over the background
 	void drawIcon(int img);
-	void setPen(uint16 penX, uint16 penY);				// Sets the 'pen' x and y positions, including making y negative if above a certain point
+	void setPen(uint16 penX, uint16 penY);              // Sets the 'pen' x and y positions, including making y negative if above a certain point
 	void center();
 	void carriageReturn();
 
 	// Music
-	void toggleSound();									// Actually pauses the sound, doesn't just turn it off/mute
+	void toggleSound();                                 // Actually pauses the sound, doesn't just turn it off/mute
 	void fixPause();
 	Song getPlaying();
 	void playMazeSong();
@@ -501,46 +506,46 @@ GenericSprite _genSprites[6];
 	void stopMusic();
 	void musicPause(int sID);
 	void musicUnPause(int sID);
-	void loadSingles(Common::String songName);			// Loads and then parse the maze song
+	void loadSingles(Common::String songName);          // Loads and then parse the maze song
 	void standardBeep();
 
 	// Palette
-	void loadPalette();									// Get the static palette data from the disk
-	void setColors(uint16 pal[]);						// Applies the current palette to the ScummVM surface palette
-	void fixColors();									// Determine whether the screen should be dim or normal
+	void loadPalette();                                 // Get the static palette data from the disk
+	void setColors(uint16 pal[]);                       // Applies the current palette to the ScummVM surface palette
+	void fixColors();                                   // Determine whether the screen should be dim or normal
 	void useNormal();
 	void useDim();
 	void useBlack();
 	void useWhite();
-	void pump();										// Alternates between white and black with delays in between (flashes screen)
+	void pump();                                        // Alternates between white and black with delays in between (flashes screen)
 	void fadePal(uint16 pal[], int count, uint16 target[]); // Fades the palette except the frame
-	void fade(uint16 pal[], int dir, int delay);		// Calls fadePal() by a given delay each iteration
-	void fadeOut(int j);								// Calls Fade with a delay of j jiffies and direction 1
-	void fadeIn(int j);									// || and direction 0
+	void fade(uint16 pal[], int dir, int delay);        // Calls fadePal() by a given delay each iteration
+	void fadeOut(int j);                                // Calls Fade with a delay of j jiffies and direction 1
+	void fadeIn(int j);                                 // || and direction 0
 	void normalFadeOut();
 	void slowFadeOut();
 	void normalFadeIn();
 
 	// Assets
 	Common::SeekableReadStream *loadIFF(Common::String fileName); // Loads a file and uncompresses if it is compressed
-	void initStoryStatic();								// Sets up all of the global static story elements
-	 int loadUniv(char mazeNum);						// Unpacks the .CNM and .UNV files into all the CNM stuff, returns the total length of everything
-	void loadMazeGraphics(int m);						// Creates a universe with a maze
-	void makeBlisters(int povX, int povY);				// Turns the unmodified CNM/CBM/LCNM etc into the modified ones to actually be used for drawing the game
-	void loadFont();									// Gets the font.spr file, and centers the sprite
-	void clearSprites();								// Clears all sprites before drawing the current frame
-	void loadSprites();									// Loads all the sprite files and centers their sprites (in spritelist, but called from kernal)
+	void initStoryStatic();                             // Sets up all of the global static story elements
+	int loadUniv(char mazeNum);                        // Unpacks the .CNM and .UNV files into all the CNM stuff, returns the total length of everything
+	void loadMazeGraphics(int m);                       // Creates a universe with a maze
+	void makeBlisters(int povX, int povY);              // Turns the unmodified CNM/CBM/LCNM etc into the modified ones to actually be used for drawing the game
+	void loadFont();                                    // Gets the font.spr file, and centers the sprite
+	void clearSprites();                                // Clears all sprites before drawing the current frame
+	void loadSprites();                                 // Loads all the sprite files and centers their sprites (in spritelist, but called from kernal)
 
 	// Input
-	void userIO();										// Get input
-	void pollKeys();									// Buffer input
-	void noNetwork();									// Setup input mirrors
-	void waitKey();										// Waits until a key is pressed (until getInput() returns true)
-	void waitClick();									// Waits until one of the two buttons is pressed
-	void blit8();										// This is actually just input, but it is called blit because it does a 'paddle blit' 8 times
+	void userIO();                                      // Get input
+	void pollKeys();                                    // Buffer input
+	void noNetwork();                                   // Setup input mirrors
+	void waitKey();                                     // Waits until a key is pressed (until getInput() returns true)
+	void waitClick();                                   // Waits until one of the two buttons is pressed
+	void blit8();                                       // This is actually just input, but it is called blit because it does a 'paddle blit' 8 times
 
 	// These will replace the myriad of hardware input handling from the source
-	bool getInput();									// True if there was input, false if not
+	bool getInput();                                    // True if there was input, false if not
 	void addKeyBuffer();
 	void clearKeyBuff();
 
@@ -564,24 +569,24 @@ GenericSprite _genSprites[6];
 	void drawLRHC(int chr, int x, int y);
 
 
-	/* 
+	/*
 	 * [Logic.cpp] Functions from Logic.GS
 	 */
 
 	// Debug
-	void doSingleStep();								// Let the user advance the engine one frame at a time
+	void doSingleStep();                                // Let the user advance the engine one frame at a time
 
 	// Main
-	void trapKeys();									// Poorly named, this checks if the player wants to restart/pause music/use debug step
-	 int keyOrButton();									// Returns value based on whether it was a keyboard key or a button press
+	void trapKeys();                                    // Poorly named, this checks if the player wants to restart/pause music/use debug step
+	int keyOrButton();                                 // Returns value based on whether it was a keyboard key or a button press
 	void logicInit();
-	void logic();										// Keeps time, handles win and lose conditions, then general logic
-	void restartLogic();								// This is the actual logic init
-	 int logicFreeze();									// Overcomplicated way to check if game over or level over
+	void logic();                                       // Keeps time, handles win and lose conditions, then general logic
+	void restartLogic();                                // This is the actual logic init
+	int logicFreeze();                                 // Overcomplicated way to check if game over or level over
 	void updateHitGauge();
 	void drawGauge(int h);
 	void makeCertificate();
-	void calcCheckSum(int l, uint8 checksum[]);			// Checksum is one word, but the source called it CheckSum
+	void calcCheckSum(int l, uint8 checksum[]);         // Checksum is one word, but the source called it CheckSum
 	bool getCertificate();
 	void printCertificate();
 
@@ -594,7 +599,7 @@ GenericSprite _genSprites[6];
 	bool isSavedKing();
 	void setSavedAna();
 	bool isSavedAna();
-	 int getLevel();									// Literally just return _level...
+	int getLevel();                                    // Literally just return _level...
 	void gameOverDisplay();
 	void gameOver();
 	void levelOver();
@@ -662,7 +667,7 @@ GenericSprite _genSprites[6];
 	 */
 
 	// Misc
-	void cycleFreeAll();							// Delete all cycles
+	void cycleFreeAll();                            // Delete all cycles
 
 
 	/*
@@ -678,7 +683,7 @@ GenericSprite _genSprites[6];
 
 	// Init
 	void initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY); // Initializes the data sprite
-	
+
 	// Main
 	void superSprite(DataSprite *dSprite, uint16 x, uint16 y, int img, uint16 bmw, byte *dst, uint16 superTop, uint16 superBottom);
 	bool clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skipY, DataSprite *dSprite, uint16 &pointX, uint16 &pointY, int img, uint16 bmw, uint16 superTop, uint16 superBottom);
@@ -702,7 +707,7 @@ GenericSprite _genSprites[6];
 	 * [door.cpp] Functions from Door.GS
 	 */
 
-	void roomTransfer(int r, int x, int y);		// Transfers the player from the current room to a new room at x,y
+	void roomTransfer(int r, int x, int y);     // Transfers the player from the current room to a new room at x,y
 	void doorOpenSecret();
 	void doorCloseSecret();
 	//void doorToNextLevel();
@@ -711,7 +716,7 @@ GenericSprite _genSprites[6];
 	void doorNew(SDoor door);
 	void doorDrawAll();
 	void doorOnDoorMat();
-	//void doorEnter();	// <-- this is actually a method of Player Monster, should probably move it there later		
+	//void doorEnter(); // <-- this is actually a method of Player Monster, should probably move it there later
 	int findDoorTop(int x, int y);
 	int findDoor(int x, int y);
 	bool doLockStuff(int d, MonsterID m, int top);
@@ -735,9 +740,9 @@ GenericSprite _genSprites[6];
 	 *
 	 */
 
-	Common::ErrorCode initDisks();						// Opens and parses IMMORTAL.dsk and IMMORTAL_GFX.dsk
-	uint32 getFeatures() const;							// Returns the game description flags
-	Common::String getGameId() const;					// Returns the game Id
+	Common::ErrorCode initDisks();                      // Opens and parses IMMORTAL.dsk and IMMORTAL_GFX.dsk
+	uint32 getFeatures() const;                         // Returns the game description flags
+	Common::String getGameId() const;                   // Returns the game Id
 
 	/* Gets a random number
 	 */
@@ -747,9 +752,9 @@ GenericSprite _genSprites[6];
 
 	bool hasFeature(EngineFeature f) const override {
 		return
-			(f == kSupportsLoadingDuringRuntime) ||
-			(f == kSupportsSavingDuringRuntime) ||
-			(f == kSupportsReturnToLauncher);
+		    (f == kSupportsLoadingDuringRuntime) ||
+		    (f == kSupportsSavingDuringRuntime) ||
+		    (f == kSupportsReturnToLauncher);
 	};
 
 	bool canLoadGameStateCurrently() override {
@@ -765,13 +770,13 @@ GenericSprite _genSprites[6];
 	Common::Error syncGame(Common::Serializer &s);
 
 	/* Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) {
-		Common::Serializer s(nullptr, stream);
-		return syncGame(s);
+	    Common::Serializer s(nullptr, stream);
+	    return syncGame(s);
 	}
 
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
+	    Common::Serializer s(stream, nullptr);
+	    return syncGame(s);
 	} */
 };
 

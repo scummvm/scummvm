@@ -29,13 +29,13 @@ namespace Immortal {
 // --- ProDOSFile methods ---
 
 ProDOSFile::ProDOSFile(char name[15], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk)
-		: _type(type)
-		, _totalBlocks(tBlk)
-		, _eof(eof)
-		, _blockPtr(bPtr)
-		, _disk(disk) {
-		strncpy(_name, name, 15);
-	}
+	: _type(type)
+	, _totalBlocks(tBlk)
+	, _eof(eof)
+	, _blockPtr(bPtr)
+	, _disk(disk) {
+	strncpy(_name, name, 15);
+}
 
 /* For debugging purposes, this prints the meta data of a file */
 
@@ -81,7 +81,7 @@ int ProDOSFile::parseIndexBlock(byte *memOffset, int blockNum, int rem) const {
 	for (int i = 0; i < blockNum; i++) {
 		dataSize   = (i == (blockNum - 1)) ? rem : ProDOSDisk::kBlockSize;
 		dataOffset = _disk->readByte();         // Low byte is first
-		
+
 		/* The cursor needs to know where to get the next pointer from in the index block,
 		 * but it also needs to jump to the offset of data to read it, so we need to preserve
 		 * the position in the index block it was in before.
@@ -93,7 +93,7 @@ int ProDOSFile::parseIndexBlock(byte *memOffset, int blockNum, int rem) const {
 
 		getDataBlock(memOffset + readSize, dataOffset, dataSize);
 		readSize += dataSize;
-		
+
 		// And now we resume the position before this call
 		_disk->seek(diskPos);
 	}
@@ -129,7 +129,7 @@ Common::SeekableReadStream *ProDOSFile::createReadStream() const {
 	} else if (_type == kFileTypeSapling) {
 		_disk->seek(indexBlock);
 		parseIndexBlock(finalData, _totalBlocks - 1, remainder);
-	
+
 	} else {
 		// If it's not a seed and not a sapling, it's a tree.
 		_disk->seek(indexBlock);
@@ -222,7 +222,7 @@ void ProDOSDisk::getDirectoryHeader(DirHeader *h) {
 	getHeader(h);
 	h->_parentBlockPtr   = _disk.readUint16LE();
 	h->_parentEntryIndex = _disk.readByte();
-	h->_parentEntryLen   = _disk.readUint16LE();  
+	h->_parentEntryLen   = _disk.readUint16LE();
 }
 
 /* This is a little sneaky, but since the bulk of the header is the same, we're just going to pretend the volume header
@@ -233,7 +233,7 @@ void ProDOSDisk::getVolumeHeader(VolHeader *h) {
 	getHeader((DirHeader *)h);
 	h->_bitmapPtr = _disk.readUint16LE();
 	h->_volBlocks = _disk.readUint16LE();
-	   _volBlocks = h->_volBlocks;
+	_volBlocks = h->_volBlocks;
 }
 
 /* Getting a file entry header is very similar to getting a header, but with different data. */
@@ -280,7 +280,7 @@ void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
 	for (int i = 0; i < h->_fileCount; i++) {
 		// When we have read all the files for a given block (_entriesPerBlock), we need to change to the next block of the directory
 		if (parsedFiles == h->_entriesPerBlock) {
-			parsedFiles = 0;      
+			parsedFiles = 0;
 			_disk.seek(n * kBlockSize);
 			p = _disk.readUint16LE();
 			n = _disk.readUint16LE();
@@ -300,8 +300,8 @@ void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
 
 			_files.setVal(fileName, Common::SharedPtr<ProDOSFile>(currFile));
 			_disk.seek(currPos);
-		
-		// Otherwise, if it is a subdirectory, we want to explore that subdirectory
+
+			// Otherwise, if it is a subdirectory, we want to explore that subdirectory
 		} else if (fileEntry._type == kFileTypeSubDir) {
 
 			_disk.seek(fileEntry._blockPtr * kBlockSize);
@@ -371,7 +371,7 @@ bool ProDOSDisk::open(const Common::String filename) {
 
 ProDOSDisk::ProDOSDisk(const Common::String filename) {
 	if (open(filename)) {
-		debug ("%s has been loaded", filename.c_str());
+		debug("%s has been loaded", filename.c_str());
 	}
 }
 

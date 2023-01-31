@@ -30,7 +30,7 @@
 
 namespace Immortal {
 
-/* 
+/*
  *
  * -----                          -----
  * ----- Screen Drawing Functions -----
@@ -49,11 +49,11 @@ void ImmortalEngine::drawUniv() {
 	_myUnivPointY = !(_myViewPortY & (kChrH - 1)) + kViewPortSpY;
 
 	//makeMyCNM();
-	//drawBGRND();							// Draw floor parts of leftmask rightmask and maskers
-	//addRows();								// Add rows to drawitem array
-	//addSprites();							// Add all active sprites that are in the viewport, into a list that will be sorted by priority
-	//sortDrawItems();						// Sort said items
-	//drawItems();							// Draw the items over the background
+	//drawBGRND();                          // Draw floor parts of leftmask rightmask and maskers
+	//addRows();                                // Add rows to drawitem array
+	//addSprites();                         // Add all active sprites that are in the viewport, into a list that will be sorted by priority
+	//sortDrawItems();                      // Sort said items
+	//drawItems();                          // Draw the items over the background
 }
 
 void ImmortalEngine::copyToScreen() {
@@ -79,7 +79,7 @@ void ImmortalEngine::clearScreen() {
 			_screenBuff[((y + 20) * kResH) + (x + 32)] = 0;
 		}
 	}
-	
+
 	_penX = kTextLeft;
 	_penY = kTextTop;
 
@@ -109,8 +109,8 @@ void ImmortalEngine::addRows() {
 	// I'm not really sure how this works yet
 	int i = _num2DrawItems;
 	_tPriority[i] = !(!(_myViewPortY & (kChrH - 1)) + _myViewPortY);
-	
-	for (int j = 0; j != kViewPortCH+4; j++, i++) {
+
+	for (int j = 0; j != kViewPortCH + 4; j++, i++) {
 		_tIndex[i] = (j << 5) | 0x8000;
 		_tPriority[i] = _tPriority[i] - kChrH;
 	}
@@ -123,13 +123,13 @@ void ImmortalEngine::addSprite(uint16 vpX, uint16 vpY, SpriteName s, int img, ui
 		if (x >= (kResH + kMaxSpriteLeft)) {
 			x |= kMaskHigh;                         // Make it negative
 		}
-		
+
 		_sprites[_numSprites]._X = (x << 1) + vpX;
-	
+
 		if (y >= (kMaxSpriteAbove + kResV)) {
 			y |= kMaskHigh;
 		}
-		
+
 		_sprites[_numSprites]._Y = (y << 1) + vpY;
 
 		if (p >= 0x80) {
@@ -137,7 +137,7 @@ void ImmortalEngine::addSprite(uint16 vpX, uint16 vpY, SpriteName s, int img, ui
 		}
 
 		_sprites[_numSprites]._priority = ((p + y) ^ 0xFFFF) + 1;
-		
+
 		_sprites[_numSprites]._image = img;
 		_sprites[_numSprites]._dSprite = &_dataSprites[s];
 		_sprites[_numSprites]._on = 1;
@@ -153,7 +153,9 @@ void ImmortalEngine::addSprites() {
 	int tmpNum = _num2DrawItems;
 	for (int i = 0; i < kMaxSprites; i++) {
 		// If the sprite is active
-		// This is commented out for testing until the issue with the function is resolved
+		/* TODO
+		 * This is commented out for testing until the issue with the function is resolved
+		 */
 		if (/*_sprites[i]._on*/0 == 1) {
 			// If sprite X is an odd number???
 			if ((_sprites[i]._X & 1) != 0) {
@@ -185,7 +187,7 @@ void ImmortalEngine::addSprites() {
 			int sx = ((_sprites[i]._X + tempImg->_deltaX) - tempD->_cenX) - _myViewPortX;
 			int sy = ((_sprites[i]._Y + tempImg->_deltaY) - tempD->_cenY) - _myViewPortY;
 
-			if (sx >= 0 ) {
+			if (sx >= 0) {
 				if (sx >= kViewPortW) {
 					continue;
 				}
@@ -193,7 +195,7 @@ void ImmortalEngine::addSprites() {
 				continue;
 			}
 
-			if (sy >= 0 ) {
+			if (sy >= 0) {
 				if (sy >= kViewPortH) {
 					continue;
 				}
@@ -226,10 +228,10 @@ void ImmortalEngine::sortDrawItems() {
 		// Assume that the list is sorted
 		bailout = true;
 		for (int i = 1; i < top; i++) {
-			if (_tPriority[i] > _tPriority[i-1]) {
+			if (_tPriority[i] > _tPriority[i - 1]) {
 				uint16 tmp = _tPriority[i];
-				_tPriority[i] = _tPriority[i-1];
-				_tPriority[i-1] = tmp;
+				_tPriority[i] = _tPriority[i - 1];
+				_tPriority[i - 1] = tmp;
 
 				// List was not sorted yet, therefor we need to check it again
 				bailout = false;
@@ -264,9 +266,9 @@ void ImmortalEngine::drawBGRND() {
 				// Left Mask, draw upper right hand corner (UPHC) of floor
 				drawURHC(_myCNM[y2][x], pointX, pointY);
 			}
-			pointX += kChrW;									// This (and the H version) could be added to the for loop iterator arugment
+			pointX += kChrW;                                    // This (and the H version) could be added to the for loop iterator arugment
 		}
-		pointX -= (kChrW * (kViewPortCW + 1));					// They could have also just done pointX = _myUnivPointX
+		pointX -= (kChrW * (kViewPortCW + 1));                  // They could have also just done pointX = _myUnivPointX
 		pointY += kChrH;
 	}
 }
@@ -290,7 +292,7 @@ void ImmortalEngine::drawItems() {
 	uint16 rowY = 0;
 	do {
 		uint16 index = _tIndex[n];
-		if (index >= 0x8000) {								// If negative, it's a row to draw
+		if (index >= 0x8000) {                              // If negative, it's a row to draw
 			// rowY is (I think) the position of the start of the scroll window within the tile data
 			rowY = (index & 0x7FFF) + _myUnivPointY;
 
@@ -376,10 +378,10 @@ void ImmortalEngine::printByte(int b) {
 
 void ImmortalEngine::printChr(char c) {
 	// This draws a character from the font sprite table, indexed as an ascii char, using superSprite
-	c &= kMaskASCII;				// Grab just the non-extended ascii part
+	c &= kMaskASCII;                // Grab just the non-extended ascii part
 
 	if (c == ' ') {
-		_penX += 8;					// A space just moves the position on the screen to draw ahead by the size of a space
+		_penX += 8;                 // A space just moves the position on the screen to draw ahead by the size of a space
 		return;
 	}
 
@@ -394,7 +396,7 @@ void ImmortalEngine::printChr(char c) {
 	case 'M':
 	case 'W':
 		_penX += 8;
-		// fall through
+	// fall through
 	default:
 		break;
 	}
@@ -408,13 +410,13 @@ void ImmortalEngine::printChr(char c) {
 		_penX -= 3;
 		break;
 	case 'j':
-		// fall through
+	// fall through
 	case 't':
 		_penX -= 2;
 		break;
 	case 'l':
 		_penX -= 4;
-		// fall through
+	// fall through
 	default:
 		break;
 	}
@@ -517,13 +519,13 @@ int ImmortalEngine::loadUniv(char mazeNum) {
 
 	// The view port of the level is longer than it is wide, so there are more columns than rows
 	// numCols = rectX / 64 (charW)
-	_univ->_rectX 	 = mazeUNV->readUint16LE() << 1;
+	_univ->_rectX    = mazeUNV->readUint16LE() << 1;
 	_univ->_numCols  = _univ->_rectX >> 6;
 	_univ->_num2Cols = _univ->_numCols << 1;
 
 	// univRectY is mazeUNV[22]
 	// numRows = rectY / 32 (charH)
-	_univ->_rectY 	 = mazeUNV->readUint16LE();
+	_univ->_rectY    = mazeUNV->readUint16LE();
 	_univ->_numRows  = _univ->_rectY >> 5;
 	_univ->_num2Rows = _univ->_numRows << 1;
 
@@ -557,7 +559,7 @@ int ImmortalEngine::loadUniv(char mazeNum) {
 	}
 
 	_dataBuffer->seek(0);
-	_univ->_numChrs++;							// Inc one more time being 0 counts
+	_univ->_numChrs++;                          // Inc one more time being 0 counts
 	_univ->_num2Chrs = _univ->_numChrs << 1;
 
 	//int lCNMCBM = mungeCBM(_univ->_num2Chrs);
@@ -591,37 +593,39 @@ void ImmortalEngine::loadSprites() {
 	 */
 
 	Common::String spriteNames[] = {"MORESPRITES.SPR", "NORLAC.SPR", "POWWOW.SPR", "TURRETS.SPR",
-									"WORM.SPR", "IANSPRITES.SPR", "LAST.SPR", "DOORSPRITES.SPR",
-									"GENSPRITES.SPR", "DRAGON.SPR", "MORDAMIR.SPR", "FLAMES.SPR",
-									"ROPE.SPR", "RESCUE.SPR", "TROLL.SPR", "GOBLIN.SPR", "WIZARDA.SPR",
-									"WIZARDB.SPR", "ULINDOR.SPR", "SPIDER.SPR", "DRAG.SPR"};
+	                                "WORM.SPR", "IANSPRITES.SPR", "LAST.SPR", "DOORSPRITES.SPR",
+	                                "GENSPRITES.SPR", "DRAGON.SPR", "MORDAMIR.SPR", "FLAMES.SPR",
+	                                "ROPE.SPR", "RESCUE.SPR", "TROLL.SPR", "GOBLIN.SPR", "WIZARDA.SPR",
+	                                "WIZARDB.SPR", "ULINDOR.SPR", "SPIDER.SPR", "DRAG.SPR"
+	                               };
 
 	// Number of sprites in each file
 	int spriteNum[] = {10, 5, 7, 10, 4, 6, 3, 10, 5, 3, 2, 1, 3, 2, 9, 10, 8, 3, 9, 10, 9};
 
 	// Pairs of (x,y) for each sprite
 	// Should probably have made this a 2d array, oops
-	uint16 centerXY[] = {16,56, 16,32, 27,39, 16,16, 32,16, 34,83, 28,37, 8,12, 8,19, 24,37,
-	/* Norlac      */   46,18, 40,0, 8,13, 32,48, 32,40,
-	/* Powwow      */   53,43, 28,37, 27,37, 26,30, 26,30, 26,29, 28,25,
-	/* Turrets     */   34,42, 28,37, 24,32, 32,56, 26,56, 8,48, 8,32, 8,14, 8,24, 32,44,
-	/* Worm        */   20,65, 25,46, 9,56, 20,53,
-	/* Iansprites  */   24,50, 32,52, 32,53, 32,52, 40,16, 40,16,
-	/* Last        */   32,56, 24,32, 24,36,
-	/* Doorsprites */   0,64, 4,49, 18,49, 18,56, 24,32, 24,16, 24,56, 24,32, 24,32, 36,32,
-	/* Gensprites  */   16,44, 16,28, 32,24, 34,45, 20,28,
-	/* Dragon      */   24,93, 32,48, 0,64,
-	/* Mordamir    */   104,104, 30,30,
-	/* Flames      */   64,0,
-	/* Rope        */   0,80, 32,52, 32,40,
-	/* Rescue      */   0,112, 0,112,
-	/* Troll       */   28,38, 28,37, 28,37, 31,38, 28,37, 25,39, 28,37, 28,37, 28,37,
-	/* Goblin      */   28,38, 30,38, 26,37, 30,38, 26,37, 26,37, 26,37, 26,37, 26,36, 44,32,
-	/* Wizarda	   */	28,37, 28,37, 28,37, 28,37, 28,37, 28,37, 28,37, 28,37,
-	/* Wizardb	   */   28,37, 28,37, 28,37,
-	/* Ulindor     */   42,42, 42,42, 42,42, 42,42, 42,42, 42,42, 42,42, 42,42, 42,42,
-	/* Spider      */   64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44, 64,44,
-	/* Drag        */   19,36, 19,36, 19,36, 19,36, 19,36, 19,36, 19,36, 19,36, 19,36};
+	uint16 centerXY[] = {16, 56, 16, 32, 27, 39, 16, 16, 32, 16, 34, 83, 28, 37, 8, 12, 8, 19, 24, 37,
+	/* Norlac      */    46, 18, 40, 0, 8, 13, 32, 48, 32, 40,
+	/* Powwow      */    53, 43, 28, 37, 27, 37, 26, 30, 26, 30, 26, 29, 28, 25,
+	/* Turrets     */    34, 42, 28, 37, 24, 32, 32, 56, 26, 56, 8, 48, 8, 32, 8, 14, 8, 24, 32, 44,
+	/* Worm        */    20, 65, 25, 46, 9, 56, 20, 53,
+	/* Iansprites  */    24, 50, 32, 52, 32, 53, 32, 52, 40, 16, 40, 16,
+	/* Last        */    32, 56, 24, 32, 24, 36,
+	/* Doorsprites */    0, 64, 4, 49, 18, 49, 18, 56, 24, 32, 24, 16, 24, 56, 24, 32, 24, 32, 36, 32,
+	/* Gensprites  */    16, 44, 16, 28, 32, 24, 34, 45, 20, 28,
+	/* Dragon      */    24, 93, 32, 48, 0, 64,
+	/* Mordamir    */    104, 104, 30, 30,
+	/* Flames      */    64, 0,
+	/* Rope        */    0, 80, 32, 52, 32, 40,
+	/* Rescue      */    0, 112, 0, 112,
+	/* Troll       */    28, 38, 28, 37, 28, 37, 31, 38, 28, 37, 25, 39, 28, 37, 28, 37, 28, 37,
+	/* Goblin      */    28, 38, 30, 38, 26, 37, 30, 38, 26, 37, 26, 37, 26, 37, 26, 37, 26, 36, 44, 32,
+	/* Wizarda     */    28, 37, 28, 37, 28, 37, 28, 37, 28, 37, 28, 37, 28, 37, 28, 37,
+	/* Wizardb     */    28, 37, 28, 37, 28, 37,
+	/* Ulindor     */    42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42,
+	/* Spider      */    64, 44, 64, 44, 64, 44, 64, 44, 64, 44, 64, 44, 64, 44, 64, 44, 64, 44, 64, 44,
+	/* Drag        */    19, 36, 19, 36, 19, 36, 19, 36, 19, 36, 19, 36, 19, 36, 19, 36, 19, 36
+	};
 
 	// s = current sprite index, f = current file index, n = current number of sprites for this file
 	int s = 0;
@@ -632,7 +636,7 @@ void ImmortalEngine::loadSprites() {
 		for (int n = 0; n < (spriteNum[f] * 2); n += 2, s++) {
 			// For every data sprite in the file, make a datasprite and initialize it
 			DataSprite d;
-			initDataSprite(file, &d, n/2, centerXY[s * 2], centerXY[(s * 2) + 1]);
+			initDataSprite(file, &d, n / 2, centerXY[s * 2], centerXY[(s * 2) + 1]);
 			_dataSprites[s] = d;
 		}
 	}
@@ -716,7 +720,7 @@ Common::SeekableReadStream *ImmortalEngine::loadIFF(Common::String fileName) {
 	 * allowing us to directly compare it with 'CMP0'.
 	 */
 	char compSig[] = "CMP0";
-		char sig[] = "0000";
+	char sig[] = "0000";
 
 	f.seek(8);
 
@@ -726,7 +730,7 @@ Common::SeekableReadStream *ImmortalEngine::loadIFF(Common::String fileName) {
 
 	if (strcmp(sig, compSig) == 0) {
 		debug("compressed");
-		
+
 		/* The size of the compressed data is stored in the header, but doesn't
 		 * account for the FORM part?? Also, **technically** this is a uint32LE,
 		 * but the engine itself actually /doesn't/ use it like that. It only
@@ -775,7 +779,7 @@ void ImmortalEngine::loadPalette() {
 	// The palettes are stored at a particular location in the disk, this just grabs them
 	Common::File d;
 	d.open("IMMORTAL.dsk");
-	
+
 	d.seek(kPaletteOffset);
 	d.read(_palDefault, 32);
 	d.read(_palWhite, 32);
@@ -797,8 +801,8 @@ void ImmortalEngine::setColors(uint16 pal[]) {
 			// Blue is the first nyble of the first byte, so it needs to move left by 4 bits (000B -> 00B0)
 			// We also need to repeat the bits so that the colour is the same proportion of 255 as it is of 15
 			_palRGB[(i * 3)]     = ((pal[i] & kMaskRed) >> 4) | ((pal[i] & kMaskRed) >> 8);
-			_palRGB[(i * 3) + 1] =  (pal[i] & kMaskGreen)     | ((pal[i] & kMaskGreen) >> 4);
-			_palRGB[(i * 3) + 2] =  (pal[i] & kMaskBlue)      | ((pal[i] & kMaskBlue) << 4);
+			_palRGB[(i * 3) + 1] = (pal[i] & kMaskGreen)     | ((pal[i] & kMaskGreen) >> 4);
+			_palRGB[(i * 3) + 2] = (pal[i] & kMaskBlue)      | ((pal[i] & kMaskBlue) << 4);
 		}
 	}
 	// Palette index to update first is 0, and there are 16 colours to update
@@ -847,9 +851,10 @@ void ImmortalEngine::fadePal(uint16 pal[], int count, uint16 target[]) {
 	 * kept, this is a direct translation of the bit manipulation sequence.
 	 */
 	uint16 maskPal[16] = {0xFFFF, 0x0000, 0x0000, 0x0000,
-						  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
-						  0xFFFF, 0xFFFF, 0xFFFF, 0x0000,
-						  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+	                      0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+	                      0xFFFF, 0xFFFF, 0xFFFF, 0x0000,
+	                      0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF
+	                     };
 
 	uint16 result;
 	uint16 temp;
@@ -930,7 +935,7 @@ void ImmortalEngine::useWhite() {
 
 void ImmortalEngine::useNormal() {
 	setColors(_palDefault);
-	 _usingNormal = 1;
+	_usingNormal = 1;
 }
 
 void ImmortalEngine::useDim() {
@@ -1007,13 +1012,13 @@ void ImmortalEngine::fixPause() {
 	// This is a nasty bit of code isn't it? It's accurate to the source though :D
 	switch (_playing) {
 	case kSongText:
-		// fall through
+	// fall through
 	case kSongMaze:
 		if (_themePaused) {
 			musicUnPause(_themeID);
 			break;
 		}
-		// fall through
+	// fall through
 	default:
 		musicPause(_themeID);
 		break;
@@ -1026,7 +1031,7 @@ void ImmortalEngine::fixPause() {
 			musicUnPause(_combatID);
 			break;
 		}
-		// fall through
+	// fall through
 	default:
 		musicPause(_combatID);
 		break;
@@ -1087,7 +1092,7 @@ void ImmortalEngine::center() {
 // Reset the X position and move the Y position down by 16 pixels
 void ImmortalEngine::carriageReturn() {
 	_penY += 16;
-	_penX = kTextLeft;	
+	_penX = kTextLeft;
 }
 
 } // namespace Immortal

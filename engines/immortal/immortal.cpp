@@ -89,7 +89,7 @@ uint16 ImmortalEngine::mult16(uint16 a, uint16 b) {
 	/* We aren't using the game's multiplication function (mult16), but we do want
 	 * to retain the ability to drop the second word, without doing (uint16) every time
 	 */
-	return (uint16) (a * b);
+	return (uint16)(a * b);
 }
 // -----------------------------------------------------
 
@@ -141,7 +141,7 @@ Common::Error ImmortalEngine::run() {
 
 	_mainSurface = new Graphics::Surface();
 	_mainSurface->create(kResH, kResV, Graphics::PixelFormat::createFormatCLUT8());
-	
+
 	_screenBuff = new byte[kScreenSize];
 
 	if (initDisks() != Common::kNoError) {
@@ -156,33 +156,33 @@ Common::Error ImmortalEngine::run() {
 	_penY = 7;
 	_penX = 1;
 
-	initStoryStatic();						// Init the arrays of static story elements (done at compile time in the source)
-	loadPalette();							// We need to grab the palette from the disk first
+	initStoryStatic();                      // Init the arrays of static story elements (done at compile time in the source)
+	loadPalette();                          // We need to grab the palette from the disk first
 
 	// This is the equivalent of Main->InitGraphics->MyClearScreen in Driver
-	useNormal();							// The first palette will be the default
-	
-	loadFont();								// Load the font sprites
-	loadWindow();							// Load the window background
-	loadSingles("Song A");					// Music
-	loadSprites();							// Get all the sprite data into memory
+	useNormal();                            // The first palette will be the default
+
+	loadFont();                             // Load the font sprites
+	loadWindow();                           // Load the window background
+	loadSingles("Song A");                  // Music
+	loadSprites();                          // Get all the sprite data into memory
 
 	_playing = kSongNothing;
 	_themePaused = 0;
 
-	clearSprites();							// Clear the sprites before we start
+	clearSprites();                         // Clear the sprites before we start
 	// This is where the request play disk would happen, but that's not needed here
-	logicInit();							// Init the game logic
+	logicInit();                            // Init the game logic
 
 	_err = Common::kNoError;
 
 	while (!shouldQuit()) {
-	/* The game loop runs at 60fps, which is 16 milliseconds per frame.
-	 * This loop keeps that time by getting the time in milliseconds at the start of the loop,
-	 * then again at the end, and the difference between them is the remainder
-	 * of the frame budget. If that remainder is within the 16 millisecond budget,
-	 * then it delays ScummVM for the remainder. If it is 0 or negative, then it continues.
-	 */
+		/* The game loop runs at 60fps, which is 16 milliseconds per frame.
+		 * This loop keeps that time by getting the time in milliseconds at the start of the loop,
+		 * then again at the end, and the difference between them is the remainder
+		 * of the frame budget. If that remainder is within the 16 millisecond budget,
+		 * then it delays ScummVM for the remainder. If it is 0 or negative, then it continues.
+		 */
 		int64 loopStart = g_system->getMillis();
 
 		// Main
