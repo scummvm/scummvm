@@ -22,6 +22,7 @@
 #include "graphics/tinygl/gl.h"
 #include "graphics/tinygl/zgl.h"
 #include "graphics/tinygl/zbuffer.h"
+#include "graphics/tinygl/pixelbuffer.h"
 #include "graphics/tinygl/texelbuffer.h"
 
 namespace TinyGL {
@@ -77,22 +78,14 @@ void TexelBuffer::getARGBAt(
 }
 
 // Nearest: store texture in original size.
-NearestTexelBuffer::NearestTexelBuffer(const Graphics::PixelBuffer &buf, uint width, uint height, uint textureSize) : TexelBuffer(width, height, textureSize) {
-	uint pixel_count = _width * _height;
-	_buf = Graphics::PixelBuffer(buf.getFormat(), pixel_count, DisposeAfterUse::NO);
-	_buf.copyBuffer(0, pixel_count, buf);
+BaseNearestTexelBuffer::BaseNearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize) : TexelBuffer(width, height, textureSize), _format(format) {
+	uint count = _width * _height * _format.bytesPerPixel;
+	_buf = new byte[count];
+	memcpy(_buf, buf, count);
 }
 
-NearestTexelBuffer::~NearestTexelBuffer() {
-	_buf.free();
-}
-
-void NearestTexelBuffer::getARGBAt(
-	uint pixel,
-	uint, uint,
-	uint8 &a, uint8 &r, uint8 &g, uint8 &b
-) const {
-	_buf.getARGBAt(pixel, a, r, g, b);
+BaseNearestTexelBuffer::~BaseNearestTexelBuffer() {
+	delete[] _buf;
 }
 
 // Bilinear: each texture coordinates corresponds to the 4 original image
@@ -111,7 +104,9 @@ void NearestTexelBuffer::getARGBAt(
 #define P11_OFFSET 3
 #define PIXEL_PER_TEXEL_SHIFT 2
 
-BilinearTexelBuffer::BilinearTexelBuffer(const Graphics::PixelBuffer &buf, uint width, uint height, uint textureSize) : TexelBuffer(width, height, textureSize) {
+BilinearTexelBuffer::BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize) : TexelBuffer(width, height, textureSize) {
+	const Graphics::PixelBuffer src(format, buf);
+
 	uint pixel00_offset = 0, pixel11_offset, pixel01_offset, pixel10_offset;
 	uint8 *texel8;
 	uint32 *texel32;
@@ -121,7 +116,7 @@ BilinearTexelBuffer::BilinearTexelBuffer(const Graphics::PixelBuffer &buf, uint 
 		for (uint x = 0; x < _width; x++) {
 			texel8 = (uint8 *)texel32;
 			pixel11_offset = pixel00_offset + _width + 1;
-			buf.getARGBAt(
+			src.getARGBAt(
 				pixel00_offset,
 				*(texel8 + P00_OFFSET + A_OFFSET),
 				*(texel8 + P00_OFFSET + R_OFFSET),
@@ -133,7 +128,7 @@ BilinearTexelBuffer::BilinearTexelBuffer(const Graphics::PixelBuffer &buf, uint 
 				pixel01_offset = pixel00_offset;
 			} else
 				pixel01_offset = pixel00_offset + 1;
-			buf.getARGBAt(
+			src.getARGBAt(
 				pixel01_offset,
 				*(texel8 + P01_OFFSET + A_OFFSET),
 				*(texel8 + P01_OFFSET + R_OFFSET),
@@ -145,14 +140,14 @@ BilinearTexelBuffer::BilinearTexelBuffer(const Graphics::PixelBuffer &buf, uint 
 				pixel10_offset = pixel00_offset;
 			} else
 				pixel10_offset = pixel00_offset + _width;
-			buf.getARGBAt(
+			src.getARGBAt(
 				pixel10_offset,
 				*(texel8 + P10_OFFSET + A_OFFSET),
 				*(texel8 + P10_OFFSET + R_OFFSET),
 				*(texel8 + P10_OFFSET + G_OFFSET),
 				*(texel8 + P10_OFFSET + B_OFFSET)
 			);
-			buf.getARGBAt(
+			src.getARGBAt(
 				pixel11_offset,
 				*(texel8 + P11_OFFSET + A_OFFSET),
 				*(texel8 + P11_OFFSET + R_OFFSET),

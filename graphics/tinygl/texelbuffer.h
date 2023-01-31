@@ -22,7 +22,8 @@
 #ifndef GRAPHICS_TEXELBUFFER_H
 #define GRAPHICS_TEXELBUFFER_H
 
-#include "graphics/tinygl/pixelbuffer.h"
+#include "graphics/pixelformat.h"
+#include "graphics/tinygl/colormasks.h"
 
 namespace TinyGL {
 
@@ -47,25 +48,59 @@ protected:
 	float _widthRatio, _heightRatio;
 };
 
-class NearestTexelBuffer : public TexelBuffer {
+class BaseNearestTexelBuffer : public TexelBuffer {
 public:
-	NearestTexelBuffer(const Graphics::PixelBuffer &buf, uint width, uint height, uint textureSize);
-	~NearestTexelBuffer();
+	BaseNearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize);
+	~BaseNearestTexelBuffer();
+
+protected:
+	byte *_buf;
+	Graphics::PixelFormat _format;
+};
+
+template<uint Format, uint Type>
+class NearestTexelBuffer final : public BaseNearestTexelBuffer {
+public:
+	NearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize)
+	  : BaseNearestTexelBuffer(buf, format, width, height, textureSize) {}
 
 protected:
 	void getARGBAt(
 		uint pixel,
 		uint, uint,
 		uint8 &a, uint8 &r, uint8 &g, uint8 &b
-	) const override;
+	) const override {
+		Pixel col = *(((const Pixel *)_buf) + pixel);
+		_format.colorToARGBT<ColorMask>(col, a, r, g, b);
+	}
 
-private:
-	Graphics::PixelBuffer _buf;
+	typedef ColorMasks<Format, Type> ColorMask;
+	typedef typename ColorMask::PixelType Pixel;
+};
+
+template<>
+class NearestTexelBuffer<TGL_RGB, TGL_UNSIGNED_BYTE> final : public BaseNearestTexelBuffer {
+public:
+	NearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize)
+	  : BaseNearestTexelBuffer(buf, format, width, height, textureSize) {}
+
+protected:
+	void getARGBAt(
+		uint pixel,
+		uint, uint,
+		uint8 &a, uint8 &r, uint8 &g, uint8 &b
+	) const override {
+		byte *col = _buf + (pixel * 3);
+		a = 0xff;
+		r = col[0];
+		g = col[1];
+		b = col[2];
+	}
 };
 
 class BilinearTexelBuffer : public TexelBuffer {
 public:
-	BilinearTexelBuffer(const Graphics::PixelBuffer &buf, uint width, uint height, uint textureSize);
+	BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize);
 	~BilinearTexelBuffer();
 
 protected:
