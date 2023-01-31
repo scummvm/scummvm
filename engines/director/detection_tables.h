@@ -2078,7 +2078,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("cdphysics", "", "CDPHYS/CDINTRO.EXE", "65d06b5fef155a2473434571aff5bc29", 370004, 313),
 
 	MACDEMO1_l("cellofania", "Demo", "Cellofania.Demo", "f5277c53bacd27936158dd3867e587e2", 389970, Common::JA_JPN, 311),
-	MACGAME1_l("cellofania", "", "Cellofania", "f5277c53bacd27936158dd3867e587e2", 394124, Common::JA_JPN, 311),
+	MACGAME1t_l("cellofania", "", "Cellofania", "09f361d7e8b581d2475d0e586b102016", 394124, Common::JA_JPN, 311),
 
 	// English Mac filename is The C.H.A.O.S. Continuum™
 	// Japanese Mac demo filename is CHAOS デモ and another file is called CHAOS Demo
