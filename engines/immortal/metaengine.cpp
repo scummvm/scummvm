@@ -34,12 +34,12 @@ Common::Error ImmortalMetaEngine::createInstance(OSystem *syst, Engine **engine,
 
 bool ImmortalMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return (f == kSavesUseExtendedFormat) ||
-		   (f == kSimpleSavesNames) ||
-		   (f == kSupportsListSaves) ||
-		   (f == kSupportsDeleteSave) ||
-		   (f == kSavesSupportMetaInfo) ||
-		   (f == kSavesSupportThumbnail) ||
-		   (f == kSupportsLoadingDuringStartup);
+	       (f == kSimpleSavesNames) ||
+	       (f == kSupportsListSaves) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSupportsLoadingDuringStartup);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(IMMORTAL)

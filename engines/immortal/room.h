@@ -90,10 +90,10 @@ struct Monster {
 };
 
 struct Flame {
-FPattern _p = kFlameOff;
+	FPattern _p = kFlameOff;
 	uint8 _x = 0;
 	uint8 _y = 0;
-	  int _c = 0;
+	int _c = 0;
 };
 
 struct Chest {
@@ -126,12 +126,12 @@ public:
 
 	RoomFlag _flags;
 
-	uint8 _xPos 	  = 0;
-	uint8 _yPos 	  = 0;
+	uint8 _xPos      = 0;
+	uint8 _yPos      = 0;
 	uint8 _holeRoom  = 0;
 	uint8 _holeCellX = 0;
 	uint8 _holeCellY = 0;
-	uint8 _candleTmp = 0;							// Special case for candle in maze 0
+	uint8 _candleTmp = 0;                           // Special case for candle in maze 0
 	uint8 _numFlames = 0;
 	uint8 _numInRoom = 0;
 
@@ -150,7 +150,7 @@ public:
 
 	//void init();
 	//void inRoomNew();
-	//void getTilePair(uint8 x, uint8 y);			// Modifies a struct of the tile number, aboveTile number, and the cell coordinates of the tile
+	//void getTilePair(uint8 x, uint8 y);           // Modifies a struct of the tile number, aboveTile number, and the cell coordinates of the tile
 
 	void setHole();
 	void drawContents(uint16 vX, uint16 vY);
@@ -172,14 +172,14 @@ public:
 	 */
 
 	// Init
-	 int cycleNew(CycID id);						// Adds a cycle to the current list
+	int cycleNew(CycID id);                        // Adds a cycle to the current list
 	void cycleFree(int c);
 
 	// Getters
-DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + getNum
-	 int cycleGetIndex(int c);
-	 int cycleGetFrame(int c);
-	 int cycleGetNumFrames(int c);
+	DataSprite *cycleGetDataSprite(int c);          // This takes the place of getFile + getNum
+	int cycleGetIndex(int c);
+	int cycleGetFrame(int c);
+	int cycleGetNumFrames(int c);
 
 	// Setters
 	void cycleSetIndex(int c, int f);
@@ -205,7 +205,7 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 	void lightTorch(uint8 x, uint8 y);
 	void flameFreeAll();
 	void flameSetRoom(Common::Array<SFlame>);
-	 int flameGetCyc(Flame *f, int first);
+	int flameGetCyc(Flame *f, int first);
 
 	/*
 	 * [bullet.cpp] Functions from Bullet.GS
@@ -222,7 +222,7 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 	 * [Univ.cpp] Functions from Univ.GS
 	 */
 
-	 void univAddSprite(uint16 vX, uint16 vY, uint16 x, uint16 y, SpriteName s, int img, uint16 p);
+	void univAddSprite(uint16 vX, uint16 vY, uint16 x, uint16 y, SpriteName s, int img, uint16 p);
 };
 
 } // namespace immortal

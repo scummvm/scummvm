@@ -53,7 +53,7 @@
 
 namespace Immortal {
 
-/* 
+/*
  *
  * -----                -----
  * ----- Main Functions -----
@@ -145,10 +145,10 @@ bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skip
 	} else if ((pointY + height) < superTop) {
 		return true;
 
-	/* The actual clipping is pretty simple:
-	 * Lower height = stop drawing the sprite early. Higher SkipY = start drawing the sprite late
-	 * So we just determine the delta for each based on superTop and superBottom
-	 */
+		/* The actual clipping is pretty simple:
+		 * Lower height = stop drawing the sprite early. Higher SkipY = start drawing the sprite late
+		 * So we just determine the delta for each based on superTop and superBottom
+		 */
 	} else {
 
 		// Starting with checking if any of the sprite is under the bottom of the screen
@@ -203,7 +203,7 @@ void ImmortalEngine::spriteAligned(DataSprite *dSprite, Image &img, uint16 &skip
 				// as that is the transparent colour
 				pixel1 = (img._bitmap[y][x] & kMask8High) >> 4;
 				pixel2 = (img._bitmap[y][x] & kMask8Low);
-				
+
 				if (pixel1 != 0) {
 					_screenBuff[pointIndex] = pixel1;
 				}
@@ -229,7 +229,7 @@ void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 poin
 	uint16 height = dSprite->_images[img]._rectH;
 
 	uint16 skipY  = 0;
-	uint16 pointIndex = 0;			// This is 'screen' and 'screen + 2' in the source
+	uint16 pointIndex = 0;          // This is 'screen' and 'screen + 2' in the source
 
 	pointX -= cenX;
 	pointY -= cenY;
@@ -237,7 +237,7 @@ void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 poin
 
 	// Normally I would just make the return from clip be reversed, but the idea is that the return would be 'offscreen == true'
 	if (!(clipSprite(height, pointIndex, skipY, dSprite, pointX, pointY, img, bmw, superTop, superBottom))) {
-		
+
 		// Alignment was a factor in the assembly because it was essentially 2 pixels per byte. However ScummVM is 1 pixel per byte
 		spriteAligned(dSprite, dSprite->_images[img], skipY, pointIndex, height, bmw, dst);
 	}
