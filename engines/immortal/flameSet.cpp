@@ -88,7 +88,7 @@ void Room::lightTorch(uint8 x, uint8 y) {
 	}
 }
 
-void Room::flameSetRoom(Common::Array<SFlame> allFlames) {
+void Room::flameSetRoom(Common::Array<SFlame> &allFlames) {
 	for (int i = 0; i < allFlames.size(); i++) {
 		Flame f;
 		f._p = allFlames[i]._p;
