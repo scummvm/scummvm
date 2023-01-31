@@ -278,6 +278,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
+		"darkside",
+		"Demo",
+		{
+			{"DARKSIDE.EXE", 0, "5c69b7c5586031c153cbb58fc6d2bff8", 20905},
+			{"DSIDEC.EXE", 0, "796c1d1a9583a0ccf5bba47813fa6a8a", 39640},
+			{"DSIDEE.EXE", 0, "1f3f607dad97efe1d8e979ef588bda01", 46952},
+			{"DSIDEH.EXE", 0, "7f45c6047798c5443f57c2002e2d2c27", 43368},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
+	},
+	{
 		"totaleclipse",
 		"",
 		{

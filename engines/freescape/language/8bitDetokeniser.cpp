@@ -378,6 +378,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 
 		case 48:
 			detokenisedStream += "EXECUTE ";
+			currentInstruction = FCLInstruction(Token::EXECUTE);
 			break;
 		}
 

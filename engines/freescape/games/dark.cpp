@@ -38,6 +38,36 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 }
 
 void DarkEngine::loadAssets() {
+	if (isDemo())
+		loadAssetsDemo();
+	else
+		loadAssetsFullGame();
+}
+
+void DarkEngine::loadAssetsDemo() {
+	Common::File file;
+	if (isDOS() && _renderMode == Common::kRenderEGA) {
+		loadBundledImages();
+		file.open("DSIDEE.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open DSIDEE.EXE");
+
+		loadFonts(&file, 0xa598);
+		load8bitBinary(&file, 0xa700, 16);
+	} else if (isDOS() && _renderMode == Common::kRenderCGA) {
+		//loadBundledImages();
+		file.open("DSIDEC.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open DSIDEC.EXE");
+		loadFonts(&file, 0xa598);
+		load8bitBinary(&file, 0x8a70, 4); // TODO
+	} else
+		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
+}
+
+void DarkEngine::loadAssetsFullGame() {
 	Common::File file;
 	if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
