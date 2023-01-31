@@ -1304,6 +1304,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "picarddossier",		"Mini-Omnipedia: Picard Dossier" },
 	{ "poliq",				"Political IQ Test" },
 	{ "pqmakingof",			"The Making of Police Quest" },
+	{ "ronja",				"Ronja Rövardotter" },
 	{ "scissorsnstones",	"Scissors N Stones On-Line Manual" },
 	{ "solmahjong",			"Solitudes Mahjong Game" },
 	{ "superbowltrivia",	"Super Bowl Trivia Game" },
@@ -7590,6 +7591,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2t_l("ritterrost", "",  "start.exe",			"9bc3d64be0fe3caa612f070b27c943b8", 2595758,
 								   "data/Rostburg.DXR", "6bf95a48f366bdf8af3a198c7b723c77", 38107269, Common::DE_DEU, 702),
+
+	// Just a launcher for the game installer (Dutch release)
+	// Game is not Director
+	WINGAME2t_l("ronja", "Launcher", "start.exe",	   "6406cc4e3d59440e68717076ffe04f91", 2933829,
+									 "Ronja.exe",	   "42b225e052662197dd8bbb7ff3d4e5bd", 253952, Common::NL_NLD, 700),
 
 	// original filename is a single space
 	MACGAME1("sentence", "", "xn-- -", "0944b962ebb00f4b5d5149d220f8449b", 113458, 702),
