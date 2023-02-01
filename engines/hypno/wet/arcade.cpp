@@ -216,7 +216,8 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 						_segmentOffset = 8;
 						_segmentRepetition = 0;
 						_segmentShootSequenceOffset = 8;
-					}
+					} else if (_arcadeMode == "Y3")
+						_skipLevel = true;
 				} else {
 					_loseLevel = true;
 					return;
