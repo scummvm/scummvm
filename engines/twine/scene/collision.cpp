@@ -231,43 +231,43 @@ void Collision::handlePushing(IVec3 &processActor, const IVec3 &oldPos, const IV
 }
 
 bool Collision::checkValidObjPos(int32 actorIdx) {
-	const ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	const ActorStruct *ptrobj = _engine->_scene->getActor(actorIdx);
 
-	const IVec3 m0 = actor->posObj() + actor->_boundingBox.mins;
-	const IVec3 m1 = actor->posObj() + actor->_boundingBox.maxs;
+	const IVec3 m0 = ptrobj->posObj() + ptrobj->_boundingBox.mins;
+	const IVec3 m1 = ptrobj->posObj() + ptrobj->_boundingBox.maxs;
 
-	if (m0.x < 0 || m0.x > SIZE_BRICK_XZ * 63) {
+	if (m0.x < 0 || m0.x > SIZE_BRICK_XZ * (SIZE_CUBE_X - 1)) {
 		return false;
 	}
-	if (m1.x < 0 || m1.x > SIZE_BRICK_XZ * 63) {
+	if (m1.x < 0 || m1.x > SIZE_BRICK_XZ * (SIZE_CUBE_X - 1)) {
 		return false;
 	}
-	if (m0.z < 0 || m0.z > SIZE_BRICK_XZ * 63) {
+	if (m0.z < 0 || m0.z > SIZE_BRICK_XZ * (SIZE_CUBE_X - 1)) {
 		return false;
 	}
-	if (m1.z < 0 || m1.z > SIZE_BRICK_XZ * 63) {
+	if (m1.z < 0 || m1.z > SIZE_BRICK_XZ * (SIZE_CUBE_X - 1)) {
 		return false;
 	}
 
 	Grid *grid = _engine->_grid;
-	if (grid->worldColBrickFull(m0.x, m0.y, m0.z, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
+	if (grid->worldColBrickFull(m0.x, m0.y, m0.z, ptrobj->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
 		return false;
 	}
-	if (grid->worldColBrickFull(m1.x, m0.y, m0.z, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
+	if (grid->worldColBrickFull(m1.x, m0.y, m0.z, ptrobj->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
 		return false;
 	}
-	if (grid->worldColBrickFull(m1.x, m0.y, m1.z, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
+	if (grid->worldColBrickFull(m1.x, m0.y, m1.z, ptrobj->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
 		return false;
 	}
-	if (grid->worldColBrickFull(m0.x, m0.y, m1.z, actor->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
+	if (grid->worldColBrickFull(m0.x, m0.y, m1.z, ptrobj->_boundingBox.maxs.y, actorIdx) != ShapeType::kNone) {
 		return false;
 	}
 
 	for (int32 n = 0; n < _engine->_scene->_nbObjets; ++n) {
-		const ActorStruct *actorTest = _engine->_scene->getActor(n);
-		if (n != actorIdx && actorTest->_body != -1 && !actor->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
-			const IVec3 &t0 = actorTest->posObj() + actorTest->_boundingBox.mins;
-			const IVec3 &t1 = actorTest->posObj() + actorTest->_boundingBox.maxs;
+		const ActorStruct *ptrobjt = _engine->_scene->getActor(n);
+		if (n != actorIdx && ptrobjt->_body != -1 && !ptrobj->_staticFlags.bIsHidden && ptrobjt->_carryBy != actorIdx) {
+			const IVec3 &t0 = ptrobjt->posObj() + ptrobjt->_boundingBox.mins;
+			const IVec3 &t1 = ptrobjt->posObj() + ptrobjt->_boundingBox.maxs;
 			if (m0.x < t1.x && m1.x > t0.x && m0.y < t1.y && m1.y > t0.y && m0.z < t1.z && m1.z > t0.z) {
 				return false;
 			}

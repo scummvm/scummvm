@@ -136,7 +136,7 @@ struct BonusParameter {
 class ActorStruct {
 private:
 	ShapeType _col = ShapeType::kNone; // collision
-	bool _brickCausesDamage = false; // TODO: this is a bitmask with multiple values in the original source
+	bool _brickCausesDamage = false;
 
 	EntityData _entityData;
 public:
@@ -191,7 +191,7 @@ public:
 
 	/** Process actor coordinate Nxw, Nyw, Nzw */
 	IVec3 _processActor;
-	IVec3 _oldPos;
+	IVec3 _oldPos; // OldPosX, OldPosY, OldPosZ
 
 	int32 _offsetTrack = -1;
 	uint8 *_moveScript = nullptr;
