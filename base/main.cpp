@@ -418,7 +418,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	bool autodetect = false;
 
 	// Check for the autorun name
-	if (argv[0]) {
+	if (argc && argv && argv[0]) {
 		const char *s = strrchr(argv[0], '/');
 
 		if (!s)
@@ -444,7 +444,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		Common::String line;
 		Common::String res;
 
-		autorunArgs.push_back(argv[0]);
+		autorunArgs.push_back(argc && argv ? argv[0] : "");
 
 		if (autorun.open("scummvm-autorun")) {
 			while (!autorun.eos()) {
