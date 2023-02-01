@@ -434,7 +434,7 @@ void Movements::processRandomAction(int actorIdx) {
 	if (actor->brickCausesDamage()) {
 		const int32 angle = ClampAngle(actor->_beta + (_engine->getRandomNumber() & (LBAAngles::ANGLE_180 - 1)) - LBAAngles::ANGLE_90 + LBAAngles::ANGLE_180);
 		initRealAngleConst(actor->_beta, angle, actor->_speed, &actor->realAngle);
-		actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->timerRef + 300;
+		actor->_delayInMillis = _engine->timerRef + _engine->getRandomNumber(_engine->toSeconds(6)) + _engine->toSeconds(6);
 		_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeRepeat, AnimationTypes::kAnimInvalid, actorIdx);
 	}
 
@@ -443,7 +443,7 @@ void Movements::processRandomAction(int actorIdx) {
 		if (_engine->timerRef > actor->_delayInMillis) {
 			const int32 angle = ClampAngle(actor->_beta + (_engine->getRandomNumber() & (LBAAngles::ANGLE_180 - 1)) - LBAAngles::ANGLE_90);
 			initRealAngleConst(actor->_beta, angle, actor->_speed, &actor->realAngle);
-			actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->timerRef + 300;
+			actor->_delayInMillis = _engine->timerRef + _engine->getRandomNumber(_engine->toSeconds(6)) + _engine->toSeconds(6);
 		}
 	}
 }
