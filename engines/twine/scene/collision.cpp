@@ -236,16 +236,16 @@ bool Collision::checkValidObjPos(int32 actorIdx) {
 	const IVec3 m0 = ptrobj->posObj() + ptrobj->_boundingBox.mins;
 	const IVec3 m1 = ptrobj->posObj() + ptrobj->_boundingBox.maxs;
 
-	if (m0.x < 0 || m0.x > SIZE_BRICK_XZ * (SIZE_CUBE_X - 1)) {
+	if (m0.x < 0 || m0.x > SCENE_SIZE_MAX) {
 		return false;
 	}
-	if (m1.x < 0 || m1.x > SIZE_BRICK_XZ * (SIZE_CUBE_X - 1)) {
+	if (m1.x < 0 || m1.x > SCENE_SIZE_MAX) {
 		return false;
 	}
-	if (m0.z < 0 || m0.z > SIZE_BRICK_XZ * (SIZE_CUBE_X - 1)) {
+	if (m0.z < 0 || m0.z > SCENE_SIZE_MAX) {
 		return false;
 	}
-	if (m1.z < 0 || m1.z > SIZE_BRICK_XZ * (SIZE_CUBE_X - 1)) {
+	if (m1.z < 0 || m1.z > SCENE_SIZE_MAX) {
 		return false;
 	}
 
