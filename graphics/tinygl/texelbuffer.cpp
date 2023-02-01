@@ -91,12 +91,12 @@ protected:
 
 BaseNearestTexelBuffer::BaseNearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize) : TexelBuffer(width, height, textureSize), _format(format) {
 	uint count = _width * _height * _format.bytesPerPixel;
-	_buf = new byte[count];
+	_buf = (byte *)gl_malloc(count);
 	memcpy(_buf, buf, count);
 }
 
 BaseNearestTexelBuffer::~BaseNearestTexelBuffer() {
-	delete[] _buf;
+	gl_free(_buf);
 }
 
 template<uint Format, uint Type>
@@ -214,7 +214,7 @@ BilinearTexelBuffer::BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat 
 	uint8 *texel8;
 	uint32 *texel32;
 
-	texel32 = _texels = new uint32[_width * _height << PIXEL_PER_TEXEL_SHIFT];
+	texel32 = _texels = (uint32 *)gl_malloc((_width * _height << PIXEL_PER_TEXEL_SHIFT) * sizeof(uint32));
 	for (uint y = 0; y < _height; y++) {
 		for (uint x = 0; x < _width; x++) {
 			texel8 = (uint8 *)texel32;
@@ -264,7 +264,7 @@ BilinearTexelBuffer::BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat 
 }
 
 BilinearTexelBuffer::~BilinearTexelBuffer() {
-	delete[] _texels;
+	gl_free(_texels);
 }
 
 static inline int interpolate(int v00, int v01, int v10, int xf, int yf) {
