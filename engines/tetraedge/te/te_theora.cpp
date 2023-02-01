@@ -97,7 +97,7 @@ float TeTheora::frameRate() {
 	return _decoder->getRate().toDouble();
 }
 
-bool TeTheora::update(unsigned long i, TeImage &imgout) {
+bool TeTheora::update(uint i, TeImage &imgout) {
 	if (_decoder->getCurFrame() > (int)i && !_path.empty()) {
 		// rewind.. no good way to do that, but it should
 		// only happen on loop.

@@ -86,11 +86,11 @@ public:
 	TeVector3f32 normal(uint idx) const;
 
 	void optimizeVerticies();
-	void resizeUpdatedTables(unsigned long newSize);
+	void resizeUpdatedTables(uint newSize);
 
 	void setColor(const TeColor &col) override;
 	void setColor(uint idx, const TeColor &col);
-	void setConf(unsigned long vertexCount, unsigned long indexCount, enum Mode mode, uint materialCount, uint materialIndexCount);
+	void setConf(uint vertexCount, uint indexCount, enum Mode mode, uint materialCount, uint materialIndexCount);
 	void setIndex(uint idx, uint val);
 	void setNormal(uint idx, const TeVector3f32 &val);
 	void setTextureUV(uint idx, const TeVector2f32 &val);

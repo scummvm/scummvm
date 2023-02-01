@@ -52,8 +52,8 @@ public:
 		return TeVector2s32(_x - other._x, _y - other._y);
 	}
 
-	long squaredLength() const {
-		return _x * _x + _y * _y;
+	int64 squaredLength() const {
+		return (int64)_x * _x + (int64)_y * _y;
 	}
 
 	static void deserialize(Common::ReadStream &stream, TeVector2s32 &dest);

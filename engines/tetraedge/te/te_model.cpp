@@ -174,7 +174,7 @@ void TeModel::update() {
 		Common::Array<TeMatrix4x4> matricies;
 		matricies.resize(_bones.size());
 		for (uint i = 0; i < _bones.size(); i++) {
-			const bone &b = _bones[i];
+			const Bone &b = _bones[i];
 			const TeMatrix4x4 matrix = TeMatrix4x4::fromTRS(b._trs);
 			if (b._parentBone == -1 || _bones.size() < 2) {
 				matricies[0] = matrix;
@@ -603,7 +603,7 @@ void TeModel::setVisibleByName(const Common::String &name, bool vis) {
 	}
 }
 
-TeMatrix4x4 TeModel::skinOffset(unsigned long boneno) const {
+TeMatrix4x4 TeModel::skinOffset(uint boneno) const {
 	if (boneno >= _skinOffsets.size())
 		return TeMatrix4x4();
 	return _skinOffsets[boneno];

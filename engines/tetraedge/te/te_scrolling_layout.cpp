@@ -279,7 +279,7 @@ bool TeScrollingLayout::onMouseMove(const Common::Point &pt) {
 	_slideDownMousePos = inputmgr->lastMousePos();
 	TeVector3f32 nowMousePos(inputmgr->lastMousePos());
 	_insideMouseThreshold = (_lastMouseDownPos - nowMousePos).length() <= _mouseMoveThreshold;
-	long elapsed = _scrollTimer.timeElapsed();
+	uint64 elapsed = _scrollTimer.timeElapsed();
 	if (elapsed > 0) {
 		_speed = offset / (float)(elapsed / 1000000.0);
 	}

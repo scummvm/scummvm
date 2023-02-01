@@ -120,7 +120,7 @@ bool TeImagesSequence::load(const Common::Path &path) {
 }
 
 
-bool TeImagesSequence::update(unsigned long i, TeImage &imgout) {
+bool TeImagesSequence::update(uint i, TeImage &imgout) {
 	_curFrame = i;
 
 	if (i >= _files.size())

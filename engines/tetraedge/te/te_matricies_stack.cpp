@@ -68,7 +68,7 @@ void TeMatriciesStack::scale(const TeVector3f32 &scale) {
 	_stack.top().scale(scale);
 }
 
-long TeMatriciesStack::size() {
+uint TeMatriciesStack::size() {
 	return _stack.size();
 }
 

@@ -257,7 +257,7 @@ static int tolua_bnd_release(lua_State *L) {
 }
 
 void tolua_open(lua_State *L) {
-	long luatop = lua_gettop(L);
+	int luatop = lua_gettop(L);
 	lua_pushstring(L, "tolua_opened");
 	lua_rawget(L, LUA_REGISTRYINDEX);
 	if (lua_type(L, -1) != LUA_TBOOLEAN) {

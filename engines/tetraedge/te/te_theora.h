@@ -50,7 +50,7 @@ public:
 	virtual void setTopBorderSize(uint val) override;
 	virtual uint topBorderSize() override;
 	virtual float frameRate() override;
-	virtual bool update(unsigned long i, TeImage &imgout) override;
+	virtual bool update(uint i, TeImage &imgout) override;
 	virtual bool isAtEnd() override;
 	virtual void setColorKeyActivated(bool val) override;
 	virtual void setColorKey(const TeColor &col) override;

@@ -45,7 +45,7 @@ public:
 	void pause();
 	void play();
 
-	void setBufferSize(long bufsize);
+	void setBufferSize(int bufsize);
 	void setColor(const TeColor &col) override;
 
 	void setColorKey(const TeColor &col);

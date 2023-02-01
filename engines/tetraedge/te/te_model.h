@@ -33,6 +33,7 @@
 #include "tetraedge/te/te_tiled_texture.h"
 #include "tetraedge/te/te_intrusive_ptr.h"
 #include "tetraedge/te/te_quaternion.h"
+#include "tetraedge/te/te_resource.h"
 
 namespace Tetraedge {
 
@@ -62,7 +63,7 @@ public:
 		TeTimer _timer;
 	};
 
-	struct bone {
+	struct Bone {
 		Common::String _name;
 		short _parentBone;
 		TeTRS _trs;
@@ -111,7 +112,7 @@ public:
 	void removeAnim();
 	void update();
 
-	void saveBone(Common::SeekableWriteStream &stream, unsigned long boneno);
+	void saveBone(Common::SeekableWriteStream &stream, uint boneno);
 	void saveMesh(Common::SeekableWriteStream &stream, const TeMesh &mesh);
 	void saveModel(Common::SeekableWriteStream &stream, uint num);
 	void saveWeights(Common::SeekableWriteStream &stream, const Common::Array<weightElement> weights);
@@ -122,7 +123,7 @@ public:
 	void setVertexAnim(TeIntrusivePtr<TeModelVertexAnimation> &anim, bool repeat);
 	void setVisibleByName(const Common::String &mname, bool vis);
 
-	TeMatrix4x4 skinOffset(unsigned long boneno) const;
+	TeMatrix4x4 skinOffset(uint boneno) const;
 
 	static Common::SeekableReadStream *tryLoadZlibStream(Common::SeekableReadStream &instr);
 
@@ -148,7 +149,7 @@ protected:
 	TeMatrix4x4 _forcedMatrix;
 	Common::Array<BonesBlender *> _boneBlenders;
 	Common::Array<MeshBlender *> _meshBlenders;
-	Common::Array<bone> _bones;
+	Common::Array<Bone> _bones;
 	Common::Array<TeMatrix4x4> _skinOffsets;
 	Common::Array<TeMatrix4x4> _boneMatricies;
 	Common::Array<TeMatrix4x4> _lerpedElements;

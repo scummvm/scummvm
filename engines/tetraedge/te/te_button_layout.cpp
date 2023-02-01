@@ -213,7 +213,7 @@ void TeButtonLayout::resetTimeFromLastValidation() {
 	timer->timeElapsed();
 }
 
-long TeButtonLayout::timeFromLastValidation() {
+uint64 TeButtonLayout::timeFromLastValidation() {
 	// probably not needed because we reimplemented how this works.
 	error("TODO: Implement TeButtonLayout::timeFromLastValidation.");
 }

@@ -41,12 +41,12 @@ public:
 	// note, probably should be Te*I*3DObject2 args here
 	virtual void addChild(Te3DObject2 *newChild);
 	virtual void addChildBefore(Te3DObject2 *newChild, const Te3DObject2 *ref);
-	virtual Te3DObject2 *child(long offset);
-	long childCount() {
+	virtual Te3DObject2 *child(int offset);
+	int childCount() {
 		return _children.size();
 	}
 
-	long childIndex(Te3DObject2 *childToFind) const;
+	int childIndex(Te3DObject2 *childToFind) const;
 
 	const Common::Array<Te3DObject2 *> &childList() const {
 		return _children;

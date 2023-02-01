@@ -199,7 +199,7 @@ bool Inventory::addObject(InventoryObject *obj) {
 				TeLayout *slot = _gui.layout(Common::String::format("page%dSlot%d", pageNo, slotNo));
 				if (!slot)
 					break;
-				for (long c = 0; c < slot->childCount(); c++) {
+				for (int c = 0; c < slot->childCount(); c++) {
 					Te3DObject2 *child = slot->child(c);
 					InventoryObject *iobj = dynamic_cast<InventoryObject *>(child);
 					if (iobj) {
@@ -428,7 +428,7 @@ void Inventory::selectedObject(InventoryObject *obj) {
 		_gui.buttonLayoutChecked("lire")->setEnable(isDocument(objId));
 		game->setCurrentObjectSprite(obj->spritePath());
 		TeLayout *textObj = _gui.layout("textObject");
-		for (long i = 0; i < textObj->childCount(); i++) {
+		for (int i = 0; i < textObj->childCount(); i++) {
 			if (textObj->child(i)->name() == obj->name()) {
 				textObj->setVisible(true);
 				textObj->child(i)->setVisible(true);

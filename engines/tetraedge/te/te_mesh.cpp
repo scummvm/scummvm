@@ -90,7 +90,7 @@ TeVector3f32 TeMesh::normal(uint idx) const {
 		return _normals[idx];
 }
 
-void TeMesh::resizeUpdatedTables(unsigned long newSize) {
+void TeMesh::resizeUpdatedTables(uint newSize) {
 	_updatedVerticies.resize(newSize);
 	_updatedNormals.resize(newSize);
 }
@@ -118,7 +118,7 @@ void TeMesh::setColor(uint idx, const TeColor &col) {
 	_colors[idx] = col;
 }
 
-void TeMesh::setConf(unsigned long vertexCount, unsigned long indexCount, enum Mode mode, uint materialCount, uint materialIndexCount) {
+void TeMesh::setConf(uint vertexCount, uint indexCount, enum Mode mode, uint materialCount, uint materialIndexCount) {
 	destroy();
 	_initialMaterialIndexCount = materialIndexCount;
 	_verticies.resize(vertexCount);

@@ -37,7 +37,7 @@ void TeModelVertexAnimation::destroy() {
 	_keydata.clear();
 }
 
-TeVector3f32 TeModelVertexAnimation::getKeyVertex(unsigned long keyno, uint vertexno) {
+TeVector3f32 TeModelVertexAnimation::getKeyVertex(uint keyno, uint vertexno) {
 	assert(keyno < _keydata.size());
 	const KeyData &data = _keydata[keyno];
 	assert(vertexno < data._vectors.size());

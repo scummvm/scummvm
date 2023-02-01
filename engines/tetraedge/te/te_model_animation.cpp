@@ -93,9 +93,9 @@ int TeModelAnimation::firstFrame() const {
 	return _firstFrame;
 }
 
-//TeMatrix4x4 TeModelAnimation::getMatrix(const Common::String &mname, unsigned long frame, bool param_5);
+//TeMatrix4x4 TeModelAnimation::getMatrix(const Common::String &mname, uint frame, bool param_5);
 
-TeQuaternion TeModelAnimation::getNMORotation(unsigned long boneNo, float amount) const {
+TeQuaternion TeModelAnimation::getNMORotation(uint boneNo, float amount) const {
 	if (boneNo < _nmoRotArrays.size()) {
 		const Common::Array<NMORotation> &arr = _nmoRotArrays[boneNo];
 		if (arr.size()) {
@@ -119,7 +119,7 @@ TeQuaternion TeModelAnimation::getNMORotation(unsigned long boneNo, float amount
 	return TeQuaternion(0, 0, 0, 1.0);
 }
 
-TeVector3f32 TeModelAnimation::getNMOTranslation(unsigned long boneNo, float amount) const {
+TeVector3f32 TeModelAnimation::getNMOTranslation(uint boneNo, float amount) const {
 	if (boneNo < _nmoTransArrays.size()) {
 		const Common::Array<NMOTranslation> &arr = _nmoTransArrays[boneNo];
 		if (arr.size()) {
@@ -143,9 +143,9 @@ TeVector3f32 TeModelAnimation::getNMOTranslation(unsigned long boneNo, float amo
 	return TeVector3f32(0, 0, 0);
 }
 
-//TeTRS TeModelAnimation::getTRS(const Common::String &boneName, unsigned long frame, bool forceUseFbx);
+//TeTRS TeModelAnimation::getTRS(const Common::String &boneName, uint frame, bool forceUseFbx);
 
-TeTRS TeModelAnimation::getTRS(unsigned long boneNo, unsigned long frame, bool forceUseFbx) const {
+TeTRS TeModelAnimation::getTRS(uint boneNo, uint frame, bool forceUseFbx) const {
 	TeTRS retval;
 
 	if (!_useNMOArrays || forceUseFbx) {
@@ -281,11 +281,11 @@ void TeModelAnimation::reset() {
 	_lastFrame = SHRT_MAX;
 }
 
-void TeModelAnimation::resizeFBXArrays(unsigned long len) {
+void TeModelAnimation::resizeFBXArrays(uint len) {
 	_fbxArrays.resize(len);
 }
 
-void TeModelAnimation::resizeNMOArrays(unsigned long len) {
+void TeModelAnimation::resizeNMOArrays(uint len) {
 	_nmoTransArrays.resize(len);
 	_nmoRotArrays.resize(len);
 	_nmoScaleArrays.resize(len);
@@ -302,7 +302,7 @@ void TeModelAnimation::setBoneName(uint boneNo, const Common::String &bname) {
 	_boneNames[boneNo] = bname;
 }
 
-void TeModelAnimation::setRotation(unsigned long num, float amount, const TeQuaternion &rot) {
+void TeModelAnimation::setRotation(uint num, float amount, const TeQuaternion &rot) {
 	if (!_useNMOArrays) {
 		uint frame = amount;
 		if (_fbxArrays[num].size() <= frame)
@@ -316,12 +316,12 @@ void TeModelAnimation::setRotation(unsigned long num, float amount, const TeQuat
 	}
 }
 
-void TeModelAnimation::setScale(unsigned long num, float amount, const TeVector3f32 &scale) {
+void TeModelAnimation::setScale(uint num, float amount, const TeVector3f32 &scale) {
 	// NOTE: This isn't actually implemented in the original.
 	error("TeModelAnimation::setScale not implemented in original game.");
 }
 
-void TeModelAnimation::setTranslation(unsigned long num, float amount, const TeVector3f32 &trans) {
+void TeModelAnimation::setTranslation(uint num, float amount, const TeVector3f32 &trans) {
 	if (!_useNMOArrays) {
 		uint frame = amount;
 		if (_fbxArrays[num].size() <= frame)

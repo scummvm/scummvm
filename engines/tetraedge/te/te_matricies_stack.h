@@ -43,7 +43,7 @@ public:
 	void rotate(const TeQuaternion &rot);
 	void rotate(float f, const TeVector3f32 &rot);
 	void scale(const TeVector3f32 &scale);
-	long size();
+	uint size();
 	void translate(const TeVector3f32 &trans);
 
 private:

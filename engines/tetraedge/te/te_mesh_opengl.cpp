@@ -225,7 +225,7 @@ uint32 TeMeshOpenGL::getTexEnvMode() const {
 	return _gltexEnvMode;
 }
 
-void TeMeshOpenGL::setConf(unsigned long vertexCount, unsigned long indexCount, enum Mode mode, uint materialCount, uint materialIndexCount) {
+void TeMeshOpenGL::setConf(uint vertexCount, uint indexCount, enum Mode mode, uint materialCount, uint materialIndexCount) {
 	destroy();
 	_initialMaterialIndexCount = materialIndexCount;
 	_verticies.resize(vertexCount);

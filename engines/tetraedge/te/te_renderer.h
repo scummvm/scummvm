@@ -80,7 +80,7 @@ public:
 		AllBuffers = DepthBuffer | ColorBuffer | StencilBuffer
 	};
 
-	void addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsigned long i2, unsigned long i3);
+	void addTransparentMesh(const TeMesh &mesh, uint i1, uint i2, uint i3);
 	void checkError(const Common::String &str) {};
 	virtual void clearBuffer(Buffer buf) = 0;
 	void create();
@@ -154,7 +154,7 @@ protected:
 	int _scissorX;
 	int _scissorY;
 
-	long _numTransparentMeshes;
+	uint _numTransparentMeshes;
 	Common::Array<TeVector3f32> _transparentMeshVertexes;
 	Common::Array<TeVector3f32> _transparentMeshNormals;
 	Common::Array<TeVector2f32> _transparentMeshCoords;

@@ -25,7 +25,7 @@ namespace Tetraedge {
 
 
 /*static*/ bool TeTimer::_pausedAll = false;
-/*static*/ unsigned long TeTimer::_realTime = 0;
+/*static*/ uint64 TeTimer::_realTime = 0;
 /*static*/ Common::Array<TeTimer *> *TeTimer::_timers = nullptr;
 /*static*/ Common::Array<TeTimer *> *TeTimer::_pausedTimers = nullptr;
 /*static*/ TeRealTimer *TeTimer::_realTimer = nullptr;
@@ -70,7 +70,7 @@ void TeTimer::start() {
 	if (!_stopped)
 		return;
 
-	unsigned long timeOffset = (_realTime - _startTime) + _startTimeOffset;
+	uint64 timeOffset = (_realTime - _startTime) + _startTimeOffset;
 	_startTimeOffset = timeOffset;
 	_startTime = _realTime;
 	_lastTimeElapsed = timeOffset;
@@ -99,14 +99,14 @@ void TeTimer::pause() {
 
 void TeTimer::update() {
 	if (!_updated) {
-		unsigned long timeOffset = (_realTime - _startTime) + _startTimeOffset;
+		uint64 timeOffset = (_realTime - _startTime) + _startTimeOffset;
 		_startTimeOffset = timeOffset;
 		_startTime = _realTime;
 		_lastTimeElapsed = timeOffset;
 		_updated = true;
 	}
 	if (_alarmSet) {
-		unsigned long timeOffset = _realTime;
+		uint64 timeOffset = _realTime;
 		if (_stopped)
 			timeOffset = _startTime;
 		timeOffset -= _startTimeOffset;
@@ -118,8 +118,8 @@ void TeTimer::update() {
 	}
 }
 
-unsigned long TeTimer::getTimeFromStart() {
-	unsigned long timeNow;
+uint64 TeTimer::getTimeFromStart() {
+	uint64 timeNow;
 	if (!_stopped)
 		timeNow = _realTime;
 	else
@@ -127,17 +127,17 @@ unsigned long TeTimer::getTimeFromStart() {
 	return timeNow - _startTimeOffset;
 }
 
-unsigned long TeTimer::timeElapsed() {
-	unsigned long elapsed = _realTime - _lastTimeElapsed;
+uint64 TeTimer::timeElapsed() {
+	uint64 elapsed = _realTime - _lastTimeElapsed;
 	_lastTimeElapsed = elapsed + _lastTimeElapsed;
 	return elapsed;
 }
 
-unsigned long TeTimer::timeFromLastTimeElapsed() {
+uint64 TeTimer::timeFromLastTimeElapsed() {
 	return realTimer()->time_() - _lastTimeElapsed;
 }
 
-unsigned long TeTimer::time_() {
+uint64 TeTimer::time_() {
 	return realTimer()->time_();
 }
 
@@ -166,8 +166,8 @@ void TeTimer::pausable(bool ispausable) {
 	}
 }
 
-void TeTimer::setAlarmIn(unsigned long offset) {
-	unsigned long timeNow = _realTime;
+void TeTimer::setAlarmIn(uint64 offset) {
+	uint64 timeNow = _realTime;
 	if (_stopped)
 		timeNow = _startTime;
 	timeNow -= _startTimeOffset;

@@ -154,7 +154,7 @@ void TeSpriteLayout::pause() {
 	_tiledSurfacePtr->pause();
 }
 
-void TeSpriteLayout::setBufferSize(long bufsize) {
+void TeSpriteLayout::setBufferSize(int bufsize) {
 	_tiledSurfacePtr->setBufferSize(bufsize);
 }
 

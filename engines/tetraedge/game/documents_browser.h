@@ -35,7 +35,7 @@ public:
 	void addDocument(Document *document);
 	void addDocument(const Common::String &str);
 
-	void currentPage(long page);
+	void currentPage(int page);
 	int documentCount(const Common::String &str) { // never used?
 		return 1;
 	}
@@ -79,7 +79,7 @@ public:
 	bool onShowedDocumentButton18();
 	bool onShowedDocumentButton19();
 
-	void showDocument(const Common::String &str, long startPage);
+	void showDocument(const Common::String &str, int startPage);
 	void unload();
 
 	TeLayout &zoomedLayout() { return _zoomedLayout; }
@@ -89,8 +89,8 @@ public:
 private:
 	TeTimer _timer;
 	TeLayout _zoomedLayout;
-	unsigned long _curPage;
-	unsigned long _startPage;
+	uint64 _curPage;
+	uint64 _startPage;
 	int _zoomCount;
 	Common::String _curDocName;
 

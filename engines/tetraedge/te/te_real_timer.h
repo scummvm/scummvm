@@ -29,24 +29,24 @@ class TeRealTimer {
 public:
 	TeRealTimer();
 
-	unsigned long getTimeFromStart();
+	uint64 getTimeFromStart();
 	void pause();
 	void start();
 	void stop();
-	unsigned long systemTime();
-	unsigned long monotonicSystemTime();
-	unsigned long time_();
-	unsigned long timeElapsed();
-	unsigned long timeFromLastTimeElapsed();
+	uint64 systemTime();
+	uint64 monotonicSystemTime();
+	uint64 time_();
+	uint64 timeElapsed();
+	uint64 timeFromLastTimeElapsed();
 
 	bool isPaused() const { return _paused; }
 
 private:
 	bool _paused;
-	unsigned long _startTime;
-	unsigned long _startTime2;
-	unsigned long _pausedTime;
-	unsigned long _maxTimeSeen;
+	uint64 _startTime;
+	uint64 _startTime2;
+	uint64 _pausedTime;
+	uint64 _maxTimeSeen;
 
 };
 

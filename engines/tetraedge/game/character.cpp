@@ -183,7 +183,7 @@ TeIntrusivePtr<TeModelAnimation> Character::animCacheLoad(const Common::Path &pa
 	return modelAnim;
 }
 
-float Character::animLength(const TeModelAnimation &modelanim, long bone, long lastframe) {
+float Character::animLength(const TeModelAnimation &modelanim, int bone, int lastframe) {
 	int last = modelanim.lastFrame();
 	if (lastframe > last)
 		lastframe = last;
@@ -790,16 +790,16 @@ float Character::speedFromAnim(double msFromStart) {
 	return result;
 }
 
-float Character::translationFromAnim(const TeModelAnimation &anim, long bone, long param_3) {
-	return translationVectorFromAnim(anim, bone, param_3).z();
+float Character::translationFromAnim(const TeModelAnimation &anim, int bone, int frame) {
+	return translationVectorFromAnim(anim, bone, frame).z();
 }
 
-TeVector3f32 Character::translationVectorFromAnim(const TeModelAnimation &anim, long bone, long frame) {
+TeVector3f32 Character::translationVectorFromAnim(const TeModelAnimation &anim, int bone, int frame) {
 	const TeTRS trs = trsFromAnim(anim, bone, frame);
 	return trs.getTranslation();
 }
 
-TeTRS Character::trsFromAnim(const TeModelAnimation &anim, long bone, long frame) {
+TeTRS Character::trsFromAnim(const TeModelAnimation &anim, int bone, int frame) {
 	if (bone == -1)
 		return TeTRS();
 

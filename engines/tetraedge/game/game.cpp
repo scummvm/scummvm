@@ -1335,7 +1335,7 @@ void Game::playRandomSound(const Common::String &name) {
 		_randomSoundTimer.start();
 		int r = _randomSource.getRandomNumber(RAND_MAX);
 		float f = (r + 1 + (r / 100) * -100);
-		long time = 1000000;
+		uint64 time = 1000000;
 		if (f >= 25.0) {
 			time = f * 45000.0;
 		}
@@ -1491,7 +1491,7 @@ bool Game::showMarkers(bool val) {
 		return false;
 
 	TeLayout *bg = _forGui.layoutChecked("background");
-	for (long i = 0; i < bg->childCount(); i++) {
+	for (int i = 0; i < bg->childCount(); i++) {
 		const InGameScene::TeMarker *marker = _scene.findMarker(bg->child(i)->name());
 		if (marker)
 			bg->child(i)->setVisible(!val);
@@ -1536,7 +1536,7 @@ Common::Error Game::syncGame(Common::Serializer &s) {
 	s.syncString(_currentZone);
 	s.syncString(_currentScene);
 	s.syncAsUint32LE(app->difficulty());
-	long elapsed = _playedTimer.timeFromLastTimeElapsed(); // TODO: + _loadedPlayTime;
+	uint64 elapsed = _playedTimer.timeFromLastTimeElapsed(); // TODO: + _loadedPlayTime;
 	s.syncAsDoubleLE(elapsed);
 	_playedTimer.stop();
 	_playedTimer.start();

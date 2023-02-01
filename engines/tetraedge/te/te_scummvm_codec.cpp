@@ -60,7 +60,7 @@ TeImage::Format TeScummvmCodec::imageFormat() {
 	return TeImage::RGBA8;
 }
 
-bool TeScummvmCodec::update(unsigned long i, TeImage &imgout) {
+bool TeScummvmCodec::update(uint i, TeImage &imgout) {
 	if (!_loadedSurface)
 		return false;
 

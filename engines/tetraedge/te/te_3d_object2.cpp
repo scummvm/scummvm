@@ -77,11 +77,11 @@ void Te3DObject2::addChildBefore(Te3DObject2 *newChild, const Te3DObject2 *ref) 
 	_childListChangedSignal.call();
 }
 
-Te3DObject2 *Te3DObject2::child(long offset) {
+Te3DObject2 *Te3DObject2::child(int offset) {
 	return _children[offset];
 }
 
-long Te3DObject2::childIndex(Te3DObject2 *c) const {
+int Te3DObject2::childIndex(Te3DObject2 *c) const {
 	for (uint i = 0; i < _children.size(); i++) {
 		if (_children[i] == c)
 			return i;

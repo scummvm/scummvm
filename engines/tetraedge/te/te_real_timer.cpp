@@ -30,12 +30,12 @@ TeRealTimer::TeRealTimer() : _startTime(0), _paused(false), _maxTimeSeen(0), _st
 	_pausedTime = 0;
 }
 
-static unsigned long getUsecs() {
-	return (unsigned long)g_system->getMillis() * 1000;
+static uint64 getUsecs() {
+	return (uint64)g_system->getMillis() * 1000;
 }
 
-unsigned long TeRealTimer::getTimeFromStart() {
-	unsigned long timeNow;
+uint64 TeRealTimer::getTimeFromStart() {
+	uint64 timeNow;
 	if (_paused)
 		timeNow = _pausedTime;
 	else
@@ -46,7 +46,7 @@ unsigned long TeRealTimer::getTimeFromStart() {
 
 void TeRealTimer::pause() {
 	if (!_paused) {
-		unsigned long timeNow = getUsecs();
+		uint64 timeNow = getUsecs();
 		if (timeNow < _maxTimeSeen)
 			timeNow = _maxTimeSeen;
 		_maxTimeSeen = timeNow;
@@ -57,7 +57,7 @@ void TeRealTimer::pause() {
 
 void TeRealTimer::start() {
 	if (_paused) {
-		unsigned long timeNow = getUsecs();
+		uint64 timeNow = getUsecs();
 		if (timeNow < _maxTimeSeen)
 			timeNow = _maxTimeSeen;
 		timeNow += (_startTime - _pausedTime);
@@ -75,36 +75,36 @@ void TeRealTimer::stop() {
 	_pausedTime = 0;
 }
 
-unsigned long TeRealTimer::systemTime() {
+uint64 TeRealTimer::systemTime() {
 	return getUsecs();
 }
 
-unsigned long TeRealTimer::monotonicSystemTime() {
-	unsigned long timeNow = getUsecs();
+uint64 TeRealTimer::monotonicSystemTime() {
+	uint64 timeNow = getUsecs();
 	if (_maxTimeSeen < timeNow)
 		_maxTimeSeen = timeNow;
 	return _maxTimeSeen;
 }
 
-unsigned long TeRealTimer::time_() {
+uint64 TeRealTimer::time_() {
 	return systemTime();
 }
 
 /* Time elapsed from the start */
-unsigned long TeRealTimer::timeElapsed() {
-	unsigned long timeNow = getUsecs();
+uint64 TeRealTimer::timeElapsed() {
+	uint64 timeNow = getUsecs();
 	if (_maxTimeSeen < timeNow)
 		_maxTimeSeen = timeNow;
 	_startTime2 = _maxTimeSeen;
-	unsigned long elapsed = _maxTimeSeen - _startTime;
+	uint64 elapsed = _maxTimeSeen - _startTime;
 	return elapsed;
 }
 
-unsigned long TeRealTimer::timeFromLastTimeElapsed() {
-	unsigned long timeNow = getUsecs();
+uint64 TeRealTimer::timeFromLastTimeElapsed() {
+	uint64 timeNow = getUsecs();
 	if (_maxTimeSeen < timeNow)
 		_maxTimeSeen = timeNow;
-	unsigned long elapsed = _maxTimeSeen - _startTime2;
+	uint64 elapsed = _maxTimeSeen - _startTime2;
 	return elapsed;
 }
 

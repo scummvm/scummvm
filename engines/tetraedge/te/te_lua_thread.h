@@ -65,8 +65,8 @@ private:
 	void _resume(int nargs);
 
 	lua_State *_luaThread;
+	uint64 _resumeCount;
 	int _bottomRef;
-	long _resumeCount;
 	int _lastResumeResult;
 	bool _released;
 

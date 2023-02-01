@@ -33,7 +33,7 @@ class TeBezierCurve : public Te3DObject2, public TeReferencesCounter {
 public:
 	TeBezierCurve();
 
-	long bounds(int val);
+	int bounds(int val);
 	void clear();
 	void draw() override;
 	float length();
@@ -44,7 +44,7 @@ public:
 
 	TeVector3f32 retrievePoint(float offset);
 	void setControlPoints(const Common::Array<TeVector3f32> &points);
-	void setNbIterations(unsigned long iterations);
+	void setNbIterations(uint iterations);
 
 	static TeVector3f32 hermiteInterpolate(float param_2, const TeVector3f32 *points, float param_4, float param_5);
 

@@ -46,8 +46,8 @@ public:
 		BUTTON_STATE_ROLLOVER = 3
 	};
 
-	long doubleValidationProtectionTimeoutTime() { return 500; }
-	long frozenValidationTimeoutTime() { return 500; }
+	uint64 doubleValidationProtectionTimeoutTime() { return 500; }
+	uint64 frozenValidationTimeoutTime() { return 500; }
 
 	virtual bool isMouseIn(const TeVector2s32 &mouseloc) override;
 	bool onMouseLeftDown(const Common::Point &pt);
@@ -63,7 +63,7 @@ public:
 	void reset();
 
 	void resetTimeFromLastValidation();
-	long timeFromLastValidation();
+	uint64 timeFromLastValidation();
 
 	void setDisabledLayout(TeLayout *disabledLayout);
 	void setHitZone(TeLayout *hitZoneLayout);

@@ -133,11 +133,11 @@ bool TeTiledTexture::load(const TeIntrusivePtr<Te3DTexture> &texture) {
 	return true;
 }
 
-long TeTiledTexture::numberOfColumns() const {
+uint32 TeTiledTexture::numberOfColumns() const {
 	return ceilf((float)_totalSize._x / (float)_tileSize._x);
 }
 
-long TeTiledTexture::numberOfRow() const {
+uint32 TeTiledTexture::numberOfRow() const {
 	return ceilf((float)_totalSize._y / (float)_tileSize._y);
 }
 

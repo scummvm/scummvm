@@ -37,7 +37,7 @@ public:
 	TeMesh::Mode getMode() const override;
 	void setMode(enum Mode mode) override;
 
-	void setConf(unsigned long vertexCount, unsigned long indexCount, enum Mode mode, uint materialCount, uint materialIndexCount);
+	void setConf(uint vertexCount, uint indexCount, enum Mode mode, uint materialCount, uint materialIndexCount);
 
 	void setglTexEnvBlend() override;
 	uint32 getTexEnvMode() const override;

@@ -39,7 +39,7 @@ void TeImage::copy(TeImage &dest, const TeVector2s32 &vec1, const TeVector2s32 &
 	error("TODO: Implement TeImage::copy");
 }
 
-unsigned long TeImage::countPixelsOfColor(const TeColor &col) const {
+uint64 TeImage::countPixelsOfColor(const TeColor &col) const {
 	error("TODO: Implement TeImage::countPixelsOfColor");
 }
 

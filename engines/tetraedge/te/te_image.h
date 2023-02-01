@@ -56,7 +56,7 @@ public:
 
 	void copy(TeImage &dest, const TeVector2s32 &vec1, const TeVector2s32 &vec2,
 			  const TeVector2s32 &vec3) const;
-	unsigned long countPixelsOfColor(const TeColor &col) const;
+	uint64 countPixelsOfColor(const TeColor &col) const;
 	//void create(); // never used?
 	void createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &palette, Format newformat) {
 		createImg(xsize, ysize, palette, newformat, xsize, ysize);

@@ -1995,7 +1995,7 @@ static void MoveCharacterPlayerTo(float x, float y, float z, bool walkFlag) {
 		return;
 
 	if (game->walkTimer().running() && game->walkTimer().timeElapsed() < 300000) {
-		unsigned long elapsed = game->walkTimer().timeElapsed();
+		uint64 elapsed = game->walkTimer().timeElapsed();
 		game->walkTimer().stop();
 		if (elapsed < 300000) {
 			character->walkMode("Jog");

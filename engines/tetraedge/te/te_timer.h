@@ -23,6 +23,7 @@
 #define TETRAEDGE_TE_TE_TIMER_H
 
 #include "common/array.h"
+#include "common/types.h"
 
 #include "tetraedge/te/te_signal.h"
 #include "tetraedge/te/te_real_timer.h"
@@ -38,12 +39,12 @@ public:
 	void start();
 	void pause();
 	void update();
-	unsigned long getTimeFromStart();
-	void setAlarmIn(unsigned long offset);
-	unsigned long timeElapsed();
-	unsigned long timeFromLastTimeElapsed();
-	unsigned long time_();
-	void setTime(unsigned long time);
+	uint64 getTimeFromStart();
+	void setAlarmIn(uint64 offset);
+	uint64 timeElapsed();
+	uint64 timeFromLastTimeElapsed();
+	uint64 time_();
+	void setTime(uint64 time);
 
 	void pausable(bool ispausable);
 
@@ -62,10 +63,10 @@ private:
 	static Common::Array<TeTimer *> *timers();
 	static Common::Array<TeTimer *> *pausedTimers();
 
-	unsigned long _startTime;
-	unsigned long _startTimeOffset;
-	unsigned long _alarmTime;
-	unsigned long _lastTimeElapsed;
+	uint64 _startTime;
+	uint64 _startTimeOffset;
+	uint64 _alarmTime;
+	uint64 _lastTimeElapsed;
 	bool _pausable;
 	bool _alarmSet;
 	bool _updated;
@@ -74,7 +75,7 @@ private:
 	TeSignal0Param _alarmSignal;
 
 	static bool _pausedAll;
-	static unsigned long _realTime;
+	static uint64 _realTime;
 	static Common::Array<TeTimer *> *_timers;
 	static Common::Array<TeTimer *> *_pausedTimers;
 	static TeRealTimer *_realTimer;

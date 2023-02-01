@@ -111,8 +111,8 @@ void DocumentsBrowser::loadZoomed() {
 	_zoomedLayout.addChild(zoomedChild);
 }
 
-void DocumentsBrowser::currentPage(long setPage) {
-	const Common::String setPageName = Common::String::format("page%ld", setPage);
+void DocumentsBrowser::currentPage(int setPage) {
+	const Common::String setPageName = Common::String::format("page%d", setPage);
 	TeLayout *pageLayout = _gui1.layout(setPageName);
 	if (!pageLayout)
 		return;
@@ -133,7 +133,7 @@ void DocumentsBrowser::currentPage(long setPage) {
 }
 
 bool DocumentsBrowser::onQuitDocumentDoubleClickTimer() {
-	long time = _timer.getTimeFromStart();
+	uint64 time = _timer.getTimeFromStart();
 	_timer.stop();
 	if (time >= 200000) {
 		showDocument(_curDocName, _startPage + 1);
@@ -165,7 +165,7 @@ bool DocumentsBrowser::onZoomedButton() {
 	return false;
 }
 
-void DocumentsBrowser::showDocument(const Common::String &docName, long startPage) {
+void DocumentsBrowser::showDocument(const Common::String &docName, int startPage) {
 	_curPage = startPage;
 	_startPage = startPage;
 	_curDocName = docName;
@@ -225,7 +225,7 @@ void DocumentsBrowser::unload() {
 			TeLayout *slot = _gui1.layout(pageSlotName);
 			if (!slot)
 				break;
-			for (long i = 0; i < slot->childCount(); i++) {
+			for (int i = 0; i < slot->childCount(); i++) {
 				Document *doc = dynamic_cast<Document *>(slot->child(i));
 				if (doc)
 					delete doc;

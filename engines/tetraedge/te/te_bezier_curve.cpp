@@ -31,7 +31,7 @@ TeBezierCurve::TeBezierCurve() : _length(0.0), _rawLength(0.0), _lengthNeedsUpda
 _rawLengthNeedsUpdate(true), _numIterations(1000) {
 }
 
-//long TeBezierCurve::bounds(int start);
+//int TeBezierCurve::bounds(int start);
 
 void TeBezierCurve::clear() {
 	_lengthNeedsUpdate = true;
@@ -179,7 +179,7 @@ void TeBezierCurve::setControlPoints(const Common::Array<TeVector3f32> &points) 
 	_controlPoints = points;
 }
 
-void TeBezierCurve::setNbIterations(unsigned long iterations) {
+void TeBezierCurve::setNbIterations(uint iterations) {
 	_lengthNeedsUpdate = true;
 	_rawLengthNeedsUpdate = true;
 	_numIterations = iterations;

@@ -61,7 +61,7 @@ void TePickMesh2::draw() {
 	renderer->disableWireFrame();
 }
 
-bool TePickMesh2::intersect(const TeVector3f32 &origin, const TeVector3f32 &dir, TeVector3f32 &hitPtOut, float &hitDistOut, bool lastHitFirst, unsigned long *triangleHitOut) {
+bool TePickMesh2::intersect(const TeVector3f32 &origin, const TeVector3f32 &dir, TeVector3f32 &hitPtOut, float &hitDistOut, bool lastHitFirst, uint *triangleHitOut) {
 	if (_verticies.size() / 3 == 0)
 		return false;
 
@@ -110,7 +110,7 @@ bool TePickMesh2::intersect2D(const TeVector2f32 &pt) {
 	error("TODO: Implement TePickMesh2::intersect2D");
 }
 
-unsigned long TePickMesh2::lastTriangleHit() const {
+uint TePickMesh2::lastTriangleHit() const {
 	if (_lastTriangleHit < _verticies.size() / 3)
 		return _lastTriangleHit;
 	return 0;

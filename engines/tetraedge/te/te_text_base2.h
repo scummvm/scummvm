@@ -66,7 +66,7 @@ public:
 	void setAlignStyle(TeFont3::AlignStyle style);
 	void setColor(uint offset, const TeColor &color);
 	void setFont(uint offset, const TeIntrusivePtr<TeFont3> &newfont);
-	void setFontSize(unsigned long fontSz);
+	void setFontSize(int fontSz);
 	void setGlobalColor(const TeColor &color);
 	void setInterLine(float val);
 	void setRect(const TeVector2s32 &rect);
@@ -86,7 +86,7 @@ private:
 
 	TeFont3::AlignStyle _alignStyle;
 	WrapMode _wrapMode;
-	unsigned long _fontSize;
+	int _fontSize;
 	bool _valueWasSet;
 	TeColor _globalColor;
 	float _interLine;

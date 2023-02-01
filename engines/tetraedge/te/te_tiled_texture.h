@@ -49,8 +49,8 @@ public:
 	bool load(const Common::Path &path);
 	bool load(const TeImage &image);
 	bool load(const TeIntrusivePtr<Te3DTexture> &texture);
-	long numberOfColumns() const;
-	long numberOfRow() const;
+	uint32 numberOfColumns() const;
+	uint32 numberOfRow() const;
 
 	TeImage *optimisedTileImage(Common::Array<TeImage> &images, const TeVector2s32 &size,
 								const Common::SharedPtr<TePalette> &pal, enum TeImage::Format format);

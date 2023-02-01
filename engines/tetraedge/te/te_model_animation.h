@@ -66,18 +66,18 @@ public:
 	void destroy();
 	int findBone(const Common::String &bname);
 	int firstFrame() const;
-	TeMatrix4x4 getMatrix(const Common::String &name, unsigned long frame, bool param_5);
-	TeQuaternion getNMORotation(unsigned long boneNo, float amount) const;
-	TeVector3f32 getNMOTranslation(unsigned long boneNo, float amount) const;
-	TeTRS getTRS(const Common::String &boneName, unsigned long frame, bool forceUseFbx);
-	TeTRS getTRS(unsigned long boneNo, unsigned long frame, bool forceUseFbx) const;
+	TeMatrix4x4 getMatrix(const Common::String &name, uint frame, bool param_5);
+	TeQuaternion getNMORotation(uint boneNo, float amount) const;
+	TeVector3f32 getNMOTranslation(uint boneNo, float amount) const;
+	TeTRS getTRS(const Common::String &boneName, uint frame, bool forceUseFbx);
+	TeTRS getTRS(uint boneNo, uint frame, bool forceUseFbx) const;
 	int lastFrame() const;
 	bool load(const Common::Path &path);
 	bool load(Common::SeekableReadStream &stream);
 	int nbFrames();
 	void reset() override;
-	void resizeFBXArrays(unsigned long len);
-	void resizeNMOArrays(unsigned long len);
+	void resizeFBXArrays(uint len);
+	void resizeNMOArrays(uint len);
 	void save(Common::SeekableWriteStream &stream);
 	void saveBone(Common::SeekableWriteStream &stream, uint boneNo);
 	void setBoneName(uint boneNo, const Common::String &bname);
@@ -85,9 +85,9 @@ public:
 		_firstFrame = framemin;
 		_lastFrame = framemax;
 	}
-	void setRotation(unsigned long num, float amount, const TeQuaternion &rot);
-	void setScale(unsigned long num, float amount, const TeVector3f32 &scale);
-	void setTranslation(unsigned long num, float amount, const TeVector3f32 &trans);
+	void setRotation(uint num, float amount, const TeQuaternion &rot);
+	void setScale(uint num, float amount, const TeVector3f32 &scale);
+	void setTranslation(uint num, float amount, const TeVector3f32 &trans);
 	void unbind();
 	void update(double millis) override;
 

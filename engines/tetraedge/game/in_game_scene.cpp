@@ -227,7 +227,7 @@ void InGameScene::convertPathToMesh(TeFreeMoveZone *zone) {
 	model->setPosition(zone->position());
 	model->setRotation(zone->rotation());
 	model->setScale(zone->scale());
-	unsigned long nverticies = zone->freeMoveZoneVerticies().size();
+	uint64 nverticies = zone->freeMoveZoneVerticies().size();
 	TeMesh *mesh0 = model->meshes()[0].get();
 	mesh0->setConf(nverticies, nverticies, TeMesh::MeshMode_Triangles, 0, 0);
 	for (uint i = 0; i < nverticies; i++) {

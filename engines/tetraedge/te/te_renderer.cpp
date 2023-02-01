@@ -37,7 +37,7 @@ _numTransparentMeshes(0), _pendingTransparentMeshProperties(0), _currentCamera(n
 _scissorX(0), _scissorY(0), _scissorWidth(0), _scissorHeight(0) {
 }
 
-void TeRenderer::addTransparentMesh(const TeMesh &mesh, unsigned long i1, unsigned long tricount, unsigned long materialno) {
+void TeRenderer::addTransparentMesh(const TeMesh &mesh, uint i1, uint tricount, uint materialno) {
 	const float orthNearVal = _currentCamera->orthoNearPlane();
 	const TeMesh::Mode meshMode = mesh.getMode();
 	if (!tricount) {
