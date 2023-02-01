@@ -573,7 +573,6 @@ private:
 	uint16 _fullPlaceId;
 	int16 _guessAnimationAmount;
 	uint16 _largeMapFlag; // CHECKME: bool?
-	int16 _teamCharId[3];
 	int16 _textPosX;
 	int16 _textPosY;
 
@@ -581,10 +580,7 @@ private:
 	bool _engineInitPending;
 	bool _protectionPassed;
 
-	int16 _teamMonsterIdArray[5];
-	CharStatus _teamCharStatus[3];
 	int16 _alertDelay;
-	int16 _teamLastAction[3];
 	int16 _teamSize;
 	int16 _word2C872;
 	bool _checkTileDisabledByScriptFl;
@@ -603,20 +599,24 @@ private:
 
 	uint16 _tempTextDelay;
 	uint8 *_tempTextPtr;
-	// TODO: Remove those useless debug flags
-	bool _dbgForceMonsterBlock; // Original debug flag? Always false.
 
 	bool _ongoingFightFl;
 	bool _statusMenuActive;
+	int16 _menuStatItemArr[15];
 	int16 _menuDepth;
 	int16 _menuItemCounter;
+
+	int16 _teamCharId[3];
+	CharStatus _teamCharStatus[3];
 	int16 _teamPctVisible[3];
 	int16 _teamPctDodgeMiss[3];
 	int16 _teamNextAttack[3];
 	int16 _teamLastInventoryUsed[3];
+	int16 _teamLastAction[3];
 
-	int16 _menuStatItemArr[15];
+	int16 _teamMonsterIdArray[5];
 	TeamMonsterEffect _teamMonsterEffects[5];
+
 	InitiativeStruct _initiatives[8];
 
 	int16 _regenCounter;

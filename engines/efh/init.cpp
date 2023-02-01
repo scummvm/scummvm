@@ -342,7 +342,6 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_drawHeroOnMapFl = true;
 	_drawMonstersOnMapFl = true;
 	_textBoxDisabledByScriptFl = false;
-	_dbgForceMonsterBlock = false;
 	_ongoingFightFl = false;
 	_statusMenuActive = false;
 	_menuDepth = 0;

@@ -227,7 +227,7 @@ Common::Error EfhEngine::run() {
 
 		if ((_mapPosX != _oldMapPosX || _mapPosY != _oldMapPosY) && !_shouldQuit) {
 			bool collisionFl = checkMonsterCollision();
-			if (_dbgForceMonsterBlock || collisionFl) {
+			if (collisionFl) {
 				_oldMapPosX = _mapPosX;
 				_oldMapPosY = _mapPosY;
 				_oldImageSetSubFilesIdx = _imageSetSubFilesIdx;
@@ -2148,13 +2148,13 @@ int8 EfhEngine::checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4) {
 		_checkTileDisabledByScriptFl = false;
 		return -1;
 	}
-	if (_tileFact[tileFactId]._tileId != 0xFF && !_dbgForceMonsterBlock) {
+
+	if (_tileFact[tileFactId]._tileId != 0xFF) {
 		if ((arg4) || (!arg4 && tileFactId != 128 && tileFactId != 121)) {
-			if (_largeMapFlag) {
+			if (_largeMapFlag)
 				_mapGameMaps[_techId][mapPosX][mapPosY] = _tileFact[tileFactId]._tileId;
-			} else {
+			else
 				_curPlace[mapPosX][mapPosY] = _tileFact[tileFactId]._tileId;
-			}
 
 			_redrawNeededFl = true;
 			if (_tileFact[tileFactId]._field0 == 0)
