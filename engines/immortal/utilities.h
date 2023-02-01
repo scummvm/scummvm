@@ -22,12 +22,7 @@
 #ifndef IMMORTAL_UTIL_H
 #define IMMORTAL_UTIL_H
 
-#include "common/debug.h"
-#include "common/debug-channels.h"
 #include "common/system.h"
-
-#include "immortal/sprite_list.h"
-#include "immortal/definitions.h"
 
 namespace Immortal {
 

@@ -23,28 +23,14 @@
  *
  */
 
-// Common is needed by immortal.h, room.h, and monster.h
-#include "common/debug.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "common/scummsys.h"
+// Common/system includes basic things like Array
 #include "common/system.h"
-#include "common/error.h"
-#include "common/fs.h"
-#include "common/file.h"
-#include "common/memstream.h"
-#include "common/hash-str.h"
-#include "common/random.h"
-#include "common/serializer.h"
-#include "common/util.h"
-#include "common/platform.h"
 
 // Story is needed by both immortal.h and room.h
 #include "immortal/story.h"
 
 // Utilities.h contains many things used by all objects, not just immortal
 #include "immortal/utilities.h"
-
 #include "immortal/immortal.h"
 
 #ifndef IMMORTAL_ROOM_H
