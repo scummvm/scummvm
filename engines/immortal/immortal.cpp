@@ -19,11 +19,11 @@
  *
  */
 
+// common/config-manager is needed for the search manager
 #include "common/config-manager.h"
-#include "common/system.h"
 
+// engines/util is needed for initGraphics()
 #include "engines/util.h"
-
 #include "immortal/immortal.h"
 
 namespace Immortal {
@@ -108,7 +108,7 @@ Common::ErrorCode ImmortalEngine::initDisks() {
 	if (SearchMan.hasFile("IMMORTAL.dsk")) {
 
 		// Instantiate the disk as an object. The disk will then open and parse itself
-		ProDOSDisk *diskBoot  = new ProDOSDisk("IMMORTAL.dsk");
+		ProDOSDisk *diskBoot = new ProDOSDisk("IMMORTAL.dsk");
 		if (diskBoot) {
 
 			// With the disk successfully parsed, it can be added to the search manager
@@ -122,7 +122,7 @@ Common::ErrorCode ImmortalEngine::initDisks() {
 
 	// Check for the gfx disk
 	if (SearchMan.hasFile("IMMORTAL_GFX.dsk")) {
-		ProDOSDisk *diskGFX  = new ProDOSDisk("IMMORTAL_GFX.dsk");
+		ProDOSDisk *diskGFX = new ProDOSDisk("IMMORTAL_GFX.dsk");
 		if (diskGFX) {
 			debug("Gfx disk found");
 			SearchMan.add("IMMORTAL_GFX.dsk", diskGFX, 0, true);

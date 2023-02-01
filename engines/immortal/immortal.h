@@ -40,28 +40,21 @@
 // Disk is only used by immortal.cpp
 #include "immortal/disk.h"
 
-// Common is needed by immortal.h, room.h, and monster.h
-#include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/error.h"
 #include "common/fs.h"
-#include "common/file.h"
-#include "common/memstream.h"
 #include "common/hash-str.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
 #include "common/platform.h"
 
-// Story is needed by both immortal.h and room.h
-#include "immortal/story.h"
-
 // Utilities.h contains many things used by all objects, not just immortal
 #include "immortal/utilities.h"
 
+// Room also includes story.h
 #include "immortal/room.h"
 
 namespace Immortal {

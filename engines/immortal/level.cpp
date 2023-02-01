@@ -24,8 +24,6 @@
 
 namespace Immortal {
 
-struct Flame;
-
 void ImmortalEngine::levelInitAtStartOfGameOnly() {
 	initStoryDynamic();
 	_lastLevelLoaded = -1;
