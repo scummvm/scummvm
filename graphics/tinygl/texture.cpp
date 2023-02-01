@@ -164,46 +164,20 @@ void GLContext::glopTexImage2D(GLParam *p) {
 		case TGL_LINEAR_MIPMAP_NEAREST:
 		case TGL_LINEAR_MIPMAP_LINEAR:
 		case TGL_LINEAR:
-			im->pixmap = new BilinearTexelBuffer(
+			im->pixmap = createBilinearTexelBuffer(
 				pixels, pf,
+				format, type,
 				width, height,
 				_textureSize
 			);
 			break;
 		default:
-			if (format == TGL_RGBA && type == TGL_UNSIGNED_BYTE) {
-				im->pixmap = new NearestTexelBuffer<TGL_RGBA, TGL_UNSIGNED_BYTE>(
-					pixels, pf,
-					width, height,
-					_textureSize
-				);
-			} else if (format == TGL_RGB && type == TGL_UNSIGNED_BYTE) {
-				im->pixmap = new NearestTexelBuffer<TGL_RGB,  TGL_UNSIGNED_BYTE>(
-					pixels, pf,
-					width, height,
-					_textureSize
-				);
-			} else if (format == TGL_RGB && type == TGL_UNSIGNED_SHORT_5_6_5) {
-				im->pixmap = new NearestTexelBuffer<TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5>(
-					pixels, pf,
-					width, height,
-					_textureSize
-				);
-			} else if (format == TGL_RGBA && type == TGL_UNSIGNED_SHORT_5_5_5_1) {
-				im->pixmap = new NearestTexelBuffer<TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1>(
-					pixels, pf,
-					width, height,
-					_textureSize
-				);
-			} else if (format == TGL_RGBA && type == TGL_UNSIGNED_SHORT_4_4_4_4) {
-				im->pixmap = new NearestTexelBuffer<TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4>(
-					pixels, pf,
-					width, height,
-					_textureSize
-				);
-			} else {
-				error("TinyGL texture: format 0x%04x and type 0x%04x combination not supported", format, type);
-			}
+			im->pixmap = createNearestTexelBuffer(
+				pixels, pf,
+				format, type,
+				width, height,
+				_textureSize
+			);
 			break;
 		}
 	}
