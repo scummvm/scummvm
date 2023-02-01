@@ -624,6 +624,12 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		delete video;
 	}
 
+	if (arc->mode == "Y2" && !arc->additionalVideo.empty()) {
+		video = new MVideo(arc->additionalVideo, Common::Point(0, 0), false, true, false);
+		runIntro(*video);
+		delete video;
+	}
+
 	if (!arc->player.empty()) {
 		_playerFrames = decodeFrames(arc->player);
 	}
