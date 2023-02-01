@@ -200,7 +200,7 @@ void Redraw::updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool flagflip) {
 	int32 drawListPos = 0;
-	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
+	for (int32 a = 0; a < _engine->_scene->_nbObjets; a++) {
 		ActorStruct *actor = _engine->_scene->getActor(a);
 		actor->_dynamicFlags.bIsDrawn = 0; // reset visible state
 
@@ -706,7 +706,7 @@ void Redraw::renderOverlays() {
 				break;
 			}
 			case OverlayType::koNumberRange: {
-				const int32 range = _engine->_collision->clampedLerp(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->timerRef - 50);
+				const int32 range = _engine->_collision->boundRuleThree(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->timerRef - 50);
 
 				char text[10];
 				Common::sprintf_s(text, "%d", range);

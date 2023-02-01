@@ -604,7 +604,7 @@ const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	return ptr;
 }
 
-const BlockDataEntry* Grid::getBlockPointer(int32 blockIdx, int32 brickIdx) const {
+const BlockDataEntry* Grid::getAdrBlock(int32 blockIdx, int32 brickIdx) const {
 	const BlockData *blockPtr = getBlockLibrary(blockIdx);
 	return &blockPtr->entries[brickIdx];
 }
@@ -619,7 +619,7 @@ void Grid::getBrickPos(int32 x, int32 y, int32 z, int32 &posx, int32 &posy) cons
 }
 
 void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z) { // AffBrickBlock
-	const BlockDataEntry *blockPtr = getBlockPointer(blockIdx, brickBlockIdx);
+	const BlockDataEntry *blockPtr = getAdrBlock(blockIdx, brickBlockIdx);
 	const uint8 brickShape = blockPtr->brickShape;
 	const uint8 brickSound = blockPtr->brickType;
 	const uint16 brickIdx = blockPtr->brickIdx;
@@ -696,7 +696,7 @@ BlockEntry Grid::getBlockEntry(int32 xmap, int32 ymap, int32 zmap) const {
 	const uint8 *pCube = _bufCube;
 	pCube += xmap * SIZE_CUBE_Y * 2;
 	pCube += ymap * 2;
-	pCube += (zmap * SIZE_CUBE_X * 2) * SIZE_CUBE_Y;
+	pCube += zmap * (SIZE_CUBE_X * SIZE_CUBE_Y * 2);
 
 	BlockEntry entry;
 	entry.blockIdx = *pCube;
@@ -725,10 +725,10 @@ ShapeType Grid::worldColBrick(int32 x, int32 y, int32 z) {
 
 	const BlockEntry entry = getBlockEntry(collision.x, collision.y, collision.z);
 	if (entry.blockIdx) {
-		const BlockDataEntry *blockPtr = getBlockPointer(entry.blockIdx, entry.brickBlockIdx);
+		const BlockDataEntry *blockPtr = getAdrBlock(entry.blockIdx, entry.brickBlockIdx);
 		return (ShapeType)blockPtr->brickShape;
 	}
-	return (ShapeType)entry.brickBlockIdx;
+	return (ShapeType)entry.brickBlockIdx; // eventually transparent color
 }
 
 const IVec3 &Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
@@ -775,7 +775,7 @@ ShapeType Grid::worldColBrickFull(int32 x, int32 y, int32 z, int32 y2, int32 act
 	ShapeType brickShape;
 	const uint8 tmpBrickIdx = *(pCube + 1);
 	if (block) {
-		const BlockDataEntry *blockPtr = getBlockPointer(block, tmpBrickIdx);
+		const BlockDataEntry *blockPtr = getAdrBlock(block, tmpBrickIdx);
 		if (checkWater && blockPtr->brickType == WATER_BRICK) {
 			brickShape = ShapeType::kSolid; // full collision
 		} else {
@@ -789,7 +789,7 @@ ShapeType Grid::worldColBrickFull(int32 x, int32 y, int32 z, int32 y2, int32 act
 				pCode -= 2;
 				uint8 code = *pCode;
 				if (code) {
-					const BlockDataEntry *blockPtr = getBlockPointer(block, 0);
+					const BlockDataEntry *blockPtr = getAdrBlock(block, 0);
 					if (blockPtr->brickType == WATER_BRICK) {
 						// Special check mount funfrock
 						if (_engine->_scene->_currentSceneIdx != LBA1SceneId::Polar_Island_on_the_rocky_peak) {
@@ -822,7 +822,7 @@ uint8 Grid::worldCodeBrick(int32 x, int32 y, int32 z) {
 
 		const BlockEntry entry = getBlockEntry(collision.x, collision.y, collision.z);
 		if (entry.blockIdx) {
-			const BlockDataEntry *blockPtr = getBlockPointer(entry.blockIdx, entry.brickBlockIdx);
+			const BlockDataEntry *blockPtr = getAdrBlock(entry.blockIdx, entry.brickBlockIdx);
 			code = blockPtr->brickType;
 		}
 	}

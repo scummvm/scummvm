@@ -617,8 +617,8 @@ void Holomap::holoMap() {
 
 		if (automove) {
 			const int32 dt = _engine->timerRef - otimer;
-			calpha = _engine->_collision->clampedLerp(oalpha, dalpha, 75, dt);
-			cbeta = _engine->_collision->clampedLerp(obeta, dbeta, 75, dt);
+			calpha = _engine->_collision->boundRuleThree(oalpha, dalpha, 75, dt);
+			cbeta = _engine->_collision->boundRuleThree(obeta, dbeta, 75, dt);
 			redraw = true;
 		}
 

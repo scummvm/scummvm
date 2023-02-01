@@ -191,9 +191,9 @@ bool Scene::loadSceneLBA2() {
 
 	/*uint32 checksum =*/ stream.readUint32LE();
 
-	_sceneNumActors = (int16)stream.readUint16LE();
+	_nbObjets = (int16)stream.readUint16LE();
 	int cnt = 1;
-	for (int32 a = 1; a < _sceneNumActors; a++, cnt++) {
+	for (int32 a = 1; a < _nbObjets; a++, cnt++) {
 		_engine->_actor->resetActor(a);
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint32LE());
@@ -237,7 +237,7 @@ bool Scene::loadSceneLBA2() {
 		stream.skip(act->_lifeScriptSize);
 
 		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
-			_sceneNumActors--;
+			_nbObjets--;
 			a--;
 		}
 	}
@@ -322,9 +322,9 @@ bool Scene::loadSceneLBA1() {
 	_sceneHero->_lifeScript = _currentScene + stream.pos();
 	stream.skip(_sceneHero->_lifeScriptSize);
 
-	_sceneNumActors = (int16)stream.readUint16LE();
+	_nbObjets = (int16)stream.readUint16LE();
 	int cnt = 1;
-	for (int32 a = 1; a < _sceneNumActors; a++, cnt++) {
+	for (int32 a = 1; a < _nbObjets; a++, cnt++) {
 		_engine->_actor->resetActor(a);
 
 		ActorStruct *act = &_sceneActors[a];
@@ -365,7 +365,7 @@ bool Scene::loadSceneLBA1() {
 		stream.skip(act->_lifeScriptSize);
 
 		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
-			_sceneNumActors--;
+			_nbObjets--;
 			a--;
 		}
 	}
@@ -480,7 +480,7 @@ void Scene::dumpSceneScript(const char *type, int actorIdx, const uint8* script,
 }
 
 void Scene::dumpSceneScripts() const {
-	for (int32 a = 0; a < _sceneNumActors; ++a) {
+	for (int32 a = 0; a < _nbObjets; ++a) {
 		const ActorStruct &actor = _sceneActors[a];
 		dumpSceneScript("life", a, actor._lifeScript, actor._lifeScriptSize);
 		dumpSceneScript("move", a, actor._moveScript, actor._moveScriptSize);
@@ -581,7 +581,7 @@ void Scene::changeScene() {
 
 	_engine->_actor->restartHeroScene();
 
-	for (int32 a = 1; a < _sceneNumActors; a++) {
+	for (int32 a = 1; a < _nbObjets; a++) {
 		_engine->_actor->initActor(a);
 	}
 
@@ -634,7 +634,7 @@ void Scene::initSceneVars() {
 	_sampleRound[2] = 0;
 	_sampleRound[3] = 0;
 
-	_sceneNumActors = 0;
+	_nbObjets = 0;
 	_sceneNumZones = 0;
 	_sceneNumTracks = 0;
 }

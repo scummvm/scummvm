@@ -35,7 +35,7 @@ class Collision {
 private:
 	TwinEEngine *_engine;
 
-	void handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest);
+	void handlePushing(IVec3 &processActor, const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest);
 
 	/** Actor collision coordinate */
 	IVec3 _processCollision; // SaveNxw, SaveNyw, SaveNzw
@@ -45,7 +45,7 @@ public:
 	IVec3 _collision;
 
 	/** Cause damage in current processed actor */
-	int32 _causeActorDamage = 0; //fieldCauseDamage
+	int32 _col1 = 0;
 
 	/**
 	 * Check if actor 1 is standing in actor 2
@@ -54,7 +54,7 @@ public:
 	 */
 	bool checkZvOnZv(int32 actorIdx1, int32 actorIdx2) const;
 
-	int32 clampedLerp(int32 start, int32 end, int32 maxDelay, int32 delay) const;
+	int32 boundRuleThree(int32 start, int32 end, int32 maxDelay, int32 delay) const;
 
 	/**
 	 * Reajust actor position in scene according with brick shape bellow actor

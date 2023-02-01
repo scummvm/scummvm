@@ -501,7 +501,7 @@ void Extra::gereExtras() {
 		const int32 deltaT = _engine->timerRef - extra->spawnTime;
 
 		if (extra->type & ExtraType::EXPLOSION) {
-			extra->sprite = _engine->_collision->clampedLerp(SPRITEHQR_EXPLOSION_FIRST_FRAME, 100, 30, deltaT);
+			extra->sprite = _engine->_collision->boundRuleThree(SPRITEHQR_EXPLOSION_FIRST_FRAME, 100, 30, deltaT);
 			continue;
 		}
 		// process extra moving

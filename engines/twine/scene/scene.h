@@ -176,7 +176,7 @@ public:
 	ScenePositionType _heroPositionType = ScenePositionType::kNoPosition; // twinsenPositionModeInNewCube
 
 	// ACTORS
-	int32 _sceneNumActors = 0;
+	int32 _nbObjets = 0;
 	ActorStruct *_sceneHero = nullptr;
 
 	/** Meca penguin actor index */

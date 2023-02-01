@@ -528,7 +528,7 @@ void GameState::processGameoverAnimation() {
 			return;
 		}
 
-		zoom = _engine->_collision->clampedLerp(40000, 3200, _engine->toSeconds(10), _engine->timerRef - startLbaTime);
+		zoom = _engine->_collision->boundRuleThree(40000, 3200, _engine->toSeconds(10), _engine->timerRef - startLbaTime);
 		const int32 angle = _engine->_screens->lerp(1, LBAAngles::ANGLE_360, _engine->toSeconds(2), (_engine->timerRef - startLbaTime) % _engine->toSeconds(2));
 
 		_engine->blitWorkToFront(rect);

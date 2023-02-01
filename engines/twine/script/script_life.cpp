@@ -1141,7 +1141,7 @@ int32 ScriptLife::lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx)
 	for (int16 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &engine->_redraw->overlayList[i];
 		if (overlay->info0 != -1 && overlay->type == OverlayType::koNumberRange) {
-			overlay->info0 = engine->_collision->clampedLerp(overlay->info1, overlay->info0, engine->toSeconds(2), overlay->lifeTime - engine->timerRef - engine->toSeconds(1));
+			overlay->info0 = engine->_collision->boundRuleThree(overlay->info1, overlay->info0, engine->toSeconds(2), overlay->lifeTime - engine->timerRef - engine->toSeconds(1));
 			overlay->info1 = engine->_gameState->_goldPieces;
 			overlay->lifeTime = engine->timerRef + engine->toSeconds(3);
 			hideRange = true;

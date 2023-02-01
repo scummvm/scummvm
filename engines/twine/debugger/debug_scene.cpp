@@ -142,7 +142,7 @@ bool DebugScene::drawBox(const ScenePositionsProjected &positions, uint8 color) 
 
 bool DebugScene::displayActors() {
 	bool state = false;
-	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
+	for (int32 a = 0; a < _engine->_scene->_nbObjets; a++) {
 		const ActorStruct *actorPtr = _engine->_scene->getActor(a);
 		const IVec3 &pos = actorPtr->posObj();
 		const BoundingBox &bbox = actorPtr->_boundingBox;

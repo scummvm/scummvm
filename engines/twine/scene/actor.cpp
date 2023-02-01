@@ -330,7 +330,7 @@ void Actor::processActorCarrier(int32 actorIdx) {
 	if (!actor->_staticFlags.bIsCarrierActor) {
 		return;
 	}
-	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
+	for (int32 a = 0; a < _engine->_scene->_nbObjets; a++) {
 		if (actor->_carryBy == actorIdx) {
 			actor->_carryBy = -1;
 		}

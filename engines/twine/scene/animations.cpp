@@ -669,7 +669,7 @@ void Animations::doAnim(int32 actorIdx) {
 			collision->receptionObj(actorIdx);
 		}
 
-		collision->_causeActorDamage = 0;
+		collision->_col1 = 0;
 
 		// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
 		// remove processActorSave
@@ -695,8 +695,8 @@ void Animations::doAnim(int32 actorIdx) {
 		}
 
 		// process wall hit while running
-		if (collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward) {
-			IVec2 destPos = _engine->_renderer->rotate(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_beta + LBAAngles::LBAAngles::ANGLE_360 + LBAAngles::LBAAngles::ANGLE_135);
+		if (collision->_col1 && !actor->_dynamicFlags.bIsFalling && IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward) {
+			IVec2 destPos = _engine->_renderer->rotate(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_beta + LBAAngles::LBAAngles::ANGLE_315 + LBAAngles::LBAAngles::ANGLE_180);
 
 			destPos.x += processActor.x;
 			destPos.y += processActor.z;
@@ -798,7 +798,7 @@ void Animations::doAnim(int32 actorIdx) {
 		}
 	}
 
-	if (collision->_causeActorDamage) {
+	if (collision->_col1) {
 		actor->setBrickCausesDamage();
 	}
 

@@ -965,13 +965,13 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 	_scene->processEnvironmentSound();
 
 	// Reset HitBy state
-	for (int32 a = 0; a < _scene->_sceneNumActors; a++) {
+	for (int32 a = 0; a < _scene->_nbObjets; a++) {
 		_scene->getActor(a)->_hitBy = -1;
 	}
 
 	_extra->gereExtras();
 
-	for (int32 a = 0; a < _scene->_sceneNumActors; a++) {
+	for (int32 a = 0; a < _scene->_nbObjets; a++) {
 		ActorStruct *actor = _scene->getActor(a);
 
 		if (actor->_dynamicFlags.bIsDead) {
