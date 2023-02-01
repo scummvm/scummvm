@@ -35,24 +35,21 @@ class Collision {
 private:
 	TwinEEngine *_engine;
 
-	void handlePushing(IVec3 &processActor, const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest);
+	void handlePushing(IVec3 &processActor, const IVec3 &oldPos, const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest);
 
 	/** Actor collision coordinate */
 	IVec3 _processCollision; // SaveNxw, SaveNyw, SaveNzw
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collision coordinate */
-	IVec3 _collision;
-
-	/** Cause damage in current processed actor */
-	int32 _col1 = 0;
+	IVec3 _collision; // YMap
 
 	/**
 	 * Check if actor 1 is standing in actor 2
 	 * @param actorIdx1 Actor 1 index
 	 * @param actorIdx2 Actor 2 index
 	 */
-	bool checkZvOnZv(int32 actorIdx1, int32 actorIdx2) const;
+	bool checkZvOnZv(const IVec3 &processActor, int32 actorIdx1, int32 actorIdx2) const;
 
 	int32 boundRuleThree(int32 start, int32 end, int32 maxDelay, int32 delay) const;
 
@@ -66,7 +63,7 @@ public:
 	 * Check collision with actors
 	 * @param actorIx Current process actor index
 	 */
-	int32 checkObjCol(int32 actorIdx);
+	int32 checkObjCol(IVec3 &processActor, const IVec3 &oldPos, int32 actorIdx);
 	bool checkValidObjPos(int32 actorIdx);
 
 	void setCollisionPos(const IVec3 &pos);
@@ -77,7 +74,7 @@ public:
 	 * @param z Hero Z coordinate
 	 * @param damageMask Cause damage mask
 	 */
-	void doCornerReajustTwinkel(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask);
+	int32 doCornerReajustTwinkel(const ActorStruct *actor, IVec3 &processActor, const IVec3 &oldPos, int32 x, int32 y, int32 z, int32 damageMask);
 
 	/**
 	 * Check other actor collision with bricks
@@ -86,10 +83,10 @@ public:
 	 * @param z Actor Z coordinate
 	 * @param damageMask Cause damage mask
 	 */
-	void doCornerReajust(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask);
+	int32 doCornerReajust(IVec3 &processActor, const IVec3 &oldPos, int32 x, int32 y, int32 z, int32 damageMask);
 
 	/** Make actor to stop falling */
-	void receptionObj(int actorIdx);
+	void receptionObj(const IVec3 &processActor, int actorIdx);
 
 	/**
 	 * Check extra collision with actors

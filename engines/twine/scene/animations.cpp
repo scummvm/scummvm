@@ -463,16 +463,13 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType flag, AnimationTypes 
 void Animations::doAnim(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
-	_engine->_actor->_processActorPtr = actor;
-
 	if (actor->_body == -1) {
 		return;
 	}
 
-	IVec3 &previousActor = actor->_previousActor;
-	previousActor = actor->_oldPos;
+	const IVec3 oldPos = actor->_oldPos;
 
-	IVec3 &processActor = actor->_processActor;
+	IVec3 processActor = actor->_processActor;
 	if (actor->_staticFlags.bIsSpriteActor) {
 		if (actor->_strengthOfHit) {
 			actor->_dynamicFlags.bIsHitting = 1;
@@ -638,38 +635,37 @@ void Animations::doAnim(int32 actorIdx) {
 		processActor -= standOnActor->_oldPos;
 		processActor += standOnActor->posObj();
 
-		if (!collision->checkZvOnZv(actorIdx, actor->_carryBy)) {
+		if (!collision->checkZvOnZv(processActor, actorIdx, actor->_carryBy)) {
 			actor->_carryBy = -1; // no longer standing on other actor
 		}
 	}
 
 	// actor falling Y speed
 	if (actor->_dynamicFlags.bIsFalling) {
-		processActor = previousActor;
-		processActor.y += _engine->_loopActorStep; // add step to fall
+		processActor = oldPos;
+		processActor.y += _engine->_stepFalling; // add step to fall
 	}
 
 	// actor collisions with bricks
+	int32 col1 = 0;
 	if (actor->_staticFlags.bComputeCollisionWithBricks) {
-		ShapeType brickShape = _engine->_grid->worldColBrick(previousActor);
+		ShapeType col = _engine->_grid->worldColBrick(oldPos);
 
-		if (brickShape != ShapeType::kNone) {
-			if (brickShape == ShapeType::kSolid) {
+		if (col != ShapeType::kNone) {
+			if (col == ShapeType::kSolid) {
 				actor->_pos.y = processActor.y = (processActor.y / SIZE_BRICK_Y) * SIZE_BRICK_Y + SIZE_BRICK_Y; // go upper
 			} else {
-				collision->reajustPos(processActor, brickShape);
+				collision->reajustPos(processActor, col);
 			}
 		}
 
 		if (actor->_staticFlags.bComputeCollisionWithObj) {
-			collision->checkObjCol(actorIdx);
+			collision->checkObjCol(processActor, oldPos, actorIdx);
 		}
 
 		if (actor->_carryBy != -1 && actor->_dynamicFlags.bIsFalling) {
-			collision->receptionObj(actorIdx);
+			collision->receptionObj(processActor, actorIdx);
 		}
-
-		collision->_col1 = 0;
 
 		// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
 		// remove processActorSave
@@ -678,16 +674,16 @@ void Animations::doAnim(int32 actorIdx) {
 
 		if (IS_HERO(actorIdx) && !actor->_staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks
-			collision->doCornerReajustTwinkel(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
-			collision->doCornerReajustTwinkel(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
-			collision->doCornerReajustTwinkel(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
-			collision->doCornerReajustTwinkel(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
+			col1 |= collision->doCornerReajustTwinkel(actor, processActor, oldPos, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
+			col1 |= collision->doCornerReajustTwinkel(actor, processActor, oldPos, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
+			col1 |= collision->doCornerReajustTwinkel(actor, processActor, oldPos, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
+			col1 |= collision->doCornerReajustTwinkel(actor, processActor, oldPos, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		} else {
 			// check other actors collisions with bricks
-			collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
-			collision->doCornerReajust(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
-			collision->doCornerReajust(actor, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
-			collision->doCornerReajust(actor, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
+			col1 |= collision->doCornerReajust(processActor, oldPos, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
+			col1 |= collision->doCornerReajust(processActor, oldPos, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
+			col1 |= collision->doCornerReajust(processActor, oldPos, actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
+			col1 |= collision->doCornerReajust(processActor, oldPos, actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		}
 		// TODO: hack to fix tank-not-moving bug https://bugs.scummvm.org/ticket/13177
 		if (actorIdx == 1 && _engine->_scene->_currentSceneIdx == LBA1SceneId::Hamalayi_Mountains_2nd_fighting_scene) {
@@ -695,7 +691,7 @@ void Animations::doAnim(int32 actorIdx) {
 		}
 
 		// process wall hit while running
-		if (collision->_col1 && !actor->_dynamicFlags.bIsFalling && IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward) {
+		if (col1 && !actor->_dynamicFlags.bIsFalling && IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward) {
 			IVec2 destPos = _engine->_renderer->rotate(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_beta + LBAAngles::LBAAngles::ANGLE_315 + LBAAngles::LBAAngles::ANGLE_180);
 
 			destPos.x += processActor.x;
@@ -715,13 +711,13 @@ void Animations::doAnim(int32 actorIdx) {
 			}
 		}
 
-		brickShape = _engine->_grid->worldColBrick(processActor);
-		actor->setCollision(brickShape);
+		col = _engine->_grid->worldColBrick(processActor);
+		actor->setCollision(col);
 
-		if (brickShape != ShapeType::kNone) {
-			if (brickShape == ShapeType::kSolid) {
+		if (col != ShapeType::kNone) {
+			if (col == ShapeType::kSolid) {
 				if (actor->_dynamicFlags.bIsFalling) {
-					collision->receptionObj(actorIdx);
+					collision->receptionObj(processActor, actorIdx);
 					processActor.y = (collision->_collision.y * SIZE_BRICK_Y) + SIZE_BRICK_Y;
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
@@ -732,35 +728,35 @@ void Animations::doAnim(int32 actorIdx) {
 					}
 
 					// no Z coordinate issue
-					if (_engine->_grid->worldColBrick(processActor.x, processActor.y, previousActor.z) != ShapeType::kNone) {
-						if (_engine->_grid->worldColBrick(previousActor.x, processActor.y, processActor.z) != ShapeType::kNone) {
+					if (_engine->_grid->worldColBrick(processActor.x, processActor.y, oldPos.z) != ShapeType::kNone) {
+						if (_engine->_grid->worldColBrick(oldPos.x, processActor.y, processActor.z) != ShapeType::kNone) {
 							return;
 						} else {
-							processActor.x = previousActor.x;
+							processActor.x = oldPos.x;
 						}
 					} else {
-						processActor.z = previousActor.z;
+						processActor.z = oldPos.z;
 					}
 				}
 			} else {
 				if (actor->_dynamicFlags.bIsFalling) {
-					collision->receptionObj(actorIdx);
+					collision->receptionObj(processActor, actorIdx);
 				}
 
-				collision->reajustPos(processActor, brickShape);
+				collision->reajustPos(processActor, col);
 			}
 
 			actor->_dynamicFlags.bIsFalling = 0;
 		} else {
 			if (actor->_staticFlags.bCanFall && actor->_carryBy == -1) {
-				brickShape = _engine->_grid->worldColBrick(processActor.x, processActor.y - 1, processActor.z);
+				col = _engine->_grid->worldColBrick(processActor.x, processActor.y - 1, processActor.z);
 
-				if (brickShape != ShapeType::kNone) {
+				if (col != ShapeType::kNone) {
 					if (actor->_dynamicFlags.bIsFalling) {
-						collision->receptionObj(actorIdx);
+						collision->receptionObj(processActor, actorIdx);
 					}
 
-					collision->reajustPos(processActor, brickShape);
+					collision->reajustPos(processActor, col);
 				} else {
 					if (!actor->_dynamicFlags.bIsRotationByAnim) {
 						actor->_dynamicFlags.bIsFalling = 1;
@@ -794,11 +790,11 @@ void Animations::doAnim(int32 actorIdx) {
 		}
 	} else {
 		if (actor->_staticFlags.bComputeCollisionWithObj) {
-			collision->checkObjCol(actorIdx);
+			collision->checkObjCol(processActor, oldPos, actorIdx);
 		}
 	}
 
-	if (collision->_col1) {
+	if (col1) {
 		actor->setBrickCausesDamage();
 	}
 

@@ -305,7 +305,7 @@ public:
 	int32 timerRef = 0;
 
 	int32 _loopInventoryItem = 0;
-	int32 _loopActorStep = 0;
+	int32 _stepFalling = 0;
 	uint32 _gameFlags;
 	Common::Platform _platform;
 

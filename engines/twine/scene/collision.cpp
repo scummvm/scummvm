@@ -40,11 +40,10 @@ namespace TwinE {
 Collision::Collision(TwinEEngine *engine) : _engine(engine) {
 }
 
-bool Collision::checkZvOnZv(int32 actorIdx1, int32 actorIdx2) const {
+bool Collision::checkZvOnZv(const IVec3 &processActor, int32 actorIdx1, int32 actorIdx2) const {
 	const ActorStruct *actor1 = _engine->_scene->getActor(actorIdx1);
 	const ActorStruct *actor2 = _engine->_scene->getActor(actorIdx2);
 
-	const IVec3 &processActor = actor1->_processActor;
 	const IVec3 &mins1 = processActor + actor1->_boundingBox.mins;
 	const IVec3 &maxs1 = processActor + actor1->_boundingBox.maxs;
 
@@ -183,7 +182,7 @@ void Collision::reajustPos(IVec3 &processActor, ShapeType brickShape) const {
 	}
 }
 
-void Collision::handlePushing(IVec3 &processActor, const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *ptrobj, ActorStruct *ptrobjt) {
+void Collision::handlePushing(IVec3 &processActor, const IVec3 &oldPos, const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *ptrobj, ActorStruct *ptrobjt) {
 	const int32 newAngle = _engine->_movements->getAngle(processActor, ptrobjt->posObj());
 
 	// protect against chain reactions
@@ -227,7 +226,7 @@ void Collision::handlePushing(IVec3 &processActor, const IVec3 &minsTest, const 
 		}
 	} else if (!ptrobj->_dynamicFlags.bIsFalling) {
 		// refuse pos
-		processActor = ptrobj->_previousActor;
+		processActor = oldPos;
 	}
 }
 
@@ -277,14 +276,13 @@ bool Collision::checkValidObjPos(int32 actorIdx) {
 	return true;
 }
 
-int32 Collision::checkObjCol(int32 actorIdx) {
+int32 Collision::checkObjCol(IVec3 &processActor, const IVec3 &oldPos, int32 actorIdx) {
 	ActorStruct *ptrobj = _engine->_scene->getActor(actorIdx);
 
-	IVec3 &processActor = ptrobj->_processActor;
 	IVec3 mins = processActor + ptrobj->_boundingBox.mins;
 	IVec3 maxs = processActor + ptrobj->_boundingBox.maxs;
 
-	ptrobj->_collision = -1;
+	ptrobj->_objCol = -1;
 
 	for (int32 a = 0; a < _engine->_scene->_nbObjets; a++) {
 		ActorStruct *ptrobjt = _engine->_scene->getActor(a);
@@ -295,7 +293,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 			const IVec3 &maxsTest = ptrobjt->posObj() + ptrobjt->_boundingBox.maxs;
 
 			if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
-				ptrobj->_collision = a; // mark as collision with actor a
+				ptrobj->_objCol = a; // mark as collision with actor a
 
 				if (ptrobjt->_staticFlags.bIsCarrierActor) {
 					if (ptrobj->_dynamicFlags.bIsFalling) {
@@ -303,7 +301,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 						processActor.y = maxsTest.y - ptrobj->_boundingBox.mins.y + 1;
 						ptrobj->_carryBy = a;
 						continue;
-					} else if (checkZvOnZv(actorIdx, a)) {
+					} else if (checkZvOnZv(processActor, actorIdx, a)) {
 						// I walk on a carrier
 						processActor.y = maxsTest.y - ptrobj->_boundingBox.mins.y + 1;
 						ptrobj->_carryBy = a;
@@ -311,11 +309,11 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 					}
 				} else {
 					// I step on someone
-					if (checkZvOnZv(actorIdx, a)) {
+					if (checkZvOnZv(processActor, actorIdx, a)) {
 						_engine->_actor->hitObj(actorIdx, a, 1, -1);
 					}
 				}
-				handlePushing(processActor, minsTest, maxsTest, ptrobj, ptrobjt);
+				handlePushing(processActor, oldPos, minsTest, maxsTest, ptrobj, ptrobjt);
 			}
 		}
 	}
@@ -335,7 +333,7 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 			// avoid current processed actor
-			if (a != actorIdx && actorTest->_body != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
+			if (a != actorIdx && actorTest->_body != -1 && !ptrobj->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
 				const IVec3 minsTest = actorTest->posObj() + actorTest->_boundingBox.mins;
 				const IVec3 maxsTest = actorTest->posObj() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
@@ -346,96 +344,88 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 		}
 	}
 
-	return ptrobj->_collision;
+	return ptrobj->_objCol;
 }
 
 void Collision::setCollisionPos(const IVec3 &pos) {
 	_processCollision = pos;
 }
 
-void Collision::doCornerReajustTwinkel(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
-	IVec3 &processActor = actor->_processActor;
-	IVec3 &previousActor = actor->_previousActor;
-	ShapeType brickShape = _engine->_grid->worldColBrick(processActor);
+int32 Collision::doCornerReajustTwinkel(const ActorStruct *actor, IVec3 &processActor, const IVec3 &oldPos, int32 x, int32 y, int32 z, int32 damageMask) {
+	ShapeType orgcol = _engine->_grid->worldColBrick(processActor);
+	int32 _col1 = 0;
 
 	processActor.x += x;
 	processActor.y += y;
 	processActor.z += z;
 
 	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= SCENE_SIZE_MAX && processActor.z <= SCENE_SIZE_MAX) {
-		const BoundingBox &bbox = _engine->_actor->_processActorPtr->_boundingBox;
-		reajustPos(processActor, brickShape);
-		brickShape = _engine->_grid->worldColBrickFull(processActor, bbox.maxs.y, OWN_ACTOR_SCENE_INDEX);
+		const BoundingBox &bbox = actor->_boundingBox;
+		reajustPos(processActor, orgcol);
+		ShapeType col = _engine->_grid->worldColBrickFull(processActor, bbox.maxs.y, OWN_ACTOR_SCENE_INDEX);
 
-		if (brickShape == ShapeType::kSolid) {
+		if (col == ShapeType::kSolid) {
 			_col1 |= damageMask;
-			brickShape = _engine->_grid->worldColBrickFull(processActor.x, processActor.y, previousActor.z + z, bbox.maxs.y, OWN_ACTOR_SCENE_INDEX);
-
-			if (brickShape == ShapeType::kSolid) {
-				brickShape = _engine->_grid->worldColBrickFull(x + previousActor.x, processActor.y, processActor.z, bbox.maxs.y, OWN_ACTOR_SCENE_INDEX);
-
-				if (brickShape != ShapeType::kSolid) {
-					_processCollision.x = previousActor.x;
+			if (_engine->_grid->worldColBrickFull(processActor.x, processActor.y, oldPos.z + z, bbox.maxs.y, OWN_ACTOR_SCENE_INDEX) == ShapeType::kSolid) {
+				if (_engine->_grid->worldColBrickFull(x + oldPos.x, processActor.y, processActor.z, bbox.maxs.y, OWN_ACTOR_SCENE_INDEX) != ShapeType::kSolid) {
+					_processCollision.x = oldPos.x;
 				}
 			} else {
-				_processCollision.z = previousActor.z;
+				_processCollision.z = oldPos.z;
 			}
 		}
 	}
 
 	processActor = _processCollision;
+	return _col1;
 }
 
-void Collision::doCornerReajust(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
-	IVec3 &processActor = actor->_processActor;
-	IVec3 &previousActor = actor->_previousActor;
-	ShapeType brickShape = _engine->_grid->worldColBrick(processActor);
+int32 Collision::doCornerReajust(IVec3 &processActor, const IVec3 &oldPos, int32 x, int32 y, int32 z, int32 damageMask) {
+	ShapeType orgcol = _engine->_grid->worldColBrick(processActor);
+	int32 _col1 = 0;
 
 	processActor.x += x;
 	processActor.y += y;
 	processActor.z += z;
 
 	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= SCENE_SIZE_MAX && processActor.z <= SCENE_SIZE_MAX) {
-		reajustPos(processActor, brickShape);
-		brickShape = _engine->_grid->worldColBrick(processActor);
+		reajustPos(processActor, orgcol);
+		ShapeType col = _engine->_grid->worldColBrick(processActor);
 
-		if (brickShape == ShapeType::kSolid) {
+		if (col == ShapeType::kSolid) {
 			_col1 |= damageMask;
-			brickShape = _engine->_grid->worldColBrick(processActor.x, processActor.y, previousActor.z + z);
-
-			if (brickShape == ShapeType::kSolid) {
-				brickShape = _engine->_grid->worldColBrick(x + previousActor.x, processActor.y, processActor.z);
-
-				if (brickShape != ShapeType::kSolid) {
-					_processCollision.x = previousActor.x;
+			if (_engine->_grid->worldColBrick(processActor.x, processActor.y, oldPos.z + z) == ShapeType::kSolid) {
+				if (_engine->_grid->worldColBrick(x + oldPos.x, processActor.y, processActor.z) != ShapeType::kSolid) {
+					_processCollision.x = oldPos.x;
 				}
 			} else {
-				_processCollision.z = previousActor.z;
+				_processCollision.z = oldPos.z;
 			}
 		}
 	}
 
 	processActor = _processCollision;
+	return _col1;
 }
 
-void Collision::receptionObj(int actorIdx) {
+void Collision::receptionObj(const IVec3 &processActor, int actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (IS_HERO(actorIdx)) {
-		const IVec3 &processActor = _engine->_actor->_processActorPtr->_processActor;
 		const int32 fall = _engine->_scene->_startYFalling - processActor.y;
 
 		if (fall >= SIZE_BRICK_Y * 8) {
-			const IVec3 &actorPos = _engine->_actor->_processActorPtr->posObj();
+			const IVec3 &actorPos = actor->posObj();
 			_engine->_extra->initSpecial(actorPos.x, actorPos.y + 1000, actorPos.z, ExtraSpecialType::kHitStars);
 			if (fall >= SIZE_BRICK_Y * 16) {
-				_engine->_actor->_processActorPtr->setLife(0);
+				actor->setLife(0);
 			} else {
-				_engine->_actor->_processActorPtr->addLife(-1);
+				actor->addLife(-1);
 			}
 			_engine->_animations->initAnim(AnimationTypes::kLandingHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx);
 		} else if (fall > 2 * SIZE_BRICK_Y) {
 			_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx);
 		} else {
-			if (_engine->_actor->_processActorPtr->_dynamicFlags.bWasWalkingBeforeFalling) {
+			if (actor->_dynamicFlags.bWasWalkingBeforeFalling) {
 				// try to not interrupt walk animation if Twinsen falls down from small height
 				_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeRepeat, AnimationTypes::kStanding, actorIdx);
 			} else {
@@ -445,11 +435,11 @@ void Collision::receptionObj(int actorIdx) {
 
 		_engine->_scene->_startYFalling = 0;
 	} else {
-		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, _engine->_actor->_processActorPtr->_nextGenAnim, actorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationAllThen, actor->_nextGenAnim, actorIdx);
 	}
 
-	_engine->_actor->_processActorPtr->_dynamicFlags.bIsFalling = 0;
-	_engine->_actor->_processActorPtr->_dynamicFlags.bWasWalkingBeforeFalling = 0;
+	actor->_dynamicFlags.bIsFalling = 0;
+	actor->_dynamicFlags.bWasWalkingBeforeFalling = 0;
 }
 
 int32 Collision::extraCheckObjCol(ExtraListStruct *extra, int32 actorIdx) {

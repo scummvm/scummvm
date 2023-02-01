@@ -125,7 +125,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		if (ctx.actor->_lifePoint <= 0) {
 			engine->_scene->_currentScriptValue = -1;
 		} else {
-			engine->_scene->_currentScriptValue = ctx.actor->_collision;
+			engine->_scene->_currentScriptValue = ctx.actor->_objCol;
 		}
 		debugCN(3, kDebugLevels::kDebugScripts, "collision(");
 		break;
@@ -134,7 +134,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		if (engine->_scene->getActor(actorIdx)->_lifePoint <= 0) {
 			engine->_scene->_currentScriptValue = -1;
 		} else {
-			engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_collision;
+			engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_objCol;
 		}
 		debugCN(3, kDebugLevels::kDebugScripts, "col_obj(%i, ", actorIdx);
 		break;

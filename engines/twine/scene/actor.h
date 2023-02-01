@@ -191,8 +191,6 @@ public:
 
 	/** Process actor coordinate Nxw, Nyw, Nzw */
 	IVec3 _processActor;
-	/** Previous process actor coordinate */
-	IVec3 _previousActor;
 	IVec3 _oldPos;
 
 	int32 _offsetTrack = -1;
@@ -210,7 +208,7 @@ public:
 	/**
 	 * colliding actor id
 	 */
-	int32 _collision = -1; // ObjCol
+	int32 _objCol = -1; // ObjCol
 	/**
 	 * actor id we are standing on
 	 */
@@ -276,8 +274,6 @@ private:
 
 public:
 	Actor(TwinEEngine *engine);
-
-	ActorStruct *_processActorPtr = nullptr;
 
 	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal; // Comportement
 	/** Hero auto aggressive mode */

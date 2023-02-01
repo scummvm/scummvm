@@ -954,9 +954,9 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	}
 
-	_loopActorStep = _loopMovePtr.getRealValueFromTime(timerRef);
-	if (!_loopActorStep) {
-		_loopActorStep = 1;
+	_stepFalling = _loopMovePtr.getRealValueFromTime(timerRef);
+	if (!_stepFalling) {
+		_stepFalling = 1;
 	}
 
 	_movements->setActorAngle(LBAAngles::ANGLE_0, -LBAAngles::ANGLE_90, LBAAngles::ANGLE_1, &_loopMovePtr);
