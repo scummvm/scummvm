@@ -38,7 +38,7 @@ public:
 
 	virtual bool load(Common::SeekableReadStream &stream) override;
 	virtual int nbFrames() override { return 1; }
-	virtual float frameRate() override  { return 0.0; }
+	virtual float frameRate() override { return 0.0f; }
 	virtual bool isAtEnd() override  { return true; }
 	virtual void setColorKeyActivated(bool val) override { }
 	virtual void setColorKey(const TeColor &col) override { }
