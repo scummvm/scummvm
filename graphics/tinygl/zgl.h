@@ -482,10 +482,6 @@ public:
 	void gl_GenTextures(TGLsizei n, TGLuint *textures);
 	void gl_DeleteTextures(TGLsizei n, const TGLuint *textures);
 
-	void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
-	                    const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
-	void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest, const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
-
 	void issueDrawCall(DrawCall *drawCall);
 	void disposeResources();
 	void disposeDrawCallLists();
