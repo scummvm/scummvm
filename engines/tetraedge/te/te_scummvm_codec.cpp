@@ -31,8 +31,10 @@ TeScummvmCodec::TeScummvmCodec() : _loadedSurface(nullptr) {
 }
 
 TeScummvmCodec::~TeScummvmCodec() {
-	if (_loadedSurface)
+	if (_loadedSurface) {
+		_loadedSurface->free();
 		delete _loadedSurface;
+	}
 }
 
 bool TeScummvmCodec::load(const Common::Path &path) {
