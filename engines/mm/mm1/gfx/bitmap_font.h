@@ -19,58 +19,27 @@
  *
  */
 
-#ifndef MM_UTILS_BITMAP_FONT_H
-#define MM_UTILS_BITMAP_FONT_H
-
-#include "common/array.h"
-#include "common/rect.h"
-#include "graphics/font.h"
-#include "graphics/managed_surface.h"
+#include "mm/utils/bitmap_font.h"
 
 namespace MM {
+namespace MM1 {
+namespace Gfx {
 
 /**
- * Implements a font stored as a grid on a passed surface
+ * The Might and Magic 1 font only has uppercase. So we
+ * override the base BitmapFont class to uppercase characters
  */
-class BitmapFont : public Graphics::Font {
-private:
-	Common::Array<Graphics::ManagedSurface> _chars;
-	size_t _startingChar;
+class BitmapFont : public ::MM::BitmapFont {
 public:
-	/**
-	 * Constructor
-	 */
-	BitmapFont() : _startingChar(' ') {}
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override {
+		MM::BitmapFont::drawChar(dst, toupper(chr), x, y, color);
+	}
 
-	/**
-	 * Loads the font
-	 */
-	bool load(const Common::String &filename);
-
-	/**
-	 * Get the font height
-	 */
-	int getFontHeight() const override { return 8; }
-
-	/**
-	 * Get the maximum character width
-	 */
-	int getMaxCharWidth() const override { return 8; }
-
-	/**
-	 * Get the width of the given character
-	 */
-	int getCharWidth(uint32 chr) const override { return 8; }
-
-	/**
-	 * Draw a character
-	 */
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 	void drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override {
-		Graphics::Font::drawChar(dst, chr, x, y, color);
+		MM::BitmapFont::drawChar(dst, toupper(chr), x, y, color);
 	}
 };
 
+} // namespace Gfx
+} // namespace MM1
 } // namespace MM
-
-#endif

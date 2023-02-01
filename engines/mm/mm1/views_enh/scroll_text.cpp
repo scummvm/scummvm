@@ -59,11 +59,6 @@ void ScrollText::addLine(const Common::String &str,
 	}
 }
 
-Common::String ScrollText::format(const Common::String &str) {
-	Common::String s = capitalize(str);
-	return searchAndReplace(s, "\n", " ");
-}
-
 void ScrollText::addText(const Common::String &s,
 		int lineNum, byte color, TextAlign align, int xp) {
 	Common::String str = s;

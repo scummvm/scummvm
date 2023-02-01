@@ -65,12 +65,6 @@ public:
 	Lines::const_iterator end() const { return _lines.end(); }
 
 	/**
-	 * Helper function for formatting original game
-	 * capitals only text into normal upper/lowercase text
-	 */
-	static Common::String format(const Common::String &str);
-
-	/**
 	 * Clear the lines
 	 */
 	void clear() {

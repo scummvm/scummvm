@@ -43,7 +43,6 @@ private:
 	// Engine APIs
 	Common::Error run() override;
 
-	bool isEnhanced() const;
 	void setupNormal();
 	bool setupEnhanced();
 public:
@@ -53,6 +52,8 @@ public:
 	~MM1Engine() override;
 
 	bool hasFeature(EngineFeature f) const override;
+
+	bool isEnhanced() const;
 
 	/**
 	 * Returns a random number

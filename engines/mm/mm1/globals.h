@@ -24,7 +24,6 @@
 
 #include "common/serializer.h"
 #include "graphics/font.h"
-#include "mm/utils/bitmap_font.h"
 #include "mm/utils/strings_data.h"
 #include "mm/utils/xeen_font.h"
 #include "mm/xeen/sprites.h"
@@ -33,6 +32,7 @@
 #include "mm/mm1/data/monsters.h"
 #include "mm/mm1/data/roster.h"
 #include "mm/mm1/data/treasure.h"
+#include "mm/mm1/gfx/bitmap_font.h"
 #include "mm/mm1/game/combat.h"
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/maps/maps.h"
@@ -50,7 +50,7 @@ public:
 	ItemsArray _items;
 	Maps::TownId _startingTown = Maps::SORPIGAL;
 	Maps::Maps _maps;
-	BitmapFont _font;
+	Gfx::BitmapFont _font;
 	bool _heardRumor = false;
 	Game::Encounter _encounters;
 	Game::Combat *_combat = nullptr;
