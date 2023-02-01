@@ -116,7 +116,7 @@ void StartU8Process::run() {
 }
 
 void StartU8Process::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN();
+	warning("Attempted save of process with prevent save flag");
 
 	Process::saveData(ws);
 }

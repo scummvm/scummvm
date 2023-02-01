@@ -256,12 +256,12 @@ uint32 KeypadGump::I_showKeypad(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 bool KeypadGump::loadData(Common::ReadStream *rs) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to load ModalGump");
 	return true;
 }
 
 void KeypadGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to save ModalGump");
+	warning("Trying to save ModalGump");
 }
 
 } // End of namespace Ultima8

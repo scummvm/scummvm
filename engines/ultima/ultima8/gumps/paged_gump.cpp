@@ -153,12 +153,12 @@ void PagedGump::addPage(Gump *g) {
 }
 
 bool PagedGump::loadData(Common::ReadStream *rs) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to load ModalGump");
 	return false;
 }
 
 void PagedGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to save ModalGump");
+	warning("Trying to save ModalGump");
 }
 
 } // End of namespace Ultima8

@@ -90,11 +90,11 @@ void DesktopGump::RenderSurfaceChanged() {
 }
 
 void DesktopGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to save DesktopGump");
+	warning("Trying to save DesktopGump");
 }
 
 bool DesktopGump::loadData(Common::ReadStream *rs, uint32 version) {
-	CANT_HAPPEN_MSG("Trying to save DesktopGump");
+	warning("Trying to load DesktopGump");
 
 	return false;
 }

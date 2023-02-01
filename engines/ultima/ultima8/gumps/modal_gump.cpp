@@ -88,11 +88,11 @@ Gump *ModalGump::onMouseDown(int button, int32 mx, int32 my) {
 
 
 void ModalGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to save ModalGump");
+	warning("Trying to save ModalGump");
 }
 
 bool ModalGump::loadData(Common::ReadStream *rs, uint32 version) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to load ModalGump");
 	return false;
 }
 

@@ -191,7 +191,7 @@ void AvatarMoverProcess::onMouseDown(int button, int32 mx, int32 my) {
 		break;
 	}
 	default:
-		CANT_HAPPEN_MSG("invalid MouseDown passed to AvatarMoverProcess");
+		warning("Invalid MouseDown passed to AvatarMoverProcess");
 		break;
 	};
 
@@ -209,7 +209,7 @@ void AvatarMoverProcess::onMouseUp(int button) {
 	} else if (button == Mouse::BUTTON_RIGHT) {
 		bid = 1;
 	} else {
-		CANT_HAPPEN_MSG("invalid MouseUp passed to AvatarMoverProcess");
+		warning("Invalid MouseUp passed to AvatarMoverProcess");
 	}
 
 	_mouseButton[bid].clearState(MBS_DOWN);

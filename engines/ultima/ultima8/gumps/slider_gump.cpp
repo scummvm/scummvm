@@ -219,11 +219,11 @@ void SliderGump::setUsecodeNotify(UCProcess *ucp) {
 }
 
 void SliderGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to save ModalGump");
+	warning("Trying to save ModalGump");
 }
 
 bool SliderGump::loadData(Common::ReadStream *rs, uint32 version) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to load ModalGump");
 
 	return false;
 }

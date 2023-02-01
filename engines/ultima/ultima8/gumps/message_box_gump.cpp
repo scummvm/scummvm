@@ -153,11 +153,11 @@ ProcId MessageBoxGump::Show(Std::string _title, Std::string _message, uint32 tit
 }
 
 void MessageBoxGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to save ModalGump");
 }
 
 bool MessageBoxGump::loadData(Common::ReadStream *rs, uint32 version) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to load ModalGump");
 
 	return false;
 }

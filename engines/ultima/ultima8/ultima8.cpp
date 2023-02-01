@@ -356,7 +356,7 @@ Common::Error Ultima8Engine::startup() {
 			return result;
 	} else {
 		// Couldn't setup the game, should never happen?
-		CANT_HAPPEN_MSG("game failed to initialize");
+		warning("game failed to initialize");
 	}
 	paint();
 	return Common::kNoError;
@@ -493,7 +493,7 @@ Common::Error Ultima8Engine::startupGame() {
 			break;
 		}
 	} else {
-		CANT_HAPPEN_MSG("Invalid game type.");
+		warning("Invalid game type.");
 	}
 
 	_inBetweenFrame = false;

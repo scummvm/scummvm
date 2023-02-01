@@ -194,12 +194,12 @@ void QuitGump::verifyQuit() {
 }
 
 bool QuitGump::loadData(Common::ReadStream *rs) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to load ModalGump");
 	return true;
 }
 
 void QuitGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to save ModalGump");
+	warning("Trying to save ModalGump");
 }
 
 } // End of namespace Ultima8

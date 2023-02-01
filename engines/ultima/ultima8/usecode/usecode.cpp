@@ -33,7 +33,6 @@ uint32 Usecode::get_class_event(uint32 classid, uint32 eventid) {
 	if (eventid >= get_class_event_count(classid)) {
 		warning("eventid too high: %u >= %u for class %u",
 			eventid, get_class_event_count(classid), classid);
-		CANT_HAPPEN();
 	}
 
 	const uint8 *data = get_class(classid);
@@ -50,7 +49,7 @@ uint32 Usecode::get_class_event(uint32 classid, uint32 eventid) {
 		offset += data[20 + (eventid * 6) + 4] << 16;
 		offset += data[20 + (eventid * 6) + 5] << 24;
 	} else {
-		CANT_HAPPEN_MSG("Invalid game type.");
+		warning("Invalid game type.");
 	}
 
 	return offset;

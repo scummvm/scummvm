@@ -60,7 +60,7 @@ CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
 	} else if (GAME_IS_CRUSADER) {
 		_mapChunkSize = 1024;
 	} else {
-		CANT_HAPPEN_MSG("Unknown game type in CurrentMap constructor.");
+		warning("Unknown game type in CurrentMap constructor.");
 	}
 
 	for (unsigned int i = 0; i < MAP_NUM_TARGET_ITEMS; i++) {

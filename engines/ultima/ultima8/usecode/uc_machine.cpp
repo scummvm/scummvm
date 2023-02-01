@@ -2157,7 +2157,7 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 		}
 	} else if (segment == SEG_GLOBAL) {
 		if (!GAME_IS_CRUSADER)
-			CANT_HAPPEN_MSG("Global pointers not supported in U8");
+			warning("Global pointers not supported in U8");
 
 		if (size == 1) {
 			_globals->setEntries(offset, 1, data[0]);
@@ -2165,7 +2165,7 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 			uint16 val = ((data[1] << 8) | data[0]);
 			_globals->setEntries(offset, 2, val);
 		} else {
-			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
+			warning("Global pointers must be size 1 or 2");
 		}
 	} else {
 		warning("Trying to access segment %04X", segment);
@@ -2211,7 +2211,7 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 		}
 	} else if (segment == SEG_GLOBAL) {
 		if (!GAME_IS_CRUSADER)
-			CANT_HAPPEN_MSG("Global pointers not supported in U8");
+			warning("Global pointers not supported in U8");
 
 		if (size == 1) {
 			data[0] = static_cast<uint8>(_globals->getEntries(offset, 1));
@@ -2220,7 +2220,7 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 			data[0] = static_cast<uint8>(val);
 			data[1] = static_cast<uint8>(val >> 8);
 		} else {
-			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
+			warning("Global pointers must be size 1 or 2");
 		}
 	} else {
 		warning("Trying to access segment %04X", segment);

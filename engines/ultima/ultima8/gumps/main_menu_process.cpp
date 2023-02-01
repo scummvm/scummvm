@@ -32,7 +32,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MainMenuProcess)
 
 MainMenuProcess::MainMenuProcess() : Process() {
-	_init = false;
+	_flags |= PROC_PREVENT_SAVE;
 }
 
 
@@ -49,7 +49,7 @@ void MainMenuProcess::run() {
 }
 
 void MainMenuProcess::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN();
+	warning("Attempted save of process with prevent save flag");
 
 	Process::saveData(ws);
 }

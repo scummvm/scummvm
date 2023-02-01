@@ -52,7 +52,7 @@ Game *Game::createGame(const GameInfo *info) {
 	case GameInfo::GAME_REGRET:
 		return new CruGame();
 	default:
-		CANT_HAPPEN_MSG("createGame: invalid _game");
+		error("createGame: invalid game tyoe");
 	}
 
 	return nullptr;

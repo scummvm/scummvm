@@ -340,12 +340,12 @@ void ShapeViewerGump::U8ShapeViewer() {
 }
 
 bool ShapeViewerGump::loadData(Common::ReadStream *rs) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to load ModalGump");
 	return false;
 }
 
 void ShapeViewerGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to save ModalGump");
+	warning("Trying to save ModalGump");
 }
 
 } // End of namespace Ultima8

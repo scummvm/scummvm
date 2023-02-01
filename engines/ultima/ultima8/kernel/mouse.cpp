@@ -430,37 +430,35 @@ void Mouse::moveDragging(int mx, int my) {
 
 	setMouseCursor(MOUSE_NORMAL);
 
-	// for a gump, notify Gump's parent that it was dragged
 	if (gump) {
+		// for a gump, notify Gump's parent that it was dragged
 		Gump *parent = gump->GetParent();
 		assert(parent); // can't drag root gump
 		int32 px = mx, py = my;
 		parent->ScreenSpaceToGump(px, py);
 		gump->onDrag(px, py);
-	} else {
+	} else if (item) {
 		// for an item, notify the gump it's on
-		if (item) {
-			Gump *desktopGump = Ultima8Engine::get_instance()->getDesktopGump();
-			gump = desktopGump->FindGump(mx, my);
-			assert(gump);
+		Gump *desktopGump = Ultima8Engine::get_instance()->getDesktopGump();
+		gump = desktopGump->FindGump(mx, my);
+		assert(gump);
 
-			if (gump->getObjId() != _draggingItem_lastGump) {
-				// item switched gump, so notify previous gump item left
-				Gump *last = getGump(_draggingItem_lastGump);
-				if (last) last->DraggingItemLeftGump(item);
-			}
-			_draggingItem_lastGump = gump->getObjId();
-			int32 gx = mx, gy = my;
-			gump->ScreenSpaceToGump(gx, gy);
-			bool ok = gump->DraggingItem(item, gx, gy);
-			if (!ok) {
-				_dragging = DRAG_TEMPFAIL;
-			} else {
-				_dragging = DRAG_OK;
-			}
-		} else {
-			CANT_HAPPEN();
+		if (gump->getObjId() != _draggingItem_lastGump) {
+			// item switched gump, so notify previous gump item left
+			Gump *last = getGump(_draggingItem_lastGump);
+			if (last) last->DraggingItemLeftGump(item);
 		}
+		_draggingItem_lastGump = gump->getObjId();
+		int32 gx = mx, gy = my;
+		gump->ScreenSpaceToGump(gx, gy);
+		bool ok = gump->DraggingItem(item, gx, gy);
+		if (!ok) {
+			_dragging = DRAG_TEMPFAIL;
+		} else {
+			_dragging = DRAG_OK;
+		}
+	} else {
+		warning("Unknown object id on mouse drag");
 	}
 
 	if (_dragging == DRAG_TEMPFAIL) {

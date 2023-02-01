@@ -544,11 +544,11 @@ void GameMapGump::RenderSurfaceChanged() {
 }
 
 void GameMapGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to save GameMapGump");
+	warning("Trying to save GameMapGump");
 }
 
 bool GameMapGump::loadData(Common::ReadStream *rs, uint32 version) {
-	CANT_HAPPEN_MSG("Trying to load GameMapGump");
+	warning("Trying to load GameMapGump");
 
 	return false;
 }

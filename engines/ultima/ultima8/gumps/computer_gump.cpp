@@ -260,11 +260,11 @@ uint32 ComputerGump::I_readComputer(const uint8 *args, unsigned int /*argsize*/)
 }
 
 void ComputerGump::saveData(Common::WriteStream *ws) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to save ModalGump");
 }
 
 bool ComputerGump::loadData(Common::ReadStream *rs, uint32 version) {
-	CANT_HAPPEN_MSG("Trying to load ModalGump");
+	warning("Trying to load ModalGump");
 
 	return false;
 }

@@ -51,18 +51,4 @@
 // double deletes (note that "delete 0" is a no-op).
 #define FORGET_OBJECT(x) do { delete x; x = 0; } while(0)
 
-//
-// Can't happen.
-// For things that really can't happen. Or shouldn't anyway.
-//
-#define CANT_HAPPEN() do { assert(false); } while(0)
-
-//
-// Can't happen with a message
-//
-// Allows a message to be supplied.
-// May not work on all compilers or runtimes as expected
-//
-#define CANT_HAPPEN_MSG(msg) do { assert(msg && false); } while(0)
-
 #endif

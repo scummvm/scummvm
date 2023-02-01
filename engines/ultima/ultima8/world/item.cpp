@@ -125,7 +125,6 @@ Container *Item::getParentAsContainer() const {
 
 	if (!p) {
 		warning("Item %u _parent (%u) is an invalid Container ObjID", getObjId(), _parent);
-		CANT_HAPPEN();
 	}
 
 	return p;
@@ -378,7 +377,6 @@ void Item::returnFromEtherealVoid() {
 		Container *p = getParentAsContainer();
 		if (!p) {
 			warning("Item %u FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent", getObjId());
-			CANT_HAPPEN();
 		}
 		moveToContainer(p);
 	}
