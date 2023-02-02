@@ -203,21 +203,21 @@ void AIScriptZuben::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptZuben::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenGone) {
-		if (Player_Query_Current_Scene() == kSceneCT06) {
-			// return true;
-			return;
+		if (Player_Query_Current_Scene() != kSceneCT06) {
+			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
+			Actor_Says(kActorMcCoy, 8529, 13); // Yuck
 		}
-		Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
-		Actor_Says(kActorMcCoy, 8529, 13);
+		return;
 	}
 
 	if (Global_Variable_Query(kVariableChapter) > 1
 	 && Global_Variable_Query(kVariableChapter) < 5
 	) {
-		if (Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) <= 20) {
+		if (Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) <= 20
+		    || Game_Flag_Query(kFlagTalkToZuben)) {
 			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
-			Actor_Says(kActorMcCoy, 8910, 11);
-		} else if (!Game_Flag_Query(kFlagTalkToZuben)) {
+			Actor_Says(kActorMcCoy, 8910, 11); // Hey you.
+		} else {
 			AI_Movement_Track_Pause(kActorZuben);
 			Actor_Face_Actor(kActorZuben, kActorMcCoy, true);
 			Actor_Says(kActorZuben, 140, 14);
@@ -228,9 +228,6 @@ void AIScriptZuben::ClickedByPlayer() {
 			dialogue();
 			Game_Flag_Set(kFlagTalkToZuben);
 			AI_Movement_Track_Unpause(kActorZuben);
-		} else {
-			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
-			Actor_Says(kActorMcCoy, 8910, 11);
 		}
 		// return true;
 	}
@@ -1315,14 +1312,23 @@ void AIScriptZuben::dialogue() {
 			Actor_Says(kActorMcCoy, 7335, 14);
 			Actor_Says(kActorZuben, 260, 15);
 			Actor_Says(kActorMcCoy, 7340, 16);
-			Actor_Says(kActorZuben, 340, 15);
-			Actor_Says(kActorMcCoy, 7345, 12);
+			if (_vm->_language != Common::DE_DEU) {
+				// In German version Zuben's quote 340 is "boop" (placeholder)
+				// So skip it along with McCoy's response, which is not a placeholder
+				// but makes no sense without Zuben's quote.
+				Actor_Says(kActorZuben, 340, 15);  // You promise no hurt.
+				Actor_Says(kActorMcCoy, 7345, 12); // Right, no hurt. No hurt anymore.
+			}
 			Actor_Clue_Acquire(kActorMcCoy, kClueZubenTalksAboutLucy2, false, kActorZuben);
 		}
 		break;
 
 	case 1510:
 		Actor_Says(kActorMcCoy, 7300, 13);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorZuben, 270, 12);
+			Actor_Says(kActorMcCoy, 7350, 18);
+		}
 		Actor_Says(kActorZuben, 280, 12);
 		Actor_Says(kActorMcCoy, 7355, 14);
 		Actor_Says(kActorZuben, 290, 15);
@@ -1330,7 +1336,14 @@ void AIScriptZuben::dialogue() {
 		Actor_Says(kActorZuben, 300, 14);
 		Actor_Says(kActorZuben, 310, 13);
 		Delay(2000);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 7360, 11);
+#else
+		// Original re-uses McCoy's quote 7360 (Did he do things to Lucy?)
+		// which McCoy already said just before.
+		// The correct quote here is 7365 (You should have killed him)
+		Actor_Says(kActorMcCoy, 7365, 11);
+#endif
 		Actor_Says(kActorZuben, 320, 12);
 		Actor_Says(kActorZuben, 330, 12);
 		Actor_Clue_Acquire(kActorMcCoy, kClueZubensMotive, false, kActorZuben);
