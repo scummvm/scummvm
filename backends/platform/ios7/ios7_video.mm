@@ -120,7 +120,7 @@ uint getSizeNextPOT(uint size) {
 	eaglLayer.opaque = YES;
 	eaglLayer.drawableProperties = @{
 	                                 kEAGLDrawablePropertyRetainedBacking: @NO,
-	                                 kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGB565
+	                                 kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8,
 	                                };
 
 	_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
@@ -603,6 +603,30 @@ uint getSizeNextPOT(uint size) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.mouseTexture.w, _videoContext.mouseTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.mouseTexture.getPixels()); printOpenGLError();
 }
 
+- (void *)getTextureInRGBA8888BE_AsRGBA8888LE {
+	// Allocate a pixel buffer with 32 bits per pixel
+	void *pixelBuffer = malloc(_videoContext.screenTexture.h * _videoContext.screenTexture.w * sizeof(uint32_t));
+	// Copy the texture pixels as we don't want to operate on the
+	memcpy(pixelBuffer, _videoContext.screenTexture.getPixels(), _videoContext.screenTexture.h * _videoContext.screenTexture.w * sizeof(uint32_t));
+
+	// Utilize the Accelerator Framwork to do some byte swapping
+	vImage_Buffer src;
+	src.height = _videoContext.screenTexture.h;
+	src.width = _videoContext.screenTexture.w;
+	src.rowBytes = _videoContext.screenTexture.pitch;
+	src.data = _videoContext.screenTexture.getPixels();
+
+	// Initialise dst with src, change data pointer to pixelBuffer
+	vImage_Buffer dst = src;
+	dst.data = pixelBuffer;
+
+	// Swap pixel channels from RGBA BE to RGBA LE (ABGR)
+	const uint8_t map[4] = { 3, 2, 1, 0 };
+	vImagePermuteChannels_ARGB8888(&src, &dst, map, kvImageNoFlags);
+
+	return pixelBuffer;
+}
+
 - (void)updateMainSurface {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLVertex) * 4, _gameScreenCoords, GL_STATIC_DRAW);
 	glVertexAttribPointer(_positionSlot, 2, GL_FLOAT, GL_FALSE, sizeof(GLVertex), 0);
@@ -613,8 +637,18 @@ uint getSizeNextPOT(uint size) {
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
 	// In the future we could use several tiled textures instead.
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _videoContext.screenTexture.getPixels()); printOpenGLError();
-
+	if (_videoContext.screenTexture.format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) {
+		// ABGR8888 in big endian which in little endian is RBGA8888 -> no convertion needed
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, _videoContext.screenTexture.getPixels()); printOpenGLError();
+	} else if (_videoContext.screenTexture.format == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) {
+		// RGBA8888 (big endian) = ABGR8888 (little endian) -> needs convertion
+		void* pixelBuffer = [self getTextureInRGBA8888BE_AsRGBA8888LE];
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer); printOpenGLError();
+		free(pixelBuffer);
+	} else {
+		// Assuming RGB565
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _videoContext.screenTexture.getPixels()); printOpenGLError();
+	}
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
@@ -639,14 +673,12 @@ uint getSizeNextPOT(uint size) {
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
-- (void)createScreenTexture {
+- (void)setGameScreenCoords{
 	const uint screenTexWidth = getSizeNextPOT(_videoContext.screenWidth);
 	const uint screenTexHeight = getSizeNextPOT(_videoContext.screenHeight);
 
 	_gameScreenCoords[1].u = _gameScreenCoords[3].u = _videoContext.screenWidth / (GLfloat)screenTexWidth;
 	_gameScreenCoords[2].v = _gameScreenCoords[3].v = _videoContext.screenHeight / (GLfloat)screenTexHeight;
-
-	_videoContext.screenTexture.create((uint16) screenTexWidth, (uint16) screenTexHeight, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 }
 
 - (void)initSurface {

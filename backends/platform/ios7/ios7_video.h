@@ -25,6 +25,7 @@
 #include <UIKit/UIKit.h>
 #include <Foundation/Foundation.h>
 #include <QuartzCore/QuartzCore.h>
+#include <Accelerate/Accelerate.h>
 
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/ES2/gl.h>
@@ -40,6 +41,8 @@ typedef struct {
 	GLfloat x, y;
 	GLfloat u,v;
 } GLVertex;
+
+uint getSizeNextPOT(uint size);
 
 @interface iPhoneView : UIView {
 	VideoContext _videoContext;
@@ -97,7 +100,7 @@ typedef struct {
 
 - (VideoContext *)getVideoContext;
 
-- (void)createScreenTexture;
+- (void)setGameScreenCoords;
 - (void)initSurface;
 - (void)setViewTransformation;
 
