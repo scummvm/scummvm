@@ -74,6 +74,28 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 		MTBOOT_OBSIDIAN_RETAIL_MAC_EN,
 	},
+	{ // Obsidian Japanese Macintosh, dumped
+		{
+			"obsidian",
+			"V1.0, 1/13/97, CD",
+			{
+				{"Obsidian Data 2", 0, "d3b4746dd05adba87e15f83a1599c6fe", 570855424},
+				//{"Obsidian Data 3", 0, "96bb5f6ab893aca9e8e3ce19d19974fc", 616954880},
+				//{"Obsidian Data 4", 0, "54cf1745ea19e0cc33d76905d0b9fc41", 593788928},
+				//{"Obsidian Data 5", 0, "adc938b08ba2d2f0a08c934e6105b0f9", 583581824},
+				//{"Obsidian Data 6", 0, "09de40ab9001eda30291421d2736fa76", 551191680},
+				//{"xn--u9j9ecg0a2fsa1io6k6jkdc2k", 0, "af62516a9a9bd16bc5c01e755a9f7329", 9186432},
+				AD_LISTEND
+			},
+			Common::JA_JPN,
+			Common::kPlatformMacintosh,
+			ADGF_TESTING,
+			GUIO3(GAMEOPTION_WIDESCREEN_MOD, GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS, GAMEOPTION_SOUND_EFFECT_SUBTITLES)
+		},
+		GID_OBSIDIAN,
+		0,
+		MTBOOT_OBSIDIAN_RETAIL_MAC_JP,
+	},
 
 	{ // Obsidian Windows, installed
 		{
