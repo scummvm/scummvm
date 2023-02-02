@@ -253,7 +253,8 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 660, 30);
 			Actor_Says(kActorMcCoy, 5060, 13);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+			// A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorMcCoy);
 #else
 			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorBulletBob);
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -329,6 +330,12 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 840, 35);
 		} else {
 			Actor_Says(kActorBulletBob, 770, 36);
+			if (_vm->_cutContent && _vm->_language != Common::ES_ESP) {
+				// In Spanish, this quote (5095) is a duplicate of quote 5085
+				// with a slightly different take from the voice actor
+				// but it does not fit here.
+				Actor_Says_With_Pause(kActorMcCoy, 5095, 0.0f, 11);
+			}
 			Actor_Says(kActorBulletBob, 780, 36);
 #if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 5090, 16);
@@ -365,8 +372,8 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 			 && !Game_Flag_Query(kFlagRC04BobTalk2)
 			 &&  Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) > 45
 			) {
-				Actor_Says(kActorBulletBob, 30, 30);
-				Actor_Says(kActorMcCoy, 4875, 13);
+				Actor_Says(kActorBulletBob, 30, 30); // B: How come I never heard of you?
+				Actor_Says(kActorMcCoy, 4875, 13);   // M: I just got assigned.
 				Actor_Says(kActorBulletBob, 80, 31);
 				Actor_Says(kActorMcCoy, 4900, 15);
 				Actor_Says(kActorBulletBob, 90, 33);
@@ -377,10 +384,16 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 					&& !Game_Flag_Query(kFlagRC04BobTalk1)
 					&& Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) < 45
 			) {
-				Actor_Says(kActorBulletBob, 40, 30);
+				Actor_Says(kActorBulletBob, 40, 30); // B: I heard of you.
 				Actor_Says(kActorMcCoy, 4880, 13);
-				Actor_Says(kActorBulletBob, 50, 35);
-				Actor_Says(kActorMcCoy, 4875, 16);
+				Actor_Says(kActorBulletBob, 50, 35); // M: You ain't done much.
+				if (_vm->_cutContent) {
+					// use an alternative take of the same quote (4875) "I just got assigned."
+					Actor_Says(kActorMcCoy, 4885, 16);
+				} else {
+					// original vanilla version re-uses this quote
+					Actor_Says(kActorMcCoy, 4875, 16);
+				}
 				Actor_Says(kActorBulletBob, 60, 36);
 				Actor_Says(kActorMcCoy, 4890, 13);
 				Actor_Says(kActorBulletBob, 70, 33);
@@ -394,7 +407,13 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 				Actor_Says(kActorBulletBob, 1880, 30);
 				Actor_Says(kActorMcCoy, 8960, 13);
 				Actor_Says(kActorBulletBob, 1890, 36);
-				Actor_Says(kActorBulletBob, 1900, 35);
+				if (_vm->_cutContent && _vm->_language == Common::FR_FRA) {
+					// In French (only) the 1910 quote follows after the 1900 quote.
+					Actor_Says_With_Pause(kActorBulletBob, 1900, 0.0f, 35);
+					Actor_Says(kActorBulletBob, 1910, 30);
+				} else {
+					Actor_Says(kActorBulletBob, 1900, 35);
+				}
 				Actor_Says(kActorMcCoy, 8965, 16);
 				Actor_Says(kActorBulletBob, 1920, 36);
 				Actor_Says(kActorBulletBob, 1930, 33);

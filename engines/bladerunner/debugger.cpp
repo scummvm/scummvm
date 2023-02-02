@@ -793,6 +793,11 @@ bool Debugger::dbgAttemptToLoadChapterSetScene(int chapterId, int setId, int sce
 	return true;
 }
 
+// Note: The chapterId that is set with this command affects loading
+//       of game resources and the return value of _vm->_settings->getChapter()
+//       However, it will NOT change the value of the game's global variable (1) for the current chapter.
+//       The user has to explicitly set that as well, after executing this debugger command,
+//       using eg. var 1 3 (for chapter 3)
 bool Debugger::cmdScene(int argc, const char **argv) {
 	if (argc != 0 && argc > 4) {
 		debugPrintf("Changes set and scene.\n");
