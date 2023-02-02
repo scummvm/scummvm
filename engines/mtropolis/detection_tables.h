@@ -90,7 +90,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
 			ADGF_TESTING,
-			GUIO3(GAMEOPTION_WIDESCREEN_MOD, GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS, GAMEOPTION_SOUND_EFFECT_SUBTITLES)
+			GUIO1(GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -144,7 +144,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
-			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
+			GUIO1(GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS)
 		},
 		GID_OBSIDIAN,
 		0,
@@ -170,7 +170,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
-			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
+			GUIO1(GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS)
 		},
 		GID_OBSIDIAN,
 		0,
