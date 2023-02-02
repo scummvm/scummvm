@@ -78,6 +78,7 @@ protected:
 class MainMenu : public Scene {
 public:
 	MainMenu(NeverhoodEngine *vm, Module *parentModule);
+	bool hasMakingOf() const;
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
