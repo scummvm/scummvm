@@ -908,8 +908,8 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 				for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
 					if (isMonsterActive(teamMonsterId, ctrMobsterId)) {
 						++victims;
-						_teamMonsterEffects[teamMonsterId]._effect[ctrMobsterId] = 1;
-						_teamMonsterEffects[teamMonsterId]._duration[ctrMobsterId] = getRandom(8);
+						_teamMonster[teamMonsterId]._mobsterStatus[ctrMobsterId]._type = kEfhStatusSleeping;
+						_teamMonster[teamMonsterId]._mobsterStatus[ctrMobsterId]._duration = getRandom(8);
 					}
 				}
 			} else {
@@ -921,16 +921,16 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 					if (isMonsterActive(teamMonsterId, ctrMobsterId)) {
 						++victims;
 						--NumberOfTargets;
-						_teamMonsterEffects[teamMonsterId]._effect[ctrMobsterId] = 1;
-						_teamMonsterEffects[teamMonsterId]._duration[ctrMobsterId] = getRandom(8);
+						_teamMonster[teamMonsterId]._mobsterStatus[ctrMobsterId]._type = kEfhStatusSleeping;
+						_teamMonster[teamMonsterId]._mobsterStatus[ctrMobsterId]._duration = getRandom(8);
 					}
 				}
 			}
 			// The original was duplicating this code in each branch of the previous random check.
 			if (victims > 1) {
-				buffer1 = Common::String::format("%d %ss fall asleep!", victims, kEncounters[_mapMonsters[_techId][_teamMonsterIdArray[teamMonsterId]]._monsterRef]._name);
+				buffer1 = Common::String::format("%d %ss fall asleep!", victims, kEncounters[_mapMonsters[_techId][_teamMonster[teamMonsterId]._id]._monsterRef]._name);
 			} else {
-				buffer1 = Common::String::format("%d %s falls asleep!", victims, kEncounters[_mapMonsters[_techId][_teamMonsterIdArray[teamMonsterId]]._monsterRef]._name);
+				buffer1 = Common::String::format("%d %s falls asleep!", victims, kEncounters[_mapMonsters[_techId][_teamMonster[teamMonsterId]._id]._monsterRef]._name);
 			}
 			_messageToBePrinted += buffer1;
 		}
@@ -947,8 +947,8 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 				for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
 					if (isMonsterActive(teamMonsterId, ctrEffectId)) {
 						++victim;
-						_teamMonsterEffects[teamMonsterId]._effect[ctrEffectId] = 2;
-						_teamMonsterEffects[teamMonsterId]._duration[ctrEffectId] = getRandom(8);
+						_teamMonster[teamMonsterId]._mobsterStatus[ctrEffectId]._type = kEfhStatusFrozen;
+						_teamMonster[teamMonsterId]._mobsterStatus[ctrEffectId]._duration = getRandom(8);
 					}
 				}
 			} else {
@@ -960,17 +960,17 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 					if (isMonsterActive(teamMonsterId, ctrMobsterId)) {
 						++victim;
 						--varAC;
-						_teamMonsterEffects[teamMonsterId]._effect[ctrMobsterId] = 2;
-						_teamMonsterEffects[teamMonsterId]._duration[ctrMobsterId] = getRandom(8);
+						_teamMonster[teamMonsterId]._mobsterStatus[ctrMobsterId]._type = kEfhStatusFrozen;
+						_teamMonster[teamMonsterId]._mobsterStatus[ctrMobsterId]._duration = getRandom(8);
 					}
 				}
 			}
 			// <CHECKME>: This part is only present in the original in the case < 50, but for me
 			// it's missing in the other case as there's an effect (frozen enemies) but no feedback to the player
 			if (victim > 1) {
-				buffer1 = Common::String::format("%d %ss are frozen in place!", victim, kEncounters[_mapMonsters[_techId][_teamMonsterIdArray[teamMonsterId]]._monsterRef]._name);
+				buffer1 = Common::String::format("%d %ss are frozen in place!", victim, kEncounters[_mapMonsters[_techId][_teamMonster[teamMonsterId]._id]._monsterRef]._name);
 			} else {
-				buffer1 = Common::String::format("%d %s is frozen in place!", victim, kEncounters[_mapMonsters[_techId][_teamMonsterIdArray[teamMonsterId]]._monsterRef]._name);
+				buffer1 = Common::String::format("%d %s is frozen in place!", victim, kEncounters[_mapMonsters[_techId][_teamMonster[teamMonsterId]._id]._monsterRef]._name);
 			}
 			_messageToBePrinted += buffer1;
 			// </CHECKME>
@@ -996,14 +996,14 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			if (getRandom(100) < 50) {
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (getRandom(100) < 50) {
-						_mapMonsters[_techId][_teamMonsterIdArray[teamMonsterId]]._hitPoints[counter] = 0;
+						_mapMonsters[_techId][_teamMonster[teamMonsterId]._id]._hitPoints[counter] = 0;
 					}
 				}
 			} else {
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(teamMonsterId, counter)) {
 						if (getRandom(100) < 50) {
-							_mapMonsters[_techId][_teamMonsterIdArray[teamMonsterId]]._hitPoints[counter] = 0;
+							_mapMonsters[_techId][_teamMonster[teamMonsterId]._id]._hitPoints[counter] = 0;
 						}
 						break;
 					}
@@ -1019,13 +1019,13 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			if (getRandom(100) < 50) {
 				_messageToBePrinted += "  A dark fiery whirlwind surrounds the poor victim...the power fades and all targeted die!";
 				for (uint counter = 0; counter < 9; ++counter) {
-					_mapMonsters[_techId][_teamMonsterIdArray[teamMonsterId]]._hitPoints[counter] = 0;
+					_mapMonsters[_techId][_teamMonster[teamMonsterId]._id]._hitPoints[counter] = 0;
 				}
 			} else {
 				_messageToBePrinted += "  A dark fiery whirlwind surrounds the poor victim...the power fades and one victim dies!";
 				for (uint counter = 0; counter < 9; ++counter) {
 					if (isMonsterActive(teamMonsterId, counter)) {
-						_mapMonsters[_techId][_teamMonsterIdArray[teamMonsterId]]._hitPoints[counter] = 0;
+						_mapMonsters[_techId][_teamMonster[teamMonsterId]._id]._hitPoints[counter] = 0;
 					}
 				}
 			}

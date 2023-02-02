@@ -201,10 +201,11 @@ uint8 MapMonster::getPronoun() {
 	return _possessivePronounSHL6 >> 6;
 }
 
-void TeamMonsterEffect::init() {
+void TeamMonster::init() {
+	_id = -1;
 	for (int ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
-		_effect[ctrMobsterId] = 0;
-		_duration[ctrMobsterId] = 0;
+		_mobsterStatus[ctrMobsterId]._type = 0;
+		_mobsterStatus[ctrMobsterId]._duration = 0;
 	}
 }
 
@@ -318,8 +319,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	}
 
 	for (int i = 0; i < 5; ++i) {
-		_teamMonsterIdArray[i] = -1;
-		_teamMonsterEffects[i].init();
+		_teamMonster[i].init();
 	}
 
 	_teamSize = 1;
