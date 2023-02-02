@@ -112,12 +112,7 @@ void Combat::draw() {
 		return;
 	case MONSTERS_AFFECTED:
 		writeMonsterEffects();
-		delaySeconds(3);
-		return;
-	case MONSTER_FLEES:
-	case MONSTER_WANDERS:
-		writeMonsterAction(_mode == MONSTER_FLEES);
-		delaySeconds(3);
+		delaySeconds(2);
 		return;
 	case MONSTER_SPELL:
 		writeMonsterSpell();
@@ -171,6 +166,12 @@ void Combat::draw() {
 		writeSpellResult();
 		if (_spellResult._delaySeconds)
 			delaySeconds(_spellResult._delaySeconds);
+		break;
+
+	case MONSTER_FLEES:
+	case MONSTER_WANDERS:
+		writeMonsterAction(_mode == MONSTER_FLEES);
+		delaySeconds(2);
 		break;
 
 	default:
@@ -539,7 +540,8 @@ void Combat::writeMonsters() {
 }
 
 void Combat::writeMonsterStatus(int monsterNum) {
-	monsterSetPtr(monsterNum);
+	_monsterP = _remainingMonsters[monsterNum];
+	monsterIndexOf();
 	byte statusBits = _remainingMonsters[monsterNum]->_status;
 
 	if (statusBits) {
@@ -556,7 +558,7 @@ void Combat::writeMonsterStatus(int monsterNum) {
 
 		writeString(STRING[Common::String::format("dialogs.combat.status.%d",
 			status)]);
-	} else if (_remainingMonsters[monsterNum]->_hp != _monsterP->_defaultHP) {
+	} else if (_monsterP->_hp != _monsterP->_defaultHP) {
 		writeDots();
 		writeString(STRING["dialogs.combat.status.wounded"]);
 	} else {
@@ -627,6 +629,7 @@ void Combat::writeMonsterEffects() {
 void Combat::writeMonsterAction(bool flees) {
 	resetBottom();
 	writeString(0, 20, _monsterName);
+	writeChar(' ');
 	writeString(STRING[flees ?
 		"dialogs.combat.monster_flees" : "dialogs.combat.monster_wanders"
 	]);

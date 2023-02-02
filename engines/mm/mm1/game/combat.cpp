@@ -585,12 +585,13 @@ void Combat::proc2() {
 void Combat::monsterAction() {
 	Encounter &enc = g_globals->_encounters;
 	byte bitset = _monsterP->_counterFlags;
-	int threshold = -1;
+	int threshold = 999;	// Never flee by default
 
 	_activeMonsterNum = _monsterIndex;
 	_monsterName = _monsterP->_name;
 	monsterIndexOf();
 
+	// Set up threshold to check whether monster flees
 	if (!(bitset & (COUNTER_THRESHOLD1 | COUNTER_THRESHOLD2))) {
 		if (enc._highestLevel < 4) {
 		} else if (enc._highestLevel < 9) {
@@ -615,13 +616,15 @@ void Combat::monsterAction() {
 	}
 
 	if (getRandomNumber(100) >= threshold) {
+		// Monster flees from combat
 		_monsterP->_experience = 0;
 		_monsterP->_field18 = 0;
-		enc._monsterList[_monsterIndex]._hp = 0;
-		enc._monsterList[_monsterIndex]._status = MONFLAG_DEAD;
+		_monsterP->_hp = 0;
+		_monsterP->_status = MONFLAG_DEAD;
 		removeMonster();
 		setMode(MONSTER_FLEES);
 	} else {
+		// Otherwise, move on to checking if monster casts spells
 		checkMonsterSpells();
 	}
 }
