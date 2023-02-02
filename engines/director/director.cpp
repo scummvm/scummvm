@@ -103,7 +103,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	for (uint i = 0; Director::directoryGlobs[i]; i++) {
 		Common::String directoryGlob = directoryGlobs[i];
-		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob);
+		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob, 0, 5);
 	}
 
 	if (debugChannelSet(-1, kDebug32bpp))
