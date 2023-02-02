@@ -104,15 +104,6 @@ void TeRendererOpenGL::init(uint width, uint height) {
 	glClearStencil(0);
 	_clearColor = TeColor(0, 0, 0, 255);
 	glClearColor(0, 0, 0, 1.0);
-	debug("[TeRenderer::init] Vendor : %s", vendor().c_str());
-	debug("[TeRenderer::init] Renderer : %s", renderer().c_str());
-	debug("[TeRenderer::init] Version : %s", glGetString(GL_VERSION));
-	int bits;
-	glGetIntegerv(GL_STENCIL_BITS, &bits);
-	debug("[TeRenderer::init] Sentil buffer bits : %d", bits);
-	glGetIntegerv(GL_DEPTH_BITS, &bits);
-	debug("[TeRenderer::init] Depth buffer bits : %d", bits);
-	//debug("[TeRenderer::init] Extensions : %s", glGetString(GL_EXTENSIONS));
 	//TeOpenGLExtensions::loadExtensions(); // this does nothing in the game?
 	_currentColor = TeColor(255, 255, 255, 255);
 	_scissorEnabled = false;

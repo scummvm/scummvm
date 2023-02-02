@@ -112,12 +112,6 @@ void TeRendererTinyGL::init(uint width, uint height) {
 	tglClearStencil(0);
 	_clearColor = TeColor(0, 0, 0, 255);
 	tglClearColor(0, 0, 0, 1.0);
-	debug("[TeRenderer::init] Vendor : %s", vendor().c_str());
-	debug("[TeRenderer::init] Renderer : %s", renderer().c_str());
-	debug("[TeRenderer::init] Version : (tinygl version)");
-	debug("[TeRenderer::init] Sentil buffer bits : (not supported)");
-	debug("[TeRenderer::init] Depth buffer bits : (not supported)");
-	//debug("[TeRenderer::init] Extensions : %s", glGetString(TGL_EXTENSIONS));
 	//TeOpenGLExtensions::loadExtensions(); // this does nothing in the game?
 	_currentColor = TeColor(255, 255, 255, 255);
 	_scissorEnabled = false;
