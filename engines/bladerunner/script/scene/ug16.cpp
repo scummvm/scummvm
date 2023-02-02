@@ -277,7 +277,7 @@ void SceneScriptUG16::dialogueWithLuther() {
 		Actor_Says(kActorLance, 120, 13);
 		Actor_Says(kActorMcCoy, 5785, 13);
 		Actor_Says(kActorLuther, 130, 6);
-		Actor_Says(kActorMcCoy, 5825, 13);
+		Actor_Says(kActorMcCoy, 5825, 13); // Used in GUZZA topic too ("Keep talking")
 		Actor_Modify_Friendliness_To_Other(kActorLuther, kActorMcCoy, -5);
 		if (Game_Flag_Query(kFlagLutherLanceIsReplicant)) {
 			Actor_Says(kActorLuther, 140, 13);
@@ -287,6 +287,7 @@ void SceneScriptUG16::dialogueWithLuther() {
 			Actor_Says(kActorMcCoy, 5790, 13);
 			Actor_Says(kActorLuther, 170, 14);
 			Game_Flag_Set(kFlagUG16LutherLanceTalkReplicants);
+			// TODO Check why friendliness modification is reverted here?
 			Actor_Modify_Friendliness_To_Other(kActorLuther, kActorMcCoy, 5);
 		} else {
 			Actor_Says(kActorLuther, 180, 14);
@@ -302,8 +303,15 @@ void SceneScriptUG16::dialogueWithLuther() {
 	case 1410: // WORK
 		Actor_Says(kActorMcCoy, 5735, 13);
 		Actor_Face_Actor(kActorMcCoy, kActorLuther, true);
-		Actor_Says(kActorLance, 160, 17);
-		Actor_Says(kActorLuther, 200, 14);
+		Actor_Says(kActorLance, 160, 17);     // Eldon shafted us. So, now we're returning the favor.
+		if (_vm->_cutContent && _vm->_language != Common::DE_DEU) {
+			// Quote 170 for kActorLance was unused.
+			// ("We're gonna figure out a way to beat that four year lifespan if it kills us.")
+			// In DEU it repeats the second part of quote 160, so it can be skipped.
+			// In ENG, ITA, FRE, ESP it is an additional quote.
+			Actor_Says(kActorLance, 170, 15); // We're gonna figure out a way (...)
+		}
+		Actor_Says(kActorLuther, 200, 14);    // We promised Clovis we'd be finished with this (...)
 		break;
 
 	case 1420: // LIFESPAN
@@ -352,7 +360,7 @@ void SceneScriptUG16::dialogueWithLuther() {
 		Actor_Says(kActorMcCoy, 5820, 13);
 		Actor_Says(kActorLance, 300, 17);
 		Actor_Says(kActorLuther, 330, 14);
-		Actor_Says(kActorMcCoy, 5825, 13);
+		Actor_Says(kActorMcCoy, 5825, 13); // Used in REPLICANTS topic too ("Keep talking")
 		Actor_Says(kActorLuther, 340, 13);
 		Actor_Says(kActorLance, 310, 13);
 		Actor_Says(kActorLuther, 350, 13);
@@ -384,7 +392,7 @@ void SceneScriptUG16::dialogueWithLuther() {
 		Actor_Says(kActorLance, 410, 14);
 		Actor_Says(kActorLance, 420, 17);
 #if BLADERUNNER_ORIGINAL_BUGS
-		// This quote is repeated (also used in RUNCITER question
+		// This quote is repeated (also used in RUNCITER topic)
 		// "That probably had something to do with you guys getting fired."
 		// It makes little sense to be here.
 		Actor_Says(kActorMcCoy, 5835, 13);
