@@ -128,13 +128,13 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_fullPlaceId);
 	s.syncAsSint16LE(_guessAnimationAmount);
 	s.syncAsUint16LE(_largeMapFlag);
-	s.syncAsSint16LE(_teamCharId[0]);
-	s.syncAsSint16LE(_teamCharId[1]);
-	s.syncAsSint16LE(_teamCharId[2]);
+	s.syncAsSint16LE(_teamChar[0]._id);
+	s.syncAsSint16LE(_teamChar[1]._id);
+	s.syncAsSint16LE(_teamChar[2]._id);
 
 	for (int i = 0; i < 3; ++i) {
-		s.syncAsSint16LE(_teamCharStatus[i]._status);
-		s.syncAsSint16LE(_teamCharStatus[i]._duration);
+		s.syncAsSint16LE(_teamChar[i]._status._type);
+		s.syncAsSint16LE(_teamChar[i]._status._duration);
 	}
 
 	s.syncAsSint16LE(_teamSize);

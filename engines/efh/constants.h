@@ -48,6 +48,12 @@ enum EfhReactionType {
 	kEfhReactionLaughs = 6
 };
 
+enum EfhStatusType {
+	kEfhStatusNormal = 0,
+	kEfhStatusSleeping = 1,
+	kEfhStatusFrozen = 2
+};
+
 struct Font {
 	uint8 _lines[8];
 };

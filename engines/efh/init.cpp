@@ -304,17 +304,17 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_guessAnimationAmount = 9;
 	_largeMapFlag = 0xFFFF;
 	_alertDelay = 0;
-	_teamCharId[0] = 0;
-	_teamCharId[1] = _teamCharId[2] = -1;
+	_teamChar[0]._id = 0;
+	_teamChar[1]._id = _teamChar[2]._id = -1;
 
 	for (int i = 0; i < 3; ++i) {
-		_teamCharStatus[i]._status = 0;
-		_teamCharStatus[i]._duration = 0;
-		_teamPctVisible[i] = 0;
-		_teamPctDodgeMiss[i] = 0;
-		_teamNextAttack[i] = -1;
-		_teamLastInventoryUsed[i] = 0;
-		_teamLastAction[i] = 0;
+		_teamChar[i]._status._type = kEfhStatusNormal;
+		_teamChar[i]._status._duration = 0;
+		_teamChar[i]._pctVisible = 0;
+		_teamChar[i]._pctDodgeMiss = 0;
+		_teamChar[i]._nextAttack = -1;
+		_teamChar[i]._lastInventoryUsed = 0;
+		_teamChar[i]._lastAction = 0;
 	}
 
 	for (int i = 0; i < 5; ++i) {

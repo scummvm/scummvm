@@ -136,24 +136,24 @@ Common::Error EfhEngine::run() {
 			_imageSetSubFilesIdx = 147;
 			break;
 		case Common::KEYCODE_F1:
-			if (_teamCharId[0] != -1) {
-				handleStatusMenu(1, _teamCharId[0]);
+			if (_teamChar[0]._id != -1) {
+				handleStatusMenu(1, _teamChar[0]._id);
 				_tempTextPtr = nullptr;
 				drawGameScreenAndTempText(true);
 				_redrawNeededFl = true;
 			}
 			break;
 		case Common::KEYCODE_F2:
-			if (_teamCharId[1] != -1) {
-				handleStatusMenu(1, _teamCharId[1]);
+			if (_teamChar[1]._id != -1) {
+				handleStatusMenu(1, _teamChar[1]._id);
 				_tempTextPtr = nullptr;
 				drawGameScreenAndTempText(true);
 				_redrawNeededFl = true;
 			}
 			break;
 		case Common::KEYCODE_F3:
-			if (_teamCharId[2] != -1) {
-				handleStatusMenu(1, _teamCharId[2]);
+			if (_teamChar[2]._id != -1) {
+				handleStatusMenu(1, _teamChar[2]._id);
 				_tempTextPtr = nullptr;
 				drawGameScreenAndTempText(true);
 				_redrawNeededFl = true;
@@ -701,9 +701,9 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 			setTextColorRed();
 
 			for (int i = 0; i < 3; ++i) {
-				if (_teamCharId[i] == -1)
+				if (_teamChar[i]._id == -1)
 					continue;
-				int16 charId = _teamCharId[i];
+				int16 charId = _teamChar[i]._id;
 				int16 textPosY = 161 + 9 * i;
 				Common::String buffer = _npcBuf[charId]._name;
 				setTextPos(16, textPosY);
@@ -720,8 +720,8 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 					continue;
 				}
 
-				switch (_teamCharStatus[i]._status) {
-				case 0: {
+				switch (_teamChar[i]._status._type) {
+				case kEfhStatusNormal: {
 					uint16 exclusiveItemId = getEquippedExclusiveType(charId, 9, true);
 					if (exclusiveItemId == 0x7FFF)
 						_nameBuffer = "(NONE)";
@@ -729,10 +729,10 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 						_nameBuffer = _items[exclusiveItemId]._name;
 					}
 					break;
-				case 1:
+				case kEfhStatusSleeping:
 					_nameBuffer = "* ASLEEP *";
 					break;
-				case 2:
+				case kEfhStatusFrozen:
 					_nameBuffer = "* FROZEN *";
 					break;
 				default:
@@ -763,7 +763,7 @@ void EfhEngine::totalPartyKill() {
 	debugC(6, kDebugEngine, "totalPartyKill");
 
 	for (uint counter = 0; counter < 3; ++counter) {
-		if (_teamCharId[counter] != -1)
+		if (_teamChar[counter]._id != -1)
 			_npcBuf[counter]._hitPoints = 0;
 	}
 }
@@ -771,25 +771,25 @@ void EfhEngine::totalPartyKill() {
 void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 	debugC(6, kDebugEngine, "removeCharacterFromTeam %d", teamMemberId);
 
-	int16 charId = _teamCharId[teamMemberId];
+	int16 charId = _teamChar[teamMemberId]._id;
 	_npcBuf[charId].field12_textId = _npcBuf[charId].fieldB_textId;
 	_npcBuf[charId].field14_textId = _npcBuf[charId].fieldE_textId;
 	_npcBuf[charId].field_10 = _npcBuf[charId].field_C;
 	_npcBuf[charId].field11_NpcId = _npcBuf[charId].field_D;
 
-	_teamCharId[teamMemberId] = -1;
-	_teamCharStatus[teamMemberId]._status = 0;
-	_teamCharStatus[teamMemberId]._duration = 0;
+	_teamChar[teamMemberId]._id = -1;
+	_teamChar[teamMemberId]._status._type = kEfhStatusNormal;
+	_teamChar[teamMemberId]._status._duration = 0;
 
 	for (int var4 = teamMemberId; var4 < 2; ++var4) {
-		_teamCharId[var4] = _teamCharId[var4 + 1];
+		_teamChar[var4]._id = _teamChar[var4 + 1]._id;
 
 		// The original isn't doing that, resulting in losing its altered status and remaining duration
-		_teamCharStatus[var4]._status = _teamCharStatus[var4 + 1]._status;
-		_teamCharStatus[var4]._duration = _teamCharStatus[var4 + 1]._duration;
+		_teamChar[var4]._status._type = _teamChar[var4 + 1]._status._type;
+		_teamChar[var4]._status._duration = _teamChar[var4 + 1]._status._duration;
 		//
 
-		_teamCharId[var4 + 1] = -1;
+		_teamChar[var4 + 1]._id = -1;
 	}
 
 	refreshTeamSize();
@@ -800,7 +800,7 @@ void EfhEngine::refreshTeamSize() {
 
 	_teamSize = 0;
 	for (uint charId = 0; charId < 3; ++charId) {
-		if (_teamCharId[charId] != -1)
+		if (_teamChar[charId]._id != -1)
 			++_teamSize;
 	}
 }
@@ -809,7 +809,7 @@ bool EfhEngine::isNpcATeamMember(int16 id) {
 	debugC(6, kDebugEngine,"isNpcATeamMember %d", id);
 
 	for (int charId = 0; charId < _teamSize; ++charId) {
-		if (_teamCharId[charId] == id)
+		if (_teamChar[charId]._id == id)
 			return true;
 	}
 
@@ -944,7 +944,7 @@ int16 EfhEngine::handleCharacterJoining() {
 	debugC(3, kDebugEngine, "handleCharacterJoining");
 
 	for (uint counter = 0; counter < 3; ++counter) {
-		if (_teamCharId[counter] == -1) {
+		if (_teamChar[counter]._id == -1) {
 			return counter;
 		}
 	}
@@ -1231,12 +1231,12 @@ void EfhEngine::handleNewRoundEffects() {
 	debugC(6, kDebugEngine, "handleNewRoundEffects");
 
 	for (int counter = 0; counter < _teamSize; ++counter) {
-		CharStatus *curStatus = &_teamCharStatus[counter];
-		if (curStatus->_status == 0) // normal
+		CharStatus *curStatus = &_teamChar[counter]._status;
+		if (curStatus->_type == kEfhStatusNormal)
 			continue;
 
 		if (--curStatus->_duration <= 0) {
-			curStatus->_status = 0;
+			curStatus->_type = kEfhStatusNormal;
 			curStatus->_duration = 0;
 		}
 	}
@@ -1245,7 +1245,7 @@ void EfhEngine::handleNewRoundEffects() {
 		return;
 
 	for (int counter = 0; counter < _teamSize; ++counter) {
-		NPCStruct *curNpc = &_npcBuf[_teamCharId[counter]];
+		NPCStruct *curNpc = &_npcBuf[_teamChar[counter]._id];
 		if (++curNpc->_hitPoints > curNpc->_maxHP)
 			curNpc->_hitPoints = curNpc->_maxHP;
 	}
@@ -1823,8 +1823,8 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 	case 4:
 		for (int charId = 0; charId < _teamSize; ++charId) {
 			for (uint inventoryId = 0; inventoryId < 10; ++inventoryId) {
-				if (_npcBuf[_teamCharId[charId]]._inventory[inventoryId]._ref == _npcBuf[npcId].field11_NpcId) {
-					removeObject(_teamCharId[charId], inventoryId);
+				if (_npcBuf[_teamChar[charId]._id]._inventory[inventoryId]._ref == _npcBuf[npcId].field11_NpcId) {
+					removeObject(_teamChar[charId]._id, inventoryId);
 					displayMonsterAnim(monsterId);
 					displayImp1Text(_npcBuf[npcId].field14_textId);
 					displayAnimFrames(0xFE, true);
@@ -1844,7 +1844,7 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 	case 6:
 		for (int charId = 0; charId < _teamSize; ++charId) {
 			for (uint inventoryId = 0; inventoryId < 10; ++inventoryId) {
-				if (_npcBuf[_teamCharId[charId]]._inventory[inventoryId]._ref == _npcBuf[npcId].field11_NpcId) {
+				if (_npcBuf[_teamChar[charId]._id]._inventory[inventoryId]._ref == _npcBuf[npcId].field11_NpcId) {
 					displayMonsterAnim(monsterId);
 					displayImp1Text(_npcBuf[npcId].field14_textId);
 					displayAnimFrames(0xFE, true);
@@ -1855,7 +1855,7 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		break;
 	case 7:
 		for (int charId = 0; charId < _teamSize; ++charId) {
-			if (_npcBuf[npcId].field11_NpcId == _teamCharId[charId]) {
+			if (_npcBuf[npcId].field11_NpcId == _teamChar[charId]._id) {
 				removeCharacterFromTeam(charId);
 				displayMonsterAnim(monsterId);
 				displayImp1Text(_npcBuf[npcId].field14_textId);
@@ -1866,10 +1866,10 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		break;
 	case 8:
 		for (int charId = 0; charId < _teamSize; ++charId) {
-			if (_npcBuf[npcId].field11_NpcId == _teamCharId[charId]) {
+			if (_npcBuf[npcId].field11_NpcId == _teamChar[charId]._id) {
 				displayMonsterAnim(monsterId);
 				_enemyNamePt2 = _npcBuf[npcId]._name;
-				_characterNamePt2 = _npcBuf[_teamCharId[charId]]._name;
+				_characterNamePt2 = _npcBuf[_teamChar[charId]._id]._name;
 				Common::String buffer = Common::String::format("%s asks that %s leave your party.", _enemyNamePt2.c_str(), _characterNamePt2.c_str());
 				for (uint i = 0; i < 2; ++i) {
 					clearBottomTextZone(0);
@@ -1893,7 +1893,7 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 		break;
 	case 9:
 		for (int charId = 0; charId < _teamSize; ++charId) {
-			if (_npcBuf[npcId].field11_NpcId == _teamCharId[charId]) {
+			if (_npcBuf[npcId].field11_NpcId == _teamChar[charId]._id) {
 				displayMonsterAnim(monsterId);
 				displayImp1Text(_npcBuf[npcId].field14_textId);
 				displayAnimFrames(0xFE, true);
@@ -2062,20 +2062,20 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 
 		if (_mapSpecialTiles[_techId][tileId]._field3 == 0xFE) {
 			for (int counter = 0; counter < _teamSize; ++counter) {
-				if (_teamCharId[counter] == -1)
+				if (_teamChar[counter]._id == -1)
 					continue;
-				if (_teamCharId[counter] == _mapSpecialTiles[_techId][tileId]._triggerId) {
+				if (_teamChar[counter]._id == _mapSpecialTiles[_techId][tileId]._triggerId) {
 					displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 					return true;
 				}
 			}
 		} else if (_mapSpecialTiles[_techId][tileId]._field3 == 0xFD) {
 			for (int counter = 0; counter < _teamSize; ++counter) {
-				if (_teamCharId[counter] == -1)
+				if (_teamChar[counter]._id == -1)
 					continue;
 
 				for (uint var2 = 0; var2 < 10; ++var2) {
-					if (_npcBuf[_teamCharId[counter]]._inventory[var2]._ref == _mapSpecialTiles[_techId][tileId]._triggerId) {
+					if (_npcBuf[_teamChar[counter]._id]._inventory[var2]._ref == _mapSpecialTiles[_techId][tileId]._triggerId) {
 						displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 						return true;
 					}
@@ -2085,14 +2085,14 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 		} else if (_mapSpecialTiles[_techId][tileId]._field3 <= 0x77) {
 			int16 scoreId = _mapSpecialTiles[_techId][tileId]._field3;
 			for (int counter = 0; counter < _teamSize; ++counter) {
-				if (_teamCharId[counter] == -1)
+				if (_teamChar[counter]._id == -1)
 					continue;
 
 				for (uint var2 = 0; var2 < 39; ++var2) {
 					// CHECKME : the whole loop doesn't make much sense as it's using scoreId instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
 					// Also, 39 correspond to the size of activeScore + passiveScore + infoScore + the 2 remaining bytes of the struct
 					warning("handleInteractionText - _activeScore[%d]", scoreId);
-					if (_npcBuf[_teamCharId[counter]]._activeScore[scoreId] >= _mapSpecialTiles[_techId][tileId]._triggerId) {
+					if (_npcBuf[_teamChar[counter]._id]._activeScore[scoreId] >= _mapSpecialTiles[_techId][tileId]._triggerId) {
 						displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 						return true;
 					}
@@ -2170,9 +2170,9 @@ void EfhEngine::computeInitiatives() {
 	debugC(6, kDebugEngine, "computeInitiatives");
 
 	for (int counter = 0; counter < 3; ++counter) {
-		if (counter < _teamSize && _teamCharId[counter] != -1) {
+		if (counter < _teamSize && _teamChar[counter]._id != -1) {
 			_initiatives[counter]._id = counter + 1000; // Magic value added to detect it's a member of the team
-			_initiatives[counter]._initiative = _npcBuf[_teamCharId[counter]]._infoScore[3]; // "Agility"
+			_initiatives[counter]._initiative = _npcBuf[_teamChar[counter]._id]._infoScore[3]; // "Agility"
 		} else {
 			_initiatives[counter]._id = -1;
 			_initiatives[counter]._initiative = -1;
@@ -2406,7 +2406,7 @@ bool EfhEngine::checkMonsterCollision() {
 				endLoop = true;
 				break;
 			case Common::KEYCODE_s: // Status
-				handleStatusMenu(1, _teamCharId[0]);
+				handleStatusMenu(1, _teamChar[0]._id);
 				endLoop = true;
 				_tempTextPtr = nullptr;
 				drawGameScreenAndTempText(true);
@@ -2483,13 +2483,13 @@ void EfhEngine::loadEfhGame() {
 	_fullPlaceId = f.readUint16LE();
 	_guessAnimationAmount = f.readSint16LE();
 	_largeMapFlag = f.readUint16LE();
-	_teamCharId[0] = f.readSint16LE();
-	_teamCharId[1] = f.readSint16LE();
-	_teamCharId[2] = f.readSint16LE();
+	_teamChar[0]._id = f.readSint16LE();
+	_teamChar[1]._id = f.readSint16LE();
+	_teamChar[2]._id = f.readSint16LE();
 
 	for (int i = 0; i < 3; ++i) {
-		_teamCharStatus[i]._status = f.readSint16LE();
-		_teamCharStatus[i]._duration = f.readSint16LE();
+		_teamChar[i]._status._type = f.readSint16LE();
+		_teamChar[i]._status._duration = f.readSint16LE();
 	}
 
 	_teamSize = f.readSint16LE();

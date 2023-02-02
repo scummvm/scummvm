@@ -203,7 +203,7 @@ struct BufferBM {
 };
 
 struct CharStatus {
-	int16 _status;
+	int16 _type;
 	int16 _duration;
 };
 
@@ -243,6 +243,16 @@ struct TileFactStruct {
 	uint8 _tileId;
 
 	void init();
+};
+
+struct TeamChar {
+	int16 _id;
+	CharStatus _status;
+	int16 _pctVisible;
+	int16 _pctDodgeMiss;
+	int16 _nextAttack;
+	int16 _lastInventoryUsed;
+	int16 _lastAction;
 };
 
 class EfhEngine : public Engine {
@@ -606,13 +616,7 @@ private:
 	int16 _menuDepth;
 	int16 _menuItemCounter;
 
-	int16 _teamCharId[3];
-	CharStatus _teamCharStatus[3];
-	int16 _teamPctVisible[3];
-	int16 _teamPctDodgeMiss[3];
-	int16 _teamNextAttack[3];
-	int16 _teamLastInventoryUsed[3];
-	int16 _teamLastAction[3];
+	TeamChar _teamChar[3];
 
 	int16 _teamMonsterIdArray[5];
 	TeamMonsterEffect _teamMonsterEffects[5];
