@@ -23,9 +23,9 @@
 #include "scumm/he/logic_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"
-#ifdef USE_LIBCURL
-#include "scumm/he/moonbase/net_main.h"
-#include "scumm/he/moonbase/net_defines.h"
+#ifdef USE_ENET
+#include "scumm/he/net/net_main.h"
+#include "scumm/he/net/net_defines.h"
 #endif
 
 namespace Scumm {
@@ -59,7 +59,7 @@ private:
 	void op_ai_set_type(int op, int numArgs, int32 *args);
 	void op_ai_clean_up(int op, int numArgs, int32 *args);
 
-#ifdef USE_LIBCURL
+#ifdef USE_ENET
 	void op_net_remote_start_script(int op, int numArgs, int32 *args);
 	void op_net_remote_send_array(int op, int numArgs, int32 *args);
 	int op_net_remote_start_function(int op, int numArgs, int32 *args);
@@ -164,8 +164,8 @@ int LogicHEmoonbase::versionID() {
 #define OP_NET_SET_AI_PLAYER_COUNT			1565
 
 int LogicHEmoonbase::startOfFrame() {
-#ifdef USE_LIBCURL
-	_vm1->_moonbase->_net->doNetworkOnceAFrame(15); // Value should be passed in...
+#ifdef USE_ENET
+	_vm1->_net->doNetworkOnceAFrame(15); // Value should be passed in...
 #endif
 
 	return 0;
@@ -209,7 +209,7 @@ int32 LogicHEmoonbase::dispatch(int op, int numArgs, int32 *args) {
 		op_ai_clean_up(op, numArgs, args);
 		break;
 
-#ifdef USE_LIBCURL
+#ifdef USE_ENET
 	case OP_NET_REMOTE_START_SCRIPT:
 		op_net_remote_start_script(op, numArgs, args);
 		break;
@@ -380,82 +380,82 @@ void LogicHEmoonbase::op_ai_clean_up(int op, int numArgs, int32 *args) {
 	_vm1->_moonbase->_ai->cleanUpAI();
 }
 
-#ifdef USE_LIBCURL
+#ifdef USE_ENET
 void LogicHEmoonbase::op_net_remote_start_script(int op, int numArgs, int32 *args) {
-	_vm1->_moonbase->_net->remoteStartScript(args[0], args[1], args[2], numArgs - 3, &args[3]);
+	_vm1->_net->remoteStartScript(args[0], args[1], args[2], numArgs - 3, &args[3]);
 }
 
 void LogicHEmoonbase::op_net_remote_send_array(int op, int numArgs, int32 *args) {
-	_vm1->_moonbase->_net->remoteSendArray(args[0], args[1], args[2], args[3]);
+	_vm1->_net->remoteSendArray(args[0], args[1], args[2], args[3]);
 }
 
 int LogicHEmoonbase::op_net_remote_start_function(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->remoteStartScriptFunction(args[0], args[1], args[2], args[3], numArgs - 4, &args[4]);
+	return _vm1->_net->remoteStartScriptFunction(args[0], args[1], args[2], args[3], numArgs - 4, &args[4]);
 }
 
 int LogicHEmoonbase::op_net_do_init_all(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->initAll();
+	return _vm1->_net->initAll();
 }
 
 int LogicHEmoonbase::op_net_do_init_provider(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->initProvider();
+	return _vm1->_net->initProvider();
 }
 
 int LogicHEmoonbase::op_net_do_init_session(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->initSession();
+	return _vm1->_net->initSession();
 }
 
 int LogicHEmoonbase::op_net_do_init_user(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->initUser();
+	return _vm1->_net->initUser();
 }
 
 int LogicHEmoonbase::op_net_query_providers(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->queryProviders();
+	return _vm1->_net->queryProviders();
 }
 
 int LogicHEmoonbase::op_net_get_provider_name(int op, int numArgs, int32 *args) {
 	char name[MAX_PROVIDER_NAME];
-	_vm1->_moonbase->_net->getProviderName(args[0] - 1, name, sizeof(name));
+	_vm1->_net->getProviderName(args[0] - 1, name, sizeof(name));
 	return _vm1->setupStringArrayFromString(name);
 }
 
 int LogicHEmoonbase::op_net_set_provider(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->setProvider(args[0] - 1);
+	return _vm1->_net->setProvider(args[0] - 1);
 }
 
 int LogicHEmoonbase::op_net_close_provider(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->closeProvider();
+	return _vm1->_net->closeProvider();
 }
 
 int LogicHEmoonbase::op_net_start_query_sessions(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->startQuerySessions();
+	return _vm1->_net->startQuerySessions();
 }
 
 int LogicHEmoonbase::op_net_update_query_sessions(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->updateQuerySessions();
+	return _vm1->_net->updateQuerySessions();
 }
 
 int LogicHEmoonbase::op_net_stop_query_sessions(int op, int numArgs, int32 *args) {
-	_vm1->_moonbase->_net->stopQuerySessions();
+	_vm1->_net->stopQuerySessions();
 	return 1;
 }
 
 int LogicHEmoonbase::op_net_query_sessions(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->querySessions();
+	return _vm1->_net->querySessions();
 }
 
 int LogicHEmoonbase::op_net_get_session_name(int op, int numArgs, int32 *args) {
 	char name[MAX_PROVIDER_NAME];
-	_vm1->_moonbase->_net->getSessionName(args[0] - 1, name, sizeof(name));
+	_vm1->_net->getSessionName(args[0] - 1, name, sizeof(name));
 	return _vm1->setupStringArrayFromString(name);
 }
 
 int LogicHEmoonbase::op_net_get_session_player_count(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->getSessionPlayerCount(args[0] - 1);
+	return _vm1->_net->getSessionPlayerCount(args[0] - 1);
 }
 
 int LogicHEmoonbase::op_net_destroy_player(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->destroyPlayer(args[0]);
+	return _vm1->_net->destroyPlayer(args[0]);
 }
 
 int LogicHEmoonbase::op_net_get_player_long_name(int op, int numArgs, int32 *args) {
@@ -469,64 +469,64 @@ int LogicHEmoonbase::op_net_get_player_short_name(int op, int numArgs, int32 *ar
 int LogicHEmoonbase::op_net_create_session(int op, int numArgs, int32 *args) {
 	char name[MAX_SESSION_NAME];
 	_vm1->getStringFromArray(args[0], name, sizeof(name));
-	return _vm1->_moonbase->_net->createSession(name);
+	return _vm1->_net->createSession(name);
 }
 
 int LogicHEmoonbase::op_net_join_session(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->joinSession(args[0] - 1);
+	return _vm1->_net->joinSession(args[0] - 1);
 }
 
 int LogicHEmoonbase::op_net_end_session(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->endSession();
+	return _vm1->_net->endSession();
 }
 
 int LogicHEmoonbase::op_net_disable_session_player_join(int op, int numArgs, int32 *args) {
-	_vm1->_moonbase->_net->disableSessionJoining();
+	_vm1->_net->disableSessionJoining();
 	return 1;
 }
 
 int LogicHEmoonbase::op_net_enable_session_player_join(int op, int numArgs, int32 *args) {
-	_vm1->_moonbase->_net->enableSessionJoining();
+	_vm1->_net->enableSessionJoining();
 	return 1;
 }
 
 int LogicHEmoonbase::op_net_set_ai_player_count(int op, int numArgs, int32 *args) {
-	_vm1->_moonbase->_net->setBotsCount(args[0]);
+	_vm1->_net->setBotsCount(args[0]);
 	return 1;
 }
 
 int LogicHEmoonbase::op_net_add_user(int op, int numArgs, int32 *args) {
 	char userName[MAX_PLAYER_NAME];
 	_vm1->getStringFromArray(args[0], userName, sizeof(userName));
-	return _vm1->_moonbase->_net->addUser(userName, userName);
+	return _vm1->_net->addUser(userName, userName);
 }
 
 int LogicHEmoonbase::op_net_remove_user(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->removeUser();
+	return _vm1->_net->removeUser();
 }
 
 int LogicHEmoonbase::op_net_who_sent_this(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->whoSentThis();
+	return _vm1->_net->whoSentThis();
 }
 
 int LogicHEmoonbase::op_net_who_am_i(int op, int numArgs, int32 *args) {
-	return _vm1->_moonbase->_net->whoAmI();
+	return _vm1->_net->whoAmI();
 }
 
 int LogicHEmoonbase::op_net_set_provider_by_name(int op, int numArgs, int32 *args) {
 	// Parameter 1 is the provider name and
 	// Parameter 2 is the (optional) tcp/ip address
-	return _vm1->_moonbase->_net->setProviderByName(args[0], args[1]);
+	return _vm1->_net->setProviderByName(args[0], args[1]);
 }
 
 void LogicHEmoonbase::op_net_set_fake_latency(int op, int numArgs, int32 *args) {
-	_vm1->_moonbase->_net->setFakeLatency(args[0]);
+	_vm1->_net->setFakeLatency(args[0]);
 }
 
 int LogicHEmoonbase::op_net_get_host_name(int op, int numArgs, int32 *args) {
 	char name[MAX_HOSTNAME_SIZE];
 
-	if (_vm1->_moonbase->_net->getHostName(name, MAX_HOSTNAME_SIZE)) {
+	if (_vm1->_net->getHostName(name, MAX_HOSTNAME_SIZE)) {
 		return _vm1->setupStringArrayFromString(name);
 	}
 
@@ -539,7 +539,7 @@ int LogicHEmoonbase::op_net_get_ip_from_name(int op, int numArgs, int32 *args) {
 
 	char ip[MAX_IP_SIZE];
 
-	if (_vm1->_moonbase->_net->getIPfromName(ip, MAX_IP_SIZE, name)) {
+	if (_vm1->_net->getIPfromName(ip, MAX_IP_SIZE, name)) {
 		return _vm1->setupStringArrayFromString(ip);
 	}
 
@@ -553,7 +553,7 @@ int LogicHEmoonbase::op_net_host_tcpip_game(int op, int numArgs, int32 *args) {
 	_vm1->getStringFromArray(args[0], sessionName, sizeof(sessionName));
 	_vm1->getStringFromArray(args[1], userName, sizeof(userName));
 
-	return _vm1->_moonbase->_net->hostGame(sessionName, userName);
+	return _vm1->_net->hostGame(sessionName, userName);
 }
 
 int LogicHEmoonbase::op_net_join_tcpip_game(int op, int numArgs, int32 *args) {
@@ -563,7 +563,7 @@ int LogicHEmoonbase::op_net_join_tcpip_game(int op, int numArgs, int32 *args) {
 	_vm1->getStringFromArray(args[0], ip, sizeof(ip));
 	_vm1->getStringFromArray(args[1], userName, sizeof(userName));
 
-	return _vm1->_moonbase->_net->joinGame(ip, userName);
+	return _vm1->_net->joinGame(ip, userName);
 }
 #endif
 

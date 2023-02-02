@@ -166,9 +166,9 @@ MODULE_OBJS += \
 	he/moonbase/moonbase.o \
 	he/moonbase/moonbase_fow.o
 
-ifdef USE_LIBCURL
+ifdef USE_ENET
 MODULE_OBJS += \
-	he/moonbase/net_main.o
+	he/net/net_main.o
 endif
 endif
 
