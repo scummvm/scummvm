@@ -191,7 +191,6 @@ void ResourceMan::loadResource(ResourceHandle &resourceHandle, bool applyResourc
 			resourceData->dataRefCount++;
 		} else {
 			NhcArchiveEntry *nhcEntry = resourceHandle._resourceFileEntry->nhcArchiveEntry;
-			// TODO: types B (subfont), C (MgsText), D (SubText)
 			if (nhcEntry && nhcEntry->isNormal()) {
 				resourceData->data = new byte[nhcEntry->size];
 				resourceHandle._resourceFileEntry->nhcArchive->load(nhcEntry, resourceData->data, 0);
