@@ -372,6 +372,12 @@ struct PixelFormat {
 	}
 	/** Return string representation. */
 	Common::String toString() const;
+
+	/** Shortcut method for checking if the current format is CLUT8 or not */
+	bool isCLUT8() const {
+		// We do not really need to check masks when all shifts equal zeroes
+		return bytesPerPixel == 1 && rShift == 0 && gShift == 0 && bShift == 0 && aShift == 0;
+	}
 };
 
 template<>
