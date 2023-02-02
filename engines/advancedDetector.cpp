@@ -461,7 +461,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 			Common::FSNode gameDataDir = Common::FSNode(ConfMan.get("path"));
 
 			for (auto d = dirs.begin(); d != dirs.end(); ++d)
-				SearchMan.addSubDirectoryMatching(gameDataDir, *d);
+				SearchMan.addSubDirectoryMatching(gameDataDir, *d, 0, _fullPathGlobsDepth);
 		}
 
 		// Call child class's createInstanceMethod.
@@ -867,6 +867,7 @@ AdvancedMetaEngineDetection::AdvancedMetaEngineDetection(const void *descs, uint
 	_maxScanDepth = 1;
 	_directoryGlobs = NULL;
 	_maxAutogenLength = 15;
+	_fullPathGlobsDepth = 5;
 
 	_hashMapsInited = false;
 
