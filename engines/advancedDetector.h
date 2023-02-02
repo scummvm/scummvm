@@ -352,6 +352,13 @@ protected:
 	 */
 	int _maxAutogenLength;
 
+	/**
+	 * If kADFlagMatchFullPaths is set, then use this value for specifying
+	 * depth for addSubDirectoryMatching() call
+	 * The default is 5;
+	 */
+	 int _fullPathGlobsDepth;
+
 public:
 	/**
 	 * Initialize game detection using AdvancedMetaEngineDetection.
