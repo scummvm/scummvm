@@ -224,13 +224,6 @@ struct MapMonster {
 	uint8 getPronoun();
 };
 
-struct TeamMonsterEffect {
-	int16 _effect[9];
-	int16 _duration[9];
-
-	void init();
-};
-
 struct InitiativeStruct {
 	int16 _id;
 	int16 _initiative;
@@ -253,6 +246,13 @@ struct TeamChar {
 	int16 _nextAttack;
 	int16 _lastInventoryUsed;
 	int16 _lastAction;
+};
+
+struct TeamMonster {
+	int16 _id;
+	CharStatus _mobsterStatus[9];
+
+	void init();
 };
 
 class EfhEngine : public Engine {
@@ -617,9 +617,7 @@ private:
 	int16 _menuItemCounter;
 
 	TeamChar _teamChar[3];
-
-	int16 _teamMonsterIdArray[5];
-	TeamMonsterEffect _teamMonsterEffects[5];
+	TeamMonster _teamMonster[5];
 
 	InitiativeStruct _initiatives[8];
 

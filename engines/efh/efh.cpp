@@ -1494,7 +1494,7 @@ bool EfhEngine::checkWeaponRange(int16 monsterId, int16 weaponId) {
 bool EfhEngine::checkMonsterMovementType(int16 id, bool teamFlag) {
 	debugC(6, kDebugEngine, "checkMonsterMovementType %d %s", id, teamFlag ? "True" : "False");
 
-	int16 monsterId = teamFlag ? _teamMonsterIdArray[id] : id;
+	int16 monsterId = teamFlag ? _teamMonster[id]._id : id;
 	MapMonster *curMapMonst = &_mapMonsters[_techId][monsterId];
 
 	if ((curMapMonst->_additionalInfo & 0xF) >= 8) // Check hostility
@@ -1513,7 +1513,7 @@ bool EfhEngine::checkTeamWeaponRange(int16 monsterId) {
 		return true;
 
 	for (uint counter = 0; counter < 5; ++counter) {
-		if (_teamMonsterIdArray[counter] == monsterId && checkMonsterMovementType(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[_techId][monsterId]._weaponItemId))
+		if (_teamMonster[counter]._id == monsterId && checkMonsterMovementType(monsterId, false) && checkWeaponRange(monsterId, _mapMonsters[_techId][monsterId]._weaponItemId))
 			return false;
 	}
 
@@ -2180,12 +2180,12 @@ void EfhEngine::computeInitiatives() {
 	}
 
 	for (int counter = 0; counter < 5; ++counter) {
-		if (_teamMonsterIdArray[counter] == -1) {
+		if (_teamMonster[counter]._id == -1) {
 			_initiatives[counter + 3]._id = -1;
 			_initiatives[counter + 3]._initiative = -1;
 		} else {
 			_initiatives[counter + 3]._id = counter;
-			_initiatives[counter + 3]._initiative = _mapMonsters[_techId][_teamMonsterIdArray[counter]]._npcId + getRandom(20);
+			_initiatives[counter + 3]._initiative = _mapMonsters[_techId][_teamMonster[counter]._id]._npcId + getRandom(20);
 		}
 	}
 
@@ -2261,7 +2261,7 @@ bool EfhEngine::hasObjectEquipped(int16 charId, int16 objectId) {
 void EfhEngine::setMapMonsterAggressivenessAndMovementType(int16 id, uint8 mask) {
 	debugC(2, kDebugEngine, "setMapMonsterAggressivenessAndMovementType %d 0x%X", id, mask);
 
-	int16 monsterId = _teamMonsterIdArray[id];
+	int16 monsterId = _teamMonster[id]._id;
 	MapMonster *curMapMonst = &_mapMonsters[_techId][monsterId];
 
 	mask &= 0x0F;
@@ -2272,7 +2272,7 @@ void EfhEngine::setMapMonsterAggressivenessAndMovementType(int16 id, uint8 mask)
 bool EfhEngine::isMonsterActive(int16 groupId, int16 id) {
 	debugC(5, kDebugEngine, "isMonsterActive %d %d", groupId, id);
 
-	if (_mapMonsters[_techId][_teamMonsterIdArray[groupId]]._hitPoints[id] > 0 && _teamMonsterEffects[groupId]._effect[id] == 0)
+	if (_mapMonsters[_techId][_teamMonster[groupId]._id]._hitPoints[id] > 0 && _teamMonster[groupId]._mobsterStatus[id]._type == kEfhStatusNormal)
 		return true;
 	return false;
 }
