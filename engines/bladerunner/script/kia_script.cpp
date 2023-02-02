@@ -518,12 +518,12 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterReplicant);
 		if (_vm->_cutContent) {
 			if (Actor_Clue_Query(kActorMcCoy, kClueZubenSquadPhoto)) {
-				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1450);
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1450); // TLK02 (Act 3 or 4 only)
 			} else {
-				KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 350); // TLK0A
 			}
-			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1460);
-			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1470);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1460); // TLK02 (Act 3 or 4 only)
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1470); // TLK02 (Act 3 or 4 only)
 		} else {
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
 		}
@@ -728,9 +728,28 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorZuben, 260);
 		break;
 	case kClueZubensMotive:
+#if BLADERUNNER_ORIGINAL_BUGS
+		// Original KIA dialogue is inconsistent with in-game here.
+		// In the actual in-game dialogue in vanilla version
+		// McCoy's quote 7350 ("Runciter?") is not used
+		// and, after Zuben's quote 280 ("He not pay..."),
+		// McCoy's quote 7355 ("All those animals died") quote is used.
+		// Also McCoy asks quote 7360 ("Did he do bad things to Lucy?")
+		// before Zubern's quote 300 ("Girl was forced to do bad things Off-World...").
 		KIA_Play_Actor_Dialogue(kActorZuben, 280);
 		KIA_Play_Actor_Dialogue(kActorMcCoy, 7350);
 		KIA_Play_Actor_Dialogue(kActorZuben, 290);
+#else
+		// Be consistent with the actual spoken dialogue
+		if (_vm->_cutContent) {
+			KIA_Play_Actor_Dialogue(kActorZuben, 270);
+			KIA_Play_Actor_Dialogue(kActorMcCoy, 7350);
+		}
+		KIA_Play_Actor_Dialogue(kActorZuben, 280);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 7355);
+		KIA_Play_Actor_Dialogue(kActorZuben, 290);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 7360);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		KIA_Play_Actor_Dialogue(kActorZuben, 300);
 		KIA_Play_Actor_Dialogue(kActorZuben, 310);
 		break;
