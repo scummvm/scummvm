@@ -298,7 +298,7 @@ Common::Error HugoEngine::run() {
 			_status._skipIntroFl = true;
 			_file->restoreGame(loadSlot);
 		} else {
-			_file->saveGame(0, "New Game");
+			_file->saveGame(99, "New Game [reserved]");
 		}
 	}
 
