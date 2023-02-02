@@ -89,6 +89,8 @@ bool TeTiledSurface::load(const Common::Path &path) {
 
 			if (_imgFormat == TeImage::INVALID) {
 				warning("TeTiledSurface::load: Wrong image format on file %s", path.toString().c_str());
+				delete _codec;
+				_codec = nullptr;
 				return false;
 			}
 			TeImage img;
@@ -117,6 +119,8 @@ bool TeTiledSurface::load(const Common::Path &path) {
 			}
 		} else {
 			warning("TeTiledSurface::load: failed to load %s", path.toString().c_str());
+			delete _codec;
+			_codec = nullptr;
 		}
 	}
 
