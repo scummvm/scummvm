@@ -237,8 +237,8 @@ public:
 	 */
 	bool getMenuText(TextId index, char *text, uint32 textSize);
 
-	void textClipFull();
-	void textClipSmall();
+	void bigWinDial();
+	void normalWinDial();
 
 	void drawAskQuestion(TextId index);
 	void drawHolomapLocation(TextId index);

@@ -657,7 +657,7 @@ bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 	return aborted;
 }
 
-bool Text::drawTextProgressive(TextId index, bool playVox, bool loop) {
+bool Text::drawTextProgressive(TextId index, bool playVox, bool loop) { // Dial
 	_engine->exitSceneryView();
 	_engine->_interface->memoClip();
 	_engine->_interface->unsetClip();
@@ -731,7 +731,7 @@ bool Text::getMenuText(TextId index, char *text, uint32 textSize) {
 	return true;
 }
 
-void Text::textClipFull() {
+void Text::bigWinDial() {
 	const int32 margin = 8;
 	_dialTextBox.left = margin;
 	_dialTextBox.top = margin;
@@ -742,7 +742,7 @@ void Text::textClipFull() {
 	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * PADDING;
 }
 
-void Text::textClipSmall() {
+void Text::normalWinDial() {
 	const int32 margin = 16;
 	_dialTextBoxLines = 3;
 	const int32 textHeight = _dialTextBoxLines * lineHeight;
@@ -760,7 +760,7 @@ void Text::drawAskQuestion(TextId index) {
 }
 
 void Text::drawHolomapLocation(TextId index) {
-	textClipSmall();
+	normalWinDial();
 	setFontCrossColor(COLOR_WHITE);
 	_engine->_interface->drawFilledRect(_dialTextBox, COLOR_BLACK);
 	const bool displayText = _engine->_cfgfile.FlagDisplayText;

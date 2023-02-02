@@ -1604,14 +1604,14 @@ int32 ScriptLife::lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BIG_MESSAGE(%i)", (int)textIdx);
 
 	ScopedEngineFreeze scopedFreeze(engine);
-	engine->_text->textClipFull();
+	engine->_text->bigWinDial();
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
 	}
 	engine->_text->setFontCrossColor(ctx.actor->_talkColor);
 	engine->_scene->_talkingActor = ctx.actorIdx;
 	engine->_text->drawTextProgressive(textIdx);
-	engine->_text->textClipSmall();
+	engine->_text->normalWinDial();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -1927,7 +1927,7 @@ int32 ScriptLife::lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) 
 	ScopedEngineFreeze scoped(engine);
 	engine->_screens->fadeToBlack(engine->_screens->_paletteRGBA);
 	engine->_screens->loadImage(TwineImage(Resources::HQR_RESS_FILE, 25, 26));
-	engine->_text->textClipFull();
+	engine->_text->bigWinDial();
 	engine->_text->setFontCrossColor(COLOR_WHITE);
 	engine->_text->_drawTextBoxBackground = false;
 	const bool tmpFlagDisplayText = engine->_cfgfile.FlagDisplayText;
@@ -1935,7 +1935,7 @@ int32 ScriptLife::lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) 
 	engine->_text->drawTextProgressive(TextId::kSendell);
 	engine->_cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	engine->_text->_drawTextBoxBackground = true;
-	engine->_text->textClipSmall();
+	engine->_text->normalWinDial();
 	engine->_screens->fadeToBlack(engine->_screens->_paletteRGBACustom);
 	engine->_screens->clearScreen();
 	engine->setPalette(engine->_screens->_paletteRGBA);

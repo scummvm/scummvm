@@ -59,7 +59,7 @@ void MenuOptions::newGame() {
 		_engine->_text->_renderTextTriangle = true;
 
 		_engine->_text->initDial(TextBankId::Inventory_Intro_and_Holomap);
-		_engine->_text->textClipFull();
+		_engine->_text->bigWinDial();
 		_engine->_text->setFontCrossColor(COLOR_WHITE);
 
 		bool aborted = _engine->_text->drawTextProgressive(TextId::kIntroText1);
@@ -84,7 +84,7 @@ void MenuOptions::newGame() {
 			_engine->_movie->playMovie(FLA_INTROD);
 		}
 
-		_engine->_text->textClipSmall();
+		_engine->_text->normalWinDial();
 	} else {
 		_engine->_movie->playMovie(ACF_INTRO);
 	}

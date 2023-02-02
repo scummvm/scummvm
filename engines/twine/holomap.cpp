@@ -503,6 +503,7 @@ void Holomap::drawListPos(int calpha, int cbeta, int cgamma, bool pos) {
 			const int32 angleX = _locations[drawList.actorIdx].angleX;
 			const int32 angleY = _locations[drawList.actorIdx].angleY;
 			Common::Rect dummy;
+			// first scene with twinsen model: x = 0, y = -497, z -764, a 432, b: 172
 			_engine->_renderer->affObjetIso(drawList.x, drawList.y, drawList.z, angleX, angleY, LBAAngles::ANGLE_0, *bodyData, dummy);
 		}
 	}
