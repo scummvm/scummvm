@@ -97,7 +97,7 @@ Background::Background(Graphics::Surface *surface, int layer, bool isSub, int ma
 	assert(_surface);
 
 	uint16 realPitch, realHeight;
-	bool isRGB = (_surface->format != Graphics::PixelFormat::createFormatCLUT8());
+	bool isRGB = !_surface->format.isCLUT8();
 	BgType type = (isRGB || swScale) ? BgType_Bmp16 : BgType_Bmp8;
 	BgSize size = getBgSize(_surface->w, _surface->h, isRGB, swScale, realPitch, realHeight);
 
