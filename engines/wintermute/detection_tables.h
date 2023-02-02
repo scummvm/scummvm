@@ -246,6 +246,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("english.dcp", "7eab045218855c9c4454c7ada7d70ef4", 170340,
 					"data.dcp", "1037a77cbd001e0644898addc022322c", 15407750), Common::EN_ANY, ADGF_UNSTABLE, WME_1_6_1),
 
+	// Five Lethal Demons (English)
+	WME_WINENTRY("5ld", "",
+		WME_ENTRY2s("english.dcp", "c5b2feb8a2a013ed6f63a0b0ea130b04", 169700,
+					"data.dcp", "27f3c958390c96999e30e96b7295a1e8", 15407750), Common::EN_ANY, ADGF_UNSTABLE, WME_1_6_2),
+
 	// Five Lethal Demons (Polish)
 	WME_WINENTRY("5ld", "",
 		WME_ENTRY2s("polish.dcp", "726e279fe3c2dc81a9241408d3585c81", 173792,
