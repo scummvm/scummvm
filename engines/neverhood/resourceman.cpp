@@ -131,6 +131,17 @@ bool ResourceMan::nhcExists(uint32 fileHash, uint32 type) {
 	return false;
 }
 
+bool ResourceMan::exists(uint32 fileHash) {
+	ResourceFileEntry *entry = findEntry(fileHash);
+	if (!entry)
+		return false;
+	if (entry->nhcArchiveEntry && entry->nhcArchive && entry->nhcArchiveEntry->isNormal())
+		return true;
+	if (entry->archiveEntry && entry->archive)
+		return true;
+	return false;
+}
+
 void ResourceMan::queryResource(uint32 fileHash, ResourceHandle &resourceHandle) {
 	ResourceFileEntry *firstEntry;
 	resourceHandle._resourceFileEntry = findEntry(fileHash, &firstEntry);

@@ -115,6 +115,7 @@ public:
 	Common::SeekableReadStream *createStream(uint32 fileHash);
 	Common::SeekableReadStream *createNhcStream(uint32 fileHash, uint32 type);
 	bool nhcExists(uint32 fileHash, uint32 type);
+	bool exists(uint32 fileHash);
 	const ResourceFileEntry& getEntry(uint index) { return _entries[index]; }
 	uint getEntryCount() { return _entries.size(); }
 	void queryResource(uint32 fileHash, ResourceHandle &resourceHandle);
