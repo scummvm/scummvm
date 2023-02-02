@@ -60,7 +60,7 @@ $(TARGET).bnr: $(APP_BANNER_IMAGE) $(APP_BANNER_AUDIO)
 	@echo built ... $(notdir $@)
 
 $(TARGET).cia: $(EXECUTABLE) $(APP_RSF) $(TARGET).smdh $(TARGET).bnr romfs
-	@$(MAKEROM) -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh -DAPP_ROMFS=romfs/
+	@$(MAKEROM) -ver $(shell echo $$(($(VER_MAJOR)*1024+$(VER_MINOR)*16+$(VER_PATCH)))) -f cia -target t -exefslogo -o $@ -elf $(EXECUTABLE) -rsf $(APP_RSF) -banner $(TARGET).bnr -icon $(TARGET).smdh -DAPP_ROMFS=romfs/
 	@echo built ... $(notdir $@)
 
 dist_3ds: $(TARGET).cia $(TARGET).3dsx $(DIST_FILES_DOCS)
