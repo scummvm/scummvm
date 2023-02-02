@@ -27,6 +27,15 @@
 namespace BladeRunner {
 
 bool Chapters::enterChapter(int chapter) {
+	// Chapter valid values are: 1 - 5 corresponding to the game Acts.
+	// Before set, _chapter is 0 (see chapters.h -- The mapped resource id is still 1)
+	// Resource id is (see _resourceIds in chapters.h):
+	// 1 for chapter 0, 1 - Act 1
+	// 2 for chapter 2, 3 - Act 2, 3
+	// 3 for chapter 4    - Act 4  (see note and code below, 3 can be used for Act 5 too)
+	// 4 for chapter 5    - Act 5
+	// Note: For resources that only go up to "3" (TLK, VQA), 3 is used for both Acts 4 and 5.
+
 	int id = _resourceIds[chapter];
 
 	if (!_vm->_sliceAnimations->openFrames(id))
