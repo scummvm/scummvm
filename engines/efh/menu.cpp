@@ -1324,7 +1324,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		} else {
 			int16 teamCharId = teamMonsterId;
 			if (teamCharId != 0x1B) {
-				if (_teamChar[teamCharId]._status._type == kEfhStatusNormal) { // BUG (likely) 
+				if (_teamChar[teamCharId]._status._type == kEfhStatusSleeping) {
 					_messageToBePrinted += "  The item makes a loud noise, awakening the character!";
 					_teamChar[teamCharId]._status._type = kEfhStatusNormal;
 					_teamChar[teamCharId]._status._duration = 0;
