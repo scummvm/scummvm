@@ -350,7 +350,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		           &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
 		           && !Game_Flag_Query(kFlagPS04GuzzaTalkDumpToMainframe)
 		) {
-			// McCoy metions Bryant's "vacation",
+			// McCoy mentions Bryant's "vacation",
 			// Guzza says about the procedure via Mainframe
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 570, 32);
@@ -378,6 +378,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		Actor_Face_Heading(kActorGuzza, 400, false);
 		Actor_Says(kActorGuzza, 620, 32);
 		if (_vm->_cutContent) {
+			Game_Flag_Set(kFlagMcCoyConfessedKillingHomelessInCT04);
 			// add a fade-out here while Guzza calls-in for favors
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kPS04LoopPanToPS04, true);
 			Scene_Loop_Set_Default(kPS04LoopMainLoop);

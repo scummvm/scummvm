@@ -108,11 +108,20 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 
 		if (Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)) {
 			if (Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)) {
+				// Thrown away (garbage collected) happens in Act 3
+				// see transient AI.
 				Actor_Voice_Over(270, kActorVoiceOver);
 				Actor_Voice_Over(280, kActorVoiceOver);
 			} else if (Game_Flag_Query(kFlagCT04HomelessBodyFound)) {
 				Actor_Voice_Over(250, kActorVoiceOver);
-				Actor_Voice_Over(260, kActorVoiceOver);
+				if (!_vm->_cutContent
+				 || !Game_Flag_Query(kFlagMcCoyConfessedKillingHomelessInCT04)) {
+					// When McCoy confesses in the Restored Content mode,
+					// the body gets found. So it's gone (but not thrown with the trash).
+					// Since McCoy has confessed though, he shouldn't say the following quote
+					// "I'd screwed up and screwed up bad. But maybe there was still a way to make it right.".
+					Actor_Voice_Over(260, kActorVoiceOver);
+				}
 			} else {
 				Actor_Voice_Over(230, kActorVoiceOver);
 				Actor_Voice_Over(240, kActorVoiceOver);
