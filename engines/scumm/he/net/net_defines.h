@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCUMM_HE_MOONBASE_NET_DEFINES_H
-#define SCUMM_HE_MOONBASE_NET_DEFINES_H
+#ifndef SCUMM_HE_NET_DEFINES_H
+#define SCUMM_HE_NET_DEFINES_H
 
 namespace Scumm {
 
@@ -46,21 +46,9 @@ namespace Scumm {
 #define PACKETTYPE_REMOTESTARTSCRIPTRESULT			3
 #define PACKETTYPE_REMOTESENDSCUMMARRAY				4
 
-const int SESSION_ERROR = 0;
-const int USER_CREATED_SESSION = 1;
-const int USER_JOINED_SESSION = 2;
-
-const int TCPIP_PROVIDER = -1;
-const int NO_PROVIDER = -2;
-
 const int MAX_PACKET_SIZE = 4096;	// bytes
 const int MAX_HOSTNAME_SIZE = 256;
 const int MAX_IP_SIZE = 32;
-const char LOCAL_HOST[] = "127.0.0.1";	//localhost
-
-const int DATA_HEADER_SIZE = 28;
-
-#define NULL_IP "";						//no IP address (causes enumsessions to search local subnet)
 
 } // End of namespace Scumm
 

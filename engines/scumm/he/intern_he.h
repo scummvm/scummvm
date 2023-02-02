@@ -249,6 +249,10 @@ protected:
 };
 
 #ifdef ENABLE_HE
+
+#ifdef USE_ENET
+class Net;
+#endif
 class Moonbase;
 
 class ScummEngine_v71he : public ScummEngine_v70he {
@@ -536,6 +540,9 @@ protected:
 
 class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class LogicHE;
+#ifdef USE_ENET
+	friend class Net;
+#endif
 	friend class Moonbase;
 	friend class MoviePlayer;
 	friend class Sprite;
@@ -612,6 +619,11 @@ protected:
 	LogicHE *_logicHE;
 	MoviePlayer *_moviePlay;
 	Sprite *_sprite;
+
+#ifdef USE_ENET
+public:
+	Net *_net;
+#endif
 
 public:
 	ScummEngine_v90he(OSystem *syst, const DetectorResult &dr);
@@ -711,6 +723,12 @@ protected:
 
 	byte VAR_U32_VERSION;
 	byte VAR_U32_ARRAY_UNK;
+
+#ifdef USE_ENET
+	byte VAR_REMOTE_START_SCRIPT;
+	byte VAR_NETWORK_AVAILABLE;
+	byte VAR_NETWORK_RECEIVE_ARRAY_SCRIPT;
+#endif
 };
 
 class ScummEngine_v99he : public ScummEngine_v90he {

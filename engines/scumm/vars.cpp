@@ -335,6 +335,14 @@ void ScummEngine_v90he::setupScummVars() {
 		VAR_SKIP_RESET_TALK_ACTOR = 125;
 	}
 	if (_game.heversion >= 99) {
+#ifdef USE_ENET
+		if (_game.id == GID_FOOTBALL || _game.id == GID_BASEBALL2001 || _game.id == GID_FOOTBALL2002 ||
+			_game.id == GID_MOONBASE) {
+			VAR_REMOTE_START_SCRIPT = 98;
+			VAR_NETWORK_AVAILABLE = 100;
+			VAR_NETWORK_RECEIVE_ARRAY_SCRIPT = 101;
+		}
+#endif
 		VAR_MAIN_SCRIPT = 127;
 		VAR_NUM_PALETTES = 130;
 		VAR_NUM_UNK = 131;
