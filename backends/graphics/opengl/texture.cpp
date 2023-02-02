@@ -378,7 +378,7 @@ FakeTexture::FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, con
 	  _fakeFormat(fakeFormat),
 	  _rgbData(),
 	  _palette(nullptr) {
-	if (_fakeFormat == Graphics::PixelFormat::createFormatCLUT8()) {
+	if (_fakeFormat.isCLUT8()) {
 		_palette = new uint32[256];
 		memset(_palette, 0, sizeof(uint32));
 	}
