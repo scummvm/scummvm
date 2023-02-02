@@ -95,6 +95,8 @@ public:
 	float speed() const { return _speed; }
 	const Common::Path &loadedPath() const { return _loadedPath; }
 
+	static void deleteLaterStatic(TeModelAnimation *obj) { TeObject::deleteLaterStatic(obj); }
+
 private:
 	TeIntrusivePtr<TeModel> _model;
 	Common::Path _loadedPath;

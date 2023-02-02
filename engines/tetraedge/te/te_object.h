@@ -34,6 +34,7 @@ public:
 
 	/** Add this object to the pending deletion queue (deleted at the end of a frame) */
 	void deleteLater();
+	static void deleteLaterStatic(TeObject *obj);
 
 	/** Delete all pending objects now */
 	static void deleteNow();

@@ -383,6 +383,7 @@ int spriteLayoutBindings(lua_State *L) {
 		}
 		lua_settop(L, -2);
 	}
+
 	if (!imgFullPath.empty()) {}
 		layout->load(imgFullPath);
 
@@ -405,12 +406,6 @@ int spriteLayoutBindings(lua_State *L) {
 	if (layout->name() == "11070-1")
 		layout->setName("ab11070-1");
 
-	if (playNow) {
-		layout->play();
-	} else {
-		layout->stop();
-	}
-
 	TeICodec *codec = layout->_tiledSurfacePtr->codec();
 	if (codec) {
 		float frameRate = codec->frameRate();
@@ -420,6 +415,14 @@ int spriteLayoutBindings(lua_State *L) {
 		} else {
 			layout->_tiledSurfacePtr->_frameAnim.setEndTime((endingFrame / frameRate) * 1000.0 * 1000.0);
 		}
+	}
+
+	// Slight divergence from original.. start playing only after setting
+	// start/end values above as it makes more sense that way.
+	if (playNow) {
+		layout->play();
+	} else {
+		layout->stop();
 	}
 
 	if (!gui->spriteLayout(layout->name())) {

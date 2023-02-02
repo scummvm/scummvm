@@ -64,6 +64,8 @@ public:
 
 	void update(double millis) override;
 
+	static void deleteLaterStatic(TeModelVertexAnimation *obj) { TeObject::deleteLaterStatic(obj); }
+
 private:
 	float _lastMillis;
 	TeIntrusivePtr<TeModel> _model;

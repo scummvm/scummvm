@@ -32,6 +32,11 @@ void TeObject::deleteLater() {
 }
 
 /*static*/
+void TeObject::deleteLaterStatic(TeObject *obj) {
+	pendingDeleteList()->push_back(obj);
+}
+
+/*static*/
 void TeObject::deleteNow() {
 	Common::Array<TeObject *> *pending = pendingDeleteList();
 	for (auto *obj : (*pending)) {

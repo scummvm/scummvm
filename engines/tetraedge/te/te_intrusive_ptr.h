@@ -30,7 +30,11 @@ namespace Tetraedge {
  */
 template<class T> class TeIntrusivePtr {
 public:
-	typedef void(T::*Tdestructor)();
+	// NOTE: The original uses a member function for this, which is cleaner, but
+	// MSVC compiles member functions for different class types (forward
+	// declaration, multi-inheritance, etc) as differnt sizes which causes all
+	// sorts of issues.  Only accept a static function to avoid such problems.
+	typedef void(*Tdestructor)(T *obj);
 
 	TeIntrusivePtr() : _p(nullptr), _deleteFn(nullptr) {}
 
@@ -75,7 +79,7 @@ public:
 		if (_p) {
 			if (_p->decrementCounter()) {
 				if (_deleteFn)
-					(_p->*_deleteFn)();
+					(_deleteFn)(_p);
 				else
 					delete _p;
 			}

@@ -70,7 +70,7 @@ _walkCurveLen(0.0f), _walkCurveIncrement(0.0f), _walkEndAnimG(false), _walkTotal
 _walkCurveNextLength(0.0f), _walkedLength(0.0f), _walkLoopAnimLen(0.0f), _walkEndGAnimLen(0.0f),
 _walkStartAnimLen(0.0f), _walkStartAnimFrameCount(0), _walkLoopAnimFrameCount(0),
 _walkEndGAnimFrameCount(0), _hasAnchor(false) {
-	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
+	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLaterStatic);
 }
 
 Character::~Character() {

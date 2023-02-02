@@ -34,8 +34,8 @@
 namespace Tetraedge {
 
 TeModel::TeModel() : _enableLights(false), _skipSkinOffsets(false), _matrixForced(false) {
-	_modelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
-	_modelVertexAnim.setDeleteFn(&TeModelVertexAnimation::deleteLater);
+	_modelAnim.setDeleteFn(&TeModelAnimation::deleteLaterStatic);
+	_modelVertexAnim.setDeleteFn(&TeModelVertexAnimation::deleteLaterStatic);
 	create();
 }
 
@@ -610,7 +610,7 @@ TeMatrix4x4 TeModel::skinOffset(uint boneno) const {
 }
 
 TeModel::BonesBlender::BonesBlender(TeIntrusivePtr<TeModelAnimation> anim, float seconds) : _anim(anim), _seconds(seconds) {
-	_anim.setDeleteFn(&TeModelAnimation::deleteLater);
+	_anim.setDeleteFn(&TeModelAnimation::deleteLaterStatic);
 	_timer.stop();
 	_timer.start();
 }
