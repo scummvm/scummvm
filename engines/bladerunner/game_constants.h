@@ -626,7 +626,7 @@ enum Flags {
 	kFlagSteeleInPoliceStation                = 185,
 	kFlagRC01PoliceDone                       = 186,
 	kFlagRC02RunciterTalk1                    = 187,
-	// 188 is never used
+	kFlagMcCoyConfessedKillingHomelessInCT04  = 188, // Original: 188 is never used
 	// 189 is never used
 	kFlagRC02ShellCasingsTaken                = 190,
 	// 191 is never used
