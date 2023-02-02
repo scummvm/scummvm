@@ -1291,6 +1291,9 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorSteele, 850, 16);
 		Actor_Says(kActorDispatcher, 0, kAnimationModeTalk);
 		Actor_Says(kActorDispatcher, 10, kAnimationModeTalk);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorDispatcher, 20, kAnimationModeTalk);
+		}
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 		Actor_Says(kActorMcCoy, 2980, 12);
 		Actor_Says(kActorSteele, 860, 14);

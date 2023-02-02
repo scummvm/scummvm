@@ -175,7 +175,10 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 4745, -1);
 			Actor_Says(kActorMcCoy, 4750, -1);
-			Actor_Says(kActorRunciter, 520, 17);
+			if (_vm->_cutContent) {
+				Actor_Says(kActorMcCoy, 4755, -1); // M: Was the tiger a fake?
+			}
+			Actor_Says(kActorRunciter, 520, 17);   // R: No! The tiger was real. I swear it.
 			Actor_Says(kActorRunciter, 530, 18);
 			Actor_Says(kActorRunciter, 540, 16);
 		}
