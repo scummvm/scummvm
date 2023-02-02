@@ -134,7 +134,7 @@ bool ResourceMan::nhcExists(uint32 fileHash, uint32 type) {
 void ResourceMan::queryResource(uint32 fileHash, ResourceHandle &resourceHandle) {
 	ResourceFileEntry *firstEntry;
 	resourceHandle._resourceFileEntry = findEntry(fileHash, &firstEntry);
-	resourceHandle._extData = firstEntry ? firstEntry->archiveEntry->extData : nullptr;
+	resourceHandle._extData = firstEntry && firstEntry->archiveEntry ? firstEntry->archiveEntry->extData : nullptr;
 }
 
 struct EntrySizeFix {
