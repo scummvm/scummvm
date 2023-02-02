@@ -232,12 +232,19 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 		case kGoalEarlyQNR04PourDrink:
 			Actor_Face_Actor(kActorMcCoy, kActorEarlyQ, true);
-			Actor_Says(kActorEarlyQ, 90, 73);
-			Actor_Says(kActorMcCoy, 3390, 3);
+			Actor_Says(kActorEarlyQ, 90, 73);  // E: It's your lucky day
+			Actor_Says(kActorMcCoy, 3390, 3);  // M: Not interested
 			Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, true);
-			Actor_Says(kActorEarlyQ, 110, 74);
-			Actor_Says(kActorMcCoy, 3385, 3);
-			Actor_Says(kActorEarlyQ, 120, 74);
+			Actor_Says(kActorEarlyQ, 110, 74); // E: Bull, everyone's interested
+			Actor_Says(kActorMcCoy, 3385, 3);  // M:   "I want information" (ENG, FRA)
+			                                   // (OR) "Make me an offer"   (DEU, ITA, ESP)
+			Actor_Says(kActorEarlyQ, 120, 74); // E: You can have whatever you little heart desires
+			if (_vm->_cutContent
+			    && (_vm->_language == Common::ES_ESP
+			       || _vm->_language == Common::IT_ITA
+			       || _vm->_language == Common::DE_DEU)) {
+				Actor_Says(kActorMcCoy, 3395, 14);  // M: "I want information" (DEU, ITA, ESP)
+			}
 			Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, true);
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04GoToMcCoy);
 			//return true;
