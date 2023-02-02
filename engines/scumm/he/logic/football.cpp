@@ -22,7 +22,27 @@
 #include "common/savefile.h"
 
 #include "scumm/he/intern_he.h"
+
+#ifdef USE_ENET
+#include "scumm/he/net/net_main.h"
+#include "scumm/he/net/net_defines.h"
+#endif
+
 #include "scumm/he/logic_he.h"
+
+// DirectPlay opcodes:
+#define OP_NET_REMOTE_START_SCRIPT	1492
+#define OP_NET_QUERY_PROVIDERS		1497
+#define OP_NET_CLOSE_PROVIDER		1500
+#define OP_NET_QUERY_SESSIONS		1501
+#define OP_NET_GET_SESSION_NAME		1502
+#define OP_NET_END_SESSION			1505
+#define OP_NET_WHO_SENT_THIS		1508
+#define OP_NET_REMOTE_SEND_ARRAY	1509
+#define OP_NET_INIT					1513
+#define OP_NET_WHO_AM_I				1510
+#define OP_NET_INIT_LAN_GAME		1515
+#define OP_NET_SET_PROVIDER_BY_NAME	1516
 
 namespace Scumm {
 
@@ -36,9 +56,15 @@ public:
 	LogicHEfootball(ScummEngine_v90he *vm) : LogicHE(vm) {}
 
 	int versionID() override;
+	int startOfFrame() override;
 	int32 dispatch(int op, int numArgs, int32 *args) override;
 
 protected:
+#ifdef USE_ENET
+	void netRemoteStartScript(int numArgs, int32 *args);
+	void netRemoteSendArray(int32 *args);
+#endif
+
 	int lineEquation3D(int32 *args);
 	virtual int translateWorldToScreen(int32 *args);
 	int fieldGoalScreenTranslation(int32 *args);
@@ -51,6 +77,14 @@ protected:
 int LogicHEfootball::versionID() {
 	return 1;
 }
+
+int LogicHEfootball::startOfFrame() {
+#ifdef USE_ENET
+	_vm->_net->doNetworkOnceAFrame(0);
+#endif
+	return 0;
+}
+
 
 int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 	int res = 0;
@@ -89,11 +123,43 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		res = getFromArray(args[0], args[1], args[2]);
 		break;
 
-	case 1492: case 1493: case 1494: case 1495: case 1496:
-	case 1497: case 1498: case 1499: case 1500: case 1501:
-	case 1502: case 1503: case 1504: case 1505: case 1506:
-	case 1507: case 1508: case 1509: case 1510: case 1511:
-	case 1512: case 1513: case 1514: case 1555:
+
+	case OP_NET_INIT:
+		// Initialize network system, this gets called at boot up and
+		// sets VAR_NETWORK_AVAILABLE (100).  We just return a 1 if
+		// ENet is compiled.
+#ifdef USE_ENET
+		res = 1;
+#endif
+		break;
+
+#ifdef USE_ENET
+	case OP_NET_REMOTE_START_SCRIPT:
+		netRemoteStartScript(numArgs, args);
+		break;
+
+	case OP_NET_END_SESSION:
+		res = _vm->_net->endSession();
+		break;
+
+	case OP_NET_WHO_SENT_THIS:
+		res = _vm->_net->whoSentThis();
+		break;
+
+	case OP_NET_REMOTE_SEND_ARRAY:
+		netRemoteSendArray(args);
+		break;
+
+	case OP_NET_WHO_AM_I:
+		res = _vm->_net->whoAmI();
+		break;
+#endif
+
+	case 1493: case 1494: case 1495: case 1496:
+	case 1498: case 1499: case 1501:
+	case 1502: case 1503: case 1504: case 1506:
+	case 1507: case 1511:
+	case 1512: case 1514: case 1555:
 		// DirectPlay-related
 		// 1513: initialize
 		// 1555: set fake lag
@@ -283,6 +349,36 @@ int LogicHEfootball::computeTwoCircleIntercepts(int32 *args) {
 	return 1;
 }
 
+#ifdef USE_ENET
+void LogicHEfootball::netRemoteStartScript(int numArgs, int32 *args) {
+	int priority = 0;
+	if (args[0] >= 15)
+		priority = PN_PRIORITY_HIGH;
+
+	int targetUserId;
+	if (_vm->_net->_isHost)
+		targetUserId = 2;
+	else
+		targetUserId = 1;
+
+	_vm->_net->remoteStartScript(PN_SENDTYPE_INDIVIDUAL, targetUserId, priority, numArgs - 3, &args[3]);
+}
+
+void LogicHEfootball::netRemoteSendArray(int32 *args) {
+	int priority = 0;
+	if (args[0] >= 10)
+		priority = PN_PRIORITY_HIGH;
+
+	int targetUserId;
+	if (_vm->_net->_isHost)
+		targetUserId = 2;
+	else
+		targetUserId = 1;
+
+	_vm->_net->remoteSendArray(PN_SENDTYPE_INDIVIDUAL, targetUserId, priority, args[3]);
+}
+#endif
+
 class LogicHEfootball2002 : public LogicHEfootball {
 public:
 	LogicHEfootball2002(ScummEngine_v90he *vm) : LogicHEfootball(vm) {
@@ -301,6 +397,11 @@ private:
 	int initScreenTranslations();
 	int getPlaybookFiles(int32 *args);
 	int largestFreeBlock();
+
+#ifdef USE_ENET
+	int netGetSessionName(int index);
+	int netInitLanGame(int32 *args);
+#endif
 
 	float _var0;
 	float _var1;
@@ -342,13 +443,39 @@ int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
 		// Get Computer Name (online play only)
 		break;
 
-	case 1515:
-		// Initialize Session (online play only)
+	// These cases are outside #ifdef USE_ENET intentionally
+	// to silence warnings:
+	case OP_NET_QUERY_PROVIDERS:
+#ifdef USE_ENET
+		res = _vm->_net->queryProviders();
+#endif
 		break;
 
-	case 1516:
-		// Start auto LAN game (online play only)
+	case OP_NET_SET_PROVIDER_BY_NAME:
+#ifdef USE_ENET
+		res = _vm->_net->setProviderByName(args[0], args[1]);
+#endif
 		break;
+
+#ifdef USE_ENET
+	case OP_NET_CLOSE_PROVIDER:
+		res = _vm->_net->closeProvider();
+		break;
+
+	case OP_NET_QUERY_SESSIONS:
+		// TODO: Replace the in-game session querying with
+		// our own GUI.
+		res = _vm->_net->querySessions();
+		break;
+
+	case OP_NET_GET_SESSION_NAME:
+		res = netGetSessionName(args[0]);
+		break;
+
+	case OP_NET_INIT_LAN_GAME:
+		res = netInitLanGame(args);
+		break;
+#endif
 
 	default:
 		res = LogicHEfootball::dispatch(op, numArgs, args);
@@ -486,6 +613,44 @@ int LogicHEfootball2002::largestFreeBlock() {
 	writeScummVar(108, 100000000);
 	return 1;
 }
+
+#ifdef USE_ENET
+int LogicHEfootball2002::netGetSessionName(int index) {
+	char name[MAX_PROVIDER_NAME];
+	_vm->_net->getSessionName(index - 1, name, sizeof(name));
+	return _vm->setupStringArrayFromString(name);
+}
+
+int LogicHEfootball2002::netInitLanGame(int32 *args) {
+	// Initialize Session
+	// Arg 0 is the provider name ("TCP/IP")
+	// Arg 1 is the session name
+	// Arg 2 is the host name.
+	// Arg 3 is a boolean determining we're hosting or joining a session.
+	char sessionName[MAX_SESSION_NAME];
+	_vm->getStringFromArray(args[1], sessionName, sizeof(sessionName));
+	char userName[MAX_PLAYER_NAME];
+	_vm->getStringFromArray(args[2], userName, sizeof(userName));
+
+	int res;
+
+	if (args[3] == 1) {
+		// Stop querying sessions if we haven't already
+		_vm->_net->stopQuerySessions();
+		// And host our new game.
+
+		res = _vm->_net->hostGame(sessionName, userName);
+	} else {
+		// TODO: Join via session name
+		res = _vm->_net->joinSession(0);
+		if (res)
+			_vm->_net->addUser(userName, userName);
+		_vm->_net->stopQuerySessions();
+	}
+
+	return res;
+}
+#endif
 
 LogicHE *makeLogicHEfootball(ScummEngine_v90he *vm) {
 	return new LogicHEfootball(vm);
