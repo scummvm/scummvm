@@ -184,7 +184,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x05:
 			buffer = script_readNumberArray(buffer, 4, scriptNumberArray);
 			if (scriptExecuteFlag) {
-				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				int16 npcId = _teamChar[scriptNumberArray[0]]._id;
 				if (npcId != -1) {
 					int16 scoreId = scriptNumberArray[1];
 					_npcBuf[npcId]._activeScore[scoreId] += scriptNumberArray[2] & 0xFF;
@@ -195,7 +195,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x06:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (scriptExecuteFlag) {
-				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				int16 npcId = _teamChar[scriptNumberArray[0]]._id;
 				if (npcId != -1) {
 					int16 scoreId = scriptNumberArray[1];
 					_npcBuf[npcId]._activeScore[scoreId] = scriptNumberArray[2] & 0xFF;
@@ -210,13 +210,13 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x08:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (scriptExecuteFlag && scriptNumberArray[0] != -1) {
-				_npcBuf[_teamCharId[scriptNumberArray[0]]]._hitPoints = 0;
+				_npcBuf[_teamChar[scriptNumberArray[0]]._id]._hitPoints = 0;
 			}
 			break;
 		case 0x09:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (scriptExecuteFlag) {
-				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				int16 npcId = _teamChar[scriptNumberArray[0]]._id;
 				if (npcId != -1) {
 					_npcBuf[npcId]._hitPoints += getRandom(scriptNumberArray[1]);
 					if (_npcBuf[npcId]._hitPoints > _npcBuf[npcId]._maxHP)
@@ -227,7 +227,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x0A:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (scriptExecuteFlag) {
-				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				int16 npcId = _teamChar[scriptNumberArray[0]]._id;
 				if (npcId != -1) {
 					_npcBuf[npcId]._hitPoints = _npcBuf[npcId]._maxHP;
 				}
@@ -236,7 +236,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		case 0x0B:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (scriptExecuteFlag) {
-				int16 npcId = _teamCharId[scriptNumberArray[0]];
+				int16 npcId = _teamChar[scriptNumberArray[0]]._id;
 				if (npcId != -1) {
 					_npcBuf[npcId]._hitPoints -= getRandom(scriptNumberArray[1]);
 					if (_npcBuf[npcId]._hitPoints < 0)
@@ -251,8 +251,8 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				bool found = false;
 				for (int counter = 0; counter < _teamSize && !found; ++counter) {
 					for (uint objectId = 0; objectId < 10; ++objectId) {
-						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == scriptItemId) {
-							removeObject(_teamCharId[counter], objectId);
+						if (_npcBuf[_teamChar[counter]._id]._inventory[objectId]._ref == scriptItemId) {
+							removeObject(_teamChar[counter]._id, objectId);
 							found = true;
 							break;
 						}
@@ -266,7 +266,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			if (scriptExecuteFlag) {
 				int16 scriptObjectId = scriptNumberArray[0];
 				for (int counter = 0; counter < _teamSize; ++counter) {
-					if (giveItemTo(_teamCharId[counter], scriptObjectId, 0xFF))
+					if (giveItemTo(_teamChar[counter]._id, scriptObjectId, 0xFF))
 						break;
 				}
 			}
@@ -278,7 +278,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				bool found = false;
 				for (int counter = 0; counter < _teamSize && !found; ++counter) {
 					for (uint objectId = 0; objectId < 10; ++objectId) {
-						if (_npcBuf[_teamCharId[counter]]._inventory[objectId]._ref == scriptItemId) {
+						if (_npcBuf[_teamChar[counter]._id]._inventory[objectId]._ref == scriptItemId) {
 							found = true;
 							break;
 						}
@@ -354,7 +354,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				// TODO: This "if" is useless, it's doing just the same loop and if statement. Consider removing it.
 				if (isNpcATeamMember(scriptNpcId)) {
 					for (uint counter = 0; counter < 3; ++counter) {
-						if (_teamCharId[counter] == scriptNpcId) {
+						if (_teamChar[counter]._id == scriptNpcId) {
 							removeCharacterFromTeam(counter);
 							break;
 						}
@@ -376,7 +376,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 				int16 scriptRandomItemId = getRandom(scriptNumberArray[1] - scriptNumberArray[0] + 1) + scriptNumberArray[0] - 1;
 				int16 counter;
 				for (counter = 0; counter < _teamSize; ++counter) {
-					if (giveItemTo(_teamCharId[counter], scriptRandomItemId, 0xFF)) {
+					if (giveItemTo(_teamChar[counter]._id, scriptRandomItemId, 0xFF)) {
 						found = true;
 						break;
 					}
@@ -389,7 +389,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 					scriptRandomItemId = displayBoxWithText("Nothing...", 1, 2, true);
 					displayFctFullScreen();
 				} else {
-					_enemyNamePt2 = _npcBuf[_teamCharId[counter]]._name;
+					_enemyNamePt2 = _npcBuf[_teamChar[counter]._id]._name;
 					_nameBuffer = _items[scriptRandomItemId]._name;
 					curLine = Common::String::format("%s finds a %s!", _enemyNamePt2.c_str(), _nameBuffer.c_str());
 					drawMapWindow();
@@ -484,7 +484,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		displayLowStatusScreen(true);
 		int16 teamSlot = handleCharacterJoining();
 		if (teamSlot > -1) {
-			_teamCharId[teamSlot] = joiningNpcId;
+			_teamChar[teamSlot]._id = joiningNpcId;
 		}
 		refreshTeamSize();
 	}

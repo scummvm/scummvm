@@ -745,23 +745,23 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				bool givenFl;
 				int16 destCharId;
 				do {
-					if (_teamCharId[2] != -1) {
+					if (_teamChar[2]._id != -1) {
 						displayStringInSmallWindowWithBorder("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
 						destCharId = selectOtherCharFromTeam();
 						var2 = false;
-					} else if (_teamCharId[1] == -1) {
+					} else if (_teamChar[1]._id == -1) {
 						destCharId = 0x1A;
 						var2 = false;
 					} else {
 						var2 = true;
-						if (_teamCharId[0] == charId)
+						if (_teamChar[0]._id == charId)
 							destCharId = 1;
 						else
 							destCharId = 0;
 					}
 
 					if (destCharId != 0x1A && destCharId != 0x1B) {
-						givenFl = giveItemTo(_teamCharId[destCharId], objectId, charId);
+						givenFl = giveItemTo(_teamChar[destCharId]._id, objectId, charId);
 						if (!givenFl) {
 							displayStringInSmallWindowWithBorder("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
 							getLastCharAfterAnimCount(_guessAnimationAmount);
@@ -1058,9 +1058,9 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			} else {
 				_messageToBePrinted += buffer1;
 			}
-			_teamPctDodgeMiss[teamCharId] -= 50;
-			if (_teamPctDodgeMiss[teamCharId] < 0)
-				_teamPctDodgeMiss[teamCharId] = 0;
+			_teamChar[teamCharId]._pctDodgeMiss -= 50;
+			if (_teamChar[teamCharId]._pctDodgeMiss < 0)
+				_teamChar[teamCharId]._pctDodgeMiss = 0;
 		}
 
 		objectUsedFl = true;
@@ -1082,9 +1082,9 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 				_messageToBePrinted += buffer1;
 			}
 
-			_teamPctVisible[teamCharId] -= 50;
-			if (_teamPctVisible[teamCharId] < 0)
-				_teamPctVisible[teamCharId] = 0;
+			_teamChar[teamCharId]._pctVisible -= 50;
+			if (_teamChar[teamCharId]._pctVisible < 0)
+				_teamChar[teamCharId]._pctVisible = 0;
 		}
 
 		objectUsedFl = true;
@@ -1166,10 +1166,10 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		} else {
 			int16 teamCharId = teamMonsterId;
 			if (teamCharId != 0x1B) {
-				if (_teamCharStatus[teamCharId]._status == 2) { // frozen
+				if (_teamChar[teamCharId]._status._type == kEfhStatusFrozen) { // frozen
 					_messageToBePrinted += "  The item makes a loud noise, awakening the character!";
-					_teamCharStatus[teamCharId]._status = 0;
-					_teamCharStatus[teamCharId]._duration = 0;
+					_teamChar[teamCharId]._status._type = kEfhStatusNormal;
+					_teamChar[teamCharId]._status._duration = 0;
 				} else {
 					_messageToBePrinted += "  The item makes a loud noise, but has no effect!";
 				}
@@ -1236,9 +1236,9 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		if (teamCharId != 0x1B) {
 			uint8 varAE = _items[itemId]._field17_attackTypeDefense;
 			uint8 effectPoints = getRandom(_items[itemId]._field19_mapPosX_or_maxDeltaPoints);
-			_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] += effectPoints;
-			if (_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] > 20) {
-				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 20;
+			_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] += effectPoints;
+			if (_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] > 20) {
+				_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] = 20;
 			}
 			if (effectPoints > 1)
 				buffer1 = Common::String::format("%s increased %d points!", kSkillArray[varAE], effectPoints);
@@ -1266,9 +1266,9 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		if (teamCharId != 0x1B) {
 			uint8 varAE = _items[itemId]._field17_attackTypeDefense;
 			uint8 effectPoints = getRandom(_items[itemId]._field19_mapPosX_or_maxDeltaPoints);
-			_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] -= effectPoints;
-			if (_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] > 20 || _npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] < 0) {
-				_npcBuf[_teamCharId[teamCharId]]._activeScore[varAE] = 1;
+			_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] -= effectPoints;
+			if (_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] > 20 || _npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] < 0) {
+				_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] = 1;
 			}
 			if (effectPoints > 1)
 				buffer1 = Common::String::format("%s lowered %d points!", kSkillArray[varAE], effectPoints);
@@ -1306,8 +1306,8 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		}
 
 		if (teamCharId != 0x1B) {
-			_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;
-			buffer1 = Common::String::format("%s collapses, dead!!!", _npcBuf[_teamCharId[teamCharId]]._name);
+			_npcBuf[_teamChar[teamCharId]._id]._hitPoints = 0;
+			buffer1 = Common::String::format("%s collapses, dead!!!", _npcBuf[_teamChar[teamCharId]._id]._name);
 			if (gameMode == 2) {
 				displayStringInSmallWindowWithBorder(buffer1, false, charId, teamMonsterId, menuId, curMenuLine);
 			} else {
@@ -1324,10 +1324,10 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		} else {
 			int16 teamCharId = teamMonsterId;
 			if (teamCharId != 0x1B) {
-				if (_teamCharStatus[teamCharId]._status == 0) {
+				if (_teamChar[teamCharId]._status._type == kEfhStatusNormal) { // BUG (likely) 
 					_messageToBePrinted += "  The item makes a loud noise, awakening the character!";
-					_teamCharStatus[teamCharId]._status = 0;
-					_teamCharStatus[teamCharId]._duration = 0;
+					_teamChar[teamCharId]._status._type = kEfhStatusNormal;
+					_teamChar[teamCharId]._status._duration = 0;
 				} else {
 					_messageToBePrinted += "  The item makes a loud noise, but has no effect!";
 				}
@@ -1347,14 +1347,14 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 
 		if (teamCharId != 0x1B) {
 			int16 effectPoints = getRandom(_items[itemId]._field17_attackTypeDefense);
-			_npcBuf[_teamCharId[teamCharId]]._hitPoints += effectPoints;
-			if (_npcBuf[_teamCharId[teamCharId]]._hitPoints > _npcBuf[_teamCharId[teamCharId]]._maxHP)
-				_npcBuf[_teamCharId[teamCharId]]._hitPoints = _npcBuf[_teamCharId[teamCharId]]._maxHP;
+			_npcBuf[_teamChar[teamCharId]._id]._hitPoints += effectPoints;
+			if (_npcBuf[_teamChar[teamCharId]._id]._hitPoints > _npcBuf[_teamChar[teamCharId]._id]._maxHP)
+				_npcBuf[_teamChar[teamCharId]._id]._hitPoints = _npcBuf[_teamChar[teamCharId]._id]._maxHP;
 
 			if (effectPoints > 1)
-				buffer1 = Common::String::format("%s is healed %d points!", _npcBuf[_teamCharId[teamCharId]]._name, effectPoints);
+				buffer1 = Common::String::format("%s is healed %d points!", _npcBuf[_teamChar[teamCharId]._id]._name, effectPoints);
 			else
-				buffer1 = Common::String::format("%s is healed 1 point!", _npcBuf[_teamCharId[teamCharId]]._name);
+				buffer1 = Common::String::format("%s is healed 1 point!", _npcBuf[_teamChar[teamCharId]._id]._name);
 		}
 
 		if (gameMode == 2) {
@@ -1377,14 +1377,14 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 
 		if (teamCharId != 0x1B) {
 			int16 effectPoints = getRandom(_items[itemId]._field17_attackTypeDefense);
-			_npcBuf[_teamCharId[teamCharId]]._hitPoints -= effectPoints;
-			if (_npcBuf[_teamCharId[teamCharId]]._hitPoints < 0)
-				_npcBuf[_teamCharId[teamCharId]]._hitPoints = 0;
+			_npcBuf[_teamChar[teamCharId]._id]._hitPoints -= effectPoints;
+			if (_npcBuf[_teamChar[teamCharId]._id]._hitPoints < 0)
+				_npcBuf[_teamChar[teamCharId]._id]._hitPoints = 0;
 
 			if (effectPoints > 1)
-				buffer1 = Common::String::format("%s is harmed for %d points!", _npcBuf[_teamCharId[teamCharId]]._name, effectPoints);
+				buffer1 = Common::String::format("%s is harmed for %d points!", _npcBuf[_teamChar[teamCharId]._id]._name, effectPoints);
 			else
-				buffer1 = Common::String::format("%s is harmed for 1 point!", _npcBuf[_teamCharId[teamCharId]]._name);
+				buffer1 = Common::String::format("%s is harmed for 1 point!", _npcBuf[_teamChar[teamCharId]._id]._name);
 		}
 
 		if (gameMode == 2) {
