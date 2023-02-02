@@ -212,7 +212,7 @@ void Game::addToScore(int score) {
 }
 
 bool Game::changeWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
-	debug("Game::changeWarp(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
+	//debug("Game::changeWarp(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
 	Application *app = g_engine->getApplication();
 	if (fadeFlag) {
 		app->blackFade();
@@ -227,7 +227,7 @@ bool Game::changeWarp(const Common::String &zone, const Common::String &scene, b
 }
 
 bool Game::changeWarp2(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
-	debug("Game::changeWarp2(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
+	//debug("Game::changeWarp2(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
 	_warped = false;
 	_movePlayerCharacterDisabled = false;
 	_sceneCharacterVisibleFromLoad = false;

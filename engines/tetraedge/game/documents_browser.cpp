@@ -99,7 +99,7 @@ void DocumentsBrowser::load() {
 	button->setVisible(false);
 
 	// Game tries to load a file that doesn't exist..
-	debug("TODO?? DocumentsBrowser::load: Game opens Documents.xml here.");
+	// TODO?? DocumentsBrowser::load: Game opens Documents.xml here
 	_timer.start();
 }
 

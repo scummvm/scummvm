@@ -64,7 +64,7 @@ void TeLuaThread::_resume(int nargs) {
 		warning("TeLuaThread::_resume: %s", msg);
 	}
 	if (_lastResumeResult != 1 && _released) {
-		debug("TeLuaThread:: deleting this?");
+		//debug("TeLuaThread:: deleting this?");
 		delete this;
 	}
 }
@@ -78,7 +78,7 @@ void TeLuaThread::execute(const Common::String &fname) {
 		_resume(0);
 	} else {
 		if (!fname.contains("Update"))
-			debug("[TeLuaThread::Execute0] La fonction : \"%s\" n'existe pas.", fname.c_str());
+			debug("[TeLuaThread::Execute0] Function: \"%s\" does not exist", fname.c_str());
 		lua_settop(_luaThread, -2);
 	}
 }
@@ -93,7 +93,7 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1) {
 		_resume(1);
 	} else {
 		if (!fname.contains("Update"))
-			debug("[TeLuaThread::Execute1] La fonction : \"%s\" n'existe pas.", fname.c_str());
+			debug("[TeLuaThread::Execute1] Function: \"%s\" does not exist", fname.c_str());
 		lua_settop(_luaThread, -2);
 	}
 }
@@ -109,7 +109,7 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 		_resume(2);
 	} else {
 		if (!fname.contains("Update"))
-			debug("[TeLuaThread::Execute2] La fonction : \"%s\" n'existe pas.", fname.c_str());
+			debug("[TeLuaThread::Execute2] Function: \"%s\" does not exist.", fname.c_str());
 		lua_settop(_luaThread, -2);
 	}
 }
@@ -126,7 +126,7 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 		_resume(3);
 	} else {
 		if (!fname.contains("Update"))
-			debug("[TeLuaThread::Execute3] La fonction : \"%s\" n'existe pas.", fname.c_str());
+			debug("[TeLuaThread::Execute3] Function: \"%s\" does not exist.", fname.c_str());
 		lua_settop(_luaThread, -4);
 	}
 }

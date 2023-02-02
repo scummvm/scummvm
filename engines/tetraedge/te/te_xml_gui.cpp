@@ -48,7 +48,7 @@ void TeXmlGui::load(const Common::Path &path) {
 
 void TeXmlGui::clear() {
 	_map.clear();
-	debug("TODO: Finish TeXmlGui.clear()");
+	// TODO: Finish TeXmlGui.clear()
 }
 
 } // end namespace Tetraedge

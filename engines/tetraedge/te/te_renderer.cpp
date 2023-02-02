@@ -285,7 +285,7 @@ void TeRenderer::pushMatrix() {
 }
 
 void TeRenderer::dumpTransparentMeshProps() const {
-	debug("** Transparent MeshProps: num:%ld pending:%d **", _numTransparentMeshes, _pendingTransparentMeshProperties);
+	debug("** Transparent MeshProps: num:%d pending:%d **", _numTransparentMeshes, _pendingTransparentMeshProperties);
 	debug("draw? / nverts / source / transl / zorder");
 	for (uint i = 0; i < _transparentMeshProps.size(); i++) {
 		debug("%s %d %d %s %f",
@@ -299,7 +299,7 @@ void TeRenderer::dumpTransparentMeshProps() const {
 }
 
 void TeRenderer::dumpTransparentMeshData() const {
-	debug("** Transparent Meshes: num:%ld pending:%d **", _numTransparentMeshes, _pendingTransparentMeshProperties);
+	debug("** Transparent Meshes: num:%d pending:%d **", _numTransparentMeshes, _pendingTransparentMeshProperties);
 	debug("vert / normal / coord / color / vertNo");
 	for (uint i = 0; i < _transparentMeshVertexes.size(); i++) {
 		debug("%s %s %s %s %d",
