@@ -290,7 +290,7 @@ void Parser::keyHandler(Common::Event event) {
 			break;
 		case Common::KEYCODE_n:
 			if (Utils::yesNoBox("Are you sure you want to start a new game?"))
-				_vm->_file->restoreGame(0);
+				_vm->_file->restoreGame(99);
 			break;
 		case Common::KEYCODE_s:
 			if (gameStatus._viewState == kViewPlay) {
