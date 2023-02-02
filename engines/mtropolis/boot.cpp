@@ -180,6 +180,7 @@ private:
 	bool _isMac;
 	bool _isRetail;
 	bool _isEnglish;
+	bool _isJapanese;
 
 	void unpackMacRetailInstaller(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files);
 	Common::SharedPtr<Obsidian::WordGameData> loadWinWordGameData();
@@ -191,6 +192,7 @@ private:
 ObsidianGameDataHandler::ObsidianGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc) {
 	_isMac = (gameDesc.desc.platform == Common::kPlatformMacintosh);
 	_isEnglish = (gameDesc.desc.language == Common::EN_ANY);
+	_isJapanese = (gameDesc.desc.language == Common::JA_JPN);
 	_isRetail = ((gameDesc.desc.flags & ADGF_DEMO) == 0);
 }
 
@@ -221,7 +223,15 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 		{"RSGKit.rPP", MKTAG('M', 'F', 'c', 'o'), MKTAG('M', 'f', 'M', 'f')},
 	};
 
-	Common::SeekableReadStream *installerDataForkStream = Common::MacResManager::openFileOrDataFork("Obsidian Installer");
+	const char *installerFileName = nullptr;
+	if (_isEnglish)
+		installerFileName = "Obsidian Installer";
+	else if (_isJapanese)
+		installerFileName = "xn--u9j9ecg0a2fsa1io6k6jkdc2k";
+	else
+		error("Couldn't figure out what file name to use as installer to unpack");
+
+	Common::SeekableReadStream *installerDataForkStream = Common::MacResManager::openFileOrDataFork(installerFileName);
 	if (!installerDataForkStream)
 		error("Obsidian Installer has no data fork");
 
@@ -671,6 +681,16 @@ const ManifestFile obsidianRetailMacEnFiles[] = {
 	{nullptr, MTFT_AUTO}
 };
 
+const ManifestFile obsidianRetailMacJpFiles[] = {
+	{"xn--u9j9ecg0a2fsa1io6k6jkdc2k", MTFT_SPECIAL},
+	{"Obsidian Data 2", MTFT_ADDITIONAL},
+	{"Obsidian Data 3", MTFT_ADDITIONAL},
+	{"Obsidian Data 4", MTFT_ADDITIONAL},
+	{"Obsidian Data 5", MTFT_ADDITIONAL},
+	{"Obsidian Data 6", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
 const ManifestFile obsidianDemoMacEnFiles[] = {
 	{"Obsidian Demo", MTFT_PLAYER},
 	{"Basic.rPP", MTFT_EXTENSION},
@@ -942,6 +962,14 @@ const Game games[] = {
 		obsidianRetailMacEnFiles,
 		nullptr,
 		&obsidianRetailEnSubtitlesDef,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Retail - Macintosh - Japanese
+	{
+		MTBOOT_OBSIDIAN_RETAIL_MAC_JP,
+		obsidianRetailMacJpFiles,
+		nullptr,
+		nullptr,
 		GameDataHandlerFactory<ObsidianGameDataHandler>::create
 	},
 	// Obsidian - Retail - Windows - English
