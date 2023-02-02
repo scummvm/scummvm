@@ -101,6 +101,10 @@ void OSystem_iOS7::initVideoContext() {
 #ifdef USE_RGB_COLOR
 Common::List<Graphics::PixelFormat> OSystem_iOS7::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> list;
+	// ABGR8888 (big endian)
+	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	// RGBA8888 (big endian)
+	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 	// RGB565
 	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	// CLUT8
@@ -138,9 +142,19 @@ void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat
 	// Create the screen texture right here. We need to do this here, since
 	// when a game requests hi-color mode, we actually set the framebuffer
 	// to the texture buffer to avoid an additional copy step.
-	execute_on_main_thread(^ {
-		[[iOS7AppDelegate iPhoneView] createScreenTexture];
-	});
+	// Free any previous screen texture and create new to handle format changes
+	_videoContext->screenTexture.free();
+
+	if (format && *format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) {
+		// ABGR8888 (big endian)
+		_videoContext->screenTexture.create((uint16) getSizeNextPOT(_videoContext->screenWidth), (uint16) getSizeNextPOT(_videoContext->screenHeight), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	} else if (format && *format == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) {
+		// RGBA8888 (big endian)
+		_videoContext->screenTexture.create((uint16) getSizeNextPOT(_videoContext->screenWidth), (uint16) getSizeNextPOT(_videoContext->screenHeight), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	} else {
+		// Assume RGB565
+		_videoContext->screenTexture.create((uint16) getSizeNextPOT(_videoContext->screenWidth), (uint16) getSizeNextPOT(_videoContext->screenHeight), Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	}
 
 	// In case the client code tries to set up a non supported mode, we will
 	// fall back to CLUT8 and set the transaction error accordingly.
@@ -148,6 +162,10 @@ void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat
 		format = 0;
 		_gfxTransactionError = kTransactionFormatNotSupported;
 	}
+
+	execute_on_main_thread(^{
+		[[iOS7AppDelegate iPhoneView] setGameScreenCoords];
+	});
 
 	if (!format || format->bytesPerPixel == 1) {
 		_framebuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
