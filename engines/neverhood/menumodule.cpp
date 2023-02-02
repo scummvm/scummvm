@@ -344,6 +344,13 @@ uint32 MenuButton::handleMessage(int messageNum, const MessageParam &param, Enti
 	return messageResult;
 }
 
+bool MainMenu::hasMakingOf() const {
+	for (uint i = 0; kMakingOfSmackerFileHashList[i]; i++)
+		if (_vm->_res->exists(kMakingOfSmackerFileHashList[i]))
+			return true;
+	return false;
+}
+
 MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 	: Scene(vm, parentModule) {
 
@@ -382,6 +389,8 @@ MainMenu::MainMenu(NeverhoodEngine *vm, Module *parentModule)
 		insertStaticSprite(0x0C24C0EE, 100);	// "Music is off" button
 
 	for (uint buttonIndex = 0; buttonIndex < 9; ++buttonIndex) {
+		if (buttonIndex == kMainMenuMakingOf && !hasMakingOf())
+			continue;
 		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
 			kMenuButtonFileHashes[buttonIndex], kMenuButtonCollisionBounds[buttonIndex]);
 		addCollisionSprite(menuButton);
