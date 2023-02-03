@@ -99,7 +99,23 @@ MODULE_OBJS += \
 	networking/sdl_net/uploadfileclienthandler.o
 endif
 
+# ENet networking source files.
 ifdef USE_ENET
+MODULE_OBJS += \
+	networking/enet/source/callbacks.o \
+	networking/enet/source/compress.o \
+	networking/enet/source/host.o \
+	networking/enet/source/list.o \
+	networking/enet/source/packet.o \
+	networking/enet/source/peer.o \
+	networking/enet/source/protocol.o
+ifdef WIN32
+MODULE_OBJS += \
+	networking/enet/source/win32.o
+else
+MODULE_OBJS += \
+	networking/enet/source/unix.o
+endif
 MODULE_OBJS += \
 	networking/enet/enet.o \
 	networking/enet/host.o \

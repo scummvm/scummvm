@@ -138,7 +138,7 @@ _ogg=auto
 _vorbis=auto
 _sdlnet=auto
 _libcurl=auto
-_enet=auto
+_enet=yes
 _tremor=auto
 _tremolo=no
 _flac=auto
@@ -1053,8 +1053,7 @@ Optional Libraries:
   --with-libcurl-prefix=DIR    prefix where libcurl is installed (optional)
   --disable-libcurl        disable libcurl networking library [autodetect]
 
-  --with-enet-prefix=DIR prefix where ENet is installed (optional)
-  --disable-enet         disable ENet networking library [autodetect]
+  --disable-enet         don't enable ENet networking support
 
   --with-discord-prefix=DIR   prefix where discord-rpc is installed (optional)
   --disable-discord       disable Discord rich presence integration [autodetect]
@@ -1372,11 +1371,6 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		SDL_NET_CFLAGS="-I$arg/include"
 		SDL_NET_LIBS="-L$arg/lib"
-		;;
-	--with-enet-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		ENET_CFLAGS="-I$arg/include"
-		ENET_LIBS="-L$arg/lib"
 		;;
 	--with-opengl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -4185,29 +4179,10 @@ EOF
 	echo "$_sdlnet"
 fi
 
-if test "$_enet" = auto ; then
-	if test "$_pkg_config" = "yes" && $_pkgconfig --exists libenet; then
-		append_var ENET_LIBS "`$_pkgconfig --libs libenet`"
-		append_var ENET_CFLAGS "`$_pkgconfig --cflags libenet`"
-	else
-		append_var ENET_LIBS "-lenet"
-	fi
-
-	# Check for ENet
-	echocheck "ENet"
-	_enet=no
-	cat > $TMPC << EOF
-#include <enet/enet.h>
-int main(int argc, char *argv[]) { enet_initialize(); return 0; }
-EOF
-	cc_check $ENET_LIBS $LIBS $INCLUDES $ENET_CFLAGS && _enet=yes
-	if test "$_enet" = yes ; then
-		append_var LIBS "$ENET_LIBS"
-		append_var INCLUDES "$ENET_CFLAGS"
-	fi
-	define_in_config_if_yes "$_enet" 'USE_ENET'
-	echo "$_enet"
-fi
+#
+# Check whether ENet networking support is requested
+#
+define_in_config_if_yes "$_enet" 'USE_ENET'
 
 #
 # Enable 16bit support only for backends which support it
@@ -6583,7 +6558,10 @@ if test "$_eventrec" = yes ; then
 fi
 
 if test "$_cloud" = yes ; then
-	echo ", cloud"
+	echo_n ", cloud"
+fi
+if test "$_enet" = yes ; then
+	echo ", ENet"
 else
 	echo
 fi

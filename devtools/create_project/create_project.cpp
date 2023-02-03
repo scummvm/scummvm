@@ -1078,7 +1078,6 @@ const Feature s_features[] = {
 	{ "fluidlite",   "USE_FLUIDLITE", true, false, "FluidLite support" },
 	{   "libcurl",     "USE_LIBCURL", true, true,  "libcurl support" },
 	{    "sdlnet",     "USE_SDL_NET", true, true,  "SDL_net support" },
-	{      "enet",        "USE_ENET", true, true,  "ENet support" },
 	{   "discord",     "USE_DISCORD", true, false, "Discord support" },
 	{ "retrowave",   "USE_RETROWAVE", true, false, "RetroWave OPL3 support" },
 
@@ -1099,6 +1098,7 @@ const Feature s_features[] = {
 	{   "opengl_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
 	{          "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
 	{            "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
+	{            "enet",                       "USE_ENET", false, true,  "ENet networking support" },
 	{      "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
 	{           "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},
 	{    "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support"},
