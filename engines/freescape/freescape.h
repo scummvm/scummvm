@@ -237,6 +237,7 @@ public:
 
 	bool checkCollisions(bool executeCode);
 	Math::Vector3d _objExecutingCodeSize;
+	virtual void executeMovementConditions();
 	void executeObjectConditions(GeometricObject *obj, bool shot, bool collided);
 	void executeLocalGlobalConditions(bool shot, bool collided);
 	void executeCode(FCLInstructionVector &code, bool shot, bool collided);
@@ -356,7 +357,7 @@ public:
 	int _lastMinute;
 
 	void getTimeFromCountdown(int &seconds, int &minutes, int &hours);
-	void updateTimeVariables();
+	virtual void updateTimeVariables();
 
 	// Cheats
 	bool _useExtendedTimer;
@@ -438,11 +439,16 @@ public:
 	DarkEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
+	void initGameState() override;
+
 	void gotoArea(uint16 areaID, int entranceID) override;
 	void pressedKey(const int keycode) override;
 
 	void loadAssetsDemo();
 	void loadAssetsFullGame();
+	int _lastTenSeconds;
+	void updateTimeVariables() override;
+	void executeMovementConditions() override;
 
 	void drawUI() override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;

@@ -149,7 +149,7 @@ void FreescapeEngine::rise() {
 
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
-	executeLocalGlobalConditions(false, true); // Only execute "on collision" room/global conditions
+	executeMovementConditions();
 }
 
 void FreescapeEngine::lower() {
@@ -174,7 +174,7 @@ void FreescapeEngine::lower() {
 
 	_lastPosition = _position;
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
-	executeLocalGlobalConditions(false, true); // Only execute "on collision" room/global conditions
+	executeMovementConditions();
 }
 
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
@@ -267,7 +267,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	//debugC(1, kFreescapeDebugMove, "player height: %f", _position.y() - areaScale * _playerHeight);
 	if (_currentArea->getAreaID() == previousAreaID)
-		executeLocalGlobalConditions(false, true); // Only execute "on collision" room/global conditions
+		executeMovementConditions();
 }
 
 bool FreescapeEngine::checkFloor(Math::Vector3d currentPosition) {
