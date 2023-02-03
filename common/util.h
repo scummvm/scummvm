@@ -413,7 +413,7 @@ bool isBlank(int c);
  *
  * @return String with a floating point number representing the given size.
  */
-Common::U32String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut);
+Common::String getHumanReadableBytes(uint64 bytes, const char *&unitsOut);
 
 /** @} */
 
