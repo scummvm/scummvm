@@ -196,7 +196,6 @@ public:
 
 	bool setupGame();
 	Common::Error startupGame();
-	void shutdownGame(bool reloading = true);
 
 	void changeVideoMode(int width, int height);
 

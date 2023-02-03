@@ -534,10 +534,6 @@ Common::Error Ultima8Engine::startupGame() {
 }
 
 void Ultima8Engine::shutdown() {
-	shutdownGame(false);
-}
-
-void Ultima8Engine::shutdownGame(bool reloading) {
 	debug(MM_INFO, "-- Shutting down Game -- ");
 
 	// Save config here....
@@ -588,22 +584,6 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	_gameInfo = nullptr;
 
 	debug(MM_INFO, "-- Game Shutdown -- ");
-
-	if (reloading) {
-		Rect dims;
-		_screen->GetSurfaceDims(dims);
-
-		debugN(MM_INFO, "Creating Desktop...\n");
-		_desktopGump = new DesktopGump(0, 0, dims.width(), dims.height());
-		_desktopGump->InitGump(0);
-		_desktopGump->MakeFocus();
-
-		if (GAME_IS_U8) {
-			debugN(MM_INFO, "Creating Inverter...\n");
-			_inverterGump = new InverterGump(0, 0, dims.width(), dims.height());
-			_inverterGump->InitGump(0);
-		}
-	}
 }
 
 //
