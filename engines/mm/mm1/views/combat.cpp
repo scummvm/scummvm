@@ -190,12 +190,9 @@ void Combat::timeout() {
 	case MONSTERS_AFFECTED:
 	case CHAR_ATTACKS:
 	case NO_EFFECT:
-		removeDeadMonsters();
-		combatLoop();
-		break;
 	case MONSTER_FLEES:
 		removeDeadMonsters();
-		checkMonsterSpells();
+		combatLoop();
 		break;
 	case MONSTER_WANDERS:
 	case INFILTRATION:
