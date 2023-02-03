@@ -47,6 +47,7 @@
 #include "director/lingo/xlibs/fileexists.h"
 #include "director/lingo/xlibs/fileio.h"
 #include "director/lingo/xlibs/findfolder.h"
+#include "director/lingo/xlibs/findsys.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 #include "director/lingo/xlibs/gpid.h"
@@ -156,6 +157,7 @@ static struct XLibProto {
 	{ FileExists::fileNames,			FileExists::open,			FileExists::close,			kXObj,					300 },	// D3
 	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
 	{ FindFolder::fileNames,			FindFolder::open,			FindFolder::close,			kXObj,					300 },	// D3
+	{ FindSys::fileNames,				FindSys::open,				FindSys::close,				kXObj,					400 },	// D4
 	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					300 },	// D3
 	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
 	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
