@@ -97,9 +97,24 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 	int streamSize = stream.size();
 	while (stream.pos() < streamSize) {
 		ImageFrame frame;
+		bool invalid = false;
+
 		frame._width = stream.readUint16LE() + 1;
 		frame._height = stream.readUint16LE() + 1;
 		frame._paletteBase = stream.readByte();
+
+		// Exact purpose of the image with size (-320)x(-200) in
+		// the titles is unclear but skipping it seems to have no ill effect.
+		// Just skip it.
+		if (frame._width > 32768) {
+			frame._width = -(int16_t)frame._width;
+			invalid = true;
+		}
+
+		if (frame._height > 32768) {
+			frame._height = -(int16_t)frame._height;
+			invalid = true;
+		}
 
 		if (animImages) {
 			// Animation cutscene image files use a 16-bit x offset
@@ -129,7 +144,12 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 
 		frame._pos = stream.pos();
 
-		if (_name.empty()) {
+		if (invalid) {
+			frame._decoded = true;
+			frame._frame.create(frame._width, frame._height, Graphics::PixelFormat::createFormatCLUT8());
+			frame._frame.fillRect(Common::Rect(0, 0, frame._width, frame._height), 0xff);
+			stream.seek(MIN(stream.pos() + frame._size, stream.size()));
+		} else if (_name.empty()) {
 			// Load data for frame and decompress it
 			frame._decoded = true;
 			byte *data1 = new byte[frame._size + 4];
