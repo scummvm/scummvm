@@ -204,7 +204,7 @@ uint8 MapMonster::getPronoun() {
 void TeamMonster::init() {
 	_id = -1;
 	for (int ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
-		_mobsterStatus[ctrMobsterId]._type = 0;
+		_mobsterStatus[ctrMobsterId]._type = kEfhStatusNormal;
 		_mobsterStatus[ctrMobsterId]._duration = 0;
 	}
 }
