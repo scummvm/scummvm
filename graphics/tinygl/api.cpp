@@ -498,7 +498,7 @@ void tglMaterialfv(TGLenum mode, TGLenum type, const TGLfloat *v) {
 	n = 4;
 	if (type == TGL_SHININESS)
 		n = 1;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < n; i++)
 		p[3 + i].f = v[i];
 	for (int i = n; i < 4; i++)
 		p[3 + i].f = 0;
