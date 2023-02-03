@@ -1166,7 +1166,9 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		} else {
 			int16 teamCharId = teamMonsterId;
 			if (teamCharId != 0x1B) {
-				if (_teamChar[teamCharId]._status._type == kEfhStatusFrozen) { // frozen
+				if (_teamChar[teamCharId]._status._type == kEfhStatusFrozen) {
+					// The message is weird because it's a duplicate of case 28, which is about "curing" sleep... But it's about being frozen.
+					// We could improve the description, but that's the way the original deals with it
 					_messageToBePrinted += "  The item makes a loud noise, awakening the character!";
 					_teamChar[teamCharId]._status._type = kEfhStatusNormal;
 					_teamChar[teamCharId]._status._duration = 0;

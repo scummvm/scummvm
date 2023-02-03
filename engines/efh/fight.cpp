@@ -1622,14 +1622,9 @@ void EfhEngine::addNewOpponents(int16 monsterId) {
 	if (teamMonsterId == -1 || teamMonsterId > 4)
 		return;
 
-	// addNewOpponents - last loop counter1_monsterId - Start
-	for (int16 ctrTeamMonsterId = teamMonsterId; ctrTeamMonsterId < 5; ++ctrTeamMonsterId) {
-		_teamMonster[ctrTeamMonsterId]._id = -1;
-		for (uint ctrEffectId = 0; ctrEffectId < 9; ++ctrEffectId) {
-			_teamMonster[ctrTeamMonsterId]._mobsterStatus[ctrEffectId]._type = (int16)0x8000;
-		}
-	}
-	// addNewOpponents - last loop counter1_monsterId - End
+	// Reset the unused groups
+	for (int16 ctrTeamMonsterId = teamMonsterId; ctrTeamMonsterId < 5; ++ctrTeamMonsterId)
+		_teamMonster[ctrTeamMonsterId].init();
 }
 
 int16 EfhEngine::getTeamMonsterAnimId() {
