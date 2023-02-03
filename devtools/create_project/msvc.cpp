@@ -74,7 +74,6 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{   "libcurl", "libcurl.lib",               "libcurl-d.lib", "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib", nullptr },
 		{    "sdlnet", "SDL_net.lib",               nullptr,         "iphlpapi.lib",                                    nullptr },
 		{   "sdl2net", "SDL2_net.lib",              nullptr,         "iphlpapi.lib",                                    "SDL_net.lib" },
-		{      "enet", "enet.lib",                  nullptr,         "winmm.lib ws2_32.lib",                            nullptr },
 		{   "discord", "discord-rpc.lib",           nullptr,         nullptr,                                           nullptr },
 		{ "retrowave", "retrowave.lib",             nullptr,         nullptr,                                           nullptr },
 		// Feature flags with library dependencies

@@ -21,7 +21,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <enet/enet.h>
+#include "backends/networking/enet/source/enet.h"
 #include "backends/networking/enet/socket.h"
 #include "common/debug.h"
 
