@@ -1126,7 +1126,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pbtoilet1",			"PerfectBLUE TOILET1" },
 	{ "pbtoilet2",			"PerfectBLUE TOILET2" },
 	{ "panicook",			"PANICOOK" },
-	{ "pepperon",			"ペペロン村の四季" },			// Four Seasons in Pepperon Village, aka Valmaison au fil des saisons, aka Livet i Pepperon
+	{ "pepperon",			"Four Seasons in Pepperon" },	// ペペロン村の四季 aka Valmaison au fil des saisons, aka Livet i Pepperon
 	{ "perfectblue",		"Perfect Blue そらいろ★ナイト" },
 	{ "please",				"Please!" }, // by Teruo Takashima
 	{ "pod1",				"POD: Super Pop Digital Magazine" },
