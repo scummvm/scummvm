@@ -147,6 +147,12 @@ SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int s
 
 		SaveStateDescriptor desc(this, slot, saveName);
 
+		// Protect slot 99 (used for 'restart game')
+		if (slot == 99) {
+			desc.setDeletableFlag(false);
+			desc.setWriteProtectedFlag(true);
+		}
+
 		Graphics::Surface *thumbnail;
 		if (!Graphics::loadThumbnail(*file, thumbnail)) {
 			warning("Missing or broken savegame thumbnail");
@@ -172,7 +178,13 @@ SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int s
 		delete file;
 		return desc;
 	}
-	return SaveStateDescriptor();
+
+	SaveStateDescriptor desc(this, slot, Common::String());
+	// Protect slot 99 (used for 'restart game')
+	if (slot == 99)
+		desc.setWriteProtectedFlag(true);
+
+	return desc;
 }
 
 void HugoMetaEngine::removeSaveState(const char *target, int slot) const {
