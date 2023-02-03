@@ -742,6 +742,7 @@ private:
 void gl_free(void *p);
 void *gl_malloc(int size);
 void *gl_zalloc(int size);
+void *gl_realloc(void *p, int size);
 
 } // end of namespace TinyGL
 

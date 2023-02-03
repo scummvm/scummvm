@@ -45,4 +45,8 @@ void *gl_zalloc(int size) {
 	return calloc(1, size);
 }
 
+void *gl_realloc(void *p, int size) {
+	return realloc(p, size);
+}
+
 } // end of namespace TinyGL

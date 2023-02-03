@@ -209,12 +209,10 @@ void GLContext::glopVertex(GLParam *p) {
 	if (n >= vertex_max) {
 		GLVertex *newarray;
 		vertex_max <<= 1;    // just double size
-		newarray = (GLVertex *)gl_malloc(sizeof(GLVertex) * vertex_max);
+		newarray = (GLVertex *)gl_realloc(vertex, sizeof(GLVertex) * vertex_max);
 		if (!newarray) {
 			error("unable to allocate GLVertex array.");
 		}
-		memcpy(newarray, vertex, n * sizeof(GLVertex));
-		gl_free(vertex);
 		vertex = newarray;
 	}
 	// new vertex entry
