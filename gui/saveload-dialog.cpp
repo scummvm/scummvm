@@ -113,9 +113,9 @@ void SaveLoadCloudSyncProgressDialog::pollCloudMan() {
 	Cloud::Storage::SyncDownloadingInfo info;
 	CloudMan.getSyncDownloadingInfo(info);
 
-	Common::String downloaded, downloadedUnits, total, totalUnits;
-	downloaded = getHumanReadableBytes(info.bytesDownloaded, downloadedUnits);
-	total = getHumanReadableBytes(info.bytesToDownload, totalUnits);
+	const char *downloadedUnits, *totalUnits;
+	Common::String downloaded = Common::getHumanReadableBytes(info.bytesDownloaded, downloadedUnits);
+	Common::String total = Common::getHumanReadableBytes(info.bytesToDownload, totalUnits);
 
 	Common::String progressPercent = Common::String::format("%u %%", progress);
 	Common::String filesDownloaded = Common::String::format("%llu", (unsigned long long)info.filesDownloaded);

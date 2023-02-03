@@ -255,8 +255,8 @@ void DownloadPacksDialog::setState(IconProcessState state) {
 		break;
 
 	case kDownloadStateListCalculated: {
-			Common::String size, sizeUnits;
-			size = getHumanReadableBytes(g_state->totalSize, sizeUnits);
+			const char *sizeUnits;
+			Common::String size = Common::getHumanReadableBytes(g_state->totalSize, sizeUnits);
 
 			_statusText->setLabel(Common::U32String::format(_("Detected %d new packs, %s %S"), g_state->fileHash.size(), size.c_str(), _(sizeUnits).c_str()));
 
@@ -282,8 +282,8 @@ void DownloadPacksDialog::setState(IconProcessState state) {
 		break;
 
 	case kDownloadComplete: {
-			Common::String size, sizeUnits;
-			size = getHumanReadableBytes(g_state->totalSize, sizeUnits);
+			const char *sizeUnits;
+			Common::String size = Common::getHumanReadableBytes(g_state->totalSize, sizeUnits);
 			_statusText->setLabel(Common::U32String::format(_("Download complete, downloaded %d packs, %s %S"), g_state->totalFiles, size.c_str(), _(sizeUnits).c_str()));
 			_cancelButton->setVisible(false);
 			_cancelButton->setLabel(_("Cancel download"));
@@ -358,17 +358,16 @@ void DownloadPacksDialog::reflowLayout() {
 }
 
 Common::U32String DownloadPacksDialog::getSizeLabelText() {
-	Common::String downloaded, downloadedUnits, total, totalUnits;
-	downloaded = getHumanReadableBytes(g_state->downloadedSize, downloadedUnits);
-	total = getHumanReadableBytes(g_state->totalSize, totalUnits);
+	const char *downloadedUnits, *totalUnits;
+	Common::String downloaded = Common::getHumanReadableBytes(g_state->downloadedSize, downloadedUnits);
+	Common::String total = Common::getHumanReadableBytes(g_state->totalSize, totalUnits);
 	return Common::U32String::format(_("Downloaded %s %S / %s %S"), downloaded.c_str(), _(downloadedUnits).c_str(), total.c_str(), _(totalUnits).c_str());
 }
 
 Common::U32String DownloadPacksDialog::getSpeedLabelText() {
-	Common::String speed, speedUnits;
-	speed = getHumanReadableBytes(getDownloadSpeed(), speedUnits);
-	speedUnits += "/s";
-	return Common::U32String::format(_("Download speed: %s %S"), speed.c_str(), _(speedUnits).c_str());
+	const char *speedUnits;
+	Common::String speed = Common::getHumanReadableBytes(getDownloadSpeed(), speedUnits);
+	return Common::U32String::format(_("Download speed: %s %S/s"), speed.c_str(), _(speedUnits).c_str());
 }
 
 void DownloadPacksDialog::refreshWidgets() {
@@ -457,10 +456,10 @@ void DownloadPacksDialog::clearCache() {
 		totalSize += size;
 	}
 
-	Common::String sizeUnits;
-	Common::String size = getHumanReadableBytes(totalSize, sizeUnits);
+	const char *sizeUnits;
+	Common::String size = Common::getHumanReadableBytes(totalSize, sizeUnits);
 
-	GUI::MessageDialog dialog(Common::U32String::format(_("You are about to remove %s %s of data, deleting all previously downloaded %S. Do you want to proceed?"), size.c_str(), sizeUnits.c_str(), _packname.c_str()), _("Proceed"), _("Cancel"));
+	GUI::MessageDialog dialog(Common::U32String::format(_("You are about to remove %s %S of data, deleting all previously downloaded %S. Do you want to proceed?"), size.c_str(), _(sizeUnits).c_str(), _packname.c_str()), _("Proceed"), _("Cancel"));
 	if (dialog.runModal() == ::GUI::kMessageOK) {
 
 		// Build list of previously downloaded icon files
