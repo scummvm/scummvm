@@ -122,8 +122,8 @@ SkyEngine::~SkyEngine() {
 	delete [] _chineseTraditionalBlock;
 	_chineseTraditionalBlock = nullptr;
 
-	_chineseTraditionalFont.clear();
-	_chineseTraditionalIndex.clear();
+	delete _big5Font;
+	_big5Font = nullptr;
 }
 
 void SkyEngine::syncSoundSettings() {
@@ -283,39 +283,6 @@ Common::Error SkyEngine::go() {
 	return Common::kNoError;
 }
 
-void SkyEngine::ChineseTraditionalGlyph::makeOutline() {
-	outline[0][0] = 0;
-	outline[0][1] = 0;
-	// OR into outline the original bitmap moved by 1 pixel
-	// 1 pixel down
-	for (int y = 0; y < SkyEngine::kChineseTraditionalHeight - 1; y++) {
-		outline[y+1][0] = bitmap[y][0];
-		outline[y+1][1] = bitmap[y][1];
-	}
-	// 1 pixel up
-	for (int y = 0; y < SkyEngine::kChineseTraditionalHeight - 1; y++) {
-		outline[y][0] |= bitmap[y+1][0];
-		outline[y][1] |= bitmap[y+1][1];
-	}
-	for (int y = 0; y < SkyEngine::kChineseTraditionalHeight; y++) {
-		// 1 pixel right
-		outline[y][0] |= bitmap[y][0] >> 1;
-		outline[y][1] |= bitmap[y][0] << 7;
-		outline[y][1] |= bitmap[y][1] >> 1;
-
-		// 1 pixel left
-		outline[y][0] |= bitmap[y][0] << 1;
-		outline[y][0] |= bitmap[y][1] >> 7;
-		outline[y][1] |= bitmap[y][1] << 1;
-	}
-
-	// Then AND-out the original bitmap
-	for (int y = 0; y < SkyEngine::kChineseTraditionalHeight; y++) {
-		outline[y][0] &= ~bitmap[y][0];
-		outline[y][1] &= ~bitmap[y][1];
-	}
-}
-
 static const struct {
 	// Identification
 	const char *md5; // File MD5
@@ -367,21 +334,8 @@ bool SkyEngine::loadChineseTraditional() {
 			skyExe.read(_chineseTraditionalBlock, stringBlockLen);
 
 			skyExe.seek(chineseExes[i].fontOffset);
-			_chineseTraditionalIndex = Common::move(Common::Array<int>(0x8000, -1));
-			// So far the only version had 1981 glyphs. Optimize a little bit for this number
-			// but don't rely on it in any way
-			_chineseTraditionalFont.reserve(1981);
-			while(1) {
-				// Big-endian because it's not really a u16 but a big5 sequence.
-				uint16 ch = skyExe.readUint16BE();
-				ChineseTraditionalGlyph glyph;
-				if (ch == 0xffff)
-					break;
-				skyExe.read(&glyph.bitmap, sizeof(glyph.bitmap));
-				glyph.makeOutline();
-				_chineseTraditionalIndex[ch & 0x7fff] = _chineseTraditionalFont.size();
-				_chineseTraditionalFont.push_back(glyph);
-			}
+			_big5Font = new Graphics::Big5Font();
+			_big5Font->loadPrefixedRaw(skyExe, 15);
 			return true;
 		}
 	}
