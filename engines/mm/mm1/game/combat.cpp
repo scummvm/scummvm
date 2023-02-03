@@ -621,8 +621,8 @@ void Combat::monsterAction() {
 		removeMonster();
 		setMode(MONSTER_FLEES);
 	} else {
-		// Otherwise, move on to checking if monster casts spells
-		checkMonsterSpells();
+		// Otherwise, move on to checking monster actions
+		checkMonsterActions();
 	}
 }
 
@@ -655,7 +655,7 @@ bool Combat::checkMonsterSpells() {
 
 void Combat::checkMonsterActions() {
 	if (checkMonsterSpells())
-		// Monster wandered or cast spell, so things are taken care of
+		// Monster cast spell, so things are taken care of
 		return;
 
 	_destCharCtr = 0;
