@@ -36,13 +36,16 @@ int Fonts::_widestChar;
 uint16 Fonts::_charCount;
 byte Fonts::_yOffsets[255];
 bool Fonts::_isModifiedEucCn;
+bool Fonts::_isBig5;
 byte *Fonts::_chineseFont;
+Graphics::Big5Font *Fonts::_big5Font;
 
 void Fonts::setVm(SherlockEngine *vm) {
 	_vm = vm;
 	_font = nullptr;
 	_charCount = 0;
 	_isModifiedEucCn = (_vm->getLanguage() == Common::Language::ZH_ANY && _vm->getGameID() == GameType::GType_RoseTattoo);
+	_isBig5 = (_vm->getLanguage() == Common::Language::ZH_TWN && _vm->getGameID() == GameType::GType_SerratedScalpel);
 }
 
 void Fonts::freeFont() {
@@ -75,6 +78,16 @@ void Fonts::setFont(int fontNum) {
 		} else {
 			_chineseFont = new byte[hzk.size()];
 			hzk.read(_chineseFont, hzk.size());
+		}
+	}
+
+	if (_isBig5 && _chineseFont == nullptr) {
+		Common::File pat;
+		if (!pat.open("TEXTPAT.FNT")) {
+			_isBig5 = false;
+		} else {
+			_big5Font = new Graphics::Big5Font();
+			_big5Font->loadPrefixedRaw(pat, 14);
 		}
 	}
 
@@ -290,6 +303,17 @@ void Fonts::writeString(BaseSurface *surface, const Common::String &str,
 			charPos.x += 5; // hardcoded space
 			continue;
 		}
+
+		if (_isBig5 && (curChar & 0x80) && nextChar) {
+			curCharPtr++;
+			uint16 point = (curChar << 8) | nextChar;
+			if (_big5Font->drawBig5Char(surface->surfacePtr(), point, charPos, overrideColor)) {
+				charPos.x += Graphics::Big5Font::kChineseTraditionalWidth;
+				continue;
+			}
+			curChar = '?';
+		}
+		
 		curChar = translateChar(curChar);
 
 		if (curChar < _charCount) {
@@ -334,6 +358,12 @@ int Fonts::stringWidth(const Common::String &str) {
 			continue;
 		}
 
+		if (_isBig5 && (curChar & 0x80) && nextChar) {
+			width += Graphics::Big5Font::kChineseTraditionalWidth;
+			c++;
+			continue;
+		}
+
 		width += charWidth(*c);
 	}
 
@@ -368,6 +398,12 @@ int Fonts::stringHeight(const Common::String &str) {
 
 		if (_isModifiedEucCn && curChar >= 0x41 && nextChar >= 0x41 && (isInEucEscape || ((curChar >= 0xa1) && (nextChar >= 0xa1)))) {
 			height = MAX(height, kChineseHeight);
+			c++;
+			continue;
+		}
+
+		if (_isBig5 && _big5Font && (curChar & 0x80) && nextChar) {
+			height = MAX(height, _big5Font->getFontHeight());
 			c++;
 			continue;
 		}
