@@ -610,10 +610,10 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 		for (int16 counterX = minX; counterX <= maxX; ++counterX) {
 			if (largeMapFl) {
 				int16 curTile = _mapGameMaps[_techId][counterX][counterY];
-				displayRawDataAtPos(_imageSetSubFilesArray[curTile], drawPosX, drawPosY);
+				displayRawDataAtPos(_tileBankSubFilesArray[curTile], drawPosX, drawPosY);
 			} else {
 				int16 curTile = _curPlace[counterX][counterY];
-				displayRawDataAtPos(_imageSetSubFilesArray[curTile], drawPosX, drawPosY);
+				displayRawDataAtPos(_tileBankSubFilesArray[curTile], drawPosX, drawPosY);
 			}
 			drawPosX += 16;
 		}
@@ -624,7 +624,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 		// Draw hero
 		int16 drawPosX = 128 + shiftPosX * 16;
 		drawPosY = 8 + shiftPosY * 16;
-		displayRawDataAtPos(_imageSetSubFilesArray[_imageSetSubFilesIdx], drawPosX, drawPosY);
+		displayRawDataAtPos(_tileBankSubFilesArray[_imageSetSubFilesIdx], drawPosX, drawPosY);
 	}
 
 	if (drawMonstersFl) {
@@ -653,7 +653,7 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 
 				int16 drawPosX = 128 + (posX - minX) * 16;
 				drawPosY = 8 + (posY - minY) * 16;
-				displayRawDataAtPos(_imageSetSubFilesArray[imageSetIdx], drawPosX, drawPosY);
+				displayRawDataAtPos(_tileBankSubFilesArray[imageSetIdx], drawPosX, drawPosY);
 			}
 		}
 	}
@@ -2447,7 +2447,7 @@ void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
 		_mapBitmapRefArr[_techId]._setId2 = setId;
 
 	int16 ptrIndex = bankId * 72;
-	loadImageSet(setId, _tileBank[bankId], &_imageSetSubFilesArray[ptrIndex], _decompBuf);
+	loadImageSet(setId, _tileBank[bankId], &_tileBankSubFilesArray[ptrIndex], _decompBuf);
 }
 
 void EfhEngine::restoreAnimImageSetId() {
