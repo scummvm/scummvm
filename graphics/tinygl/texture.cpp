@@ -45,10 +45,6 @@ GLTexture *GLContext::find_texture(uint h) {
 	return nullptr;
 }
 
-void GLContext::free_texture(uint h) {
-	free_texture(find_texture(h));
-}
-
 void GLContext::free_texture(GLTexture *t) {
 	GLTexture **ht;
 	GLImage *im;
@@ -281,7 +277,7 @@ void GLContext::gl_DeleteTextures(TGLsizei n, const TGLuint *textures) {
 		TinyGL::GLTexture *t = find_texture(textures[i]);
 		if (t) {
 			if (t == current_texture) {
-				current_texture = find_texture(0);
+				current_texture = default_texture;
 			}
 			t->disposed = true;
 		}
