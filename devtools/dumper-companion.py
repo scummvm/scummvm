@@ -683,7 +683,7 @@ def create_macfonts(args: argparse.Namespace) -> int:
     ) as fontzip:
         for hpath, obj in vol.iter_paths():
             print(f"Compressing {hpath[-1]}...")
-            with io.BytesIO() as fonts_bytesio:
+            with BytesIO() as fonts_bytesio:
                 file_to_macbin(fonts_bytesio, obj, hpath[-1].encode("mac_roman"))
                 fontzip.writestr(f"{hpath[-1]}.bin", fonts_bytesio.getvalue())
 
