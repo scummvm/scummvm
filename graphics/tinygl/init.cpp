@@ -37,15 +37,11 @@ void GLContext::initSharedState() {
 	GLSharedState *s = &shared_state;
 	s->lists = (GLList **)gl_zalloc(sizeof(GLList *) * MAX_DISPLAY_LISTS);
 	s->texture_hash_table = (GLTexture **)gl_zalloc(sizeof(GLTexture *) * TEXTURE_HASH_TABLE_SIZE);
-
-	alloc_texture(0);
 }
 
 void GLContext::endSharedState() {
 	GLSharedState *s = &shared_state;
 
-	uint h = 0;
-	free_texture(h);
 	for (int i = 0; i < MAX_DISPLAY_LISTS; i++) {
 		// TODO
 	}
@@ -146,7 +142,7 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 
 	// textures
 	texture_2d_enabled = false;
-	current_texture = alloc_texture(0);
+	current_texture = default_texture = alloc_texture(0);
 	maxTextureName = 0;
 	texture_mag_filter = TGL_LINEAR;
 	texture_min_filter = TGL_NEAREST_MIPMAP_LINEAR;
@@ -291,6 +287,7 @@ void GLContext::deinit() {
 	specbuf_cleanup();
 	for (int i = 0; i < 3; i++)
 		gl_free(matrix_stack[i]);
+	free_texture(default_texture);
 	endSharedState();
 	gl_free(vertex);
 	delete fb;

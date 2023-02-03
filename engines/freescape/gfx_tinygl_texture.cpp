@@ -33,7 +33,6 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
 	_width = surface->w;
 	_height = surface->h;
 	_format = surface->format;
-	_id = 0;
 	_internalFormat = 0;
 	_sourceFormat = 0;
 
@@ -43,7 +42,6 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
 }
 
 TinyGLTexture::~TinyGLTexture() {
-	tglDeleteTextures(1, &_id);
 	tglDeleteBlitImage(_blitImage);
 }
 
