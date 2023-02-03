@@ -3541,8 +3541,8 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_storageUsedSpaceDesc) _storageUsedSpaceDesc->setVisible(shownConnectedInfo);
 	if (_storageUsedSpace) {
 		uint64 usedSpace = CloudMan.getStorageUsedSpace(_selectedStorageIndex);
-		Common::String usedSpaceNumber, usedSpaceUnits;
-		usedSpaceNumber = Common::getHumanReadableBytes(usedSpace, usedSpaceUnits);
+		const char *usedSpaceUnits;
+		Common::String usedSpaceNumber = Common::getHumanReadableBytes(usedSpace, usedSpaceUnits);
 		_storageUsedSpace->setLabel(Common::U32String::format("%s %S", usedSpaceNumber.c_str(), _(usedSpaceUnits).c_str()));
 		_storageUsedSpace->setVisible(shownConnectedInfo);
 	}
