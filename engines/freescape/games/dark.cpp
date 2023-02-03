@@ -35,6 +35,7 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_playerHeight = _playerHeights[_playerHeightNumber];
 	_playerWidth = 12;
 	_playerDepth = 32;
+	_lastTenSeconds = -1;
 }
 
 void DarkEngine::loadAssets() {
@@ -65,6 +66,31 @@ void DarkEngine::loadAssetsDemo() {
 		load8bitBinary(&file, 0x8a70, 4); // TODO
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
+}
+
+void DarkEngine::initGameState() {
+	_flyMode = false;
+	_noClipMode = false;
+	_shootingFrames = 0;
+	_underFireFrames = 0;
+	_yaw = 0;
+	_pitch = 0;
+
+	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
+		_gameStateVars[i] = 0;
+
+	for (auto &it : _areaMap) {
+		it._value->resetArea();
+		_gameStateBits[it._key] = 0;
+	}
+
+	_playerHeightNumber = 1;
+	_playerHeight = _playerHeights[_playerHeightNumber];
+	removeTimers();
+	startCountdown(_initialCountdown);
+	_lastMinute = 0;
+	_demoIndex = 0;
+	_demoEvents.clear();
 }
 
 void DarkEngine::loadAssetsFullGame() {
@@ -152,6 +178,30 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 void DarkEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_j) {
 		_flyMode = !_flyMode;
+	}
+}
+
+void DarkEngine::executeMovementConditions() {
+	// Only execute "on collision" room/global conditions
+	if (_currentArea->getAreaFlags() == 1)
+		executeLocalGlobalConditions(false, true);
+}
+
+void DarkEngine::updateTimeVariables() {
+	// This function only executes "on collision" room/global conditions
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+	if (_lastTenSeconds != seconds / 10) {
+		_lastTenSeconds = seconds / 10;
+		if (_currentArea->getAreaFlags() == 0)
+			executeLocalGlobalConditions(false, true);
+	}
+
+	if (_lastMinute != minutes) {
+		_lastMinute = minutes;
+		_gameStateVars[0x1e] += 1;
+		_gameStateVars[0x1f] += 1;
+		executeLocalGlobalConditions(false, true);
 	}
 }
 

@@ -517,6 +517,11 @@ void FreescapeEngine::processInput() {
 	}
 }
 
+void FreescapeEngine::executeMovementConditions() {
+	// Only execute "on collision" room/global conditions
+	executeLocalGlobalConditions(false, true);
+}
+
 void FreescapeEngine::updateTimeVariables() {
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
