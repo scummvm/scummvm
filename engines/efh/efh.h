@@ -246,6 +246,8 @@ struct TeamChar {
 	int16 _nextAttack;
 	int16 _lastInventoryUsed;
 	int16 _lastAction;
+
+	void init();
 };
 
 struct TeamMonster {
@@ -570,7 +572,7 @@ private:
 	int16 _animImageSetId;
 	uint8 _paletteTransformationConstant;
 	uint8 *_circleImageSubFileArray[12];
-	uint8 *_imageSetSubFilesArray[214]; // CHECKME : logically it should be 216
+	uint8 *_tileBankSubFilesArray[214]; // CHECKME : logically it should be 216
 	BufferBM _imageDataPtr;
 	int16 _currentTileBankImageSetId[3];
 	int16 _unkRelatedToAnimImageSetId;

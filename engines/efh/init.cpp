@@ -217,6 +217,17 @@ void TileFactStruct::init() {
 	_field0 = _tileId = 0;
 }
 
+void TeamChar::init() {
+	_id = -1;
+	_status._type = kEfhStatusNormal;
+	_status._duration = 0;
+	_pctVisible = 0;
+	_pctDodgeMiss = 0;
+	_nextAttack = -1;
+	_lastInventoryUsed = 0;
+	_lastAction = 0;
+}
+
 EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -305,18 +316,11 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_guessAnimationAmount = 9;
 	_largeMapFlag = 0xFFFF;
 	_alertDelay = 0;
-	_teamChar[0]._id = 0;
-	_teamChar[1]._id = _teamChar[2]._id = -1;
 
-	for (int i = 0; i < 3; ++i) {
-		_teamChar[i]._status._type = kEfhStatusNormal;
-		_teamChar[i]._status._duration = 0;
-		_teamChar[i]._pctVisible = 0;
-		_teamChar[i]._pctDodgeMiss = 0;
-		_teamChar[i]._nextAttack = -1;
-		_teamChar[i]._lastInventoryUsed = 0;
-		_teamChar[i]._lastAction = 0;
-	}
+	for (int i = 0; i < 3; ++i)
+		_teamChar[i].init();
+
+	_teamChar[0]._id = 0;
 
 	for (int i = 0; i < 5; ++i) {
 		_teamMonster[i].init();
@@ -380,7 +384,7 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 		memset(_mapMonsters[i], 0, ARRAYSIZE(_mapMonsters[i]));
 		memset(_mapGameMaps[i], 0, ARRAYSIZE(_mapGameMaps[i]));
 	}
-	memset(_imageSetSubFilesArray, 0, ARRAYSIZE(_imageSetSubFilesArray));
+	memset(_tileBankSubFilesArray, 0, ARRAYSIZE(_tileBankSubFilesArray));
 	_regenCounter = 0;
 
 	// If requested, load a savegame instead of showing the intro
