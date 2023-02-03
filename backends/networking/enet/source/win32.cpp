@@ -70,7 +70,7 @@ enet_address_set_host_ip (ENetAddress * address, const char * name)
         const char * next = name + 1;
         if (* name != '0')
         {
-            long val = strtol (name, (char **) & next, 10);
+            long val = strtol(name, const_cast<char **>(&next), 10);
             if (val < 0 || val > 255 || next == name || next - name > 3)
               return -1;
             vals [i] = (enet_uint8) val;
@@ -103,7 +103,7 @@ enet_address_set_host (ENetAddress * address, const char * name)
 int
 enet_address_get_host_ip (const ENetAddress * address, char * name, size_t nameLength)
 {
-    char * addr = inet_ntoa (* (struct in_addr *) & address -> host);
+    char *addr = inet_ntoa(*(struct in_addr *)const_cast<struct in_addr *>(reinterpret_cast<const struct in_addr *>(&address->host)));
     if (addr == NULL)
         return -1;
     else
@@ -119,7 +119,7 @@ enet_address_get_host_ip (const ENetAddress * address, char * name, size_t nameL
 int
 enet_address_get_host (const ENetAddress * address, char * name, size_t nameLength)
 {
-    struct in_addr in;
+    struct in_addr in {};
     struct hostent * hostEntry;
  
     in.s_addr = address -> host;
@@ -166,7 +166,7 @@ enet_socket_bind (ENetSocket socket, const ENetAddress * address)
 int
 enet_socket_get_address (ENetSocket socket, ENetAddress * address)
 {
-    struct sockaddr_in sin;
+    struct sockaddr_in sin {};
     int sinLength = sizeof (struct sockaddr_in);
 
     if (getsockname (socket, (struct sockaddr *) & sin, & sinLength) == -1)
@@ -277,7 +277,7 @@ ENetSocket
 enet_socket_accept (ENetSocket socket, ENetAddress * address)
 {
     SOCKET result;
-    struct sockaddr_in sin;
+    struct sockaddr_in sin {};
     int sinLength = sizeof (struct sockaddr_in);
 
     result = accept (socket, 
@@ -328,7 +328,7 @@ enet_socket_send (ENetSocket socket,
     }
 
     if (WSASendTo (socket, 
-                   (LPWSABUF) buffers,
+                   reinterpret_cast<LPWSABUF>(const_cast<ENetBuffer *>(buffers)),
                    (DWORD) bufferCount,
                    & sentLength,
                    0,
@@ -355,7 +355,7 @@ enet_socket_receive (ENetSocket socket,
     INT sinLength = sizeof (struct sockaddr_in);
     DWORD flags = 0,
           recvLength = 0;
-    struct sockaddr_in sin;
+    struct sockaddr_in sin {};
 
     if (WSARecvFrom (socket,
                      (LPWSABUF) buffers,
@@ -392,7 +392,7 @@ enet_socket_receive (ENetSocket socket,
 int
 enet_socketset_select (ENetSocket maxSocket, ENetSocketSet * readSet, ENetSocketSet * writeSet, enet_uint32 timeout)
 {
-    struct timeval timeVal;
+    struct timeval timeVal {};
 
     timeVal.tv_sec = timeout / 1000;
     timeVal.tv_usec = (timeout % 1000) * 1000;
@@ -403,8 +403,8 @@ enet_socketset_select (ENetSocket maxSocket, ENetSocketSet * readSet, ENetSocket
 int
 enet_socket_wait (ENetSocket socket, enet_uint32 * condition, enet_uint32 timeout)
 {
-    fd_set readSet, writeSet;
-    struct timeval timeVal;
+    fd_set readSet {}, writeSet{};
+    struct timeval timeVal {};
     int selectCount;
     
     timeVal.tv_sec = timeout / 1000;

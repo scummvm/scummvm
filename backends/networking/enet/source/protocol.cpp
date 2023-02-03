@@ -290,7 +290,7 @@ enet_protocol_handle_connect (ENetHost * host, ENetProtocolHeader * header, ENet
     ENetChannel * channel;
     size_t channelCount, duplicatePeers = 0;
     ENetPeer * currentPeer, * peer = NULL;
-    ENetProtocol verifyCommand;
+    ENetProtocol verifyCommand {};
 
     channelCount = ENET_NET_TO_HOST_32 (command -> connect.channelCount);
 
@@ -1062,7 +1062,7 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
     {
         enet_uint32 * checksum = (enet_uint32 *) & host -> receivedData [headerSize - sizeof (enet_uint32)],
                     desiredChecksum = * checksum;
-        ENetBuffer buffer;
+        ENetBuffer buffer {};
 
         * checksum = peer != NULL ? peer -> connectID : 0;
 
@@ -1221,7 +1221,7 @@ enet_protocol_receive_incoming_commands (ENetHost * host, ENetEvent * event)
     for (packets = 0; packets < 256; ++ packets)
     {
        int receivedLength;
-       ENetBuffer buffer;
+       ENetBuffer buffer {};
 
        buffer.data = host -> packetData [0];
        buffer.dataLength = sizeof (host -> packetData [0]);
@@ -1390,8 +1390,8 @@ enet_protocol_check_outgoing_commands (ENetHost * host, ENetPeer * peer)
     ENetBuffer * buffer = & host -> buffers [host -> bufferCount];
     ENetOutgoingCommand * outgoingCommand;
     ENetListIterator currentCommand;
-    ENetChannel *channel;
-    enet_uint16 reliableWindow;
+    ENetChannel *channel = 0;
+    enet_uint16 reliableWindow = 0;
     size_t commandSize;
     int windowExceeded = 0, windowWrap = 0, canPing = 1;
 
@@ -1567,7 +1567,7 @@ enet_protocol_check_outgoing_commands (ENetHost * host, ENetPeer * peer)
 static int
 enet_protocol_send_outgoing_commands (ENetHost * host, ENetEvent * event, int checkForTimeouts)
 {
-    enet_uint8 headerData [sizeof (ENetProtocolHeader) + sizeof (enet_uint32)];
+	  enet_uint8 headerData [sizeof(ENetProtocolHeader) + sizeof(enet_uint32)] {};
     ENetProtocolHeader * header = (ENetProtocolHeader *) headerData;
     ENetPeer * currentPeer;
     int sentLength;

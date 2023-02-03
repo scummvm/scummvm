@@ -4184,155 +4184,163 @@ fi
 #
 define_in_config_if_yes "$_enet" 'USE_ENET'
 
-
 #
-# Check and set additional defines needed for ENet.
+# Check and set additional stuff needed for ENet.
 #
 if test "$_enet" = yes ; then
-	echo "Checks for ENet..."
+	case "$_host_os" in
+		mingw*)
+			# Additional libraries.
+			append_var LIBS "-lwinmm -lws2_32"
+			;;
 
-	echo_n "   "
-	echocheck "getaddrinfo"
-	cat > $TMPC << EOF
+		*)
+			# Check for features and define.
+			echo "Checks for ENet..."
+
+			echo_n "   "
+			echocheck "getaddrinfo"
+			cat > $TMPC << EOF
 #include <netdb.h>
 int main(void) { return getaddrinfo(0, 0, 0, 0); } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_GETADDRINFO"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_GETADDRINFO"
+				echo "yes"
+			else
+				echo "no"
+			fi
 
-	echo_n "   "
-	echocheck "getnameinfo"
-	cat > $TMPC << EOF
+			echo_n "   "
+			echocheck "getnameinfo"
+			cat > $TMPC << EOF
 #include <netdb.h>
 int main(void) { return getnameinfo(0, 0, 0, 0, 0, 0, 0); } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_GETNAMEINFO"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_GETNAMEINFO"
+				echo "yes"
+			else
+				echo "no"
+			fi
 
-	echo_n "   "
-	echocheck "gethostbyaddr_r"
-	cat > $TMPC << EOF
+			echo_n "   "
+			echocheck "gethostbyaddr_r"
+			cat > $TMPC << EOF
 #include <netdb.h>
 int main(void) { return gethostbyaddr_r(0, 0, 0, 0, 0, 0, 0, 0); } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_GETHOSTBYADDR_R"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_GETHOSTBYADDR_R"
+				echo "yes"
+			else
+				echo "no"
+			fi
 
-	echo_n "   "
-	echocheck "gethostbyname_r"
-	cat > $TMPC << EOF
+			echo_n "   "
+			echocheck "gethostbyname_r"
+			cat > $TMPC << EOF
 #include <netdb.h>
 int main(void) { return gethostbyname_r(0, 0, 0, 0, 0, 0); } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_GETHOSTBYNAME_R"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_GETHOSTBYNAME_R"
+				echo "yes"
+			else
+				echo "no"
+			fi
 
-	echo_n "   "
-	echocheck "poll"
-	cat > $TMPC << EOF
+			echo_n "   "
+			echocheck "poll"
+			cat > $TMPC << EOF
 #include <poll.h>
 int main(void) { return poll(0, 0, 0); } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_POLL"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_POLL"
+				echo "yes"
+			else
+				echo "no"
+			fi
 
-	echo_n "   "
-	echocheck "fcntl"
-	cat > $TMPC << EOF
+			echo_n "   "
+			echocheck "fcntl"
+			cat > $TMPC << EOF
 #include <fcntl.h>
 int main(void) { return fcntl(0, 0); } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_FCNTL"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_FCNTL"
+				echo "yes"
+			else
+				echo "no"
+			fi
 
-	echo_n "   "
-	echocheck "inet_pton"
-	cat > $TMPC << EOF
+			echo_n "   "
+			echocheck "inet_pton"
+			cat > $TMPC << EOF
 #include <arpa/inet.h>
 int main(void) { return inet_pton(0, 0, 0); } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_INET_PTON"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_INET_PTON"
+				echo "yes"
+			else
+				echo "no"
+			fi
 
-	echo_n "   "
-	echocheck "inet_ntop"
-	cat > $TMPC << EOF
+			echo_n "   "
+			echocheck "inet_ntop"
+			cat > $TMPC << EOF
 #include <arpa/inet.h>
 int main(void) { inet_ntop(0, 0, 0, 0); return 0; } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_INET_NTOP"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_INET_NTOP"
+				echo "yes"
+			else
+				echo "no"
+			fi
 
-	echo_n "   "
-	echocheck "msghdr.msg_flags"
-	cat > $TMPC << EOF
+			echo_n "   "
+			echocheck "msghdr.msg_flags"
+			cat > $TMPC << EOF
 #include <sys/socket.h>
 struct msghdr msg;
 int main(void) { return msg.msg_flags; } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_MSGHDR_FLAGS"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_MSGHDR_FLAGS"
+				echo "yes"
+			else
+				echo "no"
+			fi
 
-	echo_n "   "
-	echocheck "socklen_t"
-	cat > $TMPC << EOF
+			echo_n "   "
+			echocheck "socklen_t"
+			cat > $TMPC << EOF
 #include <sys/socket.h>
 int main(void) { socklen_t len = 0; return 0; } 
 EOF
-	cc_check
-	if test "$TMPR" -eq 0; then
-		append_var DEFINES "-DHAS_SOCKLEN_T"
-		echo "yes"
-	else
-		echo "no"
-	fi
+			cc_check
+			if test "$TMPR" -eq 0; then
+				append_var DEFINES "-DHAS_SOCKLEN_T"
+				echo "yes"
+			else
+				echo "no"
+			fi
+			;;
+	esac
 fi
-
 
 #
 # Enable 16bit support only for backends which support it
