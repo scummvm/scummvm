@@ -346,10 +346,7 @@ void Combat::defeatedMonsters() {
 			g_globals->_combatParty[i]->_exp += _totalExperience;
 	}
 
-	// Update the party's characters
-	g_globals->_party.combatDone();
-
-	combatDone();
+	setMode(DEFEATED_MONSTERS);
 }
 
 void Combat::setTreasure() {
@@ -632,7 +629,7 @@ void Combat::monsterAction() {
 bool Combat::checkMonsterSpells() {
 	Encounter &enc = g_globals->_encounters;
 	if (_remainingMonsters.empty()) {
-		setMode(DEFEATED_MONSTERS);
+		defeatedMonsters();
 		return true;
 	}
 
@@ -1614,6 +1611,9 @@ void Combat::combatDone() {
 	g_globals->_activeSpells._s.invisbility = 0;
 	g_globals->_activeSpells._s.shield = 0;
 	g_globals->_activeSpells._s.power_shield = 0;
+
+	// Update the party's characters
+	g_globals->_party.combatDone();
 
 	// Rearrange the party to match the combat order
 	g_globals->_party.rearrange(g_globals->_combatParty);

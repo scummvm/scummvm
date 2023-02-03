@@ -139,6 +139,11 @@ void Combat::draw() {
 		writeCharAttackNoEffect();
 		delaySeconds(3);
 		return;
+	case DEFEATED_MONSTERS:
+		writeDefeat();
+		Sound::sound2(SOUND_3);
+		delaySeconds(3);
+		return;
 	default:
 		break;
 	}
@@ -154,12 +159,6 @@ void Combat::draw() {
 	switch (_mode) {
 	case SELECT_OPTION:
 		writeOptions();
-		break;
-
-	case DEFEATED_MONSTERS:
-		writeDefeat();
-		Sound::sound2(SOUND_3);
-		delaySeconds(5);
 		break;
 
 	case SPELL_RESULT:
@@ -207,17 +206,9 @@ void Combat::timeout() {
 	case WAITS_FOR_OPENING:
 		combatLoop(true);
 		break;
-	case DEFEATED_MONSTERS: {
-		auto &spells = g_globals->_activeSpells;
-		spells._s.bless = 0;
-		spells._s.invisbility = 0;
-		spells._s.shield = 0;
-		spells._s.power_shield = 0;
-
-		close();
-		g_events->send("Game", GameMessage("UPDATE"));
+	case DEFEATED_MONSTERS:
+		combatDone();
 		break;
-	}
 	case SPELL_RESULT:
 		if (_spellResult._timeoutCallback)
 			_spellResult._timeoutCallback();
@@ -583,13 +574,10 @@ void Combat::clearPartyArea() {
 }
 
 void Combat::writeDefeat() {
-	resetBottom();
 	writeString(10, 0, "+----------------------------+");
-	for (int y = 1; y < 8; ++y) {
-		writeChar(10, y, '!');
-		writeChar(37, y, '!');
-	}
-	writeString(10, 0, "+----------------------------+");
+	for (int y = 1; y < 8; ++y)
+		writeString(10, y, "!                            !");
+	writeString(10, 8, "+----------------------------+");
 
 	writeString(10, 2, STRING["dialogs.combat.defeating1"]);
 	writeString(10, 4, STRING["dialogs.combat.defeating2"]);
@@ -872,7 +860,9 @@ void Combat::displaySpellResult(const InfoMessage &msg) {
 
 void Combat::combatDone() {
 	Game::Combat::combatDone();
+
 	close();
+	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 } // namespace Views
