@@ -69,7 +69,8 @@ Font *EditWidget::getFont() const {
 void EditWidget::setText(const Std::string &t) {
 	_text = t;
 	_cursor = _text.size();
-	FORGET_OBJECT(_cachedText);
+	delete _cachedText;
+	_cachedText = nullptr;
 }
 
 void EditWidget::ensureCursorVisible() {
@@ -124,7 +125,8 @@ void EditWidget::renderText() {
 	}
 
 	if (cv != _cursorVisible) {
-		FORGET_OBJECT(_cachedText);
+		delete _cachedText;
+		_cachedText = nullptr;
 		_cursorVisible = cv;
 	}
 
@@ -196,27 +198,31 @@ bool EditWidget::OnKeyDown(int key, int mod) {
 	case Common::KEYCODE_BACKSPACE:
 		if (_cursor > 0) {
 			_text.erase(--_cursor, 1);
-			FORGET_OBJECT(_cachedText);
+			delete _cachedText;
+			_cachedText = nullptr;
 			ensureCursorVisible();
 		}
 		break;
 	case Common::KEYCODE_DELETE:
 		if (_cursor != _text.size()) {
 			_text.erase(_cursor, 1);
-			FORGET_OBJECT(_cachedText);
+			delete _cachedText;
+			_cachedText = nullptr;
 		}
 		break;
 	case Common::KEYCODE_LEFT:
 		if (_cursor > 0) {
 			_cursor--;
-			FORGET_OBJECT(_cachedText);
+			delete _cachedText;
+			_cachedText = nullptr;
 			ensureCursorVisible();
 		}
 		break;
 	case Common::KEYCODE_RIGHT:
 		if (_cursor < _text.size()) {
 			_cursor++;
-			FORGET_OBJECT(_cachedText);
+			delete _cachedText;
+			_cachedText = nullptr;
 			ensureCursorVisible();
 		}
 		break;
@@ -247,7 +253,8 @@ bool EditWidget::OnTextInput(int unicode) {
 	if (textFits(newtext)) {
 		_text = newtext;
 		_cursor++;
-		FORGET_OBJECT(_cachedText);
+		delete _cachedText;
+		_cachedText = nullptr;
 	}
 
 	return true;

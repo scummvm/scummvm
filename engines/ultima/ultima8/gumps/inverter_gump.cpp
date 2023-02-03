@@ -129,7 +129,8 @@ void InverterGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir) {
 
 void InverterGump::RenderSurfaceChanged() {
 	DesktopGump::RenderSurfaceChanged();
-	FORGET_OBJECT(_buffer);
+	delete _buffer;
+	_buffer = nullptr;
 }
 
 } // End of namespace Ultima8
