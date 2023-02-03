@@ -1841,13 +1841,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_TESTING
 
-	// Original filename is 'BD-J/Demo'
-	// Developed by ART Sector ONE / Richard M. Coombs
-	// ベターデッド ーラティフィケーションー published by NEC Interchannel, Minato, Tokyo (1995)
-	MACGAME1("betterd", "", "Better Dead 12 megs", "17efee018a660458fae80de4364021ac", 486717, 404),
-	MACDEMO1_l("betterd", "Demo", "xn--BD-JDemo-na47b", "17efee018a660458fae80de4364021ac", 487275, Common::JA_JPN, 404),
-	WINGAME1_l("betterd", "", "BETTERD.EXE", "e484d23ce2b6750d9e7e4a7b32632f47", 696877, Common::JA_JPN, 404),
-
 	// Original filename is 東脳スタート
 	MACGAME1_l("easternmind", "", "xn--zckm1a5qp59wok6a", "276bee761e48a6fd709df77d5c2f60dd", 394781, Common::JA_JPN, 313),
 
@@ -1883,6 +1876,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 // Macromedia Director v4
 //
 //////////////////////////////////////////////////
+
+	// Original filename is 'BD-J/Demo'
+	// Developed by ART Sector ONE / Richard M. Coombs
+	// ベターデッド ーラティフィケーションー published by NEC Interchannel, Minato, Tokyo (1995)
+	MACGAME1("betterd", "", "Better Dead 12 megs", "17efee018a660458fae80de4364021ac", 486717, 404),
+	MACDEMO1_l("betterd", "Demo", "xn--BD-JDemo-na47b", "17efee018a660458fae80de4364021ac", 487275, Common::JA_JPN, 404),
+	WINGAME1_l("betterd", "", "BETTERD.EXE", "e484d23ce2b6750d9e7e4a7b32632f47", 696877, Common::JA_JPN, 404),
 
 	MACGAME1("chopsuey", "", "Chop8", "01be45e7241194dad07938e7059b88e3", 481254, 404),
 	WINGAME1("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 404),
