@@ -75,7 +75,6 @@ StarkEngine::~StarkEngine() {
 	delete StarkServices::instance().dialogPlayer;
 	delete StarkServices::instance().randomSource;
 	delete StarkServices::instance().scene;
-	delete StarkServices::instance().gfx;
 	delete StarkServices::instance().staticProvider;
 	delete StarkServices::instance().resourceProvider;
 	delete StarkServices::instance().global;
@@ -86,6 +85,7 @@ StarkEngine::~StarkEngine() {
 	delete StarkServices::instance().settings;
 	delete StarkServices::instance().gameChapter;
 	delete StarkServices::instance().gameMessage;
+	delete StarkServices::instance().gfx;
 
 	StarkServices::destroy();
 
