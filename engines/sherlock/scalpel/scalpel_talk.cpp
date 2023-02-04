@@ -289,7 +289,7 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	if (str[0] == ' ')
 		++str;
 
-	_yp += 9;
+	_yp += _vm->getLanguage() == Common::Language::ZH_TWN ? 16 : 9;
 	++_line;
 
 	// Certain different conditions require a wait
@@ -885,7 +885,7 @@ int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool
 			}
 
 			// Move to next line, if any
-			lineY += 9;
+			lineY += _vm->getLanguage() == Common::Language::ZH_TWN ? 16 : 9;
 			if (nextLine < 0)
 				break;
 			lineStartP += nextLine;
