@@ -1,0 +1,11 @@
+build/libs/
+build/obj/
+deps/
+*.o
+*.a
+scummvm.zip
+scummvm_libretro.*
+config.mk.engines.lite
+shared_modules.mk
+script.mri
+ScummVM.dat
