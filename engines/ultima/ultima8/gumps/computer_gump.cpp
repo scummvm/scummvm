@@ -21,6 +21,7 @@
 
 #include "common/keyboard.h"
 
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/gumps/computer_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/audio/audio_process.h"

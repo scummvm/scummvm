@@ -33,11 +33,4 @@
 //
 #include "ultima/ultima8/misc/classtype.h"
 
-
-//
-// Strings
-//
-#include "ultima/ultima8/misc/istring.h"
-
-
 #endif

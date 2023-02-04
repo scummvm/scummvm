@@ -23,6 +23,7 @@
 #define ULTIMA8_GRAPHICS_FONTS_FONT_H
 
 #include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/misc/encoding.h"
 

@@ -23,6 +23,7 @@
 #define ULTIMA8_KERNEL_KERNEL_H
 
 #include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {

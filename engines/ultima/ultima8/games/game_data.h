@@ -23,6 +23,7 @@
 #define ULTIMA8_GAMES_GAMEDATA_H
 
 #include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/graphics/frame_id.h"
 
 namespace Ultima {

@@ -22,6 +22,7 @@
 #ifndef ULTIMA8_KERNEL_OBJECTMANAGER_H
 #define ULTIMA8_KERNEL_OBJECTMANAGER_H
 
+#include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/common_types.h"
 

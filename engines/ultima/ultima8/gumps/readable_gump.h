@@ -22,6 +22,7 @@
 #ifndef ULTIMA8_GUMPS_READABLEGUMP_H
 #define ULTIMA8_GUMPS_READABLEGUMP_H
 
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/classtype.h"

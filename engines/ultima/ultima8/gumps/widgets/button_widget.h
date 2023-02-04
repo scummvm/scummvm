@@ -22,6 +22,7 @@
 #ifndef ULTIMA8_GUMPS_WIDGETS_BUTTONWIDGET_H
 #define ULTIMA8_GUMPS_WIDGETS_BUTTONWIDGET_H
 
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/graphics/frame_id.h"
 #include "ultima/ultima8/misc/classtype.h"
