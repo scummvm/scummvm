@@ -1,0 +1,4 @@
+# DESCRIPTION: GitLab CI/CD for libRetro (NOT FOR GitLab-proper)
+
+include:
+  - 'backends/platform/libretro/.gitlab-ci.yml'

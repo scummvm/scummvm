@@ -1,0 +1,193 @@
+######################################################################
+# Common settings and defaults
+######################################################################
+
+# Reset flags (DEFINES not reset as used in Makefile)
+INCLUDES    :=
+OBJS_DEPS   :=
+OBJS        :=
+DETECT_OBJS :=
+$(foreach MODULE,$(MODULES),$(MODULE_OBJS-$(MODULE)) :=)
+MODULES     :=
+
+# Defaults
+USE_ZLIB         ?= 1
+USE_TREMOR       ?= 0
+USE_VORBIS       ?= 1
+USE_FLAC         ?= 1
+USE_MAD          ?= 1
+USE_FAAD         ?= 1
+USE_PNG          ?= 1
+USE_JPEG         ?= 1
+USE_THEORADEC    ?= 1
+USE_FREETYPE2    ?= 1
+USE_MT32EMU      ?= 1
+USE_FLUIDSYNTH   ?= 1
+USE_LUA          ?= 1
+USE_LIBCO        ?= 1
+LOAD_RULES_MK     = 1
+USE_TINYGL       ?= 1
+USE_BINK         ?= 1
+POSIX            ?= 1
+NO_HIGH_DEF      ?= 0
+NO_WIP           ?= 1
+USE_LIBCO        ?= 1
+USE_RGB_COLOR    ?= 1
+ENABLE_VKEYBD     = 1
+USE_CLOUD        ?= 0
+STATIC_LINKING   ?= 0
+LITE             ?= 0
+
+DEBUG_ALLOW_DIRTY_SUBMODULES ?= 0
+
+# Paths
+SCUMMVM_PATH         := $(ROOT_PATH)/../../..
+DEPS_PATH            := $(ROOT_PATH)/deps
+CORE_PATH            := $(ROOT_PATH)/src
+SCRIPTS_PATH         := $(ROOT_PATH)/scripts
+srcdir               := $(SCUMMVM_PATH)
+VPATH                := $(SCUMMVM_PATH)
+UP_COMMON_MAKE       := $(SCUMMVM_PATH)/Makefile.common
+SHARED_MOD_MAKE      := $(ROOT_PATH)/shared_modules.mk
+
+# Core version shown in frontend
+GIT_TAG := $(shell cd $(ROOT_PATH) 2>/dev/null && git describe --tags 2>/dev/null)
+ifeq ($(GIT_TAG),)
+   GIT_HASH := $(shell cd $(ROOT_PATH) 2>/dev/null && git rev-parse --short HEAD 2>/dev/null)
+   ifneq ($(GIT_HASH),)
+      DEFINES += -DGIT_HASH=\"$(GIT_HASH)\"
+   endif
+else
+   DEFINES += -DGIT_TAG=\"$(GIT_TAG)\"
+endif
+
+# Nice name shown in frontend
+CORE_NAME = "ScummVM"
+# Pipe separated allowed file extensions that core can handle
+CORE_EXTENSIONS = "scummvm"
+
+INCLUDES += -I$(SCUMMVM_PATH)
+DEFINES  += -D__LIBRETRO__ -DNONSTANDARD_PORT -DUSE_RGB_COLOR -DUSE_OSD -DDISABLE_TEXT_CONSOLE -DFRONTEND_SUPPORTS_RGB565 -DUSE_TRANSLATION -DDETECTION_STATIC -DHAVE_CONFIG_H -DUSE_BINK -DUSE_LUA -DUSE_TINYGL -DENABLE_VKEYBD
+DEFINES  += -DCORE_NAME=\"$(CORE_NAME)\" -DCORE_EXTENSIONS=\"$(CORE_EXTENSIONS)\"
+CXXFLAGS += -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
+
+ifeq ($(USE_LIBCO), 1)
+   DEFINES += -DUSE_LIBCO
+else
+   LDFLAGS += -lpthread
+endif
+
+ifeq ($(TARGET_64BIT), 1)
+   DEFINES += -DSIZEOF_SIZE_T=8 -DSCUMM_64BITS
+else
+   DEFINES += -DSIZEOF_SIZE_T=4
+endif
+
+######################################################################
+# Libretro settings
+######################################################################
+
+INCLUDES     += -I$(ROOT_PATH)/include
+MODULE_PATHS += $(CORE_PATH)
+
+LIBRETRO_OBJS := $(CORE_PATH)/libretro-os.o \
+	$(CORE_PATH)/libretro-fs.o \
+	$(CORE_PATH)/libretro-fs-factory.o \
+	$(CORE_PATH)/libretro.o \
+	$(CORE_PATH)/libretro-threads.o
+
+OBJS += $(LIBRETRO_OBJS)
+
+######################################################################
+# External dependencies settings
+######################################################################
+
+ifeq (,$(filter datafiles coreinfo,$(MAKECMDGOALS)))
+$(info Configuring dependencies...)
+include $(ROOT_PATH)/dependencies.mk
+endif
+
+######################################################################
+# Module settings
+######################################################################
+
+INCLUDES    += -I$(SCUMMVM_PATH)/engines -I$(SCUMMVM_PATH)/backends/vkeybd
+
+# Base modules
+MODULES := base
+
+# script.mri head
+ifeq ($(STATIC_LINKING),1)
+   $(shell printf "CREATE $(TARGET)\n" > $(ROOT_PATH)/script.mri)
+endif
+
+# Engine modules
+# Following script
+# - generates configuration engines files (build/config.mk.engines, engines/engines.mk, engines/plugins_table.h, engines/detection_table.h) from actual source in $(SCUMMVM_PATH).
+# or (if static linking is required)
+# - generates config.mk.engines.lite - static file with a reduced set of engines for minimal builds - from lite_engines.list
+# - generates script.mri engines part
+ifeq (,$(filter clean datafiles coreinfo,$(MAKECMDGOALS)))
+$(info Configuring ScummVM engines...)
+ifneq ($(shell cd $(SCRIPTS_PATH); ./configure_engines.sh $(ROOT_PATH) $(SCUMMVM_PATH) $(NO_HIGH_DEF) $(NO_WIP) $(STATIC_LINKING) $(LITE)),0)
+   $(error Configuring ScummVM engines failed)
+else
+   $(info - ScummVM engines configured)
+endif
+endif
+
+ifeq ($(LITE), 1)
+   -include $(ROOT_PATH)/config.mk.engines.lite
+else
+   -include $(SCUMMVM_PATH)/config.mk.engines
+endif
+
+-include $(SCUMMVM_PATH)/engines/engines.mk
+
+ifeq ($(USE_MT32EMU),1)
+   INCLUDES    += -I$(SCUMMVM_PATH)/audio/softsynth/mt32/sha1
+   DEFINES += -DUSE_MT32EMU
+endif
+
+# Retrieve shared modules definitions from main Makefile.common
+RETRIEVED_SHARED_MODULES := $(shell cat $(UP_COMMON_MAKE) | tr -s "\n" "\00" | sed -e 's|.*-include engines/engines.mk||' -e 's|\#\#\#.*||' | tr -s "\00" "\n" > $(SHARED_MOD_MAKE) && printf ok || printf error)
+ifeq ($(RETRIEVED_SHARED_MODULES), ok)
+   include $(SHARED_MOD_MAKE)
+else
+   $(error Error retrieving shared modules definitions from main Makefile.common)
+endif
+
+# script.mri tail
+ifeq ($(STATIC_LINKING),1)
+   MRI_LIBS := $(shell res=""; for path in $(MODULES) ; do [ ! -z "$$(cat $(SCUMMVM_PATH)/$${path}/module.mk | grep rules.mk)" ] && res="$$res $$path" ; done ; printf "$$res")
+   $(shell printf "$(addprefix ADDLIB libtemp/lib, $(addsuffix .a\n,$(notdir $(MRI_LIBS))))" >> $(ROOT_PATH)/script.mri)
+   $(shell printf "ADDLIB libtemp/libdeps.a\n" >> $(ROOT_PATH)/script.mri)
+   $(shell printf "ADDLIB libtemp/libdetect.a\n" >> $(ROOT_PATH)/script.mri)
+   $(shell printf "$(addprefix ADDMOD libtemp/, $(addsuffix \n,$(notdir $(LIBRETRO_OBJS))))" >> $(ROOT_PATH)/script.mri)
+   $(shell printf "SAVE\n" >> $(ROOT_PATH)/script.mri)
+   $(shell printf "END\n" >> $(ROOT_PATH)/script.mri)
+   $(shell sed -i.bak -e "s/^ //g" $(ROOT_PATH)/script.mri;rm -f $(ROOT_PATH)/script.mri.bak)
+endif
+
+######################################################################
+# Rules
+######################################################################
+
+core: $(TARGET)
+
+datafiles: scummvm.zip
+
+coreinfo: $(TARGET_NAME)_libretro.info
+
+all: $(TARGET) scummvm.zip $(TARGET_NAME)_libretro.info
+
+#bundle_files
+scummvm.zip: $(SCUMMVM_PATH)/dists/scummvm.rc
+	@echo Preparing $@
+	@$(SCRIPTS_PATH)/bundle_datafiles.sh $(ROOT_PATH) $(SCUMMVM_PATH) bundle $(TARGET_NAME)
+
+$(TARGET_NAME)_libretro.info: $(SCUMMVM_PATH)/dists/scummvm.rc
+	@echo Preparing $@
+	@$(SCRIPTS_PATH)/bundle_datafiles.sh $(ROOT_PATH) $(SCUMMVM_PATH) info $(TARGET_NAME) $(CORE_NAME) $(CORE_EXTENSIONS)
+
+.PHONY: all core datafiles coreinfo
