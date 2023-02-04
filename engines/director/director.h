@@ -230,6 +230,8 @@ public:
 	Graphics::MacWindowManager *_wm;
 	Graphics::PixelFormat _pixelformat;
 
+	uint32 _debugDraw = 0;
+
 public:
 	int _colorDepth;
 	Common::HashMap<int, int> _KeyCodes;

@@ -96,6 +96,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("bpdisable", WRAP_METHOD(Debugger, cmdBpDisable));
 	registerCmd("bplist", WRAP_METHOD(Debugger, cmdBpList));
 
+	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
+
 	_nextFrame = false;
 	_nextFrameCounter = 0;
 	_nextMovie = false;
@@ -179,6 +181,9 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" bpenable [n] - Enables a specific breakpoint\n");
 	debugPrintf(" bpdisable [n] - Disables a specific breakpoint\n");
 	debugPrintf(" bplist - Lists all breakpoints\n");
+	debugPrintf("\n");
+	debugPrintf("GFX:\n");
+	debugPrintf(" draw [cast|frame|off] - Draws debug outlines for cast or frame number\n");
 	return true;
 }
 
@@ -765,6 +770,38 @@ bool Debugger::cmdBpList(int argc, const char **argv) {
 	}
 	return true;
 }
+
+bool Debugger::cmdDraw(int argc, const char **argv) {
+	if (argc > 1) {
+		for (int i = 1; i < argc; i++) {
+			if (!scumm_stricmp(argv[i], "off")) {
+				g_director->_debugDraw = 0;
+			} else if (!scumm_stricmp(argv[i], "cast")) {
+				g_director->_debugDraw |= kDebugDrawCast;
+			} else if (!scumm_stricmp(argv[i], "frame")) {
+				g_director->_debugDraw |= kDebugDrawFrame;
+			} else {
+				debugPrintf("Valid parameters are 'cast', 'frame' or 'off'.\n");
+				return true;
+			}
+		}
+	}
+
+	debugPrintf("Draw: ");
+	if (g_director->_debugDraw & kDebugDrawCast)
+		debugPrintf("cast ");
+
+	if (g_director->_debugDraw & kDebugDrawFrame)
+		debugPrintf("frame ");
+
+	if (!g_director->_debugDraw)
+		debugPrintf("off ");
+
+	debugPrintf("\n");
+
+	return true;
+}
+
 
 void Debugger::bpUpdateState() {
 	_bpCheckFunc = false;

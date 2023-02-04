@@ -400,6 +400,11 @@ enum CompareResult {
 	kCompareError
 };
 
+enum DebugDrawModes {
+	kDebugDrawCast  = 1 << 0,
+	kDebugDrawFrame = 1 << 1,
+};
+
 struct Datum;
 struct PCell;
 typedef Common::Array<Datum> DatumArray;

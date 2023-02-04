@@ -401,6 +401,13 @@ void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::
 	} else {
 		surface->copyFrom(*srcSurf);
 	}
+
+	if (g_director->_debugDraw & kDebugDrawCast) {
+		surface->frameRect(Common::Rect(0, 0, surface->w, surface->h), _wm->_colorWhite);
+
+		const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+		font->drawString(surface, Common::String::format("%d", _castId), 2, 2, 10, _wm->_colorWhite);
+	}
 }
 
 bool BitmapCastMember::isModified() {

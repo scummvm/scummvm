@@ -141,6 +141,8 @@ private:
 	bool cmdBpDisable(int argc, const char **argv);
 	bool cmdBpList(int argc, const char **argv);
 
+	bool cmdDraw(int argc, const char **argv);
+
 	void bpUpdateState();
 	void bpTest(bool forceCheck = false);
 
