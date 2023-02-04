@@ -115,12 +115,20 @@ struct FrameBuffer {
 		return _pbuf.getRawBuffer();
 	}
 
+	byte *getPixelBuffer(int pixel) {
+		return _pbuf.getRawBuffer(pixel);
+	}
+
 	int getPixelBufferWidth() {
 		return _pbufWidth;
 	}
 
 	int getPixelBufferHeight() {
 		return _pbufHeight;
+	}
+
+	int getPixelBufferPitch() {
+		return _pbufPitch;
 	}
 
 	const uint *getZBuffer() {
