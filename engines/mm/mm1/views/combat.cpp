@@ -645,9 +645,10 @@ void Combat::writeMonsterAttack() {
 	Common::String line = Common::String::format("%s %s %s",
 		monsterName.c_str(),
 		attackStyle.c_str(),
-		getAttackString().c_str()
+		c._name
 	);
 	writeString(0, 20, line);
+	writeString(0, 21, getAttackString());
 
 	// It's not ideal, but we have to do some final minor damage
 	// adjustment here after we've written the basic damage the
@@ -667,18 +668,19 @@ void Combat::writeMonsterAttack() {
 		// This returns a text line to display, and can also
 		// adjust the damage amount. Another reason why we
 		// can't actually apply damage until here
+		int yp = 22;
 		if (monsterTouch(line))
-			writeString(0, 21, line);
+			writeString(0, yp++, line);
 
 		// TODO: Maybe refactor subtractDamage to not use
 		// the _lines/add methods, which would make it cleaner
 		// to call it from here
 		_lines.clear();
-		_lines.push_back(Line(0, 2, ""));
+		_lines.push_back(Line(0, 3, ""));
 		subtractDamage();
 
 		if (!_lines.back()._text.empty())
-			writeString(0, 22, _lines.back()._text);
+			writeString(0, yp, _lines.back()._text);
 	}
 }
 
