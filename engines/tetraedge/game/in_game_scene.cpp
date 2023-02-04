@@ -1106,7 +1106,7 @@ void InGameScene::update() {
 			if (aroundAnchorZone(zone)) {
 				TeVector2f32 headRot(getHeadHorizontalRotation(_character, zone->_loc),
 					getHeadVerticalRotation(_character, zone->_loc));
-				if (headRot.getX() * 180.0 / M_PI > 90.0 || headRot.getY() * 180.0 / M_PI > 45.0) {
+				if (fabs(headRot.getX() * 180.0 / M_PI) > 90.0 || fabs(headRot.getY() * 180.0 / M_PI) > 45.0) {
 					_character->setHasAnchor(false);
 					_character->setLastHeadRotation(_character->headRotation());
 				} else {
