@@ -681,7 +681,11 @@ public:
 
 #ifdef USE_RGB_COLOR
 	/**
-	 * Determine the pixel format currently in use for screen rendering.
+	 * Fetch the pixel format currently in use for screen rendering.
+	 *
+	 * This is not neccessarily the native format for the system - if unset
+	 * it defaults toCLUT8.  To set a different format, engines should set
+	 * their preferred format using ::initGraphics().
 	 *
 	 * @return the active screen pixel format.
 	 *
