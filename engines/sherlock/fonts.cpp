@@ -334,37 +334,31 @@ int Fonts::stringWidth(const Common::String &str) {
 
 	bool isInEucEscape = false;
 
-	for (const char *c = str.c_str(); *c; ++c) {
-		byte curChar = *c;
-		byte nextChar = c[1];
+	for (int idx = 0; idx < (int) str.size(); ) {
+		byte curChar = str.c_str()[idx];
+		byte nextChar = str.c_str()[idx+1];
 
 		if (_isModifiedEucCn && !isInEucEscape && curChar == '@' && nextChar == '$') {
 			width += charWidth(' ');
-			c++;
+			idx += 2;
 			isInEucEscape = true;
 			continue;
 		}
 
 		if (_isModifiedEucCn && isInEucEscape && curChar == '$' && nextChar == '@') {
 			width += charWidth(' ');
-			c++;
+			idx += 2;
 			isInEucEscape = false;
 			continue;
 		}
 
 		if (_isModifiedEucCn && curChar >= 0x41 && nextChar >= 0x41 && (isInEucEscape || ((curChar >= 0xa1) && (nextChar >= 0xa1)))) {
 			width += kChineseWidth;
-			c++;
+			idx += 2;
 			continue;
 		}
 
-		if (_isBig5 && (curChar & 0x80) && nextChar) {
-			width += Graphics::Big5Font::kChineseTraditionalWidth;
-			c++;
-			continue;
-		}
-
-		width += charWidth(*c);
+		width += charWidth(str.c_str(), idx);
 	}
 
 	return width;
@@ -414,20 +408,35 @@ int Fonts::stringHeight(const Common::String &str) {
 	return height;
 }
 
-int Fonts::charWidth(unsigned char c) {
-	byte curChar;
+
+int Fonts::charWidth(const char *p, int &idx) {
+	byte curChar = p[idx];
+	byte nextChar = p[idx + 1];
+	if (_isBig5 && (curChar & 0x80) && nextChar) {
+		idx += 2;
+		return Graphics::Big5Font::kChineseTraditionalWidth;
+	}
+
+	idx++;
 
 	if (!_font)
 		return 0;
 
-	if (c == ' ') {
+	if (curChar == ' ') {
 		return 5; // hardcoded space
 	}
-	curChar = translateChar(c);
 
-	if (curChar < _charCount)
-		return (*_font)[curChar]._frame.w + 1;
+	byte translatedChar = translateChar(curChar);
+
+	if (translatedChar < _charCount)
+		return (*_font)[translatedChar]._frame.w + 1;
 	return 0;
+}
+
+int Fonts::charWidth(char c) {
+	char s[2] = { c, '\0' };
+	int idx = 0;
+	return charWidth(s, idx);
 }
 
 int Fonts::charHeight(unsigned char c) {

@@ -95,7 +95,12 @@ public:
 	/**
 	 * Returns the width of a character in pixels
 	 */
-	int charWidth(unsigned char c);
+	int charWidth(const char *str, int &idx);
+
+	/**
+	 * Returns the width of a character in pixels
+	 */
+	int charWidth(char ch);
 
 	/**
 	 * Returns the width of a character in pixels
