@@ -131,10 +131,10 @@ bool Party::checkPartyIncapacitated() const {
 	}
 
 	if (isActive) {
+		return false;
+	} else {
 		g_events->replaceView("Dead", true);
 		return true;
-	} else {
-		return false;
 	}
 }
 
