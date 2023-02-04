@@ -131,7 +131,7 @@ protected:
 	/**
 	 * Chooses the starting character to 
 	 */
-	void setupAttackerVal();
+	void setupAttackersCount();
 
 	/**
 	 * Checks whether the third party member

@@ -165,7 +165,7 @@ void Combat::setupCanAttacks() {
 					g_globals->_combatParty[5]->_canAttack = true;
 			}
 
-			setupAttackerVal();
+			setupAttackersCount();
 			return;
 		}
 	}
@@ -176,17 +176,17 @@ void Combat::setupCanAttacks() {
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i)
 		g_globals->_combatParty[i]->_canAttack = true;
 
-	setupAttackerVal();
+	setupAttackersCount();
 }
 
-void Combat::setupAttackerVal() {
+void Combat::setupAttackersCount() {
 	_attackersCount = 0;
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
 		if (g_globals->_combatParty[i]->_canAttack)
 			++_attackersCount;
 	}
 
-	_attackersCount = getRandomNumber(_attackersCount + 1) - 1;
+	_attackersCount += getRandomNumber(_attackersCount + 1) - 1;
 }
 
 void Combat::checkLeftWall() {
