@@ -98,6 +98,11 @@ void Surface::copyFrom(const Surface &surf) {
 	copyBlit((byte *)pixels, (const byte *)surf.pixels, pitch, surf.pitch, w, h, format.bytesPerPixel);
 }
 
+void Surface::convertFrom(const Surface &surf, const PixelFormat &f) {
+	create(surf.w, surf.h, f);
+	crossBlit((byte *)pixels, (const byte *)surf.pixels, pitch, surf.pitch, w, h, format, surf.format);
+}
+
 Surface Surface::getSubArea(const Common::Rect &area) {
 	Common::Rect effectiveArea(area);
 	effectiveArea.clip(w, h);
