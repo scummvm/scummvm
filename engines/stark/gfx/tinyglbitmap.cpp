@@ -22,6 +22,7 @@
 #include "engines/stark/gfx/tinyglbitmap.h"
 #include "engines/stark/gfx/driver.h"
 
+#include "common/system.h"
 #include "graphics/surface.h"
 
 namespace Stark {
@@ -43,9 +44,9 @@ void TinyGlBitmap::update(const Graphics::Surface *surface, const byte *palette)
 	_width = surface->w;
 	_height = surface->h;
 
-	if (surface->format != Driver::getRGBAPixelFormat()) {
-		// Convert the surface to bitmap format
-		Graphics::Surface *convertedSurface = surface->convertTo(Driver::getRGBAPixelFormat(), palette);
+	if (palette) {
+		// TinyGL doesn't currently support images with palettes, so we handle conversion here.
+		Graphics::Surface *convertedSurface = surface->convertTo(getBestPixelFormat(), palette);
 		tglUploadBlitImage(_blitImage, *convertedSurface, 0, false);
 		convertedSurface->free();
 		delete convertedSurface;
@@ -55,6 +56,10 @@ void TinyGlBitmap::update(const Graphics::Surface *surface, const byte *palette)
 }
 
 void TinyGlBitmap::setSamplingFilter(Bitmap::SamplingFilter filter) {
+}
+
+Graphics::PixelFormat TinyGlBitmap::getBestPixelFormat() const {
+	return g_system->getScreenFormat();
 }
 
 TinyGL::BlitImage *TinyGlBitmap::getBlitImage() const {
