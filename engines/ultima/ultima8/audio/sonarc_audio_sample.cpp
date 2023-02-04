@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
 
 namespace Ultima {

@@ -22,7 +22,6 @@
 #include "graphics/cursorman.h"
 #include "ultima/ultima.h"
 #include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/gump.h"

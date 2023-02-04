@@ -20,7 +20,7 @@
  */
 
 #include "ultima/ultima.h"
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/common_types.h"
 
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 

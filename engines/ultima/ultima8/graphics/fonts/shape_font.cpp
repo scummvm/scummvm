@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/shape_frame.h"

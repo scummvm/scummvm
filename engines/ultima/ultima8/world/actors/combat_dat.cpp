@@ -19,7 +19,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/combat_dat.h"
 
 namespace Ultima {

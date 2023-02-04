@@ -19,7 +19,6 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/frame_id.h"
 
 namespace Ultima {

@@ -21,7 +21,6 @@
 
 #include "ultima/ultima.h"
 #include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"

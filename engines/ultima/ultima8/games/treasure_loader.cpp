@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/games/treasure_loader.h"
 
 #include "ultima/ultima8/conf/config_file_manager.h"

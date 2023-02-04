@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/common_types.h"
 
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/games/game_data.h"

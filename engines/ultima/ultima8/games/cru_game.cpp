@@ -22,7 +22,7 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/games/cru_game.h"
 #include "ultima/ultima8/games/start_crusader_process.h"
 #include "ultima/ultima8/filesys/file_system.h"

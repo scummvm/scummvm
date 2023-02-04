@@ -21,7 +21,7 @@
 
 #include "common/config-manager.h"
 
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/filesys/file_system.h"
