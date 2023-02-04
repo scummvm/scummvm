@@ -197,7 +197,9 @@ public:
 	 */
 	void examine();
 
-	void offsetButton3DO(Common::Point &pt, int num);
+	Common::Point getTopLeftButtonPoint(int num) const;
+	Common::Rect getButtonRect(int buttonNr) const;
+
 public:
 	/**
 	 * Resets the user interface
