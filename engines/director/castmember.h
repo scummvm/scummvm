@@ -400,6 +400,8 @@ public:
 	int getPaletteId() { return _palette ? _palette->id : 0; }
 	void activatePalette() { if (_palette) g_director->setPalette(_palette->id); }
 
+	Common::String formatInfo() override;
+
 	PaletteV4 *_palette;
 };
 

@@ -317,6 +317,9 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 				break;
 			// 8bpp - if using a different palette, and we're not doing a color cycling operation, convert using nearest colour matching
 			case 8:
+				// Only redither images in Director 4 and up.
+				if (g_director->getVersion() < 400)
+					break;
 				if (castPaletteId != currentPaletteId && !isColorCycling) {
 					const auto pals = g_director->getLoadedPalettes();
 					int palIndex = pals.contains(castPaletteId) ? castPaletteId : kClutSystemMac;
@@ -1599,6 +1602,17 @@ PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::Seekable
 	: CastMember(cast, castId, stream) {
 	_type = kCastPalette;
 	_palette = nullptr;
+}
+
+Common::String PaletteCastMember::formatInfo() {
+	Common::String result;
+	if (_palette) {
+		result = "data: ";
+		for (size_t i = 0; i < (size_t)_palette->length; i++) {
+			result += Common::String::format("%02X%02X%02X", _palette->palette[3 * i], _palette->palette[3 * i + 1], _palette->palette[3 * i + 2]);
+		}
+	}
+	return result;
 }
 
 } // End of namespace Director
