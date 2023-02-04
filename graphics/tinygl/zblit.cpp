@@ -27,6 +27,8 @@
 #include "graphics/tinygl/zdirtyrect.h"
 #include "graphics/tinygl/gl.h"
 
+#include "graphics/blit.h"
+
 #include <math.h>
 
 namespace TinyGL {
@@ -36,51 +38,73 @@ Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, 
 
 struct BlitImage {
 public:
-	BlitImage() : _isDisposed(false), _version(0), _binaryTransparent(false), _refcount(1) { }
+	BlitImage() : _isDisposed(false), _version(0), _binaryTransparent(false), _opaque(true), _refcount(1) { }
 
 	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey) {
-		const Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+		_lines.clear();
+
 		int size = surface.w * surface.h;
-		_surface.create(surface.w, surface.h, textureFormat);
 		Graphics::PixelBuffer buffer(surface.format, (byte *)const_cast<void *>(surface.getPixels()));
-		Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(_surface.getPixels()));
-		dataBuffer.copyBuffer(0, 0, size, buffer);
-		if (applyColorKey) {
+
+		_opaque = true;
+		if (surface.format.aBits() > 0) {
 			for (int x = 0; x < size; x++) {
-				if (buffer.getValueAt(x) == colorKey) {
-					// Color keyed pixels become transparent white.
-					dataBuffer.setPixelAt(x, 0, 255, 255, 255);
+				uint8 r, g, b, a;
+				buffer.getARGBAt(x, a, r, g, b);
+				if (a != 0xFF) {
+					_opaque = false;
 				}
 			}
 		}
 
-		// Create opaque lines data.
-		// A line of pixels can not wrap more that one line of the image, since it would break
-		// blitting of bitmaps with a non-zero x position.
-		Graphics::PixelBuffer srcBuf = dataBuffer;
-		_lines.clear();
-		_binaryTransparent = true;
-		for (int y = 0; y < surface.h; y++) {
-			int start = -1;
-			for (int x = 0; x < surface.w; ++x) {
-				// We found a transparent pixel, so save a line from 'start' to the pixel before this.
-				uint8 r, g, b, a;
-				srcBuf.getARGBAt(x, a, r, g, b);
-				if (a != 0 && a != 0xFF) {
-					_binaryTransparent = false;
-				}
-				if (a == 0 && start >= 0) {
-					_lines.push_back(Line(start, y, x - start, srcBuf.getRawBuffer(start), textureFormat));
-					start = -1;
-				} else if (a != 0 && start == -1) {
-					start = x;
+		if (_opaque && !applyColorKey) {
+			GLContext *c = gl_get_context();
+			_surface.convertFrom(surface, c->fb->getPixelFormat());
+
+			_binaryTransparent = false;
+		} else {
+			const Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+			_surface.convertFrom(surface, textureFormat);
+
+			Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(_surface.getPixels()));
+
+			if (applyColorKey) {
+				for (int x = 0; x < size; x++) {
+					if (buffer.getValueAt(x) == colorKey) {
+						// Color keyed pixels become transparent white.
+						dataBuffer.setPixelAt(x, 0, 255, 255, 255);
+						_opaque = false;
+					}
 				}
 			}
-			// end of the bitmap line. if start is an actual pixel save the line.
-			if (start >= 0) {
-				_lines.push_back(Line(start, y, surface.w - start, srcBuf.getRawBuffer(start), textureFormat));
+
+			// Create opaque lines data.
+			// A line of pixels can not wrap more that one line of the image, since it would break
+			// blitting of bitmaps with a non-zero x position.
+			Graphics::PixelBuffer srcBuf = dataBuffer;
+			_binaryTransparent = true;
+			for (int y = 0; y < surface.h; y++) {
+				int start = -1;
+				for (int x = 0; x < surface.w; ++x) {
+					// We found a transparent pixel, so save a line from 'start' to the pixel before this.
+					uint8 r, g, b, a;
+					srcBuf.getARGBAt(x, a, r, g, b);
+					if (a != 0 && a != 0xFF) {
+						_binaryTransparent = false;
+					}
+					if (a == 0 && start >= 0) {
+						_lines.push_back(Line(start, y, x - start, srcBuf.getRawBuffer(start), textureFormat));
+						start = -1;
+					} else if (a != 0 && start == -1) {
+						start = x;
+					}
+				}
+				// end of the bitmap line. if start is an actual pixel save the line.
+				if (start >= 0) {
+					_lines.push_back(Line(start, y, surface.w - start, srcBuf.getRawBuffer(start), textureFormat));
+				}
+				srcBuf.shiftBy(surface.w);
 			}
-			srcBuf.shiftBy(surface.w);
 		}
 
 		_version++;
@@ -212,6 +236,8 @@ public:
 		}
 	}
 
+	void tglBlitOpaque(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight);
+
 	template <bool kDisableColoring, bool kDisableBlending, bool kEnableAlphaBlending>
 	void tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
 
@@ -229,7 +255,11 @@ public:
 	template <bool kDisableBlending, bool kDisableColoring, bool kDisableTransform, bool kFlipVertical, bool kFlipHorizontal, bool kEnableAlphaBlending>
 	void tglBlitGeneric(const BlitTransform &transform) {
 		if (kDisableTransform) {
-			if ((kDisableBlending || kEnableAlphaBlending) && kFlipVertical == false && kFlipHorizontal == false) {
+			if (kDisableBlending && kDisableColoring && kFlipVertical == false && kFlipHorizontal == false) {
+				tglBlitOpaque(transform._destinationRectangle.left, transform._destinationRectangle.top,
+					transform._sourceRectangle.left, transform._sourceRectangle.top,
+					transform._sourceRectangle.width() , transform._sourceRectangle.height());
+			} else if ((kDisableBlending || kEnableAlphaBlending) && kFlipVertical == false && kFlipHorizontal == false) {
 				tglBlitRLE<kDisableColoring, kDisableBlending, kEnableAlphaBlending>(transform._destinationRectangle.left,
 					transform._destinationRectangle.top, transform._sourceRectangle.left, transform._sourceRectangle.top,
 					transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._aTint,
@@ -261,9 +291,11 @@ public:
 	void incRefCount() { _refcount++; }
 	void dispose() { if (--_refcount == 0) _isDisposed = true; }
 	bool isDisposed() const { return _isDisposed; }
+	bool isOpaque() const { return _opaque; }
 private:
 	bool _isDisposed;
 	bool _binaryTransparent;
+	bool _opaque;
 	Common::Array<Line> _lines;
 	Graphics::Surface _surface;
 	int _version;
@@ -306,6 +338,21 @@ void tglDeleteBlitImage(TinyGL::BlitImage *blitImage) {
 }
 
 namespace TinyGL {
+
+void BlitImage::tglBlitOpaque(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight) {
+	GLContext *c = gl_get_context();
+
+	int clampWidth, clampHeight;
+	int width = srcWidth, height = srcHeight;
+	if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
+		return;
+
+	int fbWidth = c->fb->getPixelBufferWidth();
+
+	Graphics::crossBlit(c->fb->getPixelBuffer(dstX + dstY * fbWidth), (const byte *)_surface.getBasePtr(srcX, srcY),
+	                    c->fb->getPixelBufferPitch(), _surface.pitch, clampWidth, clampHeight,
+	                    c->fb->getPixelFormat(), _surface.format);
+}
 
 // This function uses RLE encoding to skip transparent bitmap parts
 // This blit only supports tinting but it will fall back to simpleBlit
@@ -711,7 +758,7 @@ void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	GLContext *c = gl_get_context();
 	bool disableColor = transform._aTint == 1.0f && transform._bTint == 1.0f && transform._gTint == 1.0f && transform._rTint == 1.0f;
 	bool disableTransform = transform._destinationRectangle.width() == 0 && transform._destinationRectangle.height() == 0 && transform._rotation == 0;
-	bool disableBlend = c->blending_enabled == false;
+	bool disableBlend = blitImage->isOpaque() || c->blending_enabled == false;
 	bool enableAlphaBlending = c->source_blending_factor == TGL_SRC_ALPHA && c->destination_blending_factor == TGL_ONE_MINUS_SRC_ALPHA;
 
 	if (enableAlphaBlending) {
