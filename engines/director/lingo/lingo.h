@@ -314,6 +314,7 @@ public:
 	~Lingo();
 
 	void resetLingo();
+	void resetLingoGo();
 	int getMenuNum();
 	int getMenuItemsNum(Datum &d);
 
@@ -402,7 +403,7 @@ public:
 	void func_mci(const Common::String &name);
 	void func_mciwait(const Common::String &name);
 	void func_beep(int repeats);
-	void func_goto(Datum &frame, Datum &movie);
+	void func_goto(Datum &frame, Datum &movie, bool commandgo = false );
 	void func_gotoloop();
 	void func_gotonext();
 	void func_gotoprevious();

@@ -39,6 +39,7 @@
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-gr.h"
+#include "director/lingo/lingo-the.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Director {
@@ -686,6 +687,26 @@ void Lingo::lingoError(const char *s, ...) {
 	}
 }
 
+void Lingo::resetLingoGo() {
+	// Reset lingo items that are reset on `go` command
+	// Director 4 Lingo Dictionary  p.102
+	Datum emptyDatum = Datum("");
+	Datum dZero = Datum(0);
+	Datum nullId;
+	g_lingo->setTheEntity(kTheBeepOn, nullId, kTheNOField, dZero);
+	g_lingo->setTheEntity(kTheKeyDownScript, nullId, kTheNOField, emptyDatum);
+	g_lingo->setTheEntity(kTheMouseDownScript, nullId, kTheNOField, emptyDatum);
+	g_lingo->setTheEntity(kTheMouseUpScript, nullId, kTheNOField, emptyDatum);
+
+	// TODO
+	// Should also be reset based on: Director 4 Lingo Dictionary p.102
+	// the constraint properties
+	// cursor of sprite
+	// immediate of sprite
+	// cursor
+	// puppetSprite
+}
+
 void Lingo::resetLingo() {
 	debugC(3, kDebugLingoExec, "Resetting Lingo!");
 
@@ -695,21 +716,7 @@ void Lingo::resetLingo() {
 		popContext(true);
 	}
 
-	// TODO
-	//
-	// reset the following:
-	// the keyDownScript
-	// the mouseUpScript
-	// the mouseDownScript
-	// the beepOn
-	// the constraint properties
-	// the cursor
-	// the immediate sprite properties
-	// the puppetSprite
-	// cursor commands
-	//
-	// NOTE:
-	// timeoutScript is not reset
+	resetLingoGo();
 }
 
 int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly) {

@@ -1391,7 +1391,7 @@ void LB::b_go(int nargs) {
 				warning("b_go: frame arg should be of type STRING or INT, not %s", frame.type2str());
 			}
 
-			g_lingo->func_goto(frame, movie);
+			g_lingo->func_goto(frame, movie, true);
 		}
 
 		if (nargs > 0) {

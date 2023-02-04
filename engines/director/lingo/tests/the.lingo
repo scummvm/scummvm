@@ -87,3 +87,9 @@ scummvmAssertEqual(the number of items in chunkExpr, 1)
 set the itemDelimiter to ":"
 scummvmAssertEqual(the number of items in chunkExpr, 3)
 set the itemDelimiter to save
+
+-- test initialisation
+scummvmAssertEqual(the beepOn, 0)
+scummvmAssertEqual(the keyDownScript, "")
+scummvmAssertEqual(the mouseDownScript, "")
+scummvmAssertEqual(the mouseUpScript, "")

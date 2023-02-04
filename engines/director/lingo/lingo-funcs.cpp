@@ -181,7 +181,7 @@ void Lingo::func_mciwait(const Common::String &name) {
 	warning("STUB: MCI wait file: %s", name.c_str());
 }
 
-void Lingo::func_goto(Datum &frame, Datum &movie) {
+void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 	_vm->_playbackPaused = false;
 
 	if (!_vm->getCurrentMovie())
@@ -198,6 +198,9 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
 	// freeze this script context. We'll return to it after entering the next frame.
 	g_lingo->_freezeState = true;
+
+	if (calledfromgo)
+		g_lingo->resetLingoGo();
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
