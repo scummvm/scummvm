@@ -871,7 +871,11 @@ bool Debugger::lingoCommandProcessor(const char *inputOrig) {
 		_lingoReplMode = false;
 		return true;
 	}
-	return lingoEval(inputOrig);
+	bool ret = lingoEval(inputOrig);
+
+	debugPrintf(PROMPT);
+
+	return ret;
 }
 
 bool Debugger::lingoEval(const char *inputOrig) {
@@ -879,9 +883,9 @@ bool Debugger::lingoEval(const char *inputOrig) {
 	inputSan.trim();
 	if (inputSan.empty())
 		return true;
-	Common::String expr = Common::String::format("return %s", inputSan.c_str());
+
 	// Compile the code to an anonymous function and call it
-	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(expr);
+	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(inputSan);
 	if (!sc) {
 		debugPrintf("Failed to parse expression!\n%s", _lingoReplMode ? PROMPT : "");
 		return true;
@@ -889,9 +893,10 @@ bool Debugger::lingoEval(const char *inputOrig) {
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
 	_lingoEval = true;
 	LC::call(sym, 0, true);
-	_finish = true;
-	_finishCounter = 1;
-	return cmdExit(0, nullptr);
+	g_lingo->execute();
+
+	debugPrintf("\n");
+	return true;
 }
 
 void Debugger::stepHook() {
