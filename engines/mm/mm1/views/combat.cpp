@@ -118,10 +118,6 @@ void Combat::draw() {
 		writeMonsterSpell();
 		delaySeconds(2);
 		return;
-	case MONSTER_ATTACK:
-		writeMonsterAttack();
-		delaySeconds(4);
-		return;
 	case INFILTRATION:
 		writeInfiltration();
 		delaySeconds(3);
@@ -165,6 +161,11 @@ void Combat::draw() {
 		writeSpellResult();
 		if (_spellResult._delaySeconds)
 			delaySeconds(_spellResult._delaySeconds);
+		break;
+
+	case MONSTER_ATTACK:
+		writeMonsterAttack();
+		delaySeconds(2);
 		break;
 
 	case MONSTER_FLEES:

@@ -619,6 +619,8 @@ void Combat::monsterAction() {
 		_monsterP->_hp = 0;
 		_monsterP->_status = MONFLAG_DEAD;
 		removeMonster();
+
+		_activeMonsterNum = -1;
 		setMode(MONSTER_FLEES);
 	} else {
 		// Otherwise, move on to checking monster actions
