@@ -37,7 +37,7 @@
 
 namespace Director {
 
-#define PROMPT "lingo"
+#define PROMPT "lingo) "
 
 Debugger *g_debugger;
 
@@ -312,7 +312,7 @@ bool Debugger::cmdRepl(int argc, const char **argv) {
 	debugPrintf("Switching to Lingo REPL mode, type 'lingo off' to return to the debug console.\n");
 	registerDefaultCmd(WRAP_DEFAULTCOMMAND(Debugger, lingoCommandProcessor));
 	_lingoReplMode = true;
-	debugPrintf(PROMPT);
+	setPrompt(PROMPT);
 	return true;
 }
 
@@ -869,11 +869,10 @@ bool Debugger::lingoCommandProcessor(const char *inputOrig) {
 	if (!strcmp(inputOrig, "lingo off")) {
 		registerDefaultCmd(nullptr);
 		_lingoReplMode = false;
+		resetPrompt();
 		return true;
 	}
 	bool ret = lingoEval(inputOrig);
-
-	debugPrintf(PROMPT);
 
 	return ret;
 }
@@ -887,7 +886,7 @@ bool Debugger::lingoEval(const char *inputOrig) {
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(inputSan);
 	if (!sc) {
-		debugPrintf("Failed to parse expression!\n%s", _lingoReplMode ? PROMPT : "");
+		debugPrintf("Failed to parse expression!\n");
 		return true;
 	}
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
@@ -916,7 +915,7 @@ void Debugger::stepHook() {
 		if (_lingoEval) {
 			_lingoEval = false;
 			Datum result = g_lingo->pop();
-			debugPrintf("%s\n\n%s", result.asString(true).c_str(), _lingoReplMode ? PROMPT : "");
+			debugPrintf("%s\n\n", result.asString(true).c_str());
 		} else {
 			cmdScriptFrame(0, nullptr);
 		}
