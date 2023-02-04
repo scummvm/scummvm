@@ -1996,47 +1996,20 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 	events.clearEvents();
 
 	// Loop through displaying up to five lines
-	bool endOfStr = false;
-	const char *msgP = str.c_str();
-	for (int lineNum = 0; lineNum < ONSCREEN_FILES_COUNT && !endOfStr; ++lineNum) {
-		int width = 0;
-		const char *lineStartP = msgP;
-
-		// Determine how much can be displayed on the line
-		do {
-			width += screen.charWidth(*msgP++);
-		} while (width < 300 && *msgP);
-
-		if (*msgP)
-			--msgP;
-		else
-			endOfStr = true;
-
-		// If the line needs to be wrapped, scan backwards to find
-		// the end of the previous word as a splitting point
-		if (width >= 300) {
-			while (*msgP != ' ')
-				--msgP;
-			endOfStr = false;
-		}
-
-		// Print out the line
-		Common::String line(lineStartP, msgP);
+	Common::String remainder;
+	Common::Array<Common::String> lines = screen.wordWrap(str, 300, remainder, Common::String::npos, ONSCREEN_FILES_COUNT);
+	for (uint lineNum = 0; lineNum < lines.size(); ++lineNum) {
 		screen.gPrint(Common::Point(16, CONTROLS_Y + 12 + lineNum * 9),
-			INV_FOREGROUND, "%s", line.c_str());
-
-		if (!endOfStr)
-			// Start next line at start of the nxet word after space
-			++msgP;
+			INV_FOREGROUND, "%s", lines[lineNum].c_str());
 	}
 
 	// Handle display depending on whether all the message was shown
-	if (!endOfStr) {
+	if (!remainder.empty()) {
 		Common::String fixedText_PressKeyForMore = FIXED(PressKey_ForMore);
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
 			SHERLOCK_SCREEN_WIDTH / 2, fixedText_PressKeyForMore);
-		_descStr = msgP;
+		_descStr = remainder;
 	} else {
 		Common::String fixedText_PressKeyToContinue = FIXED(PressKey_ToContinue);
 
