@@ -916,7 +916,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			bitmap->_data[pic].free();
 			bitmap->_data[pic] = buffer;
 			imgs[pic] = tglGenBlitImage();
-			tglUploadBlitImage(imgs[pic], bitmap->_data[pic], 0, false);
+			tglUploadBlitImage(imgs[pic], bitmap->_data[pic], 0, false, true);
 		}
 	} else {
 		for (int i = 0; i < bitmap->_numImages; ++i) {
