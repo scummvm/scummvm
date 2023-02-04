@@ -197,6 +197,14 @@ void ScalpelUserInterface::reset() {
 	_help = _oldHelp = -1;
 }
 
+int ScalpelUserInterface::infoLineHeight() const {
+	return _vm->getLanguage() == Common::Language::ZH_TWN ? 14 : 10;
+}
+
+int ScalpelUserInterface::infoLineYOffset() const {
+	return _vm->getLanguage() == Common::Language::ZH_TWN ? 0 : 1;
+}
+
 void ScalpelUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 
@@ -217,7 +225,7 @@ void ScalpelUserInterface::drawInterface(int bufferNum) {
 	}
 	if (bufferNum == 3)
 		screen._backBuffer2.SHfillRect(Common::Rect(0, INFO_LINE,
-			SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10), INFO_BLACK);
+			SHERLOCK_SCREEN_WIDTH, INFO_LINE + infoLineHeight()), INFO_BLACK);
 }
 
 void ScalpelUserInterface::handleInput() {
@@ -310,7 +318,7 @@ void ScalpelUserInterface::handleInput() {
 
 					if (_help != -1 && !scene._bgShapes[_bgFound]._description.empty()
 							&& scene._bgShapes[_bgFound]._description[0] != ' ')
-						screen.print(Common::Point(0, INFO_LINE + 1),
+						screen.print(Common::Point(0, INFO_LINE + infoLineYOffset()),
 						INFO_FOREGROUND, "%s", scene._bgShapes[_bgFound]._description.c_str());
 
 					_oldBgFound = _bgFound;
@@ -551,8 +559,8 @@ void ScalpelUserInterface::toggleButton(uint16 num) {
 
 void ScalpelUserInterface::clearInfo() {
 	if (_infoFlag) {
-		_vm->_screen->vgaBar(Common::Rect(IS_3DO ? 33 : 16, INFO_LINE,
-			SHERLOCK_SCREEN_WIDTH - (IS_3DO ? 33 : 19), INFO_LINE + 10), INFO_BLACK);
+		_vm->_screen->vgaBar(Common::Rect(IS_3DO ? 33 : 16, INFO_LINE + infoLineYOffset() - 1,
+			SHERLOCK_SCREEN_WIDTH - (IS_3DO ? 33 : 19), INFO_LINE + infoLineHeight()), INFO_BLACK);
 		_infoFlag = false;
 		_oldLook = -1;
 	}
@@ -703,16 +711,16 @@ void ScalpelUserInterface::lookScreen(const Common::Point &pt) {
 						}
 
 						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
-						screen.print(Common::Point(xStart, INFO_LINE + 1),
+						screen.print(Common::Point(xStart, INFO_LINE + infoLineYOffset()),
 							INFO_FOREGROUND, "%s", useText1.c_str());
 
 						if (_selector != -1) {
-							screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+							screen.print(Common::Point(xStart + width1, INFO_LINE + infoLineYOffset()),
 								TALK_FOREGROUND, "%s", useText2.c_str());
-							screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + 1),
+							screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + infoLineYOffset()),
 								INFO_FOREGROUND, "%s", useText3.c_str());
 						} else {
-							screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+							screen.print(Common::Point(xStart + width1, INFO_LINE + infoLineYOffset()),
 								INFO_FOREGROUND, "%s", useText3.c_str());
 						}
 					} else if (temp >= 0 && temp < 1000 && _selector != -1 &&
@@ -735,15 +743,15 @@ void ScalpelUserInterface::lookScreen(const Common::Point &pt) {
 						}
 
 						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
-						screen.print(Common::Point(xStart, INFO_LINE + 1),
+						screen.print(Common::Point(xStart, INFO_LINE + infoLineYOffset()),
 							INFO_FOREGROUND, "%s", giveText1.c_str());
-						screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+						screen.print(Common::Point(xStart + width1, INFO_LINE + infoLineYOffset()),
 							TALK_FOREGROUND, "%s", giveText2.c_str());
-						screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + 1),
+						screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + infoLineYOffset()),
 							INFO_FOREGROUND, "%s", giveText3.c_str());
 					}
 				} else {
-					screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", tempStr.c_str());
+					screen.print(Common::Point(0, INFO_LINE + infoLineYOffset()), INFO_FOREGROUND, "%s", tempStr.c_str());
 				}
 
 				_infoFlag = true;
@@ -767,7 +775,7 @@ void ScalpelUserInterface::lookInv() {
 		if (temp < inv._holdings) {
 			if (temp < inv._holdings) {
 				clearInfo();
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND,
+				screen.print(Common::Point(0, INFO_LINE + infoLineYOffset()), INFO_FOREGROUND,
 					"%s", inv[temp]._description.c_str());
 				_infoFlag = true;
 				_oldLook = temp;
@@ -2231,7 +2239,7 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 
 		// Display error message
 		_menuCounter = 30;
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that to yourself.");
+		screen.print(Common::Point(0, INFO_LINE + infoLineYOffset()), INFO_FOREGROUND, "You can't do that to yourself.");
 		return;
 	}
 
@@ -2283,7 +2291,7 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
 				_infoFlag = true;
 				clearInfo();
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", FIXED(UserInterface_Done));
+				screen.print(Common::Point(0, INFO_LINE + infoLineYOffset()), INFO_FOREGROUND, "%s", FIXED(UserInterface_Done));
 				_menuCounter = 25;
 			}
 		}
@@ -2293,12 +2301,12 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 		clearInfo();
 
 		if (giveMode) {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", FIXED(UserInterface_NoThankYou));
+			screen.print(Common::Point(0, INFO_LINE + infoLineYOffset()), INFO_FOREGROUND, "%s", FIXED(UserInterface_NoThankYou));
 		} else if (fixedTextActionId == kFixedTextAction_Invalid) {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", FIXED(UserInterface_YouCantDoThat));
+			screen.print(Common::Point(0, INFO_LINE + infoLineYOffset()), INFO_FOREGROUND, "%s", FIXED(UserInterface_YouCantDoThat));
 		} else {
 			Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, 0);
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
+			screen.print(Common::Point(0, INFO_LINE + infoLineYOffset()), INFO_FOREGROUND, "%s", errorMessage.c_str());
 		}
 
 		_infoFlag = true;

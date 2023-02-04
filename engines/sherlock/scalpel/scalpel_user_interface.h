@@ -199,6 +199,8 @@ public:
 
 	Common::Point getTopLeftButtonPoint(int num) const;
 	Common::Rect getButtonRect(int buttonNr) const;
+	int infoLineHeight() const;
+	int infoLineYOffset() const;
 
 public:
 	/**
