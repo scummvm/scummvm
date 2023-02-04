@@ -53,7 +53,7 @@ void DarkEngine::loadAssetsDemo() {
 
 		if (!file.isOpen())
 			error("Failed to open DSIDEE.EXE");
-
+		loadMessagesFixedSize(&file, 0x4525, 16, 27);
 		loadFonts(&file, 0xa598);
 		load8bitBinary(&file, 0xa700, 16);
 	} else if (isDOS() && _renderMode == Common::kRenderCGA) {
@@ -103,6 +103,7 @@ void DarkEngine::loadAssetsFullGame() {
 			error("Failed to open DSIDEE.EXE");
 
 		loadFonts(&file, 0xa113);
+		loadMessagesFixedSize(&file, 0x4525, 16, 27);
 		load8bitBinary(&file, 0xa280, 16);
 	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
