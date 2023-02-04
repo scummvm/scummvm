@@ -38,10 +38,16 @@ Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, 
 
 struct BlitImage {
 public:
-	BlitImage() : _isDisposed(false), _version(0), _binaryTransparent(false), _opaque(true), _refcount(1) { }
+	BlitImage() : _isDisposed(false), _version(0), _binaryTransparent(false), _opaque(true), _zBuffer(false), _refcount(1) { }
 
-	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey) {
+	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey, bool zBuffer) {
 		_lines.clear();
+
+		_zBuffer = zBuffer;
+		if (_zBuffer) {
+			_surface.copyFrom(surface);
+			return;
+		}
 
 		int size = surface.w * surface.h;
 		Graphics::PixelBuffer buffer(surface.format, (byte *)const_cast<void *>(surface.getPixels()));
@@ -213,6 +219,7 @@ public:
 	// The function only supports clipped blitting without any type of transformation or tinting.
 	void tglBlitZBuffer(int dstX, int dstY) {
 		TinyGL::GLContext *c = TinyGL::gl_get_context();
+		assert(_zBuffer);
 
 		int clampWidth, clampHeight;
 		int width = _surface.w, height = _surface.h;
@@ -254,6 +261,8 @@ public:
 	//Utility function that calls the correct blitting function.
 	template <bool kDisableBlending, bool kDisableColoring, bool kDisableTransform, bool kFlipVertical, bool kFlipHorizontal, bool kEnableAlphaBlending>
 	void tglBlitGeneric(const BlitTransform &transform) {
+		assert(!_zBuffer);
+
 		if (kDisableTransform) {
 			if (kDisableBlending && kDisableColoring && kFlipVertical == false && kFlipHorizontal == false) {
 				tglBlitOpaque(transform._destinationRectangle.left, transform._destinationRectangle.top,
@@ -296,6 +305,7 @@ private:
 	bool _isDisposed;
 	bool _binaryTransparent;
 	bool _opaque;
+	bool _zBuffer;
 	Common::Array<Line> _lines;
 	Graphics::Surface _surface;
 	int _version;
@@ -325,9 +335,9 @@ TinyGL::BlitImage *tglGenBlitImage() {
 	return image;
 }
 
-void tglUploadBlitImage(TinyGL::BlitImage *blitImage, const Graphics::Surface& surface, uint32 colorKey, bool applyColorKey) {
+void tglUploadBlitImage(TinyGL::BlitImage *blitImage, const Graphics::Surface& surface, uint32 colorKey, bool applyColorKey, bool zBuffer) {
 	if (blitImage != nullptr) {
-		blitImage->loadData(surface, colorKey, applyColorKey);
+		blitImage->loadData(surface, colorKey, applyColorKey, zBuffer);
 	}
 }
 
