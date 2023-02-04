@@ -1487,6 +1487,8 @@ void Game::setCurrentObjectSprite(const Common::String &spritePath) {
 	}
 }
 
+// Note: The naming of this function is bad, but follows the original..
+// we really set the visibility to the *opposite* of the parameter.
 bool Game::showMarkers(bool val) {
 	if (!_forGui.loaded())
 		return false;
