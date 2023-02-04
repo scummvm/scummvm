@@ -134,6 +134,7 @@ public:
 	void dumpTransparentMeshData() const;
 	const TeColor &currentColor() const { return _currentColor; }
 
+	virtual void updateScreen() = 0;
 	virtual void updateGlobalLight() = 0;
 	virtual void applyMaterial(const TeMaterial &m) = 0;
 

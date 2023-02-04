@@ -54,6 +54,7 @@ public:
 	Common::String vendor() override;
 	void applyMaterial(const TeMaterial &m) override;
 	void updateGlobalLight() override;
+	void updateScreen() override;
 
 protected:
 

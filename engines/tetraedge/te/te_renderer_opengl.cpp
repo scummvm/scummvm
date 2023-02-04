@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 #include "common/debug.h"
+#include "common/system.h"
 
 #include "graphics/opengl/system_headers.h"
 
@@ -99,7 +100,8 @@ void TeRendererOpenGL::init(uint width, uint height) {
 	// Note: original doesn't separate but blends are nicer that way.
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthFunc(GL_LEQUAL);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
+	// Original does this, probably not needed?
+	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
 	glClearDepth(1.0);
 	glClearStencil(0);
 	_clearColor = TeColor(0, 0, 0, 255);
@@ -380,6 +382,10 @@ void TeRendererOpenGL::applyMaterial(const TeMaterial &m) {
 
 void TeRendererOpenGL::updateGlobalLight() {
 	TeLightOpenGL::updateGlobal();
+}
+
+void TeRendererOpenGL::updateScreen() {
+	g_system->updateScreen();
 }
 
 Common::String TeRendererOpenGL::vendor() {

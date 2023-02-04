@@ -28,7 +28,7 @@
 
 namespace Tetraedge {
 
-TeMeshTinyGL::TeMeshTinyGL() : _glMeshMode(TGL_POINTS), _gltexEnvMode(TGL_MODULATE) {
+TeMeshTinyGL::TeMeshTinyGL() : _glMeshMode(TGL_POINTS), _gltexEnvMode(TGL_DECAL) {
 }
 
 void TeMeshTinyGL::draw() {
@@ -141,8 +141,8 @@ void TeMeshTinyGL::draw() {
 	if (!renderer->scissorEnabled())
 		tglDisable(TGL_SCISSOR_TEST);
 
-	// TODO: not supported in TGL
-	//tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_MODULATE);
+	// TODO: GL_MODULATE not supported in TGL
+	//tglTexEnvi(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_MODE, TGL_DECAL);
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 	tglDisableClientState(TGL_NORMAL_ARRAY);
 	tglDisableClientState(TGL_COLOR_ARRAY);
@@ -151,19 +151,19 @@ void TeMeshTinyGL::draw() {
 
 	if (_drawWires && !normals.empty()) {
 		renderer->disableAllLights();
-		error("TODO: Properly implement _drawWires case in TeMesh::draw");
-		/*
+		//error("TODO: Properly implement _drawWires case in TeMesh::draw");
+		///*
 		// TODO: Reimplement without glBegin/glEnd
-		glBegin(TGL_LINES);
+		tglBegin(TGL_LINES);
 		renderer->setCurrentColor(TeColor(255, 255, 255, 255));
 		for (uint i = 0; i < verticies.size(); i++) {
-			glVertex3f(verticies[i].x(), verticies[i].y(), verticies[i].z());
-			glVertex3f(verticies[i].x() + normals[i].x(),
+			tglVertex3f(verticies[i].x(), verticies[i].y(), verticies[i].z());
+			tglVertex3f(verticies[i].x() + normals[i].x(),
 					verticies[i].y() + normals[i].y(),
 					verticies[i].z() + normals[i].z());
 		}
-		glEnd();
-		*/
+		tglEnd();
+		//*/
 	}
 
 	renderer->setMatrixMode(TeRenderer::MM_GL_MODELVIEW);

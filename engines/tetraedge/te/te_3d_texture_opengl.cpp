@@ -195,8 +195,8 @@ void Te3DTextureOpenGL::update(const TeImage &img, uint xoff, uint yoff) {
 
 	setAccessName(img.getAccessName().append(".3dtex"));
 	glBindTexture(GL_TEXTURE_2D, _glTexture);
-	glPixelStorei(GL_UNPACK_SWAP_BYTES, 0);
-	glPixelStorei(GL_UNPACK_LSB_FIRST, 0);
+	glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
+	glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
 	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
