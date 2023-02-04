@@ -151,13 +151,15 @@ bool scaleBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint dstW, const uint dstH,
 			   const uint srcW, const uint srcH,
-			   const Graphics::PixelFormat &fmt);
+			   const Graphics::PixelFormat &fmt,
+			   const byte flip = 0);
 
 bool scaleBlitBilinear(byte *dst, const byte *src,
 					   const uint dstPitch, const uint srcPitch,
 					   const uint dstW, const uint dstH,
 					   const uint srcW, const uint srcH,
-					   const Graphics::PixelFormat &fmt);
+					   const Graphics::PixelFormat &fmt,
+					   const byte flip = 0);
 
 bool rotoscaleBlit(byte *dst, const byte *src,
 				   const uint dstPitch, const uint srcPitch,

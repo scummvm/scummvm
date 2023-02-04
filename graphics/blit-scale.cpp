@@ -40,18 +40,30 @@ void scaleNN(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint dstW, const uint dstH,
 			   const uint srcW, const uint srcH,
-			   int *scaleCacheX) {
+			   int *scaleCacheX, const byte flip) {
+	const bool flipx = flip & FLIP_H;
+	const bool flipy = flip & FLIP_V;
 
-	const uint dstDelta = (dstPitch - dstW * sizeof(Size));
+	const int dstIncX = (flipx ? -1 : 1);
+	const int dstIncY = (flipy ? -dstPitch : dstPitch);
+
+	if (flipx) {
+		dst += (dstW - 1) * sizeof(Size);
+	}
+
+	if (flipy) {
+		dst += (dstH - 1) * dstPitch;
+	}
 
 	for (uint y = 0; y < dstH; y++) {
 		const Size *srcP = (const Size *)(src + ((y * srcH) / dstH) * srcPitch);
+		Size *dst1 = (Size *)dst;
 		for (uint x = 0; x < dstW; x++) {
 			int val = srcP[scaleCacheX[x]];
-			*(Size *)dst = val;
-			dst += sizeof(Size);
+			*dst1 = val;
+			dst1 += dstIncX;
 		}
-		dst += dstDelta;
+		dst += dstIncY;
 	}
 }
 
@@ -61,7 +73,8 @@ bool scaleBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint dstW, const uint dstH,
 			   const uint srcW, const uint srcH,
-			   const Graphics::PixelFormat &fmt) {
+			   const Graphics::PixelFormat &fmt,
+                           const byte flip) {
 
 	int *scaleCacheX = new int[dstW];
 	for (uint x = 0; x < dstW; x++) {
@@ -70,13 +83,13 @@ bool scaleBlit(byte *dst, const byte *src,
 
 	switch (fmt.bytesPerPixel) {
 	case 1:
-		scaleNN<uint8>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX);
+		scaleNN<uint8>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX, flip);
 		break;
 	case 2:
-		scaleNN<uint16>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX);
+		scaleNN<uint16>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX, flip);
 		break;
 	case 4:
-		scaleNN<uint32>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX);
+		scaleNN<uint32>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX, flip);
 		break;
 	default:
 		delete[] scaleCacheX;
@@ -158,13 +171,15 @@ Size scaleBlitBilinearInterpolate(Size c01, Size c00, Size c11, Size c10, int ex
 	return fmt.ARGBToColorT<ColorMask>(dp_a, dp_r, dp_g, dp_b);
 }
 
-template <typename ColorMask, typename Size, bool flipx, bool flipy> // TODO: See mirroring comment in RenderTicket ctor
+template <typename ColorMask, typename Size>
 void scaleBlitBilinearLogic(byte *dst, const byte *src,
 							const uint dstPitch, const uint srcPitch,
 							const uint dstW, const uint dstH,
 							const uint srcW, const uint srcH,
 							const Graphics::PixelFormat &fmt,
-							int *sax, int *say) {
+							int *sax, int *say, byte flip) {
+	const bool flipx = flip & FLIP_H;
+	const bool flipy = flip & FLIP_V;
 
 	int spixelw = (srcW - 1);
 	int spixelh = (srcH - 1);
@@ -172,7 +187,7 @@ void scaleBlitBilinearLogic(byte *dst, const byte *src,
 	const byte *sp = src;
 
 	if (flipx) {
-		sp += spixelw;
+		sp += spixelw * sizeof(Size);
 	}
 	if (flipy) {
 		sp += srcPitch * spixelh;
@@ -248,7 +263,7 @@ void scaleBlitBilinearLogic(byte *dst, const byte *src,
 	}
 }
 
-template<typename ColorMask, typename Size, bool filtering, bool flipx, bool flipy> // TODO: See mirroring comment in RenderTicket ctor
+template<typename ColorMask, typename Size, bool filtering>
 void rotoscaleBlitLogic(byte *dst, const byte *src,
 						const uint dstPitch, const uint srcPitch,
 						const uint dstW, const uint dstH,
@@ -256,6 +271,8 @@ void rotoscaleBlitLogic(byte *dst, const byte *src,
 						const Graphics::PixelFormat &fmt,
 						const TransformStruct &transform,
 						const Common::Point &newHotspot) {
+	const bool flipx = transform._flip & FLIP_H;
+	const bool flipy = transform._flip & FLIP_V;
 
 	assert(transform._angle != kDefaultAngle); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
 
@@ -344,7 +361,8 @@ bool scaleBlitBilinear(byte *dst, const byte *src,
 					   const uint dstPitch, const uint srcPitch,
 					   const uint dstW, const uint dstH,
 					   const uint srcW, const uint srcH,
-					   const Graphics::PixelFormat &fmt) {
+					   const Graphics::PixelFormat &fmt,
+					   const byte flip) {
 	if (fmt.bytesPerPixel != 2 && fmt.bytesPerPixel != 4)
 		return false;
 
@@ -393,18 +411,18 @@ bool scaleBlitBilinear(byte *dst, const byte *src,
 	}
 
 	if (fmt == createPixelFormat<8888>()) {
-		scaleBlitBilinearLogic<ColorMasks<8888>, uint32, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say);
+		scaleBlitBilinearLogic<ColorMasks<8888>, uint32>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say, flip);
 	} else if (fmt == createPixelFormat<888>()) {
-		scaleBlitBilinearLogic<ColorMasks<888>,  uint32, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say);
+		scaleBlitBilinearLogic<ColorMasks<888>,  uint32>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say, flip);
 	} else if (fmt == createPixelFormat<565>()) {
-		scaleBlitBilinearLogic<ColorMasks<565>,  uint16, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say);
+		scaleBlitBilinearLogic<ColorMasks<565>,  uint16>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say, flip);
 	} else if (fmt == createPixelFormat<555>()) {
-		scaleBlitBilinearLogic<ColorMasks<555>,  uint16, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say);
+		scaleBlitBilinearLogic<ColorMasks<555>,  uint16>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say, flip);
 
 	} else if (fmt.bytesPerPixel == 4) {
-		scaleBlitBilinearLogic<ColorMasks<0>,    uint32, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say);
+		scaleBlitBilinearLogic<ColorMasks<0>,    uint32>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say, flip);
 	} else if (fmt.bytesPerPixel == 2) {
-		scaleBlitBilinearLogic<ColorMasks<0>,    uint16, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say);
+		scaleBlitBilinearLogic<ColorMasks<0>,    uint16>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say, flip);
 	} else {
 		delete[] sax;
 		delete[] say;
@@ -426,11 +444,11 @@ bool rotoscaleBlit(byte *dst, const byte *src,
 				   const TransformStruct &transform,
 				   const Common::Point &newHotspot) {
 	if (fmt.bytesPerPixel == 4) {
-		rotoscaleBlitLogic<ColorMasks<0>, uint32, false, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+		rotoscaleBlitLogic<ColorMasks<0>, uint32, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else if (fmt.bytesPerPixel == 2) {
-		rotoscaleBlitLogic<ColorMasks<0>, uint16, false, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+		rotoscaleBlitLogic<ColorMasks<0>, uint16, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else if (fmt.bytesPerPixel == 1) {
-		rotoscaleBlitLogic<ColorMasks<0>, uint8, false, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+		rotoscaleBlitLogic<ColorMasks<0>, uint8, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else {
 		return false;
 	}
@@ -446,18 +464,18 @@ bool rotoscaleBlitBilinear(byte *dst, const byte *src,
 						   const TransformStruct &transform,
 						   const Common::Point &newHotspot) {
 	if (fmt == createPixelFormat<8888>()) {
-		rotoscaleBlitLogic<ColorMasks<8888>, uint32, true, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+		rotoscaleBlitLogic<ColorMasks<8888>, uint32, true>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else if (fmt == createPixelFormat<888>()) {
-		rotoscaleBlitLogic<ColorMasks<888>,  uint32, true, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+		rotoscaleBlitLogic<ColorMasks<888>,  uint32, true>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else if (fmt == createPixelFormat<565>()) {
-		rotoscaleBlitLogic<ColorMasks<565>,  uint16, true, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+		rotoscaleBlitLogic<ColorMasks<565>,  uint16, true>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else if (fmt == createPixelFormat<555>()) {
-		rotoscaleBlitLogic<ColorMasks<555>,  uint16, true, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+		rotoscaleBlitLogic<ColorMasks<555>,  uint16, true>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 
 	} else if (fmt.bytesPerPixel == 4) {
-		rotoscaleBlitLogic<ColorMasks<0>,    uint32, true, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+		rotoscaleBlitLogic<ColorMasks<0>,    uint32, true>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else if (fmt.bytesPerPixel == 2) {
-		rotoscaleBlitLogic<ColorMasks<0>,    uint16, true, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+		rotoscaleBlitLogic<ColorMasks<0>,    uint16, true>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else {
 		return false;
 	}
