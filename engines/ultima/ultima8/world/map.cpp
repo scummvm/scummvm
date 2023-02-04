@@ -20,7 +20,7 @@
  */
 
 #include "ultima/ultima.h"
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/world/map.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/container.h"

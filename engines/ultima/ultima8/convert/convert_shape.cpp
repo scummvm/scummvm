@@ -23,7 +23,7 @@
 #include "ultima/ultima.h"
 #include "ultima/ultima8/convert/convert_shape.h"
 #include "ultima/ultima8/misc/stream_util.h"
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/debugger.h"
 
 namespace Ultima {
 namespace Ultima8 {

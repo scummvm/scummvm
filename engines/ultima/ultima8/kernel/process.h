@@ -24,6 +24,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/classtype.h"
+#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {

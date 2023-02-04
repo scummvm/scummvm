@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"
 #include "ultima/ultima8/games/game_data.h"

@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/fonts/jp_rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"

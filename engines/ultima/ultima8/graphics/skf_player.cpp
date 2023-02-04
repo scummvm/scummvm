@@ -20,7 +20,7 @@
  */
 
 #include "ultima/ultima.h"
-#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/graphics/skf_player.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima/ultima8/filesys/raw_archive.h"

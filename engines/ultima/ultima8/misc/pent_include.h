@@ -40,9 +40,4 @@
 #include "ultima/ultima8/misc/istring.h"
 
 
-//
-// The Debugger
-//
-#include "ultima/ultima8/misc/debugger.h"
-
 #endif
