@@ -156,7 +156,7 @@ public:
 	void resumeSounds() {}; // does nothing?
 	void saveBackup(const Common::String &saveName);
 	bool setBackground(const Common::String &name);
-	void setCurrentObjectSprite(const Common::Path &spritePath);
+	void setCurrentObjectSprite(const Common::String &spritePath);
 	bool showMarkers(bool val);
 	bool startAnimation(const Common::String &animName, int loopcount, bool reversed);
 	void startAnimationPart(const Common::String &param_1, int param_2, int param_3, int param_4, bool param_5) {};

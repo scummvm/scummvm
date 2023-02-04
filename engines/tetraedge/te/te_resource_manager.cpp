@@ -43,10 +43,9 @@ void TeResourceManager::addResource(TeResource *resource) {
 	_resources.insert_at(0, TeIntrusivePtr<TeResource>(resource));
 }
 
-bool TeResourceManager::exists(const Common::Path &path) {
-	Common::String pathstr = path.toString();
+bool TeResourceManager::exists(const Common::String &path) {
 	for (auto &resource : _resources) {
-		if (resource->getAccessName() == pathstr)
+		if (resource->getAccessName() == path)
 			return true;
 	}
 	return false;

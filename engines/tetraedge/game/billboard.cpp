@@ -25,6 +25,8 @@
 #include "tetraedge/game/billboard.h"
 #include "tetraedge/game/game.h"
 
+#include "tetraedge/te/te_core.h"
+
 namespace Tetraedge {
 
 Billboard::Billboard() : _hasPos2(false) {
@@ -34,8 +36,9 @@ bool Billboard::load(const Common::String &path) {
 	_model = new TeModel();
 	TeIntrusivePtr<Te3DTexture> texture = Te3DTexture::makeInstance();
 	Game *game = g_engine->getGame();
-	Common::Path texpath = game->sceneZonePath().join(path);
-	texture->load(texpath);
+	TeCore *core = g_engine->getCore();
+	Common::FSNode texnode = core->findFile(game->sceneZonePath().join(path));
+	texture->load(texnode);
 	_model->setName(path);
 	Common::Array<TeVector3f32> quad;
 	quad.resize(4);

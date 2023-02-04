@@ -38,11 +38,11 @@ TeSoundManager::TeSoundManager() {
 
 void TeSoundManager::playFreeSound(const Common::Path &path, float vol, const Common::String &channel) {
 	TeCore *core = g_engine->getCore();
-	Common::Path modPath = core->findFile(path);
+	Common::FSNode sndNode = core->findFile(path);
 
 	Common::File *streamfile = new Common::File();
-	if (!streamfile->open(modPath)) {
-		warning("TeSoundManager::playFreeSound: couldn't open %s", path.toString().c_str());
+	if (!sndNode.isReadable() || !streamfile->open(sndNode)) {
+		warning("TeSoundManager::playFreeSound: couldn't open %s", sndNode.getPath().c_str());
 		delete streamfile;
 		return;
 	}

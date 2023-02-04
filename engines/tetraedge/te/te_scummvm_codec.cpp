@@ -37,10 +37,10 @@ TeScummvmCodec::~TeScummvmCodec() {
 	}
 }
 
-bool TeScummvmCodec::load(const Common::Path &path) {
+bool TeScummvmCodec::load(const Common::FSNode &node) {
 	Common::File file;
-	if (file.open(path) && load(static_cast<Common::SeekableReadStream&>(file))) {
-		_path = path;
+	if (file.open(node) && load(static_cast<Common::SeekableReadStream&>(file))) {
+		_loadedPath = node.getPath();
 		return true;
 	}
 	return false;
@@ -66,8 +66,8 @@ bool TeScummvmCodec::update(uint i, TeImage &imgout) {
 	if (!_loadedSurface)
 		return false;
 
-	if (!_path.empty())
-		imgout.setAccessName(_path);
+	if (!_loadedPath.empty())
+		imgout.setAccessName(_loadedPath);
 
 	if (imgout.w == _loadedSurface->w && imgout.h == _loadedSurface->h && imgout.format == _loadedSurface->format) {
 		imgout.copyFrom(*_loadedSurface);

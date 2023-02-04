@@ -68,6 +68,7 @@ void InGameScene::addAnchorZone(const Common::String &s1, const Common::String &
 		}
 	}
 
+	assert(currentCamera());
 	currentCamera()->apply();
 	AnchorZone *zone = new AnchorZone();
 	zone->_name = name;
@@ -513,7 +514,7 @@ Common::String InGameScene::imagePathMarker(const Common::String &name) {
 	for (Te3DObject2 *child : bg->childList()) {
 		TeSpriteLayout *spritelayout = dynamic_cast<TeSpriteLayout *>(child);
 		if (spritelayout && spritelayout->name() == name) {
-			return spritelayout->_tiledSurfacePtr->path().toString();
+			return spritelayout->_tiledSurfacePtr->loadedPath();
 		}
 	}
 	return Common::String();
@@ -539,7 +540,7 @@ bool InGameScene::isObjectBlocking(const Common::String &name) {
 	return false;
 }
 
-bool InGameScene::load(const Common::Path &path) {
+bool InGameScene::load(const Common::FSNode &sceneNode) {
 	_actZones.clear();
 	Common::File actzonefile;
 	if (actzonefile.open(getActZoneFileName())) {
@@ -568,16 +569,18 @@ bool InGameScene::load(const Common::Path &path) {
 	_shadowLightNo = -1;
 
 	const Common::Path lightspath = getLightsFileName();
-	if (Common::File::exists(lightspath))
-		loadLights(lightspath);
+	TeCore *core = g_engine->getCore();
+	const Common::FSNode lightsNode(core->findFile(lightspath));
+	if (lightsNode.isReadable())
+		loadLights(lightsNode);
 
-	if (!Common::File::exists(path))
+	if (!sceneNode.isReadable())
 		return false;
 
 	close();
-	_loadedPath = path;
+	_loadedPath = sceneNode.getPath();
 	Common::File scenefile;
-	if (!scenefile.open(path))
+	if (!scenefile.open(sceneNode))
 		return false;
 
 	uint32 ncameras = scenefile.readUint32LE();
@@ -688,15 +691,15 @@ bool InGameScene::loadCharacter(const Common::String &name) {
 	return true;
 }
 
-bool InGameScene::loadLights(const Common::Path &path) {
+bool InGameScene::loadLights(const Common::FSNode &node) {
 	SceneLightsXmlParser parser;
 
 	parser.setLightArray(&_lights);
 
-	if (!parser.loadFile(path.toString()))
-		error("InGameScene::loadLights: Can't load %s", path.toString().c_str());
+	if (!parser.loadFile(node))
+		error("InGameScene::loadLights: Can't load %s", node.getPath().c_str());
 	if (!parser.parse())
-		error("InGameScene::loadLights: Can't parse %s", path.toString().c_str());
+		error("InGameScene::loadLights: Can't parse %s", node.getPath().c_str());
 
 	_shadowColor = parser.getShadowColor();
 	_shadowLightNo = parser.getShadowLightNo();
@@ -722,8 +725,8 @@ bool InGameScene::loadLights(const Common::Path &path) {
 	return true;
 }
 
-void InGameScene::loadMarkers(const Common::Path &path) {
-	_markerGui.load(path);
+void InGameScene::loadMarkers(const Common::FSNode &node) {
+	_markerGui.load(node);
 	TeLayout *bg = _bgGui.layoutChecked("background");
 	TeSpriteLayout *root = Game::findSpriteLayoutByName(bg, "root");
 	bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
@@ -749,12 +752,13 @@ bool InGameScene::loadObject(const Common::String &name) {
 bool InGameScene::loadObjectMaterials(const Common::String &name) {
 	TeImage img;
 	bool retval = false;
+	TeCore *core = g_engine->getCore();
 	for (auto &obj : _objects) {
 		if (obj._name.empty())
 			continue;
 
 		Common::Path mpath = _loadedPath.getParent().join(name).join(obj._name + ".png");
-		if (img.load(mpath)) {
+		if (img.load(core->findFile(mpath))) {
 			Te3DTexture *tex = Te3DTexture::makeInstance();
 			tex->load(img);
 			obj._model->meshes()[0]->defaultMaterial(tex);
@@ -852,8 +856,8 @@ void InGameScene::loadBlockers() {
 	}
 }
 
-void InGameScene::loadBackground(const Common::Path &path) {
-	_bgGui.load(path);
+void InGameScene::loadBackground(const Common::FSNode &node) {
+	_bgGui.load(node);
 	TeLayout *bg = _bgGui.layout("background");
 	TeLayout *root = _bgGui.layout("root");
 	bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
@@ -887,8 +891,8 @@ bool InGameScene::loadBillboard(const Common::String &name) {
 	}
 }
 
-void InGameScene::loadInteractions(const Common::Path &path) {
-	_hitObjectGui.load(path);
+void InGameScene::loadInteractions(const Common::FSNode &node) {
+	_hitObjectGui.load(node);
 	TeLayout *bgbackground = _bgGui.layoutChecked("background");
 	Game *game = g_engine->getGame();
 	TeSpriteLayout *root = game->findSpriteLayoutByName(bgbackground, "root");

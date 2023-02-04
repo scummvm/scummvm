@@ -60,11 +60,11 @@ void TeMusic::pause() {
 bool TeMusic::play() {
 	if (isPlaying())
 		return true;
-	if (_actualPath.empty() || !Common::File::exists(_actualPath))
+	if (!_fileNode.exists())
 		return false;
 
 	Common::File *streamfile = new Common::File();
-	if (!streamfile->open(_actualPath)) {
+	if (!streamfile->open(_fileNode)) {
 		delete streamfile;
 		return false;
 	}
@@ -82,7 +82,7 @@ bool TeMusic::play() {
 		soundType = Audio::Mixer::kMusicSoundType;
 	}
 
-	//debug("playing %s on channel %s at vol %d", _actualPath.toString().c_str(), _channelName.c_str(), vol);
+	//debug("playing %s on channel %s at vol %d", _fileNode.getPath().c_str(), _channelName.c_str(), vol);
 	mixer->playStream(soundType, &_sndHandle, stream, -1, vol);
 	_sndHandleValid = true;
 	_isPaused = false;
@@ -190,10 +190,8 @@ void TeMusic::setFilePath(const Common::String &name) {
 	setAccessName(name);
 	_rawPath = name;
 	TeCore *core = g_engine->getCore();
-	const Common::Path namePath(name);
 	// Note: original search logic here abstracted away in our version..
-	Common::Path modPath = core->findFile(namePath);
-	_actualPath = modPath;
+	_fileNode = core->findFile(name);
 }
 
 void TeMusic::update() {

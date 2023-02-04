@@ -45,7 +45,7 @@ public:
 	void draw() override;
 	virtual void entry() {};
 	byte isLoaded();
-	bool load(const Common::Path &path);
+	bool load(const Common::FSNode &node);
 	bool load(const TeImage &image);
 	bool load(const TeIntrusivePtr<Te3DTexture> &texture);
 
@@ -83,7 +83,8 @@ public:
 	void updateSurface();
 	void updateVideoProperties();
 
-	const Common::Path &path() const { return _path; }
+	const Common::String &loadedPath() const { return _loadedPath; }
+	void setLoadedPath(const Common::String &p) { _loadedPath = p; }
 
 	TeFrameAnim _frameAnim;
 
@@ -105,7 +106,7 @@ private:
 
 	TeImage::Format _imgFormat;
 
-	Common::Path _path;
+	Common::String _loadedPath;
 
 };
 

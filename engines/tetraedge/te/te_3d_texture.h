@@ -48,9 +48,9 @@ public:
 	TeImage::Format getFormat() const { return _format; }
 	bool hasAlpha() const;
 
-	bool load(const Common::Path &path);
+	bool load(const Common::FSNode &path);
 	virtual bool load(const TeImage &img) = 0;
-	static TeIntrusivePtr<Te3DTexture> load2(const Common::Path &path, uint size);
+	static TeIntrusivePtr<Te3DTexture> load2(const Common::FSNode &node, uint size);
 
 	static TeVector2s32 optimisedSize(const TeVector2s32 &size);
 

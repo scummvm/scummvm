@@ -98,18 +98,13 @@ void Application::create() {
 	_mainWindow.setPosition(TeVector3f32(0.0f, 0.0f, 0.0f));
 
 	TeResourceManager *resmgr = g_engine->getResourceManager();
-	_fontComic = resmgr->getResourceNoSearch<TeFont3>("Common/Fonts/ComicRelief.ttf");
-	_fontComic->load("Common/Fonts/ComicRelief.ttf");
-	_fontArgh = resmgr->getResourceNoSearch<TeFont3>("Common/Fonts/Argh.ttf");
-	_fontArgh->load("Common/Fonts/Argh.ttf");
-	_fontArial = resmgr->getResourceNoSearch<TeFont3>("Common/Fonts/arial.ttf");
-	_fontArial->load("Common/Fonts/arial.ttf");
-	_fontChaucer = resmgr->getResourceNoSearch<TeFont3>("Common/Fonts/CHAUCER.TTF");
-	_fontChaucer->load("Common/Fonts/CHAUCER.ttf");
-	_fontColaborate = resmgr->getResourceNoSearch<TeFont3>("Common/Fonts/Colaborate-Regular.otf");
-	_fontColaborate->load("Common/Fonts/Colaborate-Regular.ttf");
-	_fontProDisplay = resmgr->getResourceNoSearch<TeFont3>("Common/Fonts/ProDisplay.ttf");
-	_fontProDisplay->load("Common/Fonts/ProDisplay.ttf");
+	TeCore *core = g_engine->getCore();
+	_fontComic = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/ComicRelief.ttf"));
+	_fontArgh = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/Argh.ttf"));
+	_fontArial = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/arial.ttf"));
+	_fontChaucer = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/CHAUCER.TTF"));
+	_fontColaborate = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/Colaborate-Regular.otf"));
+	_fontProDisplay = resmgr->getResource<TeFont3>(core->findFile("Common/Fonts/ProDisplay.ttf"));
 
 	// The app prebuilds some fonts.. cover letters, numbers, a few accented chars, and punctuation.
 	// Skip that here.
@@ -136,16 +131,15 @@ void Application::create() {
 	textBase.build();
 	 */
 
-	TeCore *core = g_engine->getCore();
 	static const char allLangs[][3] = {"en", "fr", "de", "es", "it", "ru"};
 	const Common::Path textsPath("texts");
 
 	// Try alternate langs..
 	int i = 0;
-	Common::Path textFilePath;
+	Common::FSNode textFileNode;
 	while (i < ARRAYSIZE(allLangs)) {
-		textFilePath = core->findFile(textsPath.join(core->language() + ".xml"));
-		if (Common::File::exists(textFilePath))
+		textFileNode = core->findFile(textsPath.join(core->language() + ".xml"));
+		if (textFileNode.isReadable())
 			break;
 		core->language(allLangs[i]);
 		i++;
@@ -154,7 +148,7 @@ void Application::create() {
 		error("Couldn't find texts/[lang].xml for any language.");
 	}
 
-	_loc.load(textFilePath);
+	_loc.load(textFileNode);
 	core->addLoc(&_loc);
 
 	const Common::Path helpMenuPath("menus/help/help_");
@@ -208,8 +202,7 @@ void Application::create() {
 	// Note: The games do some loading of a "version.ver" file here to add a
 	// watermark to the backLayout, but that file doesn't exist in any of the
 	// GOG games so it was probably only used during development.
-	const Common::Path verFilePath("version.ver");
-	if (Common::File::exists(verFilePath)) {
+	if (Common::File::exists("version.ver")) {
 		warning("Skipping doing anything with version.ver file");
 	}
 
@@ -461,7 +454,7 @@ void Application::performRender() {
 	drawFront();
 	renderer->renderTransparentMeshes();
 	game->scene().drawPath();
-	g_system->updateScreen();
+	renderer->updateScreen();
 
 #ifdef TETRAEDGE_DUMP_LAYOUTS
 	renderCount++;

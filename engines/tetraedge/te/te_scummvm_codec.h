@@ -32,7 +32,7 @@ public:
 	TeScummvmCodec();
 	virtual ~TeScummvmCodec();
 
-	virtual bool load(const Common::Path &path) override;
+	virtual bool load(const Common::FSNode &node) override;
 	virtual bool load(Common::SeekableReadStream &stream) = 0;
 	virtual uint width() override;
 	virtual uint height() override;
@@ -55,7 +55,7 @@ public:
 
 protected:
 	Graphics::Surface *_loadedSurface;
-	Common::Path _path;
+	Common::String _loadedPath;
 
 };
 

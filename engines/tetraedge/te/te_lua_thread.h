@@ -24,7 +24,7 @@
 
 #include "common/array.h"
 #include "common/str.h"
-#include "common/path.h"
+#include "common/fs.h"
 
 struct lua_State;
 
@@ -46,7 +46,7 @@ public:
 	void execute(const Common::String &str, const TeVariant &p1, const TeVariant &p2);
 	void execute(const Common::String &str, const TeVariant &p1, const TeVariant &p2, const TeVariant &p3);
 
-	void executeFile(const Common::Path &path);
+	void executeFile(const Common::FSNode &node);
 	void pushValue(const TeVariant &val);
 
 	void release();

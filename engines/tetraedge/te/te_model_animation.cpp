@@ -181,9 +181,9 @@ int TeModelAnimation::lastFrame() const {
 }
 
 bool TeModelAnimation::load(const Common::Path &path) {
-	Common::Path foundPath = g_engine->getCore()->findFile(path);
+	Common::FSNode foundFile = g_engine->getCore()->findFile(path);
 	Common::File modelFile;
-	if (!modelFile.open(foundPath)) {
+	if (!modelFile.open(foundFile)) {
 		warning("[TeModel::load] Can't open file : %s.", path.toString().c_str());
 		return false;
 	}

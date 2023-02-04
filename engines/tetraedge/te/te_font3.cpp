@@ -83,12 +83,12 @@ Graphics::Font *TeFont3::getAtSize(uint size) {
 		load(getAccessName());
 
 	if (!_fontFile.isOpen())
-		error("TeFont3::: Couldn't open font file %s.", getAccessName().toString().c_str());
+		error("TeFont3::: Couldn't open font file %s.", getAccessName().c_str());
 
 	_fontFile.seek(0);
 	Graphics::Font *newFont = Graphics::loadTTFFont(_fontFile, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeNormal);
 	if (!newFont) {
-		error("TeFont3::: Couldn't load font %s at size %d.", _loadedPath.toString().c_str(), size);
+		error("TeFont3::: Couldn't load font %s at size %d.", _loadedPath.c_str(), size);
 	}
 	_fonts.setVal(size, newFont);
 	return newFont;
@@ -147,24 +147,33 @@ void TeFont3::draw(TeImage &destImage, const Common::String &str, int fontSize, 
 	font->drawString(&destImage, str, 0, yoff, destImage.w, uintcol, talign);
 }
 
+bool TeFont3::load(const Common::String &path) {
+	if (_loadedPath == path && _fontFile.isOpen())
+		return true; // already open
 
-bool TeFont3::load(const Common::Path &path) {
+	TeCore *core = g_engine->getCore();
+	Common::FSNode node = core->findFile(path);
+	return load(node);
+}
+
+bool TeFont3::load(const Common::FSNode &node) {
+	const Common::String path = node.getPath();
 	if (_loadedPath == path && _fontFile.isOpen())
 		return true; // already open
 
 	setAccessName(path);
 	_loadedPath = path;
 
-	if (!Common::File::exists(path)) {
-		warning("TeFont3::load: File %s doesn't exist", path.toString().c_str());
+	if (!node.exists()) {
+		warning("TeFont3::load: File %s doesn't exist", path.c_str());
 		return false;
 	}
 
 	if (_fontFile.isOpen())
 		_fontFile.close();
 
-	if (!_fontFile.open(path)) {
-		warning("TeFont3::load: can't open %s", path.toString().c_str());
+	if (!_fontFile.open(node)) {
+		warning("TeFont3::load: can't open %s", path.c_str());
 		return false;
 	}
 	return true;

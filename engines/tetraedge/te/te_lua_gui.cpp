@@ -154,7 +154,7 @@ TeButtonLayout *TeLuaGUI::buttonLayoutChecked(const Common::String &name) {
 	TeButtonLayout *l = buttonLayout(name);
 	if (!l) {
 		error("No button '%s' in gui data '%s'", name.c_str(),
-			  _scriptPath.toString().c_str());
+			  _scriptPath.c_str());
 	}
 	return l;
 }
@@ -163,7 +163,7 @@ TeLayout *TeLuaGUI::layoutChecked(const Common::String &name) {
 	TeLayout *l = layout(name);
 	if (!l) {
 		error("No layout '%s' in gui data '%s'", name.c_str(),
-			  _scriptPath.toString().c_str());
+			  _scriptPath.c_str());
 	}
 	return l;
 }
@@ -172,18 +172,20 @@ TeSpriteLayout *TeLuaGUI::spriteLayoutChecked(const Common::String &name) {
 	TeSpriteLayout *l = spriteLayout(name);
 	if (!l) {
 		error("No sprite layout '%s' in gui data '%s'", name.c_str(),
-			  _scriptPath.toString().c_str());
+			  _scriptPath.c_str());
 	}
 	return l;
 }
 
-bool TeLuaGUI::load(const Common::Path &path_) {
-	unload();
-	_scriptPath = Common::Path(path_);
+bool TeLuaGUI::load(const Common::String &subPath) {
 	TeCore *core = g_engine->getCore();
-	Common::Path path(path_);
+	return load(core->findFile(subPath));
+}
+
+bool TeLuaGUI::load(const Common::FSNode &node) {
+	unload();
+	_scriptPath = node.getPath();
 	// Not the same as original, we abstract the search logic a bit.
-	path = core->findFile(path);
 	_luaContext.setGlobal("Pixel", 0);
 	_luaContext.setGlobal("Percent", 1);
 	_luaContext.setGlobal("None", 0);
@@ -208,7 +210,7 @@ bool TeLuaGUI::load(const Common::Path &path_) {
 	_luaContext.registerCFunction("TeExtendedTextLayout", extendedTextLayoutBindings);
 	_luaContext.setInRegistry("__TeLuaGUIThis", this);
 	_luaScript.attachToContext(&_luaContext);
-	_luaScript.load(path);
+	_luaScript.load(node);
 	_luaScript.execute();
 	_luaScript.unload();
 	_loaded = true;

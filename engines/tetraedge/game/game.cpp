@@ -500,23 +500,23 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	TeCore *core = g_engine->getCore();
 
-	const Common::Path intLuaPath = core->findFile(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
-	const Common::Path logicLuaPath = core->findFile(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
-	const Common::Path setLuaPath = core->findFile(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
-	Common::Path forLuaPath = core->findFile(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
-	const Common::Path markerLuaPath = core->findFile(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
+	const Common::FSNode intLuaNode = core->findFile(scenePath.join(Common::String::format("Int%s.lua", scene.c_str())));
+	const Common::FSNode logicLuaNode = core->findFile(scenePath.join(Common::String::format("Logic%s.lua", scene.c_str())));
+	const Common::FSNode setLuaNode = core->findFile(scenePath.join(Common::String::format("Set%s.lua", scene.c_str())));
+	Common::FSNode forLuaNode = core->findFile(scenePath.join(Common::String::format("For%s.lua", scene.c_str())));
+	const Common::FSNode markerLuaNode = core->findFile(scenePath.join(Common::String::format("Marker%s.lua", scene.c_str())));
 
-	bool intLuaExists = Common::File::exists(intLuaPath);
-	bool logicLuaExists = Common::File::exists(logicLuaPath);
-	bool setLuaExists = Common::File::exists(setLuaPath);
-	bool forLuaExists = Common::File::exists(forLuaPath);
+	bool intLuaExists = intLuaNode.exists();
+	bool logicLuaExists = logicLuaNode.exists();
+	bool setLuaExists = setLuaNode.exists();
+	bool forLuaExists = forLuaNode.exists();
 	if (!forLuaExists) {
 		// slight hack.. try an alternate For lua path.
-		forLuaPath = scenePath.join("Android-MacOSX").join(Common::String::format("For%s.lua", scene.c_str()));
-		forLuaExists = Common::File::exists(forLuaPath);
-		debug("searched for %s", forLuaPath.toString().c_str());
+		forLuaNode = core->findFile(scenePath.join("Android-MacOSX").join(Common::String::format("For%s.lua", scene.c_str())));
+		forLuaExists = forLuaNode.exists();
+		debug("searched for %s", forLuaNode.getName().c_str());
 	}
-	bool markerLuaExists = Common::File::exists(markerLuaPath);
+	bool markerLuaExists = markerLuaNode.exists();
 
 	if (!intLuaExists && !logicLuaExists && !setLuaExists && !forLuaExists && !markerLuaExists) {
 		debug("No lua scripts for scene %s zone %s", scene.c_str(), zone.c_str());
@@ -530,9 +530,9 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	if (logicLuaExists) {
 		_luaContext.addBindings(LuaBinds::LuaOpenBinds);
 		_luaScript.attachToContext(&_luaContext);
-		_luaScript.load("menus/help/help.lua");
+		_luaScript.load(core->findFile("menus/help/help.lua"));
 		_luaScript.execute();
-		_luaScript.load(logicLuaPath);
+		_luaScript.load(logicLuaNode);
 	}
 
 	if (_forGui.loaded())
@@ -544,12 +544,12 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	_scene.hitObjectGui().unload();
 	Common::Path geomPath(Common::String::format("scenes/%s/Geometry%s.bin",
 												 zone.c_str(), zone.c_str()));
-	_scene.load(geomPath);
-	_scene.loadBackground(setLuaPath);
+	_scene.load(core->findFile(geomPath));
+	_scene.loadBackground(setLuaNode);
 
 	Application *app = g_engine->getApplication();
 	if (forLuaExists) {
-		_forGui.load(forLuaPath);
+		_forGui.load(forLuaNode);
 		TeLayout *bg = _forGui.layoutChecked("background");
 		bg->setRatioMode(TeILayout::RATIO_MODE_NONE);
 		app->frontLayout().addChild(bg);
@@ -562,7 +562,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	}
 
 	if (intLuaExists) {
-		_scene.loadInteractions(intLuaPath);
+		_scene.loadInteractions(intLuaNode);
 		TeLuaGUI::StringMap<TeButtonLayout *> &blayouts = _scene.hitObjectGui().buttonLayouts();
 		for (auto &entry : blayouts) {
 			HitObject *hobj = new HitObject();
@@ -608,7 +608,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	}
 
 	TeCheckboxLayout *markersCheckbox = _inGameGui.checkboxLayout("markersVisibleButton");
-	markersCheckbox->setState(_markersVisible? TeCheckboxLayout::CheckboxStateActive : TeCheckboxLayout::CheckboxStateUnactive);
+	markersCheckbox->setState(_markersVisible ? TeCheckboxLayout::CheckboxStateActive : TeCheckboxLayout::CheckboxStateUnactive);
 	markersCheckbox->onStateChangedSignal().add(this, &Game::onMarkersVisible);
 
 	initNoScale();
@@ -860,7 +860,8 @@ bool Game::loadPlayerCharacter(const Common::String &name) {
 }
 
 bool Game::loadScene(const Common::String &name) {
-	_gameEnterScript.load("scenes/OnGameEnter.lua");
+	TeCore *core = g_engine->getCore();
+	_gameEnterScript.load(core->findFile("scenes/OnGameEnter.lua"));
 	_gameEnterScript.execute();
 	Character *character = _scene._character;
 	if (character && character->_model->visible()) {
@@ -1037,8 +1038,8 @@ bool Game::onLockVideoButtonValidated() {
 }
 
 bool Game::onMarkersVisible(TeCheckboxLayout::State state) {
-	_markersVisible = (state == 0);
-	showMarkers(state == 0);
+	_markersVisible = (state == TeCheckboxLayout::CheckboxStateActive);
+	showMarkers(state == TeCheckboxLayout::CheckboxStateActive);
 	return false;
 }
 
@@ -1178,7 +1179,7 @@ bool Game::onMouseMove() {
 	if (!_entered)
 		return false;
 
-	const Common::Path DEFAULT_CURSOR("pictures/cursor.png");
+	const Common::String DEFAULT_CURSOR("pictures/cursor.png");
 
 	Application *app = g_engine->getApplication();
 
@@ -1260,7 +1261,7 @@ bool Game::onVideoFinished() {
 	app->captureFade();
 
 	TeSpriteLayout *video = _inGameGui.spriteLayoutChecked("video");
-	Common::String vidPath = video->_tiledSurfacePtr->path().toString();
+	Common::String vidPath = video->_tiledSurfacePtr->loadedPath();
 	TeButtonLayout *btn = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
 	btn->setVisible(false);
 	btn = _inGameGui.buttonLayoutChecked("skipVideoButton");
@@ -1392,7 +1393,7 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 		}
 	} else if (repeats == -1) {
 		for (GameSound *snd : _gameSounds) {
-			const Common::String accessName = snd->getAccessName().toString();
+			const Common::String accessName = snd->getAccessName();
 			if (accessName == name) {
 				snd->setRetain(true);
 				return;
@@ -1476,7 +1477,7 @@ bool Game::setBackground(const Common::String &name) {
 	return _scene.changeBackground(name);
 }
 
-void Game::setCurrentObjectSprite(const Common::Path &spritePath) {
+void Game::setCurrentObjectSprite(const Common::String &spritePath) {
 	TeSpriteLayout *currentSprite = _inGameGui.spriteLayout("currentObjectSprite");
 	if (currentSprite) {
 		if (spritePath.empty())

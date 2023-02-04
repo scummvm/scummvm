@@ -92,11 +92,12 @@ bool TeImage::isExtensionSupported(const Common::Path &path) {
 	error("TODO: Implement TeImage::isExtensionSupported");
 }
 
-bool TeImage::load(const Common::Path &path) {
+bool TeImage::load(const Common::FSNode &node) {
 	TeCore *core = g_engine->getCore();
-	TeICodec *codec = core->createVideoCodec(path);
-	if (!codec->load(path)) {
-		warning("TeImage::load: Failed to load %s.", path.toString().c_str());
+	TeICodec *codec = core->createVideoCodec(node.getPath());
+	if (!node.isReadable() || !codec->load(node)) {
+		warning("TeImage::load: Failed to load %s.", node.getPath().c_str());
+		delete codec;
 		return false;
 	}
 
@@ -104,8 +105,9 @@ bool TeImage::load(const Common::Path &path) {
 	createImg(codec->width(), codec->height(), nullpal, codec->imageFormat(), codec->width(), codec->height());
 
 	if (!codec->update(0, *this)) {
-		error("TeImage::load: Failed to update from %s.", path.toString().c_str());
+		error("TeImage::load: Failed to update from %s.", node.getPath().c_str());
 	}
+	delete codec;
 	return true;
 }
 

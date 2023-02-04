@@ -47,42 +47,40 @@ static bool compareNodes(const Common::FSNode &left, const Common::FSNode &right
 	return left.getPath() < right.getPath();
 }
 
-bool TeImagesSequence::load(const Common::Path &path) {
-	Common::FSNode directory(path);
+bool TeImagesSequence::load(const Common::FSNode &directory) {
+	const Common::String path = directory.getPath();
 	if (!directory.isDirectory()) {
-		warning("TeImagesSequence::load:: not a directory %s", path.toString().c_str());
+		warning("TeImagesSequence::load:: not a directory %s", path.c_str());
 		return false;
 	}
 
 	Common::FSList children;
 	if (!directory.getChildren(children, Common::FSNode::kListFilesOnly) || children.empty()) {
-		warning("TeImagesSequence::load:: couldn't get children of %s", path.toString().c_str());
+		warning("TeImagesSequence::load:: couldn't get children of %s", path.c_str());
 		return false;
 	}
 
 	Common::sort(children.begin(), children.end(), compareNodes);
-	if (!SearchMan.hasArchive(path.toString()))
-		SearchMan.addDirectory(path.toString(), directory);
+	if (!SearchMan.hasArchive(path))
+		SearchMan.addDirectory(path, directory);
 
 	for (Common::FSNode &child : children) {
-		Common::String filePathStr = child.getPath();
+		const Common::String fileName = child.getName();
 
-		if (filePathStr.size() <= 10 || filePathStr.substr(filePathStr.size() - 7) != "fps.png")
+		if (fileName.size() <= 10 || fileName.substr(fileName.size() - 7) != "fps.png")
 			continue;
 
-		Common::Path filePath(filePathStr);
-		Common::String fname = filePath.getLastComponent().toString();
-		Common::String fstart = fname.substr(0, fname.size() - 7);
+		Common::String fstart = fileName.substr(0, fileName.size() - 7);
 		int frameno = 0;
 		int fps = 0;
 		if (sscanf(fstart.c_str(), "%d-%d", &frameno, &fps) != 2) {
-			warning("TeImagesSequence::load can't match %s", fname.c_str());
+			warning("TeImagesSequence::load can't match %s", fileName.c_str());
 			continue;
 		}
 
 		Common::SeekableReadStream *stream = child.createReadStream();
 		if (!stream) {
-			warning("TeImagesSequence::load can't open %s", filePath.toString().c_str());
+			warning("TeImagesSequence::load can't open %s", child.getPath().c_str());
 			continue;
 		}
 
@@ -91,7 +89,7 @@ bool TeImagesSequence::load(const Common::Path &path) {
 		if (!_width || (_width < 100 && _height < 100)) {
 			Image::PNGDecoder png;
 			if (!png.loadStream(*stream)) {
-				warning("Image sequence failed to load png %s", filePath.toString().c_str());
+				warning("Image sequence failed to load png %s", child.getPath().c_str());
 				delete stream;
 				return false;
 			}

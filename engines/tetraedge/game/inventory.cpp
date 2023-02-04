@@ -426,7 +426,8 @@ void Inventory::selectedObject(InventoryObject *obj) {
 					objectDescription(objId).c_str());
 		_gui.textLayout("text")->setText(text);
 		_gui.buttonLayoutChecked("lire")->setEnable(isDocument(objId));
-		game->setCurrentObjectSprite(obj->spritePath());
+		const Common::String spritePathStr = obj->spritePath();
+		game->setCurrentObjectSprite(spritePathStr);
 		TeLayout *textObj = _gui.layout("textObject");
 		for (int i = 0; i < textObj->childCount(); i++) {
 			if (textObj->child(i)->name() == obj->name()) {
@@ -436,7 +437,7 @@ void Inventory::selectedObject(InventoryObject *obj) {
 				textObj->child(i)->setVisible(false);
 			}
 		}
-		game->inGameGui().spriteLayoutChecked("selectedObject")->load(obj->spritePath());
+		game->inGameGui().spriteLayoutChecked("selectedObject")->load(spritePathStr);
 	}
 }
 

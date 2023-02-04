@@ -24,7 +24,7 @@
 
 #include "audio/mixer.h"
 #include "common/mutex.h"
-#include "common/path.h"
+#include "common/fs.h"
 #include "common/str.h"
 
 #include "tetraedge/te/te_resource.h"
@@ -76,7 +76,7 @@ public:
 
 private:
 	Common::String _rawPath; // Plain name of file requested
-	Common::Path _actualPath; // actual path after finding it
+	Common::FSNode _fileNode; // file after finding it
 	Common::String _channelName;
 
 	bool _repeat;

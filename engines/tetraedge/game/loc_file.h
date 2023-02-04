@@ -23,7 +23,7 @@
 #define TETRAEDGE_GAME_LOC_FILE_H
 
 #include "common/str.h"
-#include "common/path.h"
+#include "common/fs.h"
 
 #include "tetraedge/te/te_i_loc.h"
 
@@ -34,7 +34,7 @@ public:
 	LocFile();
 
 	//const Common::String *avatar(const Common::String &key);
-	void load(const Common::Path &path);
+	void load(const Common::FSNode &fsnode);
 	const Common::String *value(const Common::String &key) const;
 
 };

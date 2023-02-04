@@ -20,6 +20,7 @@
  */
 
 #include "tetraedge/tetraedge.h"
+#include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_matrix4x4.h"
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_sprite_layout.h"
@@ -72,8 +73,23 @@ bool TeSpriteLayout::onParentWorldColorChanged() {
 	return false;
 }
 
-bool TeSpriteLayout::load(const Common::Path &path) {
+bool TeSpriteLayout::load(const Common::String &path) {
 	if (path.empty()) {
+		_tiledSurfacePtr = new TeTiledSurface();
+		return true;
+	}
+
+	TeCore *core = g_engine->getCore();
+	Common::FSNode node = core->findFile(path);
+	if (load(node)) {
+		_tiledSurfacePtr->setLoadedPath(path);
+		return true;
+	}
+	return false;
+}
+
+bool TeSpriteLayout::load(const Common::FSNode &node) {
+	if (!node.exists()) {
 		_tiledSurfacePtr = new TeTiledSurface();
 		return true;
 	}
@@ -81,7 +97,7 @@ bool TeSpriteLayout::load(const Common::Path &path) {
 	stop();
 	unload();
 
-	if (_tiledSurfacePtr->load(path)) {
+	if (_tiledSurfacePtr->load(node)) {
 		const TeVector2s32 texSize = _tiledSurfacePtr->tiledTexture()->totalSize();
 		if (texSize._y <= 0) {
 			setRatio(1.0);
@@ -93,7 +109,7 @@ bool TeSpriteLayout::load(const Common::Path &path) {
 		}
 		updateMesh();
 	} else {
-		debug("Failed to load TeSpriteLayout %s", path.toString().c_str());
+		debug("Failed to load TeSpriteLayout %s", node.getPath().c_str());
 	}
 	return true;
 }
@@ -115,7 +131,7 @@ bool TeSpriteLayout::load(TeIntrusivePtr<Te3DTexture> &texture) {
 		updateMesh();
 		return true;
 	} else {
-		debug("Failed to load TeSpriteLayout from texture %s", texture->getAccessName().toString().c_str());
+		debug("Failed to load TeSpriteLayout from texture %s", texture->getAccessName().c_str());
 	}
 	return false;
 }
@@ -137,7 +153,7 @@ bool TeSpriteLayout::load(TeImage &img) {
 		updateMesh();
 		return true;
 	} else {
-		debug("Failed to load TeSpriteLayout from texture %s", img.getAccessName().toString().c_str());
+		debug("Failed to load TeSpriteLayout from texture %s", img.getAccessName().c_str());
 	}
 	return false;
 }

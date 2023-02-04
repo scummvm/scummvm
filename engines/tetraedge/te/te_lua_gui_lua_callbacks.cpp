@@ -350,7 +350,12 @@ int spriteLayoutBindings(lua_State *L) {
 				}
 				if (imgPath.substr(0, 2) == "./") {
 					imgPath = imgPath.substr(0, 2);
-					imgFullPath = gui->scriptPath().getParent().join(imgPath);
+					// NOTE: This is bad.. the scriptPath is a system-local path so the
+					// separator may not be '/', we can't just make a Path from it like
+					// this.  Fortunately it seems this is never actually used? No sprites
+					// use './' in their data.
+					warning("Taking non-portable code path to load image in spriteLayoutBindings");
+					imgFullPath = Common::Path(gui->scriptPath()).getParent().join(imgPath);
 				} else {
 					imgFullPath = imgPath;
 				}
@@ -384,8 +389,8 @@ int spriteLayoutBindings(lua_State *L) {
 		lua_settop(L, -2);
 	}
 
-	if (!imgFullPath.empty()) {}
-		layout->load(imgFullPath);
+	if (!imgFullPath.empty())
+		layout->load(imgFullPath.toString());
 
 	lua_pushnil(L);
 	while (lua_next(L, -2) != 0) {

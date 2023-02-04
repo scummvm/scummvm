@@ -173,11 +173,11 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	TeCore *core = g_engine->getCore();
 	const Common::Path docPathBase(Common::String::format("DocumentsBrowser/Documents/Documents/%s_zoomed_%d", docName.c_str(), (int)startPage));
 	Common::Path docPath = docPathBase.append(".png");
-	docPath = core->findFile(docPath);
-	if (!Common::File::exists(docPath)) {
+	Common::FSNode docNode = core->findFile(docPath);
+	if (!docNode.exists()) {
 		docPath = docPathBase.append(".jpg");
-		docPath = core->findFile(docPath);
-		if (!Common::File::exists(docPath)) {
+		docNode = core->findFile(docPath);
+		if (!docNode.exists()) {
 			// Probably the end of the doc
 			if (startPage == 0)
 				warning("Can't find first page of doc named %s", docName.c_str());
@@ -189,7 +189,7 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 	app->captureFade();
 	TeSpriteLayout *sprite = _gui1.spriteLayoutChecked("zoomedSprite");
 	//sprite->setSizeType(ABSOLUTE);
-	sprite->load(docPath);
+	sprite->load(docNode);
 	TeVector2s32 spriteSize = sprite->_tiledSurfacePtr->tiledTexture()->totalSize();
 	sprite->setSizeType(RELATIVE_TO_PARENT);
 	TeVector3f32 winSize = app->getMainWindow().size();
@@ -200,10 +200,9 @@ void DocumentsBrowser::showDocument(const Common::String &docName, int startPage
 		error("DocumentsBrowser::showDocument Couldn't fetch scroll object");
 	scroll->resetScrollPosition();
 	scroll->playAutoScroll();
-	Common::Path luaPath = docPathBase.append(".lua");
-	luaPath = core->findFile(luaPath);
-	if (Common::File::exists(luaPath)) {
-		_gui2.load(luaPath);
+	Common::FSNode luaNode = core->findFile(docPathBase.append(".lua"));
+	if (luaNode.exists()) {
+		_gui2.load(luaNode);
 		error("Finish DocumentsBrowser::showDocument");
 	}
 	_gui1.layoutChecked("zoomed")->setVisible(true);

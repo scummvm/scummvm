@@ -77,11 +77,11 @@ public:
 	TeButtonLayout *buttonLayoutChecked(const Common::String &name);
 	TeSpriteLayout *spriteLayoutChecked(const Common::String &name);
 
-
-	bool load(const Common::Path &path);
+	bool load(const Common::String &subPath);
+	bool load(const Common::FSNode &node);
 	void unload();
 
-	TeVariant value(const Common::String &path);
+	TeVariant value(const Common::String &key);
 
 	template <typename T> using StringMap = Common::HashMap<Common::String, T>;
 
@@ -99,13 +99,13 @@ public:
 	StringMap<TeCurveAnim2<Te3DObject2, TeColor> *> &colorLinearAnimations() { return _colorLinearAnimations; }
 
 	bool loaded() const { return _loaded; }
-	const Common::Path &scriptPath() const { return _scriptPath; }
+	const Common::String &scriptPath() const { return _scriptPath; }
 
 protected:
 	bool _loaded;
 
 private:
-	Common::Path _scriptPath;
+	Common::String _scriptPath;
 
 	TeLuaContext _luaContext;
 	TeLuaScript _luaScript;

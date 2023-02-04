@@ -33,7 +33,7 @@ public:
 	InventoryObject();
 
 	void load(const Common::String &name);
-	Common::Path spritePath();
+	Common::String spritePath();
 	bool onButtonDown();
 	TeSignal1Param<InventoryObject&> &selectedSignal() { return _selectedSignal; };
 

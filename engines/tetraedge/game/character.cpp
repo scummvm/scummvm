@@ -363,10 +363,10 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 	_characterSettings = _globalCharacterSettings->getVal(mname);
 	_model->setTexturePath("models/Textures");
 	_model->setEnableLights(true);
-	Common::Path modelPath("models");
-	modelPath.joinInPlace(_characterSettings._modelFileName);
-	if (!_model->load(modelPath))
+	if (!_model->load(Common::Path("models").join(_characterSettings._modelFileName))) {
+		warning("Failed to load character model %s", _characterSettings._modelFileName.c_str());
 		return false;
+	}
 
 	_model->setName(mname);
 	_model->setScale(_characterSettings._defaultScale);
@@ -391,7 +391,8 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 	_walkLoopAnimLen = animLengthFromFile(walkAnim(WalkPart_Loop), &_walkLoopAnimFrameCount);
 
 	TeIntrusivePtr<Te3DTexture> shadow = Te3DTexture::makeInstance();
-	shadow->load("models/Textures/simple_shadow_alpha.tga");
+	TeCore *core = g_engine->getCore();
+	shadow->load(core->findFile("models/Textures/simple_shadow_alpha.tga"));
 
 	for (int i = 0; i < 2; i++) {
 		TeModel *pmodel = new TeModel();

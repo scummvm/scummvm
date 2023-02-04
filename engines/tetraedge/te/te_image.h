@@ -73,7 +73,7 @@ public:
 	void fill(byte r, byte g, byte b, byte a);
 	void getBuff(uint x, uint y, byte *pout, uint w, uint h);
 	bool isExtensionSupported(const Common::Path &path);
-	bool load(const Common::Path &path);
+	bool load(const Common::FSNode &node);
 	bool load(Common::ReadStream &stream, const Common::Path &path);
 	bool save(const Common::Path &path, enum Type type);
 	int serialize(Common::WriteStream &stream);

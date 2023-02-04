@@ -62,7 +62,8 @@ public:
 		TeIntrusivePtr<TeImage> _img;
 	};
 
-	bool load(const Common::Path &path);
+	bool load(const Common::String &path);
+	bool load(const Common::FSNode &node);
 	void unload();
 
 	GlyphData glyph(uint size, uint charcode);
@@ -88,7 +89,7 @@ private:
 
 	Common::File _fontFile;
 	Common::HashMap<uint, Graphics::Font *> _fonts;
-	Common::Path _loadedPath;
+	Common::String _loadedPath;
 	Common::HashMap<uint, TeIntrusivePtr<Te3DTexture>> _fontSizeData;
 };
 

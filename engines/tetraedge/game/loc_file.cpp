@@ -31,12 +31,13 @@ namespace Tetraedge {
 LocFile::LocFile() {
 }
 
-void LocFile::load(const Common::Path &path) {
+void LocFile::load(const Common::FSNode &fsnode) {
 	TeNameValXmlParser parser;
 	const Common::String xmlHeader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	Common::File locFile;
-	if (!locFile.open(path))
-		error("LocFile::load: failed to open %s.", path.toString().c_str());
+	const Common::String path = fsnode.getName();
+	if (!locFile.open(fsnode))
+		error("LocFile::load: failed to open %s.", path.c_str());
 
 	int64 fileLen = locFile.size();
 	char *buf = new char[fileLen + 1];
@@ -46,10 +47,10 @@ void LocFile::load(const Common::Path &path) {
 	delete [] buf;
 	locFile.close();
 	if (!parser.loadBuffer((const byte *)xmlContents.c_str(), xmlContents.size()))
-		error("LocFile::load: failed to load %s.", path.toString().c_str());
+		error("LocFile::load: failed to load %s.", path.c_str());
 
 	if (!parser.parse())
-		error("LocFile::load: failed to parse %s.", path.toString().c_str());
+		error("LocFile::load: failed to parse %s.", path.c_str());
 
 	_map = parser.getMap();
 }

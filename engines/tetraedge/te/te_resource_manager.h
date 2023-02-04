@@ -45,22 +45,22 @@ public:
 
 	void addResource(const TeIntrusivePtr<TeResource> &resource);
 	void addResource(TeResource *resource);
-	bool exists(const Common::Path &path);
+	bool exists(const Common::String &path);
 	void removeResource(const TeIntrusivePtr<TeResource> &resource);
 	void removeResource(const TeResource *resource);
 
-	template<class T> TeIntrusivePtr<T> getResourceNoSearch(const Common::Path &path) {
+	template<class T> TeIntrusivePtr<T> getResourceByName(const Common::String &path) {
 		for (TeIntrusivePtr<TeResource> &resource : this->_resources) {
 			if (resource->getAccessName() == path) {
 				return TeIntrusivePtr<T>(dynamic_cast<T *>(resource.get()));
 			}
 		}
-		TeIntrusivePtr<T> retval = new T();
-		addResource(retval.get());
-		return retval;
+		debug("getResourceByName: didn't find resource %s", path.c_str());
+		return TeIntrusivePtr<T>();
 	}
 
-	template<class T> TeIntrusivePtr<T> getResource(Common::Path &path) {
+	template<class T> TeIntrusivePtr<T> getResource(const Common::FSNode &node) {
+		Common::String path = node.getPath();
 		for (TeIntrusivePtr<TeResource> &resource : this->_resources) {
 			if (resource->getAccessName() == path) {
 				return TeIntrusivePtr<T>(dynamic_cast<T *>(resource.get()));
@@ -68,19 +68,19 @@ public:
 		}
 
 		TeIntrusivePtr<T> retval;
-		// Note: original search logic here abstracted away in our version..
-		TeCore *core = g_engine->getCore();
-		path = core->findFile(path);
 		retval = new T();
 
 		if (retval.get()) {
-			retval->load(path);
+			if (!node.isReadable())
+				warning("getResource: asked to fetch unreadable resource %s", node.getPath().c_str());
+			retval->load(node);
 			addResource(retval.get());
 		}
 		return retval;
 	}
 
-	template<class T> TeIntrusivePtr<T> getResourceOrMakeInstance(Common::Path &path) {
+	template<class T> TeIntrusivePtr<T> getResourceOrMakeInstance(const Common::FSNode &node) {
+		Common::String path = node.getPath();
 		for (TeIntrusivePtr<TeResource> &resource : this->_resources) {
 			if (resource->getAccessName() == path) {
 				return TeIntrusivePtr<T>(dynamic_cast<T *>(resource.get()));
@@ -88,13 +88,12 @@ public:
 		}
 
 		TeIntrusivePtr<T> retval;
-		// Note: original search logic here abstracted away in our version..
-		TeCore *core = g_engine->getCore();
-		path = core->findFile(path);
 		retval = T::makeInstance();
 
 		if (retval.get()) {
-			retval->load(path);
+			if (!node.isReadable())
+				warning("getResourceOrMakeInstance: asked to fetch unreadable resource %s", node.getPath().c_str());
+			retval->load(node);
 			addResource(retval.get());
 		}
 		return retval;

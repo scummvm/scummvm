@@ -41,15 +41,16 @@ bool TeTiledTexture::isLoaded() {
 }
 
 
-bool TeTiledTexture::load(const Common::Path &path) {
+bool TeTiledTexture::load(const Common::String &path) {
 	release();
 	TeIntrusivePtr<TeImage> img;
 	TeResourceManager *resmgr = g_engine->getResourceManager();
 	if (resmgr->exists(path)) {
-		img = resmgr->getResourceNoSearch<TeImage>(path);
+		img = resmgr->getResourceByName<TeImage>(path);
 	} else {
 		img = new TeImage();
-		if (!img->load(path))
+		TeCore *core = g_engine->getCore();
+		if (!img->load(core->findFile(path)))
 			return false;
 	}
 	load(*img);
@@ -86,7 +87,7 @@ bool TeTiledTexture::load(const TeImage &img) {
 				TeImage *optimizedimg = optimisedTileImage(imgArray, newTileSize, Common::SharedPtr<TePalette>(), img.teFormat());
 				img.copy(*optimizedimg, TeVector2s32(0, 0), TeVector2s32(_tileSize._x * row, _tileSize._y * col), newTileSize);
 				//optimizedimg->_flipY = img._flipY;
-				Common::String accessName = Common::String::format("%s.Tile%dx%d", img.getAccessName().toString().c_str(), row, col);
+				Common::String accessName = Common::String::format("%s.Tile%dx%d", img.getAccessName().c_str(), row, col);
 				optimizedimg->setAccessName(accessName);
 				tileimage = optimizedimg;
 			} else {
@@ -115,7 +116,7 @@ bool TeTiledTexture::load(const TeImage &img) {
 		_somethingSize._x = _somethingSize._x / cols;
 	if (rows)
 		_somethingSize._y = _somethingSize._y / rows;
-	setAccessName(img.getAccessName().append(".tt"));
+	setAccessName(img.getAccessName() + ".tt");
 	return true;
 }
 
@@ -129,7 +130,7 @@ bool TeTiledTexture::load(const TeIntrusivePtr<Te3DTexture> &texture) {
 	tileData->_texture = texture;
 	tileData->_vec2 = TeVector3f32(1, 1, 0);
 	tileData->_vec1 = TeVector3f32(0, 0, 0);
-	setAccessName(texture->getAccessName().append(".tt"));
+	setAccessName(texture->getAccessName() + ".tt");
 	return true;
 }
 

@@ -23,6 +23,7 @@
 
 #include "tetraedge/tetraedge.h"
 
+#include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_light.h"
 #include "tetraedge/te/te_material.h"
 #include "tetraedge/te/te_model.h"
@@ -59,7 +60,7 @@ Common::String TeMaterial::dump() const {
 			  _specularColor.dump().c_str(),
 			  _emissionColor.dump().c_str(),
 			  (int)_mode,
-			 _texture ? _texture->getAccessName().toString().c_str() : "None",
+			 _texture ? _texture->getAccessName().c_str() : "None",
 			  _shininess, _enableLights ? "on" : "off");
 }
 
@@ -88,15 +89,19 @@ TeMaterial &TeMaterial::operator=(const TeMaterial &other) {
 	return *this;
 }
 
-/*static*/ void TeMaterial::deserialize(Common::SeekableReadStream &stream, TeMaterial &material, const Common::Path &texPath) {
-	Common::String nameStr = Te3DObject2::deserializeString(stream);
+/*static*/
+void TeMaterial::deserialize(Common::SeekableReadStream &stream, TeMaterial &material, const Common::String &texPath) {
+	const Common::String nameStr = Te3DObject2::deserializeString(stream);
 
 	TeModel::loadAlign(stream);
 	material._mode = static_cast<TeMaterial::Mode>(stream.readUint32LE());
 
 	if (nameStr.size()) {
-		Common::Path fullTexPath = texPath.join(nameStr);
-		material._texture = Te3DTexture::load2(fullTexPath, 0x500);
+		TeCore *core = g_engine->getCore();
+		Common::FSNode texNode = core->findFile(Common::Path(texPath).join(nameStr));
+		material._texture = Te3DTexture::load2(texNode, 0x500);
+		if (!material._texture)
+			warning("failed to load texture %s (texpath %s)", nameStr.c_str(), texPath.c_str());
 	}
 
 	material._ambientColor.deserialize(stream);
@@ -114,7 +119,7 @@ TeMaterial &TeMaterial::operator=(const TeMaterial &other) {
 	Te3DTexture *tex = material._texture.get();
 	Common::String texName;
 	if (tex) {
-		texName = tex->getAccessName().toString();
+		texName = tex->getAccessName();
 		// "Remove extension" twice for some reason..
 		size_t offset = texName.rfind('.');
 		if (offset != Common::String::npos) {

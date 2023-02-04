@@ -44,28 +44,31 @@ bool Te3DTexture::hasAlpha() const {
 }
 
 /*static*/
-TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::Path &path, uint size) {
-	Common::Path fullPath = path.append(".3dtex");
+TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::FSNode &node, uint size) {
+	const Common::String fullPath = node.getPath() + ".3dtex";
 
 	TeResourceManager *resMgr = g_engine->getResourceManager();
 	if (!resMgr->exists(fullPath)) {
 		TeIntrusivePtr<Te3DTexture> retval(makeInstance());
-		retval->load(path);
+		if (!node.isReadable())
+			warning("Request to load unreadable texture %s", node.getPath().c_str());
+		bool result = retval->load(node);
+		if (!result)
+			warning("Failed loading texture %s", node.getPath().c_str());
 		retval->setAccessName(fullPath);
 		resMgr->addResource(retval.get());
 		return retval;
 	} else {
-		return resMgr->getResourceOrMakeInstance<Te3DTexture>(fullPath);
+		return resMgr->getResourceByName<Te3DTexture>(fullPath);
 	}
 }
 
-bool Te3DTexture::load(const Common::Path &path) {
+bool Te3DTexture::load(const Common::FSNode &node) {
 	TeResourceManager *resmgr = g_engine->getResourceManager();
-	Common::Path resPath = path;
-	TeIntrusivePtr<TeImage> img = resmgr->getResource<TeImage>(resPath);
-	load(*img);
-	setAccessName(resPath.append(".3dtex"));
-	return true;
+	TeIntrusivePtr<TeImage> img = resmgr->getResource<TeImage>(node);
+	bool result = load(*img);
+	setAccessName(node.getPath() + ".3dtex");
+	return result;
 }
 
 /*static*/

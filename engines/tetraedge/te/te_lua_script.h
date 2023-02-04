@@ -42,13 +42,13 @@ public:
 	void execute(const Common::String &fname, const TeVariant &p1, const TeVariant &p2);
 	void execute(const Common::String &fname, const TeVariant &p1, const TeVariant &p2, const TeVariant &p3);
 
-	void load(const Common::Path &path);
+	void load(const Common::FSNode &node);
 	void unload();
 
 private:
 	TeLuaContext *_luaContext;
 
-	Common::Path _scriptPath;
+	Common::FSNode _scriptNode;
 	bool _started;
 };
 

@@ -131,10 +131,10 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 	}
 }
 
-void TeLuaThread::executeFile(const Common::Path &path) {
+void TeLuaThread::executeFile(const Common::FSNode &node) {
 	Common::File scriptFile;
-	if (!scriptFile.open(path)) {
-		warning("TeLuaThread::executeFile: File %s can't be opened", path.toString().c_str());
+	if (!scriptFile.open(node)) {
+		warning("TeLuaThread::executeFile: File %s can't be opened", node.getName().c_str());
 		return;
 	}
 
@@ -148,7 +148,7 @@ void TeLuaThread::executeFile(const Common::Path &path) {
 	if (fixline)
 		fixline[2] = '\t';
 
-	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, path.toString().c_str());
+	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, node.getPath().c_str());
 	if (_lastResumeResult) {
 		const char *msg = lua_tostring(_luaThread, -1);
 		warning("TeLuaThread::executeFile: %s", msg);

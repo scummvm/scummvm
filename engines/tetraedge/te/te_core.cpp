@@ -111,16 +111,34 @@ bool TeCore::onActivityTrackingAlarm() {
 	error("TODO: Implement TeCore::onActivityTrackingAlarm");
 }
 
+static Common::FSNode _findSubPath(const Common::FSNode &parent, const Common::Path &childPath) {
+	if (childPath.empty())
+		return parent;
+	Common::FSNode childNode = parent;
+	const Common::StringArray comps = childPath.splitComponents();
+	unsigned int i;
+	for (i = 0; i < comps.size(); i++) {
+		childNode = childNode.getChild(comps[i]);
+		if (!childNode.exists())
+			break;
+	}
+	if (i == comps.size())
+		return childNode;
+	return Common::FSNode();
+}
 
-Common::Path TeCore::findFile(const Common::Path &path) {
-	if (Common::File::exists(path))
-		return path;
 
-	const Common::String gamePath = ConfMan.get("path");
-	const Common::Path resPath = Common::Path(gamePath).join("Resources");
-	const Common::Path absolutePath = resPath.join(path);
-	if (Common::FSNode(absolutePath).isDirectory())
-		return absolutePath;
+Common::FSNode TeCore::findFile(const Common::Path &path) {
+	Common::FSNode node(path);
+	if (node.exists())
+		return node;
+
+	const Common::FSNode gameRoot(ConfMan.get("path"));
+	if (!gameRoot.isDirectory())
+		error("Game directory should be a directory");
+	const Common::FSNode resNode = gameRoot.getChild("Resources");
+	if (!resNode.isDirectory())
+		error("Resources directory should exist in game");
 
 	const Common::Path fname = path.getLastComponent();
 	const Common::Path dir = path.getParent();
@@ -168,21 +186,23 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 			if (!lang.empty())
 				testPath.joinInPlace(lang);
 			testPath.joinInPlace(fname);
-			if (Common::File::exists(testPath) || Common::FSNode(testPath).exists())
-				return testPath;
+			node = _findSubPath(resNode, testPath);
+			if (node.exists())
+				return node;
 
 			// also try the other way around
 			if (!lang.empty() && suffix) {
 				testPath = dir.join(lang).joinInPlace(suffix).join(fname);
-				if (Common::File::exists(testPath) || Common::FSNode(testPath).exists())
-					return testPath;
+				node = _findSubPath(resNode, testPath);
+				if (node.exists())
+					return node;
 			}
 		}
 	}
 
 	// Didn't find it at all..
-	warning("TeCore::findFile Searched but didn't find %s", path.toString().c_str());
-	return path;
+	debug("TeCore::findFile Searched but didn't find %s", path.toString().c_str());
+	return Common::FSNode(path);
 }
 
 } // end namespace Tetraedge
