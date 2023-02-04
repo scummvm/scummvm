@@ -92,6 +92,18 @@ void Debugger::clearVars() {
 }
 
 
+void Debugger::setPrompt(Common::String prompt) {
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	_debuggerDialog->setPrompt(prompt);
+#endif
+}
+
+void Debugger::resetPrompt() {
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	_debuggerDialog->resetPrompt();
+#endif
+}
+
 // Initialisation Functions
 int Debugger::getCharsPerLine() {
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER

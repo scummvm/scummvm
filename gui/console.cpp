@@ -121,6 +121,16 @@ void ConsoleDialog::init() {
 	_pageWidth = (_w - scrollBarWidth - 2 - _leftPadding - _topPadding - scrollBarWidth) / kConsoleCharWidth;
 	_linesPerPage = (_h - 2 - _topPadding - _bottomPadding) / kConsoleLineHeight;
 	_linesInBuffer = kBufferSize / kCharsPerLine;
+
+	resetPrompt();
+}
+
+void ConsoleDialog::setPrompt(Common::String prompt) {
+	_prompt = prompt;
+}
+
+void ConsoleDialog::resetPrompt() {
+	_prompt = PROMPT;
 }
 
 void ConsoleDialog::slideUpAndClose() {
@@ -159,7 +169,7 @@ void ConsoleDialog::open() {
 	if ((_promptStartPos == -1) || (_currentPos > _promptEndPos)) {
 		// we print a prompt, if this is the first time we are called or if the
 		//  engine wrote onto us since the last call
-		print(PROMPT);
+		print(_prompt.c_str());
 		_promptStartPos = _promptEndPos = _currentPos;
 	}
 
@@ -283,7 +293,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 				keepRunning = (*_callbackProc)(this, userInput.c_str(), _callbackRefCon);
 		}
 
-		print(PROMPT);
+		print(_prompt.c_str());
 		_promptStartPos = _promptEndPos = _currentPos;
 
 		g_gui.scheduleTopDialogRedraw();

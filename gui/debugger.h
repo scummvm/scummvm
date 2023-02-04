@@ -168,6 +168,9 @@ protected:
 	 */
 	void clearVars();
 
+	void setPrompt(Common::String prompt);
+	void resetPrompt();
+
 private:
 	/**
 	 * The frame countdown specifies a number of frames that must pass

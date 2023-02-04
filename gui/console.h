@@ -129,6 +129,8 @@ protected:
 
 	void slideUpAndClose();
 
+	Common::String _prompt;
+
 public:
 	ConsoleDialog(float widthPercent, float heightPercent);
 	virtual ~ConsoleDialog();
@@ -160,6 +162,9 @@ public:
 	int getCharsPerLine() {
 		return _pageWidth;
 	}
+
+	void setPrompt(Common::String prompt);
+	void resetPrompt();
 
 protected:
 	inline char &buffer(int idx) {
