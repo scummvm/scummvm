@@ -590,6 +590,11 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiO
 
 		return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
 	}
+#ifdef USE_ENET
+	else if (gameid == "football" || gameid == "baseball2001" || gameid == "football2002" ||
+		gameid == "moonbase")
+		return new Scumm::HENetworkGameOptionsWidget(boss, name, target);
+#endif
 
 	return MetaEngine::buildEngineOptionsWidget(boss, name, target);
 }

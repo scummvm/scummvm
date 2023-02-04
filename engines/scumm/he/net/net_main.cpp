@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "scumm/he/intern_he.h"
 #include "scumm/he/net/net_main.h"
 #include "scumm/he/net/net_defines.h"
@@ -39,6 +41,14 @@ Net::Net(ScummEngine_v90he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) 
 
 	_sessionHost = nullptr;
 	_broadcastSocket = nullptr;
+
+	_sessionServerAddress = Address {"multiplayer.scummvm.org", 9120};
+	if (ConfMan.hasKey("session_server")) {
+		_sessionServerAddress = getAddressFromString(ConfMan.get("session_server"));
+		// Set port to default if not defined.
+		if (!_sessionServerAddress.port)
+			_sessionServerAddress.port = 9120;
+	}
 
 	_sessionServerPeer = -1;
 	_sessionServerHost = nullptr;
@@ -257,22 +267,24 @@ int Net::createSession(char *name) {
 	}
 
 	_isHost = true;
-	// TODO: Config to enable/disable Internet sessions.
-	if (_sessionHost->connectPeer("127.0.0.1", 9120)) {
-		_sessionServerPeer = _sessionHost->getPeerIndexFromHost("127.0.0.1", 9120);
-		// Create session to the session server.
-		Common::String req = Common::String::format(
-			"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\"}",
-			_gameName.c_str(), _gameVersion.c_str(), name);
-		_sessionHost->send(req.c_str(), _sessionServerPeer);
-	} else {
-		warning("Failed to connect to session server!  This game will not be listed on the Internet");
+	if (ConfMan.getBool("enable_session_server")) {
+		if (_sessionHost->connectPeer(_sessionServerAddress.host, _sessionServerAddress.port)) {
+			_sessionServerPeer = _sessionHost->getPeerIndexFromHost(_sessionServerAddress.host, _sessionServerAddress.port);
+			// Create session to the session server.
+			Common::String req = Common::String::format(
+				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\"}",
+				_gameName.c_str(), _gameVersion.c_str(), name);
+			_sessionHost->send(req.c_str(), _sessionServerPeer);
+		} else {
+			warning("Failed to connect to session server!  This game will not be listed on the Internet");
+		}
 	}
 
-	// TODO: Config to enable/disable LAN discovery.
-	_broadcastSocket = _enet->createSocket("0.0.0.0", 9130);
-	if (!_broadcastSocket) {
-		warning("NETWORK: Unable to create broadcast socket, your game will not be broadcast over LAN");
+	if (ConfMan.getBool("enable_lan_broadcast")) {
+		_broadcastSocket = _enet->createSocket("0.0.0.0", 9130);
+		if (!_broadcastSocket) {
+			warning("NETWORK: Unable to create broadcast socket, your game will not be broadcast over LAN");
+		}
 	}
 
 	return 1;
@@ -496,16 +508,15 @@ bool Net::destroyPlayer(int32 userId) {
 int32 Net::startQuerySessions(bool connectToSessionServer) {
 	debug(1, "Net::startQuerySessions()");
 
-	// TODO: Config to enable/disable Internet sessions.
-	if (!_sessionServerHost && connectToSessionServer) {
-		// TODO: Configurable session server address and port
-		_sessionServerHost = _enet->connectToHost("127.0.0.1", 9120);
-		if (!_sessionServerHost)
-			warning("Failed to connect to session server!  You'll won't be able to join internet sessions");
+	if (connectToSessionServer && ConfMan.getBool("enable_session_server")) {
+		if (!_sessionServerHost) {
+			_sessionServerHost = _enet->connectToHost(_sessionServerAddress.host, _sessionServerAddress.port);
+			if (!_sessionServerHost)
+				warning("Failed to connect to session server!  You'll won't be able to join internet sessions");
+		}
 	}
 
-	// TODO: Config to enable/disable LAN discovery.
-	if (!_broadcastSocket) {
+	if (ConfMan.getBool("enable_lan_broadcast") && !_broadcastSocket) {
 		_broadcastSocket = _enet->createSocket("0.0.0.0", 0);
 	}
 	return 0;
@@ -881,8 +892,8 @@ void Net::handleSessionServerData(Common::String data) {
 				Common::String address = root["address"]->asString();
 
 				if (addUser(const_cast<char *>(address.c_str()), const_cast<char *>(address.c_str()))) {
-					_userIdToAddress[_userIdCounter] = "127.0.0.1:9120";
-					_addressToUserId["127.0.0.1:9120"] = _userIdCounter;
+					_userIdToAddress[_userIdCounter] = getStringFromAddress(_sessionServerAddress);
+					_addressToUserId[getStringFromAddress(_sessionServerAddress)] = _userIdCounter;
 					_userIdToPeerIndex[_userIdCounter] = _sessionServerPeer;
 
 					_isRelayingGame = true;
@@ -959,8 +970,8 @@ void Net::handleBroadcastData(Common::String data, Common::String host, int port
 			// Session query.
 			if (_sessionHost) {
 				Common::String resp = Common::String::format(
-					"{\"cmd\":\"session_resp\",\"version\":\"%s\",\"id\":%d,\"name\":\"%s\",\"players\":%d}",
-					_gameVersion.c_str(), _sessionId, _sessionName.c_str(), getTotalPlayers());
+					"{\"cmd\":\"session_resp\",\"game\":\"%s\",\"version\":\"%s\",\"id\":%d,\"name\":\"%s\",\"players\":%d}",
+					_gameName.c_str(), _gameVersion.c_str(), _sessionId, _sessionName.c_str(), getTotalPlayers());
 
 				// Send this through the session host instead of the broadcast socket
 				// because that will send the correct port to connect to.
@@ -968,16 +979,15 @@ void Net::handleBroadcastData(Common::String data, Common::String host, int port
 				_sessionHost->sendRawData(host, port, resp.c_str());
 			}
 		} else if (command == "session_resp") {
-			if (!_sessionHost && root.contains("version") && root.contains("id") && root.contains("name") && root.contains("players")) {
+			if (!_sessionHost && root.contains("game") && root.contains("version") && root.contains("id") && root.contains("name") && root.contains("players")) {
+				Common::String game = root["game"]->asString();
 				Common::String version = root["version"]->asString();
 				int sessionId = root["id"]->asIntegerNumber();
 				Common::String name = root["name"]->asString();
 				int players = root["players"]->asIntegerNumber();
 
-				// TODO: Check and match game name
-
-				if (version != _gameVersion)
-					// Version mismatch.
+				if (game != _gameName || version != _gameVersion)
+					// Game/Version mismatch.
 					return;
 
 				if (players < 1 || players > _maxPlayers)
