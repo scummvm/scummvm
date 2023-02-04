@@ -47,6 +47,10 @@ void Combat::setMode(Mode newMode) {
 		// Make a copy of monster spell 
 		_monsterSpellLines = getMonsterSpellMessage();
 
+	if (_mode != MONSTER_ADVANCES && _mode != MONSTER_ATTACK &&
+			_mode != MONSTER_SPELL)
+		_activeMonsterNum = -1;
+
 	redraw();
 }
 
@@ -98,6 +102,7 @@ bool Combat::msgGame(const GameMessage &msg) {
 void Combat::draw() {
 	switch (_mode) {
 	case NEXT_ROUND:
+		writeMonsters();
 		resetBottom();
 		highlightNextRound();
 		delaySeconds(1);

@@ -32,11 +32,13 @@ namespace Gfx {
 class BitmapFont : public ::MM::BitmapFont {
 public:
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override {
-		MM::BitmapFont::drawChar(dst, toupper(chr), x, y, color);
+		chr = (chr & 0x80) | toupper(chr & 0x7f);
+		MM::BitmapFont::drawChar(dst, chr, x, y, color);
 	}
 
 	void drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override {
-		MM::BitmapFont::drawChar(dst, toupper(chr), x, y, color);
+		chr = (chr & 0x80) | toupper(chr & 0x7f);
+		MM::BitmapFont::drawChar(dst, chr, x, y, color);
 	}
 };
 

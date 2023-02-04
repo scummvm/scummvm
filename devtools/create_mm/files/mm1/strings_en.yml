@@ -348,7 +348,7 @@ dialogs:
 		combat: "combat!"
 	combat:
 		combat: "combat"
-		round: "round #:"
+		round: "Round #"
 		delay: "d delay"
 		protect: "p protect"
 		quickref: "q quickref"
