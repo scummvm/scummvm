@@ -31,6 +31,7 @@
 
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
+#include "gui/widgets/edittext.h"
 #include "gui/ThemeEval.h"
 
 #include "scumm/dialogs.h"
@@ -1346,5 +1347,97 @@ void MI1CdGameOptionsWidget::updateIntroAdjustmentValue() {
 void MI1CdGameOptionsWidget::updateOutlookAdjustmentValue() {
 	updateAdjustmentSlider(_outlookAdjustmentSlider, _outlookAdjustmentValue);
 }
+
+#ifdef USE_ENET
+// HE Network Play Adjustment settings
+
+HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		ScummOptionsContainerWidget(boss, name, "HENetworkGameOptionsDialog", domain) {
+	Common::String extra = ConfMan.get("extra", domain);
+
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerLabel", _("Multiplayer Server:"));
+
+	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
+	_enableSessionServer = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableSessionServer", _("Enable connection to Multiplayer Server"), _("Toggles the connection to the server that allows hosting and joining online multiplayer games over the Internet."), kEnableSessionCmd);
+	_enableLANBroadcast = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableLANBroadcast", _("Host games over LAN"), _("Allows the game sessions to be discovered over your local area network."));
+
+	_sessionServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerAddress", Common::U32String(""), _("Address of the server to connect to for hosting and joining online game sessions."));
+
+	_serverResetButton = new GUI::ButtonWidget(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", _("Default Server Settings"), _("Reset server settings to their defaults."), kResetServersCmd);
+	_serverResetDevButton = new GUI::ButtonWidget(widgetsBoss(), "HENetworkGameOptionsDialog.ServerResetDev", _("Development Server Settings"), _("Reset server settings to their development defaults."), kResetServerDevCmd);
+
+}
+
+void HENetworkGameOptionsWidget::load() {
+	bool enableSessionServer = true;
+	bool enableLANBroadcast = true;
+	Common::String sessionServerAddr = "multiplayer.scummvm.org";
+
+	if (ConfMan.hasKey("enable_session_server", _domain))
+		enableSessionServer = ConfMan.getBool("enable_session_server", _domain);
+	_enableSessionServer->setState(enableSessionServer);
+
+	if (ConfMan.hasKey("enable_lan_broadcast", _domain))
+		enableLANBroadcast = ConfMan.getBool("enable_lan_broadcast", _domain);
+	_enableLANBroadcast->setState(enableLANBroadcast);
+
+	if (ConfMan.hasKey("session_server", _domain))
+		sessionServerAddr = ConfMan.get("session_server", _domain);
+	_sessionServerAddr->setEditString(sessionServerAddr);
+	_sessionServerAddr->setEnabled(enableSessionServer);
+
+}
+
+bool HENetworkGameOptionsWidget::save() {
+	ConfMan.setBool("enable_session_server", _enableSessionServer->getState(), _domain);
+	ConfMan.setBool("enable_lan_broadcast", _enableLANBroadcast->getState(), _domain);
+	ConfMan.set("session_server", _sessionServerAddr->getEditString(), _domain);
+	return true;
+}
+
+void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+		.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
+			.addPadding(0, 0, 12, 0)
+			.addWidget("EnableSessionServer", "Checkbox")
+			.addWidget("EnableLANBroadcast", "Checkbox")
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
+				.addPadding(0, 0, 12, 0)
+				.addWidget("SessionServerLabel", "OptionsLabel")
+				.addWidget("SessionServerAddress", "EditTextWidget")
+			.closeLayout()
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 5)
+				.addPadding(0, 0, 12, 0)
+				.addWidget("ServerReset", "Button")
+				.addWidget("ServerResetDev", "Button")
+			.closeLayout()
+		.closeLayout()
+	.closeDialog();
+}
+
+void HENetworkGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+
+	switch (cmd) {
+	case kEnableSessionCmd:
+		_sessionServerAddr->setEnabled(_enableSessionServer->getState());
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	case kResetServersCmd:
+		_enableSessionServer->setState(true);
+		_sessionServerAddr->setEditString(Common::U32String("multiplayer.scummvm.org"));
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	case kResetServerDevCmd:
+		_enableSessionServer->setState(false);
+		_sessionServerAddr->setEditString(Common::U32String("127.0.0.1"));
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	default:
+		GUI::OptionsContainerWidget::handleCommand(sender, cmd, data);
+		break;
+	}
+}
+#endif
 
 } // End of namespace Scumm
