@@ -1859,6 +1859,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mmm98", "Maniac Mansion Mania Ep. 098: Maniac Apartment" },
 	{ "mmm99", "Maniac Mansion Mania Ep. 099: Die Premiere" },
 	{ "mmm100", "Maniac Mansion Mania Ep. 100: Money Mansion" },
+	{ "mmm101", "Maniac Mansion Mania Ep. 101: Mit anderen Augen" },
 	{ "mmmatman", "Maniac Mansion Mania: @-Man - The Dork Knight" },
 	{ "mmmd1", "Maniac Dungeon Raum 01: The great Escape from Maniac Dungeon" },
 	{ "mmmd2", "Maniac Dungeon Raum 02: Der Bunker" },
@@ -2611,6 +2612,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sqvn", "Space Quest Visual Novel" },
 	{ "sqvsb", "Space Quest: Vohaul Strikes Back" },
 	{ "sram2", "SRAM 2 - Cinomeh's Revenge" },
+	{ "sstrek25", "Super Star Trek 25th" },
 	{ "stablepeteandthejoust", "Stable Pete and the Joust" },
 	{ "stairquest", "Stair Quest" },
 	{ "stanamespiepisode1", "Stan Ames, Private Eye - Episode 1: Murder Incorporated" },
@@ -2765,6 +2767,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thedevilsshroudpart2", "The Devil's Shroud - Part II" },
 	{ "thedevilsshroudpart3", "The Devil's Shroud - Part III" },
 	{ "thedevilsshroudpart4", "The Devil's Shroud - Part IV" },
+	{ "thedevilsteeth", "The Devil's Teeth" },
 	{ "thedigitalspell", "The Digital Spell" },
 	{ "thedisgracedprince", "The disgraced prince" },
 	{ "thedollhousech1", "The Dollhouse - Chapter 1: Plaything" },
@@ -6104,6 +6107,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("mmm99", "die_premiere.exe", "3e9c6691d4b9fd70aa47c5bfd68c5c3a", 8312345, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm100", "money.exe", "93a18fcee8c601539cc99a2bf87f06aa", 51747173, Common::DE_DEU),
 	GAME_ENTRY("mmm100", "money.exe", "91b1d125f9c818b8d2f376d24774377e", 52085746),  // En-De
+	GAME_ENTRY_LANG("mmm101", "MMM_MiAu.exe", "bc40ee6a0cf03a983f9fcaca906d12b8", 7696543, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmd1", "Starter.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5174259, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmd2", "002.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5104718, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmmd3", "003.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5275394, Common::DE_DEU),
@@ -6950,6 +6954,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("sqvn", "ENG.exe", "615e73fc1874e92d60a1996c2330ea36", 13629884),
 	GAME_ENTRY_EN("sqvsb", "vsb.exe", "9fc9b41b494ec4a1072e7485ee6113fc", 5632323),
 	GAME_ENTRY_EN("sqvsb", "vsb.exe", "9fc9b41b494ec4a1072e7485ee6113fc", 5631438),
+	GAME_ENTRY_EN("sstrek25", "startrek.exe", "5cffd228bbf2286b3ea57aaa21087c88", 11737899), // v1.03 Win
+	GAME_ENTRY_EN("sstrek25", "startrek.ags", "5009a13b7ce87da0dbedc5a171abc22f", 8572183), // v1.03 Mac
 	GAME_ENTRY_EN("stairquest", "Stair Quest.exe", "e0aeab6a2c479fde167c4c43c3abb8ca", 4550699), // v1.0.1
 	GAME_ENTRY_EN_PLATFORM("stairquest", "stair-quest.exe", "75494269745a5282be12278166cf662c", 33778514, "Special Edition"), // v2.0 itch.io Windows
 	GAME_ENTRY_EN_PLATFORM("stairquest", "ac2game.dat", "75494269745a5282be12278166cf662c", 33778514, "Special Edition"), // v2.0 itch.io Mac
@@ -7154,6 +7160,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thedevilsshroudpart2", "DevilLyon.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 23850386),
 	GAME_ENTRY_EN("thedevilsshroudpart3", "DevilPrague.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16360454),
 	GAME_ENTRY_EN("thedevilsshroudpart4", "DevilVaduz.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 32025519),
+	GAME_ENTRY_EN("thedevilsteeth", "The Devil's Teeth.exe", "0564de07d3fd5c16e6947a647061913c", 12560271),
 	GAME_ENTRY_EN("thedigitalspell", "Digital.exe", "4d17844029d8910fbaae1bdc99e250f2", 14657385),
 	GAME_ENTRY_EN("thedisgracedprince", "Byzanz 2.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 12592231),
 	GAME_ENTRY_EN("thedollhousech1", "DH.exe", "6e861b1f476ff7cdf036082abb271329", 4931346),
