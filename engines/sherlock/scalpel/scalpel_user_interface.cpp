@@ -2040,7 +2040,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 	Common::String remainder;
 	Common::Array<Common::String> lines = screen.wordWrap(str, 300, remainder, Common::String::npos, ONSCREEN_FILES_COUNT);
 	for (uint lineNum = 0; lineNum < lines.size(); ++lineNum) {
-		screen.gPrint(Common::Point(16, CONTROLS_Y + 12 + lineNum * 9),
+		screen.gPrint(Common::Point(16, CONTROLS_Y + 12 + lineNum * (_vm->getLanguage() == Common::Language::ZH_TWN ? 16 : 9)),
 			INV_FOREGROUND, "%s", lines[lineNum].c_str());
 	}
 
