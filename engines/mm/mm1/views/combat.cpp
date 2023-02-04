@@ -681,6 +681,7 @@ void Combat::writeMonsterAttack() {
 
 		if (!_lines.back()._text.empty())
 			writeString(0, yp, _lines.back()._text);
+		_lines.clear();
 	}
 }
 
@@ -757,16 +758,9 @@ void Combat::shoot() {
 }
 
 void Combat::writeMessage() {
-	size_t idx;
-
 	resetBottom();
-	for (const auto &line : _message) {
-		Common::String text = line._text;
-		while ((idx = text.findFirstOf('|')) != Common::String::npos)
-			text.deleteChar(idx);
-
-		writeString(line.x, line.y, text);
-	}
+	for (const auto &line : _message)
+		writeString(line.x, line.y, line._text);
 }
 
 void Combat::writeCharAttackDamage() {

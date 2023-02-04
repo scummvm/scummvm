@@ -60,8 +60,7 @@ void TextView::writeChar(int x, int y, unsigned char c) {
 
 void TextView::writeString(const Common::String &str) {
 	for (const unsigned char *s = (const unsigned char *)str.c_str(); *s; ++s) {
-		if (*s != '|')
-			writeChar(*s);
+		writeChar(*s);
 
 		if (*s >= ' ' && _textPos.x == 0 && (*(s + 1) == '\r' || *(s + 1) == '\n'))
 			// Ignore carraige returns right after line wraps. The original didn't

@@ -100,13 +100,7 @@ InfoMessage &InfoMessage::operator=(const InfoMessage &src) {
 }
 
 size_t Line::size() const {
-	size_t total = 0;
-	for (uint i = 0; i < _text.size(); ++i) {
-		if (_text[i] != '|')
-			++total;
-	}
-
-	return total;
+	return _text.size();
 }
 
 } // namespace MM1
