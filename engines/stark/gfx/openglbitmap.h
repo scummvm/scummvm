@@ -43,6 +43,7 @@ public:
 	void bind() const override;
 	void update(const Graphics::Surface *surface, const byte *palette = nullptr) override;
 	void setSamplingFilter(SamplingFilter filter) override;
+	Graphics::PixelFormat getBestPixelFormat() const override;
 
 protected:
 	GLuint _id;

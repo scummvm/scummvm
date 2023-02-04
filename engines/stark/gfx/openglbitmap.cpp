@@ -88,6 +88,10 @@ void OpenGlBitmap::setSamplingFilter(Bitmap::SamplingFilter filter) {
 	}
 }
 
+Graphics::PixelFormat OpenGlBitmap::getBestPixelFormat() const {
+	return Driver::getRGBAPixelFormat();
+}
+
 } // End of namespace Gfx
 } // End of namespace Stark
 
