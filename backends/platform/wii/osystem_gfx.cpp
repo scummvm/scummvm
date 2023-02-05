@@ -657,7 +657,11 @@ void OSystem_Wii::warpMouse(int x, int y) {
 void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 									int hotspotY, uint32 keycolor,
 									bool dontScale,
-									const Graphics::PixelFormat *format) {
+									const Graphics::PixelFormat *format, const byte *mask) {
+
+	if (mask)
+		printf("OSystem_Wii::setMouseCursor: Masks are not supported\n");
+
 	gfx_tex_format_t tex_format = GFX_TF_PALETTE_RGB5A3;
 	uint tw, th;
 	uint32 oldKeycolor = _mouseKeyColor;

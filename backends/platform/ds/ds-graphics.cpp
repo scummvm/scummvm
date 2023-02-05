@@ -549,9 +549,12 @@ void OSystem_DS::warpMouse(int x, int y) {
 		_cursorPos = _screen->scaledToReal(x, y);
 }
 
-void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
 	if (!buf || w == 0 || h == 0)
 		return;
+
+	if (mask)
+		warning("OSystem_DS::setMouseCursor: Masks are not supported");
 
 	Graphics::PixelFormat actualFormat = format ? *format : _pfCLUT8;
 	if (_cursor.w != (int16)w || _cursor.h != (int16)h || _cursor.format != actualFormat)

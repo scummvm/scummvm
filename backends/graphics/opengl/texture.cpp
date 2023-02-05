@@ -377,7 +377,8 @@ FakeTexture::FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, con
 	: Texture(glIntFormat, glFormat, glType, format),
 	  _fakeFormat(fakeFormat),
 	  _rgbData(),
-	  _palette(nullptr) {
+	  _palette(nullptr),
+	  _mask(nullptr) {
 	if (_fakeFormat.isCLUT8()) {
 		_palette = new uint32[256];
 		memset(_palette, 0, sizeof(uint32));
@@ -386,6 +387,7 @@ FakeTexture::FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, con
 
 FakeTexture::~FakeTexture() {
 	delete[] _palette;
+	delete[] _mask;
 	_palette = nullptr;
 	_rgbData.free();
 }
@@ -400,6 +402,22 @@ void FakeTexture::allocate(uint width, uint height) {
 	}
 
 	_rgbData.create(width, height, getFormat());
+}
+
+void FakeTexture::setMask(const byte *mask) {
+	if (mask) {
+		const uint numPixels = _rgbData.w * _rgbData.h;
+
+		if (!_mask)
+			_mask = new byte[numPixels];
+
+		memcpy(_mask, mask, numPixels);
+	} else {
+		delete[] _mask;
+		_mask = nullptr;
+	}
+
+	flagDirty();
 }
 
 void FakeTexture::setColorKey(uint colorKey) {
@@ -444,6 +462,32 @@ void FakeTexture::updateGLTexture() {
 		Graphics::crossBlitMap(dst, src, outSurf->pitch, _rgbData.pitch, dirtyArea.width(), dirtyArea.height(), outSurf->format.bytesPerPixel, _palette);
 	} else {
 		Graphics::crossBlit(dst, src, outSurf->pitch, _rgbData.pitch, dirtyArea.width(), dirtyArea.height(), outSurf->format, _rgbData.format);
+	}
+
+	if (_mask) {
+		uint maskPitch = _rgbData.w;
+		uint dirtyWidth = dirtyArea.width();
+		byte destBPP = outSurf->format.bytesPerPixel;
+
+		const byte *maskRowStart = (_mask + dirtyArea.top * maskPitch + dirtyArea.left);
+		byte *dstRowStart = dst;
+
+		for (uint y = dirtyArea.top; y < static_cast<uint>(dirtyArea.bottom); y++) {
+			if (destBPP == 2) {
+				for (uint x = 0; x < dirtyWidth; x++) {
+					if (!maskRowStart[x])
+						reinterpret_cast<uint16 *>(dstRowStart)[x] = 0;
+				}
+			} else if (destBPP == 4) {
+				for (uint x = 0; x < dirtyWidth; x++) {
+					if (!maskRowStart[x])
+						reinterpret_cast<uint32 *>(dstRowStart)[x] = 0;
+				}
+			}
+
+			dstRowStart += outSurf->pitch;
+			maskRowStart += maskPitch;
+		}
 	}
 
 	// Do generic handling of updating the texture.

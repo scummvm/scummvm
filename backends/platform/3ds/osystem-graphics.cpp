@@ -767,12 +767,15 @@ void OSystem_3DS::setCursorDelta(float deltaX, float deltaY) {
 void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 								 int hotspotX, int hotspotY,
 								 uint32 keycolor, bool dontScale,
-								 const Graphics::PixelFormat *format) {
+								 const Graphics::PixelFormat *format, const byte *mask) {
 	_cursorScalable = !dontScale;
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;
 	_cursorKeyColor = keycolor;
 	_pfCursor = !format ? Graphics::PixelFormat::createFormatCLUT8() : *format;
+
+	if (mask)
+		warning("OSystem_3DS::setMouseCursor: Masks are not supported");
 
 	if (w != (uint)_cursor.w || h != (uint)_cursor.h || _cursor.format != _pfCursor) {
 		_cursor.create(w, h, _pfCursor);
