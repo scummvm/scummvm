@@ -194,6 +194,13 @@ public:
 	virtual void allocate(uint width, uint height) = 0;
 
 	/**
+	 * Assign a mask to the surface, where a byte value of 0 is black with 0 alpha and 1 is the normal color.
+	 *
+	 * @param mask   The mask data.
+	 */
+	virtual void setMask(const byte *mask) {}
+
+	/**
 	 * Copy image data to the surface.
 	 *
 	 * The format of the input data needs to match the format returned by
@@ -320,6 +327,7 @@ public:
 	~FakeTexture() override;
 
 	void allocate(uint width, uint height) override;
+	void setMask(const byte *mask) override;
 
 	Graphics::PixelFormat getFormat() const override { return _fakeFormat; }
 
@@ -336,6 +344,7 @@ protected:
 	Graphics::Surface _rgbData;
 	Graphics::PixelFormat _fakeFormat;
 	uint32 *_palette;
+	uint8 *_mask;
 };
 
 class TextureRGB555 : public FakeTexture {

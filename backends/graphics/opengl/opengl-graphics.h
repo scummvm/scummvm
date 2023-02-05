@@ -119,7 +119,7 @@ public:
 	void clearOverlay() override;
 	void grabOverlay(Graphics::Surface &surface) const override;
 
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 	void displayMessageOnOSD(const Common::U32String &msg) override;
@@ -130,6 +130,8 @@ public:
 	void grabPalette(byte *colors, uint start, uint num) const override;
 
 protected:
+	void renderCursor();
+
 	/**
 	 * Whether an GLES or GLES2 context is active.
 	 */
@@ -168,7 +170,7 @@ protected:
 	 * @param wantScaler Whether or not a software scaler should be used.
 	 * @return A pointer to the surface or nullptr on failure.
 	 */
-	Surface *createSurface(const Graphics::PixelFormat &format, bool wantAlpha = false, bool wantScaler = false);
+	Surface *createSurface(const Graphics::PixelFormat &format, bool wantAlpha = false, bool wantScaler = false, bool wantMask = false);
 
 	//
 	// Transaction support
@@ -375,6 +377,11 @@ protected:
 	Surface *_cursor;
 
 	/**
+	 * The rendering surface for the opacity and inversion mask (if any)
+	 */
+	Surface *_cursorMask;
+
+	/**
 	 * The X offset for the cursor hotspot in unscaled game coordinates.
 	 */
 	int _cursorHotspotX;
@@ -416,6 +423,11 @@ protected:
 	 * The key color.
 	 */
 	uint32 _cursorKeyColor;
+
+	/**
+	 * If true, use key color.
+	 */
+	bool _cursorUseKey;
 
 	/**
 	 * Whether no cursor scaling should be applied.

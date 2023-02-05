@@ -119,6 +119,14 @@ void Framebuffer::applyBlendState() {
 			GL_CALL(glEnable(GL_BLEND));
 			GL_CALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 			break;
+		case kBlendModeAdditive:
+			GL_CALL(glEnable(GL_BLEND));
+			GL_CALL(glBlendFunc(GL_ONE, GL_ONE));
+			break;
+		case kBlendModeMaskAlphaAndInvertByColor:
+			GL_CALL(glEnable(GL_BLEND));
+			GL_CALL(glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA));
+			break;
 		default:
 			break;
 	}

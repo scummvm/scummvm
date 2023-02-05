@@ -114,7 +114,7 @@ public:
 	// Mouse related
 	bool showMouse(bool visible);
 	void warpMouse(int x, int y);
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format);
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask);
 
 	// Events and input
 	bool pollEvent(Common::Event &event);

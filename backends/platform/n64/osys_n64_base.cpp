@@ -766,8 +766,11 @@ void OSystem_N64::warpMouse(int x, int y) {
 	_dirtyOffscreen = true;
 }
 
-void OSystem_N64::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OSystem_N64::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
 	if (!w || !h) return;
+
+	if (mask)
+		warning("OSystem_DS::setMouseCursor: Masks are not supported");
 
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;

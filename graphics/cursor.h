@@ -58,6 +58,9 @@ public:
 	/** Return the cursor's surface. */
 	virtual const byte *getSurface() const = 0;
 
+	/** Return the cursor's mask, if it has one. */
+	virtual const byte *getMask() const { return nullptr; }
+
 	/** Return the cursor's palette in RGB format. */
 	virtual const byte *getPalette() const = 0;
 	/** Return the starting index of the palette. */

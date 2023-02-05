@@ -305,8 +305,12 @@ void OSystem_PSP::warpMouse(int x, int y) {
 	_cursor.setXY(x, y);
 }
 
-void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
 	DEBUG_ENTER_FUNC();
+
+	if (mask)
+		PSP_DEBUG_PRINT("OSystem_PSP::setMouseCursor: Masks are not supported");
+
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
 

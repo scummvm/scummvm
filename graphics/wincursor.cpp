@@ -21,6 +21,7 @@
 
 #include "common/ptr.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "graphics/wincursor.h"
@@ -45,6 +46,7 @@ public:
 	byte getKeyColor() const override;
 
 	const byte *getSurface() const override { return _surface; }
+	const byte *getMask() const override { return _mask; }
 
 	const byte *getPalette() const override { return _palette; }
 	byte getPaletteStartIndex() const override { return 0; }
@@ -55,6 +57,7 @@ public:
 
 private:
 	byte *_surface;
+	byte *_mask;
 	byte _palette[256 * 3];
 
 	uint16 _width;    ///< The cursor's width.
@@ -72,7 +75,8 @@ WinCursor::WinCursor() {
 	_height   = 0;
 	_hotspotX = 0;
 	_hotspotY = 0;
-	_surface  = 0;
+	_surface  = nullptr;
+	_mask     = nullptr;
 	_keyColor = 0;
 	memset(_palette, 0, 256 * 3);
 }
@@ -103,6 +107,9 @@ byte WinCursor::getKeyColor() const {
 
 bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 	clear();
+
+	const bool supportOpacity = g_system->hasFeature(OSystem::kFeatureCursorMask);
+	const bool supportInvert = g_system->hasFeature(OSystem::kFeatureCursorMaskInvert);
 
 	_hotspotX = stream.readUint16LE();
 	_hotspotY = stream.readUint16LE();
@@ -161,6 +168,8 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 	// Parse the XOR map
 	const byte *src = initialSource;
 	_surface = new byte[_width * _height];
+	if (supportOpacity)
+		_mask = new byte[_width * _height];
 	byte *dest = _surface + _width * (_height - 1);
 	uint32 imagePitch = _width * bitsPerPixel / 8;
 
@@ -223,9 +232,29 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 	src += andWidth * (_height - 1);
 
 	for (uint32 y = 0; y < _height; y++) {
-		for (uint32 x = 0; x < _width; x++)
-			if (src[x / 8] & (1 << (7 - x % 8)))
-				_surface[y * _width + x] = _keyColor;
+		for (uint32 x = 0; x < _width; x++) {
+			byte &surfaceByte = _surface[y * _width + x];
+			if (src[x / 8] & (1 << (7 - x % 8))) {
+				if (_mask) {
+					byte &maskByte = _mask[y * _width + x];
+					if (surfaceByte == 0) {
+						// Transparent
+						maskByte = 0;
+					} else {
+						// Inverted, if the backend supports invert then emit an inverted pixel, otherwise opaque
+						maskByte = supportInvert ? 2 : 1;
+					}
+				} else {
+					// Don't support mask or invert, leave this as opaque if it's XOR so it's visible
+					if (surfaceByte == 0)
+						surfaceByte = _keyColor;
+				}
+			} else {
+				// Opaque pixel
+				if (_mask)
+					_mask[y * _width + x] = 1;
+			}
+		}
 
 		src -= andWidth;
 	}
@@ -235,7 +264,8 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 }
 
 void WinCursor::clear() {
-	delete[] _surface; _surface = 0;
+	delete[] _surface; _surface = nullptr;
+	delete[] _mask; _mask = nullptr;
 }
 
 WinCursorGroup::WinCursorGroup() {

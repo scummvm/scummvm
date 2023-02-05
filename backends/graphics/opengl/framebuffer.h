@@ -59,7 +59,18 @@ public:
 		 * Requires the image data being drawn to have its color values pre-multipled
 		 * with the alpha value.
 		 */
-		kBlendModePremultipliedTransparency
+		kBlendModePremultipliedTransparency,
+
+		/**
+		 * Newly drawn pixels add to the destination value.
+		 */
+		kBlendModeAdditive,
+
+		/**
+		 * Newly drawn pixels mask out existing pixels based on the alpha value and
+		 * add inversions of the pixels based on the color.
+		 */
+		kBlendModeMaskAlphaAndInvertByColor,
 	};
 
 	/**
