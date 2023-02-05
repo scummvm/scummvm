@@ -377,13 +377,6 @@ void OptionsDialog::build() {
 			if (ConfMan.isKeyTemporary("vsync"))
 				_vsyncCheckbox->setOverride(true);
 		}
-
-		_antiAliasPopUp->setEnabled(true);
-		if (ConfMan.hasKey("antialiasing", _domain)) {
-			_antiAliasPopUp->setSelectedTag(ConfMan.getInt("antialiasing", _domain));
-		} else {
-			_antiAliasPopUp->setSelectedTag(uint32(-1));
-		}
 	}
 
 	if (_stretchPopUp) {
@@ -464,6 +457,15 @@ void OptionsDialog::build() {
 	if (_rendererTypePopUp) {
 		_rendererTypePopUp->setEnabled(true);
 		_rendererTypePopUp->setSelectedTag(Graphics::Renderer::parseTypeCode(ConfMan.get("renderer", _domain)));
+	}
+
+	if (_antiAliasPopUp) {
+		_antiAliasPopUp->setEnabled(true);
+		if (ConfMan.hasKey("antialiasing", _domain)) {
+			_antiAliasPopUp->setSelectedTag(ConfMan.getInt("antialiasing", _domain));
+		} else {
+			_antiAliasPopUp->setSelectedTag(uint32(-1));
+		}
 	}
 
 	// Audio options
@@ -721,11 +723,13 @@ void OptionsDialog::apply() {
 				}
 			}
 
-			if (_antiAliasPopUp->getSelectedTag() != (uint32)-1) {
-				uint level = _antiAliasPopUp->getSelectedTag();
-				ConfMan.setInt("antialiasing", level, _domain);
-			} else {
-				ConfMan.removeKey("antialiasing", _domain);
+			if (_antiAliasPopUp) {
+				if (_antiAliasPopUp->getSelectedTag() != (uint32)-1) {
+					uint level = _antiAliasPopUp->getSelectedTag();
+					ConfMan.setInt("antialiasing", level, _domain);
+				} else {
+					ConfMan.removeKey("antialiasing", _domain);
+				}
 			}
 
 		} else {
@@ -1229,12 +1233,15 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_gfxPopUp->setEnabled(enabled);
 	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
-	_antiAliasPopUpDesc->setEnabled(enabled);
-	_antiAliasPopUp->setEnabled(enabled);
 
 	if (_rendererTypePopUp) {
 		_rendererTypePopUpDesc->setEnabled(enabled);
 		_rendererTypePopUp->setEnabled(enabled);
+	}
+
+	if (_antiAliasPopUp) {
+		_antiAliasPopUpDesc->setEnabled(enabled);
+		_antiAliasPopUp->setEnabled(enabled);
 	}
 
 	if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
@@ -1673,19 +1680,16 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		}
 	}
 
-	_antiAliasPopUpDesc = new StaticTextWidget(boss, prefix + "grAntiAliasPopupDesc", _("3D Anti-aliasing:"));
-	_antiAliasPopUp = new PopUpWidget(boss, prefix + "grAntiAliasPopup");
-	_antiAliasPopUp->appendEntry(_("<default>"), uint32(-1));
-	_antiAliasPopUp->appendEntry("");
-	_antiAliasPopUp->appendEntry(_("Disabled"), 0);
 	const Common::Array<uint> levels = g_system->getSupportedAntiAliasingLevels();
-	for (uint i = 0; i < levels.size(); i++) {
-		_antiAliasPopUp->appendEntry(Common::String::format("%dx", levels[i]), levels[i]);
-	}
-	if (levels.empty()) {
-		// Don't show the anti-aliasing selection menu when it is not supported
-		_antiAliasPopUpDesc->setVisible(false);
-		_antiAliasPopUp->setVisible(false);
+	if (!levels.empty()) {
+		_antiAliasPopUpDesc = new StaticTextWidget(boss, prefix + "grAntiAliasPopupDesc", _("3D Anti-aliasing:"));
+		_antiAliasPopUp = new PopUpWidget(boss, prefix + "grAntiAliasPopup");
+		_antiAliasPopUp->appendEntry(_("<default>"), uint32(-1));
+		_antiAliasPopUp->appendEntry("");
+		_antiAliasPopUp->appendEntry(_("Disabled"), 0);
+		for (uint i = 0; i < levels.size(); i++) {
+			_antiAliasPopUp->appendEntry(Common::String::format("%dx", levels[i]), levels[i]);
+		}
 	}
 
 	// Filtering checkbox
