@@ -728,7 +728,7 @@ void Combat::checkParty() {
 	// Update the array for the party
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
 		const Character &c = *g_globals->_combatParty[i];
-		if ((c._condition & BAD_CONDITION) || !c._hpBase)
+		if ((c._condition & BAD_CONDITION) || !c._hpCurrent)
 			g_globals->_combatParty[i]->_checked = true;
 	}
 
@@ -1232,8 +1232,8 @@ bool Combat::divineIntervention() {
 
 		if (c._condition != ERADICATED) {
 			c._condition = 0;
-			c._hpBase = c._hp;
-			c._hpMax = c._hpBase;
+			c._hpCurrent = c._hp;
+			c._hpMax = c._hpCurrent;
 		}
 	}
 
@@ -1625,14 +1625,14 @@ void Combat::combatDone() {
 
 Common::String Combat::subtractDamageFromChar() {
 	Character &c = *g_globals->_currCharacter;
-	int newHp = c._hpBase - _damage;
+	int newHp = c._hpCurrent - _damage;
 	Common::String result;
 
 	if (newHp > 0) {
-		c._hpBase = newHp;
+		c._hpCurrent = newHp;
 
 	} else {
-		c._hpBase = 0;
+		c._hpCurrent = 0;
 
 		if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS))) {
 			c._condition |= UNCONSCIOUS;

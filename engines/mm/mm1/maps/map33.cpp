@@ -78,7 +78,7 @@ void Map33::special() {
 					];
 					if (!(c._condition & BAD_CONDITION)) {
 						c._condition |= SILENCED | PARALYZED | UNCONSCIOUS;
-						c._hpBase = 0;
+						c._hpCurrent = 0;
 						msg._lines.push_back(Line(0, 2, STRING["maps.map33.quicksand"]));
 						Sound::sound(SOUND_3);
 					}

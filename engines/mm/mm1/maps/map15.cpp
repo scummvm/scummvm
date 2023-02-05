@@ -73,7 +73,7 @@ void Map15::special() {
 			if (!g_globals->_activeSpells._s.fire) {
 				for (uint i = 0; i < g_globals->_party.size(); ++i) {
 					Character &c = g_globals->_party[i];
-					c._hpBase = MAX((int)c._hpBase - 15, 0);
+					c._hpCurrent = MAX((int)c._hpCurrent - 15, 0);
 				}
 			}
 		}

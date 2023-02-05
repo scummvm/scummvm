@@ -43,7 +43,7 @@ protected:
 	static byte DAMAGE_TYPE[7];
 
 	int _trapType = 0;
-	int _hp = 0;
+	int _hpInitial = 0;
 	int _reduced = 0;
 	int _resistanceIndex = 0;
 	byte _condition = 0;

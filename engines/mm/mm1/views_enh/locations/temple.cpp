@@ -159,7 +159,7 @@ void Temple::restoreHealth() {
 	if (subtractGold(_healCost)) {
 		Character &c = *g_globals->_currCharacter;
 		c._condition = FINE;
-		c._hpBase = c._hp;
+		c._hpCurrent = c._hp;
 
 		if (_isEradicated) {
 			c._age._current += 10;

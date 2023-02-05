@@ -172,7 +172,7 @@ void Map09::special14() {
 			if (!g_globals->_activeSpells._s.poison &&
 				!(c._condition & BAD_CONDITION))
 				c._condition = POISONED;
-			c._hpBase /= 2;
+			c._hpCurrent /= 2;
 		}
 
 		SoundMessage msg(

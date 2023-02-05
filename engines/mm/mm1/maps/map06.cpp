@@ -137,8 +137,8 @@ void Map06::special04() {
 
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
-			c._hpBase = MAX((int)c._hpBase - 15, 0);
-			if (!c._hpBase) {
+			c._hpCurrent = MAX((int)c._hpCurrent - 15, 0);
+			if (!c._hpCurrent) {
 				if (!(c._condition & BAD_CONDITION))
 					c._condition = UNCONSCIOUS;
 			}

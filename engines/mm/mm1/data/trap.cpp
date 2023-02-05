@@ -88,7 +88,7 @@ void TrapData::trap() {
 	}
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i, _reduced = val4) {
-		_hp = maxVal;
+		_hpInitial = maxVal;
 		damageChar(i);
 	}
 }
@@ -96,12 +96,12 @@ void TrapData::trap() {
 void TrapData::damageChar(uint partyIndex) {
 	Character &c = g_globals->_party[partyIndex];
 	if (&c != g_globals->_currCharacter)
-		_hp >>= 1;
+		_hpInitial >>= 1;
 
 	if (_resistanceIndex != -1 &&
 			c._resistances._arr[_resistanceIndex] != 0 &&
 			getRandomNumber(100) < c._resistances._arr[_resistanceIndex]) {
-		_hp >>= 1;
+		_hpInitial >>= 1;
 		++_reduced;
 	}
 
@@ -109,27 +109,27 @@ void TrapData::damageChar(uint partyIndex) {
 	int luckLevel2 = getRandomNumber(luckLevel1 + 20);
 
 	if (getRandomNumber(luckLevel2) < luckLevel1) {
-		_hp >>= 1;
+		_hpInitial >>= 1;
 		++_reduced;
 	}
 
 	if (c._condition & BAD_CONDITION) {
-		c._hpBase = 0;
+		c._hpCurrent = 0;
 
 	} else if (c._condition & UNCONSCIOUS) {
 		c._condition = BAD_CONDITION | DEAD;
-		c._hpBase = 0;
+		c._hpCurrent = 0;
 
 	} else {
-		c._hpBase = MAX((int)c._hpBase - _hp, 0);
+		c._hpCurrent = MAX((int)c._hpCurrent - _hpInitial, 0);
 
-		if (c._hpBase == 0) {
+		if (c._hpCurrent == 0) {
 			c._condition |= UNCONSCIOUS;
 
 		} else if (!_reduced && _condition &&
 				getRandomNumber(luckLevel1 + 20) >= luckLevel1) {
 			if (_condition >= UNCONSCIOUS)
-				c._hpBase = 0;
+				c._hpCurrent = 0;
 
 			if (!(c._condition & BAD_CONDITION))
 				c._condition = _condition;

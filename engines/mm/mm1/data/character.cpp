@@ -182,7 +182,7 @@ void Character::synchronize(Common::Serializer &s) {
 	_spellLevel.synchronize(s);
 
 	s.syncAsUint16LE(_gems);
-	s.syncAsUint16LE(_hpBase);
+	s.syncAsUint16LE(_hpCurrent);
 	s.syncAsUint16LE(_hp);
 	s.syncAsUint16LE(_hpMax);
 
@@ -230,7 +230,7 @@ void Character::clear() {
 	_sp = 0;
 	_spellLevel = 0;
 	_gems = 0;
-	_hpBase = _hp = _hpMax = 0;
+	_hpCurrent = _hp = _hpMax = 0;
 	_gold = 0;
 	_ac = 0;
 	_food = 0;
@@ -317,8 +317,8 @@ Character::LevelIncrease Character::increaseLevel() {
 	else
 		newHP = MAX(newHP - 3, 1);
 
-	_hpBase += newHP;
-	_hp = _hpMax = _hpBase;
+	_hpCurrent += newHP;
+	_hp = _hpMax = _hpCurrent;
 
 	int gainedSpells = 0;
 	if (classNum < ARCHER) {
@@ -538,8 +538,8 @@ void Character::rest() {
 	_condition &= ~(ASLEEP | BLINDED | SILENCED |
 		PARALYZED | UNCONSCIOUS);
 
-	if (_hpBase == 0)
-		_hpBase = 1;
+	if (_hpCurrent == 0)
+		_hpCurrent = 1;
 
 	if (_age._current++ == 255) {
 		_age._base = MIN((int)_age._base + 1, 255);
@@ -582,7 +582,7 @@ void Character::rest() {
 		}
 
 		if (_condition & DISEASED) {
-			_hpBase = _hpMax;
+			_hpCurrent = _hpMax;
 			_sp._current = _sp._base;
 		}
 	}
@@ -620,7 +620,7 @@ size_t Character::getPerformanceTotal() const {
 		+ _sp.getPerformanceTotal()
 		+ _spellLevel.getPerformanceTotal()
 		+ PERF16(_gems)
-		+ PERF16(_hpBase)
+		+ PERF16(_hpCurrent)
 		+ PERF16(_hp)
 		+ PERF16(_hpMax)
 		+ PERF32(_gold)

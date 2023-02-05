@@ -93,7 +93,7 @@ void Map::dataWord(uint16 ofs, uint16 val) {
 
 void Map::reduceHP() {
 	for (uint i = 0; i < g_globals->_party.size(); ++i)
-		g_globals->_party[i]._hpBase /= 2;
+		g_globals->_party[i]._hpCurrent /= 2;
 }
 
 void Map::updateGame() {

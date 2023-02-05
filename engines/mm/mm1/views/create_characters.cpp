@@ -147,7 +147,7 @@ void CreateCharacters::NewCharacter::setHP(int hp) {
 	else if (_attribs1[ENDURANCE] < 8)
 		hp -= 1;
 
-	re._hpBase = re._hp = re._hpMax = hp;
+	re._hpCurrent = re._hp = re._hpMax = hp;
 
 	int ac = 0;
 	if (_attribs1[SPEED] >= 19)

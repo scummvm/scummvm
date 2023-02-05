@@ -201,7 +201,7 @@ void Map28::setCondition(byte condition) {
 void Map28::reduceHpBase() {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
-		c._hpBase /= 2;
+		c._hpCurrent /= 2;
 	}
 }
 

@@ -81,7 +81,7 @@ void Map27::special02() {
 		Character &c = g_globals->_party[i];
 		if (c._condition != ERADICATED) {
 			c._condition = 0;
-			c._hpBase = c._hpMax = c._hp;
+			c._hpCurrent = c._hpMax = c._hp;
 		}
 	}
 

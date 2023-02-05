@@ -426,7 +426,7 @@ struct Character : public PrimaryAttributes {
 
 	uint32 _exp = 0;
 	uint16 _gems = 0;
-	uint16 _hpBase = 0, _hp = 0, _hpMax = 0;
+	uint16 _hpCurrent = 0, _hp = 0, _hpMax = 0;
 	uint32 _gold = 0;
 	uint8 _food = 0;
 	uint8 _condition = 0;

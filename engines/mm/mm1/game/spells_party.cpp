@@ -473,8 +473,8 @@ SpellResult SpellsParty::cleric54_removeCondition() {
 	} else {
 		_destChar->_condition = FINE;
 
-		if (!_destChar->_hpBase)
-			_destChar->_hpBase = 1;
+		if (!_destChar->_hpCurrent)
+			_destChar->_hpCurrent = 1;
 		restoreHp(1);
 
 		return SR_SUCCESS_DONE;
@@ -534,7 +534,7 @@ SpellResult SpellsParty::cleric62_raiseDead() {
 	else
 		_destChar->_condition = FINE;
 
-	_destChar->_hpBase = 1;
+	_destChar->_hpCurrent = 1;
 	return SR_SUCCESS_DONE;
 }
 
@@ -561,7 +561,7 @@ SpellResult SpellsParty::cleric64_stoneToFlesh() {
 	else
 		_destChar->_condition = FINE;
 
-	_destChar->_hpBase = 1;
+	_destChar->_hpCurrent = 1;
 	return SR_SUCCESS_DONE;
 }
 
@@ -1022,7 +1022,7 @@ void SpellsParty::restoreHp(uint16 hp) {
 }
 
 void SpellsParty::restoreHp(Character &c, uint16 hp) {
-	c._hpBase = MIN((int)(c._hpBase + hp), (int)c._hpMax);
+	c._hpCurrent = MIN((int)(c._hpCurrent + hp), (int)c._hpMax);
 	if (!(c._condition & BAD_CONDITION))
 		c._condition &= ~UNCONSCIOUS;
 }

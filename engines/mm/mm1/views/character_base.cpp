@@ -73,7 +73,7 @@ void CharacterBase::printStats() {
 	writeNumber(re._speed);
 	_textPos.x = 8;
 	writeString(STRING["stats.attributes.hp"]);
-	writeNumber(re._hp);
+	writeNumber(re._hpCurrent);
 	_textPos.x = 16;
 	writeChar('/');
 	writeNumber(re._hpMax);
