@@ -346,26 +346,6 @@ void OptionsDialog::build() {
 			_renderModePopUp->setSelectedTag(sel);
 		}
 
-		_stretchPopUp->setSelected(0);
-
-		if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
-			if (ConfMan.hasKey("stretch_mode", _domain)) {
-				const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
-				Common::String stretchMode(ConfMan.get("stretch_mode", _domain));
-				int stretchCount = 1;
-				while (sm->name) {
-					stretchCount++;
-					if (scumm_stricmp(sm->name, stretchMode.c_str()) == 0)
-						_stretchPopUp->setSelected(stretchCount);
-					sm++;
-				}
-			}
-		} else {
-			_stretchPopUpDesc->setVisible(false);
-			_stretchPopUp->setVisible(false);
-			_stretchPopUp->setEnabled(false);
-		}
-
 		_scalerPopUp->setSelected(0);
 		_scaleFactorPopUp->setSelected(0);
 
@@ -439,6 +419,27 @@ void OptionsDialog::build() {
 			_antiAliasPopUp->setSelectedTag(ConfMan.getInt("antialiasing", _domain));
 		} else {
 			_antiAliasPopUp->setSelectedTag(uint32(-1));
+		}
+	}
+
+	if (_stretchPopUp) {
+		if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
+			_stretchPopUp->setSelected(0);
+
+			if (ConfMan.hasKey("stretch_mode", _domain)) {
+				const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
+				Common::String stretchMode(ConfMan.get("stretch_mode", _domain));
+				int stretchCount = 1;
+				while (sm->name) {
+					stretchCount++;
+					if (scumm_stricmp(sm->name, stretchMode.c_str()) == 0)
+						_stretchPopUp->setSelected(stretchCount);
+					sm++;
+				}
+			}
+		} else {
+			_stretchPopUpDesc->setVisible(false);
+			_stretchPopUp->setVisible(false);
 		}
 	}
 
@@ -650,28 +651,30 @@ void OptionsDialog::apply() {
 				}
 			}
 
-			isSet = false;
-			if ((int32)_stretchPopUp->getSelectedTag() >= 0) {
-				const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
+			if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
+				isSet = false;
+				if ((int32)_stretchPopUp->getSelectedTag() >= 0) {
+					const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
 
-				while (sm->name) {
-					if (sm->id == (int)_stretchPopUp->getSelectedTag()) {
-						if (ConfMan.get("stretch_mode", _domain) != sm->name) {
-							graphicsModeChanged = true;
-							ConfMan.set("stretch_mode", sm->name, _domain);
-							_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+					while (sm->name) {
+						if (sm->id == (int)_stretchPopUp->getSelectedTag()) {
+							if (ConfMan.get("stretch_mode", _domain) != sm->name) {
+								graphicsModeChanged = true;
+								ConfMan.set("stretch_mode", sm->name, _domain);
+								_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+							}
+							isSet = true;
+							break;
 						}
-						isSet = true;
-						break;
+						sm++;
 					}
-					sm++;
 				}
-			}
-			if (!isSet) {
-				_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
-				ConfMan.removeKey("stretch_mode", _domain);
-				if (g_system->getStretchMode() != g_system->getDefaultStretchMode())
-					graphicsModeChanged = true;
+				if (!isSet) {
+					_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+					ConfMan.removeKey("stretch_mode", _domain);
+					if (g_system->getStretchMode() != g_system->getDefaultStretchMode())
+						graphicsModeChanged = true;
+				}
 			}
 
 			isSet = false;
@@ -1229,8 +1232,11 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_stretchPopUpDesc->setEnabled(enabled);
 		_stretchPopUp->setEnabled(enabled);
 	} else {
-		_stretchPopUpDesc->setEnabled(false);
-		_stretchPopUp->setEnabled(false);
+		// Happens when we switch to backend that doesn't support stretch modes
+		if (_stretchPopUp) {
+			_stretchPopUpDesc->setEnabled(false);
+			_stretchPopUp->setEnabled(false);
+		}
 	}
 
 	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
@@ -1582,17 +1588,19 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// The Stretch mode popup
-	const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
-	_stretchPopUpDesc = new StaticTextWidget(boss, prefix + "grStretchModePopupDesc", _("Stretch mode:"));
-	if (ConfMan.isKeyTemporary("stretch_mode"))
-		_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
-	_stretchPopUp = new PopUpWidget(boss, prefix + "grStretchModePopup");
+	if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
+		const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
+		_stretchPopUpDesc = new StaticTextWidget(boss, prefix + "grStretchModePopupDesc", _("Stretch mode:"));
+		if (ConfMan.isKeyTemporary("stretch_mode"))
+			_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+		_stretchPopUp = new PopUpWidget(boss, prefix + "grStretchModePopup");
 
-	_stretchPopUp->appendEntry(_("<default>"));
-	_stretchPopUp->appendEntry(Common::U32String());
-	while (sm->name) {
-		_stretchPopUp->appendEntry(_c(sm->description, context), sm->id);
-		sm++;
+		_stretchPopUp->appendEntry(_("<default>"));
+		_stretchPopUp->appendEntry(Common::U32String());
+		while (sm->name) {
+			_stretchPopUp->appendEntry(_c(sm->description, context), sm->id);
+			sm++;
+		}
 	}
 
 	// The Scaler popup
@@ -1998,6 +2006,8 @@ void OptionsDialog::setupGraphicsTab() {
 		// Fixes crash when switching from SDL Surface to OpenGL
 		if (!_shader && g_system->hasFeature(OSystem::kFeatureShaders)) {
 			rebuild();
+		} else if (!_stretchPopUp && g_system->hasFeature(OSystem::kFeatureStretchMode)) {
+			rebuild();
 		}
 		setGraphicSettingsState(_enableGraphicSettings);
 	}
@@ -2008,9 +2018,6 @@ void OptionsDialog::setupGraphicsTab() {
 	if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
 		_stretchPopUpDesc->setVisible(true);
 		_stretchPopUp->setVisible(true);
-	} else {
-		_stretchPopUpDesc->setVisible(false);
-		_stretchPopUp->setVisible(false);
 	}
 	_fullscreenCheckbox->setVisible(true);
 	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
