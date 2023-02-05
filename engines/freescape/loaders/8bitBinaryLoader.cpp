@@ -438,6 +438,15 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	debugC(1, kFreescapeDebugParser, "Start area: %d", startArea);
 	uint8 startEntrance = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Entrace area: %d", startEntrance);
+	readField(file, 8); // Unknown
+
+	uint8 initialEnergy1 = readField(file, 8);
+	uint8 initialShield1 = readField(file, 8);
+	uint8 initialEnergy2 = readField(file, 8);
+	uint8 initialShield2 = readField(file, 8);
+
+	debugC(1, kFreescapeDebugParser, "Initial levels of energy: %d and shield: %d", initialEnergy1, initialShield1);
+	debugC(1, kFreescapeDebugParser, "Initial levels of energy: %d and shield: %d", initialEnergy2, initialShield2);
 
 	if (isAmiga() || isAtariST())
 		file->seek(offset + 0x14);
