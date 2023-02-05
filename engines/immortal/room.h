@@ -211,6 +211,6 @@ public:
 	void univAddSprite(uint16 vX, uint16 vY, uint16 x, uint16 y, SpriteName s, int img, uint16 p);
 };
 
-} // namespace immortal
+} // namespace Immortal
 
 #endif

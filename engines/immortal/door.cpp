@@ -127,4 +127,4 @@ void ImmortalEngine::doorCloseSecret() {}
 void ImmortalEngine::doorInit() {}
 void ImmortalEngine::doorClrLock() {}
 
-} // namespace immortal
+} // namespace Immortal

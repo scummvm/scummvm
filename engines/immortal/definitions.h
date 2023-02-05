@@ -235,6 +235,6 @@ enum SObjType {
 };
 
 
-} // namespace immortal
+} // namespace Immortal
 
 #endif

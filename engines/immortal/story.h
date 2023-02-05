@@ -254,6 +254,6 @@ struct Story {
 	CArray2D<SMonster> _monsters;
 };
 
-} // namespace immortal
+} // namespace Immortal
 
 #endif

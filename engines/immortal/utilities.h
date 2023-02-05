@@ -79,7 +79,7 @@ void delay8(int j);                                 // || /8
 bool inside(uint8 dist, uint8 centX, uint8 centY, uint8 pointX, uint8 pointY);
 bool insideRect(uint8 rectX, uint8 rectY, uint8 w, uint8 h, uint8 pointX, uint8 pointY);
 
-}; // namespace Util
+}; // namespace Utilities
 
 }; // namespace Immortal
 

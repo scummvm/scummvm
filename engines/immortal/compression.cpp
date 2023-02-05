@@ -258,4 +258,4 @@ void ImmortalEngine::appendList(uint16 codeW, uint16 k, uint16 &hash, uint16 &fi
 	}
 }
 
-} // namespace immortal
+} // namespace Immortal

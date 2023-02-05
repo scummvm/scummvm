@@ -153,4 +153,4 @@ bool ImmortalEngine::levelIsShowRoom(int r) {
 	return false;
 }
 
-} // namespace immortal
+} // namespace Immortal

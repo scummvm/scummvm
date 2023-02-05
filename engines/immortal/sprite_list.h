@@ -294,6 +294,6 @@ enum SpriteName {
 	kFont
 };
 
-} // namespace immortal
+} // namespace Immortal
 
 #endif

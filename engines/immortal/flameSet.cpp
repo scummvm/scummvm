@@ -148,4 +148,4 @@ int Room::flameGetCyc(Flame *f, int first) {
 	}
 }
 
-} // namespace immortal
+} // namespace Immortal

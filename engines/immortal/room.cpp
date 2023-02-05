@@ -85,4 +85,4 @@ bool Room::getWallNormal(uint8 x, uint8 y, uint8 xPrev, uint8 yPrev, int id) {
 	return true;
 }
 
-} // namespace immortal
+} // namespace Immortal

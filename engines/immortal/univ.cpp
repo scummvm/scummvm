@@ -28,4 +28,4 @@ void Room::univAddSprite(uint16 vX, uint16 vY, uint16 x, uint16 y, SpriteName s,
 	//g_immortal->addSprite(vX, vY, s, img, x, y, p);
 }
 
-} // namespace immortal
+} // namespace Immortal
