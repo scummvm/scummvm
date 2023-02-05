@@ -506,7 +506,10 @@ void Score::update() {
 	if (!_vm->_playbackPaused) {
 		uint32 count = _window->frozenLingoStateCount();
 		// Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
-		_movie->processEvent(kEventEnterFrame);
+		// D4 will only process recursive enterFrame handlers to a depth of 2.
+		// Any more will be ignored.
+		if ((_vm->getVersion() >= 400) && (count < 2))
+			_movie->processEvent(kEventEnterFrame);
 		// If another frozen state gets triggered, wait another update() before thawing
 		if (_window->frozenLingoStateCount() > count)
 			return;
