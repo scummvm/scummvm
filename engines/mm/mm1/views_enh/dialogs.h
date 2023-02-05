@@ -33,6 +33,7 @@
 //#include "mm/mm1/views/char.h"
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/game.h"
+#include "mm/mm1/views_enh/map_popup.h"
 #include "mm/mm1/views_enh/locations/market.h"
 #include "mm/mm1/views_enh/locations/temple.h"
 
@@ -55,6 +56,7 @@ private:
 	Views::Title _title;
 //	Views::ViewCharacters _viewCharacters;
 //	Views::ViewCharacter _viewCharacter;
+	ViewsEnh::MapPopup _mapPopup;
 	ViewsEnh::Locations::Market _market;
 	ViewsEnh::Locations::Temple _temple;
 public:

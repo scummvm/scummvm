@@ -109,13 +109,20 @@ void TextView::writeString(int x, int y, const Common::String &str,
 		if (line != lines.front())
 			newLine();
 
-		if (align != ALIGN_LEFT && x == 0) {
+		if (align != ALIGN_LEFT) {
 			int strWidth = getFont()->getStringWidth(line);
 
+			if (x == 0) {
+				if (align == ALIGN_MIDDLE)
+					x = _innerBounds.width() / 2;
+				else
+					x = _innerBounds.width();
+			}
+
 			if (align == ALIGN_MIDDLE)
-				_textPos.x = MAX((_innerBounds.width() - strWidth) / 2, 0);
+				_textPos.x = MAX(x - (strWidth / 2), 0);
 			else
-				_textPos.x = MAX(_innerBounds.width() - strWidth, 0);
+				_textPos.x = MAX(x - strWidth, 0);
 		}
 
 		writeString(line);

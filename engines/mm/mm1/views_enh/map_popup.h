@@ -19,23 +19,22 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_MAP_H
-#define MM1_VIEWS_ENH_MAP_H
+#ifndef MM1_VIEWS_ENH_MAP_POPUP_H
+#define MM1_VIEWS_ENH_MAP_POPUP_H
 
-#include "mm/mm1/events.h"
+#include "mm/mm1/views_enh/scroll_popup.h"
+#include "mm/mm1/views_enh/map.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define MAP_BORDER_SIZE 1
-#define MAP_TILE_W 10
-#define MAP_TILE_H 8
-
-class Map : public UIElement {
+class MapPopup : public ScrollPopup {
+private:
+	Map _map;
 public:
-	Map(UIElement *owner);
-	virtual ~Map() {}
+	MapPopup();
+	virtual ~MapPopup() {}
 
 	void draw() override;
 };

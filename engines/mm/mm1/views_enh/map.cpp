@@ -26,11 +26,6 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define BORDER_SIZE 1
-#define TILE_W 10
-#define TILE_H 8
-
-
 Map::Map(UIElement *owner) : UIElement("Map", owner) {
 }
 
@@ -40,12 +35,12 @@ void Map::draw() {
 	Graphics::ManagedSurface s = getSurface();
 
 	g_globals->_globalSprites.draw(&s, 15,
-		Common::Point(BORDER_SIZE, BORDER_SIZE));
+		Common::Point(MAP_BORDER_SIZE, MAP_BORDER_SIZE));
 
-	assert((_bounds.width() - BORDER_SIZE * 2) % TILE_W == 0);
-	assert((_bounds.height() - BORDER_SIZE * 2) % TILE_H == 0);
-	int totalX = (_bounds.width() - BORDER_SIZE * 2) / TILE_W,
-		totalY = (_bounds.height() - BORDER_SIZE * 2) / TILE_H;
+	assert((_bounds.width() - MAP_BORDER_SIZE * 2) % MAP_TILE_W == 0);
+	assert((_bounds.height() - MAP_BORDER_SIZE * 2) % MAP_TILE_H == 0);
+	int totalX = (_bounds.width() - MAP_BORDER_SIZE * 2) / MAP_TILE_W,
+		totalY = (_bounds.height() - MAP_BORDER_SIZE * 2) / MAP_TILE_H;
 
 	int currentX = maps._mapPos.x;
 	int currentY = maps._mapPos.y;
@@ -55,17 +50,17 @@ void Map::draw() {
 		MAP_H - totalY);
 
 	// Iterate through the cells
-	for (int yp = BORDER_SIZE, mazeY = yStart + totalY - 1;
-			mazeY >= yStart; yp += TILE_H, --mazeY) {
-		for (int xp = BORDER_SIZE, mazeX = xStart;
-				mazeX < (xStart + totalX); xp += TILE_W, ++mazeX) {
+	for (int yp = MAP_BORDER_SIZE, mazeY = yStart + totalY - 1;
+			mazeY >= yStart; yp += MAP_TILE_H, --mazeY) {
+		for (int xp = MAP_BORDER_SIZE, mazeX = xStart;
+				mazeX < (xStart + totalX); xp += MAP_TILE_W, ++mazeX) {
 			byte visited = map._visited[mazeY * MAP_W + mazeX];
 
 			if (!visited) {
 				g_globals->_tileSprites.draw(&s, 1,
 					Common::Point(xp, yp));
 			} else {
-				Common::Rect r(xp, yp, xp + TILE_W, yp + TILE_H);
+				Common::Rect r(xp, yp, xp + MAP_TILE_W, yp + MAP_TILE_H);
 				byte walls = map._walls[mazeY * MAP_W + mazeX];
 				int wallsW = walls & 3;
 				int wallsS = (walls >> 2) & 3;

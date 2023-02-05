@@ -118,6 +118,7 @@ MODULE_OBJS := \
 	mm1/views_enh/game_commands.o \
 	mm1/views_enh/game_messages.o \
 	mm1/views_enh/map.o \
+	mm1/views_enh/map_popup.o \
 	mm1/views_enh/scroll_popup.o \
 	mm1/views_enh/scroll_text.o \
 	mm1/views_enh/scroll_view.o \

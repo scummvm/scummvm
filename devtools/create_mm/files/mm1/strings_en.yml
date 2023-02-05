@@ -421,6 +421,11 @@ dialogs:
 			14: "thrashes at"
 			99: "shoots at"
 enhdialogs:
+	map:
+		north: "North"
+		south: "South"
+		east: "East"
+		west: "West"
 	character:
 		stats:
 			might: "mgt"

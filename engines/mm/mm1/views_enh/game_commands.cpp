@@ -54,9 +54,15 @@ GameCommands::GameCommands(UIElement *owner) :
 }
 
 bool GameCommands::msgAction(const ActionMessage & msg) {
-	if (msg._action == KEYBIND_MINIMAP) {
+	switch (msg._action) {
+	case KEYBIND_MINIMAP:
 		_minimap.toggleMinimap();
 		return true;
+	case KEYBIND_MAP:
+		addView("MapPopup");
+		return true;
+	default:
+		break;
 	}
 
 	return false;

@@ -26,7 +26,7 @@ namespace MM1 {
 namespace ViewsEnh {
 
 ScrollPopup::ScrollPopup(const Common::String &name) :
-		ScrollText("ScrollPopup") {
+		ScrollText(name) {
 }
 
 bool ScrollPopup::msgKeypress(const KeypressMessage &msg) {
