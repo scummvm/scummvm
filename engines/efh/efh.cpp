@@ -2055,35 +2055,35 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 		if (imageSetId != -1 && *_imp2PtrArray[imageSetId] != 0x30)
 			displayMiddleLeftTempText(_imp2PtrArray[imageSetId], true);
 	} else if (arg8 == 0) {
-		if (_mapSpecialTiles[_techId][tileId]._field3 == 0xFF) {
+		if (_mapSpecialTiles[_techId][tileId]._triggerType == 0xFF) {
 			displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 			return true;
 		}
 
-		if (_mapSpecialTiles[_techId][tileId]._field3 == 0xFE) {
+		if (_mapSpecialTiles[_techId][tileId]._triggerType == 0xFE) {
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamChar[counter]._id == -1)
 					continue;
-				if (_teamChar[counter]._id == _mapSpecialTiles[_techId][tileId]._triggerId) {
+				if (_teamChar[counter]._id == _mapSpecialTiles[_techId][tileId]._triggerValue) {
 					displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 					return true;
 				}
 			}
-		} else if (_mapSpecialTiles[_techId][tileId]._field3 == 0xFD) {
+		} else if (_mapSpecialTiles[_techId][tileId]._triggerType == 0xFD) {
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamChar[counter]._id == -1)
 					continue;
 
 				for (uint var2 = 0; var2 < 10; ++var2) {
-					if (_npcBuf[_teamChar[counter]._id]._inventory[var2]._ref == _mapSpecialTiles[_techId][tileId]._triggerId) {
+					if (_npcBuf[_teamChar[counter]._id]._inventory[var2]._ref == _mapSpecialTiles[_techId][tileId]._triggerValue) {
 						displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 						return true;
 					}
 				}
 			}
-		// original makes a useless check on (_mapSpecialTile[tileId]._field3 > 0x7F)
-		} else if (_mapSpecialTiles[_techId][tileId]._field3 <= 0x77) {
-			int16 scoreId = _mapSpecialTiles[_techId][tileId]._field3;
+		// original makes a useless check on (_mapSpecialTile[tileId]._triggerType > 0x7F)
+		} else if (_mapSpecialTiles[_techId][tileId]._triggerType <= 0x77) {
+			int16 scoreId = _mapSpecialTiles[_techId][tileId]._triggerType;
 			for (int counter = 0; counter < _teamSize; ++counter) {
 				if (_teamChar[counter]._id == -1)
 					continue;
@@ -2092,25 +2092,26 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 					// CHECKME : the whole loop doesn't make much sense as it's using scoreId instead of var2, plus _activeScore is an array of 15 bytes, not 0x77...
 					// Also, 39 correspond to the size of activeScore + passiveScore + infoScore + the 2 remaining bytes of the struct
 					warning("handleInteractionText - _activeScore[%d]", scoreId);
-					if (_npcBuf[_teamChar[counter]._id]._activeScore[scoreId] >= _mapSpecialTiles[_techId][tileId]._triggerId) {
+					if (_npcBuf[_teamChar[counter]._id]._activeScore[scoreId] >= _mapSpecialTiles[_techId][tileId]._triggerValue) {
 						displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 						return true;
 					}
 				}
 			}
 		}
-	} else if ((_mapSpecialTiles[_techId][tileId]._field3 == 0xFA && arg8 == 1) || (_mapSpecialTiles[_techId][tileId]._field3 == 0xFC && arg8 == 2) || (_mapSpecialTiles[_techId][tileId]._field3 == 0xFB && arg8 == 3)) {
-		if (_mapSpecialTiles[_techId][tileId]._triggerId == itemId) {
+	} else if ((_mapSpecialTiles[_techId][tileId]._triggerType == 0xFA && arg8 == 1) || (_mapSpecialTiles[_techId][tileId]._triggerType == 0xFC && arg8 == 2) || (_mapSpecialTiles[_techId][tileId]._triggerType == 0xFB && arg8 == 3)) {
+		if (_mapSpecialTiles[_techId][tileId]._triggerValue == itemId) {
 			displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 			return true;
 		}
 	} else if (arg8 == 4) {
-		int16 var6 = _mapSpecialTiles[_techId][tileId]._field3;
+		int16 var6 = _mapSpecialTiles[_techId][tileId]._triggerType;
 		if (var6 >= 0x78 && var6 <= 0xEF) {
 			var6 -= 0x78;
 			warning("handleInteractionText - _activeScore[%d]", var6);
-			// The 2 checks on var6 are useless, as [0x78..0xEF] - 0x78 => [0x00..0x77]
-			if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapSpecialTiles[_techId][tileId]._triggerId <= _npcBuf[charId]._activeScore[itemId]) {
+			// Note: The 2 checks on var6 are useless, as [0x78..0xEF] - 0x78 => [0x00..0x77]
+			// Note: In the data,all resulting values are between 2 and 14, so it's working
+			if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapSpecialTiles[_techId][tileId]._triggerValue <= _npcBuf[charId]._activeScore[itemId]) {
 				displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 				return true;
 			}
@@ -2123,7 +2124,7 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 	}
 
 	// CHECKME: there's suspiciously no check on tileId
-	if ((arg8 == 4 && _mapSpecialTiles[_techId][tileId]._field3 < 0xFA) || arg8 != 4) {
+	if ((arg8 == 4 && _mapSpecialTiles[_techId][tileId]._triggerType < 0xFA) || arg8 != 4) {
 		if (_mapSpecialTiles[_techId][tileId]._field7_textId > 0xFE)
 			return false;
 		displayImp1Text(_mapSpecialTiles[_techId][tileId]._field7_textId);

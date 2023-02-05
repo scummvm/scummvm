@@ -45,27 +45,28 @@ void EfhEngine::readAnimInfo() {
 
 	for (int i = 0; i < 100; ++i) {
 		for (int id = 0; id < 15; ++id) {
-			_animInfo[i]._unkAnimArray[id]._field[0] = f.readByte();
-			_animInfo[i]._unkAnimArray[id]._field[1] = f.readByte();
-			_animInfo[i]._unkAnimArray[id]._field[2] = f.readByte();
-			_animInfo[i]._unkAnimArray[id]._field[3] = f.readByte();
+			Common::String txtBuffer = "->";
+			for (int frameId = 0; frameId < 4; ++frameId) {
+				_animInfo[i]._frameList[id]._subFileId[frameId] = f.readByte();
+				txtBuffer += Common::String::format(" %d", _animInfo[i]._frameList[id]._subFileId[frameId]);
+			}
 
-			debugC(6, kDebugEngine, "%d %d %d %d", _animInfo[i]._unkAnimArray[id]._field[0], _animInfo[i]._unkAnimArray[id]._field[1], _animInfo[i]._unkAnimArray[id]._field[2], _animInfo[i]._unkAnimArray[id]._field[3]);
+			debugC(6, kDebugEngine, txtBuffer.c_str());
 		}
 
 		Common::String debugStr = "";
 		for (int id = 0; id < 10; ++id) {
-			_animInfo[i]._field3C_startY[id] = f.readByte();
-			debugStr += Common::String::format("%d ", _animInfo[i]._field3C_startY[id]);
+			_animInfo[i]._posY[id] = f.readByte();
+			debugStr += Common::String::format("%d ", _animInfo[i]._posY[id]);
 		}
-		debugC(6, kDebugEngine, "%s", debugStr.c_str());
+		debugC(6, kDebugEngine, debugStr.c_str());
 
 		debugStr = "";
 		for (int id = 0; id < 10; ++id) {
-			_animInfo[i]._field46_startX[id] = f.readUint16LE();
-			debugStr += Common::String::format("%d ", _animInfo[i]._field46_startX[id]);
+			_animInfo[i]._posX[id] = f.readUint16LE();
+			debugStr += Common::String::format("%d ", _animInfo[i]._posX[id]);
 		}
-		debugC(6, kDebugEngine, "%s", debugStr.c_str());
+		debugC(6, kDebugEngine, debugStr.c_str());
 		debugC(6, kDebugEngine, "---------");
 	}
 }
@@ -144,16 +145,16 @@ void EfhEngine::readItems() {
 		_items[i]._defense = f.readByte();
 		_items[i]._attacks = f.readByte();
 		_items[i]._uses = f.readByte();
-		_items[i].field_13 = f.readByte();
+		_items[i]._agilityModifier = f.readByte();
 		_items[i]._range = f.readByte();
 		_items[i]._attackType = f.readByte();
 		_items[i]._specialEffect = f.readByte();
-		_items[i]._field17_attackTypeDefense = f.readByte();
+		_items[i]._defenseType = f.readByte();
 		_items[i]._exclusiveType = f.readByte();
 		_items[i]._field19_mapPosX_or_maxDeltaPoints = f.readByte();
 		_items[i]._mapPosY = f.readByte();
 
-		debugC(7, kDebugEngine, "%s\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x", _items[i]._name, _items[i]._damage, _items[i]._defense, _items[i]._attacks, _items[i]._uses, _items[i].field_13, _items[i]._range, _items[i]._attackType, _items[i]._specialEffect, _items[i]._field17_attackTypeDefense, _items[i]._exclusiveType, _items[i]._field19_mapPosX_or_maxDeltaPoints, _items[i]._mapPosY);
+		debugC(7, kDebugEngine, "%s\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x", _items[i]._name, _items[i]._damage, _items[i]._defense, _items[i]._attacks, _items[i]._uses, _items[i]._agilityModifier, _items[i]._range, _items[i]._attackType, _items[i]._specialEffect, _items[i]._defenseType, _items[i]._exclusiveType, _items[i]._field19_mapPosX_or_maxDeltaPoints, _items[i]._mapPosY);
 	}
 }
 
@@ -323,9 +324,8 @@ void EfhEngine::loadNPCS() {
  */
 void EfhEngine::preLoadMaps() {
 	Common::DumpFile dump;
-	if (ConfMan.getBool("dump_scripts")) {
+	if (ConfMan.getBool("dump_scripts"))
 		dump.open("efhMaps.dump");
-	}
 
 	for (int idx = 0; idx < 19; ++idx) {
 		Common::String fileName = Common::String::format("tech.%d", idx);
@@ -345,16 +345,16 @@ void EfhEngine::preLoadMaps() {
 			_mapSpecialTiles[idx][i]._placeId = mapSpecialTilePtr[9 * i];
 			_mapSpecialTiles[idx][i]._posX = mapSpecialTilePtr[9 * i + 1];
 			_mapSpecialTiles[idx][i]._posY = mapSpecialTilePtr[9 * i + 2];
-			_mapSpecialTiles[idx][i]._field3 = mapSpecialTilePtr[9 * i + 3];
-			_mapSpecialTiles[idx][i]._triggerId = mapSpecialTilePtr[9 * i + 4];
+			_mapSpecialTiles[idx][i]._triggerType = mapSpecialTilePtr[9 * i + 3];
+			_mapSpecialTiles[idx][i]._triggerValue = mapSpecialTilePtr[9 * i + 4];
 			_mapSpecialTiles[idx][i]._field5_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 5]);
 			_mapSpecialTiles[idx][i]._field7_textId = READ_LE_UINT16(&mapSpecialTilePtr[9 * i + 7]);
 
 			if (ConfMan.getBool("dump_scripts") && _mapSpecialTiles[idx][i]._placeId != 0xFF) {
 				// dump a decoded version of the maps
-				Common::String buffer = Common::String::format("[%d][%d] _ placeId: 0x%02X _pos: %d, %d _field3: 0x%02X (%d), triggerId: %d, _field5/7: %d %d\n"
-					, idx, i, _mapSpecialTiles[idx][i]._placeId, _mapSpecialTiles[idx][i]._posX, _mapSpecialTiles[idx][i]._posX, _mapSpecialTiles[idx][i]._field3
-					, _mapSpecialTiles[idx][i]._field3, _mapSpecialTiles[idx][i]._triggerId, _mapSpecialTiles[idx][i]._field5_textId, _mapSpecialTiles[idx][i]._field7_textId);
+				Common::String buffer = Common::String::format("[%d][%d] _ placeId: 0x%02X _pos: %d, %d _triggerType: 0x%02X (%d), triggerId: %d, _field5/7: %d %d\n"
+					, idx, i, _mapSpecialTiles[idx][i]._placeId, _mapSpecialTiles[idx][i]._posX, _mapSpecialTiles[idx][i]._posX, _mapSpecialTiles[idx][i]._triggerType
+					, _mapSpecialTiles[idx][i]._triggerType, _mapSpecialTiles[idx][i]._triggerValue, _mapSpecialTiles[idx][i]._field5_textId, _mapSpecialTiles[idx][i]._field7_textId);
 				dump.write(buffer.c_str(), buffer.size());
 			}
 		}

@@ -157,8 +157,8 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 			s.syncAsByte(_mapSpecialTiles[i][idx]._placeId);
 			s.syncAsByte(_mapSpecialTiles[i][idx]._posX);
 			s.syncAsByte(_mapSpecialTiles[i][idx]._posY);
-			s.syncAsByte(_mapSpecialTiles[i][idx]._field3);
-			s.syncAsByte(_mapSpecialTiles[i][idx]._triggerId);
+			s.syncAsByte(_mapSpecialTiles[i][idx]._triggerType);
+			s.syncAsByte(_mapSpecialTiles[i][idx]._triggerValue);
 			s.syncAsUint16LE(_mapSpecialTiles[i][idx]._field5_textId);
 			s.syncAsUint16LE(_mapSpecialTiles[i][idx]._field7_textId);
 		}

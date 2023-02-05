@@ -504,7 +504,7 @@ void EfhEngine::handleFight_MobstersAttack(int groupId) {
 				int16 enemyPronoun = kEncounters[_mapMonsters[_techId][_teamMonster[groupId]._id]._monsterRef]._nameArticle;
 				int16 characterPronoun = _npcBuf[_teamChar[targetId]._id].getPronoun();
 
-				_teamChar[targetId]._pctDodgeMiss += (_items[monsterWeaponItemId].field_13 * 5);
+				_teamChar[targetId]._pctDodgeMiss += (_items[monsterWeaponItemId]._agilityModifier * 5);
 				int16 hitCount = 0;
 				int16 originalDamage = 0;
 				int16 damagePointsAbsorbed = 0;
@@ -1480,7 +1480,7 @@ int16 EfhEngine::getCharacterScore(int16 charId, int16 itemId) {
 		break;
 	}
 
-	extraScore += _items[itemId].field_13;
+	extraScore += _items[itemId]._agilityModifier;
 
 	int16 grandTotalScore = CLIP(totalScore + extraScore + 30, 5, 90);
 
@@ -1513,7 +1513,7 @@ bool EfhEngine::hasAdequateDefense(int16 monsterId, uint8 attackType) {
 	if (_items[itemId]._specialEffect != 0)
 		return false;
 
-	return _items[itemId]._field17_attackTypeDefense == attackType;
+	return _items[itemId]._defenseType == attackType;
 }
 
 bool EfhEngine::hasAdequateDefenseNPC(int16 charId, uint8 attackType) {
@@ -1521,7 +1521,7 @@ bool EfhEngine::hasAdequateDefenseNPC(int16 charId, uint8 attackType) {
 
 	int16 itemId = _npcBuf[charId]._defaultDefenseItemId;
 
-	if (_items[itemId]._specialEffect == 0 && _items[itemId]._field17_attackTypeDefense == attackType)
+	if (_items[itemId]._specialEffect == 0 && _items[itemId]._defenseType == attackType)
 		return true;
 
 	for (uint counter = 0; counter < 10; ++counter) {
@@ -1529,7 +1529,7 @@ bool EfhEngine::hasAdequateDefenseNPC(int16 charId, uint8 attackType) {
 			continue;
 
 		itemId = _npcBuf[charId]._inventory[counter]._ref;
-		if (_items[itemId]._specialEffect == 0 && _items[itemId]._field17_attackTypeDefense == attackType)
+		if (_items[itemId]._specialEffect == 0 && _items[itemId]._defenseType == attackType)
 			return true;
 	}
 	return false;

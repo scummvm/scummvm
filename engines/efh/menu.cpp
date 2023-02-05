@@ -1038,7 +1038,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			displayStringInSmallWindowWithBorder("There is no apparent affect!", false, charId, teamMonsterId, menuId, curMenuLine);
 		} else {
 			_messageToBePrinted += "  The magic sparkles brilliant hues in the air!";
-			setMapMonsterAggressivenessAndMovementType(teamMonsterId, _items[itemId]._field17_attackTypeDefense);
+			setMapMonsterAggressivenessAndMovementType(teamMonsterId, _items[itemId]._defenseType);
 		}
 		objectUsedFl = true;
 		break;
@@ -1236,7 +1236,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			teamCharId = teamMonsterId;
 
 		if (teamCharId != 0x1B) {
-			uint8 varAE = _items[itemId]._field17_attackTypeDefense;
+			uint8 varAE = _items[itemId]._defenseType;
 			uint8 effectPoints = getRandom(_items[itemId]._field19_mapPosX_or_maxDeltaPoints);
 			_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] += effectPoints;
 			if (_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] > 20) {
@@ -1266,7 +1266,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			teamCharId = teamMonsterId;
 
 		if (teamCharId != 0x1B) {
-			uint8 varAE = _items[itemId]._field17_attackTypeDefense;
+			uint8 varAE = _items[itemId]._defenseType;
 			uint8 effectPoints = getRandom(_items[itemId]._field19_mapPosX_or_maxDeltaPoints);
 			_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] -= effectPoints;
 			if (_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] > 20 || _npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] < 0) {
@@ -1348,7 +1348,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		}
 
 		if (teamCharId != 0x1B) {
-			int16 effectPoints = getRandom(_items[itemId]._field17_attackTypeDefense);
+			int16 effectPoints = getRandom(_items[itemId]._defenseType);
 			_npcBuf[_teamChar[teamCharId]._id]._hitPoints += effectPoints;
 			if (_npcBuf[_teamChar[teamCharId]._id]._hitPoints > _npcBuf[_teamChar[teamCharId]._id]._maxHP)
 				_npcBuf[_teamChar[teamCharId]._id]._hitPoints = _npcBuf[_teamChar[teamCharId]._id]._maxHP;
@@ -1378,7 +1378,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		}
 
 		if (teamCharId != 0x1B) {
-			int16 effectPoints = getRandom(_items[itemId]._field17_attackTypeDefense);
+			int16 effectPoints = getRandom(_items[itemId]._defenseType);
 			_npcBuf[_teamChar[teamCharId]._id]._hitPoints -= effectPoints;
 			if (_npcBuf[_teamChar[teamCharId]._id]._hitPoints < 0)
 				_npcBuf[_teamChar[teamCharId]._id]._hitPoints = 0;
