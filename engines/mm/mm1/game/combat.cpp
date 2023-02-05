@@ -1636,7 +1636,7 @@ Common::String Combat::subtractDamageFromChar() {
 			c._condition |= UNCONSCIOUS;
 
 			result = Common::String::format("%s %s", c._name,
-				STRING["monster_spellsState.goes_down"]);
+				STRING["monster_spellsState.goes_down"].c_str());
 			Sound::sound2(SOUND_8);
 
 		} else {
@@ -1644,7 +1644,7 @@ Common::String Combat::subtractDamageFromChar() {
 				c._condition = BAD_CONDITION | DEAD;
 
 			result = Common::String::format("%s %s", c._name,
-				STRING["monster_spellsState.dies"]);
+				STRING["monster_spellsState.dies"].c_str());
 			Sound::sound2(SOUND_8);
 		}
 	}
