@@ -228,7 +228,7 @@ bool MonsterTouch::action14(Common::String &line) {
 	if (canPerform(3) && isCharAffected()) {
 		setCondition(BAD_CONDITION | STONE);
 		line = Common::String::format("%s %s",
-			c.getDisplayName().c_str(),
+			c._name,
 			STRING["monster_actions.turned_to_stone"].c_str()
 		);
 		return true;
@@ -280,7 +280,7 @@ bool MonsterTouch::action17(Common::String &line) {
 	if (canPerform(3) && isCharAffected()) {
 		setCondition(BAD_CONDITION | DEAD);
 		line = Common::String::format("%s %s",
-			c.getDisplayName().c_str(),
+			c._name,
 			STRING["monster_actions.is_killed"].c_str()
 		);
 		return true;
@@ -368,7 +368,7 @@ bool MonsterTouch::action23(Common::String &line) {
 
 	setCondition(ERADICATED);
 	line = Common::String::format("%s %s",
-		c.getDisplayName().c_str(),
+		c._name,
 		STRING["monster_actions.is_eradicated"].c_str()
 	);
 

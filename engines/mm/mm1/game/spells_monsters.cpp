@@ -446,7 +446,7 @@ bool SpellsMonsters::casts() {
 }
 
 void SpellsMonsters::addCharName() {
-	add(g_globals->_currCharacter->getDisplayName());
+	add(g_globals->_currCharacter->_name);
 }
 
 void SpellsMonsters::damageRandomChar() {

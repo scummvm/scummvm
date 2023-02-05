@@ -358,7 +358,7 @@ void Search::drawTreasure() {
 
 		writeString(0, _lineNum++, Common::String::format(
 			STRING["dialogs.search.found_gems"].c_str(),
-			c.getDisplayName().c_str(),
+			c._name,
 			gems));
 		c._gems = MIN((int)c._gems + gems, 0xffff);
 	}
@@ -387,7 +387,7 @@ void Search::drawItem() {
 			// Add line for found item
 			writeString(0, _lineNum++, Common::String::format(
 				STRING["dialogs.search.found_item"].c_str(),
-				c.getDisplayName().c_str(),
+				c._name,
 				item->_name.c_str()
 			));
 
