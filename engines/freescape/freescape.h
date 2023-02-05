@@ -187,6 +187,7 @@ public:
 	void generateDemoInput();
 	virtual void pressedKey(const int keycode);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
+	virtual void checkIfStillInArea();
 	void changePlayerHeight(int index);
 	void increaseStepSize();
 	void decreaseStepSize();
@@ -449,6 +450,7 @@ public:
 	void initGameState() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
+	void checkIfStillInArea() override;
 	void pressedKey(const int keycode) override;
 
 	void loadAssetsDemo();

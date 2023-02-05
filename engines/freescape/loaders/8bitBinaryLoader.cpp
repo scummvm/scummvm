@@ -26,6 +26,7 @@
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/objects/connections.h"
 #include "freescape/objects/global.h"
 #include "freescape/objects/group.h"
 #include "freescape/objects/sensor.h"
@@ -115,6 +116,21 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		while(--byteSizeOfObject > 0)
 			structureArray.push_back(file->readByte());
 		return new GlobalStructure(structureArray);
+	} else if (objectID == 254 && objectType == ObjectType::kEntranceType) {
+		debugC(1, kFreescapeDebugParser, "Found the area connections (objectID: 254 with size %d)", byteSizeOfObject + 6);
+		Common::Array<uint8> connectionsArray;
+		connectionsArray.push_back(uint8(position.x()));
+		connectionsArray.push_back(uint8(position.y()));
+		connectionsArray.push_back(uint8(position.z()));
+
+		connectionsArray.push_back(uint8(v.x()));
+		connectionsArray.push_back(uint8(v.y()));
+		connectionsArray.push_back(uint8(v.z()));
+
+		byteSizeOfObject++;
+		while(--byteSizeOfObject > 0)
+			connectionsArray.push_back(file->readByte());
+		return new AreaConnections(connectionsArray);
 	}
 
 	debugC(1, kFreescapeDebugParser, "Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
