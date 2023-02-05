@@ -53,8 +53,8 @@ void TeCore::create() {
 	warning("TODO: TeCore::create: Finish implementing me.");
 }
 
-TeICodec *TeCore::createVideoCodec(const Common::Path &path) {
-	const Common::String filename = path.getLastComponent().toString();
+TeICodec *TeCore::createVideoCodec(const Common::FSNode &node) {
+	const Common::String filename = node.getName();
 	if (!filename.contains('.'))
 		return nullptr;
 	Common::String extn = filename.substr(filename.findFirstOf('.') + 1);
@@ -72,7 +72,7 @@ TeICodec *TeCore::createVideoCodec(const Common::Path &path) {
 	} else if (TeImagesSequence::matchExtension(extn)) {
 		return new TeImagesSequence();
 	}
-	error("TTeCore::createVideoCodec: Unrecognised format %s", path.toString().c_str());
+	error("TTeCore::createVideoCodec: Unrecognised format %s", node.getName().c_str());
 }
 
 const Common::String &TeCore::fileFlagSystemFlag(const Common::String &name) const {
