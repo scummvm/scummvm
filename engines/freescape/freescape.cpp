@@ -645,6 +645,19 @@ bool FreescapeEngine::checkIfGameEnded() {
 	return false; // TODO
 }
 
+void FreescapeEngine::setGameBit(int index) {
+	_gameStateBits[_currentArea->getAreaID()] |= (1 << (index - 1));
+}
+
+void FreescapeEngine::clearGameBit(int index) {
+	_gameStateBits[_currentArea->getAreaID()] &= ~(1 << (index - 1));
+}
+
+void FreescapeEngine::toggleGameBit(int index) {
+	_gameStateBits[_currentArea->getAreaID()] ^= (1 << (index - 1));
+}
+
+
 void FreescapeEngine::initGameState() {
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;

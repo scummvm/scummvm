@@ -239,10 +239,12 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 				playSound(3, false);
 		}
 		debugC(1, kFreescapeDebugCode, "Runing effects:");
+		if (_flyMode)
+			setGameBit(31);
 		checkCollisions(true); // run the effects
 	} else {
 		debugC(1, kFreescapeDebugCode, "Runing effects: at: %f, %f, %f", _position.x(), _position.y(), _position.z());
-
+		setGameBit(31);
 		checkCollisions(true); // run the effects
 		if (_currentArea->getAreaID() == previousAreaID) {
 			if (_flyMode)
@@ -268,6 +270,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	//debugC(1, kFreescapeDebugMove, "player height: %f", _position.y() - areaScale * _playerHeight);
 	if (_currentArea->getAreaID() == previousAreaID)
 		executeMovementConditions();
+	clearGameBit(31);
 }
 
 bool FreescapeEngine::checkFloor(Math::Vector3d currentPosition) {
