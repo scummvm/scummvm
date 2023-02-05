@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-05 22:18+0000\n"
+"POT-Creation-Date: 2023-02-05 22:27+0000\n"
 "PO-Revision-Date: 2023-01-23 06:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -57,7 +57,7 @@ msgid "Go up"
 msgstr "上へ"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadpacksdialog.cpp:267
-#: gui/downloadpacksdialog.cpp:463 gui/editgamedialog.cpp:352
+#: gui/downloadpacksdialog.cpp:462 gui/editgamedialog.cpp:352
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2347
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
@@ -99,11 +99,11 @@ msgstr "ゲームデータのダウンロード先を選択"
 msgid "Select directory with game data"
 msgstr "ゲームデータのディレクトリーを選択"
 
-#: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:226
+#: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:225
 msgid "From: "
 msgstr "ダウンロード元： "
 
-#: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
+#: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:226
 msgid "To: "
 msgstr "ダウンロード先： "
 
@@ -202,9 +202,10 @@ msgstr ""
 msgid "Downloaded %s %S / %s %S"
 msgstr "ダウンロード済 %s %S / %s %S"
 
-#: gui/downloaddialog.cpp:221 gui/downloadpacksdialog.cpp:371
-#, c-format
-msgid "Download speed: %s %S"
+#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
+#, fuzzy, c-format
+#| msgid "Download speed: %s %S"
+msgid "Download speed: %s %S/s"
 msgstr "ダウンロード速度：%s %S"
 
 #: gui/downloadpacksdialog.cpp:158
@@ -241,7 +242,7 @@ msgstr "ダウンロード"
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "DL完了。%dパック検出しました、%s %S"
 
-#: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:385
+#: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:358 engines/nancy/dialogs.cpp:313
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
@@ -250,26 +251,29 @@ msgstr "DL完了。%dパック検出しました、%s %S"
 msgid "Close"
 msgstr "閉じる"
 
-#: gui/downloadpacksdialog.cpp:392 gui/downloadpacksdialog.cpp:439
+#: gui/downloadpacksdialog.cpp:391 gui/downloadpacksdialog.cpp:438
 msgid "ERROR: No icons path set"
 msgstr "エラー：アイコンパス未指定"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:427
+#: gui/downloadpacksdialog.cpp:426
 #, c-format
 msgid "No new %S available"
 msgstr "新しい利用可能な%Sなし"
 
-#: gui/downloadpacksdialog.cpp:463
-#, c-format
+#: gui/downloadpacksdialog.cpp:462
+#, fuzzy, c-format
+#| msgid ""
+#| "You are about to remove %s %s of data, deleting all previously downloaded "
+#| "%S. Do you want to proceed?"
 msgid ""
-"You are about to remove %s %s of data, deleting all previously downloaded "
+"You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
 "データ%s %sを削除すると、既にダウンロードされた%Sの全てが削除されます。続行し"
 "ますか?"
 
-#: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "進む"
 

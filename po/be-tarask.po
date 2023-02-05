@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-05 22:18+0000\n"
+"POT-Creation-Date: 2023-02-05 22:27+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -58,7 +58,7 @@ msgid "Go up"
 msgstr "Угару"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadpacksdialog.cpp:267
-#: gui/downloadpacksdialog.cpp:463 gui/editgamedialog.cpp:352
+#: gui/downloadpacksdialog.cpp:462 gui/editgamedialog.cpp:352
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2347
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
@@ -100,11 +100,11 @@ msgstr "Выберыце тэчку, у якую заладаваць файлы
 msgid "Select directory with game data"
 msgstr "Выберыце тэчку з файламі гульні"
 
-#: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:226
+#: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:225
 msgid "From: "
 msgstr "Ад: "
 
-#: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
+#: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:226
 msgid "To: "
 msgstr "Да: "
 
@@ -204,9 +204,10 @@ msgstr ""
 msgid "Downloaded %s %S / %s %S"
 msgstr "Заладавана %s %S / %s %S"
 
-#: gui/downloaddialog.cpp:221 gui/downloadpacksdialog.cpp:371
-#, c-format
-msgid "Download speed: %s %S"
+#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
+#, fuzzy, c-format
+#| msgid "Download speed: %s %S"
+msgid "Download speed: %s %S/s"
 msgstr "Хуткасьць ладаваньня: %s %S"
 
 #: gui/downloadpacksdialog.cpp:158
@@ -246,7 +247,7 @@ msgstr "Заладаваць"
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "Ладаваньне завершанае, заладавана %d новых пакоў, %s⋅%S"
 
-#: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:385
+#: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/unknown-game-dialog.cpp:53
 #: backends/platform/android/options.cpp:358 engines/nancy/dialogs.cpp:313
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
@@ -255,25 +256,25 @@ msgstr "Ладаваньне завершанае, заладавана %d но�
 msgid "Close"
 msgstr "Закрыць"
 
-#: gui/downloadpacksdialog.cpp:392 gui/downloadpacksdialog.cpp:439
+#: gui/downloadpacksdialog.cpp:391 gui/downloadpacksdialog.cpp:438
 msgid "ERROR: No icons path set"
 msgstr "ПАМЫЛКА: Ня ўведзены шлях да значкоў"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:427
+#: gui/downloadpacksdialog.cpp:426
 #, fuzzy, c-format
 #| msgid "No new icons packs available"
 msgid "No new %S available"
 msgstr "Няма новых пакоў значкоў"
 
-#: gui/downloadpacksdialog.cpp:463
+#: gui/downloadpacksdialog.cpp:462
 #, c-format
 msgid ""
-"You are about to remove %s %s of data, deleting all previously downloaded "
+"You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
 
-#: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Працягнуць"
 
