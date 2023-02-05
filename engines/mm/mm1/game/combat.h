@@ -44,7 +44,7 @@ protected:
 	int _monsterIndex, _currentChar;
 	bool _allowFight, _allowShoot, _allowCast, _allowAttack;
 	byte _val6, _val7;
-	int _partyIndex, _val9, _val10;
+	int _partyIndex, _val9, _monsterShootingCtr;
 	int _activeMonsterNum;
 	int _destCharCtr;
 	int _destAC;

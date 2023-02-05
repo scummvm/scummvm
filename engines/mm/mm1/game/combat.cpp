@@ -54,7 +54,7 @@ void Combat::clear() {
 	_val1 = 0;
 	_val6 = _val7 = 0;
 	_partyIndex = _val9 = 0;
-	_val10 = _destCharCtr = 0;
+	_monsterShootingCtr = _destCharCtr = 0;
 	_activeMonsterNum = 0;
 	_destAC = 0;
 	_numberOfTimes = 0;
@@ -720,7 +720,7 @@ void Combat::removeDeadMonsters() {
 }
 
 void Combat::checkParty() {
-	_val10 = 0;
+	_monsterShootingCtr = 0;
 
 	if (g_globals->_party.checkPartyIncapacitated())
 		return;
@@ -912,7 +912,7 @@ void Combat::updateMonsterStatus() {
 bool Combat::monsterTouch(Common::String &line) {
 	line.clear();
 
-	if (_val10 || !_monsterP->_bonusOnTouch)
+	if (_monsterShootingCtr || !_monsterP->_bonusOnTouch)
 		return false;
 	if (_monsterP->_bonusOnTouch & 0x80) {
 		proc9();
@@ -1473,13 +1473,13 @@ void Combat::monsterAttackRandom() {
 	size_t monsterNameSize = enc._monsterList[getMonsterIndex()]._name.size() + 1;
 
 	_monsterAttackStyle = getRandomNumber((monsterNameSize < 13) ? 15 : 11);
-	_val10 = 0;
+	_monsterShootingCtr = 0;
 
 	monsterAttackInner();
 }
 
 void Combat::monsterAttackShooting() {
-	++_val10;
+	++_monsterShootingCtr;
 	_monsterAttackStyle = 99;	// shooting
 
 	monsterAttackInner();
@@ -1497,7 +1497,7 @@ void Combat::monsterAttackInner() {
 	if (c._condition & (ASLEEP | BLINDED | PARALYZED))
 		_attackerLevel += 5;
 
-	if (_val10) {
+	if (_monsterShootingCtr) {
 		_attackAttr2._base = _monsterP->_specialAbility & 0x7f;
 		_numberOfTimes = 1;
 
@@ -1524,7 +1524,7 @@ void Combat::monsterAttackInner() {
 	if (g_globals->_activeSpells._s.power_shield)
 		_damage /= 2;
 
-	if (_val10 && g_globals->_activeSpells._s.shield)
+	if (_monsterShootingCtr && g_globals->_activeSpells._s.shield)
 		_damage = MAX((int)_damage - 8, 0);
 
 	// Display the result
