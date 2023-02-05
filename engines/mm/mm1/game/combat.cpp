@@ -1514,6 +1514,8 @@ void Combat::monsterAttackInner() {
 		_attackerLevel = (attackerLevel > 255) ? 192 : attackerLevel;
 	}
 
+	// Calculate attack damage and set mode to display the result
+	addAttackDamage();
 	setMode(MONSTER_ATTACK);
 }
 
