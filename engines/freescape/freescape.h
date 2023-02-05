@@ -442,6 +442,9 @@ class DarkEngine : public FreescapeEngine {
 public:
 	DarkEngine(OSystem *syst, const ADGameDescription *gd);
 
+	uint32 _initialFuel;
+	uint32 _initialShield;
+
 	void loadAssets() override;
 	void initGameState() override;
 
@@ -455,6 +458,7 @@ public:
 	void executeMovementConditions() override;
 
 	void drawUI() override;
+	void drawDOSUI(Graphics::Surface *surface);
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 };
