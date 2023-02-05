@@ -133,7 +133,7 @@ private:
 protected:
 	Common::Array<Monster *> _remainingMonsters;
 	LineArray _lines;
-	int _damage = 0;
+	int _damage = 0, _displayedDamage = 0;
 
 	virtual bool canMonsterCast() const = 0;
 	virtual int getMonsterIndex() const = 0;

@@ -892,6 +892,8 @@ void Combat::addAttackDamage() {
 			++_timesHit;
 		}
 	}
+
+	_displayedDamage = _damage;
 }
 
 void Combat::updateMonsterStatus() {
@@ -1514,8 +1516,18 @@ void Combat::monsterAttackInner() {
 		_attackerLevel = (attackerLevel > 255) ? 192 : attackerLevel;
 	}
 
-	// Calculate attack damage and set mode to display the result
+	// Calculate attack damage
 	addAttackDamage();
+
+	// Do some final damage adjustment which may reduce the
+	// actual damage from what gets displayed
+	if (g_globals->_activeSpells._s.power_shield)
+		_damage /= 2;
+
+	if (_val10 && g_globals->_activeSpells._s.shield)
+		_damage = MAX((int)_damage - 8, 0);
+
+	// Display the result
 	setMode(MONSTER_ATTACK);
 }
 

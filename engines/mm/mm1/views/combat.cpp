@@ -655,15 +655,6 @@ void Combat::writeMonsterAttack() {
 	writeString(0, 20, line);
 	writeString(0, 21, getAttackString());
 
-	// It's not ideal, but we have to do some final minor damage
-	// adjustment here after we've written the basic damage the
-	// character will receive
-	if (g_globals->_activeSpells._s.power_shield)
-		_damage /= 2;
-
-	if (_val10 && g_globals->_activeSpells._s.shield)
-		_damage = MAX((int)_damage - 8, 0);
-
 	if (_damage) {
 		// Attacks wake up sleeping characters
 		if (!(c._condition & BAD_CONDITION))
@@ -806,7 +797,7 @@ Common::String Combat::getAttackString() {
 
 	line1 += Common::String::format(" %s ", STRING["dialogs.combat.and"].c_str());
 
-	if (_damage == 0) {
+	if (_displayedDamage == 0) {
 		line1 += STRING["dialogs.combat.misses"];
 	} else {
 		line1 += STRING["dialogs.combat.hit"];
@@ -823,7 +814,7 @@ Common::String Combat::getAttackString() {
 		}
 
 		line1 += Common::String::format(" %s %d %s",
-			STRING["dialogs.combat.for"].c_str(), _damage,
+			STRING["dialogs.combat.for"].c_str(), _displayedDamage,
 			STRING[_damage == 1 ? "dialogs.combat.point" : "dialogs.combat.points"].c_str());
 
 		if (line1.size() < 30) {
