@@ -378,9 +378,6 @@ void OptionsDialog::build() {
 				_vsyncCheckbox->setOverride(true);
 		}
 
-		_rendererTypePopUp->setEnabled(true);
-		_rendererTypePopUp->setSelectedTag(Graphics::Renderer::parseTypeCode(ConfMan.get("renderer", _domain)));
-
 		_antiAliasPopUp->setEnabled(true);
 		if (ConfMan.hasKey("antialiasing", _domain)) {
 			_antiAliasPopUp->setSelectedTag(ConfMan.getInt("antialiasing", _domain));
@@ -462,6 +459,11 @@ void OptionsDialog::build() {
 			_shaderButton->setVisible(false);
 			_shaderClearButton->setVisible(false);
 		}
+	}
+
+	if (_rendererTypePopUp) {
+		_rendererTypePopUp->setEnabled(true);
+		_rendererTypePopUp->setSelectedTag(Graphics::Renderer::parseTypeCode(ConfMan.get("renderer", _domain)));
 	}
 
 	// Audio options
@@ -710,11 +712,13 @@ void OptionsDialog::apply() {
 				}
 			}
 
-			if (_rendererTypePopUp->getSelectedTag() > 0) {
-				Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
-				ConfMan.set("renderer", Graphics::Renderer::getTypeCode(selected), _domain);
-			} else {
-				ConfMan.removeKey("renderer", _domain);
+			if (_rendererTypePopUp) {
+				if (_rendererTypePopUp->getSelectedTag() > 0) {
+					Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
+					ConfMan.set("renderer", Graphics::Renderer::getTypeCode(selected), _domain);
+				} else {
+					ConfMan.removeKey("renderer", _domain);
+				}
 			}
 
 			if (_antiAliasPopUp->getSelectedTag() != (uint32)-1) {
@@ -1225,10 +1229,13 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_gfxPopUp->setEnabled(enabled);
 	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
-	_rendererTypePopUpDesc->setEnabled(enabled);
-	_rendererTypePopUp->setEnabled(enabled);
 	_antiAliasPopUpDesc->setEnabled(enabled);
 	_antiAliasPopUp->setEnabled(enabled);
+
+	if (_rendererTypePopUp) {
+		_rendererTypePopUpDesc->setEnabled(enabled);
+		_rendererTypePopUp->setEnabled(enabled);
+	}
 
 	if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
 		_stretchPopUpDesc->setEnabled(enabled);
@@ -1646,21 +1653,23 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	if (g_system->hasFeature(OSystem::kFeatureVSync))
 		_vsyncCheckbox = new CheckboxWidget(boss, prefix + "grVSyncCheckbox", _("V-Sync"), _("Wait for the vertical sync to refresh the screen in order to prevent tearing artifacts"));
 
-	if (g_system->getOverlayWidth() > 320)
-		_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game 3D Renderer:"));
-	else
-		_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _c("Game 3D Renderer:", "lowres"));
-
-	_rendererTypePopUp = new PopUpWidget(boss, prefix + "grRendererTypePopup");
-	_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
-	_rendererTypePopUp->appendEntry("");
 	Common::Array<Graphics::RendererTypeDescription> rt = Graphics::Renderer::listTypes();
-	for (Common::Array<Graphics::RendererTypeDescription>::iterator it = rt.begin();
-	        it != rt.end(); ++it) {
-		if (g_system->getOverlayWidth() > 320) {
-			_rendererTypePopUp->appendEntry(_(it->description), it->id);
-		} else {
-			_rendererTypePopUp->appendEntry(_c(it->description, "lowres"), it->id);
+	if (!rt.empty()) {
+		if (g_system->getOverlayWidth() > 320)
+			_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game 3D Renderer:"));
+		else
+			_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _c("Game 3D Renderer:", "lowres"));
+
+		_rendererTypePopUp = new PopUpWidget(boss, prefix + "grRendererTypePopup");
+		_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
+		_rendererTypePopUp->appendEntry("");
+		for (Common::Array<Graphics::RendererTypeDescription>::iterator it = rt.begin();
+		        it != rt.end(); ++it) {
+			if (g_system->getOverlayWidth() > 320) {
+				_rendererTypePopUp->appendEntry(_(it->description), it->id);
+			} else {
+				_rendererTypePopUp->appendEntry(_c(it->description, "lowres"), it->id);
+			}
 		}
 	}
 
