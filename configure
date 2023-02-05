@@ -1637,6 +1637,11 @@ kos32)
 	_host_cpu=i686
 	_host_alias=kos32
 	;;
+m68k-atari-mint)
+	_host_os=mint
+	_host_cpu=m68k
+	_host_alias=m68k-atari-mint
+	;;
 maemo)
 	_host_os=maemo
 	_host_cpu=arm
@@ -3553,6 +3558,17 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/sdl/kolibrios/kolibrios.mk"
 			;;
 		m68k-atari-mint)
+			# auto -> yes
+			if test "$_debug_build" = "no"; then
+				# --disable-debug 
+				append_var LDFLAGS "-s"
+			fi
+
+			# auto -> no
+			if test "$_optimizations" = "yes"; then
+				# --enable-release, --enable-optimizations
+				append_var CXXFLAGS "-fomit-frame-pointer"
+			fi
 			_seq_midi=no
 			_timidity=no
 			;;
@@ -3840,6 +3856,16 @@ case $_backend in
 		if test "$_host" = ouya; then
 			_sdlnet=no
 		fi
+		;;
+	atari)
+		append_var DEFINES "-DATARI"
+		#append_var DEFINES "-DDISABLE_FANCY_THEMES"
+		#append_var DEFINES "-DDISABLE_SID"
+		#append_var DEFINES "-DDISABLE_NES_APU"
+		#append_var DEFINES "-DDISABLE_DOSBOX_OPL"
+		append_var ASFLAGS "-m68030"
+		append_var CXXFLAGS "-m68020-60"
+		append_var LDFLAGS "-m68020-60"
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
