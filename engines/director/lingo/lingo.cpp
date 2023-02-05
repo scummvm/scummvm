@@ -224,7 +224,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 }
 
 Lingo::~Lingo() {
-	resetLingo();
+	cleanupLingo();
 	cleanupFuncs();
 	cleanupMethods();
 	delete _compiler;
@@ -707,15 +707,17 @@ void Lingo::resetLingoGo() {
 	// puppetSprite
 }
 
-void Lingo::resetLingo() {
-	debugC(3, kDebugLingoExec, "Resetting Lingo!");
-
+void Lingo::cleanupLingo() {
 	g_director->_wm->removeMenu();
 
 	while (_state->callstack.size()) {
 		popContext(true);
 	}
+}
 
+void Lingo::resetLingo() {
+	debugC(3, kDebugLingoExec, "Resetting Lingo!");
+	cleanupLingo();
 	resetLingoGo();
 }
 
