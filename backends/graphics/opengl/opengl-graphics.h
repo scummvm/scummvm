@@ -405,12 +405,12 @@ protected:
 	/**
 	 * The width of the cursor in scaled game display area coordinates.
 	 */
-	uint _cursorWidthScaled;
+	float _cursorWidthScaled;
 
 	/**
 	 * The height of the cursor in scaled game display area coordinates.
 	 */
-	uint _cursorHeightScaled;
+	float _cursorHeightScaled;
 
 	/**
 	 * The key color.

@@ -667,9 +667,9 @@ void OpenGLGraphicsManager::updateScreen() {
 			_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
 			_pipeline->drawTexture(_cursor->getGLTexture(),
-									 _cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
-									 _cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
-									 _cursorWidthScaled, _cursorHeightScaled);
+			                         _cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
+			                         _cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
+			                         _cursorWidthScaled, _cursorHeightScaled);
 			drawCursor = false;
 
 			// Everything we need to clip has been clipped
@@ -1518,11 +1518,14 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 		return;
 	}
 
+	uint cursorWidth = _cursor->getWidth();
+	uint cursorHeight = _cursor->getHeight();
+
 	// By default we use the unscaled versions.
 	_cursorHotspotXScaled = _cursorHotspotX;
 	_cursorHotspotYScaled = _cursorHotspotY;
-	_cursorWidthScaled = _cursor->getWidth();
-	_cursorHeightScaled = _cursor->getHeight();
+	_cursorWidthScaled = cursorWidth;
+	_cursorHeightScaled = cursorHeight;
 
 	// In case scaling is actually enabled we will scale the cursor according
 	// to the game screen.
@@ -1531,10 +1534,10 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 		const frac_t screenScaleFactorY = intToFrac(_gameDrawRect.height()) / _gameScreen->getHeight();
 
 		_cursorHotspotXScaled = fracToInt(_cursorHotspotXScaled * screenScaleFactorX);
-		_cursorWidthScaled    = fracToInt(_cursorWidthScaled    * screenScaleFactorX);
+		_cursorWidthScaled    = fracToDouble(cursorWidth        * screenScaleFactorX);
 
 		_cursorHotspotYScaled = fracToInt(_cursorHotspotYScaled * screenScaleFactorY);
-		_cursorHeightScaled   = fracToInt(_cursorHeightScaled   * screenScaleFactorY);
+		_cursorHeightScaled   = fracToDouble(cursorHeight       * screenScaleFactorY);
 	}
 }
 
