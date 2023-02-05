@@ -131,6 +131,7 @@ private:
 	void screenShot();
 
 	bool processImmediateFrameScript(Common::String s, int id);
+	bool processFrozenScripts();
 
 public:
 	Common::Array<Channel *> _channels;
