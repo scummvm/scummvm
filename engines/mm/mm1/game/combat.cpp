@@ -1621,9 +1621,10 @@ void Combat::combatDone() {
 	g_globals->_party.rearrange(g_globals->_combatParty);
 }
 
-void Combat::subtractDamageFromChar() {
+Common::String Combat::subtractDamageFromChar() {
 	Character &c = *g_globals->_currCharacter;
 	int newHp = c._hpBase - _damage;
+	Common::String result;
 
 	if (newHp > 0) {
 		c._hpBase = newHp;
@@ -1633,22 +1634,22 @@ void Combat::subtractDamageFromChar() {
 
 		if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS))) {
 			c._condition |= UNCONSCIOUS;
-			addCharName();
-			add(' ');
-			add(STRING["monster_spellsState.goes_down"]);
+
+			result = Common::String::format("%s %s", c._name,
+				STRING["monster_spellsState.goes_down"]);
 			Sound::sound2(SOUND_8);
 
 		} else {
 			if (c._condition & BAD_CONDITION)
 				c._condition = BAD_CONDITION | DEAD;
 
-			_lines.push_back(Line(0, 3, ""));
-			addCharName();
-			add(' ');
-			add(STRING["monster_spellsState.dies"]);
+			result = Common::String::format("%s %s", c._name,
+				STRING["monster_spellsState.dies"]);
 			Sound::sound2(SOUND_8);
 		}
 	}
+
+	return result;
 }
 
 } // namespace Game

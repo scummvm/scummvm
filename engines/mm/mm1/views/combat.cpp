@@ -677,16 +677,9 @@ void Combat::writeMonsterAttack() {
 		if (monsterTouch(line))
 			writeString(0, yp++, line);
 
-		// TODO: Maybe refactor subtractDamage to not use
-		// the _lines/add methods, which would make it cleaner
-		// to call it from here
-		_lines.clear();
-		_lines.push_back(Line(0, 3, ""));
-		subtractDamageFromChar();
-
-		if (!_lines.back()._text.empty())
-			writeString(0, yp, _lines.back()._text);
-		_lines.clear();
+		Common::String damageStr = subtractDamageFromChar();
+		if (!damageStr.empty())
+			writeString(0, yp, damageStr);
 	}
 }
 

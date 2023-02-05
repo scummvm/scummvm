@@ -490,7 +490,9 @@ void SpellsMonsters::handleDamage() {
 					_damage = 1;
 
 				writeDamage();
-				subtractDamageFromChar();
+				Common::String str = subtractDamageFromChar();
+				if (!str.empty())
+					_lines.push_back(Line(0, _lines.back().y + 1, str));
 			}
 		}
 	}

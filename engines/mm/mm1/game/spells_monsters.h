@@ -144,7 +144,7 @@ protected:
 	 * Subtracts the damage from the character, making
 	 * them unconscious or die if needed
 	 */
-	virtual void subtractDamageFromChar() = 0;
+	virtual Common::String subtractDamageFromChar() = 0;
 
 	/**
 	 * Adds text for damage effects on the party
