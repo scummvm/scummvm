@@ -370,16 +370,19 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "12hoursslave", "12 Hours a Slave" },
 	{ "15minutes", "15 Minutes" },
 	{ "1dayamosquito", "1 day a mosquito" },
+	{ "2000ways", "2000 Ways To Play Badmington" },
 	{ "2034acaftercanada1", "2034 A.C. (After Canada)" },
 	{ "2034acaftercanada2", "2034 A.C. (After Canada) II" },
 	{ "24hourgame", "The 24 Hour Game" },
 	{ "24hours", "24 Hours" },
 	{ "30minutes", "30 minutes" },
+	{ "3minfart", "3 Minutes a Fart" },
 	{ "3pigsandawolf", "Three Little Pigs and a Wolf" },
 	{ "46memorylane", "46 Memory Lane" },
 	{ "4lungboy", "4-Lung Boy" },
 	{ "4ofclubs", "4 of Clubs" },
 	{ "5daysastranger", "5 Days A Stranger" },
+	{ "5dragons", "5 Dragons" },
 	{ "5oclocklock", "5-O'clock Lock" },
 	{ "6174solitaire", "6174 Solitaire" },
 	{ "6daysasacrifice", "6 Days A Sacrifice" },
@@ -463,6 +466,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "agsmastermind", "AGS Mastermind" },
 	{ "agsmittensshooter", "AGS Mittens Shooter" },
 	{ "agsmoduletester", "AGS Module Tester" },
+	{ "agstechsupport", "AGS Tech Support Game" },
 	{ "agswerewolf", "AGS Werewolf" },
 	{ "agsyahtzee", "AGS Yahtzee" },
 	{ "agsyahtzee2", "AGS Yahtzee 2" },
@@ -488,6 +492,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "allgonesoon", "All Gone Soon" },
 	{ "allgonesoon2", "All Gone Soon 2" },
 	{ "allhallowseve", "All Hallows' Eve" },
+	{ "alloweisland", "Al Lowe's Secret Island" },
 	{ "allpigs", "All Pigs Deserve To Burn In Hell" },
 	{ "allthewaydown", "All The Way Down" },
 	{ "alluminum", "P.I. Al Luminum: Haunted House" },
@@ -592,6 +597,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bakeoffitalia", "Bake Off Italia - The Graphic Adventure" },
 	{ "baldysadventure", "Baldy's Adventure" },
 	{ "balloonface", "Balloon Face" },
+	{ "balls", "Balls" },
 	{ "baltazarthefamiliar", "Baltazar the Familiar" },
 	{ "bananaman", "Banana Man" },
 	{ "bananaracer", "Banana Racer" },
@@ -617,6 +623,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "barrunner", "Ed Watts: Bar Runner" },
 	{ "bartolomeo", "Bartolomeo, misled by circumstances, learns that appearances can be deceptive" },
 	{ "bartsquestfortv", "Bart's Quest For TV" },
+	{ "basedon", "Basedon - The Game" },
 	{ "battlewarriorsrt", "Battle Warriors: Rovendale Tactics" },
 	{ "bbcscreensaver", "Background Blitz Collection Screensaver" },
 	{ "bcremake", "Black Cauldron Remake" },
@@ -627,6 +634,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "beasts", "Beasts" },
 	{ "beatthebuzzer", "Beat the Buzzer" },
 	{ "beautiesandbeasts", "Beauties and Beasts" },
+	{ "beforethedarkcrystal", "Before the Dark Crystal" },
 	{ "beforethedarkcrystal2", "Before the Dark Crystal II" },
 	{ "beforeww2", "Before WW2" },
 	{ "bellyofthebeast", "Belly of the Beast" },
@@ -1304,8 +1312,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "hawkmanor", "Terror Within Hawk Manor" },
 	{ "headbangerheaven", "Headbanger's Heaven - A Rock & Roll Adventure" },
 	{ "headoverheels", "Head over Heels" },
-	{ "heartofabraxas", "Heart of Abraxas" },
 	{ "heartland", "Heartland" },
+	{ "heartofabraxas", "Heart of Abraxas" },
+	{ "heartpart", "A Heart between Parts" },
 	{ "heatwave", "Heatwave" },
 	{ "heavenhell", "Heaven, Hell and the Neitherworld" },
 	{ "heavymetalnannulf", "Heavy Metal Nannulf: The Strange Stage" },
@@ -1517,6 +1526,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "kiselyova", "Kiselyova Unleashed!" },
 	{ "kittenadv", "Kitten Adventures" },
 	{ "kittyquest", "Kitty Quest" },
+	{ "knightpursuit", "A Knight's Pursuit" },
 	{ "knightquestforgoldenring", "Knight Quest for the Golden Ring" },
 	{ "knightsquest3", "Knight's Quest III - Tides of Merania" },
 	{ "knightsquest4", "Knight's Quest IV - Here Today, Gone to Yesterday" },
@@ -1581,6 +1591,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lifeinabox", "Life in a Box" },
 	{ "lifeofdduck", "Life of D. Duck" },
 	{ "lifeofdduck2", "Life of D. Duck II" },
+	{ "lifeworthlosing", "A Life Worth Losing" },
 	{ "liftreasureofthetanones", "Lif and the Treasure of the Tanones" },
 	{ "lightcycles", "AGS Cycles" },
 	{ "lightningmaster", "Lightning Master" },
@@ -1639,6 +1650,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lostinthenightmare2", "Lost In The Nightmare 2: Unforgettable Memories" },
 	{ "lostinthewoods", "Lost In The Woods" },
 	{ "lotto", "Lottó" },
+	{ "lowequest", "Lowe Quest" },
 	{ "lucasmaniac", "Lucas Maniac!" },
 	{ "lucasmendoza", "Lucas Mendoza, Amateur Detective: The Searchers of The Beginning" },
 	{ "lucidlucy", "LUCID LUCY" },
@@ -2191,6 +2203,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "pimpinonparakuss", "Pimpin On Parakuss IV" },
 	{ "pinkcult", "Rex and Sissi in Pink Cult" },
 	{ "pinksky", "Pink Sky" },
+	{ "pinkyalien", "Pinky the Silly Alien" },
 	{ "piratefry2", "Pirate Fry 2: The Hand of Anturus" },
 	{ "piratefry3", "Pirate Fry 3: The Isle of the Dead" },
 	{ "pirates", "Pirates!" },
@@ -2378,6 +2391,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "rockabillykid", "Rockabilly Kid" },
 	{ "rockatruestory", "Rock - A True Story" },
 	{ "rockburgerstreehouses", "Rock Burgers & Tree Houses" },
+	{ "rockpaperscissors", "AGS Rock, Paper, Scissors" },
 	{ "rockpaperscissors2", "Rock, Paper, Scissors! Reboot" },
 	{ "rockrockrock", "Rock Rock Rock" },
 	{ "rocktravis", "Rock Travis - Camilla's case" },
@@ -3952,6 +3966,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("afrojones", "afrojones.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 4739799),
 	DEMO_ENTRY_EN("agscolosseum", "AGS coliseum.exe", "6d65fa76ae212c9bbfa868698f47e921", 86449242),
 	DEMO_ENTRY_EN("agsfootballer", "AgsFootballer.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 11169151),
+	DEMO_ENTRY_EN("agsfootballer", "AgsFootballer.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 11169923),  //v1.0
 	DEMO_ENTRY_EN("agsmoduletester", "v1.0 source.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 2020344),
 	DEMO_ENTRY_EN("alemmo", "al-emmo.exe", "9661b29821fdc7f93d286f25c195fc22", 8932837), // Steam
 	DEMO_ENTRY_EN("alemmo", "emmo_demo.exe", "2fb17c4382f2f54ef6d040b6493fec4b", 8943213), // Official website
@@ -4394,7 +4409,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("15minutes", "15 minutes.exe", "615e73fc1874e92d60a1996c2330ea36", 24136635),  // v1.01
 	GAME_ENTRY_EN_PLATFORM("15minutes", "15 minutes.exe", "615e73fc1874e92d60a1996c2330ea36", 24124810, "MAGS"),  // v1.0
 	GAME_ENTRY_EN("30minutes", "30minutes.exe", "18f5fd85de78efca16c7bafce54e3f63", 17930417),
+	GAME_ENTRY_EN("3minfart", "3DAF.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 745733),
 	GAME_ENTRY_EN("1dayamosquito", "mosquito.exe", "465f972675db2da6040518221af5b0ba", 2178983),
+	GAME_ENTRY_EN("2000ways", "hourgame.exe", "4d17844029d8910fbaae1bdc99e250f2", 1707319),
 	GAME_ENTRY_EN("2034acaftercanada1", "MAGS_01_13.exe", "1280ba7c269a68a9505871516319db0c", 14123278),
 	GAME_ENTRY_EN("2034acaftercanada2", "2034 ac ii.exe", "1280ba7c269a68a9505871516319db0c", 35207006),
 	GAME_ENTRY_EN("24hours", "24.exe", "f120690b506dd63cd7d1112ea6af2f77", 1932370),
@@ -4406,6 +4423,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("5daysastranger", "5days.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4440143), // v1.3
 	GAME_ENTRY_EN_PLATFORM("5daysastranger", "5days.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4614351, "Special Edition"),
 	GAME_ENTRY_PLATFORM("5daysastranger", "5daysorig.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4593115, "Alt/Multilanguage"),
+	GAME_ENTRY_EN("5dragons", "5drag.exe", "e80586fdc2db32f65658b235d8cbc159", 4741670),
 	GAME_ENTRY_EN("5oclocklock", "dadgame.exe", "3018c5443291aec823bc63342ce4c58b", 6073887),
 	GAME_ENTRY_EN("6174solitaire", "Game6174.exe", "01534b6a57fcdb1a57486f5c24120124", 5863226),  // Windows
 	GAME_ENTRY_EN("6174solitaire", "Game6174.ags", "fedabeeb5a70acafd4f46b73238c9ec6", 2401062),  // Linux
@@ -4492,6 +4510,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("agsmagus", "AGS Wizard.exe", "434c43a5e1ba2a11c1bde723ffeae719", 21177588),
 	GAME_ENTRY_EN("agsmastermind", "AGS Mastermind.exe", "519c0d37ab893d95f5add495355e460c", 30196465),
 	GAME_ENTRY_EN("agsmittensshooter", "clex.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1381575),
+	GAME_ENTRY_EN("agstechsupport", "agsgame.exe", "88cf59aad15ca331ab0f854e16c84df3", 1229972),
 	GAME_ENTRY_EN("agswerewolf", "mags0722.exe", "0e4ddc9893796a9f39395d0e0220a37b", 6214215),
 	GAME_ENTRY_EN("agswerewolf", "mags0722.ags", "0f36bc83671ce002addf7bfa2d748747", 3073587),
 	GAME_ENTRY_EN("agsyahtzee", "ags yathzee.exe", "434c43a5e1ba2a11c1bde723ffeae719", 37295758),
@@ -4522,6 +4541,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("alientimezone", "atz.exe", "0710e2ec71042617f565c01824f0cf3c", 2911858),
 	GAME_ENTRY_EN("allgonesoon", "All_Gone_Soon.exe", "618d7dce9631229b4579340b964c6810", 8858991),
 	GAME_ENTRY_EN("allgonesoon2", "AGS2.exe", "618d7dce9631229b4579340b964c6810", 11140718),
+	GAME_ENTRY_EN("alloweisland", "asland.exe", "88cf59aad15ca331ab0f854e16c84df3", 1281427),
 	GAME_ENTRY_EN("allpigs", "All pigs deserve to burn in hell.exe", "973f6b65820ca1f4e19704a49be99d76", 20836147),
 	GAME_ENTRY_EN("alluminum", "mags_october.exe", "f120690b506dd63cd7d1112ea6af2f77", 1772481),
 	GAME_ENTRY("almostblue", "Almost Blue.exe", "2cb5f4d0914d1b1f0638c65da6689050", 231366019),  // Eng-Ita
@@ -4580,7 +4600,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("apprentice2", "app2.exe", "465f972675db2da6040518221af5b0ba", 34159191),
 	GAME_ENTRY_EN("aprofoundjourney", "apj.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 920131),
 	GAME_ENTRY_EN("apunkwithwheels", "A punk with wheels.exe", "d90cd956022235ed9b272fb0b2ab5792", 17924043),
-	GAME_ENTRY_EN("aractaur", "aractaur.exe", "aecd482222ff54206e43a029b5f0b170", 5318963),
+	GAME_ENTRY_EN_PLATFORM("aractaur", "aractaur.exe", "aecd482222ff54206e43a029b5f0b170", 5318963, "MAGS"),
+	GAME_ENTRY_EN("aractaur", "aractaur.exe", "6b4ceb9e327ac99479c08d825461f4cb", 5543430),
 	GAME_ENTRY_EN("araindogstory", "Raindog.exe", "09cf8b451781575fa3ba1a0e31f5fc66", 96888573),
 	GAME_ENTRY_EN("archeos", "archeos.exe", "2ff048659aaefd20d342db6428a5f1a0", 6659974),
 	GAME_ENTRY_EN("archeos", "archeos.exe", "2ff048659aaefd20d342db6428a5f1a0", 6661410),
@@ -4652,6 +4673,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("baltazarthefamiliar", "baltazar.exe", "9cb3c8dc7a8ab9c44815955696be2677", 2867294),
 	GAME_ENTRY_EN_PLATFORM("baltazarthefamiliar", "baltazar.exe", "9cb3c8dc7a8ab9c44815955696be2677", 2749185, "OROW"),
 	GAME_ENTRY_EN("balloonface", "hg.exe", "0710e2ec71042617f565c01824f0cf3c", 2189438),
+	GAME_ENTRY_EN("balls", "Balls.exe", "0710e2ec71042617f565c01824f0cf3c", 765814),
 	GAME_ENTRY_EN("bananaracer", "bananaracer.exe", "e93f9dfa8405f1ca9f881d160ab31dc2", 10452233),
 	GAME_ENTRY_EN("bananaracer", "bananaracer.exe", "e93f9dfa8405f1ca9f881d160ab31dc2", 10454173),
 	GAME_ENTRY_EN("barahir", "Barahir.exe", "5677656386de765e72b7400f1e631eed", 40520601),  // v1.2 Windows
@@ -4662,13 +4684,18 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("barnrunner1p1", "eclair 1.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 13202017),
 	GAME_ENTRY_EN("barnrunner1p2", "eclair 2.exe", "465f972675db2da6040518221af5b0ba", 34193929),
 	GAME_ENTRY_EN("barnrunner3", "Mini Game 3.exe", "465f972675db2da6040518221af5b0ba", 3455484),
+	GAME_ENTRY_EN("barnrunner3", "Barn Runner 3.exe", "465f972675db2da6040518221af5b0ba", 3452579),  // v2.0
 	GAME_ENTRY_EN("barnrunner4", "Barn Runner 4.exe", "465f972675db2da6040518221af5b0ba", 4954262),
 	GAME_ENTRY_EN("barnrunner4", "Mini Game 4.exe", "465f972675db2da6040518221af5b0ba", 4954264),
 	GAME_ENTRY_EN("barnrunner5p1", "barn runner 5-1.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 104073543),
+	GAME_ENTRY_EN("barnrunner5p1", "barn runner 5-1.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 104071015),  // v1.1
 	GAME_ENTRY_EN("barnrunner5p2", "barn runner 5-2.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 200879890),
+	GAME_ENTRY_EN("barnrunner5p2", "barn runner 5-2.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 200696384),  // v1.2
 	GAME_ENTRY_EN("barnrunner5p3", "Barn Runner 5-3.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 236158866),
+	GAME_ENTRY_EN("barnrunner5p3", "Barn Runner 5-3.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 236159803),  // v1.2
 	GAME_ENTRY_EN("barnrunnerbake1", "BR Bake Sale 1.exe", "18b284c22010850f79bc5c20054a70c4", 29716432),
 	GAME_ENTRY_EN("barnrunnerhall1", "BR Halloween 1.exe", "18b284c22010850f79bc5c20054a70c4", 52243988),
+	GAME_ENTRY_EN("barnrunnerhall1", "BR Halloween 1.exe", "18b284c22010850f79bc5c20054a70c4", 52252562),  //v1.3
 	GAME_ENTRY_EN("barnrunnervalentine1", "BR Valentine 1.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 101774857),
 	GAME_ENTRY_EN("barnrunnervn1", "BR VN1.exe", "809418706c429cee5d88e8d483c906cc", 26857313),
 	GAME_ENTRY_EN("barnrunnerxmas0", "BR Xmas 0.exe", "615e806856b7730afadf1fea9a756b70", 13689876),
@@ -4679,6 +4706,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("barrunner", "Bar Runner.exe", "615e73fc1874e92d60a1996c2330ea36", 3642405),  //v1.1
 	GAME_ENTRY_EN("bartolomeo", "Bartolomeo.exe", "f604f7f3a12da5d3bcf7a7814a14e43b", 42261079),
 	GAME_ENTRY_EN("bartsquestfortv", "simpsons.exe", "0500aacb6c176d47ac0f8158f055db83", 794013),
+	GAME_ENTRY_EN("basedon", "basedon.exe", "0500aacb6c176d47ac0f8158f055db83", 5775388),
 	GAME_ENTRY_EN("bbcscreensaver", "BBC-Screensaver.exe", "0e6d6f3c19f5ca250b7b7ee03cdb2083", 131195371),
 	GAME_ENTRY_EN("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
 	GAME_ENTRY_EN("beacon", "beacon.exe", "af0d268193a9220891e983d03141ec58", 24671086),
@@ -4691,6 +4719,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("beatthebuzzer", "Beat the Buzzer.exe", "4d5d25446373d4df71c6bda77a15230a", 227179876),  // v1.1 Post-Jam
 	GAME_ENTRY_EN_PLATFORM("beautiesandbeasts", "beautiesandbeasts.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 6506966, "OROW"),  //v1.00
 	GAME_ENTRY_EN("beautiesandbeasts", "beautiesandbeasts.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 6507202),  //v1.01
+	GAME_ENTRY("beforethedarkcrystal", "DarkCrystal.exe", "f120690b506dd63cd7d1112ea6af2f77", 15194282),  // En-Fr
 	GAME_ENTRY("beforethedarkcrystal2", "Before the Dark Crystal II.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 59569723),  // En-Fr
 	GAME_ENTRY_EN("bellyofthebeast", "Belly of the beast.exe", "9f8a9d74c09f188af9af3e263f8b59bc", 22461502),  // Windows
 	GAME_ENTRY_EN("bellyofthebeast", "Belly of the beast.ags", "5b086e038c7bf4eada977f52f1d22cd7", 19425322),  // Linux
@@ -5476,6 +5505,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("heartland", "Heartland.exe", "0829f8e184ed6a4bf36b14ba42003a67", 6702004, "Deluxe"),
 	GAME_ENTRY_EN_PLATFORM("heartland", "Heartland.exe", "0829f8e184ed6a4bf36b14ba42003a67", 6701875, "Deluxe"), // v1.1
 	GAME_ENTRY_EN("heartofabraxas", "orowgame.exe", "0710e2ec71042617f565c01824f0cf3c", 15632750),
+	GAME_ENTRY_EN("heartpart", "HeartPart.exe", "e257b5a3b300568570c4af5e71b20e88", 3565232),
 	GAME_ENTRY_EN("heatwave", "Heatwave.exe", "e2f7df57d111e57e3cf1e229088c6947", 3638644),
 	GAME_ENTRY_EN("heavenhell", "Limbo Adventure.exe", "9ecb923d5169ded48d5fd2c6ed4befa4", 31138864),
 	GAME_ENTRY_EN_PLATFORM("heavenhell", "Limbo Adventure.exe", "7c10efb8990fb48ded51fbcd88a6bf17", 30800724, "AKA Limbo - The Adventure Game"),
@@ -5728,6 +5758,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("kiselyova", "innah.exe", "0710e2ec71042617f565c01824f0cf3c", 1236053),
 	GAME_ENTRY_EN("kittenadv", "Kitten.exe", "9973fbc73cce23867246d3a5e3c86d01", 5423637),
 	GAME_ENTRY_EN("kittyquest", "multiverbtemplate.exe", "6e861b1f476ff7cdf036082abb271329", 78650122),
+	GAME_ENTRY_EN("knightpursuit", "Knight.exe", "0710e2ec71042617f565c01824f0cf3c", 1613627),
 	GAME_ENTRY_EN("knightquestforgoldenring", "KQuestGoldRing.exe", "f120690b506dd63cd7d1112ea6af2f77", 2582542),
 	GAME_ENTRY_EN("knightsquest3", "KQ3TOM.exe", "0710e2ec71042617f565c01824f0cf3c", 8405513),  //v1.0
 	GAME_ENTRY_EN("knightsquest3", "KQ3TOM.exe", "0710e2ec71042617f565c01824f0cf3c", 8408641),
@@ -5812,6 +5843,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("lifeinabox", "box.exe", "0500aacb6c176d47ac0f8158f055db83", 890794),
 	GAME_ENTRY_EN("lifeofdduck", "D Duck.exe", "0710e2ec71042617f565c01824f0cf3c", 49461615),
 	GAME_ENTRY_EN("lifeofdduck2", "D. Duck II.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 135923689),
+	GAME_ENTRY_EN("lifeworthlosing", "lwl.exe", "a524cbb1c51589903c4043b98917f1d9", 89591505),
 	GAME_ENTRY_EN("liftreasureofthetanones", "Lif.exe", "18b284c22010850f79bc5c20054a70c4", 3946641),
 	GAME_ENTRY_EN("lightcycles", "LightCycles.exe", "495d45fb8adfd49690ae3b97921feec6", 3415108),
 	GAME_ENTRY_EN("lightningmaster", "Master.exe", "27343924ddad3be0b97bdcaa71858b1b", 231301393),
@@ -5879,6 +5911,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("lostinthewoods", "LITW.exe", "00328f4f1e7729144483107b96b11df8", 55203461),
 	GAME_ENTRY_PLATFORM("lotto", "Lott.exe", "0564de07d3fd5c16e6947a647061913c", 6585796, "Icelandic"),
 	GAME_ENTRY_PLATFORM("lotto", "Lott.ags", "1578011383e302e787d3ff906776483f", 3553200, "Icelandic"),
+	GAME_ENTRY_EN("lowequest", "lowe.exe", "97d700529f5cc826f230c27acf81adfd", 1046425),
 	GAME_ENTRY("lucasmaniac", "LucasManiac !.exe", "f120690b506dd63cd7d1112ea6af2f77", 28361487),  // En-Fr
 	GAME_ENTRY_EN("lucidlucy", "LUCID LUCY.exe", "655363c390c7ae7225c237108edf50b7", 182038828),
 	GAME_ENTRY_EN("lucylavender", "Lucy.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 7944054),
@@ -6489,6 +6522,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("pimpinonparakuss", "Squest2.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 3717277),
 	GAME_ENTRY("pinkcult", "Pink Cult.exe", "615e73fc1874e92d60a1996c2330ea36", 2731074),  // En-Fr
 	GAME_ENTRY_EN("pinksky", "Pink_Sky.exe", "79077a68e53562082494933a21e2714f", 43597805),
+	GAME_ENTRY_EN("pinkyalien", "alien.exe", "ba27688a81119b49a550f3bbd8d6d003", 778228),
 	GAME_ENTRY_EN("piratefry2", "FryTworedo.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 8492745),
 	GAME_ENTRY_EN("piratefry3", "tryout.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 2318881),
 	GAME_ENTRY_EN("pirates", "Pirates!.exe", "0564de07d3fd5c16e6947a647061913c", 81574110),
@@ -6698,6 +6732,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("rockabillykid", "Rockabilly Kid.exe", "ff3358d8f2726d544aadfde4f1ec8407", 2650305),
 	GAME_ENTRY_EN("rockatruestory", "RON-Rock.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 3917056),
 	GAME_ENTRY_EN("rockburgerstreehouses", "RBTH.exe", "88cf59aad15ca331ab0f854e16c84df3", 1876674),
+	GAME_ENTRY_EN("rockpaperscissors", "Rock, Paper, Scissors.exe", "615e73fc1874e92d60a1996c2330ea36", 2030667),
 	GAME_ENTRY_EN("rockpaperscissors2", "Rock, Paper, Scissors 2.exe", "89a94326c8afd9e0234e269bd7330130", 2926218),
 	GAME_ENTRY_EN("rockrockrock", "rrr.exe", "7dd36aa863ed40ede1b09ae505e478cc", 9362761),
 	GAME_ENTRY_EN("rocktravis", "rock travis - camilla's case.exe", "17009da9820f5aa86d0588023d497db8", 126975468),
@@ -6743,6 +6778,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("sandmen", "sandmen.exe", "0b7529a76f38283d6e850b8d56526fc1", 3578745, Common::DE_DEU),
 	GAME_ENTRY_EN("santaclausdown", "scdown.exe", "f120690b506dd63cd7d1112ea6af2f77", 14385095),
 	GAME_ENTRY_EN("santaflight", "A Flight To Remember.exe", "2569c8f271dc356e32483d40ee16b3e9", 112461458),
+	GAME_ENTRY_EN_PLATFORM("santaflight", "A Flight To Remember Remastered.exe", "5ba6c10d5b499a1d0fef84d0947a52d5", 123138210, "Remastered"),
 	GAME_ENTRY_EN("santaorphanage", "Santa and the orphanage.exe", "099a8b752cba39bb76552e94197edbf4", 163644553),
 	GAME_ENTRY_EN("santaquest", "Santaquest.exe", "0564de07d3fd5c16e6947a647061913c", 5318615),
 	GAME_ENTRY_EN("santassidekick", "Xmas.exe", "0710e2ec71042617f565c01824f0cf3c", 1921077),
