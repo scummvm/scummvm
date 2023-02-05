@@ -19,6 +19,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - 1st generation Miyoo (New BittBoy, Pocket Go and PowKiddy Q90-V90-Q20)
      under TriForceX MiyooCFW.
    - Miyoo mini
+   - KolibriOS
 
  General:
    - Reduced amount of false positives in Mass Add.
