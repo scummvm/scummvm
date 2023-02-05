@@ -45,22 +45,23 @@ void InvObject::init() {
 }
 
 void MapSpecialTileStruct::init() {
-	_placeId = _posX = _posY = _field3 = _triggerId = 0;
+	_placeId = _posX = _posY = _triggerType = _triggerValue = 0;
 	_field5_textId = _field7_textId = 0;
 }
 
-void UnkAnimStruct::init() {
-	memset(_field, 0, 4);
+void FrameList::init() {
+	for (int i = 0; i < 4; ++i)
+		_subFileId[i] = -1;
 }
 
 void AnimInfo::init() {
-	for (int i = 0; i < 15; ++i)
-		_unkAnimArray[i].init();
-
 	for (int i = 0; i < 10; ++i) {
-		_field3C_startY[i] = 0;
-		_field46_startX[i] = 0;
+		_posX[i] = 0;
+		_posY[i] = 0;
 	}
+
+	for (int i = 0; i < 15; ++i)
+		_frameList[i].init();
 }
 
 void ItemStruct::init() {
@@ -71,11 +72,11 @@ void ItemStruct::init() {
 	_defense = 0;
 	_attacks = 0;
 	_uses = 0;
-	field_13 = 0;
+	_agilityModifier = 0;
 	_range = 0;
 	_attackType = 0;
 	_specialEffect = 0;
-	_field17_attackTypeDefense = 0;
+	_defenseType = 0;
 	_exclusiveType = 0;
 	_field19_mapPosX_or_maxDeltaPoints = 0;
 	_mapPosY = 0;

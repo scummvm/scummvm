@@ -94,23 +94,23 @@ struct MapSpecialTileStruct {
 	uint8 _placeId;
 	uint8 _posX;
 	uint8 _posY;
-	uint8 _field3;
-	uint8 _triggerId;
+	uint8 _triggerType; // 0xFD = Check inventory 0xFE = Check Character in team 0xFF Display description <= 0x77 = check score (all values in this case in data are <= 0xF)
+	uint8 _triggerValue;
 	uint16 _field5_textId;
 	uint16 _field7_textId;
 
 	void init();
 };
 
-struct UnkAnimStruct {
-	int8 _field[4];
+struct FrameList {
+	int8 _subFileId[4];
 
 	void init();
 };
 struct AnimInfo {
-	UnkAnimStruct _unkAnimArray[15];
-	uint8 _field3C_startY[10];
-	uint16 _field46_startX[10];
+	uint16 _posX[10];
+	uint8 _posY[10];
+	FrameList _frameList[15];
 
 	void init();
 };
@@ -121,11 +121,11 @@ struct ItemStruct {
 	uint8 _defense;
 	uint8 _attacks;
 	uint8 _uses;
-	int8 field_13; // data contains values from -8 to +8
+	int8 _agilityModifier; // data contains values from -8 to +8
 	uint8 _range;
 	uint8 _attackType;
 	uint8 _specialEffect;
-	uint8 _field17_attackTypeDefense;
+	uint8 _defenseType;
 	uint8 _exclusiveType;
 	uint8 _field19_mapPosX_or_maxDeltaPoints;
 	uint8 _mapPosY;
