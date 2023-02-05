@@ -682,7 +682,7 @@ void Combat::writeMonsterAttack() {
 		// to call it from here
 		_lines.clear();
 		_lines.push_back(Line(0, 3, ""));
-		subtractDamage();
+		subtractDamageFromChar();
 
 		if (!_lines.back()._text.empty())
 			writeString(0, yp, _lines.back()._text);

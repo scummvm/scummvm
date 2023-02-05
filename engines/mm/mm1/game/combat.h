@@ -105,6 +105,12 @@ protected:
 	virtual void combatDone();
 
 	/**
+	 * Subtracts the damage from the character, making
+	 * them unconscious or die if needed
+	 */
+	void subtractDamageFromChar() override;
+
+	/**
 	 * Clear all the combat variables
 	 */
 	void clear();

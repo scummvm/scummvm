@@ -490,7 +490,7 @@ void SpellsMonsters::handleDamage() {
 					_damage = 1;
 
 				writeDamage();
-				subtractDamage();
+				subtractDamageFromChar();
 			}
 		}
 	}
@@ -570,36 +570,6 @@ void SpellsMonsters::writeDamage() {
 		add('!');
 	else
 		add(STRING["monster_spellsState.of_damage"]);
-}
-
-void SpellsMonsters::subtractDamage() {
-	Character &c = *g_globals->_currCharacter;
-	int newHp = c._hpBase - _damage;
-
-	if (newHp > 0) {
-		c._hpBase = newHp;
-
-	} else {
-		c._hpBase = 0;
-
-		if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS))) {
-			c._condition |= UNCONSCIOUS;
-			addCharName();
-			add(' ');
-			add(STRING["monster_spellsState.goes_down"]);
-			Sound::sound2(SOUND_8);
-
-		} else {
-			if (c._condition & BAD_CONDITION)
-				c._condition = BAD_CONDITION | DEAD;
-
-			_lines.push_back(Line(0, 3, ""));
-			addCharName();
-			add(' ');
-			add(STRING["monster_spellsState.dies"]);
-			Sound::sound2(SOUND_8);
-		}
-	}
 }
 
 void SpellsMonsters::proc9() {
