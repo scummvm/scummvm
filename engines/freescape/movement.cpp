@@ -177,6 +177,17 @@ void FreescapeEngine::lower() {
 	executeMovementConditions();
 }
 
+void FreescapeEngine::checkIfStillInArea() {
+	for (int i = 0; i < 3; i++) {
+		if (_position.getValue(i) < 0)
+			_position.setValue(i, 0);
+		else if (_position.getValue(i) > 8128)
+			_position.setValue(i, 8128);
+	}
+	if (_position.y() >= 2016)
+		_position.y() = _lastPosition.z();
+}
+
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
 	debugC(1, kFreescapeDebugMove, "old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	int previousAreaID = _currentArea->getAreaID();
@@ -207,14 +218,9 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	if (!_flyMode)
 		_position.set(_position.x(), positionY, _position.z());
 
-	for (int i = 0; i < 3; i++) {
-		if (_position.getValue(i) < 0)
-			_position.setValue(i, 0);
-		else if (_position.getValue(i) > 8128)
-			_position.setValue(i, 8128);
-	}
-	if (_position.y() >= 2016)
-		_position.y() = _lastPosition.z();
+	checkIfStillInArea();
+	if (_currentArea->getAreaID() != previousAreaID)
+		return;
 
 	bool collided = checkCollisions(false);
 

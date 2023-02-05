@@ -23,6 +23,7 @@
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/objects/connections.h"
 
 namespace Freescape {
 
@@ -193,6 +194,30 @@ void DarkEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_j) {
 		_flyMode = !_flyMode;
 	}
+}
+
+void DarkEngine::checkIfStillInArea() {
+	AreaConnections *cons = (AreaConnections *)_currentArea->entranceWithID(254);
+	if (!cons) {
+		FreescapeEngine::checkIfStillInArea();
+		return;
+	}
+
+	int nextAreaID = 0;
+
+	if (_position.z() >= 4064 - 16)
+		nextAreaID = cons->_connections[1];
+	else if (_position.x() >= 4064 - 16)
+		nextAreaID = cons->_connections[3];
+	else if (_position.z() <= 16)
+		nextAreaID = cons->_connections[5];
+	else if (_position.x() <= 16)
+		nextAreaID = cons->_connections[7];
+
+	if (nextAreaID > 0)
+		gotoArea(nextAreaID, 0);
+	else
+		FreescapeEngine::checkIfStillInArea();
 }
 
 void DarkEngine::executeMovementConditions() {
