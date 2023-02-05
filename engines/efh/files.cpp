@@ -51,7 +51,7 @@ void EfhEngine::readAnimInfo() {
 				txtBuffer += Common::String::format(" %d", _animInfo[i]._frameList[id]._subFileId[frameId]);
 			}
 
-			debugC(6, kDebugEngine, txtBuffer.c_str());
+			debugC(6, kDebugEngine, "%s", txtBuffer.c_str());
 		}
 
 		Common::String debugStr = "";
@@ -59,14 +59,14 @@ void EfhEngine::readAnimInfo() {
 			_animInfo[i]._posY[id] = f.readByte();
 			debugStr += Common::String::format("%d ", _animInfo[i]._posY[id]);
 		}
-		debugC(6, kDebugEngine, debugStr.c_str());
+		debugC(6, kDebugEngine, "%s", debugStr.c_str());
 
 		debugStr = "";
 		for (int id = 0; id < 10; ++id) {
 			_animInfo[i]._posX[id] = f.readUint16LE();
 			debugStr += Common::String::format("%d ", _animInfo[i]._posX[id]);
 		}
-		debugC(6, kDebugEngine, debugStr.c_str());
+		debugC(6, kDebugEngine, "%s", debugStr.c_str());
 		debugC(6, kDebugEngine, "---------");
 	}
 }
@@ -390,4 +390,3 @@ void EfhEngine::preLoadMaps() {
 }
 
 } // End of namespace Efh
-

@@ -50,7 +50,7 @@ int8 InvObject::getUsesLeft() {
 EfhEngine::~EfhEngine() {
 	_mainSurface->free();
 	delete _mainSurface;
-	
+
 	delete _rnd;
 	delete _graphicsStruct;
 	delete _vgaGraphicsStruct1;
@@ -467,7 +467,7 @@ void EfhEngine::initMapMonsters() {
 
 		if (groupSize == 0)
 			continue;
-		
+
 		for (uint counter = 0; counter < groupSize; ++counter) {
 			uint rand100 = getRandom(100);
 			uint16 pictureRef = kEncounters[curMons->_monsterRef]._pictureRef;
@@ -484,7 +484,7 @@ void EfhEngine::initMapMonsters() {
 }
 
 void EfhEngine::loadMapArrays(int idx) {
-	// No longer required as everything is in memory. 
+	// No longer required as everything is in memory.
 }
 
 void EfhEngine::saveAnimImageSetId() {
@@ -495,7 +495,7 @@ void EfhEngine::saveAnimImageSetId() {
 }
 
 int16 EfhEngine::getEquipmentDefense(int16 charId) {
-	debugC(2, kDebugGraphics, "getEquipmentDefense %d %s", charId);
+	debugC(2, kDebugGraphics, "getEquipmentDefense %d", charId);
 
 	int16 altDef = 0;
 
@@ -1082,7 +1082,7 @@ int16 EfhEngine::findMapSpecialTileIndex(int16 posX, int16 posY) {
 	debugC(5, kDebugEngine, "findMapSpecialTileIndex %d %d", posX, posY);
 
 	uint16 searchPlaceId = _largeMapFlag ? 0xFE : _fullPlaceId;
-	
+
 	for (uint counter = 0; counter < 100; ++counter) {
 		MapSpecialTileStruct *curTile = &_mapSpecialTiles[_techId][counter];
 		if (curTile->_posX == posX && curTile->_posY == posY && curTile->_placeId == searchPlaceId)
@@ -2001,7 +2001,7 @@ void EfhEngine::displayImp1Text(int16 textId) {
 					maxReached = false;
 					stringIdx = 0;
 					charCounter = 0;
-					uint8 firstChar = _messageToBePrinted.firstChar(); 
+					uint8 firstChar = _messageToBePrinted.firstChar();
 					if (firstChar == 0x5E || firstChar == 0) {
 						if (firstChar == 0x5E) {
 							nextTextId = script_parse(_messageToBePrinted, 0, 0, 319, 199, true);
@@ -2319,7 +2319,7 @@ bool EfhEngine::checkMonsterCollision() {
 			continue;
 
 		MapMonster *curMapMonst = &_mapMonsters[_techId][monsterId];
-	
+
 		if (!(_largeMapFlag && curMapMonst->_fullPlaceId == 0xFE) && !(!_largeMapFlag && curMapMonst->_fullPlaceId == _fullPlaceId))
 			continue;
 
