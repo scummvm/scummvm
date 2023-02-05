@@ -346,39 +346,6 @@ void OptionsDialog::build() {
 			_renderModePopUp->setSelectedTag(sel);
 		}
 
-		_scalerPopUp->setSelected(0);
-		_scaleFactorPopUp->setSelected(0);
-
-		if (g_system->hasFeature(OSystem::kFeatureScalers)) {
-			if (ConfMan.hasKey("scaler", _domain)) {
-				const PluginList &scalerPlugins = ScalerMan.getPlugins();
-				Common::String scaler(ConfMan.get("scaler", _domain));
-
-				for (uint scalerIndex = 0; scalerIndex < scalerPlugins.size(); scalerIndex++) {
-					if (scumm_stricmp(scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getName(), scaler.c_str()) != 0)
-						continue;
-
-					_scalerPopUp->setSelectedTag(scalerIndex);
-					updateScaleFactors(scalerIndex);
-
-					if (ConfMan.hasKey("scale_factor", _domain)) {
-						int scaleFactor = ConfMan.getInt("scale_factor", _domain);
-						if (scalerPlugins[scalerIndex]->get<ScalerPluginObject>().hasFactor(scaleFactor))
-							_scaleFactorPopUp->setSelectedTag(scaleFactor);
-					}
-
-					break;
-				}
-
-			}
-		} else {
-			_scalerPopUpDesc->setVisible(false);
-			_scalerPopUp->setVisible(false);
-			_scalerPopUp->setEnabled(false);
-			_scaleFactorPopUp->setVisible(false);
-			_scaleFactorPopUp->setEnabled(false);
-		}
-
 		// Fullscreen setting
 		if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
 			_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
@@ -440,6 +407,39 @@ void OptionsDialog::build() {
 		} else {
 			_stretchPopUpDesc->setVisible(false);
 			_stretchPopUp->setVisible(false);
+		}
+	}
+
+	if (_scalerPopUp) {
+		if (g_system->hasFeature(OSystem::kFeatureScalers)) {
+			_scalerPopUp->setSelected(0);
+			_scaleFactorPopUp->setSelected(0);
+
+			if (ConfMan.hasKey("scaler", _domain)) {
+				const PluginList &scalerPlugins = ScalerMan.getPlugins();
+				Common::String scaler(ConfMan.get("scaler", _domain));
+
+				for (uint scalerIndex = 0; scalerIndex < scalerPlugins.size(); scalerIndex++) {
+					if (scumm_stricmp(scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getName(), scaler.c_str()) != 0)
+						continue;
+
+					_scalerPopUp->setSelectedTag(scalerIndex);
+					updateScaleFactors(scalerIndex);
+
+					if (ConfMan.hasKey("scale_factor", _domain)) {
+						int scaleFactor = ConfMan.getInt("scale_factor", _domain);
+						if (scalerPlugins[scalerIndex]->get<ScalerPluginObject>().hasFactor(scaleFactor))
+							_scaleFactorPopUp->setSelectedTag(scaleFactor);
+					}
+
+					break;
+				}
+
+			}
+		} else {
+			_scalerPopUpDesc->setVisible(false);
+			_scalerPopUp->setVisible(false);
+			_scaleFactorPopUp->setVisible(false);
 		}
 	}
 
@@ -677,35 +677,37 @@ void OptionsDialog::apply() {
 				}
 			}
 
-			isSet = false;
-			const PluginList &scalerPlugins = ScalerMan.getPlugins();
-			if ((int32)_scalerPopUp->getSelectedTag() >= 0) {
-				const char *name = scalerPlugins[_scalerPopUp->getSelectedTag()]->get<ScalerPluginObject>().getName();
-				if (ConfMan.get("scaler", _domain) != name) {
-					graphicsModeChanged = true;
-					ConfMan.set("scaler", name, _domain);
-					_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
-				}
+			if (g_system->hasFeature(OSystem::kFeatureScalers)) {
+				isSet = false;
+				const PluginList &scalerPlugins = ScalerMan.getPlugins();
+				if ((int32)_scalerPopUp->getSelectedTag() >= 0) {
+					const char *name = scalerPlugins[_scalerPopUp->getSelectedTag()]->get<ScalerPluginObject>().getName();
+					if (ConfMan.get("scaler", _domain) != name) {
+						graphicsModeChanged = true;
+						ConfMan.set("scaler", name, _domain);
+						_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+					}
 
-				int factor = _scaleFactorPopUp->getSelectedTag();
-				if (ConfMan.getInt("scale_factor", _domain) != factor) {
-					ConfMan.setInt("scale_factor", factor, _domain);
-					graphicsModeChanged = true;
-					_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+					int factor = _scaleFactorPopUp->getSelectedTag();
+					if (ConfMan.getInt("scale_factor", _domain) != factor) {
+						ConfMan.setInt("scale_factor", factor, _domain);
+						graphicsModeChanged = true;
+						_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+					}
+					isSet = true;
 				}
-				isSet = true;
-			}
-			if (!isSet) {
-				ConfMan.removeKey("scaler", _domain);
-				ConfMan.removeKey("scale_factor", _domain);
-				_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+				if (!isSet) {
+					ConfMan.removeKey("scaler", _domain);
+					ConfMan.removeKey("scale_factor", _domain);
+					_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 
-				uint defaultScaler = g_system->getDefaultScaler();
-				uint defaultScaleFactor = g_system->getDefaultScaleFactor();
-				if (g_system->getScaler() != defaultScaler)
-					graphicsModeChanged = true;
-				else if (g_system->getScaleFactor() != defaultScaleFactor)
-					graphicsModeChanged = true;
+					uint defaultScaler = g_system->getDefaultScaler();
+					uint defaultScaleFactor = g_system->getDefaultScaleFactor();
+					if (g_system->getScaler() != defaultScaler)
+						graphicsModeChanged = true;
+					else if (g_system->getScaleFactor() != defaultScaleFactor)
+						graphicsModeChanged = true;
+				}
 			}
 
 			if (_rendererTypePopUp->getSelectedTag() > 0) {
@@ -1244,9 +1246,12 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_scalerPopUp->setEnabled(enabled);
 		_scaleFactorPopUp->setEnabled(enabled);
 	} else {
-		_scalerPopUpDesc->setEnabled(false);
-		_scalerPopUp->setEnabled(false);
-		_scaleFactorPopUp->setEnabled(false);
+		// Happens when we switch to backend that doesn't support scalers
+		if (_scalerPopUp) {
+			_scalerPopUpDesc->setEnabled(false);
+			_scalerPopUp->setEnabled(false);
+			_scaleFactorPopUp->setEnabled(false);
+		}
 	}
 
 	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
@@ -1604,18 +1609,20 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// The Scaler popup
-	const PluginList &scalerPlugins = ScalerMan.getPlugins();
-	_scalerPopUpDesc = new StaticTextWidget(boss, prefix + "grScalerPopupDesc", _("Scaler:"));
-	_scalerPopUp = new PopUpWidget(boss, prefix + "grScalerPopup", Common::U32String(), kScalerPopUpCmd);
+	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
+		const PluginList &scalerPlugins = ScalerMan.getPlugins();
+		_scalerPopUpDesc = new StaticTextWidget(boss, prefix + "grScalerPopupDesc", _("Scaler:"));
+		_scalerPopUp = new PopUpWidget(boss, prefix + "grScalerPopup", Common::U32String(), kScalerPopUpCmd);
 
-	_scalerPopUp->appendEntry(_("<default>"));
-	_scalerPopUp->appendEntry(Common::U32String());
-	for (uint scalerIndex = 0; scalerIndex < scalerPlugins.size(); scalerIndex++) {
-		_scalerPopUp->appendEntry(_c(scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getPrettyName(), context), scalerIndex);
+		_scalerPopUp->appendEntry(_("<default>"));
+		_scalerPopUp->appendEntry(Common::U32String());
+		for (uint scalerIndex = 0; scalerIndex < scalerPlugins.size(); scalerIndex++) {
+			_scalerPopUp->appendEntry(_c(scalerPlugins[scalerIndex]->get<ScalerPluginObject>().getPrettyName(), context), scalerIndex);
+		}
+
+		_scaleFactorPopUp = new PopUpWidget(boss, prefix + "grScaleFactorPopup");
+		updateScaleFactors(_scalerPopUp->getSelectedTag());
 	}
-
-	_scaleFactorPopUp = new PopUpWidget(boss, prefix + "grScaleFactorPopup");
-	updateScaleFactors(_scalerPopUp->getSelectedTag());
 
 	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
 		if (g_system->getOverlayWidth() > 320)
@@ -2006,6 +2013,8 @@ void OptionsDialog::setupGraphicsTab() {
 		// Fixes crash when switching from SDL Surface to OpenGL
 		if (!_shader && g_system->hasFeature(OSystem::kFeatureShaders)) {
 			rebuild();
+		} else if (!_scalerPopUp && g_system->hasFeature(OSystem::kFeatureScalers)) {
+			rebuild();
 		} else if (!_stretchPopUp && g_system->hasFeature(OSystem::kFeatureStretchMode)) {
 			rebuild();
 		}
@@ -2033,10 +2042,6 @@ void OptionsDialog::setupGraphicsTab() {
 			_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 		_scalerPopUp->setVisible(true);
 		_scaleFactorPopUp->setVisible(true);
-	} else {
-		_scalerPopUpDesc->setVisible(false);
-		_scalerPopUp->setVisible(false);
-		_scaleFactorPopUp->setVisible(false);
 	}
 
 	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
