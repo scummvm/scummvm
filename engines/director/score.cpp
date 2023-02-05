@@ -125,6 +125,21 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 	return false;
 }
 
+bool Score::processFrozenScripts() {
+	// Unfreeze any in-progress scripts and attempt to run them
+	// to completion.
+	while (uint32 count = _window->frozenLingoStateCount()) {
+		_window->thawLingoState();
+		g_lingo->switchStateFromWindow();
+		g_lingo->execute();
+		if (_window->frozenLingoStateCount() >= count) {
+			debugC(3, kDebugLingoExec, "Score::processFrozenScripts(): State froze again mid-thaw, interrupting");
+			return false;
+		}
+	}
+	return true;
+}
+
 uint16 Score::getLabel(Common::String &label) {
 	if (!_labels) {
 		warning("Score::getLabel: No labels set");
@@ -353,6 +368,7 @@ void Score::update() {
 				updateWidgets(true);
 				_window->render();
 			}
+			processFrozenScripts();
 			return;
 		}
 	}
@@ -376,8 +392,10 @@ void Score::update() {
 	_vm->_skipFrameAdvance = false;
 
 	// the exitFrame event handler may have stopped this movie
-	if (_playState == kPlayStopped)
+	if (_playState == kPlayStopped) {
+		processFrozenScripts();
 		return;
+	}
 
 	if (!_vm->_playbackPaused) {
 		if (_nextFrame)
@@ -397,6 +415,7 @@ void Score::update() {
 				_playState = kPlayStopped;
 				window->setNextMovie(ref.movie);
 				window->_nextMovie.frameI = ref.frameI;
+				processFrozenScripts();
 				return;
 			}
 
@@ -404,6 +423,7 @@ void Score::update() {
 		} else {
 			if (debugChannelSet(-1, kDebugNoLoop)) {
 				_playState = kPlayStopped;
+				processFrozenScripts();
 				return;
 			}
 
@@ -492,16 +512,11 @@ void Score::update() {
 			return;
 	}
 
-	// Attempt to thaw and continue any frozen execution after startMovie and enterFrame
-	while (uint32 count = _window->frozenLingoStateCount()) {
-		_window->thawLingoState();
-		g_lingo->switchStateFromWindow();
-		g_lingo->execute();
-		if (_window->frozenLingoStateCount() >= count) {
-			debugC(3, kDebugLingoExec, "State froze again mid-thaw, interrupting");
-			return;
-		}
-	}
+	// Attempt to thaw and continue any frozen execution after startMovie and enterFrame.
+	// If they don't complete (i.e. another freezing event like a "go to frame"),
+	// force another cycle of Score::update().
+	if (!processFrozenScripts())
+		return;
 
 	if (!_vm->_playbackPaused) {
 		if ((_vm->getVersion() >= 300 && _vm->getVersion() < 400) || _movie->_allowOutdatedLingo) {
