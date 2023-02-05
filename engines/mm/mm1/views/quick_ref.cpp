@@ -41,8 +41,12 @@ void QuickRef::draw() {
 	writeString(STRING["dialogs.quick_ref.title"]);
 
 	// Print list of characters, hit pts, spell pts, and ac
-	for (uint idx = 0; idx < g_globals->_party.size(); ++idx) {
-		Character &c = g_globals->_party[idx];
+	size_t partySize = getPartySize();
+	bool inCombat = isInCombat();
+
+	for (uint idx = 0; idx < partySize; ++idx) {
+		Character &c = inCombat ? *g_globals->_combatParty[idx] :
+			g_globals->_party[idx];
 
 		// Number and name
 		writeNumber(0, 2 + idx, idx + 1);
@@ -108,9 +112,14 @@ bool QuickRef::msgAction(const ActionMessage &msg) {
 	case KEYBIND_VIEW_PARTY5:
 	case KEYBIND_VIEW_PARTY6: {
 		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-		if (charNum < g_globals->_party.size()) {
-			g_globals->_currCharacter = &g_globals->_party[charNum];
-			replaceView("CharacterInfo");
+		if (charNum < getPartySize()) {
+			if (isInCombat()) {
+				g_globals->_currCharacter = g_globals->_combatParty[charNum];
+				replaceView("CharacterViewCombat");
+			} else {
+				g_globals->_currCharacter = &g_globals->_party[charNum];
+				replaceView("CharacterInfo");
+			}
 		}
 		break;
 	}
@@ -119,6 +128,16 @@ bool QuickRef::msgAction(const ActionMessage &msg) {
 	}
 
 	return false;
+}
+
+bool QuickRef::isInCombat() const {
+	return g_events->isPresent("Combat");
+}
+
+size_t QuickRef::getPartySize() const {
+	bool inCombat = isInCombat();
+	return inCombat ? g_globals->_combatParty.size() :
+		g_globals->_party.size();
 }
 
 } // namespace Views

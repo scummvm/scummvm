@@ -343,7 +343,6 @@ bool Combat::msgAction(const ActionMessage &msg) {
 		}
 		break;
 	default:
-		// TODO: Character and quickref views
 		break;
 	}
 

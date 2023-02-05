@@ -32,6 +32,9 @@ namespace Views {
  * Quick reference list of all the characters.
  */
 class QuickRef : public CharacterBase {
+private:
+	bool isInCombat() const;
+	size_t getPartySize() const;
 public:
 	QuickRef() : CharacterBase("QuickRef") {}
 	virtual ~QuickRef() {}
