@@ -446,23 +446,23 @@ void FreescapeEngine::executeGoto(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeSetBit(FCLInstruction &instruction) {
-	uint16 index = instruction._source - 1; // Starts in 1
-	assert(index < 32);
-	_gameStateBits[_currentArea->getAreaID()] |= (1 << index);
+	uint16 index = instruction._source; // Starts at 1
+	assert(index > 0 && index <= 32);
+	setGameBit(index);
 	debugC(1, kFreescapeDebugCode, "Setting bit %d", index);
-	// debug("v: %d", (_gameStateBits[_currentArea->getAreaID()] & (1 << index)));
 }
 
 void FreescapeEngine::executeClearBit(FCLInstruction &instruction) {
-	uint16 index = instruction._source - 1; // Starts in 1
-	assert(index < 32);
-	_gameStateBits[_currentArea->getAreaID()] &= ~(1 << index);
+	uint16 index = instruction._source; // Starts at 1
+	assert(index > 0 && index <= 32);
+	clearGameBit(index);
 	debugC(1, kFreescapeDebugCode, "Clearing bit %d", index);
 }
 
 void FreescapeEngine::executeToggleBit(FCLInstruction &instruction) {
-	uint16 index = instruction._source - 1; // Starts in 1
-	_gameStateBits[_currentArea->getAreaID()] ^= (1 << index);
+	uint16 index = instruction._source; // Starts at 1
+	assert(index > 0 && index <= 32);
+	toggleGameBit(index);
 	debugC(1, kFreescapeDebugCode, "Toggling bit %d", index);
 }
 

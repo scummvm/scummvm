@@ -325,6 +325,10 @@ public:
 
 	// Game state
 	virtual void initGameState();
+	void setGameBit(int index);
+	void clearGameBit(int index);
+	void toggleGameBit(int index);
+
 	StateVars _gameStateVars;
 	StateBits _gameStateBits;
 	virtual bool checkIfGameEnded();
