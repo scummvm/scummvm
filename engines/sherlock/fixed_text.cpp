@@ -168,6 +168,37 @@ static const char *const fixedJournalTextES[] = {
 	"Despu\202s %s dijo, "
 };
 
+static const char *const fixedJournalTextZHBig5[] = {
+	// Holmes asked/said...
+	"\xba\xd6\xba\xb8\xbc\xaf\xb4\xb5\xb0\xdd\xa7\xda\x3a\x22", /* "福爾摩斯問我:"; "Holmes asked me, " */
+	"\xba\xd6\xba\xb8\xbc\xaf\xb4\xb5\xb0\xdd\xb1\xb4\xaa\xf8\x3a\x22", /* "福爾摩斯問探長:"; "Holmes asked the Inspector, " */
+	"\xba\xd6\xba\xb8\xbc\xaf\xb4\xb5\xb0\xdd%s\x3a\x22", /* "福爾摩斯問%s:"; "Holmes asked %s, " */
+	"\xba\xd6\xba\xb8\xbc\xaf\xb4\xb5\xbb\xa1\xa7\xda\x3a\x22", /* "福爾摩斯說我:"; "Holmes said to me, " */
+	"\xba\xd6\xba\xb8\xbc\xaf\xb4\xb5\xbb\xa1\xb1\xb4\xaa\xf8\x3a\x22", /* "福爾摩斯說探長:"; "Holmes said to the Inspector, " */
+	"\xba\xd6\xba\xb8\xbc\xaf\xb4\xb5\xbb\xa1%s\x3a\x22", /* "福爾摩斯說%s:"; "Holmes said to %s, " */
+	// I asked/said...
+	"\xa7\xda\xa6\x5e\xb5\xaa\x3a\x22", /* "我回答:""; "I replied, " */
+	"\xa6\x5e\xb5\xaa\xbb\xa1\x3a\x22", /* "回答說:""; "The reply was, " */
+	// Holmes/I/The Inspector/Person asked/said (without "Then" prefix)
+	"Holmes asked, ", // TODO
+	"\xba\xd6\xba\xb8\xbc\xaf\xb4\xb5\xbb\xa1\x3a", /* "福爾摩斯說:"; "Holmes said, " */
+	"I asked, ", // TODO
+	"I said, ", // TODO
+	"The Inspector asked, ", // TODO
+	"The Inspector said, ", // TODO
+	"%s asked, ", // TODO
+	"\x25\x73\xbb\xa1\x3a", /* "%s說:"; "%s said, " */
+	// Then Holmes/I/The Inspector/Person asked/said
+	"Then Holmes asked, ", // TODO
+	"Then Holmes said, ", // TODO
+	"Then I asked, ", // TODO
+	"Then I said, ", // TODO
+	"Then the Inspector asked, ", // TODO
+	"Then the Inspector said, ", // TODO
+	"Then %s asked, ", // TODO
+	"Then %s said, " // TODO
+};
+
 FixedText::FixedText(SherlockEngine *vm)  {
 	_vm = vm;
 
@@ -194,6 +225,11 @@ FixedText::FixedText(SherlockEngine *vm)  {
 		// Used by Sherlock Holmes 1+2
 		_fixedJournalTextArray = fixedJournalTextES;
 		_fixedObjectPickedUpText = "Cogido/a %s";
+		break;
+	case Common::ZH_TWN:
+		// Used by Sherlock Holmes 1+2
+		_fixedJournalTextArray = fixedJournalTextZHBig5;
+		_fixedObjectPickedUpText = "Picked up %s"; // TODO
 		break;
 	default:
 		// Default to English
