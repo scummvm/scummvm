@@ -23,14 +23,6 @@
 #include "engines/advancedDetector.h"
 #include "immortal/immortal.h"
 
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/md5.h"
-#include "common/str-array.h"
-#include "common/translation.h"
-#include "common/util.h"
-
-#include "immortal/detection.h"
 #include "immortal/detection_tables.h"
 
 ImmortalMetaEngineDetection::ImmortalMetaEngineDetection() : AdvancedMetaEngineDetection(Immortal::gameDescriptions,
