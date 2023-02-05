@@ -508,8 +508,20 @@ void Score::update() {
 		// Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
 		// D4 will only process recursive enterFrame handlers to a depth of 2.
 		// Any more will be ignored.
-		if ((_vm->getVersion() >= 400) && (count < 2))
+		if ((_vm->getVersion() >= 400) && (count < 2)) {
 			_movie->processEvent(kEventEnterFrame);
+		} else if ((_vm->getVersion() < 400) || _movie->_allowOutdatedLingo) {
+			// Force a flush of any frozen scripts before raising enterFrame
+			if (!processFrozenScripts())
+				return;
+			_movie->processEvent(kEventEnterFrame);
+			if ((_vm->getVersion() >= 300) || _movie->_allowOutdatedLingo) {
+				// Movie version of enterFrame, for D3 only. The D3 Interactivity Manual claims
+				// "This handler executes before anything else when the playback head moves."
+				// but this is incorrect. The frame script is executed first.
+				_movie->processEvent(kEventStepMovie);
+			}
+		}
 		// If another frozen state gets triggered, wait another update() before thawing
 		if (_window->frozenLingoStateCount() > count)
 			return;
@@ -522,12 +534,6 @@ void Score::update() {
 		return;
 
 	if (!_vm->_playbackPaused) {
-		if ((_vm->getVersion() >= 300 && _vm->getVersion() < 400) || _movie->_allowOutdatedLingo) {
-			// Movie version of enterFrame, for D3 only. The D3 Interactivity Manual claims
-			// "This handler executes before anything else when the playback head moves."
-			// but this is incorrect. The frame script is executed first.
-			_movie->processEvent(kEventStepMovie);
-		}
 		if (_movie->_timeOutPlay)
 			_movie->_lastTimeOut = _vm->getMacTicks();
 	}
