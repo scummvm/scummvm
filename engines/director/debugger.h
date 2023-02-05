@@ -37,6 +37,7 @@ enum BreakpointType {
 	kBreakpointMovieFrame = 3,
 	kBreakpointVariable = 4,
 	kBreakpointEntity = 5,
+	kBreakpointEvent = 6,
 };
 
 struct Breakpoint {
@@ -50,6 +51,7 @@ struct Breakpoint {
 	Common::String moviePath;
 	uint frameOffset = 0;
 	Common::String varName;
+	LEvent eventId = kEventNone;
 	int entity = 0;
 	int field = 0;
 	bool varRead = false;
@@ -85,6 +87,15 @@ struct Breakpoint {
 			result += ":";
 			result += varRead ? "r" : "";
 			result += varWrite ? "w" : "";
+			break;
+		case kBreakpointEvent:
+			result += "Event ";
+			if (eventId == kEventNone) {
+				result += "none";
+			} else {
+				result += g_lingo->_eventHandlerTypes[eventId];
+			}
+			break;
 		default:
 			break;
 		}
@@ -101,6 +112,7 @@ public:
 	void stepHook();
 	void frameHook();
 	void movieHook();
+	void eventHook(LEvent eventId);
 	void pushContextHook();
 	void popContextHook();
 	void builtinHook(const Symbol &funcSym);
@@ -136,6 +148,7 @@ private:
 	bool cmdBpFrame(int argc, const char **argv);
 	bool cmdBpEntity(int argc, const char **argv);
 	bool cmdBpVar(int argc, const char **argv);
+	bool cmdBpEvent(int argc, const char **argv);
 	bool cmdBpDel(int argc, const char **argv);
 	bool cmdBpEnable(int argc, const char **argv);
 	bool cmdBpDisable(int argc, const char **argv);
@@ -179,6 +192,7 @@ private:
 	bool _bpCheckVarWrite;
 	bool _bpCheckEntityRead;
 	bool _bpCheckEntityWrite;
+	bool _bpCheckEvent;
 };
 
 

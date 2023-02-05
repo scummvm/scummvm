@@ -91,6 +91,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("be", WRAP_METHOD(Debugger, cmdBpEntity));
 	registerCmd("bpvar", WRAP_METHOD(Debugger, cmdBpVar));
 	registerCmd("bv", WRAP_METHOD(Debugger, cmdBpVar));
+	registerCmd("bpevent", WRAP_METHOD(Debugger, cmdBpEvent));
+	registerCmd("bn", WRAP_METHOD(Debugger, cmdBpEvent));
 	registerCmd("bpdel", WRAP_METHOD(Debugger, cmdBpDel));
 	registerCmd("bpenable", WRAP_METHOD(Debugger, cmdBpEnable));
 	registerCmd("bpdisable", WRAP_METHOD(Debugger, cmdBpDisable));
@@ -118,6 +120,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	_bpCheckVarWrite = false;
 	_bpCheckEntityRead = false;
 	_bpCheckEntityWrite = false;
+	_bpCheckEvent = false;
 }
 
 Debugger::~Debugger() {
@@ -177,6 +180,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" bpentity / be [entityName:fieldName] [r/w/rw] - Create a breakpoint on a Lingo \"the\" field being accessed in a specific way");
 	debugPrintf(" bpvar / bv [varName] - Create a breakpoint on a Lingo variable being read or modified");
 	debugPrintf(" bpvar / bv [varName] [r/w/rw] - Create a breakpoint on a Lingo variable being accessed in a specific way");
+	debugPrintf(" bpevent / bn [eventName] - Create a breakpoint on a Lingo event");
 	debugPrintf(" bpdel [n] - Deletes a specific breakpoint\n");
 	debugPrintf(" bpenable [n] - Enables a specific breakpoint\n");
 	debugPrintf(" bpdisable [n] - Disables a specific breakpoint\n");
@@ -672,6 +676,35 @@ bool Debugger::cmdBpVar(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::cmdBpEvent(int argc, const char **argv) {
+	if (argc == 2) {
+		Breakpoint bp;
+		bp.type = kBreakpointEvent;
+		for (auto &it : g_lingo->_eventHandlerTypeIds) {
+			if (it._key.equalsIgnoreCase(argv[1])) {
+				bp.eventId = (LEvent)it._value;
+				break;
+			}
+		}
+		if (bp.eventId == kEventNone) {
+			debugPrintf("Event %s not found.\n", argv[1]);
+			return true;
+		}
+		bp.id = _bpNextId;
+		_bpNextId++;
+		_breakpoints.push_back(bp);
+		bpUpdateState();
+		debugPrintf("Added %s\n", bp.format().c_str());
+	} else {
+		debugPrintf("Must specify an event name. Choices are:\n");
+		for (auto &it : g_lingo->_eventHandlerTypeIds) {
+			debugPrintf("%s ", it._key.c_str());
+		}
+		debugPrintf("\n");
+	}
+	return true;
+}
+
 bool Debugger::cmdBpFrame(int argc, const char **argv) {
 	Movie *movie = g_director->getCurrentMovie();
 	if (argc == 2 || argc == 3) {
@@ -816,6 +849,7 @@ void Debugger::bpUpdateState() {
 	_bpCheckVarWrite = false;
 	_bpCheckEntityRead = false;
 	_bpCheckEntityWrite = false;
+	_bpCheckEvent = false;
 	Movie *movie = g_director->getCurrentMovie();
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 	for (auto &it : _breakpoints) {
@@ -855,6 +889,8 @@ void Debugger::bpUpdateState() {
 		} else if (it.type == kBreakpointEntity) {
 			_bpCheckEntityRead |= it.varRead;
 			_bpCheckEntityWrite |= it.varWrite;
+		} else if (it.type == kBreakpointEvent) {
+			_bpCheckEvent = true;
 		}
 	}
 }
@@ -982,6 +1018,21 @@ void Debugger::movieHook() {
 		cmdMovie(0, nullptr);
 		attach();
 		g_system->updateScreen();
+	}
+}
+
+void Debugger::eventHook(LEvent eventId) {
+	if (_bpCheckEvent) {
+		for (auto &it : _breakpoints) {
+			if (it.type == kBreakpointEvent && eventId == it.eventId) {
+				debugPrintf("Hit a breakpoint:\n");
+				debugPrintf("%s\n", it.format().c_str());
+				cmdScriptFrame(0, nullptr);
+				attach();
+				g_system->updateScreen();
+				break;
+			}
+		}
 	}
 }
 
