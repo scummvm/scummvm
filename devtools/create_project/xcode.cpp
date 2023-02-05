@@ -1389,6 +1389,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	scummvmOSX_LibPaths.push_back("\"$(inherited)\"");
 	scummvmOSX_LibPaths.push_back("\"\\\"$(SRCROOT)/lib\\\"\"");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, kSettingsNoQuote | kSettingsAsList, 5);
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "MACOSX_DEPLOYMENT_TARGET", "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "OTHER_CFLAGS", "");
 	ADD_SETTING(scummvmOSX_Debug, "PRODUCT_NAME", PROJECT_NAME);
 
