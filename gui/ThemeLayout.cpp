@@ -229,8 +229,8 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 	} else if (_overlays == "screen_center") {
 		_x = -1;
 		_y = -1;
-		_w = _defaultW > 0 ? MIN(_defaultW, g_gui.getGUIWidth()) * g_gui.getScaleFactor() : -1;
-		_h = _defaultH > 0 ? MIN(_defaultH, g_gui.getGUIHeight()) * g_gui.getScaleFactor() : -1;
+		_w = _defaultW > 0 ? MIN(_defaultW, (int16)(g_gui.getGUIWidth() * g_gui.getScaleFactor())) : -1;
+		_h = _defaultH > 0 ? MIN(_defaultH, (int16)(g_gui.getGUIHeight() * g_gui.getScaleFactor())) : -1;
 	} else {
 		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, _w, _h)) {
 			warning("Unable to retrieve overlayed dialog position %s", _overlays.c_str());
