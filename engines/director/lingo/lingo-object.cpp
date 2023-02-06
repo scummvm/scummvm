@@ -41,6 +41,7 @@
 #include "director/lingo/xlibs/askuser.h"
 #include "director/lingo/xlibs/barakeobj.h"
 #include "director/lingo/xlibs/batqt.h"
+#include "director/lingo/xlibs/blitpict.h"
 #include "director/lingo/xlibs/cdromxobj.h"
 #include "director/lingo/xlibs/darkenscreen.h"
 #include "director/lingo/xlibs/developerStack.h"
@@ -152,6 +153,7 @@ static struct XLibProto {
 	{ AskUser::fileNames,				AskUser::open,				AskUser::close,				kXObj,					400 },	// D4
 	{ BarakeObj::fileNames,				BarakeObj::open,			BarakeObj::close,			kXObj,					400 },	// D4
 	{ BatQT::fileNames,					BatQT::open,				BatQT::close,				kXObj,					400 },	// D4
+	{ BlitPict::fileNames,				BlitPict::open,				BlitPict::close,			kXObj,					400 },	// D4
 	{ CDROMXObj::fileNames,				CDROMXObj::open,			CDROMXObj::close,			kXObj,					200 },	// D2
 	{ DarkenScreen::fileNames,			DarkenScreen::open,			DarkenScreen::close,		kXObj,					300 },	// D3
 	{ DeveloperStack::fileNames,		DeveloperStack::open,		DeveloperStack::close,		kXObj,					300 },	// D3

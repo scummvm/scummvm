@@ -44,6 +44,7 @@ MODULE_OBJS = \
 	lingo/xlibs/askuser.o \
 	lingo/xlibs/barakeobj.o \
 	lingo/xlibs/batqt.o \
+	lingo/xlibs/blitpict.o \
 	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/darkenscreen.o \
 	lingo/xlibs/developerStack.o \
