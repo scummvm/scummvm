@@ -37,7 +37,7 @@ struct SpellsState {
 	// TODO: Is this variable different in different contexts?
 	// In some places it's used to hold a new condition,
 	// but others, like moonRay, uses it to hold Hp
-	byte _newCondition = 0;
+	byte _damage = 0;
 
 	/**
 	 * Synchronize data to/from savegames
@@ -48,7 +48,7 @@ struct SpellsState {
 		s.syncAsByte(_mmVal5);
 		s.syncAsByte(_mmVal7);
 		s.syncAsByte(_resistanceType);
-		s.syncAsByte(_newCondition);
+		s.syncAsByte(_damage);
 	}
 };
 

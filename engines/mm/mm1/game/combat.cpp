@@ -963,9 +963,9 @@ void Combat::iterateMonsters1Inner() {
 
 	} else {
 		enc._monsterList[getMonsterIndex()]._status |=
-			g_globals->_spellsState._newCondition;
+			g_globals->_spellsState._damage;
 
-		byte bits = g_globals->_spellsState._newCondition;
+		byte bits = g_globals->_spellsState._damage;
 		int effectNum;
 		for (effectNum = 0; effectNum < 8; ++effectNum, bits >>= 1) {
 			if (bits & 1)
@@ -1015,7 +1015,7 @@ void Combat::iterateMonsters2Inner() {
 		STRING["spells.casts_spell"].c_str());
 	const Common::String monsterName = _monsterP->_name;
 
-	_damage = g_globals->_spellsState._newCondition;
+	_damage = g_globals->_spellsState._damage;
 
 	bool affects = !monsterLevelThreshold();
 	if (affects) {
@@ -1161,7 +1161,7 @@ void Combat::summonLightning() {
 			g_globals->_currCharacter->_name,
 			STRING["spells.casts_spell"].c_str());
 
-		ss._newCondition = g_globals->_currCharacter->_level * 2 + 4;
+		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
 		ss._mmVal1++;
 		ss._mmVal2++;
 		ss._resistanceType = RESISTANCE_ELECTRICITY;
@@ -1183,7 +1183,7 @@ void Combat::summonLightning2() {
 	ss._mmVal1 = 1;
 	ss._mmVal2 = 2;
 	ss._resistanceType = RESISTANCE_ELECTRICITY;
-	ss._newCondition = getRandomNumber(29) + 3;
+	ss._damage = getRandomNumber(29) + 3;
 
 	iterateMonsters2();
 }
@@ -1193,7 +1193,7 @@ void Combat::fireball2() {
 	ss._mmVal1 = 1;
 	ss._mmVal2 = 1;
 	ss._resistanceType = 5;
-	ss._newCondition = 0;
+	ss._damage = 0;
 
 	levelAdjust();
 }
@@ -1201,7 +1201,7 @@ void Combat::fireball2() {
 void Combat::levelAdjust() {
 	SpellsState &ss = g_globals->_spellsState;
 	for (uint i = 0; i < g_globals->_currCharacter->_level._current; ++i)
-		ss._newCondition += getRandomNumber(6);
+		ss._damage += getRandomNumber(6);
 
 	iterateMonsters2();
 }
@@ -1213,7 +1213,7 @@ void Combat::paralyze() {
 	ss._mmVal1++;
 	ss._mmVal2 = 6;
 	ss._resistanceType = _attackersCount;
-	ss._newCondition = BAD_CONDITION;
+	ss._damage = BAD_CONDITION;
 
 	iterateMonsters1();
 }
@@ -1319,7 +1319,7 @@ void Combat::fireball() {
 			g_globals->_currCharacter->_name,
 			STRING["spells.casts_spell"].c_str());
 
-		ss._newCondition = g_globals->_currCharacter->_level * 2 + 4;
+		ss._damage = g_globals->_currCharacter->_level * 2 + 4;
 		ss._mmVal1++;
 		ss._mmVal2++;
 		ss._resistanceType++;
@@ -1367,7 +1367,7 @@ void Combat::weaken() {
 
 	resetDestMonster();
 	ss._mmVal1++;
-	ss._newCondition = 2;
+	ss._damage = 2;
 	iterateMonsters2();
 }
 
@@ -1379,7 +1379,7 @@ bool Combat::web() {
 	ss._mmVal1++;
 	ss._mmVal2 = 0;
 	ss._resistanceType = 5;
-	ss._newCondition = UNCONSCIOUS;
+	ss._damage = UNCONSCIOUS;
 
 	iterateMonsters1();
 	return true;
@@ -1397,10 +1397,10 @@ bool Combat::acidRain() {
 	ss._mmVal1 = 1;
 	ss._mmVal2 = 3;
 	ss._resistanceType = 15;
-	ss._newCondition = 0;
+	ss._damage = 0;
 
 	for (int i = 0; i < 5; ++i)
-		ss._newCondition += getRandomNumber(10);
+		ss._damage += getRandomNumber(10);
 
 	iterateMonsters2();
 	return true;

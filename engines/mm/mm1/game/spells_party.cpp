@@ -193,7 +193,7 @@ SpellResult SpellsParty::cleric13_blind() {
 	SpellsState &s = g_globals->_spellsState;
 	s._mmVal1++;
 	s._mmVal2 = 7;
-	s._newCondition = BLINDED;
+	s._damage = BLINDED;
 	s._resistanceType = static_cast<Resistance>((int)s._resistanceType + 1);
 
 	g_globals->_combat->iterateMonsters1();
@@ -253,7 +253,7 @@ SpellResult SpellsParty::cleric22_heroism() {
 
 SpellResult SpellsParty::cleric23_pain() {
 	SpellsState &ss = g_globals->_spellsState;
-	ss._newCondition = getRandomNumber(6) + getRandomNumber(6);
+	ss._damage = getRandomNumber(6) + getRandomNumber(6);
 	ss._mmVal1++;
 	ss._resistanceType++;
 	ss._mmVal2 = 6;
@@ -284,7 +284,7 @@ SpellResult SpellsParty::cleric27_silence() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
 	ss._mmVal2 = 7;
-	ss._newCondition = SILENCED;
+	ss._damage = SILENCED;
 	ss._resistanceType++;
 
 	g_globals->_combat->iterateMonsters1();
@@ -295,7 +295,7 @@ SpellResult SpellsParty::cleric28_suggestion() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
 	ss._mmVal2 = 6;
-	ss._newCondition = PARALYZED;
+	ss._damage = PARALYZED;
 	ss._resistanceType++;
 
 	g_globals->_combat->iterateMonsters1();
@@ -339,7 +339,7 @@ SpellResult SpellsParty::cleric35_produceFlame() {
 	ss._mmVal1++;
 	ss._resistanceType++;
 	ss._mmVal2 = 4;
-	ss._newCondition = getRandomNumber(6) +
+	ss._damage = getRandomNumber(6) +
 		getRandomNumber(6) + getRandomNumber(6);
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -349,7 +349,7 @@ SpellResult SpellsParty::cleric36_produceFrost() {
 	SpellsState &ss = g_globals->_spellsState;
 	ss._mmVal1++;
 	ss._mmVal2++;
-	ss._newCondition = getRandomNumber(6) +
+	ss._damage = getRandomNumber(6) +
 		getRandomNumber(6) + getRandomNumber(6);
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -436,7 +436,7 @@ SpellResult SpellsParty::cleric51_deadlySwarm() {
 	g_globals->_combat->resetDestMonster();
 	ss._mmVal1++;
 	ss._mmVal2 = 0;
-	ss._newCondition = getRandomNumber(10) + getRandomNumber(10);
+	ss._damage = getRandomNumber(10) + getRandomNumber(10);
 
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -507,7 +507,7 @@ SpellResult SpellsParty::cleric61_moonRay() {
 
 	// Damage the monsters
 	g_globals->_combat->resetDestMonster();
-	ss._newCondition = hp;
+	ss._damage = hp;
 	ss._mmVal1++;
 	ss._mmVal2 = 5;
 
@@ -645,7 +645,7 @@ SpellResult SpellsParty::cleric74_resurrection() {
 
 SpellResult SpellsParty::cleric75_sunRay() {
 	SpellsState &ss = g_globals->_spellsState;
-	ss._newCondition = getRandomNumber(51) + 49;
+	ss._damage = getRandomNumber(51) + 49;
 	ss._mmVal1++;
 	ss._mmVal2++;
 	ss._resistanceType = RESISTANCE_FIRE;
@@ -665,7 +665,7 @@ SpellResult SpellsParty::wizard13_energyBlast() {
 	for (int i = 0; i < g_globals->_currCharacter->_level._current; ++i)
 		damage += getRandomNumber(4);
 
-	ss._newCondition = MIN(damage, 255);
+	ss._damage = MIN(damage, 255);
 	ss._mmVal2 = 5;
 	ss._resistanceType++;
 
@@ -675,7 +675,7 @@ SpellResult SpellsParty::wizard13_energyBlast() {
 
 SpellResult SpellsParty::wizard14_flameArrow() {
 	SpellsState &ss = g_globals->_spellsState;
-	ss._newCondition = getRandomNumber(6);
+	ss._damage = getRandomNumber(6);
 	ss._mmVal1++;
 	ss._mmVal2 = 1;
 	ss._resistanceType++;
@@ -699,7 +699,7 @@ SpellResult SpellsParty::wizard18_sleep() {
 	ss._mmVal1++;
 	ss._mmVal2 = 8;
 	ss._resistanceType = RESISTANCE_FEAR;
-	ss._newCondition = 16;
+	ss._damage = 16;
 
 	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
@@ -707,7 +707,7 @@ SpellResult SpellsParty::wizard18_sleep() {
 
 SpellResult SpellsParty::wizard21_electricArrow() {
 	SpellsState &ss = g_globals->_spellsState;
-	ss._newCondition = getRandomNumber(6) + getRandomNumber(6);
+	ss._damage = getRandomNumber(6) + getRandomNumber(6);
 	ss._mmVal1++;
 	ss._resistanceType++;
 	ss._mmVal2 = 2;
@@ -775,7 +775,7 @@ SpellResult SpellsParty::wizard28_scare() {
 	ss._mmVal1++;
 	ss._mmVal2 = 7;
 	ss._resistanceType++;
-	ss._newCondition = 1;
+	ss._damage = 1;
 
 	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
@@ -837,7 +837,7 @@ SpellResult SpellsParty::wizard41_acidArrow() {
 	ss._mmVal1++;
 	ss._resistanceType++;
 	ss._mmVal2 = 3;
-	ss._newCondition += getRandomNumber(10) +
+	ss._damage += getRandomNumber(10) +
 		getRandomNumber(10) + getRandomNumber(10);
 
 	g_globals->_combat->iterateMonsters2();
@@ -850,7 +850,7 @@ SpellResult SpellsParty::wizard42_coldBeam() {
 	ss._resistanceType++;
 	ss._mmVal2 = 4;
 
-	ss._newCondition = getRandomNumber(10) + getRandomNumber(10) +
+	ss._damage = getRandomNumber(10) + getRandomNumber(10) +
 		getRandomNumber(10) + getRandomNumber(10);
 
 	g_globals->_combat->iterateMonsters2();
@@ -862,7 +862,7 @@ SpellResult SpellsParty::wizard43_feebleMind() {
 	ss._mmVal1++;
 	ss._mmVal2 = 0;
 	ss._resistanceType++;
-	ss._newCondition = 8;
+	ss._damage = 8;
 
 	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
@@ -873,7 +873,7 @@ SpellResult SpellsParty::wizard44_freeze() {
 	ss._mmVal1 = 0;
 	ss._mmVal2 = 6;
 	ss._resistanceType++;
-	ss._newCondition = 128;
+	ss._damage = 128;
 
 	g_globals->_combat->iterateMonsters1();
 	return SR_SUCCESS_SILENT;
@@ -935,7 +935,7 @@ SpellResult SpellsParty::wizard61_dancingSword() {
 
 	ss._mmVal1 = 0;
 	ss._mmVal2 = 0;
-	ss._newCondition = getRandomNumber(30);
+	ss._damage = getRandomNumber(30);
 
 	g_globals->_combat->iterateMonsters2();
 	return SR_SUCCESS_SILENT;
@@ -984,7 +984,7 @@ SpellResult SpellsParty::wizard73_meteorShower() {
 
 	ss._mmVal1++;
 	ss._mmVal2 = 5;
-	ss._newCondition = MIN((int)getRandomNumber(120) +
+	ss._damage = MIN((int)getRandomNumber(120) +
 		(int)g_globals->_currCharacter->_level._current, 120);
 
 	g_globals->_combat->iterateMonsters2();
@@ -1005,12 +1005,12 @@ SpellResult SpellsParty::wizard75_prismaticLight() {
 
 	if (ss._mmVal1 < 50) {
 		uint count = getRandomNumber(4);
-		ss._newCondition <<= count;
+		ss._damage <<= count;
 		g_globals->_combat->iterateMonsters2();
 
 	} else {
 		uint count = getRandomNumber(8);
-		ss._newCondition <<= count;
+		ss._damage <<= count;
 		g_globals->_combat->iterateMonsters1();
 	}
 
