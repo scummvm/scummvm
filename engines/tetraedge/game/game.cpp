@@ -840,6 +840,7 @@ bool Game::loadCharacter(const Common::String &name) {
 		result = _scene.loadCharacter(name);
 		if (result) {
 			character = _scene.character(name);
+			assert(character);
 			character->_onCharacterAnimFinishedSignal.remove(this, &Game::onCharacterAnimationFinished);
 			character->_onCharacterAnimFinishedSignal.add(this, &Game::onCharacterAnimationFinished);
 			character->onFinished().add(this, &Game::onDisplacementFinished);
@@ -1083,10 +1084,10 @@ bool Game::onMouseClick(const Common::Point &pt) {
 		_lastCharMoveMousePos = TeVector2s32();
 	}
 
-	if (app->isLockCursor() || _movePlayerCharacterDisabled)
+	Character *character = _scene._character;
+	if (app->isLockCursor() || _movePlayerCharacterDisabled || !character)
 		return false;
 
-	Character *character = _scene._character;
 	const Common::String &charAnim = character->curAnimName();
 
 	if (charAnim == character->characterSettings()._idleAnimFileName

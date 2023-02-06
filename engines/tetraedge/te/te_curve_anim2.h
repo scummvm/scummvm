@@ -37,7 +37,7 @@ class TeCurveAnim2 : public TeAnimation {
 public:
 	typedef void(T::*TMethod)(const S &);
 
-	TeCurveAnim2() : _callbackObj(nullptr), _duration(0), _lastUpdateTime(0) {}
+	TeCurveAnim2() : _callbackObj(nullptr), _callbackMethod(nullptr), _duration(0), _lastUpdateTime(0) {}
 	virtual ~TeCurveAnim2() {}
 
 	void setCurve(const Common::Array<float> &curve) {

@@ -137,8 +137,8 @@ bool Dialog2::onAnimationDownFinished() {
 
 bool Dialog2::onAnimationUpFinished() {
 	// Seems like this just prints a debug value??
-	TeButtonLayout *dialogButton = _gui.buttonLayout("dialog");
-	dialogButton->anchor();
+	//TeButtonLayout *dialogButton = _gui.buttonLayout("dialog");
+	//dialogButton->anchor();
 	return false;
 }
 
