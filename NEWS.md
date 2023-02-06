@@ -11,6 +11,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Obsidian.
    - Added support for Pink Panther: Passport to Peril.
    - Added support for Pink Panther: Hokus Pokus Pink.
+   - Added support for Adibou 2 "Environment", "Read/Count 4 & 5" and "Read/Count 6 & 7".
    - Added support for Driller/Space Station Oblivion (DOS/EGA/CGA, Amiga, AtariST, ZX Spectrum and Amstrad CPC versions).
    - Added support for Halls of the Dead: Faery Tale Adventure II.
 
@@ -56,9 +57,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Dreamweb:
    - Support playing from the original installer floppies.
-
- GOB:
-   - Added support for Adibou 2 "Environment", "Read/Count 4 & 5" and "Read/Count 6 & 7".
 
  Hadesch:
    - Added support for a 1997 release.
