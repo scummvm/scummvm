@@ -362,6 +362,15 @@ protected:
 	 */
 	virtual void cleanup() {}
 
+	/**
+	 * Overload if your parser wants to be notified of keys which haven't
+	 * been explicitly declared.
+	 *
+	 * The functions should return true if the key was handled and parsing should
+	 * continue, or false (default) to raise a parsing error.
+	 */
+	virtual bool handleUnknownKey(ParserNode *node) { return false; }
+
 	List<XMLKeyLayout *> _layoutList;
 
 private:
