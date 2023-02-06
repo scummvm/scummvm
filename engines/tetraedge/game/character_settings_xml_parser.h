@@ -43,6 +43,8 @@ public:
 				KEY_END()
 				XML_KEY(defaultScale)
 				KEY_END()
+				XML_KEY(invertNormals)
+				KEY_END()
 				XML_KEY(walk)
 					XML_KEY(animationFileName)
 					KEY_END()
@@ -60,9 +62,13 @@ public:
 						KEY_END()
 						XML_KEY(endD)
 							XML_PROP(file, true)
+							XML_PROP(stepRight, false)
+							XML_PROP(stepLeft, false)
 						KEY_END()
 						XML_KEY(endG)
 							XML_PROP(file, true)
+							XML_PROP(stepRight, false)
+							XML_PROP(stepLeft, false)
 						KEY_END()
 					KEY_END()
 					XML_KEY(speed)
@@ -105,7 +111,10 @@ public:
 	bool parserCallback_eyes(ParserNode *node);
 	bool parserCallback_mouth(ParserNode *node);
 	bool parserCallback_body(ParserNode *node);
+	bool parserCallback_invertNormals(ParserNode *node);
+
 	bool textCallback(const Common::String &val) override;
+	bool handleUnknownKey(ParserNode *node) override;
 
 private:
 	Character::AnimSettings parseWalkAnimSettings(const ParserNode *node) const;

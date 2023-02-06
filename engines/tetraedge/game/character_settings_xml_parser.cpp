@@ -132,6 +132,11 @@ bool CharacterSettingsXmlParser::parserCallback_body(ParserNode *node) {
 	return true;
 }
 
+bool CharacterSettingsXmlParser::parserCallback_invertNormals(ParserNode *node) {
+	_curCharacter->_invertNormals = true;
+	return true;
+}
+
 bool CharacterSettingsXmlParser::textCallback(const Common::String &val) {
 	switch (_curTextTag) {
 	case TagModelFileName:
@@ -161,6 +166,11 @@ bool CharacterSettingsXmlParser::textCallback(const Common::String &val) {
 	default:
 		break;
 	}
+	return true;
+}
+
+bool CharacterSettingsXmlParser::handleUnknownKey(ParserNode *node) {
+	warning("TODO: CharacterSettingsXmlParser handle unknown key %s", node->name.c_str());
 	return true;
 }
 

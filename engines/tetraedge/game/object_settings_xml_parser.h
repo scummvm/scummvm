@@ -45,6 +45,10 @@ public:
 				KEY_END()
 				XML_KEY(defaultScale)
 				KEY_END()
+				XML_KEY(originOffset)
+				KEY_END()
+				XML_KEY(invertNormals)
+				KEY_END()
 			KEY_END()
 		KEY_END()
 	} PARSER_END()
@@ -55,11 +59,14 @@ private:
 	bool parserCallback_Object(ParserNode *node);
 	bool parserCallback_modelFileName(ParserNode *node);
 	bool parserCallback_defaultScale(ParserNode *node);
+	bool parserCallback_originOffset(ParserNode *node);
+	bool parserCallback_invertNormals(ParserNode *node);
 	bool textCallback(const Common::String &val) override;
 
 	enum TextTagType {
 		TagModelFileName,
-		TagDefaultScale
+		TagDefaultScale,
+		TagOriginOffset
 	};
 
 	TextTagType _textTagType;
