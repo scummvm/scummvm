@@ -24,7 +24,7 @@
 namespace Efh {
 
 void EfhEngine::songDelay(int delay) {
-	debugC(3, kDebugEngine, "songDelay %ld", delay);
+	debugC(3, kDebugEngine, "songDelay %d", delay);
 
 	int remainingDelay = delay / 2;
 	while (remainingDelay > 0 && !shouldQuit()) {

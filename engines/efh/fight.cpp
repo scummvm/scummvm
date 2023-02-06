@@ -982,10 +982,10 @@ int16 EfhEngine::determineTeamTarget(int16 charId, int16 unkFied18Val, bool chec
 	case 3:
 	case 2:
 		++realRange;
-		// no break on purpose
+		// fall through
 	case 1:
 		++realRange;
-		// no break on purpose
+		// fall through
 	case 0:
 		++realRange;
 		break;
@@ -1495,6 +1495,8 @@ bool EfhEngine::checkSpecialItemsOnCurrentPlace(int16 itemId) {
 	case 1:
 		if ((itemId >= 0x58 && itemId <= 0x68) || (itemId >= 0x86 && itemId <= 0x89) || (itemId >= 0x74 && itemId <= 0x76) || itemId == 0x8C)
 			retVal = false;
+		// fall through
+		// FIXME: Is this intentional?
 	case 2:
 		if ((itemId >= 0x61 && itemId <= 0x63) || (itemId >= 0x74 && itemId <= 0x76) || (itemId >= 0x86 && itemId <= 0x89) || itemId == 0x5B || itemId == 0x5E || itemId == 0x66 || itemId == 0x68 || itemId == 0x8C)
 			retVal = false;

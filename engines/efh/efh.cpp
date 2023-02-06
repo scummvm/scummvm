@@ -1309,7 +1309,7 @@ int8 EfhEngine::checkMonsterMoveCollisionAndTileTexture(int16 monsterId) {
 
 	int16 maxSize = _largeMapFlag ? 63 : 23;
 	MapMonster *curMapMonster = &_mapMonsters[_techId][monsterId];
-	if (curMapMonster->_posX < 0 || curMapMonster->_posY < 0 || curMapMonster->_posX > maxSize || curMapMonster->_posY > maxSize)
+	if (curMapMonster->_posX > maxSize || curMapMonster->_posY > maxSize)
 		return 0;
 
 	if (curMapMonster->_posX == _mapPosX && curMapMonster->_posY == _mapPosY)

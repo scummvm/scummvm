@@ -1269,7 +1269,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 			uint8 varAE = _items[itemId]._defenseType;
 			uint8 effectPoints = getRandom(_items[itemId]._field19_mapPosX_or_maxDeltaPoints);
 			_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] -= effectPoints;
-			if (_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] > 20 || _npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] < 0) {
+			if (_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] > 20) {
 				_npcBuf[_teamChar[teamCharId]._id]._activeScore[varAE] = 1;
 			}
 			if (effectPoints > 1)
