@@ -190,7 +190,9 @@ bool XMLParser::parseActiveKey(bool closed) {
 		}
 
 	} else {
-		return parserError("Unexpected key in the active scope ('" + key->name + "').");
+		if (!handleUnknownKey(key))
+			return parserError("Unexpected key in the active scope ('" + key->name + "').");
+		ignore = true;
 	}
 
 	// check if any of the parents must be ignored.
