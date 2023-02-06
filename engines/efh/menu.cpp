@@ -235,40 +235,37 @@ void EfhEngine::displayStatusMenu(int16 windowId) {
 void EfhEngine::prepareStatusRightWindowIndexes(int16 menuId, int16 charId) {
 	debugC(6, kDebugEngine, "prepareStatusRightWindowIndexes %d %d", menuId, charId);
 
-	int16 maxId = 0;
-	int16 minId;
 	_menuItemCounter = 0;
 
 	switch (menuId) {
 	case kEfhMenuInfo:
-		minId = 26;
-		maxId = 36;
+		for (int16 counter = 0; counter <= 10; ++counter) {
+			if (_npcBuf[charId]._infoScore[counter] != 0) {
+				_menuStatItemArr[_menuItemCounter++] = counter + 26;
+			}
+		}
 		break;
 	case kEfhMenuPassive:
-		minId = 15;
-		maxId = 25;
+		for (int16 counter = 0; counter <= 10; ++counter) {
+			if (_npcBuf[charId]._passiveScore[counter] != 0) {
+				_menuStatItemArr[_menuItemCounter++] = counter + 15;
+			}
+		}
 		break;
 	case kEfhMenuActive:
-		minId = 0;
-		maxId = 14;
+		for (int16 counter = 0; counter <= 14; ++counter) {
+			if (_npcBuf[charId]._activeScore[counter] != 0) {
+				_menuStatItemArr[_menuItemCounter++] = counter;
+			}
+		}
 		break;
 	default:
-		minId = -1;
-		break;
-	}
-
-	if (minId == -1) {
 		for (uint counter = 0; counter < 10; ++counter) {
 			if (_npcBuf[charId]._inventory[counter]._ref != 0x7FFF) {
 				_menuStatItemArr[_menuItemCounter++] = counter;
 			}
 		}
-	} else {
-		for (int16 counter = minId; counter < maxId; ++counter) {
-			if (_npcBuf[charId]._activeScore[counter] != 0) {
-				_menuStatItemArr[_menuItemCounter++] = counter;
-			}
-		}
+		break;
 	}
 }
 

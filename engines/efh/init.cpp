@@ -394,6 +394,8 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_loadSaveSlot = -1;
 	_saveAuthorized = false;
 
+	_speakerStream = nullptr;
+	
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
 		if (saveSlot >= 0 && saveSlot <= 999)

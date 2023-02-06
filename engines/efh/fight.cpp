@@ -491,7 +491,7 @@ void EfhEngine::handleFight_MobstersAttack(int groupId) {
 				maxTeamMemberId = _teamSize;
 			}
 
-			if (minTeamMemberId == -1)
+			if (minTeamMemberId <= -1)
 				continue;
 
 			// handleFight - Loop on targetId - Start
