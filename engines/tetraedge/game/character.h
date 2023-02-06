@@ -70,6 +70,8 @@ public:
 		Common::String _defaultMouth;	// Note: Engine supports more, but in practice only one ever used.
 		Common::String _defaultBody;	// Note: Engine supports more, but in practice only one ever used.
 
+		bool _invertNormals;
+
 		void clear();
 	};
 

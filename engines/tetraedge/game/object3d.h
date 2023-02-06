@@ -37,6 +37,8 @@ public:
 		Common::String _name;
 		Common::String _modelFileName;
 		TeVector3f32 _defaultScale;
+		TeVector3f32 _originOffset;
+		bool _invertNormals;
 
 		void clear();
 	};

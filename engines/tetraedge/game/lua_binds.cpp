@@ -82,12 +82,31 @@ static void PlayMovie(const Common::String &vidpath, const Common::String &music
 	game->playMovie(vidpath, musicpath);
 }
 
+static void PlayMovie(const Common::String &vidpath, const Common::String &musicpath, double f) {
+	Game *game = g_engine->getGame();
+	warning("TODO: handle float value in PlayMovie for Syberia 2");
+
+	if (!game->playMovie(vidpath, musicpath)) {
+		warning("[PlayMovie] Movie \"%s\" doesn\'t exist.", vidpath.c_str());
+	}
+	// TODO: call Game::addMoviePlayed
+}
+
+
 static int tolua_ExportedFunctions_PlayMovie00(lua_State *L) {
 	tolua_Error err;
+	// Syberia 1 has 2 string args, Syberia 2 adds a double arg.
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		PlayMovie(s1, s2);
+		return 0;
+	} else if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+			&& tolua_isnumber(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		double d1 = tolua_tonumber(L, 3, 1.0);
+		PlayMovie(s1, s2, d1);
 		return 0;
 	}
 	error("#ferror in function 'PlayMovie': %d %d %s", err.index, err.array, err.type);
@@ -2038,6 +2057,45 @@ static int tolua_ExportedFunctions_MoveCharacterPlayerTo00(lua_State *L) {
 	error("#ferror in function 'MoveCharacterPlayerTo': %d %d %s", err.index, err.array, err.type);
 }
 
+static void EnableRunMode(bool val) {
+	warning("TODO: EnableRunMode %s", val ? "true" : "false");
+}
+
+static int tolua_ExportedFunctions_EnableRunMode00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		bool b1 = tolua_toboolean(L, 1, 0);
+		EnableRunMode(b1);
+	}
+	error("#ferror in function 'EnableRunMode': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetModelPlayer(const Common::String &name) {
+	Game *game = g_engine->getGame();
+	Character *character = game->scene().character(name);
+
+	if (!character) {
+		warning("[SetModelPlayer] Character not found %s", name.c_str());
+		return;
+	}
+
+	if (character->_model->name() != name) {
+		game->unloadPlayerCharacter(character->_model->name());
+		if (!game->loadPlayerCharacter(name)) {
+			warning("[SetModelPlayer] Can't load player character");
+		}
+		character->_model->setVisible(true);
+	}
+}
+
+static int tolua_ExportedFunctions_SetModelPlayer00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, 0));
+		SetModelPlayer(s1);
+	}
+	error("#ferror in function 'SetModelPlayer': %d %d %s", err.index, err.array, err.type);
+}
 
 // ////////////////////////////////////////////////////////////////////////
 
@@ -2188,6 +2246,10 @@ void LuaOpenBinds(lua_State *L) {
 	// tolua_function(L, "ReachedFreemiumLimit", tolua_ExportedFunctions_ReachedFreemiumLimit00); // Unused
 	tolua_function(L, "AddUnrecalAnim", tolua_ExportedFunctions_AddUnrecalAnim00);
 	tolua_function(L, "UnlockArtwork", tolua_ExportedFunctions_UnlockArtwork00);
+
+	// Syberia 2 specific functions.
+	tolua_function(L, "EnableRunMode", tolua_ExportedFunctions_EnableRunMode00);
+	tolua_function(L, "SetModelPlayer", tolua_ExportedFunctions_SetModelPlayer00);
 
 	tolua_endmodule(L);
 }

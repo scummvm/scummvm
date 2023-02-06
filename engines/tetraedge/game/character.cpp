@@ -52,6 +52,7 @@ void Character::CharacterSettings::clear() {
 	_defaultEyes.clear();
 	_defaultMouth.clear();
 	_defaultBody.clear();
+	_invertNormals = false;
 }
 
 void Character::WalkSettings::clear() {

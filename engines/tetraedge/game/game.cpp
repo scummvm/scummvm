@@ -1293,7 +1293,7 @@ void Game::pauseMovie() {
 	sprite->pause();
 }
 
-void Game::playMovie(const Common::String &vidPath, const Common::String &musicPath) {
+bool Game::playMovie(const Common::String &vidPath, const Common::String &musicPath) {
 	Application *app = g_engine->getApplication();
 	app->captureFade();
 	TeButtonLayout *videoBackgroundButton = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
@@ -1312,6 +1312,7 @@ void Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 	_running = false;
 
 	TeSpriteLayout *videoSpriteLayout = _inGameGui.spriteLayoutChecked("video");
+	// TODO: check return value here.
 	videoSpriteLayout->load(vidPath);
 	videoSpriteLayout->setVisible(true);
 	music.play();
@@ -1324,6 +1325,7 @@ void Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 	}
 
 	app->fade();
+	return true;
 }
 
 void Game::playRandomSound(const Common::String &name) {

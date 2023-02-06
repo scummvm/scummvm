@@ -148,6 +148,7 @@ Common::FSNode TeCore::findFile(const Common::Path &path) {
 		"PC-MacOSX",
 		"PC-PS3-Android-MacOSX",
 		"PC-MacOSX-Android-iPhone-iPad",
+		"PC-Android-MacOSX-iPhone-iPad",
 		"PC-MacOSX-Xbox360-PS3",
 		"PC-MacOSX-PS3-Xbox360",
 		"PC-MacOSX-Xbox360-PS3/PC-MacOSX",

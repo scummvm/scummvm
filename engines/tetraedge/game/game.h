@@ -145,7 +145,7 @@ public:
 
 	void pauseMovie();
 	void pauseSounds() {}; // does nothing?
-	void playMovie(const Common::String &vidPath, const Common::String &musicPath);
+	bool playMovie(const Common::String &vidPath, const Common::String &musicPath);
 	void playRandomSound(const Common::String &name);
 	void playSound(const Common::String &name, int param_2, float volume);
 	void removeNoScale2Child(TeLayout *layout);
