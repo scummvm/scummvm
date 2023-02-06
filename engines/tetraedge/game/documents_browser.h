@@ -32,7 +32,7 @@ class DocumentsBrowser : public TeLayout {
 public:
 	DocumentsBrowser();
 
-	void addDocument(Document *document);
+	int addDocument(Document *document);
 	void addDocument(const Common::String &str);
 
 	void currentPage(int page);

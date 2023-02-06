@@ -206,6 +206,24 @@ static int tolua_ExportedFunctions_TakeObject00(lua_State *L) {
 	error("#ferror in function 'TakeObject': %d %d %s", err.index, err.array, err.type);
 }
 
+static void TakeObjectInHand(const Common::String &obj) {
+	Game *game = g_engine->getGame();
+	// TODO: Set global _lastHitObjectName?? How is it used?
+	//game->luaContext().setGlobal(_lastHitObjectName, true);
+	if (!obj.empty())
+		game->addToHand(obj);
+}
+
+static int tolua_ExportedFunctions_TakeObjectInHand00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		TakeObjectInHand(s1);
+		return 0;
+	}
+	error("#ferror in function 'TakeObjectInHand': %d %d %s", err.index, err.array, err.type);
+}
+
 static void RemoveObject(const Common::String &obj) {
 	Game *game = g_engine->getGame();
 	game->inventory().removeObject(obj);
@@ -265,6 +283,35 @@ static int tolua_ExportedFunctions_ShowDocument00(lua_State *L) {
 		return 0;
 	}
 	error("#ferror in function 'ShowDocument': %d %d %s", err.index, err.array, err.type);
+}
+
+static void HideDocument() {
+	Game *game = g_engine->getGame();
+	game->documentsBrowser().hideDocument();
+}
+
+static int tolua_ExportedFunctions_HideDocument00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnoobj(L, 1, &err)) {
+		HideDocument();
+		return 0;
+	}
+	error("#ferror in function 'HideDocument': %d %d %s", err.index, err.array, err.type);
+}
+
+static void AddDocument(const Common::String &name) {
+	Game *game = g_engine->getGame();
+	game->documentsBrowser().addDocument(name);
+}
+
+static int tolua_ExportedFunctions_AddDocument00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		AddDocument(s1);
+		return 0;
+	}
+	error("#ferror in function 'AddDocument': %d %d %s", err.index, err.array, err.type);
 }
 
 static void AddUnrecalAnim(const Common::String &newanim) {
@@ -455,6 +502,51 @@ static int tolua_ExportedFunctions_AddCallbackPlayer00(lua_State *L) {
 		return 0;
 	}
 	error("#ferror in function 'AddCallbackPlayer': %d %d %s", err.index, err.array, err.type);
+}
+
+static void DeleteCallback(const Common::String &charName, const Common::String &animName, const Common::String &fnName, float triggerFrame) {
+	Game *game = g_engine->getGame();
+	Character *c = game->scene().character(charName);
+	if (c) {
+		c->deleteCallback(animName, fnName, triggerFrame);
+	} else {
+		warning("[DeleteCallback] Character's \"%s\" doesn't exist", charName.c_str());
+	}
+}
+
+static int tolua_ExportedFunctions_DeleteCallback00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+			&& tolua_isstring(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
+			&& tolua_isnoobj(L, 5, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		Common::String s3(tolua_tostring(L, 3, nullptr));
+		double n1 = tolua_tonumber(L, 4, 0.0);
+		DeleteCallback(s1, s2, s3, n1);
+		return 0;
+	}
+	error("#ferror in function 'DeleteCallback': %d %d %s", err.index, err.array, err.type);
+}
+
+static void DeleteCallbackPlayer(const Common::String &animName, const Common::String &fnName, float triggerFrame) {
+	Game *game = g_engine->getGame();
+	Character *c = game->scene()._character;
+	assert(c);
+	c->deleteCallback(animName, fnName, triggerFrame);
+}
+
+static int tolua_ExportedFunctions_DeleteCallbackPlayer00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+			&& tolua_isnumber(L, 3, 0, &err) && tolua_isnoobj(L, 4, &err)) {
+		Common::String s2(tolua_tostring(L, 1, nullptr));
+		Common::String s3(tolua_tostring(L, 2, nullptr));
+		double n1 = tolua_tonumber(L, 3, 0.0);
+		DeleteCallbackPlayer(s2, s3, n1);
+		return 0;
+	}
+	error("#ferror in function 'DeleteCallbackPlayer': %d %d %s", err.index, err.array, err.type);
 }
 
 static void AddMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y,
@@ -1005,6 +1097,34 @@ static int tolua_ExportedFunctions_TranslateGroundObject00(lua_State *L) {
 		return 0;
 	}
 	error("#ferror in function 'TranslateGroundObject': %d %d %s", err.index, err.array, err.type);
+}
+
+static void RotateGroundObject(const Common::String &name, float x, float y, float z, float time) {
+	Game *game = g_engine->getGame();
+	Object3D *obj = game->scene().object3D(name);
+	if (!obj)
+		error("[RotateGroundObject] Object not found %s", name.c_str());
+	TeQuaternion rot = obj->model()->rotation();
+	obj->_rotateStart = rot;
+	obj->_rotateAmount = TeVector3f32(x, y, z);
+	obj->_rotateTimer.start();
+	obj->_rotateTime = time;
+}
+
+static int tolua_ExportedFunctions_RotateGroundObject00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
+		&& tolua_isnumber(L, 5, 0, &err) && tolua_isnoobj(L, 6, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		float f1 = tolua_tonumber(L, 2, 0.0);
+		float f2 = tolua_tonumber(L, 3, 0.0);
+		float f3 = tolua_tonumber(L, 4, 0.0);
+		float f4 = tolua_tonumber(L, 5, 0.0);
+		RotateGroundObject(s1, f1, f2, f3, f4);
+		return 0;
+	}
+	error("#ferror in function 'RotateGroundObject': %d %d %s", err.index, err.array, err.type);
 }
 
 static void EnableLight(uint lightno, bool enable) {
@@ -2150,14 +2270,14 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "SetSoundStep", tolua_ExportedFunctions_SetSoundStep00);
 	tolua_function(L, "Selected", tolua_ExportedFunctions_Selected00);
 	tolua_function(L, "TakeObject", tolua_ExportedFunctions_TakeObject00);
-	// tolua_function(L, "TakeObjectInHand", tolua_ExportedFunctions_TakeObjectInHand00); // Unused
+	tolua_function(L, "TakeObjectInHand", tolua_ExportedFunctions_TakeObjectInHand00); // Only used in Syberia 2
 	tolua_function(L, "RemoveObject", tolua_ExportedFunctions_RemoveObject00);
 	tolua_function(L, "RemoveObject", tolua_ExportedFunctions_RemoveObject01);
 	tolua_function(L, "AddNumber", tolua_ExportedFunctions_AddNumber00);
 	tolua_function(L, "ShowDocument", tolua_ExportedFunctions_ShowDocument00);
 	// tolua_function(L, "ShowDocumentAndWaitForEnd", tolua_ExportedFunctions_ShowDocumentAndWaitForEnd00); // Unused
-	// tolua_function(L, "HideDocument", tolua_ExportedFunctions_HideDocument00); // Unused
-	// tolua_function(L, "AddDocument", tolua_ExportedFunctions_AddDocument00); // Unused
+	tolua_function(L, "HideDocument", tolua_ExportedFunctions_HideDocument00); // Only used in Syberia 2
+	tolua_function(L, "AddDocument", tolua_ExportedFunctions_AddDocument00); // Only used in Syberia 2
 	tolua_function(L, "LoadCharacter", tolua_ExportedFunctions_LoadCharacter00);
 	tolua_function(L, "UnloadCharacter", tolua_ExportedFunctions_UnloadCharacter00);
 	// tolua_function(L, "GetRotationCharacter", tolua_ExportedFunctions_GetRotationCharacter00); // Unused
@@ -2193,8 +2313,8 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "AddCallback", tolua_ExportedFunctions_AddCallback00);
 	tolua_function(L, "AddCallbackPlayer", tolua_ExportedFunctions_AddCallbackPlayer00);
 	// tolua_function(L, "AddCallbackAnimation2D", tolua_ExportedFunctions_AddCallbackAnimation2D00); // Unused
-	// tolua_function(L, "DeleteCallback", tolua_ExportedFunctions_DeleteCallback00); // Unused
-	// tolua_function(L, "DeleteCallbackPlayer", tolua_ExportedFunctions_DeleteCallbackPlayer00); // Unused
+	tolua_function(L, "DeleteCallback", tolua_ExportedFunctions_DeleteCallback00); // Only used in Syberia 2
+	tolua_function(L, "DeleteCallbackPlayer", tolua_ExportedFunctions_DeleteCallbackPlayer00); // Only used in Syberia 2
 	// tolua_function(L, "DeleteCallbackAnimation2D", tolua_ExportedFunctions_DeleteCallbackAnimation2D00); // Unused
 	tolua_function(L, "SetObjectOnCharacter", tolua_ExportedFunctions_SetObjectOnCharacter00);
 	tolua_function(L, "SetObjectRotation", tolua_ExportedFunctions_SetObjectRotation00);
@@ -2206,7 +2326,7 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "SetGroundObjectPosition", tolua_ExportedFunctions_SetGroundObjectPosition00);
 	tolua_function(L, "SetGroundObjectRotation", tolua_ExportedFunctions_SetGroundObjectRotation00);
 	tolua_function(L, "TranslateGroundObject", tolua_ExportedFunctions_TranslateGroundObject00);
-	// tolua_function(L, "RotateGroundObject", tolua_ExportedFunctions_RotateGroundObject00); // Unused
+	tolua_function(L, "RotateGroundObject", tolua_ExportedFunctions_RotateGroundObject00); // Only used in Syberia 2
 	// tolua_function(L, "SetLightPlayerCharacter", tolua_ExportedFunctions_SetLightPlayerCharacter00); // Unused
 	// tolua_function(L, "SetLightPos", tolua_ExportedFunctions_SetLightPos00); // Unused
 	tolua_function(L, "EnableLight", tolua_ExportedFunctions_EnableLight00);
@@ -2250,6 +2370,29 @@ void LuaOpenBinds(lua_State *L) {
 	// Syberia 2 specific functions.
 	tolua_function(L, "EnableRunMode", tolua_ExportedFunctions_EnableRunMode00);
 	tolua_function(L, "SetModelPlayer", tolua_ExportedFunctions_SetModelPlayer00);
+
+	// TODO Syberia 2 functions..
+	//tolua_function(L,"BlendCharacterPlayerAnimation", tolua_ExportedFunctions_BlendCharacterPlayerAnimation00);
+	//tolua_function(L,"CurrentCharacterPlayerAnimation", tolua_ExportedFunctions_CurrentCharacterPlayerAnimation00);
+	//tolua_function(L,"SetCharacterPlayerRotation", tolua_ExportedFunctions_SetCharacterPlayerRotation00);
+	//tolua_function(L,"SetCharacterPlayerPosition", tolua_ExportedFunctions_SetCharacterPlayerPosition00);
+	//tolua_function(L,"PlaySnow", tolua_ExportedFunctions_PlaySnow00);
+	//tolua_function(L,"PlaySnowCustom", tolua_ExportedFunctions_PlaySnowCustom00);
+	//tolua_function(L,"SnowCustomVisible", tolua_ExportedFunctions_SnowCustomVisible00);
+	//tolua_function(L,"AddUnlockedAnim", tolua_ExportedFunctions_AddUnlockedAnim00);
+	//tolua_function(L,"RemoveRandomSound", tolua_ExportedFunctions_RemoveRandomSound00);
+	//tolua_function(L,"SetCharacterPlayerAnimation", tolua_ExportedFunctions_SetCharacterPlayerAnimation00);
+	//tolua_function(L,"SetYoukiFollowKate", tolua_ExportedFunctions_SetYoukiFollowKate00);
+	//tolua_function(L,"PlaySmoke", tolua_ExportedFunctions_PlaySmoke00);
+	//tolua_function(L,"SmokeVisible", tolua_ExportedFunctions_SmokeVisible00);
+	//tolua_function(L,"ActivateMask", tolua_ExportedFunctions_ActivateMask00);
+	//tolua_function(L,"AddRandomAnimation", tolua_ExportedFunctions_AddRandomAnimation00);
+	//tolua_function(L,"PlayRandomAnimation", tolua_ExportedFunctions_PlayRandomAnimation00);
+	//tolua_function(L,"SetObjectMoveDest", tolua_ExportedFunctions_SetObjectMoveDest00);
+	//tolua_function(L,"SetObjectMoveTime", tolua_ExportedFunctions_SetObjectMoveTime00);
+	//tolua_function(L,"PlayVerticalScrolling", tolua_ExportedFunctions_PlayVerticalScrolling00);
+	//tolua_function(L,"GetParticleIndex", tolua_GetParticleIndex);
+	//tolua_function(L,"EnableParticle", tolua_EnableParticle);
 
 	tolua_endmodule(L);
 }

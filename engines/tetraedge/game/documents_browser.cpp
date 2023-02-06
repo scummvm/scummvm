@@ -165,6 +165,18 @@ bool DocumentsBrowser::onZoomedButton() {
 	return false;
 }
 
+int DocumentsBrowser::addDocument(Document *document) {
+	error("TODO: Implement DocumentsBrowser::addDocument");
+}
+
+void DocumentsBrowser::addDocument(const Common::String &str) {
+	Document *doc = new Document(this);
+	doc->load(str);
+	if (!addDocument(doc))
+		delete doc;
+}
+
+
 void DocumentsBrowser::showDocument(const Common::String &docName, int startPage) {
 	_curPage = startPage;
 	_startPage = startPage;

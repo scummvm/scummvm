@@ -1182,12 +1182,13 @@ void InGameScene::update() {
 			obj->model()->setPosition(trans);
 		}
 		if (obj->_rotateTime >= 0) {
-			// Never actually used in the game.
-			error("TODO: handle _rotateTime > 0 in InGameScene::update");
+			float time = MIN((float)(obj->_rotateTimer.getTimeFromStart() / 1000000.0), obj->_rotateTime);
+			TeVector3f32 rot = (obj->_rotateAmount * (time / obj->_rotateTime));
+			TeQuaternion rotq = TeQuaternion::fromEuler(rot);
+			obj->model()->setRotation(obj->_rotateStart * rotq);
 		}
 	}
 }
-
 
 bool InGameScene::AnimObject::onFinished() {
 	Game *game = g_engine->getGame();
