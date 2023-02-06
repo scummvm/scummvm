@@ -75,6 +75,10 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Escape From Hell (C) Electronic Arts, 1990";
 	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
+	}
 };
 
 } // End of namespace efh
