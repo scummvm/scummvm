@@ -1031,7 +1031,7 @@ void Combat::iterateMonsters2Inner() {
 				idx = 0;
 
 			static const byte FLAGS[8] = {
-			0x40, 0x20, 0x60, 0x10, 8, 4, 2, 1
+				0x40, 0x20, 0x60, 0x10, 8, 4, 2, 1
 			};
 			if ((_monsterP->_field1a & FLAGS[idx]) == FLAGS[idx])
 				_damage >>= 2;
@@ -1083,7 +1083,7 @@ void Combat::iterateMonsters2Inner() {
 			g_globals->_combat->iterateMonsters2Inner();
 		};
 	} else {
-		msg._ynCallback = []() {
+		msg._timeoutCallback = []() {
 			g_globals->_combat->characterDone();
 		};
 	}

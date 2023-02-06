@@ -215,6 +215,8 @@ void CastSpell::performSpell(Character *chr) {
 
 		default:
 			// Spell done, but don't display done message
+			if (isInCombat())
+				close();
 			break;
 		}
 	}
