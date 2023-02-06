@@ -284,9 +284,9 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"sword1",
 		"Steam",
-		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1088232,
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1088372,
 				   "swordres.rif",          "239bdd76c405bad0f804a8ae5df4adb0", 59788,
-				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 3193923,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 3188725,
 				   "smackshi/intro.smk",    "939643be076c73068f47ce0fd6c27183", 13305080),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
