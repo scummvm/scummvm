@@ -474,7 +474,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 		}
 	}
 
-	if (curLineNb < numbLines && !noTextFlag)
+	if (!curLine.empty() && curLineNb < numbLines && !noTextFlag)
 		displayStringAtTextPos(curLine);
 
 	if (joiningNpcId != 0xFF) {

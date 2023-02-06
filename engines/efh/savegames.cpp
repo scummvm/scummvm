@@ -58,7 +58,9 @@ Common::Error EfhEngine::loadGameState(int slot) {
 
 	// Skip the thumbnail
 	Graphics::Surface *thumbnail;
-	Graphics::loadThumbnail(*saveFile, thumbnail);
+	if (!Graphics::loadThumbnail(*saveFile, thumbnail))
+		return Common::kReadingFailed;
+	
 	delete (thumbnail);
 
 	// Skip the savegame date

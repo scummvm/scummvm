@@ -771,6 +771,10 @@ void EfhEngine::totalPartyKill() {
 void EfhEngine::removeCharacterFromTeam(int16 teamMemberId) {
 	debugC(6, kDebugEngine, "removeCharacterFromTeam %d", teamMemberId);
 
+	// Safeguard
+	if (teamMemberId < 0 || teamMemberId >= _teamSize)
+		return;
+	
 	int16 charId = _teamChar[teamMemberId]._id;
 	_npcBuf[charId].field12_textId = _npcBuf[charId].fieldB_textId;
 	_npcBuf[charId].field14_textId = _npcBuf[charId].fieldE_textId;
