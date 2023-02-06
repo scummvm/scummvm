@@ -265,7 +265,9 @@ msgstr "新しい利用可能な%Sなし"
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
-msgstr "データ%s %Sを削除すると、既にダウンロードされた%Sの全てが削除されます。続行しますか?"
+msgstr ""
+"データ%s %Sを削除すると、既にダウンロードされた%Sの全てが削除されます。続行し"
+"ますか?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
 msgid "Proceed"
