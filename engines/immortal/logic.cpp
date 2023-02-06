@@ -49,11 +49,11 @@ void ImmortalEngine::restartLogic() {
 	cycleFreeAll();
 	levelInit();
 	//roomInit();       <-- will be run in constructor of room
-	//monstInit();      <-- room.initMonsters()     \
-	//objectInit();     <-- room.initObjects()
+	//monstInit();      <-- room.initMonsters()     -|
+	//objectInit();     <-- room.initObjects()       |
 	//doorInit();       <-- room.initDoors()         |- probably all get run from room constructor
-	//sparkInit();      <-- room.initSparks()
-	//bulletInit();     <-- room.initProjectiles()  /
+	//sparkInit();      <-- room.initSparks()        |
+	//bulletInit();     <-- room.initProjectiles()  -|
 	//objectInit();     <-- again? Odd...
 	//genericSpriteInit();  <-- room.initGenSprites()
 

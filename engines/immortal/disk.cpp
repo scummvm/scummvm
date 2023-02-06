@@ -271,6 +271,8 @@ void ProDOSDisk::getFileEntry(FileEntry *f) {
  */
 
 void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::String path) {
+	// NB: p for previous set, but not currently used. This debug message silences any set-but-unused compiler warnings
+	debug(10, "searchDirectory(h:%p prev: %d next:%d, path:%s", (void *)h, p, n, path.c_str());
 	int currPos;
 	int parsedFiles = 0;
 

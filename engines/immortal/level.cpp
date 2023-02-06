@@ -69,16 +69,16 @@ void ImmortalEngine::levelLoadFile(int l) {
 
 	// Create the rooms and doors, then populate the rooms with their objects and actors
 
-	for (int d = 0; d < _stories[l]._doors.size(); d++) {
+	for (uint d = 0; d < _stories[l]._doors.size(); d++) {
 		doorNew(_stories[l]._doors[d]);
 	}
 
-	for (int r = 0; r < _stories[l]._rooms.size(); r++) {
+	for (uint r = 0; r < _stories[l]._rooms.size(); r++) {
 		_rooms[r] = new Room(_stories[l]._rooms[r]._x, _stories[l]._rooms[r]._y, _stories[l]._rooms[r]._flags);
 
 		Common::Array<SFlame> allFlames(_stories[l]._flames[r].size());
 		if (_stories[l]._flames[r].size() > 0) {
-			for (int f = 0; f < _stories[l]._flames[r].size(); f++) {
+			for (uint f = 0; f < _stories[l]._flames[r].size(); f++) {
 				SFlame sf;
 				sf._p = _stories[l]._flames[r][f]._p;
 				sf._x = _stories[l]._flames[r][f]._x;
@@ -89,13 +89,13 @@ void ImmortalEngine::levelLoadFile(int l) {
 		_allFlames[r] = allFlames;
 
 		if (_stories[l]._objects[r].size() > 0) {
-			for (int o = 0; o < _stories[l]._objects[r].size(); o++) {
+			for (uint o = 0; o < _stories[l]._objects[r].size(); o++) {
 				//objNew(_stories[l]._objects[r][o]);
 			}
 		}
 
 		if (_stories[l]._monsters[r].size() > 0) {
-			for (int m = 0; m < _stories[l]._monsters[r].size(); m++) {
+			for (uint m = 0; m < _stories[l]._monsters[r].size(); m++) {
 				//monstNew(_stories[l]._monsters[r][m]);
 			}
 		}
