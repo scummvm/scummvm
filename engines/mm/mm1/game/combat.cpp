@@ -281,7 +281,8 @@ void Combat::combatLoop(bool checkMonstersFirst) {
 					_currentChar = i;
 					g_globals->_currCharacter = &c;
 
-					if (!(c._condition & (BLINDED | SILENCED | DISEASED | POISONED))) {
+					if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS |
+							PARALYZED | ASLEEP))) {
 						// Character is enabled
 						setMode(SELECT_OPTION);
 						return;
