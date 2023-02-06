@@ -3198,11 +3198,9 @@ EOF
 		# RiscOS has no OpenGL support at all even though it's SDL based
 		_opengl_mode=none
 		if test "$_dynamic_modules" = yes ; then
-			_detection_features_static=no
 			_plugins_default=dynamic
-		else
-			_detection_features_full=no
 		fi
+		_detection_features_full=no
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
