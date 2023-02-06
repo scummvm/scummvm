@@ -40,6 +40,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("pos", WRAP_METHOD(Console, cmdPos));
 	registerCmd("intangible", WRAP_METHOD(Console, cmdIntangible));
 	registerCmd("cast", WRAP_METHOD(Console, cmdCast));
+	registerCmd("spells", WRAP_METHOD(Console, cmdSpellsAll));
 	registerCmd("encounter", WRAP_METHOD(Console, cmdEncounter));
 	registerCmd("encounters", WRAP_METHOD(Console, cmdEncounters));
 	registerCmd("specials", WRAP_METHOD(Console, cmdSpecials));
@@ -324,6 +325,13 @@ bool Console::cmdCast(int argc, const char **argv) {
 		Game::SpellsParty::cast(_spellIndex, c);
 		return false;
 	}
+}
+
+bool Console::cmdSpellsAll(int argc, const char **argv) {
+	g_globals->_allSpells = (argc == 2) && !strcmp(argv[1], "on");
+	debugPrintf("All spells is %s\n",
+		g_globals->_allSpells ? "enabled" : "disabled");
+	return true;
 }
 
 bool Console::cmdEncounter(int argc, const char **argv) {

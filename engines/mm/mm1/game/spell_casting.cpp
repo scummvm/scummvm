@@ -107,6 +107,13 @@ void SpellCasting::setSpell(Character *chr, int lvl, int num) {
 	int requiredGems = (uint8)SPELLS_SP_GEMS[spellIndex] & 0x7f;
 	if (_spellState == SS_OK)
 		setSpell(spellIndex, requiredSp, requiredGems);
+
+	// Supporting debugger command that enables all spells
+	if (g_globals->_allSpells && _spellState != SS_COMBAT_ONLY &&
+			_spellState != SS_NONCOMBAT_ONLY && _spellState != SS_OUTDOORS_ONLY) {
+		_requiredSp = _requiredGems = 0;
+		_spellState = SS_OK;
+	}
 }
 
 void SpellCasting::setSpell(int spellIndex, int requiredSp, int requiredGems) {

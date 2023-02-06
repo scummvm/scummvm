@@ -71,6 +71,11 @@ protected:
 	bool cmdCast(int argc, const char **argv);
 
 	/**
+	 * Enables/disables casting any spell
+	 */
+	bool cmdSpellsAll(int argc, const char **argv);
+
+	/**
 	 * Trigger an encounter
 	 */
 	bool cmdEncounter(int argc, const char **argv);

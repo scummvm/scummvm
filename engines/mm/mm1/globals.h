@@ -62,6 +62,7 @@ public:
 	// Console flags
 	bool _intangible = false;
 	bool _encountersOn = true;
+	bool _allSpells = false;
 
 public:
 	// Enhanced mode globals
