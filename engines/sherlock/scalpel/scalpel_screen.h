@@ -39,6 +39,7 @@ public:
 	 * Draws a button for use in the inventory, talk, and examine dialogs.
 	 * ButtonText is supposed to have its hotkey as a prefix. The hotkey will get highlighted.
 	 */
+	void makeButton(const Common::Rect &bounds, const Common::Point &textPoint, const Common::String &buttonText, bool textContainsHotkey = true);
 	void makeButton(const Common::Rect &bounds, int textX, const Common::String &buttonText, bool textContainsHotkey = true);
 
 	/**

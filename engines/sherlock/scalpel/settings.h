@@ -69,6 +69,13 @@ private:
 	 * Draws the buttons for the settings dialog
 	 */
 	int drawButtons(const Common::Point &pt, int key);
+
+	Common::Rect getButtonRect(int num) const;
+	Common::Point getButtonTextPoint(int num) const;
+	void makeButtonNum(int num, const Common::String &s);
+	void makeButtonNumDisabled(int num, const Common::String &s);
+	bool doesButtonExist(int num) const;
+
 public:
 	/**
 	 * Handles input when the settings window is being shown
