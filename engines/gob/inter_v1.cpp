@@ -447,9 +447,9 @@ void Inter_v1::o1_initMult() {
 	int16 oldAnimHeight;
 	int16 oldAnimWidth;
 	int16 oldObjCount;
-	int16 posXVar;
-	int16 posYVar;
-	int16 animDataVar;
+	uint16 posXVar;
+	uint16 posYVar;
+	uint16 animDataVar;
 
 	oldAnimWidth = _vm->_mult->_animWidth;
 	oldAnimHeight = _vm->_mult->_animHeight;
@@ -572,9 +572,9 @@ void Inter_v1::o1_loadMultObject() {
 void Inter_v1::o1_getAnimLayerInfo() {
 	int16 anim;
 	int16 layer;
-	int16 varDX, varDY;
-	int16 varUnk0;
-	int16 varFrames;
+	uint16 varDX, varDY;
+	uint16 varUnk0;
+	uint16 varFrames;
 
 	_vm->_game->_script->evalExpr(&anim);
 	_vm->_game->_script->evalExpr(&layer);
@@ -961,7 +961,7 @@ void Inter_v1::o1_if(OpFuncParams &params) {
 
 void Inter_v1::o1_assign(OpFuncParams &params) {
 	byte destType = _vm->_game->_script->peekByte();
-	int16 dest = _vm->_game->_script->readVarIndex();
+	uint16 dest = _vm->_game->_script->readVarIndex();
 
 	int16 result;
 	int16 srcType = _vm->_game->_script->evalExpr(&result);
@@ -1727,7 +1727,7 @@ void Inter_v1::o1_waitEndPlay(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_playComposition(OpFuncParams &params) {
-	int16 dataVar = _vm->_game->_script->readVarIndex();
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
 	int16 freqVal = _vm->_game->_script->readValExpr();
 
 	int16 composition[50];
@@ -1739,8 +1739,8 @@ void Inter_v1::o1_playComposition(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_getFreeMem(OpFuncParams &params) {
-	int16 freeVar;
-	int16 maxFreeVar;
+	uint16 freeVar;
+	uint16 maxFreeVar;
 
 	freeVar = _vm->_game->_script->readVarIndex();
 	maxFreeVar = _vm->_game->_script->readVarIndex();
@@ -1752,7 +1752,7 @@ void Inter_v1::o1_getFreeMem(OpFuncParams &params) {
 
 void Inter_v1::o1_checkData(OpFuncParams &params) {
 	const char *file   = _vm->_game->_script->evalString();
-	      int16 varOff = _vm->_game->_script->readVarIndex();
+	      uint16 varOff = _vm->_game->_script->readVarIndex();
 
 	if (!_vm->_dataIO->hasFile(file)) {
 		warning("File \"%s\" not found", file);
@@ -1762,7 +1762,7 @@ void Inter_v1::o1_checkData(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_cleanupStr(OpFuncParams &params) {
-	int16 strVar;
+	uint16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	_vm->_util->cleanupStr(GET_VARO_FSTR(strVar));
@@ -1770,7 +1770,7 @@ void Inter_v1::o1_cleanupStr(OpFuncParams &params) {
 
 void Inter_v1::o1_insertStr(OpFuncParams &params) {
 	int16 pos;
-	int16 strVar;
+	uint16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	_vm->_game->_script->evalExpr(nullptr);
@@ -1781,7 +1781,7 @@ void Inter_v1::o1_insertStr(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_cutStr(OpFuncParams &params) {
-	int16 strVar;
+	uint16 strVar;
 	int16 pos;
 	int16 size;
 
@@ -1792,8 +1792,8 @@ void Inter_v1::o1_cutStr(OpFuncParams &params) {
 }
 
 void Inter_v1::o1_strstr(OpFuncParams &params) {
-	int16 strVar;
-	int16 resVar;
+	uint16 strVar;
+	uint16 resVar;
 	int16 pos;
 
 	strVar = _vm->_game->_script->readVarIndex();
@@ -1807,7 +1807,7 @@ void Inter_v1::o1_strstr(OpFuncParams &params) {
 
 void Inter_v1::o1_istrlen(OpFuncParams &params) {
 	int16 len;
-	int16 strVar;
+	uint16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
 	len = strlen(GET_VARO_STR(strVar));
@@ -1871,7 +1871,7 @@ void Inter_v1::o1_freeFont(OpFuncParams &params) {
 
 void Inter_v1::o1_readData(OpFuncParams &params) {
 	const char *file    = _vm->_game->_script->evalString();
-	      int16 dataVar = _vm->_game->_script->readVarIndex();
+	      uint16 dataVar = _vm->_game->_script->readVarIndex();
 	      int16 size    = _vm->_game->_script->readValExpr();
 	      int16 offset  = _vm->_game->_script->readValExpr();
 	      int16 retSize = 0;

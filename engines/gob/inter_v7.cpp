@@ -1407,7 +1407,7 @@ void Inter_v7::o7_readData(OpFuncParams &params) {
 void Inter_v7::o7_writeData(OpFuncParams &params) {
 	Common::String file = getFile(_vm->_game->_script->evalString(), false);
 
-	int16 dataVar = _vm->_game->_script->readVarIndex();
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
 	int32 size    = _vm->_game->_script->readValExpr();
 	int32 offset  = _vm->_game->_script->evalInt();
 

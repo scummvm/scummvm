@@ -1368,7 +1368,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		return;
 	}
 
-	int16 key   = 0;
+	uint16 key   = 0;
 	int16 flags = 0;
 	Font *font = nullptr;
 	uint32 funcEnter = 0, funcLeave = 0;
