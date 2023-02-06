@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-05 22:27+0000\n"
-"PO-Revision-Date: 2023-01-22 22:00+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2023-02-06 08:49+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -205,10 +205,9 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "Téléchargé %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
-#| msgid "Download speed: %s %S"
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Vitesse de téléchargement : %s %S"
+msgstr "Vitesse de téléchargement : %s %S/s"
 
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
@@ -264,15 +263,12 @@ msgid "No new %S available"
 msgstr "Pas de nouveaux %S disponibles"
 
 #: gui/downloadpacksdialog.cpp:462
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "%S. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Vous êtes sur le point d'effacer %s %s de données, supprimant ainsi tout(e)s "
+"Vous êtes sur le point d'effacer %s %S de données, supprimant ainsi tout(e)s "
 "les %S précédemment téléchargé(e)s. Voulez-vous continuer ?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
