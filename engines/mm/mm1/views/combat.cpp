@@ -568,9 +568,14 @@ void Combat::writeParty() {
 	clearPartyArea();
 
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
-		writeChar(1 + 21 * (i % 2), 16 + (i / 2), '1' + i);
-		writeString(") ");
-		writeString(g_globals->_combatParty[i]->_name);
+		const Character &c = *g_globals->_combatParty[i];
+		writeString(21 * (i % 2), 16 + (i / 2),
+			Common::String::format("%c%c) %s",
+				(c._condition == 0) ? ' ' : '*',
+				'1' + i,
+				c._name
+			)
+		);
 	}
 }
 

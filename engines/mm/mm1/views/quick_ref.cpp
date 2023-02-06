@@ -74,8 +74,8 @@ void QuickRef::draw() {
 
 	// Print food and conditions of each character
 	for (uint idx = 0; idx < g_globals->_party.size(); ++idx) {
-		Character &c = g_globals->_party[idx];
-		g_globals->_currCharacter = &c;
+		Character &c = inCombat ? *g_globals->_combatParty[idx] :
+			g_globals->_party[idx];
 		writeNumber(0, 9 + idx, idx + 1);
 
 		_textPos.x++;
@@ -135,9 +135,7 @@ bool QuickRef::isInCombat() const {
 }
 
 size_t QuickRef::getPartySize() const {
-	bool inCombat = isInCombat();
-	return inCombat ? g_globals->_combatParty.size() :
-		g_globals->_party.size();
+	return g_globals->_party.size();
 }
 
 } // namespace Views

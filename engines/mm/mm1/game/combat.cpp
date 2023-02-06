@@ -1009,7 +1009,7 @@ void Combat::iterateMonsters2() {
 
 void Combat::iterateMonsters2Inner() {
 	Encounter &enc = g_globals->_encounters;
-	Common::String line1 = Common::String::format("|%s| %s",
+	Common::String line1 = Common::String::format("%s %s",
 		g_globals->_currCharacter->_name,
 		STRING["spells.casts_spell"].c_str());
 	const Common::String monsterName = _monsterP->_name;
@@ -1052,16 +1052,16 @@ void Combat::iterateMonsters2Inner() {
 	} else {
 		Common::String line2 = Common::String::format("%s %s %d %s %s",
 			monsterName.c_str(),
-			STRING["monster_spells.takes"].c_str(),
+			STRING["dialogs.combat.takes"].c_str(),
 			_damage,
-			STRING[_damage == 1 ? "monster_spells.point" : "monster_spells.points"].c_str(),
-			STRING["monster_spells.of_damage"].c_str()
+			STRING[_damage == 1 ? "dialogs.combat.point" : "dialogs.combat.points"].c_str(),
+			STRING["dialogs.combat.of_damage"].c_str()
 		);
 
 		msg._lines.push_back(Line(0, 1, line2));
 
 		if (_damage >= enc._monsterList[getMonsterIndex()]._hp) {
-			msg._lines.push_back(Line(0, 2, STRING["monster_spells.and_goes_down"]));
+			msg._lines.push_back(Line(0, 2, STRING["dialogs.combat.and_goes_down"]));
 		}
 	}
 
@@ -1650,7 +1650,7 @@ Common::String Combat::subtractDamageFromChar() {
 			c._condition |= UNCONSCIOUS;
 
 			result = Common::String::format("%s %s", c._name,
-				STRING["monster_spellsState.goes_down"].c_str());
+				STRING["dialogs.combat.goes_down"].c_str());
 			Sound::sound2(SOUND_8);
 
 		} else {
@@ -1658,7 +1658,7 @@ Common::String Combat::subtractDamageFromChar() {
 				c._condition = BAD_CONDITION | DEAD;
 
 			result = Common::String::format("%s %s", c._name,
-				STRING["monster_spellsState.dies"].c_str());
+				STRING["dialogs.combat.dies"].c_str());
 			Sound::sound2(SOUND_8);
 		}
 	}
