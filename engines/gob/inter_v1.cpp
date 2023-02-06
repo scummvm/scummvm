@@ -1226,17 +1226,33 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 		memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 		break;
 
-	case 55:
-		// TODO case 55 implementation
-		warning("STUB: o1_palLoad case 55 not implemented");
+	case 55: {
+		// Push a copy of the current palette
+		Video::Color *paletteCopy = new Video::Color[256];
+		memcpy((char *)paletteCopy, (char *)_vm->_draw->_vgaPalette, 768);
+		_vm->_draw->_paletteStack.push(paletteCopy);
+
 		_vm->_game->_script->skip(2);
 		_vm->_draw->_applyPal = false;
 		return;
+	}
 
 	case 56:
-		// TODO case 56 implementation
-		warning("STUB: o1_palLoad case 56 not implemented");
-		_vm->_game->_script->skip(2);
+		// Pop the last pushed palette
+		index1 =  _vm->_game->_script->readByte();
+		index2 = (_vm->_game->_script->readByte() - index1 + 1) * 3;
+		if (!_vm->_draw->_paletteStack.empty()) {
+			memcpy((char *)_vm->_draw->_vgaPalette + index1 * 3,
+				   (char *)_vm->_draw->_paletteStack.top() + index1 * 3, index2);
+			delete[] _vm->_draw->_paletteStack.pop();
+		} else {
+			warning("o1_palLoad case 56: empty palette stack, cannot pop");
+		}
+
+		_vm->_draw->_applyPal = true;
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+		_vm->_draw->_applyPal = false;
+
 		break;
 
 	case 61:
