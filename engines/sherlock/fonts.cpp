@@ -433,6 +433,122 @@ int Fonts::charWidth(const char *p, int &idx) {
 	return 0;
 }
 
+Common::Array<Common::String> Fonts::wordWrap(const Common::String &str, uint maxWidth, Common::String &rem, uint maxChars, uint maxLines, bool skipHeadAt) {
+	Common::Array<Common::String> lines;
+	int strIdx = 0;
+
+	bool isInEucEscape = false;
+	do {
+		uint width = 0;
+		uint numChars = 0;
+		int spaceIdx = 0;
+		bool spacePNeedsEndEscape = false;
+		bool spacePNeedsBeginEscape = false;
+		int lineStartIdx = strIdx;
+		// Invariant: lastCharIdx is either -1
+		// or is exactly one character behind strP
+		// and in the same escape state.
+		int lastCharIdx = -1;
+		bool isLineStartPInEucEscape = isInEucEscape;
+
+		if (skipHeadAt) {
+			// If the first character is a '@' flagging a title line, then move
+			// past it, so the @ won't be included in the line width calculation
+			if (strIdx + 1 < (int)str.size() && str[strIdx] == '@' && str[strIdx + 1] != '$')
+				++strIdx;
+		}
+
+		// Find how many characters will fit on the next line
+		while (width < maxWidth && numChars < maxChars && strIdx < (int)str.size() && str[strIdx] != '\n') {
+			if (_isModifiedEucCn) {
+				byte curChar = str[strIdx];
+				byte nextChar = strIdx + 1 < (int)str.size() ? str[strIdx + 1] : 0;
+				if (!isInEucEscape && curChar == '@' && nextChar == '$') {
+					width += charWidth(' ');
+					numChars++;
+					if (lineStartIdx != strIdx) {
+						spaceIdx = strIdx;
+						spacePNeedsEndEscape = isInEucEscape;
+						spacePNeedsBeginEscape = true;
+					}
+					lastCharIdx = -1;
+					strIdx += 2;
+					isInEucEscape = true;
+					continue;
+				}
+
+				if (isInEucEscape && curChar == '$' && nextChar == '@') {
+					width += charWidth(' ');
+					numChars++;
+					spaceIdx = strIdx;
+					lastCharIdx = -1;
+					strIdx += 2;
+					spacePNeedsEndEscape = isInEucEscape;
+					spacePNeedsBeginEscape = false;
+					isInEucEscape = false;
+					continue;
+				}
+
+				if (curChar >= 0x41 && nextChar >= 0x41 && (isInEucEscape || ((curChar >= 0xa1) && (nextChar >= 0xa1)))) {
+					width += kChineseWidth;
+					lastCharIdx = strIdx;
+					strIdx += 2;
+					numChars++;
+					continue;
+				}
+			}
+
+			// Keep track of the last space
+			if (str[strIdx] == ' ') {
+				spacePNeedsEndEscape = isInEucEscape;
+				spacePNeedsBeginEscape = isInEucEscape;
+				spaceIdx = strIdx;
+			}
+			lastCharIdx = strIdx;
+			width += charWidth(str.c_str(), strIdx);
+			numChars++;
+		}
+
+		bool previousEucEscape = isInEucEscape;
+
+		// If the line was too wide to fit on a single line, go back to the last space
+		// if there was one, or otherwise simply break the line at this point
+		if (width >= maxWidth || numChars >= maxChars) {
+			if (spaceIdx > 0) {
+				previousEucEscape = spacePNeedsEndEscape;
+				isInEucEscape = spacePNeedsBeginEscape;
+				strIdx = spaceIdx;
+			} else if (lastCharIdx > 0 && lastCharIdx != lineStartIdx) {
+				strIdx = lastCharIdx;
+			}
+		}
+
+		Common::String line = str.substr(lineStartIdx, strIdx - lineStartIdx);
+		assert(!line.contains('\n'));
+		if (!line.hasPrefix("@$") && isLineStartPInEucEscape)
+			line = "@$" + line;
+
+		if (!line.hasSuffix("$@") && previousEucEscape)
+			line = line + "$@";
+
+		// Add the line to the output array
+		lines.push_back(line);
+
+		// Move the string ahead to the next line
+		while (strIdx < (int)str.size() && (str[strIdx] == '\n' || str[strIdx] == ' ' || str[strIdx] == '\r'))
+			++strIdx;
+	} while (strIdx < (int)str.size() && lines.size() < maxLines);
+
+	rem = str.substr(strIdx);
+
+	return lines;
+}
+
+Common::Array<Common::String> Fonts::wordWrap(const Common::String &str, uint maxWidth, uint maxChars, uint maxLines, bool skipHeadAt) {
+	Common::String rem;
+	return wordWrap(str, maxWidth, rem, maxChars, maxLines, skipHeadAt);
+}
+
 int Fonts::charWidth(char c) {
 	char s[2] = { c, '\0' };
 	int idx = 0;

@@ -135,104 +135,18 @@ void WidgetBase::drawBackground() {
 
 Common::String WidgetBase::splitLines(const Common::String &str, Common::StringArray &lines, int maxWidth, uint maxLines) {
 	Talk &talk = *_vm->_talk;
-	const char *strP = str.c_str();
-	bool isModifiedEucCn = Fonts::isModifiedEucCn();
 
-	bool isInEucEscape = false;
-
-	// Loop counting up lines
 	lines.clear();
-	do {
-		int width = 0;
-		const char *spaceP = nullptr;
-		bool spacePNeedsEndEscape = false;
-		bool spacePNeedsBeginEscape = false;
-		const char *lineStartP = strP;
-		// Invariant: lastCharP is either nullptr
-		// or is exactly one character behind strP
-		// and in the same escape state.
-		const char *lastCharP = nullptr;
-		bool isLineStartPInEucEscape = isInEucEscape;
-
-		// Find how many characters will fit on the next line
-		while (width < maxWidth && *strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] ||
-				(byte)*strP == talk._opcodes[OP_NULL])) {
-			if (isModifiedEucCn) {
-				byte curChar = *strP;
-				byte nextChar = strP[1];
-				if (!isInEucEscape && curChar == '@' && nextChar == '$') {
-					width += _surface.charWidth(' ');
-					if (lineStartP != strP) {
-						spaceP = strP;
-						spacePNeedsEndEscape = isInEucEscape;
-						spacePNeedsBeginEscape = true;
-					}
-					lastCharP = nullptr;
-					strP += 2;
-					isInEucEscape = true;
-					continue;
-				}
-				
-				if (isInEucEscape && curChar == '$' && nextChar == '@') {
-					width += _surface.charWidth(' ');
-					spaceP = strP;
-					lastCharP = nullptr;
-					strP += 2;
-					spacePNeedsEndEscape = isInEucEscape;
-					spacePNeedsBeginEscape = false;
-					isInEucEscape = false;
-					continue;
-				}
-
-				if (curChar >= 0x41 && nextChar >= 0x41 && (isInEucEscape || ((curChar >= 0xa1) && (nextChar >= 0xa1)))) {
-					width += Fonts::kChineseWidth;
-					lastCharP = strP;
-					strP += 2;
-					continue;
-				}
-			}
-			width += _surface.charWidth(*strP);
-
-			// Keep track of the last space
-			if (*strP == ' ') {
-				spacePNeedsEndEscape = isInEucEscape;
-				spacePNeedsBeginEscape = isInEucEscape;
-				spaceP = strP;
-			}
-			lastCharP = strP;
-			++strP;
-		}
-
-		bool previousEucEscape = isInEucEscape;
-
-		// If the line was too wide to fit on a single line, go back to the last space
-		// if there was one, or otherwise simply break the line at this point
-		if (width >= maxWidth && spaceP != nullptr) {
-			previousEucEscape = spacePNeedsEndEscape;
-			isInEucEscape = spacePNeedsBeginEscape;
-			strP = spaceP;
-		} else if (width >= maxWidth && lastCharP != nullptr && lastCharP != lineStartP) {
-			strP = lastCharP;
-		}
-
-		Common::String line(lineStartP, strP);
-		if (!line.hasPrefix("@$") && isLineStartPInEucEscape)
-			line = "@$" + line;
-
-		if (!line.hasSuffix("$@") && previousEucEscape)
-			line = line + "$@";		
-
-		// Add the line to the output array
-		lines.push_back(line);
-
-		// Move the string ahead to the next line
-		if (*strP == ' ' || *strP == 13)
-			++strP;
-	} while (*strP && (lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER]
-			|| (byte)*strP == talk._opcodes[OP_NULL]));
+	uint idx;
+	for (idx = 0; idx < str.size(); idx++)
+		if (str[idx] >= talk._opcodes[OP_SWITCH_SPEAKER] && str[idx] != talk._opcodes[OP_NULL])
+			break;
+	Common::String rest;
+	Common::Array<Common::String> arr = _surface.wordWrap(str.substr(0, idx), maxWidth, rest, Common::String::npos, maxLines);
+	lines.swap(arr);
 
 	// Return any remaining text left over
-	return *strP ? Common::String(strP) : Common::String();
+	return rest + str.substr(idx);
 }
 
 void WidgetBase::restrictToScreen() {
