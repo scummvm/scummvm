@@ -22,11 +22,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Halls of the Dead: Faery Tale Adventure II.
 
  New platforms:
-   - RetroMini RS90 under OpenDingux beta.
-   - 1st generation Miyoo (New BittBoy, Pocket Go and PowKiddy Q90-V90-Q20)
-     under TriForceX MiyooCFW.
-   - Miyoo mini
-   - KolibriOS
+   - Added support for the RetroMini RS90 under OpenDingux beta.
+   - Added support for the 1st generation Miyoo (New BittBoy, Pocket Go and PowKiddy Q90-V90-Q20) under TriForceX MiyooCFW.
+   - Added support for the Miyoo Mini.
+   - Added support for KolibriOS.
 
  General:
    - Reduced amount of false positives in Mass Add.
