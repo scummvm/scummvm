@@ -121,6 +121,11 @@ public:
 	 * Return the currently active font number
 	 */
 	int fontNumber() const { return _fontNumber; }
+
+	Common::Array<Common::String> wordWrap(const Common::String &str, uint maxWidth, Common::String &rem,
+					       uint maxChars = Common::String::npos, uint maxLines = Common::String::npos, bool skipHeadAt = false);
+	Common::Array<Common::String> wordWrap(const Common::String &str, uint maxWidth,
+					       uint maxChars = Common::String::npos, uint maxLines = Common::String::npos, bool skipHeadAt = false);
 };
 
 } // End of namespace Sherlock
