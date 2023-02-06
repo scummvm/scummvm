@@ -192,6 +192,19 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"sword1",
+		"Steam",
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1087984,
+				   "swordres.rif",          "c7df52094d590b568a4ed35b70390d9e", 58916,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "fe087447e0e525e371cf10cfabf589eb", 14524000),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{
+		"sword1",
 		"",
 		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
 				   "clusters/swordres.rif", "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
@@ -244,11 +257,37 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"sword1",
+		"Steam",
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1088232,
+				   "swordres.rif",          "08d4942cf7c904182a31a1d5333244f3", 59788,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 3193923,
+				   "smackshi/intro.smk",    "a8c6a8770cb4b2669f4263ece8830985", 13293740),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{
+		"sword1",
 		"",
 		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
 				   "clusters/swordres.rif", "239bdd76c405bad0f804a8ae5df4adb0", 59788,
 				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3188725,
 				   "smackshi/intro.smk",    "83060041aa155d802e51b7211b62ea2f", 13525252),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{
+		"sword1",
+		"Steam",
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1088232,
+				   "swordres.rif",          "239bdd76c405bad0f804a8ae5df4adb0", 59788,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 3193923,
+				   "smackshi/intro.smk",    "939643be076c73068f47ce0fd6c27183", 13305080),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
