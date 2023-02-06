@@ -67,6 +67,8 @@ void Fonts::setFont(int fontNum) {
 			// The non-interactive demo does not contain any font at all
 			return;
 		}
+		if (_vm->getLanguage() == Common::Language::ZH_TWN)
+			fontNum = 2;
 	}
 
 	Common::String fontFilename;
