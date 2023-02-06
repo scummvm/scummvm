@@ -323,6 +323,7 @@ endif
 
 ifeq ($(BACKEND),atari)
 MODULE_OBJS += \
+	events/atari/atari-events.o \
 	graphics/atari/atari_c2p-asm.o \
 	graphics/atari/atari-graphics.o \
 	graphics/atari/atari-graphics-asm.o \
