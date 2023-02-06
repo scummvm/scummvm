@@ -263,7 +263,7 @@ public:
 	bool executeEndIfBitNotEqual(FCLInstruction &instruction);
 	bool executeEndIfVisibilityIsEqual(FCLInstruction &instruction);
 	void executeSwapJet(FCLInstruction &instruction);
-	void executePrint(FCLInstruction &instruction);
+	virtual void executePrint(FCLInstruction &instruction);
 	void executeSPFX(FCLInstruction &instruction);
 
 	// Sound
@@ -448,10 +448,12 @@ public:
 
 	void loadAssets() override;
 	void initGameState() override;
+	void borderScreen() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 	void checkIfStillInArea() override;
 	void pressedKey(const int keycode) override;
+	void executePrint(FCLInstruction &instruction) override;
 
 	void loadAssetsDemo();
 	void loadAssetsFullGame();
@@ -461,6 +463,7 @@ public:
 
 	void drawUI() override;
 	void drawDOSUI(Graphics::Surface *surface);
+	void drawFullscreenMessage(Common::String message);
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 };

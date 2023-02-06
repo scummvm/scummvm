@@ -65,6 +65,7 @@ void DarkEngine::loadAssetsDemo() {
 		if (!file.isOpen())
 			error("Failed to open DSIDEE.EXE");
 		loadMessagesFixedSize(&file, 0x4525, 16, 27);
+		loadMessagesFixedSize(&file, 0x9959, 307, 5);
 		loadFonts(&file, 0xa598);
 		load8bitBinary(&file, 0xa700, 16);
 	} else if (isDOS() && _renderMode == Common::kRenderCGA) {
@@ -134,6 +135,13 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 	if (!_gameStateBits.contains(areaID))
 		_gameStateBits[areaID] = 0;
+
+	if (isDemo()) {
+		if (!_areaMap.contains(areaID)) {
+			drawFullscreenMessage(_messagesList[30]);
+			return;
+		}
+	}
 
 	assert(_areaMap.contains(areaID));
 	_currentArea = _areaMap[areaID];
@@ -332,6 +340,110 @@ void DarkEngine::drawUI() {
 	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
 	_gfx->setViewport(_viewArea);
 
+	surface->free();
+	delete surface;
+}
+
+void DarkEngine::borderScreen() {
+	if (_border) {
+		drawBorder();
+		if (isDemo()) {
+			drawFullscreenMessage(_messagesList[27]);
+			drawFullscreenMessage(_messagesList[28]);
+			drawFullscreenMessage(_messagesList[29]);
+		} else {
+			_gfx->flipBuffer();
+			g_system->updateScreen();
+			g_system->delayMillis(3000);
+		}
+	}
+}
+
+void DarkEngine::executePrint(FCLInstruction &instruction) {
+	uint16 index = instruction._source - 1;
+	debugC(1, kFreescapeDebugCode, "Printing message %d", index);
+	_currentAreaMessages.clear();
+	if (index > 127) {
+		index = _messagesList.size() - (index - 254) - 2;
+		drawFullscreenMessage(_messagesList[index]);
+		return;
+	}
+	_currentAreaMessages.push_back(_messagesList[index]);
+}
+
+void DarkEngine::drawFullscreenMessage(Common::String message) {
+	_savedScreen = _gfx->getScreenshot();
+
+	uint32 color = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	surface->fillRect(_fullscreenViewArea, color);
+
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	surface->fillRect(_viewArea, black);
+
+	switch (_renderMode) {
+		case Common::kRenderCGA:
+			color = 1;
+			break;
+		case Common::kRenderZX:
+			color = 6;
+			break;
+		default:
+			color = 14;
+	}
+	uint8 r, g, b;
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
+	int x, y;
+	x = 42;
+	y = 30;
+	for (int i = 0; i < 8; i++) {
+		Common::String line = message.substr(28 * i, 28);
+		debug("'%s' %d", line.c_str(), line.size());
+		drawStringInSurface(line, x, y, front, black, surface);
+		y = y + 12;
+	}
+
+	if (!_uiTexture)
+		_uiTexture = _gfx->createTexture(surface);
+	else
+		_uiTexture->update(surface);
+
+	_gfx->setViewport(_fullscreenViewArea);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+	_gfx->setViewport(_viewArea);
+
+	_gfx->flipBuffer();
+	g_system->updateScreen();
+
+	Common::Event event;
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+
+			// Events
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+					cont = false;
+				}
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				// TODO: properly refresh screen
+				break;
+
+			default:
+				break;
+			}
+		}
+		g_system->delayMillis(10);
+	}
+
+	_savedScreen->free();
+	delete _savedScreen;
 	surface->free();
 	delete surface;
 }
