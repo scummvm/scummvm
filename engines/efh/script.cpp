@@ -351,13 +351,10 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (scriptExecuteFlag) {
 				int16 scriptNpcId = scriptNumberArray[0];
-				// TODO: This "if" is useless, it's doing just the same loop and if statement. Consider removing it.
-				if (isNpcATeamMember(scriptNpcId)) {
-					for (uint counter = 0; counter < 3; ++counter) {
-						if (_teamChar[counter]._id == scriptNpcId) {
-							removeCharacterFromTeam(counter);
-							break;
-						}
+				for (uint counter = 0; counter < 3; ++counter) {
+					if (_teamChar[counter]._id == scriptNpcId) {
+						removeCharacterFromTeam(counter);
+						break;
 					}
 				}
 			}

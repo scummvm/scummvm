@@ -371,23 +371,23 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	memset(_places, 0, ARRAYSIZE(_places));
 	for (int i = 0; i < 24; ++i)
 		memset(_curPlace[i], 0, ARRAYSIZE(_curPlace[i]));
-	memset(_npcBuf, 0, ARRAYSIZE(_npcBuf)*sizeof(NPCStruct));
+	memset(_npcBuf, 0, ARRAYSIZE(_npcBuf) * sizeof(NPCStruct));
 	memset(_imp1, 0, ARRAYSIZE(_imp1));
 	memset(_imp2, 0, ARRAYSIZE(_imp2));
 	memset(_titleSong, 0, ARRAYSIZE(_titleSong));
-	memset(_items, 0, ARRAYSIZE(_items)*sizeof(ItemStruct));
-	memset(_tileFact, 0, ARRAYSIZE(_tileFact)*sizeof(TileFactStruct));
-	memset(_animInfo, 0, ARRAYSIZE(_animInfo)*sizeof(AnimInfo));
+	memset(_items, 0, ARRAYSIZE(_items) * sizeof(ItemStruct));
+	memset(_tileFact, 0, ARRAYSIZE(_tileFact) * sizeof(TileFactStruct));
+	memset(_animInfo, 0, ARRAYSIZE(_animInfo) * sizeof(AnimInfo));
 	memset(_history, 0, ARRAYSIZE(_history));
 	for (int i = 0; i < 19; ++i) {
 		memset(_techDataArr[i], 0, ARRAYSIZE(_techDataArr[i]));
 		memset(_mapArr[i], 0, ARRAYSIZE(_mapArr[i]));
-		memset(_mapMonsters[i], 0, ARRAYSIZE(_mapMonsters[i])*sizeof(MapMonster));
+		memset(_mapMonsters[i], 0, ARRAYSIZE(_mapMonsters[i]) * sizeof(MapMonster));
 		for (int j = 0; j < 64; ++j) {
 			memset(_mapGameMaps[i][j], 0, ARRAYSIZE(_mapGameMaps[i][j]));
 		}
 	}
-	memset(_tileBankSubFilesArray, 0, ARRAYSIZE(_tileBankSubFilesArray)*sizeof(uint8 *));
+	memset(_tileBankSubFilesArray, 0, ARRAYSIZE(_tileBankSubFilesArray) * sizeof(uint8 *));
 	_regenCounter = 0;
 
 	// If requested, load a savegame instead of showing the intro
