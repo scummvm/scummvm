@@ -28,6 +28,7 @@
 #ifndef GOB_DRAW_H
 #define GOB_DRAW_H
 
+#include "common/stack.h"
 #include "gob/video.h"
 
 namespace Common {
@@ -125,6 +126,8 @@ public:
 	int16 _unusedPalette1[18];
 	int16 _unusedPalette2[16];
 	Video::Color _vgaPalette[256];
+
+	Common::Stack<Video::Color *> _paletteStack;
 
 	// 0 (00b): No cursor
 	// 1 (01b): Cursor would be on _backSurface
