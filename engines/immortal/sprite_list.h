@@ -46,8 +46,8 @@ struct DataSprite {
 
 struct Sprite {
 	int     _image;                                     // Index of _dSprite._images[]
-	uint16  _X;
-	uint16  _Y;
+	uint16  _x;
+	uint16  _y;
 	uint16  _on;                                        // 1 = active
 	uint16  _priority;
 	DataSprite *_dSprite;

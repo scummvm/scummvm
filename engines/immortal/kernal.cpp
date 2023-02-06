@@ -124,13 +124,13 @@ void ImmortalEngine::addSprite(uint16 vpX, uint16 vpY, SpriteName s, int img, ui
 			x |= kMaskHigh;                         // Make it negative
 		}
 
-		_sprites[_numSprites]._X = (x << 1) + vpX;
+		_sprites[_numSprites]._x = (x << 1) + vpX;
 
 		if (y >= (kMaxSpriteAbove + kResV)) {
 			y |= kMaskHigh;
 		}
 
-		_sprites[_numSprites]._Y = (y << 1) + vpY;
+		_sprites[_numSprites]._y = (y << 1) + vpY;
 
 		if (p >= 0x80) {
 			p |= kMaskHigh;
@@ -158,12 +158,12 @@ void ImmortalEngine::addSprites() {
 		 */
 		if (/*_sprites[i]._on*/0 == 1) {
 			// If sprite X is an odd number???
-			if ((_sprites[i]._X & 1) != 0) {
+			if ((_sprites[i]._x & 1) != 0) {
 				debug("not good! BRK");
 				return;
 			}
 
-			int tmpx = (_sprites[i]._X - kMaxSpriteW) - _myViewPortX;
+			int tmpx = (_sprites[i]._x - kMaxSpriteW) - _myViewPortX;
 			if (tmpx < 0) {
 				if (tmpx + (kMaxSpriteW * 2) < 0) {
 					continue;
@@ -172,7 +172,7 @@ void ImmortalEngine::addSprites() {
 				continue;
 			}
 
-			int tmpy = (_sprites[i]._Y - kMaxSpriteH) - _myViewPortY;
+			int tmpy = (_sprites[i]._y - kMaxSpriteH) - _myViewPortY;
 			if (tmpy < 0) {
 				if (tmpy + (kMaxSpriteH * 2) < 0) {
 					continue;
@@ -184,8 +184,8 @@ void ImmortalEngine::addSprites() {
 			DataSprite *tempD = _sprites[i]._dSprite;
 			//debug("what sprite is this: %d %d %d", i, _sprites[i]._image, _sprites[i]._dSprite->_images.size());
 			Image *tempImg = &(tempD->_images[_sprites[i]._image]);
-			int sx = ((_sprites[i]._X + tempImg->_deltaX) - tempD->_cenX) - _myViewPortX;
-			int sy = ((_sprites[i]._Y + tempImg->_deltaY) - tempD->_cenY) - _myViewPortY;
+			int sx = ((_sprites[i]._x + tempImg->_deltaX) - tempD->_cenX) - _myViewPortX;
+			int sy = ((_sprites[i]._y + tempImg->_deltaY) - tempD->_cenY) - _myViewPortY;
 
 			if (sx >= 0) {
 				if (sx >= kViewPortW) {
@@ -330,8 +330,8 @@ void ImmortalEngine::drawItems() {
 
 		} else {
 			// If positive, it's a sprite
-			uint16 x = (_sprites[index]._X - _myViewPortX) + kVSX;
-			uint16 y = (_sprites[index]._Y - _myViewPortY) + kVSY;
+			uint16 x = (_sprites[index]._x - _myViewPortX) + kVSX;
+			uint16 y = (_sprites[index]._y - _myViewPortY) + kVSY;
 			superSprite(_sprites[index]._dSprite, x, y, _sprites[index]._image, kVSBMW, _screenBuff, kMySuperTop, kMySuperBottom);
 		}
 		n++;
@@ -780,7 +780,7 @@ void ImmortalEngine::loadPalette() {
 	Common::File d;
 	d.open("IMMORTAL.dsk");
 	d.seek(kPaletteOffset);
-	
+
 	// Each palette is stored after each other at this kPaletteOffset in the disk
 	uint16 *pals[4] = {_palDefault, _palWhite, _palBlack, _palDim};
 
