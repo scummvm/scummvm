@@ -19,6 +19,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Erste Generation von Miyoo (New BittBoy, Pocket Go und PowKiddy Q90-V90-Q20)
      mit der TriForceX MiyooCFW.
    - Miyoo mini
+   - KolibriOS
 
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
