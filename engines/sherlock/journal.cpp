@@ -757,38 +757,11 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	// _lines array
 	_lines.clear();
 
-	while (!journalString.empty()) {
-		const char *startP = journalString.c_str();
-
-		// If the first character is a '@' flagging a title line, then move
-		// past it, so the @ won't be included in the line width calculation
-		if (*startP == '@')
-			++startP;
-
-		// Build up chacters until a full line is found
-		int width = 0;
-		const char *endP = startP;
-		while (width < JOURNAL_MAX_WIDTH && *endP && *endP != '\n' && (endP - startP) < (JOURNAL_MAX_CHARS - 1))
-			width += screen.charWidth(*endP++);
-
-		// If word wrapping, move back to end of prior word
-		if (width >= JOURNAL_MAX_WIDTH || (endP - startP) >= (JOURNAL_MAX_CHARS - 1)) {
-			while (*--endP != ' ')
-				;
-		}
-
-		// Add in the line
-		_lines.push_back(Common::String(journalString.c_str(), endP));
-
-		// Strip line off from string being processed
-		journalString = *endP ? Common::String(endP + 1) : "";
-	}
+	_lines = screen.wordWrap(journalString, JOURNAL_MAX_WIDTH, JOURNAL_MAX_CHARS, Common::String::npos, true);
 
 	// Add a blank line at the end of the text as long as text was present
 	if (!startOfReply) {
 		_lines.push_back("");
-	} else {
-		_lines.clear();
 	}
 }
 
