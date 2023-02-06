@@ -337,7 +337,7 @@ static const char *const k1GUIStringsDOSCDGerman[59] = {
 	"Aus",
 	"Ja",
 	"Nein",
-	"c""\x0F\x17""+r""\x0F\x17""+z""\x0F\x17""+""\x81\x0F\x17""+""\x89\x0F\x17""+""\x98\x0F\x17""+""\xA1\x0F\x17""+""\xAD\x0F\x17""+""\xBC\x0F\x17""+""\xCB\x0F\x17""+""\xD2\x0F\x17""+""\xDA\x0F\x17""+Schrittempo",
+	"Schrittempo",
 	"Textgeschwindigkeit",
 	"Die Musik ist",
 	"Die Soundeffekte sind",
