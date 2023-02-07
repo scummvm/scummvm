@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-05 22:27+0000\n"
-"PO-Revision-Date: 2023-01-20 22:56+0000\n"
+"PO-Revision-Date: 2023-02-07 22:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -207,10 +207,9 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "Завантажено %s %S з %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
-#| msgid "Download speed: %s %S"
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Швидкість завантаження: %s %S"
+msgstr "Швидкість завантаження: %s %S/с"
 
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
@@ -266,15 +265,12 @@ msgid "No new %S available"
 msgstr "Не знайдено нових %S"
 
 #: gui/downloadpacksdialog.cpp:462
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "%S. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Ви збираєтесь видалити %s%s даних, і видалити всі попередньо завантажені %S. "
+"Ви збираєтесь видалити %s%S даних, і видалити всі попередньо завантажені %S. "
 "Чи ви насправді хочете продовжити?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
