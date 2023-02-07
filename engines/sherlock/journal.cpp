@@ -56,8 +56,8 @@ bool Journal::drawJournal(int direction, int howFar) {
 	FixedText &fixedText = *_vm->_fixedText;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	int topLineY = IS_SERRATED_SCALPEL ? 37 : 103 - screen.charHeight('A');
-	int yp = topLineY;
+	int topLineY;
+	int yp;
 	int startPage = _page;
 	bool endJournal = false;
 	bool firstOccurance = true;
@@ -68,6 +68,22 @@ bool Journal::drawJournal(int direction, int howFar) {
 	int temp;
 	const char *matchP;
 	int width;
+	int leftX;
+
+	if (IS_SERRATED_SCALPEL) {
+		if (_vm->getLanguage() == Common::ZH_TWN) {
+			topLineY = 31;
+			leftX = 36;
+		} else {
+			topLineY = 37;
+			leftX = 53;
+		}
+	} else {
+		topLineY = 103 - screen.charHeight('A');
+		leftX = 156;
+	}
+
+	yp = topLineY;
 
 	talk._converseNum = -1;
 	_down = true;
@@ -242,30 +258,30 @@ bool Journal::drawJournal(int direction, int howFar) {
 				Common::String lineStart(_lines[temp].c_str(), matchP);
 				if (lineStart.hasPrefix("@")) {
 					width = screen.stringWidth(lineStart.c_str() + 1);
-					screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_HIGHLIGHT, "%s", lineStart.c_str() + 1);
+					screen.gPrint(Common::Point(leftX, yp), COL_PEN_HIGHLIGHT, "%s", lineStart.c_str() + 1);
 				} else {
 					width = screen.stringWidth(lineStart.c_str());
-					screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", lineStart.c_str());
+					screen.gPrint(Common::Point(leftX, yp), COL_PEN_COLOR, "%s", lineStart.c_str());
 				 }
 
 				// Print out the found keyword
 				Common::String lineMatch(matchP, matchP + _find.size());
 				byte fgColor = IS_SERRATED_SCALPEL ? (byte)Scalpel::INV_FOREGROUND : (byte)Tattoo::PEN_HIGHLIGHT_COLOR;
-				screen.gPrint(Common::Point(JOURNAL_LEFT_X + width, yp), fgColor, "%s", lineMatch.c_str());
+				screen.gPrint(Common::Point(leftX + width, yp), fgColor, "%s", lineMatch.c_str());
 				width += screen.stringWidth(lineMatch.c_str());
 
 				// Print remainder of line
-				screen.gPrint(Common::Point(JOURNAL_LEFT_X + width, yp), COL_PEN_COLOR, "%s", matchP + _find.size());
+				screen.gPrint(Common::Point(leftX + width, yp), COL_PEN_COLOR, "%s", matchP + _find.size());
 			} else if (_lines[temp].hasPrefix("@")) {
-				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_HIGHLIGHT, "%s", _lines[temp].c_str() + 1);
+				screen.gPrint(Common::Point(leftX, yp), COL_PEN_HIGHLIGHT, "%s", _lines[temp].c_str() + 1);
 			} else {
-				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
+				screen.gPrint(Common::Point(leftX, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
 			}
 		} else {
 			if (_lines[temp].hasPrefix("@")) {
-				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_HIGHLIGHT, "%s", _lines[temp].c_str() + 1);
+				screen.gPrint(Common::Point(leftX, yp), COL_PEN_HIGHLIGHT, "%s", _lines[temp].c_str() + 1);
 			} else {
-				screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
+				screen.gPrint(Common::Point(leftX, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
 			}
 		}
 
@@ -286,7 +302,10 @@ bool Journal::drawJournal(int direction, int howFar) {
 
 		if (inc) {
 			// Move to next line
-			yp += IS_SERRATED_SCALPEL ? 13 : TATTOO_LINE_SPACING[lineNum];
+			if (IS_SERRATED_SCALPEL)
+				yp += _vm->getLanguage() == Common::ZH_TWN ? 16 : 13;
+			else
+				yp += TATTOO_LINE_SPACING[lineNum];
 			++lineNum;
 		}
 	} while (lineNum < LINES_PER_PAGE && !endFlag);
