@@ -24,10 +24,10 @@
 
 namespace Efh {
 
-uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, int16 *destArray) {
+const uint8 *EfhEngine::script_readNumberArray(const uint8 *srcBuffer, int16 destArraySize, int16 *destArray) {
 	debugC(6, kDebugScript, "script_readNumberArray");
 
-	uint8 *buffer = srcBuffer;
+	const uint8 *buffer = srcBuffer;
 	for (int i = 0; i < destArraySize; ++i) {
 		buffer++;
 		buffer = script_getNumber(buffer, &destArray[i]);
@@ -36,10 +36,10 @@ uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, 
 	return buffer;
 }
 
-uint8 *EfhEngine::script_getNumber(uint8 *srcBuffer, int16 *retBuf) {
+const uint8 *EfhEngine::script_getNumber(const uint8 *srcBuffer, int16 *retBuf) {
 	debugC(6, kDebugScript, "script_getNumber");
 
-	uint8 *buffer = srcBuffer;
+	const uint8 *buffer = srcBuffer;
 	int16 retVal = 0;
 	for (;;) {
 		uint8 curChar = *buffer;
@@ -66,7 +66,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 	int16 numbLines = (1 + maxY - posY) / 9;
 	int16 width = maxX - posX;
 	int16 spaceWidth = getStringWidth(" ");
-	uint8 *buffer = (uint8 *)stringBuffer.c_str();
+	const uint8 *buffer = (const uint8 *)stringBuffer.c_str();
 	char nextWord[80];
 	Common::String curLine = "";
 	memset(nextWord, 0, sizeof(nextWord));
@@ -490,4 +490,3 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 }
 
 } // End of namespace Efh
-

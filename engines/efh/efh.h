@@ -486,8 +486,8 @@ private:
 	void synchronize(Common::Serializer &s);
 
 	// Script
-	uint8 *script_readNumberArray(uint8 *buffer, int16 destArraySize, int16 *destArray);
-	uint8 *script_getNumber(uint8 *srcBuffer, int16 *retBuf);
+	const uint8 *script_readNumberArray(const uint8 *buffer, int16 destArraySize, int16 *destArray);
+	const uint8 *script_getNumber(const uint8 *srcBuffer, int16 *retBuf);
 	int16 script_parse(Common::String str, int16 posX, int16 posY, int16 maxX, int16 maxY, bool scriptExecuteFlag);
 
 	// Sound
@@ -557,7 +557,7 @@ private:
 	};
 
 	BitmapRef _mapBitmapRefArr[19];
-	
+
 	MapSpecialTileStruct _mapSpecialTiles[19][100];
 	MapMonster _mapMonsters[19][64];
 	uint8 _mapGameMaps[19][64][64];

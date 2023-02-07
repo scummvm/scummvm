@@ -210,7 +210,7 @@ void EfhEngine::displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY) {
 
 void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 textColor) {
 	debugC(1, kDebugGraphics, "drawString %s %d %d %d", str, startX, startY, textColor);
-	uint8 *curPtr = (uint8 *)str;
+	const uint8 *curPtr = (const uint8 *)str;
 	uint16 lineHeight = _fontDescr._charHeight + _fontDescr._extraVerticalSpace;
 	int16 minX = startX;
 
