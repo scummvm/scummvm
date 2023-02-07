@@ -34,7 +34,8 @@ namespace Scalpel {
 #define JOURNAL_BUTTONS_Y_INTL 178
 #define JOURNAL_BUTTONS_Y_ZH 181
 #define JOURNAL_SEARCH_LEFT 15
-#define JOURNAL_SEARCH_TOP 186
+#define JOURNAL_SEARCH_TOP_INTL 186
+#define JOURNAL_SEARCH_TOP_ZH 184
 #define JOURNAL_SEARCH_RIGHT 296
 #define JOURNAL_SEACRH_MAX_CHARS 50
 
@@ -53,20 +54,26 @@ static const int JOURNAL_POINTS_INTL[9][3] = {
 
 static const int JOURNAL_POINTS_ZH[9][3] = {
 	{ 0, 52, 26 },
-	{ 53, 121, 87 },
+	{ 52, 121, 87 },
 	{ 122, 157, 140 },
-	{ 158, 194, 176 },
-	{ 195, 265, 230 },
-	{ 266, 320, 293 },
+	{ 157, 194, 176 },
+	{ 194, 265, 230 },
+	{ 265, 320, 293 },
 	{ 270, 320, 295 },
 	{ 270, 320, 295 },
 	{ 0, 0, 0 }
 };
 
-static const int SEARCH_POINTS[3][3] = {
+static const int SEARCH_POINTS_INTL[3][3] = {
 	{ 51, 123, 86 },
 	{ 124, 196, 159 },
 	{ 197, 269, 232 }
+};
+
+static const int SEARCH_POINTS_ZH[3][3] = {
+	{ 206, 243, 225 },
+	{ 243, 279, 261 },
+	{ 279, 315, 297 }
 };
 
 /*----------------------------------------------------------------*/
@@ -139,6 +146,22 @@ Common::Point ScalpelJournal::getButtonTextPoint(JournalButton btn) {
 			return Common::Point(JOURNAL_POINTS_INTL[idx][2], JOURNAL_BUTTONS_Y_INTL + 11);
 		else
 			return Common::Point(JOURNAL_POINTS_INTL[idx][2], JOURNAL_BUTTONS_Y_INTL);
+	}
+}
+
+Common::Rect ScalpelJournal::getSearchButtonRect(int idx) {
+	if (_vm->getLanguage() == Common::ZH_TWN) {
+		return Common::Rect(SEARCH_POINTS_ZH[idx][0], 175, SEARCH_POINTS_ZH[idx][1], 194);
+	} else {
+		return Common::Rect(SEARCH_POINTS_INTL[idx][0], 174, SEARCH_POINTS_INTL[idx][1], 184);
+	}
+}
+
+Common::Point ScalpelJournal::getSearchButtonTextPoint(int idx) {
+	if (_vm->getLanguage() == Common::ZH_TWN) {
+		return Common::Point(SEARCH_POINTS_ZH[idx][2], 177);
+	} else {
+		return Common::Point(SEARCH_POINTS_INTL[idx][2], 174);
 	}
 }
 
@@ -496,22 +519,27 @@ int ScalpelJournal::getSearchString(bool printError) {
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	int xp;
-	int yp = 174;
+	int yp;
 	bool flag = false;
 	Common::String name;
 	int done = 0;
 	byte color;
+	bool isChinese = _vm->getLanguage() == Common::ZH_TWN;
 
 	// Draw search panel
-	screen.makePanel(Common::Rect(6, 171, 313, 199));
-	screen.makeButton(Common::Rect(SEARCH_POINTS[0][0], yp, SEARCH_POINTS[0][1], yp + 10),
-		SEARCH_POINTS[0][2], _fixedTextSearchExit);
-	screen.makeButton(Common::Rect(SEARCH_POINTS[1][0], yp, SEARCH_POINTS[1][1], yp + 10),
-		SEARCH_POINTS[1][2], _fixedTextSearchBackward);
-	screen.makeButton(Common::Rect(SEARCH_POINTS[2][0], yp, SEARCH_POINTS[2][1], yp + 10),
-		SEARCH_POINTS[2][2], _fixedTextSearchForward);
+	if (isChinese)
+		screen.makePanel(Common::Rect(6, 171, 318, 199));
+	else
+		screen.makePanel(Common::Rect(6, 171, 313, 199));
 
-	screen.makeField(Common::Rect(12, 185, 307, 196));
+	screen.makeButton(getSearchButtonRect(0), getSearchButtonTextPoint(0), _fixedTextSearchExit, !isChinese);
+	screen.makeButton(getSearchButtonRect(1), getSearchButtonTextPoint(1), _fixedTextSearchBackward, !isChinese);
+	screen.makeButton(getSearchButtonRect(2), getSearchButtonTextPoint(2), _fixedTextSearchForward, !isChinese);
+
+	if (isChinese)
+		screen.makeField(Common::Rect(12, 175, 205, 194));
+	else
+		screen.makeField(Common::Rect(12, 185, 307, 196));
 
 	if (printError) {
 		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - screen.stringWidth(_fixedTextSearchNotFound)) / 2, 185),
@@ -522,7 +550,10 @@ int ScalpelJournal::getSearchString(bool printError) {
 		name = _find;
 	}
 
-	screen.slamArea(6, 171, 307, 28);
+	if (_vm->getLanguage() == Common::ZH_TWN)
+		screen.slamArea(6, 171, 312, 28);
+	else
+		screen.slamArea(6, 171, 307, 28);
 
 	if (printError) {
 		// Give time for user to see the message
@@ -545,7 +576,7 @@ int ScalpelJournal::getSearchString(bool printError) {
 	}
 
 	xp = JOURNAL_SEARCH_LEFT + screen.stringWidth(name);
-	yp = JOURNAL_SEARCH_TOP;
+	yp = isChinese ? JOURNAL_SEARCH_TOP_ZH : JOURNAL_SEARCH_TOP_INTL;
 
 	do {
 		events._released = false;
@@ -564,29 +595,29 @@ int ScalpelJournal::getSearchString(bool printError) {
 			screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), flag ? INV_FOREGROUND : BUTTON_MIDDLE);
 
 			if (events._pressed || events._released) {
-				if (pt.x > SEARCH_POINTS[0][0] && pt.x < SEARCH_POINTS[0][1] && pt.y > 174 && pt.y < 183) {
+				if (getSearchButtonRect(0).contains(pt)) {
 					found = BTN_EXIT;
 					color = COMMAND_HIGHLIGHTED;
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.buttonPrint(Common::Point(SEARCH_POINTS[0][0], SEARCH_POINTS[0][2]), color, false, _fixedTextSearchExit);
+				screen.buttonPrint(getSearchButtonTextPoint(0), color, false, _fixedTextSearchExit, !isChinese);
 
-				if (pt.x > SEARCH_POINTS[1][0] && pt.x < SEARCH_POINTS[1][1] && pt.y > 174 && pt.y < 183) {
+				if (getSearchButtonRect(1).contains(pt)) {
 					found = BTN_BACKWARD;
 					color = COMMAND_HIGHLIGHTED;
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.buttonPrint(Common::Point(SEARCH_POINTS[1][0], SEARCH_POINTS[1][2]), color, false, _fixedTextSearchBackward);
+				screen.buttonPrint(getSearchButtonTextPoint(1), color, false, _fixedTextSearchBackward, !isChinese);
 
-				if (pt.x > SEARCH_POINTS[2][0] && pt.x < SEARCH_POINTS[2][1] && pt.y > 174 && pt.y < 183) {
+				if (getSearchButtonRect(2).contains(pt)) {
 					found = BTN_FORWARD;
 					color = COMMAND_HIGHLIGHTED;
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.buttonPrint(Common::Point(SEARCH_POINTS[2][0], SEARCH_POINTS[2][2]), color, false, _fixedTextSearchForward);
+				screen.buttonPrint(getSearchButtonTextPoint(2), color, false, _fixedTextSearchForward, !isChinese);
 			}
 
 			events.wait(2);
