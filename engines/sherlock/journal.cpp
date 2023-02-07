@@ -304,6 +304,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	Talk &talk = *_vm->_talk;
 	JournalEntry &journalEntry = _journal[_index];
 	const byte *opcodes = talk._opcodes;
+	bool isBig5 = Fonts::isBig5();
 
 	Common::String dirFilename = _directory[journalEntry._converseNum];
 	bool replyOnly = journalEntry._replyOnly;
@@ -520,7 +521,13 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				// {} block is started, or a control character is encountered
 				journalString += c;
 				while (*replyP && isPrintable(*replyP) && *replyP != '{' && *replyP != '}') {
-					journalString += *replyP++;
+					journalString += *replyP;
+
+					if (isBig5 && (*replyP & 0x80)) {
+						journalString += *++replyP;
+					}
+
+					replyP++;
 				}
 
 				commentJustPrinted = false;
