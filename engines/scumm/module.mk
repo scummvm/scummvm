@@ -169,6 +169,12 @@ MODULE_OBJS += \
 ifdef USE_ENET
 MODULE_OBJS += \
 	he/net/net_main.o
+
+ifdef USE_LIBCURL
+MODULE_OBJS += \
+	he/net/net_lobby.o
+endif
+
 endif
 endif
 
