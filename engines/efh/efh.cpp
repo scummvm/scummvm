@@ -1955,7 +1955,11 @@ void EfhEngine::displayImp1Text(int16 textId) {
 		for (;;) {
 			uint8 *curString = nullptr;
 			if (curTextId >= 0 && curTextId <= 0xFE) {
-				curString = _imp1PtrArray[curTextId];
+				if (curTextId >= 100)
+					// Safeguard
+					warning("Unexpected value in displayImp1Text: %d", curTextId);
+				else
+					curString = _imp1PtrArray[curTextId];
 			}
 
 			curTextId = 0xFF;
@@ -2127,7 +2131,10 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 			return true;
 	}
 
-	// CHECKME: there's suspiciously no check on tileId
+	// Safeguard
+	if (tileId < 0)
+		return false;
+
 	if ((arg8 == 4 && _mapSpecialTiles[_techId][tileId]._triggerType < 0xFA) || arg8 != 4) {
 		if (_mapSpecialTiles[_techId][tileId]._field7_textId > 0xFE)
 			return false;
