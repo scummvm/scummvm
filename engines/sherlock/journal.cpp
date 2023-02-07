@@ -806,6 +806,9 @@ bool Journal::isPrintable(byte ch) const {
 	if (_vm->getLanguage() == Common::DE_DEU && ch == 0xe1) // accept German Sharp-S character
 		return true;
 
+	if (_vm->getLanguage() == Common::ZH_TWN && IS_SERRATED_SCALPEL && ch > 161)
+		return true;
+
 	return false;
 }
 
