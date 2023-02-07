@@ -27,35 +27,35 @@
 // Auxiliary function that waits on the socket.
 // From https://github.com/curl/curl/blob/master/docs/examples/sendrecv.c
 static int waitOnSocket(curl_socket_t sockfd, int for_recv, long timeout_ms) {
-  struct timeval tv;
-  fd_set infd, outfd, errfd;
-  int res;
+	struct timeval tv {};
+	fd_set infd {}, outfd {}, errfd {};
+	int res;
 
-  tv.tv_sec = timeout_ms / 1000;
-  tv.tv_usec = (timeout_ms % 1000) * 1000;
+	tv.tv_sec = timeout_ms / 1000;
+	tv.tv_usec = (timeout_ms % 1000) * 1000;
 
-  FD_ZERO(&infd);
-  FD_ZERO(&outfd);
-  FD_ZERO(&errfd);
+	FD_ZERO(&infd);
+	FD_ZERO(&outfd);
+	FD_ZERO(&errfd);
 
-  FD_SET(sockfd, &errfd); /* always check for error */
+	FD_SET(sockfd, &errfd); /* always check for error */
 
-  if(for_recv) {
-    FD_SET(sockfd, &infd);
-  }
-  else {
-    FD_SET(sockfd, &outfd);
-  }
+	if(for_recv) {
+		FD_SET(sockfd, &infd);
+	} else {
+		FD_SET(sockfd, &outfd);
+	}
 
-  /* select() returns the number of signalled sockets or -1 */
-  res = select((int)sockfd + 1, &infd, &outfd, &errfd, &tv);
-  return res;
+	/* select() returns the number of signalled sockets or -1 */
+	res = select((int)sockfd + 1, &infd, &outfd, &errfd, &tv);
+	return res;
 }
 
 namespace Networking {
 
 CurlSocket::CurlSocket() {
 	_easy = nullptr;
+	_socket = 0;
 }
 
 CurlSocket::~CurlSocket() {
@@ -105,7 +105,7 @@ size_t CurlSocket::send(const char *data, int len) {
 	// Keep looping until the whole thing is sent, errors,
 	// or times out.
 	while (((left > 0) && (len > 0))) {
-		size_t nsent;
+		size_t nsent = 0;
 		while (res == CURLE_AGAIN) {
 			// TODO: Time out if it takes too long.
 			res = curl_easy_send(_easy, data + nsent_total, left - nsent_total, &nsent);
@@ -123,7 +123,7 @@ size_t CurlSocket::send(const char *data, int len) {
 }
 
 size_t CurlSocket::recv(void *data, int maxLen) {
-	size_t nread;
+	size_t nread = 0;
 	CURLcode res = CURLE_AGAIN;
 	while (res == CURLE_AGAIN) {
 		// TODO: Time out if it takes too long.
