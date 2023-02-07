@@ -1751,6 +1751,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 								  GAMEOPTION_WINDOWS_CURSORS)
 
 	// King's Quest 5 - English Amiga (from www.back2roots.org)
+	// Game version 1.000.000
 	// Executable scanning reports "1.004.018"
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
@@ -1767,6 +1768,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_STD16	},
 
 	// King's Quest 5 - German Amiga (also includes english language)
+	// Game version 1.000.009
 	// Executable scanning reports "1.004.024"
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
@@ -1784,6 +1786,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::DE_DEU, Common::kPlatformAmiga, ADGF_ADDENGLISH, GUIO_STD16	},
 
 	// King's Quest 5 - Italian Amiga (also includes english language)
+	// Game version 1.000.003
 	// Executable scanning reports "1.004.024"
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
@@ -1796,6 +1799,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "de3c5c09e350fded36ca354998c2194d", 754784},
 		{"resource.006", 0, "11cb750f5f816445ad0f4b9f50a4f59a", 672527},
 		{"resource.007", 0, "11cb750f5f816445ad0f4b9f50a4f59a", 794259},
+		{"resource.008", 0, "64a63bdbeb01139b524af8ae6abb6c4d", 715226},
 		AD_LISTEND},
 		Common::IT_ITA, Common::kPlatformAmiga, ADGF_ADDENGLISH, GUIO_STD16	},
 
