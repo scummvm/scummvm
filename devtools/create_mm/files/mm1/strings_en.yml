@@ -485,6 +485,16 @@ enhdialogs:
 		no_gold: "no gold,\nno food!"
 	misc:
 		exit: "exit"
+	quickref:
+		title: "Quick Reference Chart"
+		headers:
+			name: "Name"
+			class: "Cls"
+			level: "Lvl"
+			hp: "H.P."
+			sp: "S.P."
+			ac: "A.C."
+			cond: "Cond"
 	temple:
 		title: "temple"
 		heal: "\x01""37heal"
