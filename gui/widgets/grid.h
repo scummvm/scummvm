@@ -48,7 +48,7 @@ enum {
 
 /* GridItemInfo */
 struct GridItemInfo {
-	bool		isHeader;
+	bool		isHeader, validEntry;
 	int 		entryID;
 	Common::String 		engineid;
 	Common::String 		gameid;
@@ -64,13 +64,13 @@ struct GridItemInfo {
 	int32				x, y, w, h;
 
 	GridItemInfo(int id, const Common::String &eid, const Common::String &gid, const Common::String &t,
-		const Common::String &d, const Common::String &e, Common::Language l, Common::Platform p)
-		: entryID(id), gameid(gid), engineid(eid), title(t), description(d), extra(e), language(l), platform(p), isHeader(false) {
+		const Common::String &d, const Common::String &e, Common::Language l, Common::Platform p, bool v)
+		: entryID(id), gameid(gid), engineid(eid), title(t), description(d), extra(e), language(l), platform(p), validEntry(v), isHeader(false) {
 		thumbPath = Common::String::format("icons/%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 
 	GridItemInfo(const Common::String &groupHeader, int groupID) : title(groupHeader), description(groupHeader),
-		isHeader(true), entryID(groupID), language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {
+		isHeader(true), validEntry(true), entryID(groupID), language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {
 		thumbPath = Common::String("");
 	}
 };
