@@ -34,7 +34,6 @@ namespace Sherlock {
 #define LINES_PER_PAGE (IS_SERRATED_SCALPEL ? 11 : 17)
 #define JOURNAL_MAX_WIDTH (IS_SERRATED_SCALPEL ? 230 : 422)
 #define JOURNAL_MAX_CHARS 80
-#define JOURNAL_LEFT_X (IS_SERRATED_SCALPEL ? 53 : 156)
 
 class SherlockEngine;
 

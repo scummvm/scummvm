@@ -175,8 +175,13 @@ void ScalpelJournal::drawFrame() {
 
 	// Set the palette and print the title
 	screen.setPalette(palette);
-	screen.gPrint(Common::Point(111, 18), BUTTON_BOTTOM, "%s", _fixedTextWatsonsJournal.c_str());
-	screen.gPrint(Common::Point(110, 17), INV_FOREGROUND, "%s", _fixedTextWatsonsJournal.c_str());
+	if (_vm->getLanguage() == Common::ZH_TWN) {
+		screen.gPrint(Common::Point(111, 13), BUTTON_BOTTOM, "%s", _fixedTextWatsonsJournal.c_str());
+		screen.gPrint(Common::Point(110, 12), INV_FOREGROUND, "%s", _fixedTextWatsonsJournal.c_str());
+	} else {
+		screen.gPrint(Common::Point(111, 18), BUTTON_BOTTOM, "%s", _fixedTextWatsonsJournal.c_str());
+		screen.gPrint(Common::Point(110, 17), INV_FOREGROUND, "%s", _fixedTextWatsonsJournal.c_str());
+	}
 
 	// Draw the buttons
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[0][0], JOURNAL_BUTTONS_Y,
