@@ -77,7 +77,8 @@ MODULE_OBJS += \
 	networking/curl/postrequest.o \
 	networking/curl/request.o \
 	networking/curl/session.o \
-	networking/curl/sessionrequest.o
+	networking/curl/sessionrequest.o \
+	networking/curl/socket.o
 endif
 
 ifdef USE_SDL_NET
