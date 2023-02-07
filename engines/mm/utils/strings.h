@@ -29,6 +29,7 @@ namespace MM {
 
 extern Common::String capitalize(const Common::String &str);
 extern Common::String camelCase(const Common::String &str);
+extern Common::String uppercase(const Common::String &str);
 extern Common::String searchAndReplace(const Common::String &str,
 	const Common::String &find, const Common::String &replace);
 extern int strToInt(const Common::String &str);

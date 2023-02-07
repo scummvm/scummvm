@@ -66,6 +66,15 @@ Common::String camelCase(const Common::String &str) {
 	return result;
 }
 
+Common::String uppercase(const Common::String &str) {
+	Common::String result;
+
+	for (uint i = 0; i < str.size(); ++i)
+		result += toupper(str[i]);
+
+	return result;
+}
+
 Common::String searchAndReplace(const Common::String &str,
 		const Common::String &find, const Common::String &replace) {
 	Common::String result = str;

@@ -21,6 +21,7 @@
 
 #include "common/algorithm.h"
 #include "mm/mm1/data/character.h"
+#include "mm/utils/strings.h"
 #include "mm/mm1/mm1.h"
 
 namespace MM {
@@ -159,7 +160,21 @@ Character::Character() : PrimaryAttributes() {
 }
 
 void Character::synchronize(Common::Serializer &s) {
-	s.syncBytes((byte *)_name, 16);
+	char name[16];
+	if (s.isSaving()) {
+		// Save the name in uppercase to match original
+		Common::strlcpy(name, uppercase(_name).c_str(), 16);
+		s.syncBytes((byte *)name, 16);
+	} else {
+		s.syncBytes((byte *)name, 16);
+		name[15] = '\0';
+
+		if (g_engine->isEnhanced())
+			Common::strlcpy(_name, camelCase(name).c_str(), 16);
+		else
+			Common::strlcpy(_name, uppercase(name).c_str(), 16);
+	}
+
 	s.syncAsByte(_sex);
 	s.syncAsByte(_alignmentInitial);
 	s.syncAsByte(_alignment);
