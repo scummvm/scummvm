@@ -122,7 +122,10 @@ int LogicHEfootball::versionID() {
 int LogicHEfootball::startOfFrame() {
 #ifdef USE_ENET
 #ifdef USE_LIBCURL
-	_vm->_lobby->doNetworkOnceAFrame();
+	// Football 2002 does not have lobby support, so
+	// _lobby is not defined.
+	if (_vm->_lobby)
+		_vm->_lobby->doNetworkOnceAFrame();
 #endif
 	_vm->_net->doNetworkOnceAFrame(0);
 #endif
