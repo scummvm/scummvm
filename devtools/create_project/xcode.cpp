@@ -454,6 +454,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	std::map<std::string, FileProperty> properties;
 	int fwOrder = 0;
 	// Frameworks
+	DEF_SYSFRAMEWORK("Accelerate");
 	DEF_SYSFRAMEWORK("ApplicationServices");
 	DEF_SYSFRAMEWORK("AudioToolbox");
 	DEF_SYSFRAMEWORK("AudioUnit");
@@ -582,6 +583,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_iOS.push_back("AudioToolbox.framework");
 	frameworks_iOS.push_back("QuartzCore.framework");
 	frameworks_iOS.push_back("OpenGLES.framework");
+	frameworks_iOS.push_back("Accelerate.framework");
 
 	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
 		frameworks_iOS.push_back("libfaad.a");
@@ -792,6 +794,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_tvOS.push_back("AudioToolbox.framework");
 	frameworks_tvOS.push_back("QuartzCore.framework");
 	frameworks_tvOS.push_back("OpenGLES.framework");
+	frameworks_tvOS.push_back("Accelerate.framework");
 
 	if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
 		frameworks_tvOS.push_back("libfaad.a");
