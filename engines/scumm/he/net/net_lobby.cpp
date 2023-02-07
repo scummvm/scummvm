@@ -139,9 +139,10 @@ bool Lobby::connect() {
 	debug(1, "LOBBY: Connecting to %s", url.c_str());
 
 	if (_socket->connect(url)) {
-		debugC(1, "LOBBY: Successfully connected to %s", url.c_str());
+		debug(1, "LOBBY: Successfully connected to %s", url.c_str());
 		return true;
 	} else {
+		disconnect();
 		writeStringArray(109, "Unable to contact server");
 		_vm->writeVar(108, -99);
 	}
