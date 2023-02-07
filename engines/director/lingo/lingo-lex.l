@@ -198,7 +198,7 @@ exit		{ count(); return tEXIT; }
 field		{ count(); return tFIELD; }
 frame		{ count(); return tFRAME; }
 global		{ count(); return tGLOBAL; }
-go{spc}+(to)?	{ count(); return tGO; }
+go({spc}+to)?	{ count(); return tGO; }
 hilite		{ count(); return tHILITE; }
 if			{ count(); return tIF; }
 instance	{ count(); return tINSTANCE; }
