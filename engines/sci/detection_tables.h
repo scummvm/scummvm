@@ -750,27 +750,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	{"freddypharkas", "Floppy", {
 		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
 		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
-		{"resource.msg", 0, "554f65315d851184f6e38211489fdd8f", -1},
+		{"resource.msg", 0, "554f65315d851184f6e38211489fdd8f", 331706},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// Freddy Pharkas - French DOS Floppy (supplied by misterhands in bug report #6190)
+	// Freddy Pharkas - French DOS Floppy
 	// Executable scanning reports "1.cfs.081"
 	{"freddypharkas", "Floppy", {
 		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
-		{"resource.000", 0, "fed4808fdb72486908ac7ad0044b14d8", 5233230},
+		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
 		{"resource.msg", 0, "4dc478f5c73b57e5d690bdfffdcf1c44", 816518},
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, 0, GUIO_STD16	},
-
-	// Freddy Pharkas - Windows (supplied by abevi in bug report #4176)
-	// Executable scanning reports "1.cfs.081"
-	// SCI interpreter version 1.001.132 (just a guess)
-	{"freddypharkas", "Floppy", {
-		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
-		{"resource.000", 0, "fed4808fdb72486908ac7ad0044b14d8", 5233230},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_STD16	},
 
 	// Freddy Pharkas - German DOS Floppy (from Tobis87, updated information from markcoolio in bug reports #4266 and #4286)
 	// Executable scanning reports "1.cfs.081"
@@ -778,22 +769,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	{"freddypharkas", "", {
 		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
 		{"resource.000", 0, "96b07e9b914dba1c8dc6c78a176326df", 5233230},
-		{"resource.msg", 0, "304b5a5781800affd2235152a5794fa8", -1},
+		{"resource.msg", 0, "304b5a5781800affd2235152a5794fa8", 911164},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, 0, GUIO_STD16	},
-
-	// Freddy Pharkas - Spanish DOS (from jvprat)
-	// Executable scanning reports "1.cfs.081", VERSION file reports "1.000, March 30, 1995"
-	// SCI interpreter version 1.001.132 (just a guess)
-	{"freddypharkas", "CD", {
-		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
-		{"resource.000", 0, "fed4808fdb72486908ac7ad0044b14d8", 1456640},
-		{"resource.001", 0, "15298fac241b5360763bfb68add1db07", 1456640},
-		{"resource.002", 0, "419dbd5366f702b4123dedbbb0cffaae", 1456640},
-		{"resource.003", 0, "05acdc256c742e79c50b9fe7ec2cc898", 863310},
-		{"resource.msg", 0, "45b5bf74933ac3727e4cc844446dc052", 796156},
-		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
 
 	// Freddy Pharkas - Spanish DOS (from jvprat)
 	// Executable scanning reports "1.cfs.081", VERSION file reports "1.000, March 30, 1995"
