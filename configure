@@ -1513,8 +1513,8 @@ for ac_option in $@; do
 	*)
 		option_error
 		;;
-	esac;
-done;
+	esac
+done
 
 guessed_host=`$_srcdir/config.guess`
 get_system_exe_extension $guessed_host
@@ -2282,7 +2282,7 @@ else
 fi
 
 # Check if std::nullptr_t is available
-echo_n "Checking if C++11 std::nullptr_t is available..."
+echo_n "Checking if C++11 std::nullptr_t is available... "
 cat > $TMPC << EOF
 #include <cstddef>
 int main(int argc, char *argv[]) {
@@ -2292,10 +2292,10 @@ int main(int argc, char *argv[]) {
 EOF
 cc_check
 if test "$TMPR" -eq 0; then
-		echo yes
+	echo yes
 else
-		echo no
-		define_in_config_if_yes yes 'NO_CXX11_NULLPTR_T'
+	echo no
+	define_in_config_if_yes yes 'NO_CXX11_NULLPTR_T'
 fi
 
 #
@@ -2945,6 +2945,12 @@ EOF
 		if test "$_dynamic_modules" = yes ; then
 			_detection_features_static=no
 		fi
+		# XXX: Enabling SCUMM v7+ hasn't been useful on DC for many years (bug #6008),
+		# and may confuse users, since this is one of the most popular engines, so make
+		# sure that it won't be enabled (until a better backend capability requirement
+		# feature is implemented). This may also help SCUMMv6 and below behave better
+		# on this very memory-limited platform.
+		engine_disable scumm_7_8
 		;;
 	ds)
 		_optimization_level=-Os
