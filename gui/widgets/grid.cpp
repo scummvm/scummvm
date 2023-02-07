@@ -154,9 +154,13 @@ void GridItemWidget::drawWidget() {
 				titleLines[1].deleteLastChar();
 			titleLines[1] += Common::U32String("...");
 		}
+		// Display text in alternate color if the path is unreachable
+		// Should be ok using kStateDisabled, but the list widget uses FontColorAlternate so let's stick to that
+		GUI::ThemeEngine::FontColor color = _activeEntry->validEntry ? GUI::ThemeEngine::kFontColorNormal : GUI::ThemeEngine::kFontColorAlternate;
 		Common::Rect r(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight);
 		for (uint k = 0; k < MIN(2U, titleLines.size()); ++k) {
-			g_gui.theme()->drawText(r, titleLines[k], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter);
+			g_gui.theme()->drawText(r, titleLines[k], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter, GUI::ThemeEngine::kTextInversionNone,
+									0, true, ThemeEngine::kFontStyleBold, color);
 			r.translate(0, kLineHeight);
 		}
 	}
