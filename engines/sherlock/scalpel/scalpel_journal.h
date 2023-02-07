@@ -120,6 +120,9 @@ public:
 	 * can then read the journal to review them
 	 */
 	void record(int converseNum, int statementNum, bool replyOnly = false) override;
+
+	Common::Rect getButtonRect(JournalButton btn);
+	Common::Point getButtonTextPoint(JournalButton btn);
 };
 
 } // End of namespace Scalpel
