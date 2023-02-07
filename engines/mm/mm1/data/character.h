@@ -532,6 +532,12 @@ struct Character : public PrimaryAttributes {
 	 * value for the party at the end of the game
 	 */
 	size_t getPerformanceTotal() const;
+
+	/**
+	 * Returns the color to use in enhanced mode to
+	 * represent the color of a character attribute
+	 */
+	int statColor(int amount, int threshold) const;
 };
 
 } // namespace MM1

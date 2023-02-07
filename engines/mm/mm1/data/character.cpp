@@ -654,5 +654,18 @@ size_t Character::getPerformanceTotal() const {
 		+ totalFlags;
 }
 
+int Character::statColor(int amount, int threshold) const {
+	if (amount < 1)
+		return 6;
+	else if (amount > threshold)
+		return 2;
+	else if (amount == threshold)
+		return 15;
+	else if (amount >= (threshold / 4))
+		return 9;
+	else
+		return 32;
+}
+
 } // namespace MM1
 } // namespace MM

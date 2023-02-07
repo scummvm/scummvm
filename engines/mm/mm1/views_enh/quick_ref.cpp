@@ -52,10 +52,8 @@ void QuickRef::draw() {
 	writeString(COLUMN_NAME, 20, STRING["enhdialogs.quickref.headers.name"]);
 	writeString(COLUMN_CLASS, 20, STRING["enhdialogs.quickref.headers.class"]);
 	writeString(COLUMN_LEVEL, 20, STRING["enhdialogs.quickref.headers.level"], ALIGN_RIGHT);
-	writeString(COLUMN_HP, 20, " ");
-	writeString(STRING["enhdialogs.quickref.headers.hp"]);
-	writeString(COLUMN_SP, 20, " ");
-	writeString(STRING["enhdialogs.quickref.headers.sp"]);
+	writeString(COLUMN_HP, 20, STRING["enhdialogs.quickref.headers.hp"]);
+	writeString(COLUMN_SP, 20, STRING["enhdialogs.quickref.headers.sp"]);
 	writeString(COLUMN_AC, 20, STRING["enhdialogs.quickref.headers.ac"]);
 	writeString(COLUMN_CONDITION, 20, STRING["enhdialogs.quickref.headers.cond"]);
 
@@ -78,8 +76,23 @@ void QuickRef::writeCharacterLine(int charNum) {
 	writeString(COLUMN_CLASS, yp, Common::String(
 		classStr.c_str(), classStr.c_str() + 3));
 
+	setTextColor(c.statColor(c._level._current, c._level._base));
 	writeString(COLUMN_LEVEL, yp,
-		Common::String::format("%d", c._level), ALIGN_RIGHT);
+		Common::String::format("%d", c._level._current), ALIGN_RIGHT);
+
+	setTextColor(c.statColor(c._hpCurrent, c._hpMax));
+	writeNumber(COLUMN_HP, yp, c._hpCurrent);
+
+	setTextColor(c.statColor(c._sp._current, c._sp._base));
+	writeChar(COLUMN_SP, yp, ' ');
+	writeNumber(c._sp._current);
+
+	setTextColor(c.statColor(c._ac._current, c._ac._base));
+	writeChar(COLUMN_AC, yp, ' ');
+	writeNumber(c._ac._current);
+
+
+	setTextColor(0);
 }
 
 } // namespace Views
