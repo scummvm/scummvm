@@ -252,6 +252,9 @@ protected:
 
 #ifdef USE_ENET
 class Net;
+#ifdef USE_LIBCURL
+class Lobby;
+#endif
 #endif
 class Moonbase;
 
@@ -542,6 +545,9 @@ class ScummEngine_v90he : public ScummEngine_v80he {
 	friend class LogicHE;
 #ifdef USE_ENET
 	friend class Net;
+#ifdef USE_LIBCURL
+	friend class Lobby;
+#endif
 #endif
 	friend class Moonbase;
 	friend class MoviePlayer;
@@ -623,6 +629,9 @@ protected:
 #ifdef USE_ENET
 public:
 	Net *_net;
+#ifdef USE_LIBCURL
+	Lobby *_lobby;
+#endif
 #endif
 
 public:

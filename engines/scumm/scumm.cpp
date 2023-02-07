@@ -89,6 +89,9 @@
 
 #ifdef USE_ENET
 #include "scumm/he/net/net_main.h"
+#ifdef USE_LIBCURL
+#include "scumm/he/net/net_lobby.h"
+#endif
 #endif
 
 #include "backends/audiocd/audiocd.h"
@@ -718,12 +721,17 @@ ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
 	_videoParams.wizResNum = 0;
 
 #ifdef USE_ENET
-	/* Online stuff for Backyard Football and Backyard Baseball 2001 */
+	/* Online stuff for compatable HE games */
 	_net = 0;
 	if (_game.id == GID_FOOTBALL || _game.id == GID_BASEBALL2001 || _game.id == GID_FOOTBALL2002 ||
 		_game.id == GID_MOONBASE) {
 		_net = new Net(this);
 	}
+#ifdef USE_LIBCURL
+	_lobby = 0;
+	if (_game.id == GID_FOOTBALL || _game.id == GID_BASEBALL2001)
+		_lobby = new Lobby(this);
+#endif
 #endif
 
 	VAR_NUM_SPRITE_GROUPS = 0xFF;
@@ -741,6 +749,9 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 
 #ifdef USE_ENET
 	delete _net;
+#ifdef USE_LIBCURL
+	delete _lobby;
+#endif
 #endif
 
 	if (_game.heversion >= 98) {
