@@ -165,6 +165,8 @@ We also have guides on how to get ScummVM running on a wide range of other platf
       ^^^^^^^^^^^^^^^
       :doc:`other_platforms/ios`
 
+      :doc:`other_platforms/tvos`
+
       :doc:`other_platforms/android`
 
       ---
