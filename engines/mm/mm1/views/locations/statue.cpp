@@ -49,6 +49,18 @@ bool Statue::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+bool Statue::msgAction(const ActionMessage &msg) {
+	if (endDelay())
+		return true;
+
+	if (msg._action == KEYBIND_ESCAPE) {
+		leave();
+		return true;
+	}
+
+	return false;
+}
+
 void Statue::draw() {
 	switch (_pageNum) {
 	case 0:

@@ -122,17 +122,6 @@ void CharacterInfo::timeout() {
 }
 
 bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		if (_state != DISPLAY) {
-			redraw();
-		} else {
-			close();
-		}
-
-		_state = DISPLAY;
-		return true;
-	}
-
 	switch (_state) {
 	case DISPLAY:
 		switch (msg.keycode) {
@@ -265,20 +254,36 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool CharacterInfo::msgAction(const ActionMessage &msg) {
-	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-			msg._action <= KEYBIND_VIEW_PARTY6) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
+		if (_state != DISPLAY) {
+			redraw();
+		} else {
+			close();
+		}
+
+		_state = DISPLAY;
+		return true;
+	case KEYBIND_VIEW_PARTY1:
+	case KEYBIND_VIEW_PARTY2:
+	case KEYBIND_VIEW_PARTY3:
+	case KEYBIND_VIEW_PARTY4:
+	case KEYBIND_VIEW_PARTY5:
+	case KEYBIND_VIEW_PARTY6:
 		if (_state == DISPLAY) {
 			g_globals->_currCharacter = &g_globals->_party[
 				msg._action - KEYBIND_VIEW_PARTY1];
 			redraw();
-			return true;
 		} else if (_state == TRADE_WITH) {
 			_state = TRADE_KIND;
 			_tradeWith = msg._action - KEYBIND_VIEW_PARTY1;
 			redraw();
-			return true;
 		}
+		return true;
+	default:
+		break;
 	}
+
 	return false;
 }
 

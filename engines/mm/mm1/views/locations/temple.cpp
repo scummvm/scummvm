@@ -41,11 +41,6 @@ bool Temple::msgFocus(const FocusMessage &msg) {
 }
 
 bool Temple::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		leave();
-		return true;
-	}
-
 	// If a delay is active, end it
 	if (endDelay())
 		return true;
@@ -80,6 +75,18 @@ bool Temple::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool Temple::msgAction(const ActionMessage &msg) {
+	if (endDelay())
+		return true;
+
+	if (msg._action == KEYBIND_ESCAPE) {
+		leave();
+		return true;
+	}
+
+	return false;
 }
 
 void Temple::changeCharacter(uint index) {

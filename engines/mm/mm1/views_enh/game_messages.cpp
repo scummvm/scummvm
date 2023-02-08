@@ -107,6 +107,16 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 	return false;
 }
 
+bool GameMessages::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE && g_events->focusedView() == this) {
+		close();
+		g_events->drawElements();
+		return true;
+	}
+
+	return false;
+}
+
 bool GameMessages::msgMouseDown(const MouseDownMessage &msg) {
 	// If yes/no prompting, also pass events to buttons view
 	if (_ynCallback)

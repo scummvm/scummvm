@@ -128,13 +128,11 @@ bool QuickRef::msgAction(const ActionMessage &msg) {
 				replaceView("CharacterInfo");
 			}
 		}
-		break;
+		return true;
 	}
 	default:
-		break;
+		return ScrollPopup::msgAction(msg);
 	}
-
-	return false;
 }
 
 bool QuickRef::isInCombat() const {

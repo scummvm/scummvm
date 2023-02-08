@@ -51,9 +51,6 @@ void Blacksmith::draw() {
 
 bool Blacksmith::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
-	case Common::KEYCODE_ESCAPE:
-		leave();
-		break;
 	case Common::KEYCODE_1:
 	case Common::KEYCODE_2:
 	case Common::KEYCODE_3:
@@ -79,6 +76,18 @@ bool Blacksmith::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool Blacksmith::msgAction(const ActionMessage &msg) {
+	if (endDelay())
+		return true;
+
+	if (msg._action == KEYBIND_ESCAPE) {
+		leave();
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace Locations

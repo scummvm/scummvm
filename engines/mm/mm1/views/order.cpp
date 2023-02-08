@@ -41,10 +41,7 @@ bool Order::msgGame(const GameMessage &msg) {
 }
 
 bool Order::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
-
-	} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
+	if (msg.keycode == Common::KEYCODE_BACKSPACE &&
 			!_indexes.empty()) {
 		_indexes.remove_at(_indexes.size() - 1);
 		redraw();
@@ -74,6 +71,15 @@ bool Order::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool Order::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return false;
 }
 
 void Order::draw() {

@@ -343,17 +343,6 @@ void CreateCharacters::printSummary(bool promptToSave) {
 }
 
 bool CreateCharacters::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		if (_state == SELECT_CLASS) {
-			close();
-		} else {
-			_state = SELECT_CLASS;
-			_newChar.reroll();
-			redraw();
-		}
-		return true;
-	}
-
 	switch (_state) {
 	case SELECT_CLASS:
 		if (msg.keycode == Common::KEYCODE_RETURN) {
@@ -458,6 +447,21 @@ bool CreateCharacters::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool CreateCharacters::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		if (_state == SELECT_CLASS) {
+			close();
+		} else {
+			_state = SELECT_CLASS;
+			_newChar.reroll();
+			redraw();
+		}
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace Views

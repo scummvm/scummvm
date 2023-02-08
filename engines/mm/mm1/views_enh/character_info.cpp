@@ -101,9 +101,6 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	int idx;
 
 	switch (msg.keycode) {
-	case Common::KEYCODE_ESCAPE:
-		close();
-		return true;
 	case Common::KEYCODE_UP:
 		showCursor(false);
 		if (--_cursorCell < 0)
@@ -147,7 +144,10 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool CharacterInfo::msgAction(const ActionMessage &msg) {
-	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		return true;
+	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
 			msg._action <= KEYBIND_VIEW_PARTY6) {
 		g_globals->_currCharacter = &g_globals->_party[
 				msg._action - KEYBIND_VIEW_PARTY1];

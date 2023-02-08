@@ -103,10 +103,7 @@ void Inn::draw() {
 }
 
 bool Inn::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		replaceView("MainMenu");
-		return true;
-	} else if (msg.keycode >= Common::KEYCODE_a &&
+	if (msg.keycode >= Common::KEYCODE_a &&
 		msg.keycode < (Common::KeyCode)(Common::KEYCODE_a + _charNums.size())) {
 		int charNum = _charNums[msg.keycode - Common::KEYCODE_a];
 
@@ -134,6 +131,15 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 
 		// Load the given town
 		g_globals->_maps.loadTown(g_globals->_startingTown);
+	}
+
+	return false;
+}
+
+bool Inn::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		replaceView("MainMenu");
+		return true;
 	}
 
 	return false;

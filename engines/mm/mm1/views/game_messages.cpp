@@ -108,6 +108,26 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 	return false;
 }
 
+bool GameMessages::msgAction(const ActionMessage &msg) {
+	if (g_globals->_party.isPartyDead()) {
+		// Party is dead, so now that players have read whatever
+		// message was displayed, switch to the Dead screen
+		g_events->clearViews();
+		addView("Dead");
+
+	} else if (g_events->focusedView()) {
+		if (endDelay())
+			return true;
+
+		if (msg._action == KEYBIND_ESCAPE) {
+			close();
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void GameMessages::timeout() {
 	if (_ynCallback) {
 		// _ynCallback is also used for timeout callbacks

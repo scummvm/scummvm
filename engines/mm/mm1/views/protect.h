@@ -37,7 +37,6 @@ public:
 	virtual ~Protect() {}
 
 	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 };
 

@@ -48,9 +48,8 @@ bool Market::msgKeypress(const KeypressMessage &msg) {
 		return true;
 
 	switch (msg.keycode) {
-	case Common::KEYCODE_ESCAPE:
 	case Common::KEYCODE_n:
-		leave();
+		msgAction(ActionMessage(KEYBIND_ESCAPE));
 		break;
 	case Common::KEYCODE_y:
 		buyFood();
@@ -60,6 +59,18 @@ bool Market::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool Market::msgAction(const ActionMessage &msg) {
+	if (endDelay())
+		return true;
+
+	if (msg._action == KEYBIND_ESCAPE) {
+		leave();
+		return true;
+	}
+
+	return false;
 }
 
 void Market::draw() {

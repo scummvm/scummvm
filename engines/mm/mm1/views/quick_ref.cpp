@@ -94,17 +94,11 @@ void QuickRef::draw() {
 	escToGoBack();
 }
 
-bool QuickRef::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
-		return true;
-	}
-
-	return false;
-}
-
 bool QuickRef::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
+	case KEYBIND_ESCAPE:
+		close();
+		return true;
 	case KEYBIND_VIEW_PARTY1:
 	case KEYBIND_VIEW_PARTY2:
 	case KEYBIND_VIEW_PARTY3:

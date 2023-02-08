@@ -34,6 +34,7 @@ public:
 
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace ViewsEnh

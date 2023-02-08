@@ -64,6 +64,10 @@ public:
 	 */
 	bool msgKeypress(const KeypressMessage &msg) override;
 
+	/**
+	 * Handle actions
+	 */
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Views

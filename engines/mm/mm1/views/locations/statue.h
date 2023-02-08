@@ -40,6 +40,7 @@ public:
 	void draw() override;
 	bool msgValue(const ValueMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Locations

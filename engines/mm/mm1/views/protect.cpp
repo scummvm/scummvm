@@ -88,19 +88,16 @@ void Protect::printProtectionLevel(uint protectIndex) {
 	newLine();
 }
 
-bool Protect::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
-		return true;
-	}
-
-	return false;
-}
-
 bool Protect::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_PROTECT) {
+	switch (msg._action) {
+	case KEYBIND_PROTECT:
 		addView();
 		return true;
+	case KEYBIND_ESCAPE:
+		close();
+		return true;
+	default:
+		break;
 	}
 
 	return false;

@@ -40,11 +40,6 @@ bool Tavern::msgFocus(const FocusMessage &msg) {
 }
 
 bool Tavern::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		leave();
-		return true;
-	}
-
 	// If timed message display, end the waiting
 	if (endDelay())
 		return true;
@@ -76,6 +71,18 @@ bool Tavern::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool Tavern::msgAction(const ActionMessage &msg) {
+	if (endDelay())
+		return true;
+
+	if (msg._action == KEYBIND_ESCAPE) {
+		leave();
+		return true;
+	}
+
+	return false;
 }
 
 void Tavern::draw() {

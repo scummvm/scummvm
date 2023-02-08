@@ -39,6 +39,16 @@ bool ScrollPopup::msgMouseUp(const MouseUpMessage &msg) {
 	return true;
 }
 
+bool ScrollPopup::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return false;
+}
+
+
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
