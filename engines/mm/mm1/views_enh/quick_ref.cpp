@@ -36,7 +36,6 @@ namespace ViewsEnh {
 #define COLUMN_AC 250
 #define COLUMN_CONDITION 278
 
-
 QuickRef::QuickRef() : ScrollPopup("QuickRef") {
 	setBounds(Common::Rect(0, 0, 320, 146));
 }
@@ -91,6 +90,9 @@ void QuickRef::writeCharacterLine(int charNum) {
 	writeChar(COLUMN_AC, yp, ' ');
 	writeNumber(c._ac._current);
 
+	setTextColor(c.conditionColor());
+	Common::String condStr = c.getConditionString(c.worstCondition());
+	writeString(COLUMN_CONDITION, yp, condStr);
 
 	setTextColor(0);
 }

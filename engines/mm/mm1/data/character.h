@@ -56,6 +56,13 @@ enum Condition {
 	DISEASED = 8,  SILENCED = 4, BLINDED = 2, ASLEEP = 1
 };
 
+enum ConditionEnum {
+	C_GOOD, C_ERADICATED, C_DEAD, C_STONE, C_UNCONSCIOUS,
+	C_PARALYZED, C_POISONED, C_DISEASED, C_SILENCED,
+	C_BLINDED, C_ASLEEP
+};
+
+
 enum Resistance {
 	RESISTANCE_MAGIC = 0, RESISTANCE_FIRE = 1, RESISTANCE_COLD = 2,
 	RESISTANCE_ELECTRICITY = 3, RESISTANCE_ACID = 4,
@@ -537,7 +544,23 @@ struct Character : public PrimaryAttributes {
 	 * Returns the color to use in enhanced mode to
 	 * represent the color of a character attribute
 	 */
-	int statColor(int amount, int threshold) const;
+	byte statColor(int amount, int threshold) const;
+
+	/**
+	 * Returns the condition color for display
+	 */
+	byte conditionColor() const;
+
+	/**
+	 * Returns the worst condition, if any, a character
+	 * currently has.
+	 */
+	ConditionEnum worstCondition() const;
+
+	/**
+	 * Returns a string for a given condition
+	 */
+	static Common::String getConditionString(ConditionEnum cond);
 };
 
 } // namespace MM1
