@@ -182,6 +182,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Der Relocation-Parser wurde um Unterstützung für PREL31, welches von neuen Compilern verwendet wird, erweitert.
    - Weitere Optionen zur automatischen Konfiguration in ./configure hinzugefügt.
 
+ RISC OS-Portierung:
+   - Unterstützung für die 26-bit-Versionen von RISC OS hinzugefügt.
+
 #### 2.6.1 "Incremental Escapism" (31.10.2022)
 
  Allgemein:
@@ -229,9 +232,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Android-Portierung:
    - Die Maus-Koordinaten werden nun korrekt zwischen den Bildschirm-Koordinaten und den virtuellen Koordinaten konvertiert.
-
- RISC OS-Portierung:
-   - Unterstützung für die 26-bit-Versionen von RISC OS hinzugefügt.
 
  Windows-Portierung:
   - Fehler korrigiert, der dazu führt, dass das Löschen des Icon-Caches einen zusätzlichen ScummVM-Ordner im APPDATA-Verzeichnis anlegt.
