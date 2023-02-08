@@ -187,6 +187,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Update relocation parser to support PREL31 that are emitted by new compiler.
    - Do more autoconfiguration in ./configure.
 
+ RISC OS port:
+   - Added support for 26-bit versions of RISC OS.
+
 #### 2.6.1 "Incremental Escapism" (2022-10-31)
 
  General:
@@ -233,9 +236,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Android port:
    - Properly convert mouse coordinates between screen coordinates and virtual ones.
-
- RISC OS port:
-   - Added support for 26-bit versions of RISC OS.
 
  Windows port:
    - Clearing the icons cache created a duplicate ScummVM folder in the APPDATA directory. Fixed.
