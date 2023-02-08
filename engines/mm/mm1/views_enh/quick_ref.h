@@ -35,10 +35,15 @@ private:
 	 * Write the line for a single character
 	 */
 	void writeCharacterLine(int charNum);
+
+	bool isInCombat() const;
 public:
 	QuickRef();
 	virtual ~QuickRef() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
 };
 

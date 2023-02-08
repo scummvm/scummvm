@@ -40,6 +40,16 @@ QuickRef::QuickRef() : ScrollPopup("QuickRef") {
 	setBounds(Common::Rect(0, 0, 320, 146));
 }
 
+bool QuickRef::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
+	return ScrollPopup::msgFocus(msg);
+}
+
+bool QuickRef::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return ScrollPopup::msgUnfocus(msg);
+}
+
 void QuickRef::draw() {
 	ScrollPopup::draw();
 
@@ -62,7 +72,9 @@ void QuickRef::draw() {
 }
 
 void QuickRef::writeCharacterLine(int charNum) {
-	const Character &c = g_globals->_party[charNum];
+	const Character &c = isInCombat() ?
+		*g_globals->_combatParty[charNum] :
+		g_globals->_party[charNum];
 	const int yp = 30 + (charNum * 10);
 
 	writeChar(COLUMN_NUM, yp, '1' + charNum);
@@ -95,6 +107,38 @@ void QuickRef::writeCharacterLine(int charNum) {
 	writeString(COLUMN_CONDITION, yp, condStr);
 
 	setTextColor(0);
+}
+
+bool QuickRef::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+	case KEYBIND_VIEW_PARTY1:
+	case KEYBIND_VIEW_PARTY2:
+	case KEYBIND_VIEW_PARTY3:
+	case KEYBIND_VIEW_PARTY4:
+	case KEYBIND_VIEW_PARTY5:
+	case KEYBIND_VIEW_PARTY6:
+	{
+		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
+		if (charNum < g_globals->_party.size()) {
+			if (isInCombat()) {
+				g_globals->_currCharacter = g_globals->_combatParty[charNum];
+				replaceView("CharacterViewCombat");
+			} else {
+				g_globals->_currCharacter = &g_globals->_party[charNum];
+				replaceView("CharacterInfo");
+			}
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+	return false;
+}
+
+bool QuickRef::isInCombat() const {
+	return g_events->isPresent("Combat");
 }
 
 } // namespace Views
