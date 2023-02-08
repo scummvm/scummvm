@@ -466,6 +466,9 @@ public:
 	void drawFullscreenMessage(Common::String message);
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
+
+private:
+	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
 };
 
 class EclipseEngine : public FreescapeEngine {

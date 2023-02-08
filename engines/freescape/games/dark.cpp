@@ -67,6 +67,7 @@ void DarkEngine::loadAssetsDemo() {
 		loadMessagesFixedSize(&file, 0x4525, 16, 27);
 		loadMessagesFixedSize(&file, 0x9959, 307, 5);
 		loadFonts(&file, 0xa598);
+		loadGlobalObjects(&file, 0x3d04);
 		load8bitBinary(&file, 0xa700, 16);
 	} else if (isDOS() && _renderMode == Common::kRenderCGA) {
 		//loadBundledImages();
@@ -79,6 +80,23 @@ void DarkEngine::loadAssetsDemo() {
 	} else
 		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
 }
+
+
+void DarkEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset) {
+	assert(!_areaMap.contains(255));
+	ObjectMap *globalObjectsByID = new ObjectMap;
+	file->seek(offset);
+	for (int i = 0; i < 22; i++) {
+		Object *gobj = load8bitObject(file);
+		assert(gobj);
+		assert(!globalObjectsByID->contains(gobj->getObjectID()));
+		debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());
+		(*globalObjectsByID)[gobj->getObjectID()] = gobj;
+	}
+
+	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
+}
+
 
 void DarkEngine::initGameState() {
 	_flyMode = false;
@@ -119,7 +137,14 @@ void DarkEngine::loadAssetsFullGame() {
 
 		loadFonts(&file, 0xa113);
 		loadMessagesFixedSize(&file, 0x4525, 16, 27);
+		loadGlobalObjects(&file, 0x3d04);
 		load8bitBinary(&file, 0xa280, 16);
+		// TODO: load objects
+		/*for (auto &it : _areaMap) {
+			if (!it._value->entranceWithID(255))
+				continue;
+			it._value->addStructure(_areaMap[255]);
+		}*/
 	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
 		file.open("DSIDEC.EXE");
