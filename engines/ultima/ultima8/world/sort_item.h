@@ -370,12 +370,19 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._flat != si2._flat)
 		return si1._flat > si2._flat;
 
-	// Trans always gets drawn after
-	if (si1._trans != si2._trans)
-		return si1._trans < si2._trans;
+	// Specialist handling for same location
+	if (si1._x == si2._x && si1._y == si2._y) {
+		// Trans always gets drawn after
+		if (si1._trans != si2._trans)
+			return si1._trans < si2._trans;
+	}
 
 	// Specialist z flat handling
 	if (si1._flat && si2._flat) {
+		// Trans always gets drawn after
+		if (si1._trans != si2._trans)
+			return si1._trans < si2._trans;
+
 		// Animated always gets drawn after
 		if (si1._anim != si2._anim)
 			return si1._anim < si2._anim;
