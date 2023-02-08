@@ -221,6 +221,30 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	/**
+	 * Overlapping y-flat vs non-flat items where they intersect in opposing directions
+	 * Test case for rendering issue at MainActor::teleport 41 20583 10083 48
+	 */
+	void test_y_flat_intersect_sort() {
+		Ultima::Ultima8::SortItem si1(nullptr);
+		Ultima::Ultima8::SortItem si2(nullptr);
+
+		Ultima::Ultima8::Box b1(20479, 9887, 48, 64, 128, 40);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._trans = true;
+		si1._solid = true;
+		si1._land = true;
+
+		Ultima::Ultima8::Box b2(20543, 9855, 48, 96, 0, 16);
+		si2.setBoxBounds(b2, 0, 0);
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
 	 * Overlapping non-flat items clearly in z - avatar above candle
 	 * Test case for rendering issue at MainActor::teleport 6 7774 19876 48
 	 */
