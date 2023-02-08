@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	pict.o \
 	png.o \
 	tga.o \
+	xbm.o \
 	codecs/bmp_raw.o \
 	codecs/cdtoons.o \
 	codecs/cinepak.o \
