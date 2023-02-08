@@ -242,7 +242,7 @@ void CharacterInfo::drawStats() {
 		if (i < 10)
 			pt.x += 8 + (CURR[i] < 10 ? 8 : 0);
 
-		setTextColor(statColor(CURR[i], BASE[i]));
+		setTextColor(c.statColor(CURR[i], BASE[i]));
 
 		if (i == 16) {
 			// Food
@@ -269,19 +269,6 @@ void CharacterInfo::drawStats() {
 	}
 
 	writeString(196, 120, condStr);
-}
-
-int CharacterInfo::statColor(int amount, int threshold) {
-	if (amount < 1)
-		return 6;
-	else if (amount > threshold)
-		return 2;
-	else if (amount == threshold)
-		return 15;
-	else if (amount >= (threshold / 4))
-		return 9;
-	else
-		return 32;
 }
 
 void CharacterInfo::showCursor(bool flag) {

@@ -60,11 +60,6 @@ private:
 	void drawStats();
 
 	/**
-	 * Return the color for a given stat
-	 */
-	int statColor(int amount, int threshold);
-
-	/**
 	 * Toggle display of cursor
 	 */
 	void showCursor(bool flag);
