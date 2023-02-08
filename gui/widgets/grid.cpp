@@ -145,6 +145,17 @@ void GridItemWidget::drawWidget() {
 		g_gui.theme()->drawSurface(p, *demoGfx, true);
 	}
 
+	bool validEntry = _activeEntry->validEntry;
+
+	// Darken thumbnail if path is unreachable
+	if (!validEntry) {
+		const Graphics::ManagedSurface *darkenGfx = _grid->disabledThumbnail();
+		if (darkenGfx) {
+			Common::Point p(_x, _y);
+			g_gui.theme()->drawSurface(p, *darkenGfx, true);
+		}
+	}
+
 	// Draw Title
 	if (_grid->_isTitlesVisible) {
 		// TODO: Currently title is fixed to two lines at all times, we may want
@@ -156,7 +167,7 @@ void GridItemWidget::drawWidget() {
 		}
 		// Display text in alternate color if the path is unreachable
 		// Should be ok using kStateDisabled, but the list widget uses FontColorAlternate so let's stick to that
-		GUI::ThemeEngine::FontColor color = _activeEntry->validEntry ? GUI::ThemeEngine::kFontColorNormal : GUI::ThemeEngine::kFontColorAlternate;
+		GUI::ThemeEngine::FontColor color = validEntry ? GUI::ThemeEngine::kFontColorNormal : GUI::ThemeEngine::kFontColorAlternate;
 		Common::Rect r(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight);
 		for (uint k = 0; k < MIN(2U, titleLines.size()); ++k) {
 			g_gui.theme()->drawText(r, titleLines[k], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter, GUI::ThemeEngine::kTextInversionNone,
@@ -360,6 +371,8 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_platformIconWidth = 0;
 	_extraIconHeight = 0;
 	_extraIconWidth = 0;
+	_disabledIconOverlay = nullptr;
+
 	_minGridXSpacing = 0;
 	_minGridYSpacing = 0;
 	_isTitlesVisible = 0;
@@ -398,6 +411,7 @@ GridWidget::~GridWidget() {
 	unloadSurfaces(_languageIcons);
 	unloadSurfaces(_extraIcons);
 	unloadSurfaces(_loadedSurfaces);
+	delete _disabledIconOverlay;
 	_gridItems.clear();
 	_dataEntryList.clear();
 	_headerEntryList.clear();
@@ -435,6 +449,10 @@ const Graphics::ManagedSurface *GridWidget::demoToSurface(const Common::String e
 	if (! extraString.contains("Demo") )
 		return nullptr;
 	return _extraIcons[0];
+}
+
+const Graphics::ManagedSurface *GridWidget::disabledThumbnail() {
+	return _disabledIconOverlay;
 }
 
 void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
@@ -958,10 +976,20 @@ void GridWidget::reflowLayout() {
 		unloadSurfaces(_platformIcons);
 		unloadSurfaces(_languageIcons);
 		unloadSurfaces(_loadedSurfaces);
+		if (_disabledIconOverlay)
+			_disabledIconOverlay->free();
 		reloadThumbnails();
 		loadFlagIcons();
 		loadPlatformIcons();
 		loadExtraIcons();
+
+		Graphics::ManagedSurface *gfx = new Graphics::ManagedSurface(_thumbnailWidth, _thumbnailHeight, g_system->getOverlayFormat());
+		uint32 disabledThumbnailColor = gfx->format.ARGBToColor(153, 0, 0, 0);  // 60% opacity black
+		gfx->fillRect(Common::Rect(0, 0, _thumbnailWidth, _thumbnailHeight), disabledThumbnailColor);
+		if (gfx)
+			_disabledIconOverlay = gfx;
+		else
+			_disabledIconOverlay = nullptr;
 	}
 
 	_trayHeight = kLineHeight * 3;
