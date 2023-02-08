@@ -3,12 +3,9 @@
 Apple TV OS
 ==============
 
----
-**NOTE**
+.. note::
 
-This page is under development. Only basic information is given to enable ScummVM on Apple TV.
-
----
+ This page is under development. Only basic information is given to enable ScummVM on Apple TV.
 
 This page contains all the information you need to get ScummVM up and running on an Apple TV.
 
@@ -31,14 +28,11 @@ Instructions will be added when packages are available for download.
 Transferring game files
 ========================
 
----
-**NOTE**
+.. note::
 
-Note that Apple TV applications doesn't have a ``Documents`` folder in which games can be stored. All games are stored in the ``cache`` folder which can be deleted when the system requires the needed space. This could happen if having limited available space and streaming high definition content or installing other applications. Please see https://developer.apple.com/library/archive/documentation/General/Conceptual/AppleTV_PG/OnDemandResources.html for more information.
+ Note that Apple TV applications doesn't have a ``Documents`` folder in which games can be stored. All games are stored in the ``cache`` folder which can be deleted when the system requires the needed space. This could happen if having limited available space and streaming high definition content or installing other applications. Please see https://developer.apple.com/library/archive/documentation/General/Conceptual/AppleTV_PG/OnDemandResources.html for more information.
 
-Make sure to make backups of savegames.
-
----
+ Make sure to make backups of savegames.
 
 ScummVM has built-in cloud functionality, which lets you connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../use_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../use_scummvm/LAN` page.
 
@@ -55,13 +49,13 @@ Controls
 The Apple TV supports several controllers however no mouse support. External keyboards can be used to help entering text input. Usually the Apple TV remote controller will be used.
 
 Game controllers
-^^^^^^^^^^^^^^^^^^^^
+********************
 If running tvOS 14 and later there is support for connected gamepad controllers using the Apple Game Controller framework. "Micro Gamepad Controllers ""Extended Gamepad Controllers" are supported at the moment. For more information visit
 https://developer.apple.com/documentation/gamecontroller/gcmicrogamepad
 https://developer.apple.com/documentation/gamecontroller/gcextendedgamepad
 
 Key mappings on Apple TV remote (also remote app on iOS)
-^^^^^^^^^^^^^^^^^^^^
+************************************************************
 
 .. csv-table::
     :widths: 40 60
@@ -81,7 +75,7 @@ Key mappings on Apple TV remote (also remote app on iOS)
         Touch (not press) on bottom of Touch area, Down arrow key
 
 Key mappings on Extended gamepad controller
-^^^^^^^^^^^^^^^^^^^^
+***********************************************
 
 .. csv-table::
     :widths: 40 60
@@ -90,7 +84,7 @@ Key mappings on Extended gamepad controller
 
         Button, Action
         Left analog joystick, Controls pointer
-        D-Pad, Up, Left, Right, Down arrow buttons
+        D-Pad, Up/Left/Right/Down arrow buttons
         A, Left mouse click
         B, Right mouse click
         Hold X, Show keyboard with extra keys
