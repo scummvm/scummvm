@@ -101,7 +101,7 @@ protected:
 	Common::HashMap<int, const Graphics::ManagedSurface *> _platformIcons;
 	Common::HashMap<int, const Graphics::ManagedSurface *> _languageIcons;
 	Common::HashMap<int, const Graphics::ManagedSurface *> _extraIcons;
-
+	Graphics::ManagedSurface *_disabledIconOverlay;
 	// Images are mapped by filename -> surface.
 	Common::HashMap<Common::String, const Graphics::ManagedSurface *> _loadedSurfaces;
 
@@ -174,6 +174,7 @@ public:
 	const Graphics::ManagedSurface *languageToSurface(Common::Language languageCode);
 	const Graphics::ManagedSurface *platformToSurface(Common::Platform platformCode);
 	const Graphics::ManagedSurface *demoToSurface(const Common::String extraString);
+	const Graphics::ManagedSurface *disabledThumbnail();
 
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.
 	bool calcVisibleEntries();
