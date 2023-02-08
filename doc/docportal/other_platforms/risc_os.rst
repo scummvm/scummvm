@@ -7,9 +7,10 @@ This page contains all the information you need to get ScummVM up and running on
 What you'll need
 ===================
 
-- A system running RISC OS 5.
+- A system running RISC OS 3.6 or later.
 - A minimum of 64 MB RAM. 32 MB may work in some circumstances, but is not generally recommended.
 - The `SharedUnixLibrary <https://www.riscos.info/index.php/SharedUnixLibrary>`_ and `DRenderer <https://www.riscos.info/packages/LibraryDetails.html#DRendererarm>`_ modules installed. These can be installed using `PackMan <https://www.riscos.info/index.php/PackMan>`_.
+- Support for long file names. On older versions of RISC OS, this can be provided using `raFS <http://atterer.org/riscos>`_.
 
 Installing ScummVM
 ======================================
@@ -41,6 +42,8 @@ Saved games
 
 ``<Choices$Write>.ScummVM.Saves``
 
+The save path needs to be in a path that supports long file names, so it may be necessary to change the default location to one that does.
+
 Configuration file
 **************************
 ``<Choices$Write>.ScummVM.scummvmrc``
@@ -63,6 +66,4 @@ Known issues
 ==============
 
 - ScummVM for RISC OS does not have cloud or LAN functionality.
-- FluidSynth is not supported.
-- ScummVM is not compatible with RISC OS 3, 4 or 6.
 
