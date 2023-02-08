@@ -44,7 +44,7 @@ BitmapFont::BitmapFont(const Graphics::Surface &src, const Common::Point &size,
 		Common::Rect charBounds(r.left, r.top, r.left + srcCharWidth, r.bottom);
 
 		_chars[idx].create(destCharWidth, size.y, src.format);
-		_chars[idx].transBlitFrom(src, charBounds, Common::Rect(0, 0, _chars[idx].w, _chars[idx].h));
+		_chars[idx].blitFrom(src, charBounds, Common::Rect(0, 0, _chars[idx].w, _chars[idx].h));
 	}
 }
 
@@ -54,7 +54,7 @@ void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint
 		const byte *srcP = (const byte *)c.getBasePtr(0, yCtr);
 
 		for (int xCtr = 0; xCtr < c.w; ++xCtr, ++srcP) {
-			if (!*srcP)
+			if (*srcP)
 				dst->hLine(x + xCtr, y + yCtr, x + xCtr, color);
 		}
 	}
@@ -73,7 +73,7 @@ int BitmapFont::getSourceCharacterWidth(uint charIndex, const Graphics::Surface 
 		const byte *srcP = (const byte *)src.getBasePtr(charBounds.left, y);
 
 		for (int x = 0; x < charBounds.width(); ++x, ++srcP) {
-			if (!*srcP)
+			if (*srcP)
 				rowX = x;
 		}
 
