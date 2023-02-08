@@ -160,13 +160,7 @@ void TeRendererTinyGL::renderTransparentMeshes() {
 	tglVertexPointer(3, TGL_FLOAT, sizeof(TeVector3f32), _transparentMeshVertexes.data());
 	tglNormalPointer(TGL_FLOAT, sizeof(TeVector3f32), _transparentMeshNormals.data());
 	tglTexCoordPointer(2, TGL_FLOAT, sizeof(TeVector2f32), _transparentMeshCoords.data());
-	// TinyGL doesn't correctly scale BYTE color data, so provide it pre-scaled.
-	Common::Array<float> colorVals(_transparentMeshColors.size() * 4);
-	const byte *coldata = reinterpret_cast<const byte *>(_transparentMeshColors.data());
-	for (unsigned int i = 0; i < colorVals.size(); i++) {
-		colorVals[i] = (float)coldata[i] / 255.0f;
-	}
-	tglColorPointer(4, TGL_FLOAT, sizeof(float) * 4, colorVals.data());
+	tglColorPointer(4, TGL_UNSIGNED_BYTE, sizeof(TeColor), _transparentMeshColors.data());
 
 	TeMaterial lastMaterial;
 	TeMatrix4x4 lastMatrix;
