@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-08 11:43+0000\n"
+"POT-Creation-Date: 2023-02-08 17:59+0000\n"
 "PO-Revision-Date: 2023-01-24 05:34+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -3213,27 +3213,27 @@ msgid "Resolution: %dx%d"
 msgstr "Resolució: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2516
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
 msgid "Enabled aspect ratio correction"
 msgstr "S'ha activat la correcció de la relació d'aspecte"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
 msgid "Disabled aspect ratio correction"
 msgstr "S'ha desactivat la correcció de la relació d'aspecte"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:739
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2538
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Filtering enabled"
 msgstr "Filtratge activat"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2540
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2533
 msgid "Filtering disabled"
 msgstr "Filtratge desactivat"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:767
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2567
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2560
 msgid "Stretch mode"
 msgstr "Mode d'ajustament"
 
@@ -3241,7 +3241,7 @@ msgstr "Mode d'ajustament"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2482
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2475
 msgid "Active graphics filter:"
 msgstr "Filtre de gràfics actiu:"
 

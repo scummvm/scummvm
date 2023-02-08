@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-08 11:43+0000\n"
+"POT-Creation-Date: 2023-02-08 17:59+0000\n"
 "PO-Revision-Date: 2023-02-06 11:04+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3177,27 +3177,27 @@ msgid "Resolution: %dx%d"
 msgstr "Felbontás: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2516
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
 msgid "Enabled aspect ratio correction"
 msgstr "Méretarány korrekció engedélyezve"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
 msgid "Disabled aspect ratio correction"
 msgstr "Méretarány korrekció letiltva"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:739
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2538
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Filtering enabled"
 msgstr "Szûrés engedélyezve"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2540
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2533
 msgid "Filtering disabled"
 msgstr "Szûrés letiltva"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:767
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2567
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2560
 msgid "Stretch mode"
 msgstr "Nyújtás mód"
 
@@ -3205,7 +3205,7 @@ msgstr "Nyújtás mód"
 msgid "SDL Surface"
 msgstr "SDL Felület"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2482
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2475
 msgid "Active graphics filter:"
 msgstr "Aktív grafikus szûrõk:"
 
