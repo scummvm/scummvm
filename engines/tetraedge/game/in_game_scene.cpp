@@ -1175,7 +1175,6 @@ void InGameScene::update() {
 	}
 
 	for (Object3D *obj : _object3Ds) {
-		// TODO: update object3ds if they are translating or rotating.
 		if (obj->_translateTime >= 0) {
 			float time = MIN((float)(obj->_translateTimer.getTimeFromStart() / 1000000.0), obj->_translateTime);
 			TeVector3f32 trans = obj->_translateStart + (obj->_translateAmount * (time / obj->_translateTime));

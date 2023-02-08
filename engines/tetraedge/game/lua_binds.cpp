@@ -84,7 +84,7 @@ static void PlayMovie(const Common::String &vidpath, const Common::String &music
 
 static void PlayMovie(const Common::String &vidpath, const Common::String &musicpath, double f) {
 	Game *game = g_engine->getGame();
-	warning("TODO: handle float value in PlayMovie for Syberia 2");
+	warning("TODO: handle float value %f in PlayMovie for Syberia 2", f);
 
 	if (!game->playMovie(vidpath, musicpath)) {
 		warning("[PlayMovie] Movie \"%s\" doesn\'t exist.", vidpath.c_str());
@@ -435,7 +435,7 @@ static int tolua_ExportedFunctions_SetRunMode200(lua_State *L) {
 		SetRunMode2(s1, s2);
 		return 0;
 	}
-	error("#ferror in function 'AddMarker': %d %d %s", err.index, err.array, err.type);
+	error("#ferror in function 'SetRunMode2': %d %d %s", err.index, err.array, err.type);
 }
 
 static void SetCharacterShadow(const Common::String &charName, bool val) {
@@ -560,13 +560,20 @@ static int tolua_ExportedFunctions_AddMarker00(lua_State *L) {
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
 			&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
 			&& tolua_isstring(L, 5, 1, &err) && tolua_isstring(L, 6, 1, &err)
-			&& tolua_isnoobj(L, 7, &err)) {
+			&& tolua_isnumber(L, 7, 1, &err) && tolua_isnumber(L, 8, 1, &err)
+			&& tolua_isnoobj(L, 9, &err)) {
+		// Syberia 1 version
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		double n1 = tolua_tonumber(L, 3, 0.0);
 		double n2 = tolua_tonumber(L, 4, 0.0);
 		Common::String s3(tolua_tostring(L, 5, ""));
 		Common::String s4(tolua_tostring(L, 6, ""));
+		double n3 = tolua_tonumber(L, 7, 0.0);
+		double n4 = tolua_tonumber(L, 8, 0.0);
+		if (n3 || n4) {
+			warning("TODO: handle extra params for AddMarker %f %f", n3, n4);
+		}
 		AddMarker(s1, s2, n1, n2, s3, s4);
 		return 0;
 	}
@@ -2178,6 +2185,8 @@ static int tolua_ExportedFunctions_MoveCharacterPlayerTo00(lua_State *L) {
 }
 
 static void EnableRunMode(bool val) {
+	//Game *game = g_engine->getGame();
+	//game->setRunMode(val);
 	warning("TODO: EnableRunMode %s", val ? "true" : "false");
 }
 
@@ -2186,6 +2195,7 @@ static int tolua_ExportedFunctions_EnableRunMode00(lua_State *L) {
 	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
 		bool b1 = tolua_toboolean(L, 1, 0);
 		EnableRunMode(b1);
+		return 0;
 	}
 	error("#ferror in function 'EnableRunMode': %d %d %s", err.index, err.array, err.type);
 }
@@ -2213,9 +2223,119 @@ static int tolua_ExportedFunctions_SetModelPlayer00(lua_State *L) {
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
 		Common::String s1(tolua_tostring(L, 1, 0));
 		SetModelPlayer(s1);
+		return 0;
 	}
 	error("#ferror in function 'SetModelPlayer': %d %d %s", err.index, err.array, err.type);
 }
+
+static void BlendCharacterPlayerAnimation(const Common::String &anim, float amount, bool repeat, bool returnToIdle) {
+	Game *game = g_engine->getGame();
+	Character *character = game->scene()._character;
+	if (character) {
+		character->blendAnimation(anim, amount, repeat, returnToIdle);
+	} else {
+		warning("[BlendCharacterPlayerAnimation] Character doesn't exist");
+	}
+
+}
+
+static int tolua_ExportedFunctions_BlendCharacterPlayerAnimation00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isboolean(L, 3, 0, &err) && tolua_isboolean(L, 4, 0, &err)
+		&& tolua_isnoobj(L, 6, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		float f1 = tolua_tonumber(L, 2, 0.0);
+		float b1 = tolua_toboolean(L, 3, 0.0);
+		float b2 = tolua_toboolean(L, 4, 0.0);
+		BlendCharacterPlayerAnimation(s1, f1, b1, b2);
+		return 0;
+	}
+	error("#ferror in function 'BlendCharacterPlayerAnimation': %d %d %s", err.index, err.array, err.type);
+}
+
+static bool CurrentCharacterPlayerAnimation(const Common::String &anim) {
+	Game *game = g_engine->getGame();
+	Character *character = game->scene()._character;
+	if (character) {
+		return character->curAnimName() == anim;
+	} else {
+		warning("[CurrentCharacterPlayerAnimation] Character doesn't exist");
+		return false;
+	}
+}
+
+static int tolua_ExportedFunctions_CurrentCharacterPlayerAnimation00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		bool result = CurrentCharacterPlayerAnimation(s1);
+		tolua_pushboolean(L, result);
+		return 1;
+	}
+	error("#ferror in function 'CurrentCharacterPlayerAnimation': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetCharacterPlayerPosition(float x, float y, float z) {
+	Game *game = g_engine->getGame();
+	Character *character = game->scene()._character;
+	if (character) {
+		SetCharacterRotation(character->_model->name(), x, y, z);
+	}
+}
+
+static int tolua_ExportedFunctions_SetCharacterPlayerRotation00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnumber(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isnoobj(L, 4, &err)) {
+		float f1 = tolua_tonumber(L, 1, 0.0);
+		float f2 = tolua_tonumber(L, 2, 0.0);
+		float f3 = tolua_tonumber(L, 3, 0.0);
+		SetCharacterPlayerPosition(f1, f2, f3);
+		return 0;
+	}
+	error("#ferror in function 'SetCharacterPlayerRotation': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetCharacterPlayerPosition(const Common::String &zone, float x, float y, float z) {
+	Game *game = g_engine->getGame();
+	Character *character = game->scene()._character;
+	if (character) {
+		SetCharacterPosition(character->_model->name(), zone, x, y, z);
+	}
+}
+
+static int tolua_ExportedFunctions_SetCharacterPlayerPosition00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnumber(L, 2, 0, &err) && tolua_isnumber(L, 4, 0, &err)
+		&& tolua_isnoobj(L, 5, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		float f1 = tolua_tonumber(L, 2, 0.0);
+		float f2 = tolua_tonumber(L, 3, 0.0);
+		float f3 = tolua_tonumber(L, 4, 0.0);
+		SetCharacterPlayerPosition(s1, f1, f2, f3);
+		return 0;
+	}
+	error("#ferror in function 'SetCharacterPlayerPosition': %d %d %s", err.index, err.array, err.type);
+}
+
+static void AddUnlockedAnim(const Common::String &name) {
+	// Note: does nothing, but we needed to add it..
+}
+
+static int tolua_ExportedFunctions_AddUnlockedAnim00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, 0));
+		AddUnlockedAnim(s1);
+		return 0;
+	}
+	error("#ferror in function 'AddUnlockedAnim': %d %d %s", err.index, err.array, err.type);
+}
+
+
+
 
 // ////////////////////////////////////////////////////////////////////////
 
@@ -2370,29 +2490,29 @@ void LuaOpenBinds(lua_State *L) {
 	// Syberia 2 specific functions.
 	tolua_function(L, "EnableRunMode", tolua_ExportedFunctions_EnableRunMode00);
 	tolua_function(L, "SetModelPlayer", tolua_ExportedFunctions_SetModelPlayer00);
+	tolua_function(L, "BlendCharacterPlayerAnimation", tolua_ExportedFunctions_BlendCharacterPlayerAnimation00);
+	tolua_function(L, "CurrentCharacterPlayerAnimation", tolua_ExportedFunctions_CurrentCharacterPlayerAnimation00);
+	tolua_function(L, "SetCharacterPlayerRotation", tolua_ExportedFunctions_SetCharacterPlayerRotation00);
+	tolua_function(L, "SetCharacterPlayerPosition", tolua_ExportedFunctions_SetCharacterPlayerPosition00);
+	tolua_function(L, "AddUnlockedAnim", tolua_ExportedFunctions_AddUnlockedAnim00);
 
 	// TODO Syberia 2 functions..
-	//tolua_function(L,"BlendCharacterPlayerAnimation", tolua_ExportedFunctions_BlendCharacterPlayerAnimation00);
-	//tolua_function(L,"CurrentCharacterPlayerAnimation", tolua_ExportedFunctions_CurrentCharacterPlayerAnimation00);
-	//tolua_function(L,"SetCharacterPlayerRotation", tolua_ExportedFunctions_SetCharacterPlayerRotation00);
-	//tolua_function(L,"SetCharacterPlayerPosition", tolua_ExportedFunctions_SetCharacterPlayerPosition00);
-	//tolua_function(L,"PlaySnow", tolua_ExportedFunctions_PlaySnow00);
-	//tolua_function(L,"PlaySnowCustom", tolua_ExportedFunctions_PlaySnowCustom00);
-	//tolua_function(L,"SnowCustomVisible", tolua_ExportedFunctions_SnowCustomVisible00);
-	//tolua_function(L,"AddUnlockedAnim", tolua_ExportedFunctions_AddUnlockedAnim00);
-	//tolua_function(L,"RemoveRandomSound", tolua_ExportedFunctions_RemoveRandomSound00);
-	//tolua_function(L,"SetCharacterPlayerAnimation", tolua_ExportedFunctions_SetCharacterPlayerAnimation00);
-	//tolua_function(L,"SetYoukiFollowKate", tolua_ExportedFunctions_SetYoukiFollowKate00);
-	//tolua_function(L,"PlaySmoke", tolua_ExportedFunctions_PlaySmoke00);
-	//tolua_function(L,"SmokeVisible", tolua_ExportedFunctions_SmokeVisible00);
-	//tolua_function(L,"ActivateMask", tolua_ExportedFunctions_ActivateMask00);
-	//tolua_function(L,"AddRandomAnimation", tolua_ExportedFunctions_AddRandomAnimation00);
-	//tolua_function(L,"PlayRandomAnimation", tolua_ExportedFunctions_PlayRandomAnimation00);
-	//tolua_function(L,"SetObjectMoveDest", tolua_ExportedFunctions_SetObjectMoveDest00);
-	//tolua_function(L,"SetObjectMoveTime", tolua_ExportedFunctions_SetObjectMoveTime00);
-	//tolua_function(L,"PlayVerticalScrolling", tolua_ExportedFunctions_PlayVerticalScrolling00);
-	//tolua_function(L,"GetParticleIndex", tolua_GetParticleIndex);
-	//tolua_function(L,"EnableParticle", tolua_EnableParticle);
+	//tolua_function(L, "PlaySnow", tolua_ExportedFunctions_PlaySnow00);
+	//tolua_function(L, "PlaySnowCustom", tolua_ExportedFunctions_PlaySnowCustom00);
+	//tolua_function(L, "SnowCustomVisible", tolua_ExportedFunctions_SnowCustomVisible00);
+	//tolua_function(L, "RemoveRandomSound", tolua_ExportedFunctions_RemoveRandomSound00);
+	//tolua_function(L, "SetCharacterPlayerAnimation", tolua_ExportedFunctions_SetCharacterPlayerAnimation00);
+	//tolua_function(L, "SetYoukiFollowKate", tolua_ExportedFunctions_SetYoukiFollowKate00);
+	//tolua_function(L, "PlaySmoke", tolua_ExportedFunctions_PlaySmoke00);
+	//tolua_function(L, "SmokeVisible", tolua_ExportedFunctions_SmokeVisible00);
+	//tolua_function(L, "ActivateMask", tolua_ExportedFunctions_ActivateMask00);
+	//tolua_function(L, "AddRandomAnimation", tolua_ExportedFunctions_AddRandomAnimation00);
+	//tolua_function(L, "PlayRandomAnimation", tolua_ExportedFunctions_PlayRandomAnimation00);
+	//tolua_function(L, "SetObjectMoveDest", tolua_ExportedFunctions_SetObjectMoveDest00);
+	//tolua_function(L, "SetObjectMoveTime", tolua_ExportedFunctions_SetObjectMoveTime00);
+	//tolua_function(L, "PlayVerticalScrolling", tolua_ExportedFunctions_PlayVerticalScrolling00);
+	//tolua_function(L, "GetParticleIndex", tolua_GetParticleIndex);
+	//tolua_function(L, "EnableParticle", tolua_EnableParticle);
 
 	tolua_endmodule(L);
 }
