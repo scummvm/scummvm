@@ -121,28 +121,44 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 			g_globals->_currCharacter = &g_globals->_roster[charNum];
 			_characterView.addView();
 		}
-	} else if (msg.keycode == Common::KEYCODE_x) {
-		// Load party from selected characters
-		g_globals->_party.clear();
-		for (uint i = 0; i < _partyChars.size(); ++i)
-			g_globals->_party.push_back(
-				g_globals->_roster[_partyChars[i]]);
-		g_globals->_currCharacter = &g_globals->_party.front();
+		return true;
 
-		// Load the given town
-		g_globals->_maps.loadTown(g_globals->_startingTown);
+	} else if (msg.keycode == Common::KEYCODE_x) {
+		exitInn();
+		return true;
 	}
 
 	return false;
 }
 
 bool Inn::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
 		replaceView("MainMenu");
 		return true;
+	case KEYBIND_SELECT:
+		exitInn();
+		return true;
+	default:
+		break;
 	}
 
 	return false;
+}
+
+void Inn::exitInn() {
+	if (_partyChars.empty())
+		return;
+
+	// Load party from selected characters
+	g_globals->_party.clear();
+	for (uint i = 0; i < _partyChars.size(); ++i)
+		g_globals->_party.push_back(
+			g_globals->_roster[_partyChars[i]]);
+	g_globals->_currCharacter = &g_globals->_party.front();
+
+	// Load the given town
+	g_globals->_maps.loadTown(g_globals->_startingTown);
 }
 
 } // namespace Locations

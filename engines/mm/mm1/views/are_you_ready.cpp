@@ -32,8 +32,8 @@ void AreYouReady::draw() {
 	writeString(11, 13, STRING["dialogs.ready.2"]);
 }
 
-bool AreYouReady::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_RETURN) {
+bool AreYouReady::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_SELECT) {
 		replaceView("MainMenu");
 		return true;
 	}

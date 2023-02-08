@@ -38,6 +38,7 @@ struct KeybindingRecord {
 
 static const KeybindingRecord MENU_KEYS[] = {
 	{ KEYBIND_ESCAPE, "ESCAPE", "Escape", "ESCAPE", nullptr },
+	{ KEYBIND_SELECT, "SELECT", "Select", "RETURN", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 

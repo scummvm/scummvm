@@ -29,6 +29,7 @@ namespace MM1 {
 
 enum KeybindingAction {
 	KEYBIND_ESCAPE,
+	KEYBIND_SELECT,
 
 	KEYBIND_FORWARDS,
 	KEYBIND_BACKWARDS,

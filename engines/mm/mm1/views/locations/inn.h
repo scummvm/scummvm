@@ -36,6 +36,12 @@ private:
 	CharacterView _characterView;
 	Common::Array<uint> _charNums;
 	IntArray _partyChars;
+
+	/**
+	 * Exit the Inn
+	 */
+	void exitInn();
+
 public:
 	Inn() : TextView("Inn") {
 	}
