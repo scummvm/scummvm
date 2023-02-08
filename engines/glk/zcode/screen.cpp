@@ -25,7 +25,10 @@
 #include "glk/conf.h"
 #include "common/file.h"
 #include "graphics/fonts/ttf.h"
-#include "image/bmp.h"
+#include "image/xbm.h"
+
+#include "glk/zcode/infocom6x8.xbm"
+#include "glk/zcode/infocom_graphics.xbm"
 
 namespace Glk {
 namespace ZCode {
@@ -77,14 +80,10 @@ void FrotzScreen::loadVersion6Fonts(Common::Archive *archive) {
 	_fonts.resize(8);
 
 	// Load up the 8x8 Infocom font
-	Image::BitmapDecoder decoder;
-	Common::File f;
-	if (!f.open("infocom6x8.bmp", *archive))
-		error("Could not load font");
+	Image::XBMDecoder decoder;
+	decoder.loadBits(infocom6x8_bits, infocom6x8_width, infocom6x8_height);
 
 	Common::Point fontSize(6, 8);
-	decoder.loadStream(f);
-	f.close();
 
 	// Add normal fonts
 	_fonts[MONOR] = new FixedWidthBitmapFont(*decoder.getSurface(), fontSize, 6, 8);
@@ -99,7 +98,7 @@ void FrotzScreen::loadVersion6Fonts(Common::Archive *archive) {
 
 	for (int y = 8 - 2; y < emph.h; y += 8) {
 		byte *lineP = (byte *)emph.getBasePtr(0, y);
-		Common::fill(lineP, lineP + emph.w, 0);
+		Common::fill(lineP, lineP + emph.w, 1);
 	}
 
 	// Add them to the font list
@@ -110,18 +109,15 @@ void FrotzScreen::loadVersion6Fonts(Common::Archive *archive) {
 }
 
 void FrotzScreen::loadExtraFonts(Common::Archive *archive) {
-	Image::BitmapDecoder decoder;
-	Common::File f;
-	if (!f.open("infocom_graphics.bmp", *archive))
-		error("Could not load font");
+	Image::XBMDecoder decoder;
+	decoder.loadBits(infocom_graphics_bits, infocom_graphics_width, infocom_graphics_height);
 
 	Common::Point fontSize(_fonts[0]->getMaxCharWidth(), _fonts[0]->getFontHeight());
-	decoder.loadStream(f);
 	_fonts.push_back(new FixedWidthBitmapFont(*decoder.getSurface(), fontSize));
-	f.close();
 
 	// Add Runic font. It provides cleaner versions of the runic characters in the
 	// character graphics font
+	Common::File f;
 	if (!f.open("NotoSansRunic-Regular.ttf", *archive))
 		error("Could not load font");
 
