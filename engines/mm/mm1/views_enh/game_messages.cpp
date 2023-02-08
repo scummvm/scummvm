@@ -108,10 +108,20 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool GameMessages::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE && g_events->focusedView() == this) {
-		close();
-		g_events->drawElements();
-		return true;
+	if (g_events->focusedView()) {
+		switch (msg._action) {
+		case KEYBIND_ESCAPE:
+			close();
+			g_events->drawElements();
+			return true;
+		case KEYBIND_SELECT:
+			close();
+			g_events->drawElements();
+			_ynCallback();
+			return true;
+		default:
+			break;
+		}
 	}
 
 	return false;

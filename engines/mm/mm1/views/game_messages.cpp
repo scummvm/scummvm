@@ -119,9 +119,16 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 		if (endDelay())
 			return true;
 
-		if (msg._action == KEYBIND_ESCAPE) {
+		switch (msg._action) {
+		case KEYBIND_ESCAPE:
 			close();
 			return true;
+		case KEYBIND_SELECT:
+			close();
+			_ynCallback();
+			return true;
+		default:
+			break;
 		}
 	}
 

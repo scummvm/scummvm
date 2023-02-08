@@ -65,9 +65,15 @@ bool Market::msgAction(const ActionMessage &msg) {
 	if (endDelay())
 		return true;
 
-	if (msg._action == KEYBIND_ESCAPE) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
 		leave();
 		return true;
+	case KEYBIND_SELECT:
+		buyFood();
+		return true;
+	default:
+		break;
 	}
 
 	return false;
