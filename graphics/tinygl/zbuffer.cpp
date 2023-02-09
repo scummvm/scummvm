@@ -310,10 +310,10 @@ void getSurfaceRef(Graphics::Surface &surface) {
 	c->fb->getSurfaceRef(surface);
 }
 
-Graphics::Surface *copyToBuffer(const Graphics::PixelFormat &dstFormat) {
+Graphics::Surface *copyFromFrameBuffer(const Graphics::PixelFormat &dstFormat) {
 	GLContext *c = gl_get_context();
 	assert(c->fb);
-	return c->fb->copyToBuffer(dstFormat);
+	return c->fb->copyFromFrameBuffer(dstFormat);
 }
 
 } // end of namespace TinyGL

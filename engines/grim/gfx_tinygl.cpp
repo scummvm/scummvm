@@ -1259,7 +1259,7 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h, bool useStored) {
 	if (useStored) {
 		bmp = createScreenshotBitmap(_storedDisplay, w, h, true);
 	} else {
-		Graphics::Surface *src = TinyGL::copyToBuffer(_pixelFormat);
+		Graphics::Surface *src = TinyGL::copyFromFrameBuffer(_pixelFormat);
 		bmp = createScreenshotBitmap(src, w, h, true);
 		src->free();
 		delete src;
@@ -1276,7 +1276,7 @@ void GfxTinyGL::storeDisplay() {
 	TinyGL::presentBuffer();
 	_storedDisplay->free();
 	delete _storedDisplay;
-	_storedDisplay = TinyGL::copyToBuffer(_pixelFormat);
+	_storedDisplay = TinyGL::copyFromFrameBuffer(_pixelFormat);
 }
 
 void GfxTinyGL::copyStoredToDisplay() {

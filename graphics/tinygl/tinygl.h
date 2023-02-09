@@ -35,7 +35,7 @@ void destroyContext();
 void presentBuffer();
 void presentBuffer(Common::List<Common::Rect> &dirtyAreas);
 void getSurfaceRef(Graphics::Surface &surface);
-Graphics::Surface *copyToBuffer(const Graphics::PixelFormat &dstFormat);
+Graphics::Surface *copyFromFrameBuffer(const Graphics::PixelFormat &dstFormat);
 
 } // end of namespace TinyGL
 

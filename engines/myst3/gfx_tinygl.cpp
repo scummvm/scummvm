@@ -266,7 +266,7 @@ void TinyGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 }
 
 Graphics::Surface *TinyGLRenderer::getScreenshot() {
-	return TinyGL::copyToBuffer(Texture::getRGBAPixelFormat());
+	return TinyGL::copyFromFrameBuffer(Texture::getRGBAPixelFormat());
 }
 
 void TinyGLRenderer::flipBuffer() {

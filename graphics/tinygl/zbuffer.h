@@ -127,7 +127,7 @@ struct FrameBuffer {
 		return _zbuf;
 	}
 
-	Graphics::Surface *copyToBuffer(const Graphics::PixelFormat &dstFormat) {
+	Graphics::Surface *copyFromFrameBuffer(const Graphics::PixelFormat &dstFormat) {
 		Graphics::Surface tmp;
 		tmp.init(_pbufWidth, _pbufHeight, _pbufPitch, _pbuf.getRawBuffer(), _pbufFormat);
 		return tmp.convertTo(dstFormat);
