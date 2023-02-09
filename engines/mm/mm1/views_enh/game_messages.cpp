@@ -111,13 +111,21 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 	if (g_events->focusedView()) {
 		switch (msg._action) {
 		case KEYBIND_ESCAPE:
-			close();
-			g_events->drawElements();
+			if (_keyCallback) {
+				_keyCallback(Common::KeyState(Common::KEYCODE_ESCAPE));
+			} else {
+				close();
+				g_events->drawElements();
+			}
 			return true;
 		case KEYBIND_SELECT:
-			close();
-			g_events->drawElements();
-			_ynCallback();
+			if (_keyCallback) {
+				_keyCallback(Common::KeyState(Common::KEYCODE_RETURN));
+			} else {
+				close();
+				g_events->drawElements();
+				_ynCallback();
+			}
 			return true;
 		default:
 			break;

@@ -121,11 +121,19 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 
 		switch (msg._action) {
 		case KEYBIND_ESCAPE:
-			close();
+			if (_keyCallback) {
+				_keyCallback(Common::KeyState(Common::KEYCODE_ESCAPE));
+			} else {
+				close();
+			}
 			return true;
 		case KEYBIND_SELECT:
-			close();
-			_ynCallback();
+			if (_keyCallback) {
+				_keyCallback(Common::KeyState(Common::KEYCODE_RETURN));
+			} else {
+				close();
+				_ynCallback();
+			}
 			return true;
 		default:
 			break;
