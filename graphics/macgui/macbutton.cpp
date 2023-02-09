@@ -145,14 +145,14 @@ bool MacButton::draw(bool forceRedraw) {
 	switch (_buttonType) {
 	case kCheckBox: {
 		Common::Rect c = Common::Rect(r.left, r.top + 2, r.left + 10, r.top + 2 + 10);
-		Graphics::drawRect1(c, 0, _wm->getDrawPixel(), &pd);
+		Graphics::drawRect1(c, 0xff, _wm->getDrawPixel(), &pd);
 		break;
 	}
 	case kRound:
-		Graphics::drawRoundRect1(r, 4, 0, false, _wm->getDrawPixel(), &pd);
+		Graphics::drawRoundRect1(r, 4, 0xff, false, _wm->getDrawPixel(), &pd);
 		break;
 	case kRadio:
-		Graphics::drawEllipse(r.left, r.top + 2, r.left + 11, r.top + 13, 0, false, _wm->getDrawPixel(), &pd);
+		Graphics::drawEllipse(r.left, r.top + 2, r.left + 11, r.top + 13, 0xff, false, _wm->getDrawPixel(), &pd);
 		break;
 	}
 
