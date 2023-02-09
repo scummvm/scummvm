@@ -130,13 +130,8 @@ void Title::timeout() {
 }
 
 bool Title::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_SPACE) {
-		// Start showing game screens slideshow
-		cancelDelay();
-		_screenNum = 2;
-		_fadeIndex = 0;
-		redraw();
-	}
+	if (msg.keycode == Common::KEYCODE_SPACE)
+		startSlideshow();
 
 	return true;
 }
@@ -145,9 +140,19 @@ bool Title::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		g_events->replaceView("AreYouReady");
 		return true;
+	} else if (msg._action == KEYBIND_SELECT) {
+		startSlideshow();
+		return true;
 	}
 
 	return false;
+}
+
+void Title::startSlideshow() {
+	cancelDelay();
+	_screenNum = 2;
+	_fadeIndex = 0;
+	redraw();
 }
 
 } // namespace Views

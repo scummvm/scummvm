@@ -35,6 +35,11 @@ private:
 	Graphics::ManagedSurface _screens[SCREENS_COUNT];
 	int _screenNum = -1;
 	int _fadeIndex = 0;
+
+	/**
+	 * Starts the slideshow of game scenes
+	 */
+	void startSlideshow();
 public:
 	Title();
 	virtual ~Title() {}
