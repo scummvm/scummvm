@@ -1075,7 +1075,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_maxHeight = _textHeight = 0;
 
 	_bgcolor = 0;
-	_fgcolor = 0;
+	_fgcolor = 0xff;
 
 	_textFlags = 0;
 	_scroll = 0;
