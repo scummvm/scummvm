@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-08 17:59+0000\n"
-"PO-Revision-Date: 2023-01-20 18:05+0000\n"
+"PO-Revision-Date: 2023-02-09 08:34+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -207,10 +207,9 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "Baixado %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
-#| msgid "Download speed: %s %S"
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Velocidade de download: %s %S"
+msgstr "Velocidade de download: %s %S/s"
 
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
@@ -266,15 +265,12 @@ msgid "No new %S available"
 msgstr "Nenhum novo %S disponível"
 
 #: gui/downloadpacksdialog.cpp:462
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "%S. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Você está prestes a remover %s %s de dados, excluindo todos os %S baixados "
+"Você está prestes a remover %s %S de dados, excluindo todos os %S baixados "
 "anteriormente. Você deseja prosseguir?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
