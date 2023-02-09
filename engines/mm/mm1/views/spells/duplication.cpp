@@ -49,10 +49,7 @@ void Duplication::draw() {
 bool Duplication::msgKeypress(const KeypressMessage &msg) {
 	Inventory &inv = g_globals->_currCharacter->_backpack;
 
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		spellFailed();
-
-	} else if (msg.keycode >= Common::KEYCODE_a &&
+	if (msg.keycode >= Common::KEYCODE_a &&
 		msg.keycode < (Common::KEYCODE_a + (int)inv.size())) {
 		int itemIndex = msg.keycode - Common::KEYCODE_a;
 
@@ -77,6 +74,15 @@ bool Duplication::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool Duplication::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		spellFailed();
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace Spells

@@ -71,7 +71,6 @@ bool Market::msgKeypress(const KeypressMessage &msg) {
 			buyFood();
 			return true;
 		case Common::KEYCODE_n:
-		case Common::KEYCODE_ESCAPE:
 			leave();
 			return true;
 		default:
@@ -81,6 +80,19 @@ bool Market::msgKeypress(const KeypressMessage &msg) {
 
 	return false;
 }
+
+bool Market::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_SELECT) {
+		buyFood();
+		return true;
+	} else if (msg._action == KEYBIND_ESCAPE) {
+		leave();
+		return true;
+	}
+
+	return false;
+}
+
 
 void Market::buyFood() {
 	int numPurchases = 0;

@@ -165,8 +165,8 @@ void CharacterBase::draw() {
 	printStats();
 }
 
-bool CharacterBase::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+bool CharacterBase::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
 		close();
 		return true;
 	}

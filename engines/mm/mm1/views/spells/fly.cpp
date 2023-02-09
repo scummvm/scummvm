@@ -65,11 +65,7 @@ void Fly::draw() {
 }
 
 bool Fly::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
-		_callback(-1);
-
-	} else if (_mode == SELECT_X && msg.keycode >= Common::KEYCODE_a
+	if (_mode == SELECT_X && msg.keycode >= Common::KEYCODE_a
 		&& msg.keycode <= Common::KEYCODE_d) {
 		// X map selected
 		_mode = SELECT_Y;
@@ -91,6 +87,16 @@ bool Fly::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool Fly::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		_callback(-1);
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace Spells

@@ -57,10 +57,22 @@ void Rest::draw() {
 
 bool Rest::msgKeypress(const KeypressMessage &msg) {
 	if (_mode == CONFIRM) {
-		if (msg.keycode == Common::KEYCODE_ESCAPE ||
-			msg.keycode == Common::KEYCODE_n) {
+		if (msg.keycode == Common::KEYCODE_n) {
 			close();
 		} else if (msg.keycode == Common::KEYCODE_y) {
+			close();
+			Game::Rest::check();
+		}
+	}
+
+	return true;
+}
+
+bool Rest::msgAction(const ActionMessage &msg) {
+	if (_mode == CONFIRM) {
+		if (msg._action == KEYBIND_ESCAPE) {
+			close();
+		} else if (msg._action == KEYBIND_SELECT) {
 			close();
 			Game::Rest::check();
 		}

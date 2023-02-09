@@ -53,6 +53,7 @@ public:
 	BlacksmithSubview(const Common::String &name) : Location(name) {}
 
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Locations

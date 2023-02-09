@@ -73,14 +73,21 @@ void Characters::draw() {
 }
 
 bool Characters::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
-	} else if (msg.keycode >= Common::KEYCODE_a &&
+	if (msg.keycode >= Common::KEYCODE_a &&
 		msg.keycode <= (Common::KEYCODE_a + (int)_charIndexes.size() - 1)) {
 		// Character selected
 		uint charIndex = _charIndexes[msg.keycode - Common::KEYCODE_a];
 		g_globals->_currCharacter = &g_globals->_roster[charIndex];
 		_characterView.addView();
+	}
+
+	return false;
+}
+
+bool Characters::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		return true;
 	}
 
 	return false;

@@ -232,11 +232,6 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 		return true;
 
 	if (_mode == SELECT_OPTION && _option != OPTION_NONE) {
-		if (msg.keycode == Common::KEYCODE_ESCAPE) {
-			combatLoop();
-			return true;
-		}
-
 		switch (_option) {
 		case OPTION_FIGHT:
 		case OPTION_SHOOT:

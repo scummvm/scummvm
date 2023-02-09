@@ -122,9 +122,6 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 
 	case OPTIONS:
 		switch (msg.keycode) {
-		case Common::KEYCODE_ESCAPE:
-			close();
-			break;
 		case Common::KEYCODE_1:
 			openContainer();
 			break;
@@ -144,11 +141,7 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case WHO_WILL_TRY:
-		if (msg.keycode == Common::KEYCODE_ESCAPE) {
-			_mode = OPTIONS;
-			draw();
-
-		} else if (msg.keycode >= Common::KEYCODE_1 &&
+		if (msg.keycode >= Common::KEYCODE_1 &&
 			msg.keycode <= (Common::KEYCODE_0 + (int)g_globals->_party.size())) {
 			// Character selected
 			g_globals->_currCharacter = &g_globals->_party[
@@ -167,10 +160,33 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case GET_TREASURE:
-
+		break;
 
 	default:
 		break;
+	}
+
+	return true;
+}
+
+bool Search::msgAction(const ActionMessage &msg) {
+	if (endDelay())
+		return true;
+
+	if (msg._action == KEYBIND_ESCAPE) {
+		switch (_mode) {
+		case OPTIONS:
+			close();
+			break;
+		case WHO_WILL_TRY:
+			_mode = OPTIONS;
+			draw();
+			break;
+		default:
+			break;
+		}
+
+		return true;
 	}
 
 	return true;

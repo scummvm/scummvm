@@ -51,17 +51,6 @@ void CharacterManage::draw() {
 }
 
 bool CharacterManage::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		if (_state != DISPLAY) {
-			redraw();
-		} else {
-			close();
-		}
-
-		_state = DISPLAY;
-		return true;
-	}
-
 	switch (_state) {
 	case DISPLAY:
 		if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_n) {
@@ -108,7 +97,16 @@ bool CharacterManage::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool CharacterManage::msgAction(const ActionMessage &msg) {
-	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
+	if (msg._action == KEYBIND_ESCAPE) {
+		if (_state != DISPLAY) {
+			redraw();
+		} else {
+			close();
+		}
+
+		_state = DISPLAY;
+		return true;
+	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
 			msg._action <= KEYBIND_VIEW_PARTY6 &&
 			_state == DISPLAY) {
 		g_globals->_currCharacter = &g_globals->_party[

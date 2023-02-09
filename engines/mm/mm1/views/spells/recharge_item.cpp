@@ -49,10 +49,7 @@ void RechargeItem::draw() {
 bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
 	Inventory &inv = g_globals->_currCharacter->_backpack;
 
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		spellFailed();
-
-	} else if (msg.keycode >= Common::KEYCODE_a &&
+	if (msg.keycode >= Common::KEYCODE_a &&
 			msg.keycode < (Common::KEYCODE_a + (int)inv.size())) {
 		int itemIndex = msg.keycode - Common::KEYCODE_a;
 		Item *item = g_globals->_items.getItem(inv[itemIndex]._id);
@@ -71,6 +68,15 @@ bool RechargeItem::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool RechargeItem::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		spellFailed();
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace Spells

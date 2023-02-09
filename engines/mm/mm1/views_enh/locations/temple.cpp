@@ -38,9 +38,15 @@ Temple::Temple() : Location("Temple") {
 }
 
 bool Temple::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
 	send("View", ValueMessage(LOC_TEMPLE));
 	changeCharacter(0);
 
+	return true;
+}
+
+bool Temple::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	return true;
 }
 
@@ -77,9 +83,6 @@ void Temple::draw() {
 
 bool Temple::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
-	case Common::KEYCODE_ESCAPE:
-		leave();
-		break;
 	case Common::KEYCODE_h:
 		restoreHealth();
 		break;
@@ -96,19 +99,31 @@ bool Temple::msgKeypress(const KeypressMessage &msg) {
 		g_globals->_currCharacter->gatherGold();
 		redraw();
 		break;
-	case Common::KEYCODE_1:
-	case Common::KEYCODE_2:
-	case Common::KEYCODE_3:
-	case Common::KEYCODE_4:
-	case Common::KEYCODE_5:
-	case Common::KEYCODE_6:
-		changeCharacter(msg.keycode - Common::KEYCODE_1);
-		break;
 	default:
 		break;
 	}
 
 	return true;
+}
+
+bool Temple::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
+		leave();
+		return true;
+	case KEYBIND_VIEW_PARTY1:
+	case KEYBIND_VIEW_PARTY2:
+	case KEYBIND_VIEW_PARTY3:
+	case KEYBIND_VIEW_PARTY4:
+	case KEYBIND_VIEW_PARTY5:
+	case KEYBIND_VIEW_PARTY6:
+		changeCharacter(msg._action - KEYBIND_VIEW_PARTY1);
+		return true;
+	default:
+		break;
+	}
+
+	return false;
 }
 
 void Temple::changeCharacter(uint index) {

@@ -74,7 +74,6 @@ public:
 	bool msgValue(const ValueMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	void timeout() override;
 };

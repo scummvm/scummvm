@@ -48,7 +48,7 @@ public:
 	CharacterBase(const Common::String &name) : TextView(name) {}
 	~CharacterBase() {}
 
-	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
 };
 

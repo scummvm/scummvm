@@ -51,12 +51,7 @@ void TextEntry::drawText() {
 bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 	Common::KeyCode kc = msg.keycode;
 
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		drawText();
-		close();
-		_abortFn();
-		return true;
-	} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
+	if (msg.keycode == Common::KEYCODE_BACKSPACE &&
 			!_text.empty()) {
 		_text.deleteLastChar();
 		drawText();
@@ -79,6 +74,17 @@ bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 		drawText();
 		close();
 		_enterFn(_text);
+		return true;
+	}
+
+	return false;
+}
+
+bool TextEntry::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		drawText();
+		close();
+		_abortFn();
 		return true;
 	}
 

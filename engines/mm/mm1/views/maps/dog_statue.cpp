@@ -65,8 +65,7 @@ void DogStatue::draw() {
 }
 
 bool DogStatue::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_y || msg.keycode == Common::KEYCODE_n ||
-			msg.keycode == Common::KEYCODE_ESCAPE) {
+	if (msg.keycode == Common::KEYCODE_y || msg.keycode == Common::KEYCODE_n) {
 		MM1::Maps::Map42 &map = *static_cast<MM1::Maps::Map42 *>(g_maps->_currentMap);
 		close();
 
@@ -77,6 +76,21 @@ bool DogStatue::msgKeypress(const KeypressMessage &msg) {
 
 	return true;
 }
+
+bool DogStatue::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE || msg._action == KEYBIND_SELECT) {
+		MM1::Maps::Map42 &map = *static_cast<MM1::Maps::Map42 *>(g_maps->_currentMap);
+		close();
+
+		if (msg._action == KEYBIND_SELECT)
+			map.dogDesecrate();
+
+		return true;
+	}
+
+	return false;
+}
+
 
 } // namespace Maps
 } // namespace Views

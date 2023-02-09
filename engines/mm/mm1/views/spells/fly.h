@@ -74,6 +74,11 @@ public:
 	 * Keypress handler
 	 */
 	bool msgKeypress(const KeypressMessage &msg) override;
+
+	/**
+	 * Action handler
+	 */
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Spells

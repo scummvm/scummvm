@@ -62,10 +62,7 @@ void Teleport::draw() {
 }
 
 bool Teleport::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
-
-	} else if (_mode == SELECT_DIRECTION && (
+	if (_mode == SELECT_DIRECTION && (
 			msg.keycode == Common::KEYCODE_n ||
 			msg.keycode == Common::KEYCODE_s ||
 			msg.keycode == Common::KEYCODE_e ||
@@ -86,6 +83,15 @@ bool Teleport::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool Teleport::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return false;
 }
 
 void Teleport::teleport() {

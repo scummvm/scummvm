@@ -52,6 +52,8 @@ public:
 
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+
 	void display(int x, int y, int maxLen, bool isNumeric,
 		Abort abortFn, Enter enterFn);
 };
