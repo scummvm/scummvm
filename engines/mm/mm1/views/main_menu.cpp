@@ -48,7 +48,7 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 		break;
 
 	case Common::KEYCODE_v:
-		addView("ViewCharacters");
+		addView("Characters");
 		break;
 
 	case Common::KEYCODE_1:

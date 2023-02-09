@@ -48,12 +48,12 @@ private:
 
 	// Unenhanced views
 	Views::AreYouReady _areYouReady;
+	Views::Characters _characters;
 	Views::CreateCharacters _createCharacters;
 	Views::Locations::Inn _inn;
 	Views::MainMenu _mainMenu;
 	Views::Protect _protect;
 	Views::Title _title;
-//	Views::ViewCharacters _viewCharacters;
 //	Views::ViewCharacter _viewCharacter;
 	ViewsEnh::MapPopup _mapPopup;
 	ViewsEnh::QuickRef _quickRef;

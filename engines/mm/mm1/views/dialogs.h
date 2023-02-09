@@ -25,6 +25,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/views/bash.h"
+#include "mm/mm1/views/characters.h"
 #include "mm/mm1/views/character_view_combat.h"
 #include "mm/mm1/views/combat.h"
 #include "mm/mm1/views/create_characters.h"
@@ -89,6 +90,7 @@ struct Dialogs {
 private:
 	Views::AreYouReady _areYouReady;
 	Views::Bash _bash;
+	Views::Characters _characters;
 	Views::CharacterViewCombat _characterViewCombat;
 	Views::Combat _combat;
 	Views::CreateCharacters _createCharacters;
