@@ -790,7 +790,7 @@ Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, bool forPuppet, Dis
 }
 
 bool SNDDecoder::hasLoopBounds() {
-	return _loopStart != 0 && _loopEnd != 0;
+	return _loopStart != 0 || _loopEnd != 0;
 }
 
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
