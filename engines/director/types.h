@@ -30,6 +30,8 @@ enum {
 	kFewFamesMaxCounter = 19,
 };
 
+#define kQuirksCacheArchive "quirks"
+
 enum MovieFlag {
 	kMovieFlagAllowOutdatedLingo	= (1 << 8)
 };

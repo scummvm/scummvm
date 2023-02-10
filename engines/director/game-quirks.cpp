@@ -145,7 +145,7 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 	if (!list.empty()) {
 		CachedArchive *archive = new CachedArchive(list);
 
-		SearchMan.add("cache", archive);
+		SearchMan.add(kQuirksCacheArchive, archive);
 	}
 }
 

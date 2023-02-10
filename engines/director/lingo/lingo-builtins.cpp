@@ -1164,6 +1164,20 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 				Common::Array<Common::String> fileNameList;
 				for (uint i = 0; i < f.size(); i++)
 					fileNameList.push_back(f[i].getName());
+
+				// Now mix in any files coming from the quirks
+				Common::Archive *cache = SearchMan.getArchive(kQuirksCacheArchive);
+
+				if (cache) {
+					Common::ArchiveMemberList files;
+
+					cache->listMatchingMembers(files, path + (path.empty() ? "*" : "/*"), true);
+
+					for (auto &fi : files) {
+						fileNameList.push_back(fi->getName().c_str());
+					}
+				}
+
 				Common::sort(fileNameList.begin(), fileNameList.end());
 				r = Datum(fileNameList[fileNum]);
 			}
