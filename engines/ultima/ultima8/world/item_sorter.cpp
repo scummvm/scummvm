@@ -385,6 +385,10 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 				if (!it->_itemNum || !it->contains(x, y))
 					continue;
 
+				// Skip transparent non-solids
+				if (!it->_solid && it->_trans)
+					continue;
+
 				// Now check the _frame itself
 				const ShapeFrame *_frame = it->_shape->getFrame(it->_frame);
 				assert(_frame); // invalid frames shouldn't have been added to the list
@@ -410,6 +414,10 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 	if (!selected) {
 		for (it = _items; it != nullptr; it = it->_next) {
 			if (!it->_itemNum || !it->contains(x, y))
+				continue;
+
+			// Skip transparent non-solids
+			if (!it->_solid && it->_trans)
 				continue;
 
 			// Now check the _frame itself
