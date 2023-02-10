@@ -126,6 +126,8 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 	for (auto q = quirks; q->target != nullptr; q++) {
 		if (q->platform == Common::kPlatformUnknown || q->platform == platform)
 			if (!strcmp(q->target, target)) {
+				debugC(1, kDebugLoading, "Applying quirk for the target %s", target);
+
 				q->quirk();
 				break;
 			}
@@ -139,6 +141,8 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 				if (size == -1)
 					size = strlen((const char *)f->data);
 				list.push_back(CachedArchive::InputEntry(f->fileName, f->data, size));
+
+				debugC(1, kDebugLoading, "Added file '%s' of size %d to the file cache", f->fileName, size);
 			}
 	}
 
