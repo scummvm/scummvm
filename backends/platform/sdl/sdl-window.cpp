@@ -24,6 +24,7 @@
 #include "backends/platform/sdl/sdl-window.h"
 
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "icons/scummvm.xpm"
 
@@ -292,7 +293,9 @@ float SdlWindow::getDpiScalingFactor() const {
 	getDisplayDpi(&dpi, &defaultDpi);
 	debug(4, "dpi: %g default: %g", dpi, defaultDpi);
 	float ratio = dpi / defaultDpi;
-	return ratio;
+	// Getting the DPI can be unreliable, so clamp the scaling factor to make sure
+	// we do not return unreasonable values.
+	return CLIP(ratio, 1.0f, 4.0f);
 }
 
 float SdlWindow::getSdlDpiScalingFactor() const {
