@@ -25,8 +25,6 @@
  * - mtropolis
  */
 
-#include "common/array.h"
-#include "common/str.h"
 #include "common/archive.h"
 
 namespace Common {
