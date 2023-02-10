@@ -355,6 +355,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "poohk",				"Winnie the Pooh Kindergarten" },
 	{ "poohp",				"Winnie the Pooh Preschool" },
 	{ "pooht",				"Winnie the Pooh Toddler" },
+	{ "pothead",			"Pothead" },
 	{ "princessfashion",	"Disney's Princess Fashion Boutique" },
 	{ "puppetmotel",		"Puppet Motel" },
 	{ "pyst",				"Pyst" },
@@ -6178,6 +6179,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("pinkgear", "", "Go To PINKGEAR", "ff888459bfaa03ad82ec5f7f1eae3de3", 718756, Common::JA_JPN, 501),
 	WINGAME1_l("pinkgear", "", "GOTOPINK.EXE", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 3592612, Common::JA_JPN, 501),
+
+	MACGAME1t("pothead", "", "Pothead", "f6458c20ba653e8c3a4d74d43685de1e", 107863, 501),
+	WINGAME1t("pothead", "", "Pothead.exe", "9e57704af0c1dcd2f546e8bdb225f610", 1412033, 501),
 
 	// Found on Sierra On-Line's MasterCook Cooking Light v4.0 (1996)
 	// There are no Mac demos on this disc
