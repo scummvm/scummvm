@@ -16,11 +16,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Halls of the Dead: Faery Tale Adventure II hinzugefügt.
 
  Neue Plattformen:
-   - RetroMini RS90 mit OpenDingux Beta-Firmware.
-   - Erste Generation von Miyoo (New BittBoy, Pocket Go und PowKiddy Q90-V90-Q20)
-     mit der TriForceX MiyooCFW.
-   - Miyoo mini
-   - KolibriOS
+   - Unterstützung für RetroMini RS90 mit OpenDingux Beta-Firmware hinzugefügt.
+   - Unterstützung für die erste Generation von Miyoo (New BittBoy, Pocket Go und PowKiddy Q90-V90-Q20)
+     mit der TriForceX MiyooCFW-Firmware hinzugefügt.
+   - Unterstützung für Miyoo mini hinzugefügt.
+   - Unterstützung für KolibriOS hinzugefügt.
 
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
@@ -38,6 +38,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für eine Konfigurationsdatei mit Anweisungen hinzugefügt, die dann gelten,
      wenn keine reguläre Konfigurationsdatei existiert. Die Datei wird über --initial-cfg=DATEI oder
      -i übergeben.
+   - Die Unterstützung für Spiel-Dateien, die eine Dateigröße von mehr als 2GB erreichen, wurde auf
+     weiteren Plattformen hinzugefügt.
 
  AGI:
    - Unterstützung der französischen Übersetzungen verbessert.
@@ -105,7 +107,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      sowie für Indiana Jones 4 hinzugefügt.
    - Mögliche Sackgasse in der Ultimate Talkie Edition von Monkey Island 2 korrigiert.
      Diese ist immer dann aufgetreten, wenn der Spieler am Ende von Part II
-     das Modell des Leuchtturms nicht aufhebt, bevor Captain Dread Guybrush
+     einen benötigten Gegenstand nicht aufhebt, bevor Captain Dread Guybrush
      zurück zu Scabb Island bringt.
    - Einige Fehler in den Originalversionen der Spiele sowie Logik- und Continuity-Fehler
      korrigiert (nur, wenn die Option "Verwende spiel-spezifische Verbesserungen" aktiv ist).
@@ -152,6 +154,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Sword2:
    - Die Spiele-Erkennung nutzt nun MD5-Checksummen. Teile uns deine nicht erkannten Versionen mit!
+
+ Tinsel:
+   - Die Farbe der Untertitel in Discworld II wird nun auch auf Big-Endian-Ports korrekt dargestellt.
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie im Original.
