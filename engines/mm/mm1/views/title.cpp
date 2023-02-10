@@ -138,7 +138,8 @@ bool Title::msgKeypress(const KeypressMessage &msg) {
 
 bool Title::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
-		g_events->replaceView("AreYouReady");
+		g_events->replaceView(g_engine->isEnhanced() ?
+			"MainMenu" : "AreYouReady");
 		return true;
 	} else if (msg._action == KEYBIND_SELECT) {
 		startSlideshow();

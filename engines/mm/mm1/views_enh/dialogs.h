@@ -23,15 +23,13 @@
 #define MM1_VIEWS_ENH_DIALOGS_H
 
 #include "mm/mm1/events.h"
-#include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/views/create_characters.h"
 #include "mm/mm1/views/locations/inn.h"
-#include "mm/mm1/views/main_menu.h"
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/title.h"
-//#include "mm/mm1/views/char.h"
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/game.h"
+#include "mm/mm1/views_enh/main_menu.h"
 #include "mm/mm1/views_enh/map_popup.h"
 #include "mm/mm1/views_enh/quick_ref.h"
 #include "mm/mm1/views_enh/locations/market.h"
@@ -47,14 +45,14 @@ private:
 	ViewsEnh::Game _game;
 
 	// Unenhanced views
-	Views::AreYouReady _areYouReady;
 	Views::Characters _characters;
 	Views::CreateCharacters _createCharacters;
 	Views::Locations::Inn _inn;
-	Views::MainMenu _mainMenu;
 	Views::Protect _protect;
 	Views::Title _title;
 //	Views::ViewCharacter _viewCharacter;
+	ViewsEnh::MainMenu _areYouReady;
+	ViewsEnh::MainMenu _mainMenu;
 	ViewsEnh::MapPopup _mapPopup;
 	ViewsEnh::QuickRef _quickRef;
 	ViewsEnh::Locations::Market _market;
