@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/compression/vise.h"
+#include "common/macresman.h"
 #include "common/memstream.h"
 #include "director/director.h"
 #include "graphics/macgui/macfontmanager.h"
@@ -85,13 +87,41 @@ static void quirkLzone() {
 	SearchMan.addSubDirectoryMatching(g_director->_gameDataDir, "win_data", 0, 2);
 }
 
-static void quirkMcLuhan() {
-	// TODO. Read fonts from MCLUHAN/SYSTEM directory
+static void quirkMcLuhanWin() {
 	g_director->_extraSearchPath.push_back("mcluhan\\");
 	Graphics::MacFontManager *fontMan = g_director->_wm->_fontMan;
 	fontMan->loadWindowsFont("MCLUHAN/SYSTEM/MCBOLD13.FON");
 	fontMan->loadWindowsFont("MCLUHAN/SYSTEM/MCLURG__.FON");
 	fontMan->loadWindowsFont("MCLUHAN/SYSTEM/MCL1N___.FON");
+}
+
+static void quirkMcLuhanMac() {
+	Common::SeekableReadStream *installer = Common::MacResManager::openFileOrDataFork("Understanding McLuhan Installer");
+
+	if (!installer) {
+		warning("quirkMcLuhanMac(): Cannot open installer file");
+		return;
+	}
+
+	Common::Archive *archive = Common::createMacVISEArchive(installer);
+
+	if (!archive) {
+		warning("quirkMcLuhanMac(): Failed to open installer");
+		return;
+	}
+
+	Common::MacResManager font;
+
+	if (!font.open("McLuhan-Regular", *archive)) {
+		warning("quirkMcLuhanMac(): Failed to load font file \"McLuhan-Regular\"");
+		return;
+	}
+
+	Graphics::MacFontManager *fontMan = g_director->_wm->_fontMan;
+	fontMan->loadFonts(&font);
+
+	delete archive;
+	delete installer;
 }
 
 struct Quirk {
@@ -114,7 +144,8 @@ struct Quirk {
 	{ "lzone", Common::kPlatformWindows, &quirkLzone },
 	{ "mamauta1", Common::kPlatformMacintosh, &quirk640x480Desktop },
 	{ "mamauta1", Common::kPlatformWindows, &quirk640x480Desktop },
-	{ "mcluhan", Common::kPlatformWindows, &quirkMcLuhan },
+	{ "mcluhan", Common::kPlatformWindows, &quirkMcLuhanWin },
+	{ "mcluhan", Common::kPlatformMacintosh, &quirkMcLuhanMac },
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
 
