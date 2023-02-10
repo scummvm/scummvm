@@ -283,7 +283,7 @@ bool Debugger::cmdDumpFiles(int argc, const char **) {
 	debugC(1, kLastExpressDebugResource, "--------------------------------------------------------------------\n\n"); \
 	debugC(1, kLastExpressDebugResource, "Filename,Size,MD5\n"); \
 	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) { \
-		Common::SeekableReadStream *stream = getArchive((*it)->getName()); \
+		Common::SeekableReadStream *stream = getArchiveMember((*it)->getName()); \
 		if (!stream) { \
 			debugPrintf("ERROR: Cannot create stream for file: %s\n", (*it)->getName().c_str()); \
 			restoreArchive(); \
@@ -346,7 +346,7 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 			return cmdExit(0, nullptr);
 		} else {
 			Sequence sequence(filename);
-			if (sequence.load(getArchive(filename))) {
+			if (sequence.load(getArchiveMember(filename))) {
 				_engine->getCursor()->show(false);
 				clearBg(GraphicsManager::kBackgroundOverlay);
 
@@ -463,7 +463,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 			return cmdExit(0, nullptr);
 		} else {
 			Sequence *sequence = new Sequence(filename);
-			if (sequence->load(getArchive(filename))) {
+			if (sequence->load(getArchiveMember(filename))) {
 
 				// Check that we have at least a frame to show
 				if (sequence->count() == 0) {
@@ -538,7 +538,7 @@ bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 
 		_engine->_system->getMixer()->stopAll();
 
-		_soundStream->load(getArchive(name), kVolumeFull, false);
+		_soundStream->load(getArchiveMember(name), kVolumeFull, false);
 
 		if (argc == 3)
 			restoreArchive();
@@ -580,7 +580,7 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 			return cmdExit(0, nullptr);
 		} else {
 			SubtitleManager subtitle(_engine->getFont());
-			if (subtitle.load(getArchive(filename))) {
+			if (subtitle.load(getArchiveMember(filename))) {
 				_engine->getCursor()->show(false);
 				for (uint16 i = 0; i < subtitle.getMaxTime(); i += 25) {
 					clearBg(GraphicsManager::kBackgroundAll);
@@ -651,7 +651,7 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 			// Check if we got a nis filename or an animation index
 			if (name.contains('.')) {
 				Animation animation;
-				if (animation.load(getArchive(name))) {
+				if (animation.load(getArchiveMember(name))) {
 					_engine->getCursor()->show(false);
 					animation.play();
 					_engine->getCursor()->show(true);

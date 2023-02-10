@@ -1925,7 +1925,7 @@ void Action::playAnimation(EventIndex index, bool debugMode) const {
 	// In debug mode, just show the animation
 	if (debugMode) {
 		Animation animation;
-		if (animation.load(getArchive(Common::String(_animationList[index].filename) + ".nis")))
+		if (animation.load(getArchiveMember(Common::String(_animationList[index].filename) + ".nis")))
 			animation.play();
 		return;
 	}
@@ -1957,7 +1957,7 @@ void Action::playAnimation(EventIndex index, bool debugMode) const {
 			processSound = true;
 
 		Animation animation;
-		if (animation.load(getArchive(Common::String(_animationList[index].filename) + ".nis") , processSound ? Animation::kFlagDefault : Animation::kFlagProcess))
+		if (animation.load(getArchiveMember(Common::String(_animationList[index].filename) + ".nis") , processSound ? Animation::kFlagDefault : Animation::kFlagProcess))
 			animation.play();
 
 		if (getSoundQueue()->isBuffered("TIMER"))

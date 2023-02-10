@@ -29,7 +29,7 @@
 #define LOW_BYTE(w)           ((unsigned char)(((unsigned long)(w)) & 0xff))
 
 // Misc
-#define getArchive(name) _engine->getResourceManager()->getFileStream(name)
+#define getArchiveMember(name) _engine->getResourceManager()->getFileStream(name)
 #define rnd(value) _engine->getRandom().getRandomNumber(value - 1)
 
 // Engine subclasses
@@ -73,8 +73,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 // Sequences
-#define loadSequence(name) Sequence::load(name, getArchive(name))
-#define loadSequence1(name, field30) Sequence::load(name, getArchive(name), field30)
+#define loadSequence(name) Sequence::load(name, getArchiveMember(name))
+#define loadSequence1(name, field30) Sequence::load(name, getArchiveMember(name), field30)
 
 #define clearBg(type) _engine->getGraphicsManager()->clear(type)
 #define showScene(index, type) _engine->getGraphicsManager()->draw(getScenes()->get(index), type);

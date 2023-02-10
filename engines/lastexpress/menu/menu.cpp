@@ -308,7 +308,7 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 			if (!_hasShownIntro) {
 				// Show Broderbrund logo
 				Animation animation;
-				if (animation.load(getArchive("1930.nis")))
+				if (animation.load(getArchiveMember("1930.nis")))
 					animation.play();
 
 				getFlags()->mouseRightClick = false;
@@ -317,7 +317,7 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 				getSound()->playSoundWithSubtitles("MUS001.SND", kSoundTypeIntro | kVolumeFull, kEntityPlayer);
 
 				// Show The Smoking Car logo
-				if (animation.load(getArchive("1931.nis")))
+				if (animation.load(getArchiveMember("1931.nis")))
 					animation.play();
 
 				_hasShownIntro = true;
@@ -500,7 +500,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 
 							// Show intro
 							Animation animation;
-							if (animation.load(getArchive("1601.nis")))
+							if (animation.load(getArchiveMember("1601.nis")))
 								animation.play();
 
 							getEvent(kEventIntro) = 1;

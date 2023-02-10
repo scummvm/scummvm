@@ -227,10 +227,10 @@ void SoundEntry::loadStream(Common::String name) {
 	_name = name;
 
 	// Load sound data
-	_stream = getArchive(name);
+	_stream = getArchiveMember(name);
 
 	if (!_stream)
-		_stream = getArchive("DEFAULT.SND");
+		_stream = getArchiveMember("DEFAULT.SND");
 
 	if (!_stream)
 		_status = kSoundFlagClosed;
@@ -465,7 +465,7 @@ void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
 
 void SubtitleEntry::loadData() {
 	_data = new SubtitleManager(_engine->getFont());
-	_data->load(getArchive(_filename));
+	_data->load(getArchiveMember(_filename));
 
 	getSoundQueue()->setSubtitleFlag(getSoundQueue()->getSubtitleFlag() | 2);
 	getSoundQueue()->setCurrentSubtitle(this);
@@ -477,7 +477,7 @@ void SubtitleEntry::setupAndDraw() {
 
 	if (!_data) {
 		_data = new SubtitleManager(_engine->getFont());
-		_data->load(getArchive(_filename));
+		_data->load(getArchiveMember(_filename));
 	}
 
 	if (_data->getMaxTime() > _sound->getTime()) {
