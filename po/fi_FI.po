@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-10 08:36+0000\n"
-"PO-Revision-Date: 2023-01-29 09:34+0000\n"
-"Last-Translator: LINUX-SAUNA <linuxsauna@protonmail.com>\n"
+"PO-Revision-Date: 2023-02-10 21:34+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -204,10 +204,9 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "Ladattu %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
-#| msgid "Download speed: %s %S"
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Latausnopeus: %s %S"
+msgstr "Latausnopeus: %s %S/s"
 
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
@@ -263,15 +262,12 @@ msgid "No new %S available"
 msgstr "Uusia %S ei ole saatavilla"
 
 #: gui/downloadpacksdialog.cpp:462
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "%S. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Olet poistamassa %s %s dataa, sisältäen kaikki aiemmin ladatut %S. Haluatko "
+"Olet poistamassa %s %S dataa, sisältäen kaikki aiemmin ladatut %S. Haluatko "
 "jatkaa?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
