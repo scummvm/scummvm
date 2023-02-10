@@ -71,10 +71,6 @@ struct CachedFile {
 		"WOLFGANG.dat",	// It needs an empty file
 			(const byte *)"", 0
 	},
-	{ "mcluhan", Common::kPlatformWindows,
-		"prefs/Markers/List.Txt",	// It needs an empty file
-			(const byte *)"", 0
-	},
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
