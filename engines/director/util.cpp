@@ -515,7 +515,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			foundPath = wrappedPathMakeRelative(searchIn + path, recursive, addexts, directory);
 			recLevel--;
 
-			if (testPath(foundPath))
+			if (testPath(foundPath, directory))
 				return foundPath;
 
 			debugN(9, "%s", recIndent());
@@ -531,7 +531,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		foundPath = wrappedPathMakeRelative(*i + path, recursive, addexts, directory);
 		recLevel--;
 
-		if (testPath(foundPath))
+		if (testPath(foundPath, directory))
 			return foundPath;
 
 		debugN(9, "%s", recIndent());
