@@ -54,7 +54,7 @@ uint8 Host::service(int timeout) {
 
 	if (event.type > ENET_EVENT_TYPE_NONE) {
 		char hostName[50];
-		if (enet_address_get_host_ip(&event.peer->address, hostName, 50) == 0)
+		if (enet_address_get_host(&event.peer->address, hostName, 50) == 0)
 			_recentHost = Common::String(hostName);
 		_recentPort = event.peer->address.port;
 	}
@@ -124,7 +124,7 @@ int Host::getPort() {
 int Host::getPeerIndexFromHost(Common::String host, int port) {
 	for (int i = 0; i < (int)_host->peerCount; i++) {
 		char hostName[50];
-		if (enet_address_get_host_ip(&_host->peers[i].address, hostName, 50) == 0) {
+		if (enet_address_get_host(&_host->peers[i].address, hostName, 50) == 0) {
 			if (host == hostName && port == _host->peers[i].address.port) {
 				return i;
 			}
