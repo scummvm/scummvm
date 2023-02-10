@@ -129,6 +129,11 @@ int Host::getPeerIndexFromHost(Common::String host, int port) {
 				return i;
 			}
 		}
+		if (enet_address_get_host_ip(&_host->peers[i].address, hostName, 50) == 0) {
+			if (host == hostName && port == _host->peers[i].address.port) {
+				return i;
+			}
+		}
 	}
 	return -1;
 }
