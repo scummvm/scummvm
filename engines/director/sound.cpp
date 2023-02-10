@@ -135,7 +135,9 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 		//   4. maybe more?
 		if (shouldStopOnZero(soundChannel)) {
 			stopSound(soundChannel);
-		} else {
+		// Director 4 will stop after the current loop iteration, but
+		// Director 3 will continue looping until the sound is replaced.
+		} else if (g_director->getVersion() >= 400) {
 			// If there is a loopable stream specified, set the loop to expire by itself
 			if (_channels[soundChannel - 1].loopPtr) {
 				debugC(5, kDebugSound, "DirectorSound::playCastMember(): telling loop in channel %d to stop", soundChannel);
