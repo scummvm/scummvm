@@ -339,6 +339,9 @@ Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
 
+
+	debug(9, "convertPath(%s)", path.c_str());
+
 	if (!path.contains(':') && !path.contains('\\') && !path.contains('@')) {
 		return path;
 	}
@@ -466,6 +469,10 @@ bool testPath(Common::String &path, bool directory) {
 Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory) {
 	//Wrap pathMakeRelative to search in extra paths defined by the game
 	Common::String foundPath;
+
+	debug(8, "pathMakeRelative(\"%s\", recursive: %d, addexts: %d, directory: %d):", path.c_str(), recursive, addexts, directory);
+	path = convertPath(path);
+	debug(9, "pathMakeRelative(): converted -> %s", path.c_str());
 
 	Datum searchPath = g_director->getLingo()->_searchPath;
 	if (searchPath.type == ARRAY && searchPath.u.farr->arr.size() > 0) {
