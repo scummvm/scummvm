@@ -78,8 +78,8 @@ bool Socket::receive() {
 
 	_recentData = Common::String((const char*)data, receivedLength);
 
-	char hostName[15];
-	if (enet_address_get_host_ip(&_address, hostName, sizeof(hostName)) == 0)
+	char hostName[50];
+	if (enet_address_get_host(&_address, hostName, sizeof(hostName)) == 0)
 		_recentHost = hostName;
 	else
 		_recentHost = "";
