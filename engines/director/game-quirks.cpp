@@ -91,7 +91,7 @@ static void quirkLzone() {
 
 static void quirkMcLuhan() {
 	// TODO. Read fonts from MCLUHAN/SYSTEM directory
-	g_director->_extraSearchPath.push_back("mcluhan");
+	g_director->_extraSearchPath.push_back("mcluhan\\");
 	Graphics::MacFontManager *fontMan = g_director->_wm->_fontMan;
 	fontMan->loadWindowsFont("MCLUHAN/SYSTEM/MCBOLD13.FON");
 	fontMan->loadWindowsFont("MCLUHAN/SYSTEM/MCLURG__.FON");
