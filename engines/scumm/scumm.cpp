@@ -1389,9 +1389,6 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	else
 		OF_OWNER_ROOM = 0x0F;
 
-	// if (_game.id==GID_MONKEY2 && _bootParam == 0)
-	//	_bootParam = 10001;
-
 	if (!_copyProtection && _game.id == GID_INDY4 && _bootParam == 0) {
 		_bootParam = -7873;
 	}
