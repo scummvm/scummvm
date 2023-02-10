@@ -20,10 +20,12 @@
  */
 
 #include "common/archive.h"
+#include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/memstream.h"
+#include "common/punycode.h"
 
 namespace Common {
 
@@ -60,6 +62,45 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, b
 	}
 
 	return matches;
+}
+
+void Archive::dumpArchive(String destPath) {
+	Common::ArchiveMemberList files;
+
+	listMembers(files);
+
+	byte *data = nullptr;
+	uint dataSize = 0;
+
+	for (auto &f : files) {
+		Common::String filename = Common::punycode_encodefilename(f->getName());
+		warning("File: %s", filename.c_str());
+
+		Common::SeekableReadStream *stream = f->createReadStream();
+
+		uint32 len = stream->size();
+		if (dataSize < len) {
+			free(data);
+			data = (byte *)malloc(stream->size());
+			dataSize = stream->size();
+		}
+
+		stream->read(data, len);
+
+		Common::DumpFile out;
+		Common::String outname = destPath + filename;
+		if (!out.open(outname, true)) {
+			warning("Archive::dumpArchive(): Can not open dump file %s", outname.c_str());
+		} else {
+			out.write(data, len);
+			out.flush();
+			out.close();
+		}
+
+		delete stream;
+	}
+
+	free(data);
 }
 
 SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(const Path &path) const {

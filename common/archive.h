@@ -142,6 +142,11 @@ public:
 	 * @return The newly created input stream.
 	 */
 	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const = 0;
+
+	/**
+	 * Dump all files from the archive to the given directory
+	 */
+	void dumpArchive(String destPath);
 };
 
 class MemcachingCaseInsensitiveArchive;
