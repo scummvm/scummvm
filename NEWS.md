@@ -38,6 +38,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added possibility to customize the default settings by specifying an initial
      configuration file to load if no configuration file exists in the usual
      location (via --initial-cfg=FILE or -i command line option).
+   - Added support for loading game resources which are bigger than 2GB on more
+     platforms.
 
  AGI:
    - Improved support for French translations.
@@ -105,8 +107,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added EGA dithering mode for VGA versions of Loom, Monkey Island 1 and 2 and
      Indiana Jones 4.
    - Fixed a possible dead-end in the Ultimate Talkie Edition of Monkey Island 2,
-     if one doesn't pick up the model lighthouse lens before Captain Dread brings
-     Guybrush back to Scabb Island, at the end of Part II.
+     if one doesn't pick up a required item before Captain Dread brings Guybrush
+     back to Scabb Island, at the end of Part II.
    - Fixed various original game bugs, oversights and continuity errors (only
      when using the "Enable game-specific enhancements" setting).
    - Improved the decoding of some Western European game strings when they're
@@ -151,6 +153,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sword2:
    - Switched detection to md5-based. Submit your unrecognized versions!
+
+ Tinsel:
+   - Fixed Discworld II subtitle colors on big-endian ports.
 
  Toon:
    - Made game menus behave like in the original.
