@@ -274,6 +274,7 @@ int Net::createSession(char *name) {
 			Common::String req = Common::String::format(
 				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\"}",
 				_gameName.c_str(), _gameVersion.c_str(), name);
+			debug(1, "NETWORK: Sending to session server: %s", req.c_str());
 			_sessionHost->send(req.c_str(), _sessionServerPeer);
 		} else {
 			warning("Failed to connect to session server!  This game will not be listed on the Internet");
@@ -532,9 +533,12 @@ int32 Net::updateQuerySessions() {
 			_gameName.c_str(), _gameVersion.c_str());
 		_sessionServerHost->send(getSessions.c_str(), 0);
 
-		uint32 tickCount = g_system->getMillis() + 100;
+		_gotSessions = false;
+		uint32 tickCount = g_system->getMillis() + 1000;
 		while(g_system->getMillis() < tickCount) {
 			serviceSessionServer();
+			if (_gotSessions)
+				break;
 		}
 	}
 	if (_broadcastSocket) {
@@ -820,7 +824,7 @@ void Net::handleSessionServerData(Common::String data) {
 
 	Common::JSONValue *json = Common::JSON::parse(data.c_str());
 	if (!json) {
-		warning("NETWORK: Received non-JSON string from session server ignoring.");
+		warning("NETWORK: Received non-JSON string from session server, \"%s\", ignoring", data.c_str());
 		return;
 	}
 	if (!json->isObject()){
@@ -871,6 +875,7 @@ void Net::handleSessionServerData(Common::String data) {
 					session.timestamp = g_system->getMillis();
 					_sessions.push_back(session);
 				}
+				_gotSessions = true;
 			}
 		} else if (_isHost && command == "joining_session") {
 			// Someone is gonna attempt to join our session.  Get their address and hole-punch:
