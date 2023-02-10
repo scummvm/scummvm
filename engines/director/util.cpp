@@ -335,11 +335,34 @@ Common::String CastMemberID::asString() const {
 	return res;
 }
 
+int recLevel = 0;
+const char *tabs[] = {	"",
+						"  ",
+						"    ",
+						"      ",
+						"        ",
+						"          ",
+						"            ",
+						"              ",
+						"                ",
+						"                  ",
+						"                    ",
+};
+
+const char *recIndent() {
+	if (recLevel >= ARRAYSIZE(tabs)) {
+		warning("recIndent() too deep: %d", recLevel);
+		return tabs[0];
+	}
+
+	return tabs[recLevel];
+}
+
 Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
 
-
+	debugN(9, "%s", recIndent());
 	debug(9, "convertPath(%s)", path.c_str());
 
 	if (!path.contains(':') && !path.contains('\\') && !path.contains('@')) {
@@ -409,6 +432,7 @@ bool testPath(Common::String &path, bool directory) {
 	     Common::MacResManager::exists(Common::Path(path, g_director->_dirSeparator))))
 		return true;
 
+	debugN(9, "%s", recIndent());
 	debug(9, "testPath: %s  dir: %d", path.c_str(), directory);
 
 	// check for the game data dir
@@ -455,10 +479,12 @@ bool testPath(Common::String &path, bool directory) {
 			}
 		}
 		if (!exists) {
+			debugN(9, "%s", recIndent());
 			debug(9, "testPath: Not exists");
 			return false;
 		}
 	}
+	debugN(9, "%s", recIndent());
 	debug(9, "testPath: ***** HAVE MATCH");
 	// write back path with correct case
 	path = newPath;
@@ -470,31 +496,45 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	//Wrap pathMakeRelative to search in extra paths defined by the game
 	Common::String foundPath;
 
+	recLevel = 0;
+
+	debugN(8, "%s", recIndent());
 	debug(8, "pathMakeRelative(\"%s\", recursive: %d, addexts: %d, directory: %d):", path.c_str(), recursive, addexts, directory);
 	path = convertPath(path);
+	debugN(9, "%s", recIndent());
 	debug(9, "pathMakeRelative(): converted -> %s", path.c_str());
 
 	Datum searchPath = g_director->getLingo()->_searchPath;
 	if (searchPath.type == ARRAY && searchPath.u.farr->arr.size() > 0) {
 		for (uint i = 0; i < searchPath.u.farr->arr.size(); i++) {
 			Common::String searchIn = searchPath.u.farr->arr[i].asString();
+			debugN(9, "%s", recIndent());
 			debug(9, "pathMakeRelative(): searchPath: %s", searchIn.c_str());
 
+			recLevel++;
 			foundPath = wrappedPathMakeRelative(searchIn + path, recursive, addexts, directory);
+			recLevel--;
+
 			if (testPath(foundPath))
 				return foundPath;
 
+			debugN(9, "%s", recIndent());
 			debug(9, "pathMakeRelative(): -- searchPath not found: %s", foundPath.c_str());
 		}
 	}
 
 	for (auto i = g_director->_extraSearchPath.begin(); i != g_director->_extraSearchPath.end(); ++i) {
+		debugN(9, "%s", recIndent());
 		debug(9, "pathMakeRelative(): extraSearchPath: %s", i->c_str());
 
+		recLevel++;
 		foundPath = wrappedPathMakeRelative(*i + path, recursive, addexts, directory);
+		recLevel--;
+
 		if (testPath(foundPath))
 			return foundPath;
 
+		debugN(9, "%s", recIndent());
 		debug(9, "pathMakeRelative(): -- extraSearchPath not found: %s", foundPath.c_str());
 	}
 
@@ -509,21 +549,25 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 
 	Common::String initialPath(path);
 
+	debugN(9, "%s", recIndent());
 	debug(9, "wrappedPathMakeRelative(): s0 %s -> %s", path.c_str(), initialPath.c_str());
 
 	if (recursive) // first level
 		initialPath = convertPath(initialPath);
 
+	debugN(9, "%s", recIndent());
 	debug(9, "wrappedPathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
 	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, g_director->_dirSeparator);
 	Common::String convPath = initialPath;
 
+	debugN(9, "%s", recIndent());
 	debug(9, "wrappedPathMakeRelative(): s2 %s", convPath.c_str());
 
 	if (testPath(initialPath, directory))
 		return initialPath;
 
+	debugN(9, "%s", recIndent());
 	debug(9, "wrappedPathMakeRelative(): s2.1 -- not found %s", initialPath.c_str());
 
 	// Now try to search the file
@@ -533,15 +577,18 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 		int pos = convPath.find(g_director->_dirSeparator);
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
 
+		debugN(9, "%s", recIndent());
 		debug(9, "wrappedPathMakeRelative(): s3 try %s", convPath.c_str());
 
 		if (!testPath(convPath, directory)) {
 			// If we were supplied a path with subdirectories,
 			// attempt to combine it with the current movie path at every iteration
 			Common::String locPath = Common::normalizePath(g_director->getCurrentPath() + convPath, g_director->_dirSeparator);
+			debugN(9, "%s", recIndent());
 			debug(9, "wrappedPathMakeRelative(): s3.1 try %s", locPath.c_str());
 
 			if (!testPath(locPath, directory)) {
+				debugN(9, "%s", recIndent());
 				debug(9, "wrappedPathMakeRelative(): s3.1 -- not found %s", locPath.c_str());
 				continue;
 			}
@@ -558,11 +605,13 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 		// Try stripping all of the characters not allowed in FAT
 		convPath = stripMacPath(initialPath.c_str());
 
+		debugN(9, "%s", recIndent());
 		debug(9, "wrappedPathMakeRelative(): s4 %s", convPath.c_str());
 
 		if (testPath(initialPath, directory))
 			return initialPath;
 
+		debugN(9, "%s", recIndent());
 		debug(9, "wrappedPathMakeRelative(): s4.1 -- not found %s", initialPath.c_str());
 
 		// Now try to search the file
@@ -570,13 +619,16 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 			int pos = convPath.find(g_director->_dirSeparator);
 			convPath = Common::String(&convPath.c_str()[pos + 1]);
 
+			debugN(9, "%s", recIndent());
 			debug(9, "wrappedPathMakeRelative(): s5 try %s", convPath.c_str());
 
 			if (!testPath(convPath, directory)) {
+				debugN(9, "%s", recIndent());
 				debug(9, "wrappedPathMakeRelative(): s5 -- not found %s", convPath.c_str());
 				continue;
 			}
 
+			debugN(9, "%s", recIndent());
 			debug(9, "wrappedPathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
 
 			opened = true;
@@ -617,12 +669,17 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 				Common::String ext = component.substr(component.size() - 4);
 				Common::String newpath = convPath + convertMacFilename(nameWithoutExt.c_str()) + ext;
 
+				debugN(9, "%s", recIndent());
 				debug(9, "wrappedPathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
+
+				recLevel++;
 				Common::String res = wrappedPathMakeRelative(newpath, false, false);
+				recLevel--;
 
 				if (testPath(res))
 					return res;
 
+				debugN(9, "%s", recIndent());
 				debug(9, "wrappedPathMakeRelative(): s6 -- not found %s", res.c_str());
 			}
 		}
@@ -659,6 +716,7 @@ Common::String testExtensions(Common::String component, Common::String initialPa
 	for (int i = 0; exts[i]; ++i) {
 		Common::String newpath = convPath + component.c_str() + exts[i];
 
+		debugN(9, "%s", recIndent());
 		debug(9, "testExtensions(): sT %s -> try %s, comp: %s", initialPath.c_str(), newpath.c_str(), component.c_str());
 		Common::String res = wrappedPathMakeRelative(newpath, false, false);
 
@@ -668,6 +726,7 @@ Common::String testExtensions(Common::String component, Common::String initialPa
 	for (int i = 0; exts[i]; ++i) {
 		Common::String newpath = convPath + convertMacFilename(component.c_str()) + exts[i];
 
+		debugN(9, "%s", recIndent());
 		debug(9, "testExtensions(): sT %s -> try %s, comp: %s", initialPath.c_str(), newpath.c_str(), component.c_str());
 		Common::String res = wrappedPathMakeRelative(newpath, false, false);
 
