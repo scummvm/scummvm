@@ -139,7 +139,7 @@ There is no way to change ScummVM settings on the Dreamcast.
 Known issues
 ==============
 
-- The Dreamcast has no external storage medium, and only has 16MB of RAM. As such, the Dreamcast port of ScummVM does not support The Curse of Monkey Island or the Dig. The resources required for these games are too great for the Dreamcast to handle. Full Throttle is not completable.
+- The Dreamcast has no external storage medium, and only has 16MB of RAM. As such, the Dreamcast port of ScummVM currently does not support SCUMM v7/v8 games (The Dig, Full Throttle and The Curse of Monkey Island), and any other "big" game may not run at all.
 
 
 - There is currently no way to manually add games to the games list. The autodetect feature usually works well, but sometimes games will show up on the list twice, incorrect games will show up with the correct game, and, quite rarely, the game will not show up on the list at all.
