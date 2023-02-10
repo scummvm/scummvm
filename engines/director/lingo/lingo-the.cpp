@@ -1086,6 +1086,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	case kTheSearchCurrentFolder:
 		warning("BUILDBOT: Trying to set SearchCurrentFolder lingo property");
 		break;
+	case kTheSearchPath:
+		g_lingo->_searchPath = d;
+		break;
 	case kTheSelEnd:
 		movie->_selEnd = d.asInt();
 		if (movie->_currentEditableTextChannel != 0) {
