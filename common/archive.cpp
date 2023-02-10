@@ -221,6 +221,15 @@ bool SearchSet::hasArchive(const String &name) const {
 	return (find(name) != _list.end());
 }
 
+Archive *SearchSet::getArchive(const String &name) const {
+	auto arch = find(name);
+
+	if (arch == _list.end())
+		return nullptr;
+
+	return arch->_arc;
+}
+
 void SearchSet::clear() {
 	for (ArchiveNodeList::iterator i = _list.begin(); i != _list.end(); ++i) {
 		if (i->_autoFree)

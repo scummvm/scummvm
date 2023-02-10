@@ -311,6 +311,11 @@ public:
 	bool hasArchive(const String &name) const;
 
 	/**
+	 * Looks up an archive in the searchable set.
+	 */
+	Archive *getArchive(const String &name) const;
+
+	/**
 	 * Empty the searchable set.
 	 */
 	virtual void clear();
