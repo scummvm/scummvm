@@ -451,11 +451,15 @@ void MacFontManager::loadWindowsFont(const Common::String fileName) {
 	font->setName(fullName);
 	font->setFont(winFont, false);
 	_fontRegistry.setVal(font->getName(), font);
+
+	debug(2, "MacFontManager::loadWindowsFont(): Loaded font %s", fullName.c_str());
 }
 
 const Font *MacFontManager::getFont(MacFont *macFont) {
 	Common::String name;
 	const Font *font = 0;
+
+	debug(3, "getFont(%s), id: %d", getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), 0).c_str(), macFont->getId());
 
 	int aliasForId = getFontAliasForId(macFont->getId());
 	if (aliasForId > -1) {
@@ -516,6 +520,10 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 
 		if (_fontInfo.contains(id) && _winFontRegistry.contains(_fontInfo.getVal(id)->name)) {
 			font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
+			const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
+
+			if (winfont->getFontHeight() != macFont->getSize())
+				warning("MacFontManager::getFont(): For font '%s' windows font '%s' is used of a different size %d", macFont->getName().c_str(), winfont->getName().c_str(), winfont->getFontHeight());
 		}
 	}
 
