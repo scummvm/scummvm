@@ -3442,6 +3442,18 @@ char ScummEngine::displayMessage(const char *altButton, const char *message, ...
 	return runDialog(dialog);
 }
 
+bool ScummEngine::displayMessageYesNo(const char *message, ...) {
+	char buf[STRINGBUFLEN];
+	va_list va;
+
+	va_start(va, message);
+	vsnprintf(buf, STRINGBUFLEN, message, va);
+	va_end(va);
+
+	GUI::MessageDialog dialog(buf, _("Yes"), _("No"));
+	return runDialog(dialog) == GUI::kMessageOK;
+}
+
 
 #pragma mark -
 #pragma mark --- Miscellaneous ---
