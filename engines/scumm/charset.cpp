@@ -725,7 +725,11 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 						dst[1] = _shadowColor;
 				}
 				dst[0] = col;
+			} else if (!(bits & revBitMask(x % 8)) && (y < height - 1) &&
+				_vm->_useCJKMode && _vm->_game.platform == Common::kPlatformSegaCD) {
+				dst[0] = 0;
 			}
+
 			dst += dest.format.bytesPerPixel;
 			dst2 += dest.format.bytesPerPixel;
 		}

@@ -566,6 +566,10 @@ bool ScummEngine::newLine() {
 			_useCJKMode = false;
 		_nextTop += _charset->getFontHeight();
 		_useCJKMode = useCJK;
+
+		if (_useCJKMode && _game.platform == Common::kPlatformSegaCD) {
+			_nextTop -= 1;
+		}
 	}
 	if (_game.version > 3) {
 		// FIXME: is this really needed?
