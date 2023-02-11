@@ -118,7 +118,7 @@ void OSystem_Atari::initBackend() {
 	bool superVidel = VgetMonitor() == MON_VGA && Getcookie(C_SupV, NULL) == C_FOUND;
 
 	_timerManager = new DefaultTimerManager();
-	_savefileManager = new DefaultSaveFileManager();
+	_savefileManager = new DefaultSaveFileManager("saves");
 
 	AtariEventSource *atariEventSource = new AtariEventSource();
 	_eventManager = new DefaultEventManager(makeKeyboardRepeatingEventSource(atariEventSource));
