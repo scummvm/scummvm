@@ -51,9 +51,11 @@ public:
 	void openUrl(const char *url);
 
 	bool connect();
-	void disconnect();
+	void disconnect(bool lost = false);
 	void login(const char *userName, const char *password);
+	
 	void getUserProfile(int userId);
+	void setIcon(int icon);
 protected:
 	ScummEngine_v90he *_vm;
 	Common::String _gameName;
@@ -62,6 +64,8 @@ protected:
 	Common::String _buffer;
 
 	void writeStringArray(int array, Common::String string);
+	void runRemoteStartScript(int *args);
+	void systemAlert(int type, Common::String message);
 
 	void receiveData();
 	void processLine(Common::String line);

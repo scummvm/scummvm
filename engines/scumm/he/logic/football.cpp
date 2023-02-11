@@ -229,6 +229,10 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 	case OP_NET_GET_PROFILE:
 		_vm->_lobby->getUserProfile(args[0]);
 		break;
+	
+	case OP_NET_CHANGE_ICON:
+		_vm->_lobby->setIcon(args[0]);
+		break;
 
 #endif // USE_LIBCURL
 #endif // USE_ENET
@@ -266,7 +270,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 	case 2203: case 2204:
 	case 2205: case 2206: case 2207: case 2208: case 2209:
 	case 2210: case 2211: case 2212: case 2213:
-	case 2215: case 2216: case 2217: case 2218: case 2219:
+	case 2215: case 2216: case 2217: case 2219:
 	case 2220: case 2221: case 2222: case 2223: case 2224:
 	case 2225: case 2226: case 2227: case 2228:
 		// Boneyards-related
