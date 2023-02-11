@@ -93,7 +93,7 @@ size_t DataStream::ReadAndConvertArrayOfInt64(int64_t *buffer, size_t count) {
 
 size_t DataStream::WriteAndConvertArrayOfInt16(const int16_t *buffer, size_t count) {
 	size_t elem;
-	for (elem = 0; elem < count && !EOS(); ++elem, ++buffer) {
+	for (elem = 0; elem < count; ++elem, ++buffer) {
 		int16_t val = *buffer;
 		ConvertInt16(val);
 		if (Write(&val, sizeof(int16_t)) < sizeof(int16_t)) {
@@ -105,7 +105,7 @@ size_t DataStream::WriteAndConvertArrayOfInt16(const int16_t *buffer, size_t cou
 
 size_t DataStream::WriteAndConvertArrayOfInt32(const int32_t *buffer, size_t count) {
 	size_t elem;
-	for (elem = 0; elem < count && !EOS(); ++elem, ++buffer) {
+	for (elem = 0; elem < count; ++elem, ++buffer) {
 		int32_t val = *buffer;
 		ConvertInt32(val);
 		if (Write(&val, sizeof(int32_t)) < sizeof(int32_t)) {
@@ -117,7 +117,7 @@ size_t DataStream::WriteAndConvertArrayOfInt32(const int32_t *buffer, size_t cou
 
 size_t DataStream::WriteAndConvertArrayOfInt64(const int64_t *buffer, size_t count) {
 	size_t elem;
-	for (elem = 0; elem < count && !EOS(); ++elem, ++buffer) {
+	for (elem = 0; elem < count; ++elem, ++buffer) {
 		int64_t val = *buffer;
 		ConvertInt64(val);
 		if (Write(&val, sizeof(int64_t)) < sizeof(int64_t)) {
