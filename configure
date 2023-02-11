@@ -563,6 +563,15 @@ get_system_exe_extension() {
 	mingw* | *os2-emx)
 		_exeext=".exe"
 		;;
+	mint)
+		if test "$_backend" = "atari"; then
+			# ATARI backend
+			_exeext=".ttp"
+		else
+			# SDL backend
+			_exeext=".gtp"
+		fi
+		;;
 	emscripten)
 		_exeext=".html"
 		;;
@@ -793,7 +802,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
+  --backend=BACKEND       backend to build (3ds, atari, android, dc, dingux, ds, gcw0,
                           gph, iphone, ios7, ios7-arm64, maemo, n64, null, opendingux,
                           openpandora, psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
@@ -3558,7 +3567,7 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/sdl/kolibrios/kolibrios.mk"
 			;;
 		m68k-atari-mint)
-			# auto -> yes
+			# auto -> yes (overriden by $_release_build = yes)
 			if test "$_debug_build" = "no"; then
 				# --disable-debug 
 				append_var LDFLAGS "-s"
@@ -3569,6 +3578,13 @@ if test -n "$_host"; then
 				# --enable-release, --enable-optimizations
 				append_var CXXFLAGS "-fomit-frame-pointer"
 			fi
+
+			# auto -> no
+			if test "$_release_build" = "yes"; then
+				# --enable-release
+				append_var DEFINES "-DNDEBUG"
+			fi
+			
 			_seq_midi=no
 			_timidity=no
 			;;

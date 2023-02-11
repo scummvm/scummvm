@@ -39,6 +39,7 @@ lib*.a
 /*.bnr
 /romfs
 /dist_3ds
+/dist-generic
 /.project
 /.cproject
 /.settings
@@ -231,6 +232,8 @@ ScummVM.config
 ScummVM.creator
 ScummVM.files
 ScummVM.includes
+ScummVM.cflags
+ScummVM.cxxflags
 
 #Ignore Komodo IDE/Edit project files
 *.komodoproject
@@ -288,3 +291,7 @@ android_project
 dists/emscripten/libs/
 dists/emscripten/games/
 dists/emscripten/emsdk-*
+
+#Ignore Atari/FreeMiNT files
+scummvm.gtp
+scummvm.ttp
