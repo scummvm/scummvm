@@ -203,6 +203,14 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 
 #ifdef USE_LIBCURL
 	// Lobby opcodes goes here:
+	case OP_NET_OPEN_WEB_URL:
+		{
+			char url[50];
+			_vm->getStringFromArray(args[0], url, sizeof(url));
+
+			_vm->_lobby->openUrl(url);
+			break;
+		}
 	case OP_NET_DOWNLOAD_PLAYBOOK:
 		// TODO
 		break;
