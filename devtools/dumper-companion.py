@@ -23,10 +23,10 @@ import unicodedata
 import urllib.request
 import zipfile
 from binascii import crc_hqx
-from io import BytesIO, StringIO, IOBase
+from io import BytesIO, IOBase, StringIO
 from pathlib import Path
 from struct import pack, unpack
-from typing import Any, ByteString, List, Tuple
+from typing import Any
 
 import machfs
 
@@ -88,7 +88,7 @@ decode_map = {
 # fmt: on
 
 
-def decode_macjapanese(text: ByteString) -> str:
+def decode_macjapanese(text: bytes) -> str:
     """
     Decode MacJapanese
 
@@ -157,7 +157,7 @@ def decode_macjapanese(text: ByteString) -> str:
     return res
 
 
-def file_to_macbin(out_f: IOBase, f: machfs.File, name: ByteString) -> bytes:
+def file_to_macbin(out_f: IOBase, f: machfs.File, name: bytes) -> None:
     oldFlags = f.flags >> 8
     newFlags = f.flags & 0xFF
     macbin_header = pack(
@@ -190,6 +190,8 @@ def file_to_macbin(out_f: IOBase, f: machfs.File, name: ByteString) -> bytes:
     if f.rsrc:
         out_f.write(f.rsrc)
         out_f.write(b"\x00" * (-len(f.rsrc) % 128))
+
+    return None
 
 
 def macbin_get_datafork(f: bytes) -> bytes:
@@ -298,7 +300,7 @@ def extract_volume(args: argparse.Namespace) -> int:
     japanese: bool = args.japanese
     dryrun: bool = args.dryrun
     rawtext: bool = args.nopunycode
-    loglevel: string = args.log
+    loglevel: str = args.log
     force_macbinary: bool = args.forcemacbinary
 
     numeric_level = getattr(logging, loglevel.upper(), None)
@@ -396,7 +398,7 @@ def extract_volume(args: argparse.Namespace) -> int:
 
 
 def punyencode_paths(
-    paths: List[Path], verbose: bool = False, source_encoding: str = None
+    paths: list[Path], verbose: bool = False, source_encoding: str | None = None
 ) -> int:
     """Rename filepaths to their punyencoded names"""
     count = 0
@@ -416,7 +418,7 @@ def punyencode_paths(
     return count
 
 
-def demojibake_hfs_bytestring(s: ByteString, encoding: str):
+def demojibake_hfs_bytestring(s: bytes, encoding: str):
     """
     Takes misinterpreted bytestrings from macOS and transforms
     them into the correct interpretation.
@@ -440,12 +442,11 @@ def demojibake_hfs_bytestring(s: ByteString, encoding: str):
     )
 
 
-def decode_bytestring(s: ByteString, encoding: str):
+def decode_bytestring(s: bytes, encoding: str):
     """Wrapper for decode() that can dispatch to decode_macjapanese"""
     if encoding == "mac_japanese":
         return decode_macjapanese(s)
-    else:
-        return s.decode(encoding)
+    return s.decode(encoding)
 
 
 def punyencode_arg(args: argparse.Namespace) -> int:
@@ -455,15 +456,15 @@ def punyencode_arg(args: argparse.Namespace) -> int:
 
 
 def punyencode_dir(
-    directory: Path, verbose: bool = False, source_encoding: str = None
+    directory: Path, verbose: bool = False, source_encoding: str|None = None
 ) -> int:
     """
     Recursively punyencode all directory and filenames
 
     Renames the leaves, i.e. files, first and the works it way up the tree by renaming the
     """
-    files: List[Path] = []
-    dirs: List[Path] = []
+    files: list[Path] = []
+    dirs: list[Path] = []
     if source_encoding is not None:
         directory = Path(demojibake_hfs_bytestring(directory, source_encoding))
     else:
@@ -796,7 +797,7 @@ if __name__ == "__main__":
 ### Test functions
 
 
-def call_test_parser(input_args: List[str]) -> Any:
+def call_test_parser(input_args: list[str]) -> Any:
     """Helper function to call the parser"""
     parser = generate_parser()
     args = parser.parse_args(input_args)
