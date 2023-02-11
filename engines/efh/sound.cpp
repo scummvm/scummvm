@@ -208,6 +208,7 @@ void EfhEngine::generateSound(int16 soundType) {
 		break;
 	case 9:
 		generateSound1(20, 888, 500);
+		g_system->delayMillis(100);
 		generateSound1(20, 888, 500);
 		break;
 	case 10:
@@ -259,6 +260,7 @@ void EfhEngine::genericGenerateSound(int16 soundType, int16 repeatCount) {
 	case 9:
 	case 10:
 		generateSound(10);
+		g_system->delayMillis(100);
 		generateSound(9);
 		break;
 	case 14:
@@ -269,6 +271,7 @@ void EfhEngine::genericGenerateSound(int16 soundType, int16 repeatCount) {
 	case 13:
 		for (int counter = 0; counter < repeatCount; ++counter) {
 			generateSound(17);
+			g_system->delayMillis(100);
 		}
 		break;
 	case 15:
