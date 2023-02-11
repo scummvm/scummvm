@@ -365,35 +365,37 @@ def extract_volume(args: argparse.Namespace) -> int:
             )
             might_be_jp_warned = True
 
+        if dryrun:
+            continue
+
         # Write the file to disk
         if isinstance(obj, machfs.Folder):
-            if not dryrun:
-                upath.mkdir(exist_ok=True)
-                os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
+            upath.mkdir(exist_ok=True)
+            os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
             # Set the modified time for folders
-        else:
-            print(upath)
-            if not dryrun:
-                if obj.data and not obj.rsrc and not force_macbinary:
-                    upath.write_bytes(obj.data)
+            continue
 
-                elif obj.rsrc or force_macbinary:
-                    with upath.open("wb") as out_file:
-                        file_to_macbin(out_file, obj, hpath[-1].encode("mac_roman"))
+        print(upath)
+        if obj.data and not obj.rsrc and not force_macbinary:
+            upath.write_bytes(obj.data)
 
-                elif not obj.data and not obj.rsrc:
-                    upath.touch()
+        elif obj.rsrc or force_macbinary:
+            with upath.open("wb") as out_file:
+                file_to_macbin(out_file, obj, hpath[-1].encode("mac_roman"))
 
-                os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
-                # This needs to be done after writing files as writing files resets
-                # the parent folder's modified time that was set before
-                if len(hpath) > 1:
-                    for i in range(len(hpath), 0, -1):
-                        parent_folder_modtime = vol.get(hpath[:i]).mddate - 2082844800
-                        os.utime(
-                            Path(*(upath.parts[:i])),
-                            (parent_folder_modtime, parent_folder_modtime),
-                        )
+        elif not obj.data and not obj.rsrc:
+            upath.touch()
+
+        os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
+        # This needs to be done after writing files as writing files resets
+        # the parent folder's modified time that was set before
+        if len(hpath) > 1:
+            for i in range(len(hpath), 0, -1):
+                parent_folder_modtime = vol.get(hpath[:i]).mddate - 2082844800
+                os.utime(
+                    Path(*(upath.parts[:i])),
+                    (parent_folder_modtime, parent_folder_modtime),
+                )
     return 0
 
 
