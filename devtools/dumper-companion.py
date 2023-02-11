@@ -299,7 +299,7 @@ def extract_volume(args: argparse.Namespace) -> int:
     destination_dir: Path = args.dir
     japanese: bool = args.japanese
     dryrun: bool = args.dryrun
-    rawtext: bool = args.nopunycode
+    dopunycode: bool = not args.nopunycode
     loglevel: str = args.log
     force_macbinary: bool = args.forcemacbinary
 
@@ -337,8 +337,8 @@ def extract_volume(args: argparse.Namespace) -> int:
 
     if not dryrun:
         destination_dir.mkdir(parents=True, exist_ok=True)
-    maybe_not_jp = False
-    maybe_not_jp_warned = False
+    might_be_jp = False
+    might_be_jp_warned = False
     for hpath, obj in vol.iter_paths():
         # Encode the path
         upath = destination_dir
@@ -350,20 +350,20 @@ def extract_volume(args: argparse.Namespace) -> int:
                     if decode_macjapanese(
                         el.encode("mac_roman")
                     ) != el and not isinstance(obj, machfs.Folder):
-                        maybe_not_jp = True
+                        might_be_jp = True
                 except Exception:
                     # If we get an exception from trying to decode it as Mac-Japanese, it's probably not
                     pass
-            if not rawtext:
+            if dopunycode:
                 el = punyencode(el)
 
             upath /= el
 
-        if maybe_not_jp and not maybe_not_jp_warned:
+        if might_be_jp and not might_be_jp_warned:
             logging.warning(
                 "Possible Mac-Japanese string detected, did you mean to use --japanese?"
             )
-            maybe_not_jp_warned = True
+            might_be_jp_warned = True
 
         # Write the file to disk
         if isinstance(obj, machfs.Folder):
