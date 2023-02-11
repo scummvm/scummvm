@@ -19,6 +19,7 @@
  *
  */
 
+#include "base/version.h"
 #include "common/config-manager.h"
 
 #include "scumm/he/intern_he.h"
@@ -28,6 +29,8 @@ namespace Scumm {
 
 Lobby::Lobby(ScummEngine_v90he *vm) : _vm(vm) {
 	_gameName = _vm->_game.gameid;
+	if (_gameName == "baseball2001")
+		_gameName == "baseball";
 	_socket = nullptr;
 
 	_userId = 0;
@@ -76,7 +79,8 @@ void Lobby::receiveData() {
 	char data[1024];
 	size_t len = _socket->recv(data, 1024);
 	if (!len) {
-		// Assume disconnection.
+		// We have been disconnected.
+		disconnect(true);
 	}
 
 	Common::String data_str(data, len);
@@ -157,20 +161,55 @@ bool Lobby::connect() {
 		debug(1, "LOBBY: Successfully connected to %s", url.c_str());
 		return true;
 	} else {
-		disconnect();
+		delete _socket;
+		_socket = nullptr;
 		writeStringArray(109, "Unable to contact server");
 		_vm->writeVar(108, -99);
 	}
 	return false;
 }
 
-void Lobby::disconnect() {
+void Lobby::disconnect(bool lost) {
 	if (!_socket)
 		return;
+	
+	if (!lost) {
+		debug(1, "LOBBY: Disconnecting connection to server.");
+		Common::JSONObject disconnectObject;
+		disconnectObject.setVal("cmd", new Common::JSONValue("disconnect"));
+		send(disconnectObject);
+	} else {
+		systemAlert(901, "You have been disconnected from our server. Returning to login screen.");
+	}
 
-	debug(1, "LOBBY: Disconnecting connection to server.");
 	delete _socket;
 	_socket = nullptr;
+}
+
+void Lobby::runRemoteStartScript(int *args) {
+	if (!_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT)) {
+		warning("LOBBY: VAR_REMOTE_START_SCRIPT not defined!");
+		return;
+	}
+	_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, args);
+	// These scripts always returns a 1 into the stack.  Let's pop it out.
+	_vm->pop();
+}
+
+void Lobby::systemAlert(int type, Common::String message) {
+	int args[25];
+	memset(args, 0, sizeof(args));
+
+	// Write the message as a string array.
+	writeStringArray(0, message);
+
+	// Setup the arguments
+	args[0] = OP_REMOTE_SYSTEM_ALERT;
+	args[1] = type;
+	args[2] = _vm->VAR(0);
+
+	// Run the script
+	runRemoteStartScript(args);
 }
 
 void Lobby::login(const char *userName, const char *password) {
@@ -179,6 +218,7 @@ void Lobby::login(const char *userName, const char *password) {
 	loginRequestParameters.setVal("user", new Common::JSONValue((Common::String)userName));
 	loginRequestParameters.setVal("pass", new Common::JSONValue((Common::String)password));
 	loginRequestParameters.setVal("game", new Common::JSONValue((Common::String)_gameName));
+	loginRequestParameters.setVal("version", new Common::JSONValue(gScummVMVersionLite));
 
 	send(loginRequestParameters);
 }
@@ -214,10 +254,20 @@ void Lobby::handleProfileInfo(Common::JSONArray profile) {
 		if (profile[i]->isIntegerNumber()) {
 			_vm->writeArray(108, 0, i, profile[i]->asIntegerNumber());
 		} else {
-			warning("BYOnline: Value for profile index %d is not an integer!", i);
+			warning("LOBBY: Value for profile index %d is not an integer!", i);
 		}
 	}
 	_vm->writeVar(111, 1);
+}
+
+void Lobby::setIcon(int icon) {
+	if (!_socket)
+		return;
+
+	Common::JSONObject setIconRequest;
+	setIconRequest.setVal("cmd", new Common::JSONValue("set_icon"));
+	setIconRequest.setVal("icon", new Common::JSONValue((long long int)icon));
+	send(setIconRequest);
 }
 
 } // End of namespace Scumm

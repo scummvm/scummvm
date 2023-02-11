@@ -23,6 +23,7 @@
 #define BASE_VERSION_H
 
 extern const char gScummVMVersion[];     // e.g. "0.4.1"
+extern const char gScummVMVersionLite[]; // e.g. "0.4.1" (without version control revisions)
 extern const char gScummVMBuildDate[];   // e.g. "2003-06-24"
 extern const char gScummVMVersionDate[]; // e.g. "0.4.1 (2003-06-24)"
 extern const char gScummVMCompiler[];    // e.g. "GCC 11.2.0"
