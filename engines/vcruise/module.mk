@@ -3,6 +3,8 @@ MODULE := engines/vcruise
 MODULE_OBJS = \
 	metaengine.o \
 	runtime.o \
+	script.o \
+	textparser.o \
 	vcruise.o
 
 

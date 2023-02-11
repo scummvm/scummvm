@@ -1,0 +1,145 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef VCRUISE_SCRIPT_H
+#define VCRUISE_SCRIPT_H
+
+#include "common/array.h"
+#include "common/hashmap.h"
+#include "common/ptr.h"
+#include "common/types.h"
+
+namespace Common {
+
+class ReadStream;
+
+} // End of namespace Common
+
+namespace VCruise {
+
+namespace ScriptOps {
+
+enum ScriptOp {
+	kInvalid,
+
+	kNumber,
+
+	kRotate,
+	kAngle,
+	kAngleGGet,
+	kSpeed,
+	kSAnimL,
+	kChangeL,
+	kAnimR,
+	kAnimF,
+	kAnimN,
+	kAnimG,
+	kAnimS,
+	kAnim,
+	kStatic,
+	kVarLoad,
+	kVarStore,
+	kSetCursor,
+	kSetRoom,
+	kLMB,
+	kLMB1,
+	kSoundS1,
+	kSoundL2,
+	kMusic,
+	kMusicUp,
+	kParm1,
+	kParm2,
+	kParm3,
+	kParmG,
+	kVolumeDn4,
+	kVolumeUp3,
+	kRandom,
+	kDrop,
+	kDup,
+	kSay3,
+	kSetTimer,
+	kLoSet,
+	kLoGet,
+	kHiSet,
+	kHiGet,
+
+	kNot,
+	kAnd,
+	kOr,
+	kCmpEq,
+
+	kBitLoad,
+	kBitSet0,
+	kBitSet1,
+
+	kDisc1,
+	kDisc2,
+	kDisc3,
+
+	kEscOn,
+	kEscOff,
+	kEscGet,
+	kBackStart,
+
+	kAnimName,
+	kValueName,
+	kVarName,
+	kSoundName,
+	kCursorName,
+
+	kCheckValue,	// Check if stack top is equal to arg.  If it is, pop the argument, otherwise leave it on the stack and skip the next instruction.
+	kJump,			// Offset instruction index by arg.
+};
+
+} // End of namespace ScriptOps
+
+struct Instruction {
+	Instruction();
+	explicit Instruction(ScriptOps::ScriptOp paramOp);
+	Instruction(ScriptOps::ScriptOp paramOp, int32 paramArg);
+
+	ScriptOps::ScriptOp op;
+	int32 arg;
+};
+
+struct Script {
+	Common::Array<Instruction> instrs;
+};
+
+struct ScreenScriptSet {
+	Common::SharedPtr<Script> entryScript;
+	Common::HashMap<uint, Common::SharedPtr<Script> > interactionScripts;
+};
+
+struct RoomScriptSet {
+	Common::HashMap<uint, Common::SharedPtr<ScreenScriptSet> > screenScripts;
+};
+
+struct ScriptSet {
+	Common::HashMap<uint, Common::SharedPtr<RoomScriptSet> > roomScripts;
+	Common::Array<Common::String> strings;
+};
+
+Common::SharedPtr<ScriptSet> compileLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath);
+
+}
+
+#endif

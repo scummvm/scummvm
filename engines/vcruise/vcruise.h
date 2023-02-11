@@ -57,6 +57,8 @@ public:
 	bool canSaveAutosaveCurrently() override;
 	bool canSaveGameStateCurrently() override;
 
+	void initializePath(const Common::FSNode &gamePath) override;
+
 protected:
 	void pauseEngineIntern(bool pause) override;
 
@@ -66,6 +68,8 @@ private:
 	Common::Rect _videoRect;
 	Common::Rect _menuBarRect;
 	Common::Rect _trayRect;
+
+	Common::FSNode _rootFSNode;
 
 	Common::SharedPtr<Runtime> _runtime;
 };
