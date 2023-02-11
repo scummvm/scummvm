@@ -51,6 +51,9 @@
 #if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
 #include "backends/platform/ios7/ios7_common.h"
 #endif
+#ifdef __ANDROID__
+#include "backends/fs/android/android-fs-factory.h"
+#endif
 
 // We assume here Fluidsynth minor will never be above 255 and
 // that micro versions won't break API compatibility
@@ -299,6 +302,17 @@ int MidiDriver_FluidSynth::open() {
 		dialog.runModal();
 		return MERR_DEVICE_NOT_AVAILABLE;
 	}
+
+#if defined(__ANDROID__) && defined(FS_HAS_STREAM_SUPPORT)
+	// In Android, when using SAF we need to wrap IO to make it work
+	// We can only do this with FluidSynth 2.0
+	if (!isUsingInMemorySoundFontData &&
+			AndroidFilesystemFactory::instance().hasSAF()) {
+		Common::FSNode fsnode(ConfMan.get("soundfont"));
+		_engineSoundFontData = fsnode.createReadStream();
+		isUsingInMemorySoundFontData = _engineSoundFontData != nullptr;
+	}
+#endif
 
 	_settings = new_fluid_settings();
 
