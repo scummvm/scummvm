@@ -1081,6 +1081,15 @@ static const LegacyGraphicsMode s_legacyGraphicsModes[] = {
 	{ "tv2x", "tv", 2 }
 };
 
+bool ScalerManager::isOldGraphicsSetting(const Common::String &gfxMode) {
+	for (uint i = 0; i < ARRAYSIZE(s_legacyGraphicsModes); ++i) {
+		if (gfxMode == s_legacyGraphicsModes[i].oldName) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void ScalerManager::updateOldSettings() {
 	// Search for legacy gfx_mode and replace it
 	if (ConfMan.hasKey("gfx_mode")) {
