@@ -1221,8 +1221,6 @@ void Net::handleGameData(Common::JSONValue *json, int peerIndex) {
 				return;
 			}
 
-			debug("%d", _vm->VAR(_vm->VAR_REMOTE_START_SCRIPT));
-
 			_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
 			_vm->pop();
 		}

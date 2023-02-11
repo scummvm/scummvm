@@ -124,6 +124,20 @@ void Lobby::handleHeartbeat() {
 	send(heartbeat);
 }
 
+void Lobby::openUrl(const char *url) {
+	debug(1, "LOBBY: openURL: %s", url);
+	Common::String urlString = Common::String(url);
+
+	if (urlString == "http://www.jrsn.com/c_corner/cc_regframe.asp") {
+		_vm->displayMessage(0, "Online Play for this game is provided by Backyard Sports Online, which is a\nservice provided by the ScummVM project.\nYou will now be taken to their registration page.");
+		if (!g_system->openUrl("https://backyardsports.online/register")) {
+			_vm->displayMessage(0, "Failed to open registration URL.  Please navigate to this page manually.\n\n\"https://backyardsports.online/register\"");
+		}
+	} else {
+		warning("LOBBY: URL not handled: %s", url);
+	}
+}
+
 bool Lobby::connect() {
 	if (_socket)
 		return true;
@@ -134,7 +148,7 @@ bool Lobby::connect() {
 	// different protocol.  This is done so we can achieve communicating over
 	// TLS/SSL sockets.
 	// TODO: custom url
-	Common::String url = "http://localhost:9130";
+	Common::String url = "http://127.0.0.1:9130";
 
 	debug(1, "LOBBY: Connecting to %s", url.c_str());
 

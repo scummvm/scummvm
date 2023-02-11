@@ -48,6 +48,8 @@ public:
 	void doNetworkOnceAFrame();
 	void send(Common::JSONObject data);
 
+	void openUrl(const char *url);
+
 	bool connect();
 	void disconnect();
 	void login(const char *userName, const char *password);
