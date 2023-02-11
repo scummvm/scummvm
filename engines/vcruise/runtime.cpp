@@ -38,6 +38,26 @@ namespace VCruise {
 AnimationDef::AnimationDef() : animNum(0), firstFrame(0), lastFrame(0) {
 }
 
+InteractionDef::InteractionDef() : objectType(0), interactionID(0) {
+}
+
+void MapDef::clear() {
+	for (uint screen = 0; screen < kNumScreens; screen++)
+		for (uint direction = 0; direction < kNumDirections; direction++)
+			screenDirections[screen][direction].reset();
+}
+
+const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direction) {
+	if (screen < kFirstScreen)
+		return nullptr;
+
+	screen -= kFirstScreen;
+
+	if (screen >= kNumScreens)
+		return nullptr;
+
+	return screenDirections[screen][direction].get();
+}
 
 Runtime::Runtime(OSystem *system, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _roomNumber(1), _screenNumber(0), _loadedRoomNumber(0), _activeScreenNumber(0), _gameState(kGameStateBoot), _gameID(gameID), _rootFSNode(rootFSNode), _havePendingScreenChange(false) {
@@ -45,6 +65,10 @@ Runtime::Runtime(OSystem *system, const Common::FSNode &rootFSNode, VCruiseGameI
 	_logDir = _rootFSNode.getChild("Log");
 	if (!_logDir.exists() || !_logDir.isDirectory())
 		error("Couldn't resolve Log directory");
+
+	_mapDir = _rootFSNode.getChild("Map");
+	if (!_mapDir.exists() || !_mapDir.isDirectory())
+		error("Couldn't resolve Map directory");
 }
 
 Runtime::~Runtime() {
@@ -219,13 +243,73 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 	bool changedScreen = (screenNumber != _activeScreenNumber) || changedRoom;
 
 	if (changedRoom) {
-		Common::String logFileName = Common::String::format("Room%02i.log", static_cast<int>(roomNumber));
+		_scriptSet.reset();
 
+		Common::String logFileName = Common::String::format("Room%02i.log", static_cast<int>(roomNumber));
 		Common::FSNode logFileNode = _logDir.getChild(logFileName);
-		if (Common::SeekableReadStream *logicFile = logFileNode.createReadStream())
-			_scriptSet = compileLogicFile(*logicFile, static_cast<uint>(logicFile->size()), logFileNode.getPath());
-		else
-			_scriptSet.reset();
+		if (logFileNode.exists()) {
+			if (Common::SeekableReadStream *logicFile = logFileNode.createReadStream()) {
+				_scriptSet = compileLogicFile(*logicFile, static_cast<uint>(logicFile->size()), logFileNode.getPath());
+				delete logicFile;
+			}
+		}
+
+		_map.clear();
+
+		Common::String mapFileName = Common::String::format("Room%02i.map", static_cast<int>(roomNumber));
+		Common::FSNode mapFileNode = _mapDir.getChild(mapFileName);
+		if (mapFileNode.exists()) {
+			if (Common::SeekableReadStream *mapFile = mapFileNode.createReadStream()) {
+				loadMap(mapFile);
+				delete mapFile;
+			}
+		}
+	}
+}
+
+void Runtime::loadMap(Common::SeekableReadStream *stream) {
+	byte screenDefOffsets[MapDef::kNumScreens * MapDef::kNumDirections * 4];
+
+	if (!stream->seek(16))
+		error("Error skipping map file header");
+
+	if (stream->read(screenDefOffsets, sizeof(screenDefOffsets)) != sizeof(screenDefOffsets))
+		error("Error reading map offset table");
+
+	for (uint screen = 0; screen < MapDef::kNumScreens; screen++) {
+		for (uint direction = 0; direction < MapDef::kNumDirections; direction++) {
+			uint32 offset = READ_LE_UINT32(screenDefOffsets + (MapDef::kNumDirections * screen + direction) * 4);
+			if (!offset)
+				continue;
+
+			if (!stream->seek(offset))
+				error("Error seeking to screen data");
+
+			byte screenDefHeader[16];
+			if (stream->read(screenDefHeader, 16) != 16)
+				error("Error reading screen def header");
+
+			uint16 numInteractions = READ_LE_UINT16(screenDefHeader + 0);
+
+			if (numInteractions > 0) {
+				Common::SharedPtr<MapScreenDirectionDef> screenDirectionDef(new MapScreenDirectionDef());
+				screenDirectionDef->interactions.resize(numInteractions);
+
+				for (uint i = 0; i < numInteractions; i++) {
+					InteractionDef &idef = screenDirectionDef->interactions[i];
+
+					byte interactionData[12];
+					if (stream->read(interactionData, 12) != 12)
+						error("Error reading interaction data");
+
+					idef.rect = Common::Rect(READ_LE_INT16(interactionData + 0), READ_LE_INT16(interactionData + 2), READ_LE_INT16(interactionData + 4), READ_LE_INT16(interactionData + 6));
+					idef.interactionID = READ_LE_UINT16(interactionData + 8);
+					idef.objectType = READ_LE_UINT16(interactionData + 10);
+				}
+
+				_map.screenDirections[screen][direction] = screenDirectionDef;
+			}
+		}
 	}
 }
 
