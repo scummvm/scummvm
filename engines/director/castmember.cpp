@@ -1434,6 +1434,12 @@ void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 }
 
 Common::String TextCastMember::formatInfo() {
+	Common::String format = _ptext.encode();
+	for (int i = 0; i < (int)format.size(); i++) {
+		if (format[i] == '\r')
+			format.replace(i, 1, "\n");
+	}
+
 	return Common::String::format(
 		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, editable: %d, text: \"%s\"",
 		_initialRect.width(), _initialRect.height(),
@@ -1441,7 +1447,7 @@ Common::String TextCastMember::formatInfo() {
 		_boundingRect.width(), _boundingRect.height(),
 		_boundingRect.left, _boundingRect.top,
 		getForeColor(), getBackColor(),
-		_editable, _ptext.encode().c_str()
+		_editable, format.c_str()
 	);
 
 }
