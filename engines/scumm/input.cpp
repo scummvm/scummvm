@@ -1358,7 +1358,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				// Map arrow keys to number keys in the SEGA version of MI to support
 				// scrolling to conversation choices. See bug report #2013 for details.
 				_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_UP + 54;
-				debug(5, "dir %d", _mouseAndKeyboardStat);
+
 				// Left and right are swapped
 				if (lastKeyHit.keycode == Common::KEYCODE_LEFT || lastKeyHit.keycode == Common::KEYCODE_RIGHT) {
 					_mouseAndKeyboardStat += lastKeyHit.keycode == Common::KEYCODE_LEFT ? -1 : 1;
