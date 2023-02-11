@@ -90,7 +90,7 @@ enum GameMode {
 
 #define XEEN_SAVEGAME_VERSION 2
 
-class XeenEngine : public Engine {
+class XeenEngine : public MMEngine {
 	/**
 	 * Container to a set of options newly introduced under ScummVM
 	 */
@@ -101,9 +101,6 @@ class XeenEngine : public Engine {
 		ExtendedOptions() : _showItemCosts(false), _durableArmor(false) {
 		}
 	};
-private:
-	const MightAndMagicGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
 private:
 	/**
 	 * Initializes all the engine sub-objects
@@ -117,7 +114,6 @@ private:
 
 	// Engine APIs
 	Common::Error run() override;
-	bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific
@@ -184,26 +180,6 @@ public:
 public:
 	XeenEngine(OSystem *syst, const MM::MightAndMagicGameDescription *gameDesc);
 	~XeenEngine() override;
-
-	/**
-	 * Returns the features
-	 */
-	uint32 getFeatures() const;
-
-	/**
-	 * Returns the game language
-	 */
-	Common::Language getLanguage() const;
-
-	/**
-	 * Returns the game's platform
-	 */
-	Common::Platform getPlatform() const;
-
-	/**
-	 * Gets the game Id
-	 */
-	uint32 getGameID() const;
 
 	/**
 	 * Returns the game Id, but with a reuslt of Clouds or Dark Side for World of Xeen,

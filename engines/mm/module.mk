@@ -2,6 +2,7 @@ MODULE := engines/mm
 
 MODULE_OBJS := \
 	metaengine.o \
+	mm.o \
 	utils/bitmap_font.o \
 	utils/engine_data.o \
 	utils/strings.o \

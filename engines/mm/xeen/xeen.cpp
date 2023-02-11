@@ -34,8 +34,7 @@ namespace Xeen {
 XeenEngine *g_vm = nullptr;
 
 XeenEngine::XeenEngine(OSystem *syst, const MightAndMagicGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc), _randomSource("Xeen") {
-
+		: MMEngine(syst, gameDesc) {
 	_combat = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
@@ -116,13 +115,6 @@ bool XeenEngine::initialize() {
 	loadSettings();
 
 	return true;
-}
-
-bool XeenEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
 }
 
 void XeenEngine::loadSettings() {
@@ -335,10 +327,6 @@ void XeenEngine::GUIError(const Common::U32String &msg) {
 }
 
 
-uint32 XeenEngine::getGameID() const {
-	return _gameDescription->gameID;
-}
-
 uint32 XeenEngine::getSpecificGameId() const {
 	uint gameId = g_vm->getGameID();
 	if (gameId == GType_WorldOfXeen)
@@ -349,18 +337,6 @@ uint32 XeenEngine::getSpecificGameId() const {
 
 uint32 XeenEngine::getGameFeatures() const {
 	return _gameDescription->features;
-}
-
-uint32 XeenEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-Common::Language XeenEngine::getLanguage() const {
-	return _gameDescription->desc.language;
-}
-
-Common::Platform XeenEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
 }
 
 bool XeenEngine::getIsCD() const {

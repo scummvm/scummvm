@@ -40,8 +40,7 @@ namespace MM1 {
 MM1Engine *g_engine = nullptr;
 
 MM1Engine::MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc)
-		: Engine(syst), Events(gameDesc->features & GF_ENHANCED),
-		_gameDescription(gameDesc), _randomSource("MM1") {
+		: MMEngine(syst, gameDesc), Events(gameDesc->features & GF_ENHANCED) {
 	g_engine = this;
 }
 
@@ -116,13 +115,6 @@ bool MM1Engine::setupEnhanced() {
 	g_events->showCursor();
 
 	return true;
-}
-
-bool MM1Engine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
 }
 
 bool MM1Engine::canSaveGameStateCurrently() {

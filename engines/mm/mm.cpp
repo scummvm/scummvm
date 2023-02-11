@@ -19,56 +19,35 @@
  *
  */
 
-#ifndef MM_MM_H
-#define MM_MM_H
-
-#include "common/random.h"
-#include "mm/detection.h"
+#include "mm/mm.h"
 
 namespace MM {
 
-enum MightAndMagicDebugChannels {
-	kDebugPath = 1 << 0,
-	kDebugScripts = 1 << 1,
-	kDebugGraphics = 1 << 2,
-	kDebugSound = 1 << 3
-};
+MMEngine::MMEngine(OSystem *syst, const MM::MightAndMagicGameDescription *gameDesc) :
+	Engine(syst), _gameDescription(gameDesc), _randomSource("MightAndMagic") {
+}
 
-class MMEngine : public Engine {
-protected:
-	const MightAndMagicGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
-public:
-	MMEngine(OSystem *syst, const MM::MightAndMagicGameDescription *gameDesc);
-	~MMEngine() override {}
+bool MMEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
 
-	/**
-	 * Checks for feature flag
-	 */
-	bool hasFeature(EngineFeature f) const override;
+uint32 MMEngine::getGameID() const {
+	return _gameDescription->gameID;
+}
 
-	/**
-	 * Returns the features
-	 */
-	uint32 getFeatures() const;
+uint32 MMEngine::getFeatures() const {
+	return _gameDescription->desc.flags;
+}
 
-	/**
-	 * Returns the game language
-	 */
-	Common::Language getLanguage() const;
+Common::Language MMEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
 
-	/**
-	 * Returns the game's platform
-	 */
-	Common::Platform getPlatform() const;
-
-	/**
-	 * Gets the game Id
-	 */
-	uint32 getGameID() const;
-
-};
+Common::Platform MMEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
+}
 
 } // namespace MM
-
-#endif // MM_MM_H
