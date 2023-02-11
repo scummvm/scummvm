@@ -64,7 +64,7 @@ bool FileStream::IsValid() const {
 
 bool FileStream::EOS() const {
 	Common::ReadStream *rs = dynamic_cast<Common::ReadStream *>(_file);
-	return !rs || rs->eos();
+	return rs && rs->eos();
 }
 
 soff_t FileStream::GetLength() const {
