@@ -217,7 +217,10 @@ Common::Error EfhEngine::run() {
 			generateSound(10);
 			break;
 		case Common::KEYCODE_6:
-			generateSound1(20, 888, 3000);
+			generateSound(9);
+			break;
+		case Common::KEYCODE_7:
+			generateSound(16);
 			break;
 		default:
 			if (retVal != Common::KEYCODE_INVALID)

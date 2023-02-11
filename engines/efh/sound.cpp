@@ -143,9 +143,9 @@ void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
 	int delta;
 	// The original is using -/+1 but it takes ages even with speed / 10, so I switched to -/+5
 	if (startFreq > endFreq)
-		delta = -5;
+		delta = -50;
 	else
-		delta = 5;
+		delta = 50;
 
 	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
@@ -157,7 +157,7 @@ void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
 		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, curFreq, -1);
 		// The original is just looping, making the sound improperly timed as the length of a loop is directly related to the speed of the CPU
 		// Dividing by 10 is just a guess based on how it sounds. I suspect it may be still too much
-		songDelay(speed / 10);
+		songDelay(speed);
 		_speakerStream->stop();
 		curFreq += delta;
 	} while (curFreq < endFreq && !shouldQuit());
@@ -196,7 +196,7 @@ void EfhEngine::generateSound5(int repeat) {
 	debugC(3, kDebugEngine, "generateSound5 %d", repeat);
 	for (int i = 0; i < repeat; ++i)
 		//It looks identical, so I'm reusing generateSound2
-		generateSound2(256, 4096, 10);
+		generateSound2(256, 4096, 2);
 }
 
 void EfhEngine::generateSound(int16 soundType) {
@@ -207,20 +207,20 @@ void EfhEngine::generateSound(int16 soundType) {
 		generateSound3();
 		break;
 	case 9:
-		generateSound1(20, 888, 3000);
-		generateSound1(20, 888, 3000);
+		generateSound1(20, 888, 500);
+		generateSound1(20, 888, 500);
 		break;
 	case 10:
 		generateSound5(1);
 		break;
 	case 13:
-		generateSound2(256, 4096, 18);
+		generateSound2(256, 4096, 2);
 		break;
 	case 14:
-		generateSound2(20, 400, 100);
+		generateSound2(20, 400, 20);
 		break;
 	case 15:
-		generateSound2(100, 888, 88);
+		generateSound2(100, 888, 10);
 		break;
 	case 16:
 		generateSound1(2000, 6096, 1500);
