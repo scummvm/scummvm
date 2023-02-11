@@ -66,6 +66,29 @@ struct RoomDef {
 	Common::String name;
 };
 
+struct InteractionDef {
+	InteractionDef();
+
+	Common::Rect rect;
+	uint16 interactionID;
+	uint16 objectType;
+};
+
+struct MapScreenDirectionDef {
+	Common::Array<InteractionDef> interactions;
+};
+
+struct MapDef {
+	static const uint kNumScreens = 96;
+	static const uint kNumDirections = 8;
+	static const uint kFirstScreen = 0xa0;
+
+	Common::SharedPtr<MapScreenDirectionDef> screenDirections[kNumScreens][kNumDirections];
+
+	void clear();
+	const MapScreenDirectionDef *getScreenDirection(uint screen, uint direction);
+};
+
 class Runtime {
 public:
 	Runtime(OSystem *system, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
@@ -82,6 +105,7 @@ private:
 
 	void loadIndex();
 	void changeToScreen(uint roomNumber, uint screenNumber);
+	void loadMap(Common::SeekableReadStream *stream);
 
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursors;		// Cursors indexed as CURSOR_CUR_##
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursorsShort;	// Cursors indexed as CURSOR_#
@@ -98,9 +122,12 @@ private:
 
 	Common::FSNode _rootFSNode;
 	Common::FSNode _logDir;
+	Common::FSNode _mapDir;
 
 	Common::Array<Common::SharedPtr<RoomDef> > _roomDefs;
 	Common::SharedPtr<ScriptSet> _scriptSet;
+
+	MapDef _map;
 
 	enum IndexParseType {
 		kIndexParseTypeNone,
