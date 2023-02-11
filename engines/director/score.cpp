@@ -450,29 +450,41 @@ void Score::update() {
 
 	if (tempo) {
 		const bool waitForClickOnly = _vm->getVersion() < 300;
-		const int maxDelay = _vm->getVersion() < 400 ? 120 : 60;
+		int maxDelay = 60;
+		if (_vm->getVersion() < 300) {
+			maxDelay = 120;
+		} else if (_vm->getVersion() < 400) {
+			// Director 3 has a slider that goes up to 120, but any value
+			// beyond 95 gets converted into a video wait instruction.
+			maxDelay = 95;
+		}
 		if (tempo >= 256 - maxDelay) {
 			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
+			debugC(5, kDebugLoading, "Score::update(): setting _nextFrameTime to %d based on a delay of %d", _nextFrameTime, 256 - tempo);
 		} else if (tempo <= 120) {
 			// FPS
 			_currentFrameRate = tempo;
 			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
+			debugC(5, kDebugLoading, "Score::update(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, tempo);
 		} else {
 			if (tempo == 128) {
 				_waitForClick = true;
 				_waitForClickCursor = false;
 				renderCursor(_movie->getWindow()->getMousePos());
+				debugC(5, kDebugLoading, "Score::update(): waiting for mouse click before next frame");
 			} else if (!waitForClickOnly && tempo == 135) {
 				// Wait for sound channel 1
 				_waitForChannel = 1;
+				debugC(5, kDebugLoading, "Score::update(): waiting for sound channel 1 before next frame");
 			} else if (!waitForClickOnly && tempo == 134) {
 				// Wait for sound channel 2
 				_waitForChannel = 2;
-
+				debugC(5, kDebugLoading, "Score::update(): waiting for sound channel 2 before next frame");
 			} else if (!waitForClickOnly && tempo >= 136 && tempo <= 135 + _numChannelsDisplayed) {
 				// Wait for a digital video in a channel to finish playing
 				_waitForVideoChannel = tempo - 135;
+				debugC(5, kDebugLoading, "Score::update(): waiting for video in channel %d before next frame", _waitForVideoChannel);
 			} else {
 				warning("Unhandled tempo instruction: %d", tempo);
 			}
