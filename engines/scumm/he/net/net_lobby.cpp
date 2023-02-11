@@ -129,9 +129,10 @@ void Lobby::openUrl(const char *url) {
 	Common::String urlString = Common::String(url);
 
 	if (urlString == "http://www.jrsn.com/c_corner/cc_regframe.asp") {
-		_vm->displayMessage(0, "Online Play for this game is provided by Backyard Sports Online, which is a\nservice provided by the ScummVM project.\nYou will now be taken to their registration page.");
-		if (!g_system->openUrl("https://backyardsports.online/register")) {
-			_vm->displayMessage(0, "Failed to open registration URL.  Please navigate to this page manually.\n\n\"https://backyardsports.online/register\"");
+		if (_vm->displayMessageYesNo("Online Play for this game is provided by Backyard Sports Online, which is a\nservice provided by the ScummVM project.\nWould you like to go to their registration page?")) {
+			if (!g_system->openUrl("https://backyardsports.online/register")) {
+				_vm->displayMessage(0, "Failed to open registration URL.  Please navigate to this page manually.\n\n\"https://backyardsports.online/register\"");
+			}
 		}
 	} else {
 		warning("LOBBY: URL not handled: %s", url);
