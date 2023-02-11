@@ -1353,12 +1353,17 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			// because that's what MI2 looks for in its "instant win" cheat.
 			_mouseAndKeyboardStat = lastKeyHit.keycode + 154;
 
-		} else if (lastKeyHit.keycode >= Common::KEYCODE_UP &&
-		          lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
-			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
+		} else if (lastKeyHit.keycode >= Common::KEYCODE_UP && lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
+			if (isSegaCD) {
 				// Map arrow keys to number keys in the SEGA version of MI to support
 				// scrolling to conversation choices. See bug report #2013 for details.
 				_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_UP + 54;
+				debug(5, "dir %d", _mouseAndKeyboardStat);
+				// Left and right are swapped
+				if (lastKeyHit.keycode == Common::KEYCODE_LEFT || lastKeyHit.keycode == Common::KEYCODE_RIGHT) {
+					_mouseAndKeyboardStat += lastKeyHit.keycode == Common::KEYCODE_LEFT ? -1 : 1;
+				}
+
 			} else if (isUsingOriginalGUI() || (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
 				// Map arrow keys to number keys in games which use the original menu screen.
 				switch (lastKeyHit.keycode) {
@@ -1386,6 +1391,24 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				_mouseAndKeyboardStat = lastKeyHit.ascii;
 			}
 
+		} else if (isSegaCD && lastKeyHit.keycode >= Common::KEYCODE_KP0 && lastKeyHit.keycode <= Common::KEYCODE_KP9) {
+			switch (lastKeyHit.keycode) {
+			case Common::KEYCODE_KP8: // Up:
+				_mouseAndKeyboardStat = 54;
+				break;
+			case Common::KEYCODE_KP2: // Down:
+				_mouseAndKeyboardStat = 55;
+				break;
+			case Common::KEYCODE_KP4: // Left (swapped):
+				_mouseAndKeyboardStat = 56;
+				break;
+			case Common::KEYCODE_KP6: // Right (swapped):
+				_mouseAndKeyboardStat = 57;
+				break;
+			default:
+				break;
+			}
+
 		} else {
 			// Map the DEL key when using the original GUI; used when writing the savegame name.
 			if (isUsingOriginalGUI() && lastKeyHit.keycode == Common::KEYCODE_DELETE)
@@ -1400,9 +1423,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	// scripts, we have to do this manually for the other games.  We don't want to do this for (later)
 	// HE games, since they can sometimes have scripts that accept Enter and Tab keys.
 	if (_game.heversion < 71) {
-		if (_mouseAndKeyboardStat == Common::KEYCODE_RETURN && _cursor.state > 0 && _game.version <= 6) {
+		if (_mouseAndKeyboardStat == Common::KEYCODE_RETURN && (_cursor.state > 0 || isSegaCD) && _game.version <= 6) {
 			_mouseAndKeyboardStat = MBS_LEFT_CLICK;
-		} else if (_mouseAndKeyboardStat == Common::KEYCODE_TAB && _cursor.state > 0 && _game.version >= 4 && _game.version <= 6) {
+		} else if (_mouseAndKeyboardStat == Common::KEYCODE_TAB && (_cursor.state > 0 || isSegaCD) && _game.version >= 4 && _game.version <= 6) {
 			_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
 		}
 	}
