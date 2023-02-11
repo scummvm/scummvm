@@ -30,13 +30,16 @@
 #include "common/serializer.h"
 #include "common/str-array.h"
 #include "graphics/surface.h"
+#include "mm/shared/xeen/cc_archive.h"
 
 namespace MM {
 namespace Xeen {
 
+using Shared::Xeen::BaseCCArchive;
+using Shared::Xeen::CCArchive;
+using Shared::Xeen::CCEntry;
+
 class XeenEngine;
-class CCArchive;
-class BaseCCArchive;
 class File;
 class SaveArchive;
 class Party;
@@ -56,21 +59,6 @@ class SavesManager;
 		} \
 		_bytesSynced += SIZE; \
 	}
-
-/**
- * Details of a single entry in a CC file index
- */
-struct CCEntry {
-	uint16 _id;
-	int _offset;
-	uint16 _size;
-	int _writeOffset;
-
-	CCEntry() : _id(0), _offset(0), _size(0), _writeOffset(0) {}
-	CCEntry(uint16 id, uint32 offset, uint32 size)
-		: _id(id), _offset(offset), _size(size) {
-	}
-};
 
 /*
  * Main resource manager
@@ -241,67 +229,6 @@ public:
 			_filesize = _in->size();
 		return _in != nullptr && _in->pos() >= _filesize;
 	}
-};
-
-/**
- * Base Xeen CC file implementation
- */
-class BaseCCArchive : public Common::Archive {
-protected:
-	Common::Array<CCEntry> _index;
-
-	/**
-	 * Load the index of a given CC file
-	 */
-	void loadIndex(Common::SeekableReadStream &stream);
-
-	/**
-	 * Saves out the contents of the index. Used when creating savegames
-	 */
-	void saveIndex(Common::WriteStream &stream);
-
-	/**
-	 * Given a resource name, returns whether an entry exists, and returns
-	 * the header index data for that entry
-	 */
-	virtual bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
-
-	/**
-	 * Given a resource Id, returns whether an entry exists, and returns
-	 * the header index data for that entry
-	 */
-	virtual bool getHeaderEntry(uint16 id, CCEntry &ccEntry) const;
-public:
-	/**
-	 * Hash a given filename to produce the Id that represents it
-	 */
-	static uint16 convertNameToId(const Common::String &resourceName);
-public:
-	BaseCCArchive() {}
-
-	// Archive implementation
-	bool hasFile(const Common::Path &path) const override;
-	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
-};
-
-/**
- * Xeen CC file implementation
- */
-class CCArchive : public BaseCCArchive {
-private:
-	Common::String _filename;
-	Common::String _prefix;
-	bool _encoded;
-protected:
-	bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const override;
-public:
-	CCArchive(const Common::String &filename, bool encoded);
-	CCArchive(const Common::String &filename, const Common::String &prefix, bool encoded);
-	~CCArchive() override;
-
-	// Archive implementation
-	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 };
 
 class SaveArchive : public BaseCCArchive {

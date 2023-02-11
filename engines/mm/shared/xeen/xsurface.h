@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef XEEN_SHARED_XSURFACE_H
-#define XEEN_SHARED_XSURFACE_H
+#ifndef MM_SHARED_XEEN_XSURFACE_H
+#define MM_SHARED_XEEN_XSURFACE_H
 
 #include "common/scummsys.h"
 #include "common/system.h"

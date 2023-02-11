@@ -246,6 +246,7 @@ MODULE_OBJS := \
 	xeen/subtitles.o \
 	xeen/window.o \
 	xeen/xeen.o \
+	shared/xeen/cc_archive.o \
 	shared/xeen/xsurface.o
 
 # This module can be built as a plugin
