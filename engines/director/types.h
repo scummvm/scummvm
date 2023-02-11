@@ -375,6 +375,12 @@ enum VarType {
 	kVarLocal
 };
 
+enum LPPFlag {
+	kLPPNone = 0,
+	kLPPSimple = 1 << 0,
+	kLPPForceD2 = 1 << 1,
+};
+
 struct CastMemberID {
 	int member;
 	int castLib;

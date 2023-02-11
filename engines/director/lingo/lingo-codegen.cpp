@@ -116,7 +116,7 @@ ScriptContext *LingoCompiler::compileAnonymous(const Common::U32String &code) {
 	return compileLingo(code, nullptr, kNoneScript, CastMemberID(0, 0), "[anonymous]", true);
 }
 
-ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, const Common::String &scriptName, bool anonymous) {
+ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, const Common::String &scriptName, bool anonymous, uint32 preprocFlags) {
 	_assemblyArchive = archive;
 	_assemblyAST = nullptr;
 	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, type, id.member);
@@ -127,7 +127,7 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 	_hadError = false;
 
 	// Preprocess the code for ease of the parser
-	Common::String codeNorm = codePreprocessor(code, archive, type, id).encode(Common::kUtf8);
+	Common::String codeNorm = codePreprocessor(code, archive, type, id, preprocFlags).encode(Common::kUtf8);
 	const char *utf8Code = codeNorm.c_str();
 
 	// Parse the Lingo and build an AST
