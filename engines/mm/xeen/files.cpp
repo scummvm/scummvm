@@ -435,22 +435,6 @@ void File::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP) {
 
 /*------------------------------------------------------------------------*/
 
-void StringArray::load(const Common::String &name) {
-	File f(name);
-	clear();
-	while (f.pos() < f.size())
-		push_back(f.readString());
-}
-
-void StringArray::load(const Common::String &name, int ccMode) {
-	File f(name, ccMode);
-	clear();
-	while (f.pos() < f.size())
-		push_back(f.readString());
-}
-
-/*------------------------------------------------------------------------*/
-
 SaveArchive::SaveArchive(Party *party) : BaseCCArchive(), _party(party), _data(nullptr), _dataSize(0) {
 }
 

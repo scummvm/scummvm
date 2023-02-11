@@ -226,22 +226,6 @@ public:
 	int64 pos() const override { return _parentStream->pos() - _begin; }
 };
 
-class StringArray : public Common::StringArray {
-public:
-	StringArray() {}
-	StringArray(const Common::String &name) { load(name); }
-
-	/**
-	 * Loads a string array from the specified file
-	 */
-	void load(const Common::String &name);
-
-	/**
-	 * Loads a string array from the specified file
-	 */
-	void load(const Common::String &name, int ccMode);
-};
-
 class XeenSerializer : public Common::Serializer {
 private:
 	Common::SeekableReadStream *_in;
