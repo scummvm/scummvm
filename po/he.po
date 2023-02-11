@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-10 08:36+0000\n"
-"PO-Revision-Date: 2023-01-22 12:34+0000\n"
+"PO-Revision-Date: 2023-02-12 03:34+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -202,10 +202,9 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "ירדו %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
-#| msgid "Download speed: %s %S"
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "מהירות הורדה: %s %S"
+msgstr "מהירות הורדה: %s%S בשנייה"
 
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
@@ -261,14 +260,11 @@ msgid "No new %S available"
 msgstr "אין %S חדשות זמינות"
 
 #: gui/downloadpacksdialog.cpp:462
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "%S. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
-msgstr "יוסרו %s %s של נתונים, ואיתם יימחקו כל %S שכבר ירדו, האם להמשיך?"
+msgstr "יוסרו %s%S של נתונים, ואיתם יימחקו כל %S שכבר ירדו, האם להמשיך?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
 msgid "Proceed"
