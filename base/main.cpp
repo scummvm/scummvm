@@ -84,6 +84,7 @@
 #if defined(__DC__)
 #include "backends/platform/dc/DCLauncherDialog.h"
 #else
+#include "graphics/scalerplugin.h"
 #include "gui/launcher.h"
 #endif
 
@@ -587,6 +588,19 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 #endif
 
+	// If we received an old style graphics mode parameter via command line
+	// override it to default at this stage, so that the backend init won't
+	// pass it onto updateOldSettings(). If it happened to be a valid new
+	// graphics mode, we'll put it back after initBackend().
+	Common::String gfxModeSetting;
+	if (settings.contains("gfx-mode")) {
+		gfxModeSetting = settings["gfx-mode"];
+		if (ScalerMan.isOldGraphicsSetting(gfxModeSetting)) {
+			settings["gfx-mode"] = "default";
+			ConfMan.set("gfx_mode", settings["gfx-mode"], Common::ConfigManager::kSessionDomain);
+		}
+	}
+
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
 	system.initBackend();
@@ -595,19 +609,22 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// we check this here. We can't do it until after the backend is inited,
 	// or there won't be a graphics manager to ask for the supported modes.
 
-	if (settings.contains("gfx-mode")) {
+	if (!gfxModeSetting.empty()) {
 		const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
-		Common::String option = settings["gfx-mode"];
 		bool isValid = false;
 
 		while (gm->name && !isValid) {
-			isValid = !scumm_stricmp(gm->name, option.c_str());
+			isValid = !scumm_stricmp(gm->name, gfxModeSetting.c_str());
 			gm++;
 		}
 		if (!isValid) {
-			warning("Unrecognized graphics mode '%s'. Switching to default mode", option.c_str());
-			settings["gfx-mode"] = "default";
+			// We will actually already have switched to default, but couldn't be sure that it was right until now.
+			warning("Unrecognized graphics mode '%s'. Switching to default mode", gfxModeSetting.c_str());
+		} else {
+			settings["gfx-mode"] = gfxModeSetting;
+			system.setGraphicsMode(gfxModeSetting.c_str());
 		}
+		ConfMan.set("gfx_mode", gfxModeSetting, Common::ConfigManager::kSessionDomain);
 	}
 	if (settings.contains("disable-display")) {
 		ConfMan.setInt("disable-display", 1, Common::ConfigManager::kTransientDomain);

@@ -234,6 +234,11 @@ public:
 	 * Update scaler settings from older versions of ScummVM.
 	 */
 	void updateOldSettings();
+
+	/**
+	 * Returns whether the supplied mode is one of the old gfx-modes.
+	 */
+	bool isOldGraphicsSetting(const Common::String &gfxMode);
 };
 
 /** Convenience shortcut for accessing singleton */
