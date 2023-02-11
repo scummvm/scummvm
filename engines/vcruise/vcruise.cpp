@@ -108,7 +108,7 @@ Common::Error VCruiseEngine::run() {
 	else
 		error("Unable to find a suitable graphics format");
 
-	_runtime.reset(new Runtime(_system));
+	_runtime.reset(new Runtime(_system, _rootFSNode, _gameDescription->gameID));
 
 	_runtime->loadCursors(exeName);
 
@@ -152,6 +152,12 @@ bool VCruiseEngine::canSaveAutosaveCurrently() {
 
 bool VCruiseEngine::canSaveGameStateCurrently() {
 	return false;
+}
+
+void VCruiseEngine::initializePath(const Common::FSNode &gamePath) {
+	Engine::initializePath(gamePath);
+
+	_rootFSNode = gamePath;
 }
 
 } // End of namespace VCruise
