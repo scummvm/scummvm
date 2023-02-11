@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	game/help_option_menu.o \
 	game/how_to.o \
 	game/in_game_scene.o \
+	game/in_game_scene_xml_parser.o \
 	game/inventory.o \
 	game/inventory_menu.o \
 	game/inventory_object.o \
@@ -47,6 +48,7 @@ MODULE_OBJS := \
 	te/te_bezier_curve.o \
 	te/te_button_layout.o \
 	te/te_camera.o \
+	te/te_camera_xml_parser.o \
 	te/te_checkbox_layout.o \
 	te/te_clip_layout.o \
 	te/te_color.o \

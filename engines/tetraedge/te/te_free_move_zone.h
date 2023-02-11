@@ -81,6 +81,14 @@ public:
 
 	TeActZone *isInZone(const TeVector3f32 &pt);
 
+	bool loadAStar(const Common::Path &path, const TeVector2s32 &size);
+	bool loadBin(const Common::Path &path, const Common::Array<TeBlocker> *blockers,
+			const Common::Array<TeRectBlocker> *rectblockers, const Common::Array<TeActZone> *actzones,
+			const TeVector2f32 &gridSize);
+	bool loadBin(Common::ReadStream &stream, const Common::Array<TeBlocker> *blockers,
+			const Common::Array<TeRectBlocker> *rectblockers, const Common::Array<TeActZone> *actzones,
+			const TeVector2f32 &gridSize);
+
 	// loadBin() 2 versions, seem unused
 
 	// name(), onPositionChanged(), position(), rotate(), rotation(), scale(),
@@ -107,8 +115,8 @@ public:
 	void updateTransformedVertices();
 
 	static float normalizeAngle(float angle);
-	static void deserialize(Common::ReadStream &stream, TeFreeMoveZone &dest, Common::Array<TeBlocker> *blockers,
-			Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones);
+	static void deserialize(Common::ReadStream &stream, TeFreeMoveZone &dest, const Common::Array<TeBlocker> *blockers,
+			const Common::Array<TeRectBlocker> *rectblockers, const Common::Array<TeActZone> *actzones);
 	static void serialize(Common::WriteStream &stream, const TeFreeMoveZone &src, bool updateFirst);
 
 	static TePickMesh2 *findNearestMesh(TeIntrusivePtr<TeCamera> &camera, const TeVector2s32 &frompt,
@@ -119,9 +127,9 @@ public:
 private:
 	TeVector2s32 aStarResolution() const;
 
-	Common::Array<TeActZone> *_actzones;
-	Common::Array<TeBlocker> *_blockers;
-	Common::Array<TeRectBlocker> *_rectBlockers;
+	const Common::Array<TeActZone> *_actzones;
+	const Common::Array<TeBlocker> *_blockers;
+	const Common::Array<TeRectBlocker> *_rectBlockers;
 
 	Common::Array<TeVector3f32> _freeMoveZoneVerticies;
 	Common::Array<uint> _pickMesh;
@@ -131,6 +139,7 @@ private:
 	TeVector2f32 _gridSquareSize;
 	TeVector2f32 _gridTopLeft;
 	TeVector2f32 _gridBottomRight;
+	TeVector2f32 _loadGridSize; // At least, it seems unused?
 	TeMatrix4x4 _gridMatrix;
 	TeMatrix4x4 _inverseWorldTransform;
 
@@ -151,6 +160,8 @@ private:
 
 	micropather::MicroPather *_micropather;
 	TeTimer _updateTimer;
+
+	Common::Path _aszGridPath;
 };
 
 } // end namespace Tetraedge

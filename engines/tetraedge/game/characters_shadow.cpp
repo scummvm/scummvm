@@ -44,7 +44,7 @@ void CharactersShadow::create(InGameScene *scene) {
 	renderer->enableTexture();
 	_camera = new TeCamera();
 	_camera->setProjMatrixType(2);
-	_camera->setPerspectiveVal(1.0);
+	_camera->setAspectRatio(1.0);
 	_camera->setName("_shadowCam");
 	_camera->viewport(0, 0, _texSize, _texSize);
 

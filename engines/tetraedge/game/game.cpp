@@ -544,7 +544,14 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	_scene.hitObjectGui().unload();
 	Common::Path geomPath(Common::String::format("scenes/%s/Geometry%s.bin",
 												 zone.c_str(), zone.c_str()));
-	_scene.load(core->findFile(geomPath));
+	Common::FSNode geomFile = core->findFile(geomPath);
+	if (geomFile.isReadable()) {
+		// Syberia 1, load geom bin
+		_scene.load(geomFile);
+	} else {
+		// Syberia 2, load from xml
+		_scene.loadXml(zone, scene);
+	}
 	_scene.loadBackground(setLuaNode);
 
 	Application *app = g_engine->getApplication();
@@ -920,6 +927,7 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 	}
 	if (callScripts) {
 		_luaScript.execute("OnCharacterAnimationFinished", "Kate");
+		_luaScript.execute("OnCharacterAnimationPlayerFinished", anim);
 		_luaScript.execute("OnCellCharacterAnimationPlayerFinished", anim);
 	}
 

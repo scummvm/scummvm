@@ -22,12 +22,22 @@
 #include "tetraedge/te/te_vector2f32.h"
 #include "tetraedge/te/te_vector2s32.h"
 #include "tetraedge/te/te_vector3f32.h"
+#include "tetraedge/tetraedge.h"
 
 namespace Tetraedge {
 
 TeVector2f32::TeVector2f32(const TeVector2s32 &other) {
 	setX(other._x);
 	setY(other._y);
+}
+
+bool TeVector2f32::parse(const Common::String &val) {
+	const Common::StringArray parts = TetraedgeEngine::splitString(val, ',');
+	if (parts.size() != 2)
+		return false;
+	setX(atof(parts[0].c_str()));
+	setY(atof(parts[1].c_str()));
+	return true;
 }
 
 

@@ -92,7 +92,11 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1) {
 		pushValue(p1);
 		_resume(1);
 	} else {
-		if (!fname.contains("Update"))
+		// Don't report Update (as original) or some other functions which are not
+		// implemented in both games
+		if (!fname.contains("Update") && !fname.equals("OnCellCharacterAnimationPlayerFinished")
+				&& !fname.equals("OnCharacterAnimationFinished") && !fname.equals("OnCellDialogFinished")
+				&& !fname.equals("OnCellFreeSoundFinished"))
 			debug("[TeLuaThread::Execute1] Function: \"%s\" does not exist", fname.c_str());
 		lua_settop(_luaThread, -2);
 	}

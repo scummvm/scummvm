@@ -64,7 +64,9 @@ public:
 		return _colorInheritance;
 	}
 
-	static void deserialize(Common::ReadStream &stream, Te3DObject2 &dest);
+	/* Note: Added control for includesName not in original as Syberia 2 data format uses
+	   the file name as the model name. */
+	static void deserialize(Common::ReadStream &stream, Te3DObject2 &dest, bool includesName = true);
 	static void serialize(Common::WriteStream &stream, Te3DObject2 &src);
 
 	virtual void draw() {}

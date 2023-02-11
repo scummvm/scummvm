@@ -550,9 +550,9 @@ static int tolua_ExportedFunctions_DeleteCallbackPlayer00(lua_State *L) {
 }
 
 static void AddMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y,
-				const Common::String &loctype, const Common::String &markerVal) {
+				const Common::String &loctype, const Common::String &markerVal, float anchorX, float anchorY) {
 	Game *game = g_engine->getGame();
-	game->scene().addMarker(markerName, imgPath, x, y, loctype, markerVal);
+	game->scene().addMarker(markerName, imgPath, x, y, loctype, markerVal, anchorX, anchorY);
 }
 
 static int tolua_ExportedFunctions_AddMarker00(lua_State *L) {
@@ -562,7 +562,6 @@ static int tolua_ExportedFunctions_AddMarker00(lua_State *L) {
 			&& tolua_isstring(L, 5, 1, &err) && tolua_isstring(L, 6, 1, &err)
 			&& tolua_isnumber(L, 7, 1, &err) && tolua_isnumber(L, 8, 1, &err)
 			&& tolua_isnoobj(L, 9, &err)) {
-		// Syberia 1 version
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		double n1 = tolua_tonumber(L, 3, 0.0);
@@ -571,10 +570,7 @@ static int tolua_ExportedFunctions_AddMarker00(lua_State *L) {
 		Common::String s4(tolua_tostring(L, 6, ""));
 		double n3 = tolua_tonumber(L, 7, 0.0);
 		double n4 = tolua_tonumber(L, 8, 0.0);
-		if (n3 || n4) {
-			warning("TODO: handle extra params for AddMarker %f %f", n3, n4);
-		}
-		AddMarker(s1, s2, n1, n2, s3, s4);
+		AddMarker(s1, s2, n1, n2, s3, s4, n3, n4);
 		return 0;
 	}
 	error("#ferror in function 'AddMarker': %d %d %s", err.index, err.array, err.type);
@@ -2320,6 +2316,38 @@ static int tolua_ExportedFunctions_SetCharacterPlayerPosition00(lua_State *L) {
 	error("#ferror in function 'SetCharacterPlayerPosition': %d %d %s", err.index, err.array, err.type);
 }
 
+static void SetCharacterPlayerAnimation(const Common::String &animname, bool repeat, bool returnToIdle, int startframe, int endframe) {
+	Game *game = g_engine->getGame();
+	Character *c = game->scene()._character;
+	if (!c) {
+		warning("SetCharacterPlayerAnimation: no active character");
+		return;
+	}
+
+	bool result = c->setAnimation(animname, repeat, returnToIdle, false, startframe, endframe);
+	if (!result) {
+		warning("[SetCharacterPlayerAnimation] Character's animation \"%s\" doesn't exist",
+			animname.c_str());
+	}
+}
+
+static int tolua_ExportedFunctions_SetCharacterPlayerAnimation00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 1, &err)
+		&& tolua_isboolean(L, 3, 1, &err) && tolua_isnumber(L, 4, 1, &err)
+		&& tolua_isnumber(L, 5, 1, &err) && tolua_isnoobj(L, 6, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		bool b1 = tolua_toboolean(L, 2, 1);
+		bool b2 = tolua_toboolean(L, 3, 0);
+		double f3 = tolua_tonumber(L, 4, -1.0);
+		double f4 = tolua_tonumber(L, 5, 9999.0);
+		SetCharacterPlayerAnimation(s1, b1, b2, (int)f3, (int)f4);
+		return 0;
+	}
+	warning("#ferror in function 'SetCharacterPlayerAnimation': %d %d %s", err.index, err.array, err.type);
+	return 0;
+}
+
 static void AddUnlockedAnim(const Common::String &name) {
 	// Note: does nothing, but we needed to add it..
 }
@@ -2494,6 +2522,7 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "CurrentCharacterPlayerAnimation", tolua_ExportedFunctions_CurrentCharacterPlayerAnimation00);
 	tolua_function(L, "SetCharacterPlayerRotation", tolua_ExportedFunctions_SetCharacterPlayerRotation00);
 	tolua_function(L, "SetCharacterPlayerPosition", tolua_ExportedFunctions_SetCharacterPlayerPosition00);
+	tolua_function(L, "SetCharacterPlayerAnimation", tolua_ExportedFunctions_SetCharacterPlayerAnimation00);
 	tolua_function(L, "AddUnlockedAnim", tolua_ExportedFunctions_AddUnlockedAnim00);
 
 	// TODO Syberia 2 functions..
@@ -2501,7 +2530,6 @@ void LuaOpenBinds(lua_State *L) {
 	//tolua_function(L, "PlaySnowCustom", tolua_ExportedFunctions_PlaySnowCustom00);
 	//tolua_function(L, "SnowCustomVisible", tolua_ExportedFunctions_SnowCustomVisible00);
 	//tolua_function(L, "RemoveRandomSound", tolua_ExportedFunctions_RemoveRandomSound00);
-	//tolua_function(L, "SetCharacterPlayerAnimation", tolua_ExportedFunctions_SetCharacterPlayerAnimation00);
 	//tolua_function(L, "SetYoukiFollowKate", tolua_ExportedFunctions_SetYoukiFollowKate00);
 	//tolua_function(L, "PlaySmoke", tolua_ExportedFunctions_PlaySmoke00);
 	//tolua_function(L, "SmokeVisible", tolua_ExportedFunctions_SmokeVisible00);

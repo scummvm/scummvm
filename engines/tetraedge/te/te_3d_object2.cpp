@@ -90,9 +90,11 @@ int Te3DObject2::childIndex(Te3DObject2 *c) const {
 }
 
 /*static*/
-void Te3DObject2::deserialize(Common::ReadStream &stream, Te3DObject2 &dest) {
-	Common::String str = deserializeString(stream);
-	dest.setName(str);
+void Te3DObject2::deserialize(Common::ReadStream &stream, Te3DObject2 &dest, bool includesName /* = true */) {
+	if (includesName) {
+		Common::String str = deserializeString(stream);
+		dest.setName(str);
+	}
 
 	TeVector3f32 vect;
 	TeVector3f32::deserialize(stream, vect);

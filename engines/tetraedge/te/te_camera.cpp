@@ -24,6 +24,8 @@
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_camera.h"
+#include "tetraedge/te/te_camera_xml_parser.h"
+#include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_matrix4x4.h"
 #include "tetraedge/te/te_renderer.h"
 
@@ -32,7 +34,7 @@ namespace Tetraedge {
 TeCamera::TeCamera() : _projectionMatrixType(0), _orthogonalParamL(0.0f),
 	_orthogonalParamR(1.0f), _orthogonalParamT(1.0f), _orthogonalParamB(0.0f),
 	_orthNearVal(10.0f), _orthFarVal(4000.0f), _transformA(0), /*_transformB(0),*/
-	_fov(40.0f), _somePerspectiveVal(1.0f), _viewportX(0), _viewportY(0), _viewportW(0),
+	_fov(40.0f), _aspectRatio(1.0f), _viewportX(0), _viewportY(0), _viewportW(0),
 	_viewportH(0)
 {
 }
@@ -116,7 +118,7 @@ void TeCamera::buildPerspectiveMatrix2() {
 	_projectionMatrix = TeMatrix4x4();
 	float f = tanf(_fov * 0.5);
 	_projectionMatrix.setValue(0, 0, 1.0 / f);
-	_projectionMatrix.setValue(1, 1, _somePerspectiveVal / f);
+	_projectionMatrix.setValue(1, 1, _aspectRatio / f);
 	_projectionMatrix.setValue(2, 2, -(_orthNearVal + _orthFarVal) / (_orthNearVal - _orthFarVal));
 	_projectionMatrix.setValue(3, 2, 1.0);
 	_projectionMatrix.setValue(2, 3, (_orthFarVal * 2) * _orthNearVal / (_orthNearVal - _orthFarVal));
@@ -126,7 +128,7 @@ void TeCamera::buildPerspectiveMatrix2() {
 void TeCamera::buildPerspectiveMatrix3() {
 	_projectionMatrix = TeMatrix4x4();
 	float f = tanf(_fov * 0.5);
-	_projectionMatrix.setValue(0, 0, (1.0 / f) / _somePerspectiveVal);
+	_projectionMatrix.setValue(0, 0, (1.0 / f) / _aspectRatio);
 	_projectionMatrix.setValue(1, 1, 1.0 / f);
 	_projectionMatrix.setValue(2, 2, -(_orthNearVal + _orthFarVal) / (_orthNearVal - _orthFarVal));
 	_projectionMatrix.setValue(3, 2, 1.0);
@@ -163,13 +165,31 @@ Math::Ray TeCamera::getRay(const TeVector2s32 &pxloc) {
 	return ray;
 }
 
-void TeCamera::loadBin(const Common::String &path) {
+void TeCamera::loadXml(const Common::Path &path) {
+	setName(path.getLastComponent().toString());
+	_projectionMatrixType = 3;
+	TeCore *core = g_engine->getCore();
+	Common::FSNode node = core->findFile(path);
+	if (!node.isReadable()) {
+		warning("Can't open camera data %s", path.toString().c_str());
+	}
+	TeCameraXmlParser parser;
+	parser._cam = this;
+	if (!parser.loadFile(node))
+		error("TeCamera::loadXml: can't load file %s", node.getPath().c_str());
+	if (!parser.parse())
+		error("TeCamera::loadXml: error parsing %s", node.getPath().c_str());
+}
+
+/*
+void TeCamera::loadBin(const Common::Path &path) {
 	error("TODO: Implement TeCamera::loadBin");
 }
 
 void TeCamera::loadBin(const Common::ReadStream &stream) {
 	error("TODO: Implement TeCamera::loadBin");
 }
+*/
 
 void TeCamera::orthogonalParams(float left, float right, float top, float bottom) {
 	_orthogonalParamL = left;

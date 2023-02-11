@@ -61,6 +61,8 @@ public:
 		return sqrt(getX() * getX() + getY() * getY());
 	}
 
+	bool parse(const Common::String &val);
+
 	/*
 	TODO: do we need anything that isn't already in Vector2d here?
 	TeVector2f32(const TeVector2f32 &other);

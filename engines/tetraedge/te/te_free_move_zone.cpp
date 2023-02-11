@@ -21,10 +21,14 @@
 
 #include "tetraedge/tetraedge.h"
 
+#include "common/file.h"
+#include "common/compression/zlib.h"
+
 #include "tetraedge/te/te_free_move_zone.h"
 #include "tetraedge/te/micropather.h"
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_ray_intersection.h"
+#include "tetraedge/te/te_core.h"
 
 namespace Tetraedge {
 
@@ -104,6 +108,13 @@ void TeFreeMoveZone::buildAStar() {
 	if (graphSize._x == 0 || graphSize._y == 0)
 		return;
 
+	bool regenerate = true;
+	if (!_aszGridPath.empty()) {
+		regenerate = !loadAStar(_aszGridPath, graphSize);
+	}
+	if (!regenerate)
+		return;
+
 	if (!_loadedFromBin) {
 		for (int x = 0; x < graphSize._x; x++) {
 			for (int y = 0; y < graphSize._y; y++) {
@@ -141,8 +152,67 @@ void TeFreeMoveZone::buildAStar() {
 	}
 }
 
+bool TeFreeMoveZone::loadAStar(const Common::Path &path, const TeVector2s32 &size) {
+	Common::FSNode node = g_engine->getCore()->findFile(path);
+	Common::File file;
+	if (!node.isReadable() || !file.open(node)) {
+		warning("[TeFreeMoveZone::loadAStar] Can't open file : %s.", path.toString().c_str());
+		return false;
+	}
+	TeVector2s32 readSize;
+	readSize.deserialize(file, readSize);
+	if (size != readSize) {
+		warning("[TeFreeMoveZone::loadAStar] Wrong file : %s.", path.toString().c_str());
+		return false;
+	}
+	uint32 bytes = file.readUint32LE();
+	if (bytes > 100000)
+		error("Improbable size %d for compressed astar data", bytes);
+
+	unsigned long decompBytes = size._x * size._y;
+	byte *buf = new byte[bytes];
+	byte *outBuf = new byte[decompBytes];
+	file.read(buf, bytes);
+	bool result = Common::uncompress(outBuf, &decompBytes, buf, bytes);
+	delete [] buf;
+	if (result) {
+		for (uint i = 0; i < decompBytes; i++)
+			_graph->_flags.data()[i] = outBuf[i];
+	}
+	delete [] outBuf;
+	return result;
+}
+
+
 void TeFreeMoveZone::calcGridMatrix() {
-	error("TODO: Implement TeFreeMoveZone::calcGridMatrix");
+	float angle = 0.0f;
+	float mul = 0.0f;
+	for (uint i = 0; i < _borders.size() - 1; i += 2) {
+		const TeVector3f32 &v1 = _verticies[_borders[i]];
+		const TeVector3f32 &v2 = _verticies[_borders[i + 1]];
+		const TeVector3f32 diff = v2 - v1;
+		const TeVector2f32 diff2(diff.x(), diff.z());
+		float len = diff2.length();
+		float f = fmod(atan2(diff.z(), diff.x()), M_PI_2);
+		if (f < 0)
+			f += M_PI_2;
+
+		if (f - angle < -M_PI_4) {
+			angle -= M_PI_2;
+		} else if (f - angle > M_PI_4) {
+			f -= M_PI_2;
+		}
+
+		angle *= mul;
+		mul += len;
+		angle = fmod((f * len + angle) / mul, M_PI_2);
+		if (angle < 0)
+			angle += M_PI_2;
+	}
+
+	const TeQuaternion rot = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), angle);
+	const TeMatrix4x4 rotMatrix = rot.toTeMatrix();
+	_gridMatrix = TeMatrix4x4() * rotMatrix;
 }
 
 void TeFreeMoveZone::clear() {
@@ -239,8 +309,8 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 }
 
 /*static*/
-void TeFreeMoveZone::deserialize(Common::ReadStream &stream, TeFreeMoveZone &dest, Common::Array<TeBlocker> *blockers,
-			Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones) {
+void TeFreeMoveZone::deserialize(Common::ReadStream &stream, TeFreeMoveZone &dest, const Common::Array<TeBlocker> *blockers,
+			const Common::Array<TeRectBlocker> *rectblockers, const Common::Array<TeActZone> *actzones) {
 	dest.clear();
 	TePickMesh2::deserialize(stream, dest);
 	TeVector2f32::deserialize(stream, dest._gridSquareSize);
@@ -330,7 +400,6 @@ static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &
 	return result;
 }
 
-
 byte TeFreeMoveZone::hasBlockerIntersection(const TeVector2s32 &pt) {
 	TeVector2f32 borders[4];
 
@@ -417,6 +486,59 @@ TeActZone *TeFreeMoveZone::isInZone(const TeVector3f32 &pt) {
 	error("TODO: Implement TeFreeMoveZone::isInZone");
 }
 
+bool TeFreeMoveZone::loadBin(const Common::Path &path, const Common::Array<TeBlocker> *blockers,
+		const Common::Array<TeRectBlocker> *rectblockers, const Common::Array<TeActZone> *actzones,
+		const TeVector2f32 &gridSize) {
+	Common::FSNode node = g_engine->getCore()->findFile(path);
+	if (!node.isReadable()) {
+		warning("[TeFreeMoveZone::loadBin] Can't open file : %s.", node.getName().c_str());
+		return false;
+	}
+	_aszGridPath = path.append(".aszgrid");
+	Common::File file;
+	file.open(node);
+	return loadBin(file, blockers, rectblockers, actzones, gridSize);
+}
+
+bool TeFreeMoveZone::loadBin(Common::ReadStream &stream, const Common::Array<TeBlocker> *blockers,
+		const Common::Array<TeRectBlocker> *rectblockers, const Common::Array<TeActZone> *actzones,
+		const TeVector2f32 &gridSize) {
+	_loadGridSize = gridSize;
+	_loadedFromBin = true;
+
+	// Load position, rotation, scale (not name)
+	Te3DObject2::deserialize(stream, *this, false);
+
+	Common::Array<TeVector3f32> vecs;
+	Te3DObject2::deserializeVectorArray(stream, vecs);
+
+	uint32 triangles = stream.readUint32LE();
+	_freeMoveZoneVerticies.resize(triangles * 3);
+	_gridDirty = true;
+	_transformedVerticiesDirty = true;
+	_bordersDirty = true;
+	_pickMeshDirty = true;
+	_projectedPointsDirty = true;
+
+	for (uint v = 0; v < triangles * 3; v++) {
+		uint16 s = stream.readUint16LE();
+		if (s >= vecs.size())
+			error("Invalid vertex offset %d (of %d) loading TeFreeMoveZone", s, vecs.size());
+		_freeMoveZoneVerticies[v] = vecs[s];
+	}
+	updateTransformedVertices();
+	updatePickMesh();
+
+	_blockers = blockers;
+	_rectBlockers = rectblockers;
+	_actzones = actzones;
+	updateGrid(false);
+	Common::Path p(name());
+	setName(p.getLastComponent().toString());
+
+	return true;
+}
+
 bool TeFreeMoveZone::onViewportChanged() {
 	_projectedPointsDirty = true;
 	return false;
@@ -443,6 +565,7 @@ void TeFreeMoveZone::preUpdateGrid() {
 
 		_gridTopLeft.setX(newVec.x());
 		_gridTopLeft.setY(newVec.z());
+		_gridBottomRight = _gridTopLeft;
 
 		_gridWorldY = newVec.y();
 	}
@@ -454,18 +577,16 @@ void TeFreeMoveZone::preUpdateGrid() {
 		else
 			newVec = gridInverse * _freeMoveZoneVerticies[vertNo];
 
-		if (_gridTopLeft.getX() <= newVec.x()) {
-			if (_gridBottomRight.getX() < newVec.x())
-				_gridBottomRight.setX(newVec.x());
-		} else {
+		if (_gridTopLeft.getX() > newVec.x()) {
 			_gridTopLeft.setX(newVec.x());
+		} else if (_gridBottomRight.getX() < newVec.x()) {
+			_gridBottomRight.setX(newVec.x());
 		}
 
-		if (_gridTopLeft.getY() <= newVec.z()) {
-			if (_gridBottomRight.getY() < newVec.z())
-				_gridBottomRight.setY(newVec.z());
-		} else {
+		if (_gridTopLeft.getY() > newVec.z()) {
 			_gridTopLeft.setY(newVec.z());
+		} else if (_gridBottomRight.getY() < newVec.z()) {
+			_gridBottomRight.setY(newVec.z());
 		}
 
 		if (newVec.y() < _gridWorldY)
@@ -478,17 +599,15 @@ void TeFreeMoveZone::preUpdateGrid() {
 		else
 			_gridSquareSize = TeVector2f32(2.0f, 2.0f);
 	} else {
+		/* Syberia 1 code, never actually used..
 		const TeVector2f32 gridVecDiff = _gridBottomRight - _gridTopLeft;
 		float minSide = MIN(gridVecDiff.getX(), gridVecDiff.getY()) / 20.0f;
 		_gridSquareSize.setX(minSide);
 		_gridSquareSize.setY(minSide);
-
-		error("FIXME: Finish preUpdateGrid for loaded-from-bin case.");
-		/*
-		// what's this field?
-		if (_field_0x414.x != 0.0)
-			_gridOffsetSomething = _field_0x414;
+		if (_loadGridSize.getX())
+			_gridSquareSize = _loadGridSize;
 		*/
+		_gridSquareSize = TeVector2f32(20.0f, 20.0f);
 	}
 
 	TeMatrix4x4 worldTrans = worldTransformationMatrix();
@@ -501,7 +620,11 @@ TeVector2s32 TeFreeMoveZone::projectOnAStarGrid(const TeVector3f32 &pt) {
 	if (!_loadedFromBin) {
 		offsetpt = TeVector2f32(pt.x() - _gridTopLeft.getX(), pt.z() - _gridTopLeft.getY());
 	} else {
-		error("TODO: Implement TeFreeMoveZone::projectOnAStarGrid for _loadedFromBin");
+		TeMatrix4x4 invGrid = _gridMatrix;
+		invGrid.inverse();
+		TeVector3f32 transPt = invGrid * (_inverseWorldTransform * pt);
+		offsetpt.setX(transPt.x() - _gridTopLeft.getX());
+		offsetpt.setY(transPt.y() - _gridTopLeft.getY());
 	}
 	const TeVector2f32 projected = offsetpt / _gridSquareSize;
 	return TeVector2s32((int)projected.getX(), (int)projected.getY());
@@ -613,36 +736,34 @@ void TeFreeMoveZone::updateBorders() {
 
 	updatePickMesh();
 
-	if (_verticies.size() > 2) {
-		for (uint triNo1 = 0; triNo1 < _verticies.size() / 3; triNo1++) {
-			for (uint vecNo1 = 0; vecNo1 < 3; vecNo1++) {
-				uint left1 = triNo1 * 3 + vecNo1;
-				uint left2 = triNo1 * 3 + (vecNo1 == 2 ? 0 : vecNo1 + 1);
-				const TeVector3f32 vleft1 = _verticies[left1];
-				const TeVector3f32 vleft2 = _verticies[left2];
+	for (uint triNo1 = 0; triNo1 < _verticies.size() / 3; triNo1++) {
+		for (uint vecNo1 = 0; vecNo1 < 3; vecNo1++) {
+			uint left1 = triNo1 * 3 + vecNo1;
+			uint left2 = triNo1 * 3 + (vecNo1 == 2 ? 0 : vecNo1 + 1);
+			const TeVector3f32 vleft1 = _verticies[left1];
+			const TeVector3f32 vleft2 = _verticies[left2];
 
-				bool skip = false;
-				for (uint triNo2 = 0; triNo2 < _verticies.size() / 3; triNo2++) {
-					if (skip)
+			bool skip = false;
+			for (uint triNo2 = 0; triNo2 < _verticies.size() / 3; triNo2++) {
+				if (skip)
+					break;
+				if (triNo2 == triNo1)
+					continue;
+
+				for (uint vecNo2 = 0; vecNo2 < 3; vecNo2++) {
+					uint right1 = triNo2 * 3 + vecNo2;
+					uint right2 = triNo2 * 3 + (vecNo2 == 2 ? 0 : vecNo2 + 1);
+					const TeVector3f32 vright1 = _verticies[right1];
+					const TeVector3f32 vright2 = _verticies[right2];
+					if ((vright1 == vleft1 && vright2 == vleft2) || (vright1 == vleft2 && vright2 == vleft1)) {
+						skip = true;
 						break;
-
-					for (uint vecNo2 = 0; vecNo2 < 3; vecNo2++) {
-						if (triNo2 == triNo1)
-							continue;
-						uint right1 = triNo2 * 3 + vecNo2;
-						uint right2 = triNo2 * 3 + (vecNo2 == 2 ? 0 : vecNo2 + 1);
-						TeVector3f32 vright1 = _verticies[right1];
-						TeVector3f32 vright2 = _verticies[right2];
-						if (vright1 == vleft1 && vright2 == vleft2 && vright1 == vleft2 && vright2 == vleft1) {
-							skip = true;
-							break;
-						}
 					}
 				}
-				if (!skip) {
-					_borders.push_back(left1);
-					_borders.push_back(left2);
-				}
+			}
+			if (!skip) {
+				_borders.push_back(left1);
+				_borders.push_back(left2);
 			}
 		}
 	}
@@ -674,7 +795,7 @@ void TeFreeMoveZone::updatePickMesh() {
 		_pickMesh.push_back(vecNo + 1);
 		_pickMesh.push_back(vecNo + 2);
 		vecNo += 3;
-}
+	}
 
 	debug("[TeFreeMoveZone::updatePickMesh] %s nb triangles reduced from : %d to : %d", name().c_str(),
 			 _freeMoveZoneVerticies.size() / 3, _pickMesh.size() / 3);

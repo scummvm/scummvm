@@ -28,6 +28,7 @@
 #include "tetraedge/game/billboard.h"
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/in_game_scene.h"
+#include "tetraedge/game/in_game_scene_xml_parser.h"
 #include "tetraedge/game/character.h"
 #include "tetraedge/game/characters_shadow.h"
 #include "tetraedge/game/object3d.h"
@@ -46,6 +47,9 @@
 //#define TETRAEDGE_DEBUG_LIGHTS
 
 namespace Tetraedge {
+
+/*static*/
+bool InGameScene::_collisionSlide = false;
 
 InGameScene::InGameScene() : _character(nullptr), _charactersShadow(nullptr),
 _shadowLightNo(-1), _waitTime(-1.0f), _shadowColor(0, 0, 0, 0x80), _shadowFov(20.0f),
@@ -90,14 +94,14 @@ void InGameScene::addAnchorZone(const Common::String &s1, const Common::String &
 	_anchorZones.push_back(zone);
 }
 
-bool InGameScene::addMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal) {
+bool InGameScene::addMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal, float anchorX, float anchorY) {
 	const TeMarker *marker = findMarker(markerName);
 	if (!marker) {
 		Game *game = g_engine->getGame();
 		TeSpriteLayout *markerSprite = new TeSpriteLayout();
 		// Note: game checks paths here but seems to just use the original?
 		markerSprite->setName(markerName);
-		markerSprite->setAnchor(TeVector3f32(0.0f, 0.0f, 0.0f));
+		markerSprite->setAnchor(TeVector3f32(anchorX, anchorY, 0.0f));
 		markerSprite->load(imgPath);
 		markerSprite->setSizeType(TeILayout::RELATIVE_TO_PARENT);
 		markerSprite->setPositionType(TeILayout::RELATIVE_TO_PARENT);
@@ -286,7 +290,7 @@ void InGameScene::deserializeCam(Common::ReadStream &stream, TeIntrusivePtr<TeCa
 	// load name/position/rotation/scale
 	Te3DObject2::deserialize(stream, *cam);
 	cam->setFov(stream.readFloatLE());
-	cam->setPerspectiveVal(stream.readFloatLE());
+	cam->setAspectRatio(stream.readFloatLE());
 	// Original loads the second val then ignores it and sets 3000.
 	cam->setOrthoPlanes(stream.readFloatLE(), 3000.0);
 	stream.readFloatLE();
@@ -440,6 +444,7 @@ void InGameScene::freeGeometry() {
 	_dummies.clear();
 	cameras().clear();
 	_zoneModels.clear();
+	_masks.clear();
 	if (_charactersShadow) {
 		delete _charactersShadow;
 		_charactersShadow = nullptr;
@@ -541,24 +546,9 @@ bool InGameScene::isObjectBlocking(const Common::String &name) {
 }
 
 bool InGameScene::load(const Common::FSNode &sceneNode) {
-	_actZones.clear();
-	Common::File actzonefile;
-	if (actzonefile.open(getActZoneFileName())) {
-		if (Te3DObject2::loadAndCheckFourCC(actzonefile, "0TCA")) {
-			uint32 count = actzonefile.readUint32LE();
-			if (count > 1000000)
-				error("Improbable number of actzones %d", count);
-			_actZones.resize(count);
-			for (uint i = 0; i < _actZones.size(); i++) {
-				_actZones[i]._s1 = Te3DObject2::deserializeString(actzonefile);
-				_actZones[i]._s2 = Te3DObject2::deserializeString(actzonefile);
-				for (int j = 0; j < 4; j++)
-					TeVector2f32::deserialize(actzonefile, _actZones[i]._points[j]);
-				_actZones[i]._flag1 = (actzonefile.readByte() != 0);
-				_actZones[i]._flag2 = true;
-			}
-		}
-	}
+	// Syberia 1 has loadActZones function contents inline.
+	loadActZones();
+
 	if (!_lights.empty()) {
 		g_engine->getRenderer()->disableAllLights();
 		for (uint i = 0; i < _lights.size(); i++) {
@@ -674,6 +664,72 @@ bool InGameScene::load(const Common::FSNode &sceneNode) {
 	return true;
 }
 
+bool InGameScene::loadXml(const Common::String &zone, const Common::String &scene) {
+	_zoneName = zone;
+	_sceneName = scene;
+	_blockers.clear();
+	_rectBlockers.clear();
+	_collisionSlide = 0;
+	loadActZones();
+	loadBlockers();
+
+	Common::Path xmlpath = Common::Path("scenes").joinInPlace(zone).joinInPlace(scene).joinInPlace("Scene")
+												.appendInPlace(scene).appendInPlace(".xml");
+	Common::FSNode node = g_engine->getCore()->findFile(xmlpath);
+	InGameSceneXmlParser parser;
+	parser._scene = this;
+	parser.setAllowText();
+	if (!parser.loadFile(node))
+		error("InGameScene::loadXml: Can't load %s", node.getPath().c_str());
+	if (!parser.parse())
+		error("InGameScene::loadXml: Can't parse %s", node.getPath().c_str());
+
+	return true;
+}
+
+void InGameScene::loadActZones() {
+	_actZones.clear();
+	Common::File actzonefile;
+	if (actzonefile.open(getActZoneFileName())) {
+		if (Te3DObject2::loadAndCheckFourCC(actzonefile, "ACT0")) {
+			uint32 count = actzonefile.readUint32LE();
+			if (count > 1000000)
+				error("Improbable number of actzones %d", count);
+			_actZones.resize(count);
+			for (uint i = 0; i < _actZones.size(); i++) {
+				_actZones[i]._s1 = Te3DObject2::deserializeString(actzonefile);
+				_actZones[i]._s2 = Te3DObject2::deserializeString(actzonefile);
+				for (int j = 0; j < 4; j++)
+					TeVector2f32::deserialize(actzonefile, _actZones[i]._points[j]);
+				_actZones[i]._flag1 = (actzonefile.readByte() != 0);
+				_actZones[i]._flag2 = true;
+			}
+		} else {
+			warning("loadActZones: Incorrect header in %s", actzonefile.getName());
+		}
+	}
+}
+
+static Common::Path _sceneFileNameBase() {
+	Game *game = g_engine->getGame();
+	Common::Path retval("scenes");
+	retval.joinInPlace(game->currentZone());
+	retval.joinInPlace(game->currentScene());
+	return retval;
+}
+
+bool InGameScene::loadCamera(const Common::String &name) {
+	Common::Path p = _sceneFileNameBase().joinInPlace(name).appendInPlace(".xml");
+	TeCamera *cam = new TeCamera();
+	cam->loadXml(p);
+	// Original doesn't do this? but we seem to need it
+	cam->setName(name);
+	TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
+	cam->viewport(0, 0, winSize.x(), winSize.y());
+	cameras().push_back(TeIntrusivePtr<TeCamera>(cam));
+	return true;
+}
+
 bool InGameScene::loadCharacter(const Common::String &name) {
 	Character *c = character(name);
 	if (!c) {
@@ -688,6 +744,16 @@ bool InGameScene::loadCharacter(const Common::String &name) {
 		_characters.push_back(c);
 	}
 	c->_model->setVisible(true);
+	return true;
+}
+
+bool InGameScene::loadFreeMoveZone(const Common::String &name, TeVector2f32 &gridSize) {
+	TeFreeMoveZone *zone = new TeFreeMoveZone();
+	zone->setName(name);
+	Common::Path p = _sceneFileNameBase().joinInPlace(name).appendInPlace(".bin");
+	zone->loadBin(p, &_blockers, &_rectBlockers, &_actZones, gridSize);
+	_freeMoveZones.push_back(zone);
+	zone->setVisible(false);
 	return true;
 }
 
@@ -793,12 +859,105 @@ bool InGameScene::loadPlayerCharacter(const Common::String &name) {
 	return true;
 }
 
-static Common::Path _sceneFileNameBase() {
-	Game *game = g_engine->getGame();
-	Common::Path retval("scenes");
-	retval.joinInPlace(game->currentZone());
-	retval.joinInPlace(game->currentScene());
-	return retval;
+bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
+	const Common::Path pdat = Common::Path(zone).joinInPlace(scene).joinInPlace(name).appendInPlace(".bin");
+	const Common::Path ptex = Common::Path(zone).joinInPlace(scene).joinInPlace(texture);
+	Common::FSNode datnode = g_engine->getCore()->findFile(pdat);
+	Common::FSNode texnode = g_engine->getCore()->findFile(ptex);
+	if (!datnode.isReadable()) {
+		warning("[InGameScene::loadDynamicLightBloc] Can't open file : %s.", pdat.toString().c_str());
+		return false;
+	}
+
+	Common::File file;
+	file.open(datnode);
+
+	TeModel *model = new TeModel();
+	model->meshes().resize(1);
+	model->setName(datnode.getName());
+
+	TeVector3f32 vec;
+	TeVector2f32 vec2;
+	TeVector3f32::deserialize(file, vec);
+	// Read position/rotation/scale.
+	model->deserialize(file, *model);
+
+	uint32 verts = file.readUint32LE();
+	uint32 tricount = file.readUint32LE();
+	if (verts > 100000 || tricount > 10000)
+		error("Improbable number of verts (%d) or triangles (%d)", verts, tricount);
+
+	TeMesh *mesh = model->meshes()[0].get();
+	mesh->setConf(verts, tricount * 3, TeMesh::MeshMode_Triangles, 0, 0);
+
+	for (uint i = 0; i < verts; i++) {
+		TeVector3f32::deserialize(file, vec);
+		mesh->setVertex(i, vec);
+		mesh->setNormal(i, TeVector3f32(0, 0, 1));
+	}
+	for (uint i = 0; i < verts; i++) {
+		TeVector2f32::deserialize(file, vec2);
+		vec.y() = 1.0 - vec.y();
+		mesh->setTextureUV(i, vec2);
+	}
+
+	for (uint i = 0; i < tricount; i++)
+		mesh->setIndex(i, file.readUint16LE());
+
+	file.close();
+
+	if (texnode.isReadable()) {
+		TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
+		tex->load2(texnode, 0x500);
+		mesh->defaultMaterial(tex);
+	} else if (texture.size()) {
+		warning("loadDynamicLightBloc: Failed to load texture %s", texture.c_str());
+	}
+
+	model->setVisible(false);
+
+	_zoneModels.push_back(TeIntrusivePtr<TeModel>(model));
+	return true;
+}
+
+bool InGameScene::loadLight(const Common::String &fname, const Common::String &zone, const Common::String &scene) {
+	warning("TODO: Implement InGameScene::loadLight");
+	return true;
+}
+
+bool InGameScene::loadMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
+	warning("TODO: Implement InGameScene::loadMask");
+	return true;
+}
+
+bool InGameScene::loadRBB(const Common::String &fname, const Common::String &zone, const Common::String &scene) {
+	warning("TODO: Implement InGameScene::loadRBB");
+	return true;
+}
+
+bool InGameScene::loadRippleMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
+	warning("TODO: Implement InGameScene::loadRippleMask");
+	return true;
+}
+
+bool InGameScene::loadRObject(const Common::String &fname, const Common::String &zone, const Common::String &scene) {
+	warning("TODO: Implement InGameScene::loadRObject");
+	return true;
+}
+
+bool InGameScene::loadShadowMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
+	warning("TODO: Implement InGameScene::loadShadowMask");
+	return true;
+}
+
+bool InGameScene::loadShadowReceivingObject(const Common::String &fname, const Common::String &zone, const Common::String &scene) {
+	warning("TODO: Implement InGameScene::loadShadowReceivingObject");
+	return true;
+}
+
+bool InGameScene::loadZBufferObject(const Common::String &fname, const Common::String &zone, const Common::String &scene) {
+	warning("TODO: Implement InGameScene::loadZBufferObject");
+	return true;
 }
 
 Common::Path InGameScene::getLightsFileName() const {

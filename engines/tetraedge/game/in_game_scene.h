@@ -45,6 +45,8 @@ class TeLayout;
 
 class InGameScene : public TeScene {
 public:
+	friend class InGameSceneXmlParser;
+
 	InGameScene();
 
 	struct AnimObject {
@@ -94,7 +96,7 @@ public:
 		_blockingObjects.push_back(obj);
 	}
 	void addCallbackAnimation2D(const Common::String &param_1, const Common::String &param_2, float param_3);
-	bool addMarker(const Common::String &name, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal);
+	bool addMarker(const Common::String &name, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal, float anchorX, float anchorY);
 	static float angularDistance(float a1, float a2);
 	bool aroundAnchorZone(const AnchorZone *zone);
 	TeLayout *background();
@@ -146,6 +148,25 @@ public:
 	bool loadObjectMaterials(const Common::String &name);
 	bool loadObjectMaterials(const Common::String &path, const Common::String &name);
 	bool loadPlayerCharacter(const Common::String &cname);
+
+	// Syberia 2 specific data..
+	void loadActZones();
+	bool loadCamera(const Common::String &name);
+	bool loadDynamicLightBloc(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene);
+	// loadFlamme uses the xml doc
+	bool loadFreeMoveZone(const Common::String &name, TeVector2f32 &gridSize);
+	bool loadLight(const Common::String &fname, const Common::String &zone, const Common::String &scene);
+	bool loadMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene);
+	bool loadRBB(const Common::String &fname, const Common::String &zone, const Common::String &scene);
+	bool loadRippleMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene);
+	bool loadRObject(const Common::String &fname, const Common::String &zone, const Common::String &scene);
+	//bool loadSBB(const Common::String &fname, const Common::String &zone, const Common::String &scene); // Unused?
+	bool loadShadowMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene);
+	bool loadShadowReceivingObject(const Common::String &fname, const Common::String &zone, const Common::String &scene);
+	//bool loadSnowCone(const Common::String &fname, const Common::String &zone, const Common::String &scene) { return false; } // Unused?
+	//bool loadSnowCustom() // todo: from xml file?
+	bool loadXml(const Common::String &zone, const Common::String &scene);
+	bool loadZBufferObject(const Common::String &fname, const Common::String &zone, const Common::String &scene);
 
 	void moveCharacterTo(const Common::String &charName, const Common::String &curveName, float curveOffset, float curveEnd);
 	int object(const Common::String &oname);
@@ -199,6 +220,11 @@ public:
 	TeTimer &waitTimeTimer() { return _waitTimeTimer; }
 	Common::Array<Common::SharedPtr<TeLight>> &lights() { return _lights; }
 
+	// Note: Zone name and scene name are only set in Syberia 2
+	const Common::String getZoneName() const { return _zoneName; }
+	const Common::String getSceneName() const { return _sceneName; }
+
+	void setCollisionSlide(bool val) { _collisionSlide = val; }
 
 private:
 	int _shadowLightNo;
@@ -231,6 +257,7 @@ private:
 	Common::Array<TeIntrusivePtr<TeBezierCurve>> _bezierCurves;
 	Common::Array<Dummy> _dummies;
 	Common::Array<TeIntrusivePtr<TeModel>> _zoneModels;
+	Common::Array<TeIntrusivePtr<TeModel>> _masks;
 
 	TeIntrusivePtr<TeModel> _playerCharacterModel;
 	TeIntrusivePtr<TeBezierCurve> _curve;
@@ -245,6 +272,13 @@ private:
 	TeVector2f32 _viewportSize;
 
 	Common::Path _loadedPath;
+
+	// Syberia 2 specific items
+	static bool _collisionSlide;
+	Common::String _sceneName;
+	Common::String _zoneName;
+
+
 };
 
 } // end namespace Tetraedge
