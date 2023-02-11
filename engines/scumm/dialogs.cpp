@@ -1364,9 +1364,7 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 
 	_sessionServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerAddress", Common::U32String(""), _("Address of the server to connect to for hosting and joining online game sessions."));
 
-	_serverResetButton = new GUI::ButtonWidget(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", _("Default Server Settings"), _("Reset server settings to their defaults."), kResetServersCmd);
-	_serverResetDevButton = new GUI::ButtonWidget(widgetsBoss(), "HENetworkGameOptionsDialog.ServerResetDev", _("Development Server Settings"), _("Reset server settings to their development defaults."), kResetServerDevCmd);
-
+	_serverResetButton = addClearButton(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", kResetServersCmd);
 }
 
 void HENetworkGameOptionsWidget::load() {
@@ -1406,11 +1404,7 @@ void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 				.addPadding(0, 0, 12, 0)
 				.addWidget("SessionServerLabel", "OptionsLabel")
 				.addWidget("SessionServerAddress", "EditTextWidget")
-			.closeLayout()
-			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 5)
-				.addPadding(0, 0, 12, 0)
-				.addWidget("ServerReset", "Button")
-				.addWidget("ServerResetDev", "Button")
+				.addWidget("ServerReset", "", 15, 15)
 			.closeLayout()
 		.closeLayout()
 	.closeDialog();
@@ -1426,11 +1420,6 @@ void HENetworkGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint3
 	case kResetServersCmd:
 		_enableSessionServer->setState(true);
 		_sessionServerAddr->setEditString(Common::U32String("multiplayer.scummvm.org"));
-		g_gui.scheduleTopDialogRedraw();
-		break;
-	case kResetServerDevCmd:
-		_enableSessionServer->setState(false);
-		_sessionServerAddr->setEditString(Common::U32String("127.0.0.1"));
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	default:

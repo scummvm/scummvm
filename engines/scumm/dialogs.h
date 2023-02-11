@@ -336,19 +336,17 @@ private:
 	enum {
 		kEnableSessionCmd = 'ENBS',
 		kResetServersCmd = 'CLRS',
-		kResetServerDevCmd = 'CLRD'
 	};
 
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_enableSessionServer;
+
 	GUI::EditTextWidget *_sessionServerAddr;
+	GUI::ButtonWidget *_serverResetButton;
 
 	GUI::CheckboxWidget *_enableLANBroadcast;
-
-	GUI::ButtonWidget *_serverResetButton;
-	GUI::ButtonWidget *_serverResetDevButton;
 };
 #endif
 
