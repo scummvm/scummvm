@@ -125,7 +125,7 @@ public:
 	Common::String formatCastSummary(int castId);
 
 private:
-	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);
+	void loadScriptV2(Common::SeekableReadStreamEndian &stream, uint16 id);
 	void loadFontMap(Common::SeekableReadStreamEndian &stream);
 	void loadFontMapV4(Common::SeekableReadStreamEndian &stream);
 	void loadFXmp(Common::SeekableReadStreamEndian &stream);

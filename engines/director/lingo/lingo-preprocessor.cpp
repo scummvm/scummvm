@@ -62,7 +62,7 @@ static Common::U32String nexttok(const Common::u32char_type_t *s, const Common::
 	return res;
 }
 
-Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, bool simple) {
+Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, uint32 flags) {
 	const Common::u32char_type_t *s = code.c_str();
 	Common::U32String res;
 
@@ -161,7 +161,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 		s++;
 	}
 
-	if (simple)
+	if (flags & kLPPSimple)
 		return res;
 
 	tmp = res;
@@ -193,9 +193,15 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 
 		if (!defFound && (type == kMovieScript || type == kCastScript) && (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
-			if (tok.equals(macro) || tok.equals(factory) || tok.equals(on) || tok.equals(global) || tok.equals(property)) {
+			if (tok.equals(macro) || tok.equals(factory)) {
 				defFound = true;
-			} else {
+			} else if (!(flags & kLPPForceD2)) {
+				if (tok.equals(on) || tok.equals(global) || tok.equals(property)) {
+					defFound = true;
+				}
+			}
+
+			if (!defFound) {
 				debugC(2, kDebugParse | kDebugPreprocess, "skipping line before first definition");
 				for (int i = 0; i < continuationCount; i++) {
 					res += CONTINUATION;

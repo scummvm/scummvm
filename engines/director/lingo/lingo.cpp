@@ -322,7 +322,7 @@ Symbol Lingo::getHandler(const Common::String &name) {
 	return sym;
 }
 
-void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName) {
+void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName, uint32 preprocFlags) {
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d in '%s%s'\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, utf8ToPrintable(g_director->getCurrentPath()).c_str(), utf8ToPrintable(cast->getMacName()).c_str(), code.encode().c_str());
 
@@ -340,7 +340,7 @@ void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint1
 	else
 		contextName = Common::String::format("%d", id);
 
-	ScriptContext *sc = g_lingo->_compiler->compileLingo(code, this, type, CastMemberID(id, cast->_castLibID), contextName);
+	ScriptContext *sc = g_lingo->_compiler->compileLingo(code, this, type, CastMemberID(id, cast->_castLibID), contextName, false, preprocFlags);
 	if (sc) {
 		scriptContexts[type][id] = sc;
 		*sc->_refCount += 1;
