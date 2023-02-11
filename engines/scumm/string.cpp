@@ -548,6 +548,11 @@ bool ScummEngine::newLine() {
 			// (FT/German, if you look at the sign on the container at game start). After counterchecking
 			// the original code it seems that setting _nextLeft to 0 is the right thing to do here.
 			_nextLeft = /*_game.version >= 6 ? _string[0].xpos :*/ 0;
+
+		// The Sega CD version of Monkey Island 1 performs
+		// additional clipping on the X position of the string
+		if (_game.platform == Common::kPlatformSegaCD && _nextLeft < 16)
+			_nextLeft = 16;
 	} else if (_isRTL) {
 		if (_game.id == GID_MANIAC || _game.heversion >= 72 || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
@@ -924,7 +929,11 @@ void ScummEngine::CHARSET_1() {
 	}
 
 	if (_game.version > 3) {
-		int maxwidth = _charset->_right - _string[0].xpos - 1;
+		int maxwidth = _charset->_right - _string[0].xpos;
+
+		// The Sega CD text routines are more sensible to text wrapping
+		maxwidth -= _game.platform == Common::kPlatformSegaCD ? 16 : 1;
+
 		if (_charset->_center) {
 			if (maxwidth > _nextLeft)
 				maxwidth = _nextLeft;
@@ -936,8 +945,15 @@ void ScummEngine::CHARSET_1() {
 
 	if (_charset->_center) {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
+
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
+
+		// The Sega CD version of Monkey Island 1 performs
+		// additional clipping on the X position of the string
+		if (_game.platform == Common::kPlatformSegaCD && _nextLeft < 16)
+			_nextLeft = 16;
+
 	} else if (_isRTL) {
 		if (_game.id == GID_MANIAC || _game.heversion >= 72 || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
