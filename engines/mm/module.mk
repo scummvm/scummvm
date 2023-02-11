@@ -245,7 +245,7 @@ MODULE_OBJS := \
 	xeen/subtitles.o \
 	xeen/window.o \
 	xeen/xeen.o \
-	xeen/xsurface.o
+	shared/xeen/xsurface.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MM), DYNAMIC_PLUGIN)

@@ -19,42 +19,16 @@
  *
  */
 
-#ifndef XEEN_XSURFACE_H
-#define XEEN_XSURFACE_H
-
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/rect.h"
-#include "graphics/managed_surface.h"
+#include "common/algorithm.h"
+#include "common/util.h"
+#include "mm/shared/xeen/xsurface.h"
+#include "mm/xeen/resources.h"
+#include "mm/xeen/screen.h"
 
 namespace MM {
+namespace Shared {
 namespace Xeen {
 
-class BaseSurface : public Graphics::ManagedSurface {
-public:
-	void addDirtyRect(const Common::Rect &r) override {
-		Graphics::ManagedSurface::addDirtyRect(r);
-	}
-public:
-	BaseSurface() : Graphics::ManagedSurface() {
-	}
-	BaseSurface(int width, int height) : Graphics::ManagedSurface(width, height) {
-	}
-	~BaseSurface() override {
-	}
-};
-
-class XSurface : public BaseSurface {
-public:
-	XSurface() : BaseSurface() {
-	}
-	XSurface(int width, int height) : BaseSurface(width, height) {
-	}
-	~XSurface() override {
-	}
-};
-
 } // End of namespace Xeen
+} // End of namespace Shared
 } // End of namespace MM
-
-#endif

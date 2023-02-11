@@ -23,7 +23,7 @@
 #define XEEN_FONT_H
 
 #include "common/language.h"
-#include "mm/xeen/xsurface.h"
+#include "mm/shared/xeen/xsurface.h"
 
 namespace MM {
 namespace Xeen {
@@ -43,7 +43,7 @@ struct FontData {
 	static Justify _fontJustify;
 };
 
-class FontSurface: public XSurface, public FontData {
+class FontSurface: public Shared::Xeen::XSurface, public FontData {
 private:
 	const char *_displayString;
 	bool _msgWraps;

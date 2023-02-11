@@ -27,10 +27,12 @@
 #include "common/file.h"
 #include "graphics/surface.h"
 #include "mm/xeen/files.h"
-#include "mm/xeen/xsurface.h"
+#include "mm/shared/xeen/xsurface.h"
 
 namespace MM {
 namespace Xeen {
+
+using Shared::Xeen::XSurface;
 
 class XeenEngine;
 class Window;

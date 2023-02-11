@@ -27,7 +27,7 @@
 #include "common/rect.h"
 #include "mm/xeen/cutscenes.h"
 #include "mm/xeen/sprites.h"
-#include "mm/xeen/xsurface.h"
+#include "mm/shared/xeen/xsurface.h"
 
 namespace MM {
 namespace Xeen {
