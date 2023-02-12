@@ -677,6 +677,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		bool cancelled = false;
 
 		if (!ConfMan.getGameDomains().empty()) {
+			// I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 			GUI::MessageDialog alert(_(
 				"In this new version of ScummVM Android, significant changes were made to "
 				"the file access system to allow support for modern versions of the Android "
@@ -689,7 +690,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				"  1. For each game whose data is not found, go to the \"Paths\" tab in "
 				"the \"Game Options\" and change the \"Game path\"\n"
 				"  2. Inside the ScummVM file browser, use \"Go Up\" until you reach "
-				"the \"root\" folder where you will see the \"<Add SAF node>\" option.\n"
+				"the \"root\" folder where you will see the \"<Add a new folder>\" option.\n"
 				"  3. Choose that, then browse and select the \"parent\" folder for your "
 				"games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder\".\n"
 				"  4. Then, a new folder \"myGames\" will appear on the \"root\" folder "
@@ -704,6 +705,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			if (alert.runModal() != GUI::kMessageOK)
 				cancelled = true;
 		} else {
+			// I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 			GUI::MessageDialog alert(_(
 				"In this new version of ScummVM Android, significant changes were made to "
 				"the file access system to allow support for modern versions of the Android "
@@ -711,7 +713,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				"Thus, you need to set up SAF in order to be able to add the games.\n"
 				"\n"
 				"  1. Inside the ScummVM file browser, use \"Go Up\" until you reach "
-				"the \"root\" folder where you will see the \"<Add SAF node>\" option.\n"
+				"the \"root\" folder where you will see the \"<Add a new folder>\" option.\n"
 				"  2. Choose that, then browse and select the \"parent\" folder for your "
 				"games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder\".\n"
 				"  3. Then, a new folder \"myGames\" will appear on the \"root\" folder "
