@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-10 08:36+0000\n"
+"POT-Creation-Date: 2023-02-12 08:54+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -2306,11 +2306,11 @@ msgstr ""
 msgid "Saves"
 msgstr "इस चयनित खेल को शुरू करें"
 
-#: base/main.cpp:734
+#: base/main.cpp:753
 msgid "Error running game:"
 msgstr ""
 
-#: base/main.cpp:781
+#: base/main.cpp:800
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 

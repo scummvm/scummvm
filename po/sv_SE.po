@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-10 08:36+0000\n"
+"POT-Creation-Date: 2023-02-12 08:54+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -2363,11 +2363,11 @@ msgstr "Spela"
 msgid "Saves"
 msgstr "Spara"
 
-#: base/main.cpp:734
+#: base/main.cpp:753
 msgid "Error running game:"
 msgstr "Fel under körning av spel:"
 
-#: base/main.cpp:781
+#: base/main.cpp:800
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunde inte hitta en motor kapabel till att köra det valda spelet"
 

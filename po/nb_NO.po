@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-10 08:36+0000\n"
+"POT-Creation-Date: 2023-02-12 08:54+0000\n"
 "PO-Revision-Date: 2023-01-25 18:50+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2333,11 +2333,11 @@ msgstr "Spill"
 msgid "Saves"
 msgstr "Lagringer"
 
-#: base/main.cpp:734
+#: base/main.cpp:753
 msgid "Error running game:"
 msgstr "Problem ved kjøring av spill:"
 
-#: base/main.cpp:781
+#: base/main.cpp:800
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikke finne noen motor som kunne kjøre det valgte spillet"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-10 08:36+0000\n"
+"POT-Creation-Date: 2023-02-12 08:54+0000\n"
 "PO-Revision-Date: 2023-01-13 15:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2347,11 +2347,11 @@ msgstr "Spelen"
 msgid "Saves"
 msgstr "Opgeslagen spellen"
 
-#: base/main.cpp:734
+#: base/main.cpp:753
 msgid "Error running game:"
 msgstr "Fout tijdens het starten van spel:"
 
-#: base/main.cpp:781
+#: base/main.cpp:800
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 "Kon geen engine vinden die in staat was het geselecteerde spel te spelen"
