@@ -2766,7 +2766,7 @@ MiniscriptInstructionOutcome WorldManagerInterface::setCurrentScene(MiniscriptTh
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	bool addToReturnList = _opInt & 0x01 != 0;
+	bool addToReturnList = (_opInt & 0x01) != 0;
 	thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(scene->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, false, addToReturnList));
 
 	return kMiniscriptInstructionOutcomeContinue;
