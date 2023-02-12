@@ -526,6 +526,8 @@ private:
 	float _angle;
 	int32 _maxX;
 	int32 _minX;
+
+	int _requestedSessionId = -2;
 };
 
 int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
@@ -569,6 +571,13 @@ int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
 	case OP_NET_SET_PROVIDER_BY_NAME:
 #ifdef USE_ENET
 		res = _vm->_net->setProviderByName(args[0], args[1]);
+		if (res)
+			_requestedSessionId = _vm->networkSessionDialog();
+		if (_requestedSessionId == -2) {
+			// Cancelled out the join dialog.
+			_vm->_net->closeProvider();
+			res = 0;
+		}
 #endif
 		break;
 
@@ -578,9 +587,9 @@ int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
 		break;
 
 	case OP_NET_QUERY_SESSIONS:
-		// TODO: Replace the in-game session querying with
-		// our own GUI.
-		res = _vm->_net->querySessions();
+		if (_requestedSessionId > -1)
+			// Emulate that we've found a session.
+			res = 1;
 		break;
 
 	case OP_NET_GET_SESSION_NAME:
@@ -731,8 +740,8 @@ int LogicHEfootball2002::largestFreeBlock() {
 
 #ifdef USE_ENET
 int LogicHEfootball2002::netGetSessionName(int index) {
-	char name[MAX_PROVIDER_NAME];
-	_vm->_net->getSessionName(index - 1, name, sizeof(name));
+	char name[MAX_SESSION_NAME];
+	_vm->_net->getSessionName(_requestedSessionId, name, sizeof(name));
 	return _vm->setupStringArrayFromString(name);
 }
 
@@ -753,11 +762,9 @@ int LogicHEfootball2002::netInitLanGame(int32 *args) {
 		// Stop querying sessions if we haven't already
 		_vm->_net->stopQuerySessions();
 		// And host our new game.
-
 		res = _vm->_net->hostGame(sessionName, userName);
 	} else {
-		// TODO: Join via session name
-		res = _vm->_net->joinSession(0);
+		res = _vm->_net->joinSession(_requestedSessionId);
 		if (res)
 			_vm->_net->addUser(userName, userName);
 		_vm->_net->stopQuerySessions();

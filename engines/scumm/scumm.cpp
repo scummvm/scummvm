@@ -87,10 +87,13 @@
 #include "scumm/imuse/drivers/midi.h"
 #include "scumm/detection_steam.h"
 
+#ifdef ENABLE_HE
 #ifdef USE_ENET
 #include "scumm/he/net/net_main.h"
+#include "gui/sessionselector.h"
 #ifdef USE_LIBCURL
 #include "scumm/he/net/net_lobby.h"
+#endif
 #endif
 #endif
 
@@ -3454,6 +3457,19 @@ bool ScummEngine::displayMessageYesNo(const char *message, ...) {
 	return runDialog(dialog) == GUI::kMessageOK;
 }
 
+#ifdef ENABLE_HE
+int ScummEngine_v90he::networkSessionDialog() {
+	GUI::MessageDialog dialog(_("Would you like to host or join a network play session?"), _("Host"), _("Join"));
+	int res = runDialog(dialog);
+	if (res == GUI::kMessageOK)
+		// Hosting session.
+		return -1;
+	
+	// Joining a session
+	GUI::SessionSelectorDialog sessionDialog(this);
+	return runDialog(sessionDialog);
+}
+#endif
 
 #pragma mark -
 #pragma mark --- Miscellaneous ---

@@ -551,7 +551,31 @@ void ScummEngine_v6::o6_neq() {
 
 void ScummEngine_v6::o6_gt() {
 	int a = pop();
-	push(pop() > a);
+	int b = pop();
+
+	// WORKAROUND: In Football 2002, when hosting an Network game, it would eventually timeout,
+	// which causes the game to stop hosting and query for sessions again.
+	//
+	// [016C] (39)     localvar8++
+	// [016F] (36)     if (localvar8 > localvar12) {
+	// [0179] (54)       printDebug.begin()
+	// [017B] (54)       printDebug.msg("Host Timeout")
+	// [018A] (7C)       startScript(90,220,[])
+	// [0190] (7C)       startScript(90,2051,[])
+	// [0197] (7C)       startScript(90,2054,[])
+	// [019E] (80)       stopScript(0)
+	// [01A1] (**)     }
+	//
+	// We have our own session selection dialog which allows the user to host or join a session as
+	// they please; we do not want them to go through the whole setup again after the timeout
+	// so let's just make unreachable, allowing the session to be hosted indefinitely until
+	// they cancel it out.
+	if (_game.id == GID_FOOTBALL2002 && _currentRoom == 3 && vm.slot[_currentScript].number == 2052) {
+		push(0);
+		return;
+	}
+
+	push(b > a);
 }
 
 void ScummEngine_v6::o6_lt() {
