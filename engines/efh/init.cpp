@@ -215,7 +215,7 @@ void InitiativeStruct::init() {
 }
 
 void TileFactStruct::init() {
-	_field0 = _tileId = 0;
+	_status = _tileId = 0;
 }
 
 void TeamChar::init() {

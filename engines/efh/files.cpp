@@ -211,8 +211,8 @@ void EfhEngine::loadTechMapImp(int16 fileId) {
 	// The purpose is to properly load the misc map data in arrays in order to use them without being a pain afterwards
 	loadMapArrays(_techId);
 
-	loadImageSetToTileBank(1, _mapBitmapRefArr[_techId]._setId1 + 1);
-	loadImageSetToTileBank(2, _mapBitmapRefArr[_techId]._setId2 + 1);
+	loadImageSetToTileBank(0, _mapBitmapRefArr[_techId]._setId1);
+	loadImageSetToTileBank(1, _mapBitmapRefArr[_techId]._setId2);
 
 	initMapMonsters();
 	readImpFile(_techId, true);
@@ -248,7 +248,7 @@ void EfhEngine::readTileFact() {
 		error("Unable to find file %s", fileName.c_str());
 
 	for (int i = 0; i < 432; ++i) {
-		_tileFact[i]._field0 = f.readByte();
+		_tileFact[i]._status = f.readByte();
 		_tileFact[i]._tileId = f.readByte();
 	}
 }

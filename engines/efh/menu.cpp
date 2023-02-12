@@ -1091,7 +1091,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		_mapPosY = getRandom(_largeMapFlag ? 63 : 23);
 		int16 tileFactId = getTileFactId(_mapPosX, _mapPosY);
 
-		if (_tileFact[tileFactId]._field0 == 0) {
+		if (_tileFact[tileFactId]._status == 0) {
 			totalPartyKill();
 			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
 			if (gameMode == 2) {
@@ -1126,7 +1126,7 @@ int16 EfhEngine::useObject(int16 charId, int16 objectId, int16 teamMonsterId, in
 		_mapPosX = _items[itemId]._field19_mapPosX_or_maxDeltaPoints;
 		_mapPosY = _items[itemId]._mapPosY;
 		int16 tileFactId = getTileFactId(_mapPosX, _mapPosY);
-		if (_tileFact[tileFactId]._field0 == 0) {
+		if (_tileFact[tileFactId]._status == 0) {
 			totalPartyKill();
 			buffer1 = "The entire party vanishes in a flash... only to appear in stone !";
 			if (gameMode == 2) {

@@ -400,11 +400,11 @@ void EfhEngine::initEngine() {
 	}
 
 	// Load map tiles bitmaps
+	loadImageSetToTileBank(0, 0);
 	loadImageSetToTileBank(1, 1);
-	loadImageSetToTileBank(2, 2);
 
 	// Load characters bitmaps
-	loadImageSetToTileBank(3, 6);
+	loadImageSetToTileBank(2, 5);
 
 	// Load 320*200 Menu screen
 	Common::String fileName = Common::String::format("imageset.%d", 10);
@@ -436,10 +436,8 @@ void EfhEngine::initEngine() {
 	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	readImpFile(99, false);
 	_introDoneFl = true;
+
 	restoreAnimImageSetId();
-
-	// Note: The original at this point saves int 24h and sets a new int24 to handle fatal failure
-
 	checkProtection();
 	if (_loadSaveSlot == -1) {
 		loadEfhGame();
@@ -649,11 +647,10 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 				if (!groupAliveFl)
 					continue;
 
-				int16 imageSetIdx = 148 + kEncounters[curMapMons->_monsterRef]._animId;
-
 				if ((curMapMons->_possessivePronounSHL6 & 0x3F) == 0x3F && isNpcATeamMember(curMapMons->_npcId))
 					continue;
 
+				int16 imageSetIdx = 148 + kEncounters[curMapMons->_monsterRef]._animId;
 				int16 drawPosX = 128 + (posX - minX) * 16;
 				drawPosY = 8 + (posY - minY) * 16;
 				displayRawDataAtPos(_tileBankSubFilesArray[imageSetIdx], drawPosX, drawPosY);
@@ -2148,14 +2145,14 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 	return false;
 }
 
-int8 EfhEngine::checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4) {
-	debugC(3, kDebugEngine, "checkTileStatus %d-%d %s", mapPosX, mapPosY, arg4 ? "true" : "false");
+int8 EfhEngine::checkTileStatus(int16 mapPosX, int16 mapPosY, bool teamFl) {
+	debugC(3, kDebugEngine, "checkTileStatus %d-%d %s", mapPosX, mapPosY, teamFl ? "true" : "false");
 
 	int16 curTileInfo = getMapTileInfo(mapPosX, mapPosY);
 	int16 tileFactId = _currentTileBankImageSetId[curTileInfo / 72] * 72;
 	tileFactId += curTileInfo % 72;
 
-	if (arg4) {
+	if (teamFl) {
 		handleInteractionText(mapPosX, mapPosY, -1, 0x7FFF, 0, tileFactId);
 	}
 
@@ -2165,20 +2162,20 @@ int8 EfhEngine::checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4) {
 	}
 
 	if (_tileFact[tileFactId]._tileId != 0xFF) {
-		if ((arg4) || (!arg4 && tileFactId != 128 && tileFactId != 121)) {
+		if (teamFl || (!teamFl && tileFactId != 128 && tileFactId != 121)) {
 			if (_largeMapFlag)
 				_mapGameMaps[_techId][mapPosX][mapPosY] = _tileFact[tileFactId]._tileId;
 			else
 				_curPlace[mapPosX][mapPosY] = _tileFact[tileFactId]._tileId;
 
 			_redrawNeededFl = true;
-			if (_tileFact[tileFactId]._field0 == 0)
+			if (_tileFact[tileFactId]._status == 0) // Stone ?
 				return 2;
 			return 1;
 		}
 	}
 
-	return _tileFact[tileFactId]._field0;
+	return _tileFact[tileFactId]._status;
 }
 
 void EfhEngine::computeInitiatives() {
@@ -2444,12 +2441,9 @@ bool EfhEngine::checkMonsterCollision() {
 	return true;
 }
 
-void EfhEngine::loadImageSetToTileBank(int16 tileBankId, int16 imageSetId) {
-	debugC(3, kDebugEngine, "loadImageSetToTileBank %d %d", tileBankId, imageSetId);
-
-	// TODO: all the values of titleBankId and imageSetId are hardcoded. When all the calls are implemented, fix the values to avoid to have to decrease them
-	int16 bankId = tileBankId - 1;
-	int16 setId = imageSetId - 1;
+// The original was decreasing both parameters by 1. Instead, the values passed which are hardcoded are reduced by 1
+void EfhEngine::loadImageSetToTileBank(int16 bankId, int16 setId) {
+	debugC(3, kDebugEngine, "loadImageSetToTileBank %d %d", bankId, setId);
 
 	if (_currentTileBankImageSetId[bankId] == setId)
 		return;

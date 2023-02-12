@@ -216,7 +216,7 @@ struct MapMonster {
 	uint8 _weaponItemId;
 	uint8 _maxDamageAbsorption;
 	uint8 _monsterRef;
-	uint8 _additionalInfo; // abbb cddd a: special move flag, bbb: Pct modifier for random move, c aggressiveness, ddd movetype
+	uint8 _additionalInfo; // abbb cddd a: special move flag, bbb: Pct modifier for random move, c aggressiveness, ddd move type
 	uint8 _talkTextId;
 	uint8 _groupSize;
 	int16 _hitPoints[9];
@@ -232,7 +232,7 @@ struct InitiativeStruct {
 };
 
 struct TileFactStruct {
-	uint8 _field0;
+	uint8 _status;
 	uint8 _tileId;
 
 	void init();
@@ -305,7 +305,7 @@ private:
 	int16 getEquipmentDefense(int16 charId);
 	uint16 getEquippedExclusiveType(int16 charId, int16 exclusiveType, bool flag);
 	void displayLowStatusScreen(bool flag);
-	void loadImageSetToTileBank(int16 tileBankId, int16 imageSetId);
+	void loadImageSetToTileBank(int16 bankId, int16 setId);
 	void restoreAnimImageSetId();
 	void checkProtection();
 	void loadEfhGame();
@@ -366,7 +366,7 @@ private:
 	void startTalkMenu(int16 monsterId);
 	void displayImp1Text(int16 textId);
 	bool handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId, int16 itemId, int16 arg8, int16 imageSetId);
-	int8 checkTileStatus(int16 mapPosX, int16 mapPosY, bool arg4);
+	int8 checkTileStatus(int16 mapPosX, int16 mapPosY, bool teamFl);
 	void computeInitiatives();
 	void redrawScreenForced();
 	int16 countMonsterGroupMembers(int16 monsterGroup);
@@ -572,7 +572,7 @@ private:
 	int16 _animImageSetId;
 	uint8 _paletteTransformationConstant;
 	uint8 *_circleImageSubFileArray[12];
-	uint8 *_tileBankSubFilesArray[214]; // CHECKME : logically it should be 216
+	uint8 *_tileBankSubFilesArray[216];
 	BufferBM _imageDataPtr;
 	int16 _currentTileBankImageSetId[3];
 	int16 _unkRelatedToAnimImageSetId;
