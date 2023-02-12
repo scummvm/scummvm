@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-12 20:57+0000\n"
+"PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
@@ -218,10 +218,9 @@ msgstr "Chyba %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
-#, fuzzy, c-format
-#| msgid "Downloading icons list..."
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Stahování seznamu ikon..."
+msgstr "Stahování %S..."
 
 #: gui/downloadpacksdialog.cpp:200
 #, fuzzy
@@ -229,27 +228,23 @@ msgid "Clear Cache"
 msgstr "Vyčistit hodnotu"
 
 #: gui/downloadpacksdialog.cpp:251
-#, fuzzy, c-format
-#| msgid "Downloading icons list... %d entries"
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Stahování seznamu ikon... %d položek"
+msgstr "Stahování seznamu %S... %d položek"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "Zjištěno %d nových balíčků, %s %S"
 
 #: gui/downloadpacksdialog.cpp:263
-#, fuzzy
 msgid "Download"
 msgstr "Stáhnout"
 
 #: gui/downloadpacksdialog.cpp:287
-#, fuzzy, c-format
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"Stahování dokončeno.\n"
-"Nešlo stáhnout %u souborů."
+msgstr "Stahování dokončeno, staženo %d balíčků, %s %S"
 
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
 #: gui/gui-manager.cpp:162 gui/unknown-game-dialog.cpp:53
@@ -262,7 +257,7 @@ msgstr "Zavřít"
 
 #: gui/downloadpacksdialog.cpp:391 gui/downloadpacksdialog.cpp:438
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "CHYBA: Nebyla nastavena cesta k adresáři s ikonami"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:426
@@ -2025,7 +2020,7 @@ msgstr "Vyberte adresář pro kořen Správce souborů"
 
 #: gui/options.cpp:3182
 msgid "icon packs"
-msgstr ""
+msgstr "balíček ikon"
 
 #: gui/options.cpp:3193
 msgid "shader packs"
