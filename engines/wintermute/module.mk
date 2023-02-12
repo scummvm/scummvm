@@ -165,6 +165,7 @@ MODULE_OBJS += \
 	base/gfx/3dmesh.o \
 	base/gfx/3dshadow_volume.o \
 	base/gfx/base_renderer3d.o \
+	base/gfx/skin_mesh_helper.o \
 	base/gfx/xactive_animation.o \
 	base/gfx/xanimation.o \
 	base/gfx/xanimation_channel.o \
@@ -175,6 +176,7 @@ MODULE_OBJS += \
 	base/gfx/xmaterial.o \
 	base/gfx/xmesh.o \
 	base/gfx/xmodel.o \
+	base/gfx/xskinmesh_loader.o \
 	base/gfx/opengl/base_surface_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d_shader.o \

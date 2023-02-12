@@ -26,6 +26,8 @@
  */
 
 #include "engines/wintermute/base/gfx/xmaterial.h"
+#include "engines/wintermute/base/gfx/xskinmesh_loader.h"
+#include "engines/wintermute/base/gfx/skin_mesh_helper.h"
 
 #include "graphics/opengl/system_headers.h"
 
@@ -46,12 +48,16 @@ XMeshOpenGL::~XMeshOpenGL() {
 
 //////////////////////////////////////////////////////////////////////////
 bool XMeshOpenGL::render(XModel *model) {
-	if (_vertexData == nullptr) {
+	float *vertexData = _skinMesh->_mesh->_vertexData;
+	auto indexData = _skinMesh->_mesh->_indexData;
+	auto indexRanges = _skinMesh->_mesh->_indexRanges;
+	auto materialIndices = _skinMesh->_mesh->_materialIndices;
+	if (vertexData == nullptr) {
 		return false;
 	}
 
 	for (uint32 i = 0; i < _numAttrs; i++) {
-		int materialIndex = _materialIndices[i];
+		int materialIndex = materialIndices[i];
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[materialIndex]->_diffuse.data);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, _materials[materialIndex]->_diffuse.data);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, _materials[materialIndex]->_specular.data);
@@ -73,12 +79,12 @@ bool XMeshOpenGL::render(XModel *model) {
 		if (textureEnable)
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-		glVertexPointer(3, GL_FLOAT, kVertexComponentCount * sizeof(float), _vertexData + kPositionOffset);
-		glNormalPointer(GL_FLOAT, kVertexComponentCount * sizeof(float), _vertexData + kNormalOffset);
+		glVertexPointer(3, GL_FLOAT, XSkinMeshLoader::kVertexComponentCount * sizeof(float), vertexData + XSkinMeshLoader::kPositionOffset);
+		glNormalPointer(GL_FLOAT, XSkinMeshLoader::kVertexComponentCount * sizeof(float), vertexData + XSkinMeshLoader::kNormalOffset);
 		if (textureEnable)
-			glTexCoordPointer(2, GL_FLOAT, kVertexComponentCount * sizeof(float), _vertexData + kTextureCoordOffset);
+			glTexCoordPointer(2, GL_FLOAT, XSkinMeshLoader::kVertexComponentCount * sizeof(float), vertexData + XSkinMeshLoader::kTextureCoordOffset);
 
-		glDrawElements(GL_TRIANGLES, _indexRanges[i + 1] - _indexRanges[i], GL_UNSIGNED_SHORT, _indexData.data() + _indexRanges[i]);
+		glDrawElements(GL_TRIANGLES, indexRanges[i + 1] - indexRanges[i], GL_UNSIGNED_SHORT, indexData.data() + indexRanges[i]);
 
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_NORMAL_ARRAY);

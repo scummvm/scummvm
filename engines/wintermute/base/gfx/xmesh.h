@@ -40,19 +40,13 @@ namespace Wintermute {
 class BaseSprite;
 class FrameNode;
 class Material;
-class XModel;
 class ShadowVolume;
 class VideoTheoraPlayer;
+class SkinMeshHelper;
 struct XMeshObject;
 
-struct SkinWeights {
-	Common::String _boneName;
-	Math::Matrix4 _offsetMatrix;
-	BaseArray<uint32> _vertexIndices;
-	BaseArray<float> _vertexWeights;
-};
-
 class XMesh : public BaseNamedObject {
+	friend class XSkinMeshLoader;
 public:
 	XMesh(BaseGame *inGame);
 	virtual ~XMesh();
@@ -76,47 +70,23 @@ public:
 	bool restoreDeviceObjects();
 
 protected:
-	static const int kVertexComponentCount = 8;
-	static const int kPositionOffset = 5;
-	static const int kTextureCoordOffset = 0;
-	static const int kNormalOffset = 2;
-
-	// anything which does not fit into 16 bits would we fine
-	static const uint32 kNullIndex = 0xFFFFFFFF;
-
-	bool parsePositionCoords(XMeshObject *mesh);
-	bool parseFaces(XMeshObject *mesh, int faceCount, Common::Array<int> &indexCountPerFace);
-	bool parseTextureCoords(XFileData *xobj);
-	bool parseNormalCoords(XFileData *xobj);
-	bool parseMaterials(XFileData *xobj, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace);
-	bool parseSkinWeights(XFileData *xobj);
-	bool parseVertexDeclaration(XFileData *xobj);
 
 	void updateBoundingBox();
 
-	bool generateAdjacency();
-	bool adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4);
-
-	float *_vertexData;
-	float *_vertexPositionData;
-	float *_vertexNormalData;
-	uint32 _vertexCount;
-	Common::Array<uint16> _indexData;
-
-	BaseArray<Math::Matrix4 *> _boneMatrices;
-	BaseArray<SkinWeights> skinWeightsList;
-
-	Common::Array<uint32> _adjacency;
-
-	BaseArray<Material *> _materials;
-	BaseArray<int> _indexRanges;
-	BaseArray<int> _materialIndices;
 	uint32 _numAttrs;
 
 	// Wintermute3D used the ID3DXSKININFO interface
 	// we will only store, whether this mesh is skinned at all
 	// and factor out the necessary computations into some functions
 	bool _skinnedMesh;
+
+	SkinMeshHelper *_skinMesh;
+
+	BaseArray<Math::Matrix4 *> _boneMatrices;
+
+	Common::Array<uint32> _adjacency;
+
+	BaseArray<Material *> _materials;
 };
 
 } // namespace Wintermute
