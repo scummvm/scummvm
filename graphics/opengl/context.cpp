@@ -321,11 +321,6 @@ int Context::getGLSLVersion() const {
 		return 0;
 	}
 
-	// No shader support in OpenGL 1.x
-	if (type == kContextGL && !isGLVersionOrHigher(2, 0)) {
-		return 0;
-	}
-
 	const char *glslVersionString = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
 	if (!glslVersionString) {
 		warning("Could not get GLSL version");
