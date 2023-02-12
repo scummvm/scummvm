@@ -22,8 +22,8 @@
 #include "common/stream.h"
 #include "common/hash-str.h"
 
-#include "engines/vcruise/script.h"
-#include "engines/vcruise/textparser.h"
+#include "vcruise/script.h"
+#include "vcruise/textparser.h"
 
 
 namespace VCruise {
@@ -529,8 +529,8 @@ void ScriptCompiler::codeGenScript(ProtoScript &protoScript, Script &script) {
 
 	int32 nextLabel = 0;
 
-	// Pass 1: Convert all flow control constructs into references to the flow control construct.
-	// This changes Switch, If, and Break proto-ops to point to the corresponding if or switch index
+	// Pass 1: Collect flow control constructs, make all flow control constructs point to the index of the construct,
+	// replace Else, Case, EndIf, EndSwitch, and Default instructions with Label and JumpToLabel.
 	for (const ProtoInstruction &instr : protoScript.instrs) {
 		switch (instr.protoOp) {
 		case kProtoOpScript:
@@ -675,8 +675,7 @@ void ScriptCompiler::codeGenScript(ProtoScript &protoScript, Script &script) {
 
 	Common::HashMap<uint, uint> labelToInstr;
 
-	// Pass 2: Convert CF block references into label-targeting ops
-	// This eliminates If, Switch, and Break ops
+	// Pass 2: Unroll If and Switch instructions into CheckValue and JumpToLabel ops, resolve label locations
 	for (const ProtoInstruction &instr : instrs) {
 		switch (instr.protoOp) {
 		case kProtoOpScript:
@@ -717,7 +716,7 @@ void ScriptCompiler::codeGenScript(ProtoScript &protoScript, Script &script) {
 
 	instrs.clear();
 
-	// Pass 3: Resolve labels and write out finished instructions
+	// Pass 3: Change all JumpToLabel ops to Jump ops and write out final instructions
 	script.instrs.reserve(instrs2.size());
 
 	for (const ProtoInstruction &instr : instrs2) {

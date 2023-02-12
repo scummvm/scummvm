@@ -30,20 +30,32 @@ class OSystem;
 
 namespace Graphics {
 
+struct PixelFormat;
 struct WinCursorGroup;
+class ManagedSurface;
 
 } // End of namespace Graphics
 
+namespace Video {
+
+class AVIDecoder;
+
+} // End of namespace Video
+
 namespace VCruise {
 
+class AudioPlayer;
 class TextParser;
 struct ScriptSet;
+struct Script;
+struct Instruction;
 
 enum GameState {
-	kGameStateBoot,
-	kGameStateCinematic,
-	kGameStateQuit,
-	kGameStateRunning,
+	kGameStateBoot,					// Booting the game
+	kGameStateWaitingForAnimation,	// Waiting for a blocking animation to complete, then resuming script
+	kGameStateQuit,					// Quitting
+	kGameStateIdle,					// Waiting for input events
+	kGameStateScript,				// Running a script
 };
 
 struct AnimationDef {
@@ -91,8 +103,10 @@ struct MapDef {
 
 class Runtime {
 public:
-	Runtime(OSystem *system, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
+	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
 	virtual ~Runtime();
+
+	void initSections(Common::Rect gameRect, Common::Rect menuRect, Common::Rect trayRect, const Graphics::PixelFormat &pixFmt);
 
 	void loadCursors(const char *exeName);
 
@@ -100,35 +114,6 @@ public:
 	void drawFrame();
 
 private:
-	bool bootGame();
-	bool runGame();
-
-	void loadIndex();
-	void changeToScreen(uint roomNumber, uint screenNumber);
-	void loadMap(Common::SeekableReadStream *stream);
-
-	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursors;		// Cursors indexed as CURSOR_CUR_##
-	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursorsShort;	// Cursors indexed as CURSOR_#
-
-	OSystem *_system;
-	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
-	uint _screenNumber;
-
-	uint _loadedRoomNumber;
-	uint _activeScreenNumber;
-	bool _havePendingScreenChange;
-	GameState _gameState;
-	VCruiseGameID _gameID;
-
-	Common::FSNode _rootFSNode;
-	Common::FSNode _logDir;
-	Common::FSNode _mapDir;
-
-	Common::Array<Common::SharedPtr<RoomDef> > _roomDefs;
-	Common::SharedPtr<ScriptSet> _scriptSet;
-
-	MapDef _map;
-
 	enum IndexParseType {
 		kIndexParseTypeNone,
 		kIndexParseTypeRoom,
@@ -141,13 +126,165 @@ private:
 		kIndexParseTypeNameRoom,
 	};
 
+	enum AnimDecoderState {
+		kAnimDecoderStateStopped,
+		kAnimDecoderStatePlaying,
+		kAnimDecoderStatePaused,
+	};
+
 	struct IndexPrefixTypePair {
 		const char *prefix;
 		IndexParseType parseType;
 	};
 
+	struct RenderSection {
+		Common::SharedPtr<Graphics::ManagedSurface> surf;
+		Common::Rect rect;
+
+		void init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt);
+	};
+
+	typedef int32 ScriptArg_t;
+	typedef int32 StackValue_t;
+
+	bool bootGame();
+	bool runIdle();
+	bool runScript();
+	bool runWaitForAnimation();
+	void terminateScript();
+
+	void loadIndex();
+	void changeToScreen(uint roomNumber, uint screenNumber);
+	void loadMap(Common::SeekableReadStream *stream);
+
+	void changeMusicTrack(int musicID);
+	void changeAnimation(const AnimationDef &animDef);
+
+	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
+
+	void activateScript(const Common::SharedPtr<Script> &script);
+
 	bool parseIndexDef(TextParser &parser, IndexParseType parseType, uint roomNumber, const Common::String &blamePath);
 	void allocateRoomsUpTo(uint roomNumber);
+
+	void scriptOpNumber(ScriptArg_t arg);
+	void scriptOpRotate(ScriptArg_t arg);
+	void scriptOpAngle(ScriptArg_t arg);
+	void scriptOpAngleGGet(ScriptArg_t arg);
+	void scriptOpSpeed(ScriptArg_t arg);
+	void scriptOpSAnimL(ScriptArg_t arg);
+	void scriptOpChangeL(ScriptArg_t arg);
+
+	void scriptOpAnimR(ScriptArg_t arg);
+	void scriptOpAnimF(ScriptArg_t arg);
+	void scriptOpAnimN(ScriptArg_t arg);
+	void scriptOpAnimG(ScriptArg_t arg);
+	void scriptOpAnimS(ScriptArg_t arg);
+	void scriptOpAnim(ScriptArg_t arg);
+
+	void scriptOpStatic(ScriptArg_t arg);
+	void scriptOpVarLoad(ScriptArg_t arg);
+	void scriptOpVarStore(ScriptArg_t arg);
+	void scriptOpSetCursor(ScriptArg_t arg);
+	void scriptOpSetRoom(ScriptArg_t arg);
+	void scriptOpLMB(ScriptArg_t arg);
+	void scriptOpLMB1(ScriptArg_t arg);
+	void scriptOpSoundS1(ScriptArg_t arg);
+	void scriptOpSoundL2(ScriptArg_t arg);
+
+	void scriptOpMusic(ScriptArg_t arg);
+	void scriptOpMusicUp(ScriptArg_t arg);
+	void scriptOpParm1(ScriptArg_t arg);
+	void scriptOpParm2(ScriptArg_t arg);
+	void scriptOpParm3(ScriptArg_t arg);
+	void scriptOpParmG(ScriptArg_t arg);
+
+	void scriptOpVolumeDn4(ScriptArg_t arg);
+	void scriptOpVolumeUp3(ScriptArg_t arg);
+	void scriptOpRandom(ScriptArg_t arg);
+	void scriptOpDrop(ScriptArg_t arg);
+	void scriptOpDup(ScriptArg_t arg);
+	void scriptOpSay3(ScriptArg_t arg);
+	void scriptOpSetTimer(ScriptArg_t arg);
+	void scriptOpLoSet(ScriptArg_t arg);
+	void scriptOpLoGet(ScriptArg_t arg);
+	void scriptOpHiSet(ScriptArg_t arg);
+	void scriptOpHiGet(ScriptArg_t arg);
+
+	void scriptOpNot(ScriptArg_t arg);
+	void scriptOpAnd(ScriptArg_t arg);
+	void scriptOpOr(ScriptArg_t arg);
+	void scriptOpCmpEq(ScriptArg_t arg);
+
+	void scriptOpBitLoad(ScriptArg_t arg);
+	void scriptOpBitSet0(ScriptArg_t arg);
+	void scriptOpBitSet1(ScriptArg_t arg);
+
+	void scriptOpDisc1(ScriptArg_t arg);
+	void scriptOpDisc2(ScriptArg_t arg);
+	void scriptOpDisc3(ScriptArg_t arg);
+
+	void scriptOpEscOn(ScriptArg_t arg);
+	void scriptOpEscOff(ScriptArg_t arg);
+	void scriptOpEscGet(ScriptArg_t arg);
+	void scriptOpBackStart(ScriptArg_t arg);
+
+	void scriptOpAnimName(ScriptArg_t arg);
+	void scriptOpValueName(ScriptArg_t arg);
+	void scriptOpVarName(ScriptArg_t arg);
+	void scriptOpSoundName(ScriptArg_t arg);
+	void scriptOpCursorName(ScriptArg_t arg);
+
+	void scriptOpCheckValue(ScriptArg_t arg);
+	void scriptOpJump(ScriptArg_t arg);
+
+	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursors;		// Cursors indexed as CURSOR_CUR_##
+	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursorsShort;	// Cursors indexed as CURSOR_#
+
+	OSystem *_system;
+	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
+	uint _screenNumber;
+	uint _direction;
+
+	uint _loadedRoomNumber;
+	uint _activeScreenNumber;
+	bool _havePendingScreenChange;
+	GameState _gameState;
+
+	bool _escOn;
+
+	VCruiseGameID _gameID;
+
+	Common::FSNode _rootFSNode;
+	Common::FSNode _logDir;
+	Common::FSNode _mapDir;
+	Common::FSNode _sfxDir;
+	Common::FSNode _animsDir;
+
+	Common::Array<Common::SharedPtr<RoomDef> > _roomDefs;
+	Common::SharedPtr<ScriptSet> _scriptSet;
+
+	Common::SharedPtr<Script> _activeScript;
+	uint _scriptNextInstruction;
+	Common::Array<StackValue_t> _scriptStack;
+
+	Common::SharedPtr<AudioPlayer> _musicPlayer;
+
+	Common::SharedPtr<Video::AVIDecoder> _animDecoder;
+	AnimDecoderState _animDecoderState;
+	uint _animFrameNumber;
+	uint _animLastFrame;
+	uint _loadedAnimation;
+
+	Audio::Mixer *_mixer;
+
+	MapDef _map;
+
+	RenderSection _gameSection;
+	RenderSection _menuSection;
+	RenderSection _traySection;
+
+	static const uint kAnimDefStackArgs = 3;
 };
 
 } // End of namespace VCruise
