@@ -177,6 +177,12 @@ public:
 	bool _gameWon[3];
 	uint _finalScore;
 	ExtendedOptions _extOptions;
+
+	CCArchive *_xeenCc = nullptr, *_darkCc = nullptr,
+		*_introCc = nullptr;
+	SaveArchive *_xeenSave = nullptr, *_darkSave = nullptr;
+	BaseCCArchive *_currentArchive = nullptr;
+	SaveArchive *_currentSave = nullptr;
 public:
 	XeenEngine(OSystem *syst, const MM::MightAndMagicGameDescription *gameDesc);
 	~XeenEngine() override;

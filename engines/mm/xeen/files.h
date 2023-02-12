@@ -31,6 +31,7 @@
 #include "common/str-array.h"
 #include "graphics/surface.h"
 #include "mm/shared/xeen/cc_archive.h"
+#include "mm/shared/xeen/file.h"
 
 namespace MM {
 namespace Xeen {
@@ -38,9 +39,9 @@ namespace Xeen {
 using Shared::Xeen::BaseCCArchive;
 using Shared::Xeen::CCArchive;
 using Shared::Xeen::CCEntry;
+using Shared::Xeen::File;
 
 class XeenEngine;
-class File;
 class SaveArchive;
 class Party;
 class OutFile;
@@ -65,7 +66,13 @@ class SavesManager;
  */
 class FileManager {
 public:
-	int _ccNum;
+	int _ccNum = 0;
+	CCArchive *_xeenCc = nullptr, *_darkCc = nullptr,
+		*_introCc = nullptr;
+	SaveArchive *_xeenSave = nullptr, *_darkSave = nullptr;
+	BaseCCArchive *_currentArchive = nullptr;
+	SaveArchive *_currentSave = nullptr;
+
 public:
 	/**
 	 * Constructor
@@ -98,97 +105,6 @@ public:
 	 * Saves a save archive to a savegame
 	 */
 	void save(Common::WriteStream &s);
-};
-
-/**
- * Derived file class
- */
-class File : public Common::File {
-	friend class FileManager;
-	friend class OutFile;
-	friend class SavesManager;
-	friend class Debugger;
-private:
-	static CCArchive *_xeenCc, *_darkCc, *_introCc;
-	static SaveArchive *_xeenSave, *_darkSave;
-	static BaseCCArchive *_currentArchive;
-	static SaveArchive *_currentSave;
-public:
-	/**
-	 * Sets which archive is used by default
-	 */
-	static void setCurrentArchive(int ccMode);
-
-	/**
-	 * Synchronizes a boolean array as a bitfield set
-	 */
-	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
-public:
-	File() : Common::File() {}
-	File(const Common::String &filename);
-	File(const Common::String &filename, int ccMode);
-	File(const Common::String &filename, Common::Archive &archive);
-	~File() override {}
-
-	/**
-	 * Opens the given file, throwing an error if it can't be opened
-	 */
-	bool open(const Common::Path &filename) override;
-
-	/**
-	 * Opens the given file, throwing an error if it can't be opened
-	 */
-	bool open(const Common::Path &filename, Common::Archive &archive) override;
-
-	/**
-	 * Opens the given file, throwing an error if it can't be opened
-	 */
-	virtual bool open(const Common::String &filename, int ccMode);
-
-	/**
-	 * Opens the given file
-	 */
-	bool open(const Common::FSNode &node) override {
-		return Common::File::open(node);
-	}
-
-	/**
-	 * Opens the given file
-	 */
-	bool open(SeekableReadStream *stream, const Common::String &name) override {
-		return Common::File::open(stream, name);
-	}
-
-	/**
-	 * Reads in a null terminated string
-	 */
-	Common::String readString();
-
-	/**
-	 * Checks if a given file exists
-	 *
-	 * @param	filename	the file to check for
-	 * @return	true if the file exists, false otherwise
-	 */
-	static bool exists(const Common::String &filename);
-
-	/**
-	 * Checks if a given file exists
-	 *
-	 * @param	filename	the file to check for
-	 * @param	ccMode		Archive to use
-	 * @return	true if the file exists, false otherwise
-	 */
-	static bool exists(const Common::String &filename, int ccMode);
-
-	/**
-	 * Checks if a given file exists
-	 *
-	 * @param	filename	the file to check for
-	 * @param	archive		Archive to use
-	 * @return	true if the file exists, false otherwise
-	 */
-	static bool exists(const Common::String &filename, Common::Archive &archive);
 };
 
 /**

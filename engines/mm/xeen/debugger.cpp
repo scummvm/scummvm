@@ -215,8 +215,8 @@ bool Debugger::cmdLoadOriginal(int argc, const char **argv) {
 	}
 
 	// Loop through loading the sides' save archives
-	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
-	CCArchive *cc[2] = { File::_xeenCc, File::_darkCc };
+	SaveArchive *archives[2] = { files._xeenSave, files._darkSave };
+	CCArchive *cc[2] = { files._xeenCc, files._darkCc };
 	const char *prefix[2] = { "XEEN", "DARK" };
 
 	Common::FSNode folder(argv[1]);
@@ -238,7 +238,7 @@ bool Debugger::cmdLoadOriginal(int argc, const char **argv) {
 	files.setGameCc(_vm->getGameID() == GType_DarkSide ? 1 : 0);
 
 	// Load the character roster and party
-	File::_currentSave->loadParty();
+	files._currentSave->loadParty();
 
 	// Reset any combat information from the previous game
 	combat.reset();

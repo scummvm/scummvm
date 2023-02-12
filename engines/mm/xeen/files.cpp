@@ -34,38 +34,38 @@ namespace Xeen {
 
 FileManager::FileManager(XeenEngine *vm) {
 	_ccNum = vm->getGameID() == GType_DarkSide;
-	File::_xeenCc = File::_darkCc = File::_introCc = nullptr;
-	File::_xeenSave = File::_darkSave = nullptr;
-	File::_currentSave = nullptr;
-	File::_currentArchive = nullptr;
+	_xeenCc = _darkCc = _introCc = nullptr;
+	_xeenSave = _darkSave = nullptr;
+	_currentSave = nullptr;
+	_currentArchive = nullptr;
 }
 
 FileManager::~FileManager() {
 	SearchMan.remove("intro");
 	SearchMan.remove("data");
-	delete File::_xeenCc;
-	delete File::_darkCc;
+	delete _xeenCc;
+	delete _darkCc;
 }
 
 bool FileManager::setup() {
 	if (g_vm->getGameID() == GType_Swords) {
-		File::_xeenCc = nullptr;
-		File::_darkCc = new CCArchive("swrd.cc", "xeen", true);
+		_xeenCc = nullptr;
+		_darkCc = new CCArchive("swrd.cc", "xeen", true);
 	} else {
-		File::_xeenCc = (g_vm->getGameID() == GType_DarkSide) ? nullptr :
+		_xeenCc = (g_vm->getGameID() == GType_DarkSide) ? nullptr :
 			new CCArchive("xeen.cc", "xeen", true);
-		File::_darkCc = (g_vm->getGameID() == GType_Clouds) ? nullptr :
+		_darkCc = (g_vm->getGameID() == GType_Clouds) ? nullptr :
 			new CCArchive("dark.cc", "dark", true);
 	}
 
 	if (Common::File::exists("intro.cc")) {
-		File::_introCc = new CCArchive("intro.cc", "intro", true);
-		SearchMan.add("intro", File::_introCc);
+		_introCc = new CCArchive("intro.cc", "intro", true);
+		SearchMan.add("intro", _introCc);
 	}
 
-	File::_currentArchive = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
-		File::_darkCc : File::_xeenCc;
-	assert(File::_currentArchive);
+	_currentArchive = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
+		_darkCc : _xeenCc;
+	assert(_currentArchive);
 
 	// Set up the engine data file
 	Common::U32String errMsg;
@@ -93,144 +93,6 @@ void FileManager::load(Common::SeekableReadStream &stream) {
 
 void FileManager::save(Common::WriteStream &s) {
 	s.writeByte(_ccNum ? 1 : 0);
-}
-
-/*------------------------------------------------------------------------*/
-
-CCArchive *File::_xeenCc;
-CCArchive *File::_darkCc;
-CCArchive *File::_introCc;
-SaveArchive *File::_xeenSave;
-SaveArchive *File::_darkSave;
-BaseCCArchive *File::_currentArchive;
-SaveArchive *File::_currentSave;
-
-File::File(const Common::String &filename) {
-	File::open(filename);
-}
-
-File::File(const Common::String &filename, Common::Archive &archive) {
-	File::open(filename, archive);
-}
-
-File::File(const Common::String &filename, int ccMode) {
-	File::open(filename, ccMode);
-}
-
-bool File::open(const Common::Path &filename) {
-	if (!_currentSave || !Common::File::open(filename, *_currentSave)) {
-		if (!_currentArchive || !Common::File::open(filename, *_currentArchive)) {
-			// Could not find in current archive, so try intro.cc or in folder
-			if (!Common::File::open(filename))
-				error("Could not open file - %s", filename.toString().c_str());
-		}
-	}
-
-	return true;
-}
-
-bool File::open(const Common::Path &filename, Common::Archive &archive) {
-	if (!Common::File::open(filename, archive))
-		error("Could not open file - %s", filename.toString().c_str());
-	return true;
-}
-
-bool File::open(const Common::String &filename, int ccMode) {
-	FileManager &files = *g_vm->_files;
-	int oldNum = files._ccNum;
-
-	files.setGameCc(ccMode);
-	if (File::exists(filename, *_currentArchive))
-		File::open(filename, *_currentArchive);
-	else
-		File::open(filename);
-
-	files.setGameCc(oldNum);
-
-	return true;
-}
-
-void File::setCurrentArchive(int ccMode) {
-	switch (ccMode) {
-	case 0:
-		_currentArchive = _xeenCc;
-		_currentSave = _xeenSave;
-		break;
-
-	case 1:
-		_currentArchive = _darkCc;
-		_currentSave = _darkSave;
-		break;
-
-	case 2:
-		_currentArchive = _introCc;
-		_currentSave = nullptr;
-		break;
-
-	default:
-		break;
-	}
-
-	assert(_currentArchive);
-}
-
-Common::String File::readString() {
-	Common::String result;
-	char c;
-
-	while (pos() < size() && (c = (char)readByte()) != '\0')
-		result += c;
-
-	return result;
-}
-
-bool File::exists(const Common::String &filename) {
-	if (!_currentSave || !_currentSave->hasFile(filename)) {
-		if (!_currentArchive->hasFile(filename)) {
-			// Could not find in current archive, so try intro.cc or in folder
-			return Common::File::exists(filename);
-		}
-	}
-
-	return true;
-}
-
-bool File::exists(const Common::String &filename, int ccMode) {
-	FileManager &files = *g_vm->_files;
-	int oldNum = files._ccNum;
-
-	files.setGameCc(ccMode);
-	bool result = exists(filename);
-	files.setGameCc(oldNum);
-
-	return result;
-}
-
-bool File::exists(const Common::String &filename, Common::Archive &archive) {
-	return archive.hasFile(filename);
-}
-
-void File::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP) {
-	byte data = 0;
-
-	int bitCounter = 0;
-	for (bool *p = startP; p < endP; ++p, bitCounter = (bitCounter + 1) % 8) {
-		if (bitCounter == 0) {
-			if (s.isLoading() || p != startP)
-				s.syncAsByte(data);
-
-			if (s.isSaving())
-				data = 0;
-		}
-
-		if (s.isLoading())
-			*p = ((data >> bitCounter) & 1) != 0;
-		else if (*p)
-			data |= 1 << bitCounter;
-	}
-
-	if (s.isSaving())
-		s.syncAsByte(data);
 }
 
 /*------------------------------------------------------------------------*/
@@ -402,7 +264,8 @@ void SaveArchive::replaceEntry(uint16 id, const byte *data, size_t size) {
 
 OutFile::OutFile(const Common::String &filename) :
 		_filename(filename), _backingStream(DisposeAfterUse::YES) {
-	_archive = File::_currentSave;
+	FileManager &files = *g_vm->_files;
+	_archive = files._currentSave;
 }
 
 OutFile::OutFile(const Common::String &filename, SaveArchive *archive) :
@@ -411,8 +274,9 @@ OutFile::OutFile(const Common::String &filename, SaveArchive *archive) :
 
 OutFile::OutFile(const Common::String &filename, int ccMode) :
 		_filename(filename), _backingStream(DisposeAfterUse::YES) {
+	FileManager &files = *g_vm->_files;
 	g_vm->_files->setGameCc(ccMode);
-	_archive = File::_currentSave;
+	_archive = files._currentSave;
 }
 
 uint32 OutFile::write(const void *dataPtr, uint32 dataSize) {

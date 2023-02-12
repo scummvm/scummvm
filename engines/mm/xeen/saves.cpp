@@ -36,13 +36,15 @@ namespace Xeen {
 
 SavesManager::SavesManager(const Common::String &targetName) : _targetName(targetName),
 _wonWorld(false), _wonDarkSide(false) {
-	File::_xeenSave = nullptr;
-	File::_darkSave = nullptr;
+	FileManager &files = *g_vm->_files;
+	files._xeenSave = nullptr;
+	files._darkSave = nullptr;
 }
 
 SavesManager::~SavesManager() {
-	delete File::_xeenSave;
-	delete File::_darkSave;
+	FileManager &files = *g_vm->_files;
+	delete files._xeenSave;
+	delete files._darkSave;
 }
 
 static const char *const SAVEGAME_STR = "XEEN";
@@ -121,6 +123,7 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc, 
 		return Common::kCreatingFileFailed;
 
 	// Push map and party data to the save archives
+	FileManager &files = *g_vm->_files;
 	Map &map = *g_vm->_map;
 	map.saveMaze();
 
@@ -130,7 +133,7 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc, 
 	writeSavegameHeader(out, header);
 
 	// Loop through saving the sides' save archives
-	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
+	SaveArchive *archives[2] = { files._xeenSave, files._darkSave };
 	for (int idx = 0; idx < 2; ++idx) {
 		if (archives[idx]) {
 			archives[idx]->save(*out);
@@ -141,7 +144,6 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc, 
 	}
 
 	// Write out miscellaneous
-	FileManager &files = *g_vm->_files;
 	files.save(*out);
 
 	out->finalize();
@@ -171,7 +173,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 	events.setPlayTime(header._totalFrames);
 
 	// Loop through loading the sides' save archives
-	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
+	SaveArchive *archives[2] = { files._xeenSave, files._darkSave };
 	for (int idx = 0; idx < 2; ++idx) {
 		uint fileSize = saveFile->readUint32LE();
 
@@ -181,7 +183,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 					saveFile->pos() + fileSize);
 				archives[idx]->load(arcStream);
 			} else {
-				archives[idx]->reset((idx == 1) ? File::_darkCc : File::_xeenCc);
+				archives[idx]->reset((idx == 1) ? files._darkCc : files._xeenCc);
 			}
 		} else {
 			assert(!fileSize);
@@ -192,7 +194,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 	files.load(*saveFile);
 
 	// Load the character roster and party
-	File::_currentSave->loadParty();
+	files._currentSave->loadParty();
 
 	// Reset any combat information from the previous game
 	combat.reset();
@@ -208,30 +210,31 @@ Common::Error SavesManager::loadGameState(int slot) {
 }
 
 void SavesManager::newGame() {
-	delete File::_xeenSave;
-	delete File::_darkSave;
-	File::_xeenSave = nullptr;
-	File::_darkSave = nullptr;
+	FileManager &files = *g_vm->_files;
+	delete files._xeenSave;
+	delete files._darkSave;
+	files._xeenSave = nullptr;
+	files._darkSave = nullptr;
 
 	// Reset any combat information from the previous game
 	g_vm->_combat->reset();
 
 	// Reset the game states
 	if (g_vm->getGameID() != GType_Clouds) {
-		File::_darkSave = new SaveArchive(g_vm->_party);
-		File::_darkSave->reset(File::_darkCc);
+		files._darkSave = new SaveArchive(g_vm->_party);
+		files._darkSave->reset(files._darkCc);
 	}
 	if (g_vm->getGameID() != GType_DarkSide && g_vm->getGameID() != GType_Swords) {
-		File::_xeenSave = new SaveArchive(g_vm->_party);
-		File::_xeenSave->reset(File::_xeenCc);
+		files._xeenSave = new SaveArchive(g_vm->_party);
+		files._xeenSave->reset(files._xeenCc);
 	}
 
-	File::_currentSave = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
-		File::_darkSave : File::_xeenSave;
-	assert(File::_currentSave);
+	files._currentSave = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
+		files._darkSave : files._xeenSave;
+	assert(files._currentSave);
 
 	// Load the character roster and party
-	File::_currentSave->loadParty();
+	files._currentSave->loadParty();
 
 	// Set any final initial values
 	Party &party = *g_vm->_party;
