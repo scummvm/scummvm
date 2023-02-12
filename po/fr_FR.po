@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-12 17:13+0000\n"
+"POT-Creation-Date: 2023-02-12 17:16+0000\n"
 "PO-Revision-Date: 2023-02-06 08:49+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2360,6 +2360,7 @@ msgstr "Jouer"
 msgid "Saves"
 msgstr "Sauvegardes"
 
+#. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:682
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
@@ -2394,6 +2395,7 @@ msgstr "Ok"
 msgid "Read Later"
 msgstr ""
 
+#. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
@@ -2953,7 +2955,7 @@ msgstr "Dialogue de saisie prédictive"
 msgid "Confirm"
 msgstr "Confirmer"
 
-#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:173
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -3245,68 +3247,68 @@ msgstr "Choisir le fichier à charger"
 msgid "Add a new folder"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:252
+#: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:371
 msgid "Center"
 msgstr "Centrer"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:253
+#: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
 msgstr "Mise à l'échelle Pixel-perfect"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:254
+#: backends/graphics/opengl/opengl-graphics.cpp:255
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
 msgstr "Mise à l'échelle avec pixels réguliers"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:255
+#: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
 msgstr "Adapter à la fenêtre"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:256
+#: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
 msgstr "Étirer pour remplir la fenêtre"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:257
+#: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
 msgstr "Adapter à la fenêtre (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:709
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:713
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Résolution : %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
 msgid "Enabled aspect ratio correction"
 msgstr "Correction du rapport d'aspect activée"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
 msgid "Disabled aspect ratio correction"
 msgstr "Correction du rapport d'aspect désactivée"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:739
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Filtering enabled"
 msgstr "Filtrage activé"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2533
 msgid "Filtering disabled"
 msgstr "Filtrage désactivé"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:767
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2560
 msgid "Stretch mode"
 msgstr "Mode d'étirement"

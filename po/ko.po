@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-12 17:13+0000\n"
+"POT-Creation-Date: 2023-02-12 17:16+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2334,6 +2334,7 @@ msgstr "플레이"
 msgid "Saves"
 msgstr "저장"
 
+#. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:682
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
@@ -2368,6 +2369,7 @@ msgstr "확인"
 msgid "Read Later"
 msgstr ""
 
+#. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
@@ -2918,7 +2920,7 @@ msgstr "예측 입력 창"
 msgid "Confirm"
 msgstr "확인"
 
-#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:173
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -3208,68 +3210,68 @@ msgstr "불러올 파일을 선택"
 msgid "Add a new folder"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:252
+#: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:371
 msgid "Center"
 msgstr "중앙"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:253
+#: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
 msgstr "픽셀 맞춤 크기조절"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:254
+#: backends/graphics/opengl/opengl-graphics.cpp:255
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
 msgstr "균일 픽셀 크기조절"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:255
+#: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
 msgstr "창 크기에 맞춤"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:256
+#: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
 msgstr "창에 맞게 늘림"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:257
+#: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
 msgstr "창 크기에 맞춤 (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:709
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:713
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:739
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2533
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:767
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2560
 msgid "Stretch mode"
 msgstr "확대 모드"

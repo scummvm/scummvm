@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-12 17:13+0000\n"
+"POT-Creation-Date: 2023-02-12 17:16+0000\n"
 "PO-Revision-Date: 2023-02-10 21:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2328,6 +2328,7 @@ msgstr "Pelaa"
 msgid "Saves"
 msgstr "Tallennukset"
 
+#. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:682
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
@@ -2362,6 +2363,7 @@ msgstr "Ok"
 msgid "Read Later"
 msgstr ""
 
+#. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
@@ -2914,7 +2916,7 @@ msgstr "Ennustava tekstinsyöttö"
 msgid "Confirm"
 msgstr "Vahvista"
 
-#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:173
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -3204,68 +3206,68 @@ msgstr "Valitse ladattava tiedosto"
 msgid "Add a new folder"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:252
+#: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:371
 msgid "Center"
 msgstr "Keskitetty"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:253
+#: backends/graphics/opengl/opengl-graphics.cpp:254
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
 msgstr "Pikselintarkka skaalaus"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:254
+#: backends/graphics/opengl/opengl-graphics.cpp:255
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
 msgstr "Tasapikseliskaalaus"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:255
+#: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
 msgstr "Sovita ikkunaan"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:256
+#: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
 msgstr "Venytä ikkunaan"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:257
+#: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
 msgstr "Sovita ikkunaan (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:709
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:713
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Resoluutio: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2509
 msgid "Enabled aspect ratio correction"
 msgstr "Kuvasuhteen korjaus päällä"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
 msgid "Disabled aspect ratio correction"
 msgstr "Kuvasuhteen korjaus pois päältä"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:739
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Filtering enabled"
 msgstr "Suodatus päällä"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2533
 msgid "Filtering disabled"
 msgstr "Suodatus pois päältä"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:767
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2560
 msgid "Stretch mode"
 msgstr "Venytystila"
