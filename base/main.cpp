@@ -66,6 +66,7 @@
 #ifdef USE_FREETYPE2
 #include "graphics/fonts/ttf.h"
 #endif
+#include "graphics/scalerplugin.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
@@ -84,7 +85,6 @@
 #if defined(__DC__)
 #include "backends/platform/dc/DCLauncherDialog.h"
 #else
-#include "graphics/scalerplugin.h"
 #include "gui/launcher.h"
 #endif
 
