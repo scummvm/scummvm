@@ -574,15 +574,30 @@ bool ScummEngine::newLine() {
 	} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
 		_nextTop += _string[0].height;
 	} else {
-		bool useCJK = _useCJKMode;
-		// SCUMM5 FM-Towns doesn't use the height of the ROM font here.
-		if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
+		if (_game.platform == Common::kPlatformSegaCD && _useCJKMode) {
+			// The JAP Sega CD version of Monkey Island 1 doesn't just calculate
+			// the font height, but instead relies on the actual string height.
+			// If the string contains at least a 2 byte character, then we signal it with
+			// the opposite of the hack used below for FM-Towns, so that getFontHeight()
+			// can yield the correct result.
 			_useCJKMode = false;
-		_nextTop += _charset->getFontHeight();
-		_useCJKMode = useCJK;
 
-		if (_useCJKMode && _game.platform == Common::kPlatformSegaCD) {
-			_nextTop -= 1;
+			for (int i = 0; _charsetBuffer[i]; i++) {
+				if (is2ByteCharacter(_language, _charsetBuffer[i])) {
+					_useCJKMode = true;
+					break;
+				}
+			}
+
+			_nextTop += _charset->getFontHeight() - 1;
+			_useCJKMode = true;
+		} else {
+			bool useCJK = _useCJKMode;
+			// SCUMM5 FM-Towns doesn't use the height of the ROM font here.
+			if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
+				_useCJKMode = false;
+			_nextTop += _charset->getFontHeight();
+			_useCJKMode = useCJK;
 		}
 	}
 	if (_game.version > 3) {
