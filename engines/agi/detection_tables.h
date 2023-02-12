@@ -371,6 +371,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Gold Rush! (CoCo3 360k/720k) [AGI 2.072]
 	GAME_PS("goldrush", "updated", "c49bf56bf91e31a4601a604e51ef8bfb", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
 
+	// King's Quest 1 (DOS) 1.0U [AGI 2.272]
+	GAME("kq1", "1.0U 1986", "f3464778c9ae1a9e1fbed566f917b3d7", 0x2272, GID_KQ1),
+
 	// King's Quest 1 (Amiga) 1.0U      # 2.082
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_PO("kq1", "1.0U 1986", "246c695324f1c514aee2b904fa352fad", 0x2440, GID_KQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
@@ -518,6 +521,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 3 (PC 3.5") 2.14 3/15/88 [AGI 2.936]
 	GAME("kq3", "2.14 1988-03-15 3.5\"", "d3d17b77b3b3cd13246749231d9473cd", 0x2936, GID_KQ3),
+
+	// King's Quest 3 (PC 3.5") 2.14 3/15/88 [AGI 2.936] "For MCGA"
+	GAME("kq3", "2.14 1988-03-15 3.5\" MCGA", "7650e659c7bc0f1e9f8a410b7a2e9de6", 0x2936, GID_KQ3),
 
 	// King's Quest 3 (CoCo3 158k/360k) 1.0C [AGI 2.023]
 	GAME_PS("kq3", "", "5a6be7d16b1c742c369ef5cc64fefdd2", 429, 0x2440, GID_KQ3, Common::kPlatformCoCo3),
@@ -815,6 +821,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Space Quest 2 (PC 3.5") 2.0F [AGI 2.936]
 	GAME("sq2", "2.0F 1989-01-05 3.5\"", "28add5125484302d213911df60d2aded", 0x2936, GID_SQ2),
+
+	// Space Quest 2 (PC 5.25") 2.0F [AGI 2.936]
+	GAME("sq2", "2.0F 1989-01-05 3.5\"", "bb5a44d0bea416f2cd4c3385eaa21af4", 0x2936, GID_SQ2),
 
 	// Space Quest 2 (CoCo3 360k) [AGI 2.023]
 	GAME_PS("sq2", "", "12973d39b892dc9d280257fd271e9597", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
