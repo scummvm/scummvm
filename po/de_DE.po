@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-06 17:53+0000\n"
+"PO-Revision-Date: 2023-02-12 19:20+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2369,6 +2369,28 @@ msgid ""
 "\n"
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
+"In dieser neuen Android-Version von ScummVM wurden umfangreiche Änderungen "
+"für den Zugriff auf das Dateisystem vorgenommen, um den Anforderungen\n"
+"moderner Android-Versionen gerecht zu werden. Wenn Du feststellst, dass "
+"deine bisher hinzugefügten Spiele oder benutzerdefinierten Verzeichnisse "
+"nicht mehr funktionieren,\n"
+"passe diese Pfade bitte an und verwende ab sofort das SAF-System, um zu dem "
+"gewünschten Ort zu navigieren.\n"
+"Dabei kannst Du folgendermaßen vorgehen:\n"
+"\n"
+"  1. Für jedes Spiel, dessen Daten nicht gefunden wurden, gehe zum \"Pfade\"-"
+"Tab in den Spieloptionen und ändere den \"Spielpfad\"\n"
+"  2. Gehe im ScummVM-Dateibrowser \"nach oben\", um zu dem \"root\"-Ordner "
+"zu gehen, wo Du auch die Option \"<Ordner hinzufügen>\" siehst.\n"
+"  3. Wähle diese Option und gehe dann zu dem Verzeichnis, in dem deine "
+"Spielverzeichnisse liegen, z.B. \"SD-Karte > Spiele\". Klicke auf \"Verwende "
+"diesen Ordner\".\n"
+"  4. Anschließend erscheint ein neuer Ordner \"Spiele\" im \"root\"-Ordner "
+"des ScummVM-Dateibrowsers.\n"
+"  5. Wähle von diesem Ordner ausgehend das gewünschte Spielverzeichnis aus.\n"
+"  \n"
+"  Die Schritte 2 und 3 müssen nur einmalig für alle deine Spiele "
+"durchgeführt werden."
 
 #: base/main.cpp:701 base/main.cpp:722
 #: engines/director/lingo/lingo-builtins.cpp:1185
@@ -2379,7 +2401,7 @@ msgstr "OK"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:703 base/main.cpp:724
 msgid "Read Later"
-msgstr ""
+msgstr "Später lesen"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
@@ -2397,6 +2419,19 @@ msgid ""
 "the ScummVM browser.\n"
 "  4. Browse through this folder to your game data."
 msgstr ""
+"In dieser neuen Android-Version von ScummVM wurden umfangreiche Änderungen "
+"für den Zugriff auf das Dateisystem vorgenommen, um den Anforderungen\n"
+"moderner Android-Versionen gerecht zu werden. Daher musst Du SAF einrichten, "
+"um deine Spiele hinzufügen zu können.\n"
+"\n"
+"  1. Gehe im ScummVM-Dateibrowser \"nach oben\", um zu dem \"root\"-Ordner "
+"zu gehen, wo Du auch die Option \"<Ordner hinzufügen>\" siehst.\n"
+"  2. Wähle diese Option und gehe dann zu dem Verzeichnis, in dem deine "
+"Spielverzeichnisse liegen, z.B. \"SD-Karte > Spiele\". Klicke auf \"Verwende "
+"diesen Ordner\".\n"
+"  3. Anschließend erscheint ein neuer Ordner \"Spiele\" im \"root\"-Ordner "
+"des ScummVM-Dateibrowsers.\n"
+"  4. Wähle von diesem Ordner ausgehend das gewünschte Spielverzeichnis aus."
 
 #: base/main.cpp:820
 msgid "Error running game:"
@@ -3220,16 +3255,14 @@ msgstr "Touchscreen-Tipp-Modus - schweben (DPad-Klicks)"
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:664
-#, fuzzy
-#| msgid "Choose file for loading"
 msgid "Choose a new folder"
-msgstr "Zu ladende Datei auswählen"
+msgstr "Neuen Ordner wählen"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.h:173
 #: backends/fs/android/android-saf-fs.h:174
 msgid "Add a new folder"
-msgstr ""
+msgstr "Ordner hinzufügen"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3920,10 +3953,8 @@ msgstr "In 3D-Spielen"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
-#, fuzzy
-#| msgid "Forget SAF authorization"
 msgid "Remove folder authorizations..."
-msgstr "Vergesse SAF-Autorisation"
+msgstr "Entferne Ordner-Berechtigungen..."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
