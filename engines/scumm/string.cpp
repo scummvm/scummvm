@@ -540,7 +540,9 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 bool ScummEngine::newLine() {
 	_nextLeft = _string[0].xpos;
 	if (_charset->_center) {
-		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
+		int stringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
+		_nextLeft -= stringWidth / 2;
+
 		if (_nextLeft < 0)
 			// The commented out part of the next line was meant as a fix for Kanji text glitches in DIG.
 			// But these glitches couldn't be reproduced in recent tests. So the underlying issue might
@@ -551,8 +553,15 @@ bool ScummEngine::newLine() {
 
 		// The Sega CD version of Monkey Island 1 performs
 		// additional clipping on the X position of the string
-		if (_game.platform == Common::kPlatformSegaCD && _nextLeft < 16)
-			_nextLeft = 16;
+		if (_game.platform == Common::kPlatformSegaCD) {
+			// Clip 16 pixels away from the right
+			if (_nextLeft + stringWidth > (_screenWidth - 16))
+				_nextLeft -= (_nextLeft + stringWidth) - (_screenWidth - 16);
+
+			// Clip 16 pixels away from the left
+			if (_nextLeft < 16)
+				_nextLeft = 16;
+		}
 	} else if (_isRTL) {
 		if (_game.id == GID_MANIAC || _game.heversion >= 72 || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
@@ -944,16 +953,24 @@ void ScummEngine::CHARSET_1() {
 	}
 
 	if (_charset->_center) {
-		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
+		int stringWidth = _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
+		_nextLeft -= stringWidth / 2;
 
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
 
 		// The Sega CD version of Monkey Island 1 performs
 		// additional clipping on the X position of the string
-		if (_game.platform == Common::kPlatformSegaCD && _nextLeft < 16)
-			_nextLeft = 16;
+		if (_game.platform == Common::kPlatformSegaCD) {
+			// Clip 16 pixels away from the right
+			if (_nextLeft + stringWidth > (_screenWidth - 16))
+				_nextLeft -= (_nextLeft + stringWidth) - (_screenWidth - 16);
 
+
+			// Clip 16 pixels away from the left
+			if (_nextLeft < 16)
+				_nextLeft = 16;
+		}
 	} else if (_isRTL) {
 		if (_game.id == GID_MANIAC || _game.heversion >= 72 || ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && _charset->getCurID() == 4)) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
