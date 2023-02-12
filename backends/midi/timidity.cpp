@@ -141,7 +141,6 @@ int MidiDriver_TIMIDITY::open() {
 	char *res;
 	char timidity_host[NI_MAXHOST];
 	char timidity_port[6], data_port[6];
-	int num;
 
 	/* count ourselves open */
 	if (_isOpen)
@@ -204,13 +203,13 @@ int MidiDriver_TIMIDITY::open() {
 	/*
 	 * open data connection
 	 */
-	num = atoi(res + 4);
+	uint num = atoi(res + 4);
 	if (num > 65535) {
 		warning("TiMidity: Invalid port %d given.\n", num);
 		close_all();
 		return -1;
 	}
-	snprintf(data_port, sizeof(data_port), "%d", num);
+	snprintf(data_port, sizeof(data_port), "%.5d", (uint16)num);
 	if ((_data_fd = connect_to_server(timidity_host, data_port)) < 0) {
 		warning("TiMidity: can't open data connection (host=%s, port=%s)", timidity_host, data_port);
 		close_all();
