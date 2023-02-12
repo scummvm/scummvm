@@ -50,13 +50,15 @@ void GLContext::endSharedState() {
 	gl_free(s->texture_hash_table);
 }
 
-void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool enableStencilBuffer, bool dirtyRectsEnable) {
+void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize,
+	           bool enableStencilBuffer, bool dirtyRectsEnable, uint32 drawCallMemorySize) {
 	assert(gl_ctx == nullptr);
 	gl_ctx = new GLContext();
-	gl_ctx->init(screenW, screenH, pixelFormat, textureSize, enableStencilBuffer, dirtyRectsEnable);
+	gl_ctx->init(screenW, screenH, pixelFormat, textureSize, enableStencilBuffer, dirtyRectsEnable, drawCallMemorySize);
 }
 
-void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool enableStencilBuffer, bool dirtyRectsEnable) {
+void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize,
+	             bool enableStencilBuffer, bool dirtyRectsEnable, uint32 drawCallMemorySize) {
 	GLViewport *v;
 
 	_enableDirtyRectangles = dirtyRectsEnable;
@@ -257,11 +259,9 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	// color mask
 	color_mask_red = color_mask_green = color_mask_blue = color_mask_alpha = true;
 
-	const size_t kDrawCallMemory = 60ULL * 1024ULL * 1024ULL;
-
 	_currentAllocatorIndex = 0;
-	_drawCallAllocator[0].initialize(kDrawCallMemory);
-	_drawCallAllocator[1].initialize(kDrawCallMemory);
+	_drawCallAllocator[0].initialize(drawCallMemorySize);
+	_drawCallAllocator[1].initialize(drawCallMemorySize);
 	_debugRectsEnabled = false;
 	_profilingEnabled = false;
 

@@ -354,7 +354,7 @@ bool LowLevelGraphicsTGL::Init(int alWidth, int alHeight, int alBpp, int abFulls
 
 	mlMultisampling = alMultisampling;
 	initGraphics(alWidth, alHeight, nullptr);
-	TinyGL::createContext(alWidth, alHeight, mpPixelFormat, 256, false);
+	TinyGL::createContext(alWidth, alHeight, mpPixelFormat, 256, false, 60 * 1024 * 1024);
 	SetupGL();
 	ShowCursor(false);
 	g_system->updateScreen();
