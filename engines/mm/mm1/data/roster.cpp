@@ -70,7 +70,7 @@ void Roster::update(const IntArray &charNums) {
 		int destIndex;
 		if (charNums.size() == g_globals->_party.size() &&
 				charNums[i] < ROSTER_COUNT &&
-				_items[charNums[i]]._name == c._name) {
+				!strcmp(_items[charNums[i]]._name, c._name)) {
 			// Started game from title screen and set up party,
 			// so we known the correct roster index already
 			destIndex = charNums[i];
