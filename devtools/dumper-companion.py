@@ -312,7 +312,7 @@ def extract_volume(args: argparse.Namespace) -> int:
     vol = machfs.Volume()
     with source_volume.open(mode="rb") as f:
         f.seek(0x200)
-        if f.read(4) == b"PM\0\0":
+        if f.read(4) == b"PM\x00\x00":
             partition_num = 1
             partition_type = ""
             while partition_type != "Apple_HFS":
@@ -320,7 +320,7 @@ def extract_volume(args: argparse.Namespace) -> int:
                     ">III", f.read(12)
                 )
                 f.seek(32, 1)
-                partition_type = f.read(32).decode("ascii").split("\0")[0]
+                partition_type = f.read(32).decode("ascii").split("\x00")[0]
                 if partition_num <= num_partitions and partition_type != "Apple_HFS":
                     # Move onto the next partition
                     partition_num += 1
@@ -328,7 +328,6 @@ def extract_volume(args: argparse.Namespace) -> int:
                 else:
                     # We found the one we want or there's none
                     break
-
             f.seek(partition_start * 0x200)
             vol.read(f.read(partition_size * 0x200))
         else:
@@ -337,6 +336,7 @@ def extract_volume(args: argparse.Namespace) -> int:
 
     if not dryrun:
         destination_dir.mkdir(parents=True, exist_ok=True)
+
     might_be_jp = False
     might_be_jp_warned = False
     folders = []
@@ -369,7 +369,6 @@ def extract_volume(args: argparse.Namespace) -> int:
         if dryrun:
             if not isinstance(obj, machfs.Folder):
                 print(upath)
-
             continue
 
         # Write the file to disk
@@ -460,7 +459,7 @@ def punyencode_arg(args: argparse.Namespace) -> int:
 
 
 def punyencode_dir(
-    directory: Path, verbose: bool = False, source_encoding: str|None = None
+    directory: Path, verbose: bool = False, source_encoding: str | None = None
 ) -> int:
     """
     Recursively punyencode all directory and filenames
