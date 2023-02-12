@@ -609,6 +609,15 @@ TeMatrix4x4 TeModel::skinOffset(uint boneno) const {
 	return _skinOffsets[boneno];
 }
 
+void TeModel::setMeshCount(uint count) {
+	assert(count < 100000);
+	while (_meshes.size() < count)
+		_meshes.push_back(Common::SharedPtr<TeMesh>(TeMesh::makeInstance()));
+
+	if (_meshes.size() > count)
+		_meshes.resize(count);
+}
+
 TeModel::BonesBlender::BonesBlender(TeIntrusivePtr<TeModelAnimation> anim, float seconds) : _anim(anim), _seconds(seconds) {
 	_anim.setDeleteFn(&TeModelAnimation::deleteLaterStatic);
 	_timer.stop();

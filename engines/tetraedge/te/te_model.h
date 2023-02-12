@@ -134,6 +134,7 @@ public:
 
 	void setEnableLights(bool val) { _enableLights = val; }
 	void setTexturePath(const Common::String &path) { _texturePath = path; }
+	void setMeshCount(uint count);
 
 protected:
 	TeMatrix4x4 lerpElementsMatrix(uint weightNum, const Common::Array<TeMatrix4x4> &matricies);
