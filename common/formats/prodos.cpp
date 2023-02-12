@@ -85,7 +85,7 @@ int ProDOSFile::parseIndexBlock(byte *memOffset, int blockNum, int rem) const {
 		 */
 		diskPos = _disk->pos();
 
-		_disk->skip(255);                       // The high bytes are stored at the end of the block instead because reasons???
+		_disk->skip(255);                       // The high bytes are stored at the end of the block
 		dataOffset = (dataOffset + (_disk->readByte() << 8)) * ProDOSDisk::kBlockSize;    // High byte is second
 
 		getDataBlock(memOffset + readSize, dataOffset, dataSize);
@@ -287,14 +287,12 @@ void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
 
 		FileEntry fileEntry;
 		getFileEntry(&fileEntry);
-		//debug("%s", fileEntry._name);
 		parsedFiles++;
 		currPos = _disk.pos();
 
 		// It is a regular file if (dead < file type < pascal) and the file has a size
 		if ((kFileTypeDead < fileEntry._type) && (fileEntry._type < kFileTypePascal) && (fileEntry._eof > 0)) {
 			Common::String fileName = path + fileEntry._name;
-			//debug("%s", fileName.c_str());
 			ProDOSFile *currFile = new ProDOSFile(fileEntry._name, fileEntry._type, fileEntry._totalBlocks, fileEntry._eof, fileEntry._blockPtr, &_disk);
 
 			_files.setVal(fileName, Common::SharedPtr<ProDOSFile>(currFile));
@@ -302,9 +300,7 @@ void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
 
 			// Otherwise, if it is a subdirectory, we want to explore that subdirectory
 		} else if (fileEntry._type == kFileTypeSubDir) {
-
 			_disk.seek(fileEntry._blockPtr * kBlockSize);
-			//debug("--- diving into a subdirectory ---");
 
 			uint16 subP = _disk.readUint16LE();
 			uint16 subN = _disk.readUint16LE();
@@ -315,7 +311,6 @@ void ProDOSDisk::searchDirectory(DirHeader *h, uint16 p, uint16 n, Common::Strin
 			Common::String subPath = Common::String(path + subHead._name + '/');
 			searchDirectory(&subHead, subP, subN, path);
 
-			//debug("--- surfacing to parent directory ---");
 			_disk.seek(currPos);
 		}
 	}
@@ -345,8 +340,6 @@ void ProDOSDisk::getVolumeBitmap(VolHeader *h) {
 /* Gets the volume information and parses the filesystem, adding file objects to a map as it goes */
 
 bool ProDOSDisk::open(const Common::String filename) {
-	debug("opening %s", filename.c_str());
-
 	_disk.open(filename);
 	_disk.read(_loader1, kBlockSize);
 	_disk.read(_loader2, kBlockSize);
@@ -356,8 +349,6 @@ bool ProDOSDisk::open(const Common::String filename) {
 
 	VolHeader header;
 	getVolumeHeader(&header);
-	debug("volume name: %s", header._name);
-
 	getVolumeBitmap(&header);
 
 	Common::String pathName;                        // This is so that the path name starts blank, and then for every directory searched it adds the directory name to the path
@@ -370,7 +361,7 @@ bool ProDOSDisk::open(const Common::String filename) {
 
 ProDOSDisk::ProDOSDisk(const Common::String filename) {
 	if (open(filename)) {
-		debug("%s has been loaded", filename.c_str());
+		//debug("%s has been loaded", filename.c_str());
 	}
 }
 
