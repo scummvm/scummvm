@@ -665,7 +665,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 
-		} while (!selectionDoneFl); // Loop until a menu entry is confirmed by the user by pressing the enter key 
+		} while (!selectionDoneFl); // Loop until a menu entry is confirmed by the user by pressing the enter key
 
 		bool validationFl = true;
 
@@ -737,7 +737,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					validationFl = false;
 				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 			}
-			
+
 			if (validationFl) {
 				bool givenFl;
 				int16 destCharId;

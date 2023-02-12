@@ -60,7 +60,7 @@ Common::Error EfhEngine::loadGameState(int slot) {
 	Graphics::Surface *thumbnail;
 	if (!Graphics::loadThumbnail(*saveFile, thumbnail))
 		return Common::kReadingFailed;
-	
+
 	delete (thumbnail);
 
 	// Skip the savegame date
@@ -180,7 +180,7 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 			for (int j = 0; j < 9; ++j)
 				s.syncAsSint16LE(_mapMonsters[i][idx]._hitPoints[j]);
 		}
-		
+
 		for (int x = 0; x < 64; ++x) {
 			for (int y = 0; y < 64; ++y)
 				s.syncAsByte(_mapGameMaps[i][x][y]);
@@ -195,7 +195,7 @@ void EfhEngine::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < 99; ++i) {
 		_npcBuf[i].synchronize(s);
 	}
-		
+
 	s.syncAsByte(_saveAuthorized);
 }
 

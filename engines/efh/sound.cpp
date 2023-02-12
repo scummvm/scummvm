@@ -113,18 +113,18 @@ void EfhEngine::generateSound1(int lowFreq, int highFreq, int duration) {
 
 	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, highFreq, -1);
 	songDelay(10);
-	_speakerStream->stop();		
+	_speakerStream->stop();
 
 
 	for (int i = 0; i < duration; ++i) {
 		var2 = ROR(var2 + 0x9248, 3);
 		int val = (var2 * (highFreq - lowFreq)) >> 16;
-		
+
 		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, lowFreq + val, -1);
 		songDelay(10);
-		_speakerStream->stop();		
+		_speakerStream->stop();
 	}
-	
+
 
 	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;
@@ -161,7 +161,7 @@ void EfhEngine::generateSound2(int startFreq, int endFreq, int speed) {
 		_speakerStream->stop();
 		curFreq += delta;
 	} while (curFreq < endFreq && !shouldQuit());
-	
+
 
 	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;

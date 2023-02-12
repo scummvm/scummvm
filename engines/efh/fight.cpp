@@ -185,7 +185,7 @@ void EfhEngine::handleFight_checkEndEffect(int16 charId) {
 	// At this point : The status is different to 0 (normal) and the effect duration is finally 0 (end of effect)
 	_enemyNamePt2 = _npcBuf[_teamChar[charId]._id]._name;
 	_enemyNamePt1 = getArticle(_npcBuf[_teamChar[charId]._id].getPronoun());
-	
+
 	// End of effect message depends on the type of effect
 	switch (_teamChar[charId]._status._type) {
 	case kEfhStatusSleeping:
@@ -221,7 +221,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 
 	if (minMonsterGroupId == -1)
 		return;
-	
+
 	int16 maxMonsterGroupId;
 	if (_items[teamCharItemId]._range == 4)
 		maxMonsterGroupId = 5;
@@ -468,7 +468,7 @@ void EfhEngine::handleFight_MobstersAttack(int groupId) {
 	// In the original, this function is part of handleFight.
 	// It has been split for readability purposes.
 	debugC(3, kDebugFight, "handleFight_MobstersAttack %d", groupId);
-	
+
 	// handleFight - Loop on mobsterId - Start
 	for (uint ctrMobsterId = 0; ctrMobsterId < 9; ++ctrMobsterId) {
 		if (isMonsterActive(groupId, ctrMobsterId)) {
