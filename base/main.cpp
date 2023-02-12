@@ -677,8 +677,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		bool cancelled = false;
 
 		if (!ConfMan.getGameDomains().empty()) {
-			// I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 			GUI::MessageDialog alert(_(
+				// I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 				"In this new version of ScummVM Android, significant changes were made to "
 				"the file access system to allow support for modern versions of the Android "
 				"Operating System.\n"
@@ -705,8 +705,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			if (alert.runModal() != GUI::kMessageOK)
 				cancelled = true;
 		} else {
-			// I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 			GUI::MessageDialog alert(_(
+				// I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 				"In this new version of ScummVM Android, significant changes were made to "
 				"the file access system to allow support for modern versions of the Android "
 				"Operating System.\n"
