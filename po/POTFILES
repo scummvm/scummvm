@@ -70,6 +70,8 @@ backends/events/default/default-events.cpp
 backends/events/gph/gph-events.cpp
 backends/events/maemosdl/maemosdl-events.cpp
 backends/events/openpandora/op-events.cpp
+backends/fs/android/android-saf-fs.cpp
+backends/fs/android/android-saf-fs.h
 backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp

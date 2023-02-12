@@ -149,7 +149,8 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 
 	if (inAppDomain && AndroidFilesystemFactory::instance().hasSAF()) {
 		// Only show this checkbox in Options (via Options... in the launcher), and not at game domain level (via Edit Game...)
-		(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ForgetSAFButton", _("Forget SAF authorization"), Common::U32String(), kRemoveCmd))->setTarget(this);
+		// I18N: This button opens a list of all folders added for Android Storage Attached Framework
+		(new GUI::ButtonWidget(widgetsBoss(), "AndroidOptionsDialog.ForgetSAFButton", _("Remove folder authorizations..."), Common::U32String(), kRemoveCmd))->setTarget(this);
 	}
 }
 
