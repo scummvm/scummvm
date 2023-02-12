@@ -147,6 +147,8 @@ bool InGameSceneXmlParser::textCallback(const Common::String &val) {
 		}
 		_fmzGridSize = sz;
 	}
+	// fall through
+	// FIXME: Is this intentional or break missing?
 	default:
 		parserError("Unexpected text block");
 		return false;
