@@ -368,11 +368,6 @@ void OSystem_Android::initBackend() {
 
 	_main_thread = pthread_self();
 
-	// TODO Setting debug level to 3, temporarily
-	//      only for catching the level 3 messages from the new (Apr 2021)
-	//      gui-scale (hidpi) code
-	gDebugLevel = 3;
-
 	// Warning: ConfMan.registerDefault() can be used for a Session of ScummVM
 	//          but:
 	//              1. The values will NOT persist to storage
