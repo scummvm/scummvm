@@ -107,6 +107,8 @@ enum ScriptOp {
 
 	kCheckValue,	// Check if stack top is equal to arg.  If it is, pop the argument, otherwise leave it on the stack and skip the next instruction.
 	kJump,			// Offset instruction index by arg.
+
+	kNumOps,
 };
 
 } // End of namespace ScriptOps

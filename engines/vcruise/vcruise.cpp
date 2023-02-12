@@ -94,8 +94,8 @@ Common::Error VCruiseEngine::run() {
 	size.y = videoSize.y + menuBarSize.y + traySize.y;
 
 	Common::Point menuTL = Common::Point((size.x - menuBarSize.x) / 2, 0);
-	Common::Point videoTL = Common::Point((size.x - videoSize.x) / 2, menuTL.y);
-	Common::Point trayTL = Common::Point((size.x - traySize.x) / 2, videoTL.y);
+	Common::Point videoTL = Common::Point((size.x - videoSize.x) / 2, menuTL.y + menuBarSize.y);
+	Common::Point trayTL = Common::Point((size.x - traySize.x) / 2, videoTL.y + videoSize.y);
 
 	_menuBarRect = Common::Rect(menuTL.x, menuTL.y, menuTL.x + menuBarSize.x, menuTL.y + menuBarSize.y);
 	_videoRect = Common::Rect(videoTL.x, videoTL.y, videoTL.x + videoSize.x, videoTL.y + videoSize.y);
@@ -108,7 +108,10 @@ Common::Error VCruiseEngine::run() {
 	else
 		error("Unable to find a suitable graphics format");
 
-	_runtime.reset(new Runtime(_system, _rootFSNode, _gameDescription->gameID));
+	_system->fillScreen(0);
+
+	_runtime.reset(new Runtime(_system, _mixer, _rootFSNode, _gameDescription->gameID));
+	_runtime->initSections(_videoRect, _menuBarRect, _trayRect, _system->getScreenFormat());
 
 	_runtime->loadCursors(exeName);
 
