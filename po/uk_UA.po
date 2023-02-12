@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-12 18:31+0000\n"
+"PO-Revision-Date: 2023-02-12 18:50+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -2364,7 +2364,7 @@ msgid ""
 msgstr ""
 "В цій новій версії ScunmVM для Android було зроблено значних змін у доступі "
 "до файлів, які уможливлюють підтримку сучасних версій операційної системи "
-"Andriod\n"
+"Android\n"
 "У разі, якшо ви побачите, що ігри, які ви додали раніше, або інші шляхи до "
 "файлів не працюють, вам потрібно змінити ці шляхи з використанням системи "
 "SAF.\n"
@@ -2377,7 +2377,7 @@ msgstr ""
 "  3. Виберіть цю опцію і потім оберіть \"корінну\" папку, де лежать всі ваші "
 "ігри, наприклад, \"SD Card > myGames\". Натисніть \"Обрати цю папку\".\n"
 "  4. Після цього у папці \"root\" у переглядачі файлів ScummVM ви побачите "
-"нову папку  \"myGames\"\n"
+"нову папку \"myGames\"\n"
 "  5. Тепер ви зможете переходити через цю папку до ваших ігор.\n"
 "\n"
 "Кроки 2 та 3 необхідно повторити для кожної з ваших ігор."
@@ -2391,7 +2391,7 @@ msgstr "Гаразд"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:703 base/main.cpp:724
 msgid "Read Later"
-msgstr ""
+msgstr "Читати пізніше"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
@@ -2409,6 +2409,18 @@ msgid ""
 "the ScummVM browser.\n"
 "  4. Browse through this folder to your game data."
 msgstr ""
+"В цій новій версії ScunmVM для Android було зроблено значних змін у доступі "
+"до файлів, які уможливлюють підтримку сучасних версій операційної системи "
+"Android.\n"
+"Тож, вам потрібно налаштувати SAF для того, щоб ви могли додавати ігри.\n"
+"\n"
+"  1. У переглядачі файлів ScummVM, тисніть \"Вгору\", доки не перейдете до "
+"верху, у папку \"корінна\". Там ви побачите опцію \"<Додати нову папку>\"\n"
+"  2. Виберіть цю опцію і потім оберіть \"корінну\" папку, де лежать всі ваші "
+"ігри, наприклад, \"SD Card > myGames\". Натисніть \"Обрати цю папку\".\n"
+"  3. Після цього у папці \"root\" у переглядачі файлів ScummVM ви побачите "
+"нову папку \"myGames\"\n"
+"  4. Тепер ви зможете переходити через цю папку до ваших ігор."
 
 #: base/main.cpp:820
 msgid "Error running game:"
@@ -3226,16 +3238,14 @@ msgstr "Режим дотику у тачскріні - Проліт (клік D
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:664
-#, fuzzy
-#| msgid "Choose file for loading"
 msgid "Choose a new folder"
-msgstr "Оберіть файл для завантаження"
+msgstr "Вибрати нову папку"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.h:173
 #: backends/fs/android/android-saf-fs.h:174
 msgid "Add a new folder"
-msgstr ""
+msgstr "Додати нову папку"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3926,10 +3936,8 @@ msgstr "У 3D іграх"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
-#, fuzzy
-#| msgid "Forget SAF authorization"
 msgid "Remove folder authorizations..."
-msgstr "Забути авторизацію SAF"
+msgstr "Видалити авторизацію для папок..."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
