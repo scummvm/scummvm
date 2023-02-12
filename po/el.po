@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-06 12:55+0000\n"
+"PO-Revision-Date: 2023-02-12 18:50+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -2411,7 +2411,7 @@ msgstr "Ok"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:703 base/main.cpp:724
 msgid "Read Later"
-msgstr ""
+msgstr "Να το δω αργότερα"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
@@ -3263,16 +3263,14 @@ msgstr "'Λειτουργία Tap' οθόνης αφής - Αιώρηση (DPad 
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:664
-#, fuzzy
-#| msgid "Choose file for loading"
 msgid "Choose a new folder"
-msgstr "Επιλογή αρχείου για φόρτωση"
+msgstr "Επιλογή νέου φακέλου"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.h:173
 #: backends/fs/android/android-saf-fs.h:174
 msgid "Add a new folder"
-msgstr ""
+msgstr "Προσθήκη νέου φακέλου"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3967,10 +3965,8 @@ msgstr "Στα 3D παιχνίδια"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
-#, fuzzy
-#| msgid "Forget SAF authorization"
 msgid "Remove folder authorizations..."
-msgstr "Ανάκληση εξουσιοδοτήσης SAF"
+msgstr "Ανάκληση εξουσιοδοτήσεων για φακέλους..."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
