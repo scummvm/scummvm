@@ -367,6 +367,9 @@ def extract_volume(args: argparse.Namespace) -> int:
             might_be_jp_warned = True
 
         if dryrun:
+            if not isinstance(obj, machfs.Folder):
+                print(upath)
+
             continue
 
         # Write the file to disk
