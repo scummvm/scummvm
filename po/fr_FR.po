@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-06 08:49+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2023-02-12 18:12+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -2383,6 +2383,30 @@ msgid ""
 "\n"
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
+"Dans cette nouvelle version de ScummVM pour Android, des modifications "
+"importantes ont été apportées au système d'accès aux fichiers afin de "
+"permettre la prise en charge des versions récentes du système d'exploitation "
+"Android.\n"
+"Si vous constatez que vos jeux ajoutés ou vos chemins personnalisés ne "
+"fonctionnent plus, veuillez modifier ces chemins et utiliser le système SAF "
+"pour naviguer vers les emplacements souhaités.\n"
+"Pour ce faire :\n"
+"\n"
+"  1. Pour chaque jeu dont les données ne sont pas trouvées, allez dans "
+"l'onglet \"Chemins\" dans les \"Options du jeu\" et modifiez le \"Chemin du "
+"jeu\".\n"
+"  2. A l'intérieur du navigateur de fichiers de ScummVM, utilisez \"Remonter"
+"\" jusqu'à ce que vous atteigniez le dossier \"racine\" où vous verrez "
+"l'option \"<Ajouter un nouveau dossier>\".\n"
+"  3. Choisissez cette option, puis naviguez et sélectionnez le dossier "
+"\"parent\" pour vos sous-dossiers de jeux, par exemple \"SD Card > myGames\""
+". Cliquez sur \"Utiliser ce dossier\".\n"
+"  4. Ensuite, un nouveau dossier \"myGames\" apparaîtra dans le dossier "
+"\"racine\" du navigateur ScummVM.\n"
+"  5. Naviguez dans ce dossier jusqu'à vos données de jeu.\n"
+"\n"
+"Les étapes 2 et 3 ne doivent être effectuées qu'une seule fois pour tous vos "
+"jeux."
 
 #: base/main.cpp:701 base/main.cpp:722
 #: engines/director/lingo/lingo-builtins.cpp:1185
@@ -2393,7 +2417,7 @@ msgstr "Ok"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:703 base/main.cpp:724
 msgid "Read Later"
-msgstr ""
+msgstr "Lire plus tard"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
@@ -2411,6 +2435,21 @@ msgid ""
 "the ScummVM browser.\n"
 "  4. Browse through this folder to your game data."
 msgstr ""
+"Dans cette nouvelle version de ScummVM pour Android, des modifications "
+"importantes ont été apportées au système d'accès aux fichiers afin de "
+"permettre la prise en charge des versions récentes du système d'exploitation "
+"Android.\n"
+"Il nécessite de mettre en place SAF afin de pouvoir ajouter vos jeux.\n"
+"\n"
+"  1. Dans le navigateur de fichiers de ScummVM, utilisez \"Remonter\" "
+"jusqu'à ce que vous atteigniez le dossier \"racine\" où vous verrez l'option "
+"\"<Ajouter un nouveau dossier>\".\n"
+"  2. Choisissez cette option, puis naviguez et sélectionnez le dossier "
+"\"parent\" pour vos sous-dossiers de jeux, par exemple \"SD Card > myGames\""
+". Cliquez sur \"Utiliser ce dossier\".\n"
+"  3. Ensuite, un nouveau dossier \"myGames\" apparaîtra dans le dossier "
+"\"racine\" du navigateur ScummVM.\n"
+"  4. Naviguez dans ce dossier jusqu'à vos données de jeu."
 
 #: base/main.cpp:820
 msgid "Error running game:"
@@ -3236,16 +3275,14 @@ msgstr "Touchscreen 'Tap Mode' - Déplacer sans cliquer"
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:664
-#, fuzzy
-#| msgid "Choose file for loading"
 msgid "Choose a new folder"
-msgstr "Choisir le fichier à charger"
+msgstr "Choisir un nouveau dossier"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.h:173
 #: backends/fs/android/android-saf-fs.h:174
 msgid "Add a new folder"
-msgstr ""
+msgstr "Ajouter un nouveau dossier"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3938,10 +3975,8 @@ msgstr "Dans les jeux 3D"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
-#, fuzzy
-#| msgid "Forget SAF authorization"
 msgid "Remove folder authorizations..."
-msgstr "Oublier l'autorisation de SAF"
+msgstr "Supprimer les autorisations du dossiers.."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
