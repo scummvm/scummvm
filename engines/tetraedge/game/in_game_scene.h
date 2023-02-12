@@ -277,7 +277,7 @@ private:
 	static bool _collisionSlide;
 	Common::String _sceneName;
 	Common::String _zoneName;
-
+	bool _maskAlpha;
 
 };
 

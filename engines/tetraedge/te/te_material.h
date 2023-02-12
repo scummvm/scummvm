@@ -36,7 +36,8 @@ class TeMaterial {
 public:
 	enum Mode {
 		MaterialMode0,
-		MaterialMode1
+		MaterialMode1,
+		MaterialMode2
 	};
 
 	TeMaterial();

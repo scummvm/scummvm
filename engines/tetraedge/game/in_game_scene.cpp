@@ -53,8 +53,7 @@ bool InGameScene::_collisionSlide = false;
 
 InGameScene::InGameScene() : _character(nullptr), _charactersShadow(nullptr),
 _shadowLightNo(-1), _waitTime(-1.0f), _shadowColor(0, 0, 0, 0x80), _shadowFov(20.0f),
-_shadowFarPlane(1000), _shadowNearPlane(1)
- {
+_shadowFarPlane(1000), _shadowNearPlane(1), _maskAlpha(false) {
 }
 
 void InGameScene::activateAnchorZone(const Common::String &name, bool val) {
@@ -227,7 +226,7 @@ void InGameScene::close() {
 void InGameScene::convertPathToMesh(TeFreeMoveZone *zone) {
 	TeIntrusivePtr<TeModel> model = new TeModel();
 	model->meshes().clear();
-	model->meshes().push_back(Common::SharedPtr<TeMesh>(TeMesh::makeInstance()));
+	model->setMeshCount(1);
 	model->setName("shadowReceiving");
 	model->setPosition(zone->position());
 	model->setRotation(zone->rotation());
@@ -664,6 +663,17 @@ bool InGameScene::load(const Common::FSNode &sceneNode) {
 	return true;
 }
 
+static Common::Path _sceneFileNameBase(const Common::String &zone, const Common::String &scene) {
+	Common::Path retval("scenes");
+	retval.joinInPlace(zone).joinInPlace(scene);
+	return retval;
+}
+
+static Common::Path _sceneFileNameBase() {
+	const Game *game = g_engine->getGame();
+	return _sceneFileNameBase(game->currentZone(), game->currentScene());
+}
+
 bool InGameScene::loadXml(const Common::String &zone, const Common::String &scene) {
 	_zoneName = zone;
 	_sceneName = scene;
@@ -673,7 +683,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	loadActZones();
 	loadBlockers();
 
-	Common::Path xmlpath = Common::Path("scenes").joinInPlace(zone).joinInPlace(scene).joinInPlace("Scene")
+	Common::Path xmlpath = _sceneFileNameBase(zone, scene).joinInPlace("Scene")
 												.appendInPlace(scene).appendInPlace(".xml");
 	Common::FSNode node = g_engine->getCore()->findFile(xmlpath);
 	InGameSceneXmlParser parser;
@@ -708,14 +718,6 @@ void InGameScene::loadActZones() {
 			warning("loadActZones: Incorrect header in %s", actzonefile.getName());
 		}
 	}
-}
-
-static Common::Path _sceneFileNameBase() {
-	Game *game = g_engine->getGame();
-	Common::Path retval("scenes");
-	retval.joinInPlace(game->currentZone());
-	retval.joinInPlace(game->currentScene());
-	return retval;
 }
 
 bool InGameScene::loadCamera(const Common::String &name) {
@@ -873,12 +875,9 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 	file.open(datnode);
 
 	TeModel *model = new TeModel();
-	model->meshes().resize(1);
+	model->setMeshCount(1);
 	model->setName(datnode.getName());
 
-	TeVector3f32 vec;
-	TeVector2f32 vec2;
-	TeVector3f32::deserialize(file, vec);
 	// Read position/rotation/scale.
 	model->deserialize(file, *model);
 
@@ -890,6 +889,8 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 	TeMesh *mesh = model->meshes()[0].get();
 	mesh->setConf(verts, tricount * 3, TeMesh::MeshMode_Triangles, 0, 0);
 
+	TeVector3f32 vec;
+	TeVector2f32 vec2;
 	for (uint i = 0; i < verts; i++) {
 		TeVector3f32::deserialize(file, vec);
 		mesh->setVertex(i, vec);
@@ -901,14 +902,14 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 		mesh->setTextureUV(i, vec2);
 	}
 
-	for (uint i = 0; i < tricount; i++)
+	for (uint i = 0; i < tricount * 3; i++)
 		mesh->setIndex(i, file.readUint16LE());
 
 	file.close();
 
 	if (texnode.isReadable()) {
 		TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
-		tex->load2(texnode, 0x500);
+		tex->load2(texnode, false);
 		mesh->defaultMaterial(tex);
 	} else if (texture.size()) {
 		warning("loadDynamicLightBloc: Failed to load texture %s", texture.c_str());
@@ -926,7 +927,66 @@ bool InGameScene::loadLight(const Common::String &fname, const Common::String &z
 }
 
 bool InGameScene::loadMask(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
-	warning("TODO: Implement InGameScene::loadMask");
+	TeCore *core = g_engine->getCore();
+	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
+	Common::Path texpath = _sceneFileNameBase(zone, scene).joinInPlace(texture);
+	Common::FSNode datnode = core->findFile(datpath);
+	if (!datnode.isReadable()) {
+		warning("[InGameScene::loadMask] Can't open file : %s.", datpath.toString().c_str());
+		return false;
+	}
+	TeModel *model = new TeModel();
+	model->setMeshCount(1);
+	model->setName(name);
+
+	Common::File file;
+	file.open(datnode);
+
+	// Load position, rotation, size.
+	Te3DObject2::deserialize(file, *model, false);
+
+	uint32 verts = file.readUint32LE();
+	uint32 tricount = file.readUint32LE();
+	if (verts > 100000 || tricount > 10000)
+		error("Improbable number of verts (%d) or triangles (%d)", verts, tricount);
+
+	TeMesh *mesh = model->meshes()[0].get();
+	mesh->setConf(verts, tricount * 3, TeMesh::MeshMode_Triangles, 0, 0);
+
+	TeVector3f32 vec;
+	TeVector2f32 vec2;
+	for (uint i = 0; i < verts; i++) {
+		TeVector3f32::deserialize(file, vec);
+		mesh->setVertex(i, vec);
+		mesh->setNormal(i, TeVector3f32(0, 0, 1));
+		if (_maskAlpha) {
+			mesh->setColor(TeColor(255, 255, 255, 128));
+		}
+	}
+	for (uint i = 0; i < verts; i++) {
+		TeVector2f32::deserialize(file, vec2);
+		vec.y() = 1.0 - vec.y();
+		mesh->setTextureUV(i, vec2);
+	}
+
+	// For some reason this one has the indexes in reverse order :(
+	for (uint i = 0; i < tricount * 3; i += 3) {
+		mesh->setIndex(i + 2, file.readUint16LE());
+		mesh->setIndex(i + 1, file.readUint16LE());
+		mesh->setIndex(i, file.readUint16LE());
+	}
+
+	file.close();
+	Common::FSNode texnode = core->findFile(texpath);
+	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
+	tex->load2(texnode, !_maskAlpha);
+	mesh->defaultMaterial(tex);
+
+	if (!_maskAlpha) {
+		mesh->materials()[0]._mode = TeMaterial::MaterialMode2;
+	}
+
+	_masks.push_back(model);
 	return true;
 }
 

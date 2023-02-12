@@ -50,7 +50,9 @@ public:
 
 	bool load(const Common::FSNode &path);
 	virtual bool load(const TeImage &img) = 0;
-	static TeIntrusivePtr<Te3DTexture> load2(const Common::FSNode &node, uint size);
+	// The original passes a GL enum param, but it's only ever GL_INVALID or GL_ALPHA.
+	// Simplify to avoid leaking gl types.
+	static TeIntrusivePtr<Te3DTexture> load2(const Common::FSNode &node, bool alphaOnly);
 
 	static TeVector2s32 optimisedSize(const TeVector2s32 &size);
 

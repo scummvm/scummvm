@@ -82,14 +82,16 @@ static void PlayMovie(const Common::String &vidpath, const Common::String &music
 	game->playMovie(vidpath, musicpath);
 }
 
-static void PlayMovie(const Common::String &vidpath, const Common::String &musicpath, double f) {
+static void PlayMovie(const Common::String &vidpath, const Common::String &musicpath, double volume) {
 	Game *game = g_engine->getGame();
-	warning("TODO: handle float value %f in PlayMovie for Syberia 2", f);
 
-	if (!game->playMovie(vidpath, musicpath)) {
-		warning("[PlayMovie] Movie \"%s\" doesn\'t exist.", vidpath.c_str());
+	if (!game->playMovie(vidpath, musicpath, (float)volume)) {
+		warning("[PlayMovie] Movie \"%s\" doesn't exist.", vidpath.c_str());
+		return;
 	}
-	// TODO: call Game::addMoviePlayed
+
+	warning("TODO: call Game::addMoviePlayed");
+	//game->addMoviePlayed(vidpath, musicpath);
 }
 
 

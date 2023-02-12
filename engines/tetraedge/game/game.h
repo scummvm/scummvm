@@ -145,7 +145,7 @@ public:
 
 	void pauseMovie();
 	void pauseSounds() {}; // does nothing?
-	bool playMovie(const Common::String &vidPath, const Common::String &musicPath);
+	bool playMovie(const Common::String &vidPath, const Common::String &musicPath, float volume = 1.0f);
 	void playRandomSound(const Common::String &name);
 	void playSound(const Common::String &name, int param_2, float volume);
 	void removeNoScale2Child(TeLayout *layout);
@@ -181,9 +181,9 @@ public:
 	bool _isCharacterWalking;
 	bool _isCharacterIdle;
 
-	const Common::String &currentZone() { return _currentZone; }
-	const Common::String &currentScene() { return _currentScene; }
-	const Common::Path &sceneZonePath() { return _sceneZonePath; }
+	const Common::String &currentZone() const { return _currentZone; }
+	const Common::String &currentScene() const { return _currentScene; }
+	const Common::Path &sceneZonePath() const { return _sceneZonePath; }
 	TeLuaScript &luaScript() { return _luaScript; }
 	TeLuaContext &luaContext() { return _luaContext; }
 	InGameScene &scene() { return _scene; }

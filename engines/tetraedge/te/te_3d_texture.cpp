@@ -44,7 +44,7 @@ bool Te3DTexture::hasAlpha() const {
 }
 
 /*static*/
-TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::FSNode &node, uint size) {
+TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::FSNode &node, bool alphaOnly) {
 	const Common::String fullPath = node.getPath() + ".3dtex";
 
 	TeResourceManager *resMgr = g_engine->getResourceManager();

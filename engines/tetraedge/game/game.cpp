@@ -1302,7 +1302,7 @@ void Game::pauseMovie() {
 	sprite->pause();
 }
 
-bool Game::playMovie(const Common::String &vidPath, const Common::String &musicPath) {
+bool Game::playMovie(const Common::String &vidPath, const Common::String &musicPath, float volume /* = 1.0f */) {
 	Application *app = g_engine->getApplication();
 	app->captureFade();
 	TeButtonLayout *videoBackgroundButton = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
@@ -1315,7 +1315,7 @@ bool Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 	music.stop();
 	music.setChannelName("video");
 	music.repeat(false);
-	music.volume(1.0f);
+	music.volume(volume);
 	music.load(musicPath);
 
 	_running = false;
