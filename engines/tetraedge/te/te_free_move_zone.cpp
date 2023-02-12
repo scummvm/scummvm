@@ -195,19 +195,19 @@ void TeFreeMoveZone::calcGridMatrix() {
 		float len = diff2.length();
 		float f = fmod(atan2(diff.z(), diff.x()), M_PI_2);
 		if (f < 0)
-			f += M_PI_2;
+			f += (float)M_PI_2;
 
 		if (f - angle < -M_PI_4) {
-			angle -= M_PI_2;
+			angle -= (float)M_PI_2;
 		} else if (f - angle > M_PI_4) {
-			f -= M_PI_2;
+			f -= (float)M_PI_2;
 		}
 
 		angle *= mul;
 		mul += len;
 		angle = fmod((f * len + angle) / mul, M_PI_2);
 		if (angle < 0)
-			angle += M_PI_2;
+			angle += (float)M_PI_2;
 	}
 
 	const TeQuaternion rot = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), angle);
