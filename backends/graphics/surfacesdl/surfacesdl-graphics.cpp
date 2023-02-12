@@ -2165,7 +2165,6 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 void SurfaceSdlGraphicsManager::undrawMouse() {
 	_mouseLastRect = _mouseNextRect;
 
-	int hotX, hotY;
 	const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
 
 	// The offsets must be applied, since the call to convertWindowToVirtual()
@@ -2177,13 +2176,17 @@ void SurfaceSdlGraphicsManager::undrawMouse() {
 	if (!_overlayInGUI) {
 		_mouseNextRect.w = _mouseCurState.vW;
 		_mouseNextRect.h = _mouseCurState.vH;
-		hotX = _mouseCurState.vHotX;
-		hotY = _mouseCurState.vHotY;
+		_mouseNextRect.x -= _mouseCurState.vHotX;
+		_mouseNextRect.y -= _mouseCurState.vHotY;
 	} else {
 		_mouseNextRect.w = _mouseCurState.rW;
 		_mouseNextRect.h = _mouseCurState.rH;
-		hotX = _mouseCurState.rHotX;
-		hotY = _mouseCurState.rHotY;
+		_mouseNextRect.x -= _mouseCurState.rHotX;
+		_mouseNextRect.y -= _mouseCurState.rHotY;
+	}
+
+	if (!_cursorVisible || !_mouseSurface) {
+		_mouseNextRect.x = _mouseNextRect.y = _mouseNextRect.w = _mouseNextRect.h = 0;
 	}
 
 	// Add the area covered by the mouse cursor to the list of dirty rects if
@@ -2195,41 +2198,34 @@ void SurfaceSdlGraphicsManager::undrawMouse() {
 	// scaled and aspect-ratio corrected.
 
 	if (_mouseLastRect.w != 0 && _mouseLastRect.h != 0)
-		addDirtyRect(_mouseLastRect.x - hotX, _mouseLastRect.y - hotY, _mouseLastRect.w, _mouseLastRect.h, _overlayInGUI);
+		addDirtyRect(_mouseLastRect.x, _mouseLastRect.y, _mouseLastRect.w, _mouseLastRect.h, _overlayInGUI);
 
 	if (_mouseNextRect.w != 0 && _mouseNextRect.h != 0)
-		addDirtyRect(_mouseNextRect.x - hotX, _mouseNextRect.y - hotY, _mouseNextRect.w, _mouseNextRect.h, _overlayInGUI);
+		addDirtyRect(_mouseNextRect.x, _mouseNextRect.y, _mouseNextRect.w, _mouseNextRect.h, _overlayInGUI);
 }
 
 void SurfaceSdlGraphicsManager::drawMouse() {
 	if (!_cursorVisible || !_mouseSurface || !_mouseCurState.w || !_mouseCurState.h) {
-		_mouseLastRect.x = _mouseLastRect.y = _mouseLastRect.w = _mouseLastRect.h = 0;
-		_mouseNextRect.x = _mouseNextRect.y = _mouseNextRect.w = _mouseNextRect.h = 0;
 		return;
 	}
 
 	SDL_Rect dst;
-	int scale;
-
-	if (!_overlayInGUI) {
-		scale = _videoMode.scaleFactor;
-	} else {
-		scale = 1;
-	}
 
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
 
-	dst.x = _mouseNextRect.x + _currentShakeXOffset;
-	dst.y = _mouseNextRect.y + _currentShakeYOffset;
+	dst.x = _mouseNextRect.x;
+	dst.y = _mouseNextRect.y;
 	dst.w = _mouseNextRect.w;
 	dst.h = _mouseNextRect.h;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
 		dst.y = real2Aspect(dst.y);
 
-	dst.x = scale * dst.x - _mouseCurState.rHotX;
-	dst.y = scale * dst.y - _mouseCurState.rHotY;
+	if (!_overlayInGUI) {
+		dst.x *= _videoMode.scaleFactor;
+		dst.y *= _videoMode.scaleFactor;
+	}
 	dst.w = _mouseCurState.rW;
 	dst.h = _mouseCurState.rH;
 
