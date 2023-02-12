@@ -507,7 +507,8 @@ public:
 	void initSharedState();
 	void endSharedState();
 
-	void init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize, bool enableStencilBuffer, bool dirtyRectsEnable = true);
+	void init(int screenW, int screenH, Graphics::PixelFormat pixelFormat, int textureSize,
+	          bool enableStencilBuffer, bool dirtyRectsEnable, uint32 drawCallMemorySize);
 	void deinit();
 
 	void gl_print_matrix(const float *m);
