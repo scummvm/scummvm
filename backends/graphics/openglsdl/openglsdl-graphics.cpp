@@ -190,6 +190,10 @@ OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	notifyContextDestroy();
 	SDL_GL_DeleteContext(_glContext);
+#else
+	if (_hwScreen) {
+		notifyContextDestroy();
+	}
 #endif
 }
 

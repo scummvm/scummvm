@@ -103,6 +103,7 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 #if !USE_FORCED_GLES
 	ShaderManager::destroy();
 #endif
+	delete _pipeline;
 }
 
 bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
