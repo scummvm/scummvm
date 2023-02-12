@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-12 16:56+0000\n"
+"POT-Creation-Date: 2023-02-12 17:13+0000\n"
 "PO-Revision-Date: 2023-02-06 11:04+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2321,7 +2321,7 @@ msgstr "Játék"
 msgid "Saves"
 msgstr "Mentések"
 
-#: base/main.cpp:681
+#: base/main.cpp:682
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2334,7 +2334,7 @@ msgid ""
 "  1. For each game whose data is not found, go to the \"Paths\" tab in the "
 "\"Game Options\" and change the \"Game path\"\n"
 "  2. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-"\"root\" folder where you will see the \"<Add SAF node>\" option.\n"
+"\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
 "  3. Choose that, then browse and select the \"parent\" folder for your "
 "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder\".\n"
 "  4. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
@@ -2344,18 +2344,18 @@ msgid ""
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
 
-#: base/main.cpp:700 base/main.cpp:720
+#: base/main.cpp:701 base/main.cpp:722
 #: engines/director/lingo/lingo-builtins.cpp:1185
 msgid "Ok"
 msgstr "Ok"
 
 #. I18N: A button caption to dismiss amessage and read it later
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:702 base/main.cpp:722
+#: base/main.cpp:703 base/main.cpp:724
 msgid "Read Later"
 msgstr ""
 
-#: base/main.cpp:708
+#: base/main.cpp:710
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2363,7 +2363,7 @@ msgid ""
 "Thus, you need to set up SAF in order to be able to add the games.\n"
 "\n"
 "  1. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-"\"root\" folder where you will see the \"<Add SAF node>\" option.\n"
+"\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
 "  2. Choose that, then browse and select the \"parent\" folder for your "
 "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder\".\n"
 "  3. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
@@ -2371,11 +2371,11 @@ msgid ""
 "  4. Browse through this folder to your game data."
 msgstr ""
 
-#: base/main.cpp:818
+#: base/main.cpp:820
 msgid "Error running game:"
 msgstr "Hiba a játék futtatásakor:"
 
-#: base/main.cpp:865
+#: base/main.cpp:867
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Nem található olyan játékmotor ami a választott játékot támogatja"
 
