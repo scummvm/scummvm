@@ -45,7 +45,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GAMEOPTION_WIDESCREEN_MOD, GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS, GAMEOPTION_SOUND_EFFECT_SUBTITLES)
 		},
 		GID_OBSIDIAN,
@@ -67,7 +67,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GAMEOPTION_WIDESCREEN_MOD, GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS, GAMEOPTION_SOUND_EFFECT_SUBTITLES)
 		},
 		GID_OBSIDIAN,
@@ -89,7 +89,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS)
 		},
 		GID_OBSIDIAN,
@@ -116,7 +116,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO3(GAMEOPTION_WIDESCREEN_MOD, GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS, GAMEOPTION_SOUND_EFFECT_SUBTITLES)
 		},
 		GID_OBSIDIAN,
@@ -143,7 +143,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS)
 		},
 		GID_OBSIDIAN,
@@ -169,7 +169,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO1(GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS)
 		},
 		GID_OBSIDIAN,
@@ -195,7 +195,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
@@ -221,7 +221,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
@@ -244,7 +244,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
@@ -269,7 +269,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
@@ -294,7 +294,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO0()
 		},
 		GID_OBSIDIAN,
@@ -317,7 +317,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO0()
 		},
 		GID_OBSIDIAN,
@@ -340,7 +340,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
@@ -363,7 +363,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO1(GAMEOPTION_WIDESCREEN_MOD)
 		},
 		GID_OBSIDIAN,
