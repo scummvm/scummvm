@@ -41,7 +41,7 @@ bool InGameSceneXmlParser::parserCallback_gridSize(ParserNode *node) {
 }
 
 bool InGameSceneXmlParser::parserCallback_curve(ParserNode *node) {
-	warning("TODO: handle curve tag in InGameSceneXmlParser");
+	_scene->loadCurve(node->values["name"]);
 	return true;
 }
 

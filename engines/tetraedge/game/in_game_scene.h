@@ -152,6 +152,7 @@ public:
 	// Syberia 2 specific data..
 	void loadActZones();
 	bool loadCamera(const Common::String &name);
+	bool loadCurve(const Common::String &name);
 	bool loadDynamicLightBloc(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene);
 	// loadFlamme uses the xml doc
 	bool loadFreeMoveZone(const Common::String &name, TeVector2f32 &gridSize);

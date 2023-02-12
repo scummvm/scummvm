@@ -2138,7 +2138,7 @@ static void MoveCharacterPlayerTo(float x, float y, float z, bool walkFlag) {
 	if (dest == game->posPlayer() && character->walkModeStr() == "Walk")
 		return;
 
-	if (game->walkTimer().running() && game->walkTimer().timeElapsed() < 300000) {
+	if (game->walkTimer().running() && game->walkTimer().timeElapsed() < 300000 && game->runModeEnabled()) {
 		uint64 elapsed = game->walkTimer().timeElapsed();
 		game->walkTimer().stop();
 		if (elapsed < 300000) {
@@ -2183,9 +2183,8 @@ static int tolua_ExportedFunctions_MoveCharacterPlayerTo00(lua_State *L) {
 }
 
 static void EnableRunMode(bool val) {
-	//Game *game = g_engine->getGame();
-	//game->setRunMode(val);
-	warning("TODO: EnableRunMode %s", val ? "true" : "false");
+	Game *game = g_engine->getGame();
+	game->setRunModeEnabled(val);
 }
 
 static int tolua_ExportedFunctions_EnableRunMode00(lua_State *L) {

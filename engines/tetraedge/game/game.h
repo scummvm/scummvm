@@ -205,6 +205,9 @@ public:
 	bool isArtworkUnlocked(const Common::String &name) const;
 	static Common::String artworkConfName(const Common::String &name);
 
+	void setRunModeEnabled(bool val) { _runModeEnabled = val; }
+	bool runModeEnabled() const { return _runModeEnabled; }
+
 private:
 	bool _luaShowOwnerError;
 	bool _running;
@@ -286,6 +289,9 @@ private:
 	TeVector3f32 _posPlayer;
 
 	Common::Point _lastUpdateMousePos;
+
+	// Syberia 2 specific data
+	bool _runModeEnabled;
 };
 
 } // end namespace Tetraedge

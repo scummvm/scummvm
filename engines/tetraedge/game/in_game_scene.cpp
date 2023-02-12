@@ -861,9 +861,22 @@ bool InGameScene::loadPlayerCharacter(const Common::String &name) {
 	return true;
 }
 
+bool InGameScene::loadCurve(const Common::String &name) {
+	const Common::Path path = _sceneFileNameBase().joinInPlace(name).appendInPlace(".bin");
+	TeCore *core = g_engine->getCore();
+	Common::FSNode node = core->findFile(path);
+	if (!node.isReadable()) {
+		warning("[InGameScene::loadCurve] Can't open file : %s.", path.toString().c_str());
+		return false;
+	}
+	TeBezierCurve *curve = new TeBezierCurve();
+	curve->loadBin(node);
+	return true;
+}
+
 bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common::String &texture, const Common::String &zone, const Common::String &scene) {
-	const Common::Path pdat = Common::Path(zone).joinInPlace(scene).joinInPlace(name).appendInPlace(".bin");
-	const Common::Path ptex = Common::Path(zone).joinInPlace(scene).joinInPlace(texture);
+	const Common::Path pdat = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
+	const Common::Path ptex = _sceneFileNameBase(zone, scene).joinInPlace(texture);
 	Common::FSNode datnode = g_engine->getCore()->findFile(pdat);
 	Common::FSNode texnode = g_engine->getCore()->findFile(ptex);
 	if (!datnode.isReadable()) {

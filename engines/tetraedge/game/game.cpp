@@ -53,7 +53,7 @@ _lastCharMoveMousePos(0.0f, 0.0f), _randomSoundFinished(false),
 _previousMousePos(-1, -1), _markersVisible(true), _saveRequested(false),
 _gameLoadState(0), _luaShowOwnerError(false), _score(0), _warped(false),
 _firstInventory(true), _randomSource("SyberiaGameRandom"), _frameCounter(0),
-_warpFadeFlag(false), _dialogsTold(0) {
+_warpFadeFlag(false), _dialogsTold(0), _runModeEnabled(true) {
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		_objectsTakenBits[i] = false;
 	}
@@ -1115,7 +1115,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 			if (curve->controlPoints().size() == 1) {
 				character->endMove();
 			} else {
-				if (!_walkTimer.running() || _walkTimer.timeElapsed() > 300000) {
+				if (!_walkTimer.running() || _walkTimer.timeElapsed() > 300000 || !_runModeEnabled) {
 					_walkTimer.stop();
 					_walkTimer.start();
 					character->walkMode("Walk");
