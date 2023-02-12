@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 08:54+0000\n"
-"PO-Revision-Date: 2022-05-01 15:27+0000\n"
+"PO-Revision-Date: 2023-02-12 16:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
@@ -207,15 +207,14 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "Staženo %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
-#| msgid "Download speed: %s %S"
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Rychlost stahování: %s %S"
+msgstr "Rychlost stahování: %s %S/s"
 
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "Chyba %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
