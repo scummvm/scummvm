@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-01-25 18:50+0000\n"
+"PO-Revision-Date: 2023-02-12 20:57+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -206,10 +206,9 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "Lastet ned %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
-#| msgid "Download speed: %s %S"
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Nedlastingshastighet: %s %S"
+msgstr "Nedlastingshastighet: %s %S/s"
 
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
@@ -265,15 +264,12 @@ msgid "No new %S available"
 msgstr "Ingen nye %S tilgjengelig"
 
 #: gui/downloadpacksdialog.cpp:462
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "%S. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Du holder på å fjerne %s %s med data. Dette medfører sletting av alle "
+"Du holder på å fjerne %s %S med data. Dette medfører sletting av alle "
 "tidligere nedlastede %S. Ønsker du å fortsette?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
@@ -447,12 +443,12 @@ msgstr "Overstyr globale MT-32-instillinger"
 
 #: gui/editgamedialog.cpp:299 gui/options.cpp:2279
 msgid "Paths"
-msgstr "Baner"
+msgstr "Filbaner"
 
 #: gui/editgamedialog.cpp:301 gui/options.cpp:2281
 msgctxt "lowres"
 msgid "Paths"
-msgstr "Baner"
+msgstr "Filbaner"
 
 #: gui/editgamedialog.cpp:308
 msgid "Game Path:"
@@ -2356,6 +2352,26 @@ msgid ""
 "\n"
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
+"I denne nye utgaven av ScummVM Android har det blitt gjort større endringer "
+"til filtilgangssystemet for å utbedre støtten for moderne versjoner av "
+"Android-operativsystemet.\n"
+"Hvis du opplever at spill du allerede har lagt til eller tilpassede filbaner "
+"ikke lengre fungerer som du skal, kan du redigere de filbanene og bruke SAF-"
+"systemet til å bla deg frem til riktig filbane.\n"
+"\n"
+"Slik gjør du dette:\n"
+"1. For hvert spill som ikke blir funnet, gå til «Filbaner»-fanen under "
+"«Spillinnstillinger» og endre «Filbane for spill».\n"
+"2. I ScummVM-utforskeren bruker du «Gå opp» frem til du når «Rot»-mappen "
+"hvor du finner alternativet «Legg til ny mappe».\n"
+"3. Velg dette alternativet og bla deg frem til hovedmappen for de "
+"forskjellige undermappene til spillene dine, som f.eks. «SD-kort > Mine "
+"Spill». Trykk på «Bruk denne mappen».\n"
+"4. Nå dukker det opp en «Mine Spill»-mappe i hovedmappen til ScummVM-"
+"utforskeren.\n"
+"5. Bla deg gjennom denne mappen for å finne spilldataen din.\n"
+"\n"
+"Du trenger bare å gjennomføre steg 2 og 3 én gang for alle spillene dine."
 
 #: base/main.cpp:701 base/main.cpp:722
 #: engines/director/lingo/lingo-builtins.cpp:1185
@@ -2366,7 +2382,7 @@ msgstr "Ok"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:703 base/main.cpp:724
 msgid "Read Later"
-msgstr ""
+msgstr "Les senere"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
@@ -2384,6 +2400,19 @@ msgid ""
 "the ScummVM browser.\n"
 "  4. Browse through this folder to your game data."
 msgstr ""
+"I denne nye utgaven av ScummVM Android har det blitt gjort større endringer "
+"til filtilgangssystemet for å utbedre støtten for moderne versjoner av "
+"Android-operativsystemet.\n"
+"Derfor må du konfigurere SAF for å kunne legge til spill.\n"
+"\n"
+"1. I ScummVM-utforskeren bruker du «Gå opp» frem til du når «Rot»-mappen, "
+"hvor du finner alternativet «Legg til ny mappe».\n"
+"2. Velg denne og bla deg frem til «Hovedmappen» for de forskjellige "
+"undermappene til spillene dine, som f.eks. «SD-kort > Mine Spill». Trykk på «"
+"Bruk denne mappen».\n"
+"3. Nå dukker det opp en «Mine Spill»-mappe i hovedmappen til ScummVM-"
+"utforskeren.\n"
+"4. Bla deg gjennom denne mappen for å finne fildataen til spillene dine."
 
 #: base/main.cpp:820
 msgid "Error running game:"
@@ -3206,16 +3235,14 @@ msgstr "Touchskjerm 'Tapmodus' - Sveve (DPad Klikk)"
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:664
-#, fuzzy
-#| msgid "Choose file for loading"
 msgid "Choose a new folder"
-msgstr "Velg fil for lasting"
+msgstr "Velg ny mappe"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.h:173
 #: backends/fs/android/android-saf-fs.h:174
 msgid "Add a new folder"
-msgstr ""
+msgstr "Legg til ny mappe"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3905,10 +3932,8 @@ msgstr "I 3D-spill"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
-#, fuzzy
-#| msgid "Forget SAF authorization"
 msgid "Remove folder authorizations..."
-msgstr "Glem SAF-godkjenning"
+msgstr "Fjern mappegodkjenninger ..."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
