@@ -50,7 +50,7 @@ enum Tile : uint8 {
 	kTileTopLower75,
 	kTileLower3,
 	kTileLower5,
-	kTileCeilingTile = 2
+	kTileCeilingTile = 2 // This duplicate is intentional
 };
 
 /* Quick note:
