@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-12 16:34+0000\n"
+"PO-Revision-Date: 2023-02-12 20:57+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
@@ -2029,7 +2029,7 @@ msgstr ""
 
 #: gui/options.cpp:3193
 msgid "shader packs"
-msgstr ""
+msgstr "q"
 
 #: gui/options.cpp:3315
 msgid ""
