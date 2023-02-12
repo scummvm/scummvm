@@ -31,7 +31,7 @@ namespace TinyGL {
 
 void createContext(int screenW, int screenH, Graphics::PixelFormat pixelFormat,
                    int textureSize, bool enableStencilBuffer, bool dirtyRectsEnable,
-                   uint32 drawCallMemorySize = 6 * 1024 * 1024);
+                   uint32 drawCallMemorySize = 5 * 1024 * 1024);
 void destroyContext();
 void presentBuffer();
 void presentBuffer(Common::List<Common::Rect> &dirtyAreas);
