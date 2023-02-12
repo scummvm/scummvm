@@ -2052,4 +2052,25 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'SessionSelector' overlays = 'screen_center' shading = 'dim'>
+		<layout type = 'vertical' padding = '4, 4, 16, 4' align = 'center'>
+			<widget name = 'QueryProgressText'
+					width = '480'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'SessionList'
+					width = '480'
+					height = '250'
+			/>
+			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
+				<widget name = 'Join'
+						type = 'Button'
+				/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
 </layout_info>
