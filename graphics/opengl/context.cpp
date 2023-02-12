@@ -103,7 +103,6 @@ void Context::initialize(ContextType contextType) {
 #endif
 
 	const char *verString = (const char *)glGetString(GL_VERSION);
-	debug(5, "OpenGL version: %s", verString);
 
 	if (type == kContextGL) {
 		// OpenGL version number is either of the form major.minor or major.minor.release,
@@ -140,7 +139,6 @@ void Context::initialize(ContextType contextType) {
 
 	// Obtain maximum texture size.
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, (GLint *)&maxTextureSize);
-	debug(5, "OpenGL maximum texture size: %d", maxTextureSize);
 
 	const char *extString = (const char *)glGetString(GL_EXTENSIONS);
 
@@ -290,6 +288,7 @@ void Context::initialize(ContextType contextType) {
 	const char *glslVersionString = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
 
 	// Log features supported by GL context.
+	debug(5, "OpenGL version: %s", verString);
 	debug(5, "OpenGL vendor: %s", glGetString(GL_VENDOR));
 	debug(5, "OpenGL renderer: %s", glGetString(GL_RENDERER));
 	debug(5, "OpenGL: version %d.%d", majorVersion, minorVersion);
@@ -298,6 +297,7 @@ void Context::initialize(ContextType contextType) {
 	debug(5, "OpenGL: Max texture size: %d", maxTextureSize);
 	debug(5, "OpenGL: NPOT texture support: %d", NPOTSupported);
 	debug(5, "OpenGL: Shader support: %d", shadersSupported);
+	debug(5, "OpenGL: Shader support for engines: %d", enginesShadersSupported);
 	debug(5, "OpenGL: Multitexture support: %d", multitextureSupported);
 	debug(5, "OpenGL: FBO support: %d", framebufferObjectSupported);
 	debug(5, "OpenGL: Multisample FBO support: %d", framebufferObjectMultisampleSupported);
@@ -307,6 +307,8 @@ void Context::initialize(ContextType contextType) {
 	debug(5, "OpenGL: Unpack subimage support: %d", unpackSubImageSupported);
 	debug(5, "OpenGL: OpenGL ES depth 24 support: %d", OESDepth24);
 	debug(5, "OpenGL: Texture edge clamping support: %d", textureEdgeClampSupported);
+	debug(5, "OpenGL: Texture border clamping support: %d", textureBorderClampSupported);
+	debug(5, "OpenGL: Texture mirror repeat support: %d", textureMirrorRepeatSupported);
 	debug(5, "OpenGL: Texture max level support: %d", textureMaxLevelSupported);
 }
 
