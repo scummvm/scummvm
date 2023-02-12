@@ -69,5 +69,12 @@ MODULE_OBJS += \
 	updates-dialog.o
 endif
 
+ifdef ENABLE_HE
+ifdef USE_ENET
+MODULE_OBJS += \
+	sessionselector.o
+endif
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk
