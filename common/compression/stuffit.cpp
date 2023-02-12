@@ -182,7 +182,7 @@ bool StuffItArchive::open(Common::SeekableReadStream *stream) {
 		uint16 actualHeaderCRC = crc.crcFast(header, sizeof(header) - 2);
 
 		if (actualHeaderCRC != headerCRC)
-			error ("Header CRC mismatch: %04x vs %04x", actualHeaderCRC, headerCRC);
+			error ("StuffItArchive::open(): Header CRC mismatch: %04x vs %04x", actualHeaderCRC, headerCRC);
 
 		// Ignore directories for now
 		if (dataForkCompression == 32 || dataForkCompression == 33)
@@ -291,7 +291,7 @@ Common::SharedArchiveContents StuffItArchive::readContentsForPath(const Common::
 	uint16 actualCRC = Common::CRC16().crcFast(uncompressedBlock, entry.uncompressedSize);
 
 	if (actualCRC != entry.crc) {
-		error("CRC mismatch: %04x vs %04x", actualCRC, entry.crc);
+		error("StuffItArchive::readContentsForPath(): CRC mismatch: %04x vs %04x for file %s", actualCRC, entry.crc, name.c_str());
 	}
 
 	return Common::SharedArchiveContents(uncompressedBlock, entry.uncompressedSize);
