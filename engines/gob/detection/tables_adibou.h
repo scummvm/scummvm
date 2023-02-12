@@ -75,7 +75,7 @@
 		AD_ENTRY1s("intro.stk", "94ae7004348dc8bf99c23a9a6ef81827", 956162),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -117,7 +117,7 @@
 		AD_ENTRY1s("intro.stk", "f2b797819aeedee557e904b0b5ccd82e", 8736454),
 		FR_FRA,
 		kPlatformWindows,
-		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND | ADGF_TESTING,
+		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -131,7 +131,7 @@
 		AD_ENTRY1s("intro.stk", "7b1f1f6f6477f54401e95d913f75e333", 8736904),
 		FR_FRA,
 		kPlatformWindows,
-		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND | ADGF_TESTING,
+		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -145,7 +145,7 @@
 		AD_ENTRY1s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134),
 		FR_FRA,
 		kPlatformWindows,
-		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND | ADGF_TESTING,
+		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -159,7 +159,7 @@
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		FR_FRA,
 		kPlatformWindows,
-		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND | ADGF_TESTING,
+		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -173,7 +173,7 @@
 		AD_ENTRY1s("intro.stk", "ff63637e3cb7f0a457edf79457b1c6b3", 9333874),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -190,7 +190,7 @@
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -205,7 +205,7 @@
 		AD_ENTRY1s("intro.stk", "80588ad3b5510bb44d3f40d6b07b81e7", 956328),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -222,7 +222,7 @@
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		IT_ITA,
 		kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -238,7 +238,7 @@
 		AD_ENTRY1s("intro.stk", "0b996fcd8929245fecddc4d9169843d0", 956682),
 		ES_ESP,
 		kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -254,7 +254,7 @@
 		AD_ENTRY1s("intro.stk", "718a51862406136c28639489a9ba950a", 956350),
 		EN_ANY,
 		kPlatformWindows,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()},
 	kGameTypeAdibou2,
 	kFeatures640x480,
@@ -270,7 +270,7 @@
 		AD_ENTRY1s("intro.stk", "0f197c6b8f1cef3fb4aa37438a52e031", 954276),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
@@ -285,7 +285,7 @@
 		AD_ENTRY1s("intro.stk", "ea6c2d25f33135db763c1175979d904a", 528108),
 		EN_GRB,
 		kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou2,
@@ -300,7 +300,7 @@
 				   "demogb.vmd", "bc9c1db97db7bec8f566332444fa0090", 14320840),
 		EN_GRB,
 		kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdibou2,
@@ -315,7 +315,7 @@
 				   "demoall.vmd", "4672b2deacc6fca97484840424b1921b", 14263433),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdibou2,
@@ -330,7 +330,7 @@
 				   "demofra.vmd", "b494cdec1aac7e54c3f2480512d2880e", 14297100),
 		FR_FRA,
 		kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdibou2,
