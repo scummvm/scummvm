@@ -3401,8 +3401,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("chunchunworld", "Theme Song Artist", "ARTIST.EXE", "e4b601ba3bf6fe9c661e0ab520c6c9cc", 696877, 404),
 	MACGAME1("chunchunworld", "Theme Song View", "TSV_SL.EXE", "190b00ab0c009de914a5f3c5878547fb", 5596259, 404),
 
-	// Original Mac filename is 中天スタート
-	MACGAME1_l("chuteng", "", "Chu-Teng Start", "ea646eccc9a53f44ce082459d4809a06", 484351, Common::JA_JPN, 404),
+	// ﾃｭﾃ愿ｬVﾃ厩ﾃ運ﾃ
+	MACGAME1_l("chuteng", "", "xn--VX^[g-6lazbd6pugk", "r:ea646eccc9a53f44ce082459d4809a06", 484095, Common::JA_JPN, 404),
+	MACGAME1("chuteng", "", "xn--VX^[g-6lazbd6pugk", "r:ea646eccc9a53f44ce082459d4809a06", 484351, 404),
 	WINGAME1_l("chuteng", "", "CHUTENG.EXE", "aaef7b33829ff7b0243412c89869e011", 746971, Common::JA_JPN, 404),
 
 	MACDEMO1("cinemac", "Sample Projector", "Sample Projector with BackDrop", "2c27791a84756be6201d281bad54f7bb", 285958, 404),
