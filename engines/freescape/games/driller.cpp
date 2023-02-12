@@ -660,6 +660,12 @@ void DrillerEngine::loadAssetsFullGame() {
 
 	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
+		_title->free();
+		delete _title;
+		file.open("CGATITLE.RL");
+		_title = load8bitImage(&file, 4, 0x1b3);
+
+		file.close();
 		file.open("DRILLC.EXE");
 
 		if (!file.isOpen())
@@ -669,6 +675,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadMessagesFixedSize(&file, 0x2585, 14, 20);
 		load8bitBinary(&file, 0x7bb0, 4);
 		loadGlobalObjects(&file, 0x1fa2);
+		//_border = load8bitImage(&file, 4, 0x261);
 	} else
 		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
 

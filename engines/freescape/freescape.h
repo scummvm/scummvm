@@ -164,6 +164,9 @@ public:
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
 	Object *load8bitObject(Common::SeekableReadStream *file);
+	void renderPixels8bitImage(Graphics::Surface *surface, int &i, int &j, int pixels);
+	uint32 getPixel8bitImage(int index);
+	Graphics::Surface *load8bitImage(Common::SeekableReadStream *file, int ncolors, int offset);
 
 	// Areas
 	uint16 _startArea;

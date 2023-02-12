@@ -298,6 +298,154 @@ static const char *eclipseRoomName[] = {
 	"ILLUSION",
 	"????????"};
 
+byte kCGAPalettePinkBlueWhiteData[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0xff},
+	{0xff, 0x55, 0xff},
+	{0xff, 0xff, 0xff},
+};
+
+uint32 FreescapeEngine::getPixel8bitImage(int index) {
+	uint8 r, g, b;
+	if (index < 4) {
+		_gfx->readFromPalette(0, r, g, b);
+		return _gfx->_currentPixelFormat.ARGBToColor(0xFF, r, g, b);
+	}
+	_gfx->readFromPalette(index / 4, r, g, b);
+	return _gfx->_currentPixelFormat.ARGBToColor(0xFF, r, g, b);
+}
+
+void FreescapeEngine::renderPixels8bitImage(Graphics::Surface *surface, int &i, int &j, int pixels) {
+	int c1 = pixels >> 4;
+	int c2 = pixels & 0xf;
+
+	if (i == 320) {
+		return;
+	}
+
+	surface->setPixel(i, j, getPixel8bitImage(c1));
+	i++;
+
+	if (i == 320) {
+		return;
+	}
+
+	surface->setPixel(i, j, getPixel8bitImage(c1));
+	i++;
+
+	if (i == 320) {
+		return;
+	}
+
+	surface->setPixel(i, j, getPixel8bitImage(c2));
+	i++;
+
+	if (i == 320) {
+		return;
+	}
+
+	surface->setPixel(i, j, getPixel8bitImage(c2));
+	i++;
+}
+
+Graphics::Surface *FreescapeEngine::load8bitImage(Common::SeekableReadStream *file, int ncolors, int offset) {
+	Graphics::Surface *surface = new Graphics::Surface();
+	assert(ncolors == 4);
+	_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
+	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
+	uint32 black = _gfx->_currentPixelFormat.ARGBToColor(0xFF, 0, 0, 0);
+	surface->fillRect(Common::Rect(0, 0, 320, 200), black);
+
+	int i = 0;
+	int j = 0;
+	int command = -1;
+	int singlePixelsToProcess = 0;
+	bool repeatedPixelsToProcess = false;
+	file->seek(offset);
+	while (!file->eos()) {
+		assert(i <= 320);
+		int pixels = -1;
+		int repetition = -1;
+
+		if (singlePixelsToProcess == 0 && !repeatedPixelsToProcess) {
+			if (command < 0)
+				command = file->readByte();
+
+			//debug("reading command: %x at %lx", command, file->pos() - 1);
+
+			assert(command >= 0x7f);
+			singlePixelsToProcess = (0xff - command + 2) * 2;
+			//debug("single Pixels to process: %d", singlePixelsToProcess);
+
+			repeatedPixelsToProcess = true;
+			if (i == 320) {
+				j++;
+				i = 0;
+			}
+			command = -1;
+			continue;
+		}
+
+		if (singlePixelsToProcess > 0) {
+			singlePixelsToProcess--;
+			pixels = file->readByte();
+			//debug("reading pixels: %x at %d, %d", pixels, i, j);
+			renderPixels8bitImage(surface, i, j, pixels);
+		} else if (repeatedPixelsToProcess) {
+			repetition = file->readByte() + 1;
+			//debug("reading repetition: %x", repetition - 1);
+			assert(repetition > 0);
+			if (repetition >= 0x80) {
+				command = repetition - 1;
+				repeatedPixelsToProcess = false;
+				continue;
+			}
+
+			if (i == 320) {
+				j++;
+				i = 0;
+				continue;
+			}
+
+			int pixels1 = file->readByte();
+			//debug("reading pixels: %x", pixels1);
+
+			int pixels2 = file->readByte();
+			//debug("reading pixels: %x", pixels2);
+
+			if (repetition >= 1) {
+				while (repetition > 0) {
+					repetition--;
+
+					if (i == 320) {
+						j++;
+						i = 0;
+					}
+
+					if (j == 200)
+						return surface;
+
+					//sdebug("repeating pixels: %x at %d, %d", pixels1, i, j);
+					renderPixels8bitImage(surface, i, j, pixels1);
+
+					if (i == 320) {
+						j++;
+						i = 0;
+					}
+
+					if (j == 200)
+						return surface;
+
+					//debug("repeating pixels: %x at %d, %d", pixels2, i, j);
+					renderPixels8bitImage(surface, i, j, pixels2);
+				}
+			}
+		}
+	}
+
+	return surface;
+}
+
 Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
 	Common::String name;
