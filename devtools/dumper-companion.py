@@ -339,6 +339,7 @@ def extract_volume(args: argparse.Namespace) -> int:
         destination_dir.mkdir(parents=True, exist_ok=True)
     might_be_jp = False
     might_be_jp_warned = False
+    folders = []
     for hpath, obj in vol.iter_paths():
         # Encode the path
         upath = destination_dir
@@ -371,8 +372,8 @@ def extract_volume(args: argparse.Namespace) -> int:
         # Write the file to disk
         if isinstance(obj, machfs.Folder):
             upath.mkdir(exist_ok=True)
-            os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
-            # Set the modified time for folders
+            # Save the modified time for folders to apply once all files are written
+            folders.append((upath, obj.mddate - 2082844800))
             continue
 
         print(upath)
@@ -387,15 +388,13 @@ def extract_volume(args: argparse.Namespace) -> int:
             upath.touch()
 
         os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
-        # This needs to be done after writing files as writing files resets
-        # the parent folder's modified time that was set before
-        if len(hpath) > 1:
-            for i in range(len(hpath), 0, -1):
-                parent_folder_modtime = vol.get(hpath[:i]).mddate - 2082844800
-                os.utime(
-                    Path(*(upath.parts[:i])),
-                    (parent_folder_modtime, parent_folder_modtime),
-                )
+
+    # This needs to be done after writing files as writing files resets
+    # the parent folder's modified time
+    if not dryrun:
+        for upath, modtime in folders:
+            os.utime(upath, (modtime, modtime))
+
     return 0
 
 
