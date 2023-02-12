@@ -226,13 +226,11 @@ bool cImageEntityData::CreateFromFile(const tString &asFile, tIntVec &avImageHan
 			tString sFile;
 			if (bGotAnim) {
 				int lNum = i + 1;
-				char buff[5];
-				snprintf(buff, 5, "%d", lNum);
 
 				sFile = sImageName;
 				if (lNum < 10)
 					sFile += "0";
-				sFile += buff;
+				sFile += Common::String::format("%d", lNum).c_str();
 			} else {
 				sFile = sImageName;
 			}
