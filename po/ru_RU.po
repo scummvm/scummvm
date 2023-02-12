@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-12 19:51+0000\n"
+"PO-Revision-Date: 2023-02-12 19:53+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -656,7 +656,7 @@ msgstr ""
 
 #: gui/gui-manager.cpp:153 gui/options.cpp:2287
 msgid "GUI"
-msgstr "Графический интерфейс"
+msgstr "GUI"
 
 #: gui/gui-manager.cpp:157 engines/mohawk/myst.cpp:573
 #: engines/mohawk/riven.cpp:837
