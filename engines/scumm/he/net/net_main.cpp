@@ -269,7 +269,10 @@ int Net::createSession(char *name) {
 	_isHost = true;
 	if (ConfMan.getBool("enable_session_server")) {
 		if (_sessionHost->connectPeer(_sessionServerAddress.host, _sessionServerAddress.port)) {
-			_sessionServerPeer = _sessionHost->getPeerIndexFromHost(_sessionServerAddress.host, _sessionServerAddress.port);
+			// FIXME: Get the IP address of the session server when a domain address is used. 
+
+			// _sessionServerPeer = _sessionHost->getPeerIndexFromHost(_sessionServerAddress.host, _sessionServerAddress.port);
+			_sessionServerPeer = 0;
 			// Create session to the session server.
 			Common::String req = Common::String::format(
 				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\"}",
