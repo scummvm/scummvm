@@ -108,7 +108,7 @@ Common::ErrorCode ImmortalEngine::initDisks() {
 	if (SearchMan.hasFile("IMMORTAL.dsk")) {
 
 		// Instantiate the disk as an object. The disk will then open and parse itself
-		ProDOSDisk *diskBoot = new ProDOSDisk("IMMORTAL.dsk");
+		Common::ProDOSDisk *diskBoot = new Common::ProDOSDisk("IMMORTAL.dsk");
 		if (diskBoot) {
 
 			// With the disk successfully parsed, it can be added to the search manager
@@ -122,7 +122,7 @@ Common::ErrorCode ImmortalEngine::initDisks() {
 
 	// Check for the gfx disk
 	if (SearchMan.hasFile("IMMORTAL_GFX.dsk")) {
-		ProDOSDisk *diskGFX = new ProDOSDisk("IMMORTAL_GFX.dsk");
+		Common::ProDOSDisk *diskGFX = new Common::ProDOSDisk("IMMORTAL_GFX.dsk");
 		if (diskGFX) {
 			debug("Gfx disk found");
 			SearchMan.add("IMMORTAL_GFX.dsk", diskGFX, 0, true);

@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	compression.o \
 	cycle.o \
 	door.o \
-	disk.o \
 	drawChr.o \
 	flameSet.o \
 	immortal.o \

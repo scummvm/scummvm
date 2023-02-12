@@ -37,9 +37,7 @@
 // Detection is only needed by the main engine
 #include "immortal/detection.h"
 
-// Disk is only used by immortal.cpp
-#include "immortal/disk.h"
-
+#include "common/formats/prodos.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/scummsys.h"

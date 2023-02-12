@@ -19,9 +19,9 @@
  *
  */
 
-#include "immortal/disk.h"
+#include "common/formats/prodos.h"
 
-namespace Immortal {
+namespace Common {
 
 // --- ProDOSFile methods ---
 
@@ -427,4 +427,4 @@ Common::SeekableReadStream *ProDOSDisk::createReadStreamForMember(const Common::
 	return f->createReadStream();
 }
 
-} // namespace Immortal
+} // Namespace Common

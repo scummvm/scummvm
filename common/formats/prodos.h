@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef IMMORTAL_DISK_H
-#define IMMORTAL_DISK_H
+#ifndef COMMON_PRODOS_H
+#define COMMON_PRODOS_H
 
 #include "common/memstream.h"
 #include "common/file.h"
@@ -34,7 +34,7 @@
  * matter for game engines anyway.
  */
 
-namespace Immortal {
+namespace Common {
 
 // These values define for ProDOS how to read the file entry, and also whether it's a keyblock (if it is a directory header, it's the keyblock of that directory)
 enum FileType : char {
@@ -210,6 +210,6 @@ private:
 };
 
 
-} // namespace Immortal
+} // Namespace Common
 
 #endif
