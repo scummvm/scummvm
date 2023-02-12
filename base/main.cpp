@@ -622,7 +622,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			warning("Unrecognized graphics mode '%s'. Switching to default mode", gfxModeSetting.c_str());
 		} else {
 			settings["gfx-mode"] = gfxModeSetting;
+			system.beginGFXTransaction();
 			system.setGraphicsMode(gfxModeSetting.c_str());
+			system.endGFXTransaction();
 		}
 		ConfMan.set("gfx_mode", gfxModeSetting, Common::ConfigManager::kSessionDomain);
 	}
