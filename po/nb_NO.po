@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-12 17:29+0000\n"
+"POT-Creation-Date: 2023-02-13 15:25+0000\n"
 "PO-Revision-Date: 2023-02-12 20:57+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2330,7 +2330,7 @@ msgid "Saves"
 msgstr "Lagringer"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:682
+#: base/main.cpp:686
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2373,19 +2373,19 @@ msgstr ""
 "\n"
 "Du trenger bare å gjennomføre steg 2 og 3 én gang for alle spillene dine."
 
-#: base/main.cpp:701 base/main.cpp:722
+#: base/main.cpp:705 base/main.cpp:726
 #: engines/director/lingo/lingo-builtins.cpp:1185
 msgid "Ok"
 msgstr "Ok"
 
 #. I18N: A button caption to dismiss amessage and read it later
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:703 base/main.cpp:724
+#: base/main.cpp:707 base/main.cpp:728
 msgid "Read Later"
 msgstr "Les senere"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:710
+#: base/main.cpp:714
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2414,11 +2414,11 @@ msgstr ""
 "utforskeren.\n"
 "4. Bla deg gjennom denne mappen for å finne fildataen til spillene dine."
 
-#: base/main.cpp:820
+#: base/main.cpp:824
 msgid "Error running game:"
 msgstr "Problem ved kjøring av spill:"
 
-#: base/main.cpp:867
+#: base/main.cpp:871
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikke finne noen motor som kunne kjøre det valgte spillet"
 

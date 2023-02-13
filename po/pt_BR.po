@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-12 17:29+0000\n"
+"POT-Creation-Date: 2023-02-13 15:25+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -2340,7 +2340,7 @@ msgid "Saves"
 msgstr "Salvamentos"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:682
+#: base/main.cpp:686
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2384,19 +2384,19 @@ msgstr ""
 "As etapas 2 e 3 precisam ser executadas apenas uma vez para todos os seus "
 "jogos."
 
-#: base/main.cpp:701 base/main.cpp:722
+#: base/main.cpp:705 base/main.cpp:726
 #: engines/director/lingo/lingo-builtins.cpp:1185
 msgid "Ok"
 msgstr "Ok"
 
 #. I18N: A button caption to dismiss amessage and read it later
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:703 base/main.cpp:724
+#: base/main.cpp:707 base/main.cpp:728
 msgid "Read Later"
 msgstr "Ler mais Tarde"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:710
+#: base/main.cpp:714
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2425,11 +2425,11 @@ msgstr ""
 "navegador ScummVM.\n"
 "  4. Navegue por esta pasta até os dados do seu jogo."
 
-#: base/main.cpp:820
+#: base/main.cpp:824
 msgid "Error running game:"
 msgstr "Erro ao executar o jogo:"
 
-#: base/main.cpp:867
+#: base/main.cpp:871
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 "Não foi possível encontrar nenhuma engine capaz de rodar o jogo selecionado"

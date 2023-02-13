@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-12 17:29+0000\n"
+"POT-Creation-Date: 2023-02-13 15:25+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -2381,7 +2381,7 @@ msgid "Saves"
 msgstr "Gorde"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:682
+#: base/main.cpp:686
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2404,19 +2404,19 @@ msgid ""
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
 
-#: base/main.cpp:701 base/main.cpp:722
+#: base/main.cpp:705 base/main.cpp:726
 #: engines/director/lingo/lingo-builtins.cpp:1185
 msgid "Ok"
 msgstr "Ados"
 
 #. I18N: A button caption to dismiss amessage and read it later
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:703 base/main.cpp:724
+#: base/main.cpp:707 base/main.cpp:728
 msgid "Read Later"
 msgstr ""
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:710
+#: base/main.cpp:714
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2432,11 +2432,11 @@ msgid ""
 "  4. Browse through this folder to your game data."
 msgstr ""
 
-#: base/main.cpp:820
+#: base/main.cpp:824
 msgid "Error running game:"
 msgstr "Jokoa exekutatzean errorea:"
 
-#: base/main.cpp:867
+#: base/main.cpp:871
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Ezin izan da aukeraturiko jokoa exekutatzeko gai den motorerik aurkitu"
 
