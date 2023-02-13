@@ -811,7 +811,7 @@ void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
 
 	if (stackArgs[kAnimDefStackArgs] != 0)
-		warning("sanimL second operand wasn't zero (what does that do??)");
+		warning("sanimL second operand wasn't zero (what does that do?)");
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
 	uint direction = stackArgs[kAnimDefStackArgs + 1];
@@ -888,6 +888,7 @@ void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
 	warning("Sound loop not implemented yet");
+	(void)stackArgs;
 }
 
 void Runtime::scriptOpMusic(ScriptArg_t arg) {
@@ -900,12 +901,14 @@ void Runtime::scriptOpMusicUp(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
 	warning("Music volume changes are not implemented");
+	(void)stackArgs;
 }
 
 void Runtime::scriptOpMusicDn(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
 	warning("Music volume changes are not implemented");
+	(void)stackArgs;
 }
 
 void Runtime::scriptOpParm1(ScriptArg_t arg) { error("Unimplemented opcode"); }
@@ -919,6 +922,7 @@ void Runtime::scriptOpRandom(ScriptArg_t arg) { error("Unimplemented opcode"); }
 
 void Runtime::scriptOpDrop(ScriptArg_t arg) {
 	TAKE_STACK(1);
+	(void)stackArgs;
 }
 
 void Runtime::scriptOpDup(ScriptArg_t arg) {
