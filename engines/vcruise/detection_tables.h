@@ -45,7 +45,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		},
 		GID_REAH,
 	},
-	{ AD_TABLE_END_MARKER }
+	{ AD_TABLE_END_MARKER, GID_UNKNOWN }
 };
 
 } // End of namespace MTropolis
