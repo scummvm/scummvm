@@ -37,7 +37,7 @@ public:
 	enum Mode {
 		MaterialMode0,
 		MaterialMode1,
-		MaterialMode2
+		MaterialMode2 // alpha only?
 	};
 
 	TeMaterial();
