@@ -152,13 +152,48 @@ bool Lobby::connect() {
 	// NOTE: Even though the protocol starts with http(s), this is an entirely
 	// different protocol.  This is done so we can achieve communicating over
 	// TLS/SSL sockets.
-	// TODO: custom url
-	Common::String url = "http://127.0.0.1:9130";
+	Common::String lobbyUrl = "https://multiplayer.scummvm.org:9130";
+	if (ConfMan.hasKey("lobby_server")) {
+		lobbyUrl = ConfMan.get("lobby_server");
+	}
 
-	debug(1, "LOBBY: Connecting to %s", url.c_str());
+	// Parse the URL for checks:
+	Networking::CurlURL url;
+	if (url.parseURL(lobbyUrl)) {
+		Common::String scheme = url.getScheme();
+		if (!scheme.contains("http")) {
+			warning("LOBBY: Unsupported scheme in URL: \"%s\"", scheme.c_str());
+			writeStringArray(109, "Unsupported scheme in server address");
+			_vm->writeVar(108, -99);
+			return false;
+		}
 
-	if (_socket->connect(url)) {
-		debug(1, "LOBBY: Successfully connected to %s", url.c_str());
+		int port = url.getPort();
+		switch (port) {
+		case -1:
+			warning("LOBBY: Unable to get port.");
+			writeStringArray(109, "Unable to get port in address");
+			_vm->writeVar(108, -99);
+			return false;
+		case 0:
+			// Add default port:
+			lobbyUrl += ":9130";
+			break;
+		}
+	} else
+		warning("LOBBY: Could not parse URL, attempting to connect as is");
+
+
+	// // Maybe this check could be done better...
+	// int pos = lobbyUrl.findLastOf(":");
+	// if (pos)
+	// 	// If the URL missing a port at the end, add the default one in.
+	// 	lobbyUrl += ":9130";
+
+	debug(1, "LOBBY: Connecting to %s", lobbyUrl.c_str());
+
+	if (_socket->connect(lobbyUrl)) {
+		debug(1, "LOBBY: Successfully connected to %s", lobbyUrl.c_str());
 		return true;
 	} else {
 		delete _socket;
@@ -172,7 +207,7 @@ bool Lobby::connect() {
 void Lobby::disconnect(bool lost) {
 	if (!_socket)
 		return;
-	
+
 	if (!lost) {
 		debug(1, "LOBBY: Disconnecting connection to server.");
 		Common::JSONObject disconnectObject;
