@@ -30,10 +30,10 @@ namespace VCruise {
 
 static const VCruiseGameDescription gameDescriptions[] = {
 
-	{ // Reah: Face the Unknown, GOG downloadable version
+	{ // Reah: Face the Unknown, DVD/digital version
 		{
 			"reah",
-			"GOG",
+			"DVD",
 			{
 				{"Reah.exe", 0, "60ec19c53f1323cc7f0314f98d396283", 304128},
 				AD_LISTEND
