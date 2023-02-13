@@ -712,14 +712,12 @@ const int colors[] = {
 void showMixturesSuper(int page = 0) {
 	g_screen->screenTextColor(FG_WHITE);
 	for (int i = 0; i < 13; i++) {
-		char buf[4];
 
 		const Spell *s = g_spells->getSpell(i + 13 * page);
 		int line = i + 8;
 		g_screen->screenTextAt(2, line, "%s", s->_name);
 
-		snprintf(buf, 4, "%3d", g_ultima->_saveGame->_mixtures[i + 13 * page]);
-		g_screen->screenTextAt(6, line, "%s", buf);
+		g_screen->screenTextAt(6, line, "%s", Common::String::format("%3d", g_ultima->_saveGame->_mixtures[i + 13 * page]).c_str());
 
 		g_screen->screenShowChar(32, 9, line);
 		int comp = s->_components;
@@ -729,8 +727,7 @@ void showMixturesSuper(int page = 0) {
 		}
 		g_screen->screenTextColor(FG_WHITE);
 
-		snprintf(buf, 3, "%2d", s->_mp);
-		g_screen->screenTextAt(19, line, "%s", buf);
+		g_screen->screenTextAt(19, line, "%s", Common::String::format("%2d", s->_mp).c_str());
 	}
 }
 
