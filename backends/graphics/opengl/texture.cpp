@@ -573,6 +573,11 @@ void ScaledTexture::updateGLTexture() {
 
 	Common::Rect dirtyArea = getDirtyArea();
 
+	// Extend the dirty region for scalers
+	// that "smear" the screen, e.g. 2xSAI
+	dirtyArea.grow(_extraPixels);
+	dirtyArea.clip(Common::Rect(0, 0, _rgbData.w, _rgbData.h));
+
 	const byte *src = (const byte *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
 	uint srcPitch = _rgbData.pitch;
 	byte *dst;
