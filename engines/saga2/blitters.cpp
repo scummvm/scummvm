@@ -122,7 +122,7 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 		byte trans = stream.readByte();
 
 		if (stream.eos()) {
-			warning("unpackSprite: premature end of data");
+			debug(8, "unpackSprite: premature end of data #1");
 			fail = true;
 			break;
 		}
@@ -144,7 +144,7 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 		byte fill = stream.readByte();
 
 		if (stream.eos()) {
-			warning("unpackSprite: premature end of data");
+			debug(8, "unpackSprite: premature end of data #2");
 			fail = true;
 			break;
 		}
@@ -156,7 +156,7 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 			fail = true;
 		}
 		if (stream.read(dst, fill) != fill) {
-			warning("unpackSprite: premature end of data");
+			debug(8, "unpackSprite: premature end of data #3");
 			fail = true;
 			break;
 		}
