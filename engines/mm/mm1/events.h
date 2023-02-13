@@ -332,6 +332,13 @@ public:
 	 */
 	bool isPresent(const Common::String &name) const;
 
+	/**
+	 * Returns true if combat is active
+	 */
+	bool isInCombat() const {
+		return isPresent("Combat");
+	}
+
 	Graphics::Screen *getScreen() const {
 		return _screen;
 	}

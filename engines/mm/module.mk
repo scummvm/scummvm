@@ -125,6 +125,7 @@ MODULE_OBJS += \
 	mm1/views_enh/game.o \
 	mm1/views_enh/game_commands.o \
 	mm1/views_enh/game_messages.o \
+	mm1/views_enh/game_party.o \
 	mm1/views_enh/main_menu.o \
 	mm1/views_enh/map.o \
 	mm1/views_enh/map_popup.o \

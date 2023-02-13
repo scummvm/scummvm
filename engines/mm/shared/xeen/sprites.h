@@ -110,18 +110,6 @@ public:
 		uint flags = 0, int scale = 0);
 
 	/**
-	 * Draw a sprite onto a given window
-	 * @param windowIndex	Destination window number
-	 * @param frame		Frame number
-	 * @param destPos	Destination position
-	 * @param flags		Flags
-	 * @param scale		Scale: 0=No scale, SCALE_ENLARGE=Enlarge it
-	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
-	 */
-	void draw(int windowIndex, int frame, const Common::Point &destPos,
-		uint flags = 0, int scale = 0);
-
-	/**
 	 * Draw the sprite onto the given surface
 	 * @param dest		Destination surface
 	 * @param frame		Frame number
