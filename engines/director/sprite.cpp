@@ -165,10 +165,10 @@ void Sprite::createQDMatte() {
 		break;
 	case kLineBottomTopSprite:
 	case kLineTopBottomSprite:
-		warning("Sprite::createQDMatte doesn't support creating matte for type %d", _spriteType);
+		warning("Sprite::createQDMatte doesn't support creating matte for type %d (%s)", _spriteType, spriteType2str(_spriteType));
 		break;
 	default:
-		warning("Sprite::createQDMatte Expected shape type but got type %d", _spriteType);
+		warning("Sprite::createQDMatte Expected shape type but got type %d (%s)", _spriteType, spriteType2str(_spriteType));
 	}
 
 	Graphics::Surface surface;

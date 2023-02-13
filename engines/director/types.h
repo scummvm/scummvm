@@ -158,7 +158,7 @@ enum SpriteType {
 	kOutlinedOvalSprite				= 14,	// QuickDraw
 	kThickLineSprite				= 15,	// 2pt width line
 	kCastMemberSprite				= 16,	// Specified by cast member
-	kFilmLoopSpite					= 17,
+	kFilmLoopSprite					= 17,
 	kDirMovieSprite					= 18
 };
 
@@ -414,6 +414,7 @@ typedef Common::Array<PCell> PropertyArray;
 
 const char *scriptType2str(ScriptType scr);
 const char *castType2str(CastType type);
+const char *spriteType2str(SpriteType type);
 
 } // End of namespace Director
 

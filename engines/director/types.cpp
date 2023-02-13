@@ -60,6 +60,7 @@ const char *castTypes[] = {
 	"script",
 	"RTE",
 };
+
 const char *castType2str(CastType type) {
 	if (type == kCastTypeAny)
 		return "any";
@@ -68,6 +69,36 @@ const char *castType2str(CastType type) {
 		return castTypes[type];
 
 	warning("BUILDBOT: Unknown castType: %d", type);
+	return "<unknown>";
+}
+
+const char *spriteType[] = {
+	"Inactive",
+	"Bitmap",
+	"Rectangle",
+	"RoundedRectangle",
+	"Oval",
+	"LineTopBottom",
+	"LineBottomTop",
+	"Text",
+	"Button",
+	"Checkbox",
+	"RadioButton",
+	"Pict",
+	"OutlinedRectangle",
+	"OutlinedRoundedRectangle",
+	"OutlinedOval",
+	"ThickLine",
+	"CastMember",
+	"FilmLoop",
+	"DirMovie",
+};
+
+const char *spriteType2str(SpriteType type) {
+	if (type >= kInactiveSprite && type <= kDirMovieSprite)
+		return spriteType[type];
+
+	warning("BUILDBOT: Unknown spriteType: %d", type);
 	return "<unknown>";
 }
 
