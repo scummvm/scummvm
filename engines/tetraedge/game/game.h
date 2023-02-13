@@ -132,6 +132,7 @@ public:
 	bool onCharacterAnimationPlayerFinished(const Common::String &val);
 	bool onDialogFinished(const Common::String &val);
 	bool onDisplacementFinished();
+	bool onDisplacementPlayerFinished();
 	bool onFinishedCheckBackup(bool result);
 	bool onFinishedLoadingBackup(const Common::String &val);
 	bool onFinishedSavingBackup(int something);

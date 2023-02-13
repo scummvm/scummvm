@@ -306,7 +306,7 @@ void Game::enter() {
 	Character::loadSettings("models/ModelsSettings.xml");
 	Object3D::loadSettings("objects/ObjectsSettings.xml");
 	if (_scene._character) {
-		_scene._character->onFinished().remove(this, &Game::onDisplacementFinished);
+		_scene._character->onFinished().remove(this, &Game::onDisplacementPlayerFinished);
 		_scene.unloadCharacter(_scene._character->_model->name());
 	}
 	bool loaded = loadPlayerCharacter("Kate");
@@ -364,8 +364,8 @@ void Game::enter() {
 		onFinishedLoadingBackup("");
 	}
 	_sceneCharacterVisibleFromLoad = true;
-	_scene._character->onFinished().remove(this, &Game::onDisplacementFinished);
-	_scene._character->onFinished().add(this, &Game::onDisplacementFinished);
+	_scene._character->onFinished().remove(this, &Game::onDisplacementPlayerFinished);
+	_scene._character->onFinished().add(this, &Game::onDisplacementPlayerFinished);
 	_prevSceneName.clear();
 	_notifier.load();
 }
@@ -850,7 +850,12 @@ bool Game::loadCharacter(const Common::String &name) {
 			assert(character);
 			character->_onCharacterAnimFinishedSignal.remove(this, &Game::onCharacterAnimationFinished);
 			character->_onCharacterAnimFinishedSignal.add(this, &Game::onCharacterAnimationFinished);
-			character->onFinished().add(this, &Game::onDisplacementFinished);
+			// Syberia 2 uses a simplified callback here.
+			// We have made onDisplacementPlayerFinished more like Syberia 1's onDisplacementPlayerFinished.
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia)
+				character->onFinished().add(this, &Game::onDisplacementPlayerFinished);
+			else
+				character->onFinished().add(this, &Game::onDisplacementFinished);
 		}
 	}
 	return result;
@@ -861,8 +866,8 @@ bool Game::loadPlayerCharacter(const Common::String &name) {
 	if (result) {
 		_scene._character->_characterAnimPlayerFinishedSignal.remove(this, &Game::onCharacterAnimationPlayerFinished);
 		_scene._character->_characterAnimPlayerFinishedSignal.add(this, &Game::onCharacterAnimationPlayerFinished);
-		_scene._character->onFinished().remove(this, &Game::onDisplacementFinished);
-		_scene._character->onFinished().add(this, &Game::onDisplacementFinished);
+		_scene._character->onFinished().remove(this, &Game::onDisplacementPlayerFinished);
+		_scene._character->onFinished().add(this, &Game::onDisplacementPlayerFinished);
 	}
 	return result;
 }
@@ -980,20 +985,10 @@ bool Game::onDialogFinished(const Common::String &val) {
 	return false;
 }
 
+// This is the Syberia 2 version of this function, not used in Syb 2.
+// Syb 1 uses a function much more like onDisplacementPlayerFinished below.
 bool Game::onDisplacementFinished() {
-	_sceneCharacterVisibleFromLoad = true;
-	_scene._character->stop();
-	_scene._character->setAnimation(_scene._character->characterSettings()._idleAnimFileName, true);
-
-	if (!_isCharacterWalking) {
-		_isCharacterWalking = false;
-		_isCharacterIdle = true;
-	} else {
-		_isCharacterIdle = false;
-	}
-
 	TeLuaThread *thread = nullptr;
-
 	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {
 		YieldedCallback &cb = _yieldedCallbacks[i];
 		if (cb._luaFnName == "OnDisplacementFinished") {
@@ -1006,6 +1001,41 @@ bool Game::onDisplacementFinished() {
 		thread->resume();
 	} else {
 		_luaScript.execute("OnDisplacementFinished");
+	}
+	return false;
+}
+
+bool Game::onDisplacementPlayerFinished() {
+	_sceneCharacterVisibleFromLoad = true;
+	assert(_scene._character);
+	_scene._character->stop();
+	_scene._character->walkMode("Walk");
+	_scene._character->setAnimation(_scene._character->characterSettings()._idleAnimFileName, true);
+
+	if (_isCharacterWalking) {
+		_isCharacterWalking = false;
+		_isCharacterIdle = true;
+	} else {
+		_isCharacterIdle = false;
+	}
+
+	TeLuaThread *thread = nullptr;
+
+	const char *cbName = (g_engine->gameType() == TetraedgeEngine::kSyberia ?
+						"OnDisplacementFinished" : "OnDisplacementPlayerFinished");
+
+	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {
+		YieldedCallback &cb = _yieldedCallbacks[i];
+		if (cb._luaFnName == cbName) {
+			thread = cb._luaThread;
+			_yieldedCallbacks.remove_at(i);
+			break;
+		}
+	}
+	if (thread) {
+		thread->resume();
+	} else {
+		_luaScript.execute(cbName);
 	}
 	return false;
 }
@@ -1584,7 +1614,12 @@ bool Game::unloadCharacter(const Common::String &charname) {
 	}
 	c->_onCharacterAnimFinishedSignal.remove(this, &Game::onCharacterAnimationFinished);
 	c->removeAnim();
-	c->onFinished().remove(this, &Game::onDisplacementFinished);
+	// Syberia 2 uses a simplified callback here.
+	// We have made onDisplacementPlayerFinished more like Syberia 1's onDisplacementPlayerFinished.
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia)
+		c->onFinished().remove(this, &Game::onDisplacementPlayerFinished);
+	else
+		c->onFinished().remove(this, &Game::onDisplacementFinished);
 	_scene.unloadCharacter(charname);
 	return true;
 }
@@ -1692,7 +1727,9 @@ void Game::update() {
 		_scene.update();
 	} else {
 		TeSoundManager *soundmgr = g_engine->getSoundManager();
-		for (auto &music : soundmgr->musics()) {
+		// Take a copy in case the active music objects changes as we iterate.
+		Common::Array<TeMusic *> musics = soundmgr->musics();
+		for (TeMusic *music : musics) {
 			const Common::String &chanName = music->channelName();
 			if (chanName != "music" && chanName != "sfx" && chanName != "dialog")
 				music->stop();

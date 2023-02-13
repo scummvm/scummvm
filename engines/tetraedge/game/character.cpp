@@ -507,8 +507,7 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 			float newY = (fabs(minY) > fabs(lastHeadY)) ? 0.0 : minY + lastHeadY;
 			_lastHeadRotation.setY(newY);
 
-			_headRotation.setX(_lastHeadRotation.getX());
-			_headRotation.setY(_lastHeadRotation.getY());
+			_headRotation = _lastHeadRotation;
 
 			TeQuaternion rot1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(-1, 0, 0), _lastHeadRotation.getX());
 			TeQuaternion rot2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 0, 1), _lastHeadRotation.getY());
