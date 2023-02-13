@@ -1,7 +1,7 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.7.0 (DD.MM.YYYY)
+#### 2.7.0 (26.02.2023)
 
  Neue Spiele:
    - Unterstützung für Soldier Boyz hinzugefügt.
