@@ -383,8 +383,8 @@ void AVIDecoder::readStreamName(uint32 size) {
 		skipChunk(size);
 	} else {
 		// Get in the name
-		assert(size > 0 && size < 64);
-		char buffer[64];
+		assert(size > 0 && size < 128);
+		char buffer[128];
 		_fileStream->read(buffer, size);
 		if (size & 1)
 			_fileStream->skip(1);
