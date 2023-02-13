@@ -244,7 +244,8 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsHelp) ||
 		(
 			f == kSupportsChangingOptionsDuringRuntime &&
-			Common::String(_game.guioptions).contains(GUIO_AUDIO_OVERRIDE)
+			(Common::String(_game.guioptions).contains(GUIO_AUDIO_OVERRIDE) ||
+			 Common::String(_game.guioptions).contains(GUIO_NETWORK))
 		) ||
 		(f == kSupportsQuitDialogOverride && (_useOriginalGUI || !ChainedGamesMan.empty()));
 }
@@ -593,7 +594,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiO
 #ifdef USE_ENET
 	else if (gameid == "football" || gameid == "baseball2001" || gameid == "football2002" ||
 		gameid == "moonbase")
-		return new Scumm::HENetworkGameOptionsWidget(boss, name, target);
+		return new Scumm::HENetworkGameOptionsWidget(boss, name, target, gameid);
 #endif
 
 	return MetaEngine::buildEngineOptionsWidget(boss, name, target);

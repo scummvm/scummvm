@@ -326,7 +326,7 @@ private:
  */
 class HENetworkGameOptionsWidget : public ScummOptionsContainerWidget {
 public:
-	HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	HENetworkGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain, const Common::String gameid);
 	~HENetworkGameOptionsWidget() override {};
 
 	void load() override;
@@ -338,6 +338,8 @@ private:
 		kResetServersCmd = 'CLRS',
 	};
 
+	Common::String _gameid;
+
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
@@ -347,6 +349,9 @@ private:
 	GUI::ButtonWidget *_serverResetButton;
 
 	GUI::CheckboxWidget *_enableLANBroadcast;
+
+	GUI::EditTextWidget *_lobbyServerAddr;
+	GUI::ButtonWidget *_lobbyResetButton;
 };
 #endif
 

@@ -24,6 +24,7 @@
 
 #include "common/formats/json.h"
 #include "backends/networking/curl/socket.h"
+#include "backends/networking/curl/url.h"
 
 // Commands for VAR_REMOTE_START_SCRIPT. (55 in football; 324 in baseball)
 #define OP_REMOTE_SYSTEM_ALERT			9911
@@ -53,7 +54,7 @@ public:
 	bool connect();
 	void disconnect(bool lost = false);
 	void login(const char *userName, const char *password);
-	
+
 	void getUserProfile(int userId);
 	void setIcon(int icon);
 protected:
