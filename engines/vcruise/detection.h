@@ -27,8 +27,10 @@
 namespace VCruise {
 
 enum VCruiseGameID {
-	GID_REAH	= 0,
-	GID_SCHIZM	= 1,
+	GID_UNKNOWN	= 0,
+
+	GID_REAH	= 1,
+	GID_SCHIZM	= 2,
 };
 
 struct VCruiseGameDescription {
