@@ -671,6 +671,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 
 #ifdef __ANDROID__
+	// This early popup message for Android, informing the users about important
+	// changes to file access, needs to be *after* language for the GUI has been selected.
+	// Hence, we instantiate GUI Manager here, to take care of this.
+	GUI::GuiManager::instance();
 	if (AndroidFilesystemFactory::instance().hasSAF()
 		&& !ConfMan.hasKey("android_saf_dialog_shown")) {
 
