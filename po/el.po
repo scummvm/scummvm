@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-12 21:50+0000\n"
+"PO-Revision-Date: 2023-02-13 17:02+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1598,11 +1598,11 @@ msgstr "Θέμα:"
 
 #: gui/options.cpp:2507
 msgid "GUI scale:"
-msgstr "Κλιμάκωση GUI:"
+msgstr "Κλιμάκωση ΓΔΧ:"
 
 #: gui/options.cpp:2514
 msgid "GUI renderer:"
-msgstr "Απόδοση εικόνας GUI:"
+msgstr "Απόδοση εικόνας ΓΔΧ:"
 
 #: gui/options.cpp:2527
 msgid "Return to the launcher when leaving a game"
@@ -1629,15 +1629,15 @@ msgstr ""
 
 #: gui/options.cpp:2542
 msgid "GUI language:"
-msgstr "Γλώσσα GUI:"
+msgstr "Γλώσσα ΓΔΧ:"
 
 #: gui/options.cpp:2542
 msgid "Language of ScummVM GUI"
-msgstr "Γλώσσα του ScummVM GUI"
+msgstr "Γλώσσα για τη ΓΔΧ (GUI) του ScummVM"
 
 #: gui/options.cpp:2568
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr "Χρήση γλώσσας παιχνιδιού ως γλώσσα του ScummVM GUI"
+msgstr "Χρήση γλώσσας παιχνιδιού ως γλώσσα για τη ΓΔΧ (GUI) του ScummVM"
 
 #: gui/options.cpp:2569
 msgid ""
@@ -1645,10 +1645,10 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"Ξεκινώντας ένα παιχνίδι, η γλώσσα παιχνιδιού θα χρησιμοποιείται και για το "
-"περιβάλλον διεπαφής (GUI) του ScummVM. Έτσι, αν ένα παιχνίδι χρησιμοποιεί τα "
-"παράθυρα διαλόγου του ScummVM για αποθήκευση και φόρτωση, αυτά θα είναι στην "
-"ίδια γλώσσα με το παιχνίδι."
+"Ξεκινώντας ένα παιχνίδι, η γλώσσα παιχνιδιού θα χρησιμοποιείται και για τη "
+"γραφική διεπαφή χρήστη (ΓΔΧ ή αλλιώς GUI) του ScummVM. Έτσι, αν ένα παιχνίδι "
+"χρησιμοποιεί τα παράθυρα διαλόγου του ScummVM για αποθήκευση και φόρτωση, "
+"αυτά θα είναι στην ίδια γλώσσα με το παιχνίδι."
 
 #: gui/options.cpp:2581
 msgid "Use native system file browser"
@@ -1944,8 +1944,8 @@ msgstr "Μετατροπή κειμένου σε ομιλία"
 #: gui/options.cpp:2745
 msgid "Will read text in gui on mouse over."
 msgstr ""
-"Θα διαβάσει το κείμενο που βρίσκεται κάτω από το ποντίκι στο γραφικό "
-"περιβάλλον διεπαφής."
+"Θα διαβάσει το κείμενο που βρίσκεται κάτω από το ποντίκι στη γραφική διεπαφή "
+"χρήστη (ΓΔΧ ή αλλιώς GUI)."
 
 #: gui/options.cpp:2758
 msgid "None"
@@ -2017,13 +2017,15 @@ msgstr ""
 
 #: gui/options.cpp:3122
 msgid "Select directory for GUI themes"
-msgstr "Επιλέξτε φάκελο για θέματα GUI"
+msgstr ""
+"Επιλέξτε φάκελο θεμάτων (themes) για τη γραφική διεπαφή χρήστη (ΓΔΧ ή αλλιώς "
+"GUI)"
 
 #: gui/options.cpp:3132
 msgid "Select directory for GUI launcher thumbnails"
 msgstr ""
-"Επιλέξτε φάκελο για τα εικονίδια παιχνιδιών στο γραφικό περιβάλλον διεπαφής "
-"(GUI) του launcher"
+"Επιλέξτε φάκελο για τα εικονίδια παιχνιδιών που θα εμφανίζονται στη γραφική "
+"διεπαφή χρήστη (ΓΔΧ ή αλλιώς GUI) του launcher"
 
 #: gui/options.cpp:3142
 msgid "Select directory for extra files"
@@ -3136,8 +3138,8 @@ msgid ""
 "on MIDI tab. Music is off."
 msgstr ""
 "Το FluidSynth απαιτεί μια ρύθμιση για 'soundfont'. Παρακαλούμε να "
-"προσδιορίσετε ένα από το περιβάλλον διεπαφής (GUI) του ScummVM στο tab \"MIDI"
-"\". Η μουσική θα απενεργοποιηθεί."
+"προσδιορίσετε ένα από τη γραφική διεπαφή χρήστη (ΓΔΧ ή αλλιώς GUI) του "
+"ScummVM στο tab \"MIDI\". Η μουσική θα απενεργοποιηθεί."
 
 #: audio/softsynth/fluidsynth.cpp:367
 #, c-format
@@ -7392,7 +7394,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1052 engines/scumm/metaengine.cpp:666
 msgid "Enable the original GUI and Menu"
-msgstr "Χρήση αρχικού Μενού και Περιβάλλοντος Διεπαφής (GUI)"
+msgstr "Χρήση αρχικού Μενού και Γραφικής Διεπαφής Χρήστη (GUI)"
 
 #: engines/scumm/dialogs.cpp:1053
 msgid ""
@@ -9074,7 +9076,7 @@ msgstr "Προβολή υπαρχόντων"
 #: engines/wintermute/keymapper_tables.h:1932
 #: engines/wintermute/keymapper_tables.h:1990
 msgid "GUI variant A"
-msgstr "Α' εκδοχή διεπαφής"
+msgstr "Α' εκδοχή ΓΔΧ"
 
 #: engines/wintermute/keymapper_tables.h:276
 #: engines/wintermute/keymapper_tables.h:339
@@ -9085,7 +9087,7 @@ msgstr "Α' εκδοχή διεπαφής"
 #: engines/wintermute/keymapper_tables.h:1938
 #: engines/wintermute/keymapper_tables.h:1996
 msgid "GUI variant B"
-msgstr "Β' εκδοχή διεπαφής"
+msgstr "Β' εκδοχή ΓΔΧ"
 
 #: engines/wintermute/keymapper_tables.h:283
 #: engines/wintermute/keymapper_tables.h:414
