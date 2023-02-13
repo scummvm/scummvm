@@ -23,6 +23,7 @@
 #define VCRUISE_RUNTIME_H
 
 #include "common/hashmap.h"
+#include "common/keyboard.h"
 
 #include "vcruise/detection.h"
 
@@ -43,6 +44,8 @@ class AVIDecoder;
 } // End of namespace Video
 
 namespace VCruise {
+
+static const uint kNumDirections = 8;
 
 class AudioPlayer;
 class TextParser;
@@ -92,7 +95,6 @@ struct MapScreenDirectionDef {
 
 struct MapDef {
 	static const uint kNumScreens = 96;
-	static const uint kNumDirections = 8;
 	static const uint kFirstScreen = 0xa0;
 
 	Common::SharedPtr<MapScreenDirectionDef> screenDirections[kNumScreens][kNumDirections];
@@ -112,6 +114,11 @@ public:
 
 	bool runFrame();
 	void drawFrame();
+
+	void onLButtonDown(int16 x, int16 y);
+	void onLButtonUp(int16 x, int16 y);
+	void onMouseMove(int16 x, int16 y);
+	void onKeyDown(Common::KeyCode keyCode);
 
 private:
 	enum IndexParseType {
@@ -194,6 +201,7 @@ private:
 
 	void scriptOpMusic(ScriptArg_t arg);
 	void scriptOpMusicUp(ScriptArg_t arg);
+	void scriptOpMusicDn(ScriptArg_t arg);
 	void scriptOpParm1(ScriptArg_t arg);
 	void scriptOpParm2(ScriptArg_t arg);
 	void scriptOpParm3(ScriptArg_t arg);
@@ -245,6 +253,18 @@ private:
 	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
 	uint _screenNumber;
 	uint _direction;
+
+	AnimationDef _panLeftAnimationDef;
+	AnimationDef _panRightAnimationDef;
+	bool _havePanAnimations;
+
+	AnimationDef _idleAnimations[kNumDirections];
+	bool _haveIdleAnimations[kNumDirections];
+
+	Common::HashMap<uint32, int32> _variables;
+
+	static const uint kPanLeftInteraction = 1;
+	static const uint kPanRightInteraction = 3;
 
 	uint _loadedRoomNumber;
 	uint _activeScreenNumber;

@@ -376,6 +376,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"soundL2", ProtoOp::kProtoOpScript, ScriptOps::kSoundL2},
 	{"music", ProtoOp::kProtoOpScript, ScriptOps::kMusic},
 	{"musicUp", ProtoOp::kProtoOpScript, ScriptOps::kMusicUp},
+	{"musicDn", ProtoOp::kProtoOpScript, ScriptOps::kMusicDn},
 
 	{"parm1", ProtoOp::kProtoOpScript, ScriptOps::kParm1},
 	{"parm2", ProtoOp::kProtoOpScript, ScriptOps::kParm2},
