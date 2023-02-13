@@ -1248,7 +1248,10 @@ static void ShowBillboard(const Common::String &name) {
 	Game *game = g_engine->getGame();
 	Billboard *bb = game->scene().billboard(name);
 	if (!bb) {
-		error("[ShowBillboard] Billboard not found %s", name.c_str());
+		// Syberia 2 uses billboard A1_RomHaut/11100/A11100-01-04.png but never
+		// loads it..
+		warning("[ShowBillboard] Billboard not found %s", name.c_str());
+		return;
 	}
 	bb->model()->setVisible(true);
 }
@@ -1654,7 +1657,7 @@ static int tolua_ExportedFunctions_ActivateAnchorZone00(lua_State *L) {
 	error("#ferror in function 'ActivateAnchorZone': %d %d %s", err.index, err.array, err.type);
 }
 
-static void SetCharacterLookChar(const Common::String &charname, const Common::String &destname, bool tall) {
+static void SetCharacterLookChar(const Common::String &charname, const Common::String &destname, bool tall, float f) {
 	Game *game = g_engine->getGame();
 	Character *character = game->scene().character(charname);
 	if (!character) {
@@ -1662,6 +1665,8 @@ static void SetCharacterLookChar(const Common::String &charname, const Common::S
 		return;
 	}
 	character->setLookingAtTallThing(tall);
+	if (f != 0.0)
+		warning("TODO: Use float param %f in SetCharacterLookChar", f);
 	if (destname.empty()) {
 		character->setCharLookingAt(nullptr);
 	} else {
@@ -1677,11 +1682,13 @@ static void SetCharacterLookChar(const Common::String &charname, const Common::S
 static int tolua_ExportedFunctions_SetCharacterLookChar00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
-		&& tolua_isboolean(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
+		&& tolua_isboolean(L, 3, 1, &err) && tolua_isnumber(L, 4, 1, &err)
+		&& tolua_isnoobj(L, 5, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		bool b = tolua_toboolean(L, 3, 1);
-		SetCharacterLookChar(s1, s2, b);
+		float f = tolua_tonumber(L, 4, 0.0);
+		SetCharacterLookChar(s1, s2, b, f);
 		return 0;
 	}
 	error("#ferror in function 'SetCharacterLookChar': %d %d %s", err.index, err.array, err.type);
