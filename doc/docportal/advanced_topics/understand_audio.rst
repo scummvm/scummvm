@@ -115,7 +115,7 @@ You don't need to enable **True Roland MT-32** in the MT-32 tab, ScummVM does th
 
     Some games work better with some MT-32 devices than others. As an example, Lure of the Temptress makes use of extra sound effects included with the CM-32L and won't sound right with an MT-32. Likewise, The Colonel's Bequest uses some bugs in the early MT-32 modules, which means that later devices will play incorrect sound effects!
 
-    `This Wikipedia article <https://en.wikipedia.org/wiki/List_of_MT-32-compatible_computer_games>`_ provides a comprehensive list of MT-32 compatible games, including which games work best with which device.
+    `This article <https://www.vogonswiki.com/index.php/List_of_MT-32-compatible_computer_games>`_ provides a comprehensive list of MT-32 compatible games, including which games work best with which device.
 
 The processor requirements for the MT-32 emulator are quite high; a fast CPU is strongly recommended.
 
