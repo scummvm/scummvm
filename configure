@@ -162,6 +162,7 @@ _vpx=auto
 _faad=auto
 _fluidsynth=auto
 _fluidlite=auto
+_sonivox=auto
 _opengl_mode=auto
 _opengl_game_classic=auto
 _opengl_game_shaders=auto
@@ -1048,6 +1049,10 @@ Optional Libraries:
                            installed (optional)
   --disable-fluidlite      disable fluidlite MIDI driver [autodetect]
 
+  --with-sonivox-prefix=DIR prefix where libsonivox is
+                           installed (optional)
+  --disable-sonivox        disable EAS MIDI driver [autodetect]
+
   --with-ieee1284-prefix=DIR prefix where libieee1284 is installed (optional)
   --enable-opl2lpt         enable OPL2LPT support
 
@@ -1222,6 +1227,8 @@ for ac_option in $@; do
 	--enable-fluidsynth)          _fluidsynth=yes        ;;
 	--disable-fluidlite)          _fluidlite=no          ;;
 	--enable-fluidlite)           _fluidlite=yes         ;;
+	--disable-sonivox)            _sonivox=no            ;;
+	--enable-sonivox)             _sonivox=yes           ;;
 	--enable-readline)            _readline=yes          ;;
 	--disable-readline)           _readline=no           ;;
 	--enable-freetype2)           _freetype2=yes         ;;
@@ -1294,6 +1301,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDLITE_CFLAGS="-I$arg/include"
 		FLUIDLITE_LIBS="-L$arg/lib"
+		;;
+	--with-sonivox-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		SONIVOX_CFLAGS="-I$arg/include"
+		SONIVOX_LIBS="-L$arg/lib"
 		;;
 	--with-mpeg2-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5889,6 +5901,36 @@ else
 	add_line_to_config_h '#undef USE_FLUIDLITE'
 fi
 echo "$_fluidlite"
+
+#
+# Check for Sonivox
+#
+echocheck "Sonivox"
+
+append_var SONIVOX_LIBS "-lsonivox"
+if test "$_sonivox" = auto; then
+	_sonivox=no
+	cat > $TMPC << EOF
+#include <sonivox/eas.h>
+int main(void) { /* delete_fluid_settings(new_fluid_settings()); */ return 0; }
+EOF
+	cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
+	if test "$_sonivox" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists sonivox; then
+		SONIVOX_LIBS="`$_pkgconfig --static --libs sonivox`"
+		cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
+	fi
+	if test "$_sonivox" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists sonivox-static; then
+		SONIVOX_LIBS="`$_pkgconfig --static --libs sonivox-static`"
+		cc_check_no_clean $SONIVOX_CFLAGS $SONIVOX_LIBS && _sonivox=yes
+	fi
+	cc_check_clean
+fi
+if test "$_sonivox" = yes; then
+	append_var LIBS "$SONIVOX_LIBS"
+	append_var INCLUDES "$SONIVOX_CFLAGS"
+fi
+define_in_config_if_yes "$_sonivox" 'USE_SONIVOX'
+echo "$_sonivox"
 
 #
 # Check for readline if text_console is enabled
