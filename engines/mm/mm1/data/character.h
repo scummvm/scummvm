@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/serializer.h"
 #include "mm/mm1/data/items.h"
+#include "mm/shared/xeen/sprites.h"
 
 namespace MM {
 namespace MM1 {
@@ -456,7 +457,9 @@ struct Character : public PrimaryAttributes {
 	byte _worthiness = 0;
 	byte _alignmentCtr = 0;
 	byte _flags[14];
+
 	byte _portrait = 0;
+	Shared::Xeen::SpriteResource _faceSprites;
 
 	// Non persistent fields
 	byte _numDrinks = 0;

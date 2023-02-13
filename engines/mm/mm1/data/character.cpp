@@ -228,6 +228,11 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_alignmentCtr);
 	s.syncBytes(_flags, 14);
 	s.syncAsByte(_portrait);
+
+	if (s.isLoading() && g_engine->isEnhanced()) {
+		Common::String name = Common::String::format("char%02d.fac", _portrait + 1);
+		_faceSprites.load(name);
+	}
 }
 
 void Character::clear() {

@@ -55,12 +55,11 @@ void GameParty::draw() {
 
 	// Draw character frames
 	for (uint idx = 0; idx < g_globals->_party.size(); ++idx) {
-		const Character &c = inCombat ? *g_globals->_combatParty[idx] : g_globals->_party[idx];
+		Character &c = inCombat ? *g_globals->_combatParty[idx] : g_globals->_party[idx];
 		ConditionEnum charCondition = c.worstCondition();
 		int charFrame = FACE_CONDITION_FRAMES[charCondition];
 
-//		Shared::Xeen::SpriteResource *sprites = (charFrame > 4) ? &_dseFace : c._faceSprites;
-		Shared::Xeen::SpriteResource *sprites = &_dseFace;
+		Shared::Xeen::SpriteResource *sprites = (charFrame > 4) ? &_dseFace : &c._faceSprites;
 		assert(sprites);
 		if (charFrame > 4)
 			charFrame -= 5;
