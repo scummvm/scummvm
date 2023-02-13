@@ -210,9 +210,24 @@ INITIALIZER(initResourceHandles) {
 		return false;
 	if (g_vm->getGameId() == GID_FTA2) {
 		// Only FTA2 has resource imports
-		resImports = (ResImportTable *)LoadResource(listRes, MKTAG('I', 'M', 'P', 'O'), "res imports");
-		if (!resImports)
+		Common::SeekableReadStream *stream = loadResourceToStream(listRes, MKTAG('I', 'M', 'P', 'O'), "res imports");
+
+		if (!stream)
 			return false;
+
+		resImports = (ResImportTable *)malloc(sizeof(ResImportTable));
+		resImports->deadActorProto = (int16)stream->readSint16LE();
+		(void)stream->readSint16LE();
+		(void)stream->readSint16LE();
+		resImports->EXP_spellEffect_CreateFireWisp = stream->readSint16LE();
+		resImports->EXP_spellEffect_CreateWindWisp = stream->readSint16LE();
+		resImports->EXP_spellEffect_CreateWraith = stream->readSint16LE();
+		resImports->EXP_spellEffect_TeleportToShrine = stream->readSint16LE();
+		resImports->EXP_spellEffect_Rejoin = stream->readSint16LE();
+		resImports->EXP_spellEffect_Timequake = stream->readSint16LE();
+		resImports->EXP_spellEffect_CreateFood = stream->readSint16LE();
+
+		delete stream;
 	}
 	return true;
 }
