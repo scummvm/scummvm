@@ -708,7 +708,7 @@ Datum CastMember::getField(int field) {
 		break;
 	case kTheCastType:
 		d.type = SYMBOL;
-		d.u.s = new Common::String(castTypeToString(_type));
+		d.u.s = new Common::String(castType2str(_type));
 		break;
 	case kTheFileName:
 		if (castInfo)

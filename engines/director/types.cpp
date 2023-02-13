@@ -37,53 +37,38 @@ const char *scriptType2str(ScriptType scr) {
 	if (scr < 0)
 		return "NoneScript";
 
-	if (scr > kMaxScriptType)
+	if (scr > kMaxScriptType) {
+		warning("BUILDBOT: Unknown scriptType: %d", scr);
 		return "<unknown>";
+	}
 
 	return scriptTypes[scr];
 }
 
-Common::String castTypeToString(const CastType &type) {
-	Common::String res;
-	switch (type) {
-	case kCastBitmap:
-		res = "bitmap";
-		break;
-	case kCastPalette:
-		res = "palette";
-		break;
-	case kCastButton:
-		res = "button";
-		break;
-	case kCastPicture:
-		res = "picture";
-		break;
-	case kCastDigitalVideo:
-		res = "digitalVideo";
-		break;
-	case kCastLingoScript:
-		res = "script";
-		break;
-	case kCastShape:
-		res = "shape";
-		break;
-	case kCastFilmLoop:
-		res = "filmLoop";
-		break;
-	case kCastSound:
-		res = "sound";
-		break;
-	case kCastMovie:
-		res = "movie";
-		break;
-	case kCastText:
-		res = "text";
-		break;
-	default:
-		res = "empty";
-		break;
-	}
-	return res;
+const char *castTypes[] = {
+	"empty",
+	"bitmap",
+	"filmLoop",
+	"text",
+	"palette",
+	"picture",
+	"sound",
+	"button",
+	"shape",
+	"movie",
+	"digitalVideo",
+	"script",
+	"RTE",
+};
+const char *castType2str(CastType type) {
+	if (type == kCastTypeAny)
+		return "any";
+
+	if (type <= kCastRTE)
+		return castTypes[type];
+
+	warning("BUILDBOT: Unknown castType: %d", type);
+	return "<unknown>";
 }
 
 

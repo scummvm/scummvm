@@ -1522,7 +1522,7 @@ Common::String Cast::formatCastSummary(int castId = -1) {
 		CastMemberInfo *castMemberInfo = getCastMemberInfo(*it);
 		Common::String info = castMember->formatInfo();
 		result += Common::String::format("%5d: type=%s, name=\"%s\"",
-			*it, castTypeToString(castMember->_type).c_str(),
+			*it, castType2str(castMember->_type),
 			castMemberInfo ? castMemberInfo->name.c_str() : ""
 		);
 

@@ -60,7 +60,7 @@ enum ScriptType {
 	kMovieScript = 2,
 	kEventScript = 3,
 	kTestScript = 4,
-	kMaxScriptType = 4	// Sync with cast.cpp:46, array scriptTypes[]
+	kMaxScriptType = 4	// Sync with types.cpp:28, array scriptTypes[]
 };
 
 enum ScriptFlag {
@@ -413,7 +413,7 @@ typedef Common::Array<Datum> DatumArray;
 typedef Common::Array<PCell> PropertyArray;
 
 const char *scriptType2str(ScriptType scr);
-Common::String castTypeToString(const CastType &type);
+const char *castType2str(CastType type);
 
 } // End of namespace Director
 

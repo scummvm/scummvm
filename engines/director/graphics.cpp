@@ -87,7 +87,7 @@ Image::ImageDecoder *DirectorEngine::getTile(int num) {
 
 	if (member->_type != kCastBitmap) {
 		warning("BUILDBOT: DirectorEngine::getTile(%d) VWTL refers to incorrect cast %s type %s", num,
-				tile->bitmapId.asString().c_str(), castTypeToString(member->_type).c_str());
+				tile->bitmapId.asString().c_str(), castType2str(member->_type));
 
 		return _builtinTiles[num].img;
 	}
