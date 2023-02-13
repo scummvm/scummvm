@@ -89,7 +89,7 @@ TilePoint computeRepulsionVector(
    TaskStackList class
  * ===================================================================== */
 
-const int       numTaskStacks = 32;
+const int       numTaskStacks = 320;
 
 //  Manages the memory used for the TaskStack's.  There will
 //  only be one global instantiation of this class
@@ -401,7 +401,7 @@ void cleanupTaskStacks() {
    TaskList class
  * ===================================================================== */
 
-const int       numTasks = 64;
+const int numTasks = 640;
 
 //  Manages the memory used for the Task's.  There will only be one
 //  global instantiation of this class
