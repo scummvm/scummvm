@@ -51,12 +51,12 @@ void ButtonContainer::restoreButtons() {
 }
 
 void ButtonContainer::addButton(const Common::Rect &bounds, KeybindingAction action,
-	Xeen::SpriteResource *sprites) {
+	Shared::Xeen::SpriteResource *sprites) {
 	_buttons.push_back(UIButton(this, bounds, action, _buttons.size() * 2, sprites, sprites != nullptr));
 }
 
 void ButtonContainer::addButton(const Common::Rect &bounds, KeybindingAction action,
-	int frameNum, Xeen::SpriteResource *sprites) {
+	int frameNum, Shared::Xeen::SpriteResource *sprites) {
 	_buttons.push_back(UIButton(this, bounds, action, frameNum, sprites, sprites != nullptr));
 }
 

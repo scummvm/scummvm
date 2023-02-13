@@ -22,14 +22,14 @@
 #ifndef MM1_UTILS_MOUSE_H
 #define MM1_UTILS_MOUSE_H
 
-#include "mm/xeen/sprites.h"
+#include "mm/shared/xeen/sprites.h"
 
 namespace MM {
 namespace MM1 {
 
 class Mouse {
 private:
-	Xeen::SpriteResource _sprites;
+	Shared::Xeen::SpriteResource _sprites;
 public:
 	Mouse() {}
 

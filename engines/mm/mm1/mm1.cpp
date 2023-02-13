@@ -31,6 +31,7 @@
 #include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/views/game.h"
 #include "mm/mm1/views_enh/game.h"
+#include "mm/shared/xeen/cc_archive.h"
 
 namespace MM {
 namespace MM1 {
@@ -93,7 +94,7 @@ bool MM1Engine::setupEnhanced() {
 	}
 
 	// Add the Xeen cc archives
-	::MM::Xeen::CCArchive *xeenCC = new ::MM::Xeen::CCArchive(
+	Shared::Xeen::CCArchive *xeenCC = new Shared::Xeen::CCArchive(
 		"xeen.cc", "xeen", true);
 	SearchMan.add("xeen", xeenCC);
 

@@ -32,12 +32,12 @@ namespace ViewsEnh {
 
 class ScrollView : public TextView {
 	struct Button {
-		Xeen::SpriteResource *_sprites;
+		Shared::Xeen::SpriteResource *_sprites;
 		Common::Point _pos;
 		int _frame;
 		Common::KeyState _key;
 
-		Button(Xeen::SpriteResource *sprites,
+		Button(Shared::Xeen::SpriteResource *sprites,
 			const Common::Point &pos, int frame,
 			const Common::KeyState &key) :
 			_sprites(sprites), _pos(pos), _frame(frame), _key(key) {
@@ -83,7 +83,7 @@ public:
 	/**
 	 * Add a button for display
 	 */
-	void addButton(Xeen::SpriteResource *sprites,
+	void addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame,
 		const Common::KeyState &key);
 

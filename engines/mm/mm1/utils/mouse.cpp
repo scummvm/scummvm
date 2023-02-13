@@ -30,8 +30,8 @@ void Mouse::loadCursors() {
 }
 
 void Mouse::setCursor(int cursorId) {
-	Xeen::XSurface cursor;
-	_sprites.draw(cursor, cursorId, Common::Point(0, 0), Xeen::SPRFLAG_RESIZE);
+	Shared::Xeen::XSurface cursor;
+	_sprites.draw(cursor, cursorId, Common::Point(0, 0), Shared::Xeen::SPRFLAG_RESIZE);
 
 	CursorMan.replaceCursor(cursor.getPixels(), cursor.w, cursor.h, 0, 0, 0);
 	showCursor();

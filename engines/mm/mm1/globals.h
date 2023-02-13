@@ -66,10 +66,10 @@ public:
 
 public:
 	// Enhanced mode globals
-	Xeen::SpriteResource _mainIcons;
-	Xeen::SpriteResource _confirmIcons;
-	Xeen::SpriteResource _globalSprites;
-	Xeen::SpriteResource _tileSprites;
+	Shared::Xeen::SpriteResource _mainIcons;
+	Shared::Xeen::SpriteResource _confirmIcons;
+	Shared::Xeen::SpriteResource _globalSprites;
+	Shared::Xeen::SpriteResource _tileSprites;
 	byte SYMBOLS[20][64];
 	XeenFont _fontNormal;
 	XeenFont _fontReduced;

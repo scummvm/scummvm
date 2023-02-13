@@ -29,7 +29,7 @@ namespace ViewsEnh {
 GameCommands::GameCommands(UIElement *owner) :
 		ButtonContainer("GameCommands", owner),
 		_minimap(this) {
-	Xeen::SpriteResource *spr = &g_globals->_mainIcons;
+	Shared::Xeen::SpriteResource *spr = &g_globals->_mainIcons;
 	addButton(Common::Rect(286, 75, 310, 95), KEYBIND_NONE, spr);       // Unlock
 	addButton(Common::Rect(235, 75, 259, 95), KEYBIND_PROTECT, spr);    // Protect
 	addButton(Common::Rect(260, 75, 284, 95), KEYBIND_REST, spr);       // Rest

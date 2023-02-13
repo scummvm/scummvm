@@ -24,7 +24,7 @@
 
 #include "mm/mm1/views_enh/scroll_view.h"
 #include "mm/mm1/views_enh/scroll_popup.h"
-#include "mm/xeen/sprites.h"
+#include "mm/shared/xeen/sprites.h"
 
 namespace MM {
 namespace MM1 {
@@ -37,7 +37,7 @@ class CharacterInfo : public ScrollView {
 		int _frame; int _x; int _y;
 	};
 private:
-	Xeen::SpriteResource _viewIcon;
+	Shared::Xeen::SpriteResource _viewIcon;
 	static const IconPos ICONS[CHAR_ICONS_COUNT];
 	const char *ICONS_TEXT[CHAR_ICONS_COUNT];
 	int _cursorCell = 0;

@@ -67,6 +67,12 @@ public:
 	 */
 	uint32 getGameID() const;
 
+	/**
+	 * Get a random number
+	 */
+	uint getRandomNumber(int max) {
+		return _randomSource.getRandomNumber(max);
+	}
 };
 
 } // namespace MM

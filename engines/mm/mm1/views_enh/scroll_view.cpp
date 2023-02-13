@@ -41,7 +41,7 @@ ScrollView::ScrollView(const Common::String &name,
 	_bounds.setBorderSize(FRAME_BORDER_SIZE);
 }
 
-void ScrollView::addButton(Xeen::SpriteResource *sprites,
+void ScrollView::addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame,
 		const Common::KeyState &key) {
 	_buttons.push_back(Button(sprites, pos, frame, key));

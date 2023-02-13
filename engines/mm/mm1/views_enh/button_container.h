@@ -25,7 +25,7 @@
 #include "common/array.h"
 #include "common/stack.h"
 #include "common/rect.h"
-#include "mm/xeen/sprites.h"
+#include "mm/shared/xeen/sprites.h"
 #include "mm/mm1/views/text_view.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/metaengine.h"
@@ -39,7 +39,7 @@ class ButtonContainer;
 class UIButton {
 public:
 	Common::Rect _bounds;
-	Xeen::SpriteResource *_sprites;
+	Shared::Xeen::SpriteResource *_sprites;
 	KeybindingAction _action;
 	uint _frameNum, _selectedFrame;
 	bool _draw;
@@ -48,7 +48,7 @@ public:
 	 * Constructor
 	 */
 	UIButton(ButtonContainer *owner, const Common::Rect &bounds,
-			KeybindingAction action, uint frameNum, Xeen::SpriteResource *sprites,
+			KeybindingAction action, uint frameNum, Shared::Xeen::SpriteResource *sprites,
 			bool draw) :
 			_bounds(bounds), _action(action), _frameNum(frameNum),
 			_selectedFrame(frameNum | 1), _sprites(sprites), _draw(draw) {
@@ -104,9 +104,9 @@ public:
 	void restoreButtons();
 
 	void addButton(const Common::Rect &bounds, KeybindingAction action,
-		Xeen::SpriteResource *sprites = nullptr);
+		Shared::Xeen::SpriteResource *sprites = nullptr);
 	void addButton(const Common::Rect &bounds, KeybindingAction action,
-		int frameNum, Xeen::SpriteResource *sprites = nullptr);
+		int frameNum, Shared::Xeen::SpriteResource *sprites = nullptr);
 
 	void draw() override;
 	bool msgMouseDown(const MouseDownMessage &msg) override;
