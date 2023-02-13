@@ -767,6 +767,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "calvin", "Calvin" },
 	{ "camp1", "Camp 1" },
 	{ "campaigndaphnewhite", "The Campaign of Daphne White" },
+	{ "cancer", "Cancer" },
 	{ "candlecove", "Return to Candle Cove" },
 	{ "candyforest", "The Candy Forest" },
 	{ "capricorn", "Tropic of Capricorn" },
@@ -1085,6 +1086,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "eikos1", "La Légende d'Eikos chapitre 1 : Le Seigneur des Loups" },
 	{ "eikos2", "La Légende d'Eikos chapitre 2 : Réveil dans la Nuit" },
 	{ "electrokit", "Maaikes Elektrokit" },
+	{ "elegantmurdermystery", "The Elegant Murder Mystery" },
 	{ "elevator", "The Elevator" },
 	{ "elevatorriseabyss", "The Elevator - Rise from the Abyss!" },
 	{ "elfer", "Elfer" },
@@ -1098,6 +1100,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "emilyenough", "Emily Enough: Imprisoned" },
 	{ "emmaroide", "Emma Roide" },
 	{ "emptymindblankfate", "Empty Mind - Blank Fate" },
+	{ "enchantedlake", "The Enchanted Lake"},
 	{ "encounters", "Encounters of the Closest Kind" },
 	{ "endlessloop", "Endless Loop" },
 	{ "enoworld", "Enoworld" },
@@ -2945,6 +2948,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "tillcows", "'Til Cows Tear us Apart" },
 	{ "tiltor", "TiLTOR" },
 	{ "timeparadox", "TIME-PARADOX 2009" },
+	{ "timeparadoxenk", "Enkerro's Time Paradox" },
 	{ "timequest1", "Time Quest" },
 	{ "timequest2", "Time Quest 2" },
 	{ "timesinkofchronos", "Timesink of Chronos" },
@@ -4101,6 +4105,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("eerieblue", "EerieBlue.exe", "bacdba3c759a861e899e6b0adcbb8bd5", 96605122),
 	DEMO_ENTRY_EN("eerieblue", "EerieBlue.exe", "bacdba3c759a861e899e6b0adcbb8bd5", 96647570),
 	DEMO_ENTRY("emmaroide", "emma roide.exe", "aefd91a131817036d224fe030e406c6e", 24919443),  // En-Fr
+	DEMO_ENTRY_EN("enchantedlake", "The Enchanted Lake.exe", "1f0edcb7fa3f8e2b1dd60fa6c0bce60f", 1101257),
 	DEMO_ENTRY_EN("enterthestory", "Enter The Story.exe", "0514661a4ba6772cf0db0cf839fc7003", 19589742),
 	DEMO_ENTRY_EN("everlight", "Everlight.exe", "0500aacb6c176d47ac0f8158f055db83", 17597037),
 	DEMO_ENTRY_EN("everythingm", "TinyMika.exe", "66adc3431f0626a2c6e80f31a21f0981", 3529496),
@@ -4888,6 +4893,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("camp1", "Camp1.exe", "d0c1d3be980d97e592ffe16b71a3b9f9", 34131784),
 	GAME_ENTRY_EN("campaigndaphnewhite", "The Campaigne of Daphne White.exe", "7446ce302043dac2acc8cd5cc7cc8f68", 703443005),
 	GAME_ENTRY_EN("campaigndaphnewhite", "The Campaigne of Daphne White.ags", "2ffa994c7198ed96f4425fae6932071a", 700961325),
+	GAME_ENTRY_EN("cancer", "cancer.exe", "9cf51833e787cc919837d9a8bd8fc14c", 632811),
 	GAME_ENTRY_EN("candlecove", "CandleCove.exe", "615e73fc1874e92d60a1996c2330ea36", 3143609),
 	GAME_ENTRY_EN("candyforest", "CandyForest.exe", "7a3096ac0237cb6aa8e1718e28caf039", 3959806),
 	GAME_ENTRY_EN("captaincringe", "captain_cringe.exe", "dd8586ebefd5c457e29b6b9845a576ea", 2631464),
@@ -5255,10 +5261,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("egoplanetapes", "EgoInPlanetOfTheApes.ags", "cfc308c9dcbd329a0c5bf1283e731c92", 19452067),
 	GAME_ENTRY_EN("egoplanetapes", "Crossover.ags", "86a0b6f733707544035d7e823584ed4d", 16666330),
 	GAME_ENTRY_EN("egress", "Egress.exe", "615e73fc1874e92d60a1996c2330ea36", 439827181),
+	GAME_ENTRY_EN("egress", "Egress.exe", "981e60a9be515bb56c634856462abbc7", 441036301),  // v1.1
 	GAME_ENTRY_EN("eight", "8.exe", "c7835774540a2e7d9d89a2df66fbcec4", 2412166),
 	GAME_ENTRY_LANG("eikos1", "La Legende d'Eikos.exe", "0564de07d3fd5c16e6947a647061913c", 602426109, Common::FR_FRA),
 	GAME_ENTRY_LANG("eikos2", "eikos2.exe", "0564de07d3fd5c16e6947a647061913c", 1038284323, Common::FR_FRA),
 	GAME_ENTRY("electrokit", "electrctGUI.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8941606),  //Eng-Dutch
+	GAME_ENTRY_EN("elegantmurdermystery", "DH.exe", "0b7529a76f38283d6e850b8d56526fc1", 2098899),
 	GAME_ENTRY_EN("elevator", "Elevator.exe", "f10516e88ec858700804ee69d041aead", 29506915),
 	GAME_ENTRY_EN("elevatorriseabyss", "T_E_R.exe", "f120690b506dd63cd7d1112ea6af2f77", 13366126),
 	GAME_ENTRY_LANG("elfer", "socer.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1911767, Common::DE_DEU),
@@ -5285,6 +5293,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("errand", "Errand.exe", "8212e96af620f6e02a37fdf583f79751", 4425035),  // v1.3  Windows Multilang
 	GAME_ENTRY("errand", "Errand.exe", "8212e96af620f6e02a37fdf583f79751", 4421187),  // v1.3  Alt/Linux Multiang
 	GAME_ENTRY("errand", "errand.exe", "8212e96af620f6e02a37fdf583f79751", 4425232),  // v1.5  Win/Linux Multilang
+	GAME_ENTRY("errand", "errand.exe", "d25c3cb8a42c5565634dfef76b3cf83e", 4048015),  // Win Multilang itch.io
 	GAME_ENTRY_EN("escape", "Escape.exe", "9cf51833e787cc919837d9a8bd8fc14c", 2182153),
 	GAME_ENTRY_EN("escapefromasmallroom", "game1.exe", "0b7529a76f38283d6e850b8d56526fc1", 803029),
 	GAME_ENTRY_EN("escapefromevergreenforest", "EFEF.exe", "2e58934bbe98335f33c20a23a6c6135a", 23855632),
@@ -7439,6 +7448,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("tillcows", "Till Cows Tear Us Apart.exe", "2ee7b3c494b8f33b6967525ef07de69a", 53504480),
 	GAME_ENTRY_EN("tiltor", "Tiltor.exe", "f120690b506dd63cd7d1112ea6af2f77", 17561878),
 	GAME_ENTRY("timeparadox", "REDQUEST.exe", "465f972675db2da6040518221af5b0ba", 32472406),  //Eng-Rus
+	GAME_ENTRY_EN("timeparadoxenk", "timeparadoxenk.exe", "06a03fe35791b0578068ab1873455463", 1840636),
 	GAME_ENTRY("timequest1", "gam.exe", "465f972675db2da6040518221af5b0ba", 5669007),  //Eng-Rus
 	GAME_ENTRY("timequest1", "TQ.exe", "465f972675db2da6040518221af5b0ba", 5671274),  //Eng-Rus v1.1
 	GAME_ENTRY("timequest2", "TimeQ2.exe", "465f972675db2da6040518221af5b0ba", 5838823),  //Eng-Rus
