@@ -7,7 +7,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Engine "xeen" wurde für Might & Magic zu "mm" umbenannt.
 
 
-#### 2.7.0 (DD.MM.YYYY)
+#### 2.7.0 (26.02.2023)
 
  Neue Spiele:
    - Unterstützung für Soldier Boyz hinzugefügt.

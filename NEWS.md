@@ -7,7 +7,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Renamed 'xeen' engine to 'mm' for Might & Magic.
 
 
-#### 2.7.0 (XXXX-XX-XX)
+#### 2.7.0 (2023-02-26)
 
  New games:
    - Added support for Soldier Boyz.
