@@ -83,8 +83,11 @@ void TeSoundManager::setChannelVolume(const Common::String &channel, float vol) 
 }
 
 void TeSoundManager::update() {
-	for (auto &m : _musics)
+	// Take a copy in case the list changes as we iterate.
+	Common::Array<TeMusic *> musics = _musics;
+	for (TeMusic *m : musics) {
 		m->update();
+	}
 }
 
 
