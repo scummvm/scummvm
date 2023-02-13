@@ -18,41 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef BACKENDS_NETWORKING_CURL_SOCKET_H
-#define BACKENDS_NETWORKING_CURL_SOCKET_H
+#ifndef BACKENDS_NETWORKING_CURL_URL_H
+#define BACKENDS_NETWORKING_CURL_URL_H
 
-typedef void CURL;
-#ifdef WIN32
-// Including winsock2.h will result in errors, we have to define
-// SOCKET ourselves.
-#include <basetsd.h>
-typedef UINT_PTR SOCKET;
-
-typedef SOCKET curl_socket_t;
-#else
-typedef int curl_socket_t;
-#endif
+typedef struct Curl_URL CURLU;
 
 #include "common/str.h"
 
 namespace Networking {
 
-class CurlSocket {
+class CurlURL {
 public:
-	CurlSocket();
-	~CurlSocket();
+	CurlURL();
+	~CurlURL();
 
-	bool connect(Common::String url);
+	bool parseURL(Common::String url);
 
-	int ready();
-
-	size_t send(const char *data, int len);
-	size_t recv(void *data, int maxLen);
+	Common::String getScheme();
+	Common::String getHost();
+	int getPort(bool returnDefault = false);
+	Common::String getPath();
 private:
-	CURL *_easy;
-	curl_socket_t _socket;
+	CURLU *_url;
 };
 
-} // End of namespace Networking
+} // End of Namespace Networking
 
 #endif
