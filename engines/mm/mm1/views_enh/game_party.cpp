@@ -87,12 +87,9 @@ void GameParty::draw() {
 		_hpSprites.draw(&s, frame, Common::Point(HP_BARS_X[idx], 38));
 
 		// Also draw the highlight if character is selected
-
+		if (g_globals->_currCharacter == &c)
+			g_globals->_globalSprites.draw(&s, 8, Common::Point(CHAR_FACES_X[idx] - 1, 5));
 	}
-	/*
-	if (_hiliteChar != HILIGHT_CHAR_NONE)
-		_globalSprites.draw(&s, 8, Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
-*/
 }
 
 } // namespace ViewsEnh
