@@ -25,7 +25,7 @@
 	<key>CFBundleExecutable</key>
 	<string>scummvm</string>
 	<key>CFBundleGetInfoString</key>
-	<string>2.7.0pre, Copyright 2001-2023 The ScummVM Team</string>
+	<string>2.7.1pre, Copyright 2001-2023 The ScummVM Team</string>
 	<key>CFBundleIconFile</key>
 	<string>scummvm.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -61,9 +61,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.7.0pre</string>
+	<string>2.7.1pre</string>
 	<key>CFBundleVersion</key>
-	<string>2.7.0pre</string>
+	<string>2.7.1pre</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright 2001-2023 The ScummVM Team</string>
 	<key>NSPrincipalClass</key>
