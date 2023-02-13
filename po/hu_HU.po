@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-06 11:04+0000\n"
+"PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -2344,6 +2344,27 @@ msgid ""
 "\n"
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
+"A ScummVM Android új verziójában jelentős változtatásokat hajtottak végre a "
+"fájlhozzáférési rendszerben, hogy lehetővé tegyék az Android operációs "
+"rendszer modern verzióinak támogatását.\n"
+"Ha úgy találja, hogy a meglévő hozzáadott játékai vagy egyéni útvonalai már "
+"nem működnek, kérjük, szerkessze ezeket az útvonalakat, és ezúttal a SAF "
+"rendszer segítségével tallózzon a kívánt helyekre.\n"
+"Ezeket tedd:\n"
+"\n"
+"  1. Minden olyan játék esetében, amelynek adatai nem találhatók, lépj a "
+"„Játékbeállítások” „Útvonalak” fülre, és módosítsd a „Játék elérési útját”.\n"
+"  2. A ScummVM fájlböngészőn belül használd a \"Go Up\" gombot, amíg el nem "
+"éred a \"gyökér\" mappát, ahol megjelenik az \"<Új mappa hozzáadása>\" opció."
+"\n"
+"  3. Válaszd ezt, majd tallózz és válaszd ki a \"szülő\" mappát a játékok "
+"almappáihoz, pl. \"SD-kártya > myGames\". Kattints a \"Mappa használata\" "
+"gombra.\n"
+"  4. Ezután egy új \"myGames\" mappa jelenik meg a ScummVM böngésző \"root\" "
+"mappájában.\n"
+"  5. Böngéssz ebben a mappában a játék adataihoz.\n"
+"\n"
+"A 2. és 3. lépést az összes játéknál csak egyszer kell elvégezni."
 
 #: base/main.cpp:701 base/main.cpp:722
 #: engines/director/lingo/lingo-builtins.cpp:1185
@@ -2354,7 +2375,7 @@ msgstr "Ok"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:703 base/main.cpp:724
 msgid "Read Later"
-msgstr ""
+msgstr "Később elolvas"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
@@ -2372,6 +2393,20 @@ msgid ""
 "the ScummVM browser.\n"
 "  4. Browse through this folder to your game data."
 msgstr ""
+"A ScummVM Android új verziójában jelentős változtatásokat hajtottak végre a "
+"fájlhozzáférési rendszerben, hogy lehetővé tegyék az Android operációs "
+"rendszer modern verzióinak támogatását.\n"
+"Ezért a játékok hozzáadásához be kell állítania a SAF-et.\n"
+"\n"
+"  1. A ScummVM fájlböngészőn belül használd a \"Go Up\" gombot, amíg el nem "
+"éred a \"gyökér\" mappát, ahol megjelenik az \"<Új mappa hozzáadása>\" opció."
+"\n"
+"  2. Válaszd ezt, majd tallózz és válaszd ki a \"szülő\" mappát a játékok "
+"almappáihoz, pl. \"SD-kártya > myGames\". Kattints a \"Mappa használata\" "
+"gombra.\n"
+"  3. Ezután egy új \"myGames\" mappa jelenik meg a ScummVM böngésző \"root\" "
+"mappájában.\n"
+"  4. Böngéssz ebben a mappában a játék adataihoz."
 
 #: base/main.cpp:820
 msgid "Error running game:"
@@ -3189,16 +3224,14 @@ msgstr "Érintõképernyõ 'Érintésmód' - Lebegõ (DPad katt)"
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:664
-#, fuzzy
-#| msgid "Choose file for loading"
 msgid "Choose a new folder"
-msgstr "Válassz betöltendõ fájlt"
+msgstr "Válassz egy új mappát"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.h:173
 #: backends/fs/android/android-saf-fs.h:174
 msgid "Add a new folder"
-msgstr ""
+msgstr "Új mappa hozzáadása"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3888,10 +3921,8 @@ msgstr "3D játékokban"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
-#, fuzzy
-#| msgid "Forget SAF authorization"
 msgid "Remove folder authorizations..."
-msgstr "Felejtsd el a SAF-engedélyt"
+msgstr "Mappaengedélyek eltávolítása..."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
