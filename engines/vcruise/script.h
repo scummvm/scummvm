@@ -65,6 +65,7 @@ enum ScriptOp {
 	kSoundL2,
 	kMusic,
 	kMusicUp,
+	kMusicDn,
 	kParm1,
 	kParm2,
 	kParm3,

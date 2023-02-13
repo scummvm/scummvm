@@ -72,9 +72,12 @@ void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics:
 }
 
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
-	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _loadedRoomNumber(0), _activeScreenNumber(0),
+	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _rootFSNode(rootFSNode), _havePendingScreenChange(false), _scriptNextInstruction(0),
 	  _escOn(false), _loadedAnimation(0), _animFrameNumber(0), _animLastFrame(0), _animDecoderState(kAnimDecoderStateStopped) {
+
+	for (uint i = 0; i < kNumDirections; i++)
+		_haveIdleAnimations[i] = false;
 
 	_logDir = _rootFSNode.getChild("Log");
 	if (!_logDir.exists() || !_logDir.isDirectory())
@@ -299,6 +302,7 @@ bool Runtime::runScript() {
 
 			DISPATCH_OP(Music);
 			DISPATCH_OP(MusicUp);
+			DISPATCH_OP(MusicDn);
 			DISPATCH_OP(Parm1);
 			DISPATCH_OP(Parm2);
 			DISPATCH_OP(Parm3);
@@ -489,11 +493,16 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 				}
 			}
 		}
+
+		_havePanAnimations = false;
+
+		for (uint i = 0; i < kNumDirections; i++)
+			_haveIdleAnimations[i] = false;
 	}
 }
 
 void Runtime::loadMap(Common::SeekableReadStream *stream) {
-	byte screenDefOffsets[MapDef::kNumScreens * MapDef::kNumDirections * 4];
+	byte screenDefOffsets[MapDef::kNumScreens * kNumDirections * 4];
 
 	if (!stream->seek(16))
 		error("Error skipping map file header");
@@ -502,8 +511,8 @@ void Runtime::loadMap(Common::SeekableReadStream *stream) {
 		error("Error reading map offset table");
 
 	for (uint screen = 0; screen < MapDef::kNumScreens; screen++) {
-		for (uint direction = 0; direction < MapDef::kNumDirections; direction++) {
-			uint32 offset = READ_LE_UINT32(screenDefOffsets + (MapDef::kNumDirections * screen + direction) * 4);
+		for (uint direction = 0; direction < kNumDirections; direction++) {
+			uint32 offset = READ_LE_UINT32(screenDefOffsets + (kNumDirections * screen + direction) * 4);
 			if (!offset)
 				continue;
 
@@ -731,6 +740,31 @@ void Runtime::allocateRoomsUpTo(uint roomNumber) {
 	}
 }
 
+void Runtime::onLButtonDown(int16 x, int16 y) {
+}
+
+void Runtime::onLButtonUp(int16 x, int16 y) {
+}
+
+void Runtime::onMouseMove(int16 x, int16 y) {
+}
+
+void Runtime::onKeyDown(Common::KeyCode keyCode) {
+	if (keyCode == Common::KEYCODE_ESCAPE) {
+		if (_gameState == kGameStateWaitingForAnimation) {
+			if (_escOn) {
+				// Terminate the animation
+				if (_animDecoderState == kAnimDecoderStatePlaying) {
+					_animDecoder->pauseVideo(true);
+					_animDecoderState = kAnimDecoderStatePaused;
+				}
+				_gameState = kGameStateScript;
+				return;
+			}
+		}
+	}
+}
+
 #ifdef CHECK_STACK
 #error "CHECK_STACK is already defined"
 #endif
@@ -761,18 +795,54 @@ void Runtime::scriptOpNumber(ScriptArg_t arg) {
 	_scriptStack.push_back(arg);
 }
 
-void Runtime::scriptOpRotate(ScriptArg_t arg) { error("Unimplemented opcode"); }
+void Runtime::scriptOpRotate(ScriptArg_t arg) {
+	TAKE_STACK(kAnimDefStackArgs + kAnimDefStackArgs);
+
+	_panLeftAnimationDef = stackArgsToAnimDef(stackArgs + 0);
+	_panRightAnimationDef = stackArgsToAnimDef(stackArgs + kAnimDefStackArgs);
+	_havePanAnimations = true;
+}
+
 void Runtime::scriptOpAngle(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpAngleGGet(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpSpeed(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpSAnimL(ScriptArg_t arg) { error("Unimplemented opcode"); }
+
+void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
+	TAKE_STACK(kAnimDefStackArgs + 2);
+
+	if (stackArgs[kAnimDefStackArgs] != 0)
+		warning("sanimL second operand wasn't zero (what does that do??)");
+
+	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
+	uint direction = stackArgs[kAnimDefStackArgs + 1];
+
+	if (direction >= kNumDirections)
+		error("sanimL invalid direction");
+
+	_haveIdleAnimations[direction] = true;
+	_idleAnimations[direction] = animDef;
+}
+
 void Runtime::scriptOpChangeL(ScriptArg_t arg) { error("Unimplemented opcode"); }
 
 void Runtime::scriptOpAnimR(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpAnimF(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpAnimN(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpAnimG(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpAnimS(ScriptArg_t arg) { error("Unimplemented opcode"); }
+
+void Runtime::scriptOpAnimS(ScriptArg_t arg) {
+	TAKE_STACK(kAnimDefStackArgs + 2);
+
+	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
+	animDef.lastFrame = animDef.firstFrame;	// Static animation
+
+	changeAnimation(animDef);
+
+	_gameState = kGameStateWaitingForAnimation;	// FIXME
+	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
+	_direction = stackArgs[kAnimDefStackArgs + 1];
+	_havePendingScreenChange = true;
+}
 
 void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
@@ -783,17 +853,42 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	_gameState = kGameStateWaitingForAnimation;
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
 	_direction = stackArgs[kAnimDefStackArgs + 1];
+	_havePendingScreenChange = true;
 }
 
 void Runtime::scriptOpStatic(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpVarLoad(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpVarStore(ScriptArg_t arg) { error("Unimplemented opcode"); }
+
+void Runtime::scriptOpVarLoad(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	uint32 varID = (static_cast<uint32>(_roomNumber) << 16) | static_cast<uint32>(stackArgs[0]);
+
+	Common::HashMap<uint32, int32>::const_iterator it = _variables.find(varID);
+	if (it == _variables.end())
+		_scriptStack.push_back(0);
+	else
+		_scriptStack.push_back(it->_value);
+}
+
+void Runtime::scriptOpVarStore(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	uint32 varID = (static_cast<uint32>(_roomNumber) << 16) | static_cast<uint32>(stackArgs[1]);
+
+	_variables[varID] = stackArgs[0];
+}
+
 void Runtime::scriptOpSetCursor(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpSetRoom(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpLMB(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpLMB1(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpSoundS1(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpSoundL2(ScriptArg_t arg) { error("Unimplemented opcode"); }
+
+void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	warning("Sound loop not implemented yet");
+}
 
 void Runtime::scriptOpMusic(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -801,7 +896,18 @@ void Runtime::scriptOpMusic(ScriptArg_t arg) {
 	changeMusicTrack(stackArgs[0]);
 }
 
-void Runtime::scriptOpMusicUp(ScriptArg_t arg) { error("Unimplemented opcode"); }
+void Runtime::scriptOpMusicUp(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	warning("Music volume changes are not implemented");
+}
+
+void Runtime::scriptOpMusicDn(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	warning("Music volume changes are not implemented");
+}
+
 void Runtime::scriptOpParm1(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpParm2(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpParm3(ScriptArg_t arg) { error("Unimplemented opcode"); }
@@ -829,29 +935,48 @@ void Runtime::scriptOpLoGet(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpHiSet(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpHiGet(ScriptArg_t arg) { error("Unimplemented opcode"); }
 
-void Runtime::scriptOpNot(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpAnd(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpOr(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpCmpEq(ScriptArg_t arg) { error("Unimplemented opcode"); }
+void Runtime::scriptOpNot(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	_scriptStack.push_back((stackArgs[0] == 0) ? 1 : 0);
+}
+
+void Runtime::scriptOpAnd(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	_scriptStack.push_back((stackArgs[0] != 0 && stackArgs[1] != 0) ? 1 : 0);
+}
+
+void Runtime::scriptOpOr(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	_scriptStack.push_back((stackArgs[0] != 0 || stackArgs[1] != 0) ? 1 : 0);
+}
+
+void Runtime::scriptOpCmpEq(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	_scriptStack.push_back((stackArgs[0] == stackArgs[1]) ? 1 : 0);
+}
 
 void Runtime::scriptOpBitLoad(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpBitSet0(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpBitSet1(ScriptArg_t arg) { error("Unimplemented opcode"); }
 
 void Runtime::scriptOpDisc1(ScriptArg_t arg) {
-	// Always pass disc check
+	// Disc check, always pass
 	TAKE_STACK(1);
 	_scriptStack.push_back(1);
 }
 
 void Runtime::scriptOpDisc2(ScriptArg_t arg) {
-	// Always pass disc check
+	// Disc check, always pass
 	TAKE_STACK(2);
 	_scriptStack.push_back(1);
 }
 
 void Runtime::scriptOpDisc3(ScriptArg_t arg) {
-	// Always pass disc check
+	// Disc check, always pass
 	TAKE_STACK(3);
 	_scriptStack.push_back(1);
 }
@@ -890,8 +1015,36 @@ void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 
 
 void Runtime::scriptOpValueName(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpVarName(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpSoundName(ScriptArg_t arg) { error("Unimplemented opcode"); }
+
+void Runtime::scriptOpVarName(ScriptArg_t arg) {
+	if (_roomNumber >= _roomDefs.size())
+		error("Invalid room number for var name op");
+
+	const RoomDef *roomDef = _roomDefs[_roomNumber].get();
+	if (!roomDef)
+		error("Room def doesn't exist");
+
+	const Common::String &varName = _scriptSet->strings[arg];
+
+	Common::HashMap<Common::String, uint>::const_iterator it = roomDef->vars.find(varName);
+	if (it == roomDef->vars.end())
+		error("Var '%s' doesn't exist in room %i", varName.c_str(), static_cast<int>(_roomNumber));
+
+	_scriptStack.push_back(it->_value);
+}
+
+void Runtime::scriptOpSoundName(ScriptArg_t arg) {
+	const Common::String sndName = _scriptSet->strings[arg];
+
+	warning("Sound IDs are not implemented yet");
+
+	int32 soundID = 0;
+	for (uint i = 0; i < 4; i++)
+		soundID = soundID * 10 + (sndName[i] - '0');
+
+	_scriptStack.push_back(soundID);
+}
+
 void Runtime::scriptOpCursorName(ScriptArg_t arg) { error("Unimplemented opcode"); }
 
 void Runtime::scriptOpCheckValue(ScriptArg_t arg) {
@@ -910,5 +1063,6 @@ void Runtime::scriptOpJump(ScriptArg_t arg) {
 void Runtime::drawFrame() {
 	_system->updateScreen();
 }
+
 
 } // End of namespace VCruise

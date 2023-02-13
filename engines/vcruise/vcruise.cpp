@@ -44,6 +44,18 @@ void VCruiseEngine::handleEvents() {
 
 	while (eventMan->pollEvent(evt)) {
 		switch (evt.type) {
+		case Common::EVENT_LBUTTONDOWN:
+			_runtime->onLButtonDown(evt.mouse.x, evt.mouse.y);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_runtime->onLButtonUp(evt.mouse.x, evt.mouse.y);
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			_runtime->onMouseMove(evt.mouse.x, evt.mouse.y);
+			break;
+		case Common::EVENT_KEYDOWN:
+			_runtime->onKeyDown(evt.kbd.keycode);
+			break;
 		default:
 			break;
 		}
