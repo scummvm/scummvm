@@ -46,7 +46,8 @@ bool InGameSceneXmlParser::parserCallback_curve(ParserNode *node) {
 }
 
 bool InGameSceneXmlParser::parserCallback_dummy(ParserNode *node) {
-	warning("TODO: handle dummy tag in InGameSceneXmlParser");
+	_scene->_dummies.push_back(InGameScene::Dummy());
+	_scene->_dummies.back()._name = node->values["name"];
 	return true;
 }
 
