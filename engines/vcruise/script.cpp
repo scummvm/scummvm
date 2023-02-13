@@ -752,9 +752,6 @@ uint ScriptCompiler::indexString(const Common::String &str) {
 }
 
 Common::SharedPtr<ScriptSet> compileLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath) {
-
-	uint cipherOffset = 255u - (streamSize % 255u);
-
 	LogicUnscrambleStream unscrambleStream(&stream, streamSize);
 	TextParser parser(&unscrambleStream);
 
