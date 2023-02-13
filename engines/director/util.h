@@ -58,8 +58,6 @@ Common::String dumpFactoryName(const char *prefix, const char *name, const char 
 
 bool isButtonSprite(SpriteType spriteType);
 
-Common::String castTypeToString(const CastType &type);
-
 class RandomState {
 public:
 	uint32 _seed;

@@ -413,6 +413,7 @@ typedef Common::Array<Datum> DatumArray;
 typedef Common::Array<PCell> PropertyArray;
 
 const char *scriptType2str(ScriptType scr);
+Common::String castTypeToString(const CastType &type);
 
 } // End of namespace Director
 

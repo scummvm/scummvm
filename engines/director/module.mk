@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	stxt.o \
 	tests.o \
 	transitions.o \
+	types.o \
 	util.o \
 	window.o \
 	lingo/lingo.o \
