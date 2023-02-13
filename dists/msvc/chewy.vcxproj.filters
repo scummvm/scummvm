@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="audio">
+			<UniqueIdentifier>50541036-247D-443F-8807-6289B3041BD1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="dialogs">
+			<UniqueIdentifier>FB467509-8AEB-4F67-B763-75D1802E6A13</UniqueIdentifier>
+		</Filter>
+		<Filter Include="rooms">
+			<UniqueIdentifier>F73698F9-16F0-44D2-9C19-365B2C5471A0</UniqueIdentifier>
+		</Filter>
+		<Filter Include="video">
+			<UniqueIdentifier>337CF9EB-E4DA-4B23-9E23-3CC59D6F52FC</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\chewy\atds.cpp" />
+		<ClCompile Include="..\..\engines\chewy\audio\chewy_voc.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\audio\module_tmf.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\audio\tmf_stream.cpp">
+			<Filter>audio</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\barriers.cpp" />
+		<ClCompile Include="..\..\engines\chewy\chewy.cpp" />
+		<ClCompile Include="..\..\engines\chewy\console.cpp" />
+		<ClCompile Include="..\..\engines\chewy\cursor.cpp" />
+		<ClCompile Include="..\..\engines\chewy\detail.cpp" />
+		<ClCompile Include="..\..\engines\chewy\dialogs\cinema.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\dialogs\credits.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\dialogs\files.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\dialogs\inventory.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\dialogs\main_menu.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\dialogs\options.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\effect.cpp" />
+		<ClCompile Include="..\..\engines\chewy\events.cpp" />
+		<ClCompile Include="..\..\engines\chewy\font.cpp" />
+		<ClCompile Include="..\..\engines\chewy\globals.cpp" />
+		<ClCompile Include="..\..\engines\chewy\inits.cpp" />
+		<ClCompile Include="..\..\engines\chewy\main.cpp" />
+		<ClCompile Include="..\..\engines\chewy\mcga_graphics.cpp" />
+		<ClCompile Include="..\..\engines\chewy\memory.cpp" />
+		<ClCompile Include="..\..\engines\chewy\menus.cpp" />
+		<ClCompile Include="..\..\engines\chewy\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\chewy\movclass.cpp" />
+		<ClCompile Include="..\..\engines\chewy\object.cpp" />
+		<ClCompile Include="..\..\engines\chewy\object_extra.cpp" />
+		<ClCompile Include="..\..\engines\chewy\r_event.cpp" />
+		<ClCompile Include="..\..\engines\chewy\resource.cpp" />
+		<ClCompile Include="..\..\engines\chewy\room.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room00.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room01.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room02.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room03.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room04.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room05.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room06.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room07.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room08.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room09.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room10.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room11.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room12.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room13.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room14.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room16.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room17.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room18.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room19.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room21.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room22.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room23.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room24.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room25.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room26.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room27.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room28.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room29.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room31.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room32.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room33.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room34.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room35.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room37.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room39.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room40.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room41.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room42.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room43.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room44.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room45.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room46.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room47.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room48.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room49.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room50.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room51.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room52.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room53.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room54.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room55.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room56.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room57.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room58.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room59.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room62.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room63.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room64.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room65.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room66.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room67.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room68.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room69.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room70.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room71.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room72.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room73.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room74.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room75.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room76.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room77.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room78.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room79.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room80.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room81.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room82.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room83.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room84.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room85.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room86.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room87.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room88.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room89.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room90.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room91.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room92.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room93.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room94.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room95.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room96.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\rooms\room97.cpp">
+			<Filter>rooms</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\sound.cpp" />
+		<ClCompile Include="..\..\engines\chewy\sprite.cpp" />
+		<ClCompile Include="..\..\engines\chewy\t_event.cpp" />
+		<ClCompile Include="..\..\engines\chewy\text.cpp" />
+		<ClCompile Include="..\..\engines\chewy\timer.cpp" />
+		<ClCompile Include="..\..\engines\chewy\types.cpp" />
+		<ClCompile Include="..\..\engines\chewy\video\cfo_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\chewy\video\video_player.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\chewy\ani_dat.h" />
+		<ClInclude Include="..\..\engines\chewy\atds.h" />
+		<ClInclude Include="..\..\engines\chewy\audio\chewy_voc.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\audio\module_tmf.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\audio\tmf_stream.h">
+			<Filter>audio</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\barriers.h" />
+		<ClInclude Include="..\..\engines\chewy\chewy.h" />
+		<ClInclude Include="..\..\engines\chewy\console.h" />
+		<ClInclude Include="..\..\engines\chewy\cursor.h" />
+		<ClInclude Include="..\..\engines\chewy\defines.h" />
+		<ClInclude Include="..\..\engines\chewy\detail.h" />
+		<ClInclude Include="..\..\engines\chewy\detection.h" />
+		<ClInclude Include="..\..\engines\chewy\dialogs\cinema.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\dialogs\credits.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\dialogs\files.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\dialogs\inventory.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\dialogs\main_menu.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\dialogs\options.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\effect.h" />
+		<ClInclude Include="..\..\engines\chewy\events.h" />
+		<ClInclude Include="..\..\engines\chewy\font.h" />
+		<ClInclude Include="..\..\engines\chewy\globals.h" />
+		<ClInclude Include="..\..\engines\chewy\main.h" />
+		<ClInclude Include="..\..\engines\chewy\mcga_graphics.h" />
+		<ClInclude Include="..\..\engines\chewy\memory.h" />
+		<ClInclude Include="..\..\engines\chewy\menus.h" />
+		<ClInclude Include="..\..\engines\chewy\movclass.h" />
+		<ClInclude Include="..\..\engines\chewy\ngstypes.h" />
+		<ClInclude Include="..\..\engines\chewy\object.h" />
+		<ClInclude Include="..\..\engines\chewy\object_extra.h" />
+		<ClInclude Include="..\..\engines\chewy\resource.h" />
+		<ClInclude Include="..\..\engines\chewy\room.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room00.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room01.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room02.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room03.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room04.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room05.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room06.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room07.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room08.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room09.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room10.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room11.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room12.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room13.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room14.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room16.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room17.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room18.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room19.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room21.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room22.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room23.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room24.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room25.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room26.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room27.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room28.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room29.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room31.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room32.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room33.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room34.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room35.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room37.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room39.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room40.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room41.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room42.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room43.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room44.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room45.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room46.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room47.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room48.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room49.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room50.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room51.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room52.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room53.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room54.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room55.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room56.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room57.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room58.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room59.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room62.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room63.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room64.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room65.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room66.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room67.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room68.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room69.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room70.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room71.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room72.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room73.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room74.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room75.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room76.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room77.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room78.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room79.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room80.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room81.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room82.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room83.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room84.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room85.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room86.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room87.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room88.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room89.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room90.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room91.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room92.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room93.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room94.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room95.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room96.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\room97.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\rooms\rooms.h">
+			<Filter>rooms</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\sound.h" />
+		<ClInclude Include="..\..\engines\chewy\text.h" />
+		<ClInclude Include="..\..\engines\chewy\timer.h" />
+		<ClInclude Include="..\..\engines\chewy\types.h" />
+		<ClInclude Include="..\..\engines\chewy\video\cfo_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\chewy\video\video_player.h">
+			<Filter>video</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\chewy\module.mk" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{B0E95AB1-40A3-4F3D-8EFC-5B46E12BDDF5}</ProjectGuid>
+		<RootNamespace>director</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\aiff.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\applecdxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\askuser.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\barakeobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\cdromxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\darkenscreen.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\ednox.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\fileexists.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\fileio.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\findfolder.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\flushxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\fplayxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\gpid.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\iscd.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\ispippin.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\jitdraw3.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\jwxini.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\labeldrvxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\memoryxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\miscx.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\moovxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\movemousexobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\movutils.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\orthoplayxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\palxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\popupmenuxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\qtmovie.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\registercomponent.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\serialportxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\soundjam.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\spacemgr.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\videodiscxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\volumelist.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\widgetxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\winxobj.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\xplayanim.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\yasix.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-builtins.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-bytecode.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-code.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-codegen.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-events.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-funcs.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-gr.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-lex.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-object.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-patcher.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-preprocessor.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-the.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo-utils.cpp" />
+		<ClCompile Include="..\..\engines\director\lingo\lingo.cpp" />
+		<ClCompile Include="..\..\engines\director\archive.cpp" />
+		<ClCompile Include="..\..\engines\director\cast.cpp" />
+		<ClCompile Include="..\..\engines\director\castmember.cpp" />
+		<ClCompile Include="..\..\engines\director\channel.cpp" />
+		<ClCompile Include="..\..\engines\director\cursor.cpp" />
+		<ClCompile Include="..\..\engines\director\debugger.cpp" />
+		<ClCompile Include="..\..\engines\director\director.cpp" />
+		<ClCompile Include="..\..\engines\director\events.cpp" />
+		<ClCompile Include="..\..\engines\director\fonts.cpp" />
+		<ClCompile Include="..\..\engines\director\frame.cpp" />
+		<ClCompile Include="..\..\engines\director\game-quirks.cpp" />
+		<ClCompile Include="..\..\engines\director\graphics.cpp" />
+		<ClCompile Include="..\..\engines\director\images.cpp" />
+		<ClCompile Include="..\..\engines\director\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\director\movie.cpp" />
+		<ClCompile Include="..\..\engines\director\resource.cpp" />
+		<ClCompile Include="..\..\engines\director\score.cpp" />
+		<ClCompile Include="..\..\engines\director\sound.cpp" />
+		<ClCompile Include="..\..\engines\director\sprite.cpp" />
+		<ClCompile Include="..\..\engines\director\stxt.cpp" />
+		<ClCompile Include="..\..\engines\director\tests.cpp" />
+		<ClCompile Include="..\..\engines\director\transitions.cpp" />
+		<ClCompile Include="..\..\engines\director\util.cpp" />
+		<ClCompile Include="..\..\engines\director\window.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\aiff.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\applecdxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\askuser.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\barakeobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\cdromxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\darkenscreen.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\ednox.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\fileexists.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\fileio.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\findfolder.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\flushxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\fplayxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\gpid.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\iscd.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\ispippin.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\jitdraw3.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\jwxini.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\labeldrvxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\memoryxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\miscx.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\moovxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\movemousexobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\movutils.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\orthoplayxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\palxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\popupmenuxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\qtmovie.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\registercomponent.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\serialportxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\soundjam.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\spacemgr.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\videodiscxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\volumelist.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\widgetxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\winxobj.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\xplayanim.h" />
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\yasix.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo-ast.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo-builtins.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo-bytecode.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo-code.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo-codegen.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo-gr.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo-object.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo-the.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo-utils.h" />
+		<ClInclude Include="..\..\engines\director\lingo\lingo.h" />
+		<ClInclude Include="..\..\engines\director\archive.h" />
+		<ClInclude Include="..\..\engines\director\cast.h" />
+		<ClInclude Include="..\..\engines\director\castmember.h" />
+		<ClInclude Include="..\..\engines\director\channel.h" />
+		<ClInclude Include="..\..\engines\director\cursor.h" />
+		<ClInclude Include="..\..\engines\director\debugger.h" />
+		<ClInclude Include="..\..\engines\director\detection.h" />
+		<ClInclude Include="..\..\engines\director\detection_paths.h" />
+		<ClInclude Include="..\..\engines\director\detection_tables.h" />
+		<ClInclude Include="..\..\engines\director\director.h" />
+		<ClInclude Include="..\..\engines\director\frame.h" />
+		<ClInclude Include="..\..\engines\director\graphics-data.h" />
+		<ClInclude Include="..\..\engines\director\images.h" />
+		<ClInclude Include="..\..\engines\director\movie.h" />
+		<ClInclude Include="..\..\engines\director\palette-fade.h" />
+		<ClInclude Include="..\..\engines\director\score.h" />
+		<ClInclude Include="..\..\engines\director\sound.h" />
+		<ClInclude Include="..\..\engines\director\sprite.h" />
+		<ClInclude Include="..\..\engines\director\stxt.h" />
+		<ClInclude Include="..\..\engines\director\types.h" />
+		<ClInclude Include="..\..\engines\director\util.h" />
+		<ClInclude Include="..\..\engines\director\window.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\director\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

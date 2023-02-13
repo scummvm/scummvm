@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="games">
+			<UniqueIdentifier>B9311D69-B78A-415E-AEFB-FCD010E8C5E5</UniqueIdentifier>
+		</Filter>
+		<Filter Include="language">
+			<UniqueIdentifier>21E3DBD6-DAA1-41BB-9A89-3CCE88222A9D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="loaders">
+			<UniqueIdentifier>1D33483B-9CCA-4002-970C-21CFA4F4B870</UniqueIdentifier>
+		</Filter>
+		<Filter Include="objects">
+			<UniqueIdentifier>6FF75A12-589E-486E-AF10-8B9AD6B28410</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\freescape\area.cpp" />
+		<ClCompile Include="..\..\engines\freescape\demo.cpp" />
+		<ClCompile Include="..\..\engines\freescape\freescape.cpp" />
+		<ClCompile Include="..\..\engines\freescape\games\castle.cpp">
+			<Filter>games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\dark.cpp">
+			<Filter>games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\driller.cpp">
+			<Filter>games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\eclipse.cpp">
+			<Filter>games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\games\palettes.cpp">
+			<Filter>games</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\gfx.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_opengl.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_opengl_texture.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_tinygl.cpp" />
+		<ClCompile Include="..\..\engines\freescape\gfx_tinygl_texture.cpp" />
+		<ClCompile Include="..\..\engines\freescape\language\8bitDetokeniser.cpp">
+			<Filter>language</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\language\instruction.cpp">
+			<Filter>language</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\loaders\8bitBinaryLoader.cpp">
+			<Filter>loaders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\freescape\movement.cpp" />
+		<ClCompile Include="..\..\engines\freescape\neo.cpp" />
+		<ClCompile Include="..\..\engines\freescape\objects\geometricobject.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\objects\sensor.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\freescape\sound.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\freescape\area.h" />
+		<ClInclude Include="..\..\engines\freescape\detection.h" />
+		<ClInclude Include="..\..\engines\freescape\freescape.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_opengl.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_opengl_texture.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_tinygl.h" />
+		<ClInclude Include="..\..\engines\freescape\gfx_tinygl_texture.h" />
+		<ClInclude Include="..\..\engines\freescape\language\8bitDetokeniser.h">
+			<Filter>language</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\language\instruction.h">
+			<Filter>language</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\language\token.h">
+			<Filter>language</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\neo.h" />
+		<ClInclude Include="..\..\engines\freescape\objects\entrance.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\geometricobject.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\global.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\group.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\object.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\freescape\objects\sensor.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\freescape\module.mk" />
+	</ItemGroup>
+</Project>

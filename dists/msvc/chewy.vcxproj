@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{81919AD4-9EE5-4B65-9017-EB401F68E5C8}</ProjectGuid>
+		<RootNamespace>chewy</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\chewy\audio\chewy_voc.cpp" />
+		<ClCompile Include="..\..\engines\chewy\audio\module_tmf.cpp" />
+		<ClCompile Include="..\..\engines\chewy\audio\tmf_stream.cpp" />
+		<ClCompile Include="..\..\engines\chewy\dialogs\cinema.cpp" />
+		<ClCompile Include="..\..\engines\chewy\dialogs\credits.cpp" />
+		<ClCompile Include="..\..\engines\chewy\dialogs\files.cpp" />
+		<ClCompile Include="..\..\engines\chewy\dialogs\inventory.cpp" />
+		<ClCompile Include="..\..\engines\chewy\dialogs\main_menu.cpp" />
+		<ClCompile Include="..\..\engines\chewy\dialogs\options.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room00.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room01.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room02.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room03.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room04.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room05.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room06.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room07.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room08.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room09.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room10.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room11.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room12.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room13.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room14.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room16.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room17.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room18.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room19.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room21.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room22.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room23.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room24.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room25.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room26.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room27.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room28.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room29.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room31.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room32.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room33.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room34.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room35.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room37.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room39.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room40.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room41.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room42.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room43.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room44.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room45.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room46.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room47.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room48.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room49.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room50.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room51.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room52.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room53.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room54.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room55.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room56.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room57.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room58.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room59.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room62.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room63.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room64.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room65.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room66.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room67.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room68.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room69.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room70.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room71.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room72.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room73.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room74.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room75.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room76.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room77.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room78.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room79.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room80.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room81.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room82.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room83.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room84.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room85.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room86.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room87.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room88.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room89.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room90.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room91.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room92.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room93.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room94.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room95.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room96.cpp" />
+		<ClCompile Include="..\..\engines\chewy\rooms\room97.cpp" />
+		<ClCompile Include="..\..\engines\chewy\video\cfo_decoder.cpp" />
+		<ClCompile Include="..\..\engines\chewy\video\video_player.cpp" />
+		<ClCompile Include="..\..\engines\chewy\atds.cpp" />
+		<ClCompile Include="..\..\engines\chewy\barriers.cpp" />
+		<ClCompile Include="..\..\engines\chewy\chewy.cpp" />
+		<ClCompile Include="..\..\engines\chewy\console.cpp" />
+		<ClCompile Include="..\..\engines\chewy\cursor.cpp" />
+		<ClCompile Include="..\..\engines\chewy\detail.cpp" />
+		<ClCompile Include="..\..\engines\chewy\effect.cpp" />
+		<ClCompile Include="..\..\engines\chewy\events.cpp" />
+		<ClCompile Include="..\..\engines\chewy\font.cpp" />
+		<ClCompile Include="..\..\engines\chewy\globals.cpp" />
+		<ClCompile Include="..\..\engines\chewy\inits.cpp" />
+		<ClCompile Include="..\..\engines\chewy\main.cpp" />
+		<ClCompile Include="..\..\engines\chewy\mcga_graphics.cpp" />
+		<ClCompile Include="..\..\engines\chewy\memory.cpp" />
+		<ClCompile Include="..\..\engines\chewy\menus.cpp" />
+		<ClCompile Include="..\..\engines\chewy\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\chewy\movclass.cpp" />
+		<ClCompile Include="..\..\engines\chewy\object.cpp" />
+		<ClCompile Include="..\..\engines\chewy\object_extra.cpp" />
+		<ClCompile Include="..\..\engines\chewy\r_event.cpp" />
+		<ClCompile Include="..\..\engines\chewy\resource.cpp" />
+		<ClCompile Include="..\..\engines\chewy\room.cpp" />
+		<ClCompile Include="..\..\engines\chewy\sound.cpp" />
+		<ClCompile Include="..\..\engines\chewy\sprite.cpp" />
+		<ClCompile Include="..\..\engines\chewy\t_event.cpp" />
+		<ClCompile Include="..\..\engines\chewy\text.cpp" />
+		<ClCompile Include="..\..\engines\chewy\timer.cpp" />
+		<ClCompile Include="..\..\engines\chewy\types.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\chewy\audio\chewy_voc.h" />
+		<ClInclude Include="..\..\engines\chewy\audio\module_tmf.h" />
+		<ClInclude Include="..\..\engines\chewy\audio\tmf_stream.h" />
+		<ClInclude Include="..\..\engines\chewy\dialogs\cinema.h" />
+		<ClInclude Include="..\..\engines\chewy\dialogs\credits.h" />
+		<ClInclude Include="..\..\engines\chewy\dialogs\files.h" />
+		<ClInclude Include="..\..\engines\chewy\dialogs\inventory.h" />
+		<ClInclude Include="..\..\engines\chewy\dialogs\main_menu.h" />
+		<ClInclude Include="..\..\engines\chewy\dialogs\options.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room00.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room01.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room02.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room03.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room04.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room05.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room06.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room07.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room08.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room09.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room10.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room11.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room12.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room13.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room14.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room16.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room17.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room18.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room19.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room21.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room22.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room23.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room24.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room25.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room26.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room27.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room28.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room29.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room31.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room32.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room33.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room34.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room35.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room37.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room39.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room40.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room41.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room42.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room43.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room44.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room45.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room46.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room47.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room48.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room49.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room50.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room51.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room52.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room53.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room54.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room55.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room56.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room57.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room58.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room59.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room62.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room63.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room64.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room65.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room66.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room67.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room68.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room69.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room70.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room71.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room72.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room73.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room74.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room75.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room76.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room77.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room78.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room79.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room80.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room81.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room82.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room83.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room84.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room85.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room86.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room87.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room88.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room89.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room90.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room91.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room92.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room93.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room94.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room95.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room96.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\room97.h" />
+		<ClInclude Include="..\..\engines\chewy\rooms\rooms.h" />
+		<ClInclude Include="..\..\engines\chewy\video\cfo_decoder.h" />
+		<ClInclude Include="..\..\engines\chewy\video\video_player.h" />
+		<ClInclude Include="..\..\engines\chewy\ani_dat.h" />
+		<ClInclude Include="..\..\engines\chewy\atds.h" />
+		<ClInclude Include="..\..\engines\chewy\barriers.h" />
+		<ClInclude Include="..\..\engines\chewy\chewy.h" />
+		<ClInclude Include="..\..\engines\chewy\console.h" />
+		<ClInclude Include="..\..\engines\chewy\cursor.h" />
+		<ClInclude Include="..\..\engines\chewy\defines.h" />
+		<ClInclude Include="..\..\engines\chewy\detail.h" />
+		<ClInclude Include="..\..\engines\chewy\detection.h" />
+		<ClInclude Include="..\..\engines\chewy\effect.h" />
+		<ClInclude Include="..\..\engines\chewy\events.h" />
+		<ClInclude Include="..\..\engines\chewy\font.h" />
+		<ClInclude Include="..\..\engines\chewy\globals.h" />
+		<ClInclude Include="..\..\engines\chewy\main.h" />
+		<ClInclude Include="..\..\engines\chewy\mcga_graphics.h" />
+		<ClInclude Include="..\..\engines\chewy\memory.h" />
+		<ClInclude Include="..\..\engines\chewy\menus.h" />
+		<ClInclude Include="..\..\engines\chewy\movclass.h" />
+		<ClInclude Include="..\..\engines\chewy\ngstypes.h" />
+		<ClInclude Include="..\..\engines\chewy\object.h" />
+		<ClInclude Include="..\..\engines\chewy\object_extra.h" />
+		<ClInclude Include="..\..\engines\chewy\resource.h" />
+		<ClInclude Include="..\..\engines\chewy\room.h" />
+		<ClInclude Include="..\..\engines\chewy\sound.h" />
+		<ClInclude Include="..\..\engines\chewy\text.h" />
+		<ClInclude Include="..\..\engines\chewy\timer.h" />
+		<ClInclude Include="..\..\engines\chewy\types.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\chewy\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="formats">
+			<UniqueIdentifier>AFFB79C7-4CA6-4E56-A4E3-2A43D0461EB6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="gfx">
+			<UniqueIdentifier>ABB5DB21-2626-4713-976F-F504CF879C8C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="model">
+			<UniqueIdentifier>FEDF0F26-2543-4DE7-ACDD-405B55D585DF</UniqueIdentifier>
+		</Filter>
+		<Filter Include="movement">
+			<UniqueIdentifier>282597B1-7E09-4E15-A6CD-B2B1ED38D4A1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="resources">
+			<UniqueIdentifier>95616D41-7D3C-4C47-899B-BC240EF6B441</UniqueIdentifier>
+		</Filter>
+		<Filter Include="services">
+			<UniqueIdentifier>48BC9E18-2876-40B4-B885-329FB2C319C4</UniqueIdentifier>
+		</Filter>
+		<Filter Include="tools">
+			<UniqueIdentifier>6FCEEB59-D947-433F-98C4-E90602D565F0</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui">
+			<UniqueIdentifier>0BBD6A29-E955-4892-AFB3-604AE70A0660</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui\menu">
+			<UniqueIdentifier>8E5E26D1-467D-4144-81E9-5691BD0717AB</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui\world">
+			<UniqueIdentifier>7A53BDDE-15F4-4AF5-B35D-7155DF56FE85</UniqueIdentifier>
+		</Filter>
+		<Filter Include="visual">
+			<UniqueIdentifier>002E043C-5663-4C72-AE82-D980578813D8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="visual\effects">
+			<UniqueIdentifier>A28EA05B-820B-4FCE-B76D-DF8F745632ED</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\stark\console.cpp" />
+		<ClCompile Include="..\..\engines\stark\formats\biff.cpp">
+			<Filter>formats</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\formats\biffmesh.cpp">
+			<Filter>formats</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\formats\dds.cpp">
+			<Filter>formats</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\formats\iss.cpp">
+			<Filter>formats</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\formats\tm.cpp">
+			<Filter>formats</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\formats\xarc.cpp">
+			<Filter>formats</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\formats\xmg.cpp">
+			<Filter>formats</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\formats\xrc.cpp">
+			<Filter>formats</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\driver.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\opengl.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\openglactor.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\openglbitmap.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\openglfade.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\openglprop.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\opengls.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\openglsactor.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\openglsfade.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\openglsprop.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\openglssurface.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\openglsurface.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\opengltexture.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\renderentry.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\surfacerenderer.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\texture.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\tinygl.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglactor.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglbitmap.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglfade.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglprop.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\tinyglsurface.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\gfx\tinygltexture.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\stark\model\animhandler.cpp">
+			<Filter>model</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\model\model.cpp">
+			<Filter>model</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\model\skeleton_anim.cpp">
+			<Filter>model</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\movement\followpath.cpp">
+			<Filter>movement</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\movement\followpathlight.cpp">
+			<Filter>movement</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\movement\movement.cpp">
+			<Filter>movement</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\movement\shortestpath.cpp">
+			<Filter>movement</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\movement\stringpullingpath.cpp">
+			<Filter>movement</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\movement\turn.cpp">
+			<Filter>movement</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\movement\walk.cpp">
+			<Filter>movement</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resourcereference.cpp" />
+		<ClCompile Include="..\..\engines\stark\resources\anim.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\animhierarchy.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\animscript.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\animsoundtrigger.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\bonesmesh.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\bookmark.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\camera.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\command.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\container.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\dialog.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\direction.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\floor.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\floorface.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\floorfield.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\fmv.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\image.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\item.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\knowledge.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\knowledgeset.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\layer.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\level.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\light.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\lipsync.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\location.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\object.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\path.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\pattable.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\root.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\script.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\scroll.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\sound.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\speech.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\string.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\resources\textureset.cpp">
+			<Filter>resources</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\savemetadata.cpp" />
+		<ClCompile Include="..\..\engines\stark\scene.cpp" />
+		<ClCompile Include="..\..\engines\stark\services\archiveloader.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\dialogplayer.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\diary.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\fontprovider.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\gamechapter.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\gameinterface.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\gamemessage.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\global.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\resourceprovider.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\services.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\settings.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\stateprovider.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\staticprovider.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\services\userinterface.cpp">
+			<Filter>services</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\stark.cpp" />
+		<ClCompile Include="..\..\engines\stark\tools\abstractsyntaxtree.cpp">
+			<Filter>tools</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\tools\block.cpp">
+			<Filter>tools</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\tools\command.cpp">
+			<Filter>tools</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\tools\decompiler.cpp">
+			<Filter>tools</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\cursor.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\dialogbox.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\menu\dialogmenu.cpp">
+			<Filter>ui\menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\menu\diaryindex.cpp">
+			<Filter>ui\menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\menu\diarypages.cpp">
+			<Filter>ui\menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\menu\fmvmenu.cpp">
+			<Filter>ui\menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\menu\locationscreen.cpp">
+			<Filter>ui\menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\menu\mainmenu.cpp">
+			<Filter>ui\menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\menu\saveloadmenu.cpp">
+			<Filter>ui\menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\menu\settingsmenu.cpp">
+			<Filter>ui\menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\window.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\world\actionmenu.cpp">
+			<Filter>ui\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\world\button.cpp">
+			<Filter>ui\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\world\clicktext.cpp">
+			<Filter>ui\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\world\dialogpanel.cpp">
+			<Filter>ui\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\world\fmvscreen.cpp">
+			<Filter>ui\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\world\gamescreen.cpp">
+			<Filter>ui\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\world\gamewindow.cpp">
+			<Filter>ui\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\world\inventorywindow.cpp">
+			<Filter>ui\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\ui\world\topmenu.cpp">
+			<Filter>ui\world</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\actor.cpp">
+			<Filter>visual</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\effects\bubbles.cpp">
+			<Filter>visual\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\effects\effect.cpp">
+			<Filter>visual\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\effects\fireflies.cpp">
+			<Filter>visual\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\effects\fish.cpp">
+			<Filter>visual\effects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\explodingimage.cpp">
+			<Filter>visual</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\flashingimage.cpp">
+			<Filter>visual</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\image.cpp">
+			<Filter>visual</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\prop.cpp">
+			<Filter>visual</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\smacker.cpp">
+			<Filter>visual</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\stark\visual\text.cpp">
+			<Filter>visual</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\stark\console.h" />
+		<ClInclude Include="..\..\engines\stark\debug.h" />
+		<ClInclude Include="..\..\engines\stark\detection.h" />
+		<ClInclude Include="..\..\engines\stark\formats\biff.h">
+			<Filter>formats</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\formats\biffmesh.h">
+			<Filter>formats</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\formats\dds.h">
+			<Filter>formats</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\formats\iss.h">
+			<Filter>formats</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\formats\tm.h">
+			<Filter>formats</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\formats\xarc.h">
+			<Filter>formats</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\formats\xmg.h">
+			<Filter>formats</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\formats\xrc.h">
+			<Filter>formats</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\bitmap.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\driver.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\faderenderer.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\opengl.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\openglactor.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\openglbitmap.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\openglfade.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\openglprop.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\opengls.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\openglsactor.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\openglsfade.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\openglsprop.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\openglssurface.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\openglsurface.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\opengltexture.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\renderentry.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\surfacerenderer.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\texture.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\tinygl.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglactor.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglbitmap.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglfade.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglprop.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\tinyglsurface.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\gfx\tinygltexture.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\model\animhandler.h">
+			<Filter>model</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\model\model.h">
+			<Filter>model</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\model\skeleton_anim.h">
+			<Filter>model</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\movement\followpath.h">
+			<Filter>movement</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\movement\followpathlight.h">
+			<Filter>movement</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\movement\movement.h">
+			<Filter>movement</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\movement\shortestpath.h">
+			<Filter>movement</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\movement\stringpullingpath.h">
+			<Filter>movement</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\movement\turn.h">
+			<Filter>movement</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\movement\walk.h">
+			<Filter>movement</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resourcereference.h" />
+		<ClInclude Include="..\..\engines\stark\resources\anim.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\animhierarchy.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\animscript.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\animsoundtrigger.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\bonesmesh.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\bookmark.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\camera.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\command.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\container.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\dialog.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\direction.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\floor.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\floorface.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\floorfield.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\fmv.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\image.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\item.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\knowledge.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\knowledgeset.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\layer.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\level.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\light.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\lipsync.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\location.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\object.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\path.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\pattable.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\root.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\script.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\scroll.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\sound.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\speech.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\string.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\resources\textureset.h">
+			<Filter>resources</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\savemetadata.h" />
+		<ClInclude Include="..\..\engines\stark\scene.h" />
+		<ClInclude Include="..\..\engines\stark\services\archiveloader.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\dialogplayer.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\diary.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\fontprovider.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\gamechapter.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\gameinterface.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\gamemessage.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\global.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\resourceprovider.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\services.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\settings.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\stateprovider.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\staticprovider.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\services\userinterface.h">
+			<Filter>services</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\stark.h" />
+		<ClInclude Include="..\..\engines\stark\tools\abstractsyntaxtree.h">
+			<Filter>tools</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\tools\block.h">
+			<Filter>tools</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\tools\command.h">
+			<Filter>tools</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\tools\decompiler.h">
+			<Filter>tools</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\cursor.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\dialogbox.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\menu\dialogmenu.h">
+			<Filter>ui\menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\menu\diaryindex.h">
+			<Filter>ui\menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\menu\diarypages.h">
+			<Filter>ui\menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\menu\fmvmenu.h">
+			<Filter>ui\menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\menu\locationscreen.h">
+			<Filter>ui\menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\menu\mainmenu.h">
+			<Filter>ui\menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\menu\saveloadmenu.h">
+			<Filter>ui\menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\menu\settingsmenu.h">
+			<Filter>ui\menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\screen.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\window.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\world\actionmenu.h">
+			<Filter>ui\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\world\button.h">
+			<Filter>ui\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\world\clicktext.h">
+			<Filter>ui\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\world\dialogpanel.h">
+			<Filter>ui\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\world\fmvscreen.h">
+			<Filter>ui\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\world\gamescreen.h">
+			<Filter>ui\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\world\gamewindow.h">
+			<Filter>ui\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\world\inventorywindow.h">
+			<Filter>ui\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\ui\world\topmenu.h">
+			<Filter>ui\world</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\actor.h">
+			<Filter>visual</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\effects\bubbles.h">
+			<Filter>visual\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\effects\effect.h">
+			<Filter>visual\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\effects\fireflies.h">
+			<Filter>visual\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\effects\fish.h">
+			<Filter>visual\effects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\explodingimage.h">
+			<Filter>visual</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\flashingimage.h">
+			<Filter>visual</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\image.h">
+			<Filter>visual</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\prop.h">
+			<Filter>visual</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\smacker.h">
+			<Filter>visual</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\text.h">
+			<Filter>visual</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\stark\visual\visual.h">
+			<Filter>visual</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\stark\module.mk" />
+	</ItemGroup>
+</Project>

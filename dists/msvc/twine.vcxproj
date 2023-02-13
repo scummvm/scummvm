@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{BAC62459-D85A-45EF-A015-35B862948C28}</ProjectGuid>
+		<RootNamespace>twine</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\twine\audio\music.cpp" />
+		<ClCompile Include="..\..\engines\twine\audio\sound.cpp" />
+		<ClCompile Include="..\..\engines\twine\debugger\console.cpp" />
+		<ClCompile Include="..\..\engines\twine\debugger\debug.cpp" />
+		<ClCompile Include="..\..\engines\twine\debugger\debug_grid.cpp" />
+		<ClCompile Include="..\..\engines\twine\debugger\debug_scene.cpp" />
+		<ClCompile Include="..\..\engines\twine\menu\interface.cpp" />
+		<ClCompile Include="..\..\engines\twine\menu\menu.cpp" />
+		<ClCompile Include="..\..\engines\twine\menu\menuoptions.cpp" />
+		<ClCompile Include="..\..\engines\twine\parser\anim.cpp" />
+		<ClCompile Include="..\..\engines\twine\parser\blocklibrary.cpp" />
+		<ClCompile Include="..\..\engines\twine\parser\body.cpp" />
+		<ClCompile Include="..\..\engines\twine\parser\entity.cpp" />
+		<ClCompile Include="..\..\engines\twine\parser\holomap.cpp" />
+		<ClCompile Include="..\..\engines\twine\parser\parser.cpp" />
+		<ClCompile Include="..\..\engines\twine\parser\sprite.cpp" />
+		<ClCompile Include="..\..\engines\twine\parser\text.cpp" />
+		<ClCompile Include="..\..\engines\twine\renderer\redraw.cpp" />
+		<ClCompile Include="..\..\engines\twine\renderer\renderer.cpp" />
+		<ClCompile Include="..\..\engines\twine\renderer\screens.cpp" />
+		<ClCompile Include="..\..\engines\twine\resources\hqr.cpp" />
+		<ClCompile Include="..\..\engines\twine\resources\lzss.cpp" />
+		<ClCompile Include="..\..\engines\twine\resources\resources.cpp" />
+		<ClCompile Include="..\..\engines\twine\scene\actor.cpp" />
+		<ClCompile Include="..\..\engines\twine\scene\animations.cpp" />
+		<ClCompile Include="..\..\engines\twine\scene\collision.cpp" />
+		<ClCompile Include="..\..\engines\twine\scene\extra.cpp" />
+		<ClCompile Include="..\..\engines\twine\scene\gamestate.cpp" />
+		<ClCompile Include="..\..\engines\twine\scene\grid.cpp" />
+		<ClCompile Include="..\..\engines\twine\scene\movements.cpp" />
+		<ClCompile Include="..\..\engines\twine\scene\scene.cpp" />
+		<ClCompile Include="..\..\engines\twine\script\script_life.cpp" />
+		<ClCompile Include="..\..\engines\twine\script\script_life_v1.cpp" />
+		<ClCompile Include="..\..\engines\twine\script\script_life_v2.cpp" />
+		<ClCompile Include="..\..\engines\twine\script\script_move.cpp" />
+		<ClCompile Include="..\..\engines\twine\script\script_move_v1.cpp" />
+		<ClCompile Include="..\..\engines\twine\script\script_move_v2.cpp" />
+		<ClCompile Include="..\..\engines\twine\holomap.cpp" />
+		<ClCompile Include="..\..\engines\twine\input.cpp" />
+		<ClCompile Include="..\..\engines\twine\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\twine\movies.cpp" />
+		<ClCompile Include="..\..\engines\twine\shared.cpp" />
+		<ClCompile Include="..\..\engines\twine\slideshow.cpp" />
+		<ClCompile Include="..\..\engines\twine\text.cpp" />
+		<ClCompile Include="..\..\engines\twine\twine.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\twine\audio\music.h" />
+		<ClInclude Include="..\..\engines\twine\audio\sound.h" />
+		<ClInclude Include="..\..\engines\twine\debugger\console.h" />
+		<ClInclude Include="..\..\engines\twine\debugger\debug.h" />
+		<ClInclude Include="..\..\engines\twine\debugger\debug_grid.h" />
+		<ClInclude Include="..\..\engines\twine\debugger\debug_scene.h" />
+		<ClInclude Include="..\..\engines\twine\menu\interface.h" />
+		<ClInclude Include="..\..\engines\twine\menu\menu.h" />
+		<ClInclude Include="..\..\engines\twine\menu\menuoptions.h" />
+		<ClInclude Include="..\..\engines\twine\parser\anim.h" />
+		<ClInclude Include="..\..\engines\twine\parser\blocklibrary.h" />
+		<ClInclude Include="..\..\engines\twine\parser\body.h" />
+		<ClInclude Include="..\..\engines\twine\parser\bodytypes.h" />
+		<ClInclude Include="..\..\engines\twine\parser\entity.h" />
+		<ClInclude Include="..\..\engines\twine\parser\holomap.h" />
+		<ClInclude Include="..\..\engines\twine\parser\parser.h" />
+		<ClInclude Include="..\..\engines\twine\parser\sprite.h" />
+		<ClInclude Include="..\..\engines\twine\parser\text.h" />
+		<ClInclude Include="..\..\engines\twine\renderer\redraw.h" />
+		<ClInclude Include="..\..\engines\twine\renderer\renderer.h" />
+		<ClInclude Include="..\..\engines\twine\renderer\screens.h" />
+		<ClInclude Include="..\..\engines\twine\renderer\shadeangletab.h" />
+		<ClInclude Include="..\..\engines\twine\resources\hqr.h" />
+		<ClInclude Include="..\..\engines\twine\resources\lzss.h" />
+		<ClInclude Include="..\..\engines\twine\resources\resources.h" />
+		<ClInclude Include="..\..\engines\twine\scene\actor.h" />
+		<ClInclude Include="..\..\engines\twine\scene\animations.h" />
+		<ClInclude Include="..\..\engines\twine\scene\collision.h" />
+		<ClInclude Include="..\..\engines\twine\scene\extra.h" />
+		<ClInclude Include="..\..\engines\twine\scene\gamestate.h" />
+		<ClInclude Include="..\..\engines\twine\scene\grid.h" />
+		<ClInclude Include="..\..\engines\twine\scene\movements.h" />
+		<ClInclude Include="..\..\engines\twine\scene\scene.h" />
+		<ClInclude Include="..\..\engines\twine\script\script_life.h" />
+		<ClInclude Include="..\..\engines\twine\script\script_life_v1.h" />
+		<ClInclude Include="..\..\engines\twine\script\script_life_v2.h" />
+		<ClInclude Include="..\..\engines\twine\script\script_move.h" />
+		<ClInclude Include="..\..\engines\twine\script\script_move_v1.h" />
+		<ClInclude Include="..\..\engines\twine\script\script_move_v2.h" />
+		<ClInclude Include="..\..\engines\twine\achievements_tables.h" />
+		<ClInclude Include="..\..\engines\twine\detection.h" />
+		<ClInclude Include="..\..\engines\twine\holomap.h" />
+		<ClInclude Include="..\..\engines\twine\input.h" />
+		<ClInclude Include="..\..\engines\twine\movies.h" />
+		<ClInclude Include="..\..\engines\twine\shared.h" />
+		<ClInclude Include="..\..\engines\twine\slideshow.h" />
+		<ClInclude Include="..\..\engines\twine\text.h" />
+		<ClInclude Include="..\..\engines\twine\twine.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\twine\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

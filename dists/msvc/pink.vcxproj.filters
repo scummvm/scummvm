@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="objects">
+			<UniqueIdentifier>AF5CAFC2-9000-4D99-A298-7A29312F78C9</UniqueIdentifier>
+		</Filter>
+		<Filter Include="objects\actions">
+			<UniqueIdentifier>D87B186D-5815-4F86-A800-722C12D3ABDE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="objects\actors">
+			<UniqueIdentifier>5A587522-B4CB-4F4B-A1A5-E2A761228A7B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="objects\handlers">
+			<UniqueIdentifier>234D47D3-9BEB-4CCB-A3F5-0F3B0CF87C55</UniqueIdentifier>
+		</Filter>
+		<Filter Include="objects\pages">
+			<UniqueIdentifier>5320BC54-5937-4C9B-805C-3E7627C051E0</UniqueIdentifier>
+		</Filter>
+		<Filter Include="objects\sequences">
+			<UniqueIdentifier>DB285E7A-3383-4316-AD62-5DFC9087E76A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="objects\walk">
+			<UniqueIdentifier>1D68A43F-08DD-4280-A1CE-9CA58F22CB3A</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\pink\archive.cpp" />
+		<ClCompile Include="..\..\engines\pink\audio_info_mgr.cpp" />
+		<ClCompile Include="..\..\engines\pink\cel_decoder.cpp" />
+		<ClCompile Include="..\..\engines\pink\console.cpp" />
+		<ClCompile Include="..\..\engines\pink\cursor_mgr.cpp" />
+		<ClCompile Include="..\..\engines\pink\file.cpp" />
+		<ClCompile Include="..\..\engines\pink\gui.cpp" />
+		<ClCompile Include="..\..\engines\pink\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\pink\objects\actions\action.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\action_cel.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\action_hide.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\action_loop.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\action_play.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\action_play_with_sfx.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\action_sound.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\action_still.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\action_talk.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\action_text.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actions\walk_action.cpp">
+			<Filter>objects\actions</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actors\actor.cpp">
+			<Filter>objects\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actors\audio_info_pda_button.cpp">
+			<Filter>objects\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actors\lead_actor.cpp">
+			<Filter>objects\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actors\pda_button_actor.cpp">
+			<Filter>objects\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\actors\supporting_actor.cpp">
+			<Filter>objects\actors</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\condition.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\handlers\handler.cpp">
+			<Filter>objects\handlers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\handlers\handler_mgr.cpp">
+			<Filter>objects\handlers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\inventory.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\module.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\object.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\pages\game_page.cpp">
+			<Filter>objects\pages</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\pages\page.cpp">
+			<Filter>objects\pages</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\pages\pda_page.cpp">
+			<Filter>objects\pages</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\sequences\seq_timer.cpp">
+			<Filter>objects\sequences</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\sequences\sequence.cpp">
+			<Filter>objects\sequences</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\sequences\sequence_context.cpp">
+			<Filter>objects\sequences</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\sequences\sequence_item.cpp">
+			<Filter>objects\sequences</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\sequences\sequencer.cpp">
+			<Filter>objects\sequences</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\side_effect.cpp">
+			<Filter>objects</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\walk\walk_location.cpp">
+			<Filter>objects\walk</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\walk\walk_mgr.cpp">
+			<Filter>objects\walk</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\objects\walk\walk_shortest_path.cpp">
+			<Filter>objects\walk</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\pink\pda_mgr.cpp" />
+		<ClCompile Include="..\..\engines\pink\pink.cpp" />
+		<ClCompile Include="..\..\engines\pink\resource_mgr.cpp" />
+		<ClCompile Include="..\..\engines\pink\saveload.cpp" />
+		<ClCompile Include="..\..\engines\pink\screen.cpp" />
+		<ClCompile Include="..\..\engines\pink\sound.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\pink\archive.h" />
+		<ClInclude Include="..\..\engines\pink\audio_info_mgr.h" />
+		<ClInclude Include="..\..\engines\pink\cel_decoder.h" />
+		<ClInclude Include="..\..\engines\pink\console.h" />
+		<ClInclude Include="..\..\engines\pink\constants.h" />
+		<ClInclude Include="..\..\engines\pink\cursor_mgr.h" />
+		<ClInclude Include="..\..\engines\pink\detection_tables.h" />
+		<ClInclude Include="..\..\engines\pink\file.h" />
+		<ClInclude Include="..\..\engines\pink\objects\actions\action.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\action_cel.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\action_hide.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\action_loop.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\action_play.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\action_play_with_sfx.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\action_sound.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\action_still.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\action_talk.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\action_text.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actions\walk_action.h">
+			<Filter>objects\actions</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actors\actor.h">
+			<Filter>objects\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actors\audio_info_pda_button.h">
+			<Filter>objects\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actors\cursor_actor.h">
+			<Filter>objects\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actors\inventory_actor.h">
+			<Filter>objects\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actors\lead_actor.h">
+			<Filter>objects\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actors\pda_button_actor.h">
+			<Filter>objects\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\actors\supporting_actor.h">
+			<Filter>objects\actors</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\condition.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\handlers\handler.h">
+			<Filter>objects\handlers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\handlers\handler_mgr.h">
+			<Filter>objects\handlers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\inventory.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\module.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\object.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\pages\game_page.h">
+			<Filter>objects\pages</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\pages\page.h">
+			<Filter>objects\pages</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\pages\pda_page.h">
+			<Filter>objects\pages</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\sequences\seq_timer.h">
+			<Filter>objects\sequences</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\sequences\sequence.h">
+			<Filter>objects\sequences</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\sequences\sequence_context.h">
+			<Filter>objects\sequences</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\sequences\sequence_item.h">
+			<Filter>objects\sequences</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\sequences\sequencer.h">
+			<Filter>objects\sequences</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\side_effect.h">
+			<Filter>objects</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\walk\walk_location.h">
+			<Filter>objects\walk</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\walk\walk_mgr.h">
+			<Filter>objects\walk</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\objects\walk\walk_shortest_path.h">
+			<Filter>objects\walk</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\pink\pda_mgr.h" />
+		<ClInclude Include="..\..\engines\pink\pink.h" />
+		<ClInclude Include="..\..\engines\pink\resource_mgr.h" />
+		<ClInclude Include="..\..\engines\pink\screen.h" />
+		<ClInclude Include="..\..\engines\pink\sound.h" />
+		<ClInclude Include="..\..\engines\pink\utils.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\pink\module.mk" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{E2680037-C28D-424E-AF61-782E226F4755}</ProjectGuid>
+		<RootNamespace>asylum</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\asylum\puzzles\board.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\boardkeyhidesto.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\boardsalvation.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\boardyouth.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\clock.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\fisherman.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\hivecontrol.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\hivemachine.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\lock.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\morguedoor.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\pipes.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\puzzle.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\puzzles.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\tictactoe.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\timemachine.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\vcr.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\wheel.cpp" />
+		<ClCompile Include="..\..\engines\asylum\puzzles\writings.cpp" />
+		<ClCompile Include="..\..\engines\asylum\resources\actor.cpp" />
+		<ClCompile Include="..\..\engines\asylum\resources\data.cpp" />
+		<ClCompile Include="..\..\engines\asylum\resources\encounters.cpp" />
+		<ClCompile Include="..\..\engines\asylum\resources\inventory.cpp" />
+		<ClCompile Include="..\..\engines\asylum\resources\object.cpp" />
+		<ClCompile Include="..\..\engines\asylum\resources\polygons.cpp" />
+		<ClCompile Include="..\..\engines\asylum\resources\script.cpp" />
+		<ClCompile Include="..\..\engines\asylum\resources\special.cpp" />
+		<ClCompile Include="..\..\engines\asylum\resources\worldstats.cpp" />
+		<ClCompile Include="..\..\engines\asylum\system\config.cpp" />
+		<ClCompile Include="..\..\engines\asylum\system\cursor.cpp" />
+		<ClCompile Include="..\..\engines\asylum\system\graphics.cpp" />
+		<ClCompile Include="..\..\engines\asylum\system\savegame.cpp" />
+		<ClCompile Include="..\..\engines\asylum\system\screen.cpp" />
+		<ClCompile Include="..\..\engines\asylum\system\sound.cpp" />
+		<ClCompile Include="..\..\engines\asylum\system\speech.cpp" />
+		<ClCompile Include="..\..\engines\asylum\system\text.cpp" />
+		<ClCompile Include="..\..\engines\asylum\views\insertdisc.cpp" />
+		<ClCompile Include="..\..\engines\asylum\views\menu.cpp" />
+		<ClCompile Include="..\..\engines\asylum\views\resviewer.cpp" />
+		<ClCompile Include="..\..\engines\asylum\views\scene.cpp" />
+		<ClCompile Include="..\..\engines\asylum\views\scenetitle.cpp" />
+		<ClCompile Include="..\..\engines\asylum\views\video.cpp" />
+		<ClCompile Include="..\..\engines\asylum\asylum.cpp" />
+		<ClCompile Include="..\..\engines\asylum\console.cpp" />
+		<ClCompile Include="..\..\engines\asylum\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\asylum\respack.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\asylum\puzzles\board.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\boardkeyhidesto.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\boardsalvation.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\boardyouth.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\clock.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\fisherman.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\hivecontrol.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\hivemachine.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\lock.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\morguedoor.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\pipes.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\puzzle.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\puzzles.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\tictactoe.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\timemachine.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\vcr.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\wheel.h" />
+		<ClInclude Include="..\..\engines\asylum\puzzles\writings.h" />
+		<ClInclude Include="..\..\engines\asylum\resources\actor.h" />
+		<ClInclude Include="..\..\engines\asylum\resources\data.h" />
+		<ClInclude Include="..\..\engines\asylum\resources\encounters.h" />
+		<ClInclude Include="..\..\engines\asylum\resources\inventory.h" />
+		<ClInclude Include="..\..\engines\asylum\resources\object.h" />
+		<ClInclude Include="..\..\engines\asylum\resources\polygons.h" />
+		<ClInclude Include="..\..\engines\asylum\resources\script.h" />
+		<ClInclude Include="..\..\engines\asylum\resources\special.h" />
+		<ClInclude Include="..\..\engines\asylum\resources\worldstats.h" />
+		<ClInclude Include="..\..\engines\asylum\system\config.h" />
+		<ClInclude Include="..\..\engines\asylum\system\cursor.h" />
+		<ClInclude Include="..\..\engines\asylum\system\graphics.h" />
+		<ClInclude Include="..\..\engines\asylum\system\savegame.h" />
+		<ClInclude Include="..\..\engines\asylum\system\screen.h" />
+		<ClInclude Include="..\..\engines\asylum\system\sound.h" />
+		<ClInclude Include="..\..\engines\asylum\system\speech.h" />
+		<ClInclude Include="..\..\engines\asylum\system\text.h" />
+		<ClInclude Include="..\..\engines\asylum\views\insertdisc.h" />
+		<ClInclude Include="..\..\engines\asylum\views\menu.h" />
+		<ClInclude Include="..\..\engines\asylum\views\resviewer.h" />
+		<ClInclude Include="..\..\engines\asylum\views\scene.h" />
+		<ClInclude Include="..\..\engines\asylum\views\scenetitle.h" />
+		<ClInclude Include="..\..\engines\asylum\views\video.h" />
+		<ClInclude Include="..\..\engines\asylum\asylum.h" />
+		<ClInclude Include="..\..\engines\asylum\console.h" />
+		<ClInclude Include="..\..\engines\asylum\detection_tables.h" />
+		<ClInclude Include="..\..\engines\asylum\eventhandler.h" />
+		<ClInclude Include="..\..\engines\asylum\respack.h" />
+		<ClInclude Include="..\..\engines\asylum\shared.h" />
+		<ClInclude Include="..\..\engines\asylum\staticres.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\asylum\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

@@ -1,0 +1,969 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|arm64">
+			<Configuration>Analysis</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{13D23603-AA2F-45D4-93F4-AB56B3973639}</ProjectGuid>
+		<RootNamespace>ags</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+		<VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows</VcpkgTriplet>
+		<VcpkgTriplet Condition="'$(Platform)' == 'arm64'">arm64-windows</VcpkgTriplet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysisarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_ags_dynamic_object.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_audio_channel.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_audio_clip.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_character.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_dialog.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_dynamic_array.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_dynamic_object.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_gui.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_gui_object.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_hotspot.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_inventory.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_object.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_region.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\cc_serializer.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\managed_object_pool.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_camera.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_date_time.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_dialog_options_rendering.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_dict.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_drawing_surface.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_dynamic_sprite.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_file.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_overlay.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_set.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_string.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_user_object.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_view_frame.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynobj\script_viewport.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\statobj\ags_static_object.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\statobj\static_array.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\audio_channel.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\audio_clip.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\button.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\cd_audio.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\character.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\character_extras.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\character_info_engine.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\date_time.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dialog.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dialog_options_rendering.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\display.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\draw.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\draw_software.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\drawing_surface.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\dynamic_sprite.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\event.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\file.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\game.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\game_setup.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\game_state.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_api.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_audio.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_button.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_character.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_date_time.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_debug.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_dialog.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_display.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_drawing_surface.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_dynamic_sprite.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_file.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_game.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_gui.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_hotspot.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_inv_window.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_inventory_item.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_label.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_listbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_mouse.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_object.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_overlay.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_palette.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_parser.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_region.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_room.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_screen.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_slider.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_string.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_textbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_timer.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_translation.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_video.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_view_frame.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_viewport.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_walk_behind.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\global_walkable_area.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\gui.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\gui_control.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\gui_inv.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\hotspot.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\interface_button.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\interface_element.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\inv_window.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\inventory_item.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\label.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\listbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\math.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\mouse.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\move_list.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\object.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\overlay.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\parser.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\properties.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\region.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\rich_game_media.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\room.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\room_object.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\room_status.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\route_finder.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\route_finder_impl.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\route_finder_impl_legacy.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\route_finder_jps.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\screen.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\screen_overlay.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\script_containers.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\slider.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\speech.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\sprite.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\sprite_cache_engine.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\string.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\sys_events.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\system.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\textbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\timer.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\translation.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\view_frame.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\viewport_script.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\walk_behind.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\ac\walkable_area.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\debugging\console_output_target.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\debugging\debug.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\debugging\file_based_ags_debugger.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\debugging\log_file.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\debugging\message_buffer.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\device\mouse_w32.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\font\fonts_engine.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\game\game_init.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\game\savegame.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\game\savegame_components.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\game\savegame_v321.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\game\viewport.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gfx\ali_3d_scummvm.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gfx\blender.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gfx\color_engine.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gfx\gfx_driver_base.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gfx\gfx_driver_factory.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gfx\gfx_util.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gfx\gfxfilter_scaling.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gfx\gfxfilter_scummvm_renderer.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gui\animating_gui_button.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gui\csci_dialog.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gui\gui_dialog.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gui\gui_engine.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gui\my_label.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gui\my_listbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gui\my_push_button.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gui\my_textbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\gui\new_control.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\config.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\engine.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\engine_setup.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\game_file.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\game_run.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\game_start.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\graphics_mode.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\main.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\quit.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\main\update.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\media\audio\ambient_sound.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\media\audio\audio.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\media\audio\clip_my_midi.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\media\audio\queued_audio_item.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\media\audio\sound.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\media\audio\sound_clip.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\media\video\video.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\platform\base\ags_platform_driver.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\platform\base\sys_main.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\platform\scummvm\scummvm_platform_driver.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\script\cc_instance.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\script\executing_script.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\script\exports.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\script\runtime_script_value.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\script\script.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\script\script_api.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\script\script_runtime.cpp" />
+		<ClCompile Include="..\..\engines\ags\engine\script\system_imports.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\aastr-0.1.1\aarot.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\aastr-0.1.1\aastr.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\aastr-0.1.1\aautil.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\alfont\alfont.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\color.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\config.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\draw.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\file.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\fixed.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\flood.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\gfx.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\graphics.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\math.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\rotate.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\surface.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\system.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\allegro\unicode.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\std\std.cpp" />
+		<ClCompile Include="..\..\engines\ags\lib\system\datetime.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_agi\ags_agi.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_blend\ags_blend.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_clipboard\ags_clipboard.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_controller\ags_controller.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_creditz\ags_creditz.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_creditz\ags_creditz1.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_creditz\ags_creditz2.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_creditz\drawing.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_fire\ags_fire.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_flashlight\ags_flashlight.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_flashlight\gfx.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_galaxy_steam\ags_galaxy_steam.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_galaxy_steam\ags_wadjeteye_steam.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_joy\ags_joy.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_nickenstien_gfx\ags_nickenstien_gfx.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_pal_render\ags_pal_render.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_pal_render\raycast.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_parallax\ags_parallax.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_shell\ags_shell.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_snow_rain\ags_snow_rain.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_snow_rain\weather.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sock\ags_sock.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\ags_sprite_font.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\ags_sprite_font_clifftop.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\character_entry.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\color.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\sprite_font.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\sprite_font_renderer.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\sprite_font_renderer_clifftop.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\variable_width_font.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\variable_width_sprite_font.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_sprite_font\variable_width_sprite_font_clifftop.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_tcp_ip\ags_tcp_ip.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_touch\ags_touch.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_wadjet_util\ags_wadjet_util.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_waves\ags_waves.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_waves\data.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_waves\draw.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_waves\sound.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_waves\warper.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_waves\weather.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\audio_channel.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\audio_clip.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\button.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\character.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\core.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\date_time.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\dialog.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\dialog_options_rendering_info.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\drawing_surface.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\dynamic_sprite.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\file.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\game.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\global_api.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\gui.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\gui_control.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\hotspot.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\inv_window.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\inventory_item.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\label.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\listbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\maths.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\mouse.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\object.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\overlay.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\parser.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\region.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\room.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\slider.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\string.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\system.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\textbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\core\view_frame.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\ags_plugin.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\plugin_base.cpp" />
+		<ClCompile Include="..\..\engines\ags\plugins\plugin_object_reader.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\dynobj\script_audio_clip.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\audio_clip_type.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\character_info.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\common.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\dialog_topic.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\game_setup_struct.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\game_setup_struct_base.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\inventory_item_info.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\keycode.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\mouse_cursor.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\sprite_cache.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\sprite_file.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\view.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\ac\words_dictionary.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\core\asset.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\core\asset_manager.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\debugging\debug_manager.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\font\fonts.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\font\ttf_font_renderer.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\font\wfn_font.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\font\wfn_font_renderer.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\game\custom_properties.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\game\interactions.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\game\main_game_file.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\game\room_file.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\game\room_file_base.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\game\room_file_deprecated.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\game\room_struct.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\game\tra_file.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gfx\allegro_bitmap.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gfx\bitmap.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gfx\image.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gui\gui_button.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gui\gui_inv.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gui\gui_label.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gui\gui_listbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gui\gui_main.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gui\gui_object.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gui\gui_slider.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\gui\gui_textbox.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\script\cc_common.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\script\cc_script.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\aligned_stream.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\buffered_stream.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\compress.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\data_ext.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\data_stream.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\directory.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\file.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\file_stream.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\geometry.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\ini_file.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\ini_util.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\lzw.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\memory_stream.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\multi_file_lib.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\path.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\proxy_stream.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\stdio_compat.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\stream.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\string.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\string_compat.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\string_utils.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\text_stream_reader.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\text_stream_writer.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\version.cpp" />
+		<ClCompile Include="..\..\engines\ags\shared\util\wgt2_allg.cpp" />
+		<ClCompile Include="..\..\engines\ags\ags.cpp" />
+		<ClCompile Include="..\..\engines\ags\console.cpp" />
+		<ClCompile Include="..\..\engines\ags\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\ags\events.cpp" />
+		<ClCompile Include="..\..\engines\ags\game_scanner.cpp" />
+		<ClCompile Include="..\..\engines\ags\globals.cpp" />
+		<ClCompile Include="..\..\engines\ags\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\ags\music.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\all_dynamic_classes.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\all_script_classes.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_ags_dynamic_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_audio_channel.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_audio_clip.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_character.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_dialog.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_dynamic_array.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_dynamic_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_dynamic_object_addr_and_manager.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_gui.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_gui_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_hotspot.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_inventory.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_region.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\cc_serializer.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\managed_object_pool.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_audio_channel.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_camera.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_containers.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_date_time.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_dialog.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_dialog_options_rendering.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_dict.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_drawing_surface.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_dynamic_sprite.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_file.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_gui.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_hotspot.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_inv_item.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_mouse.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_overlay.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_region.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_set.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_string.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_system.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_user_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_view_frame.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynobj\script_viewport.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\statobj\ags_static_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\statobj\static_array.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\statobj\static_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\asset_helper.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\audio_channel.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\audio_clip.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\button.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\cd_audio.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\character.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\character_extras.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\date_time.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dialog.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dialog_options_rendering.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\display.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\draw.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\draw_software.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\drawing_surface.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\dynamic_sprite.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\event.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\file.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\game.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\game_setup.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\game_state.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_audio.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_button.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_character.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_date_time.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_debug.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_dialog.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_display.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_drawing_surface.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_dynamic_sprite.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_file.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_game.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_gui.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_hotspot.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_inv_window.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_inventory_item.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_label.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_listbox.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_mouse.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_overlay.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_palette.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_parser.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_region.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_room.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_screen.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_slider.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_string.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_textbox.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_timer.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_translation.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_video.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_view_frame.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_viewport.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_walk_behind.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\global_walkable_area.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\gui.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\gui_control.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\hotspot.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\inv_window.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\inventory_item.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\label.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\lip_sync.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\listbox.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\math.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\mouse.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\move_list.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\overlay.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\parser.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\path_helper.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\properties.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\region.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\rich_game_media.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\room.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\room_object.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\room_status.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\route_finder.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\route_finder_impl.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\route_finder_impl_legacy.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\route_finder_jps.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\runtime_defines.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\screen.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\screen_overlay.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\slider.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\speech.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\sprite.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\sprite_list_entry.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\string.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\sys_events.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\system.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\textbox.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\timer.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\top_bar_settings.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\translation.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\view_frame.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\walk_behind.h" />
+		<ClInclude Include="..\..\engines\ags\engine\ac\walkable_area.h" />
+		<ClInclude Include="..\..\engines\ags\engine\debugging\ags_editor_debugger.h" />
+		<ClInclude Include="..\..\engines\ags\engine\debugging\console_output_target.h" />
+		<ClInclude Include="..\..\engines\ags\engine\debugging\debug_log.h" />
+		<ClInclude Include="..\..\engines\ags\engine\debugging\debugger.h" />
+		<ClInclude Include="..\..\engines\ags\engine\debugging\dummy_ags_debugger.h" />
+		<ClInclude Include="..\..\engines\ags\engine\debugging\file_based_ags_debugger.h" />
+		<ClInclude Include="..\..\engines\ags\engine\debugging\log_file.h" />
+		<ClInclude Include="..\..\engines\ags\engine\debugging\message_buffer.h" />
+		<ClInclude Include="..\..\engines\ags\engine\device\mouse_w32.h" />
+		<ClInclude Include="..\..\engines\ags\engine\game\game_init.h" />
+		<ClInclude Include="..\..\engines\ags\engine\game\savegame.h" />
+		<ClInclude Include="..\..\engines\ags\engine\game\savegame_components.h" />
+		<ClInclude Include="..\..\engines\ags\engine\game\savegame_internal.h" />
+		<ClInclude Include="..\..\engines\ags\engine\game\viewport.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\ali_3d_scummvm.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\blender.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\ddb.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\gfx_defines.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\gfx_driver_base.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\gfx_driver_factory.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\gfx_driver_factory_base.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\gfx_mode_list.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\gfx_util.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\gfxfilter.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\gfxfilter_scaling.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\gfxfilter_scummvm_renderer.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gfx\graphics_driver.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\animating_gui_button.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\csci_dialog.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\gui_dialog.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\gui_dialog_defines.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\gui_dialog_internal_defs.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\my_controls.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\my_label.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\my_listbox.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\my_push_button.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\my_textbox.h" />
+		<ClInclude Include="..\..\engines\ags\engine\gui\new_control.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\config.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\engine.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\engine_setup.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\game_file.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\game_run.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\game_start.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\graphics_mode.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\main.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\quit.h" />
+		<ClInclude Include="..\..\engines\ags\engine\main\update.h" />
+		<ClInclude Include="..\..\engines\ags\engine\media\audio\ambient_sound.h" />
+		<ClInclude Include="..\..\engines\ags\engine\media\audio\audio.h" />
+		<ClInclude Include="..\..\engines\ags\engine\media\audio\audio_defines.h" />
+		<ClInclude Include="..\..\engines\ags\engine\media\audio\audio_system.h" />
+		<ClInclude Include="..\..\engines\ags\engine\media\audio\clip_my_midi.h" />
+		<ClInclude Include="..\..\engines\ags\engine\media\audio\queued_audio_item.h" />
+		<ClInclude Include="..\..\engines\ags\engine\media\audio\sound.h" />
+		<ClInclude Include="..\..\engines\ags\engine\media\audio\sound_clip.h" />
+		<ClInclude Include="..\..\engines\ags\engine\media\video\video.h" />
+		<ClInclude Include="..\..\engines\ags\engine\platform\base\ags_platform_driver.h" />
+		<ClInclude Include="..\..\engines\ags\engine\platform\base\sys_main.h" />
+		<ClInclude Include="..\..\engines\ags\engine\script\cc_instance.h" />
+		<ClInclude Include="..\..\engines\ags\engine\script\executing_script.h" />
+		<ClInclude Include="..\..\engines\ags\engine\script\exports.h" />
+		<ClInclude Include="..\..\engines\ags\engine\script\non_blocking_script_function.h" />
+		<ClInclude Include="..\..\engines\ags\engine\script\runtime_script_value.h" />
+		<ClInclude Include="..\..\engines\ags\engine\script\script.h" />
+		<ClInclude Include="..\..\engines\ags\engine\script\script_api.h" />
+		<ClInclude Include="..\..\engines\ags\engine\script\script_runtime.h" />
+		<ClInclude Include="..\..\engines\ags\engine\script\system_imports.h" />
+		<ClInclude Include="..\..\engines\ags\lib\aastr-0.1.1\aastr.h" />
+		<ClInclude Include="..\..\engines\ags\lib\aastr-0.1.1\aautil.h" />
+		<ClInclude Include="..\..\engines\ags\lib\alfont\alfont.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\aintern.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\alconfig.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\base.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\color.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\config.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\draw.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\error.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\file.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\fixed.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\flood.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\fmaths.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\gfx.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\rotate.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\surface.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\system.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro\unicode.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\algorithm.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\array.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\chrono.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\functional.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\initializer_list.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\limits.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\list.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\map.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\math.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\memory.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\mutex.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\queue.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\regex.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\set.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\stack.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\thread.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\type_traits.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\unordered_set.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\utility.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\vector.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\xtr1common.h" />
+		<ClInclude Include="..\..\engines\ags\lib\std\xutility.h" />
+		<ClInclude Include="..\..\engines\ags\lib\system\datetime.h" />
+		<ClInclude Include="..\..\engines\ags\lib\allegro.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_agi\ags_agi.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_blend\ags_blend.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_clipboard\ags_clipboard.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_controller\ags_controller.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_creditz\ags_creditz.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_creditz\ags_creditz1.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_creditz\ags_creditz2.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_creditz\drawing.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_fire\ags_fire.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_flashlight\ags_flashlight.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_galaxy_steam\ags_galaxy_steam.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_galaxy_steam\ags_wadjeteye_steam.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_joy\ags_joy.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_nickenstien_gfx\ags_nickenstien_gfx.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_pal_render\ags_pal_render.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_pal_render\pal_render.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_pal_render\raycast.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_parallax\ags_parallax.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_shell\ags_shell.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_snow_rain\ags_snow_rain.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_snow_rain\weather.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sock\ags_sock.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\ags_sprite_font.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\ags_sprite_font_clifftop.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\character_entry.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\color.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\sprite_font.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\sprite_font_renderer.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\sprite_font_renderer_clifftop.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\variable_width_font.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\variable_width_sprite_font.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_sprite_font\variable_width_sprite_font_clifftop.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_tcp_ip\ags_tcp_ip.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_touch\ags_touch.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_wadjet_util\ags_wadjet_util.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_waves\ags_waves.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_waves\vars.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\audio_channel.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\audio_clip.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\button.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\character.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\core.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\date_time.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\dialog.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\dialog_options_rendering_info.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\drawing_surface.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\dynamic_sprite.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\file.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\game.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\global_api.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\gui.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\gui_control.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\hotspot.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\inv_window.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\inventory_item.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\label.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\listbox.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\maths.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\mouse.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\object.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\overlay.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\parser.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\region.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\room.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\slider.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\string.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\system.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\textbox.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\core\view_frame.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\ags_plugin.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\plugin_base.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\plugin_engine.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\plugin_object_reader.h" />
+		<ClInclude Include="..\..\engines\ags\plugins\serializer.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\dynobj\script_audio_clip.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\audio_clip_type.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\character_info.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\common.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\common_defines.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\dialog_topic.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\game_setup_struct.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\game_setup_struct_base.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\game_struct_defines.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\game_version.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\interface_button.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\interface_element.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\inventory_item_info.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\keycode.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\mouse_cursor.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\old_game_setup_struct.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\sprite_cache.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\sprite_file.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\view.h" />
+		<ClInclude Include="..\..\engines\ags\shared\ac\words_dictionary.h" />
+		<ClInclude Include="..\..\engines\ags\shared\core\asset.h" />
+		<ClInclude Include="..\..\engines\ags\shared\core\asset_manager.h" />
+		<ClInclude Include="..\..\engines\ags\shared\core\def_version.h" />
+		<ClInclude Include="..\..\engines\ags\shared\core\platform.h" />
+		<ClInclude Include="..\..\engines\ags\shared\core\types.h" />
+		<ClInclude Include="..\..\engines\ags\shared\debugging\debug_manager.h" />
+		<ClInclude Include="..\..\engines\ags\shared\debugging\out.h" />
+		<ClInclude Include="..\..\engines\ags\shared\debugging\output_handler.h" />
+		<ClInclude Include="..\..\engines\ags\shared\font\ags_font_renderer.h" />
+		<ClInclude Include="..\..\engines\ags\shared\font\fonts.h" />
+		<ClInclude Include="..\..\engines\ags\shared\font\ttf_font_renderer.h" />
+		<ClInclude Include="..\..\engines\ags\shared\font\wfn_font.h" />
+		<ClInclude Include="..\..\engines\ags\shared\font\wfn_font_renderer.h" />
+		<ClInclude Include="..\..\engines\ags\shared\game\custom_properties.h" />
+		<ClInclude Include="..\..\engines\ags\shared\game\interactions.h" />
+		<ClInclude Include="..\..\engines\ags\shared\game\main_game_file.h" />
+		<ClInclude Include="..\..\engines\ags\shared\game\plugin_info.h" />
+		<ClInclude Include="..\..\engines\ags\shared\game\room_file.h" />
+		<ClInclude Include="..\..\engines\ags\shared\game\room_struct.h" />
+		<ClInclude Include="..\..\engines\ags\shared\game\room_version.h" />
+		<ClInclude Include="..\..\engines\ags\shared\game\tra_file.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gfx\allegro_bitmap.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gfx\bitmap.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gfx\gfx_def.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gfx\image.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gui\gui_button.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gui\gui_defines.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gui\gui_inv.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gui\gui_label.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gui\gui_listbox.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gui\gui_main.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gui\gui_object.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gui\gui_slider.h" />
+		<ClInclude Include="..\..\engines\ags\shared\gui\gui_textbox.h" />
+		<ClInclude Include="..\..\engines\ags\shared\script\cc_common.h" />
+		<ClInclude Include="..\..\engines\ags\shared\script\cc_internal.h" />
+		<ClInclude Include="..\..\engines\ags\shared\script\cc_script.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\aligned_stream.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\bbop.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\buffered_stream.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\compress.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\data_ext.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\data_stream.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\directory.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\error.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\file.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\file_stream.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\geometry.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\ini_file.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\ini_util.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\lzw.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\math.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\memory.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\memory_compat.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\memory_stream.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\multi_file_lib.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\path.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\proxy_stream.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\scaling.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\stdio_compat.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\stream.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\string.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\string_compat.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\string_types.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\string_utils.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\text_reader.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\text_stream_reader.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\text_stream_writer.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\text_writer.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\utf8.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\version.h" />
+		<ClInclude Include="..\..\engines\ags\shared\util\wgt2_allg.h" />
+		<ClInclude Include="..\..\engines\ags\achievements_tables.h" />
+		<ClInclude Include="..\..\engines\ags\ags.h" />
+		<ClInclude Include="..\..\engines\ags\console.h" />
+		<ClInclude Include="..\..\engines\ags\detection.h" />
+		<ClInclude Include="..\..\engines\ags\detection_tables.h" />
+		<ClInclude Include="..\..\engines\ags\events.h" />
+		<ClInclude Include="..\..\engines\ags\game_scanner.h" />
+		<ClInclude Include="..\..\engines\ags\globals.h" />
+		<ClInclude Include="..\..\engines\ags\metaengine.h" />
+		<ClInclude Include="..\..\engines\ags\music.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\ags\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

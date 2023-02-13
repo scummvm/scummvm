@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="demo">
+			<UniqueIdentifier>79175FA4-6FD0-4B64-A34C-5DD34D4A9CAD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="environ">
+			<UniqueIdentifier>34789B7E-1F4A-4762-AD0A-6AD20A66CE14</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\buried\agent_evaluation.cpp" />
+		<ClCompile Include="..\..\engines\buried\avi_frames.cpp" />
+		<ClCompile Include="..\..\engines\buried\biochip_right.cpp" />
+		<ClCompile Include="..\..\engines\buried\biochip_view.cpp" />
+		<ClCompile Include="..\..\engines\buried\buried.cpp" />
+		<ClCompile Include="..\..\engines\buried\complete.cpp" />
+		<ClCompile Include="..\..\engines\buried\console.cpp" />
+		<ClCompile Include="..\..\engines\buried\credits.cpp" />
+		<ClCompile Include="..\..\engines\buried\death.cpp" />
+		<ClCompile Include="..\..\engines\buried\demo\demo_menu.cpp">
+			<Filter>demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\demo\features.cpp">
+			<Filter>demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\demo\movie_scene.cpp">
+			<Filter>demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\agent3_lair.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\ai_lab.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\alien.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\castle.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\da_vinci.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\future_apartment.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\mayan.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\scene_base.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\scene_common.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\environ\scene_factory.cpp">
+			<Filter>environ</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\buried\frame_window.cpp" />
+		<ClCompile Include="..\..\engines\buried\gameui.cpp" />
+		<ClCompile Include="..\..\engines\buried\graphics.cpp" />
+		<ClCompile Include="..\..\engines\buried\inventory_info.cpp" />
+		<ClCompile Include="..\..\engines\buried\inventory_window.cpp" />
+		<ClCompile Include="..\..\engines\buried\livetext.cpp" />
+		<ClCompile Include="..\..\engines\buried\main_menu.cpp" />
+		<ClCompile Include="..\..\engines\buried\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\buried\navarrow.cpp" />
+		<ClCompile Include="..\..\engines\buried\overview.cpp" />
+		<ClCompile Include="..\..\engines\buried\saveload.cpp" />
+		<ClCompile Include="..\..\engines\buried\scene_view.cpp" />
+		<ClCompile Include="..\..\engines\buried\sound.cpp" />
+		<ClCompile Include="..\..\engines\buried\title_sequence.cpp" />
+		<ClCompile Include="..\..\engines\buried\video_window.cpp" />
+		<ClCompile Include="..\..\engines\buried\window.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\buried\agent_evaluation.h" />
+		<ClInclude Include="..\..\engines\buried\aidata.h" />
+		<ClInclude Include="..\..\engines\buried\animdata.h" />
+		<ClInclude Include="..\..\engines\buried\avi_frames.h" />
+		<ClInclude Include="..\..\engines\buried\biochip_right.h" />
+		<ClInclude Include="..\..\engines\buried\biochip_view.h" />
+		<ClInclude Include="..\..\engines\buried\bookdata.h" />
+		<ClInclude Include="..\..\engines\buried\buried.h" />
+		<ClInclude Include="..\..\engines\buried\complete.h" />
+		<ClInclude Include="..\..\engines\buried\console.h" />
+		<ClInclude Include="..\..\engines\buried\credits.h" />
+		<ClInclude Include="..\..\engines\buried\death.h" />
+		<ClInclude Include="..\..\engines\buried\demo\demo_menu.h">
+			<Filter>demo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\buried\demo\features.h">
+			<Filter>demo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\buried\demo\movie_scene.h">
+			<Filter>demo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\buried\detection.h" />
+		<ClInclude Include="..\..\engines\buried\detection_tables.h" />
+		<ClInclude Include="..\..\engines\buried\environ\scene_base.h">
+			<Filter>environ</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\buried\environ\scene_common.h">
+			<Filter>environ</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\buried\fbcdata.h" />
+		<ClInclude Include="..\..\engines\buried\frame_window.h" />
+		<ClInclude Include="..\..\engines\buried\gameui.h" />
+		<ClInclude Include="..\..\engines\buried\global_flags.h" />
+		<ClInclude Include="..\..\engines\buried\graphics.h" />
+		<ClInclude Include="..\..\engines\buried\inndata.h" />
+		<ClInclude Include="..\..\engines\buried\invdata.h" />
+		<ClInclude Include="..\..\engines\buried\inventory_info.h" />
+		<ClInclude Include="..\..\engines\buried\inventory_window.h" />
+		<ClInclude Include="..\..\engines\buried\livetext.h" />
+		<ClInclude Include="..\..\engines\buried\main_menu.h" />
+		<ClInclude Include="..\..\engines\buried\message.h" />
+		<ClInclude Include="..\..\engines\buried\navarrow.h" />
+		<ClInclude Include="..\..\engines\buried\navdata.h" />
+		<ClInclude Include="..\..\engines\buried\overview.h" />
+		<ClInclude Include="..\..\engines\buried\resources.h" />
+		<ClInclude Include="..\..\engines\buried\scene_view.h" />
+		<ClInclude Include="..\..\engines\buried\snddata.h" />
+		<ClInclude Include="..\..\engines\buried\sound.h" />
+		<ClInclude Include="..\..\engines\buried\sprtdata.h" />
+		<ClInclude Include="..\..\engines\buried\title_sequence.h" />
+		<ClInclude Include="..\..\engines\buried\video_window.h" />
+		<ClInclude Include="..\..\engines\buried\window.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\buried\module.mk" />
+	</ItemGroup>
+</Project>
