@@ -47,7 +47,7 @@ SessionSelectorDialog::SessionSelectorDialog(Scumm::ScummEngine_v90he *vm)
 	_timestamp = 0;
 
 	_queryProgressText = new StaticTextWidget(this, "SessionSelector.QueryProgressText",
-						_("... progress ..."));
+						_("Querying games..."));
 
 	_queryProgressText->setAlign(Graphics::kTextAlignCenter);
 
@@ -64,6 +64,7 @@ SessionSelectorDialog::SessionSelectorDialog(Scumm::ScummEngine_v90he *vm)
 void SessionSelectorDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case GUI::kListSelectionChangedCmd:
+		_timestamp = g_system->getMillis();
 		_joinButton->setEnabled(true);
 		break;
 	case GUI::kListItemDoubleClickedCmd:
@@ -88,7 +89,7 @@ void SessionSelectorDialog::handleTickle() {
 	_vm->_net->doNetworkOnceAFrame(12);
 
 	// Query for new sessions every 5 seconds.
-	if (g_system->getMillis() - _timestamp > 5000) {
+	if (!_timestamp || g_system->getMillis() - _timestamp > 5000) {
 		int numSessions = _vm->_net->querySessions();
 
 		// Clear list
@@ -100,6 +101,10 @@ void SessionSelectorDialog::handleTickle() {
 			_vm->_net->getSessionName(i, name, MAX_SESSION_NAME);
 			_list->append(name);
 		}
+
+		_joinButton->setEnabled(false);
+		// Update the dialog
+		_queryProgressText->setLabel(Common::U32String::format(_("Found %d available games."), l.size()));
 
 		_timestamp = g_system->getMillis();
 	}
