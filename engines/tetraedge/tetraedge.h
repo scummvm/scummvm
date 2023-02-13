@@ -51,6 +51,14 @@ class TeResourceManager;
 class TeInputMgr;
 
 class TetraedgeEngine : public Engine {
+public:
+	enum TetraedgeGameType {
+		kNone,
+		kSyberia,
+		kSyberia2,
+		kAmerzone
+	};
+
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -61,6 +69,7 @@ private:
 	TeRenderer *_renderer;
 	TeResourceManager *_resourceManager;
 	TeInputMgr *_inputMgr;
+	enum TetraedgeGameType _gameType;
 
 protected:
 	// Engine APIs
@@ -120,6 +129,7 @@ public:
 	TeRenderer *getRenderer();
 	TeResourceManager *getResourceManager();
 	TeInputMgr *getInputMgr();
+	TetraedgeGameType gameType() const { return _gameType; }
 
 	void openConfigDialog();
 	bool onKeyUp(const Common::KeyState &state);
