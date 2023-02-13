@@ -174,8 +174,9 @@ Billboard *InGameScene::billboard(const Common::String &name) {
 }
 
 bool InGameScene::changeBackground(const Common::String &name) {
-	if (Common::File::exists(name)) {
-		_bgGui.spriteLayoutChecked("root")->load(name);
+	Common::FSNode node = g_engine->getCore()->findFile(name);
+	if (node.isReadable()) {
+		_bgGui.spriteLayoutChecked("root")->load(node);
 		return true;
 	}
 	return false;
@@ -1419,6 +1420,16 @@ void InGameScene::update() {
 			obj->model()->setRotation(obj->_rotateStart * rotq);
 		}
 	}
+}
+
+void InGameScene::activateMask(const Common::String &name, bool val) {
+	for (auto mask : _masks) {
+		if (mask->name() == name) {
+			mask->setVisible(val);
+			return;
+		}
+	}
+	warning("activateMask: Didn't find mask %s", name.c_str());
 }
 
 bool InGameScene::AnimObject::onFinished() {

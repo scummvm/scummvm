@@ -226,6 +226,7 @@ public:
 	const Common::String getSceneName() const { return _sceneName; }
 
 	void setCollisionSlide(bool val) { _collisionSlide = val; }
+	void activateMask(const Common::String &name, bool val);
 
 private:
 	int _shadowLightNo;

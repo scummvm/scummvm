@@ -2370,7 +2370,79 @@ static int tolua_ExportedFunctions_AddUnlockedAnim00(lua_State *L) {
 	error("#ferror in function 'AddUnlockedAnim': %d %d %s", err.index, err.array, err.type);
 }
 
+static void SetObjectMoveDest(const Common::String &obj, float x, float y, float z) {
+	warning("TODO: SetObjectMoveDest(%s, %f, %f, %f)", obj.c_str(), x, y, z);
+}
 
+static int tolua_ExportedFunctions_SetObjectMoveDest00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnumber(L, 2, 0, &err) && tolua_isnumber(L, 4, 0, &err)
+		&& tolua_isnoobj(L, 5, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		float f1 = tolua_tonumber(L, 2, 0.0);
+		float f2 = tolua_tonumber(L, 3, 0.0);
+		float f3 = tolua_tonumber(L, 4, 0.0);
+		SetObjectMoveDest(s1, f1, f2, f3);
+		return 0;
+	}
+	error("#ferror in function 'SetObjectMoveDest': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetObjectMoveTime(const Common::String &obj, float f) {
+	warning("TODO: SetObjectMoveTime(%s, %f)", obj.c_str(), f);
+}
+
+static int tolua_ExportedFunctions_SetObjectMoveTime00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
+		&& tolua_isnoobj(L, 3, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		float f1 = tolua_tonumber(L, 2, 0.0);
+		SetObjectMoveTime(s1, f1);
+		return 0;
+	}
+	error("#ferror in function 'SetObjectMoveTime': %d %d %s", err.index, err.array, err.type);
+}
+
+static void ActivateMask(const Common::String &name, bool val) {
+	Game *game = g_engine->getGame();
+	game->scene().activateMask(name, val);
+}
+
+static int tolua_ExportedFunctions_ActivateMask00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err)
+		&& tolua_isnoobj(L, 3, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		bool b1 = tolua_toboolean(L, 2, 0.0);
+		ActivateMask(s1, b1);
+		return 0;
+	}
+	error("#ferror in function 'ActivateMask': %d %d %s", err.index, err.array, err.type);
+}
+
+// Not your imagination, the implementation of these two is quite different to the others.
+static int tolua_GetParticleIndex(lua_State *L) {
+	Common::String s1(tolua_tostring(L, 1, nullptr));
+	warning("TODO: GetParticleIndex(%s)", s1.c_str());
+	tolua_pushnumber(L, 0);
+	//int idx = TeParticle::getIndex(s1);
+	//tolua_pushnumber(L, idx);
+	return 1;
+}
+
+static int tolua_EnableParticle(lua_State *L) {
+	double d1 = tolua_tonumber(L, 1, 0.0);
+	/*
+	TeParticle *p = (TeParticle *)TeParticle::getIndexedParticle((int)d1);
+	if (p) {
+		double d2 = tolua_tonumber(L, 2, 1.0);
+		p->enable((int)d2 != 0);
+	}*/
+	warning("TODO: EnableParticle(%d)", (int)d1);
+	return 0;
+}
 
 
 // ////////////////////////////////////////////////////////////////////////
@@ -2532,6 +2604,11 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "SetCharacterPlayerPosition", tolua_ExportedFunctions_SetCharacterPlayerPosition00);
 	tolua_function(L, "SetCharacterPlayerAnimation", tolua_ExportedFunctions_SetCharacterPlayerAnimation00);
 	tolua_function(L, "AddUnlockedAnim", tolua_ExportedFunctions_AddUnlockedAnim00);
+	tolua_function(L, "SetObjectMoveDest", tolua_ExportedFunctions_SetObjectMoveDest00);
+	tolua_function(L, "SetObjectMoveTime", tolua_ExportedFunctions_SetObjectMoveTime00);
+	tolua_function(L, "ActivateMask", tolua_ExportedFunctions_ActivateMask00);
+	tolua_function(L, "GetParticleIndex", tolua_GetParticleIndex);
+	tolua_function(L, "EnableParticle", tolua_EnableParticle);
 
 	// TODO Syberia 2 functions..
 	//tolua_function(L, "PlaySnow", tolua_ExportedFunctions_PlaySnow00);
@@ -2541,14 +2618,9 @@ void LuaOpenBinds(lua_State *L) {
 	//tolua_function(L, "SetYoukiFollowKate", tolua_ExportedFunctions_SetYoukiFollowKate00);
 	//tolua_function(L, "PlaySmoke", tolua_ExportedFunctions_PlaySmoke00);
 	//tolua_function(L, "SmokeVisible", tolua_ExportedFunctions_SmokeVisible00);
-	//tolua_function(L, "ActivateMask", tolua_ExportedFunctions_ActivateMask00);
 	//tolua_function(L, "AddRandomAnimation", tolua_ExportedFunctions_AddRandomAnimation00);
 	//tolua_function(L, "PlayRandomAnimation", tolua_ExportedFunctions_PlayRandomAnimation00);
-	//tolua_function(L, "SetObjectMoveDest", tolua_ExportedFunctions_SetObjectMoveDest00);
-	//tolua_function(L, "SetObjectMoveTime", tolua_ExportedFunctions_SetObjectMoveTime00);
 	//tolua_function(L, "PlayVerticalScrolling", tolua_ExportedFunctions_PlayVerticalScrolling00);
-	//tolua_function(L, "GetParticleIndex", tolua_GetParticleIndex);
-	//tolua_function(L, "EnableParticle", tolua_EnableParticle);
 
 	tolua_endmodule(L);
 }
