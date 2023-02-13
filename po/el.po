@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-12 17:29+0000\n"
-"PO-Revision-Date: 2023-02-13 17:02+0000\n"
+"PO-Revision-Date: 2023-02-13 17:54+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -505,7 +505,7 @@ msgstr "Στατιστικά"
 #: gui/options.cpp:3237
 msgctxt "path"
 msgid "None"
-msgstr "Κανένα"
+msgstr "Δεν έχει προσδιοριστεί"
 
 #: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
 #: gui/editgamedialog.cpp:601 gui/options.cpp:2371 gui/options.cpp:2373
@@ -1754,7 +1754,7 @@ msgstr "Το όνομα χρήστη που χρησιμοποιείται απ�
 
 #: gui/options.cpp:2665
 msgid "<none>"
-msgstr "<κανένα>"
+msgstr "<δεν έχει δοθεί>"
 
 #: gui/options.cpp:2667
 msgid "Used space:"
@@ -1949,7 +1949,7 @@ msgstr ""
 
 #: gui/options.cpp:2758
 msgid "None"
-msgstr "Κανένα"
+msgstr "Δεν έχει προσδιοριστεί"
 
 #: gui/options.cpp:2819
 msgid "Ignore"
@@ -2366,7 +2366,7 @@ msgid ""
 "in the Options dialog."
 msgstr ""
 "Μπορείτε να αλλάξετε αυτή τη ρύθμιση αργότερα\n"
-"στην καρτέλα Διάφορα στις Επιλογές."
+"από την καρτέλα Διάφορα στις Καθολικές Επιλογές."
 
 #: gui/widget.cpp:437 gui/widget.cpp:439 gui/widget.cpp:445 gui/widget.cpp:447
 msgid "Clear value"
@@ -2439,7 +2439,7 @@ msgstr "Ok"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:703 base/main.cpp:724
 msgid "Read Later"
-msgstr "Να το δω αργότερα"
+msgstr "Θα το δω μετά"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:710
@@ -3593,7 +3593,7 @@ msgstr "Υ άξονας Δεξιού Μοχλού"
 #: backends/keymapper/remap-widget.cpp:295
 #: backends/keymapper/remap-widget.cpp:325
 msgid "Reset to defaults"
-msgstr "Επαναφορά αρχικών ρυθμίσεων"
+msgstr "Επαναφορά προεπιλογών"
 
 #: backends/keymapper/remap-widget.cpp:296
 msgid "Clear mapping"
