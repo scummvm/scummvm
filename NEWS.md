@@ -192,6 +192,27 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Update relocation parser to support PREL31 that are emitted by new compiler.
    - Do more autoconfiguration in ./configure.
 
+ Android port:
+   - Added Storage Access Framework support.
+   - Improved support for game controllers.
+
+ iOS port:
+   - Added pointer device support.
+   - Improved suppport for touchpad mode.
+   - Added support for games that use 32 bit pixel formats.
+
+ Nintendo DS port:
+   - Added a splash screen to the top screen when the launcher is active.
+
+ OpenDingux port:
+   - Added support for dynamic plugins.
+
+ PS Vita port:
+   - Added support for dynamic plugins.
+
+ PSP port:
+   - Improved support for games that use 32 bit pixel formats.
+
  RISC OS port:
    - Added support for 26-bit versions of RISC OS.
 
