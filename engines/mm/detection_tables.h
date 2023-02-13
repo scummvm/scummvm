@@ -22,6 +22,7 @@
 namespace MM {
 
 static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
+#ifdef ENABLE_MM1
 	{
 		// Might and Magic 1
 		{
@@ -51,7 +52,9 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 		GType_MightAndMagic1,
 		GF_ENHANCED
 	},
+#endif
 
+#ifdef ENABLE_XEEN
 	{
 		// World of Xeen
 		{
@@ -320,6 +323,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 		GType_Swords,
 		0
 	},
+#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };

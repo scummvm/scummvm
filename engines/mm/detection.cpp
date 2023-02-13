@@ -26,13 +26,17 @@
 #include "mm/mm.h"
 
 static const PlainGameDescriptor MIGHT_AND_MAGIC_GAMES[] = {
+#ifdef ENABLE_MM1
 	{ "mm1", "Might and Magic: Book One - Secret of the Inner Sanctum"},
 	{ "mm1_enh", "Might and Magic: Book One - Secret of the Inner Sanctum - Enhanced"},
+#endif
+#ifdef ENABLE_XEEN
 	{ "cloudsofxeen", "Might and Magic IV: Clouds of Xeen" },
 	{ "darksideofxeen", "Might and Magic V: Darkside of Xeen" },
 	{ "worldofxeen", "Might and Magic: World of Xeen" },
 	{ "swordsofxeen", "Might and Magic: Swords of Xeen" },
-	{0, 0}
+#endif
+	{ 0, 0 }
 };
 
 static const DebugChannelDef DEBUG_FLAT_LIST[] = {

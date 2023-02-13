@@ -29,11 +29,15 @@
 #include "common/translation.h"
 
 #include "mm/detection.h"
+#ifdef ENABLE_MM1
 #include "mm/mm1/mm1.h"
+#endif
+#ifdef ENABLE_XEEN
 #include "mm/xeen/xeen.h"
 #include "mm/xeen/metaengine.h"
 #include "mm/xeen/worldofxeen/worldofxeen.h"
 #include "mm/xeen/swordsofxeen/swordsofxeen.h"
+#endif
 
 class MMMetaEngine : public AdvancedMetaEngine {
 private:
@@ -67,9 +71,12 @@ Common::Error MMMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 	const MM::MightAndMagicGameDescription *gd = (const MM::MightAndMagicGameDescription *)desc;
 
 	switch (gd->gameID) {
+#ifdef ENABLE_MM1
 	case MM::GType_MightAndMagic1:
 		*engine = new MM::MM1::MM1Engine(syst, gd);
 		break;
+#endif
+#ifdef ENABLE_XEEN
 	case MM::GType_Clouds:
 	case MM::GType_DarkSide:
 	case MM::GType_WorldOfXeen:
@@ -78,6 +85,7 @@ Common::Error MMMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 	case MM::GType_Swords:
 		*engine = new MM::Xeen::SwordsOfXeen::SwordsOfXeenEngine(syst, gd);
 		break;
+#endif
 	default:
 		return Common::kUnsupportedGameidError;
 	}
@@ -86,25 +94,30 @@ Common::Error MMMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 }
 
 SaveStateList MMMetaEngine::listSaves(const char *target) const {
+#ifdef ENABLE_XEEN
 	if (isXeenGame(target))
 		// Fallback original code for Xeen
 		return MM::Xeen::XeenMetaEngine::listSaves(this, target);
-
+#endif
 	return AdvancedMetaEngine::listSaves(target);
 }
 
 SaveStateDescriptor MMMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+#ifdef ENABLE_XEEN
 	if (isXeenGame(target))
 		// Fallback original code for Xeen
 		return MM::Xeen::XeenMetaEngine::querySaveMetaInfos(this, target, slot);
+#endif
 
 	return AdvancedMetaEngine::querySaveMetaInfos(target, slot);
 }
 
 Common::KeymapArray MMMetaEngine::initKeymaps(const char *target) const {
+#ifdef ENABLE_MM1
 	const Common::String gameId = getGameId(target);
 	if (gameId == "mm1" || gameId == "mm1_enh")
 		return MM::MM1::MetaEngine::initKeymaps();
+#endif
 
 	return Common::KeymapArray();
 }

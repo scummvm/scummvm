@@ -8,6 +8,13 @@ MODULE_OBJS := \
 	utils/strings.o \
 	utils/strings_data.o \
 	utils/xeen_font.o \
+	shared/xeen/cc_archive.o \
+	shared/xeen/file.o \
+	shared/xeen/sprites.o \
+	shared/xeen/xsurface.o
+
+ifdef ENABLE_MM1
+MODULE_OBJS += \
 	mm1/console.o \
 	mm1/events.o \
 	mm1/globals.o \
@@ -187,7 +194,11 @@ MODULE_OBJS := \
 	mm1/maps/map51.o \
 	mm1/maps/map52.o \
 	mm1/maps/map53.o \
-	mm1/maps/map54.o \
+	mm1/maps/map54.o
+endif
+
+ifdef ENABLE_XEEN
+MODULE_OBJS += \
 	xeen/worldofxeen/clouds_cutscenes.o \
 	xeen/worldofxeen/darkside_cutscenes.o \
 	xeen/worldofxeen/worldofxeen_cutscenes.o \
@@ -245,11 +256,8 @@ MODULE_OBJS := \
 	xeen/sprites.o \
 	xeen/subtitles.o \
 	xeen/window.o \
-	xeen/xeen.o \
-	shared/xeen/cc_archive.o \
-	shared/xeen/file.o \
-	shared/xeen/sprites.o \
-	shared/xeen/xsurface.o
+	xeen/xeen.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MM), DYNAMIC_PLUGIN)

@@ -36,10 +36,12 @@ namespace Xeen {
 class File : public Common::File {
 private:
 public:
+#ifdef ENABLE_XEEN
 	/**
 	 * Sets which archive is used by default
 	 */
 	static void setCurrentArchive(int ccMode);
+#endif
 
 	/**
 	 * Synchronizes a boolean array as a bitfield set
@@ -49,10 +51,11 @@ public:
 	File() : Common::File() {
 	}
 	File(const Common::String &filename);
-	File(const Common::String &filename, int ccMode);
 	File(const Common::String &filename, Common::Archive &archive);
-	~File() override {
-	}
+#ifdef ENABLE_XEEN
+	File(const Common::String &filename, int ccMode);
+#endif
+	~File() override {}
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
@@ -63,11 +66,12 @@ public:
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
 	bool open(const Common::Path &filename, Common::Archive &archive) override;
-
+#ifdef ENABLE_XEEN
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
 	virtual bool open(const Common::String &filename, int ccMode);
+#endif
 
 	/**
 	 * Opens the given file
@@ -96,6 +100,7 @@ public:
 	 */
 	static bool exists(const Common::String &filename);
 
+#ifdef ENABLE_XEEN
 	/**
 	 * Checks if a given file exists
 	 *
@@ -104,6 +109,7 @@ public:
 	 * @return	true if the file exists, false otherwise
 	 */
 	static bool exists(const Common::String &filename, int ccMode);
+#endif
 
 	/**
 	 * Checks if a given file exists

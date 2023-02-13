@@ -20,13 +20,14 @@
  */
 
 #include "mm/shared/xeen/file.h"
+#ifdef ENABLE_XEEN
 #include "mm/xeen/files.h"
 #include "mm/xeen/xeen.h"
+#endif
 
 namespace MM {
 namespace Shared {
 namespace Xeen {
-
 
 File::File(const Common::String &filename) {
 	File::open(filename);
@@ -36,11 +37,14 @@ File::File(const Common::String &filename, Common::Archive &archive) {
 	File::open(filename, archive);
 }
 
+#ifdef ENABLE_XEEN
 File::File(const Common::String &filename, int ccMode) {
 	File::open(filename, ccMode);
 }
+#endif
 
 bool File::open(const Common::Path &filename) {
+#ifdef ENABLE_XEEN
 	MM::Xeen::XeenEngine *engine = dynamic_cast<MM::Xeen::XeenEngine *>(g_engine);
 
 	if (engine) {
@@ -57,6 +61,10 @@ bool File::open(const Common::Path &filename) {
 		if (!Common::File::open(filename))
 			error("Could not open file - %s", filename.toString().c_str());
 	}
+#else
+	if (!Common::File::open(filename))
+		error("Could not open file - %s", filename.toString().c_str());
+#endif
 
 	return true;
 }
@@ -67,6 +75,7 @@ bool File::open(const Common::Path &filename, Common::Archive &archive) {
 	return true;
 }
 
+#ifdef ENABLE_XEEN
 bool File::open(const Common::String &filename, int ccMode) {
 	MM::Xeen::XeenEngine *engine = dynamic_cast<MM::Xeen::XeenEngine *>(g_engine);
 	assert(engine);
@@ -112,6 +121,7 @@ void File::setCurrentArchive(int ccMode) {
 
 	assert(fm._currentArchive);
 }
+#endif
 
 Common::String File::readString() {
 	Common::String result;
@@ -124,6 +134,7 @@ Common::String File::readString() {
 }
 
 bool File::exists(const Common::String &filename) {
+#ifdef ENABLE_XEEN
 	MM::Xeen::XeenEngine *engine = dynamic_cast<MM::Xeen::XeenEngine *>(g_engine);
 
 	if (engine) {
@@ -140,8 +151,12 @@ bool File::exists(const Common::String &filename) {
 	} else {
 		return Common::File::exists(filename);
 	}
+#else
+	return Common::File::exists(filename);
+#endif
 }
 
+#ifdef ENABLE_XEEN
 bool File::exists(const Common::String &filename, int ccMode) {
 	MM::Xeen::XeenEngine *engine = dynamic_cast<MM::Xeen::XeenEngine *>(g_engine);
 	assert(engine);
@@ -154,6 +169,7 @@ bool File::exists(const Common::String &filename, int ccMode) {
 
 	return result;
 }
+#endif
 
 bool File::exists(const Common::String &filename, Common::Archive &archive) {
 	return archive.hasFile(filename);
