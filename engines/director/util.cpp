@@ -1034,7 +1034,7 @@ Common::Platform platformFromID(uint16 id) {
 	case 2:
 		return Common::kPlatformWindows;
 	default:
-		warning("platformFromID: Unknown platform ID %d", id);
+		warning("BUILDBOT: platformFromID: Unknown platform ID %d", id);
 		break;
 	}
 	return Common::kPlatformUnknown;
