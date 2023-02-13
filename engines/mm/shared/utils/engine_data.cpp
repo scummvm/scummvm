@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "common/translation.h"
 #include "common/compression/unzip.h"
-#include "mm/utils/engine_data.h"
+#include "mm/shared/utils/engine_data.h"
 
 #define DATA_FILENAME "mm.dat"
 

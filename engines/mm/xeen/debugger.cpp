@@ -20,7 +20,7 @@
  */
 
 #include "common/file.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings.h"
 #include "mm/xeen/xeen.h"
 #include "mm/xeen/debugger.h"
 #include "mm/xeen/files.h"

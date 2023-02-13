@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "image/bmp.h"
-#include "mm/utils/xeen_font.h"
+#include "mm/shared/utils/xeen_font.h"
 
 namespace MM {
 

@@ -21,7 +21,7 @@
 
 #include "common/file.h"
 #include "image/bmp.h"
-#include "mm/utils/bitmap_font.h"
+#include "mm/shared/utils/bitmap_font.h"
 
 namespace MM {
 

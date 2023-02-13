@@ -21,8 +21,8 @@
 
 #include "common/array.h"
 #include "common/file.h"
-#include "mm/utils/strings_data.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings_data.h"
+#include "mm/shared/utils/strings.h"
 
 namespace MM {
 

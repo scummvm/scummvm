@@ -21,7 +21,7 @@
 
 #include "common/algorithm.h"
 #include "mm/mm1/data/character.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings.h"
 #include "mm/mm1/mm1.h"
 
 namespace MM {

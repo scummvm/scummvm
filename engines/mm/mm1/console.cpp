@@ -22,7 +22,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings.h"
 #include "mm/mm1/console.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/events.h"

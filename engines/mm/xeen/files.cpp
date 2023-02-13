@@ -27,7 +27,7 @@
 #include "mm/xeen/xeen.h"
 #include "mm/xeen/files.h"
 #include "mm/xeen/saves.h"
-#include "mm/utils/engine_data.h"
+#include "mm/shared/utils/engine_data.h"
 
 namespace MM {
 namespace Xeen {

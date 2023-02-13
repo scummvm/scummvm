@@ -20,7 +20,7 @@
  */
 
 #include "common/util.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings.h"
 #include "mm/mm1/views_enh/game_messages.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"

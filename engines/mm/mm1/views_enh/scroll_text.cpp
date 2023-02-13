@@ -21,7 +21,7 @@
 
 #include "mm/mm1/views_enh/scroll_text.h"
 #include "mm/mm1/globals.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings.h"
 
 namespace MM {
 namespace MM1 {

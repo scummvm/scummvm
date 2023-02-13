@@ -20,7 +20,7 @@
  */
 
 #include "common/textconsole.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings.h"
 
 namespace MM {
 

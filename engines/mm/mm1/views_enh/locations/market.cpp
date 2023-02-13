@@ -21,7 +21,7 @@
 
 #include "mm/mm1/views_enh/locations/market.h"
 #include "mm/mm1/globals.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings.h"
 
 namespace MM {
 namespace MM1 {

@@ -20,7 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_info.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {

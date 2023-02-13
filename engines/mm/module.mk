@@ -3,11 +3,11 @@ MODULE := engines/mm
 MODULE_OBJS := \
 	metaengine.o \
 	mm.o \
-	utils/bitmap_font.o \
-	utils/engine_data.o \
-	utils/strings.o \
-	utils/strings_data.o \
-	utils/xeen_font.o \
+	shared/utils/bitmap_font.o \
+	shared/utils/engine_data.o \
+	shared/utils/strings.o \
+	shared/utils/strings_data.o \
+	shared/utils/xeen_font.o \
 	shared/xeen/cc_archive.o \
 	shared/xeen/file.o \
 	shared/xeen/sprites.o \

@@ -23,7 +23,7 @@
 #include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/views_enh/text_view.h"
 #include "mm/mm1/mm1.h"
-#include "mm/utils/strings.h"
+#include "mm/shared/utils/strings.h"
 
 namespace MM {
 namespace MM1 {

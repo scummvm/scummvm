@@ -22,7 +22,7 @@
 #include "engines/engine.h"
 #include "graphics/fonts/ttf.h"
 #include "mm/mm1/globals.h"
-#include "mm/utils/engine_data.h"
+#include "mm/shared/utils/engine_data.h"
 #include "graphics/fontman.h"
 
 namespace MM {

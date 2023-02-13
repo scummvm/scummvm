@@ -24,8 +24,8 @@
 
 #include "common/serializer.h"
 #include "graphics/font.h"
-#include "mm/utils/strings_data.h"
-#include "mm/utils/xeen_font.h"
+#include "mm/shared/utils/strings_data.h"
+#include "mm/shared/utils/xeen_font.h"
 #include "mm/xeen/sprites.h"
 #include "mm/mm1/data/game_state.h"
 #include "mm/mm1/data/items.h"
