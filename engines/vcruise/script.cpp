@@ -253,7 +253,6 @@ void ScriptCompiler::expectNumber(uint32 &outNumber) {
 
 void ScriptCompiler::compileRoomScriptSet(ScriptSet *ss) {
 	Common::SharedPtr<RoomScriptSet> roomScript;
-	uint roomID = 0;
 
 	TextParserState state;
 	Common::String token;
