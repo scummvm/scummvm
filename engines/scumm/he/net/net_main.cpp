@@ -267,9 +267,17 @@ int Net::createSession(char *name) {
 	}
 
 	_isHost = true;
-	if (ConfMan.getBool("enable_session_server")) {
+
+	bool enableSessionServer = true;
+	bool enableLanBroadcast = true;
+	if (ConfMan.hasKey("enable_session_server"))
+		enableSessionServer = ConfMan.getBool("enable_session_server");
+	if (ConfMan.hasKey("enable_lan_broadcast"))
+		enableLanBroadcast = ConfMan.getBool("enable_lan_broadcast");
+
+	if (enableSessionServer) {
 		if (_sessionHost->connectPeer(_sessionServerAddress.host, _sessionServerAddress.port)) {
-			// FIXME: Get the IP address of the session server when a domain address is used. 
+			// FIXME: Get the IP address of the session server when a domain address is used.
 
 			// _sessionServerPeer = _sessionHost->getPeerIndexFromHost(_sessionServerAddress.host, _sessionServerAddress.port);
 			_sessionServerPeer = 0;
@@ -284,7 +292,7 @@ int Net::createSession(char *name) {
 		}
 	}
 
-	if (ConfMan.getBool("enable_lan_broadcast")) {
+	if (enableLanBroadcast) {
 		_broadcastSocket = _enet->createSocket("0.0.0.0", 9130);
 		if (!_broadcastSocket) {
 			warning("NETWORK: Unable to create broadcast socket, your game will not be broadcast over LAN");
@@ -512,7 +520,14 @@ bool Net::destroyPlayer(int32 userId) {
 int32 Net::startQuerySessions(bool connectToSessionServer) {
 	debug(1, "Net::startQuerySessions()");
 
-	if (connectToSessionServer && ConfMan.getBool("enable_session_server")) {
+	bool enableSessionServer = true;
+	bool enableLanBroadcast = true;
+	if (ConfMan.hasKey("enable_session_server"))
+		enableSessionServer = ConfMan.getBool("enable_session_server");
+	if (ConfMan.hasKey("enable_lan_broadcast"))
+		enableLanBroadcast = ConfMan.getBool("enable_lan_broadcast");
+
+	if (connectToSessionServer && enableSessionServer) {
 		if (!_sessionServerHost) {
 			_sessionServerHost = _enet->connectToHost(_sessionServerAddress.host, _sessionServerAddress.port);
 			if (!_sessionServerHost)
@@ -520,7 +535,7 @@ int32 Net::startQuerySessions(bool connectToSessionServer) {
 		}
 	}
 
-	if (ConfMan.getBool("enable_lan_broadcast") && !_broadcastSocket) {
+	if (enableLanBroadcast && !_broadcastSocket) {
 		_broadcastSocket = _enet->createSocket("0.0.0.0", 0);
 	}
 	return 0;
