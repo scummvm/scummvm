@@ -453,9 +453,7 @@ int LogicHEfootball::computeTwoCircleIntercepts(int32 *args) {
 
 #ifdef USE_ENET
 void LogicHEfootball::netRemoteStartScript(int numArgs, int32 *args) {
-	int priority = 0;
-	if (args[0] >= 15)
-		priority = PN_PRIORITY_HIGH;
+	int priority = PN_PRIORITY_HIGH;
 
 	int targetUserId;
 	if (_vm->_net->_isHost)
@@ -467,9 +465,7 @@ void LogicHEfootball::netRemoteStartScript(int numArgs, int32 *args) {
 }
 
 void LogicHEfootball::netRemoteSendArray(int32 *args) {
-	int priority = 0;
-	if (args[0] >= 10)
-		priority = PN_PRIORITY_HIGH;
+	int priority = PN_PRIORITY_HIGH;
 
 	int targetUserId;
 	if (_vm->_net->_isHost)
