@@ -604,10 +604,10 @@ void AnimateSpot(const animdesc_t *info) {
 		if (info->params.desc)
 			DrawMessage(SeekToString(desci_data, info->params.desc), frontbuffer);
 
-		PlayAnim(info->index & ~ANIMFLG_USESPOT, found_spot->sx, found_spot->sy);
+		playAnim(info->index & ~ANIMFLG_USESPOT, found_spot->sx, found_spot->sy);
 	} else {
 		/*at specified coords*/
-		PlayAnim(info->index, info->params.coords.x, info->params.coords.y);
+		playAnim(info->index, info->params.coords.x, info->params.coords.y);
 	}
 }
 
@@ -1337,7 +1337,7 @@ void BounceCurrentItem(byte flags, byte y) {
 	item->flags = flags;
 	item->area = script_byte_vars.zone_area;
 	BackupScreenOfSpecialRoom();
-	PlayAnim(41, 176 / 4, y);
+	playAnim(41, 176 / 4, y);
 	DrawRoomItemsIndicator();
 	RestoreScreenOfSpecialRoom();
 }

@@ -1182,7 +1182,7 @@ uint16 SCR_20_HidePortraitDots(void) {
 
 	dot_effect_step = 17;
 	dot_effect_delay = 100;
-	CopyScreenBlockWithDotEffect(backbuffer, x, y, width, height, frontbuffer);
+	copyScreenBlockWithDotEffect(backbuffer, x, y, width, height, frontbuffer);
 
 	return 0;
 }
@@ -1407,7 +1407,7 @@ uint16 SCR_26_GameOver(void) {
 	CGA_BackBufferToRealFull();
 	CGA_ColorSelect(0x30);
 	AnimStarfield(InitStarfield(), frontbuffer);
-	PlayAnim(44, 156 / 4, 95);
+	playAnim(44, 156 / 4, 95);
 	script_byte_vars.zone_index = 135;
 
 	/*reload background*/
@@ -1636,7 +1636,7 @@ uint16 SCR_38_PlayAnim(void) {
 	index = *script_ptr++;
 	x = *script_ptr++;
 	y = *script_ptr++;
-	PlayAnim(index, x, y);
+	playAnim(index, x, y);
 	return 0;
 }
 
@@ -2138,7 +2138,7 @@ uint16 SCR_31_Fight2(void) {
 						}
 						if (fightlist[i].anim.index == 55)
 							playSound(151);
-						PlayAnim(fightlist[i].anim.index, fightlist[i].anim.params.coords.x, fightlist[i].anim.params.coords.y);
+						playAnim(fightlist[i].anim.index, fightlist[i].anim.params.coords.x, fightlist[i].anim.params.coords.y);
 						break;
 					}
 				}
@@ -2162,7 +2162,7 @@ void FightWin(void) {
 		        && fight_mode == 0) {
 			script_byte_vars.bvar_67 = 1;
 			playSound(149);
-			PlayAnim(40, found_spot->sx, found_spot->sy);
+			playAnim(40, found_spot->sx, found_spot->sy);
 		}
 	}
 
@@ -2190,7 +2190,7 @@ void DrawDeathAnim(void) {
 
 	for (i = 0; i < 23; i++) {
 		if (fightlist3[i].room == script_byte_vars.zone_room) {
-			PlayAnim(fightlist3[i].anim.index, fightlist3[i].anim.params.coords.x, fightlist3[i].anim.params.coords.y);
+			playAnim(fightlist3[i].anim.index, fightlist3[i].anim.params.coords.x, fightlist3[i].anim.params.coords.y);
 			break;
 		}
 	}
@@ -2510,7 +2510,7 @@ uint16 SCR_66_DeProfundisRideToExit(void) {
 
 	dot_effect_delay = 1;
 	dot_effect_step = 17;
-	CopyScreenBlockWithDotEffect(backbuffer, 112 / 4, 139, 72 / 4, 40, frontbuffer);
+	copyScreenBlockWithDotEffect(backbuffer, 112 / 4, 139, 72 / 4, 40, frontbuffer);
 
 	return 0;
 }
@@ -2680,7 +2680,7 @@ uint16 SCR_54_DotFadeRoom(void) {
 
 	dot_effect_delay = 1;
 	dot_effect_step = 17;
-	CopyScreenBlockWithDotEffect(backbuffer, room_bounds_rect.sx, room_bounds_rect.sy, room_bounds_rect.ex - room_bounds_rect.sx, room_bounds_rect.ey - room_bounds_rect.sy, frontbuffer);
+	copyScreenBlockWithDotEffect(backbuffer, room_bounds_rect.sx, room_bounds_rect.sy, room_bounds_rect.ex - room_bounds_rect.sx, room_bounds_rect.ey - room_bounds_rect.sy, frontbuffer);
 
 	return 0;
 }
@@ -3370,7 +3370,7 @@ int16 ConsumePsiEnergy(byte amount) {
 
 	if (current < amount) {
 		/*no energy left*/
-		PlayAnim(68, 296 / 4, 71);
+		playAnim(68, 296 / 4, 71);
 		return 0;
 	}
 
@@ -3378,7 +3378,7 @@ int16 ConsumePsiEnergy(byte amount) {
 
 	/*significantly changed?*/
 	if ((current & 0xF0) != (script_byte_vars.psy_energy & 0xF0))
-		PlayAnim(68, 296 / 4, 71);
+		playAnim(68, 296 / 4, 71);
 
 	return 1;
 }
@@ -3490,7 +3490,7 @@ uint16 CMD_D_PsiBrainwarp(void) {
 		}
 
 		if (GetZoneObjCommand(1 * 2) != 0) {
-			PlayAnim(39, found_spot->sx + 8 / 4, found_spot->sy - 10);
+			playAnim(39, found_spot->sx + 8 / 4, found_spot->sy - 10);
 			RestoreScreenOfSpecialRoom();
 			return ScriptRerun;
 		}
@@ -3507,7 +3507,7 @@ uint16 CMD_D_PsiBrainwarp(void) {
 	script_byte_vars.tries_left = 2;
 	the_command = 0;
 	if (script_byte_vars.bvar_43 == 0) {
-		PlayAnim(39, found_spot->sx + 8 / 4, found_spot->sy - 10);
+		playAnim(39, found_spot->sx + 8 / 4, found_spot->sy - 10);
 		RestoreScreenOfSpecialRoom();
 		return ScriptRerun;
 	}
@@ -3549,7 +3549,7 @@ uint16 CMD_E_PsiZoneScan(void) {
 			if ((spot->flags & ~(SPOTFLG_40 | 7)) == (SPOTFLG_20 | SPOTFLG_8) && spot->sy == y) {
 				playSound(27);
 				spot->flags |= SPOTFLG_80;
-				PlayAnim(38, spot->sx, spot->sy);
+				playAnim(38, spot->sx, spot->sy);
 				break;
 			}
 		}
@@ -3582,7 +3582,7 @@ uint16 CMD_F_PsiPsiShift(void) {
 	MenuLoop(0, 0);
 	BackupScreenOfSpecialRoom();
 	playSound(25);
-	PlayAnim(39, cursor_x / 4, cursor_y);
+	playAnim(39, cursor_x / 4, cursor_y);
 	RestoreScreenOfSpecialRoom();
 
 	if (script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(3 * 2) == 0)
@@ -3991,7 +3991,7 @@ uint16 CMD_1B_Holo(void) {
 	x = found_spot->sx;
 	y = found_spot->sy;
 
-	PlayAnim(42, x + 4 / 4, y + 6);
+	playAnim(42, x + 4 / 4, y + 6);
 
 	num = 321 + ((Swap16(script_word_vars.timer_ticks2) < 60 * 60) ? 0 : 4) + (script_byte_vars.rand_value % 4);
 	msg = SeekToString(diali_data, num);
@@ -4004,14 +4004,14 @@ uint16 CMD_1B_Holo(void) {
 
 	IFGM_PlaySfx(0);
 
-	PlayAnim(43, x, y);
+	playAnim(43, x, y);
 
 	PromptWait();
 	PopDirtyRects(DirtyRectBubble);
 
 	IFGM_PlaySample(225);
 
-	PlayAnim(45, x, y);
+	playAnim(45, x, y);
 
 	return 0;
 }

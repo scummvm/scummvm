@@ -25,8 +25,8 @@
 
 namespace Chamber {
 
-void PlayAnim(byte index, byte x, byte y);
-void CopyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target);
+void playAnim(byte index, byte x, byte y);
+void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target);
 
 extern byte dot_effect_step;
 extern uint16 dot_effect_delay;
