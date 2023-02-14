@@ -602,7 +602,7 @@ void AnimateSpot(const animdesc_t *info) {
 		cursor_x = found_spot->sx * 4;
 		cursor_y = found_spot->sy;
 		if (info->params.desc)
-			DrawMessage(SeekToString(desci_data, info->params.desc), frontbuffer);
+			DrawMessage(seekToString(desci_data, info->params.desc), frontbuffer);
 
 		playAnim(info->index & ~ANIMFLG_USESPOT, found_spot->sx, found_spot->sy);
 	} else {
@@ -918,9 +918,9 @@ void DrawZoneSpots(void) {
 }
 
 void RefreshZone(void) {
-	PopDirtyRects(DirtyRectSprite);
-	PopDirtyRects(DirtyRectBubble);
-	PopDirtyRects(DirtyRectText);
+	popDirtyRects(DirtyRectSprite);
+	popDirtyRects(DirtyRectBubble);
+	popDirtyRects(DirtyRectText);
 
 	if (!skip_zone_transition && !right_button)
 		DrawBackground(CGA_SCREENBUFFER, 1);
@@ -953,7 +953,7 @@ void DrawObjectHint(void) {
 	char_draw_coords_x = room_hint_bar_coords_x;
 	char_draw_coords_y = room_hint_bar_coords_y;
 	char_xlat_table = chars_color_wonb;
-	PrintStringCentered(SeekToString(motsi_data, object_hint), backbuffer);
+	PrintStringCentered(seekToString(motsi_data, object_hint), backbuffer);
 
 #ifdef DEBUG_ZONE
 	cga_PrintChar(0x20, backbuffer);
@@ -980,7 +980,7 @@ void DrawCommandHint(void) {
 	char_draw_coords_x = cmd_hint_bar_coords_x;
 	char_draw_coords_y = cmd_hint_bar_coords_y;
 	char_xlat_table = chars_color_wonb;
-	PrintStringCentered(SeekToString(vepci_data, command_hint), backbuffer);
+	PrintStringCentered(seekToString(vepci_data, command_hint), backbuffer);
 }
 
 /*

@@ -54,7 +54,7 @@ uint16 cpu_speed_delay;
 Prompt user to insert disk #2 to any drive
 */
 void AskDisk2(void) {
-	DrawMessage(SeekToString(vepci_data, 179), frontbuffer);
+	DrawMessage(seekToString(vepci_data, 179), frontbuffer);
 }
 
 void SaveToFile(char *filename, void *data, uint16 size) {
@@ -94,7 +94,7 @@ void Randomize(void) {
 }
 
 void TRAP() {
-	PromptWait();
+	promptWait();
 	for (;;) ;
 }
 

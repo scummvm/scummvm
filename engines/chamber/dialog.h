@@ -57,18 +57,18 @@ extern dirty_rect_t *last_dirty_rect;
 #define SPIKE_BUBRIGHT 0xC0
 #define SPIKE_BUBLEFT  0xE0
 
-void AddDirtyRect(byte kind, byte x, byte y, byte w, byte h, uint16 offs);
-void GetDirtyRectAndFree(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs);
-void GetDirtyRectAndSetSprite(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs);
+void addDirtyRect(byte kind, byte x, byte y, byte w, byte h, uint16 offs);
+void getDirtyRectAndFree(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs);
+void getDirtyRectAndSetSprite(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs);
 
-void PopDirtyRects(byte kind);
-void DrawPersonBubble(byte x, byte y, byte flags, byte *msg);
-void DesciTextBox(uint16 x, uint16 y, uint16 width, byte *msg);
+void popDirtyRects(byte kind);
+void drawPersonBubble(byte x, byte y, byte flags, byte *msg);
+void desciTextBox(uint16 x, uint16 y, uint16 width, byte *msg);
 
-void PromptWait(void);
+void promptWait(void);
 
-byte *SeekToString(byte *bank, uint16 num);
-byte *SeekToStringScr(byte *bank, uint16 num, byte **ptr);
+byte *seekToString(byte *bank, uint16 num);
+byte *seekToStringScr(byte *bank, uint16 num, byte **ptr);
 
 } // End of namespace Chamber
 

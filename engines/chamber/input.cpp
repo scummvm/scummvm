@@ -149,7 +149,7 @@ int16 AskQuitGame(void) {
 
 	int16 quit = -1;
 
-	byte *msg = SeekToString(desci_data, 411);	/*DO YOU WANT TO QUIT ? (Y OR N).*/
+	byte *msg = seekToString(desci_data, 411);	/*DO YOU WANT TO QUIT ? (Y OR N).*/
 	char_draw_max_width = 32;
 	draw_x = 1;
 	draw_y = 188;
