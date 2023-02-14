@@ -45,6 +45,7 @@ TestExitStatus fullScreenMode();
 TestExitStatus filteringMode();
 TestExitStatus aspectRatio();
 TestExitStatus palettizedCursors();
+TestExitStatus maskedCursors();
 TestExitStatus mouseMovements();
 TestExitStatus copyRectToScreen();
 TestExitStatus iconifyWindow();
