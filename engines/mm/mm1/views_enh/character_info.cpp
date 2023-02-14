@@ -184,11 +184,12 @@ void CharacterInfo::draw() {
 void CharacterInfo::drawTitle() {
 	const Character &c = *g_globals->_currCharacter;
 	Common::String msg = Common::String::format(
-		"%s : %s %s %s",
+		"%s : %s %s %s %s",
 		camelCase(c._name).c_str(),
-		capitalize(STRING[Common::String::format("stats.alignments.%d", (int)c._alignment)]).c_str(),
-		capitalize(STRING[Common::String::format("stats.races.%d", (int)c._race)]).c_str(),
-		capitalize(STRING[Common::String::format("stats.classes.%d", (int)c._class)]).c_str()
+		STRING[Common::String::format("stats.sex.%d", (int)c._sex)].c_str(),
+		STRING[Common::String::format("stats.alignments.%d", (int)c._alignment)].c_str(),
+		STRING[Common::String::format("stats.races.%d", (int)c._race)].c_str(),
+		STRING[Common::String::format("stats.classes.%d", (int)c._class)].c_str()
 	);
 
 	writeString(0, 0, msg);
