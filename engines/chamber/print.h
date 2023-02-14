@@ -35,14 +35,14 @@ extern byte chars_color_bonc[];
 extern byte chars_color_wonb[];
 extern byte chars_color_wonc[];
 
-void PrintStringCentered(byte *str, byte *target);
-byte *PrintStringPadded(byte *str, byte *target);
+void printStringCentered(byte *str, byte *target);
+byte *printStringPadded(byte *str, byte *target);
 
-void DrawMessage(byte *msg, byte *target);
+void drawMessage(byte *msg, byte *target);
 
 void cga_DrawTextBox(byte *msg, byte *target);
 
-void CalcStringSize(byte *str, uint16 *w, uint16 *n);
+void calcStringSize(byte *str, uint16 *w, uint16 *n);
 
 } // End of namespace Chamber
 

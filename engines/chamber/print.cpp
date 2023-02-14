@@ -38,7 +38,7 @@ byte draw_y;
 Calculate number of string's character until whitespace
 Return current word's characters count and the next word ptr
 */
-byte *CalcStringWordWidth(byte *str, uint16 *w) {
+byte *calcStringWordWidth(byte *str, uint16 *w) {
 	uint16 ww = 0;
 	byte c;
 
@@ -69,11 +69,11 @@ byte *CalcStringWordWidth(byte *str, uint16 *w) {
 /*
 Calculate number of text's words and max word width (in chars)
 */
-void CalcStringSize(byte *str, uint16 *w, uint16 *n) {
+void calcStringSize(byte *str, uint16 *w, uint16 *n) {
 	uint16 ww = 0, nw = 0, lw;
 	byte *s = str;
 	do {
-		s = CalcStringWordWidth(s, &lw);
+		s = calcStringWordWidth(s, &lw);
 		if (lw > ww)
 			ww = lw;
 		nw += 1;
@@ -86,11 +86,11 @@ void CalcStringSize(byte *str, uint16 *w, uint16 *n) {
 Calculate number of text's lines with respect to set max width
 If a line is longer, wrap it to the next line
 */
-uint16 CalcTextLines(byte *str) {
+uint16 calcTextLines(byte *str) {
 	uint16 lines = 1;
 	uint16 w, left = char_draw_max_width;
 	while (str != cur_str_end) {
-		str = CalcStringWordWidth(str, &w);
+		str = calcStringWordWidth(str, &w);
 		if (left > w) {
 			left = left - w - 1;
 		} else {
@@ -107,12 +107,12 @@ byte chars_color_bonc[] = {0x55, 0x54, 0x51, 0x50, 0x45, 0x44, 0x41, 0x40, 0x15,
 byte chars_color_wonb[] = {   0,    3, 0x0C, 0x0F, 0x30, 0x33, 0x3C, 0x3F, 0xC0, 0xC3, 0xCC, 0xCF, 0xF0, 0xF3, 0xFC, 0xFF}; /*white on black*/
 byte chars_color_wonc[] = {0x55, 0x57, 0x5D, 0x5F, 0x75, 0xF7, 0x7D, 0x7F, 0xD5, 0xD7, 0xDD, 0xDF, 0xF5, 0xF7, 0xFD, 0xFF}; /*white on cyan*/
 
-void PrintStringPad(uint16 w, byte *target) {
+void printStringPad(uint16 w, byte *target) {
 	while (w--)
 		cga_PrintChar(0, target);
 }
 
-byte *PrintWord(byte *str, byte *target) {
+byte *printWord(byte *str, byte *target) {
 	byte c, f;
 	if ((*str & 0x3F) == 0)
 		goto skip_1st;
@@ -143,15 +143,15 @@ skip_1st:
 	return str;
 }
 
-byte *PrintStringLine(byte *str, uint16 *left, byte *target) {
+byte *printStringLine(byte *str, uint16 *left, byte *target) {
 	uint16 mw = char_draw_max_width;
 	for (;;) {
 		uint16 w;
-		CalcStringWordWidth(str, &w);
+		calcStringWordWidth(str, &w);
 		if (mw < w)
 			break;
 		mw -= w;
-		str = PrintWord(str, target);
+		str = printWord(str, target);
 		if (string_ended || (mw == 0))
 			break;
 		mw--;
@@ -161,38 +161,38 @@ byte *PrintStringLine(byte *str, uint16 *left, byte *target) {
 	return str;
 }
 
-byte *PrintStringPadded(byte *str, byte *target) {
+byte *printStringPadded(byte *str, byte *target) {
 	uint16 w;
 
 	if (g_vm->getLanguage() != Common::EN_USA) {
 		uint16 n;
-		CalcStringSize(str, &w, &n);
+		calcStringSize(str, &w, &n);
 		if (w + 2 >= char_draw_max_width)
 			char_draw_max_width = w + 2;
 	}
 
-	str = PrintStringLine(str, &w, target);
+	str = printStringLine(str, &w, target);
 	if (w != 0)
-		PrintStringPad(w, target);
+		printStringPad(w, target);
 	return str;
 }
 
-void PrintStringCentered(byte *str, byte *target) {
+void printStringCentered(byte *str, byte *target) {
 	byte pad = 0;
 	uint16 ww = 0, lw;
 	byte *s = str;
 	do {
-		s = CalcStringWordWidth(s, &lw);
+		s = calcStringWordWidth(s, &lw);
 		ww += lw;
 	} while (s != cur_str_end);
 
 	pad = (char_draw_max_width - ww) / 2;
 	if (pad) {
 		char_draw_max_width -= pad;
-		PrintStringPad(pad, target);
+		printStringPad(pad, target);
 	}
 	string_ended = 0;   /*TODO: move me elsewhere*/
-	PrintStringPadded(str, target);
+	printStringPadded(str, target);
 }
 
 void cga_DrawTextBox(byte *msg, byte *target) {
@@ -202,7 +202,7 @@ void cga_DrawTextBox(byte *msg, byte *target) {
 	char_xlat_table = chars_color_bonc;
 
 	if (g_vm->getLanguage() == Common::EN_USA) {
-		CalcStringSize(msg, &ww, &nw);
+		calcStringSize(msg, &ww, &nw);
 		if (ww >= char_draw_max_width)
 			char_draw_max_width = ww;
 	}
@@ -224,7 +224,7 @@ void cga_DrawTextBox(byte *msg, byte *target) {
 	do {
 		char_draw_coords_x = draw_x;
 		cga_PrintChar(0x3B, target);
-		msg = PrintStringPadded(msg, target);
+		msg = printStringPadded(msg, target);
 		cga_PrintChar(0x3C, target);
 		char_draw_coords_y += 6;
 	} while (!string_ended);
@@ -238,12 +238,12 @@ void cga_DrawTextBox(byte *msg, byte *target) {
 	cga_DrawVLine(x + w, y, 1, 0, target);              /*bottom right corner*/
 }
 
-void DrawMessage(byte *msg, byte *target) {
+void drawMessage(byte *msg, byte *target) {
 	uint16 x, y;
 	uint16 w, h;
-	CalcStringSize(msg, &w, &h);
+	calcStringSize(msg, &w, &h);
 	char_draw_max_width = (h < 5) ? (w + 2) : 20;
-	char_draw_max_height = CalcTextLines(msg) * 6 + 7;
+	char_draw_max_height = calcTextLines(msg) * 6 + 7;
 
 	x = cursor_x / 4;
 	if (x < 9)
@@ -265,7 +265,7 @@ void DrawMessage(byte *msg, byte *target) {
 }
 
 #if 1
-void DebugMessage(char *msg, ...) {
+void debugMessage(char *msg, ...) {
 	int16 i;
 	byte c;
 	byte m[256];
@@ -294,7 +294,7 @@ void DebugMessage(char *msg, ...) {
 
 	cur_str_end = m + i;
 
-	DrawMessage(m, frontbuffer);
+	drawMessage(m, frontbuffer);
 }
 #endif
 

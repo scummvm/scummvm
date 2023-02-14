@@ -53,11 +53,11 @@ uint16 cpu_speed_delay;
 /*
 Prompt user to insert disk #2 to any drive
 */
-void AskDisk2(void) {
-	DrawMessage(seekToString(vepci_data, 179), frontbuffer);
+void askDisk2(void) {
+	drawMessage(seekToString(vepci_data, 179), frontbuffer);
 }
 
-void SaveToFile(char *filename, void *data, uint16 size) {
+void saveToFile(char *filename, void *data, uint16 size) {
 	warning("STUB: SaveToFile(%s, data, %d)", filename, size);
 #if 0
 	FILE *f = fopen(filename, "wb");
@@ -66,14 +66,14 @@ void SaveToFile(char *filename, void *data, uint16 size) {
 #endif
 }
 
-int16 LoadSplash(const char *filename) {
+int16 loadSplash(const char *filename) {
 	if (!LoadFile(filename, scratch_mem1))
 		return 0;
 	decompress(scratch_mem1 + 8, backbuffer);   /* skip compressed/decompressed size fields */
 	return 1;
 }
 
-uint16 BenchmarkCpu(void) {
+uint16 benchmarkCpu(void) {
 	byte t;
 	uint16 cycles = 0;
 	for (t = script_byte_vars.timer_ticks; t == script_byte_vars.timer_ticks;) ;
@@ -81,7 +81,7 @@ uint16 BenchmarkCpu(void) {
 	return cycles;
 }
 
-void Randomize(void) {
+void randomize(void) {
 	warning("STUB: Randomize()");
 #if 0
 	union REGS reg;
@@ -99,7 +99,7 @@ void TRAP() {
 }
 
 /* Main Game Loop */
-void GameLoop(byte *target) {
+void gameLoop(byte *target) {
 	for (;;) {
 		AnimateSpots(target);
 
@@ -122,7 +122,7 @@ void GameLoop(byte *target) {
 		} else {
 			selectCursor(CURSOR_FINGER);
 			object_hint = 117;
-			CheckMenuCommandHover();
+			checkMenuCommandHover();
 		}
 
 		if (object_hint != last_object_hint)
@@ -190,7 +190,7 @@ process:
 }
 
 
-void ExitGame(void) {
+void exitGame(void) {
 	switchToTextMode();
 	uninitTimer();
 }
@@ -219,16 +219,16 @@ Common::Error ChamberEngine::run() {
 
 	if (g_vm->getLanguage() == Common::EN_USA) {
 		/* Load title screen */
-		if (!LoadSplash("PRESCGA.BIN"))
-			ExitGame();
+		if (!loadSplash("PRESCGA.BIN"))
+			exitGame();
 
 		if (ifgm_loaded) {
 			/*TODO*/
 		}
 	} else {
 		/* Load title screen */
-		if (!LoadSplash("PRES.BIN"))
-			ExitGame();
+		if (!loadSplash("PRES.BIN"))
+			exitGame();
 	}
 
 	/* Select intense cyan-mageta palette */
@@ -246,8 +246,8 @@ Common::Error ChamberEngine::run() {
 		c = 'E';
 	} else {
 		/* Load language selection screen */
-		if (!LoadSplash("DRAP.BIN"))
-			ExitGame();
+		if (!loadSplash("DRAP.BIN"))
+			exitGame();
 
 		/* Wait for a keypress and show the language selection screen */
 		clearKeyboard();
@@ -282,18 +282,18 @@ Common::Error ChamberEngine::run() {
 	/* Load script and other static resources */
 	/* Those are normally embedded in the executable, but here we load extracted ones*/
 	if (!LoadStaticData())
-		ExitGame();
+		exitGame();
 
 	/* Load text resources */
 	if (!LoadVepciData() || !LoadDesciData() || !LoadDialiData())
-		ExitGame();
+		exitGame();
 
 	/* Detect/Initialize input device */
 	initInput();
 
 	/* Load graphics resources */
 	while (!LoadFond() || !LoadSpritesData() || !LoadPersData())
-		AskDisk2();
+		askDisk2();
 
 	/*TODO: is this neccessary?*/
 	cga_BackBufferToRealFull();
@@ -302,7 +302,7 @@ Common::Error ChamberEngine::run() {
 	SaveRestartGame();
 
 	/* Detect CPU speed for delay routines */
-	cpu_speed_delay = BenchmarkCpu() / 8;
+	cpu_speed_delay = benchmarkCpu() / 8;
 
 	if (g_vm->getLanguage() == Common::EN_USA) {
 		if (ifgm_loaded) {
@@ -314,7 +314,7 @@ Common::Error ChamberEngine::run() {
 //restart:;
 	setjmp(restart_jmp);
 
-	Randomize();
+	randomize();
 
 	/* Set start zone */
 	script_byte_vars.zone_index = 7;
@@ -354,14 +354,14 @@ Common::Error ChamberEngine::run() {
 #endif
 
 	/* Main game loop */
-	GameLoop(frontbuffer);
+	gameLoop(frontbuffer);
 
-	/*TODO: the following code is never executed since GameLoop is infinite (or the whole game is restarted) */
+	/*TODO: the following code is never executed since gameLoop is infinite (or the whole game is restarted) */
 
 	/* Release hardware */
 	uninitInput();
 
-	ExitGame();
+	exitGame();
 
 	return Common::kNoError;
 }

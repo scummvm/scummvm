@@ -70,7 +70,7 @@ persframe_t pers_frames[] = {
 	{27, 34,    0,    0,    0,    0}
 };
 
-void MakePortraitFrame(byte index, byte *target) {
+void makePortraitFrame(byte index, byte *target) {
 	uint16 i;
 	persframe_t *pframe = &pers_frames[index];
 	*target++ = pframe->height;
@@ -91,7 +91,7 @@ void MakePortraitFrame(byte index, byte *target) {
 /*
 Superimpose source sprite data over target image data
 */
-void MergeImageAndSpriteData(byte *target, int16 pitch, byte *source, uint16 w, uint16 h) {
+void mergeImageAndSpriteData(byte *target, int16 pitch, byte *source, uint16 w, uint16 h) {
 	uint16 x;
 	while (h--) {
 		for (x = 0; x < w; x++) {
@@ -107,7 +107,7 @@ void MergeImageAndSpriteData(byte *target, int16 pitch, byte *source, uint16 w, 
 /*
 Superimpose horizontally-flipped source sprite data over target image data
 */
-void MergeImageAndSpriteDataFlip(byte *target, int16 pitch, byte *source, uint16 w, uint16 h) {
+void mergeImageAndSpriteDataFlip(byte *target, int16 pitch, byte *source, uint16 w, uint16 h) {
 	uint16 x;
 	target += w - 1;
 	while (h--) {
@@ -125,7 +125,7 @@ void MergeImageAndSpriteDataFlip(byte *target, int16 pitch, byte *source, uint16
 /*
 Build portrait from multiple pers sprites
 */
-byte *LoadPortrait(byte **pinfo, byte *end) {
+byte *loadPortrait(byte **pinfo, byte *end) {
 	while (*pinfo != end) {
 		byte index;
 		uint16 flags;
@@ -148,18 +148,18 @@ byte *LoadPortrait(byte **pinfo, byte *end) {
 			pitch = -pitch;
 		}
 		if (flags & 0x4000) /*horizontal flip*/
-			MergeImageAndSpriteDataFlip(buffer, pitch, sprite, sprw, sprh);
+			mergeImageAndSpriteDataFlip(buffer, pitch, sprite, sprw, sprh);
 		else
-			MergeImageAndSpriteData(buffer, pitch, sprite, sprw, sprh);
+			mergeImageAndSpriteData(buffer, pitch, sprite, sprw, sprh);
 	}
 	return sprit_load_buffer + 2;
 }
 
-byte *LoadPortraitWithFrame(byte index) {
+byte *loadPortraitWithFrame(byte index) {
 	byte *pinfo, *end;
 	pinfo = SeekToEntry(icone_data, index, &end);
-	MakePortraitFrame(*pinfo++, sprit_load_buffer + 2);
-	return LoadPortrait(&pinfo, end);
+	makePortraitFrame(*pinfo++, sprit_load_buffer + 2);
+	return loadPortrait(&pinfo, end);
 }
 
 
@@ -199,7 +199,7 @@ struct {
 	{248, 117, 16,  2, 33, 33}
 };
 
-byte SelectCurrentAnim(byte *x, byte *y, byte *index) {
+byte selectCurrentAnim(byte *x, byte *y, byte *index) {
 	int16 i;
 	byte aniidx = ((pers_t *)(script_vars[ScrPool8_CurrentPers]))->index & ~7;
 	for (i = 0; i < STATIC_ANIMS_MAX; i++) {
@@ -216,7 +216,7 @@ byte SelectCurrentAnim(byte *x, byte *y, byte *index) {
 	return 0;
 }
 
-void DrawBoxAroundSpot(void) {
+void drawBoxAroundSpot(void) {
 	byte *buffer;
 	uint16 w, h;
 	uint16 ofs;
@@ -252,7 +252,7 @@ void DrawBoxAroundSpot(void) {
 /*Get on-screen image as specified by script to temp buffer and register it with dirty rect of kind 2
 If rmb is pressed, draw it immediately and return 0
 */
-int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
+int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	byte index;
 	byte xx, yy;
 	byte *image;
@@ -261,8 +261,8 @@ int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	if (index == 0xFF) {
 		if (script_byte_vars.dirty_rect_kind != 0)
 			return 0;
-		DrawBoxAroundSpot();
-		if (!SelectCurrentAnim(&xx, &yy, &index))
+		drawBoxAroundSpot();
+		if (!selectCurrentAnim(&xx, &yy, &index))
 			return 0;
 	} else {
 		xx = *((*desc)++);
@@ -272,7 +272,7 @@ int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	cur_image_coords_y = yy;
 	cur_image_idx = index;
 
-	image = LoadPortraitWithFrame(index - 1);
+	image = loadPortraitWithFrame(index - 1);
 	cur_image_size_h = *image++;
 	cur_image_size_w = *image++;
 	cur_image_pixels = image;
@@ -293,28 +293,28 @@ int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	return 1;
 }
 
-void PlayHurtSound() {
+void playHurtSound() {
 	if (!ifgm_loaded)
 		playSound(144);
 	else
 		playSound(144 + (Rand() / 4) % 4);
 }
 
-void BlinkWithSound(byte color) {
+void blinkWithSound(byte color) {
 	cga_ColorSelect(color);
-	PlayHurtSound();
+	playHurtSound();
 	SelectPalette();
 }
 
-void BlinkToRed(void) {
-	BlinkWithSound(0x3C);
+void blinkToRed(void) {
+	blinkWithSound(0x3C);
 }
 
-void BlinkToWhite(void) {
+void blinkToWhite(void) {
 	if (g_vm->getLanguage() == Common::EN_USA)
-		PlayHurtSound();	/*TODO: play here and later? looks like a bug, original code will trash palette selection if pcspeaker is used*/
+		playHurtSound();	/*TODO: play here and later? looks like a bug, original code will trash palette selection if pcspeaker is used*/
 
-	BlinkWithSound(0x3F);
+	blinkWithSound(0x3F);
 }
 
 volatile byte vblank_ticks;
@@ -328,11 +328,11 @@ void waitVBlankTimer(void) {
 	waitVBlank();
 }
 
-void AnimPortrait(byte layer, byte index, byte delay) {
+void animPortrait(byte layer, byte index, byte delay) {
 	byte *ani, *ani_end;
 	byte temp;
 
-	SelectCurrentAnim(&temp, &temp, &temp);
+	selectCurrentAnim(&temp, &temp, &temp);
 
 	if (index == 0xFF)
 		index = cur_image_anim1;
@@ -351,10 +351,10 @@ void AnimPortrait(byte layer, byte index, byte delay) {
 		uint16 offs;
 
 		byte portrait = *ani++;
-		LoadPortraitWithFrame(portrait - 1);
+		loadPortraitWithFrame(portrait - 1);
 		if (*ani == 0xFF) {
 			ani++;
-			LoadPortrait(&ani, ani + 3);
+			loadPortrait(&ani, ani + 3);
 		}
 		getDirtyRectAndSetSprite(layer, &kind, &x, &y, &width, &height, &offs);
 		waitVBlank();
@@ -363,9 +363,9 @@ void AnimPortrait(byte layer, byte index, byte delay) {
 		if (delay) {
 			if (ani[-1] == 37) { /*TODO: what is it?*/
 				if (script_byte_vars.extreme_violence)
-					BlinkToRed();
+					blinkToRed();
 				else
-					BlinkToWhite();
+					blinkToWhite();
 			} else {
 				int16 i;
 				while (delay--) for (i = 0; i < cpu_speed_delay; i++) ; /*TODO: FIXME weak delay*/

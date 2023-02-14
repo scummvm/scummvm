@@ -75,7 +75,7 @@ void *script_vars[ScrPools_MAX] = {
 	pers_list
 };
 
-extern void AskDisk2(void);
+extern void askDisk2(void);
 
 /*
 Get next random byte value
@@ -684,7 +684,7 @@ uint16 SCR_5_DrawPortraitLiftRight(void) {
 
 	script_ptr++;
 
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	/*TODO: use local args instead of globals*/
@@ -700,7 +700,7 @@ uint16 SCR_6_DrawPortraitLiftLeft(void) {
 
 	script_ptr++;
 
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	/*TODO: use local args instead of globals*/
@@ -716,7 +716,7 @@ uint16 SCR_7_DrawPortraitLiftDown(void) {
 
 	script_ptr++;
 
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	/*TODO: use local args instead of globals*/
@@ -732,7 +732,7 @@ uint16 SCR_8_DrawPortraitLiftUp(void) {
 
 	script_ptr++;
 
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	/*TODO: use local args instead of globals*/
@@ -748,7 +748,7 @@ uint16 SCR_9_DrawPortrait(void) {
 
 	script_ptr++;
 
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	cga_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
@@ -805,7 +805,7 @@ uint16 SCR_B_DrawPortraitTwistEffect(void) {
 
 	script_ptr++;
 
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	offs = cga_CalcXY_p(x, y);
@@ -856,7 +856,7 @@ uint16 SCR_C_DrawPortraitArcEffect(void) {
 
 	script_ptr++;
 
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	offs = cga_CalcXY_p(x, y);
@@ -879,7 +879,7 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 
 	script_ptr++;
 
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	cur_image_end = width * height;
@@ -908,7 +908,7 @@ uint16 SCR_E_DrawPortraitZoomIn(void) {
 
 	script_ptr++;
 
-	if (!DrawPortrait(&script_ptr, &x, &y, &width, &height))
+	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
 	cga_AnimZoomIn(cur_image_pixels, cur_image_size_w, cur_image_size_h, frontbuffer, cur_image_offs);
@@ -916,12 +916,12 @@ uint16 SCR_E_DrawPortraitZoomIn(void) {
 }
 
 
-uint16 DrawPortraitZoomed(byte **params) {
+uint16 drawPortraitZoomed(byte **params) {
 	byte x, y, width, height;
 	byte zwidth, zheight;
 
 	right_button = 0;   /*prevent cancel or zoom parameters won't be consumed*/
-	if (!DrawPortrait(params, &x, &y, &width, &height))
+	if (!drawPortrait(params, &x, &y, &width, &height))
 		return 0;   /*TODO: maybe just remove the if/return instead?*/
 
 	zwidth = *((*params)++);
@@ -940,7 +940,7 @@ Draw image with specified w/h zoom
 */
 uint16 SCR_10_DrawPortraitZoomed(void) {
 	script_ptr++;
-	DrawPortraitZoomed(&script_ptr);
+	drawPortraitZoomed(&script_ptr);
 
 #if 0
 	/*TODO: debug wait*/
@@ -1412,7 +1412,7 @@ uint16 SCR_26_GameOver(void) {
 
 	/*reload background*/
 	while (!LoadFond())
-		AskDisk2();
+		askDisk2();
 
 	JaggedZoom(backbuffer, frontbuffer);
 
@@ -1622,7 +1622,7 @@ uint16 SCR_18_AnimPortrait(void) {
 	index = *script_ptr++;
 	delay = *script_ptr++;
 
-	AnimPortrait(layer, index, delay);
+	animPortrait(layer, index, delay);
 
 	return 0;
 }
@@ -1653,7 +1653,7 @@ uint16 SCR_3D_ActionsMenu(void) {
 
 	for (;;) {
 		script_ptr++;
-		ActionsMenu(&script_ptr);
+		actionsMenu(&script_ptr);
 		if (the_command == 0xFFFF)
 			break;
 
@@ -1720,7 +1720,7 @@ uint16 SCR_28_MenuLoop(void) {
 
 	selectCursor(cursor);
 
-	MenuLoop(mask, value);
+	menuLoop(mask, value);
 
 	return 0;
 }
@@ -1898,10 +1898,10 @@ uint16 SCR_30_Fight(void) {
 	/*draw player portrait*/
 	player_image[1] = x;
 	player_image[2] = y;
-	if (DrawPortrait(&image, &x, &y, &width, &height))
+	if (drawPortrait(&image, &x, &y, &width, &height))
 		cga_AnimLiftToLeft(width, cur_image_pixels, width, 1, height, CGA_SCREENBUFFER, cga_CalcXY_p(x + width - 1, y));
 
-	BlinkToWhite();
+	blinkToWhite();
 
 	if (pers->name != 44 && pers->name != 56 && pers->name != 51) {	/*VORT, MONKEY, TURKEY*/
 		getDirtyRectAndFree(1, &kind, &x, &y, &width, &height, &offs);
@@ -2783,7 +2783,7 @@ static void AnimSaucer(void) {
 	cga_ColorSelect(0x30);
 
 	right_button = 0;
-	if (!DrawPortrait(&pimage1, &x, &y, &width, &height))
+	if (!drawPortrait(&pimage1, &x, &y, &width, &height))
 		return;
 
 	height_prev = 200 - 1;
@@ -2876,7 +2876,7 @@ static void AnimSaucer(void) {
 	}
 };
 
-extern int16 LoadSplash(const char *filename);
+extern int16 loadSplash(const char *filename);
 
 /*
 TODO: check me
@@ -2888,7 +2888,7 @@ void TheEnd(void) {
 	AnimSaucer();
 
 	if (g_vm->getLanguage() == Common::EN_USA) {
-		DrawPortraitZoomed(&pimage2);
+		drawPortraitZoomed(&pimage2);
 
 		script_byte_vars.zone_index = 135;
 
@@ -2898,12 +2898,12 @@ void TheEnd(void) {
 		while(buttons == 0);
 
 		while (!LoadFond())
-			AskDisk2();
+			askDisk2();
 		JaggedZoom(backbuffer, frontbuffer);
 		cga_BackBufferToRealFull();
 	} else {
-		while (!LoadSplash("PRES.BIN"))
-			AskDisk2();
+		while (!loadSplash("PRES.BIN"))
+			askDisk2();
 		cga_BackBufferToRealFull();
 	}
 }
@@ -3004,7 +3004,7 @@ uint16 SCR_63_LiftSpot6(void) {
 
 uint16 SCR_64_DrawBoxAroundSpot(void) {
 	script_ptr++;
-	DrawBoxAroundSpot();
+	drawBoxAroundSpot();
 	return 0;
 }
 
@@ -3017,7 +3017,7 @@ uint16 SCR_14_DrawDesc(void) {
 	msg = seekToStringScr(desci_data, *script_ptr, &script_ptr);
 	script_ptr++;
 
-	DrawMessage(msg, CGA_SCREENBUFFER);
+	drawMessage(msg, CGA_SCREENBUFFER);
 
 	return 0;
 }
@@ -3226,7 +3226,7 @@ uint16 CMD_2_PsiPowers(void) {
 	do {
 		pollInput();
 		selectCursor(CURSOR_FINGER);
-		CheckPsiCommandHover();
+		checkPsiCommandHover();
 		if (command_hint != 100)
 			command_hint += 109;
 		if (command_hint != last_command_hint)
@@ -3266,14 +3266,14 @@ uint16 CMD_4_EnergyLevel(void) {
 	if (script_byte_vars.psy_energy != 0)
 		anim = 41 + (script_byte_vars.psy_energy / 16);
 
-	if (DrawPortrait(&image, &x, &y, &width, &height)) {
+	if (drawPortrait(&image, &x, &y, &width, &height)) {
 		cga_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
 	}
 
 	do {
 		IFGM_PlaySample(28);
-		AnimPortrait(1, anim, 10);
-		AnimPortrait(1, anim + 14, 10);
+		animPortrait(1, anim, 10);
+		animPortrait(1, anim + 14, 10);
 		pollInputButtonsOnly();
 	} while (buttons == 0);
 
@@ -3341,7 +3341,7 @@ uint16 CMD_8_Timer(void) {
 	byte x, y, width, height;
 	byte *image = timer_image;
 
-	if (DrawPortrait(&image, &x, &y, &width, &height)) {
+	if (drawPortrait(&image, &x, &y, &width, &height)) {
 		cga_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
 	}
 
@@ -3442,7 +3442,7 @@ uint16 CMD_B_PsiStickyFingers(void) {
 	BackupScreenOfSpecialRoom();
 	DrawStickyNet();
 	selectCursor(CURSOR_FLY);
-	MenuLoop(0, 0);
+	menuLoop(0, 0);
 	playSound(224);
 	cga_BackBufferToRealFull();
 	RestoreScreenOfSpecialRoom();
@@ -3467,7 +3467,7 @@ uint16 CMD_C_PsiKnowMind(void) {
 		return ScriptRerun;
 	}
 
-	ProcessMenu();
+	processMenu();
 
 	if (script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(2 * 2) == 0)
 		the_command = Swap16(script_word_vars.psi_cmds[1]);
@@ -3481,7 +3481,7 @@ uint16 CMD_D_PsiBrainwarp(void) {
 
 	if (script_byte_vars.bvar_43 == 0) {
 		BackupScreenOfSpecialRoom();
-		ProcessMenu();
+		processMenu();
 
 		if (script_byte_vars.cur_spot_idx == 0) {
 			the_command = Swap16(script_word_vars.wvar_0C);
@@ -3579,7 +3579,7 @@ uint16 CMD_F_PsiPsiShift(void) {
 	}
 
 	selectCursor(CURSOR_GRAB);
-	MenuLoop(0, 0);
+	menuLoop(0, 0);
 	BackupScreenOfSpecialRoom();
 	playSound(25);
 	playAnim(39, cursor_x / 4, cursor_y);
@@ -3604,7 +3604,7 @@ uint16 CMD_10_PsiExtremeViolence(void) {
 		return ScriptRerun;
 	}
 
-	ProcessMenu();
+	processMenu();
 
 	if (script_byte_vars.cur_spot_idx == 0) {
 		the_command = Swap16(script_word_vars.psi_cmds[4]);
@@ -3658,7 +3658,7 @@ uint16 CMD_11_PsiTuneIn(void) {
 }
 
 void ActionForPersonChoice(uint16 *actions) {
-	ProcessMenu();
+	processMenu();
 	the_command = 0x9183;   /*THERE`S NOBODY.*/
 	if (script_byte_vars.cur_spot_idx != 0 && script_byte_vars.cur_pers != 0) {
 		pers_t *pers = (pers_t *)script_vars[ScrPool8_CurrentPers];
@@ -4393,7 +4393,7 @@ again:;
 		res = RunScript(templ_data + the_command);
 		break;
 	case 0x9000:
-		DrawMessage(seekToString(desci_data, cmd), CGA_SCREENBUFFER);
+		drawMessage(seekToString(desci_data, cmd), CGA_SCREENBUFFER);
 		break;
 	case 0xA000:
 	case 0xB000:

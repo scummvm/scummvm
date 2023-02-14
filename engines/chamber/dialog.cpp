@@ -118,7 +118,7 @@ void drawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 	char_xlat_table = chars_color_bonw;
 
 	if (g_vm->getLanguage() == Common::EN_USA) {
-		CalcStringSize(msg, &ww, &nw);
+		calcStringSize(msg, &ww, &nw);
 		if (ww >= char_draw_max_width)
 			char_draw_max_width = ww;
 	}
@@ -136,7 +136,7 @@ void drawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 
 	for (string_ended = 0; !string_ended; char_draw_coords_y += 6) {
 		cga_PrintChar(0x3B, CGA_SCREENBUFFER);
-		msg = PrintStringPadded(msg, CGA_SCREENBUFFER);
+		msg = printStringPadded(msg, CGA_SCREENBUFFER);
 		cga_PrintChar(0x3C, CGA_SCREENBUFFER);
 		char_draw_coords_x = x;
 	}

@@ -28,12 +28,12 @@ namespace Chamber {
 extern byte act_menu_x;
 extern byte act_menu_y;
 
-void ActionsMenu(byte **pinfo);
-void MenuLoop(byte spotmask, byte spotvalue);
-void ProcessMenu(void);
+void actionsMenu(byte **pinfo);
+void menuLoop(byte spotmask, byte spotvalue);
+void processMenu(void);
 
-void CheckMenuCommandHover(void);
-void CheckPsiCommandHover(void);
+void checkMenuCommandHover(void);
+void checkPsiCommandHover(void);
 
 } // End of namespace Chamber
 
