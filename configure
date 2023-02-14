@@ -1941,7 +1941,6 @@ riscos)
 	elif `which makerun >/dev/null 2>&1`; then
 		add_line_to_config_mk "MAKERUN := makerun"
 	fi
-	echo Over here!
 	;;
 *)
 	;;
