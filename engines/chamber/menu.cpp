@@ -134,7 +134,7 @@ void ActionsMenu(byte **pinfo) {
 	for (i = 0; i < numchoices; i++)
 		DrawSpriteN(1, act_dot_rects[i].sx, act_dot_rects[i].sy, CGA_SCREENBUFFER);
 
-	SelectCursor(CURSOR_FINGER);
+	selectCursor(CURSOR_FINGER);
 	ProcessInput();
 
 	choice = 0;
@@ -160,7 +160,7 @@ void ActionsMenu(byte **pinfo) {
 			DrawCommandHint();  /*to backbuffer*/
 		DrawHintsAndCursor(CGA_SCREENBUFFER);
 	} while (buttons == 0);
-	UndrawCursor(CGA_SCREENBUFFER);
+	undrawCursor(CGA_SCREENBUFFER);
 
 	if (the_command != 0xFFFF) {
 		playSound(19);
@@ -189,11 +189,11 @@ void MenuLoop(byte spotmask, byte spotvalue) {
 			DrawObjectHint();
 		DrawHintsAndCursor(frontbuffer);
 	} while (buttons == 0);
-	UndrawCursor(frontbuffer);
+	undrawCursor(frontbuffer);
 }
 
 void ProcessMenu(void) {
-	SelectCursor(CURSOR_BODY);
+	selectCursor(CURSOR_BODY);
 	MenuLoop(SPOTFLG_80 | SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8, SPOTFLG_80 | SPOTFLG_10);
 }
 

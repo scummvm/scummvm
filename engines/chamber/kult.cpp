@@ -116,11 +116,11 @@ void GameLoop(byte *target) {
 
 		the_command = 0;
 		if (IsCursorInRect(&room_bounds_rect)) {
-			SelectCursor(CURSOR_TARGET);
+			selectCursor(CURSOR_TARGET);
 			command_hint = 100;
 			SelectSpotCursor();
 		} else {
-			SelectCursor(CURSOR_FINGER);
+			selectCursor(CURSOR_FINGER);
 			object_hint = 117;
 			CheckMenuCommandHover();
 		}
@@ -165,7 +165,7 @@ void GameLoop(byte *target) {
 
 process:
 			;
-			UpdateUndrawCursor(target);
+			updateUndrawCursor(target);
 			RefreshSpritesData();
 			RunCommand();
 			BlitSpritesToBackBuffer();
@@ -174,7 +174,7 @@ process:
 		} else {
 			/*Player action*/
 
-			UpdateUndrawCursor(target);
+			updateUndrawCursor(target);
 			RefreshSpritesData();
 			RunCommandKeepSp();
 			script_byte_vars.used_commands++;

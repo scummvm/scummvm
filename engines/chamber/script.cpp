@@ -1718,7 +1718,7 @@ uint16 SCR_28_MenuLoop(void) {
 	mask = *script_ptr++;
 	value = *script_ptr++;
 
-	SelectCursor(cursor);
+	selectCursor(cursor);
 
 	MenuLoop(mask, value);
 
@@ -3210,7 +3210,7 @@ uint16 SCR_6A_Unused(void) {
 Open room's items inventory
 */
 uint16 CMD_1_RoomObjects(void) {
-	UpdateUndrawCursor(CGA_SCREENBUFFER);
+	updateUndrawCursor(CGA_SCREENBUFFER);
 	inv_bgcolor = 0xAA;
 	OpenInventory((0xFF << 8) | ITEMFLG_ROOM, (script_byte_vars.zone_area << 8) | ITEMFLG_ROOM);
 	return ScriptRerun;
@@ -3225,7 +3225,7 @@ uint16 CMD_2_PsiPowers(void) {
 	ProcessInput();
 	do {
 		PollInput();
-		SelectCursor(CURSOR_FINGER);
+		selectCursor(CURSOR_FINGER);
 		CheckPsiCommandHover();
 		if (command_hint != 100)
 			command_hint += 109;
@@ -3233,7 +3233,7 @@ uint16 CMD_2_PsiPowers(void) {
 			DrawCommandHint();
 		DrawHintsAndCursor(CGA_SCREENBUFFER);
 	} while (buttons == 0);
-	UndrawCursor(CGA_SCREENBUFFER);
+	undrawCursor(CGA_SCREENBUFFER);
 	cga_RestoreBackupImage(CGA_SCREENBUFFER);
 	return ScriptRerun;
 }
@@ -3242,7 +3242,7 @@ uint16 CMD_2_PsiPowers(void) {
 Open normal inventory box
 */
 uint16 CMD_3_Posessions(void) {
-	UpdateUndrawCursor(CGA_SCREENBUFFER);
+	updateUndrawCursor(CGA_SCREENBUFFER);
 	inv_bgcolor = 0x55;
 	OpenInventory(ITEMFLG_OWNED, ITEMFLG_OWNED);
 	return ScriptRerun;
@@ -3441,7 +3441,7 @@ uint16 CMD_B_PsiStickyFingers(void) {
 
 	BackupScreenOfSpecialRoom();
 	DrawStickyNet();
-	SelectCursor(CURSOR_FLY);
+	selectCursor(CURSOR_FLY);
 	MenuLoop(0, 0);
 	playSound(224);
 	cga_BackBufferToRealFull();
@@ -3578,7 +3578,7 @@ uint16 CMD_F_PsiPsiShift(void) {
 		return ScriptRerun;
 	}
 
-	SelectCursor(CURSOR_GRAB);
+	selectCursor(CURSOR_GRAB);
 	MenuLoop(0, 0);
 	BackupScreenOfSpecialRoom();
 	playSound(25);
