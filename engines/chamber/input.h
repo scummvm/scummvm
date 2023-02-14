@@ -34,21 +34,21 @@ extern volatile byte key_direction;
 extern volatile byte key_code;
 extern byte key_held;
 
-byte ReadKeyboardChar(void);
-void ClearKeyboard(void);
-byte GetKeyScan(void);
+byte readKeyboardChar(void);
+void clearKeyboard(void);
+byte getKeyScan(void);
 
-byte PollMouse(uint16 *curs_x, uint8 *curs_y);
-byte PollKeyboard(void);
-void SetInputButtons(byte keys);
+byte pollMouse(uint16 *curs_x, uint8 *curs_y);
+byte pollKeyboard(void);
+void setInputButtons(byte keys);
 
-void PollInput(void);
-void ProcessInput(void);
-void PollInputButtonsOnly(void);
-void ResetInput(void);
+void pollInput(void);
+void processInput(void);
+void pollInputButtonsOnly(void);
+void resetInput(void);
 
-void InitInput(void);
-void UninitInput(void);
+void initInput(void);
+void uninitInput(void);
 
 } // End of namespace Chamber
 

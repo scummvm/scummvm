@@ -144,7 +144,7 @@ uint16 SCR_1_AspirantItemTrade(void) {
 
 	for (;;) {
 		inv_bgcolor = 0xFF;
-		OpenInventory(0xFE, ITEMFLG_OWNED);
+		openInventory(0xFE, ITEMFLG_OWNED);
 
 		if (inv_count == 0) {
 			the_command = 0xC1BC;
@@ -229,7 +229,7 @@ uint16 SCR_2_RudeAspirantTrade(void) {
 
 	for (;;) {
 		inv_bgcolor = 0xFF;
-		OpenInventory(0xFE, ITEMFLG_OWNED);
+		openInventory(0xFE, ITEMFLG_OWNED);
 
 		if (inv_count == 0) {
 			the_command = 0xC1C5;
@@ -2607,7 +2607,7 @@ uint16 SCR_51_SkullTraderItemTrade(void) {
 	old_script = script_ptr;
 
 	inv_bgcolor = 0xFF;
-	OpenInventory(0xFF, ITEMFLG_OWNED);
+	openInventory(0xFF, ITEMFLG_OWNED);
 
 	status = 1;
 	if (inv_count != 0) {
@@ -2620,7 +2620,7 @@ uint16 SCR_51_SkullTraderItemTrade(void) {
 
 				((item_t *)(script_vars[ScrPool3_CurrentItem]))->flags = 0;
 
-				OpenInventory(0xFF, ITEMFLG_TRADER);
+				openInventory(0xFF, ITEMFLG_TRADER);
 
 				status = 4;
 				if (the_command != 0) {
@@ -2893,7 +2893,7 @@ void TheEnd(void) {
 		script_byte_vars.zone_index = 135;
 
 		do {
-			PollInputButtonsOnly();
+			pollInputButtonsOnly();
 		}
 		while(buttons == 0);
 
@@ -3212,7 +3212,7 @@ Open room's items inventory
 uint16 CMD_1_RoomObjects(void) {
 	updateUndrawCursor(CGA_SCREENBUFFER);
 	inv_bgcolor = 0xAA;
-	OpenInventory((0xFF << 8) | ITEMFLG_ROOM, (script_byte_vars.zone_area << 8) | ITEMFLG_ROOM);
+	openInventory((0xFF << 8) | ITEMFLG_ROOM, (script_byte_vars.zone_area << 8) | ITEMFLG_ROOM);
 	return ScriptRerun;
 }
 
@@ -3222,9 +3222,9 @@ Open Psi Powers menu
 uint16 CMD_2_PsiPowers(void) {
 	/*Psi powers bar*/
 	BackupAndShowSprite(3, 280 / 4, 40);
-	ProcessInput();
+	processInput();
 	do {
-		PollInput();
+		pollInput();
 		selectCursor(CURSOR_FINGER);
 		CheckPsiCommandHover();
 		if (command_hint != 100)
@@ -3244,7 +3244,7 @@ Open normal inventory box
 uint16 CMD_3_Posessions(void) {
 	updateUndrawCursor(CGA_SCREENBUFFER);
 	inv_bgcolor = 0x55;
-	OpenInventory(ITEMFLG_OWNED, ITEMFLG_OWNED);
+	openInventory(ITEMFLG_OWNED, ITEMFLG_OWNED);
 	return ScriptRerun;
 }
 
@@ -3274,7 +3274,7 @@ uint16 CMD_4_EnergyLevel(void) {
 		IFGM_PlaySample(28);
 		AnimPortrait(1, anim, 10);
 		AnimPortrait(1, anim + 14, 10);
-		PollInputButtonsOnly();
+		pollInputButtonsOnly();
 	} while (buttons == 0);
 
 	popDirtyRects(DirtyRectSprite);
@@ -3357,7 +3357,7 @@ uint16 CMD_8_Timer(void) {
 		cga_PrintChar((minutes & 1) ? 26 : 0, CGA_SCREENBUFFER);    /*colon*/
 		cga_PrintChar(minutes / (60 * 10) + 16, CGA_SCREENBUFFER);
 		cga_PrintChar(minutes / 60 + 16, CGA_SCREENBUFFER);
-		PollInputButtonsOnly();
+		pollInputButtonsOnly();
 	} while (buttons == 0);
 
 	popDirtyRects(DirtyRectSprite);

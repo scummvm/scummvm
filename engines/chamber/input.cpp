@@ -55,7 +55,7 @@ byte accell_countdown;
 uint16 accelleration = 1;
 byte mouseButtons = 0;
 
-void PollDiscrete(void);
+void pollDiscrete(void);
 
 byte ChamberEngine::readKeyboardChar() {
 	Common::Event event;
@@ -81,10 +81,10 @@ byte ChamberEngine::readKeyboardChar() {
 	}
 }
 
-void ClearKeyboard(void) {
+void clearKeyboard(void) {
 }
 
-void SetInputButtons(byte keys) {
+void setInputButtons(byte keys) {
 	if (keys & 2)
 		right_button = ~0;
 	if (keys & 1)
@@ -93,13 +93,13 @@ void SetInputButtons(byte keys) {
 	buttons_repeat = keys;
 }
 
-byte PollMouse(void) {
-	PollInput();
+byte pollMouse(void) {
+	pollInput();
 
 	return buttons;
 }
 
-byte PollKeyboard(void) {
+byte pollKeyboard(void) {
 	byte direction = key_direction;
 	if (direction && direction == key_direction_old) {
 		if (++accell_countdown == 10) {
@@ -142,7 +142,7 @@ byte PollKeyboard(void) {
 /*
 Show game exit confirmation dialog and get user's input
 */
-int16 AskQuitGame(void) {
+int16 askQuitGame(void) {
 	/*EU version comes without requited text string*/
 	if (g_vm->getLanguage() != Common::EN_USA)
 		return 0;
@@ -181,11 +181,11 @@ int16 AskQuitGame(void) {
 	return quit;
 }
 
-void PollInputButtonsOnly() {
-	PollInput();
+void pollInputButtonsOnly() {
+	pollInput();
 }
 
-void PollInput(void) {
+void pollInput(void) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -194,7 +194,7 @@ void PollInput(void) {
 				mouseButtons |= 1;
 			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				if (g_vm->getLanguage() == Common::EN_USA) {
-					if (AskQuitGame() != 0)
+					if (askQuitGame() != 0)
 						g_vm->_shouldQuit = true;
 				}
 			}
@@ -236,16 +236,16 @@ void PollInput(void) {
 		}
 	}
 
-	SetInputButtons(mouseButtons);
+	setInputButtons(mouseButtons);
 }
 
-void ProcessInput(void) {
-	PollInput();
+void processInput(void) {
+	pollInput();
 	updateCursor();
 	drawCursor(frontbuffer);
 }
 
-void KeyboardIsr() {
+void keyboardIsr() {
 	warning("STUB: KeyboardIsr()");
 #if 0
 	byte scan, strobe;
@@ -290,11 +290,11 @@ void KeyboardIsr() {
 #endif
 }
 
-void InitInput(void) {
+void initInput(void) {
 	have_mouse = 1;
 }
 
-void UninitInput(void) {
+void uninitInput(void) {
 }
 
 } // End of namespace Chamber
