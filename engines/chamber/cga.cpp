@@ -634,7 +634,7 @@ byte *LoadSprite(byte index, byte *bank, byte *buffer, byte header_only) {
 	uint16 rsize;
 	byte *sprite, *sprite_end;
 	byte *bitmask;
-	sprite = SeekToEntryW(bank, index, &sprite_end);
+	sprite = seekToEntryW(bank, index, &sprite_end);
 	w = *sprite++;
 	h = *sprite++;
 	rsize = w * h;  /*raster part size*/

@@ -157,7 +157,7 @@ byte *loadPortrait(byte **pinfo, byte *end) {
 
 byte *loadPortraitWithFrame(byte index) {
 	byte *pinfo, *end;
-	pinfo = SeekToEntry(icone_data, index, &end);
+	pinfo = seekToEntry(icone_data, index, &end);
 	makePortraitFrame(*pinfo++, sprit_load_buffer + 2);
 	return loadPortrait(&pinfo, end);
 }
@@ -341,7 +341,7 @@ void animPortrait(byte layer, byte index, byte delay) {
 
 	IFGM_PlaySfx(index);
 
-	ani = SeekToEntry(anico_data, index - 1, &ani_end);
+	ani = seekToEntry(anico_data, index - 1, &ani_end);
 	cur_image_pixels = sprit_load_buffer + 2 + 2;
 
 	while (ani != ani_end) {

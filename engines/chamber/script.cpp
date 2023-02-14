@@ -437,7 +437,7 @@ uint16 LoadVar(byte **ptr, byte **varptr) {
 		if (vartype & VARTYPE_BLOCK) {
 			byte *end;
 			byte index = *((*ptr)++);
-			varbase = SeekToEntryW(varbase, index, &end);
+			varbase = seekToEntryW(varbase, index, &end);
 		}
 		varoffs = *((*ptr)++);
 #if 1
@@ -1411,7 +1411,7 @@ uint16 SCR_26_GameOver(void) {
 	script_byte_vars.zone_index = 135;
 
 	/*reload background*/
-	while (!LoadFond())
+	while (!loadFond())
 		askDisk2();
 
 	JaggedZoom(backbuffer, frontbuffer);
@@ -2897,7 +2897,7 @@ void TheEnd(void) {
 		}
 		while(buttons == 0);
 
-		while (!LoadFond())
+		while (!loadFond())
 			askDisk2();
 		JaggedZoom(backbuffer, frontbuffer);
 		cga_BackBufferToRealFull();
@@ -4357,7 +4357,7 @@ uint16 RunScript(byte *code) {
 Get script routine
 */
 byte *GetScriptSubroutine(uint16 index) {
-	return SeekToEntry(templ_data, index, &script_end_ptr);
+	return seekToEntry(templ_data, index, &script_end_ptr);
 }
 
 /*

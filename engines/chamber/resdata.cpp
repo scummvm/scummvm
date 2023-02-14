@@ -36,7 +36,7 @@ extern int16 loadSplash(const char *filename);
 Get bank entry
 TODO: port SeekToString to this routine
 */
-byte *SeekToEntry(byte *bank, uint16 num, byte **end) {
+byte *seekToEntry(byte *bank, uint16 num, byte **end) {
 	byte len;
 	byte *p = bank;
 
@@ -49,7 +49,7 @@ byte *SeekToEntry(byte *bank, uint16 num, byte **end) {
 	return p + 1;
 }
 
-byte *SeekToEntryW(byte *bank, uint16 num, byte **end) {
+byte *seekToEntryW(byte *bank, uint16 num, byte **end) {
 	uint16 len;
 	byte *p = bank;
 
@@ -62,7 +62,7 @@ byte *SeekToEntryW(byte *bank, uint16 num, byte **end) {
 	return p + 2;
 }
 
-uint16 LoadFile(const char *filename, byte *buffer) {
+uint16 loadFile(const char *filename, byte *buffer) {
 	Common::File in;
 
 	in.open(filename);
@@ -73,7 +73,7 @@ uint16 LoadFile(const char *filename, byte *buffer) {
 	return in.read(buffer, 0xFFFF0);
 }
 
-uint16 SaveFile(char *filename, byte *buffer, uint16 size) {
+uint16 saveFile(char *filename, byte *buffer, uint16 size) {
 	warning("STUB: SaveFile(%s, buffer, %d)", filename, size);
 	return 0;
 #if 0
@@ -90,10 +90,10 @@ uint16 SaveFile(char *filename, byte *buffer, uint16 size) {
 #endif
 }
 
-int16 LoadFilesList(ResEntry_t *entries) {
+int16 loadFilesList(ResEntry_t *entries) {
 	int16 i;
 	for (i = 0; entries[i].name[0] != '$'; i++) {
-		if (!LoadFile(entries[i].name, (byte *)entries[i].buffer))
+		if (!loadFile(entries[i].name, (byte *)entries[i].buffer))
 			return 0;
 	}
 	return 1;
@@ -135,7 +135,7 @@ ResEntry_tp res_static[] = {
 Load resident data files. Original game has all these data files embedded in the executable.
 NB! Static data includes the font file, don't use any text print routines before it's loaded.
 */
-int16 LoadStaticData() {
+int16 loadStaticData() {
 	Common::File pxi;
 
 	if (g_vm->getLanguage() == Common::EN_USA)
@@ -215,14 +215,14 @@ int16 LoadStaticData() {
 		}
 
 		if (res_static[i].name[0] == '$')
-			warning("LoadStaticData(): Extra resource %s", resName.c_str());
+			warning("loadStaticData(): Extra resource %s", resName.c_str());
 	}
 
 	// And now check that everything was loaded
 	bool missing = false;
 	for (int i = 0; res_static[i].name[0] != '$'; i++) {
 		if (*res_static[i].buffer == NULL) {
-			warning("LoadStaticData(): Resource %s is not present", res_static[i].name);
+			warning("loadStaticData(): Resource %s is not present", res_static[i].name);
 			missing = true;
 		}
 	}
@@ -241,11 +241,11 @@ ResEntry_t res_texts[] = {
 /*
 Load strings data (commands/names)
 */
-int16 LoadVepciData() {
-	return LoadFilesList(res_texts);
+int16 loadVepciData() {
+	return loadFilesList(res_texts);
 }
 
-int16 LoadFond(void) {
+int16 loadFond(void) {
 	return loadSplash("FOND.BIN");
 }
 
@@ -255,8 +255,8 @@ ResEntry_t res_sprites[] = {
 	{"$", NULL}
 };
 
-int16 LoadSpritesData(void) {
-	return LoadFilesList(res_sprites);
+int16 loadSpritesData(void) {
+	return loadFilesList(res_sprites);
 }
 
 ResEntry_t res_person[] = {
@@ -265,11 +265,11 @@ ResEntry_t res_person[] = {
 	{"$", NULL}
 };
 
-int16 LoadPersData(void) {
+int16 loadPersData(void) {
 	/*Originally it tries to load pers1 + pers2 as a single contiguos resource, if have enough memory*/
 	/*If memory is low, neccessary file is loaded on demand, according to requested bank resource index*/
 	/*Here we load both parts to their own memory buffers then select one in LoadPersSprit()*/
-	return LoadFilesList(res_person);
+	return loadFilesList(res_person);
 }
 
 ResEntry_t res_desci[] = {
@@ -280,8 +280,8 @@ ResEntry_t res_desci[] = {
 /*
 Load strings data (obj. descriptions)
 */
-int16 LoadDesciData(void) {
-	while (!LoadFilesList(res_desci))
+int16 loadDesciData(void) {
+	while (!loadFilesList(res_desci))
 		askDisk2();
 	return 1;
 }
@@ -294,8 +294,8 @@ ResEntry_t res_diali[] = {
 /*
 Load strings data (dialogs)
 */
-int16 LoadDialiData(void) {
-	while (!LoadFilesList(res_diali))
+int16 loadDialiData(void) {
+	while (!loadFilesList(res_diali))
 		askDisk2();
 	return 1;
 }
