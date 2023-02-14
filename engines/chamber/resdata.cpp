@@ -29,8 +29,8 @@
 
 namespace Chamber {
 
-extern void AskDisk2(void);
-extern int16 LoadSplash(const char *filename);
+extern void askDisk2(void);
+extern int16 loadSplash(const char *filename);
 
 /*
 Get bank entry
@@ -246,7 +246,7 @@ int16 LoadVepciData() {
 }
 
 int16 LoadFond(void) {
-	return LoadSplash("FOND.BIN");
+	return loadSplash("FOND.BIN");
 }
 
 ResEntry_t res_sprites[] = {
@@ -282,7 +282,7 @@ Load strings data (obj. descriptions)
 */
 int16 LoadDesciData(void) {
 	while (!LoadFilesList(res_desci))
-		AskDisk2();
+		askDisk2();
 	return 1;
 }
 
@@ -296,7 +296,7 @@ Load strings data (dialogs)
 */
 int16 LoadDialiData(void) {
 	while (!LoadFilesList(res_diali))
-		AskDisk2();
+		askDisk2();
 	return 1;
 }
 

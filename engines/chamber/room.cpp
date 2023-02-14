@@ -602,7 +602,7 @@ void AnimateSpot(const animdesc_t *info) {
 		cursor_x = found_spot->sx * 4;
 		cursor_y = found_spot->sy;
 		if (info->params.desc)
-			DrawMessage(seekToString(desci_data, info->params.desc), frontbuffer);
+			drawMessage(seekToString(desci_data, info->params.desc), frontbuffer);
 
 		playAnim(info->index & ~ANIMFLG_USESPOT, found_spot->sx, found_spot->sy);
 	} else {
@@ -953,7 +953,7 @@ void DrawObjectHint(void) {
 	char_draw_coords_x = room_hint_bar_coords_x;
 	char_draw_coords_y = room_hint_bar_coords_y;
 	char_xlat_table = chars_color_wonb;
-	PrintStringCentered(seekToString(motsi_data, object_hint), backbuffer);
+	printStringCentered(seekToString(motsi_data, object_hint), backbuffer);
 
 #ifdef DEBUG_ZONE
 	cga_PrintChar(0x20, backbuffer);
@@ -980,7 +980,7 @@ void DrawCommandHint(void) {
 	char_draw_coords_x = cmd_hint_bar_coords_x;
 	char_draw_coords_y = cmd_hint_bar_coords_y;
 	char_xlat_table = chars_color_wonb;
-	PrintStringCentered(seekToString(vepci_data, command_hint), backbuffer);
+	printStringCentered(seekToString(vepci_data, command_hint), backbuffer);
 }
 
 /*
@@ -1366,9 +1366,9 @@ byte *LoadMursmSprite(byte index) {
 		sprh = *sprite++;
 
 		if (index & 0x80)     /*horizontal flip*/
-			MergeImageAndSpriteDataFlip(buffer, pitch, sprite, sprw, sprh);
+			mergeImageAndSpriteDataFlip(buffer, pitch, sprite, sprw, sprh);
 		else
-			MergeImageAndSpriteData(buffer, pitch, sprite, sprw, sprh);
+			mergeImageAndSpriteData(buffer, pitch, sprite, sprw, sprh);
 	}
 
 	/*TODO: move this from globals to args/consts?*/

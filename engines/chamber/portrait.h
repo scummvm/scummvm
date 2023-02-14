@@ -39,16 +39,16 @@ extern uint16 cur_frame_width;
 
 extern volatile byte vblank_ticks;
 
-int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height);
-void AnimPortrait(byte layer, byte index, byte delay);
+int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height);
+void animPortrait(byte layer, byte index, byte delay);
 
-void DrawBoxAroundSpot(void);
+void drawBoxAroundSpot(void);
 
-void MergeImageAndSpriteData(byte *target, int16 pitch, byte *source, uint16 w, uint16 h);
-void MergeImageAndSpriteDataFlip(byte *target, int16 pitch, byte *source, uint16 w, uint16 h);
+void mergeImageAndSpriteData(byte *target, int16 pitch, byte *source, uint16 w, uint16 h);
+void mergeImageAndSpriteDataFlip(byte *target, int16 pitch, byte *source, uint16 w, uint16 h);
 
-void BlinkToRed(void);
-void BlinkToWhite(void);
+void blinkToRed(void);
+void blinkToWhite(void);
 
 
 } // End of namespace Chamber

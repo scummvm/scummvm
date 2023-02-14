@@ -54,7 +54,7 @@ struct {
 };
 
 /*Handle keyboard keys in actions menu (to cycle through choices with directional keys)*/
-byte PollKeyboardInActionsMenu(void) {
+byte pollKeyboardInActionsMenu(void) {
 	pollInput();
 	if (!(key_direction & 0xF)) {
 		key_held = 0;
@@ -83,7 +83,7 @@ void pollInputInActionsMenu(void) {
 }
 
 /*Draw actions menu and process its choices*/
-void ActionsMenu(byte **pinfo) {
+void actionsMenu(byte **pinfo) {
 	byte x, y;
 	byte choices;
 	int16 i, choice, numchoices;
@@ -180,7 +180,7 @@ void ActionsMenu(byte **pinfo) {
 }
 
 /*TODO: maybe rename to SpotsLoop*/
-void MenuLoop(byte spotmask, byte spotvalue) {
+void menuLoop(byte spotmask, byte spotvalue) {
 	processInput();
 	do {
 		pollInput();
@@ -192,9 +192,9 @@ void MenuLoop(byte spotmask, byte spotvalue) {
 	undrawCursor(frontbuffer);
 }
 
-void ProcessMenu(void) {
+void processMenu(void) {
 	selectCursor(CURSOR_BODY);
-	MenuLoop(SPOTFLG_80 | SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8, SPOTFLG_80 | SPOTFLG_10);
+	menuLoop(SPOTFLG_80 | SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8, SPOTFLG_80 | SPOTFLG_10);
 }
 
 
@@ -209,7 +209,7 @@ rect_t menu_buttons_rects[] = {
 	{296 / 4, 312 / 4, 136, 152}    /*Time*/
 };
 
-void CheckMenuCommandHover(void) {
+void checkMenuCommandHover(void) {
 	int16 i;
 	for (i = 0; i < 8; i++) {
 		if (IsCursorInRect(&menu_buttons_rects[i])) {
@@ -236,7 +236,7 @@ rect_t psi_buttons_rects[] = {
 	{280 / 4, 296 / 4, 152, 168}    /*Tune In*/
 };
 
-void CheckPsiCommandHover(void) {
+void checkPsiCommandHover(void) {
 	/*TODO: maybe merge it with CheckMenuCommandHover()*/
 	int16 i;
 	for (i = 0; i < 8; i++) {
