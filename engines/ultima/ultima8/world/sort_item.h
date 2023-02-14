@@ -39,7 +39,7 @@ class Shape;
  * Other code should have no reason to include it.
  */
 struct SortItem {
-	SortItem(SortItem *n) : _next(n), _prev(nullptr), _itemNum(0),
+	SortItem() : _next(nullptr), _prev(nullptr), _itemNum(0),
 			_shape(nullptr), _order(-1), _depends(), _shapeNum(0),
 			_frame(0), _flags(0), _extFlags(0), _sr(),
 			_x(0), _y(0), _z(0), _xLeft(0),

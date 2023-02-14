@@ -14,8 +14,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 	/* Non-overlapping with lower Y position should always be below */
 	void test_basic_y_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(0, 10, 0, 10, 10, 0);
 		Ultima::Ultima8::Box b2(0, 30, 0, 10, 10, 0);
@@ -28,8 +28,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 	/* Non-overlapping with lower X position should always be below */
 	void test_basic_x_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(10, 0, 0, 10, 10, 0);
 		Ultima::Ultima8::Box b2(30, 0, 0, 10, 10, 0);
@@ -42,8 +42,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 	/* Non-overlapping with lower Z position should always be below */
 	void test_basic_z_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(10, 10, 0, 10, 10, 10);
 		Ultima::Ultima8::Box b2(10, 10, 20, 10, 10, 10);
@@ -56,8 +56,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 	/* Sprites should always be at the top regardless of x/y/z */
 	void test_sprite_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(59454, 49246, 80, 32, 160, 16);
 		Ultima::Ultima8::Box b2(59440, 49144, 63, 32, 32, 63);
@@ -80,8 +80,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * Test case for keycard rendering issue at MainActor::teleport 9 34174 41502 0
 	 */
 	void test_inv_item_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(34142, 41150, 0, 256, 64, 8);
 		si1.setBoxBounds(b1, 0, 0);
@@ -102,8 +102,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 	/* Overlapping flat items (generally the floor) follow a set of rules */
 	void test_flat_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(0, 0, 0, 10, 10, 0);
 		Ultima::Ultima8::Box b2(0, 0, 0, 10, 10, 0);
@@ -158,8 +158,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 	/* Overlapping non-flat items also follow a set of rules */
 	void test_non_flat_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		// Land always gets drawn below
 		// MainActor::teleport 6 7642 19776 48
@@ -183,8 +183,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * Wall with window should render after non-window wall
 	 */
 	void test_nonflat_tranparent_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(17407, 16127, 48, 32, 96, 40);
 		si1.setBoxBounds(b1, 0, 0);
@@ -205,8 +205,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * Test case for rendering issue at MainActor::teleport 41 20063 13887 48
 	 */
 	void test_y_flat_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(64, 0, 16, 64, 0, 16);
 		si1.setBoxBounds(b1, 0, 0);
@@ -225,8 +225,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * Test case for rendering issue at MainActor::teleport 41 20583 10083 48
 	 */
 	void test_y_flat_intersect_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(20479, 9887, 48, 64, 128, 40);
 		si1.setBoxBounds(b1, 0, 0);
@@ -249,8 +249,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * Test case for rendering issue at MainActor::teleport 6 7774 19876 48
 	 */
 	void test_nonflat_z_clear_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(129, 32, 0, 64, 64, 24);
 		si1.setBoxBounds(b1, 0, 0);
@@ -271,8 +271,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * This looks like a possible rendering test easter egg in the original game
 	 */
 	void test_anim_easter_egg() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(20735, 1919, 0, 64, 64, 16);
 		si1.setBoxBounds(b1, 0, 0);
@@ -292,8 +292,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * Test case for rendering armor of flames spell
 	 */
 	void test_armor_of_flames_sort() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(13655, 5111, 8, 64, 64, 16);
 		si1.setBoxBounds(b1, 0, 0);
@@ -310,8 +310,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 	/* Overlapping non-flat occludes flat */
 	void test_basic_occludes() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(0, 0, 0, 128, 128, 16);
 		Ultima::Ultima8::Box b2(0, 0, 0, 128, 128, 0);
@@ -327,8 +327,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * Test case for rendering issue at MainActor::teleport 49 19167 17582 48
 	 */
 	void test_frame_offset_occludes() {
-		Ultima::Ultima8::SortItem si1(nullptr);
-		Ultima::Ultima8::SortItem si2(nullptr);
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(0, 0, 0, 128, 128, 16);
 		Ultima::Ultima8::Box b2(0, 0, 0, 128, 128, 0);
@@ -352,7 +352,7 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_basic_contains() {
-		Ultima::Ultima8::SortItem si1(nullptr);
+		Ultima::Ultima8::SortItem si1;
 
 		Ultima::Ultima8::Box b1(0, 0, 0, 128, 128, 16);
 		si1.setBoxBounds(b1, 0, 0);

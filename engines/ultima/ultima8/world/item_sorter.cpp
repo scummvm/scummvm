@@ -46,7 +46,11 @@ ItemSorter::ItemSorter(int capacity) :
 	_itemsUnused(nullptr), _painted(nullptr), _camSx(0), _camSy(0),
 	_sortLimit(0), _sortLimitChanged(false) {
 	int i = capacity;
-	while (i--) _itemsUnused = new SortItem(_itemsUnused);
+	while (i--) {
+		SortItem *next = _itemsUnused;
+		_itemsUnused = new SortItem();
+		_itemsUnused->_next = next;
+	}
 }
 
 ItemSorter::~ItemSorter() {
@@ -59,9 +63,9 @@ ItemSorter::~ItemSorter() {
 	_itemsTail = nullptr;
 
 	while (_itemsUnused) {
-		SortItem *_next = _itemsUnused->_next;
+		SortItem *next = _itemsUnused->_next;
 		delete _itemsUnused;
-		_itemsUnused = _next;
+		_itemsUnused = next;
 	}
 
 	delete [] _items;
@@ -101,7 +105,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 
 	// First thing, get a SortItem to use (first of unused)
 	if (!_itemsUnused)
-		_itemsUnused = new SortItem(nullptr);
+		_itemsUnused = new SortItem();
 	SortItem *si = _itemsUnused;
 
 	si->_itemNum = itemNum;
