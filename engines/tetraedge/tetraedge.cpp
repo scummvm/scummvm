@@ -40,6 +40,7 @@
 #include "tetraedge/te/te_lua_thread.h"
 #include "tetraedge/te/te_sound_manager.h"
 #include "tetraedge/te/te_input_mgr.h"
+#include "tetraedge/te/te_particle.h"
 
 namespace Tetraedge {
 
@@ -67,6 +68,7 @@ TetraedgeEngine::~TetraedgeEngine() {
 	TeLuaThread::cleanup();
 	TeTimer::cleanup();
 	TeObject::cleanup();
+	TeParticle::cleanup();
 }
 
 /*static*/

@@ -121,6 +121,36 @@ bool InGameSceneXmlParser::parserCallback_noCollisionSlide(ParserNode *node) {
 	return true;
 }
 
+bool InGameSceneXmlParser::parserCallback_flamme(ParserNode *node) {
+	_scene->_flammes.push_back(InGameScene::Flamme());
+	return true;
+}
+
+bool InGameSceneXmlParser::parserCallback_name(ParserNode *node) {
+	_scene->_flammes.back()._name = node->values["value"];
+	return true;
+}
+
+bool InGameSceneXmlParser::parserCallback_center(ParserNode *node) {
+	_scene->_flammes.back()._center = parsePoint(node);
+	return true;
+}
+
+bool InGameSceneXmlParser::parserCallback_yMax(ParserNode *node) {
+	_scene->_flammes.back()._yMax = parsePoint(node);
+	return true;
+}
+
+bool InGameSceneXmlParser::parserCallback_offsetMin(ParserNode *node) {
+	_scene->_flammes.back()._offsetMin = parsePoint(node);
+	return true;
+}
+
+bool InGameSceneXmlParser::parserCallback_offsetMax(ParserNode *node) {
+	_scene->_flammes.back()._offsetMax = parsePoint(node);
+	return true;
+}
+
 bool InGameSceneXmlParser::closedKeyCallback(ParserNode *node) {
 	_textNodeType = TextNodeNone;
 	if (node->name == "pathZone") {
@@ -147,9 +177,8 @@ bool InGameSceneXmlParser::textCallback(const Common::String &val) {
 			return false;
 		}
 		_fmzGridSize = sz;
+		break;
 	}
-	// fall through
-	// FIXME: Is this intentional or break missing?
 	default:
 		parserError("Unexpected text block");
 		return false;

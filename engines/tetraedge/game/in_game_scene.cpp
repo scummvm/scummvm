@@ -32,6 +32,7 @@
 #include "tetraedge/game/character.h"
 #include "tetraedge/game/characters_shadow.h"
 #include "tetraedge/game/object3d.h"
+#include "tetraedge/game/particle_xml_parser.h"
 #include "tetraedge/game/scene_lights_xml_parser.h"
 
 #include "tetraedge/te/te_bezier_curve.h"
@@ -694,6 +695,17 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 		error("InGameScene::loadXml: Can't load %s", node.getPath().c_str());
 	if (!parser.parse())
 		error("InGameScene::loadXml: Can't parse %s", node.getPath().c_str());
+
+	Common::Path pxmlpath = _sceneFileNameBase(zone, scene).joinInPlace("particles.xml");
+	Common::FSNode pnode = g_engine->getCore()->findFile(pxmlpath);
+	if (pnode.isReadable()) {
+		ParticleXmlParser pparser;
+		pparser._scene = this;
+		if (!pparser.loadFile(pnode))
+			error("InGameScene::loadXml: Can't load %s", pnode.getPath().c_str());
+		if (!pparser.parse())
+			error("InGameScene::loadXml: Can't parse %s", pnode.getPath().c_str());
+	}
 
 	return true;
 }

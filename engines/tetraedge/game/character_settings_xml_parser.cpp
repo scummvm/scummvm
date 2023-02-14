@@ -170,8 +170,14 @@ bool CharacterSettingsXmlParser::textCallback(const Common::String &val) {
 }
 
 bool CharacterSettingsXmlParser::handleUnknownKey(ParserNode *node) {
-	warning("TODO: CharacterSettingsXmlParser handle unknown key %s", node->name.c_str());
-	return true;
+	if (node->values.contains("animFile")) {
+		const Common::String &animFile = node->values["animFile"];
+		warning("TODO: CharacterSettingsXmlParser handle mapping %s -> %s",
+			node->name.c_str(), animFile.c_str());
+		return true;
+	}
+	parserError("Unknown key");
+	return false;
 }
 
 } // end namespace Tetraedge

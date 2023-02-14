@@ -19,19 +19,22 @@
  *
  */
 
-#include "common/hashmap.h"
-#include "common/str.h"
-#include "common/formats/xmlparser.h"
-#include "tetraedge/game/in_game_scene.h"
-
 #ifndef TETRAEDGE_GAME_IN_GAME_SCENE_XML_PARSER_H
 #define TETRAEDGE_GAME_IN_GAME_SCENE_XML_PARSER_H
 
+#include "tetraedge/te/te_xml_parser.h"
+#include "tetraedge/game/in_game_scene.h"
+
 namespace Tetraedge {
 
-class InGameSceneXmlParser : public Common::XMLParser {
+/**
+ * XML Parser for in game scene files in Syberia 2.
+ * Sybeira 1 uses a binary format, see InGameScene::load.
+ */
+class InGameSceneXmlParser : public TeXmlParser {
 public:
-	// Parser
+	// NOTE: This doesn't handle snowCustom tag which was
+	// added in original but commented out in every place.
 	CUSTOM_XML_PARSER(InGameSceneXmlParser) {
 		XML_KEY(scene)
 			XML_KEY(camera)
@@ -84,6 +87,31 @@ public:
 			XML_KEY(light)
 				XML_PROP(name, true)
 			KEY_END()
+			XML_KEY(flamme)
+				XML_KEY(name)
+					XML_PROP(value, true)
+				KEY_END()
+				XML_KEY(center)
+					XML_PROP(x, true)
+					XML_PROP(y, true)
+					XML_PROP(z, true)
+				KEY_END()
+				XML_KEY(yMax)
+					XML_PROP(x, true)
+					XML_PROP(y, true)
+					XML_PROP(z, true)
+				KEY_END()
+				XML_KEY(offsetMin)
+					XML_PROP(x, true)
+					XML_PROP(y, true)
+					XML_PROP(z, true)
+				KEY_END()
+				XML_KEY(offsetMax)
+					XML_PROP(x, true)
+					XML_PROP(y, true)
+					XML_PROP(z, true)
+				KEY_END()
+			KEY_END()
 			XML_KEY(collisionSlide)
 			KEY_END()
 			XML_KEY(noCollisionSlide)
@@ -110,6 +138,14 @@ public:
 	bool parserCallback_light(ParserNode *node);
 	bool parserCallback_collisionSlide(ParserNode *node);
 	bool parserCallback_noCollisionSlide(ParserNode *node);
+
+	// Flamme and its children.
+	bool parserCallback_flamme(ParserNode *node);
+	bool parserCallback_name(ParserNode *node);
+	bool parserCallback_center(ParserNode *node);
+	bool parserCallback_yMax(ParserNode *node);
+	bool parserCallback_offsetMin(ParserNode *node);
+	bool parserCallback_offsetMax(ParserNode *node);
 
 	virtual bool closedKeyCallback(ParserNode *node) override;
 	virtual bool textCallback(const Common::String &val) override;

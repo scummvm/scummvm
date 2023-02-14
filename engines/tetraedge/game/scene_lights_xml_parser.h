@@ -25,11 +25,11 @@
 #include "common/formats/xmlparser.h"
 #include "tetraedge/te/te_light.h"
 #include "tetraedge/te/te_vector3f32.h"
-
+#include "tetraedge/te/te_xml_parser.h"
 
 namespace Tetraedge {
 
-class SceneLightsXmlParser : public Common::XMLParser {
+class SceneLightsXmlParser : public TeXmlParser {
 public:
 	void setLightArray(Common::Array<Common::SharedPtr<TeLight>> *lights) {
 		_lights = lights;
@@ -152,8 +152,6 @@ private:
 	bool parserCallback_NearPlane(ParserNode *node);
 	bool parserCallback_FarPlane(ParserNode *node);
 	bool parserCallback_Color(ParserNode *node);
-
-	bool parseCol(ParserNode *node, TeColor &colout);
 
 };
 

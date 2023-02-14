@@ -47,9 +47,6 @@ bool Te3DTexture::hasAlpha() const {
 TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::FSNode &node, bool alphaOnly) {
 	const Common::String fullPath = node.getPath() + ".3dtex";
 
-	if (alphaOnly)
-		warning("TODO: Handle alphaOnly in Te3DTexture::load2");
-
 	TeResourceManager *resMgr = g_engine->getResourceManager();
 	if (!resMgr->exists(fullPath)) {
 		TeIntrusivePtr<Te3DTexture> retval(makeInstance());
@@ -58,6 +55,10 @@ TeIntrusivePtr<Te3DTexture> Te3DTexture::load2(const Common::FSNode &node, bool 
 		bool result = retval->load(node);
 		if (!result)
 			warning("Failed loading texture %s", node.getPath().c_str());
+
+		if (alphaOnly)
+			warning("TODO: Handle alphaOnly in Te3DTexture::load2");
+
 		retval->setAccessName(fullPath);
 		resMgr->addResource(retval.get());
 		return retval;

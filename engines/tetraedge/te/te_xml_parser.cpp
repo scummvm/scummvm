@@ -19,48 +19,45 @@
  *
  */
 
-#include "tetraedge/te/te_camera_xml_parser.h"
+#include "tetraedge/te/te_xml_parser.h"
 
 namespace Tetraedge {
 
-bool TeCameraXmlParser::parserCallback_position(ParserNode *node) {
-	_cam->setPosition(parsePoint(node));
-	return true;
-}
-
-bool TeCameraXmlParser::parserCallback_rotation(ParserNode *node) {
+TeVector3f32 TeXmlParser::parsePoint(const ParserNode *node) const {
 	float x = atof(node->values["x"].c_str());
 	float y = atof(node->values["y"].c_str());
 	float z = atof(node->values["z"].c_str());
-	float w = atof(node->values["w"].c_str());
-	_cam->setRotation(TeQuaternion(x, y, z, w));
-	return true;
-
+	return TeVector3f32(x, y, z);
 }
 
-bool TeCameraXmlParser::parserCallback_scale(ParserNode *node) {
-	_cam->setScale(parsePoint(node));
-	return true;
-}
+bool TeXmlParser::parseCol(const ParserNode *node, TeColor &colout) {
+	uint r = node->values["r"].asUint64();
+	uint g = node->values["g"].asUint64();
+	uint b = node->values["b"].asUint64();
+	uint a;
+	if (node->values.contains("a"))
+		a = node->values["a"].asUint64();
+	else
+		a = 0xff;
 
-bool TeCameraXmlParser::parserCallback_fov(ParserNode *node) {
-	_cam->setFov(parseDouble(node));
-	return true;
-}
-
-bool TeCameraXmlParser::parserCallback_aspect(ParserNode *node) {
-	_cam->setAspectRatio(parseDouble(node));
-	return true;
-}
-
-bool TeCameraXmlParser::parserCallback_near(ParserNode *node) {
-	_cam->setOrthoNear(parseDouble(node));
+	if (r > 255 || g > 255 || b > 255 || a > 255) {
+		parserError("Invalid color values");
+		return false;
+	}
+	colout = TeColor(r, g, b, a);
 	return true;
 }
 
-bool TeCameraXmlParser::parserCallback_far(ParserNode *node) {
-	_cam->setOrthoFar(parseDouble(node));
-	return true;
+double TeXmlParser::parseDouble(const ParserNode *node, const char *attr) const {
+	if (!attr)
+		attr = "value";
+	return atof(node->values[attr].c_str());
+}
+
+int TeXmlParser::parseUint(const ParserNode *node, const char *attr) const {
+	if (!attr)
+		attr = "value";
+	return node->values[attr].asUint64();
 }
 
 } // end namespace Tetraedge

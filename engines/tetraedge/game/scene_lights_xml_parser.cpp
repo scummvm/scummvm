@@ -29,24 +29,6 @@ bool SceneLightsXmlParser::parserCallback_Global(ParserNode *node) {
 	return true;
 }
 
-bool SceneLightsXmlParser::parseCol(ParserNode *node, TeColor &colout) {
-	uint r = node->values["r"].asUint64();
-	uint g = node->values["g"].asUint64();
-	uint b = node->values["b"].asUint64();
-	uint a;
-	if (node->values.contains("a"))
-		a = node->values["a"].asUint64();
-	else
-		a = 0xff;
-
-	if (r > 255 || g > 255 || b > 255 || a > 255) {
-		parserError("Invalid color values");
-		return false;
-	}
-	colout = TeColor(r, g, b, a);
-	return true;
-}
-
 bool SceneLightsXmlParser::parserCallback_Ambient(ParserNode *node) {
 	// can appear under either global or light
 	TeColor col;
@@ -79,16 +61,13 @@ bool SceneLightsXmlParser::parserCallback_Light(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_Position(ParserNode *node) {
-	float x = atof(node->values["x"].c_str());
-	float y = atof(node->values["y"].c_str());
-	float z = atof(node->values["z"].c_str());
-	_lights->back()->setPosition3d(TeVector3f32(x, y, z));
+	_lights->back()->setPosition3d(parsePoint(node));
 	return true;
 }
 
 bool SceneLightsXmlParser::parserCallback_Direction(ParserNode *node) {
-	float h = (atof(node->values["h"].c_str()) * M_PI) / 180.0;
-	float v = (atof(node->values["v"].c_str()) * M_PI) / 180.0;
+	float h = (float)((parseDouble(node, "h") * M_PI) / 180.0);
+	float v = (float)((parseDouble(node, "v") * M_PI) / 180.0);
 	_lights->back()->setPositionRadial(TeVector2f32(h, v));
 	return true;
 }
@@ -112,9 +91,9 @@ bool SceneLightsXmlParser::parserCallback_Specular(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_Attenuation(ParserNode *node) {
-	float c = atof(node->values["constant"].c_str());
-	float l = atof(node->values["linear"].c_str());
-	float q = atof(node->values["quadratic"].c_str());
+	float c = parseDouble(node, "constant");
+	float l = parseDouble(node, "linear");
+	float q = parseDouble(node, "quadratic");
 	if (c < 0 || l < 0 || q < 0)
 		warning("Loaded invalid lighting attenuation vals %f %f %f", c, l, q);
 	_lights->back()->setConstAtten(c);
@@ -124,7 +103,7 @@ bool SceneLightsXmlParser::parserCallback_Attenuation(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_Cutoff(ParserNode *node) {
-	float cutoff = atof(node->values["value"].c_str());
+	float cutoff = parseDouble(node);
 	if (cutoff < 0.0f || (cutoff > 90.0f && cutoff != 180.0f))
 		warning("Loaded invalid lighting cutoff value %f", cutoff);
 	_lights->back()->setCutoff((cutoff * M_PI) / 180.0);
@@ -132,7 +111,7 @@ bool SceneLightsXmlParser::parserCallback_Cutoff(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_Exponent(ParserNode *node) {
-	float expon = atof(node->values["value"].c_str());
+	float expon = parseDouble(node);
 	if (expon < 0.0f || expon > 128.0f)
 		warning("Loaded invalid lighting exponent value %f", expon);
 	_lights->back()->setExponent(expon);
@@ -140,7 +119,7 @@ bool SceneLightsXmlParser::parserCallback_Exponent(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_DisplaySize(ParserNode *node) {
-	_lights->back()->setDisplaySize(atof(node->values["value"].c_str()));
+	_lights->back()->setDisplaySize(parseDouble(node));
 	return true;
 }
 
@@ -156,17 +135,17 @@ bool SceneLightsXmlParser::parserCallback_SourceLight(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_Fov(ParserNode *node) {
-	_shadowFov = atof(node->values["value"].c_str());
+	_shadowFov = parseDouble(node);
 	return true;
 }
 
 bool SceneLightsXmlParser::parserCallback_NearPlane(ParserNode *node) {
-	_shadowNearPlane = atof(node->values["value"].c_str());
+	_shadowNearPlane = parseDouble(node);
 	return true;
 }
 
 bool SceneLightsXmlParser::parserCallback_FarPlane(ParserNode *node) {
-	_shadowFarPlane = atof(node->values["value"].c_str());
+	_shadowFarPlane = parseDouble(node);
 	return true;
 }
 

@@ -30,6 +30,7 @@
 #include "tetraedge/to_lua.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_lua_thread.h"
+#include "tetraedge/te/te_particle.h"
 
 namespace Tetraedge {
 
@@ -2425,22 +2426,22 @@ static int tolua_ExportedFunctions_ActivateMask00(lua_State *L) {
 // Not your imagination, the implementation of these two is quite different to the others.
 static int tolua_GetParticleIndex(lua_State *L) {
 	Common::String s1(tolua_tostring(L, 1, nullptr));
-	warning("TODO: GetParticleIndex(%s)", s1.c_str());
-	tolua_pushnumber(L, 0);
-	//int idx = TeParticle::getIndex(s1);
-	//tolua_pushnumber(L, idx);
+	int idx = TeParticle::getIndex(s1);
+	tolua_pushnumber(L, idx);
 	return 1;
 }
 
 static int tolua_EnableParticle(lua_State *L) {
 	double d1 = tolua_tonumber(L, 1, 0.0);
-	/*
+	if (d1 < 0) {
+		warning("EnableParticle: Invalid particle %d requested", (int)d1);
+		return 0;
+	}
 	TeParticle *p = (TeParticle *)TeParticle::getIndexedParticle((int)d1);
 	if (p) {
 		double d2 = tolua_tonumber(L, 2, 1.0);
-		p->enable((int)d2 != 0);
-	}*/
-	warning("TODO: EnableParticle(%d)", (int)d1);
+		p->setEnabled((int)d2 != 0);
+	}
 	return 0;
 }
 

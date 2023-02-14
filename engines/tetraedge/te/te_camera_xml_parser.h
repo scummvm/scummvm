@@ -22,14 +22,12 @@
 #ifndef TETRAEDGE_TE_TE_CAMERA_XML_PARSER_H
 #define TETRAEDGE_TE_TE_CAMERA_XML_PARSER_H
 
-#include "common/str.h"
-#include "common/formats/xmlparser.h"
-
+#include "tetraedge/te/te_xml_parser.h"
 #include "tetraedge/te/te_camera.h"
 
 namespace Tetraedge {
 
-class TeCameraXmlParser : public Common::XMLParser {
+class TeCameraXmlParser : public TeXmlParser {
 public:
 	// Parser
 	CUSTOM_XML_PARSER(TeCameraXmlParser) {

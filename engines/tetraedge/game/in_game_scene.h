@@ -35,6 +35,7 @@
 #include "tetraedge/te/te_scene.h"
 #include "tetraedge/te/te_light.h"
 #include "tetraedge/te/te_lua_gui.h"
+#include "tetraedge/te/te_particle.h"
 #include "tetraedge/te/te_pick_mesh2.h"
 
 namespace Tetraedge {
@@ -88,6 +89,14 @@ public:
 		TeVector3f32 _position;
 		TeQuaternion _rotation;
 		TeVector3f32 _scale;
+	};
+
+	struct Flamme {
+		Common::String _name;
+		TeVector3f32 _center;
+		TeVector3f32 _yMax;
+		TeVector3f32 _offsetMin;
+		TeVector3f32 _offsetMax;
 	};
 
 	void activateAnchorZone(const Common::String &name, bool val);
@@ -220,6 +229,7 @@ public:
 	void setWaitTime(float usecs) { _waitTime = usecs; }
 	TeTimer &waitTimeTimer() { return _waitTimeTimer; }
 	Common::Array<Common::SharedPtr<TeLight>> &lights() { return _lights; }
+	Common::Array<TeIntrusivePtr<TeParticle>> &particles() { return _particles; }
 
 	// Note: Zone name and scene name are only set in Syberia 2
 	const Common::String getZoneName() const { return _zoneName; }
@@ -258,8 +268,10 @@ private:
 	Common::Array<Object> _objects;
 	Common::Array<TeIntrusivePtr<TeBezierCurve>> _bezierCurves;
 	Common::Array<Dummy> _dummies;
+	Common::Array<Flamme> _flammes;
 	Common::Array<TeIntrusivePtr<TeModel>> _zoneModels;
 	Common::Array<TeIntrusivePtr<TeModel>> _masks;
+	Common::Array<TeIntrusivePtr<TeParticle>> _particles;
 
 	TeIntrusivePtr<TeModel> _playerCharacterModel;
 	TeIntrusivePtr<TeBezierCurve> _curve;

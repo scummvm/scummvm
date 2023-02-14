@@ -29,11 +29,7 @@ bool TeTextLayoutXmlParser::parserCallback_section(ParserNode *node) {
 }
 
 bool TeTextLayoutXmlParser::parserCallback_color(ParserNode *node) {
-	const Common::String &r = node->values["r"];
-	const Common::String &g = node->values["g"];
-	const Common::String &b = node->values["b"];
-	_color = TeColor(r.asUint64(), g.asUint64(), b.asUint64(), 255);
-	return true;
+	return parseCol(node, _color);
 }
 
 bool TeTextLayoutXmlParser::parserCallback_font(ParserNode *node) {
