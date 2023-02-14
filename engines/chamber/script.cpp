@@ -1417,7 +1417,7 @@ uint16 SCR_26_GameOver(void) {
 	JaggedZoom(backbuffer, frontbuffer);
 
 	cga_BackBufferToRealFull();
-	RestartGame();
+	restartGame();
 	return 0;
 }
 
@@ -2915,7 +2915,7 @@ uint16 SCR_5B_TheEnd(void) {
 	TheEnd();
 
 	if (g_vm->getLanguage() == Common::EN_USA)
-		RestartGame();
+		restartGame();
 	else
 		for (;;) ;  /*HANG*/
 
@@ -4123,7 +4123,7 @@ Load save file
 */
 uint16 CMD_25_LoadGame(void) {
 	IFGM_StopSample();
-	if (LoadScena())
+	if (loadScena())
 		the_command = 0x918F;   /*error loading*/
 	else
 		the_command = 0x90AA;
@@ -4134,7 +4134,7 @@ uint16 CMD_25_LoadGame(void) {
 Write save file
 */
 uint16 CMD_26_SaveGame(void) {
-	if (SaveScena())
+	if (saveScena())
 		the_command = 0x9190;   /*error saving*/
 	else
 		the_command = 0x90AA;
