@@ -347,7 +347,7 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 			_sortLimitChanged = false;
 
 			debugC(kDebugObject, "SortItem: %s", si->dumpInfo().c_str());
-			if (_painted && si->overlap(_painted)) {
+			if (_painted && si->overlap(*_painted)) {
 				debugC(kDebugObject, "Overlaps: %s", _painted->dumpInfo().c_str());
 			}
 		}
