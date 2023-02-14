@@ -317,7 +317,7 @@ void PlayAnim(byte index, byte x, byte y) {
 			panim++;
 			sound = *panim++;
 			panim++;    /*unused*/
-			PlaySound(sound);
+			playSound(sound);
 			break;
 		case 0xFC:  /*nothing*/
 			panim++;

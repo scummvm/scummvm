@@ -59,7 +59,7 @@ pcsample_t pc_samples[] = {
 
 #undef N
 
-static void SpeakerPlay(pcsample_t *sample) {
+static void speakerPlay(pcsample_t *sample) {
 	uint16 rep, freq, delay1, delay2;
 
 	freq = sample->freq;
@@ -108,7 +108,7 @@ byte sounds_table[kMaxSounds][3] = {
 	{31, 0, 0}
 };
 
-void PlaySound(byte index) {
+void playSound(byte index) {
 	int16 i;
 	if (IFGM_PlaySound(index))
 		return;
@@ -117,7 +117,7 @@ void PlaySound(byte index) {
 		if (sounds_table[i][0] == index
 		        || sounds_table[i][1] == index
 		        || sounds_table[i][2] == index) {
-			SpeakerPlay(&pc_samples[i]);
+			speakerPlay(&pc_samples[i]);
 			break;
 		}
 	}

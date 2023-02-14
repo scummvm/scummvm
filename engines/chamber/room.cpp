@@ -506,7 +506,7 @@ void AnimRoomDoorOpen(byte index) {
 		info->layer[1].pixels += info->layer[1].width * 2 * 2;
 	}
 
-	PlaySound(31);
+	playSound(31);
 }
 
 /*
@@ -541,7 +541,7 @@ void AnimRoomDoorClose(byte index) {
 	info->layer[1].pixels = oldpixels;
 	DrawRoomDoor();
 
-	PlaySound(31);
+	playSound(31);
 }
 
 /*Maybe FindRoomDoor?*/

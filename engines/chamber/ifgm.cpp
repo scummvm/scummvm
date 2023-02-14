@@ -88,7 +88,7 @@ void IFGM_PlaySfx(byte index) {
 		return;
 	if (cur_dlg_index == 0)
 		return;
-	PlaySound(sfx_sounds[index % 16]);
+	playSound(sfx_sounds[index % 16]);
 }
 
 } // end of namespace Chamber

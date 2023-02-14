@@ -295,9 +295,9 @@ int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 
 void PlayHurtSound() {
 	if (!ifgm_loaded)
-		PlaySound(144);
+		playSound(144);
 	else
-		PlaySound(144 + (Rand() / 4) % 4);
+		playSound(144 + (Rand() / 4) % 4);
 }
 
 void BlinkWithSound(byte color) {
