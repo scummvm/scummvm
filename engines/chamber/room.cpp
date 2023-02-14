@@ -143,19 +143,19 @@ static const byte cga_color_sels[] = {
 	0x30, 0x10, 0x30, 0x10, 0x30, 0x10, 0x10, 0x30, 0x10, 0x10, 0x10, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x10, 0x10, 0x10
 };
 
-void SelectSpecificPalette(byte index) {
+void selectSpecificPalette(byte index) {
 	cga_ColorSelect(cga_color_sels[index]);
 }
 
 
-void SelectPalette(void) {
+void selectPalette(void) {
 	cga_ColorSelect(cga_color_sels[script_byte_vars.palette_index]);
 }
 
 /*
 Blit sprites to backbuffer
 */
-void BlitSpritesToBackBuffer(void) {
+void blitSpritesToBackBuffer(void) {
 	int16 i;
 	for (i = 0; i < MAX_SPRITES; i++) {
 		byte *sprite = sprites_list[i];
@@ -166,7 +166,7 @@ void BlitSpritesToBackBuffer(void) {
 /*
 Copy data at sprite's rect from screen to backbuffer
 */
-void RefreshSpritesData(void) {
+void refreshSpritesData(void) {
 	int16 i;
 	for (i = 0; i < MAX_SPRITES; i++) {
 		byte *sprite = sprites_list[i];
@@ -177,7 +177,7 @@ void RefreshSpritesData(void) {
 /*
 Check if packed x/y coordinates are in rect
 */
-int16 IsInRect(byte x, byte y, rect_t *rect) {
+int16 isInRect(byte x, byte y, rect_t *rect) {
 	if (x < rect->sx) return 0;
 	if (x >= rect->ex) return 0;
 	if (y < rect->sy) return 0;
@@ -188,14 +188,14 @@ int16 IsInRect(byte x, byte y, rect_t *rect) {
 /*
 Check if cursor is in rect
 */
-int16 IsCursorInRect(rect_t *rect) {
-	return IsInRect(cursor_x / CGA_PIXELS_PER_BYTE, cursor_y, rect);
+int16 isCursorInRect(rect_t *rect) {
+	return isInRect(cursor_x / CGA_PIXELS_PER_BYTE, cursor_y, rect);
 }
 
 /*
 Find person for a current spot
 */
-void FindPerson(void) {
+void findPerson(void) {
 	int16 i;
 	pers_t *pers = pers_list;
 	for (i = 0; i < PERS_MAX; i++, pers++) {
@@ -211,11 +211,11 @@ void FindPerson(void) {
 /*
 Select a spot under cursor if its flags are matched given criteria
 */
-void CheckHotspots(byte m, byte v) {
+void checkHotspots(byte m, byte v) {
 	int16 i;
 	spot_t *spot = zone_spots;
 	for (i = 0; spot != zone_spots_end; i++, spot++) {
-		if (IsCursorInRect((rect_t *)spot) && (spot->flags & SPOTFLG_80) && ((spot->flags & m) == v)) {
+		if (isCursorInRect((rect_t *)spot) && (spot->flags & SPOTFLG_80) && ((spot->flags & m) == v)) {
 			script_byte_vars.cur_spot_idx = i + 1;
 			spot_sprite = sprites_list + i;
 			found_spot = spot;
@@ -223,7 +223,7 @@ void CheckHotspots(byte m, byte v) {
 			object_hint = spot->hint;
 			cursor_color = 0xAA;
 			the_command = Swap16(spot->command);
-			FindPerson();
+			findPerson();
 			return;
 		}
 	}
@@ -235,9 +235,9 @@ void CheckHotspots(byte m, byte v) {
 /*
 Select cursor shape for current spot
 */
-void SelectSpotCursor(void) {
+void selectSpotCursor(void) {
 	int16 curs = CURSOR_TARGET;
-	CheckHotspots(script_byte_vars.spot_m, script_byte_vars.spot_v);
+	checkHotspots(script_byte_vars.spot_m, script_byte_vars.spot_v);
 	if (cursor_color == 0xAA) {
 		curs = CURSOR_BODY;
 		if ((script_byte_vars.cur_spot_flags & (SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8)) != SPOTFLG_10) {
@@ -270,7 +270,7 @@ static const int16 background_draw_steps[] = {
 /*
 Draw main backgound pattern, in spiral-like order
 */
-void DrawBackground(byte *target, byte vblank) {
+void drawBackground(byte *target, byte vblank) {
 	int16 i;
 	uint16 offs = (2 / 2) * CGA_BYTES_PER_LINE + 8;   /*TODO: calcxy?*/
 	byte *pixels = gauss_data + 0x3C8; /*TODO: better const*/
@@ -292,7 +292,7 @@ void DrawBackground(byte *target, byte vblank) {
 /*
 Load and initialize zone data
 */
-void LoadZone(void) {
+void loadZone(void) {
 	byte *zptr, *zend;
 
 	zptr = seekToEntry(zones_data, script_byte_vars.zone_index - 1, &zend);
@@ -346,7 +346,7 @@ void LoadZone(void) {
 	script_byte_vars.used_commands = 0;
 }
 
-void ResetZone(void) {
+void resetZone(void) {
 	script_byte_vars.bvar_43 = 0;
 	script_byte_vars.bvar_4B = 0;
 	script_byte_vars.bvar_61 = 0;
@@ -370,7 +370,7 @@ void ResetZone(void) {
 /*
 Load puzzl sprite to buffer, return next free buffer ptr
 */
-byte *LoadPuzzl(byte index, byte *buffer) {
+byte *loadPuzzl(byte index, byte *buffer) {
 	if (script_byte_vars.palette_index == 14)
 		return LoadSprite(index, puzzl_data + 4, buffer, 1);
 	else
@@ -380,9 +380,9 @@ byte *LoadPuzzl(byte index, byte *buffer) {
 /*
 Load puzzl sprite to scratch buffer, return sprite ptr
 */
-byte *LoadPuzzlToScratch(byte index) {
+byte *loadPuzzlToScratch(byte index) {
 	byte *buffer = scratch_mem2;
-	LoadPuzzl(index, buffer);
+	loadPuzzl(index, buffer);
 	return buffer;
 }
 
@@ -408,7 +408,7 @@ byte arpla_y_step;
 /*
 Fill in sliding door animation information
 */
-void InitRoomDoorInfo(byte index) {
+void initRoomDoorInfo(byte index) {
 	int16 i;
 	byte *aptr;
 	byte *sprbuf;
@@ -421,7 +421,7 @@ void InitRoomDoorInfo(byte index) {
 	for (i = 0; i < kNumDoorSprites; i++) {
 		byte x, y, w, h, ox;
 		byte *sprite = sprbuf;
-		sprbuf = LoadPuzzl(aptr[0], sprbuf);
+		sprbuf = loadPuzzl(aptr[0], sprbuf);
 
 		x = aptr[1];
 		y = aptr[2];
@@ -463,7 +463,7 @@ void InitRoomDoorInfo(byte index) {
 /*
 Draw sliding door
 */
-void DrawRoomDoor(void) {
+void drawRoomDoor(void) {
 	int16 i;
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
 	for (i = 0; i < kNumDoorSprites; i++) {
@@ -485,14 +485,14 @@ void DrawRoomDoor(void) {
 /*
 Animate sliding door open
 */
-void AnimRoomDoorOpen(byte index) {
+void animRoomDoorOpen(byte index) {
 	int16 i;
 
 	byte oldheight;
 
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
 
-	InitRoomDoorInfo(index);
+	initRoomDoorInfo(index);
 
 	IFGM_PlaySample(29);
 
@@ -500,7 +500,7 @@ void AnimRoomDoorOpen(byte index) {
 
 	for (i = 0; i < oldheight / 2; i++) {
 #if 1
-		DrawRoomDoor();
+		drawRoomDoor();
 #endif
 		info->layer[1].height -= 2;
 		info->layer[1].pixels += info->layer[1].width * 2 * 2;
@@ -512,14 +512,14 @@ void AnimRoomDoorOpen(byte index) {
 /*
 Animate sliding door close
 */
-void AnimRoomDoorClose(byte index) {
+void animRoomDoorClose(byte index) {
 	int16 i;
 
 	byte oldheight;
 	byte *oldpixels;
 
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
-	InitRoomDoorInfo(index);
+	initRoomDoorInfo(index);
 
 	IFGM_PlaySample(29);
 
@@ -531,7 +531,7 @@ void AnimRoomDoorClose(byte index) {
 
 	for (i = 0; i < oldheight / 2; i++) {
 #if 1
-		DrawRoomDoor();
+		drawRoomDoor();
 #endif
 		info->layer[1].height += 2;
 		info->layer[1].pixels -= info->layer[1].width * 2 * 2;
@@ -539,13 +539,13 @@ void AnimRoomDoorClose(byte index) {
 
 	info->layer[1].height = oldheight;
 	info->layer[1].pixels = oldpixels;
-	DrawRoomDoor();
+	drawRoomDoor();
 
 	playSound(31);
 }
 
 /*Maybe FindRoomDoor?*/
-byte FindInitialSpot(void) {
+byte findInitialSpot(void) {
 	spot_t *spot;
 	byte index;
 	byte flags = script_byte_vars.last_door;
@@ -562,7 +562,7 @@ byte FindInitialSpot(void) {
 /*
 Find first spot index that matches given flags
 */
-byte FindSpotByFlags(byte mask, byte value) {
+byte findSpotByFlags(byte mask, byte value) {
 	spot_t *spot;
 	byte index;
 	for (index = 1, spot = zone_spots; spot != zone_spots_end; spot++, index++) {
@@ -575,13 +575,13 @@ byte FindSpotByFlags(byte mask, byte value) {
 /*
 Select person and its spot (if available)
 */
-byte SelectPerson(byte offset) {
+byte selectPerson(byte offset) {
 	/*TODO: replace offset arg with index?*/
 	byte index = offset / 5;   /* / sizeof(pers_t) */
 
 	script_vars[ScrPool8_CurrentPers] = &pers_list[index];
 
-	index = FindSpotByFlags(0x3F, (pers_list[index].index & 7) | SPOTFLG_10);   /*TODO: return 0 if not found?*/
+	index = findSpotByFlags(0x3F, (pers_list[index].index & 7) | SPOTFLG_10);   /*TODO: return 0 if not found?*/
 	if (index == 0xFF)
 		return 0;
 
@@ -594,7 +594,7 @@ byte SelectPerson(byte offset) {
 /*
 Play animation at the selected spot or specified coordinates
 */
-void AnimateSpot(const animdesc_t *info) {
+void animateSpot(const animdesc_t *info) {
 	byte *sprite = *spot_sprite;
 	cga_RestoreImage(sprite, backbuffer);
 	if (info->index & ANIMFLG_USESPOT) {
@@ -652,7 +652,7 @@ lutinanim_t lutins_table[] = {
 	{0, {  0,  0,  0,  0,  0,  0,  0,  0} }
 };
 
-void BeforeChangeZone(byte index) {
+void beforeChangeZone(byte index) {
 	byte oldspot;
 	static const animdesc_t anim57 = {ANIMFLG_USESPOT | 57, { { 0, 0 } }};
 	static const animdesc_t anim58 = {ANIMFLG_USESPOT | 58, { { 0, 0 } }};
@@ -667,18 +667,18 @@ void BeforeChangeZone(byte index) {
 
 	script_byte_vars.need_draw_spots = ~0;
 
-	SelectPerson(PersonOffset(kPersScifi));
-	AnimateSpot(&anim57);
+	selectPerson(PersonOffset(kPersScifi));
+	animateSpot(&anim57);
 
 	if (pers_list[kPersMonkey].area != 0) {
-		SelectPerson(PersonOffset(kPersMonkey));
-		AnimateSpot(&anim58);
+		selectPerson(PersonOffset(kPersMonkey));
+		animateSpot(&anim58);
 	}
 
 	script_byte_vars.cur_spot_idx = oldspot;
 }
 
-void ChangeZone(byte index) {
+void changeZone(byte index) {
 	byte spridx = 0;
 
 	script_byte_vars.prev_zone_index = script_byte_vars.zone_index;
@@ -698,12 +698,12 @@ void ChangeZone(byte index) {
 			la->sprites[i] = spridx;
 	}
 
-	LoadZone();
-	ResetZone();
+	loadZone();
+	resetZone();
 }
 
 
-void DrawPersons(void) {
+void drawPersons(void) {
 	int16 i;
 	byte index, pidx;
 	spot_t *spot;
@@ -728,7 +728,7 @@ void DrawPersons(void) {
 				spot->hint = pers_list[i].name;
 				pers_list[i].flags |= index;
 				if (spot->flags & SPOTFLG_40)
-					DrawZoneAniSprite((rect_t *)spot, index, backbuffer);
+					drawZoneAniSprite((rect_t *)spot, index, backbuffer);
 				break;
 			}
 		}
@@ -738,10 +738,10 @@ void DrawPersons(void) {
 /*
 Draw room's static object to backbuffer
 */
-void DrawRoomStaticObject(byte *aptr, byte *rx, byte *ry, byte *rw, byte *rh) {
+void drawRoomStaticObject(byte *aptr, byte *rx, byte *ry, byte *rw, byte *rh) {
 	byte x, y, w, h;
 	int16 pitch;
-	byte *sprite = LoadPuzzlToScratch(aptr[0]);
+	byte *sprite = loadPuzzlToScratch(aptr[0]);
 	x = aptr[1];
 	y = aptr[2];
 	w = sprite[0];
@@ -788,13 +788,13 @@ Draw all room's static objects (decorations) to backbuffer
 Initialize room bounds rect to room's dimensions
 Draw room's name box and text
 */
-void DrawRoomStatics(void) {
+void drawRoomStatics(void) {
 	byte *aptr, *aend;
 	byte doorcount = 0;
 	byte x, y, w, h;
 	uint16 xx, ww;
 
-	DrawBackground(backbuffer, 0);
+	drawBackground(backbuffer, 0);
 	arpla_y_step = script_byte_vars.hands;
 
 	aptr = seekToEntry(arpla_data, script_byte_vars.zone_room - 1, &aend);
@@ -815,7 +815,7 @@ void DrawRoomStatics(void) {
 				continue;   /*TODO: error? index may never be that high here*/
 		}
 		/*draw decor object*/
-		DrawRoomStaticObject(aptr, &x, &y, &w, &h);
+		drawRoomStaticObject(aptr, &x, &y, &w, &h);
 
 		/*update room's bounding rect*/
 		if (x < room_bounds_rect.sx)
@@ -838,7 +838,7 @@ void DrawRoomStatics(void) {
 
 	/*print room name*/
 	cga_PrintChar(0x3B, backbuffer);
-	DrawObjectHint();                       /* area name */
+	drawObjectHint();                       /* area name */
 	cga_PrintChar(0x3C, backbuffer);
 
 	/*draw border around hint text*/
@@ -856,7 +856,7 @@ void DrawRoomStatics(void) {
 /*
 Redraw all room's static objects (decorations) to backbuffer
 */
-void RedrawRoomStatics(byte index, byte y_step) {
+void redrawRoomStatics(byte index, byte y_step) {
 	byte *aptr, *aend;
 	byte x, y, w, h;
 	arpla_y_step = y_step;
@@ -864,14 +864,14 @@ void RedrawRoomStatics(byte index, byte y_step) {
 	aptr = seekToEntry(arpla_data, index - 1, &aend);
 	for (; aptr != aend; aptr += 3) {
 		/*load room's bg objs*/
-		DrawRoomStaticObject(aptr, &x, &y, &w, &h);
+		drawRoomStaticObject(aptr, &x, &y, &w, &h);
 	}
 }
 
 /*
 Draw "some item in the room" icon
 */
-void DrawRoomItemsIndicator(void) {
+void drawRoomItemsIndicator(void) {
 	byte spridx = 172;
 	int16 i;
 	for (i = 0; i < MAX_INV_ITEMS; i++) {
@@ -892,7 +892,7 @@ void DrawRoomItemsIndicator(void) {
 	}
 }
 
-void DrawZoneSpots(void) {
+void drawZoneSpots(void) {
 	static const animdesc_t anim59 = {ANIMFLG_USESPOT | 59, { { 0, 0 } }};
 	static const animdesc_t anim60 = {ANIMFLG_USESPOT | 60, { { 0, 0 } }};
 
@@ -901,29 +901,29 @@ void DrawZoneSpots(void) {
 	if (!script_byte_vars.need_draw_spots)
 		return;
 
-	SelectPerson(PersonOffset(kPersScifi));
-	AnimateSpot(&anim59);
+	selectPerson(PersonOffset(kPersScifi));
+	animateSpot(&anim59);
 
 	pers_list[kPersScifi].area = script_byte_vars.zone_area;
 
 	if (pers_list[kPersMonkey].area != 0) {
 		pers_list[kPersMonkey].area = script_byte_vars.zone_area;
-		SelectPerson(PersonOffset(kPersMonkey));
-		AnimateSpot(&anim60);
+		selectPerson(PersonOffset(kPersMonkey));
+		animateSpot(&anim60);
 	}
 
 	script_byte_vars.cur_spot_idx = oldspot;
 
-	DrawPersons();
+	drawPersons();
 }
 
-void RefreshZone(void) {
+void refreshZone(void) {
 	popDirtyRects(DirtyRectSprite);
 	popDirtyRects(DirtyRectBubble);
 	popDirtyRects(DirtyRectText);
 
 	if (!skip_zone_transition && !right_button)
-		DrawBackground(CGA_SCREENBUFFER, 1);
+		drawBackground(CGA_SCREENBUFFER, 1);
 
 	cga_BackBufferToRealFull();
 
@@ -934,19 +934,19 @@ void RefreshZone(void) {
 		in_de_profundis = 1;
 	}
 
-	DrawTheWallDoors();
-	SelectPalette();
-	DrawRoomItemsIndicator();
-	DrawZoneSpots();
+	drawTheWallDoors();
+	selectPalette();
+	drawRoomItemsIndicator();
+	drawZoneSpots();
 	if (script_byte_vars.cur_spot_idx != 0)
-		AnimRoomDoorClose(script_byte_vars.cur_spot_idx);
-	BlitSpritesToBackBuffer();
+		animRoomDoorClose(script_byte_vars.cur_spot_idx);
+	blitSpritesToBackBuffer();
 }
 
 /*
 Draw object hint or zone name text to backbuffer
 */
-void DrawObjectHint(void) {
+void drawObjectHint(void) {
 	if (script_byte_vars.zone_index == 135)
 		return;
 	char_draw_max_width = room_hint_bar_width;
@@ -966,7 +966,7 @@ void DrawObjectHint(void) {
 /*
 Copy object hint from backbuffer to screen
 */
-void ShowObjectHint(byte *target) {
+void showObjectHint(byte *target) {
 	if (script_byte_vars.zone_index == 135)
 		return;
 	cga_CopyScreenBlock(backbuffer, room_hint_bar_width + 2, 9, target, cga_CalcXY_p(room_hint_bar_coords_x - 1, room_hint_bar_coords_y - 2));
@@ -975,7 +975,7 @@ void ShowObjectHint(byte *target) {
 /*
 Draw command hint text to backbuffer
 */
-void DrawCommandHint(void) {
+void drawCommandHint(void) {
 	char_draw_max_width = cmd_hint_bar_width;
 	char_draw_coords_x = cmd_hint_bar_coords_x;
 	char_draw_coords_y = cmd_hint_bar_coords_y;
@@ -986,11 +986,11 @@ void DrawCommandHint(void) {
 /*
 Copy command hint from backbuffer to screen
 */
-void ShowCommandHint(byte *target) {
+void showCommandHint(byte *target) {
 	cga_CopyScreenBlock(backbuffer, cmd_hint_bar_width + 2, 9, target, cga_CalcXY_p(cmd_hint_bar_coords_x - 1, cmd_hint_bar_coords_y - 2));
 }
 
-void LoadLutinSprite(uint16 lutidx) {
+void loadLutinSprite(uint16 lutidx) {
 	byte spridx;
 	uint16 flags;
 	byte *lutin_entry, *lutin_entry_end;
@@ -1023,19 +1023,19 @@ void LoadLutinSprite(uint16 lutidx) {
 
 		buffer = lutin_mem + 2 + (flags & 0x7FFF) * 2;
 		if (flags & 0x8000)
-			MergeSpritesDataFlip(buffer, lutin_mem[0] * 2, sprite, sprw, sprh);
+			mergeSpritesDataFlip(buffer, lutin_mem[0] * 2, sprite, sprw, sprh);
 		else
-			MergeSpritesData(buffer, lutin_mem[0] * 2, sprite, sprw, sprh);
+			mergeSpritesData(buffer, lutin_mem[0] * 2, sprite, sprw, sprh);
 	}
 }
 
 /*
 Draw specific room's person idle sprite
 */
-void DrawCharacterSprite(byte spridx, byte x, byte y, byte *target) {
+void drawCharacterSprite(byte spridx, byte x, byte y, byte *target) {
 	lutin_mem = scratch_mem2;
 
-	LoadLutinSprite(spridx);
+	loadLutinSprite(spridx);
 
 	DrawSprite(scratch_mem2, target, cga_CalcXY_p(x, y));
 }
@@ -1044,7 +1044,7 @@ void DrawCharacterSprite(byte spridx, byte x, byte y, byte *target) {
 Draw room's person idle sprite and advance sprite's animation
 Return true if a sprite was drawn
 */
-char DrawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
+char drawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
 	int16 i;
 	byte spridx;
 	pers_t *pers = pers_list;
@@ -1056,7 +1056,7 @@ char DrawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
 
 			lutin_mem = scratch_mem2;
 
-			LoadLutinSprite(spridx);
+			loadLutinSprite(spridx);
 
 			zsprite_w = scratch_mem2[0];
 			zsprite_h = scratch_mem2[1];
@@ -1073,7 +1073,7 @@ char DrawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
 /*
 Initialize Aspirant
 */
-void PrepareAspirant(void) {
+void prepareAspirant(void) {
 	byte index;
 	byte hostility, appearance;
 	byte flags;
@@ -1099,7 +1099,7 @@ void PrepareAspirant(void) {
 	if (script_byte_vars.zone_area >= kAreaPassage1)
 		return;
 
-	index = FindSpotByFlags(0x3F, 17);
+	index = findSpotByFlags(0x3F, 17);
 	if (index == 0xFF)
 		return;
 	aspirant_spot = &zone_spots[index - 1];
@@ -1180,7 +1180,7 @@ void PrepareAspirant(void) {
 /*
 Initialize Vorts
 */
-void PrepareVorts(void) {
+void prepareVorts(void) {
 	spot_t *spot;
 
 	if ((script_byte_vars.zone_area != kAreaTheReturn) || !(script_byte_vars.bvar_36 & 0x80)) {
@@ -1229,7 +1229,7 @@ void PrepareVorts(void) {
 /*
 Initialize Turkey
 */
-void PrepareTurkey(void) {
+void prepareTurkey(void) {
 	spot_t *spot;
 
 	if (script_byte_vars.zone_area == kAreaPlacatingThePowers && script_byte_vars.bvar_4E == 0) {
@@ -1274,8 +1274,8 @@ void PrepareTurkey(void) {
 /*
 Load puzzl sprite to scratch and init draw params
 */
-uint16 GetPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *ofs) {
-	byte *spr = LoadPuzzlToScratch(index);
+uint16 getPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *ofs) {
+	byte *spr = loadPuzzlToScratch(index);
 	*w = spr[0];
 	*h = spr[1];
 	*ofs = cga_CalcXY_p(x, y);
@@ -1285,7 +1285,7 @@ uint16 GetPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *
 /*
 Save specific fully drawn rooms to backbuffer
 */
-void BackupScreenOfSpecialRoom(void) {
+void backupScreenOfSpecialRoom(void) {
 	switch (script_byte_vars.zone_room) {
 	case 41: /* THE POWERS OF THE ABYSS */
 	case 22: /* DE PROFUNDIS */
@@ -1299,11 +1299,11 @@ void BackupScreenOfSpecialRoom(void) {
 /*
 Fully redraw specific rooms
 */
-void RestoreScreenOfSpecialRoom(void) {
+void restoreScreenOfSpecialRoom(void) {
 	switch (script_byte_vars.zone_room) {
 	case 23: /* DE PROFUNDIS */
 	case 24: /* DE PROFUNDIS */
-		RedrawRoomStatics(script_byte_vars.zone_room, 0);
+		redrawRoomStatics(script_byte_vars.zone_room, 0);
 		break;
 	}
 }
@@ -1311,7 +1311,7 @@ void RestoreScreenOfSpecialRoom(void) {
 /*
 Modify anim sprite 127
 */
-void SetAnim127Sprite(byte flags, byte spridx) {
+void setAnim127Sprite(byte flags, byte spridx) {
 	byte *lutin_entry, *lutin_entry_end;
 	lutin_entry = seekToEntry(lutin_data, 127, &lutin_entry_end);
 	lutin_entry[2] = spridx;
@@ -1330,22 +1330,22 @@ void SetAnim127Sprite(byte flags, byte spridx) {
 /*
 Bounce current item to the room/inventory
 */
-void BounceCurrentItem(byte flags, byte y) {
+void bounceCurrentItem(byte flags, byte y) {
 	item_t *item = (item_t *)(script_vars[ScrPool3_CurrentItem]);
 
-	SetAnim127Sprite(flags, item->sprite);
+	setAnim127Sprite(flags, item->sprite);
 	item->flags = flags;
 	item->area = script_byte_vars.zone_area;
-	BackupScreenOfSpecialRoom();
+	backupScreenOfSpecialRoom();
 	playAnim(41, 176 / 4, y);
-	DrawRoomItemsIndicator();
-	RestoreScreenOfSpecialRoom();
+	drawRoomItemsIndicator();
+	restoreScreenOfSpecialRoom();
 }
 
 /*
 Load The Wall gate sprites
 */
-byte *LoadMursmSprite(byte index) {
+byte *loadMursmSprite(byte index) {
 	byte *pinfo, *end;
 	pinfo = seekToEntry(mursm_data, index, &end);
 
@@ -1361,7 +1361,7 @@ byte *LoadMursmSprite(byte index) {
 		buffer = sprit_load_buffer + (flags & 0x3FFF);
 		pitch = 20;
 
-		sprite = LoadPuzzlToScratch(index & 0x7F);
+		sprite = loadPuzzlToScratch(index & 0x7F);
 		sprw = *sprite++;
 		sprh = *sprite++;
 
@@ -1386,7 +1386,7 @@ thewalldoor_t the_wall_doors[2];
 Open The Wall's right gate
 TODO: move this to CGA?
 */
-void TheWallOpenRightDoor(byte x, byte y, byte width, byte height, byte limit) {
+void theWallOpenRightDoor(byte x, byte y, byte width, byte height, byte limit) {
 	uint16 offs = cga_CalcXY_p(x + width - 2, y);
 
 	while (--width) {
@@ -1415,7 +1415,7 @@ void TheWallOpenRightDoor(byte x, byte y, byte width, byte height, byte limit) {
 Open The Wall's left gate
 TODO: move this to CGA?
 */
-void TheWallOpenLeftDoor(byte x, byte y, byte width, byte height, byte limit) {
+void theWallOpenLeftDoor(byte x, byte y, byte width, byte height, byte limit) {
 	uint16 offs = cga_CalcXY_p(x + 1, y);
 
 	while (--width) {
@@ -1443,12 +1443,12 @@ void TheWallOpenLeftDoor(byte x, byte y, byte width, byte height, byte limit) {
 Animate The Wall doors
 Phase 3: Fully closed -> Half opened
 */
-void TheWallPhase3_DoorOpen1(void) {
+void theWallPhase3_DoorOpen1(void) {
 	script_byte_vars.zone_index = (script_byte_vars.zone_index == 95) ? 9 : 102;
-	LoadZone();
+	loadZone();
 
-	TheWallOpenRightDoor(144 / 4, 32, 80 / 4, 59, 40 / 4);
-	TheWallOpenLeftDoor(64 / 4, 32, 80 / 4, 59, 40 / 4);
+	theWallOpenRightDoor(144 / 4, 32, 80 / 4, 59, 40 / 4);
+	theWallOpenLeftDoor(64 / 4, 32, 80 / 4, 59, 40 / 4);
 
 	IFGM_StopSample();
 
@@ -1459,12 +1459,12 @@ void TheWallPhase3_DoorOpen1(void) {
 Animate The Wall doors
 Phase 0: Half opened -> Fully opened
 */
-void TheWallPhase0_DoorOpen2(void) {
+void theWallPhase0_DoorOpen2(void) {
 	script_byte_vars.zone_index = (script_byte_vars.zone_index == 9) ? 24 : 30;
-	LoadZone();
+	loadZone();
 
-	TheWallOpenRightDoor((144 + 40) / 4, 32, (80 - 40) / 4, 59, 0);
-	TheWallOpenLeftDoor(64 / 4, 32, (80 - 40) / 4, 59, 0);
+	theWallOpenRightDoor((144 + 40) / 4, 32, (80 - 40) / 4, 59, 0);
+	theWallOpenLeftDoor(64 / 4, 32, (80 - 40) / 4, 59, 0);
 
 	IFGM_StopSample();
 
@@ -1475,18 +1475,18 @@ void TheWallPhase0_DoorOpen2(void) {
 Animate The Wall doors
 Phase 1: Opened -> Half closed
 */
-void TheWallPhase1_DoorClose1(void) {
+void theWallPhase1_DoorClose1(void) {
 	byte *spr;
 
 	script_byte_vars.zone_index = (script_byte_vars.zone_index == 24) ? 9 : 102;
-	LoadZone();
+	loadZone();
 
-	spr = LoadMursmSprite(0);
+	spr = loadMursmSprite(0);
 	spr += cur_frame_width - 1;
 	cur_image_coords_x = 64 / 4;
 	cga_AnimLiftToRight(10, spr, cur_frame_width, 1, cur_image_size_h, frontbuffer, cga_CalcXY_p(cur_image_coords_x, cur_image_coords_y));
 
-	spr = LoadMursmSprite(1);
+	spr = loadMursmSprite(1);
 	cur_image_coords_x = 220 / 4;
 	cga_AnimLiftToLeft(10, spr, cur_frame_width, 1, cur_image_size_h, frontbuffer, cga_CalcXY_p(cur_image_coords_x, cur_image_coords_y));
 
@@ -1499,18 +1499,18 @@ void TheWallPhase1_DoorClose1(void) {
 Animate The Wall doors
 Phase 2: Half closed -> Fully closed
 */
-void TheWallPhase2_DoorClose2(void) {
+void theWallPhase2_DoorClose2(void) {
 	byte *spr;
 
 	script_byte_vars.zone_index = (script_byte_vars.zone_index == 9) ? 95 : 103;
-	LoadZone();
+	loadZone();
 
-	spr = LoadMursmSprite(0);
+	spr = loadMursmSprite(0);
 	spr += cur_frame_width - 1;
 	cur_image_coords_x = 64 / 4;
 	cga_AnimLiftToRight(10, spr - 10, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, cga_CalcXY_p(cur_image_coords_x, cur_image_coords_y));
 
-	spr = LoadMursmSprite(1);
+	spr = loadMursmSprite(1);
 	cur_image_coords_x = 220 / 4;
 	cga_AnimLiftToLeft(10, spr, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, cga_CalcXY_p(cur_image_coords_x, cur_image_coords_y) - 10);
 
@@ -1522,22 +1522,22 @@ void TheWallPhase2_DoorClose2(void) {
 /*
 Draw default The Wall doors
 */
-void DrawTheWallDoors(void) {
+void drawTheWallDoors(void) {
 	switch (script_byte_vars.zone_index) {
 	case 9:
 	case 102:
-		cga_Blit(LoadMursmSprite(0) + 10, 20, 10, 59, CGA_SCREENBUFFER, cga_CalcXY_p(64 / CGA_PIXELS_PER_BYTE, 32));
+		cga_Blit(loadMursmSprite(0) + 10, 20, 10, 59, CGA_SCREENBUFFER, cga_CalcXY_p(64 / CGA_PIXELS_PER_BYTE, 32));
 		if (g_vm->getLanguage() == Common::EN_USA) {
 			/*This fixes odd black patch on the right gate door*/
-			cga_Blit(LoadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, cga_CalcXY_p(184 / CGA_PIXELS_PER_BYTE, 32));
+			cga_Blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, cga_CalcXY_p(184 / CGA_PIXELS_PER_BYTE, 32));
 		} else {
-			cga_Blit(LoadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, cga_CalcXY_p(180 / CGA_PIXELS_PER_BYTE, 32));
+			cga_Blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, cga_CalcXY_p(180 / CGA_PIXELS_PER_BYTE, 32));
 		}
 		break;
 	case 95:
 	case 103:
-		cga_Blit(LoadMursmSprite(0), 20, 20, 59, CGA_SCREENBUFFER, cga_CalcXY_p(64 / CGA_PIXELS_PER_BYTE, 32));
-		cga_Blit(LoadMursmSprite(1), 20, 20, 59, CGA_SCREENBUFFER, cga_CalcXY_p(144 / CGA_PIXELS_PER_BYTE, 32));
+		cga_Blit(loadMursmSprite(0), 20, 20, 59, CGA_SCREENBUFFER, cga_CalcXY_p(64 / CGA_PIXELS_PER_BYTE, 32));
+		cga_Blit(loadMursmSprite(1), 20, 20, 59, CGA_SCREENBUFFER, cga_CalcXY_p(144 / CGA_PIXELS_PER_BYTE, 32));
 		break;
 	}
 }
@@ -1545,7 +1545,7 @@ void DrawTheWallDoors(void) {
 /*
 Superimpose source sprite data over target sprite data
 */
-void MergeSpritesData(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h) {
+void mergeSpritesData(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h) {
 	uint16 x;
 	while (h--) {
 		for (x = 0; x < w; x++) {
@@ -1562,7 +1562,7 @@ void MergeSpritesData(byte *target, uint16 pitch, byte *source, uint16 w, uint16
 /*
 Superimpose horizontally-flipped source sprite data over target sprite data
 */
-void MergeSpritesDataFlip(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h) {
+void mergeSpritesDataFlip(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h) {
 	uint16 x;
 	target += w * 2 - 2;
 	while (h--) {
@@ -1582,7 +1582,7 @@ void MergeSpritesDataFlip(byte *target, uint16 pitch, byte *source, uint16 w, ui
 Save image at the rect to buffer
 Return current and next free buffer ptr
 */
-byte *BackupSpotImage(spot_t *spot, byte **spotback, byte *buffer) {
+byte *backupSpotImage(spot_t *spot, byte **spotback, byte *buffer) {
 	*spotback = buffer;
 	buffer = cga_BackupImage(backbuffer, cga_CalcXY_p(spot->sx, spot->sy), spot->ex - spot->sx, spot->ey - spot->sy, buffer);
 	return buffer;
@@ -1591,7 +1591,7 @@ byte *BackupSpotImage(spot_t *spot, byte **spotback, byte *buffer) {
 /*
 Save zone spot images to sprites list
 */
-void BackupSpotsImages(void) {
+void backupSpotsImages(void) {
 	spot_t *spot = zone_spots;
 	byte *buffer = scratch_mem1;
 	int16 i;
@@ -1599,7 +1599,7 @@ void BackupSpotsImages(void) {
 		sprites_list[i] = 0;
 	for (i = 0; spot != zone_spots_end; spot++, i++) { /*TODO: maybe don't advance it if spot is skipped?*/
 		if (spot->flags & SPOTFLG_40)
-			buffer = BackupSpotImage(spot, &sprites_list[i], buffer);
+			buffer = backupSpotImage(spot, &sprites_list[i], buffer);
 	}
 }
 
@@ -1607,7 +1607,7 @@ void BackupSpotsImages(void) {
 Animate all room's persons, one per call
 TODO: rename me
 */
-void DrawSpots(byte *target) {
+void drawSpots(byte *target) {
 	spot_t *spot = zone_spots_cur;
 	byte spridx = zone_spr_index;
 	if (spot == zone_spots_end) {
@@ -1621,7 +1621,7 @@ void DrawSpots(byte *target) {
 			zone_spots_cur = spot + 1;
 			zone_spr_index = spridx;
 			/*TODO: subclass spot_t from rect_t*/
-			if (DrawZoneAniSprite((rect_t *)spot, (spot - zone_spots) + 1, backbuffer)) {
+			if (drawZoneAniSprite((rect_t *)spot, (spot - zone_spots) + 1, backbuffer)) {
 				updateCursor();
 				waitVBlank();
 				undrawCursor(target);
@@ -1642,25 +1642,25 @@ void DrawSpots(byte *target) {
 Animate room's persons at fixed rate
 TODO: rename me
 */
-void AnimateSpots(byte *target) {
+void animateSpots(byte *target) {
 	if (script_byte_vars.timer_ticks % 32 == 31)
-		DrawSpots(target);
+		drawSpots(target);
 }
 
 /*
 Draw cursor and hints text on screen
 */
-void DrawHintsAndCursor(byte *target) {
+void drawHintsAndCursor(byte *target) {
 	updateCursor();
 	waitVBlank();
 	undrawCursor(target);
 	if (object_hint != last_object_hint) {
-		ShowObjectHint(target);
+		showObjectHint(target);
 		last_object_hint = object_hint;
 	}
 
 	if (command_hint != last_command_hint) {
-		ShowCommandHint(target);
+		showCommandHint(target);
 		last_command_hint = command_hint;
 	}
 
@@ -1670,8 +1670,8 @@ void DrawHintsAndCursor(byte *target) {
 /*
 Hide a person
 */
-void HidePerson(byte offset) {
-	SelectPerson(offset);
+void hidePerson(byte offset) {
+	selectPerson(offset);
 	found_spot->flags &= ~SPOTFLG_80;
 }
 
@@ -1687,7 +1687,7 @@ const byte *timed_seq_ptr = patrol_route;
 /*
 Update Protozorqs locations
 */
-void UpdateProtozorqs(void) {
+void updateProtozorqs(void) {
 	uint16 elapsed;
 
 	if (script_byte_vars.bvar_45 != 0)
@@ -1747,13 +1747,13 @@ void UpdateProtozorqs(void) {
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_3F) {
 			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35, { { 0, 0 } }};
 			updateUndrawCursor(frontbuffer);
-			RefreshSpritesData();
-			HidePerson(PersonOffset(kPersProtozorq14));
-			HidePerson(PersonOffset(kPersProtozorq5));
-			HidePerson(PersonOffset(kPersProtozorq12));
-			HidePerson(PersonOffset(kPersProtozorq13));
-			AnimateSpot(&anim35);
-			BlitSpritesToBackBuffer();
+			refreshSpritesData();
+			hidePerson(PersonOffset(kPersProtozorq14));
+			hidePerson(PersonOffset(kPersProtozorq5));
+			hidePerson(PersonOffset(kPersProtozorq12));
+			hidePerson(PersonOffset(kPersProtozorq13));
+			animateSpot(&anim35);
+			blitSpritesToBackBuffer();
 			drawCursor(frontbuffer);
 			return;
 		}
@@ -1761,24 +1761,24 @@ void UpdateProtozorqs(void) {
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_40) {
 			static const animdesc_t anim34 = {ANIMFLG_USESPOT | 34, { { 0, 0 } }};
 			updateUndrawCursor(frontbuffer);
-			RefreshSpritesData();
+			refreshSpritesData();
 
-			SelectPerson(PersonOffset(kPersProtozorq14));
-			AnimateSpot(&anim34);
+			selectPerson(PersonOffset(kPersProtozorq14));
+			animateSpot(&anim34);
 
-			if (SelectPerson(PersonOffset(kPersProtozorq12))) {
-				AnimateSpot(&anim34);
+			if (selectPerson(PersonOffset(kPersProtozorq12))) {
+				animateSpot(&anim34);
 
-				SelectPerson(PersonOffset(kPersProtozorq5));
-				AnimateSpot(&anim34);
+				selectPerson(PersonOffset(kPersProtozorq5));
+				animateSpot(&anim34);
 
-				SelectPerson(PersonOffset(kPersProtozorq13));
-				AnimateSpot(&anim34);
+				selectPerson(PersonOffset(kPersProtozorq13));
+				animateSpot(&anim34);
 			}
 
-			DrawPersons();
+			drawPersons();
 			cga_BackBufferToRealFull();
-			BlitSpritesToBackBuffer();
+			blitSpritesToBackBuffer();
 			drawCursor(frontbuffer);
 
 			if (script_byte_vars.zapstiks_owned != 0)
@@ -1798,10 +1798,10 @@ void UpdateProtozorqs(void) {
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_3F) {
 			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35, { { 0, 0 } }};
 			updateUndrawCursor(frontbuffer);
-			RefreshSpritesData();
-			HidePerson(PersonOffset(kPersProtozorq14));
-			AnimateSpot(&anim35);
-			BlitSpritesToBackBuffer();
+			refreshSpritesData();
+			hidePerson(PersonOffset(kPersProtozorq14));
+			animateSpot(&anim35);
+			blitSpritesToBackBuffer();
 			drawCursor(frontbuffer);
 			return;
 		}
@@ -1809,14 +1809,14 @@ void UpdateProtozorqs(void) {
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_40) {
 			static const animdesc_t anim34 = {ANIMFLG_USESPOT | 34, { { 0, 0 } }};
 			updateUndrawCursor(frontbuffer);
-			RefreshSpritesData();
+			refreshSpritesData();
 
-			SelectPerson(PersonOffset(kPersProtozorq14));
-			AnimateSpot(&anim34);
+			selectPerson(PersonOffset(kPersProtozorq14));
+			animateSpot(&anim34);
 
-			DrawPersons();
+			drawPersons();
 			cga_BackBufferToRealFull();
-			BlitSpritesToBackBuffer();
+			blitSpritesToBackBuffer();
 			drawCursor(frontbuffer);
 
 			return;
@@ -1827,7 +1827,7 @@ void UpdateProtozorqs(void) {
 /*
 Check how many time have passed and call the guards
 */
-void CheckGameTimeLimit(void) {
+void checkGameTimeLimit(void) {
 	uint16 elapsed = Swap16(script_word_vars.timer_ticks2);
 
 	if (elapsed < 60 * 60)
@@ -1868,7 +1868,7 @@ void CheckGameTimeLimit(void) {
 /*
 Clean up dropped items after some time
 */
-void CleanupDroppedItems(void) {
+void cleanupDroppedItems(void) {
 	int16 i;
 
 	if (Swap16(script_word_vars.timer_ticks2) - drops_cleanup_time < 180)
@@ -1883,7 +1883,7 @@ void CleanupDroppedItems(void) {
 	}
 }
 
-void ResetAllPersons(void) {
+void resetAllPersons(void) {
 	int16 i;
 	for (i = 0; i < PERS_MAX; i++)
 		pers_list[i].flags &= ~PERSFLG_80;

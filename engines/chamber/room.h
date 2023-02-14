@@ -159,79 +159,79 @@ typedef struct thewalldoor_t {
 
 extern thewalldoor_t the_wall_doors[2];
 
-int16 IsInRect(byte x, byte y, rect_t *rect);
-int16 IsCursorInRect(rect_t *rect);
-void SelectSpotCursor(void);
+int16 isInRect(byte x, byte y, rect_t *rect);
+int16 isCursorInRect(rect_t *rect);
+void selectSpotCursor(void);
 
-void CheckHotspots(byte m, byte v);
+void checkHotspots(byte m, byte v);
 
-void AnimateSpot(const animdesc_t *info);
-byte *LoadPuzzlToScratch(byte index);
+void animateSpot(const animdesc_t *info);
+byte *loadPuzzlToScratch(byte index);
 
-void DrawObjectHint(void);
-void ShowObjectHint(byte *target);
-void DrawCommandHint(void);
-void ShowCommandHint(byte *target);
+void drawObjectHint(void);
+void showObjectHint(byte *target);
+void drawCommandHint(void);
+void showCommandHint(byte *target);
 
-void DrawCharacterSprite(byte spridx, byte x, byte y, byte *target);
-char DrawZoneAniSprite(rect_t *rect, uint16 index, byte *target);
+void drawCharacterSprite(byte spridx, byte x, byte y, byte *target);
+char drawZoneAniSprite(rect_t *rect, uint16 index, byte *target);
 
-void DrawHintsAndCursor(byte *target);
+void drawHintsAndCursor(byte *target);
 
-void DrawTheWallDoors(void);
-void MergeSpritesData(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h);
-void MergeSpritesDataFlip(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h);
+void drawTheWallDoors(void);
+void mergeSpritesData(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h);
+void mergeSpritesDataFlip(byte *target, uint16 pitch, byte *source, uint16 w, uint16 h);
 
-void RefreshSpritesData(void);
-void BlitSpritesToBackBuffer(void);
-byte *BackupSpotImage(spot_t *spot, byte **spotback, byte *buffer);
-void BackupSpotsImages(void);
+void refreshSpritesData(void);
+void blitSpritesToBackBuffer(void);
+byte *backupSpotImage(spot_t *spot, byte **spotback, byte *buffer);
+void backupSpotsImages(void);
 
-void SelectPalette(void);
-void SelectSpecificPalette(byte index);
+void selectPalette(void);
+void selectSpecificPalette(byte index);
 
-byte FindSpotByFlags(byte mask, byte value);
-byte SelectPerson(byte offset);
+byte findSpotByFlags(byte mask, byte value);
+byte selectPerson(byte offset);
 
-void FindPerson(void);
+void findPerson(void);
 
-void BeforeChangeZone(byte index);
-void DrawRoomItemsIndicator(void);
-void DrawRoomStaticObject(byte *aptr, byte *rx, byte *ry, byte *rw, byte *rh);
-void DrawRoomStatics(void);
-void RedrawRoomStatics(byte index, byte y_step);
-void DrawPersons(void);
-void RefreshZone(void);
-void ChangeZone(byte index);
+void beforeChangeZone(byte index);
+void drawRoomItemsIndicator(void);
+void drawRoomStaticObject(byte *aptr, byte *rx, byte *ry, byte *rw, byte *rh);
+void drawRoomStatics(void);
+void redrawRoomStatics(byte index, byte y_step);
+void drawPersons(void);
+void refreshZone(void);
+void changeZone(byte index);
 
-void DrawSpots(byte *target);
-void AnimateSpots(byte *target);
+void drawSpots(byte *target);
+void animateSpots(byte *target);
 
-byte FindInitialSpot(void);
-void AnimRoomDoorOpen(byte index);
-void AnimRoomDoorClose(byte index);
+byte findInitialSpot(void);
+void animRoomDoorOpen(byte index);
+void animRoomDoorClose(byte index);
 
-uint16 GetPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *ofs);
+uint16 getPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *ofs);
 
-void BounceCurrentItem(byte flags, byte y);
+void bounceCurrentItem(byte flags, byte y);
 
-void BackupScreenOfSpecialRoom(void);
-void RestoreScreenOfSpecialRoom(void);
+void backupScreenOfSpecialRoom(void);
+void restoreScreenOfSpecialRoom(void);
 
-void TheWallPhase3_DoorOpen1(void);
-void TheWallPhase0_DoorOpen2(void);
-void TheWallPhase1_DoorClose1(void);
-void TheWallPhase2_DoorClose2(void);
+void theWallPhase3_DoorOpen1(void);
+void theWallPhase0_DoorOpen2(void);
+void theWallPhase1_DoorClose1(void);
+void theWallPhase2_DoorClose2(void);
 
-void PrepareAspirant(void);
-void PrepareVorts(void);
-void PrepareTurkey(void);
+void prepareAspirant(void);
+void prepareVorts(void);
+void prepareTurkey(void);
 
-void UpdateProtozorqs(void);
-void CheckGameTimeLimit(void);
-void CleanupDroppedItems(void);
+void updateProtozorqs(void);
+void checkGameTimeLimit(void);
+void cleanupDroppedItems(void);
 
-void ResetAllPersons(void);
+void resetAllPersons(void);
 
 } // End of namespace Chamber
 

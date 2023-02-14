@@ -331,7 +331,7 @@ uint16 SCR_4_StealZapstik(void) {
 		script_vars[ScrPool3_CurrentItem] = &inventory_items[kItemZapstik1 - 1 + (script_byte_vars.cur_pers - 1) - kPersProtozorq1];
 		script_byte_vars.steals_count++;
 
-		BounceCurrentItem(ITEMFLG_OWNED, 85);  /*bounce to inventory*/
+		bounceCurrentItem(ITEMFLG_OWNED, 85);  /*bounce to inventory*/
 
 		the_command = 0x9147;   /*YOU GET HIS ZAPSTIK*/
 		if (script_byte_vars.zapstik_stolen == 0) {
@@ -1195,7 +1195,7 @@ uint16 SCR_39_AnimRoomDoorOpen(void) {
 
 	script_ptr++;
 	door = *script_ptr++;
-	AnimRoomDoorOpen(door);
+	animRoomDoorOpen(door);
 	return 0;
 }
 
@@ -1207,7 +1207,7 @@ uint16 SCR_3A_AnimRoomDoorClose(void) {
 
 	script_ptr++;
 	door = *script_ptr++;
-	AnimRoomDoorClose(door);
+	animRoomDoorClose(door);
 	return 0;
 }
 
@@ -1218,7 +1218,7 @@ uint16 SCR_25_ChangeZoneOnly(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	ChangeZone(index);
+	changeZone(index);
 	script_byte_vars.zone_room = old;
 	return 0;
 }
@@ -1426,7 +1426,7 @@ Draw all active room's persons
 */
 uint16 SCR_4C_DrawPersons(void) {
 	script_ptr++;
-	DrawPersons();
+	drawPersons();
 	return 0;
 }
 
@@ -1437,7 +1437,7 @@ uint16 SCR_13_RedrawRoomStatics(void) {
 	byte index;
 	script_ptr++;
 	index = *script_ptr++;
-	RedrawRoomStatics(index, 0);
+	redrawRoomStatics(index, 0);
 	return 0;
 }
 
@@ -1459,29 +1459,29 @@ uint16 SCR_42_LoadZone(void) {
 			script_byte_vars.last_door = script_byte_vars.cur_spot_flags & 7;
 		else if ((script_byte_vars.cur_spot_flags & ((SPOTFLG_20 | SPOTFLG_10 | SPOTFLG_8))) == SPOTFLG_8) {
 			skip_zone_transition = 1;
-			AnimRoomDoorOpen(script_byte_vars.cur_spot_idx);
+			animRoomDoorOpen(script_byte_vars.cur_spot_idx);
 			script_byte_vars.last_door = script_byte_vars.cur_spot_flags & 7;
 		} else
 			script_byte_vars.last_door = 0;
 	}
-	BeforeChangeZone(index);
-	ChangeZone(index);
+	beforeChangeZone(index);
+	changeZone(index);
 	script_byte_vars.zone_area_copy = script_byte_vars.zone_area;
-	script_byte_vars.cur_spot_idx = FindInitialSpot();
+	script_byte_vars.cur_spot_idx = findInitialSpot();
 	skip_zone_transition |= script_byte_vars.cur_spot_idx;
 
-	DrawRoomStatics();
+	drawRoomStatics();
 
 	if (script_byte_vars.bvar_5F != 0) {
-		RedrawRoomStatics(script_byte_vars.bvar_5F, 0);
+		redrawRoomStatics(script_byte_vars.bvar_5F, 0);
 		script_byte_vars.bvar_5F = 0;
 	}
 
-	BackupSpotsImages();
-	PrepareVorts();
-	PrepareTurkey();
-	PrepareAspirant();
-	DrawPersons();
+	backupSpotsImages();
+	prepareVorts();
+	prepareTurkey();
+	prepareAspirant();
+	drawPersons();
 	script_byte_vars.cur_spot_flags = 0;
 	return 0;
 }
@@ -1489,9 +1489,9 @@ uint16 SCR_42_LoadZone(void) {
 /*
 Draw current sprites
 */
-uint16 SCR_59_BlitSpritesToBackBuffer(void) {
+uint16 SCR_59_blitSpritesToBackBuffer(void) {
 	script_ptr++;
-	BlitSpritesToBackBuffer();
+	blitSpritesToBackBuffer();
 	return 0;
 }
 
@@ -1500,7 +1500,7 @@ Apply current palette
 */
 uint16 SCR_5A_SelectPalette(void) {
 	script_ptr++;
-	SelectPalette();
+	selectPalette();
 	return 0;
 }
 
@@ -1511,7 +1511,7 @@ uint16 SCR_5E_SelectTempPalette(void) {
 	byte index;
 	script_ptr++;
 	index = *script_ptr++;
-	SelectSpecificPalette(index);
+	selectSpecificPalette(index);
 	return 0;
 }
 
@@ -1520,7 +1520,7 @@ Draw new zone
 */
 uint16 SCR_43_RefreshZone(void) {
 	script_ptr++;
-	RefreshZone();
+	refreshZone();
 	return 0;
 }
 
@@ -1529,7 +1529,7 @@ Go to new zone and draw it
 */
 uint16 SCR_36_ChangeZone(void) {
 	SCR_42_LoadZone();
-	RefreshZone();
+	refreshZone();
 	return 0;
 }
 
@@ -1544,7 +1544,7 @@ void SCR_DrawRoomObjectBack(byte *x, byte *y, byte *w, byte *h) {
 	obj[1] = *script_ptr++; /*x*/
 	obj[2] = *script_ptr++; /*y*/
 
-	DrawRoomStaticObject(obj, x, y, w, h);
+	drawRoomStaticObject(obj, x, y, w, h);
 }
 
 /*
@@ -1673,7 +1673,7 @@ uint16 SCR_3D_ActionsMenu(void) {
 
 		script_ptr = old_script;
 		if (--script_byte_vars.tries_left == 0)
-			ResetAllPersons();
+			resetAllPersons();
 	}
 
 	script_end_ptr = old_script_end;
@@ -1690,16 +1690,16 @@ uint16 SCR_3E_TheWallAdvance(void) {
 	script_byte_vars.the_wall_phase = (script_byte_vars.the_wall_phase + 1) % 4;
 	switch (script_byte_vars.the_wall_phase) {
 	default:
-		TheWallPhase3_DoorOpen1();
+		theWallPhase3_DoorOpen1();
 		break;
 	case 0:
-		TheWallPhase0_DoorOpen2();
+		theWallPhase0_DoorOpen2();
 		break;
 	case 1:
-		TheWallPhase1_DoorClose1();
+		theWallPhase1_DoorClose1();
 		break;
 	case 2:
-		TheWallPhase2_DoorClose2();
+		theWallPhase2_DoorClose2();
 		break;
 	}
 
@@ -1849,7 +1849,7 @@ Draw updated Hands in Who Will Be Saved
 */
 uint16 SCR_41_LiftHand(void) {
 	script_ptr++;
-	RedrawRoomStatics(92, script_byte_vars.hands);
+	redrawRoomStatics(92, script_byte_vars.hands);
 	cga_BackBufferToRealFull();
 	playSound(31);
 	return 0;
@@ -1880,7 +1880,7 @@ uint16 SCR_30_Fight(void) {
 		if (next_vorts_cmd == 0xA015) {
 			the_command = 0xA015;
 			RunCommand();
-			SelectPerson(PersonOffset(pers - pers_list));
+			selectPerson(PersonOffset(pers - pers_list));
 		}
 		if (Swap16(script_word_vars.next_aspirant_cmd) == 0xC357) {
 			the_command = 0xC357;
@@ -2087,7 +2087,7 @@ uint16 SCR_31_Fight2(void) {
 			pers_list[kPersVort2].flags = pers->flags;
 			if (script_byte_vars.zapstiks_owned == 0) {
 				static const animdesc_t anim19 = {ANIMFLG_USESPOT | 19, { { 0, 0 } }};
-				AnimateSpot(&anim19);
+				animateSpot(&anim19);
 			}
 			the_command = next_vorts_cmd;
 			RunCommand();
@@ -2096,7 +2096,7 @@ uint16 SCR_31_Fight2(void) {
 			pers_list[kPersVort3].flags = pers->flags;
 			if (script_byte_vars.zapstiks_owned == 0) {
 				static const animdesc_t anim20 = {ANIMFLG_USESPOT | 20, { { 0, 0 } }};
-				AnimateSpot(&anim20);
+				animateSpot(&anim20);
 			}
 			the_command = next_vorts_cmd;
 			RunCommand();
@@ -2183,7 +2183,7 @@ void DrawDeathAnim(void) {
 	int16 i;
 
 	/*remove existing cadaver if any*/
-	if (SelectPerson(PersonOffset(kPersCadaver))) {
+	if (selectPerson(PersonOffset(kPersCadaver))) {
 		found_spot->flags &= ~SPOTFLG_80;
 		cga_RestoreImage(*spot_sprite, backbuffer);
 	}
@@ -2208,16 +2208,16 @@ uint16 SCR_60_ReviveCadaver(void) {
 	pers_t *pers;
 	script_ptr++;
 
-	BlitSpritesToBackBuffer();
+	blitSpritesToBackBuffer();
 
-	SelectPerson(PersonOffset(kPersCadaver));
+	selectPerson(PersonOffset(kPersCadaver));
 
 	script_byte_vars.bvar_60 = 1;
 	FightWin();
 	script_byte_vars.bvar_60 = 0;
 	pers_list[kPersCadaver].area = 0;
 
-	SelectPerson(fight_pers_ofs);
+	selectPerson(fight_pers_ofs);
 	zone_spots[5].flags = SPOTFLG_40 | SPOTFLG_10 | SPOTFLG_2 | SPOTFLG_1;
 	found_spot->flags |= SPOTFLG_80;
 
@@ -2225,7 +2225,7 @@ uint16 SCR_60_ReviveCadaver(void) {
 	pers->flags &= ~PERSFLG_40;
 	pers->area = script_byte_vars.zone_area;
 
-	DrawPersons();
+	drawPersons();
 	cga_BackBufferToRealFull();
 
 	return 0;
@@ -2240,7 +2240,7 @@ uint16 SCR_57_ShowCharacterSprite(void) {
 	x = *script_ptr++;
 	y = *script_ptr++;
 
-	DrawCharacterSprite(index, x, y, frontbuffer);
+	drawCharacterSprite(index, x, y, frontbuffer);
 
 	return 0;
 }
@@ -2253,12 +2253,12 @@ uint16 SCR_58_DrawCharacterSprite(void) {
 	x = *script_ptr++;
 	y = *script_ptr++;
 
-	DrawCharacterSprite(index, x, y, backbuffer);
+	drawCharacterSprite(index, x, y, backbuffer);
 
 	return 0;
 }
 
-extern void ExitGame(void);
+extern void exitGame(void);
 
 uint16 SCR_15_SelectSpot(void) {
 	byte mask, index;
@@ -2267,17 +2267,17 @@ uint16 SCR_15_SelectSpot(void) {
 	mask = *script_ptr++;
 	index = *script_ptr++;
 	if (mask != 0) {
-		index = FindSpotByFlags(mask, index);   /*TODO: return 0 if not found?*/
+		index = findSpotByFlags(mask, index);   /*TODO: return 0 if not found?*/
 		if (index == 0xFF) {
 			TODO("ERROR: SelectSpot: spot not found");
-			ExitGame(); /*hard abort*/
+			exitGame(); /*hard abort*/
 		}
 	}
 	found_spot = &zone_spots[index - 1];
 	script_byte_vars.cur_spot_idx = index;
 	spot_sprite = &sprites_list[index - 1];
 
-	FindPerson();
+	findPerson();
 
 	if (script_byte_vars.cur_pers == 0)
 		script_vars[ScrPool8_CurrentPers] = &pers_list[kPersProtozorq12];
@@ -2301,11 +2301,11 @@ uint16 SCR_45_DeProfundisRoomEntry(void) {
 	script_ptr++;
 
 	/*draw Platform*/
-	sprofs = GetPuzzlSprite(3, 140 / 4, 174, &w, &h, &ofs);
+	sprofs = getPuzzlSprite(3, 140 / 4, 174, &w, &h, &ofs);
 	cga_BlitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
 
 	/*draw Granite Monster*/
-	sprofs = GetPuzzlSprite(119, 128 / 4, 94, &w, &h, &ofs);
+	sprofs = getPuzzlSprite(119, 128 / 4, 94, &w, &h, &ofs);
 	cga_BlitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
 
 	promptWait();
@@ -2338,7 +2338,7 @@ uint16 SCR_46_DeProfundisLowerHook(void) {
 	script_ptr++;
 
 	/*draw Hook*/
-	sprofs = GetPuzzlSprite(96, 140 / 4, 18, &w, &h, &ofs);
+	sprofs = getPuzzlSprite(96, 140 / 4, 18, &w, &h, &ofs);
 
 	h = 1;
 	y = 15;
@@ -2368,7 +2368,7 @@ uint16 SCR_47_DeProfundisRiseMonster(void) {
 	script_ptr++;
 
 	/*draw Granite Monster head*/
-	sprofs = GetPuzzlSprite(118, 112 / 4, 174, &w, &h, &ofs);
+	sprofs = getPuzzlSprite(118, 112 / 4, 174, &w, &h, &ofs);
 
 	h = 1;
 	y = 68;
@@ -2399,7 +2399,7 @@ uint16 SCR_48_DeProfundisLowerMonster(void) {
 	script_ptr++;
 
 	/*draw Hook*/
-	sprofs = GetPuzzlSprite(118, 112 / 4, 106, &w, &h, &ofs);
+	sprofs = getPuzzlSprite(118, 112 / 4, 106, &w, &h, &ofs);
 
 	y = 34;
 
@@ -2429,7 +2429,7 @@ uint16 SCR_49_DeProfundisRiseHook(void) {
 	script_ptr++;
 
 	/*draw Hook*/
-	sprofs = GetPuzzlSprite(96, 140 / 4, 18, &w, &h, &ofs);
+	sprofs = getPuzzlSprite(96, 140 / 4, 18, &w, &h, &ofs);
 
 	h = 16;
 	y = 15;
@@ -2467,7 +2467,7 @@ uint16 SCR_65_DeProfundisMovePlatform(void) {
 		y += 4;
 
 	/*draw Platform*/
-	sprofs = GetPuzzlSprite(3, x, y, &w, &h, &ofs);
+	sprofs = getPuzzlSprite(3, x, y, &w, &h, &ofs);
 
 	y = 4;
 	if (state) {
@@ -2504,7 +2504,7 @@ uint16 SCR_66_DeProfundisRideToExit(void) {
 	script_ptr++;
 
 	/*draw Granite Monster*/
-	sprofs = GetPuzzlSprite(119, 128 / 4, 139, &w, &h, &ofs);
+	sprofs = getPuzzlSprite(119, 128 / 4, 139, &w, &h, &ofs);
 
 	cga_BlitScratchBackSprite(sprofs, w, 20, backbuffer, ofs);
 
@@ -2520,7 +2520,7 @@ Draw item bounce to room objects animation
 */
 uint16 SCR_4E_BounceCurrentItemToRoom(void) {
 	script_ptr++;
-	BounceCurrentItem(ITEMFLG_ROOM, 43);
+	bounceCurrentItem(ITEMFLG_ROOM, 43);
 	return 0;
 }
 
@@ -2529,7 +2529,7 @@ Draw item bounce to inventory animation
 */
 uint16 SCR_4F_BounceCurrentItemToInventory(void) {
 	script_ptr++;
-	BounceCurrentItem(ITEMFLG_OWNED, 85);
+	bounceCurrentItem(ITEMFLG_OWNED, 85);
 	return 0;
 }
 
@@ -2543,7 +2543,7 @@ uint16 SCR_50_BounceItemToInventory(void) {
 	itemidx = *script_ptr++;
 	script_vars[ScrPool3_CurrentItem] = &inventory_items[itemidx - 1];
 
-	BounceCurrentItem(ITEMFLG_OWNED, 85);
+	bounceCurrentItem(ITEMFLG_OWNED, 85);
 	return 0;
 }
 
@@ -2562,7 +2562,7 @@ uint16 SCR_4B_ProtoDropZapstik(void) {
 
 	script_vars[ScrPool3_CurrentItem] = &inventory_items[kItemZapstik1 - 1 + (script_byte_vars.cur_pers - 1) - kPersProtozorq1];
 
-	BounceCurrentItem(ITEMFLG_ROOM, 43);
+	bounceCurrentItem(ITEMFLG_ROOM, 43);
 
 	return 0;
 }
@@ -2578,7 +2578,7 @@ void LootAspirantsItem(void) {
 		script_vars[ScrPool3_CurrentItem] = item;
 		script_byte_vars.steals_count++;
 		script_byte_vars.bvar_6D[aspirant_ptr->index >> 6] = item->name; /*TODO: check these index bits*/
-		BounceCurrentItem(ITEMFLG_OWNED, 85);
+		bounceCurrentItem(ITEMFLG_OWNED, 85);
 		the_command = 0x90AA;   /*OK*/
 	} else
 		the_command = 0x9140;   /*NOTHING ON HIM*/
@@ -2650,7 +2650,7 @@ uint16 SCR_51_SkullTraderItemTrade(void) {
 
 uint16 SCR_52_RefreshSpritesData(void) {
 	script_ptr++;
-	RefreshSpritesData();
+	refreshSpritesData();
 	return 0;
 }
 
@@ -2687,7 +2687,7 @@ uint16 SCR_54_DotFadeRoom(void) {
 
 uint16 SCR_55_DrawRoomItemsIndicator(void) {
 	script_ptr++;
-	DrawRoomItemsIndicator();
+	drawRoomItemsIndicator();
 	return 0;
 }
 
@@ -2701,7 +2701,7 @@ uint16 SCR_56_MorphRoom98(void) {
 
 	IFGM_PlaySample(242);
 
-	RedrawRoomStatics(98, 0);
+	redrawRoomStatics(98, 0);
 
 	ofs = cga_CalcXY(0, 136);
 	for (h = 60; h; h--) {
@@ -2712,7 +2712,7 @@ uint16 SCR_56_MorphRoom98(void) {
 			ofs -= CGA_BYTES_PER_LINE;
 	}
 
-	BackupSpotImage(&zone_spots[3], &sprites_list[3], sprites_list[3]);
+	backupSpotImage(&zone_spots[3], &sprites_list[3], sprites_list[3]);
 
 	IFGM_StopSample();
 
@@ -2992,11 +2992,11 @@ uint16 SCR_62_PsiReaction(void) {
 uint16 SCR_63_LiftSpot6(void) {
 	script_ptr++;
 
-	BlitSpritesToBackBuffer();
+	blitSpritesToBackBuffer();
 	zone_spots[6].sy -= 5;
 	zone_spots[6].ey -= 5;
-	BackupSpotsImages();
-	DrawPersons();
+	backupSpotsImages();
+	drawPersons();
 	cga_BackBufferToRealFull();
 
 	return 0;
@@ -3230,8 +3230,8 @@ uint16 CMD_2_PsiPowers(void) {
 		if (command_hint != 100)
 			command_hint += 109;
 		if (command_hint != last_command_hint)
-			DrawCommandHint();
-		DrawHintsAndCursor(CGA_SCREENBUFFER);
+			drawCommandHint();
+		drawHintsAndCursor(CGA_SCREENBUFFER);
 	} while (buttons == 0);
 	undrawCursor(CGA_SCREENBUFFER);
 	cga_RestoreBackupImage(CGA_SCREENBUFFER);
@@ -3388,7 +3388,7 @@ uint16 CMD_A_PsiSolarEyes(void) {
 		return 0;
 
 	if (zone_palette == 14) {
-		RedrawRoomStatics(script_byte_vars.zone_room, zone_palette);
+		redrawRoomStatics(script_byte_vars.zone_room, zone_palette);
 		zone_palette = 0;
 		cga_BackBufferToRealFull();
 	}
@@ -3411,7 +3411,7 @@ void DrawStickyNet(void) {
 	byte x, y, w, h;
 
 	uint16 ofs;
-	byte *sprite = LoadPuzzlToScratch(80);
+	byte *sprite = loadPuzzlToScratch(80);
 
 	x = room_bounds_rect.sx;
 	y = room_bounds_rect.sy;
@@ -3439,13 +3439,13 @@ uint16 CMD_B_PsiStickyFingers(void) {
 		return ScriptRerun;
 	}
 
-	BackupScreenOfSpecialRoom();
+	backupScreenOfSpecialRoom();
 	DrawStickyNet();
 	selectCursor(CURSOR_FLY);
 	menuLoop(0, 0);
 	playSound(224);
 	cga_BackBufferToRealFull();
-	RestoreScreenOfSpecialRoom();
+	restoreScreenOfSpecialRoom();
 
 	if (script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(0 * 2) == 0)
 		the_command = Swap16(script_word_vars.psi_cmds[0]);
@@ -3480,7 +3480,7 @@ uint16 CMD_D_PsiBrainwarp(void) {
 		return 0;
 
 	if (script_byte_vars.bvar_43 == 0) {
-		BackupScreenOfSpecialRoom();
+		backupScreenOfSpecialRoom();
 		processMenu();
 
 		if (script_byte_vars.cur_spot_idx == 0) {
@@ -3491,7 +3491,7 @@ uint16 CMD_D_PsiBrainwarp(void) {
 
 		if (GetZoneObjCommand(1 * 2) != 0) {
 			playAnim(39, found_spot->sx + 8 / 4, found_spot->sy - 10);
-			RestoreScreenOfSpecialRoom();
+			restoreScreenOfSpecialRoom();
 			return ScriptRerun;
 		}
 	}
@@ -3508,7 +3508,7 @@ uint16 CMD_D_PsiBrainwarp(void) {
 	the_command = 0;
 	if (script_byte_vars.bvar_43 == 0) {
 		playAnim(39, found_spot->sx + 8 / 4, found_spot->sy - 10);
-		RestoreScreenOfSpecialRoom();
+		restoreScreenOfSpecialRoom();
 		return ScriptRerun;
 	}
 
@@ -3529,7 +3529,7 @@ uint16 CMD_E_PsiZoneScan(void) {
 		return ScriptRerun;
 	}
 
-	BackupScreenOfSpecialRoom();
+	backupScreenOfSpecialRoom();
 
 	IFGM_PlaySample(26);
 
@@ -3559,7 +3559,7 @@ uint16 CMD_E_PsiZoneScan(void) {
 			offs += CGA_BYTES_PER_LINE;
 	}
 
-	RestoreScreenOfSpecialRoom();
+	restoreScreenOfSpecialRoom();
 
 	IFGM_StopSample();
 
@@ -3580,10 +3580,10 @@ uint16 CMD_F_PsiPsiShift(void) {
 
 	selectCursor(CURSOR_GRAB);
 	menuLoop(0, 0);
-	BackupScreenOfSpecialRoom();
+	backupScreenOfSpecialRoom();
 	playSound(25);
 	playAnim(39, cursor_x / 4, cursor_y);
-	RestoreScreenOfSpecialRoom();
+	restoreScreenOfSpecialRoom();
 
 	if (script_byte_vars.cur_spot_idx == 0 || GetZoneObjCommand(3 * 2) == 0)
 		the_command = Swap16(script_word_vars.psi_cmds[5]);
@@ -3786,19 +3786,19 @@ uint16 CMD_13_ActivateFountain(void) {
 
 	script_byte_vars.bvar_6A = 1;
 	for (i = 0; i < 10; i++) {
-		DrawRoomStaticObject(water1, &x, &y, &w, &h);
+		drawRoomStaticObject(water1, &x, &y, &w, &h);
 		waitVBlank();
 		cga_BackBufferToRealFull();
 		for (j = 0; j < 0x1FFF; j++) ; /*TODO: weak delay*/
 
-		DrawRoomStaticObject(water2, &x, &y, &w, &h);
+		drawRoomStaticObject(water2, &x, &y, &w, &h);
 		waitVBlank();
 		cga_BackBufferToRealFull();
 		for (j = 0; j < 0x1FFF; j++) ; /*TODO: weak delay*/
 	}
 
-	DrawRoomStaticObject(headl, &x, &y, &w, &h);
-	DrawRoomStaticObject(headr, &x, &y, &w, &h);
+	drawRoomStaticObject(headl, &x, &y, &w, &h);
+	drawRoomStaticObject(headr, &x, &y, &w, &h);
 	cga_BackBufferToRealFull();
 
 	return 0;
@@ -3810,12 +3810,12 @@ Vorts walking into the room
 uint16 CMD_14_VortAppear(void) {
 	/*TODO: check me*/
 	pers_list[kPersVort].area = script_byte_vars.zone_area;
-	SelectPerson(0);
-	AnimateSpot(&vortanims_ptr->field_1);
+	selectPerson(0);
+	animateSpot(&vortanims_ptr->field_1);
 	IFGM_StopSample();
 	next_vorts_cmd = 0xA015;
-	BlitSpritesToBackBuffer();
-	DrawPersons();
+	blitSpritesToBackBuffer();
+	drawPersons();
 	cga_BackBufferToRealFull();
 	next_vorts_ticks = Swap16(script_word_vars.timer_ticks2) + 5;
 	return 0;
@@ -3889,8 +3889,8 @@ uint16 CMD_15_VortLeave(void) {
 
 	zone_spots[(pers->flags & 15) - 1].flags &= ~SPOTFLG_80;
 
-	SelectPerson(0);
-	AnimateSpot(anim);
+	selectPerson(0);
+	animateSpot(anim);
 	IFGM_StopSample();
 	script_byte_vars.bvar_36 &= 0x80;
 	return 0;
@@ -3928,9 +3928,9 @@ uint16 CMD_18_AspirantLeave(void) {
 
 	if ((aspirant_ptr->flags & PERSFLG_40) == 0) {
 		aspirant_spot->flags &= ~SPOTFLG_80;
-		SelectPerson(script_byte_vars.aspirant_pers_ofs);
+		selectPerson(script_byte_vars.aspirant_pers_ofs);
 		script_byte_vars.aspirant_flags = 0;
-		AnimateSpot(&anim33);
+		animateSpot(&anim33);
 	}
 
 	return 0;
@@ -3948,10 +3948,10 @@ uint16 CMD_19_AspirantAppear(void) {
 	script_word_vars.next_aspirant_cmd = BE(0xA018);	/*leave*/
 	script_byte_vars.check_used_commands = 3;
 	script_byte_vars.used_commands = 0;
-	SelectPerson(script_byte_vars.aspirant_pers_ofs);
-	AnimateSpot(&anim23);
-	BlitSpritesToBackBuffer();
-	DrawPersons();
+	selectPerson(script_byte_vars.aspirant_pers_ofs);
+	animateSpot(&anim23);
+	blitSpritesToBackBuffer();
+	drawPersons();
 	cga_BackBufferToRealFull();
 	if (script_byte_vars.aspirant_flags == 5) {
 		the_command = 0xC029;
@@ -4022,11 +4022,11 @@ Turkey walking into the room
 uint16 CMD_1E_TurkeyAppear(void) {
 	/*TODO: check me*/
 	pers_list[kPersTurkey].area = script_byte_vars.zone_area;
-	SelectPerson(PersonOffset(kPersTurkey));
-	AnimateSpot(&turkeyanims_ptr->field_1);
+	selectPerson(PersonOffset(kPersTurkey));
+	animateSpot(&turkeyanims_ptr->field_1);
 	next_turkey_cmd = 0xA01F;
-	BlitSpritesToBackBuffer();
-	DrawPersons();
+	blitSpritesToBackBuffer();
+	drawPersons();
 	cga_BackBufferToRealFull();
 	next_turkey_ticks = Swap16(script_word_vars.timer_ticks2) + 5;
 	return 0;
@@ -4055,8 +4055,8 @@ uint16 CMD_1F_TurkeyLeave(void) {
 
 	zone_spots[(pers->flags & 15) - 1].flags &= ~SPOTFLG_80;
 
-	SelectPerson(PersonOffset(kPersTurkey));
-	AnimateSpot(anim);
+	selectPerson(PersonOffset(kPersTurkey));
+	animateSpot(anim);
 	return 0;
 }
 
@@ -4278,7 +4278,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_56_MorphRoom98,
 	SCR_57_ShowCharacterSprite,
 	SCR_58_DrawCharacterSprite,
-	SCR_59_BlitSpritesToBackBuffer,
+	SCR_59_blitSpritesToBackBuffer,
 	SCR_5A_SelectPalette,
 	SCR_5B_TheEnd,
 	SCR_5C_ClearInventory,

@@ -95,7 +95,7 @@ void drawInventoryBox(uint16 filtermask, uint16 filtervalue) {
 void checkInventoryItemHover(byte count) {
 	int16 i;
 	for (i = 0; i < count; i++) {
-		if (IsCursorInRect((rect_t *)&inventory_spots[i])) {
+		if (isCursorInRect((rect_t *)&inventory_spots[i])) {
 			the_command = inventory_spots[i].command;
 			command_hint = inventory_spots[i].name;
 			cursor_color = 0xAA;
@@ -121,8 +121,8 @@ void openInventory(uint16 filtermask, uint16 filtervalue) {
 			pollInput();
 			checkInventoryItemHover(inv_count);
 			if (command_hint != last_command_hint)
-				DrawCommandHint();
-			DrawHintsAndCursor(frontbuffer);
+				drawCommandHint();
+			drawHintsAndCursor(frontbuffer);
 		} while (buttons == 0);
 		undrawCursor(frontbuffer);
 	}

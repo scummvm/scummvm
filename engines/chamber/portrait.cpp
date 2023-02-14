@@ -303,7 +303,7 @@ void playHurtSound() {
 void blinkWithSound(byte color) {
 	cga_ColorSelect(color);
 	playHurtSound();
-	SelectPalette();
+	selectPalette();
 }
 
 void blinkToRed(void) {
