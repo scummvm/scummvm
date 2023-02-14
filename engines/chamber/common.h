@@ -30,7 +30,7 @@ namespace Chamber {
 
 #define TODO(s) \
 	{   \
-		printf(s);  \
+		warning("%s", s);  \
 		promptWait();   \
 		for(;;) ;   \
 	}
