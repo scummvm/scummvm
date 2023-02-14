@@ -30,7 +30,7 @@ namespace Scumm {
 Lobby::Lobby(ScummEngine_v90he *vm) : _vm(vm) {
 	_gameName = _vm->_game.gameid;
 	if (_gameName == "baseball2001")
-		_gameName == "baseball";
+		_gameName = "baseball";
 	_socket = nullptr;
 
 	_userId = 0;
@@ -122,6 +122,67 @@ void Lobby::processLine(Common::String line) {
 	}
 }
 
+int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
+	int res = 0;
+
+	switch(op) {
+	case OP_NET_OPEN_WEB_URL:
+		char url[128];
+		_vm->getStringFromArray(args[0], url, sizeof(url));
+
+		openUrl(url);
+		break;
+	case OP_NET_DOWNLOAD_PLAYBOOK:
+		// TODO
+		break;
+	case OP_NET_CONNECT:
+		connect();
+		break;
+	case OP_NET_DISCONNECT:
+		disconnect();
+		break;
+	case OP_NET_LOGIN:
+		char userName[16];
+		char password[16];
+
+		_vm->getStringFromArray(args[0], userName, sizeof(userName));
+		_vm->getStringFromArray(args[1], password, sizeof(password));
+
+		login(userName, password);
+		break;
+	case OP_NET_GET_PROFILE:
+		getUserProfile(args[0]);
+		break;
+	case OP_NET_CHANGE_ICON:
+		setIcon(args[0]);
+		break;
+	
+	case OP_NET_DOWNLOAD_FILE:
+		// TODO: News, Poll, and Banner downloads.
+		_vm->writeVar(135, 1);
+		break;
+	// TODO: Should we actually implement update checks here
+	// this at some point?
+	case OP_NET_UPDATE_INIT:
+		break;
+	case OP_NET_FETCH_UPDATES:
+		_vm->writeVar(111, 2);
+		break;
+
+	default:
+		Common::String str = Common::String::format("LOBBY: unknown op: (%d, %d, [", op, numArgs);
+		if (numArgs > 0)
+			str += Common::String::format("%d", args[0]);
+		for (int i = 1; i < numArgs; i++) {
+			str += Common::String::format(", %d", args[i]);
+		}
+		str += "])";
+		warning("%s", str.c_str());
+	}
+
+	return res;
+}
+
 void Lobby::handleHeartbeat() {
 	Common::JSONObject heartbeat;
 	heartbeat.setVal("cmd", new Common::JSONValue("heartbeat"));
@@ -132,7 +193,8 @@ void Lobby::openUrl(const char *url) {
 	debug(1, "LOBBY: openURL: %s", url);
 	Common::String urlString = Common::String(url);
 
-	if (urlString == "http://www.jrsn.com/c_corner/cc_regframe.asp") {
+	if (urlString == "http://www.jrsn.com/c_corner/cc_regframe.asp" ||
+	    urlString == "http://www.humongoussports.com/backyard/registration/register.asp") {
 		if (_vm->displayMessageYesNo("Online Play for this game is provided by Backyard Sports Online, which is a\nservice provided by the ScummVM project.\nWould you like to go to their registration page?")) {
 			if (!g_system->openUrl("https://backyardsports.online/register")) {
 				_vm->displayMessage(0, "Failed to open registration URL.  Please navigate to this page manually.\n\n\"https://backyardsports.online/register\"");
