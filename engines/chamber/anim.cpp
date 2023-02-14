@@ -50,7 +50,7 @@ uint16 dot_effect_delay;
 
 extern uint16 cpu_speed_delay;
 
-extern byte *SeekToEntry(byte *bank, uint16 num, byte **end);
+extern byte *seekToEntry(byte *bank, uint16 num, byte **end);
 extern void LoadLutinSprite(uint16 lutidx);
 
 void getScratchBuffer(byte mode) {
@@ -304,7 +304,7 @@ void playAnim(byte index, byte x, byte y) {
 	last_anim_x = x;
 	last_anim_y = y;
 
-	panim = SeekToEntry(anima_data, index - 1, &anima_end_ofs);
+	panim = seekToEntry(anima_data, index - 1, &anima_end_ofs);
 	while (panim != anima_end_ofs) {
 		byte mode = *panim;
 		switch (mode) {

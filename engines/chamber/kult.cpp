@@ -67,7 +67,7 @@ void saveToFile(char *filename, void *data, uint16 size) {
 }
 
 int16 loadSplash(const char *filename) {
-	if (!LoadFile(filename, scratch_mem1))
+	if (!loadFile(filename, scratch_mem1))
 		return 0;
 	decompress(scratch_mem1 + 8, backbuffer);   /* skip compressed/decompressed size fields */
 	return 1;
@@ -281,18 +281,18 @@ Common::Error ChamberEngine::run() {
 
 	/* Load script and other static resources */
 	/* Those are normally embedded in the executable, but here we load extracted ones*/
-	if (!LoadStaticData())
+	if (!loadStaticData())
 		exitGame();
 
 	/* Load text resources */
-	if (!LoadVepciData() || !LoadDesciData() || !LoadDialiData())
+	if (!loadVepciData() || !loadDesciData() || !loadDialiData())
 		exitGame();
 
 	/* Detect/Initialize input device */
 	initInput();
 
 	/* Load graphics resources */
-	while (!LoadFond() || !LoadSpritesData() || !LoadPersData())
+	while (!loadFond() || !loadSpritesData() || !loadPersData())
 		askDisk2();
 
 	/*TODO: is this neccessary?*/

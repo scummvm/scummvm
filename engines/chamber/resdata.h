@@ -84,26 +84,26 @@ extern byte *anima_data;
 extern byte *anico_data;
 extern byte *zones_data;
 
-byte *SeekToEntry(byte *bank, uint16 num, byte **end);
-byte *SeekToEntryW(byte *bank, uint16 num, byte **end);
+byte *seekToEntry(byte *bank, uint16 num, byte **end);
+byte *seekToEntryW(byte *bank, uint16 num, byte **end);
 
-uint16 LoadFile(const char *filename, byte *buffer);
-uint16 SaveFile(char *filename, byte *buffer, uint16 size);
-int16 LoadFilesList(ResEntry_t *entries);
+uint16 loadFile(const char *filename, byte *buffer);
+uint16 saveFile(char *filename, byte *buffer, uint16 size);
+int16 loadFilesList(ResEntry_t *entries);
 
-int16 LoadStaticData(void);
-int16 LoadFond(void);
-int16 LoadSpritesData(void);
-int16 LoadPersData(void);
+int16 loadStaticData(void);
+int16 loadFond(void);
+int16 loadSpritesData(void);
+int16 loadPersData(void);
 
 extern ResEntry_t res_texts[];
-int16 LoadVepciData(void);
+int16 loadVepciData(void);
 
 extern ResEntry_t res_desci[];
-int16 LoadDesciData(void);
+int16 loadDesciData(void);
 
 extern ResEntry_t res_diali[];
-int16 LoadDialiData(void);
+int16 loadDialiData(void);
 
 } // End of namespace Chamber
 

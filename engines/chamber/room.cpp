@@ -295,7 +295,7 @@ Load and initialize zone data
 void LoadZone(void) {
 	byte *zptr, *zend;
 
-	zptr = SeekToEntry(zones_data, script_byte_vars.zone_index - 1, &zend);
+	zptr = seekToEntry(zones_data, script_byte_vars.zone_index - 1, &zend);
 	script_byte_vars.zone_area = *zptr++;
 	script_byte_vars.zone_room = *zptr++;
 	zone_name = object_hint = *zptr++;
@@ -797,7 +797,7 @@ void DrawRoomStatics(void) {
 	DrawBackground(backbuffer, 0);
 	arpla_y_step = script_byte_vars.hands;
 
-	aptr = SeekToEntry(arpla_data, script_byte_vars.zone_room - 1, &aend);
+	aptr = seekToEntry(arpla_data, script_byte_vars.zone_room - 1, &aend);
 	room_bounds_rect.sx = 0xFF;
 	room_bounds_rect.ex = 0;
 	room_bounds_rect.sy = 0xFF;
@@ -861,7 +861,7 @@ void RedrawRoomStatics(byte index, byte y_step) {
 	byte x, y, w, h;
 	arpla_y_step = y_step;
 
-	aptr = SeekToEntry(arpla_data, index - 1, &aend);
+	aptr = seekToEntry(arpla_data, index - 1, &aend);
 	for (; aptr != aend; aptr += 3) {
 		/*load room's bg objs*/
 		DrawRoomStaticObject(aptr, &x, &y, &w, &h);
@@ -1007,7 +1007,7 @@ void LoadLutinSprite(uint16 lutidx) {
 		buffer[i * 2 + 1] = 0;  /*pixels*/
 	}
 
-	lutin_entry = SeekToEntry(lutin_data, lutidx, &lutin_entry_end);
+	lutin_entry = seekToEntry(lutin_data, lutidx, &lutin_entry_end);
 
 	*buffer++ = *lutin_entry++; /*width*/
 	*buffer++ = *lutin_entry++; /*height*/
@@ -1313,7 +1313,7 @@ Modify anim sprite 127
 */
 void SetAnim127Sprite(byte flags, byte spridx) {
 	byte *lutin_entry, *lutin_entry_end;
-	lutin_entry = SeekToEntry(lutin_data, 127, &lutin_entry_end);
+	lutin_entry = seekToEntry(lutin_data, 127, &lutin_entry_end);
 	lutin_entry[2] = spridx;
 	switch (spridx) {
 	case 37:	/*DAGGER*/
@@ -1347,7 +1347,7 @@ Load The Wall gate sprites
 */
 byte *LoadMursmSprite(byte index) {
 	byte *pinfo, *end;
-	pinfo = SeekToEntry(mursm_data, index, &end);
+	pinfo = seekToEntry(mursm_data, index, &end);
 
 	while (pinfo != end) {
 		uint16 flags;
