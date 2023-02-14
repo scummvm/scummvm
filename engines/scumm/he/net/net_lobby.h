@@ -85,21 +85,24 @@ public:
 	void send(Common::JSONObject data);
 
 	int32 dispatch(int op, int numArgs, int32 *args);
-
-	void openUrl(const char *url);
-
-	bool connect();
-	void disconnect(bool lost = false);
-	void login(const char *userName, const char *password);
-
-	void getUserProfile(int userId);
-	void setIcon(int icon);
 protected:
 	ScummEngine_v90he *_vm;
 	Common::String _gameName;
 	Networking::CurlSocket *_socket;
 
 	Common::String _buffer;
+
+	Common::JSONArray _playersList;
+
+	int _userId;
+	int _playerId; // Opponent's user ID.
+
+	int _areaIdForPopulation; // The area id we're waiting for population for (to prevent getting population for one area while wanting another).
+
+	bool _inArea;
+	int _gamesPlaying;
+
+	bool _inGame;
 
 	void writeStringArray(int array, Common::String string);
 	void runRemoteStartScript(int *args);
@@ -110,10 +113,68 @@ protected:
 
 	void handleHeartbeat();
 
+	void openUrl(const char *url);
+
+	bool connect();
+	void disconnect(bool lost = false);
+
+	void login(const char *userName, const char *password);
 	void handleLoginResp(int errorCode, int userId, Common::String response);
+
+	void getUserProfile(int userId);
 	void handleProfileInfo(Common::JSONArray profile);
 
-	int _userId;
+	void handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTeam, int error, Common::String message);
+
+	void setIcon(int icon);
+
+	void getPopulation(int areaId, int unknown);
+	void handlePopulation(int areaId, int population);
+
+	void locatePlayer(int userNameArray);
+	void handleLocateResp(int code, int areaId, Common::String area);
+
+	void enterArea(int32 areaId);
+	void leaveArea();
+
+	void getPlayersList(int start, int end);
+	bool _checkPlayersLists(Common::JSONArray other);
+	void handlePlayersList(Common::JSONArray playersList);
+	void getPlayerInfo(int32 idx);
+
+	void handleGamesPlaying(int games);
+
+	void setPhoneStatus(int status);
+
+	void sendBusy(int playerId);
+	void handleReceiverBusy();
+
+	void challengePlayer(int32 playerId, int32 stadium);
+	void handleReceiveChallenge(int playerId, int stadium, Common::String name);
+
+	void challengeTimeout(int playerId);
+
+	int32 answerPhone(int playerId);
+	void handleConsideringChallenge();
+
+	void counterChallenge(int stadium);
+	void handleCounterChallenge(int stadium);
+
+	void declineChallenge(int playerId);
+	void handleDeclineChallenge(int notResponding);
+
+	void acceptChallenge(int playerId);
+	void handleAcceptChallenge();
+
+	void startHostingGame(int playerId);
+	void handleHostGameResp(int resp);
+
+	void handleGameSession(int sessionId);
+	void handleGameRelay(int relayId);
+
+	void gameStarted(int hoster, int player, int playerNameArray);
+	void gameFinished();
+
 };
 
 } // End of namespace Scumm
