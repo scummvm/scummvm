@@ -212,7 +212,7 @@ byte selectCurrentAnim(byte *x, byte *y, byte *index) {
 			return 1;
 		}
 	}
-	printf("SelectCurrentAnim: not found for %d\n", aniidx);
+	warning("SelectCurrentAnim: not found for %d", aniidx);
 	return 0;
 }
 

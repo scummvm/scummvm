@@ -20,11 +20,13 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 
 #include <setjmp.h>
 
 #include "common/system.h"
+#include "common/debug.h"
 
 #include "chamber/chamber.h"
 #include "chamber/common.h"
@@ -45,7 +47,7 @@
 #include "chamber/savegame.h"
 #include "chamber/ifgm.h"
 
-#if 1
+#if 0
 #define DEBUG_SCRIPT
 char DEBUG_SCRIPT_LOG[] = "!script.log";
 #endif
@@ -107,14 +109,14 @@ enum CommandStatus {
 };
 
 uint16 CMD_TRAP(void) {
-	printf("CMD TRAP\n");
+	warning("CMD TRAP");
 	promptWait();
 	for (;;) ;
 	return 0;
 }
 
 uint16 SCR_TRAP(void) {
-	printf("SCR TRAP 0x%02X @ 0x%lX\n", *script_ptr, script_ptr - templ_data);
+	warning("SCR TRAP 0x%02X @ 0x%lX", *script_ptr, script_ptr - templ_data);
 	promptWait();
 	for (;;) ;
 	return 0;
@@ -471,7 +473,7 @@ uint16 loadVar(byte **ptr, byte **varptr) {
 				break;
 			}
 			if (varoffs >= maxoffs) {
-				printf("Scr var out of bounds @ %X (pool %d, ofs 0x%X, max 0x%X)\n", (uint16)(script_ptr - templ_data), vartype & VARTYPE_KIND, varoffs, maxoffs);
+				warning("Scr var out of bounds @ %X (pool %d, ofs 0x%X, max 0x%X)", (uint16)(script_ptr - templ_data), vartype & VARTYPE_KIND, varoffs, maxoffs);
 				promptWait();
 			}
 		}
@@ -486,7 +488,7 @@ uint16 loadVar(byte **ptr, byte **varptr) {
 #if 0
 		/*TODO: debug stuff, remove me*/
 		if (varoffs == 0x48)
-			printf("Var 2.%X = %X\n", varoffs, value);
+			warning("Var 2.%X = %X", varoffs, value);
 #endif
 	} else {
 		/*immediate value*/
@@ -3770,7 +3772,7 @@ uint16 menu_commands_23[] = {
 };
 
 uint16 CMD_12_(void) {
-	printf("cmd 12\n");
+	warning("cmd 12");
 	ActionForPersonChoice(menu_commands_12);
 	return ScriptRerun;
 }
@@ -4397,13 +4399,13 @@ again:;
 		break;
 	case 0xA000:
 	case 0xB000:
-		printf("Command: $%X 0x%X\n", the_command, cmd);
+		debug("Command: $%X 0x%X", the_command, cmd);
 		res = command_handlers[cmd]();
 		break;
 	case 0xF000:
 		/*restore sp from keep_sp then run script*/
 		/*currently only supposed to work correctly from the SCR_4D_PriorityCommand handler*/
-		printf("Restore: $%X 0x%X\n", the_command, cmd);
+		debug("Restore: $%X 0x%X", the_command, cmd);
 	/*TODO("SCR_RESTORE\n");*/
 	/*fall through*/
 	default:

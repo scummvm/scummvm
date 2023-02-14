@@ -20,7 +20,7 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 
 #include <setjmp.h>
 
