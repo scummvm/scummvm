@@ -470,9 +470,9 @@ enhdialogs:
 			eligible: "Eligible"
 			ineligible: "Ineligible"
 			on_hand: "On Hand"
-		item: "\x01""37item"
-		quick: "\x01""37quick"
-		exchange: "\x01""37exch"
+		item: "\x01""37Item"
+		quick: "\x01""37Quick"
+		exchange: "\x01""37Exch"
 		conditions:
 			good: "Good"
 	location:
@@ -485,7 +485,7 @@ enhdialogs:
 		thankyou: "thank you,\ncome again!"
 		no_gold: "no gold,\nno food!"
 	misc:
-		exit: "exit"
+		exit: "Exit"
 	quickref:
 		title: "Quick Reference Chart"
 		headers:
