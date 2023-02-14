@@ -90,6 +90,10 @@ void GameParty::draw() {
 		if (g_globals->_currCharacter == &c)
 			g_globals->_globalSprites.draw(&s, 8, Common::Point(CHAR_FACES_X[idx] - 1, 5));
 	}
+
+	// Sprite drawing doesn't automatically mark the drawn areas,
+	// so manually flag the entire area as dirty
+	s.markAllDirty();
 }
 
 } // namespace ViewsEnh

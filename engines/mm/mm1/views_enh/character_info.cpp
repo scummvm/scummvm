@@ -82,8 +82,8 @@ CharacterInfo::CharacterInfo() :
 
 bool CharacterInfo::msgFocus(const FocusMessage &msg) {
 	_viewIcon.load("view.icn");
-	MetaEngine::setKeybindingMode(
-		KeybindingMode::KBMODE_PARTY_MENUS);
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
+	g_events->findView("GameParty")->draw();
 
 	_cursorCell = 0;
 	showCursor(true);
@@ -151,6 +151,7 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 			msg._action <= KEYBIND_VIEW_PARTY6) {
 		g_globals->_currCharacter = &g_globals->_party[
 				msg._action - KEYBIND_VIEW_PARTY1];
+		g_events->findView("GameParty")->draw();
 		redraw();
 		return true;
 	}

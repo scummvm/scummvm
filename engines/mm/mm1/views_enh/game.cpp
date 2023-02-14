@@ -45,6 +45,8 @@ Game::Game() : TextView("Game"),
 
 bool Game::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_NORMAL);
+	g_globals->_currCharacter = nullptr;
+
 	return TextView::msgFocus(msg);
 }
 
