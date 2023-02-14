@@ -53,7 +53,7 @@ extern uint16 cpu_speed_delay;
 extern byte *SeekToEntry(byte *bank, uint16 num, byte **end);
 extern void LoadLutinSprite(uint16 lutidx);
 
-void GetScratchBuffer(byte mode) {
+void getScratchBuffer(byte mode) {
 	byte *buffer = scratch_mem2;
 	uint16 offs = 0;
 	if (mode & 0x80)
@@ -63,16 +63,16 @@ void GetScratchBuffer(byte mode) {
 	lutin_mem = buffer + offs;
 }
 
-void AnimLoadSprite(byte **panim) {
+void animLoadSprite(byte **panim) {
 	byte mode;
 	byte index;
 	mode = *((*panim)++);
 	index = *((*panim)++);
-	GetScratchBuffer(mode);
+	getScratchBuffer(mode);
 	LoadLutinSprite(index);
 }
 
-void ClipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx, int8 dy) {
+void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx, int8 dy) {
 	if (anim_flags == 7)
 		return;
 	if (anim_flags & 4) {
@@ -108,7 +108,7 @@ void ClipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx
 	}
 }
 
-void CopyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target) {
+void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target) {
 	uint16 offs;
 	uint16 xx = x * 4;
 	uint16 ww = width * 4;
@@ -131,7 +131,7 @@ void CopyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte
 	}
 }
 
-void AnimDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 pitch) {
+void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 pitch) {
 	uint16 delay;
 	byte ex, ey, updx, updy, updw, updh;
 	uint16 ofs = CGA_CalcXY_p(x, y);
@@ -162,7 +162,7 @@ void AnimDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	WaitVBlank();
 
 	if (anim_use_dot_effect)
-		CopyScreenBlockWithDotEffect(backbuffer, updx, updy, updw, updh, frontbuffer);
+		copyScreenBlockWithDotEffect(backbuffer, updx, updy, updw, updh, frontbuffer);
 	else {
 		CGA_CopyScreenBlock(backbuffer, updw, updh, frontbuffer, ofs);
 	}
@@ -176,12 +176,12 @@ void AnimDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	anim_shift_x = anim_shift_y = 0;
 }
 
-void AnimUndrawSprite(void) {
+void animUndrawSprite(void) {
 	CGA_CopyScreenBlock(backbuffer, last_anim_width, last_anim_height, CGA_SCREENBUFFER, CGA_CalcXY_p(last_anim_x, last_anim_y));
 	last_anim_height = 0;
 }
 
-void PlayAnimCore(byte **panim) {
+void playAnimCore(byte **panim) {
 	byte mode;
 	uint16 count, count2;
 	byte *pframe;
@@ -203,7 +203,7 @@ void PlayAnimCore(byte **panim) {
 			int8 dx, dy;
 			uint16 pitch;
 			mode = *pframe++;
-			GetScratchBuffer(mode);
+			getScratchBuffer(mode);
 			dy = mode & 7;
 			dx = (mode >> 3) & 7;
 
@@ -219,12 +219,12 @@ void PlayAnimCore(byte **panim) {
 			sprh = *sprite++;
 
 			pitch = sprw * 2;
-			ClipSprite(&x, &y, &sprw, &sprh, &sprite, dx, dy);
-			AnimDrawSprite(x, y, sprw, sprh, sprite, pitch);
+			clipSprite(&x, &y, &sprw, &sprh, &sprite, dx, dy);
+			animDrawSprite(x, y, sprw, sprh, sprite, pitch);
 
 			if (anim_flags & 4) {
 				if (anim_cycle == 0) {
-					AnimUndrawSprite();
+					animUndrawSprite();
 					goto end;
 				}
 			} else if (anim_flags & 2) {
@@ -240,62 +240,62 @@ end:
 	*panim += mode & 7;
 }
 
-void Anim1(byte **panim) {
+void anim1(byte **panim) {
 	anim_cycle = 0xFF;
 	anim_use_dot_effect = 0;
-	PlayAnimCore(panim);
+	playAnimCore(panim);
 }
 
-void Anim2(byte **panim) {
+void anim2(byte **panim) {
 	anim_cycle = 1;
 	anim_use_dot_effect = 0;
-	PlayAnimCore(panim);
+	playAnimCore(panim);
 }
 
-void Anim3(byte **panim) {
+void anim3(byte **panim) {
 	anim_cycle = 1;
 	anim_use_dot_effect = 0;
-	PlayAnimCore(panim);
+	playAnimCore(panim);
 }
 
-void Anim4(byte **panim) {
+void anim4(byte **panim) {
 	anim_cycle = last_anim_width - 1;
 	anim_use_dot_effect = 0;
-	PlayAnimCore(panim);
+	playAnimCore(panim);
 }
 
-void Anim5(byte **panim) {
+void anim5(byte **panim) {
 	anim_cycle = last_anim_width - 1;
 	anim_use_dot_effect = 0;
-	PlayAnimCore(panim);
+	playAnimCore(panim);
 }
 
-void Anim6(byte **panim) {
+void anim6(byte **panim) {
 	anim_cycle = last_anim_height;
 	anim_use_dot_effect = 0;
-	PlayAnimCore(panim);
+	playAnimCore(panim);
 }
 
-void Anim7(byte **panim) {
+void anim7(byte **panim) {
 	anim_cycle = 0xFF;
 	anim_use_dot_effect = 1;
-	PlayAnimCore(panim);
+	playAnimCore(panim);
 }
 
 typedef void (*animhandler_t)(byte **panim);
 
 animhandler_t anim_handlers[] = {
-	AnimLoadSprite,
-	Anim1,
-	Anim2,
-	Anim3,
-	Anim4,
-	Anim5,
-	Anim6,
-	Anim7
+	animLoadSprite,
+	anim1,
+	anim2,
+	anim3,
+	anim4,
+	anim5,
+	anim6,
+	anim7
 };
 
-void PlayAnim(byte index, byte x, byte y) {
+void playAnim(byte index, byte x, byte y) {
 	byte sound;
 	byte *panim;
 
