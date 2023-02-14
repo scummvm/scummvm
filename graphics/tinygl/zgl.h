@@ -284,12 +284,12 @@ struct GLContext {
 	GLLight *first_light;
 	Vector4 ambient_light_model;
 	int local_light_model;
-	int lighting_enabled;
+	bool lighting_enabled;
 	int light_model_two_side;
 
 	// materials
 	GLMaterial materials[2];
-	int color_material_enabled;
+	bool color_material_enabled;
 	int current_color_material_mode;
 	int current_color_material_type;
 
@@ -333,8 +333,8 @@ struct GLContext {
 	int current_front_face;
 	int current_shade_model;
 	int current_cull_face;
-	int cull_face_enabled;
-	int normalize_enabled;
+	bool cull_face_enabled;
+	bool normalize_enabled;
 	gl_draw_triangle_func draw_triangle_front, draw_triangle_back;
 
 	// selection

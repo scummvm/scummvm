@@ -70,34 +70,34 @@ void GLContext::glopEnableDisable(GLParam *p) {
 
 	switch (code) {
 	case TGL_CULL_FACE:
-		cull_face_enabled = v;
+		cull_face_enabled = v != 0;
 		break;
 	case TGL_LIGHTING:
-		lighting_enabled = v;
+		lighting_enabled = v != 0;
 		break;
 	case TGL_COLOR_MATERIAL:
-		color_material_enabled = v;
+		color_material_enabled = v != 0;
 		break;
 	case TGL_FOG:
-		fog_enabled = v;
+		fog_enabled = v != 0;
 		break;
 	case TGL_TEXTURE_2D:
-		texture_2d_enabled = v;
+		texture_2d_enabled = v != 0;
 		break;
 	case TGL_NORMALIZE:
-		normalize_enabled = v;
+		normalize_enabled = v != 0;
 		break;
 	case TGL_DEPTH_TEST:
-		depth_test_enabled = v;
+		depth_test_enabled = v != 0;
 		break;
 	case TGL_ALPHA_TEST:
-		alpha_test_enabled = v;
+		alpha_test_enabled = v != 0;
 		break;
 	case TGL_STENCIL_TEST:
-		stencil_test_enabled = v;
+		stencil_test_enabled = v != 0;
 		break;
 	case TGL_BLEND:
-		blending_enabled = v;
+		blending_enabled = v != 0;
 		break;
 	case TGL_POLYGON_OFFSET_FILL:
 		if (v)
