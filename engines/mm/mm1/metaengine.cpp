@@ -69,6 +69,7 @@ static const KeybindingRecord COMBAT_KEYS[] = {
 };
 
 static const KeybindingRecord NORMAL_KEYS[] = {
+	{ KEYBIND_SELECT, "SELECT", "Select", "RETURN", nullptr },
 	{ KEYBIND_FORWARDS, "FORWARDS", "Forwards", "UP", nullptr },
 	{ KEYBIND_BACKWARDS, "BACKWARDS", "Backwards", "DOWN", nullptr },
 	{ KEYBIND_TURN_LEFT, "TURN_LEFT", "Turn Left", "LEFT", nullptr },
@@ -150,6 +151,8 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 			act->addDefaultInputMapping(r->_key);
 			if (r->_joy)
 				act->addDefaultInputMapping(r->_joy);
+			if (r->_action == KEYBIND_SELECT)
+				act->addDefaultInputMapping("SPACE");
 
 			if (r->_action == KEYBIND_FORWARDS || r->_action == KEYBIND_BACKWARDS ||
 					r->_action == KEYBIND_TURN_LEFT || r->_action == KEYBIND_TURN_RIGHT ||

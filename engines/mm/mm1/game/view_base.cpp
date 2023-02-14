@@ -78,6 +78,10 @@ darkness:
 
 bool ViewBase::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
+	case KEYBIND_SELECT:
+		// Shortcut for closing messages
+		g_events->redraw();
+		break;
 	case KEYBIND_FORWARDS:
 	case KEYBIND_STRAFE_LEFT:
 	case KEYBIND_STRAFE_RIGHT:
