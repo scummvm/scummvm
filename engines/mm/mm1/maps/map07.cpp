@@ -161,6 +161,7 @@ void Map07::special13() {
 			for (uint i = 0; i < g_globals->_party.size(); ++i) {
 				Character &c = g_globals->_party[i];
 				c._sex = (c._sex == MALE) ? FEMALE : MALE;
+				c.loadFaceSprites();
 			}
 
 			g_events->send(SoundMessage(0, 1, STRING["maps.map07.reversal"]));

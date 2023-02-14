@@ -231,12 +231,12 @@ void Character::synchronize(Common::Serializer &s, int portraitNum) {
 	if (s.isLoading() && portraitNum != -1)
 		_portrait = portraitNum;
 
-	if (s.isLoading() && g_engine->isEnhanced())
+	if (s.isLoading())
 		loadFaceSprites();
 }
 
 void Character::loadFaceSprites() {
-	if (_portrait != 0xff) {
+	if (_portrait != 0xff && g_engine->isEnhanced()) {
 		Common::String cname = Common::String::format("char%02d.fac",
 			_portrait * 2 + (_sex == MALE ? 0 : 1) + 1);
 		_faceSprites.load(cname);
