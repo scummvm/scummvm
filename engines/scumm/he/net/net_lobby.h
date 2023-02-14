@@ -26,6 +26,41 @@
 #include "backends/networking/curl/socket.h"
 #include "backends/networking/curl/url.h"
 
+// Boneyards (Lobby) opcodes.
+#define OP_NET_OPEN_WEB_URL						2121
+#define OP_NET_DOWNLOAD_PLAYBOOK				2122
+#define OP_NET_CONNECT 							2200
+#define OP_NET_DISCONNECT 						2201
+#define OP_NET_LOGIN							2202
+#define OP_NET_ENTER_AREA						2204
+#define OP_NET_GET_NUM_PLAYERS_IN_AREA			2205
+#define OP_NET_FETCH_PLAYERS_INFO_IN_AREA		2206
+#define OP_NET_GET_PLAYERS_INFO					2207
+#define OP_NET_START_HOSTING_GAME				2208
+#define OP_NET_CALL_PLAYER						2209
+#define OP_NET_RECEIVER_BUSY					2212
+#define OP_NET_COUNTER_CHALLENGE				2213
+#define OP_NET_GET_PROFILE						2214
+#define OP_NET_DECLINE_CHALLENGE				2215
+#define OP_NET_ACCEPT_CHALLENGE					2216
+#define OP_NET_STOP_CALLING						2217
+#define OP_NET_CHANGE_ICON						2218
+#define OP_NET_SET_PHONE_STATUS					2220
+#define OP_NET_ANSWER_PHONE						2221
+#define OP_NET_LEAVE_AREA						2222
+#define OP_NET_GAME_FINISHED					2223
+#define OP_NET_GAME_STARTED						2224
+#define OP_NET_UPDATE_PROFILE_ARRAY				2225
+#define OP_NET_LOCATE_PLAYER					2226
+#define OP_NET_GET_POPULATION					2227
+// Used in baseball to get news, poll and banner.
+#define OP_NET_DOWNLOAD_FILE					2238
+
+// MAIA (Updater) opcodes.
+#define OP_NET_UPDATE_INIT						3000
+#define OP_NET_CHECK_INTERNET_STATUS			3001
+#define OP_NET_FETCH_UPDATES					3002
+
 // Commands for VAR_REMOTE_START_SCRIPT. (55 in football; 324 in baseball)
 #define OP_REMOTE_SYSTEM_ALERT			9911
 #define OP_REMOTE_START_CONNECTION		9919
@@ -48,6 +83,8 @@ public:
 
 	void doNetworkOnceAFrame();
 	void send(Common::JSONObject data);
+
+	int32 dispatch(int op, int numArgs, int32 *args);
 
 	void openUrl(const char *url);
 

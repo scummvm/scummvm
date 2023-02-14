@@ -47,41 +47,6 @@
 #define OP_NET_INIT_LAN_GAME		1515
 #define OP_NET_SET_PROVIDER_BY_NAME	1516
 
-// Boneyards (Lobby) opcodes.
-#define OP_NET_OPEN_WEB_URL						2121
-#define OP_NET_DOWNLOAD_PLAYBOOK				2122
-#define OP_NET_CONNECT 							2200
-#define OP_NET_DISCONNECT 						2201
-#define OP_NET_LOGIN							2202
-#define OP_NET_ENTER_AREA						2204
-#define OP_NET_GET_NUM_PLAYERS_IN_AREA			2205
-#define OP_NET_FETCH_PLAYERS_INFO_IN_AREA		2206
-#define OP_NET_GET_PLAYERS_INFO					2207
-#define OP_NET_START_HOSTING_GAME				2208
-#define OP_NET_CALL_PLAYER						2209
-#define OP_NET_RECEIVER_BUSY					2212
-#define OP_NET_COUNTER_CHALLENGE				2213
-#define OP_NET_GET_PROFILE						2214
-#define OP_NET_DECLINE_CHALLENGE				2215
-#define OP_NET_ACCEPT_CHALLENGE					2216
-#define OP_NET_STOP_CALLING						2217
-#define OP_NET_CHANGE_ICON						2218
-#define OP_NET_SET_PHONE_STATUS					2220
-#define OP_NET_ANSWER_PHONE						2221
-#define OP_NET_LEAVE_AREA						2222
-#define OP_NET_GAME_FINISHED					2223
-#define OP_NET_GAME_STARTED						2224
-#define OP_NET_UPDATE_PROFILE_ARRAY				2225
-#define OP_NET_LOCATE_PLAYER					2226
-#define OP_NET_GET_POPULATION					2227
-// Used in baseball to get news, poll and banner.
-#define OP_NET_DOWNLOAD_FILE					2238
-
-// MAIA (Updater) opcodes.
-#define OP_NET_UPDATE_INIT						3000
-#define OP_NET_CHECK_INTERNET_STATUS			3001
-#define OP_NET_FETCH_UPDATES					3002
-
 namespace Scumm {
 
 /**
@@ -101,9 +66,6 @@ protected:
 #ifdef USE_ENET
 	void netRemoteStartScript(int numArgs, int32 *args);
 	void netRemoteSendArray(int32 *args);
-#ifdef USE_LIBCURL
-	void netLogin(int32 *args);
-#endif
 #endif
 
 	int lineEquation3D(int32 *args);
@@ -134,6 +96,12 @@ int LogicHEfootball::startOfFrame() {
 
 
 int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	if (op > 2120 && op < 3003 && op != OP_NET_CHECK_INTERNET_STATUS &&
+		_vm->_lobby) 
+		return _vm->_lobby->dispatch(op, numArgs, args);
+#endif
+
 	int res = 0;
 
 	switch (op) {
@@ -200,41 +168,6 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 	case OP_NET_WHO_AM_I:
 		res = _vm->_net->whoAmI();
 		break;
-
-#ifdef USE_LIBCURL
-	// Lobby opcodes goes here:
-	case OP_NET_OPEN_WEB_URL:
-		{
-			char url[50];
-			_vm->getStringFromArray(args[0], url, sizeof(url));
-
-			_vm->_lobby->openUrl(url);
-			break;
-		}
-	case OP_NET_DOWNLOAD_PLAYBOOK:
-		// TODO
-		break;
-	case OP_NET_CONNECT:
-		_vm->_lobby->connect();
-		break;
-
-	case OP_NET_DISCONNECT:
-		_vm->_lobby->disconnect();
-		break;
-
-	case OP_NET_LOGIN:
-		netLogin(args);
-		break;
-
-	case OP_NET_GET_PROFILE:
-		_vm->_lobby->getUserProfile(args[0]);
-		break;
-	
-	case OP_NET_CHANGE_ICON:
-		_vm->_lobby->setIcon(args[0]);
-		break;
-
-#endif // USE_LIBCURL
 #endif // USE_ENET
 
 	case OP_NET_CHECK_INTERNET_STATUS:
@@ -249,14 +182,6 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 #endif
 		break;
 
-	// TODO: Should we actually implement update checks here
-	// this at some point?
-	case OP_NET_UPDATE_INIT:
-		break;
-	case OP_NET_FETCH_UPDATES:
-		writeScummVar(111, 2);
-		break;
-
 	case 1493: case 1494: case 1495: case 1496:
 	case 1498: case 1499: case 1501:
 	case 1502: case 1503: case 1504: case 1506:
@@ -265,23 +190,6 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		// DirectPlay-related
 		// 1513: initialize
 		// 1555: set fake lag
-		break;
-
-	case 2203: case 2204:
-	case 2205: case 2206: case 2207: case 2208: case 2209:
-	case 2210: case 2211: case 2212: case 2213:
-	case 2215: case 2216: case 2217: case 2219:
-	case 2220: case 2221: case 2222: case 2223: case 2224:
-	case 2225: case 2226: case 2227: case 2228:
-		// Boneyards-related
-		break;
-
-	case 3003: case 3004:
-		// Internet-related
-		// 3000: check for updates
-		// 3001: check network status
-		// 3002: autoupdate
-		// 3003: close connection
 		break;
 
 	default:
@@ -475,19 +383,6 @@ void LogicHEfootball::netRemoteSendArray(int32 *args) {
 
 	_vm->_net->remoteSendArray(PN_SENDTYPE_INDIVIDUAL, targetUserId, priority, args[3]);
 }
-
-#ifdef USE_LIBCURL
-void LogicHEfootball::netLogin(int32 *args) {
-	char userName[16];
-	char password[16];
-
-	_vm->getStringFromArray(args[0], userName, sizeof(userName));
-	_vm->getStringFromArray(args[1], password, sizeof(password));
-
-	_vm->_lobby->login(userName, password);
-}
-
-#endif // USE_LIBCURL
 #endif // USE_ENET
 
 class LogicHEfootball2002 : public LogicHEfootball {
