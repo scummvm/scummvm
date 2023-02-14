@@ -149,10 +149,14 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 		return true;
 	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
 			msg._action <= KEYBIND_VIEW_PARTY6) {
-		g_globals->_currCharacter = &g_globals->_party[
+		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
+		if (charNum < g_globals->_party.size()) {
+			g_globals->_currCharacter = &g_globals->_party[
 				msg._action - KEYBIND_VIEW_PARTY1];
-		g_events->findView("GameParty")->draw();
-		redraw();
+			g_events->findView("GameParty")->draw();
+			redraw();
+		}
+
 		return true;
 	}
 
