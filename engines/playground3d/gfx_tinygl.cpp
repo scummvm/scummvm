@@ -76,6 +76,7 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system) :
 		Renderer(system),
+		_context(nullptr),
 		_blitImageRgba(nullptr),
 		_blitImageRgb(nullptr),
 		_blitImageRgb565(nullptr),
@@ -84,7 +85,7 @@ TinyGLRenderer::TinyGLRenderer(OSystem *system) :
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
-	TinyGL::destroyContext();
+	TinyGL::destroyContext(_context);
 }
 
 void TinyGLRenderer::init() {
@@ -92,7 +93,8 @@ void TinyGLRenderer::init() {
 
 	computeScreenViewport();
 
-	TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, true, ConfMan.getBool("dirtyrects"));
+	_context = TinyGL::createContext(kOriginalWidth, kOriginalHeight, g_system->getScreenFormat(), 512, true, ConfMan.getBool("dirtyrects"));
+	TinyGL::setContext(_context);
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();

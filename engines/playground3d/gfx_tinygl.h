@@ -60,6 +60,7 @@ public:
 	void flipBuffer() override;
 
 private:
+	TinyGL::ContextHandle *_context;
 	Math::Vector3d _pos;
 	TGLuint _textureRgbaId[5];
 	TGLuint _textureRgbId[5];
