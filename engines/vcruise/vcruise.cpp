@@ -65,14 +65,17 @@ void VCruiseEngine::handleEvents() {
 Common::Error VCruiseEngine::run() {
 	Common::List<Graphics::PixelFormat> pixelFormats = _system->getSupportedFormats();
 
-	const Graphics::PixelFormat *fmt16 = nullptr;
+	const Graphics::PixelFormat *fmt16_565 = nullptr;
+	const Graphics::PixelFormat *fmt16_555 = nullptr;
 	const Graphics::PixelFormat *fmt32 = nullptr;
 
 	for (const Graphics::PixelFormat &fmt : pixelFormats) {
-		if (fmt.rBits() == 8 && fmt.gBits() == 8 && fmt.bBits() == 8)
+		if (fmt32 == nullptr && fmt.bytesPerPixel == 4 && fmt.rBits() == 8 && fmt.gBits() == 8 && fmt.bBits() == 8)
 			fmt32 = &fmt;
-		if ((fmt.rBits() + fmt.gBits() + fmt.bBits()) == 16)
-			fmt16 = &fmt;
+		if (fmt16_555 == nullptr && fmt.rBits() == 5 && fmt.gBits() == 5 && fmt.bBits() == 5)
+			fmt16_555 = &fmt;
+		if (fmt16_565 == nullptr && fmt.rBits() == 5 && fmt.gBits() == 6 && fmt.bBits() == 5)
+			fmt16_565 = &fmt;
 	}
 
 	// Figure out screen layout
@@ -115,8 +118,10 @@ Common::Error VCruiseEngine::run() {
 
 	if (fmt32)
 		initGraphics(size.x, size.y, fmt32);
-	else if (fmt16)
-		initGraphics(size.x, size.y, fmt16);
+	else if (fmt16_565)
+		initGraphics(size.x, size.y, fmt16_565);
+	else if (fmt16_555)
+		initGraphics(size.x, size.y, fmt16_555);
 	else
 		error("Unable to find a suitable graphics format");
 
