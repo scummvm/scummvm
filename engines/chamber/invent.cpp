@@ -86,7 +86,7 @@ void drawInventoryBox(uint16 filtermask, uint16 filtervalue) {
 		inventory_spots[count].name = inventory_items[i].name;
 		inventory_spots[count].command = inventory_items[i].command;
 		inventory_spots[count].itemidx = i + 1;
-		DrawSpriteN(inventory_items[i].sprite, inventory_spots[count].sx, inventory_spots[count].sy, CGA_SCREENBUFFER);
+		drawSpriteN(inventory_items[i].sprite, inventory_spots[count].sx, inventory_spots[count].sy, CGA_SCREENBUFFER);
 		count++;
 	}
 	inv_count = count;
@@ -100,7 +100,7 @@ void checkInventoryItemHover(byte count) {
 			command_hint = inventory_spots[i].name;
 			cursor_color = 0xAA;
 			script_byte_vars.inv_item_index = inventory_spots[i].itemidx;
-			script_vars[ScrPool3_CurrentItem] = &inventory_items[script_byte_vars.inv_item_index - 1];
+			script_vars[kScrPool3_CurrentItem] = &inventory_items[script_byte_vars.inv_item_index - 1];
 			return;
 		}
 	}
@@ -128,7 +128,7 @@ void openInventory(uint16 filtermask, uint16 filtervalue) {
 	}
 	cga_RestoreImage(scratch_mem2, frontbuffer);
 	playSound(20);
-	switch (((item_t *)script_vars[ScrPool3_CurrentItem])->name) {
+	switch (((item_t *)script_vars[kScrPool3_CurrentItem])->name) {
 	case 108:	/*DAGGER*/
 	case 115:	/*SACRIFICIAL BLADE*/
 	case 117:	/*CHOPPER*/

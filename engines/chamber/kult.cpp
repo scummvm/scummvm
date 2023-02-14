@@ -167,7 +167,7 @@ process:
 			;
 			updateUndrawCursor(target);
 			refreshSpritesData();
-			RunCommand();
+			runCommand();
 			blitSpritesToBackBuffer();
 			processInput();
 			drawSpots(target);
@@ -176,7 +176,7 @@ process:
 
 			updateUndrawCursor(target);
 			refreshSpritesData();
-			RunCommandKeepSp();
+			runCommandKeepSp();
 			script_byte_vars.used_commands++;
 			if (script_byte_vars.dead_flag) {
 				if (--script_byte_vars.tries_left == 0)
@@ -198,7 +198,7 @@ void exitGame(void) {
 jmp_buf restart_jmp;
 
 #ifdef DEBUG_ENDING
-extern TheEnd(void);
+extern theEnd(void);
 #endif
 
 Common::Error ChamberEngine::run() {
@@ -336,7 +336,7 @@ Common::Error ChamberEngine::run() {
 
 	/* Play introduction sequence and initialize game */
 	the_command = 0xC001;
-	RunCommand();
+	runCommand();
 
 	if (_shouldQuit)
 		return Common::kNoError;
@@ -349,7 +349,7 @@ Common::Error ChamberEngine::run() {
 
 #ifdef DEBUG_ENDING
 	script_byte_vars.game_paused = 5;
-	TheEnd();
+	theEnd();
 	for (;;) ;
 #endif
 

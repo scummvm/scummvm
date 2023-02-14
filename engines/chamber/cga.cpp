@@ -608,7 +608,7 @@ void cga_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen,
 /*
 Blit progressive sprite (w+h+mask+pixel) to interlaced screen buffer
 */
-void DrawSprite(byte *sprite, byte *screen, uint16 ofs) {
+void drawSprite(byte *sprite, byte *screen, uint16 ofs) {
 	byte w, h;
 	w = *sprite++;
 	h = *sprite++;
@@ -618,7 +618,7 @@ void DrawSprite(byte *sprite, byte *screen, uint16 ofs) {
 /*
 Blit progressive sprite (w+h+mask+pixel) to interlaced screen buffer, horizontally flipped
 */
-void DrawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) {
+void drawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) {
 	byte w, h;
 	w = *sprite++;
 	h = *sprite++;
@@ -629,7 +629,7 @@ void DrawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) {
 Load and uncompress 2-bit sprite
 Return next ptr after the loaded sprite
 */
-byte *LoadSprite(byte index, byte *bank, byte *buffer, byte header_only) {
+byte *loadSprite(byte index, byte *bank, byte *buffer, byte header_only) {
 	byte w, h;
 	uint16 rsize;
 	byte *sprite, *sprite_end;
@@ -710,52 +710,52 @@ extern byte sprit_data[RES_SPRIT_MAX];
 
 byte sprit_load_buffer[1290];
 
-byte *LoadSprit(byte index) {
-	LoadSprite(index, sprit_data + 4, sprit_load_buffer, 0);
+byte *loadSprit(byte index) {
+	loadSprite(index, sprit_data + 4, sprit_load_buffer, 0);
 	return sprit_load_buffer;
 }
 
-byte *LoadPersSprit(byte index) {
+byte *loadPersSprit(byte index) {
 #if 1
 	/*Use separate memory for pers1/pers2*/
 	if (index < 61)
-		LoadSprite(index, pers1_data + 4, scratch_mem2, 0);
+		loadSprite(index, pers1_data + 4, scratch_mem2, 0);
 	else
-		LoadSprite(index - 61, pers2_data + 4, scratch_mem2, 0);
+		loadSprite(index - 61, pers2_data + 4, scratch_mem2, 0);
 #else
 	/*Use single large chunk for pers1+pers2*/
-	LoadSprite(index, pers1_data + 4, scratch_mem2, 0);
+	loadSprite(index, pers1_data + 4, scratch_mem2, 0);
 #endif
 
 	return scratch_mem2;
 }
 
 
-void DrawSpriteN(byte index, uint16 x, uint16 y, byte *target) {
+void drawSpriteN(byte index, uint16 x, uint16 y, byte *target) {
 	uint16 ofs;
 	byte *sprite;
-	sprite = LoadSprit(index);
+	sprite = loadSprit(index);
 	ofs = cga_CalcXY_p(x, y);
-	DrawSprite(sprite, target, ofs);
+	drawSprite(sprite, target, ofs);
 }
 
-void DrawSpriteNFlip(byte index, uint16 x, uint16 y, byte *target) {
+void drawSpriteNFlip(byte index, uint16 x, uint16 y, byte *target) {
 	uint16 ofs;
 	byte *sprite;
-	sprite = LoadSprit(index);
+	sprite = loadSprit(index);
 	ofs = cga_CalcXY_p(x, y);
-	DrawSpriteFlip(sprite, target, ofs);
+	drawSpriteFlip(sprite, target, ofs);
 }
 
-void BackupAndShowSprite(byte index, byte x, byte y) {
+void backupAndShowSprite(byte index, byte x, byte y) {
 	byte w, h;
 	uint16 ofs;
-	byte *sprite = LoadSprit(index);
+	byte *sprite = loadSprit(index);
 	ofs = cga_CalcXY_p(x, y);
 	w = sprite[0];
 	h = sprite[1];
 	cga_BackupImageReal(ofs, w, h);
-	DrawSprite(sprite, CGA_SCREENBUFFER, ofs);  /*DrawSpriteN(index, x, y, CGA_SCREENBUFFER);*/
+	drawSprite(sprite, CGA_SCREENBUFFER, ofs);  /*DrawSpriteN(index, x, y, CGA_SCREENBUFFER);*/
 }
 
 /*
@@ -1006,7 +1006,7 @@ static const byte piecedelays[] = {
 };
 
 /*break screen area onto 4x4 pix pieces*/
-static void ScreenToPieces(byte width, byte height, byte *screen, uint16 offs, scrpiece_t *pieces) {
+static void screenToPieces(byte width, byte height, byte *screen, uint16 offs, scrpiece_t *pieces) {
 	const byte *delays = piecedelays;
 	height = (height + 3) / 4;
 	while (height--) {
@@ -1035,7 +1035,7 @@ static void ScreenToPieces(byte width, byte height, byte *screen, uint16 offs, s
 	pieces->offs = 0;   /*end of list*/
 }
 
-static void FallPieces(scrpiece_t *pieces, byte *source, byte *target) {
+static void fallPieces(scrpiece_t *pieces, byte *source, byte *target) {
 	byte t = 1;
 	byte again = 0;
 	do {
@@ -1121,8 +1121,8 @@ static void FallPieces(scrpiece_t *pieces, byte *source, byte *target) {
 
 void cga_HideShatterFall(byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	scrpiece_t *pieces = (scrpiece_t *)scratch_mem2;
-	ScreenToPieces(w, h, screen, ofs, pieces);
-	FallPieces(pieces, source, target);
+	screenToPieces(w, h, screen, ofs, pieces);
+	fallPieces(pieces, source, target);
 }
 
 void cga_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byte *target) {

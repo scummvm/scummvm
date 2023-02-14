@@ -139,7 +139,7 @@ byte *loadPortrait(byte **pinfo, byte *end) {
 		buffer = sprit_load_buffer + 2 + 2 + (flags & 0x3FFF);
 		pitch = cur_frame_width;
 
-		sprite = LoadPersSprit(index);
+		sprite = loadPersSprit(index);
 		sprw = *sprite++;
 		sprh = *sprite++;
 
@@ -201,7 +201,7 @@ struct {
 
 byte selectCurrentAnim(byte *x, byte *y, byte *index) {
 	int16 i;
-	byte aniidx = ((pers_t *)(script_vars[ScrPool8_CurrentPers]))->index & ~7;
+	byte aniidx = ((pers_t *)(script_vars[kScrPool8_CurrentPers]))->index & ~7;
 	for (i = 0; i < STATIC_ANIMS_MAX; i++) {
 		if (static_anims[i].index == aniidx) {
 			*x = static_anims[i].x;
@@ -297,7 +297,7 @@ void playHurtSound() {
 	if (!ifgm_loaded)
 		playSound(144);
 	else
-		playSound(144 + (Rand() / 4) % 4);
+		playSound(144 + (getRand() / 4) % 4);
 }
 
 void blinkWithSound(byte color) {

@@ -200,7 +200,7 @@ void findPerson(void) {
 	pers_t *pers = pers_list;
 	for (i = 0; i < PERS_MAX; i++, pers++) {
 		if ((pers->flags & 15) == script_byte_vars.cur_spot_idx) {
-			script_vars[ScrPool8_CurrentPers] = pers;
+			script_vars[kScrPool8_CurrentPers] = pers;
 			script_byte_vars.cur_pers = i + 1;
 			return;
 		}
@@ -334,7 +334,7 @@ void loadZone(void) {
 	}
 
 	zone_spots = (spot_t *)zptr;
-	script_vars[ScrPool4_ZoneSpots] = (spot_t *)zptr;
+	script_vars[kScrPool4_ZoneSpots] = (spot_t *)zptr;
 	zone_spots_end = (spot_t *)zend;
 	zone_spots_cur = (spot_t *)zptr;
 	zone_spr_index = 0;
@@ -372,9 +372,9 @@ Load puzzl sprite to buffer, return next free buffer ptr
 */
 byte *loadPuzzl(byte index, byte *buffer) {
 	if (script_byte_vars.palette_index == 14)
-		return LoadSprite(index, puzzl_data + 4, buffer, 1);
+		return loadSprite(index, puzzl_data + 4, buffer, 1);
 	else
-		return LoadSprite(index, puzzl_data + 4, buffer, 0);
+		return loadSprite(index, puzzl_data + 4, buffer, 0);
 }
 
 /*
@@ -579,7 +579,7 @@ byte selectPerson(byte offset) {
 	/*TODO: replace offset arg with index?*/
 	byte index = offset / 5;   /* / sizeof(pers_t) */
 
-	script_vars[ScrPool8_CurrentPers] = &pers_list[index];
+	script_vars[kScrPool8_CurrentPers] = &pers_list[index];
 
 	index = findSpotByFlags(0x3F, (pers_list[index].index & 7) | SPOTFLG_10);   /*TODO: return 0 if not found?*/
 	if (index == 0xFF)
@@ -881,8 +881,8 @@ void drawRoomItemsIndicator(void) {
 			break;
 		}
 	}
-	DrawSpriteN(spridx, 296 / CGA_PIXELS_PER_BYTE, 14, CGA_SCREENBUFFER);
-	DrawSpriteN(spridx, 296 / CGA_PIXELS_PER_BYTE, 14, backbuffer);
+	drawSpriteN(spridx, 296 / CGA_PIXELS_PER_BYTE, 14, CGA_SCREENBUFFER);
+	drawSpriteN(spridx, 296 / CGA_PIXELS_PER_BYTE, 14, backbuffer);
 
 	/*recalculate the number of zapstiks we have*/
 	script_byte_vars.zapstiks_owned = 0;
@@ -1017,7 +1017,7 @@ void loadLutinSprite(uint16 lutidx) {
 		flags = *lutin_entry++;
 		flags |= (*lutin_entry++) << 8;
 
-		sprite = LoadSprit(spridx);
+		sprite = loadSprit(spridx);
 		sprw = *sprite++;
 		sprh = *sprite++;
 
@@ -1037,7 +1037,7 @@ void drawCharacterSprite(byte spridx, byte x, byte y, byte *target) {
 
 	loadLutinSprite(spridx);
 
-	DrawSprite(scratch_mem2, target, cga_CalcXY_p(x, y));
+	drawSprite(scratch_mem2, target, cga_CalcXY_p(x, y));
 }
 
 /*
@@ -1062,7 +1062,7 @@ char drawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
 			zsprite_h = scratch_mem2[1];
 			zsprite_draw_ofs = cga_CalcXY_p(rect->sx, rect->sy);
 
-			DrawSprite(scratch_mem2, target, zsprite_draw_ofs);
+			drawSprite(scratch_mem2, target, zsprite_draw_ofs);
 
 			return ~0;
 		}
@@ -1113,7 +1113,7 @@ void prepareAspirant(void) {
 		return;
 
 	hostility = script_byte_vars.rand_value;
-	appearance = Rand();
+	appearance = getRand();
 	flags = 0;
 	/*
 	flags values:
@@ -1137,13 +1137,13 @@ void prepareAspirant(void) {
 			script_word_vars.next_aspirant_cmd = BE(0xA018);	/*leave*/
 			script_byte_vars.check_used_commands = 3;			/*after 3 actions*/
 			script_byte_vars.aspirant_flags = flags;
-			script_vars[ScrPool8_CurrentPers] = aspirant_ptr;
+			script_vars[kScrPool8_CurrentPers] = aspirant_ptr;
 		} else if (appearance < 52) {
 			script_word_vars.next_aspirant_cmd = BE(0xA019);
 			flags |= 4;
 			script_byte_vars.check_used_commands = 3;
 			script_byte_vars.aspirant_flags = flags;
-			script_vars[ScrPool8_CurrentPers] = aspirant_ptr;
+			script_vars[kScrPool8_CurrentPers] = aspirant_ptr;
 		} else {
 			/*do not spawn*/
 			script_byte_vars.aspirant_flags = 0;
@@ -1162,13 +1162,13 @@ void prepareAspirant(void) {
 			script_word_vars.next_aspirant_cmd = BE(0xA018);	/*leave*/
 			script_byte_vars.check_used_commands = 3;			/*after 3 actions*/
 			script_byte_vars.aspirant_flags = flags;
-			script_vars[ScrPool8_CurrentPers] = aspirant_ptr;
+			script_vars[kScrPool8_CurrentPers] = aspirant_ptr;
 		} else if (appearance < 52) {
 			script_word_vars.next_aspirant_cmd = BE(0xA019);
 			flags |= 4;
 			script_byte_vars.check_used_commands = 3;
 			script_byte_vars.aspirant_flags = flags;
-			script_vars[ScrPool8_CurrentPers] = aspirant_ptr;
+			script_vars[kScrPool8_CurrentPers] = aspirant_ptr;
 		} else {
 			/*do not spawn*/
 			script_byte_vars.aspirant_flags = 0;
@@ -1331,7 +1331,7 @@ void setAnim127Sprite(byte flags, byte spridx) {
 Bounce current item to the room/inventory
 */
 void bounceCurrentItem(byte flags, byte y) {
-	item_t *item = (item_t *)(script_vars[ScrPool3_CurrentItem]);
+	item_t *item = (item_t *)(script_vars[kScrPool3_CurrentItem]);
 
 	setAnim127Sprite(flags, item->sprite);
 	item->flags = flags;
