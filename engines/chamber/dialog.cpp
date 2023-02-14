@@ -39,7 +39,7 @@ uint16 cur_dlg_index;
 dirty_rect_t dirty_rects[MAX_DIRTY_RECT];
 dirty_rect_t *last_dirty_rect = dirty_rects;
 
-void AddDirtyRect(byte kind, byte x, byte y, byte w, byte h, uint16 offs) {
+void addDirtyRect(byte kind, byte x, byte y, byte w, byte h, uint16 offs) {
 	int16 i;
 	dirty_rect_t *r = dirty_rects;
 	for (i = 0; i < MAX_DIRTY_RECT; i++, r++) /*TODO: may go oob*/
@@ -55,7 +55,7 @@ void AddDirtyRect(byte kind, byte x, byte y, byte w, byte h, uint16 offs) {
 	last_dirty_rect = r;
 }
 
-void GetDirtyRect(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs, byte newkind) {
+void getDirtyRect(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs, byte newkind) {
 	*kind = dirty_rects[index].kind;
 	*offs = dirty_rects[index].offs;
 	*w = dirty_rects[index].width;
@@ -67,19 +67,19 @@ void GetDirtyRect(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, u
 	script_byte_vars.dirty_rect_kind = dirty_rects[0].kind;
 }
 
-void GetDirtyRectAndFree(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs) {
-	GetDirtyRect(index - 1, kind, x, y, w, h, offs, DirtyRectFree);
+void getDirtyRectAndFree(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs) {
+	getDirtyRect(index - 1, kind, x, y, w, h, offs, DirtyRectFree);
 }
 
-void GetDirtyRectAndSetSprite(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs) {
-	GetDirtyRect(index - 1, kind, x, y, w, h, offs, DirtyRectSprite);
+void getDirtyRectAndSetSprite(int16 index, byte *kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs) {
+	getDirtyRect(index - 1, kind, x, y, w, h, offs, DirtyRectSprite);
 }
 
-int16 FindDirtyRectAndFree(byte kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs) {
+int16 findDirtyRectAndFree(byte kind, byte *x, byte *y, byte *w, byte *h, uint16 *offs) {
 	int16 i;
 	for (i = 0; i < MAX_DIRTY_RECT; i++) {
 		if (dirty_rects[i].kind == kind) {
-			GetDirtyRect(i, &kind, x, y, w, h, offs, DirtyRectFree);
+			getDirtyRect(i, &kind, x, y, w, h, offs, DirtyRectFree);
 			return 1;
 		}
 	}
@@ -87,11 +87,11 @@ int16 FindDirtyRectAndFree(byte kind, byte *x, byte *y, byte *w, byte *h, uint16
 }
 
 /*Restore screen data from back buffer as specified by dirty rects of kind*/
-void PopDirtyRects(byte kind) {
+void popDirtyRects(byte kind) {
 	byte x, y;
 	byte width, height;
 	uint16 offs;
-	while (FindDirtyRectAndFree(kind, &x, &y, &width, &height, &offs)) {
+	while (findDirtyRectAndFree(kind, &x, &y, &width, &height, &offs)) {
 		cga_CopyScreenBlock(backbuffer, width, height, frontbuffer, offs);
 		if (kind == DirtyRectBubble) {
 			/*pop bubble's spike*/
@@ -100,16 +100,16 @@ void PopDirtyRects(byte kind) {
 	}
 }
 
-void DesciTextBox(uint16 x, uint16 y, uint16 width, byte *msg) {
+void desciTextBox(uint16 x, uint16 y, uint16 width, byte *msg) {
 	draw_x = x;
 	draw_y = y;
 	char_draw_max_width = width;
 	cga_DrawTextBox(msg, frontbuffer);
-	AddDirtyRect(DirtyRectText, draw_x, draw_y, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, cga_CalcXY_p(draw_x, draw_y));
+	addDirtyRect(DirtyRectText, draw_x, draw_y, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, cga_CalcXY_p(draw_x, draw_y));
 }
 
 /*Draw dialog bubble with text and spike*/
-void DrawPersonBubble(byte x, byte y, byte flags, byte *msg) {
+void drawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 	uint16 ofs;
 	byte w, h;
 	uint16 ww, nw;
@@ -176,10 +176,10 @@ void DrawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 		break;
 	}
 
-	AddDirtyRect(DirtyRectBubble, ofs >> 8, ofs & 255, w, h, cga_CalcXY_p(x, y));
+	addDirtyRect(DirtyRectBubble, ofs >> 8, ofs & 255, w, h, cga_CalcXY_p(x, y));
 }
 
-void ShowPromptAnim(void) {
+void showPromptAnim(void) {
 	if (script_byte_vars.zone_index == 135)
 		return;
 	waitVBlank();
@@ -187,14 +187,14 @@ void ShowPromptAnim(void) {
 	cursor_anim_phase = ~cursor_anim_phase;
 }
 
-void PromptWait(void) {
+void promptWait(void) {
 	cursor_anim_phase = 0;
 
 	do {
 		byte ticks = script_byte_vars.timer_ticks;
 		if ((ticks % 8) == 0 && ticks != cursor_anim_ticks) {
 			cursor_anim_ticks = ticks;
-			ShowPromptAnim();
+			showPromptAnim();
 		}
 		PollInputButtonsOnly();
 
@@ -206,13 +206,13 @@ void PromptWait(void) {
 	} while (!buttons);
 
 	if (cursor_anim_phase)
-		ShowPromptAnim();
+		showPromptAnim();
 }
 
 /*
 Get string with index num from strings bank
 */
-byte *SeekToString(byte *bank, uint16 num) {
+byte *seekToString(byte *bank, uint16 num) {
 	byte len;
 	byte *p = bank;
 
@@ -231,7 +231,7 @@ byte *SeekToString(byte *bank, uint16 num) {
 /*
 Get string with index num from strings bank, with large string index support for scripts
 */
-byte *SeekToStringScr(byte *bank, uint16 num, byte **ptr) {
+byte *seekToStringScr(byte *bank, uint16 num, byte **ptr) {
 	byte len;
 	byte *p = bank;
 

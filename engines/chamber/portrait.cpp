@@ -277,7 +277,7 @@ int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	cur_image_size_w = *image++;
 	cur_image_pixels = image;
 	cur_image_offs = cga_CalcXY_p(cur_image_coords_x, cur_image_coords_y);
-	AddDirtyRect(DirtyRectSprite, cur_image_coords_x, cur_image_coords_y, cur_image_size_w, cur_image_size_h, cur_image_offs);
+	addDirtyRect(DirtyRectSprite, cur_image_coords_x, cur_image_coords_y, cur_image_size_w, cur_image_size_h, cur_image_offs);
 
 	/*TODO: remove and use only globals?*/
 	*x = cur_image_coords_x;
@@ -356,7 +356,7 @@ void AnimPortrait(byte layer, byte index, byte delay) {
 			ani++;
 			LoadPortrait(&ani, ani + 3);
 		}
-		GetDirtyRectAndSetSprite(layer, &kind, &x, &y, &width, &height, &offs);
+		getDirtyRectAndSetSprite(layer, &kind, &x, &y, &width, &height, &offs);
 		waitVBlank();
 		cga_BlitAndWait(cur_image_pixels, width, width, height, CGA_SCREENBUFFER, offs);
 		waitVBlankTimer();

@@ -108,14 +108,14 @@ enum CommandStatus {
 
 uint16 CMD_TRAP(void) {
 	printf("CMD TRAP\n");
-	PromptWait();
+	promptWait();
 	for (;;) ;
 	return 0;
 }
 
 uint16 SCR_TRAP(void) {
 	printf("SCR TRAP 0x%02X @ 0x%lX\n", *script_ptr, script_ptr - templ_data);
-	PromptWait();
+	promptWait();
 	for (;;) ;
 	return 0;
 }
@@ -404,9 +404,9 @@ uint16 SCR_2D_Wait(void) {
 /*
 Show blinking prompt indicator and wait for a keypress
 */
-uint16 SCR_2E_PromptWait(void) {
+uint16 SCR_2E_promptWait(void) {
 	script_ptr++;
-	PromptWait();
+	promptWait();
 	return 0;
 }
 
@@ -472,7 +472,7 @@ uint16 LoadVar(byte **ptr, byte **varptr) {
 			}
 			if (varoffs >= maxoffs) {
 				printf("Scr var out of bounds @ %X (pool %d, ofs 0x%X, max 0x%X)\n", (uint16)(script_ptr - templ_data), vartype & VARTYPE_KIND, varoffs, maxoffs);
-				PromptWait();
+				promptWait();
 			}
 		}
 #endif
@@ -944,7 +944,7 @@ uint16 SCR_10_DrawPortraitZoomed(void) {
 
 #if 0
 	/*TODO: debug wait*/
-	PromptWait();
+	promptWait();
 #endif
 
 	return 0;
@@ -963,7 +963,7 @@ uint16 SCR_19_HidePortraitLiftLeft(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
@@ -1009,7 +1009,7 @@ uint16 SCR_1A_HidePortraitLiftRight(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
@@ -1054,7 +1054,7 @@ uint16 SCR_1B_HidePortraitLiftUp(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
@@ -1090,7 +1090,7 @@ uint16 SCR_1C_HidePortraitLiftDown(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
@@ -1126,7 +1126,7 @@ uint16 SCR_1E_HidePortraitTwist(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
@@ -1150,7 +1150,7 @@ uint16 SCR_1F_HidePortraitArc(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
@@ -1174,7 +1174,7 @@ uint16 SCR_20_HidePortraitDots(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
@@ -1586,9 +1586,9 @@ uint16 SCR_3_DrawItemBox(void) {
 
 	x = dirty_rects[0].x;
 	y = dirty_rects[0].y + 70;
-	msg = SeekToString(desci_data, 274 + item->name);
+	msg = seekToString(desci_data, 274 + item->name);
 
-	DesciTextBox(x, y, 18, msg);
+	desciTextBox(x, y, 18, msg);
 	DrawSpriteN(item->sprite, x, y + 1, frontbuffer);
 
 	return 0;
@@ -1597,16 +1597,16 @@ uint16 SCR_3_DrawItemBox(void) {
 /*
 Draw simple bubble with text
 */
-uint16 SCR_37_DesciTextBox(void) {
+uint16 SCR_37_desciTextBox(void) {
 	byte x, y, w;
 	byte *msg;
 	script_ptr++;
-	msg = SeekToStringScr(desci_data, *script_ptr, &script_ptr);
+	msg = seekToStringScr(desci_data, *script_ptr, &script_ptr);
 	script_ptr++;
 	x = *script_ptr++;
 	y = *script_ptr++;
 	w = *script_ptr++;
-	DesciTextBox(x, y, w, msg);
+	desciTextBox(x, y, w, msg);
 	return 0;
 }
 
@@ -1739,7 +1739,7 @@ uint16 SCR_2A_PopDialogRect(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs); /*TODO: implicit target*/
 	cga_CopyScreenBlock(backbuffer, 2, 21, CGA_SCREENBUFFER, offs = (x << 8) | y);  /*TODO: implicit target*/
 
@@ -1753,7 +1753,7 @@ Restore screen data from back buffer as specified by dirty rect of kind dialog b
 */
 uint16 SCR_2B_PopAllBubbles(void) {
 	script_ptr++;
-	PopDirtyRects(DirtyRectBubble);
+	popDirtyRects(DirtyRectBubble);
 	return 0;
 }
 
@@ -1770,7 +1770,7 @@ uint16 SCR_22_HidePortraitShatter(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
@@ -1794,7 +1794,7 @@ uint16 SCR_23_HidePortrait(void) {
 	script_ptr++;
 	index = *script_ptr++;
 
-	GetDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
+	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
@@ -1831,7 +1831,7 @@ Restore screen data from back buffer for all portraits
 */
 uint16 SCR_24_PopAllPortraits(void) {
 	script_ptr++;
-	PopDirtyRects(DirtyRectSprite);
+	popDirtyRects(DirtyRectSprite);
 	return 0;
 }
 
@@ -1840,7 +1840,7 @@ Restore screen data from back buffer for all text bubbles
 */
 uint16 SCR_40_PopAllTextBoxes() {
 	script_ptr++;
-	PopDirtyRects(DirtyRectText);
+	popDirtyRects(DirtyRectText);
 	return 0;
 }
 
@@ -1904,7 +1904,7 @@ uint16 SCR_30_Fight(void) {
 	BlinkToWhite();
 
 	if (pers->name != 44 && pers->name != 56 && pers->name != 51) {	/*VORT, MONKEY, TURKEY*/
-		GetDirtyRectAndFree(1, &kind, &x, &y, &width, &height, &offs);
+		getDirtyRectAndFree(1, &kind, &x, &y, &width, &height, &offs);
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 	}
 
@@ -2308,7 +2308,7 @@ uint16 SCR_45_DeProfundisRoomEntry(void) {
 	sprofs = GetPuzzlSprite(119, 128 / 4, 94, &w, &h, &ofs);
 	cga_BlitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
 
-	PromptWait();
+	promptWait();
 
 	for (; h; h--) {
 		waitVBlank();
@@ -3014,7 +3014,7 @@ Draw text box
 uint16 SCR_14_DrawDesc(void) {
 	byte *msg;
 	script_ptr++;
-	msg = SeekToStringScr(desci_data, *script_ptr, &script_ptr);
+	msg = seekToStringScr(desci_data, *script_ptr, &script_ptr);
 	script_ptr++;
 
 	DrawMessage(msg, CGA_SCREENBUFFER);
@@ -3031,19 +3031,19 @@ uint16 SCR_17_DrawPersonThoughtBubbleDialog(void) {
 	byte x, y;
 	byte *msg;
 	script_ptr++;
-	msg = SeekToStringScr(diali_data, *script_ptr, &script_ptr);
+	msg = seekToStringScr(diali_data, *script_ptr, &script_ptr);
 	script_ptr++;
 
 	x = found_spot->sx;
 	y = found_spot->sy;
 
 	if (x < 140 / 4)
-		DrawPersonBubble(found_spot->ex, y - 40, SPIKE_BUBLEFT | 20, msg);
+		drawPersonBubble(found_spot->ex, y - 40, SPIKE_BUBLEFT | 20, msg);
 	else
-		DrawPersonBubble(x - 80 / 4, y - 40, SPIKE_BUBRIGHT | 20, msg);
+		drawPersonBubble(x - 80 / 4, y - 40, SPIKE_BUBRIGHT | 20, msg);
 
-	PromptWait();
-	PopDirtyRects(DirtyRectBubble);
+	promptWait();
+	popDirtyRects(DirtyRectBubble);
 	return 0;
 }
 
@@ -3051,23 +3051,23 @@ uint16 SCR_17_DrawPersonThoughtBubbleDialog(void) {
 Draw dialog bubble with text for a person, wait for a key, then hide. Auto find bubble location
 Use normal spike
 */
-uint16 SCR_61_DrawPersonBubbleDialog(void) {
+uint16 SCR_61_drawPersonBubbleDialog(void) {
 	byte x, y;
 	byte *msg;
 	script_ptr++;
-	msg = SeekToStringScr(diali_data, *script_ptr, &script_ptr);
+	msg = seekToStringScr(diali_data, *script_ptr, &script_ptr);
 	script_ptr++;
 
 	x = found_spot->sx;
 	y = found_spot->sy;
 
 	if (x < 140 / 4)
-		DrawPersonBubble(found_spot->ex, y - 40, SPIKE_DNLEFT | 20, msg);
+		drawPersonBubble(found_spot->ex, y - 40, SPIKE_DNLEFT | 20, msg);
 	else
-		DrawPersonBubble(x - 80 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
+		drawPersonBubble(x - 80 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
 
-	PromptWait();
-	PopDirtyRects(DirtyRectBubble);
+	promptWait();
+	popDirtyRects(DirtyRectBubble);
 	return 0;
 }
 
@@ -3118,10 +3118,10 @@ uint16 SCR_27_DrawGaussBubble(void) {
 	byte *msg;
 
 	script_ptr++;
-	msg = SeekToStringScr(diali_data, *script_ptr, &script_ptr);
+	msg = seekToStringScr(diali_data, *script_ptr, &script_ptr);
 	script_ptr++;
 
-	DrawPersonBubble(32 / 4, 20, 15, msg);
+	drawPersonBubble(32 / 4, 20, 15, msg);
 	return 0;
 }
 
@@ -3132,7 +3132,7 @@ uint16 SCR_29_DialiTextBox(void) {
 	byte x, y, f;
 	byte *msg;
 	script_ptr++;
-	msg = SeekToStringScr(diali_data, *script_ptr, &script_ptr);
+	msg = seekToStringScr(diali_data, *script_ptr, &script_ptr);
 	cur_dlg_index = cur_str_index;  /*TODO: useless?*/
 
 	script_ptr++;
@@ -3140,7 +3140,7 @@ uint16 SCR_29_DialiTextBox(void) {
 	y = *script_ptr++;
 	f = *script_ptr++;
 
-	DrawPersonBubble(x, y, f, msg);
+	drawPersonBubble(x, y, f, msg);
 	return 0;
 }
 
@@ -3257,8 +3257,8 @@ uint16 CMD_4_EnergyLevel(void) {
 	byte *image = energy_image;
 	byte anim = 40;
 
-	PopDirtyRects(DirtyRectSprite);
-	PopDirtyRects(DirtyRectBubble);
+	popDirtyRects(DirtyRectSprite);
+	popDirtyRects(DirtyRectBubble);
 
 	cur_dlg_index = 0;
 	ifgm_flag2 = ~0;
@@ -3277,7 +3277,7 @@ uint16 CMD_4_EnergyLevel(void) {
 		PollInputButtonsOnly();
 	} while (buttons == 0);
 
-	PopDirtyRects(DirtyRectSprite);
+	popDirtyRects(DirtyRectSprite);
 
 	ifgm_flag2 = 0;
 	IFGM_StopSample();
@@ -3360,7 +3360,7 @@ uint16 CMD_8_Timer(void) {
 		PollInputButtonsOnly();
 	} while (buttons == 0);
 
-	PopDirtyRects(DirtyRectSprite);
+	popDirtyRects(DirtyRectSprite);
 
 	return 0;
 }
@@ -3646,13 +3646,13 @@ uint16 CMD_11_PsiTuneIn(void) {
 		return ScriptRerun;
 	}
 
-	msg = SeekToString(diali_data, command);
+	msg = seekToString(diali_data, command);
 	cur_dlg_index = cur_str_index;  /*TODO: useless?*/
 
-	DrawPersonBubble(32 / 4, 20, 15, msg);
+	drawPersonBubble(32 / 4, 20, 15, msg);
 
-	PromptWait();
-	PopDirtyRects(DirtyRectBubble);
+	promptWait();
+	popDirtyRects(DirtyRectBubble);
 
 	return 0;
 }
@@ -3920,8 +3920,8 @@ uint16 CMD_18_AspirantLeave(void) {
 	/*TODO: check me*/
 	static const animdesc_t anim33 = {ANIMFLG_USESPOT | 33, { { 0, 0 } }};
 
-	PopDirtyRects(DirtyRectSprite);
-	PopDirtyRects(DirtyRectText);
+	popDirtyRects(DirtyRectSprite);
+	popDirtyRects(DirtyRectText);
 
 	aspirant_ptr->area = 0;
 	script_word_vars.next_aspirant_cmd = BE(0);
@@ -3943,7 +3943,7 @@ uint16 CMD_19_AspirantAppear(void) {
 	/*TODO: check me*/
 	static const animdesc_t anim23 = {ANIMFLG_USESPOT | 23, { { 0, 0 } }};
 
-	PopDirtyRects(DirtyRectSprite);
+	popDirtyRects(DirtyRectSprite);
 	aspirant_ptr->area = script_byte_vars.zone_area;
 	script_word_vars.next_aspirant_cmd = BE(0xA018);	/*leave*/
 	script_byte_vars.check_used_commands = 3;
@@ -3994,20 +3994,20 @@ uint16 CMD_1B_Holo(void) {
 	playAnim(42, x + 4 / 4, y + 6);
 
 	num = 321 + ((Swap16(script_word_vars.timer_ticks2) < 60 * 60) ? 0 : 4) + (script_byte_vars.rand_value % 4);
-	msg = SeekToString(diali_data, num);
+	msg = seekToString(diali_data, num);
 	cur_dlg_index = cur_str_index;  /*TODO: useless?*/
 
 	if (x < 140 / 4)
-		DrawPersonBubble(x + 32 / 4, y - 40, SPIKE_DNLEFT | 20, msg);
+		drawPersonBubble(x + 32 / 4, y - 40, SPIKE_DNLEFT | 20, msg);
 	else
-		DrawPersonBubble(x - 92 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
+		drawPersonBubble(x - 92 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
 
 	IFGM_PlaySfx(0);
 
 	playAnim(43, x, y);
 
-	PromptWait();
-	PopDirtyRects(DirtyRectBubble);
+	promptWait();
+	popDirtyRects(DirtyRectBubble);
 
 	IFGM_PlaySample(225);
 
@@ -4084,21 +4084,21 @@ uint16 CMD_21_VortTalk(void) {
 	else
 		num = 35;
 
-	msg = SeekToString(diali_data, num);
+	msg = seekToString(diali_data, num);
 	cur_dlg_index = cur_str_index;  /*TODO: useless?*/
 
 	x = found_spot->sx;
 	y = found_spot->sy;
 
 	if (x < 140 / 4)
-		DrawPersonBubble(found_spot->ex, y - 40, SPIKE_DNLEFT | 20, msg);
+		drawPersonBubble(found_spot->ex, y - 40, SPIKE_DNLEFT | 20, msg);
 	else
-		DrawPersonBubble(x - 80 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
+		drawPersonBubble(x - 80 / 4, y - 40, SPIKE_DNRIGHT | 20, msg);
 
 	IFGM_PlaySfx(0);
 
-	PromptWait();
-	PopDirtyRects(DirtyRectBubble);
+	promptWait();
+	popDirtyRects(DirtyRectBubble);
 
 	return 0;
 }
@@ -4235,7 +4235,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_2B_PopAllBubbles,
 	SCR_2C_Wait4,
 	SCR_2D_Wait,
-	SCR_2E_PromptWait,
+	SCR_2E_promptWait,
 	SCR_2F_LootAspirantsItem,
 	SCR_30_Fight,   /*30*/
 	SCR_31_Fight2,
@@ -4244,7 +4244,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_34_Call,
 	SCR_35_Ret,
 	SCR_36_ChangeZone,
-	SCR_37_DesciTextBox,
+	SCR_37_desciTextBox,
 	SCR_38_PlayAnim,
 	SCR_39_AnimRoomDoorOpen,
 	SCR_3A_AnimRoomDoorClose,
@@ -4286,7 +4286,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_5E_SelectTempPalette,
 	SCR_5F_DrawRoomObjectBack,
 	SCR_60_ReviveCadaver,   /*60*/
-	SCR_61_DrawPersonBubbleDialog,
+	SCR_61_drawPersonBubbleDialog,
 	SCR_62_PsiReaction,
 	SCR_63_LiftSpot6,
 	SCR_64_DrawBoxAroundSpot,
@@ -4393,7 +4393,7 @@ again:;
 		res = RunScript(templ_data + the_command);
 		break;
 	case 0x9000:
-		DrawMessage(SeekToString(desci_data, cmd), CGA_SCREENBUFFER);
+		DrawMessage(seekToString(desci_data, cmd), CGA_SCREENBUFFER);
 		break;
 	case 0xA000:
 	case 0xB000:
