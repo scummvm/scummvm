@@ -97,7 +97,7 @@ static const char savegame_name[] = "SCENAx.BIN";
 	rlen = read(f, buffer, size); if(rlen != size) goto error;
 
 #if 0
-int16 ReadSaveData(int16 f, int16 clean) {
+int16 readSaveData(int16 f, int16 clean) {
 	int16 rlen;
 	uint16 zero = 0;
 	byte *p;
@@ -343,7 +343,7 @@ error:;
 	return 1;
 }
 
-int16 WriteSaveData(int16 f, int16 clean) {
+int16 writeSaveData(int16 f, int16 clean) {
 	int16 wlen;
 	uint16 zero = 0;
 	byte *p;
@@ -586,8 +586,8 @@ error:;
 }
 #endif
 
-int16 LoadScena(void) {
-	warning("STUB: LoadScena()");
+int16 loadScena(void) {
+	warning("STUB: loadScena()");
 	return 1;
 #if 0
 	int16 f;
@@ -620,8 +620,8 @@ int16 LoadScena(void) {
 #endif
 }
 
-int16 SaveScena(void) {
-	warning("STUB: SaveScena()");
+int16 saveScena(void) {
+	warning("STUB: saveScena()");
 	return 1;
 #if 0
 	int16 f;
@@ -651,8 +651,8 @@ int16 SaveScena(void) {
 #endif
 }
 
-void SaveRestartGame(void) {
-	warning("STUB: SaveRestartGame()");
+void saveRestartGame(void) {
+	warning("STUB: saveRestartGame()");
 #if 0
 	int16 f;
 
@@ -669,19 +669,19 @@ void SaveRestartGame(void) {
 }
 
 //extern jmp_buf restart_jmp;
-extern void AskDisk2(void);
+extern void askDisk2(void);
 
-void RestartGame(void) {
-	warning("STUB: RestartGame()");
+void restartGame(void) {
+	warning("STUB: restartGame()");
 
 #if 0
 	int16 f;
 	int16 res;
 
-	for (;; AskDisk2()) {
+	for (;; askDisk2()) {
 		f = open(restart_name, O_RDONLY | O_BINARY);
 		if (f != -1) {
-			res = ReadSaveData(f, 1);
+			res = readSaveData(f, 1);
 			close(f);
 			if (res == 0)
 				break;

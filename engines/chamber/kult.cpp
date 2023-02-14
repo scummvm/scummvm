@@ -299,7 +299,7 @@ Common::Error ChamberEngine::run() {
 	cga_BackBufferToRealFull();
 
 	/* Create clean game state snapshot */
-	SaveRestartGame();
+	saveRestartGame();
 
 	/* Detect CPU speed for delay routines */
 	cpu_speed_delay = benchmarkCpu() / 8;
