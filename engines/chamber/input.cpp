@@ -241,8 +241,8 @@ void PollInput(void) {
 
 void ProcessInput(void) {
 	PollInput();
-	UpdateCursor();
-	DrawCursor(frontbuffer);
+	updateCursor();
+	drawCursor(frontbuffer);
 }
 
 void KeyboardIsr() {

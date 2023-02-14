@@ -115,7 +115,7 @@ void OpenInventory(uint16 filtermask, uint16 filtervalue) {
 	cga_BackupImageReal(cga_CalcXY_p(232 / 4, 56), 64 / 4, 64);
 	DrawInventoryBox(filtermask, filtervalue);
 	if (inv_count != 0) {
-		SelectCursor(CURSOR_FINGER);
+		selectCursor(CURSOR_FINGER);
 		ProcessInput();
 		do {
 			PollInput();
@@ -124,7 +124,7 @@ void OpenInventory(uint16 filtermask, uint16 filtervalue) {
 				DrawCommandHint();
 			DrawHintsAndCursor(frontbuffer);
 		} while (buttons == 0);
-		UndrawCursor(frontbuffer);
+		undrawCursor(frontbuffer);
 	}
 	cga_RestoreImage(scratch_mem2, frontbuffer);
 	playSound(20);

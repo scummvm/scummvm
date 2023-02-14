@@ -64,7 +64,7 @@ byte cursorImage[CURSOR_WIDTH * CURSOR_HEIGHT];
 /*
 Select cursor shape and its hotspot
 */
-void SelectCursor(uint16 num) {
+void selectCursor(uint16 num) {
 	cursor_x_shift = cursor_shifts[num][0];
 	cursor_y_shift = cursor_shifts[num][1];
 	cursor_shape = souri_data + num * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / CGA_PIXELS_PER_BYTE;
@@ -98,29 +98,29 @@ void SelectCursor(uint16 num) {
 /*
 Build cursor sprite for its current pixel-grained position
 */
-void UpdateCursor(void) {
+void updateCursor(void) {
 }
 
 /*
 Draw cursor sprite and backup background pixels
 */
-void DrawCursor(byte *target) {
+void drawCursor(byte *target) {
 	g_system->updateScreen();
 }
 
 /*
 Restore background pixels under cursor
 */
-void UndrawCursor(byte *target) {
+void undrawCursor(byte *target) {
 }
 
 /*
 Restore pixels under cursor and update cursor sprite
 */
-void UpdateUndrawCursor(byte *target) {
+void updateUndrawCursor(byte *target) {
 	/*TODO: does this call order makes any sense?*/
-	UpdateCursor();
-	UndrawCursor(target);
+	updateCursor();
+	undrawCursor(target);
 }
 
 } // End of namespace Chamber

@@ -49,11 +49,11 @@ extern byte *cursor_shape;
 extern byte cursor_anim_ticks;
 extern byte cursor_anim_phase;
 
-void SelectCursor(uint16 num);
-void UpdateCursor(void);
-void DrawCursor(byte *target);
-void UndrawCursor(byte *target);
-void UpdateUndrawCursor(byte *target);
+void selectCursor(uint16 num);
+void updateCursor(void);
+void drawCursor(byte *target);
+void undrawCursor(byte *target);
+void updateUndrawCursor(byte *target);
 
 } // End of namespace Chamber
 
