@@ -970,18 +970,21 @@ void Runtime::scriptOpBitSet1(ScriptArg_t arg) { error("Unimplemented opcode"); 
 void Runtime::scriptOpDisc1(ScriptArg_t arg) {
 	// Disc check, always pass
 	TAKE_STACK(1);
+	(void)stackArgs;
 	_scriptStack.push_back(1);
 }
 
 void Runtime::scriptOpDisc2(ScriptArg_t arg) {
 	// Disc check, always pass
 	TAKE_STACK(2);
+	(void)stackArgs;
 	_scriptStack.push_back(1);
 }
 
 void Runtime::scriptOpDisc3(ScriptArg_t arg) {
 	// Disc check, always pass
 	TAKE_STACK(3);
+	(void)stackArgs;
 	_scriptStack.push_back(1);
 }
 
