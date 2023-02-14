@@ -101,12 +101,12 @@ void TRAP() {
 /* Main Game Loop */
 void gameLoop(byte *target) {
 	for (;;) {
-		AnimateSpots(target);
+		animateSpots(target);
 
 		/* Update/check live things */
-		UpdateProtozorqs();
-		CheckGameTimeLimit();
-		CleanupDroppedItems();
+		updateProtozorqs();
+		checkGameTimeLimit();
+		cleanupDroppedItems();
 
 		/* Get player input */
 		pollInput();
@@ -115,10 +115,10 @@ void gameLoop(byte *target) {
 			return;
 
 		the_command = 0;
-		if (IsCursorInRect(&room_bounds_rect)) {
+		if (isCursorInRect(&room_bounds_rect)) {
 			selectCursor(CURSOR_TARGET);
 			command_hint = 100;
-			SelectSpotCursor();
+			selectSpotCursor();
 		} else {
 			selectCursor(CURSOR_FINGER);
 			object_hint = 117;
@@ -126,12 +126,12 @@ void gameLoop(byte *target) {
 		}
 
 		if (object_hint != last_object_hint)
-			DrawObjectHint();
+			drawObjectHint();
 
 		if (command_hint != last_command_hint)
-			DrawCommandHint();
+			drawCommandHint();
 
-		DrawHintsAndCursor(target);
+		drawHintsAndCursor(target);
 
 		if (!buttons || !the_command) {
 			/*Pending / AI commands*/
@@ -166,25 +166,25 @@ void gameLoop(byte *target) {
 process:
 			;
 			updateUndrawCursor(target);
-			RefreshSpritesData();
+			refreshSpritesData();
 			RunCommand();
-			BlitSpritesToBackBuffer();
+			blitSpritesToBackBuffer();
 			processInput();
-			DrawSpots(target);
+			drawSpots(target);
 		} else {
 			/*Player action*/
 
 			updateUndrawCursor(target);
-			RefreshSpritesData();
+			refreshSpritesData();
 			RunCommandKeepSp();
 			script_byte_vars.used_commands++;
 			if (script_byte_vars.dead_flag) {
 				if (--script_byte_vars.tries_left == 0)
-					ResetAllPersons();
+					resetAllPersons();
 			}
-			BlitSpritesToBackBuffer();
+			blitSpritesToBackBuffer();
 			processInput();
-			DrawSpots(target);
+			drawSpots(target);
 		}
 	}
 }
@@ -342,7 +342,7 @@ Common::Error ChamberEngine::run() {
 		return Common::kNoError;
 
 	/* Sync graphics */
-	BlitSpritesToBackBuffer();
+	blitSpritesToBackBuffer();
 
 	/* Initialize cursor backup */
 	processInput();

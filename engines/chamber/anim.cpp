@@ -51,7 +51,7 @@ uint16 dot_effect_delay;
 extern uint16 cpu_speed_delay;
 
 extern byte *seekToEntry(byte *bank, uint16 num, byte **end);
-extern void LoadLutinSprite(uint16 lutidx);
+extern void loadLutinSprite(uint16 lutidx);
 
 void getScratchBuffer(byte mode) {
 	byte *buffer = scratch_mem2;
@@ -69,7 +69,7 @@ void animLoadSprite(byte **panim) {
 	mode = *((*panim)++);
 	index = *((*panim)++);
 	getScratchBuffer(mode);
-	LoadLutinSprite(index);
+	loadLutinSprite(index);
 }
 
 void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx, int8 dy) {

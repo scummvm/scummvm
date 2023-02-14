@@ -143,7 +143,7 @@ void actionsMenu(byte **pinfo) {
 		pollInputInActionsMenu();
 
 		for (choice = 0; choice < numchoices; choice++) {
-			if (IsCursorInRect(&act_dot_rects[choice]))
+			if (isCursorInRect(&act_dot_rects[choice]))
 				break;
 		}
 		if (choice < numchoices) {
@@ -157,8 +157,8 @@ void actionsMenu(byte **pinfo) {
 		}
 
 		if (command_hint != last_command_hint)
-			DrawCommandHint();  /*to backbuffer*/
-		DrawHintsAndCursor(CGA_SCREENBUFFER);
+			drawCommandHint();  /*to backbuffer*/
+		drawHintsAndCursor(CGA_SCREENBUFFER);
 	} while (buttons == 0);
 	undrawCursor(CGA_SCREENBUFFER);
 
@@ -184,10 +184,10 @@ void menuLoop(byte spotmask, byte spotvalue) {
 	processInput();
 	do {
 		pollInput();
-		CheckHotspots(spotmask, spotvalue);
+		checkHotspots(spotmask, spotvalue);
 		if (object_hint != last_object_hint)
-			DrawObjectHint();
-		DrawHintsAndCursor(frontbuffer);
+			drawObjectHint();
+		drawHintsAndCursor(frontbuffer);
 	} while (buttons == 0);
 	undrawCursor(frontbuffer);
 }
@@ -212,7 +212,7 @@ rect_t menu_buttons_rects[] = {
 void checkMenuCommandHover(void) {
 	int16 i;
 	for (i = 0; i < 8; i++) {
-		if (IsCursorInRect(&menu_buttons_rects[i])) {
+		if (isCursorInRect(&menu_buttons_rects[i])) {
 			the_command = 0xA001 + i;
 			command_hint = i ? (i + 3) : 101;
 			cursor_color = 0xAA;
@@ -240,7 +240,7 @@ void checkPsiCommandHover(void) {
 	/*TODO: maybe merge it with CheckMenuCommandHover()*/
 	int16 i;
 	for (i = 0; i < 8; i++) {
-		if (IsCursorInRect(&psi_buttons_rects[i])) {
+		if (isCursorInRect(&psi_buttons_rects[i])) {
 			the_command = 0xA00A + i;
 			command_hint = i + 12;
 			cursor_color = 0xAA;
