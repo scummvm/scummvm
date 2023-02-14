@@ -58,7 +58,7 @@ float TeVariant::toFloat32(bool *success) const {
 	if (_type == TypeFloat32) {
 		if (success)
 			*success = true;
-		return *(float *)(&_data);
+		return *(const float *)(&_data);
 	} else {
 		if (success)
 			*success = false;
@@ -71,7 +71,7 @@ double TeVariant::toFloat64(bool *success) const {
 	if (_type == TypeFloat64) {
 		if (success)
 			*success = true;
-		return *(double *)(&_data);
+		return *(const double *)(&_data);
 	} else {
 		if (success)
 			*success = false;
@@ -84,7 +84,7 @@ int32 TeVariant::toSigned32(bool *success) const {
 	if (_type == TypeInt32) {
 		if (success)
 			*success = true;
-		return *(int32 *)(&_data);
+		return *(const int32 *)(&_data);
 	} else {
 		if (success)
 			*success = false;
@@ -97,7 +97,7 @@ int64 TeVariant::toSigned64(bool *success) const {
 	if (_type == TypeInt64) {
 		if (success)
 			*success = true;
-		return *(int64 *)(&_data);
+		return *(const int64 *)(&_data);
 	} else {
 		if (success)
 			*success = false;
@@ -123,7 +123,7 @@ int32 TeVariant::toUnsigned32(bool *success) const {
 	if (_type == TypeUInt32) {
 		if (success)
 			*success = true;
-		return *(uint32 *)(&_data);
+		return *(const uint32 *)(&_data);
 	} else {
 		if (success)
 			*success = false;
@@ -136,7 +136,7 @@ int64 TeVariant::toUnsigned64(bool *success) const {
 	if (_type == TypeUInt64) {
 		if (success)
 			*success = true;
-		return *(uint64 *)(&_data);
+		return *(const uint64 *)(&_data);
 	} else {
 		if (success)
 			*success = false;
