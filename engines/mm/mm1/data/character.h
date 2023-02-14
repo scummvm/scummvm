@@ -471,8 +471,10 @@ struct Character : public PrimaryAttributes {
 
 	/**
 	 * Handles save/loading a character
+	 * @param portraitNum		Override for portrait to use for
+	 * a character being loaded from the game defaults
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s, int portraitNum = -1);
 
 	/**
 	 * Equality test
@@ -551,6 +553,11 @@ struct Character : public PrimaryAttributes {
 	 * value for the party at the end of the game
 	 */
 	size_t getPerformanceTotal() const;
+
+	/**
+	 * Loads the face sprites for the character
+	 */
+	void loadFaceSprites();
 
 	/**
 	 * Returns the color to use in enhanced mode to

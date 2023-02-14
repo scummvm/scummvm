@@ -46,8 +46,10 @@ public:
 
 	/**
 	 * Synchronizes the contents of the roster
+	 * @param isLoadingDefaults		True if we're loading the
+	 * default roster of the game
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s, bool isLoadingDefaults);
 
 	/**
 	 * Load the roster

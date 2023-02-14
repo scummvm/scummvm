@@ -159,7 +159,7 @@ Character::Character() : PrimaryAttributes() {
 	Common::fill(&_flags[0], &_flags[14], 0);
 }
 
-void Character::synchronize(Common::Serializer &s) {
+void Character::synchronize(Common::Serializer &s, int portraitNum) {
 	char name[16];
 	if (s.isSaving()) {
 		// Save the name in uppercase to match original
@@ -228,9 +228,17 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_alignmentCtr);
 	s.syncBytes(_flags, 14);
 	s.syncAsByte(_portrait);
+	if (s.isLoading() && portraitNum != -1)
+		_portrait = portraitNum;
 
-	if (s.isLoading() && g_engine->isEnhanced()) {
-		Common::String cname = Common::String::format("char%02d.fac", _portrait + 1);
+	if (s.isLoading() && g_engine->isEnhanced())
+		loadFaceSprites();
+}
+
+void Character::loadFaceSprites() {
+	if (_portrait != 0xff) {
+		Common::String cname = Common::String::format("char%02d.fac",
+			_portrait * 2 + (_sex == MALE ? 0 : 1) + 1);
 		_faceSprites.load(cname);
 	}
 }
