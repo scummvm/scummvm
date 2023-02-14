@@ -56,6 +56,7 @@ GFXTestSuite::GFXTestSuite() {
 
 	// Mouse Layer tests (Palettes and movements)
 	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
+	addTest("MaskedCursors", &GFXtests::maskedCursors);
 	addTest("MouseMovements", &GFXtests::mouseMovements);
 	// FIXME: Scaled cursor crash with odd dimmensions
 	addTest("ScaledCursors", &GFXtests::scaledCursors);
@@ -718,6 +719,223 @@ TestExitStatus GFXtests::palettizedCursors() {
 	CursorMan.disableCursorPalette(false);
 	// Done with cursors, make them invisible, any other test the could simply make it visible
 	CursorMan.showMouse(false);
+	return passed;
+}
+
+/**
+ * Tests Masked cursors.
+ * Method: Create a cursor with a transparent, mask, inverted, and color-inverted areas, it should behave properly over colored areas. Once you click test terminates
+ */
+TestExitStatus GFXtests::maskedCursors() {
+
+	Testsuite::clearScreen();
+	Common::String info = "Masked cursors test.  If masked cursors are enabled, you should see a cursor with 4 sections:\n"
+						  "T for transparent, O for opaque, I for inverted, C for colorized inverted.\n"
+						  "If the I or C letters are absent, then that type of masking is unsupported";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : Masked Cursors\n");
+		return kTestSkipped;
+	}
+
+	TestExitStatus passed = kTestPassed;
+	bool isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorMask);
+
+	g_system->delayMillis(1000);
+
+	if (isFeaturePresent) {
+		const byte cursorLeftColData[] = {
+			1, 1, 1,
+			0, 1, 0,
+			0, 1, 0,
+			0, 0, 0,
+
+			0, 1, 0,
+			1, 0, 1,
+			0, 1, 0,
+			0, 0, 0,
+
+			0, 1, 0,
+			0, 1, 0,
+			0, 1, 0,
+			0, 0, 0,
+
+			0, 1, 1,
+			1, 0, 0,
+			0, 1, 1,
+			0, 0, 0,
+		};
+
+		byte cursorData[16 * 16];
+		byte maskData[16 * 16];
+
+		for (int y = 0; y < 16; y++) {
+			for (int x = 0; x < 16; x++) {
+				// Fill cursor and mask with white transparent
+				cursorData[y * 16 + x] = 3;
+				maskData[y * 16 + x] = kCursorMaskTransparent;
+			}
+		}
+
+		for (int y = 12; y < 16; y++) {
+			for (int x = 5; x < 16; x++) {
+				// Fill color mask part with red
+				cursorData[y * 16 + x] = 2;
+			}
+		}
+
+		// Fill T O I C graphic
+		for (int y = 0; y < 16; y++)
+			for (int x = 0; x < 3; x++)
+				if (cursorLeftColData[y * 3 + x])
+					maskData[y * 16 + x + 1] = kCursorMaskOpaque;
+
+		// Fill middle column
+		for (int y = 0; y < 16; y++) {
+			for (int x = 0; x < 5; x++) {
+				maskData[y * 16 + x + 5] = kCursorMaskOpaque;
+			}
+		}
+
+		bool haveInverted = g_system->hasFeature(OSystem::kFeatureCursorMaskInvert);
+		bool haveInvertedColor = g_system->hasFeature(OSystem::kFeatureCursorMaskInvertUsingColor);
+
+		// Fill middle column
+		for (int y = 0; y < 16; y++) {
+			for (int x = 0; x < 4; x++) {
+				maskData[y * 16 + x + 5] = kCursorMaskOpaque;
+			}
+		}
+
+		for (int x = 0; x < 5; x++) {
+			for (int y = 0; y < 4; y++) {
+				maskData[(y + 0) * 16 + x + 11] = kCursorMaskTransparent;
+				maskData[(y + 4) * 16 + x + 11] = kCursorMaskOpaque;
+				maskData[(y + 8) * 16 + x + 11] = kCursorMaskInvert;
+				maskData[(y + 12) * 16 + x + 11] = kCursorMaskInvertUsingColor;
+			}
+		}
+
+		// Mask out unsupported types
+		if (!haveInverted) {
+			for (int y = 8; y < 12; y++)
+				for (int x = 0; x < 16; x++)
+					maskData[y * 16 + x] = kCursorMaskTransparent;
+		}
+
+		if (!haveInvertedColor) {
+			for (int y = 12; y < 16; y++)
+				for (int x = 0; x < 16; x++)
+					maskData[y * 16 + x] = kCursorMaskTransparent;
+		}
+
+		byte oldPalette[256 * 3];
+		g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
+
+		byte newPalette[] = {0, 0, 0, 255, 255, 255, 255, 0, 0, 255, 255, 255};
+		
+		g_system->getPaletteManager()->setPalette(newPalette, 0, 4);
+
+		CursorMan.replaceCursor(cursorData, 16, 16, 1, 1, 0, false, nullptr, maskData);
+		CursorMan.showMouse(true);
+		
+		bool waitingForClick = true;
+		while (waitingForClick) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
+					waitingForClick = false;
+				}
+			}
+
+			g_system->delayMillis(10);
+			g_system->updateScreen();
+		}
+
+		g_system->getPaletteManager()->setPalette(oldPalette, 0, 256);
+
+		if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'T' transparent?", "Yes", "No", kOptionLeft)) {
+			return kTestFailed;
+		}
+
+		if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'O' opaque?", "Yes", "No", kOptionLeft)) {
+			return kTestFailed;
+		}
+
+		if (!haveInverted) {
+			if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'I' inverted?", "Yes", "No", kOptionLeft)) {
+				return kTestFailed;
+			}
+		}
+
+		if (!haveInvertedColor) {
+			if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'C' inverted according to the color to the left of it?", "Yes", "No", kOptionLeft)) {
+				return kTestFailed;
+			}
+		}
+
+#ifdef USE_RGB_COLOR
+		Common::String rgbInfo = "Try again with a cursor using RGB data?";
+
+		if (!Testsuite::handleInteractiveInput(rgbInfo, "OK", "Skip", kOptionRight)) {
+			g_system->delayMillis(500);
+
+			Graphics::PixelFormat rgbaFormat = Graphics::createPixelFormat<8888>();
+
+			uint32 rgbaCursorData[16 * 16];
+			for (uint i = 0; i < 16 * 16; i++) {
+				byte colorByte = cursorData[i];
+				byte r = newPalette[colorByte * 3 + 0];
+				byte g = newPalette[colorByte * 3 + 1];
+				byte b = newPalette[colorByte * 3 + 2];
+
+				rgbaCursorData[i] = rgbaFormat.ARGBToColor(255, r, g, b);
+			}
+
+			CursorMan.replaceCursor(rgbaCursorData, 16, 16, 1, 1, 0, false, &rgbaFormat, maskData);
+
+			waitingForClick = true;
+			while (waitingForClick) {
+				Common::Event event;
+				while (g_system->getEventManager()->pollEvent(event)) {
+					if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
+						waitingForClick = false;
+					}
+				}
+
+				g_system->delayMillis(10);
+				g_system->updateScreen();
+			}
+
+			if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'T' transparent?", "Yes", "No", kOptionLeft)) {
+				return kTestFailed;
+			}
+
+			if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'O' opaque?", "Yes", "No", kOptionLeft)) {
+				return kTestFailed;
+			}
+
+			if (!haveInverted) {
+				if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'I' inverted?", "Yes", "No", kOptionLeft)) {
+					return kTestFailed;
+				}
+			}
+
+			if (!haveInvertedColor) {
+				if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'C' inverted according to the color to the left of it?", "Yes", "No", kOptionLeft)) {
+					return kTestFailed;
+				}
+			}
+		}
+#endif
+
+		CursorMan.showMouse(false);
+	} else {
+		Testsuite::displayMessage("feature not supported");
+	}
+
+	g_system->delayMillis(500);
+
 	return passed;
 }
 
