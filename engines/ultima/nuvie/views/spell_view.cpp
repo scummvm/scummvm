@@ -132,7 +132,6 @@ void SpellView::Display(bool full_redraw) {
 		screen->update(area.left, area.top, area.width(), area.height());
 	}
 #endif
-	return;
 }
 
 uint8 SpellView::fill_cur_spell_list() {
@@ -293,17 +292,13 @@ void SpellView::display_spell_list_text() {
 }
 
 void SpellView::display_spell_text(Spell *spell, uint16 line_num, uint8 selected_spell) {
-	char num_str[4];
 	line_num++;
 
 	font->drawString(screen, spell->name, area.left + 16, area.top + (line_num * 8));
-	snprintf(num_str, 3, "%d", get_available_spell_count(spell));
-	font->drawString(screen, num_str, area.left + NEWMAGIC_BMP_W - 24, area.top + (line_num * 8));
+	font->drawString(screen, Common::String::format("%d", get_available_spell_count(spell)).c_str(), area.left + NEWMAGIC_BMP_W - 24, area.top + (line_num * 8));
 
 	if (spell->num == selected_spell)
 		font->drawChar(screen, 26, area.left + 8, area.top + (line_num * 8));
-
-	return;
 }
 
 uint16 SpellView::get_available_spell_count(Spell *s) {
@@ -341,7 +336,6 @@ void SpellView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 	button_image2 = tmp_screen->create_sdl_surface_from(tile->data, 8, 16, 16, 16);
 	right_button = new GUI_Button(this, 3 * 16, NEWMAGIC_BMP_H, button_image, button_image2, this);
 	this->AddWidget(right_button);
-
 }
 
 void SpellView::event_mode_select_spell() {

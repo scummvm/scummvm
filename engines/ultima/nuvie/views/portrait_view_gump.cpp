@@ -133,7 +133,7 @@ void PortraitViewGump::right_arrow() {
 }
 
 void PortraitViewGump::Display(bool full_redraw) {
-	char buf[6]; //xxxxx\n
+	Common::String buf; //xxxxx\n
 //display_level_text();
 //display_spell_list_text();
 	Common::Rect dst;
@@ -150,55 +150,54 @@ void PortraitViewGump::Display(bool full_redraw) {
 
 	font->textOut(screen->get_sdl_surface(), area.left + 29 + w, area.top + 6, actor->get_name());
 
-	snprintf(buf, 5, "%d", actor->get_strength());
-	font->textExtent(buf, &w, &h);
-	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 18, buf);
+	buf = Common::String::format("%d", actor->get_strength());
+	font->textExtent(buf.c_str(), &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 18, buf.c_str());
 
-	snprintf(buf, 5, "%d", actor->get_dexterity());
-	font->textExtent(buf, &w, &h);
-	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 27, buf);
+	buf = Common::String::format("%d", actor->get_dexterity());
+	font->textExtent(buf.c_str(), &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 27, buf.c_str());
 
-	snprintf(buf, 5, "%d", actor->get_intelligence());
-	font->textExtent(buf, &w, &h);
-	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 36, buf);
+	buf = Common::String::format("%d", actor->get_intelligence());
+	font->textExtent(buf.c_str(), &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 36, buf.c_str());
 
 	font->setColoring(0x6c, 0x00, 0x00, 0xbc, 0x34, 0x00, 0x00, 0x00, 0x00);
 
-	snprintf(buf, 5, "%d", actor->get_magic());
-	font->textExtent(buf, &w, &h);
-	font->textOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 55, buf);
+	buf = Common::String::format("%d", actor->get_magic());
+	font->textExtent(buf.c_str(), &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 55, buf.c_str());
 
-	snprintf(buf, 5, "%d", actor->get_maxmagic());
-	font->textExtent(buf, &w, &h);
-	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 55, buf);
+	buf = Common::String::format("%d", actor->get_maxmagic());
+	font->textExtent(buf.c_str(), &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 55, buf.c_str());
 
 	font->setColoring(0x00, 0x3c, 0x70, 0x74, 0x74, 0x74, 0x00, 0x00, 0x00);
 
-	snprintf(buf, 5, "%d", actor->get_hp());
-	font->textExtent(buf, &w, &h);
-	font->textOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 64, buf);
+	buf = Common::String::format("%d", actor->get_hp());
+	font->textExtent(buf.c_str(), &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 64, buf.c_str());
 
-	snprintf(buf, 5, "%d", actor->get_maxhp());
-	font->textExtent(buf, &w, &h);
-	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 64, buf);
+	buf = Common::String::format("%d", actor->get_maxhp());
+	font->textExtent(buf.c_str(), &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 64, buf.c_str());
 
 	font->setColoring(0xa8, 0x28, 0x00, 0xa8, 0x54, 0x00, 0x00, 0x00, 0x00);
 
-	snprintf(buf, 5, "%d", actor->get_level());
-	font->textExtent(buf, &w, &h);
-	font->textOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 73, buf);
+	buf = Common::String::format("%d", actor->get_level());
+	font->textExtent(buf.c_str(), &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 73, buf.c_str());
 
-	snprintf(buf, 5, "%d", actor->get_exp());
-	font->textExtent(buf, &w, &h);
-	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 73, buf);
+	buf = Common::String::format("%d", actor->get_exp());
+	font->textExtent(buf.c_str(), &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 73, buf.c_str());
 
-	if (show_cursor)
+	if (show_cursor) {
 		screen->blit(area.left + cursor_xoff, area.top + cursor_yoff, (const unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
+	}
+
 	update_display = false;
 	screen->update(area.left, area.top, area.width(), area.height());
-
-
-	return;
 }
 
 GUI_status PortraitViewGump::set_cursor_pos(gumpCursorPos pos) {

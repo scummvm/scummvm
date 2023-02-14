@@ -198,17 +198,15 @@ void SpellViewGump::loadCircleSuffix(Std::string datadir, Std::string image) {
 
 void SpellViewGump::printSpellQty(uint8 spellNum, uint16 x, uint16 y) {
 	Magic *m = Game::get_game()->get_magic();
-	char num_str[4];
 
 	Spell *spell = m->get_spell((uint8)spellNum);
 
 	uint16 qty = get_available_spell_count(spell);
-	snprintf(num_str, 3, "%d", qty);
 
 	if (qty < 10)
 		x += 5;
 
-	font->textOut(bg_image, x, y, num_str);
+	font->textOut(bg_image, x, y, Common::String::format("%d", qty).c_str());
 }
 
 void SpellViewGump::Display(bool full_redraw) {

@@ -86,8 +86,6 @@ void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, Std::string la
 
 	tmx->writeBuf((const unsigned char *)header.c_str(), header.length());
 
-	char buf[5]; // 'nnnn\0'
-
 	uint16 mx, my;
 	for (my = 0; my < sideLength; my++) {
 		for (mx = 0; mx < sideLength; mx++) {
@@ -97,8 +95,9 @@ void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, Std::string la
 			} else { //everything else is uint16
 				gid = ((const uint16 *)data)[my * sideLength + mx] + 1 + gidOffset;
 			}
-			snprintf(buf, sizeof(buf), "%d", gid);
-			tmx->writeBuf((const unsigned char *)buf, strlen(buf));
+			// 'nnnn\0'
+			Common::String temp = Common::String::format("%d", gid);
+			tmx->writeBuf((const unsigned char *)temp.c_str(), temp.size());
 			if (mx < sideLength - 1 || my < sideLength - 1) { //don't write comma after last element in the array.
 				tmx->write1(',');
 			}
@@ -194,10 +193,9 @@ bool TMXMap::exportMapLevel(uint8 level) {
 	NuvieIOFileWrite tmx;
 	uint16 width = map->get_width(level);
 	mapdata = map->get_map_data(level);
-	char level_string[3]; // 'nn\0'
+	Common::String level_string = Common::String::format("%d", level); // 'nn\0'
 	Std::string filename;
-	snprintf(level_string, sizeof(level_string), "%d", level);
-	build_path(savedir, savename + "_" + Std::string(level_string) + ".tmx", filename);
+	build_path(savedir, savename + "_" + Std::string(level_string.c_str()) + ".tmx", filename);
 
 	tmx.open(filename);
 	Std::string swidth = sint32ToString((sint32)width);
