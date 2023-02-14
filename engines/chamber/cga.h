@@ -98,18 +98,18 @@ void cga_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen
 
 void cga_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask);
 
-void DrawSprite(byte *sprite, byte *screen, uint16 ofs);
-void DrawSpriteFlip(byte *sprite, byte *screen, uint16 ofs);
+void drawSprite(byte *sprite, byte *screen, uint16 ofs);
+void drawSpriteFlip(byte *sprite, byte *screen, uint16 ofs);
 
-void DrawSpriteN(byte index, uint16 x, uint16 y, byte *target);
-void DrawSpriteNFlip(byte index, uint16 x, uint16 y, byte *target);
+void drawSpriteN(byte index, uint16 x, uint16 y, byte *target);
+void drawSpriteNFlip(byte index, uint16 x, uint16 y, byte *target);
 
-void BackupAndShowSprite(byte index, byte x, byte y);
+void backupAndShowSprite(byte index, byte x, byte y);
 
-byte *LoadSprite(byte index, byte *bank, byte *buffer, byte header_only);
+byte *loadSprite(byte index, byte *bank, byte *buffer, byte header_only);
 
-byte *LoadSprit(byte index);
-byte *LoadPersSprit(byte index);
+byte *loadSprit(byte index);
+byte *loadPersSprit(byte index);
 
 void cga_AnimLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y);
 void cga_AnimLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);

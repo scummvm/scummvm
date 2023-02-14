@@ -29,16 +29,16 @@
 namespace Chamber {
 
 enum ScriptPools {
-	ScrPool0_WordVars0,
-	ScrPool1_WordVars1,
-	ScrPool2_ByteVars,
-	ScrPool3_CurrentItem,
-	ScrPool4_ZoneSpots,
-	ScrPool5_Persons,
-	ScrPool6_Inventory,
-	ScrPool7_Zapstiks,
-	ScrPool8_CurrentPers,
-	ScrPools_MAX
+	kScrPool0_WordVars0,
+	kScrPool1_WordVars1,
+	kScrPool2_ByteVars,
+	kScrPool3_CurrentItem,
+	kScrPool4_ZoneSpots,
+	kScrPool5_Persons,
+	kScrPool6_Inventory,
+	kScrPool7_Zapstiks,
+	kScrPool8_CurrentPers,
+	kScrPools_MAX
 };
 
 /*Byte-packed, members accessed from script code by hardcoded offsets*/
@@ -179,7 +179,7 @@ typedef struct script_word_vars_t {
 	uint16 wvar_B8;             /* B8 */
 } script_word_vars_t;
 
-extern void *script_vars[ScrPools_MAX];
+extern void *script_vars[kScrPools_MAX];
 extern script_word_vars_t script_word_vars;
 extern script_byte_vars_t script_byte_vars;
 
@@ -229,15 +229,15 @@ extern uint16 fight_pers_ofs;
 extern byte wait_delta;
 
 extern byte rand_seed;
-byte Rand(void);
-uint16 RandW(void);
+byte getRand(void);
+uint16 getRandW(void);
 
 extern uint16 the_command;
 
-byte *GetScriptSubroutine(uint16 index);
+byte *getScriptSubroutine(uint16 index);
 
-uint16 RunCommand(void);
-uint16 RunCommandKeepSp(void);
+uint16 runCommand(void);
+uint16 runCommandKeepSp(void);
 
 uint16 Swap16(uint16 x);
 

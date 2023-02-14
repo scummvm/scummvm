@@ -63,7 +63,7 @@ byte *script_ptr, *script_end_ptr;
 byte *script_stack[5 * 2];
 byte **script_stack_ptr = script_stack;
 
-void *script_vars[ScrPools_MAX] = {
+void *script_vars[kScrPools_MAX] = {
 	&script_word_vars,
 	&script_word_vars,
 	&script_byte_vars,
@@ -80,7 +80,7 @@ extern void askDisk2(void);
 /*
 Get next random byte value
 */
-byte Rand(void) {
+byte getRand(void) {
 	script_byte_vars.rand_value = aleat_data[++rand_seed];
 	return script_byte_vars.rand_value;
 }
@@ -88,9 +88,9 @@ byte Rand(void) {
 /*
 Get next random word value
 */
-uint16 RandW(void) {
-	uint16 r = Rand() << 8;
-	return r | Rand();
+uint16 getRandW(void) {
+	uint16 r = getRand() << 8;
+	return r | getRand();
 }
 
 uint16 Swap16(uint16 x) {
@@ -123,7 +123,7 @@ uint16 SCR_TRAP(void) {
 /*
 Remove "not interested in that" tag from owned items
 */
-void ReclaimRefusedItems(void) {
+void reclaimRefusedItems(void) {
 	int16 i;
 	for (i = 0; i < MAX_INV_ITEMS; i++) {
 		if (inventory_items[i].flags == (ITEMFLG_OWNED | ITEMFLG_DONTWANT))
@@ -148,13 +148,13 @@ uint16 SCR_1_AspirantItemTrade(void) {
 
 		if (inv_count == 0) {
 			the_command = 0xC1BC;
-			RunCommand();
+			runCommand();
 			break;
 		}
 
 		if (the_command == 0) {
 			the_command = 0xC1C0;
-			RunCommand();
+			runCommand();
 			break;
 		}
 
@@ -164,11 +164,11 @@ uint16 SCR_1_AspirantItemTrade(void) {
 			break;
 
 		item1 = &inventory_items[aspirant_ptr->item - 1];	/*aspirant's item*/
-		item2 = (item_t *)(script_vars[ScrPool3_CurrentItem]);	/*our offer*/
+		item2 = (item_t *)(script_vars[kScrPool3_CurrentItem]);	/*our offer*/
 
 		if (item2->flags == (ITEMFLG_OWNED | ITEMFLG_DONTWANT) || item1->name == item2->name) {
 			the_command = 0xC1C0;
-			RunCommand();
+			runCommand();
 			break;
 		}
 
@@ -194,18 +194,18 @@ uint16 SCR_1_AspirantItemTrade(void) {
 			default:	/*STONE FLY*/
 				the_command = 0xC1B9;
 			}
-			RunCommand();
+			runCommand();
 			break;
 		} else {
 			/*not interested*/
 			item2->flags = ITEMFLG_OWNED | ITEMFLG_DONTWANT;
 			the_command = 0xC1BD;
-			RunCommand();
+			runCommand();
 			continue;
 		}
 	}
 
-	ReclaimRefusedItems();
+	reclaimRefusedItems();
 
 	script_ptr = old_script;
 	script_end_ptr = old_script_end;
@@ -225,7 +225,7 @@ uint16 SCR_2_RudeAspirantTrade(void) {
 	old_script = script_ptr;
 
 	the_command = 0x9099;   /*WHAT DO YOU WANT TO EXCHANGE?*/
-	RunCommand();
+	runCommand();
 
 	for (;;) {
 		inv_bgcolor = 0xFF;
@@ -233,7 +233,7 @@ uint16 SCR_2_RudeAspirantTrade(void) {
 
 		if (inv_count == 0) {
 			the_command = 0xC1C5;
-			RunCommand();
+			runCommand();
 			break;
 		}
 
@@ -243,22 +243,22 @@ uint16 SCR_2_RudeAspirantTrade(void) {
 		the_command = 0x9140;   /*NOTHING ON HIM*/
 
 		if (aspirant_ptr->item == 0) {
-			RunCommand();
+			runCommand();
 			break;
 		}
 
 		item1 = &inventory_items[aspirant_ptr->item - 1];	/*aspirant's item*/
-		item2 = (item_t *)(script_vars[ScrPool3_CurrentItem]);	/*our offer*/
+		item2 = (item_t *)(script_vars[kScrPool3_CurrentItem]);	/*our offer*/
 
 		if (item2->flags == (ITEMFLG_OWNED | ITEMFLG_DONTWANT)) {
 			the_command = 0xC1C0;
-			RunCommand();
+			runCommand();
 			break;
 		}
 
 		/*only trade for ROPE, LANTERN, STONE FLY, GOBLET*/
 		if (item1->name < 104 || item1->name >= 108) {
-			RunCommand();
+			runCommand();
 			break;
 		}
 
@@ -271,7 +271,7 @@ uint16 SCR_2_RudeAspirantTrade(void) {
 			/*show confirmation menu*/
 			script_byte_vars.trade_accepted = 0;
 			the_command = 0xC1C6;
-			RunCommand();
+			runCommand();
 			if (script_byte_vars.trade_accepted == 0)
 				break;
 
@@ -292,18 +292,18 @@ uint16 SCR_2_RudeAspirantTrade(void) {
 			default:	/*STONE FLY*/
 				the_command = 0xC1B9;
 			}
-			RunCommand();
+			runCommand();
 			break;
 		} else {
 			/*not interested*/
 			item2->flags = ITEMFLG_OWNED | ITEMFLG_DONTWANT;
 			the_command = 0xC1BD;
-			RunCommand();
+			runCommand();
 			continue;
 		}
 	}
 
-	ReclaimRefusedItems();
+	reclaimRefusedItems();
 
 	script_ptr = old_script;
 	script_end_ptr = old_script_end;
@@ -317,29 +317,29 @@ Steal a Zapstik form Protozorq
 uint16 SCR_4_StealZapstik(void) {
 	byte *old_script;
 
-	pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
+	pers_t *pers = (pers_t *)(script_vars[kScrPool8_CurrentPers]);
 
 	script_ptr++;
 	old_script = script_ptr;
 
 	if ((pers->index & ~7) != 0x30) {
 		the_command = 0x9148;   /*YOU`VE ALREADY GOT IT*/
-		RunCommand();
+		runCommand();
 	} else {
 		pers->index &= ~0x18;
 
-		script_vars[ScrPool3_CurrentItem] = &inventory_items[kItemZapstik1 - 1 + (script_byte_vars.cur_pers - 1) - kPersProtozorq1];
+		script_vars[kScrPool3_CurrentItem] = &inventory_items[kItemZapstik1 - 1 + (script_byte_vars.cur_pers - 1) - kPersProtozorq1];
 		script_byte_vars.steals_count++;
 
 		bounceCurrentItem(ITEMFLG_OWNED, 85);  /*bounce to inventory*/
 
 		the_command = 0x9147;   /*YOU GET HIS ZAPSTIK*/
 		if (script_byte_vars.zapstik_stolen == 0) {
-			RunCommand();
+			runCommand();
 			script_byte_vars.zapstik_stolen = 1;
 			the_command = 0x9032;   /*THIS SHOULD GIVE YOU THE EDGE IN MOST COMBATS!*/
 		}
-		RunCommand();
+		runCommand();
 	}
 
 	script_ptr = old_script;
@@ -353,7 +353,7 @@ byte wait_delta = 0;
 /*
 Wait for a specified number of seconds (real time) or a keypress
 */
-void Wait(byte seconds) {
+void wait(byte seconds) {
 	warning("STUB: Wait(%d)", seconds);
 
 #if 0
@@ -384,7 +384,7 @@ Wait for a 4 seconds or a keypress
 */
 uint16 SCR_2C_Wait4(void) {
 	script_ptr++;
-	Wait(4);
+	wait(4);
 	return 0;
 }
 
@@ -397,7 +397,7 @@ uint16 SCR_2D_Wait(void) {
 	script_ptr++;
 	seconds = *script_ptr++;
 	(void)seconds;
-	Wait(4);    /*TODO: looks like a bug?*/
+	wait(4);    /*TODO: looks like a bug?*/
 	return 0;
 }
 
@@ -424,7 +424,7 @@ byte var_size;
 /*
 Fetch variable's value and address
 */
-uint16 LoadVar(byte **ptr, byte **varptr) {
+uint16 loadVar(byte **ptr, byte **varptr) {
 	byte vartype;
 	byte *varbase;
 	uint16 value = 0;
@@ -444,29 +444,29 @@ uint16 LoadVar(byte **ptr, byte **varptr) {
 		{
 			int16 maxoffs = 0;
 			switch (vartype & VARTYPE_KIND) {
-			case ScrPool0_WordVars0:
-			case ScrPool1_WordVars1:
+			case kScrPool0_WordVars0:
+			case kScrPool1_WordVars1:
 				maxoffs = sizeof(script_word_vars);
 				break;
-			case ScrPool2_ByteVars:
+			case kScrPool2_ByteVars:
 				maxoffs = sizeof(script_byte_vars);
 				break;
-			case ScrPool3_CurrentItem:
+			case kScrPool3_CurrentItem:
 				maxoffs = sizeof(item_t);
 				break;
-			case ScrPool4_ZoneSpots:
+			case kScrPool4_ZoneSpots:
 				maxoffs = RES_ZONES_MAX;
 				break;
-			case ScrPool5_Persons:
+			case kScrPool5_Persons:
 				maxoffs = sizeof(pers_list);
 				break;
-			case ScrPool6_Inventory:
+			case kScrPool6_Inventory:
 				maxoffs = sizeof(inventory_items);
 				break;
-			case ScrPool7_Zapstiks:
+			case kScrPool7_Zapstiks:
 				maxoffs = sizeof(inventory_items) - sizeof(item_t) * (kItemZapstik1 - 1);
 				break;
-			case ScrPool8_CurrentPers:
+			case kScrPool8_CurrentPers:
 				maxoffs = sizeof(pers_t);
 				break;
 			}
@@ -519,7 +519,7 @@ uint16 LoadVar(byte **ptr, byte **varptr) {
 /*
 Perform math/logic operation on two operands
 */
-uint16 MathOp(byte op, uint16 op1, uint16 op2) {
+uint16 mathOp(byte op, uint16 op1, uint16 op2) {
 	if (op & MATHOP_CMP) {
 		if (op & MATHOP_EQ)
 			if (op1 == op2) return ~0;
@@ -552,14 +552,14 @@ uint16 MathOp(byte op, uint16 op1, uint16 op2) {
 /*
 Evaluate an expression
 */
-uint16 MathExpr(byte **ptr) {
+uint16 mathExpr(byte **ptr) {
 	byte op;
 	uint16 op1, op2;
 	byte *opptr;
-	op1 = LoadVar(ptr, &opptr);
+	op1 = loadVar(ptr, &opptr);
 	while (((op = *((*ptr)++)) & MATHOP_END) == 0) {
-		op2 = LoadVar(ptr, &opptr);
-		op1 = MathOp(op, op1, op2);
+		op2 = loadVar(ptr, &opptr);
+		op1 = mathOp(op, op1, op2);
 	}
 	return op1;
 }
@@ -574,10 +574,10 @@ uint16 SCR_3B_MathExpr(void) {
 	script_ptr++;
 
 	/*get result variable pointer*/
-	op1 = LoadVar(&script_ptr, &opptr);
+	op1 = loadVar(&script_ptr, &opptr);
 
 	/*evaluate*/
-	op2 = MathExpr(&script_ptr);
+	op2 = mathExpr(&script_ptr);
 
 	/*store result*/
 	/*TODO: original bug? MathExpr may overwrite global var_size, so mixed-size expressions will produce errorneous results*/
@@ -602,7 +602,7 @@ uint16 SCR_4D_PriorityCommand(void) {
 	the_command |= (*script_ptr++) << 8;
 	the_command |= 0xF000;
 
-	/*TODO: normally this should be called from the RunCommand() itself,
+	/*TODO: normally this should be called from the runCommand() itself,
 	because command Fxxx may be issued from the other places as well (maybe it's not the case)
 	But that would require some sort of synchronization to avoid infinite loop
 	So jump to top interepter's loop directly from here for now
@@ -619,7 +619,7 @@ uint16 SCR_12_Chain(void) {
 	script_ptr++;
 	the_command = *script_ptr++;          /*little-endian*/
 	the_command |= (*script_ptr++) << 8;
-	script_ptr = GetScriptSubroutine(the_command - 1);
+	script_ptr = getScriptSubroutine(the_command - 1);
 	return 0;
 }
 
@@ -642,7 +642,7 @@ Conditional jump (IF/ELSE block)
 uint16 SCR_3C_CondExpr(void) {
 	script_ptr++;
 
-	if (MathExpr(&script_ptr)) {
+	if (mathExpr(&script_ptr)) {
 		/*fall to IF block*/
 		script_ptr += 2;
 	} else {
@@ -765,7 +765,7 @@ uint16 SCR_A_DrawPortrait(void) {
 /*
 Draw screen pixels using 2-phase clockwise twist
 */
-void TwistDraw(byte x, byte y, byte width, byte height, byte *source, byte *target) {
+void twistDraw(byte x, byte y, byte width, byte height, byte *source, byte *target) {
 	int16 i;
 	uint16 sx, ex, sy, ey, t;
 	sx = x * 4;
@@ -811,7 +811,7 @@ uint16 SCR_B_DrawPortraitTwistEffect(void) {
 	offs = cga_CalcXY_p(x, y);
 
 	cga_SwapScreenRect(cur_image_pixels, width, height, backbuffer, offs);
-	TwistDraw(x, y, width, height, backbuffer, frontbuffer);
+	twistDraw(x, y, width, height, backbuffer, frontbuffer);
 	cga_BlitAndWait(scratch_mem2, width, width, height, backbuffer, offs);
 
 	return 0;
@@ -820,7 +820,7 @@ uint16 SCR_B_DrawPortraitTwistEffect(void) {
 /*
 Draw screen pixels using arc-like sweep
 */
-void ArcDraw(byte x, byte y, byte width, byte height, byte *source, byte *target) {
+void arcDraw(byte x, byte y, byte width, byte height, byte *source, byte *target) {
 	int16 i;
 	uint16 sx, ex, sy, ey;
 	sx = x * 4;
@@ -862,7 +862,7 @@ uint16 SCR_C_DrawPortraitArcEffect(void) {
 	offs = cga_CalcXY_p(x, y);
 
 	cga_SwapScreenRect(cur_image_pixels, width, height, backbuffer, offs);
-	ArcDraw(x, y, width, height, backbuffer, frontbuffer);
+	arcDraw(x, y, width, height, backbuffer, frontbuffer);
 	cga_BlitAndWait(scratch_mem2, width, width, height, backbuffer, offs);
 
 	return 0;
@@ -1132,7 +1132,7 @@ uint16 SCR_1E_HidePortraitTwist(void) {
 		return 0;
 	}
 
-	TwistDraw(x, y, width, height, backbuffer, frontbuffer);
+	twistDraw(x, y, width, height, backbuffer, frontbuffer);
 
 	return 0;
 }
@@ -1156,7 +1156,7 @@ uint16 SCR_1F_HidePortraitArc(void) {
 		return 0;
 	}
 
-	ArcDraw(x, y, width, height, backbuffer, frontbuffer);
+	arcDraw(x, y, width, height, backbuffer, frontbuffer);
 
 	return 0;
 }
@@ -1252,7 +1252,7 @@ static jpoint_t jdeltas[JCOUNT] = {
 /*
 Play exploding zoom animation
 */
-void JaggedZoom(byte *source, byte *target) {
+void jaggedZoom(byte *source, byte *target) {
 	int16 i;
 	jpoint_t points[JCOUNT + 1];
 	uint16 outside = 0;
@@ -1269,7 +1269,7 @@ void JaggedZoom(byte *source, byte *target) {
 	for (;;) {
 		cycle++;
 		if (cycle % 8 == 0)
-			choices = RandW();
+			choices = getRandW();
 
 		for (i = 0; i < JCOUNT; i++) {
 			signed short t;
@@ -1320,23 +1320,23 @@ typedef struct star_t {
 /*
 Generate random star
 */
-void RandomStar(star_t *star) {
-	star->x = RandW();
-	star->y = RandW();
-	star->z = RandW() & 0xFFF;
+void randomStar(star_t *star) {
+	star->x = getRandW();
+	star->y = getRandW();
+	star->z = getRandW() & 0xFFF;
 }
 
 /*
 Generate a bunch of random stars
 */
-star_t *InitStarfield(void) {
+star_t *initStarfield(void) {
 	int16 i;
 	star_t *stars = (star_t *)scratch_mem2;
 	for (i = 0; i < 300; i++) {
 		stars[i].ofs = 0;
 		stars[i].pixel = 0;
 		stars[i].mask = 0;
-		RandomStar(&stars[i]);
+		randomStar(&stars[i]);
 	}
 	return stars;
 }
@@ -1344,7 +1344,7 @@ star_t *InitStarfield(void) {
 /*
 Draw a frame of starfield animation and update stars
 */
-void DrawStars(star_t *stars, int16 iter, byte *target) {
+void drawStars(star_t *stars, int16 iter, byte *target) {
 	int16 i;
 	/*TODO: bug? initialized 300 stars, but animated only 256?*/
 	for (i = 0; i < 256; i++, stars++) {
@@ -1354,7 +1354,7 @@ void DrawStars(star_t *stars, int16 iter, byte *target) {
 		target[stars->ofs] &= stars->mask;
 		if (stars->z < 328) {
 			if (iter >= 30) {
-				RandomStar(stars);
+				randomStar(stars);
 				stars->z |= 0x1800;
 			}
 			continue;
@@ -1389,10 +1389,10 @@ void DrawStars(star_t *stars, int16 iter, byte *target) {
 /*
 Play starfield animation
 */
-void AnimStarfield(star_t *stars, byte *target) {
+void animStarfield(star_t *stars, byte *target) {
 	int16 i;
 	for (i = 100; i; i--)
-		DrawStars(stars, i, target);
+		drawStars(stars, i, target);
 }
 
 /*
@@ -1403,10 +1403,10 @@ uint16 SCR_26_GameOver(void) {
 	in_de_profundis = 0;
 	script_byte_vars.game_paused = 1;
 	memset(backbuffer, 0, sizeof(backbuffer) - 2);  /*TODO: original bug?*/
-	JaggedZoom(backbuffer, frontbuffer);
+	jaggedZoom(backbuffer, frontbuffer);
 	cga_BackBufferToRealFull();
 	cga_ColorSelect(0x30);
-	AnimStarfield(InitStarfield(), frontbuffer);
+	animStarfield(initStarfield(), frontbuffer);
 	playAnim(44, 156 / 4, 95);
 	script_byte_vars.zone_index = 135;
 
@@ -1414,7 +1414,7 @@ uint16 SCR_26_GameOver(void) {
 	while (!loadFond())
 		askDisk2();
 
-	JaggedZoom(backbuffer, frontbuffer);
+	jaggedZoom(backbuffer, frontbuffer);
 
 	cga_BackBufferToRealFull();
 	restartGame();
@@ -1580,7 +1580,7 @@ uint16 SCR_3_DrawItemBox(void) {
 	current = *script_ptr++;
 
 	if (current)
-		item = (item_t *)script_vars[ScrPool3_CurrentItem];
+		item = (item_t *)script_vars[kScrPool3_CurrentItem];
 	else
 		item = &inventory_items[aspirant_ptr->item - 1];
 
@@ -1589,7 +1589,7 @@ uint16 SCR_3_DrawItemBox(void) {
 	msg = seekToString(desci_data, 274 + item->name);
 
 	desciTextBox(x, y, 18, msg);
-	DrawSpriteN(item->sprite, x, y + 1, frontbuffer);
+	drawSpriteN(item->sprite, x, y + 1, frontbuffer);
 
 	return 0;
 }
@@ -1662,7 +1662,7 @@ uint16 SCR_3D_ActionsMenu(void) {
 			return ScriptRerun;
 		}
 
-		RunCommand();
+		runCommand();
 
 		script_byte_vars.used_commands++;
 		if (script_byte_vars.bvar_43 == 0 && script_byte_vars.used_commands > script_byte_vars.check_used_commands) {
@@ -1864,7 +1864,7 @@ uint16 SCR_30_Fight(void) {
 	byte x, y, width, height, kind;
 	uint16 offs;
 	byte *old_script, *old_script_end = script_end_ptr;
-	pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
+	pers_t *pers = (pers_t *)(script_vars[kScrPool8_CurrentPers]);
 
 	byte strenght, win, rnd;
 
@@ -1879,15 +1879,15 @@ uint16 SCR_30_Fight(void) {
 	if (pers->name != 44) {	/*VORT*/
 		if (next_vorts_cmd == 0xA015) {
 			the_command = 0xA015;
-			RunCommand();
+			runCommand();
 			selectPerson(PersonOffset(pers - pers_list));
 		}
 		if (Swap16(script_word_vars.next_aspirant_cmd) == 0xC357) {
 			the_command = 0xC357;
-			RunCommand();
+			runCommand();
 		}
 
-		pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
+		pers = (pers_t *)(script_vars[kScrPool8_CurrentPers]);
 		if (pers->name != 56 && pers->name != 51) {	/*MONKEY, TURKEY*/
 			x = dirty_rects[0].x + 64 / 4;
 			y = dirty_rects[0].y;
@@ -1975,16 +1975,16 @@ uint16 SCR_30_Fight(void) {
 	if (strenght >= 2) {
 		if (strenght == 2) {
 			if (rnd >= 205)
-				win = Rand() < 128 ? (0x40 | 0x10 | 1) : (0x40 | 0x10 | 2);
+				win = getRand() < 128 ? (0x40 | 0x10 | 1) : (0x40 | 0x10 | 2);
 		} else if (strenght == 4 && rnd < 100) {
-			win = Rand() < 128 ? (0x40 | 0x10 | 1) : (0x40 | 0x10 | 2);
+			win = getRand() < 128 ? (0x40 | 0x10 | 1) : (0x40 | 0x10 | 2);
 		} else {
 			win = 2;
 			if (strenght == 3) {
 				if (rnd < 128)  /*TODO: check me, maybe original bug (checks against wrong reg?)*/
-					win = Rand() < 51 ? (0x80 | 0x10 | 1) : (0x80 | 0x10 | 2);
+					win = getRand() < 51 ? (0x80 | 0x10 | 1) : (0x80 | 0x10 | 2);
 				else
-					win = Rand() < 205 ? (0x20 | 0x10 | 1) : (0x20 | 0x10 | 2);
+					win = getRand() < 205 ? (0x20 | 0x10 | 1) : (0x20 | 0x10 | 2);
 			}
 		}
 	}
@@ -2077,7 +2077,7 @@ uint16 SCR_31_Fight2(void) {
 	script_ptr++;
 
 	if (script_byte_vars.bvar_43 != 18) {
-		pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
+		pers_t *pers = (pers_t *)(script_vars[kScrPool8_CurrentPers]);
 		fight_pers_ofs = (byte *)pers - (byte *)pers_list; /*TODO check size*/
 		pers->flags |= PERSFLG_40;
 		pers->area = 0;
@@ -2090,7 +2090,7 @@ uint16 SCR_31_Fight2(void) {
 				animateSpot(&anim19);
 			}
 			the_command = next_vorts_cmd;
-			RunCommand();
+			runCommand();
 		} else if (pers->index == 8) {	/*Vort duo*/
 			pers_list[kPersVort3].area = script_byte_vars.zone_area;
 			pers_list[kPersVort3].flags = pers->flags;
@@ -2099,7 +2099,7 @@ uint16 SCR_31_Fight2(void) {
 				animateSpot(&anim20);
 			}
 			the_command = next_vorts_cmd;
-			RunCommand();
+			runCommand();
 		} else {
 			if (prev_fight_mode == 0
 			        && script_byte_vars.zapstiks_owned != 0
@@ -2221,7 +2221,7 @@ uint16 SCR_60_ReviveCadaver(void) {
 	zone_spots[5].flags = SPOTFLG_40 | SPOTFLG_10 | SPOTFLG_2 | SPOTFLG_1;
 	found_spot->flags |= SPOTFLG_80;
 
-	pers = (pers_t *)script_vars[ScrPool8_CurrentPers];
+	pers = (pers_t *)script_vars[kScrPool8_CurrentPers];
 	pers->flags &= ~PERSFLG_40;
 	pers->area = script_byte_vars.zone_area;
 
@@ -2280,7 +2280,7 @@ uint16 SCR_15_SelectSpot(void) {
 	findPerson();
 
 	if (script_byte_vars.cur_pers == 0)
-		script_vars[ScrPool8_CurrentPers] = &pers_list[kPersProtozorq12];
+		script_vars[kScrPool8_CurrentPers] = &pers_list[kPersProtozorq12];
 
 	return 0;
 }
@@ -2541,7 +2541,7 @@ uint16 SCR_50_BounceItemToInventory(void) {
 
 	script_ptr++;
 	itemidx = *script_ptr++;
-	script_vars[ScrPool3_CurrentItem] = &inventory_items[itemidx - 1];
+	script_vars[kScrPool3_CurrentItem] = &inventory_items[itemidx - 1];
 
 	bounceCurrentItem(ITEMFLG_OWNED, 85);
 	return 0;
@@ -2551,7 +2551,7 @@ uint16 SCR_50_BounceItemToInventory(void) {
 Take away Protozorq's zapstik and bounce it to room
 */
 uint16 SCR_4B_ProtoDropZapstik(void) {
-	pers_t *pers = (pers_t *)(script_vars[ScrPool8_CurrentPers]);
+	pers_t *pers = (pers_t *)(script_vars[kScrPool8_CurrentPers]);
 
 	script_ptr++;
 
@@ -2560,7 +2560,7 @@ uint16 SCR_4B_ProtoDropZapstik(void) {
 
 	pers->index &= ~0x18;
 
-	script_vars[ScrPool3_CurrentItem] = &inventory_items[kItemZapstik1 - 1 + (script_byte_vars.cur_pers - 1) - kPersProtozorq1];
+	script_vars[kScrPool3_CurrentItem] = &inventory_items[kItemZapstik1 - 1 + (script_byte_vars.cur_pers - 1) - kPersProtozorq1];
 
 	bounceCurrentItem(ITEMFLG_ROOM, 43);
 
@@ -2575,7 +2575,7 @@ void LootAspirantsItem(void) {
 		item_t *item = &inventory_items[aspirant_ptr->item - 1];
 		aspirant_ptr->item = 0;
 
-		script_vars[ScrPool3_CurrentItem] = item;
+		script_vars[kScrPool3_CurrentItem] = item;
 		script_byte_vars.steals_count++;
 		script_byte_vars.bvar_6D[aspirant_ptr->index >> 6] = item->name; /*TODO: check these index bits*/
 		bounceCurrentItem(ITEMFLG_OWNED, 85);
@@ -2616,9 +2616,9 @@ uint16 SCR_51_SkullTraderItemTrade(void) {
 			status = 3;
 			if (script_byte_vars.inv_item_index >= kItemRope1 && script_byte_vars.inv_item_index <= kItemLantern4) {
 				the_command = 0xC204;	/*WHICH ONE DO YOU WANT?*/
-				RunCommand();
+				runCommand();
 
-				((item_t *)(script_vars[ScrPool3_CurrentItem]))->flags = 0;
+				((item_t *)(script_vars[kScrPool3_CurrentItem]))->flags = 0;
 
 				openInventory(0xFF, ITEMFLG_TRADER);
 
@@ -2632,8 +2632,8 @@ uint16 SCR_51_SkullTraderItemTrade(void) {
 					if (script_byte_vars.rand_value < 128) {
 #endif
 						status = 6;	/*win*/
-						((item_t *)(script_vars[ScrPool3_CurrentItem]))[-1].flags = ITEMFLG_TRADER; /*offer previous item copy for next trade*/
-						((item_t *)(script_vars[ScrPool3_CurrentItem]))->flags = 0;	/*consume selected item*/
+						((item_t *)(script_vars[kScrPool3_CurrentItem]))[-1].flags = ITEMFLG_TRADER; /*offer previous item copy for next trade*/
+						((item_t *)(script_vars[kScrPool3_CurrentItem]))->flags = 0;	/*consume selected item*/
 					}
 				}
 			}
@@ -2664,11 +2664,11 @@ uint16 SCR_53_FindInvItem(void) {
 	item = &inventory_items[first - 1];
 	for (i = 0; i < count; i++) {
 		if (item[i].flags == flags) {
-			script_vars[ScrPool3_CurrentItem] = &item[i];
+			script_vars[kScrPool3_CurrentItem] = &item[i];
 			return 0;
 		}
 	}
-	script_vars[ScrPool3_CurrentItem] = &item[count - 1];
+	script_vars[kScrPool3_CurrentItem] = &item[count - 1];
 	return 0;
 }
 
@@ -2881,7 +2881,7 @@ extern int16 loadSplash(const char *filename);
 /*
 TODO: check me
 */
-void TheEnd(void) {
+void theEnd(void) {
 	static byte image2[] = {168, 28, 85, 22, 15};
 	byte *pimage2 = image2;
 
@@ -2899,7 +2899,7 @@ void TheEnd(void) {
 
 		while (!loadFond())
 			askDisk2();
-		JaggedZoom(backbuffer, frontbuffer);
+		jaggedZoom(backbuffer, frontbuffer);
 		cga_BackBufferToRealFull();
 	} else {
 		while (!loadSplash("PRES.BIN"))
@@ -2912,7 +2912,7 @@ uint16 SCR_5B_TheEnd(void) {
 	script_ptr++;   /*Useless since this handler never returns*/
 	script_byte_vars.game_paused = 5;
 
-	TheEnd();
+	theEnd();
 
 	if (g_vm->getLanguage() == Common::EN_USA)
 		restartGame();
@@ -3221,7 +3221,7 @@ Open Psi Powers menu
 */
 uint16 CMD_2_PsiPowers(void) {
 	/*Psi powers bar*/
-	BackupAndShowSprite(3, 280 / 4, 40);
+	backupAndShowSprite(3, 280 / 4, 40);
 	processInput();
 	do {
 		pollInput();
@@ -3294,10 +3294,10 @@ uint16 CMD_5_Wait(void) {
 	script_word_vars.timer_ticks2 = Swap16(Swap16(script_word_vars.timer_ticks2) + 300);
 
 	the_command = next_vorts_cmd;
-	RunCommand();
+	runCommand();
 
 	the_command = next_turkey_cmd;
-	RunCommand();
+	runCommand();
 
 	script_byte_vars.used_commands = script_byte_vars.check_used_commands;
 
@@ -3306,7 +3306,7 @@ uint16 CMD_5_Wait(void) {
 	if (the_command == 0) {
 		if (script_word_vars.next_aspirant_cmd == 0) {
 			the_command = 0x9005;
-			RunCommand();
+			runCommand();
 		}
 	} else {
 		if (script_byte_vars.bvar_26 >= 63 && script_byte_vars.zone_area < 22 && script_byte_vars.zone_area != 1)
@@ -3394,7 +3394,7 @@ uint16 CMD_A_PsiSolarEyes(void) {
 	}
 
 	the_command = Swap16(script_word_vars.wvar_AA);
-	RunCommand();
+	runCommand();
 	script_byte_vars.cur_spot_flags = 0xFF;
 
 	return 0;
@@ -3425,7 +3425,7 @@ void DrawStickyNet(void) {
 	for (; h; h -= 30) {
 		int16 i;
 		for (i = 0; i < w; i += 16 / 4)
-			DrawSprite(sprite, frontbuffer, ofs + i);
+			drawSprite(sprite, frontbuffer, ofs + i);
 		ofs += CGA_BYTES_PER_LINE * 30 / 2;
 	}
 }
@@ -3502,7 +3502,7 @@ uint16 CMD_D_PsiBrainwarp(void) {
 		return 0;
 	}
 
-	((pers_t *)script_vars[ScrPool8_CurrentPers])->flags |= PERSFLG_80;
+	((pers_t *)script_vars[kScrPool8_CurrentPers])->flags |= PERSFLG_80;
 	script_byte_vars.dead_flag = script_byte_vars.cur_spot_idx;
 	script_byte_vars.tries_left = 2;
 	the_command = 0;
@@ -3661,7 +3661,7 @@ void ActionForPersonChoice(uint16 *actions) {
 	processMenu();
 	the_command = 0x9183;   /*THERE`S NOBODY.*/
 	if (script_byte_vars.cur_spot_idx != 0 && script_byte_vars.cur_pers != 0) {
-		pers_t *pers = (pers_t *)script_vars[ScrPool8_CurrentPers];
+		pers_t *pers = (pers_t *)script_vars[kScrPool8_CurrentPers];
 		byte index = pers->name;
 		if (index == 93)    /*CADAVER*/
 			index = 19 + 42;
@@ -4356,14 +4356,14 @@ uint16 RunScript(byte *code) {
 /*
 Get script routine
 */
-byte *GetScriptSubroutine(uint16 index) {
+byte *getScriptSubroutine(uint16 index) {
 	return seekToEntry(templ_data, index, &script_end_ptr);
 }
 
 /*
 Run script command
 */
-uint16 RunCommand(void) {
+uint16 runCommand(void) {
 	uint16 res;
 	uint16 cmd;
 
@@ -4377,7 +4377,7 @@ again:;
 	{
 		FILE *f = fopen(DEBUG_SCRIPT_LOG, "at");
 		if (f) {
-			fprintf(f, "\nRunCommand 0x%04X rc: %d rs: %d\n", the_command, runcmd_reentr, runscr_reentr);
+			fprintf(f, "\nrunCommand 0x%04X rc: %d rs: %d\n", the_command, runcmd_reentr, runscr_reentr);
 			fclose(f);
 		}
 	}
@@ -4407,7 +4407,7 @@ again:;
 	/*TODO("SCR_RESTORE\n");*/
 	/*fall through*/
 	default:
-		res = RunScript(GetScriptSubroutine(cmd - 1));
+		res = RunScript(getScriptSubroutine(cmd - 1));
 	}
 
 #ifdef DEBUG_SCRIPT
@@ -4431,10 +4431,10 @@ again:;
 	return res;
 }
 
-uint16 RunCommandKeepSp(void) {
+uint16 runCommandKeepSp(void) {
 	/*keep_sp = sp;*/
 	setjmp(script_jmp);
-	return RunCommand();
+	return runCommand();
 }
 
 } // End of namespace Chamber

@@ -110,7 +110,7 @@ void actionsMenu(byte **pinfo) {
 	y = act_menu_y;
 
 	/*menu sprite*/
-	BackupAndShowSprite(0, x, y);
+	backupAndShowSprite(0, x, y);
 	playSound(18);
 
 	choices = *((*pinfo)++);
@@ -132,7 +132,7 @@ void actionsMenu(byte **pinfo) {
 	act_dot_rects_end = act_dot_rects + numchoices + 1;
 
 	for (i = 0; i < numchoices; i++)
-		DrawSpriteN(1, act_dot_rects[i].sx, act_dot_rects[i].sy, CGA_SCREENBUFFER);
+		drawSpriteN(1, act_dot_rects[i].sx, act_dot_rects[i].sy, CGA_SCREENBUFFER);
 
 	selectCursor(CURSOR_FINGER);
 	processInput();
@@ -167,11 +167,11 @@ void actionsMenu(byte **pinfo) {
 		waitVBlank();
 
 		/*draw dot explosion animation*/
-		DrawSpriteN(24, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
+		drawSpriteN(24, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
 		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
-		DrawSpriteN(2, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
+		drawSpriteN(2, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
 		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
-		DrawSpriteN(25, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
+		drawSpriteN(25, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
 		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
 	}
 	cga_RestoreBackupImage(CGA_SCREENBUFFER);

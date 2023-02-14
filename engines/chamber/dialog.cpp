@@ -152,27 +152,27 @@ void drawPersonBubble(byte x, byte y, byte flags, byte *msg) {
 	switch (flags & SPIKE_MASK) {
 	case SPIKE_UPLEFT:  /*upper-left spike*/
 		ofs = cga_CalcXY_p(x + 1, y - 7);
-		DrawSpriteN(18, x + 1, y - 7, CGA_SCREENBUFFER);
+		drawSpriteN(18, x + 1, y - 7, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_UPRIGHT: /*upper-right spike*/
 		ofs = cga_CalcXY_p(x + char_draw_max_width, y - 7) - 1;
-		DrawSpriteNFlip(18, x + char_draw_max_width, y - 7, CGA_SCREENBUFFER);
+		drawSpriteNFlip(18, x + char_draw_max_width, y - 7, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_DNRIGHT: /*lower-right spike*/
 		ofs = cga_CalcXY_p(x + char_draw_max_width, char_draw_coords_y + 1) - 1;
-		DrawSpriteNFlip(21, x + char_draw_max_width, char_draw_coords_y + 1, CGA_SCREENBUFFER);
+		drawSpriteNFlip(21, x + char_draw_max_width, char_draw_coords_y + 1, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_DNLEFT:  /*lower-left spike*/
 		ofs = cga_CalcXY_p(x + 1, char_draw_coords_y + 1);
-		DrawSpriteN(21, x + 1, char_draw_coords_y + 1, CGA_SCREENBUFFER);
+		drawSpriteN(21, x + 1, char_draw_coords_y + 1, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_BUBRIGHT:    /*lower-right bubbles*/
 		ofs = cga_CalcXY_p(x + char_draw_max_width, char_draw_coords_y + 4);
-		DrawSpriteN(20, x + char_draw_max_width, char_draw_coords_y + 4, CGA_SCREENBUFFER);
+		drawSpriteN(20, x + char_draw_max_width, char_draw_coords_y + 4, CGA_SCREENBUFFER);
 		break;
 	case SPIKE_BUBLEFT: /*lower-left bubbles*/
 		ofs = cga_CalcXY_p(x + 1, char_draw_coords_y + 4);
-		DrawSpriteN(19, x + 1, char_draw_coords_y + 4, CGA_SCREENBUFFER);
+		drawSpriteN(19, x + 1, char_draw_coords_y + 4, CGA_SCREENBUFFER);
 		break;
 	}
 
@@ -183,7 +183,7 @@ void showPromptAnim(void) {
 	if (script_byte_vars.zone_index == 135)
 		return;
 	waitVBlank();
-	DrawSpriteN(cursor_anim_phase ? 23 : 22, 300 / 4, 155, frontbuffer);
+	drawSpriteN(cursor_anim_phase ? 23 : 22, 300 / 4, 155, frontbuffer);
 	cursor_anim_phase = ~cursor_anim_phase;
 }
 
