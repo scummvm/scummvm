@@ -141,7 +141,7 @@ script_byte_vars_t script_byte_vars = {
 	0,    /* 6A */
 	0,    /* 6B */
 	0,    /* 6C */
-	/*{0,0,0,0}*/  /* 6D..70 */
+	{0,0,0,0}  /* 6D..70 */
 };
 
 script_word_vars_t script_word_vars = {

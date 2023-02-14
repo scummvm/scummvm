@@ -114,7 +114,7 @@ uint16 CMD_TRAP(void) {
 }
 
 uint16 SCR_TRAP(void) {
-	printf("SCR TRAP 0x%02X @ 0x%X\n", *script_ptr, script_ptr - templ_data);
+	printf("SCR TRAP 0x%02X @ 0x%lX\n", *script_ptr, script_ptr - templ_data);
 	PromptWait();
 	for (;;) ;
 	return 0;
@@ -396,6 +396,7 @@ uint16 SCR_2D_Wait(void) {
 	byte seconds;
 	script_ptr++;
 	seconds = *script_ptr++;
+	(void)seconds;
 	Wait(4);    /*TODO: looks like a bug?*/
 	return 0;
 }
@@ -587,6 +588,7 @@ uint16 SCR_3B_MathExpr(void) {
 		opptr[1] = op2 & 255;
 	}
 
+	(void)op1;
 	/*return op1;*/ /*previous value, never used?*/
 	return 0;
 }
@@ -870,7 +872,7 @@ uint16 SCR_C_DrawPortraitArcEffect(void) {
 Draw image with slow top-to-down reveal effect by repeatedly draw its every 17th pixel
 */
 uint16 SCR_D_DrawPortraitDotEffect(void) {
-	int16 i;
+	//int16 i;
 	byte x, y, width, height;
 	uint16 offs, step = 17;
 	byte *target = CGA_SCREENBUFFER;
@@ -2084,7 +2086,7 @@ uint16 SCR_31_Fight2(void) {
 			pers_list[kPersVort2].area = script_byte_vars.zone_area;
 			pers_list[kPersVort2].flags = pers->flags;
 			if (script_byte_vars.zapstiks_owned == 0) {
-				static const animdesc_t anim19 = {ANIMFLG_USESPOT | 19};
+				static const animdesc_t anim19 = {ANIMFLG_USESPOT | 19, { { 0, 0 } }};
 				AnimateSpot(&anim19);
 			}
 			the_command = next_vorts_cmd;
@@ -2093,7 +2095,7 @@ uint16 SCR_31_Fight2(void) {
 			pers_list[kPersVort3].area = script_byte_vars.zone_area;
 			pers_list[kPersVort3].flags = pers->flags;
 			if (script_byte_vars.zapstiks_owned == 0) {
-				static const animdesc_t anim20 = {ANIMFLG_USESPOT | 20};
+				static const animdesc_t anim20 = {ANIMFLG_USESPOT | 20, { { 0, 0 } }};
 				AnimateSpot(&anim20);
 			}
 			the_command = next_vorts_cmd;
@@ -3077,7 +3079,7 @@ byte *DebugString(char *msg, ...) {
 	va_list ap;
 
 	va_start(ap, msg);
-	vsprintf((char *)m, msg, ap);
+	vsnprintf((char *)m, 256, msg, ap);
 	va_end(ap);
 
 	for (i = 0; m[i]; i++) {
@@ -3916,7 +3918,7 @@ Aspirant walking out of the room
 */
 uint16 CMD_18_AspirantLeave(void) {
 	/*TODO: check me*/
-	static const animdesc_t anim33 = {ANIMFLG_USESPOT | 33};
+	static const animdesc_t anim33 = {ANIMFLG_USESPOT | 33, { { 0, 0 } }};
 
 	PopDirtyRects(DirtyRectSprite);
 	PopDirtyRects(DirtyRectText);
@@ -3939,7 +3941,7 @@ Aspirant walking into the room
 */
 uint16 CMD_19_AspirantAppear(void) {
 	/*TODO: check me*/
-	static const animdesc_t anim23 = {ANIMFLG_USESPOT | 23};
+	static const animdesc_t anim23 = {ANIMFLG_USESPOT | 23, { { 0, 0 } }};
 
 	PopDirtyRects(DirtyRectSprite);
 	aspirant_ptr->area = script_byte_vars.zone_area;

@@ -311,7 +311,7 @@ Common::Error ChamberEngine::run() {
 	}
 
 	/*restart game from here*/
-restart:;
+//restart:;
 	setjmp(restart_jmp);
 
 	Randomize();

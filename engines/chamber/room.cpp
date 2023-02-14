@@ -654,8 +654,8 @@ lutinanim_t lutins_table[] = {
 
 void BeforeChangeZone(byte index) {
 	byte oldspot;
-	static const animdesc_t anim57 = {ANIMFLG_USESPOT | 57, 0};
-	static const animdesc_t anim58 = {ANIMFLG_USESPOT | 58, 0};
+	static const animdesc_t anim57 = {ANIMFLG_USESPOT | 57, { { 0, 0 } }};
+	static const animdesc_t anim58 = {ANIMFLG_USESPOT | 58, { { 0, 0 } }};
 
 	script_byte_vars.need_draw_spots = 0;
 	if (pers_list[kPersScifi].area != script_byte_vars.zone_area)
@@ -893,8 +893,8 @@ void DrawRoomItemsIndicator(void) {
 }
 
 void DrawZoneSpots(void) {
-	static const animdesc_t anim59 = {ANIMFLG_USESPOT | 59, 0};
-	static const animdesc_t anim60 = {ANIMFLG_USESPOT | 60, 0};
+	static const animdesc_t anim59 = {ANIMFLG_USESPOT | 59, { { 0, 0 } }};
+	static const animdesc_t anim60 = {ANIMFLG_USESPOT | 60, { { 0, 0 } }};
 
 	byte oldspot = script_byte_vars.cur_spot_idx;
 
@@ -1745,7 +1745,7 @@ void UpdateProtozorqs(void) {
 		pers_list[kPersProtozorq13].area = script_byte_vars.bvar_40;
 
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_3F) {
-			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35, 0};
+			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35, { { 0, 0 } }};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
 			HidePerson(PersonOffset(kPersProtozorq14));
@@ -1759,7 +1759,7 @@ void UpdateProtozorqs(void) {
 		}
 
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_40) {
-			static const animdesc_t anim34 = {ANIMFLG_USESPOT | 34, 0};
+			static const animdesc_t anim34 = {ANIMFLG_USESPOT | 34, { { 0, 0 } }};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
 
@@ -1796,7 +1796,7 @@ void UpdateProtozorqs(void) {
 			return;
 
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_3F) {
-			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35, 0};
+			static const animdesc_t anim35 = {ANIMFLG_USESPOT | 35, { { 0, 0 } }};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
 			HidePerson(PersonOffset(kPersProtozorq14));
@@ -1807,7 +1807,7 @@ void UpdateProtozorqs(void) {
 		}
 
 		if (script_byte_vars.zone_area == script_byte_vars.bvar_40) {
-			static const animdesc_t anim34 = {ANIMFLG_USESPOT | 34, 0};
+			static const animdesc_t anim34 = {ANIMFLG_USESPOT | 34, { { 0, 0 } }};
 			UpdateUndrawCursor(frontbuffer);
 			RefreshSpritesData();
 
