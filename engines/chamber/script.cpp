@@ -1851,7 +1851,7 @@ uint16 SCR_41_LiftHand(void) {
 	script_ptr++;
 	RedrawRoomStatics(92, script_byte_vars.hands);
 	CGA_BackBufferToRealFull();
-	PlaySound(31);
+	playSound(31);
 	return 0;
 }
 
@@ -2137,7 +2137,7 @@ uint16 SCR_31_Fight2(void) {
 							IFGM_PlaySample(150);
 						}
 						if (fightlist[i].anim.index == 55)
-							PlaySound(151);
+							playSound(151);
 						PlayAnim(fightlist[i].anim.index, fightlist[i].anim.params.coords.x, fightlist[i].anim.params.coords.y);
 						break;
 					}
@@ -2161,7 +2161,7 @@ void FightWin(void) {
 		        && script_byte_vars.zapstiks_owned != 0
 		        && fight_mode == 0) {
 			script_byte_vars.bvar_67 = 1;
-			PlaySound(149);
+			playSound(149);
 			PlayAnim(40, found_spot->sx, found_spot->sy);
 		}
 	}
@@ -3188,13 +3188,13 @@ uint16 SCR_68_PlaySfx(void) {
 /*
 Play sound
 */
-uint16 SCR_69_PlaySound(void) {
+uint16 SCR_69_playSound(void) {
 	byte index;
 	script_ptr++;
 	index = *script_ptr++;
 	script_ptr++;
 
-	PlaySound(index);
+	playSound(index);
 	return 0;
 }
 
@@ -3443,7 +3443,7 @@ uint16 CMD_B_PsiStickyFingers(void) {
 	DrawStickyNet();
 	SelectCursor(CURSOR_FLY);
 	MenuLoop(0, 0);
-	PlaySound(224);
+	playSound(224);
 	CGA_BackBufferToRealFull();
 	RestoreScreenOfSpecialRoom();
 
@@ -3547,7 +3547,7 @@ uint16 CMD_E_PsiZoneScan(void) {
 
 		for (spot = zone_spots; spot != zone_spots_end; spot++) {
 			if ((spot->flags & ~(SPOTFLG_40 | 7)) == (SPOTFLG_20 | SPOTFLG_8) && spot->sy == y) {
-				PlaySound(27);
+				playSound(27);
 				spot->flags |= SPOTFLG_80;
 				PlayAnim(38, spot->sx, spot->sy);
 				break;
@@ -3581,7 +3581,7 @@ uint16 CMD_F_PsiPsiShift(void) {
 	SelectCursor(CURSOR_GRAB);
 	MenuLoop(0, 0);
 	BackupScreenOfSpecialRoom();
-	PlaySound(25);
+	playSound(25);
 	PlayAnim(39, cursor_x / 4, cursor_y);
 	RestoreScreenOfSpecialRoom();
 
@@ -3672,7 +3672,7 @@ void ActionForPersonChoice(uint16 *actions) {
 
 		the_command = actions[index];
 
-		PlaySound(22);
+		playSound(22);
 	}
 }
 
@@ -4294,7 +4294,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_66_DeProfundisRideToExit,
 	SCR_67_Unused,
 	SCR_68_PlaySfx,
-	SCR_69_PlaySound,
+	SCR_69_playSound,
 	SCR_6A_Unused,
 };
 #define MAX_SCR_HANDLERS (sizeof(script_handlers) / sizeof(script_handlers[0]))

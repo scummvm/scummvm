@@ -192,7 +192,7 @@ process:
 
 void ExitGame(void) {
 	SwitchToTextMode();
-	UninitTimer();
+	uninitTimer();
 }
 
 jmp_buf restart_jmp;
@@ -215,7 +215,7 @@ Common::Error ChamberEngine::run() {
 	SwitchToGraphicsMode();
 
 	/* Install timer callback */
-	InitTimer();
+	initTimer();
 
 	if (g_vm->getLanguage() == Common::EN_USA) {
 		/* Load title screen */

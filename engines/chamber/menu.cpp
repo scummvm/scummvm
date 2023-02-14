@@ -111,7 +111,7 @@ void ActionsMenu(byte **pinfo) {
 
 	/*menu sprite*/
 	BackupAndShowSprite(0, x, y);
-	PlaySound(18);
+	playSound(18);
 
 	choices = *((*pinfo)++);
 	menurecs = *pinfo;
@@ -163,7 +163,7 @@ void ActionsMenu(byte **pinfo) {
 	UndrawCursor(CGA_SCREENBUFFER);
 
 	if (the_command != 0xFFFF) {
-		PlaySound(19);
+		playSound(19);
 		WaitVBlank();
 
 		/*draw dot explosion animation*/

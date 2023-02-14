@@ -32,7 +32,7 @@
 namespace Chamber {
 
 
-void AnimateGauss(byte *target) {
+void animateGauss(byte *target) {
 	byte *sprite;
 	byte phase = Rand() % 4;
 	if (phase == script_byte_vars.gauss_phase)
@@ -48,17 +48,17 @@ void timerCallback(void *refCon) {
 		if (script_byte_vars.timer_ticks % 16 == 0) {
 			script_word_vars.timer_ticks2 = Swap16(Swap16(script_word_vars.timer_ticks2) + 1);
 #if 1
-			AnimateGauss(frontbuffer);
+			animateGauss(frontbuffer);
 #endif
 		}
 	}
 }
 
-void InitTimer(void) {
+void initTimer(void) {
 	g_system->getTimerManager()->installTimerProc(&timerCallback, 1000000 / 16, NULL, "mainTimer");
 }
 
-void UninitTimer(void) {
+void uninitTimer(void) {
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 }
 

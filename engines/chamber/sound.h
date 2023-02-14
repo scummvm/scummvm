@@ -25,7 +25,7 @@
 
 namespace Chamber {
 
-void PlaySound(byte index);
+void playSound(byte index);
 
 } // End of namespace Chamber
 

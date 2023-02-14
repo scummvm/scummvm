@@ -25,8 +25,8 @@
 
 namespace Chamber {
 
-void InitTimer(void);
-void UninitTimer(void);
+void initTimer(void);
+void uninitTimer(void);
 
 } // End of namespace Chamber
 

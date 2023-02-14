@@ -81,7 +81,7 @@ void DrawInventoryBox(uint16 filtermask, uint16 filtervalue) {
 		if (count == 0) {
 			/*once first valid item found, draw the box*/
 			CGA_FillAndWait(inv_bgcolor, 64 / 4, 64, CGA_SCREENBUFFER, CGA_CalcXY_p(232 / 4, 56));
-			PlaySound(20);
+			playSound(20);
 		}
 		inventory_spots[count].name = inventory_items[i].name;
 		inventory_spots[count].command = inventory_items[i].command;
@@ -127,7 +127,7 @@ void OpenInventory(uint16 filtermask, uint16 filtervalue) {
 		UndrawCursor(frontbuffer);
 	}
 	CGA_RestoreImage(scratch_mem2, frontbuffer);
-	PlaySound(20);
+	playSound(20);
 	switch (((item_t *)script_vars[ScrPool3_CurrentItem])->name) {
 	case 108:	/*DAGGER*/
 	case 115:	/*SACRIFICIAL BLADE*/
