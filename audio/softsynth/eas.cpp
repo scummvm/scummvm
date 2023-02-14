@@ -67,7 +67,8 @@ public:
 
 	// MidiDriver
 	int open() override;
-	bool isOpen() const override;
+	bool isOpen() const override { return _dlHandle != 0; }
+
 	void close() override;
 	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
@@ -313,10 +314,6 @@ int MidiDriver_EAS::open() {
 	return 0;
 }
 
-bool MidiDriver_EAS::isOpen() const {
-	return _dlHandle != 0;
-}
-
 void MidiDriver_EAS::close() {
 	MidiDriver_MPU401::close();
 
@@ -358,6 +355,9 @@ void MidiDriver_EAS::close() {
 void MidiDriver_EAS::send(uint32 b) {
 	byte buf[4];
 
+	if (!isOpen())
+		return;
+
 	WRITE_LE_UINT32(buf, b);
 
 	int32 len = 3;
@@ -371,6 +371,9 @@ void MidiDriver_EAS::send(uint32 b) {
 
 void MidiDriver_EAS::sysEx(const byte *msg, uint16 length) {
 	byte buf[266];
+
+	if (!isOpen())
+		return;
 
 	assert(length + 2 <= ARRAYSIZE(buf));
 
@@ -396,6 +399,9 @@ uint32 MidiDriver_EAS::getBaseTempo() {
 int MidiDriver_EAS::readBuffer(int16 *buffer, const int numSamples) {
 	// see note at top of this file
 	assert(numSamples == INTERMEDIATE_BUFFER_SIZE);
+
+	if (!isOpen())
+		return -1;
 
 	int32 res, c;
 
