@@ -272,7 +272,7 @@ void DebugMessage(char *msg, ...) {
 	va_list ap;
 
 	va_start(ap, msg);
-	vsprintf((char *)m, msg, ap);
+	vsnprintf((char *)m, 256, msg, ap);
 	va_end(ap);
 
 	for (i = 0; m[i]; i++) {
