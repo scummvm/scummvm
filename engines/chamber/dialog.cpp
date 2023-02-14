@@ -196,7 +196,7 @@ void promptWait(void) {
 			cursor_anim_ticks = ticks;
 			showPromptAnim();
 		}
-		PollInputButtonsOnly();
+		pollInputButtonsOnly();
 
 		if (g_vm->_shouldQuit)
 			break;

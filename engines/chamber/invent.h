@@ -28,9 +28,9 @@ namespace Chamber {
 extern byte inv_count;
 extern byte inv_bgcolor;
 
-void DrawInventoryBox(uint16 filtermask, uint16 filtervalue);
+void drawInventoryBox(uint16 filtermask, uint16 filtervalue);
 
-void OpenInventory(uint16 filtermask, uint16 filtervalue);
+void openInventory(uint16 filtermask, uint16 filtervalue);
 
 } // End of namespace Chamber
 

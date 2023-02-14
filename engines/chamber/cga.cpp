@@ -150,7 +150,7 @@ void switchToTextMode(void) {
 }
 
 void waitVBlank(void) {
-	PollInput();
+	pollInput();
 	g_system->delayMillis(10);
 }
 

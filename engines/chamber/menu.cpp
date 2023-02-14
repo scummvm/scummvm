@@ -55,7 +55,7 @@ struct {
 
 /*Handle keyboard keys in actions menu (to cycle through choices with directional keys)*/
 byte PollKeyboardInActionsMenu(void) {
-	PollInput();
+	pollInput();
 	if (!(key_direction & 0xF)) {
 		key_held = 0;
 		return key_code;
@@ -78,8 +78,8 @@ byte PollKeyboardInActionsMenu(void) {
 }
 
 /*Handle player input in actions menu*/
-void PollInputInActionsMenu(void) {
-	PollInput();
+void pollInputInActionsMenu(void) {
+	pollInput();
 }
 
 /*Draw actions menu and process its choices*/
@@ -135,12 +135,12 @@ void ActionsMenu(byte **pinfo) {
 		DrawSpriteN(1, act_dot_rects[i].sx, act_dot_rects[i].sy, CGA_SCREENBUFFER);
 
 	selectCursor(CURSOR_FINGER);
-	ProcessInput();
+	processInput();
 
 	choice = 0;
 	act_dot_rects_cur = act_dot_rects;
 	do {
-		PollInputInActionsMenu();
+		pollInputInActionsMenu();
 
 		for (choice = 0; choice < numchoices; choice++) {
 			if (IsCursorInRect(&act_dot_rects[choice]))
@@ -181,9 +181,9 @@ void ActionsMenu(byte **pinfo) {
 
 /*TODO: maybe rename to SpotsLoop*/
 void MenuLoop(byte spotmask, byte spotvalue) {
-	ProcessInput();
+	processInput();
 	do {
-		PollInput();
+		pollInput();
 		CheckHotspots(spotmask, spotvalue);
 		if (object_hint != last_object_hint)
 			DrawObjectHint();

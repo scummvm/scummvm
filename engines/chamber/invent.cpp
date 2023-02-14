@@ -71,7 +71,7 @@ byte inv_bgcolor = 0;  /*TODO: pass this as param?*/
 Filter items and put them inventory box, then draw it if non-empty
 filtermask/filtervalue specify area (in high 8 bits) and flags (in lower 8 bits)
 */
-void DrawInventoryBox(uint16 filtermask, uint16 filtervalue) {
+void drawInventoryBox(uint16 filtermask, uint16 filtervalue) {
 	int16 i;
 	byte count = 0;
 	for (i = 0; i < MAX_INV_ITEMS; i++) {
@@ -92,7 +92,7 @@ void DrawInventoryBox(uint16 filtermask, uint16 filtervalue) {
 	inv_count = count;
 }
 
-void CheckInventoryItemHover(byte count) {
+void checkInventoryItemHover(byte count) {
 	int16 i;
 	for (i = 0; i < count; i++) {
 		if (IsCursorInRect((rect_t *)&inventory_spots[i])) {
@@ -110,16 +110,16 @@ void CheckInventoryItemHover(byte count) {
 	the_command = 0;
 }
 
-void OpenInventory(uint16 filtermask, uint16 filtervalue) {
+void openInventory(uint16 filtermask, uint16 filtervalue) {
 	the_command = 0;
 	cga_BackupImageReal(cga_CalcXY_p(232 / 4, 56), 64 / 4, 64);
-	DrawInventoryBox(filtermask, filtervalue);
+	drawInventoryBox(filtermask, filtervalue);
 	if (inv_count != 0) {
 		selectCursor(CURSOR_FINGER);
-		ProcessInput();
+		processInput();
 		do {
-			PollInput();
-			CheckInventoryItemHover(inv_count);
+			pollInput();
+			checkInventoryItemHover(inv_count);
 			if (command_hint != last_command_hint)
 				DrawCommandHint();
 			DrawHintsAndCursor(frontbuffer);

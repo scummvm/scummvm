@@ -109,7 +109,7 @@ void GameLoop(byte *target) {
 		CleanupDroppedItems();
 
 		/* Get player input */
-		PollInput();
+		pollInput();
 
 		if (g_vm->_shouldQuit)
 			return;
@@ -169,7 +169,7 @@ process:
 			RefreshSpritesData();
 			RunCommand();
 			BlitSpritesToBackBuffer();
-			ProcessInput();
+			processInput();
 			DrawSpots(target);
 		} else {
 			/*Player action*/
@@ -183,7 +183,7 @@ process:
 					ResetAllPersons();
 			}
 			BlitSpritesToBackBuffer();
-			ProcessInput();
+			processInput();
 			DrawSpots(target);
 		}
 	}
@@ -250,14 +250,14 @@ Common::Error ChamberEngine::run() {
 			ExitGame();
 
 		/* Wait for a keypress and show the language selection screen */
-		ClearKeyboard();
+		clearKeyboard();
 		readKeyboardChar();
 
 		if (_shouldQuit)
 			return Common::kNoError;
 
 		cga_BackBufferToRealFull();
-		ClearKeyboard();
+		clearKeyboard();
 
 		/* Wait for a valid language choice */
 		do {
@@ -289,7 +289,7 @@ Common::Error ChamberEngine::run() {
 		ExitGame();
 
 	/* Detect/Initialize input device */
-	InitInput();
+	initInput();
 
 	/* Load graphics resources */
 	while (!LoadFond() || !LoadSpritesData() || !LoadPersData())
@@ -345,7 +345,7 @@ Common::Error ChamberEngine::run() {
 	BlitSpritesToBackBuffer();
 
 	/* Initialize cursor backup */
-	ProcessInput();
+	processInput();
 
 #ifdef DEBUG_ENDING
 	script_byte_vars.game_paused = 5;
@@ -359,7 +359,7 @@ Common::Error ChamberEngine::run() {
 	/*TODO: the following code is never executed since GameLoop is infinite (or the whole game is restarted) */
 
 	/* Release hardware */
-	UninitInput();
+	uninitInput();
 
 	ExitGame();
 
