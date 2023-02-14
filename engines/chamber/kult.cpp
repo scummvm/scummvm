@@ -191,7 +191,7 @@ process:
 
 
 void ExitGame(void) {
-	SwitchToTextMode();
+	switchToTextMode();
 	uninitTimer();
 }
 
@@ -212,7 +212,7 @@ Common::Error ChamberEngine::run() {
 
 	IFGM_Init();
 
-	SwitchToGraphicsMode();
+	switchToGraphicsMode();
 
 	/* Install timer callback */
 	initTimer();
@@ -232,10 +232,10 @@ Common::Error ChamberEngine::run() {
 	}
 
 	/* Select intense cyan-mageta palette */
-	CGA_ColorSelect(0x30);
+	cga_ColorSelect(0x30);
 
 	/* Show the title screen */
-	CGA_BackBufferToRealFull();
+	cga_BackBufferToRealFull();
 
 	if (g_vm->getLanguage() == Common::EN_USA) {
 		if (ifgm_loaded) {
@@ -256,7 +256,7 @@ Common::Error ChamberEngine::run() {
 		if (_shouldQuit)
 			return Common::kNoError;
 
-		CGA_BackBufferToRealFull();
+		cga_BackBufferToRealFull();
 		ClearKeyboard();
 
 		/* Wait for a valid language choice */
@@ -277,7 +277,7 @@ Common::Error ChamberEngine::run() {
 	res_diali[0].name[4] = c;
 
 	if (g_vm->getLanguage() != Common::EN_USA)
-		CGA_BackBufferToRealFull();
+		cga_BackBufferToRealFull();
 
 	/* Load script and other static resources */
 	/* Those are normally embedded in the executable, but here we load extracted ones*/
@@ -296,7 +296,7 @@ Common::Error ChamberEngine::run() {
 		AskDisk2();
 
 	/*TODO: is this neccessary?*/
-	CGA_BackBufferToRealFull();
+	cga_BackBufferToRealFull();
 
 	/* Create clean game state snapshot */
 	SaveRestartGame();

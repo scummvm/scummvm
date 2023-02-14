@@ -138,23 +138,23 @@ static const uint8 PALETTE_CGA2[4 * 3] = {
 /*
   Switch to CGA 320x200x2bpp mode
 */
-void SwitchToGraphicsMode(void) {
+void switchToGraphicsMode(void) {
 	g_system->getPaletteManager()->setPalette(PALETTE_CGA, 0, 4);
 }
 
 /*
   Switch to text mode
 */
-void SwitchToTextMode(void) {
-	warning("STUB: SwitchToTextMode()");
+void switchToTextMode(void) {
+	warning("STUB: switchToTextMode()");
 }
 
-void WaitVBlank(void) {
+void waitVBlank(void) {
 	PollInput();
 	g_system->delayMillis(10);
 }
 
-void CGA_ColorSelect(byte csel) {
+void cga_ColorSelect(byte csel) {
 	const byte *pal;
 	if (csel & 0x10)
 		pal = PALETTE_CGA;
@@ -165,7 +165,7 @@ void CGA_ColorSelect(byte csel) {
 	g_system->setCursorPalette(pal, 0, 4);
 }
 
-void CGA_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
+void cga_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
 	dx = dy = 0;
 	w = 320; h = 200;
 	// Align x by 4
@@ -183,7 +183,7 @@ void CGA_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
 	w = (w + 3) / 4;
 
 	for (int16 y = 0; y < h; y++) {
-		byte *src = CGA_SCREENBUFFER + CGA_CalcXY(dx, dy + y);
+		byte *src = CGA_SCREENBUFFER + cga_CalcXY(dx, dy + y);
 		byte *dst = scrbuffer + (y + dy) * 320 + dx;
 
 		for (int16 x = 0; x < w; x++) {
@@ -202,26 +202,26 @@ void CGA_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
 	g_system->updateScreen();
 }
 
-void CGA_blitToScreen(int16 ofs, int16 w, int16 h) {
+void cga_blitToScreen(int16 ofs, int16 w, int16 h) {
 	int16 dy = ofs / 80;
 	int16 dx = (ofs % 80) * 4;
 
-	CGA_blitToScreen(dx, dy, w, h);
+	cga_blitToScreen(dx, dy, w, h);
 }
 
-void CGA_BackBufferToRealFull(void) {
+void cga_BackBufferToRealFull(void) {
 	memcpy(CGA_SCREENBUFFER, backbuffer, sizeof(backbuffer));
 
-	CGA_blitToScreen(0, 0, 320, 200);
+	cga_blitToScreen(0, 0, 320, 200);
 }
 
-void CGA_RealBufferToBackFull(void) {
+void cga_RealBufferToBackFull(void) {
 	memcpy(backbuffer, CGA_SCREENBUFFER, sizeof(backbuffer));
 }
 
 /*Copy interlaced screen data to another screen*/
 /*NB! w is in bytes*/
-void CGA_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void cga_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	uint16 oh = h;
 	uint16 oofs = ofs;
 	while (h--) {
@@ -232,16 +232,16 @@ void CGA_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 
 	}
 
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 4, oh);
 }
 
 /*
 Flip screen and backbuffer
 */
-void CGA_SwapRealBackBuffer(void) {
+void cga_SwapRealBackBuffer(void) {
 	uint16 i;
 	uint16 *s, *d;
-	WaitVBlank();
+	waitVBlank();
 	s = (uint16 *)CGA_SCREENBUFFER;
 	d = (uint16 *)backbuffer;
 	for (i = 0; i < sizeof(backbuffer) / 2; i++) {
@@ -250,14 +250,14 @@ void CGA_SwapRealBackBuffer(void) {
 		*d++ = t;
 	}
 
-	CGA_blitToScreen(0, 0, 320, 200);
+	cga_blitToScreen(0, 0, 320, 200);
 }
 
 
 /*
 Copy current screen's pixels to scratch mem, put new pixels to screen
 */
-void CGA_SwapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void cga_SwapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte *old = scratch_mem2;
 	uint16 oh = h;
 	uint16 oofs = ofs;
@@ -273,7 +273,7 @@ void CGA_SwapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 o
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 4, oh);
 }
 
 /*
@@ -281,8 +281,8 @@ Calc screen offset from normal pixel coordinates
 Out:
   screen offset
 */
-uint16 CGA_CalcXY(uint16 x, uint16 y) {
-	return CGA_CalcXY_p(x / 4, y);
+uint16 cga_CalcXY(uint16 x, uint16 y) {
+	return cga_CalcXY_p(x / 4, y);
 }
 
 /*
@@ -290,7 +290,7 @@ Calc screen offset from packed pixel coordinates
 Out:
   screen offset
 */
-uint16 CGA_CalcXY_p(uint16 x, uint16 y) {
+uint16 cga_CalcXY_p(uint16 x, uint16 y) {
 	uint16 ofs = 0;
 	if (y & 1)
 		ofs += CGA_ODD_LINES_OFS;
@@ -304,7 +304,7 @@ backup screen rect to a buffer
 Out:
   next buffer ptr
 */
-byte *CGA_BackupImage(byte *screen, uint16 ofs, uint16 w, uint16 h, byte *buffer) {
+byte *cga_BackupImage(byte *screen, uint16 ofs, uint16 w, uint16 h, byte *buffer) {
 	*(byte *)(buffer + 0) = h;
 	*(byte *)(buffer + 1) = w;
 	*(uint16 *)(buffer + 2) = ofs;
@@ -319,15 +319,15 @@ byte *CGA_BackupImage(byte *screen, uint16 ofs, uint16 w, uint16 h, byte *buffer
 	return buffer;
 }
 
-byte *CGA_BackupImageReal(uint16 ofs, uint16 w, uint16 h) {
-	return CGA_BackupImage(CGA_SCREENBUFFER, ofs, w, h, scratch_mem2);
+byte *cga_BackupImageReal(uint16 ofs, uint16 w, uint16 h) {
+	return cga_BackupImage(CGA_SCREENBUFFER, ofs, w, h, scratch_mem2);
 }
 
 /*
 Blit progressive image to interlaced screen buffer
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void CGA_Blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void cga_Blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte *src = pixels;
 	uint16 oofs = ofs;
 	for (int16 y = 0; y < h; y++) {
@@ -339,19 +339,19 @@ void CGA_Blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, w * 4, h);
+		cga_blitToScreen(oofs, w * 4, h);
 }
 
 /*
 Blit progressive image to interlaced screen buffer, then wait for VBlank
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void CGA_BlitAndWait(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
-	CGA_Blit(pixels, pw, w, h, screen, ofs);
-	WaitVBlank();
+void cga_BlitAndWait(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+	cga_Blit(pixels, pw, w, h, screen, ofs);
+	waitVBlank();
 }
 
-void CGA_Fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void cga_Fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 oofs = ofs;
 	for (int16 y = 0; y < h; y++) {
 		memset(screen + ofs, pixel, w);
@@ -361,18 +361,18 @@ void CGA_Fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, w * 4, h);
+		cga_blitToScreen(oofs, w * 4, h);
 }
 
-void CGA_FillAndWait(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
-	CGA_Fill(pixel, w, h, screen, ofs);
-	WaitVBlank();
+void cga_FillAndWait(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+	cga_Fill(pixel, w, h, screen, ofs);
+	waitVBlank();
 }
 
 /*
 Restore saved image to target screen buffer
 */
-void CGA_RestoreImage(byte *buffer, byte *target) {
+void cga_RestoreImage(byte *buffer, byte *target) {
 	uint16 w, h;
 	uint16 ofs;
 
@@ -384,20 +384,20 @@ void CGA_RestoreImage(byte *buffer, byte *target) {
 	ofs = *(uint16 *)(buffer + 2);
 	buffer += 4;    /*TODO: fix me for large int*/
 
-	CGA_Blit(buffer, w, w, h, target, ofs);
+	cga_Blit(buffer, w, w, h, target, ofs);
 }
 
 /*
 Restore saved image from scratch mem to target screen buffer
 */
-void CGA_RestoreBackupImage(byte *target) {
-	CGA_RestoreImage(scratch_mem2, target);
+void cga_RestoreBackupImage(byte *target) {
+	cga_RestoreImage(scratch_mem2, target);
 }
 
 /*
 Copy image's real screen data to backbuffer
 */
-void CGA_RefreshImageData(byte *buffer) {
+void cga_RefreshImageData(byte *buffer) {
 	uint16 w, h;
 	uint16 ofs;
 
@@ -408,14 +408,14 @@ void CGA_RefreshImageData(byte *buffer) {
 	w = *(byte *)(buffer + 1);
 	ofs = *(uint16 *)(buffer + 2);
 
-	CGA_CopyScreenBlock(CGA_SCREENBUFFER, w, h, backbuffer, ofs);
+	cga_CopyScreenBlock(CGA_SCREENBUFFER, w, h, backbuffer, ofs);
 }
 
 /*
 Draw a vertical line with origin x:y and length l, using color
 NB! Line must not wrap around the edge
 */
-void CGA_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
+void cga_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	uint16 ofs;
 	/*pixels are starting from top bits of byte*/
 	uint16 mask = ~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL));
@@ -424,7 +424,7 @@ void CGA_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	mask >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
 	pixel >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
 
-	ofs = CGA_CalcXY_p(x / CGA_PIXELS_PER_BYTE, y);
+	ofs = cga_CalcXY_p(x / CGA_PIXELS_PER_BYTE, y);
 
 	uint16 ol = l;
 	while (l--) {
@@ -435,14 +435,14 @@ void CGA_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	}
 
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen(x, y, 1, ol);
+		cga_blitToScreen(x, y, 1, ol);
 }
 
 /*
 Draw a horizontal line with origin x:y and length l, using color
 NB! Line must not wrap around the edge
 */
-void CGA_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
+void cga_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	uint16 ofs;
 	/*pixels are starting from top bits of byte*/
 	uint16 mask = ~(3 << ((CGA_PIXELS_PER_BYTE - 1) * CGA_BITS_PER_PIXEL));
@@ -451,7 +451,7 @@ void CGA_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	mask >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
 	pixel >>= (x % CGA_PIXELS_PER_BYTE) * CGA_BITS_PER_PIXEL;
 
-	ofs = CGA_CalcXY_p(x / CGA_PIXELS_PER_BYTE, y);
+	ofs = cga_CalcXY_p(x / CGA_PIXELS_PER_BYTE, y);
 	uint16 ol = l;
 	while (l--) {
 		target[ofs] = (target[ofs] & mask) | pixel;
@@ -464,7 +464,7 @@ void CGA_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 		}
 	}
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen(x, y, ol, 1);
+		cga_blitToScreen(x, y, ol, 1);
 }
 
 /*
@@ -472,7 +472,7 @@ Draw horizontal line of length l with color, add surrounding pixels (bmask, bpix
 Return next line screen offset
 NB! Length specifies byte lenght of inner segment, not amount of pixels
  */
-uint16 CGA_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs) {
+uint16 cga_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs) {
 	target[ofs] = (target[ofs] & (bmask >> 8)) | (bpix >> 8);
 	memset(target + ofs + 1, color, l);
 	target[ofs + 1 + l] = (target[ofs + 1 + l] & (bmask & 255)) | (bpix & 255);
@@ -482,7 +482,7 @@ uint16 CGA_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, by
 		ofs += CGA_BYTES_PER_LINE;
 
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, l * 4 + 2, 1);
+		cga_blitToScreen(oofs, l * 4 + 2, 1);
 
 	return ofs;
 }
@@ -490,10 +490,10 @@ uint16 CGA_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, by
 /*
 Print a character at current cursor pos, then advance
 */
-void CGA_PrintChar(byte c, byte *target) {
+void cga_PrintChar(byte c, byte *target) {
 	uint16 i;
 	byte *font = carpc_data + c * CGA_FONT_HEIGHT;
-	uint16 ofs = CGA_CalcXY_p(char_draw_coords_x++, char_draw_coords_y);
+	uint16 ofs = cga_CalcXY_p(char_draw_coords_x++, char_draw_coords_y);
 	for (i = 0; i < CGA_FONT_HEIGHT; i++) {
 		c = *font++;
 		c = char_xlat_table[c];
@@ -504,7 +504,7 @@ void CGA_PrintChar(byte c, byte *target) {
 	}
 
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen((char_draw_coords_x - 1) * 4, char_draw_coords_y, 4, CGA_FONT_HEIGHT);
+		cga_blitToScreen((char_draw_coords_x - 1) * 4, char_draw_coords_y, 4, CGA_FONT_HEIGHT);
 }
 
 
@@ -513,7 +513,7 @@ Blit progressive sprite (mask+pixel) from scratch buffer to interlaced screen bu
 NB! width specify a number of bytes, not count of pixels
 TODO: generalize/merge me with BlitSprite
 */
-void CGA_BlitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void cga_BlitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte x;
 	byte *pixels = scratch_mem2 + 2 + sprofs;
 	uint16 oh = h;
@@ -528,18 +528,18 @@ void CGA_BlitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, 
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 4, oh);
 }
 
-void CGA_BlitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs) {
-	CGA_CopyScreenBlock(backbuffer, w, h, screen, ofs);
+void cga_BlitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs) {
+	cga_CopyScreenBlock(backbuffer, w, h, screen, ofs);
 }
 
 /*
 Blit progressive sprite (mask+pixel) to interlaced screen buffer
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void CGA_BlitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void cga_BlitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte x;
 	uint16 oh = h;
 	uint16 oofs = ofs;
@@ -553,14 +553,14 @@ void CGA_BlitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, ui
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 4, oh);
 }
 
 /*
 Blit progressive sprite (mask+pixel) to interlaced screen buffer. Flip the sprite horizontally
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void CGA_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void cga_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	byte x;
 	uint16 oh = h;
 	uint16 oofs = ofs;
@@ -574,7 +574,7 @@ void CGA_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 4, oh);
 }
 
 /*
@@ -585,7 +585,7 @@ Used to draw mouse cursor and backup what's under it
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 NB! pixel+mask comes in reversed order, compared to regular BlitSprite
 */
-void CGA_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask) {
+void cga_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask) {
 	byte x;
 	uint16 oh = h;
 	uint16 oofs = ofs;
@@ -601,7 +601,7 @@ void CGA_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen,
 	}
 
 	if (screen == CGA_SCREENBUFFER)
-		CGA_blitToScreen(oofs, w * 4, oh);
+		cga_blitToScreen(oofs, w * 4, oh);
 }
 
 
@@ -612,7 +612,7 @@ void DrawSprite(byte *sprite, byte *screen, uint16 ofs) {
 	byte w, h;
 	w = *sprite++;
 	h = *sprite++;
-	CGA_BlitSprite(sprite, w * 2, w, h, screen, ofs);
+	cga_BlitSprite(sprite, w * 2, w, h, screen, ofs);
 }
 
 /*
@@ -622,7 +622,7 @@ void DrawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) {
 	byte w, h;
 	w = *sprite++;
 	h = *sprite++;
-	CGA_BlitSpriteFlip(sprite, w * 2, w, h, screen, ofs);
+	cga_BlitSpriteFlip(sprite, w * 2, w, h, screen, ofs);
 }
 
 /*
@@ -735,7 +735,7 @@ void DrawSpriteN(byte index, uint16 x, uint16 y, byte *target) {
 	uint16 ofs;
 	byte *sprite;
 	sprite = LoadSprit(index);
-	ofs = CGA_CalcXY_p(x, y);
+	ofs = cga_CalcXY_p(x, y);
 	DrawSprite(sprite, target, ofs);
 }
 
@@ -743,7 +743,7 @@ void DrawSpriteNFlip(byte index, uint16 x, uint16 y, byte *target) {
 	uint16 ofs;
 	byte *sprite;
 	sprite = LoadSprit(index);
-	ofs = CGA_CalcXY_p(x, y);
+	ofs = cga_CalcXY_p(x, y);
 	DrawSpriteFlip(sprite, target, ofs);
 }
 
@@ -751,10 +751,10 @@ void BackupAndShowSprite(byte index, byte x, byte y) {
 	byte w, h;
 	uint16 ofs;
 	byte *sprite = LoadSprit(index);
-	ofs = CGA_CalcXY_p(x, y);
+	ofs = cga_CalcXY_p(x, y);
 	w = sprite[0];
 	h = sprite[1];
-	CGA_BackupImageReal(ofs, w, h);
+	cga_BackupImageReal(ofs, w, h);
 	DrawSprite(sprite, CGA_SCREENBUFFER, ofs);  /*DrawSpriteN(index, x, y, CGA_SCREENBUFFER);*/
 }
 
@@ -763,11 +763,11 @@ Blit progressive image to interlaced screen buffer, then wait for VBlank
 Push image from the top to down
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void CGA_AnimLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void cga_AnimLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 i;
 	pixels += pw * (h - 1);
 	for (i = 1; i <= h; i++) {
-		CGA_BlitAndWait(pixels, pw, w, i, screen, ofs);
+		cga_BlitAndWait(pixels, pw, w, i, screen, ofs);
 		pixels -= pw;
 	}
 }
@@ -778,10 +778,10 @@ Pull and expand image from the right to left
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 NB! ofs specifies top-right corner of the image
 */
-void CGA_AnimLiftToLeft(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void cga_AnimLiftToLeft(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 i;
 	for (i = 0; i < n; i++) {
-		CGA_BlitAndWait(pixels, pw, w + i, h, screen, ofs);
+		cga_BlitAndWait(pixels, pw, w + i, h, screen, ofs);
 		ofs -= 1;
 	}
 }
@@ -791,10 +791,10 @@ Blit progressive image to interlaced screen buffer, then wait for VBlank
 Push image from the left to right
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 */
-void CGA_AnimLiftToRight(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+void cga_AnimLiftToRight(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 i;
 	for (i = 0; i < n; i++) {
-		CGA_BlitAndWait(pixels, pw, w + i, h, screen, ofs);
+		cga_BlitAndWait(pixels, pw, w + i, h, screen, ofs);
 		pixels -= 1;
 	}
 }
@@ -805,10 +805,10 @@ Push image from the down to up
 NB! width and pixelswidth specify a number of bytes, not count of pixels
 NB! x:y specifies left-bottom coords
 */
-void CGA_AnimLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y) {
+void cga_AnimLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y) {
 	uint16 i;
 	for (i = 1; i <= h; i++) {
-		CGA_BlitAndWait(pixels, pw, w, i, screen, CGA_CalcXY_p(x, y));
+		cga_BlitAndWait(pixels, pw, w, i, screen, cga_CalcXY_p(x, y));
 		y -= 1;
 	}
 }
@@ -817,7 +817,7 @@ void CGA_AnimLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen,
 /*Fill gap with source screen data*/
 /*offs points to block's bottom most line, data will be shifted to next line*/
 /*NB! w is in bytes*/
-void CGA_HideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void cga_HideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	while (n--) {
 		int16 i;
 		uint16 sofs, tofs;
@@ -847,10 +847,10 @@ void CGA_HideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 
 		memcpy(target + tofs, source + tofs, w);
 
 		if (screen == CGA_SCREENBUFFER) {
-			CGA_blitToScreen(0, 0, 320, 200);
+			cga_blitToScreen(0, 0, 320, 200);
 		}
 
-		WaitVBlank();
+		waitVBlank();
 
 		ofs ^= CGA_ODD_LINES_OFS;
 		if ((ofs & CGA_ODD_LINES_OFS) == 0)
@@ -862,7 +862,7 @@ void CGA_HideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 
 /*Fill gap with source screen data*/
 /*offs points to block's top most line, data will be shifted to previous line*/
 /*NB! w is in bytes*/
-void CGA_HideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void cga_HideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	while (n--) {
 		int16 i;
 		uint16 sofs, tofs;
@@ -892,10 +892,10 @@ void CGA_HideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w,
 		memcpy(target + tofs, source + tofs, w);
 
 		if (screen == CGA_SCREENBUFFER) {
-			CGA_blitToScreen(0, 0, 320, 200);
+			cga_blitToScreen(0, 0, 320, 200);
 		}
 
-		WaitVBlank();
+		waitVBlank();
 
 		ofs ^= CGA_ODD_LINES_OFS;
 		if ((ofs & CGA_ODD_LINES_OFS) != 0)
@@ -907,7 +907,7 @@ void CGA_HideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w,
 /*Fill gap with source screen data*/
 /*offs points to block's left most column, data will be shifted to previous column*/
 /*NB! w is in bytes*/
-void CGA_HideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void cga_HideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	while (n--) {
 		int16 i;
 		uint16 sofs, tofs;
@@ -931,10 +931,10 @@ void CGA_HideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 
 		}
 
 		if (screen == CGA_SCREENBUFFER) {
-			CGA_blitToScreen(0, 0, 320, 200);
+			cga_blitToScreen(0, 0, 320, 200);
 		}
 
-		WaitVBlank();
+		waitVBlank();
 
 		ofs--;
 	}
@@ -944,7 +944,7 @@ void CGA_HideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 
 /*Fill gap with source screen data*/
 /*offs points to block's right most column, data will be shifted to next column*/
 /*NB! w is in bytes*/
-void CGA_HideScreenBlockLiftToRight(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void cga_HideScreenBlockLiftToRight(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	while (n--) {
 		int16 i;
 		uint16 sofs, tofs;
@@ -968,10 +968,10 @@ void CGA_HideScreenBlockLiftToRight(uint16 n, byte *screen, byte *source, uint16
 		}
 
 		if (screen == CGA_SCREENBUFFER) {
-			CGA_blitToScreen(0, 0, 320, 200);
+			cga_blitToScreen(0, 0, 320, 200);
 		}
 
-		WaitVBlank();
+		waitVBlank();
 
 		ofs++;
 	}
@@ -1111,21 +1111,21 @@ static void FallPieces(scrpiece_t *pieces, byte *source, byte *target) {
 		}
 
 		if (target == CGA_SCREENBUFFER) {
-			CGA_blitToScreen(0, 0, 320, 200);
+			cga_blitToScreen(0, 0, 320, 200);
 		}
 
-		WaitVBlank();
+		waitVBlank();
 		t++;
 	} while (again);
 }
 
-void CGA_HideShatterFall(byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+void cga_HideShatterFall(byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	scrpiece_t *pieces = (scrpiece_t *)scratch_mem2;
 	ScreenToPieces(w, h, screen, ofs, pieces);
 	FallPieces(pieces, source, target);
 }
 
-void CGA_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byte *target) {
+void cga_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byte *target) {
 	byte b0 = 0;
 	byte b1 = 0;
 	byte mask;
@@ -1150,7 +1150,7 @@ void CGA_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byt
 	}
 	dy = h * 2;
 
-	ofs = CGA_CalcXY_p(sx / 4, sy);
+	ofs = cga_CalcXY_p(sx / 4, sy);
 	mask = 0xC0 >> ((sx % 4) * 2);
 
 	val = dy + dx;
@@ -1193,7 +1193,7 @@ void CGA_TraceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *source, byt
 	}
 
 	if (target == CGA_SCREENBUFFER)
-		CGA_blitToScreen(0, 0, 320, 200);
+		cga_blitToScreen(0, 0, 320, 200);
 }
 
 /*TODO: get rid of this structure and pass everything relevant as arguments?*/
@@ -1232,7 +1232,7 @@ static uint16 FPDiv(uint16 a, byte b) {
 Draw scaled image
 NB! tw/th specify target width/height in pixels
 */
-static void CGA_Zoom(zoom_t *params, byte tw, byte th, byte *source, byte *target, uint16 ofs) {
+static void cga_Zoom(zoom_t *params, byte tw, byte th, byte *source, byte *target, uint16 ofs) {
 	byte x, y;
 	uint16 finofs = ofs;
 	byte *temp = scratch_mem2;
@@ -1300,7 +1300,7 @@ static void CGA_Zoom(zoom_t *params, byte tw, byte th, byte *source, byte *targe
 			params->yval_l = params->eh;
 	}
 
-	CGA_BlitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
+	cga_BlitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
 }
 
 /*
@@ -1308,7 +1308,7 @@ Draw scaled image
 NB! tw/th specify target width/height in pixels
 This is slightly simplified version, but should work identical to the code above
 */
-static void CGA_ZoomOpt(zoom_t *params, byte tw, byte th, byte *source, byte *target, uint16 ofs) {
+static void cga_ZoomOpt(zoom_t *params, byte tw, byte th, byte *source, byte *target, uint16 ofs) {
 	byte x, y;
 	uint16 finofs = ofs;
 	byte *temp = scratch_mem2;
@@ -1367,7 +1367,7 @@ static void CGA_ZoomOpt(zoom_t *params, byte tw, byte th, byte *source, byte *ta
 			yval = params->eh << 8;
 	}
 
-	CGA_BlitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
+	cga_BlitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
 }
 
 /*
@@ -1375,7 +1375,7 @@ Draw image zoomed from w:h to nw:nx to target at specified ofs
 Use backbuffer pixels to fill sides
 NB! w/nw are the number of bytes, not pixels
 */
-void CGA_ZoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target, uint16 ofs) {
+void cga_ZoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target, uint16 ofs) {
 	zoom_t zoom;
 
 	zoom.pixels = pixels;
@@ -1391,9 +1391,9 @@ void CGA_ZoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target,
 
 	/*TODO: why this nw/nh order? maybe bug*/
 #if 0
-	CGA_Zoom(&zoom, nh - 2, nw * 4 - 2, backbuffer, target, ofs);
+	cga_Zoom(&zoom, nh - 2, nw * 4 - 2, backbuffer, target, ofs);
 #else
-	CGA_ZoomOpt(&zoom, nh - 2, nw * 4 - 2, backbuffer, target, ofs);
+	cga_ZoomOpt(&zoom, nh - 2, nw * 4 - 2, backbuffer, target, ofs);
 #endif
 }
 
@@ -1403,7 +1403,7 @@ Use backbuffer pixels to fill sides
 Ofs specifies zoom origin
 NB! w is the number of bytes, not pixels
 */
-void CGA_AnimZoomOpt(zoom_t *zoom, uint16 w, uint16 h, byte steps, byte *target, uint16 ofs) {
+void cga_AnimZoomOpt(zoom_t *zoom, uint16 w, uint16 h, byte steps, byte *target, uint16 ofs) {
 	uint16 xstep = FPDiv(w, steps); /*fixed-point 8.8 value*/
 	uint16 ystep = FPDiv(h, steps); /*fixed-point 8.8 value*/
 
@@ -1413,7 +1413,7 @@ void CGA_AnimZoomOpt(zoom_t *zoom, uint16 w, uint16 h, byte steps, byte *target,
 	for (steps = steps / 2 - 2; steps; steps--) {
 		uint16 prev;
 
-		CGA_ZoomOpt(zoom, xval >> 8, yval >> 8, backbuffer, target, ofs);
+		cga_ZoomOpt(zoom, xval >> 8, yval >> 8, backbuffer, target, ofs);
 
 		prev = yval;
 		yval += ystep;
@@ -1441,7 +1441,7 @@ Use backbuffer pixels to fill sides
 NB! w is the number of bytes, not pixels
 NB! ofs is the final image top left corner, not the zoom origin
 */
-void CGA_AnimZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs) {
+void cga_AnimZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs) {
 	uint16 finofs = ofs;
 	byte x, y, maxside;
 
@@ -1468,16 +1468,16 @@ void CGA_AnimZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs) {
 	if (maxside < h)
 		maxside = h;
 
-	CGA_AnimZoomOpt(&zoom, w * 4 * 2, h * 2, maxside, target, ofs);
+	cga_AnimZoomOpt(&zoom, w * 4 * 2, h * 2, maxside, target, ofs);
 
-	CGA_BlitAndWait(pixels, w, w, h, target, finofs);
+	cga_BlitAndWait(pixels, w, w, h, target, finofs);
 }
 
 /*
 Draw scaled image
 NB! tw/th specify target width/height in pixels
 */
-void CGA_ZoomInplace(zoom_t *params, byte tw, byte th, byte *source, byte *target, uint16 ofs) {
+void cga_ZoomInplace(zoom_t *params, byte tw, byte th, byte *source, byte *target, uint16 ofs) {
 	byte x, y;
 
 	/*calc old/new ratio*/
@@ -1544,7 +1544,7 @@ void CGA_ZoomInplace(zoom_t *params, byte tw, byte th, byte *source, byte *targe
 	}
 }
 
-void CGA_ZoomInplaceXY(byte *pixels, byte w, byte h, byte nw, byte nh, uint16 x, uint16 y, byte *target) {
+void cga_ZoomInplaceXY(byte *pixels, byte w, byte h, byte nw, byte nh, uint16 x, uint16 y, byte *target) {
 	zoom_t zoom;
 
 	zoom.pixels = pixels;
@@ -1554,7 +1554,7 @@ void CGA_ZoomInplaceXY(byte *pixels, byte w, byte h, byte nw, byte nh, uint16 x,
 	zoom.eh = h - 1;
 	zoom.xbase = x % 4;
 
-	CGA_ZoomInplace(&zoom, nw, nh, target, target, CGA_CalcXY(x, y));
+	cga_ZoomInplace(&zoom, nw, nh, target, target, cga_CalcXY(x, y));
 }
 
 } // End of namespace Chamber

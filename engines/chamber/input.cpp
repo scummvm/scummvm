@@ -153,7 +153,7 @@ int16 AskQuitGame(void) {
 	char_draw_max_width = 32;
 	draw_x = 1;
 	draw_y = 188;
-	CGA_DrawTextBox(msg, frontbuffer);
+	cga_DrawTextBox(msg, frontbuffer);
 
 	Common::Event event;
 
@@ -176,7 +176,7 @@ int16 AskQuitGame(void) {
 			}
 		}
 	}
-	CGA_CopyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, CGA_CalcXY_p(draw_x, draw_y));
+	cga_CopyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, cga_CalcXY_p(draw_x, draw_y));
 
 	return quit;
 }

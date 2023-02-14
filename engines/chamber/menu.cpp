@@ -164,7 +164,7 @@ void ActionsMenu(byte **pinfo) {
 
 	if (the_command != 0xFFFF) {
 		playSound(19);
-		WaitVBlank();
+		waitVBlank();
 
 		/*draw dot explosion animation*/
 		DrawSpriteN(24, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
@@ -174,7 +174,7 @@ void ActionsMenu(byte **pinfo) {
 		DrawSpriteN(25, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
 		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
 	}
-	CGA_RestoreBackupImage(CGA_SCREENBUFFER);
+	cga_RestoreBackupImage(CGA_SCREENBUFFER);
 
 	*pinfo += numchoices * 3;
 }
