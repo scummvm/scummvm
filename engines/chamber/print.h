@@ -40,7 +40,7 @@ byte *PrintStringPadded(byte *str, byte *target);
 
 void DrawMessage(byte *msg, byte *target);
 
-void CGA_DrawTextBox(byte *msg, byte *target);
+void cga_DrawTextBox(byte *msg, byte *target);
 
 void CalcStringSize(byte *str, uint16 *w, uint16 *n);
 

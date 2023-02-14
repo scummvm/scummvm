@@ -116,7 +116,7 @@ void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte
 
 	for (offs = 0; offs != cur_image_end;) {
 		byte mask = 0xC0 >> (((xx + offs % ww) % 4) * 2);
-		uint16 ofs = CGA_CalcXY(xx + offs % ww, y + offs / ww);
+		uint16 ofs = cga_CalcXY(xx + offs % ww, y + offs / ww);
 
 		target[ofs] = (target[ofs] & ~mask) | (source[ofs] & mask);
 
@@ -134,9 +134,9 @@ void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte
 void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 pitch) {
 	uint16 delay;
 	byte ex, ey, updx, updy, updw, updh;
-	uint16 ofs = CGA_CalcXY_p(x, y);
-	CGA_BackupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
-	CGA_BlitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
+	uint16 ofs = cga_CalcXY_p(x, y);
+	cga_BackupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
+	cga_BlitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
 	ex = x + sprw;
 	ey = y + sprh;
 	if (last_anim_height != 0) {
@@ -154,19 +154,19 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	}
 	updw = ex - updx;
 	updh = ey - updy;
-	ofs = CGA_CalcXY_p(updx, updy);
+	ofs = cga_CalcXY_p(updx, updy);
 	/*TODO looks like here was some code before*/
 	for (delay = 0; delay < anim_draw_delay; delay++) {
 		g_system->delayMillis(1000 / 16 / 25);
 	}
-	WaitVBlank();
+	waitVBlank();
 
 	if (anim_use_dot_effect)
 		copyScreenBlockWithDotEffect(backbuffer, updx, updy, updw, updh, frontbuffer);
 	else {
-		CGA_CopyScreenBlock(backbuffer, updw, updh, frontbuffer, ofs);
+		cga_CopyScreenBlock(backbuffer, updw, updh, frontbuffer, ofs);
 	}
-	CGA_RestoreImage(sprit_load_buffer, backbuffer);
+	cga_RestoreImage(sprit_load_buffer, backbuffer);
 
 	last_anim_x = x;
 	last_anim_y = y;
@@ -177,7 +177,7 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 }
 
 void animUndrawSprite(void) {
-	CGA_CopyScreenBlock(backbuffer, last_anim_width, last_anim_height, CGA_SCREENBUFFER, CGA_CalcXY_p(last_anim_x, last_anim_y));
+	cga_CopyScreenBlock(backbuffer, last_anim_width, last_anim_height, CGA_SCREENBUFFER, cga_CalcXY_p(last_anim_x, last_anim_y));
 	last_anim_height = 0;
 }
 

@@ -241,12 +241,12 @@ void DrawBoxAroundSpot(void) {
 	y += (ofs / CGA_BYTES_PER_LINE) * 2;
 	w *= CGA_PIXELS_PER_BYTE;   /*TODO: this will overflow on large sprite*/
 
-	CGA_DrawVLine(x, y, h - 1, 0, CGA_SCREENBUFFER);
-	CGA_DrawHLine(x, y, w - 1, 0, CGA_SCREENBUFFER);
-	CGA_DrawVLine(x + w - 1, y, h - 1, 0, CGA_SCREENBUFFER);
-	CGA_DrawHLine(x, y + h - 1, w - 1, 0, CGA_SCREENBUFFER);
+	cga_DrawVLine(x, y, h - 1, 0, CGA_SCREENBUFFER);
+	cga_DrawHLine(x, y, w - 1, 0, CGA_SCREENBUFFER);
+	cga_DrawVLine(x + w - 1, y, h - 1, 0, CGA_SCREENBUFFER);
+	cga_DrawHLine(x, y + h - 1, w - 1, 0, CGA_SCREENBUFFER);
 
-	CGA_RefreshImageData(*spot_sprite);
+	cga_RefreshImageData(*spot_sprite);
 }
 
 /*Get on-screen image as specified by script to temp buffer and register it with dirty rect of kind 2
@@ -276,7 +276,7 @@ int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	cur_image_size_h = *image++;
 	cur_image_size_w = *image++;
 	cur_image_pixels = image;
-	cur_image_offs = CGA_CalcXY_p(cur_image_coords_x, cur_image_coords_y);
+	cur_image_offs = cga_CalcXY_p(cur_image_coords_x, cur_image_coords_y);
 	AddDirtyRect(DirtyRectSprite, cur_image_coords_x, cur_image_coords_y, cur_image_size_w, cur_image_size_h, cur_image_offs);
 
 	/*TODO: remove and use only globals?*/
@@ -286,7 +286,7 @@ int16 DrawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	*height = cur_image_size_h;
 
 	if (right_button) {
-		CGA_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
+		cga_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
 		return 0;
 	}
 
@@ -301,7 +301,7 @@ void PlayHurtSound() {
 }
 
 void BlinkWithSound(byte color) {
-	CGA_ColorSelect(color);
+	cga_ColorSelect(color);
 	PlayHurtSound();
 	SelectPalette();
 }
@@ -319,13 +319,13 @@ void BlinkToWhite(void) {
 
 volatile byte vblank_ticks;
 
-void WaitVBlankTimer(void) {
+void waitVBlankTimer(void) {
 	if (g_vm->getLanguage() == Common::EN_USA) {
 		/*A crude attempt to fix the animation speed...*/
 		while (vblank_ticks < 3) ;
 		vblank_ticks = 0;
 	}
-	WaitVBlank();
+	waitVBlank();
 }
 
 void AnimPortrait(byte layer, byte index, byte delay) {
@@ -357,9 +357,9 @@ void AnimPortrait(byte layer, byte index, byte delay) {
 			LoadPortrait(&ani, ani + 3);
 		}
 		GetDirtyRectAndSetSprite(layer, &kind, &x, &y, &width, &height, &offs);
-		WaitVBlank();
-		CGA_BlitAndWait(cur_image_pixels, width, width, height, CGA_SCREENBUFFER, offs);
-		WaitVBlankTimer();
+		waitVBlank();
+		cga_BlitAndWait(cur_image_pixels, width, width, height, CGA_SCREENBUFFER, offs);
+		waitVBlankTimer();
 		if (delay) {
 			if (ani[-1] == 37) { /*TODO: what is it?*/
 				if (script_byte_vars.extreme_violence)
