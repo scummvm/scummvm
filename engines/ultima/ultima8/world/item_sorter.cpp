@@ -138,10 +138,17 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->setBoxBounds(box, _camSx, _camSy);
 
 	// Real Screenspace from shape frame
-	si->_sr.left = si->_sxBot - frame->_xoff;
-	si->_sr.top = si->_syBot - frame->_yoff;
-	si->_sr.right = si->_sr.left + frame->_width;
-	si->_sr.bottom = si->_sr.top + frame->_height;
+	if (si->_flags & Item::FLG_FLIPPED) {
+		si->_sr.left = si->_sxBot + frame->_xoff - frame->_width;
+		si->_sr.top = si->_syBot - frame->_yoff;
+		si->_sr.right = si->_sr.left + frame->_width;
+		si->_sr.bottom = si->_sr.top + frame->_height;
+	} else {
+		si->_sr.left = si->_sxBot - frame->_xoff;
+		si->_sr.top = si->_syBot - frame->_yoff;
+		si->_sr.right = si->_sr.left + frame->_width;
+		si->_sr.bottom = si->_sr.top + frame->_height;
+	}
 
 	// Do Clipping here
 	if (!_clipWindow.intersects(si->_sr)) {
