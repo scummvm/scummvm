@@ -534,10 +534,24 @@ void ScummEngine_v6::o6_eq() {
 	int a = pop();
 	int b = pop();
 
+	// WORKAROUND: Online play is disabled in the Macintosh versions of Backyard Football and Backyard Baseball 2001
+	// because the original U32 makes use of DirectPlay, a Windows exclusive API; we now have our own implementation
+	// which is cross-platform compatable.  We get around that by tricking those checks that we are playing on
+	// the Windows version. These scripts check VAR_PLATFORM (b) against the value (2) of the Macintosh platform (a).
+	if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (vm.slot[_currentScript].number == 2049 || vm.slot[_currentScript].number == 2050 ||
+		vm.slot[_currentScript].number == 498) && a == 2 && b == 2) {
+		push(0);
+	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 2 && (vm.slot[_currentScript].number == 10002 || vm.slot[_currentScript].number == 2050) &&
+		a == 2 && b == 2) {
+		push(0);
+	} else if (_game.id == GID_FOOTBALL2002 && _currentRoom == 3 && vm.slot[_currentScript].number == 2079 &&
+		a == 2 && b == 2) {
+		push(0);
+
 	// WORKAROUND: Forces the game version string set via script 1 to be used in both Macintosh and Windows versions,
 	// when checking for save game compatibility. Allows saved games to be shared between Macintosh and Windows versions.
 	// The scripts check VAR_PLATFORM (b) against the value (2) of the Macintosh platform (a).
-	if (_game.id == GID_BASEBALL2001 && (vm.slot[_currentScript].number == 291 || vm.slot[_currentScript].number == 292) &&
+	} else if (_game.id == GID_BASEBALL2001 && (vm.slot[_currentScript].number == 291 || vm.slot[_currentScript].number == 292) &&
 		a == 2 && b == 1) {
 		push(1);
 	} else {
