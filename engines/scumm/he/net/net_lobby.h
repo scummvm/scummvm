@@ -22,9 +22,13 @@
 #ifndef SCUMM_HE_NET_LOBBY_H
 #define SCUMM_HE_NET_LOBBY_H
 
-#include "common/formats/json.h"
 #include "backends/networking/curl/socket.h"
 #include "backends/networking/curl/url.h"
+#include "common/formats/json.h"
+
+#include "scumm/he/net/net_main.h"
+
+#define MAX_USER_NAME 16
 
 // Boneyards (Lobby) opcodes.
 #define OP_NET_OPEN_WEB_URL						2121
@@ -85,6 +89,8 @@ public:
 	void send(Common::JSONObject data);
 
 	int32 dispatch(int op, int numArgs, int32 *args);
+
+	int _sessionId;
 protected:
 	ScummEngine_v90he *_vm;
 	Common::String _gameName;
@@ -95,6 +101,7 @@ protected:
 	Common::JSONArray _playersList;
 
 	int _userId;
+	Common::String _userName;
 	int _playerId; // Opponent's user ID.
 
 	int _areaIdForPopulation; // The area id we're waiting for population for (to prevent getting population for one area while wanting another).
@@ -119,7 +126,7 @@ protected:
 	void disconnect(bool lost = false);
 
 	void login(const char *userName, const char *password);
-	void handleLoginResp(int errorCode, int userId, Common::String response);
+	void handleLoginResp(int errorCode, int userId, Common::String sessionServer, Common::String response);
 
 	void getUserProfile(int userId);
 	void handleProfileInfo(Common::JSONArray profile);
@@ -127,6 +134,7 @@ protected:
 	void handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTeam, int error, Common::String message);
 
 	void setIcon(int icon);
+	void sendGameResults(int userId, int arrayIndex, int unknown);
 
 	void getPopulation(int areaId, int unknown);
 	void handlePopulation(int areaId, int population);

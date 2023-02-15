@@ -101,6 +101,18 @@ Common::String Net::getStringFromAddress(Address address) {
 	return Common::String::format("%s:%d", address.host.c_str(), address.port);
 }
 
+void Net::setSessionServer(Common::String sessionServer) {
+	debug(1, "Net::setSessionServer(\"%s\")", sessionServer.c_str());
+
+	ConfMan.setBool("enable_session_server", true);
+	ConfMan.setBool("enable_lan_broadcast", false);
+
+	_sessionServerAddress = getAddressFromString(sessionServer);
+	// Set port to default if not defined.
+	if (!_sessionServerAddress.port)
+		_sessionServerAddress.port = 9120;
+}
+
 int Net::hostGame(char *sessionName, char *userName) {
 	if (createSession(sessionName)) {
 		if (addUser(userName, userName)) {
@@ -184,7 +196,6 @@ bool Net::connectToSession(Common::String address, int port) {
 	if (!_sessionHost)
 		return false;
 
-	_isHost = false;
 	return true;
 }
 
@@ -306,23 +317,28 @@ int Net::getTotalPlayers() {
 	return _numUsers + _numBots;
 }
 
-int Net::joinSession(int sessionIndex) {
-	debug(1, "Net::joinSession(%d)", sessionIndex); // PN_JoinSession
+int Net::joinSessionById(int sessionId) {
+	debug(1, "Net::joinSessionById(%d)", sessionId);
 	if (_sessions.empty()) {
 		warning("Net::joinSession(): no sessions");
 		return 0;
 	}
 
-	if (sessionIndex >= (int)_sessions.size()) {
-		warning("Net::joinSession(): session number too big: %d >= %d", sessionIndex, _sessions.size());
-		return 0;
+	for (Common::Array<Session>::iterator i = _sessions.begin(); i != _sessions.end(); i++) {
+		if (i->id == sessionId) {
+			return doJoinSession(*i);
+		}
 	}
+	warning("Net::joinSessionById(): session %d not found!", sessionId);
+	return 0;
 
-	Session session = _sessions[sessionIndex];
+}
+
+int Net::doJoinSession(Session session) {
 	if (!session.local && _sessionServerHost) {
 		Common::String joinSession = Common::String::format(
-			"{\"cmd\":\"join_session\",\"game\":\"%s\",\"version\":\"%s\",\"session\":%d}",
-			_gameName.c_str(), _gameVersion.c_str(), sessionIndex);
+			"{\"cmd\":\"join_session\",\"game\":\"%s\",\"version\":\"%s\",\"id\":%d}",
+			_gameName.c_str(), _gameVersion.c_str(), session.id);
 		_sessionServerHost->send(joinSession.c_str(), 0);
 
 		// Give the host time to hole punch us.
@@ -369,6 +385,22 @@ int Net::joinSession(int sessionIndex) {
 	}
 
 	return true;
+}
+
+int Net::joinSession(int sessionIndex) {
+	debug(1, "Net::joinSession(%d)", sessionIndex); // PN_JoinSession
+	if (_sessions.empty()) {
+		warning("Net::joinSession(): no sessions");
+		return 0;
+	}
+
+	if (sessionIndex >= (int)_sessions.size()) {
+		warning("Net::joinSession(): session number too big: %d >= %d", sessionIndex, _sessions.size());
+		return 0;
+	}
+
+	Session session = _sessions[sessionIndex];
+	return doJoinSession(session);
 }
 
 int Net::endSession() {
@@ -420,6 +452,8 @@ int Net::endSession() {
 
 	_myUserId = -1;
 	_fromUserId = -1;
+
+	_isHost = false;
 
 	_hostDataQueue.clear();
 	_peerIndexQueue.clear();
@@ -545,7 +579,7 @@ int32 Net::updateQuerySessions() {
 	debug(1, "Net::updateQuerySessions(): begin"); // UpdateQuerySessions
 
 	if (_sessionServerHost) {
-		// Get internet-based sessions from the sessin server.
+		// Get internet-based sessions from the session server.
 		Common::String getSessions = Common::String::format(
 			"{\"cmd\":\"get_sessions\",\"game\":\"%s\",\"version\":\"%s\"}",
 			_gameName.c_str(), _gameVersion.c_str());

@@ -34,11 +34,14 @@ Lobby::Lobby(ScummEngine_v90he *vm) : _vm(vm) {
 	_socket = nullptr;
 
 	_userId = 0;
+	_userName = "";
+
+	_sessionId = 0;
 }
 
 Lobby::~Lobby() {
 	if (_socket)
-		delete _socket;
+		disconnect();
 }
 
 void Lobby::writeStringArray(int array, Common::String string) {
@@ -113,8 +116,9 @@ void Lobby::processLine(Common::String line) {
 		} else if (command == "login_resp") {
 			int errorCode = root["error_code"]->asIntegerNumber();
 			int userId = root["id"]->asIntegerNumber();
+			Common::String sessionServer = root["sessionServer"]->asString();
 			Common::String response = root["response"]->asString();
-			handleLoginResp(errorCode, userId, response);
+			handleLoginResp(errorCode, userId, sessionServer, response);
 		} else if (command == "profile_info") {
 			Common::JSONArray profile = root["profile"]->asArray();
 			handleProfileInfo(profile);
@@ -151,8 +155,8 @@ void Lobby::processLine(Common::String line) {
 		} else if (command == "accept_challenge") {
 			handleAcceptChallenge();
 		} else if (command == "game_session") {
-			// int session = root["session"]->asIntegerNumber();
-			// handleGameSession((int)session);
+			int session = root["session"]->asIntegerNumber();
+			handleGameSession((int)session);
 		} else if (command == "game_relay") {
 			// int relay = root["relay"]->asIntegerNumber();
 			// handleGameRelay(relay);
@@ -186,8 +190,8 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 		disconnect();
 		break;
 	case OP_NET_LOGIN:
-		char userName[16];
-		char password[16];
+		char userName[MAX_USER_NAME];
+		char password[MAX_USER_NAME];
 
 		_vm->getStringFromArray(args[0], userName, sizeof(userName));
 		_vm->getStringFromArray(args[1], password, sizeof(password));
@@ -207,9 +211,9 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 	case OP_NET_GET_PLAYERS_INFO:
 		getPlayerInfo(args[0]);
 		break;
-	// case OP_NET_START_HOSTING_GAME:
-		// startHostingGame(args[0]);
-		// break;
+	case OP_NET_START_HOSTING_GAME:
+		startHostingGame(args[0]);
+		break;
 	case OP_NET_CALL_PLAYER:
 		challengePlayer(args[0], args[1]);
 		break;
@@ -234,15 +238,15 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 	case OP_NET_LEAVE_AREA:
 		leaveArea();
 		break;
-	// case OP_NET_GAME_FINISHED:
-		// gameFinished();
-		// break;
-	// case OP_NET_GAME_STARTED:
-		// gameStarted(args[0], args[1], args[2]);
-		// break;
-	// case OP_NET_UPDATE_PROFILE_ARRAY:
-	// 	sendGameResults(args[0], args[1], args[2]);
-	// 	break;
+	case OP_NET_GAME_FINISHED:
+		gameFinished();
+		break;
+	case OP_NET_GAME_STARTED:
+		gameStarted(args[0], args[1], args[2]);
+		break;
+	case OP_NET_UPDATE_PROFILE_ARRAY:
+		sendGameResults(args[0], args[1], args[2]);
+		break;
 	case OP_NET_LOCATE_PLAYER:
 		locatePlayer(args[0]);
 		break;
@@ -380,6 +384,9 @@ void Lobby::disconnect(bool lost) {
 
 	delete _socket;
 	_socket = nullptr;
+
+	_userId = 0;
+	_userName = "";
 }
 
 void Lobby::runRemoteStartScript(int *args) {
@@ -409,9 +416,10 @@ void Lobby::systemAlert(int type, Common::String message) {
 }
 
 void Lobby::login(const char *userName, const char *password) {
+	_userName = userName;
 	Common::JSONObject loginRequestParameters;
 	loginRequestParameters.setVal("cmd", new Common::JSONValue("login"));
-	loginRequestParameters.setVal("user", new Common::JSONValue((Common::String)userName));
+	loginRequestParameters.setVal("user", new Common::JSONValue(_userName));
 	loginRequestParameters.setVal("pass", new Common::JSONValue((Common::String)password));
 	loginRequestParameters.setVal("game", new Common::JSONValue((Common::String)_gameName));
 	loginRequestParameters.setVal("version", new Common::JSONValue(gScummVMVersionLite));
@@ -419,13 +427,14 @@ void Lobby::login(const char *userName, const char *password) {
 	send(loginRequestParameters);
 }
 
-void Lobby::handleLoginResp(int errorCode, int userId, Common::String response) {
+void Lobby::handleLoginResp(int errorCode, int userId, Common::String sessionServer, Common::String response) {
 	if (errorCode > 0) {
 		writeStringArray(109, response);
 		_vm->writeVar(108, -99);
 		return;
 	}
 	_userId = userId;
+	_vm->_net->setSessionServer(sessionServer);
 	_vm->writeVar(108, 99);
 }
 
@@ -466,6 +475,29 @@ void Lobby::setIcon(int icon) {
 	send(setIconRequest);
 }
 
+void Lobby::sendGameResults(int userId, int arrayIndex, int unknown) {
+	if (!_socket) {
+		return;
+	}
+
+	Common::JSONObject setProfileRequest;
+	setProfileRequest.setVal("cmd", new Common::JSONValue("game_results"));
+	setProfileRequest.setVal("user", new Common::JSONValue((long long int)userId));
+
+	ScummEngine_v90he::ArrayHeader *ah = (ScummEngine_v90he::ArrayHeader *)_vm->getResourceAddress(rtString, arrayIndex & ~0x33539000);
+	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
+		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+
+	Common::JSONArray arrayData;
+	for (int i = 0; i < size; i++) {
+		// Assuming they're dword type
+		int32 data = (int32)READ_LE_UINT32(ah->data + i * 4);
+		arrayData.push_back(new Common::JSONValue((long long int)data));
+	}
+	setProfileRequest.setVal("fields", new Common::JSONValue(arrayData));
+	send(setProfileRequest);
+}
+
 void Lobby::getPopulation(int areaId, int unknown) {
 	_areaIdForPopulation = areaId;
 
@@ -487,7 +519,7 @@ void Lobby::locatePlayer(int usernameArray) {
 		return;
 	}
 
-	char userName[16];
+	char userName[MAX_USER_NAME];
 	_vm->getStringFromArray(usernameArray, userName, sizeof(userName));
 
 	Common::JSONObject locatePlayerRequest;
@@ -511,7 +543,7 @@ void Lobby::enterArea(int32 areaId) {
 		return;
 	}
 	if (!_socket) {
-		warning("BYOnline: Tried to enter area %d without connecting to server first!", (int)areaId);
+		warning("LOBBY: Tried to enter area %d without connecting to server first!", (int)areaId);
 		return;
 	}
 
@@ -556,7 +588,7 @@ void Lobby::leaveArea() {
 
 void Lobby::getPlayersList(int start, int end) {
 	if (!_socket) {
-		warning("BYOnline: Tried to fetch players list without connecting to server first!");
+		warning("LOBBY: Tried to fetch players list without connecting to server first!");
 		return;
 	}
 
@@ -601,7 +633,7 @@ void Lobby::handlePlayersList(Common::JSONArray playersList) {
 
 void Lobby::getPlayerInfo(int32 idx) {
 	if ((uint)idx - 1 > _playersList.size()) {
-		warning("BYOnline: _playersList is too small for index. (%d > %d)", (int)idx, (int)_playersList.size());
+		warning("LOBBY: _playersList is too small for index. (%d > %d)", (int)idx, (int)_playersList.size());
 		return;
 	}
 
@@ -636,7 +668,7 @@ void Lobby::setPhoneStatus(int status) {
 
 void Lobby::challengePlayer(int32 playerId, int32 stadium) {
 	if (!_socket) {
-		warning("BYOnline: Tried to challenge player without connecting to server first!");
+		warning("LOBBY: Tried to challenge player without connecting to server first!");
 		return;
 	}
 
@@ -665,7 +697,7 @@ void Lobby::handleReceiveChallenge(int playerId, int stadium, Common::String nam
 
 void Lobby::challengeTimeout(int playerId) {
 	if (!_socket) {
-		warning("BYOnline: Tried to timeout challenge without connecting to server first!");
+		warning("LOBBY: Tried to timeout challenge without connecting to server first!");
 		return;
 	}
 
@@ -699,7 +731,7 @@ void Lobby::handleReceiverBusy() {
 
 int32 Lobby::answerPhone(int playerId) {
 	if (!_socket) {
-		warning("BYOnline: Tried to answer phone without connecting to server first!");
+		warning("LOBBY: Tried to answer phone without connecting to server first!");
 		return 0;
 	}
 
@@ -734,7 +766,7 @@ void Lobby::handleConsideringChallenge() {
 
 void Lobby::counterChallenge(int stadium) {
 	if (!_socket) {
-		warning("BYOnline: Tried to counter challenge without connecting to server first!");
+		warning("LOBBY: Tried to counter challenge without connecting to server first!");
 		return;
 	}
 
@@ -758,7 +790,7 @@ void Lobby::handleCounterChallenge(int stadium) {
 
 void Lobby::declineChallenge(int playerId) {
 	if (!_socket) {
-		warning("BYOnline: Tried to decline challenge without connecting to server first!");
+		warning("LOBBY: Tried to decline challenge without connecting to server first!");
 		return;
 	}
 
@@ -782,7 +814,7 @@ void Lobby::handleDeclineChallenge(int notResponding) {
 
 void Lobby::acceptChallenge(int playerId) {
 	if (!_socket) {
-		warning("BYOnline: Tried to accept challenge without connecting to server first!");
+		warning("LOBBY: Tried to accept challenge without connecting to server first!");
 		return;
 	}
 
@@ -812,6 +844,102 @@ void Lobby::handleAcceptChallenge() {
 
 	// Run the script
 	runRemoteStartScript(args);
+}
+
+void Lobby::startHostingGame(int playerId) {
+	if (!_socket)
+		return;
+	
+	_playerId = playerId;
+	_vm->writeVar(111, 0);
+
+	// Create ENet instance.
+	if (!_vm->_net->setProviderByName(0, 0)) {
+		_vm->writeVar(111, 1);
+		return;
+	}
+
+	// TODO: Actual session name.
+	if (_vm->_net->hostGame(const_cast<char *>(_userName.c_str()), const_cast<char *>(_userName.c_str()))) {
+		// Wait till the session server assigns us a session id.
+		uint tickCount = 0;
+		while(_vm->_net->_sessionId == -1) {
+			_vm->_net->doNetworkOnceAFrame(12);
+			tickCount += 5;
+			g_system->delayMillis(5);
+			if (tickCount >= 5000)
+				break;
+		}
+		int sessionId = _vm->_net->_sessionId;
+		if (sessionId > 0) {
+			_inGame = true;
+			// Send our session over to our opponent.
+			Common::JSONObject sendSessionRequest;
+			sendSessionRequest.setVal("cmd", new Common::JSONValue("send_session"));
+			sendSessionRequest.setVal("user", new Common::JSONValue((long long int)_playerId));
+			sendSessionRequest.setVal("session", new Common::JSONValue((long long int)sessionId));
+			send(sendSessionRequest);
+
+			// Tell the game that we're hosting.
+			_vm->writeVar(111, 99);
+		} else
+			_vm->writeVar(111, 1);
+	} else
+		_vm->writeVar(111, 1);
+}
+
+void Lobby::handleGameSession(int sessionId) {
+	_sessionId = sessionId;
+	_inGame = true;
+
+	if (_vm->_net->setProviderByName(0, 0)) {
+		// Tell the game to start connecting to our host.
+		int args[25];
+		memset(args, 0, sizeof(args));
+
+		// Setup the arguments
+		args[0] = OP_REMOTE_START_CONNECTION;
+
+		// Run the script
+		runRemoteStartScript(args);
+	}
+}
+
+void Lobby::gameStarted(int hoster, int player, int playerNameArray) {
+	// if (_vm->_game.id == GID_BASEBALL2001 && _vm->readVar(399) == 1 && _vm->readVar(686) == 1) {  // Only if we're online and in Prince Rupert
+		// 	// Request teams for this client and opponent
+		// Common::JSONObject getTeamsRequest;
+		// getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
+		// getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)player));
+		// send(getTeamsRequest);
+	// }
+
+	char playerName[16];
+	_vm->getStringFromArray(playerNameArray, playerName, sizeof(playerName));
+
+	if (hoster != _userId) {
+		warning("LOBBY: Got game started op but the hoster wasn't us!");
+		return;
+	}
+
+	// Don't accept anymore sessions.
+	_vm->_net->disableSessionJoining();
+
+	Common::JSONObject gameStartedRequest;
+	gameStartedRequest.setVal("cmd", new Common::JSONValue("game_started"));
+	gameStartedRequest.setVal("user", new Common::JSONValue((long long int)player));
+
+	send(gameStartedRequest);
+}
+
+void Lobby::gameFinished() {
+	_inGame = false;
+	_vm->_net->closeProvider();
+
+	Common::JSONObject gameFinishedRequest;
+	gameFinishedRequest.setVal("cmd", new Common::JSONValue("game_finished"));
+
+	send(gameFinishedRequest);
 }
 
 } // End of namespace Scumm
