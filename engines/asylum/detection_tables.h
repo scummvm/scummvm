@@ -281,6 +281,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 	{
+		// Hebrew fanmade translation (GOG version)
+		"asylum",
+		"Fanmade",
+		{
+			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+			{"RES.005",   0, "02c06cb1cb4038203c027b53a5d71c05", 18064925},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			AD_LISTEND
+		},
+		Common::HE_ISR,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO0()
+	},
+	{
 		// English Demo
 		"asylum",
 		"Demo",

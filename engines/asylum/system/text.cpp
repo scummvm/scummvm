@@ -20,6 +20,7 @@
  */
 
 #include "common/rational.h"
+#include "common/unicode-bidi.h"
 
 #include "asylum/system/text.h"
 
@@ -138,6 +139,8 @@ void Text::draw(const char *text) {
 	if (!text)
 		return;
 
+	if (_vm->getLanguage() == Common::HE_ISR)
+		text = Common::convertBiDiString(text, Common::kWindows1255).c_str();
 	while (*text) {
 		drawChar(text[0]);
 		text++;
@@ -151,6 +154,8 @@ void Text::draw(const char *text, int16 length) {
 	if (!text)
 		return;
 
+	if (_vm->getLanguage() == Common::HE_ISR)
+		text = Common::convertBiDiString(Common::String(text, length), Common::kWindows1255).c_str();
 	for (int16 i = 0; i < length; i++)
 		drawChar(text[i]);
 }
