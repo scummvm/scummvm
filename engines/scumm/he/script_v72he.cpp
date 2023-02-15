@@ -1934,6 +1934,14 @@ void ScummEngine_v72he::o72_readINI() {
 			// be lost, skip through the whole thing.  This disables
 			// the update button on the login screen as well.
 			push(1);
+		} else if (!strcmp((char *)option, "InternetConnect")) {
+			// WORKAROUND: In the patched version of Backyard
+			// Football 2002, they added an option to join a game
+			// over the internet by manually inputing an IP address.
+			// Our network implementation does not support this currently,
+			// and we have our own way of connecting to joins over the
+			// Internet anyways, so force disable it.
+			push(0);
 		} else if (!strcmp((char *)option, "TextOn")) {
 			push(ConfMan.getBool("subtitles"));
 		} else if (!strcmp((char *)option, "Disk") && (_game.id == GID_BIRTHDAYRED || _game.id == GID_BIRTHDAYYELLOW)) {
