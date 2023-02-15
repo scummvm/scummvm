@@ -473,7 +473,6 @@ int LogicHEfootball2002::getPlaybookFiles(int32 *args) {
 	// Now store the result in an array
 	int array = _vm->setupStringArray(output.size());
 	Common::strlcpy((char *)_vm->getStringAddress(array), output.c_str(), output.size() + 1);
-	_vm->getResourceSize(rtString, array);
 
 	// And store the array index in variable 108
 	writeScummVar(108, array);
