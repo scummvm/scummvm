@@ -466,6 +466,7 @@ struct Character : public PrimaryAttributes {
 	// Combat fields
 	bool _checked = false;
 	bool _canAttack = false;
+	int _activeSpell = -1;
 
 	Character();
 

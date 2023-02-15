@@ -70,6 +70,10 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 
 bool Game::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
+	case KEYBIND_SPELL:
+		addView("CastSpell");
+		return true;
+
 	case KEYBIND_VIEW_PARTY1:
 	case KEYBIND_VIEW_PARTY2:
 	case KEYBIND_VIEW_PARTY3:
@@ -82,7 +86,7 @@ bool Game::msgAction(const ActionMessage &msg) {
 			g_globals->_currCharacter = &g_globals->_party[charNum];
 			addView("CharacterInfo");
 		}
-		break;
+		return true;
 	}
 	default:
 		break;

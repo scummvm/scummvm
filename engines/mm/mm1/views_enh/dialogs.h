@@ -27,6 +27,7 @@
 #include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/title.h"
+#include "mm/mm1/views_enh/cast_spell.h"
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/views_enh/main_menu.h"
@@ -51,7 +52,7 @@ private:
 	Views::Protect _protect;
 	Views::Title _title;
 //	Views::ViewCharacter _viewCharacter;
-	ViewsEnh::MainMenu _areYouReady;
+	ViewsEnh::CastSpell _castSpell;
 	ViewsEnh::MainMenu _mainMenu;
 	ViewsEnh::MapPopup _mapPopup;
 	ViewsEnh::QuickRef _quickRef;
