@@ -139,10 +139,12 @@ bool Te3DTextureOpenGL::load(const TeImage &img) {
 
 	const void *imgdata = img.getPixels();
 	if (_format == TeImage::RGB8) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, _texWidth, _texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		GLenum destfmt = _alphaOnly ? GL_ALPHA : GL_RGB8;
+		glTexImage2D(GL_TEXTURE_2D, 0, destfmt, _texWidth, _texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.pitch / 3, img.h, GL_RGB, GL_UNSIGNED_BYTE, imgdata);
 	} else if (_format == TeImage::RGBA8) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		GLenum destfmt = _alphaOnly ? GL_ALPHA : GL_RGBA8;
+		glTexImage2D(GL_TEXTURE_2D, 0, destfmt, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.w, img.h, GL_RGBA, GL_UNSIGNED_BYTE, imgdata);
 		// FIXME: Slight hack.. sometimes artifacts appear because we draw
 		// a (half?)pixel outside the original texture. Clear one more row

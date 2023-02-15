@@ -128,7 +128,7 @@ static Common::FSNode _findSubPath(const Common::FSNode &parent, const Common::P
 }
 
 
-Common::FSNode TeCore::findFile(const Common::Path &path) {
+Common::FSNode TeCore::findFile(const Common::Path &path) const {
 	Common::FSNode node(path);
 	if (node.exists())
 		return node;

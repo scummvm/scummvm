@@ -81,7 +81,7 @@ private:
 	float _gravity;
 	bool _randomDir;
 	TeVector3f32 _orientation;
-	
+
 	static Common::Array<TeParticle *> *indexedParticles();
 	static Common::Array<TeParticle *> *_indexedParticles;
 };

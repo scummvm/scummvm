@@ -20,6 +20,8 @@
  */
 
 #include "tetraedge/te/te_particle.h"
+#include "tetraedge/tetraedge.h"
+#include "tetraedge/te/te_core.h"
 
 namespace Tetraedge {
 
@@ -39,9 +41,13 @@ TeParticle::~TeParticle() {
 	}
 }
 
-bool TeParticle::loadTexture(const Common::String &name) {
-	warning("TODO: TeParticle::loadTexture %s", name.c_str());
-	return true;
+bool TeParticle::loadTexture(const Common::String &filename) {
+	// Path for these textures includes '/' so convert to Path object first.
+	const Common::Path path(filename);
+	_texture = Te3DTexture::makeInstance();
+	TeCore *core = g_engine->getCore();
+	Common::FSNode texnode = core->findFile(path);
+	return _texture->load(texnode);
 }
 
 /*static*/

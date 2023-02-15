@@ -140,10 +140,11 @@ bool Te3DTextureTinyGL::load(const TeImage &img) {
 	tglPixelStorei(TGL_UNPACK_ALIGNMENT, 1);
 
 	const void *imgdata = img.getPixels();
+	TGLenum destfmt = _alphaOnly ? TGL_ALPHA : TGL_RGBA;
 	if (_format == TeImage::RGB8) {
-		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, img.pitch / 3, img.h, 0, TGL_RGB, TGL_UNSIGNED_BYTE, imgdata);
+		tglTexImage2D(TGL_TEXTURE_2D, 0, destfmt, img.pitch / 3, img.h, 0, TGL_RGB, TGL_UNSIGNED_BYTE, imgdata);
 	} else if (_format == TeImage::RGBA8) {
-		tglTexImage2D(TGL_TEXTURE_2D, 0, TGL_RGBA, img.w, img.h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, imgdata);
+		tglTexImage2D(TGL_TEXTURE_2D, 0, destfmt, img.w, img.h, 0, TGL_RGBA, TGL_UNSIGNED_BYTE, imgdata);
 	} else {
 		warning("Te3DTexture::load can't send image format %d to GL.", _format);
 	}

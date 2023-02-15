@@ -122,33 +122,6 @@ public:
 	InGameScene *_scene;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 } // end namespace Tetraedge
 
 #endif // TETRAEDGE_GAME_PARTICLE_XML_PARSER_H

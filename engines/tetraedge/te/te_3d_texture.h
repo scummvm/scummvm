@@ -63,8 +63,10 @@ public:
 
 	uint width() const { return _width; }
 	uint height() const { return _height; }
+	void setLoadAlphaOnly() { _alphaOnly = true; }
 
 	static Te3DTexture *makeInstance();
+
 
 protected:
 	uint _width;
@@ -75,6 +77,8 @@ protected:
 	bool _createdTexture;
 	bool _loaded;
 	TeMatrix4x4 _matrix;
+
+	bool _alphaOnly;
 
 	uint _texWidth;
 	uint _texHeight;
