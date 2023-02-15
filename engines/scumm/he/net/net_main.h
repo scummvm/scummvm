@@ -35,6 +35,7 @@ public:
 	Net(ScummEngine_v90he *vm);
 	~Net();
 
+private:
 	struct Address {
 		Common::String host;
 		int port;
@@ -43,7 +44,16 @@ public:
 		};
 	};
 
-private:
+	struct Session {
+		bool local = false;
+		int id = -1;
+		Common::String host;
+		int port;
+		Common::String name;
+		int players;
+		uint32 timestamp;
+	};
+
 	Address getAddressFromString(Common::String address);
 	Common::String getStringFromAddress(Address address);
 public:
@@ -55,7 +65,9 @@ public:
 	int whoAmI();
 	int createSession(char *name);
 	int joinSession(int sessionIndex);
+	int joinSessionById(int sessionId);
 	int endSession();
+	void setSessionServer(Common::String sessionServer);
 	void disableSessionJoining();
 	void enableSessionJoining();
 	void setBotsCount(int botsCount);
@@ -83,6 +95,7 @@ public:
 
 private:
 	bool connectToSession(Common::String address, int port);
+	int doJoinSession(Session session);
 	bool serviceBroadcast();
 	void handleBroadcastData(Common::String data, Common::String host, int port);
 	void serviceSessionServer();
@@ -136,16 +149,6 @@ public:
 
 	Common::Queue<Common::JSONValue *> _hostDataQueue;
 	Common::Queue<int> _peerIndexQueue;
-
-	struct Session {
-		bool local = false;
-		int id = -1;
-		Common::String host;
-		int port;
-		Common::String name;
-		int players;
-		uint32 timestamp;
-	};
 
 	Common::Array<Session> _sessions;
 	int _hostPort;

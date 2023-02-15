@@ -617,7 +617,16 @@ void ScummEngine_v6::o6_div() {
 
 void ScummEngine_v6::o6_land() {
 	int a = pop();
-	push(pop() && a);
+	int b = pop();
+	// WORKAROUND: When entering an area, the game will check if
+	// vars 133 and 134 are set, else it will wait for 5 seconds before
+	// showing the coach list.  var133 is set 1 somewhere but var134
+	// is always set at 0. I am going to assume this is a script bug,
+	// so let's skip the 5 second wait.
+	if (_game.id == GID_BASEBALL2001 && _currentRoom == 40 && vm.slot[_currentScript].number == 2122)
+		push(1);
+	else
+		push(b && a);
 }
 
 void ScummEngine_v6::o6_lor() {
@@ -753,6 +762,17 @@ void ScummEngine_v6::o6_jump() {
 	}
 
 	_scriptPointer += offset;
+
+	// WORKAROUND:  When getting the area popuation, the scripts does not break after getting
+	// the popuation.  Not only this may slow down the game a bit, it sends quite a bit of bandwidth
+	// considering we're outside the game.  So let's break the script for 5 seconds 
+	// before jumping back to the beginning.
+	if ((_game.id == GID_BASEBALL2001 && _currentRoom == 39 && vm.slot[_currentScript].number == 2090 && offset == -904) ||
+		(_game.id == GID_BASEBALL2001 && _currentRoom == 40 && vm.slot[_currentScript].number == 2101 && offset == -128)) {
+		vm.slot[_currentScript].delay = 5 * 60; // 5 seconds
+		vm.slot[_currentScript].status = ssPaused;
+		o6_breakHere();
+	}
 }
 
 void ScummEngine_v6::o6_startScript() {
