@@ -42,8 +42,6 @@ public:
 	SpriteResource() : Shared::Xeen::SpriteResource() {}
 	SpriteResource(const Common::String &filename) :
 		Shared::Xeen::SpriteResource(filename) {}
-	SpriteResource(const SpriteResource &src) :
-		Shared::Xeen::SpriteResource(src) {}
 	SpriteResource(const Common::String &filename, int ccMode);
 
 	/**
