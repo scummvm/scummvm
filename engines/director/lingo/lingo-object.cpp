@@ -1072,7 +1072,8 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		}
 		if (toEdit) {
 			Common::Rect bbox = toEdit->getBbox();
-			toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
+			if (!toEdit->_widget)
+				toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
 		}
 	}
 
@@ -1128,8 +1129,6 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		((Graphics::MacText *)toEdit->_widget)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(d.asString()));
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
-		_modified = true;
-		toEdit->_widget->removeWidget(_widget);
 		return true;
 	case kTheTextHeight:
 		_lineSpacing = d.asInt();
@@ -1143,8 +1142,6 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		((Graphics::MacText *)toEdit->_widget)->setTextSize(d.asInt());
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
-		_modified = true;
-		toEdit->_widget->removeWidget(_widget);
 		return true;
 	case kTheTextStyle:
 		if (!toEdit) {
@@ -1157,8 +1154,6 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		}
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
-		_modified = true;
-		toEdit->_widget->removeWidget(_widget);
 		return true;
 	default:
 		break;
