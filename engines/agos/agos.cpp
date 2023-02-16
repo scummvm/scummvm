@@ -691,8 +691,14 @@ Common::Error AGOSEngine::init() {
 		_subtitles = ConfMan.getBool("subtitles");
 
 		if (getGameType() == GType_SIMON1) {
+			const Common::FSNode gameDataDir(ConfMan.get("path"));
+			Common::FSNode subDir = gameDataDir.getChild("En_sub");
+
+			// 25th Anniversary edition features full English subtitles
+			if (_language == Common::EN_ANY && subDir.exists())
+				_subtitles = true;
 			// English and German versions don't have full subtitles
-			if (_language == Common::EN_ANY || _language == Common::DE_DEU)
+			else if (_language == Common::EN_ANY || _language == Common::DE_DEU)
 				_subtitles = false;
 			// Other versions require speech to be enabled
 			else

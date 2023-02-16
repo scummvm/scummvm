@@ -2010,12 +2010,39 @@ static const AGOSGameDescription gameDescriptions[] = {
 				{ "simon.gme",		GAME_GMEFILE,	"b1b18d0731b64c0738c5cc4a2ee792fc", 7030377},
 				{ "stripped.txt",	GAME_STRFILE,	"a27e87a9ba21212d769804b3df47bfb2", 252},
 				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				{ "simon.wav",		0,				"312c6a2733c0769526ebc45854d1232a", 170374592},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_CD,
 			GUIO3(GUIO_NOSUBTITLES, GAMEOPTION_WINDOWS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 1 - 25th Anniversary
+	{
+		{
+			"simon1",
+			"25thAniversary",
+
+			{
+				{ "gamepc",			GAME_BASEFILE,	"c7c12fea7f6d0bfd22af5cdbc8166862", 36152},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "simon.gme",		GAME_GMEFILE,	"b1b18d0731b64c0738c5cc4a2ee792fc", 7030377},
+				{ "stripped.txt",	GAME_STRFILE,	"a27e87a9ba21212d769804b3df47bfb2", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				{ "simon.mp3",		0,				"91c5d0e332e0013e6869e03e49833885", 36341696},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_CD,
+			GUIO2(GAMEOPTION_WINDOWS_TEMPOS, GAMEOPTION_DISABLE_FADE_EFFECTS)
 		},
 
 		GType_SIMON1,
