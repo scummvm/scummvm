@@ -27,7 +27,6 @@
 #include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/title.h"
-#include "mm/mm1/views_enh/cast_spell.h"
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/views_enh/main_menu.h"
@@ -35,6 +34,7 @@
 #include "mm/mm1/views_enh/quick_ref.h"
 #include "mm/mm1/views_enh/locations/market.h"
 #include "mm/mm1/views_enh/locations/temple.h"
+#include "mm/mm1/views_enh/spells/cast_spell.h"
 
 namespace MM {
 namespace MM1 {

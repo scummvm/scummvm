@@ -426,6 +426,7 @@ enhdialogs:
 	cast_spell:
 		title: "Cast Spell"
 		spell_ready: "Spell Ready:"
+		none: "None Ready"
 		cost: "Cost"
 		cur_sp: "Cur SP"
 		cast: "\x01""37Cast"

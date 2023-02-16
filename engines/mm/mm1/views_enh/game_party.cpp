@@ -87,7 +87,7 @@ void GameParty::draw() {
 		_hpSprites.draw(&s, frame, Common::Point(HP_BARS_X[idx], 38));
 
 		// Also draw the highlight if character is selected
-		if (g_globals->_currCharacter == &c)
+		if (_highlightOn && g_globals->_currCharacter == &c)
 			g_globals->_globalSprites.draw(&s, 8, Common::Point(CHAR_FACES_X[idx] - 1, 5));
 	}
 
@@ -95,6 +95,17 @@ void GameParty::draw() {
 	// so manually flag the entire area as dirty
 	s.markAllDirty();
 }
+
+bool GameParty::msgGame(const GameMessage &msg) {
+	if (msg._name == "CHAR_HIGHLIGHT") {
+		_highlightOn = msg._value != 0;
+		draw();
+		return true;
+	}
+
+	return false;
+}
+
 
 } // namespace ViewsEnh
 } // namespace MM1

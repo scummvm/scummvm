@@ -37,6 +37,7 @@ private:
 	Shared::Xeen::SpriteResource _restoreSprites;
 	Shared::Xeen::SpriteResource _hpSprites;
 	Shared::Xeen::SpriteResource _dseFace;
+	bool _highlightOn = false;
 
 public:
 	GameParty(UIElement *owner);
@@ -46,6 +47,11 @@ public:
 	 * Draw the view
 	 */
 	void draw() override;
+
+	/**
+	 * Handle game messages
+	 */
+	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace ViewsEnh

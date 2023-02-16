@@ -19,36 +19,33 @@
  *
  */
 
-#include "mm/mm1/views_enh/cast_spell.h"
-#include "mm/mm1/globals.h"
+#ifndef MM1_VIEWS_ENH_CAST_SPELL_H
+#define MM1_VIEWS_ENH_CAST_SPELL_H
+
+#include "mm/mm1/messages.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-CastSpell::CastSpell() : ScrollView("CastSpell") {
-	_bounds = Common::Rect(234, 0, 320, 144);
+/**
+ * Dialog for casting a spell
+ */
+class CastSpell : public ScrollView {
+public:
+	CastSpell();
+	virtual ~CastSpell() {}
 
-	addButton(&g_globals->_confirmIcons,
-		Common::Point(14, 10), 0,
-		Common::KeyState(Common::KEYCODE_y, 'y'));
-	addButton(&g_globals->_confirmIcons,
-		Common::Point(40, 10), 2,
-		Common::KeyState(Common::KEYCODE_n, 'n'));
-}
-
-void CastSpell::draw() {
-	ScrollView::draw();
-}
-
-bool CastSpell::msgFocus(const FocusMessage &msg) {
-	return true;
-}
-
-bool CastSpell::msgKeypress(const KeypressMessage &msg) {
-	return true;
-}
+	void draw() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+};
 
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
+
+#endif

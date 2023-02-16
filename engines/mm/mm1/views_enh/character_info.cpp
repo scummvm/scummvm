@@ -83,7 +83,11 @@ CharacterInfo::CharacterInfo() :
 bool CharacterInfo::msgFocus(const FocusMessage &msg) {
 	_viewIcon.load("view.icn");
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
-	g_events->findView("GameParty")->draw();
+
+	// Turn on highlight for selected character
+	if (!g_globals->_currCharacter)
+		g_globals->_currCharacter = &g_globals->_party[0];
+	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
 
 	_cursorCell = 0;
 	showCursor(true);
@@ -94,6 +98,11 @@ bool CharacterInfo::msgFocus(const FocusMessage &msg) {
 
 bool CharacterInfo::msgUnfocus(const UnfocusMessage &msg) {
 	_viewIcon.clear();
+
+	// Turn off highlight for selected character
+	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)false));
+
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	return ScrollView::msgUnfocus(msg);
 }
 

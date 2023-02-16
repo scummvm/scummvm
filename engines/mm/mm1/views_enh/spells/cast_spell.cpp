@@ -1,0 +1,105 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "mm/mm1/views_enh/spells/cast_spell.h"
+#include "mm/mm1/globals.h"
+
+namespace MM {
+namespace MM1 {
+namespace ViewsEnh {
+
+CastSpell::CastSpell() : ScrollView("CastSpell") {
+	_bounds = Common::Rect(225, 0, 320, 144);
+
+	addButton(&g_globals->_confirmIcons,
+		Common::Point(0, 100), 0,
+		Common::KeyState(Common::KEYCODE_y, 'y'));
+	addButton(&g_globals->_confirmIcons,
+		Common::Point(40, 100), 2,
+		Common::KeyState(Common::KEYCODE_n, 'n'));
+}
+
+bool CastSpell::msgFocus(const FocusMessage &msg) {
+	// Turn on highlight for selected character
+	if (!g_globals->_currCharacter)
+		g_globals->_currCharacter = &g_globals->_party[0];
+	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
+
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
+	return true;
+}
+
+bool CastSpell::msgUnfocus(const UnfocusMessage &msg) {
+	// Turn off highlight for selected character
+	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)false));
+
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return true;
+}
+
+void CastSpell::draw() {
+	ScrollView::draw();
+
+	const Character &c = *g_globals->_currCharacter;
+	writeString(0, 0, STRING["enhdialogs.cast_spell.title"], ALIGN_MIDDLE);
+	writeString(0, 20, c._name, ALIGN_MIDDLE);
+	writeString(0, 40, STRING["enhdialogs.cast_spell.spell_ready"]);
+
+	writeString(0, 80, STRING["enhdialogs.cast_spell.cost"]);
+	writeString(0, 90, STRING["enhdialogs.cast_spell.cur_sp"]);
+	writeString(0, 80, Common::String::format("%d/%d", 6, 9), ALIGN_RIGHT);
+	writeString(0, 90, Common::String::format("%d", c._sp._current), ALIGN_RIGHT);
+
+	writeString(0, 120, STRING["enhdialogs.cast_spell.cast"]);
+	writeString(30, 120, STRING["enhdialogs.cast_spell.new"]);
+	writeString(60, 120, STRING["enhdialogs.cast_spell.esc"]);
+
+	setTextColor(37);
+	writeString(0, 60, STRING["enhdialogs.cast_spell.none"], ALIGN_MIDDLE);
+}
+
+bool CastSpell::msgKeypress(const KeypressMessage &msg) {
+	return true;
+}
+
+bool CastSpell::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		return true;
+
+	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
+			msg._action <= KEYBIND_VIEW_PARTY6) {
+		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
+		if (charNum < g_globals->_party.size()) {
+			g_globals->_currCharacter = &g_globals->_party[
+				msg._action - KEYBIND_VIEW_PARTY1];
+			g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
+			redraw();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+} // namespace ViewsEnh
+} // namespace MM1
+} // namespace MM
