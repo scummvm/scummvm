@@ -239,9 +239,7 @@ bool Runtime::runWaitForAnimation() {
 			_system->copyRectToScreen(_gameSection.surf->getBasePtr(copyRect.left, copyRect.top), _gameSection.surf->pitch, copyRect.left + _gameSection.rect.left, copyRect.top + _gameSection.rect.top, copyRect.width(), copyRect.height());
 		}
 
-		// The current frame will be the frame to be decoded on the next decode call,
-		// which means if it exceeds the last frame then it's time to stop
-		if (_animDecoder->getCurFrame() > static_cast<int>(_animLastFrame)) {
+		if (_animDecoder->getCurFrame() >= static_cast<int>(_animLastFrame)) {
 			_animDecoder->pauseVideo(true);
 			_animDecoderState = kAnimDecoderStatePaused;
 
