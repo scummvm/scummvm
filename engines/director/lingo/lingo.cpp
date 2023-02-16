@@ -1575,7 +1575,7 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 			}
 
 			if (!silent)
-				warning("varFetch: variable %s not found", name.c_str());
+				debugC(1, kDebugLingoExec, "varFetch: variable %s not found", name.c_str());
 			return result;
 		}
 		break;
@@ -1586,7 +1586,7 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 			if (_globalvars.contains(name)) {
 				return _globalvars[name];
 			}
-			warning("varFetch: global variable %s not defined", name.c_str());
+			debugC(1, kDebugLingoExec, "varFetch: global variable %s not defined", name.c_str());
 			return result;
 		}
 		break;
@@ -1597,7 +1597,7 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 			if (_state->localVars && _state->localVars->contains(name)) {
 				return (*_state->localVars)[name];
 			}
-			warning("varFetch: local variable %s not defined", name.c_str());
+			debugC(1, kDebugLingoExec, "varFetch: local variable %s not defined", name.c_str());
 			return result;
 		}
 		break;
