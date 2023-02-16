@@ -45,6 +45,36 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		},
 		GID_REAH,
 	},
+	{ // Reah: Face the Unknown, 6 CD Version
+		{
+			"reah",
+			"CD",
+			{
+				{"Reah.exe", 0, "77bc7f7819cdd443f52b193529138c87", 305664},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_REAH,
+	},
+	{ // Schizm, 5 CD Version
+		{
+			"schizm",
+			"CD",
+			{
+				{"Schizm.exe", 0, "296edd26d951c3bdc4d303c4c88b27cd", 364544},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_SCHIZM,
+	},
 	{ AD_TABLE_END_MARKER, GID_UNKNOWN }
 };
 
