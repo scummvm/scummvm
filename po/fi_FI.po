@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-15 07:25+0000\n"
-"PO-Revision-Date: 2023-02-10 21:34+0000\n"
+"PO-Revision-Date: 2023-02-16 23:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -2351,6 +2351,25 @@ msgid ""
 "\n"
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
+"Tähän uuteen ScummVM:n Android-versioon on tehty huomattavia "
+"tiedostokäsittelyä koskevia muutoksia jotta pystymme tukemaan Android-"
+"käyttöjärjestelmän uudempia versioita.\n"
+"Jos huomaat että vanhat lisäämäsi pelit tai tiedostopolut eivät enää toimi, "
+"ole hyvä ja muokkaa k.o. polkuja ja tällä kertaa käytä SAF-järjestelmää "
+"näiden löytämiseen.\n"
+"Seuraa näitä vaiheita:\n"
+"\n"
+"  1. Jokaiselle pelille jonka dataa ei löydy, mene \"Polut\"-välilehteen "
+"\"Muuta pelin asetuksia\" alla ja muuta \"Pelin polku\":a\n"
+"  2. Paina \"Siirry ylös\" ScummVM-tiedostoselaimessa kunnes saavut "
+"juurikansioon jossa näet \"<Luo kansio>\" vaihtoehdon.\n"
+"  3. Valitse se, sitten selaa ja valitse pelikansioidesi yläkansio, e.g. \"SD"
+" Card > myGames\". Paina \"Käytä tätä kansiota\".\n"
+"  4. Uusi \"myGames\"-kansio ilmestyy ScummVM-tiedostoselaimen juurikansioon."
+"\n"
+"  5. Etsi pelidatasi tämän kansion sisältä.\n"
+"\n"
+"Vaiheet 2 ja 3 tätytyy suorittaa vain kerran kaikille peleillesi."
 
 #: base/main.cpp:705 base/main.cpp:726
 #: engines/director/lingo/lingo-builtins.cpp:1185
@@ -2361,7 +2380,7 @@ msgstr "Ok"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:707 base/main.cpp:728
 msgid "Read Later"
-msgstr ""
+msgstr "Lue myöhemmin"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:714
@@ -2379,6 +2398,18 @@ msgid ""
 "the ScummVM browser.\n"
 "  4. Browse through this folder to your game data."
 msgstr ""
+"Tähän uuteen ScummVM:n Android-versioon on tehty huomattavia "
+"tiedostokäsittelyä koskevia muutoksia jotta pystymme tukemaan Android-"
+"käyttöjärjestelmän uudempia versioita.\n"
+"Tästä johtuen joudut säätämään SAF:ia jotta voit lisätä pelejä.\n"
+"\n"
+"  1. Paina \"Siirry ylös\" ScummVM-tiedostoselaimessa kunnes saavut "
+"juurikansioon jossa näet \"<Luo kansio>\" option.\n"
+"  2. Valitse se, sitten selaa ja valitse pelikansioidesi yläkansio, e.g. \"SD"
+" Card > myGames\". Paina \"Käytä tätä kansiota\".\n"
+"  3. Uusi \"myGames\"-kansio ilmestyy ScummVM-tiedostoselaimen juurikansioon."
+"\n"
+"  4. Etsi pelidatasi tämän kansion sisältä."
 
 #: base/main.cpp:824
 msgid "Error running game:"
@@ -3195,16 +3226,14 @@ msgstr "Kosketusnäytön 'Tap moodi' - Hover (DPad klikkaus)"
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:664
-#, fuzzy
-#| msgid "Choose file for loading"
 msgid "Choose a new folder"
-msgstr "Valitse ladattava tiedosto"
+msgstr "Valitse uusi kansio"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.h:173
 #: backends/fs/android/android-saf-fs.h:174
 msgid "Add a new folder"
-msgstr ""
+msgstr "Luo kansio"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3894,10 +3923,8 @@ msgstr "3D-peleissä"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
-#, fuzzy
-#| msgid "Forget SAF authorization"
 msgid "Remove folder authorizations..."
-msgstr "Unohda SAF-autorisaatio"
+msgstr "Poista kansioautorisaatiot..."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
