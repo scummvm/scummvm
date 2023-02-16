@@ -3,7 +3,7 @@
 <component type="desktop">
   <id>scummvm.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
-  <project_license>GPL-2.0+</project_license>
+  <project_license>GPL-3.0-or-later</project_license>
   <name>ScummVM</name>
   <summary>Interpreter for numerous adventure games and role-playing games</summary>
   <summary xml:lang="de">Interpreter für zahlreiche Adventure-Spiele und RPGs</summary>
