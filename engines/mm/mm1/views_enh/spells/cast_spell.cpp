@@ -28,8 +28,8 @@ namespace ViewsEnh {
 
 CastSpell::CastSpell() : ScrollView("CastSpell") {
 	_bounds = Common::Rect(225, 0, 320, 146);
-	_icons.load("cast.icn");
 
+	_icons.load("cast.icn");
 	addButton(&_icons, Common::Point(0, 100), 0,
 		Common::KeyState(Common::KEYCODE_c, 'c'));
 	addButton(&_icons, Common::Point(28, 100), 2,
@@ -57,12 +57,18 @@ bool CastSpell::msgUnfocus(const UnfocusMessage &msg) {
 
 void CastSpell::draw() {
 	ScrollView::draw();
+	_fontReduced = false;
 
 	const Character &c = *g_globals->_currCharacter;
 	writeString(0, 0, STRING["enhdialogs.cast_spell.title"], ALIGN_MIDDLE);
 	writeString(0, 20, c._name, ALIGN_MIDDLE);
 	writeString(0, 40, STRING["enhdialogs.cast_spell.spell_ready"]);
 
+	setTextColor(37);
+	writeString(0, 60, STRING["enhdialogs.cast_spell.none"], ALIGN_MIDDLE);
+	setTextColor(0);
+
+	_fontReduced = true;
 	writeString(0, 80, STRING["enhdialogs.cast_spell.cost"]);
 	writeString(0, 90, STRING["enhdialogs.cast_spell.cur_sp"]);
 	writeString(0, 80, Common::String::format("%d/%d", 6, 9), ALIGN_RIGHT);
@@ -70,10 +76,9 @@ void CastSpell::draw() {
 
 	writeString(0, 122, STRING["enhdialogs.cast_spell.cast"]);
 	writeString(30, 122, STRING["enhdialogs.cast_spell.new"]);
-	writeString(58, 122, STRING["enhdialogs.cast_spell.esc"]);
+	writeString(60, 122, STRING["enhdialogs.cast_spell.esc"]);
 
-	setTextColor(37);
-	writeString(0, 60, STRING["enhdialogs.cast_spell.none"], ALIGN_MIDDLE);
+	_fontReduced = false;
 }
 
 bool CastSpell::msgKeypress(const KeypressMessage &msg) {
