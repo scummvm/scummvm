@@ -33,6 +33,8 @@ namespace ViewsEnh {
  * Dialog for casting a spell
  */
 class CastSpell : public ScrollView {
+private:
+	Shared::Xeen::SpriteResource _icons;
 public:
 	CastSpell();
 	virtual ~CastSpell() {}

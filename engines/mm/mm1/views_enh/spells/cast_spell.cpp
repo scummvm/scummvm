@@ -27,14 +27,14 @@ namespace MM1 {
 namespace ViewsEnh {
 
 CastSpell::CastSpell() : ScrollView("CastSpell") {
-	_bounds = Common::Rect(225, 0, 320, 144);
+	_bounds = Common::Rect(225, 0, 320, 146);
+	_icons.load("cast.icn");
 
-	addButton(&g_globals->_confirmIcons,
-		Common::Point(0, 100), 0,
-		Common::KeyState(Common::KEYCODE_y, 'y'));
-	addButton(&g_globals->_confirmIcons,
-		Common::Point(40, 100), 2,
+	addButton(&_icons, Common::Point(0, 100), 0,
+		Common::KeyState(Common::KEYCODE_c, 'c'));
+	addButton(&_icons, Common::Point(28, 100), 2,
 		Common::KeyState(Common::KEYCODE_n, 'n'));
+	addButton(&_icons, Common::Point(56, 100), 4, KEYBIND_ESCAPE);
 }
 
 bool CastSpell::msgFocus(const FocusMessage &msg) {
@@ -68,9 +68,9 @@ void CastSpell::draw() {
 	writeString(0, 80, Common::String::format("%d/%d", 6, 9), ALIGN_RIGHT);
 	writeString(0, 90, Common::String::format("%d", c._sp._current), ALIGN_RIGHT);
 
-	writeString(0, 120, STRING["enhdialogs.cast_spell.cast"]);
-	writeString(30, 120, STRING["enhdialogs.cast_spell.new"]);
-	writeString(60, 120, STRING["enhdialogs.cast_spell.esc"]);
+	writeString(0, 122, STRING["enhdialogs.cast_spell.cast"]);
+	writeString(30, 122, STRING["enhdialogs.cast_spell.new"]);
+	writeString(58, 122, STRING["enhdialogs.cast_spell.esc"]);
 
 	setTextColor(37);
 	writeString(0, 60, STRING["enhdialogs.cast_spell.none"], ALIGN_MIDDLE);

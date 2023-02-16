@@ -47,6 +47,11 @@ void ScrollView::addButton(Shared::Xeen::SpriteResource *sprites,
 	_buttons.push_back(Button(sprites, pos, frame, key));
 }
 
+void ScrollView::addButton(Shared::Xeen::SpriteResource *sprites,
+		const Common::Point &pos, int frame, KeybindingAction action) {
+	_buttons.push_back(Button(sprites, pos, frame, action));
+}
+
 void ScrollView::resetSelectedButton() {
 	_selectedButton = -1;
 	redraw();
@@ -171,7 +176,11 @@ bool ScrollView::msgMouseUp(const MouseUpMessage &msg) {
 	// If the highlighted button remains the same, trigger it's key
 	int selectedButton = getButtonAt(msg._pos);
 	if (selectedButton != -1 && selectedButton == oldSelection) {
-		msgKeypress(KeypressMessage(_buttons[selectedButton]._key));
+		const Button &btn = _buttons[selectedButton];
+		if (btn._action != KEYBIND_NONE)
+			msgAction(btn._action);
+		else
+			msgKeypress(KeypressMessage(btn._key));
 		return true;
 	}
 

@@ -36,11 +36,17 @@ class ScrollView : public TextView {
 		Common::Point _pos;
 		int _frame;
 		Common::KeyState _key;
+		KeybindingAction _action = KEYBIND_NONE;
 
 		Button(Shared::Xeen::SpriteResource *sprites,
 			const Common::Point &pos, int frame,
 			const Common::KeyState &key) :
 			_sprites(sprites), _pos(pos), _frame(frame), _key(key) {
+		}
+		Button(Shared::Xeen::SpriteResource *sprites,
+			const Common::Point &pos, int frame,
+			KeybindingAction action) :
+			_sprites(sprites), _pos(pos), _frame(frame), _action(action) {
 		}
 	};
 private:
@@ -86,6 +92,12 @@ public:
 	void addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame,
 		const Common::KeyState &key);
+
+	/**
+	 * Add a button for display
+	 */
+	void addButton(Shared::Xeen::SpriteResource *sprites,
+		const Common::Point &pos, int frame, KeybindingAction action);
 
 	/**
 	 * Reset selected button
