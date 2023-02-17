@@ -157,15 +157,12 @@ void Lobby::processLine(Common::String line) {
 		} else if (command == "game_session") {
 			int session = root["session"]->asIntegerNumber();
 			handleGameSession((int)session);
-		} else if (command == "game_relay") {
-			// int relay = root["relay"]->asIntegerNumber();
-			// handleGameRelay(relay);
 		} else if (command == "teams") {
-			// int error = root["error"]->asIntegerNumber();
-			// Common::String message = root["message"]->asString();
-			// Common::JSONArray userTeam = root["user"]->asArray();
-			// Common::JSONArray opponentTeam = root["opponent"]->asArray();
-			// handleTeams(userTeam, opponentTeam, (int)error, message);
+			int error = root["error"]->asIntegerNumber();
+			Common::String message = root["message"]->asString();
+			Common::JSONArray userTeam = root["user"]->asArray();
+			Common::JSONArray opponentTeam = root["opponent"]->asArray();
+			handleTeams(userTeam, opponentTeam, error, message);
 		}
 	}
 }
@@ -463,6 +460,45 @@ void Lobby::handleProfileInfo(Common::JSONArray profile) {
 		}
 	}
 	_vm->writeVar(111, 1);
+}
+
+void Lobby::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTeam, int error, Common::String message) {
+	if (ConfMan.getBool("enable_competitive_mods")) {
+		if (error == 1) {
+			warning("LOBBY: Unable to retrieve custom teams: %s", message.c_str());
+			_vm->writeVar(747, 0);
+			return;
+		}
+		// We're going to store our team in array 748, which seems to be otherwise unused
+		// Then we'll pull from that array as needed later
+		int userTeamArray = 0;
+		_vm->defineArray(748, ScummEngine_v90he::kIntArray, 0, 0, 0, userTeam.size(), true, &userTeamArray);
+		_vm->writeVar(748, userTeamArray);
+
+		for (uint i = 0; i < userTeam.size(); i++) {
+			if (userTeam[i]->isIntegerNumber()) {
+				_vm->writeArray(748, 0, i, userTeam[i]->asIntegerNumber());
+			} else {
+				warning("LOBBY: Value for user team index %d is not an integer!", i);
+			}
+		}
+
+		// And similarly store the opponent's team in array 749
+		int opponentTeamArray = 0;
+		_vm->defineArray(749, ScummEngine_v90he::kIntArray, 0, 0, 0, opponentTeam.size(), true, &opponentTeamArray);
+		_vm->writeVar(749, opponentTeamArray);
+
+		for (uint i = 0; i < opponentTeam.size(); i++) {
+			if (opponentTeam[i]->isIntegerNumber()) {
+				_vm->writeArray(749, 0, i, opponentTeam[i]->asIntegerNumber());
+			} else {
+				warning("LOBBY: Value for opponent team index %d is not an integer!", i);
+			}
+		}
+
+		// Write a one to var747 to indicate that Prince Rupert teams should be pulled from arrays 748 and 749
+		_vm->writeVar(747, 1);
+	}
 }
 
 void Lobby::setIcon(int icon) {
@@ -825,14 +861,15 @@ void Lobby::acceptChallenge(int playerId) {
 	acceptChallengeRequest.setVal("user", new Common::JSONValue((long long int)playerId));
 	send(acceptChallengeRequest);
 
-	// TODO: Competitive mods toggle
-	// if (_vm->_game.id == GID_BASEBALL2001 && _vm->readVar(559) == 19) {  // Only if in Prince Rupert
-	// 	// Request teams for this client and opponent
-	// 	Common::JSONObject getTeamsRequest;
-	// 	getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
-	// 	getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)playerId));
-	// 	send(getTeamsRequest);
-	// }
+	if (ConfMan.getBool("enable_competitive_mods")) {
+		if (_vm->_game.id == GID_BASEBALL2001 && _vm->readVar(559) == 19) {  // Only if in Prince Rupert
+			// Request teams for this client and opponent
+			Common::JSONObject getTeamsRequest;
+			getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
+			getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)playerId));
+			send(getTeamsRequest);
+		}
+	}
 }
 
 void Lobby::handleAcceptChallenge() {
@@ -849,7 +886,7 @@ void Lobby::handleAcceptChallenge() {
 void Lobby::startHostingGame(int playerId) {
 	if (!_socket)
 		return;
-	
+
 	_playerId = playerId;
 	_vm->writeVar(111, 0);
 
@@ -906,13 +943,16 @@ void Lobby::handleGameSession(int sessionId) {
 }
 
 void Lobby::gameStarted(int hoster, int player, int playerNameArray) {
-	// if (_vm->_game.id == GID_BASEBALL2001 && _vm->readVar(399) == 1 && _vm->readVar(686) == 1) {  // Only if we're online and in Prince Rupert
-		// 	// Request teams for this client and opponent
-		// Common::JSONObject getTeamsRequest;
-		// getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
-		// getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)player));
-		// send(getTeamsRequest);
-	// }
+	if (ConfMan.getBool("enable_competitive_mods")) {
+		// Only if we're online and in Prince Rupert
+		if (_vm->_game.id == GID_BASEBALL2001 && _vm->readVar(399) == 1 && _vm->readVar(686) == 1) {
+			// Request teams for this client and opponent
+			Common::JSONObject getTeamsRequest;
+			getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
+			getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)player));
+			send(getTeamsRequest);
+		}
+	}
 
 	char playerName[16];
 	_vm->getStringFromArray(playerNameArray, playerName, sizeof(playerName));

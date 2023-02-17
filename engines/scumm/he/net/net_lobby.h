@@ -62,7 +62,6 @@
 
 // MAIA (Updater) opcodes.
 #define OP_NET_UPDATE_INIT						3000
-#define OP_NET_CHECK_INTERNET_STATUS			3001
 #define OP_NET_FETCH_UPDATES					3002
 
 // Commands for VAR_REMOTE_START_SCRIPT. (55 in football; 324 in baseball)
