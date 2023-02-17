@@ -23,6 +23,7 @@
 
 #include "engines/advancedDetector.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/formats/winexe.h"
 
@@ -292,6 +293,11 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 
 		return game;
 	}
+
+	// Now, if we have --start-movie supplied, let's consider that
+	// the developer knows what they're doing and report Director game
+	if (ConfMan.hasKey("start_movie"))
+		return ADDetectedGame(&desc->desc);
 
 	return ADDetectedGame();
 }
