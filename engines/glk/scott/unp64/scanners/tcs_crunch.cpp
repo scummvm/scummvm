@@ -22,6 +22,7 @@
 #include "common/endian.h"
 #include "glk/scott/types.h"
 #include "glk/scott/unp64/unp64.h"
+#include "glk/scott/unp64/exo_util.h"
 
 namespace Glk {
 namespace Scott {
@@ -33,23 +34,22 @@ void scnTCScrunch(UnpStr *unp) {
 		return;
 	mem = unp->_mem;
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x819) == 0x018536A9) && mem[0x81d] == 0x4c) {
+		if (u32eq(mem + 0x819, 0x018536A9) && mem[0x81d] == 0x4c) {
 			p = READ_LE_UINT16(&mem[0x81e]); // mem[0x81e] | mem[0x81f] << 8;
 			if (mem[p] == 0xa2 && mem[p + 2] == 0xbd &&
-				(*(unsigned int *)(mem + p + 0x05) == 0xE801109D) &&
-				((*(unsigned int *)(mem + p + 0x38) == 0x01524CFB) ||
-				((*(unsigned int *)(mem + p + 0x38) == 0x8DE1A9FB) &&
-				(*(unsigned int *)(mem + p + 0x3c) == 0x524C0328)))) {
+				u32eq(mem + p + 0x05, 0xE801109D) &&
+				(u32eq(mem + p + 0x38, 0x01524CFB) ||
+				 (u32eq(mem + p + 0x38, 0x8DE1A9FB) &&
+				  u32eq(mem + p + 0x3c, 0x524C0328)))) {
 				unp->_depAdr = 0x334;
 				unp->_forced = 0x819;
 				unp->_endAdr = 0x2d;
 			}
-		}
-		else if ((*(unsigned int *)(mem + 0x819) == 0x018534A9) && mem[0x81d] == 0x4c) {
+		} else if (u32eq(mem + 0x819, 0x018534A9) && mem[0x81d] == 0x4c) {
 			p = READ_LE_UINT16(&mem[0x81e]); // mem[0x81e] | mem[0x81f] << 8;
 			if (mem[p] == 0xa2 && mem[p + 2] == 0xbd &&
-				(*(unsigned int *)(mem + p + 0x05) == 0xE801109D) &&
-				(*(unsigned int *)(mem + p + 0x38) == 0x01304CFB)) {
+				u32eq(mem + p + 0x05, 0xE801109D) &&
+				u32eq(mem + p + 0x38, 0x01304CFB)) {
 				unp->_depAdr = 0x334;
 				unp->_forced = 0x818;
 				if (mem[unp->_forced] != 0x78)
@@ -59,9 +59,9 @@ void scnTCScrunch(UnpStr *unp) {
 				p += 0xc8;
 				q = p + 6;
 				for (; p < q; p += 3) {
-					if ((mem[p] == 0x20) &&
-						(*(unsigned short int *)(mem + p + 1) >= 0xa000) &&
-						(*(unsigned short int *)(mem + p + 1) <= 0xbfff)) {
+					if (mem[p] == 0x20 &&
+						u16gteq(mem + p + 1, 0xa000) &&
+						u16lteq(mem + p + 1, 0xbfff)) {
 						mem[p] = 0x2c;
 					}
 				}

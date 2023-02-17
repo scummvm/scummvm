@@ -188,7 +188,7 @@ static int mode_indy(CpuCtx *r, InstArg *arg) {
 }
 
 static int mode_rel(CpuCtx *r, InstArg *arg) {
-	arg->_rel._value = r->_mem[r->_pc + 1];
+	arg->_rel._value = (int8_t)r->_mem[r->_pc + 1];
 	r->_pc += 2;
 	return MODE_RELATIVE;
 }

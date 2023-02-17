@@ -22,6 +22,7 @@
 #include "common/endian.h"
 #include "glk/scott/types.h"
 #include "glk/scott/unp64/unp64.h"
+#include "glk/scott/unp64/exo_util.h"
 
 namespace Glk {
 namespace Scott {
@@ -33,10 +34,10 @@ void scnActionPacker(UnpStr *unp) {
 		return;
 	mem = unp->_mem;
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x811) == 0x018538A9) &&
-			(*(unsigned int *)(mem + 0x81d) == 0xCEF7D0E8) &&
-			(*(unsigned int *)(mem + 0x82d) == 0x0F9D0837) &&
-			(*(unsigned int *)(mem + 0x84b) == 0x03D00120)) {
+		if (u32eq(mem + 0x811, 0x018538A9) &&
+			u32eq(mem + 0x81d, 0xCEF7D0E8) &&
+			u32eq(mem + 0x82d, 0x0F9D0837) &&
+			u32eq(mem + 0x84b, 0x03D00120)) {
 			unp->_depAdr = 0x110;
 			unp->_forced = 0x811;
 			unp->_strMem = READ_LE_UINT16(&mem[0x848]);

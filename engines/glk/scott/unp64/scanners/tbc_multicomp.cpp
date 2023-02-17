@@ -34,17 +34,17 @@ void scnTBCMultiComp(UnpStr *unp) {
 		return;
 	mem = unp->_mem;
 	if (unp->_depAdr == 0) {
-		if (((*(unsigned int *)(mem + 0x82c) & 0xfffffffd) == 0x9ACA0184) &&
-			 (*(unsigned int *)(mem + 0x830) == 0xA001004C) &&
-			 (*(unsigned int *)(mem + 0x834) == 0x84FD8400) &&
-			 (*(unsigned int *)(mem + 0x8a2) == 0x01494C01)) {
+		if (u32eqmasked(mem + 0x82c, 0xfffffffd, 0x9ACA0184) &&
+			u32eq(mem + 0x830, 0xA001004C) &&
+			u32eq(mem + 0x834, 0x84FD8400) &&
+			u32eq(mem + 0x8a2, 0x01494C01)) {
 			/*normal 2080*/
 			if (mem[0x84a] == 0x81) {
-				if (*(unsigned int *)(mem + 0x820) == 0x32BDE9A2) {
+				if (u32eq(mem + 0x820, 0x32BDE9A2)) {
 					unp->_forced = 0x820;
 					unp->_retAdr = READ_LE_UINT16(&mem[0x8b2]); // mem[0x8b2] | mem[0x8b3] << 8;
 					if (unp->_retAdr == 0x1e1) {
-						if (*(unsigned int *)(mem + 0x916) == 0x4CA87120) {
+						if (u32eq(mem + 0x916, 0x4CA87120)) {
 							p = *(unsigned short int *)(mem + 0x91a);
 							if (p == 0xa7ae) {
 								unp->_retAdr = p;
@@ -71,7 +71,7 @@ void scnTBCMultiComp(UnpStr *unp) {
 			}
 			/*firelord 2076*/
 			else if (mem[0x84a] == 0x7b) {
-				if (*(unsigned int *)(mem + 0x81d) == 0x32BDE9A2) {
+				if (u32eq(mem + 0x81d, 0x32BDE9A2)) {
 					unp->_forced = 0x81d;
 					unp->_retAdr = READ_LE_UINT16(&mem[0x8ac]); // mem[0x8ac] | mem[0x8ad] << 8;
 					p = 0x8eb;
@@ -97,11 +97,11 @@ void scnTBCMultiComp(UnpStr *unp) {
 	}
 	/* TBC Multicompactor ?  very similar but larger code */
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x822) == 0x9D083DBD) &&
-			(*(unsigned int *)(mem + 0x826) == 0xD0CA0333) &&
-			(*(unsigned int *)(mem + 0x832) == 0xF7D0CA00) &&
-			(*(unsigned int *)(mem + 0x836) == 0xCA018678) &&
-			(*(unsigned int *)(mem + 0x946) == 0xADC5AFA5)) {
+		if (u32eq(mem + 0x822, 0x9D083DBD) &&
+			u32eq(mem + 0x826, 0xD0CA0333) &&
+			u32eq(mem + 0x832, 0xF7D0CA00) &&
+			u32eq(mem + 0x836, 0xCA018678) &&
+			u32eq(mem + 0x946, 0xADC5AFA5)) {
 			if (unp->_info->_run == -1) {
 				for (p = 0x81e; p < 0x821; p++) {
 					if (mem[p] == 0xa2) {
@@ -130,10 +130,10 @@ void scnTBCMultiComp(UnpStr *unp) {
 	}
 	/*"AUTOMATIC BREAK SYSTEM" found in Manowar Cracks*/
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x835) == 0x9D0845BD) &&
-			(*(unsigned int *)(mem + 0x839) == 0xD0CA00ff) &&
-			(*(unsigned int *)(mem + 0x83e) == 0xCA018678) &&
-			(*(unsigned int *)(mem + 0x8e1) == 0xADC5AFA5)) {
+		if (u32eq(mem + 0x835, 0x9D0845BD) &&
+			u32eq(mem + 0x839, 0xD0CA00ff) &&
+			u32eq(mem + 0x83e, 0xCA018678) &&
+			u32eq(mem + 0x8e1, 0xADC5AFA5)) {
 			if (unp->_info->_run == -1) {
 				for (p = 0x830; p < 0x834; p++) {
 					if (mem[p] == 0xa2) {

@@ -471,26 +471,14 @@ int decrunchC64(uint8_t **sf, size_t *extent, C64Rec record) {
 
 	uncompressed = new uint8_t[0xffff];
 
-	char *switches[3];
-	int numSwitches = 0;
-
-	if (record._switches != nullptr) {
-		char string[100];
-		Common::strcpy_s(string, record._switches);
-		switches[numSwitches] = strtok(string, " ");
-
-		while (switches[numSwitches] != nullptr)
-			switches[++numSwitches] = strtok(nullptr, " ");
-	}
-
 	size_t result = 0;
 
 	for (int i = 1; i <= record._decompressIterations; i++) {
 		/* We only send switches on the iteration specified by parameter */
 		if (i == record._parameter && record._switches != nullptr) {
-			result = unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, switches, numSwitches);
+			result = unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, record._switches);
 		} else
-			result = unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, nullptr, 0);
+			result = unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, nullptr);
 		if (result) {
 			if (_G(_entireFile) != nullptr)
 				delete[] _G(_entireFile);

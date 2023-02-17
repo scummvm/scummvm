@@ -125,7 +125,7 @@ int findSys(const byte *buf, int target) {
 
 static void loadPrgData(byte mem[65536], uint8_t *data, size_t dataLength, LoadInfo *info) {
 	int len = MIN(65536 - info->_start, static_cast<int>(dataLength));
-	memcpy(mem + info->_start, data, len);
+	memcpy(mem + info->_start, data, (size_t)len);
 
 	info->_end = info->_start + len;
 	info->_basicVarStart = -1;
@@ -178,6 +178,57 @@ int strToInt(const char *str, int *value) {
 	} while (0);
 
 	return status;
+}
+
+bool u32eq(const unsigned char *addr, uint32_t val)
+{
+	return addr[3] == (val >> 24) &&
+	addr[2] == ((val >> 16) & 0xff) &&
+	addr[1] == ((val >>	 8) & 0xff) &&
+	addr[0] == (val & 0xff);
+}
+
+bool u32eqmasked(const unsigned char *addr, uint32_t mask, uint32_t val)
+{
+	uint32_t val1 = addr[0] | (addr[1] << 8) | (addr[2] << 16) | (addr[3] << 24);
+	return (val1 & mask) == val;
+}
+
+bool u32eqxored(const unsigned char *addr, uint32_t xormask, uint32_t val)
+{
+	uint32_t val1 = addr[0] | (addr[1] << 8) | (addr[2] << 16) | (addr[3] << 24);
+	return (val1 ^ xormask) == val;
+}
+
+bool u16eqmasked(const unsigned char *addr, uint16_t mask, uint16_t val)
+{
+	uint16_t val1 = addr[0] | (addr[1] << 8);
+	return (val1 & mask) == val;
+}
+
+
+bool u16eq(const unsigned char *addr, uint16_t val)
+{
+	return addr[1] == (val >> 8) &&
+	addr[0] == (val & 0xff);
+}
+
+bool u16noteq(const unsigned char *addr, uint16_t val)
+{
+	return addr[1] != (val >> 8) ||
+	addr[0] != (val & 0xff);
+}
+
+bool u16gteq(const unsigned char *addr, uint16_t val)
+{
+	uint16_t val2 = addr[0] | (addr[1] << 8);
+	return val2 >= val;
+}
+
+bool u16lteq(const unsigned char *addr, uint16_t val)
+{
+	uint16_t val2 = addr[0] | (addr[1] << 8);
+	return val2 <= val;
 }
 
 } // End of namespace Scott

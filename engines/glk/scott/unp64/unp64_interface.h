@@ -27,7 +27,7 @@
 namespace Glk {
 namespace Scott {
 
-int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t *finalLength, char *settings[], int numSettings);
+int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t *finalLength, const char *settings);
 
 } // End of namespace Scott
 } // End of namespace Glk
