@@ -56,9 +56,13 @@ public:
 	void setRandomDir(bool val) { _randomDir = val; }
 	void setOrientation(const TeVector3f32 &orientation) { _orientation = orientation; }
 
+	void update(int val);
+
 	static int getIndex(const Common::String &name);
 	static TeParticle *getIndexedParticle(int idx);
 	static void cleanup();
+
+	static void updateAll(int val);
 
 private:
 	Common::Array<TeIntrusivePtr<TeElement>> _elements;

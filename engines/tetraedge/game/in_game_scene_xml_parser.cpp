@@ -88,6 +88,7 @@ bool InGameSceneXmlParser::parserCallback_shadowMask(ParserNode *node) {
 }
 
 bool InGameSceneXmlParser::parserCallback_shadowReceivingObject(ParserNode *node) {
+	_scene->loadShadowReceivingObject(node->values["name"], _scene->getZoneName(), _scene->getSceneName());
 	return true;
 }
 

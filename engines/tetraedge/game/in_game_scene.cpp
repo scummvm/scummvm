@@ -44,13 +44,28 @@
 #include "tetraedge/te/te_lua_script.h"
 #include "tetraedge/te/te_lua_thread.h"
 
-//#define TETRAEDGE_DEBUG_PATHFINDING
+#define TETRAEDGE_DEBUG_PATHFINDING
 //#define TETRAEDGE_DEBUG_LIGHTS
 
 namespace Tetraedge {
 
 /*static*/
 bool InGameScene::_collisionSlide = false;
+
+/*static*/
+const int InGameScene::MAX_FIRE = 50;
+const int InGameScene::MAX_SNOW = 250;
+const int InGameScene::MAX_SMOKE = 350;
+const float InGameScene::DUREE_MAX_FIRE = 32000.0;
+const float InGameScene::SCALE_FIRE = 0.1;
+const int InGameScene::MAX_FLAKE = 10;
+const float InGameScene::DUREE_MIN_FLAKE = 3000.0;
+const float InGameScene::DUREE_MAX_FLAKE = 5000.0;
+const float InGameScene::SCALE_FLAKE = 0.1;
+const float InGameScene::DEPTH_MAX_FLAKE = 0.1;
+
+
+
 
 InGameScene::InGameScene() : _character(nullptr), _charactersShadow(nullptr),
 _shadowLightNo(-1), _waitTime(-1.0f), _shadowColor(0, 0, 0, 0x80), _shadowFov(20.0f),
@@ -696,6 +711,23 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	if (!parser.parse())
 		error("InGameScene::loadXml: Can't parse %s", node.getPath().c_str());
 
+	// loadFlamme and loadSnowCustom are handled by the above.
+
+	_charactersShadow = CharactersShadow::makeInstance();
+	_charactersShadow->create(this);
+
+	for (uint i = 0; i < _lights.size(); i++)
+		_lights[i]->disable(i);
+	_lights.clear();
+
+	const Common::Path lightspath = getLightsFileName();
+	TeCore *core = g_engine->getCore();
+	const Common::FSNode lightsNode(core->findFile(lightspath));
+	if (lightsNode.isReadable())
+		loadLights(lightsNode);
+
+	// TODO: Should we set particle matrix to current cam matrix here?
+	// If we are loading a new scene it seems redundant..
 	Common::Path pxmlpath = _sceneFileNameBase(zone, scene).joinInPlace("particles.xml");
 	Common::FSNode pnode = g_engine->getCore()->findFile(pxmlpath);
 	if (pnode.isReadable()) {
@@ -882,8 +914,9 @@ bool InGameScene::loadCurve(const Common::String &name) {
 		warning("[InGameScene::loadCurve] Can't open file : %s.", path.toString().c_str());
 		return false;
 	}
-	TeBezierCurve *curve = new TeBezierCurve();
+	TeIntrusivePtr<TeBezierCurve> curve = new TeBezierCurve();
 	curve->loadBin(node);
+	_bezierCurves.push_back(curve);
 	return true;
 }
 
@@ -1400,6 +1433,7 @@ void InGameScene::update() {
 	}
 
 	TeScene::update();
+	// TODO: YoukiManager::update();
 
 	float waitTime = _waitTimeTimer.timeFromLastTimeElapsed();
 	if (_waitTime != -1.0 && waitTime > _waitTime) {
@@ -1418,6 +1452,14 @@ void InGameScene::update() {
 		if (!resumed)
 			game->luaScript().execute("OnWaitFinished");
 	}
+
+	// TODO: Update Flammes
+
+	// Original does this, but snowCustoms are never actually created?
+	//for (auto snow : _snowCustoms)
+	//	snow->addFlake();
+
+	TeParticle::updateAll(1);
 
 	for (Object3D *obj : _object3Ds) {
 		if (obj->_translateTime >= 0) {
@@ -1460,6 +1502,20 @@ bool InGameScene::AnimObject::onFinished() {
 	}
 	game->luaScript().execute("OnFinishedAnim", _name);
 	return false;
+}
+
+void InGameScene::Flamme::initFire() {
+	_needsFires = true;
+	_fires.resize(MAX_FIRE);
+}
+
+InGameScene::Flamme::~Flamme() {
+	for (auto fire : _fires) {
+		if (fire) {
+			delete fire;
+		}
+	}
+	_fires.clear();
 }
 
 } // end namespace Tetraedge

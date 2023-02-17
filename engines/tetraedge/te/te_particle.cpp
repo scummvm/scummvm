@@ -50,6 +50,10 @@ bool TeParticle::loadTexture(const Common::String &filename) {
 	return _texture->load(texnode);
 }
 
+void TeParticle::update(int val) {
+	// TODO: Implement me.
+}
+
 /*static*/
 Common::Array<TeParticle *> *TeParticle::_indexedParticles = nullptr;
 
@@ -72,6 +76,13 @@ TeParticle *TeParticle::getIndexedParticle(int idx) {
 	if (idx >= (int)(parts->size()))
 		error("Invalid particle %d requested (of %d)", idx, parts->size());
 	return (*parts)[idx];
+}
+
+/*static*/
+void TeParticle::updateAll(int val) {
+	Common::Array<TeParticle *> *parts = indexedParticles();
+	for (uint i = 0; i < parts->size(); i++)
+		(*parts)[i]->update(val);
 }
 
 /*static*/

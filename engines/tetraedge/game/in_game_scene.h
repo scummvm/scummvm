@@ -91,12 +91,35 @@ public:
 		TeVector3f32 _scale;
 	};
 
+	static const int MAX_FIRE;
+	static const int MAX_SNOW;
+	static const int MAX_SMOKE;
+	static const float DUREE_MAX_FIRE;
+	static const float SCALE_FIRE;
+	static const int MAX_FLAKE;
+	static const float DUREE_MIN_FLAKE;
+	static const float DUREE_MAX_FLAKE;
+	static const float SCALE_FLAKE;
+	static const float DEPTH_MAX_FLAKE;
+
+	struct Fire {
+		TeCurveAnim2<TeModel, TeVector3f32> _positionAnim;
+		TeCurveAnim2<TeModel, TeColor> _colorAnim;
+		TeCurveAnim2<TeModel, TeVector3f32> _scaleAnim;
+	};
+
 	struct Flamme {
+		Flamme() : _needsFires(false), _addFireOnUpdate(false) {};
+		~Flamme();
+		Common::Array<Fire*> _fires;
 		Common::String _name;
 		TeVector3f32 _center;
 		TeVector3f32 _yMax;
 		TeVector3f32 _offsetMin;
 		TeVector3f32 _offsetMax;
+		bool _needsFires;
+		bool _addFireOnUpdate;
+		void initFire();
 	};
 
 	void activateAnchorZone(const Common::String &name, bool val);

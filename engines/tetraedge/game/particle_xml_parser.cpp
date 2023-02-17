@@ -122,5 +122,4 @@ bool ParticleXmlParser::parserCallback_orientation(ParserNode *node) {
 }
 
 
-
 } // end namespace Tetraedge
