@@ -45,7 +45,7 @@ void scaleNN(byte *dst, const byte *src,
 	const bool flipy = flip & FLIP_V;
 
 	const int dstIncX = (flipx ? -1 : 1);
-	const int dstIncY = (flipy ? -dstPitch : dstPitch);
+	const int dstIncY = (flipy ? -static_cast<int>(dstPitch) : static_cast<int>(dstPitch));
 
 	if (flipx) {
 		dst += (dstW - 1) * sizeof(Size);
