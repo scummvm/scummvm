@@ -22,6 +22,7 @@
 #include "common/endian.h"
 #include "glk/scott/types.h"
 #include "glk/scott/unp64/unp64.h"
+#include "glk/scott/unp64/exo_util.h"
 
 namespace Glk {
 namespace Scott {
@@ -34,10 +35,10 @@ void scnCaution(UnpStr *unp) {
 	mem = unp->_mem;
 	/* quickpacker 1.0 sysless */
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x801) == 0xE67800A2) &&
-			(*(unsigned int *)(mem + 0x805) == 0x07EDBD01) &&
-			(*(unsigned int *)(mem + 0x80d) == 0x00284CF8) &&
-			(*(unsigned int *)(mem + 0x844) == 0xAC00334C)) {
+		if (u32eq(mem + 0x801, 0xE67800A2) &&
+			u32eq(mem + 0x805, 0x07EDBD01) &&
+			u32eq(mem + 0x80d, 0x00284CF8) &&
+			u32eq(mem + 0x844, 0xAC00334C)) {
 			unp->_forced = 0x801;
 			unp->_depAdr = 0x28;
 			unp->_retAdr = READ_LE_UINT16(&mem[0x86b]);
@@ -50,11 +51,11 @@ void scnCaution(UnpStr *unp) {
 	}
 	/* quickpacker 2.x + sys */
 	if (unp->_depAdr == 0) {
-		if (((*(unsigned int *)(mem + 0x80b) & 0xf0ffffff) == 0x60A200A0) &&
-			 (*(unsigned int *)(mem + 0x80f) == 0x0801BD78) &&
-			 (*(unsigned int *)(mem + 0x813) == 0xD0CA0095) &&
-			 (*(unsigned int *)(mem + 0x81e) == 0xD0C80291) &&
-			 (*(unsigned int *)(mem + 0x817) == 0x001A4CF8)) {
+		if (u32eqmasked(mem + 0x80b, 0xf0ffffff, 0x60A200A0) &&
+			u32eq(mem + 0x80f, 0x0801BD78) &&
+			u32eq(mem + 0x813, 0xD0CA0095) &&
+			u32eq(mem + 0x81e, 0xD0C80291) &&
+			u32eq(mem + 0x817, 0x001A4CF8)) {
 			unp->_forced = 0x80b;
 			unp->_depAdr = 0x01a;
 			if (mem[0x80e] == 0x69) {
@@ -77,11 +78,11 @@ void scnCaution(UnpStr *unp) {
 	}
 	/* strangely enough, sysless v2.0 depacker is at $0002 */
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x83d) == 0xAA004A20) &&
-			(*(unsigned int *)(mem + 0x801) == 0xA27800A0) &&
-			(*(unsigned int *)(mem + 0x805) == 0x080FBD55) &&
-			(*(unsigned int *)(mem + 0x809) == 0xD0CA0095) &&
-			(*(unsigned int *)(mem + 0x80d) == 0x00024CF8)) {
+		if (u32eq(mem + 0x83d, 0xAA004A20) &&
+			u32eq(mem + 0x801, 0xA27800A0) &&
+			u32eq(mem + 0x805, 0x080FBD55) &&
+			u32eq(mem + 0x809, 0xD0CA0095) &&
+			u32eq(mem + 0x80d, 0x00024CF8)) {
 			unp->_forced = 0x801;
 			unp->_depAdr = 0x2;
 			unp->_retAdr = READ_LE_UINT16(&mem[0x83b]);
@@ -95,14 +96,14 @@ void scnCaution(UnpStr *unp) {
 	}
 	/* same goes for v2.5 sysless, seems almost another packer */
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x83b) == 0xAA005520) &&
-			(*(unsigned int *)(mem + 0x801) == 0x60A200A0) &&
-			(*(unsigned int *)(mem + 0x805) == 0x0801BD78) &&
-			(*(unsigned int *)(mem + 0x809) == 0xD0CA0095) &&
-			(*(unsigned int *)(mem + 0x80d) == 0x00104CF8)) {
+		if (u32eq(mem + 0x83b, 0xAA005520) &&
+			u32eq(mem + 0x801, 0x60A200A0) &&
+			u32eq(mem + 0x805, 0x0801BD78) &&
+			u32eq(mem + 0x809, 0xD0CA0095) &&
+			u32eq(mem + 0x80d, 0x00104CF8)) {
 			unp->_forced = 0x801;
 			unp->_depAdr = 0x10;
-			unp->_retAdr = READ_LE_UINT16(&mem[0x839]); 
+			unp->_retAdr = READ_LE_UINT16(&mem[0x839]);
 			unp->_endAdr = READ_LE_UINT16(&mem[0x847]);
 			unp->_endAdr += 0x100;
 			unp->_fStrAf = 0x46;
@@ -113,11 +114,11 @@ void scnCaution(UnpStr *unp) {
 	}
 	/* hardpacker */
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x80d) == 0x8534A978) &&
-			(*(unsigned int *)(mem + 0x811) == 0xB9B3A001) &&
-			(*(unsigned int *)(mem + 0x815) == 0x4C99081F) &&
-			(*(unsigned int *)(mem + 0x819) == 0xF7D08803) &&
-			(*(unsigned int *)(mem + 0x81d) == 0xB9034D4C)) {
+		if (u32eq(mem + 0x80d, 0x8534A978) &&
+			u32eq(mem + 0x811, 0xB9B3A001) &&
+			u32eq(mem + 0x815, 0x4C99081F) &&
+			u32eq(mem + 0x819, 0xF7D08803) &&
+			u32eq(mem + 0x81d, 0xB9034D4C)) {
 			unp->_forced = 0x80d;
 			unp->_depAdr = 0x34d;
 			unp->_retAdr = READ_LE_UINT16(&mem[0x87f]);

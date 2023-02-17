@@ -22,6 +22,7 @@
 #include "common/endian.h"
 #include "glk/scott/types.h"
 #include "glk/scott/unp64/unp64.h"
+#include "glk/scott/unp64/exo_util.h"
 
 namespace Glk {
 namespace Scott {
@@ -33,10 +34,10 @@ void scnByteBoiler(UnpStr *unp) {
 		return;
 	mem = unp->_mem;
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x813) == 0xE800F09D) &&
-			(*(unsigned int *)(mem + 0x818) == 0x014E4CF7)) {
+		if (u32eq(mem + 0x813, 0xE800F09D) &&
+			u32eq(mem + 0x818, 0x014E4CF7)) {
 			p = READ_LE_UINT16(&mem[0x811]);
-			if (*(unsigned int *)(mem + p + 1) == 0x02D0FAA5) {
+			if (u32eq(mem + p + 1, 0x02D0FAA5)) {
 				unp->_depAdr = 0x14e;
 				unp->_forced = 0x80b;
 				unp->_retAdr = READ_LE_UINT16(&mem[p + 0x5c]);
@@ -50,17 +51,17 @@ void scnByteBoiler(UnpStr *unp) {
 	}
 	/* CPX hack */
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x80b) == 0xA97800A2) &&
-			(*(unsigned int *)(mem + 0x815) == 0x4C01E6D0)) {
+		if (u32eq(mem + 0x80b, 0xA97800A2) &&
+			u32eq(mem + 0x815, 0x4C01E6D0)) {
 			q = READ_LE_UINT16(&mem[0x819]);
-			if ((*(unsigned int *)(mem + q + 3) == 0xE800F09D) &&
-				(*(unsigned int *)(mem + q + 8) == 0x014E4CF7)) {
+			if (u32eq(mem + q + 3, 0xE800F09D) &&
+				u32eq(mem + q + 8, 0x014E4CF7)) {
 				p = READ_LE_UINT16(&mem[q + 1]);
-				if (*(unsigned int *)(mem + p + 1) == 0x02D0FAA5) {
+				if (u32eq(mem + p + 1, 0x02D0FAA5)) {
 					unp->_depAdr = 0x14e;
 					unp->_forced = 0x80b;
-					unp->_retAdr = READ_LE_UINT16(&mem[p + 0x5c]); 
-					unp->_endAdr = READ_LE_UINT16(&mem[p + 0x0e]); 
+					unp->_retAdr = READ_LE_UINT16(&mem[p + 0x5c]);
+					unp->_endAdr = READ_LE_UINT16(&mem[p + 0x0e]);
 					unp->_endAdr++;
 					unp->_fStrAf = 0xfe;
 					unp->_idFlag = 1;
@@ -71,15 +72,15 @@ void scnByteBoiler(UnpStr *unp) {
 	}
 	/* SCS hack */
 	if (unp->_depAdr == 0) {
-		if ((*(unsigned int *)(mem + 0x813) == 0xE800F09D) &&
-			(*(unsigned int *)(mem + 0x818) == 0x01bf4CF7)) {
-			p = READ_LE_UINT16(&mem[0x811]); 
-			if ((*(unsigned int *)(mem + p + 1) == 0x02D0FAA5) &&
-				(*(unsigned int *)(mem + p + 0xdd) == 0x014e4c01)) {
+		if (u32eq(mem + 0x813, 0xE800F09D) &&
+			u32eq(mem + 0x818, 0x01bf4CF7)) {
+			p = READ_LE_UINT16(&mem[0x811]);
+			if (u32eq(mem + p + 1, 0x02D0FAA5) &&
+				u32eq(mem + p + 0xdd, 0x014e4c01)) {
 				unp->_depAdr = 0x14e;
 				unp->_forced = 0x80b;
-				unp->_retAdr = READ_LE_UINT16(&mem[p + 0x5c]); 
-				unp->_endAdr = READ_LE_UINT16(&mem[p + 0x0e]); 
+				unp->_retAdr = READ_LE_UINT16(&mem[p + 0x5c]);
+				unp->_endAdr = READ_LE_UINT16(&mem[p + 0x0e]);
 				unp->_endAdr++;
 				unp->_fStrAf = 0xfe;
 				unp->_idFlag = 1;
