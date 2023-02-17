@@ -1108,6 +1108,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mazebox",			"The Latest Works of MazeBox" },
 	{ "macintosho20",		"村上隆" }, // Macintosho exhibit disk #20 - Takashi Murakami's Hiropon
 	{ "microphonefiend",	"Microphone Fiend" },
+	{ "minkymomo1",			"Minky Momo Maniacs Part.1" },  // ミンキー モモ
+	{ "minkymomo2",			"Minky Momo Maniacs Part.2" },
 	{ "mmedia11",			"Masters of Media: The Making of サクラ大戦" },			// Sakura Taisen
 	{ "moderntimes",		"Charles Chaplin in Modern Times" },
 	{ "mominoki",			"もみの木の下で ～ The Day of St.Claus" },			// Under the Fir Tree
@@ -4434,6 +4436,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t("milo", "", "LAUNCHER.EXE", "09441c0931944d1cb3e3da72b59efc12", 721983,
 						  "MILO.EXE", "4035595e298631d18e23dd377fa469c0", 704645, 400),
 	WINGAME1("milo", "v2.02", "milo/milo.exe", "ade4937def30cb38c60f3ac737036577", 704645, 404),
+
+	MACGAME2("minkymomo1", "",  "MMM1",						"4577dd3eadc467a986ab172d90871b22", 520227,
+				    			"MOVIE/OPENING/OPEN01.MOV",	"9acb2d4608933a7a4cfb9bd737409d1d", 30200, 404),
+	WINGAME2t("minkymomo1", "", "MMM1.exe",					"b4d021d8952ec997f8ad6901a429980c", 43030929,
+				    			"MOVIE/OPENING/OPEN01.MOV",	"25b828bb948e000446a2cb4c306c53f9", 17047168, 404),
+
+	MACGAME2("minkymomo2", "",  "Minky Momo 2",				"4577dd3eadc467a986ab172d90871b22", 520227,
+				    			"MOV/OVA/001.MOV",			"c92bf567a089e9333b317f3c93f67998", 55672, 404),
+	WINGAME2t("minkymomo2", "", "MMM2.exe",					"59f135530f69bb90e82d5ba85a88bd1e", 62899765,
+				    			"MOV/OVA/001.MOV",			"9fd63a3656b005eccddd5666b301a7b3", 37377536, 404),
 
 	MACGAME1("mirage", "", "Mirage", "0c7bbb4b24823e5ab871cb4c1d6f3710", 486698, 404),
 	WINGAME2("mirage", "", "MIRAGE.EXE", "2291ea234c14f1ccb8f2e67ae09bbfa3", 696867,
