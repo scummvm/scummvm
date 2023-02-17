@@ -71,7 +71,7 @@ enum SpellFlag {
 	SF_OUTDOORS_ONLY = 0x10
 };
 
-int SpellCasting::getSpellIndex(Character *chr, int lvl, int num) {
+int SpellCasting::getSpellIndex(const Character *chr, int lvl, int num) {
 	int lvlNum;
 	int setNum = chr->_class == ARCHER || chr->_class == SORCERER ? 1 : 0;
 	int spellNum = num - 1;
@@ -84,7 +84,24 @@ int SpellCasting::getSpellIndex(Character *chr, int lvl, int num) {
 	return spellIndex;
 }
 
-void SpellCasting::setSpell(Character *chr, int lvl, int num) {
+void SpellCasting::getSpellLevelNum(int spellIndex, int &lvl, int &num) {
+	int idx = spellIndex % 47;
+	int numSpells;
+
+	for (lvl = 1; lvl < 8; ++lvl) {
+		int numSpells = (lvl >= 5) ? 5 : 8;
+		if (idx < numSpells) {
+			num = idx + 1;
+			return;
+		}
+		idx -= numSpells;
+	}
+
+	num = -1;
+}
+
+
+void SpellCasting::setSpell(const Character *chr, int lvl, int num) {
 	_spellState = SS_OK;
 
 	// Figure the offset in the spell list

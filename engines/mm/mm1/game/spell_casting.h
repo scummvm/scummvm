@@ -52,12 +52,17 @@ public:
 	/**
 	 * Sets the current spell
 	 */
-	void setSpell(Character *chr, int lvl, int num);
+	void setSpell(const Character *chr, int lvl, int num);
 
 	/**
 	 * Get the index in the spell array for a given spell
 	 */
-	static int getSpellIndex(Character *chr, int lvl, int num);
+	static int getSpellIndex(const Character *chr, int lvl, int num);
+
+	/**
+	 * Get the spell level and number from spell index
+	 */
+	static void getSpellLevelNum(int spellIndex, int &lvl, int &num);
 
 	/**
 	 * Sets a spell directly by index

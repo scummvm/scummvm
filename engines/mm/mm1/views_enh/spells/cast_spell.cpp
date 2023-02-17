@@ -41,8 +41,9 @@ bool CastSpell::msgFocus(const FocusMessage &msg) {
 	// Turn on highlight for selected character
 	if (!g_globals->_currCharacter)
 		g_globals->_currCharacter = &g_globals->_party[0];
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
+	updateSelectedSpell();
 
+	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
 	return true;
 }
@@ -65,13 +66,21 @@ void CastSpell::draw() {
 	writeString(0, 40, STRING["enhdialogs.cast_spell.spell_ready"]);
 
 	setTextColor(37);
-	writeString(0, 60, STRING["enhdialogs.cast_spell.none"], ALIGN_MIDDLE);
-	setTextColor(0);
+
+	Common::String spellName = STRING["enhdialogs.cast_spell.none"];
+	if (c._nonCombatSpell >= 0 && c._nonCombatSpell < 47) {
+		spellName = STRING[Common::String::format("spells.cleric.%d", c._nonCombatSpell)];
+	} else if (c._nonCombatSpell >= 47) {
+		spellName = STRING[Common::String::format("spells.wizard.%d", c._nonCombatSpell - 47)];
+	}
+	writeString(0, 60, spellName, ALIGN_MIDDLE);
 
 	_fontReduced = true;
+	setTextColor(0);
 	writeString(0, 80, STRING["enhdialogs.cast_spell.cost"]);
 	writeString(0, 90, STRING["enhdialogs.cast_spell.cur_sp"]);
-	writeString(0, 80, Common::String::format("%d/%d", 6, 9), ALIGN_RIGHT);
+	writeString(0, 80, Common::String::format("%d/%d",
+		_requiredSp, _requiredGems), ALIGN_RIGHT);
 	writeString(0, 90, Common::String::format("%d", c._sp._current), ALIGN_RIGHT);
 
 	writeString(0, 122, STRING["enhdialogs.cast_spell.cast"]);
@@ -96,6 +105,7 @@ bool CastSpell::msgAction(const ActionMessage &msg) {
 		if (charNum < g_globals->_party.size()) {
 			g_globals->_currCharacter = &g_globals->_party[
 				msg._action - KEYBIND_VIEW_PARTY1];
+			updateSelectedSpell();
 			g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
 			redraw();
 			return true;
@@ -103,6 +113,21 @@ bool CastSpell::msgAction(const ActionMessage &msg) {
 	}
 
 	return false;
+}
+
+void CastSpell::updateSelectedSpell() {
+	const Character &c = *g_globals->_currCharacter;
+
+	if (c._nonCombatSpell == -1) {
+		_requiredSp = _requiredGems = 0;
+
+	} else {
+		int lvl, num;
+		getSpellLevelNum(c._nonCombatSpell, lvl, num);
+		assert(getSpellIndex(&c, lvl, num) == c._nonCombatSpell);
+
+		setSpell(&c, lvl, num);
+	}
 }
 
 } // namespace ViewsEnh

@@ -23,6 +23,7 @@
 #define MM1_VIEWS_ENH_CAST_SPELL_H
 
 #include "mm/mm1/messages.h"
+#include "mm/mm1/game/spell_casting.h"
 #include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
@@ -32,9 +33,15 @@ namespace ViewsEnh {
 /**
  * Dialog for casting a spell
  */
-class CastSpell : public ScrollView {
+class CastSpell : public ScrollView, public MM1::Game::SpellCasting {
 private:
 	Shared::Xeen::SpriteResource _icons;
+
+	/**
+	 * Updates the data for the displayed spell
+	 */
+	void updateSelectedSpell();
+
 public:
 	CastSpell();
 	virtual ~CastSpell() {}
