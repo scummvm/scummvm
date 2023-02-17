@@ -105,16 +105,25 @@ case OP_NET_INIT:
 		break;
 
 	case OP_NET_QUERY_SESSIONS:
-		res = _vm->_net->querySessions();
+#ifdef USE_LIBCURL
+		if (_vm->_lobby->_sessionId) {
+			_vm->_net->querySessions();
+			// Only proceed if we've found the session
+			// we're looking for.
+			res = _vm->_net->ifSessionExist(_vm->_lobby->_sessionId);
+		}
+#endif
 		break;
 
 	case OP_NET_JOIN_SESSION:
+#ifdef USE_LIBCURL
 		if (_vm->_lobby->_sessionId) {
 			res = _vm->_net->joinSessionById(_vm->_lobby->_sessionId);
 			if (res) {
 				_vm->_net->stopQuerySessions();
 			}
 		}
+#endif
 		break;
 
 	case OP_NET_END_SESSION:
