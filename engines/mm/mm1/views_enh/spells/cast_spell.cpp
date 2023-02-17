@@ -91,7 +91,21 @@ void CastSpell::draw() {
 }
 
 bool CastSpell::msgKeypress(const KeypressMessage &msg) {
-	return true;
+	if (msg.keycode == Common::KEYCODE_c) {
+		close();
+
+		const Character &c = *g_globals->_currCharacter;
+		if (c._nonCombatSpell != -1) {
+			// TODO: Cast spell here
+		}
+		return true;
+	} else if (msg.keycode == Common::KEYCODE_n) {
+		// Select a new spell
+		addView("Spellbook");
+		return true;
+	}
+
+	return false;
 }
 
 bool CastSpell::msgAction(const ActionMessage &msg) {

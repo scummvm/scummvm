@@ -86,7 +86,6 @@ int SpellCasting::getSpellIndex(const Character *chr, int lvl, int num) {
 
 void SpellCasting::getSpellLevelNum(int spellIndex, int &lvl, int &num) {
 	int idx = spellIndex % 47;
-	int numSpells;
 
 	for (lvl = 1; lvl < 8; ++lvl) {
 		int numSpells = (lvl >= 5) ? 5 : 8;
