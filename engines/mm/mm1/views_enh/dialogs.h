@@ -35,6 +35,7 @@
 #include "mm/mm1/views_enh/locations/market.h"
 #include "mm/mm1/views_enh/locations/temple.h"
 #include "mm/mm1/views_enh/spells/cast_spell.h"
+#include "mm/mm1/views_enh/spells/spellbook.h"
 
 namespace MM {
 namespace MM1 {
@@ -52,7 +53,8 @@ private:
 	Views::Protect _protect;
 	Views::Title _title;
 //	Views::ViewCharacter _viewCharacter;
-	ViewsEnh::CastSpell _castSpell;
+	ViewsEnh::Spells::CastSpell _castSpell;
+	ViewsEnh::Spells::Spellbook _spellbook;
 	ViewsEnh::MainMenu _mainMenu;
 	ViewsEnh::MapPopup _mapPopup;
 	ViewsEnh::QuickRef _quickRef;

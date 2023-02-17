@@ -25,6 +25,7 @@
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
+namespace Spells {
 
 CastSpell::CastSpell() : ScrollView("CastSpell") {
 	_bounds = Common::Rect(225, 0, 320, 146);
@@ -114,7 +115,7 @@ bool CastSpell::msgAction(const ActionMessage &msg) {
 		return true;
 
 	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-			msg._action <= KEYBIND_VIEW_PARTY6) {
+		msg._action <= KEYBIND_VIEW_PARTY6) {
 		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
 		if (charNum < g_globals->_party.size()) {
 			g_globals->_currCharacter = &g_globals->_party[
@@ -127,6 +128,16 @@ bool CastSpell::msgAction(const ActionMessage &msg) {
 	}
 
 	return false;
+}
+
+bool CastSpell::msgGame(const GameMessage &msg) {
+	if (msg._name == "UPDATE") {
+		updateSelectedSpell();
+		draw();
+		return true;
+	}
+
+	return true;
 }
 
 void CastSpell::updateSelectedSpell() {
@@ -144,6 +155,7 @@ void CastSpell::updateSelectedSpell() {
 	}
 }
 
+} // namespace Spells
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

@@ -120,6 +120,7 @@ MODULE_OBJS += \
 	mm1/views/trap.o \
 	mm1/views/unlock.o \
 	mm1/views_enh/spells/cast_spell.o \
+	mm1/views_enh/spells/spellbook.o \
 	mm1/views_enh/button_container.o \
 	mm1/views_enh/character_info.o \
 	mm1/views_enh/dialogs.o \

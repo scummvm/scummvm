@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_CAST_SPELL_H
-#define MM1_VIEWS_ENH_CAST_SPELL_H
+#ifndef MM1_VIEWS_ENH_SPELLBOOK_H
+#define MM1_VIEWS_ENH_SPELLBOOK_H
 
 #include "mm/mm1/messages.h"
 #include "mm/mm1/game/spell_casting.h"
@@ -32,11 +32,14 @@ namespace ViewsEnh {
 namespace Spells {
 
 /**
- * Dialog for casting a spell
+ * Dialog for selecting a spell to cast
  */
-class CastSpell : public ScrollView, public MM1::Game::SpellCasting {
+class Spellbook : public ScrollView, public MM1::Game::SpellCasting {
 private:
-	Shared::Xeen::SpriteResource _icons;
+	/**
+	 * Called when character is changed
+	 */
+	void selectChar(uint charNum);
 
 	/**
 	 * Updates the data for the displayed spell
@@ -44,15 +47,15 @@ private:
 	void updateSelectedSpell();
 
 public:
-	CastSpell();
-	virtual ~CastSpell() {}
+	Spellbook();
+	virtual ~Spellbook() {
+	}
 
 	void draw() override;
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace Spells
