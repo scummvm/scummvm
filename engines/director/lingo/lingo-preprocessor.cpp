@@ -172,7 +172,8 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 	int linenumber = 1;
 	bool defFound = false;
 
-	const Common::U32String macro("macro"), factory("factory"), on("on"), global("global"), property("property");
+	const Common::U32String macro("macro"), factory("factory"), on("on"), global("global"), property("property"),
+		mci("mci");
 
 	while (*s) {
 		line.clear();
@@ -211,6 +212,26 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 					res += *s++;
 				continue;
 			}
+		}
+
+		// In MultiMedia Movie format, .MMM files used by Microsoft
+		// 'mci' keyword is followed by the unquoted commands, e.g.
+		//     mci close all
+		//     mci play wave to 15228 hold
+		//
+		// Since Director requires them in a single thing, we add
+		// quotes around
+		const Common::u32char_type_t *contLine;
+		tok = nexttok(line.c_str(), &contLine);
+
+		if (tok.equals(mci) && *contLine != 0 && !Common::U32String(contLine).contains('\"')) {
+			// Scan first non-whitespace
+			while (*contLine && (*contLine == ' ' || *contLine == '\t' || *contLine == CONTINUATION)) // If we see a whitespace
+				contLine++;
+
+			res1 = Common::U32String::format("%S \"%S\"", tok.c_str(), contLine);
+
+			debugC(2, kDebugParse | kDebugPreprocess, "wrapped mci command into quotes");
 		}
 
 		res1 = patchLingoCode(res1, archive, type, id, linenumber);

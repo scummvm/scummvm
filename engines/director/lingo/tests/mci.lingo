@@ -11,3 +11,7 @@ sound stop 1
 playAccel "globe.mma", repeat, 5, noFlush, clickStop
 playAccel "globe.mma", tempo, 100, repeat, 10, noFlush, clickStop
 playAccel "globe.mma", tempo, 10, repeat, 4, noFlush, clickStop
+
+mci
+mci close all
+mci play wave to 15228 hold
