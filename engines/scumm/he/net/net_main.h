@@ -66,6 +66,7 @@ public:
 	int createSession(char *name);
 	int joinSession(int sessionIndex);
 	int joinSessionById(int sessionId);
+	int ifSessionExist(int sessionId);
 	int endSession();
 	void setSessionServer(Common::String sessionServer);
 	void disableSessionJoining();

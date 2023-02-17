@@ -329,9 +329,24 @@ int Net::joinSessionById(int sessionId) {
 			return doJoinSession(*i);
 		}
 	}
-	warning("Net::joinSessionById(): session %d not found!", sessionId);
+	warning("Net::joinSessionById(): session %d not found", sessionId);
 	return 0;
+}
 
+int Net::ifSessionExist(int sessionId) {
+	debug(1, "Net::ifSessionExist(%d)", sessionId);
+	if (_sessions.empty()) {
+		debug(1, "Net::ifSessionExist(): no sessions");
+		return 0;
+	}
+
+	for (Common::Array<Session>::iterator i = _sessions.begin(); i != _sessions.end(); i++) {
+		if (i->id == sessionId) {
+			return 1;
+		}
+	}
+	debug(1, "Net::ifSessionExist(): session %d not found.", sessionId);
+	return 0;
 }
 
 int Net::doJoinSession(Session session) {
@@ -636,7 +651,7 @@ void Net::stopQuerySessions() {
 
 int Net::querySessions() {
 	debug(1, "Net::querySessions()"); // PN_QuerySessions
-	// Deprecated OP used in Backyard Football 2002 to query sessions,
+	// Deprecated OP used in Football and Baseball to query sessions,
 	// emulate this by using the functions used in Moonbase Commander:
 	startQuerySessions();
 

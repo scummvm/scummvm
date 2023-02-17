@@ -144,7 +144,7 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 	case OP_NET_INIT:
 		// Initialize network system, this gets called at boot up and
 		// sets VAR_NETWORK_AVAILABLE (100).  We just return a 1 if
-		// ENet is compiled.
+		// ENet is compiled.  Used in both 1999 and 2002.
 #ifdef USE_ENET
 		res = 1;
 #endif
@@ -156,16 +156,25 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		break;
 
 	case OP_NET_QUERY_SESSIONS:
-		res = _vm->_net->querySessions();
+#ifdef USE_LIBCURL
+		if (_vm->_lobby->_sessionId) {
+			_vm->_net->querySessions();
+			// Only proceed if we've found the session
+			// we're looking for.
+			res = _vm->_net->ifSessionExist(_vm->_lobby->_sessionId);
+		}
+#endif
 		break;
 
 	case OP_NET_JOIN_SESSION:
+#ifdef USE_LIBCURL
 		if (_vm->_lobby->_sessionId) {
 			res = _vm->_net->joinSessionById(_vm->_lobby->_sessionId);
 			if (res) {
 				_vm->_net->stopQuerySessions();
 			}
 		}
+#endif
 		break;
 
 	case OP_NET_END_SESSION:
