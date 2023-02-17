@@ -752,7 +752,7 @@ void DreamWebEngine::useGun() {
 		_getBack = 1;
 		_vars._progressPoints++;
 
-	} else if (_realLocation == 25) {
+	} else if (_realLocation == 25 && _mapX == 0 && _mapY == 50) {
 		// helicopter
 		showPuzText(34, 300);
 		_vars._lastWeapon = 1;
