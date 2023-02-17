@@ -153,7 +153,7 @@ int Mouse::getMouseLength(int mx, int my) const {
 		return 2;
 
 	// For short cursor, reference point is near the avatar's feet
-	dy = abs((dims.height() / 2 + (dims.height() * 14 / 200)) - my); //! constant
+	dy = abs((dims.height() / 2 + 14) - my); //! constant
 	int xshort = dims.width() * 30 / 320;
 	int yshort = dims.height() * 30 / 320;
 
@@ -170,7 +170,7 @@ Direction Mouse::getMouseDirectionWorld(int mx, int my) const {
 
 	// For now, reference point is (near) the center of the screen
 	int dx = mx - dims.width() / 2;
-	int dy = (dims.height() / 2 + (dims.height() * 14 / 200)) - my; //! constant
+	int dy = (dims.height() / 2 + 14) - my; //! constant
 
 	return Direction_Get(dy * 2, dx, dirmode_8dirs);
 }
