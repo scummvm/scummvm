@@ -778,8 +778,14 @@ Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, bool forPuppet, Dis
 
 	if (looping) {
 		if (hasLoopBounds()) {
-			// Return an automatically looping stream.
-			return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
+			// FIXME: determine the correct behaviour for non-consecutive loop bounds
+			if (_loopEnd < _loopStart) {
+				warning("SNDDecoder::getAudioStream: Looping sound has non-consecutive bounds, using entire sample");
+				return new Audio::LoopingAudioStream(stream, 0);
+			} else {
+				// Return an automatically looping stream.
+				return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
+			}
 		} else {
 			// Not sure if looping sounds can appear without loop bounds.
 			// Let's just log a warning and loop the entire sound...
