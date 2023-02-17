@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-15 07:25+0000\n"
-"PO-Revision-Date: 2023-01-24 05:34+0000\n"
+"PO-Revision-Date: 2023-02-18 00:34+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -205,10 +205,9 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "Descarregat: %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
-#| msgid "Download speed: %s %S"
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Velocitat de baixada: %s %S"
+msgstr "Velocitat de baixada: %s %S/s"
 
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
@@ -264,15 +263,12 @@ msgid "No new %S available"
 msgstr "No hi ha nou %S disponible"
 
 #: gui/downloadpacksdialog.cpp:462
-#, fuzzy, c-format
-#| msgid ""
-#| "You are about to remove %s %s of data, deleting all previously downloaded "
-#| "%S. Do you want to proceed?"
+#, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
-"Esteu a punt d'eliminar %s %s de dades, suprimint tots els fitxers %S "
+"Esteu a punt d'eliminar %s %S de dades, suprimint tots els fitxers %S "
 "baixats prèviament. Voleu continuar?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
@@ -3225,10 +3221,8 @@ msgstr "'Mode Toc' de pantalla tàctil - Flotant (Clics de DPad)"
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:664
-#, fuzzy
-#| msgid "Choose file for loading"
 msgid "Choose a new folder"
-msgstr "Trieu el fitxer a carregar"
+msgstr "Trieu una carpeta nova"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.h:173
