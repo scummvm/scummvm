@@ -235,7 +235,7 @@ void MacText::init() {
 	if (!colorFontRun.text.empty()) {
 		_fgcolor = colorFontRun.fgcolor;
 		colorFontRun.text.clear();
-		debug(9, "Reading fg color though text, instead of the argument, read %x", _fgcolor);
+		debug(9, "Reading fg color though text, instead of the argument, read %d", _fgcolor);
 		_defaultFormatting = colorFontRun;
 		_defaultFormatting.wm = _wm;
 	}
