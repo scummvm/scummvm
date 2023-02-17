@@ -505,7 +505,28 @@ void ScummEngine_v6::o6_byteArrayRead() {
 
 void ScummEngine_v6::o6_wordArrayRead() {
 	int base = pop();
-	push(readArray(fetchScriptWord(), 0, base));
+	int array = fetchScriptWord();
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	if (ConfMan.getBool("enable_competitive_mods")) {
+		// If we're pulling from the randomly selected teams for online play
+		// at Prince Rupert, read from variables 748 and 749 instead
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 6 && vm.slot[_currentScript].number == 2071 &&
+			readVar(399) == 1 &&  // We're online and in the team name select screen
+			readVar(747) == 1) {  // We successfully got team arrays the host and opponent
+			switch (array) {
+			case 264:
+			case 321:
+				array = 748;
+				break;
+			case 265:
+			case 322:
+				array = 749;
+				break;
+			}
+		}
+	}
+#endif
+	push(readArray(array, 0, base));
 }
 
 void ScummEngine_v6::o6_byteArrayIndexedRead() {
@@ -534,11 +555,44 @@ void ScummEngine_v6::o6_eq() {
 	int a = pop();
 	int b = pop();
 
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	int offset = _scriptPointer - _scriptOrgPointer;
+	// WORKAROUND: In Backyard Baseball 2001, The special rules of the Mountain Aire and Wilderness neighborhoods
+	// are incorrect.  They were set to "3 innings" and "no swing spot" respectively, while they were supposed to be set to
+	// "no special rules" and "3 innings".  This is a script bug which assumed to be fixed in later post-retail updates, but
+	// since we don't have access to any of those, this workaround will have to do.
+	if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 419 && ((a == 9 && b == 9) || (a == 8 && b == 8))) {
+		switch (a) {
+		case 9:
+			// Mountain Aire (No special rules)
+			writeVar(695, 0);
+			break;
+		case 8:
+			// Wilderness (3 innings)
+			writeVar(695, 64);
+			break;
+		}
+
+		// Clean up stack and stop the script
+		fetchScriptWord();
+		pop();
+		stopObjectCode();
+
+	// HACK: This script doesn't allow Super Colossal Dome to be chosen for online play, by checking if the selected
+	// field's value is 5 (SCD's number) and incrementing/decrementing if it is. To allow SCD to be used, we return 0
+	// for those checks.
+	} else if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 40 &&
+		vm.slot[_currentScript].number == 2106 && a == 5 && (offset == 16754 || offset == 16791)) {
+		push(0);
+
 	// WORKAROUND: Online play is disabled in the Macintosh versions of Backyard Football and Backyard Baseball 2001
 	// because the original U32 makes use of DirectPlay, a Windows exclusive API; we now have our own implementation
 	// which is cross-platform compatable.  We get around that by tricking those checks that we are playing on
 	// the Windows version. These scripts check VAR_PLATFORM (b) against the value (2) of the Macintosh platform (a).
+	} else if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (vm.slot[_currentScript].number == 2049 || vm.slot[_currentScript].number == 2050 ||
+#else
 	if (_game.id == GID_FOOTBALL && _currentRoom == 2 && (vm.slot[_currentScript].number == 2049 || vm.slot[_currentScript].number == 2050 ||
+#endif
 		vm.slot[_currentScript].number == 498) && a == 2 && b == 2) {
 		push(0);
 	} else if (_game.id == GID_BASEBALL2001 && _currentRoom == 2 && (vm.slot[_currentScript].number == 10002 || vm.slot[_currentScript].number == 2050) &&
@@ -779,7 +833,7 @@ void ScummEngine_v6::o6_jump() {
 
 	// WORKAROUND:  When getting the area popuation, the scripts does not break after getting
 	// the popuation.  Not only this may slow down the game a bit, it sends quite a bit of bandwidth
-	// considering we're outside the game.  So let's break the script for 5 seconds 
+	// considering we're outside the game.  So let's break the script for 5 seconds
 	// before jumping back to the beginning.
 	if ((_game.id == GID_BASEBALL2001 && _currentRoom == 39 && vm.slot[_currentScript].number == 2090 && offset == -904) ||
 		(_game.id == GID_BASEBALL2001 && _currentRoom == 40 && vm.slot[_currentScript].number == 2101 && offset == -128)) {
@@ -1392,6 +1446,23 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 	int min = pop();
 	int rnd = _rnd.getRandomNumber(0x7fff);
 	rnd = min + (rnd % (max - min + 1));
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	if (ConfMan.getBool("enable_competitive_mods")) {
+		// For using predefined teams in Prince Rupert, instead of choosing player IDs randomly
+		// let's pull from the variables that contain the teams
+		if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 298 &&
+			readVar(399) == 1 && readVar(747) == 1) {
+			int offset = _scriptPointer - _scriptOrgPointer;
+			if (offset == 117) {
+				// Host's team
+				rnd = readArray(748, 0, vm.localvar[_currentScript][1]);
+			} else if (offset == 210) {
+				// Opponent's team
+				rnd = readArray(749, 0, vm.localvar[_currentScript][1]);
+			}
+		}
+	}
+#endif
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);

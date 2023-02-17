@@ -352,6 +352,8 @@ private:
 
 	GUI::EditTextWidget *_lobbyServerAddr;
 	GUI::ButtonWidget *_lobbyResetButton;
+
+	GUI::CheckboxWidget *_enableCompetitiveMods;
 };
 #endif
 

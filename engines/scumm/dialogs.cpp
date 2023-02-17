@@ -1365,8 +1365,9 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 		// Lobby configuration (Do not include LAN settings)
 #ifdef USE_LIBCURL
 		text->setLabel(_("Online Server:"));
-		_lobbyServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.LobbyServerAddress", Common::U32String(""), _("Address of the server to connect to for online play."));
+		_lobbyServerAddr = new GUI::EditTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.LobbyServerAddress", Common::U32String(""), _("Address of the server to connect to for online play.  It must start with either \"https://\" or \"http://\" schemas."));
 		_serverResetButton = addClearButton(widgetsBoss(), "HENetworkGameOptionsDialog.ServerReset", kResetServersCmd);
+		_enableCompetitiveMods = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.EnableCompetitiveMods", _("Enable online competitive mods"), _("Enables custom-made modifications intented for online competitive play."));
 #endif
 	} else {
 		// Network configuration (Include LAN settings)
@@ -1383,9 +1384,14 @@ void HENetworkGameOptionsWidget::load() {
 	if (_gameid == "football" || _gameid == "baseball2001") {
 #ifdef USE_LIBCURL
 		Common::String lobbyServerAddr = "https://multiplayer.scummvm.org:9130";
+		bool enableCompetitiveMods = false;
+
 		if (ConfMan.hasKey("lobby_server", _domain))
 			lobbyServerAddr = ConfMan.get("lobby_server", _domain);
 		_lobbyServerAddr->setEditString(lobbyServerAddr);
+		if (ConfMan.hasKey("enable_competitive_mods", _domain))
+			enableCompetitiveMods = ConfMan.getBool("enable_competitive_mods", _domain);
+		_enableCompetitiveMods->setState(enableCompetitiveMods);
 #endif
 	} else {
 		bool enableSessionServer = true;
@@ -1411,6 +1417,7 @@ bool HENetworkGameOptionsWidget::save() {
 	if (_gameid == "football" || _gameid == "baseball2001") {
 #ifdef USE_LIBCURL
 		ConfMan.set("lobby_server", _lobbyServerAddr->getEditString(), _domain);
+		ConfMan.setBool("enable_competitive_mods", _enableCompetitiveMods->getState(), _domain);
 #endif
 	} else {
 		ConfMan.setBool("enable_session_server", _enableSessionServer->getState(), _domain);
@@ -1432,6 +1439,7 @@ void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 					.addWidget("LobbyServerAddress", "EditTextWidget")
 					.addWidget("ServerReset", "", 15, 15)
 				.closeLayout()
+				.addWidget("EnableCompetitiveMods", "Checkbox")
 			.closeLayout()
 		.closeDialog();
 #endif
