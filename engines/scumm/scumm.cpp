@@ -3457,7 +3457,7 @@ bool ScummEngine::displayMessageYesNo(const char *message, ...) {
 	return runDialog(dialog) == GUI::kMessageOK;
 }
 
-#ifdef ENABLE_HE
+#if defined(ENABLE_HE) && defined(USE_ENET)
 int ScummEngine_v90he::networkSessionDialog() {
 	GUI::MessageDialog dialog(_("Would you like to host or join a network play session?"), _("Host"), _("Join"));
 	int res = runDialog(dialog);
