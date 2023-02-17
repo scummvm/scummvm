@@ -691,6 +691,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 		if (_frames[frameId]->_palette.normal) {
 			// For fade palette transitions, the whole fade happens with
 			// the previous frame's layout.
+			debugC(kDebugLoading, 2, "Score::renderPrePaletteCycle(): fading palette to %d over %d frames", currentPalette, fadeFrames);
 			for (int i = 0; i < fadeFrames; i++) {
 				lerpPalette(
 					calcPal,
@@ -703,6 +704,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 				g_director->draw();
 				// On click, stop loop and reset palette
 				if (_vm->processEvents(true)) {
+					debugC(kDebugLoading, 2, "Score::renderPrePaletteCycle(): interrupted, setting palette to %d", currentPalette);
 					g_director->setPalette(resolvePaletteId(currentPalette));
 					return true;
 				}
@@ -716,9 +718,11 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 			byte *fadePal = nullptr;
 			if (_frames[frameId]->_palette.fadeToBlack) {
 				// Fade everything except color index 0 to black
+				debugC(kDebugLoading, 2, "Score::renderPrePaletteCycle(): fading palette to black over %d frames", fadeFrames);
 				fadePal = kBlackPalette;
 			} else if (_frames[frameId]->_palette.fadeToWhite) {
 				// Fade everything except color index 255 to white
+				debugC(kDebugLoading, 2, "Score::renderPrePaletteCycle(): fading palette to white over %d frames", fadeFrames);
 				fadePal = kWhitePalette;
 			} else {
 				// Shouldn't reach here
@@ -737,6 +741,7 @@ bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
 				g_director->draw();
 				// On click, stop loop and reset palette
 				if (_vm->processEvents(true)) {
+					debugC(kDebugLoading, 2, "Score::renderPrePaletteCycle(): interrupted, setting palette to %d", currentPalette);
 					g_director->setPalette(resolvePaletteId(currentPalette));
 					return true;
 				}
@@ -808,6 +813,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 
 		if (_frames[frameId]->_palette.overTime) {
 			// Do a single color step in one frame transition
+			debugC(kDebugLoading, 2, "Score::renderPaletteCycle(): color cycle palette %d by 1 frame", currentPalette);
 			g_director->shiftPalette(firstColor, lastColor, false);
 			g_director->draw();
 		} else {
@@ -819,6 +825,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 
 			// Do a full color cycle in one frame transition
 			int steps = lastColor - firstColor + 1;
+			debugC(kDebugLoading, 2, "Score::renderPaletteCycle(): color cycle palette %d over %d steps %d times", currentPalette, steps, _frames[frameId]->_palette.cycleCount);
 			for (int i = 0; i < _frames[frameId]->_palette.cycleCount; i++) {
 				for (int j = 0; j < steps; j++) {
 					g_director->shiftPalette(firstColor, lastColor, false);
@@ -856,6 +863,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 				// Copy the current palette into the snapshot buffer
 				memset(_paletteSnapshotBuffer, 0, 768);
 				memcpy(_paletteSnapshotBuffer, g_director->getPalette(), g_director->getPaletteColorCount() * 3);
+				debugC(kDebugLoading, 2, "Score::renderPaletteCycle(): fading palette to %d over %d frames", currentPalette, frameCount);
 			}
 
 			if (_frames[frameId]->_palette.normal) {
@@ -908,6 +916,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 		} else {
 			// Short circuit for fast renderer
 			if (debugChannelSet(-1, kDebugFast)) {
+				debugC(kDebugLoading, 2, "Score::renderPaletteCycle(): setting palette to %d", currentPalette);
 				g_director->setPalette(resolvePaletteId(currentPalette));
 				return;
 			}
@@ -940,11 +949,14 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 				for (int i = 0; i < fadeColorWait; i++) {
 					// On click, stop loop and reset palette
 					if (_vm->processEvents(true)) {
+						debugC(kDebugLoading, 2, "Score::renderPaletteCycle(): interrupted, setting palette to %d", currentPalette);
 						g_director->setPalette(resolvePaletteId(currentPalette));
 						return;
 					}
 					g_director->delayMillis(frameDelay);
 				}
+
+				debugC(kDebugLoading, 2, "Score::renderPaletteCycle(): fading palette to %d over %d frames", currentPalette, fadeFrames);
 
 				for (int i = 0; i < fadeFrames; i++) {
 					lerpPalette(
@@ -958,6 +970,7 @@ void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
 					g_director->draw();
 					// On click, stop loop and reset palette
 					if (_vm->processEvents(true)) {
+						debugC(kDebugLoading, 2, "Score::renderPaletteCycle(): interrupted, setting palette to %d", currentPalette);
 						g_director->setPalette(resolvePaletteId(currentPalette));
 						return;
 					}
@@ -1460,15 +1473,16 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 Common::String Score::formatChannelInfo() {
 	Frame &frame = *_frames[_currentFrame];
 	Common::String result;
+	int defaultPalette = g_director->getCurrentMovie()->getCast()->_defaultPalette;
 	result += Common::String::format("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d\n",
 		frame._tempo, frame._skipFrameFlag, frame._blend);
 	if (frame._palette.paletteId) {
-		result += Common::String::format("PAL:    paletteId: %d, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d\n",
+		result += Common::String::format("PAL:    paletteId: %d, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d, defaultId: %d\n",
 			frame._palette.paletteId, frame._palette.firstColor, frame._palette.lastColor, frame._palette.flags,
 			frame._palette.cycleCount, frame._palette.speed, frame._palette.frameCount,
-			frame._palette.fade, frame._palette.delay, frame._palette.style);
+			frame._palette.fade, frame._palette.delay, frame._palette.style, defaultPalette);
 	} else {
-		result += Common::String::format("PAL:    paletteId: 000\n");
+		result += Common::String::format("PAL:    paletteId: 000, defaultId: %d\n", defaultPalette);
 	}
 	result += Common::String::format("TRAN:   transType: %d, transDuration: %d, transChunkSize: %d\n",
 		frame._transType, frame._transDuration, frame._transChunkSize);
