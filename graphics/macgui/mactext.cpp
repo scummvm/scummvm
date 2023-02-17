@@ -2170,8 +2170,12 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 		// We requested only part of one line
 		if (i == startRow && i == endRow) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
+				if (_textLines[i].chunks[chunk].text.empty()) {
+					// skip empty chunks, but keep them formatted,
+					// a text input box needs to keep the formatting even when all text is removed.
+					ADDFORMATTING();
 					continue;
+				}
 
 				if (startCol <= 0) {
 					ADDFORMATTING();
