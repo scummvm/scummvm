@@ -134,9 +134,8 @@ enum CursorMaskValue {
 	 *  Backend must support kFeatureCursorMaskInvert for this mode. */
 	kCursorMaskInvert = 2,
 
-	/** Inverts the overlapped pixel based on the cursor's color value.
-	  * Backend must support kFeatureCursorMaskInvertUsingColor for this mode. */
-	kCursorMaskInvertUsingColor = 3,
+	/** kFeatureCursorMaskInvertUsingColor for this mode. */
+	kCursorMaskPaletteXorColorXnor = 3,
 };
 
 /**
@@ -418,10 +417,11 @@ public:
 		kFeatureCursorMaskInvert,
 
 		/**
-		 * Backends supporting this feature allow cursor masks to use mode kCursorMaskInvertUsingColor in the mask values,
-		 * which inverts the destination pixel based on the color value of the cursor.
+		 * Backends supporting this feature allow cursor masks to use mode kCursorMaskPaletteXorColorXnor in the mask values,
+		 * which uses (Color XOR Destination) for CLUT8 blending and (Color XNOR Destination) for RGB blending.  This is
+		 * equivalent to Classic MacOS behavior for pixel colors other than black and white.
 		 */
-		kFeatureCursorMaskInvertUsingColor,
+		kFeatureCursorMaskPaletteXorColorXnor,
 
 		/**
 		 * A backend has this feature if its overlay pixel format has an alpha
