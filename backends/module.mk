@@ -243,7 +243,8 @@ MODULE_OBJS += \
 	plugins/win32/win32-provider.o \
 	saves/windows/windows-saves.o \
 	updates/win32/win32-updates.o \
-	taskbar/win32/win32-taskbar.o
+	taskbar/win32/win32-taskbar.o \
+	printing/win32/win32-printman.o 
 
 ifdef USE_TTS
 MODULE_OBJS += \
