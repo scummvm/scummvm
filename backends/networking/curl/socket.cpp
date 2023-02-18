@@ -74,7 +74,7 @@ bool CurlSocket::connect(Common::String url) {
 		curl_easy_setopt(_easy, CURLOPT_URL, url.c_str());
 		// Just connect to the host, do not do any transfers.
 		curl_easy_setopt(_easy, CURLOPT_CONNECT_ONLY, 1L);
-		
+
 		// Uncomment this to disable SSL certificate verification
 		// (e.g. self-signed certs).
 		// curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0L);

@@ -132,9 +132,9 @@ Socket *ENet::createSocket(Common::String address, int port) {
 	}
 
 	enet_socket_set_option (enetSocket, ENET_SOCKOPT_NONBLOCK, 1);
-    enet_socket_set_option (enetSocket, ENET_SOCKOPT_BROADCAST, 1);
+	enet_socket_set_option (enetSocket, ENET_SOCKOPT_BROADCAST, 1);
 	enet_socket_set_option (enetSocket, ENET_SOCKOPT_RCVBUF, ENET_HOST_RECEIVE_BUFFER_SIZE);
-    enet_socket_set_option (enetSocket, ENET_SOCKOPT_SNDBUF, ENET_HOST_SEND_BUFFER_SIZE);
+	enet_socket_set_option (enetSocket, ENET_SOCKOPT_SNDBUF, ENET_HOST_SEND_BUFFER_SIZE);
 
 	return new Socket(enetSocket);
 }
