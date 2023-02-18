@@ -67,6 +67,9 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	return screenDirections[screen][direction].get();
 }
 
+ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false) {
+}
+
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
 	rect = paramRect;
 	surf.reset(new Graphics::ManagedSurface(paramRect.width(), paramRect.height(), fmt));
@@ -76,13 +79,13 @@ void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics:
 Runtime::OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)) {
 }
 
-
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _rootFSNode(rootFSNode), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _scriptNextInstruction(0),
-	  _escOn(false), _lmbInteractionState(false), _debugMode(false),
+	  _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animDecoderState(kAnimDecoderStateStopped),
-	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleInteractionID(0) {
+	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleInteractionID(0),
+	  _lmbDown(false), _lmbDragging(false), _lmbDownTime(0) {
 
 	for (uint i = 0; i < kNumDirections; i++)
 		_haveIdleAnimations[i] = false;
@@ -194,7 +197,10 @@ bool Runtime::runFrame() {
 	}
 
 	// Discard any unconsumed OS events
-	_pendingEvents.clear();
+	OSEvent evt;
+	while (popOSEvent(evt)) {
+		// Do nothing
+	}
 
 	return true;
 }
@@ -216,7 +222,6 @@ bool Runtime::bootGame() {
 }
 
 bool Runtime::runIdle() {
-
 	if (_havePendingScreenChange) {
 		_havePendingScreenChange = false;
 
@@ -489,7 +494,27 @@ bool Runtime::popOSEvent(OSEvent &evt) {
 			if (_mousePos == tempEvent.pos)
 				continue;
 
+			if (_lmbDown && tempEvent.pos != _lmbDownPos)
+				_lmbDragging = true;
+
 			_mousePos = tempEvent.pos;
+		} else if (tempEvent.type == kOSEventTypeLButtonDown) {
+			// Discard LButtonDown events missing a matching release (can happen if e.g. user holds button down
+			// and then alt-tabs out of the process on Windows)
+			if (_lmbDown)
+				continue;
+
+			_lmbDown = true;
+			_lmbDragging = false;
+			_lmbDownTime = tempEvent.timestamp;
+			_lmbDownPos = tempEvent.pos;
+		} else if (tempEvent.type == kOSEventTypeLButtonUp) {
+			// Discard LButtonUp events missing a matching down
+			if (!_lmbDown)
+				continue;
+
+			_lmbDown = false;
+			// Don't reset _lmbDragging - Want that available to determine if this was a drag release or click
 		}
 
 		evt = tempEvent;
@@ -497,6 +522,13 @@ bool Runtime::popOSEvent(OSEvent &evt) {
 	}
 
 	return false;
+}
+
+void Runtime::queueOSEvent(const OSEvent &evt) {
+	OSEvent timedEvt = evt;
+	timedEvt.timestamp = g_system->getMillis();
+
+	_pendingEvents.push_back(timedEvt);
 }
 
 void Runtime::loadIndex() {
@@ -620,7 +652,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 				if (screenScriptIt != screenScriptsMap.end()) {
 					const Common::SharedPtr<Script> &script = screenScriptIt->_value->entryScript;
 					if (script)
-						activateScript(script, false);
+						activateScript(script, ScriptEnvironmentVars());
 				}
 			}
 		}
@@ -643,6 +675,8 @@ void Runtime::returnToIdleState() {
 	}
 
 	_idleIsOnInteraction = false;
+
+	detectPanoramaDirections();
 
 	changeToCursor(_cursors[kCursorArrow]);
 	dischargeIdleMouseMove();
@@ -682,7 +716,7 @@ void Runtime::dischargeIdleMouseMove() {
 		Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
 
 		if (script)
-			activateScript(script, false);
+			activateScript(script, ScriptEnvironmentVars());
 	} else if (!isOnInteraction && _idleIsOnInteraction) {
 		_idleIsOnInteraction = false;
 		changeToCursor(_cursors[kCursorArrow]);
@@ -800,11 +834,11 @@ AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
 	return def;
 }
 
-void Runtime::activateScript(const Common::SharedPtr<Script> &script, bool lmbInteractionState) {
+void Runtime::activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars) {
 	if (script->instrs.size() == 0)
 		return;
 
-	_lmbInteractionState = false;
+	_scriptEnv = envVars;
 	_activeScript = script;
 	_scriptNextInstruction = 0;
 	_gameState = kGameStateScript;
@@ -986,13 +1020,21 @@ Common::SharedPtr<Script> Runtime::findScriptForInteraction(uint interactionID) 
 	return nullptr;
 }
 
+void Runtime::detectPanoramaDirections() {
+	_panoramaDirectionFlags = 0;
+
+	if (_havePanAnimations)
+		_panoramaDirectionFlags |= kPanoramaHorizFlags;
+}
+
 void Runtime::onLButtonDown(int16 x, int16 y) {
 	onMouseMove(x, y);
 
 	OSEvent evt;
 	evt.type = kOSEventTypeLButtonDown;
 	evt.pos = Common::Point(x, y);
-	_pendingEvents.push_back(evt);
+
+	queueOSEvent(evt);
 }
 
 void Runtime::onLButtonUp(int16 x, int16 y) {
@@ -1001,21 +1043,24 @@ void Runtime::onLButtonUp(int16 x, int16 y) {
 	OSEvent evt;
 	evt.type = kOSEventTypeLButtonUp;
 	evt.pos = Common::Point(x, y);
-	_pendingEvents.push_back(evt);
+
+	queueOSEvent(evt);
 }
 
 void Runtime::onMouseMove(int16 x, int16 y) {
 	OSEvent evt;
 	evt.type = kOSEventTypeMouseMove;
 	evt.pos = Common::Point(x, y);
-	_pendingEvents.push_back(evt);
+
+	queueOSEvent(evt);
 }
 
 void Runtime::onKeyDown(Common::KeyCode keyCode) {
 	OSEvent evt;
 	evt.type = kOSEventTypeKeyDown;
 	evt.keyCode = keyCode;
-	_pendingEvents.push_back(evt);
+
+	queueOSEvent(evt);
 }
 
 #ifdef CHECK_STACK
@@ -1143,7 +1188,7 @@ void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
 void Runtime::scriptOpSetRoom(ScriptArg_t arg) { error("Unimplemented opcode"); }
 
 void Runtime::scriptOpLMB(ScriptArg_t arg) {
-	if (!_lmbInteractionState)
+	if (!_scriptEnv.lmb)
 		terminateScript();
 }
 
