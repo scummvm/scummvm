@@ -43,12 +43,7 @@ Net::Net(ScummEngine_v90he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) 
 	_broadcastSocket = nullptr;
 
 	_sessionServerAddress = Address {"multiplayer.scummvm.org", 9120};
-	if (ConfMan.hasKey("session_server")) {
-		_sessionServerAddress = getAddressFromString(ConfMan.get("session_server"));
-		// Set port to default if not defined.
-		if (!_sessionServerAddress.port)
-			_sessionServerAddress.port = 9120;
-	}
+	_forcedAddress = false;
 
 	_sessionServerPeer = -1;
 	_sessionServerHost = nullptr;
@@ -104,6 +99,7 @@ Common::String Net::getStringFromAddress(Address address) {
 void Net::setSessionServer(Common::String sessionServer) {
 	debug(1, "Net::setSessionServer(\"%s\")", sessionServer.c_str());
 
+	_forcedAddress = true;
 	ConfMan.setBool("enable_session_server", true);
 	ConfMan.setBool("enable_lan_broadcast", false);
 
@@ -287,6 +283,12 @@ int Net::createSession(char *name) {
 		enableLanBroadcast = ConfMan.getBool("enable_lan_broadcast");
 
 	if (enableSessionServer) {
+		if (!_forcedAddress && ConfMan.hasKey("session_server")) {
+			_sessionServerAddress = getAddressFromString(ConfMan.get("session_server"));
+			// Set port to default if not defined.
+			if (!_sessionServerAddress.port)
+				_sessionServerAddress.port = 9120;
+		}
 		if (_sessionHost->connectPeer(_sessionServerAddress.host, _sessionServerAddress.port)) {
 			// FIXME: Get the IP address of the session server when a domain address is used.
 
@@ -578,6 +580,12 @@ int32 Net::startQuerySessions(bool connectToSessionServer) {
 
 	if (connectToSessionServer && enableSessionServer) {
 		if (!_sessionServerHost) {
+			if (!_forcedAddress && ConfMan.hasKey("session_server")) {
+				_sessionServerAddress = getAddressFromString(ConfMan.get("session_server"));
+				// Set port to default if not defined.
+				if (!_sessionServerAddress.port)
+					_sessionServerAddress.port = 9120;
+			}
 			_sessionServerHost = _enet->connectToHost(_sessionServerAddress.host, _sessionServerAddress.port);
 			if (!_sessionServerHost)
 				warning("Failed to connect to session server!  You'll won't be able to join internet sessions");
