@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	midi/sndio.o \
 	midi/stmidi.o \
 	midi/timidity.o \
+	printing/printman.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	timer/default/default-timer.o

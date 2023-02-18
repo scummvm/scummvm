@@ -37,6 +37,7 @@
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
+#include "backends/printing/printman.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/dlc/store.h"
 
@@ -47,6 +48,7 @@ OSystem::OSystem() {
 	_eventManager = nullptr;
 	_timerManager = nullptr;
 	_savefileManager = nullptr;
+	_printingManager = nullptr;
 #if defined(USE_TASKBAR)
 	_taskbarManager = nullptr;
 #endif
@@ -71,6 +73,9 @@ OSystem::~OSystem() {
 
 	delete _timerManager;
 	_timerManager = nullptr;
+
+	delete _printingManager;
+	_printingManager = nullptr;
 
 #if defined(USE_TASKBAR)
 	delete _taskbarManager;
