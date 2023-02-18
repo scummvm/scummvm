@@ -31,6 +31,7 @@
 #include "scumm/util.h"
 #include "scumm/he/wiz_he.h"
 #include "scumm/he/moonbase/moonbase.h"
+#include "backends/printing/printman.h"
 
 namespace Scumm {
 
@@ -1491,7 +1492,18 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	}
 
 	if (flags & kWIFPrint) {
-		error("WizImage printing is unimplemented");
+		assert(comp == 0);
+
+		uint8 *pal = _vm->findWrappedBlock(MKTAG('R', 'G', 'B', 'S'), dataPtr, state, 0);
+		assert(pal);
+
+		uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
+		assert(wizd);
+
+		PrintingManager *pm=_vm->_system->getPrintingManager();
+		pm->printImage(wizd, pal, width, height);
+
+		return 0;
 	}
 
 	int32 dstPitch, dstType, cw, ch;

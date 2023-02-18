@@ -403,7 +403,7 @@ void ScummEngine_v70he::o70_readINI() {
 	type = pop();
 	switch (type) {
 	case 1: // number
-		if (!strcmp((char *)option, "NoPrinting")) {
+		if (!strcmp((char *)option, "NoPrinting") && !_system->hasFeature(OSystem::Feature::kFeaturePrinting)) {
 			push(1);
 		} else if (!strcmp((char *)option, "TextOn")) {
 			push(ConfMan.getBool("subtitles"));
