@@ -1355,10 +1355,13 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 		ScummOptionsContainerWidget(boss, name, "HENetworkGameOptionsDialog", domain), _gameid(gameid) {
 	Common::String extra = ConfMan.get("extra", domain);
 
-	// TODO: Re-add "Load modded audio" option.
+	// Add back the "Load modded audio" option.
+	const Common::String guiOptionsString = ConfMan.get("guioptions", domain);
+	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
+	if (guiOptions.contains(GUIO_AUDIO_OVERRIDE))
+		_audioOverride = new GUI::CheckboxWidget(widgetsBoss(), "HENetworkGameOptionsDialog.AudioOverride", _("Load modded audio"), _("Replace music, sound effects, and speech clips with modded audio files, if available."));
 
 	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "HENetworkGameOptionsDialog.SessionServerLabel", _("Multiplayer Server:"));
-
 	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
 	if (_gameid == "football" || _gameid == "baseball2001") {
@@ -1381,6 +1384,12 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 }
 
 void HENetworkGameOptionsWidget::load() {
+	if (_audioOverride) {
+		bool audioOverride = true;
+		if (ConfMan.hasKey("audio_override", _domain))
+			audioOverride = ConfMan.getBool("audio_override", _domain);
+		_audioOverride->setState(audioOverride);
+	}
 	if (_gameid == "football" || _gameid == "baseball2001") {
 #ifdef USE_LIBCURL
 		Common::String lobbyServerAddr = "https://multiplayer.scummvm.org:9130";
@@ -1414,6 +1423,8 @@ void HENetworkGameOptionsWidget::load() {
 }
 
 bool HENetworkGameOptionsWidget::save() {
+	if (_audioOverride)
+		ConfMan.setBool("audio_override", _audioOverride->getState(), _domain);
 	if (_gameid == "football" || _gameid == "baseball2001") {
 #ifdef USE_LIBCURL
 		ConfMan.set("lobby_server", _lobbyServerAddr->getEditString(), _domain);
@@ -1433,6 +1444,7 @@ void HENetworkGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Com
 		layouts.addDialog(layoutName, overlayedLayout)
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 5)
 				.addPadding(0, 0, 12, 0)
+				.addWidget("AudioOverride", "Checkbox")
 				.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
 					.addPadding(0, 0, 12, 0)
 					.addWidget("SessionServerLabel", "OptionsLabel")
