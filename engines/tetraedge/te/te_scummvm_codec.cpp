@@ -72,6 +72,11 @@ bool TeScummvmCodec::update(uint i, TeImage &imgout) {
 	if (imgout.w == _loadedSurface->w && imgout.h == _loadedSurface->h && imgout.format == _loadedSurface->format) {
 		imgout.copyFrom(*_loadedSurface);
 		return true;
+	} else if (imgout.w == _loadedSurface->w && imgout.h == _loadedSurface->h) {
+		Graphics::PixelFormat destfmt = imgout.format;
+		imgout.copyFrom(*_loadedSurface);
+		imgout.convertToInPlace(destfmt);
+		return true;
 	}
 
 	error("TODO: Implement TeScummvmCodec::update for different sizes");
