@@ -98,7 +98,7 @@ void Spellbook::draw() {
 		writeString(0, yp, Common::String::format("%c", (i == 9) ? '0' : '1' + i));
 
 		const int spellIndex = _topIndex + i;
-		setTextColor((spellIndex == _selectedIndex) ? 9 : 37);
+		setTextColor((spellIndex == _selectedIndex) ? 15 : 37);
 
 		if (_count == 0) {
 			if (i == 0)
@@ -125,6 +125,42 @@ void Spellbook::draw() {
 }
 
 bool Spellbook::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode >= Common::KEYCODE_0 && msg.keycode <= Common::KEYCODE_9) {
+		int newIndex = _topIndex + (msg.keycode == Common::KEYCODE_0 ?
+			9 : msg.keycode - Common::KEYCODE_1);
+		if (newIndex < _count) {
+			_selectedIndex = newIndex;
+			redraw();
+			return true;
+		}
+
+	} else if (msg.keycode == Common::KEYCODE_PAGEUP) {
+		if (_topIndex > 0) {
+			_topIndex = MAX(_topIndex - 10, 0);
+			redraw();
+			return true;
+		}
+	} else if (msg.keycode == Common::KEYCODE_PAGEDOWN) {
+		int newTopIndex = _topIndex + 10;
+		if (newTopIndex < _count) {
+			_topIndex = newTopIndex;
+			redraw();
+			return true;
+		}
+	} else if (msg.keycode == Common::KEYCODE_UP) {
+		if (_topIndex > 0) {
+			--_topIndex;
+			redraw();
+			return true;
+		}
+	} else if (msg.keycode == Common::KEYCODE_DOWN) {
+		if ((_topIndex + 10) < _count) {
+			++_topIndex;
+			redraw();
+			return true;
+		}
+	}
+
 	return false;
 }
 
