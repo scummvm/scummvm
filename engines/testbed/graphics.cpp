@@ -798,7 +798,7 @@ TestExitStatus GFXtests::maskedCursors() {
 		}
 
 		bool haveInverted = g_system->hasFeature(OSystem::kFeatureCursorMaskInvert);
-		bool haveInvertedColor = g_system->hasFeature(OSystem::kFeatureCursorMaskInvertUsingColor);
+		bool haveColorXorBlend = g_system->hasFeature(OSystem::kFeatureCursorMaskPaletteXorColorXnor);
 
 		// Fill middle column
 		for (int y = 0; y < 16; y++) {
@@ -812,7 +812,7 @@ TestExitStatus GFXtests::maskedCursors() {
 				maskData[(y + 0) * 16 + x + 11] = kCursorMaskTransparent;
 				maskData[(y + 4) * 16 + x + 11] = kCursorMaskOpaque;
 				maskData[(y + 8) * 16 + x + 11] = kCursorMaskInvert;
-				maskData[(y + 12) * 16 + x + 11] = kCursorMaskInvertUsingColor;
+				maskData[(y + 12) * 16 + x + 11] = kCursorMaskPaletteXorColorXnor;
 			}
 		}
 
@@ -823,7 +823,7 @@ TestExitStatus GFXtests::maskedCursors() {
 					maskData[y * 16 + x] = kCursorMaskTransparent;
 		}
 
-		if (!haveInvertedColor) {
+		if (!haveColorXorBlend) {
 			for (int y = 12; y < 16; y++)
 				for (int x = 0; x < 16; x++)
 					maskData[y * 16 + x] = kCursorMaskTransparent;
@@ -868,7 +868,7 @@ TestExitStatus GFXtests::maskedCursors() {
 			}
 		}
 
-		if (!haveInvertedColor) {
+		if (!haveColorXorBlend) {
 			if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'C' inverted according to the color to the left of it?", "Yes", "No", kOptionLeft)) {
 				return kTestFailed;
 			}
@@ -921,7 +921,7 @@ TestExitStatus GFXtests::maskedCursors() {
 				}
 			}
 
-			if (!haveInvertedColor) {
+			if (!haveColorXorBlend) {
 				if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'C' inverted according to the color to the left of it?", "Yes", "No", kOptionLeft)) {
 					return kTestFailed;
 				}
