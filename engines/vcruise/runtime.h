@@ -111,6 +111,7 @@ public:
 	void initSections(Common::Rect gameRect, Common::Rect menuRect, Common::Rect trayRect, const Graphics::PixelFormat &pixFmt);
 
 	void loadCursors(const char *exeName);
+	void setDebugMode(bool debugMode);
 
 	bool runFrame();
 	void drawFrame();
@@ -151,6 +152,24 @@ private:
 		void init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt);
 	};
 
+	enum OSEventType {
+		kOSEventTypeInvalid,
+
+		kOSEventTypeMouseMove,
+		kOSEventTypeLButtonDown,
+		kOSEventTypeLButtonUp,
+
+		kOSEventTypeKeyDown,
+	};
+
+	struct OSEvent {
+		OSEvent();
+
+		OSEventType type;
+		Common::Point pos;
+		Common::KeyCode keyCode;
+	};
+
 	typedef int32 ScriptArg_t;
 	typedef int32 StackValue_t;
 
@@ -158,10 +177,18 @@ private:
 	bool runIdle();
 	bool runScript();
 	bool runWaitForAnimation();
+	void continuePlayingAnimation(bool loop, bool &outEndedAnimation);
+	void drawSectionToScreen(const RenderSection &section, const Common::Rect &rect);
+	void commitSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void terminateScript();
+
+	bool popOSEvent(OSEvent &evt);
 
 	void loadIndex();
 	void changeToScreen(uint roomNumber, uint screenNumber);
+	void returnToIdleState();
+	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
+	void dischargeIdleMouseMove();
 	void loadMap(Common::SeekableReadStream *stream);
 
 	void changeMusicTrack(int musicID);
@@ -169,11 +196,16 @@ private:
 
 	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
 
-	void activateScript(const Common::SharedPtr<Script> &script);
+	void activateScript(const Common::SharedPtr<Script> &script, bool lmbInteractionState);
 
 	bool parseIndexDef(TextParser &parser, IndexParseType parseType, uint roomNumber, const Common::String &blamePath);
 	void allocateRoomsUpTo(uint roomNumber);
 
+	void drawDebugOverlay();
+
+	Common::SharedPtr<Script> findScriptForInteraction(uint interactionID) const;
+
+	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
 	void scriptOpRotate(ScriptArg_t arg);
 	void scriptOpAngle(ScriptArg_t arg);
@@ -249,6 +281,8 @@ private:
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursors;		// Cursors indexed as CURSOR_CUR_##
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursorsShort;	// Cursors indexed as CURSOR_#
 
+	Common::HashMap<Common::String, StackValue_t> _namedCursors;
+
 	OSystem *_system;
 	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
 	uint _screenNumber;
@@ -269,9 +303,12 @@ private:
 	uint _loadedRoomNumber;
 	uint _activeScreenNumber;
 	bool _havePendingScreenChange;
+	bool _havePendingReturnToIdleState;
 	GameState _gameState;
 
 	bool _escOn;
+	bool _lmbInteractionState;
+	bool _debugMode;
 
 	VCruiseGameID _gameID;
 
@@ -292,19 +329,31 @@ private:
 
 	Common::SharedPtr<Video::AVIDecoder> _animDecoder;
 	AnimDecoderState _animDecoderState;
-	uint _animFrameNumber;
+	uint _animPendingDecodeFrame;
+	uint _animDisplayingFrame;
+	uint _animFirstFrame;
 	uint _animLastFrame;
 	uint _loadedAnimation;
+	bool _animPlayWhileIdle;
+
+	bool _idleIsOnInteraction;
+	uint _idleInteractionID;
 
 	Audio::Mixer *_mixer;
 
 	MapDef _map;
 
 	RenderSection _gameSection;
+	RenderSection _gameDebugBackBuffer;
 	RenderSection _menuSection;
 	RenderSection _traySection;
 
+	Common::Point _mousePos;
+	Common::Array<OSEvent> _pendingEvents;
+
 	static const uint kAnimDefStackArgs = 3;
+
+	static const uint kCursorArrow = 0;
 };
 
 } // End of namespace VCruise

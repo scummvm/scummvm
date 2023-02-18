@@ -25,6 +25,8 @@
 #include "common/stream.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/wincursor.h"
 #include "graphics/managed_surface.h"
 
@@ -71,10 +73,16 @@ void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics:
 	surf->fillRect(Common::Rect(0, 0, surf->w, surf->h), 0xffffffff);
 }
 
+Runtime::OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)) {
+}
+
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
-	  _gameState(kGameStateBoot), _gameID(gameID), _rootFSNode(rootFSNode), _havePendingScreenChange(false), _scriptNextInstruction(0),
-	  _escOn(false), _loadedAnimation(0), _animFrameNumber(0), _animLastFrame(0), _animDecoderState(kAnimDecoderStateStopped) {
+	  _gameState(kGameStateBoot), _gameID(gameID), _rootFSNode(rootFSNode), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _scriptNextInstruction(0),
+	  _escOn(false), _lmbInteractionState(false), _debugMode(false),
+	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animDecoderState(kAnimDecoderStateStopped),
+	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleInteractionID(0) {
 
 	for (uint i = 0; i < kNumDirections; i++)
 		_haveIdleAnimations[i] = false;
@@ -140,6 +148,24 @@ void Runtime::loadCursors(const char *exeName) {
 			}
 		}
 	}
+
+	if (_gameID == GID_REAH) {
+		_namedCursors["CUR_TYL"] = 13;		// Tyl = back
+		//_namedCursors["CUR_NIC"] = ?		// Nic = nothing
+		//_namedCursors["CUR_WEZ"] = 50		// Wez = call? FIXME
+		_namedCursors["CUR_LUPA"] = 21;		// Lupa = magnifier, could be 36 too?
+		_namedCursors["CUR_NAC"] = 35;		// Nac = top?  Not sure.  But this is the finger pointer.
+		_namedCursors["CUR_PRZOD"] = 1;		// Przod = forward
+
+		// CUR_ZOSTAW is in the executable memory but appears to be unused
+	}
+}
+
+void Runtime::setDebugMode(bool debugMode) {
+	if (debugMode) {
+		_debugMode = true;
+		_gameDebugBackBuffer.init(_gameSection.rect, _gameSection.surf->format);
+	}
 }
 
 bool Runtime::runFrame() {
@@ -167,6 +193,9 @@ bool Runtime::runFrame() {
 		}
 	}
 
+	// Discard any unconsumed OS events
+	_pendingEvents.clear();
+
 	return true;
 }
 
@@ -191,17 +220,71 @@ bool Runtime::runIdle() {
 	if (_havePendingScreenChange) {
 		_havePendingScreenChange = false;
 
+		_havePendingReturnToIdleState = true;
+
 		changeToScreen(_roomNumber, _screenNumber);
 		return true;
+	}
+
+	if (_havePendingReturnToIdleState) {
+		_havePendingReturnToIdleState = false;
+
+		returnToIdleState();
+		return true;
+	}
+
+	if (_animPlayWhileIdle) {
+		bool animEnded = false;
+		continuePlayingAnimation(true, animEnded);
+	}
+
+	if (_debugMode)
+		drawDebugOverlay();
+
+	OSEvent osEvent;
+	while (popOSEvent(osEvent)) {
+		if (osEvent.type == kOSEventTypeMouseMove)
+			dischargeIdleMouseMove();
 	}
 
 	return false;
 }
 
 bool Runtime::runWaitForAnimation() {
-	if (!_animDecoder) {
+	bool animEnded = false;
+	continuePlayingAnimation(false, animEnded);
+
+	if (animEnded) {
 		_gameState = kGameStateScript;
 		return true;
+	} else {
+		// Still waiting, check events
+		OSEvent evt;
+		while (popOSEvent(evt)) {
+			if (evt.type == kOSEventTypeKeyDown && evt.keyCode == Common::KEYCODE_ESCAPE) {
+				if (_escOn) {
+					// Terminate the animation
+					if (_animDecoderState == kAnimDecoderStatePlaying) {
+						_animDecoder->pauseVideo(true);
+						_animDecoderState = kAnimDecoderStatePaused;
+					}
+					_gameState = kGameStateScript;
+					return true;
+				}
+			}
+		}
+
+		// Yield
+		return false;
+	}
+}
+
+void Runtime::continuePlayingAnimation(bool loop, bool &outAnimationEnded) {
+	outAnimationEnded = false;
+
+	if (!_animDecoder) {
+		outAnimationEnded = true;
+		return;
 	}
 
 	bool needsFirstFrame = false;
@@ -222,11 +305,26 @@ bool Runtime::runWaitForAnimation() {
 		if (!needNewFrame)
 			break;
 
+		// We check this here for timing reasons: The no-loop case after the draw terminates the animation as soon as the last frame
+		// starts delaying without waiting for the time until the next frame to expire.
+		// The loop check here DOES wait for the time until next frame to expire.
+		if (loop && _animPendingDecodeFrame > _animLastFrame) {
+			if (!_animDecoder->seekToFrame(_animFirstFrame)) {
+				outAnimationEnded = true;
+				return;
+			}
+
+			_animPendingDecodeFrame = _animFirstFrame;
+		}
+
 		const Graphics::Surface *surface = _animDecoder->decodeNextFrame();
 		if (!surface) {
-			_gameState = kGameStateScript;
-			return true;
+			outAnimationEnded = true;
+			return;
 		}
+
+		_animDisplayingFrame = _animPendingDecodeFrame;
+		_animPendingDecodeFrame++;
 
 		Common::Rect copyRect = Common::Rect(0, 0, surface->w, surface->h);
 
@@ -236,20 +334,31 @@ bool Runtime::runWaitForAnimation() {
 
 		if (copyRect.isValidRect() || !copyRect.isEmpty()) {
 			_gameSection.surf->blitFrom(*surface, copyRect, copyRect);
-			_system->copyRectToScreen(_gameSection.surf->getBasePtr(copyRect.left, copyRect.top), _gameSection.surf->pitch, copyRect.left + _gameSection.rect.left, copyRect.top + _gameSection.rect.top, copyRect.width(), copyRect.height());
+			drawSectionToScreen(_gameSection, copyRect);
 		}
 
-		if (_animDecoder->getCurFrame() >= static_cast<int>(_animLastFrame)) {
-			_animDecoder->pauseVideo(true);
-			_animDecoderState = kAnimDecoderStatePaused;
+		if (!loop) {
+			if (_animDisplayingFrame >= static_cast<int>(_animLastFrame)) {
+				_animDecoder->pauseVideo(true);
+				_animDecoderState = kAnimDecoderStatePaused;
 
-			_gameState = kGameStateScript;
-			return true;
+				outAnimationEnded = true;
+				return;
+			}
 		}
 	}
+}
 
-	// Pump and handle events
-	return false;
+void Runtime::drawSectionToScreen(const RenderSection &section, const Common::Rect &rect) {
+	if (_debugMode && (&_gameSection == &section)) {
+		_gameDebugBackBuffer.surf->blitFrom(*section.surf, rect, rect);
+		commitSectionToScreen(_gameDebugBackBuffer, rect);
+	} else
+		commitSectionToScreen(section, rect);
+}
+
+void Runtime::commitSectionToScreen(const RenderSection &section, const Common::Rect &rect) {
+	_system->copyRectToScreen(section.surf->getBasePtr(rect.left, rect.top), section.surf->pitch, rect.left + section.rect.left, rect.top + section.rect.top, rect.width(), rect.height());
 }
 
 #ifdef DISPATCH_OP
@@ -364,6 +473,30 @@ void Runtime::terminateScript() {
 
 	if (_havePendingScreenChange)
 		changeToScreen(_roomNumber, _screenNumber);
+}
+
+bool Runtime::popOSEvent(OSEvent &evt) {
+	OSEvent tempEvent;
+
+	while (_pendingEvents.size() > 0) {
+		tempEvent = _pendingEvents[0];
+		_pendingEvents.remove_at(0);
+
+		// Button events automatically inject a mouse move position
+		if (tempEvent.type == kOSEventTypeMouseMove) {
+			// If this didn't actually change the mouse position, which is common with synthetic mouse events,
+			// discard the event.
+			if (_mousePos == tempEvent.pos)
+				continue;
+
+			_mousePos = tempEvent.pos;
+		}
+
+		evt = tempEvent;
+		return true;
+	}
+
+	return false;
 }
 
 void Runtime::loadIndex() {
@@ -487,7 +620,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 				if (screenScriptIt != screenScriptsMap.end()) {
 					const Common::SharedPtr<Script> &script = screenScriptIt->_value->entryScript;
 					if (script)
-						activateScript(script);
+						activateScript(script, false);
 				}
 			}
 		}
@@ -496,6 +629,63 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 		for (uint i = 0; i < kNumDirections; i++)
 			_haveIdleAnimations[i] = false;
+
+		_havePendingReturnToIdleState = true;
+	}
+}
+
+void Runtime::returnToIdleState() {
+	_animPlayWhileIdle = false;
+
+	if (_haveIdleAnimations[_direction]) {
+		changeAnimation(_idleAnimations[_direction]);
+		_animPlayWhileIdle = true;
+	}
+
+	_idleIsOnInteraction = false;
+
+	changeToCursor(_cursors[kCursorArrow]);
+	dischargeIdleMouseMove();
+}
+
+void Runtime::changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor) {
+	if (!cursor)
+		CursorMan.showMouse(false);
+	else {
+		CursorMan.replaceCursor(cursor->cursors[0].cursor);
+		CursorMan.showMouse(true);
+	}
+}
+
+void Runtime::dischargeIdleMouseMove() {
+	const MapScreenDirectionDef *sdDef = _map.getScreenDirection(_screenNumber, _direction);
+
+	Common::Point relMouse(_mousePos.x - _gameSection.rect.left, _mousePos.y - _gameSection.rect.top);
+
+	bool isOnInteraction = false;
+	uint interactionID = 0;
+	if (sdDef) {
+		for (const InteractionDef &idef : sdDef->interactions) {
+			if (idef.rect.contains(relMouse)) {
+				isOnInteraction = true;
+				interactionID = idef.interactionID;
+				break;
+			}
+		}
+	}
+
+	if (isOnInteraction && (_idleIsOnInteraction == false || interactionID != _idleInteractionID)) {
+		_idleIsOnInteraction = true;
+		_idleInteractionID = interactionID;
+
+		// New interaction, is there a script?
+		Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
+
+		if (script)
+			activateScript(script, false);
+	} else if (!isOnInteraction && _idleIsOnInteraction) {
+		_idleIsOnInteraction = false;
+		changeToCursor(_cursors[kCursorArrow]);
 	}
 }
 
@@ -596,7 +786,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef) {
 	}
 
 	_animDecoder->seekToFrame(animDef.firstFrame);
-	_animFrameNumber = animDef.firstFrame;
+	_animPendingDecodeFrame = animDef.firstFrame;
+	_animFirstFrame = animDef.firstFrame;
 	_animLastFrame = animDef.lastFrame;
 }
 
@@ -609,10 +800,11 @@ AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
 	return def;
 }
 
-void Runtime::activateScript(const Common::SharedPtr<Script> &script) {
+void Runtime::activateScript(const Common::SharedPtr<Script> &script, bool lmbInteractionState) {
 	if (script->instrs.size() == 0)
 		return;
 
+	_lmbInteractionState = false;
 	_activeScript = script;
 	_scriptNextInstruction = 0;
 	_gameState = kGameStateScript;
@@ -738,29 +930,92 @@ void Runtime::allocateRoomsUpTo(uint roomNumber) {
 	}
 }
 
-void Runtime::onLButtonDown(int16 x, int16 y) {
+void Runtime::drawDebugOverlay() {
+	if (!_debugMode)
+		return;
+
+	const Graphics::PixelFormat pixFmt = _gameDebugBackBuffer.surf->format;
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+
+	uint32 whiteColor = pixFmt.ARGBToColor(255, 255, 255, 255);
+	uint32 blackColor = pixFmt.ARGBToColor(255, 0, 0, 0);
+
+	const MapScreenDirectionDef *sdDef = _map.getScreenDirection(_screenNumber, _direction);
+	if (sdDef) {
+		for (const InteractionDef &idef : sdDef->interactions) {
+			Common::Rect rect = idef.rect;
+
+			Common::String label = Common::String::format("0%x", static_cast<int>(idef.interactionID));
+
+			Graphics::ManagedSurface *surf = _gameDebugBackBuffer.surf.get();
+
+			if (font) {
+				Common::Point pt = Common::Point(rect.left + 2, rect.top + 2);
+
+				font->drawString(surf, label, pt.x + 1, pt.y + 1, rect.width(), blackColor);
+				font->drawString(surf, label, pt.x, pt.y, rect.width(), whiteColor);
+			}
+
+			surf->frameRect(Common::Rect(rect.left + 1, rect.top + 1, rect.right + 1, rect.bottom + 1), blackColor);
+			surf->frameRect(rect, whiteColor);
+		}
+	}
+
+	commitSectionToScreen(_gameDebugBackBuffer, Common::Rect(0, 0, _gameDebugBackBuffer.rect.width(), _gameDebugBackBuffer.rect.height()));
 }
 
-void Runtime::onLButtonUp(int16 x, int16 y) {
-}
+Common::SharedPtr<Script> Runtime::findScriptForInteraction(uint interactionID) const {
+	if (_scriptSet) {
+		Common::HashMap<uint, Common::SharedPtr<RoomScriptSet> >::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
 
-void Runtime::onMouseMove(int16 x, int16 y) {
-}
+		if (roomScriptIt != _scriptSet->roomScripts.end()) {
+			const RoomScriptSet &roomScriptSet = *roomScriptIt->_value;
 
-void Runtime::onKeyDown(Common::KeyCode keyCode) {
-	if (keyCode == Common::KEYCODE_ESCAPE) {
-		if (_gameState == kGameStateWaitingForAnimation) {
-			if (_escOn) {
-				// Terminate the animation
-				if (_animDecoderState == kAnimDecoderStatePlaying) {
-					_animDecoder->pauseVideo(true);
-					_animDecoderState = kAnimDecoderStatePaused;
-				}
-				_gameState = kGameStateScript;
-				return;
+			Common::HashMap<uint, Common::SharedPtr<ScreenScriptSet> >::const_iterator screenScriptIt = roomScriptSet.screenScripts.find(_screenNumber);
+			if (screenScriptIt != roomScriptSet.screenScripts.end()) {
+				const ScreenScriptSet &screenScriptSet = *screenScriptIt->_value;
+
+				Common::HashMap<uint, Common::SharedPtr<Script> >::const_iterator interactionScriptIt = screenScriptSet.interactionScripts.find(interactionID);
+				if (interactionScriptIt != screenScriptSet.interactionScripts.end())
+					return interactionScriptIt->_value;
 			}
 		}
 	}
+
+	return nullptr;
+}
+
+void Runtime::onLButtonDown(int16 x, int16 y) {
+	onMouseMove(x, y);
+
+	OSEvent evt;
+	evt.type = kOSEventTypeLButtonDown;
+	evt.pos = Common::Point(x, y);
+	_pendingEvents.push_back(evt);
+}
+
+void Runtime::onLButtonUp(int16 x, int16 y) {
+	onMouseMove(x, y);
+
+	OSEvent evt;
+	evt.type = kOSEventTypeLButtonUp;
+	evt.pos = Common::Point(x, y);
+	_pendingEvents.push_back(evt);
+}
+
+void Runtime::onMouseMove(int16 x, int16 y) {
+	OSEvent evt;
+	evt.type = kOSEventTypeMouseMove;
+	evt.pos = Common::Point(x, y);
+	_pendingEvents.push_back(evt);
+}
+
+void Runtime::onKeyDown(Common::KeyCode keyCode) {
+	OSEvent evt;
+	evt.type = kOSEventTypeKeyDown;
+	evt.keyCode = keyCode;
+	_pendingEvents.push_back(evt);
 }
 
 #ifdef CHECK_STACK
@@ -836,7 +1091,7 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 
 	changeAnimation(animDef);
 
-	_gameState = kGameStateWaitingForAnimation;	// FIXME
+	_gameState = kGameStateWaitingForAnimation;
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
 	_direction = stackArgs[kAnimDefStackArgs + 1];
 	_havePendingScreenChange = true;
@@ -876,9 +1131,22 @@ void Runtime::scriptOpVarStore(ScriptArg_t arg) {
 	_variables[varID] = stackArgs[0];
 }
 
-void Runtime::scriptOpSetCursor(ScriptArg_t arg) { error("Unimplemented opcode"); }
+void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	if (stackArgs[0] < 0 || static_cast<uint>(stackArgs[0]) >= _cursors.size())
+		error("Invalid cursor ID");
+
+	changeToCursor(_cursors[stackArgs[0]]);
+}
+
 void Runtime::scriptOpSetRoom(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpLMB(ScriptArg_t arg) { error("Unimplemented opcode"); }
+
+void Runtime::scriptOpLMB(ScriptArg_t arg) {
+	if (!_lmbInteractionState)
+		terminateScript();
+}
+
 void Runtime::scriptOpLMB1(ScriptArg_t arg) { error("Unimplemented opcode"); }
 void Runtime::scriptOpSoundS1(ScriptArg_t arg) { error("Unimplemented opcode"); }
 
@@ -1050,7 +1318,17 @@ void Runtime::scriptOpSoundName(ScriptArg_t arg) {
 	_scriptStack.push_back(soundID);
 }
 
-void Runtime::scriptOpCursorName(ScriptArg_t arg) { error("Unimplemented opcode"); }
+void Runtime::scriptOpCursorName(ScriptArg_t arg) {
+	const Common::String &cursorName = _scriptSet->strings[arg];
+
+	Common::HashMap<Common::String, StackValue_t>::const_iterator namedCursorIt = _namedCursors.find(cursorName);
+	if (namedCursorIt == _namedCursors.end()) {
+		error("Unimplemented cursor name '%s'", cursorName.c_str());
+		return;
+	}
+
+	_scriptStack.push_back(namedCursorIt->_value);
+}
 
 void Runtime::scriptOpCheckValue(ScriptArg_t arg) {
 	PEEK_STACK(1);

@@ -132,6 +132,10 @@ Common::Error VCruiseEngine::run() {
 
 	_runtime->loadCursors(exeName);
 
+	if (ConfMan.getBool("vcruise_debug")) {
+		_runtime->setDebugMode(true);
+	}
+
 	// Run the game
 	while (!shouldQuit()) {
 		handleEvents();
