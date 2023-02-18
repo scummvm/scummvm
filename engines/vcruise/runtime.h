@@ -103,6 +103,12 @@ struct MapDef {
 	const MapScreenDirectionDef *getScreenDirection(uint screen, uint direction);
 };
 
+struct ScriptEnvironmentVars {
+	ScriptEnvironmentVars();
+
+	bool lmb;
+};
+
 class Runtime {
 public:
 	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
@@ -162,12 +168,21 @@ private:
 		kOSEventTypeKeyDown,
 	};
 
+	enum PanoramaState {
+		kPanoramaStateInactive,
+		kPanoramaStatePanningLeft,
+		kPanoramaStatePanningRight,
+		kPanoramaStatePanningUp,
+		kPanoramaStatePanningDown,
+	};
+
 	struct OSEvent {
 		OSEvent();
 
 		OSEventType type;
 		Common::Point pos;
 		Common::KeyCode keyCode;
+		uint32 timestamp;
 	};
 
 	typedef int32 ScriptArg_t;
@@ -183,6 +198,7 @@ private:
 	void terminateScript();
 
 	bool popOSEvent(OSEvent &evt);
+	void queueOSEvent(const OSEvent &evt);
 
 	void loadIndex();
 	void changeToScreen(uint roomNumber, uint screenNumber);
@@ -196,7 +212,7 @@ private:
 
 	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
 
-	void activateScript(const Common::SharedPtr<Script> &script, bool lmbInteractionState);
+	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
 
 	bool parseIndexDef(TextParser &parser, IndexParseType parseType, uint roomNumber, const Common::String &blamePath);
 	void allocateRoomsUpTo(uint roomNumber);
@@ -204,6 +220,7 @@ private:
 	void drawDebugOverlay();
 
 	Common::SharedPtr<Script> findScriptForInteraction(uint interactionID) const;
+	void detectPanoramaDirections();
 
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
@@ -298,7 +315,17 @@ private:
 	Common::HashMap<uint32, int32> _variables;
 
 	static const uint kPanLeftInteraction = 1;
+	static const uint kPanDownInteraction = 2;
 	static const uint kPanRightInteraction = 3;
+	static const uint kPanUpInteraction = 4;
+
+	static const uint kPanoramaLeftFlag = 1;
+	static const uint kPanoramaRightFlag = 2;
+	static const uint kPanoramaUpFlag = 4;
+	static const uint kPanoramaDownFlag = 8;
+	static const uint kPanoramaHorizFlags = (kPanoramaLeftFlag | kPanoramaRightFlag);
+
+	uint _panoramaDirectionFlags;
 
 	uint _loadedRoomNumber;
 	uint _activeScreenNumber;
@@ -307,7 +334,6 @@ private:
 	GameState _gameState;
 
 	bool _escOn;
-	bool _lmbInteractionState;
 	bool _debugMode;
 
 	VCruiseGameID _gameID;
@@ -324,6 +350,7 @@ private:
 	Common::SharedPtr<Script> _activeScript;
 	uint _scriptNextInstruction;
 	Common::Array<StackValue_t> _scriptStack;
+	ScriptEnvironmentVars _scriptEnv;
 
 	Common::SharedPtr<AudioPlayer> _musicPlayer;
 
@@ -349,6 +376,11 @@ private:
 	RenderSection _traySection;
 
 	Common::Point _mousePos;
+	Common::Point _lmbDownPos;
+	uint32 _lmbDownTime;
+	bool _lmbDown;
+	bool _lmbDragging;
+
 	Common::Array<OSEvent> _pendingEvents;
 
 	static const uint kAnimDefStackArgs = 3;
