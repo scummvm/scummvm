@@ -510,6 +510,7 @@ enhdialogs:
 		spell_points: "Spell Pts"
 		select: "Select"
 		exit: "Exit"
+		non_caster: "Not a spell caster..."
 	temple:
 		title: "temple"
 		heal: "\x01""37heal"

@@ -37,6 +37,9 @@ namespace Spells {
 class Spellbook : public ScrollView, public MM1::Game::SpellCasting {
 private:
 	Shared::Xeen::SpriteResource _scrollSprites;
+	bool _isWizard;
+	int _topIndex = 0, _count = 0;
+	int _selectedIndex = -1;
 
 	/**
 	 * Loads buttons for the dialog
@@ -52,11 +55,6 @@ private:
 	 * Called when character is changed
 	 */
 	void updateChar();
-
-	/**
-	 * Updates the data for the displayed spell
-	 */
-	void updateSelectedSpell();
 
 public:
 	Spellbook();

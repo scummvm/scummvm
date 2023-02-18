@@ -36,7 +36,7 @@ void Spellbook::addButtons() {
 	_scrollSprites.load("scroll.icn");
 	addButton(&g_globals->_mainIcons, Common::Point(187, 26), 0, Common::KEYCODE_UP);
 	addButton(&g_globals->_mainIcons, Common::Point(187, 111), 2, Common::KEYCODE_DOWN);
-	addButton(&_scrollSprites, Common::Point(90, 109), 5, KEYBIND_SELECT);
+	addButton(&_scrollSprites, Common::Point(100, 109), 5, KEYBIND_SELECT);
 
 	addButton(Common::Rect(40, 28, 187, 36), Common::KEYCODE_1);
 	addButton(Common::Rect(40, 37, 187, 45), Common::KEYCODE_2);
@@ -55,7 +55,7 @@ void Spellbook::addButtons() {
 }
 
 bool Spellbook::msgFocus(const FocusMessage &msg) {
-	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	updateChar();
 	return true;
 }
@@ -63,8 +63,6 @@ bool Spellbook::msgFocus(const FocusMessage &msg) {
 bool Spellbook::msgUnfocus(const UnfocusMessage &msg) {
 	// Turn off highlight for selected character
 	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)false));
-
-	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	return true;
 }
 
@@ -92,12 +90,38 @@ void Spellbook::draw() {
 		STRING["enhdialogs.spellbook.spell_points"].c_str(), c._sp._current);
 	writeString(7, 111, sp);
 
-	// Write line numbers 1 to 0 on left edge
+	// Iterate over the lines
 	for (int i = 0; i < 10; ++i) {
-		writeString(0, 15 + 9 * i,
-			Common::String::format("%c", (i == 9) ? '0' : '1' + i));
-	}
+		// Left gutter row number
+		setTextColor(0);
+		const int yp = 15 + 9 * i;
+		writeString(0, yp, Common::String::format("%c", (i == 9) ? '0' : '1' + i));
 
+		const int spellIndex = _topIndex + i;
+		setTextColor((spellIndex == _selectedIndex) ? 9 : 37);
+
+		if (_count == 0) {
+			if (i == 0)
+				writeString(12, yp, STRING["enhdialogs.spellbook.non_caster"]);
+
+		} else if (spellIndex < _count) {
+			// Spell name
+			Common::String spellName = STRING[Common::String::format(
+				"spells.%s.%d",
+				_isWizard ? "wizard" : "cleric",
+				spellIndex
+			)];
+			writeString(12, yp, spellName);
+
+			// Spell requirements
+			int lvl, num;
+			getSpellLevelNum(47 * (_isWizard ? 1 : 0) + spellIndex, lvl, num);
+			setSpell(g_globals->_currCharacter, lvl, num);
+
+			writeString(152, yp, Common::String::format("%d/%d",
+				_requiredSp, _requiredGems), ALIGN_RIGHT);
+		}
+	}
 }
 
 bool Spellbook::msgKeypress(const KeypressMessage &msg) {
@@ -134,29 +158,22 @@ void Spellbook::updateChar() {
 	// Update the highlighted char in the party display
 	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
 
+	// Update fields
+	const Character &c = *g_globals->_currCharacter;
+	_selectedIndex = (g_events->isInCombat() ? c._combatSpell : c._nonCombatSpell) % 47;
+	if (_selectedIndex == -1)
+		_selectedIndex = 0;
+	_topIndex = (_selectedIndex / 10) * 10;
+
+	if (c._spellLevel._current == 0) {
+		_count = 0;
+	} else {
+		_count = (c._spellLevel._current < 5) ?
+			c._spellLevel * 8 - 1 : 31 + (c._spellLevel - 4) * 5;
+	}
+
 	// And finally, update the display
 	redraw();
-}
-
-void selectedCharChanged() {
-
-}
-
-void Spellbook::updateSelectedSpell() {
-	/*
-	const Character &c = *g_globals->_currCharacter;
-
-	if (c._nonCombatSpell == -1) {
-		_requiredSp = _requiredGems = 0;
-
-	} else {
-		int lvl, num;
-		getSpellLevelNum(c._nonCombatSpell, lvl, num);
-		assert(getSpellIndex(&c, lvl, num) == c._nonCombatSpell);
-
-		setSpell(&c, lvl, num);
-	}
-	*/
 }
 
 } // namespace Spells
