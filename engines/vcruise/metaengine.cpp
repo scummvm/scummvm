@@ -33,14 +33,19 @@ struct Surface;
 namespace VCruise {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{GAMEOPTION_LAUNCH_DEBUG,
-	 {_s("Start with debugger"),
-	  _s("Starts with the debugger dashboard active."),
-	  "vcruise_debug",
-	  false,
-	  0,
-	  0}},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR};
+	{
+		GAMEOPTION_LAUNCH_DEBUG,
+		{
+			_s("Start with debugger"),
+			_s("Starts with the debugger dashboard active."),
+			"vcruise_debug",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 } // End of namespace VCruise
 
