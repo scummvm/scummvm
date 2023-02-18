@@ -320,6 +320,7 @@ void ScriptCompiler::compileScreenScriptSet(ScreenScriptSet *sss) {
 			codeGenScript(protoScript, *currentScript);
 
 			currentScript.reset(new Script());
+			protoScript.reset();
 
 			sss->interactionScripts[interactionNumber] = currentScript;
 		} else if (compileInstructionToken(protoScript, token)) {
