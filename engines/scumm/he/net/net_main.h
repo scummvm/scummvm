@@ -120,6 +120,14 @@ public:
 	int _latencyTime; // ms
 	bool _fakeLatency;
 
+	bool _isHost;  // true = hosting game, false = joined game.
+
+	int _myUserId;
+	int _fromUserId;
+
+	int _sessionId; // Session ID received from the session server.
+
+private:
 	ScummEngine_v90he *_vm;
 
 	Common::String _gameName;
@@ -138,14 +146,9 @@ public:
 	Common::HashMap<int, Common::String> _userIdToAddress;
 	Common::HashMap<Common::String, int> _addressToUserId;
 
-	int _myUserId;
-	int _fromUserId;
-
-	int _sessionId; // Session ID received from the session server.
 	Common::String _sessionName;
 	Networking::Host *_sessionHost;
 
-	bool _isHost;  // true = hosting game, false = joined game.
 	bool _isShuttingDown;
 
 	Common::Queue<Common::JSONValue *> _hostDataQueue;
