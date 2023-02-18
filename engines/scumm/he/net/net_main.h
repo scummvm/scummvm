@@ -160,6 +160,7 @@ public:
 	// For creating/joining sessions over the Internet.
 	Networking::Host *_sessionServerHost;
 	Address _sessionServerAddress;
+	bool _forcedAddress;
 	bool _gotSessions;
 	int _sessionServerPeer;
 	bool _isRelayingGame; // If we're relaying in-game data over the session server or not.
