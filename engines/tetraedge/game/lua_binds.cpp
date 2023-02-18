@@ -2481,6 +2481,35 @@ static int tolua_ExportedFunctions_PlayRandomAnimation00(lua_State *L) {
 	error("#ferror in function 'PlayRandomAnimation': %d %d %s", err.index, err.array, err.type);
 }
 
+static int tolua_ExportedFunctions_PlaySmoke00(lua_State *L) {
+	// This exists in the game, but does nothing.
+	return 0;
+}
+
+static int tolua_ExportedFunctions_SmokeVisible00(lua_State *L) {
+	// This exists in the game, but does nothing.
+	return 0;
+}
+
+static int tolua_ExportedFunctions_PlaySnow00(lua_State *L) {
+	// This exists in the game, but does nothing.
+	return 0;
+}
+
+static int tolua_ExportedFunctions_PlaySnowCustom00(lua_State *L) {
+	// This exists in the game, but does nothing.
+	return 0;
+}
+
+static int tolua_ExportedFunctions_SnowCustomVisible00(lua_State *L) {
+	// This exists in the game, but does nothing.
+	return 0;
+}
+
+static int tolua_ExportedFunctions_RemoveRandomSound00(lua_State *L) {
+	// This exists in the game, but does nothing.
+	return 0;
+}
 
 // Not your imagination, the implementation of these two is quite different to the others.
 static int tolua_GetParticleIndex(lua_State *L) {
@@ -2669,16 +2698,16 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "SetYoukiFollowKate", tolua_ExportedFunctions_SetYoukiFollowKate00);
 	tolua_function(L, "AddRandomAnimation", tolua_ExportedFunctions_AddRandomAnimation00);
 	tolua_function(L, "PlayRandomAnimation", tolua_ExportedFunctions_PlayRandomAnimation00);
+	tolua_function(L, "PlaySmoke", tolua_ExportedFunctions_PlaySmoke00);
+	tolua_function(L, "SmokeVisible", tolua_ExportedFunctions_SmokeVisible00);
+	tolua_function(L, "PlaySnow", tolua_ExportedFunctions_PlaySnow00);
+	tolua_function(L, "PlaySnowCustom", tolua_ExportedFunctions_PlaySnowCustom00);
+	tolua_function(L, "SnowCustomVisible", tolua_ExportedFunctions_SnowCustomVisible00);
+	tolua_function(L, "RemoveRandomSound", tolua_ExportedFunctions_RemoveRandomSound00);
 	tolua_function(L, "GetParticleIndex", tolua_GetParticleIndex);
 	tolua_function(L, "EnableParticle", tolua_EnableParticle);
 
 	// TODO Syberia 2 functions..
-	//tolua_function(L, "PlaySnow", tolua_ExportedFunctions_PlaySnow00);
-	//tolua_function(L, "PlaySnowCustom", tolua_ExportedFunctions_PlaySnowCustom00);
-	//tolua_function(L, "SnowCustomVisible", tolua_ExportedFunctions_SnowCustomVisible00);
-	//tolua_function(L, "RemoveRandomSound", tolua_ExportedFunctions_RemoveRandomSound00);
-	//tolua_function(L, "PlaySmoke", tolua_ExportedFunctions_PlaySmoke00);
-	//tolua_function(L, "SmokeVisible", tolua_ExportedFunctions_SmokeVisible00);
 	//tolua_function(L, "PlayVerticalScrolling", tolua_ExportedFunctions_PlayVerticalScrolling00);
 
 	tolua_endmodule(L);
