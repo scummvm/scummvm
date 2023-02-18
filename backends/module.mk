@@ -25,7 +25,8 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
-	timer/default/default-timer.o
+	timer/default/default-timer.o \
+	printing/printman.o 
 
 ifdef USE_CLOUD
 
