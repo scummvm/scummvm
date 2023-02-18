@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "backends/networking/curl/socket.h"
 #include "common/debug.h"
+#include "common/system.h"
 #include <curl/curl.h>
 
 // Auxiliary function that waits on the socket.
@@ -106,9 +107,13 @@ size_t CurlSocket::send(const char *data, int len) {
 	// or times out.
 	while (((left > 0) && (len > 0))) {
 		size_t nsent = 0;
+		uint32 tickCount = g_system->getMillis() + 5000;
 		while (res == CURLE_AGAIN) {
-			// TODO: Time out if it takes too long.
 			res = curl_easy_send(_easy, data + nsent_total, left - nsent_total, &nsent);
+			if (g_system->getMillis() >= tickCount) {
+				warning("libcurl: Took too long attempting to send data to socket");
+				return nsent;
+			}
 		}
 		if (res == CURLE_OK) {
 			nsent_total += nsent;
@@ -125,13 +130,17 @@ size_t CurlSocket::send(const char *data, int len) {
 size_t CurlSocket::recv(void *data, int maxLen) {
 	size_t nread = 0;
 	CURLcode res = CURLE_AGAIN;
+	uint32 tickCount = g_system->getMillis() + 5000;
 	while (res == CURLE_AGAIN) {
-		// TODO: Time out if it takes too long.
 		res = curl_easy_recv(_easy, data, maxLen, &nread);
+		if (g_system->getMillis() >= tickCount) {
+			warning("libcurl: Took too long attempting to read data from socket");
+			return nread;
+		}
 	}
 	if(res != CURLE_OK) {
 		warning("libcurl Error on receiving data: %s\n", curl_easy_strerror(res));
-		return -1;
+		return nread;
 	}
 
 	debug(1, "libcurl: Received %lu bytes", (uint64)nread);
