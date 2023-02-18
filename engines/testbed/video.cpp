@@ -22,6 +22,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 #include "video/qt_decoder.h"
+#include "video/qt_data.h"
 
 #include "testbed/testbed.h"
 #include "graphics/palette.h"
@@ -30,15 +31,6 @@ namespace Testbed {
 
 void TestbedEngine::videoTest() {
 	Graphics::PixelFormat pixelformat = Graphics::PixelFormat::createFormatCLUT8();
-	byte palette[768];
-
-	for (int i = 0; i < 256; i++) {
-		palette[i * 3 + 0] = i;
-		palette[i * 3 + 1] = i;
-		palette[i * 3 + 2] = i;
-	}
-
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	initGraphics(640, 480, &pixelformat);
 
 	Common::String path = ConfMan.get("start_movie");
@@ -49,6 +41,13 @@ void TestbedEngine::videoTest() {
 		warning("Cannot open video %s", path.c_str());
 		return;
 	}
+
+	const byte *palette = video->getPalette();
+
+	if (!palette) {
+		palette = Video::quickTimeDefaultPalette256;
+	}
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	video->start();
 
