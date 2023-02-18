@@ -36,10 +36,22 @@ namespace Spells {
  */
 class Spellbook : public ScrollView, public MM1::Game::SpellCasting {
 private:
+	Shared::Xeen::SpriteResource _scrollSprites;
+
+	/**
+	 * Loads buttons for the dialog
+	 */
+	void addButtons();
+
+	/**
+	 * Selects a new character to show spellbook for
+	 */
+	void selectChar(uint charNum);
+
 	/**
 	 * Called when character is changed
 	 */
-	void selectChar(uint charNum);
+	void updateChar();
 
 	/**
 	 * Updates the data for the displayed spell

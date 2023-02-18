@@ -507,7 +507,7 @@ enhdialogs:
 			cond: "Cond"
 	spellbook:
 		title: "Spells for"
-		spell_pts: "Spell Pts - "
+		spell_points: "Spell Pts"
 		select: "Select"
 		exit: "Exit"
 	temple:

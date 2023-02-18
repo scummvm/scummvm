@@ -28,12 +28,35 @@ namespace ViewsEnh {
 namespace Spells {
 
 Spellbook::Spellbook() : ScrollView("Spellbook") {
-	_bounds = Common::Rect(27, 6, 195, 142);
+	_bounds = Common::Rect(27, 6, 208, 142);
+	addButtons();
+}
+
+void Spellbook::addButtons() {
+	_scrollSprites.load("scroll.icn");
+	addButton(&g_globals->_mainIcons, Common::Point(187, 26), 0, Common::KEYCODE_UP);
+	addButton(&g_globals->_mainIcons, Common::Point(187, 111), 2, Common::KEYCODE_DOWN);
+	addButton(&_scrollSprites, Common::Point(90, 109), 5, KEYBIND_SELECT);
+
+	addButton(Common::Rect(40, 28, 187, 36), Common::KEYCODE_1);
+	addButton(Common::Rect(40, 37, 187, 45), Common::KEYCODE_2);
+	addButton(Common::Rect(40, 46, 187, 54), Common::KEYCODE_3);
+	addButton(Common::Rect(40, 55, 187, 63), Common::KEYCODE_4);
+	addButton(Common::Rect(40, 64, 187, 72), Common::KEYCODE_5);
+	addButton(Common::Rect(40, 73, 187, 81), Common::KEYCODE_6);
+	addButton(Common::Rect(40, 82, 187, 90), Common::KEYCODE_7);
+	addButton(Common::Rect(40, 91, 187, 99), Common::KEYCODE_8);
+	addButton(Common::Rect(40, 100, 187, 108), Common::KEYCODE_9);
+	addButton(Common::Rect(40, 109, 187, 117), Common::KEYCODE_0);
+	addButton(Common::Rect(174, 123, 198, 133), Common::KEYCODE_ESCAPE);
+	addButton(Common::Rect(187, 35, 198, 73), Common::KEYCODE_PAGEUP);
+	addButton(Common::Rect(187, 74, 198, 112), Common::KEYCODE_PAGEDOWN);
+	addButton(Common::Rect(132, 123, 168, 133), Common::KEYCODE_s);
 }
 
 bool Spellbook::msgFocus(const FocusMessage &msg) {
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
+	updateChar();
 	return true;
 }
 
@@ -47,14 +70,34 @@ bool Spellbook::msgUnfocus(const UnfocusMessage &msg) {
 
 void Spellbook::draw() {
 	ScrollView::draw();
+
+	Graphics::ManagedSurface s = getSurface();
 	const Character &c = *g_globals->_currCharacter;
 
+	// Draw the scrolling area frame
+	_scrollSprites.draw(&s, 4, Common::Point(14, 20));
+	_scrollSprites.draw(&s, 0, Common::Point(162, 20));
+	_scrollSprites.draw(&s, 2, Common::Point(162, 105));
+
+	// Title line
 	_fontReduced = true;
 	Common::String title = Common::String::format("%s %s",
 		STRING["enhdialogs.spellbook.title"].c_str(),
 		c._name
 	);
 	writeString(0, 0, title, ALIGN_MIDDLE);
+
+	// Write current spell points
+	Common::String sp = Common::String::format("%s - %d",
+		STRING["enhdialogs.spellbook.spell_points"].c_str(), c._sp._current);
+	writeString(7, 111, sp);
+
+	// Write line numbers 1 to 0 on left edge
+	for (int i = 0; i < 10; ++i) {
+		writeString(0, 15 + 9 * i,
+			Common::String::format("%c", (i == 9) ? '0' : '1' + i));
+	}
+
 }
 
 bool Spellbook::msgKeypress(const KeypressMessage &msg) {
@@ -81,7 +124,10 @@ bool Spellbook::msgAction(const ActionMessage &msg) {
 void Spellbook::selectChar(uint charNum) {
 	assert(!g_events->isInCombat());
 	g_globals->_currCharacter = &g_globals->_party[charNum];
+	updateChar();
+}
 
+void Spellbook::updateChar() {
 	// Refresh the cast spell side dialog for new character
 	send("CastSpell", GameMessage("UPDATE"));
 

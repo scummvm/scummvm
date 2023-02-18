@@ -29,24 +29,34 @@ namespace MM1 {
 namespace ViewsEnh {
 
 #define FRAME_BORDER_SIZE 8
+#define GLYPH_W 16
+#define GLYPH_H 16
 
 class ScrollView : public TextView {
 	struct Button {
 		Shared::Xeen::SpriteResource *_sprites;
-		Common::Point _pos;
-		int _frame;
+		Common::Rect _bounds;
+		int _frame = -1;
 		Common::KeyState _key;
 		KeybindingAction _action = KEYBIND_NONE;
 
 		Button(Shared::Xeen::SpriteResource *sprites,
 			const Common::Point &pos, int frame,
 			const Common::KeyState &key) :
-			_sprites(sprites), _pos(pos), _frame(frame), _key(key) {
+			_sprites(sprites), _frame(frame), _key(key),
+			_bounds(Common::Rect(pos.x, pos.y, pos.x + GLYPH_W, pos.y + GLYPH_H)) {
 		}
 		Button(Shared::Xeen::SpriteResource *sprites,
 			const Common::Point &pos, int frame,
 			KeybindingAction action) :
-			_sprites(sprites), _pos(pos), _frame(frame), _action(action) {
+			_sprites(sprites), _frame(frame), _action(action),
+			_bounds(Common::Rect(pos.x, pos.y, pos.x + GLYPH_W, pos.y + GLYPH_H)) {
+		}
+		Button(const Common::Rect &r, const Common::KeyState &key) :
+			_sprites(nullptr), _bounds(r), _key(key) {
+		}
+		Button(const Common::Rect &r, const KeybindingAction action) :
+			_sprites(nullptr), _bounds(r), _action(action) {
 		}
 	};
 private:
@@ -98,6 +108,16 @@ public:
 	 */
 	void addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame, KeybindingAction action);
+
+	/**
+	 * Add a button for display
+	 */
+	void addButton(const Common::Rect &r, const Common::KeyState &key);
+
+	/**
+	 * Add a button for display
+	 */
+	void addButton(const Common::Rect &r, KeybindingAction action);
 
 	/**
 	 * Reset selected button
