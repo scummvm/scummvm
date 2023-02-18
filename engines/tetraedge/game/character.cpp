@@ -70,7 +70,7 @@ _recallageY(true), _walkToFlag(false), _walkCurveEnd(0.0f), _walkCurveLast(0.0f)
 _walkCurveLen(0.0f), _walkCurveIncrement(0.0f), _walkEndAnimG(false), _walkTotalFrames(0),
 _walkCurveNextLength(0.0f), _walkedLength(0.0f), _walkLoopAnimLen(0.0f), _walkEndGAnimLen(0.0f),
 _walkStartAnimLen(0.0f), _walkStartAnimFrameCount(0), _walkLoopAnimFrameCount(0),
-_walkEndGAnimFrameCount(0), _hasAnchor(false) {
+_walkEndGAnimFrameCount(0), _hasAnchor(false), _charLookingAtFloat(0.0f) {
 	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLaterStatic);
 }
 
@@ -210,7 +210,7 @@ float Character::animLengthFromFile(const Common::String &animname, uint32 *pfra
 	}
 
 	// The "Pere" or "father" bone is the root.
-	float animLen = animLength(*anim, anim->findBone("Pere"), lastframe);
+	float animLen = animLength(*anim, anim->findBone(rootBone()), lastframe);
 	int frameCount = anim->lastFrame() + 1 - anim->firstFrame();
 	*pframeCount = frameCount;
 
@@ -462,7 +462,7 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 		return false;
 
 	Game *game = g_engine->getGame();
-	if (boneName == "Pere") {
+	if (boneName == rootBone()) {
 		const Common::String animfile = _model->anim()->loadedPath().getLastComponent().toString();
 		bool resetX = false;
 		if (game->scene()._character == this) {
@@ -593,7 +593,7 @@ bool Character::onModelAnimationFinished() {
 	}
 
 	if (!isWalkAnim && shouldAdjust) {
-		int pereBone = _curModelAnim->findBone("Pere");
+		int pereBone = _curModelAnim->findBone(rootBone());
 		const TeTRS endTRS = trsFromAnim(*_curModelAnim, pereBone, _curModelAnim->lastFrame());
 		TeVector3f32 trans = endTRS.getTranslation();
 		trans.x() = -trans.x();
@@ -697,6 +697,13 @@ void Character::removeFromCurve() {
 	_curve.release();
 }
 
+Common::String Character::rootBone() const {
+	if (g_engine->gameType() != TetraedgeEngine::kSyberia2 || _model->name() != "Youki")
+		return "Pere";
+	else
+		return "Bip01";
+}
+
 bool Character::setAnimation(const Common::String &aname, bool repeat, bool returnToIdle, bool unused, int startFrame, int endFrame) {
 	if (aname.empty())
 		return false;
@@ -770,7 +777,7 @@ float Character::speedFromAnim(double msFromStart) {
 	if (!modelAnim)
 		return 0.0f;
 
-	const int pereBone = modelAnim->findBone("Pere");
+	const int pereBone = modelAnim->findBone(rootBone());
 	int curFrame = modelAnim->calcCurrentFrame(msFromStart);
 
 	float result;

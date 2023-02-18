@@ -48,6 +48,10 @@ void TeRendererOpenGL::clearBuffer(TeRenderer::Buffer buf) {
 	glClear(glBuf);
 }
 
+void TeRendererOpenGL::colorMask(bool r, bool g, bool b, bool a) {
+	glColorMask(r, g, b, a);
+}
+
 void TeRendererOpenGL::disableAllLights() {
 	TeLightOpenGL::disableAll();
 }

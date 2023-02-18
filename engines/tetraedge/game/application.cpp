@@ -84,6 +84,7 @@ void Application::create() {
 
 	const int winWidth = g_engine->getDefaultScreenWidth();
 	const int winHeight = g_engine->getDefaultScreenHeight();
+
 	// See TeMainWindowBase::initCamera
 	_mainWindowCamera.reset(new TeCamera());
 	_mainWindowCamera->setName("_mainWinCam");
@@ -96,6 +97,7 @@ void Application::create() {
 	_mainWindow.setSizeType(TeILayout::ABSOLUTE);
 	_mainWindow.setPositionType(TeILayout::ABSOLUTE);
 	_mainWindow.setPosition(TeVector3f32(0.0f, 0.0f, 0.0f));
+	_mainWindow.setName("TeEngine Application");
 
 	TeResourceManager *resmgr = g_engine->getResourceManager();
 	TeCore *core = g_engine->getCore();

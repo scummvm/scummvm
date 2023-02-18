@@ -19,46 +19,30 @@
  *
  */
 
-#include "common/file.h"
-#include "image/png.h"
-#include "graphics/surface.h"
-
-#include "tetraedge/te/te_png.h"
+#include "tetraedge/tetraedge.h"
+#include "tetraedge/game/youki_manager.h"
 
 namespace Tetraedge {
 
-TePng::TePng() {
+YoukiManager::YoukiManager() : _followKate(false) {
 }
 
-TePng::~TePng() {
+void YoukiManager::reset() {
+	_followKate = false;
 }
 
-/*static*/
-bool TePng::matchExtension(const Common::String &extn) {
-	return extn == "png";
+void YoukiManager::update() {
+	if (g_engine->gameType() != TetraedgeEngine::kSyberia2)
+		return;
+	// TODO: Implement me.
 }
 
-bool TePng::load(Common::SeekableReadStream &stream) {
-	if (_loadedSurface)
-		delete _loadedSurface;
-	_loadedSurface = nullptr;
-
-	Image::PNGDecoder png;
-	if (!png.loadStream(stream))
-		return false;
-
-	_loadedSurface = png.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	return true;
+bool YoukiManager::onAnimFinished(const Common::String &anim) {
+	return false;
 }
 
-TeImage::Format TePng::imageFormat() {
-	if (_loadedSurface) {
-		if (_loadedSurface->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24))
-			return TeImage::RGBA8;
-		else if (_loadedSurface->format == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0))
-			return TeImage::RGB8;
-	}
-	return TeImage::INVALID;
+bool YoukiManager::onMoveFinished() {
+	return false;
 }
 
 } // end namespace Tetraedge

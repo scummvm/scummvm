@@ -49,6 +49,10 @@ void TeRendererTinyGL::clearBuffer(TeRenderer::Buffer buf) {
 	tglClear(glBuf);
 }
 
+void TeRendererTinyGL::colorMask(bool r, bool g, bool b, bool a) {
+	tglColorMask(r, g, b, a);
+}
+
 void TeRendererTinyGL::disableAllLights() {
 	TeLightTinyGL::disableAll();
 }

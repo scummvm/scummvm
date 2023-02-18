@@ -83,6 +83,7 @@ public:
 	void addTransparentMesh(const TeMesh &mesh, uint i1, uint i2, uint i3);
 	void checkError(const Common::String &str) {};
 	virtual void clearBuffer(Buffer buf) = 0;
+	virtual void colorMask(bool r, bool g, bool b, bool a) = 0;
 	void create();
 	TeMatrix4x4 currentMatrix();
 	virtual void disableAllLights() = 0;

@@ -115,7 +115,7 @@ bool TeImage::load(Common::ReadStream &stream, const Common::Path &path) {
 	error("TODO: Implement TeImage::load");
 }
 
-bool TeImage::save(const Common::Path &path, enum Type type) {
+bool TeImage::save(const Common::Path &path, enum SaveType type) {
 	error("TODO: Implement TeImage::save");
 }
 

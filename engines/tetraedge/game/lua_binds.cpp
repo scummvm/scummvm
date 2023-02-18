@@ -1666,8 +1666,11 @@ static void SetCharacterLookChar(const Common::String &charname, const Common::S
 		return;
 	}
 	character->setLookingAtTallThing(tall);
+
 	if (f != 0.0)
 		warning("TODO: Use float param %f in SetCharacterLookChar", f);
+	character->setCharLookingAtFloat(f);
+
 	if (destname.empty()) {
 		character->setCharLookingAt(nullptr);
 	} else {
@@ -2372,7 +2375,12 @@ static int tolua_ExportedFunctions_AddUnlockedAnim00(lua_State *L) {
 }
 
 static void SetObjectMoveDest(const Common::String &obj, float x, float y, float z) {
-	warning("TODO: SetObjectMoveDest(%s, %f, %f, %f)", obj.c_str(), x, y, z);
+	Object3D *obj3d = g_engine->getGame()->scene().object3D(obj);
+	if (obj3d) {
+		obj3d->setObjectMoveDest(TeVector3f32(x, y, z));
+	} else {
+		warning("[SetObjectMoveDest] Object not found %s", obj.c_str());
+	}
 }
 
 static int tolua_ExportedFunctions_SetObjectMoveDest00(lua_State *L) {
@@ -2391,7 +2399,12 @@ static int tolua_ExportedFunctions_SetObjectMoveDest00(lua_State *L) {
 }
 
 static void SetObjectMoveTime(const Common::String &obj, float f) {
-	warning("TODO: SetObjectMoveTime(%s, %f)", obj.c_str(), f);
+	Object3D *obj3d = g_engine->getGame()->scene().object3D(obj);
+	if (obj3d) {
+		obj3d->setObjectMoveTime(f);
+	} else {
+		warning("[SetObjectMoveTime] Object not found %s", obj.c_str());
+	}
 }
 
 static int tolua_ExportedFunctions_SetObjectMoveTime00(lua_State *L) {
@@ -2423,6 +2436,52 @@ static int tolua_ExportedFunctions_ActivateMask00(lua_State *L) {
 	error("#ferror in function 'ActivateMask': %d %d %s", err.index, err.array, err.type);
 }
 
+static void SetYoukiFollowKate(bool val) {
+	g_engine->getGame()->scene().youkiManager().setFollowKate(val);
+}
+
+static int tolua_ExportedFunctions_SetYoukiFollowKate00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		bool b1 = tolua_toboolean(L, 1, 0.0);
+		SetYoukiFollowKate(b1);
+		return 0;
+	}
+	error("#ferror in function 'SetYoukiFollowKate': %d %d %s", err.index, err.array, err.type);
+}
+
+static void AddRandomAnimation(const Common::String &character, const Common::String &anim, float f) {
+	// This exists in the game, but does nothing.
+}
+
+static int tolua_ExportedFunctions_AddRandomAnimation00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) &&
+		tolua_isboolean(L, 3, 0, &err) && tolua_isnoobj(L, 4, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		bool b1 = tolua_toboolean(L, 3, 0.0);
+		AddRandomAnimation(s1, s2, b1);
+		return 0;
+	}
+	error("#ferror in function 'AddRandomAnimation': %d %d %s", err.index, err.array, err.type);
+}
+
+static void PlayRandomAnimation(const Common::String &character) {
+	// This exists in the game, but does nothing.
+}
+
+static int tolua_ExportedFunctions_PlayRandomAnimation00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		PlayRandomAnimation(s1);
+		return 0;
+	}
+	error("#ferror in function 'PlayRandomAnimation': %d %d %s", err.index, err.array, err.type);
+}
+
+
 // Not your imagination, the implementation of these two is quite different to the others.
 static int tolua_GetParticleIndex(lua_State *L) {
 	Common::String s1(tolua_tostring(L, 1, nullptr));
@@ -2444,7 +2503,6 @@ static int tolua_EnableParticle(lua_State *L) {
 	}
 	return 0;
 }
-
 
 // ////////////////////////////////////////////////////////////////////////
 
@@ -2608,6 +2666,9 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "SetObjectMoveDest", tolua_ExportedFunctions_SetObjectMoveDest00);
 	tolua_function(L, "SetObjectMoveTime", tolua_ExportedFunctions_SetObjectMoveTime00);
 	tolua_function(L, "ActivateMask", tolua_ExportedFunctions_ActivateMask00);
+	tolua_function(L, "SetYoukiFollowKate", tolua_ExportedFunctions_SetYoukiFollowKate00);
+	tolua_function(L, "AddRandomAnimation", tolua_ExportedFunctions_AddRandomAnimation00);
+	tolua_function(L, "PlayRandomAnimation", tolua_ExportedFunctions_PlayRandomAnimation00);
 	tolua_function(L, "GetParticleIndex", tolua_GetParticleIndex);
 	tolua_function(L, "EnableParticle", tolua_EnableParticle);
 
@@ -2616,11 +2677,8 @@ void LuaOpenBinds(lua_State *L) {
 	//tolua_function(L, "PlaySnowCustom", tolua_ExportedFunctions_PlaySnowCustom00);
 	//tolua_function(L, "SnowCustomVisible", tolua_ExportedFunctions_SnowCustomVisible00);
 	//tolua_function(L, "RemoveRandomSound", tolua_ExportedFunctions_RemoveRandomSound00);
-	//tolua_function(L, "SetYoukiFollowKate", tolua_ExportedFunctions_SetYoukiFollowKate00);
 	//tolua_function(L, "PlaySmoke", tolua_ExportedFunctions_PlaySmoke00);
 	//tolua_function(L, "SmokeVisible", tolua_ExportedFunctions_SmokeVisible00);
-	//tolua_function(L, "AddRandomAnimation", tolua_ExportedFunctions_AddRandomAnimation00);
-	//tolua_function(L, "PlayRandomAnimation", tolua_ExportedFunctions_PlayRandomAnimation00);
 	//tolua_function(L, "PlayVerticalScrolling", tolua_ExportedFunctions_PlayVerticalScrolling00);
 
 	tolua_endmodule(L);

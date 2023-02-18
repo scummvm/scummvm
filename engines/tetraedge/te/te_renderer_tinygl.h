@@ -33,6 +33,7 @@ public:
 	TeRendererTinyGL();
 
 	void clearBuffer(TeRenderer::Buffer buf) override;
+	void colorMask(bool r, bool g, bool b, bool a) override;
 	void disableAllLights() override;
 	void disableTexture() override;
 	void disableWireFrame() override;

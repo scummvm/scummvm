@@ -19,46 +19,32 @@
  *
  */
 
-#include "common/file.h"
-#include "image/png.h"
-#include "graphics/surface.h"
+#ifndef TETRAEDGE_GAME_YOUKI_MANAGER_H
+#define TETRAEDGE_GAME_YOUKI_MANAGER_H
 
-#include "tetraedge/te/te_png.h"
+#include "common/str.h"
+#include "tetraedge/te/te_timer.h"
+
 
 namespace Tetraedge {
 
-TePng::TePng() {
-}
+class YoukiManager {
+public:
+	YoukiManager();
 
-TePng::~TePng() {
-}
+	void setFollowKate(bool val) { _followKate = val; }
+	void reset();
+	void update();
 
-/*static*/
-bool TePng::matchExtension(const Common::String &extn) {
-	return extn == "png";
-}
+private:
+	bool onAnimFinished(const Common::String &anim);
+	bool onMoveFinished();
 
-bool TePng::load(Common::SeekableReadStream &stream) {
-	if (_loadedSurface)
-		delete _loadedSurface;
-	_loadedSurface = nullptr;
+	TeTimer _timer;
+	bool _followKate;
 
-	Image::PNGDecoder png;
-	if (!png.loadStream(stream))
-		return false;
-
-	_loadedSurface = png.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	return true;
-}
-
-TeImage::Format TePng::imageFormat() {
-	if (_loadedSurface) {
-		if (_loadedSurface->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24))
-			return TeImage::RGBA8;
-		else if (_loadedSurface->format == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0))
-			return TeImage::RGB8;
-	}
-	return TeImage::INVALID;
-}
+};
 
 } // end namespace Tetraedge
+
+#endif // TETRAEDGE_GAME_YOUKI_MANAGER_H

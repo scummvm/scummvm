@@ -28,6 +28,7 @@
 
 #include "tetraedge/game/object3d.h"
 #include "tetraedge/game/billboard.h"
+#include "tetraedge/game/youki_manager.h"
 
 #include "tetraedge/te/te_act_zone.h"
 #include "tetraedge/te/te_bezier_curve.h"
@@ -122,6 +123,11 @@ public:
 		void initFire();
 	};
 
+	// TODO: 
+	struct RippleMask {
+
+	};
+
 	void activateAnchorZone(const Common::String &name, bool val);
 	void addAnchorZone(const Common::String &s1, const Common::String &name, float radius);
 	void addBlockingObject(const Common::String &obj) {
@@ -148,6 +154,9 @@ public:
 	void deserializeCam(Common::ReadStream &stream, TeIntrusivePtr<TeCamera> &cam);
 	void deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<TeModel> &model, TePickMesh2 *pickmesh);
 	virtual void draw() override;
+	void drawKate();
+	void drawMask();
+	void drawReflection();
 	void drawPath();
 	Dummy dummy(const Common::String &name);
 	bool findKate();
@@ -260,6 +269,7 @@ public:
 
 	void setCollisionSlide(bool val) { _collisionSlide = val; }
 	void activateMask(const Common::String &name, bool val);
+	YoukiManager &youkiManager() { return _youkiManager; }
 
 private:
 	int _shadowLightNo;
@@ -283,6 +293,7 @@ private:
 	Common::Array<Billboard *> _billboards;
 	Common::Array<TeSpriteLayout *> _sprites;
 	Common::Array<TePickMesh2 *> _clickMeshes;
+	Common::Array<RippleMask *> _rippleMasks;
 
 	Common::HashMap<Common::String, SoundStep> _soundSteps;
 	Common::HashMap<Common::String, Common::Array<Callback*>> _callbacks;
@@ -295,6 +306,7 @@ private:
 	Common::Array<TeIntrusivePtr<TeModel>> _zoneModels;
 	Common::Array<TeIntrusivePtr<TeModel>> _masks;
 	Common::Array<TeIntrusivePtr<TeParticle>> _particles;
+	Common::Array<TeIntrusivePtr<TeModel>> _shadowReceivingObjects;
 
 	TeIntrusivePtr<TeModel> _playerCharacterModel;
 	TeIntrusivePtr<TeBezierCurve> _curve;
@@ -315,6 +327,7 @@ private:
 	Common::String _sceneName;
 	Common::String _zoneName;
 	bool _maskAlpha;
+	YoukiManager _youkiManager;
 
 };
 

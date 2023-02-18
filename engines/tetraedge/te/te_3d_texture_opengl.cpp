@@ -139,12 +139,28 @@ bool Te3DTextureOpenGL::load(const TeImage &img) {
 
 	const void *imgdata = img.getPixels();
 	if (_format == TeImage::RGB8) {
-		GLenum destfmt = _alphaOnly ? GL_ALPHA : GL_RGB8;
-		glTexImage2D(GL_TEXTURE_2D, 0, destfmt, _texWidth, _texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		if (_alphaOnly)
+			warning("Te3DTexture::load can't load RGB as alpha-only");
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, _texWidth, _texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.pitch / 3, img.h, GL_RGB, GL_UNSIGNED_BYTE, imgdata);
 	} else if (_format == TeImage::RGBA8) {
-		GLenum destfmt = _alphaOnly ? GL_ALPHA : GL_RGBA8;
-		glTexImage2D(GL_TEXTURE_2D, 0, destfmt, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		Graphics::Surface surf;
+		if (_alphaOnly) {
+			surf.copyFrom(img);
+			// Slight hack: Move R data to A channel.  Our image reader
+			// only reads data as RGB, so use red for alpha-only values.
+			uint32 *p = (uint32 *)surf.getPixels();
+			for (int y = 0; y < img.h; y++) {
+				for (int x = 0; x < img.w; x++) {
+					byte a, r, g, b;
+					img.format.colorToARGB(p[x], a, r, g ,b);
+					p[x] = img.format.ARGBToColor(r, r, r, r);
+				}
+				p += img.pitch / 4;
+			}
+			imgdata = surf.getPixels();
+		}
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img.w, img.h, GL_RGBA, GL_UNSIGNED_BYTE, imgdata);
 		// FIXME: Slight hack.. sometimes artifacts appear because we draw
 		// a (half?)pixel outside the original texture. Clear one more row
@@ -155,6 +171,8 @@ bool Te3DTextureOpenGL::load(const TeImage &img) {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, img.h, img.w, 1, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 			delete [] buf;
 		}
+		if (_alphaOnly)
+			surf.free();
 	} else {
 		warning("Te3DTexture::load can't send image format %d to GL.", _format);
 	}

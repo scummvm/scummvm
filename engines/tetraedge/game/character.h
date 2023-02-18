@@ -127,7 +127,7 @@ public:
 	//void play() // just called TeAnimation::play();
 	void removeAnim();
 	void removeFromCurve();
-	static Common::String rootBone() { return "Pere"; }
+	Common::String rootBone() const;
 
 	bool setAnimation(const Common::String &name, bool repeat, bool returnToIdle = false, bool unused = false, int startFrame = -1, int endFrame = 9999);
 	void setAnimationSound(const Common::String &name, uint offset);
@@ -161,6 +161,7 @@ public:
 	bool needsSomeUpdate() const { return _needsSomeUpdate; }
 	void setNeedsSomeUpdate(bool val) { _needsSomeUpdate = val; }
 	void setCharLookingAt(Character *other) { _charLookingAt = other; }
+	void setCharLookingAtFloat(float f) { _charLookingAtFloat = f; }
 	const TeVector3f32 &positionCharacter() const { return _positionCharacter; }
 	void setPositionCharacter(const TeVector3f32 &val) { _positionCharacter = val; }
 	bool positionFlag() const { return _positionFlag; }
@@ -202,6 +203,7 @@ private:
 	Common::String _animSound;
 
 	Character *_charLookingAt;
+	float _charLookingAtFloat; // TODO: what is this?
 
 	uint _animSoundOffset;
 

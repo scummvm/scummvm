@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/hashmap.h"
 
+#include "tetraedge/te/te_curve_anim2.h"
 #include "tetraedge/te/te_object.h"
 #include "tetraedge/te/te_model.h"
 #include "tetraedge/te/te_vector3f32.h"
@@ -52,6 +53,11 @@ public:
 
 	TeIntrusivePtr<TeModel> model() { return _modelPtr; }
 
+	void setObjectMoveDest(const TeVector3f32 &vec);
+	void setObjectMoveTime(float f);
+	bool onMoveAnimFinished();
+	void setCurMovePos(const TeVector3f32 &pos);
+
 	float _rotateTime;
 	TeTimer _rotateTimer;
 	TeQuaternion _rotateStart;
@@ -61,6 +67,9 @@ public:
 	TeTimer _translateTimer;
 	TeVector3f32 _translateStart;
 	TeVector3f32 _translateAmount;
+
+	TeCurveAnim2<Object3D,TeVector3f32> _moveAnim;
+	TeVector3f32 _curMovePos;
 
 	Common::String _onCharName;
 	Common::String _onCharBone;

@@ -48,16 +48,17 @@ public:
 	enum Format {
 		RGB8 = 5,
 		RGBA8 = 6,
+		// GREY8 = 0xd,
 		INVALID = 0xe
 	};
-	enum Type {
-		PNG,
+	enum SaveType {
+		PNG
 	};
 
 	void copy(TeImage &dest, const TeVector2s32 &vec1, const TeVector2s32 &vec2,
 			  const TeVector2s32 &vec3) const;
 	uint64 countPixelsOfColor(const TeColor &col) const;
-	//void create(); // never used?
+	// void create(); // never used?
 	void createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &palette, Format newformat) {
 		createImg(xsize, ysize, palette, newformat, xsize, ysize);
 	}
@@ -75,7 +76,7 @@ public:
 	bool isExtensionSupported(const Common::Path &path);
 	bool load(const Common::FSNode &node);
 	bool load(Common::ReadStream &stream, const Common::Path &path);
-	bool save(const Common::Path &path, enum Type type);
+	bool save(const Common::Path &path, enum SaveType type);
 	int serialize(Common::WriteStream &stream);
 	TeVector2s32 bufSize() const {
 		return TeVector2s32(pitch / format.bytesPerPixel, h);
