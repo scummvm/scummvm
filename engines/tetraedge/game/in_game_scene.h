@@ -123,9 +123,17 @@ public:
 		void initFire();
 	};
 
-	// TODO: 
-	struct RippleMask {
+	// TODO: Any other members of RippleMask?
+	class RippleMask : public TeModel {
 
+	};
+
+	struct SceneLight {
+		Common::String _name;
+		TeVector3f32 _v1;
+		TeVector3f32 _v2;
+		TeColor _color;
+		float _f;
 	};
 
 	void activateAnchorZone(const Common::String &name, bool val);
@@ -304,6 +312,7 @@ private:
 	Common::Array<TeIntrusivePtr<TeBezierCurve>> _bezierCurves;
 	Common::Array<Dummy> _dummies;
 	Common::Array<Flamme> _flammes;
+	Common::Array<SceneLight> _sceneLights;
 	Common::Array<TeIntrusivePtr<TeModel>> _zoneModels;
 	Common::Array<TeIntrusivePtr<TeModel>> _masks;
 	Common::Array<TeIntrusivePtr<TeParticle>> _particles;

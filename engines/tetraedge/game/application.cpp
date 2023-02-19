@@ -48,7 +48,7 @@ bool Application::_dontUpdateWhenApplicationPaused = false;
 
 Application::Application() : _finishedGame(false), _finishedFremium(false),
 _captureFade(false), _difficulty(1), _created(false), _tutoActivated(false),
-_drawShadows(true) {
+_drawShadows(true), _ratioStretched(false) {
 	TeCore *core = g_engine->getCore();
 	core->_coreNotReady = true;
 	core->fileFlagSystemSetFlag("platform", "MacOSX");

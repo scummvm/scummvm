@@ -428,8 +428,19 @@ void InGameScene::drawMask() {
 }
 
 void InGameScene::drawReflection() {
-	if (_rippleMasks.size())
-		error("TODO: Implement InGameScene::drawReflection");
+	if (_rippleMasks.empty() || currentCameraIndex() >= (int)cameras().size())
+		return;
+
+	currentCamera()->apply();
+	if (!_maskAlpha)
+		g_engine->getRenderer()->colorMask(false, false, false, false);
+
+	for (uint i = _rippleMasks.size() - 1; i > 0; i--) {
+		_rippleMasks[i]->draw();
+	}
+
+	if (!_maskAlpha)
+		g_engine->getRenderer()->colorMask(true, true, true, true);
 }
 
 void InGameScene::drawPath() {
@@ -498,7 +509,9 @@ void InGameScene::freeGeometry() {
 	_zoneModels.clear();
 	_masks.clear();
 	_shadowReceivingObjects.clear();
-	// TODO: _sceneLights.clear();
+	if (_charactersShadow)
+		_charactersShadow->destroy();
+	_sceneLights.clear();
 	if (_charactersShadow) {
 		delete _charactersShadow;
 		_charactersShadow = nullptr;
@@ -945,7 +958,8 @@ bool InGameScene::loadObjectMaterials(const Common::String &name) {
 }
 
 bool InGameScene::loadObjectMaterials(const Common::String &path, const Common::String &name) {
-	error("TODO: InGameScene::loadObjectMaterials(%s, %s)", path.c_str(), name.c_str());
+	// Seems like this is never used?
+	error("InGameScene::loadObjectMaterials(%s, %s)", path.c_str(), name.c_str());
 }
 
 bool InGameScene::loadPlayerCharacter(const Common::String &name) {
@@ -1043,8 +1057,24 @@ bool InGameScene::loadDynamicLightBloc(const Common::String &name, const Common:
 	return true;
 }
 
-bool InGameScene::loadLight(const Common::String &fname, const Common::String &zone, const Common::String &scene) {
-	warning("TODO: Implement InGameScene::loadLight");
+bool InGameScene::loadLight(const Common::String &name, const Common::String &zone, const Common::String &scene) {
+	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
+	Common::FSNode datnode = g_engine->getCore()->findFile(datpath);
+	if (!datnode.isReadable()) {
+		warning("[InGameScene::loadLight] Can't open file : %s.", datpath.toString().c_str());
+		return false;
+	}
+
+	Common::File file;
+	file.open(datnode);
+	SceneLight light;
+	light._name = name;
+	TeVector3f32::deserialize(file, light._v1);
+	TeVector3f32::deserialize(file, light._v2);
+	light._color.deserialize(file);
+	light._f = file.readFloatLE();
+
+	_sceneLights.push_back(light);
 	return true;
 }
 
@@ -1180,8 +1210,44 @@ bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Co
 	return true;
 }
 
-bool InGameScene::loadZBufferObject(const Common::String &fname, const Common::String &zone, const Common::String &scene) {
-	warning("TODO: Implement InGameScene::loadZBufferObject");
+bool InGameScene::loadZBufferObject(const Common::String &name, const Common::String &zone, const Common::String &scene) {
+	Common::Path datpath = _sceneFileNameBase(zone, scene).joinInPlace(name).appendInPlace(".bin");
+	Common::FSNode datnode = g_engine->getCore()->findFile(datpath);
+	if (!datnode.isReadable()) {
+		warning("[InGameScene::loadZBufferObject] Can't open file : %s.", datpath.toString().c_str());
+		return false;
+	}
+	TeModel *model = new TeModel();
+	model->setMeshCount(1);
+	model->setName(name);
+
+	Common::File file;
+	file.open(datnode);
+
+	// Load position, rotation, size.
+	Te3DObject2::deserialize(file, *model, false);
+
+	uint32 verts = file.readUint32LE();
+	uint32 tricount = file.readUint32LE();
+	if (verts > 100000 || tricount > 10000)
+		error("Improbable number of verts (%d) or triangles (%d)", verts, tricount);
+
+	TeMesh *mesh = model->meshes()[0].get();
+	mesh->setConf(verts, tricount * 3, TeMesh::MeshMode_Triangles, 0, 0);
+
+	for (uint i = 0; i < verts; i++) {
+		TeVector3f32 vec;
+		TeVector3f32::deserialize(file, vec);
+		mesh->setVertex(i, vec);
+		mesh->setNormal(i, TeVector3f32(0, 0, 1));
+		mesh->setColor(i, TeColor(128, 0, 255, 128));
+	}
+
+	for (uint i = 0; i < tricount * 3; i++) {
+		mesh->setIndex(i, file.readUint16LE());
+	}
+
+	_zoneModels.push_back(model);
 	return true;
 }
 
@@ -1606,36 +1672,92 @@ void InGameScene::updateScroll() {
 	if (!root)
 		error("No root layout in the background");
 	_scrollOffset = TeVector2f32();
-	TeVector2s32 texSize = root->_tiledSurfacePtr->tiledTexture()->totalSize();
+	TeIntrusivePtr<TeTiledTexture> rootTex = root->_tiledSurfacePtr->tiledTexture();
+	TeVector2s32 texSize = rootTex->totalSize();
 	if (texSize._x < 801) {
 		if (texSize._y < 601) {
 			_scrollOffset = TeVector2f32(0.5f, 0.0f);
 			updateViewport(0);
 		} else {
-			// TODO: update stuff here.
+			TeVector3f32 usersz = bg->userSize();
+			usersz.y() = 2.333333f;
+			bg->setSize(usersz);
+			//TeVector2f32 boundLayerSz = boundLayerSize();
+			layerSize();
+
+			float y1 = 300.0f / texSize._y;
+			float y2 = (texSize._y - 300.0f) / texSize._y;
+
+			if (_verticalScrollPlaying) {
+				float elapsed = _verticalScrollTimer.timeFromLastTimeElapsed();
+				_scrollOffset.setY(elapsed * (y2 - y1) / _verticalScrollTime + y1);
+			} else if (_character && _character->_model) {
+				TeIntrusivePtr<TeCamera> cam = currentCamera();
+				TeMatrix4x4 camProjMatrix = cam->projectionMatrix();
+				TeMatrix4x4 camWorldMatrix = cam->worldTransformationMatrix();
+				camWorldMatrix.inverse();
+				TeMatrix4x4 camProjWorld = camProjMatrix * camWorldMatrix;
+				TeVector3f32 charPos = camProjWorld * _character->_model->position();
+				_scrollOffset.setY(1.0f - (charPos.y() + 1.0f));
+			}
+			_scrollOffset.setX(0.5f);
+			_scrollOffset.setY(CLIP(_scrollOffset.getY(), y1, y2));
+			if (_scrollOffset.getY() >= y2 && _verticalScrollPlaying) {
+				_verticalScrollTimer.stop();
+				_verticalScrollPlaying = false;
+			}
+			root->setAnchor(TeVector3f32(0.5f, _scrollOffset.getY(), 0.5f));
+			updateViewport(2);
 		}
 	} else {
-		// TODO: update stuff here.
+		TeVector3f32 usersz = bg->userSize();
+		usersz.x() = texSize._x / 800.0f;
+		bg->setSize(usersz);
+		//TeVector2f32 boundLayerSz = boundLayerSize();
+		TeVector2f32 layerSz = layerSize();
+		float x1, x2;
+		if (g_engine->getApplication()->ratioStretched()) {
+			x1 = layerSz.getX() * 2;
+			const TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
+			x2 = winSize.x();
+		} else {
+			x1 = layerSz.getX() * 2;
+			x2 = layerSz.getX();
+		}
+		TeIntrusivePtr<TeCamera> cam = currentCamera();
+		if (cam) {
+			TeMatrix4x4 camProjMatrix = cam->projectionMatrix();
+			TeMatrix4x4 camWorldMatrix = cam->worldTransformationMatrix();
+			camWorldMatrix.inverse();
+			TeMatrix4x4 camProjWorld = camProjMatrix * camWorldMatrix;
+			TeVector3f32 charPos = camProjWorld * _character->_model->position();
+			_scrollOffset.setX((charPos.x() + 1.0f) / 2.0f);
+			float xmin = x2 / x1;
+			float xmax = 1.0f - (x2 / x1);
+			_scrollOffset.setX(CLIP(_scrollOffset.getX(), xmin, xmax));
+			root->setAnchor(TeVector3f32(_scrollOffset.getX(), 0.5f, 0.5f));
+			TeLayout *forbg = g_engine->getGame()->forGui().layoutChecked("background");
+			forbg->setAnchor(TeVector3f32(_scrollOffset.getX(), 0.5f, 0.5f));
+			updateViewport(1);
+			// _globalScrollingType = 1;  // This gets set but never used?
+		}
 	}
 }
 
 void InGameScene::updateViewport(int ival) {
-	TeVector2f32 lsize = layerSize();
-	TeVector2f32 offset((0.5f - _scrollOffset.getX()) * _scrollScale.getX(),
-						_scrollOffset.getY() * _scrollScale.getY());
-	TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
+	const TeVector2f32 lsize = layerSize();
+	const TeVector2f32 offset((0.5f - _scrollOffset.getX()) * _scrollScale.getX(),
+							_scrollOffset.getY() * _scrollScale.getY());
+	const TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
+	float aspectRatio = lsize.getX() / lsize.getY();
 	for (auto cam : cameras()) {
 		//cam->setSomething(ival);
 		int x = (winSize.x() - lsize.getX()) / 2.0f + offset.getX();
 		int y = (winSize.y() - lsize.getY()) / 2.0f;
-		int width = lsize.getX();
-		int height = lsize.getY();
-		cam->viewport(x, y, width, height);
-		float aspectRatio = lsize.getX() / lsize.getY();
-		/* TODO: Handle ratioStretched
-		if (g_engine->getApplication()->_ratioStretched) {
+		cam->viewport(x, y, lsize.getX(), lsize.getY());
+		if (g_engine->getApplication()->ratioStretched()) {
 			aspectRatio = (aspectRatio / (winSize.x() / winSize.y())) * 1.333333f;
-		} */
+		}
 		cam->setAspectRatio(aspectRatio);
 	}
 }

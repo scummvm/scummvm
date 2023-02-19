@@ -113,6 +113,7 @@ public:
 	TeLayout &frontOrientationLayout() { return _frontOrientationLayout; }
 	TeLayout &backLayout() { return _backLayout; }
 	LocFile &loc() { return _loc; }
+	bool ratioStretched() const { return _ratioStretched; }
 
 private:
 	bool _finishedGame;
@@ -166,6 +167,7 @@ private:
 	bool _created;
 	bool _tutoActivated;
 	bool _drawShadows;
+	bool _ratioStretched;
 
 	int _difficulty;
 
