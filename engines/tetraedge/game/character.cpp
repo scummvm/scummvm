@@ -371,14 +371,17 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 
 	_model->setName(mname);
 	_model->setScale(_characterSettings._defaultScale);
+	if (_characterSettings._invertNormals)
+		_model->invertNormals();
 
 	for (auto &mesh : _model->meshes())
 		mesh->setVisible(true);
 
-	// Set all mouthes not visible by default
+	// Set all mouthes, eyes, etc not visible by default
 	_model->setVisibleByName("_B_", false);
-	// Set all eyes not visible by default
 	_model->setVisibleByName("_Y_", false);
+	_model->setVisibleByName("_M_", false);
+	_model->setVisibleByName("_E_", false);
 
 	// Note: game loops through "faces" here, but it only ever uses the default ones.
 	_model->setVisibleByName(_characterSettings._defaultEyes, true);

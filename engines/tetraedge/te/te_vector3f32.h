@@ -76,6 +76,8 @@ public:
 	}
 
 	void rotate(const TeQuaternion &rot);
+
+	TeVector3f32 operator-() { return TeVector3f32(-x(), -y(), -z()); }
 };
 
 TeVector3f32 operator^(const TeVector3f32 &left, const TeVector3f32 &right);

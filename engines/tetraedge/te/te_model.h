@@ -98,6 +98,7 @@ public:
 	int findOrAddWeights(const Common::Array<weightElement> &weights);
 	void forceMatrix(const TeMatrix4x4 &matrix);
 	TeTRS getBone(TeIntrusivePtr<TeModelAnimation> anim, uint num);
+	void invertNormals();
 
 	/* Align the stream to the nearest 4 byte boudary*/
 	static void loadAlign(Common::SeekableReadStream &stream);
