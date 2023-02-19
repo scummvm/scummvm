@@ -263,8 +263,8 @@ protected:
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
-		bool vsync;
 #endif
+		bool vsync;
 
 		uint scalerIndex;
 		int scaleFactor;
@@ -285,8 +285,8 @@ protected:
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 			stretchMode = 0;
-			vsync = false;
 #endif
+			vsync = false;
 
 			scalerIndex = 0;
 			scaleFactor = 0;
@@ -428,9 +428,7 @@ protected:
 
 	virtual void setAspectRatioCorrection(bool enable);
 	void setFilteringMode(bool enable);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	void setVSync(bool enable);
-#endif
 
 	bool saveScreenshot(const Common::String &filename) const override;
 	virtual void setGraphicsModeIntern();

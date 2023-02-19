@@ -179,8 +179,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.stretchMode = STRETCH_FIT;
-	_videoMode.vsync = ConfMan.getBool("vsync");
 #endif
+	_videoMode.vsync = ConfMan.getBool("vsync");
 
 	_videoMode.scalerIndex = getDefaultScaler();
 	_videoMode.scaleFactor = getDefaultScaleFactor();
@@ -236,11 +236,9 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 	case OSystem::kFeatureFilteringMode:
 		setFilteringMode(enable);
 		break;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureVSync:
 		setVSync(enable);
 		break;
-#endif
 	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteDisabled = !enable;
 		blitCursor();
@@ -267,10 +265,8 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
 #endif
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureVSync:
 		return _videoMode.vsync;
-#endif
 	case OSystem::kFeatureFilteringMode:
 		return _videoMode.filtering;
 	case OSystem::kFeatureCursorPalette:
@@ -348,13 +344,13 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 
 			_videoMode.stretchMode = _oldVideoMode.stretchMode;
 		}
-
+#endif
 		if (_videoMode.vsync != _oldVideoMode.vsync) {
 			errors |= OSystem::kTransactionVSyncFailed;
 
 			_videoMode.vsync = _oldVideoMode.vsync;
 		}
-#endif
+
 		if (_videoMode.filtering != _oldVideoMode.filtering) {
 			errors |= OSystem::kTransactionFilteringFailed;
 
@@ -1527,7 +1523,6 @@ void SurfaceSdlGraphicsManager::setFullscreenMode(bool enable) {
 	}
 }
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 void SurfaceSdlGraphicsManager::setVSync(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
 
@@ -1542,7 +1537,6 @@ void SurfaceSdlGraphicsManager::setVSync(bool enable) {
 		_transactionDetails.needHotswap = true;
 	}
 }
-#endif
 
 void SurfaceSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
