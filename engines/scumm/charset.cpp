@@ -434,10 +434,15 @@ void CharsetRendererV3::setCurID(int32 id) {
 }
 
 int CharsetRendererCommon::getFontHeight() const {
-	if (_vm->_useCJKMode)
+	bool isSegaCD = _vm->_game.platform == Common::kPlatformSegaCD;
+
+	if (isSegaCD && _vm->_segaForce2ByteCharHeight) {
+		return MAX(_vm->_2byteHeight, _fontHeight);
+	} else if (_vm->_useCJKMode && !isSegaCD) {
 		return MAX(_vm->_2byteHeight + 1, _fontHeight);
-	else
+	} else {
 		return _fontHeight;
+	}
 }
 
 // do spacing for variable width old-style font
@@ -526,12 +531,23 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					// This is the only way to get an accurate text formatting in the MI1 intro.
 					chr = (int8)text[pos++] | (chr << 8);
 			} else if (chr & 0x80) {
-				pos++;
-				width += _vm->_2byteWidth;
-				// Original keeps glyph width and character dimensions separately
-				if (_vm->_language == Common::KO_KOR || _vm->_language == Common::ZH_TWN) {
-					width++;
+				if (_vm->_game.platform == Common::kPlatformSegaCD) {
+					// Special character: this one has to be rendered as a space (0x20)
+					// and also inherits its rendering dimensions.
+					if (chr == 0xFD && text[pos] == 0xFA) {
+						width += getCharWidth(0x20);
+					} else {
+						width += _vm->_2byteWidth;
+					}
+				} else {
+					width += _vm->_2byteWidth;
+					// Original keeps glyph width and character dimensions separately
+					if (_vm->_language == Common::KO_KOR || _vm->_language == Common::ZH_TWN) {
+						width++;
+					}
 				}
+
+				pos++;
 				continue;
 			}
 		}
@@ -993,6 +1009,11 @@ void CharsetRenderer::saveLoadWithSerializer(Common::Serializer &ser) {
 void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	VirtScreen *vs;
 	bool is2byte = (chr >= 256 && _vm->_useCJKMode);
+
+	if (_vm->_game.platform == Common::kPlatformSegaCD && chr == 0xFAFD) {
+		is2byte = false;
+		chr = 0x20;
+	}
 
 	assertRange(1, _curId, _vm->_numCharsets - 1, "charset");
 
