@@ -1492,18 +1492,22 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	}
 
 	if (flags & kWIFPrint) {
-		assert(comp == 0);
+		switch (comp) {
+		case 0: {
+			uint8 *pal = _vm->findWrappedBlock(MKTAG('R', 'G', 'B', 'S'), dataPtr, state, 0);
+			assert(pal);
 
-		uint8 *pal = _vm->findWrappedBlock(MKTAG('R', 'G', 'B', 'S'), dataPtr, state, 0);
-		assert(pal);
+			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
+			assert(wizd);
 
-		uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
-		assert(wizd);
+			PrintingManager *pm = _vm->_system->getPrintingManager();
+			pm->printImage(wizd, pal, width, height);
 
-		PrintingManager *pm=_vm->_system->getPrintingManager();
-		pm->printImage(wizd, pal, width, height);
-
-		return 0;
+			return 0;
+		}
+		default:
+			error("Unsupported compression mode %d", comp);
+		}
 	}
 
 	int32 dstPitch, dstType, cw, ch;
