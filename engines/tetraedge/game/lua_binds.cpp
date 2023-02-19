@@ -2511,6 +2511,20 @@ static int tolua_ExportedFunctions_RemoveRandomSound00(lua_State *L) {
 	return 0;
 }
 
+static void PlayVerticalScrolling(float time) {
+	g_engine->getGame()->scene().playVerticalScrolling(time);
+}
+
+static int tolua_ExportedFunctions_PlayVerticalScrolling00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnumber(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		float f1 = tolua_tonumber(L, 1, 0.0);
+		PlayVerticalScrolling(f1);
+		return 0;
+	}
+	error("#ferror in function 'SetObjectMoveTime': %d %d %s", err.index, err.array, err.type);
+}
+
 // Not your imagination, the implementation of these two is quite different to the others.
 static int tolua_GetParticleIndex(lua_State *L) {
 	Common::String s1(tolua_tostring(L, 1, nullptr));
@@ -2704,11 +2718,9 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "PlaySnowCustom", tolua_ExportedFunctions_PlaySnowCustom00);
 	tolua_function(L, "SnowCustomVisible", tolua_ExportedFunctions_SnowCustomVisible00);
 	tolua_function(L, "RemoveRandomSound", tolua_ExportedFunctions_RemoveRandomSound00);
+	tolua_function(L, "PlayVerticalScrolling", tolua_ExportedFunctions_PlayVerticalScrolling00);
 	tolua_function(L, "GetParticleIndex", tolua_GetParticleIndex);
 	tolua_function(L, "EnableParticle", tolua_EnableParticle);
-
-	// TODO Syberia 2 functions..
-	//tolua_function(L, "PlayVerticalScrolling", tolua_ExportedFunctions_PlayVerticalScrolling00);
 
 	tolua_endmodule(L);
 }

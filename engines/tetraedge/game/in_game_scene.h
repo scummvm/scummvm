@@ -215,6 +215,7 @@ public:
 	Object3D *object3D(const Common::String &oname);
 	void onMainWindowSizeChanged();
 	TeFreeMoveZone *pathZone(const Common::String &zname);
+	void playVerticalScrolling(float time);
 	TeVector3f32 positionMarker(const Common::String &mname);
 	void removeBlockingObject(const Common::String &oname);
 
@@ -233,8 +234,8 @@ public:
 	void update() override;
 
 	// Does nothing, but to keep calls from original..
-	static void updateScroll() {};
-	static void updateViewport() {};
+	void updateScroll();
+	void updateViewport(int ival);
 
 	Character *_character;
 	Common::Array<Character *> _characters;
@@ -317,7 +318,8 @@ private:
 
 	Common::Array<Common::SharedPtr<TeLight>> _lights;
 
-	TeVector2f32 _someScrollVector;
+	TeVector2f32 _scrollOffset;
+	TeVector2f32 _scrollScale;
 	TeVector2f32 _viewportSize;
 
 	Common::Path _loadedPath;
@@ -328,7 +330,9 @@ private:
 	Common::String _zoneName;
 	bool _maskAlpha;
 	YoukiManager _youkiManager;
-
+	TeTimer _verticalScrollTimer;
+	float _verticalScrollTime;
+	bool _verticalScrollPlaying;
 };
 
 } // end namespace Tetraedge

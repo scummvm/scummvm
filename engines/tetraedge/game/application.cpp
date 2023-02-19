@@ -328,6 +328,7 @@ bool Application::run() {
 
 		renderer->reset();
 		game->update();
+		game->scene().updateScroll();
 		g_engine->getSoundManager()->update();
 		performRender();
 		if (game->_returnToMainMenu) {
@@ -352,7 +353,6 @@ bool Application::run() {
 			}
 			_finishedGame = false;
 		}
-		InGameScene::updateScroll();
 		TeObject::deleteNow();
 	}
 	return true;

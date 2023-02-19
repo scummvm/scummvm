@@ -67,7 +67,8 @@ const float InGameScene::DEPTH_MAX_FLAKE = 0.1;
 
 InGameScene::InGameScene() : _character(nullptr), _charactersShadow(nullptr),
 _shadowLightNo(-1), _waitTime(-1.0f), _shadowColor(0, 0, 0, 0x80), _shadowFov(20.0f),
-_shadowFarPlane(1000), _shadowNearPlane(1), _maskAlpha(false) {
+_shadowFarPlane(1000), _shadowNearPlane(1), _maskAlpha(false),
+_verticalScrollTime(1000000.0f), _verticalScrollPlaying(false) {
 }
 
 void InGameScene::activateAnchorZone(const Common::String &name, bool val) {
@@ -588,7 +589,7 @@ Common::String InGameScene::imagePathMarker(const Common::String &name) {
 }
 
 void InGameScene::initScroll() {
-	_someScrollVector = TeVector2f32(0.5f, 0.0f);
+	_scrollOffset = TeVector2f32(0.5f, 0.0f);
 }
 
 bool InGameScene::isMarker(const Common::String &name) {
@@ -605,6 +606,21 @@ bool InGameScene::isObjectBlocking(const Common::String &name) {
 			return true;
 	}
 	return false;
+}
+
+TeVector2f32 InGameScene::layerSize() {
+	TeLayout *bglayout = _bgGui.layout("background");
+	TeVector3f32 sz;
+	if (bglayout) {
+		TeLayout *rootlayout = Game::findSpriteLayoutByName(bglayout, "root");
+		if (!rootlayout)
+			error("InGameScene::layerSize: No root layout inside the background");
+		sz = rootlayout->size();
+		_scrollScale = TeVector2f32(sz.x(), sz.y());
+	} else {
+		sz = g_engine->getApplication()->getMainWindow().size();
+	}
+	return TeVector2f32(sz.x(), sz.y());
 }
 
 bool InGameScene::load(const Common::FSNode &sceneNode) {
@@ -1322,6 +1338,14 @@ TeFreeMoveZone *InGameScene::pathZone(const Common::String &name) {
 	return nullptr;
 }
 
+void InGameScene::playVerticalScrolling(float time) {
+	_verticalScrollTimer.start();
+	_verticalScrollTimer.stop();
+	_verticalScrollTimer.start();
+	_verticalScrollTime = time * 1000000.0f;
+	_verticalScrollPlaying = true;
+}
+
 void InGameScene::reset() {
 	for (auto *character : _characters)
 		character->setFreeMoveZone(nullptr);
@@ -1422,7 +1446,7 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 		_character->deleteAnim();
 		_character->deleteAllCallback();
 		if (_character->_model->anim())
-		_character->_model->anim()->stop(); // TODO: added this
+			_character->_model->anim()->stop(); // TODO: added this
 		_character->setFreeMoveZone(nullptr); // TODO: added this
 		// TODO: deleteLater() something here..
 		_character = nullptr;
@@ -1567,6 +1591,52 @@ void InGameScene::update() {
 			TeQuaternion rotq = TeQuaternion::fromEuler(rot);
 			obj->model()->setRotation(obj->_rotateStart * rotq);
 		}
+	}
+}
+
+void InGameScene::updateScroll() {
+	if (g_engine->gameType() != TetraedgeEngine::kSyberia2)
+		return;
+
+	TeLayout *bg = _bgGui.layout("background");
+	if (!bg)
+		return;
+
+	TeSpriteLayout *root = Game::findSpriteLayoutByName(bg, "root");
+	if (!root)
+		error("No root layout in the background");
+	_scrollOffset = TeVector2f32();
+	TeVector2s32 texSize = root->_tiledSurfacePtr->tiledTexture()->totalSize();
+	if (texSize._x < 801) {
+		if (texSize._y < 601) {
+			_scrollOffset = TeVector2f32(0.5f, 0.0f);
+			updateViewport(0);
+		} else {
+			// TODO: update stuff here.
+		}
+	} else {
+		// TODO: update stuff here.
+	}
+}
+
+void InGameScene::updateViewport(int ival) {
+	TeVector2f32 lsize = layerSize();
+	TeVector2f32 offset((0.5f - _scrollOffset.getX()) * _scrollScale.getX(),
+						_scrollOffset.getY() * _scrollScale.getY());
+	TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
+	for (auto cam : cameras()) {
+		//cam->setSomething(ival);
+		int x = (winSize.x() - lsize.getX()) / 2.0f + offset.getX();
+		int y = (winSize.y() - lsize.getY()) / 2.0f;
+		int width = lsize.getX();
+		int height = lsize.getY();
+		cam->viewport(x, y, width, height);
+		float aspectRatio = lsize.getX() / lsize.getY();
+		/* TODO: Handle ratioStretched
+		if (g_engine->getApplication()->_ratioStretched) {
+			aspectRatio = (aspectRatio / (winSize.x() / winSize.y())) * 1.333333f;
+		} */
+		cam->setAspectRatio(aspectRatio);
 	}
 }
 
