@@ -505,8 +505,8 @@ void OSystem_iOS7::dirtyFullOverlayScreen() {
 void OSystem_iOS7::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
 	//printf("setMouseCursor(%p, %u, %u, %i, %i, %u, %d, %p)\n", (const void *)buf, w, h, hotspotX, hotspotY, keycolor, dontScale, (const void *)format);
 
-	//if (mask)
-	//	printf("OSystem_iOS7::setMouseCursor: Masks are not supported");
+	if (mask)
+		printf("OSystem_iOS7::setMouseCursor: Masks are not supported");
 
 	const Graphics::PixelFormat pixelFormat = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
 #if 0
