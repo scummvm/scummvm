@@ -52,14 +52,12 @@ void Win32PrintingManager::printImage(Common::String jobName, byte *pixels, byte
 	HDC hdcImg = CreateCompatibleDC(hdcPrint);
 	
 	HPALETTE pal = buildPalette(paletteData);
-	HBITMAP bitmap = buildBitmap(hdcImg, pixels, paletteData, width, height);
+	HBITMAP bitmap = buildBitmap(hdcPrint, pixels, paletteData, width, height);
 	if (!bitmap)
 		goto delDC;
 
 	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
 
-	SelectPalette(hdcImg, pal, TRUE);
-	RealizePalette(hdcImg);
 	SelectObject(hdcImg, bitmap);
 
 	BitBlt(hdcPrint, 0, 0, width, height, hdcImg, 0, 0, SRCCOPY);
