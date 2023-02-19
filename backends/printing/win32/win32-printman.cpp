@@ -112,9 +112,9 @@ HPALETTE Win32PrintingManager::buildPalette(byte *paletteData) {
 	lpal->palVersion = 1;
 
 	for (uint i = 0; i < 256; ++i, paletteData+=3) {
-		lpal->palPalEntry[i].peBlue = paletteData[0];
-		lpal->palPalEntry[i].peRed = paletteData[1];
-		lpal->palPalEntry[i].peGreen = paletteData[2];
+		lpal->palPalEntry[i].peRed = paletteData[0];
+		lpal->palPalEntry[i].peGreen = paletteData[1];
+		lpal->palPalEntry[i].peBlue = paletteData[2];
 		lpal->palPalEntry[i].peFlags = 0;
 	}
 
