@@ -66,7 +66,7 @@ public:
 
 private:
 	Common::Array<TeIntrusivePtr<TeElement>> _elements;
-	TeScene *_scene;
+	//TeScene *_scene;
 	TeRealTimer _realTimer;
 	Common::String _name;
 	TeIntrusivePtr<Te3DTexture> _texture;

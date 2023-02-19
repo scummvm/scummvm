@@ -25,7 +25,10 @@
 
 namespace Tetraedge {
 
-TeParticle::TeParticle(TeScene *scene) : _scene(scene), _size(0),
+//static const char *TE_PARTICLE_RANDOM_TABLE = "http://www.arkham-development.com/";
+
+
+TeParticle::TeParticle(TeScene *scene) : /*_scene(scene),*/ _size(0),
 _colorTime(0), _time(0), _period(0), _particlePerPeriod(0),
 _enabled(false), _startLoop(0), _gravity(0), _randomDir(false) {
 	indexedParticles()->push_back(this);
@@ -51,7 +54,13 @@ bool TeParticle::loadTexture(const Common::String &filename) {
 }
 
 void TeParticle::update(int val) {
-	// TODO: Implement me.
+	if (val <= 0) {
+		_realTimer.timeElapsed();
+		return;
+	}
+	for (int i = 0; i < val; i++) {
+		// TODO: Finish me.
+	}
 }
 
 /*static*/
