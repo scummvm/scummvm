@@ -760,8 +760,8 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
         int hotspotX, int hotspotY,
         uint32 keycolor, bool dontScale,
         const Graphics::PixelFormat *format, const byte *mask) {
-	ENTER("%p, %u, %u, %d, %d, %u, %d, %p", buf, w, h, hotspotX, hotspotY,
-	      keycolor, dontScale, format);
+	ENTER("%p, %u, %u, %d, %d, %u, %d, %p, %p", buf, w, h, hotspotX, hotspotY,
+	      keycolor, dontScale, format, mask);
 
 	if (mask)
 		warning("AndroidGraphics3dManager::setMouseCursor: Masks are not supported");
