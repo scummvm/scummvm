@@ -2714,7 +2714,7 @@ void dgPolyhedra::Optimize(const dgFloat64 *const array, dgInt32 strideInBytes,
 							if (handle) {
 								handle->m_edge = NULL;
 							}
-							ptr->m_userData = (dgUnsigned32)(size_t)(NULL);
+							ptr->m_userData = PointerToInt(NULL);
 
 						}
 
@@ -2753,7 +2753,7 @@ void dgPolyhedra::Optimize(const dgFloat64 *const array, dgInt32 strideInBytes,
 									if (handle) {
 										handle->m_edge = NULL;
 									}
-									ptr1->m_userData = (dgUnsigned32)(size_t)(NULL);
+									ptr1->m_userData = PointerToInt(NULL);
 
 								}
 							}
@@ -2780,7 +2780,7 @@ void dgPolyhedra::Optimize(const dgFloat64 *const array, dgInt32 strideInBytes,
 									if (handle) {
 										handle->m_edge = NULL;
 									}
-									ptr1->m_twin->m_userData = (dgUnsigned32)(size_t)(NULL);
+									ptr1->m_twin->m_userData = PointerToInt(NULL);
 
 								}
 							}
