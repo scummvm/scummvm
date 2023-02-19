@@ -137,8 +137,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_transactionMode(kTransactionNone),
 	_scalerPlugins(ScalerMan.getPlugins()), _scalerPlugin(nullptr), _scaler(nullptr),
 	_needRestoreAfterOverlay(false), _isInOverlayPalette(false), _isDoubleBuf(false), _prevForceRedraw(false), _numPrevDirtyRects(0),
-	_prevCursorNeedsRedraw(false)
-{
+	_prevCursorNeedsRedraw(false),
+	_mouseKeyColor(0) {
 
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
@@ -220,7 +220,8 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 		(f == OSystem::kFeatureVSync) ||
 #endif
 		(f == OSystem::kFeatureCursorPalette) ||
-		(f == OSystem::kFeatureIconifyWindow);
+		(f == OSystem::kFeatureIconifyWindow) ||
+		(f == OSystem::kFeatureCursorMask);
 }
 
 void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
@@ -1955,10 +1956,102 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 #pragma mark -
 
 void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keyColor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
-	bool formatChanged = false;
 
-	if (mask)
-		warning("SurfaceSdlGraphicsManager::setMouseCursor: Masks are not supported");
+	if (mask && (!format || format->bytesPerPixel == 1)) {
+		// 8-bit masked cursor, SurfaceSdl has no alpha mask support so we must convert this to color key
+		const byte *bufBytes = static_cast<const byte *>(buf);
+
+		uint numPixelUsingColor[256];
+		for (uint i = 0; i < 256; i++)
+			numPixelUsingColor[i] = 0;
+
+		uint numPixels = w * h;
+
+		for (uint i = 0; i < numPixels; i++) {
+			if (mask[i] == kCursorMaskOpaque)
+				numPixelUsingColor[bufBytes[i]]++;
+		}
+
+		uint bestColorNumPixels = 0xffffffffu;
+		uint bestKey = 0;
+		for (uint i = 0; i < 256; i++) {
+			if (numPixelUsingColor[i] < bestColorNumPixels) {
+				bestColorNumPixels = numPixelUsingColor[i];
+				bestKey = i;
+				if (bestColorNumPixels == 0)
+					break;
+			}
+		}
+
+		if (bestColorNumPixels != 0)
+			warning("SurfaceSdlGraphicsManager::setMouseCursor: A mask was specified for an 8-bit cursor but the cursor couldn't be converted to color key");
+
+		Common::Array<byte> maskedImage;
+		maskedImage.resize(w * h);
+		for (uint i = 0; i < numPixels; i++) {
+			if (mask[i] == kCursorMaskOpaque)
+				maskedImage[i] = bufBytes[i];
+			else
+				maskedImage[i] = static_cast<byte>(bestKey);
+		}
+
+		setMouseCursor(&maskedImage[0], w, h, hotspotX, hotspotY, bestKey, dontScale, format, nullptr);
+		return;
+	}
+
+#ifdef USE_RGB_COLOR
+	if (mask && format && format->bytesPerPixel > 1) {
+		const uint numPixels = w * h;
+		const uint inBPP = format->bytesPerPixel;
+
+		Graphics::PixelFormat formatWithAlpha = Graphics::createPixelFormat<8888>();
+
+		// Use the existing format if it already has alpha
+		if (format->aBits() > 0)
+			formatWithAlpha = *format;
+
+		const uint outBPP = format->bytesPerPixel;
+
+		Common::Array<byte> maskedImage;
+		maskedImage.resize(numPixels * outBPP);
+
+		uint32 inColor = 0;
+		byte *inColorPtr = reinterpret_cast<byte *>(&inColor);
+#ifdef SCUMM_BIG_ENDIAN
+		inColorPtr += 4 - inBPP;
+#endif
+
+		uint32 outColor = 0;
+		byte *outColorPtr = reinterpret_cast<byte *>(&outColor);
+#ifdef SCUMM_BIG_ENDIAN
+		outColorPtr += 4 - inBPP;
+#endif
+
+		for (uint i = 0; i < numPixels; i++) {
+			if (mask[i] != kCursorMaskOpaque)
+				outColor = 0;
+			else {
+				memcpy(inColorPtr, static_cast<const byte *>(buf) + i * inBPP, inBPP);
+
+				uint8 r = 0;
+				uint8 g = 0;
+				uint8 b = 0;
+				uint8 a = 0;
+				format->colorToARGB(inColor, a, r, g, b);
+				if (a == 0)
+					outColor = 0;
+				else
+					outColor = formatWithAlpha.ARGBToColor(a, r, g, b);
+			}
+			memcpy(&maskedImage[i * outBPP], outColorPtr, outBPP);
+		}
+
+		setMouseCursor(&maskedImage[0], w, h, hotspotX, hotspotY, 0, dontScale, &formatWithAlpha, nullptr);
+		return;
+	}
+#endif
+
+	bool formatChanged = false;
 
 	if (format) {
 #ifndef USE_RGB_COLOR
