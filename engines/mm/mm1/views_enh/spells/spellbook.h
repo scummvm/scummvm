@@ -56,6 +56,11 @@ private:
 	 */
 	void updateChar();
 
+	/**
+	 * Performs the selected spell
+	 */
+	void castSpell();
+
 public:
 	Spellbook();
 	virtual ~Spellbook() {

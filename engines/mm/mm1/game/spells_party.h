@@ -30,7 +30,8 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
-#define SPELLS_COUNT (47 * 2)
+#define CATEGORY_SPELLS_COUNT 47
+#define SPELLS_COUNT (CATEGORY_SPELLS_COUNT * 2)
 
 enum SpellResult {
 	SR_SUCCESS_DONE, SR_SUCCESS_SILENT, SR_FAILED
@@ -178,7 +179,6 @@ public:
 	 * Casts a spell
 	 */
 	static SpellResult cast(uint spell, Character *destChar);
-	static SpellResult cast(uint spellx);
 };
 
 } // namespace Game

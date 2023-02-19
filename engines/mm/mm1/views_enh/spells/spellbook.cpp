@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/spells/spellbook.h"
+#include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -115,7 +116,7 @@ void Spellbook::draw() {
 
 			// Spell requirements
 			int lvl, num;
-			getSpellLevelNum(47 * (_isWizard ? 1 : 0) + spellIndex, lvl, num);
+			getSpellLevelNum(CATEGORY_SPELLS_COUNT * (_isWizard ? 1 : 0) + spellIndex, lvl, num);
 			setSpell(g_globals->_currCharacter, lvl, num);
 
 			writeString(152, yp, Common::String::format("%d/%d",
@@ -165,17 +166,36 @@ bool Spellbook::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Spellbook::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
 		close();
 		return true;
 
-	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-		msg._action <= KEYBIND_VIEW_PARTY6 && !g_events->isInCombat()) {
-		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-
-		if (charNum < g_globals->_party.size())
-			selectChar(charNum);
+	case KEYBIND_SELECT:
+		close();
+		castSpell();
 		return true;
+
+	case KEYBIND_VIEW_PARTY1:
+	case KEYBIND_VIEW_PARTY2:
+	case KEYBIND_VIEW_PARTY3:
+	case KEYBIND_VIEW_PARTY4:
+	case KEYBIND_VIEW_PARTY5:
+	case KEYBIND_VIEW_PARTY6:
+		// This is unlikely to be triggered. Since normally '1' to '6'
+		// changes the selected character, but in this dialog,
+		// numeric keys are used to select a spell number
+		if (!g_events->isInCombat()) {
+			uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
+
+			if (charNum < g_globals->_party.size())
+				selectChar(charNum);
+			return true;
+		}
+		return true;
+
+	default:
+		break;
 	}
 
 	return false;
@@ -196,7 +216,7 @@ void Spellbook::updateChar() {
 
 	// Update fields
 	const Character &c = *g_globals->_currCharacter;
-	_selectedIndex = (g_events->isInCombat() ? c._combatSpell : c._nonCombatSpell) % 47;
+	_selectedIndex = (g_events->isInCombat() ? c._combatSpell : c._nonCombatSpell) % CATEGORY_SPELLS_COUNT;
 	if (_selectedIndex == -1)
 		_selectedIndex = 0;
 	_topIndex = (_selectedIndex / 10) * 10;
@@ -210,6 +230,35 @@ void Spellbook::updateChar() {
 
 	// And finally, update the display
 	redraw();
+}
+
+void Spellbook::castSpell() {
+	Character &c = *g_globals->_currCharacter;
+	int spellIndex = (_isWizard ? CATEGORY_SPELLS_COUNT : 0) + _selectedIndex;
+
+	// Set the selected spell for the character
+	if (g_events->isInCombat())
+		c._combatSpell = spellIndex;
+	else
+		c._nonCombatSpell = spellIndex;
+
+	// Set the spell
+	int lvl, num;
+	getSpellLevelNum(spellIndex, lvl, num);
+	setSpell(&c, lvl, num);
+	assert(getSpellIndex(&c, lvl, num) == spellIndex);
+
+	if (!canCast()) {
+		Common::String msg = getSpellError();
+		warning("TODO: Show error - %s", msg.c_str());
+
+	} else {
+		if (hasCharTarget()) {
+			// TODO: select a character target
+		} else {
+			// TODO: Cast spell
+		}
+	}
 }
 
 } // namespace Spells
