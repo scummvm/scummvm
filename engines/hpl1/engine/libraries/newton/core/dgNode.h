@@ -173,7 +173,7 @@ dgNode<T>::~dgNode() {
 
 template<class T>
 dgRef *dgNode<T>::CreateClone() const {
-	return new T(*(T *)Common::remove_const<T *>::type(this));
+	return new T(*const_cast<T *>((const T *)this));
 }
 
 template<class T>
