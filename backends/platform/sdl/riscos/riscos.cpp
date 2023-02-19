@@ -26,6 +26,7 @@
 #include "backends/platform/sdl/riscos/riscos.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/events/riscossdl/riscossdl-events.h"
+#include "backends/graphics/riscossdl/riscossdl-graphics.h"
 #include "backends/fs/riscos/riscos-fs-factory.h"
 #include "backends/fs/riscos/riscos-fs.h"
 
@@ -56,6 +57,10 @@ void OSystem_RISCOS::initBackend() {
 	// Create the events manager
 	if (_eventSource == 0)
 		_eventSource = new RISCOSSdlEventSource();
+
+	// Create the graphics manager
+	if (!_graphicsManager)
+		_graphicsManager = new RISCOSSdlGraphicsManager(_eventSource, _window);
 
 	// Create the savefile manager
 	if (_savefileManager == 0) {
