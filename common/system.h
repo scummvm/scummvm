@@ -124,17 +124,20 @@ enum Type {
 * Pixel mask modes for cursor graphics.
 */
 enum CursorMaskValue {
-	// Overlapped pixel is unchanged
+	/** Overlapped pixel is unchanged */
 	kCursorMaskTransparent = 0,
 
-	// Overlapped pixel is replaced with the cursor pixel.
+	/** Overlapped pixel is replaced with the cursor pixel. */
 	kCursorMaskOpaque = 1,
 
 	/** Fully inverts the overlapped pixel regardless of the cursor color data.
 	 *  Backend must support kFeatureCursorMaskInvert for this mode. */
 	kCursorMaskInvert = 2,
 
-	/** kFeatureCursorMaskInvertUsingColor for this mode. */
+	/** Blends with mode (Destination AND Mask) XOR Color in palette modes, or
+	 *  (Destination AND Mask) XOR (NOT Color) in RGB modes, which is equivalent to
+	 *  Classic MacOS behavior for pixel colors other than black and white.
+	 *  Backend must support kFeatureCursorMaskPaletteXorColorXnor for this mode. */
 	kCursorMaskPaletteXorColorXnor = 3,
 };
 
