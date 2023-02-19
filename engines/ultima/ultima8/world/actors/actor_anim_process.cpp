@@ -211,7 +211,7 @@ void ActorAnimProcess::run() {
 #endif
 
 				// TODO: there are _three_ places where we can fall; clean up
-				if (_tracker->isUnsupported()) {
+				if (_tracker->isUnsupported() && z > 0) {
 #ifdef WATCHACTOR
 					if (_itemNum == watchactor) {
 						debugC(kDebugActor, "Animation [%u] ActorAnimProcess falling at end",
@@ -239,7 +239,7 @@ void ActorAnimProcess::run() {
 						  Kernel::get_instance()->getFrameNum());
 #endif
 
-				if (_tracker->isUnsupported()) {
+				if (_tracker->isUnsupported() && z > 0) {
 #ifdef WATCHACTOR
 					if (_itemNum == watchactor) {
 						debugC(kDebugActor, "Animation [%u] ActorAnimProcess falling from blocked",
@@ -352,7 +352,7 @@ void ActorAnimProcess::run() {
 
 
 	if (_repeatCounter == _tracker->getAnimAction()->getFrameRepeat()) {
-		if (_tracker->isUnsupported()) {
+		if (_tracker->isUnsupported() && z > 0) {
 			_animAborted = !_tracker->getAnimAction()->hasFlags(AnimAction::AAF_UNSTOPPABLE);
 
 #ifdef WATCHACTOR

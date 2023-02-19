@@ -99,18 +99,9 @@ void GravityProcess::run() {
 	int32 ix, iy, iz;
 	item->getLocation(ix, iy, iz);
 
-	//
-	// Shouldn't go very negative as item should always hit the floor.
-	//
-	// Slight hack here because Mordea falls through the floor when she
-	// wakes up - set a value big enough that the next event can happen
-	// before we destroy the actor.
-	//
-	if (iz < -5000) {
-		warning("Item %d fell too far, stopping GravityProcess", _itemNum);
+	// Shouldn't go negative as original did not allow it
+	if (iz <= 0 && _zSpeed < 0) {
 		terminate();
-		_itemNum = 0;
-		item->destroy();
 		return;
 	}
 
@@ -118,6 +109,9 @@ void GravityProcess::run() {
 	tx = ix + _xSpeed;
 	ty = iy + _ySpeed;
 	tz = iz + _zSpeed;
+
+	if (tz < 0)
+		tz = 0;
 
 //#define BOUNCE_DIAG
 

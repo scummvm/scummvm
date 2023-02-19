@@ -681,11 +681,15 @@ void U8AvatarMoverProcess::step(Animation::Sequence action, Direction direction,
 
 	if (action == Animation::step && res == Animation::END_OFF_LAND &&
 	        lastanim != Animation::keepBalance && !adjusted) {
-		if (checkTurn(stepdir, false))
+		int32 ax, ay, az;
+		avatar->getLocation(ax, ay, az);
+		if (az > 0) {
+			if (checkTurn(stepdir, false))
+				return;
+			debug(6, "Step: end off land both altdirs failed, keep balance.");
+			waitFor(avatar->doAnim(Animation::keepBalance, stepdir));
 			return;
-		debug(6, "Step: end off land both altdirs failed, keep balance.");
-		waitFor(avatar->doAnim(Animation::keepBalance, stepdir));
-		return;
+		}
 	}
 
 	if (action == Animation::step && res == Animation::FAILURE) {
