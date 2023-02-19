@@ -62,10 +62,6 @@ bool StringsData::load(const Common::String &filename) {
 		key.trim();
 		value.trim();
 
-		if (value.contains("quick")) {
-			warning("%s", value.c_str());
-		}
-
 		// Strip quotes from start and end of string
 		if (value.hasPrefix("\"") && value.hasSuffix("\"")) {
 			value.deleteChar(0);
