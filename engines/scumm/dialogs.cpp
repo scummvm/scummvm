@@ -1356,6 +1356,7 @@ HENetworkGameOptionsWidget::HENetworkGameOptionsWidget(GuiObject *boss, const Co
 	Common::String extra = ConfMan.get("extra", domain);
 
 	// Add back the "Load modded audio" option.
+	_audioOverride = nullptr;
 	const Common::String guiOptionsString = ConfMan.get("guioptions", domain);
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
 	if (guiOptions.contains(GUIO_AUDIO_OVERRIDE))
