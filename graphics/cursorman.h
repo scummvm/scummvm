@@ -68,7 +68,6 @@ public:
 	 * can be safely freed afterwards.
 	 *
 	 * @param buf		New cursor data.
-	 * @param mask		New cursor data.
 	 * @param w			Width.
 	 * @param h			Height.
 	 * @param hotspotX	Hotspot X coordinate.
