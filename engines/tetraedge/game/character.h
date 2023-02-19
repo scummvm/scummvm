@@ -34,6 +34,7 @@
 #include "tetraedge/te/te_bezier_curve.h"
 #include "tetraedge/te/te_free_move_zone.h"
 #include "tetraedge/te/te_trs.h"
+#include "tetraedge/te/te_curve_anim2.h"
 
 namespace Tetraedge {
 
@@ -93,6 +94,13 @@ public:
 		int _lastCheckFrame;
 		int _maxCalls;
 		float _callsMade;
+	};
+
+	class Water {
+		Water();
+		TeIntrusivePtr<TeModel> _model;
+		TeCurveAnim2<TeModel,TeColor> _colorAnim;
+		TeCurveAnim2<TeModel,TeVector3f32> _scaleAnim;
 	};
 
 	void addCallback(const Common::String &s1, const Common::String &s2, float f1, float f2);

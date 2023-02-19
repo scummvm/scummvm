@@ -1054,4 +1054,44 @@ void Character::walkTo(float curveEnd, bool walkFlag) {
 	play();
 }
 
+Character::Water::Water() {
+	_model = new TeModel();
+	_model->setName("Water");
+	TeIntrusivePtr<TeCamera> cam = g_engine->getGame()->scene().currentCamera();
+	if (!cam)
+		error("No active camera when constructing water");
+	TeMatrix4x4 camMatrix = cam->worldTransformationMatrix();
+	Common::Array<TeVector3f32> quad;
+	quad.resize(4);
+	quad[0] = camMatrix.mult3x3(TeVector3f32(-0.1, 0.0,  0.1));
+	quad[1] = camMatrix.mult3x3(TeVector3f32( 0.1, 0.0,  0.1));
+	quad[2] = camMatrix.mult3x3(TeVector3f32(-0.1, 0.0, -0.1));
+	quad[3] = camMatrix.mult3x3(TeVector3f32( 0.1, 0.0, -0.1));
+	TeQuaternion rot = TeQuaternion::fromEuler(TeVector3f32(0, 0, 0));
+	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
+	tex->load(g_engine->getCore()->findFile("texturesIngame/EauOndine1.tga"));
+	_model->setQuad(tex, quad, TeColor(255, 0, 0, 0));
+	_model->setRotation(rot);
+	_model->setScale(TeVector3f32(0.5, 0.5, 0.5));
+	_colorAnim._duration = 2000.0f;
+	TeColor col = _model->color();
+	col.a() = 100;
+	_colorAnim._startVal = col;
+	col.a() = 0;
+	_colorAnim._endVal = col;
+	Common::Array<float> curve;
+	curve.push_back(0);
+	curve.push_back(1);
+	_colorAnim.setCurve(curve);
+	_colorAnim._callbackObj = _model.get();
+	_colorAnim._callbackMethod = &TeModel::setColor;
+	_colorAnim.play();
+	_scaleAnim._duration = 2000.0f;
+	_scaleAnim._startVal = _model->scale();
+	_scaleAnim._endVal = TeVector3f32(3.0f, 3.0f, 3.0f);
+	_scaleAnim.setCurve(curve);
+	_scaleAnim._callbackObj = _model.get();
+	_scaleAnim._callbackMethod = &TeModel::setScale;
+}
+
 } // end namespace Tetraedge
