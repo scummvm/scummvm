@@ -290,6 +290,7 @@ endif
 ifdef RISCOS
 MODULE_OBJS += \
 	events/riscossdl/riscossdl-events.o \
+	graphics/riscossdl/riscossdl-graphics.o \
 	fs/riscos/riscos-fs.o \
 	fs/riscos/riscos-fs-factory.o \
 	midi/riscos.o \
