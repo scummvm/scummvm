@@ -34,25 +34,27 @@ class Win32PrintingManager : public Common::PrintingManager {
 public:
 	virtual ~Win32PrintingManager();
 
-	virtual void printImage(const Common::String &jobName, byte *pixels, byte *palette, uint32 width, uint32 height);
+	void printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf) override;
+	void printImage(const Common::String &jobName, const byte *pixels, const byte *palette, uint32 width, uint32 height) override;
 
 private:
 	HDC createDefaultPrinterContext();
 	HDC createPrinterContext(LPWSTR devName);
-	HPALETTE buildPalette(byte *paletteData);
-	HBITMAP buildBitmap(HDC hdc, byte *pixels, byte *palette, uint width, uint height);
+	HPALETTE buildPalette(const byte *paletteData);
+	HBITMAP buildBitmap(HDC hdc, const byte *pixels, const byte *palette, uint width, uint height);
+	HBITMAP buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf);
 };
 
 
 Win32PrintingManager::~Win32PrintingManager() {}
 
-void Win32PrintingManager::printImage(const Common::String &jobName, byte *pixels, byte *paletteData, uint32 width, uint32 height) {
+void Win32PrintingManager::printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf) {
+
 	HDC hdcPrint = createDefaultPrinterContext();
 
 	HDC hdcImg = CreateCompatibleDC(hdcPrint);
 
-	HPALETTE pal = buildPalette(paletteData);
-	HBITMAP bitmap = buildBitmap(hdcImg, pixels, paletteData, width, height);
+	HBITMAP bitmap = buildBitmap(hdcPrint, surf);
 	if (!bitmap) {
 		DeleteDC(hdcImg);
 		return;
@@ -60,11 +62,9 @@ void Win32PrintingManager::printImage(const Common::String &jobName, byte *pixel
 
 	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
 
-	SelectPalette(hdcImg, pal, TRUE);
-	RealizePalette(hdcImg);
 	SelectObject(hdcImg, bitmap);
 
-	BitBlt(hdcPrint, 0, 0, width, height, hdcImg, 0, 0, SRCCOPY);
+	BitBlt(hdcPrint, 0, 0, surf.w, surf.h, hdcImg, 0, 0, SRCCOPY);
 
 	Escape(hdcPrint, NEWFRAME, 0, NULL, NULL);
 	Escape(hdcPrint, ENDDOC, 0, NULL, NULL);
@@ -73,6 +73,33 @@ void Win32PrintingManager::printImage(const Common::String &jobName, byte *pixel
 	DeleteDC(hdcImg);
 	DeleteDC(hdcPrint);
 }
+
+void Win32PrintingManager::printImage(Common::String jobName, const byte *pixels, const byte *paletteData, uint32 width, uint32 height) {
+	HDC hdcPrint = createDefaultPrinterContext();
+
+	HDC hdcImg = CreateCompatibleDC(hdcPrint);
+
+	HBITMAP bitmap = buildBitmap(hdcPrint, pixels, paletteData, width, height);
+	if (!bitmap) {
+		DeleteDC(hdcImg);
+		return;
+	}
+
+	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
+
+	SelectObject(hdcImg, bitmap);
+
+	BitBlt(hdcPrint, 0, 0, width, height, hdcImg, 0, 0, SRCCOPY);
+	//TransparentBlt(hdcPrint, 0, 0, width, height, hdcImg, 0, 0, width, height, transpColor);
+
+	Escape(hdcPrint, NEWFRAME, 0, NULL, NULL);
+	Escape(hdcPrint, ENDDOC, 0, NULL, NULL);
+
+	DeleteObject(bitmap);
+	DeleteDC(hdcImg);
+	DeleteDC(hdcPrint);
+}
+
 
 HDC Win32PrintingManager::createDefaultPrinterContext() {
 	wchar_t szPrinter[MAX_PATH];
@@ -104,7 +131,7 @@ HDC Win32PrintingManager::createPrinterContext(LPWSTR devName) {
 	return printerDC;
 }
 
-HPALETTE Win32PrintingManager::buildPalette(byte *paletteData) {
+HPALETTE Win32PrintingManager::buildPalette(const byte *paletteData) {
 	LOGPALETTE *lpal = (LOGPALETTE *)malloc(sizeof(LOGPALETTE) + (256 - 1) * sizeof(PALETTEENTRY));
 
 	if (!lpal)
@@ -127,7 +154,7 @@ HPALETTE Win32PrintingManager::buildPalette(byte *paletteData) {
 	return pal;
 }
 
-HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, byte *pixels, byte *palette, uint width, uint height) {
+HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const byte *pixels, const byte *palette, uint width, uint height) {
 	const uint colorCount = 256;
 	BITMAPINFO *bitmapInfo = (BITMAPINFO *)malloc(sizeof(BITMAPINFO) + sizeof(RGBQUAD) * (colorCount - 1));
 
@@ -152,6 +179,45 @@ HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, byte *pixels, byte *palette, 
 	}
 
 	HBITMAP bitmap = CreateDIBitmap(hdc, &(bitmapInfo->bmiHeader), CBM_INIT, pixels, bitmapInfo, DIB_RGB_COLORS);
+
+	free(bitmapInfo);
+
+	return bitmap;
+}
+
+HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf) {
+	const uint colorCount = 256;
+	BITMAPINFO *bitmapInfo = (BITMAPINFO *)malloc(sizeof(BITMAPINFO) + sizeof(RGBQUAD) * (colorCount - 1));
+
+	if (!bitmapInfo)
+		return NULL;
+
+	bitmapInfo->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bitmapInfo->bmiHeader.biWidth = surf.w;
+	bitmapInfo->bmiHeader.biHeight = -((LONG)surf.h);
+	bitmapInfo->bmiHeader.biPlanes = 1;
+	bitmapInfo->bmiHeader.biBitCount = (surf.format.isCLUT8() ? 8 : surf.format.bpp());
+	bitmapInfo->bmiHeader.biCompression = BI_RGB;
+	bitmapInfo->bmiHeader.biSizeImage = 0;
+	bitmapInfo->bmiHeader.biClrUsed = (surf.format.isCLUT8() ? colorCount : 0);
+	bitmapInfo->bmiHeader.biClrImportant = (surf.format.isCLUT8() ? colorCount : 0);
+
+	if (surf.hasPalette()) {
+		byte *colors = new byte[colorCount * 3];
+		surf.grabPalette(colors, 0, colorCount);
+
+		byte *palette = colors;
+		for (uint colorIndex = 0; colorIndex < colorCount; ++colorIndex, palette += 3) {
+			bitmapInfo->bmiColors[colorIndex].rgbRed = palette[0];
+			bitmapInfo->bmiColors[colorIndex].rgbGreen = palette[1];
+			bitmapInfo->bmiColors[colorIndex].rgbBlue = palette[2];
+			bitmapInfo->bmiColors[colorIndex].rgbReserved = 0;
+		}
+
+		delete[] colors;
+	}
+
+	HBITMAP bitmap = CreateDIBitmap(hdc, &(bitmapInfo->bmiHeader), CBM_INIT, surf.getPixels(), bitmapInfo, DIB_RGB_COLORS);
 
 	free(bitmapInfo);
 
