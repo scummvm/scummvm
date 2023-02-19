@@ -119,7 +119,7 @@ dgHeapBase<OBJECT, KEY>::dgHeapBase(const void *const buffer, dgInt32 sizeInByte
 //	NEWTON_ASSERT (0);
 //	m_allocated = false;
 	m_allocator = NULL;
-	m_pool = (RECORD *)Common::remove_const<void * const>::type(buffer);
+	m_pool = const_cast<RECORD *>((const RECORD *)buffer);
 	m_maxCount = dgInt32(sizeInBytes / sizeof(RECORD));
 	Flush();
 }
