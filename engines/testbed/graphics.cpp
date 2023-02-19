@@ -740,6 +740,7 @@ TestExitStatus GFXtests::maskedCursors() {
 
 	TestExitStatus passed = kTestPassed;
 	bool isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorMask);
+	bool haveCursorPalettes = g_system->hasFeature(OSystem::kFeatureCursorPalette);
 
 	g_system->delayMillis(1000);
 
@@ -836,6 +837,9 @@ TestExitStatus GFXtests::maskedCursors() {
 		
 		g_system->getPaletteManager()->setPalette(newPalette, 0, 4);
 
+		if (haveCursorPalettes)
+			g_system->setCursorPalette(newPalette, 0, 4);
+
 		CursorMan.replaceCursor(cursorData, 16, 16, 1, 1, 0, false, nullptr, maskData);
 		CursorMan.showMouse(true);
 		
@@ -862,13 +866,13 @@ TestExitStatus GFXtests::maskedCursors() {
 			return kTestFailed;
 		}
 
-		if (!haveInverted) {
+		if (haveInverted) {
 			if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'I' inverted?", "Yes", "No", kOptionLeft)) {
 				return kTestFailed;
 			}
 		}
 
-		if (!haveColorXorBlend) {
+		if (haveColorXorBlend) {
 			if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'C' inverted according to the color to the left of it?", "Yes", "No", kOptionLeft)) {
 				return kTestFailed;
 			}
@@ -915,13 +919,13 @@ TestExitStatus GFXtests::maskedCursors() {
 				return kTestFailed;
 			}
 
-			if (!haveInverted) {
+			if (haveInverted) {
 				if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'I' inverted?", "Yes", "No", kOptionLeft)) {
 					return kTestFailed;
 				}
 			}
 
-			if (!haveColorXorBlend) {
+			if (haveColorXorBlend) {
 				if (!Testsuite::handleInteractiveInput("Was the part of the cursor to the right of the 'C' inverted according to the color to the left of it?", "Yes", "No", kOptionLeft)) {
 					return kTestFailed;
 				}
