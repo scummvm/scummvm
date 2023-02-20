@@ -34,10 +34,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"reah",
 			"DVD",
-			{
-				{"Reah.exe", 0, "60ec19c53f1323cc7f0314f98d396283", 304128},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("Reah.exe", "60ec19c53f1323cc7f0314f98d396283", 304128),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -49,10 +46,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"reah",
 			"CD",
-			{
-				{"Reah.exe", 0, "77bc7f7819cdd443f52b193529138c87", 305664},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("Reah.exe", "77bc7f7819cdd443f52b193529138c87", 305664),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -64,10 +58,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 		{
 			"schizm",
 			"CD",
-			{
-				{"Schizm.exe", 0, "296edd26d951c3bdc4d303c4c88b27cd", 364544},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("Schizm.exe", "296edd26d951c3bdc4d303c4c88b27cd", 364544),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -78,6 +69,6 @@ static const VCruiseGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GID_UNKNOWN }
 };
 
-} // End of namespace MTropolis
+} // End of namespace VCruise
 
 #endif

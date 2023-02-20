@@ -262,26 +262,26 @@ bool Runtime::runWaitForAnimation() {
 	if (animEnded) {
 		_gameState = kGameStateScript;
 		return true;
-	} else {
-		// Still waiting, check events
-		OSEvent evt;
-		while (popOSEvent(evt)) {
-			if (evt.type == kOSEventTypeKeyDown && evt.keyCode == Common::KEYCODE_ESCAPE) {
-				if (_escOn) {
-					// Terminate the animation
-					if (_animDecoderState == kAnimDecoderStatePlaying) {
-						_animDecoder->pauseVideo(true);
-						_animDecoderState = kAnimDecoderStatePaused;
-					}
-					_gameState = kGameStateScript;
-					return true;
+	}
+
+	// Still waiting, check events
+	OSEvent evt;
+	while (popOSEvent(evt)) {
+		if (evt.type == kOSEventTypeKeyDown && evt.keyCode == Common::KEYCODE_ESCAPE) {
+			if (_escOn) {
+				// Terminate the animation
+				if (_animDecoderState == kAnimDecoderStatePlaying) {
+					_animDecoder->pauseVideo(true);
+					_animDecoderState = kAnimDecoderStatePaused;
 				}
+				_gameState = kGameStateScript;
+				return true;
 			}
 		}
-
-		// Yield
-		return false;
 	}
+
+	// Yield
+	return false;
 }
 
 void Runtime::continuePlayingAnimation(bool loop, bool &outAnimationEnded) {
@@ -343,7 +343,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool &outAnimationEnded) {
 		}
 
 		if (!loop) {
-			if (_animDisplayingFrame >= static_cast<int>(_animLastFrame)) {
+			if (_animDisplayingFrame >= _animLastFrame) {
 				_animDecoder->pauseVideo(true);
 				_animDecoderState = kAnimDecoderStatePaused;
 

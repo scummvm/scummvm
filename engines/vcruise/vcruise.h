@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef VCRUISE_VCRUISE_H
-#define VCRUISE_VCRUISE_H
+#ifndef VCRUISE_H
+#define VCRUISE_H
 
 #include "engines/engine.h"
 #include "common/rect.h"
@@ -76,4 +76,4 @@ private:
 
 } // End of namespace VCruise
 
-#endif /* VCRUISE_VCRUISE_H */
+#endif /* VCRUISE_H */

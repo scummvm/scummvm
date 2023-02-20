@@ -33,6 +33,8 @@ namespace VCruise {
 
 VCruiseEngine::VCruiseEngine(OSystem *syst, const VCruiseGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	SearchMan.addDirectory(gameDataDir.getPath(), gameDataDir);
 }
 
 VCruiseEngine::~VCruiseEngine() {
@@ -84,18 +86,15 @@ Common::Error VCruiseEngine::run() {
 	Common::Point videoSize;
 	Common::Point traySize;
 	Common::Point menuBarSize;
-	const char *exeName = nullptr;
 
 	if (_gameDescription->gameID == GID_REAH) {
 		videoSize = Common::Point(608, 348);
 		menuBarSize = Common::Point(640, 44);
 		traySize = Common::Point(640, 88);
-		exeName = "Reah.exe";
 	} else if (_gameDescription->gameID == GID_SCHIZM) {
 		videoSize = Common::Point(640, 360);
 		menuBarSize = Common::Point(640, 32);
 		traySize = Common::Point(640, 88);
-		exeName = "Schizm.exe";
 	} else {
 		error("Unknown game");
 	}
@@ -130,6 +129,8 @@ Common::Error VCruiseEngine::run() {
 	_runtime.reset(new Runtime(_system, _mixer, _rootFSNode, _gameDescription->gameID));
 	_runtime->initSections(_videoRect, _menuBarRect, _trayRect, _system->getScreenFormat());
 
+	const char *exeName = _gameDescription->desc.filesDescriptions[0].fileName;
+
 	_runtime->loadCursors(exeName);
 
 	if (ConfMan.getBool("vcruise_debug")) {
@@ -159,7 +160,7 @@ void VCruiseEngine::pauseEngineIntern(bool pause) {
 bool VCruiseEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsReturnToLauncher:
-	case kSupportsSavingDuringRuntime:
+	//case kSupportsSavingDuringRuntime:
 		return true;
 	default:
 		return false;
