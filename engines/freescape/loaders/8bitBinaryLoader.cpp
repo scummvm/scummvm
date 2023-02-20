@@ -308,14 +308,14 @@ byte kCGAPalettePinkBlueWhiteData[4][3] = {
 uint32 FreescapeEngine::getPixel8bitImage(int index) {
 	uint8 r, g, b;
 	if (index < 4) {
-		_gfx->readFromPalette(0, r, g, b);
+		_gfx->readFromPalette(index, r, g, b);
 		return _gfx->_currentPixelFormat.ARGBToColor(0xFF, r, g, b);
 	}
 	_gfx->readFromPalette(index / 4, r, g, b);
 	return _gfx->_currentPixelFormat.ARGBToColor(0xFF, r, g, b);
 }
 
-void FreescapeEngine::renderPixels8bitImage(Graphics::Surface *surface, int &i, int &j, int pixels) {
+void FreescapeEngine::renderPixels8bitTitleImage(Graphics::Surface *surface, int &i, int &j, int pixels) {
 	int c1 = pixels >> 4;
 	int c2 = pixels & 0xf;
 
@@ -323,7 +323,7 @@ void FreescapeEngine::renderPixels8bitImage(Graphics::Surface *surface, int &i, 
 		return;
 	}
 
-	surface->setPixel(i, j, getPixel8bitImage(c1));
+	surface->setPixel(i, j, getPixel8bitImage(c1 / 4));
 	i++;
 
 	if (i == 320) {
@@ -337,7 +337,7 @@ void FreescapeEngine::renderPixels8bitImage(Graphics::Surface *surface, int &i, 
 		return;
 	}
 
-	surface->setPixel(i, j, getPixel8bitImage(c2));
+	surface->setPixel(i, j, getPixel8bitImage(c2 / 4));
 	i++;
 
 	if (i == 320) {
@@ -348,7 +348,7 @@ void FreescapeEngine::renderPixels8bitImage(Graphics::Surface *surface, int &i, 
 	i++;
 }
 
-Graphics::Surface *FreescapeEngine::load8bitImage(Common::SeekableReadStream *file, int ncolors, int offset) {
+Graphics::Surface *FreescapeEngine::load8bitTitleImage(Common::SeekableReadStream *file, int ncolors, int offset) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	assert(ncolors == 4);
 	_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
@@ -390,7 +390,7 @@ Graphics::Surface *FreescapeEngine::load8bitImage(Common::SeekableReadStream *fi
 			singlePixelsToProcess--;
 			pixels = file->readByte();
 			//debug("reading pixels: %x at %d, %d", pixels, i, j);
-			renderPixels8bitImage(surface, i, j, pixels);
+			renderPixels8bitTitleImage(surface, i, j, pixels);
 		} else if (repeatedPixelsToProcess) {
 			repetition = file->readByte() + 1;
 			//debug("reading repetition: %x", repetition - 1);
@@ -426,7 +426,7 @@ Graphics::Surface *FreescapeEngine::load8bitImage(Common::SeekableReadStream *fi
 						return surface;
 
 					//sdebug("repeating pixels: %x at %d, %d", pixels1, i, j);
-					renderPixels8bitImage(surface, i, j, pixels1);
+					renderPixels8bitTitleImage(surface, i, j, pixels1);
 
 					if (i == 320) {
 						j++;
@@ -437,12 +437,110 @@ Graphics::Surface *FreescapeEngine::load8bitImage(Common::SeekableReadStream *fi
 						return surface;
 
 					//debug("repeating pixels: %x at %d, %d", pixels2, i, j);
-					renderPixels8bitImage(surface, i, j, pixels2);
+					renderPixels8bitTitleImage(surface, i, j, pixels2);
 				}
 			}
 		}
 	}
 
+	return surface;
+}
+
+void FreescapeEngine::renderPixels8bitBinImage(Graphics::Surface *surface, int &i, int &j, int pixels, int color) {
+	if (i >= 320) {
+		//debug("cannot continue, stopping here at row %d!", j);
+		return;
+	}
+
+	int acc = 1 << 7;
+	while (acc > 0) {
+		assert(i < 320);
+		if (acc & pixels)
+			surface->setPixel(i, j, getPixel8bitImage(color));
+		i++;
+		acc = acc >> 1;
+	}
+
+}
+
+Graphics::Surface *FreescapeEngine::load8bitBinImage(Common::SeekableReadStream *file, int ncolors, int offset) {
+	Graphics::Surface *surface = new Graphics::Surface();
+	assert(ncolors == 4);
+	_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
+	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
+	uint32 black = _gfx->_currentPixelFormat.ARGBToColor(0xFF, 0, 0, 0);
+	surface->fillRect(Common::Rect(0, 0, 320, 200), black);
+
+	file->seek(offset);
+	int imageSize = file->readUint16BE();
+
+	int i = 0;
+	int j = 0;
+	int hPixelsWritten = 0;
+	int color = 1;
+	int command = 0;
+	while (file->pos() <= offset + imageSize) {
+		debug("pos: %lx", file->pos());
+		command = file->readByte();
+
+		color = hPixelsWritten < 320 ? 1 : 2;
+		//debug("command: %x with j: %d", command, j);
+		if (j >= 200)
+			return surface;
+
+		if (command <= 0x7f) {
+			//debug("starting singles at i: %d j: %d", i, j);
+			int start = i;
+			while (command-- >= 0) {
+				int pixels = file->readByte();
+				//debug("single pixels command: %d with pixels: %x", command, pixels);
+				renderPixels8bitBinImage(surface, i, j, pixels, color);
+			}
+			hPixelsWritten = hPixelsWritten + i - start;
+		} else if (command <= 0xff && command >= 0xf0) {
+			int size = 136 - 8*(command - 0xf0);
+			int start = i;
+			int pixels = file->readByte();
+			//debug("starting 0xfX: at i: %d j: %d with pixels: %x", i, j, pixels);
+			while (size > 0) {
+				renderPixels8bitBinImage(surface, i, j, pixels, color);
+				size = size - 8;
+			}
+			hPixelsWritten = hPixelsWritten + i - start;
+			assert(i <= 320);
+		} else if (command <= 0xef && command >= 0xe0) {
+			int size = 264 - 8*(command - 0xe0);
+			int start = i;
+			int pixels = file->readByte();
+			//debug("starting 0xeX: at i: %d j: %d with pixels: %x", i, j, pixels);
+			while (size > 0) {
+				renderPixels8bitBinImage(surface, i, j, pixels, color);
+				size = size - 8;
+			}
+			hPixelsWritten = hPixelsWritten + i - start;
+		} else if (command <= 0xdf && command >= 0xd0) {
+			int size = 272 + 8*(0xdf - command);
+			int start = i;
+			int pixels = file->readByte();
+			while (size > 0) {
+				renderPixels8bitBinImage(surface, i, j, pixels, color);
+				size = size - 8;
+			}
+			hPixelsWritten = hPixelsWritten + i - start;
+		} else {
+			error("unknown command: %x", command);
+		}
+
+		if (i >= 320) {
+			i = 0;
+			if (hPixelsWritten >= 640) {
+				j++;
+				hPixelsWritten = 0;
+			}
+		}
+
+
+	}
 	return surface;
 }
 
