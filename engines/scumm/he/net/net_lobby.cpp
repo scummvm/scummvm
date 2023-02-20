@@ -379,6 +379,10 @@ void Lobby::disconnect(bool lost) {
 		systemAlert(901, "You have been disconnected from our server. Returning to login screen.");
 	}
 
+	if (ConfMan.getBool("enable_competitive_mods"))
+		// set var747 (custom teams status) to 0
+		_vm->writeVar(747, 0);
+
 	delete _socket;
 	_socket = nullptr;
 
