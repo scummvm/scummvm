@@ -515,16 +515,12 @@ void Runtime::queueOSEvent(const OSEvent &evt) {
 void Runtime::loadIndex() {
 	const char *indexPath = "Log/Index.txt";
 
-	Common::File stream;
-	if (!stream.open(indexPath))
-		error("Failed to open main index");
+	Common::INIFile iniFile;
+	iniFile.allowNonEnglishCharacters();
+	if (!iniFile.loadFromFile(indexPath))
+		error("Failed to load main logic index");
 
-	Common::String blamePath = indexPath;
-
-	TextParser parser(&stream);
-
-	Common::String token;
-	TextParserState state;
+	IndexParseType indexParseType = kIndexParseTypeNone;
 
 	static const IndexPrefixTypePair parsePrefixes[] = {
 		{"Room", kIndexParseTypeRoom},
@@ -536,52 +532,35 @@ void Runtime::loadIndex() {
 		{"SRoom", kIndexParseTypeSRoom},
 	};
 
-	IndexParseType indexParseType = kIndexParseTypeNone;
-	uint currentRoomNumber = 0;
+	for (const Common::INIFile::Section &section : iniFile.getSections()) {
+		uint roomNumber = 0;
 
-	for (;;) {
-		char firstCh = 0;
-		if (!parser.skipWhitespaceAndComments(firstCh, state))
-			break;
-
-		if (firstCh == '[') {
-			if (!parser.parseToken(token, state))
-				error("Index open bracket wasn't terminated");
-
-			if (token == "NameRoom") {
-				indexParseType = kIndexParseTypeNameRoom;
-			} else {
-				bool foundType = false;
-				uint prefixLen = 0;
-				for (const IndexPrefixTypePair &prefixTypePair : parsePrefixes) {
-					uint len = strlen(prefixTypePair.prefix);
-					if (token.size() > len && !memcmp(token.c_str(), prefixTypePair.prefix, len)) {
-						indexParseType = prefixTypePair.parseType;
-						foundType = true;
-						prefixLen = len;
-						break;
-					}
-				}
-
-				if (!foundType)
-					error("Unknown index heading type %s", token.c_str());
-
-				currentRoomNumber = 0;
-				for (uint i = prefixLen; i < token.size(); i++) {
-					char digit = token[i];
-					if (digit < '0' || digit > '9')
-						error("Malformed room def");
-					currentRoomNumber = currentRoomNumber * 10 + (token[i] - '0');
+		if (section.name == "NameRoom") {
+			indexParseType = kIndexParseTypeNameRoom;
+		} else {
+			bool foundType = false;
+			uint prefixLen = 0;
+			for (const IndexPrefixTypePair &prefixTypePair : parsePrefixes) {
+				if (section.name.hasPrefix(prefixTypePair.prefix)) {
+					indexParseType = prefixTypePair.parseType;
+					foundType = true;
+					prefixLen = strlen(prefixTypePair.prefix);
+					break;
 				}
 			}
 
-			parser.expect("]", blamePath);
+			if (!foundType)
+				error("Unknown index heading type %s", section.name.c_str());
 
-			allocateRoomsUpTo(currentRoomNumber);
-		} else {
-			parser.requeue(&firstCh, 1, state);
 
-			if (!parseIndexDef(parser, indexParseType, currentRoomNumber, blamePath))
+			if (!sscanf(section.name.c_str() + prefixLen, "%u", &roomNumber))
+				error("Malformed room def '%s'", section.name.c_str());
+
+			allocateRoomsUpTo(roomNumber);
+		}
+
+		for (const Common::INIFile::KeyValue &keyValue : section.getKeys()) {
+			if (!parseIndexDef(indexParseType, roomNumber, keyValue.key, keyValue.value))
 				break;
 		}
 	}
@@ -819,112 +798,85 @@ void Runtime::activateScript(const Common::SharedPtr<Script> &script, const Scri
 	_gameState = kGameStateScript;
 }
 
-bool Runtime::parseIndexDef(TextParser &parser, IndexParseType parseType, uint roomNumber, const Common::String &blamePath) {
-	Common::String lineText;
-	parser.expectLine(lineText, blamePath, true);
-
-	Common::MemoryReadStream lineStream(reinterpret_cast<const byte *>(lineText.c_str()), lineText.size(), DisposeAfterUse::NO);
-	TextParser strParser(&lineStream);
-
+bool Runtime::parseIndexDef(IndexParseType parseType, uint roomNumber, const Common::String &key, const Common::String &value) {
 	switch (parseType) {
 	case kIndexParseTypeNameRoom: {
-			uint nameRoomNumber = 0;
-			Common::String name;
-			strParser.expectToken(name, blamePath);
-			strParser.expect("=", blamePath);
-			strParser.expectUInt(nameRoomNumber, blamePath);
+		uint nameRoomNumber = 0;
 
-			allocateRoomsUpTo(nameRoomNumber);
-			_roomDefs[nameRoomNumber]->name = name;
-		} break;
+		if (!sscanf(value.c_str(), "%u", &nameRoomNumber))
+			error("Malformed NameRoom def '%s'", value.c_str());
+
+		allocateRoomsUpTo(nameRoomNumber);
+		_roomDefs[nameRoomNumber]->name = key;
+	} break;
 	case kIndexParseTypeRoom: {
-			Common::String name;
+		int animNum = 0;
+		uint firstFrame = 0;
+		uint lastFrame = 0;
+		if (sscanf(value.c_str(), "%i, %u, %u", &animNum, &firstFrame, &lastFrame) != 3)
+			error("Malformed room animation def '%s'", value.c_str());
 
-			AnimationDef animDef;
+		
+		AnimationDef animDef;
+		animDef.animNum = animNum;
+		animDef.firstFrame = firstFrame;
+		animDef.lastFrame = lastFrame;
 
-			strParser.expectToken(name, blamePath);
-			strParser.expect("=", blamePath);
-			strParser.expectInt(animDef.animNum, blamePath);
-			strParser.expect(",", blamePath);
-			strParser.expectUInt(animDef.firstFrame, blamePath);
-			strParser.expect(",", blamePath);
-			strParser.expectUInt(animDef.lastFrame, blamePath);
-			_roomDefs[roomNumber]->animations[name] = animDef;
-		} break;
+		_roomDefs[roomNumber]->animations[key] = animDef;
+	} break;
 	case kIndexParseTypeRRoom: {
-			Common::String name;
+		Common::String name;
 
-			Common::Rect rect;
 
-			strParser.expectToken(name, blamePath);
-			strParser.expect("=", blamePath);
-			strParser.expectShort(rect.left, blamePath);
-			strParser.expect(",", blamePath);
-			strParser.expectShort(rect.top, blamePath);
-			strParser.expect(",", blamePath);
-			strParser.expectShort(rect.right, blamePath);
+		int left = 0;
+		int top = 0;
+		int width = 0;
+		int height = 0;
 
-			// Line 4210 in Reah contains an animation def instead of a rect def, detect this and discard
-			if (!strParser.checkEOL()) {
-				strParser.expect(",", blamePath);
-				strParser.expectShort(rect.bottom, blamePath);
+		int numValuesRead = sscanf(value.c_str(), "%i, %i, %i, %i", &left, &top, &width, &height);
 
-				_roomDefs[roomNumber]->rects[name] = rect;
-			}
-
-		} break;
+		if (numValuesRead == 4) {
+			_roomDefs[roomNumber]->rects[key] = Common::Rect(left, top, left + width, top + height);
+		} else {
+			// Line 4210 in Reah contains an animation def instead of a rect def, so we need to tolerate invalid values here
+			warning("Invalid rect def in logic index '%s'", value.c_str());
+		}
+	} break;
 	case kIndexParseTypeYRoom: {
-			Common::String name;
+		uint varSlot = 0;
 
-			uint varSlot = 0;
-
-			strParser.expectToken(name, blamePath);
-			strParser.expect("=", blamePath);
-			strParser.expectUInt(varSlot, blamePath);
-
-			_roomDefs[roomNumber]->vars[name] = varSlot;
-		} break;
+		if (!sscanf(value.c_str(), "%u", &varSlot))
+			error("Malformed var def '%s'", value.c_str());
+			
+		_roomDefs[roomNumber]->vars[key] = varSlot;
+	} break;
 	case kIndexParseTypeVRoom: {
-			Common::String name;
+		Common::String name;
 
-			int value = 0;
+		int val = 0;
 
-			strParser.expectToken(name, blamePath);
-			strParser.expect("=", blamePath);
-			strParser.expectInt(value, blamePath);
+		if (!sscanf(value.c_str(), "%i", &val))
+			error("Malformed value def '%s'", value.c_str());
 
-			_roomDefs[roomNumber]->values[name] = value;
-		} break;
+		_roomDefs[roomNumber]->values[key] = val;
+	} break;
 	case kIndexParseTypeTRoom: {
-			Common::String name;
-			Common::String value;
-
-			strParser.expectToken(name, blamePath);
-			strParser.expect("=", blamePath);
-			strParser.expectLine(value, blamePath, false);
-
-			_roomDefs[roomNumber]->texts[name] = value;
-		} break;
+		_roomDefs[roomNumber]->texts[key] = value;
+	} break;
 	case kIndexParseTypeCRoom: {
-			Common::String name;
-			int value;
-
-			strParser.expectToken(name, blamePath);
-			strParser.expect("=", blamePath);
-			strParser.expectInt(value, blamePath);
-
-			_roomDefs[roomNumber]->consts[name] = value;
-		} break;
+		// This is only used for one entry ("PrzedDrzwiamiDoZsypu" = "In front of the door to the chute") in Reah
+		// and doesn't seem to be referenced in any scripts or anything else.  Discard it.
+	} break;
 	case kIndexParseTypeSRoom: {
-			Common::String name;
-			int value;
+		Common::String name;
 
-			strParser.expectToken(name, blamePath);
-			strParser.expect("=", blamePath);
-			strParser.expectInt(value, blamePath);
+		int soundID = 0;
 
-			_roomDefs[roomNumber]->sounds[name] = value;
-		} break;
+		if (!sscanf(value.c_str(), "%i", &soundID))
+			error("Malformed sound def '%s'", value.c_str());
+
+		_roomDefs[roomNumber]->values[key] = soundID;
+	} break;
 	default:
 		assert(false);
 		return false;

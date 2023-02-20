@@ -75,7 +75,6 @@ struct RoomDef {
 	Common::HashMap<Common::String, uint> vars;
 	Common::HashMap<Common::String, int> values;
 	Common::HashMap<Common::String, Common::String> texts;
-	Common::HashMap<Common::String, int> consts;
 	Common::HashMap<Common::String, int> sounds;
 
 	Common::String name;
@@ -214,7 +213,7 @@ private:
 
 	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
 
-	bool parseIndexDef(TextParser &parser, IndexParseType parseType, uint roomNumber, const Common::String &blamePath);
+	bool parseIndexDef(IndexParseType parseType, uint roomNumber, const Common::String &key, const Common::String &value);
 	void allocateRoomsUpTo(uint roomNumber);
 
 	void drawDebugOverlay();
