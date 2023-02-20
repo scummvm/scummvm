@@ -1494,14 +1494,21 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	if (flags & kWIFPrint) {
 		switch (comp) {
 		case 0: {
-			uint8 *pal = _vm->findWrappedBlock(MKTAG('R', 'G', 'B', 'S'), dataPtr, state, 0);
-			assert(pal);
+			Graphics::ManagedSurface surf;
+			surf.w = width;
+			surf.h = height;
+			surf.format=Graphics::PixelFormat::createFormatCLUT8();
 
 			uint8 *wizd = _vm->findWrappedBlock(MKTAG('W', 'I', 'Z', 'D'), dataPtr, state, 0);
 			assert(wizd);
+			surf.setPixels(wizd);
+
+			uint8 *pal = _vm->findWrappedBlock(MKTAG('R', 'G', 'B', 'S'), dataPtr, state, 0);
+			assert(pal);
+			surf.setPalette(pal, 0, 256);
 
 			PrintingManager *pm = _vm->_system->getPrintingManager();
-			pm->printImage(wizd, pal, width, height);
+			pm->printImage(surf);
 
 			return 0;
 		}
