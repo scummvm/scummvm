@@ -1066,10 +1066,10 @@ Character::Water::Water() {
 	TeMatrix4x4 camMatrix = cam->worldTransformationMatrix();
 	Common::Array<TeVector3f32> quad;
 	quad.resize(4);
-	quad[0] = camMatrix.mult3x3(TeVector3f32(-0.1, 0.0,  0.1));
-	quad[1] = camMatrix.mult3x3(TeVector3f32( 0.1, 0.0,  0.1));
-	quad[2] = camMatrix.mult3x3(TeVector3f32(-0.1, 0.0, -0.1));
-	quad[3] = camMatrix.mult3x3(TeVector3f32( 0.1, 0.0, -0.1));
+	quad[0] = camMatrix.mult3x3(TeVector3f32(-0.1f, 0.0f,  0.1f));
+	quad[1] = camMatrix.mult3x3(TeVector3f32( 0.1f, 0.0f,  0.1f));
+	quad[2] = camMatrix.mult3x3(TeVector3f32(-0.1f, 0.0f, -0.1f));
+	quad[3] = camMatrix.mult3x3(TeVector3f32( 0.1f, 0.0f, -0.1f));
 	TeQuaternion rot = TeQuaternion::fromEuler(TeVector3f32(0, 0, 0));
 	TeIntrusivePtr<Te3DTexture> tex = Te3DTexture::makeInstance();
 	tex->load(g_engine->getCore()->findFile("texturesIngame/EauOndine1.tga"));

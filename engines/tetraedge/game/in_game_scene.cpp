@@ -56,13 +56,13 @@ bool InGameScene::_collisionSlide = false;
 const int InGameScene::MAX_FIRE = 50;
 const int InGameScene::MAX_SNOW = 250;
 const int InGameScene::MAX_SMOKE = 350;
-const float InGameScene::DUREE_MAX_FIRE = 32000.0;
-const float InGameScene::SCALE_FIRE = 0.1;
+const float InGameScene::DUREE_MAX_FIRE = 32000.0f;
+const float InGameScene::SCALE_FIRE = 0.1f;
 const int InGameScene::MAX_FLAKE = 10;
-const float InGameScene::DUREE_MIN_FLAKE = 3000.0;
-const float InGameScene::DUREE_MAX_FLAKE = 5000.0;
-const float InGameScene::SCALE_FLAKE = 0.1;
-const float InGameScene::DEPTH_MAX_FLAKE = 0.1;
+const float InGameScene::DUREE_MIN_FLAKE = 3000.0f;
+const float InGameScene::DUREE_MAX_FLAKE = 5000.0f;
+const float InGameScene::SCALE_FLAKE = 0.1f;
+const float InGameScene::DEPTH_MAX_FLAKE = 0.1f;
 
 
 InGameScene::InGameScene() : _character(nullptr), _charactersShadow(nullptr),
