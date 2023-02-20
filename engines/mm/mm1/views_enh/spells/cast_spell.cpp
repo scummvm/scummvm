@@ -91,9 +91,9 @@ bool CastSpell::msgKeypress(const KeypressMessage &msg) {
 		// Select a new spell
 		addView("Spellbook");
 		return true;
+	} else {
+		return PartyView::msgKeypress(msg);
 	}
-
-	return false;
 }
 
 bool CastSpell::msgAction(const ActionMessage &msg) {
@@ -101,17 +101,8 @@ bool CastSpell::msgAction(const ActionMessage &msg) {
 		close();
 		return true;
 
-	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-		msg._action <= KEYBIND_VIEW_PARTY6) {
-		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-		if (charNum < g_globals->_party.size()) {
-			g_globals->_currCharacter = &g_globals->_party[
-				msg._action - KEYBIND_VIEW_PARTY1];
-			updateSelectedSpell();
-			g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
-			redraw();
-			return true;
-		}
+	} else {
+		return PartyView::msgAction(msg);
 	}
 
 	return false;

@@ -34,14 +34,14 @@ bool PartyView::msgFocus(const FocusMessage &msg) {
 	if (!g_globals->_currCharacter)
 		g_globals->_currCharacter = &g_globals->_party[0];
 
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
+	g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
 	return true;
 }
 
 bool PartyView::msgUnfocus(const UnfocusMessage &msg) {
 	// Turn off highlight for selected character
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)false));
+	g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)false));
 
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	return true;
@@ -49,6 +49,22 @@ bool PartyView::msgUnfocus(const UnfocusMessage &msg) {
 
 bool PartyView::msgMouseDown(const MouseDownMessage &msg) {
 	return send("GameParty", msg);
+}
+
+bool PartyView::msgGame(const GameMessage &msg) {
+	if (msg._name == "UPDATE") {
+		draw();
+		return true;
+	}
+
+	return true;
+}
+
+bool PartyView::msgAction(const ActionMessage &msg) {
+	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
+			msg._action <= KEYBIND_VIEW_PARTY6)
+		return send("GameParty", msg);
+	return false;
 }
 
 } // namespace ViewsEnh

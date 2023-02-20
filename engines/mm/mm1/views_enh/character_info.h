@@ -22,7 +22,7 @@
 #ifndef MM1_VIEWS_ENH_CHARACTER_INFO_H
 #define MM1_VIEWS_ENH_CHARACTER_INFO_H
 
-#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/party_view.h"
 #include "mm/mm1/views_enh/scroll_popup.h"
 #include "mm/shared/xeen/sprites.h"
 
@@ -32,7 +32,7 @@ namespace ViewsEnh {
 
 #define CHAR_ICONS_COUNT 22
 
-class CharacterInfo : public ScrollView {
+class CharacterInfo : public PartyView {
 	struct IconPos {
 		int _frame; int _x; int _y;
 	};

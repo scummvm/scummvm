@@ -62,7 +62,7 @@ const CharacterInfo::IconPos CharacterInfo::ICONS[CHAR_ICONS_COUNT] = {
 
 
 CharacterInfo::CharacterInfo() :
-		ScrollView("CharacterInfo"), _statInfo("ScrollText") {
+		PartyView("CharacterInfo"), _statInfo("ScrollText") {
 	_bounds = Common::Rect(0, 0, 320, 146);
 	_statInfo.setReduced(true);
 
@@ -82,28 +82,16 @@ CharacterInfo::CharacterInfo() :
 
 bool CharacterInfo::msgFocus(const FocusMessage &msg) {
 	_viewIcon.load("view.icn");
-	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
-
-	// Turn on highlight for selected character
-	if (!g_globals->_currCharacter)
-		g_globals->_currCharacter = &g_globals->_party[0];
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
-
 	_cursorCell = 0;
 	showCursor(true);
 	delayFrames(CURSOR_BLINK_FRAMES);
 
-	return ScrollView::msgFocus(msg);
+	return PartyView::msgFocus(msg);
 }
 
 bool CharacterInfo::msgUnfocus(const UnfocusMessage &msg) {
 	_viewIcon.clear();
-
-	// Turn off highlight for selected character
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)false));
-
-	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
-	return ScrollView::msgUnfocus(msg);
+	return PartyView::msgUnfocus(msg);
 }
 
 bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
@@ -156,17 +144,8 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		close();
 		return true;
-	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-			msg._action <= KEYBIND_VIEW_PARTY6) {
-		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-		if (charNum < g_globals->_party.size()) {
-			g_globals->_currCharacter = &g_globals->_party[
-				msg._action - KEYBIND_VIEW_PARTY1];
-			g_events->findView("GameParty")->draw();
-			redraw();
-		}
-
-		return true;
+	} else {
+		return PartyView::msgAction(msg);
 	}
 
 	return false;
