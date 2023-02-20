@@ -22,13 +22,20 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "graphics/managed_surface.h"
 
 class PrintingManager {
 public:
 	virtual ~PrintingManager();
 
-	virtual void printImage(Common::String jobName, byte *pixels, byte *palette, uint32 width, uint32 height) = 0;
-	void printImage(byte * pixels, byte * palette, uint32 width, uint32 height) {
+	virtual void printImage(Common::String jobName, const Graphics::ManagedSurface &surf) = 0;
+
+	virtual void printImage(Common::String jobName, const byte *pixels, const byte *palette, uint32 width, uint32 height) = 0;
+	void printImage(const byte * pixels, const byte * palette, uint32 width, uint32 height) {
 		printImage("ScummVM", pixels, palette, width, height);
+	}
+
+	void printImage(const Graphics::ManagedSurface& surf) {
+		printImage("ScummVM", surf);
 	}
 };
