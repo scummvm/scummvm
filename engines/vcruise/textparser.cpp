@@ -29,30 +29,23 @@ namespace VCruise {
 TextParserState::TextParserState() : _lineNum(1), _col(1), _prevWasCR(false), _isParsingComment(false) {
 }
 
-TextParser::TextParser(Common::ReadStream *stream) : _stream(stream), _readBufferPos(0), _readBufferEnd(0), _returnBufferPos(kReturnBufferSize) {
-	memset(_readBuffer, 0, kReadBufferSize);
-	memset(_returnedBuffer, 0, kReturnBufferSize);
+TextParser::TextParser(Common::ReadStream *stream) : _stream(stream), _returnedBufferPos(kReturnedBufferSize) {
+	memset(_returnedBuffer, 0, kReturnedBufferSize);
 }
 
 bool TextParser::readOneChar(char &outC, TextParserState &outState) {
-	if (_returnBufferPos == kReturnBufferSize) {
-		if (_readBufferPos == _readBufferEnd) {
-			if (_stream->eos())
-				return false;
-
-			_readBufferPos = 0;
-			_readBufferEnd = _stream->read(_readBuffer, kReadBufferSize);
-			if (_readBufferEnd == 0)
-				return false;
-		}
+	if (_returnedBufferPos == kReturnedBufferSize) {
+		if (_stream->eos())
+			return false;
 	}
 
 	char c = 0;
 
-	if (_returnBufferPos != kReturnBufferSize) {
-		c = _returnedBuffer[_returnBufferPos++];
+	if (_returnedBufferPos != kReturnedBufferSize) {
+		c = _returnedBuffer[_returnedBufferPos++];
 	} else {
-		c = _readBuffer[_readBufferPos++];
+		if (!_stream->read(&c, 1))
+			return false;
 	}
 
 	TextParserState prevState = _state;
@@ -115,9 +108,9 @@ bool TextParser::isWhitespace(char c) {
 
 void TextParser::requeue(const char *chars, uint numChars, const TextParserState &state) {
 	_state = state;
-	assert(_returnBufferPos >= numChars);
-	_returnBufferPos -= numChars;
-	memcpy(_returnedBuffer + _returnBufferPos, chars, numChars);
+	assert(_returnedBufferPos >= numChars);
+	_returnedBufferPos -= numChars;
+	memcpy(_returnedBuffer + _returnedBufferPos, chars, numChars);
 }
 
 void TextParser::requeue(const Common::String &str, const TextParserState &state) {
