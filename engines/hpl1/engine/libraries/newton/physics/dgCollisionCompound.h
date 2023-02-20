@@ -62,6 +62,7 @@ protected:
 		dgNodeBase(dgCollisionConvex *const m_shape, dgInt32 id);
 		dgNodeBase(dgNodeBase *const left, dgNodeBase *const right, dgInt32 id);
 		~dgNodeBase();
+		void reset();
 		bool BoxTest(const OOBBTestData &data) const;
 		bool BoxTest(const OOBBTestData &data, const dgNodeBase *const otherNode) const;
 

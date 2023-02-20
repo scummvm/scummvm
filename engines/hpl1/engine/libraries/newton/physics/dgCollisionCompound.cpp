@@ -155,6 +155,22 @@ dgCollisionCompound::dgNodeBase::~dgNodeBase() {
 	}
 }
 
+void dgCollisionCompound::dgNodeBase::reset() {
+	m_id = 0; // FIXME: Maybe should reset to -1
+	m_left = NULL;
+	m_right = NULL;
+	m_parent = NULL;
+	m_type = 0;
+	m_shape = NULL;
+
+	m_p0 = dgVector(0.0f, 0.0f, 0.0f, 0.0f);
+	m_p1 = dgVector(0.0f, 0.0f, 0.0f, 0.0f);;
+	m_size = dgVector(0.0f, 0.0f, 0.0f, 0.0f);;
+	m_origin = dgVector(0.0f, 0.0f, 0.0f, 0.0f);;
+
+	m_area = 0.0f;
+}
+
 bool dgCollisionCompound::dgNodeBase::BoxTest(const OOBBTestData &data,
         const dgNodeBase *const otherNode) const {
 	dgVector otherOrigin(data.m_matrix.TransformVector(otherNode->m_origin));
@@ -355,7 +371,7 @@ dgCollisionCompound::dgCollisionCompound(dgWorld *const world,
 		Data() {
 		}
 		~Data() {
-			memset(this, 0, sizeof(dgNodeBase));
+			this->reset();
 		}
 
 		dgInt8 m_padding[128];
