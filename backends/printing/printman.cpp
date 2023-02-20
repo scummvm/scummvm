@@ -29,7 +29,7 @@ void PrintingManager::printImage(Common::String jobName, const Graphics::Managed
 	PrintJob *job = createJob(jobName);
 
 	job->drawBitmap(surf, 0, 0);
-	job->newPage();
+	job->pageFinished();
 	job->endDoc();
 
 	delete job;

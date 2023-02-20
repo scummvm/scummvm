@@ -47,7 +47,7 @@ public:
 
 	void drawBitmap(const Graphics::ManagedSurface &surf, int x, int y);
 
-	void newPage();
+	void pageFinished();
 	void endDoc();
 	void abortJob();
 
@@ -99,7 +99,7 @@ delDC:
 	DeleteDC(hdcImg);
 }
 
-void Win32PrintJob::newPage() {
+void Win32PrintJob::pageFinished() {
 	Escape(hdcPrint, NEWFRAME, 0, NULL, NULL);
 }
 

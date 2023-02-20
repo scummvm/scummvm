@@ -49,7 +49,7 @@ public:
 
 	virtual void drawBitmap(const Graphics::ManagedSurface &surf, int x, int y) = 0;
 
-	virtual void newPage() = 0;
+	virtual void pageFinished() = 0;
 	virtual void endDoc() = 0;
 	virtual void abortJob() = 0;
 };
