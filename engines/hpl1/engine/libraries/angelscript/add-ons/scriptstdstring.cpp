@@ -395,7 +395,7 @@ void RegisterStdString_Native(asIScriptEngine *engine) {
 	UNUSED_VAR(r);
 
 	// Register the string type
-#if AS_CAN_USE_CPP11
+#ifdef AS_CAN_USE_CPP11
 	// With C++11 it is possible to use asGetTypeTraits to automatically determine the correct flags to use
 	r = engine->RegisterObjectType("string", sizeof(Common::String), asOBJ_VALUE | asGetTypeTraits<Common::String>());
 	assert(r >= 0);
