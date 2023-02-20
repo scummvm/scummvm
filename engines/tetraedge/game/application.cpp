@@ -309,7 +309,8 @@ void Application::startGame(bool newGame, int difficulty) {
 }
 
 void Application::resume() {
-	error("TODO: Implement Application::resume");
+	// Probably not needed.
+	error("Implement Application::resume");
 }
 
 bool Application::run() {
@@ -347,8 +348,8 @@ bool Application::run() {
 				TeLuaGUI finalGui;
 				finalGui.load("finalURL.lua");
 				/*TeVariant finalVal =*/ finalGui.value("finalURL");
+				// Not clear if this variant is ever used in original.
 				debug("TODO: use final URL??");
-				// TODO: Not clear if this variant is ever used in original.
 				finalGui.unload();
 			}
 			_finishedGame = false;
@@ -359,7 +360,8 @@ bool Application::run() {
 }
 
 void Application::suspend() {
-	error("TODO: Implement Application::suspend");
+	// Probably not needed.
+	error("Implement Application::suspend");
 }
 
 void Application::showNoCellIcon(bool show) {
@@ -385,7 +387,8 @@ void Application::showLoadingIcon(bool show) {
 }
 
 void Application::saveCorrupted(const Common::String &fname) {
-	error("TODO: Implement Application::showLoadingIcon");
+	// Probably not needed.
+	error("Implement Application::saveCorrupted");
 }
 
 void Application::drawBack() {
@@ -504,7 +507,8 @@ bool Application::isFading() {
 }
 
 bool Application::onBlackFadeAnimationFinished() {
-	error("TODO: Implement Application::onBlackFadeAnimationFinished");
+	_visFade._blackFadeSprite.setVisible(false);
+	_visFade._buttonLayout.setVisible(false);
 	return false;
 }
 
@@ -545,13 +549,13 @@ void Application::lockCursorFromAction(bool lock) {
 }
 
 void Application::loadOptions(const Common::String &fname) {
-	// TODO: Maybe load options here - original uses an
-	// xml file but we would want confman.
-	debug("TODO: Implement Application::loadOptions %s", fname.c_str());
+	// Probably not needed.  We sync confman in addArtworkUnlocked.
+	debug("Application::loadOptions %s", fname.c_str());
 }
 
 void Application::saveOptions(const Common::String &fname) {
-	debug("TODO: Implement Application::saveOptions %s", fname.c_str());
+	// Probably not needed.  We sync confman in addArtworkUnlocked.
+	debug("Application::saveOptions %s", fname.c_str());
 }
 
 Common::String Application::getHelpText(const Common::String &key) {
@@ -559,7 +563,8 @@ Common::String Application::getHelpText(const Common::String &key) {
 }
 
 const char *Application::inAppUnlockFullVersionID() {
-	error("TODO: Implement Application::inAppUnlockFullVersionID");
+	// Probably not needed.
+	error("Implement Application::inAppUnlockFullVersionID");
 }
 
 } // end namespace Tetraedge
