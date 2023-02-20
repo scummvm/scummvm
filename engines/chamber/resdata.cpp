@@ -147,7 +147,7 @@ int16 loadStaticData() {
 
 	uint32 *modOffs = new uint32[numMods];
 
-	for (int i = 0; i < numMods; i++)
+	for (uint i = 0; i < numMods; i++)
 		modOffs[i] = modBase + pxi.readUint32BE();
 
 	// So far, take only resource 0. Additional selection is required
@@ -182,7 +182,7 @@ int16 loadStaticData() {
 	const char *firstRes = "ARPLA.";
 	int32 resOffs = -1;
 
-	for (int i = off; i < rawSize; i++)
+	for (uint i = off; i < rawSize; i++)
 		if (!strncmp((char *)rawData + i, firstRes, strlen(firstRes))) {
 			resOffs = i;
 			break;

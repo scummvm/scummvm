@@ -303,7 +303,11 @@ void loadZone(void) {
 	if (zone_obj_count != 0) {
 		uint16 i;
 		uint16 *zcmds = script_word_vars.zone_obj_cmds;
-		memset(script_word_vars.zone_obj_cmds, 0, 15 * 5);  /*half of list: TODO: bug? wipe whole list?*/
+#if 0
+		memset(script_word_vars.zone_obj_cmds, 0, 15 * 5 * sizeof(uint8));  /*Original code? - half of list: TODO: bug? wipe whole list?*/
+#else
+		memset(script_word_vars.zone_obj_cmds, 0, 15 * 5 * sizeof(uint16));  /* wipe whole list */
+#endif
 		for (i = 0; i < zone_obj_count; i++) {
 			/*load spot's reactions*/
 			uint16 flags = (*zptr++) << 8;

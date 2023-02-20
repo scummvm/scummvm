@@ -49,7 +49,6 @@ uint16 dot_effect_delay;
 
 extern uint16 cpu_speed_delay;
 
-extern byte *seekToEntry(byte *bank, uint16 num, byte **end);
 extern void loadLutinSprite(uint16 lutidx);
 
 void getScratchBuffer(byte mode) {

@@ -1227,6 +1227,9 @@ static uint16 FPDiv(uint16 a, byte b) {
 	/*is it really any better than (uint32)(a << 8) / b ?*/
 }
 
+// call commented out in void cga_ZoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target, uint16 ofs) currently
+// thus causes an unused function warning
+#if 0
 /*
 Draw scaled image
 NB! tw/th specify target width/height in pixels
@@ -1301,6 +1304,7 @@ static void cga_Zoom(zoom_t *params, byte tw, byte th, byte *source, byte *targe
 
 	cga_BlitAndWait(scratch_mem2, params->fw, params->fw, th + 2, target, finofs);
 }
+#endif
 
 /*
 Draw scaled image
