@@ -31,7 +31,7 @@ namespace TinyGL {
 
 #define MAX_INTEGER             2147483647
 #define FLOAT_TO_INTEGER(f)     ((TGLint)(f * MAX_INTEGER))
-#define FLOAT_TO_BOOLEAN(f)     ((f) ? TGL_TRUE : TGL_FALSE)
+#define VALUE_TO_BOOLEAN(f)     ((f) ? TGL_TRUE : TGL_FALSE)
 
 void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dataType) {
 	int mnr = 0;
@@ -322,7 +322,7 @@ void GLContext::gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dat
 		dataType = kFloatType;
 		break;
 	case TGL_FRONT_FACE:
-		data->_int = current_front_face;
+		data->_int = (current_front_face == 0) ? TGL_CCW : TGL_CW;
 		dataType = kIntType;
 		break;
 	case TGL_INDEX_ARRAY:
@@ -942,29 +942,29 @@ void GLContext::gl_GetBooleanv(TGLenum pname, TGLboolean *data) {
 
 	switch (dataType) {
 	case kIntType:
-		data[0] = FLOAT_TO_BOOLEAN(tmpData._int);
+		data[0] = VALUE_TO_BOOLEAN(tmpData._int);
 		break;
 	case kInt4Type:
 		for (int i = 0; i < 4; i++)
-			data[i] = FLOAT_TO_BOOLEAN(tmpData._int4[i]);
+			data[i] = VALUE_TO_BOOLEAN(tmpData._int4[i]);
 		break;
 	case kUintType:
-		data[0] = FLOAT_TO_BOOLEAN(tmpData._int);
+		data[0] = VALUE_TO_BOOLEAN(tmpData._int);
 		break;
 	case kFloatType:
-		data[0] = FLOAT_TO_BOOLEAN(tmpData._float);
+		data[0] = VALUE_TO_BOOLEAN(tmpData._float);
 		break;
 	case kFloat2Type:
 		for (int i = 0; i < 2; i++)
-			data[i] = FLOAT_TO_BOOLEAN(tmpData._float2[i]);
+			data[i] = VALUE_TO_BOOLEAN(tmpData._float2[i]);
 		break;
 	case kFloat4Type:
 		for (int i = 0; i < 4; i++)
-			data[i] = FLOAT_TO_BOOLEAN(tmpData._float4[i]);
+			data[i] = VALUE_TO_BOOLEAN(tmpData._float4[i]);
 		break;
 	case kFloat16Type:
 		for (int i = 0; i < 16; i++)
-			data[i] = FLOAT_TO_BOOLEAN(tmpData._float16[i]);
+			data[i] = VALUE_TO_BOOLEAN(tmpData._float16[i]);
 		break;
 	default:
 		assert("gl_GetBooleanv: unknown data type");
