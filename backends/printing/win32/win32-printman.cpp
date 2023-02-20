@@ -35,13 +35,10 @@ public:
 	virtual ~Win32PrintingManager();
 
 	void printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf) override;
-	void printImage(const Common::String &jobName, const byte *pixels, const byte *palette, uint32 width, uint32 height) override;
 
 private:
 	HDC createDefaultPrinterContext();
 	HDC createPrinterContext(LPWSTR devName);
-	HPALETTE buildPalette(const byte *paletteData);
-	HBITMAP buildBitmap(HDC hdc, const byte *pixels, const byte *palette, uint width, uint height);
 	HBITMAP buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf);
 };
 
@@ -74,33 +71,6 @@ void Win32PrintingManager::printImage(const Common::String &jobName, const Graph
 	DeleteDC(hdcPrint);
 }
 
-void Win32PrintingManager::printImage(Common::String jobName, const byte *pixels, const byte *paletteData, uint32 width, uint32 height) {
-	HDC hdcPrint = createDefaultPrinterContext();
-
-	HDC hdcImg = CreateCompatibleDC(hdcPrint);
-
-	HBITMAP bitmap = buildBitmap(hdcPrint, pixels, paletteData, width, height);
-	if (!bitmap) {
-		DeleteDC(hdcImg);
-		return;
-	}
-
-	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
-
-	SelectObject(hdcImg, bitmap);
-
-	BitBlt(hdcPrint, 0, 0, width, height, hdcImg, 0, 0, SRCCOPY);
-	//TransparentBlt(hdcPrint, 0, 0, width, height, hdcImg, 0, 0, width, height, transpColor);
-
-	Escape(hdcPrint, NEWFRAME, 0, NULL, NULL);
-	Escape(hdcPrint, ENDDOC, 0, NULL, NULL);
-
-	DeleteObject(bitmap);
-	DeleteDC(hdcImg);
-	DeleteDC(hdcPrint);
-}
-
-
 HDC Win32PrintingManager::createDefaultPrinterContext() {
 	wchar_t szPrinter[MAX_PATH];
 	BOOL success;
@@ -129,60 +99,6 @@ HDC Win32PrintingManager::createPrinterContext(LPWSTR devName) {
 
 	HDC printerDC = CreateDCW(L"WINSPOOL", devName, NULL, devmode);
 	return printerDC;
-}
-
-HPALETTE Win32PrintingManager::buildPalette(const byte *paletteData) {
-	LOGPALETTE *lpal = (LOGPALETTE *)malloc(sizeof(LOGPALETTE) + (256 - 1) * sizeof(PALETTEENTRY));
-
-	if (!lpal)
-		return NULL;
-
-	lpal->palNumEntries = 256;
-	lpal->palVersion = 1;
-
-	for (uint i = 0; i < 256; ++i, paletteData += 3) {
-		lpal->palPalEntry[i].peRed = paletteData[0];
-		lpal->palPalEntry[i].peGreen = paletteData[1];
-		lpal->palPalEntry[i].peBlue = paletteData[2];
-		lpal->palPalEntry[i].peFlags = 0;
-	}
-
-	HPALETTE pal = CreatePalette(lpal);
-
-	free(lpal);
-
-	return pal;
-}
-
-HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const byte *pixels, const byte *palette, uint width, uint height) {
-	const uint colorCount = 256;
-	BITMAPINFO *bitmapInfo = (BITMAPINFO *)malloc(sizeof(BITMAPINFO) + sizeof(RGBQUAD) * (colorCount - 1));
-
-	if (!bitmapInfo)
-		return NULL;
-
-	bitmapInfo->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bitmapInfo->bmiHeader.biWidth = width;
-	bitmapInfo->bmiHeader.biHeight = -((LONG)height);
-	bitmapInfo->bmiHeader.biPlanes = 1;
-	bitmapInfo->bmiHeader.biBitCount = 8;
-	bitmapInfo->bmiHeader.biCompression = BI_RGB;
-	bitmapInfo->bmiHeader.biSizeImage = 0;
-	bitmapInfo->bmiHeader.biClrUsed = colorCount;
-	bitmapInfo->bmiHeader.biClrImportant = colorCount;
-
-	for (uint colorIndex = 0; colorIndex < colorCount; ++colorIndex, palette += 3) {
-		bitmapInfo->bmiColors[colorIndex].rgbRed = palette[0];
-		bitmapInfo->bmiColors[colorIndex].rgbGreen = palette[1];
-		bitmapInfo->bmiColors[colorIndex].rgbBlue = palette[2];
-		bitmapInfo->bmiColors[colorIndex].rgbReserved = 0;
-	}
-
-	HBITMAP bitmap = CreateDIBitmap(hdc, &(bitmapInfo->bmiHeader), CBM_INIT, pixels, bitmapInfo, DIB_RGB_COLORS);
-
-	free(bitmapInfo);
-
-	return bitmap;
 }
 
 HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf) {
