@@ -19,6 +19,9 @@
  *
  */
 
+#ifndef BACKENDS_PRINTING_PRINTMAN_H
+#define BACKENDS_PRINTING_PRINTMAN_H
+
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -50,3 +53,5 @@ public:
 	virtual void endDoc() = 0;
 	virtual void abortJob() = 0;
 };
+
+#endif
