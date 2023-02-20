@@ -623,10 +623,10 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 	if (changedScreen) {
 		if (_scriptSet) {
-			Common::HashMap<uint, Common::SharedPtr<RoomScriptSet> >::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
+			RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
 			if (roomScriptIt != _scriptSet->roomScripts.end()) {
-				Common::HashMap<uint, Common::SharedPtr<ScreenScriptSet> > &screenScriptsMap = roomScriptIt->_value->screenScripts;
-				Common::HashMap<uint, Common::SharedPtr<ScreenScriptSet> >::const_iterator screenScriptIt = screenScriptsMap.find(_screenNumber);
+				const ScreenScriptSetMap_t &screenScriptsMap = roomScriptIt->_value->screenScripts;
+				ScreenScriptSetMap_t::const_iterator screenScriptIt = screenScriptsMap.find(_screenNumber);
 				if (screenScriptIt != screenScriptsMap.end()) {
 					const Common::SharedPtr<Script> &script = screenScriptIt->_value->entryScript;
 					if (script)
@@ -976,16 +976,16 @@ void Runtime::drawDebugOverlay() {
 
 Common::SharedPtr<Script> Runtime::findScriptForInteraction(uint interactionID) const {
 	if (_scriptSet) {
-		Common::HashMap<uint, Common::SharedPtr<RoomScriptSet> >::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
+		RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
 
 		if (roomScriptIt != _scriptSet->roomScripts.end()) {
 			const RoomScriptSet &roomScriptSet = *roomScriptIt->_value;
 
-			Common::HashMap<uint, Common::SharedPtr<ScreenScriptSet> >::const_iterator screenScriptIt = roomScriptSet.screenScripts.find(_screenNumber);
+			ScreenScriptSetMap_t::const_iterator screenScriptIt = roomScriptSet.screenScripts.find(_screenNumber);
 			if (screenScriptIt != roomScriptSet.screenScripts.end()) {
 				const ScreenScriptSet &screenScriptSet = *screenScriptIt->_value;
 
-				Common::HashMap<uint, Common::SharedPtr<Script> >::const_iterator interactionScriptIt = screenScriptSet.interactionScripts.find(interactionID);
+				ScriptMap_t::const_iterator interactionScriptIt = screenScriptSet.interactionScripts.find(interactionID);
 				if (interactionScriptIt != screenScriptSet.interactionScripts.end())
 					return interactionScriptIt->_value;
 			}
