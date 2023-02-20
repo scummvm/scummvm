@@ -23,10 +23,10 @@ MODULE_OBJS := \
 	midi/sndio.o \
 	midi/stmidi.o \
 	midi/timidity.o \
+	printing/printman.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
-	timer/default/default-timer.o \
-	printing/printman.o 
+	timer/default/default-timer.o
 
 ifdef USE_CLOUD
 
@@ -240,11 +240,11 @@ MODULE_OBJS += \
 	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
 	midi/windows.o \
+	printing/win32/win32-printman.o \
 	plugins/win32/win32-provider.o \
 	saves/windows/windows-saves.o \
 	updates/win32/win32-updates.o \
-	taskbar/win32/win32-taskbar.o \
-	printing/win32/win32-printman.o 
+	taskbar/win32/win32-taskbar.o
 
 ifdef USE_TTS
 MODULE_OBJS += \
