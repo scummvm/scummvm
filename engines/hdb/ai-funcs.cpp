@@ -2384,6 +2384,12 @@ void AI::movePlayer(uint16 buttons) {
 		int ny = _player->tileY + yva[_player->dir];
 		AIEntity *hit = findEntity(nx, ny);
 
+		if (hit && hit->type == AI_NONE) {
+			AIEntity *temp = g_hdb->_ai->findEntityIgnore(nx, ny, hit);
+			if (temp)
+				hit = temp;
+		}
+
 		// the reason to check for no entity or an AI_NONE is because
 		// there's a possibility that an actual entity and a LUA entity
 		// can share the same spot, so we need to be able to deal with
