@@ -338,12 +338,6 @@ private:
 
 	VCruiseGameID _gameID;
 
-	Common::FSNode _rootFSNode;
-	Common::FSNode _logDir;
-	Common::FSNode _mapDir;
-	Common::FSNode _sfxDir;
-	Common::FSNode _animsDir;
-
 	Common::Array<Common::SharedPtr<RoomDef> > _roomDefs;
 	Common::SharedPtr<ScriptSet> _scriptSet;
 
