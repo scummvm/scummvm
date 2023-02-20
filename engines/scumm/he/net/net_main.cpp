@@ -296,8 +296,8 @@ int Net::createSession(char *name) {
 			_sessionServerPeer = 0;
 			// Create session to the session server.
 			Common::String req = Common::String::format(
-				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\"}",
-				_gameName.c_str(), _gameVersion.c_str(), name);
+				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\",\"maxplayers\":%d}",
+				_gameName.c_str(), _gameVersion.c_str(), name, _maxPlayers);
 			debug(1, "NETWORK: Sending to session server: %s", req.c_str());
 			_sessionHost->send(req.c_str(), _sessionServerPeer);
 		} else {
