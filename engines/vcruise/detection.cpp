@@ -36,16 +36,12 @@ static const PlainGameDescriptor vCruiseGames[] = {
 
 #include "vcruise/detection_tables.h"
 
-static const char *directoryGlobs[] = {
-	nullptr
-};
-
 class VCruiseMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	VCruiseMetaEngineDetection() : AdvancedMetaEngineDetection(VCruise::gameDescriptions, sizeof(VCruise::VCruiseGameDescription), vCruiseGames) {
 		_guiOptions = GUIO1(GAMEOPTION_LAUNCH_DEBUG);
 		_maxScanDepth = 1;
-		_directoryGlobs = directoryGlobs;
+		_directoryGlobs = nullptr;
 		_flags = kADFlagCanPlayUnknownVariants;
 	}
 
