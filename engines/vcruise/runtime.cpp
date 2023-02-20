@@ -1038,8 +1038,16 @@ void Runtime::onKeyDown(Common::KeyCode keyCode) {
 	queueOSEvent(evt);
 }
 
-#ifdef CHECK_STACK
-#error "CHECK_STACK is already defined"
+#ifdef PEEK_STACK
+#error "PEEK_STACK is already defined"
+#endif
+
+#ifdef TAKE_STACK
+#error "TAKE_STACK is already defined"
+#endif
+
+#ifdef OPCODE_STUB
+#error "OPCODE_STUB is already defined"
 #endif
 
 #define PEEK_STACK(n)                                                                         \
@@ -1064,6 +1072,11 @@ void Runtime::onKeyDown(Common::KeyCode keyCode) {
 		this->_scriptStack.resize(stackSize - (n));                                           \
 	} while (false)
 
+#define OPCODE_STUB(op)                           \
+	void Runtime::scriptOp##op(ScriptArg_t arg) { \
+		error("Unimplemented opcode '" #op "'");  \
+	}
+
 void Runtime::scriptOpNumber(ScriptArg_t arg) {
 	_scriptStack.push_back(arg);
 }
@@ -1076,9 +1089,9 @@ void Runtime::scriptOpRotate(ScriptArg_t arg) {
 	_havePanAnimations = true;
 }
 
-void Runtime::scriptOpAngle(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpAngleGGet(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpSpeed(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(Angle)
+OPCODE_STUB(AngleGGet)
+OPCODE_STUB(Speed)
 
 void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
@@ -1096,12 +1109,12 @@ void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 	_idleAnimations[direction] = animDef;
 }
 
-void Runtime::scriptOpChangeL(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(ChangeL)
 
-void Runtime::scriptOpAnimR(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpAnimF(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpAnimN(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpAnimG(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(AnimR)
+OPCODE_STUB(AnimF)
+OPCODE_STUB(AnimN)
+OPCODE_STUB(AnimG)
 
 void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
@@ -1129,7 +1142,7 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	_havePendingScreenChange = true;
 }
 
-void Runtime::scriptOpStatic(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(Static)
 
 void Runtime::scriptOpVarLoad(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -1160,15 +1173,15 @@ void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
 	changeToCursor(_cursors[stackArgs[0]]);
 }
 
-void Runtime::scriptOpSetRoom(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(SetRoom)
 
 void Runtime::scriptOpLMB(ScriptArg_t arg) {
 	if (!_scriptEnv.lmb)
 		terminateScript();
 }
 
-void Runtime::scriptOpLMB1(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpSoundS1(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(LMB1)
+OPCODE_STUB(SoundS1)
 
 void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
 	TAKE_STACK(2);
@@ -1186,25 +1199,26 @@ void Runtime::scriptOpMusic(ScriptArg_t arg) {
 void Runtime::scriptOpMusicUp(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
-	warning("Music volume changes are not implemented");
+	warning("Music volume ramp up is not implemented");
 	(void)stackArgs;
 }
 
 void Runtime::scriptOpMusicDn(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
-	warning("Music volume changes are not implemented");
+	warning("Music volume ramp down is not implemented");
 	(void)stackArgs;
 }
 
-void Runtime::scriptOpParm1(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpParm2(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpParm3(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpParmG(ScriptArg_t arg) { error("Unimplemented opcode"); }
 
-void Runtime::scriptOpVolumeDn4(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpRandom(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(Parm1)
+OPCODE_STUB(Parm2)
+OPCODE_STUB(Parm3)
+OPCODE_STUB(ParmG)
+
+OPCODE_STUB(VolumeDn4)
+OPCODE_STUB(VolumeUp3)
+OPCODE_STUB(Random)
 
 void Runtime::scriptOpDrop(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -1218,12 +1232,12 @@ void Runtime::scriptOpDup(ScriptArg_t arg) {
 	_scriptStack.push_back(stackArgs[0]);
 }
 
-void Runtime::scriptOpSay3(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpSetTimer(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpLoSet(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpLoGet(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpHiSet(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpHiGet(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(Say3)
+OPCODE_STUB(SetTimer)
+OPCODE_STUB(LoSet)
+OPCODE_STUB(LoGet)
+OPCODE_STUB(HiSet)
+OPCODE_STUB(HiGet)
 
 void Runtime::scriptOpNot(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -1249,9 +1263,9 @@ void Runtime::scriptOpCmpEq(ScriptArg_t arg) {
 	_scriptStack.push_back((stackArgs[0] == stackArgs[1]) ? 1 : 0);
 }
 
-void Runtime::scriptOpBitLoad(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpBitSet0(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpBitSet1(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(BitLoad)
+OPCODE_STUB(BitSet0)
+OPCODE_STUB(BitSet1)
 
 void Runtime::scriptOpDisc1(ScriptArg_t arg) {
 	// Disc check, always pass
@@ -1284,8 +1298,8 @@ void Runtime::scriptOpEscOff(ScriptArg_t arg) {
 	_escOn = false;
 }
 
-void Runtime::scriptOpEscGet(ScriptArg_t arg) { error("Unimplemented opcode"); }
-void Runtime::scriptOpBackStart(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(EscGet)
+OPCODE_STUB(BackStart)
 
 void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 	// I doubt this is actually how it works internally but whatever
@@ -1307,7 +1321,7 @@ void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 }
 
 
-void Runtime::scriptOpValueName(ScriptArg_t arg) { error("Unimplemented opcode"); }
+OPCODE_STUB(ValueName)
 
 void Runtime::scriptOpVarName(ScriptArg_t arg) {
 	if (_roomNumber >= _roomDefs.size())
@@ -1362,6 +1376,11 @@ void Runtime::scriptOpCheckValue(ScriptArg_t arg) {
 void Runtime::scriptOpJump(ScriptArg_t arg) {
 	_scriptNextInstruction = arg;
 }
+
+#undef TAKE_STACK
+#undef PEEK_STACK
+#undef OPCODE_STUB
+
 
 void Runtime::drawFrame() {
 	_system->updateScreen();
