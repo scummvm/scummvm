@@ -1077,8 +1077,6 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 
 		const Graphics::PixelFormat cursorFormat = cursorSurface->format;
 
-		bool haveXorPixels = false;
-
 		_cursorMask->fill(0);
 		for (uint x = 0; x < w; x++) {
 			for (uint y = 0; y < h; y++) {
@@ -1102,7 +1100,6 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 				if (maskByte == kCursorMaskInvert) {
 					maskOpacity = 0xff;
 					maskInversionAdd = 0xff;
-					haveXorPixels = true;
 				}
 
 				uint32 encodedMaskPixel = maskFormat.ARGBToColor(maskOpacity, maskInversionAdd, maskInversionAdd, maskInversionAdd);
