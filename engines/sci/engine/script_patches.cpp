@@ -120,6 +120,7 @@ static const char *const selectorNameTable[] = {
 	"solvePuzzle",  // Quest For Glory 3
 	"curIcon",      // Quest For Glory 3, QFG4
 	"curInvIcon",   // Quest For Glory 3, QFG4
+	"edgeHit",      // King's Quest 5
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
@@ -261,6 +262,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_solvePuzzle,
 	SELECTOR_curIcon,
 	SELECTOR_curInvIcon,
+	SELECTOR_edgeHit,
 	SELECTOR_startText,
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
@@ -5346,10 +5348,51 @@ static const uint16 kq5PatchPc98CampfireMessages[] = {
 	PATCH_END
 };
 
+// When the boat sinks while game speed is set to fast, the boat jumps from its
+//  initial position to the left edge of the screen. This is because at fast
+//  speeds, ego reaches the right edge when leaving the previous screen.
+//  The sinking script doesn't expect ego:edgeHit to be set, and when it is,
+//  Rm:init moves ego back to the opposite edge.
+//
+// We fix this by clearing ego:edgeHit when initializing the sinking boat.
+//
+// Applies to: All versions
+// Responsible method: rm047:init
+// Fixes bug: #14218
+static const uint16 kq5SignatureSinkingBoatPosition[] = {
+	0x30, SIG_UINT16(0x0078),        // bnt 0078
+	SIG_ADDTOOFFSET(+9),
+	0x81, 0x00,                      // lag 00
+	0x4a, 0x08,                      // send 08 [ ego ... ]
+	SIG_ADDTOOFFSET(+24),
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(loop),       // pushi loop
+	0x78,                            // push1
+	0x76,                            // push0 [ redundant, loop is already 0 ]
+	SIG_ADDTOOFFSET(+8),
+	0x4a, 0x24,                      // send 24 [ sailBoat ... loop: 0 ... ]
+	SIG_END
+};
+
+static const uint16 kq5PatchSinkingBoatPosition[] = {
+	0x31, 0x79,                      // bnt 79
+	PATCH_GETORIGINALBYTES(3, 9),
+	0x38, PATCH_SELECTOR16(edgeHit), // pushi edgeHit
+	0x78,                            // push1
+	0x76,                            // push0
+	0x81, 0x00,                      // lag 00
+	0x4a, 0x0e,                      // send 0e [ ego ... edgeHit: 0 ]
+	PATCH_GETORIGINALBYTES(16, 24),
+	PATCH_ADDTOOFFSET(+8),
+	0x4a, 0x1e,                      // send 1e [ sailBoat ... ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
 	{  true,     0, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
+	{  true,    47, "sinking boat position",                       1, kq5SignatureSinkingBoatPosition,      kq5PatchSinkingBoatPosition },
 	{  true,    99, "disable speed test",                          1, sci01SpeedTestLocalSignature,         sci01SpeedTestLocalPatch },
 	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,              sci11SpeedTestPatch },
 	{ false,   109, "Crispin intro signal",                        1, kq5SignatureCrispinIntroSignal,       kq5PatchCrispinIntroSignal },
