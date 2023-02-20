@@ -412,7 +412,7 @@ bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::
 		return true;
 	}
 
-	if (token.size() >= 5 && token[0] == 'C' && token[1] == 'U' && token[2] == 'R' && token[3] == '_') {
+	if (token.hasPrefix("CUR_")) {
 		script.instrs.push_back(ProtoInstruction(ScriptOps::kCursorName, indexString(token)));
 		return true;
 	}
