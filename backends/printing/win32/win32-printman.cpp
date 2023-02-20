@@ -54,7 +54,6 @@ public:
 	private:
 	HDC createDefaultPrinterContext();
 	HDC createPrinterContext(LPTSTR devName);
-	HPALETTE buildPalette(const byte *paletteData);
 	HBITMAP buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf);
 
 	HDC hdcPrint;
@@ -140,29 +139,6 @@ HDC Win32PrintJob::createPrinterContext(LPTSTR devName) {
 
 	HDC printerDC = CreateDC(TEXT("WINSPOOL"), devName, NULL, devmode);
 	return printerDC;
-}
-
-HPALETTE Win32PrintJob::buildPalette(const byte *paletteData) {
-	LOGPALETTE *lpal = (LOGPALETTE*)malloc(sizeof(LOGPALETTE) + (256-1)*sizeof(PALETTEENTRY));
-
-	if (!lpal)
-		return NULL;
-
-	lpal->palNumEntries = 256;
-	lpal->palVersion = 1;
-
-	for (uint i = 0; i < 256; ++i, paletteData+=3) {
-		lpal->palPalEntry[i].peRed = paletteData[0];
-		lpal->palPalEntry[i].peGreen = paletteData[1];
-		lpal->palPalEntry[i].peBlue = paletteData[2];
-		lpal->palPalEntry[i].peFlags = 0;
-	}
-
-	HPALETTE pal = CreatePalette(lpal);
-
-	free(lpal);
-
-	return pal;
 }
 
 HBITMAP Win32PrintJob::buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf) {
