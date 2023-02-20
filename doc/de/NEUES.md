@@ -1,6 +1,13 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.7.1 (XX.XX.2023)
+
+ HDB:
+   - Fehler behoben, der verhindert, dass der rote Umschlag mit der Tastatur aufgehoben werden kann.
+
+   
+
 #### 2.7.0 (26.02.2023)
 
  Neue Spiele:
