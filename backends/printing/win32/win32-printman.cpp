@@ -39,7 +39,7 @@ public:
 
 private:
 	HDC createDefaultPrinterContext();
-	HDC createPrinterContext(LPWSTR devName);
+	HDC createPrinterContext(LPTSTR devName);
 	HPALETTE buildPalette(const byte *paletteData);
 	HBITMAP buildBitmap(HDC hdc, const byte *pixels, const byte *palette, uint width, uint height);
 	HBITMAP buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf);
@@ -102,31 +102,31 @@ delDC:
 
 
 HDC Win32PrintingManager::createDefaultPrinterContext() {
-	wchar_t szPrinter[MAX_PATH];
+	TCHAR szPrinter[MAX_PATH];
 	BOOL success;
 	DWORD cchPrinter(ARRAYSIZE(szPrinter));
 
-	success=GetDefaultPrinterW(szPrinter, &cchPrinter);
+	success=GetDefaultPrinter(szPrinter, &cchPrinter);
 	if (!success)
 		return NULL;
 
 	return createPrinterContext(szPrinter);
 }
-HDC Win32PrintingManager::createPrinterContext(LPWSTR devName) {
+HDC Win32PrintingManager::createPrinterContext(LPTSTR devName) {
 	HANDLE handle;
 	BOOL success;
 
-	success=OpenPrinterW(devName, &handle, NULL);
+	success=OpenPrinter(devName, &handle, NULL);
 	if (!success)
 		return NULL;
 
-	int size = DocumentPropertiesW(NULL, handle, devName, NULL, NULL, 0);
+	int size = DocumentProperties(NULL, handle, devName, NULL, NULL, 0);
 	DEVMODE *devmode = (DEVMODE *)malloc(size);
-	DocumentPropertiesW(NULL, handle, devName, devmode, NULL, DM_OUT_BUFFER);
+	DocumentProperties(NULL, handle, devName, devmode, NULL, DM_OUT_BUFFER);
 
 	ClosePrinter(handle);
 
-	HDC printerDC = CreateDCW(L"WINSPOOL", devName, NULL, devmode);
+	HDC printerDC = CreateDC(TEXT("WINSPOOL"), devName, NULL, devmode);
 	return printerDC;
 }
 
