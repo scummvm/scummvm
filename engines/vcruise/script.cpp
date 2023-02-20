@@ -202,17 +202,9 @@ bool ScriptCompiler::parseDecNumber(const Common::String &token, uint start, uin
 	if (start == token.size())
 		return false;
 
-	uint32 num = 0;
-	for (uint i = start; i < token.size(); i++) {
-		char c = token[i];
-		uint32 digit = 0;
-		if (c >= '0' && c <= '9')
-			digit = c - '0';
-		else
-			return false;
-
-		num = num * 10u + digit;
-	}
+	uint num = 0;
+	if (!sscanf(token.c_str() + start, "%u", &num))
+		return false;
 
 	outNumber = num;
 	return true;
@@ -222,19 +214,9 @@ bool ScriptCompiler::parseHexNumber(const Common::String &token, uint start, uin
 	if (start == token.size())
 		return false;
 
-	uint32 num = 0;
-	for (uint i = start; i < token.size(); i++) {
-		char c = token[i];
-		uint32 digit = 0;
-		if (c >= '0' && c <= '9')
-			digit = c - '0';
-		else if (c >= 'a' && c <= 'f')
-			digit = (c - 'a') + 0xa;
-		else
-			return false;
-
-		num = num * 16u + digit;
-	}
+	uint num = 0;
+	if (!sscanf(token.c_str() + start, "%x", &num))
+		return false;
 
 	outNumber = num;
 	return true;
