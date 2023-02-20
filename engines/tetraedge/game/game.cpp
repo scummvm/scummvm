@@ -82,7 +82,7 @@ bool Game::addAnimToSet(const Common::String &anim) {
 	const Common::Path animPath(Common::String("scenes/") + anim + "/");
 
 	if (Common::File::exists(animPath)) {
-		Common::StringArray parts = TetraedgeEngine::splitString(anim, '/');
+		const Common::StringArray parts = TetraedgeEngine::splitString(anim, '/');
 		assert(parts.size() >= 2);
 
 		const Common::String layoutName = parts[1];
@@ -602,7 +602,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	video->_tiledSurfacePtr->_frameAnim.onStop().remove(this, &Game::onVideoFinished);
 	video->_tiledSurfacePtr->_frameAnim.onStop().add(this, &Game::onVideoFinished);
 
-	TeButtonLayout *invbtn = _inGameGui.buttonLayout("inventoryButton");
+	TeButtonLayout *invbtn = _inGameGui.buttonLayoutChecked("inventoryButton");
 	invbtn->onMouseClickValidated().remove(this, &Game::onInventoryButtonValidated);
 	invbtn->onMouseClickValidated().add(this, &Game::onInventoryButtonValidated);
 	invbtn->setSizeType(TeILayout::RELATIVE_TO_PARENT);

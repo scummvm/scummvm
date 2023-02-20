@@ -90,11 +90,11 @@ void DocumentsBrowser::load() {
 	if (docBrowser)
 		addChild(docBrowser);
 
-	TeButtonLayout *button = _gui1.buttonLayout("previousPage");
+	TeButtonLayout *button = _gui1.buttonLayoutChecked("previousPage");
 	button->onMouseClickValidated().add(this, &DocumentsBrowser::onPreviousPage);
-	button = _gui1.buttonLayout("nextPage");
+	button = _gui1.buttonLayoutChecked("nextPage");
 	button->onMouseClickValidated().add(this, &DocumentsBrowser::onNextPage);
-	button = _gui1.buttonLayout("zoomed");
+	button = _gui1.buttonLayoutChecked("zoomed");
 	button->onMouseClickValidated().add(this, &DocumentsBrowser::onZoomedButton);
 	button->setVisible(false);
 

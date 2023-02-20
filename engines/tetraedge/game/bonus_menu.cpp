@@ -148,7 +148,7 @@ bool BonusMenu::onLeftButton() {
 }
 
 bool BonusMenu::onMouseMove(const Common::Point &pt) {
-	TeButtonLayout *slideLayout = buttonLayout("slideButton");
+	TeButtonLayout *slideLayout = buttonLayoutChecked("slideButton");
 	if (slideLayout->state() == TeButtonLayout::BUTTON_STATE_DOWN) {
 		TeCurveAnim2<TeLayout, TeVector3f32> *slideAnim = layoutPositionLinearAnimation("slideAnimation");
 		if (!slideAnim->_runTimer.running()) {

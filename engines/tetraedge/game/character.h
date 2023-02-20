@@ -57,7 +57,7 @@ public:
 	};
 
 	struct CharacterSettings {
-		CharacterSettings() : _walkSpeed(0.0f) {}
+		CharacterSettings() : _walkSpeed(0.0f), _invertNormals(false) {}
 
 		Common::String _name;
 		Common::String _modelFileName;

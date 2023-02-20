@@ -68,7 +68,7 @@ bool SplashScreens::onAlarm() {
 	} else {
 		load(scriptName);
 
-		TeButtonLayout *btnLayout = buttonLayout("splash");
+		TeButtonLayout *btnLayout = buttonLayoutChecked("splash");
 		btnLayout->onMouseClickValidated().add(this, &SplashScreens::onQuitSplash);
 
 		TeLayout *splash = layout("splash");

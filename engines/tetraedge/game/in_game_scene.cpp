@@ -94,7 +94,7 @@ void InGameScene::addAnchorZone(const Common::String &s1, const Common::String &
 	zone->_activated = true;
 
 	if (s1.contains("Int")) {
-		TeButtonLayout *btn = hitObjectGui().buttonLayout(name);
+		TeButtonLayout *btn = hitObjectGui().buttonLayoutChecked(name);
 		TeVector3f32 pos = btn->position();
 		pos.x() += g_engine->getDefaultScreenWidth() / 2.0f;
 		pos.y() += g_engine->getDefaultScreenHeight() / 2.0f;
@@ -1673,7 +1673,7 @@ void InGameScene::updateScroll() {
 		error("No root layout in the background");
 	_scrollOffset = TeVector2f32();
 	TeIntrusivePtr<TeTiledTexture> rootTex = root->_tiledSurfacePtr->tiledTexture();
-	TeVector2s32 texSize = rootTex->totalSize();
+	const TeVector2s32 texSize = rootTex->totalSize();
 	if (texSize._x < 801) {
 		if (texSize._y < 601) {
 			_scrollOffset = TeVector2f32(0.5f, 0.0f);
@@ -1693,10 +1693,10 @@ void InGameScene::updateScroll() {
 				_scrollOffset.setY(elapsed * (y2 - y1) / _verticalScrollTime + y1);
 			} else if (_character && _character->_model) {
 				TeIntrusivePtr<TeCamera> cam = currentCamera();
-				TeMatrix4x4 camProjMatrix = cam->projectionMatrix();
+				const TeMatrix4x4 camProjMatrix = cam->projectionMatrix();
 				TeMatrix4x4 camWorldMatrix = cam->worldTransformationMatrix();
 				camWorldMatrix.inverse();
-				TeMatrix4x4 camProjWorld = camProjMatrix * camWorldMatrix;
+				const TeMatrix4x4 camProjWorld = camProjMatrix * camWorldMatrix;
 				TeVector3f32 charPos = camProjWorld * _character->_model->position();
 				_scrollOffset.setY(1.0f - (charPos.y() + 1.0f));
 			}
@@ -1726,11 +1726,11 @@ void InGameScene::updateScroll() {
 		}
 		TeIntrusivePtr<TeCamera> cam = currentCamera();
 		if (cam) {
-			TeMatrix4x4 camProjMatrix = cam->projectionMatrix();
+			const TeMatrix4x4 camProjMatrix = cam->projectionMatrix();
 			TeMatrix4x4 camWorldMatrix = cam->worldTransformationMatrix();
 			camWorldMatrix.inverse();
-			TeMatrix4x4 camProjWorld = camProjMatrix * camWorldMatrix;
-			TeVector3f32 charPos = camProjWorld * _character->_model->position();
+			const TeMatrix4x4 camProjWorld = camProjMatrix * camWorldMatrix;
+			const TeVector3f32 charPos = camProjWorld * _character->_model->position();
 			_scrollOffset.setX((charPos.x() + 1.0f) / 2.0f);
 			float xmin = x2 / x1;
 			float xmax = 1.0f - (x2 / x1);
