@@ -279,15 +279,15 @@ void GLContext::glopDrawElements(GLParam *p) {
 	glopEnd(nullptr);
 }
 
-void GLContext::glopEnableClientState(GLParam *p) {
+void GLContext::gl_EnableClientState(GLParam *p) {
 	client_states |= p[1].i;
 }
 
-void GLContext::glopDisableClientState(GLParam *p) {
+void GLContext::gl_DisableClientState(GLParam *p) {
 	client_states &= p[1].i;
 }
 
-void GLContext::glopVertexPointer(GLParam *p) {
+void GLContext::gl_VertexPointer(GLParam *p) {
 	vertex_array_size = p[1].i;
 	vertex_array_type = p[2].i;
 	vertex_array = p[4].p;
@@ -310,7 +310,7 @@ void GLContext::glopVertexPointer(GLParam *p) {
 	}
 }
 
-void GLContext::glopColorPointer(GLParam *p) {
+void GLContext::gl_ColorPointer(GLParam *p) {
 	color_array_size = p[1].i;
 	color_array_type = p[2].i;
 	color_array = p[4].p;
@@ -339,7 +339,7 @@ void GLContext::glopColorPointer(GLParam *p) {
 	}
 }
 
-void GLContext::glopNormalPointer(GLParam *p) {
+void GLContext::gl_NormalPointer(GLParam *p) {
 	normal_array_type = p[1].i;
 	normal_array = p[3].p;
 	switch (p[1].i) {
@@ -361,7 +361,7 @@ void GLContext::glopNormalPointer(GLParam *p) {
 	}
 }
 
-void GLContext::glopTexCoordPointer(GLParam *p) {
+void GLContext::gl_TexCoordPointer(GLParam *p) {
 	texcoord_array_size = p[1].i;
 	texcoord_array_type = p[2].i;
 	texcoord_array = p[4].p;

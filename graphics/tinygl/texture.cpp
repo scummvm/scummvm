@@ -244,10 +244,7 @@ error:
 	}
 }
 
-void GLContext::glopPixelStore(GLParam *p) {
-	int pname = p[1].i;
-	int param = p[2].i;
-
+void GLContext::gl_PixelStore(TGLenum pname, TGLint param) {
 	if (pname != TGL_UNPACK_ALIGNMENT || param != 1) {
 		error("tglPixelStore: unsupported option");
 	}

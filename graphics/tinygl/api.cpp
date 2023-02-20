@@ -736,13 +736,8 @@ void tglDeleteTextures(TGLsizei n, const TGLuint *textures) {
 
 void tglPixelStorei(TGLenum pname, TGLint param) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGL::GLParam p[3];
 
-	p[0].op = TinyGL::OP_PixelStore;
-	p[1].i = pname;
-	p[2].i = param;
-
-	c->gl_add_op(p);
+	c->gl_PixelStore(pname, param);
 }
 
 // selection
@@ -875,8 +870,6 @@ void tglEnableClientState(TGLenum array) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[2];
 
-	p[0].op = TinyGL::OP_EnableClientState;
-
 	switch (array) {
 	case TGL_VERTEX_ARRAY:
 		p[1].i = VERTEX_ARRAY;
@@ -895,14 +888,12 @@ void tglEnableClientState(TGLenum array) {
 		break;
 	}
 
-	c->gl_add_op(p);
+	c->gl_EnableClientState(p);
 }
 
 void tglDisableClientState(TGLenum array) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[2];
-
-	p[0].op = TinyGL::OP_DisableClientState;
 
 	switch (array) {
 	case TGL_VERTEX_ARRAY:
@@ -922,58 +913,54 @@ void tglDisableClientState(TGLenum array) {
 		break;
 	}
 
-	c->gl_add_op(p);
+	c->gl_DisableClientState(p);
 }
 
 void tglVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[5];
 
-	p[0].op = TinyGL::OP_VertexPointer;
 	p[1].i = size;
 	p[2].i = type;
 	p[3].i = stride;
 	p[4].p = const_cast<void *>(pointer);
 
-	c->gl_add_op(p);
+	c->gl_VertexPointer(p);
 }
 
 void tglColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[5];
 
-	p[0].op = TinyGL::OP_ColorPointer;
 	p[1].i = size;
 	p[2].i = type;
 	p[3].i = stride;
 	p[4].p = const_cast<void *>(pointer);
 
-	c->gl_add_op(p);
+	c->gl_ColorPointer(p);
 }
 
 void tglNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[4];
 
-	p[0].op = TinyGL::OP_NormalPointer;
 	p[1].i = type;
 	p[2].i = stride;
 	p[3].p = const_cast<void *>(pointer);
 
-	c->gl_add_op(p);
+	c->gl_NormalPointer(p);
 }
 
 void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[5];
 
-	p[0].op = TinyGL::OP_TexCoordPointer;
 	p[1].i = size;
 	p[2].i = type;
 	p[3].i = stride;
 	p[4].p = const_cast<void *>(pointer);
 
-	c->gl_add_op(p);
+	c->gl_TexCoordPointer(p);
 }
 
 // fog

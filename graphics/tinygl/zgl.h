@@ -469,7 +469,7 @@ struct GLContext {
 	void gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dataType);
 
 public:
-	// The glob* functions exposed to public, however they are only for internal use.
+	// The glop* functions exposed to public, however they are only for internal use.
 	// Calling them from outside of TinyGL is forbidden
 	#define ADD_OP(a, b, d) void glop ## a (GLParam *p);
 	#include "graphics/tinygl/opinfo.h"
@@ -499,11 +499,19 @@ public:
 	void gl_GetDoublev(TGLenum pname, TGLdouble *data);
 	void gl_GetBooleanv(TGLenum pname, TGLboolean *data);
 
+	void gl_EnableClientState(GLParam *p);
+	void gl_DisableClientState(GLParam *p);
+	void gl_VertexPointer(GLParam *p);
+	void gl_ColorPointer(GLParam *p);
+	void gl_NormalPointer(GLParam *p);
+	void gl_TexCoordPointer(GLParam *p);
+
 	GLTexture *alloc_texture(uint h);
 	GLTexture *find_texture(uint h);
 	void free_texture(GLTexture *t);
 	void gl_GenTextures(TGLsizei n, TGLuint *textures);
 	void gl_DeleteTextures(TGLsizei n, const TGLuint *textures);
+	void gl_PixelStore(TGLenum pname, TGLint param);
 
 	void issueDrawCall(DrawCall *drawCall);
 	void disposeResources();
