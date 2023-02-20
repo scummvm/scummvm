@@ -35,6 +35,10 @@ class ReadStream;
 
 namespace VCruise {
 
+struct ScreenScriptSet;
+struct RoomScriptSet;
+struct ScriptSet;
+
 namespace ScriptOps {
 
 enum ScriptOp {
@@ -127,17 +131,21 @@ struct Script {
 	Common::Array<Instruction> instrs;
 };
 
+typedef Common::HashMap<uint, Common::SharedPtr<Script> > ScriptMap_t;
+typedef Common::HashMap<uint, Common::SharedPtr<ScreenScriptSet> > ScreenScriptSetMap_t;
+typedef Common::HashMap<uint, Common::SharedPtr<RoomScriptSet> > RoomScriptSetMap_t;
+
 struct ScreenScriptSet {
 	Common::SharedPtr<Script> entryScript;
-	Common::HashMap<uint, Common::SharedPtr<Script> > interactionScripts;
+	ScriptMap_t interactionScripts;
 };
 
 struct RoomScriptSet {
-	Common::HashMap<uint, Common::SharedPtr<ScreenScriptSet> > screenScripts;
+	ScreenScriptSetMap_t screenScripts;
 };
 
 struct ScriptSet {
-	Common::HashMap<uint, Common::SharedPtr<RoomScriptSet> > roomScripts;
+	RoomScriptSetMap_t roomScripts;
 	Common::Array<Common::String> strings;
 };
 
