@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	midi.o \
 	misc.o \
 	networking.o \
+	printing.o \
 	savegame.o \
 	sound.o \
 	testbed.o \
