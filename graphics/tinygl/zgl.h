@@ -25,8 +25,8 @@
  * It also has modifications by the ResidualVM-team, which are covered under the GPLv2 (or later).
  */
 
-#ifndef _tgl_zgl_h_
-#define _tgl_zgl_h_
+#ifndef TGL_ZGL_H
+#define TGL_ZGL_H
 
 #include "common/util.h"
 #include "common/textconsole.h"
@@ -79,6 +79,25 @@ enum {
 #define TGL_OFFSET_FILL    0x1
 #define TGL_OFFSET_LINE    0x2
 #define TGL_OFFSET_POINT   0x4
+
+enum eDataType {
+	kIntType,
+	kInt4Type,
+	kUintType,
+	kFloatType,
+	kFloat2Type,
+	kFloat4Type,
+	kFloat16Type
+};
+
+union uglValue {
+	TGLint _int;
+	TGLint _int4[4];
+	TGLfloat _float;
+	TGLfloat _float2[2];
+	TGLfloat _float4[4];
+	TGLfloat _float16[16];
+};
 
 struct GLSpecBuf {
 	int shininess_i;
@@ -407,6 +426,7 @@ struct GLContext {
 	bool depth_write_mask;
 
 	// stencil
+	bool stencil_buffer_supported;
 	bool stencil_test_enabled;
 	int stencil_test_func;
 	int stencil_ref_val;
@@ -446,6 +466,8 @@ struct GLContext {
 	void gl_vertex_transform(GLVertex *v);
 	void gl_calc_fog_factor(GLVertex *v);
 
+	void gl_get_pname(TGLenum pname, union uglValue *data, eDataType &dataType);
+
 public:
 	// The glob* functions exposed to public, however they are only for internal use.
 	// Calling them from outside of TinyGL is forbidden
@@ -474,6 +496,8 @@ public:
 
 	void gl_GetIntegerv(TGLenum pname, TGLint *data);
 	void gl_GetFloatv(TGLenum pname, TGLfloat *data);
+	void gl_GetDoublev(TGLenum pname, TGLdouble *data);
+	void gl_GetBooleanv(TGLenum pname, TGLboolean *data);
 
 	GLTexture *alloc_texture(uint h);
 	GLTexture *find_texture(uint h);

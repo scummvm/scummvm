@@ -150,6 +150,7 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	GLViewport *v;
 
 	_enableDirtyRectangles = dirtyRectsEnable;
+	stencil_buffer_supported = enableStencilBuffer;
 
 	fb = new TinyGL::FrameBuffer(screenW, screenH, pixelFormat, enableStencilBuffer);
 	renderRect = Common::Rect(0, 0, screenW, screenH);
