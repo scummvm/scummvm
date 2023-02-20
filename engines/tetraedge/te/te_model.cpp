@@ -140,8 +140,8 @@ TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, uint num) {
 void TeModel::invertNormals() {
 	for (auto mesh : meshes()) {
 		for (uint i = 0; i < mesh->numIndexes() / 3; i++) {
-			ushort idx0 = mesh->index(i);
-			ushort idx2 = mesh->index(i + 2);
+			uint idx0 = mesh->index(i);
+			uint idx2 = mesh->index(i + 2);
 			mesh->setIndex(i, idx2);
 			mesh->setIndex(i, idx0);
 		}
