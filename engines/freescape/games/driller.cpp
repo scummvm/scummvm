@@ -659,12 +659,15 @@ void DrillerEngine::loadAssetsFullGame() {
 		load8bitBinary(&file, 0x9b40, 16);
 
 	} else if (_renderMode == Common::kRenderCGA) {
-		loadBundledImages();
-		_title->free();
-		delete _title;
+		file.open("SCN1C.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 4, 0x0);
+		}
+		file.close();
 		file.open("CGATITLE.RL");
-		_title = load8bitTitleImage(&file, 4, 0x1b3);
-
+		if (file.isOpen()) {
+			_title = load8bitTitleImage(&file, 4, 0x1b3);
+		}
 		file.close();
 		file.open("DRILLC.EXE");
 
