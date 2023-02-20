@@ -133,43 +133,8 @@ void TextParser::expectInt(int &outInt, const Common::String &blamePath) {
 	TextParserState state;
 	expectTokenInternal(token, blamePath, state);
 
-	int result = 0;
-	bool isNegative = false;
-	uint startIndex = 0;
-	if (token[0] == '-') {
-		if (token.size() == 1)
-			error("Parsing error in '%s' at line %i col %i: Signed integer was malformed", blamePath.c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col));
-
-		isNegative = true;
-		startIndex = 1;
-	}
-
-	int base = 10;
-	bool isHex = (token.size() >= (startIndex) + 3 && token[startIndex] == '0' && token[startIndex + 1] == 'x');
-	if (isHex) {
-		startIndex += 2;
-		base = 16;
-	}
-
-	for (uint i = startIndex; i < token.size(); i++) {
-		char c = token[i];
-		int digit = 0;
-		if (c >= '0' && c <= '9')
-			digit = (c - '0');
-		else if (isHex && (c >= 'a' && c <= 'f'))
-			digit = (c - 'a') + 0xa;
-		else if (isHex && (c >= 'A' && c <= 'F'))
-			digit = (c - 'A') + 0xa;
-		else
-			error("Parsing error in '%s' at line %i col %i: Integer contained non-digits", blamePath.c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col));
-
-		if (isNegative)
-			digit = -digit;
-
-		result = result * base + digit;
-	}
-
-	outInt = result;
+	if (!sscanf(token.c_str(), "%i", &outInt))
+		error("Parsing error in '%s' at line %i col %i: Integer was malformed", blamePath.c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col));
 }
 
 void TextParser::expectUInt(uint &outUInt, const Common::String &blamePath) {
@@ -177,19 +142,8 @@ void TextParser::expectUInt(uint &outUInt, const Common::String &blamePath) {
 	TextParserState state;
 	expectTokenInternal(token, blamePath, state);
 
-	uint result = 0;
-
-	for (uint i = 0; i < token.size(); i++) {
-		char c = token[i];
-		if (c < '0' || c > '9')
-			error("Parsing error in '%s' at line %i col %i: Integer contained non-digits", blamePath.c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col));
-
-		uint additional = c - '0';
-
-		result = result * 10 + additional;
-	}
-
-	outUInt = result;
+	if (!sscanf(token.c_str(), "%u", &outUInt))
+		error("Parsing error in '%s' at line %i col %i: Unsigned integer was malformed", blamePath.c_str(), static_cast<int>(state._lineNum), static_cast<int>(state._col));
 }
 
 void TextParser::expectLine(Common::String &outToken, const Common::String &blamePath, bool continueToNextLine) {
