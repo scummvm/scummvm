@@ -75,15 +75,10 @@ private:
 
 	Common::ReadStream *_stream;
 
-	static const uint kReadBufferSize = 4096;
-	static const uint kReturnBufferSize = 8;
+	static const uint kReturnedBufferSize = 8;
 
-	char _returnedBuffer[kReturnBufferSize];
-	uint _returnBufferPos;
-
-	char _readBuffer[kReadBufferSize];
-	uint _readBufferPos;
-	uint _readBufferEnd;
+	char _returnedBuffer[kReturnedBufferSize];
+	uint _returnedBufferPos;
 };
 
 } // End of namespace VCruise
