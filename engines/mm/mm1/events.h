@@ -177,6 +177,11 @@ public:
 	int getRandomNumber(int maxNumber);
 
 	/**
+	 * Gets the element's name
+	 */
+	Common::String getName() const { return _name; }
+
+	/**
 	 * Sets the element's bounds
 	 */
 	virtual void setBounds(const Common::Rect &r) {

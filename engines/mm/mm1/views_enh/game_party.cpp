@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views_enh/game_party.h"
+#include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 
@@ -31,13 +31,13 @@ static const byte CONDITION_COLORS[17] = {
 	9, 9, 9, 9, 9, 9, 9, 9, 32, 32, 32, 32, 6, 6, 6, 6, 15
 };
 
-const byte FACE_CONDITION_FRAMES[17] = {
+static const byte FACE_CONDITION_FRAMES[17] = {
 	2, 2, 2, 1, 1, 4, 4, 4, 3, 2, 4, 3, 3, 5, 6, 7, 0
 };
 
-const byte CHAR_FACES_X[6] = { 10, 45, 81, 117, 153, 189 };
+static const byte CHAR_FACES_X[6] = { 10, 45, 81, 117, 153, 189 };
 
-const byte HP_BARS_X[6] = { 13, 50, 86, 122, 158, 194 };
+static const byte HP_BARS_X[6] = { 13, 50, 86, 122, 158, 194 };
 
 GameParty::GameParty(UIElement *owner) : TextView("GameParty", owner),
 		_restoreSprites("restorex.icn"),
@@ -106,6 +106,43 @@ bool GameParty::msgGame(const GameMessage &msg) {
 	return false;
 }
 
+bool GameParty::msgMouseDown(const MouseDownMessage &msg) {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		const Common::Rect r(CHAR_FACES_X[i], 150, CHAR_FACES_X[i] + 30, 180);
+		if (r.contains(msg._pos)) {
+			msgAction(ActionMessage((KeybindingAction)(KEYBIND_VIEW_PARTY1 + i)));
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool GameParty::msgAction(const ActionMessage &msg) {
+	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
+			msg._action <= KEYBIND_VIEW_PARTY6) {
+		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
+		if (charNum < g_globals->_party.size()) {
+			// Change the selected character
+			g_globals->_currCharacter = &g_globals->_party[charNum];
+			_highlightOn = true;
+			draw();
+
+			if (dynamic_cast<ViewsEnh::Game *>(g_events->focusedView()) != nullptr) {
+				// Open character info dialog
+				addView("CharacterInfo");
+
+			} else {
+				// Another view is focused, so simply call it to update
+				send(g_events->focusedView()->getName(), GameMessage("UPDATE"));
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
 
 } // namespace ViewsEnh
 } // namespace MM1

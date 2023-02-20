@@ -52,6 +52,10 @@ public:
 	 * Handle game messages
 	 */
 	bool msgGame(const GameMessage &msg) override;
+
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace ViewsEnh

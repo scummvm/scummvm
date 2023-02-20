@@ -19,42 +19,27 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_CAST_SPELL_H
-#define MM1_VIEWS_ENH_CAST_SPELL_H
+#ifndef MM1_VIEWS_ENH_PARTY_VIEW_H
+#define MM1_VIEWS_ENH_PARTY_VIEW_H
 
-#include "mm/mm1/messages.h"
-#include "mm/mm1/game/spell_casting.h"
-#include "mm/mm1/views_enh/party_view.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
-namespace Spells {
 
-/**
- * Dialog for casting a spell
- */
-class CastSpell : public PartyView, public MM1::Game::SpellCasting {
-private:
-	Shared::Xeen::SpriteResource _icons;
-
-	/**
-	 * Updates the data for the displayed spell
-	 */
-	void updateSelectedSpell();
-
+class PartyView : public ScrollView {
 public:
-	CastSpell();
-	virtual ~CastSpell() {}
+	PartyView(const Common::String &name) : ScrollView(name) {}
+	PartyView(const Common::String &name, UIElement *owner) :
+		ScrollView(name, owner) {}
+	virtual ~PartyView() {}
 
-	void draw() override;
 	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
 };
 
-} // namespace Spells
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

@@ -19,44 +19,38 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_CAST_SPELL_H
-#define MM1_VIEWS_ENH_CAST_SPELL_H
-
-#include "mm/mm1/messages.h"
-#include "mm/mm1/game/spell_casting.h"
 #include "mm/mm1/views_enh/party_view.h"
+#include "mm/mm1/views_enh/game_party.h"
+#include "mm/mm1/events.h"
+#include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
-namespace Spells {
 
-/**
- * Dialog for casting a spell
- */
-class CastSpell : public PartyView, public MM1::Game::SpellCasting {
-private:
-	Shared::Xeen::SpriteResource _icons;
+bool PartyView::msgFocus(const FocusMessage &msg) {
+	// Turn on highlight for selected character
+	if (!g_globals->_currCharacter)
+		g_globals->_currCharacter = &g_globals->_party[0];
 
-	/**
-	 * Updates the data for the displayed spell
-	 */
-	void updateSelectedSpell();
+	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
+	return true;
+}
 
-public:
-	CastSpell();
-	virtual ~CastSpell() {}
+bool PartyView::msgUnfocus(const UnfocusMessage &msg) {
+	// Turn off highlight for selected character
+	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)false));
 
-	void draw() override;
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-};
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return true;
+}
 
-} // namespace Spells
+bool PartyView::msgMouseDown(const MouseDownMessage &msg) {
+	return send("GameParty", msg);
+}
+
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
-
-#endif

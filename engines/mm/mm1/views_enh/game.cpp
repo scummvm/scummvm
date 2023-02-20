@@ -71,21 +71,6 @@ bool Game::msgAction(const ActionMessage &msg) {
 	case KEYBIND_SPELL:
 		addView("CastSpell");
 		return true;
-
-	case KEYBIND_VIEW_PARTY1:
-	case KEYBIND_VIEW_PARTY2:
-	case KEYBIND_VIEW_PARTY3:
-	case KEYBIND_VIEW_PARTY4:
-	case KEYBIND_VIEW_PARTY5:
-	case KEYBIND_VIEW_PARTY6:
-	{
-		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-		if (charNum < g_globals->_party.size()) {
-			g_globals->_currCharacter = &g_globals->_party[charNum];
-			addView("CharacterInfo");
-		}
-		return true;
-	}
 	default:
 		break;
 	}

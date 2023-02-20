@@ -27,7 +27,7 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Spells {
 
-CastSpell::CastSpell() : ScrollView("CastSpell") {
+CastSpell::CastSpell() : PartyView("CastSpell") {
 	_bounds = Common::Rect(225, 0, 320, 146);
 
 	_icons.load("cast.icn");
@@ -39,21 +39,8 @@ CastSpell::CastSpell() : ScrollView("CastSpell") {
 }
 
 bool CastSpell::msgFocus(const FocusMessage &msg) {
-	// Turn on highlight for selected character
-	if (!g_globals->_currCharacter)
-		g_globals->_currCharacter = &g_globals->_party[0];
+	(void)PartyView::msgFocus(msg);
 	updateSelectedSpell();
-
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)true));
-	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
-	return true;
-}
-
-bool CastSpell::msgUnfocus(const UnfocusMessage &msg) {
-	// Turn off highlight for selected character
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)false));
-
-	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	return true;
 }
 
