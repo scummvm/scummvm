@@ -1256,7 +1256,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 							res = val2 ^ val1;
 							break;
 						default:
-							error("o72_arrayOps: case 132 unknown type %d)", type);
+							error("o72_arrayOps: case 138 unknown type %d)", type);
 						}
 						writeArray(array, dim2start, dim1, res);
 					}
