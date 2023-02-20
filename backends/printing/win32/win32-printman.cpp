@@ -176,13 +176,13 @@ HBITMAP Win32PrintJob::buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf
 	bitmapInfo->bmiHeader.biWidth = surf.w;
 	bitmapInfo->bmiHeader.biHeight = -((LONG)surf.h); // Blame the OS2 team for bitmaps being upside down
 	bitmapInfo->bmiHeader.biPlanes = 1;
-	bitmapInfo->bmiHeader.biBitCount = 8;
-	bitmapInfo->bmiHeader.biCompression = (surf.format.isCLUT8()?BI_RGB:BI_BITFIELDS);
+	bitmapInfo->bmiHeader.biBitCount = (surf.format.isCLUT8()?8:surf.format.bpp());
+	bitmapInfo->bmiHeader.biCompression = BI_RGB;
 	bitmapInfo->bmiHeader.biSizeImage = 0;
-	bitmapInfo->bmiHeader.biClrUsed = colorCount;
-	bitmapInfo->bmiHeader.biClrImportant = colorCount;
+	bitmapInfo->bmiHeader.biClrUsed = (surf.format.isCLUT8()?colorCount:0);
+	bitmapInfo->bmiHeader.biClrImportant = (surf.format.isCLUT8() ? colorCount : 0);
 
-	if (surf.format.isCLUT8()) {
+	if (surf.hasPalette()) {
 		byte *colors = new byte[colorCount * 3];
 		surf.grabPalette(colors, 0, colorCount);
 
@@ -200,7 +200,6 @@ HBITMAP Win32PrintJob::buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf
 	HBITMAP bitmap = CreateDIBitmap(hdc, &(bitmapInfo->bmiHeader), CBM_INIT, surf.getPixels(), bitmapInfo, DIB_RGB_COLORS);
 
 	free(bitmapInfo);
-
 	return bitmap;
 }
 
