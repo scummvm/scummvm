@@ -30,11 +30,6 @@ public:
 
 	virtual void printImage(Common::String jobName, const Graphics::ManagedSurface &surf) = 0;
 
-	virtual void printImage(Common::String jobName, const byte *pixels, const byte *palette, uint32 width, uint32 height) = 0;
-	void printImage(const byte * pixels, const byte * palette, uint32 width, uint32 height) {
-		printImage("ScummVM", pixels, palette, width, height);
-	}
-
 	void printImage(const Graphics::ManagedSurface& surf) {
 		printImage("ScummVM", surf);
 	}
