@@ -23,6 +23,7 @@
 #include "common/ptr.h"
 #include "common/system.h"
 #include "common/stream.h"
+#include "common/file.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -81,7 +82,7 @@ Runtime::OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Com
 
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
-	  _gameState(kGameStateBoot), _gameID(gameID), _rootFSNode(rootFSNode), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _scriptNextInstruction(0),
+	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _scriptNextInstruction(0),
 	  _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleInteractionID(0),
@@ -89,22 +90,6 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 
 	for (uint i = 0; i < kNumDirections; i++)
 		_haveIdleAnimations[i] = false;
-
-	_logDir = _rootFSNode.getChild("Log");
-	if (!_logDir.exists() || !_logDir.isDirectory())
-		error("Couldn't resolve Log directory");
-
-	_mapDir = _rootFSNode.getChild("Map");
-	if (!_mapDir.exists() || !_mapDir.isDirectory())
-		error("Couldn't resolve Map directory");
-
-	_sfxDir = _rootFSNode.getChild("Sfx");
-	if (!_sfxDir.exists() || !_sfxDir.isDirectory())
-		error("Couldn't resolve Sfx directory");
-
-	_animsDir = _rootFSNode.getChild("Anims");
-	if (!_animsDir.exists() || !_animsDir.isDirectory())
-		error("Couldn't resolve Anims directory");
 }
 
 Runtime::~Runtime() {
@@ -122,33 +107,29 @@ void Runtime::loadCursors(const char *exeName) {
 		error("Couldn't open executable file %s", exeName);
 
 	Common::Array<Common::WinResourceID> cursorGroupIDs = winRes->getIDList(Common::kWinGroupCursor);
-	for (Common::Array<Common::WinResourceID>::const_iterator it = cursorGroupIDs.begin(), itEnd = cursorGroupIDs.end(); it != itEnd; ++it) {
-		const Common::WinResourceID &id = *it;
-
-		Common::SharedPtr<Graphics::WinCursorGroup> cursorGroup(Graphics::WinCursorGroup::createCursorGroup(winRes.get(), *it));
+	for (const Common::WinResourceID &id : cursorGroupIDs) {
+		Common::SharedPtr<Graphics::WinCursorGroup> cursorGroup(Graphics::WinCursorGroup::createCursorGroup(winRes.get(), id));
 		if (!winRes) {
 			warning("Couldn't load cursor group");
 			continue;
 		}
 
 		Common::String nameStr = id.getString();
-		if (nameStr.size() == 8 && nameStr.substr(0, 7) == "CURSOR_") {
+		if (nameStr.matchString("CURSOR_#")) {
 			char c = nameStr[7];
-			if (c >= '0' && c <= '9') {
-				uint shortID = c - '0';
-				if (shortID >= _cursorsShort.size())
-					_cursorsShort.resize(shortID + 1);
-				_cursorsShort[shortID] = cursorGroup;
-			}
-		} else if (nameStr.size() == 13 && nameStr.substr(0, 11) == "CURSOR_CUR_") {
+
+			uint shortID = c - '0';
+			if (shortID >= _cursorsShort.size())
+				_cursorsShort.resize(shortID + 1);
+			_cursorsShort[shortID] = cursorGroup;
+		} else if (nameStr.matchString("CURSOR_CUR_##")) {
 			char c1 = nameStr[11];
 			char c2 = nameStr[12];
-			if (c1 >= '0' && c1 <= '9' && c2 >= '0' && c2 <= '9') {
-				uint longID = (c1 - '0') * 10 + (c2 - '0');
-				if (longID >= _cursors.size())
-					_cursors.resize(longID + 1);
-				_cursors[longID] = cursorGroup;
-			}
+
+			uint longID = (c1 - '0') * 10 + (c2 - '0');
+			if (longID >= _cursors.size())
+				_cursors.resize(longID + 1);
+			_cursors[longID] = cursorGroup;
 		}
 	}
 
@@ -532,15 +513,15 @@ void Runtime::queueOSEvent(const OSEvent &evt) {
 }
 
 void Runtime::loadIndex() {
-	Common::FSNode indexFSNode = _logDir.getChild("Index.txt");
+	const char *indexPath = "Log/Index.txt";
 
-	Common::ReadStream *stream = indexFSNode.createReadStream();
-	if (!stream)
+	Common::File stream;
+	if (!stream.open(indexPath))
 		error("Failed to open main index");
 
-	Common::String blamePath = indexFSNode.getPath();
+	Common::String blamePath = indexPath;
 
-	TextParser parser(stream);
+	TextParser parser(&stream);
 
 	Common::String token;
 	TextParserState state;
@@ -622,24 +603,21 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 		_scriptSet.reset();
 
-		Common::String logFileName = Common::String::format("Room%02i.log", static_cast<int>(roomNumber));
-		Common::FSNode logFileNode = _logDir.getChild(logFileName);
-		if (logFileNode.exists()) {
-			if (Common::SeekableReadStream *logicFile = logFileNode.createReadStream()) {
-				_scriptSet = compileLogicFile(*logicFile, static_cast<uint>(logicFile->size()), logFileNode.getPath());
-				delete logicFile;
-			}
+		Common::String logicFileName = Common::String::format("Log/Room%02i.log", static_cast<int>(roomNumber));
+		Common::File logicFile;
+		if (logicFile.open(logicFileName)) {
+			_scriptSet = compileLogicFile(logicFile, static_cast<uint>(logicFile.size()), logicFileName);
+			logicFile.close();
 		}
 
 		_map.clear();
 
-		Common::String mapFileName = Common::String::format("Room%02i.map", static_cast<int>(roomNumber));
-		Common::FSNode mapFileNode = _mapDir.getChild(mapFileName);
-		if (mapFileNode.exists()) {
-			if (Common::SeekableReadStream *mapFile = mapFileNode.createReadStream()) {
-				loadMap(mapFile);
-				delete mapFile;
-			}
+		Common::String mapFileName = Common::String::format("Map/Room%02i.map", static_cast<int>(roomNumber));
+		Common::File mapFile;
+
+		if (mapFile.open(mapFileName)) {
+			loadMap(&mapFile);
+			mapFile.close();
 		}
 	}
 
@@ -772,16 +750,17 @@ void Runtime::loadMap(Common::SeekableReadStream *stream) {
 void Runtime::changeMusicTrack(int track) {
 	_musicPlayer.reset();
 
-	Common::String wavFileName = Common::String::format("Music-%02i.wav", static_cast<int>(track));
-	Common::FSNode wavFileNode = _sfxDir.getChild(wavFileName);
-	if (wavFileNode.exists()) {
-		if (Common::SeekableReadStream *wavFile = wavFileNode.createReadStream()) {
-			if (Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(wavFile, DisposeAfterUse::YES)) {
-				Common::SharedPtr<Audio::AudioStream> loopingStream(Audio::makeLoopingAudioStream(audioStream, 0));
+	Common::String wavFileName = Common::String::format("Sfx/Music-%02i.wav", static_cast<int>(track));
+	Common::File *wavFile = new Common::File();
+	if (wavFile->open(wavFileName)) {
+		if (Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(wavFile, DisposeAfterUse::YES)) {
+			Common::SharedPtr<Audio::AudioStream> loopingStream(Audio::makeLoopingAudioStream(audioStream, 0));
 
-				_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream, 255, 0));
-			}
+			_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream, 255, 0));
 		}
+	} else {
+		warning("Music file '%s' is missing", wavFileName.c_str());
+		delete wavFile;
 	}
 }
 
@@ -795,14 +774,10 @@ void Runtime::changeAnimation(const AnimationDef &animDef) {
 		_animDecoder.reset();
 		_animDecoderState = kAnimDecoderStateStopped;
 
-		Common::String aviFileName = Common::String::format("Anim%04i.avi", animFile);
-		Common::FSNode aviFileNode = _animsDir.getChild(aviFileName);
-		if (!aviFileNode.exists()) {
-			warning("Animation file %i is missing", animFile);
-			return;
-		}
+		Common::String aviFileName = Common::String::format("Anims/Anim%04i.avi", animFile);
+		Common::File *aviFile = new Common::File();
 
-		if (Common::SeekableReadStream *aviFile = aviFileNode.createReadStream()) {
+		if (aviFile->open(aviFileName)) {
 			_animDecoder.reset(new Video::AVIDecoder());
 			if (!_animDecoder->loadStream(aviFile)) {
 				warning("Animation file %i could not be loaded", animFile);
@@ -810,7 +785,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef) {
 			}
 		} else {
 			warning("Animation file %i is missing", animFile);
-			return;
+			delete aviFile;
 		}
 	}
 
