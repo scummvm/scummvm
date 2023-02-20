@@ -7,6 +7,12 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Renamed 'xeen' engine to 'mm' for Might & Magic.
 
 
+#### 2.7.1 (2023-XX-XX)
+
+ HDB:
+   - Fixed bug with inability to pick up red envelope with keyboard.
+
+
 #### 2.7.0 (2023-02-26)
 
  New games:
