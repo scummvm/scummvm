@@ -24,13 +24,29 @@
 #include "common/str.h"
 #include "graphics/managed_surface.h"
 
+class PrintJob;
+
 class PrintingManager {
 public:
 	virtual ~PrintingManager();
 
-	virtual void printImage(Common::String jobName, const Graphics::ManagedSurface &surf) = 0;
+	virtual PrintJob *createJob(Common::String jobName) = 0;
+
+	void printImage(Common::String jobName, const Graphics::ManagedSurface &surf);
 
 	void printImage(const Graphics::ManagedSurface& surf) {
 		printImage("ScummVM", surf);
 	}
+};
+
+class PrintJob {
+public:
+	friend class PrintingManager;
+	virtual ~PrintJob();
+
+	virtual void drawBitmap(const Graphics::ManagedSurface &surf, int x, int y) = 0;
+
+	virtual void newPage() = 0;
+	virtual void endDoc() = 0;
+	virtual void abortJob() = 0;
 };

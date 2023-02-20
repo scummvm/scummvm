@@ -29,79 +29,91 @@
 #include "win32-printman.h"
 #include "common/ustr.h"
 
+class Win32PrintJob;
 
 class Win32PrintingManager : public PrintingManager {
 public:
 	virtual ~Win32PrintingManager();
+	
+	PrintJob *createJob(Common::String jobName);
+};
 
-	void printImage(Common::String jobName, const Graphics::ManagedSurface &surf);
-	void printImage(Common::String jobName, const byte *pixels, const byte *palette, uint32 width, uint32 height);
+class Win32PrintJob : public PrintJob {
+public:
+	friend class Win32PrintingManager;
 
-private:
+	Win32PrintJob(Common::String jobName);
+	~Win32PrintJob();
+
+	void drawBitmap(const Graphics::ManagedSurface &surf, int x, int y);
+
+	void newPage();
+	void endDoc();
+	void abortJob();
+
+	private:
 	HDC createDefaultPrinterContext();
 	HDC createPrinterContext(LPTSTR devName);
 	HPALETTE buildPalette(const byte *paletteData);
-	HBITMAP buildBitmap(HDC hdc, const byte *pixels, const byte *palette, uint width, uint height);
 	HBITMAP buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf);
+
+	HDC hdcPrint;
+	bool jobActive;
 };
 
 
 Win32PrintingManager::~Win32PrintingManager() {}
 
-void Win32PrintingManager::printImage(Common::String jobName, const Graphics::ManagedSurface &surf) {
+PrintJob *Win32PrintingManager::createJob(Common::String jobName) {
+	return new Win32PrintJob(jobName);
+}
 
-	HDC hdcPrint = createDefaultPrinterContext();
 
+Win32PrintJob::Win32PrintJob(Common::String jobName) : jobActive(true) {
+	hdcPrint = createDefaultPrinterContext();
+
+	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
+}
+
+Win32PrintJob::~Win32PrintJob() {
+	if (jobActive) {
+		abortJob();
+		warning("Printjob still active during destruction!");
+	}
+	DeleteDC(hdcPrint);
+}
+
+void Win32PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, int x, int y) {
 	HDC hdcImg = CreateCompatibleDC(hdcPrint);
 
 	HBITMAP bitmap = buildBitmap(hdcPrint, surf);
 	if (!bitmap)
 		goto delDC;
 
-	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
-
 	SelectObject(hdcImg, bitmap);
 
-	BitBlt(hdcPrint, 0, 0, surf.w, surf.h, hdcImg, 0, 0, SRCCOPY);
-
-	Escape(hdcPrint, NEWFRAME, 0, NULL, NULL);
-	Escape(hdcPrint, ENDDOC, 0, NULL, NULL);
-
+	BitBlt(hdcPrint, x, y, surf.w, surf.h, hdcImg, 0, 0, SRCCOPY);
+	
 	DeleteObject(bitmap);
 delDC:
 	DeleteDC(hdcImg);
-	DeleteDC(hdcPrint);
-
-	
 }
 
-void Win32PrintingManager::printImage(Common::String jobName, const byte *pixels, const byte *paletteData, uint32 width, uint32 height) {
-	HDC hdcPrint = createDefaultPrinterContext();
-
-	HDC hdcImg = CreateCompatibleDC(hdcPrint);
-	
-	HBITMAP bitmap = buildBitmap(hdcPrint, pixels, paletteData, width, height);
-	if (!bitmap)
-		goto delDC;
-
-	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
-
-	SelectObject(hdcImg, bitmap);
-
-	BitBlt(hdcPrint, 0, 0, width, height, hdcImg, 0, 0, SRCCOPY);
-	//TransparentBlt(hdcPrint, 0, 0, width, height, hdcImg, 0, 0, width, height, transpColor);
-
+void Win32PrintJob::newPage() {
 	Escape(hdcPrint, NEWFRAME, 0, NULL, NULL);
-	Escape(hdcPrint, ENDDOC, 0, NULL, NULL);
-
-	DeleteObject(bitmap);
-delDC:
-	DeleteDC(hdcImg);
-	DeleteDC(hdcPrint);
 }
 
+void Win32PrintJob::endDoc() {
+	Escape(hdcPrint, ENDDOC, 0, NULL, NULL);
+	jobActive = false;
+}
 
-HDC Win32PrintingManager::createDefaultPrinterContext() {
+void Win32PrintJob::abortJob() {
+	Escape(hdcPrint, ABORTDOC, 0, NULL, NULL);
+	jobActive = false;
+}
+
+HDC Win32PrintJob::createDefaultPrinterContext() {
 	TCHAR szPrinter[MAX_PATH];
 	BOOL success;
 	DWORD cchPrinter(ARRAYSIZE(szPrinter));
@@ -112,7 +124,7 @@ HDC Win32PrintingManager::createDefaultPrinterContext() {
 
 	return createPrinterContext(szPrinter);
 }
-HDC Win32PrintingManager::createPrinterContext(LPTSTR devName) {
+HDC Win32PrintJob::createPrinterContext(LPTSTR devName) {
 	HANDLE handle;
 	BOOL success;
 
@@ -130,7 +142,7 @@ HDC Win32PrintingManager::createPrinterContext(LPTSTR devName) {
 	return printerDC;
 }
 
-HPALETTE Win32PrintingManager::buildPalette(const byte *paletteData) {
+HPALETTE Win32PrintJob::buildPalette(const byte *paletteData) {
 	LOGPALETTE *lpal = (LOGPALETTE*)malloc(sizeof(LOGPALETTE) + (256-1)*sizeof(PALETTEENTRY));
 
 	if (!lpal)
@@ -153,38 +165,7 @@ HPALETTE Win32PrintingManager::buildPalette(const byte *paletteData) {
 	return pal;
 }
 
-HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const byte *pixels, const byte *palette, uint width, uint height) {
-	const uint colorCount = 256;
-	BITMAPINFO *bitmapInfo=(BITMAPINFO *)malloc(sizeof(BITMAPINFO) + sizeof(RGBQUAD)*(colorCount-1));
-
-	if (!bitmapInfo)
-		return NULL;
-
-	bitmapInfo->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bitmapInfo->bmiHeader.biWidth = width;
-	bitmapInfo->bmiHeader.biHeight = -((LONG)height);//Blame the OS2 team for bitmaps being upside down
-	bitmapInfo->bmiHeader.biPlanes = 1;
-	bitmapInfo->bmiHeader.biBitCount = 8;
-	bitmapInfo->bmiHeader.biCompression = BI_RGB;
-	bitmapInfo->bmiHeader.biSizeImage = 0;
-	bitmapInfo->bmiHeader.biClrUsed = colorCount;
-	bitmapInfo->bmiHeader.biClrImportant = colorCount;
-
-	for (uint colorIndex = 0; colorIndex < colorCount; ++colorIndex, palette+=3) {
-		bitmapInfo->bmiColors[colorIndex].rgbRed = palette[0];
-		bitmapInfo->bmiColors[colorIndex].rgbGreen = palette[1];
-		bitmapInfo->bmiColors[colorIndex].rgbBlue = palette[2];
-		bitmapInfo->bmiColors[colorIndex].rgbReserved = 0;
-	}
-
-	HBITMAP bitmap = CreateDIBitmap(hdc, &(bitmapInfo->bmiHeader), CBM_INIT, pixels, bitmapInfo, DIB_RGB_COLORS);
-
-	free(bitmapInfo);
-
-	return bitmap;
-}
-
-HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf) {
+HBITMAP Win32PrintJob::buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf) {
 	const uint colorCount = 256;
 	BITMAPINFO *bitmapInfo = (BITMAPINFO *)malloc(sizeof(BITMAPINFO) + sizeof(RGBQUAD) * (colorCount - 1));
 

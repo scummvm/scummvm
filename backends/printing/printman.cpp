@@ -22,3 +22,16 @@
 #include "printman.h"
 
 PrintingManager::~PrintingManager() {}
+
+PrintJob::~PrintJob() {}
+
+void PrintingManager::printImage(Common::String jobName, const Graphics::ManagedSurface &surf) {
+	PrintJob *job = createJob(jobName);
+
+	job->drawBitmap(surf, 0, 0);
+	job->newPage();
+	job->endDoc();
+
+	delete job;
+}
+
