@@ -511,10 +511,11 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("initial-cfg"))
 		initConfigFilename = settings["initial-cfg"];
 
+	bool configLoadStatus;
 	if (settings.contains("config")) {
-		ConfMan.loadConfigFile(settings["config"], initConfigFilename);
+		configLoadStatus = ConfMan.loadConfigFile(settings["config"], initConfigFilename);
 	} else {
-		ConfMan.loadDefaultConfigFile(initConfigFilename);
+		configLoadStatus = ConfMan.loadDefaultConfigFile(initConfigFilename);
 	}
 
 	// Update the config file
@@ -638,6 +639,11 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 	setupGraphics(system);
 
+	if (!configLoadStatus) {
+		GUI::MessageDialog alert(_("Bad config file format. overwrite?"), _("Yes"), _("Cancel"));
+		if (alert.runModal() != GUI::kMessageOK)
+   			return 0;
+	}
 	// Init the different managers that are used by the engines.
 	// Do it here to prevent fragmentation later
 	system.getAudioCDManager();
