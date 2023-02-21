@@ -78,15 +78,16 @@ void ConfigManager::copyFrom(ConfigManager &source) {
 }
 
 
-void ConfigManager::loadDefaultConfigFile(const String &fallbackFilename) {
+bool ConfigManager::loadDefaultConfigFile(const String &fallbackFilename) {
 	// Open the default config file
 	assert(g_system);
 	SeekableReadStream *stream = g_system->createConfigReadStream();
 	_filename.clear(); // clear the filename to indicate that we are using the default config file
 
+	bool loadResult = false;
 	// ... load it, if available ...
 	if (stream) {
-		loadFromStream(*stream);
+		loadResult = loadFromStream(*stream);
 
 		// ... and close it again.
 		delete stream;
@@ -97,10 +98,12 @@ void ConfigManager::loadDefaultConfigFile(const String &fallbackFilename) {
 			debug("Default configuration file missing, creating a new one");
 
 		flushToDisk();
+		loadResult = true;
 	}
+	return loadResult;
 }
 
-void ConfigManager::loadConfigFile(const String &filename, const String &fallbackFilename) {
+bool ConfigManager::loadConfigFile(const String &filename, const String &fallbackFilename) {
 	_filename = filename;
 
 	FSNode node(filename);
@@ -110,8 +113,9 @@ void ConfigManager::loadConfigFile(const String &filename, const String &fallbac
 			debug("Creating configuration file: %s", filename.c_str());
 	} else {
 		debug("Using configuration file: %s", _filename.c_str());
-		loadFromStream(cfg_file);
+		return loadFromStream(cfg_file);
 	}
+	return true;
 }
 
 bool ConfigManager::loadFallbackConfigFile(const String &filename) {
@@ -166,7 +170,7 @@ void ConfigManager::addDomain(const String &domainName, const ConfigManager::Dom
 }
 
 
-void ConfigManager::loadFromStream(SeekableReadStream &stream) {
+bool ConfigManager::loadFromStream(SeekableReadStream &stream) {
 	String domainName;
 	String comment;
 	Domain domain;
@@ -213,10 +217,13 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			while (*p && (isAlnum(*p) || *p == '-' || *p == '_'))
 				p++;
 
-			if (*p == '\0')
-				error("Config file buggy: missing ] in line %d", lineno);
-			else if (*p != ']')
-				error("Config file buggy: Invalid character '%c' occurred in section name in line %d", *p, lineno);
+			if (*p == '\0') {
+				warning("Config file buggy: missing ] in line %d", lineno);
+				return false;
+			} else if (*p != ']') {
+				warning("Config file buggy: Invalid character '%c' occurred in section name in line %d", *p, lineno);
+				return false;
+			}
 
 			domainName = String(line.c_str() + 1, p);
 
@@ -237,13 +244,16 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 
 			// If no domain has been set, this config file is invalid!
 			if (domainName.empty()) {
-				error("Config file buggy: Key/value pair found outside a domain in line %d", lineno);
+				warning("Config file buggy: Key/value pair found outside a domain in line %d", lineno);
+				return false;
 			}
 
 			// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
 			const char *p = strchr(t, '=');
-			if (!p)
-				error("Config file buggy: Junk found in line %d: '%s'", lineno, t);
+			if (!p) {
+				warning("Config file buggy: Junk found in line %d: '%s'", lineno, t);
+				return false;
+			}
 
 			// Extract the key/value pair
 			String key(t, p);
@@ -263,6 +273,8 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 	}
 
 	addDomain(domainName, domain); // Add the last domain found
+
+	return true;
 }
 
 void ConfigManager::flushToDisk() {
