@@ -647,7 +647,11 @@ void DrillerEngine::loadAssetsFullGame() {
 			loadGlobalObjects(&file, 0x1855 - 0x400);
 		}
 	} else if (_renderMode == Common::kRenderEGA) {
-		loadBundledImages();
+		file.open("SCN1E.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 0x0);
+		}
+		file.close();
 		file.open("DRILLE.EXE");
 
 		if (!file.isOpen())
@@ -657,16 +661,16 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadFonts(&file, 0x99dd);
 		loadGlobalObjects(&file, 0x3b42);
 		load8bitBinary(&file, 0x9b40, 16);
-
+		_border = load8bitBinImage(&file, 0x210);
 	} else if (_renderMode == Common::kRenderCGA) {
 		file.open("SCN1C.DAT");
 		if (file.isOpen()) {
-			_title = load8bitBinImage(&file, 4, 0x0);
+			_title = load8bitBinImage(&file, 0x0);
 		}
 		file.close();
 		file.open("CGATITLE.RL");
 		if (file.isOpen()) {
-			_title = load8bitTitleImage(&file, 4, 0x1b3);
+			_title = load8bitTitleImage(&file, 0x1b3);
 		}
 		file.close();
 		file.open("DRILLC.EXE");
@@ -678,7 +682,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadMessagesFixedSize(&file, 0x2585, 14, 20);
 		load8bitBinary(&file, 0x7bb0, 4);
 		loadGlobalObjects(&file, 0x1fa2);
-		_border = load8bitBinImage(&file, 4, 0x210);
+		_border = load8bitBinImage(&file, 0x210);
 	} else
 		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
 

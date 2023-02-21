@@ -165,11 +165,14 @@ public:
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
 	Object *load8bitObject(Common::SeekableReadStream *file);
 	void renderPixels8bitTitleImage(Graphics::Surface *surface, int &i, int &j, int pixels);
-	void renderPixels8bitBinImage(Graphics::Surface *surface, int &i, int &j, int pixels, int color);
+	void renderPixels8bitBinImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
+
+	void renderPixels8bitBinCGAImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
+	void renderPixels8bitBinEGAImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
 
 	uint32 getPixel8bitImage(int index);
-	Graphics::Surface *load8bitBinImage(Common::SeekableReadStream *file, int ncolors, int offset);
-	Graphics::Surface *load8bitTitleImage(Common::SeekableReadStream *file, int ncolors, int offset);
+	Graphics::Surface *load8bitBinImage(Common::SeekableReadStream *file, int offset);
+	Graphics::Surface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
 
 
 	// Areas
