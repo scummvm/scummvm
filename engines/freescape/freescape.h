@@ -487,6 +487,7 @@ public:
 	EclipseEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
+	void titleScreen() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
