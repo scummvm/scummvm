@@ -59,6 +59,9 @@ enum GameState {
 	kGameStateQuit,					// Quitting
 	kGameStateIdle,					// Waiting for input events
 	kGameStateScript,				// Running a script
+
+	kGameStatePanLeft,
+	kGameStatePanRight,
 };
 
 struct AnimationDef {
@@ -106,6 +109,7 @@ struct ScriptEnvironmentVars {
 	ScriptEnvironmentVars();
 
 	bool lmb;
+	uint panInteractionID;
 };
 
 class Runtime {
@@ -169,6 +173,9 @@ private:
 
 	enum PanoramaState {
 		kPanoramaStateInactive,
+
+		kPanoramaStatePanningUncertainDirection,
+
 		kPanoramaStatePanningLeft,
 		kPanoramaStatePanningRight,
 		kPanoramaStatePanningUp,
@@ -189,12 +196,15 @@ private:
 
 	bool bootGame();
 	bool runIdle();
+	bool runHorizontalPan(bool isRight);
 	bool runScript();
 	bool runWaitForAnimation();
 	void continuePlayingAnimation(bool loop, bool &outEndedAnimation);
 	void drawSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void commitSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void terminateScript();
+
+	void startTerminatingHorizontalPan(bool isRight);
 
 	bool popOSEvent(OSEvent &evt);
 	void queueOSEvent(const OSEvent &evt);
@@ -203,11 +213,12 @@ private:
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
-	void dischargeIdleMouseMove();
+	bool dischargeIdleMouseMove();
 	void loadMap(Common::SeekableReadStream *stream);
 
 	void changeMusicTrack(int musicID);
 	void changeAnimation(const AnimationDef &animDef);
+	void changeAnimation(const AnimationDef &animDef, uint initialFrame);
 
 	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
 
@@ -219,7 +230,10 @@ private:
 	void drawDebugOverlay();
 
 	Common::SharedPtr<Script> findScriptForInteraction(uint interactionID) const;
+
 	void detectPanoramaDirections();
+	void detectPanoramaMouseMovement();
+	void panoramaActivate();
 
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
@@ -373,12 +387,23 @@ private:
 	uint32 _lmbDownTime;
 	bool _lmbDown;
 	bool _lmbDragging;
+	bool _lmbReleaseWasClick;	// If true, then the mouse didn't move at all since the LMB down
+
+	PanoramaState _panoramaState;
+	// The anchor point behavior is kind of weird.  The way it works in Reah is that if the camera is panning left or right and the mouse is moved
+	// back across the anchor threshold at all, then the anchor point is reset to the mouse position.  This means it can drift, because the center
+	// is moved by roughly the margin amount.
+	// Vertical panning on the other hand resets the anchor vertical coordinate every time.
+	Common::Point _panoramaAnchor;
 
 	Common::Array<OSEvent> _pendingEvents;
 
 	static const uint kAnimDefStackArgs = 3;
 
 	static const uint kCursorArrow = 0;
+
+	static const int kPanoramaPanningMarginX = 10;
+	static const int kPanoramaPanningMarginY = 10;
 };
 
 } // End of namespace VCruise
