@@ -100,15 +100,16 @@ void Win32PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, Common::Poi
 	HDC hdcImg = CreateCompatibleDC(hdcPrint);
 
 	HBITMAP bitmap = buildBitmap(hdcPrint, surf);
-	if (!bitmap)
-		goto delDC;
+	if (!bitmap) {
+		DeleteDC(hdcImg);
+		return;
+	}
 
 	SelectObject(hdcImg, bitmap);
 
 	BitBlt(hdcPrint, pos.x, pos.y, surf.w, surf.h, hdcImg, 0, 0, SRCCOPY);
 	
 	DeleteObject(bitmap);
-delDC:
 	DeleteDC(hdcImg);
 }
 
