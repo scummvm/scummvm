@@ -2650,7 +2650,7 @@ NewtonCollision *NewtonCreateConvexHullFromMesh(
     const NewtonWorld *const newtonWorld, const NewtonMesh *const mesh,
     dFloat tolerance, int shapeID) {
 	TRACE_FUNTION(__FUNCTION__);
-	const dgMeshEffect *const meshEffect = (const dgMeshEffect * const)mesh;
+	const dgMeshEffect *meshEffect = (const dgMeshEffect *)mesh;
 	return (NewtonCollision *)meshEffect->CreateConvexCollision(tolerance,
 	        shapeID);
 }
@@ -3407,7 +3407,7 @@ NewtonCollision *NewtonCreateTreeCollision(NewtonWorld *const newtonWorld,
 NewtonCollision *NewtonCreateTreeCollisionFromMesh(const NewtonWorld *const newtonWorld, const NewtonMesh *const mesh, int shapeID) {
 	TRACE_FUNTION(__FUNCTION__);
 	// Newton* const world = (Newton *)newtonWorld;
-	const dgMeshEffect *const meshEffect = (const dgMeshEffect * const)mesh;
+	const dgMeshEffect *meshEffect = (const dgMeshEffect *)mesh;
 	dgCollision *const collision = meshEffect->CreateCollisionTree(shapeID);
 	//  dgCollision* const collision =  world->CreateBVH ();
 	//  collision->SetUserDataID(dgUnsigned32 (shapeID));
@@ -7860,7 +7860,7 @@ NewtonMesh *NewtonMeshConvexHull(NewtonWorld *newtonWorld,
 
 void NewtonMeshDestroy(const NewtonMesh *const mesh) {
 
-	const dgMeshEffect *const meshEffect = (const dgMeshEffect * const)mesh;
+	const dgMeshEffect *meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	delete meshEffect;
@@ -7868,7 +7868,7 @@ void NewtonMeshDestroy(const NewtonMesh *const mesh) {
 
 void NewtonMesApplyTransform(NewtonMesh *const mesh, dFloat *matrix) {
 	TRACE_FUNTION(__FUNCTION__);
-	dgMeshEffect *const meshEffect = (dgMeshEffect * const)mesh;
+	dgMeshEffect *meshEffect = (dgMeshEffect *)mesh;
 
 	dgMatrix transform(*((dgMatrix *)matrix));
 	meshEffect->ApplyTransform(transform);
@@ -7876,7 +7876,7 @@ void NewtonMesApplyTransform(NewtonMesh *const mesh, dFloat *matrix) {
 
 void NewtonMeshCalculateOOBB(const NewtonMesh *const mesh, dFloat *const matrix,
                              dFloat *const x, dFloat *const y, dFloat *const z) {
-	const dgMeshEffect *const meshEffect = (const dgMeshEffect * const)mesh;
+	const dgMeshEffect *meshEffect = (const dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	dgBigVector size;
@@ -7891,7 +7891,7 @@ void NewtonMeshCalculateOOBB(const NewtonMesh *const mesh, dFloat *const matrix,
 void NewtonMeshCalculateVertexNormals(NewtonMesh *const mesh,
                                       dFloat angleInRadians) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect * const)mesh;
+	dgMeshEffect *meshEffect = (dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	meshEffect->CalculateNormals(angleInRadians);
@@ -7899,7 +7899,7 @@ void NewtonMeshCalculateVertexNormals(NewtonMesh *const mesh,
 
 void NewtonMeshApplySphericalMapping(NewtonMesh *const mesh, int material) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect * const)mesh;
+	dgMeshEffect *meshEffect = (dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	meshEffect->SphericalMapping(material);
@@ -7908,7 +7908,7 @@ void NewtonMeshApplySphericalMapping(NewtonMesh *const mesh, int material) {
 void NewtonMeshApplyBoxMapping(NewtonMesh *const mesh, int front,
                                int side, int top) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect * const)mesh;
+	dgMeshEffect *meshEffect = (dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	meshEffect->BoxMapping(front, side, top);
@@ -7917,7 +7917,7 @@ void NewtonMeshApplyBoxMapping(NewtonMesh *const mesh, int front,
 void NewtonMeshApplyCylindricalMapping(NewtonMesh *const mesh,
                                        int cylinderMaterial, int capMaterial) {
 
-	dgMeshEffect *const meshEffect = (dgMeshEffect * const)mesh;
+	dgMeshEffect *meshEffect = (dgMeshEffect *)mesh;
 
 	TRACE_FUNTION(__FUNCTION__);
 	meshEffect->CylindricalMapping(cylinderMaterial, capMaterial);
@@ -7931,7 +7931,7 @@ void NewtonMeshTriangulate(NewtonMesh *const mesh) {
 void NewtonMeshPolygonize(NewtonMesh *const mesh) {
 	TRACE_FUNTION(__FUNCTION__);
 
-	((dgMeshEffect * const)mesh)->ConvertToPolygons();
+	((dgMeshEffect *)mesh)->ConvertToPolygons();
 }
 
 int NewtonMeshIsOpenMesh(const NewtonMesh *const mesh) {
