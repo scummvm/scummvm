@@ -45,8 +45,8 @@ public:
 	Win32PrintJob(Common::String jobName);
 	~Win32PrintJob();
 
-	void drawBitmap(const Graphics::ManagedSurface &surf, int x, int y);
-	void drawText(const Common::String &text, int x, int y);
+	void drawBitmap(const Graphics::ManagedSurface &surf, Common::Point pos);
+	void drawText(const Common::String &text, Common::Point pos);
 
 	void setTextColor(int r, int g, int b);
 	Common::Rect getTextBounds(const Common::String &text) const;
@@ -96,7 +96,7 @@ Win32PrintJob::~Win32PrintJob() {
 	free(devmode);
 }
 
-void Win32PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, int x, int y) {
+void Win32PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, Common::Point pos) {
 	HDC hdcImg = CreateCompatibleDC(hdcPrint);
 
 	HBITMAP bitmap = buildBitmap(hdcPrint, surf);
@@ -105,15 +105,15 @@ void Win32PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, int x, int 
 
 	SelectObject(hdcImg, bitmap);
 
-	BitBlt(hdcPrint, x, y, surf.w, surf.h, hdcImg, 0, 0, SRCCOPY);
+	BitBlt(hdcPrint, pos.x, pos.y, surf.w, surf.h, hdcImg, 0, 0, SRCCOPY);
 	
 	DeleteObject(bitmap);
 delDC:
 	DeleteDC(hdcImg);
 }
 
-void Win32PrintJob::drawText(const Common::String &text, int x, int y) {
-	TextOutA(hdcPrint, x, y, const_cast<char*>(text.c_str()), text.size());
+void Win32PrintJob::drawText(const Common::String &text, Common::Point pos) {
+	TextOutA(hdcPrint, pos.x, pos.y, const_cast<char *>(text.c_str()), text.size());
 }
 
 void Win32PrintJob::setTextColor(int r, int g, int b) {

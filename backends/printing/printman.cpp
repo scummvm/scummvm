@@ -28,7 +28,7 @@ PrintJob::~PrintJob() {}
 void PrintingManager::printImage(Common::String jobName, const Graphics::ManagedSurface &surf) {
 	PrintJob *job = createJob(jobName);
 
-	job->drawBitmap(surf, 0, 0);
+	job->drawBitmap(surf, Common::Point());
 	job->pageFinished();
 	job->endDoc();
 

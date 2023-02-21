@@ -48,8 +48,8 @@ public:
 	friend class PrintingManager;
 	virtual ~PrintJob();
 
-	virtual void drawBitmap(const Graphics::ManagedSurface &surf, int x, int y) = 0;
-	virtual void drawText(const Common::String &text, int x, int y) = 0;
+	virtual void drawBitmap(const Graphics::ManagedSurface &surf, Common::Point pos) = 0;
+	virtual void drawText(const Common::String &text, Common::Point pos) = 0;
 
 	virtual void setTextColor(int r, int g, int b) = 0;
 	virtual Common::Rect getTextBounds(const Common::String &text) const = 0;
