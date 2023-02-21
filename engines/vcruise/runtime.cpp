@@ -68,7 +68,7 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	return screenDirections[screen][direction].get();
 }
 
-ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false) {
+ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), panInteractionID(0) {
 }
 
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
@@ -86,7 +86,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleInteractionID(0),
-	  _lmbDown(false), _lmbDragging(false), _lmbDownTime(0) {
+	  _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
+	  _panoramaState(kPanoramaStateInactive) {
 
 	for (uint i = 0; i < kNumDirections; i++)
 		_haveIdleAnimations[i] = false;
@@ -165,6 +166,12 @@ bool Runtime::runFrame() {
 		case kGameStateIdle:
 			moreActions = runIdle();
 			break;
+		case kGameStatePanLeft:
+			moreActions = runHorizontalPan(false);
+			break;
+		case kGameStatePanRight:
+			moreActions = runHorizontalPan(true);
+			break;
 		case kGameStateScript:
 			moreActions = runScript();
 			break;
@@ -227,12 +234,65 @@ bool Runtime::runIdle() {
 	if (_debugMode)
 		drawDebugOverlay();
 
+	detectPanoramaMouseMovement();
+
 	OSEvent osEvent;
 	while (popOSEvent(osEvent)) {
-		if (osEvent.type == kOSEventTypeMouseMove)
-			dischargeIdleMouseMove();
+		if (osEvent.type == kOSEventTypeMouseMove) {
+			bool changedState = dischargeIdleMouseMove();
+			if (changedState)
+				return true;
+		}
 	}
 
+	// Yield
+	return false;
+}
+
+bool Runtime::runHorizontalPan(bool isRight) {
+	bool animEnded = false;
+	continuePlayingAnimation(true, animEnded);
+
+	Common::Point panRelMouse = _mousePos - _panoramaAnchor;
+
+	if (!_lmbDown) {
+		debug(1, "Terminating pan: LMB is not down");
+		startTerminatingHorizontalPan(isRight);
+		return true;
+	}
+
+	if (!isRight && panRelMouse.x > -kPanoramaPanningMarginX) {
+		debug(1, "Terminating pan: Over threshold for left movement");
+		startTerminatingHorizontalPan(isRight);
+		return true;
+	} else if (isRight && panRelMouse.x < kPanoramaPanningMarginX) {
+		debug(1, "Terminating pan: Over threshold for right movement");
+		startTerminatingHorizontalPan(isRight);
+		return true;
+	}
+
+	OSEvent osEvent;
+	while (popOSEvent(osEvent)) {
+		if (osEvent.type == kOSEventTypeLButtonUp) {
+			debug(1, "Terminating pan: LMB up");
+			startTerminatingHorizontalPan(isRight);
+			return true;
+		} else if (osEvent.type == kOSEventTypeMouseMove) {
+			panRelMouse = osEvent.pos - _panoramaAnchor;
+
+			if (!isRight && panRelMouse.x > -kPanoramaPanningMarginX) {
+				debug(1, "Terminating pan: Over threshold for left movement (from queue)");
+				startTerminatingHorizontalPan(isRight);
+				return true;
+			} else if (isRight && panRelMouse.x < kPanoramaPanningMarginX) {
+				debug(1, "Terminating pan: Over threshold for right movement (from queue)");
+				startTerminatingHorizontalPan(isRight);
+				return true;
+			}
+		}
+	}
+
+	// Didn't terminate, yield
 	return false;
 }
 
@@ -295,6 +355,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool &outAnimationEnded) {
 		// starts delaying without waiting for the time until the next frame to expire.
 		// The loop check here DOES wait for the time until next frame to expire.
 		if (loop && _animPendingDecodeFrame > _animLastFrame) {
+			debug(4, "Looped animation at frame %u", _animLastFrame);
 			if (!_animDecoder->seekToFrame(_animFirstFrame)) {
 				outAnimationEnded = true;
 				return;
@@ -302,6 +363,8 @@ void Runtime::continuePlayingAnimation(bool loop, bool &outAnimationEnded) {
 
 			_animPendingDecodeFrame = _animFirstFrame;
 		}
+
+		debug(4, "Decoding animation frame %u", _animPendingDecodeFrame);
 
 		const Graphics::Surface *surface = _animDecoder->decodeNextFrame();
 		if (!surface) {
@@ -461,6 +524,28 @@ void Runtime::terminateScript() {
 		changeToScreen(_roomNumber, _screenNumber);
 }
 
+void Runtime::startTerminatingHorizontalPan(bool isRight) {
+
+	// Figure out what slice this is.  The last frame is 1 less than usual.
+	uint slice = (_animDisplayingFrame - _animFirstFrame) * kNumDirections / (_animLastFrame - _animFirstFrame + 1);
+
+	// Compute an end frame at the end of the slice.
+	_animLastFrame = (slice + 1) * (_animLastFrame - _animFirstFrame + 1) / kNumDirections + _animFirstFrame;
+
+	debug(1, "Terminating pan at frame slice %u -> frame %u", slice, _animLastFrame);
+
+	if (isRight)
+		_direction = (slice + 1) % kNumDirections;
+	else
+		_direction = kNumDirections - 1 - slice;
+
+	_gameState = kGameStateWaitingForAnimation;
+	_panoramaState = kPanoramaStateInactive;
+
+	// Need to return to idle after direction change
+	_havePendingReturnToIdleState = true;
+}
+
 bool Runtime::popOSEvent(OSEvent &evt) {
 	OSEvent tempEvent;
 
@@ -494,8 +579,9 @@ bool Runtime::popOSEvent(OSEvent &evt) {
 			if (!_lmbDown)
 				continue;
 
+			_lmbReleaseWasClick = !_lmbDragging;
 			_lmbDown = false;
-			// Don't reset _lmbDragging - Want that available to determine if this was a drag release or click
+			_lmbDragging = false;
 		}
 
 		evt = tempEvent;
@@ -635,8 +721,11 @@ void Runtime::returnToIdleState() {
 
 	detectPanoramaDirections();
 
+	_panoramaState = kPanoramaStateInactive;
+	detectPanoramaMouseMovement();
+
 	changeToCursor(_cursors[kCursorArrow]);
-	dischargeIdleMouseMove();
+	(void) dischargeIdleMouseMove();
 }
 
 void Runtime::changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor) {
@@ -648,36 +737,65 @@ void Runtime::changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &
 	}
 }
 
-void Runtime::dischargeIdleMouseMove() {
+bool Runtime::dischargeIdleMouseMove() {
 	const MapScreenDirectionDef *sdDef = _map.getScreenDirection(_screenNumber, _direction);
 
-	Common::Point relMouse(_mousePos.x - _gameSection.rect.left, _mousePos.y - _gameSection.rect.top);
+	if (_panoramaState == kPanoramaStateInactive) {
+		Common::Point relMouse(_mousePos.x - _gameSection.rect.left, _mousePos.y - _gameSection.rect.top);
 
-	bool isOnInteraction = false;
-	uint interactionID = 0;
-	if (sdDef) {
-		for (const InteractionDef &idef : sdDef->interactions) {
-			if (idef.rect.contains(relMouse)) {
-				isOnInteraction = true;
-				interactionID = idef.interactionID;
-				break;
+		bool isOnInteraction = false;
+		uint interactionID = 0;
+		if (sdDef) {
+			for (const InteractionDef &idef : sdDef->interactions) {
+				if (idef.rect.contains(relMouse)) {
+					isOnInteraction = true;
+					interactionID = idef.interactionID;
+					break;
+				}
+			}
+		}
+
+		if (isOnInteraction && (_idleIsOnInteraction == false || interactionID != _idleInteractionID)) {
+			_idleIsOnInteraction = true;
+			_idleInteractionID = interactionID;
+
+			// New interaction, is there a script?
+			Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
+
+			if (script) {
+				activateScript(script, ScriptEnvironmentVars());
+				return true;
+			}
+		} else if (!isOnInteraction && _idleIsOnInteraction) {
+			_idleIsOnInteraction = false;
+			changeToCursor(_cursors[kCursorArrow]);
+		}
+	} else {
+		uint interactionID = 0;
+
+		Common::Point panRelMouse = _mousePos - _panoramaAnchor;
+		if (_havePanAnimations) {
+			if (panRelMouse.x <= -kPanoramaPanningMarginX)
+				interactionID = kPanLeftInteraction;
+			else if (panRelMouse.x >= kPanoramaPanningMarginX)
+				interactionID = kPanRightInteraction;
+
+			if (interactionID) {
+				// If there's an interaction script for this direction, execute it
+				Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
+
+				if (script) {
+					ScriptEnvironmentVars vars;
+					vars.panInteractionID = interactionID;
+					activateScript(script, vars);
+					return true;
+				}
 			}
 		}
 	}
 
-	if (isOnInteraction && (_idleIsOnInteraction == false || interactionID != _idleInteractionID)) {
-		_idleIsOnInteraction = true;
-		_idleInteractionID = interactionID;
-
-		// New interaction, is there a script?
-		Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
-
-		if (script)
-			activateScript(script, ScriptEnvironmentVars());
-	} else if (!isOnInteraction && _idleIsOnInteraction) {
-		_idleIsOnInteraction = false;
-		changeToCursor(_cursors[kCursorArrow]);
-	}
+	// Didn't do anything
+	return false;
 }
 
 void Runtime::loadMap(Common::SeekableReadStream *stream) {
@@ -744,6 +862,10 @@ void Runtime::changeMusicTrack(int track) {
 }
 
 void Runtime::changeAnimation(const AnimationDef &animDef) {
+	changeAnimation(animDef, animDef.firstFrame);
+}
+
+void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame) {
 	int animFile = animDef.animNum;
 	if (animFile < 0)
 		animFile = -animFile;
@@ -773,10 +895,14 @@ void Runtime::changeAnimation(const AnimationDef &animDef) {
 		_animDecoderState = kAnimDecoderStatePaused;
 	}
 
-	_animDecoder->seekToFrame(animDef.firstFrame);
-	_animPendingDecodeFrame = animDef.firstFrame;
+	assert(initialFrame >= animDef.firstFrame && initialFrame <= animDef.lastFrame);
+
+	_animDecoder->seekToFrame(initialFrame);
+	_animPendingDecodeFrame = initialFrame;
 	_animFirstFrame = animDef.firstFrame;
 	_animLastFrame = animDef.lastFrame;
+
+	debug(1, "Animation last frame set to %u", animDef.lastFrame);
 }
 
 AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
@@ -954,6 +1080,19 @@ void Runtime::detectPanoramaDirections() {
 		_panoramaDirectionFlags |= kPanoramaHorizFlags;
 }
 
+void Runtime::detectPanoramaMouseMovement() {
+	if (_panoramaState == kPanoramaStateInactive && (_lmbDragging || (_lmbDown && (g_system->getMillis() - _lmbDownTime) >= 500)))
+		panoramaActivate();
+}
+
+void Runtime::panoramaActivate() {
+	assert(_panoramaState == kPanoramaStateInactive);
+	_panoramaState = kPanoramaStatePanningUncertainDirection;
+	_panoramaAnchor = _mousePos;
+
+	// TODO: Change mouse cursor
+}
+
 void Runtime::onLButtonDown(int16 x, int16 y) {
 	onMouseMove(x, y);
 
@@ -1063,7 +1202,38 @@ void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 
 OPCODE_STUB(ChangeL)
 
-OPCODE_STUB(AnimR)
+void Runtime::scriptOpAnimR(ScriptArg_t arg) {
+	if (_scriptEnv.panInteractionID == kPanLeftInteraction) {
+		debug(1, "Pan-left interaction from direction %u", _direction);
+
+		uint reverseDirectionSlice = (kNumDirections - _direction);
+		if (reverseDirectionSlice == kNumDirections)
+			reverseDirectionSlice = 0;
+
+		uint initialFrame = reverseDirectionSlice * (_panLeftAnimationDef.lastFrame - _panLeftAnimationDef.firstFrame) / kNumDirections + _panLeftAnimationDef.firstFrame;
+
+		AnimationDef trimmedAnimation = _panLeftAnimationDef;
+		trimmedAnimation.lastFrame--;
+
+		debug(1, "Running frame loop of %u - %u from frame %u", trimmedAnimation.firstFrame, trimmedAnimation.lastFrame, initialFrame);
+
+		changeAnimation(trimmedAnimation, initialFrame);
+		_gameState = kGameStatePanLeft;
+	} else if (_scriptEnv.panInteractionID == kPanRightInteraction) {
+		debug(1, "Pan-right interaction from direction %u", _direction);
+
+		uint initialFrame = _direction * (_panRightAnimationDef.lastFrame - _panRightAnimationDef.firstFrame) / kNumDirections + _panRightAnimationDef.firstFrame;
+
+		AnimationDef trimmedAnimation = _panRightAnimationDef;
+		trimmedAnimation.lastFrame--;
+
+		debug(1, "Running frame loop of %u - %u from frame %u", trimmedAnimation.firstFrame, trimmedAnimation.lastFrame, initialFrame);
+
+		changeAnimation(_panRightAnimationDef, initialFrame);
+		_gameState = kGameStatePanRight;
+	}
+}
+
 OPCODE_STUB(AnimF)
 OPCODE_STUB(AnimN)
 OPCODE_STUB(AnimG)
