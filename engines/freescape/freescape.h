@@ -459,6 +459,7 @@ public:
 	void loadAssets() override;
 	void initGameState() override;
 	void borderScreen() override;
+	void titleScreen() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 	void checkIfStillInArea() override;

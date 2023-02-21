@@ -49,6 +49,18 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_initialShield = 15;
 }
 
+void DarkEngine::titleScreen() {
+	if (isAmiga() || isAtariST()) // These releases has their own screens
+		return;
+
+	if (_title) {
+		drawTitle();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(3000);
+	}
+}
+
 void DarkEngine::loadAssets() {
 	if (isDemo())
 		loadAssetsDemo();
@@ -59,7 +71,10 @@ void DarkEngine::loadAssets() {
 void DarkEngine::loadAssetsDemo() {
 	Common::File file;
 	if (isDOS() && _renderMode == Common::kRenderEGA) {
-		loadBundledImages();
+		file.open("SCN1E.DAT");
+		if (file.isOpen())
+			_title = load8bitBinImage(&file, 0x0);
+		file.close();
 		file.open("DSIDEE.EXE");
 
 		if (!file.isOpen())
@@ -69,6 +84,7 @@ void DarkEngine::loadAssetsDemo() {
 		loadFonts(&file, 0xa598);
 		loadGlobalObjects(&file, 0x3d04);
 		load8bitBinary(&file, 0xa700, 16);
+		_border = load8bitBinImage(&file, 0x210);
 	} else if (isDOS() && _renderMode == Common::kRenderCGA) {
 		//loadBundledImages();
 		file.open("DSIDEC.EXE");
@@ -129,7 +145,10 @@ void DarkEngine::initGameState() {
 void DarkEngine::loadAssetsFullGame() {
 	Common::File file;
 	if (_renderMode == Common::kRenderEGA) {
-		loadBundledImages();
+		file.open("SCN1E.DAT");
+		if (file.isOpen())
+			_title = load8bitBinImage(&file, 0x0);
+		file.close();
 		file.open("DSIDEE.EXE");
 
 		if (!file.isOpen())
@@ -139,6 +158,8 @@ void DarkEngine::loadAssetsFullGame() {
 		loadMessagesFixedSize(&file, 0x4525, 16, 27);
 		loadGlobalObjects(&file, 0x3d04);
 		load8bitBinary(&file, 0xa280, 16);
+		_border = load8bitBinImage(&file, 0x210);
+
 		// TODO: load objects
 		/*for (auto &it : _areaMap) {
 			if (!it._value->entranceWithID(255))
