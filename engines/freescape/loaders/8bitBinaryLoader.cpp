@@ -305,6 +305,24 @@ byte kCGAPalettePinkBlueWhiteData[4][3] = {
 	{0xff, 0xff, 0xff},
 };
 
+byte kEGADefaultPaletteData[16][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0xaa},
+	{0x00, 0xaa, 0x00},
+	{0xaa, 0x00, 0x00},
+	{0xaa, 0x00, 0xaa},
+	{0xaa, 0x55, 0x00},
+	{0x55, 0xff, 0x55},
+	{0xff, 0x55, 0x55},
+	{0x12, 0x34, 0x56},
+	{0xff, 0xff, 0x55},
+	{0xff, 0xff, 0xff},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00}
+};
+
 uint32 FreescapeEngine::getPixel8bitImage(int index) {
 	uint8 r, g, b;
 	if (index < 4) {
@@ -348,9 +366,9 @@ void FreescapeEngine::renderPixels8bitTitleImage(Graphics::Surface *surface, int
 	i++;
 }
 
-Graphics::Surface *FreescapeEngine::load8bitTitleImage(Common::SeekableReadStream *file, int ncolors, int offset) {
+Graphics::Surface *FreescapeEngine::load8bitTitleImage(Common::SeekableReadStream *file, int offset) {
 	Graphics::Surface *surface = new Graphics::Surface();
-	assert(ncolors == 4);
+	assert(_renderMode == Common::kRenderCGA);
 	_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
 	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
 	uint32 black = _gfx->_currentPixelFormat.ARGBToColor(0xFF, 0, 0, 0);
@@ -446,7 +464,7 @@ Graphics::Surface *FreescapeEngine::load8bitTitleImage(Common::SeekableReadStrea
 	return surface;
 }
 
-void FreescapeEngine::renderPixels8bitBinImage(Graphics::Surface *surface, int &i, int &j, int pixels, int color) {
+void FreescapeEngine::renderPixels8bitBinImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color) {
 	if (i >= 320) {
 		//debug("cannot continue, stopping here at row %d!", j);
 		return;
@@ -455,18 +473,30 @@ void FreescapeEngine::renderPixels8bitBinImage(Graphics::Surface *surface, int &
 	int acc = 1 << 7;
 	while (acc > 0) {
 		assert(i < 320);
-		if (acc & pixels)
-			surface->setPixel(i, j, getPixel8bitImage(color));
+		if (acc & pixels) {
+			uint8 r, g, b;
+			uint32 previousPixel = surface->getPixel(i, j);
+			_gfx->_currentPixelFormat.colorToRGB(previousPixel, r, g, b);
+			int previousColor = _gfx->indexFromColor(r, g, b);
+			//debug("index: %d", previousColor + color);
+			_gfx->readFromPalette(previousColor + color, r, g, b);
+			surface->setPixel(i, j, _gfx->_currentPixelFormat.ARGBToColor(0xFF, r, g, b));
+		}
 		i++;
 		acc = acc >> 1;
 	}
 
 }
 
-Graphics::Surface *FreescapeEngine::load8bitBinImage(Common::SeekableReadStream *file, int ncolors, int offset) {
+Graphics::Surface *FreescapeEngine::load8bitBinImage(Common::SeekableReadStream *file, int offset) {
 	Graphics::Surface *surface = new Graphics::Surface();
-	assert(ncolors == 4);
-	_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
+	if (_renderMode == Common::kRenderCGA)
+		_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
+	else if (_renderMode == Common::kRenderEGA)
+		_gfx->_palette = (byte *)kEGADefaultPaletteData;
+	else
+		error("Invalid render mode: %d", _renderMode);
+
 	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
 	uint32 black = _gfx->_currentPixelFormat.ARGBToColor(0xFF, 0, 0, 0);
 	surface->fillRect(Common::Rect(0, 0, 320, 200), black);
@@ -480,10 +510,10 @@ Graphics::Surface *FreescapeEngine::load8bitBinImage(Common::SeekableReadStream 
 	int color = 1;
 	int command = 0;
 	while (file->pos() <= offset + imageSize) {
-		debug("pos: %lx", file->pos());
+		//debug("pos: %lx", file->pos());
 		command = file->readByte();
 
-		color = hPixelsWritten < 320 ? 1 : 2;
+		color = 1 + hPixelsWritten / 320;
 		//debug("command: %x with j: %d", command, j);
 		if (j >= 200)
 			return surface;
@@ -498,33 +528,33 @@ Graphics::Surface *FreescapeEngine::load8bitBinImage(Common::SeekableReadStream 
 			}
 			hPixelsWritten = hPixelsWritten + i - start;
 		} else if (command <= 0xff && command >= 0xf0) {
-			int size = 136 - 8*(command - 0xf0);
+			int size = (136 - 8*(command - 0xf0)) / 2;
 			int start = i;
 			int pixels = file->readByte();
 			//debug("starting 0xfX: at i: %d j: %d with pixels: %x", i, j, pixels);
 			while (size > 0) {
 				renderPixels8bitBinImage(surface, i, j, pixels, color);
-				size = size - 8;
+				size = size - 4;
 			}
 			hPixelsWritten = hPixelsWritten + i - start;
 			assert(i <= 320);
 		} else if (command <= 0xef && command >= 0xe0) {
-			int size = 264 - 8*(command - 0xe0);
+			int size = (264 - 8*(command - 0xe0)) / 2;
 			int start = i;
 			int pixels = file->readByte();
 			//debug("starting 0xeX: at i: %d j: %d with pixels: %x", i, j, pixels);
 			while (size > 0) {
 				renderPixels8bitBinImage(surface, i, j, pixels, color);
-				size = size - 8;
+				size = size - 4;
 			}
 			hPixelsWritten = hPixelsWritten + i - start;
 		} else if (command <= 0xdf && command >= 0xd0) {
-			int size = 272 + 8*(0xdf - command);
+			int size = (272 + 8*(0xdf - command)) / 2;
 			int start = i;
 			int pixels = file->readByte();
 			while (size > 0) {
 				renderPixels8bitBinImage(surface, i, j, pixels, color);
-				size = size - 8;
+				size = size - 4;
 			}
 			hPixelsWritten = hPixelsWritten + i - start;
 		} else {
@@ -533,7 +563,7 @@ Graphics::Surface *FreescapeEngine::load8bitBinImage(Common::SeekableReadStream 
 
 		if (i >= 320) {
 			i = 0;
-			if (hPixelsWritten >= 640) {
+			if (hPixelsWritten >= (_renderMode == Common::kRenderCGA ? 640 : 1280)) {
 				j++;
 				hPixelsWritten = 0;
 			}
