@@ -996,8 +996,6 @@ Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &strea
 }
 
 uint16 humanVersion(uint16 ver) {
-	if (ver >= kFileVer1201)
-		return 1201;
 	if (ver >= kFileVer1200)
 		return 1200;
 	if (ver >= kFileVer1150)

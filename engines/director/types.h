@@ -339,8 +339,7 @@ enum {
 	kFileVer1000 = 0x73B,
 	kFileVer1100 = 0x781,
 	kFileVer1150 = 0x782,
-	kFileVer1200 = 0x783,
-	kFileVer1201 = 0x79F
+	kFileVer1200 = 0x79F
 };
 
 enum DatumType {
