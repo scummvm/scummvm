@@ -252,7 +252,7 @@ void loadGameFile(Common::SeekableReadStream *f) {
 		break;
 	}
 
-	if (!(_G(_game)->_subType & (C64 | MYSTERIOUS))) {
+	if ((_G(_game)->_subType & (C64 | MYSTERIOUS)) == (MYSTERIOUS | C64)) {
 		mysterious64Sysmess();
 	}
 
