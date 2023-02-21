@@ -22,7 +22,8 @@
 #ifndef BACKENDS_PRINTING_PRINTMAN_H
 #define BACKENDS_PRINTING_PRINTMAN_H
 
-
+#include "common/rect.h"
+#include "common/rational.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "graphics/managed_surface.h"
@@ -51,6 +52,27 @@ public:
 	virtual void drawText(const Common::String &text, int x, int y) = 0;
 
 	virtual void setTextColor(int r, int g, int b) = 0;
+	virtual Common::Rect getTextBounds(const Common::String &text) const = 0;
+
+	virtual Common::Rational getPixelAspectRatio() const = 0;
+
+	enum DuplexMode {
+		Unknown = 0,
+		Simplex = 1,
+		Vertical = 2,
+		Horizontal = 3
+	};
+
+	// Size of the printable area, in pixels
+	virtual Common::Rect getPrintableArea() const = 0;
+	// Offset from the top left corner of the paper to the printable area
+	virtual Common::Point getPrintableAreaOffset() const = 0;
+	// Size of the paper
+	virtual Common::Rect getPaperDimensions() const = 0;
+	virtual DuplexMode getDuplexMode() const = 0;
+	// The paper orientation
+	virtual bool isLandscapeOrientation() const = 0;
+	virtual bool supportsColors() const = 0;
 
 	virtual void pageFinished() = 0;
 	virtual void endDoc() = 0;

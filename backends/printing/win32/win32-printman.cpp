@@ -49,6 +49,15 @@ public:
 	void drawText(const Common::String &text, int x, int y);
 
 	void setTextColor(int r, int g, int b);
+	Common::Rect getTextBounds(const Common::String &text) const;
+
+	Common::Rational getPixelAspectRatio() const;
+	Common::Rect getPrintableArea() const;
+	Common::Point getPrintableAreaOffset() const;
+	Common::Rect getPaperDimensions() const;
+	DuplexMode getDuplexMode() const;
+	bool supportsColors() const;
+	bool isLandscapeOrientation() const;
 
 	void pageFinished();
 	void endDoc();
@@ -61,6 +70,7 @@ public:
 
 	HDC hdcPrint;
 	bool jobActive;
+	DEVMODE *devmode;
 };
 
 
@@ -71,7 +81,7 @@ PrintJob *Win32PrintingManager::createJob(Common::String jobName) {
 }
 
 
-Win32PrintJob::Win32PrintJob(Common::String jobName) : jobActive(true) {
+Win32PrintJob::Win32PrintJob(Common::String jobName) : jobActive(true), hdcPrint(NULL), devmode(nullptr) {
 	hdcPrint = createDefaultPrinterContext();
 
 	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
@@ -83,6 +93,7 @@ Win32PrintJob::~Win32PrintJob() {
 		warning("Printjob still active during destruction!");
 	}
 	DeleteDC(hdcPrint);
+	free(devmode);
 }
 
 void Win32PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, int x, int y) {
@@ -107,6 +118,54 @@ void Win32PrintJob::drawText(const Common::String &text, int x, int y) {
 
 void Win32PrintJob::setTextColor(int r, int g, int b) {
 	SetTextColor(hdcPrint, RGB(r, g, b));
+}
+
+Common::Rect Win32PrintJob::getTextBounds(const Common::String &text) const {
+	SIZE winSize;
+	GetTextExtentPointA(hdcPrint, text.c_str(), text.size(), &winSize);
+	return Common::Rect(winSize.cx, winSize.cy);
+}
+
+Common::Rational Win32PrintJob::getPixelAspectRatio() const {
+	return Common::Rational(
+		GetDeviceCaps(hdcPrint, ASPECTX),
+		GetDeviceCaps(hdcPrint, ASPECTY)
+	);
+}
+
+Common::Rect Win32PrintJob::getPrintableArea() const {
+	return Common::Rect(
+		GetDeviceCaps(hdcPrint, HORZRES),
+		GetDeviceCaps(hdcPrint, VERTRES)
+	);
+}
+
+Common::Point Win32PrintJob::getPrintableAreaOffset() const {
+	return Common::Point(
+		GetDeviceCaps(hdcPrint, PHYSICALOFFSETX),
+		GetDeviceCaps(hdcPrint, PHYSICALOFFSETY)
+	);
+}
+
+Common::Rect Win32PrintJob::getPaperDimensions() const {
+	return Common::Rect(
+		GetDeviceCaps(hdcPrint, PHYSICALWIDTH),
+		GetDeviceCaps(hdcPrint, PHYSICALHEIGHT)
+	);
+}
+
+PrintJob::DuplexMode Win32PrintJob::getDuplexMode() const {
+	if ((devmode->dmFields & DM_DUPLEX) == 0)
+		return Unknown;
+	return (DuplexMode)devmode->dmDuplex;
+}
+
+bool Win32PrintJob::supportsColors() const {
+	return devmode->dmColor == DMCOLOR_COLOR;
+}
+
+bool Win32PrintJob::isLandscapeOrientation() const {
+	return devmode->dmOrientation == DMORIENT_LANDSCAPE;
 }
 
 void Win32PrintJob::pageFinished() {
@@ -143,7 +202,7 @@ HDC Win32PrintJob::createPrinterContext(LPTSTR devName) {
 		return NULL;
 
 	int size = DocumentProperties(NULL, handle, devName, NULL, NULL, 0);
-	DEVMODE *devmode = (DEVMODE *)malloc(size);
+	devmode = (DEVMODE *)malloc(size);
 	DocumentProperties(NULL, handle, devName, devmode, NULL, DM_OUT_BUFFER);
 
 	ClosePrinter(handle);
