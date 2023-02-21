@@ -999,6 +999,7 @@ dgInt32 dgCollisionConvex::SimplifyClipPolygon(dgInt32 count,
         const dgVector &normal, dgVector *const polygon) const {
 	dgInt8 mark[DG_MAX_VERTEX_CLIP_FACE * 8];
 	dgInt8 buffer[8 * DG_MAX_VERTEX_CLIP_FACE * (sizeof(dgInt32) + sizeof(dgFloat32))];
+	for (uint i = 0; i < ARRAYSIZE(buffer); i++) buffer[i] = 0;
 
 	NEWTON_ASSERT(count < dgInt32(sizeof(mark) / sizeof(mark[0])));
 	dgUpHeap<dgInt32, dgFloat32> sortHeap(buffer, sizeof(buffer));

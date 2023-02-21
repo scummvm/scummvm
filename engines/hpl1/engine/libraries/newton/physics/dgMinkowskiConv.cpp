@@ -490,6 +490,7 @@ class dgContactSolver {
 		// dgPerimenterEdge* ptr;
 		// dgPerimenterEdge* ptr0;
 		dgInt32 buffer[256];
+		for (uint i = 0; i < ARRAYSIZE(buffer); i++) buffer[i] = 0;
 		dgUpHeap<dgPerimenterEdge *, dgFloat32> heap(buffer, sizeof(buffer));
 
 		dgInt32 restart = 1;
