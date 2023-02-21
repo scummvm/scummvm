@@ -2621,7 +2621,7 @@ void dgPolyhedra::Optimize(const dgFloat64 *const array, dgInt32 strideInBytes,
 	    &heapPool[0], heapPool.GetSizeInBytes());
 
 	NormalizeVertex(maxVertexIndex, &vertexPool[0], array, stride);
-	for (uint i = 0; i < maxVertexIndex; i++) vertexMetrics[i].Clear();
+	for (int i = 0; i < maxVertexIndex; i++) vertexMetrics[i].Clear();
 	CalculateAllMetrics(this, &vertexMetrics[0], &vertexPool[0]);
 
 	dgFloat64 tol2 = tol * tol;
