@@ -97,9 +97,34 @@ TestExitStatus PrintingTests::printTestPage() {
 		return kTestFailed;
 	}
 
-	job->drawBitmap(*logo, Common::Point(0,0));
+	Common::Point pos;
 
-	job->drawText(gScummVMVersionDate, Common::Point(0,logo->h + 10));
+	job->drawBitmap(*logo, pos);
+	pos += Common::Point(0, logo->h);
+
+	job->drawText(gScummVMVersionDate, pos);
+	pos += Common::Point(0, job->getTextBounds(gScummVMVersionDate).height());
+
+	if (job->supportsColors()) {
+		job->setTextColor(255, 0, 0);
+		job->drawText("Red text", pos);
+		pos += Common::Point(0, job->getTextBounds("Red text").height());
+
+		job->setTextColor(0, 255, 0);
+		job->drawText("Green text", pos);
+		pos += Common::Point(0, job->getTextBounds("Green text").height());
+
+		job->setTextColor(0, 0, 255);
+		job->drawText("Blue text", pos);
+		pos += Common::Point(0, job->getTextBounds("Blue text").height());
+
+		job->setTextColor(0, 0, 0);
+		job->drawText("Black text", pos);
+		pos += Common::Point(0, job->getTextBounds("Black text").height());
+	} else {
+		job->drawText("Grayscale printing only, no text color test", pos);
+		pos += Common::Point(0, job->getTextBounds("Grayscale printing only, no text color test").height());
+	}
 
 	job->pageFinished();
 	job->endDoc();
