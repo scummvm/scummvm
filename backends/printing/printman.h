@@ -34,9 +34,9 @@ class PrintingManager {
 public:
 	virtual ~PrintingManager();
 
-	virtual PrintJob *createJob(Common::String jobName) = 0;
+	virtual PrintJob *createJob(const Common::String &jobName) = 0;
 
-	void printImage(Common::String jobName, const Graphics::ManagedSurface &surf);
+	void printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf);
 
 	void printImage(const Graphics::ManagedSurface& surf) {
 		printImage("ScummVM", surf);

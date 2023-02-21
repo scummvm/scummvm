@@ -35,14 +35,14 @@ class Win32PrintingManager : public PrintingManager {
 public:
 	virtual ~Win32PrintingManager();
 	
-	PrintJob *createJob(Common::String jobName);
+	PrintJob *createJob(const Common::String &jobName);
 };
 
 class Win32PrintJob : public PrintJob {
 public:
 	friend class Win32PrintingManager;
 
-	Win32PrintJob(Common::String jobName);
+	Win32PrintJob(const Common::String &jobName);
 	~Win32PrintJob();
 
 	void drawBitmap(const Graphics::ManagedSurface &surf, Common::Point pos);
@@ -76,12 +76,12 @@ public:
 
 Win32PrintingManager::~Win32PrintingManager() {}
 
-PrintJob *Win32PrintingManager::createJob(Common::String jobName) {
+PrintJob *Win32PrintingManager::createJob(const Common::String &jobName) {
 	return new Win32PrintJob(jobName);
 }
 
 
-Win32PrintJob::Win32PrintJob(Common::String jobName) : jobActive(true), hdcPrint(NULL), devmode(nullptr) {
+Win32PrintJob::Win32PrintJob(const Common::String &jobName) : jobActive(true), hdcPrint(NULL), devmode(nullptr) {
 	hdcPrint = createDefaultPrinterContext();
 
 	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
