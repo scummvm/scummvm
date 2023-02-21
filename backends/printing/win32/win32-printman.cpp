@@ -46,6 +46,9 @@ public:
 	~Win32PrintJob();
 
 	void drawBitmap(const Graphics::ManagedSurface &surf, int x, int y);
+	void drawText(const Common::String &text, int x, int y);
+
+	void setTextColor(int r, int g, int b);
 
 	void pageFinished();
 	void endDoc();
@@ -96,6 +99,14 @@ void Win32PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, int x, int 
 	DeleteObject(bitmap);
 delDC:
 	DeleteDC(hdcImg);
+}
+
+void Win32PrintJob::drawText(const Common::String &text, int x, int y) {
+	TextOutA(hdcPrint, x, y, const_cast<char*>(text.c_str()), text.size());
+}
+
+void Win32PrintJob::setTextColor(int r, int g, int b) {
+	SetTextColor(hdcPrint, RGB(r, g, b));
 }
 
 void Win32PrintJob::pageFinished() {

@@ -48,6 +48,9 @@ public:
 	virtual ~PrintJob();
 
 	virtual void drawBitmap(const Graphics::ManagedSurface &surf, int x, int y) = 0;
+	virtual void drawText(const Common::String &text, int x, int y) = 0;
+
+	virtual void setTextColor(int r, int g, int b) = 0;
 
 	virtual void pageFinished() = 0;
 	virtual void endDoc() = 0;
