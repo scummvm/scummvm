@@ -97,9 +97,9 @@ TestExitStatus PrintingTests::printTestPage() {
 		return kTestFailed;
 	}
 
-	job->drawBitmap(*logo, 0, 0);
+	job->drawBitmap(*logo, Common::Point(0,0));
 
-	job->drawText(gScummVMVersionDate, 0, logo->h + 10);
+	job->drawText(gScummVMVersionDate, Common::Point(0,logo->h + 10));
 
 	job->pageFinished();
 	job->endDoc();
@@ -137,10 +137,29 @@ TestExitStatus PrintingTests::printGPL() {
 		return kTestFailed;
 	}
 
+	Common::Rect printArea = job->getPrintableArea();
+
+	Common::Point textPos;
+
 	while (!f.eos()) {
 		Common::String line = f.readLine();
 
-		//TODO: actually output the line
+		Common::Rect bounds = job->getTextBounds(line);
+
+		bounds.moveTo(textPos);
+
+		if (!printArea.contains(bounds)) {
+			textPos.x = 0;
+			textPos.y = 0;
+			job->pageFinished();
+		}
+
+		job->drawText(line, textPos);
+
+		textPos.y += bounds.height();
+	}
+	if (textPos != Common::Point(0, 0)) {
+		job->pageFinished();
 	}
 	f.close();
 
