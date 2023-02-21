@@ -3874,7 +3874,7 @@ case $_backend in
 		fi
 		;;
 	atari)
-		append_var DEFINES "-DATARI"
+		define_in_config_if_yes yes "ATARI"
 		#append_var DEFINES "-DDISABLE_FANCY_THEMES"
 		#append_var DEFINES "-DDISABLE_SID"
 		#append_var DEFINES "-DDISABLE_NES_APU"
