@@ -99,8 +99,7 @@ TestExitStatus PrintingTests::printTestPage() {
 
 	job->drawBitmap(*logo, 0, 0);
 
-	//TODO: output build details
-	gScummVMVersionDate;
+	job->drawText(gScummVMVersionDate, 0, logo->h + 10);
 
 	job->pageFinished();
 	job->endDoc();
