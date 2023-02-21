@@ -234,7 +234,7 @@ void memory_putpixel(BITMAP *bmp, int x, int y, int color) {
 
 void putpixel(BITMAP *bmp, int x, int y, int color) {
 	Graphics::ManagedSurface &surf = **bmp;
-	if (x >= surf.w || y >= surf.h)
+	if (x < 0 || x >= surf.w || y < 0 || y >= surf.h)
 		return;
 	void *p = surf.getBasePtr(x, y);
 
@@ -255,6 +255,8 @@ void putpixel(BITMAP *bmp, int x, int y, int color) {
 
 void _putpixel(BITMAP *bmp, int x, int y, int color) {
 	Graphics::ManagedSurface &surf = **bmp;
+	if (x < 0 || x >= surf.w || y < 0 || y >= surf.h)
+		return;
 	void *p = surf.getBasePtr(x, y);
 	*((uint8 *)p) = color;
 }
@@ -265,6 +267,8 @@ void _putpixel15(BITMAP *bmp, int x, int y, int color) {
 
 void _putpixel16(BITMAP *bmp, int x, int y, int color) {
 	Graphics::ManagedSurface &surf = **bmp;
+	if (x < 0 || x >= surf.w || y < 0 || y >= surf.h)
+		return;
 	void *p = surf.getBasePtr(x, y);
 	*((uint16 *)p) = color;
 }
@@ -275,6 +279,8 @@ void _putpixel24(BITMAP *bmp, int x, int y, int color) {
 
 void _putpixel32(BITMAP *bmp, int x, int y, int color) {
 	Graphics::ManagedSurface &surf = **bmp;
+	if (x < 0 || x >= surf.w || y < 0 || y >= surf.h)
+		return;
 	void *p = surf.getBasePtr(x, y);
 	*((uint32 *)p) = color;
 }
