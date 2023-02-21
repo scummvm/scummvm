@@ -20,12 +20,11 @@
  */
 #include "base/version.h"
 
-#include "common/events.h"
-#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/file.h"
 
 #include "engines/engine.h"
 
@@ -34,7 +33,6 @@
 #include "backends/printing/printman.h"
 
 #include "testbed/printing.h"
-#include "testbed/graphics.h"
 
 namespace Testbed {
 
@@ -42,7 +40,7 @@ namespace Testbed {
 PrintingTestSuite::PrintingTestSuite() {
 	addTest("Abort Job", &PrintingTests::abortJob);
 	addTest("Print Test Page", &PrintingTests::printTestPage);
-	//addTest("Print the GPL", &PrintingTests::printGPL);
+	addTest("Print the GPL", &PrintingTests::printGPL);
 }
 
 TestExitStatus PrintingTests::abortJob() {
@@ -50,10 +48,16 @@ TestExitStatus PrintingTests::abortJob() {
 		return kTestSkipped;
 	}
 	PrintingManager *pm = g_system->getPrintingManager();
-	if (!pm)
+	if (!pm) {
+		warning("No PrintingManager!");
 		return kTestFailed;
+	}
 
 	PrintJob *job = pm->createJob("ScummVM to be aborted");
+	if (!job) {
+		warning("Creating PrintJob failed!");
+		return kTestFailed;
+	}
 	job->abortJob();
 	delete job;
 
@@ -65,21 +69,37 @@ TestExitStatus PrintingTests::printTestPage() {
 	if (!ConfParams.isSessionInteractive()) {
 		return kTestSkipped;
 	}
-	if (!g_gui.theme()->supportsImages())
+	if (!g_gui.theme()->supportsImages()) {
+		Testsuite::logPrintf("No logo to load in this theme, skipping test : printTestPage\n");
 		return kTestSkipped;
+	}
+
+	if (Testsuite::handleInteractiveInput("Print a test page?", "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : printTestPage\n");
+		return kTestSkipped;
+	}
+
 	const Graphics::ManagedSurface *logo = g_gui.theme()->getImageSurface("logo.bmp");
-	if (!logo)
+	if (!logo) {
+		warning("Failed to load the scummvm logo.");
 		return kTestFailed;
+	}
 	
 	PrintingManager *pm = g_system->getPrintingManager();
-	if (!pm)
+	if (!pm) {
+		warning("No PrintingManager!");
 		return kTestFailed;
+	}
 
 	PrintJob *job = pm->createJob("ScummVM Test page");
+	if (!job) {
+		warning("Creating PrintJob failed!");
+		return kTestFailed;
+	}
 
 	job->drawBitmap(*logo, 0, 0);
 
-	//output build details
+	//TODO: output build details
 	gScummVMVersionDate;
 
 	job->pageFinished();
@@ -94,11 +114,37 @@ TestExitStatus PrintingTests::printGPL() {
 		return kTestSkipped;
 	}
 
-	PrintingManager *pm = g_system->getPrintingManager();
-	if (!pm)
+	Common::File f;
+	if (!f.open("COPYING")) {
+		warning("Failed to load COPYING");
 		return kTestFailed;
+	}
+
+	if (Testsuite::handleInteractiveInput("Print the gpl to test long jobs?", "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : printGPL\n");
+		f.close();
+		return kTestSkipped;
+	}
+
+	PrintingManager *pm = g_system->getPrintingManager();
+	if (!pm) {
+		warning("No PrintingManager!");
+		return kTestFailed;
+	}
 
 	PrintJob *job = pm->createJob("The GPL");
+	if (!job) {
+		warning("Creating PrintJob failed!");
+		return kTestFailed;
+	}
+
+	while (!f.eos()) {
+		Common::String line = f.readLine();
+
+		//TODO: actually output the line
+	}
+	f.close();
+
 	job->endDoc();
 	delete job;
 

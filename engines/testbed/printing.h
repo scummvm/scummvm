@@ -24,8 +24,6 @@
 
 #include "testbed/testsuite.h"
 
-// This file can be used as template for header files of other newer testsuites.
-
 namespace Testbed {
 
 namespace PrintingTests {
