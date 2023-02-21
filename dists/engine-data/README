@@ -49,6 +49,10 @@ File created partially by extracting font data from the French executable. It
 also contains the French and German translation, as well as a custom-made
 English translation.
 
+nancy.dat:
+File containing various constants, game logic and strings originally embedded
+in the games' executables.
+
 neverhood.dat:
 This file contains hardcoded game data used by The Neverhood game.
 
