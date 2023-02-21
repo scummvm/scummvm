@@ -26,6 +26,16 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{0, 0}};
 
 const ADGameDescription GAME_DESCRIPTIONS[] = {
+	// Humble Indie Bundle #1 Release
+	{
+		"penumbraoverture",
+		nullptr,
+		AD_ENTRY1s("Penumbra.exe", "43c33c142b18268c9e98d4c5a6d911b7", 2727936),
+		Common::Language::EN_ANY,
+		Common::Platform::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 	// GOG release
 	{
 		"penumbraoverture",
