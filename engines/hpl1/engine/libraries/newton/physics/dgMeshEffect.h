@@ -88,6 +88,18 @@ public:
 		dgFloat64 m_u1;
 		dgFloat64 m_v1;
 		dgFloat64 m_material;
+
+		void clear() {
+			m_vertex = dgBigVector(0.0f, 0.0f, 0.0f, 0.0f);
+			m_normal_x = 0.0f;
+			m_normal_y = 0.0f;
+			m_normal_z = 0.0f;
+			m_u0 = 0.0f;
+			m_v0 = 0.0f;
+			m_u1 = 0.0f;
+			m_v1 = 0.0f;
+			m_material = 0.0f;
+		}
 	};
 
 	class dgIndexArray {

@@ -551,7 +551,7 @@ dgMeshEffect::dgMeshEffect(const dgMeshEffect &source, dgFloat32 absoluteconcavi
 	dgFloat32 layer = dgFloat32(0.0f);
 
 	dgVertexAtribute polygon[256];
-	memset(polygon, 0, sizeof(polygon));
+	for (uint i = 0; i < ARRAYSIZE(polygon); i++) polygon[i].clear();
 	dgArray<dgBigVector> convexVertexBuffer(1024, GetAllocator());
 	for (dgInt32 i = 0; i < faceCount; i++) {
 		dgClusterList &clusterList = clusters[i];

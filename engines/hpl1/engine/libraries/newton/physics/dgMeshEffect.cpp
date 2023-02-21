@@ -2649,7 +2649,7 @@ dgMeshEffect::dgVertexAtribute dgMeshEffect::InterpolateVertex(
 	const dgBigVector point(srcPoint);
 
 	dgVertexAtribute attribute;
-	memset(&attribute, 0, sizeof(attribute));
+	attribute.clear();
 	dgFloat64 tol = dgFloat32(1.0e-4f);
 	for (dgInt32 i = 0; i < 4; i++) {
 		dgEdge *ptr = face;
