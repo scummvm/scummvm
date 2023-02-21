@@ -74,6 +74,11 @@ class dgBroadPhaseList {
 public:
 	dgBroadPhaseCell *m_cell;
 	void *m_axisArrayNode[3];
+
+	void reset() {
+		m_cell = NULL;
+		for (uint i = 0; i < ARRAYSIZE(m_axisArrayNode); i++) m_axisArrayNode[i] = NULL;
+	}
 };
 
 DG_MSC_VECTOR_ALIGMENT
@@ -254,6 +259,8 @@ private:
 	OnMatrixUpdateCallback m_matrixUpdate;
 	OnApplyExtForceAndTorque m_applyExtForces;
 
+	void reset();
+
 	friend class dgWorld;
 	friend class dgContact;
 	friend class dgCollision;
@@ -293,6 +300,60 @@ private:
 //	 Implementation
 //
 // *****************************************************************************
+
+inline void dgBody::reset() {
+	m_matrix = dgGetZeroMatrix();
+	m_collisionWorldMatrix = dgGetZeroMatrix();
+	m_invWorldInertiaMatrix = dgGetZeroMatrix();
+	m_rotation = dgQuaternion(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+
+	m_veloc = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_omega = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_accel = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_alpha = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_netForce = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_netTorque = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_prevExternalForce = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_prevExternalTorque = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+
+	m_mass = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_invMass = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_aparentMass = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_localCentreOfMass = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_globalCentreOfMass = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_minAABB = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_maxAABB = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+	m_dampCoef = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
+
+	m_index = 0;
+	m_uniqueID = 0;
+	m_bodyGroupId = 0;
+	m_genericLRUMark = 0;
+	m_sleepingCounter = 0;
+	m_dynamicsLru = 0;
+	m_isInDerstruionArrayLRU = 0;
+
+	m_freeze = 0;
+	m_sleeping = 0;
+	m_autoSleep = 0;
+	m_isInWorld = 0;
+	m_equilibrium = 0;
+	m_continueCollisionMode = 0;
+	m_spawnnedFromCallback = 0;
+	m_collideWithLinkedBodies = 0;
+	m_solverInContinueCollision = 0;
+	m_inCallback = 0;
+
+	m_userData = NULL;
+	m_world = NULL;
+	m_collision = NULL;
+	m_collisionCell.reset();
+	m_masterNode = NULL;
+
+	m_destructor = NULL;
+	m_matrixUpdate = NULL;
+	m_applyExtForces = NULL;
+}
 
 inline void dgBody::SetAutoSleep(bool state) {
 	m_autoSleep = dgUnsigned32(state);

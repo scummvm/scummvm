@@ -443,7 +443,7 @@ dgBody *dgWorld::CreateBody(dgCollision *const collision,
 	NEWTON_ASSERT((sizeof(dgBody) & 0xf) == 0);
 	NEWTON_ASSERT((dgUnsigned64(body) & 0xf) == 0);
 
-	memset(body, 0, sizeof(dgBody));
+	body->reset();
 
 	//  m_bodiesCount ++;
 	m_bodiesUniqueID++;
