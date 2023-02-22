@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "file.h"
 #include "tvd_data.h"
 #include "nancy1_data.h"
@@ -116,21 +114,21 @@ void writeGameData( File &output,
 
     // Write conditional dialogue text
     if (dialogueTexts) {
-        output.writeMultilangArray(*dialogueTexts);
+        writeMultilangArray(output, *dialogueTexts);
     } else {
         output.writeUint16(0);
     }
 
     // Write goodbyes text
     if (goodbyeTexts) {
-        output.writeMultilangArray(*goodbyeTexts);
+        writeMultilangArray(output, *goodbyeTexts);
     } else {
         output.writeUint16(0);
     }
 
     // Write hints text
     if (hintTexts) {
-        output.writeMultilangArray(*hintTexts);
+        writeMultilangArray(output, *hintTexts);
     } else {
         output.writeUint16(0);
     }
