@@ -538,7 +538,21 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadPalettes(&file, 0x296fa);
 		loadSoundsFx(&file, 0x30da6, 25);
 	} else if (isSpectrum()) {
-		loadBundledImages();
+		file.open("driller.zx.title");
+		if (file.isOpen()) {
+			_title = loadAndCenterScrImage(&file);
+		} else
+			error("Unable to find driller.zx.title");
+
+		file.close();
+
+		file.open("driller.zx.border");
+		if (file.isOpen()) {
+			_border = loadAndCenterScrImage(&file);
+		} else
+			error("Unable to find driller.zx.border");
+		file.close();
+
 		file.open("driller.zx.extracted");
 
 		if (!file.isOpen())

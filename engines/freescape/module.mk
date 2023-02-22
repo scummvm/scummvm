@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	neo.o \
 	objects/geometricobject.o \
 	objects/sensor.o \
+	scr.o \
 	sound.o
 
 ifdef USE_TINYGL
