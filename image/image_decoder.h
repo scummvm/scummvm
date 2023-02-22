@@ -110,6 +110,11 @@ public:
 	virtual byte getPaletteStartIndex() const { return 0; }
 	/** Return the number of colors in the palette. */
 	virtual uint16 getPaletteColorCount() const { return 0; }
+
+	/** Query whether the decoded image has a transparent color. */
+	virtual bool hasTransparentColor() const { return false; }
+	/** Return the transparent color. */
+	virtual uint32 getTransparentColor() const { return 0; }
 };
 /** @} */
 } // End of namespace Image

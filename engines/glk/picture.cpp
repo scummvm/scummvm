@@ -118,7 +118,8 @@ Picture *Pictures::load(const Common::String &name) {
 	const Graphics::Surface *img;
 	const byte *palette = nullptr;
 	uint palCount = 0;
-	int transColor = -1;
+	bool hasTransColor = false;
+	uint32 transColor = 0;
 	Picture *pic;
 
 	// Check if the picture is already in the store
@@ -136,6 +137,7 @@ Picture *Pictures::load(const Common::String &name) {
 		img = png.getSurface();
 		palette = png.getPalette();
 		palCount = png.getPaletteColorCount();
+		hasTransColor = png.hasTransparentColor();
 		transColor = png.getTransparentColor();
 	} else if (
 		((name.hasSuffixIgnoreCase(".jpg") || name.hasSuffixIgnoreCase(".jpeg")) && f.open(name))
@@ -152,6 +154,7 @@ Picture *Pictures::load(const Common::String &name) {
 		img = raw.getSurface();
 		palette = raw.getPalette();
 		palCount = raw.getPaletteColorCount();
+		hasTransColor = raw.hasTransparentColor();
 		transColor = raw.getTransparentColor();
 	} else if (f.open(Common::String::format("pic%s.rect", name.c_str()))) {
 		rectImg.w = f.readUint32BE();
@@ -183,7 +186,7 @@ Picture *Pictures::load(const Common::String &name) {
 	pic->_refCount = 1;
 	pic->_name = name;
 	pic->_scaled = false;
-	if (transColor != -1 || (!palette && img->format.aBits() > 0))
+	if (hasTransColor || (!palette && img->format.aBits() > 0))
 		pic->clear(pic->getTransparentColor());
 
 	if (!img->getPixels()) {
@@ -199,7 +202,7 @@ Picture *Pictures::load(const Common::String &name) {
 		const byte *srcP = (const byte *)img->getPixels();
 		byte *destP = (byte *)pic->getPixels();
 		for (int idx = 0; idx < img->w * img->h; ++idx, srcP++, destP += pic->format.bytesPerPixel) {
-			if ((int)*srcP != transColor) {
+			if (!hasTransColor || (uint32)*srcP != transColor) {
 				uint val = (*srcP >= palCount) ? 0 : pal[*srcP];
 				if (pic->format.bytesPerPixel == 2)
 					WRITE_LE_UINT16(destP, val);

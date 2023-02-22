@@ -82,12 +82,13 @@ bool GIFDecoder::loadStream(Common::SeekableReadStream &stream) {
 	const int height = gif->SHeight;
 
 	const ColorMapObject *colorMap = gif->SColorMap;
-	_transparentColor = NO_TRANSPARENT_COLOR;
+	_hasTransparentColor = false;
 	for (int i = 0; i < gif->ExtensionBlockCount; ++i) {
 		const ExtensionBlock &eb = gif->ExtensionBlocks[i];
 		GraphicsControlBlock gcb;
 		DGifExtensionToGCB(eb.ByteCount, eb.Bytes, &gcb);
 		if (gcb.TransparentColor != NO_TRANSPARENT_COLOR) {
+			_hasTransparentColor = true;
 			_transparentColor = gcb.TransparentColor;
 			break;
 		}

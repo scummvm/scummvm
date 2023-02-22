@@ -56,12 +56,14 @@ public:
 	const byte *getPalette() const override { return _palette; }
 	uint16 getPaletteColorCount() const override { return _colorCount; }
 	const Graphics::Surface *getSurface() const override { return _outputSurface; }
-	int getTransparentColor() const { return _transparentColor; }
+	bool hasTransparentColor() const override { return _hasTransparentColor; }
+	uint32 getTransparentColor() const override { return _transparentColor; }
 private:
 	Graphics::Surface *_outputSurface;
 	uint8 *_palette;
 	uint16 _colorCount;
-	int _transparentColor;
+	bool _hasTransparentColor;
+	uint32 _transparentColor;
 };
 
 /** @} */

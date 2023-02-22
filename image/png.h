@@ -63,7 +63,8 @@ public:
 	const Graphics::Surface *getSurface() const override { return _outputSurface; }
 	const byte *getPalette() const override { return _palette; }
 	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
-	int getTransparentColor() const { return _transparentColor; }
+	bool hasTransparentColor() const override { return _hasTransparentColor; }
+	uint32 getTransparentColor() const override { return _transparentColor; }
 	void setSkipSignature(bool skip) { _skipSignature = skip; }
 	void setKeepTransparencyPaletted(bool keep) { _keepTransparencyPaletted = keep; }
 private:
@@ -77,7 +78,8 @@ private:
 
 	// Flag to keep paletted images paletted, even when the image has transparency
 	bool _keepTransparencyPaletted;
-	int _transparentColor;
+	bool _hasTransparentColor;
+	uint32 _transparentColor;
 
 	Graphics::Surface *_outputSurface;
 };

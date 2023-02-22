@@ -105,7 +105,8 @@ void Debugger::saveRawPicture(const RawDecoder &rd, Common::WriteStream &ws) {
 	const byte *palette = rd.getPalette();
 	int paletteCount = rd.getPaletteColorCount();
 	int palStart = rd.getPaletteStartIndex();
-	int transColor = rd.getTransparentColor();
+	bool hasTransColor = rd.hasTransparentColor();
+	uint32 transColor = rd.getTransparentColor();
 
 	// If the image doesn't have a palette, we can directly write out the image
 	if (!palette) {
@@ -122,7 +123,7 @@ void Debugger::saveRawPicture(const RawDecoder &rd, Common::WriteStream &ws) {
 		uint32 *destP = (uint32 *)destSurface.getBasePtr(0, y);
 
 		for (int x = 0; x < surface->w; ++x, ++srcP, ++destP) {
-			if ((int)*srcP == transColor || (int)*srcP < palStart) {
+			if ((hasTransColor && (uint32)*srcP == transColor) || (int)*srcP < palStart) {
 				*destP = format.ARGBToColor(0, 0, 0, 0);
 			} else {
 				assert(*srcP < paletteCount);
