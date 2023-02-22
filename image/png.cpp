@@ -45,7 +45,8 @@ PNGDecoder::PNGDecoder() :
 		_paletteColorCount(0),
 		_skipSignature(false),
 		_keepTransparencyPaletted(false),
-		_transparentColor(-1) {
+		_hasTransparentColor(false),
+		_transparentColor(0) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -60,6 +61,7 @@ void PNGDecoder::destroy() {
 	}
 	delete[] _palette;
 	_palette = NULL;
+	_hasTransparentColor = false;
 }
 
 Graphics::PixelFormat PNGDecoder::getByteOrderRgbaPixelFormat(bool isAlpha) const {
@@ -190,6 +192,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			if (numTrans == 1) {
 				// For a single transparency color, the alpha should be fully transparent
 				assert(*trans == 0);
+				_hasTransparentColor = true;
 				_transparentColor = 0;
 			} else {
 				// Multiple alphas are being specified for the palette, so we can't use
