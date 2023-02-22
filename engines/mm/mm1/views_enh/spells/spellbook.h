@@ -24,7 +24,7 @@
 
 #include "mm/mm1/messages.h"
 #include "mm/mm1/game/spell_casting.h"
-#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/party_view.h"
 
 namespace MM {
 namespace MM1 {
@@ -34,10 +34,10 @@ namespace Spells {
 /**
  * Dialog for selecting a spell to cast
  */
-class Spellbook : public ScrollView, public MM1::Game::SpellCasting {
+class Spellbook : public PartyView, public MM1::Game::SpellCasting {
 private:
 	Shared::Xeen::SpriteResource _scrollSprites;
-	bool _isWizard;
+	bool _isWizard = false;
 	int _topIndex = 0, _count = 0;
 	int _selectedIndex = -1;
 
@@ -47,11 +47,6 @@ private:
 	void addButtons();
 
 	/**
-	 * Selects a new character to show spellbook for
-	 */
-	void selectChar(uint charNum);
-
-	/**
 	 * Called when character is changed
 	 */
 	void updateChar();
@@ -59,7 +54,10 @@ private:
 	/**
 	 * Performs the selected spell
 	 */
-	void castSpell();
+	void spellSelected();
+
+protected:
+	bool canSwitchChar() const override;
 
 public:
 	Spellbook();
@@ -68,9 +66,9 @@ public:
 
 	void draw() override;
 	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace Spells

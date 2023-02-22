@@ -28,7 +28,7 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Spells {
 
-Spellbook::Spellbook() : ScrollView("Spellbook") {
+Spellbook::Spellbook() : PartyView("Spellbook") {
 	_bounds = Common::Rect(27, 6, 208, 142);
 	addButtons();
 }
@@ -49,26 +49,27 @@ void Spellbook::addButtons() {
 	addButton(Common::Rect(40, 91, 187, 99), Common::KEYCODE_8);
 	addButton(Common::Rect(40, 100, 187, 108), Common::KEYCODE_9);
 	addButton(Common::Rect(40, 109, 187, 117), Common::KEYCODE_0);
-	addButton(Common::Rect(174, 123, 198, 133), Common::KEYCODE_ESCAPE);
+	addButton(Common::Rect(174, 123, 198, 133), KEYBIND_ESCAPE);
 	addButton(Common::Rect(187, 35, 198, 73), Common::KEYCODE_PAGEUP);
 	addButton(Common::Rect(187, 74, 198, 112), Common::KEYCODE_PAGEDOWN);
-	addButton(Common::Rect(132, 123, 168, 133), Common::KEYCODE_s);
+	addButton(Common::Rect(132, 123, 168, 133), KEYBIND_SELECT);
 }
 
 bool Spellbook::msgFocus(const FocusMessage &msg) {
+	PartyView::msgFocus(msg);
+
+	// In this view we don't want 1 to 6 mapping to char selection
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	updateChar();
 	return true;
 }
 
-bool Spellbook::msgUnfocus(const UnfocusMessage &msg) {
-	// Turn off highlight for selected character
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)false));
-	return true;
+bool Spellbook::canSwitchChar() const {
+	return !g_events->isInCombat();
 }
 
 void Spellbook::draw() {
-	ScrollView::draw();
+	PartyView::draw();
 
 	Graphics::ManagedSurface s = getSurface();
 	const Character &c = *g_globals->_currCharacter;
@@ -132,37 +133,37 @@ bool Spellbook::msgKeypress(const KeypressMessage &msg) {
 		if (newIndex < _count) {
 			_selectedIndex = newIndex;
 			redraw();
-			return true;
 		}
-
 	} else if (msg.keycode == Common::KEYCODE_PAGEUP) {
 		if (_topIndex > 0) {
 			_topIndex = MAX(_topIndex - 10, 0);
 			redraw();
-			return true;
 		}
 	} else if (msg.keycode == Common::KEYCODE_PAGEDOWN) {
 		int newTopIndex = _topIndex + 10;
 		if (newTopIndex < _count) {
 			_topIndex = newTopIndex;
 			redraw();
-			return true;
 		}
 	} else if (msg.keycode == Common::KEYCODE_UP) {
 		if (_topIndex > 0) {
 			--_topIndex;
 			redraw();
-			return true;
 		}
 	} else if (msg.keycode == Common::KEYCODE_DOWN) {
 		if ((_topIndex + 10) < _count) {
 			++_topIndex;
 			redraw();
-			return true;
 		}
+	} else if (msg.keycode == Common::KEYCODE_s) {
+		// Alternate alias for Select button
+		msgAction(ActionMessage(KEYBIND_SELECT));
+
+	} else {
+		return PartyView::msgKeypress(msg);
 	}
 
-	return false;
+	return true;
 }
 
 bool Spellbook::msgAction(const ActionMessage &msg) {
@@ -173,25 +174,7 @@ bool Spellbook::msgAction(const ActionMessage &msg) {
 
 	case KEYBIND_SELECT:
 		close();
-		castSpell();
-		return true;
-
-	case KEYBIND_VIEW_PARTY1:
-	case KEYBIND_VIEW_PARTY2:
-	case KEYBIND_VIEW_PARTY3:
-	case KEYBIND_VIEW_PARTY4:
-	case KEYBIND_VIEW_PARTY5:
-	case KEYBIND_VIEW_PARTY6:
-		// This is unlikely to be triggered. Since normally '1' to '6'
-		// changes the selected character, but in this dialog,
-		// numeric keys are used to select a spell number
-		if (!g_events->isInCombat()) {
-			uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-
-			if (charNum < g_globals->_party.size())
-				selectChar(charNum);
-			return true;
-		}
+		spellSelected();
 		return true;
 
 	default:
@@ -201,10 +184,13 @@ bool Spellbook::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
-void Spellbook::selectChar(uint charNum) {
-	assert(!g_events->isInCombat());
-	g_globals->_currCharacter = &g_globals->_party[charNum];
-	updateChar();
+bool Spellbook::msgGame(const GameMessage &msg) {
+	if (msg._name == "UPDATE") {
+		updateChar();
+		return true;
+	} else {
+		return PartyView::msgGame(msg);
+	}
 }
 
 void Spellbook::updateChar() {
@@ -216,6 +202,8 @@ void Spellbook::updateChar() {
 
 	// Update fields
 	const Character &c = *g_globals->_currCharacter;
+	_isWizard = c._class == SORCERER || c._class == ARCHER;
+
 	_selectedIndex = (g_events->isInCombat() ? c._combatSpell : c._nonCombatSpell) % CATEGORY_SPELLS_COUNT;
 	if (_selectedIndex == -1)
 		_selectedIndex = 0;
@@ -232,7 +220,7 @@ void Spellbook::updateChar() {
 	redraw();
 }
 
-void Spellbook::castSpell() {
+void Spellbook::spellSelected() {
 	Character &c = *g_globals->_currCharacter;
 	int spellIndex = (_isWizard ? CATEGORY_SPELLS_COUNT : 0) + _selectedIndex;
 
@@ -242,23 +230,8 @@ void Spellbook::castSpell() {
 	else
 		c._nonCombatSpell = spellIndex;
 
-	// Set the spell
-	int lvl, num;
-	getSpellLevelNum(spellIndex, lvl, num);
-	setSpell(&c, lvl, num);
-	assert(getSpellIndex(&c, lvl, num) == spellIndex);
-
-	if (!canCast()) {
-		Common::String msg = getSpellError();
-		warning("TODO: Show error - %s", msg.c_str());
-
-	} else {
-		if (hasCharTarget()) {
-			// TODO: select a character target
-		} else {
-			// TODO: Cast spell
-		}
-	}
+	// Update the cast spell dialog with the new spell
+	send("CastSpell", GameMessage("UPDATE"));
 }
 
 } // namespace Spells
