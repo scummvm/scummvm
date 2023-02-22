@@ -98,8 +98,10 @@ bool cOpenALSoundData::CreateFromFile(const tString &filename) {
 
 static Audio::SeekableAudioStream *createAudioStream(Common::MemoryReadStream *data, uint format) {
 	switch (format) {
+#ifdef USE_VORBIS
 	case kOgg:
 		return Audio::makeVorbisStream(data, DisposeAfterUse::YES);
+#endif
 	case kWav:
 		return Audio::makeWAVStream(data, DisposeAfterUse::YES);
 	}
