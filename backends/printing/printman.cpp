@@ -35,3 +35,39 @@ void PrintingManager::printImage(const Common::String &jobName, const Graphics::
 	delete job;
 }
 
+void PrintingManager::printPlainTextFile(Common::File &file) {
+	printPlainTextFile(file.getName(), file);
+}
+
+void PrintingManager::printPlainTextFile(const Common::String &jobName, Common::SeekableReadStream &file) {
+	PrintJob *job = createJob(jobName);
+
+	Common::Rect printArea = job->getPrintableArea();
+
+	Common::Point textPos;
+
+	while (!file.eos()) {
+		Common::String line = file.readLine();
+
+		Common::Rect bounds = job->getTextBounds(line);
+
+		bounds.moveTo(textPos);
+
+		if (!printArea.contains(bounds)) {
+			textPos.x = 0;
+			textPos.y = 0;
+			job->pageFinished();
+		}
+
+		job->drawText(line, textPos);
+
+		textPos.y += bounds.height();
+	}
+	if (textPos != Common::Point(0, 0)) {
+		job->pageFinished();
+	}
+
+	job->endDoc();
+	delete job;
+}
+

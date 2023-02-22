@@ -156,40 +156,9 @@ TestExitStatus PrintingTests::printGPL() {
 		return kTestFailed;
 	}
 
-	PrintJob *job = pm->createJob("The GPL");
-	if (!job) {
-		warning("Creating PrintJob failed!");
-		return kTestFailed;
-	}
+	pm->printPlainTextFile("The GPL", f);
 
-	Common::Rect printArea = job->getPrintableArea();
-
-	Common::Point textPos;
-
-	while (!f.eos()) {
-		Common::String line = f.readLine();
-
-		Common::Rect bounds = job->getTextBounds(line);
-
-		bounds.moveTo(textPos);
-
-		if (!printArea.contains(bounds)) {
-			textPos.x = 0;
-			textPos.y = 0;
-			job->pageFinished();
-		}
-
-		job->drawText(line, textPos);
-
-		textPos.y += bounds.height();
-	}
-	if (textPos != Common::Point(0, 0)) {
-		job->pageFinished();
-	}
 	f.close();
-
-	job->endDoc();
-	delete job;
 
 	return kTestPassed;
 }

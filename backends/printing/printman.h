@@ -26,6 +26,7 @@
 #include "common/rational.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/file.h"
 #include "graphics/managed_surface.h"
 
 class PrintJob;
@@ -41,6 +42,9 @@ public:
 	void printImage(const Graphics::ManagedSurface& surf) {
 		printImage("ScummVM", surf);
 	}
+
+	void printPlainTextFile(const Common::String &jobName, Common::SeekableReadStream &file);
+	void printPlainTextFile(Common::File &file);
 };
 
 class PrintJob {
