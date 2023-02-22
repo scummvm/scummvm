@@ -34,10 +34,10 @@ namespace Image {
 class MSVideo1Decoder : public Codec {
 public:
 	MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel);
-	~MSVideo1Decoder();
+	~MSVideo1Decoder() override;
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override { return _surface->format; }
 
 private:
 	byte _bitsPerPixel;

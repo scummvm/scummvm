@@ -46,10 +46,10 @@ namespace Image {
 class Indeo3Decoder : public Codec {
 public:
 	Indeo3Decoder(uint16 width, uint16 height, uint bitsPerPixel = 24);
-	~Indeo3Decoder();
+	~Indeo3Decoder() override;
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const;
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override;
 
 	static bool isIndeo3(Common::SeekableReadStream &stream);
 

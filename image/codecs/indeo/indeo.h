@@ -531,7 +531,7 @@ protected:
 	/**
 	 * Returns the pixel format for the decoder's surface
 	 */
-	virtual Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
 
 	/**
 	 * Decode the Indeo picture header.
@@ -581,7 +581,7 @@ protected:
 	int scaleMV(int mv, int mvScale);
 public:
 	IndeoDecoderBase(uint16 width, uint16 height, uint bitsPerPixel);
-	virtual ~IndeoDecoderBase();
+	~IndeoDecoderBase() override;
 };
 
 } // End of namespace Indeo

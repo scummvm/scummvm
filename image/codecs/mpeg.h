@@ -48,11 +48,11 @@ namespace Image {
 class MPEGDecoder : public Codec {
 public:
 	MPEGDecoder();
-	~MPEGDecoder();
+	~MPEGDecoder() override;
 
 	// Codec interface
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
 
 	// MPEGPSDecoder call
 	bool decodePacket(Common::SeekableReadStream &packet, uint32 &framePeriod, Graphics::Surface *dst = 0);

@@ -34,10 +34,10 @@ namespace Image {
 class MSRLEDecoder : public Codec {
 public:
 	MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
-	~MSRLEDecoder();
+	~MSRLEDecoder() override;
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override { return Graphics::PixelFormat::createFormatCLUT8(); }
 
 private:
 	byte _bitsPerPixel;

@@ -39,12 +39,12 @@ namespace Image {
 class TrueMotion1Decoder : public Codec {
 public:
 	TrueMotion1Decoder();
-	~TrueMotion1Decoder();
+	~TrueMotion1Decoder() override;
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 
 	// Always return RGB565
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
+	Graphics::PixelFormat getPixelFormat() const override { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
 
 private:
 	Graphics::Surface *_surface;

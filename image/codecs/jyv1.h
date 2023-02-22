@@ -34,7 +34,7 @@ namespace Image {
 class JYV1Decoder : public Codec {
 public:
 	JYV1Decoder (int width, int height, uint32 streamTag);
-	~JYV1Decoder();
+	~JYV1Decoder() override;
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 	Graphics::PixelFormat getPixelFormat() const override;

@@ -35,16 +35,16 @@ namespace Image {
 class QTRLEDecoder : public Codec {
 public:
 	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
-	~QTRLEDecoder();
+	~QTRLEDecoder() override;
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const;
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override;
 
-	bool containsPalette() const { return _ditherPalette != 0; }
-	const byte *getPalette() { _dirtyPalette = false; return _ditherPalette; }
-	bool hasDirtyPalette() const { return _dirtyPalette; }
-	bool canDither(DitherType type) const;
-	void setDither(DitherType type, const byte *palette);
+	bool containsPalette() const override { return _ditherPalette != 0; }
+	const byte *getPalette() override { _dirtyPalette = false; return _ditherPalette; }
+	bool hasDirtyPalette() const override { return _dirtyPalette; }
+	bool canDither(DitherType type) const override;
+	void setDither(DitherType type, const byte *palette) override;
 
 private:
 	byte _bitsPerPixel;

@@ -52,9 +52,9 @@ class Indeo5Decoder : public IndeoDecoderBase {
 	};
 public:
 	Indeo5Decoder(uint16 width, uint16 height, uint bitsPerPixel = 16);
-	virtual ~Indeo5Decoder() {}
+	~Indeo5Decoder() override {}
 
-	virtual const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 
 	static bool isIndeo5(Common::SeekableReadStream &stream);
 protected:
@@ -62,14 +62,14 @@ protected:
 	 * Decode the Indeo 5 picture header.
 	 * @returns		0 = Ok, negative number = error
 	 */
-	virtual int decodePictureHeader();
+	int decodePictureHeader() override;
 
 	/**
 	 *  Rearrange decoding and reference buffers.
 	 */
-	virtual void switchBuffers();
+	void switchBuffers() override;
 
-	virtual bool isNonNullFrame() const;
+	bool isNonNullFrame() const override;
 
 	/**
 	 *  Decode Indeo 4 band header.
@@ -77,7 +77,7 @@ protected:
 	 *  @param[in,out] band      pointer to the band descriptor
 	 *  @return        result code: 0 = OK, negative number = error
 	 */
-	virtual int decodeBandHeader(IVIBandDesc *band);
+	int decodeBandHeader(IVIBandDesc *band) override;
 
 	/**
 	 *  Decode information (block type, cbp, quant delta, motion vector)
@@ -87,7 +87,7 @@ protected:
 	 *  @param[in,out] tile      pointer to the tile descriptor
 	 *  @return        result code: 0 = OK, negative number = error
 	 */
-	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile);
+	int decodeMbInfo(IVIBandDesc *band, IVITile *tile) override;
 private:
 	/**
 	 *  Decode Indeo5 GOP (Group of pictures) header.

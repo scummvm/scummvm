@@ -70,16 +70,16 @@ struct CinepakFrame {
 class CinepakDecoder : public Codec {
 public:
 	CinepakDecoder(int bitsPerPixel = 24);
-	~CinepakDecoder();
+	~CinepakDecoder() override;
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
 
-	bool containsPalette() const { return _ditherPalette != 0; }
-	const byte *getPalette() { _dirtyPalette = false; return _ditherPalette; }
-	bool hasDirtyPalette() const { return _dirtyPalette; }
-	bool canDither(DitherType type) const;
-	void setDither(DitherType type, const byte *palette);
+	bool containsPalette() const override { return _ditherPalette != 0; }
+	const byte *getPalette() override { _dirtyPalette = false; return _ditherPalette; }
+	bool hasDirtyPalette() const override { return _dirtyPalette; }
+	bool canDither(DitherType type) const override;
+	void setDither(DitherType type, const byte *palette) override;
 
 private:
 	CinepakFrame _curFrame;

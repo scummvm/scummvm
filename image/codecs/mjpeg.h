@@ -43,10 +43,10 @@ namespace Image {
 class MJPEGDecoder : public Codec {
 public:
 	MJPEGDecoder();
-	~MJPEGDecoder();
+	~MJPEGDecoder() override;
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
+	Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
 
 private:
 	Graphics::PixelFormat _pixelFormat;
