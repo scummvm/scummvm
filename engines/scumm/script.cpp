@@ -563,8 +563,8 @@ int ScummEngine::readVar(uint var) {
 			// HACK: If we're reading var586, competitive mods enabled, playing online,
 			// successfully fetched custom teams, and we're not in one of the three scripts
 			// that cause bugs if 263 is returned here, return 263.
-			if ( _game.id == GID_BASEBALL2001 && var == 586 && readVar(399) == 1 && readVar(747) == 1 &&
-				!(_currentRoom == 4 && ( vm.slot[_currentScript].number == 2150 || vm.slot[_currentScript].number == 2208 || vm.slot[_currentScript].number == 2210))) {
+			if (_game.id == GID_BASEBALL2001 && var == 586 && readVar(399) == 1 && readVar(747) == 1 &&
+				!(_currentRoom == 4 && (vm.slot[_currentScript].number == 2150 || vm.slot[_currentScript].number == 2208 || vm.slot[_currentScript].number == 2210))) {
 				return 263;
 			}
 		}
