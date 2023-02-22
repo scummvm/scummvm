@@ -77,6 +77,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dogkennel", "The Dog Kennel" },
 	{ "domjohnson", "Dom Johnson" },
 	{ "earwigisangry", "Earwig Is Angry!" },
+	{ "easterbunny", "The Easter Bunny's Splendiferous Adventure" },
 	{ "edgeofreality", "Edge of Reality" },
 	{ "edsgravedigger", "Ed's Gravedigger" },
 	{ "elburro", "El Burro" },
@@ -85,6 +86,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "erniesbigadventure2", "Ernie's Big Adventure II" },
 	{ "everythingeuro", "Everything Euro / Alles Euro" },
 	{ "exile", "Exile" },
+	{ "existance", "Existance" },
 	{ "exodus", "Exodus" },
 	{ "eyesofthejadesphinx", "Eyes of the Jade Sphinx" },
 	{ "faddevil", "Fad of Devil's Hash" },
@@ -164,12 +166,15 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "monkeypeninsula", "The Treasure of Monkey Peninsula" },
 	{ "monkeyplank", "Monkey Plank" },
 	{ "moosewars", "Moose Wars: Desire For More Cows" },
+	{ "mousetcd", "The Mouse That Couldn't Die" },
 	{ "murder", "Murder" },
 	{ "murderfishhotel", "Philip Illinilings and the Murder at Fish Hotel" },
 	{ "nicholaswolfe1", "Nicholas Wolfe part I: Framed" },
 	{ "nightoftheplumber", "Night of the Plumber" },
 	{ "nightwatchron", "Nightwatch (2001)" },
 	{ "nihilism", "Nihilism" },
+	{ "ninjaquest", "Ninja Quest" },
+	{ "nokq", "No King Quest!" },
 	{ "nomedon", "Nomedon Inc." },
 	{ "notanothersq", "Not Another Space Quest" },
 	{ "novomestro", "Novo Mestro" },
@@ -190,6 +195,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "postmanonlydiesonce", "The Postman Only Dies Once" },
 	{ "preachersjump", "Preachers Can't Jump" },
 	{ "projectevilspy", "Project Evilspy: FenderQ Meets Jeeforce for Lunch" },
+	{ "pyramid", "Pyramid" },
 	{ "qfc", "Quest For Colours" },
 	{ "qfg412", "Quest for Glory 4 1/2" },
 	{ "raymondskeys", "Raymond's Keys: A Tragedy" },
@@ -237,6 +243,10 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ultimerr", "Ultimerr XXII: The Gems of Anthrax" },
 	{ "ultimerr2", "Ultimerr XXXIV: The Island of Fartfase" },
 	{ "universalequalizer", "The Universal Equalizer" },
+	{ "unkhour_anhour", "Unnamed Hour Game - ANHOUR" },
+	{ "unkhour_jv", "Unnamed Hour Game - JV" },
+	{ "unkhour_onehour", "Unnamed Hour Game - ONEHOUR" },
+	{ "unkhour_shorty", "Unnamed Hour Game - SHORTY" },
 	{ "vengeanceofthechicken", "Vengeance of the Chicken" },
 	{ "waitkey", "WaitKey();" },
 	{ "wambus", "The Wambus" },
@@ -649,6 +659,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bartolomeo", "Bartolomeo, misled by circumstances, learns that appearances can be deceptive" },
 	{ "bartsquestfortv", "Bart's Quest For TV" },
 	{ "basedon", "Basedon - The Game" },
+	{ "basketqust", "Interesting Basket Qust" },  // not a typo
 	{ "battlewarriorsrt", "Battle Warriors: Rovendale Tactics" },
 	{ "bbcscreensaver", "Background Blitz Collection Screensaver" },
 	{ "bcremake", "Black Cauldron Remake" },
@@ -729,6 +740,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bluemoon", "Blue Moon" },
 	{ "boardquest", "Board Quest" },
 	{ "bob", "Bob" },
+	{ "bobbycopper", "Bobby Copper" },
 	{ "bobescapes", "Bob Escapes / Bob En Cavale" },
 	{ "bobgoeshome", "Bob Goes Home" },
 	{ "bobgoeshomedeluxe", "Bob Goes Home Deluxe" },
@@ -1354,6 +1366,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "hallwayofadventures", "Hallway of Adventures" },
 	{ "hamresanden2", "The Hamresanden Chronicles II: The Black Prism" },
 	{ "hamster", "No one touches my Hamster" },
+	{ "hamsterisland", "The Secret of Hamster Island" },
 	{ "hangon", "Hang On" },
 	{ "happyduckieadventure", "Happy Duckie Adventure" },
 	{ "happyface", "^_^" },
@@ -2043,6 +2056,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "moncul", "Mon Cul!" },
 	{ "moneycab", "Money Cab" },
 	{ "monkeyklon", "A Clone of Monkey Island" },
+	{ "monkeymountain", "Monkey Mountain" },
 	{ "monkeystothemoon", "Monkeys to the Moon" },
 	{ "monkeywrench", "Monkey Wrench Issue 1: Paying The Bills" },
 	{ "monsterfromthehountedhill", "Monster from the hounted hill" },
@@ -2382,6 +2396,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "puzzlepumice", "Puzzle of the Pulchritudinous Pumice" },
 	{ "puzzlebots", "Puzzle Bots" },
 	{ "pxenophobe", "Project Xenophobe" },
+	{ "questblackdiamond", "The Quest for the Black Diamond" },
 	{ "questfighter", "Quest Fighter" },
 	{ "questfighter2", "Quest Fighter II" },
 	{ "questforcinema", "Quest For Cinema" },
@@ -2748,6 +2763,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "stevequest", "Steve Quest" },
 	{ "stickamhour1", "Stickam Hour Game - Downfallen Superhero" },
 	{ "stickamhour2", "Stickam Hour Game - Pirates" },
+	{ "stickemup", "Stick 'em Up" },
 	{ "stickmanrpg", "Stickman RPG" },
 	{ "stickmenterrorists", "Stickmen in the land of the terrorists" },
 	{ "stickycrimsonhouse", "Sticky the Stick Figure Part 1: The Crimson House" },
@@ -3101,7 +3117,10 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "unfoldingspider", "The Unfolding Spider" },
 	{ "unganeedsmumba", "UNGA needs MUMBA" },
 	{ "unintelligentdesign", "Unintelligent Design" },
-	{ "unk_hour", "Unknown Hour Game" },
+	{ "unkhour_1hour", "Unnamed Hour Game - 1HOUR" },
+	{ "unkhour_apple", "Unnamed Hour Game - APPLE" },
+	{ "unkhour_hourgame", "Unnamed Hour Game - HOURGAME" },
+	{ "unkhour_nmhour1", "Unnamed Hour Game - NMHOUR1" },
 	{ "unlicensedkill", "Unlicensed to Kill" },
 	{ "unlikelyprometheus", "The Unlikely Prometheus" },
 	{ "unprintablemagenta", "The unprintable Magenta" },
@@ -3170,6 +3189,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "wereweever", "Were We Ever?" },
 	{ "westroot", "West of the Root" },
 	{ "wet", "Wet" },
+	{ "whackunilin", "Whack-A-Unilin" },
 	{ "whathappened", "What the F--K happened!?" },
 	{ "whatisthat", "What is that" },
 	{ "whatlinusbruckmansees", "What Linus Bruckman Sees When His Eyes Are Closed" },
@@ -3213,6 +3233,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "wizardhood", "Wizardhood" },
 	{ "wolfcountry", "Wolf Country" },
 	{ "woo", "WOO: World of Our Own" },
+	{ "woof", "Woof!" },
 	{ "woolyrockbottom", "Wooly Rockbottom and the Quest for the Golden Beard of Thor!" },
 	{ "worldisweird", "The World is Weird" },
 	{ "worldofwarcraftquest", "World of Warcraft: The IMBA Quest" },
@@ -3530,12 +3551,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	PRE_25_ENTRY_EN("demonslayer4", "dem four.exe", "426e34f40e0dc5285af3fb5fc32a220e", 5110674),
 	PRE_25_ENTRY_EN("dogkennel", "KENNEL.EXE", "094135f05cf14fc3903e0d3697911a4e", 1204666),
 	PRE_25_ENTRY_EN("earwigisangry", "earwig.exe", "04eedea9846d380d6d9a120f657daa43", 2371856),
+	PRE_25_ENTRY_EN("easterbunny", "EASTER.exe", "04eedea9846d380d6d9a120f657daa43", 967448),
 	PRE_25_ENTRY_EN("edgeofreality", "edgeof.exe", "1c21bdb52bcafcafe988b30fd6bb4126", 46706875),
 	PRE_25_ENTRY_EN("erniesbigadventure1", "magsjune.exe", "fc5f54dcfc82d3b991f670490a316958", 8814849),
 	PRE_25_ENTRY_EN("erniesbigadventure2", "magsjuly.exe", "2fd8ca69f236ae1ad46edab4ba26a33d", 6647578),
 	PRE_25_ENTRY_LANG("everythingeuro", "EURO.EXE", "8e3cad1439a1d3336e721b1918a20704", 1923920, Common::DE_DEU),  // DOS Deu
 	PRE_25_ENTRY_LANG("everythingeuro", "EURO.EXE", "8e3cad1439a1d3336e721b1918a20704", 1918371, Common::EN_ANY),  // DOS Eng
 	PRE_25_ENTRY_EN("exile", "exile.exe", "aad0a09714fab4de51e5488da48fd5d4", 13421451),
+	PRE_25_ENTRY_EN("existance", "ac2game.dat", "21dbb6216639ad5817de893385c2e5b0", 420912),
 	PRE_25_ENTRY_EN("faddevil", "FAD.EXE", "094135f05cf14fc3903e0d3697911a4e", 1730090),
 	PRE_25_ENTRY_EN("floyd", "floyd.exe", "9ef5bffe7b85377751c25af806345794", 5477588),
 	PRE_25_ENTRY_EN("fowlplay", "RON2HALF.EXE", "727a30f9244441ad57a76086f4faa779", 2416233),
@@ -3589,11 +3612,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	PRE_25_ENTRY_EN("monkeyplank", "plank.exe", "1f0edcb7fa3f8e2b1dd60fa6c0bce60f", 815948),
 	PRE_25_ENTRY_EN("montyonthenorm", "Monty.exe", "89f304332b7bd02ed62f754a3b53f129", 1663257),  // original DOS version
 	PRE_25_ENTRY_EN("moosewars", "moose.exe", "f4585823c1b4ce97d78c8acb433bec52", 1448684),
+	PRE_25_ENTRY_EN("mousetcd", "ac2game.dat", "f339dc194b241a59d046f4ab80ba09bf", 456911),
 	PRE_25_ENTRY_EN("murder", "murder.exe", "221637e5d62e2ca3cc146846ab0b2e49", 935799),
 	PRE_25_ENTRY_EN("murderfishhotel", "CONTEST.exe", "6026f2bae1609882ae6f19f4de293786", 1198112),
 	PRE_25_ENTRY_EN("nightoftheplumber", "night of the plumber.exe", "1f0edcb7fa3f8e2b1dd60fa6c0bce60f", 1703896),
 	PRE_25_ENTRY_EN("nightwatchron", "NIGHTWATCH.exe", "1f0edcb7fa3f8e2b1dd60fa6c0bce60f", 2616586),
 	PRE_25_ENTRY_EN("nihilism", "RONcm.exe", "c90241861523a2ed0f2f6e68fb0f0661", 1853822),
+	PRE_25_ENTRY_EN("ninjaquest", "ac2game.dat", "6fc054fd5d69975566a1aba1985b3972", 769820),
+	PRE_25_ENTRY_EN("nokq", "ac2game.dat", "02bc49b8b55459af996c9dd62088931d", 743091),
 	PRE_25_ENTRY_EN("nomedon", "NOMEDON.exe", "094135f05cf14fc3903e0d3697911a4e", 4408173),  //v1.2
 	PRE_25_ENTRY_EN("notanothersq", "NASQ.exe", "04eedea9846d380d6d9a120f657daa43", 1268632),
 	PRE_25_ENTRY_EN("novomestro", "novo.exe", "07f9921784124d9e09f39bb831e06131", 1122507),
@@ -3615,6 +3641,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	PRE_25_ENTRY_EN("postmanonlydiesonce", "Postman.exe", "fc5f54dcfc82d3b991f670490a316958", 7187159),  // Windows
 	PRE_25_ENTRY_EN("postmanonlydiesonce", "Post.exe", "f2fe94ab604612e4595f3c79b0245529", 6726601),  // DOS
 	PRE_25_ENTRY_EN("projectevilspy", "evilspy.exe", "97d700529f5cc826f230c27acf81adfd", 1240074),
+	PRE_25_ENTRY_EN("pyramid", "PYRAMID.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 970566),
 	PRE_25_ENTRY_EN("qfc", "qfc.exe", "04eedea9846d380d6d9a120f657daa43", 2038696),
 	PRE_25_ENTRY_EN("qfg412", "qfg.exe", "8b21668ca462b0b6b35df43c5902b074", 26674790),
 	PRE_25_ENTRY_EN("qfg412", "qfg.exe", "9027912819f3a319ed9de0fd855310c3", 26954823),
@@ -3647,6 +3674,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	PRE_25_ENTRY_EN("sovietunionstrikesback", "ac2game.dat", "565953ecb1a69a31439ff33b00c539bb", 1062670),
 	PRE_25_ENTRY_EN("space", "space.exe", "094135f05cf14fc3903e0d3697911a4e", 3790026),
 	PRE_25_ENTRY_EN("spacemail", "WinVersion.exe", "9027912819f3a319ed9de0fd855310c3", 1148443),  // Windows
+	PRE_25_ENTRY_EN("spacemail", "SPACEMAIL.exe", "e016cb68731d0e38fe97905dbf0d5b36", 839512),  // DOS
 	PRE_25_ENTRY_EN("spacemail", "SPACEMAIL.exe", "e016cb68731d0e38fe97905dbf0d5b36", 962419),  // DOS
 	PRE_25_ENTRY_EN("startreksnw", "STX.exe", "9ef5bffe7b85377751c25af806345794", 1060462),
 	PRE_25_ENTRY_EN("startrektng", "STTNG.exe", "9ef5bffe7b85377751c25af806345794", 3615127),
@@ -3663,6 +3691,11 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	PRE_25_ENTRY_EN("ultimerr", "ultimerr.exe", "89f304332b7bd02ed62f754a3b53f129", 1512380),
 	PRE_25_ENTRY_EN("underworld", "UNDERWORLD.exe", "2fd8ca69f236ae1ad46edab4ba26a33d", 14661243),
 	PRE_25_ENTRY_EN("universalequalizer", "RON - The Universal Equaliser.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 1167105),
+	PRE_25_ENTRY_EN("unkhour_anhour", "ANHOUR.exe", "385a593828b1edb194e984ce55cda65e", 585951),
+	PRE_25_ENTRY_EN("unkhour_jv", "JV.exe", "1f0edcb7fa3f8e2b1dd60fa6c0bce60f", 585662),
+	PRE_25_ENTRY_EN("unkhour_onehour", "ONEHOUR.exe", "b89bb4336e79969e99f9aa39d6184a12", 733939),  // DOS
+	PRE_25_ENTRY_EN("unkhour_onehour", "ONEHOUR-win.exe", "d47d977ec267f62491db97fbaac80f44", 925987),  // Windows
+	PRE_25_ENTRY_EN("unkhour_shorty", "SHORTY.exe", "e016cb68731d0e38fe97905dbf0d5b36", 658022),
 	PRE_25_ENTRY_EN("vengeanceofthechicken", "chicken.exe", "6026f2bae1609882ae6f19f4de293786", 1808436),
 	PRE_25_ENTRY_EN("whokilledkennyrogers", "mags.exe", "ed778afb4f46c3f2a70d330532a83a2f", 1240103),
 
@@ -4874,6 +4907,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("bartolomeo", "Bartolomeo.exe", "f604f7f3a12da5d3bcf7a7814a14e43b", 42261079),
 	GAME_ENTRY_EN("bartsquestfortv", "simpsons.exe", "0500aacb6c176d47ac0f8158f055db83", 794013),
 	GAME_ENTRY_EN("basedon", "basedon.exe", "0500aacb6c176d47ac0f8158f055db83", 5775388),
+	GAME_ENTRY_EN("basketqust", "eeeeeeeeeeeeeeeee.exe", "9cf51833e787cc919837d9a8bd8fc14c", 874080),
 	GAME_ENTRY_EN("bbcscreensaver", "BBC-Screensaver.exe", "0e6d6f3c19f5ca250b7b7ee03cdb2083", 131195371),
 	GAME_ENTRY_EN("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
 	GAME_ENTRY_EN("beacon", "beacon.exe", "af0d268193a9220891e983d03141ec58", 24671086),
@@ -4968,6 +5002,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("boardquest", "board quest.exe", "465f972675db2da6040518221af5b0ba", 3862096),
 	GAME_ENTRY_EN("boardquest", "board quest.exe", "465f972675db2da6040518221af5b0ba", 3930325),
 	GAME_ENTRY_EN("bob", "bob.exe", "0b7529a76f38283d6e850b8d56526fc1", 2874144),
+	GAME_ENTRY_EN("bobbycopper", "Bobby Copper.exe", "0710e2ec71042617f565c01824f0cf3c", 1305658),
 	GAME_ENTRY("bobescapes", "bob en cavale.exe", "06a03fe35791b0578068ab1873455463", 43264937),  // En-Fr
 	GAME_ENTRY_EN("bobgoeshome", "tut.exe", "0710e2ec71042617f565c01824f0cf3c", 1480234),
 	GAME_ENTRY_EN("bobgoeshomedeluxe", "bobdeluxe.exe", "0710e2ec71042617f565c01824f0cf3c", 1555913),
@@ -5687,6 +5722,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("hallwayofadventures", "Hallway.exe", "0710e2ec71042617f565c01824f0cf3c", 7085407),  // v1.1
 	GAME_ENTRY_EN("hamresanden2", "The  Hamresanden Chronicles - II.exe", "afe40dc1416dd51e896ee0444d799f07", 22255435),
 	GAME_ENTRY_EN("hamster", "Hamster.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 1672928),
+	GAME_ENTRY_EN("hamsterisland", "Hamster.exe", "0710e2ec71042617f565c01824f0cf3c", 3212291),
 	GAME_ENTRY_EN_PLATFORM("hangon", "HangOn.exe", "6e861b1f476ff7cdf036082abb271329", 4203208, "MAGS"),  // MAGS
 	GAME_ENTRY_PLATFORM("hangon", "HangOn.exe", "e09e4f152c8f4553e90885391ac72e46", 24219759, "itch.io v2.0.0"),  // 2.0 En-Fr
 	GAME_ENTRY_EN("happyduckieadventure", "HDA.exe", "f120690b506dd63cd7d1112ea6af2f77", 1924654),
@@ -5867,6 +5903,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("intergalacticspacepancake", "space.exe", "97d700529f5cc826f230c27acf81adfd", 1797309),
 	GAME_ENTRY_EN("interstellarborders", "Interstellar Borders New.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 13864633),
 	GAME_ENTRY_EN("intestinator", "intestinator.exe", "3421b46ff95c5885603086c39a038a20", 1722265),
+	GAME_ENTRY_EN_PLATFORM("intestinator", "ac2game.ags", "af8c785b9c462228b1c134ac79f83986", 423817, "Beta"),
 	GAME_ENTRY_EN("intothelight", "ITL.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12146182),
 	GAME_ENTRY_EN("intraworld", "Intra World.exe", "0241777c2537fc5d077c05cde10bfa9f", 44338673),
 	GAME_ENTRY_EN("intraworld2", "troll.exe", "495d45fb8adfd49690ae3b97921feec6", 2935816),
@@ -6488,6 +6525,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("moneycab", "Money Cab.exe", "173f00e582eebd082d66f1291702b373", 4806018),
 	GAME_ENTRY_LANG("monkeyklon", "monkeyklon.exe", "0710e2ec71042617f565c01824f0cf3c", 5196763, Common::DE_DEU),
 	GAME_ENTRY("monkeyklon", "MI-Klon.exe", "c3b72132686c4a102b3365d380c8ae3a", 7444633),  // De-It
+	GAME_ENTRY_EN("monkeymountain", "monkeyy.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 1784095),
 	GAME_ENTRY_EN("monkeystothemoon", "Monkeys to the Moon.exe", "77d91b65ff03c1f3a8381e39c7f693cb", 8720439),
 	GAME_ENTRY_EN("monkeystothemoon", "Monkeys to the Moon.exe", "77d91b65ff03c1f3a8381e39c7f693cb", 2864790),  // Win-Linux
 	GAME_ENTRY_EN("monsterfromthehountedhill", "Monster.exe", "465f972675db2da6040518221af5b0ba", 6197451),
@@ -6874,6 +6912,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("puzzlepumice", "MAGS_Jun_2012.exe", "82da2565c456dcfb265ded6fe3189c0b", 13358126),
 	GAME_ENTRY_EN("pxenophobe", "xenophobe final.exe", "465f972675db2da6040518221af5b0ba", 78787305),  //v1.0
 	GAME_ENTRY_EN("pxenophobe", "ProjXeno.exe", "465f972675db2da6040518221af5b0ba", 79053486),  //v1.1
+	GAME_ENTRY_EN("questblackdiamond", "qftbd.exe", "ba27688a81119b49a550f3bbd8d6d003", 632435),
 	GAME_ENTRY_EN("questfighter", "Quest Fighter.exe", "21fd0f65dfa48de2b39cb8ec23b30889", 2914128),
 	GAME_ENTRY_EN("questfighter2", "Quest Fighter 2.exe", "4d7d2addcde045dae6e0363a43f9acad", 5219511),
 	GAME_ENTRY_EN("questforcinema", "Questforcinema.exe", "465f972675db2da6040518221af5b0ba", 2670632),
@@ -7311,6 +7350,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("stickamhour1", "IB SHAG Entry 12july.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 1661407, "Unfinished"),
 	GAME_ENTRY_EN("stickamhour1", "IB SHAG Entry 12july.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 1694283),
 	GAME_ENTRY_EN("stickamhour2", "IB SHAG entry 13_07_08.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 1703894),
+	GAME_ENTRY_EN("stickemup", "stick.exe", "0b7529a76f38283d6e850b8d56526fc1", 694226),
 	GAME_ENTRY_EN("stickmenterrorists", "stick.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 2399329),
 	GAME_ENTRY_EN("stickycrimsonhouse", "Crimson House Files.exe", "3b095a7872e04769d04ab45e9c1b66eb", 3610653),
 	GAME_ENTRY_EN("stolenmoustache", "moustache.exe", "615e73fc1874e92d60a1996c2330ea36", 2089017),
@@ -7751,7 +7791,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("unfoldingspider", "The Unfolding Spider.exe", "615e73fc1874e92d60a1996c2330ea36", 4099592),
 	GAME_ENTRY_EN("unganeedsmumba", "UNGA needs MUMBA.exe", "2ca6bb6d5b2710ac89fea7d69c2eaf77", 5470102),
 	GAME_ENTRY_EN("unintelligentdesign", "UD.exe", "5ca1bc01c5a45388bd5c84ef36077361", 6019596),
-	GAME_ENTRY_EN("unk_hour", "1hour.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 724154),
+	GAME_ENTRY_EN("unkhour_1hour", "1hour.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 724154),
+	GAME_ENTRY_EN("unkhour_apple", "apple.exe", "201ac17f13d0a9bcfc99213ea0161757", 1099184),
+	GAME_ENTRY_EN("unkhour_hourgame", "Hourgame.exe", "7587088a318140e1416e60740e10c904", 1176975),
+	GAME_ENTRY_EN("unkhour_nmhour1", "nmhour1.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1377323),
 	GAME_ENTRY_EN("unlicensedkill", "UTK.exe", "0564de07d3fd5c16e6947a647061913c", 10766019),
 	GAME_ENTRY_EN("unlikelyprometheus", "The Unlikely Prometheus.exe", "a370a1db43a1d376d09e43469abba1d1", 56868120),
 	GAME_ENTRY_EN("unprintablemagenta", "Magenta.exe", "615e73fc1874e92d60a1996c2330ea36", 113259258),
@@ -7831,6 +7874,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("wereweever", "didweever.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 83746941),  // v0.1.1
 	GAME_ENTRY_EN("westroot", "PotatoWestern.exe", "06a03fe35791b0578068ab1873455463", 2052270),
 	GAME_ENTRY_EN("wet", "Wet.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1271457),
+	GAME_ENTRY_EN("whackunilin", "whack.exe", "88cf59aad15ca331ab0f854e16c84df3", 1246740),
 	GAME_ENTRY_EN("whathappened", "what!.exe", "08cb9ad3be9f966132d0c17f0dee471c", 48181831),
 	GAME_ENTRY_EN("whatisthat", "somtin.exe", "0500aacb6c176d47ac0f8158f055db83", 1289618),
 	GAME_ENTRY_EN("whatlinusbruckmansees", "LinusBruckman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 320171493),
@@ -7885,6 +7929,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("wizardhood", "wiz.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 3690587, "MAGS"),
 	GAME_ENTRY_EN("woo", "Woo.exe", "06a03fe35791b0578068ab1873455463", 4770481),  //v1.2.3
 	GAME_ENTRY_EN("woo", "Woo.exe", "06a03fe35791b0578068ab1873455463", 4771204),  //v1.2.4
+	GAME_ENTRY_EN("woof", "woof.exe", "0710e2ec71042617f565c01824f0cf3c", 777374),
 	GAME_ENTRY_EN("woolyrockbottom", "Wooly.exe", "261d108f9213356a351b35b54867f342", 3409152),
 	GAME_ENTRY_EN("worldisweird", "worldweird.exe", "22fd810f7844c6366df3024b65a3411f", 341060078),
 	GAME_ENTRY("worldofwarcraftquest", "IMBA.exe", "3a96a134156aeccee37daae9a7d5232d", 31743641),  //En-De
