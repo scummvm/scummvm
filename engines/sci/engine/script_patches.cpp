@@ -7958,6 +7958,27 @@ static const uint16 longbowPatchAmigaPubFix[] = {
 	PATCH_END
 };
 
+// During the party in the pub, one of the sheriff's men has a broken doVerb
+//  method that attempts to load an invalid class when clicking an item on him.
+//  This fails silently in the original. We patch out the broken instruction.
+//
+// Applies to: All versions
+// Responsible method: man2:doVerb
+static const uint16 longbowSignaturePubPartyFix[] = {
+	0x50, SIG_ADDTOOFFSET(+2),      // class ????
+	0x1a,                           // eq?
+	0x30, SIG_UINT16(0x0004),       // bnt 0004
+	SIG_MAGICDWORD,
+	0x63, 0x00,                     // pToa species
+	0x87, 0x01,                     // lap 01
+	SIG_END
+};
+
+static const uint16 longbowPatchPubPartyFix[] = {
+	0x34, PATCH_UINT16(0xffff),     // ldi ffff
+	PATCH_END
+};
+
 // WORKAROUND: Script needed, because of differences in our pathfinding
 // algorithm
 // When the guards kick Robin out of archery room 320 the game locks up due to
@@ -8368,6 +8389,7 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   450, "abbey map fix",                               1, longbowSignatureAbbeyMapFix,             longbowPatchAbbeyMapFix },
 	{  true,   490, "hedge maze music",                            1, longbowSignatureHedgeMazeMusic,          longbowPatchHedgeMazeMusic },
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,             longbowPatchAmigaPubFix },
+	{  true,   532, "pub party fix",                               1, longbowSignaturePubPartyFix,             longbowPatchPubPartyFix },
 	{  true,   600, "amiga fulk rescue fix",                       1, longbowSignatureAmigaFulkRescue,         longbowPatchAmigaFulkRescue },
 	{  true,   803, "amiga speed test",                            1, longbowSignatureAmigaSpeedTest,          longbowPatchAmigaSpeedTest },
 	{  true,   803, "disable speed test",                          1, sci01SpeedTestLocalSignature,            sci01SpeedTestLocalPatch },
