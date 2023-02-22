@@ -1109,17 +1109,16 @@ void Net::handleBroadcastData(Common::String data, Common::String host, int port
 	}
 }
 
-bool Net::remoteReceiveData(uint32 tickCount) {
+void Net::remoteReceiveData(uint32 tickCount) {
 	uint8 messageType = _sessionHost->service();
 	switch (messageType) {
 	case ENET_EVENT_TYPE_NONE:
-		return true;
+		break;
 	case ENET_EVENT_TYPE_CONNECT:
 		{
 			debug(1, "NETWORK: New connection from %s:%d", _sessionHost->getHost().c_str(), _sessionHost->getPort());
-			return true;
+			break;
 		}
-		return true;
 	case ENET_EVENT_TYPE_DISCONNECT:
 		{
 			Common::String address = Common::String::format("%s:%d", _sessionHost->getHost().c_str(), _sessionHost->getPort());
@@ -1140,9 +1139,8 @@ bool Net::remoteReceiveData(uint32 tickCount) {
 					_vm->runScript(2104, 1, 0, 0); // leave-game
 				}
 			}
-			return true;
+			break;
 		}
-		return true;
 	case ENET_EVENT_TYPE_RECEIVE:
 		{
 			Common::String host = _sessionHost->getHost();
@@ -1153,7 +1151,7 @@ bool Net::remoteReceiveData(uint32 tickCount) {
 			if (peerIndex == -1) {
 				warning("NETWORK: Unable to get peer index for host %s:%d", host.c_str(), port);
 				_sessionHost->destroyPacket();
-				return false;
+				break;
 			}
 
 			Common::String data = _sessionHost->getPacketData();
@@ -1161,7 +1159,7 @@ bool Net::remoteReceiveData(uint32 tickCount) {
 
 			if (peerIndex == _sessionServerPeer) {
 				handleSessionServerData(data);
-				return true;
+				break;
 			}
 
 			Common::JSONValue *json = Common::JSON::parse(data.c_str());
@@ -1169,12 +1167,12 @@ bool Net::remoteReceiveData(uint32 tickCount) {
 				// Just about anything could come from the broadcast address, so do not warn.
 				warning("NETWORK: Received non-JSON string.  Got: \"%s\"", data.c_str());
 				_sessionHost->destroyPacket();
-				return false;
+				break;
 			}
 			if (!json->isObject()){
 				warning("NETWORK: Received non JSON object from broadcast socket: \"%s\"", data.c_str());
 				_sessionHost->destroyPacket();
-				return false;
+				break;
 			}
 
 			Common::JSONObject root = json->asObject();
@@ -1186,7 +1184,7 @@ bool Net::remoteReceiveData(uint32 tickCount) {
 						Common::String name = root["name"]->asString();
 						if (getTotalPlayers() > 4) {
 							// We are full.
-							return 0;
+							break;
 						}
 						_userIdToName[++_userIdCounter] = name;
 						_numUsers++;
@@ -1217,7 +1215,7 @@ bool Net::remoteReceiveData(uint32 tickCount) {
 					userId = _addressToUserId[address];
 					if (userId == -1) {
 						warning("Got remove_user but we don't know the user for address: %s", address.c_str());
-						return false;
+						break;
 					}
 					destroyPlayer(userId);
 				} else if (command == "game") {
@@ -1230,10 +1228,10 @@ bool Net::remoteReceiveData(uint32 tickCount) {
 			if (_sessionHost)
 				_sessionHost->destroyPacket();
 		}
-		return true;
 		break;
+	default:
+		warning("NETWORK: Received unknown event type %d", messageType);
 	}
-	return true;
 }
 
 void Net::doNetworkOnceAFrame(int msecs) {

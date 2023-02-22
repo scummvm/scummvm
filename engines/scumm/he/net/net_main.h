@@ -102,7 +102,7 @@ private:
 	void handleBroadcastData(Common::String data, Common::String host, int port);
 	void serviceSessionServer();
 	void handleSessionServerData(Common::String data);
-	bool remoteReceiveData(uint32 tickCount);
+	void remoteReceiveData(uint32 tickCount);
 
 public:
 	// getters
