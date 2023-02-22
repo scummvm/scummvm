@@ -206,7 +206,7 @@ static const char HELP_STRING4[] =
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 	"  --demo-mode              Start demo mode of Maniac Mansion or The 7th Guest\n"
 #endif
-#if defined(ENABLE_DIRECTOR)
+#if defined(ENABLE_DIRECTOR) || defined(ENABLE_TESTBED)
 	"  --start-movie=NAME@NUM   Start movie at frame for Director\n"
 	"							Either can be specified without the other.\n"
 #endif
@@ -936,7 +936,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
-#if defined(ENABLE_DIRECTOR)
+#if defined(ENABLE_DIRECTOR) || defined(ENABLE_TESTBED)
 			DO_LONG_OPTION("start-movie")
 			END_OPTION
 #endif
