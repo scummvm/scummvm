@@ -30,6 +30,7 @@
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/neo.h"
+#include "freescape/scr.h"
 #include "freescape/objects/sensor.h"
 
 namespace Freescape {
@@ -185,7 +186,6 @@ void FreescapeEngine::drawBorder() {
 		return;
 
 	_gfx->setViewport(_fullscreenViewArea);
-
 	assert(_borderTexture);
 	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _borderTexture);
 	_gfx->setViewport(_viewArea);
@@ -876,6 +876,16 @@ Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadS
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(*decoder.getSurface());
 	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette());
+	return surface;
+}
+
+Graphics::Surface *FreescapeEngine::loadAndCenterScrImage(Common::SeekableReadStream *stream) {
+	ScrDecoder decoder;
+	decoder.loadStream(*stream);
+	Graphics::Surface *surface = new Graphics::Surface();
+	const Graphics::Surface *decoded = decoder.getSurface();
+	surface->create(320, 200, decoded->format);
+	surface->copyRectToSurface(*decoded, (320 - decoded->w) / 2, (200 - decoded->h) / 2, Common::Rect(decoded->w, decoded->h));
 	return surface;
 }
 
