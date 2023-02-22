@@ -95,7 +95,7 @@ void Surface::init(int16 width, int16 height, int16 newPitch, void *newPixels, c
 
 void Surface::copyFrom(const Surface &surf) {
 	create(surf.w, surf.h, surf.format);
-	copyRectToSurface(surf, 0, 0, Common::Rect(surf.w, surf.h));
+	copyBlit((byte *)pixels, (const byte *)surf.pixels, pitch, surf.pitch, w, h, format.bytesPerPixel);
 }
 
 Surface Surface::getSubArea(const Common::Rect &area) {
@@ -166,7 +166,7 @@ void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int
 	// Copy buffer data to internal buffer
 	const byte *src = (const byte *)buffer;
 	byte *dst = (byte *)getBasePtr(destX, destY);
-	Graphics::copyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel);
+	copyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel);
 }
 
 void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
