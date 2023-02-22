@@ -192,6 +192,8 @@ bool InGameScene::changeBackground(const Common::String &name) {
 	Common::FSNode node = g_engine->getCore()->findFile(name);
 	if (node.isReadable()) {
 		_bgGui.spriteLayoutChecked("root")->load(node);
+		if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
+			_bgGui.spriteLayoutChecked("root")->play();
 		return true;
 	}
 	return false;
