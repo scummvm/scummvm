@@ -48,7 +48,11 @@ bool PartyView::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 bool PartyView::msgMouseDown(const MouseDownMessage &msg) {
-	return send("GameParty", msg);
+	if (canSwitchChar()) {
+		return send("GameParty", msg);
+	} else {
+		return ScrollView::msgMouseDown(msg);
+	}
 }
 
 bool PartyView::msgGame(const GameMessage &msg) {
@@ -62,7 +66,7 @@ bool PartyView::msgGame(const GameMessage &msg) {
 
 bool PartyView::msgAction(const ActionMessage &msg) {
 	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-			msg._action <= KEYBIND_VIEW_PARTY6)
+			msg._action <= KEYBIND_VIEW_PARTY6 && canSwitchChar())
 		return send("GameParty", msg);
 	return false;
 }

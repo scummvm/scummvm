@@ -28,7 +28,7 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Spells {
 
-Spellbook::Spellbook() : ScrollView("Spellbook") {
+Spellbook::Spellbook() : PartyView("Spellbook") {
 	_bounds = Common::Rect(27, 6, 208, 142);
 	addButtons();
 }
@@ -56,19 +56,20 @@ void Spellbook::addButtons() {
 }
 
 bool Spellbook::msgFocus(const FocusMessage &msg) {
+	PartyView::msgFocus(msg);
+
+	// In this view we don't want 1 to 6 mapping to char selection
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
 	updateChar();
 	return true;
 }
 
-bool Spellbook::msgUnfocus(const UnfocusMessage &msg) {
-	// Turn off highlight for selected character
-	g_events->send(GameMessage("CHAR_HIGHLIGHT", (int)false));
-	return true;
+bool Spellbook::canSwitchChar() const {
+	return !g_events->isInCombat();
 }
 
 void Spellbook::draw() {
-	ScrollView::draw();
+	PartyView::draw();
 
 	Graphics::ManagedSurface s = getSurface();
 	const Character &c = *g_globals->_currCharacter;
@@ -159,7 +160,7 @@ bool Spellbook::msgKeypress(const KeypressMessage &msg) {
 		msgAction(ActionMessage(KEYBIND_SELECT));
 
 	} else {
-		return ScrollView::msgKeypress(msg);
+		return PartyView::msgKeypress(msg);
 	}
 
 	return true;
@@ -176,24 +177,6 @@ bool Spellbook::msgAction(const ActionMessage &msg) {
 		spellSelected();
 		return true;
 
-	case KEYBIND_VIEW_PARTY1:
-	case KEYBIND_VIEW_PARTY2:
-	case KEYBIND_VIEW_PARTY3:
-	case KEYBIND_VIEW_PARTY4:
-	case KEYBIND_VIEW_PARTY5:
-	case KEYBIND_VIEW_PARTY6:
-		// This is unlikely to be triggered. Since normally '1' to '6'
-		// changes the selected character, but in this dialog,
-		// numeric keys are used to select a spell number
-		if (!g_events->isInCombat()) {
-			uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-
-			if (charNum < g_globals->_party.size())
-				selectChar(charNum);
-			return true;
-		}
-		return true;
-
 	default:
 		break;
 	}
@@ -201,10 +184,13 @@ bool Spellbook::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
-void Spellbook::selectChar(uint charNum) {
-	assert(!g_events->isInCombat());
-	g_globals->_currCharacter = &g_globals->_party[charNum];
-	updateChar();
+bool Spellbook::msgGame(const GameMessage &msg) {
+	if (msg._name == "UPDATE") {
+		updateChar();
+		return true;
+	} else {
+		return PartyView::msgGame(msg);
+	}
 }
 
 void Spellbook::updateChar() {

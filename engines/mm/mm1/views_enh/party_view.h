@@ -29,6 +29,13 @@ namespace MM1 {
 namespace ViewsEnh {
 
 class PartyView : public ScrollView {
+protected:
+	/**
+	 * Return true if the selected character can be switched
+	 */
+	virtual bool canSwitchChar() const {
+		return true;
+	}
 public:
 	PartyView(const Common::String &name) : ScrollView(name) {}
 	PartyView(const Common::String &name, UIElement *owner) :
