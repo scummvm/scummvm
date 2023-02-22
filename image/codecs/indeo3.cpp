@@ -47,25 +47,9 @@ Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height, uint bitsPerPixel) : _
 	_height = height;
 	_pixelFormat = g_system->getScreenFormat();
 
-	if (_pixelFormat.bytesPerPixel == 1) {
-		switch (bitsPerPixel) {
-		case 15:
-			_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0);
-			break;
-		case 16:
-			_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-			break;
-		case 24:
-			_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
-			break;
-		case 32:
-			_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-			break;
-		default:
-			error("Invalid color depth");
-			break;
-		}
-	}
+	// Default to a 32bpp format, if in 8bpp mode
+	if (_pixelFormat.bytesPerPixel == 1)
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
 	buildModPred();
 	allocFrames();

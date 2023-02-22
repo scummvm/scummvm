@@ -74,6 +74,7 @@ public:
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 	Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
+	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override;
 
 	bool containsPalette() const override { return _ditherPalette != 0; }
 	const byte *getPalette() override { _dirtyPalette = false; return _ditherPalette; }

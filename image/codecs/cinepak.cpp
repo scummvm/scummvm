@@ -624,6 +624,14 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream &stream, uint16 st
 	}
 }
 
+bool CinepakDecoder::setOutputPixelFormat(const Graphics::PixelFormat &format) {
+	if (_bitsPerPixel == 8)
+		return false;
+
+	_pixelFormat = format;
+	return true;
+}
+
 bool CinepakDecoder::canDither(DitherType type) const {
 	return (type == kDitherTypeVFW || type == kDitherTypeQT) && _bitsPerPixel == 24;
 }

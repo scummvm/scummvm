@@ -59,6 +59,7 @@ public:
 	// Codec API
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 	Graphics::PixelFormat getPixelFormat() const override;
+	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _requestedPixelFormat = format; return true; }
 
 	// Special API for JPEG
 	enum ColorSpace {
@@ -94,13 +95,6 @@ public:
 	 * @param outSpace The color space to output.
 	 */
 	void setOutputColorSpace(ColorSpace outSpace) { _colorSpace = outSpace; }
-
-	/**
-	 * Request the output pixel format. The JPEG decoder provides high performance
-	 * color conversion routines for some pixel formats. This setting allows to use
-	 * them and avoid costly subsequent color conversion.
-	 */
-	void setOutputPixelFormat(const Graphics::PixelFormat &format) { _requestedPixelFormat = format; }
 
 private:
 	Graphics::Surface _surface;

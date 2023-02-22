@@ -47,6 +47,12 @@ SVQ1Decoder::SVQ1Decoder(uint16 width, uint16 height) {
 	debug(1, "SVQ1Decoder::SVQ1Decoder(width:%d, height:%d)", width, height);
 	_width = width;
 	_height = height;
+	_pixelFormat = g_system->getScreenFormat();
+
+	// Default to a 32bpp format, if in 8bpp mode
+	if (_pixelFormat.bytesPerPixel == 1)
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+
 	_frameWidth = _frameHeight = 0;
 	_surface = 0;
 
@@ -251,7 +257,7 @@ const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &st
 	// Now we'll create the surface
 	if (!_surface) {
 		_surface = new Graphics::Surface();
-		_surface->create(yWidth, yHeight, g_system->getScreenFormat());
+		_surface->create(yWidth, yHeight, _pixelFormat);
 		_surface->w = _width;
 		_surface->h = _height;
 	}
