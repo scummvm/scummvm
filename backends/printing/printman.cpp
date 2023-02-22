@@ -46,22 +46,23 @@ void PrintingManager::printPlainTextFile(const Common::String &jobName, Common::
 
 	Common::Point textPos;
 
+	TextMetrics metrics = job->getTextMetrics();
+
 	while (!file.eos()) {
 		Common::String line = file.readLine();
 
-		Common::Rect bounds = job->getTextBounds(line);
+		Common::Rect bounds(1, metrics.getHeight());
 
 		bounds.moveTo(textPos);
 
 		if (!printArea.contains(bounds)) {
-			textPos.x = 0;
 			textPos.y = 0;
 			job->pageFinished();
 		}
 
 		job->drawText(line, textPos);
 
-		textPos.y += bounds.height();
+		textPos.y += metrics.getLineHeight();
 	}
 	if (textPos != Common::Point(0, 0)) {
 		job->pageFinished();

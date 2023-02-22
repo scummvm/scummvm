@@ -50,6 +50,7 @@ public:
 
 	void setTextColor(int r, int g, int b);
 	Common::Rect getTextBounds(const Common::String &text) const;
+	TextMetrics getTextMetrics();
 
 	Common::Rational getPixelAspectRatio() const;
 	Common::Rect getPrintableArea() const;
@@ -125,6 +126,18 @@ Common::Rect Win32PrintJob::getTextBounds(const Common::String &text) const {
 	SIZE winSize;
 	GetTextExtentPoint32A(hdcPrint, text.c_str(), text.size(), &winSize);
 	return Common::Rect(winSize.cx, winSize.cy);
+}
+
+TextMetrics Win32PrintJob::getTextMetrics() {
+	TEXTMETRICA winMetrics;
+	TextMetrics metrics;
+	GetTextMetricsA(hdcPrint, &winMetrics);
+
+	metrics.accent = winMetrics.tmAscent;
+	metrics.deccent = winMetrics.tmDescent;
+	metrics.leading = winMetrics.tmExternalLeading;
+
+	return metrics;
 }
 
 Common::Rational Win32PrintJob::getPixelAspectRatio() const {

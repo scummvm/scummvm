@@ -47,6 +47,8 @@ public:
 	void printPlainTextFile(Common::File &file);
 };
 
+class TextMetrics;
+
 class PrintJob {
 public:
 	friend class PrintingManager;
@@ -57,6 +59,7 @@ public:
 
 	virtual void setTextColor(int r, int g, int b) = 0;
 	virtual Common::Rect getTextBounds(const Common::String &text) const = 0;
+	virtual TextMetrics getTextMetrics() = 0;
 
 	virtual Common::Rational getPixelAspectRatio() const = 0;
 
@@ -81,6 +84,19 @@ public:
 	virtual void pageFinished() = 0;
 	virtual void endDoc() = 0;
 	virtual void abortJob() = 0;
+};
+
+class TextMetrics {
+public:
+	// distance over the base line
+	uint accent;
+	// distance unde the base line
+	uint deccent;
+	//space to add between text lines, in addition to the height.
+	uint leading;
+
+	uint getHeight() const { return accent + deccent; }
+	uint getLineHeight() const { return getHeight() + leading; }
 };
 
 #endif
