@@ -1508,7 +1508,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 			surf.setPalette(pal, 0, 256);
 
 			PrintingManager *pm = _vm->_system->getPrintingManager();
-			pm->printImage(surf);
+			pm->printImage(surf, true);
 
 			return 0;
 		}
