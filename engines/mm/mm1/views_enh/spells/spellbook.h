@@ -37,7 +37,7 @@ namespace Spells {
 class Spellbook : public ScrollView, public MM1::Game::SpellCasting {
 private:
 	Shared::Xeen::SpriteResource _scrollSprites;
-	bool _isWizard;
+	bool _isWizard = false;
 	int _topIndex = 0, _count = 0;
 	int _selectedIndex = -1;
 
@@ -59,7 +59,7 @@ private:
 	/**
 	 * Performs the selected spell
 	 */
-	void castSpell();
+	void spellSelected();
 
 public:
 	Spellbook();
