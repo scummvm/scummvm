@@ -153,7 +153,7 @@ int Net::joinGame(Common::String IP, char *userName) {
 			_broadcastSocket->send(address.host.c_str(), 9130, "{\"cmd\": \"get_session\"}");
 
 			uint tickCount = 0;
-			while(!_sessions.size()) {
+			while (!_sessions.size()) {
 				serviceBroadcast();
 				// Wait for one minute for response before giving up
 				tickCount += 5;
@@ -226,7 +226,7 @@ int Net::addUser(char *shortName, char *longName) {
 	_sessionHost->send(addUser.c_str(), 0, 0, true);
 
 	uint tickCount = 0;
-	while(_myUserId == -1) {
+	while (_myUserId == -1) {
 		remoteReceiveData(12);
 		// Wait for five seconds for our user id before giving up
 		tickCount += 5;
@@ -383,7 +383,7 @@ int Net::doJoinSession(Session session) {
 				_sessionServerHost->send(startRelay.c_str(), 0);
 
 				uint tickCount = 0;
-				while(_myUserId == -1) {
+				while (_myUserId == -1) {
 					serviceSessionServer();
 					// Wait for five seconds for our user id before giving up
 					tickCount += 5;
@@ -610,7 +610,7 @@ int32 Net::updateQuerySessions() {
 
 		_gotSessions = false;
 		uint32 tickCount = g_system->getMillis() + 1000;
-		while(g_system->getMillis() < tickCount) {
+		while (g_system->getMillis() < tickCount) {
 			serviceSessionServer();
 			if (_gotSessions)
 				break;
@@ -621,7 +621,7 @@ int32 Net::updateQuerySessions() {
 		_broadcastSocket->send("255.255.255.255", 9130, "{\"cmd\": \"get_session\"}");
 
 		uint32 tickCount = g_system->getMillis() + 500;
-		while(g_system->getMillis() < tickCount) {
+		while (g_system->getMillis() < tickCount) {
 			serviceBroadcast();
 		}
 	}
@@ -880,7 +880,7 @@ void Net::serviceSessionServer() {
 		return;
 
 	uint8 type = _sessionServerHost->service();
-	switch(type) {
+	switch (type) {
 	case ENET_EVENT_TYPE_NONE:
 		break;
 	case ENET_EVENT_TYPE_DISCONNECT:
@@ -1389,7 +1389,7 @@ void Net::handleGameDataHost(Common::JSONValue *json, int peerIndex) {
 	int toparam = json->child("toparam")->asIntegerNumber();
 	bool reliable = json->child("reliable")->asBool();
 
-	switch(to) {
+	switch (to) {
 	case PN_SENDTYPE_INDIVIDUAL:
 		{
 			if (toparam == _myUserId) {

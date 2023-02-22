@@ -904,7 +904,7 @@ void Lobby::startHostingGame(int playerId) {
 	if (_vm->_net->hostGame(const_cast<char *>(_userName.c_str()), const_cast<char *>(_userName.c_str()))) {
 		// Wait till the session server assigns us a session id.
 		uint tickCount = 0;
-		while(_vm->_net->_sessionId == -1) {
+		while (_vm->_net->_sessionId == -1) {
 			_vm->_net->doNetworkOnceAFrame(12);
 			tickCount += 5;
 			g_system->delayMillis(5);
@@ -987,5 +987,3 @@ void Lobby::gameFinished() {
 }
 
 } // End of namespace Scumm
-
-

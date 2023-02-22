@@ -186,5 +186,4 @@ protected:
 
 } // End of namespace Scumm
 
-
 #endif

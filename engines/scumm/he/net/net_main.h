@@ -22,10 +22,10 @@
 #ifndef SCUMM_HE_NET_MAIN_H
 #define SCUMM_HE_NET_MAIN_H
 
-#include "common/formats/json.h"
 #include "backends/networking/enet/enet.h"
 #include "backends/networking/enet/host.h"
 #include "backends/networking/enet/socket.h"
+#include "common/formats/json.h"
 namespace Scumm {
 
 class ScummEngine_v90he;
@@ -56,6 +56,7 @@ private:
 
 	Address getAddressFromString(Common::String address);
 	Common::String getStringFromAddress(Address address);
+
 public:
 	int hostGame(char *sessionName, char *userName);
 	int joinGame(Common::String IP, char *userName);
@@ -104,7 +105,7 @@ private:
 	bool remoteReceiveData(uint32 tickCount);
 
 public:
-	//getters
+	// getters
 	bool getHostName(char *hostname, int length);
 	bool getIPfromName(char *ip, int ipLength, char *nameBuffer);
 	void getSessionName(int sessionNumber, char *buffer, int length);
@@ -112,15 +113,15 @@ public:
 	void getProviderName(int providerIndex, char *buffer, int length);
 
 private:
-	//mostly getters
+	// mostly getters
 	int getTotalPlayers();
 
 public:
-	//fields
+	// fields
 	int _latencyTime; // ms
 	bool _fakeLatency;
 
-	bool _isHost;  // true = hosting game, false = joined game.
+	bool _isHost; // true = hosting game, false = joined game.
 
 	int _myUserId;
 	int _fromUserId;
