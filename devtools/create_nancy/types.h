@@ -55,7 +55,7 @@ struct SceneChangeDescription {
 struct ConditionalDialogue {
     byte textID;
     uint16 sceneID;
-    const char soundID[9];
+    const char *soundID;
 	Common::Array<EventFlagDescription> flagConditions;
 	Common::Array<EventFlagDescription> inventoryConditions;
 };
@@ -67,7 +67,7 @@ struct GoodbyeSceneChange {
 };
 
 struct Goodbye {
-	const char soundID[9];
+	const char *soundID;
 	Common::Array<GoodbyeSceneChange> sceneChanges;
 };
 
