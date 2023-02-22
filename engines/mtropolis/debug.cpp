@@ -293,7 +293,7 @@ void DebugToolWindowBase::render() {
 				return;
 
 			getSurface()->fillRect(Common::Rect(0, kTopBarHeight, renderWidth, getHeight()), getSurface()->format.RGBToColor(255, 255, 255));
-			getSurface()->rawBlitFrom(*_toolSurface.get(), Common::Rect(srcLeft, srcTop, srcRight, srcBottom), Common::Point(destLeft, destTop + kTopBarHeight), nullptr);
+			getSurface()->rawBlitFrom(*_toolSurface.get(), Common::Rect(srcLeft, srcTop, srcRight, srcBottom), Common::Point(destLeft, destTop + kTopBarHeight));
 		} else {
 			_haveScrollBar = false;
 			cancelScrolling();
