@@ -38,18 +38,21 @@ bool File::open(const byte *data, uint size) {
 }
 
 void File::close() {
-    if (_f)
+    if (_f) {
         fclose(_f);
+    }
+
     _f = nullptr;
     delete[] _memPtr;
     _memPtr = nullptr;
 }
 
 uint File::pos() const {
-    if (_f)
+    if (_f) {
         return ftell(_f);
-    else
+    } else {
         return _offset;
+    }
 }
 
 uint File::size() const {
@@ -67,16 +70,19 @@ uint File::size() const {
 }
 
 bool File::eof() const {
-    if (_f)
+    if (_f) {
         return feof(_f) != 0;
-    else if (_memPtr)
+    } else if (_memPtr) {
         return _offset >= _size;
+    }
+
     return false;
 }
 
 int File::seek(int offset, int whence) {
-    if (_f)
+    if (_f) {
         return fseek(_f, offset, whence);
+    }
 
     switch (whence) {
         case SEEK_SET:
@@ -96,15 +102,17 @@ int File::seek(int offset, int whence) {
 }
 
 void File::skip(int offset) {
-    if (_f)
+    if (_f) {
         fseek(_f, offset, SEEK_CUR);
-    else
+    } else {
         _offset += offset;
+    }
 }
 
 long File::read(void *buffer, size_t len) {
-    if (_f)
+    if (_f) {
         return fread(buffer, 1, len, _f);
+    }
 
     uint bytesToRead = CLIP(len, (size_t)0, _size - _offset);
     memcpy(buffer, &_memPtr[_offset], bytesToRead);
@@ -152,28 +160,6 @@ void File::writeString(const char *msg) {
             writeByte(*msg);
         } while (*msg++);
     }
-}
-
-void File::writeMultilangArray(const Common::Array<Common::Array<const char *>> &array) {
-    writeUint16(array.size());
-    Common::Array<uint32> offsets;
-    uint32 offsetsOffset = pos();
-
-    skip(array.size() * 4);
-
-    for (uint i = 0; i < array.size(); ++i) {
-        offsets.push_back(pos());
-        writeToFile(*this, array[i]);
-    }
-
-    uint end = pos();
-    seek(offsetsOffset);
-
-    for (uint i = 0; i < array.size(); ++i) {
-        writeUint32(offsets[i]);
-    }
-
-    seek(end);
 }
 
 template<>
@@ -231,4 +217,26 @@ void writeToFile(File &file, const Hint &obj) {
     file.writeString(obj.soundIDs[2]);
     writeToFile(file, obj.flagConditions);
     writeToFile(file, obj.inventoryConditions);
+}
+
+void writeMultilangArray(File &file, const Common::Array<Common::Array<const char *>> &array) {
+    file.writeUint16(array.size());
+    Common::Array<uint32> offsets;
+    uint32 offsetsOffset = file.pos();
+
+    file.skip(array.size() * 4);
+
+    for (uint i = 0; i < array.size(); ++i) {
+        offsets.push_back(file.pos());
+        writeToFile(file, array[i]);
+    }
+
+    uint end = file.pos();
+    file.seek(offsetsOffset);
+
+    for (uint i = 0; i < array.size(); ++i) {
+        file.writeUint32(offsets[i]);
+    }
+
+    file.seek(end);
 }

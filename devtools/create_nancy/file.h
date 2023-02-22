@@ -63,8 +63,6 @@ public:
 	void writeUint16(uint16 v);
 	void writeUint32(uint v);
 	void writeString(const char *msg);
-
-	void writeMultilangArray(const Common::Array<Common::Array<const char *>> &array);
 };
 
 template <class T>
@@ -94,5 +92,7 @@ template<>
 void writeToFile(File &file, const Goodbye &obj);
 template<>
 void writeToFile(File &file, const Hint &obj);
+
+void writeMultilangArray(File &file, const Common::Array<Common::Array<const char *>> &array);
 
 #endif // CREATE_NANCY_FILE_H
