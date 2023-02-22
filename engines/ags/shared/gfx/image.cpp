@@ -153,14 +153,14 @@ int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
 		}
 
 		surface.rawBlitFrom(temp, Common::Rect(0, 0, src.w, src.h),
-			Common::Point(0, 0), temp.getPalette());
+			Common::Point(0, 0));
 	} else {
 		// Copy from the source surface without alpha transparency
 		Graphics::ManagedSurface temp = src;
 		temp.format.aLoss = 8;
 
 		surface.rawBlitFrom(temp, Common::Rect(0, 0, src.w, src.h),
-			Common::Point(0, 0), nullptr);
+			Common::Point(0, 0));
 	}
 
 	// Write out the bitmap

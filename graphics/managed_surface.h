@@ -499,10 +499,10 @@ public:
 	/**
 	 * Does a blitFrom ignoring any transparency settings
 	 */
-	void rawBlitFrom(const Surface &src, const Common::Rect &srcRect,
-			const Common::Point &destPos, const uint32 *palette) {
-		blitFromInner(src, srcRect, Common::Rect(destPos.x, destPos.y,
-			destPos.x + srcRect.width(), destPos.y + srcRect.height()), palette);
+	void rawBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
+			const Common::Point &destPos) {
+		blitFromInner(src._innerSurface, srcRect, Common::Rect(destPos.x, destPos.y, destPos.x + srcRect.width(),
+			destPos.y + srcRect.height()), src._paletteSet ? src._palette : nullptr);
 	}
 
 	/**
@@ -679,14 +679,6 @@ public:
 	 * Grab the palette using RGB tuples.
 	 */
 	void grabPalette(byte *colors, uint start, uint num) const;
-
-	/**
-	 * Get the palette array.
-	 */
-	WARN_DEPRECATED("Use grabPalette instead")
-	const uint32 *getPalette() const {
-		return _palette;
-	}
 
 	/**
 	 * Set the palette using RGB tuples.
