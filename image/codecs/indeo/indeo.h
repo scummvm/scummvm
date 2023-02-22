@@ -518,8 +518,11 @@ private:
 		int blkSize);
 protected:
 	IVI45DecContext _ctx;
+	uint16 _width;
+	uint16 _height;
+	uint _bitsPerPixel;
 	Graphics::PixelFormat _pixelFormat;
-	Graphics::Surface _surface;
+	Graphics::Surface *_surface;
 
 	/**
 	 *  Scan patterns shared between indeo4 and indeo5
