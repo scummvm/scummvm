@@ -41,6 +41,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_REAH,
+		REQUIRES_MP3 | REQUIRES_JPEG,
 	},
 	{ // Reah: Face the Unknown, 6 CD Version
 		{
@@ -53,6 +54,7 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_REAH,
+		REQUIRES_MP3 | REQUIRES_JPEG,
 	},
 	{ // Schizm, 5 CD Version
 		{
@@ -65,8 +67,9 @@ static const VCruiseGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GID_SCHIZM,
+		REQUIRES_MP3 | REQUIRES_JPEG,
 	},
-	{ AD_TABLE_END_MARKER, GID_UNKNOWN }
+	{ AD_TABLE_END_MARKER, GID_UNKNOWN, REQUIRES_NONE }
 };
 
 } // End of namespace VCruise

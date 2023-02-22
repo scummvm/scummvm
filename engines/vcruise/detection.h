@@ -26,17 +26,25 @@
 
 namespace VCruise {
 
-enum VCruiseGameID {
+enum VCruiseGameID : byte {
 	GID_UNKNOWN	= 0,
 
 	GID_REAH	= 1,
 	GID_SCHIZM	= 2,
 };
 
+enum VCruiseRequirements : byte {
+	REQUIRES_NONE = 0,
+
+	REQUIRES_MP3 = (1 << 0),
+	REQUIRES_JPEG = (1 << 1)
+};
+
 struct VCruiseGameDescription {
 	ADGameDescription desc;
 
 	VCruiseGameID gameID;
+	byte requirements;
 };
 
 

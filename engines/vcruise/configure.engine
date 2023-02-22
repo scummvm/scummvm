@@ -1,4 +1,3 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine vcruise "V-Cruise" no "schizm" "" "16bit highres mad"
-add_engine schizm "Schizm" no "" "" "16bit highres mad jpeg"
+add_engine vcruise "V-Cruise" no "" "" "16bit highres"

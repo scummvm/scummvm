@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/algorithm.h"
+#include "common/translation.h"
 
 #include "vcruise/runtime.h"
 #include "vcruise/vcruise.h"
@@ -65,6 +66,18 @@ void VCruiseEngine::handleEvents() {
 }
 
 Common::Error VCruiseEngine::run() {
+#ifndef USE_JPEG
+	if (_gameDescription->gameID & REQUIRES_JPEG) {
+		return Common::Error(Common::kUnknownError, _s("This game requires JPEG support to be compiled in."));
+	}
+#endif
+
+#ifndef USE_MAD
+	if (_gameDescription->gameID & REQUIRES_MP3) {
+		GUIErrorMessage(_("MP3 support is not compiled in. The game should still be playable, but won't have music."));
+	}
+#endif
+
 	Common::List<Graphics::PixelFormat> pixelFormats = _system->getSupportedFormats();
 
 	const Graphics::PixelFormat *fmt16_565 = nullptr;
