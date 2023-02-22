@@ -46,6 +46,7 @@ public:
 	~Win32PrintJob();
 
 	void drawBitmap(const Graphics::ManagedSurface &surf, Common::Point pos);
+	void drawBitmap(const Graphics::ManagedSurface &surf, Common::Rect posAndSize);
 	void drawText(const Common::String &text, Common::Point pos);
 
 	void setTextColor(int r, int g, int b);
@@ -110,6 +111,22 @@ void Win32PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, Common::Poi
 
 	BitBlt(hdcPrint, pos.x, pos.y, surf.w, surf.h, hdcImg, 0, 0, SRCCOPY);
 	
+	DeleteObject(bitmap);
+	DeleteDC(hdcImg);
+}
+
+void Win32PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, Common::Rect posAndSize) {
+	HDC hdcImg = CreateCompatibleDC(hdcPrint);
+
+	HBITMAP bitmap = buildBitmap(hdcPrint, surf);
+	if (!bitmap) {
+		DeleteDC(hdcImg);
+		return;
+	}
+
+	SelectObject(hdcImg, bitmap);
+	StretchBlt(hdcPrint, posAndSize.left, posAndSize.top, posAndSize.width(), posAndSize.height(), hdcImg, 0, 0, surf.w, surf.h, SRCCOPY);
+
 	DeleteObject(bitmap);
 	DeleteDC(hdcImg);
 }

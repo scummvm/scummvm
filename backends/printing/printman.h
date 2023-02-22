@@ -37,10 +37,10 @@ public:
 
 	virtual PrintJob *createJob(const Common::String &jobName) = 0;
 
-	void printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf);
+	void printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf, bool scale=false);
 
-	void printImage(const Graphics::ManagedSurface& surf) {
-		printImage("ScummVM", surf);
+	void printImage(const Graphics::ManagedSurface &surf, bool scale = false) {
+		printImage("ScummVM", surf, scale);
 	}
 
 	void printPlainTextFile(const Common::String &jobName, Common::SeekableReadStream &file);
@@ -54,7 +54,8 @@ public:
 	friend class PrintingManager;
 	virtual ~PrintJob();
 
-	virtual void drawBitmap(const Graphics::ManagedSurface &surf, Common::Point pos) = 0;
+	virtual void drawBitmap(const Graphics::ManagedSurface &surf, Common::Point pos);
+	virtual void drawBitmap(const Graphics::ManagedSurface &surf, Common::Rect posAndSize) = 0;
 	virtual void drawText(const Common::String &text, Common::Point pos) = 0;
 
 	virtual void setTextColor(int r, int g, int b) = 0;

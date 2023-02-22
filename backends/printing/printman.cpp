@@ -23,12 +23,24 @@
 
 PrintingManager::~PrintingManager() {}
 
-PrintJob::~PrintJob() {}
-
-void PrintingManager::printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf) {
+void PrintingManager::printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf, bool scale) {
 	PrintJob *job = createJob(jobName);
 
-	job->drawBitmap(surf, Common::Point());
+	if (scale) {
+		Common::Rect printArea=job->getPrintableArea();
+
+		Common::Rational xRatio(printArea.width(), surf.w);
+		Common::Rational yRatio(printArea.height(), surf.h);
+
+		Common::Rational scaleFactor = ((xRatio < yRatio) ? xRatio : yRatio);
+
+		Common::Rect bitmapArea(surf.w * scaleFactor.toDouble(), surf.h * scaleFactor.toDouble());
+
+		job->drawBitmap(surf, bitmapArea);
+	} else {
+		job->drawBitmap(surf, Common::Point());
+	}
+
 	job->pageFinished();
 	job->endDoc();
 
@@ -72,3 +84,10 @@ void PrintingManager::printPlainTextFile(const Common::String &jobName, Common::
 	delete job;
 }
 
+
+
+PrintJob::~PrintJob() {}
+
+void PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, Common::Point pos) {
+	drawBitmap(surf, Common::Rect(pos.x, pos.y, pos.x + surf.w, pos.y + surf.w));
+}
