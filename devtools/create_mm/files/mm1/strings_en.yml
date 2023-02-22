@@ -479,6 +479,8 @@ enhdialogs:
 		exchange: "\x01""37Exch"
 		conditions:
 			good: "Good"
+	character_select:
+		title: "Select target"
 	location:
 		store: "store"
 		options: "options"

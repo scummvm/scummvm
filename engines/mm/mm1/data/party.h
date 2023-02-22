@@ -97,6 +97,11 @@ struct Party : public Common::Array<Character> {
 	 * Synchronizes the party to/from savegames
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Return the index of a given character
+	 */
+	int indexOf(const Character *c);
 };
 
 } // namespace MM1

@@ -19,41 +19,38 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_PARTY_VIEW_H
-#define MM1_VIEWS_ENH_PARTY_VIEW_H
+#ifndef MM1_VIEWS_ENH_CHARACTER_SELECT_H
+#define MM1_VIEWS_ENH_CHARACTER_SELECT_H
 
-#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/messages.h"
+#include "mm/mm1/data/character.h"
+#include "mm/mm1/views_enh/party_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class PartyView : public ScrollView {
+/**
+ * Dialog for choosing a character target
+ */
+class CharacterSelect : public PartyView {
+private:
+	Character *_currCharacter = nullptr;
 protected:
-	/**
-	 * Return true if the selected character can be switched
-	 */
-	virtual bool canSwitchChar() const {
-		return true;
-	}
-
 	/**
 	 * Return true if a character should be selected by default
 	 */
 	virtual bool selectCharByDefault() const {
-		return true;
+		return false;
 	}
 public:
-	PartyView(const Common::String &name) : ScrollView(name) {}
-	PartyView(const Common::String &name, UIElement *owner) :
-		ScrollView(name, owner) {}
-	virtual ~PartyView() {}
+	CharacterSelect();
+	virtual ~CharacterSelect() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	bool msgMouseDown(const MouseDownMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
+	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace ViewsEnh

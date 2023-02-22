@@ -28,6 +28,7 @@
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views_enh/character_info.h"
+#include "mm/mm1/views_enh/character_select.h"
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/views_enh/main_menu.h"
 #include "mm/mm1/views_enh/map_popup.h"
@@ -53,13 +54,14 @@ private:
 	Views::Protect _protect;
 	Views::Title _title;
 //	Views::ViewCharacter _viewCharacter;
+	ViewsEnh::Locations::Market _market;
+	ViewsEnh::Locations::Temple _temple;
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
+	ViewsEnh::CharacterSelect _characterSelect;
 	ViewsEnh::MainMenu _mainMenu;
 	ViewsEnh::MapPopup _mapPopup;
 	ViewsEnh::QuickRef _quickRef;
-	ViewsEnh::Locations::Market _market;
-	ViewsEnh::Locations::Temple _temple;
 public:
 	Dialogs() {}
 };

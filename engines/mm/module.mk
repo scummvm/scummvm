@@ -123,6 +123,7 @@ MODULE_OBJS += \
 	mm1/views_enh/spells/spellbook.o \
 	mm1/views_enh/button_container.o \
 	mm1/views_enh/character_info.o \
+	mm1/views_enh/character_select.o \
 	mm1/views_enh/dialogs.o \
 	mm1/views_enh/game.o \
 	mm1/views_enh/game_commands.o \

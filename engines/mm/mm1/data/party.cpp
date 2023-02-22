@@ -165,5 +165,14 @@ void Party::rearrange(const Common::Array<Character *> &party) {
 	}
 }
 
+int Party::indexOf(const Character *c) {
+	for (uint i = 0; i < size(); ++i) {
+		if (&(*this)[i] == c)
+			return i;
+	}
+
+	return -1;
+}
+
 } // namespace MM1
 } // namespace MM

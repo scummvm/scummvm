@@ -43,6 +43,16 @@ private:
 	 */
 	void updateSelectedSpell();
 
+	/**
+	 * Casts the selected spell
+	 */
+	void castSpell(Character *target = nullptr);
+
+	/**
+	 * Handles spell errors
+	 */
+	void spellError();
+
 public:
 	CastSpell();
 	virtual ~CastSpell() {}

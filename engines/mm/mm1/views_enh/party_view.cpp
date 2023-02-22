@@ -31,7 +31,7 @@ namespace ViewsEnh {
 
 bool PartyView::msgFocus(const FocusMessage &msg) {
 	// Turn on highlight for selected character
-	if (!g_globals->_currCharacter)
+	if (!g_globals->_currCharacter && selectCharByDefault())
 		g_globals->_currCharacter = &g_globals->_party[0];
 
 	g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));

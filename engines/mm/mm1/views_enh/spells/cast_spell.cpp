@@ -80,13 +80,20 @@ void CastSpell::draw() {
 
 bool CastSpell::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_c) {
-		close();
-
+		// Cast a spell
 		const Character &c = *g_globals->_currCharacter;
-		if (c._nonCombatSpell != -1) {
-			// TODO: Cast spell here
+
+		if (!canCast()) {
+			close();
+			spellError();
+		} else if (hasCharTarget()) {
+			addView("CharacterSelect");
+		} else {
+			close();
+			castSpell();
 		}
 		return true;
+
 	} else if (msg.keycode == Common::KEYCODE_n) {
 		// Select a new spell
 		addView("Spellbook");
@@ -113,6 +120,9 @@ bool CastSpell::msgGame(const GameMessage &msg) {
 		updateSelectedSpell();
 		draw();
 		return true;
+	} else if (msg._name == "CHAR_SELECTED" && msg._value != -1) {
+		close();
+		castSpell(&g_globals->_party[msg._value]);
 	}
 
 	return true;
@@ -131,6 +141,14 @@ void CastSpell::updateSelectedSpell() {
 
 		setSpell(&c, lvl, num);
 	}
+}
+
+void CastSpell::castSpell(Character *target) {
+	warning("TODO: cast spell");
+}
+
+void CastSpell::spellError() {
+	warning("TODO: spell error");
 }
 
 } // namespace Spells
