@@ -1,4 +1,4 @@
 engines/mm/detection.cpp
 engines/mm/metaengine.cpp
-engines/mm/utils/engine_data.cpp
+engines/mm/shared/utils/engine_data.cpp
 engines/mm/xeen/saves.cpp
