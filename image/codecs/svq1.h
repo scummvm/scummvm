@@ -44,9 +44,11 @@ public:
 	~SVQ1Decoder() override;
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
-	Graphics::PixelFormat getPixelFormat() const override { return _surface->format; }
+	Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
+	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _pixelFormat = format; return true; }
 
 private:
+	Graphics::PixelFormat _pixelFormat;
 	Graphics::Surface *_surface;
 	uint16 _width, _height;
 	uint16 _frameWidth, _frameHeight;
