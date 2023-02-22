@@ -56,6 +56,8 @@ public:
 private:
 	Graphics::Surface *_surface;
 
+	uint16 _width;
+	uint16 _height;
 	Graphics::PixelFormat _pixelFormat;
 
 	static const int _corrector_type_0[24];

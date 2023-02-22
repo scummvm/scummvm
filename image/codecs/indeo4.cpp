@@ -88,7 +88,7 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameData = nullptr;
 	_ctx._frameSize = 0;
 
-	return (err < 0) ? nullptr : &_surface;
+	return (err < 0) ? nullptr : _surface;
 }
 
 int Indeo4Decoder::decodePictureHeader() {
@@ -111,11 +111,11 @@ int Indeo4Decoder::decodePictureHeader() {
 		_ctx._hasBFrames = true;
 
 	_ctx._hasTransp = _ctx._gb->getBit();
-	if (_ctx._hasTransp && _surface.format.aBits() == 0) {
+	if (_ctx._hasTransp && _surface->format.aBits() == 0) {
 		// Surface is 4 bytes per pixel, but only RGB. So promote the
 		// surface to full RGBA, and convert all the existing pixels
 		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		_surface.convertToInPlace(_pixelFormat);
+		_surface->convertToInPlace(_pixelFormat);
 	}
 
 	// unknown bit: Mac decoder ignores this bit, XANIM returns error
@@ -610,16 +610,16 @@ int Indeo4Decoder::decodeRLETransparency(VLC_TYPE (*table)[2]) {
 	bool runIsOpaque = _ctx._gb->getBit();
 	bool nextRunIsOpaque = !runIsOpaque;
 
-	uint32 *pixel = (uint32 *)_surface.getPixels();
-	const int surfacePixelPitch = _surface.pitch / _surface.format.bytesPerPixel;
-	const int surfacePadding = surfacePixelPitch - _surface.w;
-	const uint32 *endOfVisibleRow = pixel + _surface.w;
-	const uint32 *endOfVisibleArea = pixel + surfacePixelPitch * _surface.h - surfacePadding;
+	uint32 *pixel = (uint32 *)_surface->getPixels();
+	const int surfacePixelPitch = _surface->pitch / _surface->format.bytesPerPixel;
+	const int surfacePadding = surfacePixelPitch - _surface->w;
+	const uint32 *endOfVisibleRow = pixel + _surface->w;
+	const uint32 *endOfVisibleArea = pixel + surfacePixelPitch * _surface->h - surfacePadding;
 
-	const int codecAlignedWidth = (_surface.w + 31) & ~31;
-	const int codecPaddingSize = codecAlignedWidth - _surface.w;
+	const int codecAlignedWidth = (_surface->w + 31) & ~31;
+	const int codecPaddingSize = codecAlignedWidth - _surface->w;
 
-	int numPixelsToRead = codecAlignedWidth * _surface.h;
+	int numPixelsToRead = codecAlignedWidth * _surface->h;
 	int numPixelsToSkip = 0;
 	while (numPixelsToRead > 0) {
 		int value = _ctx._gb->getVLC2<1, IVI_VLC_BITS>(table);
@@ -716,7 +716,7 @@ int Indeo4Decoder::decodeTransparency() {
 
 	if (_ctx._gb->getBit()) { /* @350 */
 		/* @358 */
-		_ctx._transKeyColor = _surface.format.ARGBToColor(0, _ctx._gb->getBits<8>(), _ctx._gb->getBits<8>(), _ctx._gb->getBits<8>());
+		_ctx._transKeyColor = _surface->format.ARGBToColor(0, _ctx._gb->getBits<8>(), _ctx._gb->getBits<8>(), _ctx._gb->getBits<8>());
 		debug(4, "Indeo4: Key color is %08x", _ctx._transKeyColor);
 		/* @477 */
 	}
@@ -767,8 +767,8 @@ int Indeo4Decoder::decodeTransparency() {
 	// necessary for correct decoding of game videos.
 	assert(!_ctx._usesTiling);
 
-	assert(_surface.format.bytesPerPixel == 4);
-	assert((_surface.pitch % 4) == 0);
+	assert(_surface->format.bytesPerPixel == 4);
+	assert((_surface->pitch % 4) == 0);
 
 	const uint32 startByte = _ctx._gb->pos() / 8;
 
@@ -781,7 +781,7 @@ int Indeo4Decoder::decodeTransparency() {
 			// It should only be necessary to draw transparency here since the
 			// data from the YUV planes gets drawn to the output surface on each
 			// frame, which resets the surface pixels to be fully opaque
-			_surface.fillRect(Common::Rect(_surface.w, _surface.h), _ctx._transKeyColor);
+			_surface->fillRect(Common::Rect(_surface->w, _surface->h), _ctx._transKeyColor);
 		}
 
 		// No alignment here

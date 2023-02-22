@@ -96,7 +96,7 @@ const Graphics::Surface *Indeo5Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameData = nullptr;
 	_ctx._frameSize = 0;
 
-	return (err < 0) ? nullptr : &_surface;
+	return (err < 0) ? nullptr : _surface;
 }
 
 int Indeo5Decoder::decodePictureHeader() {
