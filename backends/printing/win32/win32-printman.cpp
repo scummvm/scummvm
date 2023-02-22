@@ -123,7 +123,7 @@ void Win32PrintJob::setTextColor(int r, int g, int b) {
 
 Common::Rect Win32PrintJob::getTextBounds(const Common::String &text) const {
 	SIZE winSize;
-	GetTextExtentPointA(hdcPrint, text.c_str(), text.size(), &winSize);
+	GetTextExtentPoint32A(hdcPrint, text.c_str(), text.size(), &winSize);
 	return Common::Rect(winSize.cx, winSize.cy);
 }
 
