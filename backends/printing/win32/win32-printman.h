@@ -23,6 +23,7 @@
 #define BACKENDS_PRINTING_PRINTMAN_WIN32_PRINTMAN_H
 
 #ifdef WIN32
+#ifdef USE_PRINTING
 
 class PrintingManager;
 
@@ -33,4 +34,5 @@ PrintingManager *createWin32PrintingManager();
 
 #endif
 
+#endif
 #endif

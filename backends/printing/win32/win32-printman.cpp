@@ -20,6 +20,7 @@
  */
 
 #ifdef WIN32
+#ifdef USE_PRINTING
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -309,4 +310,5 @@ PrintingManager *createWin32PrintingManager() {
 	return new Win32PrintingManager();
 }
 
+#endif // USE_PRINTING
 #endif // WIN32
