@@ -205,7 +205,7 @@ bool MPEGPSDecoder::addFirstVideoTrack() {
 	// Video stream
 	// Can be MPEG-1/2 or MPEG-4/h.264. We'll assume the former and
 	// I hope we never need the latter.
-	MPEGVideoTrack *track = new MPEGVideoTrack(packet, getDefaultHighColorFormat());
+	MPEGVideoTrack *track = new MPEGVideoTrack(packet);
 	addTrack(track);
 	_streamMap[startCode] = track;
 
@@ -584,14 +584,14 @@ void MPEGPSDecoder::MPEGPSDemuxer::parseProgramStreamMap(int length) {
 // Video track
 // --------------------------------------------------------------------------
 
-MPEGPSDecoder::MPEGVideoTrack::MPEGVideoTrack(Common::SeekableReadStream *firstPacket, const Graphics::PixelFormat &format) {
+MPEGPSDecoder::MPEGVideoTrack::MPEGVideoTrack(Common::SeekableReadStream *firstPacket) {
 	_surface = 0;
 	_endOfTrack = false;
 	_curFrame = -1;
 	_framePts = 0xFFFFFFFF;
 	_nextFrameStartTime = Audio::Timestamp(0, 27000000); // 27 MHz timer
 
-	findDimensions(firstPacket, format);
+	findDimensions(firstPacket);
 
 #ifdef USE_MPEG2
 	_mpegDecoder = new Image::MPEGDecoder();
@@ -610,18 +610,20 @@ MPEGPSDecoder::MPEGVideoTrack::~MPEGVideoTrack() {
 }
 
 uint16 MPEGPSDecoder::MPEGVideoTrack::getWidth() const {
-	return _surface ? _surface->w : 0;
+	return _width;
 }
 
 uint16 MPEGPSDecoder::MPEGVideoTrack::getHeight() const {
-	return _surface ? _surface->h : 0;
+	return _height;
 }
 
 Graphics::PixelFormat MPEGPSDecoder::MPEGVideoTrack::getPixelFormat() const {
-	if (!_surface)
-		return Graphics::PixelFormat();
+	return _pixelFormat;
+}
 
-	return _surface->format;
+bool MPEGPSDecoder::MPEGVideoTrack::setOutputPixelFormat(const Graphics::PixelFormat &format) {
+	_pixelFormat = format;
+	return true;
 }
 
 const Graphics::Surface *MPEGPSDecoder::MPEGVideoTrack::decodeNextFrame() {
@@ -630,6 +632,11 @@ const Graphics::Surface *MPEGPSDecoder::MPEGVideoTrack::decodeNextFrame() {
 
 bool MPEGPSDecoder::MPEGVideoTrack::sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) {
 #ifdef USE_MPEG2
+	if (!_surface) {
+		_surface = new Graphics::Surface();
+		_surface->create(_width, _height, _pixelFormat);
+	}
+
 	if (pts != 0xFFFFFFFF) {
 		_framePts = pts;
 	}
@@ -663,7 +670,7 @@ bool MPEGPSDecoder::MPEGVideoTrack::sendPacket(Common::SeekableReadStream *packe
 #endif
 }
 
-void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *firstPacket, const Graphics::PixelFormat &format) {
+void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *firstPacket) {
 	// First, check for the picture start code
 	if (firstPacket->readUint32BE() != 0x1B3)
 		error("Failed to detect MPEG sequence start");
@@ -671,15 +678,15 @@ void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *f
 	// This is part of the bitstream, but there's really no purpose
 	// to use Common::BitStream just for this: 12 bits width, 12 bits
 	// height
-	uint16 width = firstPacket->readByte() << 4;
-	uint16 height = firstPacket->readByte();
-	width |= (height & 0xF0) >> 4;
-	height = ((height & 0x0F) << 8) | firstPacket->readByte();
+	_width = firstPacket->readByte() << 4;
+	_height = firstPacket->readByte();
+	_width |= (_height & 0xF0) >> 4;
+	_height = ((_height & 0x0F) << 8) | firstPacket->readByte();
+	_pixelFormat = g_system->getScreenFormat();
+	if (_pixelFormat.bytesPerPixel == 1)
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
-	debug(0, "MPEG dimensions: %dx%d", width, height);
-
-	_surface = new Graphics::Surface();
-	_surface->create(width, height, format);
+	debug(0, "MPEG dimensions: %dx%d", _width, _height);
 
 	firstPacket->seek(0);
 }
