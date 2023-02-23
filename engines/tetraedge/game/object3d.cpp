@@ -72,6 +72,7 @@ void Object3D::setObjectMoveDest(const TeVector3f32 &vec) {
 void Object3D::setObjectMoveTime(float time) {
 	_moveAnim._duration = time * 1000;
 	_moveAnim._callbackObj = this;
+	_moveAnim._callbackMethod = &Object3D::setCurMovePos;
 	Common::Array<float> curve;
 	curve.push_back(0.0f);
 	curve.push_back(1.0f);
