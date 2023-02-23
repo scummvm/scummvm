@@ -553,10 +553,10 @@ void DrillerEngine::loadAssetsFullGame() {
 			error("Unable to find driller.zx.border");
 		file.close();
 
-		file.open("driller.zx.extracted");
+		file.open("driller.zx.data");
 
 		if (!file.isOpen())
-			error("Failed to open driller.zx.extracted");
+			error("Failed to open driller.zx.data");
 
 		if (_variant & GF_ZX_DISC)
 			loadMessagesFixedSize(&file, 0x2164, 14, 20);
@@ -648,13 +648,13 @@ void DrillerEngine::loadAssetsFullGame() {
 	} else if (isC64()) {
 		if (_targetName.hasPrefix("spacestationoblivion")) {
 			loadBundledImages();
-			file.open("spacestationoblivion.c64.extracted");
+			file.open("spacestationoblivion.c64.data");
 			loadMessagesFixedSize(&file, 0x167a, 14, 20);
 			//loadFonts(&file, 0xae54);
 			load8bitBinary(&file, 0x8e02, 4);
 			loadGlobalObjects(&file, 0x1855);
 		} else if (_targetName.hasPrefix("driller")) {
-			file.open("driller.c64.extracted");
+			file.open("driller.c64.data");
 			loadMessagesFixedSize(&file, 0x167a - 0x400, 14, 20);
 			//loadFonts(&file, 0xae54);
 			load8bitBinary(&file, 0x8e02 - 0x400, 4);

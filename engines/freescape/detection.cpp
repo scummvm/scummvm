@@ -39,7 +39,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"",
 		{
-			{"DRILLER.ZX.EXTRACTED", 0, "396c1789a7da3db5058d18eb8d2d35a3", 37590},
+			{"DRILLER.ZX.DATA", 0, "396c1789a7da3db5058d18eb8d2d35a3", 37590},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -51,7 +51,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"",
 		{
-			{"DRILLER.ZX.EXTRACTED", 0, "6876fc03e754137f428bd4d5f16452b5", 37888},
+			{"DRILLER.ZX.DATA", 0, "6876fc03e754137f428bd4d5f16452b5", 37888},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -63,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"",
 		{
-			{"DRILLER.ZX.EXTRACTED", 0, "2b996ab877f45414f8e2ae4c862746f3", 35214},
+			{"DRILLER.ZX.DATA", 0, "2b996ab877f45414f8e2ae4c862746f3", 35214},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -123,7 +123,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"spacestationoblivion",
 		"",
 		{
-			{"SPACESTATIONOBLIVION.C64.EXTRACTED", 0, "85680576865e211f868885e9997a08b8", 22782},
+			{"SPACESTATIONOBLIVION.C64.DATA", 0, "85680576865e211f868885e9997a08b8", 22782},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -136,7 +136,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"spacestationoblivion",
 		"",
 		{
-			{"SPACESTATIONOBLIVION.C64.EXTRACTED", 0, "2b3537e21b8b871ec074df2962999781", 64514},
+			{"SPACESTATIONOBLIVION.C64.DATA", 0, "2b3537e21b8b871ec074df2962999781", 64514},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -148,7 +148,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller", // Commodore Force - Jan 94
 		"",
 		{
-			{"DRILLER.C64.EXTRACTED", 0, "511778d3167ff7504d905df507a03ac5", 63490},
+			{"DRILLER.C64.DATA", 0, "511778d3167ff7504d905df507a03ac5", 63490},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -160,7 +160,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"driller",
 		"",
 		{
-			{"DRILLER.C64.EXTRACTED", 0, "73a6f206e54fb13245fe6d92f60fbb34", 41071},
+			{"DRILLER.C64.DATA", 0, "73a6f206e54fb13245fe6d92f60fbb34", 41071},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
