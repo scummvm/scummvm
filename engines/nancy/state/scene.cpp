@@ -73,7 +73,7 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 
 	ser.skip(6);
 	ser.syncAsUint16LE(dontWrap);
-	ser.syncAsUint16LE(soundWrapAroundPan);
+	ser.syncAsUint16LE(numberOfVideoFrames);
 	ser.syncAsUint16LE(soundPanPerFrame);
 	ser.syncAsUint16LE(totalViewAngle);
 	ser.syncAsUint16LE(horizontalScrollDelta);

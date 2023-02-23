@@ -95,7 +95,7 @@ public:
 		SoundDescription sound;
 		//
 		NancyFlag dontWrap;
-		uint16 soundWrapAroundPan;
+		uint16 numberOfVideoFrames;
 		uint16 soundPanPerFrame;
 		uint16 totalViewAngle;
 		uint16 horizontalScrollDelta;
