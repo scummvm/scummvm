@@ -393,7 +393,6 @@ void DrillerEngine::loadAssetsDemo() {
 	_angleRotationIndex = 0;
 }
 
-
 byte *parseEDSK(const Common::String filename, int &size) {
 	debugC(1, kFreescapeDebugParser, "Trying to parse edsk file: %s", filename.c_str());
 	Common::File file;
@@ -457,6 +456,38 @@ byte *parseEDSK(const Common::String filename, int &size) {
 	return memBuffer;
 }
 
+void deobfuscateDrillerCPCVirtualWorlds(byte *memBuffer) {
+	// Deofuscation / loader code
+	for (int j = 0; j < 0x200; j++) {
+		memBuffer[0x14000 + j] = memBuffer[0x14200 + j];
+		memBuffer[0x14200 + j] = memBuffer[0x13400 + j];
+		memBuffer[0x14400 + j] = memBuffer[0x13800 + j];
+		memBuffer[0x14600 + j] = memBuffer[0x13c00 + j];
+	}
+
+	for (int j = 0; j < 0x200; j++) {
+		memBuffer[0x13c00 + j] = memBuffer[0x13a00 + j];
+		memBuffer[0x13a00 + j] = memBuffer[0x13600 + j];
+		memBuffer[0x13800 + j] = memBuffer[0x13200 + j];
+		memBuffer[0x13600 + j] = memBuffer[0x12e00 + j];
+		memBuffer[0x12e00 + j] = memBuffer[0x13000 + j];
+		memBuffer[0x13000 + j] = memBuffer[0x12200 + j];
+		memBuffer[0x13200 + j] = memBuffer[0x12600 + j];
+		memBuffer[0x13400 + j] = memBuffer[0x12a00 + j];
+	}
+
+	for (int i = 6; i >= 0; i--) {
+		//debug("copying 0x200 bytes to %x from %x", 0x12000 + 0x200*i, 0x11400 + 0x400*i);
+		for (int j = 0; j < 0x200; j++) {
+			memBuffer[0x12000 + 0x200*i + j] = memBuffer[0x11400 + 0x400*i + j];
+		}
+	}
+
+	for (int j = 0; j < 0x200; j++) {
+		memBuffer[0x11c00 + j] = memBuffer[0x11e00 + j];
+		memBuffer[0x11e00 + j] = memBuffer[0x11000 + j];
+	}
+}
 
 void DrillerEngine::loadAssetsFullGame() {
 	Common::File file;
@@ -590,37 +621,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		int memSize = 0;
 		if (_variant & GF_CPC_VIRTUALWORLDS) {
 			memBuffer = parseEDSK("virtualworlds.A.cpc.edsk", memSize);
-
-			// Deofuscation / loader code
-			for (int j = 0; j < 0x200; j++) {
-				memBuffer[0x14000 + j] = memBuffer[0x14200 + j];
-				memBuffer[0x14200 + j] = memBuffer[0x13400 + j];
-				memBuffer[0x14400 + j] = memBuffer[0x13800 + j];
-				memBuffer[0x14600 + j] = memBuffer[0x13c00 + j];
-			}
-
-			for (int j = 0; j < 0x200; j++) {
-				memBuffer[0x13c00 + j] = memBuffer[0x13a00 + j];
-				memBuffer[0x13a00 + j] = memBuffer[0x13600 + j];
-				memBuffer[0x13800 + j] = memBuffer[0x13200 + j];
-				memBuffer[0x13600 + j] = memBuffer[0x12e00 + j];
-				memBuffer[0x12e00 + j] = memBuffer[0x13000 + j];
-				memBuffer[0x13000 + j] = memBuffer[0x12200 + j];
-				memBuffer[0x13200 + j] = memBuffer[0x12600 + j];
-				memBuffer[0x13400 + j] = memBuffer[0x12a00 + j];
-			}
-
-			for (int i = 6; i >= 0; i--) {
-				//debug("copying 0x200 bytes to %x from %x", 0x12000 + 0x200*i, 0x11400 + 0x400*i);
-				for (int j = 0; j < 0x200; j++) {
-					memBuffer[0x12000 + 0x200*i + j] = memBuffer[0x11400 + 0x400*i + j];
-				}
-			}
-
-			for (int j = 0; j < 0x200; j++) {
-				memBuffer[0x11c00 + j] = memBuffer[0x11e00 + j];
-				memBuffer[0x11e00 + j] = memBuffer[0x11000 + j];
-			}
+			deobfuscateDrillerCPCVirtualWorlds(memBuffer);
 		} else
 			memBuffer = parseEDSK("driller.cpc.edsk", memSize);
 		assert(memSize > 0);
