@@ -100,26 +100,28 @@ void Spellbook::draw() {
 		writeString(0, yp, Common::String::format("%c", (i == 9) ? '0' : '1' + i));
 
 		const int spellIndex = _topIndex + i;
-		setTextColor((spellIndex == _selectedIndex) ? 15 : 37);
 
 		if (_count == 0) {
-			if (i == 0)
+			if (i == 0) {
+				setTextColor(37);
 				writeString(12, yp, STRING["enhdialogs.spellbook.non_caster"]);
-
+			}
 		} else if (spellIndex < _count) {
-			// Spell name
+			// Spell requirements
+			int lvl, num;
+			getSpellLevelNum(CATEGORY_SPELLS_COUNT * (_isWizard ? 1 : 0) + spellIndex, lvl, num);
+			setSpell(g_globals->_currCharacter, lvl, num);
+
+			setTextColor((spellIndex == _selectedIndex) ? 15 :
+				(canCast() ? 37 : 1));
+
+			// Spell name and requirements
 			Common::String spellName = STRING[Common::String::format(
 				"spells.%s.%d",
 				_isWizard ? "wizard" : "cleric",
 				spellIndex
 			)];
 			writeString(12, yp, spellName);
-
-			// Spell requirements
-			int lvl, num;
-			getSpellLevelNum(CATEGORY_SPELLS_COUNT * (_isWizard ? 1 : 0) + spellIndex, lvl, num);
-			setSpell(g_globals->_currCharacter, lvl, num);
-
 			writeString(152, yp, Common::String::format("%d/%d",
 				_requiredSp, _requiredGems), ALIGN_RIGHT);
 		}
