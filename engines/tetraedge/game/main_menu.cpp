@@ -205,6 +205,21 @@ bool MainMenu::onContinueGameButtonValidated() {
 	leave();
 	app->startGame(false, 1);
 	app->fade();
+
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
+		// TODO: This should probably happen on direct game load too,
+		// as it bypasses this code path which always gets called in
+		// the original?
+		if (app->ratioStretched()) {
+			app->backLayout().setRatioMode(TeILayout::RATIO_MODE_NONE);
+			app->frontLayout().setRatioMode(TeILayout::RATIO_MODE_NONE);
+		} else {
+			app->backLayout().setRatioMode(TeILayout::RATIO_MODE_LETTERBOX);
+			app->backLayout().setRatio(1.333333f);
+			app->frontLayout().setRatioMode(TeILayout::RATIO_MODE_LETTERBOX);
+			app->frontLayout().setRatio(1.333333f);
+		}
+	}
 	return false;
 }
 
