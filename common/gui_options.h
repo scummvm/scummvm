@@ -22,6 +22,11 @@
 #ifndef COMMON_GUI_OPTIONS_H
 #define COMMON_GUI_OPTIONS_H
 
+// This is an equivalent of an enum. Feel free to renumerate them
+// They are used only internally for making lookups cheaper and for
+// possibility to concatenate them as codes to the detection tables
+// See the GUIOnn() macros below
+
 #define GUIO_NONE            "\x00"
 #define GUIO_NOSUBTITLES     "\x01"
 #define GUIO_NOMUSIC         "\x02"
@@ -58,50 +63,51 @@
 #define GUIO_RENDERAPPLE2GS		"\x21"
 #define GUIO_RENDERATARIST		"\x22"
 #define GUIO_RENDERMACINTOSH	"\x23"
-#define GUIO_RENDERMACINTOSHBW	"\x28"	// Setting this to 0x28 is not ideal, but there is no free slot left. Maybe we need to migrate to 3-digit numbers...
-#define GUIO_RENDERCGACOMP		"\x29"
-#define GUIO_RENDERCGABW		"\x2a"
+#define GUIO_RENDERMACINTOSHBW	"\x24"
+#define GUIO_RENDERCGACOMP		"\x25"
+#define GUIO_RENDERCGABW		"\x26"
 
-#define GUIO_LINKSPEECHTOSFX "\x24"
-#define GUIO_LINKMUSICTOSFX  "\x25"
-#define GUIO_NOSPEECHVOLUME  "\x26"
+#define GUIO_LINKSPEECHTOSFX "\x30"
+#define GUIO_LINKMUSICTOSFX  "\x31"
+#define GUIO_NOSPEECHVOLUME  "\x32"
 
-#define GUIO_NOLANG          "\x27"
+#define GUIO_NOLANG          "\x33"
 
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
-#define GUIO_GAMEOPTIONS1    "\x30"
-#define GUIO_GAMEOPTIONS2    "\x31"
-#define GUIO_GAMEOPTIONS3    "\x32"
-#define GUIO_GAMEOPTIONS4    "\x33"
-#define GUIO_GAMEOPTIONS5    "\x34"
-#define GUIO_GAMEOPTIONS6    "\x35"
-#define GUIO_GAMEOPTIONS7    "\x36"
-#define GUIO_GAMEOPTIONS8    "\x37"
-#define GUIO_GAMEOPTIONS9    "\x38"
-#define GUIO_GAMEOPTIONS10   "\x39"
-#define GUIO_GAMEOPTIONS11   "\x3a"
-#define GUIO_GAMEOPTIONS12   "\x3b"
-#define GUIO_GAMEOPTIONS13   "\x3c"
-#define GUIO_GAMEOPTIONS14   "\x3d"
-#define GUIO_GAMEOPTIONS15   "\x3e"
-#define GUIO_GAMEOPTIONS16   "\x3f"
-#define GUIO_GAMEOPTIONS17   "\x40"
-#define GUIO_GAMEOPTIONS18   "\x41"
-#define GUIO_GAMEOPTIONS19   "\x42"
-#define GUIO_GAMEOPTIONS20   "\x43"
-#define GUIO_GAMEOPTIONS21   "\x44"
-#define GUIO_GAMEOPTIONS22   "\x45"
-#define GUIO_GAMEOPTIONS23   "\x46"
-#define GUIO_GAMEOPTIONS24   "\x47"
-#define GUIO_GAMEOPTIONS25   "\x48"
-#define GUIO_GAMEOPTIONS26   "\x49"
-#define GUIO_GAMEOPTIONS27   "\x4a"
-#define GUIO_GAMEOPTIONS28   "\x4b"
-#define GUIO_GAMEOPTIONS29   "\x4c"
-#define GUIO_GAMEOPTIONS30   "\x4d"
-#define GUIO_GAMEOPTIONS31   "\x4e"
-#define GUIO_GAMEOPTIONS32   "\x4f"
+// Putting them to the end of the range so less renumerations required
+#define GUIO_GAMEOPTIONS1    "\xe0"
+#define GUIO_GAMEOPTIONS2    "\xe1"
+#define GUIO_GAMEOPTIONS3    "\xe2"
+#define GUIO_GAMEOPTIONS4    "\xe3"
+#define GUIO_GAMEOPTIONS5    "\xe4"
+#define GUIO_GAMEOPTIONS6    "\xe5"
+#define GUIO_GAMEOPTIONS7    "\xe6"
+#define GUIO_GAMEOPTIONS8    "\xe7"
+#define GUIO_GAMEOPTIONS9    "\xe8"
+#define GUIO_GAMEOPTIONS10   "\xe9"
+#define GUIO_GAMEOPTIONS11   "\xea"
+#define GUIO_GAMEOPTIONS12   "\xeb"
+#define GUIO_GAMEOPTIONS13   "\xec"
+#define GUIO_GAMEOPTIONS14   "\xed"
+#define GUIO_GAMEOPTIONS15   "\xee"
+#define GUIO_GAMEOPTIONS16   "\xef"
+#define GUIO_GAMEOPTIONS17   "\xf0"
+#define GUIO_GAMEOPTIONS18   "\xf1"
+#define GUIO_GAMEOPTIONS19   "\xf2"
+#define GUIO_GAMEOPTIONS20   "\xf3"
+#define GUIO_GAMEOPTIONS21   "\xf4"
+#define GUIO_GAMEOPTIONS22   "\xf5"
+#define GUIO_GAMEOPTIONS23   "\xf6"
+#define GUIO_GAMEOPTIONS24   "\xf7"
+#define GUIO_GAMEOPTIONS25   "\xf8"
+#define GUIO_GAMEOPTIONS26   "\xf9"
+#define GUIO_GAMEOPTIONS27   "\xfa"
+#define GUIO_GAMEOPTIONS28   "\xfb"
+#define GUIO_GAMEOPTIONS29   "\xfc"
+#define GUIO_GAMEOPTIONS30   "\xfd"
+#define GUIO_GAMEOPTIONS31   "\xfe"
+#define GUIO_GAMEOPTIONS32   "\xff"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
