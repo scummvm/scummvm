@@ -20,26 +20,47 @@
  */
 
 #include "common/events.h"
+#include "common/file.h"
 #include "engines/util.h"
 #include "video/qt_decoder.h"
 #include "video/qt_data.h"
 
 #include "testbed/testbed.h"
+#include "testbed/video.h"
 #include "graphics/palette.h"
+#include "gui/browser.h"
 
 namespace Testbed {
 
-void TestbedEngine::videoTest() {
+Common::Error Videotests::videoTest(const Common::Path &path) {
+	Common::File *file = new Common::File();
+	if (!file->open(path)) {
+		warning("Cannot open file %s", path.toString().c_str());
+		return Common::kNoGameDataFoundError;
+	}
+	return videoTest(file, path.toString());
+}
+
+Common::Error Videotests::videoTest(const Common::FSNode &node) {
+	Common::SeekableReadStream *stream = node.createReadStream();
+	if (!stream) {
+		warning("Cannot open file %s", node.getName().c_str());
+		return Common::kNoGameDataFoundError;
+	}
+
+	return videoTest(stream, node.getName());
+}
+
+Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Common::String &name) {
 	Graphics::PixelFormat pixelformat = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(640, 480, &pixelformat);
 
-	Common::String path = ConfMan.get("start_movie");
-
 	Video::VideoDecoder *video = new Video::QuickTimeDecoder();
-
-	if (!video->loadFile(path)) {
-		warning("Cannot open video %s", path.c_str());
-		return;
+	if (!video->loadStream(stream)) {
+		warning("Cannot open video %s", name.c_str());
+		delete stream;
+		delete video;
+		return Common::kReadingFailed;
 	}
 
 	const byte *palette = video->getPalette();
@@ -54,7 +75,7 @@ void TestbedEngine::videoTest() {
 	while (!video->endOfVideo()) {
 		if (video->needsUpdate()) {
 			uint32 pos = video->getTime();
-			warning("video time: %d", pos);
+			debug(5, "video time: %d", pos);
 
 			const Graphics::Surface *frame = video->decodeNextFrame();
 			if (frame) {
@@ -78,7 +99,7 @@ void TestbedEngine::videoTest() {
 				if (Engine::shouldQuit()) {
 					video->close();
 					delete video;
-					return;
+					return Common::kNoError;
 				}
 			}
 			g_system->updateScreen();
@@ -87,6 +108,54 @@ void TestbedEngine::videoTest() {
 	}
 	video->close();
 	delete video;
+
+	return Common::kNoError;
 }
 
+TestExitStatus Videotests::testPlayback() {
+	Testsuite::clearScreen();
+	Common::String info = "Video playback test. A QuickTime video should be selected using the file browser, and it'll be played on the screen.";
+
+	Common::Point pt(0, 100);
+	Testsuite::writeOnScreen("Testing video playback", pt);
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : testPlayback\n");
+		return kTestSkipped;
+	}
+
+	GUI::BrowserDialog browser(Common::U32String("Select video file"), false);
+
+	if (browser.runModal() <= 0) {
+		Testsuite::logPrintf("Info! Skipping test : testPlayback\n");
+		return kTestSkipped;
+	}
+
+	byte palette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+
+	Common::Error error = videoTest(browser.getResult());
+
+	initGraphics(320, 200);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+	if (error.getCode() != Common::kNoError) {
+		Testsuite::logDetailedPrintf("Video playback failed: %s\n", error.getDesc().c_str());
+		return kTestFailed;
+	}
+
+	Common::String prompt = "Did the video display correctly?";
+	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
+		Testsuite::logDetailedPrintf("Video playback failed\n");
+		return kTestFailed;
+	}
+
+	return kTestPassed;
 }
+
+VideoDecoderTestSuite::VideoDecoderTestSuite() {
+	_isTsEnabled = false;
+	addTest("testPlayback", &Videotests::testPlayback, true);
+}
+
+} // End of namespace Testbed
