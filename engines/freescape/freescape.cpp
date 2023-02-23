@@ -833,7 +833,7 @@ void FreescapeEngine::loadDataBundle() {
 	char *versionData = (char *)malloc((versionFile->size() + 1) * sizeof(char));
 	versionFile->read(versionData, versionFile->size());
 	versionData[versionFile->size()] = '\0';
-	Common::String expectedVersion = "1";
+	Common::String expectedVersion = "2";
 	if (versionData != expectedVersion)
 		error("Unexpected version number for freescape.dat: expecting '%s' but found '%s'", expectedVersion.c_str(), versionData);
 	free(versionData);

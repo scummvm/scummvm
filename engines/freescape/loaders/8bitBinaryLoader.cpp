@@ -323,9 +323,9 @@ byte kEGADefaultPaletteData[16][3] = {
 	{0x00, 0x00, 0x00}
 };
 
-uint32 FreescapeEngine::getPixel8bitImage(int index) {
+uint32 FreescapeEngine::getPixel8bitTitleImage(int index) {
 	uint8 r, g, b;
-	if (index < 4) {
+	if (index < 4 || _renderMode == Common::kRenderEGA) {
 		_gfx->readFromPalette(index, r, g, b);
 		return _gfx->_currentPixelFormat.ARGBToColor(0xFF, r, g, b);
 	}
@@ -341,35 +341,42 @@ void FreescapeEngine::renderPixels8bitTitleImage(Graphics::Surface *surface, int
 		return;
 	}
 
-	surface->setPixel(i, j, getPixel8bitImage(c1 / 4));
+	if (_renderMode == Common::kRenderCGA) {
+		surface->setPixel(i, j, getPixel8bitTitleImage(c1 / 4));
+		i++;
+		if (i == 320) {
+			return;
+		}
+	}
+
+	surface->setPixel(i, j, getPixel8bitTitleImage(c1));
 	i++;
 
 	if (i == 320) {
 		return;
 	}
 
-	surface->setPixel(i, j, getPixel8bitImage(c1));
-	i++;
+	if (_renderMode == Common::kRenderCGA) {
+		surface->setPixel(i, j, getPixel8bitTitleImage(c2 / 4));
+		i++;
 
-	if (i == 320) {
-		return;
+		if (i == 320) {
+			return;
+		}
 	}
 
-	surface->setPixel(i, j, getPixel8bitImage(c2 / 4));
-	i++;
-
-	if (i == 320) {
-		return;
-	}
-
-	surface->setPixel(i, j, getPixel8bitImage(c2));
+	surface->setPixel(i, j, getPixel8bitTitleImage(c2));
 	i++;
 }
 
 Graphics::Surface *FreescapeEngine::load8bitTitleImage(Common::SeekableReadStream *file, int offset) {
 	Graphics::Surface *surface = new Graphics::Surface();
-	assert(_renderMode == Common::kRenderCGA);
-	_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
+	if (_renderMode == Common::kRenderCGA)
+		_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
+	else if (_renderMode == Common::kRenderEGA)
+		_gfx->_palette = (byte *)kEGADefaultPaletteData;
+	else
+		error("Invalid render mode: %d", _renderMode);
 	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
 	uint32 black = _gfx->_currentPixelFormat.ARGBToColor(0xFF, 0, 0, 0);
 	surface->fillRect(Common::Rect(0, 0, 320, 200), black);
