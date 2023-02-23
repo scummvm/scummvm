@@ -40,6 +40,7 @@
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
 #include "testbed/testbed.h"
+#include "testbed/video.h"
 #ifdef USE_CLOUD
 #include "testbed/cloud.h"
 #endif
@@ -166,6 +167,9 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	ts = new WebserverTestSuite();
 	testsuiteList.push_back(ts);
 #endif
+	// Video decoder
+	ts = new VideoDecoderTestSuite();
+	testsuiteList.push_back(ts);
 }
 
 TestbedEngine::~TestbedEngine() {
@@ -213,8 +217,7 @@ void TestbedEngine::checkForAllAchievements() {
 
 Common::Error TestbedEngine::run() {
 	if (ConfMan.hasKey("start_movie")) {
-		videoTest();
-		return Common::kNoError;
+		return Videotests::videoTest(ConfMan.get("start_movie"));
 	}
 
 	// Initialize graphics using following:
