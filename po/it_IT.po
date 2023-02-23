@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-02-15 07:25+0000\n"
-"PO-Revision-Date: 2023-02-06 10:22+0000\n"
+"PO-Revision-Date: 2023-02-23 20:42+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -2369,6 +2369,27 @@ msgid ""
 "\n"
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
+"In questa nuova versione di ScummVM, sono stati apportati cambiamenti "
+"significativi al sistema di accesso ai file, al fine di supportare le "
+"versioni più recenti del sistema\n"
+"operativo Android. Se i giochi precedentemente aggiunti non risultano più "
+"avviabili, modifica il percorso di ciascun gioco utilizzando la funzionalità "
+"SAF per navigare il filesystem.\n"
+"Per fare ciò:\n"
+"\n"
+"  1. Per ciascun gioco che non risulata avviabile, apri la scheda \"Percorsi"
+"\" nelle \"Opzioni Gioco\" e seleziona \"Percorso Gioco\".\n"
+"  2. Utilizzando il file manager di ScummVM, seleziona \"Cartella Superiore\""
+", fino a raggiungere la \"root\", dove comparirà l'opzione \"Aggiungi "
+"cartella\".\n"
+"  3. Seleziona l'opzione suddetta, quindi naviga fino alla cartella "
+"contenente le sottocartelle con i tuoi giochi, per es. \"SD Card > "
+"MieiGiochi\". Seleziona \"Usa questa cartella\".\n"
+"  4. Apparirà quindi una nuova cartella \"MieiGiochi\" nella \"root\" nel "
+"file manager di ScummVM.\n"
+"  5. Naviga in questa cartella fino ai gioco che intendi aggiungere.\n"
+"\n"
+"I passi 2 e 3 devono essere eseguiti una sola volta."
 
 #: base/main.cpp:705 base/main.cpp:726
 #: engines/director/lingo/lingo-builtins.cpp:1185
@@ -2379,7 +2400,7 @@ msgstr "Ok"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:707 base/main.cpp:728
 msgid "Read Later"
-msgstr ""
+msgstr "Leggi più tardi"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:714
@@ -2397,6 +2418,21 @@ msgid ""
 "the ScummVM browser.\n"
 "  4. Browse through this folder to your game data."
 msgstr ""
+"In questa nuova versione di ScummVM, sono stati apportati cambiamenti "
+"significativi al sistema di accesso ai file, al fine di supportare le "
+"versioni più recenti del sistema\n"
+"operativo Android. Pertanto è necessario configurare la funzionalità SAF per "
+"poter aggiungere i giochi.\n"
+"\n"
+"  1. Utilizzando il file manager di ScummVM, seleziona \"Cartella Superiore\""
+", fino a raggiungere la \"root\", dove comparirà l'opzione \"Aggiungi "
+"cartella\".\n"
+"  2. Seleziona l'opzione suddetta, quindi naviga fino alla cartella "
+"contenente le sottocartelle con i tuoi giochi, per es. \"SD Card > "
+"MieiGiochi\". Seleziona \"Usa questa cartella\".\n"
+"  3. Apparirà quindi una nuova cartella \"MieiGiochi\" nella \"root\" nel "
+"file manager di ScummVM.\n"
+"  4. Naviga in questa cartella fino ai giochi che intendi aggiungere."
 
 #: base/main.cpp:824
 msgid "Error running game:"
@@ -3222,16 +3258,14 @@ msgstr "Touchscreen 'Tap Mode' - Passaggio del cursore (clic DPad)"
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:664
-#, fuzzy
-#| msgid "Choose file for loading"
 msgid "Choose a new folder"
-msgstr "Seleziona il file da caricare"
+msgstr "Seleziona cartella"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.h:173
 #: backends/fs/android/android-saf-fs.h:174
 msgid "Add a new folder"
-msgstr ""
+msgstr "Aggiungi cartella"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:253
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3935,10 +3969,8 @@ msgstr "Nei giochi 3D"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
-#, fuzzy
-#| msgid "Forget SAF authorization"
 msgid "Remove folder authorizations..."
-msgstr "Rimuovi autorizzazioni SAF"
+msgstr "Rimuovi autorizzazioni cartelle..."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
