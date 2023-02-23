@@ -81,8 +81,6 @@ void CastSpell::draw() {
 bool CastSpell::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_c) {
 		// Cast a spell
-		const Character &c = *g_globals->_currCharacter;
-
 		if (!canCast()) {
 			close();
 			spellError();
@@ -148,7 +146,10 @@ void CastSpell::castSpell(Character *target) {
 }
 
 void CastSpell::spellError() {
-	warning("TODO: spell error");
+	g_events->drawElements();
+
+	Common::String msg = getSpellError();
+	send(SoundMessage(msg));
 }
 
 } // namespace Spells
