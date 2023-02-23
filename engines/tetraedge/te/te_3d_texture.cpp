@@ -28,10 +28,10 @@
 
 namespace Tetraedge {
 
-Te3DTexture::Te3DTexture() : _createdTexture(false),
-_numFrames(1), _frameRate(0), _format(TeImage::INVALID), _loaded(false),
-_width(0), _height(0), _texHeight(0), _texWidth(0), _topBorder(0), _leftBorder(0),
-_rightBorder(0), _btmBorder(0), _flipY(false), _alphaOnly(false) {
+Te3DTexture::Te3DTexture() : _createdTexture(false), _format(TeImage::INVALID),
+_loaded(false), _width(0), _height(0), _texHeight(0), _texWidth(0),
+_topBorder(0), _leftBorder(0), _rightBorder(0), _btmBorder(0),
+_flipY(false), _alphaOnly(false) {
 }
 
 Te3DTexture::~Te3DTexture() {

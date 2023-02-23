@@ -71,8 +71,6 @@ public:
 protected:
 	uint _width;
 	uint _height;
-	int _numFrames;
-	int _frameRate;
 	TeImage::Format _format;
 	bool _createdTexture;
 	bool _loaded;
