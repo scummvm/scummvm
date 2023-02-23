@@ -324,6 +324,10 @@ void SoundManager::playSound(uint16 channelID) {
 						channelID,
 						chan.volume * 255 / 100,
 						0, DisposeAfterUse::NO);
+
+	if (chan.isPanning) {
+		calculatePan(channelID);
+	}
 }
 
 void SoundManager::playSound(const SoundDescription &description) {
@@ -411,58 +415,68 @@ void SoundManager::stopAllSounds() {
 	}
 }
 
-void SoundManager::calculatePanForAllSounds() {
+void SoundManager::calculatePan(uint16 channelID) {
 	uint16 viewportFrameID = NancySceneState.getSceneInfo().frameID;
 	const State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
-	for (uint i = 0; i < 31; ++i) {
-		Channel &chan = _channels[i];
-		if (chan.isPanning) {
-			switch (sceneSummary.totalViewAngle) {
-			case 180:
-				_mixer->setChannelBalance(chan.handle, CLIP<int32>((viewportFrameID - chan.panAnchorFrame) * sceneSummary.soundPanPerFrame * 364, -32768, 32767) / 256);
-				break;
-			case 360: {
-				int16 adjustedViewportFrame = viewportFrameID - chan.panAnchorFrame;
-				if (adjustedViewportFrame < 0) {
-					adjustedViewportFrame += sceneSummary.numberOfVideoFrames;
-				}
-
-				// Divide the virtual space into quarters
-				uint16 q1 = sceneSummary.numberOfVideoFrames / 4;
-				uint16 q2 = sceneSummary.numberOfVideoFrames / 2;
-				uint16 q3 = sceneSummary.numberOfVideoFrames * 3 / 4;
-				
-				float balance;
-
-				if (adjustedViewportFrame < q1) {
-					balance = (float)adjustedViewportFrame / q1;
-					balance *= 32767;
-					balance = 32768 - balance;
-				} else if (adjustedViewportFrame < q2) {
-					balance = (float)(adjustedViewportFrame - q1) / q1;
-					balance *= 32767;
-				} else if (adjustedViewportFrame < q3) {
-					balance = (float)(adjustedViewportFrame - q2) / q1;
-					balance *= 32767;
-					balance += 32768;
-				} else {
-					balance = (float)(adjustedViewportFrame - q3) / q1;
-					balance *= 32767;
-					balance = 65535 - balance;
-				}
-				
-				// The original engine's algorithm is broken and results in flipped
-				// stereo; the following line fixes this bug
-				balance = 65535 - balance;
-
-				_mixer->setChannelBalance(chan.handle, (balance - 32768) / 256);
-				break;
-				}
-			default:
-				_mixer->setChannelBalance(chan.handle, 0);
-				break;
+	Channel &chan = _channels[channelID];
+	if (chan.isPanning) {
+		switch (sceneSummary.totalViewAngle) {
+		case 180:
+			_mixer->setChannelBalance(chan.handle, CLIP<int32>((viewportFrameID - chan.panAnchorFrame) * sceneSummary.soundPanPerFrame * 364, -32768, 32767) / 256);
+			break;
+		case 360: {
+			int16 adjustedViewportFrame = viewportFrameID - chan.panAnchorFrame;
+			if (adjustedViewportFrame < 0) {
+				adjustedViewportFrame += sceneSummary.numberOfVideoFrames;
 			}
+
+			// Divide the virtual space into quarters
+			uint16 q1 = sceneSummary.numberOfVideoFrames / 4;
+			uint16 q2 = sceneSummary.numberOfVideoFrames / 2;
+			uint16 q3 = sceneSummary.numberOfVideoFrames * 3 / 4;
+			
+			float balance;
+
+			if (adjustedViewportFrame < q1) {
+				balance = (float)adjustedViewportFrame / q1;
+				balance *= 32767;
+				balance = 32768 - balance;
+			} else if (adjustedViewportFrame < q2) {
+				balance = (float)(adjustedViewportFrame - q1) / q1;
+				balance *= 32767;
+			} else if (adjustedViewportFrame < q3) {
+				balance = (float)(adjustedViewportFrame - q2) / q1;
+				balance *= 32767;
+				balance += 32768;
+			} else {
+				balance = (float)(adjustedViewportFrame - q3) / q1;
+				balance *= 32767;
+				balance = 65535 - balance;
+			}
+			
+			// The original engine's algorithm is broken and results in flipped
+			// stereo; the following line fixes this bug
+			balance = 65535 - balance;
+
+			_mixer->setChannelBalance(chan.handle, (balance - 32768) / 256);
+			break;
+			}
+		default:
+			_mixer->setChannelBalance(chan.handle, 0);
+			break;
 		}
+	}
+}
+
+void SoundManager::calculatePan(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		calculatePan(description.channelID);
+	}
+}
+
+void SoundManager::calculatePanForAllSounds() {
+	for (uint i = 0; i < 31; ++i) {
+		calculatePan(i);
 	}
 }
 

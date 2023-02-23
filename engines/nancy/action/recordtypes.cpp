@@ -552,7 +552,6 @@ void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream)
 void PlaySoundPanFrameAnchorAndDie::execute() {
 	g_nancy->_sound->loadSound(_sound, true);
 	g_nancy->_sound->playSound(_sound);
-	g_nancy->_sound->calculatePanForAllSounds();
 	_isDone = true;
 }
 
