@@ -6,7 +6,8 @@ MODULE_OBJS := \
 	freescape.o \
 	games/castle.o \
 	games/dark.o \
-	games/driller.o \
+	games/driller/dos.o \
+	games/driller/driller.o \
 	games/eclipse.o \
 	games/palettes.o \
 	gfx.o \

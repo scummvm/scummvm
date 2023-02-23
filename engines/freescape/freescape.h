@@ -165,16 +165,12 @@ public:
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
 	Object *load8bitObject(Common::SeekableReadStream *file);
-	void renderPixels8bitTitleImage(Graphics::Surface *surface, int &i, int &j, int pixels);
 	void renderPixels8bitBinImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
 
 	void renderPixels8bitBinCGAImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
 	void renderPixels8bitBinEGAImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
 
-	uint32 getPixel8bitTitleImage(int index);
 	Graphics::Surface *load8bitBinImage(Common::SeekableReadStream *file, int offset);
-	Graphics::Surface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
-
 
 	// Areas
 	uint16 _startArea;
@@ -448,6 +444,10 @@ private:
 	void drawCPCUI(Graphics::Surface *surface);
 	void drawC64UI(Graphics::Surface *surface);
 	void drawAmigaAtariSTUI(Graphics::Surface *surface);
+
+	Graphics::Surface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
+	uint32 getPixel8bitTitleImage(int index);
+	void renderPixels8bitTitleImage(Graphics::Surface *surface, int &i, int &j, int pixels);
 };
 
 class DarkEngine : public FreescapeEngine {
