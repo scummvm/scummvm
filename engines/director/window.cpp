@@ -297,6 +297,8 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 		// Clear those previous widget pointers
 		previousSharedCast->releaseCastMemberWidget();
 		_currentMovie->_sharedCast = previousSharedCast;
+
+		debugC(1, kDebugLoading, "Skipping loading already loaded shared cast, path: %s", previousSharedCastPath.c_str());
 		return;
 	}
 
