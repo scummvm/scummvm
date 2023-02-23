@@ -106,7 +106,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	else if (isAmiga() || isAtariST())
 		_viewArea = Common::Rect(36, 16, 284, 118);
 	else if (isSpectrum())
-		_viewArea = Common::Rect(58, 20, 266, 124);
+		_viewArea = Common::Rect(56, 20, 264, 124);
 	else if (isCPC())
 		_viewArea = Common::Rect(36, 19, 284, 120);
 	else if (isC64())
@@ -1037,30 +1037,30 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 176, 188, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 152, 149, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 152, 157, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 152, 165, front, back, surface);
+	drawStringInSurface(_currentArea->_name, 174, 188, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 157, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 165, front, back, surface);
 	if (_playerHeightNumber >= 0)
-		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 74, 165, front, back, surface);
+		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 72, 165, front, back, surface);
 	else
-		drawStringInSurface(Common::String::format("%s", "J"), 74, 165, front, back, surface);
+		drawStringInSurface(Common::String::format("%s", "J"), 72, 165, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 64, 149, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 65, 157, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 217, 133, white, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 62, 149, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 63, 157, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 215, 133, white, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
-	drawStringInSurface(Common::String::format("%02d", hours), 187, 12, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", minutes), 209, 12, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 232, 12, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", hours), 185, 12, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", minutes), 207, 12, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 230, 12, front, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 169, 181, back, front, surface);
+		drawStringInSurface(message, 167, 181, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else {
@@ -1071,24 +1071,24 @@ void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 		else
 			message = _messagesList[1];
 
-		drawStringInSurface(message, 169, 181, front, back, surface);
+		drawStringInSurface(message, 167, 181, front, back, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
 
 	if (energy >= 0) {
-		Common::Rect backBar(45, 188, 109 - energy, 194);
+		Common::Rect backBar(43, 188, 107 - energy, 194);
 		surface->fillRect(backBar, back);
-		Common::Rect energyBar(108 - energy, 188, 108, 194);
+		Common::Rect energyBar(106 - energy, 188, 106, 194);
 		surface->fillRect(energyBar, front);
 	}
 
 	if (shield >= 0) {
-		Common::Rect backBar(45, 181, 109 - shield, 187);
+		Common::Rect backBar(43, 181, 107 - shield, 187);
 		surface->fillRect(backBar, back);
 
-		Common::Rect shieldBar(108 - shield, 181, 108, 187);
+		Common::Rect shieldBar(106 - shield, 181, 106, 187);
 		surface->fillRect(shieldBar, front);
 	}
 }
