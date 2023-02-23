@@ -171,7 +171,7 @@ public:
 	void renderPixels8bitBinCGAImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
 	void renderPixels8bitBinEGAImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
 
-	uint32 getPixel8bitImage(int index);
+	uint32 getPixel8bitTitleImage(int index);
 	Graphics::Surface *load8bitBinImage(Common::SeekableReadStream *file, int offset);
 	Graphics::Surface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
 

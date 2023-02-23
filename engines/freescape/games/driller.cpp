@@ -667,6 +667,12 @@ void DrillerEngine::loadAssetsFullGame() {
 			_title = load8bitBinImage(&file, 0x0);
 		}
 		file.close();
+		file.open("EGATITLE.RL");
+		if (file.isOpen()) {
+			_title = load8bitTitleImage(&file, 0x1b3);
+		}
+		file.close();
+
 		file.open("DRILLE.EXE");
 
 		if (!file.isOpen())
