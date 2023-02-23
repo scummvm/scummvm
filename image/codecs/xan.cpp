@@ -51,22 +51,31 @@ namespace Image {
 static const int SCRATCH_SPARE = 256;
 
 XanDecoder::XanDecoder(int width, int height, int bitsPerPixel) : Codec(),
-		_width(width), _height(height), _wc4Mode(false) {
+		_width(width), _height(height), _wc4Mode(false), _surface(nullptr) {
 	assert(bitsPerPixel == 16);
 	if (bitsPerPixel != 16)
 		error("XanDecoder: BPP must be 16 not %d", bitsPerPixel);
 	if (width % 2)
 		error("XanDecoder: width must be even, not %d", width);
-	_surface.create(_width, _height, getPixelFormat());
 	_scratchbuf = new uint8[_width * _height + SCRATCH_SPARE]();
 	_lumabuf = new uint8[_width * _height]();
 	_ybuf = new uint8[_width * _height]();
 	_ubuf = new uint8[_width * _height / 2]();
 	_vbuf = new uint8[_width * _height / 2]();
+
+	_pixelFormat = g_system->getScreenFormat();
+
+	// Default to a 32bpp format, if in 8bpp mode
+	if (_pixelFormat.bytesPerPixel == 1)
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 }
 
 XanDecoder::~XanDecoder() {
-	_surface.free();
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+		_surface = nullptr;
+	}
 	delete [] _scratchbuf;
 	delete [] _lumabuf;
 	delete [] _ybuf;
@@ -86,7 +95,7 @@ const Graphics::Surface *XanDecoder::decodeFrame(Common::SeekableReadStream &str
 		decodeFrameType1(stream);
 	}
 
-	return &_surface;
+	return _surface;
 }
 
 // An unoptimized version of the one from libavutil, but works fine
@@ -319,7 +328,7 @@ void XanDecoder::decodeFrameType0(Common::SeekableReadStream &stream) {
 	lumarow[0] = last * 2;
 	int x;
 	// The top row uses only the left value for prediction
-	for (x = 1; x < _surface.w - 1; x += 2) {
+	for (x = 1; x < _width - 1; x += 2) {
 		int cur = (last + *lumadecomp++) & 0x1F;
 		lumarow[x] = last + cur;
 		lumarow[x + 1] = cur * 2;
@@ -327,13 +336,13 @@ void XanDecoder::decodeFrameType0(Common::SeekableReadStream &stream) {
 	}
 	lumarow[x] = last * 2;
 	uint8 const *last_lumarow = lumarow;
-	lumarow += _surface.w;
+	lumarow += _width;
 
 	// The remaining rows
-	for (int y = 1; y < _surface.h; y++) {
+	for (int y = 1; y < _height; y++) {
 		last = ((last_lumarow[0] / 2) + *lumadecomp++) & 0x1F;
 		lumarow[0] = last * 2;
-		for (x = 1; x < _surface.w - 1; x += 2) {
+		for (x = 1; x < _width - 1; x += 2) {
 			int cur = ((last_lumarow[x + 1] / 2) + *lumadecomp++) & 0x1F;
 			lumarow[x] = last + cur;
 			lumarow[x + 1] = cur * 2;
@@ -341,7 +350,7 @@ void XanDecoder::decodeFrameType0(Common::SeekableReadStream &stream) {
 		}
 		lumarow[x] = last * 2;
 		last_lumarow = lumarow;
-		lumarow += _surface.w;
+		lumarow += _width;
 	}
 
 	if (refines_offset) {
@@ -390,18 +399,18 @@ void XanDecoder::decodeFrameType1(Common::SeekableReadStream &stream) {
 	//
 	const uint8 *lumadecomp = _scratchbuf;
 	uint8 *lumarow = _lumabuf;
-	for (int y = 0; y < _surface.h; y++) {
+	for (int y = 0; y < _height; y++) {
 		int x;
 		int last = (lumarow[0] + (*lumadecomp++ * 2)) & 0x3F;
 		lumarow[0] = last;
-		for (x = 1; x < _surface.w - 1; x += 2) {
+		for (x = 1; x < _width - 1; x += 2) {
 			int cur = (lumarow[x + 1] + (*lumadecomp++ * 2)) & 0x3F;
 			lumarow[x] = (last + cur) / 2;
 			lumarow[x + 1] = cur;
 			last = cur;
 		}
 		lumarow[x] = last;
-		lumarow += _surface.w;
+		lumarow += _width;
 	}
 
 	if (refines_offset) {
@@ -446,7 +455,7 @@ void XanDecoder::decompressLuma(Common::SeekableReadStream &stream) {
 	const int eofsymbol = stream.readByte();
 
 	const int root = nsymbols + eofsymbol;
-	const uint8 *lumaend = _scratchbuf + _surface.w * _surface.h;
+	const uint8 *lumaend = _scratchbuf + _width * _height;
 
 	stream.skip(nsymbols * 2);
 
@@ -485,12 +494,13 @@ void XanDecoder::convertYUVtoRGBSurface() {
 	for (int i = 0; i < _width * _height; i++)
 		_ybuf[i] = _lumabuf[i] << 2 | _lumabuf[i] >> 4;
 
-	YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleFull,
-						   _ybuf, _ubuf, _vbuf, _width, (_height / 2) * 2, _width, _width / 2);
-}
+	if (!_surface) {
+		_surface = new Graphics::Surface;
+		_surface->create(_width, _height, _pixelFormat);
+	}
 
-Graphics::PixelFormat XanDecoder::getPixelFormat() const {
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	YUVToRGBMan.convert420(_surface, Graphics::YUVToRGBManager::kScaleFull,
+						   _ybuf, _ubuf, _vbuf, _width, (_height / 2) * 2, _width, _width / 2);
 }
 
 } // End of namespace Image

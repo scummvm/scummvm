@@ -46,7 +46,7 @@ public:
 	~XanDecoder() override;
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
-	Graphics::PixelFormat getPixelFormat() const override;
+	Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
 
 private:
 	void decodeFrameType0(Common::SeekableReadStream &stream);
@@ -60,11 +60,14 @@ private:
 	/** convert the internally expanded YUV to the output RGBA surface */
 	void convertYUVtoRGBSurface();
 
-	/** A buffer to hold the final frame in RGBA */
-	Graphics::Surface _surface;
+	/** A buffer to hold the final frame */
+	Graphics::Surface *_surface;
 
 	/** Dest surface width and height */
 	int _width, _height;
+
+	/** Dest surface pixel format */
+	Graphics::PixelFormat _pixelFormat;
 
 	/** If true, decode chroma vals in Wing Commander 4 style (false = No Regret style) */
 	bool _wc4Mode;
