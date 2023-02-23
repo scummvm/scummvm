@@ -315,7 +315,7 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 bool Window::loadNextMovie() {
 	_soundManager->changingMovie();
 	_newMovieStarted = true;
-	_currentPath = getPath(_nextMovie.movie, _currentPath);
+	_currentPath = Common::firstPathComponents(_nextMovie.movie, g_director->_dirSeparator);
 
 	Cast *previousSharedCast = nullptr;
 	if (_currentMovie) {
