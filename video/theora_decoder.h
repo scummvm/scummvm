@@ -70,6 +70,9 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 
+	/** Frames per second of the loaded video. */
+	Common::Rational getFrameRate() const;
+
 protected:
 	void readNextPacket();
 

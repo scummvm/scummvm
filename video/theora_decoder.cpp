@@ -169,7 +169,6 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (_hasVideo) {
 		_videoTrack = new TheoraVideoTrack(getDefaultHighColorFormat(), theoraInfo, theoraSetup);
 		addTrack(_videoTrack);
-		setRate(_videoTrack->getFrameRate());
 	}
 
 	th_info_clear(&theoraInfo);
@@ -247,6 +246,12 @@ void TheoraDecoder::readNextPacket() {
 
 	// Then make sure we have enough audio buffered
 	ensureAudioBufferSize();
+}
+
+Common::Rational TheoraDecoder::getFrameRate() const {
+	if (_videoTrack)
+		return _videoTrack->getFrameRate();
+	return Common::Rational();
 }
 
 TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(const Graphics::PixelFormat &format, th_info &theoraInfo, th_setup_info *theoraSetup) {
