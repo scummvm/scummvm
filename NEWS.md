@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.7.1 (2023-XX-XX)
 
+ General:
+  - Fixed playback speed for Theora videos.
+
  HDB:
    - Fixed bug with inability to pick up red envelope with keyboard.
 
