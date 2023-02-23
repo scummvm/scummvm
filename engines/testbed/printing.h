@@ -22,6 +22,8 @@
 #ifndef TESTBED_PRINTING_H
 #define TESTBED_PRINTING_H
 
+#ifdef USE_PRINTING
+
 #include "testbed/testsuite.h"
 
 namespace Testbed {
@@ -51,4 +53,5 @@ public:
 
 } // End of namespace Testbed
 
+#endif // USE_PRINTING
 #endif // TESTBED_PRINTING_H

@@ -18,6 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifdef USE_PRINTING
+
 #include "base/version.h"
 
 #include "common/rect.h"
@@ -164,3 +167,4 @@ TestExitStatus PrintingTests::printGPL() {
 }
 
 } // End of namespace Testbed
+#endif

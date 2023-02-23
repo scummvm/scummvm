@@ -50,7 +50,9 @@
 #ifdef USE_TTS
 #include "testbed/speech.h"
 #endif
+#ifdef USE_PRINTING
 #include "testbed/printing.h"
+#endif
 
 namespace Testbed {
 
@@ -168,8 +170,11 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	ts = new WebserverTestSuite();
 	testsuiteList.push_back(ts);
 #endif
+#ifdef USE_PRINTING
+	// Printing
 	ts = new PrintingTestSuite();
 	testsuiteList.push_back(ts);
+#endif
 	// Video decoder
 	ts = new VideoDecoderTestSuite();
 	testsuiteList.push_back(ts);
