@@ -66,6 +66,9 @@
 #define GUIO_RENDERMACINTOSHBW	"\x24"
 #define GUIO_RENDERCGACOMP		"\x25"
 #define GUIO_RENDERCGABW		"\x26"
+#define GUIO_RENDERCPC      	"\x27"
+#define GUIO_RENDERZX	    	"\x28"
+#define GUIO_RENDERC64	    	"\x29"
 
 #define GUIO_LINKSPEECHTOSFX "\x30"
 #define GUIO_LINKMUSICTOSFX  "\x31"

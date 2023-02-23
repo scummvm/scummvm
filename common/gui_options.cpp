@@ -75,6 +75,9 @@ const struct GameOpt {
 	{ GUIO_RENDERATARIST,		"atari" },
 	{ GUIO_RENDERMACINTOSH,		"macintosh" },
 	{ GUIO_RENDERMACINTOSHBW,	"macintoshbw" },
+	{ GUIO_RENDERCPC,			"cpc" },
+	{ GUIO_RENDERZX,			"zx" },
+	{ GUIO_RENDERC64,			"c64" },
 
 	{ GUIO_GAMEOPTIONS1, "gameOption1" },
 	{ GUIO_GAMEOPTIONS2, "gameOption2" },
