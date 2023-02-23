@@ -66,4 +66,4 @@ public:
 
 } // End of namespace Testbed
 
-#endif // TESTBED_SPEECH_H
+#endif // TESTBED_VIDEO_H
