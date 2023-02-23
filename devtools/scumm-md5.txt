@@ -242,6 +242,7 @@ monkey	The Secret of Monkey Island
 	e17db1ddf91b39ca6bbc8ad3ed19e883	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
 	71523b539491527d9860f4407faf0411	7607	en	DOS	Demo	EGA Demo	-	Fingolfin
+	5cac06e42db6037ea491572682c4a004	7607	en	DOS	Demo	EGA Demo	non-contest demo	eientei95
 	771bc18ec6f93837b839c992b211904b	7607	de	DOS	Demo	EGA Demo	-	khalek
 	54a936ad06161ff7bfefcb96200f7bff	7617	en	Amiga	VGA Demo	Demo	-	khalek
 	c0c9de81fb965e6cbe77f6e5631ca705	9135	en	DOS	SE Talkie	Unofficial SE Talkie v1.02	lotharsm
