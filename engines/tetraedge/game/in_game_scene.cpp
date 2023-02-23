@@ -1382,8 +1382,8 @@ void InGameScene::moveCharacterTo(const Common::String &charName, const Common::
 }
 
 void InGameScene::onMainWindowSizeChanged() {
-	TeCamera *mainWinCam = g_engine->getApplication()->mainWindowCamera();
-	_viewportSize = mainWinCam->viewportSize();
+	TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
+	_viewportSize = TeVector2f32(winSize.x(), winSize.y());
 	Common::Array<TeIntrusivePtr<TeCamera>> &cams = cameras();
 	for (uint i = 0; i < cams.size(); i++) {
 		cams[i]->viewport(0, 0, _viewportSize.getX(), _viewportSize.getY());
