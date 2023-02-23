@@ -102,8 +102,9 @@ TestExitStatus PrintingTests::printTestPage() {
 
 	Common::Point pos;
 
-	job->drawBitmap(*logo, pos);
-	pos += Common::Point(0, logo->h);
+	Common::Rect logoArea(pos.x, pos.y, pos.x + logo->w * 4, pos.y+logo->h * 4);
+	job->drawBitmap(*logo, logoArea);
+	pos += Common::Point(0, logoArea.height());
 
 	job->drawText(gScummVMVersionDate, pos);
 	pos += Common::Point(0, job->getTextBounds(gScummVMVersionDate).height());
