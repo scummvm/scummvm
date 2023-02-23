@@ -461,6 +461,13 @@ Graphics::PixelFormat QuickTimeDecoder::VideoTrackHandler::getPixelFormat() cons
 	return ((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec->getPixelFormat();
 }
 
+bool QuickTimeDecoder::VideoTrackHandler::setOutputPixelFormat(const Graphics::PixelFormat &format) {
+	if (_forcedDitherPalette)
+		return false;
+
+	return ((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec->setOutputPixelFormat(format);
+}
+
 int QuickTimeDecoder::VideoTrackHandler::getFrameCount() const {
 	return _parent->frameCount;
 }

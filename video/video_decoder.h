@@ -397,6 +397,17 @@ public:
 	 */
 	bool setDitheringPalette(const byte *palette);
 
+	/**
+	 * Set the default high color format for videos that convert from YUV.
+	 *
+	 * This should be called after loadStream(), but before a decodeNextFrame()
+	 * call. This is enforced.
+	 *
+	 * @param format The preferred output pixel format
+	 * @return true on success, false otherwise
+	 */
+	bool setOutputPixelFormat(const Graphics::PixelFormat &format);
+
 	/////////////////////////////////////////
 	// Audio Control
 	/////////////////////////////////////////
@@ -576,6 +587,11 @@ protected:
 		 * Get the pixel format of this track
 		 */
 		virtual Graphics::PixelFormat getPixelFormat() const = 0;
+
+		/**
+		 * Set the default high color format for videos that convert from YUV.
+		 */
+		virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return false; }
 
 		/**
 		 * Get the current frame of this track
@@ -954,8 +970,9 @@ private:
 	mutable bool _dirtyPalette;
 	const byte *_palette;
 
-	// Enforcement of not being able to set dither
+	// Enforcement of not being able to set dither or set the default format
 	bool _canSetDither;
+	bool _canSetDefaultFormat;
 
 	// Default PixelFormat settings
 	Graphics::PixelFormat _defaultHighColorFormat;

@@ -135,6 +135,7 @@ private:
 		uint16 getWidth() const;
 		uint16 getHeight() const;
 		Graphics::PixelFormat getPixelFormat() const;
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format);
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const;
 		uint32 getNextFrameStartTime() const; // milliseconds

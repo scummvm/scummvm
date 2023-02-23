@@ -985,6 +985,13 @@ Graphics::PixelFormat AVIDecoder::AVIVideoTrack::getPixelFormat() const {
 	return Graphics::PixelFormat();
 }
 
+bool AVIDecoder::AVIVideoTrack::setOutputPixelFormat(const Graphics::PixelFormat &format) {
+	if (_videoCodec)
+		return _videoCodec->setOutputPixelFormat(format);
+
+	return false;
+}
+
 void AVIDecoder::AVIVideoTrack::loadPaletteFromChunkRaw(Common::SeekableReadStream *chunk, int firstEntry, int numEntries) {
 	assert(chunk);
 	assert(firstEntry >= 0);
