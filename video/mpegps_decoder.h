@@ -113,13 +113,14 @@ private:
 	// An MPEG 1/2 video track
 	class MPEGVideoTrack : public VideoTrack, public MPEGStream {
 	public:
-		MPEGVideoTrack(Common::SeekableReadStream *firstPacket, const Graphics::PixelFormat &format);
+		MPEGVideoTrack(Common::SeekableReadStream *firstPacket);
 		~MPEGVideoTrack();
 
 		bool endOfTrack() const { return _endOfTrack; }
 		uint16 getWidth() const;
 		uint16 getHeight() const;
 		Graphics::PixelFormat getPixelFormat() const;
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format);
 		int getCurFrame() const { return _curFrame; }
 		uint32 getNextFrameStartTime() const { return _nextFrameStartTime.msecs(); }
 		const Graphics::Surface *decodeNextFrame();
@@ -136,7 +137,11 @@ private:
 		Audio::Timestamp _nextFrameStartTime;
 		Graphics::Surface *_surface;
 
-		void findDimensions(Common::SeekableReadStream *firstPacket, const Graphics::PixelFormat &format);
+		uint16 _width;
+		uint16 _height;
+		Graphics::PixelFormat _pixelFormat;
+
+		void findDimensions(Common::SeekableReadStream *firstPacket);
 
 #ifdef USE_MPEG2
 		Image::MPEGDecoder *_mpegDecoder;
