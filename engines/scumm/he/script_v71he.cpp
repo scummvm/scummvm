@@ -410,10 +410,10 @@ void ScummEngine_v71he::o71_polygonOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 68: // HE 100
-	case 69: // HE 100
-	case 246:
-	case 248:
+	case ScummEngine_v100he::SO_SET_POLYGON: // HE 100
+	case ScummEngine_v100he::SO_SET_POLYGON_LOCAL: // HE 100
+	case SO_SET_POLYGON:
+	case SO_SET_POLYGON_LOCAL:
 		vert4y = pop();
 		vert4x = pop();
 		vert3y = pop();
@@ -422,12 +422,12 @@ void ScummEngine_v71he::o71_polygonOps() {
 		vert2x = pop();
 		vert1y = pop();
 		vert1x = pop();
-		flag = (subOp == 69 || subOp == 248);
+		flag = (subOp == ScummEngine_v100he::SO_SET_POLYGON_LOCAL || subOp == SO_SET_POLYGON_LOCAL);
 		id = pop();
 		_wiz->polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
 		break;
-	case 28: // HE 100
-	case 247:
+	case ScummEngine_v100he::SO_DELETE_POLYGON: // HE 100
+	case SO_DELETE_POLYGON:
 		toId = pop();
 		fromId = pop();
 		_wiz->polygonErase(fromId, toId);

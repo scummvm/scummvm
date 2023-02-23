@@ -67,16 +67,16 @@ void ScummEngine_v80he::o80_createSound() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 27:
+	case SO_ADD:
 		createSound(_heSndResId, pop());
 		break;
-	case 217:
+	case SO_NEW:
 		createSound(_heSndResId, -1);
 		break;
-	case 232:
+	case SO_SOUND_START:
 		_heSndResId = pop();
 		break;
-	case 255:
+	case SO_END:
 		// dummy case
 		break;
 	default:
@@ -184,15 +184,15 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 43: // HE 100
-	case 6: // number
+	case ScummEngine_v100he::SO_DWORD: // HE 100
+	case SO_DWORD: // number
 		if (!strcmp((char *)option, "Benchmark"))
 			push(2);
 		else
 			push(atoi(entry.c_str()));
 		break;
-	case 77: // HE 100
-	case 7: // string
+	case ScummEngine_v100he::SO_STRING: // HE 100
+	case SO_STRING: // string
 		writeVar(0, 0);
 		len = resStrLen((const byte *)entry.c_str());
 		data = defineArray(0, kStringArray, 0, 0, 0, len);
@@ -213,16 +213,16 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 43: // HE 100
-	case 6: // number
+	case ScummEngine_v100he::SO_DWORD: // HE 100
+	case SO_DWORD: // number
 		value = pop();
 		Common::sprintf_s(string, "%d", value);
 		copyScriptString(option, sizeof(option));
 		copyScriptString(section, sizeof(section));
 		copyScriptString(filename, sizeof(filename));
 		break;
-	case 77: // HE 100
-	case 7: // string
+	case ScummEngine_v100he::SO_STRING: // HE 100
+	case SO_STRING: // string
 		copyScriptString(string, sizeof(string));
 		copyScriptString(option, sizeof(option));
 		copyScriptString(section, sizeof(section));
@@ -261,46 +261,46 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0x13:
-	case 0x14:
+	case SO_CURSOR_IMAGE:
+	case SO_CURSOR_COLOR_IMAGE:
 		a = pop();
 		_wiz->loadWizCursor(a, 0);
 		break;
-	case 0x3C:
+	case SO_BUTTON:
 		b = pop();
 		a = pop();
 		_wiz->loadWizCursor(a, b);
 		break;
-	case 0x90:		// SO_CURSOR_ON Turn cursor on
+	case SO_CURSOR_ON:		// Turn cursor on
 		_cursor.state = 1;
 		break;
-	case 0x91:		// SO_CURSOR_OFF Turn cursor off
+	case SO_CURSOR_OFF:		// Turn cursor off
 		_cursor.state = 0;
 		break;
-	case 0x92:		// SO_USERPUT_ON
+	case SO_USERPUT_ON:
 		_userPut = 1;
 		break;
-	case 0x93:		// SO_USERPUT_OFF
+	case SO_USERPUT_OFF:
 		_userPut = 0;
 		break;
-	case 0x94:		// SO_CURSOR_SOFT_ON Turn soft cursor on
+	case SO_CURSOR_SOFT_ON:		// Turn soft cursor on
 		_cursor.state++;
 		if (_cursor.state > 1)
 			error("Cursor state greater than 1 in script");
 		break;
-	case 0x95:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
+	case SO_CURSOR_SOFT_OFF:		// Turn soft cursor off
 		_cursor.state--;
 		break;
-	case 0x96:		// SO_USERPUT_SOFT_ON
+	case SO_USERPUT_SOFT_ON:
 		_userPut++;
 		break;
-	case 0x97:		// SO_USERPUT_SOFT_OFF
+	case SO_USERPUT_SOFT_OFF:
 		_userPut--;
 		break;
-	case 0x9C:		// SO_CHARSET_SET
+	case SO_CHARSET_SET:
 		initCharset(pop());
 		break;
-	case 0x9D:		// SO_CHARSET_COLOR
+	case SO_CHARSET_COLOR:
 		getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < 16; i++)
 			_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)args[i];
@@ -479,13 +479,13 @@ void ScummEngine_v80he::o80_drawLine() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 55:
+	case SO_ACTOR:
 		drawLine(x1, y1, x, y, step, 2, id);
 		break;
-	case 63:
+	case SO_IMAGE:
 		drawLine(x1, y1, x, y, step, 3, id);
 		break;
-	case 66:
+	case SO_COLOR:
 		drawLine(x1, y1, x, y, step, 1, id);
 		break;
 	default:

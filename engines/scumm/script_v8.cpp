@@ -344,45 +344,45 @@ void ScummEngine_v8::decodeParseString(int m, int n) {
 	byte b = fetchScriptByte();
 
 	switch (b) {
-	case 0xC8:		// SO_PRINT_BASEOP
+	case SO_BASEOP:
 		_string[m].loadDefault();
 		if (n)
 			_actorToPrintStrFor = pop();
 		break;
-	case 0xC9:		// SO_PRINT_END
+	case SO_END:
 		_string[m].saveDefault();
 		break;
-	case 0xCA:		// SO_PRINT_AT
+	case SO_AT:
 		_string[m].ypos = pop();
 		_string[m].xpos = pop();
 		_string[m].overhead = false;
 		break;
-	case 0xCB:		// SO_PRINT_COLOR
+	case SO_COLOR:
 		_string[m].color = pop();
 		break;
-	case 0xCC:		// SO_PRINT_CENTER
+	case SO_CENTER:
 		_string[m].center = true;
 		_string[m].overhead = false;
 		break;
-	case 0xCD:		// SO_PRINT_CHARSET Set print character set
+	case SO_PRINT_CHARSET:		// Set print character set
 		_string[m].charset = pop();
 		break;
-	case 0xCE:		// SO_PRINT_LEFT
+	case SO_LEFT:
 		_string[m].wrapping = false;
 		_string[m].overhead = false;
 		break;
-	case 0xCF:		// SO_PRINT_OVERHEAD
+	case SO_OVERHEAD:
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
 		break;
-	case 0xD0:		// SO_PRINT_MUMBLE
+	case SO_MUMBLE:
 		_string[m].no_talk_anim = true;
 		break;
-	case 0xD1:		// SO_PRINT_STRING
+	case SO_PRINT_STRING:
 		printString(m, _scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		break;
-	case 0xD2:		// SO_PRINT_WRAP Set print wordwrap
+	case SO_PRINT_WRAP:		// Set print wordwrap
 		_string[m].wrapping = true;
 		_string[m].overhead = false;
 		break;
@@ -418,22 +418,22 @@ void ScummEngine_v8::o8_wait() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0x1E:		// SO_WAIT_FOR_ACTOR Wait for actor (to finish current action?)
+	case SO_WAIT_FOR_ACTOR:		// Wait for actor (to finish current action?)
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_ACTOR");
 		if (a->isInCurrentRoom() && a->_moving)
 			break;
 		return;
-	case 0x1F:		// SO_WAIT_FOR_MESSAGE Wait for message
+	case SO_WAIT_FOR_MESSAGE:		// Wait for message
 		if (VAR(VAR_HAVE_MSG))
 			break;
 		return;
-	case 0x20:		// SO_WAIT_FOR_CAMERA Wait for camera (to finish current action?)
+	case SO_WAIT_FOR_CAMERA:		// Wait for camera (to finish current action?)
 		if (camera._dest != camera._cur)
 			break;
 		return;
-	case 0x21:		// SO_WAIT_FOR_SENTENCE
+	case SO_WAIT_FOR_SENTENCE:
 		if (_sentenceNum) {
 			if (_sentence[_sentenceNum - 1].freezeCount && !isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 				return;
@@ -442,14 +442,14 @@ void ScummEngine_v8::o8_wait() {
 		if (!isScriptInUse(VAR(VAR_SENTENCE_SCRIPT)))
 			return;
 		break;
-	case 0x22:		// SO_WAIT_FOR_ANIMATION
+	case SO_WAIT_FOR_ANIMATION:
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_ANIMATION");
 		if (a->isInCurrentRoom() && a->_needRedraw)
 			break;
 		return;
-	case 0x23:		// SO_WAIT_FOR_TURN
+	case SO_WAIT_FOR_TURN:
 		offs = fetchScriptWordSigned();
 		actnum = pop();
 		a = derefActor(actnum, "o8_wait:SO_WAIT_FOR_TURN");
@@ -469,13 +469,13 @@ void ScummEngine_v8::o8_dimArray() {
 	int array = fetchScriptWord();
 
 	switch (subOp) {
-	case 0x0A:		// SO_ARRAY_SCUMMVAR
+	case SO_INT_ARRAY:
 		defineArray(array, kIntArray, 0, pop());
 		break;
-	case 0x0B:		// SO_ARRAY_STRING
+	case SO_STRING_ARRAY:
 		defineArray(array, kStringArray, 0, pop());
 		break;
-	case 0x0C:		// SO_ARRAY_UNDIM
+	case SO_UNDIM_ARRAY:
 		nukeArray(array);
 		break;
 	default:
@@ -488,17 +488,17 @@ void ScummEngine_v8::o8_dim2dimArray() {
 	int array = fetchScriptWord(), a, b;
 
 	switch (subOp) {
-	case 0x0A:		// SO_ARRAY_SCUMMVAR
+	case SO_INT_ARRAY:
 		b = pop();
 		a = pop();
 		defineArray(array, kIntArray, a, b);
 		break;
-	case 0x0B:		// SO_ARRAY_STRING
+	case SO_STRING_ARRAY:
 		b = pop();
 		a = pop();
 		defineArray(array, kStringArray, a, b);
 		break;
-	case 0x0C:		// SO_ARRAY_UNDIM
+	case SO_UNDIM_ARRAY:
 		nukeArray(array);
 		break;
 	default:
@@ -514,13 +514,13 @@ void ScummEngine_v8::o8_arrayOps() {
 	int list[128];
 
 	switch (subOp) {
-	case 0x14:		// SO_ASSIGN_STRING
+	case SO_ASSIGN_STRING:
 		b = pop();
 		len = resStrLen(_scriptPointer);
 		data = defineArray(array, kStringArray, 0, len + 1);
 		copyScriptString(data + b);
 		break;
-	case 0x15:		// SO_ASSIGN_SCUMMVAR_LIST
+	case SO_ASSIGN_INT_LIST:
 		b = pop();
 		len = getStackList(list, ARRAYSIZE(list));
 		d = readVar(array);
@@ -531,7 +531,7 @@ void ScummEngine_v8::o8_arrayOps() {
 			writeArray(array, 0, b + len, list[len]);
 		}
 		break;
-	case 0x16:		// SO_ASSIGN_2DIM_LIST
+	case SO_ASSIGN_2DIM_LIST:
 		b = pop();
 		len = getStackList(list, ARRAYSIZE(list));
 		d = readVar(array);
@@ -560,35 +560,35 @@ void ScummEngine_v8::o8_cursorCommand() {
 	int args[4];
 
 	switch (subOp) {
-	case 0xDC:		// SO_CURSOR_ON Turn cursor on
+	case SO_CURSOR_ON:		// Turn cursor on
 		_cursor.state = 1;
 		verbMouseOver(0);
 		break;
-	case 0xDD:		// SO_CURSOR_OFF Turn cursor off
+	case SO_CURSOR_OFF:		// Turn cursor off
 		_cursor.state = 0;
 		verbMouseOver(0);
 		break;
-	case 0xDE:		// SO_CURSOR_SOFT_ON Turn soft cursor on
+	case SO_CURSOR_SOFT_ON:		// Turn soft cursor on
 		_cursor.state++;
 		verbMouseOver(0);
 		break;
-	case 0xDF:		// SO_CURSOR_SOFT_OFF Turn soft cursor off
+	case SO_CURSOR_SOFT_OFF:		// Turn soft cursor off
 		_cursor.state--;
 		verbMouseOver(0);
 		break;
-	case 0xE0:		// SO_USERPUT_ON
+	case SO_USERPUT_ON:
 		_userPut = 1;
 		break;
-	case 0xE1:		// SO_USERPUT_OFF
+	case SO_USERPUT_OFF:
 		_userPut = 0;
 		break;
-	case 0xE2:		// SO_USERPUT_SOFT_ON
+	case SO_USERPUT_SOFT_ON:
 		_userPut++;
 		break;
-	case 0xE3:		// SO_USERPUT_SOFT_OFF
+	case SO_USERPUT_SOFT_OFF:
 		_userPut--;
 		break;
-	case 0xE4:		// SO_CURSOR_IMAGE Set cursor image
+	case SO_CURSOR_IMAGE:		// Set cursor image
 		{
 			int idx = pop();
 			int room, obj;
@@ -596,21 +596,21 @@ void ScummEngine_v8::o8_cursorCommand() {
 			setCursorFromImg(obj, room, idx);
 		}
 		break;
-	case 0xE5:		// SO_CURSOR_HOTSPOT Set cursor hotspot
+	case SO_CURSOR_HOTSPOT:		// Set cursor hotspot
 		a = pop();
 		setCursorHotspot(pop(), a);
 		break;
-	case 0xE6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
+	case SO_CURSOR_TRANSPARENT:		// Set cursor transparent color
 		setCursorTransparency(pop());
 		break;
-	case 0xE7:		// SO_CHARSET_SET
+	case SO_CHARSET_SET:
 		_string[0]._default.charset = pop();
 		break;
-	case 0xE8:		// SO_CHARSET_COLOR
+	case SO_CHARSET_COLOR:
 		getStackList(args, ARRAYSIZE(args));
 		// This opcode does nothing (confirmed with disasm)
 		break;
-	case 0xE9:		// SO_CURSOR_PUT
+	case SO_CURSOR_PUT:
 		{
 		int y = pop();
 		int x = pop();
@@ -631,61 +631,61 @@ void ScummEngine_v8::o8_resourceRoutines() {
 	int resid = pop();
 
 	switch (subOp) {
-	case 0x3C:		// Dummy case
+	case SO_HEAP_LOAD_CHARSET:		// Dummy case
 		break;
-	case 0x3D:		// SO_HEAP_LOAD_COSTUME Load costume to heap
+	case SO_HEAP_LOAD_COSTUME:		// Load costume to heap
 		ensureResourceLoaded(rtCostume, resid);
 		break;
-	case 0x3E:		// SO_HEAP_LOAD_OBJECT Load object to heap
+	case SO_HEAP_LOAD_OBJECT:		// Load object to heap
 		{
 		int room = getObjectRoom(resid);
 		loadFlObject(resid, room);
 		}
 		break;
-	case 0x3F:		// SO_HEAP_LOAD_ROOM Load room to heap
+	case SO_HEAP_LOAD_ROOM:		// Load room to heap
 		ensureResourceLoaded(rtRoom, resid);
 		break;
-	case 0x40:		// SO_HEAP_LOAD_SCRIPT Load script to heap
+	case SO_HEAP_LOAD_SCRIPT:		// Load script to heap
 		ensureResourceLoaded(rtScript, resid);
 		break;
-	case 0x41:		// SO_HEAP_LOAD_SOUND Load sound to heap
+	case SO_HEAP_LOAD_SOUND:		// Load sound to heap
 		ensureResourceLoaded(rtSound, resid);
 		break;
 
-	case 0x42:		// SO_HEAP_LOCK_COSTUME Lock costume in heap
+	case SO_HEAP_LOCK_COSTUME:		// Lock costume in heap
 		_res->lock(rtCostume, resid);
 		break;
-	case 0x43:		// SO_HEAP_LOCK_ROOM Lock room in heap
+	case SO_HEAP_LOCK_ROOM:		// Lock room in heap
 		_res->lock(rtRoom, resid);
 		break;
-	case 0x44:		// SO_HEAP_LOCK_SCRIPT Lock script in heap
+	case SO_HEAP_LOCK_SCRIPT:		// Lock script in heap
 		_res->lock(rtScript, resid);
 		break;
-	case 0x45:		// SO_HEAP_LOCK_SOUND Lock sound in heap
+	case SO_HEAP_LOCK_SOUND:		// Lock sound in heap
 		_res->lock(rtSound, resid);
 		break;
-	case 0x46:		// SO_HEAP_UNLOCK_COSTUME Unlock costume
+	case SO_HEAP_UNLOCK_COSTUME:		// Unlock costume
 		_res->unlock(rtCostume, resid);
 		break;
-	case 0x47:		// SO_HEAP_UNLOCK_ROOM Unlock room
+	case SO_HEAP_UNLOCK_ROOM:		// Unlock room
 		_res->unlock(rtRoom, resid);
 		break;
-	case 0x48:		// SO_HEAP_UNLOCK_SCRIPT Unlock script
+	case SO_HEAP_UNLOCK_SCRIPT:		// Unlock script
 		_res->unlock(rtScript, resid);
 		break;
-	case 0x49:		// SO_HEAP_UNLOCK_SOUND Unlock sound
+	case SO_HEAP_UNLOCK_SOUND:		// Unlock sound
 		_res->unlock(rtSound, resid);
 		break;
-	case 0x4A:		// SO_HEAP_NUKE_COSTUME Remove costume from heap
+	case SO_HEAP_NUKE_COSTUME:		// Remove costume from heap
 		_res->setResourceCounter(rtCostume, resid, 0x7F);
 		break;
-	case 0x4B:		// SO_HEAP_NUKE_ROOM Remove room from heap
+	case SO_HEAP_NUKE_ROOM:		// Remove room from heap
 		_res->setResourceCounter(rtRoom, resid, 0x7F);
 		break;
-	case 0x4C:		// SO_HEAP_NUKE_SCRIPT Remove script from heap
+	case SO_HEAP_NUKE_SCRIPT:		// Remove script from heap
 		_res->setResourceCounter(rtScript, resid, 0x7F);
 		break;
-	case 0x4D:		// SO_HEAP_NUKE_SOUND Remove sound from heap
+	case SO_HEAP_NUKE_SOUND:		// Remove sound from heap
 		_res->setResourceCounter(rtSound, resid, 0x7F);
 		break;
 	default:
@@ -698,14 +698,14 @@ void ScummEngine_v8::o8_roomOps() {
 	int a, b, c, d, e;
 
 	switch (subOp) {
-	case 0x52:		// SO_ROOM_PALETTE Set room palette
+	case SO_ROOM_PALETTE:		// Set room palette
 		d = pop();
 		c = pop();
 		b = pop();
 		a = pop();
 		setPalColor(d, a, b, c);
 		break;
-	case 0x57:		// SO_ROOM_FADE Fade room
+	case SO_ROOM_FADE:		// Fade room
 		a = pop();
 		if (a) {
 			_switchRoomEffect = (byte)(a);
@@ -714,7 +714,7 @@ void ScummEngine_v8::o8_roomOps() {
 			fadeIn(_newEffect);
 		}
 		break;
-	case 0x58:		// SO_ROOM_RGB_INTENSITY Set room color intensity
+	case SO_ROOM_RGB_INTENSITY:		// Set room color intensity
 		e = pop();
 		d = pop();
 		c = pop();
@@ -722,24 +722,24 @@ void ScummEngine_v8::o8_roomOps() {
 		a = pop();
 		darkenPalette(a, b, c, d, e);
 		break;
-	case 0x59:		// SO_ROOM_TRANSFORM Transform room
+	case SO_ROOM_TRANSFORM:		// Transform room
 		d = pop();
 		c = pop();
 		b = pop();
 		a = pop();
 		palManipulateInit(a, b, c, d);
 		break;
-	case 0x5C:		// SO_ROOM_NEW_PALETTE New palette
+	case SO_ROOM_NEW_PALETTE:		// New palette
 		a = pop();
 		setCurrentPalette(a);
 		break;
-	case 0x5D:		// SO_ROOM_SAVE_GAME Save game
+	case SO_ROOM_SAVE_GAME:		// Save game
 		_saveSound = 0;
 		_saveTemporaryState = true;
 		_saveLoadSlot = 1;
 		_saveLoadFlag = 1;
 		break;
-	case 0x5E:		// SO_ROOM_LOAD_GAME Load game
+	case SO_ROOM_LOAD_GAME:		// Load game
 		_saveSound = pop();
 		if (!_saveLoadFlag) {
 			_saveTemporaryState = true;
@@ -747,7 +747,7 @@ void ScummEngine_v8::o8_roomOps() {
 			_saveLoadFlag = 2;
 		}
 		break;
-	case 0x5F:		// SO_ROOM_SATURATION Set saturation of room colors
+	case SO_ROOM_SATURATION:		// Set saturation of room colors
 		e = pop();
 		d = pop();
 		c = pop();
@@ -765,7 +765,7 @@ void ScummEngine_v8::o8_actorOps() {
 	Actor *a;
 	int i, j;
 
-	if (subOp == 0x7A) {
+	if (subOp == SO_ACTOR_INIT) {
 		_curActor = pop();
 		return;
 	}
@@ -775,137 +775,137 @@ void ScummEngine_v8::o8_actorOps() {
 		return;
 
 	switch (subOp) {
-	case 0x64:		// SO_ACTOR_COSTUME Set actor costume
+	case SO_COSTUME:		// Set actor costume
 		a->setActorCostume(pop());
 		break;
-	case 0x65:		// SO_ACTOR_STEP_DIST Set actor width of steps
+	case SO_STEP_DIST:		// Set actor width of steps
 		j = pop();
 		i = pop();
 		a->setActorWalkSpeed(i, j);
 		break;
-	case 0x67:		// SO_ACTOR_ANIMATION_DEFAULT Set actor animation to default
+	case SO_ANIMATION_DEFAULT:		// Set actor animation to default
 		a->_initFrame = 1;
 		a->_walkFrame = 2;
 		a->_standFrame = 3;
 		a->_talkStartFrame = 4;
 		a->_talkStopFrame = 5;
 		break;
-	case 0x68:		// SO_ACTOR_ANIMATION_INIT Initialize animation
+	case SO_INIT_ANIMATION:		// Initialize animation
 		a->_initFrame = pop();
 		break;
-	case 0x69:		// SO_ACTOR_ANIMATION_TALK Set actor animation to talk animation
+	case SO_TALK_ANIMATION:		// Set actor animation to talk animation
 		a->_talkStopFrame = pop();
 		a->_talkStartFrame = pop();
 		break;
-	case 0x6A:		// SO_ACTOR_ANIMATION_WALK Set actor animation to walk animation
+	case SO_WALK_ANIMATION:		// Set actor animation to walk animation
 		a->_walkFrame = pop();
 		break;
-	case 0x6B:		// SO_ACTOR_ANIMATION_STAND Set actor animation to standing animation
+	case SO_STAND_ANIMATION:		// Set actor animation to standing animation
 		a->_standFrame = pop();
 		break;
-	case 0x6C:		// SO_ACTOR_ANIMATION_SPEED Set speed of animation
+	case SO_ANIMATION_SPEED:		// Set speed of animation
 		a->setAnimSpeed(pop());
 		break;
-	case 0x6D:		// SO_ACTOR_DEFAULT
+	case SO_DEFAULT:
 		a->initActor(0);
 		break;
-	case 0x6E:		// SO_ACTOR_ELEVATION
+	case SO_ELEVATION:
 		a->setElevation(pop());
 		break;
-	case 0x6F:		// SO_ACTOR_PALETTE Set actor palette
+	case SO_PALETTE:		// Set actor palette
 		j = pop();
 		i = pop();
 		assertRange(0, i, 31, "o8_actorOps: palette slot");
 		a->setPalette(i, j);
 		break;
-	case 0x70:		// SO_ACTOR_TALK_COLOR Set actor talk color
+	case SO_TALK_COLOR:		// Set actor talk color
 		a->_talkColor = pop();
 		break;
-	case 0x71:		// SO_ACTOR_NAME Set name of actor
+	case SO_ACTOR_NAME:		// Set name of actor
 		loadPtrToResource(rtActorName, a->_number, NULL);
 		break;
-	case 0x72:		// SO_ACTOR_WIDTH Set width of actor
+	case SO_ACTOR_WIDTH:		// Set width of actor
 		a->_width = pop();
 		break;
-	case 0x73:		// SO_ACTOR_SCALE Set scaling of actor
+	case SO_SCALE:		// Set scaling of actor
 		i = pop();
 		a->setScale(i, i);
 		break;
-	case 0x74:		// SO_ACTOR_NEVER_ZCLIP
+	case SO_NEVER_ZCLIP:
 		a->_forceClip = 0;
 		break;
-	case 0x75:		// SO_ACTOR_ALWAYS_ZCLIP
+	case SO_ALWAYS_ZCLIP:
 		a->_forceClip = pop();
 		// V8 uses 255 where we used to use 100
 		if (a->_forceClip == 255)
 			a->_forceClip = 100;
 		break;
-	case 0x76:		// SO_ACTOR_IGNORE_BOXES Make actor ignore boxes
+	case SO_IGNORE_BOXES:		// Make actor ignore boxes
 		a->_ignoreBoxes = true;
 		a->_forceClip = 100;
 		if (a->isInCurrentRoom())
 			a->putActor();
 		break;
-	case 0x77:		// SO_ACTOR_FOLLOW_BOXES Make actor follow boxes
+	case SO_FOLLOW_BOXES:		// Make actor follow boxes
 		a->_ignoreBoxes = false;
 		a->_forceClip = 100;
 		if (a->isInCurrentRoom())
 			a->putActor();
 		break;
-	case 0x78:		// SO_ACTOR_SPECIAL_DRAW
+	case SO_SHADOW:
 		a->_shadowMode = pop();
 		break;
-	case 0x79:		// SO_ACTOR_TEXT_OFFSET Set text offset relative to actor
+	case SO_TEXT_OFFSET:		// Set text offset relative to actor
 		a->_talkPosY = pop();
 		a->_talkPosX = pop();
 		break;
-//	case 0x7A:		// SO_ACTOR_INIT Set current actor (handled above)
-	case 0x7B:		// SO_ACTOR_VARIABLE Set actor variable
+//	case SO_ACTOR_INIT:		// Set current actor (handled above)
+	case SO_ACTOR_VARIABLE:		// Set actor variable
 		i = pop();
 		a->setAnimVar(pop(), i);
 		break;
-	case 0x7C:		// SO_ACTOR_IGNORE_TURNS_ON Make actor ignore turns
+	case SO_ACTOR_IGNORE_TURNS_ON:		// Make actor ignore turns
 		a->_ignoreTurns = true;
 		break;
-	case 0x7D:		// SO_ACTOR_IGNORE_TURNS_OFF Make actor follow turns
+	case SO_ACTOR_IGNORE_TURNS_OFF:		// Make actor follow turns
 		a->_ignoreTurns = false;
 		break;
-	case 0x7E:		// SO_ACTOR_NEW New actor
+	case SO_NEW:		// New actor
 		a->initActor(2);
 		break;
-	case 0x7F:		// SO_ACTOR_DEPTH Set actor Z position
+	case SO_ACTOR_DEPTH:		// Set actor Z position
 		a->_layer = pop();
 		break;
-	case 0x80:		// SO_ACTOR_STOP
+	case SO_ACTOR_STOP:
 		a->stopActorMoving();
 		a->startAnimActor(a->_standFrame);
 		break;
-	case 0x81:		// SO_ACTOR_FACE Make actor face angle
+	case SO_ACTOR_FACE:		// Make actor face angle
 		a->_moving &= ~MF_TURN;
 		a->setDirection(pop());
 		break;
-	case 0x82:		// SO_ACTOR_TURN Turn actor
+	case SO_ACTOR_TURN:		// Turn actor
 		a->turnToDirection(pop());
 		break;
-	case 0x83:		// SO_ACTOR_WALK_SCRIPT Set walk script for actor?
+	case SO_ACTOR_WALK_SCRIPT:		// Set walk script for actor?
 		a->_walkScript = pop();
 		break;
-	case 0x84:		// SO_ACTOR_TALK_SCRIPT Set talk script for actor?
+	case SO_ACTOR_TALK_SCRIPT:		// Set talk script for actor?
 		a->_talkScript = pop();
 		break;
-	case 0x85:		// SO_ACTOR_WALK_PAUSE
+	case SO_ACTOR_WALK_PAUSE:
 		a->_moving |= MF_FROZEN;
 		break;
-	case 0x86:		// SO_ACTOR_WALK_RESUME
+	case SO_ACTOR_WALK_RESUME:
 		a->_moving &= ~MF_FROZEN;
 		break;
-	case 0x87:		// SO_ACTOR_VOLUME Set volume of actor speech
+	case SO_ACTOR_VOLUME:		// Set volume of actor speech
 		a->_talkVolume = pop();
 		break;
-	case 0x88:		// SO_ACTOR_FREQUENCY Set frequency of actor speech
+	case SO_ACTOR_FREQUENCY:		// Set frequency of actor speech
 		a->_talkFrequency = pop();
 		break;
-	case 0x89:		// SO_ACTOR_PAN
+	case SO_ACTOR_PAN:
 		a->_talkPan = pop();
 		break;
 	default:
@@ -917,10 +917,10 @@ void ScummEngine_v8::o8_cameraOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 0x32:		// SO_CAMERA_PAUSE
+	case SO_CAMERA_PAUSE:
 		_cameraIsFrozen = true;
 		break;
-	case 0x33:		// SO_CAMERA_RESUME
+	case SO_CAMERA_RESUME:
 		_cameraIsFrozen = false;
 		break;
 	default:
@@ -933,7 +933,7 @@ void ScummEngine_v8::o8_verbOps() {
 	VerbSlot *vs = NULL;
 	int slot, a, b;
 
-	if (subOp == 0x96) {
+	if (subOp == SO_VERB_INIT) {
 		_curVerb = pop();
 		_curVerbSlot = getVerbSlot(_curVerb, 0);
 		assertRange(0, _curVerbSlot, _numVerbs - 1, "new verb slot");
@@ -945,10 +945,10 @@ void ScummEngine_v8::o8_verbOps() {
 	assert(vs);
 
 	switch (subOp) {
-	case 0x96:		// SO_VERB_INIT Choose verb number for editing
+	case SO_VERB_INIT:		// Choose verb number for editing
 		// handled above!
 		break;
-	case 0x97:		// SO_VERB_NEW New verb
+	case SO_VERB_NEW:		// New verb
 		if (_curVerbSlot == 0) {
 			for (slot = 1; slot < _numVerbs; slot++) {
 				if (_verbs[slot].verbid == 0)
@@ -972,40 +972,40 @@ void ScummEngine_v8::o8_verbOps() {
 		vs->center = 0;
 		vs->imgindex = 0;
 		break;
-	case 0x98:		// SO_VERB_DELETE Delete verb
+	case SO_VERB_DELETE:		// Delete verb
 		killVerb(_curVerbSlot);
 		break;
-	case 0x99:		// SO_VERB_NAME Set verb name
+	case SO_VERB_NAME:		// Set verb name
 		loadPtrToResource(rtVerb, _curVerbSlot, NULL);
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
-	case 0x9A:		// SO_VERB_AT Set verb (X,Y) placement
+	case SO_VERB_AT:		// Set verb (X,Y) placement
 		vs->curRect.top = pop();
 		vs->origLeft = pop();
 		break;
-	case 0x9B:		// SO_VERB_ON Turn verb on
+	case SO_VERB_ON:		// Turn verb on
 		vs->curmode = 1;
 		break;
-	case 0x9C:		// SO_VERB_OFF Turn verb off
+	case SO_VERB_OFF:		// Turn verb off
 		vs->curmode = 0;
 		break;
-	case 0x9D:		// SO_VERB_COLOR Set verb color
+	case SO_VERB_COLOR:		// Set verb color
 		vs->color = pop();
 		break;
-	case 0x9E:		// SO_VERB_HICOLOR Set verb highlighted color
+	case SO_VERB_HICOLOR:		// Set verb highlighted color
 		vs->hicolor = pop();
 		break;
-	case 0xA0:		// SO_VERB_DIMCOLOR Set verb dimmed (disabled) color
+	case SO_VERB_DIMCOLOR:		// Set verb dimmed (disabled) color
 		vs->dimcolor = pop();
 		break;
-	case 0xA1:		// SO_VERB_DIM
+	case SO_VERB_DIM:
 		vs->curmode = 2;
 		break;
-	case 0xA2:		// SO_VERB_KEY Set keypress to associate with verb
+	case SO_VERB_KEY:		// Set keypress to associate with verb
 		vs->key = pop();
 		break;
-	case 0xA3:		// SO_VERB_IMAGE Set verb image
+	case SO_VERB_IMAGE:		// Set verb image
 		b = pop();
 		a = pop();
 		if (_curVerbSlot && a != vs->imgindex) {
@@ -1014,7 +1014,7 @@ void ScummEngine_v8::o8_verbOps() {
 			vs->imgindex = a;
 		}
 		break;
-	case 0xA4:		// SO_VERB_NAME_STR Set verb name
+	case SO_VERB_NAME_STR:		// Set verb name
 		a = pop();
 		if (a == 0) {
 			loadPtrToResource(rtVerb, _curVerbSlot, (const byte *)"");
@@ -1024,13 +1024,13 @@ void ScummEngine_v8::o8_verbOps() {
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		break;
-	case 0xA5:		// SO_VERB_CENTER Center verb
+	case SO_VERB_CENTER:		// Center verb
 		vs->center = 1;
 		break;
-	case 0xA6:		// SO_VERB_CHARSET Choose charset for verb
+	case SO_VERB_CHARSET:		// Choose charset for verb
 		vs->charset_nr = pop();
 		break;
-	case 0xA7:		// SO_VERB_LINE_SPACING Choose linespacing for verb
+	case SO_VERB_LINE_SPACING:		// Choose linespacing for verb
 		_verbLineSpacing = pop();
 		break;
 	default:
@@ -1041,10 +1041,10 @@ void ScummEngine_v8::o8_verbOps() {
 void ScummEngine_v8::o8_systemOps() {
 	byte subOp = fetchScriptByte();
 	switch (subOp) {
-	case 0x28:		// SO_SYSTEM_RESTART Restart game
+	case SO_RESTART:		// Restart game
 		restart();
 		break;
-	case 0x29:		// SO_SYSTEM_QUIT Quit game
+	case SO_QUIT:		// Quit game
 		quitGame();
 		break;
 	default:
