@@ -36,11 +36,9 @@ Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummv
 
 *** Beta release notes:
 <de-DE>
-- Verbesserte Behandlung von Installationen auf einer SD-Karte
-- Halbtransparente In-App-Tastatur hinzugefügt
-- Die bilineare Filterung ist standardmäßig deaktiviert
-- Die Korrektur des Seitenverhältnisses ist jetzt standardmäßig aktiviert
-- Die ScummVM-Grafikoptionen geben nun den aktuellen Status der Einstellungen korrekt wieder
-- Fehler in der Upload-Funktion des LAN-Server-Modus behoben
-- Die Zurück-Taste fungiert nun als standardmäßig aktive "Überspringen"-Taste in einem Spiel
+- Unterstützt sicheren Dateizugriff für SD-Karten
+- Verbesserte Joystick- und Gamepad-Tastenbelegung
+- Die Unterstützung von 3D-Spielen wurde mit der Desktop-Version synchronisiert
+- Wählen Sie zwischen Joystick, Touchpad und direkter Maussteuerung pro Spiel und on-the-fly
+- Mehr Spiele, mehr Bugfixes, die vollständige Liste finden Sie unter https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
 </de-DE>

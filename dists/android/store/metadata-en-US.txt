@@ -40,5 +40,5 @@ For full release notes see https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.ht
 - Improved joystick and gamepad key-mapping
 - Synched up the support of 3d games with the desktop version
 - Choose between joystick, touchpad and direct mouse control per game and on-the-fly
-- We now support more games, including 3d ones.
+- More games, more bugfixes, the full list is at https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
 </en-US>
