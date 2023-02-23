@@ -212,6 +212,7 @@ protected:
 		uint16 getHeight() const { return _bmInfo.height; }
 		uint16 getBitCount() const { return _bmInfo.bitCount; }
 		Graphics::PixelFormat getPixelFormat() const;
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format);
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
 		Common::String &getName() { return _vidsHeader.name; }

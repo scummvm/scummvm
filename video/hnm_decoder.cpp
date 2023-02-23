@@ -1064,6 +1064,10 @@ Graphics::PixelFormat HNMDecoder::HNM6VideoTrack::getPixelFormat() const {
 	return _decoder->getPixelFormat();
 }
 
+bool HNMDecoder::HNM6VideoTrack::setOutputPixelFormat(const Graphics::PixelFormat &format) {
+	return _decoder->setOutputPixelFormat(format);
+}
+
 void HNMDecoder::HNM6VideoTrack::decodeChunk(byte *data, uint32 size,
         uint16 chunkType, uint16 flags) {
 	if (chunkType == MKTAG16('I', 'X') ||
