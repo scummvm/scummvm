@@ -169,7 +169,6 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (_hasVideo) {
 		_videoTrack = new TheoraVideoTrack(getDefaultHighColorFormat(), theoraInfo, theoraSetup);
 		addTrack(_videoTrack);
-		setRate(_videoTrack->getFrameRate());
 	}
 
 	th_info_clear(&theoraInfo);
