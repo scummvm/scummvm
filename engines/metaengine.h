@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/array.h"
-#include "common/gui_options.h"
 
 #include "engines/achievements.h"
 #include "engines/game.h"
@@ -177,9 +176,7 @@ public:
 	 * @return    The fully processed options string that is usable by the GUI.
 	 *
 	 */
-	virtual Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
-		return parseGameGUIOptions(optionsString);
-	}
+	virtual Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const;
 
 	/**
 	 * Return a list of engine specified debug channels

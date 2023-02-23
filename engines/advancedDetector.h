@@ -27,7 +27,7 @@
 
 #include "common/hash-str.h"
 
-#include "common/gui_options.h" // FIXME: Temporary hack?
+#include "common/gui_options.h" // Keep it here, so detection tables can refer to them
 
 namespace Common {
 class Error;

@@ -25,6 +25,7 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "common/gui_options.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -35,6 +36,10 @@
 #include "graphics/scaler.h"
 #include "graphics/managed_surface.h"
 #include "graphics/thumbnail.h"
+
+Common::String MetaEngineDetection::parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
+	return parseGameGUIOptions(optionsString);
+}
 
 Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
 	if (!target)
@@ -180,6 +185,10 @@ bool MetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesUseExtendedFormat);
 }
 
+/////////////////////////////////////////
+//// Extended Saves
+/////////////////////////////////////////
+
 void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
 		Common::String desc, bool isAutosave) {
 	appendExtendedSaveToStream(saveFile, playtime, desc, isAutosave);
@@ -221,8 +230,7 @@ void MetaEngine::appendExtendedSaveToStream(Common::WriteStream *saveFile, uint3
 	saveFile->writeUint32LE(headerPos);	// Store where the header starts
 }
 
-bool MetaEngine::copySaveFileToFreeSlot(const char *target, int slot)
-{
+bool MetaEngine::copySaveFileToFreeSlot(const char *target, int slot) {
 	const int emptySlot = findEmptySaveSlot(target);
 	if (emptySlot == -1)
 		return false;
