@@ -38,6 +38,7 @@ For full release notes see https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.ht
 <en-US>
 - Support secure file access for SD Cards
 - Improved joystick and gamepad key-mapping
-- Synched up support of 3d games with the desktop version
+- Synched up the support of 3d games with the desktop version
 - Choose between joystick, touchpad and direct mouse control per game and on-the-fly
+- We now support more games, including 3d ones.
 </en-US>
