@@ -2048,8 +2048,8 @@ void ScummEngine_v90he::o90_sortArray() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 129:
-	case 134: // HE100
+	case SO_SORT:
+	case ScummEngine_v100he::SO_SORT: // HE100
 		{
 			int array = fetchScriptWord();
 			int sortOrder = pop();
@@ -2070,44 +2070,44 @@ void ScummEngine_v90he::o90_getObjectData() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 32:
+	case SO_WIDTH:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(_objs[_heObjectNum].width);
 		break;
-	case 33:
+	case SO_HEIGHT:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(_objs[_heObjectNum].height);
 		break;
-	case 36:
+	case SO_COUNT:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(getObjectImageCount(_heObject));
 		break;
-	case 38:
+	case SO_DRAW_XPOS:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(_objs[_heObjectNum].x_pos);
 		break;
-	case 39:
+	case SO_DRAW_YPOS:
 		if (_heObjectNum == -1)
 			push(0);
 		else
 			push(_objs[_heObjectNum].y_pos);
 		break;
-	case 52:
+	case SO_STATE:
 		push(getState(_heObject));
 		break;
-	case 57:
+	case SO_INIT:
 		_heObject = pop();
 		_heObjectNum = getObjectIndex(_heObject);
 		break;
-	case 139:
+	case SO_NEW_GENERAL_PROPERTY:
 		// Dummy case
 		pop();
 		push(0);
@@ -2125,7 +2125,7 @@ void ScummEngine_v90he::o90_getPaletteData() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 45:
+	case SO_FIND:
 		e = pop();
 		d = pop();
 		palSlot = pop();
@@ -2134,18 +2134,18 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		r = pop();
 		push(getHEPaletteSimilarColor(palSlot, r, g, d, e));
 		break;
-	case 52:
+	case SO_STATE:
 		c = pop();
 		b = pop();
 		palSlot = pop();
 		push(getHEPaletteColorComponent(palSlot, b, c));
 		break;
-	case 66:
+	case SO_COLOR:
 		color = pop();
 		palSlot = pop();
 		push(getHEPaletteColor(palSlot, color));
 		break;
-	case 132:
+	case SO_CHANNEL:
 		c = pop();
 		b = pop();
 		if (_game.features & GF_16BIT_COLOR)
@@ -2153,7 +2153,7 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		else
 			push(getHEPaletteColorComponent(1, b, c));
 		break;
-	case 217:
+	case SO_NEW:
 		b = pop();
 		b = MAX(0, b);
 		b = MIN(b, 255);
@@ -2181,17 +2181,17 @@ void ScummEngine_v90he::o90_paletteOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 57:
+	case SO_INIT:
 		_hePaletteNum = pop();
 		break;
-	case 63:
+	case SO_IMAGE:
 		b = pop();
 		a = pop();
 		if (_hePaletteNum != 0) {
 			setHEPaletteFromImage(_hePaletteNum, a, b);
 		}
 		break;
-	case 66:
+	case SO_COLOR:
 		e = pop();
 		d = pop();
 		c = pop();
@@ -2253,8 +2253,8 @@ void ScummEngine_v90he::o90_fontUnk() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 60:	// HE100
-	case 42:
+	case ScummEngine_v100he::SO_PROPERTY:	// HE100
+	case SO_PROPERTY:
 		a = pop();
 		if (a == 2) {
 			copyScriptString(string, sizeof(string));
@@ -2267,8 +2267,8 @@ void ScummEngine_v90he::o90_fontUnk() {
 			push(readVar(0));
 		}
 		break;
-	case 0:		// HE100
-	case 57:
+	case ScummEngine_v100he::SO_INIT:		// HE100
+	case SO_INIT:
 		push(1);
 		break;
 	default:
