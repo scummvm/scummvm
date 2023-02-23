@@ -79,7 +79,8 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		// Feature flags with library dependencies
 		{   "updates", "winsparkle.lib",            nullptr,         nullptr,                                           nullptr },
 		{       "tts", nullptr,                     nullptr,         "sapi.lib",                                        nullptr },
-		{    "opengl", nullptr,                     nullptr,         "opengl32.lib",                                    nullptr }
+		{    "opengl", nullptr,                     nullptr,         "opengl32.lib",                                    nullptr },
+		{  "printing", nullptr,                     nullptr,         "Msimg32.lib",                                     nullptr }
 	};
 
 	// HACK for switching SDL_net to SDL2_net

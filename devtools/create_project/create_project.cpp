@@ -1100,6 +1100,7 @@ const Feature s_features[] = {
 	{      "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
 	{           "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},
 	{    "eventrecorder",          "ENABLE_EVENTRECORDER", false, false, "Event recorder support"},
+	{         "printing",                  "USE_PRINTING", true,  false, "Printing support"},
 	{          "updates",                   "USE_UPDATES", false, false, "Updates support"},
 	{          "dialogs",                "USE_SYSDIALOGS", false, true,  "System dialogs support"},
 	{       "langdetect",                "USE_DETECTLANG", false, true,  "System language detection support" }, // This feature actually depends on "translation", there
