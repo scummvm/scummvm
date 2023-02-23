@@ -22,6 +22,8 @@
 #ifndef BACKENDS_PRINTING_PRINTMAN_H
 #define BACKENDS_PRINTING_PRINTMAN_H
 
+#ifdef USE_PRINTING
+
 #include "common/rect.h"
 #include "common/rational.h"
 #include "common/scummsys.h"
@@ -100,4 +102,5 @@ public:
 	uint getLineHeight() const { return getHeight() + leading; }
 };
 
+#endif
 #endif

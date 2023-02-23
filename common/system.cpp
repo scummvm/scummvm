@@ -45,7 +45,9 @@ OSystem::OSystem() {
 	_eventManager = nullptr;
 	_timerManager = nullptr;
 	_savefileManager = nullptr;
+#if defined(USE_PRINTING)
 	_printingManager = nullptr;
+#endif
 #if defined(USE_TASKBAR)
 	_taskbarManager = nullptr;
 #endif
@@ -69,9 +71,10 @@ OSystem::~OSystem() {
 
 	delete _timerManager;
 	_timerManager = nullptr;
-
+#if defined(USE_PRINTING)
 	delete _printingManager;
 	_printingManager = nullptr;
+#endif
 
 #if defined(USE_TASKBAR)
 	delete _taskbarManager;

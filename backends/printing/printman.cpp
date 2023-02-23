@@ -19,6 +19,8 @@
  *
  */
 
+#ifdef USE_PRINTING
+
 #include "printman.h"
 
 PrintingManager::~PrintingManager() {}
@@ -91,3 +93,5 @@ PrintJob::~PrintJob() {}
 void PrintJob::drawBitmap(const Graphics::ManagedSurface &surf, Common::Point pos) {
 	drawBitmap(surf, Common::Rect(pos.x, pos.y, pos.x + surf.w, pos.y + surf.w));
 }
+
+#endif
