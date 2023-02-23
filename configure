@@ -198,6 +198,7 @@ _curl=yes
 _lld=no
 _mold=no
 _gold=yes
+_printing=no
 # Default vkeybd/eventrec options
 _vkeybd=no
 _eventrec=no
@@ -285,6 +286,7 @@ add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
+add_feature printing "Printing" "_print"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -907,6 +909,8 @@ Optional Features:
   --enable-vkeybd          build virtual keyboard support
   --enable-eventrecorder   enable event recording functionality
   --disable-eventrecorder  disable event recording functionality
+  --enable-printing        enable printing
+  --disable-printing       disable printing
   --enable-updates         build support for updates
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
@@ -1189,6 +1193,8 @@ for ac_option in $@; do
 	--disable-tts)                _tts=no                ;;
 	--enable-gtk)                 _gtk=yes               ;;
 	--disable-gtk)                _gtk=no                ;;
+	--enable-printing)            _printing=yes          ;;
+	--disable-printing)           _printing=no           ;;
 	--opengl-mode=*)
 		_opengl_mode=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -6180,6 +6186,22 @@ else
 	esac
 fi
 define_in_config_if_yes $_taskbar 'USE_TASKBAR'
+
+# 
+# Check whether to build printing support
+#
+echo_n "Building system printing support... "
+if test "$_printing" = "no"; then
+	echo "no"
+else
+	case $_host_os in
+	mingw*)
+		echo "win32"
+		_printing=yes
+		append_var LIBS '-lMsimg32'
+	esac
+fi
+define_in_config_if_yes $_printing 'USE_PRINTING'
 
 #
 # Check whether to build system dialogs support
