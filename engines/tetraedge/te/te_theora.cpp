@@ -94,14 +94,18 @@ uint TeTheora::topBorderSize() {
 }
 
 float TeTheora::frameRate() {
-	return _decoder->getRate().toDouble();
+	return _decoder->getFrameRate().toDouble();
 }
 
 bool TeTheora::update(uint i, TeImage &imgout) {
+	if (!_decoder->isPlaying())
+		_decoder->start();
+
 	if (_decoder->getCurFrame() > (int)i && _loadedNode.isReadable()) {
 		// rewind.. no good way to do that, but it should
 		// only happen on loop.
 		load(_loadedNode);
+		_decoder->start();
 	}
 
 	const Graphics::Surface *frame = nullptr;
