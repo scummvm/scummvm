@@ -31,7 +31,10 @@
 #include "scumm/util.h"
 #include "scumm/he/wiz_he.h"
 #include "scumm/he/moonbase/moonbase.h"
+
+#ifdef USE_PRINTING
 #include "backends/printing/printman.h"
+#endif
 
 namespace Scumm {
 
@@ -1492,6 +1495,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 	}
 
 	if (flags & kWIFPrint) {
+#ifdef USE_PRINTING
 		switch (comp) {
 		case 0: {
 			Graphics::ManagedSurface surf;
@@ -1515,6 +1519,9 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		default:
 			error("Unsupported compression mode %d", comp);
 		}
+#else
+		error("Printing support not compiled in!");
+#endif;
 	}
 
 	int32 dstPitch, dstType, cw, ch;
