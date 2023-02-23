@@ -38,6 +38,7 @@
 #include "audio/mididrv.h"
 
 #include "agi/agi.h"
+#include "agi/detection.h"
 #include "agi/font.h"
 #include "agi/graphics.h"
 #include "agi/inv.h"

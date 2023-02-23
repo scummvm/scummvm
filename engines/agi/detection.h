@@ -26,56 +26,6 @@
 
 namespace Agi {
 
-enum AgiGameType {
-	GType_PreAGI = 0,
-	GType_V1 = 1,
-	GType_V2 = 2,
-	GType_V3 = 3
-};
-
-enum AgiGameID {
-	GID_AGIDEMO,
-	GID_BC,
-	GID_DDP,
-	GID_GOLDRUSH,	// V3
-	GID_KQ1,
-	GID_KQ2,
-	GID_KQ3,
-	GID_KQ4,
-	GID_LSL1,
-	GID_MH1,		// V3
-	GID_MH2,		// V3
-	GID_MIXEDUP,
-	GID_PQ1,
-	GID_SQ1,
-	GID_SQ2,
-	GID_XMASCARD,
-	GID_FANMADE,
-	GID_GETOUTTASQ, // Fanmade
-	GID_MICKEY,     // PreAGI
-	GID_WINNIE,     // PreAGI
-	GID_TROLL       // PreAGI
-};
-
-//
-// GF_OLDAMIGAV20 means that the interpreter is an old Amiga AGI interpreter that
-// uses value 20 for the computer type (v20 i.e. vComputer) rather than the usual value 5.
-//
-enum AgiGameFeatures {
-	GF_AGIMOUSE    = (1 << 0), // this disables "Click-to-walk mouse interface"
-	GF_AGDS        = (1 << 1),
-	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
-	GF_FANMADE     = (1 << 3), // marks fanmade games
-	GF_OLDAMIGAV20 = (1 << 4),
-	GF_2GSOLDSOUND = (1 << 5),
-	GF_EXTCHAR = (1 << 6) // use WORDS.TOK.EXTENDED
-};
-
-enum BooterDisks {
-	BooterDisk1 = 0,
-	BooterDisk2 = 1
-};
-
 struct AGIGameDescription {
 	ADGameDescription desc;
 
