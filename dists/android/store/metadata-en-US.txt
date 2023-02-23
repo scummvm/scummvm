@@ -14,11 +14,11 @@ NO GAME DATA FILES ARE INCLUDED.
 
 ScummVM provides a way to play many classic graphical point-and-click adventure games and RPGs - such as SCUMM games (like Monkey Island and Day of the Tentacle), Revolution's Beneath A Steel Sky, and many more. NO GAME DATA FILES ARE INCLUDED; you must supply your own.
 
-You can find more information, and some free-to-download adventure games, on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
+You can find more information, demos, and some free-to-download adventure games on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
 
-You can find a quick-start guide on our website at https://docs.scummvm.org/en/v2.5.0/other_platforms/android.html which provides some more information, explains how to configure some Android-specific options, and where you can find other help.
+A quick-start guide is available on our website at https://docs.scummvm.org/en/v2.7.0/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
 
-http://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
+https://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
 *** Current release:
 2.5.0
@@ -32,15 +32,12 @@ For full release notes see https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.ht
 
 *** Beta release name:
 
-2.2.1c (beta)
+2.7.0 (beta)
 
 *** Beta release notes:
 <en-US>
-- additional fix for upgrading the app when installed on external SD card
-- in-app semi-transparent keyboard with more keys available
-- "Filtered graphics" setting is disabled by default and affects the UI
-- "Keep Aspect Ratio" is enabled by default
-- Graphics Options now accurately reflect the state of the settings
-- Fix for the create folder and uploading functionality of the LAN server mode
-- Android Back button used as the default "skip" button in a game
+- Support secure file access for SD Cards
+- Improved joystick and gamepad key-mapping
+- Synched up support of 3d games with the desktop version
+- Choose between joystick, touchpad and direct mouse control per game and on-the-fly
 </en-US>
