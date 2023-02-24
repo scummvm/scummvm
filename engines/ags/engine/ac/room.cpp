@@ -440,7 +440,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	if ((_GP(thisroom).GameID != NO_GAME_ID_IN_ROOM_FILE) &&
 	        (_GP(thisroom).GameID != _GP(game).uniqueid)) {
-		quitprintf("!Unable to load '%s'. This room file is assigned to a different _GP(game).", room_filename.GetCStr());
+		quitprintf("!Unable to load '%s'. This room file is assigned to a different game.", room_filename.GetCStr());
 	}
 
 	HError err = LoadRoomScript(&_GP(thisroom), newnum);

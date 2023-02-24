@@ -1028,7 +1028,7 @@ void GameLoopUntilButAnimEnd(int guin, int objn) {
 }
 
 void RunGameUntilAborted() {
-	// skip ticks to account for time spent starting _GP(game).
+	// skip ticks to account for time spent starting game.
 	skipMissedTicks();
 
 	while (!_G(abort_engine)) {
