@@ -544,14 +544,22 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 			if (_model->anim()->curFrame2() >= obj->_startFrame
 					&& _model->anim()->curFrame2() <= obj->_endFrame) {
 				obj->model()->setVisible(true);
-				TeMatrix4x4 objmatrix = boneMatrix;
-				objmatrix.scale(obj->_objScale);
-				objmatrix.rotate(obj->_objRotation);
-				objmatrix.translate(obj->_objTranslation);
-				obj->model()->forceMatrix(objmatrix);
-				obj->model()->setRotation(_model->rotation());
-				obj->model()->setPosition(_model->position());
-				obj->model()->setScale(_model->scale());
+
+				if (!obj->_moveAnim._runTimer.running()) {
+					obj->_lastMatrix = boneMatrix;
+					obj->_lastMatrix.scale(obj->_objScale);
+					obj->_lastMatrix.rotate(obj->_objRotation);
+					obj->_lastMatrix.translate(obj->_objTranslation);
+					obj->model()->forceMatrix(obj->_lastMatrix);
+					obj->model()->setRotation(_model->rotation());
+					obj->model()->setPosition(_model->position());
+					obj->model()->setScale(_model->scale());
+				} else {
+					obj->model()->forceMatrix(obj->_lastMatrix);
+					obj->model()->setRotation(_model->rotation());
+					obj->model()->setPosition(_model->position() + obj->_curMovePos);
+					obj->model()->setScale(_model->scale());
+				}
 			} else {
 				obj->model()->setVisible(false);
 			}

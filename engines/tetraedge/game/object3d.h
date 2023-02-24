@@ -78,6 +78,7 @@ public:
 	TeVector3f32 _objTranslation;
 	TeQuaternion _objRotation;
 	TeVector3f32 _objScale;
+	TeMatrix4x4 _lastMatrix;
 
 	int _startFrame;
 	int _endFrame;
