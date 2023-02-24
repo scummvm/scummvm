@@ -39,20 +39,67 @@ namespace Networking {
 
 class Socket {
 public:
+	/**
+	 * A representation of a raw UDP socket.
+	 * @param socket Contains the socket itself.
+	 */
 	Socket(ENetSocket socket);
 	~Socket();
 
+	/**
+	 * Send data to the specified address and port.
+	 * @param address Address to send data to.
+	 * @param port Port number to send data to.
+	 * @param data The data which will be sent.
+	 * @retval true on successful.
+	 * @retval false on failure.
+	 */
 	bool send(Common::String address, int port, const char *data);
+	/**
+	 * Checks for received data.
+	 * @retval true if received data.
+	 * @retval false otherwise.
+	 */
 	bool receive();
 
+	/**
+	 * Get the data received from socket.
+	 * @return String containing received data.
+	 * @note receive() must be called and returned true to get actual data.
+	 */
 	Common::String getData();
 
+	/**
+	 * Get the host name of received data.
+	 * @return The host name
+	 * @note receive() must be called and returned true to get host name.
+	 */
 	Common::String getHost();
+	/**
+	 * Get the port number of received data.
+	 * @return The port number
+	 * @note receive() must be called and returned true to get port.
+	 */
 	int getPort();
 private:
+	/**
+	 * Representation of the UDP socket.
+	 */
 	ENetSocket _socket;
+	/**
+	 * String containing the recent data received, 
+	 * @see getData()
+	 */
 	Common::String _recentData;
+	/**
+	 * String containing the last received host.
+	 * @see getHost()
+	*/
 	Common::String _recentHost;
+	/**
+	 * The last last received port number
+	 * @see getPort()
+	*/
 	int _recentPort;
 };
 
