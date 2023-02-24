@@ -2164,6 +2164,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "norserunereader", "Norse Rune Reader" },
 	{ "nosferatu", "Nosferatu: Big City" },
 	{ "nostalgik", "NOSTALGIK" },
+	{ "nosunrise", "There Ain't No Sunrise?" },
 	{ "notebookdetective", "Notebook Detective" },
 	{ "notetoself", "Note to Self" },
 	{ "notexplainable", "not the explainable" },
@@ -2828,6 +2829,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "tehhorror", "Teh Horror!" },
 	{ "templeofspheres", "Indiana Jones and the Temple of Spheres" },
 	{ "tenhumstombpart1", "Tenhum's Tomb Part 1" },
+	{ "tenweeks", "Ten Weeks" },
 	{ "terrorofthevampire", "Terror of the Vampire!" },
 	{ "teruteru", "Teru Teru Bozu" },
 	{ "tetricity", "TetriCity" },
@@ -6702,6 +6704,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("normancooks", "NORMAN.exe", "4d17844029d8910fbaae1bdc99e250f2", 9397734),
 	GAME_ENTRY_EN("norserunereader", "NorseRuneReader.exe", "f120690b506dd63cd7d1112ea6af2f77", 2111273),
 	GAME_ENTRY_EN("nosferatu", "Nos.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1680823),
+	GAME_ENTRY_EN("nosunrise", "subway.exe", "618d7dce9631229b4579340b964c6810", 3598671),
 	GAME_ENTRY_EN("notebookdetective", "Notebook Detective.exe", "0564de07d3fd5c16e6947a647061913c", 248302813),
 	GAME_ENTRY_EN("notetoself", "elandra_nts.exe", "7e706ca442dd1277f09480b9ba08a1ec", 7176224),
 	GAME_ENTRY_EN("notexplainable", "not the explanable.exe", "82da2565c456dcfb265ded6fe3189c0b", 125719833),
@@ -6952,6 +6955,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("princessmarianspigeonpinger", "PMPP.exe", "e68aaf0cea1e5701a7bb50a757bb5f4b", 2929950),
 	GAME_ENTRY_EN("principlesofevil", "P of E.exe", "0500aacb6c176d47ac0f8158f055db83", 44012235),
 	GAME_ENTRY_EN("principlesofevil", "P of E.exe", "f120690b506dd63cd7d1112ea6af2f77", 43410398),
+	GAME_ENTRY_LANG("principlesofevil", "German.exe", "0500aacb6c176d47ac0f8158f055db83", 43284740, Common::DE_DEU),
 	GAME_ENTRY_EN("principlesofevil2", "PoE II.exe", "f120690b506dd63cd7d1112ea6af2f77", 87236507),
 	GAME_ENTRY_EN("privatedetective", "PrivateDetective.exe", "9aea96d0ea823f915cd790ca0de92bbe", 22885570),  // Windows
 	GAME_ENTRY_EN("privatedetective", "PrivateDetective.ags", "c589d8787feeaa96a9a04e0622388dde", 20289202),  // Linux
@@ -7502,6 +7506,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("tehhorror", "Hallow.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1758007),
 	GAME_ENTRY_EN("templeofspheres", "Spheres.exe", "e9475a2e453039ca51c8c319a8c8255a", 7117373),
 	GAME_ENTRY_EN("tenhumstombpart1", "tomb.exe", "0710e2ec71042617f565c01824f0cf3c", 1252175),
+	GAME_ENTRY_EN("tenweeks", "Ten Weeks.exe", "b234873ef00c46eb21f73233560a9384", 38925643),  // v1.0.2 itch.io
 	GAME_ENTRY_EN("terrorofthevampire", "TERRVAMP.exe", "efd2b2abf965c4b50bea79a419b82cf1", 5164804),
 	GAME_ENTRY("teruteru", "Teru Teru Bozu.exe", "f626bce6c741bdfcc657024c39d9d28a", 150002572),  //En-Fr
 	GAME_ENTRY_LANG("tetricity", "TetriCity2.exe", "27343924ddad3be0b97bdcaa71858b1b", 8887974, Common::FR_FRA),
