@@ -280,7 +280,7 @@ void Application::create() {
 	onMainWindowSizeChanged();
 	_splashScreens.enter();
 
-	_drawShadows = (ConfMan.get("disable_shadows") != "true");
+	_drawShadows = (!ConfMan.getBool("disable_shadows"));
 
 	// Note: this is not in the original, but seems like a good place to do it..
 	g_engine->getGame()->loadUnlockedArtwork();

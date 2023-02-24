@@ -100,7 +100,7 @@ void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
 	app->frontOrientationLayout().removeChild(&app->mouseCursorLayout());
 	app->frontOrientationLayout().addChild(&app->mouseCursorLayout());
 
-	if (ConfMan.get("skip_confirm") == "true") {
+	if (ConfMan.getBool("skip_confirm")) {
 		onButtonYes();
 	}
 }

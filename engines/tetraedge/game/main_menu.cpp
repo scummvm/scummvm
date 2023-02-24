@@ -126,7 +126,7 @@ void MainMenu::enter() {
 
 	// Skip the menu if we are loading.
 	Game *game = g_engine->getGame();
-	if (game->hasLoadName() || ConfMan.get("skip_mainmenu") == "true") {
+	if (game->hasLoadName() || ConfMan.getBool("skip_mainmenu")) {
 		onNewGameConfirmed();
 	}
 }
