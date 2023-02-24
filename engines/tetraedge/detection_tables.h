@@ -39,7 +39,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
 	// GOG release
@@ -50,7 +50,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
 	AD_TABLE_END_MARKER

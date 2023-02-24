@@ -20,6 +20,7 @@
  */
 
 #include "tetraedge/detection.h"
+#include "tetraedge/metaengine.h"
 #include "tetraedge/detection_tables.h"
 
 const DebugChannelDef TetraedgeMetaEngineDetection::debugFlagList[] = {

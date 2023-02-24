@@ -22,6 +22,28 @@
 #include "tetraedge/metaengine.h"
 #include "tetraedge/detection.h"
 #include "tetraedge/tetraedge.h"
+#include "common/str-array.h"
+#include "common/translation.h"
+#include "common/gui_options.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_CORRECT_MOVIE_ASPECT,
+		{
+			_s("Correct movie aspect ratio"),
+			_s("Play Syberia cutscenes in 16:9, rather than stretching to full screen"),
+			"correct_movie_aspect",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+const ADExtraGuiOptionsMap *TetraedgeMetaEngine::getAdvancedExtraGuiOptions() const {
+	return optionsList;
+}
 
 const char *TetraedgeMetaEngine::getName() const {
 	return "tetraedge";

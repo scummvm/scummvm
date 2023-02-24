@@ -97,7 +97,8 @@ public:
 		return
 			(f == kSupportsLoadingDuringRuntime) ||
 			(f == kSupportsSavingDuringRuntime) ||
-			(f == kSupportsReturnToLauncher);
+			(f == kSupportsReturnToLauncher) ||
+			(f == kSupportsChangingOptionsDuringRuntime);
 	};
 
 	bool canLoadGameStateCurrently() override;

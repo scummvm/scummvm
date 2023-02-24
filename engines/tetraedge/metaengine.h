@@ -25,6 +25,8 @@
 #include "engines/achievements.h"
 #include "engines/advancedDetector.h"
 
+#define GAMEOPTION_CORRECT_MOVIE_ASPECT GUIO_GAMEOPTIONS1
+
 class TetraedgeMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override;
@@ -32,6 +34,8 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.
