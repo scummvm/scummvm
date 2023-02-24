@@ -115,30 +115,50 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 	// the way this gets used later, setting large negative is more correct.
 	c->_callsMade = (maxCalls == -1.0 ? -1e9 : 0.0f);
 
-	//
-	// WORKAROUND: This callback seems to be set too late.. frame 31, but it
-	// only gets to 15?  Some bug in the way anim blends hand off?
-	// for scenes/CitSpace2/34230/Logic34230.lua
-	//
-	if (fnName == "ChangeClef" && c->_triggerFrame == 31)
-		c->_triggerFrame = 15;
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+		// Syberia 1 has slightly weird logic to decide what key to use.
 
-	const Common::Path animPath = _model->anim()->loadedPath();
+		//
+		// WORKAROUND: This callback seems to be set too late.. frame 31, but it
+		// only gets to 15?  Some bug in the way anim blends hand off?
+		// for scenes/CitSpace2/34230/Logic34230.lua
+		//
+		if (fnName == "ChangeClef" && c->_triggerFrame == 31)
+			c->_triggerFrame = 15;
+		//else if (fnName == "Launch_Ballon" && c->_triggerFrame == 177)
+		//	c->_triggerFrame = 150;
 
-	// Another difference.. the original messes with paths a bit - just
-	// use the file name, since it's already limited by character.
-	Common::String animName = animPath.getLastComponent().toString();
-	if (animName.empty())
-		animName = animPath.toString();
+		const Common::Path animPath = _model->anim()->loadedPath();
 
-	if (_callbacks.contains(animName)) {
-		_callbacks[animName].push_back(c);
+		// Another difference.. the original messes with paths a bit - just
+		// use the file name, since it's already limited by character.
+		Common::String animName = animPath.getLastComponent().toString();
+		if (animName.empty())
+			animName = animPath.toString();
+
+		if (_callbacks.contains(animName)) {
+			_callbacks[animName].push_back(c);
+		} else {
+			Common::Path animKeyPath(animKey);
+			Common::Array<Callback *> callbacks;
+			callbacks.push_back(c);
+
+			_callbacks.setVal(animKeyPath.getLastComponent().toString(), callbacks);
+		}
+	} else if (g_engine->gameType() == TetraedgeEngine::kSyberia2){
+		// Syberia 2 is simpler, it always uses a lower-case version of the anim
+		// file in the passed key.
+		Common::String key = Common::Path(animKey).getLastComponent().toString();
+		key.toLowercase();
+		if (_callbacks.contains(key)) {
+			_callbacks[key].push_back(c);
+		} else {
+			Common::Array<Callback *> callbacks;
+			callbacks.push_back(c);
+			_callbacks.setVal(key, callbacks);
+		}
 	} else {
-		Common::Path animKeyPath(animKey);
-		Common::Array<Callback *> callbacks;
-		callbacks.push_back(c);
-
-		_callbacks.setVal(animKeyPath.getLastComponent().toString(), callbacks);
+		error("addCallback: Unsupported game type.");
 	}
 }
 
@@ -652,12 +672,19 @@ void Character::permanentUpdate() {
 	_callbacksChanged = false;
 	// Diverge from original - just use filename for anim callbacks as the
 	// original does werid things with paths.
-	const Common::String animFile = animPath.getLastComponent().toString();
+	Common::String animFile = animPath.getLastComponent().toString();
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
+		animFile.toLowercase();
+
+	//if (!_callbacks.empty())
+	//	debug("%s: check cbs for %s frame %d speed %.02f", _model->name().c_str(),
+	//			animFile.c_str(), curFrame, _model->anim()->speed());
+
 	if (_callbacks.contains(animFile)) {
 		Common::Array<Callback *> &cbs = _callbacks.getVal(animFile);
 		for (Callback *cb : cbs) {
-			//debug("check cb for %s frame %d against %d. speed %.02f", animFile.c_str(),
-			//		curFrame, cb->_triggerFrame, _model->anim()->speed());
+			//debug("%s: check cb for %s frame %d against %d. speed %.02f", _model->name().c_str(),
+			//		animFile.c_str(), curFrame, cb->_triggerFrame, _model->anim()->speed());
 			if (cb->_triggerFrame > cb->_lastCheckFrame && curFrame >= cb->_triggerFrame){
 				int callsMade = cb->_callsMade;
 				cb->_callsMade++;

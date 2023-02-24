@@ -497,11 +497,11 @@ static int tolua_ExportedFunctions_AddCallbackPlayer00(lua_State *L) {
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
 			&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 1, &err)
 			&& tolua_isnoobj(L, 5, &err)) {
-		Common::String s2(tolua_tostring(L, 1, nullptr));
-		Common::String s3(tolua_tostring(L, 2, nullptr));
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
 		double n1 = tolua_tonumber(L, 3, 0.0);
 		double n2 = tolua_tonumber(L, 4, -1.0);
-		AddCallbackPlayer(s2, s3, n1, n2);
+		AddCallbackPlayer(s1, s2, n1, n2);
 		return 0;
 	}
 	error("#ferror in function 'AddCallbackPlayer': %d %d %s", err.index, err.array, err.type);
