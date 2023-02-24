@@ -31,6 +31,8 @@
 
 #include "engines/engine.h"
 
+#include "graphics/pm5544.h"
+
 #include "gui/gui-manager.h"
 
 #include "backends/printing/printman.h"
@@ -100,9 +102,10 @@ TestExitStatus PrintingTests::printTestPage() {
 		return kTestFailed;
 	}
 
-	Common::Point pos;
+	Common::Point pos(20,0);
 
 	Common::Rect logoArea(pos.x, pos.y, pos.x + logo->w * 4, pos.y+logo->h * 4);
+	// Logo is 32 bpp
 	job->drawBitmap(*logo, logoArea);
 	pos += Common::Point(0, logoArea.height());
 
@@ -129,6 +132,11 @@ TestExitStatus PrintingTests::printTestPage() {
 		job->drawText("Grayscale printing only, no text color test", pos);
 		pos += Common::Point(0, job->getTextBounds("Grayscale printing only, no text color test").height());
 	}
+
+	// The test pattern is CLUT-8
+	Graphics::ManagedSurface *testPattern = Graphics::renderPM5544(800, 800);
+	job->drawBitmap(*testPattern, Common::Rect(pos.x, pos.y, pos.x+testPattern->w, pos.y+testPattern->h));
+	delete testPattern;
 
 	job->pageFinished();
 	job->endDoc();
