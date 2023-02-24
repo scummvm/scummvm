@@ -39,9 +39,10 @@ namespace Image {
  * @brief Decoder for JPEG images.
  *
  * Used in engines:
- * - Groovie
- * - Mohawk
- * - Wintermute
+ * - groovie
+ * - mohawk
+ * - vcruise
+ * - wintermute
  * @{
  */
 
