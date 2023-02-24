@@ -63,29 +63,12 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override { return 99; }
-	SaveStateList listSaves(const char *target) const override;
-	void removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
-		const Common::String prefix("fullpipe");
-		if (saveGameIdx == kSavegameFilePattern)
-			return prefix + ".s##";
-		else
-			return prefix + Common::String::format(".s%02d", saveGameIdx);
-	}
 };
 
 bool NGIMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsLoadingDuringStartup);
+	return checkExtendedSaves(f) || (f == kSupportsLoadingDuringStartup);
 }
 
 bool NGI::NGIEngine::hasFeature(EngineFeature f) const {
@@ -95,65 +78,6 @@ bool NGI::NGIEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-SaveStateList NGIMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-
-	filenames = saveFileMan->listSavefiles(getSavegameFilePattern(target));
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 2 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 2);
-
-		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
-			if (in) {
-				NGI::FullpipeSavegameHeader header;
-				if (!NGI::readSavegameHeader(in.get(), header)) {
-					continue;
-				}
-
-				SaveStateDescriptor desc(this, slotNum, header.description);
-
-				NGI::parseSavegameHeader(header, desc);
-
-				saveList.push_back(desc);
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
-void NGIMetaEngine::removeSaveState(const char *target, int slot) const {
-	g_system->getSavefileManager()->removeSavefile(NGI::getSavegameFile(slot));
-}
-
-SaveStateDescriptor NGIMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
-		NGI::getSavegameFile(slot)));
-
-	if (f) {
-		NGI::FullpipeSavegameHeader header;
-		if (!NGI::readSavegameHeader(f.get(), header, false)) {
-			return SaveStateDescriptor();
-		}
-
-		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, header.description);
-
-		NGI::parseSavegameHeader(header, desc);
-
-		desc.setThumbnail(header.thumbnail);
-
-		return desc;
-	}
-
-	return SaveStateDescriptor();
-}
 
 Common::Error NGIMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new NGI::NGIEngine(syst, (const NGI::NGIGameDescription *)desc);
