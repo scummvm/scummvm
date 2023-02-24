@@ -508,6 +508,7 @@ void InGameScene::freeGeometry() {
 	_bezierCurves.clear();
 	_dummies.clear();
 	cameras().clear();
+	models().clear();
 	_zoneModels.clear();
 	_masks.clear();
 	_shadowReceivingObjects.clear();
@@ -769,6 +770,7 @@ static Common::Path _sceneFileNameBase() {
 }
 
 bool InGameScene::loadXml(const Common::String &zone, const Common::String &scene) {
+	_maskAlpha = false;
 	_zoneName = zone;
 	_sceneName = scene;
 	_blockers.clear();
@@ -945,6 +947,9 @@ bool InGameScene::loadObjectMaterials(const Common::String &name) {
 	bool retval = false;
 	TeCore *core = g_engine->getCore();
 	for (auto &obj : _objects) {
+		// FIXME: This should probably only do something for the
+		// object where the model name matches?  It won't find the file
+		// anyway so it probably works as-is but it's a bit wrong.
 		if (obj._name.empty())
 			continue;
 

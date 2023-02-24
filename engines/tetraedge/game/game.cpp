@@ -213,6 +213,8 @@ void Game::addToScore(int score) {
 
 bool Game::changeWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
 	//debug("Game::changeWarp(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
+		_scene.freeGeometry();
 	Application *app = g_engine->getApplication();
 	if (fadeFlag) {
 		app->blackFade();
