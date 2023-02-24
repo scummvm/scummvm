@@ -23,6 +23,7 @@
 #define HPL1_TREE_H
 
 #include "common/func.h"
+#include "common/util.h"
 #include "hpl1/std/pair.h"
 
 namespace Hpl1 {
@@ -90,6 +91,34 @@ public:
 
 	using BasicIterator = Iterator<ValueType &, ValueType *>;
 	using ConstIterator = Iterator<const ValueType &, const ValueType *>;
+
+	Tree(KeyComp comp = {}) : _comp(Common::move(comp)) {
+	}
+
+	Tree(const Tree &other) : _comp(other._comp) {
+		for (const auto &val : other)
+			insert(val);
+	}
+
+	Tree(Tree &&other) : _root(other._root), _leftmost(other._leftmost), _size(other._size), _comp(Common::move(other._comp)) {
+	}
+
+	Tree &operator=(const Tree &rhs) {
+		*this = Tree(rhs);
+		return *this;
+	}
+
+	Tree &operator=(Tree &&rhs) {
+		clear();
+		_root = rhs._root;
+		_leftmost = rhs._leftmost;
+		_size = rhs._size;
+		_comp = Common::move(rhs._comp);
+		rhs._root = nullptr;
+		rhs._leftmost = nullptr;
+		rhs._size = 0;
+		return *this;
+	}
 
 	void clear() {
 		erase(begin(), end());
