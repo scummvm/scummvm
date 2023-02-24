@@ -40,5 +40,5 @@ Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummv
 - Verbesserte Joystick- und Gamepad-Tastenbelegung
 - Die Unterstützung von 3D-Spielen wurde mit der Desktop-Version synchronisiert
 - Wählen Sie zwischen Joystick, Touchpad und direkter Maussteuerung pro Spiel und on-the-fly
-- Mehr Spiele, mehr Bugfixes, die vollständige Liste finden Sie unter https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
+- Mehr Spiele, mehr Bugfixes sowie die vollständige Liste aller Änderungen finden Sie unter https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
 </de-DE>
