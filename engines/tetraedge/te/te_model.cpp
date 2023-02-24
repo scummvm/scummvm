@@ -285,7 +285,7 @@ void TeModel::update() {
 						updatedvertex = vertex;
 						if (verticies.empty())
 							updatedvertex = _boneMatricies[idx] * updatedvertex;
-						updatednormal = _boneMatricies[idx] * normal;
+						updatednormal = _boneMatricies[idx].mult3x3(normal);
 					} else {
 						idx -= _bones.size();
 						for (uint w = 0; w < _weightElements[idx].size(); w++) {
