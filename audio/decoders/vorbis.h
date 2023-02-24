@@ -34,6 +34,7 @@
  *  - sword25
  *  - touche
  *  - tucker
+ *  - vcruise
  *  - wintermute
  */
 
