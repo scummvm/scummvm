@@ -671,7 +671,7 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 				pic = sharedCast->getArchive()->getResource(tag, imgId);
 		}
 
-		if (pic == nullptr || pic->size() == 0) {
+		if ((pic == nullptr || pic->size() == 0) && !_castsInfo[key]->fileName.empty()) {
 			// image file is linked, load from the filesystem
 			Common::File file;
 
@@ -679,19 +679,29 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 			Common::String directory = _castsInfo[key]->directory;
 
 			Common::String imageFilename = directory + g_director->_dirSeparator + filename;
+
 			Common::Path path = Common::Path(pathMakeRelative(imageFilename), g_director->_dirSeparator);
 
-			file.open(path);
-			Image::PICTDecoder *pict = new Image::PICTDecoder();
-			pict->loadStream(file);
-			file.close();
-			bitmapCast->_img = pict;
+			if (file.open(path)) {
+				Image::PICTDecoder *pict = new Image::PICTDecoder();
 
-			const Graphics::Surface *surf = pict->getSurface();
-			bitmapCast->_size = surf->pitch * surf->h + pict->getPaletteColorCount() * 3;
+				bool res = pict->loadStream(file);
+				file.close();
 
-			delete pic;
-			return;
+				if (res) {
+					bitmapCast->_img = pict;
+
+					const Graphics::Surface *surf = pict->getSurface();
+					bitmapCast->_size = surf->pitch * surf->h + pict->getPaletteColorCount() * 3;
+
+					delete pic;
+					return;
+				} else {
+					warning("BUILDBOT: Cast::loadBitmapData(): wrong format for external picture '%s'", path.toString().c_str());
+				}
+			} else {
+				warning("Cast::loadBitmapData(): cannot open external picture '%s'", path.toString().c_str());
+			}
 		}
 	} else {
 		if (_loadedCast->contains(imgId)) {
