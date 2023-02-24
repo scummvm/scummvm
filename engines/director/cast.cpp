@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 
@@ -674,8 +675,6 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 		if ((pic == nullptr || pic->size() == 0)
 				&& _castsInfo.contains(key) && !_castsInfo[key]->fileName.empty()) {
 			// image file is linked, load from the filesystem
-			Common::File file;
-
 			Common::String filename = _castsInfo[key]->fileName;
 			Common::String directory = _castsInfo[key]->directory;
 
@@ -683,11 +682,12 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 
 			Common::Path path = Common::Path(pathMakeRelative(imageFilename), g_director->_dirSeparator);
 
-			if (file.open(path)) {
+			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
+			if (file) {
 				Image::PICTDecoder *pict = new Image::PICTDecoder();
 
-				bool res = pict->loadStream(file);
-				file.close();
+				bool res = pict->loadStream(*file);
+				delete file;
 
 				if (res) {
 					bitmapCast->_img = pict;
