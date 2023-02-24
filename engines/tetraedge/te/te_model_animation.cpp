@@ -177,7 +177,7 @@ int TeModelAnimation::lastFrame() const {
 	} else {
 		result = _numNMOFrames;
 	}
-	return MIN(_lastFrame, result);
+	return MIN(_lastFrame, result - 1);
 }
 
 bool TeModelAnimation::load(const Common::Path &path) {
