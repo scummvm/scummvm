@@ -27,6 +27,7 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
+#include "image/pict.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -668,6 +669,29 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 				pic = _castArchive->getResource(tag, imgId);
 			else if (sharedCast && sharedCast->getArchive()->hasResource(tag, imgId))
 				pic = sharedCast->getArchive()->getResource(tag, imgId);
+		}
+
+		if (pic == nullptr || pic->size() == 0) {
+			// image file is linked, load from the filesystem
+			Common::File file;
+
+			Common::String filename = _castsInfo[key]->fileName;
+			Common::String directory = _castsInfo[key]->directory;
+
+			Common::String imageFilename = directory + g_director->_dirSeparator + filename;
+			Common::Path path = Common::Path(pathMakeRelative(imageFilename), g_director->_dirSeparator);
+
+			file.open(path);
+			Image::PICTDecoder *pict = new Image::PICTDecoder();
+			pict->loadStream(file);
+			file.close();
+			bitmapCast->_img = pict;
+
+			const Graphics::Surface *surf = pict->getSurface();
+			bitmapCast->_size = surf->pitch * surf->h + pict->getPaletteColorCount() * 3;
+
+			delete pic;
+			return;
 		}
 	} else {
 		if (_loadedCast->contains(imgId)) {
