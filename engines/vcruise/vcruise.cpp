@@ -27,6 +27,8 @@
 #include "common/algorithm.h"
 #include "common/translation.h"
 
+#include "gui/message.h"
+
 #include "vcruise/runtime.h"
 #include "vcruise/vcruise.h"
 
@@ -76,15 +78,25 @@ Common::Error VCruiseEngine::run() {
 
 #if !defined(USE_OGG) || !defined(USE_VORBIS)
 	if (_gameDescription->desc.flags & VCRUISE_GF_WANT_OGG_VORBIS) {
-		GUIErrorMessage(_("Music for this game requires Ogg Vorbis support, which was not compiled in.  The game will still play, but will not have any music."));
+		GUI::MessageDialog dialog(
+			_("Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
+			  "The game will still play, but will not have any music."),
+			_("OK"));
+		dialog.runModal();
 	}
 #endif
 
 #if !defined(USE_MAD)
 	if (_gameDescription->desc.flags & VCRUISE_GF_WANT_MP3) {
-		GUIErrorMessage(_("Music for this game requires MP3 support, which was not compiled in.  The game will still play, but will not have any music."));
+		GUI::MessageDialog dialog(
+			_("Music for this game requires MP3 support, which was not compiled in.\n"
+			  "The game will still play, but will not have any music."),
+			_("OK"));
+		dialog.runModal();
 	}
 #endif
+
+	
 
 	const Graphics::PixelFormat *fmt16_565 = nullptr;
 	const Graphics::PixelFormat *fmt16_555 = nullptr;
