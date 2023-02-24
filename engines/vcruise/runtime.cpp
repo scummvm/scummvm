@@ -91,6 +91,9 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 
 	for (uint i = 0; i < kNumDirections; i++)
 		_haveIdleAnimations[i] = false;
+
+	for (uint i = 0; i < kPanCursorMaxCount; i++)
+		_panCursors[i] = 0;
 }
 
 Runtime::~Runtime() {
@@ -143,6 +146,18 @@ void Runtime::loadCursors(const char *exeName) {
 		_namedCursors["CUR_PRZOD"] = 1;		// Przod = forward
 
 		// CUR_ZOSTAW is in the executable memory but appears to be unused
+
+		_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp] = 2;
+		_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableDown] = 3;
+		_panCursors[kPanCursorDraggableHoriz] = 4;
+		_panCursors[kPanCursorDraggableHoriz | kPanCursorDirectionRight] = 5;
+		_panCursors[kPanCursorDraggableHoriz | kPanCursorDirectionLeft] = 6;
+		_panCursors[kPanCursorDraggableUp] = 7;
+		_panCursors[kPanCursorDraggableDown] = 8;
+		_panCursors[kPanCursorDraggableUp | kPanCursorDirectionUp] = 9;
+		_panCursors[kPanCursorDraggableDown | kPanCursorDirectionDown] = 10;
+		_panCursors[kPanCursorDraggableUp | kPanCursorDraggableDown] = 11;
+		_panCursors[kPanCursorDraggableHoriz | kPanCursorDraggableUp | kPanCursorDraggableDown] = 12;
 	}
 }
 
@@ -177,6 +192,9 @@ bool Runtime::runFrame() {
 			break;
 		case kGameStateWaitingForAnimation:
 			moreActions = runWaitForAnimation();
+			break;
+		case kGameStateWaitingForFacing:
+			moreActions = runWaitForFacing();
 			break;
 		default:
 			error("Unknown game state");
@@ -242,6 +260,26 @@ bool Runtime::runIdle() {
 			bool changedState = dischargeIdleMouseMove();
 			if (changedState)
 				return true;
+		} else if (osEvent.type == kOSEventTypeLButtonUp) {
+			PanoramaState oldPanoramaState = _panoramaState;
+			_panoramaState = kPanoramaStateInactive;
+			_idleIsOnInteraction = false;
+
+			if (_lmbReleaseWasClick) {
+				bool changedState = dischargeIdleClick();
+				if (changedState)
+					return true;
+			}
+
+			// If the released from panorama mode, pick up any interactions at the new mouse location, and change the mouse back
+			if (oldPanoramaState != kPanoramaStateInactive) {
+				debug(1, "Changing cursor to arrow due to panorama deactivation");
+				changeToCursor(_cursors[kCursorArrow]);
+
+				bool changedState = dischargeIdleMouseMove();
+				if (changedState)
+					return true;
+			}
 		}
 	}
 
@@ -319,6 +357,20 @@ bool Runtime::runWaitForAnimation() {
 				return true;
 			}
 		}
+	}
+
+	// Yield
+	return false;
+}
+
+bool Runtime::runWaitForFacing() {
+	bool animEnded = false;
+	continuePlayingAnimation(false, animEnded);
+
+	if (animEnded) {
+		changeAnimation(_postFacingAnimDef);
+		_gameState = kGameStateWaitingForAnimation;
+		return true;
 	}
 
 	// Yield
@@ -525,7 +577,6 @@ void Runtime::terminateScript() {
 }
 
 void Runtime::startTerminatingHorizontalPan(bool isRight) {
-
 	// Figure out what slice this is.  The last frame is 1 less than usual.
 	uint slice = (_animDisplayingFrame - _animFirstFrame) * kNumDirections / (_animLastFrame - _animFirstFrame + 1);
 
@@ -719,12 +770,14 @@ void Runtime::returnToIdleState() {
 
 	_idleIsOnInteraction = false;
 
+	// Do this before detectPanoramaMouseMovement so continuous panorama keeps the correct cursor
+	changeToCursor(_cursors[kCursorArrow]);
+
 	detectPanoramaDirections();
 
 	_panoramaState = kPanoramaStateInactive;
 	detectPanoramaMouseMovement();
 
-	changeToCursor(_cursors[kCursorArrow]);
 	(void) dischargeIdleMouseMove();
 }
 
@@ -791,6 +844,40 @@ bool Runtime::dischargeIdleMouseMove() {
 					return true;
 				}
 			}
+		}
+	}
+
+	// Didn't do anything
+	return false;
+}
+
+bool Runtime::dischargeIdleClick() {
+	const MapScreenDirectionDef *sdDef = _map.getScreenDirection(_screenNumber, _direction);
+
+	Common::Point relMouse(_mousePos.x - _gameSection.rect.left, _mousePos.y - _gameSection.rect.top);
+
+	bool isOnInteraction = false;
+	uint interactionID = 0;
+	if (sdDef) {
+		for (const InteractionDef &idef : sdDef->interactions) {
+			if (idef.rect.contains(relMouse)) {
+				isOnInteraction = true;
+				interactionID = idef.interactionID;
+				break;
+			}
+		}
+	}
+
+	if (isOnInteraction) {
+		// Interaction, is there a script?
+		Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
+
+		if (script) {
+			ScriptEnvironmentVars vars;
+			vars.lmb = true;
+
+			activateScript(script, vars);
+			return true;
 		}
 	}
 
@@ -1090,7 +1177,52 @@ void Runtime::panoramaActivate() {
 	_panoramaState = kPanoramaStatePanningUncertainDirection;
 	_panoramaAnchor = _mousePos;
 
-	// TODO: Change mouse cursor
+	uint cursorID = 0;
+	if (_havePanAnimations) {
+		uint panCursor = 0;
+		if (_panoramaDirectionFlags & kPanoramaHorizFlags)
+			panCursor |= kPanCursorDraggableHoriz;
+		if (_panoramaDirectionFlags & kPanoramaUpFlag)
+			panCursor |= kPanCursorDraggableUp;
+		if (_panoramaDirectionFlags & kPanoramaUpFlag)
+			panCursor |= kPanCursorDraggableDown;
+
+		cursorID = _panCursors[panCursor];
+	}
+
+	debug(1, "Changing cursor to panorama cursor %u", cursorID);
+	changeToCursor(_cursors[cursorID]);
+}
+
+bool Runtime::computeFaceDirectionAnimation(uint desiredDirection, AnimationDef &outAnimDef) {
+	if (_direction == desiredDirection)
+		return false;
+
+	uint leftPanDistance = ((_direction + kNumDirections) - desiredDirection) % kNumDirections;
+	uint rightPanDistance = ((desiredDirection + kNumDirections) - _direction) % kNumDirections;
+
+	if (rightPanDistance <= leftPanDistance) {
+		uint currentSlice = _direction;
+		uint desiredSlice = desiredDirection;
+
+		outAnimDef = _panRightAnimationDef;
+		outAnimDef.firstFrame = currentSlice * (_panRightAnimationDef.lastFrame - _panRightAnimationDef.firstFrame) / kNumDirections + _panRightAnimationDef.firstFrame;
+		outAnimDef.lastFrame = desiredSlice * (_panRightAnimationDef.lastFrame - _panRightAnimationDef.firstFrame) / kNumDirections + _panRightAnimationDef.firstFrame;
+	} else {
+		uint reverseCurrentSlice = (kNumDirections - _direction);
+		if (reverseCurrentSlice == kNumDirections)
+			reverseCurrentSlice = 0;
+
+		uint reverseDesiredSlice = (kNumDirections - desiredDirection);
+		if (reverseDesiredSlice == kNumDirections)
+			reverseDesiredSlice = 0;
+
+		outAnimDef = _panLeftAnimationDef;
+		outAnimDef.firstFrame = reverseCurrentSlice * (_panLeftAnimationDef.lastFrame - _panLeftAnimationDef.firstFrame) / kNumDirections + _panLeftAnimationDef.firstFrame;
+		outAnimDef.lastFrame = reverseDesiredSlice * (_panLeftAnimationDef.lastFrame - _panLeftAnimationDef.firstFrame) / kNumDirections + _panLeftAnimationDef.firstFrame;
+	}
+
+	return true;
 }
 
 void Runtime::onLButtonDown(int16 x, int16 y) {
@@ -1203,6 +1335,8 @@ void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 OPCODE_STUB(ChangeL)
 
 void Runtime::scriptOpAnimR(ScriptArg_t arg) {
+	bool isRight = false;
+
 	if (_scriptEnv.panInteractionID == kPanLeftInteraction) {
 		debug(1, "Pan-left interaction from direction %u", _direction);
 
@@ -1231,10 +1365,53 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 
 		changeAnimation(_panRightAnimationDef, initialFrame);
 		_gameState = kGameStatePanRight;
+
+		isRight = true;
 	}
+
+	
+	uint cursorID = 0;
+	if (_havePanAnimations) {
+		uint panCursor = 0;
+		if (_panoramaDirectionFlags & kPanoramaHorizFlags)
+			panCursor |= kPanCursorDraggableHoriz;
+		if (_panoramaDirectionFlags & kPanoramaUpFlag)
+			panCursor |= kPanCursorDraggableUp;
+		if (_panoramaDirectionFlags & kPanoramaUpFlag)
+			panCursor |= kPanCursorDraggableDown;
+
+		if (isRight)
+			panCursor |= kPanCursorDirectionRight;
+		else
+			panCursor |= kPanCursorDirectionLeft;
+
+		cursorID = _panCursors[panCursor];
+	}
+
+	changeToCursor(_cursors[cursorID]);
 }
 
-OPCODE_STUB(AnimF)
+void Runtime::scriptOpAnimF(ScriptArg_t arg) {
+	TAKE_STACK(kAnimDefStackArgs + 3);
+
+	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
+
+	AnimationDef faceDirectionAnimDef;
+	if (computeFaceDirectionAnimation(stackArgs[kAnimDefStackArgs + 2], faceDirectionAnimDef)) {
+		_postFacingAnimDef = animDef;
+		changeAnimation(faceDirectionAnimDef);
+		_gameState = kGameStateWaitingForFacing;
+	} else {
+		changeAnimation(animDef);
+		_gameState = kGameStateWaitingForAnimation;
+	}
+	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
+	_direction = stackArgs[kAnimDefStackArgs + 1];
+	_havePendingScreenChange = true;
+
+	changeToCursor(_cursors[kCursorArrow]);
+}
+
 OPCODE_STUB(AnimN)
 OPCODE_STUB(AnimG)
 
@@ -1250,6 +1427,8 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
 	_direction = stackArgs[kAnimDefStackArgs + 1];
 	_havePendingScreenChange = true;
+
+	changeToCursor(_cursors[kCursorArrow]);
 }
 
 void Runtime::scriptOpAnim(ScriptArg_t arg) {
@@ -1262,6 +1441,8 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
 	_direction = stackArgs[kAnimDefStackArgs + 1];
 	_havePendingScreenChange = true;
+
+	changeToCursor(_cursors[kCursorArrow]);
 }
 
 OPCODE_STUB(Static)
@@ -1295,7 +1476,11 @@ void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
 	changeToCursor(_cursors[stackArgs[0]]);
 }
 
-OPCODE_STUB(SetRoom)
+void Runtime::scriptOpSetRoom(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	_roomNumber = stackArgs[0];
+}
 
 void Runtime::scriptOpLMB(ScriptArg_t arg) {
 	if (!_scriptEnv.lmb)

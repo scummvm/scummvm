@@ -56,6 +56,7 @@ struct Instruction;
 enum GameState {
 	kGameStateBoot,					// Booting the game
 	kGameStateWaitingForAnimation,	// Waiting for a blocking animation to complete, then resuming script
+	kGameStateWaitingForFacing,		// Waiting for a blocking animation to complete, then playing _postFacingAnimDef and switching to kGameStateWaitingForAnimation
 	kGameStateQuit,					// Quitting
 	kGameStateIdle,					// Waiting for input events
 	kGameStateScript,				// Running a script
@@ -171,6 +172,19 @@ private:
 		kOSEventTypeKeyDown,
 	};
 
+	enum PanoramaCursorFlags {
+		kPanCursorDraggableHoriz	= (1 << 0),
+		kPanCursorDraggableUp		= (1 << 1),
+		kPanCursorDraggableDown		= (1 << 2),
+
+		kPanCursorDirectionUp		= (0 << 3),
+		kPanCursorDirectionLeft		= (1 << 3),
+		kPanCursorDirectionRight	= (2 << 3),
+		kPanCursorDirectionDown		= (3 << 3),
+
+		kPanCursorMaxCount			= (1 << 5),
+	};
+
 	enum PanoramaState {
 		kPanoramaStateInactive,
 
@@ -199,6 +213,7 @@ private:
 	bool runHorizontalPan(bool isRight);
 	bool runScript();
 	bool runWaitForAnimation();
+	bool runWaitForFacing();
 	void continuePlayingAnimation(bool loop, bool &outEndedAnimation);
 	void drawSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void commitSectionToScreen(const RenderSection &section, const Common::Rect &rect);
@@ -214,6 +229,7 @@ private:
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
 	bool dischargeIdleMouseMove();
+	bool dischargeIdleClick();
 	void loadMap(Common::SeekableReadStream *stream);
 
 	void changeMusicTrack(int musicID);
@@ -234,6 +250,8 @@ private:
 	void detectPanoramaDirections();
 	void detectPanoramaMouseMovement();
 	void panoramaActivate();
+
+	bool computeFaceDirectionAnimation(uint desiredDirection, AnimationDef &outAnimDef);
 
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
@@ -311,6 +329,8 @@ private:
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursors;		// Cursors indexed as CURSOR_CUR_##
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursorsShort;	// Cursors indexed as CURSOR_#
 
+	uint _panCursors[kPanCursorMaxCount];
+
 	Common::HashMap<Common::String, StackValue_t> _namedCursors;
 
 	OSystem *_system;
@@ -324,6 +344,8 @@ private:
 
 	AnimationDef _idleAnimations[kNumDirections];
 	bool _haveIdleAnimations[kNumDirections];
+
+	AnimationDef _postFacingAnimDef;
 
 	Common::HashMap<uint32, int32> _variables;
 
@@ -402,8 +424,8 @@ private:
 
 	static const uint kCursorArrow = 0;
 
-	static const int kPanoramaPanningMarginX = 10;
-	static const int kPanoramaPanningMarginY = 10;
+	static const int kPanoramaPanningMarginX = 11;
+	static const int kPanoramaPanningMarginY = 11;
 };
 
 } // End of namespace VCruise
