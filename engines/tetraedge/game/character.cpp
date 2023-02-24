@@ -125,8 +125,6 @@ void Character::addCallback(const Common::String &animKey, const Common::String 
 		//
 		if (fnName == "ChangeClef" && c->_triggerFrame == 31)
 			c->_triggerFrame = 15;
-		//else if (fnName == "Launch_Ballon" && c->_triggerFrame == 177)
-		//	c->_triggerFrame = 150;
 
 		const Common::Path animPath = _model->anim()->loadedPath();
 
