@@ -44,7 +44,9 @@ bool TeCameraXmlParser::parserCallback_scale(ParserNode *node) {
 }
 
 bool TeCameraXmlParser::parserCallback_fov(ParserNode *node) {
-	_cam->setFov(parseDouble(node));
+	float fov = parseDouble(node);
+	fov = atanf(1.0f / (1.333333f / tanf(fov / 2)));
+	_cam->setFov(fov * 2);
 	return true;
 }
 
