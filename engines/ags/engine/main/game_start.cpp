@@ -86,7 +86,7 @@ void start_game() {
 
 	_G(our_eip) = -42;
 
-	// skip ticks to account for initialisation or a restored _GP(game).
+	// skip ticks to account for initialisation or a restored game.
 	skipMissedTicks();
 
 	RunScriptFunctionInModules("game_start");

@@ -24,7 +24,7 @@
 //=============================================================================
 //
 // IAGSStream is a contract for stream class, provided by engine to plugin
-// on the need, such as saving/restoring the _GP(game).
+// on the need, such as saving/restoring the game.
 // The user is advised to use advanced helper methods, such as Read/WriteX
 // and Read/WriteArrayOfX to allow the stream implementation properly control
 // endianness conversions and data padding, when needed.
