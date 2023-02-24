@@ -432,8 +432,8 @@ void *tolua_tousertype(lua_State *L, int narg, void* def) {
 	return lua_gettop(L) < abs(narg) ?  def : lua_touserdata(L, narg);
 }
 
-int tolua_toboolean(lua_State *L, int narg, int def) {
-	return lua_gettop(L) < abs(narg) ?  def : lua_toboolean(L, narg);
+bool tolua_toboolean(lua_State *L, int narg, bool def) {
+	return lua_gettop(L) < abs(narg) ?  def : (lua_toboolean(L, narg) != 0);
 }
 
 void tolua_pushboolean(lua_State *L, bool val) {

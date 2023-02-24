@@ -367,7 +367,7 @@ static int tolua_ExportedFunctions_ChangeWarp00(lua_State *L) {
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isboolean(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
-		bool flag = tolua_toboolean(L, 3, 0);
+		bool flag = tolua_toboolean(L, 3, false);
 		ChangeWarp(s1, s2, flag);
 		return 0;
 	}
@@ -382,7 +382,7 @@ static void SetCharacterPlayerVisible(bool val) {
 static int tolua_ExportedFunctions_SetCharacterPlayerVisible00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
-		SetCharacterPlayerVisible(tolua_toboolean(L, 1, 0));
+		SetCharacterPlayerVisible(tolua_toboolean(L, 1, false));
 		return 0;
 	}
 	error("#ferror in function 'SetCharacterPlayerVisible': %d %d %s", err.index, err.array, err.type);
@@ -396,7 +396,7 @@ static void MoveCharacterPlayerDisabled(bool val) {
 static int tolua_ExportedFunctions_MoveCharacterPlayerDisabled00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
-		MoveCharacterPlayerDisabled(tolua_toboolean(L, 1, 0));
+		MoveCharacterPlayerDisabled(tolua_toboolean(L, 1, false));
 		return 0;
 	}
 	error("#ferror in function 'MoveCharacterPlayerDisabled': %d %d %s", err.index, err.array, err.type);
@@ -410,7 +410,7 @@ static void SetRunMode(bool run) {
 static int tolua_ExportedFunctions_SetRunMode00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
-		SetRunMode(tolua_toboolean(L, 1, 0));
+		SetRunMode(tolua_toboolean(L, 1, false));
 		return 0;
 	}
 	error("#ferror in function 'SetRunMode': %d %d %s", err.index, err.array, err.type);
@@ -452,7 +452,7 @@ static int tolua_ExportedFunctions_SetCharacterShadow00(lua_State *L) {
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err)
 			 && tolua_isnoobj(L, 3, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
-		bool b1 = tolua_toboolean(L, 2, 0);
+		bool b1 = tolua_toboolean(L, 2, false);
 		SetCharacterShadow(s1, b1);
 		return 0;
 	}
@@ -588,7 +588,7 @@ static int tolua_ExportedFunctions_SetVisibleMarker00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
 		Common::String s(tolua_tostring(L, 1, nullptr));
-		bool b = tolua_toboolean(L, 2, 0);
+		bool b = tolua_toboolean(L, 2, false);
 		SetVisibleMarker(s, b);
 		return 0;
 	}
@@ -618,7 +618,7 @@ static void SetVisibleCellphone(bool visible) {
 static int tolua_ExportedFunctions_SetVisibleCellphone00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
-		SetVisibleCellphone(tolua_toboolean(L, 1, 0));
+		SetVisibleCellphone(tolua_toboolean(L, 1, false));
 		return 0;
 	}
 	error("#ferror in function 'SetVisibleCellphone': %d %d %s", err.index, err.array, err.type);
@@ -644,7 +644,7 @@ int tolua_ExportedFunctions_StartAnimation00(lua_State *L) {
 		&& tolua_isboolean(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		double d1 = tolua_tonumber(L, 2, -1.0);
-		bool b1 = tolua_toboolean(L, 3, 0);
+		bool b1 = tolua_toboolean(L, 3, false);
 		StartAnimation(s1, d1, b1);
 		return 0;
 	}
@@ -658,7 +658,7 @@ int tolua_ExportedFunctions_StartAnimationAndWaitForEnd00(lua_State *L) {
 		&& tolua_isboolean(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		double d1 = tolua_tonumber(L, 2, -1.0);
-		bool b1 = tolua_toboolean(L, 3, 0);
+		bool b1 = tolua_toboolean(L, 3, false);
 		StartAnimation(s1, d1, b1);
 
 		Game::YieldedCallback callback;
@@ -701,7 +701,7 @@ static void SetVisibleButtonZoomed(bool val) {
 static int tolua_ExportedFunctions_SetVisibleButtonZoomed00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
-		bool b1 = tolua_toboolean(L, 1, 0);
+		bool b1 = tolua_toboolean(L, 1, false);
 		SetVisibleButtonZoomed(b1);
 		return 0;
 	}
@@ -906,8 +906,8 @@ static int tolua_ExportedFunctions_SetCharacterAnimation00(lua_State *L) {
 		&& tolua_isnoobj(L, 7, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
-		bool b1 = tolua_toboolean(L, 3, 1);
-		bool b2 = tolua_toboolean(L, 4, 0);
+		bool b1 = tolua_toboolean(L, 3, true);
+		bool b2 = tolua_toboolean(L, 4, false);
 		double f3 = tolua_tonumber(L, 5, -1.0);
 		double f4 = tolua_tonumber(L, 6, 9999.0);
 		SetCharacterAnimation(s1, s2, b1, b2, (int)f3, (int)f4);
@@ -926,8 +926,8 @@ static int tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00(lua_Stat
 		&& tolua_isnoobj(L, 7, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
-		bool b1 = tolua_toboolean(L, 3, 1);
-		bool b2 = tolua_toboolean(L, 4, 0);
+		bool b1 = tolua_toboolean(L, 3, true);
+		bool b2 = tolua_toboolean(L, 4, false);
 		double f3 = tolua_tonumber(L, 5, -1.0);
 		double f4 = tolua_tonumber(L, 6, 9999.0);
 		SetCharacterAnimation(s1, s2, b1, b2, (int)f3, (int)f4);
@@ -966,8 +966,8 @@ static int tolua_ExportedFunctions_BlendCharacterAnimation00(lua_State *L) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		double f1 = tolua_tonumber(L, 3, 0.0);
-		bool b1 = tolua_toboolean(L, 4, 1);
-		bool b2 = tolua_toboolean(L, 5, 0);
+		bool b1 = tolua_toboolean(L, 4, true);
+		bool b2 = tolua_toboolean(L, 5, false);
 		BlendCharacterAnimation(s1, s2, f1, b1, b2);
 		return 0;
 	}
@@ -982,8 +982,8 @@ static int tolua_ExportedFunctions_BlendCharacterAnimationAndWaitForEnd00(lua_St
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		double f1 = tolua_tonumber(L, 3, 0.0);
-		bool b1 = tolua_toboolean(L, 4, 1);
-		bool b2 = tolua_toboolean(L, 5, 0);
+		bool b1 = tolua_toboolean(L, 4, true);
+		bool b2 = tolua_toboolean(L, 5, false);
 		BlendCharacterAnimation(s1, s2, f1, b1, b2);
 
 		Game::YieldedCallback callback;
@@ -1149,7 +1149,7 @@ static int tolua_ExportedFunctions_EnableLight00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isnumber(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
 		float f1 = tolua_tonumber(L, 1, 0.0);
-		bool b1 = tolua_toboolean(L, 2, 0);
+		bool b1 = tolua_toboolean(L, 2, false);
 		EnableLight(f1, b1);
 		return 0;
 	}
@@ -1527,8 +1527,8 @@ static void SetVisibleButtonHelp(bool val) {
 
 static int tolua_ExportedFunctions_SetVisibleButtonHelp00(lua_State *L) {
 	tolua_Error err;
-	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 3, &err)) {
-		bool b1 = tolua_toboolean(L, 1, 0);
+	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		bool b1 = tolua_toboolean(L, 1, false);
 		SetVisibleButtonHelp(b1);
 		return 0;
 	}
@@ -1580,7 +1580,7 @@ static int tolua_ExportedFunctions_EnableRectBlocker00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isnumber(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
 		double d1 = tolua_tonumber(L, 1, 0.0f);
-		bool b1 = tolua_toboolean(L, 2, 0);
+		bool b1 = tolua_toboolean(L, 2, false);
 		EnableRectBlocker((uint)d1, b1);
 		return 0;
 	}
@@ -1599,7 +1599,7 @@ static int tolua_ExportedFunctions_EnableBlocker00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isnumber(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
 		double d1 = tolua_tonumber(L, 1, 0.0f);
-		bool b1 = tolua_toboolean(L, 2, 0);
+		bool b1 = tolua_toboolean(L, 2, false);
 		EnableBlocker((uint)d1, b1);
 		return 0;
 	}
@@ -1651,7 +1651,7 @@ static int tolua_ExportedFunctions_ActivateAnchorZone00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
 		Common::String s(tolua_tostring(L, 1, nullptr));
-		bool b = tolua_toboolean(L, 2, 0);
+		bool b = tolua_toboolean(L, 2, false);
 		ActivateAnchorZone(s, b);
 		return 0;
 	}
@@ -1690,7 +1690,7 @@ static int tolua_ExportedFunctions_SetCharacterLookChar00(lua_State *L) {
 		&& tolua_isnoobj(L, 5, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
-		bool b = tolua_toboolean(L, 3, 1);
+		bool b = tolua_toboolean(L, 3, true);
 		float f = tolua_tonumber(L, 4, 0.0);
 		SetCharacterLookChar(s1, s2, b, f);
 		return 0;
@@ -1727,7 +1727,7 @@ static int tolua_ExportedFunctions_SetCharacterMeshVisible00(lua_State *L) {
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) && tolua_isboolean(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
-		bool b = tolua_toboolean(L, 3, 0);
+		bool b = tolua_toboolean(L, 3, false);
 		SetCharacterMeshVisible(s1, s2, b);
 		return 0;
 	}
@@ -1747,7 +1747,7 @@ static int tolua_ExportedFunctions_SetRecallageY00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 1, &err) && tolua_isnoobj(L, 3, &err)) {
 		Common::String s(tolua_tostring(L, 1, nullptr));
-		bool b = tolua_toboolean(L, 2, 0);
+		bool b = tolua_toboolean(L, 2, false);
 		SetRecallageY(s, b);
 		return 0;
 	}
@@ -1778,7 +1778,7 @@ static int tolua_ExportedFunctions_DisabledZone00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 1, &err) && tolua_isnoobj(L, 3, &err)) {
 		Common::String s(tolua_tostring(L, 1, nullptr));
-		bool b = tolua_toboolean(L, 2, 1);
+		bool b = tolua_toboolean(L, 2, true);
 		DisabledZone(s, b);
 		return 0;
 	}
@@ -1800,7 +1800,7 @@ static int tolua_ExportedFunctions_DisabledInt00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 1, &err) && tolua_isnoobj(L, 3, &err)) {
 		Common::String s(tolua_tostring(L, 1, nullptr));
-		bool b = tolua_toboolean(L, 2, 1);
+		bool b = tolua_toboolean(L, 2, true);
 		DisabledInt(s, b);
 		return 0;
 	}
@@ -1815,7 +1815,7 @@ static void LockCursor(bool b) {
 static int tolua_ExportedFunctions_LockCursor00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
-		bool b = tolua_toboolean(L, 1, 0);
+		bool b = tolua_toboolean(L, 1, false);
 		LockCursor(b);
 		return 0;
 	}
@@ -2100,7 +2100,7 @@ static void MoveCharacterTo(const Common::String &charName, const Common::String
 static int tolua_ExportedFunctions_MoveCharacterTo00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
-		&& tolua_isstring(L, 3, 0, &err) && tolua_isstring(L, 4, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
 		&& tolua_isnoobj(L, 5, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
@@ -2115,7 +2115,7 @@ static int tolua_ExportedFunctions_MoveCharacterTo00(lua_State *L) {
 static int tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
-		&& tolua_isstring(L, 3, 0, &err) && tolua_isstring(L, 4, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
 		&& tolua_isnoobj(L, 5, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
@@ -2186,7 +2186,7 @@ static int tolua_ExportedFunctions_MoveCharacterPlayerTo00(lua_State *L) {
 		float f1 = tolua_tonumber(L, 1, 0.0);
 		float f2 = tolua_tonumber(L, 2, 0.0);
 		float f3 = tolua_tonumber(L, 3, 0.0);
-		bool b1 = tolua_toboolean(L, 4, 0);
+		bool b1 = tolua_toboolean(L, 4, false);
 		MoveCharacterPlayerTo(f1, f2, f3, b1);
 		return 0;
 	}
@@ -2201,7 +2201,7 @@ static void EnableRunMode(bool val) {
 static int tolua_ExportedFunctions_EnableRunMode00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
-		bool b1 = tolua_toboolean(L, 1, 0);
+		bool b1 = tolua_toboolean(L, 1, false);
 		EnableRunMode(b1);
 		return 0;
 	}
@@ -2250,12 +2250,12 @@ static void BlendCharacterPlayerAnimation(const Common::String &anim, float amou
 static int tolua_ExportedFunctions_BlendCharacterPlayerAnimation00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
-		&& tolua_isboolean(L, 3, 0, &err) && tolua_isboolean(L, 4, 0, &err)
-		&& tolua_isnoobj(L, 6, &err)) {
+		&& tolua_isboolean(L, 3, 1, &err) && tolua_isboolean(L, 4, 1, &err)
+		&& tolua_isnoobj(L, 5, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		float f1 = tolua_tonumber(L, 2, 0.0);
-		float b1 = tolua_toboolean(L, 3, 0.0);
-		float b2 = tolua_toboolean(L, 4, 0.0);
+		float b1 = tolua_toboolean(L, 3, true);
+		float b2 = tolua_toboolean(L, 4, false);
 		BlendCharacterPlayerAnimation(s1, f1, b1, b2);
 		return 0;
 	}
@@ -2349,8 +2349,8 @@ static int tolua_ExportedFunctions_SetCharacterPlayerAnimation00(lua_State *L) {
 		&& tolua_isboolean(L, 3, 1, &err) && tolua_isnumber(L, 4, 1, &err)
 		&& tolua_isnumber(L, 5, 1, &err) && tolua_isnoobj(L, 6, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
-		bool b1 = tolua_toboolean(L, 2, 1);
-		bool b2 = tolua_toboolean(L, 3, 0);
+		bool b1 = tolua_toboolean(L, 2, true);
+		bool b2 = tolua_toboolean(L, 3, false);
 		double f3 = tolua_tonumber(L, 4, -1.0);
 		double f4 = tolua_tonumber(L, 5, 9999.0);
 		SetCharacterPlayerAnimation(s1, b1, b2, (int)f3, (int)f4);
@@ -2429,7 +2429,7 @@ static int tolua_ExportedFunctions_ActivateMask00(lua_State *L) {
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err)
 		&& tolua_isnoobj(L, 3, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
-		bool b1 = tolua_toboolean(L, 2, 0.0);
+		bool b1 = tolua_toboolean(L, 2, false);
 		ActivateMask(s1, b1);
 		return 0;
 	}
@@ -2443,7 +2443,7 @@ static void SetYoukiFollowKate(bool val) {
 static int tolua_ExportedFunctions_SetYoukiFollowKate00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
-		bool b1 = tolua_toboolean(L, 1, 0.0);
+		bool b1 = tolua_toboolean(L, 1, false);
 		SetYoukiFollowKate(b1);
 		return 0;
 	}
@@ -2457,11 +2457,11 @@ static void AddRandomAnimation(const Common::String &character, const Common::St
 static int tolua_ExportedFunctions_AddRandomAnimation00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err) &&
-		tolua_isboolean(L, 3, 0, &err) && tolua_isnoobj(L, 4, &err)) {
+		tolua_isnumber(L, 3, 0, &err) && tolua_isnoobj(L, 4, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
-		bool b1 = tolua_toboolean(L, 3, 0.0);
-		AddRandomAnimation(s1, s2, b1);
+		double d1 = tolua_tonumber(L, 3, 0.0);
+		AddRandomAnimation(s1, s2, d1);
 		return 0;
 	}
 	error("#ferror in function 'AddRandomAnimation': %d %d %s", err.index, err.array, err.type);
