@@ -671,7 +671,8 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 				pic = sharedCast->getArchive()->getResource(tag, imgId);
 		}
 
-		if ((pic == nullptr || pic->size() == 0) && !_castsInfo[key]->fileName.empty()) {
+		if ((pic == nullptr || pic->size() == 0)
+				&& _castsInfo[key]->fileName && !_castsInfo[key]->fileName.empty()) {
 			// image file is linked, load from the filesystem
 			Common::File file;
 
