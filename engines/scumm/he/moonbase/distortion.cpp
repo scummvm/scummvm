@@ -96,7 +96,7 @@ static void blitDistortionCore(
 
 			if (transferOp == kReflectionClipped) {
 				if (sx < srcClipRect->left)
-					sx -= (srcClipRect->left - sx);
+					sx += (srcClipRect->left - sx);
 
 				if (sx > srcClipRect->right)
 					sx -= (sx - srcClipRect->right);
@@ -104,7 +104,7 @@ static void blitDistortionCore(
 				sx = MAX<int>(srcClipRect->left, MIN<int>(sx, srcClipRect->right));
 
 				if (sy < srcClipRect->top)
-					sy -= (srcClipRect->top - sy);
+					sy += (srcClipRect->top - sy);
 
 				if (sy > srcClipRect->bottom)
 					sy -= (sy - srcClipRect->bottom);
