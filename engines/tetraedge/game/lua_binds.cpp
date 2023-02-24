@@ -2386,7 +2386,7 @@ static void SetObjectMoveDest(const Common::String &obj, float x, float y, float
 static int tolua_ExportedFunctions_SetObjectMoveDest00(lua_State *L) {
 	tolua_Error err;
 	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 0, &err)
-		&& tolua_isnumber(L, 2, 0, &err) && tolua_isnumber(L, 4, 0, &err)
+		&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
 		&& tolua_isnoobj(L, 5, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		float f1 = tolua_tonumber(L, 2, 0.0);
