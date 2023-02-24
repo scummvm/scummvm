@@ -195,6 +195,19 @@ bool TetraedgeEngine::onKeyUp(const Common::KeyState &state) {
 	return false;
 }
 
+void TetraedgeEngine::registerConfigDefaults() {
+	// The skips are mostly for debugging to jump straight to certain
+	// things.  If they are all enabled you get into a new game as
+	// soon as possible.
+	ConfMan.registerDefault("skip_videos", false);
+	ConfMan.registerDefault("skip_splash", false);
+	ConfMan.registerDefault("skip_mainmenu", false);
+	ConfMan.registerDefault("skip_confirm", false);
+
+	ConfMan.registerDefault("disable_shadows", false);
+	ConfMan.registerDefault("correct_movie_aspect", true);
+}
+
 Common::Error TetraedgeEngine::run() {
 	if (getGameId() == "syberia")
 		_gameType = kSyberia;
@@ -204,6 +217,8 @@ Common::Error TetraedgeEngine::run() {
 		_gameType = kAmerzone;
 	else
 		error("Unknown game id %s", getGameId().c_str());
+
+	registerConfigDefaults();
 
 	configureSearchPaths();
 	// from BasicOpenGLView::prepareOpenGL..

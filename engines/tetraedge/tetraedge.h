@@ -142,6 +142,7 @@ public:
 
 private:
 	void configureSearchPaths();
+	void registerConfigDefaults();
 };
 
 extern TetraedgeEngine *g_engine;
