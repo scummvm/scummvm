@@ -27,7 +27,8 @@
 #include "common/array.h" // For OSystem::getGlobalKeymaps()
 #include "common/list.h" // For OSystem::getSupportedFormats()
 #include "common/ustr.h"
-#include "common/hash-str.h" // For Common::StringMap used in OSystem::updateStartSettings()
+#include "common/str-array.h" // For OSystem::updateStartSettings()
+#include "common/hash-str.h" // For OSystem::updateStartSettings()
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
 #include "graphics/opengl/context.h"
@@ -310,8 +311,11 @@ public:
 	 *
 	 * This function is called after the command line parameters have been parsed,
 	 * and thus the initial value of command and settings will reflect those.
+	 *
+	 * The default implementation checks if the executable name is "scummvm-auto"
+	 * or if a file named "scummvm-autorun" sits next to it to enable autorun mode.
 	 */
-	virtual void updateStartSettings(const Common::String &executable, Common::String &command, Common::StringMap &startSettings, Common::StringArray& additionalArgs) { }
+	virtual void updateStartSettings(const Common::String &executable, Common::String &command, Common::StringMap &startSettings, Common::StringArray& additionalArgs);
 
 	/**
 	 * @defgroup common_system_flags Feature flags
