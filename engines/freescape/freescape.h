@@ -439,6 +439,9 @@ private:
 	void loadAssetsDemo();
 	void loadAssetsFullGame();
 
+	void loadAssetsAtariFullGame();
+	void loadAssetsAtariDemo();
+
 	void loadAssetsAmigaFullGame();
 	void loadAssetsAmigaDemo();
 
