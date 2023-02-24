@@ -1292,8 +1292,10 @@ bool Game::onSkipVideoButtonValidated() {
 }
 
 bool Game::onVideoFinished() {
-	if (!_inGameGui.loaded())
+	if (!_inGameGui.loaded()) {
+		_music.stop();
 		return false;
+	}
 
 	Application *app = g_engine->getApplication();
 
@@ -1351,20 +1353,34 @@ bool Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 	_running = false;
 
 	TeSpriteLayout *videoSpriteLayout = _inGameGui.spriteLayoutChecked("video");
-	// TODO: check return value here.
-	videoSpriteLayout->load(vidPath);
-	videoSpriteLayout->setVisible(true);
-	music.play();
-	videoSpriteLayout->play();
+	if (videoSpriteLayout->load(vidPath)) {
+		uint vidHeight = videoSpriteLayout->_tiledSurfacePtr->codec()->height();
+		uint vidWidth = videoSpriteLayout->_tiledSurfacePtr->codec()->width();
 
-	// Stop the movie and sound early for testing if skip_videos set
-	if (ConfMan.get("skip_videos") == "true") {
-		videoSpriteLayout->_tiledSurfacePtr->_frameAnim.setNbFrames(10);
-		music.stop();
+		// Note: Not in original, but original incorrectly stretches
+		// videos that should be 16:9.
+		if (ConfMan.getBool("correct_movie_aspect")) {
+			videoSpriteLayout->setRatioMode(TeILayout::RATIO_MODE_LETTERBOX);
+			videoSpriteLayout->setRatio((float)vidWidth / vidHeight);
+			videoSpriteLayout->updateSize();
+		}
+
+		videoSpriteLayout->setVisible(true);
+		music.play();
+		videoSpriteLayout->play();
+
+		// Stop the movie and sound early for testing if skip_videos set
+		if (ConfMan.getBool("skip_videos")) {
+			videoSpriteLayout->_tiledSurfacePtr->_frameAnim.setNbFrames(10);
+			music.stop();
+		}
+
+		app->fade();
+		return true;
+	} else {
+		warning("Failed to load movie %s", vidPath.c_str());
+		return false;
 	}
-
-	app->fade();
-	return true;
 }
 
 void Game::playRandomSound(const Common::String &name) {
