@@ -439,6 +439,18 @@ private:
 	void loadAssetsDemo();
 	void loadAssetsFullGame();
 
+	void loadAssetsAmigaFullGame();
+	void loadAssetsAmigaDemo();
+
+	void loadAssetsDOSFullGame();
+	void loadAssetsDOSDemo();
+
+	void loadAssetsZXFullGame();
+	void loadAssetsZXDemo();
+
+	void loadAssetsCPCFullGame();
+	void loadAssetsCPCDemo();
+
 	void drawDOSUI(Graphics::Surface *surface);
 	void drawZXUI(Graphics::Surface *surface);
 	void drawCPCUI(Graphics::Surface *surface);

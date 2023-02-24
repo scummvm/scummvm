@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 
@@ -177,6 +179,76 @@ Graphics::Surface *DrillerEngine::load8bitTitleImage(Common::SeekableReadStream 
 		}
 	}
 	return surface;
+}
+void DrillerEngine::loadAssetsDOSFullGame() {
+	Common::File file;
+	if (_renderMode == Common::kRenderEGA) {
+		file.open("SCN1E.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 0x0);
+		}
+		file.close();
+		file.open("EGATITLE.RL");
+		if (file.isOpen()) {
+			_title = load8bitTitleImage(&file, 0x1b3);
+		}
+		file.close();
+
+		file.open("DRILLE.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open DRILLE.EXE");
+
+		loadMessagesFixedSize(&file, 0x4135, 14, 20);
+		loadFonts(&file, 0x99dd);
+		loadGlobalObjects(&file, 0x3b42);
+		load8bitBinary(&file, 0x9b40, 16);
+		_border = load8bitBinImage(&file, 0x210);
+	} else if (_renderMode == Common::kRenderCGA) {
+		file.open("SCN1C.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 0x0);
+		}
+		file.close();
+		file.open("CGATITLE.RL");
+		if (file.isOpen()) {
+			_title = load8bitTitleImage(&file, 0x1b3);
+		}
+		file.close();
+		file.open("DRILLC.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open DRILLC.EXE");
+
+		loadFonts(&file, 0x07a4a);
+		loadMessagesFixedSize(&file, 0x2585, 14, 20);
+		load8bitBinary(&file, 0x7bb0, 4);
+		loadGlobalObjects(&file, 0x1fa2);
+		_border = load8bitBinImage(&file, 0x210);
+	} else
+		error("Unsupported video mode for DOS");
+}
+
+void DrillerEngine::loadAssetsDOSDemo() {
+	Common::File file;
+	_renderMode = Common::kRenderCGA; // DOS demos is CGA only
+	_viewArea = Common::Rect(36, 16, 284, 117); // correct view area
+	_gfx->_renderMode = _renderMode;
+	loadBundledImages();
+	file.open("d2");
+	if (!file.isOpen())
+		error("Failed to open 'd2' file");
+
+	loadFonts(&file, 0x4eb0);
+	loadMessagesFixedSize(&file, 0x636, 14, 20);
+	load8bitBinary(&file, 0x55b0, 4);
+	loadGlobalObjects(&file, 0x8c);
+
+	// Fixed for a corrupted area names in the demo data
+	_areaMap[2]->_name = "LAPIS LAZULI";
+	_areaMap[3]->_name = "EMERALD";
+	_areaMap[8]->_name = "TOPAZ";
+	file.close();
 }
 
 void DrillerEngine::drawDOSUI(Graphics::Surface *surface) {

@@ -22,7 +22,6 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/memstream.h"
 #include "common/random.h"
 
 #include "freescape/freescape.h"
@@ -279,49 +278,7 @@ void DrillerEngine::loadAssets() {
 void DrillerEngine::loadAssetsDemo() {
 	Common::File file;
 	if (isAmiga()) {
-		file.open("lift.neo");
-		if (!file.isOpen())
-			error("Failed to open 'lift.neo' file");
-
-		_title = loadAndConvertNeoImage(&file, 0);
-
-		file.close();
-		file.open("console.neo");
-		if (!file.isOpen())
-			error("Failed to open 'console.neo' file");
-
-		_border = loadAndConvertNeoImage(&file, 0);
-
-		file.close();
-		file.open("demo.cmd");
-		if (!file.isOpen())
-			error("Failed to open 'demo.cmd' file");
-
-		loadDemoData(&file, 0, 0x1000);
-
-		file.close();
-		file.open("data");
-		if (!file.isOpen())
-			error("Failed to open 'data' file");
-
-		load8bitBinary(&file, 0x442, 16);
-		loadPalettes(&file, 0x0);
-
-		file.close();
-		file.open("driller");
-		if (!file.isOpen())
-			error("Failed to open 'driller' file");
-
-		loadFonts(&file, 0xa30);
-		loadMessagesFixedSize(&file, 0x3960, 14, 20);
-		loadGlobalObjects(&file, 0x3716);
-
-		file.close();
-		file.open("soundfx");
-		if (!file.isOpen())
-			error("Failed to open 'soundfx' executable for Amiga");
-
-		loadSoundsFx(&file, 0, 25);
+		loadAssetsAmigaDemo();
 	} else if (isAtariST()) {
 		file.open("lift.neo");
 		if (!file.isOpen())
@@ -368,24 +325,7 @@ void DrillerEngine::loadAssetsDemo() {
 
 		loadSoundsFx(&file, 0, 25);
 	} else if (isDOS()) {
-		_renderMode = Common::kRenderCGA; // DOS demos is CGA only
-		_viewArea = Common::Rect(36, 16, 284, 117); // correct view area
-		_gfx->_renderMode = _renderMode;
-		loadBundledImages();
-		file.open("d2");
-		if (!file.isOpen())
-			error("Failed to open 'd2' file");
-
-		loadFonts(&file, 0x4eb0);
-		loadMessagesFixedSize(&file, 0x636, 14, 20);
-		load8bitBinary(&file, 0x55b0, 4);
-		loadGlobalObjects(&file, 0x8c);
-
-		// Fixed for a corrupted area names in the demo data
-		_areaMap[2]->_name = "LAPIS LAZULI";
-		_areaMap[3]->_name = "EMERALD";
-		_areaMap[8]->_name = "TOPAZ";
-		file.close();
+		loadAssetsDOSDemo();
 	} else
 		error("Unsupported demo for Driller");
 
@@ -393,67 +333,10 @@ void DrillerEngine::loadAssetsDemo() {
 	_angleRotationIndex = 0;
 }
 
-extern byte *parseEDSK(const Common::String filename, int &size);
-extern void deobfuscateDrillerCPCVirtualWorlds(byte *memBuffer);
-
 void DrillerEngine::loadAssetsFullGame() {
 	Common::File file;
 	if (isAmiga()) {
-		if (_variant & GF_AMIGA_RETAIL) {
-			file.open("driller");
-
-			if (!file.isOpen())
-				error("Failed to open 'driller' executable for Amiga");
-
-			_border = loadAndConvertNeoImage(&file, 0x137f4);
-			byte *palette = (byte *)malloc(16 * 3);
-			for (int i = 0; i < 16; i++) { // gray scale palette
-				palette[i * 3 + 0] = i * (255 / 16);
-				palette[i * 3 + 1] = i * (255 / 16);
-				palette[i * 3 + 2] = i * (255 / 16);
-			}
-			_title = loadAndConvertNeoImage(&file, 0x10, palette);
-
-			loadFonts(&file, 0x8940);
-			loadMessagesFixedSize(&file, 0xc66e, 14, 20);
-			loadGlobalObjects(&file, 0xbd62);
-			load8bitBinary(&file, 0x29c16, 16);
-			loadPalettes(&file, 0x297d4);
-			loadSoundsFx(&file, 0x30e80, 25);
-		} else if (_variant & GF_AMIGA_BUDGET) {
-			file.open("lift.neo");
-			if (!file.isOpen())
-				error("Failed to open 'lift.neo' file");
-
-			_title = loadAndConvertNeoImage(&file, 0);
-
-			file.close();
-			file.open("console.neo");
-			if (!file.isOpen())
-				error("Failed to open 'console.neo' file");
-
-			_border = loadAndConvertNeoImage(&file, 0);
-
-			file.close();
-			file.open("driller");
-			if (!file.isOpen())
-				error("Failed to open 'driller' executable for Amiga");
-
-			loadFonts(&file, 0xa62);
-			loadMessagesFixedSize(&file, 0x499a, 14, 20);
-			loadGlobalObjects(&file, 0x4098);
-			load8bitBinary(&file, 0x21a3e, 16);
-			loadPalettes(&file, 0x215fc);
-
-			file.close();
-			file.open("soundfx");
-			if (!file.isOpen())
-				error("Failed to open 'soundfx' executable for Amiga");
-
-			loadSoundsFx(&file, 0, 25);
-		}
-		else
-			error("Invalid or unknown Amiga release");
+		loadAssetsAmigaFullGame();
 	} else if (isAtariST()) {
 		file.open("x.prg");
 
@@ -476,83 +359,9 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadPalettes(&file, 0x296fa);
 		loadSoundsFx(&file, 0x30da6, 25);
 	} else if (isSpectrum()) {
-		file.open("driller.zx.title");
-		if (file.isOpen()) {
-			_title = loadAndCenterScrImage(&file);
-		} else
-			error("Unable to find driller.zx.title");
-
-		file.close();
-
-		file.open("driller.zx.border");
-		if (file.isOpen()) {
-			_border = loadAndCenterScrImage(&file);
-		} else
-			error("Unable to find driller.zx.border");
-		file.close();
-
-		file.open("driller.zx.data");
-
-		if (!file.isOpen())
-			error("Failed to open driller.zx.data");
-
-		if (_variant & GF_ZX_DISC)
-			loadMessagesFixedSize(&file, 0x2164, 14, 20);
-		else
-			loadMessagesFixedSize(&file, 0x20e4, 14, 20);
-
-		if (_variant & GF_ZX_RETAIL)
-			loadFonts(&file, 0x62ca);
-		else if (_variant & GF_ZX_BUDGET)
-			loadFonts(&file, 0x5aa8);
-		else if (_variant & GF_ZX_DISC)
-			loadFonts(&file, 0x63f0);
-
-		if (_variant & GF_ZX_DISC)
-			loadGlobalObjects(&file, 0x1d13);
-		else
-			loadGlobalObjects(&file, 0x1c93);
-
-		if (_variant & GF_ZX_RETAIL)
-			load8bitBinary(&file, 0x642c, 4);
-		else if (_variant & GF_ZX_BUDGET)
-			load8bitBinary(&file, 0x5c0a, 4);
-		else if (_variant & GF_ZX_DISC)
-			load8bitBinary(&file, 0x6552, 4);
-
-		else
-			error("Unknown ZX spectrum variant");
+		loadAssetsZXFullGame();
 	} else if (isCPC()) {
-		loadBundledImages();
-		byte *memBuffer;
-		int memSize = 0;
-		if (_variant & GF_CPC_VIRTUALWORLDS) {
-			memBuffer = parseEDSK("virtualworlds.A.cpc.edsk", memSize);
-			deobfuscateDrillerCPCVirtualWorlds(memBuffer);
-		} else
-			memBuffer = parseEDSK("driller.cpc.edsk", memSize);
-		assert(memSize > 0);
-		Common::SeekableReadStream *stream = new Common::MemoryReadStream((const byte*)memBuffer, memSize);
-
-		if (_variant & GF_CPC_RETAIL) {
-			loadMessagesFixedSize(stream, 0xb0f7, 14, 20);
-			loadFonts(stream, 0xeb14);
-			load8bitBinary(stream, 0xec76, 4);
-			loadGlobalObjects(stream, 0xacb2);
-		} else if (_variant & GF_CPC_RETAIL2) {
-			loadMessagesFixedSize(stream, 0xb0f7 - 0x3fab, 14, 20);
-			loadFonts(stream, 0xeb14 - 0x3fab);
-			load8bitBinary(stream, 0xaccb, 4);
-			loadGlobalObjects(stream, 0xacb2 - 0x3fab);
-		} else if (_variant & _variant & GF_CPC_VIRTUALWORLDS) {
-			load8bitBinary(stream, 0x11acb, 4);
-		} else if (_variant & GF_CPC_BUDGET) {
-			loadMessagesFixedSize(stream, 0x9ef7, 14, 20);
-			loadFonts(stream, 0xd914);
-			load8bitBinary(stream, 0xda76, 4);
-			loadGlobalObjects(stream, 0x9ab2);
-		} else
-			error("Unknown Amstrad CPC variant");
+		loadAssetsCPCFullGame();
 	} else if (isC64()) {
 		if (_targetName.hasPrefix("spacestationoblivion")) {
 			loadBundledImages();
@@ -568,49 +377,8 @@ void DrillerEngine::loadAssetsFullGame() {
 			load8bitBinary(&file, 0x8e02 - 0x400, 4);
 			loadGlobalObjects(&file, 0x1855 - 0x400);
 		}
-	} else if (_renderMode == Common::kRenderEGA) {
-		file.open("SCN1E.DAT");
-		if (file.isOpen()) {
-			_title = load8bitBinImage(&file, 0x0);
-		}
-		file.close();
-		file.open("EGATITLE.RL");
-		if (file.isOpen()) {
-			_title = load8bitTitleImage(&file, 0x1b3);
-		}
-		file.close();
-
-		file.open("DRILLE.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open DRILLE.EXE");
-
-		loadMessagesFixedSize(&file, 0x4135, 14, 20);
-		loadFonts(&file, 0x99dd);
-		loadGlobalObjects(&file, 0x3b42);
-		load8bitBinary(&file, 0x9b40, 16);
-		_border = load8bitBinImage(&file, 0x210);
-	} else if (_renderMode == Common::kRenderCGA) {
-		file.open("SCN1C.DAT");
-		if (file.isOpen()) {
-			_title = load8bitBinImage(&file, 0x0);
-		}
-		file.close();
-		file.open("CGATITLE.RL");
-		if (file.isOpen()) {
-			_title = load8bitTitleImage(&file, 0x1b3);
-		}
-		file.close();
-		file.open("DRILLC.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open DRILLC.EXE");
-
-		loadFonts(&file, 0x07a4a);
-		loadMessagesFixedSize(&file, 0x2585, 14, 20);
-		load8bitBinary(&file, 0x7bb0, 4);
-		loadGlobalObjects(&file, 0x1fa2);
-		_border = load8bitBinImage(&file, 0x210);
+	} else if (isDOS()) {
+		loadAssetsDOSFullGame();
 	} else
 		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
 
