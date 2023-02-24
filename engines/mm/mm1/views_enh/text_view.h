@@ -36,6 +36,12 @@ enum TextAlign {
 class TextView : public UIElement {
 private:
 	Graphics::Font *getFont() const;
+
+	/**
+	 * Raw write string
+	 */
+	void rawWriteString(const Common::String &str);
+
 protected:
 	Common::Point _textPos;
 	int _colorsNum = 0;
@@ -55,7 +61,8 @@ protected:
 	/**
 	 * Write some text
 	 */
-	void writeString(const Common::String &str);
+	void writeString(const Common::String &str,
+		TextAlign align = ALIGN_LEFT);
 	void writeString(int x, int y, const Common::String &str,
 		TextAlign align = ALIGN_LEFT);
 
@@ -75,6 +82,12 @@ protected:
 	 * Move the text position to the next line
 	 */
 	void newLine();
+
+	/**
+	 * Split lines
+	 */
+	Common::StringArray splitLines(const Common::String &str,
+		int firstLineWidth = -1);
 
 	/**
 	 * Clear the surface
