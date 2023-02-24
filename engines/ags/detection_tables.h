@@ -235,6 +235,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thecrownofgold", "The Crown of Gold" },
 	{ "theinexperiencedassassin", "Petrakov: The Inexperienced Assassin" },
 	{ "theisland", "The Island" },
+	{ "thepigion", "The Pigion" },
 	{ "thetower", "The Tower" },
 	{ "thevestibule", "The Vestibule" },
 	{ "thewarp", "The Warp" },
@@ -255,6 +256,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "waitkey", "WaitKey();" },
 	{ "wambus", "The Wambus" },
 	{ "whokilledkennyrogers", "Who killed Kenny Rogers?" },
+	{ "xenoreturns", "Xenophobe Returns" },
 	{ "zakagsremake", "Zak McKracken and the Alien Mindbenders AGS Remake" },
 
 
@@ -2863,6 +2865,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "theawakening", "The Awakening" },
 	{ "thebadneighbours", "The bad neighbours" },
 	{ "thebar", "The Bar" },
+	{ "thebasement", "The Basement" },
 	{ "theblock", "The Block" },
 	{ "thebrokenbrain", "The Broken Brain" },
 	{ "thebum", "The Bum" },
@@ -3128,6 +3131,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "unkhour_apple", "Unnamed Hour Game - APPLE" },
 	{ "unkhour_hourgame", "Unnamed Hour Game - HOURGAME" },
 	{ "unkhour_nmhour1", "Unnamed Hour Game - NMHOUR1" },
+	{ "unlabeledtape", "The Unlabeled Videotape" },
 	{ "unlicensedkill", "Unlicensed to Kill" },
 	{ "unlikelyprometheus", "The Unlikely Prometheus" },
 	{ "unprintablemagenta", "The unprintable Magenta" },
@@ -3206,6 +3210,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "wheeloftorture", "Wheel of Torture" },
 	{ "whentheworldcalls", "When the world calls..." },
 	{ "whentimestops", "Reef Rivers in: When Time Stops" },
+	{ "where", "Where?" },
 	{ "wherebedragons", "Where Be Dragons?" },
 	{ "wheredidhumansgo", "Where Did the Humans Go?" },
 	{ "wheredidsamgo", "Where did Sam go?" },
@@ -3250,6 +3255,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "wretcher", "Wretcher" },
 	{ "writersblocks", "Writer's Blocks" },
 	{ "wrongchannel", "Wrong Channel" },
+	{ "wronggame", "The Wrong Game" },
 	{ "wulffenstein", "Wulffenstein – Im Kreuzfeuer der Reporter" },
 	{ "y", "Y" },
 	{ "yago", "Yago, the Coquerrestrial / Yago, el Coquerrestre" },
@@ -3260,6 +3266,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "zakrepixeled", "Zak McKracken and the Alien Mindbenders - repixeled" },
 	{ "zakseamonster", "Zak McKracken and the Lonely Sea Monster" },
 	{ "zakthemaniac", "Zak the Maniac - An Interactive Music Video" },
+	{ "zedquest", "Zed's Quest" },
 	{ "zeke", "Zeke and the Island of Barentsev" },
 	{ "zempquest", "Zemp's Birthday Kuest" },
 	{ "ziggyshorts", "Ziggy Shorts: The Milkshake of Doom" },
@@ -3267,6 +3274,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "zogmoonbuckle", "Zog Moonbuckle: The Mysterious Planet" },
 	{ "zombieattack", "Zombie Attack" },
 	{ "zombiefish", "Night of the Zombie Fish!" },
+	{ "zombienation", "Zombie Nation" },
+	{ "zombietown", "Zombie Town" },
 	{ "zooreal", "ZooReal" },
 	{ "zugzwang", "Zugzwang" },
 
@@ -3703,6 +3712,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	PRE_25_ENTRY_EN("thecrownofgold", "the crown of gold.exe", "e407143be000e44f113ba5ff1fbd17f9", 1971515),
 	PRE_25_ENTRY("theisland", "island.exe", "e93037e8efc7abc19b8978903ef5b409", 1814801),  // Eng-Fin
 	PRE_25_ENTRY_EN("thejourneyhomep1", "ac2game.dat", "7296c35543b93890a21482e5d3c3713c", 7538441),
+	PRE_25_ENTRY_EN("thepigion", "THEPIGION.exe", "e016cb68731d0e38fe97905dbf0d5b36", 967410),
 	PRE_25_ENTRY_EN("thetower", "thetower.exe", "9027912819f3a319ed9de0fd855310c3", 3431385),
 	PRE_25_ENTRY_EN("thewarp", "warp.exe", "9027912819f3a319ed9de0fd855310c3", 881957),
 	PRE_25_ENTRY_EN("tinygreen", "GREEN.exe", "094135f05cf14fc3903e0d3697911a4e", 1404323),
@@ -3719,6 +3729,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	PRE_25_ENTRY_EN("unkhour_shorty", "SHORTY.exe", "e016cb68731d0e38fe97905dbf0d5b36", 658022),
 	PRE_25_ENTRY_EN("vengeanceofthechicken", "chicken.exe", "6026f2bae1609882ae6f19f4de293786", 1808436),
 	PRE_25_ENTRY_EN("whokilledkennyrogers", "mags.exe", "ed778afb4f46c3f2a70d330532a83a2f", 1240103),
+	PRE_25_ENTRY_EN("xenoreturns", "XENOR.EXE", "8f80c91d160e333ab7f6be5208ea0533", 2329463),
 
 	// Post 2.5 games that aren't currently supported
 	// uses unsupported agslua plugin
@@ -4943,7 +4954,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("basedon", "basedon.exe", "0500aacb6c176d47ac0f8158f055db83", 5775388),
 	GAME_ENTRY_EN("basketqust", "eeeeeeeeeeeeeeeee.exe", "9cf51833e787cc919837d9a8bd8fc14c", 874080),
 	GAME_ENTRY_EN("bbcscreensaver", "BBC-Screensaver.exe", "0e6d6f3c19f5ca250b7b7ee03cdb2083", 131195371),
-	GAME_ENTRY_EN("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
+	GAME_ENTRY_EN("bcremake", "bc.exe", "2e58934bbe98335f33c20a23a6c6135a", 8208487),  // v1.2
+	GAME_ENTRY_EN("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),  // v1.3
 	GAME_ENTRY_EN("beacon", "beacon.exe", "af0d268193a9220891e983d03141ec58", 24671086),
 	GAME_ENTRY_EN("bear", "bear.exe", "97020973a2a635fe28eb0ba4bdfaa70b", 3258662),  //v1.3
 	GAME_ENTRY_EN("beardbeverage", "Beard.exe", "618d7dce9631229b4579340b964c6810", 7081492),
@@ -7146,6 +7158,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("saturdaynightlone", "Time.ags", "4869cda677dabf08b4054d39eb4bc242", 29817228),  // Linux
 	GAME_ENTRY_EN("saturdaynightlone2", "SaturdayNightJam.exe", "6866919e466f1b9a37c2c37e061752f3", 18283644),  // Win
 	GAME_ENTRY_EN("saturdaynightlone2", "SaturdayNightJam.ags", "bbd696b464ce82707163c3fad8dacf13", 15127144),  // Linux
+	GAME_ENTRY_EN("saturdayschool", "ss.exe", "28f82e420b82d07651b68114f90223c8", 1578062),
 	GAME_ENTRY_EN("saturdayschool", "ss.exe", "b216ee957dd677023e02d900281a02d6", 1588546),
 	GAME_ENTRY_EN_PLATFORM("saturdayschool", "ss.exe", "c9cc759756e1f24783029948da533ccd", 1916056, "OROW"),
 	GAME_ENTRY_EN("saturdaysymbiosis", "Saturday Night Symbiosis.exe", "f18443f98fd61d2c655e76a17f7da905", 24170102),
@@ -7542,6 +7555,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("thebadneighbours", "Bad neighbour.exe", "06a03fe35791b0578068ab1873455463", 9672173),
 	GAME_ENTRY_EN("thebar", "one room game.exe", "465f972675db2da6040518221af5b0ba", 11660587),
 	GAME_ENTRY_EN("thebar", "one room game.exe", "465f972675db2da6040518221af5b0ba", 8673763),
+	GAME_ENTRY_EN("thebasement", "The basement.exe", "4d5a94465148aa61c72608d6c2cde27a", 2993325),
 	GAME_ENTRY_EN("theblock", "Block.exe", "615e73fc1874e92d60a1996c2330ea36", 36339968),
 	GAME_ENTRY_EN("thebrokenbrain", "Brain.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 1092293),
 	GAME_ENTRY("thebum", "The Bum 1.04.exe", "0212ad5fd38d64f63c5d3f2f2a0f65ee", 28673515),  // En-De-Pol
@@ -7580,6 +7594,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thedeed", "TheDeed.exe", "a524cbb1c51589903c4043b98917f1d9", 3428218),
 	GAME_ENTRY_EN("thedevilsshroudpart1", "DevilTorino256.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16661573),
 	GAME_ENTRY_EN("thedevilsshroudpart1", "DevilTurin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16780039),
+	GAME_ENTRY_EN("thedevilsshroudpart2", "devillione256.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 23776250),
 	GAME_ENTRY_EN("thedevilsshroudpart2", "DevilLyon.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 23850386),
 	GAME_ENTRY_EN("thedevilsshroudpart3", "DevilPrague.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16360454),
 	GAME_ENTRY_EN("thedevilsshroudpart4", "DevilVaduz.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 32025519),
@@ -7679,6 +7694,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thepenthouse", "Penthouse.exe", "0564de07d3fd5c16e6947a647061913c", 13596940),
 	GAME_ENTRY("thephantominheritance", "Phantom.exe", "ec04c7917c003d9e07d4514ff25bf365", 27558669),  // Eng-Esp
 	GAME_ENTRY_EN("thequestfortheholysalsa", "TheQuestForTheHolySalsa.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 38506266),
+	GAME_ENTRY_EN("thequesttozooloo", "Zooloo.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 14436861),
 	GAME_ENTRY_EN("thequesttozooloo", "Zooloo.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 14619530),
 	GAME_ENTRY_EN("therail", "Rail.exe", "973f6b65820ca1f4e19704a49be99d76", 23852280),
 	GAME_ENTRY_EN_PLATFORM("theratpack", "ratpack.exe", "495d45fb8adfd49690ae3b97921feec6", 2998306, "MAGS"),
@@ -7792,7 +7808,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("trancepacific", "MAGS Sep 2007.exe", "f120690b506dd63cd7d1112ea6af2f77", 5999008, "MAGS"),  //v1.02
 	GAME_ENTRY_EN("trappedhell1", "phycho.exe", "0500aacb6c176d47ac0f8158f055db83", 697557),
 	GAME_ENTRY_EN("trappedhell2", "richphycho2.exe", "0500aacb6c176d47ac0f8158f055db83", 715802),
-	GAME_ENTRY_EN("trappedinabuilding", "T I A B.exe", "722c8bd17ace161f1bba2d9d92806eaf", 2406330),  //v1
+	GAME_ENTRY("trappedinabuilding", "T I A B.exe", "722c8bd17ace161f1bba2d9d92806eaf", 2406330),  //v1 Eng-Norsk
 	GAME_ENTRY_EN("trappedinabuilding", "T I A B.exe", "722c8bd17ace161f1bba2d9d92806eaf", 5370872),
 	GAME_ENTRY_EN("trappedinabuilding", "T I A B.exe", "722c8bd17ace161f1bba2d9d92806eaf", 5370873),
 	GAME_ENTRY("trashquest", "TQ.exe", "465f972675db2da6040518221af5b0ba", 2420457),  //Eng-Rus
@@ -7855,6 +7871,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("unkhour_apple", "apple.exe", "201ac17f13d0a9bcfc99213ea0161757", 1099184),
 	GAME_ENTRY_EN("unkhour_hourgame", "Hourgame.exe", "7587088a318140e1416e60740e10c904", 1176975),
 	GAME_ENTRY_EN("unkhour_nmhour1", "nmhour1.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1377323),
+	GAME_ENTRY_EN("unlabeledtape", "cv.exe", "465f972675db2da6040518221af5b0ba", 1502178),
 	GAME_ENTRY_EN("unlicensedkill", "UTK.exe", "0564de07d3fd5c16e6947a647061913c", 10766019),
 	GAME_ENTRY_EN("unlikelyprometheus", "The Unlikely Prometheus.exe", "a370a1db43a1d376d09e43469abba1d1", 56868120),
 	GAME_ENTRY_EN("unprintablemagenta", "Magenta.exe", "615e73fc1874e92d60a1996c2330ea36", 113259258),
@@ -7944,6 +7961,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("wheeloftorture", "Wheel of Torture.exe", "f6006e2f65412b684fb537cf49d35672", 15090596),
 	GAME_ENTRY_EN("whentheworldcalls", "When the world calls.exe", "338fa79960d40689063af31c671b8729", 1111169904),
 	GAME_ENTRY_EN("whentimestops", "When Time Stops.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 142215901),
+	GAME_ENTRY_EN("where", "Where.exe", "0b7529a76f38283d6e850b8d56526fc1", 6808177),
 	GAME_ENTRY_EN("wherebedragons", "Where Be Dragons.exe", "d8ccbb83c73ca8520b19412ce0d8de10", 2607599),
 	GAME_ENTRY_EN("wheredidhumansgo", "AdvGameChallenge22.exe", "805aebfc9a02cd02f892de6cd2cb7c87", 34137412),
 	GAME_ENTRY("wheredidhumansgo", "AdvGameChallenge22.exe", "805aebfc9a02cd02f892de6cd2cb7c87", 34137817),  // Windows Eng-Ita
@@ -7997,6 +8015,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("wrathofthesolonoids", "verb.exe", "0500aacb6c176d47ac0f8158f055db83", 3582078),
 	GAME_ENTRY_EN("wrecked", "AGS_Wrecked.exe", "310def5b0f0e3b1ec1e1f0198011c17c", 171806325),
 	GAME_ENTRY_EN("wrongchannel", "wrongchannel.exe", "09e8e7ecf1f748e57cda4b22661a8be7", 16509778),
+	GAME_ENTRY_EN("wronggame", "Thewronggame.exe", "7fa22c52586671a68bfa4cfe855a3012", 2082833),
 	GAME_ENTRY_LANG("wulffenstein", "wulffenstein.exe", "615e73fc1874e92d60a1996c2330ea36", 2575514, Common::DE_DEU),
 	GAME_ENTRY_EN("y", "LD49.ags", "e970fc2371524fefd8b52f0906b96f12", 12219717),  // Linux
 	GAME_ENTRY_EN("y", "LD49.exe", "776a62db4387dc68be92ef9933399fd5", 15326041),  // Windows
@@ -8009,12 +8028,16 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("zakrepixeled", "ZAK.exe", "305a819bce4004ef3c9b1a3a9f6ac1c8", 5741632), // v0.2.2.2
 	GAME_ENTRY_EN("zakrepixeled", "ZAK.exe", "7bf50af77154660465704b80cec1476d", 5816900), // v0.2.3.3
 	GAME_ENTRY_EN("zakthemaniac", "maniaczak.exe", "dee872e31c6d205e68aa9d87a542f07b", 24492152),
+	GAME_ENTRY_EN("zedquest", "NewZud.exe", "0500aacb6c176d47ac0f8158f055db83", 1367132),
 	GAME_ENTRY_EN("zeke", "ZTO.exe", "f120690b506dd63cd7d1112ea6af2f77", 1201019),
 	GAME_ENTRY_EN("zempquest", "HBDZemp.30", "06a03fe35791b0578068ab1873455463", 2028630),
 	GAME_ENTRY_EN("ziggyshorts", "ziggyhalemilkgame.exe", "b5d827e7fa1376f25ab30d9b700f99b4", 17145928),
 	GAME_ENTRY_EN("zippermeteor", "TheZipperMeteor.exe", "06a03fe35791b0578068ab1873455463", 11886514),
 	GAME_ENTRY_EN("zogmoonbuckle", "Zog_Moonbuckle.exe", "0a3d57052500c7e93510ca2c317b6991", 37433537),
 	GAME_ENTRY_EN("zombiefish", "FZombie.exe", "3128b9f90e2f954ba704414ae854d10b", 4220305),
+	GAME_ENTRY_EN("zombienation", "zomnat v1.1.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 46111952),
+	GAME_ENTRY_EN("zombienation", "zomnat v1.1.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 46065287),
+	GAME_ENTRY_EN("zombietown", "phychocar1.exe", "0500aacb6c176d47ac0f8158f055db83", 818731),
 	GAME_ENTRY_EN("zooreal", "zoo_real.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 24184795),
 	GAME_ENTRY_EN_PLATFORM("zugzwang", "Zugzwang.exe", "28f82e420b82d07651b68114f90223c8", 13758471, "MAGS"),  //1.0
 	GAME_ENTRY_EN("zugzwang", "Zugzwang.exe", "28f82e420b82d07651b68114f90223c8", 13870211),  //1.01
