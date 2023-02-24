@@ -83,7 +83,6 @@ TeMaterial &TeMaterial::operator=(const TeMaterial &other) {
 	_enableLights = other._enableLights;
 	_shininess = other._shininess;
 	_mode = other._mode;
-	_enableLights = other._enableLights;
 	_isShadowTexture = other._isShadowTexture;
 
 	return *this;
