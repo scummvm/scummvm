@@ -32,12 +32,35 @@ public:
 	CurlURL();
 	~CurlURL();
 
+	/**
+	 * Parses an URL string by calling curl_url_set  Must be used before using other methods.
+	 * @param url is a string containing the URL. e.g. "https://scummvm.org".
+	 * @retval true if successful.
+	 * @retval false on failure or if using an older version of libcurl.
+	 */
 	bool parseURL(Common::String url);
 
+	/**
+	 * Extracts the scheme of an URL parsed previously by parseURL.
+	 * @retval String of the URL's scheme. e.g. "https".
+	 * @retval Empty string on failure.
+	 */
 	Common::String getScheme();
+	/**
+	 * Extracts the host name of an URL parsed previously by parseURL.
+	 * @retval String of the URL's host name. e.g. "scummvm.org".
+	 * @retval Empty string on failure.
+	 */
 	Common::String getHost();
+	/**
+	 * Extracts the port of an URL parsed previously by parseURL.
+	 * @param returnDefault tells libcurl to return the default port according to the URL's scheme if not explicitly defined
+	 * @retval The URL's port number if one exists.
+	 * @retval 0 if no port found. 
+	 * @retval default port if returnDefault is true.
+	 * @retval -1 on failure.
+	 */
 	int getPort(bool returnDefault = false);
-	Common::String getPath();
 private:
 	CURLU *_url;
 };
