@@ -49,10 +49,11 @@ bool PartyView::msgUnfocus(const UnfocusMessage &msg) {
 
 bool PartyView::msgMouseDown(const MouseDownMessage &msg) {
 	if (canSwitchChar()) {
-		return send("GameParty", msg);
-	} else {
-		return ScrollView::msgMouseDown(msg);
+		if (send("GameParty", msg))
+			return true;
 	}
+
+	return ScrollView::msgMouseDown(msg);
 }
 
 bool PartyView::msgGame(const GameMessage &msg) {

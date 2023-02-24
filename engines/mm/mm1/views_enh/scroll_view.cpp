@@ -199,7 +199,10 @@ bool ScrollView::msgMouseUp(const MouseUpMessage &msg) {
 
 int ScrollView::getButtonAt(const Common::Point &pos) {
 	for (uint i = 0; i < _buttons.size(); ++i) {
-		if (_buttons[i]._bounds.contains(pos))
+		Common::Rect r = _buttons[i]._bounds;
+		r.translate(_innerBounds.left, _innerBounds.top);
+
+		if (r.contains(pos))
 			return i;
 	}
 
