@@ -171,9 +171,11 @@ bool CharacterSettingsXmlParser::textCallback(const Common::String &val) {
 
 bool CharacterSettingsXmlParser::handleUnknownKey(ParserNode *node) {
 	if (node->values.contains("animFile")) {
-		const Common::String &animFile = node->values["animFile"];
-		warning("TODO: CharacterSettingsXmlParser handle mapping %s -> %s",
-			node->name.c_str(), animFile.c_str());
+		// The game actually does nothing with these, they seem to be
+		// for debugging purposes only.
+		//const Common::String &animFile = node->values["animFile"];
+		//debug("TODO: CharacterSettingsXmlParser handle mapping %s -> %s",
+		//	node->name.c_str(), animFile.c_str());
 		return true;
 	}
 	parserError("Unknown key");
