@@ -1739,7 +1739,9 @@ static void SetRecallageY(const Common::String &charName, bool val) {
 	if (character) {
 		character->setRecallageY(val);
 	} else {
-		error("[SetRecallageY] Character not found %s", charName.c_str());
+		// Not an error - some scenes in Syberia 2 look for a Kate that isn't
+		// loaded yet.
+		warning("[SetRecallageY] Character not found %s", charName.c_str());
 	}
 }
 
@@ -2328,13 +2330,19 @@ static int tolua_ExportedFunctions_SetCharacterPlayerPosition00(lua_State *L) {
 	error("#ferror in function 'SetCharacterPlayerPosition': %d %d %s", err.index, err.array, err.type);
 }
 
-static void SetCharacterPlayerAnimation(const Common::String &animname, bool repeat, bool returnToIdle, int startframe, int endframe) {
+static void SetCharacterPlayerAnimation(Common::String animname, bool repeat, bool returnToIdle, int startframe, int endframe) {
 	Game *game = g_engine->getGame();
 	Character *c = game->scene()._character;
 	if (!c) {
 		warning("SetCharacterPlayerAnimation: no active character");
 		return;
 	}
+
+	//
+	// WORKAROUND: Typo in Syberia 2 A1_RomHaut/11110/Logic11110.lua
+	//
+	if (animname == "Kate/ka_esc_h2d.te3d")
+		animname = "Kate/ka_esc_h2d.te3da";
 
 	bool result = c->setAnimation(animname, repeat, returnToIdle, false, startframe, endframe);
 	if (!result) {
