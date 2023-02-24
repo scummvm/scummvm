@@ -698,6 +698,7 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 					delete pic;
 					return;
 				} else {
+					delete pict;
 					warning("BUILDBOT: Cast::loadBitmapData(): wrong format for external picture '%s'", path.toString().c_str());
 				}
 			} else {
