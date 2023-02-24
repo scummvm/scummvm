@@ -62,7 +62,8 @@ public:
 	bool supportsColors() const;
 	bool isLandscapeOrientation() const;
 
-	void pageFinished();
+	void beginPage();
+	void endPage();
 	void endDoc();
 	void abortJob();
 
@@ -86,8 +87,13 @@ PrintJob *Win32PrintingManager::createJob(const Common::String &jobName) {
 
 Win32PrintJob::Win32PrintJob(const Common::String &jobName) : jobActive(true), hdcPrint(NULL), devmode(nullptr) {
 	hdcPrint = createDefaultPrinterContext();
-
-	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
+	DOCINFOA info;
+	info.cbSize = sizeof(info);
+	info.fwType = 0;
+	info.lpszDatatype = nullptr;
+	info.lpszOutput = nullptr;
+	info.lpszDocName = const_cast<const char *>(jobName.c_str());
+	StartDocA(hdcPrint, &info);
 }
 
 Win32PrintJob::~Win32PrintJob() {
@@ -225,17 +231,21 @@ bool Win32PrintJob::isLandscapeOrientation() const {
 	return devmode->dmOrientation == DMORIENT_LANDSCAPE;
 }
 
-void Win32PrintJob::pageFinished() {
-	Escape(hdcPrint, NEWFRAME, 0, NULL, NULL);
+void Win32PrintJob::beginPage() {
+	StartPage(hdcPrint);
+}
+
+void Win32PrintJob::endPage() {
+	EndPage(hdcPrint);
 }
 
 void Win32PrintJob::endDoc() {
-	Escape(hdcPrint, ENDDOC, 0, NULL, NULL);
+	EndDoc(hdcPrint);
 	jobActive = false;
 }
 
 void Win32PrintJob::abortJob() {
-	Escape(hdcPrint, ABORTDOC, 0, NULL, NULL);
+	AbortDoc(hdcPrint);
 	jobActive = false;
 }
 
