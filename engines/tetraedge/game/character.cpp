@@ -412,21 +412,24 @@ bool Character::loadModel(const Common::String &mname, bool unused) {
 	_walkEndGAnimLen = animLengthFromFile(walkAnim(WalkPart_EndG), &_walkEndGAnimFrameCount);
 	_walkLoopAnimLen = animLengthFromFile(walkAnim(WalkPart_Loop), &_walkLoopAnimFrameCount);
 
-	TeIntrusivePtr<Te3DTexture> shadow = Te3DTexture::makeInstance();
-	TeCore *core = g_engine->getCore();
-	shadow->load(core->findFile("models/Textures/simple_shadow_alpha.tga"));
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+		// Only Syberia 1 has the simple shadow.
+		TeIntrusivePtr<Te3DTexture> shadow = Te3DTexture::makeInstance();
+		TeCore *core = g_engine->getCore();
+		shadow->load(core->findFile("models/Textures/simple_shadow_alpha.tga"));
 
-	for (int i = 0; i < 2; i++) {
-		TeModel *pmodel = new TeModel();
-		_shadowModel[i] = pmodel;
-		pmodel->setName("Shadow");
-		Common::Array<TeVector3f32> arr;
-		arr.resize(4);
-		arr[0] = TeVector3f32(-60.0, 0.0, -60.0);
-		arr[1] = TeVector3f32(-60.0, 0.0, 60.0);
-		arr[2] = TeVector3f32(60.0, 0.0, -60.0);
-		arr[3] = TeVector3f32(60.0, 0.0, 60.0);
-		pmodel->setQuad(shadow, arr, TeColor(0xff, 0xff, 0xff, 0x50));
+		for (int i = 0; i < 2; i++) {
+			TeModel *pmodel = new TeModel();
+			_shadowModel[i] = pmodel;
+			pmodel->setName("Shadow");
+			Common::Array<TeVector3f32> arr;
+			arr.resize(4);
+			arr[0] = TeVector3f32(-60.0, 0.0, -60.0);
+			arr[1] = TeVector3f32(-60.0, 0.0, 60.0);
+			arr[2] = TeVector3f32(60.0, 0.0, -60.0);
+			arr[3] = TeVector3f32(60.0, 0.0, 60.0);
+			pmodel->setQuad(shadow, arr, TeColor(0xff, 0xff, 0xff, 0x50));
+		}
 	}
 	return true;
 }
@@ -551,9 +554,11 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 			pos = _freeMoveZone->correctCharacterPosition(pos, &flag, true);
 		}
 		int shadowNo = boneName.contains("Bip01 L Foot") ? 0 : 1;
-		_shadowModel[shadowNo]->setPosition(pos);
-		_shadowModel[shadowNo]->setRotation(_model->rotation());
-		_shadowModel[shadowNo]->setScale(_model->scale());
+		if (_shadowModel[shadowNo]) {
+			_shadowModel[shadowNo]->setPosition(pos);
+			_shadowModel[shadowNo]->setRotation(_model->rotation());
+			_shadowModel[shadowNo]->setScale(_model->scale());
+		}
 	}
 
 	// Move any objects attached to the bone
@@ -794,8 +799,10 @@ void Character::setStepSound(const Common::String &stepSound1, const Common::Str
 }
 
 bool Character::setShadowVisible(bool visible) {
-	_shadowModel[0]->setVisible(visible);
-	_shadowModel[1]->setVisible(visible);
+	if (_shadowModel[0]) {
+		_shadowModel[0]->setVisible(visible);
+		_shadowModel[1]->setVisible(visible);
+	}
 	return false;
 }
 

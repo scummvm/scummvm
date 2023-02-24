@@ -486,8 +486,10 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_scene._character->setAnimation(_scene._character->characterSettings()._idleAnimFileName, true);
 		if (!_scene.findKate()) {
 			_scene.models().push_back(_scene._character->_model);
-			_scene.models().push_back(_scene._character->_shadowModel[0]);
-			_scene.models().push_back(_scene._character->_shadowModel[1]);
+			if (_scene._character->_shadowModel[0]) {
+				_scene.models().push_back(_scene._character->_shadowModel[0]);
+				_scene.models().push_back(_scene._character->_shadowModel[1]);
+			}
 		}
 	}
 

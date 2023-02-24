@@ -225,8 +225,10 @@ void InGameScene::close() {
 	freeGeometry();
 	if (_character && _character->_model && !findKate()) {
 		models().push_back(_character->_model);
-		models().push_back(_character->_shadowModel[0]);
-		models().push_back(_character->_shadowModel[1]);
+		if (_character->_shadowModel[0]) {
+			models().push_back(_character->_shadowModel[0]);
+			models().push_back(_character->_shadowModel[1]);
+		}
 	}
 	_objects.clear();
 	for (TeFreeMoveZone *zone : _freeMoveZones)
@@ -866,8 +868,10 @@ bool InGameScene::loadCharacter(const Common::String &name) {
 			return false;
 		}
 		models().push_back(c->_model);
-		models().push_back(c->_shadowModel[0]);
-		models().push_back(c->_shadowModel[1]);
+		if (_character->_shadowModel[0]) {
+			models().push_back(c->_shadowModel[0]);
+			models().push_back(c->_shadowModel[1]);
+		}
 		_characters.push_back(c);
 	}
 	c->_model->setVisible(true);
@@ -981,8 +985,10 @@ bool InGameScene::loadPlayerCharacter(const Common::String &name) {
 
 		if (!findKate()) {
 			models().push_back(_character->_model);
-			models().push_back(_character->_shadowModel[0]);
-			models().push_back(_character->_shadowModel[1]);
+			if (_character->_shadowModel[0]) {
+				models().push_back(_character->_shadowModel[0]);
+				models().push_back(_character->_shadowModel[1]);
+			}
 		}
 	}
 
