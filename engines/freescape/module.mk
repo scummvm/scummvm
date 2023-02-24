@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	games/driller/cpc.o \
 	games/driller/dos.o \
 	games/driller/driller.o \
+	games/driller/zx.o \
 	games/eclipse.o \
 	games/palettes.o \
 	gfx.o \
