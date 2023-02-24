@@ -424,15 +424,15 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	bool autodetect = false;
 
 	// Check for the autorun name
+	Common::String executable;
 	if (argc && argv && argv[0]) {
 		const char *s = strrchr(argv[0], '/');
-
 		if (!s)
 			s = strrchr(argv[0], '\\');
 
-		const char *appName =s ? (s + 1) : argv[0];
+		executable = s ? (s + 1) : argv[0];
 
-		if (!scumm_strnicmp(appName, "scummvm-auto", strlen("scummvm-auto"))) {
+		if (executable.equalsIgnoreCase("scummvm-auto")) {
 			warning("Will run in autodetection mode");
 			autodetect = true;
 		}
@@ -501,6 +501,35 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 
 	command = Base::parseCommandLine(settings, argc, argv);
+
+	Common::StringArray additionalArgs;
+	system.updateStartSettings(executable, command, settings, additionalArgs);
+
+	if (!additionalArgs.empty()) {
+		// Parse those additional command line arguments.
+		additionalArgs.insert_at(0, executable);
+		uint argumentsSize = additionalArgs.size();
+		char **arguments = (char **)malloc(argumentsSize * sizeof(char *));
+		for (uint i = 0; i < argumentsSize; i++) {
+			arguments[i] = (char *)malloc(additionalArgs[i].size() + 1);
+			Common::strlcpy(arguments[i], additionalArgs[i].c_str(), additionalArgs[i].size() + 1);
+		}
+
+		Common::StringMap additionalSettings;
+		Common::String additionalCommand = Base::parseCommandLine(additionalSettings, argumentsSize, arguments);
+
+		for (uint i = 0; i < argumentsSize; i++)
+			free(arguments[i]);
+		free(arguments);
+
+		// Merge additional settings and command with command line. Command line has priority.
+		if (command.empty())
+			command = additionalCommand;
+		for (Common::StringMap::const_iterator x = additionalSettings.begin(); x != additionalSettings.end(); ++x) {
+			if (!settings.contains(x->_key))
+				settings[x->_key] = x->_value;
+		}
+	}
 
 	// We allow overriding the automatic command
 	if (command.empty())
