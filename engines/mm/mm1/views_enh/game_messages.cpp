@@ -82,7 +82,7 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 	// Process the lines
 	clear();
 	for (auto line : msg._lines)
-		addText(line._text, line.y, 0, ALIGN_LEFT, line.x * 8);
+		addText(line._text, line.y, 0, line._align, line.x * 8);
 
 	redraw();
 	return true;

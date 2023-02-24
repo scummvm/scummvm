@@ -29,10 +29,6 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-enum TextAlign {
-	ALIGN_LEFT, ALIGN_RIGHT, ALIGN_MIDDLE
-};
-
 class TextView : public UIElement {
 private:
 	Graphics::Font *getFont() const;

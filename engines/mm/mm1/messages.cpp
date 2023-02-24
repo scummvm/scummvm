@@ -41,12 +41,14 @@ MouseMessage::MouseMessage(Common::EventType type,
 
 InfoMessage::InfoMessage() : Message() {}
 
-InfoMessage::InfoMessage(const Common::String &str) : Message() {
-	_lines.push_back(str);
+InfoMessage::InfoMessage(const Common::String &str,
+		TextAlign align) : Message() {
+	_lines.push_back(Line(str, align));
 }
 
-InfoMessage::InfoMessage(int x, int y, const Common::String &str) {
-	_lines.push_back(Line(x, y, str));
+InfoMessage::InfoMessage(int x, int y, const Common::String &str,
+		TextAlign align) {
+	_lines.push_back(Line(x, y, str, align));
 }
 
 InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,

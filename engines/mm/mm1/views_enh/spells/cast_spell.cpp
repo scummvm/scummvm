@@ -149,7 +149,7 @@ void CastSpell::spellError() {
 	g_events->drawElements();
 
 	Common::String msg = getSpellError();
-	send(SoundMessage(msg));
+	send(SoundMessage(msg, ALIGN_MIDDLE));
 }
 
 } // namespace Spells
