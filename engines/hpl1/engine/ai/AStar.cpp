@@ -253,9 +253,9 @@ void cAStarHandler::AddOpenNode(cAINode *apAINode, cAStarNode *apParent, float a
 		return;
 	}
 
-	// Try to add it to the open list
+	// Add it if it wasn't already inserted
 	const auto test = m_setOpenList.find(pNode);
-	if (test == m_setOpenList.end()) {
+	if (test != m_setOpenList.end()) {
 		hplDelete(pNode);
 		return;
 	}
