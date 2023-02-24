@@ -84,7 +84,8 @@ public:
 	virtual bool isLandscapeOrientation() const = 0;
 	virtual bool supportsColors() const = 0;
 
-	virtual void pageFinished() = 0;
+	virtual void beginPage() = 0;
+	virtual void endPage() = 0;
 	virtual void endDoc() = 0;
 	virtual void abortJob() = 0;
 };

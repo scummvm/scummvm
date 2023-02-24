@@ -28,6 +28,8 @@ PrintingManager::~PrintingManager() {}
 void PrintingManager::printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf, bool scale) {
 	PrintJob *job = createJob(jobName);
 
+	job->beginPage();
+
 	if (scale) {
 		Common::Rect printArea=job->getPrintableArea();
 
@@ -43,7 +45,7 @@ void PrintingManager::printImage(const Common::String &jobName, const Graphics::
 		job->drawBitmap(surf, Common::Point());
 	}
 
-	job->pageFinished();
+	job->endPage();
 	job->endDoc();
 
 	delete job;
@@ -62,6 +64,8 @@ void PrintingManager::printPlainTextFile(const Common::String &jobName, Common::
 
 	TextMetrics metrics = job->getTextMetrics();
 
+	job->beginPage();
+
 	while (!file.eos()) {
 		Common::String line = file.readLine();
 
@@ -71,16 +75,15 @@ void PrintingManager::printPlainTextFile(const Common::String &jobName, Common::
 
 		if (!printArea.contains(bounds)) {
 			textPos.y = 0;
-			job->pageFinished();
+			job->endPage();
+			job->beginPage();
 		}
 
 		job->drawText(line, textPos);
 
 		textPos.y += metrics.getLineHeight();
 	}
-	if (textPos != Common::Point(0, 0)) {
-		job->pageFinished();
-	}
+	job->endPage();
 
 	job->endDoc();
 	delete job;

@@ -102,6 +102,8 @@ TestExitStatus PrintingTests::printTestPage() {
 		return kTestFailed;
 	}
 
+	job->beginPage();
+
 	Common::Point pos(20,0);
 
 	Common::Rect logoArea(pos.x, pos.y, pos.x + logo->w * 4, pos.y+logo->h * 4);
@@ -138,7 +140,7 @@ TestExitStatus PrintingTests::printTestPage() {
 	job->drawBitmap(*testPattern, Common::Rect(pos.x, pos.y, pos.x+testPattern->w, pos.y+testPattern->h));
 	delete testPattern;
 
-	job->pageFinished();
+	job->endPage();
 	job->endDoc();
 	delete job;
 	
