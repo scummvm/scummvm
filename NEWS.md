@@ -26,6 +26,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Adibou 2 "Environment", "Read/Count 4 & 5" and "Read/Count 6 & 7".
    - Added support for Driller/Space Station Oblivion (DOS/EGA/CGA, Amiga, AtariST, ZX Spectrum and Amstrad CPC versions).
    - Added support for Halls of the Dead: Faery Tale Adventure II.
+   - Added support for Chop Suey, Eastern Mind, and 16 other Director 3 and Director 4 titles.
 
  New platforms:
    - Added support for the RetroMini RS90 under OpenDingux beta.
