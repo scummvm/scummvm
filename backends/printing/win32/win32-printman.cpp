@@ -26,6 +26,9 @@
 #include <windows.h>
 #include <winspool.h>
 
+#include "common/system.h"
+#include "backends/platform/sdl/win32/win32.h"
+
 #include "backends/printing/printman.h"
 #include "win32-printman.h"
 #include "common/ustr.h"
@@ -67,9 +70,9 @@ public:
 	void endDoc();
 	void abortJob();
 
-	private:
-	HDC createDefaultPrinterContext();
-	HDC createPrinterContext(LPTSTR devName);
+private:
+	HDC createDefaultPrinterContext(bool showDocPropsDialog = false);
+	HDC createPrinterContext(LPTSTR devName, bool showDocPropsDialog = false);
 	HBITMAP buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf);
 
 	HDC hdcPrint;
@@ -249,7 +252,7 @@ void Win32PrintJob::abortJob() {
 	jobActive = false;
 }
 
-HDC Win32PrintJob::createDefaultPrinterContext() {
+HDC Win32PrintJob::createDefaultPrinterContext(bool showDocPropsDialog) {
 	TCHAR szPrinter[MAX_PATH];
 	BOOL success;
 	DWORD cchPrinter(ARRAYSIZE(szPrinter));
@@ -258,19 +261,25 @@ HDC Win32PrintJob::createDefaultPrinterContext() {
 	if (!success)
 		return NULL;
 
-	return createPrinterContext(szPrinter);
+	return createPrinterContext(szPrinter, showDocPropsDialog);
 }
-HDC Win32PrintJob::createPrinterContext(LPTSTR devName) {
+HDC Win32PrintJob::createPrinterContext(LPTSTR devName, bool showDocPropsDialog) {
 	HANDLE handle;
 	BOOL success;
+
+	HWND parent = (dynamic_cast<OSystem_Win32 *>(g_system))->getHwnd();
 
 	success=OpenPrinter(devName, &handle, NULL);
 	if (!success)
 		return NULL;
 
-	int size = DocumentProperties(NULL, handle, devName, NULL, NULL, 0);
+	int size = DocumentProperties(parent, handle, devName, NULL, NULL, 0);
 	devmode = (DEVMODE *)malloc(size);
-	DocumentProperties(NULL, handle, devName, devmode, NULL, DM_OUT_BUFFER);
+	DocumentProperties(parent, handle, devName, devmode, NULL, DM_OUT_BUFFER);
+
+	if (showDocPropsDialog) {
+		DocumentProperties(parent, handle, devName, devmode, devmode, DM_IN_PROMPT | DM_OUT_BUFFER);
+	}
 
 	ClosePrinter(handle);
 
