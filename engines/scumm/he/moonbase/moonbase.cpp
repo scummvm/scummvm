@@ -24,9 +24,6 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"
-// #ifdef USE_LIBCURL
-// #include "scumm/he/moonbase/net_main.h"
-// #endif
 
 namespace Scumm {
 
