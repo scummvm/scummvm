@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
@@ -120,6 +121,41 @@ void deobfuscateDrillerCPCVirtualWorlds(byte *memBuffer) {
 		memBuffer[0x11c00 + j] = memBuffer[0x11e00 + j];
 		memBuffer[0x11e00 + j] = memBuffer[0x11000 + j];
 	}
+}
+
+void DrillerEngine::loadAssetsCPCFullGame() {
+	Common::File file;
+
+	loadBundledImages();
+	byte *memBuffer;
+	int memSize = 0;
+	if (_variant & GF_CPC_VIRTUALWORLDS) {
+		memBuffer = parseEDSK("virtualworlds.A.cpc.edsk", memSize);
+		deobfuscateDrillerCPCVirtualWorlds(memBuffer);
+	} else
+		memBuffer = parseEDSK("driller.cpc.edsk", memSize);
+	assert(memSize > 0);
+	Common::SeekableReadStream *stream = new Common::MemoryReadStream((const byte*)memBuffer, memSize);
+
+	if (_variant & GF_CPC_RETAIL) {
+		loadMessagesFixedSize(stream, 0xb0f7, 14, 20);
+		loadFonts(stream, 0xeb14);
+		load8bitBinary(stream, 0xec76, 4);
+		loadGlobalObjects(stream, 0xacb2);
+	} else if (_variant & GF_CPC_RETAIL2) {
+		loadMessagesFixedSize(stream, 0xb0f7 - 0x3fab, 14, 20);
+		loadFonts(stream, 0xeb14 - 0x3fab);
+		load8bitBinary(stream, 0xaccb, 4);
+		loadGlobalObjects(stream, 0xacb2 - 0x3fab);
+	} else if (_variant & _variant & GF_CPC_VIRTUALWORLDS) {
+		load8bitBinary(stream, 0x11acb, 4);
+	} else if (_variant & GF_CPC_BUDGET) {
+		loadMessagesFixedSize(stream, 0x9ef7, 14, 20);
+		loadFonts(stream, 0xd914);
+		load8bitBinary(stream, 0xda76, 4);
+		loadGlobalObjects(stream, 0x9ab2);
+	} else
+		error("Unknown Amstrad CPC variant");
 }
 
 void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {

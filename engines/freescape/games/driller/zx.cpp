@@ -18,11 +18,62 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/file.h"
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
+
+void DrillerEngine::loadAssetsZXFullGame() {
+	Common::File file;
+	file.open("driller.zx.title");
+	if (file.isOpen()) {
+		_title = loadAndCenterScrImage(&file);
+	} else
+		error("Unable to find driller.zx.title");
+
+	file.close();
+
+	file.open("driller.zx.border");
+	if (file.isOpen()) {
+		_border = loadAndCenterScrImage(&file);
+	} else
+		error("Unable to find driller.zx.border");
+	file.close();
+
+	file.open("driller.zx.data");
+
+	if (!file.isOpen())
+		error("Failed to open driller.zx.data");
+
+	if (_variant & GF_ZX_DISC)
+		loadMessagesFixedSize(&file, 0x2164, 14, 20);
+	else
+		loadMessagesFixedSize(&file, 0x20e4, 14, 20);
+
+	if (_variant & GF_ZX_RETAIL)
+		loadFonts(&file, 0x62ca);
+	else if (_variant & GF_ZX_BUDGET)
+		loadFonts(&file, 0x5aa8);
+	else if (_variant & GF_ZX_DISC)
+		loadFonts(&file, 0x63f0);
+
+	if (_variant & GF_ZX_DISC)
+		loadGlobalObjects(&file, 0x1d13);
+	else
+		loadGlobalObjects(&file, 0x1c93);
+
+	if (_variant & GF_ZX_RETAIL)
+		load8bitBinary(&file, 0x642c, 4);
+	else if (_variant & GF_ZX_BUDGET)
+		load8bitBinary(&file, 0x5c0a, 4);
+	else if (_variant & GF_ZX_DISC)
+		load8bitBinary(&file, 0x6552, 4);
+
+	else
+		error("Unknown ZX spectrum variant");
+}
 
 void DrillerEngine::drawZXUI(Graphics::Surface *surface) {
 	uint32 color = 5;

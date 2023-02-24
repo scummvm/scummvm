@@ -18,15 +18,121 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/file.h"
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 
-/*
-This file contains specific code for both Ammiga and AtariST implementations of Driller
-*/
-
 namespace Freescape {
+
+void DrillerEngine::loadAssetsAmigaFullGame() {
+	Common::File file;
+	if (_variant & GF_AMIGA_RETAIL) {
+		file.open("driller");
+
+		if (!file.isOpen())
+			error("Failed to open 'driller' executable for Amiga");
+
+		_border = loadAndConvertNeoImage(&file, 0x137f4);
+		byte *palette = (byte *)malloc(16 * 3);
+		for (int i = 0; i < 16; i++) { // gray scale palette
+			palette[i * 3 + 0] = i * (255 / 16);
+			palette[i * 3 + 1] = i * (255 / 16);
+			palette[i * 3 + 2] = i * (255 / 16);
+		}
+		_title = loadAndConvertNeoImage(&file, 0x10, palette);
+
+		loadFonts(&file, 0x8940);
+		loadMessagesFixedSize(&file, 0xc66e, 14, 20);
+		loadGlobalObjects(&file, 0xbd62);
+		load8bitBinary(&file, 0x29c16, 16);
+		loadPalettes(&file, 0x297d4);
+		loadSoundsFx(&file, 0x30e80, 25);
+	} else if (_variant & GF_AMIGA_BUDGET) {
+		file.open("lift.neo");
+		if (!file.isOpen())
+			error("Failed to open 'lift.neo' file");
+
+		_title = loadAndConvertNeoImage(&file, 0);
+
+		file.close();
+		file.open("console.neo");
+		if (!file.isOpen())
+			error("Failed to open 'console.neo' file");
+
+		_border = loadAndConvertNeoImage(&file, 0);
+
+		file.close();
+		file.open("driller");
+		if (!file.isOpen())
+			error("Failed to open 'driller' executable for Amiga");
+
+		loadFonts(&file, 0xa62);
+		loadMessagesFixedSize(&file, 0x499a, 14, 20);
+		loadGlobalObjects(&file, 0x4098);
+		load8bitBinary(&file, 0x21a3e, 16);
+		loadPalettes(&file, 0x215fc);
+
+		file.close();
+		file.open("soundfx");
+		if (!file.isOpen())
+			error("Failed to open 'soundfx' executable for Amiga");
+
+		loadSoundsFx(&file, 0, 25);
+	} else
+		error("Invalid or unknown Amiga release");
+}
+
+void DrillerEngine::loadAssetsAmigaDemo() {
+	Common::File file;
+	file.open("lift.neo");
+	if (!file.isOpen())
+		error("Failed to open 'lift.neo' file");
+
+	_title = loadAndConvertNeoImage(&file, 0);
+
+	file.close();
+	file.open("console.neo");
+	if (!file.isOpen())
+		error("Failed to open 'console.neo' file");
+
+	_border = loadAndConvertNeoImage(&file, 0);
+
+	file.close();
+	file.open("demo.cmd");
+	if (!file.isOpen())
+		error("Failed to open 'demo.cmd' file");
+
+	loadDemoData(&file, 0, 0x1000);
+
+	file.close();
+	file.open("data");
+	if (!file.isOpen())
+		error("Failed to open 'data' file");
+
+	load8bitBinary(&file, 0x442, 16);
+	loadPalettes(&file, 0x0);
+
+	file.close();
+	file.open("driller");
+	if (!file.isOpen())
+		error("Failed to open 'driller' file");
+
+	loadFonts(&file, 0xa30);
+	loadMessagesFixedSize(&file, 0x3960, 14, 20);
+	loadGlobalObjects(&file, 0x3716);
+
+	file.close();
+	file.open("soundfx");
+	if (!file.isOpen())
+		error("Failed to open 'soundfx' executable for Amiga");
+
+	loadSoundsFx(&file, 0, 25);
+}
+
+/*
+The following function contains specific UI code for both Amiga and AtariST
+*/
 
 void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
