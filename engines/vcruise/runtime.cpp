@@ -90,8 +90,11 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _panoramaState(kPanoramaStateInactive) {
 
-	for (uint i = 0; i < kNumDirections; i++)
+	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
+		_havePanUpFromDirection[i] = false;
+		_havePanDownFromDirection[i] = false;
+	}
 
 	for (uint i = 0; i < kPanCursorMaxCount; i++)
 		_panCursors[i] = 0;
@@ -776,6 +779,10 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 		}
 
 		_havePanAnimations = false;
+		for (uint i = 0; i < kNumDirections; i++) {
+			_havePanUpFromDirection[i] = false;
+			_havePanDownFromDirection[i] = false;
+		}
 
 		for (uint i = 0; i < kNumDirections; i++)
 			_haveIdleAnimations[i] = false;
@@ -977,6 +984,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef, bool consumeFPSOverri
 }
 
 void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride) {
+	debug("changeAnimation: %u -> %u  Initial %u", animDef.firstFrame, animDef.lastFrame, initialFrame);
+
 	int animFile = animDef.animNum;
 	if (animFile < 0)
 		animFile = -animFile;
@@ -1400,7 +1409,7 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 
 		debug(1, "Running frame loop of %u - %u from frame %u", trimmedAnimation.firstFrame, trimmedAnimation.lastFrame, initialFrame);
 
-		changeAnimation(_panRightAnimationDef, initialFrame, false);
+		changeAnimation(trimmedAnimation, initialFrame, false);
 		_gameState = kGameStatePanRight;
 
 		isRight = true;
@@ -1536,7 +1545,10 @@ void Runtime::scriptOpLMB(ScriptArg_t arg) {
 		terminateScript();
 }
 
-OPCODE_STUB(LMB1)
+void Runtime::scriptOpLMB1(ScriptArg_t arg) {
+	warning("LMB1 script op not implemented");
+}
+
 OPCODE_STUB(SoundS1)
 
 void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
@@ -1566,14 +1578,42 @@ void Runtime::scriptOpMusicDn(ScriptArg_t arg) {
 	(void)stackArgs;
 }
 
+void Runtime::scriptOpParm1(ScriptArg_t arg) {
+	TAKE_STACK(3);
 
-OPCODE_STUB(Parm1)
-OPCODE_STUB(Parm2)
-OPCODE_STUB(Parm3)
+	warning("Parm1 is not implemented");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpParm2(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	warning("Parm2 is not implemented");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpParm3(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	warning("Parm3 is not implemented");
+	(void)stackArgs;
+}
+
 OPCODE_STUB(ParmG)
 
-OPCODE_STUB(VolumeDn4)
 OPCODE_STUB(VolumeUp3)
+
+void Runtime::scriptOpVolumeDn4(ScriptArg_t arg) {
+	TAKE_STACK(4);
+
+	// stackArgs[0] = sound ID
+	// stackArgs[1] = duration (in 10ths of second)
+	// stackArgs[2] = new volume
+	// stackArgs[3] = stop sound ramp-down completes
+
+	warning("FX volume ramp down is not implemented");
+	(void)stackArgs;
+}
 
 void Runtime::scriptOpRandom(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -1602,11 +1642,67 @@ void Runtime::scriptOpSay3(ScriptArg_t arg) {
 	warning("Say3 opcode is not implemented yet");
 }
 
-OPCODE_STUB(SetTimer)
-OPCODE_STUB(LoSet)
-OPCODE_STUB(LoGet)
-OPCODE_STUB(HiSet)
-OPCODE_STUB(HiGet)
+void Runtime::scriptOpSetTimer(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	_timers[static_cast<uint>(stackArgs[0])] = g_system->getMillis() + static_cast<uint32>(stackArgs[1]) * 1000u;
+}
+
+void Runtime::scriptOpLoSet(ScriptArg_t arg) {
+	scriptOpVerticalPanSet(_havePanDownFromDirection);
+}
+
+void Runtime::scriptOpLoGet(ScriptArg_t arg) {
+	scriptOpVerticalPanGet();
+}
+
+void Runtime::scriptOpHiSet(ScriptArg_t arg) {
+	scriptOpVerticalPanSet(_havePanUpFromDirection);
+}
+
+void Runtime::scriptOpHiGet(ScriptArg_t arg) {
+	scriptOpVerticalPanGet();
+}
+
+void Runtime::scriptOpVerticalPanSet(bool *flags) {
+	TAKE_STACK(2);
+
+	uint baseDirection = static_cast<uint>(stackArgs[0]) % kNumDirections;
+	uint radius = stackArgs[1];
+
+	flags[baseDirection] = true;
+
+	uint rDir = baseDirection;
+	uint lDir = baseDirection;
+	for (uint i = 1; i < radius; i++) {
+		rDir++;
+		if (rDir == kNumDirections)
+			rDir = 0;
+
+		if (lDir == 0)
+			lDir = kNumDirections;
+		lDir--;
+
+		flags[lDir] = true;
+		flags[rDir] = true;
+	}
+}
+
+void Runtime::scriptOpVerticalPanGet() {
+	TAKE_STACK(2);
+
+	// In any scenario where this is used, there is a corresponding hi/lo set and this only ever triggers off of interactions,
+	// so don't really even need to check anything other than the facing direction?
+	uint baseDirection = static_cast<uint>(stackArgs[0]) % kNumDirections;
+	uint radius = stackArgs[1];
+
+	uint rtDirection = (baseDirection + kNumDirections - _direction) % kNumDirections;
+	uint lfDirection = (_direction + kNumDirections - baseDirection) % kNumDirections;
+
+	bool isInRadius = (rtDirection <= radius || lfDirection <= radius);
+
+	_scriptStack.push_back(isInRadius ? 1 : 0);
+}
 
 void Runtime::scriptOpNot(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -1707,7 +1803,23 @@ void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 }
 
 
-OPCODE_STUB(ValueName)
+
+void Runtime::scriptOpValueName(ScriptArg_t arg) {
+	if (_roomNumber >= _roomDefs.size())
+		error("Invalid room number for var name op");
+
+	const RoomDef *roomDef = _roomDefs[_roomNumber].get();
+	if (!roomDef)
+		error("Room def doesn't exist");
+
+	const Common::String &varName = _scriptSet->strings[arg];
+
+	Common::HashMap<Common::String, StackValue_t>::const_iterator it = roomDef->values.find(varName);
+	if (it == roomDef->values.end())
+		error("Value '%s' doesn't exist in room %i", varName.c_str(), static_cast<int>(_roomNumber));
+
+	_scriptStack.push_back(it->_value);
+}
 
 void Runtime::scriptOpVarName(ScriptArg_t arg) {
 	if (_roomNumber >= _roomDefs.size())

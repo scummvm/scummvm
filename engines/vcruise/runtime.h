@@ -333,6 +333,9 @@ private:
 	void scriptOpCheckValue(ScriptArg_t arg);
 	void scriptOpJump(ScriptArg_t arg);
 
+	void scriptOpVerticalPanSet(bool *flags);
+	void scriptOpVerticalPanGet();
+
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursors;		// Cursors indexed as CURSOR_CUR_##
 	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _cursorsShort;	// Cursors indexed as CURSOR_#
 
@@ -348,6 +351,8 @@ private:
 	AnimationDef _panLeftAnimationDef;
 	AnimationDef _panRightAnimationDef;
 	bool _havePanAnimations;
+	bool _havePanUpFromDirection[kNumDirections];
+	bool _havePanDownFromDirection[kNumDirections];
 
 	AnimationDef _idleAnimations[kNumDirections];
 	bool _haveIdleAnimations[kNumDirections];
@@ -355,6 +360,7 @@ private:
 	AnimationDef _postFacingAnimDef;
 
 	Common::HashMap<uint32, int32> _variables;
+	Common::HashMap<uint, uint32> _timers;
 
 	static const uint kPanLeftInteraction = 1;
 	static const uint kPanDownInteraction = 2;
