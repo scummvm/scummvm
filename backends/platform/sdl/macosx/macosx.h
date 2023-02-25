@@ -43,6 +43,7 @@ public:
 	void init() override;
 	void initBackend() override;
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
+	void updateStartSettings(const Common::String &executable, Common::String &command, Common::StringMap &settings, Common::StringArray& additionalArgs) override;
 
 #ifdef USE_OPENGL
 	GraphicsManagerType getDefaultGraphicsManager() const override;
