@@ -147,8 +147,10 @@ void Events::popView() {
 		_views[i]->draw();
 	}
 
-	if (!_views.empty())
+	if (!_views.empty()) {
 		focusedView()->msgFocus(FocusMessage());
+		focusedView()->redraw();
+	}
 }
 
 bool Events::isPresent(const Common::String &name) const {

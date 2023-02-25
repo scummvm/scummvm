@@ -176,8 +176,8 @@ bool Spellbook::msgAction(const ActionMessage &msg) {
 		return true;
 
 	case KEYBIND_SELECT:
-		close();
 		spellSelected();
+		close();
 		return true;
 
 	default:
@@ -232,9 +232,6 @@ void Spellbook::spellSelected() {
 		c._combatSpell = spellIndex;
 	else
 		c._nonCombatSpell = spellIndex;
-
-	// Update the cast spell dialog with the new spell
-	send("CastSpell", GameMessage("UPDATE"));
 }
 
 } // namespace Spells
