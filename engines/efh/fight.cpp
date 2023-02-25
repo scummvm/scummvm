@@ -750,8 +750,8 @@ void EfhEngine::getDeathTypeDescription(int16 victimId, int16 attackerId) {
 			else
 				deathType = _items[exclusiveItemId]._attackType + 1;
 		}
-	// The check "attackerId > 5" is a safeguard for a Coverity "OVERRUN" ticket, not present in the original
-	} else if (attackerId > 5 || _teamMonster[attackerId]._id == -1) {
+	// The check "attackerId >= 5" is a safeguard for a Coverity "OVERRUN" ticket, not present in the original
+	} else if (attackerId >= 5 || _teamMonster[attackerId]._id == -1) {
 		deathType = 0;
 	} else {
 		int16 itemId = _mapMonsters[_techId][_teamMonster[attackerId]._id]._weaponItemId;

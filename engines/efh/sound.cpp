@@ -35,9 +35,13 @@ void EfhEngine::songDelay(int delay) {
 
 void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
 	debugC(3, kDebugEngine, "playNote %d %d", frequencyIndex, totalDelay);
-	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 0x1234DD / kSoundFrequency[frequencyIndex], -1);
-	songDelay(totalDelay);
-	_speakerStream->stop();
+	if (frequencyIndex > 0 && frequencyIndex < 72) {
+		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, 0x1234DD / kSoundFrequency[frequencyIndex], -1);
+		songDelay(totalDelay);
+		_speakerStream->stop();
+	} else {
+		warning("playNote - Skip note with frequency index %d", frequencyIndex);
+	}
 }
 
 Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
