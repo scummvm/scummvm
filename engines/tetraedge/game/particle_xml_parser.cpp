@@ -117,7 +117,16 @@ bool ParticleXmlParser::parserCallback_randomdirection(ParserNode *node) {
 }
 
 bool ParticleXmlParser::parserCallback_orientation(ParserNode *node) {
-	_scene->particles().back()->setOrientation(parsePoint(node));
+	TeVector3f32 orient;
+	if (node->values.contains("x")) {
+		orient = parsePoint(node);
+	} else if (node->values.contains("value")) {
+		orient.y() = parseDouble(node);
+	} else {
+		return false;
+	}
+
+	_scene->particles().back()->setOrientation(orient);
 	return true;
 }
 
