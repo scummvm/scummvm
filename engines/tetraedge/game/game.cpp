@@ -213,14 +213,16 @@ void Game::addToScore(int score) {
 
 bool Game::changeWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
 	//debug("Game::changeWarp(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
-	if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
-		_scene.freeGeometry();
 	Application *app = g_engine->getApplication();
-	if (fadeFlag) {
+	if (fadeFlag && g_engine->gameType() == TetraedgeEngine::kSyberia) {
 		app->blackFade();
 	} else {
 		app->captureFade();
 	}
+	// Slight divergence from original.. free after capturing fade so characters don't disappear.
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
+		_scene.freeGeometry();
+
 	_warpZone = zone;
 	_warpScene = scene;
 	_warpFadeFlag = fadeFlag;
