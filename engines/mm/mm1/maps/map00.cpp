@@ -94,7 +94,7 @@ void Map00::special03() {
 void Map00::special04() {
 	visitedExit();
 	send(SoundMessage(
-		STRING["maps.map00.passage_outside"],
+		STRING["maps.passage_outside1"],
 		[]() {
 			g_maps->_mapPos = Common::Point(10, 10);
 			g_maps->changeMap(0xa11, 2);

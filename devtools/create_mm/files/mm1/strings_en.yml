@@ -1059,6 +1059,8 @@ maps:
 	stairs_down: "Stairs going down! Take them (Y/N)?"
 	wall_painted: "The wall is painted from ceiling to\nfloor in a black and white checkered\npattern!"
 	tavern_inside: "Step up to the bar (Y/N)?"
+	passage_outside1: "A passage leads outside, take it (Y/N)?"
+	passage_outside2: "Passage outside, exit (Y/N)?"
 
 	desert:
 		its_hot: "It's hot... "
@@ -1099,7 +1101,6 @@ maps:
 		statue: "There is a statue here. Search it (Y/N)?"
 		trapdoor: "Trap door!"
 		levitate: ", levitation saves you!"
-		passage_outside: "A passage leads outside, take it (Y/N)?"
 	emap00:
 		training_inside: "Before you are various groups engaged in training exercises. Worg, the guildmaster asks, \"Do you require training (Y/N)?\""
 
@@ -1118,7 +1119,6 @@ maps:
 		training_inside: "A tall, muscular female clad in leather\narmor approaches asking, \"Strangers,\nare you here for training (Y/N)?\""
 
 		males_drained: "Males are drained!"
-		passage_outside: "Passage outside, exit (Y/N)?"
 		secret: "A sensuous female voice speaks from\nwithin an intoxicating mist,\n\"You've discovered my secret!\""
 		zam0: "Note: zam 12,2"
 		zam1: "\"I am zam, astral brother of zom and\nonly living male residing in portsmith\n"
@@ -1141,7 +1141,6 @@ maps:
 		training_inside: "several adventurers armored in dragon\nscales, address the party,\n\"Looking for training (Y/N)?\""
 
 		morango: "Morango the mystic asks,\n\"Who shall i measure (1-6)?\""
-		passage_outside: "Passage outside, exit (Y/N)?"
 		resistances1: "% resistance for "
 		resistances2: "Magic     Fire     Cold       Elec\nAcid      Fear     Poison     Sleep"
 		pit: "Swaze pit! jump in (Y/N)?"
@@ -1167,8 +1166,6 @@ maps:
 		temple_inside: "Bright lights swirl throughout the room.a horrifying voice shrieks,\n\"Need help (Y/N)?\""
 		training_inside: "Several empty suits of armor approach\nasking, \"Need training (Y/N)?\""
 
-		passage_outside: "A passage leads outside, take it (Y/N)?"
-
 		telgoran1: "An elf dressed in robes approaches...\n\n"
 		telgoran2: "\"Friends, I am telgoran. This scroll you\nhave brought me will be very helpful\n(+2500 exp) Here's 1500 gold for your\nservices. I'll tell you a secret, if\ntreasure is what you want...\""
 		telgoran3: "\"The brothers you must find...\nPortsmith and Algary are combined.\"" 
@@ -1192,7 +1189,6 @@ maps:
 		agar2: "\"You have done well to bring me this\nscroll. (+1000 exp) Now take it to my\nprotege Telgoran in Dusk.\""
 		agar3: "\"I have no business with you. begone!\""
 		guards: "Town guards: you're under arrest!\n\na)Attack b)Bribe c)Run d)Surrender"
-		passage_outside: "Passage outside, exit (Y/N)?"
 		sentence: "High court sentence: years= "
 		treasure: "Town treasure, steal (Y/N)?"
 
@@ -1209,7 +1205,6 @@ maps:
 		backpacks_full: "*** Backpacks full ***"
 
 	map06:
-		passage_outside: "Passage outside, exit (Y/N)?"
 		portal: "Shimmering blue and white portal,\nenter (Y/N)?"
 		acid: "Splash! A pool of acid!"
 		button: "Button on the wall, press it (Y/N)?"
@@ -1254,7 +1249,6 @@ maps:
 
 	map10:
 		levitation: "Levitation saved you."
-		passage_outside: "A passage leads outside, take it (Y/N)?"
 		pit: "Jagged slime pit!"
 		poof: "Poof! you've been teleported..."
 		ranalou1: "\"I'm the wizard ranalou. are you here to\nuse the portals (Y/N)?\""
@@ -1298,11 +1292,11 @@ maps:
 		levitation1: "Luckily, your levitation spell saved you!"
 
 	map14:
-		words: "Carved on a block of ice are the words:\nStart at 15-7 and walk to doom!"
-		passage: "A secret passage to doom, take it (Y/N)?"
+		words: "Carved on a block of ice are the words:\nStart at 15-7 and walk to Doom!"
+		passage: "A secret passage to Ddoom, take it (Y/N)?"
 		pool: "The pool of health grants those who are\nworthy +4 endurance!"
-		surrounded: "You've been surrounded by the dark riderand his men! He challenges you to a duel...accept (Y/N)?"
-		castle: "The fabeled castle doom!\nWill you enter (Y/N)?"
+		surrounded: "You've been surrounded by the Dark Riderand his men! He challenges you to a duel...accept (Y/N)?"
+		castle: "The fabeled Castle Doom!\nWill you enter (Y/N)?"
 
 	map15:
 		lava: "Lava fills the valley of fire!"
@@ -1330,7 +1324,7 @@ maps:
 		wave: "A tidal wave sweeps the party away!"
 
 	map18:
-		passage: "Cavernous passage to erliquin,\ntake it (Y/N)?"
+		passage: "Cavernous passage to Erliquin,\ntake it (Y/N)?"
 		cave: "A cave, enter (Y/N)?"
 		castle_north: "Castle blackridge north, enter (Y/N)?"
 		castle_south: "Castle blackridge south, enter (Y/N)?"
@@ -1544,7 +1538,6 @@ maps:
 		message5: "Etched in silver:\nMessage interleave 'fedbac'"
 		message6: "Etched in gold:\nMessage interleave '8,5,3,9,1,4,6,2,7'"
 		message7: "Written on the wall:\nJump three times to reach center."
-		passage: "A passage leads outside, take it (Y/N)?"
 		door: "A golden door repels you!"
 		alamar1: "Suspended in a forcefield is the body\nof a man enclosed in an iron suit.\nTelepathic communication:\"I am the true\nKing Alamar, imprisoned by a demonic\nalien being! Confront him with this eye\nof goros and you shall see his true\nself."
 		alamar2: "The fate of the realm is at stake.\""
@@ -1672,7 +1665,6 @@ maps:
 			7: "Defeat the stronghold in ravens wood"
 
 	map44:
-		exit: "A passage leads outside, take it (Y/N)?"
 		message_f: "Etched in silver, message F reads:\ntstst,e1,d-ds15a1drh"
 		clover: "The green clover grants those who\nare worthy +4 luck!"
 		fountain: "The Fabulous Fabled Fountain of\nDragadune converts all gold into\nexperience, accept (Y/N)?"
@@ -1714,7 +1706,6 @@ maps:
 	map49:
 		chute: "A chute..."
 		catapult: "A catapult ejects you from the tower!"
-		passage: "A passage leads outside, take it (Y/N)?"
 		message_e: "Etched in silver, message e reads:\noei/:1-33-1ek5;d-et,"
 		alamar1: "The omnipotent king alamar speaks,\n\n"
 		alamar2: "\"Varnlings, i quest thee to find the\nCrypt of Carmenca. away with you...\""
@@ -1735,7 +1726,6 @@ maps:
 		sign4: "Ruby room"
 		sign5: "Twinkle room"
 		sign6: "Rainbow room"
-		passage: "A passage leads outside, take it (Y/N)?"
 		grate: "The crystal grate repels you!"
 
 	map51:

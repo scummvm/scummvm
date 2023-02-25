@@ -57,7 +57,7 @@ void Map44::special01() {
 	visitedExit();
 
 	send(SoundMessage(
-		STRING["maps.map44.exit"],
+		STRING["maps.passage_outside1"],
 		[]() {
 			g_maps->_mapPos = Common::Point(12, 12);
 			g_maps->changeMap(0x112, 2);
