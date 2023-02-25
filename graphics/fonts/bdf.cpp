@@ -27,6 +27,8 @@
 
 #include "graphics/surface.h"
 
+#define DRAWDEBUG 0
+
 namespace Graphics {
 
 BdfFont::BdfFont(const BdfFontData &data, DisposeAfterUse::Flag dispose)
@@ -804,14 +806,23 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 
 					int sx = (int)((float)x / scale);
 
-					if (srcd[sx / 8] & (0x80 >> (sx % 8)))
+					if (srcd[sx / 8] & (0x80 >> (sx % 8))) {
 						b |= 1;
+#if DRAWDEBUG
+						debugN("#");
+					} else {
+						debugN(" ");
+#endif
+					}
 
 					if (x % 8 == 7) {
 						*dst++ = b;
 						b = 0;
 					}
 				}
+#if DRAWDEBUG
+				debug("");
+#endif
 
 				if (((box.width - 1) % 8)) {
 					b <<= 7 - ((box.width - 1) % 8);
