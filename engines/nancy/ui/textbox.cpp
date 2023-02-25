@@ -70,6 +70,12 @@ void Textbox::init() {
 	Common::Point scrollbarDefaultPos;
 	scrollbarDefaultPos.x = chunk->readUint16LE();
 	scrollbarDefaultPos.y = chunk->readUint16LE();
+
+	// TVD handles coordinates differently, so we need to nudge scrollbars one pixel to the left
+	if (g_nancy->getGameType() == Nancy::GameType::kGameTypeVampire) {
+		scrollbarDefaultPos.x -= 1;
+	}
+
 	uint16 scrollbarMaxScroll = chunk->readUint16LE();
 
 	_firstLineOffset = chunk->readUint16LE() + 1;
@@ -88,7 +94,8 @@ void Textbox::init() {
 
 	RenderObject::init();
 
-	_scrollbar = new Scrollbar(9, scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
+	// zOrder bumped by 1 to avoid overlap with the inventory box curtains in The Vampire Diaries
+	_scrollbar = new Scrollbar(10, scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
 	_scrollbar->init();
 }
 
