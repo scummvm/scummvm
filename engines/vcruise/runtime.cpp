@@ -1854,7 +1854,7 @@ void Runtime::scriptOpValueName(ScriptArg_t arg) {
 
 	const Common::String &varName = _scriptSet->strings[arg];
 
-	Common::HashMap<Common::String, StackValue_t>::const_iterator it = roomDef->values.find(varName);
+	Common::HashMap<Common::String, int>::const_iterator it = roomDef->values.find(varName);
 	if (it == roomDef->values.end())
 		error("Value '%s' doesn't exist in room %i", varName.c_str(), static_cast<int>(_roomNumber));
 
