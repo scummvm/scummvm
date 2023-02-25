@@ -37,10 +37,10 @@
 namespace Nancy {
 namespace UI {
 
-InventoryBox::InventoryBox(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom, 6),
+InventoryBox::InventoryBox() :
+		RenderObject(6),
 		_scrollbar(nullptr),
-		_curtains(*this, this),
+		_curtains(this),
 		_scrollbarPos(0),
 		_curtainsFrameTime(0) {}
 
@@ -111,7 +111,7 @@ void InventoryBox::init() {
 
 	RenderObject::init();
 
-	_scrollbar = new Scrollbar(NancySceneState.getFrame(), 9, scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
+	_scrollbar = new Scrollbar(9, scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
 	_scrollbar->init();
 	_curtains.init();
 }

@@ -31,14 +31,12 @@ class GraphicsManager;
 
 // Loosely equivalent to the original engine's ZRenderStructs.
 // A subclass of this will be automatically updated and drawn from the graphics manager,
-// but initialization needs to be done manually. Objects are expected to know which
-// object is below them at creation.
+// but initialization needs to be done manually.
 class RenderObject {
 	friend class GraphicsManager;
 public:
 	RenderObject(uint16 zOrder);
-	RenderObject(RenderObject &redrawFrom, uint16 zOrder);
-	RenderObject(RenderObject &redrawFrom, uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
+	RenderObject(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
 
 	virtual ~RenderObject();
 
@@ -71,9 +69,7 @@ protected:
 
 	// Needed for proper handling of objects inside the viewport
 	virtual bool isViewportRelative() const { return false; }
-
-	RenderObject *_redrawFrom;
-
+	
 	bool _needsRedraw;
 	bool _isVisible;
 	uint16 _z;

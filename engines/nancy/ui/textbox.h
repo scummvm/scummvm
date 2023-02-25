@@ -36,7 +36,7 @@ class Scrollbar;
 
 class Textbox : public Nancy::RenderObject {
 public:
-	Textbox(RenderObject &redrawFrom);
+	Textbox();
 	virtual ~Textbox();
 
 	void init() override;

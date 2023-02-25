@@ -51,7 +51,7 @@ public:
 		Common::Rect sourceRect; // 0x16
 	};
 
-	InventoryBox(RenderObject &redrawFrom);
+	InventoryBox();
 	virtual ~InventoryBox();
 
 	void init() override;
@@ -73,8 +73,8 @@ private:
 
 	class Curtains : public RenderObject {
 	public:
-		Curtains(RenderObject &redrawFrom, InventoryBox *parent) :
-			RenderObject(redrawFrom, 9),
+		Curtains(InventoryBox *parent) :
+			RenderObject(9),
 			_parent(parent),
 			_soundTriggered(false),
 			_areOpen(false),

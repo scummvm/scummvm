@@ -32,7 +32,7 @@ namespace UI {
 
 class Button : public RenderObject {
 public:
-	Button(RenderObject &redrawFrom, uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
+	Button(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
 	virtual ~Button() = default;
 
 	void handleInput(NancyInput &input);

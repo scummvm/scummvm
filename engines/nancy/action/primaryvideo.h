@@ -69,7 +69,7 @@ struct FlagsStruct {
 };
 
 public:
-	PlayPrimaryVideoChan0(RenderObject &redrawFrom) : RenderObject(redrawFrom, 8) {}
+	PlayPrimaryVideoChan0() : RenderObject(8) {}
 	virtual ~PlayPrimaryVideoChan0();
 
 	void init() override;

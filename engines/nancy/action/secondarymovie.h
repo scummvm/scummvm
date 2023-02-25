@@ -38,7 +38,7 @@ public:
 		EventFlagDescription flagDesc;
 	};
 
-	PlaySecondaryMovie(RenderObject &redrawFrom) : RenderObject(redrawFrom, 8) {}
+	PlaySecondaryMovie() : RenderObject(8) {}
 	virtual ~PlaySecondaryMovie();
 
 	void init() override;

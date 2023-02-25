@@ -98,8 +98,8 @@ Scene::Scene() :
 		_gameStateRequested(NancyState::kNone),
 		_frame(),
 		_viewport(),
-		_textbox(_frame),
-		_inventoryBox(_frame),
+		_textbox(),
+		_inventoryBox(),
 		_menuButton(nullptr),
 		_helpButton(nullptr),
 		_viewportOrnaments(nullptr),
@@ -659,18 +659,18 @@ void Scene::initStaticData() {
 	readRect(*chunk, helpSrc);
 	readRect(*chunk, menuDest);
 	readRect(*chunk, helpDest);
-	_menuButton = new UI::Button(_frame, 5, g_nancy->_graphicsManager->_object0, menuSrc, menuDest);
-	_helpButton = new UI::Button(_frame, 5, g_nancy->_graphicsManager->_object0, helpSrc, helpDest);
+	_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, menuSrc, menuDest);
+	_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, helpSrc, helpDest);
 	_menuButton->init();
 	_helpButton->init();
 	g_nancy->_cursorManager->showCursor(true);
 
 	// Init ornaments (TVD only)
 	if (g_nancy->getGameType() == Nancy::GameType::kGameTypeVampire) {
-		_viewportOrnaments = new UI::ViewportOrnaments(_viewport, 9);
+		_viewportOrnaments = new UI::ViewportOrnaments(9);
 		_viewportOrnaments->init();
 		 
-		_textboxOrnaments = new UI::TextboxOrnaments(_textbox, 9);
+		_textboxOrnaments = new UI::TextboxOrnaments(9);
 		_textboxOrnaments->init();
 	}
 

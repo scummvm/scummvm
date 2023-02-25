@@ -32,7 +32,7 @@ namespace Action {
 class LeverPuzzle : public ActionRecord, public RenderObject {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-	LeverPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
+	LeverPuzzle() : RenderObject(7) {}
 	virtual ~LeverPuzzle() {}
 
 	void init() override;

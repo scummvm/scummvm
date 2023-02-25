@@ -43,8 +43,8 @@ Map::Map() : _state(kInit),
 			_mapButtonClicked(false),
 			_pickedLocationID(-1),
 			_viewport(),
-			_label(NancySceneState.getFrame(), 7),
-			_closedLabel(NancySceneState.getFrame(), 7),
+			_label(7),
+			_closedLabel(7),
 			_button(nullptr) {}
 
 Map::~Map() {
@@ -87,7 +87,7 @@ void Map::init() {
 
 	setLabel(-1);
 
-	_button = new UI::Button(NancySceneState.getFrame(), 9, g_nancy->_graphicsManager->_object0, buttonSrc, buttonDest);
+	_button = new UI::Button(9, g_nancy->_graphicsManager->_object0, buttonSrc, buttonDest);
 	_button->init();
 	_button->setVisible(true);
 

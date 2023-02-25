@@ -36,7 +36,7 @@ namespace Action {
 // action record types, whose functionality is nearly identical
 class PlayStaticBitmapAnimation : public ActionRecord, public RenderObject {
 public:
-	PlayStaticBitmapAnimation(bool interruptible, RenderObject &redrawFrom) : RenderObject(redrawFrom, 7), _isInterruptible(interruptible) {}
+	PlayStaticBitmapAnimation(bool interruptible) : RenderObject(7), _isInterruptible(interruptible) {}
 	virtual ~PlayStaticBitmapAnimation() { _fullSurface.free(); }
 
 	void init() override;

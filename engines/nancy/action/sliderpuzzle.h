@@ -37,7 +37,7 @@ namespace Action {
 class SliderPuzzle: public ActionRecord, public RenderObject {
 public:
 	enum SolveState { kNotSolved, kWaitForSound };
-	SliderPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
+	SliderPuzzle() : RenderObject(7) {}
 	virtual ~SliderPuzzle() {}
 
 	void init() override;

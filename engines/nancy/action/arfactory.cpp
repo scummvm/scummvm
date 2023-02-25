@@ -77,17 +77,17 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 0x25:
 		return new FlickerOff();
 	case 0x28:
-		return new PlayPrimaryVideoChan0(NancySceneState.getViewport());
+		return new PlayPrimaryVideoChan0();
 	case 0x29:
-		return new PlaySecondaryVideo(0, NancySceneState.getViewport());
+		return new PlaySecondaryVideo(0);
 	case 0x2A:
-		return new PlaySecondaryVideo(1, NancySceneState.getViewport());
+		return new PlaySecondaryVideo(1);
 	case 0x2B:
-		return new PlaySecondaryMovie(NancySceneState.getViewport());
+		return new PlaySecondaryMovie();
 	case 0x2C:
-		return new PlayStaticBitmapAnimation(false, NancySceneState.getViewport()); // PlayStaticBitmapAnimation
+		return new PlayStaticBitmapAnimation(false); // PlayStaticBitmapAnimation
 	case 0x2D:
-		return new PlayStaticBitmapAnimation(true, NancySceneState.getViewport()); // PlayIntStaticBitmapAnimation
+		return new PlayStaticBitmapAnimation(true); // PlayIntStaticBitmapAnimation
 	case 0x32:
 		return new MapCall();
 	case 0x33:
@@ -127,7 +127,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 0x61:
 		return new EventFlags();
 	case 0x62:
-		return new OrderingPuzzle(NancySceneState.getViewport());
+		return new OrderingPuzzle();
 	case 0x63:
 		return new LoseGame();
 	case 0x64:
@@ -139,21 +139,21 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 0x67:
 		return new DifficultyLevel();
 	case 0x68:
-		return new RotatingLockPuzzle(NancySceneState.getViewport());
+		return new RotatingLockPuzzle();
 	case 0x69:
-		return new LeverPuzzle(NancySceneState.getViewport());
+		return new LeverPuzzle();
 	case 0x6A:
-		return new Telephone(NancySceneState.getViewport());
+		return new Telephone();
 	case 0x6B:
-		return new SliderPuzzle(NancySceneState.getViewport());
+		return new SliderPuzzle();
 	case 0x6C:
-		return new PasswordPuzzle(NancySceneState.getViewport());
+		return new PasswordPuzzle();
 	case 0x6E:
 		return new AddInventoryNoHS();
 	case 0x6F:
 		return new RemoveInventoryNoHS();
 	case 0x70:
-		return new ShowInventoryItem(NancySceneState.getViewport());
+		return new ShowInventoryItem();
 	case 0x8C:
 		return new PlayDigiSoundAndDie(); // TODO
 	case 0x8D:

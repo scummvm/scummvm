@@ -32,7 +32,7 @@ namespace Action {
 class OrderingPuzzle : public ActionRecord, public RenderObject {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-	OrderingPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
+	OrderingPuzzle() : RenderObject(7) {}
 	virtual ~OrderingPuzzle() {}
 
 	void init() override;

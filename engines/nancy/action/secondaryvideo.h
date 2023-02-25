@@ -37,7 +37,7 @@ class PlaySecondaryVideo : public ActionRecord, public RenderObject {
 public:
 	enum HoverState { kNoHover, kHover, kEndHover };
 
-	PlaySecondaryVideo(uint chan, RenderObject &redrawFrom) : RenderObject(redrawFrom, 8), channel(chan) {}
+	PlaySecondaryVideo(uint chan) : RenderObject(8), channel(chan) {}
 	virtual ~PlaySecondaryVideo() { _decoder.close(); }
 
 	void init() override;

@@ -32,7 +32,7 @@ namespace Action {
 class RotatingLockPuzzle : public ActionRecord, public RenderObject {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-	RotatingLockPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
+	RotatingLockPuzzle() : RenderObject(7) {}
 	virtual ~RotatingLockPuzzle() {}
 
 	void init() override;

@@ -32,7 +32,7 @@ namespace UI {
 
 class Scrollbar : public RenderObject {
 public:
-	Scrollbar(RenderObject &redrawFrom, uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical = true);
+	Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical = true);
 	virtual ~Scrollbar() = default;
 
 	void init() override;

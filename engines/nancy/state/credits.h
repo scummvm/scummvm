@@ -38,7 +38,7 @@ namespace State {
 class Credits : public State, public Common::Singleton<Credits> {
 public:
 	enum State { kInit, kRun };
-	Credits() : _state(kInit), _background(), _text(_background), _pixelsToScroll(0) {}
+	Credits() : _state(kInit), _background(), _text(), _pixelsToScroll(0) {}
 
 	// State API
 	void process() override;
@@ -51,7 +51,7 @@ protected:
 	class CreditsText : public RenderObject {
 		friend class Credits;
 	public:
-		CreditsText(RenderObject &redrawFrom) : RenderObject(redrawFrom, 1) {}
+		CreditsText() : RenderObject(1) {}
 		virtual ~CreditsText() = default;
 	};
 

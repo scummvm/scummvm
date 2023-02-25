@@ -32,7 +32,7 @@ namespace Action {
 class PasswordPuzzle : public ActionRecord, public RenderObject {
 public:
 	enum SolveState { kNotSolved, kFailed, kSolved };
-	PasswordPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
+	PasswordPuzzle() : RenderObject(7) {}
 	virtual ~PasswordPuzzle() {}
 
 	void init() override;

@@ -43,8 +43,8 @@ public:
 
 	enum CallState { kWaiting, kButtonPress, kRinging, kBadNumber, kCall, kHangUp };
 
-	Telephone(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom, 7),
+	Telephone() :
+		RenderObject(7),
 		_callState(kWaiting),
 		_selected(0) {}
 	virtual ~Telephone() {}

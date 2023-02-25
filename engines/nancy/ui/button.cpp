@@ -33,8 +33,8 @@
 namespace Nancy {
 namespace UI {
 
-Button::Button(RenderObject &redrawFrom, uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds) :
-		RenderObject(redrawFrom, zOrder, surface, srcBounds, destBounds),
+Button::Button(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds) :
+		RenderObject(zOrder, surface, srcBounds, destBounds),
 		_isClicked(false) {
 	setVisible(false);
 	setTransparent(true);

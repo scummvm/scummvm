@@ -34,7 +34,7 @@ namespace State {
 class MainMenu : public State, public Common::Singleton<MainMenu> {
 	friend class MainMenuButton;
 public:
-	MainMenu() : _state(kInit), _selected(-1), _playedOKSound(false), _buttonDown(_background, 5) {}
+	MainMenu() : _state(kInit), _selected(-1), _playedOKSound(false), _buttonDown(5) {}
 
 	// State API
 	void process() override;

@@ -29,8 +29,8 @@
 namespace Nancy {
 namespace UI {
 
-Scrollbar::Scrollbar(RenderObject &redrawFrom, uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical) :
-		RenderObject(redrawFrom, zOrder),
+Scrollbar::Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical) :
+		RenderObject(zOrder),
 		_isVertical(isVertical),
 		_isClicked(false),
 		_currentPosition(0),

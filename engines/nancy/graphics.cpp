@@ -51,35 +51,56 @@ void GraphicsManager::init() {
 }
 
 void GraphicsManager::draw() {
+	Common::List<Common::Rect> dirtyRects;
+
+	// Update graphics for all RenderObjects and determine
+	// the areas of the screen that need to be redrawn
 	for (auto it : _objects) {
 		RenderObject &current = *it;
 
 		current.updateGraphics();
 
-		if (current._isVisible && current._needsRedraw) {
-			// object is visible and updated
-
-			if (current._redrawFrom) {
+		if (current._needsRedraw) {
+			if (current._isVisible) {
 				if (current.hasMoved() && !current.getPreviousScreenPosition().isEmpty()) {
-					// Redraw previous location if moved
-					blitToScreen(*current._redrawFrom, current.getPreviousScreenPosition());
+					// Object moved to a new location on screen, update the previous one
+					dirtyRects.push_back(current.getPreviousScreenPosition());
 				}
 
-				if (current._drawSurface.hasTransparentColor()) {
-					// Redraw below if transparent
-					blitToScreen(*current._redrawFrom, current.getScreenPosition());
-				}
+				// Redraw the current location
+				dirtyRects.push_back(current.getScreenPosition());
+			} else if (!current.getPreviousScreenPosition().isEmpty()) {
+				// Object just turned invisible, redraw the last location
+				dirtyRects.push_back(current.getPreviousScreenPosition());
 			}
-
-			// Draw the object itself
-			blitToScreen(current, current.getScreenPosition());
-		} else if (!current._isVisible && current._needsRedraw && current._redrawFrom && !current.getPreviousScreenPosition().isEmpty()) {
-			// Object just turned invisible, redraw below
-			blitToScreen(*current._redrawFrom, current.getPreviousScreenPosition());
 		}
-
+		
 		current._needsRedraw = false;
 		current._previousScreenPosition = current._screenPosition;
+	}
+
+	// Filter out dirty rects that are completely inside others to reduce overdraw
+	for (Common::Rect &outer : dirtyRects) {
+		for (Common::Rect &inner : dirtyRects) {
+			if (inner != outer && outer.contains(inner)) {
+				dirtyRects.remove(inner);
+			}
+		}
+	}
+
+	// Redraw all dirty rects
+	for (auto it : _objects) {
+		RenderObject &current = *it;
+
+		if (!current._isVisible || current.getScreenPosition().isEmpty()) {
+			continue;
+		}
+
+		for (Common::Rect rect : dirtyRects) {
+			if (rect.intersects(current.getScreenPosition())) {
+				blitToScreen(current, rect.findIntersectingRect(current.getScreenPosition()));
+			}
+		}
 	}
 
 	// Draw the screen

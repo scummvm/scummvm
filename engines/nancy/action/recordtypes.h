@@ -433,7 +433,7 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	ShowInventoryItem(RenderObject &redrawFrom) : RenderObject(redrawFrom, 9) {}
+	ShowInventoryItem() : RenderObject(9) {}
 	virtual ~ShowInventoryItem() { _fullSurface.free(); }
 
 	void init() override;
