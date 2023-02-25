@@ -231,7 +231,7 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 }
 
 Common::String OSystem_MacOSX::getDefaultConfigFileName() {
-	const Common::String baseConfigName = "Library/Preferences/ScummVM Preferences";
+	const Common::String baseConfigName = "Library/Preferences/" + getMacBundleName() + " Preferences";
 
 	Common::String configFile;
 
@@ -258,7 +258,9 @@ Common::String OSystem_MacOSX::getDefaultLogFileName() {
 		return Common::String();
 	}
 
-	return Common::String(prefix) + "/Library/Logs/scummvm.log";
+	Common::String appName = getMacBundleName();
+	appName.toLowercase();
+	return Common::String(prefix) + "/Library/Logs/" + appName + ".log";
 }
 
 Common::String OSystem_MacOSX::getDefaultIconsPath() {

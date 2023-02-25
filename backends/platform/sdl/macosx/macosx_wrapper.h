@@ -31,5 +31,6 @@ bool setTextInClipboardMacOSX(const Common::U32String &text);
 Common::String getDesktopPathMacOSX();
 Common::String getResourceAppBundlePathMacOSX();
 Common::String getAppSupportPathMacOSX();
+Common::String getMacBundleName();
 
 #endif
