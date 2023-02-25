@@ -4052,7 +4052,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("strangeland", "ac2game.dat", "151b0391a650d3c81c2758deaa5852cd", 3183277137),
 	GAME_ENTRY_GOG("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186989657), // Win v2.7
 	GAME_ENTRY_GOG("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3187004936), // Win v3.0
-	GAME_ENTRY_GOG("strangeland", "Strangeland.exe", "bd3781ed74a8ff8a2523223039825113", 3187004936), // Win v3.0 - trac #14224
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "7e5abc5202098bd00ddef999854eb9ab", 3183368017), // Mac
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "e4b9f0aa26c1115143ad483c99bc9383", 3183880236), // Mac v2.5a
 	GAME_ENTRY_GOG("strangeland", "ac2game.dat", "86e8b93b8231d6c571669f1621561a21", 3183886917), // Mac v2.7
@@ -4565,7 +4564,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("startrekmansion", "ST_BTTM.exe", "615e73fc1874e92d60a1996c2330ea36", 42877388),
 	DEMO_ENTRY_EN("startropy", "Startropy.exe", "86cc8cd9b7443b68a374ad5d002c2945", 333959797),
 	DEMO_ENTRY("stellarmessep1", "StellarMessShortDemo.exe", "a409703089eebbcfa13f0a22f6fb71ed", 8067581),  // En-Fr-De-Es
-	DEMO_ENTRY("stellarmessep1", "StellarMessShortDemo.exe", "a409703089eebbcfa13f0a22f6fb71ed", 8713074),  // En-Es
+	DEMO_ENTRY("stellarmessep1", "StellarMessDemo.exe", "a409703089eebbcfa13f0a22f6fb71ed", 8713074),  // En-Es
 	DEMO_ENTRY_EN("stickmanrpg", "Stickman RPG.exe", "465f972675db2da6040518221af5b0ba", 2030693),
 	DEMO_ENTRY_EN("stuckathome", "shtrl1.exe", "0500aacb6c176d47ac0f8158f055db83", 819147),
 	DEMO_ENTRY_EN("subterra", "SUBTERRA.exe", "fd3ecd8289bebadbf775fe8a13b9c5d7", 17981991),
