@@ -18,6 +18,7 @@ MODULE_OBJS = \
   ui/fullscreenimage.o \
   ui/button.o \
   ui/inventorybox.o \
+  ui/ornaments.o \
   ui/scrollbar.o \
   ui/textbox.o \
   ui/viewport.o \

@@ -54,6 +54,8 @@ class PlayPrimaryVideoChan0;
 
 namespace UI {
 class Button;
+class ViewportOrnaments;
+class TextboxOrnaments;
 }
 
 namespace State {
@@ -239,6 +241,9 @@ private:
 
 	UI::Button *_menuButton;
 	UI::Button *_helpButton;
+
+	UI::ViewportOrnaments *_viewportOrnaments;
+	UI::TextboxOrnaments *_textboxOrnaments;
 
 	// Data
 	SceneState _sceneState;

@@ -34,6 +34,7 @@
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/button.h"
+#include "engines/nancy/ui/ornaments.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
@@ -101,6 +102,8 @@ Scene::Scene() :
 		_inventoryBox(_frame),
 		_menuButton(nullptr),
 		_helpButton(nullptr),
+		_viewportOrnaments(nullptr),
+		_textboxOrnaments(nullptr),
 		_actionManager(),
 		_difficulty(0),
 		_activePrimaryVideo(nullptr) {}
@@ -108,6 +111,8 @@ Scene::Scene() :
 Scene::~Scene()  {
 	delete _helpButton;
 	delete _menuButton;
+	delete _viewportOrnaments;
+	delete _textboxOrnaments;
 }
 
 void Scene::process() {
@@ -285,12 +290,28 @@ void Scene::registerGraphics() {
 	_viewport.registerGraphics();
 	_textbox.registerGraphics();
 	_inventoryBox.registerGraphics();
-	_menuButton->registerGraphics();
-	_helpButton->registerGraphics();
+
+	if (_menuButton) {
+		_menuButton->registerGraphics();
+		_menuButton->setVisible(false);
+	}
+
+	if (_helpButton) {
+		_helpButton->registerGraphics();
+		_helpButton->setVisible(false);
+	}
+
+	if (_viewportOrnaments) {
+		_viewportOrnaments->registerGraphics();
+		_viewportOrnaments->setVisible(true);
+	}
+
+	if (_textboxOrnaments) {
+		_textboxOrnaments->registerGraphics();
+		_textboxOrnaments->setVisible(true);
+	}
 
 	_textbox.setVisible(!_shouldClearTextbox);
-	_menuButton->setVisible(false);
-	_helpButton->setVisible(false);
 }
 
 void Scene::synchronize(Common::Serializer &ser) {
@@ -643,6 +664,15 @@ void Scene::initStaticData() {
 	_menuButton->init();
 	_helpButton->init();
 	g_nancy->_cursorManager->showCursor(true);
+
+	// Init ornaments (TVD only)
+	if (g_nancy->getGameType() == Nancy::GameType::kGameTypeVampire) {
+		_viewportOrnaments = new UI::ViewportOrnaments(_viewport, 9);
+		_viewportOrnaments->init();
+		 
+		_textboxOrnaments = new UI::TextboxOrnaments(_textbox, 9);
+		_textboxOrnaments->init();
+	}
 
 	_state = kLoad;
 }
