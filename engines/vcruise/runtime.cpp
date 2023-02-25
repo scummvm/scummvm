@@ -69,7 +69,7 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	return screenDirections[screen][direction].get();
 }
 
-ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), panInteractionID(0) {
+ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), panInteractionID(0), fpsOverride(0) {
 }
 
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
@@ -85,7 +85,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _scriptNextInstruction(0),
 	  _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
-	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animDecoderState(kAnimDecoderStateStopped),
+	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleInteractionID(0),
 	  _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _panoramaState(kPanoramaStateInactive) {
@@ -371,7 +371,7 @@ bool Runtime::runWaitForFacing() {
 	continuePlayingAnimation(false, animEnded);
 
 	if (animEnded) {
-		changeAnimation(_postFacingAnimDef);
+		changeAnimation(_postFacingAnimDef, true);
 		_gameState = kGameStateWaitingForAnimation;
 		return true;
 	}
@@ -399,9 +399,29 @@ void Runtime::continuePlayingAnimation(bool loop, bool &outAnimationEnded) {
 		needsFirstFrame = true;
 	}
 
+	uint32 millis = 0;
+
+	// Avoid spamming event recorder as much if we don't actually need to fetch millis, but also only fetch it once here.
+	if (_animFrameRateLock)
+		millis = g_system->getMillis();
+
 	for (;;) {
-		bool needNewFrame = needsFirstFrame || (_animDecoder->getTimeToNextFrame() == 0);
-		needsFirstFrame = false;
+		bool needNewFrame = false;
+
+		if (needsFirstFrame) {
+			needNewFrame = true;
+			needsFirstFrame = false;
+		} else {
+			if (_animFrameRateLock) {
+				// if ((millis - startTime) / 1000 * frameRate) >= framesDecoded
+				if ((millis - _animStartTime) * static_cast<uint64>(_animFrameRateLock) >= (static_cast<uint64>(_animFramesDecoded) * 1000u))
+					needNewFrame = true;
+				debug("FPS lock: New frame at %u millis and %u decoded? %s", static_cast<uint>(millis - _animStartTime), static_cast<uint>(_animFramesDecoded), needNewFrame ? "yes" : "no");
+			} else {
+				if (_animDecoder->getTimeToNextFrame() == 0)
+					needNewFrame = true;
+			}
+		}
 
 		if (!needNewFrame)
 			break;
@@ -429,6 +449,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool &outAnimationEnded) {
 
 		_animDisplayingFrame = _animPendingDecodeFrame;
 		_animPendingDecodeFrame++;
+		_animFramesDecoded++;
 
 		Common::Rect copyRect = Common::Rect(0, 0, surface->w, surface->h);
 
@@ -767,7 +788,7 @@ void Runtime::returnToIdleState() {
 	_animPlayWhileIdle = false;
 
 	if (_haveIdleAnimations[_direction]) {
-		changeAnimation(_idleAnimations[_direction]);
+		changeAnimation(_idleAnimations[_direction], false);
 		_animPlayWhileIdle = true;
 	}
 
@@ -951,11 +972,11 @@ void Runtime::changeMusicTrack(int track) {
 	}
 }
 
-void Runtime::changeAnimation(const AnimationDef &animDef) {
-	changeAnimation(animDef, animDef.firstFrame);
+void Runtime::changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride) {
+	changeAnimation(animDef, animDef.firstFrame, consumeFPSOverride);
 }
 
-void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame) {
+void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride) {
 	int animFile = animDef.animNum;
 	if (animFile < 0)
 		animFile = -animFile;
@@ -991,6 +1012,14 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame) {
 	_animPendingDecodeFrame = initialFrame;
 	_animFirstFrame = animDef.firstFrame;
 	_animLastFrame = animDef.lastFrame;
+	_animFrameRateLock = 0;
+
+	if (consumeFPSOverride) {
+		_animFrameRateLock = _scriptEnv.fpsOverride;
+		_animFramesDecoded = 0;
+		_animStartTime = g_system->getMillis();
+		_scriptEnv.fpsOverride = 0;
+	}
 
 	debug(1, "Animation last frame set to %u", animDef.lastFrame);
 }
@@ -1321,7 +1350,7 @@ OPCODE_STUB(AngleGGet)
 void Runtime::scriptOpSpeed(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	warning("Speed change isn't implemented yet");
+	_scriptEnv.fpsOverride = stackArgs[0];
 }
 
 void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
@@ -1359,7 +1388,7 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 
 		debug(1, "Running frame loop of %u - %u from frame %u", trimmedAnimation.firstFrame, trimmedAnimation.lastFrame, initialFrame);
 
-		changeAnimation(trimmedAnimation, initialFrame);
+		changeAnimation(trimmedAnimation, initialFrame, false);
 		_gameState = kGameStatePanLeft;
 	} else if (_scriptEnv.panInteractionID == kPanRightInteraction) {
 		debug(1, "Pan-right interaction from direction %u", _direction);
@@ -1371,7 +1400,7 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 
 		debug(1, "Running frame loop of %u - %u from frame %u", trimmedAnimation.firstFrame, trimmedAnimation.lastFrame, initialFrame);
 
-		changeAnimation(_panRightAnimationDef, initialFrame);
+		changeAnimation(_panRightAnimationDef, initialFrame, false);
 		_gameState = kGameStatePanRight;
 
 		isRight = true;
@@ -1407,10 +1436,10 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 	AnimationDef faceDirectionAnimDef;
 	if (computeFaceDirectionAnimation(stackArgs[kAnimDefStackArgs + 2], faceDirectionAnimDef)) {
 		_postFacingAnimDef = animDef;
-		changeAnimation(faceDirectionAnimDef);
+		changeAnimation(faceDirectionAnimDef, false);
 		_gameState = kGameStateWaitingForFacing;
 	} else {
-		changeAnimation(animDef);
+		changeAnimation(animDef, true);
 		_gameState = kGameStateWaitingForAnimation;
 	}
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
@@ -1429,7 +1458,7 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
 	animDef.lastFrame = animDef.firstFrame;	// Static animation
 
-	changeAnimation(animDef);
+	changeAnimation(animDef, false);
 
 	_gameState = kGameStateWaitingForAnimation;
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
@@ -1443,7 +1472,7 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
-	changeAnimation(animDef);
+	changeAnimation(animDef, true);
 
 	_gameState = kGameStateWaitingForAnimation;
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
@@ -1459,7 +1488,7 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs);
 
 	animDef.firstFrame = animDef.lastFrame;
-	changeAnimation(animDef);
+	changeAnimation(animDef, false);
 
 	_havePendingReturnToIdleState = true;
 	_havePanAnimations = false;

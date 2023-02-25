@@ -117,6 +117,7 @@ struct ScriptEnvironmentVars {
 
 	bool lmb;
 	uint panInteractionID;
+	uint fpsOverride;
 };
 
 class Runtime {
@@ -239,8 +240,8 @@ private:
 	void loadMap(Common::SeekableReadStream *stream);
 
 	void changeMusicTrack(int musicID);
-	void changeAnimation(const AnimationDef &animDef);
-	void changeAnimation(const AnimationDef &animDef, uint initialFrame);
+	void changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride);
+	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
 
 	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
 
@@ -397,6 +398,9 @@ private:
 	uint _animDisplayingFrame;
 	uint _animFirstFrame;
 	uint _animLastFrame;
+	uint _animFrameRateLock;
+	uint32 _animStartTime;
+	uint32 _animFramesDecoded;
 	uint _loadedAnimation;
 	bool _animPlayWhileIdle;
 
