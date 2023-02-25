@@ -24,10 +24,10 @@
 #include "common/util.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
+#include "graphics/blit.h"
 #include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
-#include "graphics/blit.h"
 #include "graphics/transform_tools.h"
 
 namespace Graphics {
@@ -95,17 +95,7 @@ void Surface::init(int16 width, int16 height, int16 newPitch, void *newPixels, c
 
 void Surface::copyFrom(const Surface &surf) {
 	create(surf.w, surf.h, surf.format);
-	if (surf.pitch == pitch) {
-		memcpy(pixels, surf.pixels, h * pitch);
-	} else {
-		const byte *src = (const byte *)surf.pixels;
-		byte *dst = (byte *)pixels;
-		for (int y = h; y > 0; --y) {
-			memcpy(dst, src, w * format.bytesPerPixel);
-			src += surf.pitch;
-			dst += pitch;
-		}
-	}
+	copyBlit((byte *)pixels, (const byte *)surf.pixels, pitch, surf.pitch, w, h, format.bytesPerPixel);
 }
 
 Surface Surface::getSubArea(const Common::Rect &area) {
@@ -176,11 +166,7 @@ void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int
 	// Copy buffer data to internal buffer
 	const byte *src = (const byte *)buffer;
 	byte *dst = (byte *)getBasePtr(destX, destY);
-	for (int i = 0; i < height; i++) {
-		memcpy(dst, src, width * format.bytesPerPixel);
-		src += srcPitch;
-		dst += pitch;
-	}
+	copyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel);
 }
 
 void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
