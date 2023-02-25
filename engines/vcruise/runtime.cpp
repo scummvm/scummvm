@@ -20,10 +20,11 @@
  */
 
 #include "common/formats/winexe.h"
+#include "common/file.h"
 #include "common/ptr.h"
+#include "common/random.h"
 #include "common/system.h"
 #include "common/stream.h"
-#include "common/file.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -94,6 +95,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 
 	for (uint i = 0; i < kPanCursorMaxCount; i++)
 		_panCursors[i] = 0;
+
+	_rng.reset(new Common::RandomSource("vcruise"));
 }
 
 Runtime::~Runtime() {
@@ -1314,7 +1317,12 @@ void Runtime::scriptOpRotate(ScriptArg_t arg) {
 
 OPCODE_STUB(Angle)
 OPCODE_STUB(AngleGGet)
-OPCODE_STUB(Speed)
+
+void Runtime::scriptOpSpeed(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	warning("Speed change isn't implemented yet");
+}
 
 void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
@@ -1445,7 +1453,19 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	changeToCursor(_cursors[kCursorArrow]);
 }
 
-OPCODE_STUB(Static)
+void Runtime::scriptOpStatic(ScriptArg_t arg) {
+	TAKE_STACK(kAnimDefStackArgs);
+
+	AnimationDef animDef = stackArgsToAnimDef(stackArgs);
+
+	animDef.firstFrame = animDef.lastFrame;
+	changeAnimation(animDef);
+
+	_havePendingReturnToIdleState = true;
+	_havePanAnimations = false;
+
+	_gameState = kGameStateWaitingForAnimation;
+}
 
 void Runtime::scriptOpVarLoad(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -1525,7 +1545,15 @@ OPCODE_STUB(ParmG)
 
 OPCODE_STUB(VolumeDn4)
 OPCODE_STUB(VolumeUp3)
-OPCODE_STUB(Random)
+
+void Runtime::scriptOpRandom(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	if (stackArgs[0] == 0)
+		_scriptStack.push_back(0);
+	else
+		_scriptStack.push_back(_rng->getRandomNumber(stackArgs[0] - 1));
+}
 
 void Runtime::scriptOpDrop(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -1539,7 +1567,12 @@ void Runtime::scriptOpDup(ScriptArg_t arg) {
 	_scriptStack.push_back(stackArgs[0]);
 }
 
-OPCODE_STUB(Say3)
+void Runtime::scriptOpSay3(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	warning("Say3 opcode is not implemented yet");
+}
+
 OPCODE_STUB(SetTimer)
 OPCODE_STUB(LoSet)
 OPCODE_STUB(LoGet)
@@ -1570,9 +1603,26 @@ void Runtime::scriptOpCmpEq(ScriptArg_t arg) {
 	_scriptStack.push_back((stackArgs[0] == stackArgs[1]) ? 1 : 0);
 }
 
-OPCODE_STUB(BitLoad)
-OPCODE_STUB(BitSet0)
-OPCODE_STUB(BitSet1)
+void Runtime::scriptOpBitLoad(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+
+	_scriptStack.push_back((stackArgs[0] >> stackArgs[1]) & 1);
+}
+
+void Runtime::scriptOpBitSet0(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	ScriptArg_t bitMask = static_cast<ScriptArg_t>(1) << stackArgs[1];
+	_scriptStack.push_back(stackArgs[0] & ~bitMask);
+}
+
+void Runtime::scriptOpBitSet1(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	ScriptArg_t bitMask = static_cast<ScriptArg_t>(1) << stackArgs[1];
+	_scriptStack.push_back(stackArgs[0] | bitMask);
+}
 
 void Runtime::scriptOpDisc1(ScriptArg_t arg) {
 	// Disc check, always pass

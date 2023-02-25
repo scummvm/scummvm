@@ -29,6 +29,12 @@
 
 class OSystem;
 
+namespace Common {
+
+class RandomSource;
+
+} // End of namespace Commom
+
 namespace Graphics {
 
 struct PixelFormat;
@@ -380,6 +386,8 @@ private:
 	uint _scriptNextInstruction;
 	Common::Array<StackValue_t> _scriptStack;
 	ScriptEnvironmentVars _scriptEnv;
+
+	Common::SharedPtr<Common::RandomSource> _rng;
 
 	Common::SharedPtr<AudioPlayer> _musicPlayer;
 
