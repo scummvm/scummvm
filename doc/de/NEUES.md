@@ -7,6 +7,15 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Engine "xeen" wurde für Might & Magic zu "mm" umbenannt.
 
 
+#### 2.7.1 (2023-XX-XX)
+
+ Allgemein:
+  - Die Wiedergabe-Geschwindigkeit von Theora-Videos wurde korrigiert.
+
+ HDB:
+   - Fehler behoben, der verhindert, dass der rote Umschlag mit der Tastatur aufgehoben werden kann.
+
+
 #### 2.7.0 (26.02.2023)
 
  Neue Spiele:
