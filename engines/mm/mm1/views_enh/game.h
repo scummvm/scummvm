@@ -38,7 +38,6 @@ private:
 	Graphics::ManagedSurface _bg;
 	Views::GameView _view;
 	GameCommands _commands;
-	GameMessages _messages;
 	GameParty _party;
 public:
 	Game();

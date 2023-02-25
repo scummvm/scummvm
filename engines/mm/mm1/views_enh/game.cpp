@@ -31,7 +31,6 @@ namespace ViewsEnh {
 Game::Game() : TextView("Game"),
 		_view(this),
 		_commands(this),
-		_messages(this),
 		_party(this) {
 	_view.setBounds(Common::Rect(8, 15, 224, 130));
 

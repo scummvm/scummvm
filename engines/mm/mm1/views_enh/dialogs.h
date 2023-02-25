@@ -30,6 +30,7 @@
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/character_select.h"
 #include "mm/mm1/views_enh/game.h"
+#include "mm/mm1/views_enh/game_messages.h"
 #include "mm/mm1/views_enh/main_menu.h"
 #include "mm/mm1/views_enh/map_popup.h"
 #include "mm/mm1/views_enh/quick_ref.h"
@@ -44,9 +45,6 @@ namespace ViewsEnh {
 
 struct Dialogs {
 private:
-	ViewsEnh::CharacterInfo _characterInfo;
-	ViewsEnh::Game _game;
-
 	// Unenhanced views
 	Views::Characters _characters;
 	Views::CreateCharacters _createCharacters;
@@ -58,7 +56,10 @@ private:
 	ViewsEnh::Locations::Temple _temple;
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
+	ViewsEnh::CharacterInfo _characterInfo;
 	ViewsEnh::CharacterSelect _characterSelect;
+	ViewsEnh::Game _game;
+	ViewsEnh::GameMessages _gameMessages;
 	ViewsEnh::MainMenu _mainMenu;
 	ViewsEnh::MapPopup _mapPopup;
 	ViewsEnh::QuickRef _quickRef;

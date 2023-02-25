@@ -36,15 +36,15 @@ class GameMessages : public ScrollText {
 		bool msgKeypress(const KeypressMessage &msg) override;
 	};
 private:
-	bool _show = false;
 	YNCallback _ynCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
 	YesNo _yesNo;
 public:
-	GameMessages(UIElement *owner);
+	GameMessages();
 	virtual ~GameMessages() {}
 
 	void draw() override;
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgInfo(const InfoMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
