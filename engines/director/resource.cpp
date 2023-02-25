@@ -296,6 +296,7 @@ Archive *Window::loadEXE(const Common::String movie) {
 			result = loadEXEv3(exeStream);
 		} else {
 			warning("Window::loadEXE(): Unhandled Windows EXE version %d", g_director->getVersion());
+			delete exeStream;
 			return nullptr;
 		}
 	}
