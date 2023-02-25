@@ -34,6 +34,8 @@
 #include "graphics/surface.h"
 #include "graphics/VectorRendererSpec.h"
 
+#include "graphics/fonts/bdf.h"
+
 namespace Testbed {
 
 byte GFXTestSuite::_palette[256 * 3] = {0, 0, 0, 255, 255, 255, 255, 255, 255};
@@ -834,7 +836,7 @@ TestExitStatus GFXtests::maskedCursors() {
 		g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
 
 		byte newPalette[] = {0, 0, 0, 255, 255, 255, 255, 0, 0, 255, 255, 255};
-		
+
 		g_system->getPaletteManager()->setPalette(newPalette, 0, 4);
 
 		if (haveCursorPalettes)
@@ -842,7 +844,7 @@ TestExitStatus GFXtests::maskedCursors() {
 
 		CursorMan.replaceCursor(cursorData, 16, 16, 1, 1, 0, false, nullptr, maskData);
 		CursorMan.showMouse(true);
-		
+
 		bool waitingForClick = true;
 		while (waitingForClick) {
 			Common::Event event;
@@ -1020,6 +1022,31 @@ TestExitStatus GFXtests::copyRectToScreen() {
 	uint y = g_system->getHeight() / 2 - 10;
 
 	g_system->copyRectToScreen(buffer, 40, x, y, 40, 20);
+
+	x = 10;
+	y = 10;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+
+	const char *text = "d";
+	const Graphics::BdfFont *origFont = (const Graphics::BdfFont *)FontMan.getFontByName("helvB12.bdf");
+
+	for (int i = origFont->getFontHeight(); i <= 20; i++) {
+
+		//const Graphics::BdfFont *font = Graphics::BdfFont::scaleFont(origFont, i);
+		const Graphics::BdfFont *font = origFont;
+		int width = font->getStringWidth(text);
+
+		Common::Rect bbox = font->getBoundingBox(text, x, y, g_system->getWidth());
+		screen->frameRect(bbox, 15);
+
+		font->drawString(screen, text, x, y, width, kColorCustom);
+
+		x += width + 1;
+	}
+
+	g_system->unlockScreen();
+
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
 
