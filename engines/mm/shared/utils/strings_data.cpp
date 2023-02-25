@@ -67,6 +67,7 @@ bool StringsData::load(const Common::String &filename) {
 			value.deleteChar(0);
 			value.deleteLastChar();
 			value = searchAndReplace(value, "\"\"", "");
+			value = searchAndReplace(value, "\\\"", "\"");
 		}
 
 		// Replace any sequences
