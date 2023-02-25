@@ -23,11 +23,7 @@
 #define PLATFORM_SDL_MACOSX_WRAPPER_H
 
 #include <common/str.h>
-#include <common/ustr.h>
 
-bool hasTextInClipboardMacOSX();
-Common::U32String getTextFromClipboardMacOSX();
-bool setTextInClipboardMacOSX(const Common::U32String &text);
 Common::String getDesktopPathMacOSX();
 Common::String getResourceAppBundlePathMacOSX();
 Common::String getAppSupportPathMacOSX();

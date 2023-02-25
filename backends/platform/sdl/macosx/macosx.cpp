@@ -164,18 +164,6 @@ bool OSystem_MacOSX::displayLogFile() {
 	return err != noErr;
 }
 
-bool OSystem_MacOSX::hasTextInClipboard() {
-	return hasTextInClipboardMacOSX();
-}
-
-Common::U32String OSystem_MacOSX::getTextFromClipboard() {
-	return getTextFromClipboardMacOSX();
-}
-
-bool OSystem_MacOSX::setTextInClipboard(const Common::U32String &text) {
-	return setTextInClipboardMacOSX(text);
-}
-
 bool OSystem_MacOSX::openUrl(const Common::String &url) {
 	CFURLRef urlRef = CFURLCreateWithBytes (NULL, (const UInt8*)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
 	OSStatus err = LSOpenCFURLRef(urlRef, NULL);
