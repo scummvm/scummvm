@@ -1051,6 +1051,16 @@ AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
 	return def;
 }
 
+void Runtime::pushAnimDef(const AnimationDef &animDef) {
+	// Going from Schizm's scripts it looks like this IS pushed on to the stack, but encoded as:
+	// Bits 0..11:  Last frame
+	// Bits 12..23: First frame
+	// Bits 24..31: Number
+	_scriptStack.push_back(animDef.animNum);
+	_scriptStack.push_back(animDef.firstFrame);
+	_scriptStack.push_back(animDef.lastFrame);
+}
+
 void Runtime::activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars) {
 	if (script->instrs.size() == 0)
 		return;
@@ -1362,7 +1372,12 @@ void Runtime::scriptOpRotate(ScriptArg_t arg) {
 	_havePanAnimations = true;
 }
 
-OPCODE_STUB(Angle)
+void Runtime::scriptOpAngle(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	_scriptStack.push_back((stackArgs[0] == static_cast<StackValue_t>(_direction)) ? 1 : 0);
+}
+
 OPCODE_STUB(AngleGGet)
 
 void Runtime::scriptOpSpeed(ScriptArg_t arg) {
@@ -1814,7 +1829,6 @@ OPCODE_STUB(EscGet)
 OPCODE_STUB(BackStart)
 
 void Runtime::scriptOpAnimName(ScriptArg_t arg) {
-	// I doubt this is actually how it works internally but whatever
 	if (_roomNumber >= _roomDefs.size())
 		error("Can't resolve animation for room, room number was invalid");
 
@@ -1827,12 +1841,8 @@ void Runtime::scriptOpAnimName(ScriptArg_t arg) {
 	if (it == roomDef->animations.end())
 		error("Can't resolve animation for room, couldn't find animation '%s'", _scriptSet->strings[arg].c_str());
 
-	_scriptStack.push_back(it->_value.animNum);
-	_scriptStack.push_back(it->_value.firstFrame);
-	_scriptStack.push_back(it->_value.lastFrame);
+	pushAnimDef(it->_value);
 }
-
-
 
 void Runtime::scriptOpValueName(ScriptArg_t arg) {
 	if (_roomNumber >= _roomDefs.size())

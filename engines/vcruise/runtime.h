@@ -244,6 +244,7 @@ private:
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
 
 	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
+	void pushAnimDef(const AnimationDef &animDef);
 
 	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
 
