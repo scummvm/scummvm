@@ -48,7 +48,14 @@ bool Application::_dontUpdateWhenApplicationPaused = false;
 
 Application::Application() : _finishedGame(false), _finishedFremium(false),
 _captureFade(false), _difficulty(1), _created(false), _tutoActivated(false),
-_drawShadows(true), _ratioStretched(false) {
+_drawShadows(true) {
+	//
+	// TODO: Game defaults _ratioStretched to false, but then
+	// the horizontally scrolling scenes don't scroll properly.
+	// For now just default to true.
+	//
+	_ratioStretched = g_engine->gameType() == TetraedgeEngine::kSyberia2;
+
 	TeCore *core = g_engine->getCore();
 	core->_coreNotReady = true;
 	core->fileFlagSystemSetFlag("platform", "MacOSX");
