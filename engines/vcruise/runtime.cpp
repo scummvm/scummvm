@@ -839,7 +839,12 @@ bool Runtime::dischargeIdleMouseMove() {
 			}
 		}
 
-		if (isOnInteraction && (_idleIsOnInteraction == false || interactionID != _idleInteractionID)) {
+		if (isOnInteraction && interactionID != _idleInteractionID) {
+			_idleIsOnInteraction = false;
+			changeToCursor(_cursors[kCursorArrow]);
+		}
+
+		if (isOnInteraction && _idleIsOnInteraction == false) {
 			_idleIsOnInteraction = true;
 			_idleInteractionID = interactionID;
 
@@ -850,9 +855,6 @@ bool Runtime::dischargeIdleMouseMove() {
 				activateScript(script, ScriptEnvironmentVars());
 				return true;
 			}
-		} else if (!isOnInteraction && _idleIsOnInteraction) {
-			_idleIsOnInteraction = false;
-			changeToCursor(_cursors[kCursorArrow]);
 		}
 	} else {
 		uint interactionID = 0;
