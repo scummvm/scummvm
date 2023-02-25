@@ -677,7 +677,7 @@ void ScriptCompiler::codeGenScript(ProtoScript &protoScript, Script &script) {
 
 			for (const CodeGenSwitchCase &caseDef : switchBlock.cases) {
 				instrs2.push_back(ProtoInstruction(ScriptOps::kCheckValue, caseDef.value));
-				instrs2.push_back(ProtoInstruction(kProtoOpJumpToLabel, ScriptOps::kInvalid, caseDef.value));
+				instrs2.push_back(ProtoInstruction(kProtoOpJumpToLabel, ScriptOps::kInvalid, caseDef.label));
 			}
 
 			instrs2.push_back(ProtoInstruction(ScriptOps::kDrop));
