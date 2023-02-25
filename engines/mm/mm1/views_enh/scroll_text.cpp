@@ -64,8 +64,7 @@ void ScrollText::addText(const Common::String &s,
 	const int LINE_HEIGHT = 10;
 	Common::String str = s;
 	Common::Point pt(xp, lineNum * LINE_HEIGHT);
-	Graphics::Font &font = _fontReduced ?
-		g_globals->_fontReduced : g_globals->_fontNormal;
+	//Graphics::Font &font = _fontReduced ? g_globals->_fontReduced : g_globals->_fontNormal;
 
 	// Split the lines
 	Common::StringArray lines = splitLines(s);
