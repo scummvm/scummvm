@@ -153,8 +153,7 @@ struct InfoMessage : public Message {
 struct SoundMessage : public InfoMessage {
 public:
 	SoundMessage() : InfoMessage() { _sound = true; }
-	SoundMessage(const Common::String &str, TextAlign align = ALIGN_LEFT) :
-		InfoMessage(0, 1, str, align) { _sound = true; }
+	SoundMessage(const Common::String &str, TextAlign align = ALIGN_LEFT);
 	SoundMessage(int x, int y, const Common::String &str,
 		TextAlign align = ALIGN_LEFT) :
 		InfoMessage(x, y, str, align) { _sound = true; }
@@ -162,9 +161,7 @@ public:
 		int x2, int y2, const Common::String &str2) :
 		InfoMessage(x1, y1, str1, x2, y2, str2) { _sound = true; }
 
-	SoundMessage(const Common::String &str,
-		YNCallback ynCallback) :
-		InfoMessage(0, 1, str, ynCallback) { _sound = true; }
+	SoundMessage(const Common::String &str, YNCallback ynCallback);
 	SoundMessage(int x, int y, const Common::String &str,
 		YNCallback ynCallback) :
 		InfoMessage(x, y, str, ynCallback) { _sound = true; }
@@ -173,9 +170,7 @@ public:
 		YNCallback ynCallback) :
 		InfoMessage(x1, y1, str1, x2, y2, str2, ynCallback) { _sound = true; }
 
-	SoundMessage(const Common::String &str,
-		KeyCallback keyCallback) :
-		InfoMessage(0, 1, str, keyCallback) { _sound = true; }
+	SoundMessage(const Common::String &str, KeyCallback keyCallback);
 	SoundMessage(int x, int y, const Common::String &str,
 		KeyCallback keyCallback) :
 		InfoMessage(x, y, str, keyCallback) { _sound = true; }

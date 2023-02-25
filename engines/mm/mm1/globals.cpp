@@ -24,6 +24,7 @@
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/shared/utils/engine_data.h"
+#include "mm/shared/utils/strings.h"
 #include "graphics/fontman.h"
 
 namespace MM {
@@ -96,8 +97,10 @@ bool Globals::load(bool isEnhanced) {
 	return true;
 }
 
-const Common::String &Globals::operator[](const Common::String &name) {
-	if (g_engine->isEnhanced() && name.hasPrefix("maps.map")) {
+Common::String Globals::operator[](const Common::String &name) const {
+	bool isMapStr = g_engine->isEnhanced() && name.hasPrefix("maps.map");
+
+	if (isMapStr) {
 		// Map strings support having alternate versions in Enhanced version
 		Common::String altName = Common::String::format("maps.emap%s",
 			name.c_str() + 8);
@@ -106,7 +109,12 @@ const Common::String &Globals::operator[](const Common::String &name) {
 	}
 
 	assert(_strings.contains(name));
-	return _strings[name];
+	Common::String result = _strings[name];
+
+	if (isMapStr)
+		result = searchAndReplace(result, "\n", " ");
+
+	return result;
 }
 
 

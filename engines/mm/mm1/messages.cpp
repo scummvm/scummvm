@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/messages.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
@@ -103,6 +104,23 @@ InfoMessage &InfoMessage::operator=(const InfoMessage &src) {
 
 size_t Line::size() const {
 	return _text.size();
+}
+
+SoundMessage::SoundMessage(const Common::String &str, TextAlign align) :
+	InfoMessage(0, g_engine->isEnhanced() ? 0 : 1, str, align) {
+	_sound = true;
+}
+
+SoundMessage::SoundMessage(const Common::String &str,
+	YNCallback ynCallback) :
+	InfoMessage(0, g_engine->isEnhanced() ? 0 : 1, str, ynCallback) {
+	_sound = true;
+}
+
+SoundMessage::SoundMessage(const Common::String &str,
+	KeyCallback keyCallback) :
+	InfoMessage(0, g_engine->isEnhanced() ? 0 : 1, str, keyCallback) {
+	_sound = true;
 }
 
 } // namespace MM1

@@ -85,7 +85,7 @@ public:
 	/**
 	 * Returns a string
 	 */
-	const Common::String &operator[](const Common::String &name);
+	Common::String operator[](const Common::String &name) const;
 
 	/**
 	 * Saves global data to/from savegames

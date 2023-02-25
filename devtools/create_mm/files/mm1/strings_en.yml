@@ -1089,7 +1089,7 @@ maps:
 		temple: "Temple Moonshadow"
 		training: "Otto's Training"
 
-		blacksmith_inside: "A man wearing a leather apron speaks:\n\"Distinguished travelers, you''ve come tothe right place. Can i help you (Y/N)?\""
+		blacksmith_inside: "A man wearing a leather apron speaks:\n\"Distinguished travelers, you've come to\nthe right place. Can I help you (Y/N)?\""
 		inn_inside: "The innekeeper asks: \"Would you like to sign in (Y/N)?\""
 		market_inside: "Behind the counter, an overweight dwarf\nexclaims: \"You look like a hungry bunch!\nWould you like to buy some food (Y/N)?\""
 		temple_inside: "Several orantely robed clerics approach\nthe party and ask, \"Do you seek our help (Y/N)?\""		
