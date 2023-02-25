@@ -1685,6 +1685,7 @@ void Runtime::scriptOpSay3(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
 	warning("Say3 opcode is not implemented yet");
+	(void)stackArgs;
 }
 
 void Runtime::scriptOpSetTimer(ScriptArg_t arg) {
