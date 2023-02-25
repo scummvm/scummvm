@@ -40,8 +40,6 @@ namespace UI {
 class Scrollbar;
 
 class InventoryBox : public RenderObject {
-	friend class InventoryScrollbar;
-	friend class Shades;
 	friend class Nancy::State::Scene;
 
 public:

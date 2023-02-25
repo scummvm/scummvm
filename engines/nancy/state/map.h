@@ -39,8 +39,6 @@ class Button;
 namespace State {
 
 class Map : public State, public Common::Singleton<Map> {
-	friend class MapLabel;
-	friend class MapButton;
 public:
 	enum State { kInit, kRun };
 	Map();
