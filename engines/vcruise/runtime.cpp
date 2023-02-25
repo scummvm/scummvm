@@ -85,7 +85,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _scriptNextInstruction(0),
 	  _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
-	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
+	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
+	  _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleInteractionID(0),
 	  _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _panoramaState(kPanoramaStateInactive) {
@@ -252,7 +253,7 @@ bool Runtime::runIdle() {
 
 	if (_animPlayWhileIdle) {
 		bool animEnded = false;
-		continuePlayingAnimation(true, animEnded);
+		continuePlayingAnimation(true, false, animEnded);
 	}
 
 	if (_debugMode)
@@ -295,7 +296,7 @@ bool Runtime::runIdle() {
 
 bool Runtime::runHorizontalPan(bool isRight) {
 	bool animEnded = false;
-	continuePlayingAnimation(true, animEnded);
+	continuePlayingAnimation(true, false, animEnded);
 
 	Common::Point panRelMouse = _mousePos - _panoramaAnchor;
 
@@ -342,7 +343,7 @@ bool Runtime::runHorizontalPan(bool isRight) {
 
 bool Runtime::runWaitForAnimation() {
 	bool animEnded = false;
-	continuePlayingAnimation(false, animEnded);
+	continuePlayingAnimation(false, false, animEnded);
 
 	if (animEnded) {
 		_gameState = kGameStateScript;
@@ -371,7 +372,7 @@ bool Runtime::runWaitForAnimation() {
 
 bool Runtime::runWaitForFacing() {
 	bool animEnded = false;
-	continuePlayingAnimation(false, animEnded);
+	continuePlayingAnimation(true, true, animEnded);
 
 	if (animEnded) {
 		changeAnimation(_postFacingAnimDef, true);
@@ -383,7 +384,7 @@ bool Runtime::runWaitForFacing() {
 	return false;
 }
 
-void Runtime::continuePlayingAnimation(bool loop, bool &outAnimationEnded) {
+void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAnimationEnded) {
 	outAnimationEnded = false;
 
 	if (!_animDecoder) {
@@ -440,6 +441,11 @@ void Runtime::continuePlayingAnimation(bool loop, bool &outAnimationEnded) {
 			}
 
 			_animPendingDecodeFrame = _animFirstFrame;
+		}
+
+		if (useStopFrame && _animPendingDecodeFrame == _animStopFrame) {
+			outAnimationEnded = true;
+			return;
 		}
 
 		debug(4, "Decoding animation frame %u", _animPendingDecodeFrame);
@@ -1238,7 +1244,7 @@ void Runtime::panoramaActivate() {
 	changeToCursor(_cursors[cursorID]);
 }
 
-bool Runtime::computeFaceDirectionAnimation(uint desiredDirection, AnimationDef &outAnimDef) {
+bool Runtime::computeFaceDirectionAnimation(uint desiredDirection, const AnimationDef *&outAnimDef, uint &outInitialFrame, uint &outStopFrame) {
 	if (_direction == desiredDirection)
 		return false;
 
@@ -1249,9 +1255,9 @@ bool Runtime::computeFaceDirectionAnimation(uint desiredDirection, AnimationDef 
 		uint currentSlice = _direction;
 		uint desiredSlice = desiredDirection;
 
-		outAnimDef = _panRightAnimationDef;
-		outAnimDef.firstFrame = currentSlice * (_panRightAnimationDef.lastFrame - _panRightAnimationDef.firstFrame) / kNumDirections + _panRightAnimationDef.firstFrame;
-		outAnimDef.lastFrame = desiredSlice * (_panRightAnimationDef.lastFrame - _panRightAnimationDef.firstFrame) / kNumDirections + _panRightAnimationDef.firstFrame;
+		outAnimDef = &_panRightAnimationDef;
+		outInitialFrame = currentSlice * (_panRightAnimationDef.lastFrame - _panRightAnimationDef.firstFrame) / kNumDirections + _panRightAnimationDef.firstFrame;
+		outStopFrame = desiredSlice * (_panRightAnimationDef.lastFrame - _panRightAnimationDef.firstFrame) / kNumDirections + _panRightAnimationDef.firstFrame;
 	} else {
 		uint reverseCurrentSlice = (kNumDirections - _direction);
 		if (reverseCurrentSlice == kNumDirections)
@@ -1261,9 +1267,9 @@ bool Runtime::computeFaceDirectionAnimation(uint desiredDirection, AnimationDef 
 		if (reverseDesiredSlice == kNumDirections)
 			reverseDesiredSlice = 0;
 
-		outAnimDef = _panLeftAnimationDef;
-		outAnimDef.firstFrame = reverseCurrentSlice * (_panLeftAnimationDef.lastFrame - _panLeftAnimationDef.firstFrame) / kNumDirections + _panLeftAnimationDef.firstFrame;
-		outAnimDef.lastFrame = reverseDesiredSlice * (_panLeftAnimationDef.lastFrame - _panLeftAnimationDef.firstFrame) / kNumDirections + _panLeftAnimationDef.firstFrame;
+		outAnimDef = &_panLeftAnimationDef;
+		outInitialFrame = reverseCurrentSlice * (_panLeftAnimationDef.lastFrame - _panLeftAnimationDef.firstFrame) / kNumDirections + _panLeftAnimationDef.firstFrame;
+		outStopFrame = reverseDesiredSlice * (_panLeftAnimationDef.lastFrame - _panLeftAnimationDef.firstFrame) / kNumDirections + _panLeftAnimationDef.firstFrame;
 	}
 
 	return true;
@@ -1381,7 +1387,16 @@ void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 	_idleAnimations[direction] = animDef;
 }
 
-OPCODE_STUB(ChangeL)
+void Runtime::scriptOpChangeL(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	// Not actually sure what this does.  It usually occurs coincident with rotation interactions and animR ops.
+	// Might change the screen number?  Usually seems to change the screen number to the current screen or to the
+	// one being transitioned to.  Need more investigation.
+
+	warning("ChangeL opcode not implemented");
+	(void)stackArgs;
+}
 
 void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 	bool isRight = false;
@@ -1445,10 +1460,13 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
 
-	AnimationDef faceDirectionAnimDef;
-	if (computeFaceDirectionAnimation(stackArgs[kAnimDefStackArgs + 2], faceDirectionAnimDef)) {
+	const AnimationDef *faceDirectionAnimDef = nullptr;
+	uint initialFrame = 0;
+	uint stopFrame = 0;
+	if (computeFaceDirectionAnimation(stackArgs[kAnimDefStackArgs + 2], faceDirectionAnimDef, initialFrame, stopFrame)) {
 		_postFacingAnimDef = animDef;
-		changeAnimation(faceDirectionAnimDef, false);
+		_animStopFrame = stopFrame;
+		changeAnimation(*faceDirectionAnimDef, initialFrame, false);
 		_gameState = kGameStateWaitingForFacing;
 	} else {
 		changeAnimation(animDef, true);

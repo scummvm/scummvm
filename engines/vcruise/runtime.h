@@ -221,7 +221,7 @@ private:
 	bool runScript();
 	bool runWaitForAnimation();
 	bool runWaitForFacing();
-	void continuePlayingAnimation(bool loop, bool &outEndedAnimation);
+	void continuePlayingAnimation(bool loop, bool useStopFrame, bool &outEndedAnimation);
 	void drawSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void commitSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void terminateScript();
@@ -258,7 +258,7 @@ private:
 	void detectPanoramaMouseMovement();
 	void panoramaActivate();
 
-	bool computeFaceDirectionAnimation(uint desiredDirection, AnimationDef &outAnimDef);
+	bool computeFaceDirectionAnimation(uint desiredDirection, const AnimationDef *&outAnimDef, uint &outInitialFrame, uint &outStopFrame);
 
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
@@ -404,6 +404,7 @@ private:
 	uint _animDisplayingFrame;
 	uint _animFirstFrame;
 	uint _animLastFrame;
+	uint _animStopFrame;
 	uint _animFrameRateLock;
 	uint32 _animStartTime;
 	uint32 _animFramesDecoded;
