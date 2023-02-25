@@ -39,20 +39,21 @@ void Spellbook::addButtons() {
 	addButton(&g_globals->_mainIcons, Common::Point(187, 111), 2, Common::KEYCODE_DOWN);
 	addButton(&_scrollSprites, Common::Point(100, 109), 5, KEYBIND_SELECT);
 
-	addButton(Common::Rect(40, 28, 187, 36), Common::KEYCODE_1);
-	addButton(Common::Rect(40, 37, 187, 45), Common::KEYCODE_2);
-	addButton(Common::Rect(40, 46, 187, 54), Common::KEYCODE_3);
-	addButton(Common::Rect(40, 55, 187, 63), Common::KEYCODE_4);
-	addButton(Common::Rect(40, 64, 187, 72), Common::KEYCODE_5);
-	addButton(Common::Rect(40, 73, 187, 81), Common::KEYCODE_6);
-	addButton(Common::Rect(40, 82, 187, 90), Common::KEYCODE_7);
-	addButton(Common::Rect(40, 91, 187, 99), Common::KEYCODE_8);
-	addButton(Common::Rect(40, 100, 187, 108), Common::KEYCODE_9);
-	addButton(Common::Rect(40, 109, 187, 117), Common::KEYCODE_0);
-	addButton(Common::Rect(174, 123, 198, 133), KEYBIND_ESCAPE);
-	addButton(Common::Rect(187, 35, 198, 73), Common::KEYCODE_PAGEUP);
-	addButton(Common::Rect(187, 74, 198, 112), Common::KEYCODE_PAGEDOWN);
-	addButton(Common::Rect(132, 123, 168, 133), KEYBIND_SELECT);
+	addButton(Common::Rect(5, 14, 152, 22), Common::KEYCODE_1);
+	addButton(Common::Rect(5, 23, 152, 31), Common::KEYCODE_2);
+	addButton(Common::Rect(5, 32, 152, 40), Common::KEYCODE_3);
+	addButton(Common::Rect(5, 41, 152, 49), Common::KEYCODE_4);
+	addButton(Common::Rect(5, 50, 152, 58), Common::KEYCODE_5);
+	addButton(Common::Rect(5, 59, 152, 67), Common::KEYCODE_6);
+	addButton(Common::Rect(5, 68, 152, 76), Common::KEYCODE_7);
+	addButton(Common::Rect(5, 77, 152, 85), Common::KEYCODE_8);
+	addButton(Common::Rect(5, 86, 152, 94), Common::KEYCODE_9);
+	addButton(Common::Rect(5, 95, 152, 103), Common::KEYCODE_0);
+
+	addButton(Common::Rect(139, 109, 163, 119), KEYBIND_ESCAPE);
+	addButton(Common::Rect(152, 21, 163, 59), Common::KEYCODE_PAGEUP);
+	addButton(Common::Rect(152, 60, 163, 98), Common::KEYCODE_PAGEDOWN);
+	addButton(Common::Rect(97, 109, 163, 119), KEYBIND_SELECT);
 }
 
 bool Spellbook::msgFocus(const FocusMessage &msg) {
