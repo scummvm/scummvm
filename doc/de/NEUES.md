@@ -3,6 +3,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.7.1 (XX.XX.2023)
 
+ Allgemein:
+   - Die Wiedergabe-Geschwindigkeit von Theora-Videos wurde korrigiert.
+
  HDB:
    - Fehler behoben, der verhindert, dass der rote Umschlag mit der Tastatur aufgehoben werden kann.
 
