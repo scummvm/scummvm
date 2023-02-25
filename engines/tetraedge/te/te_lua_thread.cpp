@@ -147,10 +147,29 @@ void TeLuaThread::executeFile(const Common::FSNode &node) {
 	scriptFile.read(buf, fileLen);
 	buf[fileLen] = 0;
 	scriptFile.close();
-	// WORKAROUND: Some script files have rogue ";" lines in them with nothing else, clean those up.
+
+	//
+	// WORKAROUND: Some script files have rogue ";" lines in them with nothing
+	// else, and ScummVM common lua version doesn't like them. Clean those up.
+	//
 	char *fixline = strstr(buf, "\n\t;");
 	if (fixline)
 		fixline[2] = '\t';
+
+	//
+	// WORKAROUND: Syberia 2 constantly re-seeds the random number generator.
+	// This fails on ScummVM Lua because os.time() returns a large Number and
+	// math.randomseed() clamps the number to an int, so it always seeds on the
+	// same value.  It's also kind of pointless, so just patch it out.
+	//
+	static const char RESEED_PATTERN[] = "math.randomseed( os.time() )";
+	fixline = strstr(buf, RESEED_PATTERN);
+	while (fixline != nullptr) {
+		for (int i = 0; i < ARRAYSIZE(RESEED_PATTERN); i++) {
+			fixline[i] = ' ';
+		}
+		fixline = strstr(fixline, RESEED_PATTERN);
+	}
 
 	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, node.getPath().c_str());
 	if (_lastResumeResult) {
