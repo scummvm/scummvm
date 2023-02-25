@@ -31,6 +31,7 @@
 #include <Foundation/NSPathUtilities.h>
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CFString.h>
+#include <CoreFoundation/CFBundle.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
 #define NSPasteboardTypeString NSStringPboardType
@@ -133,4 +134,11 @@ Common::String getAppSupportPathMacOSX() {
 	if (path == nil)
 		return Common::String();
 	return Common::String([path fileSystemRepresentation]) + "/ScummVM";
+}
+
+Common::String getMacBundleName() {
+	NSString *appName = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleNameKey];
+	if (!appName)
+		return Common::String("ScummVM");
+	return Common::String([appName UTF8String]);
 }
