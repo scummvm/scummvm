@@ -831,7 +831,7 @@ bool Runtime::dischargeIdleMouseMove() {
 		uint interactionID = 0;
 		if (sdDef) {
 			for (const InteractionDef &idef : sdDef->interactions) {
-				if (idef.rect.contains(relMouse)) {
+				if (idef.objectType == 1 && idef.rect.contains(relMouse)) {
 					isOnInteraction = true;
 					interactionID = idef.interactionID;
 					break;
@@ -839,7 +839,8 @@ bool Runtime::dischargeIdleMouseMove() {
 			}
 		}
 
-		if (isOnInteraction && interactionID != _idleInteractionID) {
+		if (_idleIsOnInteraction && (!isOnInteraction || interactionID != _idleInteractionID)) {
+			// Mouse left the previous interaction
 			_idleIsOnInteraction = false;
 			changeToCursor(_cursors[kCursorArrow]);
 		}
@@ -1163,7 +1164,7 @@ void Runtime::drawDebugOverlay() {
 		for (const InteractionDef &idef : sdDef->interactions) {
 			Common::Rect rect = idef.rect;
 
-			Common::String label = Common::String::format("0%x", static_cast<int>(idef.interactionID));
+			Common::String label = Common::String::format("0%x %i", static_cast<int>(idef.interactionID), static_cast<int>(idef.objectType));
 
 			Graphics::ManagedSurface *surf = _gameDebugBackBuffer.surf.get();
 
@@ -1603,7 +1604,16 @@ void Runtime::scriptOpParm3(ScriptArg_t arg) {
 
 OPCODE_STUB(ParmG)
 
-OPCODE_STUB(VolumeUp3)
+void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	// stackArgs[0] = sound ID
+	// stackArgs[1] = duration (in 10ths of second)
+	// stackArgs[2] = new volume
+
+	warning("FX volume ramp up is not implemented");
+	(void)stackArgs;
+}
 
 void Runtime::scriptOpVolumeDn4(ScriptArg_t arg) {
 	TAKE_STACK(4);
