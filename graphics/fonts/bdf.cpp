@@ -726,7 +726,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	return new BdfFont(data, DisposeAfterUse::YES);
 }
 
-BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
+BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 	if (!src) {
 		warning("BdfFont::scaleFont(): Empty font reference in scale font");
 		return nullptr;
