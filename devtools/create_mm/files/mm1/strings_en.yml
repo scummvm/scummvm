@@ -1093,13 +1093,15 @@ maps:
 		inn_inside: "The innekeeper asks: \"Would you like to sign in (Y/N)?\""
 		market_inside: "Behind the counter, an overweight dwarf\nexclaims: \"You look like a hungry bunch!\nWould you like to buy some food (Y/N)?\""
 		temple_inside: "Several orantely robed clerics approach\nthe party and ask, \"Do you seek our help (Y/N)?\""		
-		training_inside: "Before you are various groups engaged intraining exercises. Worg,the guildmaster\nasks, \"Do you require training (Y/N)?\""
+		training_inside: "Before you are various groups engaged in\ntraining exercises. Worg,the guildmaster\nasks, \"Do you require training (Y/N)?\""
 
 		leprechaun: "A tenacious leprechaun appears saying,\n\"Traveling the roads is quite dangerous\nsave for the strong and courageous,\nonly 1 gem you lose and i'll send you\nto the town you choose.\"\n\n'ESC' to go back      Which town (1-5)?"
 		statue: "There is a statue here. Search it (Y/N)?"
 		trapdoor: "Trap door!"
 		levitate: ", levitation saves you!"
 		passage_outside: "A passage leads outside, take it (Y/N)?"
+	emap00:
+		training_inside: "Before you are various groups engaged in training exercises. Worg, the guildmaster asks, \"Do you require training (Y/N)?\""
 
 	map01:
 		blacksmith: "\"B. Smith's workshop\""
