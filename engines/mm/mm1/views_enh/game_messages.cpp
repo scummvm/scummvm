@@ -31,12 +31,10 @@ namespace ViewsEnh {
 
 GameMessages::YesNo::YesNo() :
 		ScrollView("MessagesYesNo", g_events) {
-	_bounds = Common::Rect(234, 18 * 8, 320, 200);
-	addButton(&g_globals->_confirmIcons,
-		Common::Point(14, 10), 0,
+	_bounds = Common::Rect(234, 144, 320, 200);
+	addButton(&g_globals->_confirmIcons, Common::Point(0, 0), 0,
 		Common::KeyState(Common::KEYCODE_y, 'y'));
-	addButton(&g_globals->_confirmIcons,
-		Common::Point(40, 10), 2,
+	addButton(&g_globals->_confirmIcons, Common::Point(26, 0), 2,
 		Common::KeyState(Common::KEYCODE_n, 'n'));
 }
 
