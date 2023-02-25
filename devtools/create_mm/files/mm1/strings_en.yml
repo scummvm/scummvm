@@ -1292,7 +1292,7 @@ maps:
 		levitation1: "Luckily,your levitation spell saved you!"
 		levitation2: "Levitation saved you."
 		remains: "Smashed remains of stone statues\nseem suspiciously lifelike."
-	map13e:
+	emap13:
 		levitation1: "Luckily, your levitation spell saved you!"
 
 	map14:

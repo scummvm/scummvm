@@ -22,6 +22,7 @@
 #include "engines/engine.h"
 #include "graphics/fonts/ttf.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/shared/utils/engine_data.h"
 #include "graphics/fontman.h"
 
@@ -94,6 +95,20 @@ bool Globals::load(bool isEnhanced) {
 
 	return true;
 }
+
+const Common::String &Globals::operator[](const Common::String &name) {
+	if (g_engine->isEnhanced() && name.hasPrefix("maps.map")) {
+		// Map strings support having alternate versions in Enhanced version
+		Common::String altName = Common::String::format("maps.emap%s",
+			name.c_str() + 8);
+		if (_strings.contains(altName))
+			return _strings[altName];
+	}
+
+	assert(_strings.contains(name));
+	return _strings[name];
+}
+
 
 void Globals::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_startingTown);

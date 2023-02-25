@@ -85,10 +85,7 @@ public:
 	/**
 	 * Returns a string
 	 */
-	const Common::String &operator[](const Common::String &name) {
-		assert(_strings.contains(name));
-		return _strings[name];
-	}
+	const Common::String &operator[](const Common::String &name);
 
 	/**
 	 * Saves global data to/from savegames
