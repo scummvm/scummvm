@@ -167,17 +167,64 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromPath(const Common::S
 		return nullptr;
 	}
 
-	if (!node) {
+	if (node) {
+		AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(safTree, node);
+
+		env->DeleteLocalRef(node);
+		env->DeleteLocalRef(safTree);
+
+		return ret;
+	}
+
+	// Node doesn't exist: we will try to make a node from the parent and
+	// if it works we will create a non-existent node
+
+	pos = realPath.findLastOf('/');
+	if (pos == Common::String::npos || pos == 0) {
+		// No / in path or at root, no parent and we have a tree: it's all good
+		if (pos == 0) {
+			realPath = realPath.substr(1);
+		}
+		AndroidSAFFilesystemNode *parent = makeFromTree(safTree);
+		AndroidSAFFilesystemNode *ret = static_cast<AndroidSAFFilesystemNode *>(parent->getChild(realPath));
+		delete parent;
+
+		// safTree has already been released by makeFromTree
+		return ret;
+	}
+
+	Common::String baseName(realPath.substr(pos + 1));
+	realPath.erase(pos);
+
+	pathObj = env->NewStringUTF(realPath.c_str());
+
+	node = env->CallObjectMethod(safTree, _MID_pathToNode, pathObj);
+
+	env->DeleteLocalRef(pathObj);
+
+	if (env->ExceptionCheck()) {
+		LOGE("SAFFSTree::pathToNode failed");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
 		env->DeleteLocalRef(safTree);
 		return nullptr;
 	}
 
-	AndroidSAFFilesystemNode *ret = new AndroidSAFFilesystemNode(safTree, node);
+	if (node) {
+		AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(safTree, node);
+		env->DeleteLocalRef(node);
+		env->DeleteLocalRef(safTree);
 
-	env->DeleteLocalRef(node);
+		AndroidSAFFilesystemNode *ret = static_cast<AndroidSAFFilesystemNode *>(parent->getChild(baseName));
+		delete parent;
+
+		return ret;
+	}
+
 	env->DeleteLocalRef(safTree);
-
-	return ret;
+	return nullptr;
 }
 
 AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromTree(jobject safTree) {
