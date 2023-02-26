@@ -503,7 +503,7 @@ void ManagedSurface::transBlitFrom(const ManagedSurface &src, const Common::Rect
 void ManagedSurface::transBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
 		const Common::Rect &destRect, uint32 transColor, bool flipped, uint32 overrideColor, uint32 srcAlpha,
 		const Surface *mask, bool maskOnly) {
-	if (transColor == (uint32)-1 && src._transparentColorSet)
+	if (!transColor && src._transparentColorSet)
 		transColor = src._transparentColor;
 	const uint32 *srcPalette = src._paletteSet ? src._palette : nullptr;
 	const uint32 *dstPalette = _paletteSet ? _palette : nullptr;
@@ -625,7 +625,7 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, ManagedSurface &
 
 	// If we're dealing with a 32-bit source surface, we need to split up the RGB,
 	// since we'll want to find matching RGB pixels irrespective of the alpha
-	bool isSrcTrans32 = src.format.aBits() != 0 && transColor != (uint32)-1 && transColor > 0;
+	bool isSrcTrans32 = src.format.aBits() != 0 && transColor != 0;
 	if (isSrcTrans32) {
 		src.format.colorToRGB(transColor, rst, gst, bst);
 	}
