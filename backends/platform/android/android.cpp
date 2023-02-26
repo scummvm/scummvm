@@ -450,19 +450,8 @@ void OSystem_Android::initBackend() {
 		ConfMan.setInt("gui_scale", 125); // "Large" (see gui/options.cpp and guiBaseValues[])
 	}
 
-	// BUG: "transient" ConfMan settings get nuked by the options
-	// screen. Passing the savepath in this way makes it stick
-	// (via ConfMan.registerDefault() which is called from DefaultSaveFileManager constructor (backends/saves/default/default-saves.cpp))
-	// Note: The aforementioned bug is probably the one reported here:
-	//  https://bugs.scummvm.org/ticket/3712
-	//  and maybe here:
-	//  https://bugs.scummvm.org/ticket/7389
-	// However, we do NOT set the savepath key explicitly for ConfMan
-	//          and thus the savepath will only be persisted as "default" config
-	//          for the rest of the app session (until exit).
-	//          It will NOT be reflected on the GUI, if it's not set explicitly by the user there
-	// TODO Why do we need it not shown on the GUI though?
-	//      Btw, this is a ScummVM thing, the "defaults" do not show they values on our GUI)
+
+	ConfMan.registerDefault("savepath", ConfMan.get("path") + "/saves");
 	_savefileManager = new DefaultSaveFileManager(ConfMan.get("savepath"));
 	// TODO remove the debug message eventually
 	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
