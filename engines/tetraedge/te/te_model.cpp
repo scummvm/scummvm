@@ -396,7 +396,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 		loadAlign(stream);
 		_bones[i]._parentBone = stream.readUint32LE();
 		TeTRS::deserialize(stream, _bones[i]._trs);
-		if (!_skipSkinOffsets) {
+		if (!_skipSkinOffsets || g_engine->gameType() == TetraedgeEngine::kSyberia2) {
 			_skinOffsets[i].deserialize(stream);
 		}
 	}

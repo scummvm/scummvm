@@ -327,7 +327,10 @@ bool Te3DObject2::loadAndCheckFourCC(Common::ReadStream &stream, const char *str
 	char buf[5];
 	buf[4] = '\0';
 	stream.read(buf, 4);
-	return !strncmp(buf, str, 4);
+	bool result = !strncmp(buf, str, 4);
+	if (!result)
+		debug("loadAndCheckFourCC: Look for %s, got %s", str, buf);
+	return result;
 }
 
 /*static*/
