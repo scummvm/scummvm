@@ -53,7 +53,7 @@ int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *src
 	Common::Rect srcRect = srcrect ? *srcrect : Common::Rect(0, 0, src->w, src->h);
 	Common::Point destPos = dstrect ? Common::Point(dstrect->left, dstrect->top) : Common::Point();
 
-	dst->transBlitFrom(*src, srcRect, destPos, (uint)-1);
+	dst->transBlitFrom(*src, srcRect, destPos);
 
 	if (dstrect) {
 		dstrect->setWidth(srcRect.width());
