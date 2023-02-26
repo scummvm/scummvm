@@ -150,13 +150,13 @@ FindFileRecursive FindFileRecursive::Open(const String &path, const String &wild
 	FindFile fdir = FindFile::OpenDirs(path);
 	FindFile ffile = FindFile::OpenFiles(path, wildcard);
 	if (ffile.AtEnd() && fdir.AtEnd())
-		return FindFileRecursive(); // return invalid object
+		return {}; // return invalid object
 	FindFileRecursive ff;
 	ff._fdir = std::move(fdir);
 	ff._ffile = std::move(ffile);
 	// Try get the first matching entry
 	if (ff._ffile.AtEnd() && !ff.Next())
-		return FindFileRecursive(); // return invalid object
+		return {}; // return invalid object
 	ff._maxLevel = max_level;
 	ff._fullDir = path;
 	ff._curFile = ff._ffile.Current();
