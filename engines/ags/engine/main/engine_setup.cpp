@@ -38,6 +38,7 @@
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_inv.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/main/engine_setup.h"
 #include "ags/engine/media/video/video.h"
@@ -157,7 +158,7 @@ void engine_adjust_for_rotation_settings() {
 
 // Setup gfx driver callbacks and options
 void engine_post_gfxmode_driver_setup() {
-	_G(gfxDriver)->SetCallbackForPolling(update_polled_stuff_if_runtime);
+	_G(gfxDriver)->SetCallbackForPolling(update_polled_stuff);
 	_G(gfxDriver)->SetCallbackToDrawScreen(draw_game_screen_callback, construct_engine_overlay);
 	_G(gfxDriver)->SetCallbackForNullSprite(GfxDriverNullSpriteCallback);
 }

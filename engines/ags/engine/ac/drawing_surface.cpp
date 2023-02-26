@@ -184,7 +184,6 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src,
 
 		src = newPic;
 		needToFreeBitmap = true;
-		update_polled_stuff_if_runtime();
 	}
 
 	ds = sds->StartDrawing();

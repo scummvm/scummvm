@@ -59,6 +59,9 @@ bool run_service_key_controls(KeyInput &kgn);
 // Runs service mouse controls, returns false if mouse input was claimed by the engine,
 // otherwise returns true and provides mouse button code.
 bool run_service_mb_controls(eAGSMouseButton &mbut, int &mwheelz);
+// Polls few things (exit flag and debugger messages)
+// TODO: refactor this
+void update_polled_stuff();
 
 } // namespace AGS3
 

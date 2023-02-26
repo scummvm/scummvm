@@ -76,8 +76,7 @@ int MyPushButton::pressedon(int mx, int my) {
 
 		wasstat = state;
 		state = mouseisinarea(mx, my);
-		// stop mp3 skipping if button held down
-		update_polled_stuff_if_runtime();
+		update_polled_stuff();
 		if (wasstat != state) {
 			//        ags_domouse(DOMOUSE_DISABLE);
 			draw(get_gui_screen());

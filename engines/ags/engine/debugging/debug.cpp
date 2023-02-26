@@ -36,6 +36,7 @@
 #include "ags/engine/debugging/log_file.h"
 #include "ags/engine/debugging/message_buffer.h"
 #include "ags/engine/main/config.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/platform/base/sys_main.h"
@@ -469,7 +470,7 @@ void break_into_debugger() {
 	_G(game_paused_in_debugger) = 1;
 
 	while (_G(game_paused_in_debugger)) {
-		update_polled_stuff_if_runtime();
+		update_polled_stuff();
 		_G(platform)->YieldCPU();
 	}
 
