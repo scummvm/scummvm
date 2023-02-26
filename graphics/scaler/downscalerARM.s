@@ -21,7 +21,7 @@
 
 	.text
 
-	.global	DownscaleAllByHalfARM
+	.global	downscaleAllByHalfARM
 
 	@ ARM implementation of DownscaleAllByHalf scaler.
 	@ Scales a width x height block of 16bpp pixels from srcPtr to
@@ -29,7 +29,7 @@
 	@ lines. redblueMask and round allow for one routine to do both
 	@ 565 and 555 formats.
 	.align 2
-DownscaleAllByHalfARM:
+downscaleAllByHalfARM:
 	@ r0 = srcPtr
 	@ r1 = srcPitch
 	@ r2 = dstPtr
