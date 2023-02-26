@@ -6059,13 +6059,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::ES_ESP, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	// from glorifindel
-	// TODO: Need to get ahold of italian/msg/0.msg from an Italian release
-//	{"torin", "", {
-//		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
-//		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
-//		// {"italian/msg/0.msg", 0, ?, ?},
-//		AD_LISTEND},
-//		Common::IT_ITA, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_TORIN },
+	{"torin", "", {
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{"patches/0.msg", 0, "ef23a06ff97415e58fbbe25624738789", 6025},
+		AD_LISTEND},
+		Common::IT_ITA, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_TORIN },
+
+	{"torin", "", {
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{"patches/0.msg", 0, "44f57dd333e77484002a90733005c2ae", 5690},
+		AD_LISTEND},
+		Common::PT_BRA, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_TORIN },
 
 	// fan made Hebrew translation, by "Hebrew Adventure" https://www.facebook.com/groups/200491360554968/
 	// distributed as zip package to be extracted over GOG.com version
