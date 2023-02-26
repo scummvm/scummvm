@@ -30,12 +30,15 @@ namespace ViewsEnh {
 struct LocationEntry {
 	const char *const _prefix;
 	uint _count;
+	uint _frameCount;
 };
 
-static const LocationEntry LOCATIONS[3] = {
-	{ "", 0 },
-	{ "", 0 },
-	{ "tmpl", 4 }
+static const LocationEntry LOCATIONS[5] = {
+	{ "trng", 2, 16 },
+	{ "gild", 4, 32 },	// Xeen guild anim used for market
+	{ "tmpl", 4, 26 },
+	{ "blck", 2, 13 },
+	{ "tvrn", 2, 16 }
 };
 
 bool GameView::msgGame(const GameMessage &msg) {
@@ -62,7 +65,7 @@ void GameView::showLocation(int locationId) {
 		assert(LOCATIONS[locationId]._prefix);
 		_locationId = locationId;
 		_frameIndex = _timerCtr = 0;
-		_frameCount = LOCATIONS[locationId]._count * 8;
+		_frameCount = LOCATIONS[locationId]._frameCount;
 
 		_backgrounds.resize(LOCATIONS[locationId]._count);
 		for (uint i = 0; i < _backgrounds.size(); ++i) {
