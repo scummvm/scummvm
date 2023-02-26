@@ -882,7 +882,16 @@ void ScummEngine_v2::o2_verbOps() {
 		vs->prep = prep;
 
 		vs->curRect.left = vs->origLeft = x;
-		vs->curRect.top = y;
+
+		// WORKAROUND for original bug (#14198): The italian version of Maniac Mansion
+		// erroneously set one of the verbs' ("Unlock") y coordinate to 1600 instead of
+		// 168 via scripts. We apply the fix and mark it as an enhancement.
+		if (_game.id == GID_MANIAC && _game.version == 2 && _language == Common::IT_ITA &&
+			slot == 15 && vs->curRect.top == 1600 && _enableEnhancements) {
+			vs->curRect.top = 168;
+		} else {
+			vs->curRect.top = y;
+		}
 
 		// FIXME: these keyboard map depends on the language of the game.
 		// E.g. a german keyboard has 'z' and 'y' swapped, while a french
