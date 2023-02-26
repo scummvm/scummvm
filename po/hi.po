@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-02-15 07:25+0000\n"
+"POT-Creation-Date: 2023-02-26 20:29+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -3123,7 +3123,7 @@ msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr ""
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
-#: backends/fs/android/android-saf-fs.cpp:664
+#: backends/fs/android/android-saf-fs.cpp:744
 msgid "Choose a new folder"
 msgstr ""
 
