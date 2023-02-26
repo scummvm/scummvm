@@ -722,10 +722,10 @@ void render_to_screen() {
 		/*}
 		catch (Ali3DFullscreenLostException e) {
 			Debug::Printf("Renderer exception: %s", e.Message.GetCStr());
-			while (_G(game_update_suspend) && (!_G(want_exit)) && (!_G(abort_engine))) {
+			do {
 				sys_evt_process_pending();
 				platform->Delay(300);
-			}
+			} while (_G(game_update_suspend) && (!_G(want_exit)) && (!_G(abort_engine)));
 		}*/
 	}
 }
