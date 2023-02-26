@@ -33,7 +33,7 @@ Training::Training() : Location("Training") {
 }
 
 bool Training::msgFocus(const FocusMessage &msg) {
-	send("View", ValueMessage(LOC_TRAINING));
+	send("View", GameMessage("LOCATION", LOC_TRAINING));
 	changeCharacter(0);
 
 	return true;

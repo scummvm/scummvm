@@ -251,7 +251,6 @@ public:
 	MESSAGE(Game);
 	MESSAGE(Header);
 	MESSAGE(Info);
-	MESSAGE(Value);
 	MESSAGE(DrawGraphic);
 	#undef MESSAGE
 };

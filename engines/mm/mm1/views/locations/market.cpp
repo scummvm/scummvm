@@ -35,7 +35,7 @@ Market::Market() : Location("Market") {
 }
 
 bool Market::msgFocus(const FocusMessage &msg) {
-	send("View", ValueMessage(LOC_MARKET));
+	send("View", GameMessage("LOCATION", LOC_MARKET));
 
 	Maps::Map &map = *g_maps->_currentMap;
 	_foodCost = FOOD_COST[map[Maps::MAP_ID] - 1];

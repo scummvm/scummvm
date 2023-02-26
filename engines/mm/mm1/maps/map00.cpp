@@ -276,7 +276,7 @@ void Map00::searchStatue() {
 		STRING["maps.map00.statue"],
 		[]() {
 			Map &map = *g_maps->_currentMap;
-			g_events->send("Statue", ValueMessage(map[STATUE_VAL]));
+			g_events->send("Statue", GameMessage("STATUE", map[STATUE_VAL]));
 		}
 	));
 }

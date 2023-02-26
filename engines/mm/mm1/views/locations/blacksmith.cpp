@@ -34,7 +34,7 @@ Blacksmith::Blacksmith() : Location("Blacksmith") {
 }
 
 bool Blacksmith::msgFocus(const FocusMessage &msg) {
-	send("View", ValueMessage(LOC_BLACKSMITH));
+	send("View", GameMessage("LOCATION", LOC_BLACKSMITH));
 	changeCharacter(0);
 
 	return true;

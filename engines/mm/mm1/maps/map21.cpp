@@ -160,7 +160,7 @@ void Map21::askTrivia(int questionNum) {
 
 	if (_data[TRIVIA_ENABLED]) {
 		g_maps->clearSpecial();
-		send("Trivia", questionNum);
+		send("Trivia", GameMessage("TRIVIA", questionNum));
 	}
 }
 

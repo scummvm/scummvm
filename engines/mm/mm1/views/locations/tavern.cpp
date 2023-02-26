@@ -34,7 +34,7 @@ Tavern::Tavern() : Location("Tavern") {
 }
 
 bool Tavern::msgFocus(const FocusMessage &msg) {
-	send("View", ValueMessage(LOC_TAVERN));
+	send("View", GameMessage("LOCATION", LOC_TAVERN));
 	g_globals->_currCharacter = &g_globals->_party[0];
 	return true;
 }

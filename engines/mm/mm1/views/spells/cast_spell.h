@@ -71,7 +71,7 @@ public:
 	virtual ~CastSpell() {
 	}
 
-	bool msgValue(const ValueMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;

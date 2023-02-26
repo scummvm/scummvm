@@ -33,7 +33,10 @@ CastSpell::CastSpell() : SpellView("CastSpell") {
 	_bounds = getLineBounds(20, 24);
 }
 
-bool CastSpell::msgValue(const ValueMessage &msg) {
+bool CastSpell::msgGame(const GameMessage &msg) {
+	if (msg._name != "SPELL")
+		return false;
+
 	if (msg._value == 0) {
 		// Ensure current character can cast spells
 		if (g_globals->_currCharacter->_spellLevel != 0 &&

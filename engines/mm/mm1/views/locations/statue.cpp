@@ -35,11 +35,15 @@ namespace Locations {
 Statue::Statue() : Location("Statue") {
 }
 
-bool Statue::msgValue(const ValueMessage &msg) {
-	_pageNum = 0;
-	_statueNum = msg._value;
-	addView(this);
-	return true;
+bool Statue::msgGame(const GameMessage &msg) {
+	if (msg._name == "STATUE") {
+		_pageNum = 0;
+		_statueNum = msg._value;
+		addView(this);
+		return true;
+	}
+
+	return false;
 }
 
 bool Statue::msgKeypress(const KeypressMessage &msg) {

@@ -126,7 +126,7 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	case DISPLAY:
 		switch (msg.keycode) {
 		case Common::KEYCODE_c:
-			send("CastSpell", ValueMessage(0));
+			send("CastSpell", GameMessage("SPELL", 0));
 			break;
 		case Common::KEYCODE_e:
 			if (!g_globals->_currCharacter->_backpack.empty())

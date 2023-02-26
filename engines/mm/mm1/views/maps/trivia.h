@@ -39,7 +39,7 @@ public:
 	Trivia();
 	virtual ~Trivia() {}
 
-	bool msgValue(const ValueMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 };
 

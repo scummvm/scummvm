@@ -185,14 +185,6 @@ enum LocationType {
 	LOC_BLACKSMITH = 3, LOC_TAVERN = 4
 };
 
-struct ValueMessage : public Message {
-	int _value;
-
-	ValueMessage() : Message(), _value(0) {}
-	ValueMessage(int value) : Message(),
-		_value(value) {}
-};
-
 struct DrawGraphicMessage : public Message {
 	int _gfxNum;
 

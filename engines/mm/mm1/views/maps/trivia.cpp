@@ -34,14 +34,18 @@ Trivia::Trivia() :
 	_bounds = getLineBounds(17, 24);
 }
 
-bool Trivia::msgValue(const ValueMessage &msg) {
-	_question = STRING[Common::String::format(
-		"maps.map21.questions.%d", msg._value)];
-	_correctAnswer = STRING[Common::String::format(
-		"maps.map21.answers.%d", msg._value)];
+bool Trivia::msgGame(const GameMessage &msg) {
+	if (msg._name == "TRIVIA") {
+		_question = STRING[Common::String::format(
+			"maps.map21.questions.%d", msg._value)];
+		_correctAnswer = STRING[Common::String::format(
+			"maps.map21.answers.%d", msg._value)];
 
-	open();
-	return true;
+		open();
+		return true;
+	}
+
+	return false;
 }
 
 void Trivia::draw() {
