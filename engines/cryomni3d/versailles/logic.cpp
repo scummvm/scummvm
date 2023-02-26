@@ -326,11 +326,11 @@ static const char *kImagesPaintings[] = {
 	"30N_1.GIF",      // 23: 43090
 	"30N_2.GIF",      // 24: 43091
 	"30N_3.GIF",      // 25: 43092
-	"30O_1.GIF",      // 26: 43100
-	"30O_2.GIF",      // 27: 43101
-	"30O_31.GIF",     // 28: 43102
-	"30O_32.GIF",     // 29: 43103
-	"30O_33.GIF",     // 30: 43104
+	"30O-1.GIF",      // 26: 43100
+	"30O-2.GIF",      // 27: 43101
+	"30O-31.GIF",     // 28: 43102
+	"30O-32.GIF",     // 29: 43103
+	"30O-33.GIF",     // 30: 43104
 	"30M_1.GIF",      // 31: 43130
 	"30M_2.GIF",      // 32: 43131
 	"30M_3.GIF",      // 33: 43132
@@ -462,10 +462,13 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 #undef SET_SCRIPT_BY_ID
 }
 
+#define FIMG_LOAD(img) fimg->load(getFilePath(kFileTypeFixedImg, img))
+#define FIMG_LOADz(img, zon) fimg->load(getFilePath(kFileTypeFixedImg, img), zon)
+
 // Generic handler for dumb fixed images
 template<uint ID>
 void CryOmni3DEngine_Versailles::genericDumbImage(ZonFixedImage *fimg) {
-	fimg->load(kImagesPaintings[ID]);
+	FIMG_LOAD(kImagesPaintings[ID]);
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -487,7 +490,7 @@ void CryOmni3DEngine_Versailles::genericDumbImage(ZonFixedImage *fimg) {
 // Generic handler for paintings fixed images
 template<uint ID>
 void CryOmni3DEngine_Versailles::genericPainting(ZonFixedImage *fimg) {
-	fimg->load(kImagesPaintings[ID]);
+	FIMG_LOAD(kImagesPaintings[ID]);
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -502,7 +505,7 @@ void CryOmni3DEngine_Versailles::genericPainting(ZonFixedImage *fimg) {
 #define IMG_CB(name) void CryOmni3DEngine_Versailles::img_ ## name(ZonFixedImage *fimg)
 
 IMG_CB(31101) {
-	fimg->load("21F_11.GIF");
+	FIMG_LOAD("21F_11.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -527,7 +530,7 @@ IMG_CB(31101) {
 }
 
 IMG_CB(31101b) {
-	fimg->load("21F_10.GIF");
+	FIMG_LOAD("21F_10.GIF");
 	if (_inventory.inInventoryByNameID(103)) {
 		fimg->disableZone(1);
 	}
@@ -546,7 +549,7 @@ IMG_CB(31101b) {
 }
 
 IMG_CB(31142) {
-	fimg->load("10D2_4.GIF");
+	FIMG_LOAD("10D2_4.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -562,7 +565,7 @@ IMG_CB(31142) {
 }
 
 IMG_CB(31142b) {
-	fimg->load("11D2_2.GIF");
+	FIMG_LOAD("11D2_2.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -590,7 +593,7 @@ IMG_CB(31142b) {
 }
 
 IMG_CB(31142c) {
-	fimg->load("11D2_21.GIF");
+	FIMG_LOAD("11D2_21.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -613,7 +616,7 @@ IMG_CB(31142c) {
 }
 
 IMG_CB(31142d) {
-	fimg->load("11D2_22.GIF");
+	FIMG_LOAD("11D2_22.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -632,7 +635,7 @@ IMG_CB(31142d) {
 }
 
 IMG_CB(31143) {
-	fimg->load("10D2_3.GIF");
+	FIMG_LOAD("10D2_3.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -648,7 +651,7 @@ IMG_CB(31143) {
 }
 
 IMG_CB(31143b) {
-	fimg->load("11D2_1.GIF");
+	FIMG_LOAD("11D2_1.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -676,7 +679,7 @@ IMG_CB(31143b) {
 }
 
 IMG_CB(31143c) {
-	fimg->load("11D2_11.GIF");
+	FIMG_LOAD("11D2_11.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -698,7 +701,7 @@ IMG_CB(31143c) {
 }
 
 IMG_CB(31143d) {
-	fimg->load("11D2_12.GIF");
+	FIMG_LOAD("11D2_12.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -729,7 +732,7 @@ IMG_CB(32120) {
 		return;
 	}
 
-	fimg->load("23I_10.GIF");
+	FIMG_LOAD("23I_10.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -782,7 +785,7 @@ IMG_CB(32120) {
 				        _gameVariables[GameVariables::kBrushColor] == 1) {
 					// Gold brush used on sketch
 					_gameVariables[GameVariables::kSketchState] = 3;
-					playInGameVideo("23I_11");
+					playInGameAnimVideo("23I_11");
 					// Force reload of the place
 					if (_nextPlaceId == uint(-1)) {
 						_nextPlaceId = _currentPlaceId;
@@ -797,7 +800,7 @@ IMG_CB(32120) {
 				           _gameVariables[GameVariables::kBrushColor] == 2) {
 					// Red brush used on sketch
 					_gameVariables[GameVariables::kSketchState] = 4;
-					playInGameVideo("23I_12");
+					playInGameAnimVideo("23I_12");
 					// Force reload of the place
 					if (_nextPlaceId == uint(-1)) {
 						_nextPlaceId = _currentPlaceId;
@@ -815,7 +818,7 @@ IMG_CB(32120) {
 }
 
 IMG_CB(32120b) {
-	fimg->load("23I_11.GIF");
+	FIMG_LOAD("23I_11.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneUse) {
@@ -833,7 +836,7 @@ IMG_CB(32120b) {
 }
 
 IMG_CB(32120c) {
-	fimg->load("23I_12.GIF");
+	FIMG_LOAD("23I_12.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneUse) {
@@ -851,7 +854,7 @@ IMG_CB(32120c) {
 }
 
 IMG_CB(32201) {
-	fimg->load("21E_41.GIF");
+	FIMG_LOAD("21E_41.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -868,7 +871,7 @@ IMG_CB(32201) {
 }
 
 IMG_CB(32202) {
-	fimg->load("21E_42.GIF");
+	FIMG_LOAD("21E_42.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -879,7 +882,7 @@ IMG_CB(32202) {
 }
 
 IMG_CB(32203) {
-	fimg->load("21E_43.GIF");
+	FIMG_LOAD("21E_43.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -896,7 +899,7 @@ IMG_CB(32203) {
 }
 
 IMG_CB(32204) {
-	fimg->load("21E_44.GIF");
+	FIMG_LOAD("21E_44.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -919,7 +922,7 @@ IMG_CB(32204) {
 }
 
 IMG_CB(32204b) {
-	fimg->load("21E_45.GIF");
+	FIMG_LOAD("21E_45.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -930,7 +933,7 @@ IMG_CB(32204b) {
 }
 
 IMG_CB(34131) {
-	fimg->load("43ZA_1.GIF");
+	FIMG_LOAD("43ZA_1.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -941,7 +944,7 @@ IMG_CB(34131) {
 }
 
 IMG_CB(34132) {
-	fimg->load("43ZB_2.GIF");
+	FIMG_LOAD("43ZB_2.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -952,7 +955,7 @@ IMG_CB(34132) {
 }
 
 IMG_CB(34172) {
-	playInGameVideo("43X3_10");
+	playInGameAnimVideo("43X3_10");
 	// Force reload of the place
 	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
@@ -961,7 +964,7 @@ IMG_CB(34172) {
 }
 
 IMG_CB(34173) {
-	fimg->load("43X3_2.GIF");
+	FIMG_LOAD("43X3_2.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -971,7 +974,7 @@ IMG_CB(34173) {
 		if (fimg->_zoneUse) {
 			// WORKAROUND: The video doesn't exist there is only a fixed image unused in original game. We will use it.
 			/*
-			playInGameVideo("43X3_21");
+			playInGameAnimVideo("43X3_21");
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
 			    _nextPlaceId = _currentPlaceId;
@@ -993,7 +996,7 @@ IMG_CB(34173) {
 // see what happens. You just get the reminder and see the empty drawer.
 IMG_CB(34173b) {
 	// 43X3_21 doesn't have a ZON file, use the one of 43X3_22
-	fimg->load("43X3_21.GIF", "43X3_22.ZON");
+	FIMG_LOADz("43X3_21.GIF", "43X3_22.ZON");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1015,7 +1018,7 @@ IMG_CB(34173b) {
 }
 
 IMG_CB(34173c) {
-	fimg->load("43X3_22.GIF");
+	FIMG_LOAD("43X3_22.GIF");
 	// WORKAROUND: Drawer is empty, just disable the use zone
 	fimg->disableZone(0);
 	while (1) {
@@ -1028,7 +1031,7 @@ IMG_CB(34173c) {
 }
 
 IMG_CB(34174) {
-	fimg->load("43X3_42.GIF");
+	FIMG_LOAD("43X3_42.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1048,7 +1051,7 @@ IMG_CB(34174) {
 
 IMG_CB(34174b) {
 	// Door is open but safe is closed
-	fimg->load("43X3_40.GIF");
+	FIMG_LOAD("43X3_40.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1112,14 +1115,14 @@ IMG_CB(34174c) {
 		return;
 	}
 
-	playInGameVideo("cofouv");
+	playInGameAnimVideo("cofouv");
 	// Force reload of the place
 	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
 
 	// Safe has both blueprints
-	fimg->load("43X3_30.GIF");
+	FIMG_LOAD("43X3_30.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1155,7 +1158,7 @@ IMG_CB(34174c) {
 
 IMG_CB(34174d) {
 	// Safe has only blueprint 2
-	fimg->load("43X3_43.GIF");
+	FIMG_LOAD("43X3_43.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1178,7 +1181,7 @@ IMG_CB(34174d) {
 
 IMG_CB(34174e) {
 	// Safe has only blueprint 1
-	fimg->load("43X3_41.GIF");
+	FIMG_LOAD("43X3_41.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1202,7 +1205,7 @@ IMG_CB(34174e) {
 
 IMG_CB(34174f) {
 	// Safe is empty
-	fimg->load("43X3_45.GIF");
+	FIMG_LOAD("43X3_45.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1232,7 +1235,7 @@ bool CryOmni3DEngine_Versailles::handleSafe(ZonFixedImage *fimg) {
 		safeDigits[i] = rnd.getRandomNumber(9);
 	}
 
-	fimg->load("43x3_cof.GIF");
+	FIMG_LOAD("43x3_cof.GIF");
 	const Graphics::Surface *fimgSurface = fimg->surface();
 	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
 	tempSurf.blitFrom(*fimgSurface);
@@ -1249,7 +1252,7 @@ bool CryOmni3DEngine_Versailles::handleSafe(ZonFixedImage *fimg) {
 				// Safe handle
 
 				// Animate handle
-				playInGameVideo("43x3_poi");
+				playInGameAnimVideo("43x3_poi");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1323,7 +1326,7 @@ bool CryOmni3DEngine_Versailles::checkSafeDigits(unsigned char (&safeDigits)[kSa
 }
 
 IMG_CB(41202) {
-	fimg->load("10E_20.GIF");
+	FIMG_LOAD("10E_20.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1349,7 +1352,7 @@ IMG_CB(41202) {
 }
 
 IMG_CB(41202b) {
-	fimg->load("10E_21.GIF");
+	FIMG_LOAD("10E_21.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -1379,7 +1382,7 @@ IMG_CB(41202b) {
 }
 
 IMG_CB(41801) {
-	fimg->load("12E2_10.GIF");
+	FIMG_LOAD("12E2_10.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1414,7 +1417,7 @@ IMG_CB(41801) {
 				} else {
 					// Display trunk with paper in it
 					// Animate opening
-					playInGameVideo("12E2_11");
+					playInGameAnimVideo("12E2_11");
 					// Force reload of the place
 					if (_nextPlaceId == uint(-1)) {
 						_nextPlaceId = _currentPlaceId;
@@ -1432,7 +1435,7 @@ IMG_CB(41801) {
 }
 
 IMG_CB(41801b) {
-	fimg->load("12E2_11.GIF");
+	FIMG_LOAD("12E2_11.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -1440,7 +1443,7 @@ IMG_CB(41801b) {
 		}
 		if (fimg->_zoneLow) {
 			// Animate closing
-			playInGameVideo("12E2_13");
+			playInGameAnimVideo("12E2_13");
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
@@ -1465,7 +1468,7 @@ IMG_CB(41801b) {
 }
 
 IMG_CB(41801c) {
-	fimg->load("12E2_12.GIF");
+	FIMG_LOAD("12E2_12.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -1473,7 +1476,7 @@ IMG_CB(41801c) {
 		}
 		if (fimg->_zoneLow) {
 			// Animate closing
-			playInGameVideo("12E2_13");
+			playInGameAnimVideo("12E2_13");
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
@@ -1515,7 +1518,7 @@ IMG_CB(41802) {
 	}
 
 	// There we have paper on table and ink is in its inkpot
-	fimg->load("12E2_20.GIF");
+	FIMG_LOAD("12E2_20.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1547,7 +1550,7 @@ IMG_CB(41802) {
 		if (fimg->_usedObject && fimg->_currentZone == 0) {
 			uint objID = fimg->_usedObject->idOBJ();
 			if (objID == 100) {
-				playInGameVideo("12E2_24");
+				playInGameAnimVideo("12E2_24");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1559,7 +1562,7 @@ IMG_CB(41802) {
 				setGameTime(3, 1);
 			} else if (objID == 96) {
 				// Lampoon about arts
-				playInGameVideo("PAP-BRUL");
+				playInGameAnimVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1572,7 +1575,7 @@ IMG_CB(41802) {
 
 IMG_CB(41802b) {
 	// There we have paper on table with ink on it
-	fimg->load("12E2_21.GIF");
+	FIMG_LOAD("12E2_21.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1594,7 +1597,7 @@ IMG_CB(41802b) {
 		if (fimg->_usedObject && fimg->_currentZone == 0) {
 			uint objID = fimg->_usedObject->idOBJ();
 			if (objID == 100) {
-				playInGameVideo("12E2_24");
+				playInGameAnimVideo("12E2_24");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1606,7 +1609,7 @@ IMG_CB(41802b) {
 				setGameTime(3, 1);
 			} else if (objID == 96) {
 				// Lampoon about arts
-				playInGameVideo("PAP-BRUL");
+				playInGameAnimVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1619,7 +1622,7 @@ IMG_CB(41802b) {
 
 IMG_CB(41802c) {
 	// There we have ink in inkpot and without paper
-	fimg->load("12E2_22.GIF");
+	FIMG_LOAD("12E2_22.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1639,7 +1642,7 @@ IMG_CB(41802c) {
 		if (fimg->_usedObject && fimg->_currentZone == 0) {
 			uint objID = fimg->_usedObject->idOBJ();
 			if (objID == 100) {
-				playInGameVideo("12E2_24");
+				playInGameAnimVideo("12E2_24");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1651,7 +1654,7 @@ IMG_CB(41802c) {
 				setGameTime(3, 1);
 			} else if (objID == 96) {
 				// Lampoon about arts
-				playInGameVideo("PAP-BRUL");
+				playInGameAnimVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1664,7 +1667,7 @@ IMG_CB(41802c) {
 
 IMG_CB(41802d) {
 	// There we have ink directly on table
-	fimg->load("12E2_23.GIF");
+	FIMG_LOAD("12E2_23.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1674,7 +1677,7 @@ IMG_CB(41802d) {
 		if (fimg->_usedObject && fimg->_currentZone == 0) {
 			uint objID = fimg->_usedObject->idOBJ();
 			if (objID == 100) {
-				playInGameVideo("12E2_24");
+				playInGameAnimVideo("12E2_24");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1686,7 +1689,7 @@ IMG_CB(41802d) {
 				setGameTime(3, 1);
 			} else if (objID == 96) {
 				// Lampoon about arts
-				playInGameVideo("PAP-BRUL");
+				playInGameAnimVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1708,7 +1711,7 @@ IMG_CB(43143) {
 		return;
 	}
 
-	fimg->load("30L_31.GIF");
+	FIMG_LOAD("30L_31.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1720,7 +1723,7 @@ IMG_CB(43143) {
 }
 
 IMG_CB(43143b) {
-	fimg->load("30L_3101.GIF");
+	FIMG_LOAD("30L_3101.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1747,7 +1750,7 @@ IMG_CB(43143b) {
 }
 
 IMG_CB(43145) {
-	fimg->load("30L_50.GIF");
+	FIMG_LOAD("30L_50.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1756,7 +1759,7 @@ IMG_CB(43145) {
 		}
 		if (fimg->_zoneUse) {
 			if (fimg->_currentZone == 0) {
-				playInGameVideo("30L_51");
+				playInGameAnimVideo("30L_51");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1768,7 +1771,7 @@ IMG_CB(43145) {
 				fimg->changeCallback(functor);
 				break;
 			} else if (fimg->_currentZone == 1) {
-				playInGameVideo("30L_52");
+				playInGameAnimVideo("30L_52");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1785,7 +1788,7 @@ IMG_CB(43145) {
 }
 
 IMG_CB(43145b) {
-	fimg->load("30L_51.GIF");
+	FIMG_LOAD("30L_51.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -1815,7 +1818,7 @@ IMG_CB(43145b) {
 }
 
 IMG_CB(43145c) {
-	fimg->load("30L_52.GIF");
+	FIMG_LOAD("30L_52.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -1839,7 +1842,7 @@ IMG_CB(43145c) {
 }
 
 IMG_CB(43146) {
-	fimg->load("30L_40.GIF");
+	FIMG_LOAD("30L_40.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1848,7 +1851,7 @@ IMG_CB(43146) {
 		}
 		if (fimg->_zoneUse) {
 			if (fimg->_currentZone == 0) {
-				playInGameVideo("30L_41");
+				playInGameAnimVideo("30L_41");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1860,7 +1863,7 @@ IMG_CB(43146) {
 				fimg->changeCallback(functor);
 				break;
 			} else if (fimg->_currentZone == 1) {
-				playInGameVideo("30L_42");
+				playInGameAnimVideo("30L_42");
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
 					_nextPlaceId = _currentPlaceId;
@@ -1877,7 +1880,7 @@ IMG_CB(43146) {
 }
 
 IMG_CB(43146b) {
-	fimg->load("30L_41.GIF");
+	FIMG_LOAD("30L_41.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -1901,7 +1904,7 @@ IMG_CB(43146b) {
 }
 
 IMG_CB(43146c) {
-	fimg->load("30L_42.GIF");
+	FIMG_LOAD("30L_42.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -1948,7 +1951,7 @@ IMG_CB(43160) {
 	}
 
 	// There we have charcoal and paper on table
-	fimg->load("31I01.GIF");
+	FIMG_LOAD("31I01.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -1981,7 +1984,7 @@ IMG_CB(43160) {
 
 IMG_CB(43160b) {
 	// There we have paper on table but without charcoal
-	fimg->load("31I02.GIF");
+	FIMG_LOAD("31I02.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -2002,7 +2005,7 @@ IMG_CB(43160b) {
 
 IMG_CB(43160c) {
 	// There we have charcoal on table but without paper
-	fimg->load("31I03.GIF");
+	FIMG_LOAD("31I03.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -2023,7 +2026,7 @@ IMG_CB(43160c) {
 
 IMG_CB(43160d) {
 	// There we have neither charcoal nor paper on table
-	fimg->load("31I04.GIF");
+	FIMG_LOAD("31I04.GIF");
 	setPlaceState(16, 1);
 	while (1) {
 		fimg->manage();
@@ -2035,7 +2038,7 @@ IMG_CB(43160d) {
 }
 
 IMG_CB(43190) {
-	fimg->load("31L1_20.GIF");
+	FIMG_LOAD("31L1_20.GIF");
 	if (_gameVariables[GameVariables::kCollectScore]) {
 		fimg->disableZone(0);
 	}
@@ -2046,7 +2049,7 @@ IMG_CB(43190) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			playInGameVideo("31L1_2A");
+			playInGameAnimVideo("31L1_2A");
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
@@ -2061,7 +2064,7 @@ IMG_CB(43190) {
 }
 
 IMG_CB(43190b) {
-	fimg->load("31L1_20B.GIF");
+	FIMG_LOAD("31L1_20B.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2069,7 +2072,7 @@ IMG_CB(43190b) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			playInGameVideo("31L1_2B");
+			playInGameAnimVideo("31L1_2B");
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
@@ -2084,7 +2087,7 @@ IMG_CB(43190b) {
 }
 
 IMG_CB(43190c) {
-	fimg->load("31L1_20C.GIF");
+	FIMG_LOAD("31L1_20C.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2092,7 +2095,7 @@ IMG_CB(43190c) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			playInGameVideo("31L1_2C");
+			playInGameAnimVideo("31L1_2C");
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
@@ -2107,7 +2110,7 @@ IMG_CB(43190c) {
 }
 
 IMG_CB(43190d) {
-	fimg->load("31L1_20D.GIF");
+	FIMG_LOAD("31L1_20D.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2115,7 +2118,7 @@ IMG_CB(43190d) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			playInGameVideo("31L1_2D");
+			playInGameAnimVideo("31L1_2D");
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
@@ -2130,7 +2133,7 @@ IMG_CB(43190d) {
 }
 
 IMG_CB(43190e) {
-	fimg->load("31L1_20E.GIF");
+	FIMG_LOAD("31L1_20E.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2148,7 +2151,7 @@ IMG_CB(43190e) {
 }
 
 IMG_CB(43190f) {
-	fimg->load("31L1_22.GIF");
+	FIMG_LOAD("31L1_22.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -2175,7 +2178,7 @@ IMG_CB(44071) {
 	}
 
 	// There we have a full plate
-	fimg->load("41B_bboy.GIF");
+	FIMG_LOAD("41B_bboy.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2198,7 +2201,7 @@ IMG_CB(44071) {
 
 IMG_CB(44071b) {
 	// There we have less food on plate
-	fimg->load("41B_bbo2.GIF");
+	FIMG_LOAD("41B_bbo2.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2236,7 +2239,7 @@ IMG_CB(44161) {
 	}
 
 	// There we have blueprints, quill and epigraph on desk
-	fimg->load("42X2_20.GIF");
+	FIMG_LOAD("42X2_20.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2266,7 +2269,7 @@ IMG_CB(44161) {
 
 IMG_CB(44161b) {
 	// There we have blueprints and epigraph on desk.
-	fimg->load("42X2_10.GIF");
+	FIMG_LOAD("42X2_10.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2301,7 +2304,7 @@ IMG_CB(44161b) {
 
 IMG_CB(44161c) {
 	// There we have no quill nor epigraph anymore
-	fimg->load("42X2_11.GIF");
+	FIMG_LOAD("42X2_11.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2321,7 +2324,7 @@ IMG_CB(44161c) {
 
 IMG_CB(44161d) {
 	// Look at blueprints
-	fimg->load("VAU1.GIF");
+	FIMG_LOAD("VAU1.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2341,7 +2344,7 @@ IMG_CB(44161d) {
 
 IMG_CB(44161e) {
 	// Look at blueprints
-	fimg->load("VAUB22.GIF");
+	FIMG_LOAD("VAUB22.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2367,7 +2370,7 @@ IMG_CB(44161e) {
 
 IMG_CB(44161f) {
 	// Look at blueprints result
-	fimg->load("VAU.GIF");
+	FIMG_LOAD("VAU.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2385,7 +2388,7 @@ bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
 
 	loadBMPs("bomb_%02d.bmp", bmpLetters, 28);
 
-	fimg->load("EPIL.GIF");
+	FIMG_LOAD("EPIL.GIF");
 	const Graphics::Surface *fimgSurface = fimg->surface();
 	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
 	// No need to customize image yet
@@ -2460,7 +2463,7 @@ void CryOmni3DEngine_Versailles::drawEpigraphLetters(Graphics::ManagedSurface &s
 }
 
 IMG_CB(45130) {
-	fimg->load("52M2.GIF");
+	FIMG_LOAD("52M2.GIF");
 	_dialogsMan["{JOUEUR-VU-PLANS-SALON-DIANE}"] = 'Y';
 	while (1) {
 		fimg->manage();
@@ -2472,7 +2475,7 @@ IMG_CB(45130) {
 }
 
 IMG_CB(45270) {
-	fimg->load("51A4_11.GIF");
+	FIMG_LOAD("51A4_11.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2507,7 +2510,7 @@ IMG_CB(45270) {
 }
 
 IMG_CB(45270b) {
-	fimg->load("51A4_22.GIF");
+	FIMG_LOAD("51A4_22.GIF");
 	if (!_gameVariables[GameVariables::kCollectSmallKey3]) {
 		// Collected small key 3
 		collectObject(135, fimg);
@@ -2531,7 +2534,7 @@ IMG_CB(45270b) {
 }
 
 IMG_CB(45270c) {
-	fimg->load("51A4_32.GIF");
+	FIMG_LOAD("51A4_32.GIF");
 	if (!_gameVariables[GameVariables::kCollectEngraving]) {
 		// Collected engraving
 		collectObject(134, fimg);
@@ -2555,7 +2558,7 @@ IMG_CB(45270c) {
 }
 
 IMG_CB(45270d) {
-	fimg->load("51A4_12.GIF");
+	FIMG_LOAD("51A4_12.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2575,7 +2578,7 @@ IMG_CB(45270d) {
 
 IMG_CB(45280) {
 	if (_gameVariables[GameVariables::kOpenedCurtain]) {
-		fimg->load("53I_LUST.GIF");
+		FIMG_LOAD("53I_LUST.GIF");
 		_gameVariables[GameVariables::kSeenMemorandum] = 1;
 		while (1) {
 			fimg->manage();
@@ -2599,7 +2602,7 @@ IMG_CB(88001) {
 		return;
 	}
 
-	fimg->load("33P_10.GIF");
+	FIMG_LOAD("33P_10.GIF");
 	if (_inventory.inInventoryByNameID(121)) {
 		fimg->disableZone(0);
 	}
@@ -2613,7 +2616,7 @@ IMG_CB(88001) {
 		        !_inventory.inInventoryByNameID(121)) {
 			// Open the drawer
 
-			playInGameVideo("33P_10");
+			playInGameAnimVideo("33P_10");
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
@@ -2631,7 +2634,7 @@ IMG_CB(88001) {
 IMG_CB(88001b) {
 	_gameVariables[GameVariables::kMedalsDrawerStatus] = 2;
 
-	fimg->load("33P_12.GIF");
+	FIMG_LOAD("33P_12.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit) {
@@ -2665,7 +2668,7 @@ IMG_CB(88001c) {
 	// Paper is laid on the medals
 	_gameVariables[GameVariables::kMedalsDrawerStatus] = 3;
 
-	fimg->load("33P_13.GIF");
+	FIMG_LOAD("33P_13.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2678,7 +2681,7 @@ IMG_CB(88001c) {
 			// Use charcoal on paper and medals
 			_inventory.removeByNameID(113);
 
-			playInGameVideo("33P_14");
+			playInGameAnimVideo("33P_14");
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
 				_nextPlaceId = _currentPlaceId;
@@ -2697,7 +2700,7 @@ IMG_CB(88001c) {
 }
 
 IMG_CB(88002) {
-	fimg->load("53Z1c_10.GIF");
+	FIMG_LOAD("53Z1c_10.GIF");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -2746,7 +2749,7 @@ IMG_CB(88003) {
 		return;
 	}
 
-	fimg->load("70Z_10.GIF");
+	FIMG_LOAD("70Z_10.GIF");
 
 	// Draw countdown there and not in fixed image class directly
 	Graphics::ManagedSurface tempSurf;
@@ -2789,7 +2792,7 @@ IMG_CB(88003) {
 }
 
 IMG_CB(88003b) {
-	fimg->load("70Z_11.GIF");
+	FIMG_LOAD("70Z_11.GIF");
 
 	// Draw countdown there and not in fixed image class directly
 	Graphics::ManagedSurface tempSurf;
@@ -2824,7 +2827,7 @@ IMG_CB(88003b) {
 }
 
 IMG_CB(88003c) {
-	fimg->load("70Z_12.GIF");
+	FIMG_LOAD("70Z_12.GIF");
 
 	// Draw countdown there and not in fixed image class directly
 	Graphics::ManagedSurface tempSurf;
@@ -2859,7 +2862,7 @@ IMG_CB(88003c) {
 }
 
 IMG_CB(88003d) {
-	fimg->load("70Z_13.GIF");
+	FIMG_LOAD("70Z_13.GIF");
 
 	// Draw countdown there and not in fixed image class directly
 	Graphics::ManagedSurface tempSurf;
@@ -2894,7 +2897,7 @@ IMG_CB(88003d) {
 }
 
 IMG_CB(88003e) {
-	fimg->load("70Z_14.GIF");
+	FIMG_LOAD("70Z_14.GIF");
 
 	// Draw countdown there and not in fixed image class directly
 	Graphics::ManagedSurface tempSurf;
@@ -2929,7 +2932,7 @@ IMG_CB(88003e) {
 }
 
 IMG_CB(88003f) {
-	fimg->load("70Z_15.GIF");
+	FIMG_LOAD("70Z_15.GIF");
 
 	// Draw countdown there and not in fixed image class directly
 	Graphics::ManagedSurface tempSurf;
@@ -2947,7 +2950,7 @@ IMG_CB(88003f) {
 		}
 		if (fimg->_zoneUse) {
 			if (handleBomb(fimg)) {
-				playInGameVideo("COFFRE");
+				playInGameAnimVideo("COFFRE");
 				_forcePaletteUpdate = true;
 				// Force reload of the place
 				if (_nextPlaceId == uint(-1)) {
@@ -3004,9 +3007,9 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 	}
 
 	if (bombPasswordLength <= kBombPasswordSmallLength) {
-		fimg->load("70z_16.GIF");
+		FIMG_LOAD("70z_16.GIF");
 	} else {
-		fimg->load("70z_17.GIF");
+		FIMG_LOAD("70z_17.GIF");
 	}
 	const Graphics::Surface *fimgSurface = fimg->surface();
 	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
@@ -3241,7 +3244,7 @@ void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surfa
 }
 
 IMG_CB(88004) {
-	fimg->load("31j31.gif");
+	FIMG_LOAD("31j31.gif");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -3260,12 +3263,12 @@ IMG_CB(88004) {
 
 IMG_CB(88004b) {
 	// Open the toilets
-	playInGameVideo("31j32");
+	playInGameAnimVideo("31j32");
 	// Force reload of the place
 	if (_nextPlaceId == uint(-1)) {
 		_nextPlaceId = _currentPlaceId;
 	}
-	fimg->load("31j32.gif");
+	FIMG_LOAD("31j32.gif");
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -3282,7 +3285,7 @@ IMG_CB(88004b) {
 	}
 	if (!shouldAbort()) {
 		// Close the toilets
-		playInGameVideo("31j32b");
+		playInGameAnimVideo("31j32b");
 		// Force reload of the place
 		if (_nextPlaceId == uint(-1)) {
 			_nextPlaceId = _currentPlaceId;
@@ -3290,6 +3293,8 @@ IMG_CB(88004b) {
 	}
 }
 
+#undef FIMG_LOAD
+#undef FIMG_LOADz
 #undef IMG_CB
 
 // Init place and filter event
@@ -3330,7 +3335,7 @@ FILTER_EVENT(1, 2) {
 INIT_PLACE(1, 3) {
 	if (!_gameVariables[GameVariables::kHasPlayedLebrun]) {
 		Common::File *audioFile = new Common::File();
-		if (!audioFile->open(_localizedFilenames[LocalizedFilenames::kLeb001])) {
+		if (!audioFile->open(getFilePath(kFileTypeSound, _localizedFilenames[LocalizedFilenames::kLeb001]))) {
 			warning("Failed to open sound file %s", _localizedFilenames[LocalizedFilenames::kLeb001].c_str());
 			delete audioFile;
 			return;
@@ -3387,7 +3392,7 @@ FILTER_EVENT(1, 14) {
 		// Open the curtain
 		uint fakePlaceId = getFakeTransition(*event);
 		fakeTransition(fakePlaceId);
-		playInGameVideo("10D2_1");
+		playInGameAnimVideo("10D2_1");
 		setPlaceState(14, 1);
 		// setPlaceState will force reload
 		// Don't pass the event as we try to avoid implementing use
@@ -3430,7 +3435,7 @@ FILTER_EVENT(1, 14) {
 	uint fakePlaceId = getFakeTransition(*event);
 	fakeTransition(fakePlaceId);
 
-	playInGameVideo(video);
+	playInGameAnimVideo(video);
 
 	// Force reload of the place
 	if (_nextPlaceId == uint(-1)) {
@@ -3487,7 +3492,7 @@ FILTER_EVENT(2, 1) {
 				callback = &CryOmni3DEngine_Versailles::img_31101b;
 			}
 
-			playInGameVideo(video);
+			playInGameAnimVideo(video);
 
 			// Force reload of the place
 			if (_nextPlaceId == uint(-1)) {
@@ -3567,7 +3572,7 @@ FILTER_EVENT(2, 2) {
 	uint fakePlaceId = getFakeTransition(*event);
 	fakeTransition(fakePlaceId);
 
-	playInGameVideo(video);
+	playInGameAnimVideo(video);
 
 	// Force reload of the place
 	if (_nextPlaceId == uint(-1)) {
@@ -3796,11 +3801,11 @@ FILTER_EVENT(3, 10) {
 	} else if (*event == 21) {
 		if (_dialogsMan["SUISSE-VU-AUTORISATION"] == 'Y') {
 			fakeTransition(*event);
-			playInGameVideo("33O_SUIP");
-			playInGameVideo("33O_P");
+			playInGameAnimVideo("33O_SUIP");
+			playInGameAnimVideo("33O_P");
 			executeSeeAction(88001);
 			if (!shouldAbort()) {
-				playInGameVideo("33P_O");
+				playInGameAnimVideo("33P_O");
 			}
 			_forcePaletteUpdate = true;
 			// Force reload of the place
@@ -3891,13 +3896,13 @@ FILTER_EVENT(3, 18) {
 	_transitionAnimateWarp = false;
 
 	if (_placeStates[22].state) {
-		playInGameVideo("31J1_L2");
+		playInGameAnimVideo("31J1_L2");
 	} else if (_gameVariables[GameVariables::kAlreadyWent3_19]) {
-		playInGameVideo("31J1_L1");
+		playInGameAnimVideo("31J1_L1");
 	} else {
-		playInGameVideo("31J1_L0");
-		playInGameVideo("31L1_AL2");
-		playInGameVideo("31L1_AL3");
+		playInGameAnimVideo("31J1_L0");
+		playInGameAnimVideo("31L1_AL2");
+		playInGameAnimVideo("31L1_AL3");
 		_gameVariables[GameVariables::kAlreadyWent3_19] = 1;
 		_gameVariables[GameVariables::kCabinetDrawerStatus] = 1;
 	}
@@ -3934,7 +3939,7 @@ FILTER_EVENT(3_5, 20) {
 	}
 
 	fakeTransition(*event);
-	playInGameVideo("31j31");
+	playInGameAnimVideo("31j31");
 
 	// Force reload of the place
 	if (_nextPlaceId == uint(-1)) {
@@ -4132,7 +4137,7 @@ FILTER_EVENT(4, 12_13_14) {
 		error("BUG: Shouldn't be here");
 	}
 
-	playInGameVideo(video);
+	playInGameAnimVideo(video);
 
 	// Force reload of the place
 	if (_nextPlaceId == uint(-1)) {
@@ -4177,7 +4182,7 @@ FILTER_EVENT(4, 16) {
 
 		if (idOBJ == 124) {
 			_inventory.removeByNameID(124);
-			playInGameVideo("41X2_CR1");
+			playInGameAnimVideo("41X2_CR1");
 			setGameTime(2, 4);
 		}
 		_inventory.deselectObject();
@@ -4528,7 +4533,7 @@ FILTER_EVENT(5, 33) {
 		uint fakePlaceId = getFakeTransition(*event);
 		fakeTransition(fakePlaceId);
 
-		playInGameVideo("LUSTRE");
+		playInGameAnimVideo("LUSTRE");
 		// setPlaceState will force reload
 
 		setPlaceState(33, 1);
@@ -4547,7 +4552,7 @@ FILTER_EVENT(5, 34) {
 	if (*event == 35) {
 		fakeTransition(*event);
 
-		playInGameVideo("53z1c_10");
+		playInGameAnimVideo("53z1c_10");
 
 		executeSeeAction(88002);
 
@@ -4744,7 +4749,7 @@ FILTER_EVENT(7, 20) {
 	if (*event == 21) {
 		fakeTransition(*event);
 
-		playInGameVideo("70z_10");
+		playInGameAnimVideo("70z_10");
 
 		executeSeeAction(88003);
 

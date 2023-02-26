@@ -38,7 +38,7 @@ public:
 	CryoExtFont() : _height(0), _maxAdvance(0), _crf(nullptr), _codepage(Common::kCodePageInvalid) { }
 	virtual ~CryoExtFont();
 
-	void load(const Common::String &fontFile, Common::CodePage encoding);
+	void load(const Common::Path &fontFile, Common::CodePage encoding);
 
 	virtual int getFontHeight() const { return _height; }
 	virtual int getMaxCharWidth() const { return _maxAdvance; }
@@ -50,7 +50,7 @@ public:
 	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 private:
-	void loadOffsets(const Common::String &offsetsFile);
+	void loadOffsets(const Common::Path &offsetsFile);
 	void assureCached(uint32 chr) const;
 	uint32 mapGlyph(uint32 chr) const;
 

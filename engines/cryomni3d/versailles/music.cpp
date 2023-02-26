@@ -67,11 +67,11 @@ void CryOmni3DEngine_Versailles::musicUpdate() {
 	// New file, stop the old one first
 	musicStop();
 
-	Common::String musicFName(prepareFileName(musicBName, "wav"));
+	Common::Path musicPath(getFilePath(kFileTypeMusic, musicBName));
 
 	Common::File *musicFile = new Common::File();
-	if (!musicFile->open(musicFName)) {
-		warning("Failed to open music file %s/%s", musicBName, musicFName.c_str());
+	if (!musicFile->open(musicPath)) {
+		warning("Failed to open music file %s/%s", musicBName, musicPath.toString().c_str());
 		delete musicFile;
 		return;
 	}
@@ -81,7 +81,7 @@ void CryOmni3DEngine_Versailles::musicUpdate() {
 	musicFile = nullptr;
 
 	if (!musicDecoder) {
-		warning("Failed to decode music file %s/%s", musicBName, musicFName.c_str());
+		warning("Failed to decode music file %s/%s", musicBName, musicPath.toString().c_str());
 		return;
 	}
 

@@ -68,7 +68,7 @@ public:
 	void display() const;
 
 	/* These functions and attributes are used in image handler */
-	void load(const Common::String &image, const char *zone = nullptr);
+	void load(const Common::Path &image, const char *zone = nullptr);
 	void manage();
 	void updateSurface(const Graphics::Surface *newSurface);
 	const Graphics::Surface *surface() const { return _imageSurface; }
@@ -109,7 +109,7 @@ protected:
 		bool valid;
 	};
 
-	void loadZones(const Common::String &image);
+	void loadZones(const Common::Path &image);
 	void handleMouseZones(const Common::Array<Zone>::const_iterator &currentZone);
 
 	Image::ImageDecoder *_imageDecoder;

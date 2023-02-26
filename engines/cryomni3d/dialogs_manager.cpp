@@ -30,10 +30,10 @@ DialogsManager::~DialogsManager() {
 	delete[] _gtoBuffer;
 }
 
-void DialogsManager::loadGTO(const Common::String &gtoFileName) {
+void DialogsManager::loadGTO(const Common::Path &gtoFilePath) {
 	Common::File gtoFile;
-	if (!gtoFile.open(gtoFileName)) {
-		error("Can't open GTO file '%s'", gtoFileName.c_str());
+	if (!gtoFile.open(gtoFilePath)) {
+		error("Can't open GTO file '%s'", gtoFilePath.toString().c_str());
 	}
 
 	_labels.clear();
