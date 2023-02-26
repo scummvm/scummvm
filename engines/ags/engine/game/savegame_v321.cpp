@@ -414,7 +414,7 @@ HSaveError restore_save_data_v321(Stream *in, const PreservedParams &pp, Restore
 	ccScript *compsc = _GP(game).compiled_script;
 	CharacterInfo *chwas = _GP(game).chars;
 	WordsDictionary *olddict = _GP(game).dict;
-	char *mesbk[MAXGLOBALMES];
+	std::vector<String> mesbk(MAXGLOBALMES);
 	int numchwas = _GP(game).numcharacters;
 	for (size_t i = 0; i < MAXGLOBALMES; ++i)
 		mesbk[i] = _GP(game).messages[i];
