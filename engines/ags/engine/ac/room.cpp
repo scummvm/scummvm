@@ -72,6 +72,7 @@
 #include "ags/engine/gfx/gfxfilter.h"
 #include "ags/shared/util/math.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -431,8 +432,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		}
 	}
 
-	update_polled_stuff_if_runtime();
-
 	// load the room from disk
 	_G(our_eip) = 200;
 	_GP(thisroom).GameID = NO_GAME_ID_IN_ROOM_FILE;
@@ -450,7 +449,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	convert_room_coordinates_to_data_res(&_GP(thisroom));
 
-	update_polled_stuff_if_runtime();
 	_G(our_eip) = 201;
 
 	_GP(play).room_width = _GP(thisroom).Width;
@@ -474,11 +472,8 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	}
 
 	for (size_t i = 0; i < _GP(thisroom).BgFrameCount; ++i) {
-		update_polled_stuff_if_runtime();
 		_GP(thisroom).BgFrames[i].Graphic = PrepareSpriteForUse(_GP(thisroom).BgFrames[i].Graphic, false);
 	}
-
-	update_polled_stuff_if_runtime();
 
 	_G(our_eip) = 202;
 	// Update game viewports
@@ -505,11 +500,8 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	_G(walkareabackup) = BitmapHelper::CreateBitmapCopy(_GP(thisroom).WalkAreaMask.get());
 
 	_G(our_eip) = 204;
-	update_polled_stuff_if_runtime();
 	redo_walkable_areas();
-	update_polled_stuff_if_runtime();
 	walkbehinds_recalc();
-	update_polled_stuff_if_runtime();
 
 	_G(our_eip) = 205;
 	// setup objects
@@ -606,8 +598,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		_G(in_new_room) = 2;
 	}
 
-	update_polled_stuff_if_runtime();
-
 	if (_GP(thisroom).EventHandlers == nullptr) {
 		// legacy interactions
 		// copy interactions from room file into our temporary struct
@@ -635,10 +625,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 		ccAddExternalDynamicObject(_GP(thisroom).Hotspots[cc].ScriptName, &_G(scrHotspot)[cc], &_GP(ccDynamicHotspot));
 	}
-
-	_G(our_eip) = 206;
-
-	update_polled_stuff_if_runtime();
 
 	_G(our_eip) = 210;
 	if (IS_ANTIALIAS_SPRITES) {
@@ -681,8 +667,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		for (int cc = 0; cc < _GP(game).numcharacters; cc++)
 			StopMoving(cc);
 	}
-
-	update_polled_stuff_if_runtime();
 
 	_G(roominst) = nullptr;
 	if (_G(debug_flags) & DBG_NOSCRIPT) ;
@@ -840,7 +824,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	_G(color_map) = nullptr;
 
 	_G(our_eip) = 209;
-	update_polled_stuff_if_runtime();
 	generate_light_table();
 	update_music_volume();
 
@@ -870,7 +853,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		setpal();
 
 	_G(our_eip) = 220;
-	update_polled_stuff_if_runtime();
+	update_polled_stuff();
 	debug_script_log("Now in room %d", _G(displayed_room));
 	GUI::MarkAllGUIForUpdate();
 	pl_run_plugin_hooks(AGSE_ENTERROOM, _G(displayed_room));
@@ -881,8 +864,6 @@ void new_room(int newnum, CharacterInfo *forchar) {
 	EndSkippingUntilCharStops();
 
 	debug_script_log("Room change requested to room %d", newnum);
-
-	update_polled_stuff_if_runtime();
 
 	// we are currently running Leaves Screen scripts
 	_G(in_leaves_screen) = newnum;
@@ -904,7 +885,6 @@ void new_room(int newnum, CharacterInfo *forchar) {
 		// who is not in the new room. therefore, abort the follow
 		_G(playerchar)->following = -1;
 	}
-	update_polled_stuff_if_runtime();
 
 	// change rooms
 	unload_old_room();
@@ -915,8 +895,6 @@ void new_room(int newnum, CharacterInfo *forchar) {
 
 		GUI::MarkAllGUIForUpdate();
 	}
-
-	update_polled_stuff_if_runtime();
 
 	load_new_room(newnum, forchar);
 

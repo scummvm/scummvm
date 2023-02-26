@@ -477,7 +477,7 @@ bool InventoryScreen::Run() {
 	}
 	wasonitem = isonitem;
 
-	update_polled_stuff_if_runtime();
+	update_polled_stuff();
 
 	WaitForNextFrame();
 

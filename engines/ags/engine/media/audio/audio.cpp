@@ -763,7 +763,7 @@ void update_volume_drop_if_voiceover() {
 // Update the music, and advance the crossfade on a step
 // (this should only be called once per game loop)
 void update_audio_system_on_game_loop() {
-	update_polled_stuff_if_runtime();
+	update_polled_stuff();
 
 	process_scheduled_music_update();
 

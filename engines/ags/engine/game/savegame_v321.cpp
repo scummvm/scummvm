@@ -400,8 +400,6 @@ HSaveError restore_save_data_v321(Stream *in, const PreservedParams &pp, Restore
 		return err;
 	restore_game_spriteset(in);
 
-	update_polled_stuff_if_runtime();
-
 	err = restore_game_scripts(in, pp, r_data);
 	if (!err)
 		return err;
@@ -461,13 +459,7 @@ HSaveError restore_save_data_v321(Stream *in, const PreservedParams &pp, Restore
 	restore_game_thisroom(in, r_data);
 	restore_game_ambientsounds(in, r_data);
 	restore_game_overlays(in);
-
-	update_polled_stuff_if_runtime();
-
 	restore_game_dynamic_surfaces(in, r_data);
-
-	update_polled_stuff_if_runtime();
-
 	restore_game_displayed_room_status(in, r_data);
 	err = restore_game_globalvars(in);
 	if (!err)

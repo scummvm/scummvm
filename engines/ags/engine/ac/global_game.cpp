@@ -169,8 +169,6 @@ int LoadSaveSlotScreenshot(int slnum, int width, int height) {
 	                   RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
 	                   RectWH(0, 0, width, height));
 
-	update_polled_stuff_if_runtime();
-
 	// replace the bitmap in the sprite set
 	free_dynamic_sprite(gotSlot);
 	add_dynamic_sprite(gotSlot, newPic);

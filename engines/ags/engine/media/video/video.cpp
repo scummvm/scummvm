@@ -68,7 +68,7 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 		return false;
 	}
 
-	update_polled_stuff_if_runtime();
+	update_polled_stuff();  // TODO: probably unneeded
 
 	Graphics::Screen scr;
 	bool stretchVideo = (flags & kVideo_Stretch) != 0;
@@ -78,8 +78,8 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 	if (!enableAudio)
 		decoder->setVolume(0);
 
-	update_polled_stuff_if_runtime();
-	 
+	update_polled_stuff();
+
 	decoder->start();
 	while (!SHOULD_QUIT && !decoder->endOfVideo()) {
 		if (decoder->needsUpdate()) {

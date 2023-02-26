@@ -19,7 +19,6 @@
  *
  */
 
-#include "ags/shared/ac/common.h" // update_polled_stuff
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/ac/words_dictionary.h" // TODO: extract string decryption
@@ -140,8 +139,6 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 		for (size_t i = 0; i < polypoint_areas; ++i)
 			wallpoints[i].Read(in);
 	*/
-
-	update_polled_stuff_if_runtime();
 
 	room->Edges.Top = in->ReadInt16();
 	room->Edges.Bottom = in->ReadInt16();
@@ -295,7 +292,6 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 			room->Regions[i].Tint = in->ReadInt32();
 	}
 
-	update_polled_stuff_if_runtime();
 	// Primary background (LZW or RLE compressed depending on format)
 	if (data_ver >= kRoomVersion_pre114_5)
 		room->BgFrames[0].Graphic.reset(
@@ -304,16 +300,12 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 		room->BgFrames[0].Graphic.reset(load_rle_bitmap8(in));
 
 	// Area masks
-	update_polled_stuff_if_runtime();
 	if (data_ver >= kRoomVersion_255b)
 		room->RegionMask.reset(load_rle_bitmap8(in));
 	else if (data_ver >= kRoomVersion_114)
 		skip_rle_bitmap8(in); // an old version - clear the 'shadow' area into a blank regions bmp (???)
-	update_polled_stuff_if_runtime();
 	room->WalkAreaMask.reset(load_rle_bitmap8(in));
-	update_polled_stuff_if_runtime();
 	room->WalkBehindMask.reset(load_rle_bitmap8(in));
-	update_polled_stuff_if_runtime();
 	room->HotspotMask.reset(load_rle_bitmap8(in));
 	return HError::None();
 }
@@ -382,7 +374,6 @@ HError ReadAnimBgBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	}
 
 	for (size_t i = 1; i < room->BgFrameCount; ++i) {
-		update_polled_stuff_if_runtime();
 		room->BgFrames[i].Graphic.reset(
 			load_lzw(in, room->BackgroundBPP, &room->BgFrames[i].Palette));
 	}

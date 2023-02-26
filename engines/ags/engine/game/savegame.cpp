@@ -50,6 +50,7 @@
 #include "ags/engine/game/savegame.h"
 #include "ags/engine/game/savegame_components.h"
 #include "ags/engine/game/savegame_internal.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/main/main.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
@@ -483,15 +484,11 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	int queuedMusicSize = _GP(play).music_queue_size;
 	_GP(play).music_queue_size = 0;
 
-	update_polled_stuff_if_runtime();
-
 	// load the room the game was saved in
 	if (_G(displayed_room) >= 0)
 		load_new_room(_G(displayed_room), nullptr);
 	else
 		set_room_placeholder();
-
-	update_polled_stuff_if_runtime();
 
 	_GP(play).gscript_timer = gstimer;
 	// restore the correct room volume (they might have modified
@@ -508,8 +505,6 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	_GP(spriteset).Precache(_GP(game).mcurs[r_data.CursorID].pic);
 
 	sys_window_set_title(_GP(play).game_name);
-
-	update_polled_stuff_if_runtime();
 
 	if (_G(displayed_room) >= 0) {
 		// Fixup the frame index, in case the restored room does not have enough background frames
@@ -606,7 +601,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	RestoreViewportsAndCameras(r_data);
 
 	_GP(play).ClearIgnoreInput(); // don't keep ignored input after save restore
-	update_polled_stuff_if_runtime();
+	update_polled_stuff();
 
 	pl_run_plugin_hooks(AGSE_POSTRESTOREGAME, 0);
 
