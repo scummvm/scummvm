@@ -99,7 +99,7 @@ static bool GetFilesImpl(const String &dir_path, std::vector<String> &files, boo
 		Common::FSNode::kListFilesOnly);
 
 	for (uint i = 0; i < fsList.size(); ++i)
-		files.push_back(fsList[i].getName());
+		files.emplace_back(fsList[i].getName());
 	return true;
 }
 
@@ -164,7 +164,7 @@ FindFileRecursive FindFileRecursive::Open(const String &path, const String &wild
 }
 
 void FindFileRecursive::Close() {
-	while (_fdirs.size())
+	while (!_fdirs.empty())
 		_fdirs.pop();
 	_fdir.Close();
 	_ffile.Close();
@@ -210,7 +210,7 @@ bool FindFileRecursive::PushDir(const String &sub) {
 }
 
 bool FindFileRecursive::PopDir() {
-	if (_fdirs.size() == 0)
+	if (_fdirs.empty())
 		return false; // no more parent levels
 	// restore parent level
 	_fdir = std::move(_fdirs.top());
