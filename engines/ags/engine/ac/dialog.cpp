@@ -479,8 +479,6 @@ void DialogOptions::Prepare(int _dlgnum, bool _runGameLoopsInBackground) {
 
 	_GP(play).in_conversation ++;
 
-	update_polled_stuff_if_runtime();
-
 	if (_GP(game).dialog_bullet > 0)
 		bullet_wid = _GP(game).SpriteInfos[_GP(game).dialog_bullet].Width + 3;
 
@@ -489,8 +487,6 @@ void DialogOptions::Prepare(int _dlgnum, bool _runGameLoopsInBackground) {
 		bullet_wid += get_text_width_outlined("9. ", usingfont);
 
 	_G(said_text) = 0;
-
-	update_polled_stuff_if_runtime();
 
 	const Rect &ui_view = _GP(play).GetUIViewport();
 	tempScrn = BitmapHelper::CreateBitmap(ui_view.GetWidth(), ui_view.GetHeight(), _GP(game).GetColorDepth());
@@ -770,12 +766,8 @@ void DialogOptions::Redraw() {
 
 	wantRefresh = false;
 
-	update_polled_stuff_if_runtime();
-
 	subBitmap = recycle_bitmap(subBitmap,
 		_G(gfxDriver)->GetCompatibleBitmapFormat(tempScrn->GetColorDepth()), dirtywidth, dirtyheight);
-
-	update_polled_stuff_if_runtime();
 
 	if (usingCustomRendering) {
 		subBitmap->Blit(tempScrn, 0, 0, 0, 0, tempScrn->GetWidth(), tempScrn->GetHeight());
@@ -945,7 +937,7 @@ bool DialogOptions::Run() {
 		}
 	}
 
-	update_polled_stuff_if_runtime();
+	update_polled_stuff();
 
 	if (!runGameLoopsInBackground && (_GP(play).fast_forward == 0)) { // note if runGameLoopsInBackground then it's called inside UpdateGameOnce
 		WaitForNextFrame();

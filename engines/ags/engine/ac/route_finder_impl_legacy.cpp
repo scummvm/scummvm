@@ -442,8 +442,6 @@ static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
 	int totalfound = 0;
 	int DIRECTION_BONUS = 0;
 
-	update_polled_stuff_if_runtime();
-
 	while (foundAnswer < 0) {
 		min = 29999;
 		changeiter = iteration;
@@ -548,7 +546,6 @@ static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
 			}
 		}
 		if (totalfound >= 1000) {
-			update_polled_stuff_if_runtime();
 			totalfound = 0;
 		}
 	}

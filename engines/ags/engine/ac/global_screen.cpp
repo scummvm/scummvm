@@ -30,6 +30,7 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/screen.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -77,7 +78,7 @@ void ShakeScreen(int severe) {
 
 			render_graphics();
 
-			update_polled_stuff_if_runtime();
+			update_polled_stuff();
 		}
 	} else {
 		// Optimized variant for software render: create game scene once and shake it
@@ -88,7 +89,7 @@ void ShakeScreen(int severe) {
 			const int yoff = hh % 2 == 0 ? 0 : severe;
 			_GP(play).shake_screen_yoff = yoff;
 			render_to_screen();
-			update_polled_stuff_if_runtime();
+			update_polled_stuff();
 		}
 		clear_letterbox_borders();
 		render_to_screen();

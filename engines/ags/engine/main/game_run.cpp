@@ -796,7 +796,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	_G(our_eip) = 7;
 
-	update_polled_stuff_if_runtime();
+	update_polled_stuff();
 	if (_G(abort_engine))
 		return;
 
@@ -812,7 +812,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	game_loop_update_fps();
 
-	update_polled_stuff_if_runtime();
+	update_polled_stuff();
 	if (_G(abort_engine))
 		return;
 
@@ -1041,7 +1041,7 @@ void RunGameUntilAborted() {
 	}
 }
 
-void update_polled_stuff_if_runtime() {
+void update_polled_stuff() {
 	::AGS::g_events->pollEvents();
 
 	if (_G(want_exit)) {

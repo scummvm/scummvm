@@ -1706,7 +1706,6 @@ void prepare_room_sprites() {
 	// and for software renderer in case there are overlapping viewports.
 	// Note that software DDB is just a tiny wrapper around bitmap, so overhead is negligible.
 	if (_G(current_background_is_dirty) || !_G(roomBackgroundBmp)) {
-		update_polled_stuff_if_runtime();
 		_G(roomBackgroundBmp) =
 			recycle_ddb_bitmap(_G(roomBackgroundBmp), _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get(), false, true);
 

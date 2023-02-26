@@ -222,8 +222,6 @@ void RawDrawImageTransparent(int xx, int yy, int slot, int legacy_transparency) 
 	// 1 - 99 => alpha 1 - 244
 	//
 	RawDrawImageTrans(xx, yy, slot, GfxDef::LegacyTrans100ToAlpha255(legacy_transparency));
-
-	update_polled_stuff_if_runtime();  // this operation can be slow so stop music skipping
 }
 void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
 	if ((gotSlot < 0) || (_GP(spriteset)[gotSlot] == nullptr))
@@ -249,7 +247,6 @@ void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
 	delete newPic;
 	invalidate_screen();
 	mark_current_background_dirty();
-	update_polled_stuff_if_runtime();  // this operation can be slow so stop music skipping
 	RAW_END();
 }
 void RawDrawLine(int fromx, int fromy, int tox, int toy) {

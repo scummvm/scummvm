@@ -333,7 +333,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 			if (do_break)
 				break;
 
-			update_polled_stuff_if_runtime();
+			update_polled_stuff();
 
 			if (_GP(play).fast_forward == 0) {
 				WaitForNextFrame();

@@ -30,6 +30,7 @@
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/screen.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/ags_plugin.h"
@@ -282,7 +283,7 @@ void process_event(const EventHappened *evp) {
 					_G(gfxDriver)->EndSpriteBatch();
 				}
 				render_to_screen();
-				update_polled_stuff_if_runtime();
+				update_polled_stuff();
 				WaitForNextFrame();
 			}
 
@@ -316,7 +317,7 @@ void process_event(const EventHappened *evp) {
 				_G(gfxDriver)->DrawSprite(0, 0, ddb);
 				_G(gfxDriver)->EndSpriteBatch();
 				render_to_screen();
-				update_polled_stuff_if_runtime();
+				update_polled_stuff();
 				WaitForNextFrame();
 			}
 
