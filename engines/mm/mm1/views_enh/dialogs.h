@@ -45,13 +45,11 @@ namespace ViewsEnh {
 
 struct Dialogs {
 private:
-	// Unenhanced views
 	Views::Characters _characters;
 	Views::CreateCharacters _createCharacters;
 	Views::Locations::Inn _inn;
 	Views::Protect _protect;
 	Views::Title _title;
-//	Views::ViewCharacter _viewCharacter;
 	ViewsEnh::Locations::Market _market;
 	ViewsEnh::Locations::Temple _temple;
 	ViewsEnh::Spells::CastSpell _castSpell;

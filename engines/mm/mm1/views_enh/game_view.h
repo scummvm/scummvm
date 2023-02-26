@@ -23,18 +23,32 @@
 #define MM1_VIEWS_ENH_GAME_VIEW_H
 
 #include "mm/mm1/views/game_view.h"
+#include "mm/shared/xeen/sprites.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
 class GameView : public Views::GameView {
+private:
+	int _locationId = -1;
+	Common::Array<Shared::Xeen::SpriteResource> _backgrounds;
+	uint _frameIndex = 0, _frameCount = 0;
+	uint _timerCtr = 0;
+
+	/**
+	 * Start location animation
+	 */
+	void showLocation(int locationId);
+
 public:
 	GameView(UIElement *owner) : Views::GameView(owner) {}
 	virtual ~GameView() {}
 
 	void draw() override;
 	bool msgGame(const GameMessage &msg) override;
+	bool tick() override;
+	void update();
 };
 
 } // namespace ViewsEnh

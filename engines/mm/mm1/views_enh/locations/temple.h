@@ -47,6 +47,7 @@ public:
 	Temple();
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;

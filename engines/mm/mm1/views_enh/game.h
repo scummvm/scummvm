@@ -51,7 +51,7 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 };
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

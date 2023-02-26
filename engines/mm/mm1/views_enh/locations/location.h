@@ -69,6 +69,16 @@ public:
 	 * Leave the location, turning around
 	 */
 	void leave();
+
+	/**
+	 * Draw the location
+	 */
+	void draw();
+
+	/**
+	 * Tick handler
+	 */
+	bool tick();
 };
 
 } // namespace Locations

@@ -42,6 +42,12 @@ bool Temple::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
+bool Temple::msgUnfocus(const UnfocusMessage &msg) {
+	send("View", GameMessage("LOCATION", -1));
+	(void)Location::msgUnfocus(msg);
+	return true;
+}
+
 void Temple::draw() {
 	Location::draw();
 

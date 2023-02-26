@@ -66,6 +66,19 @@ void Location::backpackFull() {
 	displayMessage(STRING["dialogs.misc.backpack_full"]);
 }
 
+void Location::draw() {
+	send("View", GameMessage("LOCATION_DRAW"));
+	PartyView::draw();
+}
+
+bool Location::tick() {
+	// Locations have animated game backgrounds, so pass on tick
+	// to the game view to let it update
+	g_events->findView("View")->tick();
+	redraw();
+	return true;
+}
+
 } // namespace Locations
 } // namespace ViewsEnh
 } // namespace MM1

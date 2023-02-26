@@ -53,10 +53,8 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 void Game::draw() {
-	if (_needsRedraw) {
-		Graphics::ManagedSurface s = getSurface();
-		s.blitFrom(_bg);
-	}
+	Graphics::ManagedSurface s = getSurface();
+	s.blitFrom(_bg);
 
 	UIElement::draw();
 }
