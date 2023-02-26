@@ -216,6 +216,10 @@ void Te3DObject2::setPosition(const TeVector3f32 &pos) {
 	_onParentWorldTransformationMatrixChangedSignal.call();
 }
 
+void Te3DObject2::setPositionFast(const TeVector3f32 &pos) {
+	_position = pos;
+}
+
 void Te3DObject2::setRotation(const TeQuaternion &rot) {
 	if (_rotation == rot)
 		return;

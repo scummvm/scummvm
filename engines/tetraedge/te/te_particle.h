@@ -33,7 +33,13 @@ namespace Tetraedge {
 
 class TeParticle : public TeReferencesCounter {
 public:
-	class TeElement : public TeReferencesCounter {};
+	class TeElement : public TeModel {
+		public:
+		TeElement() : _elapsedTime(0), _yOffset(0) {}
+		float _elapsedTime;
+		float _yOffset;
+		TeVector3f32 _direction;
+	};
 
 	TeParticle(TeScene *scene);
 	~TeParticle();
@@ -54,19 +60,25 @@ public:
 	void setStartLoop(int startloop) { _startLoop = startloop; }
 	void setGravity(float gravity) { _gravity = gravity; }
 	void setRandomDir(bool val) { _randomDir = val; }
-	void setOrientation(const TeVector3f32 &orientation) { _orientation = orientation; }
+	void setOrientation(const TeVector3f32 &orientation);
+	void setMatrix(const TeMatrix4x4 &mat) { _matrix = mat; }
 
 	void update(int val);
+
+	int startLoop() const { return _startLoop; }
+	TeRealTimer realTimer() { return _realTimer; }
 
 	static int getIndex(const Common::String &name);
 	static TeParticle *getIndexedParticle(int idx);
 	static void cleanup();
 
+	static void deleteAll();
 	static void updateAll(int val);
 
 private:
-	Common::Array<TeIntrusivePtr<TeElement>> _elements;
-	//TeScene *_scene;
+	Common::List<TeIntrusivePtr<TeElement>> _elements;
+	Common::Array<TeIntrusivePtr<TeElement>> _elementsPending;
+	TeScene *_scene;
 	TeRealTimer _realTimer;
 	Common::String _name;
 	TeIntrusivePtr<Te3DTexture> _texture;
@@ -76,15 +88,17 @@ private:
 	TeVector3f32 _volumeSize;
 	TeColor _startColor;
 	TeColor _endColor;
-	int	_colorTime;
-	int	_time;
-	int	_period;
-	int	_particlePerPeriod;
+	int _colorTime;
+	int _time;
+	int _lastTime;
+	int _period;
+	int _particlePerPeriod;
 	bool _enabled;
 	int _startLoop;
 	float _gravity;
 	bool _randomDir;
-	TeVector3f32 _orientation;
+	TeMatrix4x4 _matrix;
+	TeMatrix4x4 _orientMatrix;
 
 	static Common::Array<TeParticle *> *indexedParticles();
 	static Common::Array<TeParticle *> *_indexedParticles;

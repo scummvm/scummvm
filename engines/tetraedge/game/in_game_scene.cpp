@@ -554,6 +554,9 @@ void InGameScene::freeSceneObjects() {
 
 	// TODO: Clean up snows, waterCones, smokes, snowCones
 
+	_particles.clear();
+	TeParticle::deleteAll();
+
 	deleteAllCallback();
 	_markers.clear();
 
@@ -819,6 +822,15 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 			error("InGameScene::loadXml: Can't load %s", pnode.getPath().c_str());
 		if (!pparser.parse())
 			error("InGameScene::loadXml: Can't parse %s", pnode.getPath().c_str());
+	}
+
+
+	TeMatrix4x4 camMatrix = currentCamera() ?
+		currentCamera()->worldTransformationMatrix() : TeMatrix4x4();
+	for (auto particle : _particles) {
+		particle->setMatrix(camMatrix);
+		particle->realTimer().start();
+		particle->update(particle->startLoop());
 	}
 
 	return true;

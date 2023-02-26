@@ -118,6 +118,7 @@ public:
 	}
 	virtual void setParent(Te3DObject2 *newparent);  // note, probably should be Te*I*3DObject2 arg
 	virtual void setPosition(const TeVector3f32 &pos);
+	virtual void setPositionFast(const TeVector3f32 &pos);
 	virtual void setRotation(const TeQuaternion &rot);
 	virtual void setScale(const TeVector3f32 &newScale);
 	virtual void setSize(const TeVector3f32 &newSize);
