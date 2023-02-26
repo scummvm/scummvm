@@ -29,9 +29,9 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
-Location::Location(const Common::String &name) :
-		ScrollView(name) {
+Location::Location(const Common::String &name) : PartyView(name) {
 	_bounds = Common::Rect(232, 0, 320, 146);
+	_escSprite.load("esc.icn");
 }
 
 void Location::leave() {
@@ -44,14 +44,6 @@ void Location::displayMessage(const Common::String &msg) {
 	Location::draw();
 
 	writeLine(3, msg, ALIGN_MIDDLE);
-}
-
-void Location::changeCharacter(uint index) {
-	if (index >= g_globals->_party.size())
-		return;
-
-	g_globals->_currCharacter = &g_globals->_party[index];
-	redraw();
 }
 
 bool Location::subtractGold(uint amount) {

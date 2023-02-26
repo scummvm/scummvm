@@ -37,25 +37,20 @@ private:
 	int _healCost = 0, _uncurseCost = 0;
 	int _alignmentCost = 0, _donateCost = 0;
 private:
+	void updateCosts();
 	void restoreHealth();
 	void uncurseItems();
 	void restoreAlignment();
 	void donate();
 
-protected:
-	/**
-	 * Change character
-	 */
-	void changeCharacter(uint index) override;
-
 public:
 	Temple();
 
 	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace Locations

@@ -22,14 +22,18 @@
 #ifndef MM1_VIEWS_ENH_LOCATIONS_LOCATION_H
 #define MM1_VIEWS_ENH_LOCATIONS_LOCATION_H
 
-#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/party_view.h"
+#include "mm/shared/xeen/sprites.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
-class Location : public ScrollView {
+class Location : public PartyView {
+protected:
+	Shared::Xeen::SpriteResource _escSprite;
+
 protected:
 	/**
 	 * Called when an active timeout countdown expired
@@ -37,11 +41,6 @@ protected:
 	void timeout() override {
 		leave();
 	}
-
-	/**
-	 * Change character
-	 */
-	virtual void changeCharacter(uint index);
 
 	/**
 	 * Subtract gold from current character
