@@ -1845,6 +1845,29 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				}
 			}
 		}
+
+		// Also create the default directory for icons and shaders
+		File defaultScummVMIconsPath = new File(_actualScummVMDataDir, "icons");
+
+		if (defaultScummVMIconsPath.exists() && defaultScummVMIconsPath.isDirectory()) {
+			Log.d(ScummVM.LOG_TAG, "ScummVM default icons/shaders path already exists: " + defaultScummVMIconsPath.getPath());
+		} else if (!defaultScummVMIconsPath.exists() && defaultScummVMIconsPath.mkdirs()) {
+			Log.d(ScummVM.LOG_TAG, "Created ScummVM default icons/shaders path: " + defaultScummVMIconsPath.getPath());
+		} else {
+			Log.e(ScummVM.LOG_TAG, "Could not create folder for ScummVM default icons/shaders path: " + defaultScummVMIconsPath.getPath());
+			new AlertDialog.Builder(this)
+				.setTitle(R.string.no_icons_path_title)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setMessage(R.string.no_icons_path_configured)
+				.setNegativeButton(R.string.quit,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
+				.show();
+			return false;
+		}
 		return true;
 	}
 

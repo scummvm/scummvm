@@ -25,6 +25,8 @@
 	<string name="no_config_file">Unable to read ScummVM config file or create a new one!</string>
 	<string name="no_save_path_title">Save Path Error</string>
 	<string name="no_save_path_configured">Unable to create or access default save path!</string>
+	<string name="no_icons_path_title">Icons Path Error</string>
+	<string name="no_icons_path_configured">Unable to create or access default icons and shaders path!</string>
 	<string name="bad_explicit_save_path_configured">Unable to access the globally set save path! Please revert to default from ScummVM Options</string>
 	<!-- <string name="no_plugins_title">No plugins found</string> -->
 	<!-- <string name="no_plugins_found">ScummVM requires at least one <i>game

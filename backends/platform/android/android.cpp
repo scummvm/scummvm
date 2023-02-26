@@ -456,6 +456,11 @@ void OSystem_Android::initBackend() {
 	// TODO remove the debug message eventually
 	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
 
+
+	ConfMan.registerDefault("iconspath", ConfMan.get("path") + "/icons");
+	// TODO remove the debug message eventually
+	LOGD("Setting Default Icons and Shaders path to: %s", ConfMan.get("iconspath").c_str());
+
 	_timerManager = new DefaultTimerManager();
 
 	_event_queue_lock = new Common::Mutex();
