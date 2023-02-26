@@ -79,9 +79,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private File _configScummvmFile;
 	private File _actualScummVMDataDir;
 	private File _possibleExternalScummVMDir;
-	private File _usingScummVMSavesDir;
 	boolean _externalPathAvailableForReadAccess;
-//	private File _usingLogFile;
 
 	// SAF related
 	public final static int REQUEST_SAF = 50000;
@@ -948,16 +946,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			// Start ScummVM
 //			Log.d(ScummVM.LOG_TAG, "CONFIG: " +  _configScummvmFile.getPath());
 //			Log.d(ScummVM.LOG_TAG, "PATH: " +  _actualScummVMDataDir.getPath());
-//			Log.d(ScummVM.LOG_TAG, "LOG: " +  _usingLogFile.getPath());
-//			Log.d(ScummVM.LOG_TAG, "SAVEPATH: " +  _usingScummVMSavesDir.getPath());
 
 			// TODO log file setting via "--logfile=" + _usingLogFile.getPath() causes crash
 			//      probably because this option is specific to SDL_BACKEND (see: base/commandLine.cpp)
 			_scummvm.setArgs(new String[]{
 				"ScummVM",
 				"--config=" + _configScummvmFile.getPath(),
-				"--path=" + _actualScummVMDataDir.getPath(),
-				"--savepath=" + _usingScummVMSavesDir.getPath()
+				"--path=" + _actualScummVMDataDir.getPath()
 			});
 
 			Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
@@ -1400,21 +1395,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//      to avoid issues with unavailable shared / external storage and to be (mostly) compatible with what the older versions did
 		// WARNING: The returned path may change over time if the calling app is moved to an adopted storage device, so only relative paths should be persisted.
 		_actualScummVMDataDir = getFilesDir();
-		// Checking for null only makes sense if we were using external storage
-//		if (_actualScummVMDataDir == null || !_actualScummVMDataDir.canRead()) {
-//			new AlertDialog.Builder(this)
-//				.setTitle(R.string.no_external_files_dir_access_title)
-//				.setIcon(android.R.drawable.ic_dialog_alert)
-//				.setMessage(R.string.no_external_files_dir_access)
-//				.setNegativeButton(R.string.quit,
-//					new DialogInterface.OnClickListener() {
-//						public void onClick(DialogInterface dialog, int which) {
-//							finish();
-//						}
-//					})
-//				.show();
-//			return false;
-//		}
+		// Checking for null _actualScummVMDataDir only makes sense if we were using external storage
 
 		Log.d(ScummVM.LOG_TAG, "Base ScummVM data folder is: " + _actualScummVMDataDir.getPath());
 		String smallNodeDesc;
@@ -1430,77 +1411,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			}
 		}
 
-//		File internalScummVMLogsDir = new File(_actualScummVMDataDir, ".cache/scummvm/logs");
-//		if (!internalScummVMLogsDir.exists() && internalScummVMLogsDir.mkdirs()) {
-//			Log.d(ScummVM.LOG_TAG, "Created ScummVM Logs path: " + internalScummVMLogsDir.getPath());
-//		} else if (internalScummVMLogsDir.isDirectory()) {
-//			Log.d(ScummVM.LOG_TAG, "ScummVM Logs path already exists: " + internalScummVMLogsDir.getPath());
-//		} else {
-//			Log.e(ScummVM.LOG_TAG, "Could not create folder for ScummVM Logs path: " + internalScummVMLogsDir.getPath());
-//			new AlertDialog.Builder(this)
-//				.setTitle(R.string.no_log_file_title)
-//				.setIcon(android.R.drawable.ic_dialog_alert)
-//				.setMessage(R.string.no_log_file)
-//				.setNegativeButton(R.string.quit,
-//					new DialogInterface.OnClickListener() {
-//						public void onClick(DialogInterface dialog, int which) {
-//							finish();
-//						}
-//					})
-//				.show();
-//			return false;
-//		}
-//
-//		_usingLogFile = new File(internalScummVMLogsDir, "scummvm.log");
-//		try {
-//			if (_usingLogFile.exists() || !_usingLogFile.createNewFile()) {
-//				Log.d(ScummVM.LOG_TAG, "ScummVM Log file already exists!");
-//				Log.d(ScummVM.LOG_TAG, "Existing ScummVM Log: " + _usingLogFile.getPath());
-//			} else {
-//				Log.d(ScummVM.LOG_TAG, "An empty ScummVM log file was created!");
-//				Log.d(ScummVM.LOG_TAG, "New ScummVM Log: " + _usingLogFile.getPath());
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			new AlertDialog.Builder(this)
-//				.setTitle(R.string.no_log_file_title)
-//				.setIcon(android.R.drawable.ic_dialog_alert)
-//				.setMessage(R.string.no_log_file)
-//				.setNegativeButton(R.string.quit,
-//					new DialogInterface.OnClickListener() {
-//						public void onClick(DialogInterface dialog, int which) {
-//							finish();
-//						}
-//					})
-//				.show();
-//			return false;
-//		}
-
-		File internalScummVMConfigDir = new File(_actualScummVMDataDir, ".config/scummvm");
-		if (!internalScummVMConfigDir.exists() && internalScummVMConfigDir.mkdirs()) {
-			Log.d(ScummVM.LOG_TAG, "Created ScummVM Config path: " + internalScummVMConfigDir.getPath());
-		} else if (internalScummVMConfigDir.isDirectory()) {
-			Log.d(ScummVM.LOG_TAG, "ScummVM Config path already exists: " + internalScummVMConfigDir.getPath());
-		} else {
-			Log.e(ScummVM.LOG_TAG, "Could not create folder for ScummVM Config path: " + internalScummVMConfigDir.getPath());
-			new AlertDialog.Builder(this)
-				.setTitle(R.string.no_config_file_title)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setMessage(R.string.no_config_file)
-				.setNegativeButton(R.string.quit,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-						}
-					})
-				.show();
-			return false;
-		}
-
 		LinkedHashMap<String, File> candidateOldLocationsOfScummVMConfigMap = new LinkedHashMap<>();
-		// Note: The "missing" case below for: (scummvm.ini)) (SDL port - A) is checked above; it is the same path we store the config file for 2.3+
+		// Note: The "missing" case below for: (scummvm.ini)) (SDL port - A) is checked above;
+		// it is the same path we store the config file for 2.3+
 		// SDL port was officially on the Play Store for versions 1.9+ up until and including 2.0)
-		// Using LinkedHashMap because the order of searching is important
+		// Using LinkedHashMap because the order of searching is important.
 		// We want to re-use the more recent ScummVM old version too
 		// TODO try getDir too without a path? just "." ??
 		candidateOldLocationsOfScummVMConfigMap.put("(scummvm.ini) (SDL port - B)", new File(_actualScummVMDataDir, "../.config/scummvm/scummvm.ini"));
@@ -1562,10 +1477,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		boolean existingConfigInScummVMDataDirReplacedOnce = false; // patch for 2.2.1 Beta1 purposes
 
 		// NOTE: our config file scummvm.ini is created directly inside the ScummVM internal app path
-		//       this is probably due to a mistake (?), since we do create a config path for it above
-		//       ( in File internalScummVMConfigDir , the sub-path ".config/scummvm")
-		//       However, this is harmless, so we can keep it this way.
-		//       Or we could change it in a future version.
+		//       It is more user friendly to keep it this way (rather than put it in a subpath ".config/scummvm",
+		//       since it can be directly browsable using the ScummVM's LAN server mode,
+		//       and looking in the root of the internal app folder.
 		//       Keep in mind that changing the scummvm.ini config file location would require at the very least:
 		//       - Moving the old scummvm.ini (if upgrading) to the new location and deleting it from the old one
 		//       - Updating the ScummVM documentation about the new location
@@ -1582,7 +1496,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
 						maxOldVersionFound = tmpOldVersionFound;
 						existingVersionFoundInScummVMDataDir = tmpOldVersionFound;
-						//scummVMConfigHandled = false; // invalidate the handled flag
 					}
 				} else {
 					Log.d(ScummVM.LOG_TAG, "Could not find info on existing ScummVM version. Unsupported or corrupt file?");
@@ -1725,20 +1638,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//      or external storage not always being available (but then eg. a save file on the storage should be correctly shown as not available)
 		//      or maybe among Android OS versions the same external storage could be mounted to a (somewhat) different path?
 		//      However, it seems unavoidable when user has set paths explicitly (ie not using the defaults)
-		//      We always set the default save path as a launch parameter
 		//
 		// By default choose to store savegames on app's internal storage, which is always available
 		//
 		File defaultScummVMSavesPath = new File(_actualScummVMDataDir, "saves");
-		// By default use this as the saves path
-		_usingScummVMSavesDir = new File(defaultScummVMSavesPath.getPath());
 
 		if (defaultScummVMSavesPath.exists() && defaultScummVMSavesPath.isDirectory()) {
-			try {
-				Log.d(ScummVM.LOG_TAG, "ScummVM default saves path already exists: " + defaultScummVMSavesPath.getPath());
-			} catch (Exception e) {
-				Log.d(ScummVM.LOG_TAG, "ScummVM default saves path exception CAUGHT!");
-			}
+			Log.d(ScummVM.LOG_TAG, "ScummVM default saves path already exists: " + defaultScummVMSavesPath.getPath());
 		} else if (!defaultScummVMSavesPath.exists() && defaultScummVMSavesPath.mkdirs()) {
 			Log.d(ScummVM.LOG_TAG, "Created ScummVM default saves path: " + defaultScummVMSavesPath.getPath());
 		} else {
@@ -1939,50 +1845,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				}
 			}
 		}
-
-		File persistentGlobalSavePath = null;
-		if (_configScummvmFile.exists() && _configScummvmFile.isFile()) {
-			Log.d(ScummVM.LOG_TAG, "Looking into config file for save path: " + _configScummvmFile.getPath());
-			String persistentGlobalSavePathStr = getSavepathInfoFromScummvmConfiguration(_configScummvmFile.getPath());
-			if (!TextUtils.isEmpty(persistentGlobalSavePathStr) && !TextUtils.isEmpty(persistentGlobalSavePathStr.trim()) ) {
-				Log.d(ScummVM.LOG_TAG, "Found explicit save path: " + persistentGlobalSavePathStr);
-				persistentGlobalSavePath = new File(persistentGlobalSavePathStr);
-				if (persistentGlobalSavePath.exists() && persistentGlobalSavePath.isDirectory() && persistentGlobalSavePath.listFiles() != null) {
-					try {
-						Log.d(ScummVM.LOG_TAG, "ScummVM explicit saves path folder exists and it is list-able");
-					} catch (Exception e) {
-						persistentGlobalSavePath = null;
-						Log.e(ScummVM.LOG_TAG, "ScummVM explicit saves path exception CAUGHT!");
-					}
-				} else {
-					// We won't bother creating it, it's not in our scope to do that (and it would probably result in potential permission issues)
-					Log.e(ScummVM.LOG_TAG, "Could not access explicit save folder for ScummVM: " + persistentGlobalSavePath.getPath());
-					persistentGlobalSavePath = null;
-					// We should *not* quit or return here,
-					// TODO But, how do we override this explicit set path? Do we leave it to the user to reset it?
-					new AlertDialog.Builder(this)
-						.setTitle(R.string.no_save_path_title)
-						.setIcon(android.R.drawable.ic_dialog_alert)
-						.setMessage(R.string.bad_explicit_save_path_configured)
-						.setPositiveButton(R.string.ok,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {
-
-								}
-							})
-						.show();
-				}
-			} else {
-				Log.d(ScummVM.LOG_TAG, "Could not find explicit save path info in ScummVM's config file");
-			}
-		}
-
-		if (persistentGlobalSavePath != null) {
-			// Use the persistent savepath
-			_usingScummVMSavesDir = new File(persistentGlobalSavePath.getPath());
-		}
-		Log.d(ScummVM.LOG_TAG, "Resulting save path is: " + _usingScummVMSavesDir.getPath());
-
 		return true;
 	}
 
