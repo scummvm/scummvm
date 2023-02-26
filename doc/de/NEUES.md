@@ -16,7 +16,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler behoben, der verhindert, dass der rote Umschlag mit der Tastatur aufgehoben werden kann.
 
 
-#### 2.7.0 (26.02.2023)
+#### 2.7.0 "The Real Slim Shader" (26.02.2023)
 
  Neue Spiele:
    - Unterstützung für Soldier Boyz hinzugefügt.
