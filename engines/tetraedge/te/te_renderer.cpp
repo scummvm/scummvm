@@ -49,13 +49,19 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, uint i1, uint tricount, 
 		if (!tricount)
 			return;
 	}
-	_transparentMeshVertexes.resize((_numTransparentMeshes + tricount) * 3);
-	_transparentMeshNormals.resize((_numTransparentMeshes + tricount) * 3);
-	_transparentMeshCoords.resize((_numTransparentMeshes + tricount) * 3);
-	_transparentMeshColors.resize((_numTransparentMeshes + tricount) * 3);
-	_transparentMeshVertexNums.resize((_numTransparentMeshes + tricount) * 3);
 
-	int newPropsSize = _pendingTransparentMeshProperties + (mesh.shouldDrawMaybe() ? tricount : 1);
+	uint vertcount = (_numTransparentMeshes + tricount) * 3;
+	_transparentMeshVertexes.resize(vertcount);
+	_transparentMeshNormals.resize(vertcount);
+	_transparentMeshCoords.resize(vertcount);
+	_transparentMeshColors.resize(vertcount);
+	_transparentMeshVertexNums.resize(vertcount);
+
+	uint newPropsSize = _pendingTransparentMeshProperties + (mesh.shouldDrawMaybe() ? tricount : 1);
+	// Reserve blocks of 64 to avoid reallocating too much.
+	uint newPropsReserve = (newPropsSize / 64 + 1) * 64;
+	assert(newPropsReserve >= newPropsSize);
+	_transparentMeshProps.reserve(newPropsReserve);
 	_transparentMeshProps.resize(newPropsSize);
 	if (meshMode == TeMesh::MeshMode_Triangles) {
 		for (uint i = 0; i < tricount; i++) {
