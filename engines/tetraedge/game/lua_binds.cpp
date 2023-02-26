@@ -1536,7 +1536,9 @@ static int tolua_ExportedFunctions_SetVisibleButtonHelp00(lua_State *L) {
 }
 
 static bool TestFileFlagSystemFlag(const Common::String &flagname, const Common::String &val) {
-	if (flagname == "platform" && val == "Android")
+	// Syberia 1 always returns that it is Android. Syberia 2 doesn't.
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia
+			&& flagname == "platform" && val == "Android")
 		return true;
 	return g_engine->getCore()->fileFlagSystemFlag(flagname) == val;
 }
