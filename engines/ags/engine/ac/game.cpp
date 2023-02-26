@@ -1299,9 +1299,9 @@ void replace_tokens(const char *srcmes, char *destm, int maxlen) {
 }
 
 const char *get_global_message(int msnum) {
-	if (_GP(game).messages[msnum - 500] == nullptr)
+	if (_GP(game).messages[msnum - 500].IsEmpty())
 		return "";
-	return get_translation(_GP(game).messages[msnum - 500]);
+	return get_translation(_GP(game).messages[msnum - 500].GetCStr());
 }
 
 void get_message_text(int msnum, char *buffer, char giveErr) {
@@ -1311,14 +1311,14 @@ void get_message_text(int msnum, char *buffer, char giveErr) {
 
 	if (msnum >= 500) {
 
-		if ((msnum >= MAXGLOBALMES + 500) || (_GP(game).messages[msnum - 500] == nullptr)) {
+		if ((msnum >= MAXGLOBALMES + 500) || (_GP(game).messages[msnum - 500].IsEmpty())) {
 			if (giveErr)
 				quit("!DisplayGlobalMessage: message does not exist");
 			buffer[0] = 0;
 			return;
 		}
 		buffer[0] = 0;
-		replace_tokens(get_translation(_GP(game).messages[msnum - 500]), buffer, maxlen);
+		replace_tokens(get_translation(_GP(game).messages[msnum - 500].GetCStr()), buffer, maxlen);
 		return;
 	} else if (msnum < 0 || (size_t)msnum >= _GP(thisroom).MessageCount) {
 		if (giveErr)

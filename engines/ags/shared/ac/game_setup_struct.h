@@ -22,6 +22,7 @@
 #ifndef AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 
+//#include "ags/lib/std/array.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/shared/ac/character_info.h" // TODO: constants to separate header
@@ -159,7 +160,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 
 	// Functions for reading and writing appropriate data from/to save game
 	void ReadFromSaveGame_v321(Shared::Stream *in, char *gswas, ccScript *compsc, CharacterInfo *chwas,
-							   WordsDictionary *olddict, char **mesbk);
+							   WordsDictionary *olddict, std::vector<String> &mesbk);
 
 	void ReadFromSavegame(Shared::Stream *in);
 	void WriteForSavegame(Shared::Stream *out);
