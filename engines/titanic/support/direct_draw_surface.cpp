@@ -90,7 +90,7 @@ void DirectDrawSurface::fillRect(Rect *rect, byte r, byte g, byte b) {
 void DirectDrawSurface::blit(const Rect &destRect, DirectDrawSurface *srcSurface, Rect &srcRect) {
 	assert(srcSurface);
 	if (!destRect.isEmpty())
-		_surface->transBlitFrom(*srcSurface->_surface, srcRect, destRect, (uint)-1);
+		_surface->transBlitFrom(*srcSurface->_surface, srcRect, destRect);
 }
 
 void DirectDrawSurface::blit(const Point &destPos, DirectDrawSurface *srcSurface, Rect *bounds) {
