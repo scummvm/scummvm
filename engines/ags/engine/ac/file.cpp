@@ -415,8 +415,12 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	}
 #endif
 
-	// don't allow write operations for relative paths outside game dir
+	// Create a proper ResolvedPath with FSLocation separating base location
+	// (which the engine is not allowed to create) and sub-dirs (created by the engine).
+	parent_dir = parent_dir.Concat(Path::GetDirectoryPath(child_path));
+	child_path = Path::GetFilename(child_path);
 	ResolvedPath test_rp = ResolvedPath(parent_dir, child_path, alt_path);
+	// don't allow write operations for relative paths outside game dir
 	if (!read_only) {
 		if (!Path::IsSameOrSubDir(test_rp.Loc.FullDir, test_rp.FullPath)) {
 			debug_script_warn("Attempt to access file '%s' denied (outside of game directory)", sc_path.GetCStr());
