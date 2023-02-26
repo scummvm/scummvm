@@ -58,6 +58,7 @@ void SessionRequest::openLocalFile(Common::String localFile) {
 		ErrorResponse error(this, false, true, "SessionRequestFile: unable to open file to download into", -1);
 		finishError(error);
 		delete _localFile;
+		_localFile = nullptr;
 		return;
 	}
 
