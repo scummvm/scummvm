@@ -69,54 +69,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj, Commo
 
 	XSkinMeshLoader *mesh = new XSkinMeshLoader(this, meshObject);
 	_skinMesh = new SkinMeshHelper(mesh);
-
-	mesh->parsePositionCoords(meshObject);
-
-	uint numFaces = _skinMesh->getNumFaces();
-
-	//uint numBones = _skinMesh->getNumBones();
-
-	Common::Array<int> indexCountPerFace;
-
-	mesh->parseFaces(meshObject, numFaces, indexCountPerFace);
-
-	uint numChildren = 0;
-	xobj->getChildren(numChildren);
-
-	for (uint32 i = 0; i < numChildren; i++) {
-		XFileData xchildData;
-		XClassType objectType;
-		if (xobj->getChild(i, xchildData)) {
-			if (xchildData.getType(objectType)) {
-				if (objectType == kXClassMeshTextureCoords) {
-					mesh->parseTextureCoords(&xchildData);
-				} else if (objectType == kXClassMeshNormals) {
-					mesh->parseNormalCoords(&xchildData);
-				} else if (objectType == kXClassMeshMaterialList) {
-					mesh->parseMaterials(&xchildData, _gameRef, numFaces, filename, materialReferences, indexCountPerFace);
-				} else if (objectType == kXClassMaterial) {
-					Material *mat = new Material(_gameRef);
-					mat->loadFromX(&xchildData, filename);
-					_materials.add(mat);
-
-					// one material = one index range
-					_numAttrs = 1;
-					mesh->_indexRanges.push_back(0);
-					mesh->_indexRanges.push_back(mesh->_indexData.size());
-				} else if (objectType == kXClassSkinMeshHeader) {
-					int boneCount = xchildData.getXSkinMeshHeaderObject()->_nBones;
-					_skinnedMesh = boneCount > 0;
-				} else if (objectType == kXClassSkinWeights) {
-					_skinnedMesh = true;
-					mesh->parseSkinWeights(&xchildData);
-				} else if (objectType == kXClassDeclData) {
-					mesh->parseVertexDeclaration(&xchildData);
-				}
-			}
-		}
-	}
-
-	mesh->generateAdjacency(_adjacency);
+	mesh->loadMesh(filename, xobj, materialReferences);
 
 	return true;
 }

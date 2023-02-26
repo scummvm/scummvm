@@ -53,6 +53,54 @@ XSkinMeshLoader::~XSkinMeshLoader() {
 	delete[] _vertexNormalData;
 }
 
+void XSkinMeshLoader::loadMesh(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
+	parsePositionCoords(_meshObject);
+
+	uint numFaces = _meshObject->_numFaces;
+
+	Common::Array<int> indexCountPerFace;
+
+	parseFaces(_meshObject, numFaces, indexCountPerFace);
+
+	uint numChildren = 0;
+	xobj->getChildren(numChildren);
+
+	for (uint32 i = 0; i < numChildren; i++) {
+		XFileData xchildData;
+		XClassType objectType;
+		if (xobj->getChild(i, xchildData)) {
+			if (xchildData.getType(objectType)) {
+				if (objectType == kXClassMeshTextureCoords) {
+					parseTextureCoords(&xchildData);
+				} else if (objectType == kXClassMeshNormals) {
+					parseNormalCoords(&xchildData);
+				} else if (objectType == kXClassMeshMaterialList) {
+					parseMaterials(&xchildData, _mesh->_gameRef, numFaces, filename, materialReferences, indexCountPerFace);
+				} else if (objectType == kXClassMaterial) {
+					Material *mat = new Material(_mesh->_gameRef);
+					mat->loadFromX(&xchildData, filename);
+					_mesh->_materials.add(mat);
+
+					// one material = one index range
+					_mesh->_numAttrs = 1;
+					_indexRanges.push_back(0);
+					_indexRanges.push_back(_indexData.size());
+				} else if (objectType == kXClassSkinMeshHeader) {
+					int boneCount = xchildData.getXSkinMeshHeaderObject()->_nBones;
+					_mesh->_skinnedMesh = boneCount > 0;
+				} else if (objectType == kXClassSkinWeights) {
+					_mesh->_skinnedMesh = true;
+					parseSkinWeights(&xchildData);
+				} else if (objectType == kXClassDeclData) {
+					parseVertexDeclaration(&xchildData);
+				}
+			}
+		}
+	}
+
+	generateAdjacency(_mesh->_adjacency);
+}
+
 bool XSkinMeshLoader::parsePositionCoords(XMeshObject *mesh) {
 	for (uint i = 0; i < _vertexCount; ++i) {
 		_vertexPositionData[i * 3 + 0] = mesh->_vertices[i]._x;
