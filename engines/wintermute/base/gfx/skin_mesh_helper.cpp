@@ -28,6 +28,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
 #include "engines/wintermute/base/gfx/xskinmesh_loader.h"
+#include "engines/wintermute/base/gfx/xfile_loader.h"
 
 namespace Wintermute {
 
@@ -43,7 +44,7 @@ SkinMeshHelper::~SkinMeshHelper() {
 
 //////////////////////////////////////////////////////////////////////////
 uint SkinMeshHelper::getNumFaces() {
-	return 0;//_mesh->getNumFaces();
+	return _mesh->_meshObject->_numFaces;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -34,13 +34,17 @@ namespace Wintermute {
 // define constant to make it available to the linker
 const uint32 XSkinMeshLoader::kNullIndex;
 
-XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh) {
+XSkinMeshLoader::XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject) {
 	_mesh = mesh;
+	_meshObject = meshObject;
 
-	_vertexData = nullptr;
-	_vertexPositionData = nullptr;
-	_vertexNormalData = nullptr;
-	_vertexCount = 0;
+	_vertexCount = meshObject->_numVertices;
+	// vertex format for .X meshes will be position + normals + textures
+	_vertexData = new float[kVertexComponentCount * _vertexCount]();
+	_vertexPositionData = new float[3 * _vertexCount]();
+	// we already know how big this is supposed to be
+	// TODO: might have to generate normals if file does not contain any
+	_vertexNormalData = new float[3 * _vertexCount]();
 }
 
 XSkinMeshLoader::~XSkinMeshLoader() {

@@ -67,25 +67,18 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj, Commo
 		return false;
 	}
 
-	XSkinMeshLoader *mesh = new XSkinMeshLoader(this);
+	XSkinMeshLoader *mesh = new XSkinMeshLoader(this, meshObject);
 	_skinMesh = new SkinMeshHelper(mesh);
-
-	mesh->_vertexCount = meshObject->_numVertices;
-
-	// vertex format for .X meshes will be position + normals + textures
-	mesh->_vertexData = new float[XSkinMeshLoader::kVertexComponentCount * mesh->_vertexCount]();
-	mesh->_vertexPositionData = new float[3 * mesh->_vertexCount]();
-	// we already know how big this is supposed to be
-	// TODO: might have to generate normals if file does not contain any
-	mesh->_vertexNormalData = new float[3 * mesh->_vertexCount]();
 
 	mesh->parsePositionCoords(meshObject);
 
-	int faceCount = meshObject->_numFaces;
+	uint numFaces = _skinMesh->getNumFaces();
+
+	//uint numBones = _skinMesh->getNumBones();
 
 	Common::Array<int> indexCountPerFace;
 
-	mesh->parseFaces(meshObject, faceCount, indexCountPerFace);
+	mesh->parseFaces(meshObject, numFaces, indexCountPerFace);
 
 	uint numChildren = 0;
 	xobj->getChildren(numChildren);
@@ -100,7 +93,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj, Commo
 				} else if (objectType == kXClassMeshNormals) {
 					mesh->parseNormalCoords(&xchildData);
 				} else if (objectType == kXClassMeshMaterialList) {
-					mesh->parseMaterials(&xchildData, _gameRef, faceCount, filename, materialReferences, indexCountPerFace);
+					mesh->parseMaterials(&xchildData, _gameRef, numFaces, filename, materialReferences, indexCountPerFace);
 				} else if (objectType == kXClassMaterial) {
 					Material *mat = new Material(_gameRef);
 					mat->loadFromX(&xchildData, filename);

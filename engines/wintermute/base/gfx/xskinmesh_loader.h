@@ -33,6 +33,7 @@ class Material;
 class XModel;
 class XMesh;
 class ShadowVolume;
+class SkinMeshHelper;
 class VideoTheoraPlayer;
 struct XMeshObject;
 
@@ -47,9 +48,10 @@ class XSkinMeshLoader {
 	friend class XMesh;
 	friend class XMeshOpenGL;
 	friend class XMeshOpenGLShader;
+	friend class SkinMeshHelper;
 
 public:
-	XSkinMeshLoader(XMesh *mesh);
+	XSkinMeshLoader(XMesh *mesh, XMeshObject *meshObject);
 	virtual ~XSkinMeshLoader();
 	
 protected:
@@ -89,6 +91,7 @@ protected:
 	BaseArray<int> _materialIndices;
 
 	XMesh *_mesh;
+	XMeshObject *_meshObject;
 };
 
 } // namespace Wintermute
