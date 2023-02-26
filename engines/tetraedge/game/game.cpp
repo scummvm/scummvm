@@ -874,6 +874,8 @@ bool Game::loadPlayerCharacter(const Common::String &name) {
 		_scene._character->_characterAnimPlayerFinishedSignal.add(this, &Game::onCharacterAnimationPlayerFinished);
 		_scene._character->onFinished().remove(this, &Game::onDisplacementPlayerFinished);
 		_scene._character->onFinished().add(this, &Game::onDisplacementPlayerFinished);
+	} else {
+		debug("failed to load player character %s", name.c_str());
 	}
 	return result;
 }

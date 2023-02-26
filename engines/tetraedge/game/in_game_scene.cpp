@@ -995,16 +995,31 @@ bool InGameScene::loadPlayerCharacter(const Common::String &name) {
 
 		_playerCharacterModel = _character->_model;
 
-		if (!findKate()) {
-			models().push_back(_character->_model);
-			if (_character->_shadowModel[0]) {
-				models().push_back(_character->_shadowModel[0]);
-				models().push_back(_character->_shadowModel[1]);
+		bool kateFound = findKate();
+
+		if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+			if (!kateFound) {
+				models().push_back(_character->_model);
+				if (_character->_shadowModel[0]) {
+					models().push_back(_character->_shadowModel[0]);
+					models().push_back(_character->_shadowModel[1]);
+				}
 			}
+		} else {
+			if (kateFound) {
+				for (uint i = 0; i < models().size(); i++) {
+					if (models()[i] == _character->_model) {
+						models().remove_at(i);
+						break;
+					}
+				}
+			}
+			models().push_back(_character->_model);
 		}
 	}
 
 	_character->_model->setVisible(true);
+	_character->setFreeMoveZone(nullptr);
 	return true;
 }
 
@@ -1539,7 +1554,7 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 		if (_character->_model->anim())
 			_character->_model->anim()->stop(); // TODO: added this
 		_character->setFreeMoveZone(nullptr); // TODO: added this
-		// TODO: deleteLater() something here..
+		_character->deleteLater();
 		_character = nullptr;
 	}
 	for (uint i = 0; i < _characters.size(); i++) {
@@ -1548,7 +1563,7 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 			c->removeAnim();
 			c->deleteAnim();
 			c->deleteAllCallback();
-			// TODO: deleteLater() something here..
+			c->deleteLater();
 			if (c->_model->anim())
 				c->_model->anim()->stop(); // TODO: added this
 			c->setFreeMoveZone(nullptr); // TODO: added this

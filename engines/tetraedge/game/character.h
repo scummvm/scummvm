@@ -38,7 +38,7 @@
 
 namespace Tetraedge {
 
-class Character : public TeAnimation {
+class Character : public TeAnimation, public TeObject {
 public:
 	Character();
 	virtual ~Character();

@@ -2214,7 +2214,7 @@ static int tolua_ExportedFunctions_EnableRunMode00(lua_State *L) {
 
 static void SetModelPlayer(const Common::String &name) {
 	Game *game = g_engine->getGame();
-	Character *character = game->scene().character(name);
+	Character *character = game->scene()._character;
 
 	if (!character) {
 		warning("[SetModelPlayer] Character not found %s", name.c_str());
