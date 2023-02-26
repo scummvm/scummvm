@@ -971,7 +971,8 @@ void ScummEngine::CHARSET_1() {
 
 		// If the string is centered and this is MI1 Sega CD, don't add linebreaks right away;
 		// we will take care of it in a different way just below ... :-)
-		if (_game.platform != Common::kPlatformSegaCD && !_charset->_center) {
+		if (_game.platform != Common::kPlatformSegaCD ||
+			(_game.platform != Common::kPlatformSegaCD && !_charset->_center)) {
 			_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, maxWidth);
 		}
 	}
