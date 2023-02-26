@@ -35,10 +35,6 @@
 constexpr int SCREEN_WIDTH = 640;
 constexpr int SCREEN_HEIGHT = 480;
 
-// minimum overlay dimensions
-constexpr int OVERLAY_WIDTH = 320;
-constexpr int OVERLAY_HEIGHT = 240;
-
 class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
 public:
 	AtariGraphicsManager();
@@ -75,10 +71,12 @@ public:
 	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
 	bool isOverlayVisible() const override { return _overlayVisible; }
-	Graphics::PixelFormat getOverlayFormat() const override { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
+	Graphics::PixelFormat getOverlayFormat() const override { return PIXELFORMAT_RGB332; }
 	void clearOverlay() override;
 	void grabOverlay(Graphics::Surface &surface) const override;
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
+	int16 getOverlayHeight() const override { return 480; }
+	int16 getOverlayWidth() const override { return 640; }
 
 	bool showMouse(bool visible) override;
 	void warpMouse(int x, int y) override;
@@ -93,7 +91,8 @@ public:
 	Common::Keymap *getKeymap() const;
 
 protected:
-	const Graphics::PixelFormat PIXELFORMAT8 = Graphics::PixelFormat::createFormatCLUT8();
+	const Graphics::PixelFormat PIXELFORMAT_CLUT8 = Graphics::PixelFormat::createFormatCLUT8();
+	const Graphics::PixelFormat PIXELFORMAT_RGB332 = Graphics::PixelFormat(1, 3, 3, 2, 0, 5, 2, 0, 0);
 
 	typedef void* (*AtariMemAlloc)(size_t bytes);
 	typedef void (*AtariMemFree)(void *ptr);
@@ -141,8 +140,6 @@ protected:
 	static const int BACK_BUFFER1 = 1;
 	static const int BACK_BUFFER2 = 2;
 
-	Graphics::Surface _chunkySurface;	// for Videl's copyRectToSurfaceWithKey
-
 private:
 	enum CustomEventAction {
 		kActionToggleAspectRatioCorrection = 100,
@@ -165,26 +162,12 @@ private:
 	virtual void copyRectToSurface(Graphics::Surface &dstSurface,
 								   const Graphics::Surface &srcSurface, int destX, int destY,
 								   const Common::Rect &subRect) const = 0;
-	virtual void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface,
+	virtual void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &bgSurface,
 										  const Graphics::Surface &srcSurface, int destX, int destY,
-										  const Common::Rect &subRect, uint32 key) const = 0;
+										  const Common::Rect &subRect, uint32 key, const byte srcPalette[256*3]) const = 0;
 	virtual void alignRect(const Graphics::Surface &srcSurface, Common::Rect &rect) const {}
 
-	enum class ScaleMode {
-		NONE,
-		UPSCALE,
-		DOWNSCALE
-	};
-	void copySurface8ToSurface16(const Graphics::Surface &srcSurface, const byte *srcPalette,
-								 Graphics::Surface &dstSurface, int destX, int destY,
-								 const Common::Rect subRect, ScaleMode scaleMode) const;
-	void copySurface8ToSurface16WithKey(const Graphics::Surface &srcSurface, const byte* srcPalette,
-										Graphics::Surface &dstSurface, int destX, int destY,
-										const Common::Rect subRect, uint32 key) const;
-
 	void handleModifiedRect(const Graphics::Surface &surface, Common::Rect rect, Common::Array<Common::Rect> &rects) const;
-
-	void updateCursorRect();
 
 	bool _aspectRatioCorrection = false;
 	bool _oldAspectRatioCorrection = false;
@@ -206,6 +189,7 @@ private:
 	Common::Rect _modifiedScreenRect;	// direct rendering only
 	bool _screenModified = false;	// double/triple buffering only
 
+	Graphics::Surface _chunkySurface;
 	Common::Array<Common::Rect> _modifiedChunkyRects;
 
 	byte *_overlayScreen = nullptr;	// for Mfree() purposes only
@@ -265,7 +249,7 @@ private:
 		Common::Rect srcRect;
 		Common::Rect dstRect;
 
-		// palette (only used for 16bpp screen surfaces)
+		// palette (only used for the overlay)
 		byte palette[256*3] = {};
 
 	private:
@@ -279,6 +263,7 @@ private:
 	Common::Rect _oldCursorRect;
 
 	byte _palette[256*3] = {};
+	byte _overlayPalette[256*3] = {};
 };
 
 #endif

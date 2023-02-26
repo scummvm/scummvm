@@ -63,6 +63,13 @@ AtariGraphicsManager::AtariGraphicsManager() {
 
 	ConfMan.flushToDisk();
 
+	// Generate RGB332 palette for the overlay
+	for (uint i = 0; i < 256; i++) {
+		_overlayPalette[i*3 + 0] = ((i >> 5) & 7) << 5;
+		_overlayPalette[i*3 + 1] = ((i >> 2) & 7) << 5;
+		_overlayPalette[i*3 + 2] = (i & 3) << 6;
+	}
+
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
@@ -76,8 +83,13 @@ bool AtariGraphicsManager::hasFeature(OSystem::Feature f) const {
 		debug("hasFeature(kFeatureAspectRatioCorrection): %d", !_vgaMonitor);
 		return !_vgaMonitor;
 	case OSystem::Feature::kFeatureCursorPalette:
-		debug("hasFeature(kFeatureCursorPalette): %d", isOverlayVisible());
-		return isOverlayVisible();
+		// XXX: pretend to have cursor palette all the time, this function
+		// can get called (and it is) any time, before and after showOverlay()
+		// (overlay cursor uses the cross if kFeatureCursorPalette returns false
+		// here too soon)
+		//debug("hasFeature(kFeatureCursorPalette): %d", isOverlayVisible());
+		//return isOverlayVisible();
+		return true;
 	case OSystem::Feature::kFeatureVSync:
 		debug("hasFeature(kFeatureVSync): %d", _vsync);
 		return true;
@@ -109,7 +121,8 @@ bool AtariGraphicsManager::getFeatureState(OSystem::Feature f) const {
 		return _aspectRatioCorrection;
 	case OSystem::Feature::kFeatureCursorPalette:
 		//debug("getFeatureState(kFeatureCursorPalette): %d", isOverlayVisible());
-		return isOverlayVisible();
+		//return isOverlayVisible();
+		return true;
 	case OSystem::Feature::kFeatureVSync:
 		//debug("getFeatureState(kFeatureVSync): %d", _vsync);
 		return _vsync;
@@ -134,7 +147,7 @@ void AtariGraphicsManager::initSize(uint width, uint height, const Graphics::Pix
 
 	_pendingState.width = width;
 	_pendingState.height = height;
-	_pendingState.format = format ? *format : PIXELFORMAT8;
+	_pendingState.format = format ? *format : PIXELFORMAT_CLUT8;
 }
 
 void AtariGraphicsManager::beginGFXTransaction() {
@@ -150,7 +163,7 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 	//if (_pendingState == _currentState)
 	//	return static_cast<OSystem::TransactionError>(error);
 
-	if (_pendingState.format != PIXELFORMAT8)
+	if (_pendingState.format != PIXELFORMAT_CLUT8)
 		error |= OSystem::TransactionError::kTransactionFormatNotSupported;
 
 	// TODO: Several engines support unusual resolutions like 256x240 (NES Maniac Mansion),
@@ -354,17 +367,13 @@ void AtariGraphicsManager::updateScreen() {
 	bool resolutionChanged = false;
 
 	if (_pendingScreenChange & kPendingScreenChangeOverlay) {
-		if (_vgaMonitor) {
-			if (getOverlayWidth() == 640 && getOverlayHeight() == 480)
-				asm_screen_set_scp_res(scp_640x480x16_vga);
-			else
-				asm_screen_set_scp_res(scp_320x240x16_vga);
-		} else {
-			//asm_screen_set_scp_res(scp_320x240x16_rgb);
-			asm_screen_set_scp_res(scp_640x480x16_rgb);
-		}
+		if (_vgaMonitor)
+			asm_screen_set_scp_res(scp_640x480x8_vga);
+		else
+			asm_screen_set_scp_res(scp_640x480x8_rgb);
 
 		asm_screen_set_vram(_screenOverlaySurface.getPixels());
+		asm_screen_set_falcon_palette(_overlayPalette);
 		resolutionChanged = true;
 	}
 
@@ -374,16 +383,8 @@ void AtariGraphicsManager::updateScreen() {
 		resolutionChanged = true;
 	}
 
-	if ((_pendingScreenChange & kPendingScreenChangePalette) && !isOverlayVisible()) {
-		static uint falconPalette[256];
-
-		for (uint i = 0; i < 256; ++i) {
-			// RRRRRRRR GGGGGGGG BBBBBBBB -> RRRRRRrr GGGGGGgg 00000000 BBBBBBbb
-			falconPalette[i] = (_palette[i * 3 + 0] << 24) | (_palette[i * 3 + 1] << 16) | _palette[i * 3 + 2];
-		}
-#ifdef SCREEN_ACTIVE
-		asm_screen_set_falcon_palette(falconPalette);
-#endif
+	if (_pendingScreenChange & kPendingScreenChangePalette) {
+		asm_screen_set_falcon_palette(_palette);
 	}
 
 	_pendingScreenChange = kPendingScreenChangeNone;
@@ -411,7 +412,7 @@ void AtariGraphicsManager::showOverlay(bool inGUI) {
 	if (_overlayVisible)
 		return;
 
-	_pendingScreenChange &= ~kPendingScreenChangeScreen;
+	_pendingScreenChange &= ~(kPendingScreenChangeScreen | kPendingScreenChangePalette);
 	_pendingScreenChange |= kPendingScreenChangeOverlay;
 
 	_cursor.swap();
@@ -433,7 +434,7 @@ void AtariGraphicsManager::hideOverlay() {
 		return;
 
 	_pendingScreenChange &= ~kPendingScreenChangeOverlay;
-	_pendingScreenChange |= kPendingScreenChangeScreen;
+	_pendingScreenChange |= (kPendingScreenChangeScreen | kPendingScreenChangePalette);
 
 	_cursor.swap();
 	// don't fool game cursor logic (especially direct rendering)
@@ -463,29 +464,44 @@ void AtariGraphicsManager::clearOverlay() {
 		vOffset = (480 - 400) / 2;
 	}
 
-	ScaleMode scaleMode;
-	if (w == _overlaySurface.w && h == _overlaySurface.h) {
-		scaleMode = ScaleMode::NONE;
-	} else if (w / _overlaySurface.w == 2 && h / _overlaySurface.h == 2) {
-		scaleMode = ScaleMode::DOWNSCALE;
-		vOffset /= 2;
-	} else if (_overlaySurface.w / w == 2 && _overlaySurface.h / h == 2) {
-		scaleMode = ScaleMode::UPSCALE;
+	bool upscale = false;
+
+	if (_overlaySurface.w / w == 2 && _overlaySurface.h / h == 2) {
+		upscale = true;
 		vOffset *= 2;
-	} else {
-		warning("Unknown overlay (%d, %d) / screen (%d, %d) ratio: ",
+	} else if (vOffset != 0) {
+		warning("Unknown overlay (%d, %d) / screen (%d, %d) ratio",
 			_overlaySurface.w, _overlaySurface.h, w, h);
 		return;
 	}
 
 	memset(_overlaySurface.getBasePtr(0, 0), 0, _overlaySurface.pitch * vOffset);
-	copySurface8ToSurface16(
-		sourceSurface,
-		_palette,
-		_overlaySurface,
-		0, vOffset,
-		Common::Rect(sourceSurface.w, sourceSurface.h),
-		scaleMode);
+
+	// Transpose from game palette to RGB332 (overlay palette)
+	const byte *src = (const byte*)sourceSurface.getPixels();
+	byte *dst = (byte*)_overlaySurface.getBasePtr(0, vOffset);
+
+	for (int y = 0; y < sourceSurface.h; y++) {
+		for (int x = 0; x < sourceSurface.w; x++) {
+			const byte col = *src++;
+			const byte pixel = (_palette[3*col + 0] & 0xe0)
+							| ((_palette[3*col + 1] >> 3) & 0x1c)
+							| ((_palette[3*col + 2] >> 6) & 0x03);
+
+			if (upscale) {
+				*(dst + _overlaySurface.pitch) = pixel;
+				*dst++ = pixel;
+				*(dst + _overlaySurface.pitch) = pixel;
+				*dst++ = pixel;
+			} else {
+				*dst++ = pixel;
+			}
+		}
+
+		if (upscale)
+			dst += _overlaySurface.pitch;
+	}
+
 	memset(_overlaySurface.getBasePtr(0, _overlaySurface.h - vOffset), 0, _overlaySurface.pitch * vOffset);
 
 	handleModifiedRect(_overlaySurface, Common::Rect(_overlaySurface.w, _overlaySurface.h), _modifiedOverlayRects);
@@ -530,7 +546,7 @@ void AtariGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int h
 	if (mask)
 		warning("AtariGraphicsManager::setMouseCursor: Masks are not supported");
 
-	const Graphics::PixelFormat cursorFormat = format ? *format : PIXELFORMAT8;
+	const Graphics::PixelFormat cursorFormat = format ? *format : PIXELFORMAT_CLUT8;
 	_cursor.setSurface(buf, (int)w, (int)h, hotspotX, hotspotY, keycolor, cursorFormat);
 }
 
@@ -576,14 +592,14 @@ Common::Keymap *AtariGraphicsManager::getKeymap() const {
 void AtariGraphicsManager::allocateSurfaces() {
 	for (int i = 0; i < SCREENS; ++i) {
 		if (!(_screen[i] = allocateAtariSurface(_screenSurface,
-												SCREEN_WIDTH, SCREEN_HEIGHT, PIXELFORMAT8,
+												SCREEN_WIDTH, SCREEN_HEIGHT, PIXELFORMAT_CLUT8,
 												getStRamAllocFunc())))
 			error("Failed to allocate screen memory in ST RAM");
 		_screenAligned[i] = (byte*)_screenSurface.getPixels();
 	}
 	_screenSurface.setPixels(_screenAligned[getDefaultGraphicsMode() <= 1 ? FRONT_BUFFER : BACK_BUFFER1]);
 
-	_chunkySurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, PIXELFORMAT8);
+	_chunkySurface.create(SCREEN_WIDTH, SCREEN_HEIGHT, PIXELFORMAT_CLUT8);
 
 	if (!(_overlayScreen = allocateAtariSurface(_screenOverlaySurface,
 												getOverlayWidth(), getOverlayHeight(), getOverlayFormat(),
@@ -658,7 +674,7 @@ bool AtariGraphicsManager::updateOverlay() {
 		if (!drawCursor && !_cursor.outOfScreen && _cursor.visible)
 			drawCursor = rect.intersects(_cursor.dstRect);
 
-		_screenOverlaySurface.copyRectToSurface(_overlaySurface, rect.left, rect.top, rect);
+		copyRectToSurface(_screenOverlaySurface, _overlaySurface, rect.left, rect.top, rect);
 
 		_modifiedOverlayRects.pop_back();
 
@@ -669,7 +685,8 @@ bool AtariGraphicsManager::updateOverlay() {
 		return updated;
 
 	if ((_cursor.positionChanged || !_cursor.visible) && !_oldCursorRect.isEmpty()) {
-		_screenOverlaySurface.copyRectToSurface(_overlaySurface, _oldCursorRect.left, _oldCursorRect.top, _oldCursorRect);
+		alignRect(_screenOverlaySurface, _oldCursorRect);
+		copyRectToSurface(_screenOverlaySurface, _overlaySurface, _oldCursorRect.left, _oldCursorRect.top, _oldCursorRect);
 		_oldCursorRect = Common::Rect();
 
 		updated = true;
@@ -677,14 +694,10 @@ bool AtariGraphicsManager::updateOverlay() {
 
 	if (drawCursor && _cursor.visible) {
 		//debug("Redraw cursor (overlay): %d %d %d %d", _cursor.dstRect.left, _cursor.dstRect.top, _cursor.dstRect.width(), _cursor.dstRect.height());
-
-		copySurface8ToSurface16WithKey(
-			_cursor.surface,
-			_cursor.palette,
-			_screenOverlaySurface,
+		copyRectToSurfaceWithKey(
+			_screenOverlaySurface, _overlaySurface, _cursor.surface,
 			_cursor.dstRect.left, _cursor.dstRect.top,
-			_cursor.srcRect,
-			_cursor.keycolor);
+			_cursor.srcRect, _cursor.keycolor, _cursor.palette);
 
 		_cursor.positionChanged = _cursor.surfaceChanged = false;
 		_oldCursorRect = _cursor.dstRect;
@@ -795,9 +808,9 @@ bool AtariGraphicsManager::updateSingleBuffer() {
 	if (drawCursor && _cursor.visible) {
 		//debug("Redraw cursor (single): %d %d %d %d", _cursor.dstRect.left, _cursor.dstRect.top, _cursor.dstRect.width(), _cursor.dstRect.height());
 		copyRectToSurfaceWithKey(
-			_screenSurface, _cursor.surface,
+			_screenSurface, _chunkySurface, _cursor.surface,
 			_cursor.dstRect.left, _cursor.dstRect.top,
-			_cursor.srcRect, _cursor.keycolor);
+			_cursor.srcRect, _cursor.keycolor, _cursor.palette);
 
 		_cursor.positionChanged = _cursor.surfaceChanged = false;
 		_oldCursorRect = _cursor.dstRect;
@@ -849,9 +862,9 @@ bool AtariGraphicsManager::updateDoubleAndTripleBuffer() {
 		//debug("Redraw cursor (double/triple): %d %d %d %d", _cursor.dstRect.left, _cursor.dstRect.top, _cursor.dstRect.width(), _cursor.dstRect.height());
 
 		copyRectToSurfaceWithKey(
-			frontBufferScreenSurface, _cursor.surface,
+			frontBufferScreenSurface, _chunkySurface, _cursor.surface,
 			_cursor.dstRect.left, _cursor.dstRect.top,
-			_cursor.srcRect, _cursor.keycolor);
+			_cursor.srcRect, _cursor.keycolor, _cursor.palette);
 
 		_cursor.positionChanged = _cursor.surfaceChanged = false;
 		_oldCursorRect = _cursor.dstRect;
@@ -882,100 +895,10 @@ void AtariGraphicsManager::freeAtariSurface(byte *ptr, Graphics::Surface &surfac
 	freeFunc(ptr);
 }
 
-void AtariGraphicsManager::copySurface8ToSurface16(
-		const Graphics::Surface &srcSurface, const byte *srcPalette,
-		Graphics::Surface &dstSurface, int destX, int destY,
-		const Common::Rect subRect, ScaleMode scaleMode) const {
-	assert(srcSurface.format.bytesPerPixel == 1);
-	assert(dstSurface.format.bytesPerPixel == 2);
-
-	// faster (no memory (re-)allocation) version of Surface::convertTo()
-	const int w = subRect.width();
-	const int h = subRect.height();
-
-	const int srcScale = scaleMode == ScaleMode::DOWNSCALE ? 2 : 1;
-	const byte *srcRow = (const byte*)srcSurface.getBasePtr(subRect.left * srcScale, subRect.top * srcScale);
-	uint16 *dstRow = (uint16*)dstSurface.getBasePtr(destX, destY);	// already upscaled if needed
-
-	static uint32 srcPaletteMap[256];
-	Graphics::convertPaletteToMap(srcPaletteMap, srcPalette, 256, dstSurface.format);
-
-	// optimized paths for each case...
-	if (scaleMode == ScaleMode::NONE) {
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				*dstRow++ = srcPaletteMap[*srcRow++];
-			}
-
-			srcRow += srcSurface.w - w;
-			dstRow += dstSurface.w - w;
-		}
-	} else if (scaleMode == ScaleMode::DOWNSCALE) {
-		for (int y = 0; y < h / 2; y++) {
-			for (int x = 0; x < w / 2; x++) {
-				*dstRow++ = srcPaletteMap[*srcRow];
-				srcRow += 2;
-			}
-
-			srcRow += srcSurface.w - w + srcSurface.w;
-			dstRow += dstSurface.w - w / 2;
-		}
-	} else if (scaleMode == ScaleMode::UPSCALE) {
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				const uint16 pixel = srcPaletteMap[*srcRow++];
-
-				*(dstRow + dstSurface.w) = pixel;
-				*dstRow++ = pixel;
-				*(dstRow + dstSurface.w) = pixel;
-				*dstRow++ = pixel;
-			}
-
-			srcRow += srcSurface.w - w;
-			dstRow += dstSurface.w - w * 2 + dstSurface.w;
-		}
-	}
-}
-
-void AtariGraphicsManager::copySurface8ToSurface16WithKey(
-		const Graphics::Surface &srcSurface, const byte *srcPalette,
-		Graphics::Surface &dstSurface, int destX, int destY,
-		const Common::Rect subRect, uint32 key) const {
-	assert(srcSurface.format.bytesPerPixel == 1);
-	assert(dstSurface.format.bytesPerPixel == 2);
-
-	// faster (no memory (re-)allocation) version of Surface::convertTo()
-	const int w = subRect.width();
-	const int h = subRect.height();
-
-	const byte *srcRow = (const byte *)srcSurface.getBasePtr(subRect.left, subRect.top);
-	uint16 *dstRow = (uint16 *)dstSurface.getBasePtr(destX, destY);
-
-	static uint32 srcPaletteMap[256];
-	Graphics::convertPaletteToMap(srcPaletteMap, srcPalette, 256, dstSurface.format);
-
-	const uint16 keyColor = srcPaletteMap[key];
-
-	for (int y = 0; y < h; y++) {
-		for (int x = 0; x < w; x++) {
-			const uint16 pixel = srcPaletteMap[*srcRow++];
-
-			if (pixel != keyColor) {
-				*dstRow++ = pixel;
-			} else {
-				dstRow++;
-			}
-		}
-
-		srcRow += srcSurface.w - w;
-		dstRow += dstSurface.w - w;
-	}
-}
-
 void AtariGraphicsManager::handleModifiedRect(
 		const Graphics::Surface &surface,
 		Common::Rect rect, Common::Array<Common::Rect> &rects) const {
-	if (_currentState.mode == GraphicsMode::SingleBuffering)
+	if (_currentState.mode == GraphicsMode::SingleBuffering || isOverlayVisible())
 		alignRect(surface, rect);
 
 	if (rect.width() == surface.w && rect.height() == surface.h) {
@@ -1034,7 +957,8 @@ void AtariGraphicsManager::Cursor::updatePosition(int deltaX, int deltaY, const 
 	positionChanged = true;
 }
 
-void AtariGraphicsManager::Cursor::setSurface(const void *buf, int w, int h, int _hotspotX, int _hotspotY, uint32 _keycolor, const Graphics::PixelFormat &format) {
+void AtariGraphicsManager::Cursor::setSurface(const void *buf, int w, int h, int hotspotX_, int hotspotY_, uint32 keycolor_,
+											  const Graphics::PixelFormat &format) {
 	if (w == 0 || h == 0 || buf == nullptr) {
 		if (surface.getPixels())
 			surface.free();
@@ -1044,11 +968,11 @@ void AtariGraphicsManager::Cursor::setSurface(const void *buf, int w, int h, int
 	if (surface.w != w || surface.h != h || surface.format != format)
 		surface.create(w, h, format);
 
-	surface.copyRectToSurface(buf, w * format.bytesPerPixel, 0, 0, w, h);
+	surface.copyRectToSurface(buf, w * surface.format.bytesPerPixel, 0, 0, w, h);
 
-	hotspotX = _hotspotX;
-	hotspotY = _hotspotY;
-	keycolor = _keycolor;
+	hotspotX = hotspotX_;
+	hotspotY = hotspotY_;
+	keycolor = keycolor_;
 
 	surfaceChanged = true;
 }

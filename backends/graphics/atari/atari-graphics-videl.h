@@ -64,9 +64,6 @@ public:
 		return AtariGraphicsManager::endGFXTransaction();
 	}
 
-	int16 getOverlayHeight() const override { return _vgaMonitor ? OVERLAY_HEIGHT : 2 * OVERLAY_HEIGHT; }
-	int16 getOverlayWidth() const override { return _vgaMonitor ? OVERLAY_WIDTH : 2 * OVERLAY_WIDTH; }
-
 private:
 	void copyRectToSurface(Graphics::Surface &dstSurface,
 						   const Graphics::Surface &srcSurface, int destX, int destY,
@@ -91,12 +88,9 @@ private:
 		}
 	}
 
-	// TODO: allow specifying different background than _chunkySurface?
-	// TODO: alignRect and this function could be perhaps better if we know that all surfaces
-	// are aligned on 16px and their pitch is % 16 as well?
-	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface,
+	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &bgSurface,
 								  const Graphics::Surface &srcSurface, int destX, int destY,
-								  const Common::Rect &subRect, uint32 key) const override {
+								  const Common::Rect &subRect, uint32 key, const byte srcPalette[256*3]) const override {
 		Common::Rect backgroundRect(destX, destY, destX + subRect.width(), destY + subRect.height());
 
 		// ensure that background's left and right lie on a 16px boundary and double the width if needed
@@ -105,22 +99,52 @@ private:
 		const int deltaX = destX - backgroundRect.left;
 
 		backgroundRect.right = (backgroundRect.right + deltaX + 15) & 0xfff0;
-		if (backgroundRect.right > _chunkySurface.w)
-			backgroundRect.right = _chunkySurface.w;
+		if (backgroundRect.right > bgSurface.w)
+			backgroundRect.right = bgSurface.w;
 
 		static Graphics::Surface cachedSurface;
 
-		if (cachedSurface.w != backgroundRect.width() || cachedSurface.h != backgroundRect.height()) {
+		if (cachedSurface.w != backgroundRect.width()
+				|| cachedSurface.h != backgroundRect.height()
+				|| cachedSurface.format != bgSurface.format) {
 			cachedSurface.create(
 				backgroundRect.width(),
 				backgroundRect.height(),
-				_chunkySurface.format);
+				bgSurface.format);
 		}
 
 		// copy background
-		cachedSurface.copyRectToSurface(_chunkySurface, 0, 0, backgroundRect);
+		cachedSurface.copyRectToSurface(bgSurface, 0, 0, backgroundRect);
+
 		// copy cursor
-		cachedSurface.copyRectToSurfaceWithKey(srcSurface, deltaX, 0, subRect, key);
+		if (cachedSurface.format == PIXELFORMAT_RGB332) {
+			assert(srcSurface.format == PIXELFORMAT_CLUT8);
+
+			// Convert CLUT8 to RGB332 palette and do copyRectToSurfaceWithKey() at the same time
+			const byte *src = (const byte*)srcSurface.getBasePtr(subRect.left, subRect.top);
+			byte *dst = (byte*)cachedSurface.getBasePtr(deltaX, 0);
+
+			const int16 w = subRect.width();
+			const int16 h = subRect.height();
+
+			for (int16 y = 0; y < h; ++y) {
+				for (int16 x = 0; x < w; ++x) {
+					const uint32 color = *src++;
+					if (color != key) {
+						*dst++ = (srcPalette[color*3 + 0] & 0xe0)
+							  | ((srcPalette[color*3 + 1] >> 3) & 0x1c)
+							  | ((srcPalette[color*3 + 2] >> 6) & 0x03);
+					} else {
+						dst++;
+					}
+				}
+
+				src += (srcSurface.pitch - w);
+				dst += (cachedSurface.pitch - w);
+			}
+		} else {
+			cachedSurface.copyRectToSurfaceWithKey(srcSurface, deltaX, 0, subRect, key);
+		}
 
 		copyRectToSurface(
 			dstSurface,

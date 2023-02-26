@@ -51,9 +51,9 @@ void asm_screen_falcon_restore(void);
 void asm_screen_set_tt_palette(const uint16 pPalette[256]);
 /**
  * Set Atari Falcon palette.
- * @param pPalette 256 palette entries (RRRRRRrr GGGGGGgg 00000000 BBBBBBbb)
+ * @param pPalette 256 palette entries (RRRRRRRR GGGGGGGG BBBBBBBB)
  */
-void asm_screen_set_falcon_palette(const uint32 pPalette[256]);
+void asm_screen_set_falcon_palette(const byte pPalette[256*3]);
 
 /**
  * Set Atari TT/Falcon video base.

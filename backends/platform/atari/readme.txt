@@ -58,8 +58,8 @@ less hungry games even a CT2/DFB@50 MHz or the AfterBurner040 could be enough).
 - Custom (and optimal) drawing routines (especially for the cursor).
 
 - Custom (Super)Videl resolutions for the best possible performance and visual
-  experience (320x240 in RGB, chunky modes with SuperVidel, 640x480@16bpp for
-  the overlay in RGB/SuperVidel, ...)
+  experience (320x240 in RGB, chunky modes with SuperVidel, 640x480@8bpp for
+  the overlay, ...)
 
 - Custom (hardware based) aspect ratio correction (!)
 
@@ -373,8 +373,6 @@ Future plans
 
 - unified file paths in scummvm.ini
 
-- 8bpp overlay (and get rid of all that 16bpp handling code)
-
 - profiling :) (see also https://github.com/scummvm/scummvm/pull/2382)
 
 - DSP-based sample mixer
@@ -412,7 +410,7 @@ Future plans
 
 
 Closing words
-—------------
+-------------
 
 I have opened a pull request with all of my code
 (https://github.com/scummvm/scummvm/pull/4687) so who knows, maybe ScummVM

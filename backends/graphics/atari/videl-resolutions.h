@@ -32,8 +32,6 @@ extern       byte scp_320x200x8_vga[SCP_SIZE];
 
 extern const byte scp_320x240x8_rgb[SCP_SIZE];
 extern       byte scp_320x240x8_vga[SCP_SIZE];
-extern const byte scp_320x240x16_rgb[SCP_SIZE];
-extern const byte scp_320x240x16_vga[SCP_SIZE];
 
 extern const byte scp_640x400x8_rgb[SCP_SIZE];
 extern const byte scp_640x400x8_rgb60[SCP_SIZE];
@@ -41,7 +39,5 @@ extern       byte scp_640x400x8_vga[SCP_SIZE];
 
 extern const byte scp_640x480x8_rgb[SCP_SIZE];
 extern       byte scp_640x480x8_vga[SCP_SIZE];
-extern const byte scp_640x480x16_rgb[SCP_SIZE];
-extern const byte scp_640x480x16_vga[SCP_SIZE];
 
 #endif

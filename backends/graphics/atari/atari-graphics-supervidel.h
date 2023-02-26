@@ -71,9 +71,6 @@ public:
 		return graphicsModes;
 	}
 
-	int16 getOverlayHeight() const override { return 2 * OVERLAY_HEIGHT; }
-	int16 getOverlayWidth() const override { return 2 * OVERLAY_WIDTH; }
-
 protected:
 	AtariMemAlloc getStRamAllocFunc() const override {
 		return [](size_t bytes) {
@@ -96,9 +93,9 @@ private:
 		dstSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
 	}
 
-	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface,
+	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &bgSurface,
 								  const Graphics::Surface &srcSurface, int destX, int destY,
-								  const Common::Rect &subRect, uint32 key) const override {
+								  const Common::Rect &subRect, uint32 key, const byte srcPalette[256*3]) const override {
 		dstSurface.copyRectToSurfaceWithKey(srcSurface, destX, destY, subRect, key);
 	}
 
