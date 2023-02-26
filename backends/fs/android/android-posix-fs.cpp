@@ -30,13 +30,7 @@ AbstractFSNode *AndroidPOSIXFilesystemNode::makeNode() const {
 }
 
 AbstractFSNode *AndroidPOSIXFilesystemNode::makeNode(const Common::String &path) const {
-	// If SAF works, it was a SAF URL
-	AbstractFSNode *node = AndroidSAFFilesystemNode::makeFromPath(path);
-	if (node) {
-		return node;
-	}
-
-	return new AndroidPOSIXFilesystemNode(path, _config);
+	return AndroidFilesystemFactory::instance().makeFileNodePath(path);
 }
 
 #endif

@@ -586,6 +586,10 @@ AddSAFFakeNode::~AddSAFFakeNode() {
 }
 
 AbstractFSNode *AddSAFFakeNode::getChild(const Common::String &name) const {
+	if (_fromPath) {
+		// When starting from /saf try to get the tree node
+		return AndroidSAFFilesystemNode::makeFromPath(Common::String(AndroidSAFFilesystemNode::SAF_MOUNT_POINT) + name);
+	}
 	// We can't call getChild as it's protected
 	return nullptr;
 }
@@ -596,6 +600,11 @@ AbstractFSNode *AddSAFFakeNode::getParent() const {
 }
 
 bool AddSAFFakeNode::exists() const {
+	if (_fromPath) {
+		// /saf always exists when created as a path
+		return true;
+	}
+
 	if (!_proxied) {
 		makeProxySAF();
 	}
@@ -608,6 +617,16 @@ bool AddSAFFakeNode::exists() const {
 }
 
 bool AddSAFFakeNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
+	if (_fromPath) {
+		// When built from path, /saf lists all SAF node but never proposes to add one
+		if (mode == Common::FSNode::kListFilesOnly) {
+			// All directories
+			return true;
+		}
+		AndroidFilesystemFactory::instance().getSAFTrees(list, false);
+		return true;
+	}
+
 	if (!_proxied) {
 		makeProxySAF();
 	}
@@ -620,6 +639,10 @@ bool AddSAFFakeNode::getChildren(AbstractFSList &list, ListMode mode, bool hidde
 }
 
 Common::String AddSAFFakeNode::getPath() const {
+	if (_fromPath) {
+		return SAF_ADD_FAKE_PATH;
+	}
+
 	if (!_proxied) {
 		makeProxySAF();
 	}
@@ -632,6 +655,10 @@ Common::String AddSAFFakeNode::getPath() const {
 }
 
 bool AddSAFFakeNode::isReadable() const {
+	if (_fromPath) {
+		return true;
+	}
+
 	if (!_proxied) {
 		makeProxySAF();
 	}
@@ -644,6 +671,10 @@ bool AddSAFFakeNode::isReadable() const {
 }
 
 bool AddSAFFakeNode::isWritable() const {
+	if (_fromPath) {
+		return false;
+	}
+
 	if (!_proxied) {
 		makeProxySAF();
 	}
@@ -656,6 +687,8 @@ bool AddSAFFakeNode::isWritable() const {
 }
 
 void AddSAFFakeNode::makeProxySAF() const {
+	assert(!_fromPath);
+
 	if (_proxied) {
 		return;
 	}
