@@ -11,7 +11,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
    
 
-#### 2.7.0 (26.02.2023)
+#### 2.7.0 "The Real Slim Shader" (26.02.2023)
 
  Neue Spiele:
    - Unterstützung für Soldier Boyz hinzugefügt.

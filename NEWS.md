@@ -10,9 +10,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed bug with inability to pick up red envelope with keyboard.
 
 
-
-
-#### 2.7.0 (2023-02-26)
+#### 2.7.0 "The Real Slim Shader" (2023-02-26)
 
  New games:
    - Added support for Soldier Boyz.
