@@ -290,6 +290,17 @@ CGE2
    * - Paul Gilbert
      -
 
+Chamber
+^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Retro-Junk;
+     -
+   * - Eugene Sandulenko
+     -
+
 Chewy
 ^^^^^
 
@@ -651,6 +662,15 @@ Illusions
    * - Benjamin Haisch
      -
    * - Eric Fry
+     -
+
+Immortal
+^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Michael Hayman
      -
 
 Kingdom
@@ -1377,6 +1397,15 @@ Ultima
      - (Pentagram)
    * - Willem Jan Palenstijn
      - (Pentagram)
+
+V-Cruise
+^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Eric Lasota
+     -
 
 Voyeur
 ^^^^^^
