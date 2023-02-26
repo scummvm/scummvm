@@ -80,10 +80,11 @@ void GraphicsManager::draw() {
 	}
 
 	// Filter out dirty rects that are completely inside others to reduce overdraw
-	for (Common::Rect &outer : dirtyRects) {
-		for (Common::Rect &inner : dirtyRects) {
-			if (inner != outer && outer.contains(inner)) {
-				dirtyRects.remove(inner);
+	for (auto outer = dirtyRects.begin(); outer != dirtyRects.end(); ++outer) {
+		for (auto inner = dirtyRects.begin(); inner != dirtyRects.end(); ++inner) {
+			if (inner != outer && (*outer).contains(*inner)) {
+				dirtyRects.erase(inner);
+				break;
 			}
 		}
 	}
