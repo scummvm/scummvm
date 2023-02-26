@@ -4,7 +4,7 @@ all: scummvm.kos $(EXECUTABLE)
 
 scummvm.kos: $(srcdir)/backends/platform/sdl/kolibrios/wrapper-main.c
 	+$(QUIET_CC)$(CXX) -I$(KOS32_SDK_DIR)/sources/newlib/libc/include -specs=$(srcdir)/backends/platform/sdl/kolibrios/kolibrios.spec -x c -o $@.coff $<
-	+$(QUIET)$(KOS32_AUTOBUILD)/bin/kos32-objcopy $@.coff -O binary $@
+	+$(QUIET)$(KOS32_AUTOBUILD)/tools/win32/bin/kos32-objcopy $@.coff -O binary $@
 
 $(bundle): all
 	$(RM) -rf $(bundle)

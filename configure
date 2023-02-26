@@ -1868,12 +1868,12 @@ kolibrios)
 		echo "Please set KOS32_SDK_DIR and KOS32_AUTOBUILD in your environment. export KOS32_SDK_DIR=<path to KOS32 SDK> and export KOS32_AUTOBUILD=<path to KOS32 build>"
 		exit 1
 	fi
-	_as="${KOS32_AUTOBUILD}/bin/kos32-as"
-	_ar="${KOS32_AUTOBUILD}/bin/kos32-ar cr"
-	_ranlib="${KOS32_AUTOBUILD}/bin/kos32-ar -s"
-	_strip="${KOS32_AUTOBUILD}/bin/kos32-strip"
+	_as="${KOS32_AUTOBUILD}/tools/win32/bin/kos32-as"
+	_ar="${KOS32_AUTOBUILD}/tools/win32/bin/kos32-ar cr"
+	_ranlib="${KOS32_AUTOBUILD}/tools/win32/bin/kos32-ar -s"
+	_strip="${KOS32_AUTOBUILD}/tools/win32/bin/kos32-strip"
 	if test -z "$CXX"; then
-		CXX="${KOS32_AUTOBUILD}/bin/kos32-g++"
+		CXX="${KOS32_AUTOBUILD}/tools/win32/bin/kos32-g++"
 	fi
 	append_var DEFINES "-U__WIN32__ -U_Win32 -U_WIN32 -U__MINGW32__ -UWIN32 -DKOLIBRIOS=1 -D_POSIX_C_SOURCE=1 -D_XOPEN_SOURCE=1"
 	append_var CXXFLAGS "-I${KOS32_SDK_DIR}/sources/newlib/libc/include -I${KOS32_SDK_DIR}/sources/libstdc++-v3/include -fno-ident -fomit-frame-pointer"
