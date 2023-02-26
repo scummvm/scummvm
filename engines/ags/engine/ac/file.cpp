@@ -413,12 +413,13 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		if (child_path.CompareLeftNoCase(gameTarget) != 0)
 			child_path = String::FromFormat("%s-%s", gameTarget.GetCStr(), child_path.GetCStr());
 	}
-#endif
-
+#else
 	// Create a proper ResolvedPath with FSLocation separating base location
 	// (which the engine is not allowed to create) and sub-dirs (created by the engine).
 	parent_dir = parent_dir.Concat(Path::GetDirectoryPath(child_path));
 	child_path = Path::GetFilename(child_path);
+#endif
+
 	ResolvedPath test_rp = ResolvedPath(parent_dir, child_path, alt_path);
 	// don't allow write operations for relative paths outside game dir
 	if (!read_only) {
