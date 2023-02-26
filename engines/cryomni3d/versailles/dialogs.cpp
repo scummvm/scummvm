@@ -33,7 +33,7 @@ bool CryOmni3DEngine_Versailles::preprocessDialog(const Common::String &sequence
 	}
 
 	if (_currentLevel == 1 && _currentPlaceId == 3) {
-		playInGameVideo("11D_LEB1");
+		playInGameAnimVideo("11D_LEB1");
 	}
 
 	_dialogsMan["{JOUEUR-VU-MEMORANDUM-DANS-LUSTRE-DU-SALON-DE-LA-GUERRE}"] = 'N';
@@ -119,7 +119,7 @@ void CryOmni3DEngine_Versailles::postprocessDialog(const Common::String &sequenc
 		}
 		if (!_gameVariables[GameVariables::kGotMedalsSolution] &&
 		        _dialogsMan["MONSIEUR-DONNE-SOLUTION-MEDAILLES"] == 'Y') {
-			playInGameVideo("32M_MR2");
+			playInGameAnimVideo("32M_MR2");
 			_gameVariables[GameVariables::kGotMedalsSolution] = 1;
 		}
 		if (!_gameVariables[GameVariables::kDecipherScore] &&
@@ -293,7 +293,7 @@ void CryOmni3DEngine_Versailles::dialogShowBontempsGivesKey() {
 }
 
 void CryOmni3DEngine_Versailles::dialogShowDuMaineLeaves() {
-	playInGameVideo("62S_DUC1");
+	playInGameAnimVideo("62S_DUC1");
 	_inventory.removeByNameID(144);
 	setPlaceState(19, 1);
 }
@@ -312,7 +312,7 @@ void CryOmni3DEngine_Versailles::dialogShowLeBrunGives() {
 }
 
 void CryOmni3DEngine_Versailles::dialogShowLeBrunLeave() {
-	playInGameVideo("11D_LEB3");
+	playInGameAnimVideo("11D_LEB3");
 	setGameTime(2, 1);
 }
 

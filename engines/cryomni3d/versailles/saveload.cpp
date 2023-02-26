@@ -49,7 +49,7 @@ Common::String CryOmni3DEngine_Versailles::getSaveStateName(int slot) const {
 }
 
 bool CryOmni3DEngine_Versailles::canVisit() const {
-	return Common::File::exists("game0001.sav");
+	return Common::File::exists(getFilePath(kFileTypeSaveGameVisit, "game0001.sav"));
 }
 
 void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &saveNames,
@@ -73,11 +73,9 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 
 	if (visit) {
 		// Add bootstrap visit
-		if (Common::File::exists("game0001.sav")) {
-			Common::File visitFile;
-			if (!visitFile.open("game0001.sav")) {
-				error("Can't load visit file");
-			}
+		Common::Path visitPath(getFilePath(kFileTypeSaveGameVisit, "game0001.sav"));
+		Common::File visitFile;
+		if (visitFile.open(visitPath)) {
 			visitFile.read(saveName, kSaveDescriptionLen);
 			saveNames.push_back(saveName);
 		} else {
@@ -233,7 +231,7 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 	if (visit && saveNum == 1) {
 		// Load bootstrap visit
 		Common::File *visitFile = new Common::File();
-		if (!visitFile->open("game0001.sav")) {
+		if (!visitFile->open(getFilePath(kFileTypeSaveGameVisit, "game0001.sav"))) {
 			delete visitFile;
 			error("Can't load visit file");
 		}

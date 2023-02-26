@@ -54,7 +54,7 @@ FontManager::~FontManager() {
 	}
 }
 
-void FontManager::loadFonts(const Common::Array<Common::String> &fontFiles,
+void FontManager::loadFonts(const Common::Array<Common::Path> &fontFiles,
 							Common::CodePage codepage) {
 	assert(codepage != Common::kCodePageInvalid);
 	_codepage = codepage;
@@ -66,9 +66,10 @@ void FontManager::loadFonts(const Common::Array<Common::String> &fontFiles,
 	_fonts.clear();
 	_fonts.reserve(fontFiles.size());
 
-	Common::HashMap<Common::String, Graphics::Font *> fontsCache;
+	Common::HashMap<Common::Path, Graphics::Font *,
+		Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualsTo> fontsCache;
 
-	for (Common::Array<Common::String>::const_iterator it = fontFiles.begin(); it != fontFiles.end();
+	for (Common::Array<Common::Path>::const_iterator it = fontFiles.begin(); it != fontFiles.end();
 	        it++) {
 		Graphics::Font *fontEntry = nullptr;
 		if (fontsCache.tryGetVal(*it, fontEntry)) {
@@ -93,7 +94,7 @@ void FontManager::loadFonts(const Common::Array<Common::String> &fontFiles,
 	}
 }
 
-void FontManager::loadTTFList(const Common::String &ttfList, Common::CodePage codepage) {
+void FontManager::loadTTFList(const Common::Path &ttfList, Common::CodePage codepage) {
 #ifdef USE_FREETYPE2
 	assert(codepage != Common::kCodePageInvalid);
 	_codepage = codepage;
@@ -107,8 +108,10 @@ void FontManager::loadTTFList(const Common::String &ttfList, Common::CodePage co
 	Common::File list;
 
 	if (!list.open(ttfList)) {
-		error("can't open file %s", ttfList.c_str());
+		error("can't open file %s", ttfList.toString().c_str());
 	}
+
+	Common::Path ttfParentDir(ttfList.getParent());
 
 	Common::String line = list.readLine();
 	uint32 num = atoi(line.c_str());
@@ -141,6 +144,7 @@ void FontManager::loadTTFList(const Common::String &ttfList, Common::CodePage co
 
 		Common::Array<Common::String> fontFiles;
 		fontFiles.push_back(fontFile);
+		fontFiles.push_back(ttfParentDir.appendComponent(fontFile).toString());
 
 		// Use 96 dpi as it's the default under Windows
 		Graphics::Font *font = Graphics::findTTFace(fontFiles, uniFontFace, bold, italic, -(int)size,

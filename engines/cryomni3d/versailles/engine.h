@@ -179,6 +179,29 @@ struct LocalizedFilenames {
 	};
 };
 
+enum FileType {
+	kFileTypeAnimacti,
+	kFileTypeDocBg,
+	kFileTypeDialAnim,
+	kFileTypeDialSound,
+	kFileTypeFont,
+	kFileTypeGTO,
+	kFileTypeFixedImg,
+	kFileTypeMenu,
+	kFileTypeMusic,
+	kFileTypeObject,
+	kFileTypeSaveGameVisit,
+	kFileTypeTransScene,
+	kFileTypeTransSceneI,
+	kFileTypeSound,
+	kFileTypeSprite,
+	kFileTypeSpriteBmp,
+	kFileTypeText,
+	kFileTypeWAM,
+	kFileTypeWarpCyclo,
+	kFileTypeWarpHNM
+};
+
 struct PlaceState {
 	typedef void (CryOmni3DEngine_Versailles::*InitFunc)();
 	typedef bool (CryOmni3DEngine_Versailles::*FilterEventFunc)(uint *event);
@@ -240,12 +263,7 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::String getSaveStateName(int slot) const override;
 
-	Common::String prepareFileName(const Common::String &baseName, const char *extension) const {
-		const char *const extensions[] = { extension, nullptr };
-		return prepareFileName(baseName, extensions);
-	}
-	Common::String prepareFileName(const Common::String &baseName,
-	                                       const char *const *extensions) const override;
+	Common::Path getFilePath(FileType fileType, const Common::String &baseName) const;
 
 	void setupPalette(const byte *colors, uint start, uint num) override { setupPalette(colors, start, num, true); }
 	void makeTranslucent(Graphics::Surface &dst, const Graphics::Surface &src) const override;
@@ -346,7 +364,10 @@ private:
 
 	bool showSubtitles() const;
 
-	void playInGameVideo(const Common::String &filename, bool restoreCursorPalette = true);
+	void playInGameAnimVideo(const Common::String &filename) {
+		playInGameVideo(getFilePath(kFileTypeAnimacti, filename));
+	}
+	void playInGameVideo(const Common::Path &filename, bool restoreCursorPalette = true);
 	void playSubtitledVideo(const Common::String &filename);
 
 	void loadBMPs(const char *pattern, Graphics::Surface *bmps, uint count);
