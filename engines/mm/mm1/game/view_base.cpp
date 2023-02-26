@@ -99,13 +99,6 @@ bool ViewBase::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
-bool ViewBase::msgValue(const ValueMessage &msg) {
-	_descriptionLine = STRING[Common::String::format(
-		"dialogs.location.titles.%d", msg._value)];
-	draw();
-	return true;
-}
-
 bool ViewBase::msgFocus(const FocusMessage &msg) {
 	return false;
 }
@@ -117,6 +110,11 @@ bool ViewBase::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "UPDATE") {
 		replaceView("Game");
 		update();
+		return true;
+	} else if (msg._name == "LOCATION") {
+		_descriptionLine = STRING[Common::String::format(
+			"dialogs.location.titles.%d", msg._value)];
+		draw();
 		return true;
 	}
 

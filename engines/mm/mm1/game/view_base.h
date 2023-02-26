@@ -78,7 +78,6 @@ public:
 	bool msgHeader(const HeaderMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
-	bool msgValue(const ValueMessage &msg) override;
 
 	/**
 	 * Updates game state

@@ -36,7 +36,7 @@ Temple::Temple() : Location("Temple") {
 
 bool Temple::msgFocus(const FocusMessage &msg) {
 	(void)Location::msgFocus(msg);
-	send("View", ValueMessage(LOC_TEMPLE));
+	send("View", GameMessage("LOCATION", LOC_TEMPLE));
 	updateCosts();
 
 	return true;

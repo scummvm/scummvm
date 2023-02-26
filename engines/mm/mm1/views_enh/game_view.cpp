@@ -19,40 +19,20 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_GAME_H
-#define MM1_VIEWS_ENH_GAME_H
-
-#include "graphics/managed_surface.h"
-#include "mm/mm1/events.h"
 #include "mm/mm1/views_enh/game_view.h"
-#include "mm/mm1/views_enh/game_commands.h"
-#include "mm/mm1/views_enh/game_messages.h"
-#include "mm/mm1/views_enh/game_party.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class Game : public Views::TextView {
-private:
-	Graphics::ManagedSurface _bg;
-	ViewsEnh::GameView _view;
-	GameCommands _commands;
-	GameParty _party;
-public:
-	Game();
-	virtual ~Game() {}
+void GameView::draw() {
+	Views::GameView::draw();
+}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-};
+bool GameView::msgGame(const GameMessage &msg) {
+	return Views::GameView::msgGame(msg);
+}
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
-
-#endif
