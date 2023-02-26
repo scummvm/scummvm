@@ -25,15 +25,11 @@
 #include "backends/graphics/graphics.h"
 
 #include <mint/osbind.h>
+#include <vector>
 
-#include "common/array.h"
 #include "common/events.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
-
-// maximum screen dimensions
-constexpr int SCREEN_WIDTH = 640;
-constexpr int SCREEN_HEIGHT = 480;
 
 class AtariGraphicsManager : public GraphicsManager, Common::EventObserver {
 public:
@@ -108,8 +104,6 @@ protected:
 	void allocateSurfaces();
 	void freeSurfaces();
 
-	bool _vgaMonitor = true;
-
 	enum class GraphicsMode : int {
 		DirectRendering,
 		SingleBuffering,
@@ -118,29 +112,24 @@ protected:
 	};
 
 	struct GraphicsState {
-		bool operator==(const GraphicsState &other) const {
-			return mode == other.mode
-				&& width == other.width
-				&& height == other.height
-				&& format == other.format;
-		}
-		bool operator!=(const GraphicsState &other) const {
-			return !(*this == other);
-		}
-
 		GraphicsMode mode;
 		int width;
 		int height;
 		Graphics::PixelFormat format;
+		bool vsync;
 	};
 	GraphicsState _pendingState = {};
 
-	static const int SCREENS = 3;
-	static const int FRONT_BUFFER = 0;
-	static const int BACK_BUFFER1 = 1;
-	static const int BACK_BUFFER2 = 2;
-
 private:
+	enum {
+		// maximum screen dimensions
+		SCREEN_WIDTH = 640,
+		SCREEN_HEIGHT = 480
+	};
+
+	// use std::vector as its clear() doesn't reset capacity
+	using DirtyRects = std::vector<Common::Rect>;
+
 	enum CustomEventAction {
 		kActionToggleAspectRatioCorrection = 100,
 	};
@@ -148,30 +137,55 @@ private:
 	void setVidelResolution() const;
 	void waitForVbl() const;
 
-	bool updateOverlay();
-	bool updateDirectBuffer();
-	bool updateSingleBuffer();
-	bool updateDoubleAndTripleBuffer();
+	bool updateDirect();
+	bool updateBuffered(const Graphics::Surface &srcSurface, Graphics::Surface &dstSurface, const DirtyRects &dirtyRects);
 
-	byte *allocateAtariSurface(Graphics::Surface &surface,
+	void allocateAtariSurface(Graphics::Surface &surface,
 							  int width, int height, const Graphics::PixelFormat &format,
 							  const AtariMemAlloc &allocFunc);
 
-	void freeAtariSurface(byte *ptr, Graphics::Surface &surface, const AtariMemFree &freeFunc);
+	void freeAtariSurface(byte *ptr, const AtariMemFree &freeFunc);
 
 	virtual void copyRectToSurface(Graphics::Surface &dstSurface,
 								   const Graphics::Surface &srcSurface, int destX, int destY,
-								   const Common::Rect &subRect) const = 0;
+								   const Common::Rect &subRect) const {
+		dstSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
+	}
 	virtual void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &bgSurface,
 										  const Graphics::Surface &srcSurface, int destX, int destY,
-										  const Common::Rect &subRect, uint32 key, const byte srcPalette[256*3]) const = 0;
+										  const Common::Rect &subRect, uint32 key, const byte srcPalette[256*3]) const {
+		dstSurface.copyRectToSurfaceWithKey(srcSurface, destX, destY, subRect, key);
+	}
 	virtual void alignRect(const Graphics::Surface &srcSurface, Common::Rect &rect) const {}
 
-	void handleModifiedRect(const Graphics::Surface &surface, Common::Rect rect, Common::Array<Common::Rect> &rects) const;
+	void addDirtyRect(const Graphics::Surface &surface, DirtyRects &rects, Common::Rect rect) const;
 
+	void cursorPositionChanged() {
+		if (_overlayVisible) {
+			_buffer[OVERLAY_BUFFER]->cursorPositionChanged = true;
+		} else {
+			_buffer[FRONT_BUFFER]->cursorPositionChanged
+				= _buffer[BACK_BUFFER1]->cursorPositionChanged
+				= _buffer[BACK_BUFFER2]->cursorPositionChanged
+				= true;
+		}
+	}
+
+	void cursorSurfaceChanged() {
+		if (_overlayVisible) {
+			_buffer[OVERLAY_BUFFER]->cursorSurfaceChanged = true;
+		} else {
+			_buffer[FRONT_BUFFER]->cursorSurfaceChanged
+				= _buffer[BACK_BUFFER1]->cursorSurfaceChanged
+				= _buffer[BACK_BUFFER2]->cursorSurfaceChanged
+				= true;
+		}
+	}
+
+	bool _vgaMonitor = true;
 	bool _aspectRatioCorrection = false;
 	bool _oldAspectRatioCorrection = false;
-	bool _vsync = true;
+	bool _guiVsync = true;
 
 	GraphicsState _currentState = {};
 
@@ -183,28 +197,46 @@ private:
 	};
 	int _pendingScreenChange = kPendingScreenChangeNone;
 
-	byte *_screen[SCREENS] = {};	// for Mfree() purposes only
-	byte *_screenAligned[SCREENS] = {};
+	enum {
+		FRONT_BUFFER,
+		BACK_BUFFER1,
+		BACK_BUFFER2,
+		OVERLAY_BUFFER,
+		BUFFER_COUNT
+	};
+
+	struct ScreenInfo {
+		ScreenInfo(byte *p_)
+			: p(p_) {
+		}
+
+		void reset() {
+			cursorPositionChanged = true;
+			cursorSurfaceChanged = false;
+			dirtyRects.clear();
+			oldCursorRect = Common::Rect();
+		}
+
+		byte *p;
+		bool cursorPositionChanged = true;
+		bool cursorSurfaceChanged = false;
+		DirtyRects dirtyRects = DirtyRects(100);	// reserve 100 rects
+		Common::Rect oldCursorRect;
+	};
+	ScreenInfo *_buffer[BUFFER_COUNT] = {};
+	ScreenInfo *_workScreen = nullptr;
+	ScreenInfo *_oldWorkScreen = nullptr;	// used in hideOverlay()
+
 	Graphics::Surface _screenSurface;
-	Common::Rect _modifiedScreenRect;	// direct rendering only
-	bool _screenModified = false;	// double/triple buffering only
-
+	Common::Rect _dirtyScreenRect;	// direct rendering only
 	Graphics::Surface _chunkySurface;
-	Common::Array<Common::Rect> _modifiedChunkyRects;
 
-	byte *_overlayScreen = nullptr;	// for Mfree() purposes only
 	Graphics::Surface _screenOverlaySurface;
 	bool _overlayVisible = false;
-
 	Graphics::Surface _overlaySurface;
-	Common::Array<Common::Rect> _modifiedOverlayRects;
 
 	struct Cursor {
-		void update(const Graphics::Surface &screen);
-
-		bool isModified() const {
-			return surfaceChanged || positionChanged;
-		}
+		void update(const Graphics::Surface &screen, bool isModified);
 
 		bool visible = false;
 
@@ -212,19 +244,11 @@ private:
 		Common::Point getPosition() const {
 			return Common::Point(x, y);
 		}
-		void setPosition(int x_, int y_, bool override = false) {
-			if (x == x_ && y == y_)
-				return;
-
-			if (!visible && !override)
-				return;
-
+		void setPosition(int x_, int y_) {
 			x = x_;
 			y = y_;
-			positionChanged = true;
 		}
 		void updatePosition(int deltaX, int deltaY, const Graphics::Surface &screen);
-		bool positionChanged = false;
 		void swap() {
 			const int tmpX = oldX;
 			const int tmpY = oldY;
@@ -234,13 +258,10 @@ private:
 
 			x = tmpX;
 			y = tmpY;
-
-			positionChanged = false;
 		}
 
 		// surface
 		void setSurface(const void *buf, int w, int h, int _hotspotX, int _hotspotY, uint32 _keycolor, const Graphics::PixelFormat &format);
-		bool surfaceChanged = false;
 		Graphics::Surface surface;
 		uint32 keycolor;
 
@@ -259,8 +280,6 @@ private:
 		int hotspotX;
 		int hotspotY;
 	} _cursor;
-
-	Common::Rect _oldCursorRect;
 
 	byte _palette[256*3] = {};
 	byte _overlayPalette[256*3] = {};

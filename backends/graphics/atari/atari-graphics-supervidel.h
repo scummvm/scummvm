@@ -87,18 +87,6 @@ protected:
 	}
 
 private:
-	void copyRectToSurface(Graphics::Surface &dstSurface,
-						   const Graphics::Surface &srcSurface, int destX, int destY,
-						   const Common::Rect &subRect) const override {
-		dstSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
-	}
-
-	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface, const Graphics::Surface &bgSurface,
-								  const Graphics::Surface &srcSurface, int destX, int destY,
-								  const Common::Rect &subRect, uint32 key, const byte srcPalette[256*3]) const override {
-		dstSurface.copyRectToSurfaceWithKey(srcSurface, destX, destY, subRect, key);
-	}
-
 	static long hasSvRamBoosted() {
 		register long ret __asm__ ("d0") = 0;
 

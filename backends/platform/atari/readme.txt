@@ -66,8 +66,6 @@ less hungry games even a CT2/DFB@50 MHz or the AfterBurner040 could be enough).
 - Support for PC keys (page up, page down, pause, F11/F12, ...) and mouse wheel
   (Eiffel/Aranym only)
 
-- Still without any assembly optimizations...
-
 This makes such games as The Curse of Monkey Island better playable (on
 SuperVidel nearly always also with CD (WAV) music and speech). Also, AdLib
 emulation works nicely with many games without noticeable slow downs.
@@ -153,14 +151,11 @@ Pros:
 
 - second fastest possible rendering
 
-- doesn't update the whole screen (works best with a moderate amount of
-  rectangles to update)
-
 Cons:
 
 - screen tearing in most cases
 
-- if there are too many smaller rectangles, it can be less efficient than
+- if there is too many smaller rectangles, it can be less efficient than
   updating the whole buffer at once
 
 SuperBlitter used: yes, for rectangle blitting to screen and cursor restoration.
@@ -185,9 +180,8 @@ Pros:
 
 Cons:
 
-- since two buffers are present, the buffer is always blitted into the screen
-  surface as whole, even if only one tiny little rectangle is changed (excluding
-  the cursor)
+- if there is too many smaller rectangles, it can be less efficient than
+  single buffering
 
 - frame rate is set to 60/30/15/etc FPS so you can see big irregular jumps
   between 30 and 15 FPS for example; this is happening when screen updates take
@@ -202,15 +196,14 @@ Triple buffering:
 ~~~~~~~~~~~~~~~~~
 
 Best of both worlds - screen tearing is avoided thanks to using of multiple
-buffers and the rendering pipeline doesn't have to wait until Vsync(). The vsync
-flag is used only to differentiate between two (very similar) modes of
-operation:
+buffers and the rendering pipeline doesn't have to wait until Vsync() (therefore
+this flag is ignored).
 
-1. "True triple buffering" as described in
-https://en.wikipedia.org/wiki/Multiple_buffering#Triple_buffering (vsync on)
-
-2. "Swap chain" as described in https://en.wikipedia.org/wiki/Swap_chain (vsync
-off)
+Please note that Atari backend uses "true" triple buffering as described in
+https://en.wikipedia.org/wiki/Multiple_buffering#Triple_buffering and not "swap
+chain" as described in https://en.wikipedia.org/wiki/Swap_chain. The latter
+would be slightly slower as three buffers would need to be updated instead of
+two.
 
 Pros:
 
@@ -220,23 +213,19 @@ Pros:
 
 Cons:
 
-- since three buffers are present, the buffer is always blitted into the screen
-  surface as whole, even if only one tiny little rectangle is changed (excluding
-  the cursor)
+- if there is too many smaller rectangles, it can be less efficient than
+  single buffering
 
 - slightly irregular frame rate (depends solely on the game's complexity)
 
-- in case of extremely fast rendering in 1.), one or more buffers are
-  dropped in favor of showing only the most recent one (unlikely)
-
-- in case of extremely fast rendering in 2.), screen tearing is possible
-  because the rendering pipeline starts overwriting the buffer which is
-  currently displayed (unlikely)
+- in case of extremely fast rendering, one or more frames are dropped in favor
+  of showing only the most recent one (unlikely; double buffer guaranties that
+  every frame is shown, no matter how insignificant)
 
 SuperBlitter used: yes, for rectangle blitting to screen and cursor restoration.
 Sometimes also for generic copying between buffers (see above).
 
-Triple buffering with vsync on is the default mode for this port.
+Triple buffering is the default mode for this port.
 
 
 SuperVidel and SuperBlitter
@@ -267,18 +256,19 @@ to avoid unpleasant playing experiences.
 Game engines with unexpected performance hit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A typical example from this category is the Gobliiins engine (and its
-sequels). At first it looks like our machine / backend is doing something
-terribly wrong but the truth is it is the engine itself which is doing a lot of
-unnecessary redraws and updates, sometimes even before reaching the backend.
-The only real solution is to profile and fix the engine.
+A typical example from this category is Gobliiins (and its sequels) and SCI
+engine games (Gabriel Knight, Larry 2/7, ...). At first it looks like our
+machine or Atari backend is doing something terribly wrong but the truth is
+that it is the engine itself which is doing a lot of unnecessary redraws and
+updates, sometimes even before reaching the backend. The only solution is to
+profile and fix those engines.
 
 Too many fullscreen updates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Somewhat related to the previous point - sometimes the engine authors didn't
 realize the impact of every update on the overall performance and instead of
-updating only the rectangles that really had changed, they ask for a full screen
+updating only the rectangles that really had changed, they ask for a fullscreen
 update. Not a problem on a >1 GHz machine but very visible on Atari! Also, this
 is (by definition) the case of animated intros, especially those in 640x480.
 
@@ -289,7 +279,7 @@ It could seem that sample music replay must be the most demanding one but on the
 contrary! _Always_ choose a CD version of a game (with *.wav tracks) to any
 other version. With one exception: if you have a native MIDI device able to
 replay the given game's MIDI notes (using the STMIDI plugin). MIDI emulation
-(synthesis) can easily take down as many as 10 FPS.
+(synthesis) can easily eat as much as 50% of all used CPU time.
 
 CD music slows everything down
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -332,9 +322,6 @@ rendering by 10-15 FPS if not used with caution. That happens if a game takes,
 say, 1.2 frames per update (so causing screen tearing anyway and rendering the
 option useless) but Vsync() forces it to wait 2 full frames instead.
 
-By the way, the vsync flag in Global Options affects also the overlay rendering
-(with all the pitfalls which apply to the single buffering mode)
-
 Slow GUI
 ~~~~~~~~
 
@@ -373,22 +360,15 @@ Future plans
 
 - unified file paths in scummvm.ini
 
-- profiling :) (see also https://github.com/scummvm/scummvm/pull/2382)
-
 - DSP-based sample mixer
 
 - avoid loading music/speech files (and thus slowing down everything) if muted
-
-- assembly copy routines when SuperVidel is not present or can't be used
 
 - cached audio/video streams (i.e. don't load only "output_samples" number of
   samples but cache, say, 1 second so disk i/o wont be so stressed)
 
 - using LDG or Thorsten Otto's sharedlibs: https://tho-otto.de/sharedlibs.php
   for game engine plugins to relieve the huge binary size
-
-- reuse modified rects in double/triple buffer in the next frame - that way we
-  wouldn't need to refresh the whole screen in every case
 
 - add support for the TT030; this would be easily possible when I rewrite the
   renderer with a more flexible resolution switching
@@ -408,14 +388,15 @@ Future plans
 
 - C2P could support 4- and 6-bit depth
 
+- increase file buffer size with setvbuf or by using
+  Common::wrapBufferedWriteStream and disabling stdio buffering
+
 
 Closing words
 -------------
 
-I have opened a pull request with all of my code
-(https://github.com/scummvm/scummvm/pull/4687) so who knows, maybe ScummVM
-2.8.0 for Atari will be already present on the official website. :-)
-
+This backend is part of ScummVM 2.8.0 onwards. Let's see whether we can make it
+to the official website. :-)
 
 MiKRO / Mystic Bytes, XX.XX.2023
 Kosice / Slovakia
