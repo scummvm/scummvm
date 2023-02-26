@@ -162,7 +162,7 @@ protected:
 public:
 	static const char SAF_ADD_FAKE_PATH[];
 
-	AddSAFFakeNode() : _proxied(nullptr) { }
+	AddSAFFakeNode(bool fromPath) : _proxied(nullptr), _fromPath(fromPath) { }
 	~AddSAFFakeNode() override;
 
 	bool exists() const override;
@@ -187,6 +187,7 @@ public:
 private:
 	void makeProxySAF() const;
 
+	bool _fromPath;
 	mutable AbstractFSNode *_proxied;
 };
 #endif
