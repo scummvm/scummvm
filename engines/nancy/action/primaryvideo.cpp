@@ -122,8 +122,6 @@ void PlayPrimaryVideoChan0::init() {
 		error("Couldn't load video file %s", _videoName.c_str());
 	}
 
-	_drawSurface.create(_src.width(), _src.height(), _decoder.getPixelFormat());
-
 	if (!_paletteName.empty()) {
 		GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
 		setTransparent(true);
@@ -144,16 +142,7 @@ void PlayPrimaryVideoChan0::updateGraphics() {
 	}
 
 	if (_decoder.needsUpdate()) {
-		if (_videoFormat == 2) {
-			_drawSurface.blitFrom(*_decoder.decodeNextFrame(), _src, Common::Point());
-		} else if (_videoFormat == 1) {
-			// This seems to be the only place in the engine where format 1 videos
-			// are scaled with arbitrary sizes; everything else uses double size
-			Graphics::Surface *scaledFrame = _decoder.decodeNextFrame()->getSubArea(_src).scale(_screenPosition.width(), _screenPosition.height());
-			GraphicsManager::copyToManaged(*scaledFrame, _drawSurface, true);
-			scaledFrame->free();
-			delete scaledFrame;
-		}
+		GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _drawSurface, _videoFormat == 1);
 
 		_needsRedraw = true;
 	}
@@ -184,7 +173,7 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 	ser.skip(0x13, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0xF, kGameTypeNancy1);
 
-	readRect(stream, _src);
+	ser.skip(0x10); // Bounds
 	readRect(stream, _screenPosition);
 
 	char *rawText = new char[1500];

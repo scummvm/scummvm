@@ -87,7 +87,6 @@ public:
 	Common::String _videoName;
 	Common::String _paletteName;
 	uint _videoFormat = 2;
-	Common::Rect _src;
 	Common::String _text;
 
 	SoundDescription _sound;
