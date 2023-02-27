@@ -65,7 +65,8 @@ struct RoomCameraDrawData {
 struct ObjTexture {
 	// Sprite ID
 	uint32_t SpriteID = UINT32_MAX;
-	// Raw bitmap
+	// Raw bitmap; used for software render mode,
+	// or when particular object types require generated image.
 	std::unique_ptr<Shared::Bitmap> Bmp;
 	// Corresponding texture, created by renderer
 	Engine::IDriverDependantBitmap *Ddb = nullptr;
@@ -76,8 +77,8 @@ struct ObjTexture {
 	Point Off;
 
 	ObjTexture() = default;
-	ObjTexture(Shared::Bitmap *bmp, Engine::IDriverDependantBitmap *ddb, int x, int y, int xoff = 0, int yoff = 0)
-		: Bmp(bmp), Ddb(ddb), Pos(x, y), Off(xoff, yoff) {
+	ObjTexture(uint32_t sprite_id, Shared::Bitmap *bmp, Engine::IDriverDependantBitmap *ddb, int x, int y, int xoff = 0, int yoff = 0)
+		: SpriteID(sprite_id), Bmp(bmp), Ddb(ddb), Pos(x, y), Off(xoff, yoff) {
 	}
 	ObjTexture(ObjTexture &&o);
 	~ObjTexture();
@@ -180,11 +181,6 @@ void draw_gui_sprite_v330(Shared::Bitmap *ds, int pic, int x, int y, bool use_al
 void draw_gui_sprite(Shared::Bitmap *ds, bool use_alpha, int xpos, int ypos,
 	Shared::Bitmap *image, bool src_has_alpha, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
 
-// Generates a transformed sprite, using src image and parameters;
-// * if transformation is necessary - writes into dst and returns dst;
-// * if no transformation is necessary - simply returns src;
-Shared::Bitmap *transform_sprite(Shared::Bitmap *src, bool src_has_alpha, std::unique_ptr<Shared::Bitmap> &dst,
-	const Size dst_sz, Shared::GraphicFlip flip = Shared::kFlip_None);
 // Render game on screen
 void render_to_screen();
 // Callbacks for the graphics driver
@@ -192,10 +188,16 @@ void draw_game_screen_callback();
 void GfxDriverOnInitCallback(void *data);
 bool GfxDriverNullSpriteCallback(int x, int y);
 void putpixel_compensate(Shared::Bitmap *g, int xx, int yy, int col);
-// create the actsps[aa] image with the object drawn correctly
-// returns 1 if nothing at all has changed and actsps is still
-// intact from last time; 0 otherwise
-int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware);
+// Create the actsps[aa] image with the object drawn correctly.
+// Returns true if nothing at all has changed and actsps is still
+// intact from last time; false otherwise.
+// Hardware-accelerated do not require altering the raw bitmap itself,
+// so they only detect whether the sprite ID itself has changed.
+// Software renderers modify the cached bitmap whenever any visual
+// effect changes (scaling, tint, etc).
+// * alwaysUseSoftware option forces HW renderers to  construct the image
+// in software mode as well.
+bool construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware);
 // Returns a cached character image prepared for the render
 Shared::Bitmap *get_cached_character_image(int charid);
 // Returns a cached object image prepared for the render

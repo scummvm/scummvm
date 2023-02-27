@@ -92,6 +92,7 @@ ObjTexture::~ObjTexture() {
 }
 
 ObjTexture &ObjTexture::operator=(ObjTexture &&o) {
+	SpriteID = o.SpriteID;
 	if (Ddb) {
 		assert(_G(gfxDriver));
 		_G(gfxDriver)->DestroyDDB(Ddb);
@@ -790,7 +791,8 @@ Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitma
 }
 
 void sync_object_texture(ObjTexture &obj, bool has_alpha = false, bool opaque = false) {
-	obj.Ddb = recycle_ddb_sprite(obj.Ddb, obj.SpriteID, obj.Bmp.get(), has_alpha, opaque);
+	Bitmap *use_bmp = obj.Bmp.get() ? obj.Bmp.get() : _GP(spriteset)[obj.SpriteID];
+	obj.Ddb = recycle_ddb_sprite(obj.Ddb, obj.SpriteID, use_bmp, has_alpha, opaque);
 }
 
 //------------------------------------------------------------------------
@@ -1026,11 +1028,12 @@ void get_local_tint(int xpp, int ypp, int nolight,
 
 
 // Applies the specified RGB Tint or Light Level to the actsps
-// sprite indexed with actspsindex
-void apply_tint_or_light(int actspsindex, int light_level,
-                         int tint_amount, int tint_red, int tint_green,
-                         int tint_blue, int tint_light, int coldept,
-                         Bitmap *blitFrom) {
+// sprite indexed with actspsindex.
+// Used for software render mode only.
+static void apply_tint_or_light(int actspsindex, int light_level,
+								int tint_amount, int tint_red, int tint_green,
+								int tint_blue, int tint_light, int coldept,
+								Bitmap *blitFrom) {
 
 	// In a 256-colour game, we cannot do tinting or lightning
 	// (but we can do darkening, if light_level < 0)
@@ -1091,7 +1094,13 @@ void apply_tint_or_light(int actspsindex, int light_level,
 	}
 }
 
-Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr<Bitmap> &dst, const Size dst_sz, GraphicFlip flip) {
+// Generates a transformed sprite, using src image and parameters;
+
+// * if transformation is necessary - writes into dst and returns dst;
+// * if no transformation is necessary - simply returns src;
+// Used for software render mode only.
+static Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr<Bitmap> &dst,
+								const Size dst_sz, GraphicFlip flip = Shared::kFlip_None) {
 	if ((src->GetSize() == dst_sz) && (flip == kFlip_None))
 		return src; // No transform: return source image
 
@@ -1133,7 +1142,8 @@ Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, std::unique_ptr<Bitmap
 // Draws the specified 'sppic' sprite onto _GP(actsps)[useindx] at the
 // specified width and height, and flips the sprite if necessary.
 // Returns 1 if something was drawn to actsps; returns 0 if no
-// scaling or stretching was required, in which case nothing was done
+// scaling or stretching was required, in which case nothing was done.
+// Used for software render mode only.
 static bool scale_and_flip_sprite(int useindx, int sppic, int newwidth, int newheight, bool hmirror) {
 	Bitmap *src = _GP(spriteset)[sppic];
 	Bitmap *result = transform_sprite(src, (_GP(game).SpriteInfos[sppic].Flags & SPF_ALPHACHANNEL) != 0,
@@ -1141,10 +1151,14 @@ static bool scale_and_flip_sprite(int useindx, int sppic, int newwidth, int newh
 	return result != src;
 }
 
-// create the actsps[aa] image with the object drawn correctly
-// returns 1 if nothing at all has changed and actsps is still
-// intact from last time; 0 otherwise
-int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware) {
+// Create the actsps[aa] image with the object drawn correctly.
+// Returns true if nothing at all has changed and actsps is still
+// intact from last time; false otherwise.
+// Hardware-accelerated renderers always return true, because they do not
+// require altering the raw bitmap itself.
+// Except if alwaysUseSoftware is set, in which case even HW renderers
+// construct the image in software mode as well.
+bool construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware) {
 	bool hardwareAccelerated = !alwaysUseSoftware && _G(gfxDriver)->HasAcceleratedTransform();
 
 	if (_GP(spriteset)[_G(objs)[aa].num] == nullptr)
@@ -1221,12 +1235,13 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	const int useindx = aa; // actsps array index
 	auto &actsp = _GP(actsps)[useindx];
 	actsp.SpriteID = _G(objs)[aa].num; // for texture sharing
-	if ((hardwareAccelerated) &&
-			(_G(walkBehindMethod) != DrawOverCharSprite) &&
-			(_G(objcache)[aa].image != nullptr) &&
-			(_G(objcache)[aa].sppic == _G(objs)[aa].num) &&
-			(actsp.Bmp != nullptr)) {
+	// NOTE: we need cached bitmap if:
+	// * it's a software renderer, otherwise
+	// * the walk-behind method is DrawOverCharSprite
+	if ((hardwareAccelerated) && (_G(walkBehindMethod) != DrawOverCharSprite)) {
 		// HW acceleration
+		bool has_texture_change = _G(objcache)[aa].sppic != _G(objs)[aa].num;
+		_G(objcache)[aa].sppic = _G(objs)[aa].num;
 		_G(objcache)[aa].tintamnt = tint_level;
 		_G(objcache)[aa].tintr = tint_red;
 		_G(objcache)[aa].tintg = tint_green;
@@ -1235,10 +1250,12 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 		_G(objcache)[aa].lightlev = light_level;
 		_G(objcache)[aa].zoom = zoom_level;
 		_G(objcache)[aa].mirrored = isMirrored;
-
-		return 1;
+		return has_texture_change;
 	}
 
+	//
+	// Software mode below
+	//
 	if ((!hardwareAccelerated) && (_G(gfxDriver)->HasAcceleratedTransform())) {
 		// They want to draw it in software mode with the D3D driver, so force a redraw
 		_G(objcache)[aa].sppic = -389538;
@@ -1258,17 +1275,17 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 		// the image is the same, we can use it cached!
 		if ((_G(walkBehindMethod) != DrawOverCharSprite) &&
 			(actsp.Bmp != nullptr))
-			return 1;
+			return true;
 		// Check if the X & Y co-ords are the same, too -- if so, there
 		// is scope for further optimisations
 		if ((_G(objcache)[aa].x == _G(objs)[aa].x) &&
 				(_G(objcache)[aa].y == _G(objs)[aa].y) &&
 				(actsp.Bmp != nullptr) &&
 				(_G(walk_behind_baselines_changed) == 0))
-			return 1;
+			return true;
 		recycle_bitmap(actsp.Bmp, coldept, sprwidth, sprheight);
 		actsp.Bmp->Blit(_G(objcache)[aa].image.get(), 0, 0, 0, 0, _G(objcache)[aa].image->GetWidth(), _G(objcache)[aa].image->GetHeight());
-		return 0;
+		return false; // image was modified
 	}
 
 	// Not cached, so draw the image
@@ -1279,7 +1296,6 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 		actspsUsed = scale_and_flip_sprite(useindx, _G(objs)[aa].num, sprwidth, sprheight, isMirrored);
 	}
 	if (!actspsUsed) {
-		// ensure actsps exists // CHECKME: why do we need this in hardware accel mode too?
 		recycle_bitmap(actsp.Bmp, coldept, src_sprwidth, src_sprheight);
 	}
 
@@ -1311,7 +1327,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	_G(objcache)[aa].lightlev = light_level;
 	_G(objcache)[aa].zoom = zoom_level;
 	_G(objcache)[aa].mirrored = isMirrored;
-	return 0;
+	return false; // image was modified
 }
 
 // This is only called from draw_screen_background, but it's separated
@@ -1326,7 +1342,7 @@ void prepare_objects_for_drawing() {
 			continue;
 
 		int tehHeight;
-		int actspsIntact = construct_object_gfx(aa, nullptr, &tehHeight, false);
+		bool actspsIntact = construct_object_gfx(aa, nullptr, &tehHeight, false);
 
 		const int useindx = aa; // actsps array index
 		auto &actsp = _GP(actsps)[useindx];
@@ -1580,8 +1596,10 @@ void prepare_characters_for_drawing() {
 		_GP(charcache)[aa].lightlev = light_level;
 
 		// If cache needs to be re-drawn
-		if (!_GP(charcache)[aa].in_use) {
-
+		// NOTE: we need cached bitmap if:
+		// * it's a software renderer, otherwise
+		// * the walk-behind method is DrawOverCharSprite
+		if (((!_G(gfxDriver)->HasAcceleratedTransform()) || (_G(walkBehindMethod) == DrawOverCharSprite)) && !_GP(charcache)[aa].in_use) {
 			// create the base sprite in _GP(actsps)[useindx], which will
 			// be scaled and/or flipped, as appropriate
 			bool actspsUsed = false;
@@ -1616,7 +1634,7 @@ void prepare_characters_for_drawing() {
 			recycle_bitmap(_GP(charcache)[aa].image, coldept, actsp.Bmp->GetWidth(), actsp.Bmp->GetHeight());
 			_GP(charcache)[aa].image->Blit(actsp.Bmp.get(), 0, 0);
 
-		} // end if !cache.inUse
+		} // end if !cache.in_use
 
 		int usebasel = chin->get_baseline();
 
