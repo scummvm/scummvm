@@ -216,7 +216,7 @@ void save_room_data_segment() {
 
 	_G(croom)->tsdatasize = _G(roominst)->globaldatasize;
 	if (_G(croom)->tsdatasize > 0) {
-		_G(croom)->tsdata = (char *)malloc(_G(croom)->tsdatasize + 10);
+		_G(croom)->tsdata = new char[_G(croom)->tsdatasize + 10];
 		memcpy(_G(croom)->tsdata, &_G(roominst)->globaldata[0], _G(croom)->tsdatasize);
 	}
 
