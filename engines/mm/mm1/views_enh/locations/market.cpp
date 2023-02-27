@@ -31,25 +31,27 @@ namespace Locations {
 Market::Market() : Location("Market") {
 	addButton(&g_globals->_confirmIcons,
 		Common::Point(_innerBounds.width() / 2 - 24,
-			_innerBounds.height() - 32),
-		0, Common::KEYCODE_y);
+			_innerBounds.height() - 22), 0, Common::KEYCODE_y);
 	addButton(&g_globals->_confirmIcons,
 		Common::Point(_innerBounds.width() / 2 + 4,
-			_innerBounds.height() - 32),
-		2, Common::KEYCODE_n);
+			_innerBounds.height() - 22), 2, Common::KEYCODE_n);
 }
 
 bool Market::msgFocus(const FocusMessage &msg) {
 	Maps::Map &map = *g_maps->_currentMap;
 	_foodCost = FOOD_COST[map[Maps::MAP_ID] - 1];
+
+	(void)Location::msgFocus(msg);
+	send("View", GameMessage("LOCATION", LOC_MARKET));
+
 	return true;
 }
 
 void Market::draw() {
 	Location::draw();
 
-	writeLine(0, STRING["enhdialogs.location.store"],ALIGN_MIDDLE);
-	writeLine(1, STRING["enhdialogs.location.options"], ALIGN_MIDDLE);
+	writeLine(0, STRING["enhdialogs.market.title"],ALIGN_MIDDLE);
+	writeLine(1, STRING["enhdialogs.location.options_for"], ALIGN_MIDDLE);
 	writeLine(6, STRING["enhdialogs.market.buy_food"], ALIGN_MIDDLE);
 	writeLine(7, Common::String::format("%d %s",
 		_foodCost, STRING["dialogs.market.gp"].c_str()),

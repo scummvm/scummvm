@@ -70,15 +70,17 @@ public:
 	 */
 	void leave();
 
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+
 	/**
 	 * Draw the location
 	 */
-	void draw();
+	void draw() override;
 
 	/**
 	 * Tick handler
 	 */
-	bool tick();
+	bool tick() override;
 };
 
 } // namespace Locations

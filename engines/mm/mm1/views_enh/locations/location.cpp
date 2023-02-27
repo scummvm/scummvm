@@ -66,6 +66,12 @@ void Location::backpackFull() {
 	displayMessage(STRING["dialogs.misc.backpack_full"]);
 }
 
+bool Location::msgUnfocus(const UnfocusMessage &msg) {
+	send("View", GameMessage("LOCATION", -1));
+	(void)PartyView::msgUnfocus(msg);
+	return true;
+}
+
 void Location::draw() {
 	send("View", GameMessage("LOCATION_DRAW"));
 	PartyView::draw();
