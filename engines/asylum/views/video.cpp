@@ -109,7 +109,7 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 				getText()->draw(0, 99, kTextCenter, Common::Point(10, y), 20, 620, text);
 
 				if (_vm->checkGameVersion("Steam")) {
-					Graphics::Surface *st = getScreen()->getSurface().convertTo(g_system->getScreenFormat(), _subtitlePalette);
+					Graphics::Surface *st = getScreen()->getSurface()->convertTo(g_system->getScreenFormat(), _subtitlePalette);
 					g_system->copyRectToScreen((const byte *)st->getBasePtr(0, 400), st->pitch, 0, 400, 640, 80);
 					st->free();
 					delete st;
