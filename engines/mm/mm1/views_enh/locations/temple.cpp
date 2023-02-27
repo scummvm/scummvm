@@ -35,7 +35,7 @@ Temple::Temple() : Location("Temple", LOC_TEMPLE) {
 }
 
 bool Temple::msgFocus(const FocusMessage &msg) {
-	(void)Location::msgFocus(msg);
+	Location::msgFocus(msg);
 	updateCosts();
 
 	return true;

@@ -38,6 +38,8 @@ Market::Market() : Location("Market", LOC_MARKET) {
 }
 
 bool Market::msgFocus(const FocusMessage &msg) {
+	Location::msgFocus(msg);
+
 	Maps::Map &map = *g_maps->_currentMap;
 	_foodCost = FOOD_COST[map[Maps::MAP_ID] - 1];
 
@@ -49,6 +51,8 @@ void Market::draw() {
 
 	writeLine(0, STRING["enhdialogs.market.title"],ALIGN_MIDDLE);
 	writeLine(1, STRING["enhdialogs.location.options_for"], ALIGN_MIDDLE);
+	writeLine(3, camelCase(g_globals->_currCharacter->_name), ALIGN_MIDDLE);
+
 	writeLine(6, STRING["enhdialogs.market.buy_food"], ALIGN_MIDDLE);
 	writeLine(7, Common::String::format("%d %s",
 		_foodCost, STRING["dialogs.market.gp"].c_str()),

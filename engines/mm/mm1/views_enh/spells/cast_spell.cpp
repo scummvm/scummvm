@@ -45,7 +45,7 @@ bool CastSpell::msgFocus(const FocusMessage &msg) {
 }
 
 void CastSpell::draw() {
-	ScrollView::draw();
+	PartyView::draw();
 	_fontReduced = false;
 
 	const Character &c = *g_globals->_currCharacter;
