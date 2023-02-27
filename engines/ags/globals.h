@@ -535,7 +535,7 @@ public:
 	int _said_text = 0;
 	int _longestline = 0;
 	// Old dialog support
-	std::vector< std::shared_ptr<unsigned char> > _old_dialog_scripts;
+	std::vector<std::vector<uint8_t>> _old_dialog_scripts;
 	std::vector<String> _old_speech_lines;
 
 	/**@}*/
