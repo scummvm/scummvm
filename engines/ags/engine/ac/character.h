@@ -70,6 +70,8 @@ ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx);
 void    Character_SetAsPlayer(CharacterInfo *chaa);
 void    Character_SetIdleView(CharacterInfo *chaa, int iview, int itime);
 void    Character_SetOption(CharacterInfo *chaa, int flag, int yesorno);
+bool	Character_SetProperty(CharacterInfo *chaa, const char *property, int value);
+bool	Character_SetTextProperty(CharacterInfo *chaa, const char *property, const char *value);
 void    Character_SetSpeed(CharacterInfo *chaa, int xspeed, int yspeed);
 void    Character_StopMoving(CharacterInfo *charp);
 void    Character_Tint(CharacterInfo *chaa, int red, int green, int blue, int opacity, int luminance);

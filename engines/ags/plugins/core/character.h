@@ -70,6 +70,8 @@ public:
 	void SayBackground(ScriptMethodParams &params);
 	void SetAsPlayer(ScriptMethodParams &params);
 	void SetIdleView(ScriptMethodParams &params);
+	void SetProperty(ScriptMethodParams &params);
+	void SetTextProperty(ScriptMethodParams &params);
 	void SetSpeed(ScriptMethodParams &params);
 	void StopMoving(ScriptMethodParams &params);
 	void ScPl_Think(ScriptMethodParams &params);

@@ -35,6 +35,8 @@ void Object::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(Object::GetProperty^1, Object::GetProperty);
 	SCRIPT_METHOD(Object::GetPropertyText^2, Object::GetPropertyText);
 	SCRIPT_METHOD(Object::GetTextProperty^1, Object::GetTextProperty);
+	SCRIPT_METHOD(Object::SetProperty^2, Object::SetProperty);
+	SCRIPT_METHOD(Object::SetTextProperty^2, Object::SetTextProperty);
 	SCRIPT_METHOD(Object::MergeIntoBackground^0, Object::MergeIntoBackground);
 	SCRIPT_METHOD(Object::Move^5, Object::Move);
 	SCRIPT_METHOD(Object::RemoveTint^0, Object::RemoveTint);
@@ -107,6 +109,16 @@ void Object::GetPropertyText(ScriptMethodParams &params) {
 void Object::GetTextProperty(ScriptMethodParams &params) {
 	PARAMS2(ScriptObject *, objj, const char *, property);
 	params._result = AGS3::Object_GetTextProperty(objj, property);
+}
+
+void Object::SetProperty(ScriptMethodParams &params) {
+	PARAMS3(ScriptObject *, objj, const char *, property, int, value);
+	params._result = AGS3::Object_SetProperty(objj, property, value);
+}
+
+void Object::SetTextProperty(ScriptMethodParams &params) {
+	PARAMS3(ScriptObject *, objj, const char *, property, const char *, value);
+	params._result = AGS3::Object_SetTextProperty(objj, property, value);
 }
 
 void Object::MergeIntoBackground(ScriptMethodParams &params) {

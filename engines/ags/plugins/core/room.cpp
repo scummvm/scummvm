@@ -32,6 +32,8 @@ void Room::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(Room::GetDrawingSurfaceForBackground^1, Room::GetDrawingSurfaceForBackground);
 	SCRIPT_METHOD(Room::GetProperty^1, Room::GetProperty);
 	SCRIPT_METHOD(Room::GetTextProperty^1, Room::GetTextProperty);
+	SCRIPT_METHOD(Room::SetProperty^2, Room::SetProperty);
+	SCRIPT_METHOD(Room::SetTextProperty^2, Room::SetTextProperty);
 	SCRIPT_METHOD(Room::get_BottomEdge, Room::GetBottomEdge);
 	SCRIPT_METHOD(Room::get_ColorDepth, Room::GetColorDepth);
 	SCRIPT_METHOD(Room::get_Height, Room::GetHeight);
@@ -57,6 +59,16 @@ void Room::GetProperty(ScriptMethodParams &params) {
 void Room::GetTextProperty(ScriptMethodParams &params) {
 	PARAMS1(const char *, property);
 	params._result = AGS3::Room_GetTextProperty(property);
+}
+
+void Room::SetProperty(ScriptMethodParams &params) {
+	PARAMS2(const char *, property, int, value);
+	params._result = AGS3::Room_SetProperty(property, value);
+}
+
+void Room::SetTextProperty(ScriptMethodParams &params) {
+	PARAMS2(const char *, property, const char *, value);
+	params._result = AGS3::Room_SetTextProperty(property, value);
 }
 
 void Room::GetBottomEdge(ScriptMethodParams &params) {

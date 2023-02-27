@@ -35,6 +35,8 @@ void InventoryItem::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(InventoryItem::GetProperty ^ 1, InventoryItem::GetProperty);
 	SCRIPT_METHOD(InventoryItem::GetPropertyText ^ 2, InventoryItem::GetPropertyText);
 	SCRIPT_METHOD(InventoryItem::GetTextProperty ^ 1, InventoryItem::GetTextProperty);
+	SCRIPT_METHOD(InventoryItem::SetProperty ^ 2, InventoryItem::SetProperty);
+	SCRIPT_METHOD(InventoryItem::SetTextProperty ^ 2, InventoryItem::SetTextProperty);
 	SCRIPT_METHOD(InventoryItem::RunInteraction ^ 1, InventoryItem::RunInteraction);
 	SCRIPT_METHOD(InventoryItem::SetName ^ 1, InventoryItem::SetName);
 	SCRIPT_METHOD(InventoryItem::get_CursorGraphic, InventoryItem::GetCursorGraphic);
@@ -74,6 +76,16 @@ void InventoryItem::GetPropertyText(ScriptMethodParams &params) {
 void InventoryItem::GetTextProperty(ScriptMethodParams &params) {
 	PARAMS2(ScriptInvItem *, scii, const char *, property);
 	params._result = AGS3::InventoryItem_GetTextProperty(scii, property);
+}
+
+void InventoryItem::SetProperty(ScriptMethodParams &params) {
+	PARAMS3(ScriptInvItem *, scii, const char *, property, int, value);
+	params._result = AGS3::InventoryItem_SetProperty(scii, property, value);
+}
+
+void InventoryItem::SetTextProperty(ScriptMethodParams &params) {
+	PARAMS3(ScriptInvItem *, scii, const char *, property, const char *, value);
+	params._result = AGS3::InventoryItem_SetTextProperty(scii, property, value);
 }
 
 void InventoryItem::RunInteraction(ScriptMethodParams &params) {
