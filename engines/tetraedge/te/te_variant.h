@@ -56,8 +56,11 @@ public:
 	int32 toSigned32(bool *success = nullptr) const;
 	int64 toSigned64(bool *success = nullptr) const;
 	Common::String toString(bool *success = nullptr) const;
-	int32 toUnsigned32(bool *success = nullptr) const;
-	int64 toUnsigned64(bool *success = nullptr) const;
+	uint32 toUnsigned32(bool *success = nullptr) const;
+	uint64 toUnsigned64(bool *success = nullptr) const;
+
+	/// Dump a string representation for debugging
+	Common::String dumpStr() const;
 
 private:
 	uint64 _data;
