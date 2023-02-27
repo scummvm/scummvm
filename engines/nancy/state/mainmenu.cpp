@@ -116,7 +116,7 @@ void MainMenu::run() {
 				_state = kStop;
 
 				_buttonDown._drawSurface.create(_background._drawSurface, _srcRects[i]);
-				_buttonDown._screenPosition = _destRects[i];
+				_buttonDown.moveTo(_destRects[i]);
 				_buttonDown.setVisible(true);
 
 				return;

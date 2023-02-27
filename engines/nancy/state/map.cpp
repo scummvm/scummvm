@@ -79,11 +79,15 @@ void Map::init() {
 	readRect(*chunk, closedLabelSrc);
 
 	_closedLabel._drawSurface.create(g_nancy->_graphicsManager->_object0, closedLabelSrc);
+	
+	Common::Rect newScreenRect;
 
-	_closedLabel._screenPosition.left = textboxScreenPosition.left + ((textboxScreenPosition.width() - closedLabelSrc.width()) / 2);
-	_closedLabel._screenPosition.right = _closedLabel._screenPosition.left + closedLabelSrc.width() - 1;
-	_closedLabel._screenPosition.bottom = textboxScreenPosition.bottom - 11;
-	_closedLabel._screenPosition.top = _closedLabel._screenPosition.bottom - closedLabelSrc.height() + 1;
+	newScreenRect.left = textboxScreenPosition.left + ((textboxScreenPosition.width() - closedLabelSrc.width()) / 2);
+	newScreenRect.right = newScreenRect.left + closedLabelSrc.width() - 1;
+	newScreenRect.bottom = textboxScreenPosition.bottom - 11;
+	newScreenRect.top = newScreenRect.bottom - closedLabelSrc.height() + 1;
+
+	_closedLabel.moveTo(newScreenRect);
 
 	setLabel(-1);
 
@@ -147,9 +151,11 @@ void Map::init() {
 		chunk->seek(0x9A + i * 16, SEEK_SET);
 		readRect(*chunk, loc.labelSrc);
 
+		Common::Rect closedScreenRect = _closedLabel.getScreenPosition();
+
 		loc.labelDest.left = textboxScreenPosition.left + ((textboxScreenPosition.width() - loc.labelSrc.width()) / 2);
 		loc.labelDest.right = loc.labelDest.left + loc.labelSrc.width() - 1;
-		loc.labelDest.bottom = _closedLabel._screenPosition.bottom - ((_closedLabel._screenPosition.bottom - loc.labelSrc.height() - textboxScreenPosition.top) / 2) - 11;
+		loc.labelDest.bottom = closedScreenRect.bottom - ((closedScreenRect.bottom - loc.labelSrc.height() - textboxScreenPosition.top) / 2) - 11;
 		loc.labelDest.top = loc.labelDest.bottom - loc.labelSrc.height() + 1;
 	}
 
@@ -226,7 +232,7 @@ void Map::setLabel(int labelID) {
 		_label.setVisible(false);
 		_closedLabel.setVisible(false);
 	} else {
-		_label._screenPosition = _locations[labelID].labelDest;
+		_label.moveTo(_locations[labelID].labelDest);
 		_label._drawSurface.create(g_nancy->_graphicsManager->_object0, _locations[labelID].labelSrc);
 		_label.setVisible(true);
 

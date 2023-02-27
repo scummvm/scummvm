@@ -123,7 +123,7 @@ void PlaySecondaryVideo::updateGraphics() {
 			}
 
 			_drawSurface.create(_fullFrame, _videoDescs[vpFrame].srcRect);
-			_screenPosition = _videoDescs[vpFrame].destRect;
+			moveTo(_videoDescs[vpFrame].destRect);
 			_hotspot = _screenPosition;
 			_hotspot.clip(NancySceneState.getViewport().getBounds());
 			_hasHotspot = true;

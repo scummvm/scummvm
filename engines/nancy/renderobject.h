@@ -61,7 +61,6 @@ public:
 	Common::Rect getBounds() const { return Common::Rect(_screenPosition.width(), _screenPosition.height()); }
 
 	Graphics::ManagedSurface _drawSurface;
-	Common::Rect _screenPosition;
 
 protected:
 	// Z order and blit type are extracted directly from the corresponding
@@ -75,6 +74,7 @@ protected:
 	bool _isVisible;
 	uint16 _z;
 	Common::Rect _previousScreenPosition;
+	Common::Rect _screenPosition;
 };
 
 } // End of namespace Nancy
