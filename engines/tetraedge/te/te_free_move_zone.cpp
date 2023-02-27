@@ -778,7 +778,9 @@ void TeFreeMoveZone::updateGrid(bool force) {
 	_updateTimer.start();
 	buildAStar();
 	_micropather->Reset();
-	debug("[TeFreeMoveZone::updateGrid()] %s time : %.2f", name().c_str(), _updateTimer.getTimeFromStart() / 1000000.0);
+	// This debug msg copied from the original, but it's
+	// a bit noisy and not so useful.
+	// debug("[TeFreeMoveZone::updateGrid()] %s time : %.2f", name().c_str(), _updateTimer.getTimeFromStart() / 1000000.0);
 	_gridDirty = false;
 }
 

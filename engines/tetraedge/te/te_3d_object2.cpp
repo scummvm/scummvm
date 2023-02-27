@@ -149,7 +149,8 @@ void Te3DObject2::removeChild(Te3DObject2 *child) {
 		Common::String cname("nullptr");
 		if (child)
 			cname = child->name();
-		debug("Request to remove child (%s) which is not a child of this (%s).", cname.c_str(), name().c_str());
+		// This happens on every scene change so this is a bit too noisy.
+		// debug("Request to remove child (%s) which is not a child of this (%s).", cname.c_str(), name().c_str());
 	}
 }
 

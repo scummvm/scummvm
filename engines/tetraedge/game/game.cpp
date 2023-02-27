@@ -1776,7 +1776,7 @@ bool Game::HitObject::onDown() {
 }
 
 bool Game::HitObject::onUp() {
-	debug("Game::HitObject mouseup: %s", _name.c_str());
+	// debug("Game::HitObject mouseup: %s", _name.c_str());
 	_game->luaScript().execute("OnButtonUp", _name);
 	_game->_isCharacterIdle = true;
 	return false;
