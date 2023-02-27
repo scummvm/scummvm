@@ -70,6 +70,7 @@
 #include "backends/graphics3d/android/android-graphics3d.h"
 #include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/android.h"
+#include "backends/fs/android/android-fs.h"
 #include "backends/fs/android/android-fs-factory.h"
 
 const char *android_log_tag = "ScummVM";
@@ -121,6 +122,38 @@ void checkGlError(const char *expr, const char *file, int line) {
 		LOGE("GL ERROR: %s on %s (%s:%d)", getGlErrStr(error), expr, file, line);
 }
 #endif
+
+class AndroidSaveFileManager : public DefaultSaveFileManager {
+public:
+	AndroidSaveFileManager(const Common::String &defaultSavepath) : DefaultSaveFileManager(defaultSavepath) {}
+
+	bool removeSavefile(const Common::String &filename) override {
+		Common::String path = getSavePath() + "/" + filename;
+		AbstractFSNode *node = AndroidFilesystemFactory::instance().makeFileNodePath(path);
+
+		if (!node) {
+			return false;
+		}
+
+		AndroidFSNode *anode = dynamic_cast<AndroidFSNode *>(node);
+
+		if (!anode) {
+			// This should never happen
+			warning("Invalid node received");
+			delete node;
+			return false;
+		}
+
+		bool ret = anode->remove();
+
+		delete anode;
+
+		if (!ret) {
+			setError(Common::kUnknownError, Common::String("Couldn't delete the save file: %s", path.c_str()));
+		}
+		return ret;
+	}
+};
 
 OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_audio_sample_rate(audio_sample_rate),
@@ -450,9 +483,7 @@ void OSystem_Android::initBackend() {
 		ConfMan.setInt("gui_scale", 125); // "Large" (see gui/options.cpp and guiBaseValues[])
 	}
 
-
-	ConfMan.registerDefault("savepath", ConfMan.get("path") + "/saves");
-	_savefileManager = new DefaultSaveFileManager(ConfMan.get("savepath"));
+	_savefileManager = new AndroidSaveFileManager(ConfMan.get("path") + "/saves");
 	// TODO remove the debug message eventually
 	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
 
