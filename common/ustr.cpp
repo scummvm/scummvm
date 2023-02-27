@@ -252,6 +252,55 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 	return length;
 }
 
+void U32String::replace(uint32 pos, uint32 count, const U32String &str) {
+	replace(pos, count, str, 0, str._size);
+}
+
+void U32String::replace(iterator begin_, iterator end_, const U32String &str) {
+	replace(begin_ - _str, end_ - begin_, str._str, 0, str._size);
+}
+
+void U32String::replace(uint32 posOri, uint32 countOri, const U32String &str,
+					 uint32 posDest, uint32 countDest) {
+	replace(posOri, countOri, str._str, posDest, countDest);
+}
+
+void U32String::replace(uint32 posOri, uint32 countOri, const u32char_type_t *str,
+					 uint32 posDest, uint32 countDest) {
+
+	// Prepare string for the replaced text.
+	if (countOri < countDest) {
+		uint32 offset = countDest - countOri; ///< Offset to copy the characters
+		uint32 newSize = _size + offset;
+
+		ensureCapacity(newSize, true);
+
+		_size = newSize;
+
+		// Push the old characters to the end of the string
+		for (uint32 i = _size; i >= posOri + countDest; i--)
+			_str[i] = _str[i - offset];
+
+	} else if (countOri > countDest) {
+		uint32 offset = countOri - countDest; ///< Number of positions that we have to pull back
+
+		makeUnique();
+
+		// Pull the remainder string back
+		for (uint32 i = posOri + countDest; i + offset <= _size; i++)
+			_str[i] = _str[i + offset];
+
+		_size -= offset;
+	} else {
+		makeUnique();
+	}
+
+	// Copy the replaced part of the string
+	for (uint32 i = 0; i < countDest; i++)
+		_str[posOri + i] = str[posDest + i];
+
+}
+
 char* U32String::itoa(int num, char* str, uint base) {
 	if (num < 0) {
 		str[0] = '-';
