@@ -33,7 +33,7 @@ ViewFrame::ViewFrame()
 	, yoffs(0)
 	, speed(0)
 	, flags(0)
-	, sound(0)
+	, sound(-1)
 	, audioclip(-1) {
 	reserved_for_future[0] = 0;
 	reserved_for_future[1] = 0;
