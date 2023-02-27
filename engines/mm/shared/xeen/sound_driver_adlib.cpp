@@ -19,10 +19,12 @@
  *
  */
 
-#include "mm/xeen/sound_driver_adlib.h"
-#include "mm/xeen/xeen.h"
+#include "common/debug.h"
+#include "mm/shared/xeen/sound_driver_adlib.h"
+#include "mm/mm.h"
 
 namespace MM {
+namespace Shared {
 namespace Xeen {
 
 #define CALLBACKS_PER_SECOND 73
@@ -424,5 +426,6 @@ byte SoundDriverAdlib::calculateLevel(byte level, bool isFx) {
 	return scaling | (0x3f - totalLevel);
 }
 
-} // End of namespace Xeen
-} // End of namespace MM
+} // namespace Xeen
+} // namespace Shared
+} // namespace MM

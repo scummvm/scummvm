@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef XEEN_SOUND_DRIVER_H
-#define XEEN_SOUND_DRIVER_H
+#ifndef MM_SHARED_XEEN_SOUND_DRIVER_H
+#define MM_SHARED_XEEN_SOUND_DRIVER_H
 
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
@@ -28,7 +28,7 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "common/stack.h"
-#include "mm/xeen/files.h"
+#include "mm/shared/xeen/file.h"
 
 #define CHANNEL_COUNT 9
 
@@ -37,6 +37,7 @@ namespace OPL {
 }
 
 namespace MM {
+namespace Shared {
 namespace Xeen {
 
 enum MusicCommand {
@@ -199,7 +200,8 @@ public:
 	}
 };
 
-} // End of namespace Xeen
-} // End of namespace MM
+} // namespace Xeen
+} // namespace Shared
+} // namespace MM
 
 #endif

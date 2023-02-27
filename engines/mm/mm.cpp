@@ -23,8 +23,11 @@
 
 namespace MM {
 
+MMEngine *g_engine;
+
 MMEngine::MMEngine(OSystem *syst, const MM::MightAndMagicGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _randomSource("MightAndMagic") {
+		Engine(syst), _gameDescription(gameDesc), _randomSource("MightAndMagic") {
+	g_engine = this;
 }
 
 bool MMEngine::hasFeature(EngineFeature f) const {
@@ -48,6 +51,10 @@ Common::Language MMEngine::getLanguage() const {
 
 Common::Platform MMEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
+}
+
+bool MMEngine::getIsCD() const {
+	return getFeatures() & ADGF_CD;
 }
 
 } // namespace MM

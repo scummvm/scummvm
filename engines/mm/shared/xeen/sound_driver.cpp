@@ -19,13 +19,15 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/md5.h"
 #include "common/config-manager.h"
-#include "mm/xeen/sound_driver.h"
-#include "mm/xeen/xeen.h"
-#include "mm/xeen/files.h"
+#include "mm/shared/xeen/sound_driver.h"
+#include "mm/shared/xeen/file.h"
+#include "mm/mm.h"
 
 namespace MM {
+namespace Shared {
 namespace Xeen {
 
 SoundDriver::SoundDriver() : _frameCtr(0) {
@@ -238,5 +240,6 @@ const CommandFn SoundDriver::FX_COMMANDS[16] = {
 	&SoundDriver::cmdChangeFrequency,  &SoundDriver::fxEndSubroutine
 };
 
-} // End of namespace Xeen
-} // End of namespace MM
+} // namespace Xeen
+} // namespace Shared
+} // namespace MM

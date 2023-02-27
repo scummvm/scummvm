@@ -23,24 +23,25 @@
 #include "audio/decoders/voc.h"
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
-#include "mm/xeen/sound.h"
-#include "mm/xeen/sound_driver_adlib.h"
-#include "mm/xeen/xeen.h"
+#include "mm/shared/xeen/sound.h"
+#include "mm/shared/xeen/sound_driver_adlib.h"
+#include "mm/mm.h"
 
 namespace MM {
+namespace Shared {
 namespace Xeen {
 
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _fxOn(true), _musicOn(true), _subtitles(false),
 _songData(nullptr), _effectsData(nullptr), _musicSide(0), _musicPercent(100),
 _musicVolume(0), _sfxVolume(0) {
 	_SoundDriver = new SoundDriverAdlib();
-	if (g_vm->getIsCD())
+	if (g_engine->getIsCD())
 		g_system->getAudioCDManager()->open();
 }
 
 Sound::~Sound() {
 	stopAllAudio();
-	if (g_vm->getIsCD())
+	if (g_engine->getIsCD())
 		g_system->getAudioCDManager()->close();
 
 	delete _SoundDriver;
@@ -111,7 +112,7 @@ void Sound::setFxOn(bool isOn) {
 		ConfMan.setBool("mute", false);
 	ConfMan.flushToDisk();
 
-	g_vm->syncSoundSettings();
+	g_engine->syncSoundSettings();
 }
 
 void Sound::loadEffectsData() {
@@ -215,7 +216,7 @@ void Sound::setMusicOn(bool isOn) {
 		ConfMan.setBool("mute", false);
 	ConfMan.flushToDisk();
 
-	g_vm->syncSoundSettings();
+	g_engine->syncSoundSettings();
 }
 
 bool Sound::isMusicPlaying() const {
@@ -250,5 +251,6 @@ void Sound::updateVolume() {
 	songCommand(SET_VOLUME, _musicPercent * _musicVolume / 100, _sfxVolume);
 }
 
-} // End of namespace Xeen
-} // End of namespace MM
+} // namespace Xeen
+} // namespace Shared
+} // namespace MM

@@ -339,9 +339,5 @@ uint32 XeenEngine::getGameFeatures() const {
 	return _gameDescription->features;
 }
 
-bool XeenEngine::getIsCD() const {
-	return getFeatures() & ADGF_CD;
-}
-
 } // End of namespace Xeen
 } // End of namespace MM

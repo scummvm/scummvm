@@ -19,16 +19,17 @@
  *
  */
 
-#ifndef XEEN_SOUND_DRIVER_ADLIB_H
-#define XEEN_SOUND_DRIVER_ADLIB_H
+#ifndef MM_SHARED_XEEN_SOUND_DRIVER_ADLIB_H
+#define MM_SHARED_XEEN_SOUND_DRIVER_ADLIB_H
 
-#include "mm/xeen/sound_driver.h"
+#include "mm/shared/xeen/sound_driver.h"
 
 namespace OPL {
 	class OPL;
 }
 
 namespace MM {
+namespace Shared {
 namespace Xeen {
 
 class SoundDriverAdlib : public SoundDriver {
@@ -162,7 +163,8 @@ public:
 	int songCommand(uint commandId, byte musicVolume = 0, byte sfxVolume = 0) override;
 };
 
-} // End of namespace Xeen
-} // End of namespace MM
+} // namespace Xeen
+} // namespace Shared
+} // namespace MM
 
 #endif

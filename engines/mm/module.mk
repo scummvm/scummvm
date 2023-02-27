@@ -10,6 +10,9 @@ MODULE_OBJS := \
 	shared/utils/xeen_font.o \
 	shared/xeen/cc_archive.o \
 	shared/xeen/file.o \
+	shared/xeen/sound.o \
+	shared/xeen/sound_driver.o \
+	shared/xeen/sound_driver_adlib.o \
 	shared/xeen/sprites.o \
 	shared/xeen/xsurface.o
 
@@ -255,9 +258,6 @@ MODULE_OBJS += \
 	xeen/saves.o \
 	xeen/screen.o \
 	xeen/scripts.o \
-	xeen/sound.o \
-	xeen/sound_driver.o \
-	xeen/sound_driver_adlib.o \
 	xeen/spells.o \
 	xeen/sprites.o \
 	xeen/subtitles.o \
