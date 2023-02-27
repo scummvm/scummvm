@@ -857,7 +857,7 @@ bool Game::loadCharacter(const Common::String &name) {
 			character->_onCharacterAnimFinishedSignal.remove(this, &Game::onCharacterAnimationFinished);
 			character->_onCharacterAnimFinishedSignal.add(this, &Game::onCharacterAnimationFinished);
 			// Syberia 2 uses a simplified callback here.
-			// We have made onDisplacementPlayerFinished more like Syberia 1's onDisplacementPlayerFinished.
+			// We have made onDisplacementPlayerFinished more like Syberia 1's onDisplacementFinished.
 			if (g_engine->gameType() == TetraedgeEngine::kSyberia)
 				character->onFinished().add(this, &Game::onDisplacementPlayerFinished);
 			else
@@ -905,6 +905,16 @@ bool Game::onCharacterAnimationFinished(const Common::String &charName) {
 	if (!_scene._character)
 		return false;
 
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
+		Character *character = scene().character(charName);
+		const Common::String curAnimName = character->curAnimName();
+		if (character && (curAnimName == character->walkAnim(Character::WalkPart_EndD)
+			|| curAnimName == character->walkAnim(Character::WalkPart_EndG))) {
+			character->updatePosition(1.0);
+			character->endMove();
+		}
+	}
+
 	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {
 		YieldedCallback &cb = _yieldedCallbacks[i];
 		if (cb._luaFnName == "OnCharacterAnimationFinished" && cb._luaParam == charName) {
@@ -928,6 +938,7 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 	bool callScripts = true;
 	for (uint i = 0; i < _yieldedCallbacks.size(); i++) {
 		YieldedCallback &cb = _yieldedCallbacks[i];
+		// Yes, even Syberia2 checks for Kate here..
 		if (cb._luaFnName == "OnCharacterAnimationFinished" && cb._luaParam == "Kate") {
 			TeLuaThread *lua = cb._luaThread;
 			_yieldedCallbacks.remove_at(i);
@@ -939,8 +950,10 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &anim) {
 		}
 	}
 	if (callScripts) {
-		_luaScript.execute("OnCharacterAnimationFinished", "Kate");
-		_luaScript.execute("OnCharacterAnimationPlayerFinished", anim);
+		if (g_engine->gameType() == TetraedgeEngine::kSyberia)
+			_luaScript.execute("OnCharacterAnimationFinished", "Kate");
+		else
+			_luaScript.execute("OnCharacterAnimationPlayerFinished", anim);
 		_luaScript.execute("OnCellCharacterAnimationPlayerFinished", anim);
 	}
 
@@ -993,7 +1006,7 @@ bool Game::onDialogFinished(const Common::String &val) {
 	return false;
 }
 
-// This is the Syberia 2 version of this function, not used in Syb 2.
+// This is the Syberia 2 version of this function, not used in Syb 1.
 // Syb 1 uses a function much more like onDisplacementPlayerFinished below.
 bool Game::onDisplacementFinished() {
 	TeLuaThread *thread = nullptr;
