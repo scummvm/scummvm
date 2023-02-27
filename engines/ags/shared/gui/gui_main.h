@@ -73,41 +73,43 @@ public:
 public:
 	GUIMain();
 
-	void        InitDefaults();
+	void	InitDefaults();
 
 	// Tells if the gui background supports alpha channel
-	bool        HasAlphaChannel() const;
+	bool	HasAlphaChannel() const;
 	// Tells if GUI will react on clicking on it
-	bool        IsClickable() const;
+	bool	IsClickable() const;
 	// Tells if GUI's visibility is overridden and it won't be displayed on
 	// screen regardless of Visible property (until concealed mode is off).
-	bool        IsConcealed() const;
+	bool	IsConcealed() const;
 	// Tells if gui is actually meant to be displayed on screen.
 	// Normally Visible property determines whether GUI is allowed to be seen,
 	// but there may be other settings that override it.
-	bool        IsDisplayed() const;
+	bool	IsDisplayed() const;
 	// Tells if given coordinates are within interactable area of gui
 	// NOTE: this currently tests for actual visibility and Clickable property
-	bool        IsInteractableAt(int x, int y) const;
+	bool	IsInteractableAt(int x, int y) const;
 	// Tells if gui is a text window
-	bool        IsTextWindow() const;
+	bool	IsTextWindow() const;
 	// Tells if GUI is *allowed* to be displayed and interacted with.
 	// This does not necessarily mean that it is displayed right now, because
 	// GUI may be hidden for other reasons, including overriding behavior.
 	// For example GUI with kGUIPopupMouseY style will not be shown unless
 	// mouse cursor is at certain position on screen.
-	bool        IsVisible() const;
+	bool	IsVisible() const;
 
 	// Tells if GUI has graphically changed recently
-	bool        HasChanged() const;
-	bool        HasControlsChanged() const;
+	bool	HasChanged() const;
+	bool	HasControlsChanged() const;
 	// Manually marks GUI as graphically changed
 	// NOTE: this only matters if GUI's own graphic changes (content, size etc),
 	// but not its state (visible) or texture drawing mode (transparency, etc).
-	void        MarkChanged();
-	void        MarkControlsChanged();
+	void	MarkChanged();
+	void	MarkControlsChanged();
 	// Clears changed flag
-	void        ClearChanged();
+	void	ClearChanged();
+	// Resets control-under-mouse detection.
+	void	ResetOverControl();
 
 	// Finds a control under given screen coordinates, returns control's child ID.
 	// Optionally allows extra leeway (offset in all directions) to let the user grab tiny controls.
@@ -228,7 +230,7 @@ void DrawTextAligned(Bitmap *ds, const char *text, int font, color_t text_color,
 void DrawTextAlignedHor(Bitmap *ds, const char *text, int font, color_t text_color, int x1, int x2, int y, FrameAlignment align);
 
 // Mark all existing GUI for redraw
-void MarkAllGUIForUpdate();
+void MarkAllGUIForUpdate(bool redraw, bool reset_over_ctrl);
 // Mark all translatable GUI controls for redraw
 void MarkForTranslationUpdate();
 // Mark all GUI which use the given font for recalculate/redraw;

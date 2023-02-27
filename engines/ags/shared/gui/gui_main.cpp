@@ -208,6 +208,13 @@ void GUIMain::ClearChanged() {
 	_hasControlsChanged = false;
 }
 
+void GUIMain::ResetOverControl() {
+	// Force it to re-check for which control is under the mouse
+	MouseWasAt.X = -1;
+	MouseWasAt.Y = -1;
+	MouseOverCtrl = -1;
+}
+
 void GUIMain::AddControl(GUIControlType type, int32_t id, GUIObject *control) {
 	_ctrlRefs.emplace_back(type, id);
 	_controls.push_back(control);
@@ -681,11 +688,15 @@ void DrawTextAlignedHor(Bitmap *ds, const char *text, int font, color_t text_col
 	wouttext_outline(ds, line.X1, y, font, text_color, text);
 }
 
-void MarkAllGUIForUpdate() {
+void MarkAllGUIForUpdate(bool redraw, bool reset_over_ctrl) {
 	for (auto &gui : _GP(guis)) {
-		gui.MarkChanged();
-		for (int i = 0; i < gui.GetControlCount(); ++i)
-			gui.GetControl(i)->MarkChanged();
+		if (redraw) {
+			gui.MarkChanged();
+			for (int i = 0; i < gui.GetControlCount(); ++i)
+				gui.GetControl(i)->MarkChanged();
+		}
+		if (reset_over_ctrl)
+			gui.ResetOverControl();
 	}
 }
 
@@ -788,7 +799,7 @@ static HError ResortGUI(bool bwcompat_ctrl_zorder = false) {
 		}
 		gui.ResortZOrder();
 	}
-	MarkAllGUIForUpdate();
+	MarkAllGUIForUpdate(true, true);
 	return HError::None();
 }
 

@@ -424,7 +424,7 @@ int SetGameOption(int opt, int setting) {
 		GUI::Options.DisabledStyle = static_cast<GuiDisableStyle>(_GP(game).options[OPT_DISABLEOFF]);
 		// If GUI was disabled at this time then also update it, as visual style could've changed
 		if (_GP(play).disabled_user_interface > 0) {
-			GUI::MarkAllGUIForUpdate();
+			GUI::MarkAllGUIForUpdate(true, false);
 		}
 	} else if (opt == OPT_PORTRAITSIDE) {
 		if (setting == 0)  // set back to Left
