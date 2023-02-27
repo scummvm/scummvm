@@ -53,9 +53,15 @@ RenderObject::~RenderObject() {
 	}
 }
 
-void RenderObject::moveTo(Common::Point position) {
+void RenderObject::moveTo(const Common::Point &position) {
 	_previousScreenPosition = _screenPosition;
 	_screenPosition.moveTo(position);
+	_needsRedraw = true;
+}
+
+void RenderObject::moveTo(const Common::Rect &bounds) {
+	_previousScreenPosition = _screenPosition;
+	_screenPosition = bounds;
 	_needsRedraw = true;
 }
 
@@ -88,7 +94,8 @@ Common::Rect RenderObject::getPreviousScreenPosition() const {
 	}
 }
 
-// Convert from screen to local space. Does NOT take _drawSurface's offset into account
+// Convert a rectangle from screen space to local (to _drawSurface) space.
+// Does NOT take _drawSurface's offset into account
 Common::Rect RenderObject::convertToLocal(const Common::Rect &screen) const {
 	Common::Rect ret = screen;
 	Common::Point offset;
@@ -105,14 +112,39 @@ Common::Rect RenderObject::convertToLocal(const Common::Rect &screen) const {
 	offset.y -= _screenPosition.top;
 
 	ret.translate(offset.x, offset.y);
+
+	if (_drawSurface.w != _screenPosition.width() || _drawSurface.h != _screenPosition.height()) {
+		Common::Rect srcBounds = _drawSurface.getBounds();
+
+		float scaleX = (float)_screenPosition.width() / srcBounds.width();
+		float scaleY = (float)_screenPosition.height() / srcBounds.height();
+
+		ret.left = (ret.left - srcBounds.left) * scaleX;
+		ret.right = (ret.right - srcBounds.left) * scaleX;
+		ret.top = (ret.top - srcBounds.top) * scaleY;
+		ret.bottom = (ret.bottom - srcBounds.top) * scaleY;
+	}
+
 	return ret;
 }
 
-// Convert from local to screen space. Does NOT take _drawSurface's offset into account
+// Convert rectangle from local (to _drawSurface) space to screen space.
+// Does NOT take _drawSurface's offset into account
 Common::Rect RenderObject::convertToScreen(const Common::Rect &rect) const {
-
 	Common::Rect ret = rect;
 	Common::Point offset;
+
+	if (_drawSurface.w != _screenPosition.width() || _drawSurface.h != _screenPosition.height()) {
+		Common::Rect srcBounds = _drawSurface.getBounds();
+
+		float scaleX = (float)srcBounds.width() / _screenPosition.width();
+		float scaleY = (float)srcBounds.height() / _screenPosition.height();
+
+		ret.left = (ret.left - srcBounds.left) * scaleX;
+		ret.right = (ret.right - srcBounds.left) * scaleX;
+		ret.top = (ret.top - srcBounds.top) * scaleY;
+		ret.bottom = (ret.bottom - srcBounds.top) * scaleY;
+	}
 
 	if (isViewportRelative()) {
 		Common::Rect viewportScreenPos = NancySceneState.getViewport().getScreenPosition();
@@ -126,6 +158,7 @@ Common::Rect RenderObject::convertToScreen(const Common::Rect &rect) const {
 	offset.y += _screenPosition.top;
 
 	ret.translate(offset.x, offset.y);
+
 	return ret;
 }
 

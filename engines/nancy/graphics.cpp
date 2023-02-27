@@ -290,8 +290,7 @@ void GraphicsManager::loadFonts() {
 
 // Draw a given screen-space rectangle to the screen
 void GraphicsManager::blitToScreen(const RenderObject &src, Common::Rect screenRect) {
-	Common::Point pointDest(screenRect.left, screenRect.top);
-	_screen.blitFrom(src._drawSurface, src.convertToLocal(screenRect), pointDest);
+	_screen.blitFrom(src._drawSurface, src._drawSurface.getBounds().findIntersectingRect(src.convertToLocal(screenRect)), screenRect);
 }
 
 int GraphicsManager::objectComparator(const void *a, const void *b) {

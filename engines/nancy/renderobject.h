@@ -44,7 +44,8 @@ public:
 	virtual void registerGraphics(); // Does not get called automatically
 	virtual void updateGraphics() {}
 
-	void moveTo(Common::Point position);
+	void moveTo(const Common::Point &position);
+	void moveTo(const Common::Rect &bounds);
 	void setVisible(bool visible);
 	void setTransparent(bool isTransparent);
 
@@ -52,12 +53,12 @@ public:
 	Common::Rect getScreenPosition() const;
 	Common::Rect getPreviousScreenPosition() const;
 
-	// Given a screen-space rect, convert it to the source surface's local space
+	// Given a screen-space rect, convert it to the _drawSurface's local space
 	Common::Rect convertToLocal(const Common::Rect &screen) const;
-	// Given a local space rect, convert it to screen space
+	// Given a local (to the _drawSurface) space rect, convert it to screen space
 	Common::Rect convertToScreen(const Common::Rect &rect) const;
 
-	Common::Rect getBounds() const { return Common::Rect(_drawSurface.w, _drawSurface.h); }
+	Common::Rect getBounds() const { return Common::Rect(_screenPosition.width(), _screenPosition.height()); }
 
 	Graphics::ManagedSurface _drawSurface;
 	Common::Rect _screenPosition;
