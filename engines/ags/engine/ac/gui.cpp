@@ -445,9 +445,8 @@ void update_gui_disabled_status() {
 	}
 
 	if (all_buttons_was != _G(all_buttons_disabled)) {
-		// As controls become enabled we must notify parent GUIs
-		// to let them reset control-under-mouse detection
-		GUI::MarkAllGUIForUpdate();
+		// Mark guis for redraw and reset control-under-mouse detection
+		GUI::MarkAllGUIForUpdate(GUI::Options.DisabledStyle != kGuiDis_Unchanged, true);
 		if (GUI::Options.DisabledStyle != kGuiDis_Unchanged) {
 			invalidate_screen();
 		}
