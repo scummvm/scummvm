@@ -57,14 +57,16 @@ void ViewAnimation::leave() {
 
 /*------------------------------------------------------------------------*/
 
-class Training : public ViewAnimation {
+class Blacksmith : public ViewAnimation {
 public:
-	Training() : ViewAnimation("trng", 2, 16) {}
-	~Training() override {}
+	Blacksmith() : ViewAnimation("blck", 2, 13) {
+	}
+	~Blacksmith() override {
+	}
 
 	void enter() override {
-		_sound.playVoice("hello1.voc");
-		_sound.playSong("grounds.m");
+		_sound.playVoice("whaddayo.voc");
+		_sound.playSong("smith.m");
 	}
 };
 
@@ -74,30 +76,8 @@ public:
 	~Market() override {}
 
 	void enter() override {
-		_sound.playVoice("guild10.voc");
+		_sound.playVoice("hello.voc");
 		_sound.playSong("guild.m");
-	}
-};
-
-class Temple : public ViewAnimation {
-public:
-	Temple() : ViewAnimation("tmpl", 4, 26) {}
-	~Temple() override {}
-
-	void enter() override {
-		_sound.playVoice("maywe2.voc");
-		_sound.playSong("temple.m");
-	}
-};
-
-class Blacksmith : public ViewAnimation {
-public:
-	Blacksmith() : ViewAnimation("blck", 2, 13) {}
-	~Blacksmith() override {}
-
-	void enter() override {
-		_sound.playVoice("whaddayo.voc");
-		_sound.playSong("smith.m");
 	}
 };
 
@@ -114,6 +94,32 @@ public:
 	void leave() override {
 		ViewAnimation::leave();
 		_sound.playVoice("goodbye.voc");
+	}
+};
+
+class Temple : public ViewAnimation {
+public:
+	Temple() : ViewAnimation("tmpl", 4, 26) {
+	}
+	~Temple() override {
+	}
+
+	void enter() override {
+		_sound.playVoice("maywe2.voc");
+		_sound.playSong("temple.m");
+	}
+};
+
+class Training : public ViewAnimation {
+public:
+	Training() : ViewAnimation("trng", 2, 16) {
+	}
+	~Training() override {
+	}
+
+	void enter() override {
+		_sound.playVoice("hello1.voc");
+		_sound.playSong("grounds.m");
 	}
 };
 
