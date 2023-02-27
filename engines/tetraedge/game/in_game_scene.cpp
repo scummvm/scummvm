@@ -112,6 +112,7 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 	const TeMarker *marker = findMarker(markerName);
 	if (!marker) {
 		Game *game = g_engine->getGame();
+		Application *app = g_engine->getApplication();
 		TeSpriteLayout *markerSprite = new TeSpriteLayout();
 		// Note: game checks paths here but seems to just use the original?
 		markerSprite->setName(markerName);
@@ -121,21 +122,36 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 		markerSprite->setPositionType(TeILayout::RELATIVE_TO_PARENT);
 		TeVector3f32 newPos;
 		if (locType == "PERCENT") {
-			Application *app = g_engine->getApplication();
-			TeVector3f32 frontLayoutSize = app->frontLayout().userSize();
-			newPos.x() = frontLayoutSize.x() * (x / 100.0);
-			newPos.y() = frontLayoutSize.y() * (y / 100.0);
+			TeVector3f32 parentSize;
+			//if (g_engine->gameType() == TetraedgeEngine::kSyberia)
+				parentSize = app->frontLayout().userSize();
+			//else
+			//	parentSize = app->getMainWindow().size();
+			newPos.x() = parentSize.x() * (x / 100.0f);
+			newPos.y() = parentSize.y() * (y / 100.0f);
 		} else {
 			newPos.x() = x / g_engine->getDefaultScreenWidth();
 			newPos.y() = y / g_engine->getDefaultScreenHeight();
 		}
 		markerSprite->setPosition(newPos);
 
-		const TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
+		const TeVector3f32 winSize = app->getMainWindow().size();
+		float xscale = 1.0f;
+		float yscale = 1.0f;
+		if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
+			TeLayout *bglayout = _bgGui.layoutChecked("background");
+			TeSpriteLayout *rootlayout = Game::findSpriteLayoutByName(bglayout, "root");
+			if (rootlayout) {
+				TeVector2s32 bgSize = rootlayout->_tiledSurfacePtr->tiledTexture()->totalSize();
+				xscale = 800.0f / bgSize._x;
+				yscale = 600.0f / bgSize._y;
+			}
+		}
+
 		if (g_engine->getCore()->fileFlagSystemFlag("definition") == "SD") {
-			markerSprite->setSize(TeVector3f32(0.07f, (4.0f / ((winSize.y() / winSize.x()) * 4.0f)) * 0.07f, 0.0));
+			markerSprite->setSize(TeVector3f32(xscale * 0.07f, yscale * (4.0f / ((winSize.y() / winSize.x()) * 4.0f)) * 0.07f, 0.0));
 		} else {
-			markerSprite->setSize(TeVector3f32(0.04f, (4.0f / ((winSize.y() / winSize.x()) * 4.0f)) * 0.04f, 0.0));
+			markerSprite->setSize(TeVector3f32(xscale * 0.04f, yscale * (4.0f / ((winSize.y() / winSize.x()) * 4.0f)) * 0.04f, 0.0));
 		}
 		markerSprite->setVisible(game->markersVisible());
 		markerSprite->_tiledSurfacePtr->_frameAnim.setLoopCount(-1);
