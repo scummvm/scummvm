@@ -53,8 +53,8 @@ struct RoomStatus {
 	int   beenhere = 0;
 	uint32_t numobj = 0;
 	std::vector<RoomObject> obj;
-	int   tsdatasize = 0;
-	char *tsdata = nullptr;
+	uint32_t tsdatasize = 0;
+	std::vector<char> tsdata;
 	Interaction intrHotspot[MAX_ROOM_HOTSPOTS];
 	std::vector<Interaction> intrObject;
 	Interaction intrRegion[MAX_ROOM_REGIONS];

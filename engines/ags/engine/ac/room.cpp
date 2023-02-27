@@ -216,8 +216,8 @@ void save_room_data_segment() {
 
 	_G(croom)->tsdatasize = _G(roominst)->globaldatasize;
 	if (_G(croom)->tsdatasize > 0) {
-		_G(croom)->tsdata = new char[_G(croom)->tsdatasize];
-		memcpy(_G(croom)->tsdata, &_G(roominst)->globaldata[0], _G(croom)->tsdatasize);
+		_G(croom)->tsdata.resize(_G(croom)->tsdatasize);
+		memcpy(_G(croom)->tsdata.data(), &_G(roominst)->globaldata[0], _G(croom)->tsdatasize);
 	}
 
 }
@@ -673,9 +673,9 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	else if (_GP(thisroom).CompiledScript != nullptr) {
 		compile_room_script();
 		if (_G(croom)->tsdatasize > 0) {
-			if (_G(croom)->tsdatasize != _G(roominst)->globaldatasize)
+			if (_G(croom)->tsdatasize != (unsigned) _G(roominst)->globaldatasize)
 				quit("room script data segment size has changed");
-			memcpy(&_G(roominst)->globaldata[0], _G(croom)->tsdata, _G(croom)->tsdatasize);
+			memcpy(&_G(roominst)->globaldata[0], _G(croom)->tsdata.data(), _G(croom)->tsdatasize);
 		}
 	}
 	_G(our_eip) = 207;

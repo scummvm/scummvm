@@ -135,8 +135,8 @@ static void restore_game_room_state(Stream *in) {
 			if (roomstat->beenhere) {
 				ReadRoomStatus_Aligned(roomstat, in);
 				if (roomstat->tsdatasize > 0) {
-					roomstat->tsdata = new char[roomstat->tsdatasize];
-					in->Read(&roomstat->tsdata[0], roomstat->tsdatasize);
+					roomstat->tsdata.resize(roomstat->tsdatasize);
+					in->Read(roomstat->tsdata.data(), roomstat->tsdatasize);
 				}
 			}
 		}
@@ -325,10 +325,10 @@ static void restore_game_displayed_room_status(Stream *in, RestoredData &r_data)
 		ReadRoomStatus_Aligned(&_GP(troom), in);
 
 		if (_GP(troom).tsdatasize > 0) {
-			_GP(troom).tsdata = new char[_GP(troom).tsdatasize];
-			in->Read(&_GP(troom).tsdata[0], _GP(troom).tsdatasize);
+			_GP(troom).tsdata.resize(_GP(troom).tsdatasize);
+			in->Read(_GP(troom).tsdata.data(), _GP(troom).tsdatasize);
 		} else
-			_GP(troom).tsdata = nullptr;
+			_GP(troom).tsdata.clear();
 	}
 }
 
