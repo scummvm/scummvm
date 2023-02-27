@@ -77,9 +77,11 @@ public class SAFFSTree {
 	}
 
 	public static class SAFFSNode {
-		public static final int DIRECTORY = 1;
-		public static final int WRITABLE  = 2;
-		public static final int READABLE  = 4;
+		public static final int DIRECTORY = 0x01;
+		public static final int WRITABLE  = 0x02;
+		public static final int READABLE  = 0x04;
+		public static final int DELETABLE = 0x08;
+		public static final int REMOVABLE = 0x10;
 
 		public SAFFSNode _parent;
 		public String _path;
@@ -94,6 +96,26 @@ public class SAFFSTree {
 			_path = path;
 			_documentId = documentId;
 			_flags = flags;
+		}
+
+		private static int computeFlags(String mimeType, int flags) {
+			int ourFlags = 0;
+			if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType)) {
+				ourFlags |= SAFFSNode.DIRECTORY;
+			}
+			if ((flags & (DocumentsContract.Document.FLAG_SUPPORTS_WRITE | DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE)) != 0) {
+				ourFlags |= SAFFSNode.WRITABLE;
+			}
+			if ((flags & DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT) == 0) {
+				ourFlags |= SAFFSNode.READABLE;
+			}
+			if ((flags & DocumentsContract.Document.FLAG_SUPPORTS_DELETE) != 0) {
+				ourFlags |= SAFFSNode.DELETABLE;
+			}
+			if ((flags & DocumentsContract.Document.FLAG_SUPPORTS_REMOVE) != 0) {
+				ourFlags |= SAFFSNode.REMOVABLE;
+			}
+			return ourFlags;
 		}
 	}
 
@@ -242,16 +264,7 @@ public class SAFFSTree {
 				final String mimeType = c.getString(2);
 				final int flags = c.getInt(3);
 
-				int ourFlags = 0;
-				if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType)) {
-					ourFlags |= SAFFSNode.DIRECTORY;
-				}
-				if ((flags & (DocumentsContract.Document.FLAG_SUPPORTS_WRITE | DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE)) != 0) {
-					ourFlags |= SAFFSNode.WRITABLE;
-				}
-				if ((flags & DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT) == 0) {
-					ourFlags |= SAFFSNode.READABLE;
-				}
+				final int ourFlags = SAFFSNode.computeFlags(mimeType, flags);
 
 				SAFFSNode newnode = new SAFFSNode(node, node._path + "/" + displayName, documentId, ourFlags);
 				_cache.put(newnode._path, newnode);
@@ -300,16 +313,7 @@ public class SAFFSTree {
 
 				final int flags = c.getInt(3);
 
-				int ourFlags = 0;
-				if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType)) {
-					ourFlags |= SAFFSNode.DIRECTORY;
-				}
-				if ((flags & (DocumentsContract.Document.FLAG_SUPPORTS_WRITE | DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE)) != 0) {
-					ourFlags |= SAFFSNode.WRITABLE;
-				}
-				if ((flags & DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT) == 0) {
-					ourFlags |= SAFFSNode.READABLE;
-				}
+				final int ourFlags = SAFFSNode.computeFlags(mimeType, flags);
 
 				newnode = new SAFFSNode(node, childPath, documentId, ourFlags);
 				_cache.put(newnode._path, newnode);
@@ -418,18 +422,8 @@ public class SAFFSTree {
 				final String mimeType = c.getString(1);
 				final int flags = c.getInt(2);
 
-				int ourFlags = 0;
-				if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType)) {
-					ourFlags |= SAFFSNode.DIRECTORY;
-				}
-				if ((flags & (DocumentsContract.Document.FLAG_SUPPORTS_WRITE | DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE)) != 0) {
-					ourFlags |= SAFFSNode.WRITABLE;
-				}
-				if ((flags & DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT) == 0) {
-					ourFlags |= SAFFSNode.READABLE;
-				}
+				node._flags = SAFFSNode.computeFlags(mimeType, flags);
 
-				node._flags = ourFlags;
 				return displayName;
 			}
 		} catch (Exception e) {
