@@ -128,7 +128,7 @@ void TextView::writeString(const Common::String &str, TextAlign align) {
 	Common::StringArray lines = splitLines(str, lineWidth);
 
 	int xStart = _textPos.x;
-	for (auto line : lines) {
+	for (const auto &line : lines) {
 		if (line != lines.front()) {
 			newLine();
 			_textPos.x = xStart;
