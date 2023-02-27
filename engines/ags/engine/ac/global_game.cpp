@@ -825,7 +825,7 @@ int WaitMouseKey(int nloops) {
 }
 
 int WaitInput(int input_flags, int nloops) {
-	return WaitImpl(input_flags >> 16 | SKIP_AUTOTIMER, nloops);
+	return WaitImpl((input_flags >> SKIP_RESULT_TYPE_SHIFT) | SKIP_AUTOTIMER, nloops);
 }
 
 void SkipWait() {
