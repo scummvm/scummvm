@@ -159,7 +159,7 @@ void TeParticle::update(int val) {
 								 _endColor.g() * endScale + _startColor.g() * startScale,
 								 _endColor.b() * endScale + _startColor.b() * startScale,
 								 _endColor.a() * endScale + alpha * startScale));
-				for (int i = -1; i < timeOffset / 100; i++) {
+				for (int j = -1; j < timeOffset / 100; j++) {
 					elem->_yOffset += _gravity / 1000;
 					elem->setPositionFast(elem->position() + TeVector3f32(0, elem->_yOffset, 0));
 				}
@@ -167,9 +167,9 @@ void TeParticle::update(int val) {
 				// This element is done.
 				_elementsPending.push_back(elem);
 				eiter = _elements.erase(eiter);
-				for (uint i = 0; i < _scene->models().size(); i++) {
-					if (_scene->models()[i].get() == elem.get()) {
-						_scene->models().remove_at(i);
+				for (uint j = 0; j < _scene->models().size(); j++) {
+					if (_scene->models()[j].get() == elem.get()) {
+						_scene->models().remove_at(j);
 						break;
 					}
 				}
