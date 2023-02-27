@@ -35,6 +35,8 @@ void Hotspot::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(Hotspot::GetProperty^1, Hotspot::GetProperty);
 	SCRIPT_METHOD(Hotspot::GetPropertyText^2, Hotspot::GetPropertyText);
 	SCRIPT_METHOD(Hotspot::GetTextProperty^1, Hotspot::GetTextProperty);
+	SCRIPT_METHOD(Hotspot::SetProperty^2, Hotspot::SetProperty);
+	SCRIPT_METHOD(Hotspot::SetTextProperty^2, Hotspot::SetTextProperty);
 	SCRIPT_METHOD(Hotspot::RunInteraction^1, Hotspot::RunInteraction);
 	SCRIPT_METHOD(Hotspot::get_Enabled, Hotspot::GetEnabled);
 	SCRIPT_METHOD(Hotspot::set_Enabled, Hotspot::SetEnabled);
@@ -72,6 +74,16 @@ void Hotspot::GetPropertyText(ScriptMethodParams &params) {
 void Hotspot::GetTextProperty(ScriptMethodParams &params) {
 	PARAMS2(ScriptHotspot *, hss, const char *, property);
 	params._result = AGS3::Hotspot_GetTextProperty(hss, property);
+}
+
+void Hotspot::SetProperty(ScriptMethodParams &params) {
+	PARAMS3(ScriptHotspot *, hss, const char *, property, int, value);
+	params._result = AGS3::Hotspot_SetProperty(hss, property, value);
+}
+
+void Hotspot::SetTextProperty(ScriptMethodParams &params) {
+	PARAMS3(ScriptHotspot *, hss, const char *, property, const char *, value);
+	params._result = AGS3::Hotspot_SetTextProperty(hss, property, value);
 }
 
 void Hotspot::RunInteraction(ScriptMethodParams &params) {

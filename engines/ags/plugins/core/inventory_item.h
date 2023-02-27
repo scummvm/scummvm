@@ -40,6 +40,8 @@ public:
 	void GetProperty(ScriptMethodParams &params);
 	void GetPropertyText(ScriptMethodParams &params);
 	void GetTextProperty(ScriptMethodParams &params);
+	void SetProperty(ScriptMethodParams &params);
+	void SetTextProperty(ScriptMethodParams &params);
 	void RunInteraction(ScriptMethodParams &params);
 	void SetName(ScriptMethodParams &params);
 	void GetCursorGraphic(ScriptMethodParams &params);

@@ -41,6 +41,8 @@ void    Hotspot_RunInteraction(ScriptHotspot *hss, int mood);
 int     Hotspot_GetProperty(ScriptHotspot *hss, const char *property);
 void    Hotspot_GetPropertyText(ScriptHotspot *hss, const char *property, char *bufer);
 const char *Hotspot_GetTextProperty(ScriptHotspot *hss, const char *property);
+bool    Hotspot_SetProperty(ScriptHotspot *hss, const char *property, int value);
+bool    Hotspot_SetTextProperty(ScriptHotspot *hss, const char *property, const char *value);
 
 // Gets hotspot ID at the given room coordinates;
 // if hotspot is disabled or non-existing, returns 0 (no area)

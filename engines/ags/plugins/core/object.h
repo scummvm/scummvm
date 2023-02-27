@@ -40,6 +40,8 @@ public:
 	void GetProperty(ScriptMethodParams &params);
 	void GetPropertyText(ScriptMethodParams &params);
 	void GetTextProperty(ScriptMethodParams &params);
+	void SetProperty(ScriptMethodParams &params);
+	void SetTextProperty(ScriptMethodParams &params);
 	void MergeIntoBackground(ScriptMethodParams &params);
 	void Move(ScriptMethodParams &params);
 	void RemoveTint(ScriptMethodParams &params);

@@ -37,6 +37,8 @@ public:
 	void GetDrawingSurfaceForBackground(ScriptMethodParams &params);
 	void GetProperty(ScriptMethodParams &params);
 	void GetTextProperty(ScriptMethodParams &params);
+	void SetProperty(ScriptMethodParams &params);
+	void SetTextProperty(ScriptMethodParams &params);
 	void GetBottomEdge(ScriptMethodParams &params);
 	void GetColorDepth(ScriptMethodParams &params);
 	void GetHeight(ScriptMethodParams &params);

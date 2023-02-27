@@ -42,6 +42,8 @@ int Room_GetBottomEdge();
 int Room_GetMusicOnLoad();
 const char *Room_GetTextProperty(const char *property);
 int Room_GetProperty(const char *property);
+bool Room_SetProperty(const char *property, int value);
+bool Room_SetTextProperty(const char *property, const char *value);
 const char *Room_GetMessages(int index);
 bool Room_Exists(int room);
 RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int32_t param_count);
