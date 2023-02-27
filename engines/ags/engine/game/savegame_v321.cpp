@@ -135,7 +135,7 @@ static void restore_game_room_state(Stream *in) {
 			if (roomstat->beenhere) {
 				ReadRoomStatus_Aligned(roomstat, in);
 				if (roomstat->tsdatasize > 0) {
-					roomstat->tsdata = (char *)malloc(roomstat->tsdatasize + 8);  // JJS: Why allocate 8 additional bytes?
+					roomstat->tsdata = new char[roomstat->tsdatasize + 8];  // JJS: Why allocate 8 additional bytes?
 					in->Read(&roomstat->tsdata[0], roomstat->tsdatasize);
 				}
 			}
@@ -325,7 +325,7 @@ static void restore_game_displayed_room_status(Stream *in, RestoredData &r_data)
 		ReadRoomStatus_Aligned(&_GP(troom), in);
 
 		if (_GP(troom).tsdatasize > 0) {
-			_GP(troom).tsdata = (char *)malloc(_GP(troom).tsdatasize + 5);
+			_GP(troom).tsdata = new char[_GP(troom).tsdatasize + 5];
 			in->Read(&_GP(troom).tsdata[0], _GP(troom).tsdatasize);
 		} else
 			_GP(troom).tsdata = nullptr;
