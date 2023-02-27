@@ -27,19 +27,61 @@ namespace ViewsEnh {
 
 #define TICKS_PER_FRAME 4
 
-struct LocationEntry {
-	const char *const _prefix;
-	uint _count;
-	uint _frameCount;
+namespace Animations {
+
+ViewAnimation::ViewAnimation(const char *prefix, uint count, uint frameCount) :
+		_frameCount(frameCount) {
+	_backgrounds.resize(count);
+
+	for (uint i = 0; i < _backgrounds.size(); ++i) {
+		Common::String name = Common::String::format(
+			"%s%d.twn", prefix, i + 1);
+		_backgrounds[i].load(name);
+	}
+}
+
+void ViewAnimation::tick() {
+	_frameIndex = (_frameIndex + 1) % _frameCount;
+}
+
+void ViewAnimation::draw(Graphics::ManagedSurface &s) {
+	_backgrounds[_frameIndex / 8].draw(&s, _frameIndex % 8,
+		Common::Point(0, 0));
+}
+
+class Training : public ViewAnimation {
+public:
+	Training() : ViewAnimation("trng", 2, 16) {}
+	~Training() override {}
 };
 
-static const LocationEntry LOCATIONS[5] = {
-	{ "trng", 2, 16 },
-	{ "gild", 4, 32 },	// Xeen guild anim used for market
-	{ "tmpl", 4, 26 },
-	{ "blck", 2, 13 },
-	{ "tvrn", 2, 16 }
+class Market : public ViewAnimation {
+public:
+	Market() : ViewAnimation("gild", 4, 32) {}
+	~Market() override {}
 };
+
+class Temple : public ViewAnimation {
+public:
+	Temple() : ViewAnimation("tmpl", 4, 26) {}
+	~Temple() override {}
+};
+
+class Blacksmith : public ViewAnimation {
+public:
+	Blacksmith() : ViewAnimation("blck", 2, 13) {}
+	~Blacksmith() override {}
+};
+
+class Tavern : public ViewAnimation {
+public:
+	Tavern() : ViewAnimation("tvrn", 2, 16) {}
+	~Tavern() override {}
+};
+
+} // namespace Animations
+
+/*------------------------------------------------------------------------*/
 
 bool GameView::msgGame(const GameMessage &msg) {
 	if (msg._name == "LOCATION") {
@@ -58,40 +100,51 @@ bool GameView::msgGame(const GameMessage &msg) {
 
 void GameView::showLocation(int locationId) {
 	if (locationId == -1) {
-		_backgrounds.clear();
-		_frameCount = 0;
-		_locationId = -1;
-	} else {
-		assert(LOCATIONS[locationId]._prefix);
-		_locationId = locationId;
-		_frameIndex = _timerCtr = 0;
-		_frameCount = LOCATIONS[locationId]._frameCount;
+		_anim->leave();
+		delete _anim;
+		_anim = nullptr;
 
-		_backgrounds.resize(LOCATIONS[locationId]._count);
-		for (uint i = 0; i < _backgrounds.size(); ++i) {
-			Common::String name = Common::String::format("%s%d.twn",
-				LOCATIONS[locationId]._prefix, i + 1);
-			_backgrounds[i].load(name);
+	} else {
+		assert(!_anim);
+		switch (locationId) {
+		case LOC_TRAINING:
+			_anim = new Animations::Training();
+			break;
+		case LOC_MARKET:
+			_anim = new Animations::Market();
+			break;
+		case LOC_TEMPLE:
+			_anim = new Animations::Temple();
+			break;
+		case LOC_BLACKSMITH:
+			_anim = new Animations::Blacksmith();
+			break;
+		case LOC_TAVERN:
+			_anim = new Animations::Tavern();
+			break;
+		default:
+			error("Unknown location type");
+			break;
 		}
+
+		_anim->enter();
 	}
 }
 
 void GameView::draw() {
-	if (_locationId == -1) {
+	if (_anim == nullptr) {
 		Views::GameView::draw();
-
 	} else {
 		Graphics::ManagedSurface s = getSurface();
-		_backgrounds[_frameIndex / 8].draw(&s, _frameIndex % 8,
-			Common::Point(0, 0));
+		_anim->draw(s);
 	}
 }
 
 bool GameView::tick() {
-	if (_locationId != -1) {
+	if (_anim != nullptr) {
 		if (++_timerCtr >= TICKS_PER_FRAME) {
 			_timerCtr = 0;
-			_frameIndex = (_frameIndex + 1) % _frameCount;
+			_anim->tick();
 		}
 
 		redraw();
