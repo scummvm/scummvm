@@ -465,7 +465,7 @@ bool Scene::action(AsylumAction a) {
 				break;
 
 			if (!_vm->checkGameVersion("Demo")) {
-				_savedScreen.copyFrom(getScreen()->getSurface());
+				_savedScreen.copyFrom(*getScreen()->getSurface());
 				memcpy(_savedPalette, getScreen()->getPalette(), sizeof(_savedPalette));
 				_vm->switchEventHandler(_vm->menu());
 			}
