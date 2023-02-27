@@ -28,7 +28,7 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
-Market::Market() : Location("Market") {
+Market::Market() : Location("Market", LOC_MARKET) {
 	addButton(&g_globals->_confirmIcons,
 		Common::Point(_innerBounds.width() / 2 - 24,
 			_innerBounds.height() - 22), 0, Common::KEYCODE_y);
@@ -40,9 +40,6 @@ Market::Market() : Location("Market") {
 bool Market::msgFocus(const FocusMessage &msg) {
 	Maps::Map &map = *g_maps->_currentMap;
 	_foodCost = FOOD_COST[map[Maps::MAP_ID] - 1];
-
-	(void)Location::msgFocus(msg);
-	send("View", GameMessage("LOCATION", LOC_MARKET));
 
 	return true;
 }

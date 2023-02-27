@@ -35,7 +35,7 @@ void MapTown::blacksmith() {
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.blacksmith_inside", _mapIndex)],
 		[]() {
-			g_events->addView("Blacksmith");
+			g_events->send("Blacksmith", GameMessage("DISPLAY"));
 		}
 	));
 }
@@ -46,7 +46,7 @@ void MapTown::inn() {
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.inn_inside", _mapIndex)],
 		[]() {
-			g_events->replaceView("Inn");
+			g_events->send("Inn", GameMessage("DISPLAY"));
 		}
 	));
 }
@@ -57,7 +57,7 @@ void MapTown::market() {
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.market_inside", _mapIndex)],
 		[]() {
-			g_events->addView("Market");
+			g_events->send("Market", GameMessage("DISPLAY"));
 		}
 	));
 }
@@ -68,7 +68,7 @@ void MapTown::tavern() {
 	send(SoundMessage(
 		STRING["maps.tavern_inside"],
 		[]() {
-			g_events->addView("Tavern");
+			g_events->send("Tavern", GameMessage("DISPLAY"));
 		}
 	));
 }
@@ -79,7 +79,7 @@ void MapTown::temple() {
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.temple_inside", _mapIndex)],
 		[]() {
-			g_events->addView("Temple");
+			g_events->send("Temple", GameMessage("DISPLAY"));
 		}
 	));
 }
@@ -90,7 +90,7 @@ void MapTown::training() {
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.training_inside", _mapIndex)],
 		[]() {
-			g_events->addView("Training");
+			g_events->send("Training", GameMessage("DISPLAY"));
 		}
 	));
 }
