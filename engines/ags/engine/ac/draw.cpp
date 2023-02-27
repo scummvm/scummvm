@@ -388,7 +388,7 @@ void init_game_drawdata() {
 	_GP(charcache).resize(_GP(game).numcharacters);
 
 	for (int i = 0; i < MAX_ROOM_OBJECTS; ++i)
-		_G(objcache)[i].image = nullptr;
+		_G(objcache)[i] = ObjectCache();
 
 	size_t actsps_num = _GP(game).numcharacters + MAX_ROOM_OBJECTS;
 	_GP(actsps).resize(actsps_num);
@@ -430,16 +430,12 @@ void dispose_room_drawdata() {
 void clear_drawobj_cache() {
 	// clear the character cache
 	for (auto &cc : _GP(charcache)) {
-		if (cc.in_use)
-			delete cc.image;
-		cc.image = nullptr;
-		cc.in_use = false;
+		cc = ObjectCache();
 	}
 
 	// clear the object cache
 	for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
-		delete _G(objcache)[i].image;
-		_G(objcache)[i].image = nullptr;
+		_G(objcache)[i] = ObjectCache();
 	}
 
 	// room overlays cache
@@ -1244,8 +1240,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	}
 
 	if ((!hardwareAccelerated) && (_G(gfxDriver)->HasAcceleratedTransform())) {
-		// They want to draw it in software mode with the D3D driver,
-		// so force a redraw
+		// They want to draw it in software mode with the D3D driver, so force a redraw
 		_G(objcache)[aa].sppic = -389538;
 	}
 
@@ -1272,7 +1267,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 				(_G(walk_behind_baselines_changed) == 0))
 			return 1;
 		recycle_bitmap(actsp.Bmp, coldept, sprwidth, sprheight);
-		actsp.Bmp->Blit(_G(objcache)[aa].image, 0, 0, 0, 0, _G(objcache)[aa].image->GetWidth(), _G(objcache)[aa].image->GetHeight());
+		actsp.Bmp->Blit(_G(objcache)[aa].image.get(), 0, 0, 0, 0, _G(objcache)[aa].image->GetWidth(), _G(objcache)[aa].image->GetHeight());
 		return 0;
 	}
 
@@ -1304,7 +1299,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	}
 
 	// Re-use the bitmap if it's the same size
-	_G(objcache)[aa].image = recycle_bitmap(_G(objcache)[aa].image, coldept, sprwidth, sprheight);
+	recycle_bitmap(_G(objcache)[aa].image, coldept, sprwidth, sprheight);
 	// Create the cached image and store it
 	_G(objcache)[aa].image->Blit(actsp.Bmp.get(), 0, 0);
 	_G(objcache)[aa].sppic = _G(objs)[aa].num;
@@ -1535,7 +1530,7 @@ void prepare_characters_for_drawing() {
 			(_GP(charcache)[aa].lightlev == light_level)) {
 			if (_G(walkBehindMethod) == DrawOverCharSprite) {
 				recycle_bitmap(actsp.Bmp, _GP(charcache)[aa].image->GetColorDepth(), _GP(charcache)[aa].image->GetWidth(), _GP(charcache)[aa].image->GetHeight());
-				actsp.Bmp->Blit(_GP(charcache)[aa].image, 0, 0);
+				actsp.Bmp->Blit(_GP(charcache)[aa].image.get(), 0, 0);
 			} else {
 				usingCachedImage = true;
 			}
@@ -1618,7 +1613,7 @@ void prepare_characters_for_drawing() {
 
 			// update the character cache with the new image
 			_GP(charcache)[aa].in_use = true;
-			_GP(charcache)[aa].image = recycle_bitmap(_GP(charcache)[aa].image, coldept, actsp.Bmp->GetWidth(), actsp.Bmp->GetHeight());
+			recycle_bitmap(_GP(charcache)[aa].image, coldept, actsp.Bmp->GetWidth(), actsp.Bmp->GetHeight());
 			_GP(charcache)[aa].image->Blit(actsp.Bmp.get(), 0, 0);
 
 		} // end if !cache.inUse
