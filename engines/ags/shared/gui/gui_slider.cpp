@@ -83,7 +83,7 @@ void GUISlider::UpdateMetrics() {
 		MaxValue = MinValue + 1;
 	Value = Math::Clamp(Value, MinValue, MaxValue);
 	// Test if sprite is available; // TODO: return a placeholder from spriteset instead!
-	const int handle_im = _GP(spriteset)[HandleImage] ? HandleImage : 0;
+	const int handle_im = ((HandleImage > 0) && _GP(spriteset)[HandleImage]) ? HandleImage : 0;
 
 	// Depending on slider's orientation, thickness is either Height or Width
 	const int thickness = IsHorizontal() ? Height : Width;
@@ -179,7 +179,7 @@ void GUISlider::Draw(Bitmap *ds, int x, int y) {
 	}
 
 	// Test if sprite is available; // TODO: return a placeholder from spriteset instead!
-	const int handle_im = _GP(spriteset)[HandleImage] ? HandleImage : 0;
+	const int handle_im = ((HandleImage > 0) && _GP(spriteset)[HandleImage]) ? HandleImage : 0;
 	if (handle_im > 0) // handle is a sprite
 	{
 		draw_gui_sprite(ds, handle_im, handle.Left, handle.Top, true);
