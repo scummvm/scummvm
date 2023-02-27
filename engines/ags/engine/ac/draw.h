@@ -88,7 +88,7 @@ struct ObjTexture {
 // ObjectCache stores cached object data, used to determine
 // if active sprite / texture should be reconstructed
 struct ObjectCache {
-	Shared::Bitmap *image = nullptr;
+	std::unique_ptr<AGS::Shared::Bitmap> image;
 	bool  in_use = false;
 	int   sppic = 0;
 	short tintr = 0, tintg = 0, tintb = 0, tintamnt = 0, tintlight = 0;
