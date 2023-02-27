@@ -941,6 +941,8 @@ static const char *credits[] = {
 "C0""Oystein Eftevaag",
 "C2""(retired)",
 "C0""Thierry Crozat",
+"C0""dwa",
+"C2""Tiger/Leopard PPC",
 "",
 "C1""Mandriva",
 "C0""Dominik Scherer",

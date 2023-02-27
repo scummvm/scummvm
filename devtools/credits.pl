@@ -770,6 +770,7 @@ begin_credits("Credits");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Oystein Eftevaag", "vinterstum", "(retired)");
 				add_person("Thierry Crozat", "criezy", "");
+				add_person("", "dwa", "Tiger/Leopard PPC");
 			end_section();
 
 			begin_section("Mandriva");

@@ -1914,6 +1914,8 @@ macOS
      - (retired)
    * - Thierry Crozat
      -
+   * - dwa
+     - Tiger/Leopard PPC
 
 Mandriva
 ^^^^^^^^
