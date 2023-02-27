@@ -53,7 +53,7 @@ public:
 	int16  getWidth(ResourceId resourceId);
 	char  *get(ResourceId resourceId);
 
-	void drawChar(char character);
+	void drawASCII(char character) { drawChar(character); }
 	void draw(const char *text);
 	void draw(const Common::Point &point, const char *text);
 	void draw(ResourceId resourceId);
@@ -70,6 +70,8 @@ public:
 	void setTransTableNum(uint32 val) { _transTableNum = val; }
 
 private:
+	void drawChar(char character);
+
 	AsylumEngine *_vm;
 
 	GraphicResource *_fontResource;
