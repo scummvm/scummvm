@@ -566,9 +566,10 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("iPhone / iPad");
-				add_person("Oystein Eftevaag", "vinterstum", "");
+				add_person("Oystein Eftevaag", "vinterstum", "(retired)");
 				add_person("Vincent B&eacute;nony", "bSr43", "");
 				add_person("Thierry Crozat", "criezy", "");
+				add_person("Lars Sundstr&ouml;m", "larsamannen", "");
 			end_section();
 
 			begin_section("LinuxMoto");
@@ -767,7 +768,7 @@ begin_credits("Credits");
 
 			begin_section("macOS");
 				add_person("Max Horn", "Fingolfin", "(retired)");
-				add_person("Oystein Eftevaag", "vinterstum", "");
+				add_person("Oystein Eftevaag", "vinterstum", "(retired)");
 				add_person("Thierry Crozat", "criezy", "");
 			end_section();
 

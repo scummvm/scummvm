@@ -1503,10 +1503,12 @@ iPhone / iPad
    :widths: 35 65
 
    * - Oystein Eftevaag
-     -
+     - (retired)
    * - Vincent Bénony
      -
    * - Thierry Crozat
+     -
+   * - Lars Sundström
      -
 
 LinuxMoto
@@ -1909,7 +1911,7 @@ macOS
    * - Max Horn
      - (retired)
    * - Oystein Eftevaag
-     -
+     - (retired)
    * - Thierry Crozat
      -
 
