@@ -1837,6 +1837,17 @@ static int tolua_ExportedFunctions_PlaySound00(lua_State *L) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		double d1 = tolua_tonumber(L, 2, -1.0);
 		double d2 = tolua_tonumber(L, 3, 1.0);
+		//
+		// WORKAROUND: Syberia 2 script A1_MonCour/12200/Logic12200.lua
+		// calls this with (0.4, -1) - should be the other way around, and
+		// the sound name should have ".ogg" on the end.
+		//
+		if (d2 == -1 && s1 == "sounds/SFX/AB_12220-01") {
+			double tmp = d2;
+			d2 = d1;
+			d1 = tmp;
+			s1 += ".ogg";
+		}
 		PlaySound(s1, d1, d2);
 		return 0;
 	}
