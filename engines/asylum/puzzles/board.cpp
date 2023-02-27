@@ -160,7 +160,8 @@ void PuzzleBoard::drawText() {
 			break;
 
 		getText()->setPosition(Common::Point(x, _selectedSlot != index ? 360 : 370));
-		getText()->drawChar(_solvedText[index]);
+		// TODO: Check this for Chinese
+		getText()->drawASCII(_solvedText[index]);
 
 		index += 2;
 	}
