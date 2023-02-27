@@ -1393,6 +1393,10 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 		_cursor->recreate();
 	}
 
+	if (_cursorMask) {
+		_cursorMask->recreate();
+	}
+
 #ifdef USE_OSD
 	if (_osdMessageSurface) {
 		_osdMessageSurface->recreate();
@@ -1415,6 +1419,10 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 
 	if (_cursor) {
 		_cursor->destroy();
+	}
+
+	if (_cursorMask) {
+		_cursorMask->destroy();
 	}
 
 #ifdef USE_OSD
