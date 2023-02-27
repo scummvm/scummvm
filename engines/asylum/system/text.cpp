@@ -30,12 +30,13 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 
+#if defined(USE_FREETYPE2)
+#include "graphics/fonts/ttf.h"
+#endif
+
 namespace Asylum {
 
-Text::Text(AsylumEngine *engine) : _vm(engine) {
-	_curFontFlags = 0;
-	_fontResource = nullptr;
-	_transTableNum = 0;
+Text::Text(AsylumEngine *engine) : _vm(engine), _fontResource(nullptr), _transTableNum(0), _curFontFlags(0), _chineseFontLoadAttempted(false) {
 }
 
 Text::~Text() {
@@ -59,22 +60,45 @@ ResourceId Text::loadFont(ResourceId resourceId) {
 	return previousFont;
 }
 
+void Text::loadChineseFont() {
+	if (_chineseFontLoadAttempted)
+		return;
+
+	_chineseFontLoadAttempted = true;
+
+#if defined(USE_FREETYPE2)
+	_chineseFont.reset(Graphics::loadTTFFontFromArchive("NotoSansSC-Regular.otf", 32, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
+#endif
+}
+
 void Text::setPosition(const Common::Point &point) {
 	_position = point;
 }
 
 int16 Text::getWidth(char c) {
-	if (!_fontResource)
-		error("[Text::getWidth] Font not initialized properly");
+       if (!_fontResource)
+               error("[Text::getWidth] Font not initialized properly");
 
-	GraphicFrame *font = _fontResource->getFrame((uint8)c);
+       GraphicFrame *font = _fontResource->getFrame((uint8)c);
 
-	return (int16)(font->surface.w + font->x - _curFontFlags);
+       return (int16)(font->surface.w + font->x - _curFontFlags);
+}
+
+int16 Text::getChineseWidth(const Common::U32String &utext) {
+	loadChineseFont();
+	if (!_chineseFont)
+		return 0;
+
+	return _chineseFont->getStringWidth(utext);
 }
 
 int16 Text::getWidth(const char *text) {
 	if (!_fontResource)
 		error("[Text::getWidth] font resource hasn't been loaded yet!");
+
+	if (_vm->getLanguage() == Common::Language::ZH_CHN) {
+		return getChineseWidth(Common::U32String(text, Common::CodePage::kGBK));
+	}
 
 	int16 width = 0;
 	char character = *text;
@@ -96,6 +120,10 @@ int16 Text::getWidth(const char *text, int16 length) {
 
 	if (length == 0)
 		return 0;
+
+	if (_vm->getLanguage() == Common::Language::ZH_CHN) {
+		return getChineseWidth(Common::U32String(text, length, Common::CodePage::kGBK));
+	}
 
 	int16 width = 0;
 	char character = *text;
@@ -135,9 +163,32 @@ void Text::drawChar(char character) {
 	_position.x += (int16)fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
+void Text::drawChinese(const Common::U32String &utext) {
+	loadChineseFont();
+	if (!_chineseFont)
+		return;
+	Graphics::Surface *surf = getScreen()->getSurface();
+	uint8 color = 0;
+	// TODO: Add more colors
+	switch (_fontResource->getResourceId()) {
+	default:
+		debug(5, "Unrecognized font resource 0x%x for string %s", _fontResource->getResourceId(), utext.encode().c_str());
+		color = 1;
+		break;
+	}
+
+	_chineseFont->drawString(surf, utext, _position.x, _position.y, surf->w - _position.x, color);
+	_position.x += _chineseFont->getStringWidth(utext);
+}
+
 void Text::draw(const char *text) {
 	if (!text)
 		return;
+
+	if (_vm->getLanguage() == Common::Language::ZH_CHN) {
+		drawChinese(Common::U32String(text, Common::CodePage::kGBK));
+		return;
+	}
 
 	if (_vm->getLanguage() == Common::HE_ISR)
 		text = Common::convertBiDiString(text, Common::kWindows1255).c_str();
@@ -153,6 +204,11 @@ void Text::draw(const char *text, int16 length) {
 
 	if (!text)
 		return;
+
+	if (_vm->getLanguage() == Common::Language::ZH_CHN) {
+		drawChinese(Common::U32String(text, length, Common::CodePage::kGBK));
+		return;
+	}
 
 	if (_vm->getLanguage() == Common::HE_ISR)
 		text = Common::convertBiDiString(Common::String(text, length), Common::kWindows1255).c_str();
@@ -188,6 +244,48 @@ int16 Text::draw(TextCentering centering, const Common::Point &point, int16 spac
 int16 Text::draw(int16 a1, int16 a2, TextCentering centering, const Common::Point &point, int16 spacing, int16 width, const char *text) {
 	if (!text || !*text)
 		return 0;
+
+	// TODO: Make non-Chinese into Graphics::Font as well.
+	if (_vm->getLanguage() == Common::Language::ZH_CHN) {
+		Common::Array<Common::U32String> lines;
+		Common::Point coords = point;
+		int16 printed = 0;
+
+		loadChineseFont();
+		if (!_chineseFont)
+			return 0;
+		char *buf = scumm_strdup(text);
+		for (char *ptr = buf; *ptr; ptr++)
+			if (*ptr == 1 || *ptr == 2) // Start of heading (SOH) or start of text (STX)
+				*ptr = '\n';
+		Common::U32String utext(buf, Common::CodePage::kGBK);
+		free(buf);
+
+		_chineseFont->wordWrapText(utext, width, lines);
+
+		for (int index = a1; index <= (a1 + a2) && index < (int)lines.size(); index++) {
+			switch (centering) {
+			default:
+			case kTextCalculate:
+				break;
+
+			case kTextCenter:
+				setPosition(coords + Common::Point((width - getChineseWidth(lines[index])) / 2, 0));
+				drawChinese(lines[index]);
+				break;
+
+			case kTextNormal:
+				setPosition(coords);
+				drawChinese(lines[index]);
+				break;
+			}
+
+			coords.y += spacing;
+			++printed;
+		}
+
+		return printed;
+	}
 
 	Common::Point coords = point;
 
