@@ -24,12 +24,16 @@
 
 #include "backends/fs/posix-drives/posix-drives-fs.h"
 
-class AndroidPOSIXFilesystemNode : public DrivePOSIXFilesystemNode {
+#include "backends/fs/android/android-fs.h"
+
+class AndroidPOSIXFilesystemNode : public DrivePOSIXFilesystemNode, public AndroidFSNode {
 	// To let the factory redefine the displayed name
 	friend class AndroidFilesystemFactory;
 protected:
 	AbstractFSNode *makeNode() const override;
 	AbstractFSNode *makeNode(const Common::String &path) const override;
+
+	bool remove() override;
 
 public:
 	AndroidPOSIXFilesystemNode(const Common::String &path, const Config &config)
