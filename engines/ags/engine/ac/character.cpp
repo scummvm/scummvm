@@ -2414,15 +2414,12 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		if (viewWasLocked)
 			charFrameWas = speakingChar->frame;
 
-		// If speech view is missing a loop or the loop does not have frames - use loop 0
-		if (speakingChar->loop >= _GP(views)[speakingChar->view].numLoops ||
-				_GP(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1) {
-			String err = String::FromFormat("Character %s speech view %d does not have necessary loop %d or it has no frames",
-				speakingChar->scrname, speakingChar->view + 1, speakingChar->loop);
-			// is there even a fallback loop?
-			if (_GP(views)[speakingChar->view].numLoops == 0 || _GP(views)[speakingChar->view].loops[0].numFrames == 0)
-				quitprintf("!%s; and there's no valid loop to fall back.", err.GetCStr());
-			debug_script_warn("WARNING: %s; switching to loop 0.", err.GetCStr());
+		if ((speakingChar->view < 0) || _GP(views)[speakingChar->view].numLoops == 0)
+			quitprintf("!Character %s current view %d is invalid, or has no loops.", speakingChar->scrname, speakingChar->view + 1);
+		// If current view is missing a loop - use loop 0
+		if (speakingChar->loop >= _GP(views)[speakingChar->view].numLoops) {
+			debug_script_warn("WARNING: Character %s current view %d does not have necessary loop %d; switching to loop 0.",
+							  speakingChar->scrname, speakingChar->view + 1, speakingChar->loop);
 			speakingChar->loop = 0;
 		}
 
@@ -2654,15 +2651,12 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			speakingChar->frame = 0;
 			speakingChar->flags |= CHF_FIXVIEW;
 
-			// If speech view is missing a loop or the loop does not have frames - use loop 0
-			if (speakingChar->loop >= _GP(views)[speakingChar->view].numLoops ||
-				_GP(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1) {
-				String err = String::FromFormat("Character %s speech view %d does not have necessary loop %d or it has no frames",
-					speakingChar->scrname, speakingChar->view + 1, speakingChar->loop);
-				// is there even a fallback loop?
-				if (_GP(views)[speakingChar->view].numLoops == 0 || _GP(views)[speakingChar->view].loops[0].numFrames == 0)
-					quitprintf("!%s; and there's no valid loop to fall back.", err.GetCStr());
-				debug_script_warn("WARNING: %s; switching to loop 0.", err.GetCStr());
+			if ((speakingChar->view < 0) || _GP(views)[speakingChar->view].numLoops == 0)
+				quitprintf("!Character %s speech view %d is invalid, or has no loops.", speakingChar->scrname, speakingChar->view + 1);
+			// If speech view is missing a loop - use loop 0
+			if (speakingChar->loop >= _GP(views)[speakingChar->view].numLoops) {
+				debug_script_warn("WARNING: Character %s speech view %d does not have necessary loop %d; switching to loop 0.",
+								  speakingChar->scrname, speakingChar->view + 1, speakingChar->loop);
 				speakingChar->loop = 0;
 			}
 
