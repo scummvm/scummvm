@@ -347,6 +347,40 @@ public class SAFFSTree {
 		return createStream(node, "wt");
 	}
 
+	public boolean removeNode(SAFFSNode node) {
+		final ContentResolver resolver = _context.getContentResolver();
+		final Uri uri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._documentId);
+
+		if ((node._flags & SAFFSNode.REMOVABLE) != 0) {
+			final Uri parentUri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._parent._documentId);
+			try {
+				if (!DocumentsContract.removeDocument(resolver, uri, parentUri)) {
+					return false;
+				}
+			} catch(FileNotFoundException e) {
+				return false;
+			}
+		} else if ((node._flags & SAFFSNode.DELETABLE) != 0) {
+			try {
+				if (!DocumentsContract.deleteDocument(resolver, uri)) {
+					return false;
+				}
+			} catch(FileNotFoundException e) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+
+		for(Map.Entry<String, SAFFSNode> e : _cache.entrySet()) {
+			if (e.getValue() == node) {
+				e.setValue(NOT_FOUND_NODE);
+			}
+		}
+
+		return true;
+	}
+
 	public void removeTree() {
 		final ContentResolver resolver = _context.getContentResolver();
 

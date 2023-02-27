@@ -27,12 +27,14 @@
 #include "common/translation.h"
 #include "backends/fs/abstract-fs.h"
 
+#include "backends/fs/android/android-fs.h"
+
 /**
  * Implementation of the ScummVM file system API.
  *
  * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class AndroidSAFFilesystemNode final : public AbstractFSNode {
+class AndroidSAFFilesystemNode final : public AbstractFSNode, public AndroidFSNode {
 protected:
 	// SAFFSTree
 	static jmethodID _MID_getTreeId;
@@ -43,6 +45,7 @@ protected:
 	static jmethodID _MID_createFile;
 	static jmethodID _MID_createReadStream;
 	static jmethodID _MID_createWriteStream;
+	static jmethodID _MID_removeNode;
 	static jmethodID _MID_removeTree;
 
 	static jfieldID _FID__treeName;
@@ -134,6 +137,8 @@ public:
 	Common::SeekableWriteStream *createWriteStream() override;
 	bool createDirectory() override;
 
+	bool remove() override;
+
 	/**
 	 * Removes the SAF tree.
 	 * Only works on the root node
@@ -154,7 +159,7 @@ protected:
 	void cacheData(bool force = false);
 };
 
-class AddSAFFakeNode final : public AbstractFSNode {
+class AddSAFFakeNode final : public AbstractFSNode, public AndroidFSNode {
 protected:
 	AbstractFSNode *getChild(const Common::String &name) const override;
 	AbstractFSNode *getParent() const override;
@@ -178,11 +183,11 @@ public:
 	bool isReadable() const override;
 	bool isWritable() const override;
 
-
 	Common::SeekableReadStream *createReadStream() override { return nullptr; }
-	virtual Common::SeekableWriteStream *createWriteStream() override { return nullptr; }
+	Common::SeekableWriteStream *createWriteStream() override { return nullptr; }
 
-	virtual bool createDirectory() { return false; }
+	bool createDirectory() override { return false; }
+	bool remove() override { return false; }
 
 private:
 	void makeProxySAF() const;
