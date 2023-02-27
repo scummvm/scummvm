@@ -64,6 +64,7 @@ jmethodID AndroidSAFFilesystemNode::_MID_createDirectory = 0;
 jmethodID AndroidSAFFilesystemNode::_MID_createFile = 0;
 jmethodID AndroidSAFFilesystemNode::_MID_createReadStream = 0;
 jmethodID AndroidSAFFilesystemNode::_MID_createWriteStream = 0;
+jmethodID AndroidSAFFilesystemNode::_MID_removeNode = 0;
 jmethodID AndroidSAFFilesystemNode::_MID_removeTree = 0;
 
 jfieldID AndroidSAFFilesystemNode::_FID__treeName = 0;
@@ -107,6 +108,7 @@ void AndroidSAFFilesystemNode::initJNI() {
 	FIND_METHOD(, createFile, "(" SAFFSNodeSig "Ljava/lang/String;)" SAFFSNodeSig);
 	FIND_METHOD(, createReadStream, "(" SAFFSNodeSig ")I");
 	FIND_METHOD(, createWriteStream, "(" SAFFSNodeSig ")I");
+	FIND_METHOD(, removeNode, "(" SAFFSNodeSig ")Z");
 	FIND_METHOD(, removeTree, "()V");
 
 	FIND_FIELD(, _treeName, "Ljava/lang/String;");
@@ -538,6 +540,59 @@ bool AndroidSAFFilesystemNode::createDirectory() {
 	env->DeleteLocalRef(child);
 
 	cacheData(true);
+
+	return true;
+}
+
+bool AndroidSAFFilesystemNode::remove() {
+	assert(_safTree != nullptr);
+
+	if (!_safNode) {
+		return false;
+	}
+
+	if (!_safParent) {
+		// It's the root of the tree: we can't delete it
+		return false;
+	}
+
+	if (isDirectory()) {
+		// Don't delete folders (yet?)
+		return false;
+	}
+
+	JNIEnv *env = JNI::getEnv();
+
+	bool result = env->CallBooleanMethod(_safTree, _MID_removeNode, _safNode);
+
+	if (env->ExceptionCheck()) {
+		LOGE("SAFFSTree::removeNode failed");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return false;
+	}
+
+	if (!result) {
+		return false;
+	}
+
+	env->DeleteGlobalRef(_safNode);
+	_safNode = nullptr;
+
+	// Create the parent node to fetch informations needed to make us a non-existent node
+	AndroidSAFFilesystemNode *parent = new AndroidSAFFilesystemNode(_safTree, _safParent);
+
+	size_t pos = _path.findLastOf('/');
+	if (pos == Common::String::npos) {
+		_newName = _path;
+	} else {
+		_newName = _path.substr(pos + 1);
+	}
+	_path = parent->_path;
+
+	delete parent;
 
 	return true;
 }
