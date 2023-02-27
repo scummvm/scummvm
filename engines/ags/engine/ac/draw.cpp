@@ -1448,21 +1448,20 @@ void prepare_characters_for_drawing() {
 
 		CharacterInfo *chin = &_GP(game).chars[aa];
 		_G(our_eip) = 330;
-		// if it's on but set to view -1, they're being silly
+		// Test for valid view and loop
 		if (chin->view < 0) {
 			quitprintf("!The character '%s' was turned on in the current room (room %d) but has not been assigned a view number.",
 			           chin->name, _G(displayed_room));
 		}
-
+		if (chin->loop >= _GP(views)[chin->view].numLoops) {
+			quitprintf("!The character '%s' could not be displayed because there was no loop %d of view %d.",
+					   chin->name, chin->loop, chin->view + 1);
+			continue;  // FIXME: upstream does not break here
+		}
+		// If frame is too high -- fallback to the frame 0;
+		// there's always at least 1 dummy frame at index 0
 		if (chin->frame >= _GP(views)[chin->view].loops[chin->loop].numFrames)
 			chin->frame = 0;
-
-		if ((chin->loop >= _GP(views)[chin->view].numLoops) ||
-		        (_GP(views)[chin->view].loops[chin->loop].numFrames < 1)) {
-			warning("The character '%s' could not be displayed because there were no frames in loop %d of view %d.",
-			           chin->name, chin->loop, chin->view + 1);
-			continue;
-		}
 
 		sppic = _GP(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
 		if (sppic < 0)
