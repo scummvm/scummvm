@@ -549,26 +549,29 @@ bool Engine::warnBeforeOverwritingAutosave() {
 	if (!desc.isValid() || desc.isAutosave())
 		return true;
 	Common::U32StringArray altButtons;
-	altButtons.push_back(_("Overwrite"));
-	altButtons.push_back(_("Cancel autosave"));
+	altButtons.push_back(_("Delete"));
+	altButtons.push_back(_("Skip autosave"));
 	const Common::U32String message = Common::U32String::format(
-				_("WARNING: The autosave slot has a saved game named %S. "
-				  "You can either move the existing save to a new slot, "
-				  "Overwrite the existing save, "
-				  "or cancel autosave (will not prompt again until restart)"), desc.getDescription().c_str());
+				_("WARNING: The autosave slot contains a saved game named %S, and an autosave is pending.\n"
+				  "Please move this saved game to a new slot, or delete it if it's no longer needed.\n"
+				  "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."), desc.getDescription().c_str());
 	GUI::MessageDialog warn(message, _("Move"), altButtons);
 	switch (runDialog(warn)) {
 	case GUI::kMessageOK:
-		if (!getMetaEngine()->copySaveFileToFreeSlot(_targetName.c_str(), getAutosaveSlot())) {
-			GUI::MessageDialog error(_("ERROR: Could not copy the savegame to a new slot"));
-			error.runModal();
-			return false;
+		if (getMetaEngine()->copySaveFileToFreeSlot(_targetName.c_str(), getAutosaveSlot())) {
+				g_system->getSavefileManager()->removeSavefile(
+							getMetaEngine()->getSavegameFile(getAutosaveSlot(), _targetName.c_str()));
+		} else {
+				GUI::MessageDialog error(_("ERROR: Could not copy the savegame to a new slot"));
+				error.runModal();
+				return false;
 		}
 		return true;
-	case GUI::kMessageAlt: // Overwrite
+	case GUI::kMessageAlt: // Delete
+		g_system->getSavefileManager()->removeSavefile(
+					getMetaEngine()->getSavegameFile(getAutosaveSlot(), _targetName.c_str()));
 		return true;
-	case GUI::kMessageAlt + 1: // Cancel autosave
-		_autosaveInterval = 0;
+	case GUI::kMessageAlt + 1: // Skip autosave
 		return false;
 	default: // Hitting Escape returns -1. On this case, don't save but do prompt again later.
 		return false;
