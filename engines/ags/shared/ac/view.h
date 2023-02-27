@@ -41,7 +41,7 @@ struct ViewFrame {
 	int   pic;
 	short xoffs, yoffs;
 	short speed;
-	int   flags;
+	int   flags;  // VFLG_* flags
 	int   sound;  // play sound when this frame comes round
 	int   reserved_for_future[2]; // kept only for plugin api
 	// not saved, set at runtime only
