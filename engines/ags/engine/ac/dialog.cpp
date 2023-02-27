@@ -182,7 +182,7 @@ int run_dialog_script(int dialogID, int offse, int optionIndex) {
 		if (offse == -1)
 			return result;
 
-		unsigned char *script = _G(old_dialog_scripts)[dialogID].get() + offse;
+		unsigned char *script = _G(old_dialog_scripts)[dialogID].data() + offse;
 
 		unsigned short param1 = 0;
 		unsigned short param2 = 0;

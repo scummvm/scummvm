@@ -120,12 +120,12 @@ struct LoadedGameEntities {
 
 	// Original sprite data (when it was read into const-sized arrays)
 	size_t                  SpriteCount;
-	Common::Array<byte>     SpriteFlags;
+	std::vector<uint8_t>	SpriteFlags; // SPF_* flags
 
 	// Old dialog support
 	// legacy compiled dialog script of its own format,
 	// requires separate interpreting
-	std::vector< std::shared_ptr<unsigned char> > OldDialogScripts;
+	std::vector<std::vector<uint8_t>> OldDialogScripts;
 	// probably, actual dialog script sources kept within some older games
 	std::vector<String>     OldDialogSources;
 	// speech texts displayed during dialog
