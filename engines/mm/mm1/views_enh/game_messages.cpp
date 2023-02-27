@@ -52,7 +52,7 @@ GameMessages::GameMessages() : ScrollText("GameMessages") {
 void GameMessages::draw() {
 	ScrollText::draw();
 
-	if (_ynCallback) {
+	if (_ynCallback && !isDelayActive()) {
 		_yesNo.resetSelectedButton();
 		_yesNo.draw();
 	}
@@ -79,7 +79,10 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 	// Process the lines
 	clear();
 	for (auto line : msg._lines)
-		addText(line._text, line.y, 0, line._align, line.x * 8);
+		addText(line._text, line.y, 0, line._align, 0);
+
+	if (msg._delaySeconds)
+		delaySeconds(msg._delaySeconds);
 
 	return true;
 }
@@ -154,6 +157,13 @@ bool GameMessages::msgMouseUp(const MouseUpMessage &msg) {
 	if (_ynCallback)
 		return send("MessagesYesNo", msg);
 	return false;
+}
+
+void GameMessages::timeout() {
+	close();
+
+	if (_timeoutCallback)
+		_timeoutCallback();
 }
 
 } // namespace ViewsEnh

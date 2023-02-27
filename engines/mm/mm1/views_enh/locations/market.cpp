@@ -108,8 +108,6 @@ void Market::buyFood() {
 		STRING["enhdialogs.market.thankyou"] :
 		STRING["enhdialogs.market.no_gold"]
 	);
-
-	delaySeconds(3);
 }
 
 bool Market::buyFood(Character *c) {

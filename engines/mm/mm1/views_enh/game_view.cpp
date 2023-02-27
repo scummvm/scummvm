@@ -171,7 +171,7 @@ void GameView::showLocation(int locationId) {
 			break;
 		}
 
-		_anim->enter();
+		_anim->leave();
 	}
 }
 

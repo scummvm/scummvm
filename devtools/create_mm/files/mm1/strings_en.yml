@@ -495,8 +495,8 @@ enhdialogs:
 	market:
 		title: "Market"
 		buy_food: "Buy food"
-		thankyou: "Thank you,\ncome again!"
-		no_gold: "No gold,\nno food!"
+		thankyou: "Thank you, come again!"
+		no_gold: "No gold, no food!"
 	misc:
 		exit: "Exit"
 	quickref:

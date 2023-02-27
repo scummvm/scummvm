@@ -39,6 +39,7 @@ class ScrollText : public ScrollView {
 		Common::String _str;
 		Common::Point _pos;
 		byte _color = 0;
+		TextAlign _align = ALIGN_LEFT;
 
 		Line(const Common::String &str,
 			const Common::Point &pos, byte color = 0) :

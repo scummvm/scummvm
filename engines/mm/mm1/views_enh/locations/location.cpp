@@ -35,15 +35,25 @@ Location::Location(const Common::String &name) : PartyView(name) {
 }
 
 void Location::leave() {
+	if (g_events->focusedView() == this)
+		close();
+
 	g_maps->turnAround();
-	close();
 	g_events->redraw();
 }
 
 void Location::displayMessage(const Common::String &msg) {
 	Location::draw();
 
-	writeLine(3, msg, ALIGN_MIDDLE);
+	InfoMessage infoMsg(msg, ALIGN_MIDDLE);
+	infoMsg._delaySeconds = 3;
+	infoMsg._timeoutCallback = []() {
+		Location *loc = dynamic_cast<Location *>(g_events->focusedView());
+		assert(loc);
+		loc->leave();
+	};
+
+	g_events->send(infoMsg);
 }
 
 bool Location::subtractGold(uint amount) {
