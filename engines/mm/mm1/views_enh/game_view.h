@@ -24,6 +24,7 @@
 
 #include "mm/mm1/views/game_view.h"
 #include "mm/shared/xeen/sprites.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -32,10 +33,12 @@ namespace ViewsEnh {
 namespace Animations {
 
 class ViewAnimation {
-protected:
+private:
 	Common::Array<Shared::Xeen::SpriteResource> _backgrounds;
 	uint _frameIndex = 0;
 	uint _frameCount = 0;
+protected:
+	Sound &_sound;
 public:
 	ViewAnimation(const char *prefix, uint count, uint frameCount);
 	virtual ~ViewAnimation() {}
@@ -43,7 +46,7 @@ public:
 	virtual void enter() {}
 	void tick();
 	void draw(Graphics::ManagedSurface &s);
-	virtual void leave() {}
+	virtual void leave();
 };
 
 } // namespace Animations

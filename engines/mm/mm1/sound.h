@@ -22,6 +22,8 @@
 #ifndef MM_MM1_SOUND_H
 #define MM_MM1_SOUND_H
 
+#include "mm/shared/xeen/sound.h"
+
 namespace MM {
 namespace MM1 {
 
@@ -30,8 +32,10 @@ enum SoundId {
 	SOUND_5 = 5, SOUND_8 = 8, SOUND_9 = 9
 };
 
-class Sound {
+class Sound : public Shared::Xeen::Sound {
 public:
+	Sound(Audio::Mixer *mixer) : Shared::Xeen::Sound(mixer) {}
+
 	static void sound(SoundId soundNum);
 	static void sound2(SoundId soundNum);
 	static void stopSound();

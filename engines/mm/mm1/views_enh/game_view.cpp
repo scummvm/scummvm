@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/game_view.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
@@ -30,7 +31,7 @@ namespace ViewsEnh {
 namespace Animations {
 
 ViewAnimation::ViewAnimation(const char *prefix, uint count, uint frameCount) :
-		_frameCount(frameCount) {
+		_sound(*g_engine->_sound), _frameCount(frameCount) {
 	_backgrounds.resize(count);
 
 	for (uint i = 0; i < _backgrounds.size(); ++i) {
@@ -49,34 +50,71 @@ void ViewAnimation::draw(Graphics::ManagedSurface &s) {
 		Common::Point(0, 0));
 }
 
+void ViewAnimation::leave() {
+	_sound.stopSound();
+	_sound.stopSong();
+}
+
+/*------------------------------------------------------------------------*/
+
 class Training : public ViewAnimation {
 public:
 	Training() : ViewAnimation("trng", 2, 16) {}
 	~Training() override {}
+
+	void enter() override {
+		_sound.playVoice("hello1.voc");
+		_sound.playSong("grounds.m");
+	}
 };
 
 class Market : public ViewAnimation {
 public:
 	Market() : ViewAnimation("gild", 4, 32) {}
 	~Market() override {}
+
+	void enter() override {
+		_sound.playVoice("guild10.voc");
+		_sound.playSong("guild.m");
+	}
 };
 
 class Temple : public ViewAnimation {
 public:
 	Temple() : ViewAnimation("tmpl", 4, 26) {}
 	~Temple() override {}
+
+	void enter() override {
+		_sound.playVoice("maywe2.voc");
+		_sound.playSong("temple.m");
+	}
 };
 
 class Blacksmith : public ViewAnimation {
 public:
 	Blacksmith() : ViewAnimation("blck", 2, 13) {}
 	~Blacksmith() override {}
+
+	void enter() override {
+		_sound.playVoice("whaddayo.voc");
+		_sound.playSong("smith.m");
+	}
 };
 
 class Tavern : public ViewAnimation {
 public:
 	Tavern() : ViewAnimation("tvrn", 2, 16) {}
 	~Tavern() override {}
+
+	void enter() override {
+		_sound.playVoice("hello.voc");
+		_sound.playSong("tavern.m");
+	}
+
+	void leave() override {
+		ViewAnimation::leave();
+		_sound.playVoice("goodbye.voc");
+	}
 };
 
 } // namespace Animations

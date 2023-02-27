@@ -47,11 +47,16 @@ MM1Engine::MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc
 
 MM1Engine::~MM1Engine() {
 	g_engine = nullptr;
+	delete _sound;
 }
 
 Common::Error MM1Engine::run() {
 	// Initialize graphics mode
 	initGraphics(320, 200);
+
+	// Setup mixer
+	_sound = new Sound(_mixer);
+	syncSoundSettings();
 
 	if (isEnhanced()) {
 		if (!setupEnhanced())
@@ -72,6 +77,13 @@ Common::Error MM1Engine::run() {
 
 	runGame();
 	return Common::kNoError;
+}
+
+void MM1Engine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	if (_sound)
+		_sound->updateSoundSettings();
 }
 
 bool MM1Engine::isEnhanced() const {
