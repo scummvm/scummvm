@@ -202,7 +202,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  iOS port:
    - Added pointer device support.
-   - Improved suppport for touchpad mode.
+   - Improved support for touchpad mode.
    - Added support for games that use 32 bit pixel formats.
 
  Nintendo DS port:
