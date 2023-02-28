@@ -44,6 +44,7 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
 	const Graphics::Surface *decodeFrame(uint frameNr);
 	void addFrameTime(const uint16 timeToAdd);
+	bool atEnd() const;
 
 private:
 	class AVFVideoTrack : public FixedRateVideoTrack {

@@ -76,6 +76,12 @@ void AVFDecoder::addFrameTime(const uint16 timeToAdd) {
 	((AVFDecoder::AVFVideoTrack *)getTrack(0))->_frameTime += timeToAdd;
 }
 
+// Custom function to allow the last frame of the video to play correctly
+bool AVFDecoder::atEnd() const {
+	const AVFDecoder::AVFVideoTrack *track = ((const AVFDecoder::AVFVideoTrack *)getTrack(0));
+	return !track->isReversed() && track->endOfTrack() && track->getFrameTime(track->getFrameCount()) <= getTime();
+}
+
 AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uint32 chunkFileFormat) {
 	assert(stream);
 	_fileStream = stream;
