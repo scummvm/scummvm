@@ -12,6 +12,17 @@ RMEnsure DigitalRenderer 0.55 Error ScummVM requires DigitalRenderer 0.55 or lat
 
 Unset Alias$RMLoadIfThere
 
+| By setting ScummVM$Heap we force libunixlib to always use dynamic areas for data allocations
+| This frees up space for plugins and allows to have plenty of space for data
+Set HasLargeWimpSlot no
+RMEnsure UtilityModule 6.00 Set HasLargeWimpSlot yes
+RMEnsure UtilityModule 5.00 Set HasLargeWimpSlot no
+
+If "<HasLargeWimpSlot>" = "no" Then Set ScummVM$Heap ""
+If "<HasLargeWimpSlot>" = "no" Then SetEval ScummVM$HeapMax 128
+
+Unset HasLargeWimpSlot
+
 | If running from the desktop, redirect stdout and stderr to a file.
 | This shouldn't happen when running from the command line, so that commands like "<ScummVM$Dir> --help" still work as expected.
 Set Alias$Run_ScummVM Run <Obey$Dir>.scummvm %%*0 ><Choices$Write>.ScummVM.stdout 2><Choices$Write>.ScummVM.stderr

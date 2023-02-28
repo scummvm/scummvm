@@ -32,10 +32,6 @@
 #include <kernel.h>
 #include <swis.h>
 
-// By declaring this variable we force libunixlib to always use dynamic areas for data allocations
-// This frees up space for plugins and allows to have plenty of space for data
-const char *const __dynamic_da_name = "ScummVM Heap";
-
 // HACK: These two function are part of private API in libunixlib
 // They let allocate and free data in the application space where the stack is placed below 64MB
 // When using malloc with big chunks we end up in memory mapped areas above 64MB
