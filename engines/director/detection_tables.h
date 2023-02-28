@@ -999,6 +999,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "rolypolys",			"ローリーポーリーズの七転び八起き" },
 	{ "rolypolys2",			"ローリーポーリーズの世界旅行" },
 	{ "ronron",				"ゆけゆけロンロン!" },								// Yuke Yuke Ron Ron!
+	{ "rosaboken",			"Walküre no Densetsu Gaiden: Rosa no Bōken" },  // ワルキューレの伝説 外伝 ローザの冒険
 	{ "sabotenman",			"The Saboten Man" },
 	{ "sakin2",				"砂金II" },										// Sakin II
 	{ "sakuratoasobo",		"さくらとあそぼ" },								// Let's Play with "SAKURA"!
@@ -4905,6 +4906,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("rooked", "v1.1P", "ROOKED v1.1P", "58b4e23f8260c100f84232e7b62b74f8", 504455, 404),
 
+	WINGAME2_l("rosaboken", "", "ROZA.EXE",	   "t:77d284794cb44421cb6e27e23b29988d", 1373353,
+								"ROZA_MN.DXR", "t:7dea46f5097703e241ddc07d403ee904", 1836896, Common::JA_JPN, 404),
+
 	// Developed by Masahiro Fukuda & Co, published by Mizuki of Kashiba, Nara, Japan (1995)
 	// Auto Mode plays game as a non-interactive movie
 	WINGAME1_l("sabotenman", "",          "SABOTEN.EXE",  "30721602cb11d8764c5f0d9999ebe04d", 753725, Common::JA_JPN, 404),
@@ -7772,8 +7776,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 							   "DATA/intro.dxr", "a8fe1c32a4c4d40ed00393d8602b979e", 997164, 800),
 
 	// From bugreport #13438
-	// Mac version is D10
-	WINGAME1t("artmarcopatrito", "", "The_Art.exe", "5b1dc5ceba980c61ff9f6c82f187f106", 2158556, 851),
+	// Mac OSX version is D10
+	MACGAME1("artmarcopatrito", "Classic", "The Art",	  "12f06b96b6e1e721d22a4e60e938effc", 227393, 851),
+	WINGAME1t("artmarcopatrito", "",	   "The_Art.exe", "5b1dc5ceba980c61ff9f6c82f187f106", 2158556, 851),
 
 	MACGAME1("astroblast", "v1.1", "AstroBlast", "b669b6ace5f203cf7dbdee5277d0c908", 218617, 800),
 
@@ -8131,7 +8136,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Published by Virtual Views, Turin (2003) in English, French, Italian
 	// Players were posted online throughout the decade for compatibility with later OS versions
-	// FIXME: Needs confirmation
 	MACGAME1("sinkha1", "", "HYLEYN",	  "08c9ea94f6469e71ae0c71987bbf6323", 157809, 850),
 	WINGAME1("sinkha1", "", "HYLEYN.exe", "c163f36141579ee374f7b4b2bddee95a", 2117678, 850),
 
@@ -8146,9 +8150,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Published in 2007 (see notes for episode 1)
 	// Episodes 2 and 3 were sold together on one CD
 	// Episode selection is available after starting game
-	// FIXME: Needs confirmation
-	WINGAME2("sinkha2", "", "START.exe", "c163f36141579ee374f7b4b2bddee95a", 2117422,
-							"Init.dxr",  "40ef7beccb79c1a17a54752d833fc672", 769420, 850),
+	// Mac OSX version is D10
+	MACGAME2("sinkha2", "Classic", "START",		 "r:12f06b96b6e1e721d22a4e60e938effc", 235702,
+								   "ME/MAA.cxt", "d:252ded5347d19ec02bbbc2335640b7f6", 745596, 850),
+	WINGAME2("sinkha2", "", 	   "START.exe",	 "c163f36141579ee374f7b4b2bddee95a",   2117678,
+								   "ME/MAA.cxt", "252ded5347d19ec02bbbc2335640b7f6",   745596, 850),
 
 	// Players for Classic Mac OS / Win9x, available here:
 	// http://www.sinkha.com/dfiles/players/ATM_MOSC.sit.bin
@@ -8409,9 +8415,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("aolstarwars", "", "STARWARS.EXE", 		"bcf64185ce848b7b70858d62945f48a8", 25472412,
 								"VID/TEASER_LARGE.WMV", "11b13d01a656d34a19d01247747478a4", 16763648, 1010),
 
-	// Windows version is D8.5
+	// Windows and Mac Classic versions are D8.5
 	// External movies in the 'ME' folder are aliased to ':Cassic OS:ME' (sic)
-	MACGAME1("artmarcopatrito", "", "The Art.osx", "2dbd6c69e359896c0291101c93b0dc03", 303895, 1000),
+	MACGAME1("artmarcopatrito", "OS X", "The Art.osx", "r:2dbd6c69e359896c0291101c93b0dc03", 303895, 1000),
 
 	MACGAME1("babarcoins", "", "Mac.osx",		"a171b7a952d1ac68ae3cd419d6dfc674", 309249, 1010),
 	WINGAME2("babarcoins", "", "Start.exe",		"b198e9bf56c679747e4fd0972d5ba7b7", 2659300,
@@ -8533,11 +8539,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("shellwhirl", "", "Shell Whirl", "a171b7a952d1ac68ae3cd419d6dfc674", 313545, 1010),
 	WINGAME1("shellwhirl", "", "Shell Whirl.exe", "bcf64185ce848b7b70858d62945f48a8", 3779090, 1010),
 
-	// Players for newer OSes, available here:
+	// Player for newer OSes, available here:
 	// http://www.sinkha.com/dfiles/players/HY_MOSX1.zip
-	// http://www.sinkha.com/dfiles/players/ATM_MOSX1.zip
 	MACGAME2("sinkha1", "OS X 10.1-10.4", "START.osx",	"5af79c7672a0db0bc2ddacb9dee4d86c", 3121400,
 										  "ME/MAA.cxt", "3f79a60e8f8a884f67855a5c1f0e66b5", 835098, 1000),
+
+	// OSX player on Sinkha Episode 2-3 CD
+	// Classic player is D8.5
+	MACGAME2("sinkha2", "OS X", "START.osx",  "r:9a8a6c9b5204bd86ef0b26e60dc8e039", 344560,
+								"ME/MAA.cxt", "r:5ce71027811056309ef8bde7e9433b93", 37748, 1000),
+	// Player for newer OSes, available here:
+	// http://www.sinkha.com/dfiles/players/ATM_MOSX1.zip
 	MACGAME2("sinkha2", "OS X 10.1-10.4", "START.osx",	"5af79c7672a0db0bc2ddacb9dee4d86c", 3121400,
 										  "ME/MAA.cxt", "26f7dcd7a5690910f2116205f54cb44b", 759494, 1000),
 
