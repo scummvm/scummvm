@@ -34,6 +34,7 @@
 #include "mm/mm1/views_enh/main_menu.h"
 #include "mm/mm1/views_enh/map_popup.h"
 #include "mm/mm1/views_enh/quick_ref.h"
+#include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/locations/market.h"
 #include "mm/mm1/views_enh/locations/temple.h"
 #include "mm/mm1/views_enh/spells/cast_spell.h"
@@ -50,6 +51,7 @@ private:
 	Views::Locations::Inn _inn;
 	Views::Protect _protect;
 	Views::Title _title;
+	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Locations::Market _market;
 	ViewsEnh::Locations::Temple _temple;
 	ViewsEnh::Spells::CastSpell _castSpell;

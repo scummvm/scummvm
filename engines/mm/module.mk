@@ -142,6 +142,8 @@ MODULE_OBJS += \
 	mm1/views_enh/scroll_text.o \
 	mm1/views_enh/scroll_view.o \
 	mm1/views_enh/text_view.o \
+	mm1/views_enh/interactions/interaction.o \
+	mm1/views_enh/interactions/statue.o \
 	mm1/views_enh/locations/location.o \
 	mm1/views_enh/locations/market.o \
 	mm1/views_enh/locations/temple.o \
