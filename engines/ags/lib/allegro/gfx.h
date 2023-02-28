@@ -210,7 +210,6 @@ extern bool is_linear_bitmap(BITMAP *bmp);
 extern bool is_planar_bitmap(BITMAP *bmp);
 extern void bmp_select(BITMAP *bmp);
 extern byte *bmp_write_line(BITMAP *bmp, int line);
-extern void bmp_unwrite_line(BITMAP *bmp);
 extern void bmp_write8(byte *addr, int color);
 extern void bmp_write15(byte *addr, int color);
 extern void bmp_write16(byte *addr, int color);

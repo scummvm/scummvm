@@ -197,8 +197,6 @@ static void _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 
 		aa_ADVANCE(sy, yinc, ydd, yi1, yi2);
 	}
-
-	bmp_unwrite_line(_dst);
 }
 
 /*

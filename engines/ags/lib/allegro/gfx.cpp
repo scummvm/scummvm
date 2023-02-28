@@ -202,10 +202,6 @@ byte *bmp_write_line(BITMAP *bmp, int line) {
 	return bmp->line[line];
 }
 
-void bmp_unwrite_line(BITMAP *bmp) {
-	// No implementation needed
-}
-
 void bmp_write8(byte *addr, int color) {
 	*addr = color;
 }
