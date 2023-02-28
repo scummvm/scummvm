@@ -74,7 +74,7 @@ SystemVars *SkyEngine::_systemVars = nullptr;
 const char *SkyEngine::shortcutsKeymapId = "sky-shortcuts";
 
 SkyEngine::SkyEngine(OSystem *syst)
-	: Engine(syst), _fastMode(0), _debugger(0) {
+	: Engine(syst), _fastMode(0), _debugger(0), _big5Font(nullptr) {
 	_systemVars = new SystemVars();
 	_systemVars->systemFlags    = 0;
 	_systemVars->gameVersion    = 0;
