@@ -247,14 +247,15 @@ bool VideoMemoryGraphicsDriver::DoNullSpriteCallback(int x, int y) {
 	if (!_nullSpriteCallback)
 		error("Unhandled attempt to draw null sprite");
 	_stageScreenDirty = false;
-	_stageVirtualScreen->ClearTransparent();
 	// NOTE: this is not clear whether return value of callback may be
 	// relied on. Existing plugins do not seem to return anything but 0,
 	// even if they handle this event.
 	_stageScreenDirty |= _nullSpriteCallback(x, y) != 0;
 	if (_stageScreenDirty) {
-		if (_stageVirtualScreenDDB)
+		if (_stageVirtualScreenDDB) {
 			UpdateDDBFromBitmap(_stageVirtualScreenDDB, _stageVirtualScreen.get(), true);
+			_stageVirtualScreen->ClearTransparent();
+		}
 		else
 			_stageVirtualScreenDDB = CreateDDBFromBitmap(_stageVirtualScreen.get(), true);
 		return true;
