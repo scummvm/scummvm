@@ -93,8 +93,15 @@ GameObject *GetOwner(GameObject *go) {
 // This call looks up a spells object prototype. It can accept either
 //   an object ID or a spell ID
 SkillProto *skillProtoFromID(int16 spellOrObjectID) {
+	SkillProto *sProto = (SkillProto *)GameObject::protoAddress(spellOrObjectID);
 	if (spellOrObjectID > MAX_SPELLS)
-		return (SkillProto *)GameObject::protoAddress(spellOrObjectID);
+		return sProto;
+
+	// Can be spellId, check if this the prototype returned by spellOrObjectID refers to a spell
+	int16 manaColor = spellBook[sProto->getSpellID()].getManaType();
+	int16 manaCost  = spellBook[sProto->getSpellID()].getManaAmt();
+	if (manaColor >= ksManaIDRed &&  manaColor <= ksManaIDViolet &&  manaCost > 0) // A spell
+		return sProto;
 
 	if (spellOrObjectID >= kTotalSpellBookPages)
 		error("Wrong spellID: %d > %d", spellOrObjectID, kTotalSpellBookPages);
