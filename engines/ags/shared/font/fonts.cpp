@@ -69,7 +69,7 @@ bool font_first_renderer_loaded() {
 }
 
 bool is_font_loaded(size_t fontNumber) {
-	return fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer != nullptr;;
+	return fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer != nullptr;
 }
 
 // Finish font's initialization
