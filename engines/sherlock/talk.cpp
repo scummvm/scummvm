@@ -773,8 +773,19 @@ void Talk::doScript(const Common::String &script) {
 			_endStr = true;
 		} else if (c == '{') {
 			// Start of comment, so skip over it
-			while (*str++ != '}')
-				;
+			if (Fonts::isBig5()) {
+				while (*str && *str != '}') {
+					if ((*str & 0x80) && str[1])
+						str += 2;
+					else
+						str++;
+				}
+				if (*str)
+					str++;
+			} else {
+				while (*str++ != '}')
+					;
+			}
 		} else if (isOpcode(c)) {
 			// the original interpreter checked for c being >= 0x80
 			// and if that is the case, it tried to process it as opcode, BUT ALSO ALWAYS skipped over it

@@ -21,7 +21,10 @@
 
 #include "base/plugins.h"
 
+#include "common/translation.h"
+
 #include "engines/advancedDetector.h"
+#include "gui/message.h"
 
 #include "plumbers/plumbers.h"
 
@@ -40,7 +43,17 @@ class PlumbersMetaEngine : public AdvancedMetaEngine {
 };
 
 Common::Error PlumbersMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Plumbers::PlumbersGame(syst, desc);
+	if (desc->platform == Common::kPlatform3DO) {
+#ifdef USE_RGB_COLOR
+		*engine = new Plumbers::PlumbersGame3DO(syst, desc);
+#else
+		 // I18N: Plumbers is the title of the game. 3DO is the name of platform
+		GUI::MessageDialog dialog(_("3DO Plumbers requires RGB support."));
+		dialog.runModal();
+		return Common::kUnsupportedColorMode;
+#endif
+	} else
+		*engine = new Plumbers::PlumbersGameWindows(syst, desc);
 	return Common::kNoError;
 }
 

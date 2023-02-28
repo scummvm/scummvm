@@ -440,7 +440,7 @@ void InGameScene::drawMask() {
 	if (!_maskAlpha)
 		rend->colorMask(false, false, false, false);
 
-	for (auto mask : _masks)
+	for (auto &mask : _masks)
 		mask->draw();
 
 	if (!_maskAlpha)
@@ -843,7 +843,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 
 	TeMatrix4x4 camMatrix = currentCamera() ?
 		currentCamera()->worldTransformationMatrix() : TeMatrix4x4();
-	for (auto particle : _particles) {
+	for (auto &particle : _particles) {
 		particle->setMatrix(camMatrix);
 		particle->realTimer().start();
 		particle->update(particle->startLoop());
@@ -1806,7 +1806,7 @@ void InGameScene::updateViewport(int ival) {
 							_scrollOffset.getY() * _scrollScale.getY());
 	const TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
 	float aspectRatio = lsize.getX() / lsize.getY();
-	for (auto cam : cameras()) {
+	for (auto &cam : cameras()) {
 		//cam->setSomething(ival);
 		int x = (winSize.x() - lsize.getX()) / 2.0f + offset.getX();
 		int y = (winSize.y() - lsize.getY()) / 2.0f;
@@ -1819,7 +1819,7 @@ void InGameScene::updateViewport(int ival) {
 }
 
 void InGameScene::activateMask(const Common::String &name, bool val) {
-	for (auto mask : _masks) {
+	for (auto &mask : _masks) {
 		if (mask->name() == name) {
 			mask->setVisible(val);
 			return;

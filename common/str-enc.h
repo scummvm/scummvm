@@ -39,6 +39,7 @@ enum CodePage {
 	kWindows1256,
 	kWindows1257,
 	kWindows932,
+	kWindows936,
 	kWindows949,
 	kWindows950,
 	kISO8859_1,
@@ -54,6 +55,8 @@ enum CodePage {
 
 	kLatin1 = kISO8859_1,
 	kBig5 = kWindows950,
+	kGBK = kWindows936,
+	kEUCCN = kWindows936,
 	kLastEncoding = kASCII
 };
 

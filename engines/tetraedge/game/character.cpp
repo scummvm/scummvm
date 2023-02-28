@@ -323,7 +323,7 @@ void Character::deleteCallback(const Common::String &key, const Common::String &
 }
 
 void Character::endMove() {
-	if (_model->name() == "Kate")
+	if (g_engine->getGame()->scene()._character == this)
 		walkMode("Walk");
 
 	_onFinishedSignal.call();
@@ -871,6 +871,7 @@ void Character::update(double msFromStart) {
 
 	const float baseAngle = (_walkCurveStart > _walkCurveEnd ? M_PI : 0);
 	const float sign = (_walkCurveStart > _walkCurveEnd ? -1 : 1);
+
 	updatePosition(_walkCurveLast);
 
 	float lastWalkedLength = _walkedLength;

@@ -27,6 +27,7 @@
 #include "common/error.h"
 #include "common/keyboard.h"
 #include "engines/engine.h"
+#include "graphics/big5.h"
 
 /**
  * This is the namespace of the Sky engine.
@@ -110,19 +111,9 @@ public:
 	static void *_itemList[300];
 	static SystemVars *_systemVars;
 	static const char *shortcutsKeymapId;
-	static const int kChineseTraditionalWidth = 16;
-	static const int kChineseTraditionalHeight = 15;
-	struct ChineseTraditionalGlyph {
-		byte bitmap[kChineseTraditionalHeight][kChineseTraditionalWidth / 8];
-		byte outline[kChineseTraditionalHeight][kChineseTraditionalWidth / 8];
-
-		void makeOutline();
-	};
-
-  	uint32 _chineseTraditionalOffsets[8];
+	uint32 _chineseTraditionalOffsets[8];
 	char *_chineseTraditionalBlock;
-	Common::Array<ChineseTraditionalGlyph> _chineseTraditionalFont;
-	Common::Array<int> _chineseTraditionalIndex;
+	Graphics::Big5Font *_big5Font;
 
 protected:
 	// Engine APIs

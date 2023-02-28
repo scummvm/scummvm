@@ -95,7 +95,7 @@ bool PuzzleWritings::init(const AsylumEvent &)  {
 	getText()->drawCentered(Common::Point(10, 375), 590, getText()->get(MAKE_RESOURCE(kResourcePackText, textId++)));
 	getText()->drawCentered(Common::Point(10, 405), 590, getText()->get(MAKE_RESOURCE(kResourcePackText, textId)));
 
-	_textSurface.copyFrom(getScreen()->getSurface());
+	_textSurface.copyFrom(*getScreen()->getSurface());
 
 	return false;
 }

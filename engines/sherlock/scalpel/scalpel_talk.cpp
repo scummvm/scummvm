@@ -232,11 +232,14 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	}
 
 	// Find amount of text that will fit on the line
-	int width = 0, idx = 0;
+	int width = 0, idx = 0, last_space = 0, last_valid = 0;
 	do {
-		width += screen.charWidth(str[idx]);
-		++idx;
-		++_charCount;
+		int old_idx = idx;
+		if (str[idx] == ' ')
+			last_space = idx;
+		last_valid = idx;
+		width += screen.charWidth((const char *) str, idx);
+		_charCount += idx - old_idx;
 	} while (width < 298 && str[idx] && str[idx] != '{' && (!isOpcode(str[idx])));
 
 	if (str[idx] || width >= 298) {
@@ -250,9 +253,12 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 
 	// If word wrap is needed, find the start of the current word
 	if (width >= 298) {
-		while (str[idx] != ' ') {
-			--idx;
-			--_charCount;
+		if (last_space > 0) {
+			_charCount -= idx - last_space;
+			idx = last_space;
+		} else {
+			_charCount -= idx - last_valid;
+			idx = last_valid;
 		}
 	}
 
@@ -279,11 +285,11 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	// Move to end of displayed line
 	str += idx;
 
-	// If line wrap occurred, then move to after the separating space between the words
-	if (str[0] && (!isOpcode(str[0])) && str[0] != '{')
+	// If line wrap with space occurred, then move to after the separating space between the words
+	if (str[0] == ' ')
 		++str;
 
-	_yp += 9;
+	_yp += _vm->getLanguage() == Common::Language::ZH_TWN ? 16 : 9;
 	++_line;
 
 	// Certain different conditions require a wait
@@ -823,19 +829,27 @@ int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool
 	for (;;) {
 		// Get as much of the statement as possible will fit on the
 		Common::String sLine;
-		const char *lineEndP = lineStartP;
 		int width = 0;
+		int lastSpace = 0;
+		int lastValid = 0;
+		int linePtr = 0;
+		int nextLine = -1;
 		do {
-			width += screen.charWidth(*lineEndP);
-		} while (*++lineEndP && width < maxWidth);
+			lastValid = linePtr;
+			if (lineStartP[linePtr] == ' ')
+				lastSpace = linePtr;
+			width += screen.charWidth(lineStartP, linePtr);
+		} while (lineStartP[linePtr] && width < maxWidth);
 
 		// Check if we need to wrap the line
 		if (width >= maxWidth) {
-			// Work backwards to the prior word's end
-			while (*--lineEndP != ' ')
-				;
-
-			sLine = Common::String(lineStartP, lineEndP++);
+			if (lastSpace > 0) {
+				sLine = Common::String(lineStartP, lastSpace);
+				nextLine = lastSpace + 1;
+			} else {
+				sLine = Common::String(lineStartP, lastValid);
+				nextLine = lastValid;
+			}
 		} else {
 			// Can display remainder of the statement on the current line
 			sLine = Common::String(lineStartP);
@@ -871,11 +885,10 @@ int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool
 			}
 
 			// Move to next line, if any
-			lineY += 9;
-			lineStartP = lineEndP;
-
-			if (!*lineEndP)
+			lineY += _vm->getLanguage() == Common::Language::ZH_TWN ? 16 : 9;
+			if (nextLine < 0)
 				break;
+			lineStartP += nextLine;
 		} else {
 			// We're close to the bottom of the screen, so stop display
 			lineY = -1;

@@ -30,21 +30,14 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
-Temple::Temple() : Location("Temple") {
+Temple::Temple() : Location("Temple", LOC_TEMPLE) {
 	addButton(&_escSprite, Common::Point(24, 100), 0, KEYBIND_ESCAPE);
 }
 
 bool Temple::msgFocus(const FocusMessage &msg) {
-	(void)Location::msgFocus(msg);
-	send("View", GameMessage("LOCATION", LOC_TEMPLE));
+	Location::msgFocus(msg);
 	updateCosts();
 
-	return true;
-}
-
-bool Temple::msgUnfocus(const UnfocusMessage &msg) {
-	send("View", GameMessage("LOCATION", -1));
-	(void)Location::msgUnfocus(msg);
 	return true;
 }
 

@@ -107,7 +107,31 @@ bool TePickMesh2::intersect(const TeVector3f32 &origin, const TeVector3f32 &dir,
 }
 
 bool TePickMesh2::intersect2D(const TeVector2f32 &pt) {
-	error("TODO: Implement TePickMesh2::intersect2D");
+	if (_verticies.size() < 3)
+		return false;
+
+	// Check last triangle hit first..
+	TeVector2f32 vert2s[3];
+	for (uint i = 0; i < 3; i++) {
+		const TeVector3f32 &vert = _verticies[_lastTriangleHit * 3 + i];
+		vert2s[i] = TeVector2f32(vert.x(), vert.z());
+	}
+
+	if (pointInTriangle(pt, vert2s[0], vert2s[1], vert2s[2]))
+		return true;
+
+	for (uint tri = 0; tri < _verticies.size() / 3; tri++) {
+		for (uint i = 0; i < 3; i++) {
+			const TeVector3f32 &vert = _verticies[tri * 3 + i];
+			vert2s[i] = TeVector2f32(vert.x(), vert.z());
+		}
+
+		if (pointInTriangle(pt, vert2s[0], vert2s[1], vert2s[2])) {
+			_lastTriangleHit = tri;
+			return true;
+		}
+	}
+	return false;
 }
 
 uint TePickMesh2::lastTriangleHit() const {

@@ -91,6 +91,9 @@ private:
 	 * Returns the button, if any, that is under the specified position
 	 */
 	JournalButton getHighlightedButton(const Common::Point &pt);
+
+	Common::Rect getSearchButtonRect(int idx);
+	Common::Point getSearchButtonTextPoint(int idx);
 public:
 	ScalpelJournal(SherlockEngine *vm);
 	~ScalpelJournal() override {}
@@ -120,6 +123,9 @@ public:
 	 * can then read the journal to review them
 	 */
 	void record(int converseNum, int statementNum, bool replyOnly = false) override;
+
+	Common::Rect getButtonRect(JournalButton btn);
+	Common::Point getButtonTextPoint(JournalButton btn);
 };
 
 } // End of namespace Scalpel

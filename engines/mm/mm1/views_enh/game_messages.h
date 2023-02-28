@@ -38,6 +38,7 @@ class GameMessages : public ScrollText {
 private:
 	YNCallback _ynCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
+	YNCallback &_timeoutCallback = _ynCallback;
 	YesNo _yesNo;
 public:
 	GameMessages();
@@ -50,6 +51,7 @@ public:
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgMouseDown(const MouseDownMessage &msg) override;
 	bool msgMouseUp(const MouseUpMessage &msg) override;
+	void timeout() override;
 };
 
 } // namespace ViewsEnh

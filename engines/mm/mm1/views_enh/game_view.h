@@ -24,16 +24,36 @@
 
 #include "mm/mm1/views/game_view.h"
 #include "mm/shared/xeen/sprites.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+namespace Animations {
+
+class ViewAnimation {
+private:
+	Common::Array<Shared::Xeen::SpriteResource> _backgrounds;
+	uint _frameIndex = 0;
+	uint _frameCount = 0;
+protected:
+	Sound &_sound;
+public:
+	ViewAnimation(const char *prefix, uint count, uint frameCount);
+	virtual ~ViewAnimation() {}
+
+	virtual void enter() {}
+	void tick();
+	void draw(Graphics::ManagedSurface &s);
+	virtual void leave();
+};
+
+} // namespace Animations
+
 class GameView : public Views::GameView {
 private:
-	int _locationId = -1;
-	Common::Array<Shared::Xeen::SpriteResource> _backgrounds;
-	uint _frameIndex = 0, _frameCount = 0;
+	Animations::ViewAnimation *_anim = nullptr;
 	uint _timerCtr = 0;
 
 	/**
@@ -43,12 +63,13 @@ private:
 
 public:
 	GameView(UIElement *owner) : Views::GameView(owner) {}
-	virtual ~GameView() {}
+	virtual ~GameView() {
+		delete _anim;
+	}
 
 	void draw() override;
 	bool msgGame(const GameMessage &msg) override;
 	bool tick() override;
-	void update();
 };
 
 } // namespace ViewsEnh

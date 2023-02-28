@@ -36,13 +36,16 @@ int Fonts::_widestChar;
 uint16 Fonts::_charCount;
 byte Fonts::_yOffsets[255];
 bool Fonts::_isModifiedEucCn;
+bool Fonts::_isBig5;
 byte *Fonts::_chineseFont;
+Graphics::Big5Font *Fonts::_big5Font;
 
 void Fonts::setVm(SherlockEngine *vm) {
 	_vm = vm;
 	_font = nullptr;
 	_charCount = 0;
 	_isModifiedEucCn = (_vm->getLanguage() == Common::Language::ZH_ANY && _vm->getGameID() == GameType::GType_RoseTattoo);
+	_isBig5 = (_vm->getLanguage() == Common::Language::ZH_TWN && _vm->getGameID() == GameType::GType_SerratedScalpel);
 }
 
 void Fonts::freeFont() {
@@ -64,6 +67,8 @@ void Fonts::setFont(int fontNum) {
 			// The non-interactive demo does not contain any font at all
 			return;
 		}
+		if (_vm->getLanguage() == Common::Language::ZH_TWN)
+			fontNum = 2;
 	}
 
 	Common::String fontFilename;
@@ -75,6 +80,16 @@ void Fonts::setFont(int fontNum) {
 		} else {
 			_chineseFont = new byte[hzk.size()];
 			hzk.read(_chineseFont, hzk.size());
+		}
+	}
+
+	if (_isBig5 && _chineseFont == nullptr) {
+		Common::File pat;
+		if (!pat.open("TEXTPAT.FNT")) {
+			_isBig5 = false;
+		} else {
+			_big5Font = new Graphics::Big5Font();
+			_big5Font->loadPrefixedRaw(pat, 14);
 		}
 	}
 
@@ -290,6 +305,17 @@ void Fonts::writeString(BaseSurface *surface, const Common::String &str,
 			charPos.x += 5; // hardcoded space
 			continue;
 		}
+
+		if (_isBig5 && (curChar & 0x80) && nextChar) {
+			curCharPtr++;
+			uint16 point = (curChar << 8) | nextChar;
+			if (_big5Font->drawBig5Char(surface->surfacePtr(), point, charPos, overrideColor)) {
+				charPos.x += Graphics::Big5Font::kChineseTraditionalWidth;
+				continue;
+			}
+			curChar = '?';
+		}
+		
 		curChar = translateChar(curChar);
 
 		if (curChar < _charCount) {
@@ -310,31 +336,31 @@ int Fonts::stringWidth(const Common::String &str) {
 
 	bool isInEucEscape = false;
 
-	for (const char *c = str.c_str(); *c; ++c) {
-		byte curChar = *c;
-		byte nextChar = c[1];
+	for (int idx = 0; idx < (int) str.size(); ) {
+		byte curChar = str.c_str()[idx];
+		byte nextChar = str.c_str()[idx+1];
 
 		if (_isModifiedEucCn && !isInEucEscape && curChar == '@' && nextChar == '$') {
 			width += charWidth(' ');
-			c++;
+			idx += 2;
 			isInEucEscape = true;
 			continue;
 		}
 
 		if (_isModifiedEucCn && isInEucEscape && curChar == '$' && nextChar == '@') {
 			width += charWidth(' ');
-			c++;
+			idx += 2;
 			isInEucEscape = false;
 			continue;
 		}
 
 		if (_isModifiedEucCn && curChar >= 0x41 && nextChar >= 0x41 && (isInEucEscape || ((curChar >= 0xa1) && (nextChar >= 0xa1)))) {
 			width += kChineseWidth;
-			c++;
+			idx += 2;
 			continue;
 		}
 
-		width += charWidth(*c);
+		width += charWidth(str.c_str(), idx);
 	}
 
 	return width;
@@ -372,26 +398,163 @@ int Fonts::stringHeight(const Common::String &str) {
 			continue;
 		}
 
+		if (_isBig5 && _big5Font && (curChar & 0x80) && nextChar) {
+			height = MAX(height, _big5Font->getFontHeight());
+			c++;
+			continue;
+		}
+
 		height = MAX(height, charHeight(*c));
 	}
 
 	return height;
 }
 
-int Fonts::charWidth(unsigned char c) {
-	byte curChar;
+
+int Fonts::charWidth(const char *p, int &idx) {
+	byte curChar = p[idx];
+	byte nextChar = p[idx + 1];
+	if (_isBig5 && (curChar & 0x80) && nextChar) {
+		idx += 2;
+		return Graphics::Big5Font::kChineseTraditionalWidth;
+	}
+
+	idx++;
 
 	if (!_font)
 		return 0;
 
-	if (c == ' ') {
+	if (curChar == ' ') {
 		return 5; // hardcoded space
 	}
-	curChar = translateChar(c);
 
-	if (curChar < _charCount)
-		return (*_font)[curChar]._frame.w + 1;
+	byte translatedChar = translateChar(curChar);
+
+	if (translatedChar < _charCount)
+		return (*_font)[translatedChar]._frame.w + 1;
 	return 0;
+}
+
+Common::Array<Common::String> Fonts::wordWrap(const Common::String &str, uint maxWidth, Common::String &rem, uint maxChars, uint maxLines, bool skipHeadAt) {
+	Common::Array<Common::String> lines;
+	int strIdx = 0;
+
+	bool isInEucEscape = false;
+	do {
+		uint width = 0;
+		uint numChars = 0;
+		int spaceIdx = 0;
+		bool spacePNeedsEndEscape = false;
+		bool spacePNeedsBeginEscape = false;
+		int lineStartIdx = strIdx;
+		// Invariant: lastCharIdx is either -1
+		// or is exactly one character behind strP
+		// and in the same escape state.
+		int lastCharIdx = -1;
+		bool isLineStartPInEucEscape = isInEucEscape;
+
+		if (skipHeadAt) {
+			// If the first character is a '@' flagging a title line, then move
+			// past it, so the @ won't be included in the line width calculation
+			if (strIdx + 1 < (int)str.size() && str[strIdx] == '@' && str[strIdx + 1] != '$')
+				++strIdx;
+		}
+
+		// Find how many characters will fit on the next line
+		while (width < maxWidth && numChars < maxChars && strIdx < (int)str.size() && str[strIdx] != '\n') {
+			if (_isModifiedEucCn) {
+				byte curChar = str[strIdx];
+				byte nextChar = strIdx + 1 < (int)str.size() ? str[strIdx + 1] : 0;
+				if (!isInEucEscape && curChar == '@' && nextChar == '$') {
+					width += charWidth(' ');
+					numChars++;
+					if (lineStartIdx != strIdx) {
+						spaceIdx = strIdx;
+						spacePNeedsEndEscape = isInEucEscape;
+						spacePNeedsBeginEscape = true;
+					}
+					lastCharIdx = -1;
+					strIdx += 2;
+					isInEucEscape = true;
+					continue;
+				}
+
+				if (isInEucEscape && curChar == '$' && nextChar == '@') {
+					width += charWidth(' ');
+					numChars++;
+					spaceIdx = strIdx;
+					lastCharIdx = -1;
+					strIdx += 2;
+					spacePNeedsEndEscape = isInEucEscape;
+					spacePNeedsBeginEscape = false;
+					isInEucEscape = false;
+					continue;
+				}
+
+				if (curChar >= 0x41 && nextChar >= 0x41 && (isInEucEscape || ((curChar >= 0xa1) && (nextChar >= 0xa1)))) {
+					width += kChineseWidth;
+					lastCharIdx = strIdx;
+					strIdx += 2;
+					numChars++;
+					continue;
+				}
+			}
+
+			// Keep track of the last space
+			if (str[strIdx] == ' ') {
+				spacePNeedsEndEscape = isInEucEscape;
+				spacePNeedsBeginEscape = isInEucEscape;
+				spaceIdx = strIdx;
+			}
+			lastCharIdx = strIdx;
+			width += charWidth(str.c_str(), strIdx);
+			numChars++;
+		}
+
+		bool previousEucEscape = isInEucEscape;
+
+		// If the line was too wide to fit on a single line, go back to the last space
+		// if there was one, or otherwise simply break the line at this point
+		if (width >= maxWidth || numChars >= maxChars) {
+			if (spaceIdx > 0) {
+				previousEucEscape = spacePNeedsEndEscape;
+				isInEucEscape = spacePNeedsBeginEscape;
+				strIdx = spaceIdx;
+			} else if (lastCharIdx > 0 && lastCharIdx != lineStartIdx) {
+				strIdx = lastCharIdx;
+			}
+		}
+
+		Common::String line = str.substr(lineStartIdx, strIdx - lineStartIdx);
+		assert(!line.contains('\n'));
+		if (!line.hasPrefix("@$") && isLineStartPInEucEscape)
+			line = "@$" + line;
+
+		if (!line.hasSuffix("$@") && previousEucEscape)
+			line = line + "$@";
+
+		// Add the line to the output array
+		lines.push_back(line);
+
+		// Move the string ahead to the next line
+		while (strIdx < (int)str.size() && (str[strIdx] == '\n' || str[strIdx] == ' ' || str[strIdx] == '\r'))
+			++strIdx;
+	} while (strIdx < (int)str.size() && lines.size() < maxLines);
+
+	rem = str.substr(strIdx);
+
+	return lines;
+}
+
+Common::Array<Common::String> Fonts::wordWrap(const Common::String &str, uint maxWidth, uint maxChars, uint maxLines, bool skipHeadAt) {
+	Common::String rem;
+	return wordWrap(str, maxWidth, rem, maxChars, maxLines, skipHeadAt);
+}
+
+int Fonts::charWidth(char c) {
+	char s[2] = { c, '\0' };
+	int idx = 0;
+	return charWidth(s, idx);
 }
 
 int Fonts::charHeight(unsigned char c) {

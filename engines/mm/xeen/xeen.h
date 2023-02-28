@@ -199,11 +199,6 @@ public:
 	uint32 getGameFeatures() const;
 
 	/**
-	 * Returns true if the game is the CD version
-	 */
-	bool getIsCD() const;
-
-	/**
 	 * Returns a random number
 	 */
 	int getRandomNumber(int maxNumber);

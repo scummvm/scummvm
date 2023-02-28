@@ -993,7 +993,7 @@ void Menu::updateSaveGame() {
 			if (_isEditingSavegameName) {
 				if (getSaveLoad()->getIndex() == (uint32)(index + _startIndex)) {
 					if (_caretBlink < 6)
-						getText()->drawChar('_');
+						getText()->drawASCII('_');
 
 					_caretBlink = (_caretBlink + 1) % 12;
 				}
@@ -1030,7 +1030,7 @@ void Menu::updateSaveGame() {
 			if (_isEditingSavegameName) {
 				if (getSaveLoad()->getIndex() == (uint32)(index + _startIndex)) {
 					if (_caretBlink < 6)
-						getText()->drawChar('_');
+						getText()->drawASCII('_');
 
 					_caretBlink = (_caretBlink + 1) % 12;
 				}
@@ -1377,11 +1377,11 @@ void Menu::updateAudioOptions() {
 
 		switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
 		getText()->setPosition(Common::Point(350, (int16)(29 * volumeIndex + 150)));
-		getText()->draw("-");
+		getText()->drawASCII('-');
 
 		switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < (29 * volumeIndex + 150) || cursor.y > (29 * (volumeIndex + 6)));
 		getText()->setPosition(Common::Point(sizeMinus + 360, (int16)(29 * volumeIndex + 150)));
-		getText()->draw("+");
+		getText()->drawASCII('+');
 
 		switch (volumeIndex) {
 		default:
@@ -1416,10 +1416,10 @@ void Menu::updateAudioOptions() {
 		getText()->setPosition(Common::Point(sizePlus + sizeMinus + 365, (int16)(29 * volumeIndex + 150)));
 		if (volumeValue > 0) {
 			for (int32 i = 0; i < volumeValue; i++)
-				getText()->drawChar(']');
+				getText()->drawASCII(']');
 
 			if (volumeValue == 20)
-				getText()->drawChar('*');
+				getText()->drawASCII('*');
 		} else if (volumeIndex) {
 			getText()->draw(MAKE_RESOURCE(kResourcePackText, 1429));
 		}
@@ -1463,20 +1463,20 @@ void Menu::updateSettings() {
 
 	switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < 150 || cursor.y > 174);
 	getText()->setPosition(Common::Point(350, 150));
-	getText()->draw("-");
+	getText()->drawASCII('-');
 
 	switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < 150 || cursor.y > 174);
 	getText()->setPosition(Common::Point(sizeMinus + 360, 150));
-	getText()->draw("+");
+	getText()->drawASCII('+');
 
 	getText()->setPosition(Common::Point(sizeMinus + sizePlus + 365, 150));
 	getText()->loadFont(kFontYellow);
 	if (Config.gammaLevel) {
 		for (int32 i = 0; i < Config.gammaLevel; i++)
-			getText()->drawChar(']');
+			getText()->drawASCII(']');
 
 		if (Config.gammaLevel == 8)
-			getText()->drawChar('*');
+			getText()->drawASCII('*');
 	} else {
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1435));
 	}
@@ -1488,11 +1488,11 @@ void Menu::updateSettings() {
 
 	switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < 179 || cursor.y > 203);
 	getText()->setPosition(Common::Point(350, 179));
-	getText()->draw("-");
+	getText()->drawASCII('-');
 
 	switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < 179 || cursor.y > 203);
 	getText()->setPosition(Common::Point(sizeMinus + 360, 179));
-	getText()->draw("+");
+	getText()->drawASCII('+');
 
 	getText()->setPosition(Common::Point(sizeMinus + sizePlus + 365, 179));
 	getText()->loadFont(kFontYellow);
@@ -1500,10 +1500,10 @@ void Menu::updateSettings() {
 		getText()->draw(MAKE_RESOURCE(kResourcePackText, 1436));
 	} else {
 		for (int32 i = 5; i > Config.performance; --i) // This has ] augmenting when pressing - which is a bit convoluted (perf == speed == more ])
-			getText()->drawChar(']');
+			getText()->drawASCII(']');
 
 		if (!Config.performance)
-			getText()->draw('*');
+			getText()->drawASCII('*');
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1538,17 +1538,17 @@ void Menu::updateSettings() {
 
 	switchFont(cursor.x < 350 || cursor.x > (sizeMinus + 350) || cursor.y < 209 || cursor.y > 233);
 	getText()->setPosition(Common::Point(350, 209));
-	getText()->draw("-");
+	getText()->drawASCII('-');
 
 	switchFont(cursor.x < (sizeMinus + 360) || cursor.x > (sizeMinus + sizePlus + 360) || cursor.y < 209 || cursor.y > 233);
 	getText()->setPosition(Common::Point(sizeMinus + 360, 209));
-	getText()->draw("+");
+	getText()->drawASCII('+');
 
 	getText()->setPosition(Common::Point(sizeMinus + sizePlus + 365, 209));
 	getText()->loadFont(kFontYellow);
 
 	for (int i = 1; i <= Config.animationsSpeed; i++)
-		getText()->drawChar(']');
+		getText()->drawASCII(']');
 
 	//////////////////////////////////////////////////////////////////////////
 	// Back to main menu
@@ -1579,7 +1579,7 @@ void Menu::updateKeyboardConfig() {
 			getText()->loadFont(kFontBlue);
 
 			if (_caretBlink < 6)
-				getText()->drawChar('_');
+				getText()->drawASCII('_');
 
 			_caretBlink = (_caretBlink + 1) % 12;
 		} else {

@@ -220,11 +220,11 @@ static const SherlockGameDescription gameDescriptions[] = {
 		// Provided by AquariumTroop
 		{
 			"scalpel",
-			_s("Missing game code"), // Reason for being unsupported
+			nullptr,
 			AD_ENTRY1s("talk.lib", "334c7d468860f20eafbcd002891f0c6b", 173935),
 			Common::ZH_TWN,
 			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_SerratedScalpel,

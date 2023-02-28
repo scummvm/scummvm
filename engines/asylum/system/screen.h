@@ -147,8 +147,8 @@ public:
 	void drawRect(const Common::Rect &rect, uint32 color = 0xFF);
 	void copyToBackBufferClipped(Graphics::Surface *surface, int16 x, int16 y);
 
-	// Used by Writings puzzle
-	const Graphics::Surface &getSurface() const { return _backBuffer; };
+	// Used by Writings puzzle and Chinese renderer
+	Graphics::Surface *getSurface() { return &_backBuffer; };
 
 private:
 	AsylumEngine *_vm;

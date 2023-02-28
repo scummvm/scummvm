@@ -252,6 +252,7 @@ public:
 protected:
 	StringEncodingResult encodeUTF8(const U32String &src, char errorChar);
 	StringEncodingResult encodeWindows932(const U32String &src, char errorChar);
+	StringEncodingResult encodeWindows936(const U32String &src, char errorChar);
 	StringEncodingResult encodeWindows949(const U32String &src, char errorChar);
 	StringEncodingResult encodeWindows950(const U32String &src, bool translit, char errorChar);
 	StringEncodingResult encodeJohab(const U32String &src, char errorChar);

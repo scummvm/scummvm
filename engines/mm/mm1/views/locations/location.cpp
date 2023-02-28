@@ -36,6 +36,15 @@ Location::Location(const Common::String &name) : TextView(name) {
 	_modeString = STRING["dialogs.location.gather"];
 }
 
+bool Location::msgGame(const GameMessage &msg) {
+	if (msg._name == "DISPLAY") {
+		addView();
+		return true;
+	}
+
+	return TextView::msgGame(msg);
+}
+
 void Location::draw() {
 	clearSurface();
 	writeString(0, 0, g_globals->_currCharacter->_name);

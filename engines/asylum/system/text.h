@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "common/scummsys.h"
+#include "graphics/font.h"
 
 #include "asylum/shared.h"
 
@@ -47,13 +48,12 @@ public:
 	ResourceId loadFont(ResourceId resourceId);
 
 	void   setPosition(const Common::Point &point);
-	int16  getWidth(char c);
 	int16  getWidth(const char *text);
 	int16  getWidth(const char *text, int16 length);
 	int16  getWidth(ResourceId resourceId);
 	char  *get(ResourceId resourceId);
 
-	void drawChar(char character);
+	void drawASCII(char character) { drawChar(character); }
 	void draw(const char *text);
 	void draw(const Common::Point &point, const char *text);
 	void draw(ResourceId resourceId);
@@ -61,6 +61,7 @@ public:
 	void draw(const char *text, ResourceId fontResourceId, int16 y);
 	void draw(const char *text, int16 length);
 	int16 draw(TextCentering centering, const Common::Point &point, int16 spacing, int16 width, const char *text);
+	void drawChinese(const Common::U32String &utext);
 	int16 draw(int16 a1, int16 a2, TextCentering centering, const Common::Point &point, int16 spacing, int16 width, const char *text);
 
 	void drawCentered(const Common::Point &point, int16 width, const char *text);
@@ -70,6 +71,12 @@ public:
 	void setTransTableNum(uint32 val) { _transTableNum = val; }
 
 private:
+	int16  getWidth(char c);
+	void drawChar(char character);
+
+	int16 getChineseWidth(const Common::U32String &utext);
+	void loadChineseFont();
+
 	AsylumEngine *_vm;
 
 	GraphicResource *_fontResource;
@@ -79,6 +86,8 @@ private:
 	Common::Point _position;
 	uint8 _curFontFlags;
 
+	Common::ScopedPtr<Graphics::Font> _chineseFont;
+	bool _chineseFontLoadAttempted;
 };
 
 } // end of namespace Asylum

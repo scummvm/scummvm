@@ -70,7 +70,7 @@ void ScrollText::addText(const Common::String &s,
 
 	// Add them in
 	for (uint i = 0; i < lines.size(); ++i, ++lineNum, pt.y += LINE_HEIGHT)
-		_lines.push_back(Line(lines[i], pt, color));
+		_lines.push_back(Line(lines[i], pt, color, align));
 }
 
 void ScrollText::draw() {
@@ -80,7 +80,7 @@ void ScrollText::draw() {
 	for (Lines::const_iterator i = begin();
 		i != end(); ++i) {
 		setTextColor(i->_color);
-		writeString(i->_pos.x, i->_pos.y, i->_str);
+		writeString(i->_pos.x, i->_pos.y, i->_str, i->_align);
 	}
 }
 

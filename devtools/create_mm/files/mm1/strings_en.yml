@@ -108,11 +108,11 @@ dialogs:
 		copyright2: "All Rights Reserved"
 		scummvm: "Enhanced version provided by ScummVM"
 	market:
-		special: "special today,all you can eat! "
-		gp: "gp/ea"
-		will_you_pay: "will you pay (Y/N)?"
-		thankyou: "thank you, come again!"
-		no_gold: "no gold, no food!"
+		special: "Special today,all you can eat! "
+		gp: "GP/ea"
+		will_you_pay: "Will you pay (Y/N)?"
+		thankyou: "Thank you, come again!"
+		no_gold: "No gold, no food!"
 	order:
 		title: " re-order party  new  1  2  3  4  5  6"
 		old: "old"
@@ -493,9 +493,10 @@ enhdialogs:
 		east: "East"
 		west: "West"
 	market:
-		buy_food: "buy food"
-		thankyou: "thank you,\ncome again!"
-		no_gold: "no gold,\nno food!"
+		title: "Market"
+		buy_food: "Buy food"
+		thankyou: "Thank you, come again!"
+		no_gold: "No gold, no food!"
 	misc:
 		exit: "Exit"
 	quickref:

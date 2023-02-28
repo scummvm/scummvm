@@ -30,6 +30,8 @@
 #include "common/lua/lauxlib.h"
 #include "common/lua/lualib.h"
 
+//#define TETRAEDGE_LUA_DEBUG 1
+
 namespace Tetraedge {
 
 /*static*/
@@ -73,6 +75,11 @@ void TeLuaThread::execute(const Common::String &fname) {
 	if (!_luaThread)
 		return;
 
+#ifdef TETRAEDGE_LUA_DEBUG
+	if (fname != "Update" && fname != "UpdateHelp")
+		debug("TeLuaThread::execute: %s()", fname.c_str());
+#endif
+
 	lua_getglobal(_luaThread, fname.c_str());
 	if (lua_type(_luaThread, -1) == LUA_TFUNCTION) {
 		_resume(0);
@@ -86,6 +93,10 @@ void TeLuaThread::execute(const Common::String &fname) {
 void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1) {
 	if (!_luaThread)
 		return;
+
+#ifdef TETRAEDGE_LUA_DEBUG
+	debug("TeLuaThread::execute: %s(%s)", fname.c_str(), p1.dumpStr().c_str());
+#endif
 
 	lua_getglobal(_luaThread, fname.c_str());
 	if (lua_type(_luaThread, -1) == LUA_TFUNCTION) {
@@ -106,6 +117,11 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 	if (!_luaThread)
 		return;
 
+#ifdef TETRAEDGE_LUA_DEBUG
+	debug("TeLuaThread::execute: %s(%s, %s)", fname.c_str(), p1.dumpStr().c_str(),
+			p2.dumpStr().c_str());
+#endif
+
 	lua_getglobal(_luaThread, fname.c_str());
 	if (lua_type(_luaThread, -1) == LUA_TFUNCTION) {
 		pushValue(p1);
@@ -121,6 +137,12 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, const TeVariant &p2, const TeVariant &p3) {
 	if (!_luaThread)
 		return;
+
+#ifdef TETRAEDGE_LUA_DEBUG
+	debug("TeLuaThread::execute: %s(%s, %s, %s)", fname.c_str(), p1.dumpStr().c_str(),
+				p2.dumpStr().c_str(), p3.dumpStr().c_str());
+#endif
+
 
 	lua_getglobal(_luaThread, fname.c_str());
 	if (lua_type(_luaThread, -1) == LUA_TFUNCTION) {
@@ -141,6 +163,10 @@ void TeLuaThread::executeFile(const Common::FSNode &node) {
 		warning("TeLuaThread::executeFile: File %s can't be opened", node.getName().c_str());
 		return;
 	}
+
+#ifdef TETRAEDGE_LUA_DEBUG
+	debug("TeLuaThread::executeFile: %s", node.getName().c_str());
+#endif
 
 	int64 fileLen = scriptFile.size();
 	char *buf = new char[fileLen + 1];
@@ -223,11 +249,19 @@ void TeLuaThread::release() {
 }
 
 void TeLuaThread::resume() {
+#ifdef TETRAEDGE_LUA_DEBUG
+	debug("TeLuaThread::resume");
+#endif
+
 	if (_luaThread)
 		_resume(0);
 }
 
 void TeLuaThread::resume(const TeVariant &p1) {
+#ifdef TETRAEDGE_LUA_DEBUG
+	debug("TeLuaThread::resume(%s)", p1.dumpStr().c_str());
+#endif
+
 	if (_luaThread) {
 		pushValue(p1);
 		_resume(1);
@@ -235,6 +269,10 @@ void TeLuaThread::resume(const TeVariant &p1) {
 }
 
 void TeLuaThread::resume(const TeVariant &p1, const TeVariant &p2) {
+#ifdef TETRAEDGE_LUA_DEBUG
+	debug("TeLuaThread::resume(%s, %s)", p1.dumpStr().c_str(), p2.dumpStr().c_str());
+#endif
+
 	if (_luaThread) {
 		pushValue(p1);
 		pushValue(p2);
@@ -243,6 +281,11 @@ void TeLuaThread::resume(const TeVariant &p1, const TeVariant &p2) {
 }
 
 void TeLuaThread::resume(const TeVariant &p1, const TeVariant &p2, const TeVariant &p3) {
+#ifdef TETRAEDGE_LUA_DEBUG
+	debug("TeLuaThread::resume(%s, %s, %s)", p1.dumpStr().c_str(), p2.dumpStr().c_str(),
+				p3.dumpStr().c_str());
+#endif
+
 	if (_luaThread) {
 		pushValue(p1);
 		pushValue(p2);

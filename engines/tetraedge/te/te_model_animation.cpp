@@ -356,6 +356,10 @@ void TeModelAnimation::update(double millis) {
 		if (_finishedSignalPending) {
 			_finishedSignalPending = false;
 			_onFinishedSignal.call();
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
+				if (_repeatNum >= _repeatCount && _repeatCount != -1)
+					stop();
+			}
 		}
 	}
 }

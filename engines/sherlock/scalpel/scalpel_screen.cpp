@@ -32,7 +32,7 @@ ScalpelScreen::ScalpelScreen(SherlockEngine *vm) : Screen(vm) {
 	activateBackBuffer1();
 }
 
-void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
+void ScalpelScreen::makeButton(const Common::Rect &bounds, const Common::Point &textPoint,
 		const Common::String &buttonText, bool textContainsHotkey) {
 
 	Surface &bb = _backBuffer;
@@ -42,7 +42,12 @@ void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
 	bb.fillRect(Common::Rect(bounds.left + 1, bounds.bottom - 1, bounds.right, bounds.bottom), BUTTON_BOTTOM);
 	bb.fillRect(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
 
-	buttonPrint(Common::Point(textX, bounds.top), COMMAND_FOREGROUND, false, buttonText, textContainsHotkey);
+	buttonPrint(textPoint, COMMAND_FOREGROUND, false, buttonText, textContainsHotkey);
+}
+
+void ScalpelScreen::makeButton(const Common::Rect &bounds, int textX,
+		const Common::String &buttonText, bool textContainsHotkey) {
+	makeButton(bounds, Common::Point(textX, bounds.top), buttonText, textContainsHotkey);
 }
 
 // ButtonText is supposed to have its hotkey as a prefix. The hotkey will get highlighted.
@@ -91,11 +96,13 @@ void ScalpelScreen::buttonPrint(const Common::Point &pt, uint color, bool slamIt
 		if (slamIt) {
 			print(Common::Point(xStart, pt.y + 1),
 				COMMAND_FOREGROUND, "%s", buttonText.c_str() + skipTextOffset);
-			print(Common::Point(xStart + prefixOffsetX, pt.y + 1), COMMAND_HIGHLIGHTED, "%c", hotkey);
+			if (textContainsHotkey)
+				print(Common::Point(xStart + prefixOffsetX, pt.y + 1), COMMAND_HIGHLIGHTED, "%c", hotkey);
 		} else {
 			gPrint(Common::Point(xStart, pt.y),
 				COMMAND_FOREGROUND, "%s", buttonText.c_str() + skipTextOffset);
-			gPrint(Common::Point(xStart + prefixOffsetX, pt.y), COMMAND_HIGHLIGHTED, "%c", hotkey);
+			if (textContainsHotkey)
+				gPrint(Common::Point(xStart + prefixOffsetX, pt.y), COMMAND_HIGHLIGHTED, "%c", hotkey);
 		}
 	} else if (slamIt) {
 		print(Common::Point(xStart, pt.y + 1), color, "%s", buttonText.c_str() + skipTextOffset);

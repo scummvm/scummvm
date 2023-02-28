@@ -33,6 +33,7 @@ namespace Locations {
 class Location : public PartyView {
 protected:
 	Shared::Xeen::SpriteResource _escSprite;
+	int _locationId = -1;
 
 protected:
 	/**
@@ -63,22 +64,29 @@ protected:
 	void backpackFull();
 
 public:
-	Location(const Common::String &name);
+	Location(const Common::String &name, int locationId);
+
+	/**
+	 * Game message handler
+	 */
+	bool msgGame(const GameMessage &msg) override;
 
 	/**
 	 * Leave the location, turning around
 	 */
 	void leave();
 
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+
 	/**
 	 * Draw the location
 	 */
-	void draw();
+	void draw() override;
 
 	/**
 	 * Tick handler
 	 */
-	bool tick();
+	bool tick() override;
 };
 
 } // namespace Locations

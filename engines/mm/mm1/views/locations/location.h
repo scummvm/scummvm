@@ -77,6 +77,11 @@ public:
 	virtual ~Location() {}
 
 	/**
+	 * Game message handler
+	 */
+	bool msgGame(const GameMessage &msg) override;
+
+	/**
 	 * Draws the initial display for the business
 	 */
 	void draw() override;

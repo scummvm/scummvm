@@ -68,12 +68,19 @@ public:
 	uint32 getGameID() const;
 
 	/**
+	 * Returns true if the game is the CD version
+	 */
+	bool getIsCD() const;
+
+	/**
 	 * Get a random number
 	 */
 	uint getRandomNumber(int max) {
 		return _randomSource.getRandomNumber(max);
 	}
 };
+
+extern MMEngine *g_engine;
 
 } // namespace MM
 

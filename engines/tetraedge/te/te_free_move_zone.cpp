@@ -148,7 +148,31 @@ void TeFreeMoveZone::buildAStar() {
 		}
 	} else {
 		// Loaded from bin..
-		error("TODO: Implement TeFreeMoveZone::buildAStar for loaded from bin case");
+		for (int x = 0; x < graphSize._x; x++) {
+			for (int y = 0; y < graphSize._y; y++) {
+				byte blockerIntersection = hasBlockerIntersection(TeVector2s32(x, y));
+				if (blockerIntersection == 1) {
+					_graph->_flags[_graph->_size._x * y + x] = 1;
+				} else {
+					if (!hasCellBorderIntersection(TeVector2s32(x, y))) {
+						const float gridSquareX = _gridSquareSize.getX();
+						const float gridSquareY = _gridSquareSize.getY();
+						TeVector3f32 gridPt = _gridMatrix * TeVector3f32(
+								 x * gridSquareX + _gridTopLeft.getX() + gridSquareX / 2, 0.0,
+								 y * gridSquareY + _gridTopLeft.getY() + gridSquareY / 2);
+						bool doesIntersect = intersect2D(TeVector2f32(gridPt.x(), gridPt.z()));
+						if (!doesIntersect)
+							_graph->_flags[graphSize._x * y + x] = 1;
+						else if (blockerIntersection == 2)
+							_graph->_flags[graphSize._x * y + x] = 2;
+						else
+							_graph->_flags[graphSize._x * y + x] = 0;
+					} else {
+						_graph->_flags[graphSize._x * y + x] = 2;
+					}
+				}
+			}
+		}
 	}
 }
 
