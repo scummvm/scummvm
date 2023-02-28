@@ -1636,6 +1636,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "kq4retold", "King's Quest IV: The Perils of Rosella Retold" },
 	{ "kq9vga", "King's Quest IX: The Silver Lining VGA" },
 	{ "kristmaskrisis", "Kristmas Krisis" },
+	{ "ksauna", "Karjalan Sauna" },
 	{ "ktx1", "KTX-1" },
 	{ "kumastory", "Kuma Story" },
 	{ "laboite", "La boite" },
@@ -2355,6 +2356,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "pouvoir", "pouvoir" },
 	{ "powernap", "Power Nap" },
 	{ "powerunlimited", "Power Unlimited Boardgame" },
+	{ "pq4sciish", "Police Quest IV SCI(ish)" },
 	{ "pqtadventure", "Adventures of PQT" },
 	{ "practicescript", "Practice Script: The 1-Room Puzzler" },
 	{ "predatorspreyforplants", "Predators Prey For Plants" },
@@ -4492,6 +4494,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("phantomfellows", "TPF.ags", "9e8ca56e0a85a5d75ae4f6fd1f6e3e21", 502058945),  // Linux
 	DEMO_ENTRY_EN("platformerius", "platformerius.exe", "a3ad5fa6463c0116a2ac8986841860e0", 1512479),
 	DEMO_ENTRY("politicalenemy", "Political Enemy.exe", "387ff720e746ae46e93f463fd58d77a4", 205108968),  // Eng-Ita
+	DEMO_ENTRY_EN("pq4sciish", "PQ4 Remake Demo.exe", "0564de07d3fd5c16e6947a647061913c", 6203078),
 	DEMO_ENTRY_EN("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 727898212),
 	DEMO_ENTRY_EN("prototypical", "Proto.exe", "06a03fe35791b0578068ab1873455463", 48507319),
 	DETECTION_ENTRY("proxecto", "proxec.exe", "465f972675db2da6040518221af5b0ba", 2636209, Common::UNK_LANG, "Demo/Galician", nullptr, ADGF_DEMO),
@@ -6103,6 +6106,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("kq4retold", "KQ4Retold.ags", "f472e13626996771d94066ab5661924d", 163943178), // v1.0.4 Linux
 	GAME_ENTRY_EN("kq4retold", "ac2game.dat", "da6140c1e246d5f7641464bda80c45d5", 312046797), // v1.0.4 Mac
 	GAME_ENTRY("kristmaskrisis", "Kristmas Krisis.exe", "90413e9ae57e222f8913b09d2bc847bc", 2067681),  // En-De
+	GAME_ENTRY_LANG("ksauna", "Karjalan Sauna.exe", "663bbdd33432ee73be23f3c97d10053e", 14485962, Common::FI_FIN),
 	GAME_ENTRY_EN("ktx1", "KTX-1.exe", "615e73fc1874e92d60a1996c2330ea36", 13806290),
 	GAME_ENTRY_EN("kumastory", "Kuma Story.exe", "5d82ab003f108bf44999421884d69f55", 5621765),
 	GAME_ENTRY_LANG("laboite", "LaBoite.exe", "4c4cb72d17cf1d8d0d3907f869ea0609", 142354237, Common::FR_FRA),
@@ -7195,7 +7199,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("secretquestremake", "secretquest.exe", "f120690b506dd63cd7d1112ea6af2f77", 2121159),
 	GAME_ENTRY_EN("secrets", "Secrets.exe", "06a03fe35791b0578068ab1873455463", 36176884),
 	GAME_ENTRY_EN("seed", "Seed.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 67903775),
-	GAME_ENTRY_EN("seekye", "GGJ21.exe", "0564de07d3fd5c16e6947a647061913c", 5997590),
+	GAME_ENTRY_EN("seekye", "GGJ21.exe", "0564de07d3fd5c16e6947a647061913c", 5997590),  // GameJam
+	GAME_ENTRY_EN("seekye", "GGJ21.exe", "0564de07d3fd5c16e6947a647061913c", 6448377),  // itch.io
 	GAME_ENTRY("self", "Self.exe", "559b801e76fa37dc3b1fdd8844e7733a", 27802879),  // Eng-Tur
 	GAME_ENTRY_EN("sepulchre", "sepulchre.exe", "38dce17f7f7b96badf3a88e11e7a9797", 28412866),
 	GAME_ENTRY_EN("serina", "Serinas Transylvanian Trip.exe", "8fd84e9331691d9fd1c393a383807b64", 11447796),
