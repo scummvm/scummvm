@@ -85,27 +85,38 @@ void EditTextWidget::drawWidget() {
 	selBegin = MAX(selBegin, 0);
 	selEnd = MAX(selEnd, 0);
 	
-	Common::UnicodeBiDiText utxt(_editString);
-	Common::U32String left = Common::U32String(utxt.visual.c_str(), utxt.visual.c_str() + selBegin);
-	Common::U32String selected = Common::U32String(utxt.visual.c_str() + selBegin, selEnd - selBegin);
-	Common::U32String right = Common::U32String(utxt.visual.c_str() + selEnd);
-	Common::U32StringArray parts {left, selected, right};
-	int scrollOffset = _editScrollOffset;
-	for (int i = 0; i < parts.size(); i++) {
-		if (!parts[i].size())
-			continue;
-		Common::U32String part = parts[i];
-		int partW = g_gui.getStringWidth(part, _font);
-		int clipL = drawRect.left + (scrollOffset < 0 ? -scrollOffset : 0);
-		if (x + partW > 0 && x < _w && clipL < drawRect.right) {
-			int sO = scrollOffset < 0 ? 0 : -scrollOffset;
-			_inversion = i == 1 ? ThemeEngine::kTextInversionFocus : ThemeEngine::kTextInversionNone;
-			g_gui.theme()->drawText(Common::Rect(clipL, y, drawRect.right, y + drawRect.height()), part, _state,
-                _drawAlign, _inversion, sO, false, _font, ThemeEngine::kFontColorNormal, true,	
-                _textDrawableArea);
+	if (!g_gui.useRTL()) {
+		Common::UnicodeBiDiText utxt(_editString);
+		Common::U32String left = Common::U32String(utxt.visual.c_str(), utxt.visual.c_str() + selBegin);
+		Common::U32String selected = Common::U32String(utxt.visual.c_str() + selBegin, selEnd - selBegin);
+		Common::U32String right = Common::U32String(utxt.visual.c_str() + selEnd);
+		Common::U32StringArray parts {left, selected, right};
+		int scrollOffset = _editScrollOffset;
+		for (uint i = 0; i < parts.size(); i++) {
+			if (!parts[i].size())
+				continue;
+			Common::U32String part = parts[i];
+			int partW = g_gui.getStringWidth(part, _font);
+			int clipL = drawRect.left + (scrollOffset < 0 ? -scrollOffset : 0);
+			int clipR = MIN(clipL + partW, (int)drawRect.right);
+			if (x + partW > 0 && x < _w && clipL < drawRect.right) {
+				int sO = scrollOffset < 0 ? 0 : -scrollOffset;
+				_inversion = i == 1 ? ThemeEngine::kTextInversionFocus : ThemeEngine::kTextInversionNone;
+				g_gui.theme()->drawText(Common::Rect(clipL, y, clipR, y + drawRect.height()), part, _state,
+				                        _drawAlign, _inversion, sO, false, _font, ThemeEngine::kFontColorNormal, 
+				                        true, _textDrawableArea);
+			}
+			x += partW;
+			scrollOffset -= partW;
 		}
-		x += partW;
-		scrollOffset -= partW;
+	} else {
+		// The above method does not render RTL languages correctly, so fallback to default method
+		// There are only two possible cases, either the whole string has been selected
+		// or nothing has been selected.
+		_inversion = _selOffset ? ThemeEngine::kTextInversionFocus : ThemeEngine::kTextInversionNone;
+		g_gui.theme()->drawText(drawRect, _editString, _state, _drawAlign, _inversion, 
+		                        -_editScrollOffset, false, _font, ThemeEngine::kFontColorNormal, true, 
+		                        _textDrawableArea);
 	}
 }
 
