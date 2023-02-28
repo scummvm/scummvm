@@ -92,6 +92,8 @@ jmethodID JNI::_MID_showKeyboardControl = 0;
 jmethodID JNI::_MID_getBitmapResource = 0;
 jmethodID JNI::_MID_setTouchMode = 0;
 jmethodID JNI::_MID_getTouchMode = 0;
+jmethodID JNI::_MID_getScummVMBasePath;
+jmethodID JNI::_MID_getScummVMConfigPath;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
@@ -503,9 +505,60 @@ int JNI::getTouchMode() {
 	return mode;
 }
 
+Common::String JNI::getScummVMBasePath() {
+	JNIEnv *env = JNI::getEnv();
+
+	jstring pathObj = (jstring)env->CallObjectMethod(_jobj, _MID_getScummVMBasePath);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Failed to get ScummVM base path");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return Common::String();
+	}
+
+	Common::String path;
+	const char *pathP = env->GetStringUTFChars(pathObj, 0);
+	if (pathP != 0) {
+		path = Common::String(pathP);
+		env->ReleaseStringUTFChars(pathObj, pathP);
+	}
+	env->DeleteLocalRef(pathObj);
+
+	return path;
+}
+
+Common::String JNI::getScummVMConfigPath() {
+	JNIEnv *env = JNI::getEnv();
+
+	jstring pathObj = (jstring)env->CallObjectMethod(_jobj, _MID_getScummVMConfigPath);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Failed to get ScummVM base path");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return Common::String();
+	}
+
+	Common::String path;
+	const char *pathP = env->GetStringUTFChars(pathObj, 0);
+	if (pathP != 0) {
+		path = Common::String(pathP);
+		env->ReleaseStringUTFChars(pathObj, pathP);
+	}
+	env->DeleteLocalRef(pathObj);
+
+	return path;
+}
+
+
 // The following adds assets folder to search set.
 // However searching and retrieving from "assets" on Android this is slow
-// so we also make sure to add the "path" directory, with a higher priority
+// so we also make sure to add the base directory, with a higher priority
 // This is done via a call to ScummVMActivity's (java) getSysArchives
 void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	JNIEnv *env = JNI::getEnv();
@@ -672,6 +725,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getBitmapResource, "(I)Landroid/graphics/Bitmap;");
 	FIND_METHOD(, setTouchMode, "(I)V");
 	FIND_METHOD(, getTouchMode, "()I");
+	FIND_METHOD(, getScummVMBasePath, "()Ljava/lang/String;");
+	FIND_METHOD(, getScummVMConfigPath, "()Ljava/lang/String;");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
