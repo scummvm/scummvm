@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.8.0 (XXXX-XX-XX)
 
+ Asylum:
+   - Added support for Chinese Sanitarium.
+
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
 
