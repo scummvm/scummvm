@@ -149,10 +149,12 @@ public:
 
 	// Get scanline for direct reading
 	inline const unsigned char *GetScanLine(int index) const {
-		return (index >= 0 && index < GetHeight()) ? _alBitmap->getBasePtr(0, index) : nullptr;
+		assert(index >= 0 && index < GetHeight());
+		return _alBitmap->getBasePtr(0, index);
 	}
 	inline unsigned char *GetScanLine(int index) {
-		return (index >= 0 && index < GetHeight()) ? (unsigned char *)_alBitmap->getBasePtr(0, index) : nullptr;
+		assert(index >= 0 && index < GetHeight());
+		return (unsigned char *)_alBitmap->getBasePtr(0, index);
 	}
 
 	// Get bitmap's mask color (transparent color)
