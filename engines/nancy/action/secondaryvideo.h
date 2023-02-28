@@ -50,6 +50,11 @@ public:
 
 	Common::String _filename;
 	Common::String _paletteFilename;
+	// Common::String _bitmapOverlayFilename
+
+	// TVD only
+	NancyFlag _enableHotspot = kTrue;
+
 	uint16 _loopFirstFrame = 0; // 0x1E
 	uint16 _loopLastFrame = 0; // 0x20
 	uint16 _onHoverFirstFrame = 0; // 0x22

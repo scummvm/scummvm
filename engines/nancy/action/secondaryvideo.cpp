@@ -61,7 +61,7 @@ void PlaySecondaryVideo::updateGraphics() {
 		return;
 	}
 
-	if (_isInFrame) {
+	if (_isInFrame && _decoder.isPlaying() ? _decoder.needsUpdate() || _decoder.atEnd() : true) {
 		int lastAnimationFrame = -1;
 		switch (_hoverState) {
 		case kNoHover:
@@ -82,7 +82,6 @@ void PlaySecondaryVideo::updateGraphics() {
 					_decoder.start();
 				}
 
-				_decoder.seekToFrame(_onHoverEndLastFrame);
 				_decoder.setRate(-_decoder.getRate());
 			} else {
 				lastAnimationFrame = _onHoverLastFrame;
@@ -100,11 +99,15 @@ void PlaySecondaryVideo::updateGraphics() {
 			}
 		}
 
-		if (_decoder.isPlaying() && _decoder.needsUpdate()) {
-			GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteFilename.size() > 0);
-			_needsRedraw = true;
+		if (_decoder.isPlaying()) {
+			if (_decoder.needsUpdate()) {
+				GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteFilename.size() > 0);
+				_needsRedraw = true;
+			}
 
-			if (lastAnimationFrame > -1 && _decoder.getCurFrame() == lastAnimationFrame + (_decoder.getRate().getNumerator() > 0 ? 1 : -1)) {
+			if (lastAnimationFrame > -1 &&
+					(_decoder.atEnd() ||
+					 _decoder.getCurFrame() == lastAnimationFrame + (_decoder.getRate().getNumerator() > 0 ? 1 : -1))) {
 				if (_hoverState == kNoHover) {
 					_decoder.seekToFrame(_loopFirstFrame);
 				} else {
@@ -112,18 +115,21 @@ void PlaySecondaryVideo::updateGraphics() {
 				}
 			}
 		}
+	}
 
-		if (_needsRedraw && _isVisible) {
-			int vpFrame = -1;
-			for (uint i = 0; i < _videoDescs.size(); ++i) {
-				if (_videoDescs[i].frameID == _currentViewportFrame) {
-					vpFrame = i;
-					break;
-				}
+	if (_needsRedraw && _isVisible) {
+		int vpFrame = -1;
+		for (uint i = 0; i < _videoDescs.size(); ++i) {
+			if (_videoDescs[i].frameID == _currentViewportFrame) {
+				vpFrame = i;
+				break;
 			}
+		}
 
-			_drawSurface.create(_fullFrame, _videoDescs[vpFrame].srcRect);
-			moveTo(_videoDescs[vpFrame].destRect);
+		_drawSurface.create(_fullFrame, _videoDescs[vpFrame].srcRect);
+		moveTo(_videoDescs[vpFrame].destRect);
+
+		if (_enableHotspot == kTrue) {
 			_hotspot = _screenPosition;
 			_hotspot.clip(NancySceneState.getViewport().getBounds());
 			_hasHotspot = true;
@@ -152,10 +158,17 @@ void PlaySecondaryVideo::handleInput(NancyInput &input) {
 void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _filename);
 	readFilename(stream, _paletteFilename);
-	stream.skip(10);
+	stream.skip(10); // video overlay bitmap filename
 
 	if (_paletteFilename.size()) {
-		stream.skip(14); // unknown data
+		stream.skip(12);
+		// videoSource (HD, CD, cache)
+		// ??
+		// _paletteStart
+		// _paletteSize
+		// hasOverlayBitmap
+		// ignoreHoverAnimation??
+		_enableHotspot = (NancyFlag)stream.readUint16LE();
 	}
 
 	_loopFirstFrame = stream.readUint16LE();
@@ -212,13 +225,13 @@ void PlaySecondaryVideo::execute() {
 				}
 
 				_isInFrame = true;
-				_hoverState = kNoHover;
 				setVisible(true);
 			} else {
 				if (_isVisible) {
 					setVisible(false);
 					_hasHotspot = false;
 					_isInFrame = false;
+					_hoverState = kNoHover;
 					_decoder.stop();
 				}
 			}
