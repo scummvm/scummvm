@@ -347,9 +347,9 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 	bool lastPixelWasTransparent = false;
 	for (int y = 0; y < tile->height; y++) {
 		lastPixelWasTransparent = false;
-		const uint8_t *scanline_before = bitmap->GetScanLine(y + tile->y - 1);
+		const uint8_t *scanline_before = (y > 0) ? bitmap->GetScanLine(y + tile->y - 1) : nullptr;
 		const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
-		const uint8_t *scanline_after = bitmap->GetScanLine(y + tile->y + 1);
+		const uint8_t *scanline_after = (y < tile->height - 1) ? bitmap->GetScanLine(y + tile->y + 1) : nullptr;
 		unsigned int *memPtrLong = (unsigned int *)dst_ptr;
 
 		for (int x = 0; x < tile->width; x++) {
