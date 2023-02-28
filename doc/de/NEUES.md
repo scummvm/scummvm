@@ -3,6 +3,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.8.0 (XXXX-XX-XX)
 
+ Asylum:
+   - Unterstützung für die chinesische Version von Sanitarium hinzugefügt.
+
  Sherlock:
    - Unterstützung für die chinesische Version von Serrated Scalpel hinzugefügt.
 
