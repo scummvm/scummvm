@@ -3,9 +3,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.8.0 (XXXX-XX-XX)
 
- Plumbers:
-   - Added support for 3DO version.
-
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
 
