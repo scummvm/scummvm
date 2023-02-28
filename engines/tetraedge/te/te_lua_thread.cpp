@@ -197,6 +197,19 @@ void TeLuaThread::executeFile(const Common::FSNode &node) {
 		fixline = strstr(fixline, RESEED_PATTERN);
 	}
 
+	//
+	// WORKAROUND: Syberia 2 A1_Cabaret/11420/Logic11420.lua has a typo on a
+	// variable name that causes the game to lock up
+	//
+	fixline = strstr(buf, "OBJECT_10050_Inventory_obj_coeurmec_Taketoun ");
+	if (fixline) {
+		// Taketoun -> Taken
+		fixline[40] = 'n';
+		fixline[41] = ' ';
+		fixline[42] = ' ';
+		fixline[43] = ' ';
+	}
+
 	_lastResumeResult = luaL_loadbuffer(_luaThread, buf, fileLen, node.getPath().c_str());
 	if (_lastResumeResult) {
 		const char *msg = lua_tostring(_luaThread, -1);
