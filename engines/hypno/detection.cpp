@@ -239,7 +239,7 @@ static const ADGameDescription gameDescriptions[] = {
 					"setup.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 160740),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
