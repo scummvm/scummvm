@@ -3,6 +3,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.8.0 (XXXX-XX-XX)
 
+ Sherlock:
+   - Unterstützung für die chinesische Version von Serrated Scalpel hinzugefügt.
+
  Xeen:
    - Die Engine "xeen" wurde für Might & Magic zu "mm" umbenannt.
 
