@@ -111,7 +111,8 @@ void downscaleCLUT8ByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, u
 		dst += dstSkip;
 	}
 }
-}
+
+} // end of anonymous namespsce
 
 void downscaleSurfaceByHalf(Surface *out, const Surface *in, const byte *palette) {
 	if (in->format.isCLUT8() && out->format.isCLUT8() && palette != nullptr) {
