@@ -50,11 +50,9 @@ void SaveStateDescriptor::initSaveSlot(const MetaEngine *metaEngine) {
 	int autosaveSlot = metaEngine ? metaEngine->getAutosaveSlot() : -1;
 	
 	if (autosaveSlot >= 0 && _slot == autosaveSlot) {
-		const bool autosaveEnabled = ConfMan.getInt("autosave_period");
-		// When autosaving enabled, add user support for managing autosave file.
-		// If autosaving disabled, do not allow autosave slot to be deleted or overwritten (no changes unless autosave tests are active).
-		_isWriteProtected = !autosaveEnabled;
-		_isDeletable = autosaveEnabled;	
+		// Do not allow autosave slot to be deleted or overwritten
+		_isWriteProtected = true;
+		_isDeletable = false;	
 	} else {
 		_isWriteProtected = false;
 		_isDeletable = true;		
