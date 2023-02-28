@@ -50,8 +50,7 @@ void Market::draw() {
 	Location::draw();
 
 	writeLine(0, STRING["enhdialogs.market.title"],ALIGN_MIDDLE);
-	writeLine(1, STRING["enhdialogs.location.options_for"], ALIGN_MIDDLE);
-	writeLine(3, camelCase(g_globals->_currCharacter->_name), ALIGN_MIDDLE);
+	writeLine(1, STRING["enhdialogs.location.options"], ALIGN_MIDDLE);
 
 	writeLine(6, STRING["enhdialogs.market.buy_food"], ALIGN_MIDDLE);
 	writeLine(7, Common::String::format("%d %s",
