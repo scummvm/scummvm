@@ -77,6 +77,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected Bitmap getBitmapResource(int resource);
 	abstract protected void setTouchMode(int touchMode);
 	abstract protected int getTouchMode();
+	abstract protected String getScummVMBasePath();
+	abstract protected String getScummVMConfigPath();
 	abstract protected String[] getSysArchives();
 	abstract protected String[] getAllStorageLocations();
 	abstract protected String[] getAllStorageLocationsNoPermissionRequest();
