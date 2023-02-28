@@ -483,12 +483,14 @@ void OSystem_Android::initBackend() {
 		ConfMan.setInt("gui_scale", 125); // "Large" (see gui/options.cpp and guiBaseValues[])
 	}
 
-	_savefileManager = new AndroidSaveFileManager(ConfMan.get("path") + "/saves");
+	Common::String basePath = JNI::getScummVMBasePath();
+
+	_savefileManager = new AndroidSaveFileManager(basePath + "/saves");
 	// TODO remove the debug message eventually
 	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
 
 
-	ConfMan.registerDefault("iconspath", ConfMan.get("path") + "/icons");
+	ConfMan.registerDefault("iconspath", basePath + "/icons");
 	// TODO remove the debug message eventually
 	LOGD("Setting Default Icons and Shaders path to: %s", ConfMan.get("iconspath").c_str());
 
@@ -522,6 +524,10 @@ void OSystem_Android::initBackend() {
 	_audiocdManager = new DefaultAudioCDManager();
 
 	BaseBackend::initBackend();
+}
+
+Common::String OSystem_Android::getDefaultConfigFileName() {
+	return JNI::getScummVMConfigPath();
 }
 
 bool OSystem_Android::hasFeature(Feature f) {

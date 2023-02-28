@@ -779,6 +779,16 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		protected String getScummVMBasePath() {
+			return _actualScummVMDataDir.getPath();
+		}
+
+		@Override
+		protected String getScummVMConfigPath() {
+			return _configScummvmFile.getPath();
+		}
+
+		@Override
 		protected String[] getSysArchives() {
 			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _actualScummVMDataDir.getPath());
 			if (_externalPathAvailableForReadAccess) {
@@ -944,15 +954,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			// We should have a valid path to a configuration file here
 
 			// Start ScummVM
-//			Log.d(ScummVM.LOG_TAG, "CONFIG: " +  _configScummvmFile.getPath());
-//			Log.d(ScummVM.LOG_TAG, "PATH: " +  _actualScummVMDataDir.getPath());
-
-			// TODO log file setting via "--logfile=" + _usingLogFile.getPath() causes crash
-			//      probably because this option is specific to SDL_BACKEND (see: base/commandLine.cpp)
 			_scummvm.setArgs(new String[]{
-				"ScummVM",
-				"--config=" + _configScummvmFile.getPath(),
-				"--path=" + _actualScummVMDataDir.getPath()
+				"ScummVM"
 			});
 
 			Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
