@@ -42,8 +42,6 @@ public:
 
 	void setEditString(const Common::U32String &str) override;
 
-	void handleMouseDown(int x, int y, int button, int clickCount) override;
-
 	bool wantsFocus() override { return true; }
 
 	void reflowLayout() override;
