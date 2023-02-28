@@ -179,10 +179,10 @@ int32_t BufferedStream::WriteByte(uint8_t val) {
 bool BufferedStream::Seek(soff_t offset, StreamSeek origin) {
 	soff_t want_pos = -1;
 	switch (origin) {
-	case StreamSeek::kSeekCurrent:  want_pos = _position + offset; break;
-	case StreamSeek::kSeekBegin:    want_pos = _start + offset; break;
-	case StreamSeek::kSeekEnd:      want_pos = _end + offset; break;
-	default: break;
+		case StreamSeek::kSeekCurrent:  want_pos = _position + offset; break;
+		case StreamSeek::kSeekBegin:    want_pos = _start + offset; break;
+		case StreamSeek::kSeekEnd:      want_pos = _end + offset; break;
+		default: return false;
 	}
 
 	// clamp
