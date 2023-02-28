@@ -107,12 +107,12 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 		// the titles is unclear but skipping it seems to have no ill effect.
 		// Just skip it.
 		if (frame._width > 32768) {
-			frame._width = -(int16_t)frame._width;
+			frame._width = -(int16)frame._width;
 			invalid = true;
 		}
 
 		if (frame._height > 32768) {
-			frame._height = -(int16_t)frame._height;
+			frame._height = -(int16)frame._height;
 			invalid = true;
 		}
 
