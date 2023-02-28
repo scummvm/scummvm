@@ -47,7 +47,7 @@ void skip_rle_bitmap8(Shared::Stream *in);
 
 // LZW compression
 void lzw_compress(const uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *out);
-void lzw_decompress(uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *in);
+void lzw_decompress(uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *in, size_t in_sz);
 // Saves bitmap with an optional palette compressed by LZW
 void save_lzw(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB(*pal)[256] = nullptr);
 // Loads bitmap decompressing

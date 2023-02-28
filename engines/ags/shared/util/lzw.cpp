@@ -21,12 +21,13 @@
 
 //=============================================================================
 //
-// LZW compression -- the LZW/GIF patent has expired, so we can use it now!!!
+// LZW compression.
 //
 //=============================================================================
 
 #include "ags/shared/util/lzw.h"
 #include "ags/shared/ac/common.h" // quit
+#include "ags/shared/util/bbop.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
@@ -197,66 +198,61 @@ bool lzwcompress(Stream *lzw_in, Stream *out) {
 	return true;
 }
 
-inline void myputc(uint8_t ccc, Stream *out) {
-	if (_G(maxsize) > 0) {
-		_G(putbytes)++;
-		if (_G(putbytes) > _G(maxsize))
-			return;
-	}
-
-	_G(outbytes)++;
-	out->WriteInt8(ccc);
-}
-
-bool lzwexpand(Stream *lzw_in, Stream *out, size_t out_size) {
+bool lzwexpand(const uint8_t *src, size_t src_sz, uint8_t *dst, size_t dst_sz) {
 	int bits, ch, i, j, len, mask;
-	char *lzbuffer;
-	_G(outbytes) = 0; _G(putbytes) = 0;
-	_G(maxsize) = out_size;
+	uint8_t *dst_ptr = dst;
+	const uint8_t *src_ptr = src;
 
-	lzbuffer = (char *)malloc(N);
-	if (lzbuffer == nullptr) {
-		return false;
+	if (dst_sz == 0)
+		return false; // nowhere to expand to
+
+	_G(lzbuffer) = (uint8_t *)malloc(N);
+	if (_G(lzbuffer) == nullptr) {
+		return false;  // not enough memory
 	}
 	i = N - F;
 
-	// this end condition just checks for EOF, which is no good to us
-	while ((bits = lzw_in->ReadByte()) != -1) {
+	// Read from the src and expand, until either src or dst runs out of space
+	while ((static_cast<size_t>(src_ptr - src) < src_sz) &&
+		   (static_cast<size_t>(dst_ptr - dst) < dst_sz)) {
+		bits = *(src_ptr++);
 		for (mask = 0x01; mask & 0xFF; mask <<= 1) {
 			if (bits & mask) {
+				if (static_cast<size_t>(src_ptr - src) > (src_sz - sizeof(int16_t)))
+					break;
+
 				short jshort = 0;
-				jshort = lzw_in->ReadInt16();
+				jshort = BBOp::Int16FromLE(*(reinterpret_cast<const int16_t *>(src_ptr)));
+				src_ptr += sizeof(int16_t);
 				j = jshort;
 
 				len = ((j >> 12) & 15) + 3;
 				j = (i - j - 1) & (N - 1);
 
+				if (static_cast<size_t>(dst_ptr - dst) > (dst_sz - len))
+					break; // not enough dest buffer
+
 				while (len--) {
-					myputc(lzbuffer[i] = lzbuffer[j], out);
+					*(dst_ptr++) = (_G(lzbuffer)[i] = _G(lzbuffer)[j]);
 					j = (j + 1) & (N - 1);
 					i = (i + 1) & (N - 1);
 				}
 			} else {
-				ch = lzw_in->ReadByte();
-				myputc(lzbuffer[i] = ch, out);
+				ch = *(src_ptr++);
+				*(dst_ptr++) = (_G(lzbuffer)[i] = static_cast<uint8_t>(ch));
 				i = (i + 1) & (N - 1);
 			}
 
-			if ((_G(putbytes) >= _G(maxsize)) && (_G(maxsize) > 0))
-				break;
-
-			if ((lzw_in->EOS()) && (_G(maxsize) > 0)) {
-				free(lzbuffer);
-				return false;
+			if ((static_cast<size_t>(dst_ptr - dst) >= dst_sz) ||
+				(static_cast<size_t>(src_ptr - src) >= src_sz)) {
+				break; // not enough dest buffer for the next pass
 			}
-		}                           // end for mask
+		} // end for mask
 
-		if ((_G(putbytes) >= _G(maxsize)) && (_G(maxsize) > 0))
-			break;
 	}
 
-	free(lzbuffer);
-	return true;
+	free(_G(lzbuffer));
+	return (src_ptr - src) == src_sz;
 }
 
 } // namespace AGS3
