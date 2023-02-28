@@ -56,9 +56,7 @@ void Location::leave() {
 }
 
 void Location::displayMessage(const Common::String &msg) {
-	Location::draw();
-
-	InfoMessage infoMsg(msg, ALIGN_MIDDLE);
+	InfoMessage infoMsg(0, 0, msg, ALIGN_MIDDLE);
 	infoMsg._delaySeconds = 3;
 	infoMsg._timeoutCallback = []() {
 		Location *loc = dynamic_cast<Location *>(g_events->focusedView());
