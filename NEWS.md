@@ -21,6 +21,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  HDB:
    - Fixed bug with inability to pick up red envelope with keyboard.
 
+ RISC OS port:
+   - Fixed crash on RISC OS 5 with games that require lots of RAM.
+
 
 #### 2.7.0 "The Real Slim Shader" (2023-02-26)
 
