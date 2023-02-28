@@ -239,14 +239,15 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 					int continueSearching = 1;
 					while (continueSearching) {
 
-						const char *textStart = &text[1];
+						const char *textStart = ++text; // begin with next char
 
+						// find where the next word ends
 						while ((text[0] == ',') || (Common::isAlnum((unsigned char)text[0]) != 0))
 							text++;
 
 						continueSearching = 0;
 
-						if (text[0] == ' ') {
+						if (text[0] == 0 || text[0] == ' ') {
 							Common::strcpy_s(thisword, textStart);
 							thisword[text - textStart] = 0;
 							// forward past any multi-word alternatives
