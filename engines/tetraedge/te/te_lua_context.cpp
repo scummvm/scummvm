@@ -29,6 +29,8 @@
 
 namespace Tetraedge {
 
+//#define TETRAEDGE_LUA_DEBUG 1
+
 //static lua_State *globalState = nullptr;
 
 static int luaPanicFunction(lua_State *state) {
@@ -37,6 +39,15 @@ static int luaPanicFunction(lua_State *state) {
 	lua_settop(state, -2);
 	return 1;
 }
+
+#ifdef TETRAEDGE_LUA_DEBUG
+static void luaDebugHook(lua_State *L, lua_Debug *ar) {
+    if (!lua_getinfo(L, "Sn", ar))
+        return;
+    debug("LUA: %s %d", ar->source, ar->currentline);
+}
+#endif
+
 
 TeLuaContext::TeLuaContext() : _luaState(nullptr) {
 	_luaState = lua_open();
@@ -56,6 +67,9 @@ void TeLuaContext::create() {
 	_luaState = lua_open();
 	luaL_openlibs(_luaState);
 	lua_atpanic(_luaState, luaPanicFunction);
+#ifdef TETRAEDGE_LUA_DEBUG
+	lua_sethook(_luaState, luaDebugHook, LUA_MASKCALL | LUA_MASKLINE, 0);
+#endif
 }
 
 void TeLuaContext::destroy() {
