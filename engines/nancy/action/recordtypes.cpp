@@ -106,9 +106,66 @@ void Hot1FrSceneChange::execute() {
 }
 
 void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream) {
-	stream.seek(0x14, SEEK_CUR);
-	uint size = stream.readUint16LE() * 0x12;
-	stream.skip(size);
+	_onTrue.readData(stream);
+	_onFalse.readData(stream);
+	_condType = (ConditionType)stream.readByte();
+	_conditionID = stream.readUint16LE();
+	_conditionPayload = stream.readByte();
+	uint numHotspots = stream.readUint16LE();
+	
+	_hotspots.resize(numHotspots);
+	
+	for (uint i = 0; i < numHotspots; ++i) {
+		_hotspots[i].readData(stream);
+	}
+}
+
+void HotMultiframeMultisceneChange::execute() {
+	switch (_state) {
+	case kBegin:
+		// set something to 1
+		_state = kRun;
+		// fall through
+	case kRun:
+		_hasHotspot = false;
+
+		for (HotspotDescription &desc : _hotspots) {
+			if (desc.frameID == NancySceneState.getSceneInfo().frameID) {
+				_hotspot = desc.coords;
+				_hasHotspot = true;
+			}
+		}
+
+		break;
+	case kActionTrigger: {
+		bool conditionMet = false;
+		switch (_condType) {
+		case kEventFlag:
+			if (NancySceneState.getEventFlag(_conditionID, (NancyFlag)_conditionPayload)) {
+				conditionMet = true;
+			}
+			break;
+		case kItem:
+			if (NancySceneState.hasItem(_conditionID) == _conditionPayload) {
+				conditionMet = true;
+			}
+			break;
+		case kItemHeld:
+			if (NancySceneState.getHeldItem() == _conditionPayload) {
+				conditionMet = true;
+			}
+			break;
+		}
+
+		if (conditionMet) {
+			NancySceneState.changeScene(_onTrue);
+		} else {
+			NancySceneState.changeScene(_onFalse);
+		}
+
+		break;
+	}
+	}
 }
 
 void PaletteThisScene::readData(Common::SeekableReadStream &stream) {

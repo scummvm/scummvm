@@ -79,7 +79,17 @@ protected:
 
 class HotMultiframeMultisceneChange : public Unimplemented {
 public:
+	enum ConditionType { kEventFlag = 1, kItem = 2, kItemHeld = 3 };
+
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	SceneChangeDescription _onTrue;
+	SceneChangeDescription _onFalse;
+	ConditionType _condType;
+	uint16 _conditionID;
+	byte _conditionPayload;
+	Common::Array<HotspotDescription> _hotspots;
 
 protected:
 	Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneChange"; }
