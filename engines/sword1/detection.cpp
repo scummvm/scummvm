@@ -36,11 +36,18 @@ static const PlainGameDescriptor swordGames[] = {
 
 #include "sword1/detection_tables.h"
 
+static const char *const directoryGlobs[] = {
+	"smackshi",
+	"video",
+	nullptr
+};
+
 class SwordMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	SwordMetaEngineDetection() : AdvancedMetaEngineDetection(Sword1::gameDescriptions, sizeof(ADGameDescription), swordGames) {
 		_guiOptions = GUIO2(GUIO_NOMIDI, GUIO_NOASPECT);
 		_flags = kADFlagMatchFullPaths;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	PlainGameDescriptor findGame(const char *gameId) const override {
