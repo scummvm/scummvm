@@ -80,9 +80,7 @@ void send_message_to_debugger(const std::vector<std::pair<String, String> > &tag
 #endif
 
 	for (const auto &tag_value : tag_values) {
-		String tag_line = String::FromFormat("  <%s><![CDATA[%s]]></%s> ",
-											 tag_value.first.GetCStr(), tag_value.second.GetCStr(), tag_value.first.GetCStr());
-		messageToSend.Append(tag_line);
+		messageToSend.AppendFmt("  <%s><![CDATA[%s]]></%s> ", tag_value.first.GetCStr(), tag_value.second.GetCStr(), tag_value.first.GetCStr());
 	}
 
 	messageToSend.Append("</Debugger>\n");
@@ -125,19 +123,19 @@ std::vector<String> parse_log_multigroup(const String &group_str) {
 	for (size_t i = 0; i < group_str.GetLength(); ++i) {
 		switch (group_str[i]) {
 		case 'm':
-			grplist.push_back("main");
+			grplist.emplace_back("main");
 			break;
 		case 'g':
-			grplist.push_back("game");
+			grplist.emplace_back("game");
 			break;
 		case 's':
-			grplist.push_back("script");
+			grplist.emplace_back("script");
 			break;
 		case 'c':
-			grplist.push_back("sprcache");
+			grplist.emplace_back("sprcache");
 			break;
 		case 'o':
-			grplist.push_back("manobj");
+			grplist.emplace_back("manobj");
 			break;
 		}
 	}
@@ -180,7 +178,7 @@ void apply_log_config(const ConfigTree &cfg, const String &log_id,
 	dbgout->ClearGroupFilters();
 
 	if (value.IsEmpty() || value.CompareNoCase("default") == 0) {
-		for (const auto opt : def_opts)
+		for (const auto &opt : def_opts)
 			dbgout->SetGroupFilter(opt.first, opt.second);
 	} else {
 		const auto options = value.Split(',');
@@ -517,9 +515,8 @@ void scriptDebugHook(ccInstance *ccinst, int linenum) {
 
 	const char *scriptName = ccinst->runningInst->instanceof->GetSectionName(ccinst->pc);
 
-	for (size_t i = 0; i < _G(breakpoints).size(); ++i) {
-		if ((_G(breakpoints)[i].lineNumber == linenum) &&
-		        (strcmp(_G(breakpoints)[i].scriptName, scriptName) == 0)) {
+	for (const auto &breakpoint : _G(breakpoints)) {
+		if ((breakpoint.lineNumber == linenum) && (strcmp(breakpoint.scriptName, scriptName) == 0)) {
 			break_into_debugger();
 			break;
 		}
@@ -533,7 +530,7 @@ void check_debug_keys() {
 	if (_GP(play).debug_mode) {
 		// do the run-time script debugging
 
-		const Uint8 *ks = SDL_GetKeyboardState(NULL);
+		const Uint8 *ks = SDL_GetKeyboardState(nullptr);
 		if ((!ks[SDL_SCANCODE_SCROLLLOCK]) && (scrlockWasDown))
 			scrlockWasDown = 0;
 		else if ((ks[SDL_SCANCODE_SCROLLLOCK]) && (!scrlockWasDown)) {
