@@ -24,6 +24,12 @@ For a more comprehensive changelog of the latest experimental code, see:
  SAGA2:
    - Fixed crash when hovering over certain spells.
 
+ Sword1:
+   - Added detection for Czech version with ScummVM cutscenes.
+
+ Sword2:
+   - Added support for GOG.com version.
+
  RISC OS port:
    - Fixed crash on RISC OS 5 with games that require lots of RAM.
 
