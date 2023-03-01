@@ -80,9 +80,10 @@ private:
 		PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount);
 		~PSXVideoTrack();
 
-		uint16 getWidth() const { return _surface->w; }
-		uint16 getHeight() const { return _surface->h; }
-		Graphics::PixelFormat getPixelFormat() const { return _surface->format; }
+		uint16 getWidth() const { return _width; }
+		uint16 getHeight() const { return _height; }
+		Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) { _pixelFormat = format; return true; }
 		bool endOfTrack() const { return _endOfTrack; }
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
@@ -94,6 +95,9 @@ private:
 
 	private:
 		Graphics::Surface *_surface;
+		Graphics::PixelFormat _pixelFormat;
+		uint16 _width;
+		uint16 _height;
 		uint32 _frameCount;
 		Audio::Timestamp _nextFrameStartTime;
 		bool _endOfTrack;
