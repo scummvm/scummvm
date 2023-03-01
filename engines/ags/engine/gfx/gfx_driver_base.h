@@ -143,6 +143,8 @@ protected:
 	virtual void OnSetFilter();
 	// Initialize sprite batch and allocate necessary resources
 	virtual void InitSpriteBatch(size_t index, const SpriteBatchDesc &desc) = 0;
+	// Gets the index of a last draw entry (sprite)
+	virtual size_t GetLastDrawEntryIndex() = 0;
 	// Clears sprite lists
 	virtual void ResetAllBatches() = 0;
 
@@ -163,7 +165,10 @@ protected:
 	GFXDRV_CLIENTCALLBACKINITGFX _initGfxCallback;
 
 	// Sprite batch parameters
-	SpriteBatchDescs _spriteBatchDesc; // sprite batches list
+	SpriteBatchDescs _spriteBatchDesc;
+	// The range of sprites in this sprite batch (counting nested sprites):
+	// the last of the previous batch, and the last of the current.
+	std::vector<std::pair<size_t, size_t>> _spriteBatchRange;
 	size_t _actSpriteBatch; // active batch index
 };
 
