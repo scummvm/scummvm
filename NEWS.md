@@ -25,10 +25,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed crash when hovering over certain spells.
 
  Sword1:
-   - Added detection for Czech version with ScummVM cutscenes.
+   - Added detection for Czech and Polish versions with DXA cutscenes.
 
  Sword2:
    - Added support for GOG.com version.
+   - Added detection for alternate Polish version.
 
  RISC OS port:
    - Fixed crash on RISC OS 5 with games that require lots of RAM.
