@@ -38,6 +38,7 @@ static const char *const directoryGlobs[] = {
 	"clusters",
 	"smacks",
 	"video",
+	"extras", // GOG.com
 	nullptr
 };
 
