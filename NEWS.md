@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  HDB:
    - Fixed bug with inability to pick up red envelope with keyboard.
 
+ SAGA2:
+   - Fixed crash when hovering over certain spells.
+
  RISC OS port:
    - Fixed crash on RISC OS 5 with games that require lots of RAM.
 
