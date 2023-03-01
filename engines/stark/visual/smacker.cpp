@@ -72,9 +72,9 @@ void VisualSmacker::loadBink(Common::SeekableReadStream *stream) {
 
 	_decoder = new Video::BinkDecoder();
 	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
-	// We need a format with alpha transparency, so we can't use _bitmap->getBestPixelFormat() here.
-	_decoder->setDefaultHighColorFormat(Gfx::Driver::getRGBAPixelFormat());
 	_decoder->loadStream(stream);
+	// We need a format with alpha transparency, so we can't use _bitmap->getBestPixelFormat() here.
+	_decoder->setOutputPixelFormat(Gfx::Driver::getRGBAPixelFormat());
 
 	init();
 }

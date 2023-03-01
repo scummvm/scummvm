@@ -57,8 +57,8 @@ Dialog::Dialog(Myst3Engine *vm, uint id):
 
 	// Load the movie
 	Common::SeekableReadStream *movieStream = movieDesc.getData();
-	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	_bink.loadStream(movieStream);
+	_bink.setOutputPixelFormat(Texture::getRGBAPixelFormat());
 	_bink.start();
 
 	const Graphics::Surface *frame = _bink.decodeNextFrame();

@@ -102,7 +102,7 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 videoFlags = _bink->readUint32LE();
 
 	// BIKh and BIKi swap the chroma planes
-	addTrack(new BinkVideoTrack(width, height, getDefaultHighColorFormat(), frameCount,
+	addTrack(new BinkVideoTrack(width, height, frameCount,
 			Common::Rational(frameRateNum, frameRateDen), (id == kBIKhID || id == kBIKiID), videoFlags & kVideoFlagAlpha, id));
 
 	uint32 audioTrackCount = _bink->readUint32LE();
@@ -242,8 +242,8 @@ BinkDecoder::AudioInfo::~AudioInfo() {
 	delete dct;
 }
 
-BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const Graphics::PixelFormat &format, uint32 frameCount, const Common::Rational &frameRate, bool swapPlanes, bool hasAlpha, uint32 id) :
-		_frameCount(frameCount), _frameRate(frameRate), _swapPlanes(swapPlanes), _hasAlpha(hasAlpha), _id(id) {
+BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, bool swapPlanes, bool hasAlpha, uint32 id) :
+		_frameCount(frameCount), _frameRate(frameRate), _swapPlanes(swapPlanes), _hasAlpha(hasAlpha), _id(id), _surface(nullptr) {
 	_curFrame = -1;
 
 	for (int i = 0; i < 16; i++)
@@ -269,8 +269,8 @@ BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const G
 	}
 
 	// Make the surface even-sized:
-	_surfaceHeight = height;
-	_surfaceWidth = width;
+	_surfaceHeight = _height = height;
+	_surfaceWidth = _width = width;
 
 	if (height & 1) {
 		_surfaceHeight++;
@@ -279,12 +279,11 @@ BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const G
 		_surfaceWidth++;
 	}
 
-	_surface.create(_surfaceWidth, _surfaceHeight, format);
-	// Since we over-allocate to make surfaces even-sized
-	// we need to set the actual VIDEO size back into the
-	// surface.
-	_surface.h = height;
-	_surface.w = width;
+	_pixelFormat = g_system->getScreenFormat();
+
+	// Default to a 32bpp format, if in 8bpp mode
+	if (_pixelFormat.bytesPerPixel == 1)
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
 	// Compute the video dimensions in blocks
 	_yBlockWidth   = (width  +  7) >> 3;
@@ -323,7 +322,11 @@ BinkDecoder::BinkVideoTrack::~BinkVideoTrack() {
 		_huffman[i] = 0;
 	}
 
-	_surface.free();
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+		_surface = nullptr;
+	}
 }
 
 Common::Rational BinkDecoder::getFrameRate() {
@@ -446,6 +449,16 @@ bool BinkDecoder::BinkVideoTrack::rewind() {
 void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	assert(frame.bits);
 
+	if (!_surface) {
+		_surface = new Graphics::Surface();
+		_surface->create(_surfaceWidth, _surfaceHeight, _pixelFormat);
+		// Since we over-allocate to make surfaces even-sized
+		// we need to set the actual VIDEO size back into the
+		// surface.
+		_surface->h = _height;
+		_surface->w = _width;
+	}
+
 	if (_hasAlpha) {
 		if (_id == kBIKiID)
 			frame.bits->skip(32);
@@ -470,11 +483,11 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	// to allow for odd-sized videos.
 	if (_hasAlpha) {
 		assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2] && _curPlanes[3]);
-		YUVToRGBMan.convert420Alpha(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2], _curPlanes[3],
+		YUVToRGBMan.convert420Alpha(_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2], _curPlanes[3],
 				_surfaceWidth, _surfaceHeight, _yBlockWidth * 8, _uvBlockWidth * 8);
 	} else {
 		assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
-		YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2],
+		YUVToRGBMan.convert420(_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2],
 				_surfaceWidth, _surfaceHeight, _yBlockWidth * 8, _uvBlockWidth * 8);
 	}
 
@@ -675,8 +688,8 @@ void BinkDecoder::BinkVideoTrack::mergeHuffmanSymbols(VideoFrame &video, byte *d
 }
 
 void BinkDecoder::BinkVideoTrack::initBundles() {
-	uint32 bw     = (_surface.w + 7) >> 3;
-	uint32 bh     = (_surface.h + 7) >> 3;
+	uint32 bw     = (_width + 7) >> 3;
+	uint32 bh     = (_height + 7) >> 3;
 	uint32 blocks = bw * bh;
 
 	for (int i = 0; i < kSourceMAX; i++) {
@@ -684,8 +697,8 @@ void BinkDecoder::BinkVideoTrack::initBundles() {
 		_bundles[i].dataEnd = _bundles[i].data + blocks * 64;
 	}
 
-	uint32 cbw[2] = { (uint32)((_surface.w + 7) >> 3), (uint32)((_surface.w  + 15) >> 4) };
-	uint32 cw [2] = { (uint32)( _surface.w          ), (uint32)( _surface.w        >> 1) };
+	uint32 cbw[2] = { (uint32)((_width + 7) >> 3), (uint32)((_width  + 15) >> 4) };
+	uint32 cw [2] = { (uint32)( _width          ), (uint32)( _width        >> 1) };
 
 	// Calculate the lengths of an element count in bits
 	for (int i = 0; i < 2; i++) {

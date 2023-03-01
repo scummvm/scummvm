@@ -360,8 +360,8 @@ bool MovieSubtitles::loadSubtitles(int32 id) {
 
 	// Load the movie
 	Common::SeekableReadStream *movieStream = movie.getData();
-	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	_bink.loadStream(movieStream);
+	_bink.setOutputPixelFormat(Texture::getRGBAPixelFormat());
 	_bink.start();
 
 	return true;

@@ -73,9 +73,9 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	loadPosition(binkDesc.getVideoData());
 
 	Common::SeekableReadStream *binkStream = binkDesc.getData();
-	_bink.setDefaultHighColorFormat(Texture::getRGBAPixelFormat());
 	_bink.setSoundType(Audio::Mixer::kSFXSoundType);
 	_bink.loadStream(binkStream);
+	_bink.setOutputPixelFormat(Texture::getRGBAPixelFormat());
 
 	if (binkDesc.getType() == Archive::kMultitrackMovie || binkDesc.getType() == Archive::kDialogMovie) {
 		uint language = ConfMan.getInt("audio_language");
