@@ -140,7 +140,7 @@ void Scott::runGame() {
 	// Check for savegame
 	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
-	if(!shouldQuit())
+	if (!shouldQuit())
 		_G(_initialState) = saveCurrentState();
 
 	while (!shouldQuit()) {
