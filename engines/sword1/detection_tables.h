@@ -361,6 +361,19 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"sword1",
+		"English speech and DXA cutscenes",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "clusters/swordres.rif", "239bdd76c405bad0f804a8ae5df4adb0", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3199652,
+				   "smackshi/intro.dxa",    nullptr, -1),
+		Common::CS_CZE,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{
+		"sword1",
 		"Akella",
 		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
 				   "clusters/swordres.rif", "e7021abec62dd774010d1f432ef9f03a", 58916,
