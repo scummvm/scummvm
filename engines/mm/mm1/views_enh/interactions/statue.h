@@ -33,7 +33,6 @@ class Statue : public Interaction {
 private:
 	int _statueNum = 0;
 	int _pageNum = 0;
-
 protected:
 	/**
 	 * Handles any action/press

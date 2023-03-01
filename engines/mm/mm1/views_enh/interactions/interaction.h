@@ -37,6 +37,7 @@ private:
 	int _tickCtr = 0;
 	int _portraitFrameNum = 0;
 protected:
+	Common::String _title;
 	Common::StringArray _lines;
 	bool _animated = true;
 	int _portraitNum = 0;

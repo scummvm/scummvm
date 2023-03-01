@@ -171,6 +171,10 @@ void TextView::writeLine(int lineNum, const Common::String &str,
 	writeString(xp, lineNum * ROW_HEIGHT, str, align);
 }
 
+size_t TextView::getStringWidth(const Common::String &str) {
+	return getFont()->getStringWidth(str);
+}
+
 void TextView::newLine() {
 	_textPos.x = 0;
 	_textPos.y += ROW_HEIGHT;

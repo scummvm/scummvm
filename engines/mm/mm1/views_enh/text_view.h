@@ -75,6 +75,11 @@ protected:
 		TextAlign align = ALIGN_LEFT, int xp = 0);
 
 	/**
+	 * Gets the string width
+	 */
+	size_t getStringWidth(const Common::String &str);
+
+	/**
 	 * Move the text position to the next line
 	 */
 	void newLine();

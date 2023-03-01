@@ -29,6 +29,7 @@ namespace ViewsEnh {
 namespace Interactions {
 
 Statue::Statue() : Interaction("Statue", 33) {
+	_title = STRING["dialogs.statues.statue"];
 	_animated = false;
 }
 

@@ -61,6 +61,11 @@ void Interaction::draw() {
 	_frame.draw(&s, 0, Common::Point(8, 8));
 	_portrait.draw(&s, _portraitFrameNum, Common::Point(15, 14));
 
+	if (!_title.empty()) {
+		size_t strWidth = getStringWidth(_title);
+		writeString(125 - strWidth / 2, 20, _title);
+	}
+
 	for (uint i = 0; i < _lines.size(); ++i) {
 		writeLine(6 + i, _lines[i], ALIGN_MIDDLE);
 	}

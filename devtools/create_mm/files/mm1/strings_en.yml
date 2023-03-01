@@ -177,6 +177,7 @@ dialogs:
 	statues:
 		stone: "On this stone statue of "
 		plaque: "A plaque reads..."
+		statue: "Statue"
 		names:
 			0: "a human knight"
 			1: "an elven wizard"
