@@ -522,6 +522,10 @@ enhdialogs:
 		donate: "\x01""37Donate"
 		uncurse: "\x01""37Uncurse"
 		realign: "\x01""37Re-align"
+	training:
+		title: "Training"
+		train: "\x01""37Train"
+		esc: "ESC"
 stats:
 	none: "None"
 	inventory: "-----<Equipped>----------<Backpack>----"

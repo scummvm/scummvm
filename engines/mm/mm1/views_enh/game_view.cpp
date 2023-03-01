@@ -118,7 +118,7 @@ public:
 	}
 
 	void enter() override {
-		_sound.playVoice("hello1.voc");
+		_sound.playVoice("training.voc");
 		_sound.playSong("grounds.m");
 	}
 };

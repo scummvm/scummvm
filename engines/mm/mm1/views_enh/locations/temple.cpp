@@ -107,7 +107,7 @@ bool Temple::msgAction(const ActionMessage &msg) {
 		leave();
 		return true;
 	default:
-		return Location::msgAction(msg);;
+		return Location::msgAction(msg);
 	}
 }
 

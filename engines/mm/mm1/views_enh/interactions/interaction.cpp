@@ -74,7 +74,7 @@ void Interaction::draw() {
 bool Interaction::tick() {
 	if (_animated && ++_tickCtr >= 10) {
 		_tickCtr = 0;
-		_portraitFrameNum = g_engine->getRandomNumber(3);
+		_portraitFrameNum = g_engine->getRandomNumber(0, 3);
 		redraw();
 	}
 

@@ -37,6 +37,7 @@
 #include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/locations/market.h"
 #include "mm/mm1/views_enh/locations/temple.h"
+#include "mm/mm1/views_enh/locations/training.h"
 #include "mm/mm1/views_enh/spells/cast_spell.h"
 #include "mm/mm1/views_enh/spells/spellbook.h"
 
@@ -54,6 +55,7 @@ private:
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Locations::Market _market;
 	ViewsEnh::Locations::Temple _temple;
+	ViewsEnh::Locations::Training _training;
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
 	ViewsEnh::CharacterInfo _characterInfo;
