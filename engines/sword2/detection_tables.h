@@ -240,6 +240,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // Alternate version. Bugreport #14277
+		"sword2",
+		"English speech/alternate version",
+		AD_ENTRY3s("general.clu", "31db8564f9187538f24d9fda0677f666", 7059728,
+				   "text.clu",    "77fb6f58acad0f9c4eebeb5527b32861", 410707,
+				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263),
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword2",
 		"English speech",
