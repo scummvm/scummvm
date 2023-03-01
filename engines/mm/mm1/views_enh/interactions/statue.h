@@ -32,7 +32,14 @@ namespace Interactions {
 class Statue : public Interaction {
 private:
 	int _statueNum = 0;
-	int _topLine = 0;
+	int _pageNum = 0;
+
+protected:
+	/**
+	 * Handles any action/press
+	 */
+	void viewAction() override;
+
 public:
 	Statue();
 
@@ -40,6 +47,11 @@ public:
 	 * Handles game message
 	 */
 	bool msgGame(const GameMessage &msg) override;
+
+	/**
+	 * Handles focus
+	 */
+	bool msgFocus(const FocusMessage &msg) override;
 };
 
 } // namespace Interactions

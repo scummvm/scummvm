@@ -20,24 +20,53 @@
  */
 
 #include "mm/mm1/views_enh/interactions/statue.h"
+#include "mm/mm1/globals.h"
+
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-Statue::Statue() : Interaction("Statue", 1) {
+Statue::Statue() : Interaction("Statue", 33) {
+	_animated = false;
 }
 
 bool Statue::msgGame(const GameMessage &msg) {
 	if (msg._name == "STATUE") {
-		_topLine = 0;
+		_pageNum = 0;
 		_statueNum = msg._value;
 		addView(this);
 		return true;
 	}
 
 	return false;
+}
+
+bool Statue::msgFocus(const FocusMessage &msg) {
+	Common::String statueType = STRING[Common::String::format(
+		"dialogs.statues.names.%d", _statueNum)];
+	Common::String str = Common::String::format("%s%s. %s",
+		STRING["dialogs.statues.stone"].c_str(),
+		statueType.c_str(),
+		STRING["dialogs.statues.plaque"].c_str()
+	);
+
+	addText(str);
+	return true;
+}
+
+void Statue::viewAction() {
+	switch (++_pageNum) {
+	case 1:
+		addText(STRING[Common::String::format(
+			"dialogs.statues.messages.%d", _statueNum)]);
+		redraw();
+		break;
+	default:
+		leave();
+		break;
+	}
 }
 
 } // namespace Interactions

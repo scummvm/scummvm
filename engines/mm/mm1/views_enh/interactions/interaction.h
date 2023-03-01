@@ -37,7 +37,22 @@ private:
 	int _tickCtr = 0;
 	int _portraitFrameNum = 0;
 protected:
+	Common::StringArray _lines;
 	bool _animated = true;
+	int _portraitNum = 0;
+protected:
+	/**
+	 * Handles any action/press
+	 */
+	virtual void viewAction() {
+		leave();
+	}
+
+	/**
+	 * Adds text for display
+	 */
+	void addText(const Common::String &str);
+
 public:
 	Interaction(const Common::String &name, int portrait);
 
@@ -65,6 +80,21 @@ public:
 	 * Leave the location, turning around
 	 */
 	void leave();
+
+	/**
+	 * Keypress handler
+	 */
+	bool msgKeypress(const KeypressMessage &msg) override;
+
+	/**
+	 * Action handler
+	 */
+	bool msgAction(const ActionMessage &msg) override;
+
+	/**
+	 * Mouse click handler
+	 */
+	bool msgMouseDown(const MouseDownMessage &msg) override;
 };
 
 } // namespace Interactions

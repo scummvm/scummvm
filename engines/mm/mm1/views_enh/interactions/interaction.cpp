@@ -23,6 +23,7 @@
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
+#include "mm/shared/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
@@ -33,6 +34,10 @@ Interaction::Interaction(const Common::String &name, int portrait) : ScrollView(
 	_bounds = Common::Rect(8, 8, 224, 140);
 	_frame.load("frame.fac");
 	_portrait.load(Common::String::format("face%02d.fac", portrait));
+}
+
+void Interaction::addText(const Common::String &str) {
+	_lines = splitLines(searchAndReplace(str, "\n", " "));
 }
 
 bool Interaction::msgGame(const GameMessage &msg) {
@@ -53,8 +58,12 @@ void Interaction::draw() {
   	ScrollView::draw();
 
 	Graphics::ManagedSurface s = getSurface();
-	_frame.draw(&s, 0, Common::Point(16, 16));
-	_portrait.draw(&s, _portraitFrameNum, Common::Point(23, 22));
+	_frame.draw(&s, 0, Common::Point(8, 8));
+	_portrait.draw(&s, _portraitFrameNum, Common::Point(15, 14));
+
+	for (uint i = 0; i < _lines.size(); ++i) {
+		writeLine(6 + i, _lines[i], ALIGN_MIDDLE);
+	}
 }
 
 bool Interaction::tick() {
@@ -73,6 +82,38 @@ void Interaction::leave() {
 
 	g_maps->turnAround();
 	g_events->redraw();
+}
+
+bool Interaction::msgKeypress(const KeypressMessage &msg) {
+	viewAction();
+	return true;
+}
+
+bool Interaction::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		leave();
+
+	} else if (msg._action == KEYBIND_SELECT) {
+		// ***DEBUG*** - Used for cycling through portraits.
+		// To let me pick good portraits from Xeen
+		_animated = false;
+		_lines.clear();
+		++_portraitNum;
+		_portrait.load(Common::String::format("face%02d.fac", _portraitNum));
+
+		Interaction::draw();
+		writeNumber(20, 70, _portraitNum);
+
+	} else {
+		viewAction();
+	}
+
+	return true;
+}
+
+bool Interaction::msgMouseDown(const MouseDownMessage &msg) {
+	viewAction();
+	return true;
 }
 
 } // namespace Interactions
