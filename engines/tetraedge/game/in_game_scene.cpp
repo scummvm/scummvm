@@ -806,8 +806,39 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	InGameSceneXmlParser parser;
 	parser._scene = this;
 	parser.setAllowText();
-	if (!parser.loadFile(node))
-		error("InGameScene::loadXml: Can't load %s", node.getPath().c_str());
+
+	Common::String fixedbuf;
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia2 && scene == "GangcarVideo") {
+		//
+		// WORKAROUND: scenes/A1_RomHaut/GangcarVideo/SceneGangcarVideo.xml
+		// in Syberia 2 has an embedded comment, which is invalid XML.
+		// Patch the contents of the file before loading.
+		//
+		Common::File xmlFile;
+		if (!xmlFile.open(node))
+			error("InGameScene::loadXml: Can't open %s", node.getPath().c_str());
+		const int64 bufsize = xmlFile.size();
+		char *buf = new char[bufsize+1];
+		buf[bufsize] = '\0';
+		xmlFile.read(buf, bufsize);
+		fixedbuf = Common::String(buf);
+		delete [] buf;
+		size_t offset = fixedbuf.find("<!-- <rippleMask");
+		if (offset != Common::String::npos)
+			fixedbuf.replace(offset, 4, "    ");  // replace the <! at the start
+		offset = fixedbuf.find("texture=\"R11280-1-00.png\"/> -->");
+		if (offset != Common::String::npos)
+			fixedbuf.replace(offset + 29, 3, "   "); // replace the > at the end
+		offset = fixedbuf.find("<!--<light ");
+		if (offset != Common::String::npos)
+			fixedbuf.replace(offset, 4, "    ");  // replace the <! at the start
+		parser.loadBuffer((const byte *)fixedbuf.c_str(), bufsize);
+	} else {
+		// Regular loading.
+		if (!parser.loadFile(node))
+			error("InGameScene::loadXml: Can't load %s", node.getPath().c_str());
+	}
+
 	if (!parser.parse())
 		error("InGameScene::loadXml: Can't parse %s", node.getPath().c_str());
 
