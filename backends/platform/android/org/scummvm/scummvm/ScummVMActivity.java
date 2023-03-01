@@ -950,47 +950,48 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		if (!seekAndInitScummvmConfiguration()) {
 			Log.e(ScummVM.LOG_TAG, "Error while trying to find and/or initialize ScummVM configuration file!");
 			// in fact in all the cases where we return false, we also called finish()
-		} else {
-			// We should have a valid path to a configuration file here
-
-			// Start ScummVM
-			_scummvm.setArgs(new String[]{
-				"ScummVM"
-			});
-
-			Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
-			_mouseHelper = null;
-			if (_hoverAvailable) {
-				_mouseHelper = new MouseHelper(_scummvm);
-//				_mouseHelper.attach(_main_surface);
-			}
-
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-				_events = new ScummVMEventsModern(this, _scummvm, _mouseHelper);
-			} else {
-				_events = new ScummVMEventsBase(this, _scummvm, _mouseHelper);
-			}
-
-			setupTouchModeBtn(_events.getTouchMode());
-
-			// On screen button listener
-			//findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
-			_toggleTouchModeKeyboardBtnIcon.setOnClickListener(touchModeKeyboardBtnOnClickListener);
-			_toggleTouchModeKeyboardBtnIcon.setOnLongClickListener(touchModeKeyboardBtnOnLongClickListener);
-			_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
-
-			// Keyboard visibility listener - mainly to hide system UI if keyboard is shown and we return from Suspend to the Activity
-			setKeyboardVisibilityListener(this);
-
-			_main_surface.setOnKeyListener(_events);
-			_main_surface.setOnTouchListener(_events);
-			if (_mouseHelper != null) {
-				_main_surface.setOnHoverListener(_mouseHelper);
-			}
-
-			_scummvm_thread = new Thread(_scummvm, "ScummVM");
-			_scummvm_thread.start();
+			return;
 		}
+
+		// We should have a valid path to a configuration file here
+
+		// Start ScummVM
+		_scummvm.setArgs(new String[]{
+			"ScummVM"
+		});
+
+		Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
+		_mouseHelper = null;
+		if (_hoverAvailable) {
+			_mouseHelper = new MouseHelper(_scummvm);
+			//_mouseHelper.attach(_main_surface);
+		}
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+			_events = new ScummVMEventsModern(this, _scummvm, _mouseHelper);
+		} else {
+			_events = new ScummVMEventsBase(this, _scummvm, _mouseHelper);
+		}
+
+		setupTouchModeBtn(_events.getTouchMode());
+
+		// On screen button listener
+		//findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
+		_toggleTouchModeKeyboardBtnIcon.setOnClickListener(touchModeKeyboardBtnOnClickListener);
+		_toggleTouchModeKeyboardBtnIcon.setOnLongClickListener(touchModeKeyboardBtnOnLongClickListener);
+		_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
+
+		// Keyboard visibility listener - mainly to hide system UI if keyboard is shown and we return from Suspend to the Activity
+		setKeyboardVisibilityListener(this);
+
+		_main_surface.setOnKeyListener(_events);
+		_main_surface.setOnTouchListener(_events);
+		if (_mouseHelper != null) {
+			_main_surface.setOnHoverListener(_mouseHelper);
+		}
+
+		_scummvm_thread = new Thread(_scummvm, "ScummVM");
+		_scummvm_thread.start();
 	}
 
 	@Override
