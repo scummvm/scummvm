@@ -345,16 +345,16 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 												 char *dst_ptr, const int dst_pitch, const bool usingLinearFiltering) {
 	const int src_depth = bitmap->GetColorDepth();
 	bool lastPixelWasTransparent = false;
-	for (int y = 0; y < tile->height; y++) {
-		lastPixelWasTransparent = false;
-		const uint8_t *scanline_before = (y > 0) ? bitmap->GetScanLine(y + tile->y - 1) : nullptr;
-		const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
-		const uint8_t *scanline_after = (y < tile->height - 1) ? bitmap->GetScanLine(y + tile->y + 1) : nullptr;
-		unsigned int *memPtrLong = (unsigned int *)dst_ptr;
+	switch (src_depth) {
+	case 8: {
+		for (int y = 0; y < tile->height; y++) {
+			lastPixelWasTransparent = false;
+			const uint8_t *scanline_before = (y > 0) ? bitmap->GetScanLine(y + tile->y - 1) : nullptr;
+			const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
+			const uint8_t *scanline_after = (y < tile->height - 1) ? bitmap->GetScanLine(y + tile->y + 1) : nullptr;
+			unsigned int *memPtrLong = (unsigned int *)dst_ptr;
 
-		for (int x = 0; x < tile->width; x++) {
-			switch (src_depth) {
-			case 8: {
+			for (int x = 0; x < tile->width; x++) {
 				const unsigned char *srcData = (const unsigned char *)&scanline_at[(x + tile->x) * sizeof(char)];
 				if (*srcData == MASK_COLOR_8) {
 					if (!usingLinearFiltering)
@@ -386,9 +386,19 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 						lastPixelWasTransparent = false;
 					}
 				}
-				break;
 			}
-			case 16: {
+			dst_ptr += dst_pitch;
+		}
+	} break;
+	case 16: {
+		for (int y = 0; y < tile->height; y++) {
+			lastPixelWasTransparent = false;
+			const uint8_t *scanline_before = (y > 0) ? bitmap->GetScanLine(y + tile->y - 1) : nullptr;
+			const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
+			const uint8_t *scanline_after = (y < tile->height - 1) ? bitmap->GetScanLine(y + tile->y + 1) : nullptr;
+			unsigned int *memPtrLong = (unsigned int *)dst_ptr;
+
+			for (int x = 0; x < tile->width; x++) {
 				const unsigned short *srcData = (const unsigned short *)&scanline_at[(x + tile->x) * sizeof(short)];
 				if (*srcData == MASK_COLOR_16) {
 					if (!usingLinearFiltering)
@@ -420,9 +430,19 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 						lastPixelWasTransparent = false;
 					}
 				}
-				break;
 			}
-			case 32: {
+			dst_ptr += dst_pitch;
+		}
+	} break;
+	case 32: {
+		for (int y = 0; y < tile->height; y++) {
+			lastPixelWasTransparent = false;
+			const uint8_t *scanline_before = (y > 0) ? bitmap->GetScanLine(y + tile->y - 1) : nullptr;
+			const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
+			const uint8_t *scanline_after = (y < tile->height - 1) ? bitmap->GetScanLine(y + tile->y + 1) : nullptr;
+			unsigned int *memPtrLong = (unsigned int *)dst_ptr;
+
+			for (int x = 0; x < tile->width; x++) {
 				const unsigned int *srcData = (const unsigned int *)&scanline_at[(x + tile->x) * sizeof(int)];
 				if (*srcData == MASK_COLOR_32) {
 					if (!usingLinearFiltering)
@@ -456,49 +476,73 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 						lastPixelWasTransparent = false;
 					}
 				}
-				break;
 			}
-			default:
-				break;
-			}
+			dst_ptr += dst_pitch;
 		}
-		dst_ptr += dst_pitch;
+	} break;
+	default:
+		break;
 	}
 }
 
 void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaque(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile,
 													   char *dst_ptr, const int dst_pitch) {
 	const int src_depth = bitmap->GetColorDepth();
-	for (int y = 0; y < tile->height; y++) {
-		const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
-		unsigned int *memPtrLong = (unsigned int *)dst_ptr;
 
-		for (int x = 0; x < tile->width; x++) {
-			switch (src_depth) {
-			case 8: {
+	switch (src_depth) {
+	case 8: {
+		for (int y = 0; y < tile->height; y++) {
+			const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
+			unsigned int *memPtrLong = (unsigned int *)dst_ptr;
+
+			for (int x = 0; x < tile->width; x++) {
 				const unsigned char *srcData = (const unsigned char *)&scanline_at[(x + tile->x) * sizeof(char)];
 				memPtrLong[x] = VMEMCOLOR_RGBA(algetr8(*srcData), algetg8(*srcData), algetb8(*srcData), 0xFF);
-				break;
 			}
-			case 16: {
+
+			dst_ptr += dst_pitch;
+		}
+	} break;
+	case 16: {
+		for (int y = 0; y < tile->height; y++) {
+			const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
+			unsigned int *memPtrLong = (unsigned int *)dst_ptr;
+
+			for (int x = 0; x < tile->width; x++) {
 				const unsigned short *srcData = (const unsigned short *)&scanline_at[(x + tile->x) * sizeof(short)];
 				memPtrLong[x] = VMEMCOLOR_RGBA(algetr16(*srcData), algetg16(*srcData), algetb16(*srcData), 0xFF);
-				break;
 			}
-			case 32: {
-				const unsigned int *srcData = (const unsigned int *)&scanline_at[(x + tile->x) * sizeof(int)];
-				if (has_alpha)
+
+			dst_ptr += dst_pitch;
+		}
+	} break;
+	case 32: {
+		if (has_alpha) {
+			for (int y = 0; y < tile->height; y++) {
+				const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
+				unsigned int *memPtrLong = (unsigned int *)dst_ptr;
+
+				for (int x = 0; x < tile->width; x++) {
+					const unsigned int *srcData = (const unsigned int *)&scanline_at[(x + tile->x) * sizeof(int)];
 					memPtrLong[x] = VMEMCOLOR_RGBA(algetr32(*srcData), algetg32(*srcData), algetb32(*srcData), algeta32(*srcData));
-				else
-					memPtrLong[x] = VMEMCOLOR_RGBA(algetr32(*srcData), algetg32(*srcData), algetb32(*srcData), 0xFF);
-				break;
+				}
+				dst_ptr += dst_pitch;
 			}
-			default:
-				break;
+		} else {
+			for (int y = 0; y < tile->height; y++) {
+				const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
+				unsigned int *memPtrLong = (unsigned int *)dst_ptr;
+
+				for (int x = 0; x < tile->width; x++) {
+					const unsigned int *srcData = (const unsigned int *)&scanline_at[(x + tile->x) * sizeof(int)];
+					memPtrLong[x] = VMEMCOLOR_RGBA(algetr32(*srcData), algetg32(*srcData), algetb32(*srcData), 0xFF);
+				}
+				dst_ptr += dst_pitch;
 			}
 		}
-
-		dst_ptr += dst_pitch;
+	} break;
+	default:
+		break;
 	}
 }
 
