@@ -57,8 +57,8 @@ SwordEngine::SwordEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "streams"); // PSX videos
 
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "clusters"); // Comes from AD
-	//SearchMan.addSubDirectoryMatching(gameDataDir, "video"); // Comes from AD
-	//SearchMan.addSubDirectoryMatching(gameDataDir, "smackshi"); // Comes from AD
+	SearchMan.addSubDirectoryMatching(gameDataDir, "video"); // Comes from AD
+	SearchMan.addSubDirectoryMatching(gameDataDir, "smackshi"); // Comes from AD
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "english"); // PSX Demo  // Comes from AD
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "italian"); // PSX Demo  // Comes from AD
 

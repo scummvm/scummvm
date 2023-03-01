@@ -335,6 +335,19 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"sword1",
+		"English speech and DXA cutscenes",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "88c0793a4fa908083b00f6677c545f78", 58916,
+				   "clusters/text.clu",     "7d9e47533fde5333dc310bfd73eaeb5c", 2666944,
+				   "intro.dxa",             nullptr, -1),
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{
+		"sword1",
 		"English speech",
 		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
 				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
@@ -365,7 +378,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
 				   "clusters/swordres.rif", "239bdd76c405bad0f804a8ae5df4adb0", 59788,
 				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3199652,
-				   "smackshi/intro.dxa",    nullptr, -1),
+				   "intro.dxa",             nullptr, -1),
 		Common::CS_CZE,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
