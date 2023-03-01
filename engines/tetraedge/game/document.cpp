@@ -19,16 +19,32 @@
  *
  */
 
+#include "tetraedge/tetraedge.h"
 #include "tetraedge/game/document.h"
+#include "tetraedge/game/documents_browser.h"
+#include "tetraedge/te/te_core.h"
+#include "tetraedge/te/te_sprite_layout.h"
 
 namespace Tetraedge {
 
-Document::Document(DocumentsBrowser *browser) /*: _browser(browser)*/ {
+Document::Document(DocumentsBrowser *browser) : _browser(browser) {
 
 }
 
 void Document::load(const Common::String &name) {
-	error("TODO: Implement Document::load");
+	setSizeType(RELATIVE_TO_PARENT);
+	setSize(TeVector3f32(1, 1, 1));
+	_gui.load("DocumentsBrowser/Document.lua");
+	addChild(_gui.layoutChecked("object"));
+	setName(name);
+	const Common::Path sprPath = spritePath();
+	_gui.spriteLayoutChecked("upLayout")->load(g_engine->getCore()->findFile(sprPath));
+	_gui.buttonLayoutChecked("object")->onMouseClickValidated().add(this, &Document::onButtonDown);
+	TeITextLayout *txtLayout = _gui.textLayout("text");
+	if (!txtLayout)
+		error("can't find text layout in document");
+	Common::String header("<section style=\"center\" /><color r=\"255\" g=\"255\" b=\"255\"/><font file=\"Common/Fonts/arial.ttf\" size=\"16\" />");
+	txtLayout->setText(header + _browser->documentName(name));
 }
 
 void Document::unload() {

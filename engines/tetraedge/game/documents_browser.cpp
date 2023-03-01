@@ -165,8 +165,28 @@ bool DocumentsBrowser::onZoomedButton() {
 	return false;
 }
 
-int DocumentsBrowser::addDocument(Document *document) {
-	error("TODO: Implement DocumentsBrowser::addDocument");
+bool DocumentsBrowser::addDocument(Document *document) {
+	int pageno = 0;
+	while (true) {
+		Common::String pageName = Common::String::format("page%d", pageno);
+		TeLayout *page = _gui1.layout(pageName);
+		if (!page)
+			break;
+		int slotno = 0;
+		while (true) {
+			Common::String pageSlotName = Common::String::format("page%dSlot%d", pageno, slotno);
+			TeLayout *slot = _gui1.layout(pageSlotName);
+			if (!slot)
+				break;
+			if (slot->childCount() == 0) {
+				slot->addChild(document);
+				return true;
+			}
+			slotno++;
+		}
+		pageno++;
+	}
+	return false;
 }
 
 void DocumentsBrowser::addDocument(const Common::String &str) {
@@ -176,6 +196,11 @@ void DocumentsBrowser::addDocument(const Common::String &str) {
 		delete doc;
 }
 
+Common::String DocumentsBrowser::documentName(const Common::String &name) {
+	// Note: this returns a value from an xml file,
+	// but the xml file doesn't exist in either game.
+	return "";
+}
 
 void DocumentsBrowser::showDocument(const Common::String &docName, int startPage) {
 	_curPage = startPage;

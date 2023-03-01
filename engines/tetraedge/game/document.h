@@ -53,7 +53,7 @@ public:
 	void unload();
 
 private:
-	//DocumentsBrowser *_browser;
+	DocumentsBrowser *_browser;
 	TeLuaGUI _gui;
 	TeSignal1Param<Document &> _onButtonDownSignal;
 };
