@@ -67,7 +67,6 @@ void AGSSnowRain::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(srSetBaseline, AGSSnowRain::srSetBaseline);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
-	_engine->RequestEventHook(AGSE_PRESCREENDRAW);
 	_engine->RequestEventHook(AGSE_ENTERROOM);
 	_engine->RequestEventHook(AGSE_SAVEGAME);
 	_engine->RequestEventHook(AGSE_RESTOREGAME);
@@ -82,6 +81,12 @@ int64 AGSSnowRain::AGS_EngineOnEvent(int event, NumberPtr data) {
 		if (_snow.IsActive())
 			_snow.UpdateWithDrift();
 	} else if (event == AGSE_ENTERROOM) {
+		// Get screen size when entering a room
+		// FIXME: Upsteam uses srSetBaseline that doubles the height value if screenHeight == 400.
+		// That doesn't seem to make a difference. Also the implementation changed in later commits
+		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight, &_screenColorDepth);
+		_rain.SetBaseline(0, _screenHeight);
+		_snow.SetBaseline(0, _screenHeight);
 		_rain.EnterRoom();
 		_snow.EnterRoom();
 	} else if (event == AGSE_RESTOREGAME) {
@@ -92,10 +97,6 @@ int64 AGSSnowRain::AGS_EngineOnEvent(int event, NumberPtr data) {
 		Serializer s(_engine, data, false);
 		_rain.syncGame(s);
 		_snow.syncGame(s);
-	} else if (event == AGSE_PRESCREENDRAW) {
-		// Get screen size once here
-		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight , &_screenColorDepth);
-		_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
 	}
 
 	return 0;
