@@ -358,6 +358,19 @@ const char *recIndent() {
 	return tabs[recLevel];
 }
 
+bool isAbsolutePath(Common::String &path) {
+	// Starts with Mac directory notation for the game root
+	if (path.hasPrefix("@:"))
+		return true;
+	// Starts with a Windows drive letter
+	if (path.size() >= 3
+			&& Common::isAlpha(path[0])
+			&& path[1] == ':'
+			&& path[2] == '\\')
+		return true;
+	return false;
+}
+
 Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
@@ -500,9 +513,15 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 	debugN(8, "%s", recIndent());
 	debug(8, "pathMakeRelative(\"%s\", recursive: %d, addexts: %d, directory: %d):", path.c_str(), recursive, addexts, directory);
+	bool isAbsolute = isAbsolutePath(path);
 	path = convertPath(path);
 	debugN(9, "%s", recIndent());
 	debug(9, "pathMakeRelative(): converted -> %s", path.c_str());
+
+	// Absolute paths should not be matched against the global search path list
+	if (isAbsolute) {
+		return wrappedPathMakeRelative(path, recursive, addexts, directory, true);
+	}
 
 	Datum searchPath = g_director->getLingo()->_searchPath;
 	if (searchPath.type == ARRAY && searchPath.u.farr->arr.size() > 0) {
@@ -517,7 +536,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			debug(9, "pathMakeRelative(): searchPath: %s", searchIn.c_str());
 
 			recLevel++;
-			foundPath = wrappedPathMakeRelative(searchIn + path, recursive, addexts, directory);
+			foundPath = wrappedPathMakeRelative(searchIn + path, recursive, addexts, directory, false);
 			recLevel--;
 
 			if (testPath(foundPath, directory))
@@ -533,7 +552,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		debug(9, "pathMakeRelative(): extraSearchPath: %s", i->c_str());
 
 		recLevel++;
-		foundPath = wrappedPathMakeRelative(*i + path, recursive, addexts, directory);
+		foundPath = wrappedPathMakeRelative(*i + path, recursive, addexts, directory, false);
 		recLevel--;
 
 		if (testPath(foundPath, directory))
@@ -542,15 +561,14 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		debugN(9, "%s", recIndent());
 		debug(9, "pathMakeRelative(): -- extraSearchPath not found: %s", foundPath.c_str());
 	}
-
-	return wrappedPathMakeRelative(path, recursive, addexts, directory);
+	return wrappedPathMakeRelative(path, recursive, addexts, directory, false);
 }
 
 
 // if we are finding the file path, then this func will return exactly the executable file path
 // if we are finding the directory path, then we will get the path relative to the game data dir.
 // e.g. if we have game data dir as SSwarlock, then "A:SSwarlock" -> "", "A:SSwarlock:Nav" -> "Nav"
-Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory) {
+Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory, bool absolute) {
 
 	Common::String initialPath(path);
 
@@ -563,7 +581,11 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 	debugN(9, "%s", recIndent());
 	debug(9, "wrappedPathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
-	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, g_director->_dirSeparator);
+	if (absolute) {
+		initialPath = Common::normalizePath(initialPath, g_director->_dirSeparator);
+	} else {
+		initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, g_director->_dirSeparator);
+	}
 	Common::String convPath = initialPath;
 
 	debugN(9, "%s", recIndent());
