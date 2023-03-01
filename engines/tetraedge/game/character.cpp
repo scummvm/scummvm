@@ -454,6 +454,7 @@ bool Character::loadSettings(const Common::String &path) {
 	buf[bufsize] = '\0';
 	xmlFile.read(buf, bufsize);
 	Common::String fixedbuf(buf);
+	delete [] buf;
 	size_t offset = fixedbuf.find("------------");
 	while (offset != Common::String::npos) {
 		fixedbuf.replace(offset, 12, "--");
