@@ -97,6 +97,20 @@ static const ADGameDescription gameDescriptions[] = {
 
 	{
 		"sword2",
+		"",
+		AD_ENTRY5s("general.clu", "31db8564f9187538f24d9fda0677f666", 7059728,
+				   "text.clu",    "9b344d976ca8d19a1cf5aa4413397f6b", 304968,
+				   "speech1.clu", "a403904a0e825356107d228f8f74092e", 176260048,
+				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263,
+				   "bs2.dat",   "c8238e7d017faa3b48d98df3f42a63e6", 336246),
+		Common::ZH_CHN,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{
+		"sword2",
 		"1CD release",
 		AD_ENTRY3s("general.clu",  "31db8564f9187538f24d9fda0677f666", 7059728,
 				   "resource.tab", "ee4c0a8a2b8821ca113ea4176968b857", 16588,
