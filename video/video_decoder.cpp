@@ -49,12 +49,6 @@ VideoDecoder::VideoDecoder() {
 	_mainAudioTrack = 0;
 	_canSetDither = true;
 	_canSetDefaultFormat = true;
-
-	// Find the best format for output
-	_defaultHighColorFormat = g_system->getScreenFormat();
-
-	if (_defaultHighColorFormat.bytesPerPixel == 1)
-		_defaultHighColorFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 }
 
 void VideoDecoder::close() {
