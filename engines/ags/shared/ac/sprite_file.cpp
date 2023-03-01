@@ -109,17 +109,29 @@ static void UnpackIndexedBitmap(Bitmap *image, const uint8_t *data, size_t data_
 	const uint8_t bpp = image->GetBPP();
 	const size_t dst_size = image->GetWidth() * image->GetHeight() * image->GetBPP();
 	uint8_t *dst = image->GetDataForWriting(), *dst_end = dst + dst_size;
-	for (size_t p = 0; (p < data_size) && (dst < dst_end); ++p, dst += bpp) {
-		uint8_t index = data[p];
-		assert(index < pal_count);
-		uint32_t color = (index < pal_count) ? palette[index] : palette[0];
-		switch (bpp) {
-		case 2: *((uint16_t *)dst) = color; break;
-		case 4: *((uint32_t *)dst) = color; break;
-		default: assert(0); return;
+
+	switch (bpp) {
+		case 2:
+			for (size_t p = 0; (p < data_size) && (dst < dst_end); ++p, dst += bpp) {
+				uint8_t index = data[p];
+				assert(index < pal_count);
+				uint32_t color = palette[(index < pal_count) ? index : 0];
+				*((uint16_t *)dst) = color;
+			}
+			break;
+		case 4:
+			for (size_t p = 0; (p < data_size) && (dst < dst_end); ++p, dst += bpp) {
+				uint8_t index = data[p];
+				assert(index < pal_count);
+				uint32_t color = palette[(index < pal_count) ? index : 0];
+				*((uint32_t *)dst) = color;
+			}
+			break;
+		default:
+			assert(0);
+			return;
 		}
 	}
-}
 
 
 static inline SpriteFormat PaletteFormatForBPP(int bpp) {
