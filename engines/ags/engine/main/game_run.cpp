@@ -1048,7 +1048,7 @@ void update_polled_stuff() {
 		quit("||exit!");
 
 	} else if (_G(editor_debugging_initialized))
-		check_for_messages_from_editor();
+		check_for_messages_from_debugger();
 }
 
 } // namespace AGS3

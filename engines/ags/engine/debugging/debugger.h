@@ -29,9 +29,12 @@ namespace AGS3 {
 struct IAGSEditorDebugger;
 struct ScriptPosition;
 
-int check_for_messages_from_editor();
-bool send_message_to_editor(const char *msg);
-bool send_exception_to_editor(const char *qmsg);
+int check_for_messages_from_debugger();
+bool send_state_to_debugger(const char *msg);
+bool send_exception_to_debugger(const char *qmsg);
+// Returns current script's location and callstack
+AGS::Shared::String get_cur_script(int numberOfLinesOfCallStack);
+bool get_script_position(ScriptPosition &script_pos);
 void check_debug_keys();
 
 #define DBG_NOIFACE       1
