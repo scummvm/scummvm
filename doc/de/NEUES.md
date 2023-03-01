@@ -21,6 +21,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  HDB:
    - Fehler behoben, der verhindert, dass der rote Umschlag mit der Tastatur aufgehoben werden kann.
 
+ SAGA2:
+   - Fehler behoben, der zu einem Absturz bei der Nutzung einiger Zaubersprüche führt.
+
+ RISC OS-Portierung:
+   - Absturz unter RISC OS 5 bei der Nutzung von Spielen, die viel RAM benötigen, behoben.
+
 
 #### 2.7.0 "The Real Slim Shader" (26.02.2023)
 
