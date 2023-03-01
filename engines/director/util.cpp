@@ -508,6 +508,11 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	if (searchPath.type == ARRAY && searchPath.u.farr->arr.size() > 0) {
 		for (uint i = 0; i < searchPath.u.farr->arr.size(); i++) {
 			Common::String searchIn = searchPath.u.farr->arr[i].asString();
+			// Ensure there's a trailing directory separator
+			Common::String separator = Common::String::format("%c", g_director->_dirSeparator);
+			if (!searchIn.hasSuffix(separator)) {
+				searchIn += separator;
+			}
 			debugN(9, "%s", recIndent());
 			debug(9, "pathMakeRelative(): searchPath: %s", searchIn.c_str());
 
