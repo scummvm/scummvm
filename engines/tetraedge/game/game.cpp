@@ -245,7 +245,7 @@ bool Game::changeWarp2(const Common::String &zone, const Common::String &scene, 
 	luapath.appendInPlace(scene);
 	luapath.appendInPlace(".lua");
 
-	if (Common::File::exists(luapath)) {
+	if (g_engine->getCore()->findFile(luapath).exists()) {
 		_luaScript.execute("OnLeave");
 		_luaContext.removeGlobal("On");
 		_luaContext.removeGlobal("OnEnter");
