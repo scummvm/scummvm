@@ -147,15 +147,16 @@ private:
 
 	class BinkVideoTrack : public FixedRateVideoTrack {
 	public:
-		BinkVideoTrack(uint32 width, uint32 height, const Graphics::PixelFormat &format, uint32 frameCount, const Common::Rational &frameRate, bool swapPlanes, bool hasAlpha, uint32 id);
+		BinkVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, bool swapPlanes, bool hasAlpha, uint32 id);
 		~BinkVideoTrack();
 
-		uint16 getWidth() const override { return _surface.w; }
-		uint16 getHeight() const  override{ return _surface.h; }
-		Graphics::PixelFormat getPixelFormat() const override { return _surface.format; }
+		uint16 getWidth() const override { return _width; }
+		uint16 getHeight() const  override{ return _height; }
+		Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) { _pixelFormat = format; return true; }
 		int getCurFrame() const override { return _curFrame; }
 		int getFrameCount() const override { return _frameCount; }
-		const Graphics::Surface *decodeNextFrame() override { return &_surface; }
+		const Graphics::Surface *decodeNextFrame() override { return _surface; }
 		bool isSeekable() const  override{ return true; }
 		bool seek(const Audio::Timestamp &time) override { return true; }
 		bool rewind() override;
@@ -243,7 +244,10 @@ private:
 		int _curFrame;
 		int _frameCount;
 
-		Graphics::Surface _surface;
+		Graphics::Surface *_surface;
+		Graphics::PixelFormat _pixelFormat;
+		uint16 _width;
+		uint16 _height;
 		int _surfaceWidth; ///< The actual surface width
 		int _surfaceHeight; ///< The actual surface height
 

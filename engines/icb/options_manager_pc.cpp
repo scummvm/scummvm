@@ -6182,8 +6182,6 @@ void OptionsManager::DrawSlideShow() {
 
 		// This slide is bink compressed
 		Video::BinkDecoder *binkDecoder = new Video::BinkDecoder();
-		binkDecoder->setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
-
 		Common::MemoryReadStream *stream = new Common::MemoryReadStream((byte *)slideptr, slideLen);
 		if (!stream) {
 			Fatal_error("Failed open bink file");
@@ -6191,6 +6189,8 @@ void OptionsManager::DrawSlideShow() {
 		if (!binkDecoder->loadStream(stream)) {
 			Fatal_error("Failed open bink file");
 		}
+
+		binkDecoder->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
 
 		// Verify image dimensions
 		if (binkDecoder->getWidth() > SCREEN_WIDTH || binkDecoder->getHeight() > SCREEN_DEPTH)
