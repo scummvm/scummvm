@@ -176,6 +176,7 @@ public:
 	int  GetCompatibleBitmapFormat(int color_depth) override;
 	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override;
 	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	IDriverDependantBitmap *CreateRenderTargetDDB(int width, int height, int color_depth, bool opaque) override;
 	void UpdateDDBFromBitmap(IDriverDependantBitmap *ddb, Bitmap *bitmap, bool hasAlpha) override;
 	void DestroyDDB(IDriverDependantBitmap *ddb) override;
 

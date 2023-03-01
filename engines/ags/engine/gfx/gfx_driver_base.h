@@ -223,7 +223,9 @@ public:
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
 	bool GetStageMatrixes(RenderMatrixes &rm) override;
+	// Creates new texture using given parameters
 	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override = 0;
+	// Creates new texture and copy bitmap contents over
 	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque = false) override;
 	// Get shared texture from cache, or create from bitmap and assign ID
 	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
@@ -235,7 +237,7 @@ public:
 
 protected:
 	// Create texture data with the given parameters
-	virtual TextureData *CreateTextureData(int width, int height, bool opaque) = 0;
+	virtual TextureData *CreateTextureData(int width, int height, bool opaque, bool as_render_target = false) = 0;
 	// Update texture data from the given bitmap
 	virtual void UpdateTextureData(TextureData *txdata, Bitmap *bmp, bool opaque, bool hasAlpha) = 0;
 	// Create DDB using preexisting texture data

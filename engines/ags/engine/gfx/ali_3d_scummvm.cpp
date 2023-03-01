@@ -251,6 +251,10 @@ IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDBFromBitmap(Bitma
 	return new ALSoftwareBitmap(bitmap, opaque, hasAlpha);
 }
 
+IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateRenderTargetDDB(int width, int height, int color_depth, bool opaque) {
+	return new ALSoftwareBitmap(width, height, color_depth, opaque);
+}
+
 void ScummVMRendererGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) {
 	ALSoftwareBitmap *alSwBmp = (ALSoftwareBitmap *)bitmapToUpdate;
 	alSwBmp->_bmp = bitmap;
