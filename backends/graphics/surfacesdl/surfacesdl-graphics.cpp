@@ -1171,10 +1171,18 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	// so this isn't needed there.
 	if (_currentShakeXOffset != _gameScreenShakeXOffset ||
 		(_cursorNeedsRedraw && _mouseLastRect.x <= _currentShakeXOffset)) {
-		SDL_Rect blackrect = {0, 0, (Uint16)(_gameScreenShakeXOffset * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
+		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
 
-		if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
+		if (_gameScreenShakeXOffset >= 0)
+			blackrect.w = (Uint16)(_gameScreenShakeXOffset * _videoMode.scaleFactor);
+		else {
+			blackrect.w = ((-_gameScreenShakeXOffset) * _videoMode.scaleFactor);
+			blackrect.x = ((_videoMode.screenWidth + _gameScreenShakeXOffset) * _videoMode.scaleFactor);
+		}
+
+		if (_videoMode.aspectRatioCorrection && !_overlayInGUI) {
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
+		}
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
 
@@ -1184,10 +1192,19 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	}
 	if (_currentShakeYOffset != _gameScreenShakeYOffset ||
 		(_cursorNeedsRedraw && _mouseLastRect.y <= _currentShakeYOffset)) {
-		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeYOffset * _videoMode.scaleFactor)};
+		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
 
-		if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
-			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
+		if (_gameScreenShakeYOffset >= 0)
+			blackrect.h = (Uint16)(_gameScreenShakeYOffset * _videoMode.scaleFactor);
+		else {
+			blackrect.h = ((-_gameScreenShakeYOffset) * _videoMode.scaleFactor);
+			blackrect.y = ((_videoMode.screenHeight + _gameScreenShakeYOffset) * _videoMode.scaleFactor);
+		}
+
+		if (_videoMode.aspectRatioCorrection && !_overlayInGUI) {
+			blackrect.y = real2Aspect(blackrect.y);
+			blackrect.h = real2Aspect(blackrect.h + blackrect.y - 1) - blackrect.y + 1;
+		}
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
 
@@ -1310,22 +1327,37 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		dstPitch = _hwScreen->pitch;
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
-			int dst_x = r->x + _currentShakeXOffset;
-			int dst_y = r->y + _currentShakeYOffset;
+			int src_x = r->x;
+			int src_y = r->y;
+			int dst_x = r->x;
+			int dst_y = r->y;
 			int dst_w = 0;
 			int dst_h = 0;
 #ifdef USE_ASPECT
 			int orig_dst_y = 0;
 #endif
+			if (_currentShakeXOffset >= 0)
+				dst_x += _currentShakeXOffset;
+			else
+				src_x += -_currentShakeXOffset;
+
+			if (_currentShakeYOffset >= 0)
+				dst_y += _currentShakeYOffset;
+			else
+				src_y += -_currentShakeYOffset;
 
 			if (dst_x < width && dst_y < height) {
 				dst_w = r->w;
 				if (dst_w > width - dst_x)
 					dst_w = width - dst_x;
+				if (dst_w > width - src_x)
+					dst_w = width - src_x;
 
 				dst_h = r->h;
 				if (dst_h > height - dst_y)
 					dst_h = height - dst_y;
+				if (dst_h > height - src_y)
+					dst_h = height - src_y;
 
 #ifdef USE_ASPECT
 				orig_dst_y = dst_y;
@@ -1336,8 +1368,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
 					dst_y = real2Aspect(dst_y);
 
-				_scaler->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * bpp + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-					(byte *)_hwScreen->pixels + dst_x * bpp + dst_y * dstPitch, dstPitch, dst_w, dst_h, r->x, r->y);
+				_scaler->scale((byte *)srcSurf->pixels + (src_x + _maxExtraPixels) * bpp + (src_y + _maxExtraPixels) * srcPitch, srcPitch,
+					(byte *)_hwScreen->pixels + dst_x * bpp + dst_y * dstPitch, dstPitch, dst_w, dst_h, src_x, src_y);
 			}
 
 			r->x = dst_x;
