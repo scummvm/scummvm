@@ -167,7 +167,7 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	// And now we have it all. Initialize decoders next
 	if (_hasVideo) {
-		_videoTrack = new TheoraVideoTrack(getDefaultHighColorFormat(), theoraInfo, theoraSetup);
+		_videoTrack = new TheoraVideoTrack(theoraInfo, theoraSetup);
 		addTrack(_videoTrack);
 	}
 
@@ -254,7 +254,7 @@ Common::Rational TheoraDecoder::getFrameRate() const {
 	return Common::Rational();
 }
 
-TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(const Graphics::PixelFormat &format, th_info &theoraInfo, th_setup_info *theoraSetup) {
+TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(th_info &theoraInfo, th_setup_info *theoraSetup) {
 	_theoraDecode = th_decode_alloc(&theoraInfo, theoraSetup);
 
 	if (theoraInfo.pixel_fmt != TH_PF_420)
@@ -264,11 +264,18 @@ TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(const Graphics::PixelFormat &f
 	th_decode_ctl(_theoraDecode, TH_DECCTL_GET_PPLEVEL_MAX, &postProcessingMax, sizeof(postProcessingMax));
 	th_decode_ctl(_theoraDecode, TH_DECCTL_SET_PPLEVEL, &postProcessingMax, sizeof(postProcessingMax));
 
-	_surface.create(theoraInfo.frame_width, theoraInfo.frame_height, format);
+	_x = theoraInfo.pic_x;
+	_y = theoraInfo.pic_y;
+	_width = theoraInfo.pic_width;
+	_height = theoraInfo.pic_height;
+	_surfaceWidth = theoraInfo.frame_width;
+	_surfaceHeight = theoraInfo.frame_height;
 
-	// Set up a display surface
-	_displaySurface.init(theoraInfo.pic_width, theoraInfo.pic_height, _surface.pitch,
-	                    _surface.getBasePtr(theoraInfo.pic_x, theoraInfo.pic_y), format);
+	_pixelFormat = g_system->getScreenFormat();
+
+	// Default to a 32bpp format, if in 8bpp mode
+	if (_pixelFormat.bytesPerPixel == 1)
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
 	// Set the frame rate
 	_frameRate = Common::Rational(theoraInfo.fps_numerator, theoraInfo.fps_denominator);
@@ -276,13 +283,24 @@ TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(const Graphics::PixelFormat &f
 	_endOfVideo = false;
 	_nextFrameStartTime = 0.0;
 	_curFrame = -1;
+	_surface = nullptr;
+	_displaySurface = nullptr;
 }
 
 TheoraDecoder::TheoraVideoTrack::~TheoraVideoTrack() {
 	th_decode_free(_theoraDecode);
 
-	_surface.free();
-	_displaySurface.setPixels(0);
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+		_surface = nullptr;
+	}
+
+	if (_displaySurface) {
+		_displaySurface->setPixels(0);
+		delete _displaySurface;
+		_displaySurface = nullptr;
+	}
 }
 
 bool TheoraDecoder::TheoraVideoTrack::decodePacket(ogg_packet &oggPacket) {
@@ -330,7 +348,19 @@ void TheoraDecoder::TheoraVideoTrack::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuf
 	assert(YUVBuffer[kBufferU].height == YUVBuffer[kBufferY].height >> 1);
 	assert(YUVBuffer[kBufferV].height == YUVBuffer[kBufferY].height >> 1);
 
-	YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
+	if (!_surface) {
+		_surface = new Graphics::Surface();
+		_surface->create(_surfaceWidth, _surfaceHeight, _pixelFormat);
+	}
+
+	// Set up a display surface
+	if (!_displaySurface) {
+		_displaySurface = new Graphics::Surface();
+		_displaySurface->init(_width, _height, _surface->pitch,
+		                      _surface->getBasePtr(_x, _y), _surface->format);
+	}
+
+	YUVToRGBMan.convert420(_surface, Graphics::YUVToRGBManager::kScaleITU, YUVBuffer[kBufferY].data, YUVBuffer[kBufferU].data, YUVBuffer[kBufferV].data, YUVBuffer[kBufferY].width, YUVBuffer[kBufferY].height, YUVBuffer[kBufferY].stride, YUVBuffer[kBufferU].stride);
 }
 
 static vorbis_info *info = 0;
