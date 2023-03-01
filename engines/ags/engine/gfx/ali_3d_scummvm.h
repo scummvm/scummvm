@@ -230,6 +230,11 @@ public:
 
 	void SetGraphicsFilter(PSDLRenderFilter filter);
 
+protected:
+	size_t GetLastDrawEntryIndex() override {
+		return _spriteList.size();
+	}
+
 private:
 	Graphics::Screen *_screen = nullptr;
 	PSDLRenderFilter _filter;
