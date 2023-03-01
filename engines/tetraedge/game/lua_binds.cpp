@@ -1907,7 +1907,7 @@ static int tolua_ExportedFunctions_PlayRandomSound00(lua_State *L) {
 	error("#ferror in function 'PlayRandomSound': %d %d %s", err.index, err.array, err.type);
 }
 
-static void PlayMusic(const Common::String &path) {
+static void PlayMusic(const Common::String &path, float volume) {
 	TeMusic &music = g_engine->getApplication()->music();
 	// Note: stop and set repeat before starting,
 	// very slightly different to original because we can't
@@ -1916,14 +1916,15 @@ static void PlayMusic(const Common::String &path) {
 	music.repeat(false);
 	music.load(path);
 	music.play();
-	music.volume(1.0);
+	music.volume(volume);
 }
 
 static int tolua_ExportedFunctions_PlayMusic00(lua_State *L) {
 	tolua_Error err;
-	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnumber(L, 2, 1, &err) && tolua_isnoobj(L, 3, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
-		PlayMusic(s1);
+		float f1 = tolua_tonumber(L, 2, 1.0);
+		PlayMusic(s1, f1);
 		return 0;
 	}
 	error("#ferror in function 'PlayMusic': %d %d %s", err.index, err.array, err.type);
