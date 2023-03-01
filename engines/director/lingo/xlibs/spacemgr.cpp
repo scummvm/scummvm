@@ -225,10 +225,15 @@ void SpaceMgr::m_parseText(int nargs) {
 	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 
 	Common::String result = *text.u.s;
-	Common::String curSpaceCollection;
-	Common::String curSpace;
-	Common::String curNode;
-	Common::String curView;
+	if (debugLevelSet(5)) {
+		Common::String format = result;
+		for (int i = 0; i < (int)format.size(); i++) {
+			if (format[i] == '\r')
+				format.replace(i, 1, "\n");
+		}
+		debugC(5, kDebugXObj, "SpaceMgr::m_parseText:\n%s", format.c_str());
+	}
+
 	Common::StringTokenizer instructions = Common::StringTokenizer(result, "\r");
 
 	while (!instructions.empty()) {
@@ -236,45 +241,45 @@ void SpaceMgr::m_parseText(int nargs) {
 		Common::StringTokenizer instruction = Common::StringTokenizer(instructionBody, " ");
 		Common::String type = instruction.nextToken();
 		if (type == "SPACECOLLECTION") {
-			curSpaceCollection = instruction.nextToken();
-			curSpace = "";
-			curNode = "";
-			curView = "";
-			if (!(me->_spaceCollections.contains(curSpaceCollection) && me->_checkForDups)) {
-				me->_spaceCollections[curSpaceCollection] = SpaceCollection();
+			me->_curSpaceCollection = instruction.nextToken();
+			me->_curSpace = "";
+			me->_curNode = "";
+			me->_curView = "";
+			if (!(me->_spaceCollections.contains(me->_curSpaceCollection) && me->_checkForDups)) {
+				me->_spaceCollections[me->_curSpaceCollection] = SpaceCollection();
 			}
 		} else if (type == "SPACE") {
-			curSpace = instruction.nextToken();
-			curNode = "";
-			curView = "";
-			SpaceCollection &sc = me->_spaceCollections.getVal(curSpaceCollection);
-			if (!(sc.spaces.contains(curSpaceCollection) && me->_checkForDups)) {
-				sc.spaces[curSpace] = Space();
+			me->_curSpace = instruction.nextToken();
+			me->_curNode = "";
+			me->_curView = "";
+			SpaceCollection &sc = me->_spaceCollections.getVal(me->_curSpaceCollection);
+			if (!(sc.spaces.contains(me->_curSpaceCollection) && me->_checkForDups)) {
+				sc.spaces[me->_curSpace] = Space();
 			}
 		} else if (type == "NODE") {
-			curNode = instruction.nextToken();
-			curView = "";
-			SpaceCollection &sc = me->_spaceCollections.getVal(curSpaceCollection);
-			Space &s = sc.spaces.getVal(curSpace);
-			if (!(s.nodes.contains(curNode) && me->_checkForDups)) {
-				s.nodes[curNode] = Node();
+			me->_curNode = instruction.nextToken();
+			me->_curView = "";
+			SpaceCollection &sc = me->_spaceCollections.getVal(me->_curSpaceCollection);
+			Space &s = sc.spaces.getVal(me->_curSpace);
+			if (!(s.nodes.contains(me->_curNode) && me->_checkForDups)) {
+				s.nodes[me->_curNode] = Node();
 			}
 		} else if (type == "VIEW") {
-			curView = instruction.nextToken();
-			SpaceCollection &sc = me->_spaceCollections.getVal(curSpaceCollection);
-			Space &s = sc.spaces.getVal(curSpace);
-			Node &n = s.nodes.getVal(curNode);
-			if (!(n.views.contains(curView) && me->_checkForDups)) {
-				n.views[curView] = View();
-				n.views[curView].payload = instruction.nextToken();
+			me->_curView = instruction.nextToken();
+			SpaceCollection &sc = me->_spaceCollections.getVal(me->_curSpaceCollection);
+			Space &s = sc.spaces.getVal(me->_curSpace);
+			Node &n = s.nodes.getVal(me->_curNode);
+			if (!(n.views.contains(me->_curView) && me->_checkForDups)) {
+				n.views[me->_curView] = View();
+				n.views[me->_curView].payload = instruction.nextToken();
 			}
 		} else if (type == "LLINK") {
 			Common::String target = instruction.nextToken();
 			Common::String payload = instruction.nextToken();
-			SpaceCollection &sc = me->_spaceCollections.getVal(curSpaceCollection);
-			Space &s = sc.spaces.getVal(curSpace);
-			Node &n = s.nodes.getVal(curNode);
-			View &v = n.views.getVal(curView);
+			SpaceCollection &sc = me->_spaceCollections.getVal(me->_curSpaceCollection);
+			Space &s = sc.spaces.getVal(me->_curSpace);
+			Node &n = s.nodes.getVal(me->_curNode);
+			View &v = n.views.getVal(me->_curView);
 			if (!(v.llinks.contains(target) && me->_checkForDups)) {
 				v.llinks[target] = LLink();
 				v.llinks[target].payload = payload;
@@ -282,15 +287,6 @@ void SpaceMgr::m_parseText(int nargs) {
 		} else {
 			warning("SpaceMgr::m_parseText: Unhandled instruction %s", instructionBody.c_str());
 		}
-	}
-
-	if (debugLevelSet(5)) {
-		Common::String format = result;
-		for (int i = 0; i < (int)format.size(); i++) {
-			if (format[i] == '\r')
-				format.replace(i, 1, "\n");
-		}
-		debugC(5, kDebugXObj, "SpaceMgr::m_parseText: %s", format.c_str());
 	}
 
 	g_lingo->push(Datum(0));
