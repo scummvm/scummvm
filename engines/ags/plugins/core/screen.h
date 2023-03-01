@@ -19,37 +19,33 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_SCREEN_H
-#define AGS_ENGINE_AC_SCREEN_H
+#ifndef AGS_PLUGINS_CORE_SCREEN_H
+#define AGS_PLUGINS_CORE_SCREEN_H
 
-#include "ags/engine/ac/dynobj/script_user_object.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
+namespace Plugins {
+namespace Core {
 
-int  Screen_GetScreenWidth();
-int  Screen_GetScreenHeight();
-bool Screen_GetAutoSizeViewport();
-void Screen_SetAutoSizeViewport(bool on);
-int  Screen_GetViewportCount();
-ScriptViewport *Screen_GetViewport();
-ScriptViewport *Screen_GetAnyViewport(int index);
-ScriptUserObject *Screen_RoomToScreenPoint(int roomx, int roomy);
+class Screen : public ScriptContainer {
+	BUILT_IN_HASH(Screen)
+public:
+	virtual ~Screen() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-namespace AGS {
-namespace Shared {
-class Bitmap;
-} // namespace Shared
-} // namespace AGS
-namespace AGS {
-namespace Engine {
-class IDriverDependantBitmap;
-} // namespace Engine
-} // namespace AGS
+	void GetScreenHeight(ScriptMethodParams &params);
+	void GetScreenWidth(ScriptMethodParams &params);
+	void GetAutoSizeViewport(ScriptMethodParams &params);
+	void SetAutoSizeViewport(ScriptMethodParams &params);
+	void GetViewport(ScriptMethodParams &params);
+	void GetViewportCount(ScriptMethodParams &params);
+	void GetAnyViewport(ScriptMethodParams &params);
+	void RoomToScreenPoint(ScriptMethodParams &params);
+};
 
-void my_fade_in(PALETTE p, int speed);
-void current_fade_out_effect();
-AGS::Engine::IDriverDependantBitmap *prepare_screen_for_transition_in();
-
+} // namespace Core
+} // namespace Plugins
 } // namespace AGS3
 
 #endif
