@@ -4548,7 +4548,7 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
-	*mingw32* | mingw64)
+	*cygwin* | *mingw32* | mingw64)
 		_plugin_prefix=""
 		_plugin_suffix=".dll"
 _mak_plugins='
