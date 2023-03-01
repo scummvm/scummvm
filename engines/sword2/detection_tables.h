@@ -81,6 +81,20 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // GOG.com release version 2.0.0.6
+		"sword2",
+		"GOG",
+		AD_ENTRY5s("general.clu", "31db8564f9187538f24d9fda0677f666", 7059728,
+				   "text.clu",    "9b344d976ca8d19a1cf5aa4413397f6b", 304968,
+				   "speech1.clu", "a403904a0e825356107d228f8f74092e", 176260048,
+				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263,
+				   "eye.dxa",     "7aef7fcb4faae760e82e0c7d3b336ac9", 7052599),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword2",
 		"1CD release",
