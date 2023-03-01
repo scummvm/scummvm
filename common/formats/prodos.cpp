@@ -25,13 +25,13 @@ namespace Common {
 
 // --- ProDOSFile methods ---
 
-ProDOSFile::ProDOSFile(char name[15], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk)
+ProDOSFile::ProDOSFile(char name[16], uint8 type, uint16 tBlk, uint32 eof, uint16 bPtr, Common::File *disk)
 	: _type(type)
 	, _totalBlocks(tBlk)
 	, _eof(eof)
 	, _blockPtr(bPtr)
 	, _disk(disk) {
-	strncpy(_name, name, 15);
+	strncpy(_name, name, 16);
 }
 
 /* For debugging purposes, this prints the meta data of a file */
