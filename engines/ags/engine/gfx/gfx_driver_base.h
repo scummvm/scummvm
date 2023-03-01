@@ -51,20 +51,17 @@ struct SpriteBatchDesc {
 	Rect                     Viewport;
 	// Optional model transformation, to be applied to each sprite
 	SpriteTransform          Transform;
-	// Global node offset applied to the whole batch as the last transform
-	Point                    Offset;
-	// Global node flip applied to the whole batch as the last transform
+	// Optional flip, applied to the whole batch as the last transform
 	Shared::GraphicFlip      Flip = Shared::kFlip_None;
 	// Optional bitmap to draw sprites upon. Used exclusively by the software rendering mode.
 	PBitmap                  Surface;
 
 	SpriteBatchDesc() = default;
-	SpriteBatchDesc(uint32_t parent, const Rect viewport, const SpriteTransform & transform, const Point offset = Point(),
+	SpriteBatchDesc(uint32_t parent, const Rect viewport, const SpriteTransform & transform,
 		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr)
 		: Parent(parent)
 		, Viewport(viewport)
 		, Transform(transform)
-		, Offset(offset)
 		, Flip(flip)
 		, Surface(surface) {
 	}
@@ -105,7 +102,7 @@ public:
 	Rect        GetRenderDestination() const override;
 
 	void        BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	                             const Point offset = Point(), Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) override;
+	                             Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) override;
 	void        EndSpriteBatch() override;
 	void        ClearDrawLists() override;
 

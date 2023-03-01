@@ -66,8 +66,8 @@ Rect GraphicsDriverBase::GetRenderDestination() const {
 }
 
 void GraphicsDriverBase::BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	const Point offset, GraphicFlip flip, PBitmap surface) {
-	_spriteBatchDesc.push_back(SpriteBatchDesc(_actSpriteBatch, viewport, transform, offset, flip, surface));
+	GraphicFlip flip, PBitmap surface) {
+	_spriteBatchDesc.push_back(SpriteBatchDesc(_actSpriteBatch, viewport, transform, flip, surface));
 	_actSpriteBatch = _spriteBatchDesc.size() - 1;
 	InitSpriteBatch(_actSpriteBatch, _spriteBatchDesc[_actSpriteBatch]);
 }

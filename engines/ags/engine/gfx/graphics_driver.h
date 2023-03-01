@@ -152,8 +152,8 @@ public:
 	// sprites to this batch's list.
 	// Beginning a batch while the previous was not ended will create a sub-batch
 	// (think of it as of a child scene node).
-	virtual void BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-		const Point offset = Point(), Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) = 0;
+	virtual void BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform = SpriteTransform(),
+		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) = 0;
 	// Ends current sprite batch
 	virtual void EndSpriteBatch() = 0;
 	// Adds sprite to the active batch
