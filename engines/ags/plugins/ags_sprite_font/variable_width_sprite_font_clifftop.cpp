@@ -35,7 +35,8 @@ VariableWidthSpriteFontRendererClifftop::~VariableWidthSpriteFontRendererCliffto
 void VariableWidthSpriteFontRendererClifftop::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
 	VariableWidthFont *font = getFontFor(fontNumber);
 	int totalWidth = 0;
-	for (int i = 0; i < (int)strlen(text); i++) {
+	int len_text = (int)strlen(text);
+	for (int i = 0; i < len_text; i++) {
 		char c = text[i];
 
 		BITMAP *src = _engine->GetSpriteGraphic(font->SpriteNumber);

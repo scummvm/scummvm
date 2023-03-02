@@ -38,8 +38,8 @@ bool SpriteFontRendererClifftop::SupportsExtendedCharacters(int fontNumber) {
 
 void SpriteFontRendererClifftop::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
 	SpriteFont *font = getFontFor(fontNumber);
-
-	for (int i = 0; i < (int)strlen(text); i++) {
+	int len_text = (int)strlen(text);
+	for (int i = 0; i < len_text; i++) {
 		char c = text[i];
 		c -= font->MinChar;
 		int row = c / font->Columns;

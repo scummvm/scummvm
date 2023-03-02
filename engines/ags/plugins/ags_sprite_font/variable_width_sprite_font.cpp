@@ -51,7 +51,8 @@ bool VariableWidthSpriteFontRenderer::SupportsExtendedCharacters(int fontNumber)
 int VariableWidthSpriteFontRenderer::GetTextWidth(const char *text, int fontNumber) {
 	int total = 0;
 	VariableWidthFont *font = getFontFor(fontNumber);
-	for (int i = 0; i < (int)strlen(text); i++) {
+	int len_text = (int)strlen(text);
+	for (int i = 0; i < len_text; i++) {
 		if (font->characters.count(text[i]) > 0) {
 			total += font->characters[text[i]].Width;
 			if (text[i] != ' ') total += font->Spacing;
@@ -62,7 +63,8 @@ int VariableWidthSpriteFontRenderer::GetTextWidth(const char *text, int fontNumb
 
 int VariableWidthSpriteFontRenderer::GetTextHeight(const char *text, int fontNumber) {
 	VariableWidthFont *font = getFontFor(fontNumber);
-	for (int i = 0; i < (int)strlen(text); i++) {
+	int len_text = (int)strlen(text);
+	for (int i = 0; i < len_text; i++) {
 		if (font->characters.count(text[i]) > 0) {
 			return font->characters[text[i]].Height;
 		}
@@ -156,7 +158,8 @@ VariableWidthFont *VariableWidthSpriteFontRenderer::getFontFor(int fontNum) {
 void VariableWidthSpriteFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
 	VariableWidthFont *font = getFontFor(fontNumber);
 	int totalWidth = 0;
-	for (int i = 0; i < (int)strlen(text); i++) {
+	int len_text = (int)strlen(text);
+	for (int i = 0; i < len_text; i++) {
 		char c = text[i];
 
 		BITMAP *src = _engine->GetSpriteGraphic(font->SpriteNumber);
@@ -164,7 +167,6 @@ void VariableWidthSpriteFontRenderer::RenderText(const char *text, int fontNumbe
 		totalWidth += font->characters[c].Width;
 		if (text[i] != ' ') totalWidth += font->Spacing;
 	}
-
 }
 
 
