@@ -1244,16 +1244,15 @@ bool engine_try_switch_windowed_gfxmode() {
 		// If failed, try switching back to previous gfx mode
 		res = graphics_mode_set_dm(old_dm) &&
 			graphics_mode_set_render_frame(old_frame);
+		if (!res)
+			quitprintf("Failed to restore graphics mode.");
 	}
 
-	if (res) {
-		// If succeeded (with any case), update engine objects that rely on
-		// active display mode.
-		if (!_G(gfxDriver)->GetDisplayMode().IsRealFullscreen())
-			init_desktop = get_desktop_size();
-		engine_post_gfxmode_setup(init_desktop);
-	}
-
+	// If succeeded (with any case), update engine objects that rely on
+	// active display mode.
+	if (!_G(gfxDriver)->GetDisplayMode().IsRealFullscreen())
+		init_desktop = get_desktop_size();
+	engine_post_gfxmode_setup(init_desktop);
 	// Make sure that we don't receive window events queued during init
 	sys_flush_events();
 	return res;
