@@ -769,7 +769,7 @@ void AGSPalRender::IterateStars(ScriptMethodParams &params) {
 			stars[i].x = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sw) << 1) - sw;
 			if (stars[i].x < 1.0 && stars[i].x > -1.0) stars[i].x = (float)sw;
 			stars[i].y = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sh) << 1) - sh;
-			if (stars[i].y < 1.0 && stars[i].y > 1.0) stars[i].y = (float)sh;
+			if (stars[i].y < 1.0 && stars[i].y > -1.0) stars[i].y = (float)sh;
 			stars[i].z = (float)MAX_DEPTH;
 			//stars[i].color = (rand () %240);
 		}
@@ -921,7 +921,7 @@ void AGSPalRender::DrawStars(ScriptMethodParams &params) {
 			stars[i].x = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sw) << 1) - sw;
 			if (stars[i].x < 1.0 && stars[i].x > -1.0) stars[i].x = (float)sw;
 			stars[i].y = (float)((::AGS::g_vm->getRandomNumber(0x7fffffff) % sh) << 1) - sh;
-			if (stars[i].y < 1.0 && stars[i].y > 1.0) stars[i].y = (float)sh;
+			if (stars[i].y < 1.0 && stars[i].y > -1.0) stars[i].y = (float)sh;
 			stars[i].z = (float)MAX_DEPTH;
 			//stars[i].color = (rand () %240);
 		} else if (stars[i].z > 0) {
