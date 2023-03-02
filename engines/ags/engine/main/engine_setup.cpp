@@ -160,14 +160,14 @@ void engine_adjust_for_rotation_settings() {
 void engine_post_gfxmode_driver_setup() {
 	_G(gfxDriver)->SetCallbackForPolling(update_polled_stuff);
 	_G(gfxDriver)->SetCallbackToDrawScreen(draw_game_screen_callback, construct_engine_overlay);
-	_G(gfxDriver)->SetCallbackForNullSprite(GfxDriverNullSpriteCallback);
+	_G(gfxDriver)->SetCallbackOnSpriteEvt(GfxDriverSpriteEvtCallback);
 }
 
 // Reset gfx driver callbacks
 void engine_pre_gfxmode_driver_cleanup() {
 	_G(gfxDriver)->SetCallbackForPolling(nullptr);
 	_G(gfxDriver)->SetCallbackToDrawScreen(nullptr, nullptr);
-	_G(gfxDriver)->SetCallbackForNullSprite(nullptr);
+	_G(gfxDriver)->SetCallbackOnSpriteEvt(nullptr);
 	_G(gfxDriver)->SetMemoryBackBuffer(nullptr);
 }
 

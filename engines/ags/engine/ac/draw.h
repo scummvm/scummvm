@@ -186,7 +186,7 @@ void render_to_screen();
 // Callbacks for the graphics driver
 void draw_game_screen_callback();
 void GfxDriverOnInitCallback(void *data);
-bool GfxDriverNullSpriteCallback(int x, int y);
+bool GfxDriverSpriteEvtCallback(int evt, int data);
 void putpixel_compensate(Shared::Bitmap *g, int xx, int yy, int col);
 // Create the actsps[aa] image with the object drawn correctly.
 // Returns true if nothing at all has changed and actsps is still
