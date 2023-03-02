@@ -61,7 +61,7 @@ void Location::displayMessage(const Common::String &msg) {
 	infoMsg._timeoutCallback = []() {
 		Location *loc = dynamic_cast<Location *>(g_events->focusedView());
 		assert(loc);
-		loc->leave();
+		loc->messageShown();
 	};
 
 	g_events->send(infoMsg);

@@ -526,6 +526,8 @@ enhdialogs:
 		title: "Training"
 		train: "\x01""37Train"
 		esc: "ESC"
+		needs: "%s\nneeds %d experience for level %d."
+		eligible: "%s\nis eligible for level %d."
 stats:
 	none: "None"
 	inventory: "-----<Equipped>----------<Backpack>----"

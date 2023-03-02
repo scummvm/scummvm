@@ -38,24 +38,46 @@ Training::Training() : Location("Training", LOC_TRAINING) {
 
 bool Training::msgFocus(const FocusMessage &msg) {
 	Location::msgFocus(msg);
+	checkCharacter();
 	return true;
 }
 
 void Training::draw() {
 	Location::draw();
+	const Character &c = *g_globals->_currCharacter;
 
 	setReduced(false);
 	writeLine(0, STRING["enhdialogs.training.title"], ALIGN_MIDDLE);
-	writeLine(1, STRING["enhdialogs.location.options_for"], ALIGN_MIDDLE);
-	writeLine(3, camelCase(g_globals->_currCharacter->_name), ALIGN_MIDDLE);
+	writeLine(1, STRING["enhdialogs.location.options"], ALIGN_MIDDLE);
+
+	if (_currLevel >= MAX_LEVEL) {
+		writeLine(3, c._name, ALIGN_MIDDLE);
+		writeLine(5, STRING["dialogs.training.no_way"], ALIGN_MIDDLE);
+
+	} else if (_remainingExp > 0) {
+		writeLine(3, Common::String::format(
+			STRING["enhdialogs.training.needs"].c_str(),
+			c._name, _remainingExp, _currLevel + 1), ALIGN_MIDDLE);
+
+	} else {
+		writeLine(3, Common::String::format(
+			STRING["enhdialogs.training.eligible"].c_str(),
+			c._name, _currLevel + 1), ALIGN_MIDDLE);
+	}
 
 	writeLine(10, STRING["enhdialogs.location.gold"]);
-	writeLine(10, Common::String::format("%d",
-		g_globals->_currCharacter->_gold), ALIGN_RIGHT);
+	writeLine(10, Common::String::format("%d", c._gold), ALIGN_RIGHT);
 
 	setReduced(true);
 	writeString(5, 122, STRING["enhdialogs.training.train"]);
 	writeString(43, 122, STRING["enhdialogs.training.esc"]);
+}
+
+bool Training::msgGame(const GameMessage &msg) {
+	Location::msgGame(msg);
+	if (msg._name == "UPDATE")
+		checkCharacter();
+	return true;
 }
 
 bool Training::msgKeypress(const KeypressMessage &msg) {
@@ -64,7 +86,7 @@ bool Training::msgKeypress(const KeypressMessage &msg) {
 		return true;
 
 	switch (msg.keycode) {
-	case Common::KEYCODE_a:
+	case Common::KEYCODE_t:
 		if (_canTrain)
 			train();
 		break;
@@ -73,6 +95,7 @@ bool Training::msgKeypress(const KeypressMessage &msg) {
 		redraw();
 		break;
 	default:
+		return Location::msgKeypress(msg);
 		break;
 	}
 
@@ -88,15 +111,18 @@ bool Training::msgAction(const ActionMessage &msg) {
 		return true;
 	}
 
-	return false;
+	return Location::msgAction(msg);
 }
 
 void Training::checkCharacter() {
+	assert(g_globals->_currCharacter);
 	Character &c = *g_globals->_currCharacter;
 
 	_currLevel = c._level._base;
-	if (_currLevel >= MAX_LEVEL)
+	if (_currLevel >= MAX_LEVEL) {
+		_canTrain = false;
 		return;
+	}
 
 	// Initialize fields
 	_expTotal = 0;
@@ -141,12 +167,12 @@ void Training::train() {
 	Character &c = *g_globals->_currCharacter;
 
 	if (c._condition) {
+		// Having a condition prevents characters from training
 		Sound::sound(SOUND_3);
-		clearSurface();
-		writeString(8, 5, STRING["dialogs.training.condition"]);
-		delaySeconds(3);
+		displayMessage(STRING["dialogs.training.condition"]);
 
 	} else if (!_canAfford) {
+		// Can't afford training
 		notEnoughGold();
 
 	} else {
@@ -155,19 +181,30 @@ void Training::train() {
 		Character::LevelIncrease lvl = c.increaseLevel();
 		Sound::sound(SOUND_2);
 
-		clearSurface();
-		writeString(0, 3, STRING["dialogs.training.congrats"]);
-		writeNumber(c._level._base);
+		Common::String msg = Common::String::format("%s%d",
+			STRING["dialogs.training.congrats"].c_str(),
+			c._level._base);
 
-		writeString(7, 5, Common::String::format(
-			STRING["dialogs.training.hp"].c_str(), lvl._numHP));
+		msg = Common::String::format(STRING["dialogs.training.hp"].c_str(),
+			lvl._numHP);
 
-		if (lvl._numSpells != 0)
-			writeString(7, 6, STRING["dialogs.training.new_spells"]);
+		if (lvl._numSpells != 0) {
+			msg += ". ";
+			msg += STRING["dialogs.training.new_spells"];
+		}
 
-		Sound::sound(SOUND_2);
-		delaySeconds(10);
+		displayMessage(msg);
 	}
+}
+
+void Training::timeout() {
+	checkCharacter();
+	Location::timeout();
+}
+
+void Training::messageShown() {
+	checkCharacter();
+	redraw();
 }
 
 } // namespace Location

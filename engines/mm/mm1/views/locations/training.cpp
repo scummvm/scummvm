@@ -53,8 +53,10 @@ void Training::checkCharacter() {
 	Character &c = *g_globals->_currCharacter;
 
 	_currLevel = c._level._base;
-	if (_currLevel >= MAX_LEVEL)
+	if (_currLevel >= MAX_LEVEL) {
+		_canTrain = false;
 		return;
+	}
 
 	// Initialize fields
 	_expTotal = 0;

@@ -72,6 +72,13 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 
 	/**
+	 * Called when a message is finished being shown
+	 */
+	virtual void messageShown() {
+		leave();
+	}
+
+	/**
 	 * Leave the location, turning around
 	 */
 	void leave();
