@@ -32,13 +32,13 @@ For full release notes see https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.ht
 
 *** Beta release name:
 
-2.7.0 (beta)
+2.7.0.1 (beta 2)
 
 *** Beta release notes:
 <en-US>
-- Support secure file access for SD Cards
-- Improved joystick and gamepad key-mapping
-- Synched up the support of 3d games with the desktop version
-- Choose between joystick, touchpad and direct mouse control per game and on-the-fly
+- Fix loading FluidSynth soundfonts
+- Fix setting a custom Global Save Path
+- Fix crash related to downloading shaders to custom path
+- Fix save game removal using the SAF API
 - More games, more bugfixes, the full list is at https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
 </en-US>
