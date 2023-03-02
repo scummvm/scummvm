@@ -12,6 +12,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  SAGA2:
    - Fehler behoben, der zu einem Absturz bei der Nutzung einiger Zaubersprüche führt.
 
+ Sword1:
+   - Die tschechischen und polnischen Versionen mit DXA-Zwischensequenzen werden nun korrekt erkannt.
+
+ Sword2:
+   - Unterstützung für die GOG.com-Version hinzugefügt.
+   - Unterstützung für eine alternative polnische Version hinzugefügt.
+
  RISC OS-Portierung:
    - Absturz unter RISC OS 5 bei der Nutzung von Spielen, die viel RAM benötigen, behoben.
 
