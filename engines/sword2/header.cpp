@@ -29,7 +29,7 @@
 
 namespace Sword2 {
 
-void ResHeader::read(byte *addr) {
+void ResHeader::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	fileType = readS.readByte();
@@ -49,7 +49,7 @@ void ResHeader::write(byte *addr) {
 	writeS.write(name, NAME_LEN);
 }
 
-void AnimHeader::read(byte *addr) {
+void AnimHeader::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	if (Sword2Engine::isPsx()) {
@@ -96,7 +96,7 @@ int CdtEntry::size() {
 		return 9;
 }
 
-void CdtEntry::read(byte *addr) {
+void CdtEntry::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	if (Sword2Engine::isPsx()) {
@@ -122,7 +122,7 @@ void CdtEntry::write(byte *addr) {
 	writeS.writeByte(frameType);
 }
 
-void FrameHeader::read(byte *addr) {
+void FrameHeader::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	compSize = readS.readUint32LE();
@@ -143,7 +143,7 @@ void FrameHeader::write(byte *addr) {
 	writeS.writeUint16LE(height);
 }
 
-void MultiScreenHeader::read(byte *addr) {
+void MultiScreenHeader::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	palette = readS.readUint32LE();
@@ -171,7 +171,7 @@ void MultiScreenHeader::write(byte *addr) {
 	writeS.writeUint32LE(maskOffset);
 }
 
-void ScreenHeader::read(byte *addr) {
+void ScreenHeader::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	width = readS.readUint16LE();
@@ -187,7 +187,7 @@ void ScreenHeader::write(byte *addr) {
 	writeS.writeUint16LE(noLayers);
 }
 
-void LayerHeader::read(byte *addr) {
+void LayerHeader::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	x = readS.readUint16LE();
@@ -209,7 +209,7 @@ void LayerHeader::write(byte *addr) {
 	writeS.writeUint32LE(offset);
 }
 
-void TextHeader::read(byte *addr) {
+void TextHeader::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	noOfLines = readS.readUint32LE();
@@ -221,7 +221,7 @@ void TextHeader::write(byte *addr) {
 	writeS.writeUint32LE(noOfLines);
 }
 
-void PSXScreensEntry::read(byte *addr) {
+void PSXScreensEntry::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	bgPlxXres = readS.readUint16LE();
@@ -255,7 +255,7 @@ void PSXScreensEntry::write(byte *addr) {
 	writeS.writeUint32LE(fgPlxSize);
 }
 
-void PSXFontEntry::read(byte *addr) {
+void PSXFontEntry::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	offset = readS.readUint16LE() / 2;
@@ -273,7 +273,7 @@ void PSXFontEntry::write(byte *addr) {
 	writeS.writeUint16LE(charHeight);
 }
 
-void Parallax::read(byte *addr) {
+void Parallax::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	w = readS.readUint16LE();
@@ -287,7 +287,7 @@ void Parallax::write(byte *addr) {
 	writeS.writeUint16LE(h);
 }
 
-void ObjectMouse::read(byte *addr) {
+void ObjectMouse::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	x1 = readS.readSint32LE();
@@ -309,7 +309,7 @@ void ObjectMouse::write(byte *addr) {
 	writeS.writeSint32LE(pointer);
 }
 
-void ObjectWalkdata::read(byte *addr) {
+void ObjectWalkdata::read(const byte *addr) {
 	Common::MemoryReadStream readS(addr, size());
 
 	nWalkFrames = readS.readUint32LE();

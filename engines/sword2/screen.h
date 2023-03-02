@@ -188,7 +188,7 @@ struct Parallax {
 		return 4;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 

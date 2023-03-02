@@ -47,7 +47,7 @@ struct ObjectMouse {
 		return 24;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
@@ -271,7 +271,7 @@ struct ObjectWalkdata {
 		return 916;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
