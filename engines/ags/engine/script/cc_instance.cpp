@@ -1278,12 +1278,12 @@ RuntimeScriptValue ccInstance::GetSymbolAddress(const char *symname) const {
 	char altName[200];
 	snprintf(altName, sizeof(altName), "%s$", symname);
 	RuntimeScriptValue rval_null;
-
+	size_t len_altName = strlen(altName);
 	for (k = 0; k < instanceof->numexports; k++) {
 		if (strcmp(instanceof->exports[k], symname) == 0)
 			return exports[k];
 		// mangled function name
-		if (strncmp(instanceof->exports[k], altName, strlen(altName)) == 0)
+		if (strncmp(instanceof->exports[k], altName, len_altName) == 0)
 			return exports[k];
 	}
 	return rval_null;
