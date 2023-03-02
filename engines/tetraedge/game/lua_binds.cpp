@@ -1317,7 +1317,7 @@ static int tolua_ExportedFunctions_Save00(lua_State *L) {
 	error("#ferror in function 'Save': %d %d %s", err.index, err.array, err.type);
 }
 
-static void Wait(float seconds) {
+static void Wait(double seconds) {
 	Game *game = g_engine->getGame();
 	game->scene().waitTimeTimer().start();
 	game->scene().waitTimeTimer().stop();
@@ -1701,7 +1701,7 @@ static int tolua_ExportedFunctions_SetCharacterLookChar00(lua_State *L) {
 }
 
 static uint Random(uint max) {
-	return g_engine->getGame()->randomSource().getRandomNumber(max);
+	return g_engine->getGame()->randomSource().getRandomNumber(max - 1);
 }
 
 static int tolua_ExportedFunctions_Random00(lua_State *L) {
