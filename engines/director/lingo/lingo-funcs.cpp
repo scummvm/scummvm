@@ -199,14 +199,16 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 	// freeze this script context. We'll return to it after entering the next frame.
 	g_lingo->_freezeState = true;
 
-	if (calledfromgo)
-		g_lingo->resetLingoGo();
-
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
 
 		if (!stage->setNextMovie(movieFilenameRaw))
 			return;
+
+		// If we reached here from b_go, and the movie is getting swapped out,
+		// reset all of the custom event handlers.
+		if (calledfromgo)
+			g_lingo->resetLingoGo();
 
 		if (g_lingo->_updateMovieEnabled) {
 			// Save the movie when branching to another movie.
