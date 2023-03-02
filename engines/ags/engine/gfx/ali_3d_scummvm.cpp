@@ -329,6 +329,10 @@ void ScummVMRendererGraphicsDriver::SetScreenTint(int red, int green, int blue) 
 	}
 }
 
+void ScummVMRendererGraphicsDriver::SetStageScreen(const Size & /*sz*/, int /*x*/, int /*y*/) {
+	// unsupported, as using _stageVirtualScreen instead
+}
+
 void ScummVMRendererGraphicsDriver::RenderToBackBuffer() {
 	// Close unended batches, and issue a warning
 	assert(_actSpriteBatch == 0);
