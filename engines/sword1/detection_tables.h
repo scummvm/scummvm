@@ -125,7 +125,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
-	{ // 25th Anniversary rerelease
+	{ // 25th Anniversary rerelease / Steam DLC for Director's Cut
 		"sword1",
 		"25th Anniversary",
 		AD_ENTRY4s("scripts.clu",        "72b10193714e8c6e4daca51791c0db0c", 1087240,
