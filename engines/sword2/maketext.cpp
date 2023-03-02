@@ -43,6 +43,7 @@
 #include "common/system.h"
 #include "common/unicode-bidi.h"
 #include "common/textconsole.h"
+#include "common/file.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
@@ -68,6 +69,42 @@ namespace Sword2 {
 #define DUD		64	// the first "chequered flag" (dud) symbol in
 				// our character set is in the '@' position
 
+namespace {
+Common::String readLine(Common::ReadStream &stream) {
+	Common::String ret = stream.readString('\n');
+	if (ret.hasSuffix("\r"))
+		ret = ret.substr(0, ret.size() - 1);
+	return ret;
+}
+}  // end of anonymous namespace
+
+void FontRenderer::loadTranslations() {
+	Common::File bs2en, bs2, font;
+
+	if(bs2en.open("sub/bs2_en.dat") && bs2.open("sub/bs2.dat") && font.open("font/bs1.fnt")) {
+		while (!bs2.eos() && !bs2en.eos()) {
+			Common::String id = readLine(bs2);
+			Common::String val = readLine(bs2);
+			Common::String valen = readLine(bs2en);
+			Common::String iden = readLine(bs2en);
+			if (val.empty() || valen.empty())
+				continue;
+			debug(5, "id: %s->%s", Common::U32String(iden, Common::CodePage::kWindows936).encode().c_str(),
+			      Common::U32String(id, Common::CodePage::kWindows936).encode().c_str());
+			debug(5, "val: %s->%s", Common::U32String(valen, Common::CodePage::kWindows936).encode().c_str(),
+			      Common::U32String(val, Common::CodePage::kWindows936).encode().c_str());
+			_subTranslations[valen] = val;
+		}
+
+		while (!font.eos()) {
+			ChineseGlyph glyph;
+			if (font.read(glyph.bitmap, sizeof (glyph.bitmap)) != sizeof (glyph.bitmap))
+				break;
+			_chineseFont.push_back(glyph);
+		}
+	}
+}
+
 /**
  * This function creates a new text sprite. The sprite data contains a
  * FrameHeader, but not a standard file header.
@@ -84,9 +121,25 @@ namespace Sword2 {
  */
 
 byte *FontRenderer::makeTextSprite(const byte *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border) {
+	// Keep this at the function scope to make sure we hold a reference even in case of unintentional copies.
+	// Normally we should keep using the copy from hashmap.
+	Common::String translatedSentence;
+
 	debug(5, "makeTextSprite(\"%s\", maxWidth=%u)", sentence, maxWidth);
 
+	bool isTranslated = false;
+
 	_borderPen = border;
+
+	if (!_subTranslations.empty()) {
+		if (_subTranslations.tryGetVal(Common::String((const char *)sentence), translatedSentence)) {
+			isTranslated = true;
+			debug(5, "Translating <%s> -> <%s>", sentence, translatedSentence.decode(Common::CodePage::kWindows936).encode().c_str());
+			sentence = (const byte *)translatedSentence.c_str();
+		} else {
+			debug(5, "Keeping <%s> untranslated", sentence);
+		}
+	}
 
 	// Line- and character spacing are hard-wired, rather than being part
 	// of the resource.
@@ -112,18 +165,18 @@ byte *FontRenderer::makeTextSprite(const byte *sentence, uint16 maxWidth, uint8 
 	// Get details of sentence breakdown into array of LineInfo structures
 	// and get the number of lines involved
 
-	uint16 noOfLines = analyzeSentence(sentence, maxWidth, fontRes, (LineInfo *)line);
+	uint16 noOfLines = analyzeSentence(sentence, maxWidth, fontRes, (LineInfo *)line, isTranslated);
 
 	// Construct the sprite based on the info gathered - returns floating
 	// mem block
 
-	byte *textSprite = buildTextSprite(sentence, fontRes, pen, (LineInfo *)line, noOfLines);
+	byte *textSprite = buildTextSprite(sentence, fontRes, pen, (LineInfo *)line, noOfLines, isTranslated);
 
 	free(line);
 	return textSprite;
 }
 
-uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line) {
+uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line, bool isChinese) {
 	// joinWidth = how much extra space is needed to append a word to a
 	// line. NB. SPACE requires TWICE the '_charSpacing' to join a word
 	// to line
@@ -134,20 +187,31 @@ uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint
 	uint16 pos = 0;
 	bool firstWord = true;
 
-	byte ch;
+	line[0].skipSpace = false;
+	line[0].width = 0;
+	line[0].length = 0;
 
 	do {
 		uint16 wordWidth = 0;
 		uint16 wordLength = 0;
 
 		// Calculate the width of the word.
-
-		ch = sentence[pos++];
-
-		while (ch && ch != SPACE) {
-			wordWidth += charWidth(ch, fontRes) + _charSpacing;
-			wordLength++;
-			ch = sentence[pos++];
+		while (1) {
+			byte ch = sentence[pos];
+			if (ch == 0 || ch == SPACE)
+				break;
+			int w = 0, l = 0;
+			if (isChinese && (ch & 0x80)) {
+				w = kChineseWidth + _charSpacing;
+				l = 2;
+			} else {
+				w = charWidth(ch, fontRes) + _charSpacing;
+				l = 1;
+			}
+				
+			wordWidth += w;
+			wordLength += l;
+			pos += l;
 		}
 
 		// Don't include any character spacing at the end of the word.
@@ -156,12 +220,77 @@ uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint
 		// 'ch' is now the SPACE or NULL following the word
 		// 'pos' indexes to the position following 'ch'
 
+		// Word longer than line. Happens for Chinese since it doesn't use spaces.
+		if (wordWidth > maxWidth) {
+			pos -= wordLength;
+			// Add separator if needed.
+			if (!firstWord) {
+				byte ch = sentence[pos];
+				uint16 spaceNeededForOneCharacter = joinWidth;
+
+				if (isChinese && (ch & 0x80)) {
+					spaceNeededForOneCharacter += kChineseWidth + _charSpacing;
+				}
+				spaceNeededForOneCharacter += charWidth(ch, fontRes) + _charSpacing;
+
+				if (line[lineNo].width + spaceNeededForOneCharacter <= maxWidth) {
+					// The separator fits on this line.
+					line[lineNo].width += spaceNeededForOneCharacter;
+					line[lineNo].length += (1 + spaceNeededForOneCharacter);
+					line[lineNo].skipSpace = false;
+				} else {
+					// The word spills over to the next line, i.e.
+					// no separating space.
+					line[lineNo].skipSpace = true;
+					
+					lineNo++;
+
+					assert(lineNo < MAX_LINES);
+
+					line[lineNo].width = wordWidth;
+					line[lineNo].length = wordLength;
+					line[lineNo].skipSpace = false;
+				}
+			}
+
+			while (1) {
+				byte ch = sentence[pos];
+				if (ch == 0 || ch == SPACE)
+					break;
+				int w = 0, l = 0;
+				if (isChinese && (ch & 0x80)) {
+					w = kChineseWidth + _charSpacing;
+					l = 2;
+				} else {
+					w = charWidth(ch, fontRes) + _charSpacing;
+					l = 1;
+				}
+				if (line[lineNo].width + w <= maxWidth) {
+					line[lineNo].width += w;
+					line[lineNo].length += l;
+				} else {
+					line[lineNo].skipSpace = false;
+					lineNo++;
+					line[lineNo].skipSpace = false;
+					line[lineNo].width = w;
+					line[lineNo].length = l;
+				}
+				pos += l;
+			}
+
+			continue;
+		}
+
+		while (sentence[pos] == SPACE)
+			pos++;
+
 		if (firstWord) {
 			// This is the first word on the line, so no separating
 			// space is needed.
 
 			line[0].width = wordWidth;
 			line[0].length = wordLength;
+			line[0].skipSpace = false;
 			firstWord = false;
 		} else {
 			// See how much extra space this word will need to
@@ -177,6 +306,7 @@ uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint
 			} else {
 				// The word spills over to the next line, i.e.
 				// no separating space.
+				line[lineNo].skipSpace = true;
 
 				lineNo++;
 
@@ -184,9 +314,10 @@ uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint
 
 				line[lineNo].width = wordWidth;
 				line[lineNo].length = wordLength;
+				line[lineNo].skipSpace = false;
 			}
 		}
-	} while (ch);
+	} while (sentence[pos]);
 
 	return lineNo + 1;
 }
@@ -207,7 +338,7 @@ uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint
  *         error-signal character (chequered flag)
  */
 
-byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines) {
+byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines, bool isChinese) {
 	uint16 i;
 
 	// Find the width of the widest line in the output text
@@ -282,7 +413,28 @@ byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 
 		// width minus the 'overlap'
 
 		for (uint j = 0; j < line[i].length; j++) {
-			byte *charPtr = findChar(*currTxtLine++, charSet);
+			byte ch = *currTxtLine++;
+			if (isChinese && (ch & 0x80)) {
+				byte low = *currTxtLine++;
+				int fullidx;
+				j++;
+				if (ch >= 0xa1 && ch <= 0xfe
+				    && low >= 0xa1 && low <= 0xfe)
+					fullidx = (ch - 0xa1) * 94 + (low - 0xa1);
+				else
+					fullidx = -1;
+				if (fullidx < 0 || fullidx >= (int)_chineseFont.size())
+					fullidx = 2 * 94 + 30; // Question mark
+
+				assert(kChineseHeight == char_height);
+
+				copyCharRaw(_chineseFont[fullidx].bitmap, kChineseWidth, kChineseHeight, spritePtr, spriteWidth, pen);
+
+				spritePtr += kChineseWidth + _charSpacing;
+
+				continue;
+			}
+			byte *charPtr = findChar(ch, charSet);
 
 			frame_head.read(charPtr);
 
@@ -298,8 +450,10 @@ byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 
 			spritePtr += frame_head.width + _charSpacing;
 		}
 
+		sentence += line[i].length;
 		// Skip space at end of last word in this line
-		sentence += line[i].length + 1;
+		if (line[i].skipSpace)
+			sentence++;
 
 		if (Sword2Engine::isPsx())
 			linePtr += (char_height / 2 + _lineSpacing) * spriteWidth;
@@ -455,20 +609,23 @@ byte *FontRenderer::findChar(byte ch, byte *charSet) {
  *                    LETTER_COL to pen.
  */
 
-void FontRenderer::copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen) {
+void FontRenderer::copyChar(const byte *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen) {
 	FrameHeader frame;
 
 	frame.read(charPtr);
 
-	byte *source = charPtr + FrameHeader::size();
+	copyCharRaw(charPtr + FrameHeader::size(), frame.width, frame.height, spritePtr, spriteWidth, pen);
+}
+
+void FontRenderer::copyCharRaw(const byte *source, uint16 charWidth, uint16 charHeight, byte *spritePtr, uint16 spriteWidth, uint8 pen) {
 	byte *rowPtr = spritePtr;
 
-	for (uint i = 0; i < frame.height; i++) {
+	for (uint i = 0; i < charHeight; i++) {
 		byte *dest = rowPtr;
 
 		if (pen) {
 			// Use the specified colors
-			for (uint j = 0; j < frame.width; j++) {
+			for (uint j = 0; j < charWidth; j++) {
 				switch (*source++) {
 				case 0:
 					// Do nothing if source pixel is zero,
@@ -494,8 +651,8 @@ void FontRenderer::copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, 
 			// Pen is zero, so just copy character sprites
 			// directly into text sprite without remapping colors.
 			// Apparently overlapping is never considered here?
-			memcpy(dest, source, frame.width);
-			source += frame.width;
+			memcpy(dest, source, charWidth);
+			source += charWidth;
 		}
 		rowPtr += spriteWidth;
 	}

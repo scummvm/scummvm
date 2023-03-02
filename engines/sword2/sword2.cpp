@@ -204,6 +204,8 @@ Common::Error Sword2Engine::run() {
 	_fontRenderer = new FontRenderer(this);
 	_sound = new Sound(this);
 	_mouse = new Mouse(this);
+	
+	_fontRenderer->loadTranslations();
 
 	registerDefaultSettings();
 	readSettings();
