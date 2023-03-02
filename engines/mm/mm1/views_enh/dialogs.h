@@ -35,6 +35,7 @@
 #include "mm/mm1/views_enh/map_popup.h"
 #include "mm/mm1/views_enh/quick_ref.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
+#include "mm/mm1/views_enh/locations/inn.h"
 #include "mm/mm1/views_enh/locations/market.h"
 #include "mm/mm1/views_enh/locations/tavern.h"
 #include "mm/mm1/views_enh/locations/temple.h"
@@ -50,10 +51,10 @@ struct Dialogs {
 private:
 	Views::Characters _characters;
 	Views::CreateCharacters _createCharacters;
-	Views::Locations::Inn _inn;
 	Views::Protect _protect;
 	Views::Title _title;
 	ViewsEnh::Interactions::Statue _statue;
+	ViewsEnh::Locations::Inn _inn;
 	ViewsEnh::Locations::Market _market;
 	ViewsEnh::Locations::Tavern _tavern;
 	ViewsEnh::Locations::Temple _temple;

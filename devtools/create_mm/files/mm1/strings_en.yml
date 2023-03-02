@@ -90,12 +90,12 @@ dialogs:
 		5: "inn in which you stayed"
 		6: "by pressing 'enter'"	
 	inn:
-		title: "(%c) inn of "
+		title: "(%c) Inn of "
 		to_view: "to view"
-		ctrl: "(ctrl)-"
-		add_remove: "add/remove"
-		exit: "'x' exit inn"
-		full: "*** party is full ***"
+		ctrl: "(Ctrl)-"
+		add_remove: "Add/Remove"
+		exit: "'x' Exit inn"
+		full: "*** Party is full ***"
 	main_menu:
 		title1: "Might and Magic"
 		title2: "Secret of the Inner Sanctum"
