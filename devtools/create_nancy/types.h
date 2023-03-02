@@ -61,7 +61,7 @@ struct ConditionalDialogue {
 };
 
 struct GoodbyeSceneChange {
-	Common::Array<int16> sceneIDs;
+	Common::Array<uint16> sceneIDs;
 	Common::Array<EventFlagDescription> flagConditions;
 	EventFlagDescription flagToSet;
 };

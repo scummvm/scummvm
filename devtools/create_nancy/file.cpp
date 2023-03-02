@@ -220,11 +220,10 @@ void writeToFile(File &file, const Hint &obj) {
 }
 
 void writeMultilangArray(File &file, const Common::Array<Common::Array<const char *>> &array) {
-    file.writeUint16(array.size());
     Common::Array<uint32> offsets;
     uint32 offsetsOffset = file.pos();
 
-    file.skip(array.size() * 4);
+    file.skip(array.size() * 4 + 4 + 2);
 
     for (uint i = 0; i < array.size(); ++i) {
         offsets.push_back(file.pos());
@@ -234,6 +233,8 @@ void writeMultilangArray(File &file, const Common::Array<Common::Array<const cha
     uint end = file.pos();
     file.seek(offsetsOffset);
 
+    file.writeUint16(array.size());
+    file.writeUint32(end);
     for (uint i = 0; i < array.size(); ++i) {
         file.writeUint32(offsets[i]);
     }
