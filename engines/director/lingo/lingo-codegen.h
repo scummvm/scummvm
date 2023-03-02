@@ -57,6 +57,7 @@ public:
 	LingoArchive *_assemblyArchive;
 	ScriptContext *_assemblyContext;
 	Node *_assemblyAST;
+	int32 _assemblyId;
 	ScriptData *_currentAssembly;
 	bool _indef;
 	uint _linenumber;

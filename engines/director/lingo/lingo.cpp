@@ -248,8 +248,11 @@ LingoArchive::~LingoArchive() {
 	// LctxContexts has a huge overlap with scriptContexts.
 	for (ScriptContextHash::iterator it = lctxContexts.begin(); it != lctxContexts.end(); ++it){
 		ScriptContext *script = it->_value;
-		if (script->getOnlyInLctxContexts())
-			delete script;
+		if (script->getOnlyInLctxContexts()) {
+			*script->_refCount -= 1;
+			if (*script->_refCount <= 0)
+				delete script;
+		}
 	}
 
 	for (int i = 0; i <= kMaxScriptType; i++) {
@@ -258,6 +261,15 @@ LingoArchive::~LingoArchive() {
 			if (*it->_value->_refCount <= 0)
 				delete it->_value;
 		}
+	}
+
+	for (auto it : factoryContexts) {
+		for (auto jt : *it._value) {
+			*jt._value->_refCount -= 1;
+			if (*jt._value->_refCount <= 0)
+				delete jt._value;
+		}
+		delete it._value;
 	}
 }
 
@@ -301,6 +313,22 @@ Common::String LingoArchive::formatFunctionList(const char *prefix) {
 			}
 			result += ":\n";
 			result += (*it->_value).formatFunctionList(Common::String::format("%s    ", prefix).c_str());
+		}
+	}
+	result += Common::String::format("%sFactories:\n", prefix);
+	if (factoryContexts.empty()) {
+		result += Common::String::format("%s  [empty]\n", prefix);
+	} else {
+		for (auto it : factoryContexts) {
+			result += Common::String::format("%s  %d:\n", prefix, it._key);
+			if (it._value->empty()) {
+				result += Common::String::format("%s    [empty]\n", prefix);
+			} else {
+				for (auto jt : *it._value) {
+					result += Common::String::format("%s    %s:\n", prefix, jt._key.c_str());
+					result += jt._value->formatFunctionList(Common::String::format("%s      ", prefix).c_str());
+				}
+			}
 		}
 	}
 	return result;

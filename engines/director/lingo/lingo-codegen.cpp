@@ -95,6 +95,7 @@ LingoCompiler::LingoCompiler() {
 	_assemblyArchive = nullptr;
 	_currentAssembly = nullptr;
 	_assemblyContext = nullptr;
+	_assemblyId = -1;
 
 	_indef = false;
 	_methodVars = nullptr;
@@ -119,7 +120,8 @@ ScriptContext *LingoCompiler::compileAnonymous(const Common::U32String &code) {
 ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, const Common::String &scriptName, bool anonymous, uint32 preprocFlags) {
 	_assemblyArchive = archive;
 	_assemblyAST = nullptr;
-	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, type, id.member);
+	_assemblyId = id.member;
+	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, type, _assemblyId);
 	_currentAssembly = new ScriptData;
 
 	_methodVars = new VarTypeHash;
@@ -136,6 +138,7 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 		delete _assemblyContext;
 		delete _currentAssembly;
 		delete _methodVars;
+		_assemblyId = -1;
 		return nullptr;
 	}
 
@@ -146,6 +149,7 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 		delete _currentAssembly;
 		delete _methodVars;
 		delete _assemblyAST;
+		_assemblyId = -1;
 		return nullptr;
 	}
 
@@ -226,6 +230,7 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 	_assemblyAST = nullptr;
 	_assemblyContext = nullptr;
 	_assemblyArchive = nullptr;
+	_assemblyId = -1;
 	return mainContext;
 }
 
@@ -375,6 +380,16 @@ void LingoCompiler::registerFactory(Common::String &name) {
 	_assemblyContext->setName(name);
 	_assemblyContext->setFactory(true);
 	g_lingo->_globalvars[name] = _assemblyContext;
+	// Add the factory to the list in the archive
+	if (_assemblyArchive) {
+		if (!_assemblyArchive->factoryContexts.contains(_assemblyId)) {
+			_assemblyArchive->factoryContexts[_assemblyId] = new Common::HashMap<Common::String, ScriptContext *>();
+		}
+		if (!_assemblyArchive->factoryContexts[_assemblyId]->contains(name)) {
+			*_assemblyContext->_refCount += 1;
+			(*_assemblyArchive->factoryContexts[_assemblyId])[name] = _assemblyContext;
+		}
+	}
 }
 
 void LingoCompiler::updateLoopJumps(uint nextTargetPos, uint exitTargetPos) {
