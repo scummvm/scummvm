@@ -30,7 +30,6 @@ MODULE_OBJS = \
   state/scene.o \
   commontypes.o \
   console.o \
-  constants.o \
   cursor.o \
   decompress.o \
   dialogs.o \

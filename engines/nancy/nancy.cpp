@@ -35,7 +35,6 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/dialogs.h"
 #include "engines/nancy/console.h"
-#include "engines/nancy/constants.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/action/primaryvideo.h"
@@ -51,7 +50,13 @@ namespace Nancy {
 
 NancyEngine *g_nancy;
 
-NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine(syst), _gameDescription(gd), _system(syst) {
+NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
+		Engine(syst),
+		_gameDescription(gd),
+		_system(syst),
+		_datFileMajorVersion(0),
+		_datFileMinorVersion(1) {
+
 	g_nancy = this;
 
 	_randomSource = new Common::RandomSource("Nancy");
@@ -151,8 +156,8 @@ Common::Platform NancyEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-const GameConstants &NancyEngine::getConstants() const {
-	return gameConstants[getGameType() - 1];
+const StaticData &NancyEngine::getStaticData() const {
+	return _staticData;
 }
 
 void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState overridePrevious) {
@@ -318,6 +323,9 @@ void NancyEngine::bootGameEngine() {
 	_resource = new ResourceManager();
 	_resource->initialize();
 
+	// Read nancy.dat
+	readDatFile();
+
 	// Setup mixer
 	syncSoundSettings();
 
@@ -338,9 +346,7 @@ void NancyEngine::bootGameEngine() {
 		"MAP", "CD", "TBOX", "CURS", "VIEW", "MSND",
 		"BUOK", "BUDE", "BULS", "GLOB", "SLID",
 		"SET", "CURT", "CANT", "TH1", "TH2",
-		"QUOT", "TMOD",
-		// Used in nancy2
-		"CLOK", "SPEC"
+		"QUOT", "TMOD", "CLOK", "SPEC"
 	};
 
 	for (auto const &n : names) {
@@ -486,6 +492,36 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 		ser.syncAsSint16LE(time);
 		_fastMovementTimeDelta = time;
 	}
+}
+
+void NancyEngine::readDatFile() {
+	Common::SeekableReadStream *datFile = SearchMan.createReadStreamForMember("nancy.dat");
+	if (!datFile) {
+		error("Unable to find nancy.dat");
+	}
+
+	if (datFile->readUint32BE() != MKTAG('N', 'N', 'C', 'Y')) {
+		error("nancy.dat is invalid");
+	}
+
+	byte major = datFile->readByte();
+	byte minor = datFile->readByte();
+	if (major != _datFileMajorVersion || minor != _datFileMinorVersion) {	
+		error("Incorrect nancy.dat version. Expected '%d.%d', found %d.%d",
+			_datFileMajorVersion, _datFileMinorVersion, major, minor);
+	}
+
+	uint16 numGames = datFile->readUint16LE();
+	if (getGameType() > numGames) {
+		warning("Data for game type %d is not in nancy.dat", numGames);
+		return;
+	}
+
+	// Seek to offset containing current game
+	datFile->skip((getGameType() - 1) * 4);
+	datFile->seek(datFile->readUint32LE());
+
+	_staticData.readData(*datFile, _gameDescription->desc.language);
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {

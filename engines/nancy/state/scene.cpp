@@ -29,7 +29,6 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
-#include "engines/nancy/constants.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -235,7 +234,7 @@ void Scene::setHeldItem(int16 id)  {
 }
 
 void Scene::setEventFlag(int16 label, NancyFlag flag) {
-	if (label > -1 && (uint)label < g_nancy->getConstants().numEventFlags) {
+	if (label > -1 && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		_flags.eventFlags[label] = flag;
 	}
 }
@@ -245,7 +244,7 @@ void Scene::setEventFlag(EventFlagDescription eventFlag) {
 }
 
 bool Scene::getEventFlag(int16 label, NancyFlag flag) const {
-	if (label > -1 && (uint)label < g_nancy->getConstants().numEventFlags) {
+	if (label > -1 && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		return _flags.eventFlags[label] == flag;
 	} else {
 		return false;
@@ -345,7 +344,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	// TODO hardcoded inventory size
 	auto &order = getInventoryBox()._order;
 	uint prevSize = getInventoryBox()._order.size();
-	getInventoryBox()._order.resize(g_nancy->getConstants().numItems);
+	getInventoryBox()._order.resize(g_nancy->getStaticData().numItems);
 
 	if (ser.isSaving()) {
 		for (uint i = prevSize; i < order.size(); ++i) {
@@ -353,7 +352,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		}
 	}
 
-	ser.syncArray(order.data(), g_nancy->getConstants().numItems, Common::Serializer::Sint16LE);
+	ser.syncArray(order.data(), g_nancy->getStaticData().numItems, Common::Serializer::Sint16LE);
 
 	while (order.size() && order.back() == -1) {
 		order.pop_back();
@@ -365,7 +364,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	}
 
 	// TODO hardcoded inventory size
-	ser.syncArray(_flags.items.data(), g_nancy->getConstants().numItems, Common::Serializer::Byte);
+	ser.syncArray(_flags.items.data(), g_nancy->getStaticData().numItems, Common::Serializer::Byte);
 	ser.syncAsSint16LE(_flags.heldItem);
 	g_nancy->_cursorManager->setCursorItemID(_flags.heldItem);
 
@@ -380,7 +379,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	g_nancy->setTotalPlayTime((uint32)_timers.lastTotalTime);
 
 	// TODO hardcoded number of event flags
-	ser.syncArray(_flags.eventFlags.data(), g_nancy->getConstants().numEventFlags, Common::Serializer::Byte);
+	ser.syncArray(_flags.eventFlags.data(), g_nancy->getStaticData().numEventFlags, Common::Serializer::Byte);
 
 	ser.syncArray<uint16>(_flags.sceneHitCount, (uint16)2001, Common::Serializer::Uint16LE);
 
@@ -414,14 +413,14 @@ void Scene::synchronize(Common::Serializer &ser) {
 }
 
 void Scene::init() {
-	_flags.eventFlags = Common::Array<NancyFlag>(g_nancy->getConstants().numEventFlags, kFalse);
+	_flags.eventFlags = Common::Array<NancyFlag>(g_nancy->getStaticData().numEventFlags, kFalse);
 
 	// Does this ever get used?
 	for (uint i = 0; i < 2001; ++i) {
 		_flags.sceneHitCount[i] = 0;
 	}
 
-	_flags.items = Common::Array<NancyFlag>(g_nancy->getConstants().numItems, kFalse);
+	_flags.items = Common::Array<NancyFlag>(g_nancy->getStaticData().numItems, kFalse);
 
 	_timers.lastTotalTime = 0;
 	_timers.playerTime = g_nancy->_startTimeHours * 3600000;
@@ -619,12 +618,8 @@ void Scene::run() {
 	}
 
 	// Handle invisible map button
-	for (uint i = 0; i < ARRAYSIZE(g_nancy->getConstants().mapAccessSceneIDs); ++i) {
-		if (g_nancy->getConstants().mapAccessSceneIDs[i] == -1) {
-			break;
-		}
-
-		if ((int)_sceneState.currentScene.sceneID == g_nancy->getConstants().mapAccessSceneIDs[i]) {
+	for (uint16 id : g_nancy->getStaticData().mapAccessSceneIDs) {
+		if ((int)_sceneState.currentScene.sceneID == id) {
 			if (_mapHotspot.contains(input.mousePos)) {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
@@ -632,6 +627,8 @@ void Scene::run() {
 					requestStateChange(NancyState::kMap);
 				}
 			}
+
+			break;
 		}
 	}
 
@@ -682,13 +679,9 @@ void Scene::initStaticData() {
 }
 
 void Scene::clearSceneData() {
-	// only clear select flags
-	for (uint i = 0; i < ARRAYSIZE(g_nancy->getConstants().eventFlagsToClearOnSceneChange); ++i) {
-		if (g_nancy->getConstants().eventFlagsToClearOnSceneChange[i] == -1) {
-			break;
-		}
-
-		_flags.eventFlags[g_nancy->getConstants().eventFlagsToClearOnSceneChange[i]] = kFalse;
+	// Clear generic flags only
+	for (uint16 id : g_nancy->getStaticData().genericEventFlags) {
+		_flags.eventFlags[id] = kFalse;
 	}
 
 	clearLogicConditions();

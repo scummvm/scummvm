@@ -64,7 +64,6 @@ class GraphicsManager;
 class CursorManager;
 class CheatDialog;
 class NancyConsole;
-struct GameConstants;
 
 namespace State {
 class State;
@@ -93,7 +92,7 @@ public:
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
 
-	const GameConstants &getConstants() const;
+	const StaticData &getStaticData() const;
 
 	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
 	NancyState::NancyState getState() { return _gameFlow.curState; }
@@ -150,12 +149,17 @@ private:
 	void readChunkList(const IFF &boot, Common::Serializer &ser, const Common::String &prefix);
 
 	void readBootSummary(const IFF &boot);
+	void readDatFile();
 
 	Common::Error synchronize(Common::Serializer &serializer);
 
 	bool isCompressed();
 
 	bool _cheatTypeIsEventFlag;
+
+	StaticData _staticData;
+	const byte _datFileMajorVersion;
+	const byte _datFileMinorVersion;
 
 	GameFlow _gameFlow;
 	OSystem *_system;
