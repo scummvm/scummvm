@@ -376,8 +376,8 @@ size_t ScummVMRendererGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &bat
 	for (; (from < _spriteList.size()) && (_spriteList[from].node == batch.ID); ++from) {
 		const auto &sprite = _spriteList[from];
 		if (sprite.ddb == nullptr) {
-			if (_nullSpriteCallback)
-				_nullSpriteCallback(sprite.x, sprite.y);
+			if (_spriteEvtCallback)
+				_spriteEvtCallback(sprite.x, sprite.y);
 			else
 				error("Unhandled attempt to draw null sprite");
 

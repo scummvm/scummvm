@@ -34,7 +34,7 @@ namespace Engine {
 GraphicsDriverBase::GraphicsDriverBase()
 	: _pollingCallback(nullptr)
 	, _drawScreenCallback(nullptr)
-	, _nullSpriteCallback(nullptr)
+	, _spriteEvtCallback(nullptr)
 	, _initGfxCallback(nullptr) {
 	// Initialize default sprite batch, it will be used when no other batch was activated
 	_actSpriteBatch = 0;
@@ -275,15 +275,15 @@ void VideoMemoryGraphicsDriver::DestroyAllStageScreens() {
 	_stageScreens.clear();
 }
 
-IDriverDependantBitmap *VideoMemoryGraphicsDriver::DoNullSpriteCallback(int x, int y) {
-	if (!_nullSpriteCallback)
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::DoSpriteEvtCallback(int evt, int data) {
+	if (!_spriteEvtCallback)
 		error("Unhandled attempt to draw null sprite");
 	_stageScreenDirty = false;
 	// NOTE: this is not clear whether return value of callback may be
 	// relied on. Existing plugins do not seem to return anything but 0,
 	// even if they handle this event. This is why we also set
 	// _stageScreenDirty in certain plugin API function implementations.
-	_stageScreenDirty |= _nullSpriteCallback(x, y) != 0;
+	_stageScreenDirty |= _spriteEvtCallback(evt, data) != 0;
 	if (_stageScreenDirty) {
 		return UpdateStageScreenDDB(_rendSpriteBatch);
 	}

@@ -92,7 +92,7 @@ struct RenderMatrixes {
 
 
 typedef void (*GFXDRV_CLIENTCALLBACK)();
-typedef bool (*GFXDRV_CLIENTCALLBACKXY)(int x, int y);
+typedef bool (*GFXDRV_CLIENTCALLBACKEVT)(int evt, int data);
 typedef void (*GFXDRV_CLIENTCALLBACKINITGFX)(void *data);
 
 class IGraphicsDriver {
@@ -124,10 +124,10 @@ public:
 	// TODO: get rid of draw screen callback at some point when all fade functions are more or less grouped in one
 	virtual void SetCallbackToDrawScreen(GFXDRV_CLIENTCALLBACK callback, GFXDRV_CLIENTCALLBACK post_callback) = 0;
 	virtual void SetCallbackOnInit(GFXDRV_CLIENTCALLBACKINITGFX callback) = 0;
-	// The NullSprite callback is called in the main render loop when a
-	// null sprite is encountered. You can use this to hook into the rendering
-	// process.
-	virtual void SetCallbackForNullSprite(GFXDRV_CLIENTCALLBACKXY callback) = 0;
+	// The event callback is called in the main render loop when a
+	// event entry is encountered inside a sprite list.
+	// You can use this to hook into the rendering process.
+	virtual void SetCallbackOnSpriteEvt(GFXDRV_CLIENTCALLBACKEVT callback) = 0;
 	// Clears the screen rectangle. The coordinates are expected in the **native game resolution**.
 	virtual void ClearRectangle(int x1, int y1, int x2, int y2, RGB *colorToUse) = 0;
 	// Gets closest recommended bitmap format (currently - only color depth) for the given original format.
