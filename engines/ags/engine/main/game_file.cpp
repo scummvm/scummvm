@@ -175,6 +175,8 @@ HError load_game_file() {
 		return err;
 
 	err = (HError)ReadGameData(ents, src.InputStream.get(), src.DataVersion);
+	if (!err)
+		return err;
 	src.InputStream.reset();
 
 	//-------------------------------------------------------------------------
