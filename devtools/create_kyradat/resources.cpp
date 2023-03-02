@@ -26,6 +26,7 @@
 #include "resources/lok_amiga.h"
 #include "resources/lok_amiga_english.h"
 #include "resources/lok_amiga_german.h"
+#include "resources/lok_amiga_italian.h"
 
 #include "resources/lok_dos_demo.h"
 #include "resources/lok_dos_demo_english.h"
@@ -264,6 +265,29 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1NewGameString, kKyra1, kPlatformAmiga, kNoSpecial, DE_DEU, &k1NewGameStringAmigaGermanProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformAmiga, kNoSpecial, DE_DEU, &k1ConfigStringsAmigaGermanProvider },
 	{ k1CreditsStrings, kKyra1, kPlatformAmiga, kNoSpecial, DE_DEU, &k1CreditsStringsAmigaGermanProvider },
+	{ k1IntroStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1IntroStringsAmigaItalianProvider },
+	{ k1ItemNames, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1ItemNamesAmigaItalianProvider },
+	{ k1TakenStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1TakenStringsAmigaItalianProvider },
+	{ k1PlacedStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1PlacedStringsAmigaItalianProvider },
+	{ k1DroppedStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1DroppedStringsAmigaItalianProvider },
+	{ k1NoDropStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1NoDropStringsAmigaItalianProvider },
+	{ k1PutDownString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1PutDownStringAmigaItalianProvider },
+	{ k1WaitAmuletString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1WaitAmuletStringAmigaItalianProvider },
+	{ k1BlackJewelString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1BlackJewelStringAmigaItalianProvider },
+	{ k1HealingTipString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1HealingTipStringAmigaItalianProvider },
+	{ k1PoisonGoneString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1PoisonGoneStringAmigaItalianProvider },
+	{ k1ThePoisonStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1ThePoisonStringsAmigaItalianProvider },
+	{ k1FluteStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1FluteStringsAmigaItalianProvider },
+	{ k1WispJewelStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1WispJewelStringsAmigaItalianProvider },
+	{ k1MagicJewelStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1MagicJewelStringsAmigaItalianProvider },
+	{ k1FlaskFullString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1FlaskFullStringAmigaItalianProvider },
+	{ k1FullFlaskString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1FullFlaskStringAmigaItalianProvider },
+	{ k1OutroHomeString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1OutroHomeStringAmigaItalianProvider },
+	{ k1VeryCleverString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1VeryCleverStringAmigaItalianProvider },
+	{ k1GUIStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1GUIStringsAmigaItalianProvider },
+	{ k1NewGameString, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1NewGameStringAmigaItalianProvider },
+	{ k1ConfigStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1ConfigStringsAmigaItalianProvider },
+	{ k1CreditsStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1CreditsStringsAmigaItalianProvider },
 	{ k1KallakWritingSeq, kKyra1, kPlatformDOS, kNoSpecial, UNK_LANG, &k1KallakWritingSeqDOSProvider },
 	{ k1MalcolmTreeSeq, kKyra1, kPlatformDOS, kNoSpecial, UNK_LANG, &k1MalcolmTreeSeqDOSProvider },
 	{ k1WestwoodLogoSeq, kKyra1, kPlatformDOS, kNoSpecial, UNK_LANG, &k1WestwoodLogoSeqDOSProvider },

@@ -36,6 +36,7 @@ const Game kyra1Games[] = {
 
 	{ kKyra1, kPlatformAmiga, kNoSpecial, EN_ANY },
 	{ kKyra1, kPlatformAmiga, kNoSpecial, DE_DEU },
+	{ kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA },
 
 	{ kKyra1, kPlatformDOS, kNoSpecial, EN_ANY },
 	{ kKyra1, kPlatformDOS, kNoSpecial, DE_DEU },
