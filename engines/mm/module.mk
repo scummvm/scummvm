@@ -146,6 +146,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/statue.o \
 	mm1/views_enh/locations/location.o \
 	mm1/views_enh/locations/market.o \
+	mm1/views_enh/locations/tavern.o \
 	mm1/views_enh/locations/temple.o \
 	mm1/views_enh/locations/training.o \
 	mm1/maps/maps.o \

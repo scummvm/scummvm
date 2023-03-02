@@ -516,6 +516,12 @@ enhdialogs:
 		select: "Select"
 		exit: "Exit"
 		non_caster: "Not a spell caster..."
+	tavern:
+		title: "Tavern"
+		drink: "\x01""37Drink"
+		gather: "\x01""37Gather"
+		tip: "\x01""37Tip"
+		rumor: "\x01""37Rumors"
 	temple:
 		title: "Temple"
 		heal: "\x01""37Heal"

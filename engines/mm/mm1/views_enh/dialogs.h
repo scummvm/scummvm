@@ -36,6 +36,7 @@
 #include "mm/mm1/views_enh/quick_ref.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/locations/market.h"
+#include "mm/mm1/views_enh/locations/tavern.h"
 #include "mm/mm1/views_enh/locations/temple.h"
 #include "mm/mm1/views_enh/locations/training.h"
 #include "mm/mm1/views_enh/spells/cast_spell.h"
@@ -54,6 +55,7 @@ private:
 	Views::Title _title;
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Locations::Market _market;
+	ViewsEnh::Locations::Tavern _tavern;
 	ViewsEnh::Locations::Temple _temple;
 	ViewsEnh::Locations::Training _training;
 	ViewsEnh::Spells::CastSpell _castSpell;

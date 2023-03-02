@@ -197,11 +197,6 @@ void Training::train() {
 	}
 }
 
-void Training::timeout() {
-	checkCharacter();
-	Location::timeout();
-}
-
 void Training::messageShown() {
 	checkCharacter();
 	redraw();

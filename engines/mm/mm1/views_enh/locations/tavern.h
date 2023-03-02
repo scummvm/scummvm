@@ -19,44 +19,37 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_LOCATIONS_TRAINING_H
-#define MM1_VIEWS_ENH_LOCATIONS_TRAINING_H
+#ifndef MM1_VIEWS_ENH_LOCATIONS_TAVERN_H
+#define MM1_VIEWS_ENH_LOCATIONS_TAVERN_H
 
 #include "mm/mm1/views_enh/locations/location.h"
 #include "mm/mm1/data/character.h"
-#include "mm/mm1/data/locations.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
-class Training : public Location, public TrainingData {
-private:
-	Shared::Xeen::SpriteResource _trainSprite;
-	int _currLevel = 0;
-	CharacterClass _class = KNIGHT;
-	int _expTotal = 0;
-	int _remainingExp = 0;
-	int _expAmount = 0;
-	int _cost = 0, _cost2;
-	bool _canTrain = false;
-	bool _canAfford = false;
+class Tavern : public Location {
 private:
 	/**
-	 * Checks whether a character can train
+	 * Have a drink
 	 */
-	void checkCharacter();
+	void haveADrink();
 
 	/**
-	 * Validates if training is allowed, then trains.
+	 * Tip the bartender
 	 */
-	void train();
+	void tipBartender();
+
+	/**
+	 * Listen for rumors
+	 */
+	void listenForRumors();
 
 public:
-	Training();
+	Tavern();
 
-	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgGame(const GameMessage &msg);
 	bool msgKeypress(const KeypressMessage &msg) override;
