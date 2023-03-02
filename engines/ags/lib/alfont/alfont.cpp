@@ -955,8 +955,11 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 
 	/* is it under or over or too far to the right of the clipping rect then
 	   we can assume the string is clipped */
-	if ((y + f->face_h < bmp->ct) || (y > bmp->cb) || (x > bmp->cr))
+	if ((y + f->face_h < bmp->ct) || (y > bmp->cb) || (x > bmp->cr)) {
+		if(s_pointer) free(s_pointer);
+		s_pointer = NULL;
 		return;
+	}
 
 	//build transparency
 	if (f->transparency != 255) {
@@ -2052,8 +2055,11 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 
 	/* is it under or over or too far to the right of the clipping rect then
 	   we can assume the string is clipped */
-	if ((y + f->face_h < bmp->ct) || (y > bmp->cb) || (x > bmp->cr))
+	if ((y + f->face_h < bmp->ct) || (y > bmp->cb) || (x > bmp->cr)) {
+		if(s_pointer) free(s_pointer);
+		s_pointer = NULL;
 		return;
+	}
 
 	//build transparency
 	if (f->transparency != 255) {
