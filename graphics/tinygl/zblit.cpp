@@ -259,12 +259,12 @@ public:
 	                      int originX, int originY, float aTint, float rTint, float gTint, float bTint);
 
 	//Utility function that calls the correct blitting function.
-	template <bool kDisableBlending, bool kDisableColoring, bool kDisableTransform, bool kFlipVertical, bool kFlipHorizontal, bool kEnableAlphaBlending>
+	template <bool kDisableBlending, bool kDisableColoring, bool kDisableTransform, bool kFlipVertical, bool kFlipHorizontal, bool kEnableAlphaBlending, bool kEnableOpaqueBlit>
 	void tglBlitGeneric(const BlitTransform &transform) {
 		assert(!_zBuffer);
 
 		if (kDisableTransform) {
-			if (kDisableBlending && kDisableColoring && kFlipVertical == false && kFlipHorizontal == false) {
+			if (kEnableOpaqueBlit && kDisableColoring && kFlipVertical == false && kFlipHorizontal == false) {
 				tglBlitOpaque(transform._destinationRectangle.left, transform._destinationRectangle.top,
 					transform._sourceRectangle.left, transform._sourceRectangle.top,
 					transform._sourceRectangle.width() , transform._sourceRectangle.height());
@@ -717,45 +717,54 @@ void tglBlitZBuffer(TinyGL::BlitImage *blitImage, int x, int y) {
 namespace TinyGL {
 namespace Internal {
 
-template <bool kEnableAlphaBlending, bool kDisableColor, bool kDisableTransform, bool kDisableBlend>
+template <bool kEnableAlphaBlending, bool kEnableOpaqueBlit, bool kDisableColor, bool kDisableTransform, bool kDisableBlend>
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	if (transform._flipHorizontally) {
 		if (transform._flipVertically) {
-			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, true, kEnableAlphaBlending>(transform);
+			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, true, kEnableAlphaBlending, kEnableOpaqueBlit>(transform);
 		} else {
-			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, true, kEnableAlphaBlending>(transform);
+			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, true, kEnableAlphaBlending, kEnableOpaqueBlit>(transform);
 		}
 	} else if (transform._flipVertically) {
-		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, false, kEnableAlphaBlending>(transform);
+		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, false, kEnableAlphaBlending, kEnableOpaqueBlit>(transform);
 	} else {
-		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, false, kEnableAlphaBlending>(transform);
+		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, false, kEnableAlphaBlending, kEnableOpaqueBlit>(transform);
 	}
 }
 
-template <bool kEnableAlphaBlending, bool kDisableColor, bool kDisableTransform>
+template <bool kEnableAlphaBlending, bool kEnableOpaqueBlit, bool kDisableColor, bool kDisableTransform>
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableBlend) {
 	if (disableBlend) {
-		tglBlit<kEnableAlphaBlending, kDisableColor, kDisableTransform, true>(blitImage, transform);
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, kDisableColor, kDisableTransform, true>(blitImage, transform);
 	} else {
-		tglBlit<kEnableAlphaBlending, kDisableColor, kDisableTransform, false>(blitImage, transform);
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, kDisableColor, kDisableTransform, false>(blitImage, transform);
 	}
 }
 
-template <bool kEnableAlphaBlending, bool kDisableColor>
+template <bool kEnableAlphaBlending, bool kEnableOpaqueBlit, bool kDisableColor>
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableTransform, bool disableBlend) {
 	if (disableTransform) {
-		tglBlit<kEnableAlphaBlending, kDisableColor, true>(blitImage, transform, disableBlend);
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, kDisableColor, true>(blitImage, transform, disableBlend);
 	} else {
-		tglBlit<kEnableAlphaBlending, kDisableColor, false>(blitImage, transform, disableBlend);
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, kDisableColor, false>(blitImage, transform, disableBlend);
+	}
+}
+
+template <bool kEnableAlphaBlending, bool kEnableOpaqueBlit>
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableColor, bool disableTransform, bool disableBlend) {
+	if (disableColor) {
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, true>(blitImage, transform, disableTransform, disableBlend);
+	} else {
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, false>(blitImage, transform, disableTransform, disableBlend);
 	}
 }
 
 template <bool kEnableAlphaBlending>
-void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableColor, bool disableTransform, bool disableBlend) {
-	if (disableColor) {
-		tglBlit<kEnableAlphaBlending, true>(blitImage, transform, disableTransform, disableBlend);
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool enableOpaqueBlit, bool disableColor, bool disableTransform, bool disableBlend) {
+	if (enableOpaqueBlit) {
+		tglBlit<kEnableAlphaBlending, true>(blitImage, transform, disableColor, disableTransform, disableBlend);
 	} else {
-		tglBlit<kEnableAlphaBlending, false>(blitImage, transform, disableTransform, disableBlend);
+		tglBlit<kEnableAlphaBlending, false>(blitImage, transform, disableColor, disableTransform, disableBlend);
 	}
 }
 
@@ -763,19 +772,26 @@ void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	GLContext *c = gl_get_context();
 	bool disableColor = transform._aTint == 1.0f && transform._bTint == 1.0f && transform._gTint == 1.0f && transform._rTint == 1.0f;
 	bool disableTransform = transform._destinationRectangle.width() == 0 && transform._destinationRectangle.height() == 0 && transform._rotation == 0;
-	bool disableBlend = blitImage->isOpaque() || c->blending_enabled == false;
+	bool disableBlend = c->blending_enabled == false;
 	bool enableAlphaBlending = c->source_blending_factor == TGL_SRC_ALPHA && c->destination_blending_factor == TGL_ONE_MINUS_SRC_ALPHA;
+	bool enableOpaqueBlit = blitImage->isOpaque()
+	                    && (c->source_blending_factor == TGL_ONE || c->source_blending_factor == TGL_SRC_ALPHA)
+	                    && (c->destination_blending_factor == TGL_ZERO || c->destination_blending_factor == TGL_ONE_MINUS_SRC_ALPHA);
 
 	if (enableAlphaBlending) {
-		tglBlit<true>(blitImage, transform, disableColor, disableTransform, disableBlend);
+		tglBlit<true>(blitImage, transform, enableOpaqueBlit, disableColor, disableTransform, disableBlend);
 	} else {
-		tglBlit<false>(blitImage, transform, disableColor, disableTransform, disableBlend);
+		tglBlit<false>(blitImage, transform, enableOpaqueBlit, disableColor, disableTransform, disableBlend);
 	}
 }
 
 void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
-	blitImage->tglBlitGeneric<true, true, true, false, false, false>(transform);
+	if (blitImage->isOpaque()) {
+		blitImage->tglBlitGeneric<true, true, true, false, false, false, true>(transform);
+	} else {
+		blitImage->tglBlitGeneric<true, true, true, false, false, false, false>(transform);
+	}
 }
 
 void tglBlitZBuffer(BlitImage *blitImage, int x, int y) {
