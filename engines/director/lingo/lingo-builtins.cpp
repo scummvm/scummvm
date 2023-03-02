@@ -1344,6 +1344,13 @@ void LB::b_delay(int nargs) {
 void LB::b_do(int nargs) {
 	Common::String code = g_lingo->pop().asString();
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
+	if (!sc) {
+		warning("b_do(): compilation failed, ignoring");
+		return;
+	} else if (!sc->_eventHandlers.contains(kEventGeneric)) {
+		warning("b_do(): compiled code did not return handler, ignoring");
+		return;
+	}
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
 
 	// Check if we have anything to execute
