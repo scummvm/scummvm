@@ -30,11 +30,23 @@ namespace Hpl1 {
 
 namespace Std {
 
-template<class Key, class Val, class KeyComp = Common::Less<Key> >
+template<typename Key, typename Val>
+struct PairKey {
+	const Key &operator()(const pair<Key, Val> &p) {
+		return p.first;
+	}
+};
+
+template<typename T>
+struct Identity {
+	const T &operator()(const T &t) {
+		return t;
+	}
+};
+
+template<class ValueType, class Key, class KeyProj, class KeyComp = Common::Less<Key> >
 class Tree {
 public:
-	using ValueType = pair<Key, Val>;
-
 	struct Node {
 		Node *parent;
 		Node *left;
@@ -84,7 +96,7 @@ public:
 		}
 
 	private:
-		Iterator(Node *n) : _current(n) {}
+		explicit Iterator(Node *n) : _current(n) {}
 
 		Node *_current = nullptr;
 	};
@@ -139,7 +151,7 @@ public:
 		Node *it = _root;
 		Node *res = nullptr;
 		while (it) {
-			if (!_comp(it->value.first, key)) {
+			if (!_comp(KeyProj()(it->value), key)) {
 				res = it;
 				it = it->left;
 			} else {
@@ -153,7 +165,7 @@ public:
 		Node *it = _root;
 		Node *res = nullptr;
 		while (it) {
-			if (!_comp(it->value.first, key)) {
+			if (!_comp(KeyProj()(it->value), key)) {
 				res = it;
 				it = it->left;
 			} else {
@@ -167,7 +179,7 @@ public:
 		Node *it = _root;
 		Node *res = nullptr;
 		while (it) {
-			if (!_comp(key, it->value.first)) {
+			if (!_comp(key, KeyProj()(it->value))) {
 				it = it->right;
 			} else {
 				res = it;
@@ -181,7 +193,7 @@ public:
 		Node *it = _root;
 		Node *res = nullptr;
 		while (it) {
-			if (!_comp(key, it->value.first)) {
+			if (!_comp(key, KeyProj()(it->value))) {
 				it = it->right;
 			} else {
 				res = it;
@@ -194,7 +206,7 @@ public:
 	BasicIterator erase(BasicIterator it) {
 		auto const u = it._current;
 		if (!u)
-			return {nullptr};
+			return BasicIterator(nullptr);
 		auto v = merge(u->left, u->right);
 		if (u->parent) {
 			auto const p = u->parent;
@@ -222,23 +234,15 @@ public:
 	}
 
 	BasicIterator insert(const ValueType &val) {
-		auto it = &_root;
-		Node *parent = nullptr;
-		bool wentRight = false;
-		while (*it) {
-			parent = *it;
-			if (_comp((*it)->value.first, val.first)) {
-				it = &(*it)->right;
-				wentRight = true;
-			} else {
-				it = &(*it)->left;
-			}
-		}
-		*it = new Node{parent, nullptr, nullptr, val};
-		if (!wentRight)
-			_leftmost = *it;
-		++_size;
-		return BasicIterator{*it};
+		return internalInsert(&_root, val);
+	}
+
+  	// requires that either start is lowerbound of val or start is end()
+  	// otherwise the resulting tree could be unsorted
+	BasicIterator insert(BasicIterator start, const ValueType &val) {
+		if (start == end())
+			return insert(val);
+		return internalInsert(&start._current, val);
 	}
 
 	std::size_t size() const { return _size; }
@@ -264,6 +268,24 @@ private:
 			left->parent = lm;
 			return right;
 		}
+	}
+
+	BasicIterator internalInsert(Node **starting_node, const ValueType &val) {
+		auto it = starting_node;
+		Node *parent = nullptr;
+		while (*it) {
+			parent = *it;
+			if (_comp(KeyProj()((*it)->value), KeyProj()(val))) {
+				it = &(*it)->right;
+			} else {
+				it = &(*it)->left;
+			}
+		}
+		*it = new Node{parent, nullptr, nullptr, val};
+		if (!_leftmost || (parent == _leftmost && _leftmost->left == *it))
+			_leftmost = *it;
+		++_size;
+		return BasicIterator(*it);
 	}
 
 	static Node *leftmost(Node *n) {
