@@ -226,10 +226,14 @@ void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitm
 		_txRefs.erase(found);
 }
 
-void VideoMemoryGraphicsDriver::SetStageScreen(size_t index, const Size &sz) {
+void VideoMemoryGraphicsDriver::SetStageScreen(const Size &sz, int x, int y) {
+	SetStageScreen(_actSpriteBatch, sz, x, y);
+}
+
+void VideoMemoryGraphicsDriver::SetStageScreen(size_t index, const Size &sz, int x, int y) {
 	if (_stageScreens.size() <= index)
 		_stageScreens.resize(index + 1);
-	_stageScreens[index].PresetSize = sz;
+	_stageScreens[index].Position = RectWH(x, y, sz.Width, sz.Height);
 }
 
 Bitmap *VideoMemoryGraphicsDriver::GetStageScreenRaw(size_t index) {
@@ -238,7 +242,7 @@ Bitmap *VideoMemoryGraphicsDriver::GetStageScreenRaw(size_t index) {
 		return nullptr;
 
 	auto &scr = _stageScreens[index];
-	const Size sz = scr.PresetSize;
+	const Size sz = scr.Position.GetSize();
 	if (scr.Raw && (scr.Raw->GetSize() != sz)) {
 		scr.Raw.reset();
 		if (scr.DDB)
@@ -252,7 +256,7 @@ Bitmap *VideoMemoryGraphicsDriver::GetStageScreenRaw(size_t index) {
 	return scr.Raw.get();
 }
 
-IDriverDependantBitmap *VideoMemoryGraphicsDriver::UpdateStageScreenDDB(size_t index) {
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::UpdateStageScreenDDB(size_t index, int &x, int &y) {
 	assert((index < _stageScreens.size()) && _stageScreens[index].DDB);
 	if ((_stageScreens.size() <= index) || !_stageScreens[index].Raw || !_stageScreens[index].DDB)
 		return nullptr;
@@ -260,6 +264,8 @@ IDriverDependantBitmap *VideoMemoryGraphicsDriver::UpdateStageScreenDDB(size_t i
 	auto &scr = _stageScreens[index];
 	UpdateDDBFromBitmap(scr.DDB, scr.Raw.get(), true);
 	scr.Raw->ClearTransparent();
+	x = scr.Position.Left;
+	y = scr.Position.Top;
 	return scr.DDB;
 }
 
@@ -275,7 +281,7 @@ void VideoMemoryGraphicsDriver::DestroyAllStageScreens() {
 	_stageScreens.clear();
 }
 
-IDriverDependantBitmap *VideoMemoryGraphicsDriver::DoSpriteEvtCallback(int evt, int data) {
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::DoSpriteEvtCallback(int evt, int data, int &x, int &y) {
 	if (!_spriteEvtCallback)
 		error("Unhandled attempt to draw null sprite");
 	_stageScreenDirty = false;
@@ -285,7 +291,7 @@ IDriverDependantBitmap *VideoMemoryGraphicsDriver::DoSpriteEvtCallback(int evt, 
 	// _stageScreenDirty in certain plugin API function implementations.
 	_stageScreenDirty |= _spriteEvtCallback(evt, data) != 0;
 	if (_stageScreenDirty) {
-		return UpdateStageScreenDDB(_rendSpriteBatch);
+		return UpdateStageScreenDDB(_rendSpriteBatch, x, y);
 	}
 	return nullptr;
 }

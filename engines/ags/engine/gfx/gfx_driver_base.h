@@ -244,6 +244,9 @@ public:
 	 void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
 	void DestroyDDB(IDriverDependantBitmap* ddb) override;
 
+	// Sets stage screen parameters for the current batch.
+	void SetStageScreen(const Size &sz, int x = 0, int y = 0) override;
+
 protected:
 	// Create texture data with the given parameters
 	virtual TextureData *CreateTextureData(int width, int height, bool opaque, bool as_render_target = false) = 0;
@@ -259,19 +262,20 @@ protected:
 	// Stage screens are raw bitmap buffers meant to be sent to plugins on demand
 	// at certain drawing stages. If used at least once these buffers are then
 	// rendered as additional sprites in their respected order.
-	// Presets a stage screen with the given size.
-	void SetStageScreen(size_t index, const Size &sz);
+	// Presets a stage screen with the given position (size is obligatory, offsets not).
+	void SetStageScreen(size_t index, const Size &sz, int x = 0, int y = 0);
 	// Returns a raw bitmap for the given stage screen.
 	Bitmap *GetStageScreenRaw(size_t index);
-	// Updates and returns a DDB for the given stage screen;
+	// Updates and returns a DDB for the given stage screen, and optional x,y position;
 	// clears the raw bitmap after copying to the texture.
-	IDriverDependantBitmap *UpdateStageScreenDDB(size_t index);
+	IDriverDependantBitmap *UpdateStageScreenDDB(size_t index, int &x, int &y);
 	// Disposes all the stage screen raw bitmaps and DDBs.
 	void DestroyAllStageScreens();
 	// Use engine callback to pass a render event;
-	// returns a DDB if the sprite was provided onto the virtual screen,
-	// and nullptr if this entry should be skipped.
-	IDriverDependantBitmap *DoSpriteEvtCallback(int evt, int data);
+	// returns a DDB if anything was drawn onto the current stage screen
+	// (in which case it also fills optional x,y position),
+	// or nullptr if this entry should be skipped.
+	IDriverDependantBitmap *DoSpriteEvtCallback(int evt, int data, int &x, int &y);
 
 	// Prepare and get fx item from the pool
 	IDriverDependantBitmap *MakeFx(int r, int g, int b);
@@ -307,7 +311,7 @@ private:
 	// TODO: possibly may be optimized further by having only 1 bitmap/ddb
 	// pair, and subbitmaps for raw drawing on separate stages.
 	struct StageScreen {
-		Size PresetSize; // Size preset (bitmap may be created later)
+		Rect Position; // bitmap size and pos preset (bitmap may be created later)
 		std::unique_ptr<Bitmap> Raw;
 		IDriverDependantBitmap *DDB = nullptr;
 	};

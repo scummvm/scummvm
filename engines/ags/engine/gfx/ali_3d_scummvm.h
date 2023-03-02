@@ -196,6 +196,7 @@ public:
 	void DrawSprite(int x, int y, IDriverDependantBitmap *ddb) override;
 	void SetScreenFade(int red, int green, int blue) override;
 	void SetScreenTint(int red, int green, int blue) override;
+	void SetStageScreen(const Size &sz, int x = 0, int y = 0) override;
 
 	void RenderToBackBuffer() override;
 	void Render() override;
