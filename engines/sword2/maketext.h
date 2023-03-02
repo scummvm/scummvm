@@ -74,6 +74,7 @@ enum {
 struct LineInfo {
 	uint16 width;	// Width in pixels
 	uint16 length;	// Length in characters
+	bool skipSpace; // Whether there is a trailing space
 };
 
 class FontRenderer {
@@ -91,12 +92,21 @@ private:
 				// each line - negative for overlap
 	uint8 _borderPen;	// output pen color of character borders
 
-	uint16 analyzeSentence(const byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
-	byte *buildTextSprite(const byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
+	Common::HashMap<Common::String, Common::String> _subTranslations;
+	static const int kChineseWidth = 20;
+	static const int kChineseHeight = 26;
+	struct ChineseGlyph {
+		byte bitmap[kChineseWidth * kChineseHeight];
+	};
+	Common::Array<ChineseGlyph> _chineseFont;
+
+	uint16 analyzeSentence(const byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line, bool isChinese);
+	byte *buildTextSprite(const byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines, bool isChinese);
 	uint16 charWidth(byte ch, uint32 fontRes);
 	uint16 charHeight(uint32 fontRes);
 	byte *findChar(byte ch, byte *charSet);
-	void copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen);
+	void copyChar(const byte *charPtr, byte *spritePtr, uint16 spriteWidth, uint8 pen);
+	void copyCharRaw(const byte *source, uint16 charWidth, uint16 charHeight, byte *spritePtr, uint16 spriteWidth, uint8 pen);
 
 public:
 	FontRenderer(Sword2Engine *vm) : _vm(vm) {
@@ -115,6 +125,8 @@ public:
 	void printTextBlocs();
 
 	uint32 buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, uint8 pen, uint32 type, uint32 fontRes, uint8 justification);
+
+	void loadTranslations();
 };
 
 } // End of namespace Sword2
