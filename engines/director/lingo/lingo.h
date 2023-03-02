@@ -224,6 +224,7 @@ struct Builtin {
 };
 
 typedef Common::HashMap<int32, ScriptContext *> ScriptContextHash;
+typedef Common::HashMap<int32, Common::HashMap<Common::String, ScriptContext *> *> FactoryContextHash;
 typedef Common::Array<Datum> StackData;
 typedef Common::HashMap<Common::String, Symbol, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SymbolHash;
 typedef Common::HashMap<Common::String, Datum, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DatumHash;
@@ -275,6 +276,7 @@ struct LingoArchive {
 	Cast *cast;
 	ScriptContextHash lctxContexts;
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
+	FactoryContextHash factoryContexts;
 	Common::Array<Common::String> names;
 	Common::HashMap<uint32, Common::String> primaryEventHandlers;
 	SymbolHash functionHandlers;

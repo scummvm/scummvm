@@ -1005,9 +1005,9 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	for (uint32 i = 0; i < 0x4; i++) {
 		stream.readByte();
 	}
-	/* uint16 castId = */ stream.readUint16();
+	/* uint16 _assemblyId = */ stream.readUint16();
 	// The script is coupled with to a Cast via the script ID.
-	// This castId isn't always correct.
+	// This _assemblyId isn't always correct.
 
 	int16 factoryNameId = stream.readSint16();
 
@@ -1039,19 +1039,17 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	ScriptType scriptType = kCastScript;
 	Common::String castName;
 	CastMember *member = archive->cast->getCastMemberByScriptId(scriptId);
-	int castId;
 	if (member) {
 		if (member->_type == kCastLingoScript)
 			scriptType = ((ScriptCastMember *)member)->_scriptType;
 
-		castId = member->getID();
+		_assemblyId = member->getID();
 		CastMemberInfo *info = member->getInfo();
 		if (info)
 			castName = info->name;
 	} else {
 		warning("Script %d has no associated cast member", scriptId);
 		scriptType = kNoneScript;
-		castId = -1;
 	}
 
 	_assemblyArchive = archive;
@@ -1067,12 +1065,12 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		}
 		debugC(1, kDebugCompile, "Add V4 script %d: factory '%s'", scriptId, factoryName.c_str());
 
-		sc = _assemblyContext = new ScriptContext(factoryName, scriptType, castId);
+		sc = _assemblyContext = new ScriptContext(factoryName, scriptType, _assemblyId);
 		registerFactory(factoryName);
 	} else {
-		debugC(1, kDebugCompile, "Add V4 script %d: %s %d", scriptId, scriptType2str(scriptType), castId);
+		debugC(1, kDebugCompile, "Add V4 script %d: %s %d", scriptId, scriptType2str(scriptType), _assemblyId);
 
-		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), scriptType, castId);
+		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", _assemblyId), scriptType, _assemblyId);
 	}
 
 	// initialise each property
@@ -1254,7 +1252,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		if (scriptFlags & kScriptFlagFactoryDef) {
 			buf = dumpFactoryName(encodePathForDump(archName).c_str(), factoryName.c_str(), "lscr");
 		} else {
-			buf = dumpScriptName(encodePathForDump(archName).c_str(), scriptType, castId, "lscr");
+			buf = dumpScriptName(encodePathForDump(archName).c_str(), scriptType, _assemblyId, "lscr");
 		}
 
 		if (!out.open(buf, true)) {
@@ -1606,7 +1604,9 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	}
 
 	free(codeStore);
+	_assemblyArchive = nullptr;
 	_assemblyContext = nullptr;
+	_assemblyId = -1;
 
 	return sc;
 }
