@@ -233,7 +233,8 @@ public:
 	// TODO: think how to increase safety over this (some fixed memory buffer class with iterator?)
 	// Gets scanline for directly writing into it
 	inline unsigned char *GetScanLineForWriting(int index) {
-		return (index >= 0 && index < GetHeight()) ? _alBitmap->line[index] : nullptr;
+		assert(index >= 0 && index < GetHeight());
+		return _alBitmap->line[index];
 	}
 	inline unsigned char *GetDataForWriting() {
 		return _alBitmap->line[0];
