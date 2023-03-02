@@ -55,7 +55,7 @@ struct ResHeader {
 		return 44;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
@@ -134,7 +134,7 @@ struct AnimHeader {
 		return 15;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 
 };
@@ -164,7 +164,7 @@ struct CdtEntry {
 
 	static int size();
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
@@ -190,7 +190,7 @@ struct FrameHeader {
 		return 8;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
@@ -226,7 +226,7 @@ struct MultiScreenHeader {
 		return 36;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
@@ -241,7 +241,7 @@ struct ScreenHeader {
 		return 6;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
@@ -263,7 +263,7 @@ struct LayerHeader {
 		return 16;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
@@ -349,7 +349,7 @@ struct TextHeader {
 		return 4;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
@@ -396,7 +396,7 @@ struct PSXScreensEntry {
 		return 36;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
@@ -413,7 +413,7 @@ struct PSXFontEntry {
 		return 8;
 	}
 
-	void read(byte *addr);
+	void read(const byte *addr);
 	void write(byte *addr);
 };
 
