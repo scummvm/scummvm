@@ -42,6 +42,9 @@ private:
 
 	TeTimer _timer;
 	bool _followKate;
+	bool _allowUpdate;
+	bool _isAssitAnim;
+	bool _isWalking;
 
 };
 

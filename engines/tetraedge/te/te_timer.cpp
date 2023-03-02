@@ -166,6 +166,13 @@ void TeTimer::pausable(bool ispausable) {
 	}
 }
 
+void TeTimer::setTime(uint64 time) {
+	uint64 result = _realTime - time;
+	_startTimeOffset = result;
+	_startTime = result;
+	_lastTimeElapsed = result;
+}
+
 void TeTimer::setAlarmIn(uint64 offset) {
 	uint64 timeNow = _realTime;
 	if (_stopped)
