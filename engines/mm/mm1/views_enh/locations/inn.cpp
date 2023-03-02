@@ -87,13 +87,56 @@ void Inn::draw() {
 		for (uint idx = 0; idx < _charNums.size(); ++idx) {
 			uint charNum = _charNums[idx];
 			Character &c = g_globals->_roster[charNum];
+			bool isInParty = _partyChars.contains(charNum);
+
+			// Build up character portrait and/or frame
+			Graphics::ManagedSurface portrait;
+			portrait.create(30, 30);
+			c._faceSprites.draw(&portrait, 0, Common::Point(0, 0));
 
 			Common::Point pt(_innerBounds.left + _innerBounds.width() / 3
-				* (idx % 3), 20 + 30 * (idx / 3));
-			c._faceSprites.draw(&s, 0, pt);
-			writeString(pt.x + 30, pt.y + 10, c._name);
+				* (idx % 3), 20 + 20 * (idx / 3));
+			s.blitFrom(portrait, Common::Rect(0, 0, 30, 30),
+				Common::Rect(pt.x + 2, pt.y + 2, pt.x + 17, pt.y + 17));
+
+			if (isInParty)
+				s.frameRect(Common::Rect(pt.x, pt.y, pt.x + 19, pt.y + 19), 37);
+
+			writeString(pt.x - _innerBounds.left + 22, pt.y - _innerBounds.top + 5, c._name);
+		}
+
+		setReduced(false);
+		if (_partyChars.size() == 6)
+			writeString(0, 130, STRING["dialogs.inn.full"], ALIGN_MIDDLE);
+
+		writeString(0, 145, STRING["enhdialogs.inn.left_click"], ALIGN_MIDDLE);
+		writeString(0, 155, STRING["enhdialogs.inn.right_click"], ALIGN_MIDDLE);
+
+		if (!_partyChars.empty())
+			writeString(0, 170, STRING["dialogs.inn.exit"], ALIGN_MIDDLE);
+	}
+}
+
+bool Inn::msgMouseDown(const MouseDownMessage &msg) {
+	// Cycle through portraits
+	for (uint idx = 0; idx < _charNums.size(); ++idx) {
+		Common::Point pt(_innerBounds.left + _innerBounds.width() / 3
+			* (idx % 3), 20 + 20 * (idx / 3));
+
+		if (Common::Rect(pt.x, pt.y, pt.x + 19, pt.y + 19).contains(msg._pos)) {
+			// Toggle in party
+			int charNum = _charNums[idx];
+			if (_partyChars.contains(charNum))
+				_partyChars.remove(charNum);
+			else
+				_partyChars.push_back(charNum);
+
+			redraw();
+			break;
 		}
 	}
+
+	return true;
 }
 
 bool Inn::msgKeypress(const KeypressMessage &msg) {

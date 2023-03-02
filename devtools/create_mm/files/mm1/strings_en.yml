@@ -516,6 +516,10 @@ enhdialogs:
 		select: "Select"
 		exit: "Exit"
 		non_caster: "Not a spell caster..."
+	inn:
+		left_click: "Left click potraits to add/remove"
+		right_click: "Right click to view"
+		esc: "ESC to go back"
 	tavern:
 		title: "Tavern"
 		drink: "\x01""37Drink"
