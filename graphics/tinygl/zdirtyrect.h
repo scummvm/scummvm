@@ -159,7 +159,6 @@ class BlittingDrawCall : public DrawCall {
 public:
 	enum BlittingMode {
 		BlitMode_Regular,
-		BlitMode_NoBlend,
 		BlitMode_Fast,
 		BlitMode_ZBuffer
 	};

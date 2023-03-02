@@ -137,13 +137,6 @@ void tglBlit(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transfor
 void tglBlit(TinyGL::BlitImage *blitImage, int x, int y);
 
 /**
-@brief Blits an image to the color buffer without performing any type of blending.
-@param pointer to the blit image.
-@param blit transform information.
-*/
-void tglBlitNoBlend(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform);
-
-/**
 @brief Blits an image to the color buffer without performinc any type of blending, image transformation or tinting.
 @param pointer to the blit image.
 @param x destination coordinate.

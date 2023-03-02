@@ -701,11 +701,6 @@ void tglBlit(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transfor
 	c->issueDrawCall(new TinyGL::BlittingDrawCall(blitImage, transform, TinyGL::BlittingDrawCall::BlitMode_Regular));
 }
 
-void tglBlitNoBlend(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->issueDrawCall(new TinyGL::BlittingDrawCall(blitImage, transform, TinyGL::BlittingDrawCall::BlitMode_NoBlend));
-}
-
 void tglBlitFast(TinyGL::BlitImage *blitImage, int x, int y) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::BlitTransform transform(x, y);
@@ -775,16 +770,6 @@ void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 		tglBlit<true>(blitImage, transform, disableColor, disableTransform, disableBlend);
 	} else {
 		tglBlit<false>(blitImage, transform, disableColor, disableTransform, disableBlend);
-	}
-}
-
-void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
-	if (transform._flipHorizontally == false && transform._flipVertically == false) {
-		blitImage->tglBlitGeneric<true, false, false, false, false, false>(transform);
-	} else if(transform._flipHorizontally == false) {
-		blitImage->tglBlitGeneric<true, false, false, true, false, false>(transform);
-	} else {
-		blitImage->tglBlitGeneric<true, false, false, false, true, false>(transform);
 	}
 }
 

@@ -40,9 +40,6 @@ namespace Internal {
 	// Documentation for those is the same as the one before, only those function are the one that actually execute the correct code path.
 	void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
 
-	// Disables blending explicitly.
-	void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
-
 	// Disables blending, transforms and tinting.
 	void tglBlitFast(BlitImage *blitImage, int x, int y);
 
