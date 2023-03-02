@@ -88,6 +88,7 @@ private:
 
 	float _mWindSpeed = 0;
 
+	bool _mBaselineFixed;
 	int _mTopBaseline = 0;
 	int _mBottomBaseline = 0;
 	int _mDeltaBaseline = 0;
@@ -122,7 +123,11 @@ public:
 	void SetDefaultView(int view, int loop);
 	void SetTransparency(int min_value, int max_value);
 	void SetWindSpeed(int value);
+	// Sets baseline and marks baseline as fixed
 	void SetBaseline(int top, int bottom);
+	// Resets baselines to the (0, screen_height);
+	// marks baseline for auto-update on screen change
+	void ResetBaseline();
 	void SetAmount(int amount);
 	void SetFallSpeed(int min_value, int max_value);
 };
