@@ -66,7 +66,7 @@ const float InGameScene::DEPTH_MAX_FLAKE = 0.1f;
 
 
 InGameScene::InGameScene() : _character(nullptr), _charactersShadow(nullptr),
-_shadowLightNo(-1), _waitTime(-1.0f), _shadowColor(0, 0, 0, 0x80), _shadowFov(20.0f),
+_shadowLightNo(-1), _waitTime(-1.0), _shadowColor(0, 0, 0, 0x80), _shadowFov(20.0f),
 _shadowFarPlane(1000), _shadowNearPlane(1), _maskAlpha(false),
 _verticalScrollTime(1000000.0f), _verticalScrollPlaying(false) {
 }
@@ -1706,7 +1706,7 @@ void InGameScene::update() {
 	TeScene::update();
 	_youkiManager.update();
 
-	float waitTime = _waitTimeTimer.timeFromLastTimeElapsed();
+	uint64 waitTime = _waitTimeTimer.timeFromLastTimeElapsed();
 	if (_waitTime != -1.0 && waitTime > _waitTime) {
 		_waitTime = -1.0;
 		_waitTimeTimer.stop();

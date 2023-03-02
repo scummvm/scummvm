@@ -129,12 +129,12 @@ uint64 TeTimer::getTimeFromStart() {
 
 uint64 TeTimer::timeElapsed() {
 	uint64 elapsed = _realTime - _lastTimeElapsed;
-	_lastTimeElapsed = elapsed + _lastTimeElapsed;
+	_lastTimeElapsed += elapsed;
 	return elapsed;
 }
 
 uint64 TeTimer::timeFromLastTimeElapsed() {
-	return realTimer()->time_() - _lastTimeElapsed;
+	return _realTime - _lastTimeElapsed;
 }
 
 uint64 TeTimer::time_() {
