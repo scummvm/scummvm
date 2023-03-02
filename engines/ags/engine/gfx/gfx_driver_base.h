@@ -169,7 +169,11 @@ protected:
 	// The range of sprites in this sprite batch (counting nested sprites):
 	// the last of the previous batch, and the last of the current.
 	std::vector<std::pair<size_t, size_t>> _spriteBatchRange;
-	size_t _actSpriteBatch; // active batch index
+	// The index of a currently filled sprite batch
+	size_t _actSpriteBatch;
+	// The index of a currently rendered sprite batch
+	// (or -1 / UINT32_MAX if we are outside of the render pass)
+	uint32_t _rendSpriteBatch;
 };
 
 
@@ -255,13 +259,19 @@ protected:
 	// Stage screens are raw bitmap buffers meant to be sent to plugins on demand
 	// at certain drawing stages. If used at least once these buffers are then
 	// rendered as additional sprites in their respected order.
-	PBitmap CreateStageScreen(size_t index, const Size &sz);
-	PBitmap GetStageScreen(size_t index);
+	// Presets a stage screen with the given size.
+	void SetStageScreen(size_t index, const Size &sz);
+	// Returns a raw bitmap for the given stage screen.
+	Bitmap *GetStageScreenRaw(size_t index);
+	// Updates and returns a DDB for the given stage screen;
+	// clears the raw bitmap after copying to the texture.
+	IDriverDependantBitmap *UpdateStageScreenDDB(size_t index);
+	// Disposes all the stage screen raw bitmaps and DDBs.
 	void DestroyAllStageScreens();
 	// Use engine callback to acquire replacement for the null sprite;
-	// returns true if the sprite was provided onto the virtual screen,
-	// and false if this entry should be skipped.
-	bool DoNullSpriteCallback(int x, int y);
+	// returns a DDB if the sprite was provided onto the virtual screen,
+	// and nullptr if this entry should be skipped.
+	IDriverDependantBitmap *DoNullSpriteCallback(int x, int y);
 
 	// Prepare and get fx item from the pool
 	IDriverDependantBitmap *MakeFx(int r, int g, int b);
@@ -292,8 +302,16 @@ protected:
 	int _vmem_b_shift_32;
 
 private:
-	// Virtual screens for rendering stages (sprite batches)
-	std::vector<PBitmap> _stageScreens;
+	// Stage virtual screens are used to let plugins draw custom graphics
+	// in between render stages (between room and GUI, after GUI, and so on).
+	// TODO: possibly may be optimized further by having only 1 bitmap/ddb
+	// pair, and subbitmaps for raw drawing on separate stages.
+	struct StageScreen {
+		Size Size; // Size preset (bitmap may be created later)
+		std::unique_ptr<Bitmap> Bitmap;
+		IDriverDependantBitmap *DDB = nullptr;
+	};
+	std::vector<StageScreen> _stageScreens;
 	// Flag which indicates whether stage screen was drawn upon during engine
 	// callback and has to be inserted into sprite stack.
 	bool _stageScreenDirty;

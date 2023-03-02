@@ -40,6 +40,7 @@ GraphicsDriverBase::GraphicsDriverBase()
 	_actSpriteBatch = 0;
 	_spriteBatchDesc.push_back(SpriteBatchDesc());
 	_spriteBatchRange.push_back(std::make_pair((size_t) 0, (size_t) 0));
+	_rendSpriteBatch = UINT32_MAX;
 }
 
 bool GraphicsDriverBase::IsModeSet() const {
@@ -163,8 +164,10 @@ void VideoMemoryGraphicsDriver::SetMemoryBackBuffer(Bitmap * /*backBuffer*/) {
 }
 
 Bitmap *VideoMemoryGraphicsDriver::GetStageBackBuffer(bool mark_dirty) {
+	if (_rendSpriteBatch == UINT32_MAX)
+		return nullptr;
 	_stageScreenDirty |= mark_dirty;
-	return _stageVirtualScreen.get();
+	return GetStageScreenRaw(_rendSpriteBatch);
 }
 
 bool VideoMemoryGraphicsDriver::GetStageMatrixes(RenderMatrixes &rm) {
@@ -223,50 +226,68 @@ void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitm
 		_txRefs.erase(found);
 }
 
-PBitmap VideoMemoryGraphicsDriver::CreateStageScreen(size_t index, const Size &sz) {
+void VideoMemoryGraphicsDriver::SetStageScreen(size_t index, const Size &sz) {
 	if (_stageScreens.size() <= index)
 		_stageScreens.resize(index + 1);
-	if (sz.IsNull())
-		_stageScreens[index].reset();
-	else if (_stageScreens[index] == nullptr || _stageScreens[index]->GetSize() != sz)
-		_stageScreens[index].reset(new Bitmap(sz.Width, sz.Height, _mode.ColorDepth));
-	return _stageScreens[index];
+	_stageScreens[index].Size = sz;
 }
 
-PBitmap VideoMemoryGraphicsDriver::GetStageScreen(size_t index) {
-	if (index < _stageScreens.size())
-		return _stageScreens[index];
-	return nullptr;
+Bitmap *VideoMemoryGraphicsDriver::GetStageScreenRaw(size_t index) {
+	assert(index < _stageScreens.size());
+	if (_stageScreens.size() <= index)
+		return nullptr;
+
+	auto &scr = _stageScreens[index];
+	const Size sz = scr.Size;
+	if (scr.Bitmap && (scr.Bitmap->GetSize() != sz)) {
+		scr.Bitmap.reset();
+		if (scr.DDB)
+			DestroyDDB(scr.DDB);
+		scr.DDB = nullptr;
+	}
+	if (!scr.Bitmap && !sz.IsNull()) {
+		scr.Bitmap.reset(new Bitmap(sz.Width, sz.Height, _mode.ColorDepth));
+		scr.DDB = CreateDDB(sz.Width, sz.Height, _mode.ColorDepth, false);
+	}
+	return scr.Bitmap.get();
+}
+
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::UpdateStageScreenDDB(size_t index) {
+	assert((index < _stageScreens.size()) && _stageScreens[index].DDB);
+	if ((_stageScreens.size() <= index) || !_stageScreens[index].Bitmap || !_stageScreens[index].DDB)
+		return nullptr;
+
+	auto &scr = _stageScreens[index];
+	UpdateDDBFromBitmap(scr.DDB, scr.Bitmap.get(), true);
+	scr.Bitmap->ClearTransparent();
+	return scr.DDB;
 }
 
 void VideoMemoryGraphicsDriver::DestroyAllStageScreens() {
-	if (_stageVirtualScreenDDB)
+	if (_stageVirtualScreenDDB)  // FIXME: Not in upstream
 		this->DestroyDDB(_stageVirtualScreenDDB);
 	_stageVirtualScreenDDB = nullptr;
 
-	for (size_t i = 0; i < _stageScreens.size(); ++i)
-		_stageScreens[i].reset();
-	_stageVirtualScreen.reset();
+	for (size_t i = 0; i < _stageScreens.size(); ++i) {
+		if (_stageScreens[i].DDB)
+			DestroyDDB(_stageScreens[i].DDB);
+	}
+	_stageScreens.clear();
 }
 
-bool VideoMemoryGraphicsDriver::DoNullSpriteCallback(int x, int y) {
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::DoNullSpriteCallback(int x, int y) {
 	if (!_nullSpriteCallback)
 		error("Unhandled attempt to draw null sprite");
 	_stageScreenDirty = false;
 	// NOTE: this is not clear whether return value of callback may be
 	// relied on. Existing plugins do not seem to return anything but 0,
-	// even if they handle this event.
+	// even if they handle this event. This is why we also set
+	// _stageScreenDirty in certain plugin API function implementations.
 	_stageScreenDirty |= _nullSpriteCallback(x, y) != 0;
 	if (_stageScreenDirty) {
-		if (_stageVirtualScreenDDB) {
-			UpdateDDBFromBitmap(_stageVirtualScreenDDB, _stageVirtualScreen.get(), true);
-			_stageVirtualScreen->ClearTransparent();
-		}
-		else
-			_stageVirtualScreenDDB = CreateDDBFromBitmap(_stageVirtualScreen.get(), true);
-		return true;
+		return UpdateStageScreenDDB(_rendSpriteBatch);
 	}
-	return false;
+	return nullptr;
 }
 
 IDriverDependantBitmap *VideoMemoryGraphicsDriver::MakeFx(int r, int g, int b) {
