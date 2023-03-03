@@ -520,6 +520,10 @@ void InGameScene::freeGeometry() {
 	_loadedPath.set("");
 	_youkiManager.reset();
 	freeSceneObjects();
+	if (_character)
+		_character->setFreeMoveZone(nullptr);
+	for (Character *character : _characters)
+		character->setFreeMoveZone(nullptr);
 	for (TeFreeMoveZone *zone : _freeMoveZones)
 		delete zone;
 	_freeMoveZones.clear();
@@ -1513,7 +1517,7 @@ void InGameScene::reset() {
 }
 
 TeLight *InGameScene::shadowLight() {
-	if (_shadowLightNo == -1) {
+	if (_shadowLightNo == -1 || (uint)_shadowLightNo >= _lights.size()) {
 		return nullptr;
 	}
 	return _lights[_shadowLightNo].get();
