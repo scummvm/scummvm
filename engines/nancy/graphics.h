@@ -58,7 +58,7 @@ public:
 	static void copyToManaged(void *src, Graphics::ManagedSurface &dst, uint srcW, uint srcH, const Graphics::PixelFormat &format, bool verticalFlip = false, bool doubleSize = false);
 
 	// Debug
-	void debugDrawToScreen(const Graphics::Surface &surf);
+	void debugDrawToScreen(const Graphics::ManagedSurface &surf);
 
 	Graphics::ManagedSurface _object0;
 
