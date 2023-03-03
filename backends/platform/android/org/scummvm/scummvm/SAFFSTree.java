@@ -1,12 +1,13 @@
 package org.scummvm.scummvm;
 
 import java.io.FileNotFoundException;
+
+import java.lang.ref.SoftReference;
+
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -32,7 +33,7 @@ public class SAFFSTree {
 	public static void loadSAFTrees(Context context) {
 		final ContentResolver resolver = context.getContentResolver();
 
-		_trees = new HashMap<String, SAFFSTree>();
+		_trees = new HashMap<>();
 		for (UriPermission permission : resolver.getPersistedUriPermissions()) {
 			final Uri uri = permission.getUri();
 			if (!DocumentsContract.isTreeUri(uri)) {
@@ -88,14 +89,20 @@ public class SAFFSTree {
 		public String _documentId;
 		public int _flags;
 
+		private HashMap<String, SoftReference<SAFFSNode>> _children;
+		private boolean _dirty;
+
 		private SAFFSNode() {
 		}
 
-		private SAFFSNode(SAFFSNode parent, String path, String documentId, int flags) {
+		private SAFFSNode reset(SAFFSNode parent, String path, String documentId, int flags) {
 			_parent = parent;
 			_path = path;
 			_documentId = documentId;
 			_flags = flags;
+
+			_children = null;
+			return this;
 		}
 
 		private static int computeFlags(String mimeType, int flags) {
@@ -119,40 +126,19 @@ public class SAFFSTree {
 		}
 	}
 
-	// Sentinel object
-	private static final SAFFSNode NOT_FOUND_NODE = new SAFFSNode();
-
-	private static class SAFCache extends LinkedHashMap<String, SAFFSNode> {
-		private static final int MAX_ENTRIES = 1000;
-
-		public SAFCache() {
-			super(16, 0.75f, true);
-		}
-
-		@Override
-		protected boolean removeEldestEntry(Map.Entry<String, SAFFSNode> eldest) {
-			return size() > MAX_ENTRIES;
-		}
-	}
-
 	private Context _context;
 	private Uri _treeUri;
 
 	private SAFFSNode _root;
 	private String _treeName;
 
-	private SAFCache _cache;
-
 	public SAFFSTree(Context context, Uri treeUri) {
 		_context = context;
 		_treeUri = treeUri;
 
-		_cache = new SAFCache();
-
-		_root = new SAFFSNode(null, "", DocumentsContract.getTreeDocumentId(treeUri), 0);
+		_root = new SAFFSNode().reset(null, "", DocumentsContract.getTreeDocumentId(treeUri), 0);
 		// Update flags and get name
 		_treeName = stat(_root);
-		clearCache();
 	}
 
 	public String getTreeId() {
@@ -160,142 +146,88 @@ public class SAFFSTree {
 	}
 
 	private void clearCache() {
-		_cache.clear();
-		_cache.put("/", _root);
-		_cache.put("", _root);
-	}
-
-	private static String[] normalizePath(String path) {
-		LinkedList<String> components = new LinkedList<String>(Arrays.asList(path.split("/")));
-		ListIterator<String> it = components.listIterator();
-		while(it.hasNext()) {
-			final String component = it.next();
-			if (component.isEmpty()) {
-				it.remove();
+		ArrayDeque<SAFFSNode> stack = new ArrayDeque<>();
+		stack.push(_root);
+		while (stack.size() > 0) {
+			SAFFSNode node = stack.pop();
+			node._dirty = true;
+			if (node._children == null) {
 				continue;
 			}
-			if (".".equals(component)) {
-				it.remove();
-				continue;
-			}
-			if ("..".equals(component)) {
-				it.remove();
-				if (it.hasPrevious()) {
-					it.previous();
-					it.remove();
+			for (SoftReference<SAFFSNode> ref : node._children.values()) {
+				node = ref.get();
+				if (node != null) {
+					stack.push(node);
 				}
 			}
 		}
-		return components.toArray(new String[0]);
 	}
 
 	public SAFFSNode pathToNode(String path) {
-		SAFFSNode node = null;
+		String[] components = path.split("/");
 
-		// Short-circuit
-		node = _cache.get(path);
-		if (node != null) {
-			if (node == NOT_FOUND_NODE) {
-				return null;
-			} else {
-				return node;
+		SAFFSNode node = _root;
+		for (String component : components) {
+			if (component.isEmpty() || ".".equals(component)) {
+				continue;
 			}
-		}
-
-		String[] components = normalizePath(path);
-
-		int pivot = components.length;
-		String wpath = "/" + String.join("/", components);
-
-		while(pivot > 0) {
-			node = _cache.get(wpath);
-			if (node != null) {
-				break;
+			if ("..".equals(component)) {
+				if (node._parent != null) {
+					node = node._parent;
+				}
+				continue;
 			}
 
-			// Try without last component
-			pivot--;
-			int newidx = wpath.length() - components[pivot].length() - 1;
-			wpath = wpath.substring(0, newidx);
-		}
-
-		// We found a negative result in cache for a point in the path
-		if (node == NOT_FOUND_NODE) {
-			wpath = "/" + String.join("/", components);
-			_cache.put(wpath, NOT_FOUND_NODE);
-			_cache.put(path, NOT_FOUND_NODE);
-			return null;
-		}
-
-		// Start from the last cached result (if any)
-		if (pivot == 0) {
-			node = _root;
-		}
-		while(pivot < components.length) {
-			node = getChild(node, components[pivot]);
+			node = getChild(node, component);
 			if (node == null) {
-				// Cache as much as we can
-				wpath = "/" + String.join("/", components);
-				_cache.put(wpath, NOT_FOUND_NODE);
-				_cache.put(path, NOT_FOUND_NODE);
 				return null;
 			}
-
-			pivot++;
 		}
-
-		_cache.put(path, node);
 		return node;
 	}
 
 	public SAFFSNode[] getChildren(SAFFSNode node) {
-		final ContentResolver resolver = _context.getContentResolver();
-		final Uri searchUri = DocumentsContract.buildChildDocumentsUriUsingTree(_treeUri, node._documentId);
-		final LinkedList<SAFFSNode> results = new LinkedList<>();
-
-		Cursor c = null;
-		try {
-			c = resolver.query(searchUri, new String[] { DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-				DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE,
-				DocumentsContract.Document.COLUMN_FLAGS }, null, null, null);
-			while (c.moveToNext()) {
-				final String displayName = c.getString(0);
-				final String documentId = c.getString(1);
-				final String mimeType = c.getString(2);
-				final int flags = c.getInt(3);
-
-				final int ourFlags = SAFFSNode.computeFlags(mimeType, flags);
-
-				SAFFSNode newnode = new SAFFSNode(node, node._path + "/" + displayName, documentId, ourFlags);
-				_cache.put(newnode._path, newnode);
+		Collection<SAFFSNode> results = null;
+		if (node._children != null && !node._dirty) {
+			results = new ArrayDeque<>();
+			for (SoftReference<SAFFSNode> ref : node._children.values()) {
+				if (ref == null) {
+					continue;
+				}
+				SAFFSNode newnode = ref.get();
+				if (newnode == null) {
+					// Some reference went stale: refresh
+					results = null;
+					break;
+				}
 				results.add(newnode);
 			}
-		} catch (Exception e) {
-			Log.w(ScummVM.LOG_TAG, "Failed query: " + e);
-		} finally {
-			if (c != null) {
-				c.close();
+		}
+
+		if (results == null) {
+			try {
+				results = fetchChildren(node);
+			} catch (Exception e) {
+				Log.w(ScummVM.LOG_TAG, "Failed to get children: " + e);
+				return null;
 			}
 		}
 
 		return results.toArray(new SAFFSNode[0]);
 	}
 
-	public SAFFSNode getChild(SAFFSNode node, String name) {
+	public Collection<SAFFSNode> fetchChildren(SAFFSNode node) {
 		final ContentResolver resolver = _context.getContentResolver();
 		final Uri searchUri = DocumentsContract.buildChildDocumentsUriUsingTree(_treeUri, node._documentId);
+		final ArrayDeque<SAFFSNode> results = new ArrayDeque<>();
 
-		String childPath = node._path + "/" + name;
-		SAFFSNode newnode;
+		// Keep the old children around to reuse them: this will help to keep one SAFFSNode instance for each node
+		HashMap<String, SoftReference<SAFFSNode>> oldChildren = node._children;
+		node._children = null;
 
-		newnode = _cache.get(childPath);
-		if (newnode != null) {
-			if (newnode == NOT_FOUND_NODE) {
-				return null;
-			} else {
-				return newnode;
-			}
-		}
+		// When _children will be set, it will be clean
+		node._dirty = false;
+		HashMap<String, SoftReference<SAFFSNode>> newChildren = new HashMap<>();
 
 		Cursor c = null;
 		try {
@@ -304,31 +236,88 @@ public class SAFFSTree {
 				DocumentsContract.Document.COLUMN_FLAGS }, null, null, null);
 			while (c.moveToNext()) {
 				final String displayName = c.getString(0);
-				if (!name.equals(displayName)) {
-					continue;
-				}
-
 				final String documentId = c.getString(1);
 				final String mimeType = c.getString(2);
-
 				final int flags = c.getInt(3);
 
 				final int ourFlags = SAFFSNode.computeFlags(mimeType, flags);
 
-				newnode = new SAFFSNode(node, childPath, documentId, ourFlags);
-				_cache.put(newnode._path, newnode);
-				return newnode;
+				SAFFSNode newnode = null;
+				SoftReference<SAFFSNode> oldnodeRef = null;
+				if (oldChildren != null) {
+					oldnodeRef = oldChildren.remove(displayName);
+					if (oldnodeRef != null) {
+						newnode = oldnodeRef.get();
+					}
+				}
+				if (newnode == null) {
+					newnode = new SAFFSNode();
+				}
+
+				newnode.reset(node, node._path + "/" + displayName, documentId, ourFlags);
+				newChildren.put(displayName, new SoftReference<>(newnode));
+
+				results.add(newnode);
 			}
-		} catch (Exception e) {
-			Log.w(ScummVM.LOG_TAG, "Failed query: " + e);
+
+			// Success: store the cache
+			node._children = newChildren;
 		} finally {
 			if (c != null) {
 				c.close();
 			}
 		}
 
-		_cache.put(childPath, NOT_FOUND_NODE);
-		return null;
+		return results;
+	}
+
+	public SAFFSNode getChild(SAFFSNode node, String name) {
+		final ContentResolver resolver = _context.getContentResolver();
+		final Uri searchUri = DocumentsContract.buildChildDocumentsUriUsingTree(_treeUri, node._documentId);
+
+		SAFFSNode newnode;
+
+		// This variable is used to hold a strong reference on every children nodes
+		Collection<SAFFSNode> children;
+
+		if (node._children == null || node._dirty) {
+			try {
+				children = fetchChildren(node);
+			} catch (Exception e) {
+				Log.w(ScummVM.LOG_TAG, "Failed to get children: " + e);
+				return null;
+			}
+		}
+
+		SoftReference<SAFFSNode> ref = node._children.get(name);
+		if (ref == null) {
+			return null;
+		}
+
+		newnode = ref.get();
+		if (newnode != null) {
+			return newnode;
+		}
+
+		// Node reference was stale, force a refresh
+		try {
+			children = fetchChildren(node);
+		} catch (Exception e) {
+			Log.w(ScummVM.LOG_TAG, "Failed to get children: " + e);
+			return null;
+		}
+
+		ref = node._children.get(name);
+		if (ref == null) {
+			return null;
+		}
+
+		newnode = ref.get();
+		if (newnode == null) {
+			Log.e(ScummVM.LOG_TAG, "Failed to keep a reference on object");
+		}
+
+		return newnode;
 	}
 
 	public SAFFSNode createDirectory(SAFFSNode node, String name) {
@@ -372,11 +361,9 @@ public class SAFFSTree {
 			return false;
 		}
 
-		for(Map.Entry<String, SAFFSNode> e : _cache.entrySet()) {
-			if (e.getValue() == node) {
-				e.setValue(NOT_FOUND_NODE);
-			}
-		}
+		// Cleanup node
+		node._parent._dirty = true;
+		node.reset(null, null, null, 0);
 
 		return true;
 	}
@@ -399,6 +386,16 @@ public class SAFFSTree {
 		final Uri parentUri = DocumentsContract.buildDocumentUriUsingTree(_treeUri, node._documentId);
 		Uri newDocUri;
 
+		// Make sure _children is OK
+		if (node._children == null || node._dirty) {
+			try {
+				fetchChildren(node);
+			} catch (Exception e) {
+				Log.w(ScummVM.LOG_TAG, "Failed to get children: " + e);
+				return null;
+			}
+		}
+
 		try {
 			newDocUri = DocumentsContract.createDocument(resolver, parentUri, mimeType, name);
 		} catch(FileNotFoundException e) {
@@ -410,18 +407,29 @@ public class SAFFSTree {
 
 		final String documentId = DocumentsContract.getDocumentId(newDocUri);
 
-		final SAFFSNode newnode = new SAFFSNode(node, node._path + "/" + name, documentId, 0);
+		SAFFSNode newnode = null;
+
+		SoftReference<SAFFSNode> oldnodeRef = node._children.remove(name);
+		if (oldnodeRef != null) {
+			newnode = oldnodeRef.get();
+		}
+		if (newnode == null) {
+			newnode = new SAFFSNode();
+		}
+
+		newnode.reset(node, node._path + "/" + name, documentId, 0);
 		// Update flags
-		final String realName = stat(_root);
+		final String realName = stat(newnode);
 		if (realName == null) {
 			return null;
 		}
 		// Unlikely but...
 		if (!realName.equals(name)) {
+			node._children.remove(realName);
 			newnode._path = node._path + "/" + realName;
 		}
 
-		_cache.put(newnode._path, newnode);
+		node._children.put(realName, new SoftReference<>(newnode));
 
 		return newnode;
 	}
