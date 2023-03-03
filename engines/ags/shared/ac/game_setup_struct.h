@@ -22,7 +22,6 @@
 #ifndef AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 #define AGS_SHARED_AC_GAME_SETUP_STRUCT_H
 
-//#include "ags/lib/std/array.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/shared/ac/character_info.h" // TODO: constants to separate header
@@ -147,7 +146,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	void read_lipsync(Shared::Stream *in, GameDataVersion data_ver);
 	void read_messages(Shared::Stream *in, GameDataVersion data_ver);
 
-	void ReadCharacters_Aligned(Shared::Stream *in);
+	void ReadCharacters_Aligned(Shared::Stream *in, bool is_save);
 	void WriteCharacters_Aligned(Shared::Stream *out);
 	//------------------------------
 	// Part 3

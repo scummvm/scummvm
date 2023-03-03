@@ -496,7 +496,7 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, const PreservedParams & /
 	if (!AssertGameContent(err, in->ReadInt32(), _GP(game).numcharacters, "Characters"))
 		return err;
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		_GP(game).chars[i].ReadFromFile(in);
+		_GP(game).chars[i].ReadFromFile(in, kGameVersion_Undefined, cmp_ver);
 		_GP(charextra)[i].ReadFromSavegame(in, cmp_ver);
 		Properties::ReadValues(_GP(play).charProps[i], in);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
