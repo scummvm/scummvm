@@ -379,7 +379,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 	free_do_once_tokens();
 
 	// unregister gui controls from API exports
-	// TODO: find out why are we doing this here? is this really necessary?
+	// CHECKME: find out why are we doing this here? why only to gui controls?
 	for (int i = 0; i < _GP(game).numgui; ++i) {
 		unexport_gui_controls(i);
 	}
@@ -452,8 +452,13 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		_G(dynamicallyCreatedSurfaces)[i] = r_data.DynamicSurfaces[i];
 	}
 
+	// Re-export any missing audio channel script objects, e.g. if restoring old save
+	export_missing_audiochans();
+
+	// CHECKME: find out why are we doing this here? why only to gui controls?
 	for (int i = 0; i < _GP(game).numgui; ++i)
 		export_gui_controls(i);
+
 	update_gui_zorder();
 
 	if (create_global_script()) {

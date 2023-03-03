@@ -462,6 +462,13 @@ void stop_and_destroy_channel(int chid) {
 	stop_and_destroy_channel_ex(chid, true);
 }
 
+void export_missing_audiochans() {
+	for (int i = 0; i < _GP(game).numCompatGameChannels; ++i) {
+		int h = ccGetObjectHandleFromAddress(&_G(scrAudioChannel)[i]);
+		if (h <= 0)
+			ccRegisterManagedObject(&_G(scrAudioChannel)[i], &_GP(ccDynamicAudio));
+	}
+}
 
 
 // ***** BACKWARDS COMPATIBILITY WITH OLD AUDIO SYSTEM ***** //
