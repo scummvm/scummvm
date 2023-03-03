@@ -29,6 +29,7 @@
 
 #include "common/substream.h"
 #include "video/mkv_decoder.h"
+#include "graphics/blit.h"
 
 namespace Sludge {
 
@@ -69,7 +70,14 @@ int playMovie(int fileNumber) {
 				if (s) {
 					// Transfer the next frame
 					assert(s->format.bytesPerPixel == 4);
-					g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, MIN<uint32>(s->w, g_sludge->_gfxMan->getWinWidth()), MIN<uint32>(s->h, g_sludge->_gfxMan->getWinHeight()));
+					if (((uint)s->w != g_sludge->_gfxMan->getWinWidth()) || ((uint)s->h != g_sludge->_gfxMan->getWinHeight())) {
+						Graphics::Surface *surf = g_system->lockScreen();
+						Graphics::scaleBlit((byte*)surf->getPixels(), (const byte*)s->getPixels(), surf->pitch, s->pitch,
+						                    g_sludge->_gfxMan->getWinWidth(), g_sludge->_gfxMan->getWinHeight(), s->w, s->h, s->format);
+						g_system->unlockScreen();
+					} else {
+						g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
+					}
 					g_system->updateScreen();
 				} else {
 					warning("s is false");
