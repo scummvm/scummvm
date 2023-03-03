@@ -482,6 +482,13 @@ enhdialogs:
 			good: "Good"
 	character_select:
 		title: "Select target"
+	characters:
+		left_click: "Left click portraits to view"
+	inn:
+		left_click: "Left click potraits to add/remove"
+		right_click: "Right click to view"
+		exit: "Exit Inn"
+		esc: "ESC to go back"
 	location:
 		store: "store"
 		options: "options"
@@ -516,11 +523,6 @@ enhdialogs:
 		select: "Select"
 		exit: "Exit"
 		non_caster: "Not a spell caster..."
-	inn:
-		left_click: "Left click potraits to add/remove"
-		right_click: "Right click to view"
-		exit: "Exit Inn"
-		esc: "ESC to go back"
 	tavern:
 		title: "Tavern"
 		drink: "\x01""37Drink"

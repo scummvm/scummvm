@@ -42,7 +42,7 @@ void Characters::draw() {
 	}
 
 	// Loop to print characters
-	for (int charNum = 0; charNum < 18; ++charNum) {
+	for (int charNum = 0; charNum < ROSTER_COUNT; ++charNum) {
 		if (roster._towns[charNum]) {
 			const Character &re = roster[charNum];
 			Common::String charName = re._name;

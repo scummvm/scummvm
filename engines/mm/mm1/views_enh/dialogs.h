@@ -29,6 +29,7 @@
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/character_select.h"
+#include "mm/mm1/views_enh/characters.h"
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/views_enh/game_messages.h"
 #include "mm/mm1/views_enh/main_menu.h"
@@ -49,10 +50,10 @@ namespace ViewsEnh {
 
 struct Dialogs {
 private:
-	Views::Characters _characters;
 	Views::CreateCharacters _createCharacters;
 	Views::Protect _protect;
 	Views::Title _title;
+	ViewsEnh::Characters _characters;
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Locations::Inn _inn;
 	ViewsEnh::Locations::Market _market;
