@@ -93,9 +93,17 @@ int playMovie(int fileNumber) {
 	return 0;
 }
 
+MovieStates isMoviePlaying() {
+	return movieIsPlaying;
+}
+
 int stopMovie() {
 	int r = movieIsPlaying;
 	movieIsPlaying = kMovieNothing;
+
+	g_sludge->_resMan->finishAccess();
+	setResourceForFatal(-1);
+
 	return r;
 }
 

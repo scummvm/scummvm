@@ -26,6 +26,7 @@
 #include "sludge/graphics.h"
 #include "sludge/freeze.h"
 #include "sludge/function.h"
+#include "sludge/movie.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
 #include "sludge/region.h"
@@ -297,6 +298,8 @@ bool EventManager::handleInput() {
 		}
 
 		if (!tempString.empty()) {
+			if (isMoviePlaying())
+				stopMovie();
 			VariableStack *tempStack = new VariableStack;
 			if (!checkNew(tempStack))
 				return false;
