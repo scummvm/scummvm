@@ -49,12 +49,12 @@ void YoukiManager::reset() {
 }
 
 void YoukiManager::update() {
-	if (g_engine->gameType() != TetraedgeEngine::kSyberia2)
+	if (g_engine->gameType() != TetraedgeEngine::kSyberia2 || !_followKate)
 		return;
 
 	Game *game = g_engine->getGame();
 	Character *youki = game->scene().character("Youki");
-	if (!youki)
+	if (!youki || !youki->freeMoveZone())
 		return;
 
 	if (_timer.getTimeFromStart() <= 3000000.0 || !_allowUpdate)
