@@ -453,34 +453,42 @@ void tglViewport(TGLint x, TGLint y, TGLsizei width, TGLsizei height) {
 	c->gl_add_op(p);
 }
 
-void tglFrustum(TGLdouble left, TGLdouble right, TGLdouble bottom, TGLdouble top, TGLdouble nearv, TGLdouble farv) {
+void tglFrustumf(TGLfloat left, TGLfloat right, TGLfloat bottom, TGLfloat top, TGLfloat nearv, TGLfloat farv) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[7];
 
 	p[0].op = TinyGL::OP_Frustum;
-	p[1].f = (float)left;
-	p[2].f = (float)right;
-	p[3].f = (float)bottom;
-	p[4].f = (float)top;
-	p[5].f = (float)nearv;
-	p[6].f = (float)farv;
+	p[1].f = left;
+	p[2].f = right;
+	p[3].f = bottom;
+	p[4].f = top;
+	p[5].f = nearv;
+	p[6].f = farv;
+
+	c->gl_add_op(p);
+}
+
+void tglFrustum(TGLdouble left, TGLdouble right, TGLdouble bottom, TGLdouble top, TGLdouble nearv, TGLdouble farv) {
+	tglFrustumf((TGLfloat)left, (TGLfloat)right, (TGLfloat)bottom, (TGLfloat)top, (TGLfloat)nearv, (TGLfloat)farv);
+}
+
+void tglOrthof(TGLfloat left, TGLfloat right, TGLfloat bottom, TGLfloat top, TGLfloat zNear, TGLfloat zFar) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[7];
+
+	p[0].op = TinyGL::OP_Ortho;
+	p[1].f = left;
+	p[2].f = right;
+	p[3].f = bottom;
+	p[4].f = top;
+	p[5].f = zNear;
+	p[6].f = zFar;
 
 	c->gl_add_op(p);
 }
 
 void tglOrtho(TGLdouble left, TGLdouble right, TGLdouble bottom, TGLdouble top, TGLdouble zNear, TGLdouble zFar) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	TinyGL::GLParam p[7];
-
-	p[0].op = TinyGL::OP_Ortho;
-	p[1].f = (float)left;
-	p[2].f = (float)right;
-	p[3].f = (float)bottom;
-	p[4].f = (float)top;
-	p[5].f = (float)zNear;
-	p[6].f = (float)zFar;
-
-	c->gl_add_op(p);
+	tglOrthof((TGLfloat)left, (TGLfloat)right, (TGLfloat)bottom, (TGLfloat)top, (TGLfloat)zNear, (TGLfloat)zFar);
 }
 
 // lightning
@@ -612,14 +620,18 @@ void tglClearColor(TGLfloat r, TGLfloat g, TGLfloat b, TGLfloat a) {
 	c->gl_add_op(p);
 }
 
-void tglClearDepth(TGLdouble depth) {
+void tglClearDepthf(TGLfloat depth) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::GLParam p[2];
 
 	p[0].op = TinyGL::OP_ClearDepth;
-	p[1].f = (float)depth;
+	p[1].f = depth;
 
 	c->gl_add_op(p);
+}
+
+void tglClearDepth(TGLdouble depth) {
+	tglClearDepthf((TGLfloat)depth);
 }
 
 void tglClearStencil(TGLint s) {

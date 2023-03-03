@@ -113,7 +113,7 @@ void GfxTinyGL::setupCameraFrustum(float fov, float nclip, float fclip) {
 	tglLoadIdentity();
 
 	float right = nclip * tan(fov / 2 * ((float)M_PI / 180));
-	tglFrustum(-right, right, -right * 0.75, right * 0.75, nclip, fclip);
+	tglFrustumf(-right, right, -right * 0.75f, right * 0.75f, nclip, fclip);
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
@@ -500,7 +500,7 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 			float right = 1;
 			float top = right * 0.75;
 			float div = 6.0f;
-			tglFrustum(-right / div, right / div, -top / div, top / div, 1.0f / div, 3276.8f);
+			tglFrustumf(-right / div, right / div, -top / div, top / div, 1.0f / div, 3276.8f);
 			tglMatrixMode(TGL_MODELVIEW);
 			tglLoadIdentity();
 			tglScalef(1.0, 1.0, -1.0);
@@ -1292,7 +1292,7 @@ void GfxTinyGL::dimScreen() {
 void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0, _gameWidth, _gameHeight, 0, 0, 1);
+	tglOrthof(0, _gameWidth, _gameHeight, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
@@ -1322,7 +1322,7 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0.0, _gameWidth, _gameHeight, 0.0, 0.0, 1.0);
+	tglOrthof(0, _gameWidth, _gameHeight, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
@@ -1374,7 +1374,7 @@ void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	tglOrthof(0, _screenWidth, _screenHeight, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
@@ -1418,7 +1418,7 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	tglOrthof(0, _screenWidth, _screenHeight, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
@@ -1447,7 +1447,7 @@ void GfxTinyGL::drawDimPlane() {
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0, 1.0, 1.0, 0, 0, 1);
+	tglOrthof(0, 1, 1, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 
@@ -1489,7 +1489,7 @@ void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	tglOrthof(0, _screenWidth, _screenHeight, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 

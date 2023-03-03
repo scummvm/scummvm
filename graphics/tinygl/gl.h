@@ -1167,4 +1167,23 @@ void tglTexSubImage3D(TGLenum target, TGLint level, TGLint xoffset, TGLint yoffs
 void tglCopyTexSubImage3D(TGLenum target, TGLint level, TGLint xoffset, TGLint yoffset,
                           TGLint zoffset, TGLint x, TGLint y, TGLsizei width, TGLsizei height);
 
+
+// --- GL ES 1.0 / GL_OES_single_precision ---
+
+// matrix
+void tglFrustumf(TGLfloat left, TGLfloat right, TGLfloat bottom, TGLfloat top,
+                 TGLfloat nearv, TGLfloat farv);
+void tglOrthof(TGLfloat left, TGLfloat right, TGLfloat bottom, TGLfloat top,
+               TGLfloat zNear, TGLfloat zFar);
+
+// clear
+void tglClearDepthf(TGLfloat depth);
+
+// gets
+void tglGetClipPlanef(TGLenum plane, TGLfloat *equation);
+
+// misc
+void tglDepthRangef(TGLclampf zNear, TGLclampf zFar);
+void tglClipPlanef(TGLenum plane, const TGLfloat *equation);
+
 #endif
