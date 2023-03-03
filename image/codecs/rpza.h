@@ -37,7 +37,7 @@ public:
 	RPZADecoder(uint16 width, uint16 height);
 	~RPZADecoder() override;
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
+	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 	Graphics::PixelFormat getPixelFormat() const override { return _format; }
 
 	bool containsPalette() const override { return _ditherPalette != 0; }
