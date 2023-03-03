@@ -194,6 +194,19 @@ bool is_linear_bitmap(BITMAP *bmp) {
 	return true;
 }
 
+bool is_same_bitmap(BITMAP *bmp1, BITMAP *bmp2) {
+	if ((bmp1 == nullptr) || (bmp2 == nullptr))
+		return false;
+	if (bmp1 == bmp2)
+		return true;
+
+	// TODO: allegro also returns true if one bmp is a sub of the other,
+	// i.e. they share the same id
+	// This (if needed?) would require a different implementation
+
+	return false;
+}
+
 void bmp_select(BITMAP *bmp) {
 	// No implementation needed
 }

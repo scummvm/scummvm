@@ -101,6 +101,11 @@ public:
 		return _alBitmap->isSubBitmap();
 	}
 
+	// Do both bitmaps share same data (usually: subbitmaps, or parent/subbitmap)
+	inline bool IsSameBitmap(Bitmap *other) const {
+		return is_same_bitmap(_alBitmap, other->_alBitmap) != 0;
+	}
+
 	// Checks if bitmap cannot be used
 	inline bool IsNull() const {
 		return !_alBitmap;
