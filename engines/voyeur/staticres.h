@@ -40,22 +40,34 @@ extern const int COMPUTER_SCREEN_TABLE[];
 
 extern const char *const SZ_FILENAMES[];
 
-extern const char *const SATURDAY;
-extern const char *const SUNDAY;
-extern const char *const MONDAY;
-extern const char *const AM;
-extern const char *const PM;
+extern const char *const SATURDAY_EN;
+extern const char *const SUNDAY_EN;
+extern const char *const MONDAY_EN;
+extern const char *const AM_EN;
+extern const char *const PM_EN;
+extern const char *const START_OF_MESSAGE_EN;
+extern const char *const END_OF_MESSAGE_EN;
+extern const char *const EVENT_TYPE_STRINGS_EN[4];
+extern const char *const SATURDAY_AFTERNOON_EN;
+extern const char *const PLAYER_APARTMENT_EN;
 
-extern const char *const START_OF_MESSAGE;
-extern const char *const END_OF_MESSAGE;
-
-extern const char *const EVENT_TYPE_STRINGS[4];
+extern const char *const SATURDAY_DE;
+extern const char *const SUNDAY_DE;
+extern const char *const MONDAY_DE;
+extern const char *const AM_DE;
+extern const char *const PM_DE;
+extern const char *const START_OF_MESSAGE_DE;
+extern const char *const END_OF_MESSAGE_DE;
+extern const char *const EVENT_TYPE_STRINGS_DE[4];
+extern const char *const SATURDAY_AFTERNOON_DE;
+extern const char *const PLAYER_APARTMENT_DE;
 
 extern int DOT_LINE_START[9];
 extern int DOT_LINE_OFFSET[9];
 extern int DOT_LINE_LENGTH[9];
 
-extern const char *const PIRACY_MESSAGE[];
+extern const char *const PIRACY_MESSAGE_EN[];
+extern const char *const PIRACY_MESSAGE_DE[];
 
 } // End of namespace Voyeur
 

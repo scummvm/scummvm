@@ -31,14 +31,14 @@
 namespace Voyeur {
 
 IntNode::IntNode() {
-	_intFunc = NULL;
+	_intFunc = nullptr;
 	_curTime = 0;
 	_timeReset = 0;
 	_flags = 0;
 }
 
 IntNode::IntNode(uint16 curTime, uint16 timeReset, uint16 flags) {
-	_intFunc = NULL;
+	_intFunc = nullptr;
 	_curTime = curTime;
 	_timeReset = timeReset;
 	_flags = flags;
@@ -54,7 +54,7 @@ IntData::IntData() {
 	_skipFading = false;
 	_palStartIndex = 0;
 	_palEndIndex = 0;
-	_palette = NULL;
+	_palette = nullptr;
 }
 
 /*------------------------------------------------------------------------*/
@@ -71,7 +71,7 @@ EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
 
 	Common::fill(&_cycleTime[0], &_cycleTime[4], 0);
 	Common::fill(&_cycleNext[0], &_cycleNext[4], (byte *)nullptr);
-	_cyclePtr = NULL;
+	_cyclePtr = nullptr;
 
 	_leftClick = _rightClick = false;
 	_mouseClicked = _newMouseClicked = false;
@@ -589,8 +589,13 @@ void EventsManager::stopEvidDim() {
 Common::String EventsManager::getEvidString(int eventIndex) {
 	assert(eventIndex <= _vm->_voy->_eventCount);
 	VoyeurEvent &e = _vm->_voy->_events[eventIndex];
+
+	if (_vm->getLanguage() == Common::DE_DEU)
+		return Common::String::format("%03d %.2d:%.2d %s %s", eventIndex + 1,
+									  e._isAM ? e._hour : e._hour + 12, e._minute, e._isAM ? AM_DE : PM_DE, EVENT_TYPE_STRINGS_DE[e._type - 1]);
+
 	return Common::String::format("%03d %.2d:%.2d %s %s", eventIndex + 1,
-		e._hour, e._minute, e._isAM ? AM : PM, EVENT_TYPE_STRINGS[e._type - 1]);
+		e._hour, e._minute, e._isAM ? AM_EN : PM_EN, EVENT_TYPE_STRINGS_EN[e._type - 1]);
 }
 
 } // End of namespace Voyeur

@@ -247,7 +247,7 @@ enum DisplayFlag {
 	DISPFLAG_NONE = 0};
 
 class DisplayResource {
-private:
+protected:
 	VoyeurEngine *_vm;
 public:
 	uint32 _flags;
@@ -349,7 +349,7 @@ public:
 	virtual ~ViewPortResource();
 
 	void setupViewPort();
-	void setupViewPort(PictureResource *pic, Common::Rect *clippingRect = NULL);
+	void setupViewPort(PictureResource *pic, Common::Rect *clippingRect = nullptr);
 	void addSaveRect(int pageIndex, const Common::Rect &r);
 	void fillPic(byte onOff);
 	void drawIfaceTime();

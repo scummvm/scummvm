@@ -104,16 +104,27 @@ const char *const SZ_FILENAMES[] = {
 	"Q1240100", "E1325100"
 };
 
-const char *const SATURDAY = "Saturday";
-const char *const SUNDAY = "Sunday";
-const char *const MONDAY = "Monday Morning";
-const char *const AM = "am";
-const char *const PM = "pm";
+const char *const SATURDAY_EN = "Saturday";
+const char *const SUNDAY_EN = "Sunday";
+const char *const MONDAY_EN = "Monday Morning";
+const char *const AM_EN = "am";
+const char *const PM_EN = "pm";
+const char *const START_OF_MESSAGE_EN = "*** Start of Message ***";
+const char *const END_OF_MESSAGE_EN = "*** End of Message ***";
+const char *const EVENT_TYPE_STRINGS_EN[4] = { "Video", "Audio", "Evidence", "Computer" };
+const char *const SATURDAY_AFTERNOON_EN = "Saturday Afternoon";
+const char *const PLAYER_APARTMENT_EN = "Player's Apartment";
 
-const char *const START_OF_MESSAGE = "*** Start of Message ***";
-const char *const END_OF_MESSAGE = "*** End of Message ***";
-
-const char *const EVENT_TYPE_STRINGS[4] = { "Video", "Audio", "Evidence", "Computer" };
+const char *const SATURDAY_DE = "Samstag";
+const char *const SUNDAY_DE = "Sonntag";
+const char *const MONDAY_DE = "Montag Morgen";
+const char *const AM_DE = " Uhr";
+const char *const PM_DE = " Uhr";
+const char *const START_OF_MESSAGE_DE = "   *** TEXTANFANG ***   ";
+const char *const END_OF_MESSAGE_DE = "   *** TEXTENDE ***   ";
+const char *const EVENT_TYPE_STRINGS_DE[4] = {"Video", "Audio", "Beweis", "Computer"};
+const char *const SATURDAY_AFTERNOON_DE = "Samstag Nachmittag";
+const char *const PLAYER_APARTMENT_DE = "Wohnung des Spielers";
 
 int DOT_LINE_START[9] = {
 	0xE880, 0xE9C0, 0xEB00, 0xEC40, 0xED80, 0xEEC0, 0xF000, 0xF140, 0xF280
@@ -125,7 +136,7 @@ int DOT_LINE_LENGTH[9] = {
 	5, 7, 9, 11, 11, 11, 9, 7, 5
 };
 
-const char *const PIRACY_MESSAGE[] = {
+const char *const PIRACY_MESSAGE_EN[] = {
 	"It is illegal to make",
 	"unauthorized copies of",
 	"this software. Duplication",
@@ -136,6 +147,19 @@ const char *const PIRACY_MESSAGE[] = {
 	"fines of up to $50,000",
 	"and jail terms up to",
 	"5 years."
+};
+
+const char *const PIRACY_MESSAGE_DE[] = {
+	"VOYEUR",
+	"A POV Entert. Group Production",
+	"Copyright 1993, 1994",
+	"Philips Interactive Media",
+	"Alle Urheberrechte und",
+	"Leistungsschutzrechte",
+	"vorbehalten. Kein Verleih.",
+	"Keine unerlaubte Vervielfaeltigung,",
+	"Vermietung, Auffuehrung",
+	"oder Sendung."
 };
 
 } // End of namespace Voyeur
