@@ -123,7 +123,7 @@ public class SAFFSTree {
 	private static final SAFFSNode NOT_FOUND_NODE = new SAFFSNode();
 
 	private static class SAFCache extends LinkedHashMap<String, SAFFSNode> {
-		private static final int MAX_ENTRIES = 1000;
+		private static final int MAX_ENTRIES = 10000;
 
 		public SAFCache() {
 			super(16, 0.75f, true);
