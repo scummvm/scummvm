@@ -130,7 +130,6 @@ int Net::hostGame(char *sessionName, char *userName) {
 }
 
 int Net::joinGame(Common::String IP, char *userName) {
-	// This gets called when attempting to join with the --join-game command line param.
 	debug(1, "Net::joinGame(\"%s\", \"%s\")", IP.c_str(), userName); // PN_JoinTCPIPGame
 	Address address = getAddressFromString(IP);
 
@@ -227,7 +226,7 @@ int Net::addUser(char *shortName, char *longName) {
 
 	uint tickCount = 0;
 	while (_myUserId == -1) {
-		remoteReceiveData(12);
+		remoteReceiveData();
 		// Wait for five seconds for our user id before giving up
 		tickCount += 5;
 		g_system->delayMillis(5);
@@ -265,9 +264,9 @@ int Net::createSession(char *name) {
 
 	_sessionId = -1;
 	_sessionName = name;
-	// Normally we would do only one peer (0) or three peers (2) but we are reserving one
+	// Normally we would do only one peer or three peers but we are reserving one
 	// for our connection to the session server.
-	_sessionHost = _enet->createHost("0.0.0.0", 0, _maxPlayers);
+	_sessionHost = _enet->createHost("0.0.0.0", 0, _maxPlayers + 1);
 
 	if (!_sessionHost) {
 		return 0;
@@ -477,7 +476,7 @@ int Net::endSession() {
 
 	_isRelayingGame = false;
 
-	return 0;
+	return 1;
 }
 
 void Net::disableSessionJoining() {
@@ -502,16 +501,16 @@ void Net::setBotsCount(int botsCount) {
 }
 
 int32 Net::setProviderByName(int32 parameter1, int32 parameter2) {
-	// char name[MAX_PROVIDER_NAME];
-	// char ipaddress[MAX_IP_SIZE];
+	char name[MAX_PROVIDER_NAME];
+	char ipaddress[MAX_IP_SIZE];
 
-	// ipaddress[0] = '\0';
+	ipaddress[0] = '\0';
 
-	// _vm->getStringFromArray(parameter1, name, sizeof(name));
-	// if (parameter2)
-	// 	_vm->getStringFromArray(parameter2, ipaddress, sizeof(ipaddress));
+	_vm->getStringFromArray(parameter1, name, sizeof(name));
+	if (parameter2)
+		_vm->getStringFromArray(parameter2, ipaddress, sizeof(ipaddress));
 
-	// debug(1, "Net::setProviderByName(\"%s\", \"%s\")", name, ipaddress); // PN_SetProviderByName
+	debug(1, "Net::setProviderByName(\"%s\", \"%s\")", name, ipaddress); // PN_SetProviderByName
 
 	// Emulate that we found a TCP/IP provider
 
@@ -571,6 +570,11 @@ bool Net::destroyPlayer(int32 userId) {
 int32 Net::startQuerySessions(bool connectToSessionServer) {
 	debug(1, "Net::startQuerySessions()");
 
+	if (!_enet) {
+		warning("NETWORKING: ENet not initialized yet");
+		return 0;
+	}
+
 	bool enableSessionServer = true;
 	bool enableLanBroadcast = true;
 	if (ConfMan.hasKey("enable_session_server"))
@@ -595,7 +599,7 @@ int32 Net::startQuerySessions(bool connectToSessionServer) {
 	if (enableLanBroadcast && !_broadcastSocket) {
 		_broadcastSocket = _enet->createSocket("0.0.0.0", 0);
 	}
-	return 0;
+	return 1;
 }
 
 int32 Net::updateQuerySessions() {
@@ -1109,7 +1113,7 @@ void Net::handleBroadcastData(Common::String data, Common::String host, int port
 	}
 }
 
-void Net::remoteReceiveData(uint32 tickCount) {
+void Net::remoteReceiveData() {
 	uint8 messageType = _sessionHost->service();
 	switch (messageType) {
 	case ENET_EVENT_TYPE_NONE:
@@ -1238,7 +1242,7 @@ void Net::doNetworkOnceAFrame(int msecs) {
 	if (!_enet || !_sessionHost)
 		return;
 
-	remoteReceiveData(msecs);
+	remoteReceiveData();
 
 	if (_sessionServerHost)
 		serviceSessionServer();
