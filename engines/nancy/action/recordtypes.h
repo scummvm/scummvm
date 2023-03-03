@@ -382,17 +382,19 @@ protected:
 	Common::String getRecordTypeName() const override { return "LoseGame"; }
 };
 
-class PushScene : public Unimplemented {
+class PushScene : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PushScene"; }
 };
 
-class PopScene : public Unimplemented {
+class PopScene : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PopScene"; }

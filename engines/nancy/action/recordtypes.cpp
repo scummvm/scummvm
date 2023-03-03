@@ -444,8 +444,18 @@ void PushScene::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }
 
+void PushScene::execute() {
+	NancySceneState.pushScene();
+	_isDone = true;
+}
+
 void PopScene::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
+}
+
+void PopScene::execute() {
+	NancySceneState.popScene();
+	_isDone = true;
 }
 
 void WinGame::readData(Common::SeekableReadStream &stream) {
