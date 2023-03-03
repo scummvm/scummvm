@@ -24,6 +24,7 @@
 
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/common_defines.h" // constants
+#include "ags/shared/ac/game_version.h"
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {
@@ -131,7 +132,7 @@ struct CharacterInfo {
 	void update_character_idle(CharacterExtras *chex, int &doing_nothing);
 	void update_character_follower(int &char_index, std::vector<int> &followingAsSheep, int &doing_nothing);
 
-	void ReadFromFile(Shared::Stream *in);
+	void ReadFromFile(Shared::Stream *in, GameDataVersion data_ver, int save_ver = -1);
 	void WriteToFile(Shared::Stream *out);
 };
 

@@ -29,7 +29,7 @@ namespace AGS3 {
 
 using AGS::Shared::Stream;
 
-void CharacterInfo::ReadFromFile(Stream *in) {
+void CharacterInfo::ReadFromFile(Stream *in, GameDataVersion data_ver, int save_ver) {
 	defview = in->ReadInt32();
 	talkview = in->ReadInt32();
 	view = in->ReadInt32();
@@ -77,8 +77,10 @@ void CharacterInfo::ReadFromFile(Stream *in) {
 	in->Read(scrname, MAX_SCRIPT_NAME_LEN);
 	on = in->ReadInt8();
 
-	if (_G(loaded_game_file_version) < kGameVersion_360_16)
+	if ((data_ver > kGameVersion_Undefined && data_ver < kGameVersion_360_16) ||
+		(save_ver >= 0 && save_ver < 2)) {
 		idle_anim_speed = animspeed + 5;
+	}
 }
 
 void CharacterInfo::WriteToFile(Stream *out) {

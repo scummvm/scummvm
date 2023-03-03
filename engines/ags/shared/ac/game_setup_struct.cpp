@@ -211,7 +211,7 @@ void GameSetupStruct::WriteMouseCursors_Aligned(Stream *out) {
 void GameSetupStruct::read_characters(Shared::Stream *in) {
 	chars = new CharacterInfo[numcharacters];
 
-	ReadCharacters_Aligned(in);
+	ReadCharacters_Aligned(in, false);
 }
 
 void GameSetupStruct::read_lipsync(Shared::Stream *in, GameDataVersion data_ver) {
@@ -243,10 +243,10 @@ void GameSetupStruct::read_messages(Shared::Stream *in, GameDataVersion data_ver
 	load_messages = nullptr;
 }
 
-void GameSetupStruct::ReadCharacters_Aligned(Stream *in) {
+void GameSetupStruct::ReadCharacters_Aligned(Stream *in, bool is_save) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int iteratorCount = 0; iteratorCount < numcharacters; ++iteratorCount) {
-		chars[iteratorCount].ReadFromFile(&align_s);
+		chars[iteratorCount].ReadFromFile(&align_s, is_save ? kGameVersion_Undefined : _G(loaded_game_file_version), 0);
 		align_s.Reset();
 	}
 }
@@ -363,7 +363,7 @@ void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, char *gswas, ccScript *c
 	in->ReadArrayOfInt32(&options[0], OPT_HIGHESTOPTION_321 + 1);
 	options[OPT_LIPSYNCTEXT] = in->ReadByte();
 
-	ReadCharacters_Aligned(in);
+	ReadCharacters_Aligned(in, true);
 }
 
 //=============================================================================
