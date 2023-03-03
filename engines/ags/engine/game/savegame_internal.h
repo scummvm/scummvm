@@ -72,7 +72,7 @@ struct RestoredData {
 	std::vector<Bitmap *>    DynamicSurfaces;
 	// Scripts global data
 	struct ScriptData {
-		std::shared_ptr<char> Data;
+		std::vector<char>	Data;
 		size_t              Len;
 
 		ScriptData();
