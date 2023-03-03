@@ -209,6 +209,8 @@ void GUIMain::ClearChanged() {
 }
 
 void GUIMain::ResetOverControl() {
+	if (MouseOverCtrl >= 0)
+		_controls[MouseOverCtrl]->OnMouseLeave();
 	// Force it to re-check for which control is under the mouse
 	MouseWasAt.X = -1;
 	MouseWasAt.Y = -1;
