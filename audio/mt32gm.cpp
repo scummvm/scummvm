@@ -973,6 +973,9 @@ void MidiDriver_MT32GM::metaEvent(int8 source, byte type, byte *data, uint16 len
 }
 
 void MidiDriver_MT32GM::stopAllNotes(bool stopSustainedNotes) {
+	if (!_driver)
+		return;
+
 	for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
 		if (!isOutputChannelUsed(i))
 			continue;
