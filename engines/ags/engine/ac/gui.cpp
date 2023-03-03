@@ -406,9 +406,9 @@ void replace_macro_tokens(const char *text, String &fixed_text) {
 	}
 }
 
-
 bool sort_gui_less(const int g1, const int g2) {
-	return _GP(guis)[g1].ZOrder < _GP(guis)[g2].ZOrder;
+	return (_GP(guis)[g1].ZOrder < _GP(guis)[g2].ZOrder) ||
+		   ((_GP(guis)[g1].ZOrder == _GP(guis)[g2].ZOrder) && (g1 < g2));
 }
 
 void update_gui_zorder() {
