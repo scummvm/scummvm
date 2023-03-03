@@ -107,17 +107,17 @@ void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 
 		if (!window) {
 			if (scaled) {
-				tglOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
+				tglOrthof(0, kOriginalWidth, kOriginalHeight, 0, -1, 1);
 			} else {
-				tglOrtho(0.0, _system->getWidth(), _system->getHeight(), 0.0, -1.0, 1.0);
+				tglOrthof(0, _system->getWidth(), _system->getHeight(), 0, -1, 1);
 			}
 		} else {
 			if (scaled) {
 				Common::Rect originalRect = window->getOriginalPosition();
-				tglOrtho(0.0, originalRect.width(), originalRect.height(), 0.0, -1.0, 1.0);
+				tglOrthof(0, originalRect.width(), originalRect.height(), 0, -1, 1);
 			} else {
 				Common::Rect vp = window->getPosition();
-				tglOrtho(0.0, vp.width(), vp.height(), 0.0, -1.0, 1.0);
+				tglOrthof(0, vp.width(), vp.height(), 0, -1, 1);
 			}
 		}
 

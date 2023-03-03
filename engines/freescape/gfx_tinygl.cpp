@@ -104,7 +104,7 @@ void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, floa
 	float ymaxValue = xmaxValue / aspectRatio;
 	// debug("max values: %f %f", xmaxValue, ymaxValue);
 
-	tglFrustum(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+	tglFrustumf(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 }
@@ -135,7 +135,7 @@ void TinyGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0, _screenW, _screenH, 0, 0, 1);
+	tglOrthof(0, _screenW, _screenH, 0, 0, 1);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadIdentity();
 

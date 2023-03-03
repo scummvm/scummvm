@@ -393,7 +393,7 @@ void LowLevelGraphicsTGL::SetupGL() {
 	tglViewport(0, 0, mvScreenSize.x, mvScreenSize.y);
 
 	// Depth Test setup
-	tglClearDepth(1.0f);      // VAlues buffer is cleared with
+	tglClearDepthf(1.0f);      // VAlues buffer is cleared with
 	tglEnable(TGL_DEPTH_TEST); // enable depth testing
 	tglDepthFunc(TGL_LEQUAL);  // function to do depth test with
 	tglDisable(TGL_ALPHA_TEST);
@@ -660,7 +660,7 @@ void LowLevelGraphicsTGL::ScaleMatrix(eMatrix aMtxType, const cVector3f &avScale
 void LowLevelGraphicsTGL::SetOrthoProjection(const cVector2f &avSize, float afMin, float afMax) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	tglOrtho(0, avSize.x, avSize.y, 0, afMin, afMax);
+	tglOrthof(0, avSize.x, avSize.y, 0, afMin, afMax);
 }
 
 //-----------------------------------------------------------------------
@@ -855,7 +855,7 @@ void LowLevelGraphicsTGL::SetClearColor(const cColor &aCol) {
 	tglClearColor(aCol.r, aCol.g, aCol.b, aCol.a);
 }
 void LowLevelGraphicsTGL::SetClearDepth(float afDepth) {
-	tglClearDepth(afDepth);
+	tglClearDepthf(afDepth);
 }
 void LowLevelGraphicsTGL::SetClearStencil(int alVal) {
 	tglClearStencil(alVal);
