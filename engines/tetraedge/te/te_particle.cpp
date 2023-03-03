@@ -94,9 +94,9 @@ void TeParticle::update(int val) {
 			// redoing the math on every particle.
 			Common::Array<TeVector3f32> quad(4);
 			quad[0] = _matrix.mult3x3(TeVector3f32(-1, -1, 0));
-			quad[1] = _matrix.mult3x3(TeVector3f32( 1, -1, 0));
-			quad[2] = _matrix.mult3x3(TeVector3f32( 1,  1, 0));
-			quad[3] = _matrix.mult3x3(TeVector3f32(-1,  1, 0));
+			quad[1] = _matrix.mult3x3(TeVector3f32(-1,  1, 0));
+			quad[2] = _matrix.mult3x3(TeVector3f32( 1, -1, 0));
+			quad[3] = _matrix.mult3x3(TeVector3f32( 1,  1, 0));
 			const TeQuaternion norot = TeQuaternion::fromEuler(TeVector3f32(0, 0, 0));
 			_lastTime = fmod(_lastTime, _period);
 			for (int p = 0; p < _particlePerPeriod; p++) {
