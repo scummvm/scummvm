@@ -93,7 +93,8 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 
 Scene::Scene() :
 		_state (kInit),
-		_lastHint(-1),
+		_lastHintCharacter(-1),
+		_lastHintID(-1),
 		_gameStateRequested(NancyState::kNone),
 		_frame(),
 		_viewport(),
@@ -277,10 +278,11 @@ void Scene::clearLogicConditions() {
 	}
 }
 
-void Scene::useHint(int hintID, int hintWeight) {
-	if (_lastHint != hintID) {
-		_hintsRemaining[_difficulty] += hintWeight;
-		_lastHint = hintID;
+void Scene::useHint(uint16 characterID, uint16 hintID) {
+	if (_lastHintID != hintID || _lastHintCharacter != characterID) {
+		_hintsRemaining[_difficulty] += g_nancy->getStaticData().hints[characterID][hintID].hintWeight;
+		_lastHintCharacter = characterID;
+		_lastHintID = hintID;
 	}
 }
 
@@ -385,7 +387,9 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 	ser.syncAsUint16LE(_difficulty);
 	ser.syncArray<uint16>(_hintsRemaining.data(), _hintsRemaining.size(), Common::Serializer::Uint16LE);
-	ser.syncAsSint16LE(_lastHint);
+
+	ser.syncAsSint16LE(_lastHintCharacter);
+	ser.syncAsSint16LE(_lastHintID);
 
 	// Synchronize SliderPuzzle static data
 	ser.syncAsByte(_sliderPuzzleState.playerHasTriedPuzzle);
@@ -445,7 +449,7 @@ void Scene::init() {
 			_hintsRemaining.push_back(chunk->readByte());
 		}
 
-		_lastHint = -1;
+		_lastHintCharacter = _lastHintID = -1;
 	}
 
 	_sliderPuzzleState.playerHasTriedPuzzle = false;

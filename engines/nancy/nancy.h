@@ -52,7 +52,7 @@ class Serializer;
  */
 namespace Nancy {
 
-static const int kSavegameVersion = 1;
+static const int kSavegameVersion = 2;
 
 struct NancyGameDescription;
 

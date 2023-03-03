@@ -27,7 +27,6 @@
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/action/recordtypes.h"
-#include "engines/nancy/action/responses.cpp"
 
 #include "engines/nancy/state/scene.h"
 
@@ -672,14 +671,11 @@ void HintSystem::readData(Common::SeekableReadStream &stream) {
 void HintSystem::execute() {
 	switch (_state) {
 	case kBegin:
-		if (NancySceneState.getHintsRemaining() > 0) {
-			selectHint();
-		} else {
-			getHint(0, NancySceneState.getDifficulty());
-		}
+		selectHint();
+		_genericSound.name = selectedHint->soundIDs[NancySceneState.getDifficulty()];
 
 		NancySceneState.getTextbox().clear();
-		NancySceneState.getTextbox().addTextLine(_text);
+		NancySceneState.getTextbox().addTextLine(g_nancy->getStaticData().hintTexts[selectedHint->textID + NancySceneState.getDifficulty()]);
 
 		g_nancy->_sound->loadSound(_genericSound);
 		g_nancy->_sound->playSound(_genericSound);
@@ -695,10 +691,10 @@ void HintSystem::execute() {
 
 		// fall through
 	case kActionTrigger:
-		NancySceneState.useHint(_hintID, _hintWeight);
+		NancySceneState.useHint(_characterID, _hintID);
 		NancySceneState.getTextbox().clear();
 
-		NancySceneState.changeScene(_sceneChange);
+		NancySceneState.changeScene(selectedHint->sceneChange);
 
 		_isDone = true;
 		break;
@@ -706,10 +702,13 @@ void HintSystem::execute() {
 }
 
 void HintSystem::selectHint() {
-	for (const auto &hint : nancy1Hints) {
-		if (hint.characterID != _characterID) {
-			continue;
-		}
+	if (NancySceneState.getHintsRemaining() == 0) {
+		selectedHint = &g_nancy->getStaticData().hints[_characterID][0];
+	}
+
+	// Start from 1 since the first hint is always the "I give up" option
+	for (uint i = 1; i < g_nancy->getStaticData().hints[_characterID].size(); ++i) {
+		const auto &hint = g_nancy->getStaticData().hints[_characterID][i];
 
 		bool satisfied = true;
 
@@ -724,7 +723,7 @@ void HintSystem::selectHint() {
 			}
 		}
 
-		for (const auto &inv : hint.inventoryCondition) {
+		for (const auto &inv : hint.inventoryConditions) {
 			if (inv.label == -1) {
 				break;
 			}
@@ -736,43 +735,10 @@ void HintSystem::selectHint() {
 		}
 
 		if (satisfied) {
-			getHint(hint.hintID, NancySceneState.getDifficulty());
+			selectedHint = &hint;
 			break;
 		}
 	}
-}
-
-void HintSystem::getHint(uint hint, uint difficulty) {
-	uint fileOffset = 0;
-	if (_characterID < 3) {
-		fileOffset = nancy1HintOffsets[_characterID];
-	}
-
-	fileOffset += 0x288 * hint;
-
-	Common::File file;
-	file.open("game.exe");
-	file.seek(fileOffset);
-
-	_hintID = file.readSint16LE();
-	_hintWeight = file.readSint16LE();
-
-	file.seek(difficulty * 10, SEEK_CUR);
-
-	readFilename(file, _genericSound.name);
-
-	file.seek(-(difficulty * 10) - 10, SEEK_CUR);
-	file.seek(30 + difficulty * 200, SEEK_CUR);
-
-	char textBuf[200];
-	file.read(textBuf, 200);
-	textBuf[199] = '\0';
-	_text = textBuf;
-
-	file.seek(-(difficulty * 200) - 200, SEEK_CUR);
-	file.seek(600, SEEK_CUR);
-
-	_sceneChange.readData(file);
 }
 
 } // End of namespace Action

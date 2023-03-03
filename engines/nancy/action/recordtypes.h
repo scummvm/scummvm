@@ -508,13 +508,10 @@ public:
 	byte _characterID; // 0x00
 	SoundDescription _genericSound; // 0x01
 
-	Common::String _text;
-	SceneChangeDescription _sceneChange;
-	uint16 _hintID;
-	int16 _hintWeight;
+	const Hint *selectedHint;
+	int16 _hintID;
 
 	void selectHint();
-	void getHint(uint hint, uint difficulty);
 
 protected:
 	Common::String getRecordTypeName() const override { return "HintSystem"; }

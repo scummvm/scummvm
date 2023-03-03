@@ -146,7 +146,7 @@ public:
 	uint16 getDifficulty() const { return _difficulty; }
 
 	byte getHintsRemaining() const { return _hintsRemaining[_difficulty]; }
-	void useHint(int hintID, int hintWeight);
+	void useHint(uint16 characterID, uint16 hintID);
 
 	void requestStateChange(NancyState::NancyState state) { _gameStateRequested = state; }
 	void resetStateToInit() { _state = kInit; }
@@ -252,7 +252,8 @@ private:
 	SliderPuzzleState _sliderPuzzleState;
 	uint16 _difficulty;
 	Common::Array<uint16> _hintsRemaining;
-	int16 _lastHint;
+	int16 _lastHintCharacter;
+	int16 _lastHintID;
 	NancyState::NancyState _gameStateRequested;
 
 	Common::Rect _mapHotspot;
