@@ -1,0 +1,221 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*************************************
+ *
+ * USED IN:
+ * מיץ פטל (Mitz Petel)
+ *
+ *************************************/
+/* -- Draw XObject version 1.0 beta
+Draw
+-- (c) 1995 - Daniele Russo
+-- New York University - Center for Digital Multimedia
+I        mNew                --Creates a new instance of the XObject.
+--
+I        mDispose            --Disposes of an XObject instance.
+--
+IIIII    mLine               --Draws a line.
+--
+IIIII    mLineBrush          --Draws a line using a pen.
+--
+IIIIII   mLineBrushTrans     --Draws a line using a transparent, multicolored pen.
+--
+IIIIIII  mLineBrushCol       --Draws a line using a transparent pen.
+--
+III      mFilterBMP          --Gets a picture containing all the pixels in an
+--                             image excluding those which are of a particular color.
+--                             The image to filter must be on the clipboard (as a BITMAP).
+--
+III      mFilterDIB          --As above, but the image must be a DIB.
+--
+III      mFilterBMP128       --Gets a picture containing all the pixels in an
+--                             image whose color is within the lower/upper
+--                             128. The image to filter must be on the clipboard
+--                             (as a BITMAP).
+--
+III      mFilterDIB128       --As above, but the image must be a DIB.
+--
+III      mFilterBMPMakeGhostImage
+--                             Gets a picture which has all the pixels that don't
+--                             have the background color changed to a given color,
+--                             specified by the caller. The image to filter must be
+--                             on the clipboard (as a BITMAP).
+--
+III      mFilterDIBMakeGhostImage
+--                             As above, but the image must be a DIB.
+--
+I        mEmptyClipboard     --Empties the clipboard. This method MUST be called
+--                             after using the result of mFilterBMP and mFilterBMP128.
+--
+IIII     mFill               --Fills an area starting at a specified pixel
+--                             and defined by all the adjacent pixels with
+--                             the same color.
+--
+III      mGetColor           --Gets the color of a pixel on the stage. The
+--                             result is the index of the color in Director's
+--                             palette.
+--
+IIIIII   mDrawRect           -- Draws a rectangle of a specified color.
+--
+IIIIII   mDrawFrame          -- Draws a frame using a dotted pen.
+*/
+
+#include "director/director.h"
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
+#include "director/lingo/xlibs/draw.h"
+
+
+namespace Director {
+
+const char *DrawXObj::xlibName = "Draw";
+const char *DrawXObj::fileNames[] = {
+	"DRAW",
+	0
+};
+
+static MethodProto xlibMethods[] = {
+	{ "New",						DrawXObj::m_new,						0,	0,	400 },	// D4
+	{ "Dispose",					DrawXObj::m_dispose,					0,	0,	400 },	// D4
+	{ "Line",						DrawXObj::m_line,						4,	4,	400 },	// D4
+	{ "LineBrush",					DrawXObj::m_lineBrush,					4,	4,	400 },	// D4
+	{ "LineBrushTrans",				DrawXObj::m_lineBrushTrans,				5,	5,	400 },	// D4
+	{ "LineBrushCol",				DrawXObj::m_lineBrushCol,				6,	6,	400 },	// D4
+	{ "FilterBMP",					DrawXObj::m_filterBMP,					2,	2,	400 },	// D4
+	{ "FilterDIB",					DrawXObj::m_filterDIB,					2,	2,	400 },	// D4
+	{ "FilterBMP128",				DrawXObj::m_filterBMP128,				2,	2,	400 },	// D4
+	{ "FilterDIB128",				DrawXObj::m_filterDIB128,				2,	2,	400 },	// D4
+	{ "FilterBMPMakeGhostImage",	DrawXObj::m_filterBMPMakeGhostImage,	2,	2,	400 },	// D4
+	{ "FilterDIBMakeGhostImage",	DrawXObj::m_filterDIBMakeGhostImage,	2,	2,	400 },	// D4
+	{ "EmptyClipboard",				DrawXObj::m_emptyClipboard,				0,	0,	400 },	// D4
+	{ "Fill",						DrawXObj::m_fill,						3,	3,	400 },	// D4
+	{ "GetColor",					DrawXObj::m_getColor,					2,	2,	400 },	// D4
+	{ "DrawRect",					DrawXObj::m_drawRect,					5,	5,	400 },	// D4
+	{ "DrawFrame",					DrawXObj::m_drawFrame,					5,	5,	400 },	// D4
+	{ nullptr, nullptr, 0, 0, 0 }
+};
+
+void DrawXObj::open(int type) {
+	if (type == kXObj) {
+		DrawXObject::initMethods(xlibMethods);
+		DrawXObject *xobj = new DrawXObject(kXObj);
+		g_lingo->exposeXObject(xlibName, xobj);
+	}
+}
+
+void DrawXObj::close(int type) {
+	if (type == kXObj) {
+		DrawXObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
+	}
+}
+
+
+DrawXObject::DrawXObject(ObjectType ObjectType) :Object<DrawXObject>("DrawXObj") {
+	_objType = ObjectType;
+}
+
+void DrawXObj::m_new(int nargs) {
+	g_lingo->push(g_lingo->_state->me);
+}
+
+void DrawXObj::m_dispose(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_dispose", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_line(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_line", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_lineBrush(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_lineBrush", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_lineBrushTrans(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_lineBrushTrans", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_lineBrushCol(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_lineBrushCol", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_filterBMP(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_filterBMP", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_filterDIB(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_filterDIB", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_filterBMP128(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_filterBMP128", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_filterDIB128(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_filterDIB128", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_filterBMPMakeGhostImage(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_filterBMPMakeGhostImage", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_filterDIBMakeGhostImage(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_filterDIBMakeGhostImage", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_emptyClipboard(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_emptyClipboard", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_fill(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_fill", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_getColor(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_getColor", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_drawRect(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_drawRect", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void DrawXObj::m_drawFrame(int nargs) {
+	g_lingo->printSTUBWithArglist("DrawXObj::m_drawFrame", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+} // End of namespace Director
