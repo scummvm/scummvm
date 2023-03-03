@@ -883,7 +883,7 @@ HSaveError ReadRoomStates(Stream *in, int32_t cmp_ver, const PreservedParams & /
 			if (!AssertFormatTagStrict(err, in, "RoomState", true))
 				return err;
 			RoomStatus *roomstat = getRoomStatus(id);
-			roomstat->ReadFromSavegame(in, cmp_ver);
+			roomstat->ReadFromSavegame(in, (RoomStatSvgVersion)cmp_ver);
 			if (!AssertFormatTagStrict(err, in, "RoomState", false))
 				return err;
 		}
@@ -977,7 +977,7 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 
 	// read the current troom state, in case they saved in temporary room
 	if (!in->ReadBool())
-		_GP(troom).ReadFromSavegame(in, cmp_ver);
+		_GP(troom).ReadFromSavegame(in, (RoomStatSvgVersion)cmp_ver);
 
 	return HSaveError::None();
 }
@@ -1110,15 +1110,15 @@ struct ComponentHandlers {
 		},
 		{
 			"Room States",
-			3,
-			0,
+			kRoomStatSvgVersion_36041,
+			kRoomStatSvgVersion_Initial,
 			WriteRoomStates,
 			ReadRoomStates
 		},
 		{
 			"Loaded Room State",
-			3, // must correspond to "Room States"
-			0,
+			kRoomStatSvgVersion_36041, // must correspond to "Room States"
+			kRoomStatSvgVersion_Initial,
 			WriteThisRoom,
 			ReadThisRoom
 		},

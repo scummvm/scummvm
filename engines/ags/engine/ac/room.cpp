@@ -533,7 +533,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			_GP(thisroom).LocalVariables[i].Value = _G(croom)->interactionVariableValues[i];
 
 		// Always copy object and hotspot names for < 3.6.0 games, because they were not settable
-		if (_G(loaded_game_file_version) < kGameVersion_360_16) {
+		if ((_G(loaded_game_file_version) < kGameVersion_360_16) ||	(_G(croom)->contentFormat < kRoomStatSvgVersion_36025)) {
 			for (size_t cc = 0; cc < _GP(thisroom).Objects.size(); ++cc)
 				_G(croom)->obj[cc].name = _GP(thisroom).Objects[cc].Name;
 			for (int cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
@@ -597,6 +597,8 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		_G(croom)->beenhere = 1;
 		_G(in_new_room) = 2;
 	}
+	// Reset contentFormat hint to avoid doing fixups later
+	_G(croom)->contentFormat = kRoomStatSvgVersion_Current;
 
 	if (_GP(thisroom).EventHandlers == nullptr) {
 		// legacy interactions
