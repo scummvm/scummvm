@@ -23,6 +23,7 @@
 #define AGS_ENGINE_AC_ROOM_STATUS_H
 
 #include "ags/engine/ac/room_object.h"
+#include "ags/engine/game/savegame.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/game/interactions.h"
 #include "ags/shared/util/string_types.h"
@@ -47,8 +48,16 @@ struct HotspotState {
 	void WriteToSavegame(Shared::Stream *out) const;
 };
 
-// This struct is saved in the save games - it contains everything about
-// a room that could change
+// Savegame data format for RoomStatus
+// TODO: fill in other versions (lookup the code history)
+enum RoomStatSvgVersion {
+	kRoomStatSvgVersion_Initial = 0,
+	kRoomStatSvgVersion_36025 = 3,
+	kRoomStatSvgVersion_36041 = 4,
+	kRoomStatSvgVersion_Current = kRoomStatSvgVersion_36041
+};
+
+// RoomStatus contains everything about a room that could change at runtime.
 struct RoomStatus {
 	int   beenhere = 0;
 	uint32_t numobj = 0;
@@ -76,6 +85,13 @@ struct RoomStatus {
 	EventBlock misccond;
 #endif
 
+	// A version of a save this RoomStatus was restored from.
+	// This is used as a hint when merging RoomStatus with the loaded room file (upon room enter).
+	// We need this for cases when an old format save is restored within an upgraded game
+	// (for example, game was upgraded from 3.4.0 to 3.6.0, but player tries loading 3.4.0 save),
+	// because room files are only loaded once entered, so we cannot fixup all RoomStatuses at once.
+	RoomStatSvgVersion contentFormat;
+
 	RoomStatus();
 	~RoomStatus();
 
@@ -84,7 +100,7 @@ struct RoomStatus {
 
 	void ReadFromFile_v321(Shared::Stream *in);
 	void ReadRoomObjects_Aligned(Shared::Stream *in);
-	void ReadFromSavegame(Shared::Stream *in, int save_ver);
+	void ReadFromSavegame(Shared::Stream *in, RoomStatSvgVersion save_ver);
 	void WriteToSavegame(Shared::Stream *out) const;
 };
 
