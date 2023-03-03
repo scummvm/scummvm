@@ -42,13 +42,13 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_screen = nullptr;
 	_soundManager = nullptr;
 	_voy = nullptr;
-	_bVoy = NULL;
+	_bVoy = nullptr;
 
 	_iForceDeath = ConfMan.getInt("boot_param");
 	if (_iForceDeath < 1 || _iForceDeath > 4)
 		_iForceDeath = -1;
 
-	_controlPtr = NULL;
+	_controlPtr = nullptr;
 	_stampFlags = 0;
 	_playStampGroupId = _currentVocId = 0;
 	_audioVideoId = -1;
@@ -155,8 +155,6 @@ void VoyeurEngine::initInput() {
 }
 
 bool VoyeurEngine::doHeadTitle() {
-//	char dest[144];
-
 	_eventsManager->startMainClockInt();
 
 	if (_loadGameSlot == -1) {
@@ -191,7 +189,11 @@ bool VoyeurEngine::doHeadTitle() {
 			return false;
 
 		_eventsManager->getMouseInfo();
-		doTransitionCard("Saturday Afternoon", "Player's Apartment");
+		if (getLanguage() == Common::DE_DEU)
+			doTransitionCard(SATURDAY_AFTERNOON_DE, PLAYER_APARTMENT_DE);
+		else
+			doTransitionCard(SATURDAY_AFTERNOON_EN, PLAYER_APARTMENT_EN);
+
 		_eventsManager->delayClick(90);
 
 		if (_voy->_eventFlags & EVTFLAG_VICTIM_PRESET) {
@@ -557,7 +559,7 @@ void VoyeurEngine::playAVideoDuration(int videoId, int duration) {
 	if (videoId == -1)
 		return;
 
-	PictureResource *pic = NULL;
+	PictureResource *pic = nullptr;
 	if (videoId == 42) {
 		_bVoy->getBoltGroup(0xE00);
 		_eventsManager->_videoDead = 0;
@@ -637,7 +639,7 @@ void VoyeurEngine::playAudio(int audioId) {
 	_soundManager->stopVOCPlay();
 
 	_bVoy->freeBoltGroup(0x7F00);
-	_screen->_vPort->setupViewPort(NULL);
+	_screen->_vPort->setupViewPort(nullptr);
 
 	_voy->_eventFlags &= ~EVTFLAG_RECORDING;
 	_voy->_playStampMode = 129;
@@ -648,7 +650,7 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	_screen->setColor(224, 220, 220, 220);
 	_eventsManager->_intPtr._hasPalette = true;
 
-	_screen->_vPort->setupViewPort(NULL);
+	_screen->_vPort->setupViewPort(nullptr);
 	_screen->_vPort->fillPic(0x80);
 	_screen->flipPage();
 	_eventsManager->sWaitFlip();
@@ -778,7 +780,7 @@ void VoyeurEngine::loadGame(int slot) {
 	if (!saveFile)
 		return;
 
-	Common::Serializer serializer(saveFile, NULL);
+	Common::Serializer serializer(saveFile, nullptr);
 
 	// Store the current time index before the game is loaded
 	_checkTransitionId = _voy->_transitionId;
@@ -817,7 +819,7 @@ Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc, 
 	header.write(saveFile, this, desc);
 
 	// Set up a serializer
-	Common::Serializer serializer(NULL, saveFile);
+	Common::Serializer serializer(nullptr, saveFile);
 
 	// Synchronise the data
 	serializer.setVersion(VOYEUR_SAVEGAME_VERSION);

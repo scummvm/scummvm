@@ -184,7 +184,7 @@ public:
 	 * @param frames		Optional frame numbers resource for when to apply image data
 	 * @param imgPos		Position to draw image data
 	 */
-	void play(VoyeurEngine *vm, int resourceOffset = 0, byte *frames = NULL, byte *imgPos = NULL);
+	void play(VoyeurEngine *vm, int resourceOffset = 0, byte *frames = nullptr, byte *imgPos = nullptr);
 	RL2VideoTrack *getRL2VideoTrack() { return _videoTrack; }
 	RL2AudioTrack *getRL2AudioTrack() { return _audioTrack; }
 };
