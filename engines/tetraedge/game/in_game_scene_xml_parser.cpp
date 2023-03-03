@@ -174,8 +174,16 @@ bool InGameSceneXmlParser::textCallback(const Common::String &val) {
 	case TextNodePosition: {
 		TeVector3f32 pos;
 		if (!pos.parse(val)) {
-			parserError("Can't parse dummy position");
-			return false;
+			//
+			// WORKAROUND: Syberia 2 A5_ValMaison/55016/Scene55016.xml
+			// contains invalid dummy position data.
+			//
+			if (val == "-10,-17,-31,7") {
+				pos = TeVector3f32(-10, -17, -31);
+			} else {
+				parserError("Can't parse dummy position");
+				return false;
+			}
 		}
 		_scene->_dummies.back()._position = pos;
 		break;
