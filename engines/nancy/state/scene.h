@@ -125,6 +125,8 @@ public:
 	void pauseSceneSpecificSounds();
 	void unpauseSceneSpecificSounds();
 
+	void setPlayerTime(Time time, NancyFlag relative);
+
 	void addItemToInventory(uint16 id);
 	void removeItemFromInventory(uint16 id, bool pickUp = true);
 	int16 getHeldItem() const { return _flags.heldItem; }

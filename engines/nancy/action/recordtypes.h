@@ -300,9 +300,14 @@ protected:
 	Common::String getRecordTypeName() const override { return "TextBoxClear"; }
 };
 
-class BumpPlayerClock : public Unimplemented {
+class BumpPlayerClock : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	NancyFlag _relative;
+	uint16 _hours;
+	uint16 _minutes;
 
 protected:
 	Common::String getRecordTypeName() const override { return "BumpPlayerClock"; }

@@ -211,6 +211,18 @@ void Scene::unpauseSceneSpecificSounds() {
 	}
 }
 
+void Scene::setPlayerTime(Time time, NancyFlag relative) {
+	if (relative == kTrue) {
+		// Relative, add the specified time to current playerTime
+		_timers.playerTime += time;
+	} else {
+		// Absolute, maintain days but replace hours and minutes
+		_timers.playerTime = _timers.playerTime.getDays() * 86400000 + time;
+	}
+
+	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + g_nancy->_playerTimeMinuteLength;
+}
+
 void Scene::addItemToInventory(uint16 id) {
 	_flags.items[id] = kTrue;
 	if (_flags.heldItem == id) {
