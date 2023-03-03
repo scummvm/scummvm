@@ -3085,7 +3085,7 @@ bool adrift_startup_code(Common::SeekableReadStream *gameFile) {
 	const char *locale;
 	sc_uint trace_flags;
 	sc_bool enable_debugger, stable_random;
-	assert(!gsc_startup_called);
+	//assert(!gsc_startup_called);
 	gsc_startup_called = TRUE;
 
 	assert(gameFile);
