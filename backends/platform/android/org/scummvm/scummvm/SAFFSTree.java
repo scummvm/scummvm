@@ -289,46 +289,22 @@ public class SAFFSTree {
 		SAFFSNode newnode;
 
 		newnode = _cache.get(childPath);
-		if (newnode != null) {
-			if (newnode == NOT_FOUND_NODE) {
-				return null;
-			} else {
-				return newnode;
-			}
+		if (newnode == null) {
+			// Child is not cached: fetch all files in the parent
+			// They will end up in cache
+			getChildren(node);
+			newnode = _cache.get(childPath);
 		}
 
-		Cursor c = null;
-		try {
-			c = resolver.query(searchUri, new String[] { DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-				DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE,
-				DocumentsContract.Document.COLUMN_FLAGS }, null, null, null);
-			while (c.moveToNext()) {
-				final String displayName = c.getString(0);
-				if (!name.equals(displayName)) {
-					continue;
-				}
-
-				final String documentId = c.getString(1);
-				final String mimeType = c.getString(2);
-
-				final int flags = c.getInt(3);
-
-				final int ourFlags = SAFFSNode.computeFlags(mimeType, flags);
-
-				newnode = new SAFFSNode(node, childPath, documentId, ourFlags);
-				_cache.put(newnode._path, newnode);
-				return newnode;
-			}
-		} catch (Exception e) {
-			Log.w(ScummVM.LOG_TAG, "Failed query: " + e);
-		} finally {
-			if (c != null) {
-				c.close();
-			}
+		if (newnode == null) {
+			// The child hasn't been found: don't look it up again
+			_cache.put(childPath, NOT_FOUND_NODE);
+			return null;
+		} else if (newnode == NOT_FOUND_NODE) {
+			return null;
+		} else {
+			return newnode;
 		}
-
-		_cache.put(childPath, NOT_FOUND_NODE);
-		return null;
 	}
 
 	public SAFFSNode createDirectory(SAFFSNode node, String name) {
