@@ -379,8 +379,8 @@ HGameFileError ReadPlugins(std::vector<PluginInfo> &infos, Stream *in) {
 		PluginInfo info;
 		info.Name = name;
 		if (datasize > 0) {
-			info.Data.reset(new char[datasize]);
-			in->Read(info.Data.get(), datasize);
+			info.Data.resize(datasize);
+			in->Read(&info.Data.front(), datasize);
 		}
 		info.DataLen = datasize;
 		infos.push_back(info);
