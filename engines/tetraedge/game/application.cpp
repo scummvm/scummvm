@@ -59,6 +59,11 @@ _drawShadows(true) {
 	TeCore *core = g_engine->getCore();
 	core->_coreNotReady = true;
 	core->fileFlagSystemSetFlag("platform", "MacOSX");
+	//
+	// WORKAROUND: Syberia 2 A5_ValDomaine/54000/Logic54000.lua
+	// checks a typo of this flag..
+	//
+	core->fileFlagSystemSetFlag("plateform", "MacOSX");
 	core->fileFlagSystemSetFlag("part", "Full");
 	core->fileFlagSystemSetFlag("distributor", "DefaultDistributor");
 
