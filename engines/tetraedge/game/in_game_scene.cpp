@@ -1672,6 +1672,8 @@ void InGameScene::update() {
 		}
 		if (_character->charLookingAt()) {
 			TeVector3f32 targetpos = _character->charLookingAt()->_model->position();
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
+				targetpos = targetpos * _character->lastHeadBoneTrans();
 			if (_character->lookingAtTallThing())
 				targetpos.y() += 17;
 			TeVector2f32 headRot(getHeadHorizontalRotation(_character, targetpos),
@@ -1688,8 +1690,12 @@ void InGameScene::update() {
 	for (Character *c : _characters) {
 		if (c->charLookingAt()) {
 			TeVector3f32 targetpos = c->charLookingAt()->_model->position();
-			if (c->lookingAtTallThing())
-				targetpos.y() += 17;
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+				if (c->lookingAtTallThing())
+					targetpos.y() += 17;
+			} else {
+				targetpos = targetpos * c->lastHeadBoneTrans();
+			}
 			TeVector2f32 headRot(getHeadHorizontalRotation(c, targetpos),
 					getHeadVerticalRotation(c, targetpos));
 			float hangle = headRot.getX() * 180.0f / M_PI;
