@@ -1297,6 +1297,8 @@ bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Co
 		mesh->setIndex(i, file.readUint16LE());
 	}
 
+	file.close();
+
 	_shadowReceivingObjects.push_back(model);
 	return true;
 }

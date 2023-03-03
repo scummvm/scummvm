@@ -264,6 +264,7 @@ public:
 	TeIntrusivePtr<TeBezierCurve> curve() { return _curve; }
 	void setCurve(TeIntrusivePtr<TeBezierCurve> &c) { _curve = c; }
 	Common::Array<TeIntrusivePtr<TeModel>> &zoneModels() { return _zoneModels; }
+	Common::Array<TeIntrusivePtr<TeModel>> &shadowReceivingObjects() { return _shadowReceivingObjects; }
 	Common::Array<TeRectBlocker> &rectBlockers() { return _rectBlockers; }
 	Common::Array<TeBlocker> &blockers() { return _blockers; }
 	Common::Array<Object3D *> object3Ds() { return _object3Ds; }

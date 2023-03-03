@@ -131,7 +131,10 @@ void CharactersShadowOpenGL::draw(InGameScene *scene) {
 	glEnable(GL_BLEND);
 	renderer->setCurrentColor(scene->shadowColor());
 
-	for (TeIntrusivePtr<TeModel> model : scene->zoneModels()) {
+	Common::Array<TeIntrusivePtr<TeModel>> &models =
+			(g_engine->gameType() == TetraedgeEngine::kSyberia ?
+					scene->zoneModels() : scene->shadowReceivingObjects());
+	for (TeIntrusivePtr<TeModel> model : models) {
 		if (model->meshes().size() > 0 && model->meshes()[0]->materials().empty()) {
 			model->meshes()[0]->defaultMaterial(TeIntrusivePtr<Te3DTexture>());
 			model->meshes()[0]->materials()[0]._isShadowTexture = true;
