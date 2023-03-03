@@ -145,7 +145,8 @@ void PlaySecondaryMovie::updateGraphics() {
 	}
 
 	if ((_decoder.getCurFrame() == _lastFrame && _isReverse == kFalse) ||
-		(_decoder.getCurFrame() == _firstFrame && _isReverse == kTrue)) {
+		(_decoder.getCurFrame() == _firstFrame && _isReverse == kTrue) ||
+		_decoder.atEnd()) {
 		if (!g_nancy->_sound->isSoundPlaying(_sound)) {
 			g_nancy->_sound->stopSound(_sound);
 			_decoder.stop();
