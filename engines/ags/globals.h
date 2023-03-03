@@ -302,7 +302,6 @@ public:
 	std::array<AmbientSound> *_ambient;
 
 	ScriptAudioChannel *_scrAudioChannel;
-	char _acaudio_buffer[256];
 	int _reserved_channel_count = 0;
 
 	// This is an indicator of a music played by an old audio system
