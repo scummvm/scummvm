@@ -36,6 +36,7 @@ extern int movieIsEnding;
 
 int playMovie(int fileNumber);
 int stopMovie();
+MovieStates isMoviePlaying();
 int pauseMovie();
 
 } // End of namespace Sludge
