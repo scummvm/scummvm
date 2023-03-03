@@ -22,6 +22,10 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+// Needs to be included first as system headers redefine NO and YES, which clashes
+// with the DisposeAfterUse::Flag enum used in Common stream classes.
+#include "common/file.h"
+
 #include "backends/platform/sdl/macosx/macosx.h"
 
 #include <Foundation/NSBundle.h>
@@ -69,6 +73,21 @@ void OSystem_MacOSX::updateStartSettings(const Common::String & executable, Comm
 	// If a command was specified on the command line, do not override it
 	if (!command.empty())
 		return;
+
+	// Check if we have an autorun file with additional arguments
+	NSString *autorunPath = [bundle pathForResource:@"scummvm-autorun" ofType:nil];
+	if (autorunPath) {
+		Common::File autorun;
+		Common::String line;
+		if (autorun.open(Common::FSNode([autorunPath fileSystemRepresentation]))) {
+			while (!autorun.eos()) {
+				line = autorun.readLine();
+				if (!line.empty() && line[0] != '#')
+					additionalArgs.push_back(line);
+			}
+		}
+		autorun.close();
+	}
 
 	// If the bundle contains a game directory, auto-detect it
 	NSString *gamePath = [[bundle resourcePath] stringByAppendingPathComponent:@"game"];
