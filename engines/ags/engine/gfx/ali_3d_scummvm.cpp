@@ -375,8 +375,8 @@ void ScummVMRendererGraphicsDriver::RenderToBackBuffer() {
 		} else {
 			cur_spr = RenderSpriteBatch(batch, cur_spr, virtualScreen, view_offx + transform.X, view_offy + transform.Y);
 		}
-		_stageVirtualScreen = virtualScreen;
 	}
+	_stageVirtualScreen = virtualScreen;
 	_rendSpriteBatch = UINT32_MAX;
 	ClearDrawLists();
 }
@@ -389,7 +389,8 @@ size_t ScummVMRendererGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &bat
 				_spriteEvtCallback(sprite.x, sprite.y);
 			else
 				error("Unhandled attempt to draw null sprite");
-
+			// Stage surface could have been replaced by plugin
+			surface = _stageVirtualScreen;
 			continue;
 		} else if (sprite.ddb == reinterpret_cast<ALSoftwareBitmap *>(DRAWENTRY_TINT)) {
 			// draw screen tint fx
@@ -570,7 +571,9 @@ Bitmap *ScummVMRendererGraphicsDriver::GetMemoryBackBuffer() {
 }
 
 void ScummVMRendererGraphicsDriver::SetMemoryBackBuffer(Bitmap *backBuffer) {
-	if (backBuffer) {
+	// We need to also test internal AL BITMAP pointer, because we may receive it raw from plugin,
+	// in which case the Bitmap object may be a different wrapper over our own virtual screen.
+	if (backBuffer && (backBuffer->GetAllegroBitmap() != _origVirtualScreen->GetAllegroBitmap())) {
 		virtualScreen = backBuffer;
 	} else {
 		virtualScreen = _origVirtualScreen.get();
@@ -590,6 +593,16 @@ void ScummVMRendererGraphicsDriver::SetMemoryBackBuffer(Bitmap *backBuffer) {
 
 Bitmap *ScummVMRendererGraphicsDriver::GetStageBackBuffer(bool /*mark_dirty*/) {
 	return _stageVirtualScreen;
+}
+
+void ScummVMRendererGraphicsDriver::SetStageBackBuffer(Bitmap *backBuffer) {
+	Bitmap *cur_stage = (_rendSpriteBatch == UINT32_MAX) ? virtualScreen : _spriteBatches[_rendSpriteBatch].Surface.get();
+	// We need to also test internal AL BITMAP pointer, because we may receive it raw from plugin,
+	// in which case the Bitmap object may be a different wrapper over our own virtual screen.
+	if (backBuffer && (backBuffer->GetAllegroBitmap() != cur_stage->GetAllegroBitmap()))
+		_stageVirtualScreen = backBuffer;
+	else
+		_stageVirtualScreen = cur_stage;
 }
 
 bool ScummVMRendererGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) {

@@ -299,15 +299,15 @@ void IAGSEngine::DrawTextWrapped(int32 xx, int32 yy, int32 wid, int32 font, int3
 void IAGSEngine::SetVirtualScreen(BITMAP *bmp) {
 	if (!_G(gfxDriver)->UsesMemoryBackBuffer()) {
 		debug_script_warn("SetVirtualScreen: this plugin requires software graphics driver to work correctly.");
-		// we let it continue since gfxDriver is supposed to ignore this request without throwing an exception
+		return;
 	}
 
 	if (bmp) {
 		_GP(glVirtualScreenWrap).WrapAllegroBitmap(bmp, true);
-		_G(gfxDriver)->SetMemoryBackBuffer(&_GP(glVirtualScreenWrap));
+		_G(gfxDriver)->SetStageBackBuffer(&_GP(glVirtualScreenWrap));
 	} else {
 		_GP(glVirtualScreenWrap).Destroy();
-		_G(gfxDriver)->SetMemoryBackBuffer(nullptr);
+		_G(gfxDriver)->SetStageBackBuffer(nullptr);
 	}
 }
 

@@ -170,6 +170,10 @@ Bitmap *VideoMemoryGraphicsDriver::GetStageBackBuffer(bool mark_dirty) {
 	return GetStageScreenRaw(_rendSpriteBatch);
 }
 
+void VideoMemoryGraphicsDriver::SetStageBackBuffer(Bitmap *backBuffer) { 
+	// do nothing, video-memory drivers don't support this
+}
+
 bool VideoMemoryGraphicsDriver::GetStageMatrixes(RenderMatrixes &rm) {
 	rm = _stageMatrixes;
 	return true;

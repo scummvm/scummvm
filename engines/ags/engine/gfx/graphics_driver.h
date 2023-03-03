@@ -219,7 +219,11 @@ public:
 	virtual void SetMemoryBackBuffer(Shared::Bitmap *backBuffer) = 0;
 	// Returns memory backbuffer for the current rendering stage (or base virtual screen if called outside of render pass).
 	// All renderers should support this.
-	virtual Shared::Bitmap *GetStageBackBuffer(bool mark_dirty) = 0;
+	virtual Shared::Bitmap *GetStageBackBuffer(bool mark_dirty = false) = 0;
+	// Sets custom backbuffer bitmap to render current render stage to.
+	// Passing NULL pointer will tell renderer to switch back to its original stage buffer.
+	// Note that only software renderer supports this.
+	virtual void SetStageBackBuffer(Shared::Bitmap *backBuffer) = 0;
 	// Retrieves 3 transform matrixes for the current rendering stage: world (model), view and projection.
 	// These matrixes will be filled in accordance to the renderer's compatible format;
 	// returns false if renderer does not use matrixes (not a 3D renderer).
