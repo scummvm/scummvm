@@ -306,7 +306,8 @@ void ScummVMRendererGraphicsDriver::InitSpriteBatch(size_t index, const SpriteBa
 }
 
 void ScummVMRendererGraphicsDriver::ResetAllBatches() {
-	_spriteBatches.clear();
+	// NOTE: we don't release batches themselves here, only sprite lists.
+	// This is because we cache batch surfaces, for perfomance reasons.
 	_spriteList.clear();
 }
 
