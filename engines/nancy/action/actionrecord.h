@@ -24,6 +24,7 @@
 
 #include "engines/nancy/time.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/commontypes.h"
 
 namespace Common {
 class SeekableReadStream;

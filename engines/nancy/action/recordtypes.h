@@ -22,7 +22,6 @@
 #ifndef NANCY_ACTION_RECORDTYPES_H
 #define NANCY_ACTION_RECORDTYPES_H
 
-#include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/action/actionrecord.h"
