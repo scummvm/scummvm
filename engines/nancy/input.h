@@ -81,9 +81,7 @@ enum NancyAction {
 	kNancyActionRequestSaveLoad,
 	kNancyActionRequestSetupMenu,
 	kNancyActionRequestCredits,
-	kNancyActionRequestMap,
-	kNancyActionRequestCheatMenu,
-	kNancyActionRequestEventMenu
+	kNancyActionRequestMap
 };
 
 public:

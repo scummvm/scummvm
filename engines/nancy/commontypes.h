@@ -52,7 +52,7 @@ enum NancyState {
 	kHelp,
 	kScene,
 	// CD change
-	kCheat,
+	// Cheat,
 	kQuit,
 	// regain focus
 	kNone,

@@ -44,7 +44,6 @@ namespace Nancy {
 
 class NancyEngine;
 class NancyConsole;
-class CheatDialog;
 struct SceneChangeDescription;
 
 namespace Action {
@@ -74,7 +73,6 @@ class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::Action::SliderPuzzle;
 	friend class Nancy::NancyConsole;
 	friend class Nancy::NancyEngine;
-	friend class Nancy::CheatDialog;
 
 public:
 	enum GameStateChange : byte {

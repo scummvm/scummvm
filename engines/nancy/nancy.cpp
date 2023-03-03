@@ -70,7 +70,6 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_resource = nullptr;
 	_startTimeHours = 0;
 	_overrideMovementTimeDeltas = false;
-	_cheatTypeIsEventFlag = false;
 	_horizontalEdgesSize = 0;
 	_verticalEdgesSize = 0;
 }
@@ -194,18 +193,6 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 
 		return;
 	}
-	case NancyState::kCheat:
-		if (_cheatTypeIsEventFlag) {
-			EventFlagDialog *dialog = new EventFlagDialog();
-			runDialog(*dialog);
-			delete dialog;
-		} else {
-			CheatDialog *dialog = new CheatDialog();
-			runDialog(*dialog);
-			delete dialog;
-		}
-		_input->forceCleanInput();
-		return;
 	default:
 		break;
 	}
@@ -247,11 +234,6 @@ void NancyEngine::setToPreviousState() {
 
 void NancyEngine::setMouseEnabled(bool enabled) {
 	_cursorManager->showCursor(enabled); _input->setMouseInputEnabled(enabled);
-}
-
-void NancyEngine::callCheatMenu(bool eventFlags) {
-	_cheatTypeIsEventFlag = eventFlags;
-	setState(NancyState::kCheat);
 }
 
 Common::Error NancyEngine::run() {

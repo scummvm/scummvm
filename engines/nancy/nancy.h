@@ -62,7 +62,6 @@ class InputManager;
 class SoundManager;
 class GraphicsManager;
 class CursorManager;
-class CheatDialog;
 class NancyConsole;
 
 namespace State {
@@ -102,8 +101,6 @@ public:
 	Common::SeekableReadStream *getBootChunkStream(const Common::String &name) const;
 
 	void setMouseEnabled(bool enabled);
-
-	void callCheatMenu(bool eventFlags);
 
 	// Managers
 	ResourceManager *_resource;
@@ -154,8 +151,6 @@ private:
 	Common::Error synchronize(Common::Serializer &serializer);
 
 	bool isCompressed();
-
-	bool _cheatTypeIsEventFlag;
 
 	StaticData _staticData;
 	const byte _datFileMajorVersion;
