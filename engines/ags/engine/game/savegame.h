@@ -62,8 +62,9 @@ enum SavegameVersion {
 	kSvgVersion_350_final = 11,
 	kSvgVersion_350_final2 = 12,
 	kSvgVersion_351 = 13,
-	kSvgVersion_360beta = 3060023,
-	kSvgVersion_Current = kSvgVersion_360beta,
+	kSvgVersion_360_beta = 3060023,
+	kSvgVersion_360_final = 3060041,
+	kSvgVersion_Current = kSvgVersion_360_final,
 	kSvgVersion_LowestSupported = kSvgVersion_321 // change if support dropped
 };
 
