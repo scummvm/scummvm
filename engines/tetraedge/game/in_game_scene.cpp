@@ -796,7 +796,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	_sceneName = scene;
 	_blockers.clear();
 	_rectBlockers.clear();
-	_collisionSlide = 0;
+	_collisionSlide = false;
 	loadActZones();
 	loadBlockers();
 
