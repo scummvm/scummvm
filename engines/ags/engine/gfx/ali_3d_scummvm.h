@@ -223,6 +223,7 @@ public:
 	Bitmap *GetMemoryBackBuffer() override;
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
+	void SetStageBackBuffer(Bitmap *backBuffer) override;
 	bool GetStageMatrixes(RenderMatrixes & /*rm*/) override {
 		return false; /* not supported */
 	}

@@ -231,6 +231,7 @@ public:
 	Bitmap *GetMemoryBackBuffer() override;
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
+	void SetStageBackBuffer(Bitmap *backBuffer) override;
 	bool GetStageMatrixes(RenderMatrixes &rm) override;
 	// Creates new texture using given parameters
 	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override = 0;
