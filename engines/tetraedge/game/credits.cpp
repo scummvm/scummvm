@@ -69,7 +69,6 @@ void Credits::enter(bool returnToOptions) {
 	anchorAnim->_callbackMethod = &TeLayout::setAnchor;
 	anchorAnim->play();
 
-	TeCurveAnim2<TeLayout, TeVector3f32> *bgPosAnim = nullptr;
 	if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
 		TeCurveAnim2<TeLayout, TeVector3f32> *bgPosAnim = _gui.layoutPositionLinearAnimation("scrollBackgroundPositionAnim");
 		if (!bgPosAnim)
@@ -105,7 +104,7 @@ void Credits::enter(bool returnToOptions) {
 			_curveAnim.play();
 			bgchild->setVisible(true);
 			const Common::String bgAnimName = bgchild->name() + "Anim";
-			bgPosAnim = _gui.layoutPositionLinearAnimation(bgAnimName);
+			TeCurveAnim2<TeLayout, TeVector3f32> *bgPosAnim = _gui.layoutPositionLinearAnimation(bgAnimName);
 			if (!bgPosAnim)
 				error("Couldn't find bg position anim %s", bgAnimName.c_str());
 			bgPosAnim->_callbackObj = bgchild;
