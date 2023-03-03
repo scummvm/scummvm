@@ -610,13 +610,13 @@ bool Character::onModelAnimationFinished() {
 	Game *game = g_engine->getGame();
 	bool isWalkAnim = false;
 	if (game->scene()._character == this) {
-		// TODO: check if this logic matches..
 		for (const auto &walkSettings : _characterSettings._walkSettings) {
-			isWalkAnim |= (walkSettings._key.contains("Walk") || walkSettings._key.contains("Jog"));
-			isWalkAnim |= (walkSettings._value._walkParts[0]._file == animfile
-						|| walkSettings._value._walkParts[1]._file == animfile
-						|| walkSettings._value._walkParts[2]._file == animfile
-						|| walkSettings._value._walkParts[3]._file == animfile);
+			if (walkSettings._key.contains("Walk") || walkSettings._key.contains("Jog")) {
+				isWalkAnim |= (walkSettings._value._walkParts[0]._file.contains(animfile)
+							 || walkSettings._value._walkParts[1]._file.contains(animfile)
+							 || walkSettings._value._walkParts[2]._file.contains(animfile)
+							 || walkSettings._value._walkParts[3]._file.contains(animfile));
+			}
 		}
 		isWalkAnim |= animfile.contains(_characterSettings._idleAnimFileName);
 	} else {
