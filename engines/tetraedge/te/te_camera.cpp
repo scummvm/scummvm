@@ -171,6 +171,17 @@ void TeCamera::loadXml(const Common::Path &path) {
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(path);
 	if (!node.isReadable()) {
+		//
+		// WORKAROUND: scenes/A3_Village/34015 has Camera34010, not 34015
+		//
+		Common::String spath = path.toString();
+		size_t pos = spath.find("34015.xml");
+		if (pos != Common::String::npos) {
+			spath.replace(pos + 4, 1, "0");
+		}
+		node = core->findFile(spath);
+	}
+	if (!node.isReadable()) {
 		warning("Can't open camera data %s", path.toString().c_str());
 	}
 	TeCameraXmlParser parser;
