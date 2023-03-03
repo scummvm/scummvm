@@ -123,7 +123,7 @@ extern int   ccUnserializeAllObjects(Shared::Stream *in, ICCObjectReader *callba
 // dispose the object if RefCount==0
 extern void  ccAttemptDisposeObject(int32_t handle);
 // translate between object handles and memory addresses
-extern int32_t ccGetObjectHandleFromAddress(const char *address);
+extern int32_t ccGetObjectHandleFromAddress(const void *address);
 // TODO: not sure if it makes any sense whatsoever to use "const char*"
 // in these functions, might as well change to char* or just void*.
 extern const char *ccGetObjectAddressFromHandle(int32_t handle);

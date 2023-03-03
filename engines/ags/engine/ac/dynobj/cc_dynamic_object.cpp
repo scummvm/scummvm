@@ -93,12 +93,12 @@ void ccAttemptDisposeObject(int32_t handle) {
 }
 
 // translate between object handles and memory addresses
-int32_t ccGetObjectHandleFromAddress(const char *address) {
+int32_t ccGetObjectHandleFromAddress(const void *address) {
 	// set to null
 	if (address == nullptr)
 		return 0;
 
-	int32_t handl = _GP(pool).AddressToHandle(address);
+	int32_t handl = _GP(pool).AddressToHandle((const char *)address);
 
 	ManagedObjectLog("Line %d WritePtr: %08X to %d", _G(currentline), address, handl);
 
