@@ -127,6 +127,9 @@ const char *movie01[] = {
 const char *movie00[] = {
 	"0c6b8e4fa74024c4afdf7758f8d8b1a0" //english unpatched
 };
+const char *data005[] = {
+	"84738c0783093b1e515eb98918d2a405" //Chinese unpatched
+};
 const char *data004[] = {
 	"2cdb79d3606965a9a0a3378507488dd7" //english unpatched
 };
@@ -142,7 +145,8 @@ const char *data001[] = {
 };
 const char *data000[] = {
 	"2069b8bf113119910df8219e787e7e94", //english pre-patched
-	"08e2505a6a7fd90d3920131b1297c60f" //english unpatched
+	"08e2505a6a7fd90d3920131b1297c60f", //english unpatched
+	"7c9886667636aa77fe1ab9bada257595"  //Chinese unpatched
 };
 const char *credits[] = {
 	"6dcecad8f01657184f8576aab8fb3f00", //english unpatched
@@ -150,7 +154,8 @@ const char *credits[] = {
 	"2e6319c2ec5772ced5dc9f8b41eb5de7", //german unpatched
 	"cd71ca4e600198277f22e944988f7516", //french unpatched
 	"836a2081d5e57ed6ef5eaade7f770b0e", //spanish unpatched
-	"368baa2f319a72278035095e4f4a4466"  //brasilian-portuguese
+	"368baa2f319a72278035095e4f4a4466", //brasilian-portuguese
+	"6589646e7a61eff352b2e1d1c08963eb"  //Chinese unpatched
 };
 const char *local[] = {
 	"6142624ce13ea3c9079aa80918010c4a", //italian unpatched
@@ -447,8 +452,11 @@ void MD5Check::init() {
 			MD5SUM("data001.lab", data001)
 			MD5SUM("data000.lab", data000)
 			MD5SUM("credits.lab", credits)
-			if (g_grim->getGameLanguage() != Common::EN_ANY) {
+			if (g_grim->getGameLanguage() != Common::EN_ANY && g_grim->getGameLanguage() != Common::ZH_CHN) {
 				MD5SUM("local.lab", local)
+			}
+			if (g_grim->getGameLanguage() == Common::ZH_CHN) {
+				MD5SUM("data005.lab", data005)
 			}
 		}
 	} else {
