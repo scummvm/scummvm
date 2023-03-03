@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_setlocale
 #include "common/scummsys.h"
 
 #if defined(POSIX) && defined(USE_SYSDIALOGS) && defined(USE_GTK)
@@ -32,6 +33,7 @@
 #include "common/events.h"
 #include "common/translation.h"
 
+#include <locale.h>
 #include <gtk/gtk.h>
 
 // TODO: Move this into the class? Probably possible, but I've been told that
@@ -66,6 +68,10 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 	if (isDirBrowser) {
 		action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
 	}
+
+	// Set locale to environment one to let user have its localized folders in the browser
+	setlocale(LC_ALL, "");
+
 #if GTK_CHECK_VERSION(3,20,0)
 	GtkFileChooserNative *native = gtk_file_chooser_native_new(utf8Title.c_str(), NULL, action, utf8Choose.c_str(), utf8Cancel.c_str());
 	GtkFileChooser *chooser = GTK_FILE_CHOOSER(native);
@@ -101,6 +107,11 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 	}
 
 	_inDialog = FALSE;
+
+	// Restore default C locale to prevent issues with
+	// portability of sscanf(), atof(), etc.
+	// See bugs #6434 and #14196
+	setlocale(LC_ALL, "C");
 
 #if GTK_CHECK_VERSION(3,20,0)
 	g_object_unref(native);
