@@ -39,6 +39,7 @@ class ScrollView : public TextView {
 		int _frame = -1;
 		Common::KeyState _key;
 		KeybindingAction _action = KEYBIND_NONE;
+		bool _enabled = true;
 
 		Button(Shared::Xeen::SpriteResource *sprites,
 			const Common::Point &pos, int frame,
@@ -99,25 +100,32 @@ public:
 	/**
 	 * Add a button for display
 	 */
-	void addButton(Shared::Xeen::SpriteResource *sprites,
+	int addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame,
 		const Common::KeyState &key);
 
 	/**
 	 * Add a button for display
 	 */
-	void addButton(Shared::Xeen::SpriteResource *sprites,
+	int addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame, KeybindingAction action);
 
 	/**
 	 * Add a button for display
 	 */
-	void addButton(const Common::Rect &r, const Common::KeyState &key);
+	int addButton(const Common::Rect &r, const Common::KeyState &key);
 
 	/**
 	 * Add a button for display
 	 */
-	void addButton(const Common::Rect &r, KeybindingAction action);
+	int addButton(const Common::Rect &r, KeybindingAction action);
+
+	/**
+	 * Set a button's enablement
+	 */
+	void setButtonEnabled(int buttonNum, bool enabled) {
+		_buttons[buttonNum]._enabled = enabled;
+	}
 
 	/**
 	 * Reset selected button

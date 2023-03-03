@@ -31,6 +31,9 @@ namespace Locations {
 
 Inn::Inn() : ScrollView("Inn") {
 	_bounds.setBorderSize(10);
+	_escSprite.load("esc.icn");
+	addButton(&_escSprite, Common::Point(100, 162), 0, KEYBIND_SELECT);
+	setButtonEnabled(0, false);
 }
 
 bool Inn::msgFocus(const FocusMessage &msg) {
@@ -109,11 +112,11 @@ void Inn::draw() {
 		if (_partyChars.size() == 6)
 			writeString(0, 130, STRING["dialogs.inn.full"], ALIGN_MIDDLE);
 
-		writeString(0, 145, STRING["enhdialogs.inn.left_click"], ALIGN_MIDDLE);
-		writeString(0, 155, STRING["enhdialogs.inn.right_click"], ALIGN_MIDDLE);
+		writeString(0, 142, STRING["enhdialogs.inn.left_click"], ALIGN_MIDDLE);
+		writeString(0, 152, STRING["enhdialogs.inn.right_click"], ALIGN_MIDDLE);
 
 		if (!_partyChars.empty())
-			writeString(0, 170, STRING["dialogs.inn.exit"], ALIGN_MIDDLE);
+			writeString(155, 168, STRING["enhdialogs.inn.exit"], ALIGN_MIDDLE);
 	}
 }
 
@@ -131,12 +134,13 @@ bool Inn::msgMouseDown(const MouseDownMessage &msg) {
 			else
 				_partyChars.push_back(charNum);
 
+			setButtonEnabled(0, !_partyChars.empty());
 			redraw();
 			break;
 		}
 	}
 
-	return true;
+	return ScrollView::msgMouseDown(msg);
 }
 
 bool Inn::msgKeypress(const KeypressMessage &msg) {
@@ -151,6 +155,7 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 			else
 				_partyChars.push_back(charNum);
 
+			setButtonEnabled(0, !_partyChars.empty());
 			redraw();
 
 		} else if (msg.flags == 0) {

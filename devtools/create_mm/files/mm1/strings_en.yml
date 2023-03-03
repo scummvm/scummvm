@@ -519,6 +519,7 @@ enhdialogs:
 	inn:
 		left_click: "Left click potraits to add/remove"
 		right_click: "Right click to view"
+		exit: "Exit Inn"
 		esc: "ESC to go back"
 	tavern:
 		title: "Tavern"

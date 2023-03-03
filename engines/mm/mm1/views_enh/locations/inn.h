@@ -33,6 +33,7 @@ namespace Locations {
 
 class Inn : public ScrollView {
 private:
+	Shared::Xeen::SpriteResource _escSprite;
 	Common::Array<uint> _charNums;
 	IntArray _partyChars;
 

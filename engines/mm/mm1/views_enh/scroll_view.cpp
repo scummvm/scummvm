@@ -41,23 +41,27 @@ ScrollView::ScrollView(const Common::String &name,
 	_bounds.setBorderSize(FRAME_BORDER_SIZE);
 }
 
-void ScrollView::addButton(Shared::Xeen::SpriteResource *sprites,
+int ScrollView::addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame,
 		const Common::KeyState &key) {
 	_buttons.push_back(Button(sprites, pos, frame, key));
+	return _buttons.size() - 1;
 }
 
-void ScrollView::addButton(Shared::Xeen::SpriteResource *sprites,
+int ScrollView::addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame, KeybindingAction action) {
 	_buttons.push_back(Button(sprites, pos, frame, action));
+	return _buttons.size() - 1;
 }
 
-void ScrollView::addButton(const Common::Rect &r, const Common::KeyState &key) {
+int ScrollView::addButton(const Common::Rect &r, const Common::KeyState &key) {
 	_buttons.push_back(Button(r, key));
+	return _buttons.size() - 1;
 }
 
-void ScrollView::addButton(const Common::Rect &r, KeybindingAction action) {
+int ScrollView::addButton(const Common::Rect &r, KeybindingAction action) {
 	_buttons.push_back(Button(r, action));
+	return _buttons.size() - 1;
 }
 
 void ScrollView::resetSelectedButton() {
@@ -73,7 +77,7 @@ void ScrollView::draw() {
 	Graphics::ManagedSurface s = getSurface();
 	for (uint i = 0; i < _buttons.size(); ++i) {
 		const Button &btn = _buttons[i];
-		if (btn._frame != -1) {
+		if (btn._enabled && btn._frame != -1) {
 			btn._sprites->draw(&s,
 				btn._frame + (_selectedButton == (int)i ? 1 : 0),
 				Common::Point(btn._bounds.left + _bounds.borderSize(),
@@ -202,7 +206,7 @@ int ScrollView::getButtonAt(const Common::Point &pos) {
 		Common::Rect r = _buttons[i]._bounds;
 		r.translate(_innerBounds.left, _innerBounds.top);
 
-		if (r.contains(pos))
+		if (_buttons[i]._enabled && r.contains(pos))
 			return i;
 	}
 
