@@ -117,6 +117,15 @@ bool InGameSceneXmlParser::parserCallback_collisionSlide(ParserNode *node) {
 	return true;
 }
 
+//
+// WORKAROUND: This is a typo in scenes/A2_Falaise/24020/Scene24020.xml
+// for collisionSlide.  Fix it to do what it was intended to do.
+//
+bool InGameSceneXmlParser::parserCallback_coliisionSlide(ParserNode *node) {
+	_scene->setCollisionSlide(true);
+	return true;
+}
+
 bool InGameSceneXmlParser::parserCallback_noCollisionSlide(ParserNode *node) {
 	_scene->setCollisionSlide(false);
 	return true;
