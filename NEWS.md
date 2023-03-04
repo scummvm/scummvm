@@ -5,6 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New platforms:
    - Added libretro new shiny port.
+   - Added Atari port.
 
  Asylum:
    - Added support for Chinese Sanitarium.
