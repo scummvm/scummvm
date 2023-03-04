@@ -329,6 +329,7 @@ int playMovie(int fileNumber) {
 	if (!(fsize = g_sludge->_resMan->openFileFromNum(fileNumber)))
 		return fatal("playMovie(): Can't open movie");
 
+	warning("In play movie");
 	Video::MKVDecoder decoder;
 
 	Common::SeekableReadStream *stream = g_sludge->_resMan->getData();
@@ -337,6 +338,7 @@ int playMovie(int fileNumber) {
 	if (decoder.loadStream(&video))
 		movieIsPlaying = kMoviePlaying;
 
+	warning("movieIsPlaying %d", movieIsPlaying);
 	while (movieIsPlaying) {
 		g_sludge->_evtMan->checkInput();
 		if (g_sludge->_evtMan->quit())
@@ -346,6 +348,7 @@ int playMovie(int fileNumber) {
 
 		if (decoder.isVideoLoaded()) {
 			if (decoder.endOfVideo()) {
+				warning("End of video");
 				// Movie complete, so unload the movie
 				break;
 			} else if (decoder.needsUpdate()) {
@@ -354,12 +357,18 @@ int playMovie(int fileNumber) {
 					// Transfer the next frame
 					assert(s->format.bytesPerPixel == 4);
 
+					//warning("Copy rect to screen");
+
 					g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, MIN<uint32>(s->w, g_sludge->_gfxMan->getWinWidth()), MIN<uint32>(s->h, g_sludge->_gfxMan->getWinHeight()));
 					g_system->updateScreen();
+				} else {
+					warning("s is false");
 				}
 			}
 		}
 	}
+
+	movieIsPlaying = kMovieNothing;
 
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
