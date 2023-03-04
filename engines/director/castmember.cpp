@@ -287,8 +287,10 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 				currentPalette = g_director->getPalette(currentPaletteId);
 			}
 			int castPaletteId = score->resolvePaletteId(_clut);
+			// It is possible for Director to have saved an invalid ID in _clut;
+			// if this is the case, do no dithering.
 			if (!castPaletteId)
-				castPaletteId = cast->_defaultPalette;
+				castPaletteId = currentPaletteId;
 
 			// Check if the palette is in the middle of a color fade event
 			bool isColorCycling = score->isPaletteColorCycling();
