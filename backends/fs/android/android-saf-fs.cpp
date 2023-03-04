@@ -646,13 +646,12 @@ void AndroidSAFFilesystemNode::cacheData(bool force) {
 
 	jstring pathObj = (jstring)env->GetObjectField(_safNode, _FID__path);
 	const char *path = env->GetStringUTFChars(pathObj, 0);
-	if (path != 0) {
-		workingPath = Common::String(path);
-		env->ReleaseStringUTFChars(pathObj, path);
-	} else {
+	if (path == nullptr) {
 		env->DeleteLocalRef(pathObj);
 		return;
 	}
+	workingPath = Common::String(path);
+	env->ReleaseStringUTFChars(pathObj, path);
 	env->DeleteLocalRef(pathObj);
 
 	jstring idObj = (jstring)env->CallObjectMethod(_safTree, _MID_getTreeId);
@@ -672,10 +671,15 @@ void AndroidSAFFilesystemNode::cacheData(bool force) {
 	}
 
 	const char *id = env->GetStringUTFChars(idObj, 0);
-	if (id != 0) {
-		_path = Common::String::format("%s%s%s", SAF_MOUNT_POINT, id, workingPath.c_str());
-		env->ReleaseStringUTFChars(idObj, id);
+	if (id == nullptr) {
+		env->DeleteLocalRef(idObj);
+		return;
 	}
+
+	_path = Common::String(SAF_MOUNT_POINT);
+	_path += id;
+	_path += workingPath;
+	env->ReleaseStringUTFChars(idObj, id);
 	env->DeleteLocalRef(idObj);
 
 	_cached = true;
