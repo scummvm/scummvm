@@ -72,15 +72,15 @@ public:
 
 
 	const Common::String &getFilename() const { return _filename; }
-	int32 getKernedHeight() const override { return _kernedHeight; }
+	int32 getKernedHeight() const override { return _kernedHeight * _scale; }
 	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
-	int32 getBaseOffsetY() const override { return _baseOffsetY; }
+	int32 getBaseOffsetY() const override { return _baseOffsetY * _scale; }
 	void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const override;
 	int32 getCharBitmapWidth(uint16 c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
 	int32 getCharBitmapHeight(uint16 c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
-	int32 getCharKernedWidth(uint16 c) const override { return _charHeaders[getCharIndex(c)].kernedWidth; }
-	int32 getCharStartingCol(uint16 c) const { return _charHeaders[getCharIndex(c)].startingCol; }
-	int32 getCharStartingLine(uint16 c) const { return _charHeaders[getCharIndex(c)].startingLine; }
+	int32 getCharKernedWidth(uint16 c) const override { return _charHeaders[getCharIndex(c)].kernedWidth * _scale; }
+	int32 getCharStartingCol(uint16 c) const { return _charHeaders[getCharIndex(c)].startingCol * _scale; }
+	int32 getCharStartingLine(uint16 c) const { return _charHeaders[getCharIndex(c)].startingLine * _scale; }
 	int32 getCharOffset(uint16 c) const { return _charHeaders[getCharIndex(c)].offset; }
 	const byte *getCharData(uint16 c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
 
@@ -120,6 +120,7 @@ private:
 	byte *_fontData;
 	void *_userData;
 	bool _isDBCS;
+	uint _scale;
 };
 
 class FontTTF : public Font, public PoolObject<FontTTF> {
