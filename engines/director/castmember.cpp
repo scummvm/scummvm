@@ -251,6 +251,7 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	int srcBpp = _img->getSurface()->format.bytesPerPixel;
 
 	const byte *pal = _img->getPalette();
+	bool previouslyDithered = _ditheredImg != nullptr;
 	if (_ditheredImg) {
 		_ditheredImg->free();
 		delete _ditheredImg;
@@ -332,6 +333,7 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 			}
 
 			if (_ditheredImg) {
+				debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Dithering image from source palette %d to target palette %d", _clut, score->getCurrentPalette());
 				// Save the palette ID so we can check if a redraw is required
 				_ditheredTargetClut = currentPaletteId;
 
@@ -346,6 +348,8 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 						}
 					}
 				}
+			} else if (previouslyDithered) {
+				debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Removed dithered image, score palette %d matches cast member", score->getCurrentPalette());
 			}
 
 		}

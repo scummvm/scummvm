@@ -229,7 +229,7 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 	Common::Rect rfrom, rto;
 
 	uint32 transStartTime = g_system->getMillis();
-	debugC(2, kDebugLoading, "Window::playTransition(): Playing transition %d", t.type);
+	debugC(2, kDebugImages, "Window::playTransition(): Playing transition %d", t.type);
 
 	initTransParams(t, clipRect);
 
@@ -242,22 +242,22 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 			dissolvePatternsTrans(t, clipRect, &nextFrame);
 		else
 			dissolveTrans(t, clipRect, &nextFrame);
-		debugC(2, kDebugLoading, "Window::playTransition(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
-		debugC(2, kDebugLoading, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
+		debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
+		debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
 
 	case kTransAlgoChecker:
 	case kTransAlgoStrips:
 	case kTransAlgoBlinds:
 		transMultiPass(t, clipRect, &nextFrame);
-		debugC(2, kDebugLoading, "Window::playTransition(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
-		debugC(2, kDebugLoading, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
+		debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
+		debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
 
 	case kTransAlgoZoom:
 		transZoom(t, clipRect, &nextFrame);
-		debugC(2, kDebugLoading, "Window::playTransition(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
-		debugC(2, kDebugLoading, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
+		debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
+		debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
 
 	case kTransAlgoCenterOut:
@@ -581,8 +581,8 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 	_contentIsDirty = true;
 	g_director->draw();
 
-	debugC(2, kDebugLoading, "Window::playTransition(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
-	debugC(2, kDebugLoading, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
+	debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
+	debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 }
 
 static int getLog2(int n) {

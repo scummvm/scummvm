@@ -228,7 +228,7 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 			pd.inkBlitSurface(srcRect, channel->getMask());
 		}
 	} else {
-		if (debugChannelSet(kDebugImages, 2)) {
+		if (debugChannelSet(kDebugImages, 4)) {
 			CastType castType = channel->_sprite->_cast ? channel->_sprite->_cast->_type : kCastTypeNull;
 			warning("Window::inkBlitFrom: No source surface: spriteType: %d (%s), castType: %d (%s), castId: %s",
 				channel->_sprite->_spriteType, spriteType2str(channel->_sprite->_spriteType), castType, castType2str(castType),
