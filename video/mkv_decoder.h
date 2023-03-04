@@ -160,7 +160,7 @@ private:
 	ogg_sync_state _oggSync;
 	ogg_page _oggPage;
 
-	ogg_stream_state _theoraOut, _vorbisOut;
+	ogg_stream_state _vorbisOut;
 	bool _hasVideo, _hasAudio;
 
 	vorbis_info _vorbisInfo;
