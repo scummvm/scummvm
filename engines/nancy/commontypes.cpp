@@ -26,10 +26,13 @@
 
 namespace Nancy {
 
-void SceneChangeDescription::readData(Common::SeekableReadStream &stream) {
+void SceneChangeDescription::readData(Common::SeekableReadStream &stream, bool longFormat) {
 	sceneID = stream.readUint16LE();
 	frameID = stream.readUint16LE();
 	verticalOffset = stream.readUint16LE();
+	if (longFormat) {
+		stream.skip(3);
+	}
 	doNotStartSound = (bool)(stream.readUint16LE());
 }
 

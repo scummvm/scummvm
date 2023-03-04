@@ -579,12 +579,7 @@ void ShowInventoryItem::onPause(bool pause) {
 
 void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
 	_sound.read(stream, SoundDescription::kDIGI);
-	_sceneChange.readData(stream);
-
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		stream.skip(1);
-		_sceneChange.doNotStartSound = stream.readUint16LE();
-	}
+	_sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);
 	
 	_flagOnTrigger.label = stream.readSint16LE();
 	_flagOnTrigger.flag = (NancyFlag)stream.readByte();

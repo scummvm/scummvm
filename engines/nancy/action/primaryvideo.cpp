@@ -205,8 +205,7 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 		UI::Textbox::assembleTextLine(rawText, response.text, 400);
 		readFilename(stream, response.soundName);
 		ser.skip(1);
-		response.sceneChange.readData(stream);
-		ser.skip(3, kGameTypeVampire, kGameTypeVampire);
+		response.sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 		ser.syncAsSint16LE(response.flagDesc.label);
 		ser.syncAsByte(response.flagDesc.flag);
 		ser.skip(0x32);

@@ -68,7 +68,7 @@ struct SceneChangeDescription {
 	uint16 verticalOffset = 0;
 	bool doNotStartSound = false;
 
-	void readData(Common::SeekableReadStream &stream);
+	void readData(Common::SeekableReadStream &stream, bool longFormat = false);
 };
 
 // Describes a single event flag change or comparison
