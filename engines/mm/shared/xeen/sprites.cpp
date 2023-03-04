@@ -114,12 +114,12 @@ void SpriteResource::clear() {
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-	uint flags, int scale) {
+		uint flags, int scale) const {
 	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-	const Common::Rect &bounds, uint flags, int scale) {
+	const Common::Rect &bounds, uint flags, int scale) const {
 	Common::Rect r = bounds;
 	if (flags & SPRFLAG_BOTTOM_CLIPPED)
 		r.clip(SCREEN_WIDTH, _clippedBottom);
@@ -158,11 +158,11 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 	delete drawer;
 }
 
-void SpriteResource::draw(XSurface &dest, int frame) {
+void SpriteResource::draw(XSurface &dest, int frame) const {
 	draw(dest, frame, Common::Point());
 }
 
-void SpriteResource::draw(Graphics::ManagedSurface *dest, int frame, const Common::Point &destPos) {
+void SpriteResource::draw(Graphics::ManagedSurface *dest, int frame, const Common::Point &destPos) const {
 	XSurface tmp;
 	tmp.w = dest->w;
 	tmp.h = dest->h;

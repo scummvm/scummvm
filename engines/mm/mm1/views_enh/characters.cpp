@@ -53,7 +53,7 @@ void Characters::draw() {
 		for (uint charNum = 0; charNum < ROSTER_COUNT; ++charNum) {
 			if (!roster._towns[charNum])
 				continue;
-			Character &c = roster[charNum];
+			const Character &c = roster[charNum];
 			_charIndexes.push_back(charNum);
 			int idx = _charIndexes.size() - 1;
 

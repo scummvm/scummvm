@@ -89,7 +89,7 @@ void Inn::draw() {
 
 		for (uint idx = 0; idx < _charNums.size(); ++idx) {
 			uint charNum = _charNums[idx];
-			Character &c = g_globals->_roster[charNum];
+			const Character &c = g_globals->_roster[charNum];
 			bool isInParty = _partyChars.contains(charNum);
 
 			// Build up character portrait and/or frame
