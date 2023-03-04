@@ -186,13 +186,8 @@ bool NancyConsole::Cmd_cifList(int argc, const char **argv) {
 
 	Common::Array<Common::String> list;
 	g_nancy->_resource->list((argc == 2 ? "ciftree" : argv[2]), list, atoi(argv[1]));
-	for (uint i = 0; i < list.size(); i++) {
-		debugPrintf("%-38s", list[i].c_str());
-		if ((i % 2) == 1 && i + 1 != list.size())
-			debugPrintf("\n");
-	}
 
-	debugPrintf("\n");
+	debugPrintColumns(list);
 
 	return true;
 }
