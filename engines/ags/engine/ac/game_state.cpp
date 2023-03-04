@@ -80,19 +80,19 @@ void GameState::SetAutoRoomViewport(bool on) {
 }
 
 void GameState::SetMainViewport(const Rect &viewport) {
-	_mainViewport.SetRect(viewport);
+	_mainViewport = viewport;
 	_GP(mouse).UpdateGraphicArea();
-	_GP(scsystem).viewport_width = game_to_data_coord(_mainViewport.GetRect().GetWidth());
-	_GP(scsystem).viewport_height = game_to_data_coord(_mainViewport.GetRect().GetHeight());
+	_GP(scsystem).viewport_width = game_to_data_coord(_mainViewport.GetWidth());
+	_GP(scsystem).viewport_height = game_to_data_coord(_mainViewport.GetHeight());
 	_mainViewportHasChanged = true;
 }
 
 const Rect &GameState::GetMainViewport() const {
-	return _mainViewport.GetRect();
+	return _mainViewport;
 }
 
 const Rect &GameState::GetUIViewport() const {
-	return _uiViewport.GetRect();
+	return _uiViewport;
 }
 
 PViewport GameState::GetRoomViewport(int index) const {
@@ -112,15 +112,15 @@ PViewport GameState::GetRoomViewportAt(int x, int y) const {
 }
 
 Rect GameState::GetUIViewportAbs() const {
-	return Rect::MoveBy(_uiViewport.GetRect(), _mainViewport.GetRect().Left, _mainViewport.GetRect().Top);
+	return Rect::MoveBy(_uiViewport, _mainViewport.Left, _mainViewport.Top);
 }
 
 Rect GameState::GetRoomViewportAbs(int index) const {
-	return Rect::MoveBy(_roomViewports[index]->GetRect(), _mainViewport.GetRect().Left, _mainViewport.GetRect().Top);
+	return Rect::MoveBy(_roomViewports[index]->GetRect(), _mainViewport.Left, _mainViewport.Top);
 }
 
 void GameState::SetUIViewport(const Rect &viewport) {
-	_uiViewport.SetRect(viewport);
+	_uiViewport = viewport;
 }
 
 static bool ViewportZOrder(const PViewport e1, const PViewport e2) {
@@ -244,7 +244,7 @@ PViewport GameState::CreateRoomViewport() {
 	int index = (int)_roomViewports.size();
 	PViewport viewport(new Viewport());
 	viewport->SetID(index);
-	viewport->SetRect(_mainViewport.GetRect());
+	viewport->SetRect(_mainViewport);
 	_roomViewports.push_back(viewport);
 	_scViewportHandles.push_back(0);
 	_roomViewportsSorted.push_back(viewport);
@@ -306,7 +306,7 @@ PCamera GameState::CreateRoomCamera() {
 	PCamera camera(new Camera());
 	camera->SetID(index);
 	camera->SetAt(0, 0);
-	camera->SetSize(_mainViewport.GetRect().GetSize());
+	camera->SetSize(_mainViewport.GetSize());
 	_scCameraHandles.push_back(0);
 	_roomCameras.push_back(camera);
 	return camera;

@@ -275,9 +275,9 @@ struct GameState {
 	//
 	// Tells if the room viewport should be adjusted automatically each time a new room is loaded
 	bool IsAutoRoomViewport() const;
-	// Returns main viewport position on screen, this is the overall game view
+	// Returns main (game's) viewport position on screen, this is the overall game view
 	const Rect &GetMainViewport() const;
-	// Returns UI viewport position on screen, this is the GUI layer
+	// Returns UI viewport position on screen, within the main viewport
 	const Rect &GetUIViewport() const;
 	// Returns Room viewport object by it's main index
 	PViewport  GetRoomViewport(int index) const;
@@ -396,11 +396,12 @@ private:
 
 	// Defines if the room viewport should be adjusted to the room size automatically.
 	bool _isAutoRoomViewport = false;
-	// Main viewport defines the rectangle of the drawn and interactable area
+	// Main viewport defines the rectangle of the drawn and interactable area;
 	// in the most basic case it will be equal to the game size.
-	Viewport _mainViewport;
-	// UI viewport defines the render and interaction rectangle of game's UI.
-	Viewport _uiViewport;
+	Rect _mainViewport;
+	// UI viewport defines the render and interaction rectangle of game's UI,
+	// within the main game viewport.
+	Rect _uiViewport;
 	// Room viewports define place on screen where the room camera's
 	// contents are drawn.
 	std::vector<PViewport> _roomViewports;
