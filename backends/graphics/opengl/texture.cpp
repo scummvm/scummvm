@@ -458,16 +458,23 @@ void FakeTexture::updateGLTexture() {
 	byte *dst = (byte *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
 	const byte *src = (const byte *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
 
+	applyPaletteAndMask(dst, src, outSurf->pitch, _rgbData.pitch, _rgbData.w, dirtyArea, outSurf->format, _rgbData.format);
+
+	// Do generic handling of updating the texture.
+	Texture::updateGLTexture();
+}
+
+void FakeTexture::applyPaletteAndMask(byte *dst, const byte *src, uint dstPitch, uint srcPitch, uint srcWidth, const Common::Rect &dirtyArea, const Graphics::PixelFormat &dstFormat, const Graphics::PixelFormat &srcFormat) const {
 	if (_palette) {
-		Graphics::crossBlitMap(dst, src, outSurf->pitch, _rgbData.pitch, dirtyArea.width(), dirtyArea.height(), outSurf->format.bytesPerPixel, _palette);
+		Graphics::crossBlitMap(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), dstFormat.bytesPerPixel, _palette);
 	} else {
-		Graphics::crossBlit(dst, src, outSurf->pitch, _rgbData.pitch, dirtyArea.width(), dirtyArea.height(), outSurf->format, _rgbData.format);
+		Graphics::crossBlit(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), dstFormat, srcFormat);
 	}
 
 	if (_mask) {
-		uint maskPitch = _rgbData.w;
+		uint maskPitch = srcWidth;
 		uint dirtyWidth = dirtyArea.width();
-		byte destBPP = outSurf->format.bytesPerPixel;
+		byte destBPP = dstFormat.bytesPerPixel;
 
 		const byte *maskRowStart = (_mask + dirtyArea.top * maskPitch + dirtyArea.left);
 		byte *dstRowStart = dst;
@@ -485,13 +492,10 @@ void FakeTexture::updateGLTexture() {
 				}
 			}
 
-			dstRowStart += outSurf->pitch;
+			dstRowStart += dstPitch;
 			maskRowStart += maskPitch;
 		}
 	}
-
-	// Do generic handling of updating the texture.
-	Texture::updateGLTexture();
 }
 
 TextureRGB555::TextureRGB555()
@@ -631,11 +635,7 @@ void ScaledTexture::updateGLTexture() {
 		dst = (byte *)_convData->getBasePtr(dirtyArea.left + _extraPixels, dirtyArea.top + _extraPixels);
 		dstPitch = _convData->pitch;
 
-		if (_palette) {
-			Graphics::crossBlitMap(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), _convData->format.bytesPerPixel, _palette);
-		} else {
-			Graphics::crossBlit(dst, src, dstPitch, srcPitch, dirtyArea.width(), dirtyArea.height(), _convData->format, _rgbData.format);
-		}
+		applyPaletteAndMask(dst, src, dstPitch, srcPitch, _rgbData.w, dirtyArea, _convData->format, _rgbData.format);
 
 		src = dst;
 		srcPitch = dstPitch;

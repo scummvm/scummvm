@@ -341,6 +341,8 @@ public:
 
 	void updateGLTexture() override;
 protected:
+	void applyPaletteAndMask(byte *dst, const byte *src, uint dstPitch, uint srcPitch, uint srcWidth, const Common::Rect &dirtyArea, const Graphics::PixelFormat &dstFormat, const Graphics::PixelFormat &srcFormat) const;
+
 	Graphics::Surface _rgbData;
 	Graphics::PixelFormat _fakeFormat;
 	uint32 *_palette;
