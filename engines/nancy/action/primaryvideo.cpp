@@ -416,7 +416,7 @@ void PlayPrimaryVideoChan0::addGoodbye() {
 	newResponse.text = g_nancy->getStaticData().goodbyeTexts[_goodbyeResponseCharacterID];
 	
 	// Evaluate conditions to pick from the collection of replies
-	uint sceneChangeID;
+	uint sceneChangeID = 0;
 	for (uint i = 0; i < res.sceneChanges.size(); ++i) {
 		const GoodbyeSceneChange &sc = res.sceneChanges[i];
 		if (sc.flagConditions.size() == 0) {
