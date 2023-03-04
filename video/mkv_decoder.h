@@ -114,11 +114,7 @@ private:
 		Graphics::Surface _surface;
 		Graphics::Surface _displaySurface;
 
-		th_dec_ctx *_theoraDecode;
-
 		vpx_codec_ctx_t *_codec = nullptr;
-
-		void translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer);
 	};
 
 	class VorbisAudioTrack : public AudioTrack {
@@ -145,25 +141,17 @@ private:
 		vorbis_block _vorbisBlock;
 		vorbis_dsp_state _vorbisDSP;
 
+		vorbis_info _vorbisInfo;
 		bool _endOfAudio;
 
 		ogg_packet oggPacket;
 	};
 
-	void queuePage(ogg_page *page);
-	int bufferData();
 	bool queueAudio();
-	void ensureAudioBufferSize();
 
 	Common::SeekableReadStream *_fileStream;
 
-	ogg_sync_state _oggSync;
-	ogg_page _oggPage;
-
-	ogg_stream_state _vorbisOut;
 	bool _hasVideo, _hasAudio;
-
-	vorbis_info _vorbisInfo;
 
 	VPXVideoTrack *_videoTrack = nullptr;
 	VorbisAudioTrack *_audioTrack = nullptr;
@@ -184,12 +172,9 @@ private:
 	const mkvparser::Block *pBlock;
 	long long trackNum;
 	unsigned long tn;
-	const mkvparser::Track *pTrack;
 	long long trackType;
 	int frameCount;
 	long long time_ns;
-
-	Graphics::Surface _displaySurface;
 };
 
 } // End of namespace Video
