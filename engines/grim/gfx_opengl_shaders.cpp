@@ -1519,7 +1519,10 @@ void GfxOpenGLS::destroyBitmap(BitmapData *bitmap) {
 	}
 }
 
-void GfxOpenGLS::createFont(Font *font) {
+void GfxOpenGLS::createFont(Font *f) {
+	if (!f->is8Bit())
+		error("non-8bit fonts are not supported in GL shaders renderer");
+	BitmapFont *font = static_cast<BitmapFont *>(f);
 	const byte *bitmapData = font->getFontData();
 	uint dataSize = font->getDataSize();
 
@@ -1604,16 +1607,21 @@ void GfxOpenGLS::createFont(Font *font) {
 }
 
 void GfxOpenGLS::destroyFont(Font *font) {
-	const FontUserData *data = (const FontUserData *)font->getUserData();
-	if (data) {
-		glDeleteTextures(1, &(data->texture));
-		delete data;
+	if (font->is8Bit()) {
+		const FontUserData *data = static_cast<const FontUserData *>(static_cast<const BitmapFont *>(font)->getUserData());
+		if (data) {
+			glDeleteTextures(1, &(data->texture));
+			delete data;
+		}
 	}
 }
 
 void GfxOpenGLS::createTextObject(TextObject *text) {
 	const Color &color = text->getFGColor();
-	const Font *font = text->getFont();
+	const Font *f = text->getFont();
+	if (!f->is8Bit())
+		error("non-8bit fonts are not supported in GL shaders renderer");
+	const BitmapFont *font = static_cast<const BitmapFont *>(f);
 
 	const FontUserData *userData = (const FontUserData *)font->getUserData();
 	if (!userData)
@@ -1860,7 +1868,7 @@ void GfxOpenGLS::loadEmergFont() {
 		int blockcol = c & 0xf;
 		for (int row = 0; row < 13; ++row) {
 			int base = 128 * (16 * blockrow + row) + 8 * blockcol;
-			uint8 val = Font::emerFont[c - 32][row];
+			uint8 val = BitmapFont::emerFont[c - 32][row];
 			atlas[base + 0] = (val & 0x80) ? 255 : 0;
 			atlas[base + 1] = (val & 0x40) ? 255 : 0;
 			atlas[base + 2] = (val & 0x20) ? 255 : 0;

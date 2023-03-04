@@ -25,6 +25,7 @@
 #include "engines/grim/pool.h"
 
 #include "graphics/font.h"
+#include "graphics/pixelformat.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -34,22 +35,50 @@ namespace Grim {
 
 class SaveGame;
 
-class Font : public PoolObject<Font> {
+class Font {
 public:
-	Font();
-	~Font();
+	virtual ~Font() {}
+
+	virtual int32 getKernedHeight() const = 0;
+	virtual int32 getFontWidth() const = 0;
+	virtual int getKernedStringLength(const Common::String &text) const = 0;
+	virtual int32 getBaseOffsetY() const = 0;
+	virtual void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const = 0;
+	virtual int32 getCharKernedWidth(unsigned char c) const = 0;
+	virtual int getPoolId() const = 0;
+	virtual int32 getPoolTag() const = 0;
+	virtual bool is8Bit() const = 0;
+	const Common::String &getFilename() const { return _filename; }
+
+	static Font *getByFileName(const Common::String& fileName);
+	static Font *getFirstFont();
+	static void save(const Font *font, SaveGame *state);
+	static Font *load(SaveGame *state);
+
+protected:
+	Common::String _filename;
+};
+
+class BitmapFont : public Font, public PoolObject<BitmapFont> {
+public:
+	BitmapFont();
+	~BitmapFont();
 
 	static int32 getStaticTag() { return MKTAG('F', 'O', 'N', 'T'); }
+	int getPoolId() const override { return getId(); }
+	int32 getPoolTag() const override { return getStaticTag(); }
 
 	void load(const Common::String &filename, Common::SeekableReadStream *data);
 
 
 	const Common::String &getFilename() const { return _filename; }
-	virtual int32 getKernedHeight() const { return _kernedHeight; }
-	virtual int32 getBaseOffsetY() const { return _baseOffsetY; }
+	int32 getKernedHeight() const override { return _kernedHeight; }
+	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
+	int32 getBaseOffsetY() const override { return _baseOffsetY; }
+	void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const override;
 	virtual int32 getCharBitmapWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
 	virtual int32 getCharBitmapHeight(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
-	virtual int32 getCharKernedWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].kernedWidth; }
+	int32 getCharKernedWidth(unsigned char c) const override { return _charHeaders[getCharIndex(c)].kernedWidth; }
 	virtual int32 getCharStartingCol(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingCol; }
 	virtual int32 getCharStartingLine(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingLine; }
 	virtual int32 getCharOffset(unsigned char c) const { return _charHeaders[getCharIndex(c)].offset; }
@@ -57,6 +86,7 @@ public:
 
 	const byte *getFontData() const { return _fontData; }
 	uint32 getDataSize() const { return _dataSize; }
+	bool is8Bit() const override { return true; }
 
 	virtual int getKernedStringLength(const Common::String &text) const;
 	virtual int getBitmapStringLength(const Common::String &text) const;
@@ -88,21 +118,32 @@ private:
 	uint16 *_charIndex;
 	CharHeader *_charHeaders;
 	byte *_fontData;
-	Common::String _filename;
 	void *_userData;
 };
 
-class FontTTF : public Font {
+class FontTTF : public Font, public PoolObject<FontTTF> {
 public:
 	void loadTTF(const Common::String &filename, Common::SeekableReadStream *data, int size);
+
+	static int32 getStaticTag() { return MKTAG('T', 'T', 'F', ' '); }
+	int getPoolId() const override { return getId(); }
+	int32 getPoolTag() const override { return getStaticTag(); }
 
 	int32 getKernedHeight() const override { return _font->getFontHeight(); }
 	int32 getBaseOffsetY() const override { return 0; }
 	int32 getCharKernedWidth(unsigned char c) const override { return _font->getCharWidth(c); }
+	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
 
 	int getKernedStringLength(const Common::String &text) const override { return _font->getStringWidth(text); }
+	void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const override;
+	bool is8Bit() const override { return false; }
 
+	void saveState(SaveGame *state) const;
+	void restoreState(SaveGame *state);
+
+private:
 	Graphics::Font *_font;
+	int _size;
 };
 
 } // end of namespace Grim

@@ -1286,7 +1286,10 @@ struct FontUserData {
 	GLuint texture;
 };
 
-void GfxOpenGL::createFont(Font *font) {
+void GfxOpenGL::createFont(Font *f) {
+	if (!f->is8Bit())
+		return;
+	BitmapFont *font = static_cast<BitmapFont *>(f);
 	const byte *bitmapData = font->getFontData();
 	uint dataSize = font->getDataSize();
 
@@ -1372,10 +1375,12 @@ void GfxOpenGL::createFont(Font *font) {
 }
 
 void GfxOpenGL::destroyFont(Font *font) {
-	const FontUserData *data = (const FontUserData *)font->getUserData();
-	if (data) {
-		glDeleteTextures(1, &(data->texture));
-		delete data;
+	if (font->is8Bit()) {
+		const FontUserData *data = static_cast<const FontUserData *>(static_cast<const BitmapFont *>(font)->getUserData());
+		if (data) {
+			glDeleteTextures(1, &(data->texture));
+			delete data;
+		}
 	}
 }
 
@@ -1384,14 +1389,12 @@ struct TextObjectUserData {
 };
 
 void GfxOpenGL::createTextObject(TextObject *text) {
-	if (g_grim->getGameType() != GType_GRIM || !g_grim->isRemastered())
-		return;
-
-#ifdef USE_FREETYPE2
 	//error("Could not get font userdata");
 	const Font *font = text->getFont();
-	const FontTTF *f = static_cast<const FontTTF *>(font);
-	Graphics::Font *gf = f->_font;
+
+	if (font->is8Bit())
+		return;
+
 	int numLines = text->getNumLines();
 	GLuint *texids = new GLuint[numLines];
 	glGenTextures(numLines, texids);
@@ -1399,10 +1402,8 @@ void GfxOpenGL::createTextObject(TextObject *text) {
 	for (int i = 0; i < numLines; i++) {
 		Graphics::Surface surface;
 
-		int width = gf->getStringWidth(text->getLines()[i]);
-		int height = width;
-		surface.create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-		gf->drawString(&surface, text->getLines()[i], 0, 0, width, 0xFFFFFFFF);
+		font->render(surface, text->getLines()[i], Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
+			     0xFF000000, 0xFFFFFFFF, 0x00000000);
 
 		byte *bitmap = (byte *)surface.getPixels();
 
@@ -1411,7 +1412,7 @@ void GfxOpenGL::createTextObject(TextObject *text) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface.w, surface.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap);
 
 		surface.free();
 	}
@@ -1419,7 +1420,6 @@ void GfxOpenGL::createTextObject(TextObject *text) {
 
 	ud->_texids = texids;
 	text->setUserData(ud);
-#endif
 }
 
 void GfxOpenGL::drawTextObject(const TextObject *text) {
@@ -1442,23 +1442,15 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 	glDepthMask(GL_FALSE);
 
 	const Color &color = text->getFGColor();
-	const Font *font = text->getFont();
+	const Font *f = text->getFont();
 
 	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
-	const FontUserData *userData = (const FontUserData *)font->getUserData();
-	if (!userData) {
-		if (g_grim->getGameType() != GType_GRIM || !g_grim->isRemastered())
-			error("Could not get font userdata");
-#ifdef USE_FREETYPE2
-		const FontTTF *f = static_cast<const FontTTF *>(font);
-		Graphics::Font *gf = f->_font;
-
-
+	if (!f->is8Bit()) {
 		const TextObjectUserData *ud = (const TextObjectUserData *)text->getUserData();
 
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
-			float width = gf->getStringWidth(text->getLines()[i]);
+			float width = f->getKernedStringLength(text->getLines()[i]);
 			float height = width;
 			float x = text->getLineX(i);
 
@@ -1498,10 +1490,13 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
 		glDepthMask(GL_TRUE);
-#endif
 		return;
 	}
 
+	const BitmapFont *font = static_cast<const BitmapFont *>(f);
+	const FontUserData *userData = (const FontUserData *)font->getUserData();
+	if (!userData)
+		error("Could not get font userdata");
 	float sizeW = userData->size * _scaleW;
 	float sizeH = userData->size * _scaleH;
 	GLuint texture = userData->texture;
@@ -1821,7 +1816,7 @@ void GfxOpenGL::loadEmergFont() {
 	_emergFont = glGenLists(128);
 	for (int i = 32; i < 128; i++) {
 		glNewList(_emergFont + i, GL_COMPILE);
-		glBitmap(8, 13, 0, 2, 10, 0, Font::emerFont[i - 32]);
+		glBitmap(8, 13, 0, 2, 10, 0, BitmapFont::emerFont[i - 32]);
 		glEndList();
 	}
 }

@@ -219,18 +219,13 @@ void Lua_V2::GetFontDimensions() {
 
 	const char *fontName = lua_getstring(fontObj);
 
-	Font *font = nullptr;
-	for (Font *f : Font::getPool()) {
-		if (f->getFilename() == fontName) {
-			font = f;
-		}
-	}
+	Font *font = Font::getByFileName(fontName);
 	if (!font) {
 		font = g_resourceloader->loadFont(fontName);
 	}
 	if (font) {
 		int32 h = font->getBaseOffsetY();
-		int32 w = font->getCharKernedWidth('w');
+		int32 w = font->getFontWidth();
 		lua_pushnumber(w);
 		lua_pushnumber(h);
 	} else {
