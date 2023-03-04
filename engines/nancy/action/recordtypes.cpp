@@ -199,44 +199,8 @@ void PaletteNextScene::execute() {
 	_isDone = true;
 }
 
-void StartFrameNextScene::readData(Common::SeekableReadStream &stream) {
-	stream.skip(4);
-}
-
-void StartStopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
-	stream.skip(1);
-}
-
 void LightningOn::readData(Common::SeekableReadStream &stream) {
 	stream.skip(0xA);
-}
-
-void LightningOff::readData(Common::SeekableReadStream &stream) {
-	stream.skip(1);
-}
-
-void AmbientLightUp::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0x12);
-}
-
-void AmbientLightDown::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0x12);
-}
-
-void AmbientLightToTod::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0x1C);
-}
-
-void AmbientLightToTodOff::readData(Common::SeekableReadStream &stream) {
-	stream.skip(1);
-}
-
-void FlickerOn::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0xA);
-}
-
-void FlickerOff::readData(Common::SeekableReadStream &stream) {
-	stream.skip(1);
 }
 
 void MapCall::readData(Common::SeekableReadStream &stream) {
@@ -297,30 +261,6 @@ void MapCallHotMultiframe::execute() {
 		MapCall::execute();
 		break;
 	}
-}
-
-void MapLocationAccess::readData(Common::SeekableReadStream &stream) {
-	stream.skip(4);
-}
-
-void MapLightning::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0xA);
-}
-
-void MapLightningOff::readData(Common::SeekableReadStream &stream) {
-	stream.skip(1);
-}
-
-void MapSound::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0x10);
-}
-
-void MapAviOverride::readData(Common::SeekableReadStream &stream) {
-	stream.skip(2);
-}
-
-void MapAviOverrideOff::readData(Common::SeekableReadStream &stream) {
-	stream.skip(1);
 }
 
 void TextBoxWrite::readData(Common::SeekableReadStream &stream) {

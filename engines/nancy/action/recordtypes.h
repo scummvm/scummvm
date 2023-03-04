@@ -119,87 +119,12 @@ protected:
 	Common::String getRecordTypeName() const override { return "PaletteNextScene"; }
 };
 
-class StartFrameNextScene : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "StartFrameNextScene"; }
-};
-
-class StartStopPlayerScrolling : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-	// TODO add a Start and Stop subclass
-
-	byte _type = 0;
-
-protected:
-	Common::String getRecordTypeName() const override { return "StartStopPlayerScrolling"; }
-};
-
 class LightningOn : public Unimplemented {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 
 protected:
 	Common::String getRecordTypeName() const override { return "LightningOn"; }
-};
-
-class LightningOff : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "LightningOff"; }
-};
-
-class AmbientLightUp : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "AmbientLightUp"; }
-};
-
-class AmbientLightDown : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "AmbientLightDown"; }
-};
-
-class AmbientLightToTod : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "AmbientLightToTod"; }
-};
-
-class AmbientLightToTodOff : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "AmbientLightToTodOff"; }
-};
-
-class FlickerOn : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "FlickerOn"; }
-};
-
-class FlickerOff : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "FlickerOff"; }
 };
 
 class MapCall : public ActionRecord {
@@ -233,54 +158,6 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "MapCallHotMultiframe"; }
-};
-
-class MapLocationAccess : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "MapLocationAccess"; }
-};
-
-class MapLightning : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "MapLightning"; }
-};
-
-class MapLightningOff : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "MapLightningOff"; }
-};
-
-class MapSound : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "MapSound"; }
-};
-
-class MapAviOverride : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "MapAviOverride"; }
-};
-
-class MapAviOverrideOff : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "MapAviOverrideOff"; }
 };
 
 class TextBoxWrite : public Unimplemented {

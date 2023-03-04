@@ -54,28 +54,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new PaletteThisScene();
 	case 0x0B:
 		return new PaletteNextScene();
-	case 0x0C:
-		return new StartFrameNextScene();
-	case 0x14:
-		return new StartStopPlayerScrolling(); // TODO
-	case 0x15:
-		return new StartStopPlayerScrolling(); // TODO
 	case 0x1E:
 		return new LightningOn();
-	case 0x1F:
-		return new LightningOff();
-	case 0x20:
-		return new AmbientLightUp();
-	case 0x21:
-		return new AmbientLightDown();
-	case 0x22:
-		return new AmbientLightToTod();
-	case 0x23:
-		return new AmbientLightToTodOff();
-	case 0x24:
-		return new FlickerOn();
-	case 0x25:
-		return new FlickerOff();
 	case 0x28:
 		return new PlayPrimaryVideoChan0();
 	case 0x29:
@@ -94,18 +74,6 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new MapCallHot1Fr();
 	case 0x34:
 		return new MapCallHotMultiframe();
-	case 0x35:
-		return new MapLocationAccess();
-	case 0x36:
-		return new MapLightning();
-	case 0x37:
-		return new MapLightningOff();
-	case 0x38:
-		return new MapSound();
-	case 0x39:
-		return new MapAviOverride();
-	case 0x3A:
-		return new MapAviOverrideOff();
 	case 0x41:
 		return new TextBoxWrite();
 	case 0x42:
@@ -155,9 +123,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 0x70:
 		return new ShowInventoryItem();
 	case 0x8C:
-		return new PlayDigiSoundAndDie(); // TODO
+		return new PlayDigiSoundAndDie();
 	case 0x8D:
-		return new PlayDigiSoundAndDie(); // TODO
+		return new PlayDigiSoundAndDie();
 	case 0x8E:
 		return new PlaySoundPanFrameAnchorAndDie();
 	case 0x8F:
