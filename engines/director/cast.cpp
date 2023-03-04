@@ -454,11 +454,7 @@ void Cast::loadCast() {
 			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
 			PaletteV4 p = loadPalette(*pal);
 
-			// for D2, we are using palette cast member id to resolve palette Id, so we are using lowest 1 bit to represent cast id. see Also loadCastChildren
-			if (_version < kFileVer300)
-				g_director->addPalette(clutList[i] & 0xff, p.palette, p.length);
-			else
-				g_director->addPalette(clutList[i], p.palette, p.length);
+			g_director->addPalette(clutList[i], p.palette, p.length);
 
 			delete pal;
 		}
@@ -619,18 +615,20 @@ void Cast::loadStxtData(int key, TextCastMember *member) {
 	}
 }
 
-void Cast::loadPaletteData(PaletteCastMember *member, Common::HashMap<int, PaletteV4>::iterator &p) {
+void Cast::loadPaletteData(PaletteCastMember *member) {
 	// TODO: Verify how palettes work in >D4 versions
+	int paletteId = 0;
 	if (_version >= kFileVer400 && _version < kFileVer500 && member->_children.size() == 1) {
-		member->_palette = g_director->getPalette(member->_children[0].index);
-	} else if (_version >= kFileVer300 && _version < kFileVer400) {
-		// D3 palettes are always kept in this ascending order
-		member->_palette = g_director->getPalette((++p)->_value.id);
-	} else if (_version < kFileVer300) {
-		// for D2, we shall use the castId to get the palette
-		member->_palette = g_director->getPalette(member->getID());
+		paletteId = member->_children[0].index;
+	} else if (_version < kFileVer400) {
+		// For D3 and below, palette IDs are stored in the CLUT resource as cast ID + 1024
+		paletteId = member->getID() + 1024;
 	} else {
 		warning("Cast::loadPaletteData(): Expected 1 child for palette cast, got %d", member->_children.size());
+	}
+	if (paletteId) {
+		debugC(2, kDebugImages, "Cast::loadPaletteData(): linking palette id %d to cast member %d", paletteId, member->getID());
+		member->_palette = g_director->getPalette(paletteId);
 	}
 }
 
@@ -817,8 +815,6 @@ void Cast::loadSoundData(int key, SoundCastMember *soundCast) {
 void Cast::loadCastMemberData() {
 	debugC(1, kDebugLoading, "****** Loading casts data: sprite palettes, images, filmloops, sounds and texts.");
 
-	Common::HashMap<int, PaletteV4>::iterator p = _vm->getLoadedPalettes().find(0);
-
 	int idx = 0;
 
 	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
@@ -827,7 +823,7 @@ void Cast::loadCastMemberData() {
 
 		switch (c->_value->_type){
 			case kCastPalette:
-				loadPaletteData((PaletteCastMember *)c->_value, p);
+				loadPaletteData((PaletteCastMember *)c->_value);
 				break;
 			case kCastFilmLoop:
 				loadFilmLoopData((FilmLoopCastMember *)c->_value);
@@ -918,7 +914,6 @@ PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
 	int colorIndex = 0;
 
 	for (int i = 0; i < steps; i++) {
-		bool increment = true;
 		if (hasHeader) {
 			int index = stream.readUint16BE();
 			if (index != 0x8000) {
@@ -939,8 +934,7 @@ PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
 
 		_palette[3 * colorIndex + 2] = stream.readByte();
 		stream.readByte();
-		if (increment)
-			colorIndex += 1;
+		colorIndex += 1;
 	}
 
 	return PaletteV4(0, _palette, steps);

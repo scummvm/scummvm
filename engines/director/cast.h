@@ -95,7 +95,7 @@ public:
 
 	void loadCastMemberData();
 	void loadStxtData(int key, TextCastMember *member);
-	void loadPaletteData(PaletteCastMember *member, Common::HashMap<int, PaletteV4>::iterator &p);
+	void loadPaletteData(PaletteCastMember *member);
 	void loadFilmLoopData(FilmLoopCastMember *member);
 	void loadBitmapData(int key, BitmapCastMember *bitmapCast);
 	void loadSoundData(int key, SoundCastMember *soundCast);
