@@ -27,6 +27,7 @@
 #include "sludge/newfatal.h"
 #include "sludge/sound.h"
 
+#include "common/scummsys.h"	// for USE_VPX
 #include "common/substream.h"
 #include "video/mkv_decoder.h"
 #include "graphics/blit.h"
@@ -42,7 +43,11 @@ int playMovie(int fileNumber) {
 	if (!(fsize = g_sludge->_resMan->openFileFromNum(fileNumber)))
 		return fatal("playMovie(): Can't open movie");
 
+#if !defined(USE_VPX)
+	warning("Sludge::playMovie - VPX support not compiled in, skipping movie");
+#else
 	Video::MKVDecoder decoder;
+
 
 	Common::SeekableReadStream *stream = g_sludge->_resMan->getData();
 	Common::SeekableSubReadStream video(stream, stream->pos(), stream->pos() + fsize);
@@ -85,6 +90,7 @@ int playMovie(int fileNumber) {
 			}
 		}
 	}
+#endif
 
 	movieIsPlaying = kMovieNothing;
 
