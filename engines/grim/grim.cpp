@@ -281,6 +281,10 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 		availableRendererTypes &= ~Graphics::kRendererTypeOpenGLShaders;
 	}
 
+	// Not supported yet.
+	if (getLanguage() == Common::Language::ZH_CHN)
+		availableRendererTypes &= ~Graphics::kRendererTypeOpenGLShaders;
+
 	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingType(desiredRendererType, availableRendererTypes);
 
 	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
