@@ -1451,7 +1451,7 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
 			float width = f->getKernedStringLength(text->getLines()[i]);
-			float height = width;
+			float height = f->getKernedHeight();
 			float x = text->getLineX(i);
 
 			float y = text->getLineY(i);
