@@ -528,6 +528,7 @@ void Scene::load() {
 		}
 
 		_actionManager.addNewActionRecord(*actionRecordChunk);
+		delete actionRecordChunk;
 	}
 
 	_viewport.loadVideo(_sceneState.summary.videoFile,
