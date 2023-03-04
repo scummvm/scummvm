@@ -831,10 +831,24 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 void ResourceManager::list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type) const {
 	const CifTree *cifTree = findCifTree(treeName);
 
-	if (!cifTree)
-		return;
+	if (!cifTree) {
+		Common::ArchiveMemberList list;
+		if (type == ResourceManager::kResTypeAny || type == ResourceManager::kResTypeImage) {
+			SearchMan.listMatchingMembers(list, Common::Path("*.bmp"));
+		}
 
-	cifTree->list(nameList, type);
+		if (type == ResourceManager::kResTypeAny || type == ResourceManager::kResTypeScript) {
+			SearchMan.listMatchingMembers(list, Common::Path("*.iff"));
+		}
+
+		for (auto &i : list) {
+			nameList.push_back(i.get()->getDisplayName());
+		}
+	} else {
+		cifTree->list(nameList, type);
+	}
+
+	Common::sort(nameList.begin(), nameList.end());
 }
 
 Common::String ResourceManager::getCifDescription(const Common::String &treeName, const Common::String &name) const {
