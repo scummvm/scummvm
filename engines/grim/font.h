@@ -44,7 +44,7 @@ public:
 	virtual int getKernedStringLength(const Common::String &text) const = 0;
 	virtual int32 getBaseOffsetY() const = 0;
 	virtual void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const = 0;
-	virtual int32 getCharKernedWidth(unsigned char c) const = 0;
+	virtual int32 getCharKernedWidth(uint16 c) const = 0;
 	virtual int getPoolId() const = 0;
 	virtual int32 getPoolTag() const = 0;
 	virtual bool is8Bit() const = 0;
@@ -76,21 +76,21 @@ public:
 	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
 	int32 getBaseOffsetY() const override { return _baseOffsetY; }
 	void render(Graphics::Surface &buf, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const override;
-	virtual int32 getCharBitmapWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
-	virtual int32 getCharBitmapHeight(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
-	int32 getCharKernedWidth(unsigned char c) const override { return _charHeaders[getCharIndex(c)].kernedWidth; }
-	virtual int32 getCharStartingCol(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingCol; }
-	virtual int32 getCharStartingLine(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingLine; }
-	virtual int32 getCharOffset(unsigned char c) const { return _charHeaders[getCharIndex(c)].offset; }
-	const byte *getCharData(unsigned char c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
+	int32 getCharBitmapWidth(uint16 c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
+	int32 getCharBitmapHeight(uint16 c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
+	int32 getCharKernedWidth(uint16 c) const override { return _charHeaders[getCharIndex(c)].kernedWidth; }
+	int32 getCharStartingCol(uint16 c) const { return _charHeaders[getCharIndex(c)].startingCol; }
+	int32 getCharStartingLine(uint16 c) const { return _charHeaders[getCharIndex(c)].startingLine; }
+	int32 getCharOffset(uint16 c) const { return _charHeaders[getCharIndex(c)].offset; }
+	const byte *getCharData(uint16 c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
 
 	const byte *getFontData() const { return _fontData; }
 	uint32 getDataSize() const { return _dataSize; }
-	bool is8Bit() const override { return true; }
+	bool is8Bit() const override;
 
-	virtual int getKernedStringLength(const Common::String &text) const;
-	virtual int getBitmapStringLength(const Common::String &text) const;
-	virtual int getStringHeight(const Common::String &text) const;
+	int getKernedStringLength(const Common::String &text) const;
+	int getBitmapStringLength(const Common::String &text) const;
+	int getStringHeight(const Common::String &text) const;
 
 	const void *getUserData() const { return _userData; }
 	void setUserData(void *data) { _userData = data; }
@@ -101,7 +101,7 @@ public:
 	static const uint8 emerFont[][13];
 private:
 
-	uint16 getCharIndex(unsigned char c) const;
+	uint16 getCharIndex(uint16 c) const;
 	struct CharHeader {
 		int32 offset;
 		int8  kernedWidth;
@@ -115,10 +115,11 @@ private:
 	uint32 _dataSize;
 	uint32 _kernedHeight, _baseOffsetY;
 	uint32 _firstChar, _lastChar;
-	uint16 *_charIndex;
+	Common::Array<int> _fwdCharIndex;
 	CharHeader *_charHeaders;
 	byte *_fontData;
 	void *_userData;
+	bool _isDBCS;
 };
 
 class FontTTF : public Font, public PoolObject<FontTTF> {
@@ -131,7 +132,7 @@ public:
 
 	int32 getKernedHeight() const override { return _font->getFontHeight(); }
 	int32 getBaseOffsetY() const override { return 0; }
-	int32 getCharKernedWidth(unsigned char c) const override { return _font->getCharWidth(c); }
+	int32 getCharKernedWidth(uint16 c) const override { return _font->getCharWidth(c); }
 	int32 getFontWidth() const override { return getCharKernedWidth('w'); }
 
 	int getKernedStringLength(const Common::String &text) const override { return _font->getStringWidth(text); }

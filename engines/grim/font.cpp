@@ -84,15 +84,19 @@ Font *Font::getFirstFont() {
 	return nullptr;
 }
 
+bool BitmapFont::is8Bit() const {
+	return !_isDBCS;
+}
+
 BitmapFont::BitmapFont() :
 		_userData(nullptr),
-		_fontData(nullptr), _charHeaders(nullptr), _charIndex(nullptr),
+		_fontData(nullptr), _charHeaders(nullptr),
 		_numChars(0), _dataSize(0), _kernedHeight(0), _baseOffsetY(0),
 		_firstChar(0), _lastChar(0) {
 }
 
 BitmapFont::~BitmapFont() {
-	delete[] _charIndex;
+	_fwdCharIndex.clear();
 	delete[] _charHeaders;
 	delete[] _fontData;
 	g_driver->destroyFont(this);
@@ -108,10 +112,47 @@ void BitmapFont::load(const Common::String &filename, Common::SeekableReadStream
 	_firstChar = data->readUint32LE();
 	_lastChar = data->readUint32LE();
 
-	// Read character indexes - are the key/value reversed?
-	_charIndex = new uint16[_numChars];
-	for (uint i = 0; i < _numChars; ++i)
-		_charIndex[i] = data->readUint16LE();
+	_isDBCS = g_grim->getGameLanguage() == Common::ZH_CHN && _numChars > 0xff;
+
+	if (_isDBCS) {
+		// Read character indexes - are the key/value reversed?
+		_fwdCharIndex.resize(_numChars);
+		for (uint i = 0; i < _numChars; ++i) {
+			uint16 point = data->readUint16LE();
+			_fwdCharIndex[i] = point ? point : -1;
+		}
+	} else {
+		// Read character indexes - are the key/value reversed?
+		Common::Array<uint16> revCharIndex;
+		revCharIndex.resize(_numChars);
+		uint16 maxPoint = 0;
+		for (uint i = 0; i < _numChars; ++i) {
+			uint16 point = data->readUint16LE();
+			revCharIndex[i] = point;
+			if (point > maxPoint)
+				maxPoint = point;
+		}
+		_fwdCharIndex.resize(maxPoint + 1, -1);
+		for (uint i = 0; i < _numChars; ++i) {
+			_fwdCharIndex[revCharIndex[i]] = i;
+		}
+
+		// In order to ensure the correct character codes for
+		// accented characters it is necessary to check the
+		// requested code against the index of characters for
+		// the font.  Previously, signed characters were
+		// causing the problem but it might be possible for
+		// an invalid character to be called for other reasons.
+		//
+		// Example: Without this fix when Manny greets Eva
+		// for the first time and he says "Buenos Días" the
+		// 'í' character will either show up as a different
+		// character or it crashes the game.
+		for (uint i = 0; i < _numChars; ++i) {
+			if (revCharIndex[i] == i)
+				_fwdCharIndex[revCharIndex[i]] = i;
+		}
+	}
 
 	// Read character headers
 	_charHeaders = new CharHeader[_numChars];
@@ -134,30 +175,11 @@ void BitmapFont::load(const Common::String &filename, Common::SeekableReadStream
 	g_driver->createFont(this);
 }
 
-uint16 BitmapFont::getCharIndex(unsigned char c) const {
-	uint16 c2 = uint16(c);
-
-	// In order to ensure the correct character codes for
-	// accented characters it is necessary to check the
-	// requested code against the index of characters for
-	// the font.  Previously, signed characters were
-	// causing the problem but it might be possible for
-	// an invalid character to be called for other reasons.
-	//
-	// Example: Without this fix when Manny greets Eva
-	// for the first time and he says "Buenos Días" the
-	// 'í' character will either show up as a different
-	// character or it crashes the game.
-
-	if (_charIndex[c2] == c2) {
-		return c2;
-	}
-
-	for (uint i = 0; i < _numChars; ++i) {
-		if (_charIndex[i] == c2)
-			return i;
-	}
-	Debug::warning(Debug::Fonts, "The requested character (code 0x%x) does not correspond to anything in the font data!", c2);
+uint16 BitmapFont::getCharIndex(uint16 c) const {
+	int res = c < _fwdCharIndex.size() ? _fwdCharIndex[c] : -1;
+	if (res >= 0)
+		return res;
+	Debug::warning(Debug::Fonts, "The requested character (code 0x%x) does not correspond to anything in the font data!", c);
 	// If we couldn't find the character then default to
 	// the first character in the font so that something
 	// gets loaded to prevent the game from crashing
@@ -167,7 +189,11 @@ uint16 BitmapFont::getCharIndex(unsigned char c) const {
 int BitmapFont::getKernedStringLength(const Common::String &text) const {
 	int result = 0;
 	for (uint32 i = 0; i < text.size(); ++i) {
-		result += getCharKernedWidth(text[i]);
+		uint16 ch = uint8(text[i]);
+		if (_isDBCS && i + 1 < text.size() && (ch & 0x80)) {
+			ch = (ch << 8) | (text[++i] & 0xff);
+		}
+		result += getCharKernedWidth(ch);
 	}
 	return result;
 }
@@ -175,7 +201,11 @@ int BitmapFont::getKernedStringLength(const Common::String &text) const {
 int BitmapFont::getBitmapStringLength(const Common::String &text) const {
 	int result = 0;
 	for (uint32 i = 0; i < text.size(); ++i) {
-		result += getCharKernedWidth(text[i]) + getCharStartingCol(text[i]);
+		uint16 ch = uint8(text[i]);
+		if (_isDBCS && i + 1 < text.size() && (ch & 0x80)) {
+			ch = (ch << 8) | (text[++i] & 0xff);
+		}
+		result += getCharKernedWidth(ch) + getCharStartingCol(ch);
 	}
 	return result;
 }
@@ -183,8 +213,13 @@ int BitmapFont::getBitmapStringLength(const Common::String &text) const {
 int BitmapFont::getStringHeight(const Common::String &text) const {
 	int result = 0;
 	for (uint32 i = 0; i < text.size(); ++i) {
-		int verticalOffset = getCharStartingLine(text[i]) + getBaseOffsetY();
-		int charHeight = verticalOffset + getCharBitmapHeight(text[i]);
+		uint16 ch = uint8(text[i]);
+		if (_isDBCS && i + 1 < text.size() && (ch & 0x80)) {
+			ch = (ch << 8) | (text[++i] & 0xff);
+		}
+
+		int verticalOffset = getCharStartingLine(ch) + getBaseOffsetY();
+		int charHeight = verticalOffset + getCharBitmapHeight(ch);
 		if (charHeight > result)
 			result = charHeight;
 	}
@@ -202,8 +237,7 @@ void BitmapFont::restoreState(SaveGame *state) {
 	g_driver->destroyFont(this);
 	delete[] _fontData;
 	_fontData = nullptr;
-	delete[] _charIndex;
-	_charIndex = nullptr;
+	_fwdCharIndex.clear();
 	delete[] _charHeaders;
 	_charHeaders = nullptr;
 
@@ -241,7 +275,10 @@ void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLin
 	buf.fillRect(Common::Rect(0, 0, width, height), colorKey);
 
 	for (unsigned int d = 0; d < currentLine.size(); d++) {
-		int ch = currentLine[d];
+		uint16 ch = uint8(currentLine[d]);
+		if (_isDBCS && d + 1 < currentLine.size()) {
+			ch = (ch << 8) | (currentLine[++d] & 0xff);
+		}
 		int32 charBitmapWidth = getCharBitmapWidth(ch);
 		int8 fontRow = getCharStartingLine(ch) + getBaseOffsetY();
 		int8 fontCol = getCharStartingCol(ch);
