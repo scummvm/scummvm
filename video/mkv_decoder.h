@@ -27,13 +27,10 @@
 #ifndef VIDEO_MKV_DECODER_H
 #define VIDEO_MKV_DECODER_H
 
-#include "common/rational.h"
 #include "common/queue.h"
 #include "video/video_decoder.h"
 #include "audio/mixer.h"
 #include "graphics/surface.h"
-
-#include <theora/theoradec.h>
 
 #ifdef USE_TREMOR
 #include <tremor/ivorbiscodec.h>
@@ -95,31 +92,19 @@ private:
 		VPXVideoTrack(const Graphics::PixelFormat &format, const mkvparser::Track *const pTrack);
 		~VPXVideoTrack();
 
-		bool endOfTrack() const {
-			if(_endOfVideo && _displayQueue.size())
-				return false;
-		 	return _endOfVideo;
-		 }
+		bool endOfTrack() const;
 		uint16 getWidth() const { return _displaySurface.w; }
 		uint16 getHeight() const { return _displaySurface.h; }
 		Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
 		int getCurFrame() const { return _curFrame; }
 		uint32 getNextFrameStartTime() const { return (uint32)(_nextFrameStartTime * 1000); }
-		const Graphics::Surface *decodeNextFrame() {
-			if(_displayQueue.size())
-				_surface = _displayQueue.pop();
-			warning("Size of display Queue is %d", _displayQueue.size());
-			return &_surface;
-		}
-
+		const Graphics::Surface *decodeNextFrame();
 		bool decodeFrame(byte *frame, long size);
 		void setEndOfVideo() { _endOfVideo = true; }
 
 	private:
 		int _curFrame;
-		int _doneOnce = 0;
 		bool _endOfVideo;
-		Common::Rational _frameRate;
 		double _nextFrameStartTime;
 
 		Graphics::Surface _surface;
@@ -144,10 +129,6 @@ private:
 		Audio::AudioStream *getAudioStream() const;
 
 	private:
-		// single audio fragment audio buffering
-		int _audioBufferFill;
-		ogg_int16_t *_audioBuffer;
-
 		Audio::QueuingAudioStream *_audStream;
 
 		vorbis_block _vorbisBlock;
@@ -183,10 +164,7 @@ private:
 
 	const mkvparser::Block *pBlock;
 	long long trackNum;
-	unsigned long tn;
-	long long trackType;
 	int frameCount;
-	long long time_ns;
 };
 
 } // End of namespace Video

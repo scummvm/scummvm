@@ -77,7 +77,7 @@ int MkvReader::Read(long long position, long length, unsigned char *buffer) {
 		return -1;
 
 	_stream->seek(position);
-	if (_stream->read(buffer, length) < length)
+	if (_stream->read(buffer, length) < (uint32)length)
 		return -1;
 
 	return 0;
@@ -148,16 +148,16 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 
 	ret = pSegment->Load();
-	if (ret < 0) {
+	if (ret) {
 		error("MKVDecoder::loadStream(): Segment::Load() failed (%lld).", ret);
 	}
 
 	pTracks = pSegment->GetTracks();
 
-	unsigned long i = 0;
+	uint32 i = 0;
 	const unsigned long j = pTracks->GetTracksCount();
 
-	debug(1, "Number of tracks: %ld", j);
+	debug(1, "Number of tracks: %d", j);
 
 	enum {VIDEO_TRACK = 1, AUDIO_TRACK = 2};
 	videoTrack = -1;
@@ -176,12 +176,6 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 			_videoTrack = new VPXVideoTrack(getDefaultHighColorFormat(), pTrack);
 
 			addTrack(_videoTrack);
-			//setRate(_videoTrack->getFrameRate());
-
-#if 0
-			if (rate > 0)
-				Init_Special_Timer(rate); // TODO
-#endif
 		}
 
 		if (trackType == mkvparser::Track::kAudio && audioTrack < 0) {
@@ -190,7 +184,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 			const mkvparser::AudioTrack *const pAudioTrack = static_cast<const mkvparser::AudioTrack *>(pTrack);
 
 			size_t audioHeaderSize;
-			byte *audioHeader = (byte *)pAudioTrack->GetCodecPrivate(audioHeaderSize);
+			byte *audioHeader = const_cast<byte *>(pAudioTrack->GetCodecPrivate(audioHeaderSize));
 
 			if (audioHeaderSize < 1) {
 				warning("Strange audio track in movie.");
@@ -230,14 +224,6 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_cluster = pSegment->GetFirst();
 
-#if 0
-	movieIsPlaying = playing;
-	movieIsEnding = 0;
-#endif
-
-	//const long long timeCode = _cluster->GetTimeCode();
-	long long time_ns = _cluster->GetTime();
-
 	if (_cluster->GetFirst(pBlockEntry))
 		error("_cluster::GetFirst() failed");
 
@@ -252,9 +238,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	pBlock = pBlockEntry->GetBlock();
 	trackNum = pBlock->GetTrackNumber();
-	tn = static_cast<unsigned long>(trackNum);
 	frameCount = pBlock->GetFrameCount();
-	time_ns = pBlock->GetTime(_cluster);
 
 	return true;
 }
@@ -275,7 +259,8 @@ void MKVDecoder::readNextPacket() {
 		return;
 	}
 
-	while(_audioTrack->needsAudio()){
+	// ensure we have enough buffers in the stream
+	while (_audioTrack->needsAudio()) {
 		if (frameCounter >= frameCount) {
 		_cluster->GetNext(pBlockEntry, pBlockEntry);
 
@@ -294,7 +279,6 @@ void MKVDecoder::readNextPacket() {
 			pBlock  = pBlockEntry->GetBlock();
 			trackNum = pBlock->GetTrackNumber();
 			frameCount = pBlock->GetFrameCount();
-			time_ns = pBlock->GetTime(_cluster);
 			frameCounter = 0;
 		}
 
@@ -318,7 +302,7 @@ void MKVDecoder::readNextPacket() {
 				queueAudio(size);
 			}
 		} else {
-			warning("Unprocessed track %d", trackNum);
+			warning("Unprocessed track %lld", trackNum);
 		}
 		++frameCounter;
 	}
@@ -329,13 +313,10 @@ MKVDecoder::VPXVideoTrack::VPXVideoTrack(const Graphics::PixelFormat &format, co
 
 	const long long width = pVideoTrack->GetWidth();
 	const long long height = pVideoTrack->GetHeight();
-	const double rate = pVideoTrack->GetFrameRate();
 
-	warning("VideoTrack: %lld x %lld @ %f fps", width, height, rate);
+	debug(1, "VideoTrack: %lld x %lld", width, height);
 
 	_displaySurface.create(width, height, format);
-
-	_frameRate = 10; // FIXME
 
 	_endOfVideo = false;
 	_nextFrameStartTime = 0.0;
@@ -350,7 +331,24 @@ MKVDecoder::VPXVideoTrack::VPXVideoTrack(const Graphics::PixelFormat &format, co
 
 MKVDecoder::VPXVideoTrack::~VPXVideoTrack() {
 	_displaySurface.free();
+	// The last frame is not freed in decodeNextFrame(), clear it hear instead.
+	_surface.free();
 	delete _codec;
+}
+
+bool MKVDecoder::VPXVideoTrack::endOfTrack() const {
+	if (_endOfVideo && _displayQueue.size())
+		return false;
+	return _endOfVideo;
+}
+
+const Graphics::Surface *MKVDecoder::VPXVideoTrack::decodeNextFrame() {
+	if (_displayQueue.size()) {
+		if (_surface.getPixels())
+			_surface.free();
+		_surface = _displayQueue.pop();
+	}
+	return &_surface;
 }
 
 bool MKVDecoder::VPXVideoTrack::decodeFrame(byte *frame, long size) {
@@ -362,8 +360,8 @@ bool MKVDecoder::VPXVideoTrack::decodeFrame(byte *frame, long size) {
 		error("Failed to decode frame");
 
 	// Let's decode an image frame!
-	vpx_codec_iter_t  iter = NULL;
-	vpx_image_t      *img;
+	vpx_codec_iter_t iter = NULL;
+	vpx_image_t *img;
 	Graphics::Surface tmp;
 	tmp.create(getWidth(), getHeight(), getPixelFormat());
 
@@ -374,7 +372,6 @@ bool MKVDecoder::VPXVideoTrack::decodeFrame(byte *frame, long size) {
 
 		YUVToRGBMan.convert420(&tmp, Graphics::YUVToRGBManager::kScaleITU, img->planes[0], img->planes[1], img->planes[2], img->d_w, img->d_h, img->stride[0], img->stride[1]);
 		_displayQueue.push(tmp);
-		//warning("Size of _displayQueue is now %d", _displayQueue.size());
 	}
 	return false;
 }
@@ -390,10 +387,10 @@ MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(const mkvparser::Track *const pTr
 	const long long audioBitDepth = pAudioTrack->GetBitDepth();
 	const double audioSampleRate = pAudioTrack->GetSamplingRate();
 
-	warning("audioChannels %d audioBitDepth %d audioSamplerate %f", audioChannels, audioBitDepth, audioSampleRate);
+	debug(1, "audioChannels %lld audioBitDepth %lld audioSamplerate %f", audioChannels, audioBitDepth, audioSampleRate);
 
 	size_t audioHeaderSize;
-	byte *audioHeader = (byte *)pAudioTrack->GetCodecPrivate(audioHeaderSize);
+	byte *audioHeader = const_cast<byte *>(pAudioTrack->GetCodecPrivate(audioHeaderSize));
 	byte *p = audioHeader;
 
 	uint count = *p++ + 1;
@@ -454,21 +451,20 @@ Audio::AudioStream *MKVDecoder::VorbisAudioTrack::getAudioStream() const {
 bool MKVDecoder::VorbisAudioTrack::decodeSamples(byte *frame, long size) {
 	float **pcm;
 
-	int numSamples = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm);
+	int32 numSamples = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm);
 
 	if (numSamples > 0) {
-		uint32 channels = _vorbisInfo.channels;
+		int32 channels = _vorbisInfo.channels;
 		long bytespersample = _vorbisInfo.channels * 2;
 
 		char *buffer = (char*)malloc(bytespersample * numSamples * sizeof(char));
 		if (!buffer)
 			error("MKVDecoder::readNextPacket(): buffer allocation failed");
 
-
-		for (int i = 0; i < channels; i++) { /* It's faster in this order */
+		for (int32 i = 0; i < channels; i++) { /* It's faster in this order */
 			float *src = pcm[i];
 			short *dest = ((short *)buffer) + i;
-			for (int j = 0; j < numSamples; j++) {
+			for (int32 j = 0; j < numSamples; j++) {
 				int val = rint(src[j] * 32768.f);
 				val = CLIP(val, -32768, 32767);
 				*dest = (short)val;
