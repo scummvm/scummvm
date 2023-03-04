@@ -172,7 +172,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"interview",
 			"",
-			AD_ENTRY1s("gamedata", "6ca8f6e44f30d09bd68e008be4c20e8d", 2570140),
+			AD_ENTRY2s("gamedata",		"6ca8f6e44f30d09bd68e008be4c20e8d", 2570140,
+					   "interview.exe", "7974f71566c423c3a344862dcbb827dd", 83968),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
@@ -200,6 +201,20 @@ static const SludgeGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY2s("gamedata",   "a471759e071e5d2c0e8e6887607df778", 163794266,
 					   "sludge.bmp", "69db99963fb7e93af6d48dfd7f4246ee", 13846),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"life",
+			"",
+			AD_ENTRY2s("gamedata",   		  "a471759e071e5d2c0e8e6887607df778", 163794266,
+					   "Life Flashes By.exe", "d33c957eefa85defde8b8c29a0bb5a9b", 972800),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
