@@ -112,8 +112,11 @@ bool SceneLightsXmlParser::parserCallback_Cutoff(ParserNode *node) {
 
 bool SceneLightsXmlParser::parserCallback_Exponent(ParserNode *node) {
 	float expon = parseDouble(node);
-	if (expon < 0.0f || expon > 128.0f)
-		warning("Loaded invalid lighting exponent value %f", expon);
+	if (expon < 0.0f || expon > 128.0f) {
+		// Print debug but don't bother warning - the value is not used anyway.
+		debug("Loaded invalid lighting exponent value %f, default to 1.0", expon);
+		expon = 1.0;
+	}
 	_lights->back()->setExponent(expon);
 	return true;
 }

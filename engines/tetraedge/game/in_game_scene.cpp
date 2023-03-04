@@ -862,8 +862,6 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	if (lightsNode.isReadable())
 		loadLights(lightsNode);
 
-	// TODO: Should we set particle matrix to current cam matrix here?
-	// If we are loading a new scene it seems redundant..
 	Common::Path pxmlpath = _sceneFileNameBase(zone, scene).joinInPlace("particles.xml");
 	Common::FSNode pnode = g_engine->getCore()->findFile(pxmlpath);
 	if (pnode.isReadable()) {
@@ -874,7 +872,6 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 		if (!pparser.parse())
 			error("InGameScene::loadXml: Can't parse %s", pnode.getPath().c_str());
 	}
-
 
 	TeMatrix4x4 camMatrix = currentCamera() ?
 		currentCamera()->worldTransformationMatrix() : TeMatrix4x4();
@@ -969,7 +966,19 @@ bool InGameScene::loadLights(const Common::FSNode &node) {
 
 	g_engine->getRenderer()->enableAllLights();
 	for (uint i = 0; i < _lights.size(); i++) {
+		//
+		// WORKAROUND: Some lights in Syberia 2 have 0 for all attenuation
+		// values, which causes textures to all be black.  eg,
+		// scenes/A2_Sommet/25210/lights.xml, light 0.
+		// Correct them to have the default attenuation of 1, 0, 0.
+		//
+		_lights[i]->correctAttenuation();
 		_lights[i]->enable(i);
+	}
+
+	if (_shadowLightNo >= (int)_lights.size()) {
+		warning("Disabling scene shadows: invalid shadow light no.");
+		_shadowLightNo = -1;
 	}
 
 #ifdef TETRAEDGE_DEBUG_LIGHTS
