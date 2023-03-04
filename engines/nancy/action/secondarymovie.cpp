@@ -56,6 +56,8 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // hasBitmapOverlaySurface
 	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // unknown, probably related to playing a sfx
 
+	ser.skip(6, kGameTypeNancy1);
+
 	ser.syncAsUint16LE(_unknown);
 	ser.syncAsUint16LE(_hideMouse);
 	ser.syncAsUint16LE(_isReverse);
