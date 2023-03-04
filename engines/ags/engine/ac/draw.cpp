@@ -662,25 +662,19 @@ void draw_and_invalidate_text(Bitmap *ds, int x1, int y1, int font, color_t text
 
 // Renders black borders for the legacy boxed game mode,
 // where whole game screen changes size between large and small rooms
-void render_black_borders() {
-	if (_G(gfxDriver)->UsesMemoryBackBuffer())
-		return;
-	{
-		_G(gfxDriver)->BeginSpriteBatch(RectWH(_GP(game).GetGameRes()), SpriteTransform());
-		const Rect &viewport = _GP(play).GetMainViewport();
-		if (viewport.Top > 0) {
-			// letterbox borders
-			_G(blankImage)->SetStretch(_GP(game).GetGameRes().Width, viewport.Top, false);
-			_G(gfxDriver)->DrawSprite(0, 0, _G(blankImage));
-			_G(gfxDriver)->DrawSprite(0, viewport.Bottom + 1, _G(blankImage));
-		}
-		if (viewport.Left > 0) {
-			// sidebar borders for widescreen
-			_G(blankSidebarImage)->SetStretch(viewport.Left, viewport.GetHeight(), false);
-			_G(gfxDriver)->DrawSprite(0, 0, _G(blankSidebarImage));
-			_G(gfxDriver)->DrawSprite(viewport.Right + 1, 0, _G(blankSidebarImage));
-		}
-		_G(gfxDriver)->EndSpriteBatch();
+static void render_black_borders() {
+	const Rect &viewport = _GP(play).GetMainViewport();
+	if (viewport.Top > 0) {
+		// letterbox borders
+		_G(blankImage)->SetStretch(_GP(game).GetGameRes().Width, viewport.Top, false);
+		_G(gfxDriver)->DrawSprite(0, 0, _G(blankImage));
+		_G(gfxDriver)->DrawSprite(0, viewport.Bottom + 1, _G(blankImage));
+	}
+	if (viewport.Left > 0) {
+		// sidebar borders for widescreen
+		_G(blankSidebarImage)->SetStretch(viewport.Left, viewport.GetHeight(), false);
+		_G(gfxDriver)->DrawSprite(0, 0, _G(blankSidebarImage));
+		_G(gfxDriver)->DrawSprite(viewport.Right + 1, 0, _G(blankSidebarImage));
 	}
 }
 
@@ -2283,11 +2277,10 @@ void update_mouse_cursor() {
 
 void construct_game_screen_overlay(bool draw_mouse) {
 	const bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
+	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
+									SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 	if (pl_any_want_hook(AGSE_POSTSCREENDRAW)) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-										SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
-		_G(gfxDriver)->EndSpriteBatch();
 	}
 
 	// TODO: find out if it's okay to move cursor animation and state update
@@ -2297,8 +2290,6 @@ void construct_game_screen_overlay(bool draw_mouse) {
 	// Add mouse cursor pic, and global screen tint effect
 	if (_GP(play).screen_is_faded_out == 0) {
 		// Stage: mouse cursor
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
-										SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 		if (draw_mouse && !_GP(play).mouse_cursor_hidden) {
 			_G(gfxDriver)->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor));
 			invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor), false);
@@ -2306,16 +2297,18 @@ void construct_game_screen_overlay(bool draw_mouse) {
 		// Stage: screen fx
 		if (_GP(play).screen_tint >= 1)
 			_G(gfxDriver)->SetScreenTint(_GP(play).screen_tint & 0xff, (_GP(play).screen_tint >> 8) & 0xff, (_GP(play).screen_tint >> 16) & 0xff);
-		_G(gfxDriver)->EndSpriteBatch();
-
-		// Stage: legacy letterbox mode borders (has its own sprite batch)
-		render_black_borders();
 	}
+	_G(gfxDriver)->EndSpriteBatch();
 
-	// Add global screen fade effect
-	if (_GP(play).screen_is_faded_out != 0 && full_frame_rend) {
+	// For hardware-accelerated renderers: legacy letterbox and global screen fade effect
+	if (full_frame_rend) {
 		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform());
-		_G(gfxDriver)->SetScreenFade(_GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
+		// Stage: legacy letterbox mode borders
+		if (_GP(play).screen_is_faded_out == 0)
+			render_black_borders();
+		// Stage: full screen fade fx
+		if (_GP(play).screen_is_faded_out != 0)
+			_G(gfxDriver)->SetScreenFade(_GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
 		_G(gfxDriver)->EndSpriteBatch();
 	}
 }
