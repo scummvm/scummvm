@@ -2089,14 +2089,16 @@ static void construct_room_view() {
 		const Rect &cam_rc = camera->GetRect();
 		const float view_sx = (float)view_rc.GetWidth() / (float)cam_rc.GetWidth();
 		const float view_sy = (float)view_rc.GetHeight() / (float)cam_rc.GetHeight();
+		const SpriteTransform view_trans(view_rc.Left, view_rc.Top, view_sx, view_sy);
+		const SpriteTransform cam_trans(-cam_rc.Left, -cam_rc.Top);
 
 		if (_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
 			// For hw renderer we draw everything as a sprite stack;
 			// viewport-camera pair is done as 2 nested scene nodes,
 			// where first defines how camera's image translates into the viewport on screen,
 			// and second - how room's image translates into the camera.
-			_G(gfxDriver)->BeginSpriteBatch(view_rc, SpriteTransform(view_rc.Left, view_rc.Top, view_sx, view_sy));
-			_G(gfxDriver)->BeginSpriteBatch(Rect(), SpriteTransform(-cam_rc.Left, -cam_rc.Top));
+			_G(gfxDriver)->BeginSpriteBatch(view_rc, view_trans);
+			_G(gfxDriver)->BeginSpriteBatch(Rect(), cam_trans);
 			_G(gfxDriver)->SetStageScreen(cam_rc.GetSize(), cam_rc.Left, cam_rc.Top);
 			put_sprite_list_on_screen(true);
 			_G(gfxDriver)->EndSpriteBatch();
@@ -2105,7 +2107,7 @@ static void construct_room_view() {
 			// For software renderer - combine viewport and camera in one batch,
 			// due to how the room drawing is implemented currently in the software mode.
 			// TODO: review this later?
-			SpriteTransform room_trans(-cam_rc.Left, -cam_rc.Top, view_sx, view_sy, 0.f);
+			_G(gfxDriver)->BeginSpriteBatch(view_rc, view_trans);
 
 			if (_GP(CameraDrawData)[viewport->GetID()].Frame == nullptr && _GP(CameraDrawData)[viewport->GetID()].IsOverlap) {
 				// room background is prepended to the sprite stack
@@ -2117,14 +2119,15 @@ static void construct_room_view() {
 				// coordinates (cam1 -> screen -> cam2).
 				// It's not clear whether this is worth the effort, but if it is,
 				// then we'd need to optimise view/cam data first.
-				_G(gfxDriver)->BeginSpriteBatch(view_rc, room_trans);
+				_G(gfxDriver)->BeginSpriteBatch(Rect(), cam_trans);
 				_G(gfxDriver)->DrawSprite(0, 0, _G(roomBackgroundBmp));
 			} else {
 				// room background is drawn by dirty rects system
 				PBitmap bg_surface = draw_room_background(viewport.get());
-				_G(gfxDriver)->BeginSpriteBatch(view_rc, room_trans, kFlip_None, bg_surface);
+				_G(gfxDriver)->BeginSpriteBatch(Rect(), cam_trans, kFlip_None, bg_surface);
 			}
 		put_sprite_list_on_screen(true);
+		_G(gfxDriver)->EndSpriteBatch();
 		_G(gfxDriver)->EndSpriteBatch();
 		}
 	}
