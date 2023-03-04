@@ -235,9 +235,11 @@ void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLin
 	int width = getBitmapStringLength(currentLine) + 1;
 	int height = getStringHeight(currentLine) + 1;
 
-	uint8 *_textBitmap = new uint8[height * width]();
-
 	int startColumn = 0;
+
+	buf.create(width, height, pixelFormat);
+	buf.fillRect(Common::Rect(0, 0, width, height), colorKey);
+
 	for (unsigned int d = 0; d < currentLine.size(); d++) {
 		int ch = currentLine[d];
 		int32 charBitmapWidth = getCharBitmapWidth(ch);
@@ -245,35 +247,19 @@ void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLin
 		int8 fontCol = getCharStartingCol(ch);
 
 		for (int line = 0; line < getCharBitmapHeight(ch); line++) {
-			int lineOffset = ((fontRow + line) * width);
-			for (int bitmapCol = 0; bitmapCol < charBitmapWidth; bitmapCol++) {
-				int columnOffset = startColumn + fontCol + bitmapCol;
-				int fontOffset = (charBitmapWidth * line) + bitmapCol;
-				int8 pixel = getCharData(ch)[fontOffset];
-				assert(lineOffset + columnOffset < width*height);
-				if (pixel != 0)
-					_textBitmap[lineOffset + columnOffset] = pixel;
+			int lineOffset = (fontRow + line);
+			int columnOffset = startColumn + fontCol;
+			int fontOffset = (charBitmapWidth * line);
+			for (int bitmapCol = 0; bitmapCol < charBitmapWidth; bitmapCol++, columnOffset++, fontOffset++) {
+				byte pixel = getCharData(ch)[fontOffset];
+				if (pixel == 0x80)
+					buf.setPixel(columnOffset, lineOffset, blackColor);
+				else if (pixel == 0xFF)
+					buf.setPixel(columnOffset, lineOffset, color);
 			}
 		}
 		startColumn += getCharKernedWidth(ch);
 	}
-
-	buf.create(width, height, pixelFormat);
-	uint8 *bitmapData = _textBitmap;
-	for (int iy = 0; iy < height; iy++) {
-		for (int ix = 0; ix < width; ix++, bitmapData++) {
-			byte pixel = *bitmapData;
-			if (pixel == 0x00) {
-				buf.setPixel(ix, iy, colorKey);
-			} else if (pixel == 0x80) {
-				buf.setPixel(ix, iy, blackColor);
-			} else if (pixel == 0xFF) {
-				buf.setPixel(ix, iy, color);
-			}
-		}
-	}
-
-	delete[] _textBitmap;
 }
 
 void FontTTF::loadTTF(const Common::String &filename, Common::SeekableReadStream *data, int size) {
