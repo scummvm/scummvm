@@ -295,13 +295,16 @@ void MKVDecoder::readNextPacket() {
 	// First, let's get our frame
 	if (_cluster == nullptr || _cluster->EOS()) {
 		_videoTrack->setEndOfVideo();
+		warning("EOS");
 		return;
 	}
 
-	if (frameCounter >= frameCount) {
-		int res = _cluster->GetNext(pBlockEntry, pBlockEntry);
+	//warning("trackNum: %d frameCounter: %d frameCount: %d, time_ns: %d", tn, frameCounter, frameCount, time_ns);
 
-		if  ((res != -1) || pBlockEntry->EOS()) {
+	if (frameCounter >= frameCount) {
+		_cluster->GetNext(pBlockEntry, pBlockEntry);
+
+		if ((pBlockEntry == NULL) || pBlockEntry->EOS()) {
 			_cluster = pSegment->GetNext(_cluster);
 			if ((_cluster == NULL) || _cluster->EOS()) {
 				_videoTrack->setEndOfVideo();
@@ -309,7 +312,7 @@ void MKVDecoder::readNextPacket() {
 			}
 			int ret = _cluster->GetFirst(pBlockEntry);
 
-			if (ret == -1)
+			if (ret < 0)
 				error("MKVDecoder::readNextPacket(): GetFirst() failed");
 		}
 		pBlock  = pBlockEntry->GetBlock();
@@ -326,6 +329,7 @@ void MKVDecoder::readNextPacket() {
 
 	const mkvparser::Block::Frame &theFrame = pBlock->GetFrame(frameCounter);
 	const long size = theFrame.len;
+	warning("Size of frame %ld\n", size);
 	//                const long long offset = theFrame.pos;
 
 	if (size > sizeof(frame)) {
@@ -390,6 +394,8 @@ MKVDecoder::VPXVideoTrack::~VPXVideoTrack() {
 }
 
 bool MKVDecoder::VPXVideoTrack::decodeFrame(byte *frame, long size) {
+
+	//warning("In within decodeFrame");
 
 	/* Decode the frame */
 	if (vpx_codec_decode(_codec, frame, size, NULL, 0))
@@ -538,7 +544,7 @@ MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(const mkvparser::Track *const pTr
 	movieAudioIndex = initMovieSound(fileNumber, audioFormat, audioChannels, (ALuint) audioSampleRate, feedAudio);
 #endif
 
-	debug(1, "Movie sound inited.");
+	warning("Movie sound inited.");
 #if 0
 	audio_queue_init(&audioQ);
 #endif
@@ -685,9 +691,6 @@ void MKVDecoder::VorbisAudioTrack::synthesizePacket(ogg_packet &_oggPacket) {
 }
 
 void MKVDecoder::queuePage(ogg_page *page) {
-	if (_hasVideo)
-		ogg_stream_pagein(&_theoraOut, page);
-
 	if (_hasAudio)
 		ogg_stream_pagein(&_vorbisOut, page);
 }
