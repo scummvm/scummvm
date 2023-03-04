@@ -146,6 +146,10 @@ public:
 	uint32 _stageColor;
 	Cast *_sharedCast;
 	bool _allowOutdatedLingo;
+	bool _remapPalettesWhenNeeded;
+	Common::String _createdBy;
+	Common::String _changedBy;
+	Common::String _origDirectory;
 
 	bool _videoPlayback;
 
@@ -183,10 +187,7 @@ private:
 	uint32 _flags;
 
 	Common::String _macName;
-	Common::String _createdBy;
-	Common::String _changedBy;
 	Common::String _script;
-	Common::String _directory;
 
 	bool _mouseDownWasInButton;
 	Channel *_currentDraggedChannel;

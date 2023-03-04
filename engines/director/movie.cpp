@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "common/substream.h"
 
+#include "director/types.h"
 #include "engines/util.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -68,6 +69,7 @@ Movie::Movie(Window *window) {
 	_version = 0;
 	_platform = Common::kPlatformMacintosh;
 	_allowOutdatedLingo = false;
+	_remapPalettesWhenNeeded = false;
 
 	_movieArchive = nullptr;
 
@@ -244,6 +246,7 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	InfoEntries fileInfo = Movie::loadInfoEntries(stream, _version);
 
 	_allowOutdatedLingo = (fileInfo.flags & kMovieFlagAllowOutdatedLingo) != 0;
+	_remapPalettesWhenNeeded = (fileInfo.flags & kMovieFlagRemapPalettesWhenNeeded) != 0;
 
 	_script = fileInfo.strings[0].readString(false);
 
@@ -255,7 +258,7 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 
 	_changedBy = fileInfo.strings[1].readString();
 	_createdBy = fileInfo.strings[2].readString();
-	_createdBy = fileInfo.strings[3].readString();
+	_origDirectory = fileInfo.strings[3].readString();
 
 	uint16 preload = 0;
 	if (fileInfo.strings[4].len) {
@@ -271,7 +274,7 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 		debug("VWFI: script: '%s'", _script.c_str());
 		debug("VWFI: changed by: '%s'", _changedBy.c_str());
 		debug("VWFI: created by: '%s'", _createdBy.c_str());
-		debug("VWFI: directory: '%s'", _createdBy.c_str());
+		debug("VWFI: original directory: '%s'", _origDirectory.c_str());
 		debug("VWFI: preload: %d (0x%x)", preload, preload);
 
 		for (uint i = 5; i < fileInfo.strings.size(); i++) {

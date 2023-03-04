@@ -33,6 +33,7 @@ enum {
 #define kQuirksCacheArchive "quirks"
 
 enum MovieFlag {
+	kMovieFlagRemapPalettesWhenNeeded =  (1 << 6),
 	kMovieFlagAllowOutdatedLingo	= (1 << 8)
 };
 
@@ -326,7 +327,7 @@ enum ChunkType {
 	kChunkLine
 };
 
-enum {
+enum FileVer {
 	kFileVer300 = 0x404,
 	kFileVer310 = 0x405,
 	kFileVer400 = 0x45B,

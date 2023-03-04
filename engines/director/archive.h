@@ -76,6 +76,8 @@ public:
 	bool _isBigEndian;
 	static uint32 convertTagToUppercase(uint32 tag);
 
+	virtual Common::String formatArchiveInfo();
+
 protected:
 	void dumpChunk(Resource &res, Common::DumpFile &out);
 	Common::SeekableReadStream *_stream;
@@ -97,6 +99,7 @@ public:
 	bool openFile(const Common::String &fileName) override;
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
 	Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id) override;
+	Common::String formatArchiveInfo() override;
 
 private:
 	Common::MacResManager *_resFork;
@@ -111,6 +114,7 @@ public:
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
 	Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id) override;
+	Common::String formatArchiveInfo() override;
 
 	uint32 _startOffset;
 };
@@ -126,6 +130,7 @@ public:
 	Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id) override;
 	virtual Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id, bool fileEndianness);
 	Resource getResourceDetail(uint32 tag, uint16 id) override;
+	Common::String formatArchiveInfo() override;
 
 private:
 	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);

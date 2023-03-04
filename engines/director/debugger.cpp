@@ -20,6 +20,7 @@
  */
 
 #include "common/language.h"
+#include "common/platform.h"
 #include "director/director.h"
 #include "director/debugger.h"
 #include "director/cast.h"
@@ -46,6 +47,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
 
 	registerCmd("version", WRAP_METHOD(Debugger, cmdVersion));
+	registerCmd("info", WRAP_METHOD(Debugger, cmdInfo));
 	registerCmd("movie", WRAP_METHOD(Debugger, cmdMovie));
 	registerCmd("m", WRAP_METHOD(Debugger, cmdMovie));
 	registerCmd("frame", WRAP_METHOD(Debugger, cmdFrame));
@@ -141,8 +143,8 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf("--------\n");
 	debugPrintf("Player:\n");
 	debugPrintf(" version - Shows the Director version\n");
+	debugPrintf(" info - Shows information about the current movie\n");
 	debugPrintf(" movie / m [moviePath] - Get or sets the current movie\n");
-	//debugPrintf(" movieinfo / mi - Show information for the current movie\n");
 	debugPrintf(" frame / f [frameNum] - Gets or sets the current score frame\n");
 	debugPrintf(" channels / chan [frameNum] - Shows channel information for a score frame\n");
 	debugPrintf(" cast [castNum] - Shows the cast list or castNum for the current movie\n");
@@ -201,6 +203,32 @@ bool Debugger::cmdVersion(int argc, const char **argv) {
 	debugPrintf("Executable name: %s\n", g_director->getEXEName().c_str());
 	debugPrintf("Startup file name: %s\n", g_director->_gameDescription->desc.filesDescriptions[0].fileName);
 	debugPrintf("Startup file MD5: %s\n", g_director->_gameDescription->desc.filesDescriptions[0].md5);
+	debugPrintf("\n");
+	return true;
+}
+
+bool Debugger::cmdInfo(int argc, const char **argv) {
+	Movie *movie = g_director->getCurrentMovie();
+	Score *score = movie->getScore();
+	Archive *archive = movie->getArchive();
+	Cast *cast = movie->getCast();
+	debugPrintf("Movie path: %s\n", archive->getPathName().c_str());
+	debugPrintf("Movie file size: %d\n", archive->getFileSize());
+	debugPrintf("Movie archive format: %s\n", archive->formatArchiveInfo().c_str());
+	debugPrintf("Movie platform: %s (%s)\n", Common::getPlatformCode(movie->_platform), Common::getPlatformDescription(movie->_platform));
+	debugPrintf("Movie format version: 0x%x\n", movie->_version);
+
+	debugPrintf("Created by: %s\n", movie->_createdBy.c_str());
+	debugPrintf("Modified by: %s\n", movie->_changedBy.c_str());
+	debugPrintf("Original directory: %s\n", movie->_origDirectory.c_str());
+	debugPrintf("Stage size: %dx%d\n", movie->_movieRect.width(), movie->_movieRect.height());
+	debugPrintf("Default palette ID: %d\n", cast->_defaultPalette);
+	debugPrintf("Default stage color: %d\n", cast->_stageColor);
+	debugPrintf("Copy protected: %d\n", cast->_isProtected);
+	debugPrintf("Remap palettes when needed flag: %d\n", movie->_remapPalettesWhenNeeded);
+	debugPrintf("Allow outdated Lingo flag: %d\n", movie->_allowOutdatedLingo);
+	debugPrintf("Frame count: %d\n", score->_frames.size());
+	debugPrintf("Cast member count: %d\n", cast->getCastSize());
 	debugPrintf("\n");
 	return true;
 }

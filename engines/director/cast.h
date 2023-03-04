@@ -143,6 +143,8 @@ public:
 	FontXPlatformMap _fontXPlatformMap;
 	FontMap _fontMap;
 
+	bool _isProtected;
+
 	Common::HashMap<int, CastMember *> *_loadedCast;
 	Common::HashMap<int, const Stxt *> *_loadedStxts;
 	uint16 _castIDoffset;
