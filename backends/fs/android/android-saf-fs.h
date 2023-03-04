@@ -69,7 +69,6 @@ protected:
 	// In this case _path is the parent path, _newName the node name and _safParent the parent SAF object
 	jobject _safNode;
 
-	bool _cached;
 	Common::String _path;
 	int _flags;
 	jobject _safParent;
@@ -156,7 +155,7 @@ protected:
 	AndroidSAFFilesystemNode(jobject safTree, jobject safParent,
 	                         const Common::String &path, const Common::String &name);
 
-	void cacheData(bool force = false);
+	void cacheData();
 };
 
 class AddSAFFakeNode final : public AbstractFSNode, public AndroidFSNode {
