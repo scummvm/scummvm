@@ -724,7 +724,7 @@ void Lua_V1::LockFont() {
 		const char *fontName = lua_getstring(param1);
 		Font *result = g_resourceloader->loadFont(fontName);
 		if (result) {
-			lua_pushusertag(result->getId(), MKTAG('F','O','N','T'));
+			lua_pushusertag(result->getPoolId(), result->getPoolTag());
 			return;
 		}
 	}

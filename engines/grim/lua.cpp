@@ -373,8 +373,12 @@ TextObject *LuaBase::gettextobject(lua_Object obj) {
 	return TextObject::getPool().getObject(lua_getuserdata(obj));
 }
 
-Font *LuaBase::getfont(lua_Object obj) {
-	return Font::getPool().getObject(lua_getuserdata(obj));
+Font *LuaBase::getfont(lua_Object fontObj) {
+	if (lua_tag(fontObj) == BitmapFont::getStaticTag())
+		return BitmapFont::getPool().getObject(lua_getuserdata(fontObj));
+	if (lua_tag(fontObj) == FontTTF::getStaticTag())
+		return FontTTF::getPool().getObject(lua_getuserdata(fontObj));
+	return nullptr;
 }
 
 Color LuaBase::getcolor(lua_Object obj) {
@@ -511,23 +515,18 @@ void LuaBase::setTextObjectParams(TextObjectCommon *textObject, lua_Object table
 	if (keyObj) {
 		if (g_grim->getGameType() == GType_MONKEY4 && lua_isstring(keyObj)) {
 			const char *str = lua_getstring(keyObj);
-			Font *font = nullptr;
-			for (Font *f : Font::getPool()) {
-				if (f->getFilename() == str) {
-					font = f;
-				}
-			}
+			Font *font = Font::getByFileName(str);
 			if (!font) {
 				font = g_resourceloader->loadFont(str);
 			}
 
 			textObject->setFont(font);
-		} else if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
+		} else if (lua_isuserdata(keyObj) && (lua_tag(keyObj) == BitmapFont::getStaticTag() || lua_tag(keyObj) == FontTTF::getStaticTag())) {
 			textObject->setFont(getfont(keyObj));
 		} else if (g_grim->getGameType() == GType_MONKEY4 && !textObject->getFont() && g_grim->getGamePlatform() == Common::kPlatformPS2) {
 			// HACK:
 			warning("HACK: No default font set for PS2-version, just picking one for now");
-			textObject->setFont(*Font::getPool().begin());
+			textObject->setFont(Font::getFirstFont());
 		}
 	}
 

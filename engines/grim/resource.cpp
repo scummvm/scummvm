@@ -394,7 +394,7 @@ Font *ResourceLoader::loadFont(const Common::String &filename) {
 	if (!stream)
 		error("Could not find font file %s", filename.c_str());
 
-	Font *result = new Font();
+	BitmapFont *result = new BitmapFont();
 	result->load(filename, stream);
 	delete stream;
 

@@ -1055,52 +1055,12 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 	}
 	for (int j = 0; j < numLines; j++) {
 		const Common::String &currentLine = lines[j];
-
-		int width = font->getBitmapStringLength(currentLine) + 1;
-		int height = font->getStringHeight(currentLine) + 1;
-
-		uint8 *_textBitmap = new uint8[height * width]();
-
-		int startColumn = 0;
-		for (unsigned int d = 0; d < currentLine.size(); d++) {
-			int ch = currentLine[d];
-			int32 charBitmapWidth = font->getCharBitmapWidth(ch);
-			int8 fontRow = font->getCharStartingLine(ch) + font->getBaseOffsetY();
-			int8 fontCol = font->getCharStartingCol(ch);
-
-			for (int line = 0; line < font->getCharBitmapHeight(ch); line++) {
-				int lineOffset = ((fontRow + line) * width);
-				for (int bitmapCol = 0; bitmapCol < charBitmapWidth; bitmapCol++) {
-					int columnOffset = startColumn + fontCol + bitmapCol;
-					int fontOffset = (charBitmapWidth * line) + bitmapCol;
-					int8 pixel = font->getCharData(ch)[fontOffset];
-					assert(lineOffset + columnOffset < width*height);
-					if (pixel != 0)
-						_textBitmap[lineOffset + columnOffset] = pixel;
-				}
-			}
-			startColumn += font->getCharKernedWidth(ch);
-		}
-
 		Graphics::Surface buf;
-		buf.create(width, height, _pixelFormat);
 
-		uint8 *bitmapData = _textBitmap;
-		for (int iy = 0; iy < height; iy++) {
-			for (int ix = 0; ix < width; ix++, bitmapData++) {
-				byte pixel = *bitmapData;
-				if (pixel == 0x00) {
-					buf.setPixel(ix, iy, kKitmapColorkey);
-				} else if (pixel == 0x80) {
-					buf.setPixel(ix, iy, blackColor);
-				} else if (pixel == 0xFF) {
-					buf.setPixel(ix, iy, color);
-				}
-			}
-		}
+		font->render(buf, currentLine, _pixelFormat, blackColor, color, kKitmapColorkey);
 
-		userData[j].width = width;
-		userData[j].height = height;
+		userData[j].width = buf.w;
+		userData[j].height = buf.h;
 		userData[j].image = tglGenBlitImage();
 		tglUploadBlitImage(userData[j].image, buf, kKitmapColorkey, true);
 		userData[j].x = text->getLineX(j);
@@ -1113,7 +1073,6 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 		}
 
 		buf.free();
-		delete[] _textBitmap;
 	}
 }
 
@@ -1227,7 +1186,7 @@ void GfxTinyGL::loadEmergFont() {
 	uint32 colorTransparent = textureFormat.ARGBToColor(0, 255, 255, 255);
 	for (int i = 0; i < 96; i++) {
 		_emergFont[i] = tglGenBlitImage();
-		const uint8 *ptr = Font::emerFont[i];
+		const uint8 *ptr = BitmapFont::emerFont[i];
 		for (int py = 0; py < 13; py++) {
 				int line = ptr[12 - py];
 				for (int px = 0; px < 8; px++) {

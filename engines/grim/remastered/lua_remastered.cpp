@@ -44,14 +44,14 @@ void Lua_Remastered::WidescreenCorrectionFactor() {
 void Lua_Remastered::GetFontDimensions() {
 	// Taken from Lua_v2 and modified
 	lua_Object fontObj = lua_getparam(1);
-	if (!lua_isuserdata(fontObj) || lua_tag(fontObj) != Font::getStaticTag())
+	if (!lua_isuserdata(fontObj))
 		return;
 
-	Font *font = Font::getPool().getObject(lua_getuserdata(fontObj));
+	Font *font = getfont(fontObj);
 
 	if (font) {
 		int32 h = font->getKernedHeight();
-		int32 w = font->getCharKernedWidth('w');
+		int32 w = font->getFontWidth();
 		lua_pushnumber(w);
 		lua_pushnumber(h);
 	} else {

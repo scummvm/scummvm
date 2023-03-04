@@ -242,7 +242,8 @@ void GrimEngine::clearPools() {
 	PrimitiveObject::getPool().deleteObjects();
 	TextObject::getPool().deleteObjects();
 	Bitmap::getPool().deleteObjects();
-	Font::getPool().deleteObjects();
+	BitmapFont::getPool().deleteObjects();
+	FontTTF::getPool().deleteObjects();
 	ObjectState::getPool().deleteObjects();
 
 	_currSet = nullptr;
@@ -1187,7 +1188,10 @@ void GrimEngine::savegameRestore() {
 	Bitmap::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Bitmaps restored successfully.");
 
-	Font::getPool().restoreObjects(_savedState);
+	BitmapFont::getPool().restoreObjects(_savedState);
+	if (_savedState->saveMinorVersion() >= 28) {
+		FontTTF::getPool().restoreObjects(_savedState);
+	}
 	Debug::debug(Debug::Engine, "Fonts restored successfully.");
 
 	ObjectState::getPool().restoreObjects(_savedState);
@@ -1270,7 +1274,7 @@ void GrimEngine::restoreGRIM() {
 
 	//TextObject stuff
 	_sayLineDefaults.setFGColor(_savedState->readColor());
-	_sayLineDefaults.setFont(Font::getPool().getObject(_savedState->readLESint32()));
+	_sayLineDefaults.setFont(Font::load(_savedState));
 	_sayLineDefaults.setHeight(_savedState->readLESint32());
 	_sayLineDefaults.setJustify(_savedState->readLESint32());
 	_sayLineDefaults.setWidth(_savedState->readLESint32());
@@ -1359,7 +1363,8 @@ void GrimEngine::savegameSave() {
 	Bitmap::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "Bitmaps saved successfully.");
 
-	Font::getPool().saveObjects(_savedState);
+	BitmapFont::getPool().saveObjects(_savedState);
+	FontTTF::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "Fonts saved successfully.");
 
 	ObjectState::getPool().saveObjects(_savedState);
@@ -1428,7 +1433,7 @@ void GrimEngine::saveGRIM() {
 
 	//TextObject stuff
 	_savedState->writeColor(_sayLineDefaults.getFGColor());
-	_savedState->writeLESint32(_sayLineDefaults.getFont()->getId());
+	Font::save(_sayLineDefaults.getFont(), _savedState);
 	_savedState->writeLESint32(_sayLineDefaults.getHeight());
 	_savedState->writeLESint32(_sayLineDefaults.getJustify());
 	_savedState->writeLESint32(_sayLineDefaults.getWidth());
