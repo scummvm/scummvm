@@ -72,6 +72,7 @@ public:
 	const TeVector3f32 &position3d() const { return _position3d; }
 
 	Common::String dump() const;
+	void correctAttenuation();
 
 	static TeLight *makeInstance();
 

@@ -89,6 +89,11 @@ Common::String TeLight::dump() const {
 		_quadraticAtten, _cutoff, _exponent, _displaySize);
 }
 
+void TeLight::correctAttenuation() {
+	if (!_constAtten && !_linearAtten && !_quadraticAtten)
+		_constAtten = 1.0;
+}
+
 /*static*/
 TeLight *TeLight::makeInstance() {
 	Graphics::RendererType r = g_engine->preferredRendererType();

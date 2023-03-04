@@ -24,6 +24,7 @@
 #include "graphics/tinygl/tinygl.h"
 
 #include "tetraedge/te/te_light_tinygl.h"
+#include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_color.h"
 #include "tetraedge/te/te_quaternion.h"
 #include "tetraedge/te/te_vector3f32.h"
@@ -68,11 +69,11 @@ void TeLightTinyGL::update(uint lightno) {
 	const uint glLight = _toGlLight(lightno);
 
 	const float ambient[4] = {_colAmbient.r() / 255.0f, _colAmbient.g() / 255.0f,
-			_colAmbient.b() / 255.0f, 1.0};
+			_colAmbient.b() / 255.0f, 1.0f};
 	tglLightfv(glLight, TGL_AMBIENT, ambient);
 
 	const float diff[4] = {_colDiffuse.r() / 255.0f, _colDiffuse.g() / 255.0f,
-			_colDiffuse.b() / 255.0f, 1.0};
+			_colDiffuse.b() / 255.0f, 1.0f};
 	tglLightfv(glLight, TGL_DIFFUSE, diff);
 
 	// WORKAROUND: Original game sets 0.01 as threshold here to avoid enabling
@@ -83,7 +84,7 @@ void TeLightTinyGL::update(uint lightno) {
 		tglDisable(glLight);
 
 	const float spec[4] = {_colSpecular.r() / 255.0f, _colSpecular.g() / 255.0f,
-			_colSpecular.b() / 255.0f, 1.0};
+			_colSpecular.b() / 255.0f, 1.0f};
 	tglLightfv(glLight, TGL_SPECULAR, spec);
 
 	if (_type == LightTypeSpot || _type == LightTypePoint) {
@@ -104,10 +105,12 @@ void TeLightTinyGL::update(uint lightno) {
 		const TeVector3f32 dirv = directionVector();
 		const float dir[4] = {dirv.x(), dirv.y(), dirv.z(), 0.0f};
 		tglLightfv(glLight, TGL_SPOT_DIRECTION, dir);
-		tglLightf(glLight, TGL_SPOT_CUTOFF, (_cutoff * 180.0) / M_PI);
-		tglLightf(glLight, TGL_SPOT_EXPONENT, _exponent);
+		tglLightf(glLight, TGL_SPOT_CUTOFF, (_cutoff * 180.0f) / M_PI);
+		// Exponent doesn't get set in Syberia 2
+		if (g_engine->gameType() == TetraedgeEngine::kSyberia)
+			tglLightf(glLight, TGL_SPOT_EXPONENT, _exponent);
 	} else {
-		tglLightf(glLight, TGL_SPOT_CUTOFF, 180.0);
+		tglLightf(glLight, TGL_SPOT_CUTOFF, 180.0f);
 	}
 }
 
@@ -115,7 +118,7 @@ void TeLightTinyGL::update(uint lightno) {
 void TeLightTinyGL::updateGlobal() {
 	const TeColor globalAmbient(_globalAmbientColor);
 	const float col[4] = {globalAmbient.r() / 255.0f,
-			globalAmbient.g() / 255.0f, globalAmbient.b() / 255.0f, 1.0};
+			globalAmbient.g() / 255.0f, globalAmbient.b() / 255.0f, 1.0f};
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, col);
 }
 

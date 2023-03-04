@@ -22,6 +22,7 @@
 #include "common/math.h"
 
 #include "tetraedge/te/te_light_opengl.h"
+#include "tetraedge/tetraedge.h"
 #include "tetraedge/te/te_color.h"
 #include "tetraedge/te/te_quaternion.h"
 #include "tetraedge/te/te_vector3f32.h"
@@ -69,11 +70,11 @@ void TeLightOpenGL::update(uint lightno) {
 	const uint glLight = _toGlLight(lightno);
 
 	const float ambient[4] = {_colAmbient.r() / 255.0f, _colAmbient.g() / 255.0f,
-			_colAmbient.b() / 255.0f, 1.0};
+			_colAmbient.b() / 255.0f, 1.0f};
 	glLightfv(glLight, GL_AMBIENT, ambient);
 
 	const float diff[4] = {_colDiffuse.r() / 255.0f, _colDiffuse.g() / 255.0f,
-			_colDiffuse.b() / 255.0f, 1.0};
+			_colDiffuse.b() / 255.0f, 1.0f};
 	glLightfv(glLight, GL_DIFFUSE, diff);
 
 	// WORKAROUND: Original game sets 0.01 as threshold here to avoid enabling
@@ -84,7 +85,7 @@ void TeLightOpenGL::update(uint lightno) {
 		glDisable(glLight);
 
 	const float spec[4] = {_colSpecular.r() / 255.0f, _colSpecular.g() / 255.0f,
-			_colSpecular.b() / 255.0f, 1.0};
+			_colSpecular.b() / 255.0f, 1.0f};
 	glLightfv(glLight, GL_SPECULAR, spec);
 
 	if (_type == LightTypeSpot || _type == LightTypePoint) {
@@ -105,10 +106,12 @@ void TeLightOpenGL::update(uint lightno) {
 		const TeVector3f32 dirv = directionVector();
 		const float dir[4] = {dirv.x(), dirv.y(), dirv.z(), 0.0f};
 		glLightfv(glLight, GL_SPOT_DIRECTION, dir);
-		glLightf(glLight, GL_SPOT_CUTOFF, (_cutoff * 180.0) / M_PI);
-		glLightf(glLight, GL_SPOT_EXPONENT, _exponent);
+		glLightf(glLight, GL_SPOT_CUTOFF, (_cutoff * 180.0f) / M_PI);
+		// Exponent doesn't get set in Syberia 2
+		if (g_engine->gameType() == TetraedgeEngine::kSyberia)
+			glLightf(glLight, GL_SPOT_EXPONENT, _exponent);
 	} else {
-		glLightf(glLight, GL_SPOT_CUTOFF, 180.0);
+		glLightf(glLight, GL_SPOT_CUTOFF, 180.0f);
 	}
 }
 
@@ -116,7 +119,7 @@ void TeLightOpenGL::update(uint lightno) {
 void TeLightOpenGL::updateGlobal() {
 	const TeColor globalAmbient(_globalAmbientColor);
 	const float col[4] = {globalAmbient.r() / 255.0f,
-			globalAmbient.g() / 255.0f, globalAmbient.b() / 255.0f, 1.0};
+			globalAmbient.g() / 255.0f, globalAmbient.b() / 255.0f, 1.0f};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, col);
 }
 
