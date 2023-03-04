@@ -727,7 +727,7 @@ byte *ResourceManager::loadData(const Common::String &name, uint &size) {
 		// Data was not found inside a cif tree or a cif file, try to open an .iff file
 		// This is used by The Vampire Diaries
 		Common::File f;
-		if (f.open(name + ".iff")) {
+		if (f.open(name.hasSuffixIgnoreCase(".iff") ? name : name + ".iff")) {
 			size = f.size();
 			buf = new byte[size];
 			f.read(buf, size);

@@ -52,6 +52,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("load_scene", WRAP_METHOD(NancyConsole, Cmd_loadScene));
 	registerCmd("scene_id", WRAP_METHOD(NancyConsole, Cmd_sceneID));
 	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listAcionRecords));
+	registerCmd("scan_ar_type", WRAP_METHOD(NancyConsole, Cmd_scanForActionRecordType));
 	registerCmd("get_eventflags", WRAP_METHOD(NancyConsole, Cmd_getEventFlags));
 	registerCmd("set_eventflags", WRAP_METHOD(NancyConsole, Cmd_setEventFlags));
 	registerCmd("get_inventory", WRAP_METHOD(NancyConsole, Cmd_getInventory));
@@ -60,6 +61,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("set_player_time", WRAP_METHOD(NancyConsole, Cmd_setPlayerTime));
 	registerCmd("get_difficulty", WRAP_METHOD(NancyConsole, Cmd_getDifficulty));
 	registerCmd("set_difficulty", WRAP_METHOD(NancyConsole, Cmd_setDifficulty));
+	
 }
 
 NancyConsole::~NancyConsole() {}
@@ -487,6 +489,46 @@ bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
 		}
 
 		debugPrintf("\n\n");
+	}
+
+	return true;
+}
+
+bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Scans all IFFs for ActionRecords of the provided type\n");
+		debugPrintf("Usage: %s <typeID> [cal]\n", argv[0]);
+		return true;
+	}
+
+	byte typeID = atoi(argv[1]) + 10;
+
+	Common::Array<Common::String> list;
+	g_nancy->_resource->list((argc == 2 ? "ciftree" : argv[2]), list, ResourceManager::kResTypeScript);
+
+	char descBuf[0x30];
+
+	for (Common::String &cifName : list) {
+		if (cifName.compareToIgnoreCase("ciflist") == 0) {
+			continue;
+		}
+		
+		IFF iff(cifName);
+		if (iff.load()) {
+			uint num = 0;
+			Common::SeekableReadStream *chunk = nullptr;
+			while (chunk = iff.getChunkStream("ACT", num), chunk != nullptr) {
+				chunk->seek(0x30);
+				if (chunk->readByte() == typeID) {
+					chunk->seek(0);
+					chunk->read(descBuf, 0x30);
+					descBuf[0x2F] = '\0';
+					debugPrintf("%s: ACT chunk %u, %s\n", cifName.c_str(), num, descBuf);
+				}
+				++num;
+				delete chunk;
+			}
+		}
 	}
 
 	return true;
