@@ -31,6 +31,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/engine/game/viewport.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/media/audio/queued_audio_item.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/string_types.h"
@@ -273,12 +274,14 @@ struct GameState {
 	// Viewports are positioned in game screen coordinates, related to the "game size",
 	// while cameras are positioned in room coordinates.
 	//
-	// Tells if the room viewport should be adjusted automatically each time a new room is loaded
-	bool IsAutoRoomViewport() const;
 	// Returns main (game's) viewport position on screen, this is the overall game view
 	const Rect &GetMainViewport() const;
 	// Returns UI viewport position on screen, within the main viewport
 	const Rect &GetUIViewport() const;
+	// Returns SpriteTransform corresponding to the global screen offsets
+	AGS::Engine::SpriteTransform GetGlobalTransform(bool full_frame_rend) const;
+	// Tells if the room viewport should be adjusted automatically each time a new room is loaded
+	bool IsAutoRoomViewport() const;
 	// Returns Room viewport object by it's main index
 	PViewport  GetRoomViewport(int index) const;
 	// Returns Room viewport object by index in z-order
@@ -286,8 +289,9 @@ struct GameState {
 	// Finds room viewport at the given screen coordinates; returns nullptr if non found
 	PViewport  GetRoomViewportAt(int x, int y) const;
 	// Returns UI viewport position in absolute coordinates (with main viewport offset)
-	Rect       GetUIViewportAbs() const;
-	// Returns Room viewport position in absolute coordinates (with main viewport offset)
+	Rect GetUIViewportAbs() const;
+	// Returns Room viewport position in absolute coordinates (with main viewport offset);
+	// this is a helper function, meant for peculiar cases.
 	Rect       GetRoomViewportAbs(int index) const;
 	// Sets if the room viewport should be adjusted automatically each time a new room is loaded
 	void SetAutoRoomViewport(bool on);

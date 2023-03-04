@@ -685,9 +685,11 @@ void render_black_borders() {
 }
 
 void render_to_screen() {
+	const bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
 	// Stage: final plugin callback (still drawn on game screen
 	if (pl_any_want_hook(AGSE_FINALSCREENDRAW)) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
+										SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_FINALSCREENDRAW, 0, nullptr);
 		_G(gfxDriver)->EndSpriteBatch();
 	}
@@ -701,7 +703,7 @@ void render_to_screen() {
 	while (!succeeded && !_G(want_exit) && !_G(abort_engine)) {
 		//     try
 		//     {
-		if (_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
+		if (full_frame_rend) {
 			_G(gfxDriver)->Render();
 		}
 		else {
@@ -2219,14 +2221,16 @@ void construct_game_scene(bool full_redraw) {
 		_GP(play).UpdateRoomCameras();
 
 	// Begin with the parent scene node, defining global offset and flip
-	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(0, _GP(play).shake_screen_yoff),
-								(GraphicFlip)_GP(play).screen_flipped);
+	bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
+	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
+									SpriteTransform(0, _GP(play).shake_screen_yoff),
+									(GraphicFlip)_GP(play).screen_flipped);
 
 	// Stage: room viewports
 	if (_GP(play).screen_is_faded_out == 0 && _GP(play).complete_overlay_on == 0) {
 		if (_G(displayed_room) >= 0) {
 			construct_room_view();
-		} else if (!_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
+		} else if (!full_frame_rend) {
 			// black it out so we don't get cursor trails
 			// TODO: this is possible to do with dirty rects system now too (it can paint black rects outside of room viewport)
 			_G(gfxDriver)->GetMemoryBackBuffer()->Fill(0);
@@ -2278,8 +2282,10 @@ void update_mouse_cursor() {
 }
 
 void construct_game_screen_overlay(bool draw_mouse) {
+	const bool full_frame_rend = _G(gfxDriver)->RequiresFullRedrawEachFrame();
 	if (pl_any_want_hook(AGSE_POSTSCREENDRAW)) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
+										SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
 		_G(gfxDriver)->EndSpriteBatch();
 	}
@@ -2291,7 +2297,8 @@ void construct_game_screen_overlay(bool draw_mouse) {
 	// Add mouse cursor pic, and global screen tint effect
 	if (_GP(play).screen_is_faded_out == 0) {
 		// Stage: mouse cursor
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
+										SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
 		if (draw_mouse && !_GP(play).mouse_cursor_hidden) {
 			_G(gfxDriver)->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor));
 			invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor), false);
@@ -2306,7 +2313,7 @@ void construct_game_screen_overlay(bool draw_mouse) {
 	}
 
 	// Add global screen fade effect
-	if (_GP(play).screen_is_faded_out != 0 && _G(gfxDriver)->RequiresFullRedrawEachFrame()) {
+	if (_GP(play).screen_is_faded_out != 0 && full_frame_rend) {
 		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform());
 		_G(gfxDriver)->SetScreenFade(_GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
 		_G(gfxDriver)->EndSpriteBatch();
@@ -2455,7 +2462,8 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 	// TODO: extraBitmap is a hack, used to place an additional gui element
 	// on top of the screen. Normally this should be a part of the game UI stage.
 	if (extraBitmap != nullptr) {
-		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetUIViewportAbs(), SpriteTransform(0, _GP(play).shake_screen_yoff), (GraphicFlip)_GP(play).screen_flipped);
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(0, _GP(play).shake_screen_yoff),
+										(GraphicFlip)_GP(play).screen_flipped);
 		invalidate_sprite(extraX, extraY, extraBitmap, false);
 		_G(gfxDriver)->DrawSprite(extraX, extraY, extraBitmap);
 		_G(gfxDriver)->EndSpriteBatch();
