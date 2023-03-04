@@ -27,6 +27,7 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#define LINE1_Y 5
 #define COL1_X 30
 #define COL3_X 220
 
@@ -75,14 +76,9 @@ void CharacterBase::printStats() {
 	writeLine(10, STRING["stats.attributes.food"], ALIGN_RIGHT, COL3_X);
 	writeLine(10, Common::String::format("%u", c._food), ALIGN_LEFT, COL3_X);
 
-/*	newLine();
-	newLine();
 	printCondition();
 	printInventory();
-	*/
 }
-
-#define LINE1_Y 5
 
 void CharacterBase::printSummary() {
 	const Character &c = *g_globals->_currCharacter;
@@ -111,34 +107,32 @@ void CharacterBase::printSummary() {
 }
 
 void CharacterBase::printCondition() {
-	Character &c = *g_globals->_currCharacter;
-	writeString(STRING["stats.attributes.cond"]);
-	_textPos.x++;
+	const Character &c = *g_globals->_currCharacter;
 
-	writeString(c.getConditionString());
+	writeLine(2, STRING["stats.attributes.cond"], ALIGN_RIGHT, 90);
+	writeLine(2, c.getConditionString(), ALIGN_LEFT, 90);
 }
 
 void CharacterBase::printInventory() {
-	Character &re = *g_globals->_currCharacter;
-	writeString(0, 12, STRING["stats.inventory"]);
+	const Character &c = *g_globals->_currCharacter;
+	writeLine(12, STRING["stats.inventory"]);
+	for (int i = 0; i < 5; ++i)
+		writeChar('-');
 
 	// Print the equipped and backpack items
 	for (int i = 0; i < INVENTORY_COUNT; ++i) {
 		// Equippied item
-		writeChar(0, 13 + i, '1' + i);
-		writeChar(')');
-		_textPos.x++;
-		if (re._equipped[i])
+		writeLine(13 + i, Common::String::format("%c) ", '1' + i));
+		if (c._equipped[i])
 			writeString(STRING[Common::String::format("stats.items.%d",
-				(int)re._equipped[i]._id)]);
+				(int)c._equipped[i]._id)]);
 
 		// Backpack item
-		writeChar(20, 13 + i, 'A' + i);
-		writeChar(')');
-		_textPos.x++;
-		if (re._backpack[i])
+		writeLine(13 + i, Common::String::format("%c) ", 'A' + i), ALIGN_LEFT,
+			160 - _innerBounds.left);
+		if (c._backpack[i])
 			writeString(STRING[Common::String::format("stats.items.%d",
-			(int)re._backpack[i]._id)]);
+			(int)c._backpack[i]._id)]);
 	}
 }
 
