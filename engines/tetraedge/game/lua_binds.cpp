@@ -1135,7 +1135,7 @@ static int tolua_ExportedFunctions_RotateGroundObject00(lua_State *L) {
 
 static void EnableLight(uint lightno, bool enable) {
 	Game *game = g_engine->getGame();
-	if (lightno > game->scene().lights().size()) {
+	if (lightno >= game->scene().lights().size()) {
 		error("[EnableLight] Light not found %d", lightno);
 	}
 	Common::SharedPtr<TeLight> light = game->scene().lights()[lightno];
