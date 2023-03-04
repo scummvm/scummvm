@@ -254,12 +254,7 @@ SoundManager::SoundManager() {
 void SoundManager::loadCommonSounds() {
 	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
 	Common::String chunkNames[] = {
-		"CANT", // channel 17
-		"CURT", // channel 18
-		"GLOB", // channel 20
-		"BULS", // channel 22
-		"BUDE", // channel 23
-		"BUOK", // channel 24
+		"CANT", "CURT", "GLOB", "SLID", "BULS", "BUDE", "BUOK", "TH1", "TH2",
 	};
 
 	Common::SeekableReadStream *chunk = nullptr;
