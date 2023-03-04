@@ -30,7 +30,7 @@ namespace ViewsEnh {
 void CharacterManage::draw() {
 	assert(g_globals->_currCharacter);
 	CharacterBase::draw();
-
+/*
 	switch (_state) {
 	case DISPLAY:
 		writeString(6, 21, STRING["dialogs.view_character.rename"]);
@@ -48,6 +48,7 @@ void CharacterManage::draw() {
 		writeString(6, 21, STRING["dialogs.view_character.are_you_sure"]);
 		break;
 	}
+	*/
 }
 
 bool CharacterManage::msgKeypress(const KeypressMessage &msg) {

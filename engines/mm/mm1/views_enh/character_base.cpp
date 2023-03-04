@@ -27,104 +27,87 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#define COL1_X 30
+#define COL3_X 220
+
 void CharacterBase::printStats() {
-	Character &re = *g_globals->_currCharacter;
+	const Character &c = *g_globals->_currCharacter;
 	printSummary();
 
-	writeString(0, 2, STRING["stats.attributes.int"]);
-	writeNumber(re._intelligence);
-	_textPos.x = 8;
-	writeString(STRING["stats.attributes.level"]);
-	writeNumber(re._level);
-	_textPos.x = 18;
-	writeString(STRING["stats.attributes.age"]);
-	writeNumber(re._level);
-	_textPos.x = 27;
-	writeString(STRING["stats.attributes.exp"]);
-	writeNumber(re._exp);
+	writeLine(4, STRING["stats.attributes.int"], ALIGN_RIGHT, COL1_X);
+	writeLine(4, Common::String::format("%u", c._intelligence._base), ALIGN_LEFT, COL1_X);
+	writeLine(5, STRING["stats.attributes.mgt"], ALIGN_RIGHT, COL1_X);
+	writeLine(5, Common::String::format("%u", c._might._base), ALIGN_LEFT, COL1_X);
+	writeLine(6, STRING["stats.attributes.per"], ALIGN_RIGHT, COL1_X);
+	writeLine(6, Common::String::format("%u", c._personality._base), ALIGN_LEFT, COL1_X);
+	writeLine(7, STRING["stats.attributes.end"], ALIGN_RIGHT, COL1_X);
+	writeLine(7, Common::String::format("%u", c._endurance._base), ALIGN_LEFT, COL1_X);
+	writeLine(8, STRING["stats.attributes.spd"], ALIGN_RIGHT, COL1_X);
+	writeLine(8, Common::String::format("%u", c._speed._base), ALIGN_LEFT, COL1_X);
+	writeLine(9, STRING["stats.attributes.acy"], ALIGN_RIGHT, COL1_X);
+	writeLine(9, Common::String::format("%u", c._accuracy._base), ALIGN_LEFT, COL1_X);
+	writeLine(10, STRING["stats.attributes.luc"], ALIGN_RIGHT, COL1_X);
+	writeLine(10, Common::String::format("%u", c._luck._base), ALIGN_LEFT, COL1_X);
 
-	newLine();
-	writeString(STRING["stats.attributes.mgt"]);
-	writeNumber(re._might);
+	writeLine(4, STRING["stats.attributes.level"], ALIGN_RIGHT, 90);
+	writeNumber(c._level);
+	writeLine(4, STRING["stats.attributes.age"], ALIGN_LEFT, 120);
+	writeNumber(c._age);
 
-	newLine();
-	writeString(STRING["stats.attributes.per"]);
-	writeNumber(re._personality);
-	_textPos.x = 8;
-	writeString(STRING["stats.attributes.sp"]);
-	writeNumber(re._sp._current);
-	_textPos.x = 16;
-	writeChar('/');
-	writeNumber(re._sp._base);
-	_textPos.x = 22;
-	writeChar('(');
-	writeNumber(re._spellLevel._current);
-	writeChar(')');
-	_textPos.x = 26;
-	writeString(STRING["stats.attributes.gems"]);
-	writeNumber(re._gems);
+	writeLine(6, STRING["stats.attributes.sp"], ALIGN_RIGHT, 90);
+	writeLine(6, Common::String::format("%u", c._sp._current), ALIGN_LEFT, 90);
+	writeLine(6, Common::String::format("/%u", c._sp._base), ALIGN_LEFT, 120);
+	writeLine(6, Common::String::format("(%u)", c._spellLevel._current), ALIGN_LEFT, 160);
 
-	newLine();
-	writeString(STRING["stats.attributes.end"]);
-	writeNumber(re._endurance);
+	writeLine(8, STRING["stats.attributes.hp"], ALIGN_RIGHT, 90);
+	writeLine(8, Common::String::format("%u", c._hpCurrent), ALIGN_LEFT, 90);
+	writeLine(8, Common::String::format("/%u", c._hpMax), ALIGN_LEFT, 120);
 
-	newLine();
-	writeString(STRING["stats.attributes.spd"]);
-	writeNumber(re._speed);
-	_textPos.x = 8;
-	writeString(STRING["stats.attributes.hp"]);
-	writeNumber(re._hpCurrent);
-	_textPos.x = 16;
-	writeChar('/');
-	writeNumber(re._hpMax);
-	_textPos.x = 26;
-	writeString(STRING["stats.attributes.gold"]);
-	writeNumber(re._gold);
+	writeLine(10, STRING["stats.attributes.ac"], ALIGN_RIGHT, 90);
+	writeLine(10, Common::String::format("%u", c._ac._current), ALIGN_LEFT, 90);
 
-	newLine();
-	writeString(STRING["stats.attributes.acy"]);
-	writeNumber(re._accuracy);
+	writeLine(4, STRING["stats.attributes.exp"], ALIGN_RIGHT, COL3_X);
+	writeLine(4, Common::String::format("%u", c._exp), ALIGN_LEFT, COL3_X);
+	writeLine(6, STRING["stats.attributes.gems"], ALIGN_RIGHT, COL3_X);
+	writeLine(6, Common::String::format("%u", c._gems), ALIGN_LEFT, COL3_X);
+	writeLine(8, STRING["stats.attributes.gold"], ALIGN_RIGHT, COL3_X);
+	writeLine(8, Common::String::format("%u", c._gold), ALIGN_LEFT, COL3_X);
+	writeLine(10, STRING["stats.attributes.food"], ALIGN_RIGHT, COL3_X);
+	writeLine(10, Common::String::format("%u", c._food), ALIGN_LEFT, COL3_X);
 
-	newLine();
-	writeString(STRING["stats.attributes.luc"]);
-	writeNumber(re._luck);
-	_textPos.x = 8;
-	writeString(STRING["stats.attributes.ac"]);
-	writeNumber(re._ac);
-	_textPos.x = 26;
-	writeString(STRING["stats.attributes.food"]);
-	writeNumber(re._food);
-
-	newLine();
+/*	newLine();
 	newLine();
 	printCondition();
 	printInventory();
+	*/
 }
 
+#define LINE1_Y 5
+
 void CharacterBase::printSummary() {
-	Character &re = *g_globals->_currCharacter;
-	writeString(1, 0, re._name);
+	const Character &c = *g_globals->_currCharacter;
+	writeString(35, LINE1_Y, c._name);
 
-	_textPos.x = 17;
-	writeString(": ");
+	writeString(120, LINE1_Y, ": ");
 
-	writeChar((re._sex == MALE) ? 'M' : (re._sex == FEMALE ? 'F' : 'O'));
+	writeString((c._sex == MALE) ? "M " : (c._sex == FEMALE ? "F " : "O "));
 
-	_textPos.x++;
-	writeString((re._alignment >= GOOD && re._alignment <= EVIL) ?
-		STRING[Common::String::format("stats.alignments.%d", re._alignment)] :
+	writeString((c._alignment >= GOOD && c._alignment <= EVIL) ?
+		STRING[Common::String::format("stats.alignments.%d", c._alignment)] :
 		STRING["stats.none"]
 	);
+	writeChar(' ');
 
-	if (re._race >= HUMAN && re._race <= HALF_ORC)
-		writeString(26, 0, STRING[Common::String::format("stats.races.%d", re._race)]);
+	if (c._race >= HUMAN && c._race <= HALF_ORC)
+		writeString(STRING[Common::String::format("stats.races.%d", c._race)]);
 	else
-		writeString(26, 0, STRING["stats.none"]);
+		writeString(STRING["stats.none"]);
+	writeChar(' ');
 
-	if (re._class >= KNIGHT && re._class <= ROBBER)
-		writeString(32, 0, STRING[Common::String::format("stats.classes.%d", re._class)]);
+	if (c._class >= KNIGHT && c._class <= ROBBER)
+		writeString(STRING[Common::String::format("stats.classes.%d", c._class)]);
 	else
-		writeString(32, 0, STRING["stats.none"]);
+		writeString(STRING["stats.none"]);
 }
 
 void CharacterBase::printCondition() {
@@ -161,7 +144,12 @@ void CharacterBase::printInventory() {
 
 void CharacterBase::draw() {
 	assert(g_globals->_currCharacter);
-	clearSurface();
+	const Character &c = *g_globals->_currCharacter;
+	ScrollView::draw();
+
+	Graphics::ManagedSurface s = getSurface();
+	c._faceSprites.draw(&s, 0, Common::Point(_innerBounds.left, _innerBounds.top));
+
 	printStats();
 }
 
