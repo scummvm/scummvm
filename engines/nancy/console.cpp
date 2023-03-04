@@ -509,26 +509,34 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 	char descBuf[0x30];
 
 	for (Common::String &cifName : list) {
-		if (cifName.compareToIgnoreCase("ciflist") == 0) {
-			continue;
+		Common::String name = cifName;
+		if (name.hasSuffixIgnoreCase(".iff")) {
+			name = name.substr(0, name.size() - 4);
 		}
-		
-		IFF iff(cifName);
-		if (iff.load()) {
-			uint num = 0;
-			Common::SeekableReadStream *chunk = nullptr;
-			while (chunk = iff.getChunkStream("ACT", num), chunk != nullptr) {
-				chunk->seek(0x30);
-				if (chunk->readByte() == typeID) {
-					chunk->seek(0);
-					chunk->read(descBuf, 0x30);
-					descBuf[0x2F] = '\0';
-					debugPrintf("%s: ACT chunk %u, %s\n", cifName.c_str(), num, descBuf);
+
+		// Only check inside scenes
+		if (name.matchString("S#") ||
+			name.matchString("S##") ||
+			name.matchString("S###") ||
+			name.matchString("S####")) {
+
+			IFF iff(cifName);
+			if (iff.load()) {
+				uint num = 0;
+				Common::SeekableReadStream *chunk = nullptr;
+				while (chunk = iff.getChunkStream("ACT", num), chunk != nullptr) {
+					chunk->seek(0x30);
+					if (chunk->readByte() == typeID) {
+						chunk->seek(0);
+						chunk->read(descBuf, 0x30);
+						descBuf[0x2F] = '\0';
+						debugPrintf("%s: ACT chunk %u, %s\n", cifName.c_str(), num, descBuf);
+					}
+					++num;
+					delete chunk;
 				}
-				++num;
-				delete chunk;
 			}
-		}
+		}		
 	}
 
 	return true;
