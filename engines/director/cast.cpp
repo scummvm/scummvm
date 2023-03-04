@@ -894,27 +894,53 @@ Common::String Cast::getVideoPath(int castId) {
 }
 
 PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
-	uint16 steps = stream.size() / 6;
-	uint16 index = 0;
+	int size = stream.size();
+	debugC(3, kDebugLoading, "Cast::loadPalette(): %d bytes", size);
+	if (debugChannelSet(5, kDebugLoading))
+		stream.hexdump(stream.size());
+
+	bool hasHeader = size != 6 * 256;
+	int steps = 256;
+	if (hasHeader) {
+		stream.skip(6);
+		steps = stream.readUint16();
+		int maxSteps = (size - 8) / 8;
+		if (steps > maxSteps) {
+			warning("Cast::loadPalette(): header says %d steps but there's only enough data for %d, reducing", steps, maxSteps);
+			steps = maxSteps;
+		}
+	}
+	debugC(3, kDebugLoading, "Cast::loadPalette(): %d steps", steps);
+
 	byte *_palette = new byte[steps * 3];
 
-	debugC(3, kDebugLoading, "Cast::loadPalette(): %d steps, %d bytes", steps, (int)stream.size());
 
-	if (steps > 256) {
-		warning("Cast::loadPalette(): steps > 256: %d", steps);
-		steps = 256;
-	}
+	int colorIndex = 0;
 
 	for (int i = 0; i < steps; i++) {
-		_palette[index] = stream.readByte();
+		bool increment = true;
+		if (hasHeader) {
+			int index = stream.readUint16BE();
+			if (index != 0x8000) {
+				colorIndex = index;
+			}
+		}
+
+		if (colorIndex >= steps) {
+			warning("Cast::loadPalette(): attempted to set invalid color index %d, aborting", colorIndex);
+			break;
+		}
+
+		_palette[3 * colorIndex] = stream.readByte();
 		stream.readByte();
 
-		_palette[index + 1] = stream.readByte();
+		_palette[3 * colorIndex + 1] = stream.readByte();
 		stream.readByte();
 
-		_palette[index + 2] = stream.readByte();
+		_palette[3 * colorIndex + 2] = stream.readByte();
 		stream.readByte();
-		index += 3;
+		if (increment)
+			colorIndex += 1;
 	}
 
 	return PaletteV4(0, _palette, steps);
