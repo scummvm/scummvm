@@ -142,44 +142,44 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	mkvparser::EBMLHeader ebmlHeader;
 	ebmlHeader.Parse(_reader, pos);
 
-	long long ret = mkvparser::Segment::CreateInstance(_reader, pos, pSegment);
+	long long ret = mkvparser::Segment::CreateInstance(_reader, pos, _pSegment);
 	if (ret) {
 		error("MKVDecoder::loadStream(): Segment::CreateInstance() failed (%lld).", ret);
 	}
 
-	ret = pSegment->Load();
+	ret = _pSegment->Load();
 	if (ret) {
 		error("MKVDecoder::loadStream(): Segment::Load() failed (%lld).", ret);
 	}
 
-	pTracks = pSegment->GetTracks();
+	_pTracks = _pSegment->GetTracks();
 
 	uint32 i = 0;
-	const unsigned long j = pTracks->GetTracksCount();
+	const unsigned long j = _pTracks->GetTracksCount();
 
 	debug(1, "Number of tracks: %d", j);
 
 	enum {VIDEO_TRACK = 1, AUDIO_TRACK = 2};
-	videoTrack = -1;
-	audioTrack = -1;
+	_vTrack = -1;
+	_aTrack = -1;
 
 	while (i != j) {
-		const mkvparser::Track *const pTrack = pTracks->GetTrackByIndex(i++);
+		const mkvparser::Track *const pTrack = _pTracks->GetTrackByIndex(i++);
 
 		if (pTrack == NULL)
 			continue;
 
 		const long long trackType = pTrack->GetType();
-		if (trackType == mkvparser::Track::kVideo && videoTrack < 0) {
-			videoTrack = pTrack->GetNumber();
+		if (trackType == mkvparser::Track::kVideo && _vTrack < 0) {
+			_vTrack = pTrack->GetNumber();
 
 			_videoTrack = new VPXVideoTrack(getDefaultHighColorFormat(), pTrack);
 
 			addTrack(_videoTrack);
 		}
 
-		if (trackType == mkvparser::Track::kAudio && audioTrack < 0) {
-			audioTrack = pTrack->GetNumber();
+		if (trackType == mkvparser::Track::kAudio && _aTrack < 0) {
+			_aTrack = pTrack->GetNumber();
 
 			const mkvparser::AudioTrack *const pAudioTrack = static_cast<const mkvparser::AudioTrack *>(pTrack);
 
@@ -188,7 +188,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 			if (audioHeaderSize < 1) {
 				warning("Strange audio track in movie.");
-				audioTrack = -1;
+				_aTrack = -1;
 				continue;
 			}
 
@@ -197,7 +197,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 			uint count = *p++ + 1;
 			if (count != 3) {
 				warning("Strange audio track in movie.");
-				audioTrack = -1;
+				_aTrack = -1;
 				continue;
 			}
 
@@ -206,39 +206,39 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 		}
 	}
 
-	if (videoTrack < 0)
+	if (_vTrack < 0)
 		error("Movie error: No video in movie file.");
 
-	if (audioTrack < 0)
+	if (_aTrack < 0)
 		error("Movie error: No sound found.");
 
-	const unsigned long long clusterCount = pSegment->GetCount();
+	const unsigned long long clusterCount = _pSegment->GetCount();
 
 	if (clusterCount == 0) {
 		error("Movie error: Segment has no clusters.\n");
 	}
 
-	frame = new byte[256 * 1024];
-	if (!frame)
+	_frame = new byte[256 * 1024];
+	if (!_frame)
 		return false;
 
-	_cluster = pSegment->GetFirst();
+	_cluster = _pSegment->GetFirst();
 
-	if (_cluster->GetFirst(pBlockEntry))
+	if (_cluster->GetFirst(_pBlockEntry))
 		error("_cluster::GetFirst() failed");
 
-	if ((pBlockEntry == NULL) || pBlockEntry->EOS()) {
-		_cluster = pSegment->GetNext(_cluster);
+	if ((_pBlockEntry == NULL) || _pBlockEntry->EOS()) {
+		_cluster = _pSegment->GetNext(_cluster);
 		if ((_cluster == NULL) || _cluster->EOS()) {
 			error("Error: No movie found in the movie file.");
 		}
-		if (_cluster->GetFirst(pBlockEntry))
+		if (_cluster->GetFirst(_pBlockEntry))
 			error("_cluster::GetFirst() failed");
 	}
 
-	pBlock = pBlockEntry->GetBlock();
-	trackNum = pBlock->GetTrackNumber();
-	frameCount = pBlock->GetFrameCount();
+	_pBlock = _pBlockEntry->GetBlock();
+	_trackNum = _pBlock->GetTrackNumber();
+	_frameCount = _pBlock->GetFrameCount();
 
 	return true;
 }
@@ -261,50 +261,50 @@ void MKVDecoder::readNextPacket() {
 
 	// ensure we have enough buffers in the stream
 	while (_audioTrack->needsAudio()) {
-		if (frameCounter >= frameCount) {
-		_cluster->GetNext(pBlockEntry, pBlockEntry);
+		if (_frameCounter >= _frameCount) {
+		_cluster->GetNext(_pBlockEntry, _pBlockEntry);
 
-			if ((pBlockEntry == NULL) || pBlockEntry->EOS()) {
-				_cluster = pSegment->GetNext(_cluster);
+			if ((_pBlockEntry == NULL) || _pBlockEntry->EOS()) {
+				_cluster = _pSegment->GetNext(_cluster);
 				if ((_cluster == NULL) || _cluster->EOS()) {
 					_videoTrack->setEndOfVideo();
 					_audioTrack->setEndOfAudio();
 					return;
 				}
-				int ret = _cluster->GetFirst(pBlockEntry);
+				int ret = _cluster->GetFirst(_pBlockEntry);
 				if (ret < 0)
 					error("MKVDecoder::readNextPacket(): GetFirst() failed");
 			}
 
-			pBlock  = pBlockEntry->GetBlock();
-			trackNum = pBlock->GetTrackNumber();
-			frameCount = pBlock->GetFrameCount();
-			frameCounter = 0;
+			_pBlock  = _pBlockEntry->GetBlock();
+			_trackNum = _pBlock->GetTrackNumber();
+			_frameCount = _pBlock->GetFrameCount();
+			_frameCounter = 0;
 		}
 
-		const mkvparser::Block::Frame &theFrame = pBlock->GetFrame(frameCounter);
+		const mkvparser::Block::Frame &theFrame = _pBlock->GetFrame(_frameCounter);
 		const uint32 size = theFrame.len;
 
-		if (size > sizeof(frame)) {
-			if (frame)
-				delete[] frame;
-			frame = new unsigned char[size];
-			if (!frame)
+		if (size > sizeof(_frame)) {
+			if (_frame)
+				delete[] _frame;
+			_frame = new unsigned char[size];
+			if (!_frame)
 				return;
 		}
 
-		if (trackNum == videoTrack) {
-			theFrame.Read(_reader, frame);
-			_videoTrack->decodeFrame(frame, size);
-		} else if (trackNum == audioTrack) {
+		if (_trackNum == _vTrack) {
+			theFrame.Read(_reader, _frame);
+			_videoTrack->decodeFrame(_frame, size);
+		} else if (_trackNum == _aTrack) {
 			if (size > 0) {
-				theFrame.Read(_reader, frame);
+				theFrame.Read(_reader, _frame);
 				queueAudio(size);
 			}
 		} else {
-			warning("Unprocessed track %lld", trackNum);
+			warning("Unprocessed track %lld", _trackNum);
 		}
-		++frameCounter;
+		++_frameCounter;
 	}
 }
 
@@ -520,7 +520,7 @@ bool MKVDecoder::VorbisAudioTrack::synthesizePacket(byte *frame, long size) {
 bool MKVDecoder::queueAudio(long size) {
 	bool queuedAudio = false;
 
-	if (_audioTrack->synthesizePacket(frame, size) && _audioTrack->decodeSamples(frame, size))
+	if (_audioTrack->synthesizePacket(_frame, size) && _audioTrack->decodeSamples(_frame, size))
 		queuedAudio = true;
 
 	return queuedAudio;

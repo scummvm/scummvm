@@ -152,19 +152,19 @@ private:
 	mkvparser::MkvReader *_reader = nullptr;
 
 	const mkvparser::Cluster *_cluster = nullptr;
-	const mkvparser::Tracks *pTracks = nullptr;
-	const mkvparser::BlockEntry *pBlockEntry = nullptr;
-	mkvparser::Segment *pSegment = nullptr;
+	const mkvparser::Tracks *_pTracks = nullptr;
+	const mkvparser::BlockEntry *_pBlockEntry = nullptr;
+	mkvparser::Segment *_pSegment = nullptr;
 
-	byte *frame = nullptr;
-	int frameCounter = 0;
+	byte *_frame = nullptr;
+	int _frameCounter = 0;
 
-	int videoTrack = -1;
-	int audioTrack = -1;
+	int _vTrack = -1;
+	int _aTrack = -1;
 
-	const mkvparser::Block *pBlock;
-	long long trackNum;
-	int frameCount;
+	const mkvparser::Block *_pBlock;
+	long long _trackNum;
+	int _frameCount;
 };
 
 } // End of namespace Video
