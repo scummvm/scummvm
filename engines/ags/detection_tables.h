@@ -279,6 +279,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blackwell4", "The Blackwell Deception" },
 	{ "blackwell5", "The Blackwell Epiphany" },
 	{ "captaindisaster", "Captain Disaster in: Death Has A Million Stomping Boots" },
+	{ "captaindisasterriskara", "Captain Disaster and The Two Worlds of Riskara" },
 	{ "captainhook", "Captain Hook and the Lost Girl" },
 	{ "castleagony", "Castle Agony" },
 	{ "castledornstein", "Castle Dornstein" },
@@ -2716,6 +2717,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "spilakassinn", "Spilakassinn - The Slot Machine" },
 	{ "spiritboard", "Midnight Spirit Board" },
 	{ "spitboy", "Spit Boy" },
+	{ "splendorsolis", "Splendor Solis" },
 	{ "splinter", "Splinter" },
 	{ "splitfighters", "Split Fighters" },
 	{ "spmachinima1", "SP Machinima - Episode 1" },
@@ -3023,7 +3025,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thesylph", "The Colorless Sylph" },
 	{ "thethickening", "Reality-on-the-Norm 13:13^2 The Thickening" },
 	{ "thetombofthemoon", "The Tomb of the Moon" },
-	{ "thetower", "The Tower" },
+	{ "thetowerpuzzles", "The Tower" },
 	{ "thetrap", "The Trap - A Darcy Muldoon Adventure" },
 	{ "thetreasuredmedallion", "The Treasured Medallion" },
 	{ "thetreasureoflochinch", "The Treasure of Loch Inch" },
@@ -3548,6 +3550,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	PRE_25_ENTRY_EN("blastoff", "BlastOff.exe", "8f80c91d160e333ab7f6be5208ea0533", 2043203),
 	PRE_25_ENTRY_EN("blastoff", "BlastOff-Win.exe", "727a30f9244441ad57a76086f4faa779", 2409275),
 	PRE_25_ENTRY_EN("bluecupontherun", "ac2game.dat", "c290455f00f630c8a52c7eceb7c663eb", 1995708),
+	PRE_25_ENTRY_EN("bobsquest1", "BQ1 2.1.exe", "80bdce9a1052e896c7cba6a4334cecce", 3096485),  // TRAC #14244
 	PRE_25_ENTRY_EN("bookofspells1", "ac2game.dat", "fe66cb08bcffd094c159cd4ee72bacd3", 3442073),
 	PRE_25_ENTRY_EN("bookofspells2", "ac2game.dat", "9df87a8e5bbcc7206b001c0b8316b7f9", 3263169),
 	PRE_25_ENTRY_EN("bookofspells3", "ac2game.dat", "9f0181393bdceb2c0bbdb06634714023", 4806518),
@@ -4230,6 +4233,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("calvin", "CalvinENG.exe", "7a3096ac0237cb6aa8e1718e28caf039", 85555229),
 	DEMO_ENTRY_LANG("calvin", "Calvin.exe", "7a3096ac0237cb6aa8e1718e28caf039", 85557724, Common::FR_FRA),
 	DEMO_ENTRY_EN("captaindisaster", "cd-dhamsb-demo-1-3-0.exe", "9d991dd1f9e7fee653d3a9bb2546f968", 153646768),
+	DEMO_ENTRY_EN("captaindisasterriskara", "Captain Disaster and The Two Worlds of Riskara.exe", "6689ccca6f9b2c8398352e9b772ff411", 157630000),
 	DEMO_ENTRY("captainhook", "CaptainHookAndTheLostGirl - DEMO.exe", "776a62db4387dc68be92ef9933399fd5", 8731139),  // Windows En-Fr
 	DEMO_ENTRY("captainhook", "CaptainHookAndTheLostGirl - DEMO.ags", "c0ce7476116c0a81e1d8f01ccf87d79a", 5624815),  // Linux En-Fr
 	DEMO_ENTRY_EN("castledornstein", "Castle Dornstein Demo.exe", "4141c41c06c91ec8ab9fffafbc26df67", 53098143),
@@ -4556,6 +4560,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("sphonx", "Sphonx.ags", "d51d6d1c979b7571c81b45f681be58da", 286653166),     // Linux    Tech Demo Eng/Deu
 	DEMO_ENTRY_EN("sphonx", "Sphonx - Demo.exe", "7e4ab16deb62ffe46b9da2229672845c", 279952170),  // Windows  Demo
 	DEMO_ENTRY_EN("sphonx", "Sphonx - Demo.ags", "47fe5f46944eba084fcbf812ffe8304f", 276904726),  // Linux    Demo
+	DEMO_ENTRY_EN("splendorsolis", "Splendor Solis #1.ags", "dd87d9b18bd1824d10829610c37aba4c", 3186720),
+	DEMO_ENTRY_EN("splendorsolis", "Splendor Solis #1.exe", "03741a77615d6ae1bf2cfb9e7dc8d347", 6294580),
 	DEMO_ENTRY_EN("spoonsiii", "spoonsIII.exe", "2ca80bd50763378b72cd1e1cf25afac3", 7316512),
 	DEMO_ENTRY_EN("sq2svga", "sq2svga.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 3245872),
 	DEMO_ENTRY_EN("sq3vga", "sq3vgademo.exe", "64fcaf7da0b257ea831f89c54be0ad72", 3630019),
@@ -7743,7 +7749,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thesylph", "The Sylph.exe", "20d3b102325d45a9f5841b5cf4e9e45d", 6006983),
 	GAME_ENTRY_EN("thethickening", "Retaliation Pt2.exe", "0500aacb6c176d47ac0f8158f055db83", 7084941),
 	GAME_ENTRY_EN("thetombofthemoon", "TotM.exe", "f120690b506dd63cd7d1112ea6af2f77", 1632811),
-	GAME_ENTRY_EN("thetower", "pzzles.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1621139),
+	GAME_ENTRY_EN("thetowerpuzzles", "pzzles.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1621139),
 	GAME_ENTRY_EN("thetrap", "Darcy.exe", "0500aacb6c176d47ac0f8158f055db83", 1164147),
 	GAME_ENTRY_EN("thetreasuredmedallion", "The Treasured Medallion.exe", "504df40bf50a0859e3dc15b000dab5f6", 1091122652),
 	GAME_ENTRY_EN("thetreasuredmedallion", "The Treasured Medallion ver2.exe", "504df40bf50a0859e3dc15b000dab5f6", 1077540117),  // v2
