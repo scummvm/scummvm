@@ -74,11 +74,14 @@ bool IFF::load() {
 
 	// Scan the file for DATA chunks, completely ignoring IFF structure
 	// Presumably the string "DATA" is not allowed inside of chunks...
+	// The Vampire Diaries uses the standard FORM
+	uint32 dataString = g_nancy->getGameType() == kGameTypeVampire ? ID_FORM : ID_DATA;
+
 	uint offset = 0;
 
 	while (offset < size - 3) {
 		uint32 id = READ_BE_UINT32(data + offset);
-		if (id == ID_DATA || id == ID_FORM) {
+		if (id == dataString) {
 			// Replace 'DATA' with standard 'FORM' for the parser
 			WRITE_BE_UINT32(data + offset, ID_FORM);
 			Common::MemoryReadStream stream(data + offset, size - offset);
