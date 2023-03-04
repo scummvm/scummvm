@@ -278,7 +278,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	trackType = pTrack->GetType();
 	frameCount = pBlock->GetFrameCount();
 	time_ns = pBlock->GetTime(_cluster);
-	warning("trackNum: %d frameCounter: %d frameCount: %d, time_ns: %d", tn, frameCounter, frameCount, time_ns);
+	//warning("trackNum: %d frameCounter: %d frameCount: %d, time_ns: %d", tn, frameCounter, frameCount, time_ns);
 
 	return true;
 }
@@ -322,7 +322,7 @@ void MKVDecoder::readNextPacket() {
 		trackType = pTrack->GetType();
 		frameCount = pBlock->GetFrameCount();
 		time_ns = pBlock->GetTime(_cluster);
-		warning("trackNum: %d frameCounter: %d frameCount: %d, time_ns: %d", tn, frameCounter, frameCount, time_ns);
+		//warning("trackNum: %d frameCounter: %d frameCount: %d, time_ns: %d", tn, frameCounter, frameCount, time_ns);
 
 		frameCounter = 0;
 	}
@@ -351,8 +351,7 @@ void MKVDecoder::readNextPacket() {
 
 		if (size > 0) {
 			theFrame.Read(_reader, frame);
-
-			//_audioTrack->decodeSamples(frame, size);
+			_audioTrack->decodeSamples(frame, size);
 		}
 	} else {
 		warning("Unprocessed track %d", trackNum);
@@ -492,6 +491,8 @@ MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(const mkvparser::Track *const pTr
 	audioBitDepth = pAudioTrack->GetBitDepth();
 	audioSampleRate = pAudioTrack->GetSamplingRate();
 
+	warning("audioChannels %d audioBitDepth %d audioSamplerate %f", audioChannels, audioBitDepth, audioSampleRate);
+
 	size_t audioHeaderSize;
 	byte *audioHeader = (byte *)pAudioTrack->GetCodecPrivate(audioHeaderSize);
 	byte *p = audioHeader;
@@ -513,9 +514,9 @@ MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(const mkvparser::Track *const pTr
 	vorbis_info_init(&vorbisInfo);
 	vorbis_comment_init(&vorbisComment);
 	memset(&vorbisDspState, 0, sizeof(vorbisDspState));
-	memset(&vorbisBlock, 0, sizeof(vorbisBlock));
+	memset(&_vorbisBlock, 0, sizeof(_vorbisBlock));
 
-	ogg_packet oggPacket;
+	//ogg_packet oggPacket;
 
 	oggPacket.e_o_s = false;
 	oggPacket.granulepos = 0;
@@ -535,7 +536,7 @@ MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(const mkvparser::Track *const pTr
 	r = vorbis_synthesis_init(&vorbisDspState, &vorbisInfo);
 	if (r)
 		warning("vorbis_synthesis_init failed, error: %d", r);
-	r = vorbis_block_init(&vorbisDspState, &vorbisBlock);
+	r = vorbis_block_init(&vorbisDspState, &_vorbisBlock);
 	if (r)
 		warning("vorbis_block_init failed, error: %d", r);
 
@@ -561,10 +562,10 @@ MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(const mkvparser::Track *const pTr
 }
 
 MKVDecoder::VorbisAudioTrack::~VorbisAudioTrack() {
-	vorbis_dsp_clear(&_vorbisDSP);
-	vorbis_block_clear(&vorbisBlock);
-	delete _audStream;
-	free(_audioBuffer);
+	//vorbis_dsp_clear(&_vorbisDSP);
+	//vorbis_block_clear(&vorbisBlock);
+	//delete _audStream;
+	//free(_audioBuffer);
 }
 
 Audio::AudioStream *MKVDecoder::VorbisAudioTrack::getAudioStream() const {
@@ -580,16 +581,20 @@ static double rint(double v) {
 #endif
 
 bool MKVDecoder::VorbisAudioTrack::decodeSamples(byte *frame, long size) {
-	return true;
+	//return true;
 
-	oggPacket.packet = frame;
-	oggPacket.bytes = size;
-	oggPacket.b_o_s = false;
-	oggPacket.packetno++;
-	oggPacket.granulepos = -1;
+	ogg_packet packet;
+	packet.packet = frame;
+	packet.bytes = size;
+	packet.b_o_s = false;
+	packet.e_o_s = false;
+	packet.packetno = ++oggPacket.packetno;
+	packet.granulepos = -1;
 
-	if(!vorbis_synthesis(&vorbisBlock, &oggPacket) ) {
-		if (vorbis_synthesis_blockin(&vorbisDspState, &vorbisBlock))
+	warning("oggPacket bytes : %d packno %d\n", oggPacket.bytes, oggPacket.packetno);
+
+	if(!vorbis_synthesis(&_vorbisBlock, &packet) ) {
+		if (vorbis_synthesis_blockin(&vorbisDspState, &_vorbisBlock))
 			warning("Vorbis Synthesis block in error");
 
 	} else {
@@ -673,7 +678,7 @@ bool MKVDecoder::VorbisAudioTrack::decodeSamples(byte *frame, long size) {
 			movieSoundPlaying = true;
 		}
 	}
-
+	return true;
 }
 
 bool MKVDecoder::VorbisAudioTrack::hasAudio() const {
@@ -686,8 +691,9 @@ bool MKVDecoder::VorbisAudioTrack::needsAudio() const {
 }
 
 void MKVDecoder::VorbisAudioTrack::synthesizePacket(ogg_packet &_oggPacket) {
-	if (vorbis_synthesis(&vorbisBlock, &_oggPacket) == 0) // test for success
-		vorbis_synthesis_blockin(&_vorbisDSP, &vorbisBlock);
+	warning("in synthesizePacket");
+	if (vorbis_synthesis(&_vorbisBlock, &_oggPacket) == 0) // test for success
+		vorbis_synthesis_blockin(&_vorbisDSP, &_vorbisBlock);
 }
 
 void MKVDecoder::queuePage(ogg_page *page) {
@@ -709,8 +715,7 @@ bool MKVDecoder::queueAudio() {
 		return false;
 
 	bool queuedAudio = false;
-
-#if 0
+/*
 	for (;;) {
 		if (_audioTrack->decodeSamples()) {
 			// we queued some pending audio
@@ -723,7 +728,7 @@ bool MKVDecoder::queueAudio() {
 			break;
 		}
 	}
-#endif
+	*/
 
 	return queuedAudio;
 }

@@ -142,7 +142,7 @@ private:
 
 		Audio::QueuingAudioStream *_audStream;
 
-		vorbis_block vorbisBlock;
+		vorbis_block _vorbisBlock;
 		vorbis_dsp_state _vorbisDSP;
 
 		bool _endOfAudio;
