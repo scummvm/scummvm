@@ -32,6 +32,7 @@ enum MovieStates {
 	kMoviePaused
 };
 extern MovieStates movieIsPlaying;
+extern int movieIsEnding;
 
 int playMovie(int fileNumber);
 int stopMovie();
