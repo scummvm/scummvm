@@ -139,11 +139,16 @@ private:
 typedef SpriteDrawListEntry<ALSoftwareBitmap> ALDrawListEntry;
 // Software renderer's sprite batch
 struct ALSpriteBatch {
-	uint32_t ID = 0;
+	uint32_t ID = 0u;
+	// Clipping viewport, also used as a destination for blitting optional Surface;
+	// in *relative* coordinates to parent surface.
+	Rect Viewport;
+	// Optional model transformation, to be applied to each sprite
+	SpriteTransform Transform;
 	// Intermediate surface which will be drawn upon and transformed if necessary
 	std::shared_ptr<Bitmap> Surface;
-	// Whether surface is a virtual screen's region
-	bool IsVirtualScreen = false;
+	// Whether surface is a parent surface's region (e.g. virtual screen)
+	bool IsParentRegion = false;
 	// Tells whether the surface is treated as opaque or transparent
 	bool Opaque = false;
 };
