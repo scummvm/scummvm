@@ -52,7 +52,7 @@ int playMovie(int fileNumber) {
 
 	decoder.start();
 
-	warning("movieIsPlaying %d", movieIsPlaying);
+	debug(1, "movieIsPlaying %d", movieIsPlaying);
 	while (movieIsPlaying) {
 		g_sludge->_evtMan->checkInput();
 		if (g_sludge->_evtMan->quit())
@@ -62,7 +62,7 @@ int playMovie(int fileNumber) {
 
 		if (decoder.isVideoLoaded()) {
 			if (decoder.endOfVideo()) {
-				warning("End of video");
+				debug(1, "End of video");
 				// Movie complete, so unload the movie
 				break;
 			} else if (decoder.needsUpdate()) {
