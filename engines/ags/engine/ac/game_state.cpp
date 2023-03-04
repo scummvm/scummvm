@@ -95,8 +95,20 @@ const Rect &GameState::GetUIViewport() const {
 	return _uiViewport;
 }
 
+SpriteTransform GameState::GetGlobalTransform(bool full_frame_rend) const {
+	// NOTE: shake_screen is not applied to the sprite batches,
+	// but only as a final render factor (optimization)
+	// TODO: also add global flip to the same transform, instead of passing separately?
+	return SpriteTransform(_mainViewport.Left, _mainViewport.Top +
+												   shake_screen_yoff * static_cast<int>(full_frame_rend));
+}
+
 PViewport GameState::GetRoomViewport(int index) const {
 	return _roomViewports[index];
+}
+
+Rect GameState::GetUIViewportAbs() const {
+	return Rect::MoveBy(_uiViewport, _mainViewport.Left, _mainViewport.Top);
 }
 
 const std::vector<PViewport> &GameState::GetRoomViewportsZOrdered() const {
@@ -109,10 +121,6 @@ PViewport GameState::GetRoomViewportAt(int x, int y) const {
 		if ((*it)->IsVisible() && (*it)->GetRect().IsInside(x, y))
 			return *it;
 	return nullptr;
-}
-
-Rect GameState::GetUIViewportAbs() const {
-	return Rect::MoveBy(_uiViewport, _mainViewport.Left, _mainViewport.Top);
 }
 
 Rect GameState::GetRoomViewportAbs(int index) const {
