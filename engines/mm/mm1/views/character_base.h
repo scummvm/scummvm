@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_VIEWS_VIEW_CHARACTER_BASE_H
-#define MM1_VIEWS_VIEW_CHARACTER_BASE_H
+#ifndef MM1_VIEWS_CHARACTER_BASE_H
+#define MM1_VIEWS_CHARACTER_BASE_H
 
 #include "common/array.h"
 #include "mm/mm1/views/text_view.h"

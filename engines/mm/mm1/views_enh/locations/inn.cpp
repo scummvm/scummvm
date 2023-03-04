@@ -127,15 +127,21 @@ bool Inn::msgMouseDown(const MouseDownMessage &msg) {
 			* (idx % 3), 20 + 20 * (idx / 3));
 
 		if (Common::Rect(pt.x, pt.y, pt.x + 19, pt.y + 19).contains(msg._pos)) {
-			// Toggle in party
 			int charNum = _charNums[idx];
-			if (_partyChars.contains(charNum))
-				_partyChars.remove(charNum);
-			else
-				_partyChars.push_back(charNum);
 
-			setButtonEnabled(0, !_partyChars.empty());
-			redraw();
+			if (msg._button == MouseMessage::MB_LEFT) {
+				// Toggle in party
+				if (_partyChars.contains(charNum))
+					_partyChars.remove(charNum);
+				else
+					_partyChars.push_back(charNum);
+
+				setButtonEnabled(0, !_partyChars.empty());
+				redraw();
+			} else {
+				g_globals->_currCharacter = &g_globals->_roster[charNum];
+				_characterView.addView();
+			}
 			break;
 		}
 	}
@@ -161,7 +167,7 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 		} else if (msg.flags == 0) {
 			// View character
 			g_globals->_currCharacter = &g_globals->_roster[charNum];
-			//_characterView.addView();
+			_characterView.addView();
 		}
 		return true;
 

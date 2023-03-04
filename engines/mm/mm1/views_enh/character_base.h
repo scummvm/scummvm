@@ -19,41 +19,41 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_LOCATIONS_INN_H
-#define MM1_VIEWS_ENH_LOCATIONS_INN_H
+#ifndef MM1_VIEWS_ENH_CHARACTER_BASE_H
+#define MM1_VIEWS_ENH_CHARACTER_BASE_H
 
+#include "common/array.h"
 #include "mm/mm1/views_enh/scroll_view.h"
-#include "mm/mm1/views_enh/character_view.h"
-#include "mm/mm1/data/character.h"
-#include "mm/mm1/data/int_array.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
-namespace Locations {
 
-class Inn : public ScrollView {
+/**
+ * Base class for showing character information.
+ * MM1 has three character dialogs:
+ * 1) Character management from Create Characters
+ * 2) Inn that allows simply viewing characters
+ * 3) In-game character display
+ */
+class CharacterBase : public ScrollView {
 private:
-	CharacterView _characterView;
-	Shared::Xeen::SpriteResource _escSprite;
-	Common::Array<uint> _charNums;
-	IntArray _partyChars;
+	void printStats();
+	void printSummary();
+	void printInventory();
+protected:
+	void printCondition();
 
-	/**
-	 * Exit the Inn
-	 */
-	void exitInn();
 public:
-	Inn();
+	CharacterBase(const Common::String &name) : ScrollView(name) {}
+	~CharacterBase() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	void draw() override;
-	bool msgMouseDown(const MouseDownMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	void draw() override;
+
+	void escToGoBack(int xp = 0) {}
 };
 
-} // namespace Locations
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

@@ -19,41 +19,33 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_LOCATIONS_INN_H
-#define MM1_VIEWS_ENH_LOCATIONS_INN_H
+#ifndef MM1_VIEWS_ENH_CHARACTER_MANAGE_H
+#define MM1_VIEWS_ENH_CHARACTER_MANAGE_H
 
-#include "mm/mm1/views_enh/scroll_view.h"
-#include "mm/mm1/views_enh/character_view.h"
-#include "mm/mm1/data/character.h"
-#include "mm/mm1/data/int_array.h"
+#include "common/array.h"
+#include "mm/mm1/views_enh/character_base.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
-namespace Locations {
 
-class Inn : public ScrollView {
-private:
-	CharacterView _characterView;
-	Shared::Xeen::SpriteResource _escSprite;
-	Common::Array<uint> _charNums;
-	IntArray _partyChars;
-
-	/**
-	 * Exit the Inn
-	 */
-	void exitInn();
+/**
+ * Character management dialog
+ */
+class CharacterManage : public CharacterBase {
+	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
+	ViewState _state = DISPLAY;
+	Common::String _newName;
 public:
-	Inn();
+	CharacterManage() : CharacterBase("CharacterManage") {}
+	virtual ~CharacterManage() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
-	bool msgMouseDown(const MouseDownMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 };
 
-} // namespace Locations
+
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

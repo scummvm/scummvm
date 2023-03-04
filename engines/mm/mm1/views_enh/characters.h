@@ -23,6 +23,7 @@
 #define MM1_VIEWS_ENH_LOCATIONS_Characters_H
 
 #include "mm/mm1/views_enh/locations/location.h"
+#include "mm/mm1/views_enh/character_manage.h"
 #include "mm/mm1/data/character.h"
 #include "mm/mm1/data/int_array.h"
 
@@ -32,13 +33,9 @@ namespace ViewsEnh {
 
 class Characters : public ScrollView {
 private:
+	CharacterManage _characterView;
 	Shared::Xeen::SpriteResource _escSprite;
-	Common::Array<uint> _charNums;
-
-	/**
-	 * Show a character
-	 */
-	void showCharacter(uint charIndex);
+	Common::Array<uint> _charIndexes;
 
 public:
 	Characters();

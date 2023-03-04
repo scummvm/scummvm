@@ -37,6 +37,7 @@ void Characters::draw() {
 	ScrollView::draw();
 	Graphics::ManagedSurface s = getSurface();
 	Roster &roster = g_globals->_roster;
+	_charIndexes.clear();
 
 	// Write title
 	setReduced(false);
@@ -49,10 +50,12 @@ void Characters::draw() {
 		// Write out the roster
 		setReduced(true);
 
-		for (uint idx = 0; idx < ROSTER_COUNT; ++idx) {
-			if (!roster._towns[idx])
+		for (uint charNum = 0; charNum < ROSTER_COUNT; ++charNum) {
+			if (!roster._towns[charNum])
 				continue;
-			Character &c = roster[idx];
+			Character &c = roster[charNum];
+			_charIndexes.push_back(charNum);
+			int idx = _charIndexes.size() - 1;
 
 			// Build up character portrait and/or frame
 			Graphics::ManagedSurface portrait;
@@ -76,13 +79,14 @@ void Characters::draw() {
 
 bool Characters::msgMouseDown(const MouseDownMessage &msg) {
 	// Cycle through portraits
-	for (uint idx = 0; idx < _charNums.size(); ++idx) {
+	for (uint idx = 0; idx < _charIndexes.size(); ++idx) {
 		Common::Point pt(_innerBounds.left + _innerBounds.width() / 3
 			* (idx % 3), 20 + 20 * (idx / 3));
 
 		if (Common::Rect(pt.x, pt.y, pt.x + 19, pt.y + 19).contains(msg._pos)) {
-			showCharacter(idx);
-			break;
+			g_globals->_currCharacter = &g_globals->_roster[_charIndexes[idx]];
+			_characterView.addView();
+			return true;
 		}
 	}
 
@@ -91,8 +95,9 @@ bool Characters::msgMouseDown(const MouseDownMessage &msg) {
 
 bool Characters::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode >= Common::KEYCODE_a &&
-		msg.keycode < (Common::KeyCode)(Common::KEYCODE_a + _charNums.size())) {
-		showCharacter(msg.keycode - Common::KEYCODE_a);
+			msg.keycode < (Common::KeyCode)(Common::KEYCODE_a + _charIndexes.size())) {
+		g_globals->_currCharacter = &g_globals->_roster[_charIndexes[msg.keycode - Common::KEYCODE_a]];
+		_characterView.addView();
 		return true;
 	}
 
@@ -107,10 +112,6 @@ bool Characters::msgAction(const ActionMessage &msg) {
 	default:
 		return ScrollView::msgAction(msg);
 	}
-}
-
-void Characters::showCharacter(uint charIndex) {
-	warning("TODO: Show character %d", charIndex);
 }
 
 } // namespace ViewsEnh
