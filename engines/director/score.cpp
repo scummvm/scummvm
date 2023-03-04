@@ -590,8 +590,8 @@ bool Score::renderTransition(uint16 frameId) {
 	TransParams *tp = _window->_puppetTransition;
 
 	if (tp) {
-		_window->playTransition(frameId, tp->duration, tp->area, tp->chunkSize, tp->type, 0);
-
+		setLastPalette(frameId);
+		_window->playTransition(frameId, tp->duration, tp->area, tp->chunkSize, tp->type, resolvePaletteId(currentFrame->_palette.paletteId));
 		delete _window->_puppetTransition;
 		_window->_puppetTransition = nullptr;
 		return true;
