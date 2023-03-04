@@ -246,6 +246,15 @@ void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
 	free(data);
 }
 
+Common::String Archive::formatArchiveInfo() {
+	Common::String result = "unknown, ";
+	if (_isBigEndian)
+		result += "big endian,";
+	else
+		result += "little endian, ";
+	return result;
+}
+
 // Mac Archive code
 
 MacArchive::MacArchive() : Archive(), _resFork(nullptr) {
@@ -351,6 +360,15 @@ Common::SeekableReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 id)
 	}
 
 	return new Common::SeekableReadStreamEndianWrapper(stream, true, DisposeAfterUse::YES);
+}
+
+Common::String MacArchive::formatArchiveInfo() {
+	Common::String result = "Mac resource fork, ";
+	if (_isBigEndian)
+		result += "big endian";
+	else
+		result += "little endian";
+	return result;
 }
 
 // RIFF Archive code
@@ -470,6 +488,15 @@ Common::SeekableReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16 id
 
 	auto stream = new Common::SeekableSubReadStream(_stream, _startOffset + offset, _startOffset + offset + size, DisposeAfterUse::NO);
 	return new Common::SeekableReadStreamEndianWrapper(stream, true, DisposeAfterUse::YES);
+}
+
+Common::String RIFFArchive::formatArchiveInfo() {
+	Common::String result = "RIFF, ";
+	if (_isBigEndian)
+		result += "big endian";
+	else
+		result += "little endian";
+	return result;
 }
 
 // RIFX Archive code
@@ -977,6 +1004,17 @@ Resource RIFXArchive::getResourceDetail(uint32 tag, uint16 id) {
 		error("RIFXArchive::getResourceDetail(): Archive does not contain '%s' %d", tag2str(tag), id);
 
 	return resMap[id];
+}
+
+Common::String RIFXArchive::formatArchiveInfo() {
+	Common::String result = "RIFX, ";
+	if (_isBigEndian)
+		result += "big endian, ";
+	else
+		result += "little endian, ";
+	result += "type ";
+	result += tag2str(_rifxType);
+	return result;
 }
 
 } // End of namespace Director

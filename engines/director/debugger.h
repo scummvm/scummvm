@@ -125,6 +125,7 @@ private:
 	bool cmdHelp(int argc, const char **argv);
 
 	bool cmdVersion(int argc, const char **argv);
+	bool cmdInfo(int argc, const char **argv);
 	bool cmdMovie(int argc, const char **argv);
 	bool cmdFrame(int argc, const char **argv);
 	bool cmdChannels(int argc, const char **argv);

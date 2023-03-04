@@ -62,6 +62,8 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared) {
 	_version = 0;
 	_platform = Common::kPlatformMacintosh;
 
+	_isProtected = false;
+
 	_stageColor = 0;
 
 	_loadedStxts = nullptr;
@@ -357,6 +359,7 @@ bool Cast::loadConfig() {
 		_platform = platformFromID(platform);
 
 		int16 protection = stream->readSint16();
+		_isProtected = (protection % 23) == 0;
 		/* int32 field29 = */ stream->readSint32();
 		uint32 checksum = stream->readUint32();
 
