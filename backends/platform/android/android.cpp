@@ -149,7 +149,7 @@ public:
 		delete anode;
 
 		if (!ret) {
-			setError(Common::kUnknownError, Common::String("Couldn't delete the save file: %s", path.c_str()));
+			setError(Common::kUnknownError, Common::String::format("Couldn't delete the save file: %s", path.c_str()));
 		}
 		return ret;
 	}
