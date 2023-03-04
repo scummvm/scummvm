@@ -266,64 +266,62 @@ void MKVDecoder::close() {
 }
 
 void MKVDecoder::readNextPacket() {
-	//warning("MKVDecoder::readNextPacket()");
 
 	// First, let's get our frame
 	if (_cluster == nullptr || _cluster->EOS()) {
 		_videoTrack->setEndOfVideo();
+		if (!_audioTrack->hasAudio())
+			_audioTrack->setEndOfAudio();
 		return;
 	}
 
-	//warning("trackNum: %d frameCounter: %d frameCount: %d, time_ns: %d", tn, frameCounter, frameCount, time_ns);
-
-	if (frameCounter >= frameCount) {
+	while(_audioTrack->needsAudio()){
+		if (frameCounter >= frameCount) {
 		_cluster->GetNext(pBlockEntry, pBlockEntry);
 
-		if ((pBlockEntry == NULL) || pBlockEntry->EOS()) {
-			_cluster = pSegment->GetNext(_cluster);
-			if ((_cluster == NULL) || _cluster->EOS()) {
-				_videoTrack->setEndOfVideo();
-				return;
+			if ((pBlockEntry == NULL) || pBlockEntry->EOS()) {
+				_cluster = pSegment->GetNext(_cluster);
+				if ((_cluster == NULL) || _cluster->EOS()) {
+					_videoTrack->setEndOfVideo();
+					_audioTrack->setEndOfAudio();
+					return;
+				}
+				int ret = _cluster->GetFirst(pBlockEntry);
+				if (ret < 0)
+					error("MKVDecoder::readNextPacket(): GetFirst() failed");
 			}
-			int ret = _cluster->GetFirst(pBlockEntry);
 
-			if (ret < 0)
-				error("MKVDecoder::readNextPacket(): GetFirst() failed");
+			pBlock  = pBlockEntry->GetBlock();
+			trackNum = pBlock->GetTrackNumber();
+			frameCount = pBlock->GetFrameCount();
+			time_ns = pBlock->GetTime(_cluster);
+			frameCounter = 0;
 		}
-		pBlock  = pBlockEntry->GetBlock();
-		trackNum = pBlock->GetTrackNumber();
-		frameCount = pBlock->GetFrameCount();
-		time_ns = pBlock->GetTime(_cluster);
-		frameCounter = 0;
-	}
 
-	const mkvparser::Block::Frame &theFrame = pBlock->GetFrame(frameCounter);
-	const long size = theFrame.len;
+		const mkvparser::Block::Frame &theFrame = pBlock->GetFrame(frameCounter);
+		const uint32 size = theFrame.len;
 
-	if (size > sizeof(frame)) {
-		if (frame)
-			delete[] frame;
-		frame = new unsigned char[size];
-		if (!frame)
-			return;
-	}
+		if (size > sizeof(frame)) {
+			if (frame)
+				delete[] frame;
+			frame = new unsigned char[size];
+			if (!frame)
+				return;
+		}
 
-	if (trackNum == videoTrack) {
-		warning("MKVDecoder::readNextPacket(): video track");
-
-		theFrame.Read(_reader, frame);
-		_videoTrack->decodeFrame(frame, size);
-	} else if (trackNum == audioTrack) {
-		warning("MKVDecoder::readNextPacket(): audio track");
-
-		if (size > 0) {
+		if (trackNum == videoTrack) {
 			theFrame.Read(_reader, frame);
-			_audioTrack->decodeSamples(frame, size);
+			_videoTrack->decodeFrame(frame, size);
+		} else if (trackNum == audioTrack) {
+			if (size > 0) {
+				theFrame.Read(_reader, frame);
+				queueAudio(size);
+			}
+		} else {
+			warning("Unprocessed track %d", trackNum);
 		}
-	} else {
-		warning("Unprocessed track %d", trackNum);
+		++frameCounter;
 	}
-	++frameCounter;
 }
 
 MKVDecoder::VPXVideoTrack::VPXVideoTrack(const Graphics::PixelFormat &format, const mkvparser::Track *const pTrack) {
@@ -366,12 +364,17 @@ bool MKVDecoder::VPXVideoTrack::decodeFrame(byte *frame, long size) {
 	// Let's decode an image frame!
 	vpx_codec_iter_t  iter = NULL;
 	vpx_image_t      *img;
+	Graphics::Surface tmp;
+	tmp.create(getWidth(), getHeight(), getPixelFormat());
+
 	/* Get frame data */
 	while ((img = vpx_codec_get_frame(_codec, &iter))) {
 		if (img->fmt != VPX_IMG_FMT_I420)
 			error("Movie error. The movie is not in I420 colour format, which is the only one I can hanlde at the moment.");
 
-		YUVToRGBMan.convert420(&_displaySurface, Graphics::YUVToRGBManager::kScaleITU, img->planes[0], img->planes[1], img->planes[2], img->d_w, img->d_h, img->stride[0], img->stride[1]);
+		YUVToRGBMan.convert420(&tmp, Graphics::YUVToRGBManager::kScaleITU, img->planes[0], img->planes[1], img->planes[2], img->d_w, img->d_h, img->stride[0], img->stride[1]);
+		_displayQueue.push(tmp);
+		//warning("Size of _displayQueue is now %d", _displayQueue.size());
 	}
 	return false;
 }
@@ -434,14 +437,14 @@ MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(const mkvparser::Track *const pTr
 	if(r)
 		error("vorbis_block_init, error: %d", r);
 
+	_audStream = Audio::makeQueuingAudioStream(_vorbisInfo.rate, _vorbisInfo.channels != 1);
 	_endOfAudio = false;
 }
 
 MKVDecoder::VorbisAudioTrack::~VorbisAudioTrack() {
-	//vorbis_dsp_clear(&_vorbisDSP);
-	//vorbis_block_clear(&vorbisBlock);
-	//delete _audStream;
-	//free(_audioBuffer);
+	vorbis_dsp_clear(&_vorbisDSP);
+	vorbis_block_clear(&_vorbisBlock);
+	delete _audStream;
 }
 
 Audio::AudioStream *MKVDecoder::VorbisAudioTrack::getAudioStream() const {
@@ -449,99 +452,44 @@ Audio::AudioStream *MKVDecoder::VorbisAudioTrack::getAudioStream() const {
 }
 
 bool MKVDecoder::VorbisAudioTrack::decodeSamples(byte *frame, long size) {
-	//return true;
-
-	ogg_packet packet;
-	packet.packet = frame;
-	packet.bytes = size;
-	packet.b_o_s = false;
-	packet.e_o_s = false;
-	packet.packetno = ++oggPacket.packetno;
-	packet.granulepos = -1;
-
-	warning("oggPacket bytes : %d packno %d\n", oggPacket.bytes, oggPacket.packetno);
-
-	if(!vorbis_synthesis(&_vorbisBlock, &packet) ) {
-		if (vorbis_synthesis_blockin(&vorbisDspState, &_vorbisBlock))
-			warning("Vorbis Synthesis block in error");
-
-	} else {
-		warning("Vorbis Synthesis error");
-	}
-
 	float **pcm;
 
-	int numSamples = vorbis_synthesis_pcmout(&vorbisDspState, &pcm);
+	int numSamples = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm);
 
 	if (numSamples > 0) {
-		int word = 2;
-		int sgned = 1;
-		int i, j;
-		long bytespersample= audioChannels * word;
-		//vorbis_fpu_control fpu;
+		uint32 channels = _vorbisInfo.channels;
+		long bytespersample = _vorbisInfo.channels * 2;
 
-		char *buffer = new char[bytespersample * numSamples];
+		char *buffer = (char*)malloc(bytespersample * numSamples * sizeof(char));
 		if (!buffer)
 			error("MKVDecoder::readNextPacket(): buffer allocation failed");
 
-		/* a tight loop to pack each size */
-		{
-			int val;
-			if (word == 1) {
-				int off = (sgned ? 0 : 128);
-				//vorbis_fpu_setround(&fpu);
-				for (j = 0; j < numSamples; j++)
-					for (i = 0;i < audioChannels; i++) {
-						val = (int)(pcm[i][j] * 128.f);
-						val = CLIP(val, -128, 127);
 
-						*buffer++ = val + off;
-					}
-				//vorbis_fpu_restore(fpu);
-			} else {
-				int off = (sgned ? 0 : 32768);
-
-				if (sgned) {
-					//vorbis_fpu_setround(&fpu);
-					for (i = 0; i < audioChannels; i++) { /* It's faster in this order */
-						float *src = pcm[i];
-						short *dest = ((short *)buffer) + i;
-						for (j = 0; j < numSamples; j++) {
-							val = (int)(src[j] * 32768.f);
-							val = CLIP(val, -32768, 32767);
-
-							*dest = val;
-							dest += audioChannels;
-						}
-					}
-					//vorbis_fpu_restore(fpu);
-				} else { // unsigned
-					//vorbis_fpu_setround(&fpu);
-
-					for (i = 0; i < audioChannels; i++) {
-						float *src = pcm[i];
-						short *dest = ((short *)buffer) + i;
-						for (j = 0; j < numSamples; j++) {
-							val = (int)(src[j] * 32768.f);
-							val = CLIP(val, -32768, 32767);
-
-							*dest = val + off;
-							dest += audioChannels;
-						}
-					}
-					//vorbis_fpu_restore(fpu);
-				}
+		for (int i = 0; i < channels; i++) { /* It's faster in this order */
+			float *src = pcm[i];
+			short *dest = ((short *)buffer) + i;
+			for (int j = 0; j < numSamples; j++) {
+				int val = rint(src[j] * 32768.f);
+				val = CLIP(val, -32768, 32767);
+				*dest = (short)val;
+				dest += channels;
 			}
 		}
 
-		vorbis_synthesis_read(&vorbisDspState, numSamples);
-		audioBufferLen = bytespersample * numSamples;
-		if (!movieSoundPlaying) {
-			warning("** starting sound **");
-			movieSoundPlaying = true;
-		}
+		byte flags = Audio::FLAG_16BITS;
+
+		if (_audStream->isStereo())
+			flags |= Audio::FLAG_STEREO;
+
+#ifdef SCUMM_LITTLE_ENDIAN
+		flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+		int64 audioBufferLen = bytespersample * numSamples;
+		_audStream->queueBuffer((byte *)buffer, audioBufferLen, DisposeAfterUse::YES, flags);
+		vorbis_synthesis_read(&_vorbisDSP, numSamples);
+		return true;
 	}
-	return true;
+	return false;
 }
 
 bool MKVDecoder::VorbisAudioTrack::hasAudio() const {
@@ -549,21 +497,36 @@ bool MKVDecoder::VorbisAudioTrack::hasAudio() const {
 }
 
 bool MKVDecoder::VorbisAudioTrack::needsAudio() const {
-	// TODO: 5 is very arbitrary. We probably should do something like QuickTime does.
-	return !_endOfAudio && _audStream->numQueuedStreams() < 5;
+	// TODO: 10 is very arbitrary. We probably should do something like QuickTime does.
+	return _audStream->numQueuedStreams() < 10;
 }
 
-void MKVDecoder::VorbisAudioTrack::synthesizePacket(ogg_packet &_oggPacket) {
-	warning("in synthesizePacket");
-	if (vorbis_synthesis(&_vorbisBlock, &_oggPacket) == 0) // test for success
-		vorbis_synthesis_blockin(&_vorbisDSP, &_vorbisBlock);
+bool MKVDecoder::VorbisAudioTrack::synthesizePacket(byte *frame, long size) {
+	bool res = true;
+	oggPacket.packet = frame;
+	oggPacket.bytes = size;
+	oggPacket.b_o_s = false;
+	oggPacket.packetno++;
+	oggPacket.granulepos = -1;
+	if (vorbis_synthesis(&_vorbisBlock, &oggPacket) == 0) { // test for success
+		if(vorbis_synthesis_blockin(&_vorbisDSP, &_vorbisBlock)) {
+			res = false;
+			warning("vorbis_synthesis_blockin failed");
+		}
+	}
+	else {
+		res = false;
+		warning("Vorbis synthesis failed");
+	}
+	return res;
 }
 
-bool MKVDecoder::queueAudio() {
-	if (!_hasAudio)
-		return false;
-
+bool MKVDecoder::queueAudio(long size) {
 	bool queuedAudio = false;
+
+	if (_audioTrack->synthesizePacket(frame, size) && _audioTrack->decodeSamples(frame, size))
+		queuedAudio = true;
+
 	return queuedAudio;
 }
 } // End of namespace Video

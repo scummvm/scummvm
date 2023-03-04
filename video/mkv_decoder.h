@@ -28,6 +28,7 @@
 #define VIDEO_MKV_DECODER_H
 
 #include "common/rational.h"
+#include "common/queue.h"
 #include "video/video_decoder.h"
 #include "audio/mixer.h"
 #include "graphics/surface.h"
@@ -94,25 +95,36 @@ private:
 		VPXVideoTrack(const Graphics::PixelFormat &format, const mkvparser::Track *const pTrack);
 		~VPXVideoTrack();
 
-		bool endOfTrack() const { return _endOfVideo; }
+		bool endOfTrack() const {
+			if(_endOfVideo && _displayQueue.size())
+				return false;
+		 	return _endOfVideo;
+		 }
 		uint16 getWidth() const { return _displaySurface.w; }
 		uint16 getHeight() const { return _displaySurface.h; }
 		Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
 		int getCurFrame() const { return _curFrame; }
 		uint32 getNextFrameStartTime() const { return (uint32)(_nextFrameStartTime * 1000); }
-		const Graphics::Surface *decodeNextFrame() { return &_displaySurface; }
+		const Graphics::Surface *decodeNextFrame() {
+			if(_displayQueue.size())
+				_surface = _displayQueue.pop();
+			warning("Size of display Queue is %d", _displayQueue.size());
+			return &_surface;
+		}
 
 		bool decodeFrame(byte *frame, long size);
 		void setEndOfVideo() { _endOfVideo = true; }
 
 	private:
 		int _curFrame;
+		int _doneOnce = 0;
 		bool _endOfVideo;
 		Common::Rational _frameRate;
 		double _nextFrameStartTime;
 
 		Graphics::Surface _surface;
 		Graphics::Surface _displaySurface;
+		Common::Queue<Graphics::Surface> _displayQueue;
 
 		vpx_codec_ctx_t *_codec = nullptr;
 	};
@@ -125,7 +137,7 @@ private:
 		bool decodeSamples(byte *frame, long size);
 		bool hasAudio() const;
 		bool needsAudio() const;
-		void synthesizePacket(ogg_packet &oggPacket);
+		bool synthesizePacket(byte *frame, long size);
 		void setEndOfAudio() { _endOfAudio = true; }
 
 	protected:
@@ -147,7 +159,7 @@ private:
 		ogg_packet oggPacket;
 	};
 
-	bool queueAudio();
+	bool queueAudio(long size);
 
 	Common::SeekableReadStream *_fileStream;
 
