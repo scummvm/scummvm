@@ -373,6 +373,7 @@ void ScummVMRendererGraphicsDriver::RenderToBackBuffer() {
 				virtualScreen->StretchBlt(surface, RectWH(view_offx, view_offy, viewport.GetWidth(), viewport.GetHeight()),
 					batch.Opaque ? kBitmap_Copy : kBitmap_Transparency);
 		} else {
+			_stageVirtualScreen = virtualScreen;
 			cur_spr = RenderSpriteBatch(batch, cur_spr, virtualScreen, view_offx + transform.X, view_offy + transform.Y);
 		}
 	}
