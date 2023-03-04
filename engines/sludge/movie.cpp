@@ -338,6 +338,8 @@ int playMovie(int fileNumber) {
 	if (decoder.loadStream(&video))
 		movieIsPlaying = kMoviePlaying;
 
+	decoder.start();
+
 	warning("movieIsPlaying %d", movieIsPlaying);
 	while (movieIsPlaying) {
 		g_sludge->_evtMan->checkInput();
