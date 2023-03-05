@@ -72,7 +72,7 @@ void TeRendererTinyGL::disableZBuffer() {
 }
 
 void TeRendererTinyGL::drawLine(const TeVector3f32 &from, const TeVector3f32 &to) {
-	error("TODO: Implement TeRenderer::drawLine");
+	error("TODO: Implement TeRendererTinyGL::drawLine");
 }
 
 void TeRendererTinyGL::enableAllLights() {

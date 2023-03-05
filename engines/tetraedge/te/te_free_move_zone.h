@@ -137,6 +137,7 @@ private:
 	Common::Array<uint> _pickMesh;
 	Common::Array<TeVector3f32> _transformedVerticies;
 	Common::Array<uint> _borders;
+	Common::Array<TeVector2f32> _projectedPoints;
 
 	TeVector2f32 _gridSquareSize;
 	TeVector2f32 _gridTopLeft;

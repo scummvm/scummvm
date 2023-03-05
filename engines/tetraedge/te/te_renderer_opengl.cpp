@@ -71,7 +71,20 @@ void TeRendererOpenGL::disableZBuffer() {
 }
 
 void TeRendererOpenGL::drawLine(const TeVector3f32 &from, const TeVector3f32 &to) {
-	error("TODO: Implement TeRenderer::drawLine");
+	const TeVector3f32 pts[2] = {from, to};
+	const TeVector3f32 norms(0, 0, 1);
+	const unsigned short idxs[2] = {0, 1};
+	setMatrixMode(MM_GL_MODELVIEW);
+	glPushMatrix();
+	loadCurrentMatrixToGL();
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(TeVector3f32), pts);
+	glNormalPointer(GL_FLOAT, sizeof(TeVector3f32), &norms);
+	glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, idxs);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glPopMatrix();
 }
 
 void TeRendererOpenGL::enableAllLights() {

@@ -62,7 +62,7 @@ public:
 	void orthogonalParams(float f1, float f2, float f3, float f4);
 	TeMatrix4x4 projectionMatrix();
 
-	TeVector3f32 projectPoint(const TeVector3f32 &pt);
+	TeVector2f32 projectPoint(const TeVector3f32 &pt);
 	TeVector3f32 projectPoint3f32(const TeVector3f32 &pt);
 
 	static void restore();
@@ -87,6 +87,8 @@ public:
 	float orthoFarPlane() const { return _orthFarVal; }
 	void setOrthoNear(float f) { _orthNearVal = f; }
 	void setOrthoFar(float f) { _orthFarVal = f; }
+	float getViewportHeight() const { return _viewportH; }
+	float getViewportWidth() const { return _viewportW; }
 
 private:
 	void updateProjectionMatrix();
