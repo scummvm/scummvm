@@ -51,9 +51,6 @@ ScummVMRendererGraphicsDriver::ScummVMRendererGraphicsDriver() {
 	_tint_blue = 0;
 	virtualScreen = nullptr;
 	_stageVirtualScreen = nullptr;
-
-	// Initialize default sprite batch, it will be used when no other batch was activated
-	ScummVMRendererGraphicsDriver::InitSpriteBatch(0, _spriteBatchDesc[0]);
 }
 
 ScummVMRendererGraphicsDriver::~ScummVMRendererGraphicsDriver() {
@@ -275,7 +272,7 @@ void ScummVMRendererGraphicsDriver::InitSpriteBatch(size_t index, const SpriteBa
 	Rect viewport = desc.Viewport;
 	SpriteTransform transform = desc.Transform;
 	Bitmap *parent_surf = virtualScreen;
-	if (desc.Parent > 0u) {
+	if (desc.Parent != UINT32_MAX) {
 		const auto &parent = _spriteBatches[desc.Parent];
 		if (parent.Surface)
 			parent_surf = parent.Surface.get();
@@ -366,8 +363,8 @@ void ScummVMRendererGraphicsDriver::SetStageScreen(const Size & /*sz*/, int /*x*
 
 void ScummVMRendererGraphicsDriver::RenderToBackBuffer() {
 	// Close unended batches, and issue a warning
-	assert(_actSpriteBatch == 0);
-	while (_actSpriteBatch > 0)
+	assert(_actSpriteBatch == UINT32_MAX);
+	while (_actSpriteBatch != UINT32_MAX)
 		EndSpriteBatch();
 
 	// Render all the sprite batches with necessary transformations
@@ -397,7 +394,7 @@ void ScummVMRendererGraphicsDriver::RenderToBackBuffer() {
 			const auto &batch = _spriteBatches[cur_bat];
 			const auto &batch_desc = _spriteBatchDesc[cur_bat];
 			Bitmap *surface = batch.Surface.get();
-			Bitmap *parent_surf = ((batch_desc.Parent > 0u) && _spriteBatches[batch_desc.Parent].Surface) ? _spriteBatches[batch_desc.Parent].Surface.get() : virtualScreen;
+			Bitmap *parent_surf = ((batch_desc.Parent != UINT32_MAX) && _spriteBatches[batch_desc.Parent].Surface) ? _spriteBatches[batch_desc.Parent].Surface.get() : virtualScreen;
 			const Rect &viewport = batch.Viewport;
 			const SpriteTransform &transform = batch.Transform;
 
@@ -421,7 +418,7 @@ void ScummVMRendererGraphicsDriver::RenderToBackBuffer() {
 			const auto &batch = _spriteBatches[cur_bat];
 			const auto &batch_desc = _spriteBatchDesc[cur_bat];
 			Bitmap *surface = batch.Surface.get();
-			Bitmap *parent_surf = ((batch_desc.Parent > 0u) && _spriteBatches[batch_desc.Parent].Surface) ? _spriteBatches[batch_desc.Parent].Surface.get() : virtualScreen;
+			Bitmap *parent_surf = ((batch_desc.Parent != UINT32_MAX) && _spriteBatches[batch_desc.Parent].Surface) ? _spriteBatches[batch_desc.Parent].Surface.get() : virtualScreen;
 			const Rect &viewport = batch.Viewport;
 
 			// If we're not drawing directly to the subregion of a parent surface,
