@@ -623,7 +623,7 @@ void SmushDecoder::SmushAudioTrack::handleVIMA(Common::SeekableReadStream *strea
 
 	// this will be deleted using free() by the stream, so allocate it using malloc().
 	int16 *dst = (int16 *)malloc(decompressedSize * _channels * 2);
-	decompressVima(src, dst, decompressedSize * _channels * 2, smushDestTable);
+	decompressVima(src, dst, decompressedSize * _channels * 2, smushDestTable, true);
 
 	int flags = Audio::FLAG_16BITS;
 	if (_channels == 2) {

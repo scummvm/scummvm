@@ -20,6 +20,7 @@
  */
 
 #include "common/endian.h"
+#include "common/util.h"
 
 namespace Grim {
 
@@ -116,7 +117,7 @@ void vimaInit(uint16 *destTable) {
 	}
 }
 
-void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable) {
+void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable, bool isSmush) {
 	int numChannels = 1;
 	byte sBytes[2];
 	int16 sWords[2];
@@ -135,6 +136,61 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 	}
 
 	int numSamples = destLen / (numChannels * 2);
+
+	if (READ_BE_UINT32(src) == MKTAG('I', 'M', 'A', '4')) {
+		int outputWord = 0;
+		int currTablePos = 0;
+		static const int tableDeltas[16] = {
+			-1,    -1,    -1,    -1,
+			 2,     4,     6,     8,
+			-1,    -1,    -1,    -1,
+			 2,     4,     6,     8
+		};
+		int16 *destPos = dest;
+		int curai = 7;
+		byte inputByte = 0;
+		bool nibbleSwitch = false;
+
+		src += 4;
+		if (isSmush) {
+			outputWord = READ_LE_INT16(src);
+			currTablePos = src[2];
+			src += 3;
+		}
+
+		for (int sample = 0; sample < numSamples; sample++) {
+			byte nibble;
+			if (!nibbleSwitch) {
+				inputByte = *src++;
+				nibble = inputByte >> 4;
+			} else
+				nibble = inputByte & 0xf;
+			nibbleSwitch = !nibbleSwitch;
+			currTablePos = CLIP(currTablePos + tableDeltas[nibble & 0xf], 0, 88);
+			int delta = curai >> 3;
+			if (nibble & 4) {
+				delta = delta + curai;
+			}
+			if (nibble & 2) {
+				delta = delta + (curai >> 1);
+			}
+			if (nibble & 1) {
+				delta = delta + (curai >> 2);
+			}
+			if (nibble & 8) {
+				delta = -delta;
+			}
+			outputWord = CLIP(outputWord + delta, -0x8000, 0x7fff);
+			if (currTablePos > 0)
+				curai = imcTable1[currTablePos];
+			for (int channel = 0; channel < numChannels; channel++)
+				WRITE_BE_UINT16(destPos + channel, outputWord);
+			destPos += numChannels;
+		}
+
+		return;
+	}
+
 	int bits = READ_BE_UINT16(src);
 	int bitPtr = 0;
 	src += 2;

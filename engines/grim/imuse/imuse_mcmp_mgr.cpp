@@ -115,7 +115,7 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 			_compInput[_compTable[i].compSize + 1] = 0;
 			_file->seek(_compTable[i].offset, SEEK_SET);
 			_file->read(_compInput, _compTable[i].compSize);
-			decompressVima(_compInput, (int16 *)_compOutput, _compTable[i].decompSize, imuseDestTable);
+			decompressVima(_compInput, (int16 *)_compOutput, _compTable[i].decompSize, imuseDestTable, false);
 			_outputSize = _compTable[i].decompSize;
 			if (_outputSize > 0x2000) {
 				error("McmpMgr::decompressSample() _outputSize: %d", _outputSize);
