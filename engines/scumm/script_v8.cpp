@@ -262,6 +262,13 @@ int ScummEngine_v8::fetchScriptWordSigned() {
 int ScummEngine_v8::readVar(uint var) {
 	debugC(DEBUG_VARS, "readvar(%d)", var);
 
+	// The following action re-enables the song at the beginning of Part 3,
+	// which was disabled for international releases, if the user decides so.
+	if (_enableCOMISong &&
+		VAR_LANGUAGE != 0xFF && var == VAR_LANGUAGE &&
+		vm.slot[_currentScript].number == 319 && _currentRoom == 52)
+		return 0;
+
 	if (!(var & 0xF0000000)) {
 		assertRange(0, var, _numVariables - 1, "variable");
 		return _scummVars[var];

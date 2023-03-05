@@ -692,6 +692,16 @@ static const ExtraGuiOption enableLowLatencyAudio = {
 	0
 };
 
+static const ExtraGuiOption enableCOMISong = {
+	_s("Enable the \"A Pirate I Was Meant To Be\" song"),
+	_s("Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was Meant To Be\", \
+		which was cut in international releases. Beware though: subtitles may not be fully translated."),
+	"enable_song",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -700,6 +710,7 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	const Common::String extra = ConfMan.get("extra", target);
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+	const Common::String language = ConfMan.get("language", target);
 
 	if (target.empty() || guiOptions.contains(GUIO_ORIGINALGUI)) {
 		options.push_back(enableOriginalGUI);
@@ -715,6 +726,10 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);
+
+		if (!language.equals("en")) {
+			options.push_back(enableCOMISong);
+		}
 	}
 	if (target.empty() || platform == Common::kPlatformNES) {
 		options.push_back(mmnesObjectLabelsOption);

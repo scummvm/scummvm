@@ -1441,6 +1441,13 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 		_bootParam = -1;
 	}
 
+	if (_game.version == 8 && (_language != Common::EN_ANY && _language != Common::EN_GRB && _language != Common::EN_USA)) {
+		ConfMan.registerDefault("enable_song", true);
+		if (ConfMan.hasKey("enable_song", _targetName)) {
+			_enableCOMISong = ConfMan.getBool("enable_song");
+		}
+	}
+
 #ifndef ATARI
 	int maxHeapThreshold = -1;
 
