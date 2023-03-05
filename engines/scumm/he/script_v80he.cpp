@@ -195,6 +195,8 @@ void ScummEngine_v80he::o80_readConfigFile() {
 		break;
 	case ScummEngine_v100he::SO_STRING: // HE 100
 	case SO_STRING: // string
+		if (!strcmp((char *)option, "joinip") && ConfMan.get("join_game") != "null")
+			entry = ConfMan.get("join_game");
 		writeVar(0, 0);
 		len = resStrLen((const byte *)entry.c_str());
 		data = defineArray(0, kStringArray, 0, 0, 0, len);
