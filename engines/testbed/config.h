@@ -66,40 +66,24 @@ private:
 	void parseConfigFile();
 };
 
-class TestbedListWidget : public GUI::ListWidget {
-public:
-	TestbedListWidget(GUI::Dialog *boss, const Common::String &name, Common::Array<Testsuite *> tsArray) : GUI::ListWidget(boss, name), _testSuiteArray(tsArray) {}
-
-	void markAsSelected(int i) {
-		if (!_list[i].encode().contains("selected")) {
-			_list[i] = GUI::ListWidget::getThemeColor(GUI::ThemeEngine::kFontColorNormal) + _testSuiteArray[i]->getDescription() + " (selected)";
-		}
-		draw();
-	}
-
-	void markAsDeselected(int i) {
-		if (_list[i].encode().contains("selected")) {
-			_list[i] = GUI::ListWidget::getThemeColor(GUI::ThemeEngine::kFontColorAlternate) +
-					_testSuiteArray[i]->getDescription();
-		}
-		draw();
-	}
-
-private:
-	Common::Array<Testsuite *>	_testSuiteArray;
-};
-
 class TestbedOptionsDialog : public GUI::Dialog {
 public:
 	TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan);
 	~TestbedOptionsDialog() override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void reflowLayout() override;
 
 private:
 	GUI::ButtonWidget	*_selectButton;
+	GUI::ButtonWidget *_runTestButton;
+	GUI::ButtonWidget *_quitButton;
+	GUI::StaticTextWidget *_messageText;
+	GUI::ScrollContainerWidget *_testContainerDisplay;
+	Common::Array<GUI::CheckboxWidget *> _testSuiteCheckboxArray;
+
 	Common::Array<Testsuite *> _testSuiteArray;
 	Common::U32StringArray _testSuiteDescArray;
-	TestbedListWidget *_testListDisplay;
+
 	TestbedConfigManager *_testbedConfMan;
 };
 
