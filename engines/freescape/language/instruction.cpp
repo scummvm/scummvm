@@ -249,7 +249,7 @@ void FreescapeEngine::executeSPFX(FCLInstruction &instruction) {
 		debugC(1, kFreescapeDebugCode, "Switching complete palette to color %d", dst);
 		for (int i = 1; i < 16; i++)
 			_currentArea->remapColor(i, color);
-	} else if (isDOS()) {
+	} else {
 		debugC(1, kFreescapeDebugCode, "Switching palette from position %d to %d", src, dst);
 		if (src == 0 && dst == 1)
 			_currentArea->remapColor(_currentArea->_usualBackgroundColor, _renderMode == Common::kRenderCGA ? 1 : _currentArea->_underFireBackgroundColor);
