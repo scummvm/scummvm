@@ -3057,14 +3057,16 @@ local function main_menu()
 
 	while true do
 		canvas_update()
-		input = input_poll(true)
 
 		if engine_should_quit() == 1 then
 			return "Q"
 		end
 
-		if input ~= nil then
-			if input == 113 then     --q quit
+		while true do
+			input = input_poll(true)
+			if input == nil then
+				break
+			elseif input == 113 then     --q quit
 				return "Q"
 			elseif input == 105 or input == 13 and g_menu_idx == 0 then --i
 				selected_intro()
@@ -3157,7 +3159,6 @@ local function main_menu()
 					end
 				end
 			end
-			input = nil
 		end
 	end
 end
