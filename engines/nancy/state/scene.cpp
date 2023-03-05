@@ -510,6 +510,8 @@ void Scene::load() {
 
 	_sceneState.summary.read(*sceneSummaryChunk);
 
+	delete sceneSummaryChunk;
+
 	debugC(0, kDebugScene, "Loading new scene %i: description \"%s\", frame %i, vertical scroll %i, doNotStartSound == %s",
 				_sceneState.nextScene.sceneID,
 				_sceneState.summary.description.c_str(),
