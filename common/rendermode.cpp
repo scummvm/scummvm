@@ -77,7 +77,10 @@ static const RenderGUIOMapping s_renderGUIOMapping[] = {
 	{ kRenderMacintosh,		GUIO_RENDERMACINTOSH },
 	{ kRenderMacintoshBW,	GUIO_RENDERMACINTOSHBW },
 	{ kRenderCGAComp,	    GUIO_RENDERCGACOMP },
-	{ kRenderCGA_BW,	    GUIO_RENDERCGABW }
+	{ kRenderCGA_BW,	    GUIO_RENDERCGABW },
+	{ kRenderCPC,		    GUIO_RENDERCPC },
+	{ kRenderZX,			GUIO_RENDERZX },
+	{ kRenderC64,			GUIO_RENDERC64 }
 };
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Green", "lowres")
