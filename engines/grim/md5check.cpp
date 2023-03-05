@@ -36,19 +36,24 @@ const char *gfupd101[] = {
 	"bc57c4db2ab814f3bb115ec5702b62f4"
 };
 const char *year4mus[] = {
-	"939e041887c1b14f99ad951ac8e3cb25" //english unpatched
+	"939e041887c1b14f99ad951ac8e3cb25", //english unpatched
+	"aae53e089eeb9707cc96afece1f58f15"  //Russian(7Wolf)
 };
 const char *year3mus[] = {
-	"df556a8fc151f6f48bb68a8cef855e7d" //english unpatched
+	"df556a8fc151f6f48bb68a8cef855e7d", //english unpatched
+	"904a45827a2d4b6d6fe2887394870eeb"  //Russian(7Wolf)
 };
 const char *year2mus[] = {
-	"775376fccf0415258be6b33e7e6e4985" //english unpatched
+	"775376fccf0415258be6b33e7e6e4985", //english unpatched
+	"e6efd96ffce984686214d440995f27c7"  //Russian(7Wolf)
 };
 const char *year1mus[] = {
-	"c555c95b0f7557617da364091589d6ea" //english unpatched
+	"c555c95b0f7557617da364091589d6ea", //english unpatched
+	"aed795553d93abac7bd869eeeaba74b4"  //Russian(7Wolf)
 };
 const char *year0mus[] = {
-	"fea10f11abe3ac32d53e4798f80d5ba0" //english unpatched
+	"fea10f11abe3ac32d53e4798f80d5ba0", //english unpatched
+	"f4b7aaaaaec4654ea140ebee43564d42"  //Russian(7Wolf)
 };
 const char *vox0004[] = {
 	"ae53a36f77eb0d42a28653b28c345439", //english unpatched
@@ -56,7 +61,8 @@ const char *vox0004[] = {
 	"bae246c5335c1d139b97a48277ee8841", //german unpatched
 	"a49dce6e1bb83ad40b47e03903aaff1b", //french unpatched
 	"3577a8b6cf013bc5b9c9133e29d1f4f0", //spanish unpatched
-	"2be5b0cc13a83f59945d31080b0949bb"  //brasilian-portuguese
+	"2be5b0cc13a83f59945d31080b0949bb", //brasilian-portuguese
+	"ba585dc54e34f9d9b4d732eac623d955"  //Russian(7Wolf)
 };
 const char *vox0003[] = {
 	"7c88ad7c949a516793b584299f33ed23", //english unpatched
@@ -64,7 +70,8 @@ const char *vox0003[] = {
 	"5bda9a36181c1fea368491b842c11efe", //german unpatched
 	"c4aa2c45b24f351e8fce40a141084fb0", //french unpatched
 	"1d4e94e3d3fd803a02c9993412359082", //spanish unpatched
-	"e107073a05f588df0c057b594c28b50e"  //brasilian-portuguese
+	"e107073a05f588df0c057b594c28b50e", //brasilian-portuguese
+	"02e87ba1d4d3a5fc0389265e34a5ad19"  //Russian(7Wolf)
 };
 const char *vox0002[] = {
 	"70419878e32377d9d2906fbcb2cb59b5", //english unpatched
@@ -72,7 +79,8 @@ const char *vox0002[] = {
 	"5ea9fde04f3315a51fe1fe9c5bdb9d0d", //german unpatched
 	"24bbf1f6d3d63ae07ad2dd06bd7dad8c", //french unpatched
 	"c4484dadd4a33066290e1847523d7d64", //spanish unpatched
-	"0748f44ee1e67b6d7555a644a1fa43ce"  //brasilian-portuguese
+	"0748f44ee1e67b6d7555a644a1fa43ce", //brasilian-portuguese
+	"e61f5732eabbf0ca607c5a9e332d3e81"  //Russian(7Wolf)
 };
 const char *vox0001[] = {
 	"40beb2e0a6572dc89fddb21f282bc237", //english pre-patched
@@ -81,7 +89,8 @@ const char *vox0001[] = {
 	"e13eb421b9490cbaeef66f0cf6156764", //german unpatched
 	"e940d5a4a4f2229f0a6674bf45464457", //french unpatched
 	"77cdd6f02bc3f7085bff17c454066de3", //spanish unpatched
-	"31f261f87cc4854055c1ca1afddf677e"  //brasilian-portuguese
+	"31f261f87cc4854055c1ca1afddf677e", //brasilian-portuguese
+	"87163a9690043f162a925f4fbd651aea"  //Russian(7Wolf)
 };
 const char *vox0000[] = {
 	"c7900f32d48d7e265629bd355a21c795", //english pre-patched
@@ -90,7 +99,8 @@ const char *vox0000[] = {
 	"e884221099ba62dacf04a35be8428419", //german unpatched
 	"dbe35af39eec29db21a4c6e1c228cc9d", //french unpatched
 	"076bf048de229ad8cefcb3d7c0bfd134", //spanish unpatched
-	"d48832ea234015e74590654ada02e163"  //brasilian-portuguese
+	"d48832ea234015e74590654ada02e163", //brasilian-portuguese
+	"49ddc33e24bb3821e0b6041befd1f987"  //Russian(7Wolf)
 };
 const char *movie04[] = {
 	"605d6f2cc4d21fbe702d8e637b5bcfa1", //english unpatched
@@ -98,7 +108,8 @@ const char *movie04[] = {
 	"f1b8c1de4f82099ab080f9cbe2b02da6", //german unpatched
 	"7e2a4578010cdf5407bb24dcfb6705e4", //french unpatched
 	"2daf2ec272a7be49cbfde053482f182c", //spanish unpatched
-	"d9bfe59690a5de0500d18e29cdaa293f"  //brasilian-portuguese
+	"d9bfe59690a5de0500d18e29cdaa293f", //brasilian-portuguese
+	"ccc6588e155e0e9855a569dcdf74f4f9"  //Russian(7Wolf)
 };
 const char *movie03[] = {
 	"113a768e7206016df72f9d2f5c1851b7", //english unpatched
@@ -106,7 +117,8 @@ const char *movie03[] = {
 	"d2aae2e27616f78016a71818e528acda", //german unpatched
 	"c2ba7adbf09b7a4f69c180f1c74297ee", //french unpatched
 	"fb87d5a9e3a81d3ffd521dee4432c4da", //spanish unpatched
-	"5280486c3aee4fb1f9dcbc289f5f58b9"  //brasilian-portuguese
+	"5280486c3aee4fb1f9dcbc289f5f58b9", //brasilian-portuguese
+	"7231a253da9baf142665031bc4c32937"  //Russian(7Wolf)
 };
 const char *movie02[] = {
 	"24a8704a331a03097d195f3597fe21e1", //english unpatched
@@ -114,7 +126,8 @@ const char *movie02[] = {
 	"a4d5c108a167afb0674e26790edf65e6", //german unpatched
 	"90fce3e6e1f91455d92b072f773f0a67", //french unpatched
 	"f5879c544f4c1f1f2e2d2e92c026c245", //spanish unpatched
-	"000185c50bbf09bcd7421667d46a9e5c"  //brasilian-portuguese
+	"000185c50bbf09bcd7421667d46a9e5c", //brasilian-portuguese
+	"6ee18bed78f8a44daa02751e3c46422e"  //Russian(7Wolf)
 };
 const char *movie01[] = {
 	"548a19a0a4d4ccb8660966d646210820", //english unpatched
@@ -122,10 +135,12 @@ const char *movie01[] = {
 	"500bc51ce211d528f6c7170f479c9525", //german unpatched
 	"16674e1496e4fb3f0f5f173f12e30617", //french unpatched
 	"ede9fb7d035a5d4af496f23f811707a2", //spanish unpatched
-	"a88876b3347106d49b733c178f0d606a"  //brasilian-portuguese
+	"a88876b3347106d49b733c178f0d606a", //brasilian-portuguese
+	"0fe6fa2db45633839529e4d2024cd6ac"  //Russian(7Wolf)
 };
 const char *movie00[] = {
-	"0c6b8e4fa74024c4afdf7758f8d8b1a0" //english unpatched
+	"0c6b8e4fa74024c4afdf7758f8d8b1a0", //english unpatched
+	"b2b9824ca1abc11d85d983710c18016c"  //Russian(7Wolf)
 };
 const char *data005[] = {
 	"84738c0783093b1e515eb98918d2a405" //Chinese unpatched
@@ -138,7 +153,8 @@ const char *data003[] = {
 	"7f76c20f1d77db287473ffef10b8b309" //german unpatched
 };
 const char *data002[] = {
-	"d236403c0d860961963db0134380001f" //english unpatched
+	"d236403c0d860961963db0134380001f", //english unpatched
+	"ac12be5dcf632b57150c3b0a987a085c"  //Russian(7Wolf)
 };
 const char *data001[] = {
 	"84cf3072586fe2840ae16774adb6f5cb" //english unpatched
@@ -146,7 +162,8 @@ const char *data001[] = {
 const char *data000[] = {
 	"2069b8bf113119910df8219e787e7e94", //english pre-patched
 	"08e2505a6a7fd90d3920131b1297c60f", //english unpatched
-	"7c9886667636aa77fe1ab9bada257595"  //Chinese unpatched
+	"7c9886667636aa77fe1ab9bada257595", //Chinese unpatched
+	"57cd60851d144c3a0b4115441e3ddba9"  //Russian(7Wolf)
 };
 const char *credits[] = {
 	"6dcecad8f01657184f8576aab8fb3f00", //english unpatched
@@ -155,7 +172,8 @@ const char *credits[] = {
 	"cd71ca4e600198277f22e944988f7516", //french unpatched
 	"836a2081d5e57ed6ef5eaade7f770b0e", //spanish unpatched
 	"368baa2f319a72278035095e4f4a4466", //brasilian-portuguese
-	"6589646e7a61eff352b2e1d1c08963eb"  //Chinese unpatched
+	"6589646e7a61eff352b2e1d1c08963eb", //Chinese unpatched
+	"77d41d301c84caf2c5de33a036c1e9ed"  //Russian(7Wolf)
 };
 const char *local[] = {
 	"6142624ce13ea3c9079aa80918010c4a", //italian unpatched
@@ -452,7 +470,7 @@ void MD5Check::init() {
 			MD5SUM("data001.lab", data001)
 			MD5SUM("data000.lab", data000)
 			MD5SUM("credits.lab", credits)
-			if (g_grim->getGameLanguage() != Common::EN_ANY && g_grim->getGameLanguage() != Common::ZH_CHN) {
+			if (g_grim->getGameLanguage() != Common::EN_ANY && g_grim->getGameLanguage() != Common::ZH_CHN && g_grim->getGameLanguage() != Common::RU_RUS) {
 				MD5SUM("local.lab", local)
 			}
 			if (g_grim->getGameLanguage() == Common::ZH_CHN) {
