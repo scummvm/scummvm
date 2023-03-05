@@ -267,9 +267,18 @@ Common::Error NancyEngine::run() {
 		_system->delayMillis(16);
 	}
 
-	if (State::Scene::hasInstance()) {
-		NancySceneState.destroy();
-	}
+	if (State::Logo::hasInstance())
+		State::Logo::instance().destroy();
+	if (State::Credits::hasInstance())
+		State::Credits::instance().destroy();
+	if (State::Map::hasInstance())
+		State::Map::instance().destroy();
+	if (State::Help::hasInstance())
+		State::Help::instance().destroy();
+	if (State::Scene::hasInstance())
+		State::Scene::instance().destroy();
+	if (State::MainMenu::hasInstance())
+		State::MainMenu::instance().destroy();
 
 	return Common::kNoError;
 }
