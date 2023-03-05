@@ -16,6 +16,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Dragons:
    - Implemented localizations for the copyright screen and main menu.
 
+ GrimE:
+   - Added support for Chinese Grim Fandango.
+
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
 
