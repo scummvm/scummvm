@@ -63,7 +63,7 @@ public:
 		return "neverhood";
 	}
 
-	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override {
 		return new Neverhood::NeverhoodOptionsWidget(boss, name, target);
 	}
 
