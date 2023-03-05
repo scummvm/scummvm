@@ -50,9 +50,6 @@
 namespace Tetraedge {
 
 /*static*/
-bool InGameScene::_collisionSlide = false;
-
-/*static*/
 const int InGameScene::MAX_FIRE = 50;
 const int InGameScene::MAX_SNOW = 250;
 const int InGameScene::MAX_SMOKE = 350;
@@ -800,8 +797,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	_sceneName = scene;
 	_blockers.clear();
 	_rectBlockers.clear();
-	_collisionSlide = false;
-	loadActZones();
+	TeFreeMoveZone::setCollisionSlide(false);
 	loadBlockers();
 
 	Common::Path xmlpath = _sceneFileNameBase(zone, scene).joinInPlace("Scene")

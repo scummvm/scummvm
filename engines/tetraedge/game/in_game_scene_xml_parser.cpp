@@ -113,7 +113,7 @@ bool InGameSceneXmlParser::parserCallback_light(ParserNode *node) {
 }
 
 bool InGameSceneXmlParser::parserCallback_collisionSlide(ParserNode *node) {
-	_scene->setCollisionSlide(true);
+	TeFreeMoveZone::setCollisionSlide(true);
 	return true;
 }
 
@@ -122,12 +122,12 @@ bool InGameSceneXmlParser::parserCallback_collisionSlide(ParserNode *node) {
 // for collisionSlide.  Fix it to do what it was intended to do.
 //
 bool InGameSceneXmlParser::parserCallback_coliisionSlide(ParserNode *node) {
-	_scene->setCollisionSlide(true);
+	TeFreeMoveZone::setCollisionSlide(true);
 	return true;
 }
 
 bool InGameSceneXmlParser::parserCallback_noCollisionSlide(ParserNode *node) {
-	_scene->setCollisionSlide(false);
+	TeFreeMoveZone::setCollisionSlide(false);
 	return true;
 }
 

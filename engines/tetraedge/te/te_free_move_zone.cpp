@@ -35,6 +35,9 @@ namespace Tetraedge {
 /*static*/
 //TeIntrusivePtr<TeCamera> TeFreeMoveZone::_globalCamera;
 
+/*static*/
+bool TeFreeMoveZone::_collisionSlide = false;
+
 class TeFreeMoveZoneGraph : micropather::Graph {
 	friend class TeFreeMoveZone;
 
@@ -264,9 +267,13 @@ TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, b
 	TeVector3f32 testPos(pos.x(), 0, pos.z());
 	if (!intersect(testPos, TeVector3f32(0, -1, 0), intersectPoint, f, intersectFlag, nullptr)) {
 		if (!intersect(testPos, TeVector3f32(0, 1, 0), intersectPoint, f, intersectFlag, nullptr)) {
-			if (*flagout)
-				*flagout = false;
-			return pos;
+			// Note: This flag should only ever get set in Syberia 2.
+			if (!_collisionSlide) {
+				if (*flagout)
+					*flagout = false;
+				return pos;
+			}
+			return slide(pos);
 		}
 	}
 	if (flagout)

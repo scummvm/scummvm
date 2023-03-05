@@ -277,7 +277,6 @@ public:
 	const Common::String getZoneName() const { return _zoneName; }
 	const Common::String getSceneName() const { return _sceneName; }
 
-	void setCollisionSlide(bool val) { _collisionSlide = val; }
 	void activateMask(const Common::String &name, bool val);
 	YoukiManager &youkiManager() { return _youkiManager; }
 

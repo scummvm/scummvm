@@ -47,6 +47,8 @@ public:
 	void setTriangle(uint num, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3);
 	void triangle(uint num, TeVector3f32 &v1out, TeVector3f32 &v2out, TeVector3f32 &v3out) const;
 
+	TeVector3f32 slide(const TeVector3f32 &pos);
+
 	static void serialize(Common::WriteStream &stream, const TePickMesh2 &mesh);
 	static void deserialize(Common::ReadStream &stream, TePickMesh2 &mesh);
 
