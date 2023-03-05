@@ -1260,7 +1260,12 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		_needRestoreAfterOverlay = _useOldSrc;
 	}
 
-	undrawMouse();
+	// Add the area covered by the mouse cursor to the list of dirty rects if
+	// we have to redraw the mouse, or if the cursor is alpha-blended since
+	// alpha-blended cursors will happily blend into themselves if the surface
+	// under the cursor is not reset first
+	if (_cursorNeedsRedraw || _cursorFormat.aBits() > 1)
+		undrawMouse();
 
 #ifdef USE_OSD
 	updateOSD();
@@ -1301,7 +1306,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Only draw anything if necessary
-	if (actualDirtyRects > 0) {
+	if (actualDirtyRects > 0 || _cursorNeedsRedraw) {
 		SDL_Rect *r;
 		SDL_Rect dst;
 		uint32 bpp, srcPitch, dstPitch;
