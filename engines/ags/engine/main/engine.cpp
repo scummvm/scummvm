@@ -499,7 +499,9 @@ void show_preload() {
 		IDriverDependantBitmap *ddb = _G(gfxDriver)->CreateDDBFromBitmap(tsc, false, true);
 		ddb->SetStretch(view.GetWidth(), view.GetHeight());
 		_G(gfxDriver)->ClearDrawLists();
+		_G(gfxDriver)->BeginSpriteBatch(view);
 		_G(gfxDriver)->DrawSprite(0, 0, ddb);
+		_G(gfxDriver)->EndSpriteBatch();
 		render_to_screen();
 		_G(gfxDriver)->DestroyDDB(ddb);
 		delete splashsc;
