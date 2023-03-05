@@ -1001,7 +1001,7 @@ void AtariGraphicsManager::Cursor::setSurface(const void *buf, int w, int h, int
 	if (surface.w != w || surface.h != h || surface.format != format)
 		surface.create(w, h, format);
 
-	surface.copyRectToSurface(buf, surface.pitch, 0, 0, w, h);
+	surface.copyRectToSurface(buf, w * format.bytesPerPixel, 0, 0, w, h);
 
 	hotspotX = _hotspotX;
 	hotspotY = _hotspotY;
