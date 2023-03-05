@@ -28,12 +28,12 @@ namespace MM1 {
 namespace ViewsEnh {
 
 CharacterView::CharacterView() : CharacterBase("CharacterView") {
-	addButton(&_escSprite, Common::Point(90, 162), 0, KEYBIND_ESCAPE);
+	addButton(&_escSprite, Common::Point(105, 172), 0, KEYBIND_ESCAPE, true);
 }
 
 void CharacterView::draw() {
 	CharacterBase::draw();
-	writeString(120, 168, STRING["dialogs.misc.go_back"]);
+	writeString(120, 174, STRING["dialogs.misc.go_back"]);
 }
 
 } // namespace ViewsEnh

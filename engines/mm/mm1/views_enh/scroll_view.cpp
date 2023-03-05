@@ -43,14 +43,14 @@ ScrollView::ScrollView(const Common::String &name,
 
 int ScrollView::addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame,
-		const Common::KeyState &key) {
-	_buttons.push_back(Button(sprites, pos, frame, key));
+		const Common::KeyState &key, bool halfSize) {
+	_buttons.push_back(Button(sprites, pos, frame, key, halfSize));
 	return _buttons.size() - 1;
 }
 
 int ScrollView::addButton(Shared::Xeen::SpriteResource *sprites,
-		const Common::Point &pos, int frame, KeybindingAction action) {
-	_buttons.push_back(Button(sprites, pos, frame, action));
+		const Common::Point &pos, int frame, KeybindingAction action, bool halfSize) {
+	_buttons.push_back(Button(sprites, pos, frame, action, halfSize));
 	return _buttons.size() - 1;
 }
 
@@ -78,10 +78,22 @@ void ScrollView::draw() {
 	for (uint i = 0; i < _buttons.size(); ++i) {
 		const Button &btn = _buttons[i];
 		if (btn._enabled && btn._frame != -1) {
-			btn._sprites->draw(&s,
-				btn._frame + (_selectedButton == (int)i ? 1 : 0),
-				Common::Point(btn._bounds.left + _bounds.borderSize(),
-					btn._bounds.top + _bounds.borderSize()));
+			const Common::Point pt(btn._bounds.left + _bounds.borderSize(),
+				btn._bounds.top + _bounds.borderSize());
+			int frame = btn._frame + (_selectedButton == (int)i ? 1 : 0);
+
+			if (btn._halfSize) {
+				// Draw to a temporary surface, and then copy it over at 50% size
+				Graphics::ManagedSurface tmp(GLYPH_W, GLYPH_H);
+				tmp.setTransparentColor(254);
+				btn._sprites->draw(&tmp, frame, Common::Point(0, 0));
+				s.transBlitFrom(tmp, Common::Rect(0, 0, GLYPH_W, GLYPH_H),
+					Common::Rect(pt.x, pt.y, pt.x + GLYPH_W / 2, pt.y + GLYPH_H / 2),
+					254);
+
+			} else {
+				btn._sprites->draw(&s, frame, pt);
+			}
 		}
 	}
 }

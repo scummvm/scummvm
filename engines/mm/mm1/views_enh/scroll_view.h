@@ -29,8 +29,8 @@ namespace MM1 {
 namespace ViewsEnh {
 
 #define FRAME_BORDER_SIZE 8
-#define GLYPH_W 16
-#define GLYPH_H 16
+#define GLYPH_W 24
+#define GLYPH_H 20
 
 class ScrollView : public TextView {
 	struct Button {
@@ -40,18 +40,25 @@ class ScrollView : public TextView {
 		Common::KeyState _key;
 		KeybindingAction _action = KEYBIND_NONE;
 		bool _enabled = true;
+		bool _halfSize = false;
 
 		Button(Shared::Xeen::SpriteResource *sprites,
 			const Common::Point &pos, int frame,
-			const Common::KeyState &key) :
-			_sprites(sprites), _frame(frame), _key(key),
-			_bounds(Common::Rect(pos.x, pos.y, pos.x + GLYPH_W, pos.y + GLYPH_H)) {
+			const Common::KeyState &key, bool halfSize = false) :
+			_sprites(sprites), _frame(frame), _key(key), _halfSize(halfSize),
+			_bounds(Common::Rect(pos.x, pos.y,
+				pos.x + (halfSize ? GLYPH_W / 2 : GLYPH_W),
+				pos.y + (halfSize ? GLYPH_H / 2 : GLYPH_H))
+			) {
 		}
 		Button(Shared::Xeen::SpriteResource *sprites,
 			const Common::Point &pos, int frame,
-			KeybindingAction action) :
-			_sprites(sprites), _frame(frame), _action(action),
-			_bounds(Common::Rect(pos.x, pos.y, pos.x + GLYPH_W, pos.y + GLYPH_H)) {
+			KeybindingAction action, bool halfSize = false) :
+			_sprites(sprites), _frame(frame), _action(action), _halfSize(halfSize),
+			_bounds(Common::Rect(pos.x, pos.y,
+				pos.x + (halfSize ? GLYPH_W / 2 : GLYPH_W),
+				pos.y + (halfSize ? GLYPH_H / 2 : GLYPH_H))
+			) {
 		}
 		Button(const Common::Rect &r, const Common::KeyState &key) :
 			_sprites(nullptr), _bounds(r), _key(key) {
@@ -102,13 +109,14 @@ public:
 	 */
 	int addButton(Shared::Xeen::SpriteResource *sprites,
 		const Common::Point &pos, int frame,
-		const Common::KeyState &key);
+		const Common::KeyState &key, bool halfSize = false);
 
 	/**
 	 * Add a button for display
 	 */
 	int addButton(Shared::Xeen::SpriteResource *sprites,
-		const Common::Point &pos, int frame, KeybindingAction action);
+		const Common::Point &pos, int frame, KeybindingAction action,
+		bool halfSize = false);
 
 	/**
 	 * Add a button for display
