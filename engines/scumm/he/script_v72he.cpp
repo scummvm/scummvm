@@ -1190,9 +1190,8 @@ void ScummEngine_v72he::o72_arrayOps() {
 			dim2start++;
 		}
 		break;
-	case 138:		// SO_COMPLEX_ARRAY_MATH_OPERATION
+	case SO_COMPLEX_ARRAY_MATH_OPERATION:
 			{
-				// Borrowed code from script_v100he.cpp
 				// Used by script 84 (Send end of play info) in Backyard Football during online play.
 				int array2 = fetchScriptWord();
 				int array1 = fetchScriptWord();
