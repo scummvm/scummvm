@@ -30,7 +30,7 @@ namespace ViewsEnh {
 Characters::Characters() : ScrollView("Characters") {
 	_bounds.setBorderSize(10);
 	_escSprite.load("esc.icn");
-	addButton(&_escSprite, Common::Point(90, 162), 0, KEYBIND_ESCAPE);
+	addButton(&_escSprite, Common::Point(105, 172), 0, KEYBIND_ESCAPE, true);
 }
 
 void Characters::draw() {
@@ -74,7 +74,7 @@ void Characters::draw() {
 		writeString(0, 152, STRING["enhdialogs.characters.left_click"], ALIGN_MIDDLE);
 	}
 
-	writeString(120, 168, STRING["dialogs.misc.go_back"]);
+	writeString(120, 174, STRING["dialogs.misc.go_back"]);
 }
 
 bool Characters::msgMouseDown(const MouseDownMessage &msg) {

@@ -136,6 +136,13 @@ public:
 	}
 
 	/**
+	 * Set a button's position
+	 */
+	void setButtonPos(int buttonNum, const Common::Point &pos) {
+		_buttons[buttonNum]._bounds.moveTo(pos);
+	}
+
+	/**
 	 * Reset selected button
 	 */
 	void resetSelectedButton();
