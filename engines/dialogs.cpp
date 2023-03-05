@@ -323,7 +323,7 @@ ConfigDialog::ConfigDialog() :
 	//
 	int backendTabId = tab->addTab(_("Backend"), "GlobalConfig_Backend", false);
 
-	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GlobalConfig_Backend.Container", _domain);
+	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GlobalConfig_Backend.Container", gameDomain);
 
 	if (_backendOptions) {
 		_backendOptions->setParentDialog(this);
