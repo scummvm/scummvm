@@ -30,6 +30,11 @@ namespace ViewsEnh {
 #define LINE1_Y 5
 #define COL1_X 30
 #define COL3_X 220
+#define BACKPACK_Y 103
+
+CharacterBase::CharacterBase(const Common::String &name) : ScrollView(name) {
+	_escSprite.load("esc.icn");
+}
 
 void CharacterBase::printStats() {
 	const Character &c = *g_globals->_currCharacter;
@@ -115,21 +120,21 @@ void CharacterBase::printCondition() {
 
 void CharacterBase::printInventory() {
 	const Character &c = *g_globals->_currCharacter;
-	writeLine(12, STRING["stats.inventory"]);
+	writeString(0, BACKPACK_Y, STRING["stats.inventory"]);
 	for (int i = 0; i < 5; ++i)
 		writeChar('-');
 
 	// Print the equipped and backpack items
 	for (int i = 0; i < INVENTORY_COUNT; ++i) {
 		// Equippied item
-		writeLine(13 + i, Common::String::format("%c) ", '1' + i));
+		writeString(0, BACKPACK_Y + 9 * (i + 1), Common::String::format("%c) ", '1' + i));
 		if (c._equipped[i])
 			writeString(STRING[Common::String::format("stats.items.%d",
 				(int)c._equipped[i]._id)]);
 
 		// Backpack item
-		writeLine(13 + i, Common::String::format("%c) ", 'A' + i), ALIGN_LEFT,
-			160 - _innerBounds.left);
+		writeString(160 - _innerBounds.left, BACKPACK_Y + 9 * (i + 1),
+			Common::String::format("%c) ", 'A' + i));
 		if (c._backpack[i])
 			writeString(STRING[Common::String::format("stats.items.%d",
 			(int)c._backpack[i]._id)]);

@@ -34,13 +34,13 @@ namespace ViewsEnh {
  */
 class CharacterView : public CharacterBase {
 public:
-	CharacterView() : CharacterBase("CharacterView") {}
+	CharacterView();
 	virtual ~CharacterView() {}
 
-	void draw() override {
-		CharacterBase::draw();
-		escToGoBack();
-	}
+	/**
+	 * Draw the view
+	 */
+	void draw() override;
 };
 
 } // namespace Views

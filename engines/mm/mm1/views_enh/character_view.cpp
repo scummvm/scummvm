@@ -19,46 +19,23 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_CHARACTER_BASE_H
-#define MM1_VIEWS_ENH_CHARACTER_BASE_H
-
-#include "common/array.h"
-#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/character_view.h"
+#include "mm/mm1/utils/strings.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-/**
- * Base class for showing character information.
- * MM1 has three character dialogs:
- * 1) Character management from Create Characters
- * 2) Inn that allows simply viewing characters
- * 3) In-game character display
- */
-class CharacterBase : public ScrollView {
-private:
-	void printStats();
-	void printSummary();
-	void printInventory();
+CharacterView::CharacterView() : CharacterBase("CharacterView") {
+	addButton(&_escSprite, Common::Point(90, 162), 0, KEYBIND_ESCAPE);
+}
 
-protected:
-	Shared::Xeen::SpriteResource _escSprite;
-
-	void printCondition();
-
-public:
-	CharacterBase(const Common::String &name);
-	~CharacterBase() {}
-
-	bool msgAction(const ActionMessage &msg) override;
-	void draw() override;
-
-	void escToGoBack(int xp = 0) {}
-};
+void CharacterView::draw() {
+	CharacterBase::draw();
+	writeString(120, 168, STRING["dialogs.misc.go_back"]);
+}
 
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
-
-#endif
