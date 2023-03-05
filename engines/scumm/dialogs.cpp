@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/gui_options.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/events.h"
