@@ -143,6 +143,10 @@ const char gScummVMFeatures[] = ""
 	"Theora "
 #endif
 
+#ifdef USE_VPX
+	"VPX "
+#endif
+
 #ifdef USE_FAAD
 	"AAC "
 #endif
