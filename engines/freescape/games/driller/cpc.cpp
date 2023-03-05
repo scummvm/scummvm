@@ -125,37 +125,16 @@ void deobfuscateDrillerCPCVirtualWorlds(byte *memBuffer) {
 
 void DrillerEngine::loadAssetsCPCFullGame() {
 	Common::File file;
-
 	loadBundledImages();
-	byte *memBuffer;
-	int memSize = 0;
-	if (_variant & GF_CPC_VIRTUALWORLDS) {
-		memBuffer = parseEDSK("virtualworlds.A.cpc.edsk", memSize);
-		deobfuscateDrillerCPCVirtualWorlds(memBuffer);
-	} else
-		memBuffer = parseEDSK("driller.cpc.edsk", memSize);
-	assert(memSize > 0);
-	Common::SeekableReadStream *stream = new Common::MemoryReadStream((const byte*)memBuffer, memSize);
+	file.open("DRILL.BIN");
 
-	if (_variant & GF_CPC_RETAIL) {
-		loadMessagesFixedSize(stream, 0xb0f7, 14, 20);
-		loadFonts(stream, 0xeb14);
-		load8bitBinary(stream, 0xec76, 4);
-		loadGlobalObjects(stream, 0xacb2);
-	} else if (_variant & GF_CPC_RETAIL2) {
-		loadMessagesFixedSize(stream, 0xb0f7 - 0x3fab, 14, 20);
-		loadFonts(stream, 0xeb14 - 0x3fab);
-		load8bitBinary(stream, 0xaccb, 4);
-		loadGlobalObjects(stream, 0xacb2 - 0x3fab);
-	} else if (_variant & _variant & GF_CPC_VIRTUALWORLDS) {
-		load8bitBinary(stream, 0x11acb, 4);
-	} else if (_variant & GF_CPC_BUDGET) {
-		loadMessagesFixedSize(stream, 0x9ef7, 14, 20);
-		loadFonts(stream, 0xd914);
-		load8bitBinary(stream, 0xda76, 4);
-		loadGlobalObjects(stream, 0x9ab2);
-	} else
-		error("Unknown Amstrad CPC variant");
+	if (!file.isOpen())
+		error("Failed to open DRILL.BIN");
+
+	loadMessagesFixedSize(&file, 0x214c, 14, 20);
+	loadFonts(&file, 0x5b69);
+	loadGlobalObjects(&file, 0x1d07);
+	load8bitBinary(&file, 0x5ccb, 16);
 }
 
 void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
