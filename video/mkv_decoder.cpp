@@ -156,7 +156,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 i = 0;
 	const unsigned long j = _pTracks->GetTracksCount();
 
-	debug(1, "Number of tracks: %d", j);
+	debug(1, "Number of tracks: %lu", j);
 
 	enum {VIDEO_TRACK = 1, AUDIO_TRACK = 2};
 	_vTrack = -1;
