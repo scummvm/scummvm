@@ -129,7 +129,7 @@ void PlaySecondaryVideo::updateGraphics() {
 		_drawSurface.create(_fullFrame, _videoDescs[vpFrame].srcRect);
 		moveTo(_videoDescs[vpFrame].destRect);
 
-		if (_enableHotspot == kTrue) {
+		if (_videoHotspots == kVideoHotspots) {
 			_hotspot = _screenPosition;
 			_hotspot.clip(NancySceneState.getViewport().getBounds());
 			_hasHotspot = true;
@@ -168,7 +168,7 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 		// _paletteSize
 		// hasOverlayBitmap
 		// ignoreHoverAnimation??
-		_enableHotspot = (NancyFlag)stream.readUint16LE();
+		_videoHotspots = stream.readUint16LE();
 	}
 
 	_loopFirstFrame = stream.readUint16LE();

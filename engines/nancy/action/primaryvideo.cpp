@@ -38,17 +38,17 @@ namespace Nancy {
 namespace Action {
 
 void PlayPrimaryVideoChan0::ConditionFlag::read(Common::SeekableReadStream &stream) {
-	type = (ConditionType)stream.readByte();
+	type = stream.readByte();
 	flag.label = stream.readSint16LE();
-	flag.flag = (NancyFlag)stream.readByte();
+	flag.flag = stream.readByte();
 	orFlag = stream.readByte();
 }
 
 bool PlayPrimaryVideoChan0::ConditionFlag::isSatisfied() const {
 	switch (type) {
-	case ConditionFlag::kEventFlags:
+	case kFlagEvent:
 		return NancySceneState.getEventFlag(flag);
-	case ConditionFlag::kInventory:
+	case kFlagInventory:
 		return NancySceneState.hasItem(flag.label) == flag.flag;
 	default:
 		return false;
@@ -57,11 +57,11 @@ bool PlayPrimaryVideoChan0::ConditionFlag::isSatisfied() const {
 
 void PlayPrimaryVideoChan0::ConditionFlag::set() const {
 	switch (type) {
-	case ConditionFlag::kEventFlags:
+	case kFlagEvent:
 		NancySceneState.setEventFlag(flag);
 		break;
-	case ConditionFlag::kInventory:
-		if (flag.flag == kTrue) {
+	case kFlagInventory:
+		if (flag.flag == kInvHolding) {
 			NancySceneState.addItemToInventory(flag.label);
 		} else {
 			NancySceneState.removeItemFromInventory(flag.label);
@@ -185,8 +185,8 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 	ser.skip(1);
 	ser.syncAsByte(_conditionalResponseCharacterID);
 	ser.syncAsByte(_goodbyeResponseCharacterID);
-	ser.syncAsByte(_isDialogueExitScene);
-	ser.syncAsByte(_doNotPop);
+	ser.syncAsByte(_defaultNextScene);
+	ser.syncAsByte(_popNextScene);
 	_sceneChange.readData(stream);
 
 	ser.skip(0x35, kGameTypeVampire, kGameTypeVampire);
@@ -224,9 +224,9 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 		_flagsStructs.push_back(FlagsStruct());
 		FlagsStruct &flagsStruct = _flagsStructs.back();
 		flagsStruct.conditions.read(stream);
-		flagsStruct.flagToSet.type = (ConditionFlag::ConditionType)stream.readByte();
+		flagsStruct.flagToSet.type = stream.readByte();
 		flagsStruct.flagToSet.flag.label = stream.readSint16LE();
-		flagsStruct.flagToSet.flag.flag = (NancyFlag)stream.readByte();
+		flagsStruct.flagToSet.flag.flag = stream.readByte();
 	}
 }
 
@@ -310,7 +310,7 @@ void PlayPrimaryVideoChan0::execute() {
 			} else {
 				// NPC has finished talking, we have responses
 				for (uint i = 0; i < 30; ++i) {
-					if (NancySceneState.getLogicCondition(i, kTrue)) {
+					if (NancySceneState.getLogicCondition(i, kLogUsed)) {
 						_pickedResponse = i;
 						break;
 					}
@@ -351,9 +351,9 @@ void PlayPrimaryVideoChan0::execute() {
 			} else {
 				// Evaluate scene branch structs here
 
-				if (_isDialogueExitScene == kFalse) {
+				if (_defaultNextScene == kDefaultNextSceneEnabled) {
 					NancySceneState.changeScene(_sceneChange);
-				} else if (_doNotPop == kFalse) {
+				} else if (_popNextScene == kPopNextScene) {
 					// Exit dialogue
 					NancySceneState.popScene();
 				}
@@ -402,7 +402,7 @@ void PlayPrimaryVideoChan0::addConditionalDialogue() {
 			newResponse.soundName = res.soundID;
 			newResponse.text = g_nancy->getStaticData().conditionalDialogueTexts[res.textID];
 			newResponse.sceneChange.sceneID = res.sceneID;
-			newResponse.sceneChange.doNotStartSound = true;
+			newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
 		}
 	}
 }
@@ -447,7 +447,7 @@ void PlayPrimaryVideoChan0::addGoodbye() {
 	// Set an event flag if applicable
 	NancySceneState.setEventFlag(sceneChange.flagToSet);
 
-	newResponse.sceneChange.doNotStartSound = true;
+	newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
 }
 
 } // End of namespace Action

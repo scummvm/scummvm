@@ -45,7 +45,7 @@ class InventoryBox : public RenderObject {
 public:
 	struct ItemDescription {
 		Common::String name; // 0x00
-		byte oneTimeUse = 0; // 0x14
+		byte keepItem = kInvItemUseThenLose; // 0x14
 		Common::Rect sourceRect; // 0x16
 	};
 

@@ -43,10 +43,10 @@ void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 
 	stream.skip(0x2);
-	_isTransparent = (NancyFlag)(stream.readUint16LE());
-	_doNotChangeScene = (NancyFlag)(stream.readUint16LE());
-	_isReverse = (NancyFlag)(stream.readUint16LE());
-	_isLooping = (NancyFlag)(stream.readUint16LE());
+	_transparency = stream.readUint16LE();
+	_animationSceneChange = stream.readUint16LE();
+	_playDirection = stream.readUint16LE();
+	_loop = stream.readUint16LE();
 	_firstFrame = stream.readUint16LE();
 	_loopFirstFrame = stream.readUint16LE();
 	_loopLastFrame = stream.readUint16LE();
@@ -55,10 +55,10 @@ void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
 
 	if (_isInterruptible) {
 		_interruptCondition.label = stream.readSint16LE();
-		_interruptCondition.flag = (NancyFlag)stream.readUint16LE();
+		_interruptCondition.flag = stream.readUint16LE();
 	} else {
-		_interruptCondition.label = -1;
-		_interruptCondition.flag = kFalse;
+		_interruptCondition.label = kEvNoEvent;
+		_interruptCondition.flag = kEvNotOccurred;
 	}
 
 	_sceneChange.readData(stream);
@@ -97,8 +97,8 @@ void PlayStaticBitmapAnimation::execute() {
 		if (_nextFrameTime <= _currentFrameTime) {
 			// World's worst if statement
 			if (NancySceneState.getEventFlag(_interruptCondition) ||
-				(   (((_currentFrame == _loopLastFrame) && (_isReverse == kFalse) && (_isLooping == kFalse)) ||
-					((_currentFrame == _loopFirstFrame) && (_isReverse == kTrue) && (_isLooping == kFalse))) &&
+				(   (((_currentFrame == _loopLastFrame) && (_playDirection == kPlayAnimationForward) && (_loop == kPlayAnimationOnce)) ||
+					((_currentFrame == _loopFirstFrame) && (_playDirection == kPlayAnimationReverse) && (_loop == kPlayAnimationOnce))) &&
 						!g_nancy->_sound->isSoundPlaying(_sound))   ) {
 
 				_state = kActionTrigger;
@@ -128,7 +128,7 @@ void PlayStaticBitmapAnimation::execute() {
 				_nextFrameTime = _currentFrameTime + _frameTime;
 				setFrame(_currentFrame);
 
-				if (_isReverse == kTrue) {
+				if (_playDirection == kPlayAnimationReverse) {
 					--_currentFrame;
 					_currentFrame = _currentFrame < _loopFirstFrame ? _loopLastFrame : _currentFrame;
 					return;
@@ -158,7 +158,7 @@ void PlayStaticBitmapAnimation::execute() {
 	}
 	case kActionTrigger:
 		_triggerFlags.execute();
-		if (_doNotChangeScene == kFalse) {
+		if (_animationSceneChange == kPlayAnimationSceneChange) {
 			NancySceneState.changeScene(_sceneChange);
 			finishExecution();
 		}
@@ -176,7 +176,7 @@ void PlayStaticBitmapAnimation::setFrame(uint frame) {
 	_currentFrame = frame;
 	_drawSurface.create(_fullSurface, _srcRects[frame]);
 
-	setTransparent(_isTransparent == kTrue);
+	setTransparent(_transparency == kPlayAnimationPlain);
 
 	_needsRedraw = true;
 }

@@ -49,11 +49,11 @@ public:
 	Common::Array<byte> _correctSequence; // 0x1EE, 15 bytes
 	Nancy::SoundDescription _clickSound; // 0x1FD, kNormal
 	SceneChangeDescription _solveExitScene; // 0x21F
-	EventFlagDescription _flagOnSolve; // 0x229
+	FlagDescription _flagOnSolve; // 0x229
 	uint16 _solveSoundDelay = 0; // 0x22C
 	Nancy::SoundDescription _solveSound; // 0x22E
 	SceneChangeDescription _exitScene; // 0x250
-	EventFlagDescription _flagOnExit; // 0x25A
+	FlagDescription _flagOnExit; // 0x25A
 	Common::Rect _exitHotspot; // 0x25D
 
 	SolveState _solveState = kNotSolved;

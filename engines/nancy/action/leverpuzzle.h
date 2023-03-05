@@ -49,11 +49,11 @@ public:
 	SoundDescription _moveSound; // 0x100
 	SoundDescription _noMoveSound; // 0x122
 	SceneChangeDescription _solveExitScene; // 0x144
-	EventFlagDescription _flagOnSolve; // 0x14E
+	FlagDescription _flagOnSolve; // 0x14E
 	uint16 _solveSoundDelay = 0; // 0x151
 	SoundDescription _solveSound; // 0x153
 	SceneChangeDescription _exitScene; // 0x175
-	EventFlagDescription _flagOnExit; // 0x17F
+	FlagDescription _flagOnExit; // 0x17F
 	Common::Rect _exitHotspot; // 0x182
 
 	Common::Array<byte> _playerSequence;

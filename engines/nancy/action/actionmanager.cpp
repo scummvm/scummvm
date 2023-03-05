@@ -77,7 +77,7 @@ void ActionManager::handleInput(NancyInput &input) {
 
 					// Re-add the object to the inventory unless it's marked as a one-time use
 					if (rec->_itemRequired == heldItem && rec->_itemRequired != -1) {
-						if (NancySceneState.getInventoryBox().getItemDescription(heldItem).oneTimeUse != 0) {
+						if (NancySceneState.getInventoryBox().getItemDescription(heldItem).keepItem == kInvItemKeepAlways) {
 							NancySceneState.getInventoryBox().addItem(heldItem);
 						}
 
@@ -166,16 +166,16 @@ void ActionManager::processActionRecords() {
 						break;
 					case DependencyType::kInventory:
 						switch (dep.condition) {
-						case kFalse:
+						case kInvEmpty:
 							// Item not in possession or held
-							if (NancySceneState._flags.items[dep.label] == kFalse &&
+							if (NancySceneState._flags.items[dep.label] == kInvEmpty &&
 								dep.label != NancySceneState._flags.heldItem) {
 								dep.satisfied = true;
 							}
 
 							break;
-						case kTrue:
-							if (NancySceneState._flags.items[dep.label] == kTrue ||
+						case kInvHolding:
+							if (NancySceneState._flags.items[dep.label] == kInvHolding ||
 								dep.label == NancySceneState._flags.heldItem) {
 								dep.satisfied = true;
 							}
@@ -187,7 +187,7 @@ void ActionManager::processActionRecords() {
 
 						break;
 					case DependencyType::kEventFlag:
-						if (NancySceneState.getEventFlag(dep.label, (NancyFlag)dep.condition)) {
+						if (NancySceneState.getEventFlag(dep.label, dep.condition)) {
 							// nancy1 has code for some timer array that never gets used
 							// and is discarded from nancy2 onward
 							dep.satisfied = true;
@@ -286,15 +286,15 @@ void ActionManager::processActionRecords() {
 
 						record->_itemRequired = dep.label;
 
-						if (dep.condition == 1) {
-							record->_itemRequired += 100;
+						if (dep.condition == kCursInvNotHolding) {
+							record->_itemRequired += kCursInvNotHoldingOffset;
 						}
 
 						dep.satisfied = true;
 						break;
 					}
 					case DependencyType::kTimeOfDay:
-						if (dep.label == (byte)NancySceneState._timers.timeOfDay) {
+						if (dep.label == NancySceneState._timers.timeOfDay) {
 							dep.satisfied = true;
 						}
 

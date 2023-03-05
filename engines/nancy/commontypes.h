@@ -34,7 +34,47 @@ namespace Nancy {
 
 class NancyEngine;
 
-enum NancyFlag : byte { kFalse = 1, kTrue = 2 };
+// The original engine used a large amount of #defines for numerical constants,
+// which can be found listed inside the gameflow.h file shipping with many of
+// the titles (the Russian variant of nancy1 has it as a separate file, while
+// nancy2 and above embed it within the ciftree).
+//
+// Other, more specific constants are declared within their related classes,
+// so as not to litter the namespace
+
+static const int8 kFlagNoLabel			= -1;
+static const int8 kEvNoEvent			= -1;
+static const int8 kFrNoFrame			= -1;
+
+// Event flags
+static const byte kEvNotOccurred 		= 1;
+static const byte kEvOccurred 			= 2;
+
+// Logic conditions
+static const byte kLogUsed				= 1;
+static const byte kLogNotUsed			= 2;
+
+// Inventory items flags
+static const byte kInvEmpty				= 1;
+static const byte kInvHolding			= 2;
+
+// Inventory items use types
+static const byte kInvItemUseThenLose	= 0;
+static const byte kInvItemKeepAlways	= 1;
+
+// Dependency types
+static const byte kFlagEvent			= 1;
+static const byte kFlagInventory		= 2;
+static const byte kFlagCursor			= 3;
+
+// Scene sound flags
+static const byte kContinueSceneSound	= 1;
+static const byte kLoadSceneSound		= 0;
+
+// Clock bump types
+static const byte kAbsoluteClockBump 	= 1;
+static const byte kRelativeClockBump 	= 2;
+
 enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
 
 // Separate namespace to remove possible clashes
@@ -66,15 +106,15 @@ struct SceneChangeDescription {
 	uint16 sceneID = 0;
 	uint16 frameID = 0;
 	uint16 verticalOffset = 0;
-	bool doNotStartSound = false;
+	uint16 continueSceneSound = 0;
 
 	void readData(Common::SeekableReadStream &stream, bool longFormat = false);
 };
 
-// Describes a single event flag change or comparison
-struct EventFlagDescription {
+// Describes a single flag change or comparison
+struct FlagDescription {
 	int16 label;
-	NancyFlag flag;
+	byte flag;
 };
 
 // Describes a hotspot
@@ -96,14 +136,14 @@ struct BitmapDescription {
 
 // Describes 10 event flag changes to be executed when an action is triggered
 struct MultiEventFlagDescription {
-	EventFlagDescription descs[10];
+	FlagDescription descs[10];
 
 	void readData(Common::SeekableReadStream &stream);
 	void execute();
 };
 
 struct SecondaryVideoDescription {
-	int16 frameID = -1;
+	int16 frameID = kFrNoFrame;
 	Common::Rect srcRect;
 	Common::Rect destRect;
 	// 2 unknown/empty rects
@@ -131,16 +171,16 @@ struct ConditionalDialogue {
     byte textID;
     uint16 sceneID;
     Common::String soundID;
-	Common::Array<EventFlagDescription> flagConditions;
-	Common::Array<EventFlagDescription> inventoryConditions;
+	Common::Array<FlagDescription> flagConditions;
+	Common::Array<FlagDescription> inventoryConditions;
 
 	void readData(Common::SeekableReadStream &stream);
 };
 
 struct GoodbyeSceneChange {
 	Common::Array<uint16> sceneIDs;
-	Common::Array<EventFlagDescription> flagConditions;
-	EventFlagDescription flagToSet;
+	Common::Array<FlagDescription> flagConditions;
+	FlagDescription flagToSet;
 
 	void readData(Common::SeekableReadStream &stream);
 };
@@ -157,8 +197,8 @@ struct Hint {
     int16 hintWeight;
     SceneChangeDescription sceneChange;
     Common::String soundIDs[3];
-    Common::Array<EventFlagDescription> flagConditions;
-	Common::Array<EventFlagDescription> inventoryConditions;
+    Common::Array<FlagDescription> flagConditions;
+	Common::Array<FlagDescription> inventoryConditions;
 
 	void readData(Common::SeekableReadStream &stream);
 };

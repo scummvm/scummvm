@@ -58,17 +58,17 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveExitScene.readData(stream);
 	stream.skip(2);
 	_flagOnSolve.label = stream.readSint16LE();
-	_flagOnSolve.flag = (NancyFlag)stream.readByte();
+	_flagOnSolve.flag = stream.readByte();
 	_solveSound.read(stream, SoundDescription::kNormal);
 	_failExitScene.readData(stream);
 	stream.skip(2);
 	_flagOnFail.label = stream.readSint16LE();
-	_flagOnFail.flag = (NancyFlag)stream.readByte();
+	_flagOnFail.flag = stream.readByte();
 	_failSound.read(stream, SoundDescription::kNormal);
 	_exitScene.readData(stream);
 	stream.skip(2);
 	_flagOnExit.label = stream.readSint16LE();
-	_flagOnExit.flag = (NancyFlag)stream.readByte();
+	_flagOnExit.flag = stream.readByte();
 	readRect(stream, _exitHotspot);
 }
 

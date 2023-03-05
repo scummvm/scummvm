@@ -89,7 +89,7 @@ void InventoryBox::init() {
 		_itemDescriptions.push_back(ItemDescription());
 		ItemDescription &desc = _itemDescriptions.back();
 		desc.name = Common::String(itemName);
-		desc.oneTimeUse = stream.readUint16LE();
+		desc.keepItem = stream.readUint16LE();
 		readRect(stream, desc.sourceRect);
 	}
 

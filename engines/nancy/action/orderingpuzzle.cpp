@@ -113,7 +113,7 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 	_exitScene.readData(stream, ser.getVersion() == kGameTypeVampire);
 	stream.skip(2); // shouldStopRendering, useless
 	_flagOnExit.label = stream.readSint16LE();
-	_flagOnExit.flag = (NancyFlag)stream.readByte();
+	_flagOnExit.flag = stream.readByte();
 	readRect(stream, _exitHotspot);
 }
 

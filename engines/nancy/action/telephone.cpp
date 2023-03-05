@@ -89,11 +89,11 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	_reloadScene.readData(stream);
 	stream.skip(2);
 	_flagOnReload.label = stream.readSint16LE();
-	_flagOnReload.flag = (NancyFlag)stream.readUint16LE();
+	_flagOnReload.flag = stream.readUint16LE();
 	_exitScene.readData(stream);
 	stream.skip(2);
 	_flagOnExit.label = stream.readSint16LE();
-	_flagOnExit.flag = (NancyFlag)stream.readUint16LE();
+	_flagOnExit.flag = stream.readUint16LE();
 	readRect(stream, _exitHotspot);
 
 	uint numCalls = stream.readUint16LE();
@@ -115,7 +115,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 		call.sceneChange.readData(stream);
 		stream.skip(2);
 		call.flag.label = stream.readSint16LE();
-		call.flag.flag = (NancyFlag)stream.readUint16LE();
+		call.flag.flag = stream.readUint16LE();
 	}
 }
 

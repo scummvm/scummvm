@@ -33,7 +33,7 @@ void SceneChangeDescription::readData(Common::SeekableReadStream &stream, bool l
 	if (longFormat) {
 		stream.skip(3);
 	}
-	doNotStartSound = (bool)(stream.readUint16LE());
+	continueSceneSound = stream.readUint16LE();
 }
 
 void HotspotDescription::readData(Common::SeekableReadStream &stream) {
@@ -50,7 +50,7 @@ void BitmapDescription::readData(Common::SeekableReadStream &stream) {
 void MultiEventFlagDescription::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < 10; ++i) {
 		descs[i].label = stream.readSint16LE();
-		descs[i].flag = (NancyFlag)stream.readUint16LE();
+		descs[i].flag = stream.readUint16LE();
 	}
 }
 
@@ -113,14 +113,14 @@ void ConditionalDialogue::readData(Common::SeekableReadStream &stream) {
 	flagConditions.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
 		flagConditions[i].label = stream.readSint16LE();
-		flagConditions[i].flag = (NancyFlag)stream.readByte();
+		flagConditions[i].flag = stream.readByte();
 	}
 
 	num = stream.readUint16LE();
 	inventoryConditions.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
 		inventoryConditions[i].label = stream.readSint16LE();
-		inventoryConditions[i].flag = (NancyFlag)stream.readByte();
+		inventoryConditions[i].flag = stream.readByte();
 	}
 }
 
@@ -135,11 +135,11 @@ void GoodbyeSceneChange::readData(Common::SeekableReadStream &stream) {
 	flagConditions.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
 		flagConditions[i].label = stream.readSint16LE();
-		flagConditions[i].flag = (NancyFlag)stream.readByte();
+		flagConditions[i].flag = stream.readByte();
 	}
 
 	flagToSet.label = stream.readSint16LE();
-	flagToSet.flag = (NancyFlag)stream.readByte();
+	flagToSet.flag = stream.readByte();
 }
 
 void Goodbye::readData(Common::SeekableReadStream &stream) {
@@ -164,14 +164,14 @@ void Hint::readData(Common::SeekableReadStream &stream) {
 	flagConditions.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
 		flagConditions[i].label = stream.readSint16LE();
-		flagConditions[i].flag = (NancyFlag)stream.readByte();
+		flagConditions[i].flag = stream.readByte();
 	}
 
 	num = stream.readUint16LE();
 	inventoryConditions.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
 		inventoryConditions[i].label = stream.readSint16LE();
-		inventoryConditions[i].flag = (NancyFlag)stream.readByte();
+		inventoryConditions[i].flag = stream.readByte();
 	}
 }
 

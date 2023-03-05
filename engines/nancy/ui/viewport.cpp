@@ -180,7 +180,7 @@ void Viewport::handleInput(NancyInput &input) {
 	_movementLastFrame = direction;
 }
 
-void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint verticalScroll, NancyFlag dontWrap, uint16 format, const Common::String &palette) {
+void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint verticalScroll, byte panningType, uint16 format, const Common::String &palette) {
 	if (_decoder.isVideoLoaded()) {
 		_decoder.close();
 	}
@@ -205,7 +205,7 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 
 	_movementLastFrame = 0;
 	_nextMovementTime = 0;
-	_dontWrap = dontWrap;
+	_panningType = panningType;
 }
 
 void Viewport::setPalette(const Common::String &paletteName) {
@@ -236,7 +236,7 @@ void Viewport::setFrame(uint frameNr) {
 	_needsRedraw = true;
 	_currentFrame = frameNr;
 
-	if (_dontWrap == kTrue && !((_edgesMask & kLeft) && (_edgesMask & kRight))) {
+	if (_panningType == kPanLeftRight && !((_edgesMask & kLeft) && (_edgesMask & kRight))) {
 		if (_currentFrame == 0) {
 			disableEdges(kRight);
 		} else if (_currentFrame == getFrameCount() - 1) {

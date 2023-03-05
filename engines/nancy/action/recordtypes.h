@@ -78,14 +78,12 @@ protected:
 
 class HotMultiframeMultisceneChange : public Unimplemented {
 public:
-	enum ConditionType { kEventFlag = 1, kItem = 2, kItemHeld = 3 };
-
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
 	SceneChangeDescription _onTrue;
 	SceneChangeDescription _onFalse;
-	ConditionType _condType;
+	byte _condType;
 	uint16 _conditionID;
 	byte _conditionPayload;
 	Common::Array<HotspotDescription> _hotspots;
@@ -181,7 +179,7 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	NancyFlag _relative;
+	byte _relative;
 	uint16 _hours;
 	uint16 _minutes;
 
@@ -315,7 +313,7 @@ public:
 	void execute() override;
 
 	uint16 _difficulty = 0;
-	EventFlagDescription _flag;
+	FlagDescription _flag;
 
 protected:
 	Common::String getRecordTypeName() const override { return "DifficultyLevel"; }
@@ -352,7 +350,7 @@ public:
 
 	SoundDescription _sound;
 	SceneChangeDescription _sceneChange;
-	EventFlagDescription _flagOnTrigger;
+	FlagDescription _flagOnTrigger;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PlayDigiSoundAndDie"; }
@@ -376,7 +374,7 @@ public:
 
 	SoundDescription _sound; // 0x0
 	SceneChangeDescription _sceneChange; // 0x22
-	EventFlagDescription _flag; // 0x2A
+	FlagDescription _flag; // 0x2A
 	Common::Array<HotspotDescription> _hotspots; // 0x31
 
 protected:

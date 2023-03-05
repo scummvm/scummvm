@@ -37,11 +37,9 @@ namespace Action {
 class PlayPrimaryVideoChan0 : public ActionRecord, public RenderObject {
 
 struct ConditionFlag {
-enum ConditionType : byte { kNone = 0, kEventFlags = 1, kInventory = 2 };
-
-	ConditionType type;
-	EventFlagDescription flag;
-	bool orFlag;
+	byte type;
+	FlagDescription flag;
+	byte orFlag;
 
 	void read(Common::SeekableReadStream &stream);
 	bool isSatisfied() const;
@@ -60,7 +58,7 @@ struct ResponseStruct {
 	Common::String text; // 0x06
 	Common::String soundName; // 0x196
 	SceneChangeDescription sceneChange; // 0x1A0
-	EventFlagDescription flagDesc; // 0x1A8
+	FlagDescription flagDesc; // 0x1A8
 };
 
 struct FlagsStruct {
@@ -68,7 +66,13 @@ struct FlagsStruct {
 	ConditionFlag flagToSet;
 };
 
-public:
+public:	
+	static const byte kDefaultNextSceneEnabled	= 1;
+	static const byte kDefaultNextSceneDisabled	= 2;
+
+	static const byte kPopNextScene				= 1;
+	static const byte kNoPopNextScene			= 2;
+
 	PlayPrimaryVideoChan0() : RenderObject(8) {}
 	virtual ~PlayPrimaryVideoChan0();
 
@@ -94,8 +98,8 @@ public:
 
 	byte _conditionalResponseCharacterID = 0;
 	byte _goodbyeResponseCharacterID = 0;
-	NancyFlag _isDialogueExitScene = NancyFlag::kFalse;
-	NancyFlag _doNotPop = NancyFlag::kFalse;
+	byte _defaultNextScene = kDefaultNextSceneEnabled;
+	byte _popNextScene = kNoPopNextScene;
 	SceneChangeDescription _sceneChange;
 
 	Common::Array<ResponseStruct> _responses;

@@ -34,6 +34,9 @@ namespace Action {
 // different animations depending on whether the NPC is hovered by the mouse
 class PlaySecondaryVideo : public ActionRecord, public RenderObject {
 public:
+	static const byte kNoVideoHotspots	= 1;
+	static const byte kVideoHotspots	= 2;
+
 	enum HoverState { kNoHover, kHover, kEndHover };
 
 	PlaySecondaryVideo(uint chan) : RenderObject(8), channel(chan) {}
@@ -52,7 +55,7 @@ public:
 	// Common::String _bitmapOverlayFilename
 
 	// TVD only
-	NancyFlag _enableHotspot = kTrue;
+	uint16 _videoHotspots = kVideoHotspots;
 
 	uint16 _loopFirstFrame = 0; // 0x1E
 	uint16 _loopLastFrame = 0; // 0x20

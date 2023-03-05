@@ -54,10 +54,10 @@ public:
 	Common::Array<Common::Array<int16>> _correctTileOrder; // 0x48E, size 0x48
 	SoundDescription _clickSound; // 0x4D6
 	SceneChangeDescription _solveExitScene; // 0x4F8
-	EventFlagDescription _flagOnSolve; // 0x502
+	FlagDescription _flagOnSolve; // 0x502
 	SoundDescription _solveSound; // 0x505
 	SceneChangeDescription _exitScene; // 0x527
-	EventFlagDescription _flagOnExit; // 0x531
+	FlagDescription _flagOnExit; // 0x531
 	Common::Rect _exitHotspot; // 0x534
 
 	SolveState _solveState = kNotSolved;

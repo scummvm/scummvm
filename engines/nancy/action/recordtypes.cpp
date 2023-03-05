@@ -107,7 +107,7 @@ void Hot1FrSceneChange::execute() {
 void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream) {
 	_onTrue.readData(stream);
 	_onFalse.readData(stream);
-	_condType = (ConditionType)stream.readByte();
+	_condType = stream.readByte();
 	_conditionID = stream.readUint16LE();
 	_conditionPayload = stream.readByte();
 	uint numHotspots = stream.readUint16LE();
@@ -139,17 +139,17 @@ void HotMultiframeMultisceneChange::execute() {
 	case kActionTrigger: {
 		bool conditionMet = false;
 		switch (_condType) {
-		case kEventFlag:
-			if (NancySceneState.getEventFlag(_conditionID, (NancyFlag)_conditionPayload)) {
+		case kFlagEvent:
+			if (NancySceneState.getEventFlag(_conditionID, _conditionPayload)) {
 				conditionMet = true;
 			}
 			break;
-		case kItem:
+		case kFlagInventory:
 			if (NancySceneState.hasItem(_conditionID) == _conditionPayload) {
 				conditionMet = true;
 			}
 			break;
-		case kItemHeld:
+		case kFlagCursor:
 			if (NancySceneState.getHeldItem() == _conditionPayload) {
 				conditionMet = true;
 			}
@@ -277,7 +277,7 @@ void TextBoxClear::readData(Common::SeekableReadStream &stream) {
 }
 
 void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
-	_relative = (NancyFlag)stream.readByte();
+	_relative = stream.readByte();
 	_hours = stream.readUint16LE();
 	_minutes = stream.readUint16LE();
 }
@@ -423,7 +423,7 @@ void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 }
 
 void AddInventoryNoHS::execute() {
-	if (NancySceneState.hasItem(_itemID) == kFalse) {
+	if (NancySceneState.hasItem(_itemID) == kInvHolding) {
 		NancySceneState.addItemToInventory(_itemID);
 	}
 
@@ -437,7 +437,7 @@ void RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 void DifficultyLevel::readData(Common::SeekableReadStream &stream) {
 	_difficulty = stream.readUint16LE();
 	_flag.label = stream.readSint16LE();
-	_flag.flag = (NancyFlag)stream.readUint16LE();
+	_flag.flag = stream.readUint16LE();
 }
 
 void DifficultyLevel::execute() {
@@ -522,7 +522,7 @@ void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);
 	
 	_flagOnTrigger.label = stream.readSint16LE();
-	_flagOnTrigger.flag = (NancyFlag)stream.readByte();
+	_flagOnTrigger.flag = stream.readByte();
 	stream.skip(2);
 }
 
@@ -569,10 +569,10 @@ void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
 	if (g_nancy->getGameType() != kGameTypeVampire) {
 		_sceneChange.readData(stream);
 		_flag.label = stream.readSint16LE();
-		_flag.flag = (NancyFlag)stream.readByte();
+		_flag.flag = stream.readByte();
 		stream.skip(2);
 	} else {
-		_flag.label = -1;
+		_flag.label = kEvNoEvent;
 		_sceneChange.sceneID = 9999;
 	}
 
@@ -665,7 +665,7 @@ void HintSystem::selectHint() {
 		bool satisfied = true;
 
 		for (const auto &flag : hint.flagConditions) {
-			if (flag.label == -1) {
+			if (flag.label == kFlagNoLabel) {
 				break;
 			}
 
@@ -676,7 +676,7 @@ void HintSystem::selectHint() {
 		}
 
 		for (const auto &inv : hint.inventoryConditions) {
-			if (inv.label == -1) {
+			if (inv.label == kFlagNoLabel) {
 				break;
 			}
 

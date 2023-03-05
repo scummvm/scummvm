@@ -84,13 +84,13 @@ void LeverPuzzle::readData(Common::SeekableReadStream &stream) {
 	_solveExitScene.readData(stream);
 	stream.skip(2);
 	_flagOnSolve.label = stream.readSint16LE();
-	_flagOnSolve.flag = (NancyFlag)stream.readByte();
+	_flagOnSolve.flag = stream.readByte();
 	_solveSoundDelay = stream.readUint16LE();
 	_solveSound.read(stream, SoundDescription::kNormal);
 	_exitScene.readData(stream);
 	stream.skip(2);
 	_flagOnExit.label = stream.readSint16LE();
-	_flagOnExit.flag = (NancyFlag)stream.readByte();
+	_flagOnExit.flag = stream.readByte();
 	readRect(stream, _exitHotspot);
 }
 

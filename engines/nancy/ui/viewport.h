@@ -40,6 +40,10 @@ namespace UI {
 
 class Viewport : public Nancy::RenderObject {
 public:
+	static const byte kPanNone		= 0;
+	static const byte kPan360		= 1;
+	static const byte kPanLeftRight	= 2;
+
 	Viewport() :
 		RenderObject(6),
 		_movementLastFrame(0),
@@ -47,14 +51,14 @@ public:
 		_currentFrame(0),
 		_videoFormat(0),
 		_stickyCursorPos(-1, -1),
-		_dontWrap(kFalse) {}
+		_panningType(kPanNone) {}
 
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
 	void init() override;
 	void handleInput(NancyInput &input);
 
-	void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, NancyFlag dontWrap = kFalse, uint16 format = 2, const Common::String &palette = Common::String());
+	void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, byte panningType = kPanNone, uint16 format = 2, const Common::String &palette = Common::String());
 	void setPalette(const Common::String &paletteName);
 	void setPalette(const Common::String &paletteName, uint paletteStart, uint paletteSize);
 
@@ -88,7 +92,7 @@ protected:
 	byte _movementLastFrame;
 	Time _nextMovementTime;
 
-	NancyFlag _dontWrap;
+	byte _panningType;
 
 	AVFDecoder _decoder;
 	uint16 _currentFrame;

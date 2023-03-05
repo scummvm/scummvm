@@ -95,8 +95,8 @@ void Map::init() {
 	_button->init();
 	_button->setVisible(true);
 
-	if (NancySceneState.getEventFlag(40, kTrue) && // Has set up sting
-		NancySceneState.getEventFlag(95, kTrue)) { // Connie chickens
+	if (NancySceneState.getEventFlag(40, kEvOccurred) && // Has set up sting
+		NancySceneState.getEventFlag(95, kEvOccurred)) { // Connie chickens
 		_mapID = 1;
 	} else {
 		_mapID = 0;

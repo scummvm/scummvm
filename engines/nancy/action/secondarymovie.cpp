@@ -36,7 +36,7 @@ namespace Action {
 PlaySecondaryMovie::~PlaySecondaryMovie() {
 	_decoder.close();
 
-	if (_hideMouse == kTrue && _unknown == 5) {
+	if (_playerCursorAllowed == kNoPlayerCursorAllowed && _videoSceneChange == kMovieSceneChange) {
 		g_nancy->setMouseEnabled(true);
 	}
 }
@@ -51,16 +51,16 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 
 	ser.skip(0x2); // videoPlaySource
 
-	ser.syncAsUint16LE(_isTransparent, kGameTypeVampire, kGameTypeVampire);
+	ser.syncAsUint16LE(_transparency, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(4, kGameTypeVampire, kGameTypeVampire); // paletteStart, paletteSize
 	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // hasBitmapOverlaySurface
 	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // unknown, probably related to playing a sfx
 
 	ser.skip(6, kGameTypeNancy1);
 
-	ser.syncAsUint16LE(_unknown);
-	ser.syncAsUint16LE(_hideMouse);
-	ser.syncAsUint16LE(_isReverse);
+	ser.syncAsUint16LE(_videoSceneChange);
+	ser.syncAsUint16LE(_playerCursorAllowed);
+	ser.syncAsUint16LE(_playDirection);
 	ser.syncAsUint16LE(_firstFrame);
 	ser.syncAsUint16LE(_lastFrame);
 
@@ -98,7 +98,7 @@ void PlaySecondaryMovie::init() {
 		GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
 	}
 
-	if (_isTransparent) {
+	if (_transparency == kPlayMovieTransparent) {
 		setTransparent(true);
 		_fullFrame.setTransparentColor(_drawSurface.getTransparentColor());
 	}
@@ -116,7 +116,7 @@ void PlaySecondaryMovie::updateGraphics() {
 	if (!_decoder.isPlaying() && _isVisible && !_isFinished) {
 		_decoder.start();
 
-		if (_isReverse == kTrue) {
+		if (_playDirection == kPlayMovieReverse) {
 			_decoder.setRate(-_decoder.getRate());
 			_decoder.seekToFrame(_lastFrame);
 		} else {
@@ -145,8 +145,8 @@ void PlaySecondaryMovie::updateGraphics() {
 		}
 	}
 
-	if ((_decoder.getCurFrame() == _lastFrame && _isReverse == kFalse) ||
-		(_decoder.getCurFrame() == _firstFrame && _isReverse == kTrue) ||
+	if ((_decoder.getCurFrame() == _lastFrame && _playDirection == kPlayMovieForward) ||
+		(_decoder.getCurFrame() == _firstFrame && _playDirection == kPlayMovieReverse) ||
 		_decoder.atEnd()) {
 		if (!g_nancy->_sound->isSoundPlaying(_sound)) {
 			g_nancy->_sound->stopSound(_sound);
@@ -175,7 +175,7 @@ void PlaySecondaryMovie::execute() {
 		g_nancy->_sound->loadSound(_sound);
 		g_nancy->_sound->playSound(_sound);
 
-		if (_hideMouse == kTrue) {
+		if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
 			g_nancy->setMouseEnabled(false);
 		}
 
@@ -206,11 +206,11 @@ void PlaySecondaryMovie::execute() {
 	}
 	case kActionTrigger:
 		_triggerFlags.execute();
-		if (_unknown == 5) {
+		if (_videoSceneChange == kMovieSceneChange) {
 			NancySceneState.changeScene(_sceneChange);
 		} else {
 			// Not changing the scene so enable the mouse now
-			if (_hideMouse == kTrue) {
+			if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
 				g_nancy->setMouseEnabled(true);
 			}
 		}

@@ -35,6 +35,18 @@ namespace Action {
 // action record types, whose functionality is nearly identical
 class PlayStaticBitmapAnimation : public ActionRecord, public RenderObject {
 public:
+	static const byte kPlayAnimationPlain			= 1;
+	static const byte kPlayAnimationTransparent		= 2;
+
+	static const byte kPlayAnimationSceneChange		= 1;
+	static const byte kPlayAnimationNoSceneChange 	= 2;
+
+	static const byte kPlayAnimationOnce			= 1;
+	static const byte kPlayAnimationLoop			= 2;
+
+	static const byte kPlayAnimationForward			= 1;
+	static const byte kPlayAnimationReverse			= 2;
+
 	PlayStaticBitmapAnimation(bool interruptible) : RenderObject(7), _isInterruptible(interruptible) {}
 	virtual ~PlayStaticBitmapAnimation() { _fullSurface.free(); }
 
@@ -46,15 +58,15 @@ public:
 
 	Common::String _imageName;
 
-	NancyFlag _isTransparent = NancyFlag::kFalse; // 0xC
-	NancyFlag _doNotChangeScene = NancyFlag::kFalse; // 0xE
-	NancyFlag _isReverse = NancyFlag::kFalse; // 0x10
-	NancyFlag _isLooping = NancyFlag::kFalse; // 0x12
+	uint16 _transparency = kPlayAnimationPlain; // 0xC
+	uint16 _animationSceneChange = kPlayAnimationSceneChange; // 0xE
+	uint16 _playDirection = kPlayAnimationForward; // 0x10
+	uint16 _loop = kPlayAnimationOnce; // 0x12
 	uint16 _firstFrame = 0; // 0x14
 	uint16 _loopFirstFrame = 0; // 0x16
 	uint16 _loopLastFrame = 0; // 0x18
 	Time _frameTime;
-	EventFlagDescription _interruptCondition; // 0x1E
+	FlagDescription _interruptCondition; // 0x1E
 	SceneChangeDescription _sceneChange;
 	MultiEventFlagDescription _triggerFlags; // 0x2A
 

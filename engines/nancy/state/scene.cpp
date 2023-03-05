@@ -72,7 +72,7 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	sound.read(stream, SoundDescription::kScene);
 
 	ser.skip(6);
-	ser.syncAsUint16LE(dontWrap);
+	ser.syncAsUint16LE(panningType);
 	ser.syncAsUint16LE(numberOfVideoFrames);
 	ser.syncAsUint16LE(soundPanPerFrame);
 	ser.syncAsUint16LE(totalViewAngle);
@@ -130,7 +130,7 @@ void Scene::process() {
 		// fall through
 	case kStartSound:
 		_state = kRun;
-		if (!_sceneState.doNotStartSound) {
+		if (_sceneState.continueSceneSound == kLoadSceneSound) {
 			g_nancy->_sound->stopAndUnloadSpecificSounds();
 			g_nancy->_sound->loadSound(_sceneState.summary.sound);
 			g_nancy->_sound->playSound(_sceneState.summary.sound);
@@ -171,7 +171,7 @@ void Scene::onStateExit() {
 	_gameStateRequested = NancyState::kNone;
 }
 
-void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound) {
+void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound) {
 	if (id == 9999) {
 		return;
 	}
@@ -179,12 +179,12 @@ void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noS
 	_sceneState.nextScene.sceneID = id;
 	_sceneState.nextScene.frameID = frame;
 	_sceneState.nextScene.verticalOffset = verticalOffset;
-	_sceneState.doNotStartSound = noSound;
+	_sceneState.continueSceneSound = continueSceneSound;
 	_state = kLoad;
 }
 
 void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
-	changeScene(sceneDescription.sceneID, sceneDescription.frameID, sceneDescription.verticalOffset, sceneDescription.doNotStartSound);
+	changeScene(sceneDescription.sceneID, sceneDescription.frameID, sceneDescription.verticalOffset, sceneDescription.continueSceneSound);
 }
 
 void Scene::pushScene() {
@@ -211,8 +211,8 @@ void Scene::unpauseSceneSpecificSounds() {
 	}
 }
 
-void Scene::setPlayerTime(Time time, NancyFlag relative) {
-	if (relative == kTrue) {
+void Scene::setPlayerTime(Time time, byte relative) {
+	if (relative == kRelativeClockBump) {
 		// Relative, add the specified time to current playerTime
 		_timers.playerTime += time;
 	} else {
@@ -224,7 +224,7 @@ void Scene::setPlayerTime(Time time, NancyFlag relative) {
 }
 
 void Scene::addItemToInventory(uint16 id) {
-	_flags.items[id] = kTrue;
+	_flags.items[id] = kInvHolding;
 	if (_flags.heldItem == id) {
 		setHeldItem(-1);
 	}
@@ -233,7 +233,7 @@ void Scene::addItemToInventory(uint16 id) {
 }
 
 void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
-	_flags.items[id] = kFalse;
+	_flags.items[id] = kInvEmpty;
 
 	if (pickUp) {
 		setHeldItem(id);
@@ -246,37 +246,37 @@ void Scene::setHeldItem(int16 id)  {
 	_flags.heldItem = id; g_nancy->_cursorManager->setCursorItemID(id);
 }
 
-void Scene::setEventFlag(int16 label, NancyFlag flag) {
-	if (label > -1 && (uint)label < g_nancy->getStaticData().numEventFlags) {
+void Scene::setEventFlag(int16 label, byte flag) {
+	if (label > kEvNoEvent && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		_flags.eventFlags[label] = flag;
 	}
 }
 
-void Scene::setEventFlag(EventFlagDescription eventFlag) {
+void Scene::setEventFlag(FlagDescription eventFlag) {
 	setEventFlag(eventFlag.label, eventFlag.flag);
 }
 
-bool Scene::getEventFlag(int16 label, NancyFlag flag) const {
-	if (label > -1 && (uint)label < g_nancy->getStaticData().numEventFlags) {
+bool Scene::getEventFlag(int16 label, byte flag) const {
+	if (label > kEvNoEvent && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		return _flags.eventFlags[label] == flag;
 	} else {
 		return false;
 	}
 }
 
-bool Scene::getEventFlag(EventFlagDescription eventFlag) const {
+bool Scene::getEventFlag(FlagDescription eventFlag) const {
 	return getEventFlag(eventFlag.label, eventFlag.flag);
 }
 
-void Scene::setLogicCondition(int16 label, NancyFlag flag) {
-	if (label > -1) {
+void Scene::setLogicCondition(int16 label, byte flag) {
+	if (label > kEvNoEvent) {
 		_flags.logicConditions[label].flag = flag;
 		_flags.logicConditions[label].timestamp = g_nancy->getTotalPlayTime();
 	}
 }
 
-bool Scene::getLogicCondition(int16 label, NancyFlag flag) const {
-	if (label > -1) {
+bool Scene::getLogicCondition(int16 label, byte flag) const {
+	if (label > kEvNoEvent) {
 		return _flags.logicConditions[label].flag == flag;
 	} else {
 		return false;
@@ -285,7 +285,7 @@ bool Scene::getLogicCondition(int16 label, NancyFlag flag) const {
 
 void Scene::clearLogicConditions() {
 	for (auto &cond : _flags.logicConditions) {
-		cond.flag = kFalse;
+		cond.flag = kLogNotUsed;
 		cond.timestamp = 0;
 	}
 }
@@ -336,7 +336,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		ser.syncAsUint16LE(_sceneState.nextScene.sceneID);
 		ser.syncAsUint16LE(_sceneState.nextScene.frameID);
 		ser.syncAsUint16LE(_sceneState.nextScene.verticalOffset);
-		_sceneState.doNotStartSound = false;
+		_sceneState.continueSceneSound = kContinueSceneSound;
 
 		load();
 	}
@@ -429,14 +429,14 @@ void Scene::synchronize(Common::Serializer &ser) {
 }
 
 void Scene::init() {
-	_flags.eventFlags = Common::Array<NancyFlag>(g_nancy->getStaticData().numEventFlags, kFalse);
+	_flags.eventFlags.resize(g_nancy->getStaticData().numEventFlags, kEvNotOccurred);
 
 	// Does this ever get used?
 	for (uint i = 0; i < 2001; ++i) {
 		_flags.sceneHitCount[i] = 0;
 	}
 
-	_flags.items = Common::Array<NancyFlag>(g_nancy->getStaticData().numItems, kFalse);
+	_flags.items.resize(g_nancy->getStaticData().numItems, kInvEmpty);
 
 	_timers.lastTotalTime = 0;
 	_timers.playerTime = g_nancy->_startTimeHours * 3600000;
@@ -445,7 +445,7 @@ void Scene::init() {
 	_timers.timerIsActive = false;
 	_timers.playerTimeNextMinute = 0;
 	_timers.pushedPlayTime = 0;
-	_timers.timeOfDay = Timers::kDay;
+	_timers.timeOfDay = kPlayerDay;
 
 	changeScene(g_nancy->_firstScene);
 
@@ -512,12 +512,12 @@ void Scene::load() {
 
 	delete sceneSummaryChunk;
 
-	debugC(0, kDebugScene, "Loading new scene %i: description \"%s\", frame %i, vertical scroll %i, doNotStartSound == %s",
+	debugC(0, kDebugScene, "Loading new scene %i: description \"%s\", frame %i, vertical scroll %i, %s",
 				_sceneState.nextScene.sceneID,
 				_sceneState.summary.description.c_str(),
 				_sceneState.nextScene.frameID,
 				_sceneState.nextScene.verticalOffset,
-				_sceneState.doNotStartSound == true ? "true" : "false");
+				_sceneState.continueSceneSound == kContinueSceneSound ? "kContinueSceneSound" : "kLoadSceneSound");
 
 	_sceneState.currentScene = _sceneState.nextScene;
 
@@ -536,7 +536,7 @@ void Scene::load() {
 	_viewport.loadVideo(_sceneState.summary.videoFile,
 						_sceneState.currentScene.frameID,
 						_sceneState.currentScene.verticalOffset,
-						_sceneState.summary.dontWrap,
+						_sceneState.summary.panningType,
 						_sceneState.summary.videoFormat,
 						_sceneState.summary.palettes.size() ? _sceneState.summary.palettes[_sceneState.currentScene.paletteID] : Common::String());
 
@@ -600,11 +600,11 @@ void Scene::run() {
 
 	// Set the time of day according to playerTime
 	if (_timers.playerTime.getHours() >= 7 && _timers.playerTime.getHours() < 18) {
-		_timers.timeOfDay = Timers::kDay;
+		_timers.timeOfDay = kPlayerDay;
 	} else if (_timers.playerTime.getHours() >= 19 || _timers.playerTime.getHours() < 6) {
-		_timers.timeOfDay = Timers::kNight;
+		_timers.timeOfDay = kPlayerNight;
 	} else {
-		_timers.timeOfDay = Timers::kDuskDawn;
+		_timers.timeOfDay = kPlayerDuskDawn;
 	}
 
 	// Update the UI elements and handle input
@@ -700,7 +700,7 @@ void Scene::initStaticData() {
 void Scene::clearSceneData() {
 	// Clear generic flags only
 	for (uint16 id : g_nancy->getStaticData().genericEventFlags) {
-		_flags.eventFlags[id] = kFalse;
+		_flags.eventFlags[id] = kEvNotOccurred;
 	}
 
 	clearLogicConditions();
