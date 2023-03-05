@@ -24,6 +24,8 @@
 
 #include "backends/graphics/graphics.h"
 
+#include <mint/osbind.h>
+
 #include "common/array.h"
 #include "common/events.h"
 #include "common/rect.h"
@@ -92,11 +94,20 @@ public:
 
 protected:
 	const Graphics::PixelFormat PIXELFORMAT8 = Graphics::PixelFormat::createFormatCLUT8();
-	const Graphics::PixelFormat PIXELFORMAT16 = getOverlayFormat();
 
-	bool allocateAtariSurface(byte *&buf, Graphics::Surface &surface,
-							  int width, int height, const Graphics::PixelFormat &format,
-							  int mode, uintptr mask = 0x00000000);
+	typedef void* (*AtariMemAlloc)(size_t bytes);
+	typedef void (*AtariMemFree)(void *ptr);
+
+	virtual AtariMemAlloc getStRamAllocFunc() const {
+		return [](size_t bytes) { return (void*)Mxalloc(bytes, MX_STRAM); };
+	}
+
+	virtual AtariMemFree getStRamFreeFunc() const {
+		return [](void *ptr) { Mfree(ptr); };
+	}
+
+	void allocateSurfaces();
+	void freeSurfaces();
 
 	bool _vgaMonitor = true;
 
@@ -129,18 +140,8 @@ protected:
 	static const int FRONT_BUFFER = 0;
 	static const int BACK_BUFFER1 = 1;
 	static const int BACK_BUFFER2 = 2;
-	byte *_screen[SCREENS] = {};	// for Mfree() purposes only
-	byte *_screenAligned[SCREENS] = {};
-	Graphics::Surface _screenSurface;
 
-	byte *_chunkyBuffer = nullptr;	// for Mfree() purposes only
-	Graphics::Surface _chunkySurface;
-
-	byte *_overlayScreen = nullptr;	// for Mfree() purposes only
-	Graphics::Surface _screenOverlaySurface;
-
-	byte *_overlayBuffer = nullptr;	// for Mfree() purposes only
-	Graphics::Surface _overlaySurface;
+	Graphics::Surface _chunkySurface;	// for Videl's copyRectToSurfaceWithKey
 
 private:
 	enum CustomEventAction {
@@ -155,15 +156,19 @@ private:
 	bool updateSingleBuffer();
 	bool updateDoubleAndTripleBuffer();
 
-	virtual void* allocFast(size_t bytes) const = 0;
+	byte *allocateAtariSurface(Graphics::Surface &surface,
+							  int width, int height, const Graphics::PixelFormat &format,
+							  const AtariMemAlloc &allocFunc);
 
-	virtual void copySurfaceToSurface(const Graphics::Surface &srcSurface, Graphics::Surface &dstSurface) const = 0;
-	virtual void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY,
-								   Graphics::Surface &dstSurface, const Common::Rect &subRect) const = 0;
-	virtual void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY,
-										  Graphics::Surface &dstSurface, const Common::Rect &subRect, uint32 key) const = 0;
+	void freeAtariSurface(byte *ptr, Graphics::Surface &surface, const AtariMemFree &freeFunc);
+
+	virtual void copyRectToSurface(Graphics::Surface &dstSurface,
+								   const Graphics::Surface &srcSurface, int destX, int destY,
+								   const Common::Rect &subRect) const = 0;
+	virtual void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface,
+										  const Graphics::Surface &srcSurface, int destX, int destY,
+										  const Common::Rect &subRect, uint32 key) const = 0;
 	virtual void alignRect(const Graphics::Surface &srcSurface, Common::Rect &rect) const {}
-	virtual void sync() const {}
 
 	enum class ScaleMode {
 		NONE,
@@ -195,12 +200,19 @@ private:
 	};
 	int _pendingScreenChange = kPendingScreenChangeNone;
 
-	bool _screenModified = false;	// double/triple buffering only
+	byte *_screen[SCREENS] = {};	// for Mfree() purposes only
+	byte *_screenAligned[SCREENS] = {};
+	Graphics::Surface _screenSurface;
 	Common::Rect _modifiedScreenRect;	// direct rendering only
+	bool _screenModified = false;	// double/triple buffering only
 
 	Common::Array<Common::Rect> _modifiedChunkyRects;
 
+	byte *_overlayScreen = nullptr;	// for Mfree() purposes only
+	Graphics::Surface _screenOverlaySurface;
 	bool _overlayVisible = false;
+
+	Graphics::Surface _overlaySurface;
 	Common::Array<Common::Rect> _modifiedOverlayRects;
 
 	struct Cursor {

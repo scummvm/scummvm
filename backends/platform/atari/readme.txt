@@ -254,9 +254,7 @@ means that if the SuperVidel is detected, it does the following:
 
 - when SuperVidel FW version >= 9 is detected, the async FIFO buffer is used
   instead of the slower sync blitting (where one has to wait for every
-  rectangle blit to finish). This applies only for chunky buffer -> screen
-  surfaces copy (as the generic surface copy can't rely on this behavior) but
-  despite this limitation it sometimes leads to nearly zero-cost rendering
+  rectangle blit to finish), this sometimes leads to nearly zero-cost rendering
   and makes a *huge* difference for 640x480 fullscreen updates.
 
 
@@ -269,7 +267,7 @@ to avoid unpleasant playing experiences.
 Game engines with unexpected performance hit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A typical example from this category is the Gobliins engine (and its
+A typical example from this category is the Gobliiins engine (and its
 sequels). At first it looks like our machine / backend is doing something
 terribly wrong but the truth is it is the engine itself which is doing a lot of
 unnecessary redraws and updates, sometimes even before reaching the backend.
@@ -383,8 +381,7 @@ Future plans
 
 - avoid loading music/speech files (and thus slowing down everything) if muted
 
-- assembly copy routines for screen/chunky surfaces (even with SuperVidel
-  present it is not possible to use the SuperBlitter for every surface)
+- assembly copy routines when SuperVidel is not present or can't be used
 
 - cached audio/video streams (i.e. don't load only "output_samples" number of
   samples but cache, say, 1 second so disk i/o wont be so stressed)
@@ -407,6 +404,12 @@ Future plans
 - true audio CD support via MetaDOS API
 
 - OPL2LPT and Retrowave support (if I manage to purchase it somewhere)
+
+- engines based on Graphics::Screen don't have to use my chunky buffer (however
+  it may be tricky to detect this situation)
+
+- C2P could support 4- and 6-bit depth
+
 
 Closing words
 —------------

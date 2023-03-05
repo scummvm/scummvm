@@ -27,13 +27,66 @@
 #include <mint/cookie.h>
 #include <mint/falcon.h>
 
+#include <mint/trap14.h>
+#define ct60_vm(mode, value) (long)trap_14_wwl((short)0xc60e, (short)(mode), (long)(value))
+#define ct60_vmalloc(value) ct60_vm(0, value)
+#define ct60_vmfree(value)  ct60_vm(1, value)
+
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
 #include "common/textconsole.h"	// error
+
+// bits 26:0
+#define SV_BLITTER_SRC1           ((volatile long*)0x80010058)
+#define SV_BLITTER_SRC2           ((volatile long*)0x8001005C)
+#define SV_BLITTER_DST            ((volatile long*)0x80010060)
+// The amount of bytes that are to be copied in a horizontal line, minus 1
+#define SV_BLITTER_COUNT          ((volatile long*)0x80010064)
+// The amount of bytes that are to be added to the line start adress after a line has been copied, in order to reach the next one
+#define SV_BLITTER_SRC1_OFFSET    ((volatile long*)0x80010068)
+#define SV_BLITTER_SRC2_OFFSET    ((volatile long*)0x8001006C)
+#define SV_BLITTER_DST_OFFSET     ((volatile long*)0x80010070)
+// bits 11:0 - The amount of horizontal lines to do
+#define SV_BLITTER_MASK_AND_LINES ((volatile long*)0x80010074)
+// bit    0 - busy / start
+// bits 4:1 - blit mode
+#define SV_BLITTER_CONTROL        ((volatile long*)0x80010078)
+// bit 0 - empty (read only)
+// bit 1 - full (read only)
+// bits 31:0 - data (write only)
+#define SV_BLITTER_FIFO           ((volatile long*)0x80010080)
+
+static bool isSuperBlitterLocked;
+
+static void syncSuperBlitter() {
+	// if externally locked, let the owner decide when to sync (unlock)
+	if (isSuperBlitterLocked)
+		return;
+
+	// while FIFO not empty...
+	if (superVidelFwVersion >= 9)
+		while (!(*SV_BLITTER_FIFO & 1));
+	// while busy blitting...
+	while (*SV_BLITTER_CONTROL & 1);
+}
 
 static inline bool hasMove16() {
 	long val;
 	static bool hasMove16 = Getcookie(C__CPU, &val) == C_FOUND && val >= 40;
 	return hasMove16;
+}
+
+void lockSuperBlitter() {
+	assert(!isSuperBlitterLocked);
+
+	isSuperBlitterLocked = true;
+}
+
+void unlockSuperBlitter() {
+	assert(isSuperBlitterLocked);
+
+	isSuperBlitterLocked = false;
+	if (hasSuperVidel())
+		syncSuperBlitter();
 }
 
 namespace Graphics {
@@ -53,7 +106,7 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 	pitch = (w * format.bytesPerPixel + ALIGN - 1) & (-ALIGN);
 
 	if (width && height) {
-		if (VgetMonitor() == MON_VGA && Getcookie(C_SupV, NULL) == C_FOUND) {
+		if (hasSuperVidel()) {
 			pixels = (void *)ct60_vmalloc(height * pitch);
 
 			if (!pixels)
@@ -97,21 +150,32 @@ void copyBlit(byte *dst, const byte *src,
 		return;
 
 	if (((uintptr)src & 0xFF000000) >= 0xA0000000 && ((uintptr)dst & 0xFF000000) >= 0xA0000000) {
-		// while busy blitting...
-		while (*SV_BLITTER_CONTROL & 1);
+		if (superVidelFwVersion >= 9) {
+			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC1
+			*SV_BLITTER_FIFO = 0x00000000;				// SV_BLITTER_SRC2
+			*SV_BLITTER_FIFO = (long)dst;				// SV_BLITTER_DST
+			*SV_BLITTER_FIFO = w * bytesPerPixel - 1;	// SV_BLITTER_COUNT
+			*SV_BLITTER_FIFO = srcPitch;				// SV_BLITTER_SRC1_OFFSET
+			*SV_BLITTER_FIFO = 0x00000000;				// SV_BLITTER_SRC2_OFFSET
+			*SV_BLITTER_FIFO = dstPitch;				// SV_BLITTER_DST_OFFSET
+			*SV_BLITTER_FIFO = h;						// SV_BLITTER_MASK_AND_LINES
+			*SV_BLITTER_FIFO = 0x01;					// SV_BLITTER_CONTROL
+		}  else {
+			// make sure the blitter is idle
+			while (*SV_BLITTER_CONTROL & 1);
 
-		*SV_BLITTER_SRC1           = (long)src;
-		*SV_BLITTER_SRC2           = 0x00000000;
-		*SV_BLITTER_DST            = (long)dst;
-		*SV_BLITTER_COUNT          = w * bytesPerPixel - 1;
-		*SV_BLITTER_SRC1_OFFSET    = srcPitch;
-		*SV_BLITTER_SRC2_OFFSET    = 0x00000000;
-		*SV_BLITTER_DST_OFFSET     = dstPitch;
-		*SV_BLITTER_MASK_AND_LINES = h;
-		*SV_BLITTER_CONTROL        = 0x01;
+			*SV_BLITTER_SRC1           = (long)src;
+			*SV_BLITTER_SRC2           = 0x00000000;
+			*SV_BLITTER_DST            = (long)dst;
+			*SV_BLITTER_COUNT          = w * bytesPerPixel - 1;
+			*SV_BLITTER_SRC1_OFFSET    = srcPitch;
+			*SV_BLITTER_SRC2_OFFSET    = 0x00000000;
+			*SV_BLITTER_DST_OFFSET     = dstPitch;
+			*SV_BLITTER_MASK_AND_LINES = h;
+			*SV_BLITTER_CONTROL        = 0x01;
+		}
 
-		// wait until we finish otherwise we may overwrite pixels written manually afterwards
-		while (*SV_BLITTER_CONTROL & 1);
+		syncSuperBlitter();
 	} else if (dstPitch == srcPitch && ((w * bytesPerPixel) == dstPitch)) {
 		if (hasMove16() && ((uintptr)src & (ALIGN - 1)) == 0 && ((uintptr)dst & (ALIGN - 1)) == 0) {
 			__asm__ volatile(

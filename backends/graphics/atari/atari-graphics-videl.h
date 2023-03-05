@@ -24,40 +24,19 @@
 
 #include "backends/graphics/atari/atari-graphics.h"
 
-#include <mint/osbind.h>
-
 #include "backends/graphics/atari/atari_c2p-asm.h"
 #include "common/system.h"
-#include "common/textconsole.h"	// for error()
 
 class AtariVidelManager : public AtariGraphicsManager {
 public:
 	AtariVidelManager() {
-		for (int i = 0; i < SCREENS; ++i) {
-			if (!allocateAtariSurface(_screen[i], _screenSurface, SCREEN_WIDTH, SCREEN_HEIGHT, PIXELFORMAT8, MX_STRAM))
-				error("Failed to allocate screen memory in ST RAM");
-			_screenAligned[i] = (byte*)_screenSurface.getPixels();
-		}
-		_screenSurface.setPixels(_screenAligned[getDefaultGraphicsMode() <= 1 ? FRONT_BUFFER : BACK_BUFFER1]);
-
-		if (!allocateAtariSurface(_chunkyBuffer, _chunkySurface, SCREEN_WIDTH, SCREEN_HEIGHT, PIXELFORMAT8, MX_PREFTTRAM))
-			error("Failed to allocate chunky buffer memory in ST/TT RAM");
-
-		if (!allocateAtariSurface(_overlayScreen, _screenOverlaySurface, getOverlayWidth(), getOverlayHeight(),
-								  getOverlayFormat(), MX_STRAM))
-			error("Failed to allocate overlay memory in ST RAM");
-
-		if (!allocateAtariSurface(_overlayBuffer, _overlaySurface, getOverlayWidth(), getOverlayHeight(),
-								  getOverlayFormat(), MX_PREFTTRAM))
-			error("Failed to allocate overlay buffer memory in ST/TT RAM");
+		// using virtual methods so must be done here
+		allocateSurfaces();
 	}
 
 	~AtariVidelManager() {
-		Mfree(_chunkyBuffer);
-		_chunkyBuffer = nullptr;
-
-		Mfree(_overlayBuffer);
-		_overlayBuffer = nullptr;
+		// using virtual methods so must be done here
+		freeSurfaces();
 	}
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
@@ -89,35 +68,35 @@ public:
 	int16 getOverlayWidth() const override { return _vgaMonitor ? OVERLAY_WIDTH : 2 * OVERLAY_WIDTH; }
 
 private:
-	virtual void* allocFast(size_t bytes) const override {
-		return (void*)Mxalloc(bytes, MX_PREFTTRAM);
-	}
-
-	void copySurfaceToSurface(const Graphics::Surface &srcSurface, Graphics::Surface &dstSurface) const override {
-		asm_c2p1x1_8(
-			(const byte*)srcSurface.getPixels(),
-			(const byte*)srcSurface.getBasePtr(srcSurface.w, srcSurface.h-1),
-			(byte*)dstSurface.getPixels());
-	}
-
-	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY,
-						   Graphics::Surface &dstSurface, const Common::Rect &subRect) const override {
+	void copyRectToSurface(Graphics::Surface &dstSurface,
+						   const Graphics::Surface &srcSurface, int destX, int destY,
+						   const Common::Rect &subRect) const override {
 		// 'pChunkyEnd' is a delicate parameter: the c2p routine compares it to the address register
 		// used for pixel reading; two common mistakes:
 		// 1. (subRect.left, subRect.bottom) = beginning of the next line *including the offset*
 		// 2. (subRect.right, subRect.bottom) = even worse, end of the *next* line, not current one
-		asm_c2p1x1_8_rect(
-			(const byte*)srcSurface.getBasePtr(subRect.left, subRect.top),
-			(const byte*)srcSurface.getBasePtr(subRect.right, subRect.bottom-1),
-			subRect.width(),
-			srcSurface.pitch,
-			(byte*)dstSurface.getBasePtr(destX, destY),
-			dstSurface.pitch);
+		if (subRect.width() == dstSurface.w) {
+			asm_c2p1x1_8(
+				(const byte*)srcSurface.getBasePtr(subRect.left, subRect.top),
+				(const byte*)srcSurface.getBasePtr(subRect.right, subRect.bottom-1),
+				(byte*)dstSurface.getBasePtr(destX, destY));
+		} else {
+			asm_c2p1x1_8_rect(
+				(const byte*)srcSurface.getBasePtr(subRect.left, subRect.top),
+				(const byte*)srcSurface.getBasePtr(subRect.right, subRect.bottom-1),
+				subRect.width(),
+				srcSurface.pitch,
+				(byte*)dstSurface.getBasePtr(destX, destY),
+				dstSurface.pitch);
+		}
 	}
 
 	// TODO: allow specifying different background than _chunkySurface?
-	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY,
-								  Graphics::Surface &dstSurface, const Common::Rect &subRect, uint32 key) const override {
+	// TODO: alignRect and this function could be perhaps better if we know that all surfaces
+	// are aligned on 16px and their pitch is % 16 as well?
+	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface,
+								  const Graphics::Surface &srcSurface, int destX, int destY,
+								  const Common::Rect &subRect, uint32 key) const override {
 		Common::Rect backgroundRect(destX, destY, destX + subRect.width(), destY + subRect.height());
 
 		// ensure that background's left and right lie on a 16px boundary and double the width if needed
@@ -144,9 +123,9 @@ private:
 		cachedSurface.copyRectToSurfaceWithKey(srcSurface, deltaX, 0, subRect, key);
 
 		copyRectToSurface(
+			dstSurface,
 			cachedSurface,
 			backgroundRect.left, backgroundRect.top,
-			dstSurface,
 			Common::Rect(cachedSurface.w, cachedSurface.h));
 	}
 

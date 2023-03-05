@@ -64,7 +64,7 @@ void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, 
 }
 
 // see graphics/blit-atari.cpp, Atari Falcon's SuperVidel addon allows accelerated blitting
-#ifndef ATARI
+#ifndef USE_SV_BLITTER
 void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 	assert(width >= 0 && height >= 0);
 	free();

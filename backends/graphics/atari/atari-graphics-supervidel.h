@@ -22,75 +22,42 @@
 #ifndef BACKENDS_GRAPHICS_ATARI_SUPERVIDEL_H
 #define BACKENDS_GRAPHICS_ATARI_SUPERVIDEL_H
 
-#define USE_SV_BLITTER	// TODO: into configure?
-
 #include "backends/graphics/atari/atari-graphics.h"
 
-#include <cstring>
 #include <mint/osbind.h>
 
-#ifdef USE_SV_BLITTER
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
-#endif
-
 #include "backends/graphics/atari/videl-resolutions.h"
+#include "common/debug.h"	// error() & warning()
 #include "common/scummsys.h"
-#include "common/textconsole.h"	// for error()
 
 class AtariSuperVidelManager : public AtariGraphicsManager {
 public:
 	AtariSuperVidelManager() {
 #ifdef USE_SV_BLITTER
-		_fwVersion = *SV_VERSION & 0x01ff;
-		debug("SuperVidel FW Revision: %d, using %s", _fwVersion, _fwVersion >= 9
-			  ? "fast async FIFO" : "slower sync blitting" );
+		debug("SuperVidel FW Revision: %d, using %s", superVidelFwVersion, superVidelFwVersion >= 9
+			? "fast async FIFO" : "slower sync blitting");
+#else
+		debug("SuperVidel FW Revision: %d, SuperBlitter not used", superVidelFwVersion);
 #endif
-
-		for (int i = 0; i < SCREENS; ++i) {
-			if (!allocateAtariSurface(_screen[i], _screenSurface,
-					SCREEN_WIDTH, SCREEN_HEIGHT, PIXELFORMAT8,
-					MX_STRAM, 0xA0000000))
-				error("Failed to allocate screen memory in ST RAM");
-			_screenAligned[i] = (byte*)_screenSurface.getPixels();
-		}
-		_screenSurface.setPixels(_screenAligned[getDefaultGraphicsMode() <= 1 ? FRONT_BUFFER : BACK_BUFFER1]);
-
-		if (!allocateAtariSurface(_chunkyBuffer, _chunkySurface,
-				SCREEN_WIDTH, SCREEN_HEIGHT, PIXELFORMAT8,
-				MX_PREFTTRAM))
-			error("Failed to allocate chunky buffer memory in ST/TT RAM");
-
-		if (!allocateAtariSurface(_overlayScreen, _screenOverlaySurface,
-				getOverlayWidth(), getOverlayHeight(), getOverlayFormat(),
-				MX_STRAM, 0xA0000000))
-			error("Failed to allocate overlay memory in ST RAM");
-
-		if (!allocateAtariSurface(_overlayBuffer, _overlaySurface,
-				getOverlayWidth(), getOverlayHeight(), getOverlayFormat(),
-				MX_PREFTTRAM))
-			error("Failed to allocate overlay buffer memory in ST/TT RAM");
+		if (Supexec(hasSvRamBoosted))
+			debug("SV_XBIOS has the pmmu boost enabled");
+		else
+			warning("SV_XBIOS has the pmmu boost disabled, set 'pmmu_boost = true' in C:\\SV.INF");
 
 		// patch SPSHIFT for SuperVidel's BPS8C
 		for (byte *p : {scp_320x200x8_vga, scp_320x240x8_vga, scp_640x400x8_vga, scp_640x480x8_vga}) {
 			uint16 *p16 = (uint16*)(p + 122 + 30);
 			*p16 |= 0x1000;
 		}
+
+		// using virtual methods so must be done here
+		allocateSurfaces();
 	}
 
 	~AtariSuperVidelManager() {
-#ifdef USE_SV_BLITTER
-		ct60_vmfree(_chunkyBuffer);
-#else
-		Mfree(_chunkyBuffer);
-#endif
-		_chunkyBuffer = nullptr;
-
-#ifdef USE_SV_BLITTER
-		ct60_vmfree(_overlayBuffer);
-#else
-		Mfree(_overlayBuffer);
-#endif
-		_overlayBuffer = nullptr;
+		// using virtual methods so must be done here
+		freeSurfaces();
 	}
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
@@ -107,95 +74,56 @@ public:
 	int16 getOverlayHeight() const override { return 2 * OVERLAY_HEIGHT; }
 	int16 getOverlayWidth() const override { return 2 * OVERLAY_WIDTH; }
 
+protected:
+	AtariMemAlloc getStRamAllocFunc() const override {
+		return [](size_t bytes) {
+			uintptr ptr = Mxalloc(bytes, MX_STRAM);
+
+			if (ptr != 0)
+				ptr |= 0xA0000000;
+
+			return (void*)ptr;
+		};
+	}
+	AtariMemFree getStRamFreeFunc() const override {
+		return [](void *ptr) { Mfree((uintptr)ptr & 0x00FFFFFF); };
+	}
+
 private:
-	virtual void* allocFast(size_t bytes) const override {
-#ifdef USE_SV_BLITTER
-		return (void*)ct60_vmalloc(bytes);
-#else
-		return (void*)Mxalloc(bytes, MX_PREFTTRAM);
-#endif
-	}
-
-	void copySurfaceToSurface(const Graphics::Surface &srcSurface, Graphics::Surface &dstSurface) const override {
-#ifdef USE_SV_BLITTER
-		if (_fwVersion >= 9) {
-			*SV_BLITTER_FIFO = (long)srcSurface.getPixels();	// SV_BLITTER_SRC1
-			*SV_BLITTER_FIFO = 0x00000000;						// SV_BLITTER_SRC2
-			*SV_BLITTER_FIFO = (long)dstSurface.getPixels();	// SV_BLITTER_DST
-			*SV_BLITTER_FIFO = srcSurface.w - 1;				// SV_BLITTER_COUNT
-			*SV_BLITTER_FIFO = srcSurface.pitch;				// SV_BLITTER_SRC1_OFFSET
-			*SV_BLITTER_FIFO = 0x00000000;						// SV_BLITTER_SRC2_OFFSET
-			*SV_BLITTER_FIFO = dstSurface.pitch;				// SV_BLITTER_DST_OFFSET
-			*SV_BLITTER_FIFO = srcSurface.h;					// SV_BLITTER_MASK_AND_LINES
-			*SV_BLITTER_FIFO = 0x01;							// SV_BLITTER_CONTROL
-		} else {
-			sync();
-
-			*SV_BLITTER_SRC1           = (long)srcSurface.getPixels();
-			*SV_BLITTER_SRC2           = 0x00000000;
-			*SV_BLITTER_DST            = (long)dstSurface.getPixels();
-			*SV_BLITTER_COUNT          = srcSurface.w - 1;
-			*SV_BLITTER_SRC1_OFFSET    = srcSurface.pitch;
-			*SV_BLITTER_SRC2_OFFSET    = 0x00000000;
-			*SV_BLITTER_DST_OFFSET     = dstSurface.pitch;
-			*SV_BLITTER_MASK_AND_LINES = srcSurface.h;
-			*SV_BLITTER_CONTROL        = 0x01;
-		}
-#else
-		memcpy(dstSurface.getPixels(), srcSurface.getPixels(), srcSurface.h * srcSurface.pitch);
-#endif
-	}
-
-	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, Graphics::Surface &dstSurface,
+	void copyRectToSurface(Graphics::Surface &dstSurface,
+						   const Graphics::Surface &srcSurface, int destX, int destY,
 						   const Common::Rect &subRect) const override {
-#ifdef USE_SV_BLITTER
-		if (_fwVersion >= 9) {
-			*SV_BLITTER_FIFO = (long)srcSurface.getBasePtr(subRect.left, subRect.top);	// SV_BLITTER_SRC1
-			*SV_BLITTER_FIFO = 0x00000000;												// SV_BLITTER_SRC2
-			*SV_BLITTER_FIFO = (long)dstSurface.getBasePtr(destX, destY);				// SV_BLITTER_DST
-			*SV_BLITTER_FIFO = subRect.width() - 1;										// SV_BLITTER_COUNT
-			*SV_BLITTER_FIFO = srcSurface.pitch;										// SV_BLITTER_SRC1_OFFSET
-			*SV_BLITTER_FIFO = 0x00000000;												// SV_BLITTER_SRC2_OFFSET
-			*SV_BLITTER_FIFO = dstSurface.pitch;										// SV_BLITTER_DST_OFFSET
-			*SV_BLITTER_FIFO = subRect.height();										// SV_BLITTER_MASK_AND_LINES
-			*SV_BLITTER_FIFO = 0x01;													// SV_BLITTER_CONTROL
-		} else {
-			sync();
-
-			*SV_BLITTER_SRC1           = (long)srcSurface.getBasePtr(subRect.left, subRect.top);
-			*SV_BLITTER_SRC2           = 0x00000000;
-			*SV_BLITTER_DST            = (long)dstSurface.getBasePtr(destX, destY);
-			*SV_BLITTER_COUNT          = subRect.width() - 1;
-			*SV_BLITTER_SRC1_OFFSET    = srcSurface.pitch;
-			*SV_BLITTER_SRC2_OFFSET    = 0x00000000;
-			*SV_BLITTER_DST_OFFSET     = dstSurface.pitch;
-			*SV_BLITTER_MASK_AND_LINES = subRect.height();
-			*SV_BLITTER_CONTROL        = 0x01;
-		}
-#else
 		dstSurface.copyRectToSurface(srcSurface, destX, destY, subRect);
-#endif
 	}
 
-	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, Graphics::Surface &dstSurface,
+	void copyRectToSurfaceWithKey(Graphics::Surface &dstSurface,
+								  const Graphics::Surface &srcSurface, int destX, int destY,
 								  const Common::Rect &subRect, uint32 key) const override {
-		sync();
 		dstSurface.copyRectToSurfaceWithKey(srcSurface, destX, destY, subRect, key);
 	}
 
-	virtual void sync() const override {
-#ifdef USE_SV_BLITTER
-		// while FIFO not empty...
-		if (_fwVersion >= 9)
-			while (!(*SV_BLITTER_FIFO & 1));
-		// while busy blitting...
-		while (*SV_BLITTER_CONTROL & 1);
-#endif
-	}
+	static long hasSvRamBoosted() {
+		register long ret __asm__ ("d0") = 0;
 
-#ifdef USE_SV_BLITTER
-	int _fwVersion = 0;
-#endif
+		__asm__ volatile(
+		"\tmovec	%%itt0,%%d1\n"
+		"\tcmp.l	#0xA007E060,%%d1\n"
+		"\tbne.s	1f\n"
+
+		"\tmovec	%%dtt0,%%d1\n"
+		"\tcmp.l	#0xA007E060,%%d1\n"
+		"\tbne.s	1f\n"
+
+		"\tmoveq	#1,%%d0\n"
+
+	"1:\n"
+		: "=g"(ret)	/* outputs */
+		:			/* inputs  */
+		: __CLOBBER_RETURN("d0") "d1", "cc"
+		);
+
+		return ret;
+	}
 };
 
 #endif

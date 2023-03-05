@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-
 #include "backends/events/atari/atari-events.h"
 
 #include <mint/osbind.h>
@@ -122,7 +120,7 @@ bool AtariEventSource::pollEvent(Common::Event &event) {
 
 		if (curMillis - startMillis >= 1000) {
 			float avgFps = avgFpsSum / avgFpsCount;
-			debug("*** Average FPS in 1s: %f ***", avgFps);
+			//debug("*** Average FPS in 1s: %f ***", avgFps);
 			startMillis = curMillis;
 			avgFpsSum = 0;
 			avgFpsCount = 0;

@@ -20,15 +20,12 @@
  */
 
 #include <stdio.h>
+#include <time.h>
 #include <unistd.h>
 
 #include <mint/cookie.h>
-#include <mint/falcon.h>
 #include <mint/osbind.h>
 
-// We use some stdio.h functionality here thus we need to allow some
-// symbols. Alternatively, we could simply allow everything by defining
-// FORBIDDEN_SYMBOL_ALLOW_ALL
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
@@ -51,6 +48,7 @@
 #include "backends/events/default/default-events.h"
 #include "backends/mixer/atari/atari-mixer.h"
 #include "backends/graphics/atari/atari-graphics.h"
+#include "backends/graphics/atari/atari-graphics-superblitter.h"
 #include "backends/graphics/atari/atari-graphics-supervidel.h"
 #include "backends/graphics/atari/atari-graphics-videl.h"
 #include "gui/debugger.h"
@@ -115,8 +113,6 @@ void OSystem_Atari::initBackend() {
 
 	_startTime = clock();
 
-	bool superVidel = VgetMonitor() == MON_VGA && Getcookie(C_SupV, NULL) == C_FOUND;
-
 	_timerManager = new DefaultTimerManager();
 	_savefileManager = new DefaultSaveFileManager("saves");
 
@@ -125,7 +121,7 @@ void OSystem_Atari::initBackend() {
 
 	// AtariGraphicsManager needs _eventManager ready
 	AtariGraphicsManager *atariGraphicsManager;
-	if (superVidel)
+	if (hasSuperVidel())
 		atariGraphicsManager = new AtariSuperVidelManager();
 	else
 		atariGraphicsManager = new AtariVidelManager();
