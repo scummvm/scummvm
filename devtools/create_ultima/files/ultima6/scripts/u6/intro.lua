@@ -3052,7 +3052,6 @@ local function main_menu()
 	g_menu["title"].visible = true
 	g_menu["subtitle"].visible = true
 	g_menu["menu"].visible = true
-	canvas_set_update_interval(10)
 
 	local input
 
@@ -3065,8 +3064,6 @@ local function main_menu()
 		end
 
 		if input ~= nil then
-			canvas_set_update_interval(25)
-
 			if input == 113 then     --q quit
 				return "Q"
 			elseif input == 105 or input == 13 and g_menu_idx == 0 then --i
@@ -3160,9 +3157,7 @@ local function main_menu()
 					end
 				end
 			end
-
 			input = nil
-			canvas_set_update_interval(10)
 		end
 	end
 end
