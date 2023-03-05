@@ -384,7 +384,7 @@ void ScummVMRendererGraphicsDriver::RenderToBackBuffer() {
 	const size_t last_batch_to_rend = _spriteBatchDesc.size() - 1;
 	for (size_t cur_bat = 0u, last_bat = 0u, cur_spr = 0u; last_bat <= last_batch_to_rend;) {
 		// Test if we are entering this batch (and not continuing after coming back from nested)
-		if (cur_spr == _spriteBatchRange[cur_bat].first) {
+		if (cur_spr <= _spriteBatchRange[cur_bat].first) {
 			const auto &batch = _spriteBatches[cur_bat];
 			// Prepare the transparent surface
 			if (batch.Surface && !batch.Opaque)
