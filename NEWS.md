@@ -7,6 +7,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added libretro new shiny port.
    - Added Atari port.
 
+ General:
+  - Added optional dependency for libvpx.
+
  Asylum:
    - Added support for Chinese Sanitarium.
 
