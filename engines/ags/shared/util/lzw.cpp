@@ -252,7 +252,7 @@ bool lzwexpand(const uint8_t *src, size_t src_sz, uint8_t *dst, size_t dst_sz) {
 	}
 
 	free(_G(lzbuffer));
-	return (src_ptr - src) == src_sz;
+	return static_cast<size_t>(src_ptr - src) == src_sz;
 }
 
 } // namespace AGS3
