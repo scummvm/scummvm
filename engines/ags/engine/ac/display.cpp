@@ -243,17 +243,17 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	// _display_main may be called even for custom textual overlays
 	EndSkippingUntilCharStops();
 
-	if (asspch > 0) {
+	if (_GP(topBar).wantIt) {
+		// the top bar should behave like DisplaySpeech wrt blocking
+		disp_type = DISPLAYTEXT_SPEECH;
+	}
+
+	if ((asspch > 0) && (disp_type < DISPLAYTEXT_NORMALOVERLAY)) {
 		// update the all_buttons_disabled variable in advance
 		// of the adjust_x/y_for_guis calls
 		_GP(play).disabled_user_interface++;
 		update_gui_disabled_status();
 		_GP(play).disabled_user_interface--;
-	}
-
-	if (_GP(topBar).wantIt) {
-		// the top bar should behave like DisplaySpeech wrt blocking
-		disp_type = DISPLAYTEXT_SPEECH;
 	}
 
 	// remove any previous blocking texts if necessary
