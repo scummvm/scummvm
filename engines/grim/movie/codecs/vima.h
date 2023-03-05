@@ -25,7 +25,7 @@
 namespace Grim {
 
 void vimaInit(uint16 *destTable);
-void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
+void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable, bool isSmush);
 
 } // end of namespace Grim
 
