@@ -129,12 +129,12 @@ uint64 TeTimer::getTimeFromStart() {
 
 uint64 TeTimer::timeElapsed() {
 	uint64 elapsed = _realTime - _lastTimeElapsed;
-	_lastTimeElapsed = elapsed + _lastTimeElapsed;
+	_lastTimeElapsed += elapsed;
 	return elapsed;
 }
 
 uint64 TeTimer::timeFromLastTimeElapsed() {
-	return realTimer()->time_() - _lastTimeElapsed;
+	return _realTime - _lastTimeElapsed;
 }
 
 uint64 TeTimer::time_() {
@@ -164,6 +164,13 @@ void TeTimer::pausable(bool ispausable) {
 			paused->push_back(this);
 		pause();
 	}
+}
+
+void TeTimer::setTime(uint64 time) {
+	uint64 result = _realTime - time;
+	_startTimeOffset = result;
+	_startTime = result;
+	_lastTimeElapsed = result;
 }
 
 void TeTimer::setAlarmIn(uint64 offset) {

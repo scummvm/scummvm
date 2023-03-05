@@ -36,10 +36,14 @@ static uint64 getUsecs() {
 
 uint64 TeRealTimer::getTimeFromStart() {
 	uint64 timeNow;
-	if (_paused)
+	if (_paused) {
 		timeNow = _pausedTime;
-	else
+	} else {
 		timeNow = getUsecs();
+		if (timeNow < _maxTimeSeen)
+			timeNow = _maxTimeSeen;
+		_maxTimeSeen = timeNow;
+	}
 
 	return timeNow - _startTime;
 }
@@ -61,9 +65,9 @@ void TeRealTimer::start() {
 		if (timeNow < _maxTimeSeen)
 			timeNow = _maxTimeSeen;
 		timeNow += (_startTime - _pausedTime);
-		_maxTimeSeen = timeNow;
 		_startTime = timeNow;
 		_startTime2 = timeNow;
+		_maxTimeSeen = timeNow;
 		_paused = false;
 	}
 }

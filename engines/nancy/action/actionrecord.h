@@ -24,6 +24,7 @@
 
 #include "engines/nancy/time.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/commontypes.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -32,6 +33,7 @@ class SeekableReadStream;
 namespace Nancy {
 
 class NancyEngine;
+class NancyConsole;
 struct NancyInput;
 
 namespace Action {
@@ -78,6 +80,8 @@ struct DependencyRecord {
 // will have to also subclass RenderObject.
 class ActionRecord {
 	friend class ActionManager;
+	friend class Nancy::NancyConsole;
+
 public:
 	enum ExecutionState { kBegin, kRun, kActionTrigger };
 	enum ExecutionType { kOneShot = 1, kRepeating = 2 };

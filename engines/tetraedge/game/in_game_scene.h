@@ -264,10 +264,11 @@ public:
 	TeIntrusivePtr<TeBezierCurve> curve() { return _curve; }
 	void setCurve(TeIntrusivePtr<TeBezierCurve> &c) { _curve = c; }
 	Common::Array<TeIntrusivePtr<TeModel>> &zoneModels() { return _zoneModels; }
+	Common::Array<TeIntrusivePtr<TeModel>> &shadowReceivingObjects() { return _shadowReceivingObjects; }
 	Common::Array<TeRectBlocker> &rectBlockers() { return _rectBlockers; }
 	Common::Array<TeBlocker> &blockers() { return _blockers; }
 	Common::Array<Object3D *> object3Ds() { return _object3Ds; }
-	void setWaitTime(float usecs) { _waitTime = usecs; }
+	void setWaitTime(double usecs) { _waitTime = usecs; }
 	TeTimer &waitTimeTimer() { return _waitTimeTimer; }
 	Common::Array<Common::SharedPtr<TeLight>> &lights() { return _lights; }
 	Common::Array<TeIntrusivePtr<TeParticle>> &particles() { return _particles; }
@@ -288,7 +289,7 @@ private:
 	float _shadowNearPlane;
 	float _shadowFov;
 
-	float _waitTime;
+	double _waitTime;
 	TeTimer _waitTimeTimer;
 
 	Common::Array<TeBlocker> _blockers;

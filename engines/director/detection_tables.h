@@ -846,6 +846,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "tkkgkit",			"TKKG: Identikit" },
 	{ "zwergnase",			"Zwerg Nase: Ein interaktives Märchen" },
 
+	// Hebrew titles
+	{ "petel",				"מיץ פטל" },
+
 	// Italian titles
 	{ "fuzzyfloppy2",		"Fuzzy e Floppy: Il Furto Della Rotonda" },
 	{ "fuzzyfloppy3",		"Fuzzy e Floppy: Il Raggio Magico" },
@@ -4743,6 +4746,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("peepeebonbon", "", "PPBB.MAC", "33f733b2809b94c3301096902f642b6e", 289518, Common::JA_JPN, 402),
 	WINGAME1t_l("peepeebonbon", "", "PPBB.EXE", "ccfe8e10528261b78f4a8c9657a54ff8", 746983, Common::JA_JPN, 404),
+
+	WINGAME2t_l("petel", "", "START.DIR", "t:a8495b1e4560b603e93ca1db48513db8", 10596,
+							"START.EXE", "t:df604411b447d6eea92f5451776b06d3", 690453, Common::HE_ISR, 404),
 
 	MACGAME1_l("planetdob", "", "Planet Dob", "01be45e7241194dad07938e7059b88e3", 484095, Common::JA_JPN, 404),
 

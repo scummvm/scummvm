@@ -132,6 +132,9 @@ String punycode_encode(const U32String &src) {
 	size_t h = 0, si;
 	String dst = "xn--";
 
+	if (!srclen)
+		return src;
+
 	for (si = 0; si < srclen; si++) {
 		if (src[si] < 128) {
 			dst += src[si];
@@ -204,6 +207,9 @@ bool punycode_hasprefix(const String &src) {
 }
 
 bool punycode_needEncode(const String &src) {
+	if (!src.size())
+		return false;
+
 	for (uint si = 0; si < src.size(); si++) {
 		if (src[si] & 0x80 || src[si] < 0x20 || strchr(SPECIAL_SYMBOLS, src[si])) {
 			return true;

@@ -82,6 +82,9 @@ macventure.dat         FILE    "dists/engine-data/macventure.dat"
 #if PLUGIN_ENABLED_STATIC(MORTEVIELLE)
 mort.dat               FILE    "dists/engine-data/mort.dat"
 #endif
+#if PLUGIN_ENABLED_STATIC(NANCY)
+nancy.dat              FILE    "dists/engine-data/nancy.dat"
+#endif
 #if PLUGIN_ENABLED_STATIC(NEVERHOOD)
 neverhood.dat          FILE    "dists/engine-data/neverhood.dat"
 #endif

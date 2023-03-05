@@ -31,14 +31,13 @@ https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit an
 Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.html
 
 *** Beta release name:
-
-2.2.1c (beta)
+2.7.0.1 (beta 2)
 
 *** Beta release notes:
 <de-DE>
-- Unterstützt sicheren Dateizugriff für SD-Karten
-- Verbesserte Joystick- und Gamepad-Tastenbelegung
-- Die Unterstützung von 3D-Spielen wurde mit der Desktop-Version synchronisiert
-- Wählen Sie zwischen Joystick, Touchpad und direkter Maussteuerung pro Spiel und on-the-fly
-- Mehr Spiele, mehr Bugfixes sowie die vollständige Liste aller Änderungen finden Sie unter https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
+- FluidSynth-Soundfonts werden nun korrekt geladen
+- Benutzerdefinierte Pfade für Spielstände werden nun korrekt gesetzt
+- Absturz behoben, der im Zusammenhang mit Shader-Downloads in einen benutzerdefinierten Ordner aufgetreten ist
+- Spielstand-Dateien können jetzt auch korrekt über die SAF-API gelöscht werden
+- Mehr Spiele, mehr Fehlerkorrekturen - die volle Liste findest Du unter https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
 </de-DE>

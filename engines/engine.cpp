@@ -223,6 +223,14 @@ void initCommonGFX() {
 
 		if (gameDomain->contains("shader"))
 			g_system->setShader(ConfMan.get("shader"));
+
+		// TODO: switching between OpenGL and SurfaceSDL is quite fragile
+		// and the SDL backend doesn't really need this so leave it out
+		// for now to avoid regressions
+#ifndef SDL_BACKEND
+		if (gameDomain->contains("gfx_mode"))
+			g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+#endif
 	}
 }
 

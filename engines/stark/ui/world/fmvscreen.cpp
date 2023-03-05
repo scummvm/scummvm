@@ -37,12 +37,12 @@ FMVScreen::FMVScreen(Gfx::Driver *gfx, Cursor *cursor) :
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kOriginalHeight);
 	_visible = true;
 
-	_decoder = new Video::BinkDecoder();
-	_decoder->setDefaultHighColorFormat(Gfx::Driver::getRGBAPixelFormat());
-	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
-
 	_bitmap = _gfx->createBitmap();
 	_bitmap->setSamplingFilter(StarkSettings->getImageSamplingFilter());
+
+	_decoder = new Video::BinkDecoder();
+	_decoder->setDefaultHighColorFormat(_bitmap->getBestPixelFormat());
+	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }

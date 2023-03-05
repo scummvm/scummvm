@@ -26,18 +26,17 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/util.h"
-#include "engines/nancy/constants.h"
 
 namespace Nancy {
 
 void CursorManager::init() {
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("INV");
-	chunk->seek(0xD6 + g_nancy->getConstants().numCurtainAnimationFrames * 0x20 + 0x1C);
+	chunk->seek(0xD6 + g_nancy->getStaticData().numCurtainAnimationFrames * 0x20 + 0x1C);
 	Common::String inventoryCursorsImageName = chunk->readString();
 
 	chunk = g_nancy->getBootChunkStream("CURS");
 	chunk->seek(0);
-	uint numCursors = g_nancy->getConstants().numNonItemCursors + g_nancy->getConstants().numItems * 4;
+	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * 4;
 	_cursors.reserve(numCursors);
 	for (uint i = 0; i < numCursors; ++i) {
 		_cursors.push_back(Cursor());
@@ -95,7 +94,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			itemID = 0;
 		} else {
 			// Item held
-			itemsOffset = g_nancy->getConstants().numNonItemCursors;
+			itemsOffset = g_nancy->getStaticData().numNonItemCursors;
 			hasItem = true;
 		}
 

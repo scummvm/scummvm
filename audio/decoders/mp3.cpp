@@ -407,7 +407,7 @@ Common::SeekableReadStream *MP3Stream::skipID3(Common::SeekableReadStream *strea
 
 		// Add in the 10 bytes we read in
 		size += sizeof(data);
-		debug("Skipping ID3 TAG (%d bytes)", size);
+		debug(0, "Skipping ID3 TAG (%d bytes)", size);
 		offset = size;
 	}
 

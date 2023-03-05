@@ -22,7 +22,6 @@
 #ifndef NANCY_ACTION_RECORDTYPES_H
 #define NANCY_ACTION_RECORDTYPES_H
 
-#include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/action/actionrecord.h"
@@ -79,7 +78,17 @@ protected:
 
 class HotMultiframeMultisceneChange : public Unimplemented {
 public:
+	enum ConditionType { kEventFlag = 1, kItem = 2, kItemHeld = 3 };
+
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	SceneChangeDescription _onTrue;
+	SceneChangeDescription _onFalse;
+	ConditionType _condType;
+	uint16 _conditionID;
+	byte _conditionPayload;
+	Common::Array<HotspotDescription> _hotspots;
 
 protected:
 	Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneChange"; }
@@ -290,9 +299,14 @@ protected:
 	Common::String getRecordTypeName() const override { return "TextBoxClear"; }
 };
 
-class BumpPlayerClock : public Unimplemented {
+class BumpPlayerClock : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	NancyFlag _relative;
+	uint16 _hours;
+	uint16 _minutes;
 
 protected:
 	Common::String getRecordTypeName() const override { return "BumpPlayerClock"; }
@@ -372,17 +386,19 @@ protected:
 	Common::String getRecordTypeName() const override { return "LoseGame"; }
 };
 
-class PushScene : public Unimplemented {
+class PushScene : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PushScene"; }
 };
 
-class PopScene : public Unimplemented {
+class PopScene : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PopScene"; }
@@ -498,13 +514,10 @@ public:
 	byte _characterID; // 0x00
 	SoundDescription _genericSound; // 0x01
 
-	Common::String _text;
-	SceneChangeDescription _sceneChange;
-	uint16 _hintID;
-	int16 _hintWeight;
+	const Hint *selectedHint;
+	int16 _hintID;
 
 	void selectHint();
-	void getHint(uint hint, uint difficulty);
 
 protected:
 	Common::String getRecordTypeName() const override { return "HintSystem"; }

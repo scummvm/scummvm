@@ -44,7 +44,6 @@ namespace Nancy {
 
 class NancyEngine;
 class NancyConsole;
-class CheatDialog;
 struct SceneChangeDescription;
 
 namespace Action {
@@ -74,7 +73,6 @@ class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::Action::SliderPuzzle;
 	friend class Nancy::NancyConsole;
 	friend class Nancy::NancyEngine;
-	friend class Nancy::CheatDialog;
 
 public:
 	enum GameStateChange : byte {
@@ -127,6 +125,8 @@ public:
 	void pauseSceneSpecificSounds();
 	void unpauseSceneSpecificSounds();
 
+	void setPlayerTime(Time time, NancyFlag relative);
+
 	void addItemToInventory(uint16 id);
 	void removeItemFromInventory(uint16 id, bool pickUp = true);
 	int16 getHeldItem() const { return _flags.heldItem; }
@@ -146,7 +146,7 @@ public:
 	uint16 getDifficulty() const { return _difficulty; }
 
 	byte getHintsRemaining() const { return _hintsRemaining[_difficulty]; }
-	void useHint(int hintID, int hintWeight);
+	void useHint(uint16 characterID, uint16 hintID);
 
 	void requestStateChange(NancyState::NancyState state) { _gameStateRequested = state; }
 	void resetStateToInit() { _state = kInit; }
@@ -252,7 +252,8 @@ private:
 	SliderPuzzleState _sliderPuzzleState;
 	uint16 _difficulty;
 	Common::Array<uint16> _hintsRemaining;
-	int16 _lastHint;
+	int16 _lastHintCharacter;
+	int16 _lastHintID;
 	NancyState::NancyState _gameStateRequested;
 
 	Common::Rect _mapHotspot;

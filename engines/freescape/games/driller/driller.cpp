@@ -1002,8 +1002,11 @@ void DrillerEngine::initGameState() {
 	_playerHeightNumber = 1;
 	_playerHeight = _playerHeights[_playerHeightNumber];
 	removeTimers();
-	startCountdown(_initialCountdown);
-	_lastMinute = 0;
+	startCountdown(_initialCountdown - 1);
+
+	int seconds, minutes, hours;
+	getTimeFromCountdown(seconds, minutes, hours);
+	_lastMinute = minutes;
 	_demoIndex = 0;
 	_demoEvents.clear();
 }

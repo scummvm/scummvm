@@ -32,6 +32,7 @@ public:
 	void setFeatureState(OSystem::Feature f, bool enable) override {}
 	bool getFeatureState(OSystem::Feature f) const override { return false; }
 
+#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat getScreenFormat() const override {
 		return _format;
 	}
@@ -46,6 +47,7 @@ public:
 		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 		return list;
 	}
+#endif
 
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override {
 		_width = width;

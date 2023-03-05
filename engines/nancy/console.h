@@ -48,9 +48,19 @@ private:
 	bool Cmd_playAudio(int argc, const char **argv);
 	bool Cmd_loadScene(int argc, const char **argv);
 	bool Cmd_sceneID(int argc, const char **argv);
+	bool Cmd_listAcionRecords(int argc, const char **argv);
+	bool Cmd_getEventFlags(int argc, const char **argv);
+	bool Cmd_setEventFlags(int argc, const char **argv);
+	bool Cmd_getInventory(int argc, const char **argv);
+	bool Cmd_setInventory(int argc, const char **argv);
+	bool Cmd_getPlayerTime(int argc, const char **argv);
+	bool Cmd_setPlayerTime(int argc, const char **argv);
+	bool Cmd_getDifficulty(int argc, const char **argv);
+	bool Cmd_setDifficulty(int argc, const char **argv);
 
 	Common::String _videoFile;
 	Common::String _imageFile;
+	Common::String _paletteFile;
 };
 
 } // End of namespace Nancy

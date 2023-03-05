@@ -434,6 +434,9 @@ endif
 ifdef ENABLE_MORTEVIELLE
 DIST_FILES_ENGINEDATA+=mort.dat
 endif
+ifdef ENABLE_NANCY
+DIST_FILES_ENGINEDATA+=nancy.dat
+endif
 ifdef ENABLE_NEVERHOOD
 DIST_FILES_ENGINEDATA+=neverhood.dat
 endif

@@ -117,6 +117,15 @@ bool InGameSceneXmlParser::parserCallback_collisionSlide(ParserNode *node) {
 	return true;
 }
 
+//
+// WORKAROUND: This is a typo in scenes/A2_Falaise/24020/Scene24020.xml
+// for collisionSlide.  Fix it to do what it was intended to do.
+//
+bool InGameSceneXmlParser::parserCallback_coliisionSlide(ParserNode *node) {
+	_scene->setCollisionSlide(true);
+	return true;
+}
+
 bool InGameSceneXmlParser::parserCallback_noCollisionSlide(ParserNode *node) {
 	_scene->setCollisionSlide(false);
 	return true;
@@ -165,8 +174,16 @@ bool InGameSceneXmlParser::textCallback(const Common::String &val) {
 	case TextNodePosition: {
 		TeVector3f32 pos;
 		if (!pos.parse(val)) {
-			parserError("Can't parse dummy position");
-			return false;
+			//
+			// WORKAROUND: Syberia 2 A5_ValMaison/55016/Scene55016.xml
+			// contains invalid dummy position data.
+			//
+			if (val == "-10,-17,-31,7") {
+				pos = TeVector3f32(-10, -17, -31);
+			} else {
+				parserError("Can't parse dummy position");
+				return false;
+			}
 		}
 		_scene->_dummies.back()._position = pos;
 		break;

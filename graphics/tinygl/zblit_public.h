@@ -98,7 +98,7 @@ TinyGL::BlitImage *tglGenBlitImage();
 @param color key value for alpha color keying
 @param boolean that enables alpha color keying
 */
-void tglUploadBlitImage(TinyGL::BlitImage *blitImage, const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey);
+void tglUploadBlitImage(TinyGL::BlitImage *blitImage, const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey, bool zBuffer = false);
 
 /**
 @brief Destroys an instance of blit image.
@@ -135,13 +135,6 @@ void tglBlit(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transfor
 @param y destination coordinate.
 */
 void tglBlit(TinyGL::BlitImage *blitImage, int x, int y);
-
-/**
-@brief Blits an image to the color buffer without performing any type of blending.
-@param pointer to the blit image.
-@param blit transform information.
-*/
-void tglBlitNoBlend(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform);
 
 /**
 @brief Blits an image to the color buffer without performinc any type of blending, image transformation or tinting.

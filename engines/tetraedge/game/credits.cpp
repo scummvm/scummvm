@@ -69,13 +69,15 @@ void Credits::enter(bool returnToOptions) {
 	anchorAnim->_callbackMethod = &TeLayout::setAnchor;
 	anchorAnim->play();
 
-	TeCurveAnim2<TeLayout, TeVector3f32> *bgPosAnim = _gui.layoutPositionLinearAnimation("scrollBackgroundPositionAnim");
-	if (!bgPosAnim)
-		error("Credits gui - couldn't find scrollBackgroundPositionAnim");
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+		TeCurveAnim2<TeLayout, TeVector3f32> *bgPosAnim = _gui.layoutPositionLinearAnimation("scrollBackgroundPositionAnim");
+		if (!bgPosAnim)
+			error("Credits gui - couldn't find scrollBackgroundPositionAnim");
 
-	bgPosAnim->_callbackObj = _gui.layoutChecked("backgroundSprite");
-	bgPosAnim->_callbackMethod = &TeLayout::setAnchor;
-	bgPosAnim->play();
+		bgPosAnim->_callbackObj = _gui.layoutChecked("backgroundSprite");
+		bgPosAnim->_callbackMethod = &TeLayout::setAnchor;
+		bgPosAnim->play();
+	}
 
 	_curveAnim._runTimer.pausable(false);
 	_curveAnim.stop();
@@ -91,22 +93,24 @@ void Credits::enter(bool returnToOptions) {
 	_curveAnim.setCurve(curve);
 	_curveAnim._duration = 12000;
 
-	TeLayout *backgrounds = _gui.layoutChecked("Backgrounds");
-	if (_animCounter < backgrounds->childCount()) {
-		TeSpriteLayout *bgchild = dynamic_cast<TeSpriteLayout *>(backgrounds->child(_animCounter));
-		if (!bgchild)
-			error("Child of backgrounds is not a TeSpriteLayout");
-		_curveAnim._callbackObj = bgchild;
-		_curveAnim._callbackMethod = &TeLayout::setColor;
-		_curveAnim.play();
-		bgchild->setVisible(true);
-		const Common::String bgAnimName = bgchild->name() + "Anim";
-		bgPosAnim = _gui.layoutPositionLinearAnimation(bgAnimName);
-		if (!bgPosAnim)
-			error("Couldn't find bg position anim %s", bgAnimName.c_str());
-		bgPosAnim->_callbackObj = bgchild;
-		bgPosAnim->_callbackMethod = &TeLayout::setPosition;
-		bgPosAnim->play();
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+		TeLayout *backgrounds = _gui.layoutChecked("Backgrounds");
+		if (_animCounter < backgrounds->childCount()) {
+			TeSpriteLayout *bgchild = dynamic_cast<TeSpriteLayout *>(backgrounds->child(_animCounter));
+			if (!bgchild)
+				error("Child of backgrounds is not a TeSpriteLayout");
+			_curveAnim._callbackObj = bgchild;
+			_curveAnim._callbackMethod = &TeLayout::setColor;
+			_curveAnim.play();
+			bgchild->setVisible(true);
+			const Common::String bgAnimName = bgchild->name() + "Anim";
+			TeCurveAnim2<TeLayout, TeVector3f32> *bgPosAnim = _gui.layoutPositionLinearAnimation(bgAnimName);
+			if (!bgPosAnim)
+				error("Couldn't find bg position anim %s", bgAnimName.c_str());
+			bgPosAnim->_callbackObj = bgchild;
+			bgPosAnim->_callbackMethod = &TeLayout::setPosition;
+			bgPosAnim->play();
+		}
 	}
 	_curveAnim.onFinished().add(this, &Credits::onBackgroundAnimFinished);
 }

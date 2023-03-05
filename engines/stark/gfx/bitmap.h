@@ -25,6 +25,7 @@
 #include "common/hash-str.h"
 
 namespace Graphics {
+	struct PixelFormat;
 	struct Surface;
 }
 
@@ -52,6 +53,9 @@ public:
 
 	/** Set the filter used when sampling the texture */
 	virtual void setSamplingFilter(SamplingFilter filter) = 0;
+
+	/** Get the most ideal pixel format for uploading to a texture */
+	virtual Graphics::PixelFormat getBestPixelFormat() const = 0;
 
 	/** Get the texture width */
 	uint32 width() const { return _width; }

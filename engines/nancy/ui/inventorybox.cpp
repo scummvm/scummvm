@@ -26,7 +26,6 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
-#include "engines/nancy/constants.h"
 
 #include "engines/nancy/ui/inventorybox.h"
 
@@ -64,7 +63,7 @@ void InventoryBox::init() {
 
 	stream.seek(0xD6, SEEK_SET);
 
-	uint numFrames = g_nancy->getConstants().numCurtainAnimationFrames;
+	uint numFrames = g_nancy->getStaticData().numCurtainAnimationFrames;
 	_curtainsSrc.resize(numFrames * 2);
 	for (uint i = 0; i < numFrames * 2; ++i) {
 		readRect(stream, _curtainsSrc[i]);
@@ -83,8 +82,8 @@ void InventoryBox::init() {
 	char itemName[20];
 	uint itemNameLength = g_nancy->getGameType() == kGameTypeVampire ? 15 : 20;
 
-	_itemDescriptions.reserve(g_nancy->getConstants().numItems);
-	for (uint i = 0; i < g_nancy->getConstants().numItems; ++i) {
+	_itemDescriptions.reserve(g_nancy->getStaticData().numItems);
+	for (uint i = 0; i < g_nancy->getStaticData().numItems; ++i) {
 		stream.read(itemName, itemNameLength);
 		itemName[itemNameLength - 1] = '\0';
 		_itemDescriptions.push_back(ItemDescription());
@@ -96,7 +95,7 @@ void InventoryBox::init() {
 
 	g_nancy->_resource->loadImage(inventoryBoxIconsImageName, _iconsSurface);
 
-	_fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((g_nancy->getConstants().numItems / 4) + 1), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((g_nancy->getStaticData().numItems / 4) + 1), g_nancy->_graphicsManager->getScreenPixelFormat());
 	Common::Rect sourceRect = _screenPosition;
 	sourceRect.moveTo(0, 0);
 	_drawSurface.create(_fullInventorySurface, sourceRect);
@@ -249,7 +248,7 @@ void InventoryBox::Curtains::init() {
 void InventoryBox::Curtains::updateGraphics() {
 	Time time = g_nancy->getTotalPlayTime();
 	if (_areOpen) {
-		if (_curFrame < g_nancy->getConstants().numCurtainAnimationFrames && time > _nextFrameTime) {
+		if (_curFrame < g_nancy->getStaticData().numCurtainAnimationFrames && time > _nextFrameTime) {
 			setAnimationFrame(++_curFrame);
 			_nextFrameTime = time + _parent->_curtainsFrameTime;
 
@@ -270,7 +269,7 @@ void InventoryBox::Curtains::updateGraphics() {
 		}
 	}
 
-	if (_curFrame == 0 || _curFrame == g_nancy->getConstants().numCurtainAnimationFrames) {
+	if (_curFrame == 0 || _curFrame == g_nancy->getStaticData().numCurtainAnimationFrames) {
 		_soundTriggered = false;
 	}
 }
@@ -280,7 +279,7 @@ void InventoryBox::Curtains::setAnimationFrame(uint frame) {
 	Common::Rect srcRect;
 	Common::Point destPoint;
 
-	if (frame > g_nancy->getConstants().numCurtainAnimationFrames - 1) {
+	if (frame > (uint)(g_nancy->getStaticData().numCurtainAnimationFrames - 1)) {
 		setVisible(false);
 		return;
 	} else {

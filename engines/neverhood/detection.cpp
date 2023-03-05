@@ -137,35 +137,6 @@ public:
 				    GAMEOPTION_SCALE_MAKING_OF_VIDEOS, GAMEOPTION_REPEAT_WILLIE_HINT);
 	}
 
-	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override {
-		DetectedGames detGames(AdvancedMetaEngineDetection::detectGames(fslist, skipADFlags, skipIncomplete));
-		bool hasSubs = false;
-
-		if (detGames.empty())
-			return detGames;
-
-		for (Common::FSList::const_iterator dr = fslist.begin(); dr != fslist.end() && !hasSubs; dr++) {
-			if (dr->getName().equalsIgnoreCase("language") && dr->isDirectory()) {
-				Common::FSList files;
-				if (!dr->getChildren(files, Common::FSNode::kListAll))
-					continue;
-				for (Common::FSList::const_iterator file = files.begin(); file != files.end(); file++) {
-					Common::String fname = file->getName();
-					if (fname.matchString("*.nhc", true) && !fname.equalsIgnoreCase("Fargusfx.nhc")) {
-						hasSubs = true;
-						break;
-					}
-				}
-			}
-		}
-		if (hasSubs)
-			return detGames;
-		for (DetectedGames::iterator it = detGames.begin(); it != detGames.end(); it++) {
-			it->appendGUIOptions("sndNoSubs");
-		}
-		return detGames;
-	}
-
 	const char *getName() const override {
 		return "neverhood";
 	}

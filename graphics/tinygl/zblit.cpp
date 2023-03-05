@@ -27,6 +27,8 @@
 #include "graphics/tinygl/zdirtyrect.h"
 #include "graphics/tinygl/gl.h"
 
+#include "graphics/blit.h"
+
 #include <math.h>
 
 namespace TinyGL {
@@ -36,51 +38,79 @@ Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, 
 
 struct BlitImage {
 public:
-	BlitImage() : _isDisposed(false), _version(0), _binaryTransparent(false), _refcount(1) { }
+	BlitImage() : _isDisposed(false), _version(0), _binaryTransparent(false), _opaque(true), _zBuffer(false), _refcount(1) { }
 
-	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey) {
-		const Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey, bool zBuffer) {
+		_lines.clear();
+
+		_zBuffer = zBuffer;
+		if (_zBuffer) {
+			_surface.copyFrom(surface);
+			return;
+		}
+
 		int size = surface.w * surface.h;
-		_surface.create(surface.w, surface.h, textureFormat);
 		Graphics::PixelBuffer buffer(surface.format, (byte *)const_cast<void *>(surface.getPixels()));
-		Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(_surface.getPixels()));
-		dataBuffer.copyBuffer(0, 0, size, buffer);
-		if (applyColorKey) {
+
+		_opaque = true;
+		if (surface.format.aBits() > 0) {
 			for (int x = 0; x < size; x++) {
-				if (buffer.getValueAt(x) == colorKey) {
-					// Color keyed pixels become transparent white.
-					dataBuffer.setPixelAt(x, 0, 255, 255, 255);
+				uint8 r, g, b, a;
+				buffer.getARGBAt(x, a, r, g, b);
+				if (a != 0xFF) {
+					_opaque = false;
 				}
 			}
 		}
 
-		// Create opaque lines data.
-		// A line of pixels can not wrap more that one line of the image, since it would break
-		// blitting of bitmaps with a non-zero x position.
-		Graphics::PixelBuffer srcBuf = dataBuffer;
-		_lines.clear();
-		_binaryTransparent = true;
-		for (int y = 0; y < surface.h; y++) {
-			int start = -1;
-			for (int x = 0; x < surface.w; ++x) {
-				// We found a transparent pixel, so save a line from 'start' to the pixel before this.
-				uint8 r, g, b, a;
-				srcBuf.getARGBAt(x, a, r, g, b);
-				if (a != 0 && a != 0xFF) {
-					_binaryTransparent = false;
-				}
-				if (a == 0 && start >= 0) {
-					_lines.push_back(Line(start, y, x - start, srcBuf.getRawBuffer(start), textureFormat));
-					start = -1;
-				} else if (a != 0 && start == -1) {
-					start = x;
+		if (_opaque && !applyColorKey) {
+			GLContext *c = gl_get_context();
+			_surface.convertFrom(surface, c->fb->getPixelFormat());
+
+			_binaryTransparent = false;
+		} else {
+			const Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+			_surface.convertFrom(surface, textureFormat);
+
+			Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(_surface.getPixels()));
+
+			if (applyColorKey) {
+				for (int x = 0; x < size; x++) {
+					if (buffer.getValueAt(x) == colorKey) {
+						// Color keyed pixels become transparent white.
+						dataBuffer.setPixelAt(x, 0, 255, 255, 255);
+						_opaque = false;
+					}
 				}
 			}
-			// end of the bitmap line. if start is an actual pixel save the line.
-			if (start >= 0) {
-				_lines.push_back(Line(start, y, surface.w - start, srcBuf.getRawBuffer(start), textureFormat));
+
+			// Create opaque lines data.
+			// A line of pixels can not wrap more that one line of the image, since it would break
+			// blitting of bitmaps with a non-zero x position.
+			Graphics::PixelBuffer srcBuf = dataBuffer;
+			_binaryTransparent = true;
+			for (int y = 0; y < surface.h; y++) {
+				int start = -1;
+				for (int x = 0; x < surface.w; ++x) {
+					// We found a transparent pixel, so save a line from 'start' to the pixel before this.
+					uint8 r, g, b, a;
+					srcBuf.getARGBAt(x, a, r, g, b);
+					if (a != 0 && a != 0xFF) {
+						_binaryTransparent = false;
+					}
+					if (a == 0 && start >= 0) {
+						_lines.push_back(Line(start, y, x - start, srcBuf.getRawBuffer(start), textureFormat));
+						start = -1;
+					} else if (a != 0 && start == -1) {
+						start = x;
+					}
+				}
+				// end of the bitmap line. if start is an actual pixel save the line.
+				if (start >= 0) {
+					_lines.push_back(Line(start, y, surface.w - start, srcBuf.getRawBuffer(start), textureFormat));
+				}
+				srcBuf.shiftBy(surface.w);
 			}
-			srcBuf.shiftBy(surface.w);
 		}
 
 		_version++;
@@ -189,6 +219,7 @@ public:
 	// The function only supports clipped blitting without any type of transformation or tinting.
 	void tglBlitZBuffer(int dstX, int dstY) {
 		TinyGL::GLContext *c = TinyGL::gl_get_context();
+		assert(_zBuffer);
 
 		int clampWidth, clampHeight;
 		int width = _surface.w, height = _surface.h;
@@ -212,6 +243,8 @@ public:
 		}
 	}
 
+	void tglBlitOpaque(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight);
+
 	template <bool kDisableColoring, bool kDisableBlending, bool kEnableAlphaBlending>
 	void tglBlitRLE(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight, float aTint, float rTint, float gTint, float bTint);
 
@@ -226,10 +259,16 @@ public:
 	                      int originX, int originY, float aTint, float rTint, float gTint, float bTint);
 
 	//Utility function that calls the correct blitting function.
-	template <bool kDisableBlending, bool kDisableColoring, bool kDisableTransform, bool kFlipVertical, bool kFlipHorizontal, bool kEnableAlphaBlending>
+	template <bool kDisableBlending, bool kDisableColoring, bool kDisableTransform, bool kFlipVertical, bool kFlipHorizontal, bool kEnableAlphaBlending, bool kEnableOpaqueBlit>
 	void tglBlitGeneric(const BlitTransform &transform) {
+		assert(!_zBuffer);
+
 		if (kDisableTransform) {
-			if ((kDisableBlending || kEnableAlphaBlending) && kFlipVertical == false && kFlipHorizontal == false) {
+			if (kEnableOpaqueBlit && kDisableColoring && kFlipVertical == false && kFlipHorizontal == false) {
+				tglBlitOpaque(transform._destinationRectangle.left, transform._destinationRectangle.top,
+					transform._sourceRectangle.left, transform._sourceRectangle.top,
+					transform._sourceRectangle.width() , transform._sourceRectangle.height());
+			} else if ((kDisableBlending || kEnableAlphaBlending) && kFlipVertical == false && kFlipHorizontal == false) {
 				tglBlitRLE<kDisableColoring, kDisableBlending, kEnableAlphaBlending>(transform._destinationRectangle.left,
 					transform._destinationRectangle.top, transform._sourceRectangle.left, transform._sourceRectangle.top,
 					transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._aTint,
@@ -261,9 +300,12 @@ public:
 	void incRefCount() { _refcount++; }
 	void dispose() { if (--_refcount == 0) _isDisposed = true; }
 	bool isDisposed() const { return _isDisposed; }
+	bool isOpaque() const { return _opaque; }
 private:
 	bool _isDisposed;
 	bool _binaryTransparent;
+	bool _opaque;
+	bool _zBuffer;
 	Common::Array<Line> _lines;
 	Graphics::Surface _surface;
 	int _version;
@@ -293,9 +335,9 @@ TinyGL::BlitImage *tglGenBlitImage() {
 	return image;
 }
 
-void tglUploadBlitImage(TinyGL::BlitImage *blitImage, const Graphics::Surface& surface, uint32 colorKey, bool applyColorKey) {
+void tglUploadBlitImage(TinyGL::BlitImage *blitImage, const Graphics::Surface& surface, uint32 colorKey, bool applyColorKey, bool zBuffer) {
 	if (blitImage != nullptr) {
-		blitImage->loadData(surface, colorKey, applyColorKey);
+		blitImage->loadData(surface, colorKey, applyColorKey, zBuffer);
 	}
 }
 
@@ -306,6 +348,21 @@ void tglDeleteBlitImage(TinyGL::BlitImage *blitImage) {
 }
 
 namespace TinyGL {
+
+void BlitImage::tglBlitOpaque(int dstX, int dstY, int srcX, int srcY, int srcWidth, int srcHeight) {
+	GLContext *c = gl_get_context();
+
+	int clampWidth, clampHeight;
+	int width = srcWidth, height = srcHeight;
+	if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
+		return;
+
+	int fbWidth = c->fb->getPixelBufferWidth();
+
+	Graphics::crossBlit(c->fb->getPixelBuffer(dstX + dstY * fbWidth), (const byte *)_surface.getBasePtr(srcX, srcY),
+	                    c->fb->getPixelBufferPitch(), _surface.pitch, clampWidth, clampHeight,
+	                    c->fb->getPixelFormat(), _surface.format);
+}
 
 // This function uses RLE encoding to skip transparent bitmap parts
 // This blit only supports tinting but it will fall back to simpleBlit
@@ -644,11 +701,6 @@ void tglBlit(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transfor
 	c->issueDrawCall(new TinyGL::BlittingDrawCall(blitImage, transform, TinyGL::BlittingDrawCall::BlitMode_Regular));
 }
 
-void tglBlitNoBlend(TinyGL::BlitImage *blitImage, const TinyGL::BlitTransform &transform) {
-	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->issueDrawCall(new TinyGL::BlittingDrawCall(blitImage, transform, TinyGL::BlittingDrawCall::BlitMode_NoBlend));
-}
-
 void tglBlitFast(TinyGL::BlitImage *blitImage, int x, int y) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	TinyGL::BlitTransform transform(x, y);
@@ -665,45 +717,54 @@ void tglBlitZBuffer(TinyGL::BlitImage *blitImage, int x, int y) {
 namespace TinyGL {
 namespace Internal {
 
-template <bool kEnableAlphaBlending, bool kDisableColor, bool kDisableTransform, bool kDisableBlend>
+template <bool kEnableAlphaBlending, bool kEnableOpaqueBlit, bool kDisableColor, bool kDisableTransform, bool kDisableBlend>
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	if (transform._flipHorizontally) {
 		if (transform._flipVertically) {
-			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, true, kEnableAlphaBlending>(transform);
+			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, true, kEnableAlphaBlending, kEnableOpaqueBlit>(transform);
 		} else {
-			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, true, kEnableAlphaBlending>(transform);
+			blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, true, kEnableAlphaBlending, kEnableOpaqueBlit>(transform);
 		}
 	} else if (transform._flipVertically) {
-		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, false, kEnableAlphaBlending>(transform);
+		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, true, false, kEnableAlphaBlending, kEnableOpaqueBlit>(transform);
 	} else {
-		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, false, kEnableAlphaBlending>(transform);
+		blitImage->tglBlitGeneric<kDisableBlend, kDisableColor, kDisableTransform, false, false, kEnableAlphaBlending, kEnableOpaqueBlit>(transform);
 	}
 }
 
-template <bool kEnableAlphaBlending, bool kDisableColor, bool kDisableTransform>
+template <bool kEnableAlphaBlending, bool kEnableOpaqueBlit, bool kDisableColor, bool kDisableTransform>
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableBlend) {
 	if (disableBlend) {
-		tglBlit<kEnableAlphaBlending, kDisableColor, kDisableTransform, true>(blitImage, transform);
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, kDisableColor, kDisableTransform, true>(blitImage, transform);
 	} else {
-		tglBlit<kEnableAlphaBlending, kDisableColor, kDisableTransform, false>(blitImage, transform);
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, kDisableColor, kDisableTransform, false>(blitImage, transform);
 	}
 }
 
-template <bool kEnableAlphaBlending, bool kDisableColor>
+template <bool kEnableAlphaBlending, bool kEnableOpaqueBlit, bool kDisableColor>
 void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableTransform, bool disableBlend) {
 	if (disableTransform) {
-		tglBlit<kEnableAlphaBlending, kDisableColor, true>(blitImage, transform, disableBlend);
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, kDisableColor, true>(blitImage, transform, disableBlend);
 	} else {
-		tglBlit<kEnableAlphaBlending, kDisableColor, false>(blitImage, transform, disableBlend);
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, kDisableColor, false>(blitImage, transform, disableBlend);
+	}
+}
+
+template <bool kEnableAlphaBlending, bool kEnableOpaqueBlit>
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableColor, bool disableTransform, bool disableBlend) {
+	if (disableColor) {
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, true>(blitImage, transform, disableTransform, disableBlend);
+	} else {
+		tglBlit<kEnableAlphaBlending, kEnableOpaqueBlit, false>(blitImage, transform, disableTransform, disableBlend);
 	}
 }
 
 template <bool kEnableAlphaBlending>
-void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool disableColor, bool disableTransform, bool disableBlend) {
-	if (disableColor) {
-		tglBlit<kEnableAlphaBlending, true>(blitImage, transform, disableTransform, disableBlend);
+void tglBlit(BlitImage *blitImage, const BlitTransform &transform, bool enableOpaqueBlit, bool disableColor, bool disableTransform, bool disableBlend) {
+	if (enableOpaqueBlit) {
+		tglBlit<kEnableAlphaBlending, true>(blitImage, transform, disableColor, disableTransform, disableBlend);
 	} else {
-		tglBlit<kEnableAlphaBlending, false>(blitImage, transform, disableTransform, disableBlend);
+		tglBlit<kEnableAlphaBlending, false>(blitImage, transform, disableColor, disableTransform, disableBlend);
 	}
 }
 
@@ -713,27 +774,24 @@ void tglBlit(BlitImage *blitImage, const BlitTransform &transform) {
 	bool disableTransform = transform._destinationRectangle.width() == 0 && transform._destinationRectangle.height() == 0 && transform._rotation == 0;
 	bool disableBlend = c->blending_enabled == false;
 	bool enableAlphaBlending = c->source_blending_factor == TGL_SRC_ALPHA && c->destination_blending_factor == TGL_ONE_MINUS_SRC_ALPHA;
+	bool enableOpaqueBlit = blitImage->isOpaque()
+	                    && (c->source_blending_factor == TGL_ONE || c->source_blending_factor == TGL_SRC_ALPHA)
+	                    && (c->destination_blending_factor == TGL_ZERO || c->destination_blending_factor == TGL_ONE_MINUS_SRC_ALPHA);
 
 	if (enableAlphaBlending) {
-		tglBlit<true>(blitImage, transform, disableColor, disableTransform, disableBlend);
+		tglBlit<true>(blitImage, transform, enableOpaqueBlit, disableColor, disableTransform, disableBlend);
 	} else {
-		tglBlit<false>(blitImage, transform, disableColor, disableTransform, disableBlend);
-	}
-}
-
-void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
-	if (transform._flipHorizontally == false && transform._flipVertically == false) {
-		blitImage->tglBlitGeneric<true, false, false, false, false, false>(transform);
-	} else if(transform._flipHorizontally == false) {
-		blitImage->tglBlitGeneric<true, false, false, true, false, false>(transform);
-	} else {
-		blitImage->tglBlitGeneric<true, false, false, false, true, false>(transform);
+		tglBlit<false>(blitImage, transform, enableOpaqueBlit, disableColor, disableTransform, disableBlend);
 	}
 }
 
 void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
-	blitImage->tglBlitGeneric<true, true, true, false, false, false>(transform);
+	if (blitImage->isOpaque()) {
+		blitImage->tglBlitGeneric<true, true, true, false, false, false, true>(transform);
+	} else {
+		blitImage->tglBlitGeneric<true, true, true, false, false, false, false>(transform);
+	}
 }
 
 void tglBlitZBuffer(BlitImage *blitImage, int x, int y) {

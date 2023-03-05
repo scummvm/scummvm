@@ -66,7 +66,7 @@ const float InGameScene::DEPTH_MAX_FLAKE = 0.1f;
 
 
 InGameScene::InGameScene() : _character(nullptr), _charactersShadow(nullptr),
-_shadowLightNo(-1), _waitTime(-1.0f), _shadowColor(0, 0, 0, 0x80), _shadowFov(20.0f),
+_shadowLightNo(-1), _waitTime(-1.0), _shadowColor(0, 0, 0, 0x80), _shadowFov(20.0f),
 _shadowFarPlane(1000), _shadowNearPlane(1), _maskAlpha(false),
 _verticalScrollTime(1000000.0f), _verticalScrollPlaying(false) {
 }
@@ -520,6 +520,10 @@ void InGameScene::freeGeometry() {
 	_loadedPath.set("");
 	_youkiManager.reset();
 	freeSceneObjects();
+	if (_character)
+		_character->setFreeMoveZone(nullptr);
+	for (Character *character : _characters)
+		character->setFreeMoveZone(nullptr);
 	for (TeFreeMoveZone *zone : _freeMoveZones)
 		delete zone;
 	_freeMoveZones.clear();
@@ -796,7 +800,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	_sceneName = scene;
 	_blockers.clear();
 	_rectBlockers.clear();
-	_collisionSlide = 0;
+	_collisionSlide = false;
 	loadActZones();
 	loadBlockers();
 
@@ -1293,6 +1297,8 @@ bool InGameScene::loadShadowReceivingObject(const Common::String &name, const Co
 		mesh->setIndex(i, file.readUint16LE());
 	}
 
+	file.close();
+
 	_shadowReceivingObjects.push_back(model);
 	return true;
 }
@@ -1513,7 +1519,7 @@ void InGameScene::reset() {
 }
 
 TeLight *InGameScene::shadowLight() {
-	if (_shadowLightNo == -1) {
+	if (_shadowLightNo == -1 || (uint)_shadowLightNo >= _lights.size()) {
 		return nullptr;
 	}
 	return _lights[_shadowLightNo].get();
@@ -1666,6 +1672,8 @@ void InGameScene::update() {
 		}
 		if (_character->charLookingAt()) {
 			TeVector3f32 targetpos = _character->charLookingAt()->_model->position();
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
+				targetpos = targetpos * _character->lastHeadBoneTrans();
 			if (_character->lookingAtTallThing())
 				targetpos.y() += 17;
 			TeVector2f32 headRot(getHeadHorizontalRotation(_character, targetpos),
@@ -1682,8 +1690,12 @@ void InGameScene::update() {
 	for (Character *c : _characters) {
 		if (c->charLookingAt()) {
 			TeVector3f32 targetpos = c->charLookingAt()->_model->position();
-			if (c->lookingAtTallThing())
-				targetpos.y() += 17;
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+				if (c->lookingAtTallThing())
+					targetpos.y() += 17;
+			} else {
+				targetpos = targetpos * c->lastHeadBoneTrans();
+			}
 			TeVector2f32 headRot(getHeadHorizontalRotation(c, targetpos),
 					getHeadVerticalRotation(c, targetpos));
 			float hangle = headRot.getX() * 180.0f / M_PI;
@@ -1706,7 +1718,7 @@ void InGameScene::update() {
 	TeScene::update();
 	_youkiManager.update();
 
-	float waitTime = _waitTimeTimer.timeFromLastTimeElapsed();
+	uint64 waitTime = _waitTimeTimer.timeFromLastTimeElapsed();
 	if (_waitTime != -1.0 && waitTime > _waitTime) {
 		_waitTime = -1.0;
 		_waitTimeTimer.stop();

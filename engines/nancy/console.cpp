@@ -34,6 +34,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/action/actionrecord.h"
+
 namespace Nancy {
 
 NancyConsole::NancyConsole() : GUI::Debugger() {
@@ -49,10 +51,18 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("play_audio", WRAP_METHOD(NancyConsole, Cmd_playAudio));
 	registerCmd("load_scene", WRAP_METHOD(NancyConsole, Cmd_loadScene));
 	registerCmd("scene_id", WRAP_METHOD(NancyConsole, Cmd_sceneID));
+	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listAcionRecords));
+	registerCmd("get_eventflags", WRAP_METHOD(NancyConsole, Cmd_getEventFlags));
+	registerCmd("set_eventflags", WRAP_METHOD(NancyConsole, Cmd_setEventFlags));
+	registerCmd("get_inventory", WRAP_METHOD(NancyConsole, Cmd_getInventory));
+	registerCmd("set_inventory", WRAP_METHOD(NancyConsole, Cmd_setInventory));
+	registerCmd("get_player_time", WRAP_METHOD(NancyConsole, Cmd_getPlayerTime));
+	registerCmd("set_player_time", WRAP_METHOD(NancyConsole, Cmd_setPlayerTime));
+	registerCmd("get_difficulty", WRAP_METHOD(NancyConsole, Cmd_getDifficulty));
+	registerCmd("set_difficulty", WRAP_METHOD(NancyConsole, Cmd_setDifficulty));
 }
 
-NancyConsole::~NancyConsole() {
-}
+NancyConsole::~NancyConsole() {}
 
 void NancyConsole::postEnter() {
 	GUI::Debugger::postEnter();
@@ -60,6 +70,12 @@ void NancyConsole::postEnter() {
 		Video::VideoDecoder *dec = new AVFDecoder;
 
 		if (dec->loadFile(_videoFile)) {
+			Graphics::ManagedSurface surf;
+			
+			if (_paletteFile.size()) {
+				GraphicsManager::loadSurfacePalette(surf, _paletteFile);
+			}
+
 			dec->start();
 			Common::EventManager *ev = g_system->getEventManager();
 			while (!g_nancy->shouldQuit() && !dec->endOfVideo()) {
@@ -73,7 +89,8 @@ void NancyConsole::postEnter() {
 				if (dec->needsUpdate()) {
 					const Graphics::Surface *frame = dec->decodeNextFrame();
 					if (frame) {
-						g_nancy->_graphicsManager->debugDrawToScreen(*frame);
+						GraphicsManager::copyToManaged(*frame, surf, _paletteFile.size());
+						g_nancy->_graphicsManager->debugDrawToScreen(surf);
 					}
 				}
 
@@ -86,14 +103,18 @@ void NancyConsole::postEnter() {
 		}
 
 		_videoFile.clear();
+		_paletteFile.clear();
 		delete dec;
 	}
 
 	if (!_imageFile.empty()) {
-		Graphics::Surface surf;
+		Graphics::ManagedSurface surf;
 		if (g_nancy->_resource->loadImage(_imageFile, surf)) {
+			if (_paletteFile.size()) {
+				GraphicsManager::loadSurfacePalette(surf, _paletteFile);
+			}
+
 			g_nancy->_graphicsManager->debugDrawToScreen(surf);
-			surf.free();
 
 			Common::EventManager *ev = g_system->getEventManager();
 			while (!g_nancy->shouldQuit()) {
@@ -115,6 +136,7 @@ void NancyConsole::postEnter() {
 		}
 
 		_imageFile.clear();
+		_paletteFile.clear();
 	}
 
 	// After calling the console, action end events get sent to it and the input manager
@@ -125,7 +147,7 @@ void NancyConsole::postEnter() {
 bool NancyConsole::Cmd_cifHexDump(int argc, const char **argv) {
 	if (argc < 2 || argc > 3) {
 		debugPrintf("Dumps the specified resource to standard output\n");
-		debugPrintf("Usage: %s name [cal]\n", argv[0]);
+		debugPrintf("Usage: %s <name> [cal]\n", argv[0]);
 		return true;
 	}
 
@@ -144,7 +166,7 @@ bool NancyConsole::Cmd_cifHexDump(int argc, const char **argv) {
 bool NancyConsole::Cmd_cifExport(int argc, const char **argv) {
 	if (argc < 2 || argc > 3) {
 		debugPrintf("Exports the specified resource to .cif file\n");
-		debugPrintf("Usage: %s name [cal]\n", argv[0]);
+		debugPrintf("Usage: %s <name> [cal]\n", argv[0]);
 		return true;
 	}
 
@@ -158,7 +180,7 @@ bool NancyConsole::Cmd_cifList(int argc, const char **argv) {
 	if (argc < 2 || argc > 3) {
 		debugPrintf("List resources of a certain type\n");
 		debugPrintf("Types - 0: all, 2: image, 3: script\n");
-		debugPrintf("Usage: %s type [cal]\n", argv[0]);
+		debugPrintf("Usage: %s <type> [cal]\n", argv[0]);
 		return true;
 	}
 
@@ -178,7 +200,7 @@ bool NancyConsole::Cmd_cifList(int argc, const char **argv) {
 bool NancyConsole::Cmd_cifInfo(int argc, const char **argv) {
 	if (argc < 2 || argc > 3) {
 		debugPrintf("Prints information about a resource\n");
-		debugPrintf("Usage: %s name [cal]\n", argv[0]);
+		debugPrintf("Usage: %s <name> [cal]\n", argv[0]);
 		return true;
 	}
 
@@ -189,7 +211,7 @@ bool NancyConsole::Cmd_cifInfo(int argc, const char **argv) {
 bool NancyConsole::Cmd_chunkHexDump(int argc, const char **argv) {
 	if (argc < 3 || argc > 4) {
 		debugPrintf("Hexdumps an IFF chunk\n");
-		debugPrintf("Usage: %s iffname chunkname [index]\n", argv[0]);
+		debugPrintf("Usage: %s <iffname> <chunkname> [index]\n", argv[0]);
 		return true;
 	}
 
@@ -224,7 +246,7 @@ bool NancyConsole::Cmd_chunkHexDump(int argc, const char **argv) {
 bool NancyConsole::Cmd_chunkList(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("List chunks inside an IFF\n");
-		debugPrintf("Usage: %s iffname\n", argv[0]);
+		debugPrintf("Usage: %s <iffname>\n", argv[0]);
 		return true;
 	}
 
@@ -248,14 +270,51 @@ bool NancyConsole::Cmd_chunkList(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_showImage(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Draws an image on the screen\n");
-		debugPrintf("Usage: %s name [cal]\n", argv[0]);
-		return true;
-	}
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		if (argc != 3) {
+			debugPrintf("Draws an image on the screen\n");
+			debugPrintf("Usage: %s <name> <paletteFile>\n", argv[0]);
+			return true;
+		}
 
-	_imageFile = argv[1];
-	return cmdExit(0, nullptr);
+		_imageFile = argv[1];
+		_paletteFile = argv[2];
+		return cmdExit(0, nullptr);
+	} else {
+		if (argc != 2) {
+			debugPrintf("Draws an image on the screen\n");
+			debugPrintf("Usage: %s <name>\n", argv[0]);
+			return true;
+		}
+
+		_imageFile = argv[1];
+		return cmdExit(0, nullptr);
+	}
+}
+
+bool NancyConsole::Cmd_playVideo(int argc, const char **argv) {
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		if (argc != 3) {
+			debugPrintf("Plays a video\n");
+			debugPrintf("Usage: %s <name> <paletteFile>\n", argv[0]);
+			return true;
+		}
+
+		_videoFile = argv[1];
+		_videoFile += ".avf";
+		_paletteFile = argv[2];
+		return cmdExit(0, nullptr);
+	} else {
+		if (argc != 2) {
+			debugPrintf("Plays a video\n");
+			debugPrintf("Usage: %s <name>\n", argv[0]);
+			return true;
+		}
+
+		_videoFile = argv[1];
+		_videoFile += ".avf";
+		return cmdExit(0, nullptr);
+	}
 }
 
 bool NancyConsole::Cmd_loadCal(int argc, const char **argv) {
@@ -268,18 +327,6 @@ bool NancyConsole::Cmd_loadCal(int argc, const char **argv) {
 	if (!g_nancy->_resource->loadCifTree(argv[1], "cal"))
 		debugPrintf("Failed to load '%s.cal'\n", argv[1]);
 	return true;
-}
-
-bool NancyConsole::Cmd_playVideo(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Plays a video\n");
-		debugPrintf("Usage: %s <name>\n", argv[0]);
-		return true;
-	}
-
-	_videoFile = argv[1];
-	_videoFile += ".avf";
-	return cmdExit(0, nullptr);
 }
 
 bool NancyConsole::Cmd_playAudio(int argc, const char **argv) {
@@ -310,7 +357,7 @@ bool NancyConsole::Cmd_playAudio(int argc, const char **argv) {
 bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Loads a scene\n");
-		debugPrintf("Usage: %s sceneID\n", argv[0]);
+		debugPrintf("Usage: %s <sceneID>\n", argv[0]);
 		return true;
 	}
 
@@ -339,6 +386,342 @@ bool NancyConsole::Cmd_sceneID(int argc, const char **argv) {
 
 	debugPrintf("Scene: %u, Frame: %i \n", NancySceneState.getSceneInfo().sceneID, NancySceneState.getSceneInfo().frameID);
 	return true;
+}
+
+bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
+	using namespace Nancy::Action;
+
+	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	Common::Array<ActionRecord *> &records = NancySceneState.getActionManager()._records;
+
+	debugPrintf("Scene %u has %u action records:\n\n", NancySceneState.getSceneInfo().sceneID, records.size());
+
+	for (ActionRecord *rec : records) {
+		debugPrintf("\n%s\n\ttype: %i, %s\n\texecType: %s",
+			rec->_description.c_str(),
+			rec->_type,
+			rec->getRecordTypeName().c_str(),
+			rec->_execType == ActionRecord::kRepeating ? "kRepeating" : "kOneShot");
+
+		if (rec->_dependencies.size()) {
+			debugPrintf("\n\tDependencies:");
+
+			for (DependencyRecord &dep : rec->_dependencies) {
+				debugPrintf("\n\t\t");
+				switch (dep.type) {
+				case DependencyType::kNone :
+					debugPrintf("kNone");
+					break;
+				case DependencyType::kInventory :
+					debugPrintf("kInventory, item %u, %s, %s",
+						dep.label,
+						g_nancy->getStaticData().itemNames[dep.label].c_str(),
+						dep.condition == kTrue ? "kTrue" : "kFalse");
+					break;
+				case DependencyType::kEventFlag :
+					debugPrintf("kEventFlag, flag %u, %s, %s",
+						dep.label,
+						g_nancy->getStaticData().eventFlagNames[dep.label].c_str(),
+						dep.condition == kTrue ? "kTrue" : "kFalse");
+					break;
+				case DependencyType::kLogicCondition :
+					debugPrintf("kLogicCondition, flag %u, %s",
+						dep.label,
+						dep.condition == kTrue ? "kTrue" : "kFalse");
+					break;
+				case DependencyType::kTotalTime :
+					debugPrintf("kTotalTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+						dep.hours,
+						dep.minutes,
+						dep.seconds,
+						dep.milliseconds);
+					break;
+				case DependencyType::kSceneTime :
+					debugPrintf("kSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+						dep.hours,
+						dep.minutes,
+						dep.seconds,
+						dep.milliseconds);
+					break;
+				case DependencyType::kPlayerTime :
+					debugPrintf("kPlayerTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+						dep.hours,
+						dep.minutes,
+						dep.seconds,
+						dep.milliseconds);
+					break;
+				case DependencyType::kSceneCount :
+					debugPrintf("kSceneCount, scene ID %i, hit count %s %i",
+						dep.hours,
+						dep.milliseconds == 1 ? ">" : dep.milliseconds == 2 ? "<" : "==",
+						dep.seconds);
+					break;
+				case DependencyType::kResetOnNewDay :
+					debugPrintf("kResetOnNewDay");
+					break;
+				case DependencyType::kUseItem :
+					debugPrintf("kUseItem, item %u, %s, %s",
+						dep.label,
+						g_nancy->getStaticData().itemNames[dep.label].c_str(),
+						dep.condition == kTrue ? "kTrue" : "kFalse");
+					break;
+				case DependencyType::kTimeOfDay :
+					debugPrintf("kTimeOfDay, %s",
+						dep.label == 0 ? "day" : dep.label == 1 ? "night" : "dusk/dawn");
+					break;
+				case DependencyType::kTimerNotDone :
+					debugPrintf("kTimerNotDone");
+					break;
+				case DependencyType::kTimerDone :
+					debugPrintf("kTimerDone");
+					break;
+				case DependencyType::kDifficultyLevel :
+					debugPrintf("kDifficultyLevel, level %i", dep.condition);
+					break;
+				default:
+					debugPrintf("unknown type %u", (uint)dep.type);
+					break;
+				}
+
+				debugPrintf("\n\t\t\torFlag == %s", dep.orFlag == true ? "true" : "false");
+			}
+		}
+
+		debugPrintf("\n\n");
+	}
+
+	return true;
+}
+
+bool NancyConsole::Cmd_getEventFlags(int argc, const char **argv) {
+	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	uint numEventFlags = g_nancy->getStaticData().numEventFlags;
+
+	debugPrintf("Total number of event flags: %u\n", numEventFlags);
+
+	if (argc == 1) {
+		for (uint i = 0; i < numEventFlags; ++i) {
+			debugPrintf("\nFlag %u, %s, %s",
+				i,
+				g_nancy->getStaticData().eventFlagNames[i].c_str(),
+				NancySceneState.getEventFlag(i) == true ? "kTrue" : "kFalse");
+		}
+	} else {
+		for (int i = 1; i < argc; ++i) {
+			int flagID = atoi(argv[i]);
+			if (flagID < 0 || flagID >= (int)numEventFlags) {
+				debugPrintf("\nInvalid flag %s", argv[i]);
+				continue;
+			}
+			debugPrintf("\nFlag %u, %s, %s",
+				flagID,
+				g_nancy->getStaticData().eventFlagNames[flagID].c_str(),
+				NancySceneState.getEventFlag(flagID) == true ? "kTrue" : "kFalse");
+			 
+		}
+	}
+
+	debugPrintf("\n");
+
+	return true;
+}
+
+bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
+	if (argc < 2 || argc % 2 == 0) {
+		debugPrintf("Sets one or more event flags to the provided value.\n");
+		debugPrintf("Usage: %s <flagID> <true/false>...\n", argv[0]);
+		return true;
+	}
+
+	for (int i = 1; i < argc; i += 2) {
+		int flagID = atoi(argv[i]);
+		if (flagID < 0 || flagID >= (int)g_nancy->getStaticData().numEventFlags) {
+			debugPrintf("Invalid flag %s\n", argv[i]);
+			continue;
+		}
+		
+		if (Common::String(argv[i + 1]).compareTo("true") == 0) {
+			NancySceneState.setEventFlag(flagID, Nancy::kTrue);
+			debugPrintf("Set flag %i, %s, to kTrue\n",
+				flagID,
+				g_nancy->getStaticData().eventFlagNames[flagID].c_str());
+		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
+			NancySceneState.setEventFlag(flagID, Nancy::kFalse);
+			debugPrintf("Set flag %i, %s, to kFalse\n",
+				flagID,
+				g_nancy->getStaticData().eventFlagNames[flagID].c_str());
+		} else {
+			debugPrintf("Invalid value %s\n", argv[i + 1]);
+			continue;
+		}
+	}
+
+	return cmdExit(0, nullptr);
+}
+
+bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
+	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	uint numItems = g_nancy->getStaticData().numItems;
+
+	debugPrintf("Total number of inventory items: %u\n", numItems);
+
+	if (argc == 1) {
+		for (uint i = 0; i < numItems; ++i) {
+			debugPrintf("\nItem %u, %s, %s",
+				i,
+				g_nancy->getStaticData().itemNames[i].c_str(),
+				NancySceneState.hasItem(i) == NancyFlag::kTrue ? "kTrue" : "kFalse");
+		}
+	} else {
+		for (int i = 1; i < argc; ++i) {
+			int flagID = atoi(argv[i]);
+			if (flagID < 0 || flagID >= (int)numItems) {
+				debugPrintf("\nInvalid flag %s", argv[i]);
+				continue;
+			}
+			debugPrintf("\nItem %u, %s, %s",
+				flagID,
+				g_nancy->getStaticData().itemNames[flagID].c_str(),
+				NancySceneState.hasItem(i) == NancyFlag::kTrue ? "kTrue" : "kFalse");
+			 
+		}
+	}
+
+	debugPrintf("\n");
+
+	return true;
+}
+
+bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
+	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	if (argc < 2 || argc % 2 == 0) {
+		debugPrintf("Sets one or more inventory items to the provided value.\n");
+		debugPrintf("Usage: %s <itemID> <true/false>...\n", argv[0]);
+		return true;
+	}
+
+	for (int i = 1; i < argc; i += 2) {
+		int itemID = atoi(argv[i]);
+		if (itemID < 0 || itemID >= (int)g_nancy->getStaticData().numItems) {
+			debugPrintf("Invalid item %s\n", argv[i]);
+			continue;
+		}
+		
+		if (Common::String(argv[i + 1]).compareTo("true") == 0) {
+			NancySceneState.addItemToInventory(itemID);
+			debugPrintf("Added item %i, %s, to inventory\n",
+				itemID,
+				g_nancy->getStaticData().itemNames[itemID].c_str());
+		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
+			NancySceneState.removeItemFromInventory(itemID, false);
+			debugPrintf("Removed item %i, %s, from inventory\n",
+				itemID,
+				g_nancy->getStaticData().itemNames[itemID].c_str());
+		} else {
+			debugPrintf("Invalid value %s\n", argv[i + 1]);
+			continue;
+		}
+	}
+
+	return cmdExit(0, nullptr);
+}
+
+bool NancyConsole::Cmd_getPlayerTime(int argc, const char **argv) {
+	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	Time time = NancySceneState._timers.playerTime;
+	debugPrintf("Player time: %u days, %u hours, %u minutes; %u\n",
+		time.getDays(),
+		time.getHours(),
+		time.getMinutes(),
+		(uint32)time);
+	return true;
+}
+
+bool NancyConsole::Cmd_setPlayerTime(int argc, const char **argv) {
+	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	if (argc != 2 && argc != 4) {
+		debugPrintf("Sets the in-game time.\n");
+		debugPrintf("Usage: %s <milliseconds> or %s <days> <hours> <minutes>\n", argv[0], argv[0]);
+		return true;
+	}
+
+	Time &time = NancySceneState._timers.playerTime;
+
+	if (argc == 2) {
+		time = atoi(argv[1]);
+	} else {
+		time = 	atoi(argv[1]) * 86400000 +	// days
+				atoi(argv[2]) * 3600000 +	// hours
+				atoi(argv[3]) * 60000;		// minutes
+	}
+
+	debugPrintf("Set player time to: %u days, %u hours, %u minutes; %u\n",
+		time.getDays(),
+		time.getHours(),
+		time.getMinutes(),
+		(uint32)time);
+
+	return cmdExit(0, nullptr);
+}
+
+bool NancyConsole::Cmd_getDifficulty(int argc, const char **argv) {
+	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	debugPrintf("Difficulty: %u\n", NancySceneState.getDifficulty());
+
+	return true;
+}
+
+bool NancyConsole::Cmd_setDifficulty(int argc, const char **argv) {
+	if (g_nancy->_gameFlow.curState != NancyState::kScene) {
+		debugPrintf("Not in the kScene state\n");
+		return true;
+	}
+
+	if (argc != 2) {
+		debugPrintf("Set the game difficulty.\n");
+		debugPrintf("Usage: %s <difficulty>\n", argv[0]);
+		return true;
+	}
+
+	int diff = atoi(argv[1]);
+
+	if (diff < 0 || diff > 2) {
+		debugPrintf("Invalid difficulty %s\n", argv[1]);
+		return true;
+	}
+
+	NancySceneState.setDifficulty(diff);
+	debugPrintf("Set difficulty to %i\n", diff);
+
+	return cmdExit(0, nullptr);
 }
 
 } // End of namespace Nancy

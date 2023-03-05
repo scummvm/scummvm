@@ -253,7 +253,7 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 	copyToManaged(surf, dst, verticalFlip, doubleSize);
 }
 
-void GraphicsManager::debugDrawToScreen(const Graphics::Surface &surf) {
+void GraphicsManager::debugDrawToScreen(const Graphics::ManagedSurface &surf) {
 	_screen.blitFrom(surf, Common::Point());
 	_screen.update();
 }

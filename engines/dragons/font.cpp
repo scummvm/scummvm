@@ -261,7 +261,7 @@ void FontManager::addAsciiText(int16 x, int16 y, const char *text, uint16 length
 	}
 
 	for (int i = 0; i < length; i++) {
-		wText[i] = text[i];
+		wText[i] = text[i] & 0xFFU;
 	}
 
 	addText(x, y, wText, length, fontType);

@@ -114,6 +114,8 @@ public:
 			KEY_END()
 			XML_KEY(collisionSlide)
 			KEY_END()
+			XML_KEY(coliisionSlide)
+			KEY_END()
 			XML_KEY(noCollisionSlide)
 			KEY_END()
 		KEY_END()
@@ -137,6 +139,7 @@ public:
 	bool parserCallback_rBB(ParserNode *node);
 	bool parserCallback_light(ParserNode *node);
 	bool parserCallback_collisionSlide(ParserNode *node);
+	bool parserCallback_coliisionSlide(ParserNode *node);
 	bool parserCallback_noCollisionSlide(ParserNode *node);
 
 	// Flamme and its children.

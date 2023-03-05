@@ -22,13 +22,94 @@
 #ifndef HPL1_STD_MULTISET_H
 #define HPL1_STD_MULTISET_H
 
-#include "hpl1/std/set.h"
+#include "hpl1/std/tree.h"
 
 namespace Hpl1 {
 namespace Std {
 
-template<typename T, typename Comp>
-using multiset = set<T, Comp>;
+template<class T, class CompFn = Common::Less<T>>
+class multiset {
+	using TreeT = Tree<T, T, Identity<T>, CompFn>;
+public:
+	using iterator = typename TreeT::BasicIterator;
+	using const_iterator = typename TreeT::ConstIterator;
+
+	iterator begin() {
+		return _items.begin();
+	}
+
+	iterator end() {
+		return _items.end();
+	}
+
+	const_iterator begin() const {
+		return _items.begin();
+	}
+
+	const_iterator end() const {
+		return _items.end();
+	}
+
+	void clear() {
+		_items.clear();
+	}
+
+	bool empty() {
+		return _items.size() == 0;
+	}
+
+	size_t size() {
+		return _items.size();
+	}
+
+	/**
+	 * Locate an item in the set
+	 */
+	iterator find(const T &item) {
+		const auto it = _items.lowerBound(item);
+		if (it != _items.end() && CompareEq(*it, item)) {
+			return it;
+		}
+		return _items.end();
+	}
+
+	iterator insert(const T &item) {
+		return _items.insert(item);
+	}
+
+	void erase(iterator item) {
+		_items.erase(item);
+	}
+
+	void erase(iterator first, iterator last) {
+		_items.erase(first, last);
+	}
+
+	size_t erase(const T &item) {
+		size_t total = 0;
+		for (auto it = _items.lowerBound(item); it != end() && CompareEq(*it, item);) {
+			_items.erase(it++);
+			++total;
+		}
+		return total;
+	}
+
+	/**
+	 * Returns the number of keys that match the specified key
+	 */
+	size_t count(const T &item) const {
+		size_t total = 0;
+		for (auto it = _items.lowerBound(item); it != end() && CompareEq(*it, item); ++it)
+			++total;
+		return total;
+	}
+private:
+	static bool CompareEq(const T &a, const T &b) {
+		return !CompFn()(a, b) && !CompFn()(b, a);
+	}
+
+	TreeT _items;
+};
 
 }
 

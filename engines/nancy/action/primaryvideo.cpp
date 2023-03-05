@@ -31,7 +31,6 @@
 #include "engines/nancy/graphics.h"
 
 #include "engines/nancy/action/primaryvideo.h"
-#include "engines/nancy/action/responses.cpp"
 
 #include "engines/nancy/state/scene.h"
 
@@ -235,7 +234,13 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 void PlayPrimaryVideoChan0::execute() {
 	PlayPrimaryVideoChan0 *activeVideo = NancySceneState.getActivePrimaryVideo();
 	if (activeVideo != this && activeVideo != nullptr) {
-		return;
+		if (!activeVideo->_isDone) {
+			return;
+		} else {
+			// Chained videos, hide the previous one and start this
+			activeVideo->setVisible(false);
+			NancySceneState.setActivePrimaryVideo(this);
+		}
 	}
 
 	switch (_state) {
@@ -281,7 +286,7 @@ void PlayPrimaryVideoChan0::execute() {
 
 			// Add responses when conditions have been satisfied
 			if (_conditionalResponseCharacterID != 10) {
-				addConditionalResponses();
+				addConditionalDialogue();
 			}
 
 			if (_goodbyeResponseCharacterID != 10) {
@@ -374,15 +379,54 @@ void PlayPrimaryVideoChan0::handleInput(NancyInput &input) {
 	}
 }
 
-void PlayPrimaryVideoChan0::addConditionalResponses() {
-	for (const auto &res : nancy1ConditionalResponses) {
-		if (res.characterID == _conditionalResponseCharacterID) {
-			bool isSatisfied = true;
-			for (const auto & cond : res.conditions) {
-				if (cond.label == -1) {
-					break;
-				}
+void PlayPrimaryVideoChan0::addConditionalDialogue() {
+	for (const auto &res : g_nancy->getStaticData().conditionalDialogue[_conditionalResponseCharacterID]) {
+		bool isSatisfied = true;
 
+		for (const auto &cond : res.flagConditions) {
+			if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
+				isSatisfied = false;
+				break;
+			}
+		}
+
+		for (const auto &cond : res.inventoryConditions) {
+			if (NancySceneState.hasItem(cond.label) != cond.flag) {
+				isSatisfied = false;
+				break;
+			}
+		}
+
+		if (isSatisfied) {
+			_responses.push_back(ResponseStruct());
+			ResponseStruct &newResponse = _responses.back();
+			newResponse.soundName = res.soundID;
+			newResponse.text = g_nancy->getStaticData().conditionalDialogueTexts[res.textID];
+			newResponse.sceneChange.sceneID = res.sceneID;
+			newResponse.sceneChange.doNotStartSound = true;
+		}
+	}
+}
+
+void PlayPrimaryVideoChan0::addGoodbye() {
+	auto &res = g_nancy->getStaticData().goodbyes[_goodbyeResponseCharacterID];
+	_responses.push_back(ResponseStruct());
+	ResponseStruct &newResponse = _responses.back();
+	newResponse.soundName = res.soundID;
+	newResponse.text = g_nancy->getStaticData().goodbyeTexts[_goodbyeResponseCharacterID];
+	
+	// Evaluate conditions to pick from the collection of replies
+	uint sceneChangeID = 0;
+	for (uint i = 0; i < res.sceneChanges.size(); ++i) {
+		const GoodbyeSceneChange &sc = res.sceneChanges[i];
+		if (sc.flagConditions.size() == 0) {
+			// No conditions, default choice
+			sceneChangeID = i;
+			break;
+		} else {
+			bool isSatisfied = true;
+
+			for (const auto &cond : sc.flagConditions) {
 				if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
 					isSatisfied = false;
 					break;
@@ -390,49 +434,21 @@ void PlayPrimaryVideoChan0::addConditionalResponses() {
 			}
 
 			if (isSatisfied) {
-				Common::File file;
-				char snd[9];
-
-				file.open("game.exe");
-				file.seek(nancy1ResponseBaseFileOffset + res.fileOffset);
-				file.read(snd, 8);
-				snd[8] = '\0';
-
-				_responses.push_back(ResponseStruct());
-				ResponseStruct &newResponse = _responses.back();
-				newResponse.soundName = snd;
-				newResponse.text = file.readString();
-				newResponse.sceneChange.sceneID = res.sceneID;
-				newResponse.sceneChange.doNotStartSound = true;
-
-				file.close();
+				sceneChangeID = i;
+				break;
 			}
 		}
 	}
-}
 
-void PlayPrimaryVideoChan0::addGoodbye() {
-	for (const auto &res : nancy1Goodbyes) {
-		if (res.characterID == _goodbyeResponseCharacterID) {
-			Common::File file;
-			char snd[9];
+	const GoodbyeSceneChange &sceneChange = res.sceneChanges[sceneChangeID];
+	
+	// The reply from the character is picked randomly
+	newResponse.sceneChange.sceneID = sceneChange.sceneIDs[g_nancy->_randomSource->getRandomNumber(sceneChange.sceneIDs.size() - 1)];
 
-			file.open("game.exe");
-			file.seek(nancy1ResponseBaseFileOffset + res.fileOffset);
-			file.read(snd, 8);
-			snd[8] = '\0';
+	// Set an event flag if applicable
+	NancySceneState.setEventFlag(sceneChange.flagToSet);
 
-			_responses.push_back(ResponseStruct());
-			ResponseStruct &newResponse = _responses.back();
-			newResponse.soundName = snd;
-			newResponse.text = file.readString();
-			// response is picked randomly
-			newResponse.sceneChange.sceneID = res.sceneIDs[g_nancy->_randomSource->getRandomNumber(3)];
-			newResponse.sceneChange.doNotStartSound = true;
-
-			file.close();
-		}
-	}
+	newResponse.sceneChange.doNotStartSound = true;
 }
 
 } // End of namespace Action

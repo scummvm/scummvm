@@ -238,6 +238,18 @@ public:
 	void copyFrom(const Surface &surf);
 
 	/**
+	 * Convert the data from another surface to the specified format.
+	 *
+	 * This calls @ref free on the current surface to assure that it is
+	 * clean. Make sure that the current data was created using @ref create.
+	 * Otherwise, the results are undefined.
+	 *
+	 * @param surf    The surface to convert from.
+	 * @param format  The pixel format to convert to.
+	 */
+	void convertFrom(const Surface &surf, const PixelFormat &format);
+
+	/**
 	 * Create a surface that represents a sub-area of this Surface object.
 	 *
 	 * The pixel (0, 0) of the returned Surface will be the same as pixel

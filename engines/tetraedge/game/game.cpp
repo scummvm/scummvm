@@ -1670,9 +1670,14 @@ bool Game::unloadCharacters() {
 	return true;
 }
 
-bool Game::unloadPlayerCharacter(const Common::String &character) {
-	_scene.unloadCharacter(character);
-	return true;
+bool Game::unloadPlayerCharacter(const Common::String &charname) {
+	Character *c = _scene.character(charname);
+	if (c) {
+		c->_onCharacterAnimFinishedSignal.remove(this, &Game::onCharacterAnimationPlayerFinished);
+		c->onFinished().remove(this, &Game::onDisplacementPlayerFinished);
+		_scene.unloadCharacter(charname);
+	}
+	return c != nullptr;
 }
 
 void Game::update() {

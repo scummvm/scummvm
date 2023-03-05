@@ -8,37 +8,43 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef NANCY_CONSTANTS_H
-#define NANCY_CONSTANTS_H
+#ifndef DIRECTOR_LINGO_XLIBS_XIOXOBJ_H
+#define DIRECTOR_LINGO_XLIBS_XIOXOBJ_H
 
-#include "common/scummsys.h"
+namespace Director {
 
-namespace Nancy {
-
-// A struct containing various data that was hardcoded in the original engine but changed between titles
-struct GameConstants {
-	uint numItems;
-	uint numEventFlags;
-	int mapAccessSceneIDs[18];
-	int eventFlagsToClearOnSceneChange[32];
-	uint numNonItemCursors;
-	uint numCurtainAnimationFrames;
-	uint logoEndAfter;
+class XioXObject : public Object<XioXObject> {
+public:
+	XioXObject(ObjectType objType);
 };
 
-extern const GameConstants gameConstants[];
+namespace XioXObj {
 
-} // End of namespace Nancy
+extern const char *xlibName;
+extern const char *fileNames[];
 
-#endif // NANCY_CONSTANTS_H
+void open(int type);
+void close(int type);
+
+void m_new(int nargs);
+void m_dispose(int nargs);
+void m_unlock(int nargs);
+void m_deleteFile(int nargs);
+void m_copyFile(int nargs);
+
+} // End of namespace XioXObj
+
+} // End of namespace Director
+
+#endif

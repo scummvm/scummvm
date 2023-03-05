@@ -23,7 +23,6 @@
 #define NANCY_ACTION_SECONDARYVIDEO_H
 
 #include "engines/nancy/video.h"
-#include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/action/actionrecord.h"

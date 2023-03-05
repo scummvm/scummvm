@@ -22,102 +22,101 @@
 #ifndef HPL1_STD_SET_H
 #define HPL1_STD_SET_H
 
-#include "common/array.h"
+#include "tree.h"
 
 namespace Hpl1 {
 namespace Std {
 
-/**
- * Derives the ScummVM SortedArray to match the Std::set class
- */
-template<class T, class Comparitor = Common::Less<T> >
-class set : public Common::SortedArray<T, const T &> {
-private:
-	static int ComparatorFn(const T &a, const T &b) {
-		return Comparitor().operator()(a, b) ? -1 : 0;
+template<class T, class CompFn = Common::Less<T>>
+class set {
+	using TreeT = Tree<T, T, Identity<T>, CompFn>;
+public:
+	using iterator = typename TreeT::BasicIterator;
+	using const_iterator = typename TreeT::ConstIterator;
+
+	iterator begin() {
+		return _items.begin();
 	}
 
-	static bool CompareEq(const T &a, const T &b) {
-		return !ComparatorFn(a, b) && !ComparatorFn(b, a);
+	iterator end() {
+		return _items.end();
 	}
 
-public:
-	struct Entry {
-		const T &_value;
-		Entry(const T &item) : _value(item) {
-		}
-	};
-public:
-	using iterator = typename Common::SortedArray<T, const T &>::iterator;
-	using const_iterator = typename Common::SortedArray<T, const T &>::const_iterator;
+	const_iterator begin() const {
+		return _items.begin();
+	}
 
-	/**
-	 * Constructor
-	 */
-	set() : Common::SortedArray<T, const T & >(ComparatorFn) {}
+	const_iterator end() const {
+		return _items.end();
+	}
+
+	void clear() {
+		_items.clear();
+	}
+
+	bool empty() {
+		return _items.size() == 0;
+	}
+
+	size_t size() {
+		return _items.size();
+	}
 
 	/**
 	 * Locate an item in the set
 	 */
 	iterator find(const T &item) {
-		iterator begin = this->begin();
-		iterator end = this->end();
-		while (begin < end) {
-			iterator mid = begin + (Common::distance(begin, end) / 2);
-			if (ComparatorFn(item, *mid))
-				end = mid;
-			else if (ComparatorFn(*mid, item))
-			 	begin = mid + 1;
-			else
-				return mid;
+		const auto it = _items.lowerBound(item);
+		if (it != _items.end() && CompareEq(*it, item)) {
+			return it;
 		}
-		return this->end();
+		return _items.end();
 	}
 
 	/**
 	 * Insert an element at the sorted position.
 	 */
-	Entry insert(const T &item) {
-		Common::SortedArray<T, const T &>::insert(item);
-		return Entry(item);
+	pair<iterator, bool> insert(const T &item) {
+		const auto it = _items.lowerBound(item);
+		if (it == _items.end() || !CompareEq(*it, item)) {
+			const auto position = _items.insert(it, item);
+			return {position, true};
+		}
+		return {it, false};
 	}
 
 	void erase(iterator item) {
-		Common::SortedArray<T, const T &>::erase(item);
+		_items.erase(item);
 	}
 
 	void erase(iterator first, iterator last) {
-		Common::SortedArray<T, const T &>::erase(first, last);
+		_items.erase(first, last);
 	}
 
 	size_t erase(const T &item) {
-		iterator first = find(item);
-		if (first == this->end())
-			return 0;
-		iterator end = first + 1;
-		while (end != this->end() && CompareEq(*first, *end)) {
-			++end;
+		iterator it = find(item);
+		if (it != end()) {
+			_items.erase(it);
+			return 1;
 		}
-		size_t erased = Common::distance(first, end);
-		this->erase(first, end);
-		return erased;
+		return 0;
 	}
 
 	/**
 	 * Returns the number of keys that match the specified key
 	 */
-	size_t count(const T item) const {
+	size_t count(const T &item) const {
 		size_t total = 0;
-		for (const_iterator it = this->begin(); it != this->end(); ++it) {
-			if (CompareEq(*it, item))
-				++total;
-			else if (!ComparatorFn(item, *it))
-				// Passed beyond possibility of matches
-				break;
-		}
-
+		for (auto it = _items.lowerBound(item); it != end() && CompareEq(*it, item); ++it)
+			++total;
 		return total;
 	}
+private:
+	static bool CompareEq(const T &a, const T &b) {
+		return !CompFn()(a, b) && !CompFn()(b, a);
+	}
+
+	TreeT _items;
 };
 
 } // namespace Std

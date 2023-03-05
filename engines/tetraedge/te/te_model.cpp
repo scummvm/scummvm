@@ -138,13 +138,13 @@ TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, uint num) {
 }
 
 void TeModel::invertNormals() {
-	for (auto &mesh : meshes()) {
-		for (uint i = 0; i < mesh->numIndexes() / 3; i++) {
+	for (auto &mesh : _meshes) {
+		for (uint i = 0; i < mesh->numIndexes() / 3; i += 3) {
 			// Swap order of verticies in each triangle.
-			uint idx0 = mesh->index(i);
-			uint idx2 = mesh->index(i + 2);
-			mesh->setIndex(i, idx2);
-			mesh->setIndex(i + 2, idx0);
+			uint idx0 = mesh->index(i * 3);
+			uint idx2 = mesh->index(i * 3 + 2);
+			mesh->setIndex(i * 3, idx2);
+			mesh->setIndex(i * 3 + 2, idx0);
 		}
 		for (uint i = 0; i < mesh->numVerticies(); i++) {
 			mesh->setNormal(i, -mesh->normal(i));

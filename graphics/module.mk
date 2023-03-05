@@ -63,6 +63,11 @@ MODULE_OBJS += \
 	scaler/downscalerARM.o
 endif
 
+ifdef ATARI
+MODULE_OBJS += \
+	blit-atari.o
+endif
+
 ifdef USE_TINYGL
 MODULE_OBJS += \
 	tinygl/api.o \

@@ -593,9 +593,6 @@ void BlittingDrawCall::execute(bool restoreState) const {
 	case BlittingDrawCall::BlitMode_Regular:
 		Internal::tglBlit(_image, _transform);
 		break;
-	case BlittingDrawCall::BlitMode_NoBlend:
-		Internal::tglBlitNoBlend(_image, _transform);
-		break;
 	case BlittingDrawCall::BlitMode_Fast:
 		Internal::tglBlitFast(_image, _transform._destinationRectangle.left, _transform._destinationRectangle.top);
 		break;

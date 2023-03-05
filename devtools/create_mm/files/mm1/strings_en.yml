@@ -482,6 +482,13 @@ enhdialogs:
 			good: "Good"
 	character_select:
 		title: "Select target"
+	characters:
+		left_click: "Left click portraits to view"
+	inn:
+		left_click: "Left click potraits to add/remove"
+		right_click: "Right click to view"
+		exit: "Exit Inn"
+		esc: "ESC to go back"
 	location:
 		store: "store"
 		options: "options"
@@ -576,20 +583,20 @@ stats:
 		asleep: "Asleep"
 	attributes:
 		int: "Int="
-		level: "lEvel="
+		level: "Level="
 		age: "Age="
 		exp: "Exp="
 		mgt: "Mgt="
 		per: "Per="
-		sp: "Xp="
+		sp: "SP="
 		gems: "Gems="
 		end: "End="
 		spd: "Spd="
-		hp: "Hp="
+		hp: "HP="
 		gold: "Gold="
 		acy: "Acy="
 		luc: "Luc="
-		ac: "ac="
+		ac: "AC="
 		food: "Food="
 		cond: "Cond="
 	towns:

@@ -90,6 +90,11 @@ create_mort (Strangerke)
     - Font data
     - French, German and fan-made English translation
 
+create_nancy (fracturehill)
+-----------
+    Creates nancy.dat file containing various constants, game logic
+    and strings originally embedded in the games' executables.
+
 
 create_project (LordHoto, Littleboy)
 --------------

@@ -249,7 +249,7 @@ AndroidSAFFilesystemNode *AndroidSAFFilesystemNode::makeFromTree(jobject safTree
 }
 
 AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(jobject safTree, jobject safNode) :
-	_cached(false), _flags(0), _safParent(nullptr) {
+	_flags(0), _safParent(nullptr) {
 
 	JNIEnv *env = JNI::getEnv();
 
@@ -263,7 +263,7 @@ AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(jobject safTree, jobject safN
 
 AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(jobject safTree, jobject safParent,
         const Common::String &path, const Common::String &name) :
-	_safNode(nullptr), _cached(false), _flags(0), _safParent(nullptr) {
+	_safNode(nullptr), _flags(0), _safParent(nullptr) {
 
 	JNIEnv *env = JNI::getEnv();
 
@@ -296,7 +296,6 @@ AndroidSAFFilesystemNode::AndroidSAFFilesystemNode(const AndroidSAFFilesystemNod
 		assert(_safParent);
 	}
 
-	_cached = node._cached;
 	_path = node._path;
 	_flags = node._flags;
 	_newName = node._newName;
@@ -478,7 +477,7 @@ Common::SeekableWriteStream *AndroidSAFFilesystemNode::createWriteStream() {
 
 		env->DeleteLocalRef(child);
 
-		cacheData(true);
+		cacheData();
 	}
 
 	jint fd = env->CallIntMethod(_safTree, _MID_createWriteStream, _safNode);
@@ -539,7 +538,7 @@ bool AndroidSAFFilesystemNode::createDirectory() {
 
 	env->DeleteLocalRef(child);
 
-	cacheData(true);
+	cacheData();
 
 	return true;
 }
@@ -612,11 +611,7 @@ void AndroidSAFFilesystemNode::removeTree() {
 	}
 }
 
-void AndroidSAFFilesystemNode::cacheData(bool force) {
-	if (_cached && !force) {
-		return;
-	}
-
+void AndroidSAFFilesystemNode::cacheData() {
 	JNIEnv *env = JNI::getEnv();
 
 	_flags = env->GetIntField(_safNode, _FID__flags);
@@ -640,45 +635,48 @@ void AndroidSAFFilesystemNode::cacheData(bool force) {
 		}
 		env->DeleteLocalRef(nameObj);
 	}
-	_path.clear();
 
 	Common::String workingPath;
 
 	jstring pathObj = (jstring)env->GetObjectField(_safNode, _FID__path);
 	const char *path = env->GetStringUTFChars(pathObj, 0);
-	if (path != 0) {
-		workingPath = Common::String(path);
-		env->ReleaseStringUTFChars(pathObj, path);
-	} else {
+	if (path == nullptr) {
 		env->DeleteLocalRef(pathObj);
+		error("SAFFSNode::_path is null");
 		return;
 	}
+	workingPath = Common::String(path);
+	env->ReleaseStringUTFChars(pathObj, path);
 	env->DeleteLocalRef(pathObj);
 
 	jstring idObj = (jstring)env->CallObjectMethod(_safTree, _MID_getTreeId);
 	if (env->ExceptionCheck()) {
-		LOGE("SAFFSTree::getTreeId failed");
-
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 
 		env->ReleaseStringUTFChars(pathObj, path);
 		env->DeleteLocalRef(pathObj);
+		error("SAFFSTree::getTreeId failed");
 		return;
 	}
 
 	if (!idObj) {
+		error("SAFFSTree::getTreeId returned null");
 		return;
 	}
 
 	const char *id = env->GetStringUTFChars(idObj, 0);
-	if (id != 0) {
-		_path = Common::String::format("%s%s%s", SAF_MOUNT_POINT, id, workingPath.c_str());
-		env->ReleaseStringUTFChars(idObj, id);
+	if (id == nullptr) {
+		error("Failed to get string from SAFFSTree::getTreeId");
+		env->DeleteLocalRef(idObj);
+		return;
 	}
-	env->DeleteLocalRef(idObj);
 
-	_cached = true;
+	_path = Common::String(SAF_MOUNT_POINT);
+	_path += id;
+	_path += workingPath;
+	env->ReleaseStringUTFChars(idObj, id);
+	env->DeleteLocalRef(idObj);
 }
 
 const char AddSAFFakeNode::SAF_ADD_FAKE_PATH[] = "/saf";

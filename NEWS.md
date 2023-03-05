@@ -3,8 +3,15 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.8.0 (XXXX-XX-XX)
 
+ New platforms:
+   - Added libretro new shiny port.
+   - Added Atari port.
+
  Asylum:
    - Added support for Chinese Sanitarium.
+
+ Dragons:
+   - Implemented localizations for the copyright screen and main menu.
 
  Sherlock:
    - Added support for Chinese Serrated Scalpel.

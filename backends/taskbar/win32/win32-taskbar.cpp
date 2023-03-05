@@ -74,11 +74,11 @@
 const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } }, /* propID = */ 2 };
 
 Win32TaskbarManager::Win32TaskbarManager(SdlWindow_Win32 *window) : _window(window), _taskbar(nullptr), _count(0), _icon(nullptr) {
+	CoInitialize(nullptr);
+
 	// Do nothing if not running on Windows 7 or later
 	if (!Win32::confirmWindowsVersion(6, 1))
 		return;
-
-	CoInitialize(nullptr);
 
 	// Try creating instance (on fail, _taskbar will contain NULL)
 	HRESULT hr = CoCreateInstance(CLSID_TaskbarList,

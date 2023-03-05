@@ -31,6 +31,11 @@ namespace Locations {
 
 Inn::Inn() : ScrollView("Inn") {
 	_bounds.setBorderSize(10);
+	_escSprite.load("esc.icn");
+
+	addButton(&_escSprite, Common::Point(135, 166), 0, KEYBIND_ESCAPE, true);
+	addButton(&_escSprite, Common::Point(65, 166), 0, KEYBIND_SELECT, true);
+	setButtonEnabled(1, false);
 }
 
 bool Inn::msgFocus(const FocusMessage &msg) {
@@ -65,6 +70,13 @@ bool Inn::msgFocus(const FocusMessage &msg) {
 }
 
 void Inn::draw() {
+	setButtonEnabled(1, !_partyChars.empty());
+	if (!_partyChars.empty()) {
+		setButtonPos(0, Common::Point(135, 166));
+	} else {
+		setButtonPos(0, Common::Point(105, 166));
+	}
+
 	ScrollView::draw();
 	Graphics::ManagedSurface s = getSurface();
 
@@ -86,7 +98,7 @@ void Inn::draw() {
 
 		for (uint idx = 0; idx < _charNums.size(); ++idx) {
 			uint charNum = _charNums[idx];
-			Character &c = g_globals->_roster[charNum];
+			const Character &c = g_globals->_roster[charNum];
 			bool isInParty = _partyChars.contains(charNum);
 
 			// Build up character portrait and/or frame
@@ -109,11 +121,15 @@ void Inn::draw() {
 		if (_partyChars.size() == 6)
 			writeString(0, 130, STRING["dialogs.inn.full"], ALIGN_MIDDLE);
 
-		writeString(0, 145, STRING["enhdialogs.inn.left_click"], ALIGN_MIDDLE);
-		writeString(0, 155, STRING["enhdialogs.inn.right_click"], ALIGN_MIDDLE);
+		writeString(0, 142, STRING["enhdialogs.inn.left_click"], ALIGN_MIDDLE);
+		writeString(0, 152, STRING["enhdialogs.inn.right_click"], ALIGN_MIDDLE);
+	}
 
-		if (!_partyChars.empty())
-			writeString(0, 170, STRING["dialogs.inn.exit"], ALIGN_MIDDLE);
+	if (!_partyChars.empty()) {
+		writeString(80, 168, STRING["enhdialogs.inn.exit"]);
+		writeString(150, 168, STRING["dialogs.misc.go_back"]);
+	} else {
+		writeString(120, 168, STRING["dialogs.misc.go_back"]);
 	}
 }
 
@@ -124,19 +140,26 @@ bool Inn::msgMouseDown(const MouseDownMessage &msg) {
 			* (idx % 3), 20 + 20 * (idx / 3));
 
 		if (Common::Rect(pt.x, pt.y, pt.x + 19, pt.y + 19).contains(msg._pos)) {
-			// Toggle in party
-			int charNum = _charNums[idx];
-			if (_partyChars.contains(charNum))
-				_partyChars.remove(charNum);
-			else
-				_partyChars.push_back(charNum);
+        int charNum = _charNums[idx];
 
-			redraw();
+			if (msg._button == MouseMessage::MB_LEFT) {
+				// Toggle in party
+				if (_partyChars.contains(charNum))
+					_partyChars.remove(charNum);
+				else
+					_partyChars.push_back(charNum);
+
+				setButtonEnabled(0, !_partyChars.empty());
+				redraw();
+			} else {
+				g_globals->_currCharacter = &g_globals->_roster[charNum];
+				_characterView.addView();
+			}
 			break;
 		}
 	}
 
-	return true;
+	return ScrollView::msgMouseDown(msg);
 }
 
 bool Inn::msgKeypress(const KeypressMessage &msg) {
@@ -151,12 +174,13 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 			else
 				_partyChars.push_back(charNum);
 
+			setButtonEnabled(0, !_partyChars.empty());
 			redraw();
 
 		} else if (msg.flags == 0) {
 			// View character
 			g_globals->_currCharacter = &g_globals->_roster[charNum];
-			//_characterView.addView();
+			_characterView.addView();
 		}
 		return true;
 

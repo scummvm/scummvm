@@ -23,7 +23,6 @@
 #define NANCY_ACTION_SECONDARYMOVIE_H
 
 #include "engines/nancy/video.h"
-#include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/action/actionrecord.h"
@@ -49,13 +48,16 @@ public:
 	void execute() override;
 
 	Common::String _videoName; // 0x00
+	Common::String _paletteName;
+	//Common::String _bitmapOverlayName
+	NancyFlag _isTransparent = kFalse;
 
 	uint16 _unknown = 0; // 0x1C
 	NancyFlag _hideMouse = NancyFlag::kFalse; // 0x1E
-	NancyFlag _isReverse = NancyFlag::kFalse; // 0x20
-	uint16 _firstFrame = 0; // 0x22
-	uint16 _lastFrame = 0; // 0x24
-	FlagAtFrame _frameFlags[15]; // 0x26
+	NancyFlag _isReverse = NancyFlag::kFalse; // 0x20, 2E
+	uint16 _firstFrame = 0; // 0x22, 30
+	uint16 _lastFrame = 0; // 0x24, 32
+	Common::Array<FlagAtFrame> _frameFlags; // 0x26
 	MultiEventFlagDescription _triggerFlags; // 0x80
 
 	SoundDescription _sound; // 0xA8
@@ -68,6 +70,7 @@ protected:
 	bool isViewportRelative() const override { return true; }
 
 	AVFDecoder _decoder;
+	Graphics::ManagedSurface _fullFrame;
 	int _curViewportFrame = -1;
 	bool _isFinished = false;
 };

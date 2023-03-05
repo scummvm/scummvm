@@ -29,12 +29,13 @@ namespace Hpl1 {
 
 namespace Std {
 
-template<class Key, class Val, class CompFunc = Common::Less<Key> >
+template<class Key, class Val, class CompFunc = Common::Less<Key>>
 class multimap {
+	using TreeT = Tree<pair<Key, Val>, Key, PairKey<Key, Val>, CompFunc>;
 public:
-	using value_type = typename Tree<Key, Val, CompFunc>::ValueType;
-	using iterator = typename Tree<Key, Val, CompFunc>::BasicIterator;
-	using const_iterator = typename Tree<Key, Val, CompFunc>::ConstIterator;
+	using value_type = pair<Key, Val>;
+	using iterator = typename TreeT::BasicIterator;
+	using const_iterator = typename TreeT::ConstIterator;
 
 	/**
 	 * Clears the map
@@ -155,7 +156,7 @@ private:
 		return !_comp(a, b) && !_comp(b, a);
 	}
 
-	Tree<Key, Val, CompFunc> _items;
+	TreeT _items;
 	CompFunc _comp;
 };
 

@@ -81,7 +81,7 @@ public:
 	void handleInput(NancyInput &input) override;
 
 	// Functions for handling the built-in dialogue responses found in the executable
-	void addConditionalResponses();
+	void addConditionalDialogue();
 	void addGoodbye();
 
 	Common::String _videoName;

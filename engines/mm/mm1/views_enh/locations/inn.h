@@ -22,7 +22,8 @@
 #ifndef MM1_VIEWS_ENH_LOCATIONS_INN_H
 #define MM1_VIEWS_ENH_LOCATIONS_INN_H
 
-#include "mm/mm1/views_enh/locations/location.h"
+#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/character_view.h"
 #include "mm/mm1/data/character.h"
 #include "mm/mm1/data/int_array.h"
 
@@ -33,6 +34,8 @@ namespace Locations {
 
 class Inn : public ScrollView {
 private:
+	CharacterView _characterView;
+	Shared::Xeen::SpriteResource _escSprite;
 	Common::Array<uint> _charNums;
 	IntArray _partyChars;
 

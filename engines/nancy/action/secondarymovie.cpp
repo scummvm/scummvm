@@ -28,6 +28,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "common/serializer.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -40,29 +42,44 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
 }
 
 void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
+	Common::Serializer ser(&stream, nullptr);
+	ser.setVersion(g_nancy->getGameType());
+
 	readFilename(stream, _videoName);
+	readFilename(stream, _paletteName);
+	ser.skip(10, kGameTypeVampire, kGameTypeVampire); // skip _bitmapOverlayName for now
 
-	stream.skip(0x12);
-	_unknown = stream.readUint16LE();
-	_hideMouse = (NancyFlag)stream.readUint16LE();
-	_isReverse = (NancyFlag)stream.readUint16LE();
-	_firstFrame = (NancyFlag)stream.readUint16LE();
-	_lastFrame = (NancyFlag)stream.readUint16LE();
+	ser.skip(0x2); // videoPlaySource
 
-	for (uint i = 0; i < 15; ++i) {
-		_frameFlags[i].frameID = stream.readSint16LE();
-		_frameFlags[i].flagDesc.label = stream.readSint16LE();
-		_frameFlags[i].flagDesc.flag = (NancyFlag)stream.readUint16LE();
+	ser.syncAsUint16LE(_isTransparent, kGameTypeVampire, kGameTypeVampire);
+	ser.skip(4, kGameTypeVampire, kGameTypeVampire); // paletteStart, paletteSize
+	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // hasBitmapOverlaySurface
+	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // unknown, probably related to playing a sfx
+
+	ser.syncAsUint16LE(_unknown);
+	ser.syncAsUint16LE(_hideMouse);
+	ser.syncAsUint16LE(_isReverse);
+	ser.syncAsUint16LE(_firstFrame);
+	ser.syncAsUint16LE(_lastFrame);
+
+	if (ser.getVersion() >= kGameTypeNancy1) {
+		_frameFlags.resize(15);
+		for (uint i = 0; i < 15; ++i) {
+			ser.syncAsSint16LE(_frameFlags[i].frameID);
+			ser.syncAsSint16LE(_frameFlags[i].flagDesc.label);
+			ser.syncAsUint16LE(_frameFlags[i].flagDesc.flag);
+		}
 	}
 
 	_triggerFlags.readData(stream);
 	_sound.read(stream, SoundDescription::kNormal);
 	_sceneChange.readData(stream);
+	ser.skip(3, kGameTypeVampire, kGameTypeVampire); // unknown 3 sceneChange bytes
 
-	uint16 numVideoDescs = stream.readUint16LE();
-	_videoDescs.reserve(numVideoDescs);
+	uint16 numVideoDescs;
+	ser.syncAsUint16LE(numVideoDescs);
+	_videoDescs.resize(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {
-		_videoDescs.push_back(SecondaryVideoDescription());
 		_videoDescs[i].readData(stream);
 	}
 }
@@ -76,6 +93,15 @@ void PlaySecondaryMovie::init() {
 		error("Couldn't load video file %s", _videoName.c_str());
 	}
 	_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphicsManager->getInputPixelFormat());
+	if (_paletteName.size()) {
+		GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
+	}
+
+	if (_isTransparent) {
+		setTransparent(true);
+		_fullFrame.setTransparentColor(_drawSurface.getTransparentColor());
+	}
+
 	_screenPosition = _drawSurface.getBounds();
 
 	RenderObject::init();
@@ -106,7 +132,9 @@ void PlaySecondaryMovie::updateGraphics() {
 			}
 		}
 
-		_drawSurface.blitFrom(*_decoder.decodeNextFrame(), _videoDescs[descID].srcRect, Common::Point());
+		GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteName.size() > 0);
+		_drawSurface.create(_fullFrame, _fullFrame.getBounds());
+		moveTo(_videoDescs[descID].destRect);
 		_needsRedraw = true;
 
 		for (auto f : _frameFlags) {
@@ -117,7 +145,8 @@ void PlaySecondaryMovie::updateGraphics() {
 	}
 
 	if ((_decoder.getCurFrame() == _lastFrame && _isReverse == kFalse) ||
-		(_decoder.getCurFrame() == _firstFrame && _isReverse == kTrue)) {
+		(_decoder.getCurFrame() == _firstFrame && _isReverse == kTrue) ||
+		_decoder.atEnd()) {
 		if (!g_nancy->_sound->isSoundPlaying(_sound)) {
 			g_nancy->_sound->stopSound(_sound);
 			_decoder.stop();

@@ -23,6 +23,8 @@
 #define NANCY_COMMONYPES_H
 
 #include "common/rect.h"
+#include "common/array.h"
+#include "common/str.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -50,7 +52,7 @@ enum NancyState {
 	kHelp,
 	kScene,
 	// CD change
-	kCheat,
+	// Cheat,
 	kQuit,
 	// regain focus
 	kNone,
@@ -120,6 +122,72 @@ struct SoundDescription {
 	uint16 panAnchorFrame = 0;
 
 	void read(Common::SeekableReadStream &stream, Type type);
+};
+
+// Structs inside nancy.dat, which contains all the data that was
+// originally stored inside the executable
+
+struct ConditionalDialogue {
+    byte textID;
+    uint16 sceneID;
+    Common::String soundID;
+	Common::Array<EventFlagDescription> flagConditions;
+	Common::Array<EventFlagDescription> inventoryConditions;
+
+	void readData(Common::SeekableReadStream &stream);
+};
+
+struct GoodbyeSceneChange {
+	Common::Array<uint16> sceneIDs;
+	Common::Array<EventFlagDescription> flagConditions;
+	EventFlagDescription flagToSet;
+
+	void readData(Common::SeekableReadStream &stream);
+};
+
+struct Goodbye {
+	Common::String soundID;
+	Common::Array<GoodbyeSceneChange> sceneChanges;
+
+	void readData(Common::SeekableReadStream &stream);
+};
+
+struct Hint {
+    byte textID;
+    int16 hintWeight;
+    SceneChangeDescription sceneChange;
+    Common::String soundIDs[3];
+    Common::Array<EventFlagDescription> flagConditions;
+	Common::Array<EventFlagDescription> inventoryConditions;
+
+	void readData(Common::SeekableReadStream &stream);
+};
+
+struct StaticData {
+	// Default values are for nancy1, provided for debugging purposes
+	uint16 numItems = 11;
+	uint16 numEventFlags = 168;
+	Common::Array<uint16> mapAccessSceneIDs;
+	Common::Array<uint16> genericEventFlags;
+	uint16 numNonItemCursors = 12;
+	uint16 numCurtainAnimationFrames = 7;
+	uint32 logoEndAfter = 7000;
+
+	// In-game strings and related logic
+	Common::Array<Common::Array<ConditionalDialogue>> conditionalDialogue;
+	Common::Array<Goodbye> goodbyes;
+	Common::Array<Common::Array<Hint>> hints;
+
+	Common::Array<Common::String> conditionalDialogueTexts;
+	Common::Array<Common::String> goodbyeTexts;
+	Common::Array<Common::String> hintTexts;
+	Common::String ringingText;
+
+	// Debug strings
+	Common::Array<Common::String> itemNames;
+	Common::Array<Common::String> eventFlagNames;
+
+	void readData(Common::SeekableReadStream &stream, Common::Language language);
 };
 
 } // End of namespace Nancy

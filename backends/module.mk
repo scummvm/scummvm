@@ -321,6 +321,16 @@ MODULE_OBJS += \
 	plugins/3ds/3ds-provider.o
 endif
 
+ifeq ($(BACKEND),atari)
+MODULE_OBJS += \
+	events/atari/atari-events.o \
+	graphics/atari/atari_c2p-asm.o \
+	graphics/atari/atari-graphics.o \
+	graphics/atari/atari-graphics-asm.o \
+	graphics/atari/videl-resolutions.o \
+	mixer/atari/atari-mixer.o
+endif
+
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
 	events/ds/ds-events.o \
