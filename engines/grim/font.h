@@ -88,7 +88,7 @@ public:
 	uint32 getDataSize() const { return _dataSize; }
 	bool is8Bit() const override;
 
-	int getKernedStringLength(const Common::String &text) const;
+	int getKernedStringLength(const Common::String &text) const override;
 	int getBitmapStringLength(const Common::String &text) const;
 	int getStringHeight(const Common::String &text) const;
 
