@@ -1649,6 +1649,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.ISC");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.LUA");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.MIT");
+			in.push_back(setup.srcDir + "/LICENSES/COPYING.MKV");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.TINYGL");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.GLAD");
 			in.push_back(setup.srcDir + "/COPYRIGHT");

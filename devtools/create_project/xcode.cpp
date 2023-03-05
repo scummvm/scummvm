@@ -1091,6 +1091,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("LICENSES/COPYING.ISC");
 		files.push_back("LICENSES/COPYING.LUA");
 		files.push_back("LICENSES/COPYING.MIT");
+		files.push_back("LICENSES/COPYING.MKV");
 		files.push_back("LICENSES/COPYING.TINYGL");
 		files.push_back("LICENSES/COPYING.GLAD");
 		files.push_back("NEWS.md");

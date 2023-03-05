@@ -7,6 +7,7 @@ f 0644 root sys usr/ScummVM/COPYING.OFL LICENSES/COPYING.OFL scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.ISC LICENSES/COPYING.ISC scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.LUA LICENSES/COPYING.LUA scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.MIT LICENSES/COPYING.MIT scummvm.man.readme
+f 0644 root sys usr/ScummVM/COPYING.MKV LICENSES/COPYING.MKV scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.TINYGL LICENSES/COPYING.TINYGL scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYING.GLAD LICENSES/COPYING.GLAD scummvm.man.readme
 f 0644 root sys usr/ScummVM/COPYRIGHT COPYRIGHT scummvm.man.readme
