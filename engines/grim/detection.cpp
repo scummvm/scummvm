@@ -111,6 +111,19 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_GRIM
 	},
 	{
+		// Grim Fandango Russian (7Wolf) version
+		{
+			"grim",
+			"7Wolf",
+			AD_ENTRY1s("VOX0001.LAB", "b517dbb493679b1679036de1a1bfc8a5", 57180788),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_GRIME
+		},
+		GType_GRIM
+	},
+	{
 		// Grim Fandango Portuguese version
 		{
 			"grim",
