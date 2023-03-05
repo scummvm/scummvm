@@ -1,7 +1,6 @@
 MODULE := engines/hpl1
 
 MODULE_OBJS := \
-	detection.o \
 	string.o \
 	opengl.o \
 	graphics.o \
