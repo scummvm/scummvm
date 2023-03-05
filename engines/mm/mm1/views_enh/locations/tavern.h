@@ -51,7 +51,7 @@ public:
 	Tavern();
 
 	void draw() override;
-	bool msgGame(const GameMessage &msg);
+	bool msgGame(const GameMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	void messageShown() override;

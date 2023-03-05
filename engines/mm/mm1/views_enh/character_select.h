@@ -40,7 +40,7 @@ protected:
 	/**
 	 * Return true if a character should be selected by default
 	 */
-	virtual bool selectCharByDefault() const {
+	virtual bool selectCharByDefault() const override {
 		return false;
 	}
 public:
