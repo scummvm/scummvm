@@ -547,6 +547,7 @@ public:
 	bool _enableEnhancements = false;
 	bool _useOriginalGUI = true;
 	bool _enableAudioOverride = false;
+	bool _enableCOMISong = false;
 
 	Common::Keymap *_insaneKeymap;
 
