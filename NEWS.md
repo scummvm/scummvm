@@ -10,6 +10,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Asylum:
    - Added support for Chinese Sanitarium.
 
+ Dragons:
+   - Implemented localizations for the copyright screen and main menu.
+
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
 
