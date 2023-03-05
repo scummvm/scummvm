@@ -205,6 +205,8 @@ int get_text_width(const char *texx, size_t fontNumber) {
 int get_text_width_outlined(const char *text, size_t font_number) {
 	if (font_number >= _GP(fonts).size() || !_GP(fonts)[font_number].Renderer)
 		return 0;
+	if (text == nullptr || text[0] == 0) // we ignore outline width since the text is empty
+		return 0;
 	int self_width = _GP(fonts)[font_number].Renderer->GetTextWidth(text, font_number);
 	int outline = _GP(fonts)[font_number].Info.Outline;
 	if (outline < 0 || static_cast<size_t>(outline) > _GP(fonts).size()) { // FONT_OUTLINE_AUTO or FONT_OUTLINE_NONE
