@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-06 20:26+0000\n"
-"PO-Revision-Date: 2023-03-06 20:55+0000\n"
+"PO-Revision-Date: 2023-03-06 20:57+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -7245,30 +7245,31 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1366
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "Сервер мультиплеєру:"
 
 #: engines/scumm/dialogs.cpp:1372
-#, fuzzy
 msgid "Online Server:"
-msgstr "Сервер:"
+msgstr "Онлайн-сервер:"
 
 #: engines/scumm/dialogs.cpp:1373
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
 msgstr ""
+"Адреса серверу для під'єднання для онлайн-ігор. Вона мусить починатись з "
+"\"https://\" або \"http://\"."
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "Увімкнути моди для онлайн-змагань"
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enables custom-made modifications intented for online competitive play."
-msgstr ""
+msgstr "Вмикає зміни гри, призначені для онлайнових змагань."
 
 #: engines/scumm/dialogs.cpp:1379
 msgid "Enable connection to Multiplayer Server"
-msgstr ""
+msgstr "Вмикає поєднання з Мультиплеєрним сервером"
 
 #: engines/scumm/dialogs.cpp:1379
 msgid ""
