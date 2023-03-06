@@ -2201,8 +2201,17 @@ if test "$have_gcc" = yes; then
 		cxx_version=`gcc_get_define __clang_version__`
 		cxx_version="`echo "${cxx_version}" | sed -e 's/"\([^ ]*\) .*/\1/'`"
 		cxx_version="clang $cxx_version, ok"
+
+		append_var CXXFLAGS "-Wshadow"
 	else
 		cxx_version="GCC $cxx_version, ok"
+
+		# Way too many false positives before GCC 5
+		if test $_cxx_major -ge 5; then
+			append_var CXXFLAGS "-Wshadow"
+		else
+			append_var CXXFLAGS "-Wno-missing-field-initializers"
+		fi
 	fi
 elif test "$have_icc" = yes; then
 	cxx_version="`( $CXX -dumpversion ) 2>/dev/null`"

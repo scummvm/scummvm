@@ -33,7 +33,7 @@ ifeq "$(HAVE_GCC)" "1"
 	CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 	# Enable even more warnings...
 	CXXFLAGS+= -Wpointer-arith -Wcast-qual
-	CXXFLAGS+= -Wshadow -Wnon-virtual-dtor -Wwrite-strings
+	CXXFLAGS+= -Wnon-virtual-dtor -Wwrite-strings
 
 	# Currently we disable this gcc flag, since it will also warn in cases,
 	# where using GCC_PRINTF (means: __attribute__((format(printf, x, y))))
