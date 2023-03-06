@@ -78,7 +78,6 @@ void TestbedOptionsDialog::reflowLayout() {
 	uint16 lineHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
 	int16 overlayWidth = g_system->getOverlayWidth();
 	int16 overlayHeight = g_system->getOverlayHeight();
-	uint16 yPos = lineHeight * 2;
 	uint16 xPos = lineHeight;
 	uint16 padding = 32;
 
