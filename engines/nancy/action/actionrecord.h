@@ -39,22 +39,26 @@ struct NancyInput;
 namespace Action {
 
 enum struct DependencyType : byte {
-	kNone               = 0,
-	kInventory          = 1,
-	kEventFlag          = 2,
-	kLogicCondition     = 3,
-	kTotalTime          = 4,
-	kSceneTime          = 5,
-	kPlayerTime         = 6,
-	kUnknownType7       = 7,
-	kUnknownType8       = 8,
-	kSceneCount         = 9,
-	kResetOnNewDay      = 10,
-	kUseItem            = 11,
-	kTimeOfDay          = 12,
-	kTimerNotDone       = 13,
-	kTimerDone          = 14,
-	kDifficultyLevel    = 15
+	kNone                           = 0,
+	kInventory                      = 1,
+	kEvent                          = 2,
+	kLogic                          = 3,
+	kElapsedGameTime                = 4,
+	kElapsedSceneTime               = 5,
+	kElapsedPlayerTime              = 6,
+	kSamsSight                      = 7,    // Not implemented
+	kSamsSound                      = 8,    // Not implemented
+	kSceneCount                     = 9,
+	kElapsedPlayerDay               = 10,
+	kCursorType                     = 11,
+	kPlayerTOD                      = 12,
+	kTimerLessThanDependencyTime    = 13,
+	kTimerGreaterThanDependencyTime = 14,
+	kDifficultyLevel                = 15,
+    kClosedCaptioning               = 16,   // Not implemented
+    kSound                          = 17,   // Not implemented
+    kOpenParentheses                = 18,   // Not implemented
+    kCloseParentheses               = 19    // Not implemented
 };
 
 // Describes a condition that needs to be fulfilled before the

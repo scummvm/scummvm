@@ -419,32 +419,32 @@ bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
 						g_nancy->getStaticData().itemNames[dep.label].c_str(),
 						dep.condition == kInvHolding ? "kInvHolding" : "kInvEmpty");
 					break;
-				case DependencyType::kEventFlag :
-					debugPrintf("kEventFlag, flag %u, %s, %s",
+				case DependencyType::kEvent :
+					debugPrintf("kEvent, flag %u, %s, %s",
 						dep.label,
 						g_nancy->getStaticData().eventFlagNames[dep.label].c_str(),
 						dep.condition == kEvOccurred ? "kEvOccurred" : "kEvNotOccurred");
 					break;
-				case DependencyType::kLogicCondition :
-					debugPrintf("kLogicCondition, flag %u, %s",
+				case DependencyType::kLogic :
+					debugPrintf("kLogic, flag %u, %s",
 						dep.label,
 						dep.condition == kLogUsed ? "kLogUsed" : "kLogNotUsed");
 					break;
-				case DependencyType::kTotalTime :
-					debugPrintf("kTotalTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+				case DependencyType::kElapsedGameTime :
+					debugPrintf("kElapsedGameTime, %i hours, %i minutes, %i seconds, %i milliseconds",
 						dep.hours,
 						dep.minutes,
 						dep.seconds,
 						dep.milliseconds);
 					break;
-				case DependencyType::kSceneTime :
-					debugPrintf("kSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+				case DependencyType::kElapsedSceneTime :
+					debugPrintf("kElapsedSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
 						dep.hours,
 						dep.minutes,
 						dep.seconds,
 						dep.milliseconds);
 					break;
-				case DependencyType::kPlayerTime :
+				case DependencyType::kElapsedPlayerTime :
 					debugPrintf("kPlayerTime, %i hours, %i minutes, %i seconds, %i milliseconds",
 						dep.hours,
 						dep.minutes,
@@ -457,24 +457,24 @@ bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
 						dep.milliseconds == 1 ? ">" : dep.milliseconds == 2 ? "<" : "==",
 						dep.seconds);
 					break;
-				case DependencyType::kResetOnNewDay :
-					debugPrintf("kResetOnNewDay");
+				case DependencyType::kElapsedPlayerDay :
+					debugPrintf("kElapsedPlayerDay");
 					break;
-				case DependencyType::kUseItem :
-					debugPrintf("kUseItem, item %u, %s, %s",
+				case DependencyType::kCursorType :
+					debugPrintf("kCursorType, item %u, %s, %s",
 						dep.label,
 						g_nancy->getStaticData().itemNames[dep.label].c_str(),
 						dep.condition == ActionManager::kCursInvHolding ? "kCursInvHolding" : "kCursInvNotHolding");
 					break;
-				case DependencyType::kTimeOfDay :
-					debugPrintf("kTimeOfDay, %s",
+				case DependencyType::kPlayerTOD :
+					debugPrintf("kPlayerTOD, %s",
 						dep.label == 0 ? "kPlayerDay" : dep.label == 1 ? "kPLayerNight" : "kPLayerDuskDawn");
 					break;
-				case DependencyType::kTimerNotDone :
-					debugPrintf("kTimerNotDone");
+				case DependencyType::kTimerLessThanDependencyTime :
+					debugPrintf("kTimerLessThanDependencyTime");
 					break;
-				case DependencyType::kTimerDone :
-					debugPrintf("kTimerDone");
+				case DependencyType::kTimerGreaterThanDependencyTime :
+					debugPrintf("kTimerGreaterThanDependencyTime");
 					break;
 				case DependencyType::kDifficultyLevel :
 					debugPrintf("kDifficultyLevel, level %i", dep.condition);

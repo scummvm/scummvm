@@ -186,7 +186,7 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case DependencyType::kEventFlag:
+					case DependencyType::kEvent:
 						if (NancySceneState.getEventFlag(dep.label, dep.condition)) {
 							// nancy1 has code for some timer array that never gets used
 							// and is discarded from nancy2 onward
@@ -194,7 +194,7 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case DependencyType::kLogicCondition:
+					case DependencyType::kLogic:
 						if (NancySceneState._flags.logicConditions[dep.label].flag == dep.condition) {
 							// Wait for specified time before satisfying dependency condition
 							Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState._flags.logicConditions[dep.label].timestamp;
@@ -205,30 +205,24 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case DependencyType::kTotalTime:
+					case DependencyType::kElapsedGameTime:
 						if (NancySceneState._timers.lastTotalTime >= dep.timeData) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case DependencyType::kSceneTime:
+					case DependencyType::kElapsedSceneTime:
 						if (NancySceneState._timers.sceneTime >= dep.timeData) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case DependencyType::kPlayerTime:
+					case DependencyType::kElapsedPlayerTime:
 						// TODO almost definitely wrong, as the original engine treats player time differently
 						if (NancySceneState._timers.playerTime >= dep.timeData) {
 							dep.satisfied = true;
 						}
 
-						break;
-					case DependencyType::kUnknownType7:
-						warning("Unknown Dependency type 7");
-						break;
-					case DependencyType::kUnknownType8:
-						warning("Unknown Dependency type 8");
 						break;
 					case DependencyType::kSceneCount:
 						// This dependency type keeps its data in the time variables
@@ -255,7 +249,7 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case DependencyType::kResetOnNewDay:
+					case DependencyType::kElapsedPlayerDay:
 						if (record->_days == -1) {
 							record->_days = NancySceneState._timers.playerTime.getDays();
 							dep.satisfied = true;
@@ -265,14 +259,14 @@ void ActionManager::processActionRecords() {
 						if (record->_days < NancySceneState._timers.playerTime.getDays()) {
 							record->_days = NancySceneState._timers.playerTime.getDays();
 							for (uint j = 0; j < record->_dependencies.size(); ++j) {
-								if (record->_dependencies[j].type == DependencyType::kPlayerTime) {
+								if (record->_dependencies[j].type == DependencyType::kElapsedPlayerTime) {
 									record->_dependencies[j].satisfied = false;
 								}
 							}
 						}
 
 						break;
-					case DependencyType::kUseItem: {
+					case DependencyType::kCursorType: {
 						bool hasUnsatisfiedDeps = false;
 						for (uint j = 0; j < record->_dependencies.size(); ++j) {
 							if (j != i && record->_dependencies[j].satisfied == false) {
@@ -293,19 +287,19 @@ void ActionManager::processActionRecords() {
 						dep.satisfied = true;
 						break;
 					}
-					case DependencyType::kTimeOfDay:
+					case DependencyType::kPlayerTOD:
 						if (dep.label == NancySceneState._timers.timeOfDay) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case DependencyType::kTimerNotDone:
+					case DependencyType::kTimerLessThanDependencyTime:
 						if (NancySceneState._timers.timerTime <= dep.timeData) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case DependencyType::kTimerDone:
+					case DependencyType::kTimerGreaterThanDependencyTime:
 						if (NancySceneState._timers.timerTime > dep.timeData) {
 							dep.satisfied = true;
 						}
@@ -318,7 +312,7 @@ void ActionManager::processActionRecords() {
 
 						break;
 					default:
-						warning("Unknown Dependency type %i", (int)dep.type);
+						warning("Unimplemented Dependency type %i", (int)dep.type);
 						break;
 					}
 				}
