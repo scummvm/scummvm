@@ -2126,33 +2126,6 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'TestbedOptions' overlays = 'screen' inset = '8' shading = 'dim'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8'>
-			<widget name = 'Headline'
-					height = 'Globals.Line.Height'
-			/>
-			<widget name = 'Info'
-					height = 'Globals.Line.Height'
-			/>
-			<widget name = 'List'
-					/>
-			<layout type = 'vertical' padding = '0, 0, 8, 0'>
-				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
-					<widget name = 'SelectAll'
-							type = 'Button'
-					/>
-					<space/>
-					<widget name = 'RunTests'
-							type = 'Button'
-					/>
-					<widget name = 'Quit'
-							type = 'Button'
-					/>
-				</layout>
-			</layout>
-		</layout>
-	</dialog>
-
 	<dialog name = 'SessionSelector' overlays = 'screen_center' shading = 'dim'>
 		<layout type = 'vertical' padding = '4, 4, 16, 4' align = 'center'>
 			<widget name = 'QueryProgressText'
