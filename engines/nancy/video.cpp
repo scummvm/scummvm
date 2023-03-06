@@ -79,6 +79,9 @@ void AVFDecoder::addFrameTime(const uint16 timeToAdd) {
 // Custom function to allow the last frame of the video to play correctly
 bool AVFDecoder::atEnd() const {
 	const AVFDecoder::AVFVideoTrack *track = ((const AVFDecoder::AVFVideoTrack *)getTrack(0));
+	if (!track) {
+		return true;
+	}
 	return !track->isReversed() && track->endOfTrack() && track->getFrameTime(track->getFrameCount()) <= getTime();
 }
 
