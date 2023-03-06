@@ -42,6 +42,7 @@ private:
 	byte *_compInput;
 	int _outputSize;
 	int _lastBlock;
+	bool _uncompressedSingleBlock;
 
 public:
 
