@@ -90,7 +90,7 @@
 #ifdef ENABLE_HE
 #ifdef USE_ENET
 #include "scumm/he/net/net_main.h"
-#include "gui/sessionselector.h"
+#include "scumm/dialog-sessionselector.h"
 #ifdef USE_LIBCURL
 #include "scumm/he/net/net_lobby.h"
 #endif
@@ -3471,7 +3471,7 @@ int ScummEngine_v90he::networkSessionDialog() {
 	if (res == GUI::kMessageOK)
 		// Hosting session.
 		return -1;
-	
+
 	// Joining a session
 	GUI::SessionSelectorDialog sessionDialog(this);
 	return runDialog(sessionDialog);

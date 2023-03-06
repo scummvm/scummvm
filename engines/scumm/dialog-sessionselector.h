@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SESSION_SELECTOR_DIALOG_H
-#define SESSION_SELECTOR_DIALOG_H
+#ifndef SCUMM_DIALOG_SESSION_SELECTOR_H
+#define SCUMM_DIALOG_SESSION_SELECTOR_H
 
 #include "gui/dialog.h"
 #include "gui/widgets/list.h"

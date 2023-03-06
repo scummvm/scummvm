@@ -168,6 +168,7 @@ MODULE_OBJS += \
 
 ifdef USE_ENET
 MODULE_OBJS += \
+	dialog-sessionselector.o \
 	he/net/net_main.o
 
 ifdef USE_LIBCURL

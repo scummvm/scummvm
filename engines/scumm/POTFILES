@@ -1,5 +1,6 @@
 engines/scumm/detection.cpp
 engines/scumm/detection_internal.h
+engines/scumm/dialog-sessionselector.cpp
 engines/scumm/dialogs.cpp
 engines/scumm/help.cpp
 engines/scumm/input.cpp

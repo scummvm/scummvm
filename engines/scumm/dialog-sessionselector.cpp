@@ -29,7 +29,7 @@
 
 #include "engines/advancedDetector.h"
 
-#include "gui/sessionselector.h"
+#include "scumm/dialog-sessionselector.h"
 
 namespace GUI {
 
