@@ -495,7 +495,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("mysteryhouse", "9c7f8577c506737cc07d026d8318598e", 4916),
 	DT_ENTRY0("neighboursfromhell", "686d8c0995aa085fb056c6a5bd402911", 13520),
 	DT_ENTRY0("oct31", "7ca7980f7adf3da370464610b702e94b", 356192),
-	DT_ENTRY1("oct31", "Danish", "7f0637944bc69e2bff843e76689b645b", 194758), // TODO: How can I enter Danish language?
+	DT_ENTRYL0("oct31", Common::DA_DNK, "7f0637944bc69e2bff843e76689b645b", 194758),
 	DT_ENTRY0("onnafa", "da4c0cc6fe34a08047de54abc66de038", 167339),
 	DT_ENTRY0("overtheedge", "9c7bfb9252ac80597ef125c95d58a54b", 14771),
 	DT_ENTRY1("overtheedge", "Gargoyle", "a6bb780b231c31a9e01455d0424acdca", 14937),
