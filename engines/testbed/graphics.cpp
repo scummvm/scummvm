@@ -1238,17 +1238,17 @@ TestExitStatus GFXtests::shakingEffect() {
 		case 0:
 			direction = "vertical";
 			shakeXOffset = 0;
-			shakeYOffset = 25;
+			shakeYOffset = 10;
 			break;
 		case 1:
 			direction = "horizontal";
-			shakeXOffset = 25;
+			shakeXOffset = 10;
 			shakeYOffset = 0;
 			break;
 		default:
 			direction = "diagonal";
-			shakeXOffset = 25;
-			shakeYOffset = 25;
+			shakeXOffset = 10;
+			shakeYOffset = 10;
 			break;
 		}
 
@@ -1261,6 +1261,8 @@ TestExitStatus GFXtests::shakingEffect() {
 			g_system->setShakePos(0, 0);
 			g_system->delayMillis(50);
 			g_system->updateScreen();
+			shakeXOffset = -shakeXOffset;
+			shakeYOffset = -shakeYOffset;
 		}
 		g_system->delayMillis(1500);
 
