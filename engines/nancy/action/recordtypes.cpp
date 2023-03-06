@@ -419,7 +419,7 @@ void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 }
 
 void AddInventoryNoHS::execute() {
-	if (NancySceneState.hasItem(_itemID) == kInvHolding) {
+	if (NancySceneState.hasItem(_itemID) == kInvEmpty) {
 		NancySceneState.addItemToInventory(_itemID);
 	}
 
