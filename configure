@@ -3586,7 +3586,7 @@ if test -n "$_host"; then
 		m68k-atari-mint)
 			# auto -> yes (overriden by $_release_build = yes)
 			if test "$_debug_build" = "no"; then
-				# --disable-debug 
+				# --disable-debug
 				append_var LDFLAGS "-s"
 			fi
 
@@ -3601,7 +3601,7 @@ if test -n "$_host"; then
 				# --enable-release
 				append_var DEFINES "-DNDEBUG"
 			fi
-			
+
 			_seq_midi=no
 			_timidity=no
 			;;
@@ -4180,6 +4180,48 @@ EOF
 fi
 
 #
+# Check for stuff required for ENet to compile
+#
+if test "$_enet" = yes ; then
+	case "$_host_os" in
+		mingw*)
+			# Skip for mingw.
+			;;
+		*)
+			echo "Checks for ENet..."
+
+				echo_n "   "
+				echocheck "sendmsg"
+				cat > $TMPC << EOF
+#include <sys/socket.h>
+int main(void) { return sendmsg(0, 0, 0); }
+EOF
+				cc_check
+				if test "$TMPR" -eq 0; then
+					echo "yes"
+				else
+					echo "no, required for ENet.  Disabling."
+					_enet=no
+				fi
+
+				echo_n "   "
+				echocheck "recvmsg"
+				cat > $TMPC << EOF
+#include <sys/socket.h>
+int main(void) { return recvmsg(0, 0, 0); }
+EOF
+				cc_check
+				if test "$TMPR" -eq 0; then
+					echo "yes"
+				else
+					echo "no, required for ENet.  Disabling."
+					_enet=no
+				fi
+			;;
+	esac
+fi
+
+#
 # Check whether ENet networking support is requested
 #
 define_in_config_if_yes "$_enet" 'USE_ENET'
@@ -4196,13 +4238,13 @@ if test "$_enet" = yes ; then
 
 		*)
 			# Check for features and define.
-			echo "Checks for ENet..."
+			echo "Optional checks for ENet..."
 
 			echo_n "   "
 			echocheck "getaddrinfo"
 			cat > $TMPC << EOF
 #include <netdb.h>
-int main(void) { return getaddrinfo(0, 0, 0, 0); } 
+int main(void) { return getaddrinfo(0, 0, 0, 0); }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
@@ -4216,7 +4258,7 @@ EOF
 			echocheck "getnameinfo"
 			cat > $TMPC << EOF
 #include <netdb.h>
-int main(void) { return getnameinfo(0, 0, 0, 0, 0, 0, 0); } 
+int main(void) { return getnameinfo(0, 0, 0, 0, 0, 0, 0); }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
@@ -4230,7 +4272,7 @@ EOF
 			echocheck "gethostbyaddr_r"
 			cat > $TMPC << EOF
 #include <netdb.h>
-int main(void) { return gethostbyaddr_r(0, 0, 0, 0, 0, 0, 0, 0); } 
+int main(void) { return gethostbyaddr_r(0, 0, 0, 0, 0, 0, 0, 0); }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
@@ -4244,7 +4286,7 @@ EOF
 			echocheck "gethostbyname_r"
 			cat > $TMPC << EOF
 #include <netdb.h>
-int main(void) { return gethostbyname_r(0, 0, 0, 0, 0, 0); } 
+int main(void) { return gethostbyname_r(0, 0, 0, 0, 0, 0); }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
@@ -4258,7 +4300,7 @@ EOF
 			echocheck "poll"
 			cat > $TMPC << EOF
 #include <poll.h>
-int main(void) { return poll(0, 0, 0); } 
+int main(void) { return poll(0, 0, 0); }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
@@ -4272,7 +4314,7 @@ EOF
 			echocheck "fcntl"
 			cat > $TMPC << EOF
 #include <fcntl.h>
-int main(void) { return fcntl(0, 0); } 
+int main(void) { return fcntl(0, 0); }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
@@ -4286,7 +4328,7 @@ EOF
 			echocheck "inet_pton"
 			cat > $TMPC << EOF
 #include <arpa/inet.h>
-int main(void) { return inet_pton(0, 0, 0); } 
+int main(void) { return inet_pton(0, 0, 0); }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
@@ -4300,7 +4342,7 @@ EOF
 			echocheck "inet_ntop"
 			cat > $TMPC << EOF
 #include <arpa/inet.h>
-int main(void) { inet_ntop(0, 0, 0, 0); return 0; } 
+int main(void) { inet_ntop(0, 0, 0, 0); return 0; }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
@@ -4315,7 +4357,7 @@ EOF
 			cat > $TMPC << EOF
 #include <sys/socket.h>
 struct msghdr msg;
-int main(void) { return msg.msg_flags; } 
+int main(void) { return msg.msg_flags; }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
@@ -4329,7 +4371,7 @@ EOF
 			echocheck "socklen_t"
 			cat > $TMPC << EOF
 #include <sys/socket.h>
-int main(void) { socklen_t len = 0; return 0; } 
+int main(void) { socklen_t len = 0; return 0; }
 EOF
 			cc_check
 			if test "$TMPR" -eq 0; then
