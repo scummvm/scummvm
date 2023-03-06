@@ -625,7 +625,7 @@ void SmushDecoder::SmushAudioTrack::handleVIMA(Common::SeekableReadStream *strea
 	int16 *dst = (int16 *)malloc(decompressedSize * _channels * 2);
 	decompressVima(src, dst, decompressedSize * _channels * 2, smushDestTable, true);
 
-	int flags = Audio::FLAG_16BITS;
+	int flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 	if (_channels == 2) {
 		flags |= Audio::FLAG_STEREO;
 	}

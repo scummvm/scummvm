@@ -122,7 +122,7 @@ void VimaTrack::parseSoundHeader(SoundDesc *sound, int &headerSize) {
 	}
 }
 
-int32 VimaTrack::getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size) {
+int32 VimaTrack::getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size, int32 *flags) {
 	//assert(checkForProperHandle(sound));
 	assert(buf && offset >= 0 && size >= 0);
 	assert(region >= 0 && region < sound->numRegions);
@@ -139,10 +139,12 @@ int32 VimaTrack::getDataFromRegion(SoundDesc *sound, int region, byte **buf, int
 
 	if (sound->mcmpData) {
 		size = sound->mcmpMgr->decompressSample(region_offset + offset, size, buf);
+		*flags |= Audio::FLAG_LITTLE_ENDIAN;
 	} else {
 		*buf = new byte[size];
 		sound->inStream->seek(region_offset + offset + sound->headerSize, SEEK_SET);
 		sound->inStream->read(*buf, size);
+		*flags &= ~Audio::FLAG_LITTLE_ENDIAN;
 	}
 
 	return size;
@@ -191,7 +193,7 @@ void VimaTrack::playTrack(const Audio::Timestamp *start) {
 		return;
 
 	do {
-		result = getDataFromRegion(_desc, curRegion, &data, regionOffset, mixer_size);
+		result = getDataFromRegion(_desc, curRegion, &data, regionOffset, mixer_size, &mixerFlags);
 		if (channels == 1) {
 			result &= ~1;
 		}

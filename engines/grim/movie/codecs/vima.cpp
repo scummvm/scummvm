@@ -184,7 +184,7 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 			if (currTablePos > 0)
 				curai = imcTable1[currTablePos];
 			for (int channel = 0; channel < numChannels; channel++)
-				WRITE_BE_UINT16(destPos + channel, outputWord);
+				WRITE_LE_UINT16(destPos + channel, outputWord);
 			destPos += numChannels;
 		}
 
@@ -238,7 +238,7 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 					outputWord = 0x7fff;
 			}
 
-			WRITE_BE_UINT16(destPos, outputWord);
+			WRITE_LE_UINT16(destPos, outputWord);
 			destPos += numChannels;
 
 			currTablePos += offsets[numBits - 2][val];
