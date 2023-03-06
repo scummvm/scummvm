@@ -87,7 +87,7 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 	TinyGL::createContext(screenW, screenH, _pixelFormat, 256, true, ConfMan.getBool("dirtyrects"));
 
 	_storedDisplay = new Graphics::Surface;
-	_storedDisplay->create(_gameWidth, _gameHeight, _pixelFormat);
+	_storedDisplay->create(MAX(_screenWidth, _gameWidth), MAX(_screenHeight, _gameHeight), _pixelFormat);
 
 	_currentShadowArray = nullptr;
 	tglViewport(0, 0, _screenWidth, _screenHeight);
