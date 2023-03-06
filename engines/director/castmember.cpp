@@ -320,8 +320,8 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 				break;
 			// 8bpp - if using a different palette, and we're not doing a color cycling operation, convert using nearest colour matching
 			case 8:
-				// Only redither images in Director 4 and up.
-				if (g_director->getVersion() < 400)
+				// Only redither 8-bit images if we have the flag set
+				if (!movie->_remapPalettesWhenNeeded)
 					break;
 				if (castPaletteId != currentPaletteId && !isColorCycling) {
 					const auto pals = g_director->getLoadedPalettes();
