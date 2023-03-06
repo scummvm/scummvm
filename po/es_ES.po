@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-06 19:51+0000\n"
-"PO-Revision-Date: 2023-02-12 18:31+0000\n"
+"PO-Revision-Date: 2023-03-06 20:38+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -2362,6 +2362,7 @@ msgstr "Guardados"
 #: base/main.cpp:643
 msgid "Bad config file format. overwrite?"
 msgstr ""
+"Formato del archivo de configuración incorrecto. ¿Sobrescribir el archivo?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:692
@@ -2822,12 +2823,11 @@ msgstr ""
 "para más detalles."
 
 #: engines/engine.cpp:589
-#, fuzzy
 msgid "Skip autosave"
-msgstr "Autoguardado vacío"
+msgstr "Omitir autoguardado"
 
 #: engines/engine.cpp:591
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -2835,9 +2835,11 @@ msgid ""
 "needed.\n"
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
-"AVISO: El espacio de autoguardado contiene una partida llamada %S. Puedes "
-"cambiar la partida existente a otro espacio, sobrescribirla o cancelar el "
-"autoguardado (no se volverá a preguntar hasta que reinicies)."
+"AVISO: El espacio de autoguardado contiene una partida llamada %S\n"
+"y se va a proceder a autoguardar. Cambia la partida existente a otro "
+"espacio\n"
+"o elimínala si ya no la necesitas. También puedes omitir el autoguardado\n"
+"(se te volverá a preguntar dentro de 5 minutos)."
 
 #: engines/engine.cpp:601
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -2987,14 +2989,12 @@ msgid "Confirm"
 msgstr "Confirmar"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave on"
-msgstr "Autoguardado"
+msgstr "Autoguardados activados"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave off"
-msgstr "Autoguardado"
+msgstr "Autoguardados desactivados"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:177
 msgid "OpenGL"
@@ -6772,7 +6772,7 @@ msgstr "Este elemento del menú no está implementado todavía"
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
-msgstr ""
+msgstr "Plumbers para 3DO require soporte para RGB."
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -7186,20 +7186,17 @@ msgstr ""
 "KryoFlux que también incluyó Limited Run Games."
 
 #: engines/scumm/dialog-sessionselector.cpp:50
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Querying games..."
-msgstr "Guardando partida..."
+msgstr "Buscando partidas..."
 
 #: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
 msgid "Join"
-msgstr ""
+msgstr "Unirse"
 
 #: engines/scumm/dialog-sessionselector.cpp:107
-#, fuzzy, c-format
-#| msgid "No new %S available"
+#, c-format
 msgid "Found %d available games."
-msgstr "No hay %S nuevos"
+msgstr "Se han encontrado %d partidas disponibles."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
@@ -7339,50 +7336,59 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1366
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "Servidor multijugador:"
 
 #: engines/scumm/dialogs.cpp:1372
-#, fuzzy
 msgid "Online Server:"
-msgstr "Servidor:"
+msgstr "Servidor online:"
 
 #: engines/scumm/dialogs.cpp:1373
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
 msgstr ""
+"La dirección del servidor al que desees conectarte para jugar en red.  Esta "
+"dirección debe empezar por «https://» o «http://»."
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "Habilitar mods de online competitivo"
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enables custom-made modifications intented for online competitive play."
 msgstr ""
+"Permite el uso de modificaciones personalizadas para jugar de forma "
+"competitiva a través de Internet."
 
 #: engines/scumm/dialogs.cpp:1379
 msgid "Enable connection to Multiplayer Server"
-msgstr ""
+msgstr "Permitir conexión con servidor multijugador"
 
 #: engines/scumm/dialogs.cpp:1379
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
 msgstr ""
+"Activa o desactiva la conexión con el servidor que permite crear y unirse a "
+"partidas multijugador a través de Internet."
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Host games over LAN"
-msgstr ""
+msgstr "Alojar partidas por red local (LAN)"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr ""
+"Permite que se puedan encontrar sesiones de juego a través de tu red de área "
+"local (LAN)."
 
 #: engines/scumm/dialogs.cpp:1382
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
 msgstr ""
+"La dirección del servidor donde conectarse para crear y unirse a sesiones de "
+"juego en red."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -8015,7 +8021,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:696
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
-msgstr ""
+msgstr "Activar la canción «A Pirate I Was Meant To Be»"
 
 #: engines/scumm/metaengine.cpp:697
 msgid ""
@@ -8023,31 +8029,29 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
+"Activa la canción del principio de la Parte 3, «A Pirate I Was Meant To Be», "
+"que fue suprimida en las versiones internacionales. Aviso: los subtítulos "
+"podrían estar sin traducir."
 
 #: engines/scumm/metaengine.cpp:770
-#, fuzzy
 msgid "Down Left"
-msgstr "Girar a la izquierda"
+msgstr "Bajar a la izquierda"
 
 #: engines/scumm/metaengine.cpp:783
-#, fuzzy
 msgid "Down Right"
-msgstr "Girar a la derecha"
+msgstr "Bajar a la derecha"
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
 msgid "Up Left"
-msgstr "Izquierda"
+msgstr "Subir a la izquierda"
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
 msgid "Up Right"
-msgstr "Derecha"
+msgstr "Subir a la derecha"
 
 #: engines/scumm/metaengine.cpp:828
-#, fuzzy
 msgid "Switch weapon"
-msgstr "Cambiar de pantalla"
+msgstr "Cambiar de arma"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:842
@@ -8132,13 +8136,12 @@ msgstr ""
 "dentro del directorio de DOTT, y añadir el juego a ScummVM."
 
 #: engines/scumm/scumm.cpp:3469
-#, fuzzy
 msgid "Would you like to host or join a network play session?"
-msgstr "¿Quieres guardar o restaurar una partida?"
+msgstr "¿Quieres crear o unirte a una sesión de juego en red?"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
+msgstr "Crear"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -8835,10 +8838,9 @@ msgid "Ultima VIII Debug"
 msgstr "Depuración de Ultima VIII"
 
 #: engines/vcruise/vcruise.cpp:75
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr ""
-"Este juego requiere el submotor HeroCraft, el cual no está presente en la "
+"Este juego requiere soporte para JPEG, el cual no está presente en la "
 "compilación."
 
 #: engines/vcruise/vcruise.cpp:82
