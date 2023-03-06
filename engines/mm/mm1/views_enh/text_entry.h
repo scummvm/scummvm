@@ -19,49 +19,44 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_CHARACTER_MANAGE_H
-#define MM1_VIEWS_ENH_CHARACTER_MANAGE_H
+#ifndef MM1_VIEWS_ENH_TEXT_ENTRY_H
+#define MM1_VIEWS_ENH_TEXT_ENTRY_H
 
-#include "common/array.h"
-#include "mm/mm1/views_enh/character_base.h"
-#include "mm/mm1/views_enh/text_entry.h"
+#include "mm/mm1/views_enh/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
 /**
- * Character management dialog
+ * Text or numeric entry.
  */
-class CharacterManage : public CharacterBase {
-	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
+class TextEntry : public TextView {
 private:
-	ViewState _state = DISPLAY;
-	Common::String _newName;
-	bool _changed = false;
-	TextEntry _textEntry;
-
 	/**
-	 * Set the mode
+	 * Draw the entered text
 	 */
-	void setMode(ViewState state);
-
-	/**
-	 * Set a new name
-	 */
-	void setName(const Common::String &newName);
+	void drawText();
 
 public:
-	CharacterManage();
-	virtual ~CharacterManage() {}
+	typedef void (*Abort)();
+	typedef void (*Enter)(const Common::String &text);
+	Abort _abortFn;
+	Enter _enterFn;
+	bool _isNumeric = false;
+	Common::String _text;
+	size_t _maxLen = 0;
+public:
+	TextEntry() : TextView("TextEntry") {}
+	virtual ~TextEntry() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
-};
 
+	void display(int x, int y, int maxLen, bool isNumeric,
+		Abort abortFn, Enter enterFn);
+};
 
 } // namespace ViewsEnh
 } // namespace MM1

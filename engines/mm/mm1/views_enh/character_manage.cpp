@@ -51,10 +51,10 @@ void CharacterManage::draw() {
 	assert(g_globals->_currCharacter);
 	setReduced(false);
 
+	CharacterBase::draw();
+
 	switch (_state) {
 	case DISPLAY:
-		CharacterBase::draw();
-
 		setReduced(true);
 		writeString(35, 174, STRING["enhdialogs.character.portrait"]);
 		writeString(105, 174, STRING["enhdialogs.character.rename"]);
@@ -63,9 +63,21 @@ void CharacterManage::draw() {
 		break;
 
 	case RENAME:
+		writeString(80, 172, STRING["dialogs.view_character.name"]);
+		_textEntry.display(130, 180, 15, false,
+			[]() {
+				CharacterManage *view = static_cast<CharacterManage *>(g_events->focusedView());
+				view->setMode(DISPLAY);
+			},
+			[](const Common::String &name) {
+				CharacterManage *view = static_cast<CharacterManage *>(g_events->focusedView());
+				view->setName(name);
+			}
+		);
 		break;
 
 	case DELETE:
+		writeString(120, 174, STRING["enhdialogs.character.are_you_sure"]);
 		break;
 	}
 }
@@ -82,9 +94,10 @@ bool CharacterManage::msgKeypress(const KeypressMessage &msg) {
 			redraw();
 			break;
 		case Common::KEYCODE_r:
-			warning("TODO: Rename character");
+			setMode(RENAME);
 			break;
 		case Common::KEYCODE_d:
+			setMode(DELETE);
 			break;
 		}
 		break;
@@ -118,7 +131,7 @@ bool CharacterManage::msgAction(const ActionMessage &msg) {
 			close();
 			break;
 		default:
-			_state = DISPLAY;
+			setMode(DISPLAY);
 			break;
 		}
 
@@ -126,11 +139,28 @@ bool CharacterManage::msgAction(const ActionMessage &msg) {
 	} else if (msg._action == KEYBIND_SELECT && _state == RENAME) {
 		Common::strcpy_s(c._name, _newName.c_str());
 		c._name[15] = '\0';
-		_state = DISPLAY;
+		setMode(DISPLAY);
 		return true;
 	}
 
 	return CharacterBase::msgAction(msg);
+}
+
+void CharacterManage::setMode(ViewState state) {
+	_state = state;
+
+	for (int i = 0; i < 4; ++i)
+		setButtonEnabled(i, state == DISPLAY);
+	redraw();
+}
+
+void CharacterManage::setName(const Common::String &newName) {
+	Character &c = *g_globals->_currCharacter;
+	Common::strcpy_s(c._name, newName.c_str());
+	c._name[15] = '\0';
+	_changed = true;
+
+	setMode(DISPLAY);
 }
 
 } // namespace ViewsEnh
