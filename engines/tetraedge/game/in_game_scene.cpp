@@ -1615,6 +1615,9 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 		_character->deleteLater();
 		_character = nullptr;
 	}
+
+	// NOTE: There may be multiple characters with the same
+	// model to delete here.
 	for (uint i = 0; i < _characters.size(); i++) {
 		Character *c = _characters[i];
 		if (c && c->_model->name() == name) {
@@ -1626,7 +1629,7 @@ void InGameScene::unloadCharacter(const Common::String &name) {
 				c->_model->anim()->stop(); // TODO: added this
 			c->setFreeMoveZone(nullptr); // TODO: added this
 			_characters.remove_at(i);
-			break;
+			i--;
 		}
 	}
 }

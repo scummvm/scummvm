@@ -88,6 +88,8 @@ Character::~Character() {
 	}
 	removeAnim();
 	for (uint s = 0; s < 2; s++) {
+		if (!_shadowModel[s])
+			continue;
 		for (uint i = 0; i < models.size(); i++) {
 			if (models[i] == _shadowModel[s]) {
 				models.remove_at(i);
@@ -248,6 +250,7 @@ bool Character::blendAnimation(const Common::String &animname, float amount, boo
 	if (_curModelAnim) {
 		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
 		_curModelAnim->unbind();
+		_curModelAnim->reset();
 	}
 
 	_curModelAnim = animCacheLoad(animpath);
@@ -290,6 +293,7 @@ void Character::deleteAnim() {
 	if (_curModelAnim) {
 		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
 		_curModelAnim->unbind();
+		_curModelAnim->reset();
 	}
 	_model->removeAnim();
 	_curModelAnim.release();
@@ -728,6 +732,7 @@ void Character::removeAnim() {
 	if (_curModelAnim) {
 		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
 		_curModelAnim->unbind();
+		_curModelAnim->reset();
 	}
 	_model->removeAnim();
 	if (_curModelAnim) {
@@ -762,6 +767,7 @@ bool Character::setAnimation(const Common::String &aname, bool repeat, bool retu
 	if (_curModelAnim) {
 		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
 		_curModelAnim->unbind();
+		_curModelAnim->reset();
 	}
 
 	_curModelAnim = animCacheLoad(animPath);
