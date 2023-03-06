@@ -99,6 +99,7 @@ Localizer::Localizer() {
 		case MKTAG('D', 'O', 'E', 'L'):
 		case MKTAG('a', 'r', 't', 'p'):
 		case MKTAG('s', 's', 'I', 'N'):
+		case MKTAG('I', 'N', 'T', 'T'):
 			break;
 		default:
 			error("Invalid magic reading %s: %08x (%s)", filename.c_str(), READ_BE_UINT32(data), tag2str(READ_BE_UINT32(data)));
