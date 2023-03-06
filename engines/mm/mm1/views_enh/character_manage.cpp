@@ -99,6 +99,8 @@ bool CharacterManage::msgKeypress(const KeypressMessage &msg) {
 		case Common::KEYCODE_d:
 			setMode(DELETE);
 			break;
+		default:
+			break;
 		}
 		break;
 
