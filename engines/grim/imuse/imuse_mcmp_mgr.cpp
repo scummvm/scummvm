@@ -80,8 +80,20 @@ bool McmpMgr::openSound(const char *filename, Common::SeekableReadStream *data, 
 		_compTable[i].offset += sizeCodecs;
 	}
 	_file->seek(sizeCodecs, SEEK_CUR);
+	_uncompressedSingleBlock = true;
+	if (_numCompItems == 0)
+		_uncompressedSingleBlock = false;
+	if (_numCompItems >= 1 && _compTable[0].codec != 0)
+		_uncompressedSingleBlock = false;
+	for (i = 1; i < _numCompItems; i++) {
+		if (_compTable[i].codec || _compTable[i].decompSize || _compTable[i].compSize) {
+			_uncompressedSingleBlock = false;
+			break;
+		}
+	}
 	// hack: two more bytes at the end of input buffer
-	_compInput = new byte[maxSize + 2];
+	if (!_uncompressedSingleBlock)
+		_compInput = new byte[maxSize + 2];
 	offsetData = headerSize;
 
 	return true;
@@ -94,6 +106,12 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 	if (!_file) {
 		error("McmpMgr::decompressSampleByName() File is not open!");
 		return 0;
+	}
+
+	if (_uncompressedSingleBlock) {
+		*comp_final = static_cast<byte *>(malloc(size));
+		_file->seek(_compTable[0].offset + offset, SEEK_SET);
+		return _file->read(*comp_final, size);
 	}
 
 	first_block = offset / 0x2000;
@@ -114,8 +132,12 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 			_compInput[_compTable[i].compSize] = 0;
 			_compInput[_compTable[i].compSize + 1] = 0;
 			_file->seek(_compTable[i].offset, SEEK_SET);
-			_file->read(_compInput, _compTable[i].compSize);
-			decompressVima(_compInput, (int16 *)_compOutput, _compTable[i].decompSize, imuseDestTable, false);
+			if (_compTable[i].codec == 0 && _compTable[i].decompSize == _compTable[i].compSize) {
+				_file->read(_compOutput, _compTable[i].compSize);
+			} else {
+				_file->read(_compInput, _compTable[i].compSize);
+				decompressVima(_compInput, (int16 *)_compOutput, _compTable[i].decompSize, imuseDestTable, false);
+			}
 			_outputSize = _compTable[i].decompSize;
 			if (_outputSize > 0x2000) {
 				error("McmpMgr::decompressSample() _outputSize: %d", _outputSize);
