@@ -19,6 +19,7 @@ gui/predictivedialog.cpp
 gui/recorderdialog.cpp
 gui/remotebrowser.cpp
 gui/saveload-dialog.cpp
+gui/sessionselector.cpp
 gui/shaderbrowser-dialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
