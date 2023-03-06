@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-06 20:26+0000\n"
-"PO-Revision-Date: 2023-02-12 19:53+0000\n"
+"PO-Revision-Date: 2023-03-06 21:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -2344,7 +2344,7 @@ msgstr "Сохранения"
 
 #: base/main.cpp:643
 msgid "Bad config file format. overwrite?"
-msgstr ""
+msgstr "Неверный формат файла конфигурации. Переписать его?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:692
@@ -2803,12 +2803,11 @@ msgstr ""
 "Подробности см. в документации (CD-аудио)."
 
 #: engines/engine.cpp:589
-#, fuzzy
 msgid "Skip autosave"
-msgstr "Пустое автосохранение"
+msgstr "Пропустить автосохранение"
 
 #: engines/engine.cpp:591
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -2816,9 +2815,12 @@ msgid ""
 "needed.\n"
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
-"ПРЕДУПРЕЖДЕНИЕ: В слоте для автосохранений находится сохранение %S. Вы "
-"можете либо перенести существующее сохранение в новый слот, Перетереть "
-"существующее сохранение или отменить автосохранения (до перезапуска ScummVM)"
+"ПРЕДУПРЕЖДЕНИЕ: В слоте для автосохранений находится сохранение %S, и "
+"поступил запрос на автосохранение.\n"
+"Вы можете либо перенести существующее сохранение в новый слот, либо удалить "
+"его, если оно не нужно.\n"
+"Также вы можете пропустить это автосохранение (повторная попытка через 5 "
+"минут)."
 
 #: engines/engine.cpp:601
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -2968,14 +2970,12 @@ msgid "Confirm"
 msgstr "Подтвердить"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave on"
-msgstr "Автосохранение"
+msgstr "Автосохранение включено"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave off"
-msgstr "Автосохранение"
+msgstr "Автосохранение выключено"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:177
 msgid "OpenGL"
@@ -6697,7 +6697,7 @@ msgstr "Этот пункт меню ещё не реализован"
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
-msgstr ""
+msgstr "Игра Plumbers для 3DO требует поддержки RGB."
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -7104,20 +7104,17 @@ msgstr ""
 "KryoFlux, которые также предоставляются Limited Run Games."
 
 #: engines/scumm/dialog-sessionselector.cpp:50
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Querying games..."
-msgstr "Сохраняю игру..."
+msgstr "Получаю список игр..."
 
 #: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
 msgid "Join"
-msgstr ""
+msgstr "Подключиться"
 
 #: engines/scumm/dialog-sessionselector.cpp:107
-#, fuzzy, c-format
-#| msgid "No new %S available"
+#, c-format
 msgid "Found %d available games."
-msgstr "Новые %S не обнаружены"
+msgstr "Найдено %d доступных игр"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
@@ -7254,22 +7251,23 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1366
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "Сервер мультиплеера:"
 
 #: engines/scumm/dialogs.cpp:1372
-#, fuzzy
 msgid "Online Server:"
-msgstr "Сервер:"
+msgstr "Онайн-сервер:"
 
 #: engines/scumm/dialogs.cpp:1373
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
 msgstr ""
+"Адрес серверя для подключения к онлайн-играм. Он должен начинаться с \"https"
+"://\" либо \"http://\"."
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "Включить моды для онлайн-соревнований"
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enables custom-made modifications intented for online competitive play."
