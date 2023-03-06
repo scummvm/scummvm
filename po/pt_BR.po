@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 20:26+0000\n"
+"POT-Creation-Date: 2023-03-06 20:39+0000\n"
 "PO-Revision-Date: 2023-03-06 20:57+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -82,7 +82,7 @@ msgstr "Para cima"
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
-#: engines/scumm/dialog-sessionselector.cpp:61 engines/sword1/control.cpp:888
+#: engines/scumm/dialog-sessionselector.cpp:62 engines/sword1/control.cpp:888
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Cancelar"
@@ -7151,11 +7151,13 @@ msgstr ""
 msgid "Querying games..."
 msgstr "Consultando jogos..."
 
-#: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
+#. I18N: Join online multiplayer game
+#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3469
 msgid "Join"
 msgstr "Juntar-se"
 
-#: engines/scumm/dialog-sessionselector.cpp:107
+#. I18N: Online multiplayer games were found
+#: engines/scumm/dialog-sessionselector.cpp:109
 #, c-format
 msgid "Found %d available games."
 msgstr "Foram encontrados %d jogos disponíveis."
@@ -7983,8 +7985,8 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
-"Habilita a música no início da Parte 3 do jogo, \"A Pirate I Was Meant To "
-"Be\", \t\tque foi cortada em lançamentos internacionais. Observe que as "
+"Habilita a música no início da Parte 3 do jogo, \"A Pirate I Was Meant To Be"
+"\", \t\tque foi cortada em lançamentos internacionais. Observe que as "
 "legendas podem não estar totalmente traduzidas."
 
 #: engines/scumm/metaengine.cpp:770
@@ -8806,8 +8808,8 @@ msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
-"A música para este jogo requer suporte a Ogg Vorbis, o que não foi compilado."
-"\n"
+"A música para este jogo requer suporte a Ogg Vorbis, o que não foi "
+"compilado.\n"
 "O jogo ainda pode ser jogado, mas não terá nenhuma música."
 
 #: engines/vcruise/vcruise.cpp:92

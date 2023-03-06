@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 20:26+0000\n"
+"POT-Creation-Date: 2023-03-06 20:39+0000\n"
 "PO-Revision-Date: 2023-02-16 23:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -79,7 +79,7 @@ msgstr "Siirry ylös"
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
-#: engines/scumm/dialog-sessionselector.cpp:61 engines/sword1/control.cpp:888
+#: engines/scumm/dialog-sessionselector.cpp:62 engines/sword1/control.cpp:888
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Peruuta"
@@ -7086,11 +7086,13 @@ msgstr ""
 msgid "Querying games..."
 msgstr "Tallennetaan peliä..."
 
-#: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
+#. I18N: Join online multiplayer game
+#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3469
 msgid "Join"
 msgstr ""
 
-#: engines/scumm/dialog-sessionselector.cpp:107
+#. I18N: Online multiplayer games were found
+#: engines/scumm/dialog-sessionselector.cpp:109
 #, fuzzy, c-format
 #| msgid "No new %S available"
 msgid "Found %d available games."

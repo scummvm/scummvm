@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 20:26+0000\n"
+"POT-Creation-Date: 2023-03-06 20:39+0000\n"
 "PO-Revision-Date: 2023-03-06 22:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -81,7 +81,7 @@ msgstr "Вгору"
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
-#: engines/scumm/dialog-sessionselector.cpp:61 engines/sword1/control.cpp:888
+#: engines/scumm/dialog-sessionselector.cpp:62 engines/sword1/control.cpp:888
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Відміна"
@@ -7101,11 +7101,13 @@ msgstr ""
 msgid "Querying games..."
 msgstr "Вичитую список ігор..."
 
-#: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
+#. I18N: Join online multiplayer game
+#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3469
 msgid "Join"
 msgstr "Приєднатись"
 
-#: engines/scumm/dialog-sessionselector.cpp:107
+#. I18N: Online multiplayer games were found
+#: engines/scumm/dialog-sessionselector.cpp:109
 #, c-format
 msgid "Found %d available games."
 msgstr "Знайдено %d доступних ігор."
