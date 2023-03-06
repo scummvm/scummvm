@@ -27,72 +27,101 @@
 #include "testbed/config.h"
 #include "testbed/fs.h"
 
+#include "gui/widgets/scrollcontainer.h"
+#include "gui/gui-manager.h"
+#include "gui/ThemeEval.h"
+
 namespace Testbed {
 
 TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) :
-		GUI::Dialog("TestbedOptions"),
+	GUI::Dialog(0, 0, 0, 0),
 		_testbedConfMan(tsConfMan) {
-
-	new GUI::StaticTextWidget(this, "TestbedOptions.Headline", Common::U32String("Select Testsuites to Execute"));
-	new GUI::StaticTextWidget(this, "TestbedOptions.Info", Common::U32String("Use Doubleclick to select/deselect"));
+	_testContainerDisplay = new GUI::ScrollContainerWidget(this, 0, 0, 0, 0);
+	_testContainerDisplay->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
 
 	// Construct a String Array
 	Common::Array<Testsuite *>::const_iterator iter;
 	Common::U32String description;
 	uint selected = 0;
-
 	for (iter = tsList.begin(); iter != tsList.end(); iter++) {
 		_testSuiteArray.push_back(*iter);
 		description = (*iter)->getDescription();
+		GUI::CheckboxWidget *checkbox;
+		checkbox = new GUI::CheckboxWidget(_testContainerDisplay, 0, 0, 0, 0, description, Common::U32String());
 		if ((*iter)->isEnabled()) {
-			_testSuiteDescArray.push_back(GUI::ListWidget::getThemeColor(GUI::ThemeEngine::kFontColorNormal) + description + "(selected)");
+			checkbox->setState(true);
 			selected++;
 		} else {
-			_testSuiteDescArray.push_back(GUI::ListWidget::getThemeColor(GUI::ThemeEngine::kFontColorAlternate) + description);
+			checkbox->setState(false);
 		}
+		_testSuiteCheckboxArray.push_back(checkbox);
 	}
 
-	_testListDisplay = new TestbedListWidget(this, "TestbedOptions.List", _testSuiteArray);
-	_testListDisplay->setNumberingMode(GUI::kListNumberingOff);
-	_testListDisplay->setList(_testSuiteDescArray);
-
-	// This list shouldn't be editable
-	_testListDisplay->setEditable(false);
+	_messageText = new GUI::StaticTextWidget(this, 0, 0, 0, 0, Common::U32String("Select Testsuites to Execute"), Graphics::kTextAlignLeft);
 
 	if (selected > (tsList.size() - selected)) {
-		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Deselect All"), Common::U32String(), kTestbedDeselectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, 0, 0, 0, 0, Common::U32String("Deselect All"), Common::U32String(), kTestbedDeselectAll, 0);
 	} else {
-		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Select All"), Common::U32String(), kTestbedSelectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, 0, 0, 0, 0, Common::U32String("Select All"), Common::U32String(), kTestbedSelectAll, 0);
 	}
-	new GUI::ButtonWidget(this, "TestbedOptions.RunTests", Common::U32String("Run tests"), Common::U32String(), GUI::kCloseCmd);
-	new GUI::ButtonWidget(this, "TestbedOptions.Quit", Common::U32String("Exit Testbed"), Common::U32String(), kTestbedQuitCmd);
+	_runTestButton = new GUI::ButtonWidget(this, 0, 0, 0, 0, Common::U32String("Run tests"), Common::U32String(), GUI::kCloseCmd);
+	_quitButton = new GUI::ButtonWidget(this, 0, 0, 0, 0, Common::U32String("Exit Testbed"), Common::U32String(), kTestbedQuitCmd);
+
+	reflowLayout();
 }
 
 TestbedOptionsDialog::~TestbedOptionsDialog() {}
+
+void TestbedOptionsDialog::reflowLayout() {
+
+	// Calculate all sizes for widgets
+	uint16 lineHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
+	int16 overlayWidth = g_system->getOverlayWidth();
+	int16 overlayHeight = g_system->getOverlayHeight();
+	uint16 yPos = lineHeight * 2;
+	uint16 xPos = lineHeight;
+	uint16 padding = 32;
+
+	// handle the low res
+	if (overlayHeight < 500) {
+		xPos = xPos / 2;
+		padding = 16;
+	}
+
+	uint16 buttonHeight = lineHeight * 2;
+	uint16 buttonWidth = lineHeight * 5;
+	uint16 dialogWidth = overlayWidth - padding * 2;
+	uint16 dialogHeight = overlayHeight - padding * 2;
+	uint16 buttonPosY = dialogHeight - buttonHeight - lineHeight;
+	uint16 containerWidth = dialogWidth - padding;
+	uint16 containerHeight = dialogHeight - padding - lineHeight * 4 - buttonHeight;
+
+	this->resize(padding, padding, dialogWidth, dialogHeight, false);
+
+	_testContainerDisplay->setSize(containerWidth, containerHeight);
+	_testContainerDisplay->setPos(0, lineHeight * 3);
+
+	for (auto &iter : _testSuiteCheckboxArray) {
+		iter->setPos(xPos, (&iter - _testSuiteCheckboxArray.begin()) * lineHeight * 2);
+		iter->setSize(containerWidth - padding - xPos, lineHeight * 1.5f);
+	}
+
+	_messageText->setPos(xPos, lineHeight);
+	_messageText->setSize(containerWidth - padding - xPos, lineHeight);
+	_selectButton->setPos(xPos, buttonPosY);
+	_selectButton->setSize(buttonWidth, buttonHeight);
+	_runTestButton->setPos(dialogWidth - padding * 2 - buttonWidth * 2, buttonPosY);
+	_runTestButton->setSize(buttonWidth, buttonHeight);
+	_quitButton->setPos(dialogWidth - padding - buttonWidth, buttonPosY);
+	_quitButton->setSize(buttonWidth, buttonHeight);
+
+	Dialog::reflowLayout();
+}
 
 void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	Testsuite *ts;
 	Common::WriteStream *ws;
 	switch (cmd) {
-	case GUI::kListItemDoubleClickedCmd:
-		ts  = _testSuiteArray[_testListDisplay->getSelected()];
-		if (ts) {
-			// Toggle status
-			if (ts->isEnabled()) {
-				ts->enable(false);
-			} else {
-				ts->enable(true);
-			}
-
-			// Now render status
-			if (ts->isEnabled()) {
-				_testListDisplay->markAsSelected(_testListDisplay->getSelected());
-			} else {
-				_testListDisplay->markAsDeselected(_testListDisplay->getSelected());
-			}
-		}
-		break;
-
 	case kTestbedQuitCmd:
 		Engine::quitGame();
 		close();
@@ -102,11 +131,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		_selectButton->setLabel("Select All");
 		_selectButton->setCmd(kTestbedSelectAll);
 		for (uint i = 0; i < _testSuiteArray.size(); i++) {
-			_testListDisplay->markAsDeselected(i);
-			ts  = _testSuiteArray[i];
-			if (ts) {
-				ts->enable(false);
-			}
+			_testSuiteCheckboxArray[i]->setState(false);
 		}
 		break;
 
@@ -114,15 +139,24 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		_selectButton->setLabel("Deselect All");
 		_selectButton->setCmd(kTestbedDeselectAll);
 		for (uint i = 0; i < _testSuiteArray.size(); i++) {
-			_testListDisplay->markAsSelected(i);
-			ts  = _testSuiteArray[i];
-			if (ts) {
-				ts->enable(true);
-			}
+			_testSuiteCheckboxArray[i]->setState(true);
 		}
 		break;
+
 	case GUI::kCloseCmd:
 		// This is final selected state, write it to config file.
+		for (uint i = 0; i < _testSuiteCheckboxArray.size(); i++) {
+			ts = _testSuiteArray[i];
+			if (_testSuiteCheckboxArray[i]->getState()) {
+				if (ts) {
+					ts->enable(true);
+				}
+			} else {
+				if (ts) {
+					ts->enable(false);
+				}
+			}
+		}
 		ws = _testbedConfMan->getConfigWriteStream();
 		if (ws) {
 			_testbedConfMan->writeTestbedConfigToStream(ws);
