@@ -1092,6 +1092,7 @@ void Character::walkTo(float curveEnd, bool walkFlag) {
 				animLen = walkEndLen + (float)_walkStartAnimLen + intpart * _walkLoopAnimLen;
 			}
 		} else {
+			_walkTotalFrames = _walkStartAnimFrameCount;
 			animLen = (float)(_walkStartAnimLen + _walkEndGAnimLen);
 		}
 		_walkCurveIncrement = _walkCurveLen / animLen;
