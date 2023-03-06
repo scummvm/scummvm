@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.8.0 (XXXX-XX-XX)
 
+ New games:
+   - Added support for macOS versions of Syberia and Syberia II.
+
  New platforms:
    - Added libretro new shiny port.
    - Added Atari port.
