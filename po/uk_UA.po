@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-06 20:26+0000\n"
-"PO-Revision-Date: 2023-03-06 20:57+0000\n"
+"PO-Revision-Date: 2023-03-06 22:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -7269,7 +7269,7 @@ msgstr "Вмикає зміни гри, призначені для онлайн
 
 #: engines/scumm/dialogs.cpp:1379
 msgid "Enable connection to Multiplayer Server"
-msgstr "Вмикає поєднання з Мультиплеєрним сервером"
+msgstr "Ввімкнути поєднання з Мультиплеєрним сервером"
 
 #: engines/scumm/dialogs.cpp:1379
 msgid ""
@@ -7936,7 +7936,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:770
 msgid "Down Left"
-msgstr "Донизу-вліво"
+msgstr "Донизу-наліво"
 
 #: engines/scumm/metaengine.cpp:783
 msgid "Down Right"
