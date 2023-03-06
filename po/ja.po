@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 19:46+0000\n"
+"POT-Creation-Date: 2023-03-06 19:51+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -78,7 +78,8 @@ msgstr "上へ"
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#: engines/parallaction/saveload.cpp:270 engines/sword1/control.cpp:888
+#: engines/parallaction/saveload.cpp:270
+#: engines/scumm/dialog-sessionselector.cpp:61 engines/sword1/control.cpp:888
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "キャンセル"
@@ -3260,27 +3261,27 @@ msgid "Resolution: %dx%d"
 msgstr "解像度: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
 msgid "Enabled aspect ratio correction"
 msgstr "縦横比修正適用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2635
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2633
 msgid "Disabled aspect ratio correction"
 msgstr "縦横比修正無効"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2649
 msgid "Filtering enabled"
 msgstr "フィルター適用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2653
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
 msgid "Filtering disabled"
 msgstr "フィルター無効"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2680
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2678
 msgid "Stretch mode"
 msgstr "ストレッチモード"
 
@@ -3288,7 +3289,7 @@ msgstr "ストレッチモード"
 msgid "SDL Surface"
 msgstr "SDLサーフェス"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2595
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2593
 msgid "Active graphics filter:"
 msgstr "適用中の映像フィルター："
 
@@ -5283,7 +5284,7 @@ msgstr "エラー：ゲームをセーブできませんでした。"
 msgid "Input text"
 msgstr "入力テキスト"
 
-#: engines/grim/md5check.cpp:566
+#: engines/grim/md5check.cpp:594
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -5297,7 +5298,7 @@ msgstr ""
 "ン(DVDボックスまたはジュエルケースなど)とともに提供してください：\n"
 "%s"
 
-#: engines/grim/md5check.cpp:575
+#: engines/grim/md5check.cpp:603
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
@@ -6989,6 +6990,22 @@ msgstr ""
 "テクニカルサポートに連絡して修正版をもらうか、Limited Run Games提供のKryoFlux"
 "ダンプから有効なファイルを抽出するガイドをオンラインで検索してください。"
 
+#: engines/scumm/dialog-sessionselector.cpp:50
+#, fuzzy
+#| msgid "Saving game..."
+msgid "Querying games..."
+msgstr "セーブ中..."
+
+#: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
+msgid "Join"
+msgstr ""
+
+#: engines/scumm/dialog-sessionselector.cpp:107
+#, fuzzy, c-format
+#| msgid "No new %S available"
+msgid "Found %d available games."
+msgstr "新しい利用可能な%Sなし"
+
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
 msgid "~P~revious"
@@ -7911,10 +7928,6 @@ msgstr "ゲームをセーブまたは復元してもよろしいですか?"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
-
-#: engines/scumm/scumm.cpp:3469
-msgid "Join"
 msgstr ""
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660

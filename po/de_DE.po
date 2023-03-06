@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 19:46+0000\n"
+"POT-Creation-Date: 2023-03-06 19:51+0000\n"
 "PO-Revision-Date: 2023-02-12 19:20+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -79,7 +79,8 @@ msgstr "Pfad hoch"
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#: engines/parallaction/saveload.cpp:270 engines/sword1/control.cpp:888
+#: engines/parallaction/saveload.cpp:270
+#: engines/scumm/dialog-sessionselector.cpp:61 engines/sword1/control.cpp:888
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -3322,27 +3323,27 @@ msgid "Resolution: %dx%d"
 msgstr "Auflösung: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
 msgid "Enabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur an"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2635
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2633
 msgid "Disabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur aus"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2649
 msgid "Filtering enabled"
 msgstr "Bilineare Filterung aktiviert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2653
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
 msgid "Filtering disabled"
 msgstr "Bilineare Filterung deaktiviert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2680
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2678
 msgid "Stretch mode"
 msgstr "Skaliermodus"
 
@@ -3350,7 +3351,7 @@ msgstr "Skaliermodus"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2595
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2593
 msgid "Active graphics filter:"
 msgstr "Aktiver Grafikfilter:"
 
@@ -5389,7 +5390,7 @@ msgstr "Fehler: Das Spiel konnte nicht gespeichert werden."
 msgid "Input text"
 msgstr "Text eingeben"
 
-#: engines/grim/md5check.cpp:566
+#: engines/grim/md5check.cpp:594
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -5404,7 +5405,7 @@ msgstr ""
 "einer Beschreibung Ihrer Spiele-Version (z.B. DVD-Box oder Jewelcase):\n"
 "%s"
 
-#: engines/grim/md5check.cpp:575
+#: engines/grim/md5check.cpp:603
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
@@ -7201,6 +7202,22 @@ msgstr ""
 "suchen, wie du die korrekten Dateien mithilfe der bereitgestellten KryoFlux-"
 "Dumps wiederherstellen kannst."
 
+#: engines/scumm/dialog-sessionselector.cpp:50
+#, fuzzy
+#| msgid "Saving game..."
+msgid "Querying games..."
+msgstr "Spiel wird gespeichert..."
+
+#: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
+msgid "Join"
+msgstr ""
+
+#: engines/scumm/dialog-sessionselector.cpp:107
+#, fuzzy, c-format
+#| msgid "No new %S available"
+msgid "Found %d available games."
+msgstr "Kein neues Pack verfügbar"
+
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
 msgid "~P~revious"
@@ -8142,10 +8159,6 @@ msgstr "Möchstest Du ein Spiel speichern oder fortsetzen?"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
-
-#: engines/scumm/scumm.cpp:3469
-msgid "Join"
 msgstr ""
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660

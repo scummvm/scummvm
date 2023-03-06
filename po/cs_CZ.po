@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 19:46+0000\n"
+"POT-Creation-Date: 2023-03-06 19:51+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -80,7 +80,8 @@ msgstr "Jít nahoru"
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#: engines/parallaction/saveload.cpp:270 engines/sword1/control.cpp:888
+#: engines/parallaction/saveload.cpp:270
+#: engines/scumm/dialog-sessionselector.cpp:61 engines/sword1/control.cpp:888
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Zrušit"
@@ -3270,27 +3271,27 @@ msgid "Resolution: %dx%d"
 msgstr "Rozlišení: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
 msgid "Enabled aspect ratio correction"
 msgstr "Povolena korekce poměru stran"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2635
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2633
 msgid "Disabled aspect ratio correction"
 msgstr "Zakázána korekce poměru stran"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2649
 msgid "Filtering enabled"
 msgstr "Filtrování povoleno"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2653
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
 msgid "Filtering disabled"
 msgstr "Filtrování zakázáno"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2680
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2678
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Režim protažení:"
@@ -3299,7 +3300,7 @@ msgstr "Režim protažení:"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2595
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2593
 msgid "Active graphics filter:"
 msgstr "Aktivní grafický filtr:"
 
@@ -5387,7 +5388,7 @@ msgstr "režim obrazu nemohl být změněn."
 msgid "Input text"
 msgstr "Vstup"
 
-#: engines/grim/md5check.cpp:566
+#: engines/grim/md5check.cpp:594
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -5397,7 +5398,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/grim/md5check.cpp:575
+#: engines/grim/md5check.cpp:603
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
@@ -7063,6 +7064,21 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 
+#: engines/scumm/dialog-sessionselector.cpp:50
+#, fuzzy
+#| msgid "Saving game..."
+msgid "Querying games..."
+msgstr "Ukládání hry..."
+
+#: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
+msgid "Join"
+msgstr ""
+
+#: engines/scumm/dialog-sessionselector.cpp:107
+#, c-format
+msgid "Found %d available games."
+msgstr ""
+
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
 msgid "~P~revious"
@@ -7965,10 +7981,6 @@ msgstr "Chcete hru nahrát nebo uložit?"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
-
-#: engines/scumm/scumm.cpp:3469
-msgid "Join"
 msgstr ""
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660

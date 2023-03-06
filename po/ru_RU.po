@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 19:46+0000\n"
+"POT-Creation-Date: 2023-03-06 19:51+0000\n"
 "PO-Revision-Date: 2023-02-12 19:53+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -78,7 +78,8 @@ msgstr "Вверх"
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#: engines/parallaction/saveload.cpp:270 engines/sword1/control.cpp:888
+#: engines/parallaction/saveload.cpp:270
+#: engines/scumm/dialog-sessionselector.cpp:61 engines/sword1/control.cpp:888
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Отмена"
@@ -3306,27 +3307,27 @@ msgid "Resolution: %dx%d"
 msgstr "Разрешение: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
 msgid "Enabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон включена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2635
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2633
 msgid "Disabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон выключена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2649
 msgid "Filtering enabled"
 msgstr "Фильтрация включена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2653
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
 msgid "Filtering disabled"
 msgstr "Фильтрация выключена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2680
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2678
 msgid "Stretch mode"
 msgstr "Режим растягивания"
 
@@ -3334,7 +3335,7 @@ msgstr "Режим растягивания"
 msgid "SDL Surface"
 msgstr "Поверхность SDL"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2595
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2593
 msgid "Active graphics filter:"
 msgstr "Активный графический фильтр:"
 
@@ -5348,7 +5349,7 @@ msgstr "Ошибка: к сожалению, сохранить игру не у
 msgid "Input text"
 msgstr "Введите текст"
 
-#: engines/grim/md5check.cpp:566
+#: engines/grim/md5check.cpp:594
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -5363,7 +5364,7 @@ msgstr ""
 "игры (т.е. DVD, коробочная версия):\n"
 "%s"
 
-#: engines/grim/md5check.cpp:575
+#: engines/grim/md5check.cpp:603
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
@@ -7102,6 +7103,22 @@ msgstr ""
 "поищите онлайн-руководства, которые помогут вам извлечь эти файлы из дампов "
 "KryoFlux, которые также предоставляются Limited Run Games."
 
+#: engines/scumm/dialog-sessionselector.cpp:50
+#, fuzzy
+#| msgid "Saving game..."
+msgid "Querying games..."
+msgstr "Сохраняю игру..."
+
+#: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
+msgid "Join"
+msgstr ""
+
+#: engines/scumm/dialog-sessionselector.cpp:107
+#, fuzzy, c-format
+#| msgid "No new %S available"
+msgid "Found %d available games."
+msgstr "Новые %S не обнаружены"
+
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
 msgid "~P~revious"
@@ -8032,10 +8049,6 @@ msgstr "Вы хотите сохранить либо загрузить игр�
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
-
-#: engines/scumm/scumm.cpp:3469
-msgid "Join"
 msgstr ""
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660

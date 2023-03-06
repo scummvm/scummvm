@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 19:46+0000\n"
+"POT-Creation-Date: 2023-03-06 19:51+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -78,7 +78,8 @@ msgstr "위로"
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#: engines/parallaction/saveload.cpp:270 engines/sword1/control.cpp:888
+#: engines/parallaction/saveload.cpp:270
+#: engines/scumm/dialog-sessionselector.cpp:61 engines/sword1/control.cpp:888
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "취소"
@@ -3248,27 +3249,27 @@ msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2635
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2633
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2649
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2653
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2680
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2678
 msgid "Stretch mode"
 msgstr "확대 모드"
 
@@ -3276,7 +3277,7 @@ msgstr "확대 모드"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2595
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2593
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 
@@ -5284,7 +5285,7 @@ msgstr "오류: 게임을 저장하지 못함."
 msgid "Input text"
 msgstr "텍스트 입력"
 
-#: engines/grim/md5check.cpp:566
+#: engines/grim/md5check.cpp:594
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -5298,7 +5299,7 @@ msgstr ""
 "보 (DVD 박스, 주얼 케이스 등) 를 알려주세요.\n"
 "%s"
 
-#: engines/grim/md5check.cpp:575
+#: engines/grim/md5check.cpp:603
 #, fuzzy, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
@@ -7005,6 +7006,21 @@ msgstr ""
 "KryoFlux 덤프에서 유효한 파일을 복구하는 데 도움이 되는 가이드를 온라인으로 "
 "찾아보십시오."
 
+#: engines/scumm/dialog-sessionselector.cpp:50
+#, fuzzy
+#| msgid "Saving game..."
+msgid "Querying games..."
+msgstr "게임 저장 중..."
+
+#: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
+msgid "Join"
+msgstr ""
+
+#: engines/scumm/dialog-sessionselector.cpp:107
+#, fuzzy, c-format
+msgid "Found %d available games."
+msgstr "사용 가능한 새 아이콘 팩 없음"
+
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
 msgid "~P~revious"
@@ -7914,10 +7930,6 @@ msgstr "게임을 저장하거나 불러오시겠습니까?"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
-
-#: engines/scumm/scumm.cpp:3469
-msgid "Join"
 msgstr ""
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
