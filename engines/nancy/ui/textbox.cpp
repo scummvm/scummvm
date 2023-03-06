@@ -228,7 +228,7 @@ void Textbox::drawTextbox() {
 			if (hasHotspot) {
 				hotspot.left = _borderWidth;
 				hotspot.top = _firstLineOffset - font->getFontHeight() + (_numLines + 1) * lineDist;
-				hotspot.setHeight((wrappedLines.size() - 1) * lineDist + _lineHeight);
+				hotspot.setHeight((wrappedLines.size() - 1) * _lineHeight + lineDist);
 				hotspot.setWidth(0);
 			}
 
