@@ -27,70 +27,82 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+CharacterManage::CharacterManage() : CharacterBase("CharacterManage") {
+	addButton(&_escSprite, Common::Point(20, 172), 0, Common::KEYCODE_p, true);
+	addButton(&_escSprite, Common::Point(90, 172), 0, Common::KEYCODE_r, true);
+	addButton(&_escSprite, Common::Point(160, 172), 0, Common::KEYCODE_d, true);
+	addButton(&_escSprite, Common::Point(230, 172), 0, KEYBIND_ESCAPE, true);
+}
+
+bool CharacterManage::msgFocus(const FocusMessage &msg) {
+	CharacterBase::msgFocus(msg);
+	_changed = false;
+	return true;
+}
+
+bool CharacterManage::msgUnfocus(const UnfocusMessage &msg) {
+	if (_changed)
+		g_globals->_roster.save();
+	CharacterBase::msgUnfocus(msg);
+	return true;
+}
+
 void CharacterManage::draw() {
 	assert(g_globals->_currCharacter);
-	CharacterBase::draw();
-/*
+	setReduced(false);
+
 	switch (_state) {
 	case DISPLAY:
-		writeString(6, 21, STRING["dialogs.view_character.rename"]);
-		writeString(6, 22, STRING["dialogs.view_character.delete"]);
-		escToGoBack();
+		CharacterBase::draw();
+
+		setReduced(true);
+		writeString(35, 174, STRING["enhdialogs.character.portrait"]);
+		writeString(105, 174, STRING["enhdialogs.character.rename"]);
+		writeString(175, 174, STRING["enhdialogs.character.delete"]);
+		writeString(245, 174, STRING["enhdialogs.misc.go_back"]);
 		break;
 
 	case RENAME:
-		writeString(6, 21, STRING["dialogs.view_character.name"]);
-		writeString(_newName);
-		writeChar('_');
 		break;
 
 	case DELETE:
-		writeString(6, 21, STRING["dialogs.view_character.are_you_sure"]);
 		break;
 	}
-	*/
 }
 
 bool CharacterManage::msgKeypress(const KeypressMessage &msg) {
+	Character &c = *g_globals->_currCharacter;
+
 	switch (_state) {
 	case DISPLAY:
-		if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_n) {
-			_state = RENAME;
-			_newName = "";
+		switch (msg.keycode) {
+		case Common::KEYCODE_p:
+			c._portrait = (c._portrait + 1) % NUM_PORTRAITS;
+			c.loadFaceSprites();
 			redraw();
-		} else if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_d) {
-			_state = DELETE;
-			redraw();
+			break;
+		case Common::KEYCODE_r:
+			warning("TODO: Rename character");
+			break;
+		case Common::KEYCODE_d:
+			break;
 		}
 		break;
 
 	case RENAME:
-		if (msg.ascii >= 32 && msg.ascii <= 127) {
-			_newName += toupper(msg.ascii);
-			redraw();
-		}
-		if (msg.keycode == Common::KEYCODE_RETURN || _newName.size() == 15) {
-			strncpy(g_globals->_currCharacter->_name, _newName.c_str(), 16);
-			_state = DISPLAY;
-			redraw();
-		} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
-				!_newName.empty()) {
-			_newName.deleteLastChar();
-			redraw();
-		}
 		break;
 
 	case DELETE:
-		if (msg.keycode == Common::KEYCODE_y) {
-			// Removes the character and returns to View All Characters
-			g_globals->_roster.remove(g_globals->_currCharacter);
-			close();
-		} else {
-			// Any other keypress returns to display mode
-			redraw();
+		switch (msg.keycode) {
+		case Common::KEYCODE_y:
+			msgAction(ActionMessage(KEYBIND_SELECT));
+			break;
+		case Common::KEYCODE_n:
+			msgAction(ActionMessage(KEYBIND_ESCAPE));
+			break;
+		default:
+			break;
 		}
-
-		_state = DISPLAY;
 		break;
 	}
 
@@ -98,25 +110,27 @@ bool CharacterManage::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool CharacterManage::msgAction(const ActionMessage &msg) {
+	Character &c = *g_globals->_currCharacter;
+
 	if (msg._action == KEYBIND_ESCAPE) {
-		if (_state != DISPLAY) {
-			redraw();
-		} else {
+		switch (_state) {
+		case DISPLAY:
 			close();
+			break;
+		default:
+			_state = DISPLAY;
+			break;
 		}
 
-		_state = DISPLAY;
 		return true;
-	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-			msg._action <= KEYBIND_VIEW_PARTY6 &&
-			_state == DISPLAY) {
-		g_globals->_currCharacter = &g_globals->_party[
-			msg._action - KEYBIND_VIEW_PARTY1];
-		addView();
+	} else if (msg._action == KEYBIND_SELECT && _state == RENAME) {
+		Common::strcpy_s(c._name, _newName.c_str());
+		c._name[15] = '\0';
+		_state = DISPLAY;
 		return true;
 	}
 
-	return false;
+	return CharacterBase::msgAction(msg);
 }
 
 } // namespace ViewsEnh

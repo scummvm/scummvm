@@ -36,10 +36,13 @@ class CharacterManage : public CharacterBase {
 	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
 	ViewState _state = DISPLAY;
 	Common::String _newName;
+	bool _changed = false;
 public:
-	CharacterManage() : CharacterBase("CharacterManage") {}
+	CharacterManage();
 	virtual ~CharacterManage() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;

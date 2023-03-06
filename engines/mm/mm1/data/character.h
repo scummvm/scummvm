@@ -32,6 +32,7 @@ namespace MM1 {
 
 #define INVENTORY_COUNT 6
 #define MAX_LEVEL 200
+#define NUM_PORTRAITS 12
 
 enum CharacterClass {
 	KNIGHT = 1, PALADIN = 2, ARCHER = 3, CLERIC = 4,

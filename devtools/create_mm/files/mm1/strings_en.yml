@@ -478,6 +478,10 @@ enhdialogs:
 		item: "\x01""37Item"
 		quick: "\x01""37Quick"
 		exchange: "\x01""37Exch"
+		portrait: "Portrait"
+		rename: "Rename"
+		delete: "Delete"
+		are_you_sure: "Are you sure? (Y/N)"
 		conditions:
 			good: "Good"
 	character_select:
@@ -507,6 +511,7 @@ enhdialogs:
 		no_gold: "No gold, no food!"
 	misc:
 		exit: "Exit"
+		go_back: "Go back"
 	quickref:
 		title: "Quick Reference Chart"
 		headers:
