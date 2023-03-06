@@ -138,6 +138,7 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "year?mus.lab");
 			SearchMan.listMatchingMembers(files, "local.lab");
 			SearchMan.listMatchingMembers(files, "credits.lab");
+			SearchMan.listMatchingMembers(files, "rus_font.lab");
 
 			if (g_grim->isRemastered()) {
 				SearchMan.listMatchingMembers(files, "commentary.lab");
