@@ -595,7 +595,7 @@ bool Character::onBonesUpdate(const Common::String &boneName, TeMatrix4x4 &boneM
 
 bool Character::onModelAnimationFinished() {
 	// this shouldn't happen but check to be sure..
-	if (!_model->anim())
+	if (!_model || !_model->anim())
 		return false;
 
 	const Common::Path loadedPath = _model->anim()->loadedPath();
