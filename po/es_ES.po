@@ -8848,12 +8848,18 @@ msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"La música de este juego requiere soporte para Ogg Vorbis, el cual no está "
+"presente en la compilación.\n"
+"El juego se ejecutará, pero sin música."
 
 #: engines/vcruise/vcruise.cpp:92
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"La música de este juego requiere soporte para MP3, el cual no está presente "
+"en la compilación.\n"
+"El juego se ejecutará, pero sin música."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
