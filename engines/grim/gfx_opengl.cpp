@@ -1344,6 +1344,10 @@ void GfxOpenGL::createFont(Font *f) {
 	for (int i = 0, row = 0; i < 256; ++i) {
 		int width = font->getCharBitmapWidth(i), height = font->getCharBitmapHeight(i);
 		int32 d = font->getCharOffset(i);
+		if (d + height * width > (int)dataSize) {
+			debug("Font overflow: %d: d + height * width <= dataSize: %d + %d * %d <= %d", i, d, height, width, dataSize);
+			continue;
+		}
 		for (int x = 0; x < height; ++x) {
 			// a is the offset to get to the correct row.
 			// b is the offset to get to the correct line in the character.
