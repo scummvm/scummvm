@@ -4193,6 +4193,7 @@ if test "$_enet" = yes ; then
 				echo_n "   "
 				echocheck "sendmsg"
 				cat > $TMPC << EOF
+#include <sys/types.h>
 #include <sys/socket.h>
 int main(void) { return sendmsg(0, 0, 0); }
 EOF
@@ -4207,6 +4208,7 @@ EOF
 				echo_n "   "
 				echocheck "recvmsg"
 				cat > $TMPC << EOF
+#include <sys/types.h>
 #include <sys/socket.h>
 int main(void) { return recvmsg(0, 0, 0); }
 EOF
@@ -4243,6 +4245,8 @@ if test "$_enet" = yes ; then
 			echo_n "   "
 			echocheck "getaddrinfo"
 			cat > $TMPC << EOF
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <netdb.h>
 int main(void) { return getaddrinfo(0, 0, 0, 0); }
 EOF
@@ -4257,6 +4261,8 @@ EOF
 			echo_n "   "
 			echocheck "getnameinfo"
 			cat > $TMPC << EOF
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <netdb.h>
 int main(void) { return getnameinfo(0, 0, 0, 0, 0, 0, 0); }
 EOF
@@ -4313,6 +4319,7 @@ EOF
 			echo_n "   "
 			echocheck "fcntl"
 			cat > $TMPC << EOF
+#include <unistd.h>
 #include <fcntl.h>
 int main(void) { return fcntl(0, 0); }
 EOF
@@ -4327,6 +4334,7 @@ EOF
 			echo_n "   "
 			echocheck "inet_pton"
 			cat > $TMPC << EOF
+#include <sys/socket.h>
 #include <arpa/inet.h>
 int main(void) { return inet_pton(0, 0, 0); }
 EOF
@@ -4341,6 +4349,7 @@ EOF
 			echo_n "   "
 			echocheck "inet_ntop"
 			cat > $TMPC << EOF
+#include <sys/socket.h>
 #include <arpa/inet.h>
 int main(void) { inet_ntop(0, 0, 0, 0); return 0; }
 EOF
