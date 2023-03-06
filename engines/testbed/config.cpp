@@ -34,9 +34,8 @@
 namespace Testbed {
 
 TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) :
-		GUI::Dialog("TestbedOptions"),
+	GUI::Dialog(0, 0, 0, 0),
 		_testbedConfMan(tsConfMan) {
-
 	_testContainerDisplay = new GUI::ScrollContainerWidget(this, 0, 0, 0, 0);
 	_testContainerDisplay->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
 
@@ -77,48 +76,43 @@ void TestbedOptionsDialog::reflowLayout() {
 
 	// Calculate all sizes for widgets
 	uint16 lineHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
-	uint16 checkboxWidth;
-	uint16 yPos = lineHeight * 2;
-	uint16 xPos = lineHeight;
-	uint16 padding = 40;
 	int16 overlayWidth = g_system->getOverlayWidth();
 	int16 overlayHeight = g_system->getOverlayHeight();
-	uint16 buttonHeight = 30;
-	uint16 buttonWidth = 110;
-	uint16 offset = 0;
-
-	float scale_factor = g_gui.getScaleFactor();
-	if (overlayWidth > 320) { // hires
-		checkboxWidth = 440 + 800 * (scale_factor - 1);
-		if (overlayWidth - checkboxWidth < 100) {
-			checkboxWidth = overlayWidth - 100 * scale_factor; // clamp width to at least 100px smaller than overlay to prevent glitchy scrollbars
-		}
-	} else { // lores
-		checkboxWidth = 250 + 480 * (scale_factor - 1);
-	}
+	uint16 yPos = lineHeight * 2;
+	uint16 xPos = lineHeight;
+	uint16 padding = 32;
 
 	// handle the low res
 	if (overlayHeight < 500) {
 		xPos = xPos / 2;
-		padding = 32;
-		offset = -padding;
+		padding = 16;
 	}
 
-	_testContainerDisplay->setSize(overlayWidth - padding, overlayHeight - padding - lineHeight * 2 - buttonHeight);
-	_testContainerDisplay->setPos(0, lineHeight * 2);
+	uint16 buttonHeight = lineHeight * 2;
+	uint16 buttonWidth = lineHeight * 5;
+	uint16 dialogWidth = overlayWidth - padding * 2;
+	uint16 dialogHeight = overlayHeight - padding * 2;
+	uint16 buttonPosY = dialogHeight - buttonHeight - lineHeight;
+	uint16 containerWidth = dialogWidth - padding;
+	uint16 containerHeight = dialogHeight - padding - lineHeight * 4 - buttonHeight;
+
+	this->resize(padding, padding, dialogWidth, dialogHeight, false);
+
+	_testContainerDisplay->setSize(containerWidth, containerHeight);
+	_testContainerDisplay->setPos(0, lineHeight * 3);
 
 	for (auto &iter : _testSuiteCheckboxArray) {
-		iter->setPos(xPos, (&iter - _testSuiteCheckboxArray.begin()) * 25);
-		iter->setSize(checkboxWidth, lineHeight);
+		iter->setPos(xPos, (&iter - _testSuiteCheckboxArray.begin()) * lineHeight * 2);
+		iter->setSize(containerWidth - padding - xPos, lineHeight * 1.5f);
 	}
 
 	_messageText->setPos(xPos, lineHeight);
-	_messageText->setSize(checkboxWidth, lineHeight);
-	_selectButton->setPos(xPos, overlayHeight - padding - lineHeight * 4 - offset);
+	_messageText->setSize(containerWidth - padding - xPos, lineHeight);
+	_selectButton->setPos(xPos, buttonPosY);
 	_selectButton->setSize(buttonWidth, buttonHeight);
-	_runTestButton->setPos(overlayWidth - padding - buttonWidth * 2 - xPos * 4, overlayHeight - padding - lineHeight * 4 - offset);
+	_runTestButton->setPos(dialogWidth - padding * 2 - buttonWidth * 2, buttonPosY);
 	_runTestButton->setSize(buttonWidth, buttonHeight);
-	_quitButton->setPos(overlayWidth - padding - buttonWidth - xPos * 3, overlayHeight - padding - lineHeight * 4 - offset);
+	_quitButton->setPos(dialogWidth - padding - buttonWidth, buttonPosY);
 	_quitButton->setSize(buttonWidth, buttonHeight);
 
 	Dialog::reflowLayout();
