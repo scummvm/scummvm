@@ -3,8 +3,24 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.8.0 (XXXX-XX-XX)
 
+ Neue Spiele:
+   - Unterstützung für die macOS-Versionen von Syberia und Syberia II hinzugefügt.
+
+ Neue Plattformen:
+   - Vollständig erneute Portierung für libretro hinzugefügt.
+   - Unterstützung für Atari hinzugefügt.
+
+ Allgemein:
+   - libvpx wurde als neue, optionale Abhängigkeit hinzugefügt. 
+
  Asylum:
    - Unterstützung für die chinesische Version von Sanitarium hinzugefügt.
+
+ Dragons:
+   - Die Copyright-Hinweise und das Hauptmenü werden nun korrekt übersetzt.
+
+ GrimE:
+   - Unterstützung für die chineische Version von Grim Fandango hinzugefügt.
 
  Sherlock:
    - Unterstützung für die chinesische Version von Serrated Scalpel hinzugefügt.
