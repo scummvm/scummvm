@@ -3473,7 +3473,7 @@ int ScummEngine_v90he::networkSessionDialog() {
 		return -1;
 
 	// Joining a session
-	GUI::SessionSelectorDialog sessionDialog(this);
+	SessionSelectorDialog sessionDialog(this);
 	return runDialog(sessionDialog);
 }
 #endif

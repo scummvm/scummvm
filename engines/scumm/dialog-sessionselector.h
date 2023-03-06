@@ -33,7 +33,7 @@
 #include "scumm/he/net/net_main.h"
 #include "scumm/he/net/net_defines.h"
 
-namespace GUI {
+namespace Scumm {
 
 class StaticTextWidget;
 
@@ -41,21 +41,21 @@ class SessionSelectorDialog : public Dialog {
 public:
 	SessionSelectorDialog(Scumm::ScummEngine_v90he *vm);
 
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleTickle() override;
 
 private:
-	Scumm::ScummEngine_v90he *_vm;
+	ScummEngine_v90he *_vm;
 
 	uint32 _timestamp;
 
-	Widget *_joinButton;
-	StaticTextWidget *_queryProgressText;
+	GUI::Widget *_joinButton;
+	GUI::StaticTextWidget *_queryProgressText;
 
-	ListWidget *_list;
+	GUI::ListWidget *_list;
 };
 
 
-} // End of namespace GUI
+} // End of namespace Scumm
 
 #endif

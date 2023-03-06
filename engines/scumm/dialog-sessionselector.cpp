@@ -31,7 +31,7 @@
 
 #include "scumm/dialog-sessionselector.h"
 
-namespace GUI {
+namespace Scumm {
 
 enum {
 	kOkCmd = 'OK  ',
@@ -46,22 +46,22 @@ SessionSelectorDialog::SessionSelectorDialog(Scumm::ScummEngine_v90he *vm)
 
 	_timestamp = 0;
 
-	_queryProgressText = new StaticTextWidget(this, "SessionSelector.QueryProgressText",
+	_queryProgressText = new GUI::StaticTextWidget(this, "SessionSelector.QueryProgressText",
 						_("Querying games..."));
 
 	_queryProgressText->setAlign(Graphics::kTextAlignCenter);
 
-	_list = new ListWidget(this, "SessionSelector.SessionList");
+	_list = new GUI::ListWidget(this, "SessionSelector.SessionList");
 	_list->setEditable(false);
-	_list->setNumberingMode(kListNumberingOff);
+	_list->setNumberingMode(GUI::kListNumberingOff);
 
-	_joinButton = new ButtonWidget(this, "SessionSelector.Join", _("Join"), Common::U32String(), kOkCmd, Common::ASCII_RETURN);
+	_joinButton = new GUI::ButtonWidget(this, "SessionSelector.Join", _("Join"), Common::U32String(), kOkCmd, Common::ASCII_RETURN);
 	_joinButton->setEnabled(false);
 
-	new ButtonWidget(this, "SessionSelector.Cancel", _("Cancel"), Common::U32String(), kCancelCmd, Common::ASCII_ESCAPE);
+	new GUI::ButtonWidget(this, "SessionSelector.Cancel", _("Cancel"), Common::U32String(), kCancelCmd, Common::ASCII_ESCAPE);
 }
 
-void SessionSelectorDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void SessionSelectorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case GUI::kListSelectionChangedCmd:
 		_timestamp = g_system->getMillis();
@@ -109,8 +109,8 @@ void SessionSelectorDialog::handleTickle() {
 		_timestamp = g_system->getMillis();
 	}
 
-	drawDialog(kDrawLayerForeground);
+	drawDialog(GUI::kDrawLayerForeground);
 }
 
 
-} // End of namespace GUI
+} // End of namespace Scumm
