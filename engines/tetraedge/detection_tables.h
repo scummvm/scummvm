@@ -22,8 +22,8 @@
 namespace Tetraedge {
 
 const PlainGameDescriptor GAME_NAMES[] = {
-	{ "syberia", "Syberia" },
 	{ "amerzone", "Amerzone" },
+	{ "syberia", "Syberia" },
 	{ "syberia2", "Syberia II" },
 	{ 0, 0 }
 };
@@ -38,7 +38,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("MacOS/Syberia", "d:6951fb8f71fe06f34684564625f73cd8", 10640592),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
@@ -49,7 +49,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("MacOS/Syberia 2", "d:c447586a3cb3d46d6127b467e7fb9a86", 12021136),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
