@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-06 19:51+0000\n"
-"PO-Revision-Date: 2023-02-12 18:50+0000\n"
+"PO-Revision-Date: 2023-03-06 20:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -2346,7 +2346,7 @@ msgstr "Зберігання"
 
 #: base/main.cpp:643
 msgid "Bad config file format. overwrite?"
-msgstr ""
+msgstr "Пошкоджений файл конфигурації, переписати його?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:692
@@ -2802,12 +2802,11 @@ msgstr ""
 "Детальніше див. у документації (CD-аудіо)."
 
 #: engines/engine.cpp:589
-#, fuzzy
 msgid "Skip autosave"
-msgstr "Порожнє автозбереження"
+msgstr "Пропустити автозбереження"
 
 #: engines/engine.cpp:591
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -2815,9 +2814,11 @@ msgid ""
 "needed.\n"
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
-"УВАГА: У слоті автозбереження вже знаходится збереження %S. Ви можете або "
-"перенести поточне збереження у новий слот, Перетерти поточне збереження, або "
-"відмінити автозбереження (до перезапуску ScummVM)"
+"УВАГА: У слоті автозбереження вже знаходиться збереження %S, і потрібно його "
+"переписати.\n"
+"Ви можете або перенести поточне збереження у новий слот, або видалити його, "
+"якщо воно не потрібно.\n"
+"Або ж, ви можете пропустити це автозбереження (нова спроба за 5 хвилин)."
 
 #: engines/engine.cpp:601
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -2967,14 +2968,12 @@ msgid "Confirm"
 msgstr "Підтвердити"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave on"
-msgstr "Автозбереження"
+msgstr "Автозбереження увімкнено"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave off"
-msgstr "Автозбереження"
+msgstr "Автозбереження вимкнено"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:177
 msgid "OpenGL"
@@ -6694,7 +6693,7 @@ msgstr "Цей пункт меню ще не реалізовано"
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
-msgstr ""
+msgstr "Гра Plumbers для 3DO потребує підтримку RGB."
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -7099,20 +7098,17 @@ msgstr ""
 "дампів KryoFlux, які також постачаються Limited Run Games."
 
 #: engines/scumm/dialog-sessionselector.cpp:50
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Querying games..."
-msgstr "Збережую гру..."
+msgstr "Вичитую список ігор..."
 
 #: engines/scumm/dialog-sessionselector.cpp:58 engines/scumm/scumm.cpp:3469
 msgid "Join"
-msgstr ""
+msgstr "Приєднатись"
 
 #: engines/scumm/dialog-sessionselector.cpp:107
-#, fuzzy, c-format
-#| msgid "No new %S available"
+#, c-format
 msgid "Found %d available games."
-msgstr "Не знайдено нових %S"
+msgstr "Знайдено %d доступних ігор."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
