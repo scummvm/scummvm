@@ -47,7 +47,7 @@ SessionSelectorDialog::SessionSelectorDialog(Scumm::ScummEngine_v90he *vm)
 	_timestamp = 0;
 
 	_queryProgressText = new GUI::StaticTextWidget(this, "SessionSelector.QueryProgressText",
-						_("Querying games..."));
+						_("Querying games...")); // I18N: Retrieving list of online multiplayer games
 
 	_queryProgressText->setAlign(Graphics::kTextAlignCenter);
 
@@ -55,6 +55,7 @@ SessionSelectorDialog::SessionSelectorDialog(Scumm::ScummEngine_v90he *vm)
 	_list->setEditable(false);
 	_list->setNumberingMode(GUI::kListNumberingOff);
 
+	// I18N: Join online multiplayer game
 	_joinButton = new GUI::ButtonWidget(this, "SessionSelector.Join", _("Join"), Common::U32String(), kOkCmd, Common::ASCII_RETURN);
 	_joinButton->setEnabled(false);
 
@@ -104,6 +105,7 @@ void SessionSelectorDialog::handleTickle() {
 
 		_joinButton->setEnabled(false);
 		// Update the dialog
+		// I18N: Online multiplayer games were found
 		_queryProgressText->setLabel(Common::U32String::format(_("Found %d available games."), l.size()));
 
 		_timestamp = g_system->getMillis();
