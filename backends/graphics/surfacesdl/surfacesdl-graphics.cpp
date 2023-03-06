@@ -1333,29 +1333,31 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			int src_y = r->y;
 			int dst_x = r->x;
 			int dst_y = r->y;
-			int dst_w = 0;
-			int dst_h = 0;
+			int dst_w = r->w;
+			int dst_h = r->h;
 #ifdef USE_ASPECT
 			int orig_dst_y = 0;
 #endif
-			if (_currentShakeXOffset >= 0)
-				dst_x += _currentShakeXOffset;
-			else
-				src_x += -_currentShakeXOffset;
+			dst_x += _currentShakeXOffset;
+			if (dst_x < 0) {
+				src_x -= dst_x;
+				dst_w += dst_x;
+				dst_x = 0;
+			}
 
-			if (_currentShakeYOffset >= 0)
-				dst_y += _currentShakeYOffset;
-			else
-				src_y += -_currentShakeYOffset;
+			dst_y += _currentShakeYOffset;
+			if (dst_y < 0) {
+				src_y -= dst_y;
+				dst_h += dst_y;
+				dst_y = 0;
+			}
 
-			if (dst_x < width && dst_y < height) {
-				dst_w = r->w;
+			if (dst_x < width && dst_y < height && dst_w > 0 && dst_h > 0) {
 				if (dst_w > width - dst_x)
 					dst_w = width - dst_x;
 				if (dst_w > width - src_x)
 					dst_w = width - src_x;
 
-				dst_h = r->h;
 				if (dst_h > height - dst_y)
 					dst_h = height - dst_y;
 				if (dst_h > height - src_y)
@@ -1371,17 +1373,17 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 					dst_y = real2Aspect(dst_y);
 
 				_scaler->scale((byte *)srcSurf->pixels + (src_x + _maxExtraPixels) * bpp + (src_y + _maxExtraPixels) * srcPitch, srcPitch,
-					(byte *)_hwScreen->pixels + dst_x * bpp + dst_y * dstPitch, dstPitch, dst_w, dst_h, src_x, src_y);
-			}
+						(byte *)_hwScreen->pixels + dst_x * bpp + dst_y * dstPitch, dstPitch, dst_w, dst_h, src_x, src_y);
 
-			r->x = dst_x;
-			r->y = dst_y;
-			r->w = dst_w * scale1;
-			r->h = dst_h * scale1;
+				r->x = dst_x;
+				r->y = dst_y;
+				r->w = dst_w * scale1;
+				r->h = dst_h * scale1;
 
 #ifdef USE_ASPECT
-			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayInGUI)
-				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering, convertSDLPixelFormat(_hwScreen->format));
+				if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayInGUI)
+					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering, 	convertSDLPixelFormat(_hwScreen->format));
+			}
 #endif
 		}
 		SDL_UnlockSurface(srcSurf);
