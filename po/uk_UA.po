@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-06 20:26+0000\n"
-"PO-Revision-Date: 2023-03-06 20:37+0000\n"
+"PO-Revision-Date: 2023-03-06 20:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -7275,20 +7275,24 @@ msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
 msgstr ""
+"Перемикає поєднання з сервером, який дозволяє організовувати та "
+"під'єднуватись до онлайнових ігор через Інтернет."
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Host games over LAN"
-msgstr ""
+msgstr "Організувати ігри через LAN"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr ""
+msgstr "Робить ігрові сесії видимими у локальній мережі."
 
 #: engines/scumm/dialogs.cpp:1382
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
 msgstr ""
+"Адреса для поєднання до сервера для організації та під'єднання до онлайнових "
+"сесій ігор."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -7917,7 +7921,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:696
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
-msgstr ""
+msgstr "Увімкнути пісню \"Пірат, яким би я мав бути\" (ліричну)"
 
 #: engines/scumm/metaengine.cpp:697
 msgid ""
@@ -7925,31 +7929,29 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
+"Вмикає пісню на початку Розділу 3 ігри, \"Пірат, яким би я мав бути\",\t"
+"\tкотру було вилучено з деяких перекладів гри. Важайте: субтитри можуть бути "
+"неповними."
 
 #: engines/scumm/metaengine.cpp:770
-#, fuzzy
 msgid "Down Left"
-msgstr "Повернутися наліво"
+msgstr "Донизу-вліво"
 
 #: engines/scumm/metaengine.cpp:783
-#, fuzzy
 msgid "Down Right"
-msgstr "Повернутися направо"
+msgstr "Донизу-направо"
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
 msgid "Up Left"
-msgstr "Наліво"
+msgstr "Догори-наліво"
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
 msgid "Up Right"
-msgstr "Направо"
+msgstr "Догори-направо"
 
 #: engines/scumm/metaengine.cpp:828
-#, fuzzy
 msgid "Switch weapon"
-msgstr "Переключення екранів"
+msgstr "Перемкнути зброю"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:842
@@ -8031,13 +8033,12 @@ msgstr ""
 "папки з грою Tentacle, а також додати саму гру у ScummVM."
 
 #: engines/scumm/scumm.cpp:3469
-#, fuzzy
 msgid "Would you like to host or join a network play session?"
-msgstr "Чи ви хочете зберегти або завантажити гру?"
+msgstr "Чи ви хочете розпочати або приєднатися до мережевої гри?"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
+msgstr "Розпочати"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -8720,21 +8721,24 @@ msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Відладка"
 
 #: engines/vcruise/vcruise.cpp:75
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
-msgstr "Ця гра потребує движка HeroCraft, який відсутній у збірці."
+msgstr "Ця гра потребує підтримки JPEG, яка відсутня у збірці."
 
 #: engines/vcruise/vcruise.cpp:82
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"Музика у цій грі потребує підтримки Ogg Vorbis, яка відсутня у збірці.\n"
+"Гра запуститься, але музика буде відсутня."
 
 #: engines/vcruise/vcruise.cpp:92
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"Музика у цій грі потребує підтримки MP3, яка відсутня у збірці.\n"
+"Гра запуститься, але музика буде відсутня."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
