@@ -612,7 +612,32 @@ void SmushDecoder::SmushAudioTrack::init() {
 }
 
 void SmushDecoder::SmushAudioTrack::handleVIMA(Common::SeekableReadStream *stream, uint32 size) {
+	if (size < 8)
+		return;
 	int decompressedSize = stream->readUint32BE();
+	if (decompressedSize == MKTAG('P', 'S', 'A', 'D')) {
+		decompressedSize = stream->readUint32BE();
+		if (decompressedSize > (int)size - 8)
+			decompressedSize = size - 8;
+		if (decompressedSize < 10)
+			return;
+		stream->skip(10);
+		decompressedSize -= 10;
+		byte *src = (byte *)malloc(decompressedSize);
+		stream->read(src, decompressedSize);
+
+		int flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+		if (_channels == 2) {
+			flags |= Audio::FLAG_STEREO;
+		}
+
+		if (!_queueStream) {
+			_queueStream = Audio::makeQueuingAudioStream(_freq, (_channels == 2));
+		}
+		_queueStream->queueBuffer(src, decompressedSize, DisposeAfterUse::YES, flags);
+
+		return;
+	}
 	if (decompressedSize < 0) {
 		stream->readUint32BE();
 		decompressedSize = stream->readUint32BE();
