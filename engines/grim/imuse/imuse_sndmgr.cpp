@@ -19,6 +19,8 @@
  *
  */
 
+#include "audio/decoders/raw.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -337,7 +339,7 @@ int ImuseSndMgr::getJumpFade(SoundDesc *sound, int number) {
 	return sound->jump[number].fadeDelay;
 }
 
-int32 ImuseSndMgr::getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size) {
+int32 ImuseSndMgr::getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size, int32 *flags) {
 	assert(checkForProperHandle(sound));
 	assert(buf && offset >= 0 && size >= 0);
 	assert(region >= 0 && region < sound->numRegions);
@@ -354,10 +356,12 @@ int32 ImuseSndMgr::getDataFromRegion(SoundDesc *sound, int region, byte **buf, i
 
 	if (sound->mcmpData) {
 		size = sound->mcmpMgr->decompressSample(region_offset + offset, size, buf);
+		*flags |= Audio::FLAG_LITTLE_ENDIAN;
 	} else {
 		*buf = static_cast<byte *>(malloc(size));
 		sound->inStream->seek(region_offset + offset + sound->headerSize, SEEK_SET);
 		sound->inStream->read(*buf, size);
+		*flags &= ~Audio::FLAG_LITTLE_ENDIAN;
 	}
 
 	return size;
