@@ -78,6 +78,24 @@ void RenderObject::setTransparent(bool isTransparent) {
 	}
 }
 
+void RenderObject::grabPalette(byte *colors, uint paletteStart, uint paletteSize) {
+	if (colors) {
+		_drawSurface.grabPalette(colors, paletteStart, paletteSize);
+	}
+}
+
+void RenderObject::setPalette(const Common::String &paletteName, uint paletteStart, uint paletteSize) {
+	GraphicsManager::loadSurfacePalette(_drawSurface, paletteName, paletteStart, paletteSize);
+	_needsRedraw = true;
+}
+
+void RenderObject::setPalette(const byte *colors, uint paletteStart, uint paletteSize) {
+	if (colors) {
+		_drawSurface.setPalette(colors, paletteStart, paletteSize);
+		_needsRedraw = true;
+	}
+}
+
 Common::Rect RenderObject::getScreenPosition() const {
 	if (isViewportRelative()) {
 		return NancySceneState.getViewport().convertViewportToScreen(_screenPosition);

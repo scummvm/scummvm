@@ -117,14 +117,6 @@ protected:
 	Common::String getRecordTypeName() const override { return "PaletteNextScene"; }
 };
 
-class LightningOn : public Unimplemented {
-public:
-	void readData(Common::SeekableReadStream &stream) override;
-
-protected:
-	Common::String getRecordTypeName() const override { return "LightningOn"; }
-};
-
 class MapCall : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;

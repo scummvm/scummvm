@@ -199,10 +199,6 @@ void PaletteNextScene::execute() {
 	_isDone = true;
 }
 
-void LightningOn::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0xA);
-}
-
 void MapCall::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }

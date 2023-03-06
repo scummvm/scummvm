@@ -59,8 +59,6 @@ public:
 	void handleInput(NancyInput &input);
 
 	void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, byte panningType = kPanNone, uint16 format = 2, const Common::String &palette = Common::String());
-	void setPalette(const Common::String &paletteName);
-	void setPalette(const Common::String &paletteName, uint paletteStart, uint paletteSize);
 
 	void setFrame(uint frameNr);
 	void setNextFrame();

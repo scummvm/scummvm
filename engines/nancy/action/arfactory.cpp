@@ -30,6 +30,7 @@
 #include "engines/nancy/action/sliderpuzzle.h"
 #include "engines/nancy/action/passwordpuzzle.h"
 #include "engines/nancy/action/leverpuzzle.h"
+#include "engines/nancy/action/lightning.h"
 
 #include "engines/nancy/state/scene.h"
 

@@ -5,6 +5,7 @@ MODULE_OBJS = \
   action/actionrecord.o \
   action/arfactory.o \
   action/leverpuzzle.o \
+  action/lightning.o \
   action/orderingpuzzle.o \
   action/passwordpuzzle.o \
   action/primaryvideo.o \

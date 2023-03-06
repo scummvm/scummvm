@@ -197,31 +197,12 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 	setVerticalScroll(verticalScroll);
 
 	if (palette.size()) {
-		GraphicsManager::loadSurfacePalette(_drawSurface, palette);
-		uint8 pal[256 * 3];
-		_drawSurface.grabPalette(pal, 0, 256);
-		_fullFrame.setPalette(pal, 0, 256);
+		setPalette(palette);
 	}
 
 	_movementLastFrame = 0;
 	_nextMovementTime = 0;
 	_panningType = panningType;
-}
-
-void Viewport::setPalette(const Common::String &paletteName) {
-	GraphicsManager::loadSurfacePalette(_drawSurface, paletteName);
-	uint8 pal[256 * 3];
-	_drawSurface.grabPalette(pal, 0, 256);
-	_fullFrame.setPalette(pal, 0, 256);
-	_needsRedraw = true;
-}
-
-void Viewport::setPalette(const Common::String &paletteName, uint paletteStart, uint paletteSize) {
-	GraphicsManager::loadSurfacePalette(_drawSurface, paletteName, paletteStart, paletteSize);
-	uint8 pal[256 * 3];
-	_drawSurface.grabPalette(pal, 0, 256);
-	_fullFrame.setPalette(pal, 0, 256);
-	_needsRedraw = true;
 }
 
 void Viewport::setFrame(uint frameNr) {

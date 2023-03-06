@@ -27,6 +27,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/renderobject.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/state/scene.h"
 
 namespace Nancy {
 
@@ -138,16 +139,6 @@ void GraphicsManager::clearObjects() {
 void GraphicsManager::redrawAll() {
 	for (auto &obj : _objects) {
 		obj->_needsRedraw = true;
-	}
-}
-
-void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename) {
-	Common::File f;
-	if (f.open(paletteFilename + ".bmp")) {
-		Image::BitmapDecoder dec;
-		if (dec.loadStream(f)) {
-			inSurf.setPalette(dec.getPalette(), dec.getPaletteStartIndex(), MIN<uint>(256, dec.getPaletteColorCount()));
-		}
 	}
 }
 
@@ -275,6 +266,18 @@ uint GraphicsManager::getTransColor() {
 		return 1; // If this isn't correct, try picking the pixel at [0, 0] inside the palette bitmap
 	} else {
 		return _inputPixelFormat.ARGBToColor(0, 0, 255, 0);
+	}
+}
+
+void GraphicsManager::grabViewportObjects(Common::Array<RenderObject *> &inArray) {
+	// Add the viewport
+	inArray.push_back(&(RenderObject &)NancySceneState.getViewport());
+
+	// Add all viewport-relative (non-UI) objects
+	for (RenderObject *obj : _objects) {
+		if (obj->isViewportRelative()) {
+			inArray.push_back(obj);
+		}
 	}
 }
 
