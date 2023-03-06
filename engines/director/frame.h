@@ -117,7 +117,9 @@ public:
 	TransitionType _transType;
 	PaletteInfo _palette;
 	uint8 _tempo;
+
 	uint8 _scoreCachedTempo;
+	int _scoreCachedPaletteId;
 
 	CastMemberID _sound1;
 	uint8 _soundType1;

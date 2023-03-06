@@ -38,7 +38,9 @@ Frame::Frame(Score *score, int numChannels) {
 	_transArea = 0;
 	_transChunkSize = 0;
 	_tempo = 0;
+
 	_scoreCachedTempo = 0;
+	_scoreCachedPaletteId = 0;
 
 	_numChannels = numChannels;
 
