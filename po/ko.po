@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 19:51+0000\n"
+"POT-Creation-Date: 2023-03-06 20:26+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -176,7 +176,7 @@ msgstr ""
 #: gui/saveload-dialog.cpp:1224 engines/engine.cpp:542 engines/engine.cpp:565
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/buried/saveload.cpp:69
-#: engines/director/lingo/lingo-builtins.cpp:1804
+#: engines/director/lingo/lingo-builtins.cpp:1811
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
@@ -3249,27 +3249,27 @@ msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2627
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2632
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2633
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2638
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2649
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2654
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2651
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2656
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2678
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2683
 msgid "Stretch mode"
 msgstr "확대 모드"
 
@@ -3277,7 +3277,7 @@ msgstr "확대 모드"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2593
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2598
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 
