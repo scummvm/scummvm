@@ -54,7 +54,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	else if (isSpectrum())
 		_viewArea = Common::Rect(56, 20, 264, 124);
 	else if (isCPC())
-		_viewArea = Common::Rect(36, 19, 284, 120);
+		_viewArea = Common::Rect(36, 16, 284, 117);
 	else if (isC64())
 		_viewArea = Common::Rect(32, 16, 288, 119);
 

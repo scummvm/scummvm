@@ -215,6 +215,18 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 		_gfx->_inkColor = _areaMap[levelID]->_inkColor;
 		_gfx->_paperColor = _areaMap[levelID]->_paperColor;
 		_gfx->_underFireBackgroundColor = _areaMap[levelID]->_underFireBackgroundColor;
+
+		byte *palette = (byte *)malloc(sizeof(byte) * 4 * 3);
+		for (int c = 0; c < 4; c++) {
+			byte r, g, b;
+			_gfx->selectColorFromFourColorPalette(c, r, g, b);
+			palette[3 * c + 0] = r;
+			palette[3 * c + 1] = g;
+			palette[3 * c + 2] = b;
+		}
+		_border->setPalette(palette, 0, 4);
+		free(palette);
+		processBorder();
 	} else if (isDOS() && _renderMode == Common::kRenderCGA) {
 		const CGAPalettteEntry *entry = rawCGAPaletteTable;
 		while (entry->areaId) {
