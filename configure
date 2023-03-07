@@ -865,7 +865,7 @@ Special configuration feature:
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
                                            switch for Nintendo Switch
-										   tvos for Apple TV (tvOS 9.0+)
+                                           tvos for Apple TV (tvOS 9.0+)
                                            wasm32-unknown-emscripten for WebAssembly
                                            wii for Nintendo Wii
 
@@ -2614,8 +2614,14 @@ define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 #
 echo_n "Checking host CPU architecture... "
 case $_host_cpu in
+	aarch64)
+		echo "aarch64"
+		;;
+	alpha*)
+		echo "Alpha"
+		;;
 	arm*)
-		echo "arm"
+		echo "ARM"
 		case $_host in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
@@ -2632,13 +2638,19 @@ case $_host_cpu in
 
 		append_var DEFINES "-DARM_TARGET"
 		;;
-	aarch64)
-		echo "aarch64"
+	hppa* | parisc*)
+		echo "PA-RISC"
 		;;
 	i[3-6]86)
 		echo "x86"
 		_have_x86=yes
 		define_in_config_h_if_yes $_have_x86 'HAVE_X86'
+		;;
+	ia64*)
+		echo "Itanium"
+		;;
+	m68*)
+		echo "m68k"
 		;;
 	mips*)
 		echo "MIPS"
@@ -2648,13 +2660,22 @@ case $_host_cpu in
 		echo "PowerPC"
 		append_var DEFINES "-DPPC_TARGET"
 		;;
-	amd64 | x86_64)
-		echo "x86_64"
-		_have_amd64=yes
-		define_in_config_h_if_yes $_have_amd64 'HAVE_AMD64'
+	riscv*)
+		echo "RISC-V"
+		;;
+	sh*)
+		echo "SuperH"
+		;;
+	sparc*)
+		echo "SPARC"
 		;;
 	wasm32)
 		echo "wasm32"
+		;;
+	x86_64 | amd64)
+		echo "x86_64"
+		_have_amd64=yes
+		define_in_config_h_if_yes $_have_amd64 'HAVE_AMD64'
 		;;
 	*)
 		echo "unknown ($_host_cpu)"
