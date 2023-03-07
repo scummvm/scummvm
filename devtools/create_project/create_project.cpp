@@ -396,7 +396,7 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("POSIX");
 		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
 		// correct target by the Xcode project provider.
-		// This define will help catching up target dependend files, like "browser_osx.mm"
+		// This define will help catching up target-dependent files, like "browser_osx.mm"
 		// The suffix ("_osx", or "_ios") will be used by the project provider to filter out
 		// the files, according to the target.
 		setup.defines.push_back("MACOSX");
