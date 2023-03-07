@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-06 22:17+0000\n"
-"PO-Revision-Date: 2023-02-13 17:54+0000\n"
+"PO-Revision-Date: 2023-03-07 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -2387,7 +2387,7 @@ msgstr "Αποθηκευμένα παιχνίδια"
 
 #: base/main.cpp:643
 msgid "Bad config file format. overwrite?"
-msgstr ""
+msgstr "Λάθος μορφή αρχείου ρυθμίσεων (config). Να γίνει επανεγγραφή;"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:692
@@ -2865,12 +2865,11 @@ msgstr ""
 "Δείτε την τεκμηρίωση του ScummVM (CD audio) για λεπτομέρειες."
 
 #: engines/engine.cpp:589
-#, fuzzy
 msgid "Skip autosave"
-msgstr "Κενή αυτόματη αποθήκευση"
+msgstr "Αναβολή αυτόματης αποθήκευσης"
 
 #: engines/engine.cpp:591
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -2879,9 +2878,10 @@ msgid ""
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
 "ΠΡΟΣΟΧΗ: Η θυρίδα αυτόματης αποθήκευσης έχει ήδη ένα αποθηκευμένο παιχνίδι "
-"με το όνομα %S. Μπορείτε είτε να μετακινήσετε το υπάρχον αποθηκευμένο "
-"παιχνίδι σε νέα θυρίδα, να το αντικαταστήσετε, ή να ακυρώσετε την αυτόματη "
-"αποθήκευση (δεν θα ερωτηθείτε ξανά μέχρι την επανεκκίνηση του παιχνιδιού)"
+"με το όνομα %S. Παρακαλούμε να μετακινήσετε αυτό το αποθηκευμένο παιχνίδι σε "
+"νέα θυρίδα, ή να το διαγράψετε αν δεν το χρειάζεστε πια.\n"
+"Εναλλακτικά, μπορείτε να αναβάλλετε την αυτόματη αποθήκευση (θα ερωτηθείτε "
+"ξανά σε 5 λεπτά)."
 
 #: engines/engine.cpp:601
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -3034,14 +3034,12 @@ msgid "Confirm"
 msgstr "Επιβεβαίωση"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave on"
-msgstr "Αυτόματη αποθήκευση"
+msgstr "Με αυτόματη αποθήκευση"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave off"
-msgstr "Αυτόματη αποθήκευση"
+msgstr "Χωρίς αυτόματη αποθήκευση"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:177
 msgid "OpenGL"
@@ -5632,7 +5630,7 @@ msgstr "Αδυναμία αποθήκευσης παιχνιδιού"
 
 #: engines/groovie/script.cpp:849 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
-msgstr "Θέλετε να αποθηκεύσετε ή να φορτώσετε ένα παιχνίδι?"
+msgstr "Θέλετε να αποθηκεύσετε ή να φορτώσετε ένα παιχνίδι;"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
 msgid "The Minotaur minigame is not supported yet. Skipping"
@@ -6859,7 +6857,7 @@ msgstr "Αυτή η επιλογή μενού δεν έχει υλοποιηθε
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
-msgstr ""
+msgstr "Η έκδοση του Plumbers για 3DO απαιτεί υποστήριξη RGB."
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -7292,22 +7290,19 @@ msgstr ""
 "αρχεία εικόνας δίσκων που επίσης παρείχε η Limited Run Games."
 
 #: engines/scumm/dialog-sessionselector.cpp:50
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Querying games..."
-msgstr "Αποθήκευση παιχνιδιού..."
+msgstr "Αναζήτηση παιχνιδιών..."
 
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3469
 msgid "Join"
-msgstr ""
+msgstr "Συμμετοχή"
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:109
-#, fuzzy, c-format
-#| msgid "No new %S available"
+#, c-format
 msgid "Found %d available games."
-msgstr "Δεν βρέθηκαν διαθέσιμα νέα %S"
+msgstr "Βρέθηκαν %d διαθέσιμα παιχνίδια."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
@@ -7449,50 +7444,59 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1366
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "Εξυπηρετητής Multiplayer:"
 
 #: engines/scumm/dialogs.cpp:1372
-#, fuzzy
 msgid "Online Server:"
-msgstr "Εξυπηρετητής:"
+msgstr "Online Εξυπηρετητής:"
 
 #: engines/scumm/dialogs.cpp:1373
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
 msgstr ""
+"Η διεύθυνση του εξυπηρετητή όπου θα συνδεθείτε για δικτυακό παιχνίδι.  "
+"Πρέπει να ξεκινάει με πρόθεμα \"https://\" ή \"http://\"."
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "Χρήση mods ανταγωνιστικού online"
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enables custom-made modifications intented for online competitive play."
 msgstr ""
+"Ενεργοποιεί ειδικές τροποποιήσεις (mods) που υποστηρίζουν ανταγωνιστικό "
+"online παιχνίδι."
 
 #: engines/scumm/dialogs.cpp:1379
 msgid "Enable connection to Multiplayer Server"
-msgstr ""
+msgstr "Σύνδεση στον Εξυπηρετητή Multiplayer"
 
 #: engines/scumm/dialogs.cpp:1379
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
 msgstr ""
+"Εναλλαγή σύνδεσης στον εξυπηρετητή που επιτρέπει φιλοξενία και συμμετοχή σε "
+"online mulitplayer παιχνίδια στο Διαδίκτυο."
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Host games over LAN"
-msgstr ""
+msgstr "Φιλοξενία παιχνιδιών σε LAN"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr ""
+"Επιτρέπει να βρείτε διαθέσιμες συνεδρίες παιχνιδιών στο τοπικό σας δίκτυο "
+"(LAN)."
 
 #: engines/scumm/dialogs.cpp:1382
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
 msgstr ""
+"Η διεύθυνση του εξυπηρετητή όπου θα συνδεθείτε για φιλοξενία ή συμμετοχή σε "
+"συνεδρίες online παιχνιδιού."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -8128,7 +8132,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:696
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
-msgstr ""
+msgstr "Χρήση του τραγουδιού \"A Pirate I Was Meant To Be\""
 
 #: engines/scumm/metaengine.cpp:697
 msgid ""
@@ -8136,31 +8140,29 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
+"Επαναφέρει το τραγούδι στην αρχή του Τρίτου Μέρους του παιχνιδιού, το \"A "
+"Pirate I Was Meant To Be\", \t\tπου είχε αφαιρεθεί από τις διεθνείς "
+"εκδόσεις. Προσοχή: οι υπότιτλοι μπορεί να μην είναι πλήρως μεταφρασμένοι."
 
 #: engines/scumm/metaengine.cpp:770
-#, fuzzy
 msgid "Down Left"
-msgstr "Στρίψε Αριστερά"
+msgstr "Κάτω Αριστερά"
 
 #: engines/scumm/metaengine.cpp:783
-#, fuzzy
 msgid "Down Right"
-msgstr "Στρίψε Δεξιά"
+msgstr "Κάτω Δεξιά"
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
 msgid "Up Left"
-msgstr "Αριστερά"
+msgstr "Πάνω Αριστερά"
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
 msgid "Up Right"
-msgstr "Δεξιά"
+msgstr "Πάνω Δεξιά"
 
 #: engines/scumm/metaengine.cpp:828
-#, fuzzy
 msgid "Switch weapon"
-msgstr "Εναλλαγή οθονών"
+msgstr "Αλλαγή όπλου"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:842
@@ -8248,13 +8250,12 @@ msgstr ""
 "πρέπει να προστεθεί στο ScummVM."
 
 #: engines/scumm/scumm.cpp:3469
-#, fuzzy
 msgid "Would you like to host or join a network play session?"
-msgstr "Θέλετε να αποθηκεύσετε ή να φορτώσετε ένα παιχνίδι?"
+msgstr "Θέλετε να φιλοξενήσετε ή να συμμετέχετε σε online συνεδρία παιχνιδιού;"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
+msgstr "Φιλοξενία"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -8970,23 +8971,27 @@ msgid "Ultima VIII Debug"
 msgstr "Αποσφαλμάτωση για Ultima VIII"
 
 #: engines/vcruise/vcruise.cpp:75
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr ""
-"Το παιχνίδι αυτό απαιτεί την επιμέρους μηχανή HeroCraft, η οποία δεν έχει "
-"γίνει compiled."
+"Το παιχνίδι αυτό απαιτεί υποστήριξη JPEG, η οποία δεν έχει γίνει compiled."
 
 #: engines/vcruise/vcruise.cpp:82
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"Η μουσική για αυτό το παιχνίδι απαιτεί υποστήριξη Ogg Vorbis, που δεν έχει "
+"γίνει compiled.\n"
+"Μπορείτε να παίξετε το παιχνίδι, αλλά χωρίς μουσική."
 
 #: engines/vcruise/vcruise.cpp:92
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"Η μουσική για αυτό το παιχνίδι απαιτεί υποστήριξη MP3, που δεν έχει γίνει "
+"compiled.\n"
+"Μπορείτε να παίξετε το παιχνίδι, αλλά χωρίς μουσική."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
