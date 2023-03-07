@@ -193,16 +193,12 @@ void FreescapeEngine::drawBorder() {
 
 void FreescapeEngine::drawTitle() {
 	_gfx->setViewport(_fullscreenViewArea);
-	if (isSpectrum()) {
-		Graphics::ManagedSurface *title = new Graphics::ManagedSurface();
-		title->create(320, 200, _title->format);
-		title->copyRectToSurface(*_title, (320 - _title->w) / 2, (200 - _title->h) / 2, Common::Rect(_title->w, _title->h));
-		_title->free();
-		delete _title;
-		_title = title;
+	if (!_titleTexture) {
+		Graphics::Surface *title = _gfx->convertImageFormatIfNecessary(_title);
+		_titleTexture = _gfx->createTexture(title);
+		title->free();
+		delete title;
 	}
-	if (!_titleTexture)
-		_titleTexture = _gfx->createTexture(&_title->rawSurface());
 	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _titleTexture);
 	_gfx->setViewport(_viewArea);
 }
@@ -559,8 +555,6 @@ Common::Error FreescapeEngine::run() {
 	initGameState();
 	loadColorPalette();
 
-	_gfx->convertImageFormatIfNecessary(_title);
-	_gfx->convertImageFormatIfNecessary(_border);
 	g_system->lockMouse(true);
 
 	// Simple main event loop
@@ -616,28 +610,37 @@ void FreescapeEngine::titleScreen() {}
 void FreescapeEngine::borderScreen() {}
 
 void FreescapeEngine::loadBorder() {
-	if (_border)
-		_borderTexture = _gfx->createTexture(&_border->rawSurface());
+	if (_border) {
+		Graphics::Surface *border = _gfx->convertImageFormatIfNecessary(_border);
+		_borderTexture = _gfx->createTexture(border);
+		border->free();
+		delete border;
+	}
 }
 
 void FreescapeEngine::processBorder() {
 	if (_border) {
 		if (_borderTexture)
 			delete _borderTexture;
+		Graphics::Surface *border = _gfx->convertImageFormatIfNecessary(_border);
+
 		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
-		_border->fillRect(_viewArea, gray);
+		border->fillRect(_viewArea, gray);
 
 		// Replace black pixel for transparent ones
-		uint32 black = _border->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-		uint32 transparent = _border->format.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+		uint32 black = border->format.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+		uint32 transparent = border->format.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 
-		for (int i = 0; i < _border->w; i++) {
-			for (int j = 0; j < _border->h; j++) {
-				if (_border->getPixel(i, j) == black)
-					_border->setPixel(i, j, transparent);
+		for (int i = 0; i < border->w; i++) {
+			for (int j = 0; j < border->h; j++) {
+				if (border->getPixel(i, j) == black)
+					border->setPixel(i, j, transparent);
 			}
 		}
-		_borderTexture = _gfx->createTexture(&_border->rawSurface());
+
+		_borderTexture = _gfx->createTexture(border);
+		border->free();
+		delete border;
 	}
 }
 

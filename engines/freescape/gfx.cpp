@@ -342,23 +342,25 @@ void Renderer::flipVertical(Graphics::Surface *s) {
 	}
 }
 
-void Renderer::convertImageFormatIfNecessary(Graphics::ManagedSurface *surface) {
-	if (!surface)
-		return;
+Graphics::Surface *Renderer::convertImageFormatIfNecessary(Graphics::ManagedSurface *msurface) {
+	if (!msurface)
+		return nullptr;
 
-	if (surface->format != _texturePixelFormat) {
-		const uint32 *src = surface->getPalette();
-		byte *palette = (byte *)malloc(sizeof(byte) * 16 * 3);
-		for (int num = 16; num > 0; --num, palette += 3) { // Maximum should be 16 colours
-			uint32 p = *src++;
-			palette[0] =  p        & 0xff;
-			palette[1] = (p >> 8)  & 0xff;
-			palette[2] = (p >> 16) & 0xff;
-		}
-		palette = palette - 16 * 3;
-		surface->convertToInPlace(_texturePixelFormat, palette);
-		free(palette);
+	assert(msurface->format != _texturePixelFormat);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->copyFrom(msurface->rawSurface());
+	const uint32 *src = msurface->getPalette();
+	byte *palette = (byte *)malloc(sizeof(byte) * 16 * 3);
+	for (int num = 16; num > 0; --num, palette += 3) { // Maximum should be 16 colours
+		uint32 p = *src++;
+		palette[0] =  p        & 0xff;
+		palette[1] = (p >> 8)  & 0xff;
+		palette[2] = (p >> 16) & 0xff;
 	}
+	palette = palette - 16 * 3;
+	surface->convertToInPlace(_texturePixelFormat, palette);
+	free(palette);
+	return surface;
 }
 
 Common::Rect Renderer::viewport() const {
