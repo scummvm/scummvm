@@ -572,7 +572,7 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 
 const ResString &InfoDialog::getStaticResString(Common::Language lang, int stringno) {
 	// The string parts are only needed for v1/2. So we need to provide only the
-	// language varieties that exist for these. I have added the langugage I found
+	// language varieties that exist for these. I have added the languages I found
 	// in scumm-md5.h. I guess we could actually ditch the first 3 lines...
 	static const ResString strMap1[][6] = {
 		{	// English
@@ -752,7 +752,7 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 	bool useHardcodedV3QuitPrompt = stringno == 5 && _vm->_game.version == 3 && _vm->_game.id != GID_LOOM;
 	bool useFixedDottMenuStrings = stringno >= 21 && stringno <= 26 && _vm->_game.id == GID_TENTACLE;
 
-	// I have added the langugages I found in scumm-md5.h for v1/2 games...
+	// I have added the languages I found in scumm-md5.h for v1/2 games...
 	int langIndex = 0;
 	switch (lang) {
 	case Common::FR_FRA:

@@ -1628,7 +1628,7 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 				break;
 			default:
 				error("SmushPlayer::processDispatches(): unrecognized flag %d", _smushTracks[i].flags & TRK_TYPE_MASK);
-			};
+			}
 
 			mixVolume = baseVolume * _smushTrackVols[0] / 127;
 			if ((flags & TRK_TYPE_MASK) == IS_BKG_MUSIC && isChanActive(CHN_SPEECH))
@@ -1813,7 +1813,7 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 
 			_smushTracks[i].audioRemaining = _smushDispatch[i].audioRemaining;
 			_smushDispatch[i].state = _smushTracks[i].state;
-		};
+		}
 
 		if (speechIsPlaying) {
 			if (_gainReductionMultiplier > _gainReductionLowerBound) {
