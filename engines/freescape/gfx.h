@@ -26,6 +26,7 @@
 #include "common/rect.h"
 
 #include "graphics/pixelformat.h"
+#include "graphics/managed_surface.h"
 #include "graphics/renderer.h"
 #include "math/frustum.h"
 #include "math/vector3d.h"
@@ -76,7 +77,7 @@ public:
 	virtual void polygonOffset(bool enabled) = 0;
 
 	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
-	void convertImageFormatIfNecessary(Graphics::Surface *surface);
+	void convertImageFormatIfNecessary(Graphics::ManagedSurface *surface);
 
 	virtual void freeTexture(Texture *texture) = 0;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) = 0;

@@ -194,7 +194,7 @@ void FreescapeEngine::drawBorder() {
 void FreescapeEngine::drawTitle() {
 	_gfx->setViewport(_fullscreenViewArea);
 	if (isSpectrum()) {
-		Graphics::Surface *title = new Graphics::Surface();
+		Graphics::ManagedSurface *title = new Graphics::ManagedSurface();
 		title->create(320, 200, _title->format);
 		title->copyRectToSurface(*_title, (320 - _title->w) / 2, (200 - _title->h) / 2, Common::Rect(_title->w, _title->h));
 		_title->free();
@@ -202,7 +202,7 @@ void FreescapeEngine::drawTitle() {
 		_title = title;
 	}
 	if (!_titleTexture)
-		_titleTexture = _gfx->createTexture(_title);
+		_titleTexture = _gfx->createTexture(&_title->rawSurface());
 	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _titleTexture);
 	_gfx->setViewport(_viewArea);
 }
@@ -598,7 +598,7 @@ void FreescapeEngine::borderScreen() {}
 
 void FreescapeEngine::loadBorder() {
 	if (_border)
-		_borderTexture = _gfx->createTexture(_border);
+		_borderTexture = _gfx->createTexture(&_border->rawSurface());
 }
 
 void FreescapeEngine::processBorder() {
@@ -618,7 +618,7 @@ void FreescapeEngine::processBorder() {
 					_border->setPixel(i, j, transparent);
 			}
 		}
-		_borderTexture = _gfx->createTexture(_border);
+		_borderTexture = _gfx->createTexture(&_border->rawSurface());
 	}
 }
 
@@ -850,20 +850,20 @@ byte *FreescapeEngine::getPaletteFromNeoImage(Common::SeekableReadStream *stream
 	return palette;
 }
 
-Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette) {
+Graphics::ManagedSurface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette) {
 	stream->seek(offset);
 	NeoDecoder decoder(palette);
 	decoder.loadStream(*stream);
-	Graphics::Surface *surface = new Graphics::Surface();
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->copyFrom(*decoder.getSurface());
 	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette());
 	return surface;
 }
 
-Graphics::Surface *FreescapeEngine::loadAndCenterScrImage(Common::SeekableReadStream *stream) {
+Graphics::ManagedSurface *FreescapeEngine::loadAndCenterScrImage(Common::SeekableReadStream *stream) {
 	ScrDecoder decoder;
 	decoder.loadStream(*stream);
-	Graphics::Surface *surface = new Graphics::Surface();
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	const Graphics::Surface *decoded = decoder.getSurface();
 	surface->create(320, 200, decoded->format);
 	surface->copyRectToSurface(*decoded, (320 - decoded->w) / 2, (200 - decoded->h) / 2, Common::Rect(decoded->w, decoded->h));
