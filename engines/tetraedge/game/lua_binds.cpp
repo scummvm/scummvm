@@ -867,10 +867,10 @@ static void SetCharacterOrientation(const Common::String &charname, float x, flo
 	Character *c = game->scene().character(charname);
 	if (c) {
 		const TeVector3f32 pos = c->_model->position();
-		TeVector3f32 euler(0, atan2f(abs(x - pos.x()), y - pos.z()), 0);
+		const TeVector3f32 euler(0, atan2f(-(x - pos.x()), y - pos.z()), 0);
 		c->_model->setRotation(TeQuaternion::fromEuler(euler));
 	} else {
-		warning("[SetCharacterRotation] Character not found %s", charname.c_str());
+		warning("[SetCharacterOrientation] Character not found %s", charname.c_str());
 	}
 }
 
