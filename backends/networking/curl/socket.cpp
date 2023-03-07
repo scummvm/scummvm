@@ -86,15 +86,16 @@ bool CurlSocket::connect(Common::String url) {
 		}
 
 		// Get the socket, we'll need it for waiting.
+		// NB: Do not use CURL_AT_LEAST_VERSION(x,y,z) or CURL_VERSION_BITS(x,y,z) for version check
+		//     These were only added around v7.45.0 release so break build with earlier libcurl versions
 #if LIBCURL_VERSION_NUM >= 0x072d00 // 7.45.0
-		// Try first using new CURLINFO_ACTIVESOCKET
+		// Use new CURLINFO_ACTIVESOCKET API for libcurl v7.45.0 or greater
 		res = curl_easy_getinfo(_easy, CURLINFO_ACTIVESOCKET, &_socket);
 		if (res == CURLE_OK) {
 			return true;
 		}
-#endif
-
-		// Fallback on old and deprecated CURLINFO_LASTSOCKET
+#else
+		// Fallback on old deprecated CURLINFO_LASTSOCKET API for libcurl older than v7.45.0 (October 2015)
 		long socket;
 		res = curl_easy_getinfo(_easy, CURLINFO_LASTSOCKET, &socket);
 		if (res == CURLE_OK) {
@@ -103,6 +104,7 @@ bool CurlSocket::connect(Common::String url) {
 			_socket = (curl_socket_t)socket;
 			return true;
 		}
+#endif
 
 		warning("libcurl: Failed to extract socket: %s", curl_easy_strerror(res));
 		return false;
