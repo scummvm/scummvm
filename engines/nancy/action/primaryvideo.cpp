@@ -300,6 +300,7 @@ void PlayPrimaryVideoChan0::execute() {
 
 				if (res.conditionFlags.isSatisfied()) {
 					NancySceneState.getTextbox().addTextLine(res.text);
+                    res.isOnScreen = true;
 				}
 			}
 		}
@@ -314,7 +315,19 @@ void PlayPrimaryVideoChan0::execute() {
 				// NPC has finished talking, we have responses
 				for (uint i = 0; i < 30; ++i) {
 					if (NancySceneState.getLogicCondition(i, kLogUsed)) {
-						_pickedResponse = i;
+                        int pickedOnScreenResponse = _pickedResponse = i;
+
+                        // Adjust to account for hidden responses
+                        for (uint j = 0; j < _responses.size(); ++j) {
+                            if (!_responses[j].isOnScreen) {
+                                ++_pickedResponse;
+                            }
+
+                            if ((int)j == pickedOnScreenResponse) {
+                                break;
+                            }
+                        }
+
 						break;
 					}
 				}
@@ -350,7 +363,7 @@ void PlayPrimaryVideoChan0::execute() {
 			g_nancy->_sound->stopSound(_responseGenericSound);
 
 			if (_pickedResponse != -1) {
-				NancySceneState.changeScene(_responses[_pickedResponse].sceneChange);
+                NancySceneState.changeScene(_responses[_pickedResponse].sceneChange);
 			} else {
 				// Evaluate scene branch structs here
 

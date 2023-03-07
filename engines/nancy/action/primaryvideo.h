@@ -59,6 +59,8 @@ struct ResponseStruct {
 	Common::String soundName; // 0x196
 	SceneChangeDescription sceneChange; // 0x1A0
 	FlagDescription flagDesc; // 0x1A8
+    
+	bool isOnScreen = false;
 };
 
 struct FlagsStruct {
