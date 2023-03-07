@@ -40,9 +40,9 @@ public:
 	};
 
 	enum RatioMode {
-		RATIO_MODE_NONE,
-		RATIO_MODE_LETTERBOX,
-		RATIO_MODE_PAN_SCAN
+		RATIO_MODE_NONE = 0,
+		RATIO_MODE_LETTERBOX = 1,
+		RATIO_MODE_PAN_SCAN = 2
 	};
 
 };

@@ -111,15 +111,39 @@ void Credits::enter(bool returnToOptions) {
 			bgPosAnim->_callbackMethod = &TeLayout::setPosition;
 			bgPosAnim->play();
 		}
+	} else {
+		// Syberia 2
+		TeLayout *foreground = _gui.layoutChecked("foreground1");
+		_curveAnim._callbackObj = foreground;
+		_curveAnim._callbackMethod = &TeLayout::setColor;
+		_curveAnim.play();
+		_gui.buttonLayout("quitButton")->onMouseClickValidated().add(this, &Credits::onQuitButton);
+
+		//
+		// WORKAROUND: These are set to PanScan ratio 1.0, but with our code
+		// but that shrinks them down to pillarboxed.  Force back to full size.
+		//
+		_gui.layoutChecked("foreground1")->setRatioMode(TeILayout::RATIO_MODE_NONE);
+		_gui.layoutChecked("foreground")->setRatioMode(TeILayout::RATIO_MODE_NONE);
 	}
+
 	_curveAnim.onFinished().add(this, &Credits::onBackgroundAnimFinished);
 }
 
 void Credits::leave() {
-	_curveAnim.stop();
+	//
+	// Slightly different to original.. stop *all* position/anchor animations
+	// - Syberia 2 only stops certain animations but this works for both.
+	//
 	for (auto &anim : _gui.layoutPositionLinearAnimations()) {
 		anim._value->stop();
 	}
+	for (auto &anim : _gui.layoutAnchorLinearAnimations()) {
+		anim._value->stop();
+	}
+	_curveAnim.stop();
+	_curveAnim.onFinished().remove(this, &Credits::onBackgroundAnimFinished);
+
 	if (_gui.loaded()) {
 		Application *app = g_engine->getApplication();
 		app->captureFade();
@@ -135,7 +159,6 @@ void Credits::leave() {
 			app->mainMenu().enter();
 		}
 		app->fade();
-		_curveAnim.onFinished().remove(this, &Credits::onBackgroundAnimFinished);
 	}
 }
 
@@ -145,6 +168,35 @@ bool Credits::onAnimFinished() {
 }
 
 bool Credits::onBackgroundAnimFinished() {
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia)
+		return onBackgroundAnimFinishedSyb1();
+	else
+		return onBackgroundAnimFinishedSyb2();
+}
+
+bool Credits::onBackgroundAnimFinishedSyb2() {
+	const TeColor white = TeColor(0xff, 0xff, 0xff, 0xff);
+	const TeColor clear = TeColor(0xff, 0xff, 0xff, 0);
+	if (_curveAnim._startVal != white) {
+		_curveAnim._startVal = white;
+		_curveAnim._endVal = clear;
+		TeSpriteLayout *fgLayout = _gui.spriteLayout("foreground");
+		TeVariant fgFile = _gui.value(Common::String::format("foregrounds%d", _animCounter));
+		fgLayout->load(fgFile.toString());
+	} else {
+		_curveAnim._startVal = clear;
+		_curveAnim._endVal = white;
+		TeSpriteLayout *fgLayout = _gui.spriteLayout("foreground1");
+		TeVariant fgFile = _gui.value(Common::String::format("foregrounds%d", _animCounter));
+		fgLayout->load(fgFile.toString());
+	}
+
+	_curveAnim.play();
+	_animCounter++;
+	return false;
+}
+
+bool Credits::onBackgroundAnimFinishedSyb1() {
 	_animCounter++;
 	TeLayout *backgrounds = _gui.layoutChecked("Backgrounds");
 	if (_animCounter < backgrounds->childCount()) {
@@ -175,10 +227,12 @@ bool Credits::onPadButtonUp(uint button) {
 }
 
 bool Credits::onQuitButton() {
-	TeCurveAnim2<TeLayout, TeVector3f32> *anim1 = _gui.layoutPositionLinearAnimation("scrollTextPositionAnim");
-	anim1->stop();
-	TeCurveAnim2<TeLayout, TeVector3f32> *anim2 = _gui.layoutAnchorLinearAnimation("scrollTextAnchorAnim");
-	anim2->stop();
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+		TeCurveAnim2<TeLayout, TeVector3f32> *anim1 = _gui.layoutPositionLinearAnimation("scrollTextPositionAnim");
+		anim1->stop();
+		TeCurveAnim2<TeLayout, TeVector3f32> *anim2 = _gui.layoutAnchorLinearAnimation("scrollTextAnchorAnim");
+		anim2->stop();
+	}
 	leave();
 	return true;
 }

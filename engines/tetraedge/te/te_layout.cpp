@@ -32,7 +32,7 @@ TeLayout::TeLayout() : Te3DObject2(), _autoz(true), _needZUpdate(true), _updatin
 	_positionChanged(true), _updatingPosition(false), _worldMatrixChanged(true),
 	_updatingWorldMatrix(false), _drawMode(TeILayout::DrawMode0),
 	_sizeType(CoordinatesType::ABSOLUTE), _userSize(1.0f, 1.0f, 1.0f),
-	_anchor(0.5f, 0.5f, 0.5f), _ratio(1.0f), _safeAreaRatio(1.3333334f),
+	_anchor(0.5f, 0.5f, 0.5f), _ratio(1.0f), _safeAreaRatio(1.333333f),
 	_ratioMode(RATIO_MODE_NONE), _positionType(CoordinatesType::RELATIVE_TO_PARENT)
 {
 	_userPosition = _position = TeVector3f32(0.5f, 0.5f, 0.5f);

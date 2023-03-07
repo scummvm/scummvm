@@ -36,12 +36,14 @@ public:
 	void enter(bool flag);
 	void leave();
 
+private:
 	bool onAnimFinished();
 	bool onBackgroundAnimFinished();
+	bool onBackgroundAnimFinishedSyb1();
+	bool onBackgroundAnimFinishedSyb2();
 	bool onPadButtonUp(uint button);
 	bool onQuitButton();
 
-private:
 	TeTimer _timer;
 	TeLuaGUI _gui;
 	TeCurveAnim2<Te3DObject2, TeColor> _curveAnim;

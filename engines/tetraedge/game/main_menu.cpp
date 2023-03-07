@@ -50,6 +50,14 @@ MainMenu::MainMenu() : _entered(false), _confirmingTuto(false) {
 
 void MainMenu::enter() {
 	Application *app = g_engine->getApplication();
+
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
+		app->backLayout().setRatioMode(TeILayout::RATIO_MODE_LETTERBOX);
+		app->backLayout().setRatio(1.333333f);
+		app->frontLayout().setRatioMode(TeILayout::RATIO_MODE_LETTERBOX);
+		app->frontLayout().setRatio(1.333333f);
+	}
+
 	TeSpriteLayout &appSpriteLayout = app->appSpriteLayout();
 	appSpriteLayout.setVisible(true);
 	if (!appSpriteLayout._tiledSurfacePtr->_frameAnim._runTimer.running()) {
@@ -61,6 +69,12 @@ void MainMenu::enter() {
 
 	_entered = true;
 	load("menus/mainMenu/mainMenu.lua");
+
+	//
+	// WORKAROUND: This is set to PanScan ratio 1.0, but with our code
+	// but that shrinks it down to pillarboxed.  Force back to full size.
+	//
+	layoutChecked("background")->setRatioMode(TeILayout::RATIO_MODE_NONE);
 
 	TeLayout *menuLayout = layoutChecked("menu");
 	appSpriteLayout.addChild(menuLayout);
