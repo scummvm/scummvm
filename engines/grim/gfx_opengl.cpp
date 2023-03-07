@@ -1568,11 +1568,11 @@ void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 				if (col == 0) {
 					memset(texdatapos, 0, bytes); // transparent
 					if (!texture->_hasAlpha) {
-						texdatapos[3] = '\xff'; // fully opaque
+						texdatapos[3] = 0xff; // fully opaque
 					}
 				} else {
 					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
-					texdatapos[3] = '\xff'; // fully opaque
+					texdatapos[3] = 0xff; // fully opaque
 				}
 				texdatapos += bytes;
 				data++;
