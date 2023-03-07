@@ -706,7 +706,7 @@ enum {
 	TGL_ALL_ATTRIB_BITS     = 0x000fffff
 };
 
-enum {
+enum : unsigned int {
 	// Client Attrib Mask
 	TGL_CLIENT_PIXEL_STORE_BIT      = 1,
 	TGL_CLIENT_VERTEX_ARRAY_BIT     = 2,
