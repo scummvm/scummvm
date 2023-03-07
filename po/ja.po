@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-06 22:17+0000\n"
-"PO-Revision-Date: 2023-02-13 09:34+0000\n"
+"PO-Revision-Date: 2023-03-07 11:29+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -2312,7 +2312,7 @@ msgstr "セーブ"
 
 #: base/main.cpp:643
 msgid "Bad config file format. overwrite?"
-msgstr ""
+msgstr "無効な形式です。上書きしますか?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:692
@@ -2759,12 +2759,11 @@ msgstr ""
 "詳細はドキュメント(CDオーディオ)をご覧下さい。"
 
 #: engines/engine.cpp:589
-#, fuzzy
 msgid "Skip autosave"
-msgstr "オートセーブを初期化"
+msgstr "オートセーブをスキップ"
 
 #: engines/engine.cpp:591
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -2772,9 +2771,9 @@ msgid ""
 "needed.\n"
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
-"警告：オートセーブスロットに、%Sのデータが存在します。新しいスロットへセーブ"
-"するか、このオートセーブを上書きするか、あるいはオートセーブ機能をキャンセル"
-"できます(この選択はリスタートするまで適用されます)"
+"警告：オートセーブスロットに%Sのデータが存在するため、保留されています。\n"
+"新しいスロットへこのセーブを移動するか、不要な場合は削除して下さい。\n"
+"あるいは、オートセーブをスキップできます(5分後に再度表示)。"
 
 #: engines/engine.cpp:601
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -2920,14 +2919,12 @@ msgid "Confirm"
 msgstr "確認"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave on"
-msgstr "自動セーブ"
+msgstr "オートセーブON"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave off"
-msgstr "自動セーブ"
+msgstr "オートセーブOFF"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:177
 msgid "OpenGL"
@@ -6607,7 +6604,7 @@ msgstr "このメニューは未実装です"
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
-msgstr ""
+msgstr "3DO版「Plumbers」はRGBが必要です。"
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -6991,22 +6988,19 @@ msgstr ""
 "ダンプから有効なファイルを抽出するガイドをオンラインで検索してください。"
 
 #: engines/scumm/dialog-sessionselector.cpp:50
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Querying games..."
-msgstr "セーブ中..."
+msgstr "ゲームに照会中..."
 
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3469
 msgid "Join"
-msgstr ""
+msgstr "参加"
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:109
-#, fuzzy, c-format
-#| msgid "No new %S available"
+#, c-format
 msgid "Found %d available games."
-msgstr "新しい利用可能な%Sなし"
+msgstr "利用可能な%dが見つかりました。"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
@@ -7138,44 +7132,43 @@ msgstr "可能なら、BGM・SE・スピーチクリップを改造ファイル�
 
 #: engines/scumm/dialogs.cpp:1366
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "マルチプレイサーバー："
 
 #: engines/scumm/dialogs.cpp:1372
-#, fuzzy
 msgid "Online Server:"
-msgstr "サーバー："
+msgstr "オンラインサーバー："
 
 #: engines/scumm/dialogs.cpp:1373
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
-msgstr ""
+msgstr "接続するサーバーのアドレスです。 \"https://\" または \"http://\"スキーマで始まる必要があります。"
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "オンライン対戦MODの有効化"
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enables custom-made modifications intented for online competitive play."
-msgstr ""
+msgstr "オンライン対戦を想定したカスタムMODが利用可能です。"
 
 #: engines/scumm/dialogs.cpp:1379
 msgid "Enable connection to Multiplayer Server"
-msgstr ""
+msgstr "マルチプレイサーバーへの接続を許可"
 
 #: engines/scumm/dialogs.cpp:1379
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
-msgstr ""
+msgstr "オンラインマルチプレイのホストおよび参加を可能とするサーバーへの接続を切り替えます。"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Host games over LAN"
-msgstr ""
+msgstr "LANでゲームを開催"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr ""
+msgstr "セッションをローカルネットワーク上で発見できるようにします。"
 
 #: engines/scumm/dialogs.cpp:1382
 msgid ""
