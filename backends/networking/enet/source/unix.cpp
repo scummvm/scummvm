@@ -6,7 +6,6 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/ioctl.h>
 #include <sys/time.h>
 #include <netinet/tcp.h>
 #include <netdb.h>
@@ -47,6 +46,8 @@
 
 #ifdef HAS_FCNTL
 #include <fcntl.h>
+#else
+#include <sys/ioctl.h>
 #endif
 
 #ifdef HAS_POLL
