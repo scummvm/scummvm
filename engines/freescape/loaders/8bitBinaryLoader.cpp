@@ -310,6 +310,7 @@ void FreescapeEngine::renderPixels8bitBinImage(Graphics::ManagedSurface *surface
 		if (acc & pixels) {
 			int previousColor = surface->getPixel(i, j);
 			surface->setPixel(i, j, previousColor + color);
+			assert(previousColor + color < 16);
 		}
 		i++;
 		acc = acc >> 1;

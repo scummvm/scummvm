@@ -342,16 +342,18 @@ void Renderer::flipVertical(Graphics::Surface *s) {
 	}
 }
 
-void Renderer::convertImageFormatIfNecessary(Graphics::ManagedSurface *surface) {
-	if (!surface)
-		return;
+Graphics::Surface *Renderer::convertImageFormatIfNecessary(Graphics::ManagedSurface *msurface) {
+	if (!msurface)
+		return nullptr;
 
-	if (surface->format != _texturePixelFormat) {
-		byte *palette = (byte *)malloc(sizeof(byte) * 16 * 3);
-		surface->grabPalette(palette, 0, 16); // Maximum should be 16 colours
-		surface->convertToInPlace(_texturePixelFormat, palette);
-		free(palette);
-	}
+	assert(msurface->format != _texturePixelFormat);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->copyFrom(msurface->rawSurface());
+	byte *palette = (byte *)malloc(sizeof(byte) * 16 * 3);
+	msurface->grabPalette(palette, 0, 16); // Maximum should be 16 colours
+	surface->convertToInPlace(_texturePixelFormat, palette);
+	free(palette);
+	return surface;
 }
 
 Common::Rect Renderer::viewport() const {
