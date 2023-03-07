@@ -86,13 +86,26 @@ bool CurlSocket::connect(Common::String url) {
 		}
 
 		// Get the socket, we'll need it for waiting.
+#if LIBCURL_VERSION_NUM >= 0x072d00 // 7.45.0
+		// Try first using new CURLINFO_ACTIVESOCKET
 		res = curl_easy_getinfo(_easy, CURLINFO_ACTIVESOCKET, &_socket);
-		if (res != CURLE_OK) {
-			warning("libcurl: Failed to extract socket: %s", curl_easy_strerror(res));
-			return false;
+		if (res == CURLE_OK) {
+			return true;
+		}
+#endif
+
+		// Fallback on old and deprecated CURLINFO_LASTSOCKET
+		long socket;
+		res = curl_easy_getinfo(_easy, CURLINFO_LASTSOCKET, &socket);
+		if (res == CURLE_OK) {
+			// curl_socket_t is an int or a SOCKET (Win32) which is a UINT_PTR
+			// A cast should be safe enough as long fits in it
+			_socket = (curl_socket_t)socket;
+			return true;
 		}
 
-		return true;
+		warning("libcurl: Failed to extract socket: %s", curl_easy_strerror(res));
+		return false;
 	}
 	return false;
 }
