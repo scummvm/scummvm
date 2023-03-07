@@ -2,14 +2,14 @@
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
- * file randomnessributed with this source randomnessribution.
+ * file distributed with this source distribution.
  *
- * This program is free software: you can rerandomnessribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
 
- * This program is randomnessributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -49,37 +49,37 @@ LightningOn::~LightningOn() {
 }
 
 void LightningOn::readData(Common::SeekableReadStream &stream) {
-    int16 one = stream.readSint16LE();
-    uint16 two = stream.readUint16LE();
-    int16 three = stream.readSint16LE();
+    int16 distance = stream.readSint16LE();
+    uint16 pulseTime = stream.readUint16LE();
+    int16 rgbPercent = stream.readSint16LE();
 
-    int16 baseline;
-    float randomness;
+    int16 midpoint;
+    float delta;
 
     // Calculate the min & max power of the lightning
-    baseline = (three - (one * 5));
-    randomness = 0.4 * baseline;
+    midpoint = (rgbPercent - (distance * 5));
+    delta = 0.4 * midpoint;
 
-    _minRGBPercent = MAX<uint16>(0, baseline - randomness);
-    _maxRGBPercent = MIN<uint16>(three, baseline + randomness);
+    _minRGBPercent = MAX<uint16>(0, midpoint - delta);
+    _maxRGBPercent = MIN<uint16>(rgbPercent, midpoint + delta);
 
     // Calculate the min & max delay between lightning strikes
-    baseline = 13000 - (two * 500);
-    randomness = 1.5 * baseline;
+    midpoint = 13000 - (pulseTime * 500);
+    delta = 1.5 * midpoint;
 
-    _minInterPulseDelay = MAX<int16>(500, baseline - randomness);
-    _maxInterPulseDelay = MIN<int16>(13000, baseline + randomness);
+    _minInterPulseDelay = MAX<int16>(500, midpoint - delta);
+    _maxInterPulseDelay = MIN<int16>(13000, midpoint + delta);
 
     // Calculate the min & max length of the lightning strikes
     // _minPulseLength is always 5 due to an oversight in the original code
-    _maxPulseLength = two * 10;
+    _maxPulseLength = pulseTime * 10;
 
     // Calculate the min & max delay between end of lightning and start of thunder sound
-    baseline = one * 400;
-    randomness = baseline * 0.4;
+    midpoint = distance * 400;
+    delta = midpoint * 0.4;
 
-    _minSoundStartDelay = MAX<int16>(250, baseline - randomness);
-    _maxSoundStartDelay = baseline + randomness; // No minimum value, probably a bug
+    _minSoundStartDelay = MAX<int16>(250, midpoint - delta);
+    _maxSoundStartDelay = midpoint + delta; // No minimum value, probably a bug
 
     stream.skip(0x4); // paletteStart, paletteSize
 }
