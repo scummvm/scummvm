@@ -61,7 +61,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Obsidian hinzugefügt.
    - Unterstützung für Added support for Pink Panther: Passport to Peril hinzugefügt.
    - Unterstützung für Pink Panther: Hokus Pokus Pink hinzugefügt.
-   - Unterstützung für Adibou 2 (Adi Junior) "Environment", "Read/Count 4 & 5" und "Read/Count 6 & 7" hinzugefügt.
+   - Unterstützung für Adibou 2 (Addy Junior) "Environment", "Lesen/Rechnen 4 & 5" und "Lesen/Rechnen 6 & 7" hinzugefügt.
    - Unterstützung für Driller/Space Station Oblivion (DOS/EGA/CGA, Amiga, Atari ST, ZX Spectrum und Amstrad CPC-Versionen) hinzugefügt.
    - Unterstützung für Halls of the Dead: Faery Tale Adventure II hinzugefügt.
    - Unterstützung für Chop Suey, Eastern Mind, und 16 weitere Director 3- und Director 4-Titel hinzugefügt.
