@@ -49,8 +49,6 @@ SVGBitmap::SVGBitmap(Common::SeekableReadStream *in) {
 		error("Cannot parse SVG image");
 
 	_rasterizer = NULL;
-	_cachedW = _cachedH = -1;
-	_cache = NULL;
 	_render = NULL;
 
 #ifdef SCUMM_BIG_ENDIAN
@@ -77,33 +75,16 @@ void SVGBitmap::render(Graphics::ManagedSurface &target, int dw, int dh) {
 	if (_rasterizer == NULL)
 		_rasterizer = nsvgCreateRasterizer();
 
-	if (_cachedW != dw || _cachedH != dh) {
-		if (_cache)
-			free(_cache);
-
-		_cache = (byte *)malloc(dw * dh * 4);
-
+	if (!_render || _render->w != dw || _render->h != dh) {
 		// Maintain aspect ratio
 		float xRatio = 1.0f * dw / _svg->width;
 		float yRatio = 1.0f * dh / _svg->height;
 		float ratio = xRatio < yRatio ? xRatio : yRatio;
 
-		nsvgRasterize(_rasterizer, _svg, 0, 0, ratio, _cache, dw, dh, dw * 4);
-
-		_cachedW = dw;
-		_cachedH = dh;
-
-		if (_render)
-			delete _render;
-
-		Graphics::Surface tmp;;
-		tmp.init(dw, dh, dw * 4, _cache, *_pixelformat);
-
+		delete _render;
 		_render = new ManagedSurface(dw, dh, *_pixelformat);
 
-		_render->transBlitFrom(tmp);
-
-		tmp.free();
+		nsvgRasterize(_rasterizer, _svg, 0, 0, ratio, (byte *)_render->getPixels(), dw, dh, _render->pitch);
 	}
 
 	target.blitFrom(_render->rawSurface());
