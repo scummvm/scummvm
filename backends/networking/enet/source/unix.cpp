@@ -44,6 +44,11 @@
 #endif
 #endif
 
+// vitasdk do this in their boost package
+#if defined(__vita__) && !defined(SOMAXCONN)
+#define SOMAXCONN 4096
+#endif
+
 #ifdef HAS_FCNTL
 #include <fcntl.h>
 #else
