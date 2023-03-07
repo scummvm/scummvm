@@ -610,7 +610,7 @@ void Scene::run() {
 	// Update the UI elements and handle input
 	NancyInput input = g_nancy->_input->getInput();
 	_viewport.handleInput(input);
-	
+
 	_sceneState.currentScene.verticalOffset = _viewport.getCurVerticalScroll();
 
 	if (_sceneState.currentScene.frameID != _viewport.getCurFrame()) {
@@ -689,7 +689,7 @@ void Scene::initStaticData() {
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		_viewportOrnaments = new UI::ViewportOrnaments(9);
 		_viewportOrnaments->init();
-		 
+
 		_textboxOrnaments = new UI::TextboxOrnaments(9);
 		_textboxOrnaments->init();
 	}

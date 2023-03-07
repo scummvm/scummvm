@@ -46,9 +46,9 @@ class Serializer;
  * every other game is untested but definitely unplayable
  *
  * Games using this engine:
- *  - The Vampire Diaries (1996)
- *  - Almost every mainline Nancy Drew game by HeR Interactive,
- * 	up to and including Nancy Drew: Sea of Darkness (2015)
+ *	- The Vampire Diaries (1996)
+ *	- Almost every mainline Nancy Drew game by HeR Interactive,
+ *		up to and including Nancy Drew: Sea of Darkness (2015)
  */
 namespace Nancy {
 
@@ -113,7 +113,7 @@ public:
 
 	// BSUM data
 	SceneChangeDescription _firstScene;
-	
+
 	uint16 _startTimeHours;
 	uint16 _startTimeMinutes;
 

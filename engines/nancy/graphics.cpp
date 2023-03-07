@@ -75,7 +75,7 @@ void GraphicsManager::draw() {
 				dirtyRects.push_back(current.getPreviousScreenPosition());
 			}
 		}
-		
+
 		current._needsRedraw = false;
 		current._previousScreenPosition = current._screenPosition;
 	}

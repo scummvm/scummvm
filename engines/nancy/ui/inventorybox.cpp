@@ -203,7 +203,7 @@ void InventoryBox::onReorder() {
 void InventoryBox::setHotspots(uint pageNr) {
 	for (uint i = 0; i < 4; ++i) {
 		if (i + pageNr * 4 < _order.size()) {
-			_itemHotspots[i].itemID = _order[i +  pageNr * 4];
+			_itemHotspots[i].itemID = _order[i + pageNr * 4];
 		} else {
 			_itemHotspots[i].itemID = -1;
 		}

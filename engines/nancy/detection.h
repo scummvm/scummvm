@@ -44,8 +44,8 @@ struct NancyGameDescription {
 };
 
 enum NancyDebugChannels {
-	kDebugEngine    	= 1 << 0,
-	kDebugActionRecord  = 1 << 1,
+	kDebugEngine		= 1 << 0,
+	kDebugActionRecord	= 1 << 1,
 	kDebugScene			= 1 << 2
 };
 

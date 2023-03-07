@@ -110,7 +110,7 @@ Common::Error NancyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 	return synchronize(ser);
 }
 
-bool NancyEngine::canLoadGameStateCurrently()  {
+bool NancyEngine::canLoadGameStateCurrently() {
 	return canSaveGameStateCurrently();
 }
 
@@ -497,7 +497,7 @@ void NancyEngine::readDatFile() {
 
 	byte major = datFile->readByte();
 	byte minor = datFile->readByte();
-	if (major != _datFileMajorVersion || minor != _datFileMinorVersion) {	
+	if (major != _datFileMajorVersion || minor != _datFileMinorVersion) {
 		error("Incorrect nancy.dat version. Expected '%d.%d', found %d.%d",
 			_datFileMajorVersion, _datFileMinorVersion, major, minor);
 	}

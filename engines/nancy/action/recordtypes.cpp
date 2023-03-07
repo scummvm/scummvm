@@ -111,9 +111,9 @@ void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream)
 	_conditionID = stream.readUint16LE();
 	_conditionPayload = stream.readByte();
 	uint numHotspots = stream.readUint16LE();
-	
+
 	_hotspots.resize(numHotspots);
-	
+
 	for (uint i = 0; i < numHotspots; ++i) {
 		_hotspots[i].readData(stream);
 	}
@@ -516,7 +516,7 @@ void ShowInventoryItem::onPause(bool pause) {
 void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
 	_sound.read(stream, SoundDescription::kDIGI);
 	_sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);
-	
+
 	_flagOnTrigger.label = stream.readSint16LE();
 	_flagOnTrigger.flag = stream.readByte();
 	stream.skip(2);

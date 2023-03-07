@@ -61,7 +61,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("set_player_time", WRAP_METHOD(NancyConsole, Cmd_setPlayerTime));
 	registerCmd("get_difficulty", WRAP_METHOD(NancyConsole, Cmd_getDifficulty));
 	registerCmd("set_difficulty", WRAP_METHOD(NancyConsole, Cmd_setDifficulty));
-	
+
 }
 
 NancyConsole::~NancyConsole() {}
@@ -73,7 +73,7 @@ void NancyConsole::postEnter() {
 
 		if (dec->loadFile(_videoFile)) {
 			Graphics::ManagedSurface surf;
-			
+
 			if (_paletteFile.size()) {
 				GraphicsManager::loadSurfacePalette(surf, _paletteFile);
 			}
@@ -536,7 +536,7 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 					delete chunk;
 				}
 			}
-		}		
+		}
 	}
 
 	return true;
@@ -570,7 +570,7 @@ bool NancyConsole::Cmd_getEventFlags(int argc, const char **argv) {
 				flagID,
 				g_nancy->getStaticData().eventFlagNames[flagID].c_str(),
 				NancySceneState.getEventFlag(flagID) == true ? "kEvOccurred" : "kEvNotOccurred");
-			 
+
 		}
 	}
 
@@ -592,7 +592,7 @@ bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
 			debugPrintf("Invalid flag %s\n", argv[i]);
 			continue;
 		}
-		
+
 		if (Common::String(argv[i + 1]).compareTo("true") == 0) {
 			NancySceneState.setEventFlag(flagID, kEvOccurred);
 			debugPrintf("Set flag %i, %s, to kEvOccurred\n",
@@ -640,7 +640,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 				flagID,
 				g_nancy->getStaticData().itemNames[flagID].c_str(),
 				NancySceneState.hasItem(i) == kInvHolding ? "kInvHolding" : "kInvEmpty");
-			 
+
 		}
 	}
 
@@ -667,7 +667,7 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 			debugPrintf("Invalid item %s\n", argv[i]);
 			continue;
 		}
-		
+
 		if (Common::String(argv[i + 1]).compareTo("true") == 0) {
 			NancySceneState.addItemToInventory(itemID);
 			debugPrintf("Added item %i, %s, to inventory\n",

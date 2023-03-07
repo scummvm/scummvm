@@ -429,7 +429,7 @@ void SoundManager::calculatePan(uint16 channelID) {
 			uint16 q1 = sceneSummary.numberOfVideoFrames / 4;
 			uint16 q2 = sceneSummary.numberOfVideoFrames / 2;
 			uint16 q3 = sceneSummary.numberOfVideoFrames * 3 / 4;
-			
+
 			float balance;
 
 			if (adjustedViewportFrame < q1) {
@@ -448,7 +448,7 @@ void SoundManager::calculatePan(uint16 channelID) {
 				balance *= 32767;
 				balance = 65535 - balance;
 			}
-			
+
 			// The original engine's algorithm is broken and results in flipped
 			// stereo; the following line fixes this bug
 			balance = 65535 - balance;

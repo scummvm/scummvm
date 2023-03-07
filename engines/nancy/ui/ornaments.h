@@ -29,18 +29,18 @@ namespace UI {
 
 class ViewportOrnaments : public Nancy::RenderObject {
 public:
-    ViewportOrnaments(uint16 zOrder) : RenderObject(zOrder) {}
-    virtual ~ViewportOrnaments() {}    
+	ViewportOrnaments(uint16 zOrder) : RenderObject(zOrder) {}
+	virtual ~ViewportOrnaments() {}
 
-    void init() override;
+	void init() override;
 };
 
 class TextboxOrnaments : public Nancy::RenderObject {
 public:
-    TextboxOrnaments(uint16 zOrder) : RenderObject(zOrder) {}
-    virtual ~TextboxOrnaments() {}    
+	TextboxOrnaments(uint16 zOrder) : RenderObject(zOrder) {}
+	virtual ~TextboxOrnaments() {}
 
-    void init() override;
+	void init() override;
 };
 
 } // End of namespace Nancy

@@ -168,9 +168,9 @@ struct SoundDescription {
 // originally stored inside the executable
 
 struct ConditionalDialogue {
-    byte textID;
-    uint16 sceneID;
-    Common::String soundID;
+	byte textID;
+	uint16 sceneID;
+	Common::String soundID;
 	Common::Array<FlagDescription> flagConditions;
 	Common::Array<FlagDescription> inventoryConditions;
 
@@ -193,11 +193,11 @@ struct Goodbye {
 };
 
 struct Hint {
-    byte textID;
-    int16 hintWeight;
-    SceneChangeDescription sceneChange;
-    Common::String soundIDs[3];
-    Common::Array<FlagDescription> flagConditions;
+	byte textID;
+	int16 hintWeight;
+	SceneChangeDescription sceneChange;
+	Common::String soundIDs[3];
+	Common::Array<FlagDescription> flagConditions;
 	Common::Array<FlagDescription> inventoryConditions;
 
 	void readData(Common::SeekableReadStream &stream);

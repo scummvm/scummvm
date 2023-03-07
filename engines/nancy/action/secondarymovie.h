@@ -37,10 +37,10 @@ public:
 
 	static const byte kMovieSceneChange			= 5;
 	static const byte kMovieNoSceneChange		= 6;
-		
+
 	static const byte kPlayerCursorAllowed		= 1;
 	static const byte kNoPlayerCursorAllowed	= 2;
-		
+
 	static const byte kPlayMovieForward			= 1;
 	static const byte kPlayMovieReverse			= 2;
 

@@ -29,39 +29,39 @@ namespace Action {
 
 class LightningOn : public ActionRecord {
 public:
-    enum LightningState { kStartPulse, kPulse, kThunder };
+	enum LightningState { kStartPulse, kPulse, kThunder };
 
-    LightningOn() = default;
-    virtual ~LightningOn();
+	LightningOn() = default;
+	virtual ~LightningOn();
 
 	void readData(Common::SeekableReadStream &stream) override;
-    void execute() override;
+	void execute() override;
 
-    void handlePulse(bool on);
-    void handleThunder();
+	void handlePulse(bool on);
+	void handleThunder();
 
-    LightningState _lightningState = kStartPulse;
+	LightningState _lightningState = kStartPulse;
 
-    int16 _minRGBPercent = 0;
-    int16 _maxRGBPercent = 0;
+	int16 _minRGBPercent = 0;
+	int16 _maxRGBPercent = 0;
 
-    int16 _minInterPulseDelay = 0;
-    int16 _maxInterPulseDelay = 0;
+	int16 _minInterPulseDelay = 0;
+	int16 _maxInterPulseDelay = 0;
 
-    int16 _minPulseLength = 5;
-    int16 _maxPulseLength = 0;
+	int16 _minPulseLength = 5;
+	int16 _maxPulseLength = 0;
 
-    int16 _minSoundStartDelay = 0;
-    int16 _maxSoundStartDelay = 0;
+	int16 _minSoundStartDelay = 0;
+	int16 _maxSoundStartDelay = 0;
 
-    uint32 _nextStateTime = 0;
-    uint32 _nextSoundTime0 = 0;
-    uint32 _nextSoundTime1 = 0;
+	uint32 _nextStateTime = 0;
+	uint32 _nextSoundTime0 = 0;
+	uint32 _nextSoundTime1 = 0;
 
-    int _nextSoundToPlay = 0;
+	int _nextSoundToPlay = 0;
 
-    Common::Array<RenderObject *> _viewportObjs;
-    Common::Array<byte *> _viewportObjOriginalPalettes;
+	Common::Array<RenderObject *> _viewportObjs;
+	Common::Array<byte *> _viewportObjOriginalPalettes;
 
 protected:
 	Common::String getRecordTypeName() const override { return "LightningOn"; }

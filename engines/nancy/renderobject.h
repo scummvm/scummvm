@@ -74,7 +74,7 @@ protected:
 
 	// Needed for proper handling of objects inside the viewport
 	virtual bool isViewportRelative() const { return false; }
-	
+
 	bool _needsRedraw;
 	bool _isVisible;
 	uint16 _z;

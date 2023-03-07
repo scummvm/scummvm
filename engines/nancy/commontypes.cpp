@@ -159,7 +159,7 @@ void Hint::readData(Common::SeekableReadStream &stream) {
 	soundIDs[0] = stream.readString();
 	soundIDs[1] = stream.readString();
 	soundIDs[2] = stream.readString();
-	
+
 	uint16 num = stream.readUint16LE();
 	flagConditions.resize(num);
 	for (uint16 i = 0; i < num; ++i) {

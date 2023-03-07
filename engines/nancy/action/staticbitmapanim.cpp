@@ -97,9 +97,9 @@ void PlayStaticBitmapAnimation::execute() {
 		if (_nextFrameTime <= _currentFrameTime) {
 			// World's worst if statement
 			if (NancySceneState.getEventFlag(_interruptCondition) ||
-				(   (((_currentFrame == _loopLastFrame) && (_playDirection == kPlayAnimationForward) && (_loop == kPlayAnimationOnce)) ||
+				(	(((_currentFrame == _loopLastFrame) && (_playDirection == kPlayAnimationForward) && (_loop == kPlayAnimationOnce)) ||
 					((_currentFrame == _loopFirstFrame) && (_playDirection == kPlayAnimationReverse) && (_loop == kPlayAnimationOnce))) &&
-						!g_nancy->_sound->isSoundPlaying(_sound))   ) {
+						!g_nancy->_sound->isSoundPlaying(_sound))	) {
 
 				_state = kActionTrigger;
 

@@ -104,7 +104,7 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 		for (uint curX = 0; curX < width; ++curX) {
 			switch (g_nancy->_graphicsManager->getInputPixelFormat().bytesPerPixel) {
 			case 1: {
-				byte colorID = *(const byte *)_image.getBasePtr(srcRect.left + curX, srcRect.top +  curY);
+				byte colorID = *(const byte *)_image.getBasePtr(srcRect.left + curX, srcRect.top + curY);
 
 				if (colorID != _transColor) {
 					uint8 palette[1 * 3];
@@ -115,7 +115,7 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 				break;
 			}
 			case 2: {
-				uint16 curColor = *(const uint16 *)_image.getBasePtr(srcRect.left + curX, srcRect.top +  curY);
+				uint16 curColor = *(const uint16 *)_image.getBasePtr(srcRect.left + curX, srcRect.top + curY);
 
 				if (curColor != _transColor) {
 					uint8 r, g, b;

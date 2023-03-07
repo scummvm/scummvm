@@ -749,7 +749,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 
 	byte *buf = getCifData(name, info);
 
-	if (!buf)  {
+	if (!buf) {
 		// Couldn't find image in a cif tree, try to open a .bmp file
 		// This is used by The Vampire Diaries
 		Common::File f;
@@ -793,7 +793,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 
 	byte *buf = getCifData(name, info);
 
-	if (!buf)  {
+	if (!buf) {
 		// Couldn't find image in a cif tree, try to open a .bmp file
 		// This is used by The Vampire Diaries
 		Common::File f;

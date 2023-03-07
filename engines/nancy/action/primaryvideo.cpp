@@ -233,9 +233,9 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 void PlayPrimaryVideoChan0::execute() {
 	PlayPrimaryVideoChan0 *activeVideo = NancySceneState.getActivePrimaryVideo();
 	if (activeVideo != this && activeVideo != nullptr) {
-		if (    !activeVideo->_isDone ||
+		if (	!activeVideo->_isDone ||
 				activeVideo->_defaultNextScene == kDefaultNextSceneEnabled ||
-				activeVideo->_pickedResponse != -1  ) {
+				activeVideo->_pickedResponse != -1	) {
 
 			return;
 		} else {
@@ -300,7 +300,7 @@ void PlayPrimaryVideoChan0::execute() {
 
 				if (res.conditionFlags.isSatisfied()) {
 					NancySceneState.getTextbox().addTextLine(res.text);
-                    res.isOnScreen = true;
+					res.isOnScreen = true;
 				}
 			}
 		}
@@ -315,18 +315,18 @@ void PlayPrimaryVideoChan0::execute() {
 				// NPC has finished talking, we have responses
 				for (uint i = 0; i < 30; ++i) {
 					if (NancySceneState.getLogicCondition(i, kLogUsed)) {
-                        int pickedOnScreenResponse = _pickedResponse = i;
+						int pickedOnScreenResponse = _pickedResponse = i;
 
-                        // Adjust to account for hidden responses
-                        for (uint j = 0; j < _responses.size(); ++j) {
-                            if (!_responses[j].isOnScreen) {
-                                ++_pickedResponse;
-                            }
+						// Adjust to account for hidden responses
+						for (uint j = 0; j < _responses.size(); ++j) {
+							if (!_responses[j].isOnScreen) {
+								++_pickedResponse;
+							}
 
-                            if ((int)j == pickedOnScreenResponse) {
-                                break;
-                            }
-                        }
+							if ((int)j == pickedOnScreenResponse) {
+								break;
+							}
+						}
 
 						break;
 					}
@@ -363,7 +363,7 @@ void PlayPrimaryVideoChan0::execute() {
 			g_nancy->_sound->stopSound(_responseGenericSound);
 
 			if (_pickedResponse != -1) {
-                NancySceneState.changeScene(_responses[_pickedResponse].sceneChange);
+				NancySceneState.changeScene(_responses[_pickedResponse].sceneChange);
 			} else {
 				// Evaluate scene branch structs here
 
@@ -429,7 +429,7 @@ void PlayPrimaryVideoChan0::addGoodbye() {
 	ResponseStruct &newResponse = _responses.back();
 	newResponse.soundName = res.soundID;
 	newResponse.text = g_nancy->getStaticData().goodbyeTexts[_goodbyeResponseCharacterID];
-	
+
 	// Evaluate conditions to pick from the collection of replies
 	uint sceneChangeID = 0;
 	for (uint i = 0; i < res.sceneChanges.size(); ++i) {
@@ -456,7 +456,7 @@ void PlayPrimaryVideoChan0::addGoodbye() {
 	}
 
 	const GoodbyeSceneChange &sceneChange = res.sceneChanges[sceneChangeID];
-	
+
 	// The reply from the character is picked randomly
 	newResponse.sceneChange.sceneID = sceneChange.sceneIDs[g_nancy->_randomSource->getRandomNumber(sceneChange.sceneIDs.size() - 1)];
 

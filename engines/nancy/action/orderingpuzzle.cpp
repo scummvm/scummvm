@@ -140,7 +140,7 @@ void OrderingPuzzle::execute() {
 					if (_clickedSequence.size() > (uint)_sequenceLength + ((g_nancy->getGameType() == kGameTypeVampire) ? -1 : 1)) {
 						clearAllElements();
 					}
-					
+
 					return;
 				}
 			}

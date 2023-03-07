@@ -79,7 +79,7 @@ void Map::init() {
 	readRect(*chunk, closedLabelSrc);
 
 	_closedLabel._drawSurface.create(g_nancy->_graphicsManager->_object0, closedLabelSrc);
-	
+
 	Common::Rect newScreenRect;
 
 	newScreenRect.left = textboxScreenPosition.left + ((textboxScreenPosition.width() - closedLabelSrc.width()) / 2);

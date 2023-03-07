@@ -34,141 +34,141 @@ namespace Nancy {
 namespace Action {
 
 void editPalette(byte *colors, uint percent) {
-    float alpha = (float) percent / 100;
+	float alpha = (float) percent / 100;
 
-    for (int i = 0; i < 256 * 3; ++i) {
-        uint16 origColor = colors[i];
-        colors[i] = MIN<uint16>(alpha * origColor + origColor, 255);
-    }
+	for (int i = 0; i < 256 * 3; ++i) {
+		uint16 origColor = colors[i];
+		colors[i] = MIN<uint16>(alpha * origColor + origColor, 255);
+	}
 }
 
 LightningOn::~LightningOn() {
-    for (byte *palette : _viewportObjOriginalPalettes) {
-        delete[] palette;
-    }
+	for (byte *palette : _viewportObjOriginalPalettes) {
+		delete[] palette;
+	}
 }
 
 void LightningOn::readData(Common::SeekableReadStream &stream) {
-    int16 distance = stream.readSint16LE();
-    uint16 pulseTime = stream.readUint16LE();
-    int16 rgbPercent = stream.readSint16LE();
+	int16 distance = stream.readSint16LE();
+	uint16 pulseTime = stream.readUint16LE();
+	int16 rgbPercent = stream.readSint16LE();
 
-    int16 midpoint;
-    float delta;
+	int16 midpoint;
+	float delta;
 
-    // Calculate the min & max power of the lightning
-    midpoint = (rgbPercent - (distance * 5));
-    delta = 0.4 * midpoint;
+	// Calculate the min & max power of the lightning
+	midpoint = (rgbPercent - (distance * 5));
+	delta = 0.4 * midpoint;
 
-    _minRGBPercent = MAX<uint16>(0, midpoint - delta);
-    _maxRGBPercent = MIN<uint16>(rgbPercent, midpoint + delta);
+	_minRGBPercent = MAX<uint16>(0, midpoint - delta);
+	_maxRGBPercent = MIN<uint16>(rgbPercent, midpoint + delta);
 
-    // Calculate the min & max delay between lightning strikes
-    midpoint = 13000 - (pulseTime * 500);
-    delta = 1.5 * midpoint;
+	// Calculate the min & max delay between lightning strikes
+	midpoint = 13000 - (pulseTime * 500);
+	delta = 1.5 * midpoint;
 
-    _minInterPulseDelay = MAX<int16>(500, midpoint - delta);
-    _maxInterPulseDelay = MIN<int16>(13000, midpoint + delta);
+	_minInterPulseDelay = MAX<int16>(500, midpoint - delta);
+	_maxInterPulseDelay = MIN<int16>(13000, midpoint + delta);
 
-    // Calculate the min & max length of the lightning strikes
-    // _minPulseLength is always 5 due to an oversight in the original code
-    _maxPulseLength = pulseTime * 10;
+	// Calculate the min & max length of the lightning strikes
+	// _minPulseLength is always 5 due to an oversight in the original code
+	_maxPulseLength = pulseTime * 10;
 
-    // Calculate the min & max delay between end of lightning and start of thunder sound
-    midpoint = distance * 400;
-    delta = midpoint * 0.4;
+	// Calculate the min & max delay between end of lightning and start of thunder sound
+	midpoint = distance * 400;
+	delta = midpoint * 0.4;
 
-    _minSoundStartDelay = MAX<int16>(250, midpoint - delta);
-    _maxSoundStartDelay = midpoint + delta; // No minimum value, probably a bug
+	_minSoundStartDelay = MAX<int16>(250, midpoint - delta);
+	_maxSoundStartDelay = midpoint + delta; // No minimum value, probably a bug
 
-    stream.skip(0x4); // paletteStart, paletteSize
+	stream.skip(0x4); // paletteStart, paletteSize
 }
 
 void LightningOn::execute() {
-    if (_state == kBegin) {
-        g_nancy->_graphicsManager->grabViewportObjects(_viewportObjs);
+	if (_state == kBegin) {
+		g_nancy->_graphicsManager->grabViewportObjects(_viewportObjs);
 
-        for (RenderObject *obj : _viewportObjs) {
-            if (!obj) {
-                continue;
-            }
+		for (RenderObject *obj : _viewportObjs) {
+			if (!obj) {
+				continue;
+			}
 
-            _viewportObjOriginalPalettes.push_back(new byte[256 * 3]);
-            obj->grabPalette(_viewportObjOriginalPalettes.back());
-        }
+			_viewportObjOriginalPalettes.push_back(new byte[256 * 3]);
+			obj->grabPalette(_viewportObjOriginalPalettes.back());
+		}
 
-        _state = kRun;
-    }
+		_state = kRun;
+	}
 
-    switch (_lightningState) {
-    case kStartPulse:
-        _nextStateTime = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minPulseLength, _maxPulseLength);
-        handleThunder();
-        handlePulse(true);
-        _lightningState = kPulse;
-        break;
-    case kPulse:
-        if (g_nancy->getTotalPlayTime() > _nextStateTime) {
+	switch (_lightningState) {
+	case kStartPulse:
+		_nextStateTime = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minPulseLength, _maxPulseLength);
+		handleThunder();
+		handlePulse(true);
+		_lightningState = kPulse;
+		break;
+	case kPulse:
+		if (g_nancy->getTotalPlayTime() > _nextStateTime) {
 
-            _nextStateTime = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minInterPulseDelay, _maxInterPulseDelay);
+			_nextStateTime = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minInterPulseDelay, _maxInterPulseDelay);
 
-            _lightningState = kThunder;
-            
-            if (!g_nancy->_sound->isSoundPlaying("TH1")) {
-                _nextSoundToPlay = 0;
-                _nextSoundTime0 = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minSoundStartDelay, _maxSoundStartDelay);
-            } else if (!g_nancy->_sound->isSoundPlaying("TH2")) {
-                _nextSoundToPlay = 1;
-                _nextSoundTime1 = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minSoundStartDelay, _maxSoundStartDelay);
-            } else {
-                _nextSoundToPlay = -1;
-            }
+			_lightningState = kThunder;
 
-            handlePulse(false);
-        }
-        
-        handleThunder();
-        break;
-    case kThunder:
-        if (g_nancy->getTotalPlayTime() > _nextStateTime) {
-            _lightningState = kStartPulse;
-        }
+			if (!g_nancy->_sound->isSoundPlaying("TH1")) {
+				_nextSoundToPlay = 0;
+				_nextSoundTime0 = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minSoundStartDelay, _maxSoundStartDelay);
+			} else if (!g_nancy->_sound->isSoundPlaying("TH2")) {
+				_nextSoundToPlay = 1;
+				_nextSoundTime1 = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minSoundStartDelay, _maxSoundStartDelay);
+			} else {
+				_nextSoundToPlay = -1;
+			}
 
-        handleThunder();
-        break;
-    }
+			handlePulse(false);
+		}
+
+		handleThunder();
+		break;
+	case kThunder:
+		if (g_nancy->getTotalPlayTime() > _nextStateTime) {
+			_lightningState = kStartPulse;
+		}
+
+		handleThunder();
+		break;
+	}
 }
 
 void LightningOn::handlePulse(bool on) {
-    for (uint i = 0; i < _viewportObjs.size(); ++i) {
-        RenderObject *obj = _viewportObjs[i];
+	for (uint i = 0; i < _viewportObjs.size(); ++i) {
+		RenderObject *obj = _viewportObjs[i];
 
-        if (!obj) {
-            continue;
-        }
+		if (!obj) {
+			continue;
+		}
 
-        if (on) {
-            byte newPalette[256 * 3];
-            obj->grabPalette(newPalette);
-            editPalette(newPalette, g_nancy->_randomSource->getRandomNumberRngSigned(_minRGBPercent, _maxRGBPercent));
-            obj->setPalette(newPalette);
-        } else {
-            obj->setPalette(_viewportObjOriginalPalettes[i]);
-        }
-        
-    }
+		if (on) {
+			byte newPalette[256 * 3];
+			obj->grabPalette(newPalette);
+			editPalette(newPalette, g_nancy->_randomSource->getRandomNumberRngSigned(_minRGBPercent, _maxRGBPercent));
+			obj->setPalette(newPalette);
+		} else {
+			obj->setPalette(_viewportObjOriginalPalettes[i]);
+		}
+
+	}
 }
 
 void LightningOn::handleThunder() {
-    if (_nextSoundToPlay == 0) {
-        if (g_nancy->getTotalPlayTime() > _nextSoundTime0) {
-            g_nancy->_sound->playSound("TH1");
-        }
-    } else if (_nextSoundToPlay == 1) {
-        if (g_nancy->getTotalPlayTime() > _nextSoundTime1) {
-            g_nancy->_sound->playSound("TH2");
-        }
-    }
+	if (_nextSoundToPlay == 0) {
+		if (g_nancy->getTotalPlayTime() > _nextSoundTime0) {
+			g_nancy->_sound->playSound("TH1");
+		}
+	} else if (_nextSoundToPlay == 1) {
+		if (g_nancy->getTotalPlayTime() > _nextSoundTime1) {
+			g_nancy->_sound->playSound("TH2");
+		}
+	}
 }
 
 } // End of namespace Action

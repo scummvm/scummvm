@@ -34,45 +34,45 @@ public:
 	Time(const Time &t) = default;
 	~Time() = default;
 	explicit operator uint32() const { return _milliseconds; }
-	Time &operator=(const Time &t)                          { if (this != &t) _milliseconds = t._milliseconds; return *this; }
-	Time &operator=(const uint32 &t)                        { _milliseconds = t; return *this; }
-	Time &operator+=(const Time &t)                         { _milliseconds += t._milliseconds; return *this; }
-	Time &operator+=(const uint32 &t)                       { _milliseconds+=t; return *this; }
-	Time &operator-=(const Time &t)                         { _milliseconds -= t._milliseconds; return *this; }
-	Time &operator-=(const uint32 &t)                       { _milliseconds-=t; return *this; }
+	Time &operator=(const Time &t)							{ if (this != &t) _milliseconds = t._milliseconds; return *this; }
+	Time &operator=(const uint32 &t)						{ _milliseconds = t; return *this; }
+	Time &operator+=(const Time &t)						 	{ _milliseconds += t._milliseconds; return *this; }
+	Time &operator+=(const uint32 &t)						{ _milliseconds+=t; return *this; }
+	Time &operator-=(const Time &t)							{ _milliseconds -= t._milliseconds; return *this; }
+	Time &operator-=(const uint32 &t)						{ _milliseconds-=t; return *this; }
 
-	friend Time operator+(Time l, const Time &r)            { l += r; return l; }
-	friend Time operator+(Time l, const uint32 &r)          { l += r; return l; }
-	friend Time operator+(const uint32 &l, Time r)          { r += l; return r; }
-	friend Time operator-(Time l, const Time &r)            { l -= r; return l; }
-	friend Time operator-(Time l, const uint32 &r)          { l -= r; return l; }
-	friend Time operator-(const uint32 &l, Time r)          { r -= l; return r; }
+	friend Time operator+(Time l, const Time &r)			{ l += r; return l; }
+	friend Time operator+(Time l, const uint32 &r)			{ l += r; return l; }
+	friend Time operator+(const uint32 &l, Time r)			{ r += l; return r; }
+	friend Time operator-(Time l, const Time &r)			{ l -= r; return l; }
+	friend Time operator-(Time l, const uint32 &r)			{ l -= r; return l; }
+	friend Time operator-(const uint32 &l, Time r)			{ r -= l; return r; }
 
-	friend bool operator== (const Time &l, const Time &r)   { return l._milliseconds == r._milliseconds; }
-	friend bool operator== (const Time &l, const uint32 &r) { return l._milliseconds == r; }
-	friend bool operator== (const uint32 &l, const Time &r) { return l == r._milliseconds; }
-	friend bool operator!= (const Time &l, const Time &r)   { return l._milliseconds != r._milliseconds; }
-	friend bool operator!= (const Time &l, const uint32 &r) { return l._milliseconds != r; }
-	friend bool operator!= (const uint32 &l, const Time &r) { return l != r._milliseconds; }
-	friend bool operator< (const Time &l, const Time &r)    { return l._milliseconds < r._milliseconds; }
-	friend bool operator< (const Time &l, const uint32 &r)  { return l._milliseconds < r; }
-	friend bool operator< (const uint32 &l, const Time &r)  { return l < r._milliseconds; }
-	friend bool operator> (const Time &l, const Time &r)    { return r < l; }
-	friend bool operator> (const Time &l, const uint32 &r)  { return r < l; }
-	friend bool operator> (const uint32 &l, const Time &r)  { return r < l; }
-	friend bool operator<= (const Time &l, const Time &r)   { return !(l > r); }
-	friend bool operator<= (const Time &l, const uint32 &r) { return !(l > r); }
-	friend bool operator<= (const uint32 &l, const Time &r) { return !(l > r); }
-	friend bool operator>= (const Time &l, const Time &r)   { return !(l < r); }
-	friend bool operator>= (const Time &l, const uint32 &r) { return !(l < r); }
-	friend bool operator>= (const uint32 &l, const Time &r) { return !(l < r); }
+	friend bool operator== (const Time &l, const Time &r)	{ return l._milliseconds == r._milliseconds; }
+	friend bool operator== (const Time &l, const uint32 &r)	{ return l._milliseconds == r; }
+	friend bool operator== (const uint32 &l, const Time &r)	{ return l == r._milliseconds; }
+	friend bool operator!= (const Time &l, const Time &r)	{ return l._milliseconds != r._milliseconds; }
+	friend bool operator!= (const Time &l, const uint32 &r)	{ return l._milliseconds != r; }
+	friend bool operator!= (const uint32 &l, const Time &r)	{ return l != r._milliseconds; }
+	friend bool operator< (const Time &l, const Time &r)	{ return l._milliseconds < r._milliseconds; }
+	friend bool operator< (const Time &l, const uint32 &r)	{ return l._milliseconds < r; }
+	friend bool operator< (const uint32 &l, const Time &r)	{ return l < r._milliseconds; }
+	friend bool operator> (const Time &l, const Time &r)	{ return r < l; }
+	friend bool operator> (const Time &l, const uint32 &r)	{ return r < l; }
+	friend bool operator> (const uint32 &l, const Time &r)	{ return r < l; }
+	friend bool operator<= (const Time &l, const Time &r)	{ return !(l > r); }
+	friend bool operator<= (const Time &l, const uint32 &r)	{ return !(l > r); }
+	friend bool operator<= (const uint32 &l, const Time &r)	{ return !(l > r); }
+	friend bool operator>= (const Time &l, const Time &r)	{ return !(l < r); }
+	friend bool operator>= (const Time &l, const uint32 &r)	{ return !(l < r); }
+	friend bool operator>= (const uint32 &l, const Time &r)	{ return !(l < r); }
 
-	uint16 getSeconds()         { return (_milliseconds / 1000) % 60; }
-	uint16 getMinutes()         { return (_milliseconds / 60000) % 60; }
-	uint16 getTotalHours()      { return _milliseconds / 3600000; }
+	uint16 getSeconds()			{ return (_milliseconds / 1000) % 60; }
+	uint16 getMinutes()			{ return (_milliseconds / 60000) % 60; }
+	uint16 getTotalHours()		{ return _milliseconds / 3600000; }
 
-	uint16 getHours()           { return (_milliseconds / 3600000) % 24; } // Used for player time
-	uint16 getDays()            { return _milliseconds / 86400000; } // up to 49.7 days
+	uint16 getHours()			{ return (_milliseconds / 3600000) % 24; }	// Used for player time
+	uint16 getDays()			{ return _milliseconds / 86400000; }		// up to 49.7 days
 
 private:
 	uint32 _milliseconds;

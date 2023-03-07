@@ -33,8 +33,8 @@ namespace Nancy {
 
 class NancyEngine;
 
-#define ID_DATA     MKTAG('D', 'A', 'T', 'A')
-#define ID_PCAL     MKTAG('P', 'C', 'A', 'L')
+#define ID_DATA		MKTAG('D', 'A', 'T', 'A')
+#define ID_PCAL		MKTAG('P', 'C', 'A', 'L')
 
 class IFF {
 public:
