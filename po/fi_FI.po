@@ -8719,8 +8719,8 @@ msgstr "Ultima VIII Debug"
 #: engines/vcruise/vcruise.cpp:75
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr ""
-"Tämä peli vaatii toimiakseen JPEG-tuen, jota ei ole käännetty tähän "
-"ScummVM:ään."
+"Tämä peli vaatii toimiakseen JPEG-tuen, jota ei ole käännetty tähän ScummVM:"
+"ään."
 
 #: engines/vcruise/vcruise.cpp:82
 msgid ""
