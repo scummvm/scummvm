@@ -298,32 +298,7 @@ static const char *eclipseRoomName[] = {
 	"ILLUSION",
 	"????????"};
 
-byte kCGAPalettePinkBlueWhiteData[4][3] = {
-	{0x00, 0x00, 0x00},
-	{0x55, 0xff, 0xff},
-	{0xff, 0x55, 0xff},
-	{0xff, 0xff, 0xff},
-};
-
-byte kEGADefaultPaletteData[16][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0xaa},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0xaa, 0x00, 0xaa},
-	{0xaa, 0x55, 0x00},
-	{0x55, 0xff, 0x55},
-	{0xff, 0x55, 0x55},
-	{0x12, 0x34, 0x56},
-	{0xff, 0xff, 0x55},
-	{0xff, 0xff, 0xff},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00},
-	{0x00, 0x00, 0x00}
-};
-
-void FreescapeEngine::renderPixels8bitBinImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color) {
+void FreescapeEngine::renderPixels8bitBinImage(Graphics::ManagedSurface *surface, int &i, int &j, uint8 pixels, int color) {
 	if (i >= 320) {
 		//debug("cannot continue, stopping here at row %d!", j);
 		return;
@@ -333,13 +308,8 @@ void FreescapeEngine::renderPixels8bitBinImage(Graphics::Surface *surface, int &
 	while (acc > 0) {
 		assert(i < 320);
 		if (acc & pixels) {
-			uint8 r, g, b;
-			uint32 previousPixel = surface->getPixel(i, j);
-			_gfx->_currentPixelFormat.colorToRGB(previousPixel, r, g, b);
-			int previousColor = _gfx->indexFromColor(r, g, b);
-			//debug("index: %d", previousColor + color);
-			_gfx->readFromPalette(previousColor + color, r, g, b);
-			surface->setPixel(i, j, _gfx->_currentPixelFormat.ARGBToColor(0xFF, r, g, b));
+			int previousColor = surface->getPixel(i, j);
+			surface->setPixel(i, j, previousColor + color);
 		}
 		i++;
 		acc = acc >> 1;
@@ -347,18 +317,10 @@ void FreescapeEngine::renderPixels8bitBinImage(Graphics::Surface *surface, int &
 
 }
 
-Graphics::Surface *FreescapeEngine::load8bitBinImage(Common::SeekableReadStream *file, int offset) {
-	Graphics::Surface *surface = new Graphics::Surface();
-	if (_renderMode == Common::kRenderCGA)
-		_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
-	else if (_renderMode == Common::kRenderEGA)
-		_gfx->_palette = (byte *)kEGADefaultPaletteData;
-	else
-		error("Invalid render mode: %d", _renderMode);
-
-	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
-	uint32 black = _gfx->_currentPixelFormat.ARGBToColor(0xFF, 0, 0, 0);
-	surface->fillRect(Common::Rect(0, 0, 320, 200), black);
+Graphics::ManagedSurface *FreescapeEngine::load8bitBinImage(Common::SeekableReadStream *file, int offset) {
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->create(_screenW, _screenH, Graphics::PixelFormat::createFormatCLUT8());
+	surface->fillRect(Common::Rect(0, 0, 320, 200), 0);
 
 	file->seek(offset);
 	int imageSize = file->readUint16BE();
@@ -735,7 +697,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 }
 
 void FreescapeEngine::loadBundledImages() {
-	Image::BitmapDecoder decoder;
+	/*Image::BitmapDecoder decoder;
 	Common::String targetName = Common::String(_gameDescription->gameId);
 	if (isDOS() && isDemo())
 		Common::replace(targetName, "-demo", "");
@@ -757,7 +719,7 @@ void FreescapeEngine::loadBundledImages() {
 		_title = new Graphics::Surface();
 		_title->copyFrom(*decoder.getSurface());
 		decoder.destroy();
-	}
+	}*/
 }
 
 void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {

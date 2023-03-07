@@ -25,6 +25,7 @@
 #include "common/bitarray.h"
 #include "common/events.h"
 #include "engines/advancedDetector.h"
+#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 
 #include "audio/decoders/wave.h"
@@ -124,8 +125,8 @@ public:
 	virtual void drawInfoMenu();
 
 	virtual void drawCrossair(Graphics::Surface *surface);
-	Graphics::Surface *_border;
-	Graphics::Surface *_title;
+	Graphics::ManagedSurface *_border;
+	Graphics::ManagedSurface *_title;
 	Texture *_borderTexture;
 	Texture *_titleTexture;
 	Texture *_uiTexture;
@@ -139,8 +140,8 @@ public:
 	void loadDataBundle();
 	void loadBundledImages();
 	byte *getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset);
-	Graphics::Surface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette = nullptr);
-	Graphics::Surface *loadAndCenterScrImage(Common::SeekableReadStream *stream);
+	Graphics::ManagedSurface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette = nullptr);
+	Graphics::ManagedSurface *loadAndCenterScrImage(Common::SeekableReadStream *stream);
 	void loadPalettes(Common::SeekableReadStream *file, int offset);
 	void swapPalette(uint16 areaID);
 	Common::HashMap<uint16, byte *> _paletteByArea;
@@ -165,12 +166,12 @@ public:
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
 	Area *load8bitArea(Common::SeekableReadStream *file, uint16 ncolors);
 	Object *load8bitObject(Common::SeekableReadStream *file);
-	void renderPixels8bitBinImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
+	void renderPixels8bitBinImage(Graphics::ManagedSurface *surface, int &i, int &j, uint8 pixels, int color);
 
-	void renderPixels8bitBinCGAImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
-	void renderPixels8bitBinEGAImage(Graphics::Surface *surface, int &i, int &j, uint8 pixels, int color);
+	void renderPixels8bitBinCGAImage(Graphics::ManagedSurface *surface, int &i, int &j, uint8 pixels, int color);
+	void renderPixels8bitBinEGAImage(Graphics::ManagedSurface *surface, int &i, int &j, uint8 pixels, int color);
 
-	Graphics::Surface *load8bitBinImage(Common::SeekableReadStream *file, int offset);
+	Graphics::ManagedSurface *load8bitBinImage(Common::SeekableReadStream *file, int offset);
 
 	// Areas
 	uint16 _startArea;
@@ -460,9 +461,9 @@ private:
 	void drawC64UI(Graphics::Surface *surface);
 	void drawAmigaAtariSTUI(Graphics::Surface *surface);
 
-	Graphics::Surface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
+	Graphics::ManagedSurface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
 	uint32 getPixel8bitTitleImage(int index);
-	void renderPixels8bitTitleImage(Graphics::Surface *surface, int &i, int &j, int pixels);
+	void renderPixels8bitTitleImage(Graphics::ManagedSurface *surface, int &i, int &j, int pixels);
 };
 
 class DarkEngine : public FreescapeEngine {

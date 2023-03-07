@@ -76,7 +76,7 @@ bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		return false;
 
 	assert (_renderMode == Common::kRenderCGA);
-	if (index <= 4) { // Solid colors 
+	if (index <= 4) { // Solid colors
 		readFromPalette(index - 1, r1, g1, b1);
 		r2 = r1;
 		g2 = g1;
@@ -164,7 +164,7 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 		return false;
 
 	byte *entry = (*_colorMap)[index - 1];
-	if (entry[0] == 0 && entry[1] == 0 && entry[2] == 0 && entry[3] == 0) { 
+	if (entry[0] == 0 && entry[1] == 0 && entry[2] == 0 && entry[3] == 0) {
 		readFromPalette(_paperColor, r1, g1, b1);
 		readFromPalette(_paperColor, r2, g2, b2);
 		return true;
@@ -342,12 +342,23 @@ void Renderer::flipVertical(Graphics::Surface *s) {
 	}
 }
 
-void Renderer::convertImageFormatIfNecessary(Graphics::Surface *surface) {
+void Renderer::convertImageFormatIfNecessary(Graphics::ManagedSurface *surface) {
 	if (!surface)
 		return;
 
-	if (surface->format != _texturePixelFormat)
-		surface->convertToInPlace(_texturePixelFormat);
+	if (surface->format != _texturePixelFormat) {
+		const uint32 *src = surface->getPalette();
+		byte *palette = (byte *)malloc(sizeof(byte) * 16 * 3);
+		for (int num = 16; num > 0; --num, palette += 3) { // Maximum should be 16 colours
+			uint32 p = *src++;
+			palette[0] =  p        & 0xff;
+			palette[1] = (p >> 8)  & 0xff;
+			palette[2] = (p >> 16) & 0xff;
+		}
+		palette = palette - 16 * 3;
+		surface->convertToInPlace(_texturePixelFormat, palette);
+		free(palette);
+	}
 }
 
 Common::Rect Renderer::viewport() const {

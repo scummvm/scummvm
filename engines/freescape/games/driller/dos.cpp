@@ -35,16 +35,13 @@ extern byte kEGADefaultPaletteData[16][3];
 */
 
 uint32 DrillerEngine::getPixel8bitTitleImage(int index) {
-	uint8 r, g, b;
 	if (index < 4 || _renderMode == Common::kRenderEGA) {
-		_gfx->readFromPalette(index, r, g, b);
-		return _gfx->_currentPixelFormat.ARGBToColor(0xFF, r, g, b);
+		return index;
 	}
-	_gfx->readFromPalette(index / 4, r, g, b);
-	return _gfx->_currentPixelFormat.ARGBToColor(0xFF, r, g, b);
+	return index / 4;
 }
 
-void DrillerEngine::renderPixels8bitTitleImage(Graphics::Surface *surface, int &i, int &j, int pixels) {
+void DrillerEngine::renderPixels8bitTitleImage(Graphics::ManagedSurface *surface, int &i, int &j, int pixels) {
 	int c1 = pixels >> 4;
 	int c2 = pixels & 0xf;
 
@@ -80,17 +77,10 @@ void DrillerEngine::renderPixels8bitTitleImage(Graphics::Surface *surface, int &
 	i++;
 }
 
-Graphics::Surface *DrillerEngine::load8bitTitleImage(Common::SeekableReadStream *file, int offset) {
-	Graphics::Surface *surface = new Graphics::Surface();
-	if (_renderMode == Common::kRenderCGA)
-		_gfx->_palette = (byte *)kCGAPalettePinkBlueWhiteData;
-	else if (_renderMode == Common::kRenderEGA)
-		_gfx->_palette = (byte *)kEGADefaultPaletteData;
-	else
-		error("Invalid render mode: %d", _renderMode);
-	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
-	uint32 black = _gfx->_currentPixelFormat.ARGBToColor(0xFF, 0, 0, 0);
-	surface->fillRect(Common::Rect(0, 0, 320, 200), black);
+Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableReadStream *file, int offset) {
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->create(_screenW, _screenH, Graphics::PixelFormat::createFormatCLUT8());
+	surface->fillRect(Common::Rect(0, 0, 320, 200), 0);
 
 	int i = 0;
 	int j = 0;
@@ -180,17 +170,45 @@ Graphics::Surface *DrillerEngine::load8bitTitleImage(Common::SeekableReadStream 
 	}
 	return surface;
 }
+
+byte kCGAPalettePinkBlueWhiteData[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0xff},
+	{0xff, 0x55, 0xff},
+	{0xff, 0xff, 0xff},
+};
+
+byte kEGADefaultPaletteData[16][3] = {
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0xaa},
+	{0x00, 0xaa, 0x00},
+	{0xaa, 0x00, 0x00},
+	{0xaa, 0x00, 0xaa},
+	{0xaa, 0x55, 0x00},
+	{0x55, 0xff, 0x55},
+	{0xff, 0x55, 0x55},
+	{0x12, 0x34, 0x56},
+	{0xff, 0xff, 0x55},
+	{0xff, 0xff, 0xff},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00},
+	{0x00, 0x00, 0x00}
+};
+
 void DrillerEngine::loadAssetsDOSFullGame() {
 	Common::File file;
 	if (_renderMode == Common::kRenderEGA) {
 		file.open("SCN1E.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
+			_title->setPalette((byte*)&kEGADefaultPaletteData, 0, 16);
 		}
 		file.close();
 		file.open("EGATITLE.RL");
 		if (file.isOpen()) {
 			_title = load8bitTitleImage(&file, 0x1b3);
+			_title->setPalette((byte*)&kEGADefaultPaletteData, 0, 16);
 		}
 		file.close();
 
@@ -204,15 +222,18 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		loadGlobalObjects(&file, 0x3b42);
 		load8bitBinary(&file, 0x9b40, 16);
 		_border = load8bitBinImage(&file, 0x210);
+		_border->setPalette((byte*)&kEGADefaultPaletteData, 0, 16);
 	} else if (_renderMode == Common::kRenderCGA) {
 		file.open("SCN1C.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
+			_title->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 		}
 		file.close();
 		file.open("CGATITLE.RL");
 		if (file.isOpen()) {
 			_title = load8bitTitleImage(&file, 0x1b3);
+			_title->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 		}
 		file.close();
 		file.open("DRILLC.EXE");
@@ -225,6 +246,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		load8bitBinary(&file, 0x7bb0, 4);
 		loadGlobalObjects(&file, 0x1fa2);
 		_border = load8bitBinImage(&file, 0x210);
+		_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 	} else
 		error("Unsupported video mode for DOS");
 }
