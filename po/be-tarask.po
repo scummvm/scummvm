@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 20:39+0000\n"
+"POT-Creation-Date: 2023-03-06 22:17+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -3258,27 +3258,27 @@ msgid "Resolution: %dx%d"
 msgstr "Разрознасьць: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2632
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2634
 msgid "Enabled aspect ratio correction"
 msgstr "Карэкцыя прапорцыяў экрану далучана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2638
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2640
 msgid "Disabled aspect ratio correction"
 msgstr "Карэкцыя прапорцыяў экрану адлучана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2654
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2656
 msgid "Filtering enabled"
 msgstr "Фільтраваньне далучана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2656
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2658
 msgid "Filtering disabled"
 msgstr "Фільтраваньне адлучана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2683
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2685
 msgid "Stretch mode"
 msgstr "Рэжым расьцягу"
 
@@ -3286,7 +3286,7 @@ msgstr "Рэжым расьцягу"
 msgid "SDL Surface"
 msgstr "Паверхня SDL"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2598
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2600
 msgid "Active graphics filter:"
 msgstr "Дзейны графічны фільтар:"
 
