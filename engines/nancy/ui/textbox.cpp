@@ -50,7 +50,8 @@ Textbox::Textbox() :
 		_needsTextRedraw(false),
 		_scrollbar(nullptr),
 		_scrollbarPos(0),
-		_numLines(0) {}
+		_numLines(0),
+		_lastResponseisMultiline(false) {}
 
 Textbox::~Textbox() {
 	delete _scrollbar;
@@ -79,7 +80,7 @@ void Textbox::init() {
 	uint16 scrollbarMaxScroll = chunk->readUint16LE();
 
 	_firstLineOffset = chunk->readUint16LE() + 1;
-	_lineHeight = chunk->readUint16LE();
+	_lineHeight = chunk->readUint16LE() + (g_nancy->getGameType() == Nancy::GameType::kGameTypeVampire ? 1 : 0);
 	_borderWidth = chunk->readUint16LE() - 1;
 	_maxWidthDifference = chunk->readUint16LE();
 
@@ -146,7 +147,7 @@ void Textbox::drawTextbox() {
 	const Font *font = g_nancy->_graphicsManager->getFont(_fontID);
 
 	uint maxWidth = _fullSurface.w - _maxWidthDifference - _borderWidth - 2;
-	uint lineDist = _lineHeight + _lineHeight / 4 + (g_nancy->getGameType() == kGameTypeVampire ? 1 : 0);
+	uint lineDist = _lineHeight + _lineHeight / 4;
 
 	for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
 		Common::String currentLine = _textLines[lineID];
@@ -197,6 +198,7 @@ void Textbox::drawTextbox() {
 			}
 
 			String currentSubLine;
+			_lastResponseisMultiline = false;
 
 			uint32 nextTabPos = currentLine.find(_tabToken);
 			if (nextTabPos != String::npos) {
@@ -245,6 +247,7 @@ void Textbox::drawTextbox() {
 			// a single line gets a double newline afterwards
 			if (wrappedLines.size() > 1 && hasHotspot) {
 				++_numLines;
+				_lastResponseisMultiline = true;
 			}
 
 			horizontalOffset = 0;
@@ -321,8 +324,13 @@ void Textbox::onScrollbarMove() {
 }
 
 uint16 Textbox::getInnerHeight() const {
+	// These calculations are _almost_ correct, but off by a pixel sometimes
 	uint lineDist = _lineHeight + _lineHeight / 4;
-	return _numLines * lineDist + _firstLineOffset + lineDist / 2 - 1;
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		return _numLines * lineDist + _firstLineOffset + (_lastResponseisMultiline ? - _lineHeight / 2 : 1);
+	} else {
+		return _numLines * lineDist + _firstLineOffset + lineDist / 2 - 1;
+	}
 }
 
 } // End of namespace UI

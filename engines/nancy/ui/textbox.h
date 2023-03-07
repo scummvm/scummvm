@@ -75,6 +75,8 @@ private:
 	uint16 _numLines;
 	uint16 _fontID;
 
+	bool _lastResponseisMultiline;
+
 	bool _needsTextRedraw;
 	float _scrollbarPos;
 
