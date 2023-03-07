@@ -38,7 +38,7 @@
 
 namespace Tetraedge {
 
-static const char *LAST_SAVE_CONF = "lastSaveSlot";
+static const char *LAST_SAVE_CONF = "last_save_slot";
 
 MainMenu::MainMenu() : _entered(false), _confirmingTuto(false) {
 	_newGameConfirm.onButtonYesSignal().add(this, &MainMenu::onNewGameConfirmed);
@@ -184,12 +184,9 @@ void MainMenu::tryDisableButton(const Common::String &btnName) {
 
 bool MainMenu::onContinueGameButtonValidated() {
 	Application *app = g_engine->getApplication();
-	const Common::String lastSave = ConfMan.get(LAST_SAVE_CONF);
-	if (!lastSave.empty()) {
-		int saveSlot = lastSave.asUint64();
-		g_engine->loadGameState(saveSlot);
-		return false;
-	}
+	int lastSave = ConfMan.hasKey(LAST_SAVE_CONF) ? ConfMan.getInt(LAST_SAVE_CONF) : -1;
+	if (lastSave >= 0)
+		g_engine->loadGameState(lastSave);
 
 	tryDisableButton("newGameButton");
 	tryDisableButton("continueGameButton");
@@ -263,7 +260,7 @@ bool MainMenu::onNewGameButtonValidated() {
 	// with "menus/confirm/confirmNewGame.lua"
 	// because only one save is allowed.  We just clear last
 	// save slot number and go ahead and start.
-	ConfMan.set(LAST_SAVE_CONF, "");
+	ConfMan.setInt(LAST_SAVE_CONF, -1);
 	onNewGameConfirmed();
 	return false;
 }

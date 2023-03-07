@@ -72,7 +72,7 @@ TetraedgeEngine::~TetraedgeEngine() {
 }
 
 /*static*/
-Common::StringArray TetraedgeEngine::splitString (const Common::String &text, char c) {
+Common::StringArray TetraedgeEngine::splitString(const Common::String &text, char c) {
 	Common::StringArray values;
 
 	Common::String str = text;
@@ -300,6 +300,15 @@ Graphics::RendererType TetraedgeEngine::preferredRendererType() const {
 	}
 
 	return matchingRendererType;
+}
+
+Common::Error TetraedgeEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::Error result = Engine::saveGameState(slot, desc, isAutosave);
+	if (result.getCode() == Common::kNoError) {
+		ConfMan.setInt("last_save_slot", slot);
+		ConfMan.flushToDisk();
+	}
+	return result;
 }
 
 /*static*/
