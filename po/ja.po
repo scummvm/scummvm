@@ -7142,7 +7142,9 @@ msgstr "オンラインサーバー："
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
-msgstr "接続するサーバーのアドレスです。 \"https://\" または \"http://\"スキーマで始まる必要があります。"
+msgstr ""
+"接続するサーバーのアドレスです。 \"https://\" または \"http://\"スキーマで始"
+"まる必要があります。"
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enable online competitive mods"
@@ -7160,7 +7162,9 @@ msgstr "マルチプレイサーバーへの接続を許可"
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
-msgstr "オンラインマルチプレイのホストおよび参加を可能とするサーバーへの接続を切り替えます。"
+msgstr ""
+"オンラインマルチプレイのホストおよび参加を可能とするサーバーへの接続を切り替"
+"えます。"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Host games over LAN"

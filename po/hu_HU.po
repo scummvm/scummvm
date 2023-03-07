@@ -7262,7 +7262,8 @@ msgstr "Online kompetitív modok engedélyezése"
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enables custom-made modifications intented for online competitive play."
-msgstr "Lehetővé teszi az egyedi módosításokat az online versenyszerű játékhoz."
+msgstr ""
+"Lehetővé teszi az egyedi módosításokat az online versenyszerű játékhoz."
 
 #: engines/scumm/dialogs.cpp:1379
 msgid "Enable connection to Multiplayer Server"
