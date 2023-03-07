@@ -486,7 +486,11 @@ enet_socket_receive (ENetSocket socket,
 
     if (address != NULL)
     {
+#ifdef AMIGAOS
+        msgHdr.msg_name = (char *)& sin;
+#else
         msgHdr.msg_name = & sin;
+#endif
         msgHdr.msg_namelen = sizeof (struct sockaddr_in);
     }
 
