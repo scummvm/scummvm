@@ -7,7 +7,7 @@
 # Core definitions
 .core-defs:
   variables:
-    JNI_PATH: backends/platform/libretro/build
+    JNI_PATH: backends/platform/libretro
     MAKEFILE_PATH: backends/platform/libretro
     CORENAME: scummvm
 
