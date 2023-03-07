@@ -570,15 +570,12 @@ $(TARGET): libnx-ln $(OBJS) libdeps.a libdetect.a
 	$(MKDIR) libtemp
 	cp $+ libtemp/
 	$(AR) -M < $(ROOT_PATH)/script.mri
-else ifeq ($(platform), ctr)
+else ifeq ($(STATIC_LINKING), 1)
 $(TARGET): $(OBJS) libdeps.a libdetect.a
 	$(MKDIR) libtemp
 	cp $+ libtemp/
-	$(AR) -M < $(ROOT_PATH)/script.mri
-else ifeq ($(STATIC_LINKING), 1)
-$(TARGET): $(DETECT_OBJS) $(OBJS) libdeps.a libdetect.a
 	@echo Linking $@...
-	$(HIDE)$(AR) $@ $(wildcard *.o) $(wildcard */*.o) $(wildcard */*/*.o) $(wildcard */*/*/*.o) $(wildcard */*/*/*/*.o)  $(wildcard */*/*/*/*/*.o)
+	$(AR) -M < $(ROOT_PATH)/script.mri
 else
 $(TARGET): $(DETECT_OBJS) $(OBJS) libdeps.a
 	@echo Linking $@...
