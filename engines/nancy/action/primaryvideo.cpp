@@ -233,7 +233,10 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 void PlayPrimaryVideoChan0::execute() {
 	PlayPrimaryVideoChan0 *activeVideo = NancySceneState.getActivePrimaryVideo();
 	if (activeVideo != this && activeVideo != nullptr) {
-		if (!activeVideo->_isDone) {
+		if (    !activeVideo->_isDone ||
+				activeVideo->_defaultNextScene == kDefaultNextSceneEnabled ||
+				activeVideo->_pickedResponse != -1  ) {
+
 			return;
 		} else {
 			// Chained videos, hide the previous one and start this
