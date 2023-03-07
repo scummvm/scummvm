@@ -123,9 +123,75 @@ void deobfuscateDrillerCPCVirtualWorlds(byte *memBuffer) {
 	}
 }
 
+byte kCPCPalettePinkBlueWhiteData[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0xff},
+	{0xff, 0x55, 0xff},
+	{0xff, 0xff, 0xff},
+};
+
+Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file) {
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	surface->fillRect(Common::Rect(0, 0, 320, 200), 0);
+
+	int x, y;
+	file->seek(0x80);
+	for (int block = 0; block < 8; block++) {
+		for (int line = 0; line < 25; line++) {
+			for (int offset = 0; offset < 320 / 4; offset++) {
+				byte cpc_byte = file->readByte(); // Get CPC byte
+
+				// Process first pixel
+				int pixel_0 = ((cpc_byte & 0x08) >> 2) | ((cpc_byte & 0x80) >> 7); // %Aa
+				y = line * 8 + block ; // Coord Y for the pixel
+				x = 4 * offset + 0; // Coord X for the pixel
+				surface->setPixel(x, y, pixel_0);
+
+				// Process second pixel
+				int pixel_1 = ((cpc_byte & 0x04) >> 1) | ((cpc_byte & 0x40) >> 6); // %Bb
+				y = line * 8 + block ; // Coord Y for the pixel
+				x = 4 * offset + 1; // Coord X for the pixel
+				surface->setPixel(x, y, pixel_1);
+
+				// Process third pixel
+				int pixel_2 = (cpc_byte & 0x02)        | ((cpc_byte & 0x20) >> 5); // %Cc
+				y = line * 8 + block ; // Coord Y for the pixel
+				x = 4 * offset + 2; // Coord X for the pixel
+				surface->setPixel(x, y, pixel_2);
+
+				// Process fourth pixel
+				int pixel_3 = ((cpc_byte & 0x01) << 1) | ((cpc_byte & 0x10) >> 4); // %Dd
+				y = line * 8 + block ; // Coord Y for the pixel
+				x = 4 * offset + 3; // Coord X for the pixel
+				surface->setPixel(x, y, pixel_3);
+			}
+		}
+		// We should skip the next 48 bytes, because they are padding the block to be 2048 bytes
+		file->seek(48, SEEK_CUR);
+	}
+	return surface;
+}
+
 void DrillerEngine::loadAssetsCPCFullGame() {
 	Common::File file;
-	loadBundledImages();
+
+	file.open("DSCN1.BIN");
+	if (!file.isOpen())
+		error("Failed to open DSCN1.BIN");
+
+	_title = readCPCImage(&file);
+	_title->setPalette((byte*)&kCPCPalettePinkBlueWhiteData, 0, 4);
+
+	file.close();
+	file.open("DSCN2.BIN");
+	if (!file.isOpen())
+		error("Failed to open DSCN2.BIN");
+
+	_border = readCPCImage(&file);
+	_border->setPalette((byte*)&kCPCPalettePinkBlueWhiteData, 0, 4);
+
+	file.close();
 	file.open("DRILL.BIN");
 
 	if (!file.isOpen())
@@ -153,30 +219,30 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(_currentArea->_name, 200, 188, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 149, 148, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 149, 156, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 149, 164, front, back, surface);
+	drawStringInSurface(_currentArea->_name, 200, 185, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 149, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 149, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 149, 161, front, back, surface);
 	if (_playerHeightNumber >= 0)
-		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 54, 164, front, back, surface);
+		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 54, 161, front, back, surface);
 	else
-		drawStringInSurface(Common::String::format("%s", "J"), 54, 164, front, back, surface);
+		drawStringInSurface(Common::String::format("%s", "J"), 54, 161, front, back, surface);
 
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 148, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 44, 156, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 239, 132, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 46, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 44, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%07d", score), 239, 129, front, back, surface);
 
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
-	drawStringInSurface(Common::String::format("%02d", hours), 209, 11, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", minutes), 232, 11, front, back, surface);
-	drawStringInSurface(Common::String::format("%02d", seconds), 254, 11, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", hours), 209, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", minutes), 232, 8, front, back, surface);
+	drawStringInSurface(Common::String::format("%02d", seconds), 254, 8, front, back, surface);
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 191, 180, back, front, surface);
+		drawStringInSurface(message, 191, 177, back, front, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else if (_messagesList.size() > 0) {
@@ -187,24 +253,24 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 		else
 			message = _messagesList[1];
 
-		drawStringInSurface(message, 191, 180, front, back, surface);
+		drawStringInSurface(message, 191, 177, front, back, surface);
 	}
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
 
 	if (energy >= 0) {
-		Common::Rect backBar(25, 187, 89 - energy, 194);
+		Common::Rect backBar(25, 184, 89 - energy, 191);
 		surface->fillRect(backBar, back);
-		Common::Rect energyBar(88 - energy, 187, 88, 194);
+		Common::Rect energyBar(88 - energy, 184, 88, 191);
 		surface->fillRect(energyBar, front);
 	}
 
 	if (shield >= 0) {
-		Common::Rect backBar(25, 180, 89 - shield, 186);
+		Common::Rect backBar(25, 177, 89 - shield, 183);
 		surface->fillRect(backBar, back);
 
-		Common::Rect shieldBar(88 - shield, 180, 88, 186);
+		Common::Rect shieldBar(88 - shield, 177, 88, 183);
 		surface->fillRect(shieldBar, front);
 	}
 }
