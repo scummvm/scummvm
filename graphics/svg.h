@@ -48,8 +48,6 @@ private:
 	NSVGrasterizer *_rasterizer;
 
 	Graphics::ManagedSurface *_render;
-	int _cachedW, _cachedH;
-	byte *_cache;
 
 	Graphics::PixelFormat *_pixelformat;
 };
