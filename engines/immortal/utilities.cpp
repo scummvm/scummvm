@@ -108,4 +108,4 @@ bool Utilities::insideRect(uint8 rectX, uint8 rectY, uint8 w, uint8 h, uint8 poi
 	return false;
 }
 
-}; // namespace Immortal
+} // namespace Immortal
