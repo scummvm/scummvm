@@ -245,7 +245,7 @@ const byte *parseExpression(const byte *lpBuf, const Common::UnalignedPtr<MpalHa
 }
 
 /**
- * Calculate the value of a mathamatical expression
+ * Calculate the value of a mathematical expression
  *
  * @param h					Handle to the expression
  * @returns		Numeric value
