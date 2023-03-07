@@ -2875,7 +2875,7 @@ static void AnimSaucer(void) {
 		for (i = delay; i--;) ; /*TODO: weak delay*/
 		delay += 500;
 	}
-};
+}
 
 extern int16 loadSplash(const char *filename);
 
