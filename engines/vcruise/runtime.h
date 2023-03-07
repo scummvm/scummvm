@@ -66,6 +66,8 @@ enum GameState {
 	kGameStateQuit,					// Quitting
 	kGameStateIdle,					// Waiting for input events
 	kGameStateScript,				// Running a script
+	kGameStateGyroIdle,				// Waiting for mouse movement to run a gyro
+	kGameStateGyroAnimation,		// Animating a gyro
 
 	kGameStatePanLeft,
 	kGameStatePanRight,
@@ -77,11 +79,12 @@ struct AnimationDef {
 	int animNum;	// May be negative if reversed
 	uint firstFrame;
 	uint lastFrame;	// Inclusive
+
+	Common::Rect constraintRect;
 };
 
 struct RoomDef {
 	Common::HashMap<Common::String, AnimationDef> animations;
-	Common::HashMap<Common::String, Common::Rect> rects;
 	Common::HashMap<Common::String, uint> vars;
 	Common::HashMap<Common::String, int> values;
 	Common::HashMap<Common::String, Common::String> texts;
@@ -116,6 +119,7 @@ struct ScriptEnvironmentVars {
 	ScriptEnvironmentVars();
 
 	bool lmb;
+	bool lmbDrag;
 	uint panInteractionID;
 	uint fpsOverride;
 };
@@ -167,6 +171,41 @@ private:
 		Common::Rect rect;
 
 		void init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt);
+	};
+
+	struct Gyro {
+		int32 currentState;
+		int32 requiredState;
+
+		Gyro();
+
+		void reset();
+	};
+
+	struct GyroState {
+		GyroState();
+
+		void reset();
+
+		static const uint kNumGyros = 4;
+
+		Gyro gyros[kNumGyros];
+
+		uint completeInteraction;
+		uint failureInteraction;
+		uint frameSeparation;
+
+		uint activeGyro;
+		uint dragMargin;
+		uint maxValue;
+
+		AnimationDef negAnim;
+		AnimationDef posAnim;
+		bool isVertical;
+
+		Common::Point dragBasePoint;
+		uint dragBaseState;
+		bool isWaitingForAnimation;
 	};
 
 	enum OSEventType {
@@ -221,6 +260,9 @@ private:
 	bool runScript();
 	bool runWaitForAnimation();
 	bool runWaitForFacing();
+	bool runGyroIdle();
+	bool runGyroAnimation();
+	void exitGyroIdle();
 	void continuePlayingAnimation(bool loop, bool useStopFrame, bool &outEndedAnimation);
 	void drawSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void commitSectionToScreen(const RenderSection &section, const Common::Rect &rect);
@@ -236,6 +278,7 @@ private:
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
 	bool dischargeIdleMouseMove();
+	bool dischargeIdleMouseDown();
 	bool dischargeIdleClick();
 	void loadMap(Common::SeekableReadStream *stream);
 
@@ -256,7 +299,7 @@ private:
 	Common::SharedPtr<Script> findScriptForInteraction(uint interactionID) const;
 
 	void detectPanoramaDirections();
-	void detectPanoramaMouseMovement();
+	void detectPanoramaMouseMovement(uint32 timestamp);
 	void panoramaActivate();
 
 	bool computeFaceDirectionAnimation(uint desiredDirection, const AnimationDef *&outAnimDef, uint &outInitialFrame, uint &outStopFrame);
@@ -302,6 +345,7 @@ private:
 	void scriptOpDup(ScriptArg_t arg);
 	void scriptOpSay3(ScriptArg_t arg);
 	void scriptOpSetTimer(ScriptArg_t arg);
+	void scriptOpGetTimer(ScriptArg_t arg);
 	void scriptOpLoSet(ScriptArg_t arg);
 	void scriptOpLoGet(ScriptArg_t arg);
 	void scriptOpHiSet(ScriptArg_t arg);
@@ -343,11 +387,14 @@ private:
 	uint _panCursors[kPanCursorMaxCount];
 
 	Common::HashMap<Common::String, StackValue_t> _namedCursors;
+	Common::HashMap<StackValue_t, uint> _scriptCursorIDToResourceIDOverride;
 
 	OSystem *_system;
 	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
 	uint _screenNumber;
 	uint _direction;
+
+	GyroState _gyros;
 
 	AnimationDef _panLeftAnimationDef;
 	AnimationDef _panRightAnimationDef;
@@ -407,12 +454,15 @@ private:
 	uint _animLastFrame;
 	uint _animStopFrame;
 	uint _animFrameRateLock;
+	Common::Rect _animConstraintRect;
 	uint32 _animStartTime;
 	uint32 _animFramesDecoded;
 	uint _loadedAnimation;
 	bool _animPlayWhileIdle;
 
 	bool _idleIsOnInteraction;
+	bool _idleHaveClickInteraction;
+	bool _idleHaveDragInteraction;
 	uint _idleInteractionID;
 
 	Audio::Mixer *_mixer;
@@ -440,7 +490,7 @@ private:
 
 	Common::Array<OSEvent> _pendingEvents;
 
-	static const uint kAnimDefStackArgs = 3;
+	static const uint kAnimDefStackArgs = 7;
 
 	static const uint kCursorArrow = 0;
 

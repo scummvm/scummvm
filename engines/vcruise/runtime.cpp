@@ -69,7 +69,7 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	return screenDirections[screen][direction].get();
 }
 
-ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), panInteractionID(0), fpsOverride(0) {
+ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), panInteractionID(0), fpsOverride(0) {
 }
 
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
@@ -81,13 +81,47 @@ void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics:
 Runtime::OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)) {
 }
 
+Runtime::Gyro::Gyro() {
+	reset();
+}
+
+void Runtime::Gyro::reset() {
+	currentState = 0;
+	requiredState = 0;
+}
+
+Runtime::GyroState::GyroState() {
+	reset();
+}
+
+void Runtime::GyroState::reset() {
+	for (uint i = 0; i < kNumGyros; i++)
+		gyros[i].reset();
+
+	completeInteraction = 0;
+	failureInteraction = 0;
+	frameSeparation = 1;
+
+	activeGyro = 0;
+	dragMargin = 0;
+	maxValue = 0;
+
+	negAnim = AnimationDef();
+	posAnim = AnimationDef();
+	isVertical = false;
+
+	dragBasePoint = Common::Point(0, 0);
+	dragBaseState = 0;
+	isWaitingForAnimation = false;
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _scriptNextInstruction(0),
 	  _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
-	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleInteractionID(0),
+	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0),
 	  _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _panoramaState(kPanoramaStateInactive) {
 
@@ -145,11 +179,15 @@ void Runtime::loadCursors(const char *exeName) {
 	}
 
 	if (_gameID == GID_REAH) {
-		_namedCursors["CUR_TYL"] = 13;		// Tyl = back
+		// For some reason most cursors map to their resource IDs, except for these
+		_scriptCursorIDToResourceIDOverride[13] = 35;	// Points to finger (instead of back up)
+		_scriptCursorIDToResourceIDOverride[22] = 13;	// Points to back up (instead of up arrow)
+
+		_namedCursors["CUR_TYL"] = 22;		// Tyl = back
 		//_namedCursors["CUR_NIC"] = ?		// Nic = nothing
 		//_namedCursors["CUR_WEZ"] = 50		// Wez = call? FIXME
 		_namedCursors["CUR_LUPA"] = 21;		// Lupa = magnifier, could be 36 too?
-		_namedCursors["CUR_NAC"] = 35;		// Nac = top?  Not sure.  But this is the finger pointer.
+		_namedCursors["CUR_NAC"] = 13;		// Nac = top?  Not sure.  But this is the finger pointer.
 		_namedCursors["CUR_PRZOD"] = 1;		// Przod = forward
 
 		// CUR_ZOSTAW is in the executable memory but appears to be unused
@@ -202,6 +240,12 @@ bool Runtime::runFrame() {
 			break;
 		case kGameStateWaitingForFacing:
 			moreActions = runWaitForFacing();
+			break;
+		case kGameStateGyroIdle:
+			moreActions = runGyroIdle();
+			break;
+		case kGameStateGyroAnimation:
+			moreActions = runGyroAnimation();
 			break;
 		default:
 			error("Unknown game state");
@@ -259,18 +303,22 @@ bool Runtime::runIdle() {
 	if (_debugMode)
 		drawDebugOverlay();
 
-	detectPanoramaMouseMovement();
+	uint32 timestamp = g_system->getMillis();
+	detectPanoramaMouseMovement(timestamp);
 
 	OSEvent osEvent;
 	while (popOSEvent(osEvent)) {
 		if (osEvent.type == kOSEventTypeMouseMove) {
+			detectPanoramaMouseMovement(osEvent.timestamp);
+
 			bool changedState = dischargeIdleMouseMove();
 			if (changedState)
 				return true;
+
+
 		} else if (osEvent.type == kOSEventTypeLButtonUp) {
 			PanoramaState oldPanoramaState = _panoramaState;
 			_panoramaState = kPanoramaStateInactive;
-			_idleIsOnInteraction = false;
 
 			if (_lmbReleaseWasClick) {
 				bool changedState = dischargeIdleClick();
@@ -280,13 +328,20 @@ bool Runtime::runIdle() {
 
 			// If the released from panorama mode, pick up any interactions at the new mouse location, and change the mouse back
 			if (oldPanoramaState != kPanoramaStateInactive) {
-				debug(1, "Changing cursor to arrow due to panorama deactivation");
 				changeToCursor(_cursors[kCursorArrow]);
+
+				// Clear idle interaction so that if a drag occurs but doesn't trigger a panorama or other state change,
+				// interactions are re-detected here.
+				_idleIsOnInteraction = false;
 
 				bool changedState = dischargeIdleMouseMove();
 				if (changedState)
 					return true;
 			}
+		} else if (osEvent.type == kOSEventTypeLButtonDown) {
+			bool changedState = dischargeIdleMouseDown();
+			if (changedState)
+				return true;
 		}
 	}
 
@@ -384,6 +439,122 @@ bool Runtime::runWaitForFacing() {
 	return false;
 }
 
+bool Runtime::runGyroIdle() {
+	if (!_lmbDown) {
+		exitGyroIdle();
+		return true;
+	}
+
+	int32 deltaCoordinate = 0;
+
+	if (_gyros.isVertical)
+		deltaCoordinate = _mousePos.y - _gyros.dragBasePoint.y;
+	else
+		deltaCoordinate = _gyros.dragBasePoint.x - _mousePos.x;
+
+
+	// Start the first step at half margin
+	int32 halfDragMargin = _gyros.dragMargin / 2;
+	if (deltaCoordinate < 0)
+		deltaCoordinate -= halfDragMargin;
+	else
+		deltaCoordinate += halfDragMargin;
+
+	int32 deltaState = deltaCoordinate / static_cast<int32>(_gyros.dragMargin);
+	int32 targetStateInitial = static_cast<int32>(_gyros.dragBaseState) + deltaState;
+
+	int32 targetState = 0;
+	if (targetStateInitial > 0) {
+		targetState = targetStateInitial;
+		if (static_cast<uint>(targetState) > _gyros.maxValue)
+			targetState = _gyros.maxValue;
+	}
+
+	Gyro &gyro = _gyros.gyros[_gyros.activeGyro];
+	if (targetState < gyro.currentState) {
+		AnimationDef animDef = _gyros.negAnim;
+
+		animDef.firstFrame += ((_gyros.maxValue - gyro.currentState) * _gyros.frameSeparation);
+		animDef.lastFrame = animDef.firstFrame + _gyros.frameSeparation;
+
+		changeAnimation(animDef, false);
+
+		gyro.currentState--;
+		_gameState = kGameStateGyroAnimation;
+		return true;
+	} else if (targetState > gyro.currentState) {
+		AnimationDef animDef = _gyros.posAnim;
+
+		animDef.firstFrame += gyro.currentState * _gyros.frameSeparation;
+		animDef.lastFrame = animDef.firstFrame + _gyros.frameSeparation;
+
+		changeAnimation(animDef, false);
+
+		gyro.currentState++;
+		_gameState = kGameStateGyroAnimation;
+		return true;
+	}
+
+	OSEvent evt;
+	while (popOSEvent(evt)) {
+		if (evt.type == kOSEventTypeLButtonUp) {
+			exitGyroIdle();
+			return true;
+		}
+	}
+
+	// Yield
+	return false;
+}
+
+bool Runtime::runGyroAnimation() {
+	bool animEnded = false;
+	continuePlayingAnimation(false, false, animEnded);
+
+	if (animEnded) {
+		_gameState = kGameStateGyroIdle;
+		return true;
+	}
+
+	// Yield
+	return false;
+}
+
+void Runtime::exitGyroIdle() {
+	bool succeeded = true;
+	for (uint i = 0; i < GyroState::kNumGyros; i++) {
+		const Gyro &gyro = _gyros.gyros[i];
+		if (gyro.currentState != gyro.requiredState) {
+			succeeded = false;
+			break;
+		}
+	}
+
+	// Activate the corresponding failure or success interaction if present
+	if (_scriptSet) {
+		RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
+		if (roomScriptIt != _scriptSet->roomScripts.end()) {
+			const ScreenScriptSetMap_t &screenScriptsMap = roomScriptIt->_value->screenScripts;
+			ScreenScriptSetMap_t::const_iterator screenScriptIt = screenScriptsMap.find(_screenNumber);
+			if (screenScriptIt != screenScriptsMap.end()) {
+				const ScreenScriptSet &screenScriptSet = *screenScriptIt->_value;
+
+				ScriptMap_t::const_iterator interactionScriptIt = screenScriptSet.interactionScripts.find(succeeded ? _gyros.completeInteraction : _gyros.failureInteraction);
+				if (interactionScriptIt != screenScriptSet.interactionScripts.end()) {
+					const Common::SharedPtr<Script> &script = interactionScriptIt->_value;
+					if (script) {
+						activateScript(script, ScriptEnvironmentVars());
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	_havePendingReturnToIdleState = true;
+	_gameState = kGameStateIdle;
+}
+
 void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAnimationEnded) {
 	outAnimationEnded = false;
 
@@ -461,6 +632,9 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 		_animFramesDecoded++;
 
 		Common::Rect copyRect = Common::Rect(0, 0, surface->w, surface->h);
+
+		if (!_animConstraintRect.isEmpty())
+			copyRect = copyRect.findIntersectingRect(_animConstraintRect);
 
 		Common::Rect constraintRect = Common::Rect(0, 0, _gameSection.rect.width(), _gameSection.rect.height());
 
@@ -556,6 +730,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Dup);
 			DISPATCH_OP(Say3);
 			DISPATCH_OP(SetTimer);
+			DISPATCH_OP(GetTimer);
 			DISPATCH_OP(LoSet);
 			DISPATCH_OP(LoGet);
 			DISPATCH_OP(HiSet);
@@ -747,7 +922,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 	_activeScreenNumber = screenNumber;
 
 	if (changedRoom) {
-		// Scripts are not allowed
+		// This shouldn't happen when running a script
 		assert(!_activeScript);
 
 		_scriptSet.reset();
@@ -771,6 +946,8 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 	}
 
 	if (changedScreen) {
+		_gyros.reset();
+
 		if (_scriptSet) {
 			RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
 			if (roomScriptIt != _scriptSet->roomScripts.end()) {
@@ -806,6 +983,8 @@ void Runtime::returnToIdleState() {
 	}
 
 	_idleIsOnInteraction = false;
+	_idleHaveClickInteraction = false;
+	_idleHaveDragInteraction = false;
 
 	// Do this before detectPanoramaMouseMovement so continuous panorama keeps the correct cursor
 	changeToCursor(_cursors[kCursorArrow]);
@@ -813,7 +992,7 @@ void Runtime::returnToIdleState() {
 	detectPanoramaDirections();
 
 	_panoramaState = kPanoramaStateInactive;
-	detectPanoramaMouseMovement();
+	detectPanoramaMouseMovement(g_system->getMillis());
 
 	(void) dischargeIdleMouseMove();
 }
@@ -848,6 +1027,8 @@ bool Runtime::dischargeIdleMouseMove() {
 		if (_idleIsOnInteraction && (!isOnInteraction || interactionID != _idleInteractionID)) {
 			// Mouse left the previous interaction
 			_idleIsOnInteraction = false;
+			_idleHaveClickInteraction = false;
+			_idleHaveDragInteraction = false;
 			changeToCursor(_cursors[kCursorArrow]);
 		}
 
@@ -891,26 +1072,32 @@ bool Runtime::dischargeIdleMouseMove() {
 	return false;
 }
 
-bool Runtime::dischargeIdleClick() {
-	const MapScreenDirectionDef *sdDef = _map.getScreenDirection(_screenNumber, _direction);
+bool Runtime::dischargeIdleMouseDown() {
+	if (_idleIsOnInteraction && _idleHaveDragInteraction) {
+		// Interaction, is there a script?
+		Common::SharedPtr<Script> script = findScriptForInteraction(_idleInteractionID);
 
-	Common::Point relMouse(_mousePos.x - _gameSection.rect.left, _mousePos.y - _gameSection.rect.top);
+		_idleIsOnInteraction = false; // ?
 
-	bool isOnInteraction = false;
-	uint interactionID = 0;
-	if (sdDef) {
-		for (const InteractionDef &idef : sdDef->interactions) {
-			if (idef.rect.contains(relMouse)) {
-				isOnInteraction = true;
-				interactionID = idef.interactionID;
-				break;
-			}
+		if (script) {
+			ScriptEnvironmentVars vars;
+			vars.lmbDrag = true;
+
+			activateScript(script, vars);
+			return true;
 		}
 	}
 
-	if (isOnInteraction) {
+	// Didn't do anything
+	return false;
+}
+
+bool Runtime::dischargeIdleClick() {
+	if (_idleIsOnInteraction && _idleHaveClickInteraction) {
 		// Interaction, is there a script?
-		Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
+		Common::SharedPtr<Script> script = findScriptForInteraction(_idleInteractionID);
+
+		_idleIsOnInteraction = false;	// ?
 
 		if (script) {
 			ScriptEnvironmentVars vars;
@@ -1030,6 +1217,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 	_animPendingDecodeFrame = initialFrame;
 	_animFirstFrame = animDef.firstFrame;
 	_animLastFrame = animDef.lastFrame;
+	_animConstraintRect = animDef.constraintRect;
 	_animFrameRateLock = 0;
 
 	if (consumeFPSOverride) {
@@ -1048,6 +1236,11 @@ AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
 	def.firstFrame = args[1];
 	def.lastFrame = args[2];
 
+	def.constraintRect.left = args[3];
+	def.constraintRect.top = args[4];
+	def.constraintRect.right = args[5];
+	def.constraintRect.bottom = args[6];
+
 	return def;
 }
 
@@ -1059,6 +1252,11 @@ void Runtime::pushAnimDef(const AnimationDef &animDef) {
 	_scriptStack.push_back(animDef.animNum);
 	_scriptStack.push_back(animDef.firstFrame);
 	_scriptStack.push_back(animDef.lastFrame);
+
+	_scriptStack.push_back(animDef.constraintRect.left);
+	_scriptStack.push_back(animDef.constraintRect.top);
+	_scriptStack.push_back(animDef.constraintRect.right);
+	_scriptStack.push_back(animDef.constraintRect.bottom);
 }
 
 void Runtime::activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars) {
@@ -1088,14 +1286,11 @@ bool Runtime::parseIndexDef(IndexParseType parseType, uint roomNumber, const Com
 		uint lastFrame = 0;
 		if (sscanf(value.c_str(), "%i, %u, %u", &animNum, &firstFrame, &lastFrame) != 3)
 			error("Malformed room animation def '%s'", value.c_str());
-
 		
-		AnimationDef animDef;
+		AnimationDef &animDef = _roomDefs[roomNumber]->animations[key];
 		animDef.animNum = animNum;
 		animDef.firstFrame = firstFrame;
 		animDef.lastFrame = lastFrame;
-
-		_roomDefs[roomNumber]->animations[key] = animDef;
 	} break;
 	case kIndexParseTypeRRoom: {
 		Common::String name;
@@ -1109,7 +1304,9 @@ bool Runtime::parseIndexDef(IndexParseType parseType, uint roomNumber, const Com
 		int numValuesRead = sscanf(value.c_str(), "%i, %i, %i, %i", &left, &top, &width, &height);
 
 		if (numValuesRead == 4) {
-			_roomDefs[roomNumber]->rects[key] = Common::Rect(left, top, left + width, top + height);
+			AnimationDef &animDef = _roomDefs[roomNumber]->animations[key];
+
+			animDef.constraintRect = Common::Rect(left, top, left + width, top + height);
 		} else {
 			// Line 4210 in Reah contains an animation def instead of a rect def, so we need to tolerate invalid values here
 			warning("Invalid rect def in logic index '%s'", value.c_str());
@@ -1227,8 +1424,8 @@ void Runtime::detectPanoramaDirections() {
 		_panoramaDirectionFlags |= kPanoramaHorizFlags;
 }
 
-void Runtime::detectPanoramaMouseMovement() {
-	if (_panoramaState == kPanoramaStateInactive && (_lmbDragging || (_lmbDown && (g_system->getMillis() - _lmbDownTime) >= 500)))
+void Runtime::detectPanoramaMouseMovement(uint32 timestamp) {
+	if (_panoramaState == kPanoramaStateInactive && (_lmbDragging || (_lmbDown && (timestamp - _lmbDownTime) >= 500)))
 		panoramaActivate();
 }
 
@@ -1378,7 +1575,14 @@ void Runtime::scriptOpAngle(ScriptArg_t arg) {
 	_scriptStack.push_back((stackArgs[0] == static_cast<StackValue_t>(_direction)) ? 1 : 0);
 }
 
-OPCODE_STUB(AngleGGet)
+void Runtime::scriptOpAngleGGet(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	if (stackArgs[0] < 0 || stackArgs[0] >= static_cast<StackValue_t>(GyroState::kNumGyros))
+		error("Invalid gyro index in angleGGet op");
+
+	_scriptStack.push_back(_gyros.gyros[stackArgs[0]].currentState);
+}
 
 void Runtime::scriptOpSpeed(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -1495,7 +1699,24 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 }
 
 OPCODE_STUB(AnimN)
-OPCODE_STUB(AnimG)
+
+void Runtime::scriptOpAnimG(ScriptArg_t arg) {
+	TAKE_STACK(kAnimDefStackArgs * 2 + 1);
+
+	_gyros.posAnim = stackArgsToAnimDef(stackArgs + 0);
+	_gyros.negAnim = stackArgsToAnimDef(stackArgs + kAnimDefStackArgs);
+	_gyros.isVertical = (stackArgs[kAnimDefStackArgs * 2 + 0] != 0);
+
+	if (_gyros.isVertical)
+		changeToCursor(_cursors[_panCursors[kPanCursorDraggableUp | kPanCursorDraggableDown]]);
+	else
+		changeToCursor(_cursors[_panCursors[kPanCursorDraggableHoriz]]);
+
+	_gyros.dragBasePoint = _mousePos;
+	_gyros.dragBaseState = _gyros.gyros[_gyros.activeGyro].currentState;
+
+	_gameState = kGameStateGyroIdle;
+}
 
 void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
@@ -1567,7 +1788,13 @@ void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
 	if (stackArgs[0] < 0 || static_cast<uint>(stackArgs[0]) >= _cursors.size())
 		error("Invalid cursor ID");
 
-	changeToCursor(_cursors[stackArgs[0]]);
+	uint resolvedCursorID = stackArgs[0];
+
+	Common::HashMap<StackValue_t, uint>::const_iterator overrideIt = _scriptCursorIDToResourceIDOverride.find(resolvedCursorID);
+	if (overrideIt != _scriptCursorIDToResourceIDOverride.end())
+		resolvedCursorID = overrideIt->_value;
+
+	changeToCursor(_cursors[resolvedCursorID]);
 }
 
 void Runtime::scriptOpSetRoom(ScriptArg_t arg) {
@@ -1577,15 +1804,25 @@ void Runtime::scriptOpSetRoom(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpLMB(ScriptArg_t arg) {
-	if (!_scriptEnv.lmb)
+	if (!_scriptEnv.lmb) {
+		_idleHaveClickInteraction = true;
 		terminateScript();
+	}
 }
 
 void Runtime::scriptOpLMB1(ScriptArg_t arg) {
-	warning("LMB1 script op not implemented");
+	if (!_scriptEnv.lmbDrag) {
+		_idleHaveDragInteraction = true;
+		terminateScript();
+	}
 }
 
-OPCODE_STUB(SoundS1)
+void Runtime::scriptOpSoundS1(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	warning("Sound play not implemented yet");
+	(void)stackArgs;
+}
 
 void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
 	TAKE_STACK(2);
@@ -1617,25 +1854,43 @@ void Runtime::scriptOpMusicDn(ScriptArg_t arg) {
 void Runtime::scriptOpParm1(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	warning("Parm1 is not implemented");
-	(void)stackArgs;
+	if (stackArgs[0] < 0 || static_cast<uint>(stackArgs[0]) >= GyroState::kNumGyros)
+		error("Invalid gyro index for Parm1");
+
+	uint gyroIndex = stackArgs[0];
+
+	Gyro &gyro = _gyros.gyros[gyroIndex];
+	gyro.currentState = stackArgs[1];
+	gyro.requiredState = stackArgs[2];
 }
 
 void Runtime::scriptOpParm2(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	warning("Parm2 is not implemented");
-	(void)stackArgs;
+	_gyros.completeInteraction = stackArgs[0];
+	_gyros.failureInteraction = stackArgs[1];
+	_gyros.frameSeparation = stackArgs[2];
+
+	if (_gyros.frameSeparation <= 0)
+		error("Invalid gyro frame separation");
 }
 
-void Runtime::scriptOpParm3(ScriptArg_t arg) {
+OPCODE_STUB(Parm3)
+
+void Runtime::scriptOpParmG(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	warning("Parm3 is not implemented");
-	(void)stackArgs;
-}
+	int32 gyroSlot = stackArgs[0];
+	int32 dragMargin = stackArgs[1];
+	int32 maxValue = stackArgs[2];
 
-OPCODE_STUB(ParmG)
+	if (gyroSlot < 0 || static_cast<uint>(gyroSlot) >= GyroState::kNumGyros)
+		error("Invalid gyro slot from ParmG op");
+
+	_gyros.activeGyro = gyroSlot;
+	_gyros.dragMargin = dragMargin;
+	_gyros.maxValue = maxValue;
+}
 
 void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) {
 	TAKE_STACK(3);
@@ -1692,6 +1947,18 @@ void Runtime::scriptOpSetTimer(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
 	_timers[static_cast<uint>(stackArgs[0])] = g_system->getMillis() + static_cast<uint32>(stackArgs[1]) * 1000u;
+}
+
+void Runtime::scriptOpGetTimer(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	bool isCompleted = false;
+
+	Common::HashMap<uint, uint32>::const_iterator timerIt = _timers.find(stackArgs[0]);
+	if (timerIt != _timers.end())
+		isCompleted = (g_system->getMillis() >= timerIt->_value);
+
+	_scriptStack.push_back(isCompleted ? 1 : 0);
 }
 
 void Runtime::scriptOpLoSet(ScriptArg_t arg) {

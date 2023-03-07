@@ -340,6 +340,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"dup", ProtoOp::kProtoOpScript, ScriptOps::kDup},
 	{"say3", ProtoOp::kProtoOpScript, ScriptOps::kSay3},
 	{"setTimer", ProtoOp::kProtoOpScript, ScriptOps::kSetTimer},
+	{"getTimer", ProtoOp::kProtoOpScript, ScriptOps::kGetTimer},
 	{"lo!", ProtoOp::kProtoOpScript, ScriptOps::kLoSet},
 	{"lo@", ProtoOp::kProtoOpScript, ScriptOps::kLoGet},
 	{"hi!", ProtoOp::kProtoOpScript, ScriptOps::kHiSet},
