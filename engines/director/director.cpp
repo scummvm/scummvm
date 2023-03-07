@@ -126,25 +126,19 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		_machineType = 9;	// Macintosh IIci
 	}
 
-if ( _machineType == 4 )         // setting Width , Height , colorDepth for Macintosh II
-{
+if (_machineType == 4) {  
     _wmWidth = 512;
     _wmHeight = 384;
     _colorDepth = 8;
-} 
-else if ( _machineType == 71 )    // setting Width , Height , colorDepth for Pippin
-{
+} else if (_machineType == 71) {  
     _wmWidth = 640;
     _wmHeight = 480;
     _colorDepth = 16;
-}
-else if ( _machineType == 256 )    // setting Width , Height , colorDepth for Windows
-{
+} else if (_machineType == 256) {  
     _wmWidth = 640;
     _wmHeight = 480;
     _colorDepth = 8;
-} 
-else {                           // setting Width , Height , colorDepth for OTHERS
+} else {
     _wmWidth = 1024;
     _wmHeight = 768;
     _colorDepth = 8;
