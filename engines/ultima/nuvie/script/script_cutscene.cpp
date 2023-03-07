@@ -1005,7 +1005,7 @@ static int nscript_input_poll(lua_State *L) {
 			event.kbd.keycode = keybinder->get_key_from_joy_events(&event);
 			if (event.kbd.keycode == Common::KEYCODE_INVALID)
 				// button isn't mapped or was in deadzone
-				return 0; // pretend nothing happened
+				continue; // pretend nothing happened
 
 			event.type = Common::EVENT_KEYDOWN;
 		}
@@ -1039,7 +1039,7 @@ static int nscript_input_poll(lua_State *L) {
 					key.keycode = Common::KEYCODE_RETURN;
 					break;
 				default:
-					if (keybinder->handle_always_available_keys(a)) return 0;
+					if (keybinder->handle_always_available_keys(a)) continue;
 					break;
 				}
 			}
