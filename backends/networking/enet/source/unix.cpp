@@ -448,7 +448,11 @@ enet_socket_send (ENetSocket socket,
         sin.sin_port = ENET_HOST_TO_NET_16 (address -> port);
         sin.sin_addr.s_addr = address -> host;
 
+#ifdef AMIGAOS
+        msgHdr.msg_name = (char *)& sin;
+#else
         msgHdr.msg_name = & sin;
+#endif
         msgHdr.msg_namelen = sizeof (struct sockaddr_in);
     }
 
