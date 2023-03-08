@@ -269,6 +269,13 @@ void CreateCharacters::printAttributes() {
 	}
 }
 
+void CreateCharacters::addSelection(int yStart, int num) {
+	Common::Rect r(170, 0, 320, 9);
+	r.translate(0, (yStart + num) * 9);
+
+	addButton(r, Common::KeyState((Common::KeyCode)(Common::KEYCODE_0 + num), '0' + num));
+}
+
 void CreateCharacters::printClasses() {
 	for (int classNum = KNIGHT; classNum <= SORCERER; ++classNum) {
 		setTextColor(_newChar._classesAllowed[classNum] ? 0 : 1);
@@ -276,11 +283,15 @@ void CreateCharacters::printClasses() {
 			classNum,
 			STRING[Common::String::format("stats.classes.%d", classNum)].c_str()
 		), ALIGN_LEFT, 170);
+
+		if (_newChar._classesAllowed[classNum])
+			addSelection(4, classNum);
 	}
 
 	setTextColor(0);
 	writeLine(10, Common::String::format("6) %s", STRING["stats.classes.6"].c_str()),
 		ALIGN_LEFT, 170);
+	addSelection(4, ROBBER);
 
 	writeLine(13, STRING["dialogs.create_characters.select_class"], ALIGN_MIDDLE, RIGHT_X);
 	writeLine(14, "(1-6)", ALIGN_MIDDLE, RIGHT_X);
@@ -294,6 +305,7 @@ void CreateCharacters::printRaces() {
 		writeLine(6 + i, Common::String::format("%d) %s", i,
 			STRING[Common::String::format("stats.races.%d", i)].c_str()),
 			ALIGN_LEFT, 170);
+		addSelection(6, i);
 	}
 
 	writeLine(13, STRING["dialogs.create_characters.select_race"], ALIGN_MIDDLE, RIGHT_X);
@@ -310,6 +322,7 @@ void CreateCharacters::printAlignments() {
 		writeLine(7 + i, Common::String::format("%d) %s", i,
 			STRING[Common::String::format("stats.alignments.%d", i)].c_str()),
 			ALIGN_LEFT, 170);
+		addSelection(7, i);
 	}
 
 	writeLine(13, STRING["dialogs.create_characters.select_alignment"], ALIGN_MIDDLE, RIGHT_X);
@@ -326,8 +339,10 @@ void CreateCharacters::printSexes() {
 
 	writeLine(9, "1) ", ALIGN_LEFT, 170);
 	writeString(STRING["stats.sex.1"]);
+	addSelection(8, 1);
 	writeLine(10, "2) ", ALIGN_LEFT, 170);
 	writeString(STRING["stats.sex.2"]);
+	addSelection(8, 2);
 
 	writeLine(14, STRING["dialogs.create_characters.select_sex"], ALIGN_MIDDLE, RIGHT_X);
 	writeLine(15, "(1-2)", ALIGN_MIDDLE, RIGHT_X);
@@ -532,6 +547,7 @@ void CreateCharacters::setState(State state) {
 	setButtonEnabled(2, _state == SELECT_PORTRAIT);
 	setButtonEnabled(3, _state == SELECT_PORTRAIT);
 	setButtonEnabled(4, _state == SELECT_PORTRAIT);
+	removeButtons(5, -1);
 
 	if (_state == SELECT_CLASS)
 		_newChar.reroll();

@@ -64,6 +64,16 @@ int ScrollView::addButton(const Common::Rect &r, KeybindingAction action) {
 	return _buttons.size() - 1;
 }
 
+void ScrollView::removeButtons(int start, int end) {
+	if (end == -1)
+		end = (int)_buttons.size() - 1;
+	else if (end == -2)
+		end = start;
+
+	for (; end >= start; --end)
+		_buttons.remove_at(end);
+}
+
 void ScrollView::resetSelectedButton() {
 	_selectedButton = -1;
 	redraw();

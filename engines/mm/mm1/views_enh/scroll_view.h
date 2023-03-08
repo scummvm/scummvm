@@ -143,6 +143,11 @@ public:
 	}
 
 	/**
+	 * Delete buttons
+	 */
+	void removeButtons(int start, int end = -2);
+
+	/**
 	 * Reset selected button
 	 */
 	void resetSelectedButton();

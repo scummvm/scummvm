@@ -76,6 +76,11 @@ private:
 	void printAttributes();
 
 	/**
+	 * Add a selection entry
+	 */
+	void addSelection(int yStart, int num);
+
+	/**
 	 * Display the available classes
 	 */
 	void printClasses();
