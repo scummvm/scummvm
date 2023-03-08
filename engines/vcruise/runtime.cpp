@@ -91,6 +91,28 @@ Runtime::Gyro::Gyro() {
 void Runtime::Gyro::reset() {
 	currentState = 0;
 	requiredState = 0;
+	wrapAround = false;
+	requireState = false;
+	numPreviousStates = 0;
+	numPreviousStatesRequired = 0;
+
+	for (uint i = 0; i < kMaxPreviousStates; i++) {
+		previousStates[i] = 0;
+		requiredPreviousStates[i] = 0;
+	}
+}
+
+void Runtime::Gyro::logState() {
+	if (numPreviousStatesRequired > 0) {
+		if (numPreviousStates < numPreviousStatesRequired)
+			numPreviousStates++;
+		else {
+			for (uint i = 1; i < numPreviousStates; i++)
+				previousStates[i - 1] = previousStates[i];
+		}
+
+		previousStates[numPreviousStates - 1] = currentState;
+	}
 }
 
 Runtime::GyroState::GyroState() {
@@ -486,6 +508,7 @@ bool Runtime::runGyroIdle() {
 
 		changeAnimation(animDef, false);
 
+		gyro.logState();
 		gyro.currentState--;
 		_gameState = kGameStateGyroAnimation;
 		return true;
@@ -497,6 +520,7 @@ bool Runtime::runGyroIdle() {
 
 		changeAnimation(animDef, false);
 
+		gyro.logState();
 		gyro.currentState++;
 		_gameState = kGameStateGyroAnimation;
 		return true;
@@ -531,7 +555,25 @@ void Runtime::exitGyroIdle() {
 	bool succeeded = true;
 	for (uint i = 0; i < GyroState::kNumGyros; i++) {
 		const Gyro &gyro = _gyros.gyros[i];
-		if (gyro.currentState != gyro.requiredState) {
+		if (gyro.requireState && gyro.currentState != gyro.requiredState) {
+			succeeded = false;
+			break;
+		}
+
+		if (gyro.numPreviousStates != gyro.numPreviousStatesRequired) {
+			succeeded = false;
+			break;
+		}
+
+		bool prevStatesMatch = true;
+		for (uint j = 0; j < gyro.numPreviousStates; j++) {
+			if (gyro.previousStates[j] != gyro.requiredPreviousStates[j]) {
+				prevStatesMatch = false;
+				break;
+			}
+		}
+
+		if (!prevStatesMatch) {
 			succeeded = false;
 			break;
 		}
@@ -2057,8 +2099,15 @@ void Runtime::scriptOpMusicDn(ScriptArg_t arg) {
 void Runtime::scriptOpParm0(ScriptArg_t arg) {
 	TAKE_STACK(4);
 
-	warning("Parm0 is not implemented");
-	(void)stackArgs;
+	if (stackArgs[0] < 0 || static_cast<uint>(stackArgs[0]) >= GyroState::kNumGyros)
+		error("Invalid gyro index for Parm0");
+
+	uint gyroIndex = stackArgs[0];
+
+	Gyro &gyro = _gyros.gyros[gyroIndex];
+	gyro.numPreviousStatesRequired = 3;
+	for (uint i = 0; i < 3; i++)
+		gyro.requiredPreviousStates[i] = stackArgs[i + 1];
 }
 
 void Runtime::scriptOpParm1(ScriptArg_t arg) {
@@ -2072,6 +2121,8 @@ void Runtime::scriptOpParm1(ScriptArg_t arg) {
 	Gyro &gyro = _gyros.gyros[gyroIndex];
 	gyro.currentState = stackArgs[1];
 	gyro.requiredState = stackArgs[2];
+
+	gyro.requireState = true;
 }
 
 void Runtime::scriptOpParm2(ScriptArg_t arg) {
@@ -2085,7 +2136,17 @@ void Runtime::scriptOpParm2(ScriptArg_t arg) {
 		error("Invalid gyro frame separation");
 }
 
-OPCODE_STUB(Parm3)
+void Runtime::scriptOpParm3(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	if (stackArgs[0] < 0 || static_cast<uint>(stackArgs[0]) >= GyroState::kNumGyros)
+		error("Invalid gyro index for Parm3");
+
+	uint gyroIndex = stackArgs[0];
+
+	Gyro &gyro = _gyros.gyros[gyroIndex];
+	gyro.wrapAround = true;
+}
 
 void Runtime::scriptOpParmG(ScriptArg_t arg) {
 	TAKE_STACK(3);
@@ -2156,7 +2217,14 @@ void Runtime::scriptOpSay3(ScriptArg_t arg) {
 	(void)stackArgs;
 }
 
-OPCODE_STUB(Say3Get)
+void Runtime::scriptOpSay3Get(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	warning("Say3Get opcode is not implemented yet");
+	(void)stackArgs;
+
+	_scriptStack.push_back(0);
+}
 
 void Runtime::scriptOpSetTimer(ScriptArg_t arg) {
 	TAKE_STACK(2);

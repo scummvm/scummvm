@@ -184,12 +184,21 @@ private:
 	};
 
 	struct Gyro {
+		static const uint kMaxPreviousStates = 3;
+
 		int32 currentState;
 		int32 requiredState;
+		int32 previousStates[kMaxPreviousStates];
+		int32 requiredPreviousStates[kMaxPreviousStates];
+		uint numPreviousStates;
+		uint numPreviousStatesRequired;
+		bool wrapAround;
+		bool requireState;
 
 		Gyro();
 
 		void reset();
+		void logState();
 	};
 
 	struct GyroState {
