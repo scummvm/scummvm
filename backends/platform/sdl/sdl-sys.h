@@ -173,9 +173,8 @@
 // In SDL 2.0, intrin.h is now included in SDL_cpuinfo.h, which includes
 // setjmp.h. SDL_cpuinfo.h is included from SDL.h and SDL_syswm.h.
 // Thus, we remove the exceptions for setjmp and longjmp before these two
-// includes. Unfortunately, we can't use SDL_VERSION_ATLEAST here, as SDL.h
-// hasn't been included yet at this point.
-#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && defined(_MSC_VER)
+// includes.
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && defined(_MSC_VER) && defined(USE_SDL2)
 // We unset any fake definitions of setjmp/longjmp here
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
