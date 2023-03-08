@@ -1616,13 +1616,25 @@ function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, foe, 
    elseif weapon_obj_n == 0x24 or weapon_obj_n == 0x25 or weapon_obj_n == 0x26 then
       --spear, throwing axe, dagger
 
-      if Actor.inv_remove_obj_qty(attacker, weapon_obj_n, 1) == 1 and map_is_water(target_x,target_y,target_z) == false then
-	      local obj = Obj.new(weapon_obj_n);
-	      obj.ok_to_take = true
-	      obj.temporary = true
-		  Obj.moveToMap(obj, target_x, target_y, target_z)
-	  end
-
+      --remove unreadied throwing weapons from inventory first so weapon stays readied
+      local removal_candidate = nil
+      for inv_obj in actor_inventory(attacker) do
+          if inv_obj.obj_n == weapon_obj_n then
+              removal_candidate = inv_obj
+              if removal_candidate.readied ~= true then
+                  break
+              end
+          end
+      end
+      if removal_candidate ~= nil then
+          Actor.inv_remove_obj(attacker, removal_candidate)
+          if map_is_water(target_x,target_y,target_z) == false then
+              local obj = Obj.new(weapon_obj_n);
+              obj.ok_to_take = true
+              obj.temporary = true
+              Obj.moveToMap(obj, target_x, target_y, target_z)
+          end
+      end
    elseif weapon_obj_n == 0x29 or weapon_obj_n == 0x2a or weapon_obj_n == 0x32 or weapon_obj_n == 0x36 then
       --bow, crossbow, triple crossbow, magic bow
       local projectile_obj = nil
