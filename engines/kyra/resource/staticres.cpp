@@ -97,6 +97,7 @@ const IndexTable iLanguageTable[] = {
 	{ Common::ZH_CHN,  9 },
 	{ Common::ZH_TWN, 10 },
 	{ Common::KO_KOR, 11 },
+	{ Common::CS_CZE, 12 },
 	{ -1, -1 }
 };
 

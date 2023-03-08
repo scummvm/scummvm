@@ -218,17 +218,17 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
-	{ // Bugreport #7773
+	{ // Czech fan translation of v1.0, bugreport #7773
 		{
 			"kyra1",
-			msg_fanTrans_missingLangResources, // Reason for being unsupported
+			"Extracted",
 			AD_ENTRY1s("GEMCUT.EMC", "20f876423f4caa20f5de6b4fc5dfafeb", 6686),
 			Common::CS_CZE,
 			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
+			ADGF_NO_FLAGS,
 			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
-		KYRA1_FLOPPY_FLAGS
+		KYRA1_OLDFLOPPY_FLAGS
 	},
 
 	{ // from trembyle
@@ -284,6 +284,21 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_AMIGA_FLAGS
 	},
+
+	{
+		{
+			"kyra1",
+			0,
+			AD_ENTRY1s("GEMCUT.EMC", "ed6ed782ead16d9dba0719a347e01eea", 7146),
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA)
+		},
+		KYRA1_AMIGA_FLAGS
+	},
+
+
 
 	{ // Supplied by CaptainHIT in bug report #11596
 		{

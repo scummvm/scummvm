@@ -25,6 +25,7 @@
 // The Legend of Kyrandia
 #include "resources/lok_amiga.h"
 #include "resources/lok_amiga_english.h"
+#include "resources/lok_amiga_french.h"
 #include "resources/lok_amiga_german.h"
 #include "resources/lok_amiga_italian.h"
 
@@ -37,6 +38,7 @@
 #include "resources/lok_dos_german.h"
 #include "resources/lok_dos_italian.h"
 #include "resources/lok_dos_oldfloppy.h"
+#include "resources/lok_dos_oldfloppy_czech.h"
 #include "resources/lok_dos_oldfloppy_russian.h"
 #include "resources/lok_dos_spanish.h"
 #include "resources/lok_dos_korean.h"
@@ -265,6 +267,29 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1NewGameString, kKyra1, kPlatformAmiga, kNoSpecial, DE_DEU, &k1NewGameStringAmigaGermanProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformAmiga, kNoSpecial, DE_DEU, &k1ConfigStringsAmigaGermanProvider },
 	{ k1CreditsStrings, kKyra1, kPlatformAmiga, kNoSpecial, DE_DEU, &k1CreditsStringsAmigaGermanProvider },
+	{ k1IntroStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1IntroStringsAmigaFrenchProvider },
+	{ k1ItemNames, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1ItemNamesAmigaFrenchProvider },
+	{ k1TakenStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1TakenStringsAmigaFrenchProvider },
+	{ k1PlacedStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1PlacedStringsAmigaFrenchProvider },
+	{ k1DroppedStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1DroppedStringsAmigaFrenchProvider },
+	{ k1NoDropStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1NoDropStringsAmigaFrenchProvider },
+	{ k1PutDownString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1PutDownStringAmigaFrenchProvider },
+	{ k1WaitAmuletString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1WaitAmuletStringAmigaFrenchProvider },
+	{ k1BlackJewelString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1BlackJewelStringAmigaFrenchProvider },
+	{ k1HealingTipString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1HealingTipStringAmigaFrenchProvider },
+	{ k1PoisonGoneString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1PoisonGoneStringAmigaFrenchProvider },
+	{ k1ThePoisonStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1ThePoisonStringsAmigaFrenchProvider },
+	{ k1FluteStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1FluteStringsAmigaFrenchProvider },
+	{ k1WispJewelStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1WispJewelStringsAmigaFrenchProvider },
+	{ k1MagicJewelStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1MagicJewelStringsAmigaFrenchProvider },
+	{ k1FlaskFullString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1FlaskFullStringAmigaFrenchProvider },
+	{ k1FullFlaskString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1FullFlaskStringAmigaFrenchProvider },
+	{ k1OutroHomeString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1OutroHomeStringAmigaFrenchProvider },
+	{ k1VeryCleverString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1VeryCleverStringAmigaFrenchProvider },
+	{ k1GUIStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1GUIStringsAmigaFrenchProvider },
+	{ k1NewGameString, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1NewGameStringAmigaFrenchProvider },
+	{ k1ConfigStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1ConfigStringsAmigaFrenchProvider },
+	{ k1CreditsStrings, kKyra1, kPlatformAmiga, kNoSpecial, FR_FRA, &k1CreditsStringsAmigaFrenchProvider },
 	{ k1IntroStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1IntroStringsAmigaItalianProvider },
 	{ k1ItemNames, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1ItemNamesAmigaItalianProvider },
 	{ k1TakenStrings, kKyra1, kPlatformAmiga, kNoSpecial, IT_ITA, &k1TakenStringsAmigaItalianProvider },
@@ -599,6 +624,27 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kOldFloppy, RU_RUS, &k1ConfigStringsDOSOldFloppyRussianProvider },
 	{ k1AudioTracks, kKyra1, kPlatformDOS, kOldFloppy, UNK_LANG, &k1AudioTracksDOSOldFloppyProvider },
 	{ k1AudioTracksIntro, kKyra1, kPlatformDOS, kOldFloppy, UNK_LANG, &k1AudioTracksIntroDOSOldFloppyProvider },
+	{ k1IntroStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1IntroStringsDOSOldFloppyCzechProvider },
+	{ k1ItemNames, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1ItemNamesDOSOldFloppyCzechProvider },
+	{ k1TakenStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1TakenStringsDOSOldFloppyCzechProvider },
+	{ k1PlacedStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1PlacedStringsDOSOldFloppyCzechProvider },
+	{ k1DroppedStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1DroppedStringsDOSOldFloppyCzechProvider },
+	{ k1PutDownString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1PutDownStringDOSOldFloppyCzechProvider },
+	{ k1WaitAmuletString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1WaitAmuletStringDOSOldFloppyCzechProvider },
+	{ k1BlackJewelString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1BlackJewelStringDOSOldFloppyCzechProvider },
+	{ k1HealingTipString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1HealingTipStringDOSOldFloppyCzechProvider },
+	{ k1PoisonGoneString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1PoisonGoneStringDOSOldFloppyCzechProvider },
+	{ k1ThePoisonStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1ThePoisonStringsDOSOldFloppyCzechProvider },
+	{ k1FluteStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1FluteStringsDOSOldFloppyCzechProvider },
+	{ k1WispJewelStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1WispJewelStringsDOSOldFloppyCzechProvider },
+	{ k1MagicJewelStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1MagicJewelStringsDOSOldFloppyCzechProvider },
+	{ k1FlaskFullString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1FlaskFullStringDOSOldFloppyCzechProvider },
+	{ k1FullFlaskString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1FullFlaskStringDOSOldFloppyCzechProvider },
+	{ k1OutroHomeString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1OutroHomeStringDOSOldFloppyCzechProvider },
+	{ k1VeryCleverString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1VeryCleverStringDOSOldFloppyCzechProvider },
+	{ k1GUIStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1GUIStringsDOSOldFloppyCzechProvider },
+	{ k1NewGameString, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1NewGameStringDOSOldFloppyCzechProvider },
+	{ k1ConfigStrings, kKyra1, kPlatformDOS, kOldFloppy, CS_CZE, &k1ConfigStringsDOSOldFloppyCzechProvider },
 	{ k1KallakWritingSeq, kKyra1, kPlatformDOS, kTalkieVersion, UNK_LANG, &k1KallakWritingSeqDOSCDProvider },
 	{ k1MalcolmTreeSeq, kKyra1, kPlatformDOS, kTalkieVersion, UNK_LANG, &k1MalcolmTreeSeqDOSCDProvider },
 	{ k1WestwoodLogoSeq, kKyra1, kPlatformDOS, kTalkieVersion, UNK_LANG, &k1WestwoodLogoSeqDOSCDProvider },
