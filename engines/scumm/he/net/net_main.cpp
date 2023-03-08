@@ -97,7 +97,7 @@ Common::String Net::getStringFromAddress(Address address) {
 }
 
 void Net::setSessionServer(Common::String sessionServer) {
-	debug(1, "Net::setSessionServer(\"%s\")", sessionServer.c_str());
+	debugC(DEBUG_NETWORK, "Net::setSessionServer(\"%s\")", sessionServer.c_str());
 
 	_forcedAddress = true;
 	ConfMan.setBool("enable_session_server", true);
@@ -130,7 +130,7 @@ int Net::hostGame(char *sessionName, char *userName) {
 }
 
 int Net::joinGame(Common::String IP, char *userName) {
-	debug(1, "Net::joinGame(\"%s\", \"%s\")", IP.c_str(), userName); // PN_JoinTCPIPGame
+	debugC(DEBUG_NETWORK, "Net::joinGame(\"%s\", \"%s\")", IP.c_str(), userName); // PN_JoinTCPIPGame
 	Address address = getAddressFromString(IP);
 
 	bool isLocal = false;
@@ -195,7 +195,7 @@ bool Net::connectToSession(Common::String address, int port) {
 }
 
 int Net::addUser(char *shortName, char *longName) {
-	debug(1, "Net::addUser(\"%s\", \"%s\")", shortName, longName); // PN_AddUser
+	debugC(DEBUG_NETWORK, "Net::addUser(\"%s\", \"%s\")", shortName, longName); // PN_AddUser
 	// TODO: What's the difference between shortName and longName?
 
 	if (_isHost) {
@@ -237,7 +237,7 @@ int Net::addUser(char *shortName, char *longName) {
 }
 
 int Net::removeUser() {
-	debug(1, "Net::removeUser()"); // PN_RemoveUser
+	debugC(DEBUG_NETWORK, "Net::removeUser()"); // PN_RemoveUser
 
 	if (_myUserId != -1)
 		destroyPlayer(_myUserId);
@@ -246,17 +246,17 @@ int Net::removeUser() {
 }
 
 int Net::whoSentThis() {
-	debug(1, "Net::whoSentThis(): return %d", _fromUserId); // PN_WhoSentThis
+	debugC(DEBUG_NETWORK, "Net::whoSentThis(): return %d", _fromUserId); // PN_WhoSentThis
 	return _fromUserId;
 }
 
 int Net::whoAmI() {
-	debug(1, "Net::whoAmI(): return %d", _myUserId); // PN_WhoAmI
+	debugC(DEBUG_NETWORK, "Net::whoAmI(): return %d", _myUserId); // PN_WhoAmI
 	return _myUserId;
 }
 
 int Net::createSession(char *name) {
-	debug(1, "Net::createSession(\"%s\")", name); // PN_CreateSession
+	debugC(DEBUG_NETWORK, "Net::createSession(\"%s\")", name); // PN_CreateSession
 
 	if (!_enet) {
 		return 0;
@@ -297,7 +297,7 @@ int Net::createSession(char *name) {
 			Common::String req = Common::String::format(
 				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\",\"maxplayers\":%d}",
 				_gameName.c_str(), _gameVersion.c_str(), name, _maxPlayers);
-			debug(1, "NETWORK: Sending to session server: %s", req.c_str());
+			debugC(DEBUG_NETWORK, "NETWORK: Sending to session server: %s", req.c_str());
 			_sessionHost->send(req.c_str(), _sessionServerPeer);
 		} else {
 			warning("Failed to connect to session server!  This game will not be listed on the Internet");
@@ -319,7 +319,7 @@ int Net::getTotalPlayers() {
 }
 
 int Net::joinSessionById(int sessionId) {
-	debug(1, "Net::joinSessionById(%d)", sessionId);
+	debugC(DEBUG_NETWORK, "Net::joinSessionById(%d)", sessionId);
 	if (_sessions.empty()) {
 		warning("Net::joinSession(): no sessions");
 		return 0;
@@ -335,9 +335,9 @@ int Net::joinSessionById(int sessionId) {
 }
 
 int Net::ifSessionExist(int sessionId) {
-	debug(1, "Net::ifSessionExist(%d)", sessionId);
+	debugC(DEBUG_NETWORK, "Net::ifSessionExist(%d)", sessionId);
 	if (_sessions.empty()) {
-		debug(1, "Net::ifSessionExist(): no sessions");
+		debugC(DEBUG_NETWORK, "Net::ifSessionExist(): no sessions");
 		return 0;
 	}
 
@@ -346,7 +346,7 @@ int Net::ifSessionExist(int sessionId) {
 			return 1;
 		}
 	}
-	debug(1, "Net::ifSessionExist(): session %d not found.", sessionId);
+	debugC(DEBUG_NETWORK, "Net::ifSessionExist(): session %d not found.", sessionId);
 	return 0;
 }
 
@@ -404,7 +404,7 @@ int Net::doJoinSession(Session session) {
 }
 
 int Net::joinSession(int sessionIndex) {
-	debug(1, "Net::joinSession(%d)", sessionIndex); // PN_JoinSession
+	debugC(DEBUG_NETWORK, "Net::joinSession(%d)", sessionIndex); // PN_JoinSession
 	if (_sessions.empty()) {
 		warning("Net::joinSession(): no sessions");
 		return 0;
@@ -420,7 +420,7 @@ int Net::joinSession(int sessionIndex) {
 }
 
 int Net::endSession() {
-	debug(1, "Net::endSession()"); // PN_EndSession
+	debugC(DEBUG_NETWORK, "Net::endSession()"); // PN_EndSession
 
 	if (_isHost && _hostDataQueue.size()) {
 		_isShuttingDown = true;
@@ -480,7 +480,7 @@ int Net::endSession() {
 }
 
 void Net::disableSessionJoining() {
-	debug(1, "Net::disableSessionJoining()"); // PN_DisableSessionPlayerJoin
+	debugC(DEBUG_NETWORK, "Net::disableSessionJoining()"); // PN_DisableSessionPlayerJoin
 	if (_sessionHost && _sessionServerPeer > -1 && !_isRelayingGame) {
 		_sessionHost->disconnectPeer(_sessionServerPeer);
 		_sessionServerPeer = -1;
@@ -496,7 +496,7 @@ void Net::enableSessionJoining() {
 }
 
 void Net::setBotsCount(int botsCount) {
-	debug(1, "Net::setBotsCount(%d)", botsCount); // PN_SetAIPlayerCountKludge
+	debugC(DEBUG_NETWORK, "Net::setBotsCount(%d)", botsCount); // PN_SetAIPlayerCountKludge
 	_numBots = botsCount;
 }
 
@@ -510,7 +510,7 @@ int32 Net::setProviderByName(int32 parameter1, int32 parameter2) {
 	if (parameter2)
 		_vm->getStringFromArray(parameter2, ipaddress, sizeof(ipaddress));
 
-	debug(1, "Net::setProviderByName(\"%s\", \"%s\")", name, ipaddress); // PN_SetProviderByName
+	debugC(DEBUG_NETWORK, "Net::setProviderByName(\"%s\", \"%s\")", name, ipaddress); // PN_SetProviderByName
 
 	// Emulate that we found a TCP/IP provider
 
@@ -536,7 +536,7 @@ void Net::setFakeLatency(int time) {
 
 bool Net::destroyPlayer(int32 userId) {
 	// bool PNETWIN_destroyplayer(DPID idPlayer)
-	debug(1, "Net::destroyPlayer(%d)", userId);
+	debugC(DEBUG_NETWORK, "Net::destroyPlayer(%d)", userId);
 	if (_isHost) {
 		if (userId == 1)
 			return true;
@@ -568,7 +568,7 @@ bool Net::destroyPlayer(int32 userId) {
 }
 
 int32 Net::startQuerySessions(bool connectToSessionServer) {
-	debug(1, "Net::startQuerySessions()");
+	debugC(DEBUG_NETWORK, "Net::startQuerySessions()");
 
 	if (!_enet) {
 		warning("NETWORKING: ENet not initialized yet");
@@ -603,7 +603,7 @@ int32 Net::startQuerySessions(bool connectToSessionServer) {
 }
 
 int32 Net::updateQuerySessions() {
-	debug(1, "Net::updateQuerySessions(): begin"); // UpdateQuerySessions
+	debugC(DEBUG_NETWORK, "Net::updateQuerySessions(): begin"); // UpdateQuerySessions
 
 	if (_sessionServerHost) {
 		// Get internet-based sessions from the session server.
@@ -639,12 +639,12 @@ int32 Net::updateQuerySessions() {
 		}
 	}
 
-	debug(1, "Net::updateQuerySessions(): got %d", _sessions.size());
+	debugC(DEBUG_NETWORK, "Net::updateQuerySessions(): got %d", _sessions.size());
 	return _sessions.size();
 }
 
 void Net::stopQuerySessions() {
-	debug(1, "Net::stopQuerySessions()"); // StopQuerySessions
+	debugC(DEBUG_NETWORK, "Net::stopQuerySessions()"); // StopQuerySessions
 
 	if (_sessionServerHost && !_isRelayingGame) {
 		_sessionServerHost->disconnectPeer(0);
@@ -662,7 +662,7 @@ void Net::stopQuerySessions() {
 }
 
 int Net::querySessions() {
-	debug(1, "Net::querySessions()"); // PN_QuerySessions
+	debugC(DEBUG_NETWORK, "Net::querySessions()"); // PN_QuerySessions
 	// Deprecated OP used in Football and Baseball to query sessions,
 	// emulate this by using the functions used in Moonbase Commander:
 	startQuerySessions();
@@ -671,7 +671,7 @@ int Net::querySessions() {
 }
 
 int Net::queryProviders() {
-	debug(1, "Net::queryProviders()"); // PN_QueryProviders
+	debugC(DEBUG_NETWORK, "Net::queryProviders()"); // PN_QueryProviders
 
 	// Emulate that we have 1 provider, TCP/IP
 	return 1;
@@ -683,7 +683,7 @@ int Net::setProvider(int providerIndex) {
 }
 
 int Net::closeProvider() {
-	debug(1, "Net::closeProvider()"); // PN_CloseProvider
+	debugC(DEBUG_NETWORK, "Net::closeProvider()"); // PN_CloseProvider
 	if (_enet) {
 		// Destroy all ENet instances and deinitialize.
 		if (_sessionHost) {
@@ -728,7 +728,7 @@ void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int
 	else
 		res += "]";
 
-	debug(1, "Net::remoteStartScript(%d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, argsCount); // PN_RemoteStartScriptCommand
+	debugC(DEBUG_NETWORK, "Net::remoteStartScript(%d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, argsCount); // PN_RemoteStartScriptCommand
 
 	remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPT, res, priority);
 }
@@ -750,7 +750,7 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 		_myUserId, typeOfSend, sendTypeParam, type,
 		priority == PN_PRIORITY_HIGH ? "true" : "false", data.c_str());
 
-	debug(1, "NETWORK: Sending data: %s", res.c_str());
+	debugC(DEBUG_NETWORK, "NETWORK: Sending data: %s", res.c_str());
 	Common::JSONValue *str = Common::JSON::parse(res.c_str());
 	if (_isHost) {
 		// handleGameDataHost(str, sendTypeParam - 1);
@@ -762,7 +762,7 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 }
 
 void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex) {
-	debug(1, "Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex & ~0x33539000); // PN_RemoteSendArrayCommand
+	debugC(DEBUG_NETWORK, "Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex & ~0x33539000); // PN_RemoteSendArrayCommand
 
 	ScummEngine_v90he::ArrayHeader *ah = (ScummEngine_v90he::ArrayHeader *)_vm->getResourceAddress(rtString, arrayIndex & ~0x33539000);
 
@@ -821,7 +821,7 @@ int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priori
 	else
 		res += "]";
 
-	debug(1, "Net::remoteStartScriptFunction(%d, %d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, defaultReturnValue, argsCount); // PN_RemoteStartScriptFunction
+	debugC(DEBUG_NETWORK, "Net::remoteStartScriptFunction(%d, %d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, defaultReturnValue, argsCount); // PN_RemoteStartScriptFunction
 
 	return remoteSendData(typeOfSend, sendTypeParam, PACKETTYPE_REMOTESTARTSCRIPTRETURN, res, defaultReturnValue, true, callid);
 }
@@ -837,7 +837,7 @@ bool Net::getIPfromName(char *ip, int ipLength, char *nameBuffer) {
 }
 
 void Net::getSessionName(int sessionNumber, char *buffer, int length) {
-	debug(1, "Net::getSessionName(%d, ..., %d)", sessionNumber, length); // PN_GetSessionName
+	debugC(DEBUG_NETWORK, "Net::getSessionName(%d, ..., %d)", sessionNumber, length); // PN_GetSessionName
 
 	if (_sessions.empty()) {
 		*buffer = '\0';
@@ -855,7 +855,7 @@ void Net::getSessionName(int sessionNumber, char *buffer, int length) {
 }
 
 int Net::getSessionPlayerCount(int sessionNumber) {
-	debug(1, "Net::getSessionPlayerCount(%d)", sessionNumber); // case GET_SESSION_PLAYER_COUNT_KLUDGE:
+	debugC(DEBUG_NETWORK, "Net::getSessionPlayerCount(%d)", sessionNumber); // case GET_SESSION_PLAYER_COUNT_KLUDGE:
 
 	if (_sessions.empty()) {
 		warning("Net::getSessionPlayerCount(): no sessions");
@@ -899,7 +899,7 @@ void Net::serviceSessionServer() {
 }
 
 void Net::handleSessionServerData(Common::String data) {
-	debug(1, "NETWORK: Received data from session server.  Data: %s", data.c_str());
+	debugC(DEBUG_NETWORK, "NETWORK: Received data from session server.  Data: %s", data.c_str());
 
 	Common::JSONValue *json = Common::JSON::parse(data.c_str());
 	if (!json) {
@@ -917,7 +917,7 @@ void Net::handleSessionServerData(Common::String data) {
 		if (_isHost && command == "host_session_resp") {
 			if (root.contains("id")) {
 				_sessionId = root["id"]->asIntegerNumber();
-				debug(1, "NETWORK: Our session id from session server: %d", _sessionId);
+				debugC(DEBUG_NETWORK, "NETWORK: Our session id from session server: %d", _sessionId);
 			}
 		} else if (!_isHost && command == "get_sessions_resp") {
 			if (root.contains("address") && root.contains("sessions")) {
@@ -965,7 +965,7 @@ void Net::handleSessionServerData(Common::String data) {
 				// communicate with us.  This does not work with every router though...
 				//
 				// More infomation: https://en.wikipedia.org/wiki/UDP_hole_punching
-				debug(1, "NETWORK: Hole punching %s:%d", address.host.c_str(), address.port);
+				debugC(DEBUG_NETWORK, "NETWORK: Hole punching %s:%d", address.host.c_str(), address.port);
 				_sessionHost->sendRawData(address.host, address.port, "");
 			}
 		} else if (_isHost && command == "add_user_for_relay") {
@@ -1004,7 +1004,7 @@ void Net::handleSessionServerData(Common::String data) {
 				int userId = root["id"]->asIntegerNumber();
 				if (_userIdToName.contains(userId)) {
 					if (_userIdToPeerIndex[userId] == _sessionServerPeer) {
-						debugC(1, "Removing relay user %d", userId);
+						debugC(DEBUG_NETWORK, "Removing relay user %d", userId);
 						destroyPlayer(userId);
 					} else {
 						warning("NETWORK: Attempt to remove non-relay user: %d", userId);
@@ -1033,12 +1033,12 @@ bool Net::serviceBroadcast() {
 }
 
 void Net::handleBroadcastData(Common::String data, Common::String host, int port) {
-	debug(1, "NETWORK: Received data from broadcast socket.  Source: %s:%d  Data: %s", host.c_str(), port, data.c_str());
+	debugC(DEBUG_NETWORK, "NETWORK: Received data from broadcast socket.  Source: %s:%d  Data: %s", host.c_str(), port, data.c_str());
 
 	Common::JSONValue *json = Common::JSON::parse(data.c_str());
 	if (!json) {
 		// Just about anything could come from the broadcast address, so do not warn.
-		debug(1, "NETWORK: Not a JSON string, ignoring.");
+		debugC(DEBUG_NETWORK, "NETWORK: Not a JSON string, ignoring.");
 		return;
 	}
 	if (!json->isObject()){
@@ -1120,7 +1120,7 @@ void Net::remoteReceiveData() {
 		break;
 	case ENET_EVENT_TYPE_CONNECT:
 		{
-			debug(1, "NETWORK: New connection from %s:%d", _sessionHost->getHost().c_str(), _sessionHost->getPort());
+			debugC(DEBUG_NETWORK, "NETWORK: New connection from %s:%d", _sessionHost->getHost().c_str(), _sessionHost->getPort());
 			break;
 		}
 	case ENET_EVENT_TYPE_DISCONNECT:
@@ -1131,9 +1131,9 @@ void Net::remoteReceiveData() {
 			if (_addressToUserId.contains(address))
 				userId = _addressToUserId[address];
 			if (userId > -1)
-				debug(1, "NETWORK: User %s (%d) has disconnected.", _userIdToName[userId].c_str(), userId);
+				debugC(DEBUG_NETWORK, "NETWORK: User %s (%d) has disconnected.", _userIdToName[userId].c_str(), userId);
 			else
-				debug(1, "NETWORK: Connection from %s has disconnected.", address.c_str());
+				debugC(DEBUG_NETWORK, "NETWORK: Connection from %s has disconnected.", address.c_str());
 
 			if (_gameName == "moonbase") {
 				// TODO: Host migration
@@ -1149,7 +1149,7 @@ void Net::remoteReceiveData() {
 		{
 			Common::String host = _sessionHost->getHost();
 			int port = _sessionHost->getPort();
-			debug(1, "NETWORK: Got data from %s:%d", host.c_str(), port);
+			debugC(DEBUG_NETWORK, "NETWORK: Got data from %s:%d", host.c_str(), port);
 
 			int peerIndex = _sessionHost->getPeerIndexFromHost(host, port);
 			if (peerIndex == -1) {
@@ -1159,7 +1159,7 @@ void Net::remoteReceiveData() {
 			}
 
 			Common::String data = _sessionHost->getPacketData();
-			debug(1, "%s", data.c_str());
+			debugC(DEBUG_NETWORK, "%s", data.c_str());
 
 			if (peerIndex == _sessionServerPeer) {
 				handleSessionServerData(data);
@@ -1404,7 +1404,7 @@ void Net::handleGameDataHost(Common::JSONValue *json, int peerIndex) {
 				warning("NETWORK: Got individual message for %d, but we don't know this person!  Ignoring...", toparam);
 				return;
 			}
-			debug(1, "NETWORK: Transfering message to %s (%d), peerIndex: %d", _userIdToName[toparam].c_str(), toparam, _userIdToPeerIndex[toparam]);
+			debugC(DEBUG_NETWORK, "NETWORK: Transfering message to %s (%d), peerIndex: %d", _userIdToName[toparam].c_str(), toparam, _userIdToPeerIndex[toparam]);
 			Common::String str = Common::JSON::stringify(json);
 			_sessionHost->send(str.c_str(), _userIdToPeerIndex[toparam], 0, reliable);
 		}

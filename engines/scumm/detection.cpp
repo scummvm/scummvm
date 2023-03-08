@@ -62,6 +62,7 @@ static const DebugChannelDef debugFlagList[] = {
 		{Scumm::DEBUG_INSANE, "INSANE", "Track INSANE"},
 		{Scumm::DEBUG_SMUSH, "SMUSH", "Track SMUSH"},
 		{Scumm::DEBUG_MOONBASE_AI, "MOONBASEAI", "Track Moonbase AI"},
+		{Scumm::DEBUG_NETWORK, "NETWORK", "Track Networking"},
 		DEBUG_CHANNEL_END
 };
 
@@ -210,7 +211,7 @@ Common::String ScummMetaEngineDetection::parseAndCustomizeGuiOptions(const Commo
 		break;
 	default:
 		// Leave this as nullptr for platforms that don't have a specific render option (SegaCD, NES, ...).
-		// These targets will then have the full set of render mode options in the launcher options dialog. 
+		// These targets will then have the full set of render mode options in the launcher options dialog.
 		break;
 	}
 

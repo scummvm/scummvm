@@ -71,7 +71,7 @@ void Lobby::send(Common::JSONObject data) {
 	// Add new line.
 	valueString += "\n";
 
-	debug(1, "LOBBY: Sending data: %s", valueString.c_str());
+	debugC(DEBUG_NETWORK, "LOBBY: Sending data: %s", valueString.c_str());
 	_socket->send(valueString.c_str(), strlen(valueString.c_str()));
 }
 
@@ -97,7 +97,7 @@ void Lobby::receiveData() {
 }
 
 void Lobby::processLine(Common::String line) {
-	debug(1, "LOBBY: Received Data: %s", line.c_str());
+	debugC(DEBUG_NETWORK, "LOBBY: Received Data: %s", line.c_str());
 	Common::JSONValue *json = Common::JSON::parse(line.c_str());
 	if (!json) {
 		warning("LOBBY: Received trunciated data from server! %s", line.c_str());
@@ -290,7 +290,7 @@ void Lobby::handleHeartbeat() {
 }
 
 void Lobby::openUrl(const char *url) {
-	debug(1, "LOBBY: openURL: %s", url);
+	debugC(DEBUG_NETWORK, "LOBBY: openURL: %s", url);
 	Common::String urlString = Common::String(url);
 
 	if (urlString == "http://www.jrsn.com/c_corner/cc_regframe.asp" ||
@@ -352,10 +352,10 @@ bool Lobby::connect() {
 	// 	// If the URL missing a port at the end, add the default one in.
 	// 	lobbyUrl += ":9130";
 
-	debug(1, "LOBBY: Connecting to %s", lobbyUrl.c_str());
+	debugC(DEBUG_NETWORK, "LOBBY: Connecting to %s", lobbyUrl.c_str());
 
 	if (_socket->connect(lobbyUrl)) {
-		debug(1, "LOBBY: Successfully connected to %s", lobbyUrl.c_str());
+		debugC(DEBUG_NETWORK, "LOBBY: Successfully connected to %s", lobbyUrl.c_str());
 		return true;
 	} else {
 		delete _socket;
@@ -371,7 +371,7 @@ void Lobby::disconnect(bool lost) {
 		return;
 
 	if (!lost) {
-		debug(1, "LOBBY: Disconnecting connection to server.");
+		debugC(DEBUG_NETWORK, "LOBBY: Disconnecting connection to server.");
 		Common::JSONObject disconnectObject;
 		disconnectObject.setVal("cmd", new Common::JSONValue("disconnect"));
 		send(disconnectObject);
@@ -603,7 +603,7 @@ void Lobby::enterArea(int32 areaId) {
 		_vm->writeVar(440, 0);
 	}
 
-	debug(1, "LOBBY: Entering area %d", int(areaId));
+	debugC(DEBUG_NETWORK, "LOBBY: Entering area %d", int(areaId));
 
 	Common::JSONObject enterAreaRequest;
 	enterAreaRequest.setVal("cmd", new Common::JSONValue("enter_area"));
@@ -614,7 +614,7 @@ void Lobby::enterArea(int32 areaId) {
 }
 
 void Lobby::leaveArea() {
-	debug(1, "LOBBY: Leaving area.");
+	debugC(DEBUG_NETWORK, "LOBBY: Leaving area.");
 	_playersList.clear();
 
 	if (_socket) {
