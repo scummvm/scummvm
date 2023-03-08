@@ -74,6 +74,7 @@ static const char msg_nonEngineDemo[]					= _s("Demo plays simple animations wit
 
 const KYRAGameDescription adGameDescs[] = {
 	/* disable these targets until they get supported
+	// Each DISK*.EXE file contains an embedded ZIP archive
 	{
 		{
 			"kyra1",
@@ -101,11 +102,11 @@ const KYRAGameDescription adGameDescs[] = {
 	},
 	*/
 
-	{
+	{ // floppy v1.0
 		{
 			"kyra1",
 			"Extracted",
-			AD_ENTRY1("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879"),
+			AD_ENTRY1s("GEMCUT.EMC", "3c244298395520bb62b5edfe41688879", 6792),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -114,11 +115,11 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
-	{
+	{ // floppy v1.3
 		{
 			"kyra1",
 			"Extracted",
-			AD_ENTRY1("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673"),
+			AD_ENTRY1s("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673", 6816),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -127,11 +128,11 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
-	{
+	{ // floppy v1.7
 		{
 			"kyra1",
 			"Extracted",
-			AD_ENTRY1("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24"),
+			AD_ENTRY1s("GEMCUT.EMC", "abf8eb360e79a6c2a837751fbd4d3d24", 7148),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -144,7 +145,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"Extracted",
-			AD_ENTRY1("GEMCUT.EMC", "6018e1dfeaca7fe83f8d0b00eb0dd049"),
+			AD_ENTRY1s("GEMCUT.EMC", "6018e1dfeaca7fe83f8d0b00eb0dd049", 7216),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -179,11 +180,11 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_OLDFLOPPY_FLAGS
 	},
 
-	{ // from VooD
+	{ // floppy v2.2 from VooD
 		{
 			"kyra1",
 			"Extracted",
-			AD_ENTRY1("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01"),
+			AD_ENTRY1s("GEMCUT.EMC", "8909b41596913b3f5deaf3c9f1017b01", 7030),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -192,7 +193,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
-	{ // floppy 1.8 from clemmy
+	{ // floppy v1.8 from clemmy
 		{
 			"kyra1",
 			"Extracted",
@@ -248,7 +249,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"Extracted",
-			AD_ENTRY1("GEMCUT.EMC", "57907d931675dbd16386c1d81d18fee4"),
+			AD_ENTRY1s("GEMCUT.EMC", "57907d931675dbd16386c1d81d18fee4", 6904),
 			Common::KO_KOR,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -261,8 +262,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			AD_ENTRY2s("GEMCUT.PAK", "2bd1da653eaefd691e050e4a9eb68a64", -1,
-					   "GEMCUT.EMC", "2a3f44e179f1e9f7643e90083c747571", -1),
+			AD_ENTRY1s("GEMCUT.EMC", "2a3f44e179f1e9f7643e90083c747571", 6814),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -275,8 +275,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			AD_ENTRY2s("GEMCUT.PAK", "2bd1da653eaefd691e050e4a9eb68a64", -1,
-					   "GEMCUT.EMC", "74f99e9ed99abf8d0429826d78485a2a", -1),
+			AD_ENTRY1s("GEMCUT.EMC", "74f99e9ed99abf8d0429826d78485a2a", 7214),
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -298,8 +297,6 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_AMIGA_FLAGS
 	},
 
-
-
 	{ // Supplied by CaptainHIT in bug report #11596
 		{
 			"kyra1",
@@ -313,12 +310,12 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_AMIGA_FLAGS
 	},
 
-	{
+	{ // Floppy/CD v1.0
 		{
 			"kyra1",
 			0,
-			AD_ENTRY2s("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673", -1,
-					   "BEAD.CPS",   "3038466f65b7751451844707187aa401", -1),
+			AD_ENTRY2s("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673", 6816,
+					   "BEAD.CPS",   "3038466f65b7751451844707187aa401", 534),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -337,7 +334,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDIGM, GUIO_RENDERVGA)
 		},
-				KYRA1_FLOPPY_CMP_FLAGS
+		KYRA1_FLOPPY_CMP_FLAGS
 	},
 
 	{
@@ -357,8 +354,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			AD_ENTRY2s("EMC.PAK",	  "a046bb0b422061aab8e4c4689400343a", -1,
-					   "TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59", -1),
+			AD_ENTRY2s("EMC.PAK",	  "a046bb0b422061aab8e4c4689400343a", 167021,
+					   "TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59", 140352),
 			Common::EN_ANY,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
@@ -371,8 +368,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			AD_ENTRY2s("JMC.PAK",	  "9c5707a2a478e8167e44283246612d2c", -1,
-					   "TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59", -1),
+			AD_ENTRY2s("JMC.PAK",	  "9c5707a2a478e8167e44283246612d2c", 168001,
+					   "TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59", 140352),
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
@@ -422,11 +419,11 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_CD_FLAGS
 	},
 
-	{
+	{ // CD v3.7
 		{
 			"kyra1",
 			"CD",
-			AD_ENTRY1("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722"),
+			AD_ENTRY1s("GEMCUT.PAK", "230f54e6afc007ab4117159181a1c722", 33771),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -435,7 +432,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_CD_FLAGS
 	},
 
-	{
+	{ // CD v3.7
 		{
 			"kyra1",
 			"CD",
