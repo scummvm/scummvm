@@ -474,11 +474,17 @@ void ScummEngine::setupRoomSubBlocks() {
 
 	// WORKAROUND bug #1831: The dreaded DOTT "Can't get teeth" bug
 	// makes it impossible to go on playing w/o cheating in some way.
-	// It's not quite clear what causes it, but the effect is that object
-	// 182, the teeth, are still in class 32 (kObjectClassUntouchable),
-	// when they shouldn't be. Luckily, bitvar69 is set to 1 if and only if
-	// the teeth are trapped and have not yet been taken by the player. So
-	// we can make use of that fact to fix the object class of obj 182.
+	// Before the GDC17 conference where Oliver Franzke gave more
+	// background about this, it wasn't quite clear what caused this issue,
+	// but the effect is that object 182, the teeth, are still in class 32
+	// (kObjectClassUntouchable), when they shouldn't be. Luckily, bitvar69
+	// (teeth-caught) is set to 1 if and only if the teeth are trapped and
+	// have not yet been taken by the player. So we can make use of that
+	// fact to fix the object class of obj 182. This should match what the
+	// 2016 remaster did.
+	//
+	// Not using `_enableEnhancements` since leaving the room too quickly
+	// would just make this puzzle impossible to complete.
 	if (_game.id == GID_TENTACLE && _roomResource == 26 && readVar(0x8000 + 69)
 			&& getClass(182, kObjectClassUntouchable)) {
 		putClass(182, kObjectClassUntouchable, 0);
