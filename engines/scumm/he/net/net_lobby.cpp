@@ -432,6 +432,7 @@ void Lobby::handleLoginResp(int errorCode, int userId, Common::String sessionSer
 	if (errorCode > 0) {
 		writeStringArray(109, response);
 		_vm->writeVar(108, -99);
+		disconnect();
 		return;
 	}
 	_userId = userId;
