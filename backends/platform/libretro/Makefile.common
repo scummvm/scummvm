@@ -11,34 +11,48 @@ $(foreach MODULE,$(MODULES),$(MODULE_OBJS-$(MODULE)) :=)
 MODULES     :=
 
 # Defaults
-USE_ZLIB         ?= 1
-USE_TREMOR       ?= 0
-USE_VORBIS       ?= 1
-USE_FLAC         ?= 1
-USE_MAD          ?= 1
-USE_FAAD         ?= 1
-USE_PNG          ?= 1
-USE_JPEG         ?= 1
-USE_THEORADEC    ?= 1
-USE_FREETYPE2    ?= 1
-USE_MT32EMU      ?= 1
-USE_FLUIDSYNTH   ?= 1
-USE_LUA          ?= 1
-USE_LIBCO        ?= 1
+USE_ZLIB          = 1
+USE_FLAC          = 1
+USE_MAD           = 1
+USE_FAAD          = 1
+USE_PNG           = 1
+USE_JPEG          = 1
+USE_FREETYPE2     = 1
+USE_LUA           = 1
 LOAD_RULES_MK     = 1
-USE_TINYGL       ?= 1
-USE_BINK         ?= 1
-POSIX            ?= 1
-NO_HIGH_DEF      ?= 0
-NO_WIP           ?= 1
-USE_LIBCO        ?= 1
-USE_RGB_COLOR    ?= 1
+USE_TINYGL        = 1
+USE_BINK          = 1
+POSIX             = 1
+USE_RGB_COLOR     = 1
 ENABLE_VKEYBD     = 1
-USE_CLOUD        ?= 0
+HAVE_GCC3         = 1
 STATIC_LINKING   ?= 0
 LITE             ?= 0
+NO_WIP           ?= 1
+USE_LIBCO        ?= 1
+USE_MT32EMU      ?= 1
+USE_CLOUD        ?= 0
 
 DEBUG_ALLOW_DIRTY_SUBMODULES ?= 0
+
+# Variable engines dependencies
+UNAVAILABLE_DEPS :=
+check_deps_availability = $(shell [ $(1) = 0 ] && echo $(2))
+
+USE_HIGHRES      ?= 1
+UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_HIGHRES), highres)
+
+USE_FLUIDSYNTH   ?= 1
+UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_FLUIDSYNTH), fluidsynth)
+
+USE_THEORADEC    ?= 1
+UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_THEORADEC), theoradec)
+
+USE_TREMOR       ?= 0
+UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_TREMOR), tremor)
+
+USE_VORBIS       ?= 1
+UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_VORBIS), vorbis)
 
 # Paths
 SCUMMVM_PATH         := $(ROOT_PATH)/../../..
@@ -122,26 +136,17 @@ ifeq ($(STATIC_LINKING),1)
 endif
 
 # Engine modules
-# Following script
-# - generates configuration engines files (build/config.mk.engines, engines/engines.mk, engines/plugins_table.h, engines/detection_table.h) from actual source in $(SCUMMVM_PATH).
-# or (if static linking is required)
-# - generates config.mk.engines.lite - static file with a reduced set of engines for minimal builds - from lite_engines.list
-# - generates script.mri engines part
+# Following script generates configuration engines files (build/config.mk.engines, engines/engines.mk, engines/plugins_table.h, engines/detection_table.h) from actual source in $(SCUMMVM_PATH).
 ifeq (,$(filter clean datafiles coreinfo,$(MAKECMDGOALS)))
 $(info Configuring ScummVM engines...)
-ifneq ($(shell cd $(SCRIPTS_PATH); ./configure_engines.sh $(ROOT_PATH) $(SCUMMVM_PATH) $(NO_HIGH_DEF) $(NO_WIP) $(STATIC_LINKING) $(LITE)),0)
+ifneq ($(shell cd $(SCRIPTS_PATH); ./configure_engines.sh $(ROOT_PATH) $(SCUMMVM_PATH) $(NO_WIP) $(STATIC_LINKING) $(LITE) $(UNAVAILABLE_DEPS)),0)
    $(error Configuring ScummVM engines failed)
 else
    $(info - ScummVM engines configured)
 endif
 endif
 
-ifeq ($(LITE), 1)
-   -include $(ROOT_PATH)/config.mk.engines.lite
-else
-   -include $(SCUMMVM_PATH)/config.mk.engines
-endif
-
+-include $(SCUMMVM_PATH)/config.mk.engines
 -include $(SCUMMVM_PATH)/engines/engines.mk
 
 ifeq ($(USE_MT32EMU),1)

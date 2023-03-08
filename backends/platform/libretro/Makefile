@@ -211,7 +211,7 @@ else ifeq ($(platform), gcw0)
    USE_LIBCO  = 0
    USE_CURL = 0
    USE_MT32EMU = 0
-   NO_HIGH_DEF := 1
+   USE_HIGHRES := 0
 
 # MIYOO
 else ifeq ($(platform), miyoo)
@@ -230,7 +230,7 @@ else ifeq ($(platform), miyoo)
    USE_LIBCO  = 0
    USE_CURL = 0
    USE_MT32EMU = 0
-   NO_HIGH_DEF := 1
+   USE_HIGHRES := 0
 
 # MIYOOMINI
 else ifeq ($(platform), miyoomini)
@@ -248,7 +248,7 @@ else ifeq ($(platform), miyoomini)
    USE_TREMOR = 1
    USE_LIBCO  = 0
    USE_MT32EMU = 0
-   NO_HIGH_DEF = 0
+   USE_HIGHRES = 0
 
 # ARM v7
 else ifneq (,$(findstring armv7,$(platform)))
@@ -498,8 +498,6 @@ endif
 
 # Define build flags
 DEPDIR        = .deps
-HAVE_GCC3     = true
-USE_RGB_COLOR = true
 
 CXXFLAGS += -Wno-reorder
 
