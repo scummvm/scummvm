@@ -203,6 +203,12 @@ CreateCharacters::CreateCharacters() : ScrollView("CreateCharacters") {
 	setButtonEnabled(4, false);
 }
 
+bool CreateCharacters::msgFocus(const FocusMessage &msg) {
+	if (dynamic_cast<TextEntry *>(msg._priorView) == nullptr)
+		_newChar.reroll();
+	return true;
+}
+
 void CreateCharacters::draw() {
 	ScrollView::draw();
 	printAttributes();

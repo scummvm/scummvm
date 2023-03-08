@@ -129,10 +129,7 @@ public:
 	CreateCharacters();
 	virtual ~CreateCharacters() {}
 
-	bool msgFocus(const FocusMessage &msg) override {
-		_newChar.reroll();
-		return true;
-	}
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;

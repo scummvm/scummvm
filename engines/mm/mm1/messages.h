@@ -30,12 +30,21 @@
 namespace MM {
 namespace MM1 {
 
+class UIElement;
+
 enum TextAlign {
 	ALIGN_LEFT, ALIGN_RIGHT, ALIGN_MIDDLE
 };
 
 struct Message {};
-struct FocusMessage : public Message {};
+
+struct FocusMessage : public Message {
+	UIElement *_priorView = nullptr;
+	FocusMessage() : Message() {}
+	FocusMessage(UIElement *priorView) : Message(),
+		_priorView(priorView) {}
+};
+
 struct UnfocusMessage : public Message {};
 struct ActionMessage : public Message {
 	KeybindingAction _action;
