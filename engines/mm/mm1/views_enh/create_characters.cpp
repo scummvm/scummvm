@@ -386,7 +386,6 @@ void CreateCharacters::printSummary() {
 	writeString(_newChar._name);
 
 	writeLine(12, STRING["dialogs.create_characters.save_character"], ALIGN_MIDDLE, RIGHT_X);
-	writeLine(14, "(Y/N)?", ALIGN_MIDDLE, RIGHT_X);
 }
 
 bool CreateCharacters::msgKeypress(const KeypressMessage &msg) {
@@ -555,8 +554,14 @@ void CreateCharacters::setState(State state) {
 	setButtonEnabled(4, _state == SELECT_PORTRAIT);
 	removeButtons(5, -1);
 
-	if (_state == SELECT_CLASS)
+	if (_state == SELECT_CLASS) {
 		_newChar.reroll();
+	} else if (_state == SAVE_PROMPT) {
+		addButton(&g_globals->_confirmIcons, Common::Point(185, 122), 0,
+			Common::KeyState(Common::KEYCODE_y, 'y'));
+		addButton(&g_globals->_confirmIcons, Common::Point(215, 122), 2,
+			Common::KeyState(Common::KEYCODE_n, 'n'));
+	}
 
 	if (_state == SELECT_NAME) {
 		draw();

@@ -52,7 +52,7 @@ void Events::runGame() {
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot == -1 ||
 			g_engine->loadGameState(saveSlot).getCode() != Common::kNoError) {
-		addView("CreateCharacters");// "Title");
+		addView("Title");
 	}
 
 	Common::Event e;
