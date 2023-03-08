@@ -20,10 +20,15 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Copyright-Hinweise und das Hauptmenü werden nun korrekt übersetzt.
 
  GrimE:
-   - Unterstützung für die chineische Version von Grim Fandango hinzugefügt.
+   - Unterstützung für die chinesische Version von Grim Fandango hinzugefügt.
+   - Unterstützung für die von Fargus, ENPY und 7Wolf erstellte russische Version
+     von Grim Fandango hinzugefügt.
 
  Sherlock:
    - Unterstützung für die chinesische Version von Serrated Scalpel hinzugefügt.
+
+ Sword2:
+   - Unterstützung für die chinesische Übersetzung hinzugefügt.
 
  Xeen:
    - Die Engine "xeen" wurde für Might & Magic zu "mm" umbenannt.
