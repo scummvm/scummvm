@@ -462,6 +462,8 @@ private:
 	void drawAmigaAtariSTUI(Graphics::Surface *surface);
 
 	Graphics::ManagedSurface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
+	Graphics::ManagedSurface *load8bitDemoImage(Common::SeekableReadStream *file, int offset);
+
 	uint32 getPixel8bitTitleImage(int index);
 	void renderPixels8bitTitleImage(Graphics::ManagedSurface *surface, int &i, int &j, int pixels);
 };

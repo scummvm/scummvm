@@ -105,9 +105,6 @@ void DrillerEngine::titleScreen() {
 	}
 }
 void DrillerEngine::borderScreen() {
-	if (isDOS() && isDemo()) // Demo will not show the border
-		return;
-
 	if (isAmiga() || isAtariST()) // TODO: implement these with their own animations
 		return;
 

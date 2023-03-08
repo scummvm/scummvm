@@ -196,6 +196,50 @@ byte kEGADefaultPaletteData[16][3] = {
 	{0x00, 0x00, 0x00}
 };
 
+Graphics::ManagedSurface *DrillerEngine::load8bitDemoImage(Common::SeekableReadStream *file, int offset) {
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	surface->fillRect(Common::Rect(0, 0, 320, 200), 0);
+	file->seek(offset);
+	int i = 0;
+	int j = 0;
+	while (true) {
+		byte pixels = file->readByte();
+		for (int b = 0; b < 4; b++) {
+			int color = pixels & 3;
+			pixels = pixels >> 2;
+			surface->setPixel(i + (3 - b), 2 * j, color);
+		}
+		i = i + 4;
+		if (i == 320) {
+			i = 0;
+			j++;
+		}
+		if (j == 100)
+			break;
+	}
+	file->seek(0xc0, SEEK_CUR);
+
+	i = 0;
+	j = 0;
+	while (true) {
+		byte pixels = file->readByte();
+		for (int b = 0; b < 4; b++) {
+			int color = pixels & 3;
+			pixels = pixels >> 2;
+			surface->setPixel(i + (3 - b), 2 * j + 1, color);
+		}
+		i = i + 4;
+		if (i == 320) {
+			i = 0;
+			j++;
+		}
+		if (j == 100)
+			break;
+	}
+	return surface;
+}
+
 void DrillerEngine::loadAssetsDOSFullGame() {
 	Common::File file;
 	if (_renderMode == Common::kRenderEGA) {
@@ -256,7 +300,6 @@ void DrillerEngine::loadAssetsDOSDemo() {
 	_renderMode = Common::kRenderCGA; // DOS demos is CGA only
 	_viewArea = Common::Rect(36, 16, 284, 117); // correct view area
 	_gfx->_renderMode = _renderMode;
-	loadBundledImages();
 	file.open("d2");
 	if (!file.isOpen())
 		error("Failed to open 'd2' file");
@@ -265,6 +308,8 @@ void DrillerEngine::loadAssetsDOSDemo() {
 	loadMessagesFixedSize(&file, 0x636, 14, 20);
 	load8bitBinary(&file, 0x55b0, 4);
 	loadGlobalObjects(&file, 0x8c);
+	_border = load8bitDemoImage(&file, 0x6220);
+	_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
 
 	// Fixed for a corrupted area names in the demo data
 	_areaMap[2]->_name = "LAPIS LAZULI";
