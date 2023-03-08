@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-06 22:17+0000\n"
+"POT-Creation-Date: 2023-03-08 02:41+0000\n"
 "PO-Revision-Date: 2023-03-07 11:29+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -188,7 +188,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:888
 #: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
-#: engines/vcruise/vcruise.cpp:84 engines/vcruise/vcruise.cpp:94
+#: engines/vcruise/vcruise.cpp:85 engines/vcruise/vcruise.cpp:95
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
@@ -4874,6 +4874,7 @@ msgstr ""
 "れます。\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
+#: engines/vcruise/runtime.cpp:1608
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "現在より新しいバージョンのScummVMで作成されたセーブです。ロードできません。"
@@ -6309,16 +6310,16 @@ msgstr "デバッグオーバーレイの切替"
 msgid "Force any playing movies to end"
 msgstr "再生中のムービーを強制終了"
 
-#: engines/mtropolis/saveload.cpp:142
+#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:1594
 msgid "Failed to read version information from save file"
 msgstr "セーブからバージョン情報が読み取れません"
 
-#: engines/mtropolis/saveload.cpp:150
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:1601
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "ロードに失敗、セーブファイルに有効なバージョン情報がありません。"
 
-#: engines/mtropolis/saveload.cpp:166
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:1615
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -8600,19 +8601,19 @@ msgstr "Ultima VIIIのチート"
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIIIのデバッグ"
 
-#: engines/vcruise/vcruise.cpp:75
+#: engines/vcruise/vcruise.cpp:76
 #, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr ""
 "このゲームはHeroCraftサブエンジンが必要ですが、コンパイルされていません。"
 
-#: engines/vcruise/vcruise.cpp:82
+#: engines/vcruise/vcruise.cpp:83
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:92
+#: engines/vcruise/vcruise.cpp:93
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
