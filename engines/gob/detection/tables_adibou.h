@@ -213,6 +213,20 @@
 	0, 0, 0
 },
 
+{
+	{
+		"adibou2",
+		"ADI Jr.",
+		AD_ENTRY1s("intro.stk", "718a51862406136c28639489a9ba950a", 956350),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	kGameTypeAdibou2,
+	kFeatures640x480,
+	0, 0, 0
+},
 
 // -- Italian: Adibù --
 {
