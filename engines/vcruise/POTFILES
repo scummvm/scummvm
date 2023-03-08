@@ -1,2 +1,3 @@
 engines/vcruise/metaengine.cpp
+engines/vcruise/runtime.cpp
 engines/vcruise/vcruise.cpp

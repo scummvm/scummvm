@@ -64,6 +64,13 @@ public:
 };
 
 bool VCruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
+	switch (f) {
+	case kSupportsLoadingDuringStartup:
+		return true;
+	default:
+		break;
+	}
+
 	return checkExtendedSaves(f);
 }
 

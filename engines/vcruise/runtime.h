@@ -32,6 +32,8 @@ class OSystem;
 namespace Common {
 
 class RandomSource;
+class ReadStream;
+class WriteStream;
 
 } // End of namespace Commom
 
@@ -141,6 +143,14 @@ public:
 	void onLButtonUp(int16 x, int16 y);
 	void onMouseMove(int16 x, int16 y);
 	void onKeyDown(Common::KeyCode keyCode);
+
+	bool canSave() const;
+	bool canLoad() const;
+
+	void saveGame(Common::WriteStream *stream) const;
+	bool loadGame(Common::ReadStream *stream);
+
+	bool bootGame(bool newGame);
 
 private:
 	enum IndexParseType {
@@ -254,7 +264,6 @@ private:
 	typedef int32 ScriptArg_t;
 	typedef int32 StackValue_t;
 
-	bool bootGame();
 	bool runIdle();
 	bool runHorizontalPan(bool isRight);
 	bool runScript();
@@ -323,20 +332,39 @@ private:
 	void scriptOpStatic(ScriptArg_t arg);
 	void scriptOpVarLoad(ScriptArg_t arg);
 	void scriptOpVarStore(ScriptArg_t arg);
+
+	void scriptOpItemCheck(ScriptArg_t arg);
+	void scriptOpItemCRSet(ScriptArg_t arg);
+	void scriptOpItemSRSet(ScriptArg_t arg);
+	void scriptOpItemRSet(ScriptArg_t arg);
+
 	void scriptOpSetCursor(ScriptArg_t arg);
 	void scriptOpSetRoom(ScriptArg_t arg);
 	void scriptOpLMB(ScriptArg_t arg);
 	void scriptOpLMB1(ScriptArg_t arg);
 	void scriptOpSoundS1(ScriptArg_t arg);
+	void scriptOpSoundS2(ScriptArg_t arg);
+	void scriptOpSoundS3(ScriptArg_t arg);
+	void scriptOpSoundL1(ScriptArg_t arg);
 	void scriptOpSoundL2(ScriptArg_t arg);
+	void scriptOpSoundL3(ScriptArg_t arg);
+	void scriptOp3DSoundL2(ScriptArg_t arg);
+	void scriptOpRange(ScriptArg_t arg);
+	void scriptOpAddXSound(ScriptArg_t arg);
+	void scriptOpClrXSound(ScriptArg_t arg);
+	void scriptOpStopSndLA(ScriptArg_t arg);
+	void scriptOpStopSndLO(ScriptArg_t arg);
 
 	void scriptOpMusic(ScriptArg_t arg);
 	void scriptOpMusicUp(ScriptArg_t arg);
 	void scriptOpMusicDn(ScriptArg_t arg);
+	void scriptOpParm0(ScriptArg_t arg);
 	void scriptOpParm1(ScriptArg_t arg);
 	void scriptOpParm2(ScriptArg_t arg);
 	void scriptOpParm3(ScriptArg_t arg);
 	void scriptOpParmG(ScriptArg_t arg);
+	void scriptOpSParmX(ScriptArg_t arg);
+	void scriptOpSAnimX(ScriptArg_t arg);
 
 	void scriptOpVolumeDn4(ScriptArg_t arg);
 	void scriptOpVolumeUp3(ScriptArg_t arg);
@@ -344,8 +372,10 @@ private:
 	void scriptOpDrop(ScriptArg_t arg);
 	void scriptOpDup(ScriptArg_t arg);
 	void scriptOpSay3(ScriptArg_t arg);
+	void scriptOpSay3Get(ScriptArg_t arg);
 	void scriptOpSetTimer(ScriptArg_t arg);
 	void scriptOpGetTimer(ScriptArg_t arg);
+	void scriptOpDelay(ScriptArg_t arg);
 	void scriptOpLoSet(ScriptArg_t arg);
 	void scriptOpLoGet(ScriptArg_t arg);
 	void scriptOpHiSet(ScriptArg_t arg);
@@ -354,7 +384,11 @@ private:
 	void scriptOpNot(ScriptArg_t arg);
 	void scriptOpAnd(ScriptArg_t arg);
 	void scriptOpOr(ScriptArg_t arg);
+	void scriptOpAdd(ScriptArg_t arg);
+	void scriptOpSub(ScriptArg_t arg);
 	void scriptOpCmpEq(ScriptArg_t arg);
+	void scriptOpCmpLt(ScriptArg_t arg);
+	void scriptOpCmpGt(ScriptArg_t arg);
 
 	void scriptOpBitLoad(ScriptArg_t arg);
 	void scriptOpBitSet0(ScriptArg_t arg);
@@ -496,6 +530,10 @@ private:
 
 	static const int kPanoramaPanningMarginX = 11;
 	static const int kPanoramaPanningMarginY = 11;
+
+	static const uint kSaveGameIdentifier = 0x53566372;
+	static const uint kSaveGameCurrentVersion = 1;
+	static const uint kSaveGameEarliestSupportedVersion = 1;
 };
 
 } // End of namespace VCruise

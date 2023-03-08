@@ -25,6 +25,7 @@
 #include "common/random.h"
 #include "common/system.h"
 #include "common/stream.h"
+#include "common/translation.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -36,6 +37,8 @@
 #include "audio/audiostream.h"
 
 #include "video/avi_decoder.h"
+
+#include "gui/message.h"
 
 #include "vcruise/audio_player.h"
 #include "vcruise/runtime.h"
@@ -185,7 +188,7 @@ void Runtime::loadCursors(const char *exeName) {
 
 		_namedCursors["CUR_TYL"] = 22;		// Tyl = back
 		//_namedCursors["CUR_NIC"] = ?		// Nic = nothing
-		//_namedCursors["CUR_WEZ"] = 50		// Wez = call? FIXME
+		_namedCursors["CUR_WEZ"] = 90;		// Wez = call?  This is the pick-up hand.
 		_namedCursors["CUR_LUPA"] = 21;		// Lupa = magnifier, could be 36 too?
 		_namedCursors["CUR_NAC"] = 13;		// Nac = top?  Not sure.  But this is the finger pointer.
 		_namedCursors["CUR_PRZOD"] = 1;		// Przod = forward
@@ -219,7 +222,7 @@ bool Runtime::runFrame() {
 		moreActions = false;
 		switch (_gameState) {
 		case kGameStateBoot:
-			moreActions = bootGame();
+			moreActions = bootGame(true);
 			break;
 		case kGameStateQuit:
 			return false;
@@ -262,18 +265,22 @@ bool Runtime::runFrame() {
 	return true;
 }
 
-bool Runtime::bootGame() {
+bool Runtime::bootGame(bool newGame) {
+	assert(_gameState == kGameStateBoot);
+
 	debug(1, "Booting V-Cruise game...");
 	loadIndex();
 	debug(1, "Index loaded OK");
 
 	_gameState = kGameStateIdle;
 
-	if (_gameID == GID_REAH) {
-		// TODO: Change to the logo instead (0xb1) instead when menus are implemented
-		changeToScreen(1, 0xb0);
-	} else
-		error("Couldn't figure out what screen to start on");
+	if (newGame) {
+		if (_gameID == GID_REAH) {
+			// TODO: Change to the logo instead (0xb1) instead when menus are implemented
+			changeToScreen(1, 0xb0);
+		} else
+			error("Couldn't figure out what screen to start on");
+	}
 
 	return true;
 }
@@ -708,20 +715,37 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Static);
 			DISPATCH_OP(VarLoad);
 			DISPATCH_OP(VarStore);
+			DISPATCH_OP(ItemCheck);
+			DISPATCH_OP(ItemCRSet);
+			DISPATCH_OP(ItemSRSet);
+			DISPATCH_OP(ItemRSet);
 			DISPATCH_OP(SetCursor);
 			DISPATCH_OP(SetRoom);
 			DISPATCH_OP(LMB);
 			DISPATCH_OP(LMB1);
 			DISPATCH_OP(SoundS1);
+			DISPATCH_OP(SoundS2);
+			DISPATCH_OP(SoundS3);
+			DISPATCH_OP(SoundL1);
 			DISPATCH_OP(SoundL2);
+			DISPATCH_OP(SoundL3);
+			DISPATCH_OP(3DSoundL2);
+			DISPATCH_OP(Range);
+			DISPATCH_OP(AddXSound);
+			DISPATCH_OP(ClrXSound);
+			DISPATCH_OP(StopSndLA);
+			DISPATCH_OP(StopSndLO);
 
 			DISPATCH_OP(Music);
 			DISPATCH_OP(MusicUp);
 			DISPATCH_OP(MusicDn);
+			DISPATCH_OP(Parm0);
 			DISPATCH_OP(Parm1);
 			DISPATCH_OP(Parm2);
 			DISPATCH_OP(Parm3);
 			DISPATCH_OP(ParmG);
+			DISPATCH_OP(SParmX);
+			DISPATCH_OP(SAnimX);
 
 			DISPATCH_OP(VolumeDn4);
 			DISPATCH_OP(VolumeUp3);
@@ -729,8 +753,10 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Drop);
 			DISPATCH_OP(Dup);
 			DISPATCH_OP(Say3);
+			DISPATCH_OP(Say3Get);
 			DISPATCH_OP(SetTimer);
 			DISPATCH_OP(GetTimer);
+			DISPATCH_OP(Delay);
 			DISPATCH_OP(LoSet);
 			DISPATCH_OP(LoGet);
 			DISPATCH_OP(HiSet);
@@ -739,7 +765,11 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Not);
 			DISPATCH_OP(And);
 			DISPATCH_OP(Or);
+			DISPATCH_OP(Add);
+			DISPATCH_OP(Sub);
 			DISPATCH_OP(CmpEq);
+			DISPATCH_OP(CmpGt);
+			DISPATCH_OP(CmpLt);
 
 			DISPATCH_OP(BitLoad);
 			DISPATCH_OP(BitSet0);
@@ -975,6 +1005,8 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 }
 
 void Runtime::returnToIdleState() {
+	debug(1, "Returned to idle state in room %u screen 0%x facing direction %u", _roomNumber, _screenNumber, _direction);
+
 	_animPlayWhileIdle = false;
 
 	if (_haveIdleAnimations[_direction]) {
@@ -1518,6 +1550,108 @@ void Runtime::onKeyDown(Common::KeyCode keyCode) {
 	queueOSEvent(evt);
 }
 
+bool Runtime::canSave() const {
+	return _gameState == kGameStateIdle;
+}
+
+bool Runtime::canLoad() const {
+	return _gameState == kGameStateIdle;
+}
+
+void Runtime::saveGame(Common::WriteStream *stream) const {
+	stream->writeUint32BE(kSaveGameIdentifier);
+	stream->writeUint32BE(kSaveGameCurrentVersion);
+
+	stream->writeUint32BE(_roomNumber);
+	stream->writeUint32BE(_screenNumber);
+	stream->writeUint32BE(_direction);
+
+	Common::Array<uint32> variableIDs;
+
+	for (const Common::HashMap<uint32, int32>::Node &varNode : _variables)
+		variableIDs.push_back(varNode._key);
+
+	Common::sort(variableIDs.begin(), variableIDs.end());
+
+	stream->writeUint32BE(variableIDs.size());
+
+	for (uint32 variableKey : variableIDs) {
+		Common::HashMap<uint32, int32>::const_iterator it = _variables.find(variableKey);
+		assert(it != _variables.end());
+
+		stream->writeUint32BE(variableKey);
+		stream->writeSint32BE(it->_value);
+	}
+}
+
+bool Runtime::loadGame(Common::ReadStream *stream) {
+	assert(canLoad());
+
+	uint32 saveGameID = stream->readUint32BE();
+	uint32 saveVersion = stream->readUint32BE();
+
+	if (stream->err() || stream->eos()) {
+		GUI::MessageDialog dialog(_("Failed to read version information from save file"));
+		dialog.runModal();
+
+		return false;
+	}
+
+	if (saveGameID != kSaveGameIdentifier) {
+		GUI::MessageDialog dialog(_("Failed to load save, the save file doesn't contain valid version information."));
+		dialog.runModal();
+
+		return false;
+	}
+
+	if (saveVersion > kSaveGameCurrentVersion) {
+		GUI::MessageDialog dialog(_("Saved game was created with a newer version of ScummVM. Unable to load."));
+		dialog.runModal();
+
+		return false;
+	}
+
+	if (saveVersion < kSaveGameEarliestSupportedVersion) {
+		GUI::MessageDialog dialog(_("Saved game was created with an earlier, incompatible version of ScummVM. Unable to load."));
+		dialog.runModal();
+
+		return false;
+	}
+
+	uint32 roomNumber = stream->readUint32BE();
+	uint32 screenNumber = stream->readUint32BE();
+	uint32 direction = stream->readUint32BE();
+
+	uint32 numVars = stream->readUint32BE();
+
+	if (stream->err() || stream->eos())
+		return false;
+
+	Common::HashMap<uint32, int32> vars;
+
+	for (uint32 i = 0; i < numVars; i++) {
+		uint32 varID = stream->readUint32BE();
+		int32 varValue = stream->readSint32BE();
+
+		vars[varID] = varValue;
+	}
+
+	if (stream->err() || stream->eos())
+		return false;
+
+	if (direction >= kNumDirections)
+		return false;
+
+	// Load succeeded
+	_variables = Common::move(vars);
+
+	_direction = direction;
+	changeToScreen(roomNumber, screenNumber);
+	_havePendingReturnToIdleState = true;
+
+	return true;
+}
+
 #ifdef PEEK_STACK
 #error "PEEK_STACK is already defined"
 #endif
@@ -1782,6 +1916,11 @@ void Runtime::scriptOpVarStore(ScriptArg_t arg) {
 	_variables[varID] = stackArgs[0];
 }
 
+OPCODE_STUB(ItemCheck)
+OPCODE_STUB(ItemCRSet)
+OPCODE_STUB(ItemSRSet)
+OPCODE_STUB(ItemRSet)
+
 void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
@@ -1820,14 +1959,78 @@ void Runtime::scriptOpLMB1(ScriptArg_t arg) {
 void Runtime::scriptOpSoundS1(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	warning("Sound play not implemented yet");
+	warning("Sound play 1 not implemented yet");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpSoundS2(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	warning("Sound play 2 not implemented yet");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpSoundS3(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	warning("Sound play 3 not implemented yet");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpSoundL1(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	warning("Sound loop 1 not implemented yet");
 	(void)stackArgs;
 }
 
 void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
-	warning("Sound loop not implemented yet");
+	warning("Sound loop 2 not implemented yet");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpSoundL3(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	warning("Sound loop 3 not implemented yet");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
+	TAKE_STACK(4);
+
+	warning("3D sound loop not implemented yet");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpAddXSound(ScriptArg_t arg) {
+	TAKE_STACK(4);
+
+	warning("AddXSound not implemented yet");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpClrXSound(ScriptArg_t arg) {
+	warning("ClrXSound not implemented yet");
+}
+
+void Runtime::scriptOpStopSndLA(ScriptArg_t arg) {
+	warning("StopSndLA not implemented yet");
+}
+
+void Runtime::scriptOpStopSndLO(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	warning("StopSndLO not implemented yet");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpRange(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	warning("Range not implemented yet");
 	(void)stackArgs;
 }
 
@@ -1848,6 +2051,13 @@ void Runtime::scriptOpMusicDn(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
 	warning("Music volume ramp down is not implemented");
+	(void)stackArgs;
+}
+
+void Runtime::scriptOpParm0(ScriptArg_t arg) {
+	TAKE_STACK(4);
+
+	warning("Parm0 is not implemented");
 	(void)stackArgs;
 }
 
@@ -1891,6 +2101,9 @@ void Runtime::scriptOpParmG(ScriptArg_t arg) {
 	_gyros.dragMargin = dragMargin;
 	_gyros.maxValue = maxValue;
 }
+
+OPCODE_STUB(SParmX)
+OPCODE_STUB(SAnimX)
 
 void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) {
 	TAKE_STACK(3);
@@ -1943,6 +2156,8 @@ void Runtime::scriptOpSay3(ScriptArg_t arg) {
 	(void)stackArgs;
 }
 
+OPCODE_STUB(Say3Get)
+
 void Runtime::scriptOpSetTimer(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
@@ -1952,13 +2167,20 @@ void Runtime::scriptOpSetTimer(ScriptArg_t arg) {
 void Runtime::scriptOpGetTimer(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	bool isCompleted = false;
+	bool isCompleted = true;
 
 	Common::HashMap<uint, uint32>::const_iterator timerIt = _timers.find(stackArgs[0]);
 	if (timerIt != _timers.end())
 		isCompleted = (g_system->getMillis() >= timerIt->_value);
 
 	_scriptStack.push_back(isCompleted ? 1 : 0);
+}
+
+void Runtime::scriptOpDelay(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	warning("Delay opcode is not implemented yet");
+	(void)stackArgs;
 }
 
 void Runtime::scriptOpLoSet(ScriptArg_t arg) {
@@ -2035,10 +2257,34 @@ void Runtime::scriptOpOr(ScriptArg_t arg) {
 	_scriptStack.push_back((stackArgs[0] != 0 || stackArgs[1] != 0) ? 1 : 0);
 }
 
+void Runtime::scriptOpAdd(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	_scriptStack.push_back(stackArgs[0] + stackArgs[1]);
+}
+
+void Runtime::scriptOpSub(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	_scriptStack.push_back(stackArgs[0] - stackArgs[1]);
+}
+
 void Runtime::scriptOpCmpEq(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
 	_scriptStack.push_back((stackArgs[0] == stackArgs[1]) ? 1 : 0);
+}
+
+void Runtime::scriptOpCmpLt(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	_scriptStack.push_back((stackArgs[0] < stackArgs[1]) ? 1 : 0);
+}
+
+void Runtime::scriptOpCmpGt(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	_scriptStack.push_back((stackArgs[0] > stackArgs[1]) ? 1 : 0);
 }
 
 void Runtime::scriptOpBitLoad(ScriptArg_t arg) {

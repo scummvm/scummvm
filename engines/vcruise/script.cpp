@@ -305,6 +305,10 @@ void ScriptCompiler::compileScreenScriptSet(ScreenScriptSet *sss) {
 			protoScript.reset();
 
 			sss->interactionScripts[interactionNumber] = currentScript;
+		} else if (token == "DEC") {
+			_numberParsingMode = kNumberParsingDec;
+		} else if (token == "HEX") {
+			_numberParsingMode = kNumberParsingHex;
 		} else if (compileInstructionToken(protoScript, token)) {
 			// Nothing
 		} else {
@@ -320,6 +324,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"speed", ProtoOp::kProtoOpScript, ScriptOps::kSpeed},
 	{"sanimL", ProtoOp::kProtoOpScript, ScriptOps::kSAnimL},
 	{"changeL", ProtoOp::kProtoOpScript, ScriptOps::kChangeL},
+	{"changeL1", ProtoOp::kProtoOpScript, ScriptOps::kChangeL},	// This seems wrong, but not sure what changeL1 does differently from changeL yet
 	{"animR", ProtoOp::kProtoOpScript, ScriptOps::kAnimR},
 	{"animF", ProtoOp::kProtoOpScript, ScriptOps::kAnimF},
 	{"animN", ProtoOp::kProtoOpScript, ScriptOps::kAnimN},
@@ -329,6 +334,10 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"static", ProtoOp::kProtoOpScript, ScriptOps::kStatic},
 	{"yes@", ProtoOp::kProtoOpScript, ScriptOps::kVarLoad},
 	{"yes!", ProtoOp::kProtoOpScript, ScriptOps::kVarStore},
+	{"cr?", ProtoOp::kProtoOpScript, ScriptOps::kItemCheck},
+	{"cr!", ProtoOp::kProtoOpScript, ScriptOps::kItemCRSet},
+	{"sr!", ProtoOp::kProtoOpScript, ScriptOps::kItemSRSet},
+	{"r!", ProtoOp::kProtoOpScript, ScriptOps::kItemRSet},
 	{"cursor!", ProtoOp::kProtoOpScript, ScriptOps::kSetCursor},
 	{"room!", ProtoOp::kProtoOpScript, ScriptOps::kSetRoom},
 	{"lmb", ProtoOp::kProtoOpScript, ScriptOps::kLMB},
@@ -339,8 +348,10 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"drop", ProtoOp::kProtoOpScript, ScriptOps::kDrop},
 	{"dup", ProtoOp::kProtoOpScript, ScriptOps::kDup},
 	{"say3", ProtoOp::kProtoOpScript, ScriptOps::kSay3},
+	{"say3@", ProtoOp::kProtoOpScript, ScriptOps::kSay3Get},
 	{"setTimer", ProtoOp::kProtoOpScript, ScriptOps::kSetTimer},
 	{"getTimer", ProtoOp::kProtoOpScript, ScriptOps::kGetTimer},
+	{"delay", ProtoOp::kProtoOpScript, ScriptOps::kDelay},
 	{"lo!", ProtoOp::kProtoOpScript, ScriptOps::kLoSet},
 	{"lo@", ProtoOp::kProtoOpScript, ScriptOps::kLoGet},
 	{"hi!", ProtoOp::kProtoOpScript, ScriptOps::kHiSet},
@@ -348,23 +359,41 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 
 	{"and", ProtoOp::kProtoOpScript, ScriptOps::kAnd},
 	{"or", ProtoOp::kProtoOpScript, ScriptOps::kOr},
+	{"+", ProtoOp::kProtoOpScript, ScriptOps::kAdd},
+	{"-", ProtoOp::kProtoOpScript, ScriptOps::kSub},
 	{"not", ProtoOp::kProtoOpScript, ScriptOps::kNot},
 	{"=", ProtoOp::kProtoOpScript, ScriptOps::kCmpEq},
+	{">", ProtoOp::kProtoOpScript, ScriptOps::kCmpGt},
+	{"<", ProtoOp::kProtoOpScript, ScriptOps::kCmpLt},
 
 	{"bit@", ProtoOp::kProtoOpScript, ScriptOps::kBitLoad},
 	{"bit0!", ProtoOp::kProtoOpScript, ScriptOps::kBitSet0},
 	{"bit1!", ProtoOp::kProtoOpScript, ScriptOps::kBitSet1},
 
 	{"soundS1", ProtoOp::kProtoOpScript, ScriptOps::kSoundS1},
+	{"soundS2", ProtoOp::kProtoOpScript, ScriptOps::kSoundS2},
+	{"soundS3", ProtoOp::kProtoOpScript, ScriptOps::kSoundS3},
+	{"soundL1", ProtoOp::kProtoOpScript, ScriptOps::kSoundL1},
 	{"soundL2", ProtoOp::kProtoOpScript, ScriptOps::kSoundL2},
+	{"soundL3", ProtoOp::kProtoOpScript, ScriptOps::kSoundL3},
+	{"3DsoundL2", ProtoOp::kProtoOpScript, ScriptOps::k3DSoundL2},
+	{"range", ProtoOp::kProtoOpScript, ScriptOps::kRange},
+	{"addXsound", ProtoOp::kProtoOpScript, ScriptOps::kAddXSound},
+	{"clrXsound", ProtoOp::kProtoOpScript, ScriptOps::kClrXSound},
+	{"stopSndLA", ProtoOp::kProtoOpScript, ScriptOps::kStopSndLA},
+	{"stopSndLO", ProtoOp::kProtoOpScript, ScriptOps::kStopSndLO},
+
 	{"music", ProtoOp::kProtoOpScript, ScriptOps::kMusic},
 	{"musicUp", ProtoOp::kProtoOpScript, ScriptOps::kMusicUp},
 	{"musicDn", ProtoOp::kProtoOpScript, ScriptOps::kMusicDn},
 
+	{"parm0", ProtoOp::kProtoOpScript, ScriptOps::kParm0},
 	{"parm1", ProtoOp::kProtoOpScript, ScriptOps::kParm1},
 	{"parm2", ProtoOp::kProtoOpScript, ScriptOps::kParm2},
 	{"parm3", ProtoOp::kProtoOpScript, ScriptOps::kParm3},
 	{"parmG", ProtoOp::kProtoOpScript, ScriptOps::kParmG},
+	{"sparmX", ProtoOp::kProtoOpScript, ScriptOps::kSParmX},
+	{"sanimX", ProtoOp::kProtoOpScript, ScriptOps::kSAnimX},
 
 	{"disc1", ProtoOp::kProtoOpScript, ScriptOps::kDisc1},
 	{"disc2", ProtoOp::kProtoOpScript, ScriptOps::kDisc2},

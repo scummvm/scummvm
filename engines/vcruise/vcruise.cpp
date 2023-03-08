@@ -23,6 +23,7 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/algorithm.h"
 #include "common/translation.h"
@@ -168,6 +169,17 @@ Common::Error VCruiseEngine::run() {
 		_runtime->setDebugMode(true);
 	}
 
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0) {
+			(void)_runtime->bootGame(false);
+
+			Common::Error err = loadGameState(saveSlot);
+			if (err.getCode() != Common::kNoError)
+				return err;
+		}
+	}
+
 	// Run the game
 	while (!shouldQuit()) {
 		handleEvents();
@@ -191,7 +203,8 @@ void VCruiseEngine::pauseEngineIntern(bool pause) {
 bool VCruiseEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsReturnToLauncher:
-	//case kSupportsSavingDuringRuntime:
+	case kSupportsSavingDuringRuntime:
+	case kSupportsLoadingDuringRuntime:
 		return true;
 	default:
 		return false;
@@ -199,15 +212,31 @@ bool VCruiseEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error VCruiseEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	return Common::Error(Common::kUnknownError);
+	_runtime->saveGame(stream);
+
+	if (stream->err())
+		return Common::Error(Common::kWritingFailed);
+
+	return Common::Error(Common::kNoError);
+}
+
+Common::Error VCruiseEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	if (!_runtime->loadGame(stream))
+		return Common::Error(Common::kReadingFailed);
+
+	return Common::Error(Common::kNoError);
 }
 
 bool VCruiseEngine::canSaveAutosaveCurrently() {
-	return false;
+	return _runtime->canSave();
 }
 
 bool VCruiseEngine::canSaveGameStateCurrently() {
-	return false;
+	return _runtime->canSave();
+}
+
+bool VCruiseEngine::canLoadGameStateCurrently() {
+	return _runtime->canLoad();
 }
 
 void VCruiseEngine::initializePath(const Common::FSNode &gamePath) {

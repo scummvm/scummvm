@@ -54,8 +54,11 @@ public:
 	const VCruiseGameDescription *_gameDescription;
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+
 	bool canSaveAutosaveCurrently() override;
 	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently() override;
 
 	void initializePath(const Common::FSNode &gamePath) override;
 
