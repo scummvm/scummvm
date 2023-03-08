@@ -208,6 +208,13 @@ const char gScummVMFeatures[] = ""
 #ifdef USE_LIBCURL
 	"libcurl "
 #endif
+#ifdef SDL_BACKEND
+#ifdef USE_SDL2
+	"SDL2 "
+#else
+	"SDL1.2 "
+#endif
+#endif
 #ifdef USE_SDL_NET
 	"SDL_net "
 #endif
