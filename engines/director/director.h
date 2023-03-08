@@ -209,6 +209,7 @@ public:
 	Graphics::MacDrawPixPtr getInkDrawPixel();
 
 	void loadKeyCodes();
+	void setMachineType(int machineType);
 	Common::CodePage getPlatformEncoding();
 
 	Archive *createArchive();
