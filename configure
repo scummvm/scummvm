@@ -4129,6 +4129,7 @@ if test "$_sdl" = yes ; then
 	append_var LIBS "$SDL_LIBS"
 	case $_sdlversion in
 		2.*.*)
+			append_var DEFINES "-DUSE_SDL2"
 			add_line_to_config_mk "USE_SDL2 = 1"
 			_sdlMajorVersionNumber=2
 			;;

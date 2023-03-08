@@ -431,9 +431,6 @@ int main(int argc, char *argv[]) {
 		cout << "\nBuilding against SDL 1.2\n\n";
 	} else {
 		cout << "\nBuilding against SDL 2.0\n\n";
-		// TODO: This also defines USE_SDL2 in the preprocessor, we don't do
-		// this in our configure/make based build system. Adapt create_project
-		// to replicate this behavior.
 		setup.defines.push_back("USE_SDL2");
 	}
 
