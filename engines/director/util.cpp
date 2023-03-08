@@ -288,7 +288,7 @@ void DirectorEngine::loadKeyCodes() {
 	}
 }
 
-void DirectorEngine::setMachineType(int machineType) {
+void setMachineType(int machineType) {
     switch (machineType) {
     case 1:
 		// Macintosh 512Ke
