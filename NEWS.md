@@ -25,6 +25,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
 
+ Sword2:
+   - Added support for Chinese translation.
+
  Xeen:
    - Renamed 'xeen' engine to 'mm' for Might & Magic.
 
