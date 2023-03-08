@@ -23,7 +23,7 @@
 #define MM1_VIEWS_ENH_DIALOGS_H
 
 #include "mm/mm1/events.h"
-#include "mm/mm1/views/create_characters.h"
+#include "mm/mm1/views_enh/create_characters.h"
 #include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/title.h"
@@ -50,7 +50,7 @@ namespace ViewsEnh {
 
 struct Dialogs {
 private:
-	Views::CreateCharacters _createCharacters;
+	ViewsEnh::CreateCharacters _createCharacters;
 	Views::Protect _protect;
 	Views::Title _title;
 	ViewsEnh::Characters _characters;
