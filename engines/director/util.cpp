@@ -288,6 +288,8 @@ void DirectorEngine::loadKeyCodes() {
 	}
 }
 
+extern int _wmWidth, _wmHeight, _colorDepth;
+
 void setMachineType(int machineType) {
     switch (machineType) {
     case 1: // Macintosh 512Ke
