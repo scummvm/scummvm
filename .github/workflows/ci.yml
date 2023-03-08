@@ -15,21 +15,21 @@ jobs:
           - platform: win32
             triplet: x86-windows
             arch: x86
-            configFlags: --enable-faad --enable-mpeg2 --enable-discord
-            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib fribidi'
+            configFlags: --enable-discord --enable-faad --enable-gif --enable-mpeg2
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype fribidi giflib libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
             useNasm: 'true'
           - platform: x64
             arch: x64
             triplet: x64-windows
-            configFlags: --enable-faad --enable-mpeg2 --enable-discord
-            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib fribidi'
+            configFlags: --enable-discord --enable-faad --enable-gif --enable-mpeg2
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype fribidi giflib libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
           - platform: arm64
             arch: arm64
             triplet: arm64-windows
             # fribidi is disabled due to https://github.com/microsoft/vcpkg/issues/11248 [fribidi] Fribidi doesn't cross-compile on x86-64 to target arm/arm64
             # Note that fribidi is also disabled on arm64 in devtools/create_project/msvc.cpp
-            configFlags: --enable-faad --enable-mpeg2 --enable-discord --disable-fribidi --disable-opengl
-            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib'
+            configFlags: --enable-discord --enable-faad --enable-gif --enable-mpeg2 --disable-fribidi --disable-opengl
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype giflib libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
     env:
       CONFIGURATION: Debug
       PLATFORM: ${{ matrix.platform }}
