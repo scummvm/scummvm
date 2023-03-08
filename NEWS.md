@@ -21,6 +21,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  GrimE:
    - Added support for Chinese Grim Fandango.
+   - Added support for Russian Grim Fandango translations from Fargus,
+     ENPY and 7Wolf.
 
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
