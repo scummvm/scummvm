@@ -220,7 +220,7 @@ public:
 		if (v)
 			v->parent = u->parent;
 		if (u == _leftmost)
-			_leftmost = v ? v : u->parent;
+			_leftmost = v ? leftmost(v) : u->parent;
 		--_size;
 		auto const ret = ++it;
 		delete u;
