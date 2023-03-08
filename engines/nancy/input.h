@@ -22,6 +22,8 @@
 #ifndef NANCY_INPUT_H
 #define NANCY_INPUT_H
 
+#include "engines/nancy/commontypes.h"
+
 #include "common/rect.h"
 #include "common/keyboard.h"
 
