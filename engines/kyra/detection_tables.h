@@ -28,6 +28,7 @@ namespace {
 #define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, false, true, Kyra::GI_KYRA1)
 #define KYRA1_OLDFLOPPY_FLAGS FLAGS(false, false, false, true, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_OLDFLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, true, false, false, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, false, true, false, false, false, false, Kyra::GI_KYRA1)
@@ -177,7 +178,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
-		KYRA1_OLDFLOPPY_FLAGS
+		KYRA1_OLDFLOPPY_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
 	},
 
 	{ // floppy v2.2 from VooD
@@ -229,7 +230,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
-		KYRA1_OLDFLOPPY_FLAGS
+		KYRA1_OLDFLOPPY_FAN_FLAGS(Common::CS_CZE, Common::EN_ANY)
 	},
 
 	{ // from trembyle
@@ -406,7 +407,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_CD_FLAGS
 	},
 
-	{ // HEBREW FAN TRANSLATION
+	{ // Hebrew fan translation
 		{
 			"kyra1",
 			"CD",
@@ -416,7 +417,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_CD,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
-		KYRA1_CD_FLAGS
+		KYRA1_CD_FAN_FLAGS(Common::HE_ISR, Common::EN_ANY)
 	},
 
 	{ // CD v3.7
@@ -455,7 +456,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_CD,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
-		KYRA1_CD_FLAGS
+		KYRA1_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
 
 	{ // Spanish fan translation
@@ -468,7 +469,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_CD,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
-		KYRA1_CD_FLAGS
+		KYRA1_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
 	},
 
 	{ // Kyra 1 Mac CD as mentioned in bug #7695 "KYRA1: Add support for Macintosh CD" by nnooiissee
@@ -491,12 +492,12 @@ const KYRAGameDescription adGameDescs[] = {
 			"CD",
 			AD_ENTRY2s("GEMCUT.PAK", "8ddf09fd6bfafdb27b4cf31c5a6fc91d", -1,
 					   "BEAD.CPS",	 "3038466f65b7751451844707187aa401", -1),
-			Common::EN_ANY,
+			Common::PL_POL,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
 			GUIO0()
 		},
-		KYRA1_CD_FLAGS
+		KYRA1_CD_FAN_FLAGS(Common::PL_POL, Common::EN_ANY)
 	},
 
 	{
