@@ -123,11 +123,18 @@ void deobfuscateDrillerCPCVirtualWorlds(byte *memBuffer) {
 	}
 }
 
-byte kCPCPalettePinkBlueWhiteData[4][3] = {
+byte kCPCPaletteTitleData[4][3] = {
 	{0x00, 0x00, 0x00},
-	{0x55, 0xff, 0xff},
-	{0xff, 0x55, 0xff},
-	{0xff, 0xff, 0xff},
+	{0x00, 0x80, 0xff},
+	{0xff, 0x00, 0x00},
+	{0xff, 0xff, 0x00},
+};
+
+byte kCPCPaletteBorderData[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0xff, 0x80, 0x00},
+	{0x80, 0xff, 0xff},
+	{0x00, 0x80, 0x00},
 };
 
 Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file) {
@@ -181,7 +188,7 @@ void DrillerEngine::loadAssetsCPCFullGame() {
 		error("Failed to open DSCN1.BIN");
 
 	_title = readCPCImage(&file);
-	_title->setPalette((byte*)&kCPCPalettePinkBlueWhiteData, 0, 4);
+	_title->setPalette((byte*)&kCPCPaletteTitleData, 0, 4);
 
 	file.close();
 	file.open("DSCN2.BIN");
@@ -189,7 +196,7 @@ void DrillerEngine::loadAssetsCPCFullGame() {
 		error("Failed to open DSCN2.BIN");
 
 	_border = readCPCImage(&file);
-	_border->setPalette((byte*)&kCPCPalettePinkBlueWhiteData, 0, 4);
+	_border->setPalette((byte*)&kCPCPaletteBorderData, 0, 4);
 
 	file.close();
 	file.open("DRILL.BIN");
@@ -220,9 +227,9 @@ void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {
 
 	int score = _gameStateVars[k8bitVariableScore];
 	drawStringInSurface(_currentArea->_name, 200, 185, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 149, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 149, 153, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 149, 161, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 150, 145, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 150, 153, front, back, surface);
+	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 150, 161, front, back, surface);
 	if (_playerHeightNumber >= 0)
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 54, 161, front, back, surface);
 	else

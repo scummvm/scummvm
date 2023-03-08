@@ -420,6 +420,9 @@ void DrillerEngine::drawInfoMenu() {
 		case Common::kRenderZX:
 			color = 6;
 			break;
+		case Common::kRenderCPC:
+			color = _gfx->_underFireBackgroundColor;
+			break;
 		default:
 			color = 14;
 	}
