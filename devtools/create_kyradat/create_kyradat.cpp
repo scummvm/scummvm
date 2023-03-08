@@ -1204,6 +1204,7 @@ const TypeTable languageTable[] = {
 	{ ZH_CHN,  9 },
 	{ ZH_TWN, 10 },
 	{ KO_KOR, 11 },
+	{ CS_CZE, 12 },
 	{ -1, -1 }
 };
 
