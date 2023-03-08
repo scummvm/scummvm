@@ -7301,7 +7301,8 @@ msgstr "Bruk kompetitive nettmodifikasjoner"
 
 #: engines/scumm/dialogs.cpp:1375
 msgid "Enables custom-made modifications intented for online competitive play."
-msgstr "Aktiverer skreddersydde modifikasjoner for kompetitiv spilling på nett."
+msgstr ""
+"Aktiverer skreddersydde modifikasjoner for kompetitiv spilling på nett."
 
 #: engines/scumm/dialogs.cpp:1379
 msgid "Enable connection to Multiplayer Server"
