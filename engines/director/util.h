@@ -28,6 +28,8 @@ class String;
 
 namespace Director {
 
+void setMachineType(int machineType, int& wmWidth, int& wmHeight, int& colorDepth);
+
 int castNumToNum(const char *str);
 char *numToCastNum(int num);
 
