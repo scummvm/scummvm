@@ -59,20 +59,7 @@ static retro_audio_sample_batch_t audio_batch_cb = NULL;
 static retro_environment_t environ_cb = NULL;
 static retro_input_poll_t poll_cb = NULL;
 static retro_input_state_t input_cb = NULL;
-
-void retro_set_video_refresh(retro_video_refresh_t cb) {
-	video_cb = cb;
-}
-void retro_set_audio_sample(retro_audio_sample_t cb) {}
-void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) {
-	audio_batch_cb = cb;
-}
-void retro_set_input_poll(retro_input_poll_t cb) {
-	poll_cb = cb;
-}
-void retro_set_input_state(retro_input_state_t cb) {
-	input_cb = cb;
-}
+static int retro_device = RETRO_DEVICE_JOYPAD;
 
 // System analog stick range is -0x8000 to 0x8000
 #define ANALOG_RANGE 0x8000
@@ -93,52 +80,53 @@ char cmd_params_num;
 int adjusted_RES_W = 0;
 int adjusted_RES_H = 0;
 
-void retro_set_environment(retro_environment_t cb) {
-	environ_cb = cb;
-	bool tmp = true;
+static void update_variables(void) {
+	struct retro_variable var;
 
-	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &tmp);
-	libretro_set_core_options(environ_cb);
+	var.key = "scummvm_gamepad_cursor_speed";
+	var.value = NULL;
+	gampad_cursor_speed = 1.0f;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		gampad_cursor_speed = (float)atof(var.value);
+	}
+
+	var.key = "scummvm_gamepad_cursor_acceleration_time";
+	var.value = NULL;
+	gamepad_acceleration_time = 0.2f;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		gamepad_acceleration_time = (float)atof(var.value);
+	}
+
+	var.key = "scummvm_analog_response";
+	var.value = NULL;
+	analog_response_is_quadratic = false;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		if (strcmp(var.value, "quadratic") == 0)
+			analog_response_is_quadratic = true;
+	}
+
+	var.key = "scummvm_analog_deadzone";
+	var.value = NULL;
+	analog_deadzone = (int)(0.15f * ANALOG_RANGE);
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		analog_deadzone = (int)(atoi(var.value) * 0.01f * ANALOG_RANGE);
+	}
+
+	var.key = "scummvm_mouse_speed";
+	var.value = NULL;
+	mouse_speed = 1.0f;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		mouse_speed = (float)atof(var.value);
+	}
+
+	var.key = "scummvm_speed_hack";
+	var.value = NULL;
+	speed_hack_is_enabled = false;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		if (strcmp(var.value, "enabled") == 0)
+			speed_hack_is_enabled = true;
+	}
 }
-
-unsigned retro_api_version(void) {
-	return RETRO_API_VERSION;
-}
-
-void retro_get_system_info(struct retro_system_info *info) {
-	info->library_name = CORE_NAME;
-#if defined GIT_TAG
-#define __GIT_VERSION GIT_TAG
-#elif defined GIT_HASH
-#define __GIT_VERSION GIT_HASH "-" SCUMMVM_VERSION
-#else
-#define __GIT_VERSION ""
-#endif
-	info->library_version = __GIT_VERSION;
-	info->valid_extensions = "scummvm";
-	info->need_fullpath = true;
-	info->block_extract = false;
-}
-
-void retro_get_system_av_info(struct retro_system_av_info *info) {
-	info->geometry.base_width = RES_W;
-	info->geometry.base_height = RES_H;
-	info->geometry.max_width = RES_W;
-	info->geometry.max_height = RES_H;
-	info->geometry.aspect_ratio = 4.0f / 3.0f;
-	info->timing.fps = 60.0;
-	info->timing.sample_rate = 48000.0;
-}
-
-void retro_init(void) {
-	struct retro_log_callback log;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
-		log_cb = log.log;
-	else
-		log_cb = NULL;
-}
-
-void retro_deinit(void) {}
 
 void parse_command_params(char *cmdline) {
 	int j = 0;
@@ -196,77 +184,101 @@ char *dirname(char *path) {
 }
 #endif
 
-static void update_variables(void) {
-	struct retro_variable var;
+#if (defined(GEKKO) && !defined(WIIU)) || defined(__CELLOS_LV2__)
+int access(const char *path, int amode) {
+	RFILE *f;
+	int mode;
 
-	var.key = "scummvm_gamepad_cursor_speed";
-	var.value = NULL;
-	gampad_cursor_speed = 1.0f;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		gampad_cursor_speed = (float)atof(var.value);
-	}
-
-	var.key = "scummvm_gamepad_cursor_acceleration_time";
-	var.value = NULL;
-	gamepad_acceleration_time = 0.2f;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		gamepad_acceleration_time = (float)atof(var.value);
-	}
-
-	var.key = "scummvm_analog_response";
-	var.value = NULL;
-	analog_response_is_quadratic = false;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		if (strcmp(var.value, "quadratic") == 0)
-			analog_response_is_quadratic = true;
-	}
-
-	var.key = "scummvm_analog_deadzone";
-	var.value = NULL;
-	analog_deadzone = (int)(0.15f * ANALOG_RANGE);
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		analog_deadzone = (int)(atoi(var.value) * 0.01f * ANALOG_RANGE);
-	}
-
-	var.key = "scummvm_mouse_speed";
-	var.value = NULL;
-	mouse_speed = 1.0f;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		mouse_speed = (float)atof(var.value);
-	}
-
-	var.key = "scummvm_speed_hack";
-	var.value = NULL;
-	speed_hack_is_enabled = false;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		if (strcmp(var.value, "enabled") == 0)
-			speed_hack_is_enabled = true;
-	}
-}
-
-static int retro_device = RETRO_DEVICE_JOYPAD;
-void retro_set_controller_port_device(unsigned port, unsigned device) {
-	if (port != 0) {
-		if (log_cb)
-			log_cb(RETRO_LOG_WARN, "Invalid controller port %d.\n", port);
-		return;
-	}
-
-	switch (device) {
-	case RETRO_DEVICE_JOYPAD:
-	case RETRO_DEVICE_MOUSE:
-		retro_device = device;
+	switch (amode) {
+	// we don't really care if a file exists but isn't readable
+	case F_OK:
+	case R_OK:
+		mode = RETRO_VFS_FILE_ACCESS_READ;
 		break;
+
+	case W_OK:
+		mode = RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING;
+		break;
+
 	default:
-		if (log_cb)
-			log_cb(RETRO_LOG_WARN, "Invalid controller device class %d.\n", device);
-		break;
+		return -1;
 	}
+
+	f = filestream_open(path, RETRO_VFS_FILE_ACCESS_READ, RETRO_VFS_FILE_ACCESS_HINT_NONE);
+
+	if (f) {
+		filestream_close(f);
+		return 0;
+	}
+
+	return -1;
+}
+#endif
+
+void retro_set_video_refresh(retro_video_refresh_t cb) {
+	video_cb = cb;
 }
 
-bool retro_load_game(const struct retro_game_info *game) {
+void retro_set_audio_sample(retro_audio_sample_t cb) {}
+
+void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) {
+	audio_batch_cb = cb;
+}
+
+void retro_set_input_poll(retro_input_poll_t cb) {
+	poll_cb = cb;
+}
+
+void retro_set_input_state(retro_input_state_t cb) {
+	input_cb = cb;
+}
+
+void retro_set_environment(retro_environment_t cb) {
+	environ_cb = cb;
+	bool tmp = true;
+
+	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &tmp);
+	libretro_set_core_options(environ_cb);
+}
+
+unsigned retro_api_version(void) {
+	return RETRO_API_VERSION;
+}
+
+void retro_get_system_info(struct retro_system_info *info) {
+	info->library_name = CORE_NAME;
+#if defined GIT_TAG
+#define __GIT_VERSION GIT_TAG
+#elif defined GIT_HASH
+#define __GIT_VERSION GIT_HASH "-" SCUMMVM_VERSION
+#else
+#define __GIT_VERSION ""
+#endif
+	info->library_version = __GIT_VERSION;
+	info->valid_extensions = "scummvm";
+	info->need_fullpath = true;
+	info->block_extract = false;
+}
+
+void retro_get_system_av_info(struct retro_system_av_info *info) {
+	info->geometry.base_width = RES_W;
+	info->geometry.base_height = RES_H;
+	info->geometry.max_width = RES_W;
+	info->geometry.max_height = RES_H;
+	info->geometry.aspect_ratio = 4.0f / 3.0f;
+	info->timing.fps = 60.0;
+	info->timing.sample_rate = 48000.0;
+}
+
+void retro_init(void) {
 	const char *sysdir;
 	const char *savedir;
+	struct retro_log_callback log;
+
+	if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
+		log_cb = log.log;
+	else
+		log_cb = NULL;
 
 	update_variables();
 
@@ -337,7 +349,30 @@ bool retro_load_game(const struct retro_game_info *game) {
 	}
 
 	g_system = retroBuildOS(speed_hack_is_enabled);
+}
 
+void retro_deinit(void) {}
+
+void retro_set_controller_port_device(unsigned port, unsigned device) {
+	if (port != 0) {
+		if (log_cb)
+			log_cb(RETRO_LOG_WARN, "Invalid controller port %d.\n", port);
+		return;
+	}
+
+	switch (device) {
+	case RETRO_DEVICE_JOYPAD:
+	case RETRO_DEVICE_MOUSE:
+		retro_device = device;
+		break;
+	default:
+		if (log_cb)
+			log_cb(RETRO_LOG_WARN, "Invalid controller device class %d.\n", device);
+		break;
+	}
+}
+
+bool retro_load_game(const struct retro_game_info *game) {
 	if (!g_system) {
 		if (log_cb)
 			log_cb(RETRO_LOG_ERROR, "[scummvm] Failed to initialize platform driver.\n");
@@ -525,35 +560,3 @@ void retro_cheat_set(unsigned unused, bool unused1, const char *unused2) {}
 unsigned retro_get_region(void) {
 	return RETRO_REGION_NTSC;
 }
-
-#if (defined(GEKKO) && !defined(WIIU)) || defined(__CELLOS_LV2__)
-int access(const char *path, int amode) {
-	RFILE *f;
-	int mode;
-
-	switch (amode) {
-	// we don't really care if a file exists but isn't readable
-	case F_OK:
-	case R_OK:
-		mode = RETRO_VFS_FILE_ACCESS_READ;
-		break;
-
-	case W_OK:
-		mode = RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING;
-		break;
-
-	default:
-		return -1;
-	}
-
-	f = filestream_open(path, RETRO_VFS_FILE_ACCESS_READ, RETRO_VFS_FILE_ACCESS_HINT_NONE);
-
-	if (f) {
-		filestream_close(f);
-		return 0;
-	}
-
-	return -1;
-}
-#endif
-
