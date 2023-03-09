@@ -159,7 +159,7 @@ size_t CurlSocket::recv(void *data, int maxLen) {
 		return nread;
 	}
 
-	debug(1, "libcurl: Received %lu bytes", (uint64)nread);
+	debug(1, "libcurl: Received %llu bytes", (unsigned long long)nread);
 	return nread;
 }
 
