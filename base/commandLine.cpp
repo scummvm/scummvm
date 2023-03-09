@@ -61,6 +61,10 @@ static const char USAGE_STRING[] =
 	"Try '%s --help' for more options.\n"
 ;
 
+#ifdef SDL_BACKEND
+#include "backends/platform/sdl/sdl-sys.h"
+#endif
+
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 static const char HELP_STRING1[] =
 	"ScummVM - Graphical Adventure Game Interpreter\n"
@@ -1766,6 +1770,15 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 	} else if (command == "version") {
 		printf("%s\n", gScummVMFullVersion);
+#ifdef SDL_BACKEND
+#ifdef USE_SDL2
+		SDL_version sdlLinkedVersion;
+		SDL_GetVersion(&sdlLinkedVersion);
+		printf("Using SDL backend with SDL %d.%d.%d\n", sdlLinkedVersion.major, sdlLinkedVersion.minor, sdlLinkedVersion.patch);
+#else
+		printf("Using SDL backend with SDL1.2\n")
+#endif
+#endif
 		printf("Features compiled in: %s\n", gScummVMFeatures);
 		return true;
 	} else if (command == "help") {
