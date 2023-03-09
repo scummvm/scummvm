@@ -7816,8 +7816,8 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
-"海外版でカットされた、第3部冒頭の曲「A Pirate I Was Meant To "
-"Be」を有効化。ただし、字幕が完全に翻訳されていない場合がありますのでご了承ください。"
+"海外版でカットされた、第3部冒頭の曲「A Pirate I Was Meant To Be」を有効化。た"
+"だし、字幕が完全に翻訳されていない場合がありますのでご了承ください。"
 
 #: engines/scumm/metaengine.cpp:770
 msgid "Down Left"
