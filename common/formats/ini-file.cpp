@@ -52,6 +52,7 @@ bool INIFile::isValidName(const String &name) const {
 
 INIFile::INIFile() {
 	_allowNonEnglishCharacters = false;
+	_suppressValuelessLineWarning = false;
 }
 
 void INIFile::clear() {
@@ -172,7 +173,8 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
 			const char *p = strchr(t, '=');
 			if (!p) {
-				warning("Config file buggy: Junk found in line %d: '%s'", lineno, t);
+				if (!_suppressValuelessLineWarning)
+					warning("Config file buggy: Junk found in line %d: '%s'", lineno, t);
 				kv.key = String(t);
 				kv.value.clear();
 			}  else {
@@ -474,6 +476,10 @@ void INIFile::Section::removeKey(const String &key) {
 
 void INIFile::allowNonEnglishCharacters() {
 	_allowNonEnglishCharacters = true;
+}
+
+void INIFile::suppressValuelessLineWarning() {
+	_suppressValuelessLineWarning = true;
 }
 
 } // End of namespace Common
