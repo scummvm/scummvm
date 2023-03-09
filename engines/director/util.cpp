@@ -288,6 +288,90 @@ void DirectorEngine::loadKeyCodes() {
 	}
 }
 
+void DirectorEngine::setMachineType(int machineType) {
+    _machineType = machineType;
+    
+    switch (machineType) {
+    case 1: // Macintosh 512Ke
+    case 2: // Macintosh Plus
+    case 3: // Macintosh SE
+    case 4: // Macintosh II
+    case 5: // Macintosh IIx
+    case 6: // Macintosh IIcx 
+    case 7: // Macintosh SE/30
+    case 8: // Macintosh Portable
+    case 9: // Macintosh IIci
+        _wmWidth = 512;
+        _wmHeight = 384;
+        _colorDepth = 8;
+        break;
+    case 11: // Macintosh IIfx
+        _wmWidth = 1152;
+        _wmHeight = 870;
+        _colorDepth = 1;
+        break;
+    case 15: // Macintosh Classic
+    case 16: // Macintosh IIsi
+    case 17: // Macintosh LC
+    case 20: // Macintosh Quadra 700
+    case 21: // Classic II
+    case 22: // PowerBook 100
+    case 23: // PowerBook 140
+    case 27: // Macintosh LCIII
+    case 28: // Macintosh Centris 650
+    case 30: // PowerBook Duo 230
+    case 31: // PowerBook 180
+    case 32: // PowerBook 160
+    case 33: // Macintosh Quadra 800
+    case 35: // Macintosh LC II
+    case 42: // Macintosh IIvi
+    case 46: // Macintosh IIvx
+    case 47: // Macintosh Color Classic
+    case 48: // PowerBook 165c
+    case 50: // Macintosh Centris 610
+    case 52: // PowerBook 145
+        _wmWidth = 640;
+        _wmHeight = 480;
+        _colorDepth = 8;
+        break;
+    case 45: // Power Macintosh 7100/70
+    case 53: // PowerComputing 8100/100
+        _wmWidth = 832;
+        _wmHeight = 624;
+        _colorDepth = 8;
+        break;
+    case 70: // PowerBook 540C
+        _wmWidth = 640;
+        _wmHeight = 480;
+        _colorDepth = 16;
+        break;
+    case 73: // Power Macintosh 6100/60
+        _wmWidth = 832;
+        _wmHeight = 624;
+        _colorDepth = 16;
+        break;
+    case 18: // Macintosh Quadra 900
+    case 24: // Macintosh Quadra 950
+    case 76: // Macintosh Quadra 840av
+        _wmWidth = 832;
+        _wmHeight = 624;
+        _colorDepth = 32;
+        break;
+    case 19: // PowerBook 170
+    case 25: // PowerBook Duo 210
+        _wmWidth = 640;
+        _wmHeight = 400;
+        _colorDepth = 4;
+        break;
+    case 256: // IBM PC-type machine
+    default:
+        _wmWidth = 640;
+        _wmHeight = 480;
+        _colorDepth = 8;
+        break;
+    }
+}
+
 int castNumToNum(const char *str) {
 	if (strlen(str) != 3)
 		return -1;
