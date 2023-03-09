@@ -3,31 +3,31 @@ document original contient bien plus d'informations, donc si vous ne
 trouvez pas ce que vous cherchez dans ce document et que vous comprenez
 un peu l'anglais, jetez un coup d'oeil au fichier README anglais.
 
-Pour plus d'informations, liste des jeux compatibles, détails pour
-faire un don, la dernière version disponibles et bien plus encore,
-visitez le site web de ScummVM à l'adresse https://www.scummvm.org/
+Pour plus d'informations, obtenir la liste des jeux compatibles, faire
+un don, connaître la dernière version disponible et bien plus encore,
+visitez le site web de ScummVM à l'adresse <https://www.scummvm.org/>.
 
-Table des matières:
--------------------
+Table des matières :
+--------------------
 1.0) Introduction
  * 1.1 À propos de ScummVM
  * 1.2 Démarrage rapide
 2.0) Contact
  * 2.1 Signaler des bogues
 
-1.0) Introduction:
----- -------------
+1.0) Introduction :
+---- --------------
 
-1.1) À propos de ScummVM:
----- --------------------
-ScummVM est un logiciel qui vous permet de jouer certain jeux
+1.1) À propos de ScummVM :
+---- ---------------------
+ScummVM est un logiciel qui vous permet de jouer à certains jeux
 d'aventures graphiques de type 'point-and-click' (pointer et cliquer), à
 condition que vous possédiez les fichiers de données du jeu. Le plus
-astucieux: ScummVM remplace juste les exécutables fournis avec les jeux,
-vous permettant de jouer sur les systèmes pour lesquels ils n'ont jamais
-été conçus!
+astucieux : ScummVM remplace les exécutables originaux des jeux, vous
+permettant d'y jouer sur des systèmes pour lesquels ils n'ont jamais
+été conçus !
 
-A l'origine il a été conçu pour exécuter les jeux basé sur le système
+À l'origine, il a été conçu pour exécuter les jeux basés sur le système
 SCUMM de LucasArts, tels que Maniac Mansion, Monkey Island, Day of the
 Tentacle ou Sam et Max. SCUMM est l'acronyme de 'Script Creation Utility
 for Maniac Mansion', qui a été le premier jeu pour lequel LucasArts a
@@ -43,116 +43,114 @@ Chevaliers de Baphomet (Broken Sword I), Les Boucliers de Quetzalcoatl
 Gobliiins 1-3, la série des Legend of Kyrandia, un grand nombre de jeux
 pour enfants de Humongous Entertainment (incluant les jeux Marine Malice
 et Pouce-Pouce) et beaucoup plus. Vous pouvez trouver une liste complète
-et détaillée sur les aventures qui sont pris en charge et les problèmes
-connus sur la page de compatibilité. ScummVM évolue en permanence, donc
-vérifier cette liste de compatibilités souvent.
+et détaillée des jeux qui sont pris en charge (et les problèmes connus)
+sur la page de compatibilité. ScummVM évolue en permanence, pensez donc
+à vérifier régulièrement cette liste de compatibilité.
 
 Vous pouvez jouer à ces jeux sur des ordinateurs de bureau classiques
-(sous Windows, Linux, macOS, ...), sur des consoles (Dreamcast,
-Nintendo DS et Wii, PSP, ...), smartphones (Android, iPhone, Symbian
-...) et plus encore.
+(sous Windows, Linux, macOS, ...), sur des consoles (Dreamcast, Nintendo
+DS et Wii, PSP, ...), smartphones (Android, iPhone, ...) et plus encore.
 
-À ce stade ScummVM est encore en cours de développement. Soyez conscient
-que malgré tous nos efforts pour en faire un logiciel le plus stable
-possible, des plantages peuvent survenir. et nous n'offrons aucune
-garantie. Cela étant dit, certains jeux sont supportés depuis longtemps
-et devrait fonctionner correctement avec une version stable et récente
-de ScummVM. Vous pouvez vous faire une idée du niveau de support d'un
-jeu en regardant la page de compatibilité. En fait, si vous cherchez un
-peu vous pourrez découvrir que ScummVM est même utilisé dans le commerce
-pour la ré-édition sur les plates-formes modernes de quelques-uns des
-jeux supportés. Cela montre que plusieurs entreprises sont satisfaits de
-la qualité du logiciel.
+À ce stade, ScummVM est toujours en cours de développement. Soyez
+conscient que malgré tous nos efforts pour en faire un logiciel le plus
+stable possible, des plantages peuvent survenir et nous n'offrons aucune
+garantie. Néanmoins, certains jeux sont supportés depuis longtemps et
+devraient fonctionner correctement avec une version stable et récente de
+ScummVM. Vous pouvez vous faire une idée du niveau de support d'un jeu
+en regardant notre page de compatibilité. Vous pourrez aussi découvrir
+que ScummVM est utilisé dans le commerce pour la ré-édition sur les
+plates-formes modernes de quelques-uns des jeux supportés. Cela montre
+que plusieurs entreprises sont satisfaites de la qualité du logiciel.
 
-Si vous aimez ScummVM n'hésitez pas à faire un don en utilisant le
+Si vous aimez ScummVM, n'hésitez pas à faire un don en utilisant le
 bouton PayPal sur la page d'accueil ScummVM. Cela nous aidera à acheter
 les services nécessaires pour rendre le développement de ScummVM plus
 facile et plus rapide. Si vous ne pouvez pas faire de don, vous pouvez
-aussi proposer des patches!
+aussi proposer des patches !
 
-1.2) Démarrage rapide:
----- ----------------
-IMPORTANT: Les instructions ci-dessous supposent que vous utilisez
-ScummVM en Français. Par défaut, ScummVM utilise la langue de votre
-système d'exploitation. Si vous préférez utiliser ScummVM en Anglais,
-il est sans doute préférable de lire le fichier README Anglais.
+1.2) Démarrage rapide :
+---- ------------------
+IMPORTANT : Les instructions ci-dessous supposent que vous utilisez
+ScummVM en français. Par défaut, ScummVM utilise la langue de votre
+système d'exploitation. Si vous préférez utiliser ScummVM en anglais,
+il est sans doute préférable de lire le fichier README anglais.
 
-
-Pour les plus impatients, voici comment obtenir ScummVM en cinq étapes
+Pour les plus impatients, voici comment utiliser ScummVM en cinq étapes
 simples.
 
-1. Télécharger ScummVM sur <https://www.scummvm.org/downloads/> et
-installer l'application.
+1. Téléchargez ScummVM sur <https://www.scummvm.org/downloads/> et
+installez l'application.
 
-2. Créez un répertoire sur votre disque dur et copier les fichiers de
+2. Créez un répertoire sur votre disque dur et copiez les fichiers de
 données de jeu à partir du support original dans ce répertoire. Répétez
-cette opération pour chaque jeu que vous voulez jouer. Utilisez un
-répertoire séparé pour chaque jeu.
+cette opération pour chaque jeu auquel vous souhaitez jouer (il est
+conseillé d'utiliser un répertoire distinct pour chaque jeu).
 
 3. Lancez ScummVM.
 
 Si ScummVM apparaît en anglais au lieu du français, procédez comme suit
-pour changer la langue:
+pour changer la langue :
+
 - Cliquez sur 'Options'.
 - Cliquez sur la flèche droite dans la barre d'onglets et sélectionnez
-  l'onglet 'Misc'.
-- Choisissez 'Francais' dans le champs 'GUI Language' et cliquez sur
-  'OK'. Confirmez-le message qui apparaît, cliquez sur 'Quit' pour
-  quitter ScummVM, puis redémarrer le programme.
+  l'onglet 'GUI'.
+- Choisissez 'Français' dans le champ 'GUI Language' et cliquez sur
+  'OK'.
 
-Maintenant cliquez sur 'Ajouter...', puis sélectionnez le répertoire
-contenant les fichiers de données du jeu (ne pas essayer de sélectionner
-les fichiers de données eux-mêmes!) et cliquez sur 'Choisir'.
+Cliquez ensuite sur 'Ajouter...', puis sélectionnez le répertoire
+contenant les fichiers de données du jeu (ne sélectionnez pas les
+fichiers eux-mêmes !) et cliquez sur 'Choisir'.
 
 4. Une boîte de dialogue devrait apparaître vous permettant de
-configurer divers paramètres si vous le souhaitez (la valeur par défaut
-devrait convenir dans la plupart des cas). Confirmez la boîte de
-dialogue.
+configurer divers paramètres si vous le souhaitez (les valeurs par
+défaut devraient convenir dans la plupart des cas). Confirmez la boîte
+de dialogue.
 
-5. Sélectionnez le jeu que vous voulez jouer dans la liste, et appuyez
-sur 'Démarrer'.
+5. Sélectionnez le jeu auquel vous voulez jouer dans la liste et
+appuyez sur 'Démarrer'.
 
-ScummVM se souvient des jeux ajoutés. Donc si vous quittez ScummVM puis
-le relancez la liste des jeux contiendra tous les jeux que vous avez
-déjà ajoutés. Vous pouvez donc passer directement à l'étape 5, à moins
-que vous vouliez ajouter des jeux supplémentaires.
+ScummVM se souvient des jeux ajoutés. Ainsi, si vous quittez ScummVM
+puis le relancez, la liste des jeux contiendra tous les jeux que vous
+avez déjà ajoutés. Vous pouvez donc passer directement à l'étape 5, à
+moins que vous ne vouliez ajouter des jeux supplémentaires.
 
-Astuce: Si vous souhaitez ajouter plusieurs jeux d'un coup, essayez
+Astuce : Si vous souhaitez ajouter plusieurs jeux d'un coup, essayez
 d'appuyer et de maintenir la touche Maj (Shift) tout en cliquant sur
 'Ajouter...' - son texte changera en 'Ajout Massif…'. Vous serez alors
-invitez à sélectioner un répertoire dans lequel ScummVM parcourra tous
+invité à sélectionner un répertoire dans lequel ScummVM parcourra tous
 les sous-répertoires à la recherche de jeux supportés.
 
 
-2.0) Contact:
----- --------
+2.0) Contact :
+---- ---------
 La meilleure façon de contacter l'équipe de ScummVM est de soumettre
 des rapports de bogues (voir section 2.1) ou d'utiliser nos forums
-https://forums.scummvm.org. Vous pouvez également envoyer un e-mail sur
-la liste de diffusion scummvm-devel, ou discuter avec nous sur IRC
-(#scummvm sur irc.libera.chat). S'il vous plaît ne nous demandez pas de
-supporter un jeu non pris en charge - lire la FAQ sur notre site web
-avant. Notez que la langue officielle de la liste de diffusion, forum et
-chat est l'Anglais, et aucune autre langues ne doivent être utilisée.
+<https://forums.scummvm.org>. Vous pouvez également envoyer un e-mail
+sur la liste de diffusion scummvm-devel, ou discuter avec nous sur IRC
+(#scummvm sur irc.libera.chat). Veuillez ne pas nous demander de
+supporter un jeu qui n'est pas encore pris en charge ; la FAQ sur notre
+site web vous expliquera pourquoi cela est inutile. Notez que la langue
+officielle de la liste de diffusion, du forum et du chat est l'anglais,
+aucune autre langue ne doit donc être utilisée.
 
 
-2.1) Reporting Bugs:
----- ---------------
-Pour signaler un bogue, veuillez créer un compte SourceForge et suivez
-le lien "Bug Tracker" depuis notre page d'accueil. S'il vous plaît
-vérifiez que le bogue est reproductible, et se produit encore dans la
+2.1) Signaler des bogues :
+---- ---------------------
+Pour signaler un bogue, veuillez créer un compte GitHub et suivez le
+lien "Bug Tracker" depuis notre page d'accueil. Assurez-vous que le
+bogue puisse être reproduit et qu'il se produit encore dans la version
 'Daily Build' la plus récente. Vérifiez également la liste des problèmes
-connus (ci-dessous) et la liste de compatibilité sur notre site Web pour
-ce jeu, pour s'assurer que le problème n'est pas déjà connue:
+connus (ci-dessous) et la liste de compatibilité sur notre site web pour
+ce jeu, afin de vous assurer que le problème n'est pas déjà connu :
 
    https://www.scummvm.org/compatibility/
 
 Veuillez ne pas rapporter de bogues sur les jeux qui ne sont pas
-répertoriés comme étant finissable sur la liste de compatibilité. Nous
+répertoriés comme étant finissables dans la liste de compatibilité. Nous
 savons que ces jeux ont des bogues.
 
 Veuillez inclure les informations suivantes lorsque vous signalez un
-problème:
+problème :
      - Version de ScummVM (veuillez tester avec la 'Daily Build' la plus
        récente)
      - Détails du problème, incluant les instructions pour le reproduire
@@ -160,12 +158,13 @@ problème:
      - Version du jeu (talkie, disquette, ...)
      - Plate-forme et compilateur (Win32, Linux, Mac, FreeBSD, ...)
      - Joindre une sauvegarde si possible
-     - Si ce problème est récent, s'il vous plaît notez la dernière
-       version sans bogue, et la première version qui à le problème. De
-       cette façon, nous pouvons y remédier plus rapidement, en regardant
-       les modifications apportées entre ces deux versions.
+     - Si ce problème est récent, pensez à mentionner la dernière
+       version  sans bogue et la première version où est apparu le
+       problème. De cette façon, nous pouvons y remédier plus
+       rapidement, en regardant les modifications apportées entre ces
+       deux versions.
 
-Enfin, veuillez signaler chaque problème séparément, sinon, il devient
-difficile de suivre l'état de chaque problème individuel. S'il vous
-plaît gardez à l'esprit également que tous les rapports de bogue doivent
-être rédigés en anglais.
+Enfin, veuillez signaler chaque problème séparément, sans quoi il
+devient difficile de suivre l'état de chaque problème individuel. Gardez
+à l'esprit que tous les rapports de bogue doivent également être rédigés
+en anglais.
