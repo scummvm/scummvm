@@ -57,7 +57,7 @@ void XeenFont::setColors(uint index) {
 
 int XeenFont::getCharWidth(uint32 chr) const {
 	assert(chr < 128);
-	return _widths[chr];
+	return _widths[chr & 0x7f];
 }
 
 void XeenFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
@@ -78,6 +78,18 @@ void XeenFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32
 			if ((srcVal & 3) && (x + xCtr) >= 0 && (x + xCtr) < dst->w)
 				*dest = _colors[srcVal & 3];
 		}
+	}
+}
+
+int XeenFont::getStringWidth(const Common::String &str) const {
+	// Handle not counting character highlighting sequences
+	// as part of the string width
+	size_t p = str.findFirstOf('\x01');
+	if (p == Common::String::npos) {
+		return Graphics::Font::getStringWidth(str);
+	} else {
+		return Graphics::Font::getStringWidth(
+			Common::String(str.c_str() + p + 3));
 	}
 }
 

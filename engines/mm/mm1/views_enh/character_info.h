@@ -39,7 +39,7 @@ class CharacterInfo : public PartyView {
 private:
 	Shared::Xeen::SpriteResource _viewIcon;
 	static const IconPos ICONS[CHAR_ICONS_COUNT];
-	const char *ICONS_TEXT[CHAR_ICONS_COUNT];
+	Common::String ICONS_TEXT[CHAR_ICONS_COUNT];
 	int _cursorCell = 0;
 	bool _cursorVisible = false;
 	ScrollPopup _statInfo;

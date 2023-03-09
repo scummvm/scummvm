@@ -76,7 +76,7 @@ CharacterInfo::CharacterInfo() :
 
 	for (int i = 0; i < ICONS_COUNT; ++i) {
 		ICONS_TEXT[i] = STRING[Common::String::format(
-			"enhdialogs.character.stats.%s", FIELDS[i])].c_str();
+			"enhdialogs.character.stats.%s", FIELDS[i])];
 	}
 }
 
@@ -197,7 +197,7 @@ void CharacterInfo::drawIcons() {
 
 	// Text for buttons
 	writeString(277, 25, STRING["enhdialogs.character.item"]);
-	writeString(275, 57, STRING["enhdialogs.character.quick"]);
+	writeString(273, 57, STRING["enhdialogs.character.quick"]);
 	writeString(276, 90, STRING["enhdialogs.character.exchange"]);
 	writeString(278, 122, STRING["enhdialogs.misc.exit"]);
 }
@@ -205,8 +205,7 @@ void CharacterInfo::drawIcons() {
 void CharacterInfo::drawStats() {
 	// Draw stat titles
 	for (int i = 0; i < 18; ++i) {
-		writeString(ICONS[i]._x + 27, ICONS[i]._y + 2,
-			ICONS_TEXT[i]);
+		writeString(ICONS[i]._x + 27, ICONS[i]._y + 2, ICONS_TEXT[i]);
 	}
 
 	// Draw stat values

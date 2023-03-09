@@ -182,7 +182,7 @@ void TextView::newLine() {
 
 Common::StringArray TextView::splitLines(const Common::String &str,
 		int lineWidth) {
-	Graphics::Font &font = _fontReduced ?
+	XeenFont &font = _fontReduced ?
 		g_globals->_fontReduced : g_globals->_fontNormal;
 	const char *startP = str.c_str();
 	const char *endP;

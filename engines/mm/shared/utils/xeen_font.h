@@ -71,6 +71,11 @@ public:
 	int getCharWidth(uint32 chr) const override;
 
 	/**
+	 * Get the string width
+	 */
+	int getStringWidth(const Common::String &str) const;
+
+	/**
 	 * Draw a character
 	 */
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
