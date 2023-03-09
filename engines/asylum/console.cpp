@@ -339,7 +339,7 @@ bool Console::cmdHelp(int, const char **) {
 	debugPrintf(" scene       - change the scene\n");
 	debugPrintf(" show_script - show script commands\n");
 	debugPrintf(" kill_script - terminate a script\n");
-	debugPrintf(" puzzle      - run an puzzle\n");
+	debugPrintf(" puzzle      - run a puzzle\n");
 	debugPrintf(" insertdisc  - show Insert Disc screen\n");
 	debugPrintf("\n");
 	debugPrintf(" get_status  - get actor's status\n");
