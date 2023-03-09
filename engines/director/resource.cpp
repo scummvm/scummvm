@@ -637,7 +637,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 
 	// Jump to the actual dict block and parse it
 	if (!stream->seek(dictOff)) {
-		warning("ProjectorArchive::loadArchive(): Incorrect dict offset (0x%x)", dictOff);
+		warning("BUILDBOT: ProjectorArchive::loadArchive(): Incorrect dict offset (0x%x)", dictOff);
 		return false;
 	}
 
