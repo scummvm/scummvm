@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-08 14:55+0000\n"
+"POT-Creation-Date: 2023-03-09 07:10+0000\n"
 "PO-Revision-Date: 2023-03-06 22:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4935,7 +4935,7 @@ msgstr ""
 "наступному запуску гри.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/runtime.cpp:1650
+#: engines/vcruise/runtime.cpp:1849
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Цей файл зі збереженою грою було створено у новішій версії ScummVM. Не зможу "
@@ -6394,18 +6394,18 @@ msgstr "Перемкнути шар відладки"
 msgid "Force any playing movies to end"
 msgstr "Примусове програвання роликів до кінця"
 
-#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:1636
+#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:1835
 msgid "Failed to read version information from save file"
 msgstr "Не вдалося завантажити інформацію про версію зі збереження гри"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:1643
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:1842
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Не вдалося завантажити гру, у файлі збереження відсутня інформація про "
 "версію."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:1657
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:1856
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
