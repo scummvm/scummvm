@@ -19,66 +19,36 @@
  *
  */
 
-#ifndef MM1_VIEWS_TITLE_H
-#define MM1_VIEWS_TITLE_H
-
-#include "mm/mm1/events.h"
+#include "mm/mm1/views_enh/title.h"
+#include "mm/mm1/globals.h"
+#include "mm/shared/utils/xeen_font.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 
-#define SCREENS_COUNT 10
+#define ENHANCED_Y 150
+static const char *ENHANCED = "Enhanced";
 
-class Title : public UIElement {
-private:
-	/**
-	 * Starts the slideshow of game scenes
-	 */
-	void startSlideshow();
+bool Title::msgFocus(const FocusMessage &msg) {
+	Views::Title::msgFocus(msg);
 
-protected:
-	Graphics::ManagedSurface _screens[SCREENS_COUNT];
-	int _screenNum = -1;
-	int _fadeIndex = 0;
+	// Draw the Enhanced word on the title screen
+	XeenFont &font = g_globals->_fontNormal;
+	size_t strWidth = font.getStringWidth(ENHANCED);
+	Graphics::ManagedSurface s(strWidth, 9);
+	s.clear(255);
+	s.setTransparentColor(255);
+	font.drawString(&s, ENHANCED, 0, 0, strWidth, 0);
 
-public:
-	Title();
-	virtual ~Title() {}
+	Graphics::ManagedSurface &dest = _screens[1];
+	dest.blitFrom(s, Common::Rect(0, 0, s.w, s.h),
+		Common::Rect(320 - strWidth * 2 - 10, ENHANCED_Y,
+			320 - 10, ENHANCED_Y + 9 * 2));
 
-	/**
-	 * Called when the screen is displayed
-	 */
-	bool msgFocus(const FocusMessage &msg) override;
+	return true;
+}
 
-	/**
-	 * Called when the screen is hidden
-	 */
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-
-	/**
-	 * Draw the screen
-	 */
-	void draw() override;
-
-	/**
-	 * Delay timeout
-	 */
-	void timeout() override;
-
-	/**
-	 * Handles keypresses
-	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
-
-	/**
-	 * Handle actions
-	 */
-	bool msgAction(const ActionMessage &msg) override;
-};
-
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
-
-#endif

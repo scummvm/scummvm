@@ -35,6 +35,7 @@
 #include "mm/mm1/views_enh/main_menu.h"
 #include "mm/mm1/views_enh/map_popup.h"
 #include "mm/mm1/views_enh/quick_ref.h"
+#include "mm/mm1/views_enh/title.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/locations/inn.h"
 #include "mm/mm1/views_enh/locations/market.h"
@@ -52,7 +53,7 @@ struct Dialogs {
 private:
 	ViewsEnh::CreateCharacters _createCharacters;
 	Views::Protect _protect;
-	Views::Title _title;
+	ViewsEnh::Title _title;
 	ViewsEnh::Characters _characters;
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Locations::Inn _inn;
