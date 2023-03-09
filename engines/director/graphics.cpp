@@ -360,10 +360,18 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		}
 		break;
 	case kInkTypeTransparent:
-		*dst = p->applyColor ? (~src | p->backColor) & (*dst | src) : *dst | src;
+		if (p->oneBitImage || p->applyColor) {
+			*dst = src == (int)p->colorBlack ? p->foreColor : *dst;
+		} else {
+			*dst = *dst | src;
+		}
 		break;
 	case kInkTypeNotTrans:
-		*dst = p->applyColor ? (src | p->backColor) & (*dst | ~src) : (*dst | ~src);
+		if (p->oneBitImage || p->applyColor) {
+			*dst = src == (int)p->colorWhite ? p->foreColor : *dst;
+		} else {
+			*dst = *dst | ~src;
+		}
 		break;
 	case kInkTypeReverse:
 		*dst ^= src;
@@ -372,10 +380,18 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		*dst ^= ~(src);
 		break;
 	case kInkTypeGhost:
-		*dst = p->applyColor ? (src & p->foreColor) | (*dst & ~src) : (*dst & ~src);
+		if (p->oneBitImage || p->applyColor) {
+			*dst = src == (int)p->colorBlack ? p->backColor : *dst;
+		} else {
+			*dst = *dst & ~src;
+		}
 		break;
 	case kInkTypeNotGhost:
-		*dst = p->applyColor ? (~src & p->foreColor) | (*dst & src) : (*dst & src);
+		if (p->oneBitImage || p->applyColor) {
+			*dst = src == (int)p->colorWhite ? p->backColor : *dst;
+		} else {
+			*dst = *dst & src;
+		}
 		break;
 		// Arithmetic ink types
 	default: {
@@ -424,16 +440,28 @@ Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
 }
 
 void DirectorPlotData::setApplyColor() {
+	// Director has two ways of rendering an ink setting.
+	// The default is to incorporate the full range of colors in the image.
+	// "applyColor" is used to denote the other option; reduce the image
+	// to some combination of the currently set foreground and background color.
 	applyColor = false;
 
-	if (foreColor != colorBlack) {
-		if (ink != kInkTypeGhost && ink != kInkTypeNotGhost)
-			applyColor = true;
-	}
-
-	if (backColor != colorWhite) {
-		if (ink != kInkTypeTransparent && ink != kInkTypeNotTrans && ink != kInkTypeBackgndTrans)
-			applyColor = true;
+	switch (ink) {
+	case kInkTypeMatte:
+	case kInkTypeMask:
+	case kInkTypeCopy:
+	case kInkTypeNotCopy:
+		applyColor = (foreColor != colorBlack) || (backColor != colorWhite);
+		break;
+	case kInkTypeTransparent:
+	case kInkTypeNotTrans:
+	case kInkTypeBackgndTrans:
+	case kInkTypeGhost:
+	case kInkTypeNotGhost:
+		applyColor = !((foreColor == colorBlack) && (backColor == colorWhite));
+		break;
+	default:
+		break;
 	}
 }
 
