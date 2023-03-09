@@ -285,6 +285,7 @@ private:
 	void drawSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void commitSectionToScreen(const RenderSection &section, const Common::Rect &rect);
 	void terminateScript();
+	bool checkCompletionConditions();
 
 	void startTerminatingHorizontalPan(bool isRight);
 
@@ -470,6 +471,7 @@ private:
 	uint _activeScreenNumber;
 	bool _havePendingScreenChange;
 	bool _havePendingReturnToIdleState;
+	bool _havePendingCompletionCheck;
 	GameState _gameState;
 
 	bool _escOn;

@@ -142,8 +142,8 @@ void Runtime::GyroState::reset() {
 
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
-	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _scriptNextInstruction(0),
-	  _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
+	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
+	  _scriptNextInstruction(0), _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0),
@@ -511,6 +511,7 @@ bool Runtime::runGyroIdle() {
 		gyro.logState();
 		gyro.currentState--;
 		_gameState = kGameStateGyroAnimation;
+		_havePendingCompletionCheck = true;
 		return true;
 	} else if (targetState > gyro.currentState) {
 		AnimationDef animDef = _gyros.posAnim;
@@ -523,6 +524,7 @@ bool Runtime::runGyroIdle() {
 		gyro.logState();
 		gyro.currentState++;
 		_gameState = kGameStateGyroAnimation;
+		_havePendingCompletionCheck = true;
 		return true;
 	}
 
@@ -552,56 +554,11 @@ bool Runtime::runGyroAnimation() {
 }
 
 void Runtime::exitGyroIdle() {
-	bool succeeded = true;
-	for (uint i = 0; i < GyroState::kNumGyros; i++) {
-		const Gyro &gyro = _gyros.gyros[i];
-		if (gyro.requireState && gyro.currentState != gyro.requiredState) {
-			succeeded = false;
-			break;
-		}
+	_gameState = kGameStateScript;
 
-		if (gyro.numPreviousStates != gyro.numPreviousStatesRequired) {
-			succeeded = false;
-			break;
-		}
-
-		bool prevStatesMatch = true;
-		for (uint j = 0; j < gyro.numPreviousStates; j++) {
-			if (gyro.previousStates[j] != gyro.requiredPreviousStates[j]) {
-				prevStatesMatch = false;
-				break;
-			}
-		}
-
-		if (!prevStatesMatch) {
-			succeeded = false;
-			break;
-		}
-	}
-
-	// Activate the corresponding failure or success interaction if present
-	if (_scriptSet) {
-		RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
-		if (roomScriptIt != _scriptSet->roomScripts.end()) {
-			const ScreenScriptSetMap_t &screenScriptsMap = roomScriptIt->_value->screenScripts;
-			ScreenScriptSetMap_t::const_iterator screenScriptIt = screenScriptsMap.find(_screenNumber);
-			if (screenScriptIt != screenScriptsMap.end()) {
-				const ScreenScriptSet &screenScriptSet = *screenScriptIt->_value;
-
-				ScriptMap_t::const_iterator interactionScriptIt = screenScriptSet.interactionScripts.find(succeeded ? _gyros.completeInteraction : _gyros.failureInteraction);
-				if (interactionScriptIt != screenScriptSet.interactionScripts.end()) {
-					const Common::SharedPtr<Script> &script = interactionScriptIt->_value;
-					if (script) {
-						activateScript(script, ScriptEnvironmentVars());
-						return;
-					}
-				}
-			}
-		}
-	}
-
-	_havePendingReturnToIdleState = true;
-	_gameState = kGameStateIdle;
+	// In Reah, gyro interactions stop the script.
+	if (_gameID == GID_REAH)
+		terminateScript();
 }
 
 void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAnimationEnded) {
@@ -852,8 +809,67 @@ void Runtime::terminateScript() {
 	if (_gameState == kGameStateScript)
 		_gameState = kGameStateIdle;
 
+	if (_havePendingCompletionCheck) {
+		_havePendingCompletionCheck = false;
+
+		if (checkCompletionConditions())
+			return;
+	}
+
 	if (_havePendingScreenChange)
 		changeToScreen(_roomNumber, _screenNumber);
+}
+
+bool Runtime::checkCompletionConditions() {
+	bool succeeded = true;
+	for (uint i = 0; i < GyroState::kNumGyros; i++) {
+		const Gyro &gyro = _gyros.gyros[i];
+		if (gyro.requireState && gyro.currentState != gyro.requiredState) {
+			succeeded = false;
+			break;
+		}
+
+		if (gyro.numPreviousStates != gyro.numPreviousStatesRequired) {
+			succeeded = false;
+			break;
+		}
+
+		bool prevStatesMatch = true;
+		for (uint j = 0; j < gyro.numPreviousStates; j++) {
+			if (gyro.previousStates[j] != gyro.requiredPreviousStates[j]) {
+				prevStatesMatch = false;
+				break;
+			}
+		}
+
+		if (!prevStatesMatch) {
+			succeeded = false;
+			break;
+		}
+	}
+
+	// Activate the corresponding failure or success interaction if present
+	if (_scriptSet) {
+		RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
+		if (roomScriptIt != _scriptSet->roomScripts.end()) {
+			const ScreenScriptSetMap_t &screenScriptsMap = roomScriptIt->_value->screenScripts;
+			ScreenScriptSetMap_t::const_iterator screenScriptIt = screenScriptsMap.find(_screenNumber);
+			if (screenScriptIt != screenScriptsMap.end()) {
+				const ScreenScriptSet &screenScriptSet = *screenScriptIt->_value;
+
+				ScriptMap_t::const_iterator interactionScriptIt = screenScriptSet.interactionScripts.find(succeeded ? _gyros.completeInteraction : _gyros.failureInteraction);
+				if (interactionScriptIt != screenScriptSet.interactionScripts.end()) {
+					const Common::SharedPtr<Script> &script = interactionScriptIt->_value;
+					if (script) {
+						activateScript(script, ScriptEnvironmentVars());
+						return true;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 void Runtime::startTerminatingHorizontalPan(bool isRight) {
