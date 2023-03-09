@@ -65,9 +65,33 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 
 bool Game::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
+	case KEYBIND_BASH:
+		send("Bash", GameMessage("SHOW"));
+		break;
+	case KEYBIND_MAP:
+		addView("MapPopup");
+		return true;
+	case KEYBIND_ORDER:
+		addView("Order");
+		return true;
+	case KEYBIND_PROTECT:
+		addView("Protect");
+		return true;
+	case KEYBIND_QUICKREF:
+		addView("QuickRef");
+		return true;
+	case KEYBIND_REST:
+		g_events->send(GameMessage("REST"));
+		return true;
+	case KEYBIND_SEARCH:
+		send("Search", GameMessage("SHOW"));
+		break;
 	case KEYBIND_SPELL:
 		addView("CastSpell");
 		return true;
+	case KEYBIND_UNLOCK:
+		send("Unlock", GameMessage("SHOW"));
+		break;
 	default:
 		break;
 	}

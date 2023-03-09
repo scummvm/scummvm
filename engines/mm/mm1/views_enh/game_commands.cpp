@@ -58,12 +58,6 @@ bool GameCommands::msgAction(const ActionMessage & msg) {
 	case KEYBIND_MINIMAP:
 		_minimap.toggleMinimap();
 		return true;
-	case KEYBIND_MAP:
-		addView("MapPopup");
-		return true;
-	case KEYBIND_QUICKREF:
-		addView("QuickRef");
-		return true;
 	default:
 		break;
 	}
