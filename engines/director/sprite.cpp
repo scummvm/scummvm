@@ -64,8 +64,6 @@ Sprite::Sprite(Frame *frame) {
 	_backColor = g_director->_wm->_colorWhite;
 	_foreColor = g_director->_wm->_colorBlack;
 
-	_blend = 0;
-
 	_volume = 0;
 	_stretch = 0;
 }
@@ -108,8 +106,6 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	_immediate = sprite._immediate;
 	_backColor = sprite._backColor;
 	_foreColor = sprite._foreColor;
-
-	_blend = sprite._blend;
 
 	_volume = sprite._volume;
 	_stretch = sprite._stretch;

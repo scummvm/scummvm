@@ -283,11 +283,9 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
 		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
 
-		double alpha = (double)p->alpha / 100.0;
-		rDst = static_cast<byte>((rSrc * alpha) + (rDst * (1.0 - alpha)));
-		gDst = static_cast<byte>((gSrc * alpha) + (gDst * (1.0 - alpha)));
-		bDst = static_cast<byte>((bSrc * alpha) + (bDst * (1.0 - alpha)));
-
+		rDst = lerpByte(rSrc, rDst, p->alpha, 255);
+		gDst = lerpByte(gSrc, gDst, p->alpha, 255);
+		bDst = lerpByte(bSrc, bDst, p->alpha, 255);
 		*dst = wm->findBestColor(rDst, gDst, bDst);
 		return;
 	}
@@ -306,6 +304,9 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		// fall through
 	case kInkTypeMask:
 		// Only unmasked pixels make it here, so copy them straight
+	case kInkTypeBlend:
+		// If there's a blend factor set, it's dealt with in the alpha handling block.
+		// Otherwise, treat it like a Matte image.
 	case kInkTypeCopy: {
 		if (p->applyColor) {
 			if (sizeof(T) == 1) {
@@ -402,9 +403,6 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
 
 		switch (p->ink) {
-		case kInkTypeBlend:
-				*dst = wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
-			break;
 		case kInkTypeAddPin:
 				*dst = wm->findBestColor(MIN((rSrc + rDst), 0xff), MIN((gSrc + gDst), 0xff), MIN((bSrc + bDst), 0xff));
 			break;
