@@ -2115,7 +2115,7 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 	byte b = fetchScriptByte();
 
 	switch (b) {
-	case SO_AT:
+	case ScummEngine_v6::SubOpType::SO_AT:
 		_string[m].ypos = pop();
 		_string[m].xpos = pop();
 		_string[m].overhead = false;
