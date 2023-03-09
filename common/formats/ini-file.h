@@ -131,11 +131,13 @@ public:
 	void listKeyValues(StringMap &kv); /*!< Get a list of all key/value pairs in this INI file. */
 
 	void allowNonEnglishCharacters(); /*!< Allow non-English characters in this INI file. */
+	void suppressValuelessLineWarning(); /*!< Disable warnings for lines that contain only keys. */
 
 private:
 	String		_defaultSectionName;
 	SectionList _sections;
 	bool _allowNonEnglishCharacters;
+	bool _suppressValuelessLineWarning;
 
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;
