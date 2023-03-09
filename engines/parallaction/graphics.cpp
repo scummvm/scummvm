@@ -818,7 +818,7 @@ void Gfx::freeDialogueObjects() {
 
 void Gfx::setBackground(uint type, BackgroundInfo *info) {
 	if (!info) {
-		warning("Gfx::setBackground() called with an null BackgroundInfo");
+		warning("Gfx::setBackground() called with a null BackgroundInfo");
 		return;
 	}
 
