@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-09 07:10+0000\n"
-"PO-Revision-Date: 2023-03-09 17:12+0000\n"
+"PO-Revision-Date: 2023-03-09 17:15+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4735,13 +4735,15 @@ msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:89
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "Desactiva el buidatge ràpid de la resistència de McCoy"
 
 #: engines/bladerunner/metaengine.cpp:90
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
 msgstr ""
+"Quan corri, el McCoy no començarà a alentir-se tan aviat com el jugador "
+"deixi de fer clic al ratolí"
 
 #: engines/bladerunner/metaengine.cpp:100
 msgid "Show subtitles during text crawl"
