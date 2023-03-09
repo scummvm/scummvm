@@ -84,18 +84,6 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
 	},
 	{
-		"driller",
-		"VirtualWorlds-A",
-		{
-			{"VIRTUALWORLDS.A.CPC.EDSK", 0, "421d369636984fc209a0969007daa35b", 195635},
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformAmstradCPC,
-		GF_CPC_VIRTUALWORLDS,
-		GUIO2(GUIO_NOMIDI, GAMEOPTION_AUTOMATIC_DRILLING)
-	},
-	{
 		"spacestationoblivion",
 		"",
 		{
