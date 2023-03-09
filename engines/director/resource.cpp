@@ -523,6 +523,13 @@ void Window::loadStartMovieXLibs() {
 	}
 	g_lingo->openXLib("SerialPort", kXObj);
 }
+
+/*******************************************
+ *
+ * Projector Archive
+ *
+ *******************************************/
+
 class ProjectorArchive : public Common::Archive {
 public:
 	ProjectorArchive(Common::String path);
@@ -532,8 +539,9 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+
 private:
-	int Load(Common::SeekableReadStream *stream);
+	bool loadArchive(Common::SeekableReadStream *stream);
 
 	struct Entry {
 		uint64 offset;
@@ -551,7 +559,8 @@ ProjectorArchive::ProjectorArchive(Common::String path)
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(path);
 	if (!stream)
 		error("ProjectorArchive::ProjectorArchive(): Cannot open %s", path.c_str());
-	Load(stream);
+
+	loadArchive(stream);
 	delete stream;
 }
 
@@ -559,35 +568,37 @@ ProjectorArchive::~ProjectorArchive() {
 	_files.clear();
 }
 
-int ProjectorArchive::Load(Common::SeekableReadStream *stream) {
+bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	bool bigEndian = true, found = false;
 	uint32 off, tag, rifxOffset;
 
-	// Assume the endianness of the file and try to locate the PJXX tags
-	for(int i = 0; i < 2; i++) {
+	// Assume the endianness of the file and try to locate the PJXX tag
+	for (int i = 0; i < 2; i++) {
 		bigEndian = !bigEndian;
 		stream->seek(-4, SEEK_END);
 		off = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 		stream->seek(off);
 		tag = stream->readUint32BE();
 
-		if (((tag & 0xffff0000) == MKTAG('P','J', 0, 0)) || ((tag & 0x0000ffff) == MKTAG(0, 0,'J','P'))) {
+		// Check whether we got a 'PJ' tag while ignoring the version and accounting for endianness
+		if (((tag & 0xffff0000) == MKTAG('P','J', 0, 0)) || ((tag & 0x0000ffff) == MKTAG(0, 0, 'J','P'))) {
 			found = true;
 			break;
 		}
 	}
 
 	if (!found) {
-		warning("ProjectorArchive::Load(): Projector Tag not found");
+		warning("ProjectorArchive::loadArchive(): Projector Tag not found");
 		return true;
 	}
 
 	rifxOffset = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 	stream->seek(rifxOffset);
 	tag = stream->readUint32BE();
+
 	debugC(1, kDebugLoading, "File: %s off: 0x%x, tag: %s rifx: 0x%x", _path.c_str(), off, tag2str(tag), rifxOffset);
 
-	//Try to locate the very next Dict tag
+	// Try to locate the very next Dict tag
 	tag = stream->readUint32BE();
 	found = false;
 	while (!stream->eos()) {
@@ -600,7 +611,7 @@ int ProjectorArchive::Load(Common::SeekableReadStream *stream) {
 
 	// Return if dict tag is not found
 	if (!found) {
-		warning("ProjectorArchive::Load(): Dict Tag not found.");
+		warning("ProjectorArchive::loadArchive(): Dict Tag not found.");
 		return true;
 	}
 
@@ -623,6 +634,7 @@ int ProjectorArchive::Load(Common::SeekableReadStream *stream) {
 	}
 
 	debugC(1, kDebugLoading, "Dict off: 0x%x, Size: 0x%x cnt: %d", dictOff, size, cnt);
+
 	uint32 pt = (cnt * 8) + (64 - offsetDict);
 	Common::StringArray arr(cnt);
 
@@ -630,6 +642,7 @@ int ProjectorArchive::Load(Common::SeekableReadStream *stream) {
 		stream->seek(dictOff + pt, SEEK_SET);
 		uint32 namelen = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 		arr[i] = stream->readString(0, namelen);
+
 		if (i < cnt - 1) {
 			int sub = (namelen % 4) ? (namelen % 4) : 4;
 			pt += 4 + namelen + (4 - sub);
@@ -641,12 +654,16 @@ int ProjectorArchive::Load(Common::SeekableReadStream *stream) {
 	for (uint32 i = 0; i < cnt; i++) {
 		tag = stream->readUint32BE();
 		size = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
+
 		debugC(1, kDebugLoading, "Entry: %s offset %llX tag %s size %d", arr[i].c_str(), stream->pos() - 8, tag2str(tag), size);
+
 		Entry entry;
+
 		// subtract 8 since we want to include tag and size as well
 		entry.offset = stream->pos() - 8;
 		entry.size = size + 8;
 		_files[arr[i]] = entry;
+
 		stream->seek(size, SEEK_CUR);
 	}
 
@@ -671,6 +688,7 @@ int ProjectorArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 const Common::ArchiveMemberPtr ProjectorArchive::getMember(const Common::Path &path) const {
 	Common::String name = path.toString();
+
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
@@ -680,6 +698,7 @@ const Common::ArchiveMemberPtr ProjectorArchive::getMember(const Common::Path &p
 Common::SeekableReadStream *ProjectorArchive::createReadStreamForMember(const Common::Path &path) const {
 	Common::String name = path.toString();
 	FileMap::const_iterator fDesc = _files.find(name);
+
 	if (fDesc == _files.end())
 		return nullptr;
 
