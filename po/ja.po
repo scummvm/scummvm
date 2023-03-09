@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-09 07:10+0000\n"
-"PO-Revision-Date: 2023-03-07 11:29+0000\n"
+"PO-Revision-Date: 2023-03-09 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7179,7 +7179,7 @@ msgstr "セッションをローカルネットワーク上で発見できるよ
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
-msgstr ""
+msgstr "オンラインセッションのホストサーバーのアドレスを指定します。"
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -7808,7 +7808,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:696
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
-msgstr ""
+msgstr "楽曲「A Pirate I Was Meant To Be」を有効化"
 
 #: engines/scumm/metaengine.cpp:697
 msgid ""
@@ -7816,31 +7816,28 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
+"海外版でカットされた、第3部冒頭の曲「A Pirate I Was Meant To "
+"Be」を有効化。ただし、字幕が完全に翻訳されていない場合がありますのでご了承ください。"
 
 #: engines/scumm/metaengine.cpp:770
-#, fuzzy
 msgid "Down Left"
-msgstr "左に曲がる"
+msgstr "左下"
 
 #: engines/scumm/metaengine.cpp:783
-#, fuzzy
 msgid "Down Right"
-msgstr "右に曲がる"
+msgstr "右下"
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
 msgid "Up Left"
-msgstr "左"
+msgstr "左上"
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
 msgid "Up Right"
-msgstr "右"
+msgstr "右上"
 
 #: engines/scumm/metaengine.cpp:828
-#, fuzzy
 msgid "Switch weapon"
-msgstr "スクショを保存する"
+msgstr "武器を切り替え"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:842
@@ -7922,13 +7919,12 @@ msgstr ""
 "ScummVMに追加されていなければなりません。"
 
 #: engines/scumm/scumm.cpp:3469
-#, fuzzy
 msgid "Would you like to host or join a network play session?"
-msgstr "ゲームをセーブまたは復元してもよろしいですか?"
+msgstr "セッションを開催、または参加しますか?"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
+msgstr "ホスト"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -8602,22 +8598,24 @@ msgid "Ultima VIII Debug"
 msgstr "Ultima VIIIのデバッグ"
 
 #: engines/vcruise/vcruise.cpp:76
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
-msgstr ""
-"このゲームはHeroCraftサブエンジンが必要ですが、コンパイルされていません。"
+msgstr "JPEGのサポートが必要ですが、コンパイルされていません。"
 
 #: engines/vcruise/vcruise.cpp:83
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"Ogg Vorbisのサポートが必要ですが、コンパイルされていません。\n"
+"ゲームはプレイできますが、音楽は再生されません。"
 
 #: engines/vcruise/vcruise.cpp:93
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"MP3のサポートが必要ですが、コンパイルされていません。\n"
+"ゲームはプレイできますが、音楽は再生されません。"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
