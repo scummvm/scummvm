@@ -250,8 +250,8 @@ bool initSludge(const Common::String &filename) {
 	}
 
 	if (customIconLogo & 2) {
-		// There is an logo - read it!
-		debugC(2, kSludgeDebugDataLoad, "There is an logo - read it!");
+		// There is a logo - read it!
+		debugC(2, kSludgeDebugDataLoad, "There is a logo - read it!");
 
 		// read game logo
 		Graphics::Surface gameLogo;
