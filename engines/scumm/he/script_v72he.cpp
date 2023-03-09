@@ -813,7 +813,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		_actorClipOverride.left = pop();
 		adjustRect(_actorClipOverride);
 		break;
-	case SO_AT: 		// (HE 98+)
+	case ScummEngine_v6::SubOpType::SO_AT:		// (HE 98+)
 		j = pop();
 		i = pop();
 		a->putActor(i, j);
