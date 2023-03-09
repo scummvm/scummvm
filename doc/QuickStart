@@ -46,7 +46,7 @@ check back often.
 Among the systems on which you can play those games are regular desktop
 computers (running Windows, Linux, macOS, ...), game consoles
 (Dreamcast, Nintendo DS & Wii, PSP, ...), smartphones (Android, iPhone,
-Symbian ...) and more.
+...) and more.
 
 At this time ScummVM is still under heavy development. Be aware that
 whilst we attempt to make sure that many games can be completed with few
@@ -70,7 +70,7 @@ patch!
 IMPORTANT: This short guide assumes you are using ScummVM in <translated
 language>. By default, ScummVM will use your operating system's
 language. If you prefer to use ScummVM in English, You may also prefer
-to follow the guide from the English REAMDE file.
+to follow the guide from the English README file.
 
 For the impatient among you, here is how to get ScummVM running in five
 simple steps.
@@ -88,12 +88,10 @@ simple steps.
     If at this stage ScummVM appears in English instead of <translated
     language>, do as follow to change the language:
       - Click on "Options".
-      - Click on the right arrow in the tab bar and select the "Misc"
+      - Click on the right arrow in the tab bar and select the "GUI"
         tab.
       - Select "<translated language>" in the "GUI Language" box and
         click on "OK".
-      - Confirm the message box that pops-up, click on "Quit" to quit
-        ScummVM and then restart the program.
 
     Now choose 'Add game', select the directory with the game datafiles
     (do not try to select the datafiles themselves!) and press
