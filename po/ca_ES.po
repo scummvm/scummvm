@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-09 07:10+0000\n"
-"PO-Revision-Date: 2023-03-09 17:03+0000\n"
+"PO-Revision-Date: 2023-03-09 17:04+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -2357,6 +2357,7 @@ msgstr "Partides desades"
 #: base/main.cpp:643
 msgid "Bad config file format. overwrite?"
 msgstr ""
+"El format del fitxer de configuració és incorrecte. Voleu sobreescriure´l?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:692
@@ -2391,7 +2392,7 @@ msgstr "Acceptar"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:713 base/main.cpp:734
 msgid "Read Later"
-msgstr ""
+msgstr "Llegeix més tard"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:720
@@ -3244,7 +3245,7 @@ msgstr "Trieu una carpeta nova"
 #: backends/fs/android/android-saf-fs.h:177
 #: backends/fs/android/android-saf-fs.h:178
 msgid "Add a new folder"
-msgstr ""
+msgstr "Afegeix una carpeta nova"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3939,7 +3940,7 @@ msgstr "En jocs 3D"
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
 msgid "Remove folder authorizations..."
-msgstr ""
+msgstr "Elimina les autoritzacions de carpetes..."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
