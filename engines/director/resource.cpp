@@ -635,8 +635,12 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	uint32 size = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 	uint32 dictOff = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 
-	// Jump to the actual dict block and begin parsing
-	stream->seek(dictOff);
+	// Jump to the actual dict block and parse it
+	if (!stream->seek(dictOff)) {
+		warning("ProjectorArchive::loadArchive(): Incorrect dict offset (0x%x)", dictOff);
+		return false;
+	}
+
 	tag = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 	size = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 	stream->seek(dictOff + 24);
@@ -657,7 +661,12 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	Common::StringArray arr(cnt);
 
 	for (uint32 i = 0; i < cnt; i++) {
-		stream->seek(dictOff + pt, SEEK_SET);
+		// if this fails it likely means that the dict was invalid.
+		if (!stream->seek(dictOff + pt, SEEK_SET)) {
+			warning("ProjectorArchive::loadArchive(): Incorrect entry name offset (0x%x)", dictOff + pt);
+			return false;
+		}
+
 		uint32 namelen = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 		arr[i] = stream->readString(0, namelen);
 
@@ -682,7 +691,12 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		entry.size = size + 8;
 		_files[arr[i]] = entry;
 
-		stream->seek(size, SEEK_CUR);
+		// if this fails it suggests something is either wrong with the dict or the file itself.
+		if (!stream->seek(size, SEEK_CUR)) {
+			warning("ProjectorArchive::loadArchive(): Could not read next block (0x%x) Prev Block(0x%x : %d)",
+			        entry.offset + entry.size, entry.offset, entry.size);
+			return false;
+		}
 	}
 
 	return true;
