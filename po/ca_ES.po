@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-09 07:10+0000\n"
-"PO-Revision-Date: 2023-03-09 17:06+0000\n"
+"PO-Revision-Date: 2023-03-09 17:08+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4699,7 +4699,7 @@ msgstr "Mode Sitcom"
 
 #: engines/bladerunner/metaengine.cpp:46
 msgid "Game will add laughter after actor's line or narration"
-msgstr ""
+msgstr "El joc afegirà riures després de la línia o la narració de l'actor"
 
 #: engines/bladerunner/metaengine.cpp:56
 msgid "Shorty mode"
@@ -4707,7 +4707,7 @@ msgstr "Mode curt"
 
 #: engines/bladerunner/metaengine.cpp:57
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr ""
+msgstr "El joc reduirà els actors i farà que les seves veus siguin més agudes"
 
 #: engines/bladerunner/metaengine.cpp:67
 msgid "Frame limiter high performance mode"
