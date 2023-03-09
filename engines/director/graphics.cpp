@@ -364,6 +364,9 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		if (p->oneBitImage || p->applyColor) {
 			*dst = src == (int)p->colorBlack ? p->foreColor : *dst;
 		} else {
+			// OR dst palette index with src.
+			// Originally designed for 1-bit mode to make white pixels
+			// transparent.
 			*dst = *dst | src;
 		}
 		break;
@@ -371,19 +374,29 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		if (p->oneBitImage || p->applyColor) {
 			*dst = src == (int)p->colorWhite ? p->foreColor : *dst;
 		} else {
+			// OR dst palette index with the inverse of src.
 			*dst = *dst | ~src;
 		}
 		break;
 	case kInkTypeReverse:
+		// XOR dst palette index with src.
+		// Originally designed for 1-bit mode so that
+		// black pixels would appear white on a black
+		// background.
 		*dst ^= src;
 		break;
 	case kInkTypeNotReverse:
+		// XOR dst palette index with the inverse of src.
 		*dst ^= ~(src);
 		break;
 	case kInkTypeGhost:
 		if (p->oneBitImage || p->applyColor) {
 			*dst = src == (int)p->colorBlack ? p->backColor : *dst;
 		} else {
+			// AND dst palette index with the inverse of src.
+			// Originally designed for 1-bit mode so that 
+			// black pixels would be invisible until they were
+			// over a black background, showing as white.
 			*dst = *dst & ~src;
 		}
 		break;
@@ -391,11 +404,12 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		if (p->oneBitImage || p->applyColor) {
 			*dst = src == (int)p->colorWhite ? p->backColor : *dst;
 		} else {
+			// AND dst palette index with src.
 			*dst = *dst & src;
 		}
 		break;
-		// Arithmetic ink types
 	default: {
+		// Arithmetic ink types, based on real color values
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
@@ -404,24 +418,28 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 
 		switch (p->ink) {
 		case kInkTypeAddPin:
-				*dst = wm->findBestColor(MIN((rSrc + rDst), 0xff), MIN((gSrc + gDst), 0xff), MIN((bSrc + bDst), 0xff));
+			// Add src to dst, but pinning each channel so it can't go above 0xff.
+			*dst = wm->findBestColor(rDst + MIN(0xff - rDst, (int)rSrc), gDst + MIN(0xff - gDst, (int)gSrc), bDst + MIN(0xff - bDst, (int)bSrc));
 			break;
 		case kInkTypeAdd:
-			// in basilisk, D3.1 is exactly using this method, adding color directly without preventing the overflow.
-			// but i think min(src + dst, 255) will give us a better visual effect
-				*dst = wm->findBestColor(rSrc + rDst, gSrc + gDst, bSrc + bDst);
+			// Add src to dst, allowing each channel to overflow and wrap around.
+			*dst = wm->findBestColor(rDst + rSrc, gDst + gSrc, bDst + bSrc);
 			break;
 		case kInkTypeSubPin:
-				*dst = wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
+			// Subtract src from dst, but pinning each channel so it can't go below 0x00.
+			*dst = wm->findBestColor(MAX(rDst - rSrc, 1) - 1, MAX(gDst - gSrc, 1) - 1, MAX(bDst - bSrc, 1) - 1);
 			break;
 		case kInkTypeLight:
-				*dst = wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
+			// Pick the higher of src and dst for each channel, lightening the image.
+			*dst = wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
 			break;
 		case kInkTypeSub:
-				*dst = wm->findBestColor(abs(rSrc - rDst) % 0xff + 1, abs(gSrc - gDst) % 0xff + 1, abs(bSrc - bDst) % 0xff + 1);
+			// Subtract src from dst, allowing each channel to underflow and wrap around.
+			*dst = wm->findBestColor(rDst - rSrc, gDst - gSrc, bDst - bSrc);
 			break;
 		case kInkTypeDark:
-				*dst = wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
+			// Pick the lower of src and dst for each channel, darkening the image.
+			*dst = wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
 			break;
 		default:
 			break;
