@@ -196,6 +196,11 @@ byte kEGADefaultPaletteData[16][3] = {
 	{0x00, 0x00, 0x00}
 };
 
+/*
+ The following function is only used for decoding images for
+ the Driller DOS demo
+*/
+
 Graphics::ManagedSurface *DrillerEngine::load8bitDemoImage(Common::SeekableReadStream *file, int offset) {
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
@@ -300,6 +305,14 @@ void DrillerEngine::loadAssetsDOSDemo() {
 	_renderMode = Common::kRenderCGA; // DOS demos is CGA only
 	_viewArea = Common::Rect(36, 16, 284, 117); // correct view area
 	_gfx->_renderMode = _renderMode;
+	file.open("d1");
+	if (!file.isOpen())
+		error("Failed to open 'd1' file");
+
+	_title = load8bitDemoImage(&file, 0x0);
+	_title->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
+
+	file.close();
 	file.open("d2");
 	if (!file.isOpen())
 		error("Failed to open 'd2' file");
