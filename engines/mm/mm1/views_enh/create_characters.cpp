@@ -500,6 +500,9 @@ bool CreateCharacters::msgKeypress(const KeypressMessage &msg) {
 		setState(SELECT_CLASS);
 		redraw();
 		break;
+
+	case SELECT_NAME:
+		break;
 	}
 
 	return true;
