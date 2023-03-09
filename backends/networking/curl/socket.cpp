@@ -20,10 +20,10 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include <curl/curl.h>
 #include "backends/networking/curl/socket.h"
 #include "common/debug.h"
 #include "common/system.h"
-#include <curl/curl.h>
 
 // Auxiliary function that waits on the socket.
 // From https://github.com/curl/curl/blob/master/docs/examples/sendrecv.c
@@ -115,8 +115,9 @@ bool CurlSocket::connect(Common::String url) {
 size_t CurlSocket::send(const char *data, int len) {
 	if (!_socket)
 		return -1;
-    size_t nsent_total = 0, left = len;
-    CURLcode res = CURLE_AGAIN;
+
+	size_t nsent_total = 0, left = len;
+	CURLcode res = CURLE_AGAIN;
 
 	// Keep looping until the whole thing is sent, errors,
 	// or times out.
