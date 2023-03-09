@@ -555,6 +555,7 @@ bool Runtime::runGyroAnimation() {
 
 void Runtime::exitGyroIdle() {
 	_gameState = kGameStateScript;
+	_havePendingReturnToIdleState = true;
 
 	// In Reah, gyro interactions stop the script.
 	if (_gameID == GID_REAH)
