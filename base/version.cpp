@@ -86,16 +86,14 @@ const char gScummVMFeatures[] = ""
 #endif
 
 #ifdef USE_TREMOR
-#ifdef USE_TREMOLO
+#  ifdef USE_TREMOLO
 	// libTremolo is used on WinCE for better ogg performance
 	"Tremolo "
-#else
+#  else
 	"Tremor "
-#endif
-#else
-#ifdef USE_VORBIS
+#  endif
+#elif defined(USE_VORBIS)
 	"Vorbis "
-#endif
 #endif
 
 #ifdef USE_FLAC
@@ -194,52 +192,56 @@ const char gScummVMFeatures[] = ""
 
 #ifdef USE_CLOUD
 	"cloud ("
-#ifdef USE_LIBCURL
+#  ifdef USE_LIBCURL
 	"servers"
-#ifdef USE_SDL_NET
-	", "
-#endif
-#endif
-#ifdef USE_SDL_NET
-	"local"
-#endif
+#    ifdef USE_SDL_NET
+	", local) "
+#    else
 	") "
+#    endif
+#  endif
 #else
-#ifdef USE_LIBCURL
+#  ifdef USE_LIBCURL
 	"libcurl "
-#endif
-#ifdef SDL_BACKEND
-#ifdef USE_SDL2
-	"SDL2 "
-#else
-	"SDL1.2 "
-#endif
-#endif
-#ifdef USE_SDL_NET
+#  endif
+#  ifdef USE_SDL_NET
 	"SDL_net "
+#  endif
 #endif
-#endif
+
 #ifdef USE_ENET
 	"ENet "
 #endif
+
+#ifdef SDL_BACKEND
+#  ifdef USE_SDL2
+	"SDL2 "
+#  else
+	"SDL1.2 "
+#  endif
+#endif
+
 #ifdef USE_TINYGL
 	"TinyGL "
 #endif
+
 #ifdef USE_OPENGL
 	"OpenGL "
-#ifdef USE_OPENGL_SHADERS
+#  ifdef USE_OPENGL_SHADERS
 	"(with shaders) "
+#  endif
 #endif
-#endif
+
 #ifdef USE_GLES_MODE
-#if USE_GLES_MODE == 0
+#  if USE_GLES_MODE == 0
 	"OpenGL desktop only "
-#elif USE_GLES_MODE == 1
+#  elif USE_GLES_MODE == 1
 	"OpenGL ES 1 only "
-#elif USE_GLES_MODE == 2
+#  elif USE_GLES_MODE == 2
 	"OpenGL ES 2 only "
+#  endif
 #endif
-#endif
+
 #ifdef USE_RETROWAVE
 	"RetroWave "
 #endif
