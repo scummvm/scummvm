@@ -27,14 +27,14 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-#define COLUMN_NUM 15
-#define COLUMN_NAME 35
-#define COLUMN_CLASS 118
-#define COLUMN_LEVEL 162
-#define COLUMN_HP 180
-#define COLUMN_SP 216
-#define COLUMN_AC 250
-#define COLUMN_CONDITION 276
+#define COLUMN_NUM 5
+#define COLUMN_NAME 30
+#define COLUMN_CLASS 113
+#define COLUMN_LEVEL 157
+#define COLUMN_HP 175
+#define COLUMN_SP 211
+#define COLUMN_AC 245
+#define COLUMN_CONDITION 271
 
 QuickRef::QuickRef() : ScrollPopup("QuickRef") {
 	setBounds(Common::Rect(0, 0, 320, 146));
