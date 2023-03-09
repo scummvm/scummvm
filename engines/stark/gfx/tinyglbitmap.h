@@ -30,7 +30,7 @@ namespace Stark {
 namespace Gfx {
 
 /**
- * An TinyGL bitmap wrapper
+ * A TinyGL bitmap wrapper
  */
 class TinyGlBitmap : public Bitmap {
 public:

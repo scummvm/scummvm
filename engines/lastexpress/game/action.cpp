@@ -1465,7 +1465,7 @@ IMPLEMENT_ACTION(playMusicChapterSetupTrain)
 //////////////////////////////////////////////////////////////////////////
 // // Action 43
 IMPLEMENT_ACTION(switchChapter)
-	// Nothing to do here as an hotspot action
+	// Nothing to do here as a hotspot action
 	return kSceneInvalid;
 }
 

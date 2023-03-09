@@ -36,7 +36,7 @@ struct HardwareInput;
  *
  * When the watch mode is enabled, the watcher disables the Keymapper
  * and sets itself as an event observer. Once an event corresponding
- * to an hardware input is received, it is saved for later retrieval.
+ * to a hardware input is received, it is saved for later retrieval.
  *
  * Used by the remap dialog to capture input.
  */

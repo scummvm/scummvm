@@ -158,7 +158,7 @@ inline PointerToUnaryFunc<Arg, Result> ptr_fun(Result (*func)(Arg)) {
 }
 
 /**
- * Creates an binary function object from a function pointer.
+ * Creates a binary function object from a function pointer.
  */
 template<class Arg1, class Arg2, class Result>
 inline PointerToBinaryFunc<Arg1, Arg2, Result> ptr_fun(Result (*func)(Arg1, Arg2)) {
@@ -429,7 +429,7 @@ private:
  * else
  *     warning("Unimplemented opcode %d", opcodeNum);
  *
- * If you want to see an real world example check the kyra engine.
+ * If you want to see a real-world example, check the kyra engine.
  * Files: engines/kyra/script.cpp and .h and engines/kyra/script_*.cpp
  * are interesting for that matter.
  */

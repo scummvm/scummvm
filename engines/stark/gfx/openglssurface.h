@@ -39,7 +39,7 @@ class OpenGLSDriver;
 class Bitmap;
 
 /**
- * An programmable pipeline OpenGL surface renderer
+ * A programmable pipeline OpenGL surface renderer
  */
 class OpenGLSSurfaceRenderer : public SurfaceRenderer {
 public:

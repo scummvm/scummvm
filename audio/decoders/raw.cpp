@@ -64,7 +64,7 @@ public:
 	bool seek(const Timestamp &where) override;
 private:
 	const int _rate;                                           ///< Sample rate of stream
-	const bool _isStereo;                                      ///< Whether this is an stereo stream
+	const bool _isStereo;                                      ///< Whether this is a stereo stream
 	Timestamp _playtime;                                       ///< Calculated total play time
 	Common::DisposablePtr<Common::SeekableReadStream> _stream; ///< Stream to read data from
 	bool _endOfData;                                           ///< Whether the stream end has been reached

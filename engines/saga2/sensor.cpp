@@ -43,7 +43,7 @@ void newSensorList(SensorList *s) {
 }
 
 //----------------------------------------------------------------------
-//	Deallocate an SensorList
+//	Deallocate a SensorList
 
 void deleteSensorList(SensorList *s) {
 	g_vm->_sensorListList.remove(s);

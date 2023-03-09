@@ -209,7 +209,7 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
 #define OS_BANNER_TYPE_TEXT       1
 
 /*
- *   "Text grid" window.  This type of window is similar to an normal text
+ *   "Text grid" window.  This type of window is similar to a normal text
  *   window (OS_BANNER_TYPE_TEXT), but is guaranteed to arrange its text in
  *   a regular grid of character cells, all of the same size.  This means
  *   that the output position can be moved to an arbitrary point within the

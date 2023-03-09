@@ -1961,7 +1961,7 @@ void Item::leaveFastArea() {
 		if (c) c->destroyContents();
 
 		destroy();
-		// NB: destroy() creates an DestroyItemProcess to actually
+		// NB: destroy() creates a DestroyItemProcess to actually
 		// delete the item in this case.
 	}
 	// If we have a gravity process, move us to the ground

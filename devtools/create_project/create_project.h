@@ -198,7 +198,7 @@ StringList getFeatureDefines(const FeatureList &features);
 
 /**
  * Sets the state of a given feature. This can be used to
- * either include or exclude an feature.
+ * either include or exclude a feature.
  *
  * @param name Name of the feature.
  * @param features List of features to operate on.

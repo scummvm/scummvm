@@ -1843,7 +1843,7 @@ void SurfaceSdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
 	// thus we need to clip the rect here...
 	_focusRect.clip(_videoMode.screenWidth, _videoMode.screenHeight);
 
-	// We just fake this as a dirty rect for now, to easily force an screen update whenever
+	// We just fake this as a dirty rect for now, to easily force a screen update whenever
 	// the rect changes.
 	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), _overlayVisible);
 #endif
@@ -1857,7 +1857,7 @@ void SurfaceSdlGraphicsManager::clearFocusRectangle() {
 
 	_enableFocusRect = false;
 
-	// We just fake this as a dirty rect for now, to easily force an screen update whenever
+	// We just fake this as a dirty rect for now, to easily force a screen update whenever
 	// the rect changes.
 	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), _overlayVisible);
 #endif

@@ -539,7 +539,7 @@ static void gsc_set_locale(const sc_char *name) {
  * having to write transcripts as ascii.
  */
 static void gsc_put_char_uni(glui32 unicode, const char *ascii) {
-	/* If there is an transcript stream, temporarily disconnect it. */
+	/* If there is a transcript stream, temporarily disconnect it. */
 	if (gsc_transcript_stream)
 		g_vm->glk_window_set_echo_stream(gsc_main_window, nullptr);
 

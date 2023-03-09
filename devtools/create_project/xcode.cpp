@@ -117,7 +117,7 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 	// - if the parent directory is "backends/platform/ios7", the file belongs to the iOS target.
 	// - if the parent directory is "/sdl", the file belongs to the macOS target.
 	// - if the file has a suffix, like "_osx", or "_ios", the file belongs to one of the target.
-	// - if the file is an macOS icon file (icns), it belongs to the macOS target.
+	// - if the file is a macOS icon file (icns), it belongs to the macOS target.
 	std::string name, ext;
 	splitFilename(fileName, name, ext);
 

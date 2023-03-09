@@ -635,7 +635,7 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 
 	// Added in SCUMM4. Only the numbers are used, so there
 	// is no need to provide language specific strings; there are
-	// some exceptions for which there's only an hardcoded English
+	// some exceptions for which there's only a hardcoded English
 	// string.
 	static const ResString strMap2[] = {
 		{7, ("Save")},

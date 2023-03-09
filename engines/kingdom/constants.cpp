@@ -572,7 +572,7 @@ const uint8 _emlTable[] = {
 };
 
 const uint8 _zoomTable[81][9][2] = {
-	// The first array is a dummy one used to fix an stupid trick on the index in the original
+	// The first array is a dummy one used to fix a stupid trick on the index in the original
 	{{   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}},
 	{{   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   8, 0x0A}, {   4, 0x0A}, {   2, 0x0A}, {   1, 0x0A}, {   0, 0x0A}},
 	{{   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   8, 0x0A}, {   4, 0x0A}, {   2, 0x0A}, {   1, 0x0A}, {   0, 0x0A}},

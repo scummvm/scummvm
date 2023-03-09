@@ -81,7 +81,7 @@ public:
 	//! \param size (in bytes) of data
 	bool writeFile(const Std::string &name, const uint8 *data, uint32 size);
 
-	//! write a file to the savegame from an memory stream
+	//! write a file to the savegame from a memory stream
 	//! \param name name of the file
 	//! \param buf the MemoryWriteStreamDynamic to save
 	bool writeFile(const Std::string &name, Common::MemoryWriteStreamDynamic *buf);

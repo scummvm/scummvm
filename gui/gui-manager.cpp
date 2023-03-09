@@ -442,8 +442,8 @@ void GuiManager::runLoop() {
 			// We will need to check whether the screen changed while polling
 			// for an event here. While we do send EVENT_SCREEN_CHANGED
 			// whenever this happens we still cannot be sure that we get such
-			// an event immediately. For example, we might have an mouse move
-			// event queued before an screen changed event. In some rare cases
+			// an event immediately. For example, we might have a mouse move
+			// event queued before a screen changed event. In some rare cases
 			// this would make the GUI redraw (with the code a few lines
 			// below) when it is not yet updated for new overlay dimensions.
 			// As a result ScummVM would crash because it tries to copy data

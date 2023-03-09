@@ -802,7 +802,7 @@ public:
 	 * OpenGL context does not support the function.
 	 *
 	 * @param name The name of the OpenGL function.
-	 * @return An function pointer for the requested OpenGL function or
+	 * @return A function pointer for the requested OpenGL function or
 	 *         nullptr in case of failure.
 	 */
 	virtual void *getOpenGLProcAddress(const char *name) const { return nullptr; }

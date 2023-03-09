@@ -242,7 +242,7 @@ void OSystem_SDL::initBackend() {
 	if (_graphicsManager == nullptr) {
 #ifdef USE_OPENGL
 		// Setup a list with both SDL and OpenGL graphics modes. We only do
-		// this whenever the subclass did not already set up an graphics
+		// this whenever the subclass did not already set up a graphics
 		// manager yet. This is because we don't know the type of the graphics
 		// manager of the subclass, thus we cannot easily switch between the
 		// OpenGL one and the set up one. It also is to be expected that the

@@ -249,7 +249,7 @@ bool Debugger::Cmd_SetFlag(int argc, const char **argv) {
  * This command gets the value of a flag
  */
 bool Debugger::Cmd_GetFlag(int argc, const char **argv) {
-	// Check for an flag to display
+	// Check for a flag to display
 	if (argc != 2) {
 		debugPrintf("Usage: %s <flag number>\n", argv[0]);
 		return true;

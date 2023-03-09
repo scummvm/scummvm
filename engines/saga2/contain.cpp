@@ -927,7 +927,7 @@ void ReadyContainerView::drawClipped(
 	int16           originX = _extent.x - offset.x + _iconOrigin.x,
 	                originY = _extent.y - offset.y + _iconOrigin.y;
 
-	//  Row an column number of the inventory slot.
+	//  Row and column number of the inventory slot.
 	int16           col,
 	                row;
 

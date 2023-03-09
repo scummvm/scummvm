@@ -55,7 +55,7 @@ private:
 
 /**
  * Takes an input stream containing SCX sound data and creates
- * an RewindableAudioStream from that.
+ * a RewindableAudioStream from that.
  *
  * @param stream            the SeekableReadStream from which to read the SCX data
  * @param disposeAfterUse   whether to delete the stream after use

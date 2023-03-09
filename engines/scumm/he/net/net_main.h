@@ -127,7 +127,7 @@ public:
 	int whoAmI();
 
 	/**
-	 * @brief Creates and host an network game session.
+	 * @brief Creates and host a network game session.
 	 *
 	 * @param name Session name
 	 * @retval 1 on success.
@@ -357,8 +357,8 @@ private:
 	/**
 	 * Attempt to connect to a game session with its address and port.
 	 *
-	 * @param address Address of an session to connect to.
-	 * @param port Port number of an session to connect to.
+	 * @param address Address of a session to connect to.
+	 * @param port Port number of a session to connect to.
 	 * @retval true on success
 	 * @retval false on failure.
 	 *

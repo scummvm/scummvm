@@ -264,7 +264,7 @@ void Logic::eventMouse(const Common::Event &ev) {
 		return;
 	}
 
-	// Found an hotspot: update the cursor and perform the action if the user clicked the mouse
+	// Found a hotspot: update the cursor and perform the action if the user clicked the mouse
 	_engine->getCursor()->setStyle(getAction()->getCursor(*hotspot));
 
 	if (ev.type != Common::EVENT_LBUTTONUP || _flagActionPerformed)

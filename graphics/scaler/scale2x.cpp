@@ -22,7 +22,7 @@
 /*
  * This file contains a C and MMX implementation of the Scale2x effect.
  *
- * You can find an high level description of the effect at :
+ * You can find a high-level description of the effect at:
  *
  * https://www.scale2x.it
  *

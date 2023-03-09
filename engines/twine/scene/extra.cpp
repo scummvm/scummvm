@@ -213,7 +213,7 @@ int Extra::getBonusSprite(BonusParameter bonusParameter) const {
 	assert(bonusIndex >= 0);
 	assert(bonusIndex < numBonus);
 	int8 bonusSprite = bonusSprites[bonusIndex];
-	// if bonus is magic an no magic level yet, then give life points
+	// if bonus is magic and no magic level yet, then give life points
 	if (!_engine->_gameState->_magicLevelIdx && bonusSprite == SPRITEHQR_MAGICPOINTS) {
 		bonusSprite = SPRITEHQR_LIFEPOINTS;
 	}

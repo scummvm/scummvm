@@ -1230,7 +1230,7 @@ void CGEEngine::snLight(bool in) {
 }
 
 /**
- * Set an horizontal boundary
+ * Set a horizontal boundary
  * @param scene			Scene number
  * @param barX			Horizontal boundary value
  */

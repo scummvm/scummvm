@@ -42,7 +42,7 @@ class RewindableAudioStream;
 
 /**
  * Takes an input stream containing XA ADPCM sound data and creates
- * an RewindableAudioStream from that.
+ * a RewindableAudioStream from that.
  *
  * @param stream            the SeekableReadStream from which to read the XA ADPCM data
  * @param rate              the sampling rate

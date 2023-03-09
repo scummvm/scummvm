@@ -70,7 +70,7 @@ template<class T> class IteratorImpl;
  * that returns true if its two arguments are to be considered
  * equal. Also, we assume that "=" works on Val objects for assignment.
  *
- * If aa is an HashMap<Key,Val>, then space is allocated each time aa[key] is
+ * If aa is a HashMap<Key,Val>, then space is allocated each time aa[key] is
  * referenced, for a new key. If the object is const, then an assertion is
  * triggered instead. Hence if you are not sure whether a key is contained in
  * the map, use contains() first to check for its presence.
