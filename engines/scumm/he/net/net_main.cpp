@@ -514,18 +514,8 @@ int32 Net::setProviderByName(int32 parameter1, int32 parameter2) {
 
 	// Emulate that we found a TCP/IP provider
 
-	// Create a new ENet instance and initialize the library.
-	if (_enet) {
-		warning("Net::setProviderByName: ENet instance already exists.");
-		return 1;
-	}
-	_enet = new Networking::ENet();
-	if (!_enet->initialize()) {
-		_vm->displayMessage(0, "Unable to initialize ENet library.");
-		Net::closeProvider();
-		return 0;
-	}
-	return 1;
+	// Initialize provider:
+	return initProvider();
 }
 
 void Net::setFakeLatency(int time) {
@@ -702,8 +692,17 @@ bool Net::initAll() {
 }
 
 bool Net::initProvider() {
-	warning("STUB: Net::initProvider()"); // PN_DoInitProvider
-	return false;
+	debugC(DEBUG_NETWORK, "Net::initProvider"); // PN_DoInitProvider
+	// Create a new ENet instance and initialize the library.
+	if (_enet)
+		return true;
+	_enet = new Networking::ENet();
+	if (!_enet->initialize()) {
+		_vm->displayMessage(0, "Unable to initialize ENet library.");
+		Net::closeProvider();
+		return false;
+	}
+	return true;
 }
 
 bool Net::initSession() {

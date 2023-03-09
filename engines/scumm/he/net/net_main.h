@@ -285,12 +285,10 @@ public:
 	 */
 	bool initAll();
 	/**
-	 * Initializes the provider.
+	 * Initializes the ENet provider.
 	 *
 	 * @return true on success.
 	 * @return false on failure.
-	 *
-	 * @note Currently stubbed.
 	 */
 	bool initProvider();
 	/**

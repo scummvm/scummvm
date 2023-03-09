@@ -896,7 +896,8 @@ void Lobby::startHostingGame(int playerId) {
 	_vm->writeVar(111, 0);
 
 	// Create ENet instance.
-	if (!_vm->_net->setProviderByName(0, 0)) {
+	if (!_vm->_net->initProvider()) {
+		// Tell the game that hosting has failed.
 		_vm->writeVar(111, 1);
 		return;
 	}
@@ -925,8 +926,10 @@ void Lobby::startHostingGame(int playerId) {
 			// Tell the game that we're hosting.
 			_vm->writeVar(111, 99);
 		} else
+			// Tell the game that hosting has failed.
 			_vm->writeVar(111, 1);
 	} else
+		// Tell the game that hosting has failed.
 		_vm->writeVar(111, 1);
 }
 
@@ -934,7 +937,7 @@ void Lobby::handleGameSession(int sessionId) {
 	_sessionId = sessionId;
 	_inGame = true;
 
-	if (_vm->_net->setProviderByName(0, 0)) {
+	if (_vm->_net->initProvider()) {
 		// Tell the game to start connecting to our host.
 		int args[25];
 		memset(args, 0, sizeof(args));
