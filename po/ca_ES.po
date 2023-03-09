@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-09 07:10+0000\n"
-"PO-Revision-Date: 2023-02-18 00:34+0000\n"
+"PO-Revision-Date: 2023-03-09 16:58+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -760,7 +760,7 @@ msgstr "Primera lletra"
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Inicial"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
@@ -1669,11 +1669,11 @@ msgstr "Auto-desat:"
 
 #: gui/options.cpp:2610
 msgid "Random seed:"
-msgstr ""
+msgstr "Llavor aleatòria:"
 
 #: gui/options.cpp:2610
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "Llavor per a inicialitzar tots els generadors de nombres aleatoris"
 
 #: gui/options.cpp:2620
 msgid "Enable Discord integration"
@@ -2019,7 +2019,7 @@ msgstr "Selecciona el directori /arrel/ per al gestor d'arxius"
 
 #: gui/options.cpp:3182
 msgid "icon packs"
-msgstr ""
+msgstr "paquets d'icones"
 
 #: gui/options.cpp:3193
 msgid "shader packs"
@@ -2781,12 +2781,11 @@ msgstr ""
 "Consulteu la documentació (àudio CD) per a més detalls."
 
 #: engines/engine.cpp:589
-#, fuzzy
 msgid "Skip autosave"
-msgstr "El desament automàtic és buit"
+msgstr "Omet el desament automàtic"
 
 #: engines/engine.cpp:591
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -2794,10 +2793,12 @@ msgid ""
 "needed.\n"
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
-"ADVERTÈNCIA: La ranura de desament automàtic té una partida anomenada %S. "
-"Podeu moure el partida existent a una ranura nova, sobreescriure-la, o "
-"cancel·lar el desament automàtic (no es tornarà a preguntar fins que es "
-"reiniciï)"
+"ADVERTÈNCIA: La ranura de desament automàtic té una partida anomenada %S., i "
+"hi ha un desament automàtic pendent.\n"
+"Moveu aquesta partida desada a una ranura nova, o suprimiu-la si ja no és "
+"necessària.\n"
+"Alternativament, podeu ometre el desament automàtic (es tornarà a preguntar "
+"en 5 minuts)."
 
 #: engines/engine.cpp:601
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -2948,14 +2949,12 @@ msgid "Confirm"
 msgstr "Confirma"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave on"
-msgstr "Desament automàtic"
+msgstr "Desament automàtic activat"
 
 #: engines/metaengine.cpp:390
-#, fuzzy
 msgid "Autosave off"
-msgstr "Desament automàtic"
+msgstr "Desament automàtic desactivat"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:177
 msgid "OpenGL"
@@ -6870,10 +6869,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialog-sessionselector.cpp:50
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Querying games..."
-msgstr "Desant la partida..."
+msgstr "S'estan cercant partides..."
 
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3469
@@ -6882,10 +6879,9 @@ msgstr ""
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:109
-#, fuzzy, c-format
-#| msgid "No new %S available"
+#, c-format
 msgid "Found %d available games."
-msgstr "No hi ha nou %S disponible"
+msgstr "S'han trobat %d partides disponibles."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:279
@@ -7008,9 +7004,8 @@ msgid "Multiplayer Server:"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1372
-#, fuzzy
 msgid "Online Server:"
-msgstr "Servidor:"
+msgstr "Servidor en línia:"
 
 #: engines/scumm/dialogs.cpp:1373
 msgid ""
@@ -7674,29 +7669,24 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:770
-#, fuzzy
 msgid "Down Left"
-msgstr "Gira a l'esquerra"
+msgstr "A baix a l'esquerra"
 
 #: engines/scumm/metaengine.cpp:783
-#, fuzzy
 msgid "Down Right"
-msgstr "Gira a la dreta"
+msgstr "A baix a la dreta"
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
 msgid "Up Left"
-msgstr "Esquerra"
+msgstr "A dalt a l'esquerra"
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
 msgid "Up Right"
-msgstr "Dreta"
+msgstr "A dalt a la dreta"
 
 #: engines/scumm/metaengine.cpp:828
-#, fuzzy
 msgid "Switch weapon"
-msgstr "Canvia els personatges:"
+msgstr "Canvia d'arma"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:842
@@ -7763,9 +7753,8 @@ msgstr ""
 "ScummVM."
 
 #: engines/scumm/scumm.cpp:3469
-#, fuzzy
 msgid "Would you like to host or join a network play session?"
-msgstr "Voleu desar o carregar una partida?"
+msgstr "Voleu crear o unir-vos a una sessió de joc en xarxa?"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
@@ -8428,9 +8417,8 @@ msgid "Ultima VIII Debug"
 msgstr ""
 
 #: engines/vcruise/vcruise.cpp:76
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
-msgstr "No s'ha compilat el suport per a Versalles 1685"
+msgstr "Aquest joc requereix suport JPEG, que no està dins la compilació."
 
 #: engines/vcruise/vcruise.cpp:83
 msgid ""
