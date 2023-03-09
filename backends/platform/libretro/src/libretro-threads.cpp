@@ -81,9 +81,11 @@ static void retro_wrap_emulator(void) {
 	retro_exit_to_main_thread();
 }
 
+#ifndef USE_LIBCO
 static void retro_wrap_emulator(void *args) {
 	retro_wrap_emulator();
 }
+#endif
 
 static void retro_free_emu_thread() {
 #ifdef USE_LIBCO
