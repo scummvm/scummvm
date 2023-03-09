@@ -91,9 +91,6 @@ DrillerEngine::~DrillerEngine() {
 }
 
 void DrillerEngine::titleScreen() {
-	if (isDOS() && isDemo()) // Demo will not show any title screen
-		return;
-
 	if (isAmiga() || isAtariST()) // TODO: implement these with their own animations
 		return;
 
