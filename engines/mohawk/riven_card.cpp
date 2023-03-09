@@ -850,7 +850,7 @@ RivenHotspot *RivenCard::getHotspotByName(const Common::String &name, bool optio
 	if (optional) {
 		return nullptr;
 	} else {
-		error("Card %d does not have an hotspot named %s", _id, name.c_str());
+		error("Card %d does not have a hotspot named %s", _id, name.c_str());
 	}
 }
 
