@@ -34,7 +34,7 @@ class CachedAudio;
 
 class AudioPlayer : public Audio::AudioStream {
 public:
-	AudioPlayer(Audio::Mixer *mixer, const Common::SharedPtr<Audio::AudioStream> &baseStream, byte volume, int8 balance);
+	AudioPlayer(Audio::Mixer *mixer, const Common::SharedPtr<Audio::AudioStream> &baseStream);
 	~AudioPlayer();
 
 	int readBuffer(int16 *buffer, const int numSamples) override;
@@ -42,7 +42,7 @@ public:
 	int getRate() const override;
 	bool endOfData() const override;
 
-	void sendToMixer(Audio::Mixer *mixer, byte volume, int8 balance);
+	void play(byte volume, int8 balance);
 	void stop();
 
 private:
@@ -50,6 +50,7 @@ private:
 
 	Audio::SoundHandle _handle;
 	bool _isLooping;
+	bool _isPlaying;
 	bool _exhausted;
 	Audio::Mixer *_mixer;
 	Common::SharedPtr<Audio::AudioStream> _baseStream;

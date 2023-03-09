@@ -23,10 +23,8 @@
 
 namespace VCruise {
 
-AudioPlayer::AudioPlayer(Audio::Mixer *mixer, const Common::SharedPtr<Audio::AudioStream> &baseStream, byte volume, int8 balance)
-	: _exhausted(false), _mixer(nullptr), _baseStream(baseStream) {
-	_mixer = mixer;
-	mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, this, -1, volume, balance, DisposeAfterUse::NO);
+AudioPlayer::AudioPlayer(Audio::Mixer *mixer, const Common::SharedPtr<Audio::AudioStream> &baseStream)
+	: _exhausted(false), _isPlaying(false), _mixer(mixer), _baseStream(baseStream) {
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -60,16 +58,22 @@ bool AudioPlayer::endOfData() const {
 	return _exhausted;
 }
 
-void AudioPlayer::sendToMixer(Audio::Mixer *mixer, byte volume, int8 balance) {
-	mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, this, -1, volume, balance, DisposeAfterUse::NO);
+void AudioPlayer::play(byte volume, int8 balance) {
+	if (!_isPlaying) {
+		_isPlaying = true;
+		_exhausted = false;
+		_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, this, -1, volume, balance, DisposeAfterUse::NO);
+	}
+
 }
 
 void AudioPlayer::stop() {
-	if (_mixer)
+	if (_isPlaying) {
 		_mixer->stopHandle(_handle);
+		_isPlaying = false;
+	}
 
 	_exhausted = true;
-	_mixer = nullptr;
 }
 
 } // End of namespace VCruise

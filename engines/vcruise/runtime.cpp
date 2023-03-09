@@ -140,6 +140,147 @@ void Runtime::GyroState::reset() {
 	isWaitingForAnimation = false;
 }
 
+
+SfxPlaylistEntry::SfxPlaylistEntry() : frame(0), balance(0), volume(0) {
+}
+
+SfxPlaylist::SfxPlaylist() {
+}
+
+SfxData::SfxData() {
+}
+
+void SfxData::reset() {
+	playlists.clear();
+	sounds.clear();
+}
+
+void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
+	Common::INIFile iniFile;
+
+	iniFile.allowNonEnglishCharacters();
+	if (!iniFile.loadFromStream(stream))
+		warning("SfxData::load failed to parse INI file");
+
+	const Common::INIFile::Section *samplesSection = nullptr;
+	const Common::INIFile::Section *playlistsSection = nullptr;
+
+	Common::INIFile::SectionList sections = iniFile.getSections();	// Why does this require a copy??
+
+	for (const Common::INIFile::Section &section : sections) {
+		if (section.name == "samples")
+			samplesSection = &section;
+		else if (section.name == "playlists")
+			playlistsSection = &section;
+	}
+
+	if (samplesSection) {
+		for (const Common::INIFile::KeyValue &keyValue : samplesSection->keys) {
+			Common::SharedPtr<SfxSound> sample(new SfxSound());
+
+			// Fix up the path delimiter
+			Common::String sfxPath = keyValue.value;
+			for (char &c : sfxPath) {
+				if (c == '\\')
+					c = '/';
+			}
+
+			sfxPath = Common::String("Sfx/") + sfxPath;
+
+			Common::File f;
+			if (!f.open(sfxPath))
+				warning("SfxData::load: Could not open sample file '%s'", sfxPath.c_str());
+
+			int64 size = f.size();
+			if (size <= 0 || size > 0x1fffffffu) {
+				warning("SfxData::load: File is oversized for some reason");
+				continue;
+			}
+
+			sample->soundData.resize(static_cast<uint>(size));
+			if (f.read(&sample->soundData[0], static_cast<uint32>(size)) != size) {
+				warning("SfxData::load: Couldn't read file");
+				continue;
+			}
+
+			sample->memoryStream.reset(new Common::MemoryReadStream(&sample->soundData[0], static_cast<uint32>(size)));
+			sample->audioStream.reset(Audio::makeWAVStream(sample->memoryStream.get(), DisposeAfterUse::NO));
+			sample->audioPlayer.reset(new AudioPlayer(mixer, sample->audioStream));
+
+			this->sounds[keyValue.key] = sample;
+		}
+	}
+
+	if (playlistsSection) {
+		Common::SharedPtr<SfxPlaylist> playlist;
+
+		for (const Common::INIFile::KeyValue &keyValue : playlistsSection->keys) {
+			const Common::String &key = keyValue.key;
+
+			if (key.size() == 0)
+				continue;
+
+			if (key.size() >= 2 && key.firstChar() == '\"' && key.lastChar() == '\"') {
+				if (!playlist) {
+					warning("Found playlist entry outside of a playlist");
+					continue;
+				}
+
+				Common::String workKey = key.substr(1, key.size() - 2);
+
+				Common::Array<Common::String> tokens;
+				for (;;) {
+					uint32 spaceSpanStart = workKey.find(' ');
+
+					if (spaceSpanStart == Common::String::npos) {
+						tokens.push_back(workKey);
+						break;
+					}
+
+					uint32 spaceSpanEnd = spaceSpanStart;
+
+					while (spaceSpanEnd < workKey.size() && workKey[spaceSpanEnd] == ' ')
+						spaceSpanEnd++;
+
+					tokens.push_back(workKey.substr(0, spaceSpanStart));
+					workKey = workKey.substr(spaceSpanEnd, workKey.size() - spaceSpanEnd);
+				}
+
+				if (tokens.size() != 4) {
+					warning("Found unusual playlist entry: %s", key.c_str());
+					continue;
+				}
+
+				unsigned int frameNum = 0;
+				int balance = 0;
+				unsigned int volume = 0;
+
+				if (!sscanf(tokens[0].c_str(), "%u", &frameNum) || !sscanf(tokens[2].c_str(), "%i", &balance) || !sscanf(tokens[3].c_str(), "%u", &volume)) {
+					warning("Malformed playlist entry: %s", key.c_str());
+					continue;
+				}
+
+				SoundMap_t::const_iterator soundIt = this->sounds.find(tokens[1]);
+				if (soundIt == this->sounds.end()) {
+					warning("Playlist entry referenced non-existent sound: %s", tokens[1].c_str());
+					continue;
+				}
+
+				SfxPlaylistEntry plEntry;
+				plEntry.balance = balance;
+				plEntry.frame = frameNum;
+				plEntry.volume = volume;
+				plEntry.sample = soundIt->_value;
+
+				playlist->entries.push_back(plEntry);
+			} else {
+				playlist.reset(new SfxPlaylist());
+				this->playlists[key] = playlist;
+			}
+		}
+	}
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
@@ -637,6 +778,21 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 		_animDisplayingFrame = _animPendingDecodeFrame;
 		_animPendingDecodeFrame++;
 		_animFramesDecoded++;
+
+		if (_animPlaylist) {
+			uint decodeFrameInPlaylist = _animDisplayingFrame - _animFirstFrame;
+			for (const SfxPlaylistEntry &playlistEntry : _animPlaylist->entries) {
+				if (playlistEntry.frame == decodeFrameInPlaylist) {
+					VCruise::AudioPlayer &audioPlayer = *playlistEntry.sample->audioPlayer;
+
+					audioPlayer.stop();
+					playlistEntry.sample->audioStream->seek(0);
+					audioPlayer.play(playlistEntry.volume, playlistEntry.frame);
+
+					// No break, it's possible for there to be multiple sounds in the same frame
+				}
+			}
+		}
 
 		Common::Rect copyRect = Common::Rect(0, 0, surface->w, surface->h);
 
@@ -1258,7 +1414,8 @@ void Runtime::changeMusicTrack(int track) {
 		if (Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(wavFile, DisposeAfterUse::YES)) {
 			Common::SharedPtr<Audio::AudioStream> loopingStream(Audio::makeLoopingAudioStream(audioStream, 0));
 
-			_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream, 255, 0));
+			_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream));
+			_musicPlayer->play(255, 0);
 		}
 	} else {
 		warning("Music file '%s' is missing", wavFileName.c_str());
@@ -1272,6 +1429,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef, bool consumeFPSOverri
 
 void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride) {
 	debug("changeAnimation: %u -> %u  Initial %u", animDef.firstFrame, animDef.lastFrame, initialFrame);
+
+	_animPlaylist.reset();
 
 	int animFile = animDef.animNum;
 	if (animFile < 0)
@@ -1295,6 +1454,14 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 			warning("Animation file %i is missing", animFile);
 			delete aviFile;
 		}
+
+		Common::String sfxFileName = Common::String::format("Sfx/Anim%04i.sfx", animFile);
+		Common::File sfxFile;
+
+		_sfxData.reset();
+
+		if (sfxFile.open(sfxFileName))
+			_sfxData.load(sfxFile, _mixer);
 	}
 
 	if (_animDecoderState == kAnimDecoderStatePlaying) {
@@ -1310,6 +1477,11 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 	_animLastFrame = animDef.lastFrame;
 	_animConstraintRect = animDef.constraintRect;
 	_animFrameRateLock = 0;
+
+	SfxData::PlaylistMap_t::const_iterator playlistIt = _sfxData.playlists.find(animDef.animName);
+
+	if (playlistIt != _sfxData.playlists.end())
+		_animPlaylist = playlistIt->_value;
 
 	if (consumeFPSOverride) {
 		_animFrameRateLock = _scriptEnv.fpsOverride;
@@ -1332,14 +1504,12 @@ AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
 	def.constraintRect.right = args[5];
 	def.constraintRect.bottom = args[6];
 
+	def.animName = _animDefNames[args[7]];
+
 	return def;
 }
 
 void Runtime::pushAnimDef(const AnimationDef &animDef) {
-	// Going from Schizm's scripts it looks like this IS pushed on to the stack, but encoded as:
-	// Bits 0..11:  Last frame
-	// Bits 12..23: First frame
-	// Bits 24..31: Number
 	_scriptStack.push_back(animDef.animNum);
 	_scriptStack.push_back(animDef.firstFrame);
 	_scriptStack.push_back(animDef.lastFrame);
@@ -1348,6 +1518,17 @@ void Runtime::pushAnimDef(const AnimationDef &animDef) {
 	_scriptStack.push_back(animDef.constraintRect.top);
 	_scriptStack.push_back(animDef.constraintRect.right);
 	_scriptStack.push_back(animDef.constraintRect.bottom);
+
+	uint animNameIndex = 0;
+	Common::HashMap<Common::String, uint>::const_iterator nameIt = _animDefNameToIndex.find(animDef.animName);
+	if (nameIt == _animDefNameToIndex.end()) {
+		animNameIndex = _animDefNames.size();
+		_animDefNameToIndex[animDef.animName] = animNameIndex;
+		_animDefNames.push_back(animDef.animName);
+	} else
+		animNameIndex = nameIt->_value;
+
+	_scriptStack.push_back(animNameIndex);
 }
 
 void Runtime::activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars) {
@@ -1382,6 +1563,7 @@ bool Runtime::parseIndexDef(IndexParseType parseType, uint roomNumber, const Com
 		animDef.animNum = animNum;
 		animDef.firstFrame = firstFrame;
 		animDef.lastFrame = lastFrame;
+		animDef.animName = key;
 	} break;
 	case kIndexParseTypeRRoom: {
 		Common::String name;

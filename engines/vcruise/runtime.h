@@ -31,11 +31,18 @@ class OSystem;
 
 namespace Common {
 
+class MemoryReadStream;
 class RandomSource;
 class ReadStream;
 class WriteStream;
 
 } // End of namespace Commom
+
+namespace Audio {
+
+class SeekableAudioStream;
+
+} // End of namespace Audio
 
 namespace Graphics {
 
@@ -83,6 +90,8 @@ struct AnimationDef {
 	uint lastFrame;	// Inclusive
 
 	Common::Rect constraintRect;
+
+	Common::String animName;
 };
 
 struct RoomDef {
@@ -124,6 +133,40 @@ struct ScriptEnvironmentVars {
 	bool lmbDrag;
 	uint panInteractionID;
 	uint fpsOverride;
+};
+
+struct SfxSound {
+	Common::Array<byte> soundData;
+	Common::SharedPtr<Common::MemoryReadStream> memoryStream;
+	Common::SharedPtr<Audio::SeekableAudioStream> audioStream;
+	Common::SharedPtr<AudioPlayer> audioPlayer;
+};
+
+struct SfxPlaylistEntry {
+	SfxPlaylistEntry();
+
+	uint frame;
+	Common::SharedPtr<SfxSound> sample;
+	int8 balance;
+	uint8 volume;
+};
+
+struct SfxPlaylist {
+	SfxPlaylist();
+
+	Common::Array<SfxPlaylistEntry> entries;
+};
+
+struct SfxData {
+	SfxData();
+
+	void reset();
+	void load(Common::SeekableReadStream &stream, Audio::Mixer *mixer);
+
+	typedef Common::HashMap<Common::String, Common::SharedPtr<SfxPlaylist> > PlaylistMap_t;
+	typedef Common::HashMap<Common::String, Common::SharedPtr<SfxSound> > SoundMap_t;
+	PlaylistMap_t playlists;
+	SoundMap_t sounds;
 };
 
 class Runtime {
@@ -490,8 +533,10 @@ private:
 	Common::SharedPtr<Common::RandomSource> _rng;
 
 	Common::SharedPtr<AudioPlayer> _musicPlayer;
+	SfxData _sfxData;
 
 	Common::SharedPtr<Video::AVIDecoder> _animDecoder;
+	Common::SharedPtr<SfxPlaylist> _animPlaylist;
 	AnimDecoderState _animDecoderState;
 	uint _animPendingDecodeFrame;
 	uint _animDisplayingFrame;
@@ -504,6 +549,9 @@ private:
 	uint32 _animFramesDecoded;
 	uint _loadedAnimation;
 	bool _animPlayWhileIdle;
+
+	Common::Array<Common::String> _animDefNames;
+	Common::HashMap<Common::String, uint> _animDefNameToIndex;
 
 	bool _idleIsOnInteraction;
 	bool _idleHaveClickInteraction;
@@ -535,7 +583,7 @@ private:
 
 	Common::Array<OSEvent> _pendingEvents;
 
-	static const uint kAnimDefStackArgs = 7;
+	static const uint kAnimDefStackArgs = 8;
 
 	static const uint kCursorArrow = 0;
 

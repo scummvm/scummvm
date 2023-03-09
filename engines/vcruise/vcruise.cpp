@@ -38,7 +38,7 @@ namespace VCruise {
 VCruiseEngine::VCruiseEngine(OSystem *syst, const VCruiseGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
-	SearchMan.addDirectory(gameDataDir.getPath(), gameDataDir, 0, 2);
+	SearchMan.addDirectory(gameDataDir.getPath(), gameDataDir, 0, 3);
 }
 
 VCruiseEngine::~VCruiseEngine() {
