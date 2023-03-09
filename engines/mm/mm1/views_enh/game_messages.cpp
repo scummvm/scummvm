@@ -76,6 +76,11 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 	// Add the view
 	addView(this);
 
+	if (msg._largeMessage)
+		setBounds(Common::Rect(0, 90, 234, 200));
+	else
+		setBounds(Common::Rect(0, 144, 234, 200));
+
 	// Process the lines
 	clear();
 	for (const auto &line : msg._lines)

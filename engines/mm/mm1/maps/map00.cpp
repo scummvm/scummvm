@@ -131,6 +131,7 @@ void Map00::special08() {
 			case Common::KEYCODE_3:
 			case Common::KEYCODE_4:
 			case Common::KEYCODE_5:
+				g_events->focusedView()->close();
 				map[TOWN_NUM] = keyState.ascii;
 
 				for (uint i = 0; i < g_globals->_party.size(); ++i) {
@@ -152,7 +153,6 @@ void Map00::special08() {
 				}
 
 				maps._mapPos = Common::Point(8, 5);
-				g_events->send("View", GameMessage("UPDATE"));
 				break;
 			default:
 				break;
