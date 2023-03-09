@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
+#include "common/bufferedstream.h"
 #include "common/substream.h"
 #include "common/formats/winexe.h"
 #include "graphics/wincursor.h"
@@ -541,6 +542,7 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 private:
+	Common::SeekableReadStream *createBufferedReadStream();
 	bool loadArchive(Common::SeekableReadStream *stream);
 
 	struct Entry {
@@ -555,13 +557,23 @@ private:
 ProjectorArchive::ProjectorArchive(Common::String path)
 	: _path(path), _files() {
 
-	// We'll first build our fileMap
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(path);
-	if (!stream)
-		error("ProjectorArchive::ProjectorArchive(): Cannot open %s", path.c_str());
+	// Buffer 100K into memory
+	Common::SeekableReadStream *stream = createBufferedReadStream();
 
+	// Build our filemap using the buffered stream
 	loadArchive(stream);
+
 	delete stream;
+}
+
+Common::SeekableReadStream *ProjectorArchive::createBufferedReadStream() {
+	const uint32 READ_BUFFER_SIZE = 1024 * 100;
+
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(_path);
+	if (!stream)
+		error("ProjectorArchive::createBufferedReadStream(): Cannot open %s", _path.c_str());
+
+	return Common::wrapBufferedSeekableReadStream(stream, READ_BUFFER_SIZE, DisposeAfterUse::NO);
 }
 
 ProjectorArchive::~ProjectorArchive() {
@@ -598,14 +610,19 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 
 	debugC(1, kDebugLoading, "File: %s off: 0x%x, tag: %s rifx: 0x%x", _path.c_str(), off, tag2str(tag), rifxOffset);
 
-	// Try to locate the very next Dict tag
+	// Try to locate the very next Dict tag(byte-by-byte)
 	tag = stream->readUint32BE();
 	found = false;
+
+	// This loop has neglible performance impact due to the stream being buffered.
+	// Furthermore, comparing 4 bytes at a time should be pretty fast on mordern systems.
 	while (!stream->eos()) {
 		if (tag == MKTAG('D', 'i', 'c', 't') || tag == MKTAG('t', 'c', 'i', 'D')) {
 			found = true;
 			break;
 		}
+
+		stream->seek(-3, SEEK_CUR);
 		tag = stream->readUint32BE();
 	}
 
@@ -627,6 +644,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	int8 offsetDict = 0;
 	bool oBigEndian = bigEndian;
 
+	// For 16-bit win projector
 	if (cnt > 0xFFFF) {
 		cnt = SWAP_BYTES_32(cnt);
 		offsetDict = 2;
