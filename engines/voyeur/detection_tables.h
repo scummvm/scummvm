@@ -52,7 +52,7 @@ static const VoyeurGameDescription gameDescriptions[] = {
 	 {
 		 "voyeur",
 		 "German Fan Made Version",
-		 AD_ENTRY1s("bvoy.blt", "12e9e10654171501cf8be3a7aa7198e1", 13036269),
+		 AD_ENTRY1s("bvoy.blt", "d25054313a4e676bf7a080bd36f91608", 13036269),
 		 Common::DE_DEU,
 		 Common::kPlatformDOS,
 		 ADGF_NO_FLAGS,
