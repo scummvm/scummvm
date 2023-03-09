@@ -155,7 +155,7 @@ public:
 	void dropCoins(uint coins) override;
 
 	/**
-	 * Do an get action
+	 * Do a get action
 	 */
 	void get() override;
 
@@ -201,7 +201,7 @@ public:
 	void dropCoins(uint coins) override;
 
 	/**
-	 * Do an get action
+	 * Do a get action
 	 */
 	void get() override;
 

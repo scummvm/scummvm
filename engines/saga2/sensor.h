@@ -58,7 +58,7 @@ struct GameEvent;
 
 //  Allocate a new SensorList
 void newSensorList(SensorList *s);
-//  Deallocate an SensorList
+//  Deallocate a SensorList
 void deleteSensorList(SensorList *p);
 
 //  Fetch a specified object's SensorList

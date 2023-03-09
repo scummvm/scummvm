@@ -173,7 +173,7 @@ public:
 	virtual ~SoundDriver();
 
 	/**
-	 * Starts an special effect playing
+	 * Starts a special effect playing
 	 */
 	virtual void playFX(uint effectId, const byte *data);
 

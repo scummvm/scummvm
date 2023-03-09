@@ -615,7 +615,7 @@ void Talk::stripVoiceCommands() {
 	for (uint sIdx = 0; sIdx < _statements.size(); ++sIdx) {
 		Statement &statement = _statements[sIdx];
 
-		// Scan for an sound effect byte, which indicates to play a sound
+		// Scan for a sound effect byte, which indicates to play a sound
 		for (uint idx = 0; idx < statement._reply.size(); ++idx) {
 			if (statement._reply[idx] == (char)_opcodes[OP_SFX_COMMAND]) {
 				// Replace instruction character with a space, and delete the

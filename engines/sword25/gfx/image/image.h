@@ -155,7 +155,7 @@ public:
 
 	/**
 	    @brief Checks, if the BS_Image can be a target image for a Blit call.
-	    @return Returns false, if a Blit() call with this object as an target is not allowed.
+	    @return Returns false, if a Blit() call with this object as a target is not allowed.
 	*/
 	virtual bool isBlitTarget() const = 0;
 

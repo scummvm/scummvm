@@ -159,7 +159,7 @@ struct GLParamBuffer {
 
 struct GLList {
 	GLParamBuffer *first_op_buffer;
-	// TODO: extensions for an hash table or a better allocating scheme
+	// TODO: extensions for a hash table or a better allocating scheme
 };
 
 struct GLVertex {

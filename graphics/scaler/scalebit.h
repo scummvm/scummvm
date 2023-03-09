@@ -21,9 +21,9 @@
 
 /*
  * This file contains an example implementation of the Scale effect
- * applyed to a generic bitmap.
+ * applied to a generic bitmap.
  *
- * You can find an high level description of the effect at :
+ * You can find a high-level description of the effect at:
  *
  * https://www.scale2x.it
  *

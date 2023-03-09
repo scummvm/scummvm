@@ -30,7 +30,7 @@ namespace Stark {
 namespace Gfx {
 
 /**
- * An TinyGL texture wrapper
+ * A TinyGL texture wrapper
  */
 class TinyGlTexture : public Texture {
 public:

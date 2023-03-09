@@ -140,7 +140,7 @@ public:
 	/**
 	 * Test whether cursor palettes are supported.
 	 *
-	 * This is just an convenience wrapper for checking whether
+	 * This is just a convenience wrapper for checking whether
 	 * OSystem::kFeatureCursorPalette is supported by OSystem.
 	 *
 	 * @see OSystem::kFeatureCursorPalette

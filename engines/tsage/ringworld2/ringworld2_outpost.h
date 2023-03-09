@@ -160,7 +160,7 @@ public:
 	bool _displayHelpFl;
 	bool _instructionsDisplayedFl;
 
-	// Discarded cards are put in the available cards pile, with an higher index so there no conflict
+	// Discarded cards are put in the available cards pile, with a higher index so there's no conflict
 	int _currentDiscardIndex;
 	int _availableCardsPile[100];
 	int _cardsAvailableNumb;

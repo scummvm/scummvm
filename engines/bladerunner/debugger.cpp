@@ -1585,7 +1585,7 @@ bool Debugger::cmdObject(int argc, const char **argv) {
 					bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
 					Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
 					// Intentional? When loading a game, in the loaded Scene:
-					// an object can be an non-obstacle as a sceneObject but an obstacle as a Set object.
+					// an object can be a non-obstacle as a sceneObject but an obstacle as a Set object.
 					// and this seems to be considered as a non-obstacle by the game in that Scene.
 					// These are objects that the Unobstacle_Object() is called for when a scene is loaded (SceneLoaded())
 					// So the sceneObject property overrides the Set object property in these cases

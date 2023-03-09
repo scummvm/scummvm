@@ -36,7 +36,7 @@ class TinyGLDriver;
 class Bitmap;
 
 /**
- * An programmable pipeline TinyGL surface renderer
+ * A programmable pipeline TinyGL surface renderer
  */
 class TinyGLSurfaceRenderer : public SurfaceRenderer {
 public:

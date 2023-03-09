@@ -77,7 +77,7 @@ public:
 
 	/**
 	 * Add the given surface as the display of the border in the state that is instructed by flag.
-	 * Will fail if there is already an border.
+	 * Will fail if there is already a border.
 	 * @param The surface that will be displayed.
 	 * @param The border type indicated by flag
 	 * @param The title position of bmp image

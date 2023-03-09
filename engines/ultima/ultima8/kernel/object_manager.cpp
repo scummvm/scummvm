@@ -261,7 +261,7 @@ bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
 	// _objIDs (up to 511 is reserved by U8Game, 666 is reserved for Guardian
 	// barks).
 	// FIXME: Properly fix this objID leak and increment the savegame number.
-	//        This check can then be turned into an savegame corruption check
+	//        This check can then be turned into a savegame corruption check
 	//        for saves with the new savegame version.
 	// We also fail loading when we're out of _objIDs since this could
 	// have caused serious issues when critical _objects haven't been created.

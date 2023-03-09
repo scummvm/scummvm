@@ -32,7 +32,7 @@ namespace Gfx {
 class TinyGLDriver;
 
 /**
- * An programmable pipeline TinyGL fade screen renderer
+ * A programmable pipeline TinyGL fade screen renderer
  */
 class TinyGLFadeRenderer : public FadeRenderer {
 public:

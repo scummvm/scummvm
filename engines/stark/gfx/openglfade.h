@@ -34,7 +34,7 @@ namespace Gfx {
 class OpenGLDriver;
 
 /**
- * An programmable pipeline OpenGL fade screen renderer
+ * A programmable pipeline OpenGL fade screen renderer
  */
 class OpenGLFadeRenderer : public FadeRenderer {
 public:

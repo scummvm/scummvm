@@ -249,7 +249,7 @@ uint8 MidiDriver_Simon1_AdLib::allocateOplChannel(uint8 channel, uint8 source, u
 			// Found an inactive channel - use this.
 			allocatedChannel = inactiveChannel;
 		} else {
-			// An channel already playing a note must be "stolen".
+			// A channel already playing a note must be "stolen".
 
 			// The original had some logic for a priority based reuse of
 			// channels. However, the priority value is always 0, which causes

@@ -193,8 +193,8 @@ public:
 	 * variables can be updated appropriately.
 	 *
 	 * This is a convenience method which automatically keeps track on how
-	 * often the video has been paused, ensuring that after pausing an video
-	 * e.g. twice, it has to be unpaused twice before actuallying resuming.
+	 * often the video has been paused, ensuring that after pausing a video
+	 * e.g. twice, it has to be unpaused twice before actually resuming.
 	 *
 	 * @param pause		true to pause the video, false to resume it
 	 */

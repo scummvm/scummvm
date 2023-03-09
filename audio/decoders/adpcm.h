@@ -64,7 +64,7 @@ enum ADPCMType {
 
 /**
  * Takes an input stream containing ADPCM compressed sound data and creates
- * an RewindableAudioStream from that.
+ * a RewindableAudioStream from that.
  *
  * @param stream            the SeekableReadStream from which to read the ADPCM data
  * @param disposeAfterUse   whether to delete the stream after use

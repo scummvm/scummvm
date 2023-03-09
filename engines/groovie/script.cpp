@@ -1849,7 +1849,7 @@ void Script::o_hotspot_slot() {
 
 	debugC(1, kDebugScript, "Groovie::Script: HOTSPOT-SLOT %d (%d,%d,%d,%d) @0x%04X cursor=%d (TODO)", slot, left, top, right, bottom, address, cursor);
 
-	// Set rectangle according to the used engine. To remove the previously written text an the screen.
+	// Set rectangle according to the used engine. To remove the previously written text on the screen.
 	Common::Rect removeText;
 	if (_version == kGroovieT7G) {
 		removeText.left = 0;

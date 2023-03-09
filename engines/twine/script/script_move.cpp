@@ -595,7 +595,7 @@ int32 ScriptMove::mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 }
 
 /**
- * Generate an random angle for the current actor
+ * Generate a random angle for the current actor
  * @note Opcode @c 0x22
  */
 int32 ScriptMove::mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {

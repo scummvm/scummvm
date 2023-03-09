@@ -21,9 +21,9 @@
 
 /*
  * This file contains an example implementation of the Scale effect
- * applyed to a generic bitmap.
+ * applied to a generic bitmap.
  *
- * You can find an high level description of the effect at :
+ * You can find a high-level description of the effect at:
  *
  * https://www.scale2x.it
  *
@@ -166,7 +166,7 @@ static void scale3x(void* void_dst, unsigned dst_slice, const void* void_src, un
  * The destination bitmap must be manually allocated before calling the function,
  * note that the resulting size is exactly 4x4 times the size of the source bitmap.
  * \note This function requires also a small buffer bitmap used internally to store
- * intermediate results. This bitmap must have at least an horizontal size in bytes of 2*width*pixel,
+ * intermediate results. This bitmap must have at least a horizontal size in bytes of 2*width*pixel,
  * and a vertical size of 6 rows. The memory of this buffer must not be allocated
  * in video memory because it's also read and not only written. Generally
  * a heap (malloc) or a stack (alloca) buffer is the best choices.

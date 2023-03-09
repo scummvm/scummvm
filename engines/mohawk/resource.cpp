@@ -237,7 +237,7 @@ bool MohawkArchive::openStream(Common::SeekableReadStream *stream) {
 		debug(4, "File[%02x]: Offset = %08x  Size = %07x  Flags = %02x  Unknown = %04x", i, fileTable[i].offset, fileTable[i].size, fileTable[i].flags, fileTable[i].unknown);
 	}
 
-	// Now go in an read in each of the types
+	// Now go in and read in each of the types
 	stream->seek(absOffset);
 	uint16 stringTableOffset = stream->readUint16BE();
 	uint16 typeCount = stream->readUint16BE();

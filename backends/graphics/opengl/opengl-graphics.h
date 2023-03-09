@@ -133,7 +133,7 @@ protected:
 	void renderCursor();
 
 	/**
-	 * Whether an GLES or GLES2 context is active.
+	 * Whether a GLES or GLES2 context is active.
 	 */
 	bool isGLESContext() const { return OpenGLContext.type == kContextGLES || OpenGLContext.type == kContextGLES2; }
 

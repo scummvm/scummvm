@@ -148,7 +148,7 @@ public:
 	~SoundDriverAdlib() override;
 
 	/**
-	 * Starts an special effect playing
+	 * Starts a special effect playing
 	 */
 	void playFX(uint effectId, const byte *data) override;
 

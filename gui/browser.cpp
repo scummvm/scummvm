@@ -166,7 +166,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kListSelectionChangedCmd:
 		// We do not allow selecting directories in directory
 		// browser mode, thus we will invalidate the selection
-		// when the user selects an directory over here.
+		// when the user selects a directory over here.
 		if (data != (uint32)-1 && _isDirBrowser && !_nodeContent[data].isDirectory())
 			_fileList->setSelected(-1);
 		break;

@@ -40,7 +40,7 @@ public:
 };
 
 /**
- * Factory function for an QueuingAudioStream.
+ * Factory function for a QueuingAudioStream.
  */
 RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo, Std::vector<Audio::RewindableAudioStream *>streams, DisposeAfterUse::Flag disposeAfterUse);
 
