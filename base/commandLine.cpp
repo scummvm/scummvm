@@ -1776,7 +1776,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		SDL_GetVersion(&sdlLinkedVersion);
 		printf("Using SDL backend with SDL %d.%d.%d\n", sdlLinkedVersion.major, sdlLinkedVersion.minor, sdlLinkedVersion.patch);
 #else
-		printf("Using SDL backend with SDL1.2\n")
+		printf("Using SDL backend with SDL1.2\n");
 #endif
 #endif
 		printf("Features compiled in: %s\n", gScummVMFeatures);
