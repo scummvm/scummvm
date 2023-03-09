@@ -137,12 +137,12 @@ public:
 	 * Play a given sound
 	 */
 	void playSound(const Common::String &name, int unused = 0);
-
+#ifdef ENABLE_XEEN
 	/**
 	 * Play a given sound
 	 */
 	void playSound(const Common::String &name, int ccNum, int unused);
-
+#endif
 	/**
 	 * Stop playing a sound loaded from a .m file
 	 * @remarks		In the original, passing 1 to playSound stopped the sound
@@ -158,7 +158,11 @@ public:
 	/**
 	 * Play a given voice file
 	 */
+#ifdef ENABLE_XEEN
 	void playVoice(const Common::String &name, int ccMode = -1);
+#else
+	void playVoice(const Common::String &name);
+#endif
 };
 
 } // namespace Xeen

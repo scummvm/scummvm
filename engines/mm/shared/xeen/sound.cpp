@@ -69,6 +69,7 @@ void Sound::playSound(const Common::String &name, int unused) {
 	playSound(f);
 }
 
+#ifdef ENABLE_XEEN
 void Sound::playSound(const Common::String &name, int ccNum, int unused) {
 	File f;
 	if (!f.open(name, ccNum))
@@ -76,13 +77,23 @@ void Sound::playSound(const Common::String &name, int ccNum, int unused) {
 
 	playSound(f);
 }
+#endif
 
+#ifdef ENABLE_XEEN
 void Sound::playVoice(const Common::String &name, int ccMode) {
+#else
+void Sound::playVoice(const Common::String &name) {
+#endif
 	stopSound();
 	if (!_fxOn)
 		return;
 	File f;
+#ifdef ENABLE_XEEN
 	bool result = (ccMode == -1) ? f.open(name) : f.open(name, ccMode);
+#else
+	bool result = f.open(name);
+#endif
+
 	if (!result)
 		error("Could not open sound - %s", name.c_str());
 	Common::SeekableReadStream *srcStream = f.readStream(f.size());
@@ -205,7 +216,11 @@ void Sound::playSong(const Common::String &name, int param) {
 	if (mf.open(name)) {
 		playSong(mf);
 	} else {
+#ifdef ENABLE_XEEN
 		File f(name, _musicSide);
+#else
+		File f(name);
+#endif
 		playSong(f);
 	}
 }
