@@ -25,7 +25,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/stat.h>
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <windows.h>
 #else
 #include <unistd.h>
@@ -50,7 +50,7 @@ static const char *const FILENAMES[] = {
 const char *const ENGINES = "create_project ..\\.. --use-canonical-lib-names --msvc\n";
 
 bool fileExists(const char *name) {
-#ifdef _MSC_VER
+#ifdef _WIN32
 	return (GetFileAttributesA(name) != INVALID_FILE_ATTRIBUTES);
 #else
 	return (!access(name, F_OK));
@@ -58,7 +58,7 @@ bool fileExists(const char *name) {
 }
 
 bool createDirectory(const char *name) {
-#ifdef _MSC_VER
+#ifdef _WIN32
 	return CreateDirectoryA(name, nullptr);
 #else
 	return (!mkdir(name, 0755));
