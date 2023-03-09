@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-09 07:10+0000\n"
-"PO-Revision-Date: 2023-03-09 17:15+0000\n"
+"PO-Revision-Date: 2023-03-09 17:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4752,15 +4752,19 @@ msgstr "Mostra els subtítols durant el text d'introducció"
 #: engines/bladerunner/metaengine.cpp:101
 msgid "During the intro cutscene, show subtitles during the text crawl"
 msgstr ""
+"Durant l'escena d'introducció, mostra els subtítols durant el moviment del "
+"text"
 
 #: engines/bladerunner/metaengine.cpp:111
 msgid "Fix credits for voice actors"
-msgstr ""
+msgstr "Corregeix els crèdits per als actors de doblatge"
 
 #: engines/bladerunner/metaengine.cpp:112
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
 msgstr ""
+"Actualitza els crèdits finals amb crèdits corregits per als actors de "
+"doblatge en espanyol"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
