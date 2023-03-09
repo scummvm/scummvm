@@ -329,7 +329,7 @@ const Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 		return metaEngine;
 	}
 
-	debug(9, "Engine: %s couldn't find a match for an MetaEngine plugin.", plugin->getFileName());
+	debug(9, "Engine: %s couldn't find a match for a MetaEngine plugin.", plugin->getFileName());
 	return nullptr;
 }
 
