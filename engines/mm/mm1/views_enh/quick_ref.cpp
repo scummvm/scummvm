@@ -34,7 +34,7 @@ namespace ViewsEnh {
 #define COLUMN_HP 180
 #define COLUMN_SP 216
 #define COLUMN_AC 250
-#define COLUMN_CONDITION 278
+#define COLUMN_CONDITION 276
 
 QuickRef::QuickRef() : ScrollPopup("QuickRef") {
 	setBounds(Common::Rect(0, 0, 320, 146));
