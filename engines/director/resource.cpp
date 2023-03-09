@@ -601,7 +601,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 
 	if (!found) {
 		warning("ProjectorArchive::loadArchive(): Projector Tag not found");
-		return true;
+		return false;
 	}
 
 	rifxOffset = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
@@ -629,7 +629,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	// Return if dict tag is not found
 	if (!found) {
 		warning("ProjectorArchive::loadArchive(): Dict Tag not found.");
-		return true;
+		return false;
 	}
 
 	uint32 size = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
@@ -685,7 +685,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		stream->seek(size, SEEK_CUR);
 	}
 
-	return false;
+	return true;
 }
 
 bool ProjectorArchive::hasFile(const Common::Path &path) const {
