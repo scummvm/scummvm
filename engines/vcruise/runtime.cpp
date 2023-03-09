@@ -164,6 +164,8 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 	Common::INIFile iniFile;
 
 	iniFile.allowNonEnglishCharacters();
+	iniFile.suppressValuelessLineWarning();
+
 	if (!iniFile.loadFromStream(stream))
 		warning("SfxData::load failed to parse INI file");
 
