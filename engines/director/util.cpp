@@ -289,7 +289,8 @@ void DirectorEngine::loadKeyCodes() {
 }
 
 void DirectorEngine::setMachineType(int machineType) {
-    _machineType=machineType;
+    _machineType = machineType;
+    
     switch (machineType) {
     case 1: // Macintosh 512Ke
     case 2: // Macintosh Plus
