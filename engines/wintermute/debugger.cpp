@@ -99,7 +99,7 @@ void Console::printUsage(const Common::String &command) {
 	} else if (command.equals(SET_CMD)) {
 		debugPrintf("Usage: %s <name> = <value> to set <name> to <value>\n", command.c_str());
 	} else {
-		debugPrintf("No help about this command, sorry.");
+		debugPrintf("No help about this command, sorry.\n");
 	}
 }
 
