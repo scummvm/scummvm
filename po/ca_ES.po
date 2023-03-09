@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-09 07:10+0000\n"
-"PO-Revision-Date: 2023-03-09 16:58+0000\n"
+"PO-Revision-Date: 2023-03-09 17:03+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -2023,7 +2023,7 @@ msgstr "paquets d'icones"
 
 #: gui/options.cpp:3193
 msgid "shader packs"
-msgstr ""
+msgstr "paquets de shaders"
 
 #: gui/options.cpp:3315
 msgid ""
@@ -2246,15 +2246,15 @@ msgstr "Entreu la descripció per l'espai %d:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "Trieu un shader de la llista de sota (o trieu un fitxer)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Trieu el fitxer..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Tria el shader des del sistema de fitxers"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
