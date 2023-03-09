@@ -1373,6 +1373,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ValueList scummvmOSX_defines;
 	ADD_DEFINE(scummvmOSX_defines, "\"$(inherited)\"");
 	ADD_DEFINE(scummvmOSX_defines, "SDL_BACKEND");
+	ADD_DEFINE(scummvmOSX_defines, "USE_SDL2");
 	ADD_DEFINE(scummvmOSX_defines, "MACOSX");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvmOSX_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_VERSION", "");
