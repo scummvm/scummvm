@@ -57,6 +57,7 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		LibraryProps("faad", "faad2").Libraries("faad"),
 		LibraryProps("fribidi", "fribidi").Libraries("fribidi"),
 		LibraryProps("discord", "discord").Libraries("discord-rpc"),
+		LibraryProps("tts").WinLibraries("sapi ole32"),
 		LibraryProps("retrowave", "retrowave").Libraries("retrowave")
 	};
 
@@ -90,7 +91,7 @@ set(SCUMMVM_LIBS)
 macro(find_feature)
 	set(_OPTIONS_ARGS)
 	set(_ONE_VALUE_ARGS name findpackage_name include_dirs_var libraries_var)
-	set(_MULTI_VALUE_ARGS pkgconfig_name libraries)
+	set(_MULTI_VALUE_ARGS pkgconfig_name libraries win_libraries)
 	cmake_parse_arguments(_feature "${_OPTIONS_ARGS}" "${_ONE_VALUE_ARGS}" "${_MULTI_VALUE_ARGS}" ${ARGN})
 
 	if (_feature_pkgconfig_name AND PKG_CONFIG_FOUND)
@@ -111,6 +112,9 @@ macro(find_feature)
 		endif()
 		if (_feature_libraries)
 			list(APPEND SCUMMVM_LIBS ${_feature_libraries})
+		endif()
+		if (WIN32 AND _feature_win_libraries)
+			list(APPEND SCUMMVM_LIBS ${_feature_win_libraries})
 		endif()
 	endif()
 endmacro()
@@ -213,6 +217,10 @@ void CMakeProvider::writeFeatureLibSearch(const BuildSetup &setup, std::ofstream
 			workspace << " libraries ";
 			workspace << library->libraries;
 		}
+		if (library->winLibraries) {
+			workspace << " win_libraries ";
+			workspace << library->winLibraries;
+		}
 		workspace << ")\n";
 	}
 }
@@ -300,12 +308,6 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "\ttarget_link_libraries(" << name << " winmm)\n";
 		project << "endif()\n";
 		project << "\n";
-
-		if (getFeatureBuildState("tts", setup.features)) {
-			project << "if (WIN32)\n";
-			project << "\ttarget_link_libraries(" << name << " sapi ole32)\n";
-			project << "endif()\n";
-		}
 
 		project << "set_property(TARGET " << name << " PROPERTY CXX_STANDARD 11)\n";
 		project << "set_property(TARGET " << name << " PROPERTY CXX_STANDARD_REQUIRED ON)\n";

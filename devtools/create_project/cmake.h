@@ -73,6 +73,7 @@ private:
 		const char *includesVar;
 		const char *librariesVar;
 		const char *libraries;
+		const char *winLibraries;
 	};
 
 	struct LibraryProps : Library {
@@ -80,6 +81,7 @@ private:
 			Library({_feature, _pkgConfig, _sdlVersion, nullptr}) {}
 		LibraryProps &LibrariesVar(const char *var) { librariesVar = var; return *this; }
 		LibraryProps &Libraries(const char *libs) { libraries = libs; return *this; }
+		LibraryProps &WinLibraries(const char *libs) { winLibraries = libs; return *this; }
 	};
 
 	const Library *getLibraryFromFeature(const char *feature, bool useSDL2) const;
