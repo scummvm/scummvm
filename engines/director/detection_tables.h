@@ -510,6 +510,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "chuniverse",			"The Challenge of the Universe" },
 	{ "cinevolt",			"Cinema Volta: Weird Science & Childhood Memory" },
 	{ "cocktailhour",		"Cocktail Hour: A Guide to Bartending" },
+	{ "compconf",			"Computer Confluence: Exploring Tomorrow's Technology" },
 	{ "comusic",			"Computer Music: An Interactive Documentary" },
 	{ "cpnre",				"Canadian Practical Nurse Registration Exam Practice" },
 	{ "ctrain",				"Doing it in C++" },
@@ -796,6 +797,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "kcd",				"Kompuutteri Kaikille" },
 	{ "kultapossu",			"Kultapossu ja Leo Leijona: Sateenkaarivarkaat" },
 	{ "pelitcd2000",		"Pelit CD 2000" },
+	{ "pelitpakki98",		"Pelit Pelipakki CD 1998" },
 	{ "petepilotti1",		"Pete Pilotti & Pontiac: Seikkailu Lapponiassa" },
 
 	// French titles
@@ -5625,6 +5627,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("colormind", "v1.5", "ColorMind 1.5", "37faaf693259d7a4fa031f4a2edf3098", 126087, 501),
 
+	WINGAME1("compconf", "Windows 3.1", "CCWIN311.EXE", "t:d2f5116b14bb8aaeaeae3d3d7e55d40b", 918905,  500),
+	WINGAME1("compconf", "Windows 95",  "CCWIN95.EXE",  "t:4cb9a6383932f6f11946a5692d82bcf0", 1395275, 500),
+
 	WINGAME2t("cracking", "", "crack.exe", "c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
 							  "ufog8.dxr", "7c8222a010d40b59dd96a97f0b4fa974", 542472, 500),
 
@@ -7091,8 +7096,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t_l("pantosstory", "", "START.EXE", "0aabeac068ad6048f8c7ed19ac7458ea", 1861862,
 								  "PANTOS/A00.DXR", "cadb6e5b4dd143c7754b31026f4c2676", 1367720, Common::JA_JPN, 602),
 
-	WINGAME2_l("pelit2000", "", "PELIT.EXE",	 "t:7be5a7141a379872f92808d394b79421", 1512657,
-								"DATA/MAIN.DXR", "t:55e78270243ff4c98c680864bb056308", 58250, Common::FI_FIN, 601),
+	WINGAME1_l("pelitpakki98", "", "PAKKI-16.EXE", "t:6a07c1dd2a1b80f952d5b421749458bc", 1236065, Common::FI_FIN, 601),
+
+	WINGAME2_l("pelitcd2000", "", "PELIT.EXE",	   "t:7be5a7141a379872f92808d394b79421", 1512657,
+								  "DATA/MAIN.DXR", "t:55e78270243ff4c98c680864bb056308", 58250, Common::FI_FIN, 601),
 
 	WINGAME1t_l("pettson1", "", "GUBBEN.EXE", "9ee9a4d1112db68a3a64f26d043518a3", 1341473, Common::NB_NOR, 600),
 
