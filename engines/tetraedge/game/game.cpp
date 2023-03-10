@@ -1606,11 +1606,21 @@ void Game::stopSound(const Common::String &name) {
 Common::Error Game::syncGame(Common::Serializer &s) {
 	Application *app = g_engine->getApplication();
 
-	// TODO: should be an error before testing.
-	//if (!s.syncVersion(1))
-	//	error("Save game version too new: %d", s.getVersion());
+	//
+	// Note: Early versions of this code didn't sync a version number so it was
+	// the inventory item count.  We use a large version number which would never
+	// be the inventory count.
+	//
+	if (!s.syncVersion(1000))
+		error("Save game version too new: %d", s.getVersion());
 
-	inventory().syncState(s);
+	if (s.getVersion() < 1000) {
+		warning("Loading as old un-versioned save data");
+		inventory().syncStateWithCount(s, s.getVersion());
+	} else {
+		inventory().syncState(s);
+	}
+
 	inventory().cellphone()->syncState(s);
 	// dialog2().syncState(s); // game saves this here, but doesn't actually save anything
 	_luaContext.syncState(s);

@@ -80,6 +80,7 @@ public:
 	bool updateLayout();
 
 	Common::Error syncState(Common::Serializer &s);
+	Common::Error syncStateWithCount(Common::Serializer &s, uint nitems);
 
 	Cellphone *cellphone() { return _cellphone; }
 
