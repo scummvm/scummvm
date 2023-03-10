@@ -203,10 +203,6 @@ void FreescapeEngine::drawTitle() {
 	_gfx->setViewport(_viewArea);
 }
 
-void FreescapeEngine::loadAssets() {
-	error("Function \"%s\" not implemented", __FUNCTION__);
-}
-
 // Taken from the Myst 3 codebase, it should be abstracted
 Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
 	Math::Vector3d v;
@@ -220,25 +216,6 @@ Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
 	v.normalize();
 
 	return v;
-}
-
-void FreescapeEngine::drawUI() {
-	// TODO: crossair
-	_gfx->setViewport(_viewArea);
-}
-
-void FreescapeEngine::drawInfoMenu() {
-	warning("Function \"%s\" not implemented", __FUNCTION__);
-}
-
-void FreescapeEngine::drawCrossair(Graphics::Surface *surface) {
-	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-
-	surface->drawLine(_crossairPosition.x - 3, _crossairPosition.y, _crossairPosition.x - 2, _crossairPosition.y, white);
-	surface->drawLine(_crossairPosition.x + 2, _crossairPosition.y, _crossairPosition.x + 3, _crossairPosition.y, white);
-
-	surface->drawLine(_crossairPosition.x, _crossairPosition.y - 3, _crossairPosition.x, _crossairPosition.y - 2, white);
-	surface->drawLine(_crossairPosition.x, _crossairPosition.y + 2, _crossairPosition.x, _crossairPosition.y + 3, white);
 }
 
 void FreescapeEngine::centerCrossair() {
@@ -294,7 +271,6 @@ void FreescapeEngine::drawBackground() {
 	_gfx->setViewport(_viewArea);
 	_gfx->clear(_currentArea->_skyColor);
 }
-
 
 void FreescapeEngine::drawFrame() {
 	_gfx->updateProjectionMatrix(70.0, _nearClipPlane, _farClipPlane);

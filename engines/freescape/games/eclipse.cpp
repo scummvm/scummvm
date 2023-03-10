@@ -111,7 +111,7 @@ void EclipseEngine::titleScreen() {
 	}
 }
 
-void EclipseEngine::loadAssets() {
+void EclipseEngine::loadAssetsFullGame() {
 	Common::File file;
 	if (_renderMode == Common::kRenderEGA) {
 		file.open("SCN1E.DAT");

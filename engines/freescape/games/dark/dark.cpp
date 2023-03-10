@@ -61,13 +61,6 @@ void DarkEngine::titleScreen() {
 	}
 }
 
-void DarkEngine::loadAssets() {
-	if (isDemo())
-		loadAssetsDemo();
-	else
-		loadAssetsFullGame();
-}
-
 void DarkEngine::loadAssetsDemo() {
 	Common::File file;
 	if (isDOS() && _renderMode == Common::kRenderEGA) {

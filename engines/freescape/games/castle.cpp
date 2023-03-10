@@ -56,7 +56,7 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filen
 	return (new Common::MemoryReadStream(encryptedBuffer, size));
 }
 
-void CastleEngine::loadAssets() {
+void CastleEngine::loadAssetsFullGame() {
 	Common::SeekableReadStream *stream = nullptr;
 
 	stream = decryptFile("CMLE");
