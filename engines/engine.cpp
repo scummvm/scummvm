@@ -637,9 +637,9 @@ void Engine::saveAutosaveIfEnabled() {
 		saveFlag = false;
 	}
 
-	if (saveFlag) {
-		_lastAutosaveTime = _system->getMillis();
-	} else {
+	_lastAutosaveTime = _system->getMillis();
+	
+	if (!saveFlag) {
 		// Set the next autosave interval to be in 5 minutes, rather than whatever
 		// full autosave interval the user has selected
 		_lastAutosaveTime += ((5 * 60 - _autosaveInterval) * 1000);
