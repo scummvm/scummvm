@@ -19,55 +19,72 @@
  *
  */
 
-#include "mm/mm1/views_enh/character_select.h"
-#include "mm/mm1/events.h"
+#include "mm/mm1/views_enh/trap.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-CharacterSelect::CharacterSelect() : PartyView("CharacterSelect") {
-	_bounds = Common:: Rect(225, 144, 320, 200);
+Trap::Trap() : ScrollView("Trap") {
+	setBounds(Common::Rect(0, 144, 234, 200));
 }
 
-bool CharacterSelect::msgFocus(const FocusMessage &msg) {
-	_currCharacter = g_globals->_currCharacter;
-	g_globals->_currCharacter = nullptr;
-	return PartyView::msgFocus(msg);
+bool Trap::msgGame(const GameMessage &msg) {
+	if (msg._name == "TRIGGER") {
+		open();
+		g_globals->_treasure._container =
+			g_maps->_currentMap->dataByte(Maps::MAP_49);
+		g_globals->_currCharacter = &g_globals->_party[0];
+
+		Sound::sound(SOUND_2);
+		return true;
+
+	} else if (msg._name == "TRAP") {
+		open();
+		trap();
+		return true;
+	}
+
+	return false;
 }
 
-void CharacterSelect::draw() {
+void Trap::draw() {
 	ScrollView::draw();
 
-	_fontReduced = true;
-	writeString(STRING["enhdialogs.character_select.title"]);
-}
-
-bool CharacterSelect::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
-		close();
-		g_events->send(g_events->focusedView()->getName(),
-			GameMessage("CHAR_SELECTED", -1));
-		return true;
+	if (_mode == MODE_TRIGGER) {
+		writeString(0, 0, STRING["dialogs.trap.oops"], ALIGN_MIDDLE);
 	} else {
-		return PartyView::msgAction(msg);
+		writeString(0, 0, STRING[Common::String::format("dialogs.trap.%d", _trapType)]);
 	}
 }
 
-bool CharacterSelect::msgGame(const GameMessage &msg) {
-	if (msg._name == "UPDATE") {
+bool Trap::msgKeypress(const KeypressMessage &msg) {
+	if (_mode == MODE_TRIGGER) {
+		trap();
+	} else {
 		close();
-
-		int charNum = g_globals->_party.indexOf(g_globals->_currCharacter);
-		g_globals->_currCharacter = _currCharacter;
-
-		g_events->send(g_events->focusedView()->getName(),
-			GameMessage("CHAR_SELECTED", charNum));
-		return true;
 	}
 
 	return true;
+}
+
+bool Trap::msgAction(const ActionMessage &msg) {
+	if (_mode == MODE_TRIGGER) {
+		trap();
+	} else {
+		close();
+	}
+
+	return true;
+}
+
+void Trap::trap() {
+	TrapData::trap();
+
+	_mode = MODE_TRAP;
+	draw();
 }
 
 } // namespace ViewsEnh

@@ -19,17 +19,17 @@
  *
  */
 
-#ifndef MM1_VIEWS_TRAP_H
-#define MM1_VIEWS_TRAP_H
+#ifndef MM1_VIEWS_ENH_TRAP_H
+#define MM1_VIEWS_ENH_TRAP_H
 
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 #include "mm/mm1/data/trap.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 
-class Trap : public TextView, public TrapData {
+class Trap : public ScrollView, public TrapData {
 private:
 	enum Mode { MODE_TRIGGER, MODE_TRAP };
 	Mode _mode = MODE_TRIGGER;
@@ -46,7 +46,7 @@ public:
 	bool msgAction(const ActionMessage &msg) override;
 };
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

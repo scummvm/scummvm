@@ -19,34 +19,36 @@
  *
  */
 
-#ifndef MM1_VIEWS_TRAP_H
-#define MM1_VIEWS_TRAP_H
+#ifndef MM1_VIEWS_ENH_UNLOCK_H
+#define MM1_VIEWS_ENH_UNLOCK_H
 
-#include "mm/mm1/views/text_view.h"
-#include "mm/mm1/data/trap.h"
+#include "mm/mm1/views_enh/party_view.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 
-class Trap : public TextView, public TrapData {
+class Unlock : public PartyView {
 private:
-	enum Mode { MODE_TRIGGER, MODE_TRAP };
-	Mode _mode = MODE_TRIGGER;
-protected:
-	void trap() override;
+	void charSelected(uint charIndex);
 
+protected:
+	/**
+	 * Return true if a character should be selected by default
+	 */
+	bool selectCharByDefault() const override {
+		return false;
+	}
 public:
-	Trap();
-	virtual ~Trap() {}
+	Unlock();
+	virtual ~Unlock() {}
 
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 };
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

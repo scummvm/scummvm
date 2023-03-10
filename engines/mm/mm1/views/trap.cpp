@@ -71,6 +71,16 @@ bool Trap::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+bool Trap::msgAction(const ActionMessage &msg) {
+	if (_mode == MODE_TRIGGER) {
+		trap();
+	} else {
+		close();
+	}
+
+	return true;
+}
+
 void Trap::trap() {
 	TrapData::trap();
 
