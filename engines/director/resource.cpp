@@ -546,7 +546,7 @@ private:
 	bool loadArchive(Common::SeekableReadStream *stream);
 
 	struct Entry {
-		uint64 offset;
+		uint32 offset;
 		uint32 size;
 	};
 	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
@@ -687,7 +687,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		Entry entry;
 
 		// subtract 8 since we want to include tag and size as well
-		entry.offset = stream->pos() - 8;
+		entry.offset = static_cast<uint32>(stream->pos() - 8);
 		entry.size = size + 8;
 		_files[arr[i]] = entry;
 
