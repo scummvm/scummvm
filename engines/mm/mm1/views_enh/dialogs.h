@@ -39,6 +39,7 @@
 #include "mm/mm1/views_enh/title.h"
 #include "mm/mm1/views_enh/trap.h"
 #include "mm/mm1/views_enh/unlock.h"
+#include "mm/mm1/views_enh/who_will_try.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/locations/inn.h"
 #include "mm/mm1/views_enh/locations/market.h"
@@ -64,6 +65,7 @@ private:
 	ViewsEnh::Search _search;
 	ViewsEnh::Trap _trap;
 	ViewsEnh::Unlock _unlock;
+	ViewsEnh::WhoWillTry _whoWillTry;
 	ViewsEnh::Locations::Tavern _tavern;
 	ViewsEnh::Locations::Temple _temple;
 	ViewsEnh::Locations::Training _training;

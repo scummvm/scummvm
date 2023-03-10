@@ -39,6 +39,7 @@ private:
 	bool _removing = false;
 	byte _val1 = 0;
 	int _lineNum = 0;
+	Shared::Xeen::SpriteResource _escSprite;
 
 	/**
 	 * Open the container

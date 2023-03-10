@@ -74,7 +74,7 @@ void Unlock::draw() {
 	clearSurface();
 
 	writeString(4, 1, Common::String::format(
-		STRING["dialogs.unlock.who_will_try"].c_str(),
+		STRING["dialogs.misc.who_will_try"].c_str(),
 		'0' + g_globals->_party.size()));
 	escToGoBack(0, 3);
 }

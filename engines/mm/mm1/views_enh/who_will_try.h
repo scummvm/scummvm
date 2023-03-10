@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_UNLOCK_H
-#define MM1_VIEWS_ENH_UNLOCK_H
+#ifndef MM1_VIEWS_ENH_WHO_WILL_TRY_H
+#define MM1_VIEWS_ENH_WHO_WILL_TRY_H
 
 #include "mm/mm1/views_enh/party_view.h"
 
@@ -28,16 +28,29 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class Unlock : public PartyView {
-private:
-	static void charSelected(int charIndex);
+typedef void (*WhoWillProc)(int charNum);
 
+class WhoWillTry : public PartyView {
+private:
+	WhoWillProc _callback = nullptr;
+
+protected:
+	/**
+	 * Return true if a character should be selected by default
+	 */
+	bool selectCharByDefault() const override {
+		return false;
+	}
 public:
-	Unlock();
-	virtual ~Unlock() {}
+	WhoWillTry();
+	virtual ~WhoWillTry() {}
+
+	static void display(WhoWillProc callback);
+	void open(WhoWillProc callback);
 
 	bool msgGame(const GameMessage &msg) override;
-	void draw() override {}		// View no direct display
+	void draw() override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace ViewsEnh

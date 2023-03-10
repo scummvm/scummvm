@@ -29,6 +29,8 @@ namespace ViewsEnh {
 
 Search::Search() : ScrollView("Search") {
 	_bounds = Common::Rect(234, 144, 320, 200);
+	_escSprite.load("esc.icn");
+	addButton(&_escSprite, Common::Point(120, 172), 0, KEYBIND_ESCAPE, true);
 }
 
 bool Search::msgGame(const GameMessage &msg) {
@@ -51,7 +53,6 @@ bool Search::msgGame(const GameMessage &msg) {
 }
 
 bool Search::msgFocus(const FocusMessage &msg) {
-	_bounds = getLineBounds(20, 24);
 	_lineNum = 0;
 
 	if (_mode == FOCUS_GET_TREASURE) {
@@ -69,23 +70,25 @@ bool Search::msgFocus(const FocusMessage &msg) {
 
 void Search::draw() {
 	Common::String line;
-	if (_mode != GET_ITEMS)
-		clearSurface();
+	//if (_mode != GET_ITEMS)
+	setButtonEnabled(0, _mode == OPTIONS);
+	ScrollView::draw();
 
 	switch (_mode) {
 	case INITIAL:
 		Sound::sound(SOUND_2);
 		line = STRING["dialogs.search.search"] +
 			STRING["dialogs.search.you_found"];
-		writeString(0, 1, line);
+		writeString(line);
 		delaySeconds(2);
 		break;
 
 	case OPTIONS:
-		writeString(1, 1, STRING["dialogs.search.options1"]);
-		writeString(20, 2, STRING["dialogs.search.options2"]);
-		writeString(20, 3, STRING["dialogs.search.options3"]);
-		//escToGoBack(0, 3);
+		writeString(0, 0, STRING["dialogs.search.options"]);
+		writeString(160, 0, STRING["dialogs.search.options1"]);
+		writeString(160, 9, STRING["dialogs.search.options2"]);
+		writeString(160, 18, STRING["dialogs.search.options3"]);
+		writeString(140, 30, STRING["enhdialogs.misc.go_back"]);
 		break;
 
 	case GET_TREASURE:
@@ -99,7 +102,7 @@ void Search::draw() {
 
 	case WHO_WILL_TRY: {
 		line = Common::String::format(
-			STRING["dialogs.search.who_will_try"].c_str(),
+			STRING["dialogs.misc.who_will_try"].c_str(),
 			'0' + g_globals->_party.size()
 		);
 		writeString(10, 1, line);

@@ -82,7 +82,8 @@ void Search::draw() {
 		break;
 
 	case OPTIONS:
-		writeString(1, 1, STRING["dialogs.search.options1"]);
+		writeString(1, 1, STRING["dialogs.search.options"]);
+		writeString(20, 1, STRING["dialogs.search.options1"]);
 		writeString(20, 2, STRING["dialogs.search.options2"]);
 		writeString(20, 3, STRING["dialogs.search.options3"]);
 		escToGoBack(0, 3);
@@ -99,7 +100,7 @@ void Search::draw() {
 
 	case WHO_WILL_TRY: {
 		line = Common::String::format(
-			STRING["dialogs.search.who_will_try"].c_str(),
+			STRING["dialogs.misc.who_will_try"].c_str(),
 			'0' + g_globals->_party.size()
 		);
 		writeString(10, 1, line);

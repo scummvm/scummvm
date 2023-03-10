@@ -149,6 +149,7 @@ MODULE_OBJS += \
 	mm1/views_enh/text_entry.o \
 	mm1/views_enh/text_view.o \
 	mm1/views_enh/title.o \
+	mm1/views_enh/who_will_try.o \
 	mm1/views_enh/interactions/interaction.o \
 	mm1/views_enh/interactions/statue.o \
 	mm1/views_enh/locations/inn.o \
