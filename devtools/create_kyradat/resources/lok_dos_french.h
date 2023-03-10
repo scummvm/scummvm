@@ -221,10 +221,9 @@ static const char *const k1HealingTipStringDOSFrench[1] = {
 
 static const StringListProvider k1HealingTipStringDOSFrenchProvider = { ARRAYSIZE(k1HealingTipStringDOSFrench), k1HealingTipStringDOSFrench };
 
-static const char *const k1PoisonGoneStringDOSFrench[3] = {
+static const char *const k1PoisonGoneStringDOSFrench[2] = {
 	"G""\x82""nial!",
-	"Les effets du poison ont disparu!",
-	"MBL1ERREUR: Jeu sauvegard""\x82"" d'un autre produit."
+	"Les effets du poison ont disparu!"
 };
 
 static const StringListProvider k1PoisonGoneStringDOSFrenchProvider = { ARRAYSIZE(k1PoisonGoneStringDOSFrench), k1PoisonGoneStringDOSFrench };
