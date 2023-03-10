@@ -34,6 +34,7 @@
    comments to that effect with your name and the date.  Thank you.
  */
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/ptr.h"
@@ -881,6 +882,8 @@ GzioReadStream::get_new_block()
     case 7:
       _blockType = INFLATE_STORED;
       break;
+    default:
+      error("Unsupported clickteam block type %d", (int)(b & 7));
     }
     DUMPBITS (3);
 
