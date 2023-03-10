@@ -581,25 +581,16 @@ ProjectorArchive::~ProjectorArchive() {
 }
 
 bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
-	bool bigEndian = true, found = false;
+	bool bigEndian = false, found = false;
 	uint32 off, tag, rifxOffset;
 
-	// Assume the endianness of the file and try to locate the PJXX tag
-	for (int i = 0; i < 2; i++) {
-		bigEndian = !bigEndian;
-		stream->seek(-4, SEEK_END);
-		off = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
-		stream->seek(off);
-		tag = stream->readUint32BE();
+	stream->seek(-4, SEEK_END);
+	off = stream->readUint32LE();
+	stream->seek(off);
+	tag = stream->readUint32BE();
 
-		// Check whether we got a 'PJ' tag while ignoring the version and accounting for endianness
-		if (((tag & 0xffff0000) == MKTAG('P','J', 0, 0)) || ((tag & 0x0000ffff) == MKTAG(0, 0, 'J','P'))) {
-			found = true;
-			break;
-		}
-	}
-
-	if (!found) {
+	// Check whether we got a 'PJ' tag while ignoring the version and accounting for endianness
+	if (((tag & 0xffff0000) != MKTAG('P','J', 0, 0)) && ((tag & 0x0000ffff) != MKTAG(0, 0, 'J','P'))) {
 		warning("ProjectorArchive::loadArchive(): Projector Tag not found");
 		return false;
 	}
