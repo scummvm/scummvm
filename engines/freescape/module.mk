@@ -5,7 +5,8 @@ MODULE_OBJS := \
 	demo.o \
 	freescape.o \
 	games/castle.o \
-	games/dark.o \
+	games/dark/dark.o \
+	games/dark/dos.o \
 	games/driller/amiga.o \
 	games/driller/atari.o \
 	games/driller/cpc.o \
