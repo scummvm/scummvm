@@ -75,6 +75,13 @@ private:
 		const char *libraries;
 	};
 
+	struct LibraryProps : Library {
+		LibraryProps(const char *_feature, const char *_pkgConfig = nullptr, SDLVersion _sdlVersion = kSDLVersionAny) :
+			Library({_feature, _pkgConfig, _sdlVersion, nullptr}) {}
+		LibraryProps &LibrariesVar(const char *var) { librariesVar = var; return *this; }
+		LibraryProps &Libraries(const char *libs) { libraries = libs; return *this; }
+	};
+
 	const Library *getLibraryFromFeature(const char *feature, bool useSDL2) const;
 
 	void writeWarnings(std::ofstream &output) const;
