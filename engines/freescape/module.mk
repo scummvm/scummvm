@@ -2,6 +2,7 @@ MODULE := engines/freescape
 
 MODULE_OBJS := \
 	area.o \
+	assets.o \
 	demo.o \
 	freescape.o \
 	games/castle.o \
@@ -25,7 +26,8 @@ MODULE_OBJS := \
 	objects/geometricobject.o \
 	objects/sensor.o \
 	scr.o \
-	sound.o
+	sound.o \
+	ui.o
 
 ifdef USE_TINYGL
 MODULE_OBJS += \
