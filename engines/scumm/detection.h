@@ -247,6 +247,11 @@ enum ScummGameId {
 	GID_HECUP		// CUP demos
 };
 
+struct RuScummPatcher {
+	ScummGameId gameid;
+	const char *variant;
+	const char *patcherName;
+};
 } // End of namespace Scumm
 
 

@@ -24,6 +24,7 @@
 
 #include "common/debug.h"
 #include "common/md5.h"
+#include "common/punycode.h"
 
 #include "gui/error.h"
 
@@ -210,13 +211,22 @@ static bool detectSpeech(const Common::FSList &fslist, const GameSettings *gs) {
 }
 
 // The following function tries to detect the language.
-static Common::Language detectLanguage(const Common::FSList &fslist, byte id, Common::Language originalLanguage = Common::UNK_LANG) {
+static Common::Language detectLanguage(const Common::FSList &fslist, byte id, const char *variant, Common::Language originalLanguage = Common::UNK_LANG) {
 	// First try to detect Chinese translation.
 	Common::FSNode fontFile;
 
 	if (searchFSNode(fslist, "chinese_gb16x12.fnt", fontFile)) {
 		debugC(0, kDebugGlobalDetection, "Chinese detected");
 		return Common::ZH_CHN;
+	}
+
+	for (uint i = 0; ruScummPatcherTable[i].patcherName; i++) {
+		Common::FSNode patchFile;
+		if (ruScummPatcherTable[i].gameid == id && (variant == nullptr || strcmp(variant, ruScummPatcherTable[i].variant) == 0)
+		    && searchFSNode(fslist, Common::punycode_decode(ruScummPatcherTable[i].patcherName), patchFile)) {
+			debugC(0, kDebugGlobalDetection, "Russian detected");
+			return Common::RU_RUS;
+		}
 	}
 
 	if (id != GID_CMI && id != GID_DIG) {
@@ -385,7 +395,7 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 
 				// HACK: Try to detect languages for translated games.
 				if (dr.language == UNK_LANG || dr.language == Common::EN_ANY) {
-					dr.language = detectLanguage(fslist, dr.game.id, dr.language);
+					dr.language = detectLanguage(fslist, dr.game.id, g->variant, dr.language);
 				}
 
 				// HACK: Detect between 68k and PPC versions.
@@ -572,7 +582,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			}
 
 			// HACK: Perhaps it is some modified translation?
-			dr.language = detectLanguage(fslist, g->id);
+			dr.language = detectLanguage(fslist, g->id, g->variant);
 
 			// Detect if there are speech files in this unknown game.
 			if (detectSpeech(fslist, g)) {

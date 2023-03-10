@@ -904,6 +904,20 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ NULL, NULL, kGenUnchanged, UNK_LANG, UNK, 0 }
 };
 
+static const RuScummPatcher ruScummPatcherTable[] = {
+	// cmi_rus_1.1b.exe is InstallShield
+	{ GID_MANIAC, "V2", "mm_ega_rus_1.0.exe" },
+	{ GID_MANIAC, "V2", "mm_ega_rus_1.1.exe" },
+	{ GID_INDY3, "VGA", "indy3vga_rus_1.01_final.exe" },
+	{ GID_INDY4, "", "indy_atlantis_rus_v1.0_cd.exe" }, // CD
+	{ GID_LOOM, "EGA", "loom_ega_1.0_rus.exe" },
+	{ GID_LOOM, "EGA", "loom_ega_1.1_rus.exe" },
+	{ GID_LOOM, "FM-TOWNS", "loom_fm_1.0_rus.exe" },
+	{ GID_ZAK, "V2", "zak_ega_rus_1.0.exe" },
+	{ GID_TENTACLE, "", "xn-- . -. .1.0.exe-vtlacb4b3avgf1ea6cs7c2brf8abfez6ajun7b8d6byezgg" }, // CD, "день щупальца. патчер-русификатор. вер.1.0.exe"
+	{ GID_CMI, NULL, NULL }
+};
+
 } // End of namespace Scumm
 
 #endif
