@@ -98,7 +98,8 @@ bool Draw_v7::loadCursorFromFile(Common::String cursorName) {
 							cursor->getHotspotY(),
 							cursor->getKeyColor(),
 							false,
-							&_vm->getPixelFormat());
+							&_vm->getPixelFormat(),
+							cursor->getMask());
 	CursorMan.replaceCursorPalette(cursor->getPalette(),
 								   cursor->getPaletteStartIndex(),
 								   cursor->getPaletteCount());
