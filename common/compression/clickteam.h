@@ -35,7 +35,8 @@ public:
 		BANNER_IMAGE = 0x1235,
 		FILE_LIST = 0x123a,
 		STRINGS = 0x123e,
-		UNINSTALLER = 0x123f
+		UNINSTALLER = 0x123f,
+		FILE_PATCHING_LIST = 0x1242,
 	};
 
 	class ClickteamTag : Common::NonCopyable {
@@ -53,16 +54,24 @@ public:
 		}
 	};
 
-	bool hasFile(const Path &path) const override;
+	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList&) const override;
-	const ArchiveMemberPtr getMember(const Path &path) const override;
+	const ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SharedArchiveContents readContentsForPath(const Common::String& translated) const override;
 
 	ClickteamTag* getTag(ClickteamTagId tagId) const;
 
+	static ClickteamInstaller* openPatch(Common::SeekableReadStream *stream, bool verifyOriginal = true, bool verifyAllowSkip = true,
+					     Common::Archive *reference = &SearchMan, DisposeAfterUse::Flag dispose = DisposeAfterUse::NO);
 	static ClickteamInstaller* open(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose = DisposeAfterUse::NO);
 
 private:
+	struct ClickteamPatchDescriptor {
+		uint32 _originalCRC;
+		uint32 _originalSize;
+		uint32 _patchDataOffset;
+		uint32 _patchSize;
+	};
 	class ClickteamFileDescriptor {
 	private:
 		Common::String _fileName;
@@ -74,6 +83,12 @@ private:
 		uint32 _compressedSize;
 		uint32 _uncompressedSize;
 		uint32 _expectedCRC;
+		bool _supported;
+		bool _isPatchFile;
+		bool _crcIsXorred;
+		bool _isReferenceMissing;
+		uint16 _field1c;
+		Common::Array<ClickteamPatchDescriptor> _patchEntries;
 
 		ClickteamFileDescriptor(const ClickteamTag& contentsTag, uint32 off);
 		friend class ClickteamInstaller;
@@ -84,14 +99,20 @@ private:
 
 	ClickteamInstaller(Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> files,
 			   Common::HashMap<uint16, Common::SharedPtr<ClickteamTag>> tags,
-			   uint32 crcXor, uint32 block3Offset, uint32 block3Size, Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose)
-		: _files(files), _tags(tags), _crcXor(crcXor), _block3Offset(block3Offset), /*_block3Size(block3Size), */_stream(stream, dispose) {
+			   uint32 crcXor, uint32 block3Offset, uint32 block3Size, Common::SeekableReadStream *stream,
+			   Common::Archive *reference,
+			   DisposeAfterUse::Flag dispose)
+		: _files(files), _tags(tags), _crcXor(crcXor), _block3Offset(block3Offset), /*_block3Size(block3Size), */_stream(stream, dispose),
+		  _reference(reference) {
 	}
 
+	static int findPatchIdx(const ClickteamFileDescriptor &desc, Common::SeekableReadStream *refStream, const Common::String &fileName,
+				uint32 crcXor, bool doWarn);
 	Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _files;
 	Common::HashMap<uint16, Common::SharedPtr<ClickteamTag>> _tags;
 	Common::DisposablePtr<Common::SeekableReadStream> _stream;
 	uint32 _crcXor, _block3Offset/*, _block3Size*/;
+	Common::Archive *_reference;
 };
 }
 #endif
