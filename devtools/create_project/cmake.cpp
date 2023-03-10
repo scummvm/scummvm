@@ -58,6 +58,7 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		LibraryProps("fribidi", "fribidi").Libraries("fribidi"),
 		LibraryProps("discord", "discord").Libraries("discord-rpc"),
 		LibraryProps("tts").WinLibraries("sapi ole32"),
+		LibraryProps("enet").WinLibraries("winmm ws2_32"),
 		LibraryProps("retrowave", "retrowave").Libraries("retrowave")
 	};
 
