@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/compression/clickteam.h"
 #include "common/debug-channels.h"
 #include "common/macresman.h"
 #include "common/md5.h"
@@ -40,6 +41,7 @@
 #include "scumm/charset.h"
 #include "scumm/costume.h"
 #include "scumm/debugger.h"
+#include "scumm/detection_tables.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
@@ -887,6 +889,21 @@ ScummEngine_v8::~ScummEngine_v8() {
 Common::Error ScummEngine::init() {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	for (uint i = 0; ruScummPatcherTable[i].patcherName; i++) {
+		if (ruScummPatcherTable[i].gameid == _game.id && (_game.variant == nullptr || strcmp(_game.variant, ruScummPatcherTable[i].variant) == 0)) {
+			Common::File *f = new Common::File();
+			if (f->open(ruScummPatcherTable[i].patcherName)) {
+				Common::Archive *patcher = Common::ClickteamInstaller::openPatch(f, true, true, &SearchMan, DisposeAfterUse::YES);
+				if (patcher) {
+					SearchMan.add("ruscumm", patcher, 3);
+					break;
+				}
+			}
+			delete f;
+		}
+	}
+
 
 	ConfMan.registerDefault("original_gui", true);
 	if (ConfMan.hasKey("original_gui", _targetName)) {
