@@ -98,20 +98,28 @@ bool Globals::load(bool isEnhanced) {
 }
 
 Common::String Globals::operator[](const Common::String &name) const {
-	bool isMapStr = g_engine->isEnhanced() && name.hasPrefix("maps.map");
+	bool isMapStr = name.hasPrefix("maps.map");
 
-	if (isMapStr) {
-		// Map strings support having alternate versions in Enhanced version
-		Common::String altName = Common::String::format("maps.emap%s",
-			name.c_str() + 8);
-		if (_strings.contains(altName))
-			return _strings[altName];
+	if (g_engine->isEnhanced()) {
+		if (isMapStr) {
+			// Map strings support having alternate versions in Enhanced version
+			Common::String altName = Common::String::format("maps.emap%s",
+				name.c_str() + 8);
+			if (_strings.contains(altName))
+				return _strings[altName];
+		}
+
+		if (name.hasPrefix("dialogs.")) {
+			Common::String altName = Common::String::format("enh%s", name.c_str());
+			if (_strings.contains(altName))
+				return _strings[altName];
+		}
 	}
 
 	assert(_strings.contains(name));
 	Common::String result = _strings[name];
 
-	if (isMapStr)
+	if (g_engine->isEnhanced() && isMapStr)
 		result = searchAndReplace(result, "\n", " ");
 
 	return result;
