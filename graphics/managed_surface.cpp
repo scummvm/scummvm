@@ -265,7 +265,7 @@ void ManagedSurface::blitFrom(const ManagedSurface &src, const Common::Rect &src
 void ManagedSurface::blitFrom(const ManagedSurface &src, const Common::Rect &srcRect,
 		const Common::Rect &destRect) {
 	if (src._transparentColorSet)
-		transBlitFrom(src, srcRect, destRect, -1);
+		transBlitFrom(src, srcRect, destRect, (uint32)-1);
 	else
 		blitFromInner(src._innerSurface, srcRect, destRect, src._paletteSet ? src._palette : nullptr);
 }
