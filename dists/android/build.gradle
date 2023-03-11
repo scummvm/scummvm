@@ -35,7 +35,7 @@ android {
 
         setProperty("archivesBaseName", "ScummVM")
 
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 33
 
         versionName "2.8.0"
