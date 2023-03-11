@@ -197,6 +197,7 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 	setVerticalScroll(verticalScroll);
 
 	if (palette.size()) {
+		GraphicsManager::loadSurfacePalette(_fullFrame, palette);
 		setPalette(palette);
 	}
 
