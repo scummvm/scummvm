@@ -37,8 +37,10 @@ private:
 	MemoryBlock *_data;
 	uint16 _width, _height;
 
-	void egaCreateDialog(bool blackFlag);
-	void vgaCreateDialog(bool blackFlag);
+	void egaCreateDialog();
+	void vgaCreateDialog();
+	void egaRefreshDialog();
+	void vgaRefreshDialog();
 public:
 	Surface(MemoryBlock *src, uint16 width, uint16 height);
 	Surface(uint16 width, uint16 height);
@@ -71,7 +73,8 @@ public:
 	void copyFrom(MemoryBlock *src, uint32 destOffset);
 	void empty() { _data->empty(); }
 	void fillRect(const Common::Rect &r, uint8 color);
-	void createDialog(bool blackFlag = false);
+	void createDialog();
+	void refreshDialog();
 	void copyToScreen(uint16 x, uint16 y);
 	void centerOnScreen();
 

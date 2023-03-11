@@ -479,9 +479,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	Mouse &mouse = Mouse::getReference();
 	OSystem &system = *g_system;
 	Screen &screen = Screen::getReference();
-	Common::Rect r;
 	bool isEGA = LureEngine::getReference().isEGA();
-	byte bgColor = isEGA ? EGA_DIALOG_BG_COLOR : 0;
 	byte textColor = isEGA ? EGA_DIALOG_TEXT_COLOR : VGA_DIALOG_TEXT_COLOR;
 	byte whiteColor = isEGA ? EGA_DIALOG_WHITE_COLOR : VGA_DIALOG_WHITE_COLOR;
 
@@ -515,21 +513,17 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	Common::Point size;
 	Surface::getDialogBounds(size, numCols, numLines, false);
 	Surface *s = new Surface(size.x, size.y);
-	s->createDialog(true);
+	s->createDialog();
 
 	int selectedIndex = 0;
 	bool refreshFlag = true;
-	r.left = Surface::textX();
-	r.right = s->width() - Surface::textX() + 1;
-	r.top = Surface::textY();
-	r.bottom = s->height() - Surface::textY() + 1;
 
 	bool bailOut = false;
 
 	while (!bailOut) {
 		if (refreshFlag) {
 			// Set up the contents of the menu
-			s->fillRect(r, bgColor);
+			s->refreshDialog();
 
 			for (int index = 0; index < numLines; ++index) {
 #ifndef LURE_CLICKABLE_MENUS
