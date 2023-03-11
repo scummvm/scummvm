@@ -650,11 +650,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 	// Nothing has to be done if the bitmap already has been loaded.
 	Graphics::ManagedSurface *surf = _bitmaps[filename];
 	if (surf) {
-		surf->free();
-		delete surf;
-		surf = nullptr;
-
-		_bitmaps.erase(filename);
+		return true;
 	}
 
 	if (!scalablefile.empty()) {
