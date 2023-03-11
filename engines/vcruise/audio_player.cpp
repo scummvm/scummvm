@@ -67,6 +67,14 @@ void AudioPlayer::play(byte volume, int8 balance) {
 
 }
 
+void AudioPlayer::setVolume(byte volume) {
+	_mixer->setChannelVolume(_handle, volume);
+}
+
+void AudioPlayer::setBalance(int8 balance) {
+	_mixer->setChannelBalance(_handle, balance);
+}
+
 void AudioPlayer::stop() {
 	if (_isPlaying) {
 		_mixer->stopHandle(_handle);

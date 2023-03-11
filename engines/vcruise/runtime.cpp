@@ -282,6 +282,19 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 	}
 }
 
+CachedSound::CachedSound() : rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false), volume(0), balance(0) {
+}
+
+CachedSound::~CachedSound() {
+	// Dispose player first so playback stops
+	this->player.reset();
+
+	// Dispose loopingStream before stream because stream is not refcounted by loopingStream so we need to avoid late free
+	this->loopingStream.reset();
+
+	this->stream.reset();
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
@@ -426,6 +439,10 @@ bool Runtime::runFrame() {
 		// Do nothing
 	}
 
+	uint32 timestamp = g_system->getMillis();
+
+	updateSounds(timestamp);
+
 	return true;
 }
 
@@ -435,6 +452,8 @@ bool Runtime::bootGame(bool newGame) {
 	debug(1, "Booting V-Cruise game...");
 	loadIndex();
 	debug(1, "Index loaded OK");
+	findWaves();
+	debug(1, "Waves indexed OK");
 
 	_gameState = kGameStateIdle;
 
@@ -1172,6 +1191,43 @@ void Runtime::loadIndex() {
 	}
 }
 
+void Runtime::findWaves() {
+	Common::ArchiveMemberList waves;
+	SearchMan.listMatchingMembers(waves, "Sfx/Waves-##/####*.wav", true);
+
+	for (const Common::ArchiveMemberPtr &wave : waves) {
+		Common::String name = wave->getName();
+
+		// Strip .wav extension
+		name = name.substr(0, name.size() - 4);
+
+		// Make case-insensitive
+		name.toLowercase();
+
+		_waves[name] = wave;
+	}
+}
+
+void Runtime::loadWave(uint soundID, const Common::String &soundName, const Common::ArchiveMemberPtr &archiveMemberPtr) {
+	Common::SeekableReadStream *stream = archiveMemberPtr->createReadStream();
+	if (!stream) {
+		warning("Couldn't open read stream for sound '%s'", soundName.c_str());
+		return;
+	}
+
+	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	if (!audioStream) {
+		warning("Couldn't open audio stream for sound '%s'", soundName.c_str());
+		return;
+	}
+
+	Common::SharedPtr<CachedSound> cachedSound(new CachedSound());
+	_cachedSounds[soundID] = cachedSound;
+
+	cachedSound->stream.reset(audioStream);
+	cachedSound->name = soundName;
+}
+
 void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 	bool changedRoom = (roomNumber != _loadedRoomNumber);
 	bool changedScreen = (screenNumber != _activeScreenNumber) || changedRoom;
@@ -1507,6 +1563,97 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 	}
 
 	debug(1, "Animation last frame set to %u", animDef.lastFrame);
+}
+
+void Runtime::triggerSound(bool looping, uint soundID, uint volume, int32 balance) {
+	Common::HashMap<uint, Common::SharedPtr<CachedSound> >::iterator it = _cachedSounds.find(soundID);
+	if (it == _cachedSounds.end()) {
+		warning("Couldn't trigger sound ID %u, the sound wasn't loaded", soundID);
+		return;
+	}
+
+	CachedSound &snd = *it->_value;
+
+	snd.volume = volume;
+	snd.balance = balance;
+
+	// Reset if looping state changes
+	if (snd.loopingStream && !looping) {
+		snd.player.reset();
+		snd.loopingStream.reset();
+		snd.stream->rewind();
+	}
+
+	if (!snd.loopingStream && looping)
+		snd.player.reset();
+
+	// Construct looping stream if needed and none exists
+	if (looping && !snd.loopingStream)
+		snd.loopingStream.reset(new Audio::LoopingAudioStream(snd.stream.get(), 0, DisposeAfterUse::NO, true));
+
+	if (snd.player) {
+		// If there is already a player and this is non-looping, start over
+		if (!looping) {
+			snd.player->stop();
+			snd.stream->rewind();
+			snd.player->play(volume, balance);
+		} else {
+			// Adjust volume and balance at least
+			snd.player->setVolume(volume);
+			snd.player->setBalance(balance);
+		}
+	} else {
+		snd.player.reset(new AudioPlayer(_mixer, looping ? snd.loopingStream.staticCast<Audio::AudioStream>() : snd.stream.staticCast<Audio::AudioStream>()));
+		snd.player->play(volume, balance);
+	}
+}
+
+void Runtime::triggerSoundRamp(uint soundID, uint durationMSec, uint newVolume, bool terminateOnCompletion) {
+	Common::HashMap<uint, Common::SharedPtr<CachedSound> >::const_iterator it = _cachedSounds.find(soundID);
+	if (it == _cachedSounds.end())
+		return;
+
+	CachedSound &snd = *it->_value;
+
+	snd.rampStartVolume = snd.volume;
+	snd.rampEndVolume = newVolume;
+	snd.rampTerminateOnCompletion = terminateOnCompletion;
+	snd.rampStartTime = g_system->getMillis();
+	snd.rampRatePerMSec = 65536;
+
+	if (durationMSec)
+		snd.rampRatePerMSec = 65536 / durationMSec;
+}
+
+void Runtime::updateSounds(uint32 timestamp) {
+	Common::Array<uint> condemnedSounds;
+
+	for (const Common::HashMap<uint, Common::SharedPtr<CachedSound> >::Node &node : _cachedSounds) {
+		CachedSound &snd = *node._value;
+
+		if (snd.rampRatePerMSec) {
+			uint ramp = snd.rampRatePerMSec * (timestamp - snd.rampStartTime);
+			uint newVolume = snd.volume;
+			if (ramp >= 65536) {
+				snd.rampRatePerMSec = 0;
+				newVolume = snd.rampEndVolume;
+				if (snd.rampTerminateOnCompletion)
+					condemnedSounds.push_back(node._key);
+			} else {
+				uint rampedVolume = (snd.rampStartVolume * (65536u - ramp)) + (snd.rampEndVolume * ramp);
+				newVolume = rampedVolume >> 16;
+			}
+
+			if (snd.volume != newVolume) {
+				snd.volume = newVolume;
+				if (snd.player)
+					snd.player->setVolume(snd.volume);
+			}
+		}
+	}
+
+	for (uint id : condemnedSounds)
+		_cachedSounds.erase(id);
 }
 
 AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
@@ -2217,43 +2364,37 @@ void Runtime::scriptOpLMB1(ScriptArg_t arg) {
 void Runtime::scriptOpSoundS1(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	warning("Sound play 1 not implemented yet");
-	(void)stackArgs;
+	triggerSound(false, stackArgs[0], 100, 0);
 }
 
 void Runtime::scriptOpSoundS2(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
-	warning("Sound play 2 not implemented yet");
-	(void)stackArgs;
+	triggerSound(false, stackArgs[0], stackArgs[1], 0);
 }
 
 void Runtime::scriptOpSoundS3(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	warning("Sound play 3 not implemented yet");
-	(void)stackArgs;
+	triggerSound(false, stackArgs[0], stackArgs[1], stackArgs[2]);
 }
 
 void Runtime::scriptOpSoundL1(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	warning("Sound loop 1 not implemented yet");
-	(void)stackArgs;
+	triggerSound(true, stackArgs[0], 100, 0);
 }
 
 void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
-	warning("Sound loop 2 not implemented yet");
-	(void)stackArgs;
+	triggerSound(true, stackArgs[0], stackArgs[1], 0);
 }
 
 void Runtime::scriptOpSoundL3(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	warning("Sound loop 3 not implemented yet");
-	(void)stackArgs;
+	triggerSound(true, stackArgs[0], stackArgs[1], stackArgs[2]);
 }
 
 void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
@@ -2385,24 +2526,13 @@ OPCODE_STUB(SAnimX)
 void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	// stackArgs[0] = sound ID
-	// stackArgs[1] = duration (in 10ths of second)
-	// stackArgs[2] = new volume
-
-	warning("FX volume ramp up is not implemented");
-	(void)stackArgs;
+	triggerSoundRamp(stackArgs[0], stackArgs[1] * 100, stackArgs[2], false);
 }
 
 void Runtime::scriptOpVolumeDn4(ScriptArg_t arg) {
 	TAKE_STACK(4);
 
-	// stackArgs[0] = sound ID
-	// stackArgs[1] = duration (in 10ths of second)
-	// stackArgs[2] = new volume
-	// stackArgs[3] = stop sound ramp-down completes
-
-	warning("FX volume ramp down is not implemented");
-	(void)stackArgs;
+	triggerSoundRamp(stackArgs[0], stackArgs[1] * 100, stackArgs[2], stackArgs[3] != 0);
 }
 
 void Runtime::scriptOpRandom(ScriptArg_t arg) {
@@ -2677,13 +2807,28 @@ void Runtime::scriptOpVarName(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpSoundName(ScriptArg_t arg) {
-	const Common::String sndName = _scriptSet->strings[arg];
+	Common::String sndName = _scriptSet->strings[arg];
 
 	warning("Sound IDs are not implemented yet");
 
-	int32 soundID = 0;
+	uint soundID = 0;
 	for (uint i = 0; i < 4; i++)
-		soundID = soundID * 10 + (sndName[i] - '0');
+		soundID = soundID * 10u + (sndName[i] - '0');
+
+	sndName.toLowercase();
+
+	Common::HashMap<uint, Common::SharedPtr<CachedSound> >::const_iterator cachedSoundIt = _cachedSounds.find(soundID);
+	if (cachedSoundIt != _cachedSounds.end() && cachedSoundIt->_value->name != sndName) {
+		_cachedSounds.erase(cachedSoundIt);
+		cachedSoundIt = _cachedSounds.end();
+	}
+
+	if (cachedSoundIt == _cachedSounds.end()) {
+		Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator waveIt = _waves.find(sndName);
+
+		if (waveIt != _waves.end())
+			loadWave(soundID, sndName, waveIt->_value);
+	}
 
 	_scriptStack.push_back(soundID);
 }

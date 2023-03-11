@@ -40,6 +40,7 @@ class WriteStream;
 
 namespace Audio {
 
+class AudioStream;
 class SeekableAudioStream;
 
 } // End of namespace Audio
@@ -167,6 +168,25 @@ struct SfxData {
 	typedef Common::HashMap<Common::String, Common::SharedPtr<SfxSound> > SoundMap_t;
 	PlaylistMap_t playlists;
 	SoundMap_t sounds;
+};
+
+struct CachedSound {
+	CachedSound();
+	~CachedSound();
+
+	Common::String name;
+	Common::SharedPtr<Audio::SeekableAudioStream> stream;
+	Common::SharedPtr<Audio::AudioStream> loopingStream;
+	Common::SharedPtr<AudioPlayer> player;
+
+	uint rampStartVolume;
+	uint rampEndVolume;
+	uint32 rampRatePerMSec;
+	uint32 rampStartTime;
+	bool rampTerminateOnCompletion;
+
+	uint volume;
+	int32 balance;
 };
 
 class Runtime {
@@ -337,6 +357,8 @@ private:
 	void queueOSEvent(const OSEvent &evt);
 
 	void loadIndex();
+	void findWaves();
+	void loadWave(uint soundID, const Common::String &soundName, const Common::ArchiveMemberPtr &archiveMemberPtr);
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
@@ -348,6 +370,10 @@ private:
 	void changeMusicTrack(int musicID);
 	void changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
+
+	void triggerSound(bool looping, uint soundID, uint volume, int32 balance);
+	void triggerSoundRamp(uint soundID, uint durationMSec, uint newVolume, bool terminateOnCompletion);
+	void updateSounds(uint32 timestamp);
 
 	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
 	void pushAnimDef(const AnimationDef &animDef);
@@ -583,6 +609,9 @@ private:
 	Common::Point _panoramaAnchor;
 
 	Common::Array<OSEvent> _pendingEvents;
+
+	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _waves;
+	Common::HashMap<uint, Common::SharedPtr<CachedSound> > _cachedSounds;
 
 	static const uint kAnimDefStackArgs = 8;
 
