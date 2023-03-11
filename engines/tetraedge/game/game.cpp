@@ -907,11 +907,13 @@ bool Game::onCharacterAnimationFinished(const Common::String &charName) {
 
 	if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
 		Character *character = scene().character(charName);
-		const Common::String curAnimName = character->curAnimName();
-		if (character && (curAnimName == character->walkAnim(Character::WalkPart_EndD)
-			|| curAnimName == character->walkAnim(Character::WalkPart_EndG))) {
-			character->updatePosition(1.0);
-			character->endMove();
+		if (character) {
+			const Common::String curAnimName = character->curAnimName();
+			if (character && (curAnimName == character->walkAnim(Character::WalkPart_EndD)
+				|| curAnimName == character->walkAnim(Character::WalkPart_EndG))) {
+				character->updatePosition(1.0);
+				character->endMove();
+			}
 		}
 	}
 
