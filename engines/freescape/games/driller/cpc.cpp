@@ -41,6 +41,19 @@ byte kCPCPaletteBorderData[4][3] = {
 	{0x00, 0x80, 0x00},
 };
 
+byte getCPCPixel(byte cpc_byte, int index) {
+	if (index == 0)
+		return ((cpc_byte & 0x08) >> 2) | ((cpc_byte & 0x80) >> 7);
+	else if (index == 1)
+		return ((cpc_byte & 0x04) >> 1) | ((cpc_byte & 0x40) >> 6);
+	else if (index == 2)
+		return (cpc_byte & 0x02)        | ((cpc_byte & 0x20) >> 5);
+	else if (index == 3)
+		return ((cpc_byte & 0x01) << 1) | ((cpc_byte & 0x10) >> 4);
+	else
+		error("Invalid index %d requested", index);
+}
+
 Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file) {
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
@@ -54,25 +67,25 @@ Graphics::ManagedSurface *readCPCImage(Common::SeekableReadStream *file) {
 				byte cpc_byte = file->readByte(); // Get CPC byte
 
 				// Process first pixel
-				int pixel_0 = ((cpc_byte & 0x08) >> 2) | ((cpc_byte & 0x80) >> 7); // %Aa
+				int pixel_0 = getCPCPixel(cpc_byte, 0); // %Aa
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 0; // Coord X for the pixel
 				surface->setPixel(x, y, pixel_0);
 
 				// Process second pixel
-				int pixel_1 = ((cpc_byte & 0x04) >> 1) | ((cpc_byte & 0x40) >> 6); // %Bb
+				int pixel_1 = getCPCPixel(cpc_byte, 1); // %Bb
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 1; // Coord X for the pixel
 				surface->setPixel(x, y, pixel_1);
 
 				// Process third pixel
-				int pixel_2 = (cpc_byte & 0x02)        | ((cpc_byte & 0x20) >> 5); // %Cc
+				int pixel_2 = getCPCPixel(cpc_byte, 2); // %Cc
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 2; // Coord X for the pixel
 				surface->setPixel(x, y, pixel_2);
 
 				// Process fourth pixel
-				int pixel_3 = ((cpc_byte & 0x01) << 1) | ((cpc_byte & 0x10) >> 4); // %Dd
+				int pixel_3 = getCPCPixel(cpc_byte, 3); // %Dd
 				y = line * 8 + block ; // Coord Y for the pixel
 				x = 4 * offset + 3; // Coord X for the pixel
 				surface->setPixel(x, y, pixel_3);
