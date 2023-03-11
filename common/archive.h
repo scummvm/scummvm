@@ -144,6 +144,14 @@ public:
 	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const = 0;
 
 	/**
+	 * For most archives: same as previous. For SearchSet see SearchSet
+	 * documentation.
+	 */
+	virtual SeekableReadStream *createReadStreamForMemberNext(const Path &path, const Archive *starting) const {
+		return createReadStreamForMember(path);
+	}
+
+	/**
 	 * Dump all files from the archive to the given directory
 	 */
 	void dumpArchive(String destPath);
@@ -341,6 +349,11 @@ public:
 	 * opening the first file encountered that matches the name.
 	 */
 	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+
+	/**
+	 * Similar to above but exclude matches from archives before starting and starting itself.
+	 */
+	SeekableReadStream *createReadStreamForMemberNext(const Path &path, const Archive *starting) const override;
 
 	/**
 	 * Ignore clashes when adding directories. For more details, see the corresponding parameter
