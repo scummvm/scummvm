@@ -1852,7 +1852,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 //////////////////////////////////////////////////
 
 #undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_TESTING
+#define SUPPORT_STATUS ADGF_NO_FLAGS
 
 	// Original filename is 東脳スタート
 	MACGAME1_l("easternmind", "", "xn--zckm1a5qp59wok6a", "276bee761e48a6fd709df77d5c2f60dd", 394781, Common::JA_JPN, 313),
