@@ -22,6 +22,8 @@
 // Based on Phantasma code by Thomas Harte (2013),
 // available at https://github.com/TomHarte/Phantasma/ (MIT)
 
+#include "common/file.h"
+
 #include "freescape/freescape.h"
 
 namespace Freescape {
@@ -33,7 +35,37 @@ void FreescapeEngine::loadAssets() {
 		loadAssetsFullGame();
 }
 
+void FreescapeEngine::loadAssetsFullGame() {
+	Common::File file;
+	if (isAmiga()) {
+		loadAssetsAmigaFullGame();
+	} else if (isAtariST()) {
+		loadAssetsAtariFullGame();
+	} else if (isSpectrum()) {
+		loadAssetsZXFullGame();
+	} else if (isCPC()) {
+		loadAssetsCPCFullGame();
+	} else if (isC64()) {
+		//loadAssetsC64FullGame();
+	} else if (isDOS()) {
+		loadAssetsDOSFullGame();
+	} else
+		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
+}
+
 void FreescapeEngine::loadAssetsDemo() {
+	Common::File file;
+	if (isAmiga()) {
+		loadAssetsAmigaDemo();
+	} else if (isAtariST()) {
+		loadAssetsAtariDemo();
+	} else if (isDOS()) {
+		loadAssetsDOSDemo();
+	} else
+		error("Unsupported demo for Driller");
+
+	_demoMode = !_disableDemoMode;
+	_angleRotationIndex = 0;
 }
 
 void FreescapeEngine::loadAssetsAtariDemo() {
@@ -49,9 +81,6 @@ void FreescapeEngine::loadAssetsZXDemo() {
 }
 
 void FreescapeEngine::loadAssetsCPCDemo() {
-}
-
-void FreescapeEngine::loadAssetsFullGame() {
 }
 
 void FreescapeEngine::loadAssetsAtariFullGame() {

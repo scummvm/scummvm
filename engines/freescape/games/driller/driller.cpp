@@ -206,38 +206,8 @@ void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offs
 	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
 }
 
-void DrillerEngine::loadAssetsDemo() {
-	Common::File file;
-	if (isAmiga()) {
-		loadAssetsAmigaDemo();
-	} else if (isAtariST()) {
-		loadAssetsAtariDemo();
-	} else if (isDOS()) {
-		loadAssetsDOSDemo();
-	} else
-		error("Unsupported demo for Driller");
-
-	_demoMode = !_disableDemoMode;
-	_angleRotationIndex = 0;
-}
-
 void DrillerEngine::loadAssetsFullGame() {
-	Common::File file;
-	if (isAmiga()) {
-		loadAssetsAmigaFullGame();
-	} else if (isAtariST()) {
-		loadAssetsAtariFullGame();
-	} else if (isSpectrum()) {
-		loadAssetsZXFullGame();
-	} else if (isCPC()) {
-		loadAssetsCPCFullGame();
-	} else if (isC64()) {
-		//loadAssetsC64FullGame();
-	} else if (isDOS()) {
-		loadAssetsDOSFullGame();
-	} else
-		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
-
+	FreescapeEngine::loadAssetsFullGame();
 	/*
 	We are going to inject a small script in the
 	last area to force the game to end:
