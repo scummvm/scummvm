@@ -103,7 +103,10 @@ void Context::initialize(ContextType contextType) {
 
 	const char *verString = (const char *)glGetString(GL_VERSION);
 
-	if (type == kContextGL) {
+	if (!verString) {
+		majorVersion = minorVersion = 0;
+		warning("Could not parse fetch GL_VERSION: %d", glGetError());
+	} else if (type == kContextGL) {
 		// OpenGL version number is either of the form major.minor or major.minor.release,
 		// where the numbers all have one or more digits
 		if (sscanf(verString, "%d.%d", &majorVersion, &minorVersion) != 2) {
@@ -140,6 +143,9 @@ void Context::initialize(ContextType contextType) {
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, (GLint *)&maxTextureSize);
 
 	const char *extString = (const char *)glGetString(GL_EXTENSIONS);
+	if (!extString) {
+		extString = "";
+	}
 
 	bool ARBShaderObjects = false;
 	bool ARBShadingLanguage100 = false;
