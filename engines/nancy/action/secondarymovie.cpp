@@ -51,7 +51,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 
 	ser.skip(0x2); // videoPlaySource
 
-	ser.syncAsUint16LE(_transparency, kGameTypeVampire, kGameTypeVampire);
+	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // smallSize
 	ser.skip(4, kGameTypeVampire, kGameTypeVampire); // paletteStart, paletteSize
 	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // hasBitmapOverlaySurface
 	ser.skip(2, kGameTypeVampire, kGameTypeVampire); // unknown, probably related to playing a sfx
@@ -98,7 +98,7 @@ void PlaySecondaryMovie::init() {
 		GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
 	}
 
-	if (_transparency == kPlayMovieTransparent) {
+	if (g_nancy->getGameType() == kGameTypeVampire) {
 		setTransparent(true);
 		_fullFrame.setTransparentColor(_drawSurface.getTransparentColor());
 	}
@@ -136,6 +136,7 @@ void PlaySecondaryMovie::updateGraphics() {
 		GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteName.size() > 0);
 		_drawSurface.create(_fullFrame, _fullFrame.getBounds());
 		moveTo(_videoDescs[descID].destRect);
+		
 		_needsRedraw = true;
 
 		for (auto f : _frameFlags) {

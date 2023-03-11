@@ -32,9 +32,6 @@ namespace Action {
 
 class PlaySecondaryMovie : public ActionRecord, public RenderObject {
 public:
-	static const byte kPlayMoviePlain			= 1;
-	static const byte kPlayMovieTransparent		= 2;
-
 	static const byte kMovieSceneChange			= 5;
 	static const byte kMovieNoSceneChange		= 6;
 
@@ -61,8 +58,6 @@ public:
 
 	Common::String _videoName; // 0x00
 	Common::String _paletteName;
-	//Common::String _bitmapOverlayName
-	byte _transparency = kPlayMoviePlain;
 
 	uint16 _videoSceneChange = kMovieNoSceneChange; // 0x1C
 	byte _playerCursorAllowed = kPlayerCursorAllowed; // 0x1E
