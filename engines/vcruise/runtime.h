@@ -267,6 +267,7 @@ private:
 
 		Common::Point dragBasePoint;
 		uint dragBaseState;
+		int32 dragCurrentState;
 		bool isWaitingForAnimation;
 	};
 

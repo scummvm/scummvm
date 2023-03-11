@@ -137,6 +137,7 @@ void Runtime::GyroState::reset() {
 
 	dragBasePoint = Common::Point(0, 0);
 	dragBaseState = 0;
+	dragCurrentState = 0;
 	isWaitingForAnimation = false;
 }
 
@@ -633,15 +634,20 @@ bool Runtime::runGyroIdle() {
 	int32 deltaState = deltaCoordinate / static_cast<int32>(_gyros.dragMargin);
 	int32 targetStateInitial = static_cast<int32>(_gyros.dragBaseState) + deltaState;
 
+	Gyro &gyro = _gyros.gyros[_gyros.activeGyro];
+
 	int32 targetState = 0;
-	if (targetStateInitial > 0) {
+	if (gyro.wrapAround) {
 		targetState = targetStateInitial;
-		if (static_cast<uint>(targetState) > _gyros.maxValue)
-			targetState = _gyros.maxValue;
+	} else {
+		if (targetStateInitial > 0) {
+			targetState = targetStateInitial;
+			if (static_cast<uint>(targetState) > _gyros.maxValue)
+				targetState = _gyros.maxValue;
+		}
 	}
 
-	Gyro &gyro = _gyros.gyros[_gyros.activeGyro];
-	if (targetState < gyro.currentState) {
+	if (targetState < _gyros.dragCurrentState) {
 		AnimationDef animDef = _gyros.negAnim;
 
 		animDef.firstFrame += ((_gyros.maxValue - gyro.currentState) * _gyros.frameSeparation);
@@ -651,10 +657,15 @@ bool Runtime::runGyroIdle() {
 
 		gyro.logState();
 		gyro.currentState--;
+		_gyros.dragCurrentState--;
+
+		if (gyro.currentState < 0)
+			gyro.currentState = _gyros.maxValue;
+
 		_gameState = kGameStateGyroAnimation;
 		_havePendingCompletionCheck = true;
 		return true;
-	} else if (targetState > gyro.currentState) {
+	} else if (targetState > _gyros.dragCurrentState) {
 		AnimationDef animDef = _gyros.posAnim;
 
 		animDef.firstFrame += gyro.currentState * _gyros.frameSeparation;
@@ -664,6 +675,11 @@ bool Runtime::runGyroIdle() {
 
 		gyro.logState();
 		gyro.currentState++;
+		_gyros.dragCurrentState++;
+
+		if (static_cast<uint>(gyro.currentState) > _gyros.maxValue)
+			gyro.currentState = 0;
+
 		_gameState = kGameStateGyroAnimation;
 		_havePendingCompletionCheck = true;
 		return true;
@@ -2089,6 +2105,7 @@ void Runtime::scriptOpAnimG(ScriptArg_t arg) {
 
 	_gyros.dragBasePoint = _mousePos;
 	_gyros.dragBaseState = _gyros.gyros[_gyros.activeGyro].currentState;
+	_gyros.dragCurrentState = _gyros.dragBaseState;
 
 	_gameState = kGameStateGyroIdle;
 }
