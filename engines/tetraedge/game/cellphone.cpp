@@ -78,6 +78,9 @@ void Cellphone::enter() {
 }
 
 void Cellphone::leave() {
+	if (!_gui.loaded())
+		return;
+
 	_gui.buttonLayoutChecked("background")->setVisible(false);
 	for (TeTextLayout *text : _textLayoutArray) {
 		text->deleteLater();
