@@ -169,10 +169,15 @@ class SharedArchiveContents {
 public:
 	SharedArchiveContents(byte *contents, uint32 contentSize) :
 		_strongRef(contents, ArrayDeleter<byte>()), _weakRef(_strongRef),
-		_contentSize(contentSize), _missingFile(false) {}
-	SharedArchiveContents() : _strongRef(nullptr), _weakRef(nullptr), _contentSize(0), _missingFile(true) {}
+		_contentSize(contentSize), _missingFile(false), _bypass(nullptr) {}
+	SharedArchiveContents() : _strongRef(nullptr), _weakRef(nullptr), _contentSize(0), _missingFile(true), _bypass(nullptr) {}
+	static SharedArchiveContents bypass(SeekableReadStream *stream) {
+		return SharedArchiveContents(stream);
+	}
 
 private:
+	SharedArchiveContents(SeekableReadStream *stream) : _strongRef(nullptr), _weakRef(nullptr), _contentSize(0), _missingFile(false), _bypass(stream) {}
+
 	bool isFileMissing() const { return _missingFile; }
 	SharedPtr<byte> getContents() const { return _strongRef; }
 	uint32 getSize() const { return _contentSize; }
@@ -197,6 +202,7 @@ private:
 	WeakPtr<byte> _weakRef;
 	uint32 _contentSize;
 	bool _missingFile;
+	SeekableReadStream *_bypass;
 
 	friend class MemcachingCaseInsensitiveArchive;
 };
