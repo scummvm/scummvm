@@ -909,8 +909,8 @@ bool Game::onCharacterAnimationFinished(const Common::String &charName) {
 		Character *character = scene().character(charName);
 		if (character) {
 			const Common::String curAnimName = character->curAnimName();
-			if (character && (curAnimName == character->walkAnim(Character::WalkPart_EndD)
-				|| curAnimName == character->walkAnim(Character::WalkPart_EndG))) {
+			if (curAnimName == character->walkAnim(Character::WalkPart_EndD)
+				|| curAnimName == character->walkAnim(Character::WalkPart_EndG)) {
 				character->updatePosition(1.0);
 				character->endMove();
 			}
