@@ -271,7 +271,7 @@ TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, b
 		if (!intersect(testPos, TeVector3f32(0, 1, 0), intersectPoint, f, intersectFlag, nullptr)) {
 			// Note: This flag should only ever get set in Syberia 2.
 			if (!_collisionSlide) {
-				if (*flagout)
+				if (flagout)
 					*flagout = false;
 				return pos;
 			}
