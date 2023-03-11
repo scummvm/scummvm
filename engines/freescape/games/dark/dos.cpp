@@ -26,6 +26,78 @@
 
 namespace Freescape {
 
+extern byte kEGADefaultPaletteData[16][3];
+
+void DarkEngine::loadAssetsDOSDemo() {
+	Common::File file;
+	if (_renderMode == Common::kRenderEGA) {
+		file.open("SCN1E.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 0x0);
+			_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+		}
+		file.close();
+		file.open("DSIDEE.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open DSIDEE.EXE");
+		loadMessagesFixedSize(&file, 0x4525, 16, 27);
+		loadMessagesFixedSize(&file, 0x9959, 307, 5);
+		loadFonts(&file, 0xa598);
+		loadGlobalObjects(&file, 0x3d04);
+		load8bitBinary(&file, 0xa700, 16);
+		_border = load8bitBinImage(&file, 0x210);
+		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+	} else if (_renderMode == Common::kRenderCGA) {
+		//loadBundledImages();
+		file.open("DSIDEC.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open DSIDEC.EXE");
+		loadFonts(&file, 0xa598);
+		load8bitBinary(&file, 0x8a70, 4); // TODO
+	} else
+		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
+}
+
+void DarkEngine::loadAssetsDOSFullGame() {
+	Common::File file;
+	if (_renderMode == Common::kRenderEGA) {
+		file.open("SCN1E.DAT");
+		if (file.isOpen()) {
+			_title = load8bitBinImage(&file, 0x0);
+			_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+		}
+		file.close();
+		file.open("DSIDEE.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open DSIDEE.EXE");
+
+		loadFonts(&file, 0xa113);
+		loadMessagesFixedSize(&file, 0x4525, 16, 27);
+		loadGlobalObjects(&file, 0x3d04);
+		load8bitBinary(&file, 0xa280, 16);
+		_border = load8bitBinImage(&file, 0x210);
+		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+
+		// TODO: load objects
+		/*for (auto &it : _areaMap) {
+			if (!it._value->entranceWithID(255))
+				continue;
+			it._value->addStructure(_areaMap[255]);
+		}*/
+	} else if (_renderMode == Common::kRenderCGA) {
+		loadBundledImages();
+		file.open("DSIDEC.EXE");
+
+		if (!file.isOpen())
+			error("Failed to open DSIDEC.EXE");
+		load8bitBinary(&file, 0x7bb0, 4); // TODO
+	} else
+		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
+}
+
 void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 color = _renderMode == Common::kRenderCGA ? 1 : 14;
 	uint8 r, g, b;
