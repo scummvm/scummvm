@@ -470,11 +470,12 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 	ser.skip(0x89, kGameTypeNancy2, kGameTypeNancy3);
 	ser.syncAsUint16LE(_horizontalEdgesSize);
 	ser.syncAsUint16LE(_verticalEdgesSize);
-	ser.skip(0x1C);
+	ser.skip(0x1A, kGameTypeVampire, kGameTypeVampire);
+	ser.skip(0x1C, kGameTypeNancy1);
 	int16 time = 0;
 	ser.syncAsSint16LE(time);
 	_playerTimeMinuteLength = time;
-	ser.skip(2, kGameTypeNancy1, kGameTypeNancy3);
+	ser.skip(2);
 	ser.syncAsByte(_overrideMovementTimeDeltas);
 
 	if (_overrideMovementTimeDeltas) {
