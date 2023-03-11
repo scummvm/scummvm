@@ -31,9 +31,10 @@ namespace Tetraedge {
 
 class SceneLightsXmlParser : public TeXmlParser {
 public:
-	void setLightArray(Common::Array<Common::SharedPtr<TeLight>> *lights) {
-		_lights = lights;
-	}
+	SceneLightsXmlParser(Common::Array<Common::SharedPtr<TeLight>> *lights) :
+		_lights(lights), _shadowLightNo(-1), _shadowFarPlane(0),
+		_shadowNearPlane(0), _shadowFov(0), _parent(ParentNone) {}
+
 	TeColor getShadowColor() { return _shadowColor; }
 	int getShadowLightNo() { return _shadowLightNo; }
 	float getShadowFarPlane() { return _shadowFarPlane; }
@@ -118,9 +119,10 @@ private:
 	Common::Array<Common::SharedPtr<TeLight>> *_lights;
 
 	enum ParentNodeType {
-		Parent_Global,
-		Parent_Light,
-		Parent_Shadow
+		ParentNone,
+		ParentGlobal,
+		ParentLight,
+		ParentShadow
 	};
 
 	TeColor _shadowColor;

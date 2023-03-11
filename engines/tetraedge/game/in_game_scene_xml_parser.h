@@ -33,6 +33,9 @@ namespace Tetraedge {
  */
 class InGameSceneXmlParser : public TeXmlParser {
 public:
+	InGameSceneXmlParser(InGameScene *scene)
+		: _scene(scene), _textNodeType(TextNodeNone) {}
+
 	// NOTE: This doesn't handle snowCustom tag which was
 	// added in original but commented out in every place.
 	CUSTOM_XML_PARSER(InGameSceneXmlParser) {
