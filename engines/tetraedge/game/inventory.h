@@ -40,7 +40,7 @@ public:
 	};
 
 	Inventory();
-	virtual ~Inventory() {}
+	virtual ~Inventory();
 
 	void enter();
 	void leave();
