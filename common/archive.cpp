@@ -314,6 +314,24 @@ SeekableReadStream *SearchSet::createReadStreamForMember(const Path &path) const
 	return nullptr;
 }
 
+SeekableReadStream *SearchSet::createReadStreamForMemberNext(const Path &path, const Archive *starting) const {
+	if (path.empty())
+		return nullptr;
+
+	ArchiveNodeList::const_iterator it = _list.begin();
+	for (; it != _list.end(); ++it)
+		if (it->_arc == starting) {
+			++it;
+			break;
+		}
+	for (; it != _list.end(); ++it) {
+		SeekableReadStream *stream = it->_arc->createReadStreamForMember(path);
+		if (stream)
+			return stream;
+	}
+
+	return nullptr;
+}
 
 SearchManager::SearchManager() {
 	clear(); // Force a reset
