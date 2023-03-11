@@ -107,7 +107,10 @@ SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(
 	String translated = translatePath(path);
 	bool isNew = false;
 	if (!_cache.contains(translated)) {
-		_cache[translated] = readContentsForPath(translated);
+		SharedArchiveContents readResult = readContentsForPath(translated);
+		if (readResult._bypass)
+			return readResult._bypass;
+		_cache[translated] = readResult;
 		isNew = true;
 	}
 
@@ -121,7 +124,10 @@ SeekableReadStream *MemcachingCaseInsensitiveArchive::createReadStreamForMember(
 	// Check whether the entry is still valid as WeakPtr might have expired.
 	if (!entry->makeStrong()) {
 		// If it's expired, recreate the entry.
-		_cache[translated] = readContentsForPath(translated);
+		SharedArchiveContents readResult = readContentsForPath(translated);
+		if (readResult._bypass)
+			return readResult._bypass;
+		_cache[translated] = readResult;
 		entry = &_cache[translated];
 		isNew = true;
 	}
