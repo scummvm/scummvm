@@ -26,7 +26,7 @@ import androidx.annotation.RequiresApi;
 /**
  * SAF primitives for C++ FSNode
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class SAFFSTree {
 	private static HashMap<String, SAFFSTree> _trees;
 
@@ -68,6 +68,7 @@ public class SAFFSTree {
 		return _trees.get(name);
 	}
 
+	@RequiresApi(api = 0)
 	public static void clearCaches() {
 		if (_trees == null) {
 			return;

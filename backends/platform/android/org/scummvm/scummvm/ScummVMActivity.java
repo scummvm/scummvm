@@ -823,6 +823,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		@RequiresApi(api = Build.VERSION_CODES.N)
 		protected SAFFSTree getNewSAFTree(boolean folder, boolean write, String initialURI, String prompt) {
 			Uri initialURI_ = Uri.parse(initialURI);
 			Uri uri = selectWithNativeUI(folder, write, initialURI_, prompt);
@@ -834,11 +835,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		@RequiresApi(api = Build.VERSION_CODES.N)
 		protected SAFFSTree[] getSAFTrees() {
 			return SAFFSTree.getTrees(ScummVMActivity.this);
 		}
 
 		@Override
+		@RequiresApi(api = Build.VERSION_CODES.N)
 		protected SAFFSTree findSAFTree(String name) {
 			return SAFFSTree.findTree(ScummVMActivity.this, name);
 		}
@@ -1993,6 +1996,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// Furthermore, on Android 11 (API level 30) and higher, you cannot use the ACTION_OPEN_DOCUMENT_TREE intent action to request that the user select individual files from the following directories:
 	// - The Android/data/ directory and all subdirectories.
 	// - The Android/obb/ directory and all subdirectories.
+	@RequiresApi(api = Build.VERSION_CODES.N)
 	public Uri selectWithNativeUI(boolean folder, boolean write, Uri initialURI, String prompt) {
 		// Choose a directory using the system's folder picker.
 		Intent intent;
