@@ -71,19 +71,38 @@ bool WhoWillTry::msgAction(const ActionMessage &msg) {
 		close();
 		_callback(-1);
 		return true;
+
 	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
 		msg._action <= KEYBIND_VIEW_PARTY6) {
 		int charNum = msg._action - KEYBIND_VIEW_PARTY1;
-
-		if (charNum < (int)g_globals->_party.size()) {
-			close();
-			_callback(charNum);
-		}
+		selectChar(charNum);
 
 		return true;
 	}
 
 	return PartyView::msgAction(msg);
+}
+
+void WhoWillTry::selectChar(uint charNum) {
+	if (charNum < g_globals->_party.size()) {
+		close();
+
+		const Character &c = g_globals->_party[charNum];
+
+		if ((c._condition & (BAD_CONDITION | DEAD | STONE | ASLEEP)) != 0) {
+			InfoMessage msg(STRING["dialogs.misc.check_condition"], ALIGN_MIDDLE);
+			msg._delaySeconds = 3;
+			msg._timeoutCallback = []() {
+				WhoWillTry *view = static_cast<WhoWillTry *>(g_events->findView("WhoWillTry"));
+				view->_callback(-1);
+			};
+			send(msg);
+
+		} else {
+			// Pass back that a valid character was selected
+			_callback(charNum);
+		}
+	}
 }
 
 } // namespace ViewsEnh

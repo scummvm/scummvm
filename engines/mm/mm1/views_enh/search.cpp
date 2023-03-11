@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/search.h"
+#include "mm/mm1/views_enh/who_will_try.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
@@ -28,9 +29,9 @@ namespace MM1 {
 namespace ViewsEnh {
 
 Search::Search() : ScrollView("Search") {
-	_bounds = Common::Rect(234, 144, 320, 200);
+	_bounds = Common::Rect(0, 144, 234, 200);
 	_escSprite.load("esc.icn");
-	addButton(&_escSprite, Common::Point(120, 172), 0, KEYBIND_ESCAPE, true);
+	addButton(&_escSprite, Common::Point(79, 30), 0, KEYBIND_ESCAPE, true);
 }
 
 bool Search::msgGame(const GameMessage &msg) {
@@ -54,6 +55,7 @@ bool Search::msgGame(const GameMessage &msg) {
 
 bool Search::msgFocus(const FocusMessage &msg) {
 	_lineNum = 0;
+	_bounds = Common::Rect(0, 144, 234, 200);
 
 	if (_mode == FOCUS_GET_TREASURE) {
 		// Returning from trap display
@@ -70,8 +72,9 @@ bool Search::msgFocus(const FocusMessage &msg) {
 
 void Search::draw() {
 	Common::String line;
-	//if (_mode != GET_ITEMS)
 	setButtonEnabled(0, _mode == OPTIONS);
+
+	//if (_mode != GET_ITEMS)
 	ScrollView::draw();
 
 	switch (_mode) {
@@ -79,16 +82,16 @@ void Search::draw() {
 		Sound::sound(SOUND_2);
 		line = STRING["dialogs.search.search"] +
 			STRING["dialogs.search.you_found"];
-		writeString(line);
+		writeString(0, 0, line);
 		delaySeconds(2);
 		break;
 
 	case OPTIONS:
 		writeString(0, 0, STRING["dialogs.search.options"]);
-		writeString(160, 0, STRING["dialogs.search.options1"]);
-		writeString(160, 9, STRING["dialogs.search.options2"]);
-		writeString(160, 18, STRING["dialogs.search.options3"]);
-		writeString(140, 30, STRING["enhdialogs.misc.go_back"]);
+		writeString(80, 0, STRING["dialogs.search.options1"]);
+		writeString(80, 9, STRING["dialogs.search.options2"]);
+		writeString(80, 18, STRING["dialogs.search.options3"]);
+		writeString(96, 32, STRING["enhdialogs.misc.go_back"]);
 		break;
 
 	case GET_TREASURE:
@@ -99,15 +102,6 @@ void Search::draw() {
 		// This may be called up to three times, for each item
 		drawItem();
 		break;
-
-	case WHO_WILL_TRY: {
-		line = Common::String::format(
-			STRING["dialogs.misc.who_will_try"].c_str(),
-			'0' + g_globals->_party.size()
-		);
-		writeString(10, 1, line);
-		break;
-	}
 
 	default:
 		break;
@@ -143,25 +137,6 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 		endDelay();
 		break;
 
-	case WHO_WILL_TRY:
-		if (msg.keycode >= Common::KEYCODE_1 &&
-			msg.keycode <= (Common::KEYCODE_0 + (int)g_globals->_party.size())) {
-			// Character selected
-			g_globals->_currCharacter = &g_globals->_party[
-				msg.keycode - Common::KEYCODE_1];
-			if ((g_globals->_currCharacter->_condition &
-				(BAD_CONDITION | DEAD | STONE | ASLEEP)) != 0) {
-				clearSurface();
-				writeString(3, 2, STRING["dialogs.search.check_condition"]);
-				delaySeconds(4);
-			} else if (_removing) {
-				findRemoveTrap2();
-			} else {
-				openContainer2();
-			}
-		}
-		break;
-
 	case GET_TREASURE:
 		break;
 
@@ -180,10 +155,6 @@ bool Search::msgAction(const ActionMessage &msg) {
 		switch (_mode) {
 		case OPTIONS:
 			close();
-			break;
-		case WHO_WILL_TRY:
-			_mode = OPTIONS;
-			draw();
 			break;
 		default:
 			break;
@@ -222,10 +193,6 @@ void Search::timeout() {
 	}
 	case RESPONSE:
 		_mode = OPTIONS;
-		draw();
-		break;
-
-	case WHO_WILL_TRY:
 		draw();
 		break;
 
@@ -326,15 +293,35 @@ bool Search::whoWillTry() {
 		return true;
 	} else {
 		// Switch to mode to ask which character to use
-		_mode = WHO_WILL_TRY;
-		draw();
+		WhoWillTry::display([](int charNum) {
+			static_cast<Search *>(g_events->findView("Search"))->whoWillTry(charNum);
+		});
 		return false;
 	}
 }
 
+void Search::whoWillTry(int charNum) {
+	if (charNum == -1) {
+		// Character selection aborted, go back to options
+		_mode = OPTIONS;
+
+	} else {
+		// Character selected, proceed with given action
+		g_globals->_currCharacter = &g_globals->_party[charNum];
+
+		if (_removing) {
+			findRemoveTrap2();
+		} else {
+			openContainer2();
+		}
+	}
+
+	open();
+}
+
 void Search::getTreasure() {
 	_mode = GET_TREASURE;
-	_bounds = getLineBounds(17, 24);
+	_bounds = Common::Rect(0, 144, 234, 200);
 
 	// Display a graphic for the container type
 	int gfxNum = g_globals->_treasure._container < WOODEN_BOX ? 3 : 1;

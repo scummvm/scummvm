@@ -31,9 +31,8 @@ namespace ViewsEnh {
 class Search : public ScrollView {
 private:
 	enum Mode {
-		INITIAL, OPTIONS, RESPONSE, WHO_WILL_TRY,
-		FOCUS_GET_TREASURE, GET_TREASURE, GET_ITEMS,
-		GET_ITEMS_DONE
+		INITIAL, OPTIONS, RESPONSE, FOCUS_GET_TREASURE,
+		GET_TREASURE, GET_ITEMS, GET_ITEMS_DONE
 	};
 	Mode _mode = INITIAL;
 	bool _removing = false;
@@ -88,6 +87,11 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	void timeout() override;
+
+	/**
+	 * Called after a selection of who will try is done
+	 */
+	void whoWillTry(int charNum);
 };
 
 } // namespace ViewsEnh

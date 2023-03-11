@@ -34,6 +34,8 @@ class WhoWillTry : public PartyView {
 private:
 	WhoWillProc _callback = nullptr;
 
+	void selectChar(uint charNum);
+
 protected:
 	/**
 	 * Return true if a character should be selected by default

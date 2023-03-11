@@ -168,7 +168,6 @@ dialogs:
 		bad_class: "*** Bad class ***"
 		no_sp: "*** No spell points ***"
 		magic_trap: "Magic (%c)  Trap (%c)"
-		check_condition: "*** Check condition ***"
 		it_opens: "It opens!"
 		receives: "receives"
 		each_share: "each share is worth %d gold"
@@ -314,6 +313,7 @@ dialogs:
 		some_characters: "Available characters"
 		full: "*** Backpack full ***"
 		who_will_try: "Who will try '1'-'%c'"
+		check_condition: "*** Check condition ***"
 	spells:
 		detect_charges: "magic (charges)"
 		fly_to_x: "fly to (a-e): "
