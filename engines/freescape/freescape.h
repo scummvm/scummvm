@@ -459,7 +459,6 @@ private:
 	void removeDrill(Area *area);
 	void addSkanner(Area *area);
 
-	void loadAssetsDemo() override;
 	void loadAssetsFullGame() override;
 
 	void loadAssetsAtariFullGame() override;
@@ -504,14 +503,14 @@ public:
 	void pressedKey(const int keycode) override;
 	void executePrint(FCLInstruction &instruction) override;
 
-	void loadAssetsDemo();
-	void loadAssetsFullGame();
+	void loadAssetsDOSFullGame() override;
+	void loadAssetsDOSDemo() override;
+
 	int _lastTenSeconds;
 	void updateTimeVariables() override;
 	void executeMovementConditions() override;
 
-	void drawUI() override;
-	void drawDOSUI(Graphics::Surface *surface);
+	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawFullscreenMessage(Common::String message);
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
@@ -524,12 +523,12 @@ class EclipseEngine : public FreescapeEngine {
 public:
 	EclipseEngine(OSystem *syst, const ADGameDescription *gd);
 
-	void loadAssetsFullGame() override;
 	void titleScreen() override;
-
 	void gotoArea(uint16 areaID, int entranceID) override;
 
+	void loadAssetsDOSFullGame() override;
 	void drawUI() override;
+
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 };
@@ -538,7 +537,7 @@ class CastleEngine : public FreescapeEngine {
 public:
 	CastleEngine(OSystem *syst, const ADGameDescription *gd);
 
-	void loadAssetsFullGame() override;
+	void loadAssetsDOSFullGame() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
