@@ -593,17 +593,17 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	_inventoryMenu.load();
 	_inGameGui.load("InGame.lua");
 
-	TeButtonLayout *skipbtn = _inGameGui.buttonLayout("skipVideoButton");
+	TeButtonLayout *skipbtn = _inGameGui.buttonLayoutChecked("skipVideoButton");
 	skipbtn->setVisible(false);
 	skipbtn->onMouseClickValidated().remove(this, &Game::onSkipVideoButtonValidated);
 	skipbtn->onMouseClickValidated().add(this, &Game::onSkipVideoButtonValidated);
 
-	TeButtonLayout *vidbgbtn = _inGameGui.buttonLayout("videoBackgroundButton");
+	TeButtonLayout *vidbgbtn = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
 	vidbgbtn->setVisible(false);
 	vidbgbtn->onMouseClickValidated().remove(this, &Game::onLockVideoButtonValidated);
 	vidbgbtn->onMouseClickValidated().add(this, &Game::onLockVideoButtonValidated);
 
-	TeSpriteLayout *video = _inGameGui.spriteLayout("video");
+	TeSpriteLayout *video = _inGameGui.spriteLayoutChecked("video");
 	video->setVisible(false);
 	video->_tiledSurfacePtr->_frameAnim.onStop().remove(this, &Game::onVideoFinished);
 	video->_tiledSurfacePtr->_frameAnim.onStop().add(this, &Game::onVideoFinished);
