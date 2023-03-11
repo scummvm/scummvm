@@ -75,10 +75,6 @@ class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::NancyEngine;
 
 public:
-	static const byte kPlayerDay		= 0;
-	static const byte kPlayerNight		= 1;
-	static const byte kPlayerDuskDawn	= 2;
-
 	enum GameStateChange : byte {
 		kHelpMenu = 1 << 0,
 		kMainMenu = 1 << 1,
@@ -130,6 +126,8 @@ public:
 	void unpauseSceneSpecificSounds();
 
 	void setPlayerTime(Time time, byte relative);
+	Time getPlayerTime() const { return _timers.playerTime; }
+	byte getPlayerTOD() const { return _timers.timeOfDay; }
 
 	void addItemToInventory(uint16 id);
 	void removeItemFromInventory(uint16 id, bool pickUp = true);

@@ -619,6 +619,10 @@ void Scene::run() {
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					requestStateChange(NancyState::kMap);
+
+					if (g_nancy->getGameType() == kGameTypeVampire) {
+						g_nancy->_cursorManager->showCursor(false);
+					}
 				}
 
 				input.eatMouseInput();

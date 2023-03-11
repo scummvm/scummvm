@@ -75,6 +75,11 @@ static const byte kLoadSceneSound		= 0;
 static const byte kAbsoluteClockBump 	= 1;
 static const byte kRelativeClockBump 	= 2;
 
+// Time of day
+static const byte kPlayerDay		= 0;
+static const byte kPlayerNight		= 1;
+static const byte kPlayerDuskDawn	= 2;
+
 enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
 
 // Separate namespace to remove possible clashes
