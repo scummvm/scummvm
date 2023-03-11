@@ -120,12 +120,12 @@ void Surface::getDialogBounds(Common::Point &size, int charWidth, int numLines, 
 // egaCreateDialog
 // Forms a dialog encompassing the entire surface
 
-void Surface::egaCreateDialog(bool blackFlag) {
+void Surface::egaCreateDialog() {
 	byte lineColors1[3] = {6, 0, 9};
 	byte lineColors2[3] = {7, 0, 12};
 
 	// Surface contents
-	data().setBytes(blackFlag ? 0 : EGA_DIALOG_BG_COLOR, 0, data().size());
+	data().setBytes(EGA_DIALOG_BG_COLOR, 0, data().size());
 
 	// Top/bottom lines
 	for (int y = 2; y >= 0; --y) {
@@ -157,7 +157,7 @@ void copyLine(byte *pSrc, byte *pDest, uint16 leftSide, uint16 center, uint16 ri
 
 #define VGA_DIALOG_EDGE_WIDTH 9
 
-void Surface::vgaCreateDialog(bool blackFlag) {
+void Surface::vgaCreateDialog() {
 	byte *pSrc = int_dialog_frame->data();
 	byte *pDest = _data->data();
 	uint16 xCenter = _width - VGA_DIALOG_EDGE_WIDTH * 2;
@@ -184,12 +184,33 @@ void Surface::vgaCreateDialog(bool blackFlag) {
 		pSrc += VGA_DIALOG_EDGE_WIDTH + 1 + (VGA_DIALOG_EDGE_WIDTH - 1);
 		pDest += _width;
 	}
+}
 
-	// Final processing - if black flag set, clear dialog inside area
-	if (blackFlag) {
-		Common::Rect r = Common::Rect(VGA_DIALOG_EDGE_WIDTH, VGA_DIALOG_EDGE_WIDTH,
-			_width - VGA_DIALOG_EDGE_WIDTH, _height-VGA_DIALOG_EDGE_WIDTH);
-		fillRect(r, 0);
+void Surface::egaRefreshDialog() {
+	Common::Rect r;
+
+	r.left = Surface::textX();
+	r.right = this->width() - textX() + 1;
+	r.top = Surface::textY();
+	r.bottom = this->height() - textY() + 1;
+
+	this->fillRect(r, EGA_DIALOG_BG_COLOR);
+}
+
+void Surface::vgaRefreshDialog() {
+	byte *pSrc = int_dialog_frame->data();
+	byte *pDest = _data->data();
+	uint16 xCenter = _width - VGA_DIALOG_EDGE_WIDTH * 2;
+	uint16 yCenter = _height - VGA_DIALOG_EDGE_WIDTH * 2;
+	int y;
+
+	// Skip dialog top
+	pSrc += ((VGA_DIALOG_EDGE_WIDTH - 2) + 1 + VGA_DIALOG_EDGE_WIDTH) * 9;
+	pDest += _width * 9;
+
+	for (y = 0; y < yCenter; ++y) {
+		copyLine(pSrc, pDest, VGA_DIALOG_EDGE_WIDTH, xCenter, VGA_DIALOG_EDGE_WIDTH);
+		pDest += _width;
 	}
 }
 
@@ -354,11 +375,18 @@ void Surface::fillRect(const Common::Rect &r, uint8 color) {
 	}
 }
 
-void Surface::createDialog(bool blackFlag) {
+void Surface::createDialog() {
 	if (LureEngine::getReference().isEGA())
-		egaCreateDialog(blackFlag);
+		egaCreateDialog();
 	else
-		vgaCreateDialog(blackFlag);
+		vgaCreateDialog();
+}
+
+void Surface::refreshDialog() {
+	if (LureEngine::getReference().isEGA())
+		egaRefreshDialog();
+	else
+		vgaRefreshDialog();
 }
 
 void Surface::copyToScreen(uint16 x, uint16 y) {
