@@ -163,11 +163,11 @@ bool UseCode::search_container(Obj *obj, bool show_string) {
 
 	/* Test whether this object has items inside it. */
 	if ((obj->container != NULL) &&
-	        ((obj_link = obj->container->end()) != NULL)) {
+	        ((obj_link = obj->container->start()) != NULL)) {
 		/* Add objects to obj_list. */
 		for (; obj_link != NULL;) {
 			temp_obj = (Obj *)obj_link->data;
-			obj_link = obj_link->prev;
+			obj_link = obj_link->next;
 			/*
 			obj_list->add(temp_obj);
 			temp_obj->status |= OBJ_STATUS_OK_TO_TAKE;
@@ -180,7 +180,7 @@ bool UseCode::search_container(Obj *obj, bool show_string) {
 			if (show_string) {
 				scroll->display_string(obj_manager->look_obj(temp_obj, true));
 				if (obj_link) // more objects left
-					scroll->display_string(obj_link->prev ? ", " : ", and ");
+					scroll->display_string(obj_link->next ? ", " : ", and ");
 			}
 		}
 		/* Remove objects from the container. */
