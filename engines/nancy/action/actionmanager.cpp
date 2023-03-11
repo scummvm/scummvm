@@ -288,7 +288,7 @@ void ActionManager::processActionRecords() {
 						break;
 					}
 					case DependencyType::kPlayerTOD:
-						if (dep.label == NancySceneState._timers.timeOfDay) {
+						if (dep.label == NancySceneState.getPlayerTOD()) {
 							dep.satisfied = true;
 						}
 

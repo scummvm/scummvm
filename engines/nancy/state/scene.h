@@ -127,7 +127,7 @@ public:
 
 	void setPlayerTime(Time time, byte relative);
 	Time getPlayerTime() const { return _timers.playerTime; }
-	byte getPlayerTOD() const { return _timers.timeOfDay; }
+	byte getPlayerTOD() const;
 
 	void addItemToInventory(uint16 id);
 	void removeItemFromInventory(uint16 id, bool pickUp = true);
@@ -212,7 +212,6 @@ private:
 		bool timerIsActive = false;
 		Time playerTime; // In-game time of day, adds a minute every 5 seconds
 		Time playerTimeNextMinute; // Stores the next tick count until we add a minute to playerTime
-		byte timeOfDay = kPlayerDay;
 	};
 
 	struct PlayFlags {

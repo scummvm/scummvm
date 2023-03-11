@@ -223,6 +223,16 @@ void Scene::setPlayerTime(Time time, byte relative) {
 	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + g_nancy->_playerTimeMinuteLength;
 }
 
+byte Scene::getPlayerTOD() const {
+	if (_timers.playerTime.getHours() >= 7 && _timers.playerTime.getHours() < 18) {
+		return kPlayerDay;
+	} else if (_timers.playerTime.getHours() >= 19 || _timers.playerTime.getHours() < 6) {
+		return kPlayerNight;
+	} else {
+		return kPlayerDuskDawn;
+	}
+}
+
 void Scene::addItemToInventory(uint16 id) {
 	_flags.items[id] = kInvHolding;
 	if (_flags.heldItem == id) {
@@ -388,7 +398,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint32LE((uint32 &)_timers.pushedPlayTime);
 	ser.syncAsUint32LE((uint32 &)_timers.timerTime);
 	ser.syncAsByte(_timers.timerIsActive);
-	ser.syncAsByte(_timers.timeOfDay);
+	ser.skip(1); // timeOfDay; To be removed on next savefile version bump
 
 	g_nancy->setTotalPlayTime((uint32)_timers.lastTotalTime);
 
@@ -445,7 +455,6 @@ void Scene::init() {
 	_timers.timerIsActive = false;
 	_timers.playerTimeNextMinute = 0;
 	_timers.pushedPlayTime = 0;
-	_timers.timeOfDay = kPlayerDay;
 
 	changeScene(g_nancy->_firstScene);
 
@@ -596,15 +605,6 @@ void Scene::run() {
 	if (currentPlayTime > _timers.playerTimeNextMinute) {
 		_timers.playerTime += 60000; // Add a minute
 		_timers.playerTimeNextMinute = currentPlayTime + g_nancy->_playerTimeMinuteLength;
-	}
-
-	// Set the time of day according to playerTime
-	if (_timers.playerTime.getHours() >= 7 && _timers.playerTime.getHours() < 18) {
-		_timers.timeOfDay = kPlayerDay;
-	} else if (_timers.playerTime.getHours() >= 19 || _timers.playerTime.getHours() < 6) {
-		_timers.timeOfDay = kPlayerNight;
-	} else {
-		_timers.timeOfDay = kPlayerDuskDawn;
 	}
 
 	// Update the UI elements and handle input

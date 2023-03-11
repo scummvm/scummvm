@@ -67,12 +67,12 @@ public:
 	friend bool operator>= (const Time &l, const uint32 &r)	{ return !(l < r); }
 	friend bool operator>= (const uint32 &l, const Time &r)	{ return !(l < r); }
 
-	uint16 getSeconds()			{ return (_milliseconds / 1000) % 60; }
-	uint16 getMinutes()			{ return (_milliseconds / 60000) % 60; }
-	uint16 getTotalHours()		{ return _milliseconds / 3600000; }
+	uint16 getSeconds() const		{ return (_milliseconds / 1000) % 60; }
+	uint16 getMinutes() const		{ return (_milliseconds / 60000) % 60; }
+	uint16 getTotalHours() const	{ return _milliseconds / 3600000; }
 
-	uint16 getHours()			{ return (_milliseconds / 3600000) % 24; }	// Used for player time
-	uint16 getDays()			{ return _milliseconds / 86400000; }		// up to 49.7 days
+	uint16 getHours() const			{ return (_milliseconds / 3600000) % 24; }	// Used for player time
+	uint16 getDays() const			{ return _milliseconds / 86400000; }		// up to 49.7 days
 
 private:
 	uint32 _milliseconds;
