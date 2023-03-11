@@ -69,6 +69,7 @@ void WhoWillTry::draw() {
 bool WhoWillTry::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		close();
+		_callback(-1);
 		return true;
 	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
 		msg._action <= KEYBIND_VIEW_PARTY6) {

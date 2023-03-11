@@ -34,11 +34,7 @@ Trap::Trap() : ScrollView("Trap") {
 bool Trap::msgGame(const GameMessage &msg) {
 	if (msg._name == "TRIGGER") {
 		open();
-		g_globals->_treasure._container =
-			g_maps->_currentMap->dataByte(Maps::MAP_49);
-		g_globals->_currCharacter = &g_globals->_party[0];
-
-		Sound::sound(SOUND_2);
+		trigger();
 		return true;
 
 	} else if (msg._name == "TRAP") {
@@ -61,6 +57,9 @@ void Trap::draw() {
 }
 
 bool Trap::msgKeypress(const KeypressMessage &msg) {
+	if (endDelay())
+		return true;
+
 	if (_mode == MODE_TRIGGER) {
 		trap();
 	} else {
@@ -71,6 +70,9 @@ bool Trap::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool Trap::msgAction(const ActionMessage &msg) {
+	if (endDelay())
+		return true;
+
 	if (_mode == MODE_TRIGGER) {
 		trap();
 	} else {
@@ -85,6 +87,20 @@ void Trap::trap() {
 
 	_mode = MODE_TRAP;
 	draw();
+}
+
+void Trap::trigger() {
+	_mode = MODE_TRIGGER;
+	g_globals->_treasure._container =
+		g_maps->_currentMap->dataByte(Maps::MAP_49);
+	g_globals->_currCharacter = &g_globals->_party[0];
+
+	Sound::sound(SOUND_2);
+	delaySeconds(2);
+}
+
+void Trap::timeout() {
+	trap();
 }
 
 } // namespace ViewsEnh

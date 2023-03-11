@@ -35,6 +35,7 @@ private:
 	Mode _mode = MODE_TRIGGER;
 protected:
 	void trap() override;
+	void trigger();
 
 public:
 	Trap();
@@ -44,6 +45,7 @@ public:
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	void timeout() override;
 };
 
 } // namespace Views
