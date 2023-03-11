@@ -669,10 +669,13 @@ bool Runtime::runGyroIdle() {
 	if (targetState < _gyros.dragCurrentState) {
 		AnimationDef animDef = _gyros.negAnim;
 
-		animDef.firstFrame += ((_gyros.maxValue - gyro.currentState) * _gyros.frameSeparation);
-		animDef.lastFrame = animDef.firstFrame + _gyros.frameSeparation;
+		uint initialFrame = animDef.firstFrame + ((_gyros.maxValue - gyro.currentState) * _gyros.frameSeparation);
 
-		changeAnimation(animDef, false);
+		// This is intentional instead of setting the stop frame, V-Cruise can overrun the end of the animation.
+		// firstFrame is left alone so playlists are based correctly.
+		animDef.lastFrame = initialFrame + _gyros.frameSeparation;
+
+		changeAnimation(animDef, initialFrame, false);
 
 		gyro.logState();
 		gyro.currentState--;
@@ -687,10 +690,13 @@ bool Runtime::runGyroIdle() {
 	} else if (targetState > _gyros.dragCurrentState) {
 		AnimationDef animDef = _gyros.posAnim;
 
-		animDef.firstFrame += gyro.currentState * _gyros.frameSeparation;
-		animDef.lastFrame = animDef.firstFrame + _gyros.frameSeparation;
+		uint initialFrame = animDef.firstFrame + gyro.currentState * _gyros.frameSeparation;
 
-		changeAnimation(animDef, false);
+		// This is intentional instead of setting the stop frame, V-Cruise can overrun the end of the animation.
+		// firstFrame is left alone so playlists are based correctly.
+		animDef.lastFrame = initialFrame + _gyros.frameSeparation;
+
+		changeAnimation(animDef, initialFrame, false);
 
 		gyro.logState();
 		gyro.currentState++;
