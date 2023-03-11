@@ -222,7 +222,7 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	byte *entry = (*_colorMap)[index - 1];
 	uint8 cm1 = *(entry);
 	entry++;
-	uint8 cm2 = *(entry);
+	//uint8 cm2 = *(entry);
 
 	i1 = getCPCPixel(cm1, 0);
 	i2 = getCPCPixel(cm1, 1);
