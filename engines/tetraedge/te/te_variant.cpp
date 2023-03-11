@@ -62,7 +62,7 @@ float TeVariant::toFloat32(bool *success) const {
 	} else {
 		if (success)
 			*success = false;
-		return false;
+		return 0;
 	}
 
 }
@@ -75,7 +75,7 @@ double TeVariant::toFloat64(bool *success) const {
 	} else {
 		if (success)
 			*success = false;
-		return false;
+		return 0;
 	}
 
 }
@@ -88,7 +88,7 @@ int32 TeVariant::toSigned32(bool *success) const {
 	} else {
 		if (success)
 			*success = false;
-		return false;
+		return 0;
 	}
 
 }
@@ -101,7 +101,7 @@ int64 TeVariant::toSigned64(bool *success) const {
 	} else {
 		if (success)
 			*success = false;
-		return false;
+		return 0;
 	}
 
 }
@@ -127,7 +127,7 @@ uint32 TeVariant::toUnsigned32(bool *success) const {
 	} else {
 		if (success)
 			*success = false;
-		return false;
+		return 0;
 	}
 
 }
@@ -140,7 +140,7 @@ uint64 TeVariant::toUnsigned64(bool *success) const {
 	} else {
 		if (success)
 			*success = false;
-		return false;
+		return 0;
 	}
 
 }
