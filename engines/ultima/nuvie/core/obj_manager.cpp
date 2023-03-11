@@ -382,7 +382,7 @@ bool ObjManager::save_obj(NuvieIO *save_buf, Obj *obj, uint16 parent_objblk_n) {
 	obj_save_count += 1;
 
 	if (obj->container) {
-		for (link = obj->container->end(); link != NULL; link = link->prev)
+		for (link = obj->container->start(); link != NULL; link = link->next)
 			save_obj(save_buf, (Obj *)link->data, objblk_n);
 	}
 
