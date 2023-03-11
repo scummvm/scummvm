@@ -658,28 +658,18 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 	}
 
 	if (!scalablefile.empty()) {
-		Graphics::SVGBitmap *image = nullptr;
 		Common::ArchiveMemberList members;
 		_themeFiles.listMatchingMembers(members, scalablefile);
 		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 			Common::SeekableReadStream *stream = (*i)->createReadStream();
 			if (stream) {
-				image = new Graphics::SVGBitmap(stream);
+				_bitmaps[filename] = new Graphics::SVGBitmap(stream, width * _scaleFactor, height * _scaleFactor);
 				delete stream;
-				break;
+				return true;
 			}
 		}
 
-		if (image) {
-			_bitmaps[filename] = new Graphics::ManagedSurface(width * _scaleFactor, height * _scaleFactor, *image->getPixelFormat());
-			image->render(*_bitmaps[filename], width * _scaleFactor, height * _scaleFactor);
-
-			delete image;
-		} else {
-			return false;
-		}
-
-		return true;
+		return false;
 	}
 
 	const Graphics::Surface *srcSurface = nullptr;

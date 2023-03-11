@@ -21,35 +21,20 @@
 #ifndef GRAPHICS_SVG_H
 #define GRAPHICS_SVG_H
 
+#include "graphics/managed_surface.h"
+
 namespace Common {
 class SeekableReadStream;
 }
 
-struct NSVGimage;
-struct NSVGrasterizer;
-
 namespace Graphics {
 
-class ManagedSurface;
-struct Surface;
-struct PixelFormat;
-
-class SVGBitmap {
+/**
+ * A derived graphics surface, which renders bitmap data from a SVG stream.
+ */
+class SVGBitmap : public ManagedSurface {
 public:
-	SVGBitmap(Common::SeekableReadStream *in);
-	~SVGBitmap();
-
-	Graphics::PixelFormat *getPixelFormat() { return _pixelformat; }
-
-	void render(Graphics::ManagedSurface &target, int dw, int dh);
-
-private:
-	NSVGimage *_svg;
-	NSVGrasterizer *_rasterizer;
-
-	Graphics::ManagedSurface *_render;
-
-	Graphics::PixelFormat *_pixelformat;
+	SVGBitmap(Common::SeekableReadStream *in, int dw, int dh);
 };
 
 } // end of namespace Graphics
