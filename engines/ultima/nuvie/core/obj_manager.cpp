@@ -1623,7 +1623,7 @@ bool ObjManager::addObjToContainer(U6LList *llist, Obj *obj) {
 		c_obj = (Obj *)link->data;
 
 	if (c_obj) { // we've found our container.
-		c_obj->add(obj);
+		c_obj->add(obj, false, true); //add at tail position
 
 		//DEBUG(0,LEVEL_DEBUGGING,"Cont: %s\n", tile_manager->lookAtTile(get_obj_tile_num(c_obj->obj_n)+c_obj->frame_n,0,false));
 		//DEBUG(0,LEVEL_DEBUGGING,"Add to container %s", tile_manager->lookAtTile(get_obj_tile_num(obj->obj_n)+obj->frame_n,0,false));

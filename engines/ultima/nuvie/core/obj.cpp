@@ -192,21 +192,24 @@ Actor *Obj::get_actor_holding_obj() {
 }
 
 //Add child object into container, stacking if required
-void Obj::add(Obj *obj, bool stack) {
+void Obj::add(Obj *obj, bool stack, bool addAtTail) {
 	if (container == NULL)
 		make_container();
 
 	if (stack && Game::get_game()->get_obj_manager()->is_stackable(obj))
-		add_and_stack(obj);
+		add_and_stack(obj, addAtTail);
 	else
-		container->addAtPos(0, obj);
+		if (!addAtTail)
+			container->addAtPos(0, obj);
+		else
+			container->add(obj);
 
 	obj->set_in_container(this);
 
 	return;
 }
 
-void Obj::add_and_stack(Obj *obj) {
+void Obj::add_and_stack(Obj *obj, bool addAtTail) {
 	U6Link *link;
 	Obj *cont_obj;
 
@@ -224,7 +227,10 @@ void Obj::add_and_stack(Obj *obj) {
 		}
 	}
 
-	container->addAtPos(0, obj); // add the object as we couldn't find another object to stack with.
+	if (!addAtTail)
+		container->addAtPos(0, obj); // add the object as we couldn't find another object to stack with.
+	else
+		container->add(obj);
 
 	return;
 }

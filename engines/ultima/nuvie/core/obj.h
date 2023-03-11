@@ -173,7 +173,7 @@ public:
 	void set_in_script(bool flag);
 	void set_actor_obj(bool flag);
 
-	void add(Obj *obj, bool stack = false);
+	void add(Obj *obj, bool stack = false, bool addAtTail = false);
 
 	bool remove(Obj *obj);
 
@@ -183,7 +183,7 @@ public:
 
 protected:
 
-	void add_and_stack(Obj *obj);
+	void add_and_stack(Obj *obj, bool addAtTail = false);
 
 };
 
