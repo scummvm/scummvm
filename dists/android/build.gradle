@@ -41,30 +41,29 @@ android {
         versionName "2.8.0"
         versionCode 105
         // versioncode must be incremented for each market upload
-        // ScummVM 2.8.0: 105 - 108 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.7.x: 101 - 104 (reserved for potential beta or 2.7.x bugfix builds)
-        // ScummVM 2.7.x:  97 - 100 (reserved for potential beta or 2.7.x bugfix builds)
+        // ScummVM 2.8.0:   105 - 108 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.7.x:   101 - 104 (reserved for potential beta or 2.7.x bugfix builds)
         // Historical version codes:
-        // ScummVM 2.7.0:  93 -  96 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (beta 2 on Play Store)
-        // ScummVM 2.7.0:  89 -  92 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (beta 1 on Play Store)
-        // ScummVM 2.6.x:  85 -  88 (skipped - was reserved for potential beta or 2.6.x bugfix builds)
-        // ScummVM 2.6.x:  81 -  84 (skipped - was reserved for potential beta or 2.6.x bugfix builds)
-        // ScummVM 2.6.1:  77 -  80 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.6.0:  73 -  76 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.5.1:  69 -  72 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.5.0:  65 -  68 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.2.1:  61 -  64 Play Store release version for 2.2.1 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.2.1:  57 -  60 Beta 3 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.2.1:  57 -  60 *Reserved for 2.2.1 stable/release* (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.2.1:  53 -  56 Beta 2 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.2.1:  49 -  52 Beta 1 (29 Sep 2020) (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.2.0:  45 -  48 (arm-v7a, arm64-v8a, x86, x86_64 respectively -- armeabi was dropped)
-        // ScummVM 2.1.1:  40 -  44 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.1.0:  35 -  39 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.0.0:  30 -  34
-        // ScummVM 1.9.0.1:25 -  28
-        // ScummVM 1.9.0: 19
-        // ScummVM 1.8.1: 15
+        // ScummVM 2.7.0.2:  97 - 100 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (beta 3 on Play Store)
+        // ScummVM 2.7.0.1:  93 -  96 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (beta 2 on Play Store)
+        // ScummVM 2.7.0:    89 -  92 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (beta 1 on Play Store)
+        // ScummVM 2.6.x:    85 -  88 (skipped - was reserved for potential beta or 2.6.x bugfix builds)
+        // ScummVM 2.6.x:    81 -  84 (skipped - was reserved for potential beta or 2.6.x bugfix builds)
+        // ScummVM 2.6.1:    77 -  80 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.6.0:    73 -  76 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.5.1:    69 -  72 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.5.0:    65 -  68 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.2.1:    61 -  64 Play Store release version for 2.2.1 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.2.1:    57 -  60 Beta 3 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.2.1:    53 -  56 Beta 2 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.2.1:    49 -  52 Beta 1 (29 Sep 2020) (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.2.0:    45 -  48 (arm-v7a, arm64-v8a, x86, x86_64 respectively -- armeabi was dropped)
+        // ScummVM 2.1.1:    40 -  44 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.1.0:    35 -  39 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.0.0:    30 -  34
+        // ScummVM 1.9.0.1:  25 -  28
+        // ScummVM 1.9.0:    19
+        // ScummVM 1.8.1:    15
 
     }
     buildTypes {
