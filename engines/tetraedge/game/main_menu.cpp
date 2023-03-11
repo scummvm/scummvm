@@ -308,8 +308,7 @@ bool MainMenu::onUnlockGameButtonValidated() {
 }
 
 void MainMenu::refresh() {
-	// TODO: get a real value
-	bool haveSave = false;
+	bool haveSave = ConfMan.hasKey(LAST_SAVE_CONF);
 	TeButtonLayout *continueGameButton = buttonLayout("continueGameButton");
 	if (continueGameButton) {
 		continueGameButton->setEnable(haveSave);
@@ -317,7 +316,7 @@ void MainMenu::refresh() {
 }
 
 void MainMenu::setCenterButtonsVisibility(bool visible) {
-	bool haveSave = false;
+	bool haveSave = ConfMan.hasKey(LAST_SAVE_CONF);
 
 	TeButtonLayout *continuegameunlockButton = buttonLayout("continuegameunlockButton");
 	if (continuegameunlockButton) {
