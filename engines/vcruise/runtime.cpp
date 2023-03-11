@@ -295,9 +295,26 @@ CachedSound::~CachedSound() {
 	this->stream.reset();
 }
 
+TriggeredOneShot::TriggeredOneShot() : soundID(0), uniqueSlot(0) {
+}
+
+bool TriggeredOneShot::operator==(const TriggeredOneShot &other) const {
+	return soundID == other.soundID && uniqueSlot == other.uniqueSlot;
+}
+
+bool TriggeredOneShot::operator!=(const TriggeredOneShot &other) const {
+	return !((*this) == other);
+}
+
+StaticAnimParams::StaticAnimParams() : initialDelay(0), repeatDelay(0), lockInteractions(false) {
+}
+
+StaticAnimation::StaticAnimation() : currentAlternation(0), nextStartTime(0) {
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
-	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
+	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
 	  _scriptNextInstruction(0), _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
@@ -421,6 +438,9 @@ bool Runtime::runFrame() {
 		case kGameStateWaitingForFacing:
 			moreActions = runWaitForFacing();
 			break;
+		case kGameStateWaitingForFacingToAnim:
+			moreActions = runWaitForFacingToAnim();
+			break;
 		case kGameStateGyroIdle:
 			moreActions = runGyroIdle();
 			break;
@@ -485,15 +505,34 @@ bool Runtime::runIdle() {
 		return true;
 	}
 
+	uint32 timestamp = g_system->getMillis();
+
 	if (_animPlayWhileIdle) {
+		assert(_haveIdleAnimations[_direction]);
+
+		StaticAnimation &sanim = _idleAnimations[_direction];
+		bool looping = (sanim.params.repeatDelay == 0);
+
 		bool animEnded = false;
-		continuePlayingAnimation(true, false, animEnded);
+		continuePlayingAnimation(looping, false, animEnded);
+
+		if (!looping && animEnded) {
+			_animPlayWhileIdle = false;
+			sanim.nextStartTime = timestamp + sanim.params.repeatDelay * 1000u;
+			sanim.currentAlternation = 1 - sanim.currentAlternation;
+		}
+	} else if (_haveIdleAnimations[_direction]) {
+		// Try to re-trigger
+		StaticAnimation &sanim = _idleAnimations[_direction];
+		if (sanim.nextStartTime <= timestamp) {
+			changeAnimation(sanim.animDefs[sanim.currentAlternation], false);
+			_animPlayWhileIdle = true;
+		}
 	}
 
 	if (_debugMode)
 		drawDebugOverlay();
 
-	uint32 timestamp = g_system->getMillis();
 	detectPanoramaMouseMovement(timestamp);
 
 	OSEvent osEvent;
@@ -615,13 +654,26 @@ bool Runtime::runWaitForAnimation() {
 	return false;
 }
 
-bool Runtime::runWaitForFacing() {
+bool Runtime::runWaitForFacingToAnim() {
 	bool animEnded = false;
 	continuePlayingAnimation(true, true, animEnded);
 
 	if (animEnded) {
 		changeAnimation(_postFacingAnimDef, true);
 		_gameState = kGameStateWaitingForAnimation;
+		return true;
+	}
+
+	// Yield
+	return false;
+}
+
+bool Runtime::runWaitForFacing() {
+	bool animEnded = false;
+	continuePlayingAnimation(true, true, animEnded);
+
+	if (animEnded) {
+		_gameState = kGameStateScript;
 		return true;
 	}
 
@@ -1235,8 +1287,10 @@ void Runtime::loadWave(uint soundID, const Common::String &soundName, const Comm
 }
 
 void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
-	bool changedRoom = (roomNumber != _loadedRoomNumber);
+	bool changedRoom = (roomNumber != _loadedRoomNumber) || _forceScreenChange;
 	bool changedScreen = (screenNumber != _activeScreenNumber) || changedRoom;
+
+	_forceScreenChange = false;
 
 	_roomNumber = roomNumber;
 	_screenNumber = screenNumber;
@@ -1300,11 +1354,20 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 void Runtime::returnToIdleState() {
 	debug(1, "Returned to idle state in room %u screen 0%x facing direction %u", _roomNumber, _screenNumber, _direction);
 
+	uint32 timestamp = g_system->getMillis();
+
 	_animPlayWhileIdle = false;
 
 	if (_haveIdleAnimations[_direction]) {
-		changeAnimation(_idleAnimations[_direction], false);
-		_animPlayWhileIdle = true;
+		StaticAnimation &sanim = _idleAnimations[_direction];
+		sanim.currentAlternation = 0;
+		sanim.nextStartTime = timestamp + sanim.params.initialDelay * 1000u;
+
+		if (sanim.params.initialDelay == 0) {
+			changeAnimation(sanim.animDefs[0], false);
+			_animPlayWhileIdle = true;
+			sanim.currentAlternation = 1;
+		}
 	}
 
 	_idleIsOnInteraction = false;
@@ -1493,7 +1556,7 @@ void Runtime::changeMusicTrack(int track) {
 			Common::SharedPtr<Audio::AudioStream> loopingStream(Audio::makeLoopingAudioStream(audioStream, 0));
 
 			_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream));
-			_musicPlayer->play(255, 0);
+			_musicPlayer->play(100, 0);
 		}
 	} else {
 		warning("Music file '%s' is missing", wavFileName.c_str());
@@ -2147,18 +2210,22 @@ void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 		error("sanimL invalid direction");
 
 	_haveIdleAnimations[direction] = true;
-	_idleAnimations[direction] = animDef;
+
+	StaticAnimation &outAnim = _idleAnimations[direction];
+
+	outAnim = StaticAnimation();
+	outAnim.animDefs[0] = animDef;
+	outAnim.animDefs[1] = animDef;
 }
 
 void Runtime::scriptOpChangeL(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	// Not actually sure what this does.  It usually occurs coincident with rotation interactions and animR ops.
-	// Might change the screen number?  Usually seems to change the screen number to the current screen or to the
-	// one being transitioned to.  Need more investigation.
-
-	warning("ChangeL opcode not implemented");
-	(void)stackArgs;
+	// ChangeL changes the screen number, but it also forces screen entry scripts to replay, which is
+	// needed for things like the fountain.
+	_screenNumber = stackArgs[0];
+	_havePendingScreenChange = true;
+	_forceScreenChange = true;
 }
 
 void Runtime::scriptOpAnimR(ScriptArg_t arg) {
@@ -2230,7 +2297,7 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 		_postFacingAnimDef = animDef;
 		_animStopFrame = stopFrame;
 		changeAnimation(*faceDirectionAnimDef, initialFrame, false);
-		_gameState = kGameStateWaitingForFacing;
+		_gameState = kGameStateWaitingForFacingToAnim;
 	} else {
 		changeAnimation(animDef, true);
 		_gameState = kGameStateWaitingForAnimation;
@@ -2242,7 +2309,23 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 	changeToCursor(_cursors[kCursorArrow]);
 }
 
-OPCODE_STUB(AnimN)
+void Runtime::scriptOpAnimN(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	const AnimationDef *faceDirectionAnimDef = nullptr;
+	uint initialFrame = 0;
+	uint stopFrame = 0;
+	if (computeFaceDirectionAnimation(stackArgs[0], faceDirectionAnimDef, initialFrame, stopFrame)) {
+		_animStopFrame = stopFrame;
+		changeAnimation(*faceDirectionAnimDef, initialFrame, false);
+		_gameState = kGameStateWaitingForFacing;
+	}
+
+	_direction = stackArgs[0];
+	_havePendingScreenChange = true;
+
+	changeToCursor(_cursors[kCursorArrow]);
+}
 
 void Runtime::scriptOpAnimG(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs * 2 + 1);
@@ -2526,8 +2609,37 @@ void Runtime::scriptOpParmG(ScriptArg_t arg) {
 	_gyros.maxValue = maxValue;
 }
 
-OPCODE_STUB(SParmX)
-OPCODE_STUB(SAnimX)
+void Runtime::scriptOpSParmX(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	_pendingStaticAnimParams.initialDelay = stackArgs[0];
+	_pendingStaticAnimParams.repeatDelay = stackArgs[1];
+	_pendingStaticAnimParams.lockInteractions = (stackArgs[2] != 0);
+
+	if (_pendingStaticAnimParams.lockInteractions)
+		error("Locking interactions for animation is not implemented yet");
+}
+
+void Runtime::scriptOpSAnimX(ScriptArg_t arg) {
+	TAKE_STACK(kAnimDefStackArgs * 2 + 1);
+
+	AnimationDef animDef1 = stackArgsToAnimDef(stackArgs + 0);
+	AnimationDef animDef2 = stackArgsToAnimDef(stackArgs + kAnimDefStackArgs);
+
+	uint direction = stackArgs[kAnimDefStackArgs * 2 + 0];
+
+	if (direction >= kNumDirections)
+		error("sanimX invalid direction");
+
+	_haveIdleAnimations[direction] = true;
+
+	StaticAnimation &outAnim = _idleAnimations[direction];
+
+	outAnim = StaticAnimation();
+	outAnim.animDefs[0] = animDef1;
+	outAnim.animDefs[1] = animDef2;
+	outAnim.params = _pendingStaticAnimParams;
+}
 
 void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) {
 	TAKE_STACK(3);
@@ -2565,17 +2677,37 @@ void Runtime::scriptOpDup(ScriptArg_t arg) {
 void Runtime::scriptOpSay3(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	warning("Say3 opcode is not implemented yet");
-	(void)stackArgs;
+	TriggeredOneShot oneShot;
+	oneShot.soundID = stackArgs[0];
+	oneShot.uniqueSlot = stackArgs[1];
+
+	// The third param seems to control sound interruption, but say3 is a Reah-only op and it's only ever 1.
+	if (stackArgs[2] != 1)
+		error("Invalid interrupt arg for say3, only 1 is supported.");
+
+	if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
+		triggerSound(false, oneShot.soundID, 100, 0);
+		_triggeredOneShots.push_back(oneShot);
+	}
 }
 
 void Runtime::scriptOpSay3Get(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	warning("Say3Get opcode is not implemented yet");
-	(void)stackArgs;
+	TriggeredOneShot oneShot;
+	oneShot.soundID = stackArgs[0];
+	oneShot.uniqueSlot = stackArgs[1];
 
-	_scriptStack.push_back(0);
+	// The third param seems to control sound interruption, but say3 is a Reah-only op and it's only ever 1.
+	if (stackArgs[2] != 1)
+		error("Invalid interrupt arg for say3, only 1 is supported.");
+
+	if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
+		triggerSound(false, oneShot.soundID, 100, 0);
+		_triggeredOneShots.push_back(oneShot);
+		_scriptStack.push_back(0);
+	} else
+		_scriptStack.push_back(oneShot.soundID);
 }
 
 void Runtime::scriptOpSetTimer(ScriptArg_t arg) {

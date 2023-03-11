@@ -70,14 +70,15 @@ struct Script;
 struct Instruction;
 
 enum GameState {
-	kGameStateBoot,					// Booting the game
-	kGameStateWaitingForAnimation,	// Waiting for a blocking animation to complete, then resuming script
-	kGameStateWaitingForFacing,		// Waiting for a blocking animation to complete, then playing _postFacingAnimDef and switching to kGameStateWaitingForAnimation
-	kGameStateQuit,					// Quitting
-	kGameStateIdle,					// Waiting for input events
-	kGameStateScript,				// Running a script
-	kGameStateGyroIdle,				// Waiting for mouse movement to run a gyro
-	kGameStateGyroAnimation,		// Animating a gyro
+	kGameStateBoot,							// Booting the game
+	kGameStateWaitingForAnimation,			// Waiting for a blocking animation with no stop frame complete, then resuming script
+	kGameStateWaitingForFacing,				// Waiting for a blocking animation with a stop frame to complete, then resuming script
+	kGameStateWaitingForFacingToAnim,		// Waiting for a blocking animation to complete, then playing _postFacingAnimDef and switching to kGameStateWaitingForAnimation
+	kGameStateQuit,							// Quitting
+	kGameStateIdle,							// Waiting for input events
+	kGameStateScript,						// Running a script
+	kGameStateGyroIdle,						// Waiting for mouse movement to run a gyro
+	kGameStateGyroAnimation,				// Animating a gyro
 
 	kGameStatePanLeft,
 	kGameStatePanRight,
@@ -187,6 +188,34 @@ struct CachedSound {
 
 	uint volume;
 	int32 balance;
+};
+
+struct TriggeredOneShot {
+	TriggeredOneShot();
+
+	bool operator==(const TriggeredOneShot &other) const;
+	bool operator!=(const TriggeredOneShot &other) const;
+
+	uint soundID;
+	uint uniqueSlot;
+};
+
+struct StaticAnimParams {
+	StaticAnimParams();
+
+	uint initialDelay;
+	uint repeatDelay;
+	bool lockInteractions;
+};
+
+struct StaticAnimation {
+	StaticAnimation();
+
+	AnimationDef animDefs[2];
+	StaticAnimParams params;
+
+	uint32 nextStartTime;
+	uint currentAlternation;
 };
 
 class Runtime {
@@ -342,6 +371,7 @@ private:
 	bool runScript();
 	bool runWaitForAnimation();
 	bool runWaitForFacing();
+	bool runWaitForFacingToAnim();
 	bool runGyroIdle();
 	bool runGyroAnimation();
 	void exitGyroIdle();
@@ -516,8 +546,9 @@ private:
 	bool _havePanUpFromDirection[kNumDirections];
 	bool _havePanDownFromDirection[kNumDirections];
 
-	AnimationDef _idleAnimations[kNumDirections];
+	StaticAnimation _idleAnimations[kNumDirections];
 	bool _haveIdleAnimations[kNumDirections];
+	StaticAnimParams _pendingStaticAnimParams;
 
 	AnimationDef _postFacingAnimDef;
 
@@ -540,6 +571,7 @@ private:
 	uint _loadedRoomNumber;
 	uint _activeScreenNumber;
 	bool _havePendingScreenChange;
+	bool _forceScreenChange;
 	bool _havePendingReturnToIdleState;
 	bool _havePendingCompletionCheck;
 	GameState _gameState;
@@ -612,6 +644,8 @@ private:
 
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _waves;
 	Common::HashMap<uint, Common::SharedPtr<CachedSound> > _cachedSounds;
+
+	Common::Array<TriggeredOneShot> _triggeredOneShots;
 
 	static const uint kAnimDefStackArgs = 8;
 
