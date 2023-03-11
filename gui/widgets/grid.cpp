@@ -327,14 +327,8 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 		g_gui.lockIconsSet();
 		if (g_gui.getIconsSet().hasFile(name)) {
 			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(name);
-			Graphics::SVGBitmap *image = nullptr;
-			image = new Graphics::SVGBitmap(stream);
-
+			surf = new Graphics::SVGBitmap(stream, renderWidth, renderHeight);
 			delete stream;
-
-			surf = new Graphics::ManagedSurface(renderWidth, renderHeight, *image->getPixelFormat());
-			image->render(*surf, renderWidth, renderHeight);
-			delete image;
 		} else {
 			debug(5, "GridWidget: Cannot read file '%s'", name.c_str());
 		}
