@@ -171,7 +171,7 @@ void Scene::onStateExit() {
 	_gameStateRequested = NancyState::kNone;
 }
 
-void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound) {
+void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, byte paletteID) {
 	if (id == 9999) {
 		return;
 	}
@@ -179,12 +179,17 @@ void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte con
 	_sceneState.nextScene.sceneID = id;
 	_sceneState.nextScene.frameID = frame;
 	_sceneState.nextScene.verticalOffset = verticalOffset;
+	_sceneState.nextScene.paletteID = paletteID;
 	_sceneState.continueSceneSound = continueSceneSound;
 	_state = kLoad;
 }
 
 void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
-	changeScene(sceneDescription.sceneID, sceneDescription.frameID, sceneDescription.verticalOffset, sceneDescription.continueSceneSound);
+	changeScene(sceneDescription.sceneID,
+				sceneDescription.frameID,
+				sceneDescription.verticalOffset,
+				sceneDescription.continueSceneSound,
+				sceneDescription.paletteID);
 }
 
 void Scene::pushScene() {
@@ -571,7 +576,6 @@ void Scene::load() {
 	}
 
 	_timers.sceneTime = 0;
-	_sceneState.nextScene.paletteID = 0;
 
 	_state = kStartSound;
 }

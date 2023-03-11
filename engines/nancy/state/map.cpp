@@ -74,7 +74,7 @@ void Map::onStateExit() {
 
 	if (_pickedLocationID != -1) {
 		auto &loc = _locations[_pickedLocationID];
-		NancySceneState.changeScene(loc.scenes[_mapID].sceneID, loc.scenes[_mapID].frameID, loc.scenes[_mapID].verticalOffset, false);
+		NancySceneState.changeScene(loc.scenes[_mapID]);
 
 		g_nancy->_sound->playSound("BUOK");
 	}
@@ -244,7 +244,7 @@ void TVDMap::init() {
 
 			loc.scenes.resize(2);
 			for (uint j = 0; j < 2; ++j) {
-				Location::SceneChange &sc = loc.scenes[j];
+				SceneChangeDescription &sc = loc.scenes[j];
 				chunk->seek(0x38A + (8 * i) + (56 * j));
 				sc.sceneID = chunk->readUint16LE();
 				sc.frameID = chunk->readUint16LE();
@@ -465,7 +465,7 @@ void Nancy1Map::init() {
 
 			loc.scenes.resize(2);
 			for (uint j = 0; j < 2; ++j) {
-				Location::SceneChange &sc = loc.scenes[j];
+				SceneChangeDescription &sc = loc.scenes[j];
 				chunk->seek(0x1BE + (6 * i) + (24 * j));
 				sc.sceneID = chunk->readUint16LE();
 				sc.frameID = chunk->readUint16LE();

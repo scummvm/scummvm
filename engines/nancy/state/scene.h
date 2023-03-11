@@ -117,7 +117,7 @@ public:
 	void onStateEnter() override;
 	void onStateExit() override;
 
-	void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound);
+	void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, byte paletteID = 0);
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene();
 	void popScene();

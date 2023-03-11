@@ -68,18 +68,11 @@ protected:
 	};
 
 	struct Location {
-		struct SceneChange {
-			uint16 sceneID = 0;
-			uint16 frameID = 0;
-			uint16 verticalOffset = 0;
-			int16 paletteID = -1;
-		};
-
 		Common::String description;
 
 		bool isActive = false;
 		Common::Rect hotspot;
-		Common::Array<SceneChange> scenes;
+		Common::Array<SceneChangeDescription> scenes;
 
 		Common::Rect labelSrc;
 		Common::Rect labelDest;

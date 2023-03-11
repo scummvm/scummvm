@@ -31,7 +31,8 @@ void SceneChangeDescription::readData(Common::SeekableReadStream &stream, bool l
 	frameID = stream.readUint16LE();
 	verticalOffset = stream.readUint16LE();
 	if (longFormat) {
-		stream.skip(3);
+		paletteID = stream.readByte();
+		stream.skip(2);
 	}
 	continueSceneSound = stream.readUint16LE();
 }
