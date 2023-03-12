@@ -653,13 +653,13 @@ void Scene::run() {
 
 	if (_menuButton->_isClicked) {
 		_menuButton->_isClicked = false;
-		g_nancy->_sound->playSound("GLOB");
+		g_nancy->_sound->playSound("BUOK");
 		requestStateChange(NancyState::kMainMenu);
 	}
 
 	if (_helpButton->_isClicked) {
 		_helpButton->_isClicked = false;
-		g_nancy->_sound->playSound("GLOB");
+		g_nancy->_sound->playSound("BUOK");
 		requestStateChange(NancyState::kHelp);
 	}
 
