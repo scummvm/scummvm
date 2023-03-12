@@ -62,9 +62,9 @@ enum ScriptOp {
 	kVarLoad,
 	kVarStore,
 	kItemCheck,
-	kItemCRSet,
-	kItemSRSet,
-	kItemRSet,
+	kItemRemove,
+	kItemHighlightSet,
+	kItemAdd,
 	kSetCursor,
 	kSetRoom,
 	kLMB,
@@ -122,6 +122,8 @@ enum ScriptOp {
 	kDisc1,
 	kDisc2,
 	kDisc3,
+
+	kGoto,
 
 	kEscOn,
 	kEscOff,

@@ -335,9 +335,9 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"yes@", ProtoOp::kProtoOpScript, ScriptOps::kVarLoad},
 	{"yes!", ProtoOp::kProtoOpScript, ScriptOps::kVarStore},
 	{"cr?", ProtoOp::kProtoOpScript, ScriptOps::kItemCheck},
-	{"cr!", ProtoOp::kProtoOpScript, ScriptOps::kItemCRSet},
-	{"sr!", ProtoOp::kProtoOpScript, ScriptOps::kItemSRSet},
-	{"r!", ProtoOp::kProtoOpScript, ScriptOps::kItemRSet},
+	{"cr!", ProtoOp::kProtoOpScript, ScriptOps::kItemRemove},
+	{"sr!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSet},
+	{"r!", ProtoOp::kProtoOpScript, ScriptOps::kItemAdd},
 	{"cursor!", ProtoOp::kProtoOpScript, ScriptOps::kSetCursor},
 	{"room!", ProtoOp::kProtoOpScript, ScriptOps::kSetRoom},
 	{"lmb", ProtoOp::kProtoOpScript, ScriptOps::kLMB},
@@ -347,6 +347,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"rnd", ProtoOp::kProtoOpScript, ScriptOps::kRandom},
 	{"drop", ProtoOp::kProtoOpScript, ScriptOps::kDrop},
 	{"dup", ProtoOp::kProtoOpScript, ScriptOps::kDup},
+	{"say2", ProtoOp::kProtoOpScript, ScriptOps::kSay3},	// FIXME: Figure out what the difference is between say2 and say3
 	{"say3", ProtoOp::kProtoOpScript, ScriptOps::kSay3},
 	{"say3@", ProtoOp::kProtoOpScript, ScriptOps::kSay3Get},
 	{"setTimer", ProtoOp::kProtoOpScript, ScriptOps::kSetTimer},
@@ -398,6 +399,8 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"disc1", ProtoOp::kProtoOpScript, ScriptOps::kDisc1},
 	{"disc2", ProtoOp::kProtoOpScript, ScriptOps::kDisc2},
 	{"disc3", ProtoOp::kProtoOpScript, ScriptOps::kDisc3},
+
+	{"goto", ProtoOp::kProtoOpScript, ScriptOps::kGoto},
 
 	{"#if", ProtoOp::kProtoOpIf, ScriptOps::kInvalid},
 	{"#eif", ProtoOp::kProtoOpEndIf, ScriptOps::kInvalid},

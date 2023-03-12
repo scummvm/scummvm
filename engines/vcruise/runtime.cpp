@@ -35,6 +35,8 @@
 #include "graphics/wincursor.h"
 #include "graphics/managed_surface.h"
 
+#include "image/bmp.h"
+
 #include "audio/decoders/wave.h"
 #include "audio/audiostream.h"
 
@@ -325,6 +327,9 @@ FrameData2::FrameData2() : x(0), y(0), angle(0), frameNumberInArea(0), unknown(0
 SoundParams3D::SoundParams3D() : minRange(0), maxRange(0), unknownRange(0) {
 }
 
+InventoryItem::InventoryItem() : itemID(0), highlighted(false) {
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
@@ -489,6 +494,11 @@ bool Runtime::bootGame(bool newGame) {
 	findWaves();
 	debug(1, "Waves indexed OK");
 
+	_trayBackgroundGraphic = loadGraphic("Pocket", true);
+	_trayHighlightGraphic = loadGraphic("Select", true);
+	_trayCompassGraphic = loadGraphic("Select_1", true);
+	_trayCornerGraphic = loadGraphic("Select_2", true);
+
 	_gameState = kGameStateIdle;
 
 	if (newGame) {
@@ -558,10 +568,12 @@ bool Runtime::runIdle() {
 			if (changedState)
 				return true;
 
-
 		} else if (osEvent.type == kOSEventTypeLButtonUp) {
 			PanoramaState oldPanoramaState = _panoramaState;
 			_panoramaState = kPanoramaStateInactive;
+
+			// This is the correct place for matching the original game's behavior, not switching to panorama
+			resetInventoryHighlights();
 
 			if (_lmbReleaseWasClick) {
 				bool changedState = dischargeIdleClick();
@@ -989,9 +1001,9 @@ bool Runtime::runScript() {
 			DISPATCH_OP(VarLoad);
 			DISPATCH_OP(VarStore);
 			DISPATCH_OP(ItemCheck);
-			DISPATCH_OP(ItemCRSet);
-			DISPATCH_OP(ItemSRSet);
-			DISPATCH_OP(ItemRSet);
+			DISPATCH_OP(ItemRemove);
+			DISPATCH_OP(ItemHighlightSet);
+			DISPATCH_OP(ItemAdd);
 			DISPATCH_OP(SetCursor);
 			DISPATCH_OP(SetRoom);
 			DISPATCH_OP(LMB);
@@ -1051,6 +1063,8 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Disc1);
 			DISPATCH_OP(Disc2);
 			DISPATCH_OP(Disc3);
+
+			DISPATCH_OP(Goto);
 
 			DISPATCH_OP(EscOn);
 			DISPATCH_OP(EscOff);
@@ -1442,6 +1456,7 @@ bool Runtime::dischargeIdleMouseMove() {
 			_idleHaveClickInteraction = false;
 			_idleHaveDragInteraction = false;
 			changeToCursor(_cursors[kCursorArrow]);
+			resetInventoryHighlights();
 		}
 
 		if (isOnInteraction && _idleIsOnInteraction == false) {
@@ -1471,6 +1486,8 @@ bool Runtime::dischargeIdleMouseMove() {
 				Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
 
 				if (script) {
+					resetInventoryHighlights();
+
 					ScriptEnvironmentVars vars;
 					vars.panInteractionID = interactionID;
 					activateScript(script, vars);
@@ -1490,6 +1507,7 @@ bool Runtime::dischargeIdleMouseDown() {
 		Common::SharedPtr<Script> script = findScriptForInteraction(_idleInteractionID);
 
 		_idleIsOnInteraction = false; // ?
+		resetInventoryHighlights();
 
 		if (script) {
 			ScriptEnvironmentVars vars;
@@ -2164,6 +2182,9 @@ void Runtime::panoramaActivate() {
 
 	debug(1, "Changing cursor to panorama cursor %u", cursorID);
 	changeToCursor(_cursors[cursorID]);
+
+	// We don't reset inventory highlights here.  It'd make sense, but doesn't match the original game's behavior.
+	// Inventory highlights only reset from panoramas if a rotation occurs, or the mouse button is released.
 }
 
 bool Runtime::computeFaceDirectionAnimation(uint desiredDirection, const AnimationDef *&outAnimDef, uint &outInitialFrame, uint &outStopFrame) {
@@ -2195,6 +2216,106 @@ bool Runtime::computeFaceDirectionAnimation(uint desiredDirection, const Animati
 	}
 
 	return true;
+}
+
+void Runtime::inventoryAddItem(uint item) {
+	uint firstOpenSlot = kNumInventorySlots;
+
+	for (uint i = 0; i < kNumInventorySlots; i++) {
+		if (_inventory[i].itemID == item)
+			return;
+		if (_inventory[i].itemID == 0 && firstOpenSlot == kNumInventorySlots)
+			firstOpenSlot = i;
+	}
+
+	if (firstOpenSlot == kNumInventorySlots)
+		error("Tried to add an inventory item but ran out of slots");
+
+	Common::String itemFileName = getFileNameForItemGraphic(item);
+
+	_inventory[firstOpenSlot].itemID = item;
+	_inventory[firstOpenSlot].graphic = loadGraphic(itemFileName, false);
+
+	drawInventory(firstOpenSlot);
+}
+
+void Runtime::drawInventory(uint slot) {
+	Common::Rect trayRect = _traySection.rect;
+	trayRect.translate(-trayRect.left, -trayRect.top);
+
+	const uint slotWidth = 79;
+	const uint firstItemX = 82;
+
+	const uint slotStartX = firstItemX + slot * slotWidth;
+	Common::Rect sliceRect = Common::Rect(slotStartX, 0, slotStartX + slotWidth, trayRect.height());
+
+	const bool highlighted = _inventory[slot].highlighted;
+
+	if (highlighted)
+		_traySection.surf->blitFrom(*_trayHighlightGraphic, sliceRect, sliceRect);
+	else
+		_traySection.surf->fillRect(sliceRect, 0);
+
+	const Graphics::Surface *surf = _inventory[slot].graphic.get();
+
+	// TODO: Highlighted items
+	if (surf) {
+		const uint itemWidth = surf->w;
+		const uint itemHeight = surf->h;
+
+		const uint itemTopY = (static_cast<uint>(trayRect.height()) - itemHeight) / 2u;
+		const uint itemLeftY = slotStartX + (slotWidth - itemWidth) / 2u;
+
+		if (highlighted) {
+			uint32 blackColor = surf->format.ARGBToColor(255, 0, 0, 0);
+			_traySection.surf->transBlitFrom(*surf, Common::Point(itemLeftY, itemTopY), blackColor);
+		} else
+			_traySection.surf->blitFrom(*surf, Common::Point(itemLeftY, itemTopY));
+	}
+
+	commitSectionToScreen(_traySection, sliceRect);
+}
+
+void Runtime::resetInventoryHighlights() {
+	for (uint slot = 0; slot < kNumInventorySlots; slot++) {
+		InventoryItem &item = _inventory[slot];
+		if (item.highlighted) {
+			item.highlighted = false;
+			drawInventory(slot);
+		}
+	}
+}
+
+Common::String Runtime::getFileNameForItemGraphic(uint itemID) const {
+	if (_gameID == GID_REAH)
+		return Common::String::format("Thing%u", itemID);
+	else if (_gameID == GID_SCHIZM)
+		return Common::String::format("Item%u", itemID);
+	else {
+		error("Unknown game, can't format inventory item");
+		return "";
+	}
+}
+
+Common::SharedPtr<Graphics::Surface> Runtime::loadGraphic(const Common::String &graphicName, bool required) {
+	Common::String filePath = Common::String("Gfx/") + graphicName + ".bmp";
+
+	Common::File f;
+	if (!f.open(filePath)) {
+		warning("Couldn't open BMP file '%s'", filePath.c_str());
+		return nullptr;
+	}
+
+	Image::BitmapDecoder bmpDecoder;
+	if (!bmpDecoder.loadStream(f)) {
+		warning("Failed to load BMP file '%s'", filePath.c_str());
+		return nullptr;
+	}
+
+	Common::SharedPtr<Graphics::Surface> surf(new Graphics::Surface());
+	surf->copyFrom(*bmpDecoder.getSurface());
+
+	return surf;
 }
 
 void Runtime::onLButtonDown(int16 x, int16 y) {
@@ -2250,13 +2371,21 @@ void Runtime::saveGame(Common::WriteStream *stream) const {
 	stream->writeUint32BE(_direction);
 
 	Common::Array<uint32> variableIDs;
+	Common::Array<uint> timerIDs;
+
+	uint32 timeBase = g_system->getMillis();
 
 	for (const Common::HashMap<uint32, int32>::Node &varNode : _variables)
 		variableIDs.push_back(varNode._key);
 
+	for (const Common::HashMap<uint, uint32>::Node &timerNode : _timers)
+		timerIDs.push_back(timerNode._key);
+
 	Common::sort(variableIDs.begin(), variableIDs.end());
+	Common::sort(timerIDs.begin(), timerIDs.end());
 
 	stream->writeUint32BE(variableIDs.size());
+	stream->writeUint32BE(timerIDs.size());
 
 	for (uint32 variableKey : variableIDs) {
 		Common::HashMap<uint32, int32>::const_iterator it = _variables.find(variableKey);
@@ -2265,6 +2394,17 @@ void Runtime::saveGame(Common::WriteStream *stream) const {
 		stream->writeUint32BE(variableKey);
 		stream->writeSint32BE(it->_value);
 	}
+
+	for (uint timerKey : timerIDs) {
+		Common::HashMap<uint, uint32>::const_iterator it = _timers.find(timerKey);
+		assert(it != _timers.end());
+
+		stream->writeUint32BE(timerKey);
+		stream->writeUint32BE(it->_value - timeBase);
+	}
+
+	for (const InventoryItem &item : _inventory)
+		stream->writeUint32BE(item.itemID);
 }
 
 bool Runtime::loadGame(Common::ReadStream *stream) {
@@ -2301,16 +2441,20 @@ bool Runtime::loadGame(Common::ReadStream *stream) {
 		return false;
 	}
 
+	uint32 timeBase = g_system->getMillis();
+
 	uint32 roomNumber = stream->readUint32BE();
 	uint32 screenNumber = stream->readUint32BE();
 	uint32 direction = stream->readUint32BE();
 
 	uint32 numVars = stream->readUint32BE();
+	uint32 numTimers = stream->readUint32BE();
 
 	if (stream->err() || stream->eos())
 		return false;
 
 	Common::HashMap<uint32, int32> vars;
+	Common::HashMap<uint, uint32> timers;
 
 	for (uint32 i = 0; i < numVars; i++) {
 		uint32 varID = stream->readUint32BE();
@@ -2318,6 +2462,18 @@ bool Runtime::loadGame(Common::ReadStream *stream) {
 
 		vars[varID] = varValue;
 	}
+
+	for (uint32 i = 0; i < numTimers; i++) {
+		uint timerID = stream->readUint32BE();
+		uint32 timerValue = stream->readUint32BE();
+
+		timers[timerID] = timerValue + timeBase;
+	}
+
+	uint inventoryItems[kNumInventorySlots];
+
+	for (uint i = 0; i < kNumInventorySlots; i++)
+		inventoryItems[i] = stream->readUint32BE();
 
 	if (stream->err() || stream->eos())
 		return false;
@@ -2327,6 +2483,18 @@ bool Runtime::loadGame(Common::ReadStream *stream) {
 
 	// Load succeeded
 	_variables = Common::move(vars);
+	_timers = Common::move(timers);
+
+	for (uint i = 0; i < kNumInventorySlots; i++) {
+		_inventory[i].itemID = inventoryItems[i];
+		_inventory[i].highlighted = false;
+		_inventory[i].graphic.reset();
+
+		if (inventoryItems[i] != 0)
+			_inventory[i].graphic = loadGraphic(getFileNameForItemGraphic(inventoryItems[i]), false);
+
+		drawInventory(i);
+	}
 
 	_direction = direction;
 	changeToScreen(roomNumber, screenNumber);
@@ -2560,7 +2728,7 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
-	animDef.lastFrame = animDef.firstFrame;	// Static animation
+	animDef.firstFrame = animDef.lastFrame; // Static animation
 
 	changeAnimation(animDef, false);
 
@@ -2620,10 +2788,56 @@ void Runtime::scriptOpVarStore(ScriptArg_t arg) {
 	_variables[varID] = stackArgs[0];
 }
 
-OPCODE_STUB(ItemCheck)
-OPCODE_STUB(ItemCRSet)
-OPCODE_STUB(ItemSRSet)
-OPCODE_STUB(ItemRSet)
+void Runtime::scriptOpItemCheck(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	for (const InventoryItem &item : _inventory) {
+		if (item.itemID == static_cast<uint>(stackArgs[0])) {
+			_scriptStack.push_back(1);
+			return;
+		}
+	}
+
+	_scriptStack.push_back(0);
+}
+
+void Runtime::scriptOpItemRemove(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	for (uint slot = 0; slot < kNumInventorySlots; slot++) {
+		InventoryItem &item = _inventory[slot];
+
+		if (item.itemID == static_cast<uint>(stackArgs[0])) {
+			item.highlighted = false;
+			item.itemID = 0;
+			item.graphic.reset();
+			drawInventory(slot);
+		}
+	}
+
+	_scriptStack.push_back(0);
+}
+
+void Runtime::scriptOpItemHighlightSet(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	bool isHighlighted = (stackArgs[1] != 0);
+
+	for (uint slot = 0; slot < kNumInventorySlots; slot++) {
+		InventoryItem &item = _inventory[slot];
+
+		if (item.itemID == static_cast<uint>(stackArgs[0])) {
+			item.highlighted = isHighlighted;
+			drawInventory(slot);
+		}
+	}
+}
+
+void Runtime::scriptOpItemAdd(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	inventoryAddItem(stackArgs[0]);
+}
 
 void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
 	TAKE_STACK(1);
@@ -2916,9 +3130,9 @@ void Runtime::scriptOpSay3Get(ScriptArg_t arg) {
 	if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
 		triggerSound(false, oneShot.soundID, 100, 0, false);
 		_triggeredOneShots.push_back(oneShot);
-		_scriptStack.push_back(0);
-	} else
 		_scriptStack.push_back(oneShot.soundID);
+	} else
+		_scriptStack.push_back(0);
 }
 
 void Runtime::scriptOpSetTimer(ScriptArg_t arg) {
@@ -3090,6 +3304,36 @@ void Runtime::scriptOpDisc3(ScriptArg_t arg) {
 	TAKE_STACK(3);
 	(void)stackArgs;
 	_scriptStack.push_back(1);
+}
+
+void Runtime::scriptOpGoto(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	uint newInteraction = static_cast<uint>(stackArgs[0]);
+
+	Common::SharedPtr<Script> newScript = nullptr;
+	
+	if (_scriptSet) {
+		RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
+		if (roomScriptIt != _scriptSet->roomScripts.end()) {
+			const ScreenScriptSetMap_t &screenScriptsMap = roomScriptIt->_value->screenScripts;
+			ScreenScriptSetMap_t::const_iterator screenScriptIt = screenScriptsMap.find(_screenNumber);
+			if (screenScriptIt != screenScriptsMap.end()) {
+				const ScreenScriptSet &screenScriptSet = *screenScriptIt->_value;
+
+				ScriptMap_t::const_iterator interactionScriptIt = screenScriptSet.interactionScripts.find(newInteraction);
+				if (interactionScriptIt != screenScriptSet.interactionScripts.end())
+					newScript = interactionScriptIt->_value;
+			}
+		}
+	}
+
+	if (newScript) {
+		_scriptNextInstruction = 0;
+		_activeScript = newScript;
+	} else {
+		error("Goto target %u couldn't be resolved", newInteraction);
+	}
 }
 
 void Runtime::scriptOpEscOn(ScriptArg_t arg) {
