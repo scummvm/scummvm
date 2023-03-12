@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-11 18:16+0000\n"
+"POT-Creation-Date: 2023-03-12 02:57+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -4775,7 +4775,7 @@ msgid ""
 msgstr ""
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/runtime.cpp:2081
+#: engines/vcruise/runtime.cpp:2291
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 
@@ -6115,16 +6115,16 @@ msgstr ""
 msgid "Force any playing movies to end"
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:2067
+#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:2277
 msgid "Failed to read version information from save file"
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:2074
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:2284
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:2088
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:2298
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
