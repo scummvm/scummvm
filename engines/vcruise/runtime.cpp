@@ -20,7 +20,9 @@
  */
 
 #include "common/formats/winexe.h"
+#include "common/endian.h"
 #include "common/file.h"
+#include "common/math.h"
 #include "common/ptr.h"
 #include "common/random.h"
 #include "common/system.h"
@@ -282,7 +284,9 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 	}
 }
 
-CachedSound::CachedSound() : rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false), volume(0), balance(0) {
+CachedSound::CachedSound()
+	: rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
+	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), x(0), y(0), z(0) {
 }
 
 CachedSound::~CachedSound() {
@@ -312,6 +316,15 @@ StaticAnimParams::StaticAnimParams() : initialDelay(0), repeatDelay(0), lockInte
 StaticAnimation::StaticAnimation() : currentAlternation(0), nextStartTime(0) {
 }
 
+FrameData::FrameData() : areaID{0, 0, 0, 0}, areaFrameIndex(0), frameIndex(0), frameType(0), roomNumber(0) {
+}
+
+FrameData2::FrameData2() : x(0), y(0), angle(0), frameNumberInArea(0), unknown(0) {
+}
+
+SoundParams3D::SoundParams3D() : minRange(0), maxRange(0), unknownRange(0) {
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
@@ -319,8 +332,9 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0),
-	  _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
-	  _panoramaState(kPanoramaStateInactive) {
+	  _loadedArea(0), _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
+	  _panoramaState(kPanoramaStateInactive),
+	  _listenerX(0), _listenerY(0), _listenerAngle(0) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
@@ -871,6 +885,16 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 		_animDisplayingFrame = _animPendingDecodeFrame;
 		_animPendingDecodeFrame++;
 		_animFramesDecoded++;
+
+		if (_animDisplayingFrame < _frameData2.size()) {
+			const FrameData2 &fd2 = _frameData2[_animDisplayingFrame];
+
+			_listenerX = fd2.x;
+			_listenerY = fd2.y;
+			_listenerAngle = fd2.angle;
+		}
+
+		update3DSounds();
 
 		if (_animPlaylist) {
 			uint decodeFrameInPlaylist = _animDisplayingFrame - _animFirstFrame;
@@ -1546,6 +1570,75 @@ void Runtime::loadMap(Common::SeekableReadStream *stream) {
 	}
 }
 
+void Runtime::loadFrameData(Common::SeekableReadStream *stream) {
+	int64 size = stream->size();
+	if (size < 2048 || size > 0xffffffu)
+		error("Unexpected DTA size");
+
+	uint numFrameDatas = (static_cast<uint>(size) - 2048u) / 16;
+
+	if (!stream->seek(2048))
+		error("Error skipping DTA header");
+
+	_frameData.resize(numFrameDatas);
+
+	for (uint i = 0; i < numFrameDatas; i++) {
+		byte frameData[16];
+
+		if (stream->read(frameData, 16) != 16)
+			error("Error reading DTA frame data");
+
+		FrameData &fd = _frameData[i];
+		fd.frameType = frameData[0];
+		fd.frameIndex = frameData[1] | (frameData[2] << 8) | (frameData[3] << 16);
+		fd.roomNumber = static_cast<int8>(frameData[4]);
+		memcpy(fd.areaID, frameData + 8, 4);
+
+		char decAreaFrameIndex[4];
+		memcpy(decAreaFrameIndex, frameData + 12, 4);
+
+		uint areaFrameIndex = 0;
+		for (int digit = 0; digit < 4; digit++) {
+			char c = decAreaFrameIndex[digit];
+			if (c < '0' || c > '9')
+				error("Invalid area frame index in DTA data");
+
+			areaFrameIndex = areaFrameIndex * 10u + static_cast<uint>(c - '0');
+		}
+
+		fd.areaFrameIndex = areaFrameIndex;
+
+		if (i != fd.frameIndex)
+			error("DTA frame index was out-of-line, don't know how to handle this");
+	}
+}
+
+void Runtime::loadFrameData2(Common::SeekableReadStream *stream) {
+	int64 size = stream->size();
+	if (size > 0xffffffu)
+		error("Unexpected 2DT size");
+
+	uint numFrameDatas = static_cast<uint>(size) / 16;
+
+	if (numFrameDatas == 0)
+		return;
+
+	_frameData2.resize(numFrameDatas);
+
+	uint32 numBytesToRead = numFrameDatas * 16;
+	if (stream->read(&_frameData2[0], numBytesToRead) != numBytesToRead)
+		error("Failed to read 2DT data");
+
+	for (uint i = 0; i < numFrameDatas; i++) {
+		FrameData2 &fd2 = _frameData2[i];
+		fd2.x = READ_LE_INT32(&fd2.x);
+		fd2.y = READ_LE_INT32(&fd2.y);
+		fd2.angle = READ_LE_INT32(&fd2.angle);
+		fd2.frameNumberInArea = READ_LE_UINT16(&fd2.frameNumberInArea);
+		fd2.unknown = READ_LE_UINT16(&fd2.unknown);
+	}
+}
+
 void Runtime::changeMusicTrack(int track) {
 	_musicPlayer.reset();
 
@@ -1579,6 +1672,8 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 
 	if (_loadedAnimation != static_cast<uint>(animFile)) {
 		_loadedAnimation = animFile;
+		_frameData.clear();
+		_frameData2.clear();
 		_animDecoder.reset();
 		_animDecoderState = kAnimDecoderStateStopped;
 
@@ -1603,6 +1698,21 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 
 		if (sfxFile.open(sfxFileName))
 			_sfxData.load(sfxFile, _mixer);
+		sfxFile.close();
+
+		Common::String dtaFileName = Common::String::format("Anims/Anim%04i.dta", animFile);
+		Common::File dtaFile;
+
+		if (dtaFile.open(dtaFileName))
+			loadFrameData(&dtaFile);
+		dtaFile.close();
+
+		Common::String twoDtFileName = Common::String::format("Dta/Anim%04i.2dt", animFile);
+		Common::File twoDtFile;
+
+		if (twoDtFile.open(twoDtFileName))
+			loadFrameData2(&twoDtFile);
+		twoDtFile.close();
 	}
 
 	if (_animDecoderState == kAnimDecoderStatePlaying) {
@@ -1634,7 +1744,20 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 	debug(1, "Animation last frame set to %u", animDef.lastFrame);
 }
 
-void Runtime::triggerSound(bool looping, uint soundID, uint volume, int32 balance) {
+void Runtime::setSound3DParameters(uint soundID, int32 x, int32 y, const SoundParams3D &soundParams3D) {
+	Common::HashMap<uint, Common::SharedPtr<CachedSound> >::iterator it = _cachedSounds.find(soundID);
+	if (it == _cachedSounds.end()) {
+		warning("Couldn't set sound parameters for sound ID %u, the sound wasn't loaded", soundID);
+		return;
+	}
+
+	CachedSound &snd = *it->_value;
+	snd.x = x;
+	snd.y = y;
+	snd.params3D = soundParams3D;
+}
+
+void Runtime::triggerSound(bool looping, uint soundID, uint volume, int32 balance, bool is3D) {
 	Common::HashMap<uint, Common::SharedPtr<CachedSound> >::iterator it = _cachedSounds.find(soundID);
 	if (it == _cachedSounds.end()) {
 		warning("Couldn't trigger sound ID %u, the sound wasn't loaded", soundID);
@@ -1645,6 +1768,9 @@ void Runtime::triggerSound(bool looping, uint soundID, uint volume, int32 balanc
 
 	snd.volume = volume;
 	snd.balance = balance;
+	snd.is3D = is3D;
+
+	computeEffectiveVolumeAndBalance(snd);
 
 	// Reset if looping state changes
 	if (snd.loopingStream && !looping) {
@@ -1665,15 +1791,15 @@ void Runtime::triggerSound(bool looping, uint soundID, uint volume, int32 balanc
 		if (!looping) {
 			snd.player->stop();
 			snd.stream->rewind();
-			snd.player->play(volume, balance);
+			snd.player->play(snd.effectiveVolume, snd.effectiveBalance);
 		} else {
 			// Adjust volume and balance at least
-			snd.player->setVolume(volume);
-			snd.player->setBalance(balance);
+			snd.player->setVolume(snd.effectiveVolume);
+			snd.player->setBalance(snd.effectiveBalance);
 		}
 	} else {
 		snd.player.reset(new AudioPlayer(_mixer, looping ? snd.loopingStream.staticCast<Audio::AudioStream>() : snd.stream.staticCast<Audio::AudioStream>()));
-		snd.player->play(volume, balance);
+		snd.player->play(snd.effectiveVolume, snd.effectiveBalance);
 	}
 }
 
@@ -1723,6 +1849,90 @@ void Runtime::updateSounds(uint32 timestamp) {
 
 	for (uint id : condemnedSounds)
 		_cachedSounds.erase(id);
+}
+
+void Runtime::update3DSounds() {
+	for (const Common::HashMap<uint, Common::SharedPtr<CachedSound> >::Node &node : _cachedSounds) {
+		CachedSound &snd = *node._value;
+
+		if (!snd.is3D)
+			continue;
+
+		bool changed = computeEffectiveVolumeAndBalance(snd);
+
+		if (changed) {
+			VCruise::AudioPlayer *player = snd.player.get();
+			if (player) {
+				player->setVolume(snd.effectiveVolume);
+				player->setBalance(snd.effectiveBalance);
+			}
+		}
+	}
+}
+
+bool Runtime::computeEffectiveVolumeAndBalance(CachedSound &snd) {
+	uint effectiveVolume = snd.volume;
+	int32 effectiveBalance = snd.balance;
+
+	double radians = Common::deg2rad<double>(_listenerAngle);
+	int32 cosAngle = static_cast<int32>(cos(radians) * (1 << 15));
+	int32 sinAngle = static_cast<int32>(sin(radians) * (1 << 15));
+
+	if (snd.is3D) {
+		int32 dx = snd.x - _listenerX;
+		int32 dy = snd.y - _listenerY;
+
+		uint distance = static_cast<uint>(sqrt(dx * dx + dy * dy));
+
+		if (distance >= snd.params3D.maxRange)
+			effectiveVolume = 0;
+		else if (distance > snd.params3D.minRange) {
+			uint rangeDelta = snd.params3D.maxRange - snd.params3D.minRange;
+
+			effectiveVolume = (snd.params3D.maxRange - distance) * effectiveVolume / rangeDelta;
+		}
+
+		int32 dxNormalized = 0;
+		int32 dyNormalized = 0;
+		if (distance > 0) {
+			dxNormalized = dx * (1 << 10) / static_cast<int32>(distance);
+			dyNormalized = dy * (1 << 10) / static_cast<int32>(distance);
+		}
+
+		int32 balance16 = (sinAngle * dxNormalized - cosAngle * dyNormalized) >> 9;
+
+		// Reduce to 3/5 intensity.  This means that at full balance, the opposing volume will be 1/4 the facing volume.
+		balance16 = (balance16 * 9830 + (1 << 13)) >> 14;
+
+		if (balance16 > 65536)
+			balance16 = 65536;
+		else if (balance16 < -65536)
+			balance16 = -65536;
+
+		uint rightVolume = ((65536u + balance16) * effectiveVolume) >> 16;
+		uint leftVolume = ((65536u - balance16) * effectiveVolume) >> 16;
+
+		if (leftVolume == 0 && rightVolume == 0) {
+			// This should never happen
+			effectiveVolume = 0;
+			effectiveBalance = 0;
+		} else {
+			if (leftVolume <= rightVolume) {
+				effectiveVolume = rightVolume;
+				effectiveBalance = 127 - (leftVolume * 127 / rightVolume);
+			} else {
+				effectiveVolume = leftVolume;
+				effectiveBalance = (rightVolume * 127 / leftVolume) - 127;
+			}
+		}
+	}
+
+	bool changed = (effectiveVolume != snd.effectiveVolume || effectiveBalance != snd.effectiveBalance);
+
+	snd.effectiveVolume = effectiveVolume;
+	snd.effectiveBalance = effectiveBalance;
+
+	return changed;
 }
 
 AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
@@ -2453,44 +2663,44 @@ void Runtime::scriptOpLMB1(ScriptArg_t arg) {
 void Runtime::scriptOpSoundS1(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	triggerSound(false, stackArgs[0], 100, 0);
+	triggerSound(false, stackArgs[0], 100, 0, false);
 }
 
 void Runtime::scriptOpSoundS2(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
-	triggerSound(false, stackArgs[0], stackArgs[1], 0);
+	triggerSound(false, stackArgs[0], stackArgs[1], 0, false);
 }
 
 void Runtime::scriptOpSoundS3(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	triggerSound(false, stackArgs[0], stackArgs[1], stackArgs[2]);
+	triggerSound(false, stackArgs[0], stackArgs[1], stackArgs[2], false);
 }
 
 void Runtime::scriptOpSoundL1(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	triggerSound(true, stackArgs[0], 100, 0);
+	triggerSound(true, stackArgs[0], 100, 0, false);
 }
 
 void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
-	triggerSound(true, stackArgs[0], stackArgs[1], 0);
+	triggerSound(true, stackArgs[0], stackArgs[1], 0, false);
 }
 
 void Runtime::scriptOpSoundL3(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	triggerSound(true, stackArgs[0], stackArgs[1], stackArgs[2]);
+	triggerSound(true, stackArgs[0], stackArgs[1], stackArgs[2], false);
 }
 
 void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
 	TAKE_STACK(4);
 
-	warning("3D sound loop not implemented yet");
-	(void)stackArgs;
+	setSound3DParameters(stackArgs[0], stackArgs[2], stackArgs[3], _pendingSoundParams3D);
+	triggerSound(true, stackArgs[0], stackArgs[1], 0, true);
 }
 
 void Runtime::scriptOpAddXSound(ScriptArg_t arg) {
@@ -2518,8 +2728,9 @@ void Runtime::scriptOpStopSndLO(ScriptArg_t arg) {
 void Runtime::scriptOpRange(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
-	warning("Range not implemented yet");
-	(void)stackArgs;
+	_pendingSoundParams3D.minRange = stackArgs[0];
+	_pendingSoundParams3D.maxRange = stackArgs[1];
+	_pendingSoundParams3D.unknownRange = stackArgs[2];
 }
 
 void Runtime::scriptOpMusic(ScriptArg_t arg) {
@@ -2686,7 +2897,7 @@ void Runtime::scriptOpSay3(ScriptArg_t arg) {
 		error("Invalid interrupt arg for say3, only 1 is supported.");
 
 	if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
-		triggerSound(false, oneShot.soundID, 100, 0);
+		triggerSound(false, oneShot.soundID, 100, 0, false);
 		_triggeredOneShots.push_back(oneShot);
 	}
 }
@@ -2703,7 +2914,7 @@ void Runtime::scriptOpSay3Get(ScriptArg_t arg) {
 		error("Invalid interrupt arg for say3, only 1 is supported.");
 
 	if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
-		triggerSound(false, oneShot.soundID, 100, 0);
+		triggerSound(false, oneShot.soundID, 100, 0, false);
 		_triggeredOneShots.push_back(oneShot);
 		_scriptStack.push_back(0);
 	} else
@@ -2946,8 +3157,6 @@ void Runtime::scriptOpVarName(ScriptArg_t arg) {
 
 void Runtime::scriptOpSoundName(ScriptArg_t arg) {
 	Common::String sndName = _scriptSet->strings[arg];
-
-	warning("Sound IDs are not implemented yet");
 
 	uint soundID = 0;
 	for (uint i = 0; i < 4; i++)
