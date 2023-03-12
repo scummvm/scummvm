@@ -285,7 +285,12 @@ void OpenGLRenderer::useStipple(bool enabled) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(0.0f, -1.0f);
 		glEnable(GL_POLYGON_STIPPLE);
-		glPolygonStipple(_renderMode == Common::kRenderZX ? _variableStippleArray : _defaultStippleArray);
+		if (_renderMode == Common::kRenderZX  ||
+			_renderMode == Common::kRenderCPC ||
+			_renderMode == Common::kRenderCGA)
+			glPolygonStipple(_variableStippleArray);
+		else
+			glPolygonStipple(_defaultStippleArray);
 	} else {
 		glPolygonOffset(0, 0);
 		glDisable(GL_POLYGON_OFFSET_FILL);

@@ -124,7 +124,7 @@ void FreescapeEngine::loadColorPalette() {
 	} else
 		error("Invalid render mode, no palette selected");
 
-	_gfx->_colorMap = &_colorMap;
+	_gfx->setColorMap(&_colorMap);
 }
 
 void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset) {

@@ -48,9 +48,116 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 	_colorRemaps = nullptr;
 	_renderMode = renderMode;
 	_isAccelerated = false;
+
+	for (int i = 0; i < 16; i++) {
+		_stipples[0][i] = 0;
+		_stipples[1][i] = 0;
+		_stipples[2][i] = 0;
+		_stipples[3][i] = 0;
+	}
 }
 
 Renderer::~Renderer() {}
+
+extern byte getCPCPixel(byte cpc_byte, int index);
+
+byte getCPCStipple(byte cpc_byte, int back, int fore) {
+	int c0 = getCPCPixel(cpc_byte, 0);
+	assert(c0 == back || c0 == fore);
+	int c1 = getCPCPixel(cpc_byte, 1);
+	assert(c1 == back || c1 == fore);
+	int c2 = getCPCPixel(cpc_byte, 2);
+	assert(c2 == back || c2 == fore);
+	int c3 = getCPCPixel(cpc_byte, 3);
+	assert(c3 == back || c3 == fore);
+
+	byte st = 0;
+	if (c0 == fore)
+		st = st | 0x3;
+
+	if (c1 == fore)
+		st = st | (2 << 0x3);
+
+	if (c2 == fore)
+		st = st | (4 << 0x3);
+
+	if (c3 == fore)
+		st = st |  (6 << 0x3);
+
+	return st;
+}
+
+byte getCGAPixel(byte x, int index) {
+	if (index == 0)
+		return (x >> 0) & 0x3;
+	else if (index == 1)
+		return (x >> 2) & 0x3;
+	else if (index == 2)
+		return (x >> 4) & 0x3;
+	else if (index == 3)
+		return (x >> 6) & 0x3;
+	else
+		error("Invalid index %d requested", index);
+}
+
+byte getCGAStipple(byte x, int back, int fore) {
+	int c0 = getCGAPixel(x, 0);
+	assert(c0 == back || c0 == fore || back == fore);
+	int c1 = getCGAPixel(x, 1);
+	assert(c1 == back || c1 == fore || back == fore);
+	int c2 = getCGAPixel(x, 2);
+	assert(c2 == back || c2 == fore || back == fore);
+	int c3 = getCGAPixel(x, 3);
+	assert(c3 == back || c3 == fore || back == fore);
+
+	byte st = 0;
+	if (c0 == fore)
+		st = st | 0x3;
+
+	if (c1 == fore)
+		st = st | (2 << 0x3);
+
+	if (c2 == fore)
+		st = st | (4 << 0x3);
+
+	if (c3 == fore)
+		st = st |  (6 << 0x3);
+
+	return st;
+}
+
+void Renderer::setColorMap(ColorMap *colorMap_) {
+	_colorMap = colorMap_;
+	if (_renderMode == Common::kRenderZX) {
+		for (int i = 0; i < 15; i++) {
+			byte *entry = (*_colorMap)[i];
+			_stipples[0][i] = entry[0];
+			_stipples[1][i] = entry[1];
+			_stipples[2][i] = entry[2];
+			_stipples[3][i] = entry[3];
+		}
+	} else if (_renderMode == Common::kRenderCPC) {
+		for (int i = 0; i < 15; i++) {
+			byte *entry = (*_colorMap)[i];
+			int i1 = getCPCPixel(entry[0], 0);
+			int i2 = getCPCPixel(entry[0], 1);
+			_stipples[0][i] = getCPCStipple(entry[0], i1, i2);
+			_stipples[1][i] = getCPCStipple(entry[1], i1, i2);
+			_stipples[2][i] = getCPCStipple(entry[2], i1, i2);
+			_stipples[3][i] = getCPCStipple(entry[3], i1, i2);
+		}
+	} else if (_renderMode == Common::kRenderCGA) {
+		for (int i = 0; i < 15; i++) {
+			byte *entry = (*_colorMap)[i];
+			int i1 = getCGAPixel(entry[0], 0);
+			int i2 = getCGAPixel(entry[0], 1);
+			_stipples[0][i] = getCGAStipple(entry[0], i1, i2);
+			_stipples[1][i] = getCGAStipple(entry[1], i1, i2);
+			_stipples[2][i] = getCGAStipple(entry[2], i1, i2);
+			_stipples[3][i] = getCGAStipple(entry[3], i1, i2);
+		}
+	}
+}
 
 void Renderer::readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 	r = _palette[3 * index + 0];
@@ -71,7 +178,7 @@ void Renderer::setColorRemaps(ColorReMap *colorRemaps) {
 	_colorRemaps = colorRemaps;
 }
 
-bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
+bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *stipple) {
 	if (index == _keyColor)
 		return false;
 
@@ -84,12 +191,18 @@ bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		return true;
 	}
 
+	if (stipple) {
+		stipple[0] = _stipples[0][index - 1];
+		stipple[1] = _stipples[1][index - 1];
+		stipple[2] = _stipples[2][index - 1];
+		stipple[3] = _stipples[3][index - 1];
+	}
+
 	byte *entry = (*_colorMap)[index - 1];
-	byte be = *(entry);
-	readFromPalette((be >> 4) % 4, r1, g1, b1);
-	entry++;
-	be = *(entry);
-	readFromPalette((be >> 4) % 4, r2, g2, b2);
+	uint8 c1 = getCGAPixel(entry[0], 0);
+	uint8 c2 = getCGAPixel(entry[0], 1);
+	readFromPalette(c1, r1, g1, b1);
+	readFromPalette(c2, r2, g2, b2);
 	return true;
 }
 
@@ -177,10 +290,10 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 	}
 
 	if (stipple) {
-		stipple[0] = entry[0];
-		stipple[1] = entry[1];
-		stipple[2] = entry[2];
-		stipple[3] = entry[3];
+		stipple[0] = _stipples[0][index - 1];
+		stipple[1] = _stipples[1][index - 1];
+		stipple[2] = _stipples[2][index - 1];
+		stipple[3] = _stipples[3][index - 1];
 	}
 
 	readFromPalette(_paperColor, r1, g1, b1);
@@ -203,9 +316,7 @@ void Renderer::selectColorFromFourColorPalette(uint8 index, uint8 &r1, uint8 &g1
 		error("Invalid color");
 }
 
-extern byte getCPCPixel(byte cpc_byte, int index);
-
-bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
+bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2, byte *stipple) {
 	if (index == _keyColor)
 		return false;
 
@@ -218,14 +329,16 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		return true;
 	}
 
-	uint8 i1, i2;
-	byte *entry = (*_colorMap)[index - 1];
-	uint8 cm1 = *(entry);
-	entry++;
-	//uint8 cm2 = *(entry);
+	if (stipple) {
+		stipple[0] = _stipples[0][index - 1];
+		stipple[1] = _stipples[1][index - 1];
+		stipple[2] = _stipples[2][index - 1];
+		stipple[3] = _stipples[3][index - 1];
+	}
 
-	i1 = getCPCPixel(cm1, 0);
-	i2 = getCPCPixel(cm1, 1);
+	byte *entry = (*_colorMap)[index - 1];
+	uint8 i1 = getCPCPixel(entry[0], 0);
+	uint8 i2 = getCPCPixel(entry[0], 1);
 	selectColorFromFourColorPalette(i1, r1, g1, b1);
 	selectColorFromFourColorPalette(i2, r2, g2, b2);
 	return true;
@@ -286,9 +399,9 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2,
 	else if (_renderMode == Common::kRenderC64)
 		return getRGBAtC64(index, r1, g1, b1, r2, g2, b2);
 	else if (_renderMode == Common::kRenderCGA)
-		return getRGBAtCGA(index, r1, g1, b1, r2, g2, b2);
+		return getRGBAtCGA(index, r1, g1, b1, r2, g2, b2, stipple);
 	else if (_renderMode == Common::kRenderCPC)
-		return getRGBAtCPC(index, r1, g1, b1, r2, g2, b2);
+		return getRGBAtCPC(index, r1, g1, b1, r2, g2, b2, stipple);
 	else if (_renderMode == Common::kRenderZX)
 		return getRGBAtZX(index, r1, g1, b1, r2, g2, b2, stipple);
 
