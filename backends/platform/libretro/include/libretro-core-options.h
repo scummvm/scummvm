@@ -72,6 +72,11 @@ extern "C" {
 
 
 struct retro_core_option_v2_category option_cats_us[] = {
+	{
+		"cursor",
+		"Cursor Movement",
+		"Configure cursor movement settings"
+	},
 	{ NULL, NULL, NULL },
 };
 
@@ -82,7 +87,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"Sets the mouse cursor speed multiplier when moving the cursor with the RetroPad left analog stick or D-Pad. The default value of '1.0' is optimised for games that have a native resolution of '320x200' or '320x240'. When running 'high definition' games with a resolution of '640x400' or '640x480', a Gamepad Cursor Speed of '2.0' is recommended.",
 		NULL,
-		NULL,
+		"cursor",
 		{
 			{"0.25", NULL},
 			{"0.5", NULL},
@@ -102,7 +107,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"The amount of time (In seconds) it takes for the cursor to reach full speed",
 		NULL,
-		NULL,
+		"cursor",
 		{
 			{"off", NULL},
 			{"0.1", NULL},
@@ -125,7 +130,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"Determines how the speed of the cursor varies when tilting the RetroPad left analog stick. 'Linear': Speed is directly proportional to analog stick displacement. This is standard behaviour with which most users will be familiar. 'Quadratic': Speed increases quadratically with analog stick displacement. This allows for greater precision when making small movements without sacrificing maximum speed at full analog range. This mode may require practice for effective use.",
 		NULL,
-		NULL,
+		"cursor",
 		{
 			{"linear", "Linear"},
 			{"quadratic", "Quadratic"},
@@ -139,7 +144,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"Sets the deadzone of the RetroPad analog sticks. Used to eliminate cursor drift/unwanted input.",
 		NULL,
-		NULL,
+		"cursor",
 		{
 			{"0", NULL},
 			{"5", NULL},
@@ -158,7 +163,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"Sets the mouse cursor speed multiplier when moving the cursor with the RetroMouse.",
 		NULL,
-		NULL,
+		"cursor",
 		{
 			{"0.05", NULL},
 			{"0.1", NULL},

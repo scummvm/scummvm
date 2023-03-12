@@ -70,6 +70,11 @@ extern "C" {
 /* RETRO_LANGUAGE_ITALIAN */
 
 struct retro_core_option_v2_category option_cats_it[] = {
+	{
+		"cursor",
+		"Movimento del cursore",
+		"Impostazioni relative al movimento del cursore"
+	},
 	{ NULL, NULL, NULL },
 };
 
