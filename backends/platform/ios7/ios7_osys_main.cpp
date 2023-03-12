@@ -162,6 +162,7 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 #endif
 	case kFeatureOpenUrl:
 	case kFeatureNoQuit:
+	case kFeatureKbdMouseSpeed:
 		return true;
 
 	default:
@@ -299,6 +300,29 @@ uint32 OSystem_iOS7::getMillis(bool skipRecord) {
 void OSystem_iOS7::delayMillis(uint msecs) {
 	//printf("delayMillis(%d)\n", msecs);
 	usleep(msecs * 1000);
+}
+
+float OSystem_iOS7::getMouseSpeed() {
+	switch (ConfMan.getInt("kbdmouse_speed")) {
+	case 0:
+		return 0.25;
+	case 1:
+		return 0.5;
+	case 2:
+		return 0.75;
+	case 3:
+		return 1.0;
+	case 4:
+		return 1.25;
+	case 5:
+		return 1.5;
+	case 6:
+		return 1.75;
+	case 7:
+		return 2.0;
+	default:
+		return 1.0;
+	}
 }
 
 void OSystem_iOS7::setTimerCallback(TimerProc callback, int interval) {

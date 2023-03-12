@@ -295,8 +295,8 @@ bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, in
 		_lastPadX = x;
 		_lastPadY = y;
 
-		mouseNewPosX = (int)(_videoContext->mouseX - deltaX / 0.5f);
-		mouseNewPosY = (int)(_videoContext->mouseY - deltaY / 0.5f);
+		mouseNewPosX = (int)(_videoContext->mouseX - (int)((float)deltaX * getMouseSpeed()));
+		mouseNewPosY = (int)(_videoContext->mouseY - (int)((float)deltaY * getMouseSpeed()));
 
 		int widthCap = _videoContext->overlayInGUI ? _videoContext->overlayWidth : _videoContext->screenWidth;
 		int heightCap = _videoContext->overlayInGUI ? _videoContext->overlayHeight : _videoContext->screenHeight;
@@ -353,8 +353,8 @@ void OSystem_iOS7::handleEvent_mouseRightButtonUp(Common::Event &event, int x, i
 }
 
 void OSystem_iOS7::handleEvent_mouseDelta(Common::Event &event, int deltaX, int deltaY) {
-	int mouseNewPosX = (int)(_videoContext->mouseX - deltaX);
-	int mouseNewPosY = (int)(_videoContext->mouseY - deltaY);
+	int mouseNewPosX = (int)(_videoContext->mouseX - (int)((float)deltaX * getMouseSpeed()));
+	int mouseNewPosY = (int)(_videoContext->mouseY - (int)((float)deltaY * getMouseSpeed()));
 
 	int widthCap = _videoContext->overlayInGUI ? _videoContext->overlayWidth : _videoContext->screenWidth;
 	int heightCap = _videoContext->overlayInGUI ? _videoContext->overlayHeight : _videoContext->screenHeight;
