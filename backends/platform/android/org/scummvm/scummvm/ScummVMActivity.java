@@ -800,9 +800,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		@Override
 		protected String[] getAllStorageLocations() {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+			    && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
 			    && (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 			        || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
 			) {
+				// In Tiramisu (API 33) and above, READ and WRITE external storage permissions have no effect,
+				// and they are automatically denied -- onRequestPermissionsResult() will be called without user's input
 				requestPermissions(MY_PERMISSIONS_STR_LIST, MY_PERMISSION_ALL);
 			} else {
 				return ExternalStorage.getAllStorageLocations(getApplicationContext()).toArray(new String[0]);
@@ -1072,15 +1075,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		if (requestCode == MY_PERMISSION_ALL) {
 			int numOfReqPermsGranted = 0;
-			// If request is cancelled, the result arrays are empty.
-			if (grantResults.length > 0) {
-				for (int iterGrantResult: grantResults) {
-					if (iterGrantResult == PackageManager.PERMISSION_GRANTED) {
-						Log.i(ScummVM.LOG_TAG, permissions[0] + " permission was granted at Runtime");
-						++numOfReqPermsGranted;
-					} else {
-						Log.i(ScummVM.LOG_TAG, permissions[0] + " permission was denied at Runtime");
-					}
+			// If request is canceled, the result arrays are empty.
+			for (int i = 0; i < grantResults.length; ++i) {
+				if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+					Log.i(ScummVM.LOG_TAG, permissions[i] + " permission was granted at Runtime");
+					++numOfReqPermsGranted;
+				} else {
+					Log.i(ScummVM.LOG_TAG, permissions[i] + " permission was denied at Runtime");
 				}
 			}
 
