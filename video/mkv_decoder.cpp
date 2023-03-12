@@ -447,8 +447,18 @@ Audio::AudioStream *MKVDecoder::VorbisAudioTrack::getAudioStream() const {
 	return _audStream;
 }
 
+#ifndef USE_TREMOR
+static double rint(double v) {
+	return floor(v + 0.5);
+}
+#endif
+
 bool MKVDecoder::VorbisAudioTrack::decodeSamples(byte *frame, long size) {
+#ifdef USE_TREMOR
+	ogg_int32_t **pcm;
+#else
 	float **pcm;
+#endif
 
 	int32 numSamples = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm);
 
@@ -461,10 +471,18 @@ bool MKVDecoder::VorbisAudioTrack::decodeSamples(byte *frame, long size) {
 			error("MKVDecoder::readNextPacket(): buffer allocation failed");
 
 		for (int32 i = 0; i < channels; i++) { /* It's faster in this order */
+#ifdef USE_TREMOR
+			ogg_int32_t *src = pcm[i];
+#else
 			float *src = pcm[i];
+#endif
 			short *dest = ((short *)buffer) + i;
 			for (int32 j = 0; j < numSamples; j++) {
+#ifdef USE_TREMOR
+				int val = (int)(src[j] >> 9);
+#else
 				int val = rint(src[j] * 32768.f);
+#endif
 				val = CLIP(val, -32768, 32767);
 				*dest = (short)val;
 				dest += channels;
