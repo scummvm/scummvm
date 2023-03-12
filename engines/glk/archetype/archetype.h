@@ -34,11 +34,12 @@
 namespace Glk {
 namespace Archetype {
 
+// Values must be different than Glk::GlkDebugChannels
 enum DebugFlag {
-	DEBUG_BYTES = 0x01,
-	DEBUG_MSGS = 0x02,
-	DEBUG_EXPR = 0x04,
-	DEBUG_STMT = 0x08
+	DEBUG_BYTES = 1 << 10,
+	DEBUG_MSGS =  1 << 11,
+	DEBUG_EXPR =  1 << 12,
+	DEBUG_STMT =  1 << 13
 };
 
 /**
