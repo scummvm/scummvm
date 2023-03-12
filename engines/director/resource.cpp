@@ -678,12 +678,19 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 
 	bigEndian = oBigEndian;
 
-	// The first block would start right after the dict.
+	// Jump to the first block which should start right after the dict while making sure size is aligned.
+	size += (size % 2);
 	stream->seek(dictOff + size + 8, SEEK_SET);
 
 	for (uint32 i = 0; i < cnt; i++) {
 		tag = stream->readUint32BE();
 		size = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
+
+		// endianness issue, swap size and continue
+		if (size > stream->pos()) {
+			bigEndian = !bigEndian;
+			size = SWAP_BYTES_32(size);
+		}
 
 		debugC(1, kDebugLoading, "Entry: %s offset %llX tag %s size %d", arr[i].c_str(), stream->pos() - 8, tag2str(tag), size);
 
@@ -693,6 +700,9 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		entry.offset = static_cast<uint32>(stream->pos() - 8);
 		entry.size = size + 8;
 		_files[arr[i]] = entry;
+
+		// Align size for the next seek.
+		size += (size % 2);
 
 		// if this fails it suggests something is either wrong with the dict or the file itself.
 		if (!stream->seek(size, SEEK_CUR)) {
