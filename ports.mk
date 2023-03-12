@@ -520,6 +520,10 @@ ifdef USE_A52
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/liba52.a
 endif
 
+ifdef USE_VPX
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libvpx.a
+endif
+
 ifdef USE_JPEG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libjpeg.a
 endif
