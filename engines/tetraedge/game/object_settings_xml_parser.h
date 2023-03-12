@@ -30,9 +30,8 @@ namespace Tetraedge {
 
 class ObjectSettingsXmlParser : public Common::XMLParser {
 public:
-	void setObjectSettings(Common::HashMap<Common::String, Object3D::ObjectSettings> *settings) {
-		_objectSettings = settings;
-	}
+	ObjectSettingsXmlParser(Common::HashMap<Common::String, Object3D::ObjectSettings> *settings) :
+		Common::XMLParser(), _textTagType(TagNone), _objectSettings(settings) {}
 
 	void finalize();
 
@@ -64,6 +63,7 @@ private:
 	bool textCallback(const Common::String &val) override;
 
 	enum TextTagType {
+		TagNone,
 		TagModelFileName,
 		TagDefaultScale,
 		TagOriginOffset

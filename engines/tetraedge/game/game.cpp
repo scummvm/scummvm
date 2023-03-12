@@ -593,17 +593,17 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	_inventoryMenu.load();
 	_inGameGui.load("InGame.lua");
 
-	TeButtonLayout *skipbtn = _inGameGui.buttonLayout("skipVideoButton");
+	TeButtonLayout *skipbtn = _inGameGui.buttonLayoutChecked("skipVideoButton");
 	skipbtn->setVisible(false);
 	skipbtn->onMouseClickValidated().remove(this, &Game::onSkipVideoButtonValidated);
 	skipbtn->onMouseClickValidated().add(this, &Game::onSkipVideoButtonValidated);
 
-	TeButtonLayout *vidbgbtn = _inGameGui.buttonLayout("videoBackgroundButton");
+	TeButtonLayout *vidbgbtn = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
 	vidbgbtn->setVisible(false);
 	vidbgbtn->onMouseClickValidated().remove(this, &Game::onLockVideoButtonValidated);
 	vidbgbtn->onMouseClickValidated().add(this, &Game::onLockVideoButtonValidated);
 
-	TeSpriteLayout *video = _inGameGui.spriteLayout("video");
+	TeSpriteLayout *video = _inGameGui.spriteLayoutChecked("video");
 	video->setVisible(false);
 	video->_tiledSurfacePtr->_frameAnim.onStop().remove(this, &Game::onVideoFinished);
 	video->_tiledSurfacePtr->_frameAnim.onStop().add(this, &Game::onVideoFinished);
@@ -907,11 +907,13 @@ bool Game::onCharacterAnimationFinished(const Common::String &charName) {
 
 	if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
 		Character *character = scene().character(charName);
-		const Common::String curAnimName = character->curAnimName();
-		if (character && (curAnimName == character->walkAnim(Character::WalkPart_EndD)
-			|| curAnimName == character->walkAnim(Character::WalkPart_EndG))) {
-			character->updatePosition(1.0);
-			character->endMove();
+		if (character) {
+			const Common::String curAnimName = character->curAnimName();
+			if (curAnimName == character->walkAnim(Character::WalkPart_EndD)
+				|| curAnimName == character->walkAnim(Character::WalkPart_EndG)) {
+				character->updatePosition(1.0);
+				character->endMove();
+			}
 		}
 	}
 
@@ -1606,11 +1608,21 @@ void Game::stopSound(const Common::String &name) {
 Common::Error Game::syncGame(Common::Serializer &s) {
 	Application *app = g_engine->getApplication();
 
-	// TODO: should be an error before testing.
-	//if (!s.syncVersion(1))
-	//	error("Save game version too new: %d", s.getVersion());
+	//
+	// Note: Early versions of this code didn't sync a version number so it was
+	// the inventory item count.  We use a large version number which would never
+	// be the inventory count.
+	//
+	if (!s.syncVersion(1000))
+		error("Save game version too new: %d", s.getVersion());
 
-	inventory().syncState(s);
+	if (s.getVersion() < 1000) {
+		warning("Loading as old un-versioned save data");
+		inventory().syncStateWithCount(s, s.getVersion());
+	} else {
+		inventory().syncState(s);
+	}
+
 	inventory().cellphone()->syncState(s);
 	// dialog2().syncState(s); // game saves this here, but doesn't actually save anything
 	_luaContext.syncState(s);

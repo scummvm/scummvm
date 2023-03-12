@@ -35,7 +35,11 @@
 #include "mm/mm1/views_enh/main_menu.h"
 #include "mm/mm1/views_enh/map_popup.h"
 #include "mm/mm1/views_enh/quick_ref.h"
+#include "mm/mm1/views_enh/search.h"
 #include "mm/mm1/views_enh/title.h"
+#include "mm/mm1/views_enh/trap.h"
+#include "mm/mm1/views_enh/unlock.h"
+#include "mm/mm1/views_enh/who_will_try.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/locations/inn.h"
 #include "mm/mm1/views_enh/locations/market.h"
@@ -58,6 +62,10 @@ private:
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Locations::Inn _inn;
 	ViewsEnh::Locations::Market _market;
+	ViewsEnh::Search _search;
+	ViewsEnh::Trap _trap;
+	ViewsEnh::Unlock _unlock;
+	ViewsEnh::WhoWillTry _whoWillTry;
 	ViewsEnh::Locations::Tavern _tavern;
 	ViewsEnh::Locations::Temple _temple;
 	ViewsEnh::Locations::Training _training;

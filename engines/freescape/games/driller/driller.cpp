@@ -206,61 +206,8 @@ void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offs
 	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
 }
 
-void DrillerEngine::loadAssets() {
-	if (isDemo())
-		loadAssetsDemo();
-	else
-		loadAssetsFullGame();
-
-	// Start playing music, if any, in any supported format
-	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
-}
-
-void DrillerEngine::loadAssetsDemo() {
-	Common::File file;
-	if (isAmiga()) {
-		loadAssetsAmigaDemo();
-	} else if (isAtariST()) {
-		loadAssetsAtariDemo();
-	} else if (isDOS()) {
-		loadAssetsDOSDemo();
-	} else
-		error("Unsupported demo for Driller");
-
-	_demoMode = !_disableDemoMode;
-	_angleRotationIndex = 0;
-}
-
 void DrillerEngine::loadAssetsFullGame() {
-	Common::File file;
-	if (isAmiga()) {
-		loadAssetsAmigaFullGame();
-	} else if (isAtariST()) {
-		loadAssetsAtariFullGame();
-	} else if (isSpectrum()) {
-		loadAssetsZXFullGame();
-	} else if (isCPC()) {
-		loadAssetsCPCFullGame();
-	} else if (isC64()) {
-		if (_targetName.hasPrefix("spacestationoblivion")) {
-			loadBundledImages();
-			file.open("spacestationoblivion.c64.data");
-			loadMessagesFixedSize(&file, 0x167a, 14, 20);
-			//loadFonts(&file, 0xae54);
-			load8bitBinary(&file, 0x8e02, 4);
-			loadGlobalObjects(&file, 0x1855);
-		} else if (_targetName.hasPrefix("driller")) {
-			file.open("driller.c64.data");
-			loadMessagesFixedSize(&file, 0x167a - 0x400, 14, 20);
-			//loadFonts(&file, 0xae54);
-			load8bitBinary(&file, 0x8e02 - 0x400, 4);
-			loadGlobalObjects(&file, 0x1855 - 0x400);
-		}
-	} else if (isDOS()) {
-		loadAssetsDOSFullGame();
-	} else
-		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
-
+	FreescapeEngine::loadAssetsFullGame();
 	/*
 	We are going to inject a small script in the
 	last area to force the game to end:
@@ -287,41 +234,6 @@ void DrillerEngine::loadAssetsFullGame() {
 
 void DrillerEngine::processBorder() {
 	FreescapeEngine::processBorder();
-}
-
-void DrillerEngine::drawUI() {
-	Graphics::Surface *surface = nullptr;
-	if (_border) { // This can be removed when all the borders are loaded
-		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
-		surface = new Graphics::Surface();
-		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-		surface->fillRect(_fullscreenViewArea, gray);
-		drawCrossair(surface);
-	} else
-		return;
-
-	if (isDOS())
-		drawDOSUI(surface);
-	else if (isC64())
-		drawC64UI(surface);
-	else if (isSpectrum())
-		drawZXUI(surface);
-	else if (isCPC())
-		drawCPCUI(surface);
-	else if (isAmiga() || isAtariST())
-		drawAmigaAtariSTUI(surface);
-
-	if (!_uiTexture)
-		_uiTexture = _gfx->createTexture(surface);
-	else
-		_uiTexture->update(surface);
-
-	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-	_gfx->setViewport(_viewArea);
-
-	surface->free();
-	delete surface;
 }
 
 void DrillerEngine::drawC64UI(Graphics::Surface *surface) {
@@ -912,6 +824,9 @@ void DrillerEngine::initGameState() {
 	_lastMinute = minutes;
 	_demoIndex = 0;
 	_demoEvents.clear();
+
+	// Start playing music, if any, in any supported format
+	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
 }
 
 bool DrillerEngine::checkIfGameEnded() {

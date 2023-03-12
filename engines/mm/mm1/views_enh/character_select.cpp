@@ -28,7 +28,7 @@ namespace MM1 {
 namespace ViewsEnh {
 
 CharacterSelect::CharacterSelect() : PartyView("CharacterSelect") {
-	_bounds = Common::Rect(225, 18 * 8, 320, 200);
+	_bounds = Common:: Rect(225, 144, 320, 200);
 }
 
 bool CharacterSelect::msgFocus(const FocusMessage &msg) {

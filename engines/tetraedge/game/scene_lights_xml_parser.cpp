@@ -25,7 +25,7 @@
 namespace Tetraedge {
 
 bool SceneLightsXmlParser::parserCallback_Global(ParserNode *node) {
-	_parent = Parent_Global;
+	_parent = ParentGlobal;
 	return true;
 }
 
@@ -35,7 +35,7 @@ bool SceneLightsXmlParser::parserCallback_Ambient(ParserNode *node) {
 	if (!parseCol(node, col))
 		return false;
 
-	if (_parent == Parent_Global) {
+	if (_parent == ParentGlobal) {
 		TeLight::setGlobalAmbient(col);
 	} else {
 		_lights->back()->setAmbient(col);
@@ -49,7 +49,7 @@ bool SceneLightsXmlParser::parserCallback_Lights(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_Light(ParserNode *node) {
-	_parent = Parent_Light;
+	_parent = ParentLight;
 	_lights->push_back(Common::SharedPtr<TeLight>(TeLight::makeInstance()));
 	TeLightType ltype = TeLightType::LightTypeDirectional;
 	if (node->values["Type"] == "Spot")
@@ -127,7 +127,7 @@ bool SceneLightsXmlParser::parserCallback_DisplaySize(ParserNode *node) {
 }
 
 bool SceneLightsXmlParser::parserCallback_Shadow(ParserNode *node) {
-	_parent = Parent_Shadow;
+	_parent = ParentShadow;
 	return true;
 }
 

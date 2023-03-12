@@ -194,7 +194,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	LOGI("SDK Version: %d", sdkVersion);
 
 	AndroidFilesystemFactory &fsFactory = AndroidFilesystemFactory::instance();
-	if (sdkVersion >= 21) {
+	if (sdkVersion >= 24) {
 		fsFactory.initSAF();
 	}
 	_fsFactory = &fsFactory;

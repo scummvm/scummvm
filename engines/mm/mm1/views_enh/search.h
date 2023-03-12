@@ -19,36 +19,82 @@
  *
  */
 
-#ifndef MM1_VIEWS_TRAP_H
-#define MM1_VIEWS_TRAP_H
+#ifndef MM1_VIEWS_ENH_SEARCH_H
+#define MM1_VIEWS_ENH_SEARCH_H
 
-#include "mm/mm1/views/text_view.h"
-#include "mm/mm1/data/trap.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 
-class Trap : public TextView, public TrapData {
+class Search : public ScrollView {
 private:
-	enum Mode { MODE_TRIGGER, MODE_TRAP };
-	Mode _mode = MODE_TRIGGER;
-protected:
-	void trap() override;
-	void trigger();
+	enum Mode {
+		INITIAL, OPTIONS, RESPONSE, FOCUS_GET_TREASURE,
+		GET_TREASURE, GET_ITEMS, GET_ITEMS_DONE
+	};
+	Mode _mode = INITIAL;
+	bool _removing = false;
+	byte _val1 = 0;
+	int _lineNum = 0;
+	Shared::Xeen::SpriteResource _escSprite;
+
+	/**
+	 * Open the container
+	 */
+	void openContainer();
+	void openContainer2();
+
+	/**
+	 * Find/remove trap
+	 */
+	void findRemoveTrap();
+	void findRemoveTrap2();
+
+	/**
+	 * Detect magic/trap
+	 */
+	void detectMagicTrap();
+
+	/**
+	 * Select which user to try and remove trap or detect magic
+	 */
+	bool whoWillTry();
+
+	/**
+	 * Finally give the treasure
+	 */
+	void getTreasure();
+
+	/**
+	 * Draw the treasure result
+	 */
+	void drawTreasure();
+
+	/**
+	 * Get any treasure items
+	 */
+	void drawItem();
 
 public:
-	Trap();
-	virtual ~Trap() {}
+	Search();
+	virtual ~Search() {}
 
 	bool msgGame(const GameMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	void timeout() override;
+
+	/**
+	 * Called after a selection of who will try is done
+	 */
+	void whoWillTry(int charNum);
 };
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

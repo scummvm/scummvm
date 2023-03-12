@@ -135,7 +135,31 @@ public:
 
 	// Parsing assets
 	uint8 _binaryBits;
-	virtual void loadAssets();
+	void loadAssets();
+	virtual void loadAssetsDemo();
+	virtual void loadAssetsFullGame();
+
+	virtual void loadAssetsAtariFullGame();
+	virtual void loadAssetsAtariDemo();
+
+	virtual void loadAssetsAmigaFullGame();
+	virtual void loadAssetsAmigaDemo();
+
+	virtual void loadAssetsDOSFullGame();
+	virtual void loadAssetsDOSDemo();
+
+	virtual void loadAssetsZXFullGame();
+	virtual void loadAssetsZXDemo();
+
+	virtual void loadAssetsCPCFullGame();
+	virtual void loadAssetsCPCDemo();
+
+	virtual void drawDOSUI(Graphics::Surface *surface);
+	virtual void drawZXUI(Graphics::Surface *surface);
+	virtual void drawCPCUI(Graphics::Surface *surface);
+	virtual void drawC64UI(Graphics::Surface *surface);
+	virtual void drawAmigaAtariSTUI(Graphics::Surface *surface);
+
 	Common::Archive *_dataBundle;
 	void loadDataBundle();
 	void loadBundledImages();
@@ -419,8 +443,6 @@ public:
 	void titleScreen() override;
 
 	void processBorder() override;
-	void loadAssets() override;
-	void drawUI() override;
 	void drawInfoMenu() override;
 
 	void pressedKey(const int keycode) override;
@@ -437,29 +459,26 @@ private:
 	void removeDrill(Area *area);
 	void addSkanner(Area *area);
 
-	void loadAssetsDemo();
-	void loadAssetsFullGame();
+	void loadAssetsFullGame() override;
 
-	void loadAssetsAtariFullGame();
-	void loadAssetsAtariDemo();
+	void loadAssetsAtariFullGame() override;
+	void loadAssetsAtariDemo() override;
 
-	void loadAssetsAmigaFullGame();
-	void loadAssetsAmigaDemo();
+	void loadAssetsAmigaFullGame() override;
+	void loadAssetsAmigaDemo() override;
 
-	void loadAssetsDOSFullGame();
-	void loadAssetsDOSDemo();
+	void loadAssetsDOSFullGame() override;
+	void loadAssetsDOSDemo() override;
 
-	void loadAssetsZXFullGame();
-	void loadAssetsZXDemo();
+	void loadAssetsZXFullGame() override;
 
-	void loadAssetsCPCFullGame();
-	void loadAssetsCPCDemo();
+	void loadAssetsCPCFullGame() override;
 
-	void drawDOSUI(Graphics::Surface *surface);
-	void drawZXUI(Graphics::Surface *surface);
-	void drawCPCUI(Graphics::Surface *surface);
-	void drawC64UI(Graphics::Surface *surface);
-	void drawAmigaAtariSTUI(Graphics::Surface *surface);
+	void drawDOSUI(Graphics::Surface *surface) override;
+	void drawZXUI(Graphics::Surface *surface) override;
+	void drawCPCUI(Graphics::Surface *surface) override;
+	void drawC64UI(Graphics::Surface *surface) override;
+	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
 
 	Graphics::ManagedSurface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
 	Graphics::ManagedSurface *load8bitDemoImage(Common::SeekableReadStream *file, int offset);
@@ -475,7 +494,6 @@ public:
 	uint32 _initialFuel;
 	uint32 _initialShield;
 
-	void loadAssets() override;
 	void initGameState() override;
 	void borderScreen() override;
 	void titleScreen() override;
@@ -485,14 +503,14 @@ public:
 	void pressedKey(const int keycode) override;
 	void executePrint(FCLInstruction &instruction) override;
 
-	void loadAssetsDemo();
-	void loadAssetsFullGame();
+	void loadAssetsDOSFullGame() override;
+	void loadAssetsDOSDemo() override;
+
 	int _lastTenSeconds;
 	void updateTimeVariables() override;
 	void executeMovementConditions() override;
 
-	void drawUI() override;
-	void drawDOSUI(Graphics::Surface *surface);
+	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawFullscreenMessage(Common::String message);
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
@@ -505,12 +523,12 @@ class EclipseEngine : public FreescapeEngine {
 public:
 	EclipseEngine(OSystem *syst, const ADGameDescription *gd);
 
-	void loadAssets() override;
 	void titleScreen() override;
-
 	void gotoArea(uint16 areaID, int entranceID) override;
 
+	void loadAssetsDOSFullGame() override;
 	void drawUI() override;
+
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 };
@@ -519,7 +537,7 @@ class CastleEngine : public FreescapeEngine {
 public:
 	CastleEngine(OSystem *syst, const ADGameDescription *gd);
 
-	void loadAssets() override;
+	void loadAssetsDOSFullGame() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;

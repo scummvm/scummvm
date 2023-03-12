@@ -19,16 +19,16 @@
  *
  */
 
-#include "mm/mm1/views/trap.h"
+#include "mm/mm1/views_enh/trap.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 
-Trap::Trap() : TextView("Trap") {
-	_bounds = getLineBounds(20, 24);
+Trap::Trap() : ScrollView("Trap") {
+	setBounds(Common::Rect(0, 144, 234, 200));
 }
 
 bool Trap::msgGame(const GameMessage &msg) {
@@ -47,13 +47,12 @@ bool Trap::msgGame(const GameMessage &msg) {
 }
 
 void Trap::draw() {
-	clearSurface();
+	ScrollView::draw();
 
 	if (_mode == MODE_TRIGGER) {
-		writeString(9, 1, STRING["dialogs.trap.oops"]);
+		writeString(0, 0, STRING["dialogs.trap.oops"], ALIGN_MIDDLE);
 	} else {
-		writeString(0, 1,
-			STRING[Common::String::format("dialogs.trap.%d", _trapType)]);
+		writeString(0, 0, STRING[Common::String::format("dialogs.trap.%d", _trapType)]);
 	}
 }
 
@@ -104,6 +103,6 @@ void Trap::timeout() {
 	trap();
 }
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

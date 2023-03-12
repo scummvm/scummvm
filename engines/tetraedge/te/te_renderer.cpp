@@ -92,7 +92,7 @@ void TeRenderer::addTransparentMesh(const TeMesh &mesh, uint i1, uint tricount, 
 				_transparentMeshColors[propNo + 2] = mesh.color(mesh.index(meshNo0 + 2));
 			}
 		}
-	} else if (meshMode == TeMesh::MeshMode_TriangleStrip && tricount > 0) {
+	} else if (meshMode == TeMesh::MeshMode_TriangleStrip) {
 		for (uint i = 0; i < tricount; i++) {
 			const uint meshNo0 = (i1 + i);  // TODO: This appears to be the only difference between this and the above?
 			const uint propNo = (_numTransparentMeshes + i) * 3;

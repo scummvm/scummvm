@@ -188,44 +188,6 @@ bool Renderer::getRGBAtZX(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r
 	return true;
 }
 
-void Renderer::extractCPCIndexes(uint8 cm1, uint8 cm2, uint8 &i1, uint8 &i2) {
-	if (cm1 == 0xb4 && cm2 == 0xe1) {
-		i1 = 1;
-		i2 = 2;
-	} else if (cm1 == 0xb0 && cm2 == 0xe0) {
-		i1 = 1;
-		i2 = 0;
-	} else if (cm1 == 0x05 && cm2 == 0x0a) {
-		i1 = 2;
-		i2 = 0;
-	} else if (cm1 == 0x50 && cm2 == 0xa0) {
-		i1 = 1;
-		i2 = 0;
-	} else if (cm1 == 0x55 && cm2 == 0xaa) {
-		i1 = 3;
-		i2 = 0;
-	} else if (cm1 == 0xf5 && cm2 == 0xfa) {
-		i1 = 3;
-		i2 = 1;
-	} else if (cm1 == 0x5a && cm2 == 0xa5) {
-		i1 = 1;
-		i2 = 2;
-	} else if (cm1 == 0xbb && cm2 == 0xee) {
-		i1 = 3;
-		i2 = 0;
-	} else if (cm1 == 0x5f && cm2 == 0xaf) {
-		i1 = 3;
-		i2 = 2;
-	} else if (cm1 == 0xfb && cm2 == 0xfe) { // TODO
-		i1 = 0;
-		i2 = 0;
-	} else if (cm1 == 0x40 && cm2 == 0x20) { // This one has a special stapple pattern
-		i1 = 1;
-		i2 = 0;
-	} else
-		error("%x %x", cm1, cm2);
-}
-
 void Renderer::selectColorFromFourColorPalette(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1) {
 	if (index == 0) {
 		r1 = 0;
@@ -240,6 +202,8 @@ void Renderer::selectColorFromFourColorPalette(uint8 index, uint8 &r1, uint8 &g1
 	} else
 		error("Invalid color");
 }
+
+extern byte getCPCPixel(byte cpc_byte, int index);
 
 bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &r2, uint8 &g2, uint8 &b2) {
 	if (index == _keyColor)
@@ -258,9 +222,10 @@ bool Renderer::getRGBAtCPC(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 	byte *entry = (*_colorMap)[index - 1];
 	uint8 cm1 = *(entry);
 	entry++;
-	uint8 cm2 = *(entry);
+	//uint8 cm2 = *(entry);
 
-	extractCPCIndexes(cm1, cm2, i1, i2);
+	i1 = getCPCPixel(cm1, 0);
+	i2 = getCPCPixel(cm1, 1);
 	selectColorFromFourColorPalette(i1, r1, g1, b1);
 	selectColorFromFourColorPalette(i2, r2, g2, b2);
 	return true;

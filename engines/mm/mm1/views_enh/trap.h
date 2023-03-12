@@ -19,46 +19,37 @@
  *
  */
 
-#ifndef VCRUISE_AUDIO_PLAYER_H
-#define VCRUISE_AUDIO_PLAYER_H
+#ifndef MM1_VIEWS_ENH_TRAP_H
+#define MM1_VIEWS_ENH_TRAP_H
 
-#include "common/mutex.h"
+#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/data/trap.h"
 
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
+namespace MM {
+namespace MM1 {
+namespace ViewsEnh {
 
-namespace VCruise {
-
-struct AudioMetadata;
-class CachedAudio;
-
-class AudioPlayer : public Audio::AudioStream {
-public:
-	AudioPlayer(Audio::Mixer *mixer, const Common::SharedPtr<Audio::AudioStream> &baseStream);
-	~AudioPlayer();
-
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override;
-	int getRate() const override;
-	bool endOfData() const override;
-
-	void play(byte volume, int8 balance);
-	void stop();
-
-	void setVolume(byte volume);
-	void setBalance(int8 balance);
-
+class Trap : public ScrollView, public TrapData {
 private:
-	Common::Mutex _mutex;
+	enum Mode { MODE_TRIGGER, MODE_TRAP };
+	Mode _mode = MODE_TRIGGER;
+protected:
+	void trap() override;
+	void trigger();
 
-	Audio::SoundHandle _handle;
-	bool _isLooping;
-	bool _isPlaying;
-	bool _exhausted;
-	Audio::Mixer *_mixer;
-	Common::SharedPtr<Audio::AudioStream> _baseStream;
+public:
+	Trap();
+	virtual ~Trap() {}
+
+	bool msgGame(const GameMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	void timeout() override;
 };
 
-} // End of namespace VCruise
+} // namespace ViewsEnh
+} // namespace MM1
+} // namespace MM
 
 #endif

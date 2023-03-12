@@ -83,6 +83,8 @@ bool ObjectSettingsXmlParser::textCallback(const Common::String &val) {
 		default:
 			error("should only see text for model file name or scale");
 	}
+
+	_textTagType = TagNone;
 	return true;
 }
 

@@ -61,43 +61,6 @@ void DarkEngine::titleScreen() {
 	}
 }
 
-void DarkEngine::loadAssets() {
-	if (isDemo())
-		loadAssetsDemo();
-	else
-		loadAssetsFullGame();
-}
-
-void DarkEngine::loadAssetsDemo() {
-	Common::File file;
-	if (isDOS() && _renderMode == Common::kRenderEGA) {
-		file.open("SCN1E.DAT");
-		if (file.isOpen())
-			_title = load8bitBinImage(&file, 0x0);
-		file.close();
-		file.open("DSIDEE.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open DSIDEE.EXE");
-		loadMessagesFixedSize(&file, 0x4525, 16, 27);
-		loadMessagesFixedSize(&file, 0x9959, 307, 5);
-		loadFonts(&file, 0xa598);
-		loadGlobalObjects(&file, 0x3d04);
-		load8bitBinary(&file, 0xa700, 16);
-		_border = load8bitBinImage(&file, 0x210);
-	} else if (isDOS() && _renderMode == Common::kRenderCGA) {
-		//loadBundledImages();
-		file.open("DSIDEC.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open DSIDEC.EXE");
-		loadFonts(&file, 0xa598);
-		load8bitBinary(&file, 0x8a70, 4); // TODO
-	} else
-		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
-}
-
-
 void DarkEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset) {
 	assert(!_areaMap.contains(255));
 	ObjectMap *globalObjectsByID = new ObjectMap;
@@ -112,7 +75,6 @@ void DarkEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset)
 
 	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
 }
-
 
 void DarkEngine::initGameState() {
 	_flyMode = false;
@@ -140,41 +102,6 @@ void DarkEngine::initGameState() {
 	_lastMinute = 0;
 	_demoIndex = 0;
 	_demoEvents.clear();
-}
-
-void DarkEngine::loadAssetsFullGame() {
-	Common::File file;
-	if (_renderMode == Common::kRenderEGA) {
-		file.open("SCN1E.DAT");
-		if (file.isOpen())
-			_title = load8bitBinImage(&file, 0x0);
-		file.close();
-		file.open("DSIDEE.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open DSIDEE.EXE");
-
-		loadFonts(&file, 0xa113);
-		loadMessagesFixedSize(&file, 0x4525, 16, 27);
-		loadGlobalObjects(&file, 0x3d04);
-		load8bitBinary(&file, 0xa280, 16);
-		_border = load8bitBinImage(&file, 0x210);
-
-		// TODO: load objects
-		/*for (auto &it : _areaMap) {
-			if (!it._value->entranceWithID(255))
-				continue;
-			it._value->addStructure(_areaMap[255]);
-		}*/
-	} else if (_renderMode == Common::kRenderCGA) {
-		loadBundledImages();
-		file.open("DSIDEC.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open DSIDEC.EXE");
-		load8bitBinary(&file, 0x7bb0, 4); // TODO
-	} else
-		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
 }
 
 void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -296,98 +223,6 @@ void DarkEngine::updateTimeVariables() {
 		_gameStateVars[0x1f] += 1;
 		executeLocalGlobalConditions(false, true);
 	}
-}
-
-void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
-	uint32 color = _renderMode == Common::kRenderCGA ? 1 : 14;
-	uint8 r, g, b;
-
-	_gfx->readFromPalette(color, r, g, b);
-	uint32 front = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-
-	color = _currentArea->_usualBackgroundColor;
-	if (_gfx->_colorRemaps && _gfx->_colorRemaps->contains(color)) {
-		color = (*_gfx->_colorRemaps)[color];
-	}
-
-	_gfx->readFromPalette(color, r, g, b);
-	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-
-	int score = _gameStateVars[k8bitVariableScore];
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.x())), 199, 137, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.z())), 199, 145, front, back, surface);
-	drawStringInSurface(Common::String::format("%04d", int(2 * _position.y())), 199, 153, front, back, surface);
-
-	drawStringInSurface(Common::String::format("%02d", int(_angleRotations[_angleRotationIndex])), 71, 168, front, back, surface);
-	drawStringInSurface(Common::String::format("%3d", _playerSteps[_playerStepIndex]), 71, 177, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 95, 8, front, back, surface);
-
-	int seconds, minutes, hours;
-	getTimeFromCountdown(seconds, minutes, hours);
-	// TODO: implement binary clock
-
-	Common::String message;
-	int deadline;
-	getLatestMessages(message, deadline);
-	if (deadline <= _countdown) {
-		drawStringInSurface(message, 112, 177, back, front, surface);
-		_temporaryMessages.push_back(message);
-		_temporaryMessageDeadlines.push_back(deadline);
-	} else
-		drawStringInSurface(_currentArea->_name, 112, 177, front, back, surface);
-
-	int energy = _gameStateVars[k8bitVariableEnergy]; // called fuel in this game
-	int shield = _gameStateVars[k8bitVariableShield];
-
-	_gfx->readFromPalette(9, r, g, b);
-	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
-
-	if (shield >= 0) {
-		Common::Rect shieldBar;
-		shieldBar = Common::Rect(72, 139, 151 - (k8bitMaxShield - shield), 146);
-		surface->fillRect(shieldBar, front);
-
-		shieldBar = Common::Rect(72, 140, 151 - (k8bitMaxShield - shield), 145);
-		surface->fillRect(shieldBar, blue);
-	}
-
-	if (energy >= 0) {
-		Common::Rect energyBar;
-		energyBar = Common::Rect(72, 147, 151 - (k8bitMaxEnergy - energy), 154);
-		surface->fillRect(energyBar, front);
-
-		energyBar = Common::Rect(72, 148, 151 - (k8bitMaxEnergy - energy), 153);
-		surface->fillRect(energyBar, blue);
-	}
-}
-
-void DarkEngine::drawUI() {
-	Graphics::Surface *surface = nullptr;
-	if (_border) { // This can be removed when all the borders are loaded
-		uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
-		surface = new Graphics::Surface();
-		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-		surface->fillRect(_fullscreenViewArea, gray);
-		drawCrossair(surface);
-	} else
-		return;
-
-	if (isDOS())
-		drawDOSUI(surface);
-	else
-		error("UI not implemented yet");
-
-	if (!_uiTexture)
-		_uiTexture = _gfx->createTexture(surface);
-	else
-		_uiTexture->update(surface);
-
-	_gfx->setViewport(_fullscreenViewArea);
-	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
-	_gfx->setViewport(_viewArea);
-
-	surface->free();
-	delete surface;
 }
 
 void DarkEngine::borderScreen() {

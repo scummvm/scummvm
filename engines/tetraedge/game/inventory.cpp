@@ -37,6 +37,12 @@ namespace Tetraedge {
 Inventory::Inventory() : _cellphone(nullptr), _selectedObject(nullptr) {
 }
 
+Inventory::~Inventory() {
+	if (_cellphone)
+		_cellphone->unload();
+	delete _cellphone;
+}
+
 void Inventory::enter() {
 	setVisible(true);
 	Game *game = g_engine->getGame();
@@ -406,8 +412,7 @@ InventoryObject *Inventory::selectedInventoryObject() {
 
 void Inventory::selectedObject(const Common::String &objname) {
 	int pageNo = 0;
-	bool finished = false;
-	while (!finished) {
+	while (true) {
 		TeLayout *page = _gui.layout(Common::String::format("page%d", pageNo));
 		if (!page)
 			break;
@@ -539,6 +544,10 @@ bool Inventory::updateLayout() {
 Common::Error Inventory::syncState(Common::Serializer &s) {
 	uint nitems = _invObjects.size();
 	s.syncAsUint32LE(nitems);
+	return syncStateWithCount(s, nitems);
+}
+
+Common::Error Inventory::syncStateWithCount(Common::Serializer &s, uint nitems) {
 	if (nitems > 1000)
 		error("Unexpected number of elems syncing inventory");
 

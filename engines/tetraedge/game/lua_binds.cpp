@@ -2270,8 +2270,8 @@ static int tolua_ExportedFunctions_BlendCharacterPlayerAnimation00(lua_State *L)
 		&& tolua_isnoobj(L, 5, &err)) {
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		float f1 = tolua_tonumber(L, 2, 0.0);
-		float b1 = tolua_toboolean(L, 3, true);
-		float b2 = tolua_toboolean(L, 4, false);
+		bool b1 = tolua_toboolean(L, 3, true);
+		bool b2 = tolua_toboolean(L, 4, false);
 		BlendCharacterPlayerAnimation(s1, f1, b1, b2);
 		return 0;
 	}

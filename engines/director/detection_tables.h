@@ -113,6 +113,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "crusader",			"Crusader: A Conspiracy in the Kingdom of Jerusalem" },
 	{ "crusader2000",		"Crusader: Edition 2000" },
 	{ "crystalskull",		"The Crystal Skull" },
+	{ "csi",				"CSI: Crime Scene Investigation" },
+	{ "csidarkmotives",		"CSI: Crime Scene Investigation - Dark Motives" },
 	{ "csimiami",			"CSI: Miami" },
 	{ "daedalus",			"The Daedalus Encounter" },
 	{ "darkeye",			"The Dark Eye" },
@@ -508,6 +510,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "chuniverse",			"The Challenge of the Universe" },
 	{ "cinevolt",			"Cinema Volta: Weird Science & Childhood Memory" },
 	{ "cocktailhour",		"Cocktail Hour: A Guide to Bartending" },
+	{ "compconf",			"Computer Confluence: Exploring Tomorrow's Technology" },
 	{ "comusic",			"Computer Music: An Interactive Documentary" },
 	{ "cpnre",				"Canadian Practical Nurse Registration Exam Practice" },
 	{ "ctrain",				"Doing it in C++" },
@@ -569,6 +572,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mysteriousegypt",	"Mysterious Egypt" }, // aka Voyage in Egypt
 	{ "newslinks",			"ABC NewsLinks" },
 	{ "nia4",				"News in Action 4" },
+	{ "nimoyscifi",			"Leonard Nimoy Science Fiction: The Gold Collection" },
 	{ "nixon",				"Nixon: Watergate" },
 	{ "nmm",				"Nine Month Miracle" },
 	{ "nobel100",			"The Nobel Prize: 100 Years of Creativity and Innovation" },
@@ -792,6 +796,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "aapelin1",			"Aapelin ABC: Hurjistunut Pölynimuri" },
 	{ "kcd",				"Kompuutteri Kaikille" },
 	{ "kultapossu",			"Kultapossu ja Leo Leijona: Sateenkaarivarkaat" },
+	{ "pelitcd2000",		"Pelit CD 2000" },
+	{ "pelitpakki98",		"Pelit Pelipakki CD 1998" },
 	{ "petepilotti1",		"Pete Pilotti & Pontiac: Seikkailu Lapponiassa" },
 
 	// French titles
@@ -1846,7 +1852,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 //////////////////////////////////////////////////
 
 #undef SUPPORT_STATUS
-#define SUPPORT_STATUS ADGF_TESTING
+#define SUPPORT_STATUS ADGF_NO_FLAGS
 
 	// Original filename is 東脳スタート
 	MACGAME1_l("easternmind", "", "xn--zckm1a5qp59wok6a", "276bee761e48a6fd709df77d5c2f60dd", 394781, Common::JA_JPN, 313),
@@ -4617,6 +4623,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("nile", "", "NILE.EXE",	 "9b00cbba14f0a2e0445784ebacf62c78", 2846777,
 						 "NILEGO23.DIR", "1a306c36ff503a93bde94252acc24ea6", 2259356, 404),
 
+	// Windows versions require installation
+	MACGAME1("nimoyscifi", "Volume 1", "Sci Fi Vol 1 - Power Mac", "r:abfb79859a8c81f2108242c6ea00a0f1", 57775, 404),
+	WINGAME1("nimoyscifi", "Volume 1", "SCIFI1.EXE", "t:fb9aeea2a6500e64338a3fb2b56d37bb", 724625, 404),
+	MACGAME1("nimoyscifi", "Volume 2", "Sci Fi Vol 2 - Power Mac", "r:d8b8e42c2d9875b47ea762ca3fd45122", 57510, 404),
+	WINGAME1("nimoyscifi", "Volume 2", "SCIFI2.EXE", "t:fb9aeea2a6500e64338a3fb2b56d37bb", 724625, 404),
+
 	// Full game is D5
 	WINDEMO1("nine", "Demo", "NINEDEMO.EXE", "d7596e7f6e8bc7c95d4217ff431a2f02", 711181, 404),
 
@@ -5614,6 +5626,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("cocktailhour", "", "COCKT32.EXE", "f594dd4e50ea175e8d3453b3cd16b536", 1411465, 501),
 
 	MACGAME1("colormind", "v1.5", "ColorMind 1.5", "37faaf693259d7a4fa031f4a2edf3098", 126087, 501),
+
+	WINGAME1("compconf", "Windows 3.1", "CCWIN311.EXE", "t:d2f5116b14bb8aaeaeae3d3d7e55d40b", 918905,  500),
+	WINGAME1("compconf", "Windows 95",  "CCWIN95.EXE",  "t:4cb9a6383932f6f11946a5692d82bcf0", 1395275, 500),
 
 	WINGAME2t("cracking", "", "crack.exe", "c2093c2b5dc9d3dc5b491e4df027e202", 1842361,
 							  "ufog8.dxr", "7c8222a010d40b59dd96a97f0b4fa974", 542472, 500),
@@ -7081,6 +7096,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t_l("pantosstory", "", "START.EXE", "0aabeac068ad6048f8c7ed19ac7458ea", 1861862,
 								  "PANTOS/A00.DXR", "cadb6e5b4dd143c7754b31026f4c2676", 1367720, Common::JA_JPN, 602),
 
+	WINGAME1_l("pelitpakki98", "", "PAKKI-16.EXE", "t:6a07c1dd2a1b80f952d5b421749458bc", 1236065, Common::FI_FIN, 601),
+
+	WINGAME2_l("pelitcd2000", "", "PELIT.EXE",	   "t:7be5a7141a379872f92808d394b79421", 1512657,
+								  "DATA/MAIN.DXR", "t:55e78270243ff4c98c680864bb056308", 58250, Common::FI_FIN, 601),
+
 	WINGAME1t_l("pettson1", "", "GUBBEN.EXE", "9ee9a4d1112db68a3a64f26d043518a3", 1341473, Common::NB_NOR, 600),
 
 	WINGAME2_l("pettson2", "", "START32.EXE", "518a98696fe1122e08410b0f157f21bf", 1723219,
@@ -7841,6 +7861,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("cmi", "CM38/10/01", "CMi_38_Mac", "f065c75691d28120e9f630448c3b1b71", 1225735, 800),
 	WINGAME1("cmi", "CM38/10/01", "CMi_38_Win.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2514361, 800),
 
+	WINGAME2("csi", "", "CSI.exe",		"t:027e2a77a0da8fb1ac22bd7de7939d89", 6144482,
+						"MainMenu.cxt", "t:4193d3e3d3efaa05f02211d952f4b82d", 34045,   851),
+	WINGAME2("csi", "", "CSI.exe", 		"t:027e2a77a0da8fb1ac22bd7de7939d89", 6135258,
+						"MainMenu.cxt", "t:7d5ea35cc9e1cdbb7d7b999a378b589f", 34045,   851),
+
 	// Distributed by Océano Multimedia (Colombia) of Cota, Cundinamarca (2000)
 	WINGAME2_l("deportes", "", "start.exe",    "c163f36141579ee374f7b4b2bddee95a", 2383840,
 							   "Deportes.dxr", "2330cc03f17c2aa4a4a10e76bc774fe8", 3985672, Common::ES_ESP, 850),
@@ -8319,6 +8344,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("casino5p" ,"", "Slot City/Slot City (OSX)", "d483e955df901222145267d2ad729ea2", 230407, 900),
 	// Disc 2
 	MACGAME1("casino5p" ,"", "Slots 200 Plus (OSX)", "d483e955df901222145267d2ad729ea2", 291178, 900),
+
+	WINGAME1t("csidarkmotives", "", "CSI-Dark Motives.exe", "t:0686e813c24fe8c86bb838f823fc4dc2", 3521175, 900),
 
 	WINGAME1t("csimiami", "", "CSI-Miami.exe", "18c375549db93a8b7a09ee94ff24b891", 3521217, 900),
 

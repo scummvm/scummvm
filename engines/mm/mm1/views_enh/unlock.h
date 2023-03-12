@@ -19,46 +19,29 @@
  *
  */
 
-#ifndef VCRUISE_AUDIO_PLAYER_H
-#define VCRUISE_AUDIO_PLAYER_H
+#ifndef MM1_VIEWS_ENH_UNLOCK_H
+#define MM1_VIEWS_ENH_UNLOCK_H
 
-#include "common/mutex.h"
+#include "mm/mm1/views_enh/party_view.h"
 
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
+namespace MM {
+namespace MM1 {
+namespace ViewsEnh {
 
-namespace VCruise {
-
-struct AudioMetadata;
-class CachedAudio;
-
-class AudioPlayer : public Audio::AudioStream {
-public:
-	AudioPlayer(Audio::Mixer *mixer, const Common::SharedPtr<Audio::AudioStream> &baseStream);
-	~AudioPlayer();
-
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override;
-	int getRate() const override;
-	bool endOfData() const override;
-
-	void play(byte volume, int8 balance);
-	void stop();
-
-	void setVolume(byte volume);
-	void setBalance(int8 balance);
-
+class Unlock : public PartyView {
 private:
-	Common::Mutex _mutex;
+	static void charSelected(int charIndex);
 
-	Audio::SoundHandle _handle;
-	bool _isLooping;
-	bool _isPlaying;
-	bool _exhausted;
-	Audio::Mixer *_mixer;
-	Common::SharedPtr<Audio::AudioStream> _baseStream;
+public:
+	Unlock();
+	virtual ~Unlock() {}
+
+	bool msgGame(const GameMessage &msg) override;
+	void draw() override {}		// View no direct display
 };
 
-} // End of namespace VCruise
+} // namespace ViewsEnh
+} // namespace MM1
+} // namespace MM
 
 #endif

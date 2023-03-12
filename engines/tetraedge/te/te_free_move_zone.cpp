@@ -271,7 +271,7 @@ TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, b
 		if (!intersect(testPos, TeVector3f32(0, 1, 0), intersectPoint, f, intersectFlag, nullptr)) {
 			// Note: This flag should only ever get set in Syberia 2.
 			if (!_collisionSlide) {
-				if (*flagout)
+				if (flagout)
 					*flagout = false;
 				return pos;
 			}
@@ -351,14 +351,8 @@ TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &startpt,
 
 		retval = new TeBezierCurve();
 		retval->setControlPoints(pts3d);
-	} else {
-		// No path found, just use start and end points.
-		Common::Array<TeVector3f32> points;
-		points.push_back(startpt);
-		points.push_back(endpt);
-		retval = new TeBezierCurve();
-		retval->setControlPoints(points);
 	}
+	// If no path found, return nullptr.
 
 	return retval;
 }
@@ -462,17 +456,17 @@ static int segmentIntersection(const TeVector2f32 &s1start, const TeVector2f32 &
 						TeVector2f32 *sout, float *fout1, float *fout2) {
 	const TeVector2f32 s1len = s1end - s1start;
 	const TeVector2f32 s2len = s2end - s2start;
-	float dotprod = s1len.getX() * s2len.getX() + s1len.getY() * s2len.getY();
+	float det = s1len.getX() * s2len.getY() + s1len.getY() * s2len.getX();
 	int result = 0;
-	if (dotprod != 0) {
+	if (det != 0) {
 		result = 1;
 		float intersect1 = -((s1len.getY() * s1start.getX() +
 						(s1len.getX() * s2start.getY() - s1len.getX() * s1start.getY())) -
-						 s1len.getY() * s2start.getX()) / dotprod;
+						 s1len.getY() * s2start.getX()) / det;
 		if (intersect1 >= 0.0f && intersect1 <= 1.0f) {
-			float intersect2 = -((s2len.getY() * s2start.getY() +
-						(s2len.getX() * s1start.getX() - s2len.getX() * s2start.getX())) -
-						 s2len.getY() * s1start.getY()) / dotprod;
+			float intersect2 = -((s2len.getY() * s2start.getX() +
+						(s2len.getX() * s1start.getY() - s2len.getX() * s2start.getY())) -
+						 s2len.getY() * s1start.getX()) / det;
 			if (intersect2 >= 0.0f && intersect2 <= 1.0f) {
 				result = 2;
 				if (sout)

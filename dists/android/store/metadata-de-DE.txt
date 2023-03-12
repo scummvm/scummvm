@@ -31,13 +31,12 @@ https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit an
 Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.html
 
 *** Beta release name:
-2.7.0.1 (beta 2)
+2.7.0.2 (beta 3)
 
 *** Beta release notes:
 <de-DE>
-- FluidSynth-Soundfonts werden nun korrekt geladen
-- Benutzerdefinierte Pfade für Spielstände werden nun korrekt gesetzt
-- Absturz behoben, der im Zusammenhang mit Shader-Downloads in einen benutzerdefinierten Ordner aufgetreten ist
-- Spielstand-Dateien können jetzt auch korrekt über die SAF-API gelöscht werden
-- Mehr Spiele, mehr Fehlerkorrekturen - die volle Liste findest Du unter https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
+- Schnellere App-Ladezeit
+- Eine Reihe von gemeldeten App-Abstürzen wurde behoben
+- Unterstützung von Geräten mit mindestens API-Level 16 (Android 4.1) wieder eingeführt
+- Vollständige Versionshinweise für 2.7.0 findest Du unter: https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
 </de-DE>

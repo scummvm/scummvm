@@ -19,46 +19,44 @@
  *
  */
 
-#ifndef VCRUISE_AUDIO_PLAYER_H
-#define VCRUISE_AUDIO_PLAYER_H
+#ifndef MM1_VIEWS_ENH_WHO_WILL_TRY_H
+#define MM1_VIEWS_ENH_WHO_WILL_TRY_H
 
-#include "common/mutex.h"
+#include "mm/mm1/views_enh/party_view.h"
 
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
+namespace MM {
+namespace MM1 {
+namespace ViewsEnh {
 
-namespace VCruise {
+typedef void (*WhoWillProc)(int charNum);
 
-struct AudioMetadata;
-class CachedAudio;
-
-class AudioPlayer : public Audio::AudioStream {
-public:
-	AudioPlayer(Audio::Mixer *mixer, const Common::SharedPtr<Audio::AudioStream> &baseStream);
-	~AudioPlayer();
-
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override;
-	int getRate() const override;
-	bool endOfData() const override;
-
-	void play(byte volume, int8 balance);
-	void stop();
-
-	void setVolume(byte volume);
-	void setBalance(int8 balance);
-
+class WhoWillTry : public PartyView {
 private:
-	Common::Mutex _mutex;
+	WhoWillProc _callback = nullptr;
 
-	Audio::SoundHandle _handle;
-	bool _isLooping;
-	bool _isPlaying;
-	bool _exhausted;
-	Audio::Mixer *_mixer;
-	Common::SharedPtr<Audio::AudioStream> _baseStream;
+	void selectChar(uint charNum);
+
+protected:
+	/**
+	 * Return true if a character should be selected by default
+	 */
+	bool selectCharByDefault() const override {
+		return false;
+	}
+public:
+	WhoWillTry();
+	virtual ~WhoWillTry() {}
+
+	static void display(WhoWillProc callback);
+	void open(WhoWillProc callback);
+
+	bool msgGame(const GameMessage &msg) override;
+	void draw() override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
-} // End of namespace VCruise
+} // namespace ViewsEnh
+} // namespace MM1
+} // namespace MM
 
 #endif

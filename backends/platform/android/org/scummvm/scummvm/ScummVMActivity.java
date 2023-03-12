@@ -823,6 +823,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		@RequiresApi(api = Build.VERSION_CODES.N)
 		protected SAFFSTree getNewSAFTree(boolean folder, boolean write, String initialURI, String prompt) {
 			Uri initialURI_ = Uri.parse(initialURI);
 			Uri uri = selectWithNativeUI(folder, write, initialURI_, prompt);
@@ -834,11 +835,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		@RequiresApi(api = Build.VERSION_CODES.N)
 		protected SAFFSTree[] getSAFTrees() {
 			return SAFFSTree.getTrees(ScummVMActivity.this);
 		}
 
 		@Override
+		@RequiresApi(api = Build.VERSION_CODES.N)
 		protected SAFFSTree findSAFTree(String name) {
 			return SAFFSTree.findTree(ScummVMActivity.this, name);
 		}
@@ -849,7 +852,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private MouseHelper _mouseHelper;
 	private Thread _scummvm_thread;
 
-	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -873,8 +875,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 		LinearLayout buttonLayout = new LinearLayout(this);
 		buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
-		FrameLayout.LayoutParams buttonLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.END);
-		buttonLayoutParams.setMarginEnd(5);
+		FrameLayout.LayoutParams buttonLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.RIGHT);
 		buttonLayoutParams.topMargin = 5;
 		buttonLayoutParams.rightMargin = 5;
 		_videoLayout.addView(buttonLayout, buttonLayoutParams);
@@ -1267,7 +1268,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	}
 
 	// Auxiliary function to overwrite a file (used for overwriting the scummvm.ini file with an existing other one)
-	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private static void copyFileUsingStream(File source, File dest) throws IOException {
 		try (InputStream is = new FileInputStream(source); OutputStream os = new FileOutputStream(dest)) {
 			copyStreamToStream(is, os);
@@ -1308,7 +1308,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return result;
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private static String getVersionInfoFromScummvmConfiguration(String fullIniFilePath) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fullIniFilePath))) {
 			Map<String, Properties> parsedIniMap = parseINI(bufferedReader);
@@ -1323,7 +1322,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return "";
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private static String getSavepathInfoFromScummvmConfiguration(String fullIniFilePath) {
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fullIniFilePath))) {
 			Map<String, Properties> parsedIniMap = parseINI(bufferedReader);
@@ -1338,7 +1336,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return "";
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private boolean seekAndInitScummvmConfiguration() {
 
 		// https://developer.android.com/reference/android/content/Context#getExternalFilesDir(java.lang.String)
@@ -1917,7 +1914,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// - We don't need to copy (sub)folders
 	// - We copy all the files from our assets (not a subset of them)
 	// Otherwise we would probably need to create a specifically named zip file with the selection of files we'd need to extract to the internal memory
-	@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 	private void copyAssetsToInternalMemory(boolean sideUpgrade) {
 		// sideUpgrade is set to true, if we upgrade to the same version -- just check for the files existence before copying
 		if (_actualScummVMDataDir != null) {
@@ -1993,6 +1989,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// Furthermore, on Android 11 (API level 30) and higher, you cannot use the ACTION_OPEN_DOCUMENT_TREE intent action to request that the user select individual files from the following directories:
 	// - The Android/data/ directory and all subdirectories.
 	// - The Android/obb/ directory and all subdirectories.
+	@RequiresApi(api = Build.VERSION_CODES.N)
 	public Uri selectWithNativeUI(boolean folder, boolean write, Uri initialURI, String prompt) {
 		// Choose a directory using the system's folder picker.
 		Intent intent;

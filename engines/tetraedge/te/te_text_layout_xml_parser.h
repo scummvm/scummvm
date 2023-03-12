@@ -32,7 +32,8 @@ namespace Tetraedge {
 
 class TeTextLayoutXmlParser : public TeXmlParser {
 public:
-	// Parser
+	TeTextLayoutXmlParser() : TeXmlParser(), _fontSize(0) {}
+
 	CUSTOM_XML_PARSER(TeTextLayoutXmlParser) {
 		XML_KEY(document)
 			XML_KEY(section)

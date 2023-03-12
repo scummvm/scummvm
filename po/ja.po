@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-09 07:10+0000\n"
+"POT-Creation-Date: 2023-03-12 02:57+0000\n"
 "PO-Revision-Date: 2023-03-09 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4874,7 +4874,7 @@ msgstr ""
 "れます。\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/runtime.cpp:1849
+#: engines/vcruise/runtime.cpp:2291
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "現在より新しいバージョンのScummVMで作成されたセーブです。ロードできません。"
@@ -6310,16 +6310,16 @@ msgstr "デバッグオーバーレイの切替"
 msgid "Force any playing movies to end"
 msgstr "再生中のムービーを強制終了"
 
-#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:1835
+#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:2277
 msgid "Failed to read version information from save file"
 msgstr "セーブからバージョン情報が読み取れません"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:1842
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:2284
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "ロードに失敗、セーブファイルに有効なバージョン情報がありません。"
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:1856
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:2298
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."

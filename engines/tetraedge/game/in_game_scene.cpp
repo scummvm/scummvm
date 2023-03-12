@@ -803,8 +803,7 @@ bool InGameScene::loadXml(const Common::String &zone, const Common::String &scen
 	Common::Path xmlpath = _sceneFileNameBase(zone, scene).joinInPlace("Scene")
 												.appendInPlace(scene).appendInPlace(".xml");
 	Common::FSNode node = g_engine->getCore()->findFile(xmlpath);
-	InGameSceneXmlParser parser;
-	parser._scene = this;
+	InGameSceneXmlParser parser(this);
 	parser.setAllowText();
 
 	Common::String fixedbuf;
@@ -945,9 +944,7 @@ bool InGameScene::loadFreeMoveZone(const Common::String &name, TeVector2f32 &gri
 }
 
 bool InGameScene::loadLights(const Common::FSNode &node) {
-	SceneLightsXmlParser parser;
-
-	parser.setLightArray(&_lights);
+	SceneLightsXmlParser parser(&_lights);
 
 	if (!parser.loadFile(node))
 		error("InGameScene::loadLights: Can't load %s", node.getPath().c_str());

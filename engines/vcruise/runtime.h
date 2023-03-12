@@ -40,6 +40,7 @@ class WriteStream;
 
 namespace Audio {
 
+class AudioStream;
 class SeekableAudioStream;
 
 } // End of namespace Audio
@@ -61,6 +62,8 @@ class AVIDecoder;
 namespace VCruise {
 
 static const uint kNumDirections = 8;
+static const uint kNumHighPrecisionDirections = 256;
+static const uint kHighPrecisionDirectionMultiplier = kNumHighPrecisionDirections / kNumDirections;
 
 class AudioPlayer;
 class TextParser;
@@ -69,14 +72,15 @@ struct Script;
 struct Instruction;
 
 enum GameState {
-	kGameStateBoot,					// Booting the game
-	kGameStateWaitingForAnimation,	// Waiting for a blocking animation to complete, then resuming script
-	kGameStateWaitingForFacing,		// Waiting for a blocking animation to complete, then playing _postFacingAnimDef and switching to kGameStateWaitingForAnimation
-	kGameStateQuit,					// Quitting
-	kGameStateIdle,					// Waiting for input events
-	kGameStateScript,				// Running a script
-	kGameStateGyroIdle,				// Waiting for mouse movement to run a gyro
-	kGameStateGyroAnimation,		// Animating a gyro
+	kGameStateBoot,							// Booting the game
+	kGameStateWaitingForAnimation,			// Waiting for a blocking animation with no stop frame complete, then resuming script
+	kGameStateWaitingForFacing,				// Waiting for a blocking animation with a stop frame to complete, then resuming script
+	kGameStateWaitingForFacingToAnim,		// Waiting for a blocking animation to complete, then playing _postFacingAnimDef and switching to kGameStateWaitingForAnimation
+	kGameStateQuit,							// Quitting
+	kGameStateIdle,							// Waiting for input events
+	kGameStateScript,						// Running a script
+	kGameStateGyroIdle,						// Waiting for mouse movement to run a gyro
+	kGameStateGyroAnimation,				// Animating a gyro
 
 	kGameStatePanLeft,
 	kGameStatePanRight,
@@ -167,6 +171,94 @@ struct SfxData {
 	typedef Common::HashMap<Common::String, Common::SharedPtr<SfxSound> > SoundMap_t;
 	PlaylistMap_t playlists;
 	SoundMap_t sounds;
+};
+
+struct SoundParams3D {
+	SoundParams3D();
+
+	uint minRange;
+	uint maxRange;
+
+	// Not sure what this does.  It's always shorter than the min range but after many tests, I've been
+	// unable to detect any level changes from altering this parameter.
+	uint unknownRange;
+};
+
+struct CachedSound {
+	CachedSound();
+	~CachedSound();
+
+	Common::String name;
+	Common::SharedPtr<Audio::SeekableAudioStream> stream;
+	Common::SharedPtr<Audio::AudioStream> loopingStream;
+	Common::SharedPtr<AudioPlayer> player;
+
+	uint rampStartVolume;
+	uint rampEndVolume;
+	uint32 rampRatePerMSec;
+	uint32 rampStartTime;
+	bool rampTerminateOnCompletion;
+
+	uint volume;
+	int32 balance;
+
+	uint effectiveVolume;
+	int32 effectiveBalance;
+
+	bool is3D;
+	int32 x;
+	int32 y;
+	int32 z;
+
+	SoundParams3D params3D;
+};
+
+struct TriggeredOneShot {
+	TriggeredOneShot();
+
+	bool operator==(const TriggeredOneShot &other) const;
+	bool operator!=(const TriggeredOneShot &other) const;
+
+	uint soundID;
+	uint uniqueSlot;
+};
+
+struct StaticAnimParams {
+	StaticAnimParams();
+
+	uint initialDelay;
+	uint repeatDelay;
+	bool lockInteractions;
+};
+
+struct StaticAnimation {
+	StaticAnimation();
+
+	AnimationDef animDefs[2];
+	StaticAnimParams params;
+
+	uint32 nextStartTime;
+	uint currentAlternation;
+};
+
+struct FrameData {
+	FrameData();
+
+	uint32 frameIndex;
+	uint16 areaFrameIndex;
+	int8 roomNumber;
+	uint8 frameType;	// 0x01 = Keyframe, 0x02 = Intra frame (not used in Schizm), 0x41 = Last frame
+	char areaID[4];
+};
+
+struct FrameData2 {
+	FrameData2();
+
+	int32 x;
+	int32 y;
+	int32 angle;
+	uint16 frameNumberInArea;
+	uint16 unknown;	// Subarea or something?
 };
 
 class Runtime {
@@ -267,6 +359,7 @@ private:
 
 		Common::Point dragBasePoint;
 		uint dragBaseState;
+		int32 dragCurrentState;
 		bool isWaitingForAnimation;
 	};
 
@@ -321,6 +414,7 @@ private:
 	bool runScript();
 	bool runWaitForAnimation();
 	bool runWaitForFacing();
+	bool runWaitForFacingToAnim();
 	bool runGyroIdle();
 	bool runGyroAnimation();
 	void exitGyroIdle();
@@ -336,6 +430,8 @@ private:
 	void queueOSEvent(const OSEvent &evt);
 
 	void loadIndex();
+	void findWaves();
+	void loadWave(uint soundID, const Common::String &soundName, const Common::ArchiveMemberPtr &archiveMemberPtr);
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
@@ -343,10 +439,19 @@ private:
 	bool dischargeIdleMouseDown();
 	bool dischargeIdleClick();
 	void loadMap(Common::SeekableReadStream *stream);
+	void loadFrameData(Common::SeekableReadStream *stream);
+	void loadFrameData2(Common::SeekableReadStream *stream);
 
 	void changeMusicTrack(int musicID);
 	void changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
+
+	void setSound3DParameters(uint soundID, int32 x, int32 y, const SoundParams3D &soundParams3D);
+	void triggerSound(bool looping, uint soundID, uint volume, int32 balance, bool is3D);
+	void triggerSoundRamp(uint soundID, uint durationMSec, uint newVolume, bool terminateOnCompletion);
+	void updateSounds(uint32 timestamp);
+	void update3DSounds();
+	bool computeEffectiveVolumeAndBalance(CachedSound &snd);
 
 	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
 	void pushAnimDef(const AnimationDef &animDef);
@@ -365,7 +470,7 @@ private:
 	void panoramaActivate();
 
 	bool computeFaceDirectionAnimation(uint desiredDirection, const AnimationDef *&outAnimDef, uint &outInitialFrame, uint &outStopFrame);
-
+	
 	// Script things
 	void scriptOpNumber(ScriptArg_t arg);
 	void scriptOpRotate(ScriptArg_t arg);
@@ -480,6 +585,7 @@ private:
 	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
 	uint _screenNumber;
 	uint _direction;
+	uint _highPrecisionDirection;
 
 	GyroState _gyros;
 
@@ -489,8 +595,9 @@ private:
 	bool _havePanUpFromDirection[kNumDirections];
 	bool _havePanDownFromDirection[kNumDirections];
 
-	AnimationDef _idleAnimations[kNumDirections];
+	StaticAnimation _idleAnimations[kNumDirections];
 	bool _haveIdleAnimations[kNumDirections];
+	StaticAnimParams _pendingStaticAnimParams;
 
 	AnimationDef _postFacingAnimDef;
 
@@ -513,6 +620,7 @@ private:
 	uint _loadedRoomNumber;
 	uint _activeScreenNumber;
 	bool _havePendingScreenChange;
+	bool _forceScreenChange;
 	bool _havePendingReturnToIdleState;
 	bool _havePendingCompletionCheck;
 	GameState _gameState;
@@ -550,6 +658,10 @@ private:
 	uint _loadedAnimation;
 	bool _animPlayWhileIdle;
 
+	Common::Array<FrameData> _frameData;
+	Common::Array<FrameData2> _frameData2;
+	uint32 _loadedArea;
+
 	Common::Array<Common::String> _animDefNames;
 	Common::HashMap<Common::String, uint> _animDefNameToIndex;
 
@@ -582,6 +694,16 @@ private:
 	Common::Point _panoramaAnchor;
 
 	Common::Array<OSEvent> _pendingEvents;
+
+	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _waves;
+	Common::HashMap<uint, Common::SharedPtr<CachedSound> > _cachedSounds;
+	SoundParams3D _pendingSoundParams3D;
+
+	Common::Array<TriggeredOneShot> _triggeredOneShots;
+
+	int32 _listenerX;
+	int32 _listenerY;
+	int32 _listenerAngle;
 
 	static const uint kAnimDefStackArgs = 8;
 

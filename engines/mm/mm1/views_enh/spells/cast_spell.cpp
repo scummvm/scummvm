@@ -109,8 +109,6 @@ bool CastSpell::msgAction(const ActionMessage &msg) {
 	} else {
 		return PartyView::msgAction(msg);
 	}
-
-	return false;
 }
 
 bool CastSpell::msgGame(const GameMessage &msg) {

@@ -94,13 +94,12 @@ void Object3D::setCurMovePos(const TeVector3f32 &vec) {
 
 /*static*/
 bool Object3D::loadSettings(const Common::String &path) {
-	ObjectSettingsXmlParser parser;
-	parser.setAllowText();
-
 	if (_objectSettings)
 		delete _objectSettings;
 	_objectSettings = new Common::HashMap<Common::String, ObjectSettings>();
-	parser.setObjectSettings(_objectSettings);
+
+	ObjectSettingsXmlParser parser(_objectSettings);
+	parser.setAllowText();
 
 	if (!parser.loadFile(path))
 		error("Object3D::loadSettings: Can't load %s", path.c_str());

@@ -19,21 +19,24 @@
  *
  */
 
-#include "mm/mm1/views/unlock.h"
+#include "mm/mm1/views_enh/unlock.h"
+#include "mm/mm1/views_enh/who_will_try.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 
-Unlock::Unlock() : TextView("Unlock") {
-	_bounds = getLineBounds(20, 24);
+Unlock::Unlock() : PartyView("Unlock") {
+	_bounds = Common::Rect(234, 144, 320, 200);
 }
 
 bool Unlock::msgGame(const GameMessage &msg) {
 	if (msg._name != "SHOW")
 		return false;
+
 	byte walls = g_maps->_currentWalls & g_maps->_forwardMask;
 
 	if (!(g_maps->_currentState & 0x55 & g_maps->_forwardMask) || !walls) {
@@ -55,79 +58,39 @@ bool Unlock::msgGame(const GameMessage &msg) {
 		return true;
 	}
 
-	if (g_globals->_party.size() > 1) {
-		// Select the character to use
-		open();
-	} else {
-		// With only one party member, they're automatically used
-		charSelected(0);
-	}
-
+	WhoWillTry::display(charSelected);
 	return true;
 }
 
-bool Unlock::msgFocus(const FocusMessage &msg) {
-	return true;
-}
+void Unlock::charSelected(int charIndex) {
+	if (charIndex == -1 || charIndex >= (int)g_globals->_party.size())
+		return;
 
-void Unlock::draw() {
-	clearSurface();
-
-	writeString(4, 1, Common::String::format(
-		STRING["dialogs.misc.who_will_try"].c_str(),
-		'0' + g_globals->_party.size()));
-	escToGoBack(0, 3);
-}
-
-bool Unlock::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode >= Common::KEYCODE_1 &&
-		msg.keycode <= (Common::KEYCODE_0 + (int)g_globals->_party.size())) {
-		// Character selected
-		charSelected(msg.keycode - Common::KEYCODE_1);
-	}
-
-	return true;
-}
-
-bool Unlock::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
-		close();
-		return true;
-	}
-
-	return false;
-}
-
-void Unlock::charSelected(uint charIndex) {
 	Character &c = g_globals->_party[charIndex];
 	g_globals->_currCharacter = &c;
 
 	if (c._condition & (BAD_CONDITION | DEAD | STONE | ASLEEP)) {
 		Sound::sound(SOUND_2);
-		draw();
 
 	} else {
-		if (isFocused())
-			close();
-
 		int val = g_maps->_currentMap->dataByte(Maps::MAP_49) * 4 +
-			getRandomNumber(100);
+			g_engine->getRandomNumber(100);
 
 		if (val < c._trapCtr) {
 			g_maps->_currentMap->unlockDoor();
-			send(InfoMessage(11, 1, STRING["dialogs.unlock.success"]));
+			g_engine->send(InfoMessage(11, 1, STRING["dialogs.unlock.success"]));
 
-		} else if (getRandomNumber(100) <
+		} else if (g_engine->getRandomNumber(100) <
 				g_maps->_currentMap->dataByte(Maps::MAP_TRAP_THRESHOLD)) {
-			send(InfoMessage(8, 1, STRING["dialogs.unlock.failed"]));
+			g_engine->send(InfoMessage(8, 1, STRING["dialogs.unlock.failed"]));
 
 		} else {
 			g_maps->_currentMap->unlockDoor();
-			send("Trap", GameMessage("TRIGGER"));
+			g_engine->send("Trap", GameMessage("TRIGGER"));
 		}
 	}
 }
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
