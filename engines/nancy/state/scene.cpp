@@ -351,7 +351,9 @@ void Scene::synchronize(Common::Serializer &ser) {
 		ser.syncAsUint16LE(_sceneState.nextScene.sceneID);
 		ser.syncAsUint16LE(_sceneState.nextScene.frameID);
 		ser.syncAsUint16LE(_sceneState.nextScene.verticalOffset);
-		_sceneState.continueSceneSound = kContinueSceneSound;
+		_sceneState.continueSceneSound = kLoadSceneSound;
+
+		g_nancy->_sound->stopAllSounds();
 
 		load();
 	}
