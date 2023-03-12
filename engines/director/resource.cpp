@@ -595,7 +595,14 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	rifxOffset = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
+	rifxOffset = stream->readUint32LE();
+
+	// if value is bigger than the stream size this is most likely a endianness issue.
+	if (rifxOffset > stream->size()) {
+		bigEndian = true;
+		rifxOffset = SWAP_BYTES_32(rifxOffset);
+	}
+
 	stream->seek(rifxOffset);
 	tag = stream->readUint32BE();
 
@@ -636,7 +643,9 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	size = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
 	stream->seek(dictOff + 24);
 	uint32 cnt = bigEndian ? stream->readUint32BE() : stream->readUint32LE();
-	int8 offsetDict = 0;
+
+	// Correction for when there is only a single element present according to the dict
+	uint8 offsetDict = bigEndian && cnt == 1 ? 2 : 0;
 	bool oBigEndian = bigEndian;
 
 	// For 16-bit win projector
@@ -668,6 +677,9 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 	}
 
 	bigEndian = oBigEndian;
+
+	// The first block would start right after the dict.
+	stream->seek(dictOff + size + 8, SEEK_SET);
 
 	for (uint32 i = 0; i < cnt; i++) {
 		tag = stream->readUint32BE();
