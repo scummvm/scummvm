@@ -259,6 +259,7 @@ protected:
 	void handleEvent_mouseDelta(Common::Event &event, int deltaX, int deltaY);
 
 	void rebuildSurface();
+	float getMouseSpeed();
 };
 
 #endif
