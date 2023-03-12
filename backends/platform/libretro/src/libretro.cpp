@@ -264,9 +264,10 @@ void retro_set_input_state(retro_input_state_t cb) {
 void retro_set_environment(retro_environment_t cb) {
 	environ_cb = cb;
 	bool tmp = true;
+	bool has_categories;
 
 	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &tmp);
-	libretro_set_core_options(environ_cb);
+	libretro_set_core_options(environ_cb, &has_categories);
 }
 
 unsigned retro_api_version(void) {
