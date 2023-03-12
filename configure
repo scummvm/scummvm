@@ -3245,9 +3245,6 @@ EOF
 	psp)
 		_optimization_level=-O2
 		_freetypepath="$PSPDEV/psp/bin"
-		if test -z "$PKG_CONFIG_LIBDIR"; then
-			PKG_CONFIG_LIBDIR="$PSPDEV/psp/lib/pkgconfig"
-		fi
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
@@ -3854,6 +3851,7 @@ if test -n "$_host"; then
 			_build_aspect=no
 			_mt32emu=no
 			_port_mk="backends/platform/psp/psp.mk"
+			_pkgconfig="${PSPDEV}/bin/psp-pkg-config"
 			;;
 		tvos)
 			add_line_to_config_mk 'IPHONE = 1'
