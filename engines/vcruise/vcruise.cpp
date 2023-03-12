@@ -221,8 +221,42 @@ Common::Error VCruiseEngine::saveGameStream(Common::WriteStream *stream, bool is
 }
 
 Common::Error VCruiseEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	if (!_runtime->loadGame(stream))
+	Runtime::LoadGameOutcome loadGameOutcome = _runtime->loadGame(stream);
+
+	switch (loadGameOutcome) {
+	case Runtime::kLoadGameOutcomeSucceeded:
+		return Common::Error(Common::kNoError);
+	case Runtime::kLoadGameOutcomeSaveDataCorrupted: {
+			GUI::MessageDialog dialog(_("Failed to load save, the save data appears to be damaged."));
+			dialog.runModal();
+		}
 		return Common::Error(Common::kReadingFailed);
+	case Runtime::kLoadGameOutcomeMissingVersion: {
+			GUI::MessageDialog dialog(_("Failed to read version information from save file."));
+			dialog.runModal();
+		}
+		return Common::Error(Common::kReadingFailed);
+	case Runtime::kLoadGameOutcomeInvalidVersion: {
+			GUI::MessageDialog dialog(_("Failed to load save, the save file doesn't contain valid version information."));
+			dialog.runModal();
+		}
+		return Common::Error(Common::kReadingFailed);
+	case Runtime::kLoadGameOutcomeSaveIsTooNew: {
+			GUI::MessageDialog dialog(_("Saved game was created with a newer version of ScummVM. Unable to load."));
+			dialog.runModal();
+		}
+		return Common::Error(Common::kReadingFailed);
+	case Runtime::kLoadGameOutcomeSaveIsTooOld: {
+			GUI::MessageDialog dialog(_("Saved game was created with an earlier, incompatible version of ScummVM. Unable to load."));
+			dialog.runModal();
+		}
+		return Common::Error(Common::kReadingFailed);
+	default: {
+			GUI::MessageDialog dialog(_("An unknown error occurred while attempting to load the saved game."));
+			dialog.runModal();
+		}
+		return Common::Error(Common::kReadingFailed);
+	};
 
 	return Common::Error(Common::kNoError);
 }

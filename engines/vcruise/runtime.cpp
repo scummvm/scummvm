@@ -2407,39 +2407,23 @@ void Runtime::saveGame(Common::WriteStream *stream) const {
 		stream->writeUint32BE(item.itemID);
 }
 
-bool Runtime::loadGame(Common::ReadStream *stream) {
+Runtime::LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 	assert(canLoad());
 
 	uint32 saveGameID = stream->readUint32BE();
 	uint32 saveVersion = stream->readUint32BE();
 
-	if (stream->err() || stream->eos()) {
-		GUI::MessageDialog dialog(_("Failed to read version information from save file"));
-		dialog.runModal();
+	if (stream->err() || stream->eos())
+		return kLoadGameOutcomeMissingVersion;
 
-		return false;
-	}
+	if (saveGameID != kSaveGameIdentifier)
+		return kLoadGameOutcomeInvalidVersion;
 
-	if (saveGameID != kSaveGameIdentifier) {
-		GUI::MessageDialog dialog(_("Failed to load save, the save file doesn't contain valid version information."));
-		dialog.runModal();
+	if (saveVersion > kSaveGameCurrentVersion)
+		return kLoadGameOutcomeSaveIsTooNew;
 
-		return false;
-	}
-
-	if (saveVersion > kSaveGameCurrentVersion) {
-		GUI::MessageDialog dialog(_("Saved game was created with a newer version of ScummVM. Unable to load."));
-		dialog.runModal();
-
-		return false;
-	}
-
-	if (saveVersion < kSaveGameEarliestSupportedVersion) {
-		GUI::MessageDialog dialog(_("Saved game was created with an earlier, incompatible version of ScummVM. Unable to load."));
-		dialog.runModal();
-
-		return false;
-	}
+	if (saveVersion < kSaveGameEarliestSupportedVersion)
+		return kLoadGameOutcomeSaveIsTooOld;
 
 	uint32 timeBase = g_system->getMillis();
 
@@ -2451,7 +2435,7 @@ bool Runtime::loadGame(Common::ReadStream *stream) {
 	uint32 numTimers = stream->readUint32BE();
 
 	if (stream->err() || stream->eos())
-		return false;
+		return kLoadGameOutcomeSaveDataCorrupted;
 
 	Common::HashMap<uint32, int32> vars;
 	Common::HashMap<uint, uint32> timers;
@@ -2476,10 +2460,10 @@ bool Runtime::loadGame(Common::ReadStream *stream) {
 		inventoryItems[i] = stream->readUint32BE();
 
 	if (stream->err() || stream->eos())
-		return false;
+		return kLoadGameOutcomeSaveDataCorrupted;
 
 	if (direction >= kNumDirections)
-		return false;
+		return kLoadGameOutcomeSaveDataCorrupted;
 
 	// Load succeeded
 	_variables = Common::move(vars);
@@ -2500,7 +2484,7 @@ bool Runtime::loadGame(Common::ReadStream *stream) {
 	changeToScreen(roomNumber, screenNumber);
 	_havePendingReturnToIdleState = true;
 
-	return true;
+	return kLoadGameOutcomeSucceeded;
 }
 
 #ifdef PEEK_STACK

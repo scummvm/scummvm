@@ -271,6 +271,17 @@ struct InventoryItem {
 
 class Runtime {
 public:
+	enum LoadGameOutcome {
+		kLoadGameOutcomeSucceeded,
+
+		kLoadGameOutcomeSaveDataCorrupted,
+
+		kLoadGameOutcomeMissingVersion,
+		kLoadGameOutcomeInvalidVersion,
+		kLoadGameOutcomeSaveIsTooNew,
+		kLoadGameOutcomeSaveIsTooOld,
+	};
+
 	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
 	virtual ~Runtime();
 
@@ -291,7 +302,7 @@ public:
 	bool canLoad() const;
 
 	void saveGame(Common::WriteStream *stream) const;
-	bool loadGame(Common::ReadStream *stream);
+	LoadGameOutcome loadGame(Common::ReadStream *stream);
 
 	bool bootGame(bool newGame);
 
