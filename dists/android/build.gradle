@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
 
@@ -18,13 +18,15 @@ dependencies {
 
 // Enable to see use of deprecated API
 tasks.withType(JavaCompile) {
-	 options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
 }
+
+//gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS_FULL
 
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
     buildToolsVersion "33.0.1"
     ndkVersion "21.3.6528147"
 
@@ -100,6 +102,6 @@ android {
 }
 
 dependencies {
-    implementation "androidx.annotation:annotation:1.1.0"
-    implementation "androidx.appcompat:appcompat:1.2.0"
+    implementation "androidx.annotation:annotation:1.5.0"
+    implementation "androidx.appcompat:appcompat:1.6.1"
 }
