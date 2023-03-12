@@ -5,36 +5,23 @@
 // tree. An additional intellectual property rights grant can be found
 // in the file PATENTS.  All contributing project authors may
 // be found in the AUTHORS file in the root of the source tree.
+
+#include "common/math.h"
+#include "common/ptr.h"
+#include "common/str.h"
+
 #include "video/mkv/mkvparser.h"
-
-#if defined(_MSC_VER) && _MSC_VER < 1800
-#include <float.h>  // _isnan() / _finite()
-#define MSC_COMPAT
-#endif
-
-#include <cassert>
-#include <cfloat>
-#include <climits>
-#include <cmath>
-#include <cstring>
-#include <memory>
-#include <new>
-
 #include "video/mkv/webmids.h"
+
+#ifndef LLONG_MAX
+#define LLONG_MAX 9223372036854775807LL
+#endif
 
 namespace mkvparser {
 const long long kStringElementSizeLimit = 20 * 1000 * 1000;
 const float MasteringMetadata::kValueNotPresent = FLT_MAX;
 const long long Colour::kValueNotPresent = LLONG_MAX;
 const float Projection::kValueNotPresent = FLT_MAX;
-
-#ifdef MSC_COMPAT
-inline bool isnan(double val) { return !!_isnan(val); }
-inline bool isinf(double val) { return !_finite(val); }
-#else
-inline bool isnan(double val) { return std::isnan(val); }
-inline bool isinf(double val) { return std::isinf(val); }
-#endif  // MSC_COMPAT
 
 template <typename Type>
 Type* SafeArrayAlloc(unsigned long long num_elements,
@@ -281,7 +268,7 @@ long UnserializeFloat(IMkvReader* pReader, long long pos, long long size_,
     result = d;
   }
 
-  if (mkvparser::isinf(result) || mkvparser::isnan(result))
+  if (isinf(result) || isnan(result))
     return E_FILE_FORMAT_INVALID;
 
   return 0;
@@ -4552,7 +4539,7 @@ int Track::Info::CopyStr(char* Info::*str, Info& dst_) const {
   if (dst == NULL)
     return -1;
 
-  strcpy(dst, src);
+  Common::strlcpy(dst, src, len + 1);
 
   return 0;
 }
@@ -5018,7 +5005,7 @@ bool MasteringMetadata::Parse(IMkvReader* reader, long long mm_start,
   if (!reader || *mm)
     return false;
 
-  std::unique_ptr<MasteringMetadata> mm_ptr(new MasteringMetadata());
+  Common::ScopedPtr<MasteringMetadata> mm_ptr(new MasteringMetadata());
   if (!mm_ptr.get())
     return false;
 
@@ -5107,7 +5094,7 @@ bool Colour::Parse(IMkvReader* reader, long long colour_start,
   if (!reader || *colour)
     return false;
 
-  std::unique_ptr<Colour> colour_ptr(new Colour());
+  Common::ScopedPtr<Colour> colour_ptr(new Colour());
   if (!colour_ptr.get())
     return false;
 
@@ -5205,7 +5192,7 @@ bool Projection::Parse(IMkvReader* reader, long long start, long long size,
   if (!reader || *projection)
     return false;
 
-  std::unique_ptr<Projection> projection_ptr(new Projection());
+  Common::ScopedPtr<Projection> projection_ptr(new Projection());
   if (!projection_ptr.get())
     return false;
 
@@ -5309,7 +5296,7 @@ long VideoTrack::Parse(Segment* pSegment, const Info& info,
   long long stereo_mode = 0;
 
   double rate = 0.0;
-  std::unique_ptr<char[]> colour_space_ptr;
+  Common::ScopedPtr<char, Common::ArrayDeleter<char>> colour_space_ptr;
 
   IMkvReader* const pReader = pSegment->m_pReader;
 
@@ -5322,8 +5309,8 @@ long VideoTrack::Parse(Segment* pSegment, const Info& info,
 
   const long long stop = pos + s.size;
 
-  std::unique_ptr<Colour> colour_ptr;
-  std::unique_ptr<Projection> projection_ptr;
+  Common::ScopedPtr<Colour> colour_ptr;
+  Common::ScopedPtr<Projection> projection_ptr;
 
   while (pos < stop) {
     long long id, size;
