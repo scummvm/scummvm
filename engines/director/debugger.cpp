@@ -74,6 +74,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("da", WRAP_METHOD(Debugger, cmdDisasm));
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVar));
 	registerCmd("v", WRAP_METHOD(Debugger, cmdVar));
+	registerCmd("markers", WRAP_METHOD(Debugger, cmdMarkers));
+	registerCmd("mk", WRAP_METHOD(Debugger, cmdMarkers));
 	registerCmd("step", WRAP_METHOD(Debugger, cmdStep));
 	registerCmd("s", WRAP_METHOD(Debugger, cmdStep));
 	registerCmd("next", WRAP_METHOD(Debugger, cmdNext));
@@ -161,6 +163,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
 	debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
 	debugPrintf(" var / v - Lists all of the variables available in the current script frame\n");
+	debugPrintf(" markers / mk - Lists all of the frame markers in the current score\n");
 	debugPrintf(" step / s [n] - Steps forward one or more operations\n");
 	debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
 	debugPrintf(" finish / fin - Steps until the current stack frame returns\n");
@@ -513,6 +516,19 @@ bool Debugger::cmdDisasm(int argc, const char **argv) {
 bool Debugger::cmdVar(int argc, const char **argv) {
 	Lingo *lingo = g_director->getLingo();
 	debugPrintf("%s\n", lingo->formatAllVars().c_str());
+	return true;
+}
+
+bool Debugger::cmdMarkers(int argc, const char **argv) {
+	Score *score = g_director->getCurrentMovie()->getScore();
+	if (score->_labels && score->_labels->size()) {
+		debugPrintf("Score markers:\n");
+		for (auto &it : *score->_labels) {
+			debugPrintf("\"%s\" -> %d", it->name.c_str(), it->number);
+		}
+	} else {
+		debugPrintf("No score markers found.\n");
+	}
 	return true;
 }
 
