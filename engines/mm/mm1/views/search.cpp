@@ -247,7 +247,7 @@ void Search::timeout() {
 
 void Search::openContainer() {
 	_removing = false;
-	if (!whoWillTry())
+	if (whoWillTry())
 		openContainer2();
 }
 
@@ -270,7 +270,7 @@ void Search::openContainer2() {
 
 void Search::findRemoveTrap() {
 	_removing = true;
-	if (!whoWillTry())
+	if (whoWillTry())
 		findRemoveTrap2();
 }
 
