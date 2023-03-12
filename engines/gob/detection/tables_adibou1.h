@@ -19,10 +19,57 @@
  *
  */
 
-/* Detection tables for A.J.'s World of Discovery / ADI Jnr. */
+/* Detection tables for Adibou 1 / A.J.'s World of Discovery / ADI Jnr. */
 
-#ifndef GOB_DETECTION_TABLES_AJWORLD_H
-#define GOB_DETECTION_TABLES_AJWORLD_H
+#ifndef GOB_DETECTION_TABLES_ADIBOU1_H
+#define GOB_DETECTION_TABLES_ADIBOU1_H
+
+//  -- French: Adibou --
+
+{
+	{
+		"adibou1",
+		"ADIBOU 1 Environnement 4-7 ans",
+		AD_ENTRY1s("intro.stk", "6db110188fcb7c5208d9721b5282682a", 4805104),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeAdibou1,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+
+{
+	{
+		"adibou1",
+		"ADIBOU 1 Environnement 4-7 ans",
+		AD_ENTRY1s("intro.stk", "904a93f46687617bb34e672020fc17a4", 248724),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeAdibou1,
+	kFeaturesAdLib | kFeaturesEGA,
+	0, "base.tot", 0
+},
+
+{
+	{
+		"adibou1",
+		"ADIBOU 1 Environnement 4-7 ans",
+		AD_ENTRY1s("intro.stk", "228edf921ebcd9f1c6d566856f264ea4", 2647968),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeAdibou1,
+	kFeaturesAdLib,
+	0, 0, 0
+},
 
 // -- DOS VGA Floppy --
 
@@ -59,4 +106,4 @@
 	0, 0, 0
 },
 
-#endif // GOB_DETECTION_TABLES_AJWORLD_H
+#endif // GOB_DETECTION_TABLES_ADIBOU1_H
