@@ -1,6 +1,7 @@
 
 package org.scummvm.scummvm;
 
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -237,6 +238,7 @@ public class MultitouchHelper {
 		private final WeakReference<MultitouchHelper> mListenerReference;
 
 		public MultitouchHelperHandler(MultitouchHelper listener) {
+			super(Looper.getMainLooper());
 			mListenerReference = new WeakReference<>(listener);
 		}
 

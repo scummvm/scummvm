@@ -32,6 +32,7 @@ import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 //import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -277,6 +278,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         private final WeakReference<CustomKeyboardView> mListenerReference;
 
         public CustomKeyboardViewHandler(CustomKeyboardView listener) {
+            super(Looper.getMainLooper());
             mListenerReference = new WeakReference<>(listener);
         }
 
