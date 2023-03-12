@@ -149,7 +149,7 @@ bool SoundMidiPC::init() {
 				}
 			} else {
 				if (_vm->gameFlags().isTalkie)
-					pakFile = "ENG/STARTUP.PAK";
+					pakFile =  (_vm->_flags.lang == Common::FR_FRA) ? "FRE/STARTUP.PAK" : (_vm->_flags.lang == Common::DE_DEU ? "GER/STARTUP.PAK" : "ENG/STARTUP.PAK");
 				else
 					pakFile = "INTROVOC.PAK";
 			}
