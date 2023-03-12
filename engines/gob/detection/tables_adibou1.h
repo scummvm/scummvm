@@ -71,6 +71,23 @@
 	0, 0, 0
 },
 
+//  -- German: ADI Jr. --
+
+{
+	{
+		"adibou1",
+		"ADI Jr.",
+		AD_ENTRY1s("intro.stk", "4d4c23da4cd7e080cb1769b49ace1805", 4731020),
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeAdibou1,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+
 // -- DOS VGA Floppy --
 
 {
