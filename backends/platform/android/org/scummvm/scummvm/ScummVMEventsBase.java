@@ -2,6 +2,7 @@ package org.scummvm.scummvm;
 
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.content.Context;
 //import android.util.Log;
@@ -79,6 +80,7 @@ public class ScummVMEventsBase implements
 		private final WeakReference<ScummVMEventsBase> mListenerReference;
 
 		public ScummVMEventHandler(ScummVMEventsBase listener) {
+			super(Looper.getMainLooper());
 			mListenerReference = new WeakReference<>(listener);
 		}
 
