@@ -393,7 +393,7 @@ public:
 #else
 		_overlay.create(RES_W_OVERLAY, RES_H_OVERLAY, Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
 #endif
-		_mixer = new Audio::MixerImpl(48000);
+		_mixer = new Audio::MixerImpl(SAMPLE_RATE);
 		_timerManager = new DefaultTimerManager();
 
 		_mixer->setReady(true);

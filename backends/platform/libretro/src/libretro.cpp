@@ -80,6 +80,34 @@ char cmd_params_num;
 int adjusted_RES_W = 0;
 int adjusted_RES_H = 0;
 
+static uint32 audio_latency = 0;
+static bool audio_buffer_status_support = false;
+static bool mute=true;
+
+static bool retro_audio_buff_active = false;
+static unsigned retro_audio_buff_occupancy = 0;
+static bool retro_audio_buff_underrun = false;
+
+static uint16 fps = 0;
+static uint16 sound_len = 0;                // length in samples per frame
+static size_t sound_size = 0;
+
+static int16_t *sound_buffer = NULL;       // pointer to output buffer
+
+static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
+	fps = 100.0 * frame_rate;
+	sound_len = (sample_rate * 100 + (fps >> 1)) / fps;
+	sound_size = sound_len << 2 * sizeof(int16_t);
+	if (sound_buffer)
+		sound_buffer = (int16_t *)realloc(sound_buffer, sound_size);
+	else
+		sound_buffer = (int16_t *)malloc(sound_size);
+	if (sound_buffer)
+		memset(sound_buffer, 0, sound_size);
+	else
+		log_cb(RETRO_LOG_ERROR, "audio_buffer_init error.\n");
+}
+
 static void update_variables(void) {
 	struct retro_variable var;
 
@@ -266,15 +294,15 @@ void retro_get_system_av_info(struct retro_system_av_info *info) {
 	info->geometry.max_width = RES_W;
 	info->geometry.max_height = RES_H;
 	info->geometry.aspect_ratio = 4.0f / 3.0f;
-	info->timing.fps = 60.0;
-	info->timing.sample_rate = 48000.0;
+	info->timing.fps = REFRESH_RATE;
+	info->timing.sample_rate = SAMPLE_RATE;
 }
 
 void retro_init(void) {
 	const char *sysdir;
 	const char *savedir;
-	struct retro_log_callback log;
 
+	struct retro_log_callback log;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
 		log_cb = log.log;
 	else
@@ -348,10 +376,17 @@ void retro_init(void) {
 		retroSetSaveDir(".");
 	}
 
+	// Check RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK support
+	audio_buffer_status_support = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, NULL);
+
+	audio_buffer_init(SAMPLE_RATE, REFRESH_RATE);
+
 	g_system = retroBuildOS(speed_hack_is_enabled);
 }
 
-void retro_deinit(void) {}
+void retro_deinit(void) {
+	free(sound_buffer);
+}
 
 void retro_set_controller_port_device(unsigned port, unsigned device) {
 	if (port != 0) {
@@ -393,7 +428,7 @@ bool retro_load_game(const struct retro_game_info *game) {
 		retro_msg.duration = 3000;
 		retro_msg.msg = "";
 
-		const char * target_file_ext = ".scummvm";
+		const char *target_file_ext = ".scummvm";
 		int target_file_ext_pos = strlen(game->path) - strlen(target_file_ext);
 
 		// See if we are loading a .scummvm file.
@@ -489,9 +524,9 @@ void retro_run(void) {
 		return;
 	}
 
-	bool updated = false;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
-		update_variables();
+	// Setting RA's video or audio driver to null will disable video/audio bits,
+	int audio_video_enable = 0;
+	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &audio_video_enable);
 
 	retro_switch_to_emu_thread();
 	/* Mouse */
@@ -499,27 +534,40 @@ void retro_run(void) {
 		poll_cb();
 		retroProcessMouse(input_cb, retro_device, gampad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
 
-		/* Upload video: TODO: Check the CANDUPE env value */
-		const Graphics::Surface &screen = getScreen();
 
-		video_cb(screen.getPixels(), screen.w, screen.h, screen.pitch);
+
+		/* Upload video: TODO: Check the CANDUPE env value */
+		if (audio_video_enable & 1) {
+			const Graphics::Surface &screen = getScreen();
+			video_cb(screen.getPixels(), screen.w, screen.h, screen.pitch);
+		} else {
+			//check if it's the same avoiding the call to video_cb at all
+			video_cb(NULL, 0, 0, 0); // Set to NULL to skip frame rendering
+		}
 
 		/* Upload audio */
-		static uint32 buf[800];
-		int count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *)buf, 800 * 4);
-
+		size_t count = 0;
+		if (audio_video_enable & 2) {
+			count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *)sound_buffer, sound_size);
+		}
+		mute = count ? false : true;
 #if defined(_3DS)
 		/* Hack: 3DS will produce static noise
 		 * unless we manually send a zeroed
 		 * audio buffer when no samples are
 		 * available (i.e. when the overlay
 		 * is shown) */
-		if (count == 0) {
-			memset(buf, 0, 735 * sizeof(uint32));
-			audio_batch_cb((int16_t *)buf, 735);
-		} else
+		if (mute) {
+			audio_buffer_init(SAMPLE_RATE, REFRESH_RATE);
+		}
 #endif
-			audio_batch_cb((int16_t *)buf, count);
+		audio_batch_cb(mute ? NULL : sound_buffer, count); // Set to NULL to skip sound rendering
+
+	}
+
+	bool updated = false;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated) {
+		update_variables();
 	}
 }
 
