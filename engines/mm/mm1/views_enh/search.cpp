@@ -297,6 +297,7 @@ bool Search::whoWillTry() {
 		return true;
 	} else {
 		// Switch to mode to ask which character to use
+		close();
 		WhoWillTry::display([](int charNum) {
 			static_cast<Search *>(g_events->findView("Search"))->whoWillTry(charNum);
 		});
@@ -305,6 +306,8 @@ bool Search::whoWillTry() {
 }
 
 void Search::whoWillTry(int charNum) {
+	addView();
+
 	if (charNum == -1) {
 		// Character selection aborted, go back to options
 		setMode(OPTIONS);
@@ -319,8 +322,6 @@ void Search::whoWillTry(int charNum) {
 			openContainer2();
 		}
 	}
-
-	open();
 }
 
 void Search::getTreasure() {
