@@ -140,6 +140,7 @@ private:
 	bool cmdScriptFrame(int argc, const char **argv);
 	bool cmdFuncs(int argc, const char **argv);
 	bool cmdVar(int argc, const char **argv);
+	bool cmdMarkers(int argc, const char **argv);
 	bool cmdStep(int argc, const char **argv);
 	bool cmdNext(int argc, const char **argv);
 	bool cmdFinish(int argc, const char **argv);
