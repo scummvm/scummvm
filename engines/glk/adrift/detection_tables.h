@@ -765,7 +765,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("escapefromsouth", "Release 1", "5b2608a2b7963ce2ba117dd361c91936", 4648),
 	DT_ENTRY1("escapefromsouth", "Release 2", "3a742c4bb03442749a4f89dc12e0eef1", 15407),
 	DT_ENTRY1("escapetofreedom", "Release 1", "a7edcb289eb8177a143a96912ec55393", 18171),
-	DT_ENTRY1("escapetofreedom", "Release 2",DT_ENTRY1("findandy1", "Release 1", "ca1aeba91f2d17dff959f73da8b48f03", 27512645),
+	DT_ENTRY1("escapetofreedom", "Release 2", "ca1aeba91f2d17dff959f73da8b48f03", 27512645),
 	DT_ENTRY1("etnyadrift", "Release 1", "8a376d5bdf833fa79614271d05dd36a8", 59531),
 	DT_ENTRY1("etnyadrift", "Release 2", "990c0e2390d197ebcae1109e5534c433", 59583),
 	DT_ENTRY1("eveningwithecod", "Release 1", "736f0276c4028ccd972d391f0b30ab14", 3937),
