@@ -38,5 +38,5 @@ Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummv
 - Schnellere App-Ladezeit
 - Eine Reihe von gemeldeten App-Abstürzen wurde behoben
 - Unterstützung von Geräten mit mindestens API-Level 16 (Android 4.1) wieder eingeführt
-- Vollständige Versionshinweise für 2.7.0 finden Sie unter: https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
+- Vollständige Versionshinweise für 2.7.0 findest Du unter: https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
 </de-DE>
