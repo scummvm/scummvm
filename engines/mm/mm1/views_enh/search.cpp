@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/search.h"
+#include "mm/mm1/views_enh/select_number.h"
 #include "mm/mm1/views_enh/who_will_try.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -28,7 +29,7 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-Search::Search() : ScrollView("Search") {
+Search::Search() : SelectNumber("Search") {
 	_bounds = Common::Rect(0, 144, 234, 200);
 	_escSprite.load("esc.icn");
 	addButton(&_escSprite, Common::Point(79, 30), 0, KEYBIND_ESCAPE, true);
@@ -64,7 +65,7 @@ bool Search::msgFocus(const FocusMessage &msg) {
 
 		getTreasure();
 	} else {
-		_mode = INITIAL;
+		setMode(INITIAL);
 	}
 
 	return true;
@@ -75,7 +76,7 @@ void Search::draw() {
 	setButtonEnabled(0, _mode == OPTIONS);
 
 	//if (_mode != GET_ITEMS)
-	ScrollView::draw();
+	SelectNumber::draw();
 
 	switch (_mode) {
 	case INITIAL:
@@ -120,12 +121,15 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 	case OPTIONS:
 		switch (msg.keycode) {
 		case Common::KEYCODE_1:
+			closeNumbers();
 			openContainer();
 			break;
 		case Common::KEYCODE_2:
+			closeNumbers();
 			findRemoveTrap();
 			break;
 		case Common::KEYCODE_3:
+			closeNumbers();
 			detectMagicTrap();
 			break;
 		default:
@@ -187,17 +191,17 @@ void Search::timeout() {
 		int gfxNum = g_globals->_treasure._container < WOODEN_BOX ? 4 : 2;
 		send("View", DrawGraphicMessage(gfxNum + 65));
 
-		_mode = OPTIONS;
+		setMode(OPTIONS);
 		draw();
 		break;
 	}
 	case RESPONSE:
-		_mode = OPTIONS;
+		setMode(OPTIONS);
 		draw();
 		break;
 
 	case GET_TREASURE:
-		_mode = GET_ITEMS;
+		setMode(GET_ITEMS);
 		draw();
 		break;
 
@@ -228,7 +232,7 @@ void Search::openContainer2() {
 
 		if (getRandomNumber(thresold + 5) < thresold) {
 			// Triggered a trap
-			_mode = FOCUS_GET_TREASURE;
+			setMode(FOCUS_GET_TREASURE);
 			g_events->send("Trap", GameMessage("TRAP"));
 			return;
 		}
@@ -258,7 +262,7 @@ void Search::findRemoveTrap2() {
 
 void Search::detectMagicTrap() {
 	Character &c = *g_globals->_currCharacter;
-	_mode = RESPONSE;
+	setMode(RESPONSE);
 
 	if (c._class == PALADIN || c._class == CLERIC) {
 		Sound::sound(SOUND_2);
@@ -303,7 +307,7 @@ bool Search::whoWillTry() {
 void Search::whoWillTry(int charNum) {
 	if (charNum == -1) {
 		// Character selection aborted, go back to options
-		_mode = OPTIONS;
+		setMode(OPTIONS);
 
 	} else {
 		// Character selected, proceed with given action
@@ -320,7 +324,7 @@ void Search::whoWillTry(int charNum) {
 }
 
 void Search::getTreasure() {
-	_mode = GET_TREASURE;
+	setMode(GET_TREASURE);
 	_bounds = Common::Rect(0, 144, 234, 200);
 
 	// Display a graphic for the container type
@@ -405,8 +409,15 @@ void Search::drawItem() {
 	// At this point we've either displayed the up to 3 item
 	// lines (in addition to gold and/or gems), or the party's
 	// backpacks were completely full up. Wait for 7 seconds
-	_mode = GET_ITEMS_DONE;
+	setMode(GET_ITEMS_DONE);
 	delaySeconds(7);
+}
+
+void Search::setMode(Mode mode) {
+	_mode = mode;
+
+	if (_mode == OPTIONS)
+		openNumbers(3);
 }
 
 } // namespace ViewsEnh

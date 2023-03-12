@@ -22,13 +22,13 @@
 #ifndef MM1_VIEWS_ENH_SEARCH_H
 #define MM1_VIEWS_ENH_SEARCH_H
 
-#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/select_number.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class Search : public ScrollView {
+class Search : public SelectNumber {
 private:
 	enum Mode {
 		INITIAL, OPTIONS, RESPONSE, FOCUS_GET_TREASURE,
@@ -39,6 +39,8 @@ private:
 	byte _val1 = 0;
 	int _lineNum = 0;
 	Shared::Xeen::SpriteResource _escSprite;
+
+	void setMode(Mode mode);
 
 	/**
 	 * Open the container

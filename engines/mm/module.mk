@@ -147,6 +147,7 @@ MODULE_OBJS += \
 	mm1/views_enh/scroll_text.o \
 	mm1/views_enh/scroll_view.o \
 	mm1/views_enh/search.o \
+	mm1/views_enh/select_number.o \
 	mm1/views_enh/text_entry.o \
 	mm1/views_enh/text_view.o \
 	mm1/views_enh/title.o \
