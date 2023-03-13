@@ -65,20 +65,6 @@ bool TetraedgeMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup);
 }
 
-/*static*/
-const Common::Language *TetraedgeMetaEngine::getGameLanguages() {
-	static Common::Language languages[] = {
-		Common::EN_ANY,
-		Common::FR_FRA,
-		Common::DE_DEU,
-		Common::IT_ITA,
-		Common::ES_ESP,
-		Common::RU_RUS,
-		Common::UNK_LANG
-	};
-	return languages;
-}
-
 void TetraedgeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	Tetraedge::TetraedgeEngine::getSavegameThumbnail(thumb);
 }

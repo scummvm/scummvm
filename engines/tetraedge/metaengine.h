@@ -44,8 +44,6 @@ public:
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
 
-	static const Common::Language *getGameLanguages();
-
 };
 
 #endif
