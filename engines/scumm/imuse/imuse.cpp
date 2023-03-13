@@ -366,7 +366,7 @@ void IMuseInternal::pause(bool paused) {
 	// The result is hanging notes on pause. Reportedly
 	// happens in the original distro, too. To fix that,
 	// just send AllNotesOff to the channels.
-	if (_midi_native && _native_mt32) {
+ 	if (_midi_native && _native_mt32) {
 		for (int i = 0; i < 16; ++i)
 			_midi_native->send(123 << 8 | 0xB0 | i);
 	}
