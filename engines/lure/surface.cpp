@@ -207,9 +207,12 @@ void Surface::vgaRefreshDialog() {
 	// Skip dialog top
 	pSrc += ((VGA_DIALOG_EDGE_WIDTH - 2) + 1 + VGA_DIALOG_EDGE_WIDTH) * 9;
 	pDest += _width * 9;
+	// Skip dialog left border
+	pSrc += VGA_DIALOG_EDGE_WIDTH;
+	pDest += VGA_DIALOG_EDGE_WIDTH;
 
 	for (y = 0; y < yCenter; ++y) {
-		copyLine(pSrc, pDest, VGA_DIALOG_EDGE_WIDTH, xCenter, VGA_DIALOG_EDGE_WIDTH);
+		copyLine(pSrc, pDest, 0, xCenter, 0);
 		pDest += _width;
 	}
 }
