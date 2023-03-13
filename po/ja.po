@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-13 14:20+0000\n"
+"POT-Creation-Date: 2023-03-13 19:17+0000\n"
 "PO-Revision-Date: 2023-03-09 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -139,7 +139,7 @@ msgstr "接続が制限されているようです。ダウンロードしても
 #: engines/grim/grim.cpp:359 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3463
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3480
 #: engines/toon/toon.cpp:1502
 msgid "Yes"
 msgstr "はい"
@@ -152,7 +152,7 @@ msgstr "はい"
 #: engines/grim/grim.cpp:359 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3463
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3480
 #: engines/toon/toon.cpp:1502
 msgid "No"
 msgstr "いいえ"
@@ -180,10 +180,10 @@ msgstr ""
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1134
-#: engines/scumm/scumm.cpp:1160 engines/scumm/scumm.cpp:1182
-#: engines/scumm/scumm.cpp:1535 engines/scumm/scumm.cpp:2006
-#: engines/scumm/scumm.cpp:2022 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1151
+#: engines/scumm/scumm.cpp:1177 engines/scumm/scumm.cpp:1199
+#: engines/scumm/scumm.cpp:1552 engines/scumm/scumm.cpp:2023
+#: engines/scumm/scumm.cpp:2039 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:888
 #: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:426
@@ -4391,7 +4391,7 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "このロケーションでは、セーブまたはクイックロードはサポートされていません"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2784
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2801
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4402,7 +4402,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2771
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2788
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4413,7 +4413,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2800
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2817
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6973,7 +6973,7 @@ msgstr ""
 "適用する必要があるかもしれません。\n"
 "\n"
 
-#: engines/scumm/detection_internal.h:358
+#: engines/scumm/detection_internal.h:368
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK04.LEC and 903.LFL files.\n"
@@ -6993,7 +6993,7 @@ msgid "Querying games..."
 msgstr "ゲームに照会中..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3469
+#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3486
 msgid "Join"
 msgstr "参加"
 
@@ -7844,7 +7844,7 @@ msgstr "武器を切り替え"
 msgid "Win the bike fight cheat"
 msgstr "バイク戦闘を省略"
 
-#: engines/scumm/scumm.cpp:279
+#: engines/scumm/scumm.cpp:281
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -7856,7 +7856,7 @@ msgstr ""
 "アスペクト比の補正は、[エンジン]タブで解像度を320x200にトリミングすることで実"
 "現できます。"
 
-#: engines/scumm/scumm.cpp:1133
+#: engines/scumm/scumm.cpp:1150
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
@@ -7864,7 +7864,7 @@ msgstr ""
 "「Indy」のMacintosh用実行ファイルが見つかりません。\n"
 "高解像度のフォントは使用できません。"
 
-#: engines/scumm/scumm.cpp:1159
+#: engines/scumm/scumm.cpp:1176
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -7872,7 +7872,7 @@ msgstr ""
 "Macintosh用実行ファイル「Loom」が見つかりません。\n"
 "音楽、高解像度のフォントやカーソルは使えなくなります。"
 
-#: engines/scumm/scumm.cpp:1181
+#: engines/scumm/scumm.cpp:1198
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -7881,7 +7881,7 @@ msgstr ""
 "ん。\n"
 "音楽は無効になります。"
 
-#: engines/scumm/scumm.cpp:1532
+#: engines/scumm/scumm.cpp:1549
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7891,7 +7891,7 @@ msgstr ""
 "このゲームではサポートされていないため、オーディオは無効になります。\n"
 "オリジナルのメディアから、圧縮せずにコピーしてください。"
 
-#: engines/scumm/scumm.cpp:2004
+#: engines/scumm/scumm.cpp:2021
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7900,7 +7900,7 @@ msgstr ""
 "ネイティブMIDIのサポートには、LucasArts提供のthe Roland Upgradeが必要です。\n"
 "しかし%sがありません。代わりにAdLibを使用します。"
 
-#: engines/scumm/scumm.cpp:2020
+#: engines/scumm/scumm.cpp:2037
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -7908,7 +7908,7 @@ msgstr ""
 "このMonkey Island 1の特定のバージョンは、MT-32に必要な\n"
 "リソースが欠落しています。AdLibを代用します。"
 
-#: engines/scumm/scumm.cpp:3360
+#: engines/scumm/scumm.cpp:3377
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -7918,11 +7918,11 @@ msgstr ""
 "ディレクトリーの「Maniac」フォルダー内にゲームファイルを配置し、ゲームが"
 "ScummVMに追加されていなければなりません。"
 
-#: engines/scumm/scumm.cpp:3469
+#: engines/scumm/scumm.cpp:3486
 msgid "Would you like to host or join a network play session?"
 msgstr "セッションを開催、または参加しますか?"
 
-#: engines/scumm/scumm.cpp:3469
+#: engines/scumm/scumm.cpp:3486
 msgid "Host"
 msgstr "ホスト"
 
