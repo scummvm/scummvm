@@ -134,6 +134,10 @@ Common::String TetraedgeEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+Common::Language TetraedgeEngine::getGameLanguage() const {
+	return _gameDescription->language;
+}
+
 bool TetraedgeEngine::canLoadGameStateCurrently() {
 	return _game && _application && !_application->mainMenu().isEntered();
 }
@@ -207,6 +211,7 @@ void TetraedgeEngine::registerConfigDefaults() {
 	ConfMan.registerDefault("disable_shadows", false);
 	ConfMan.registerDefault("correct_movie_aspect", true);
 }
+
 
 Common::Error TetraedgeEngine::run() {
 	if (getGameId() == "syberia")
@@ -315,5 +320,6 @@ Common::Error TetraedgeEngine::saveGameState(int slot, const Common::String &des
 void TetraedgeEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	g_engine->getApplication()->getSavegameThumbnail(thumb);
 }
+
 
 } // namespace Tetraedge

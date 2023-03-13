@@ -43,6 +43,9 @@ public:
 	 * Used by e.g. the launcher to determine whether to enable the Load button.
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
+
+	static const Common::Language *getGameLanguages();
+
 };
 
 #endif

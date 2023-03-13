@@ -37,4 +37,25 @@ TetraedgeMetaEngineDetection::TetraedgeMetaEngineDetection() : AdvancedMetaEngin
 	_flags = kADFlagMatchFullPaths;
 }
 
+
+DetectedGame TetraedgeMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
+	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);
+
+	// The AdvancedDetector model only allows specifying a single supported
+	// game language. Both games support multiple languages
+	if (game.gameId == "syberia" || game.gameId == "syberia2") {
+		const Common::Language *language = TetraedgeMetaEngine::getGameLanguages();
+		while (*language != Common::UNK_LANG) {
+			// "ru" only present on syberia 1
+			if (game.gameId == "syberia2" && *language == Common::RU_RUS)
+				continue;
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(*language));
+			language++;
+		}
+	}
+
+	return game;
+}
+
+
 REGISTER_PLUGIN_STATIC(TETRAEDGE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TetraedgeMetaEngineDetection);

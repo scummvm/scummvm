@@ -47,6 +47,8 @@ public:
 	TetraedgeMetaEngineDetection();
 	~TetraedgeMetaEngineDetection() override {}
 
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override;
+
 	const char *getEngineName() const override {
 		return "Tetraedge Engine";
 	}

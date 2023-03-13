@@ -86,6 +86,8 @@ public:
 	 */
 	Common::String getGameId() const;
 
+	Common::Language getGameLanguage() const;
+
 	/**
 	 * Gets a random number
 	 */

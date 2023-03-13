@@ -23,8 +23,11 @@
 #include "common/fs.h"
 #include "common/debug.h"
 #include "common/config-manager.h"
+#include "common/language.h"
 
 #include "tetraedge/te/te_core.h"
+
+#include "tetraedge/tetraedge.h"
 
 #include "tetraedge/te/te_png.h"
 #include "tetraedge/te/te_images_sequence.h"
@@ -46,8 +49,14 @@ void TeCore::addLoc(TeILoc *loc) {
 }
 
 void TeCore::create() {
-	// TODO: Get language from the game definition.  For now just default to en.
-	language("en");
+	const char *langCode = getLanguageCode(g_engine->getGameLanguage());
+	const Common::String confLang = ConfMan.get("language");
+	Common::String useLang = "en";
+	if (langCode)
+		useLang = langCode;
+	if (!confLang.empty())
+		useLang = confLang;
+	language(useLang);
 	_coreNotReady = false;
 	_activityTrackingTimer.alarmSignal().add(this, &TeCore::onActivityTrackingAlarm);
 	warning("TODO: TeCore::create: Finish implementing me.");
