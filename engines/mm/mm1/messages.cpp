@@ -46,7 +46,7 @@ InfoMessage::InfoMessage() : Message() {}
 
 InfoMessage::InfoMessage(const Common::String &str,
 		TextAlign align) : Message() {
-	_lines.push_back(Line(str, align));
+	_lines.push_back(Line(0, 0, str, align));
 }
 
 InfoMessage::InfoMessage(int x, int y, const Common::String &str,
