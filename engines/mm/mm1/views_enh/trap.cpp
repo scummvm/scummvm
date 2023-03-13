@@ -60,12 +60,7 @@ bool Trap::msgKeypress(const KeypressMessage &msg) {
 	if (endDelay())
 		return true;
 
-	if (_mode == MODE_TRIGGER) {
-		trap();
-	} else {
-		close();
-	}
-
+	timeout();
 	return true;
 }
 
@@ -73,12 +68,7 @@ bool Trap::msgAction(const ActionMessage &msg) {
 	if (endDelay())
 		return true;
 
-	if (_mode == MODE_TRIGGER) {
-		trap();
-	} else {
-		close();
-	}
-
+	timeout();
 	return true;
 }
 
@@ -87,6 +77,7 @@ void Trap::trap() {
 
 	_mode = MODE_TRAP;
 	draw();
+	delaySeconds(5);
 }
 
 void Trap::trigger() {
@@ -100,7 +91,11 @@ void Trap::trigger() {
 }
 
 void Trap::timeout() {
-	trap();
+	if (_mode == MODE_TRIGGER) {
+		trap();
+	} else {
+		close();
+	}
 }
 
 } // namespace ViewsEnh
