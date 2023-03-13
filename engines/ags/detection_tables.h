@@ -4992,6 +4992,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("bbcscreensaver", "BBC-Screensaver.exe", "0e6d6f3c19f5ca250b7b7ee03cdb2083", 131195371),
 	GAME_ENTRY_EN("bcremake", "bc.exe", "2e58934bbe98335f33c20a23a6c6135a", 8208487),  // v1.2
 	GAME_ENTRY_EN("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),  // v1.3
+	GAME_ENTRY_LANG("bcremake", "bc.exe", "ef3f57fbb5693c23f5815a421bdb7f4e", 7909416, Common::Language::RU_RUS),
 	GAME_ENTRY_EN("beacon", "beacon.exe", "af0d268193a9220891e983d03141ec58", 24671086),
 	GAME_ENTRY_EN("bear", "bear.exe", "97020973a2a635fe28eb0ba4bdfaa70b", 3258662),  //v1.3
 	GAME_ENTRY_EN("beardbeverage", "Beard.exe", "618d7dce9631229b4579340b964c6810", 7081492),
