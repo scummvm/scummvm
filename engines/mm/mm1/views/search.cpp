@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/search.h"
+#include "mm/mm1/views/trap.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
@@ -54,7 +55,7 @@ bool Search::msgFocus(const FocusMessage &msg) {
 	_bounds = getLineBounds(20, 24);
 	_lineNum = 0;
 
-	if (_mode == FOCUS_GET_TREASURE) {
+	if (dynamic_cast<Trap *>(msg._priorView) != nullptr) {
 		// Returning from trap display
 		if (g_globals->_party.checkPartyDead())
 			return true;
@@ -266,8 +267,6 @@ void Search::openContainer2() {
 			g_globals->_treasure._container;
 
 		if (getRandomNumber(thresold + 5) < thresold) {
-			// Triggered a trap
-			_mode = FOCUS_GET_TREASURE;
 			g_events->send("Trap", GameMessage("TRAP"));
 			return;
 		}
