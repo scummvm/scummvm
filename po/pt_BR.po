@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-12 23:24+0000\n"
-"PO-Revision-Date: 2023-03-06 20:57+0000\n"
+"PO-Revision-Date: 2023-03-13 10:57+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -8822,26 +8822,17 @@ msgstr ""
 "O jogo ainda pode ser jogado, mas não terá nenhuma música."
 
 #: engines/vcruise/vcruise.cpp:230
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, the save file doesn't contain valid version "
-#| "information."
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
-"Falha ao carregar o salvamento, o arquivo salvo não contém informações de "
-"versão válidas."
+"Falha ao carregar o salvamento, os dados salvos parecem estar danificados."
 
 #: engines/vcruise/vcruise.cpp:235
-#, fuzzy
-#| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
-msgstr "Falha ao ler as informações da versão do arquivo salvo"
+msgstr "Falha ao ler as informações da versão do arquivo salvo."
 
 #: engines/vcruise/vcruise.cpp:255
-#, fuzzy
-#| msgid "An internal error occurred while attempting to write save game data"
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr "Ocorreu um erro interno ao tentar gravar dados do progresso do jogo"
+msgstr "Ocorreu um erro desconhecido ao tentar carregar o jogo salvo."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
