@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-12 23:24+0000\n"
-"PO-Revision-Date: 2023-03-07 11:29+0000\n"
+"PO-Revision-Date: 2023-03-13 10:57+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -7275,20 +7275,24 @@ msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
 msgstr ""
+"Bekapcsolja a kapcsolatot a szerverrel, amely lehetővé teszi az online "
+"többjátékos játékok fogadását és csatlakozását az interneten keresztül."
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Host games over LAN"
-msgstr ""
+msgstr "Játékok tárolása LAN-on keresztül"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr ""
+msgstr "Lehetővé teszi a játékmenetek felfedezését a helyi hálózaton keresztül."
 
 #: engines/scumm/dialogs.cpp:1382
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
 msgstr ""
+"Annak a szervernek a címe, amelyhez online játékmenetekhez csatlakozni és "
+"csatlakozni kell."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -7918,7 +7922,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:696
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
-msgstr ""
+msgstr "Engedélyezi a „A Pirate I Was Menant To Be” dalt"
 
 #: engines/scumm/metaengine.cpp:697
 msgid ""
@@ -7926,31 +7930,29 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
+"Engedélyezi a dalt a játék 3. részének elején, a \"A Pirate I Was Deant To "
+"Be\" címen, amelyet nemzetközi kiadásokban vágtak ki. Vigyázat: "
+"előfordulhat, hogy a feliratokat nem fordítják le teljesen."
 
 #: engines/scumm/metaengine.cpp:770
-#, fuzzy
 msgid "Down Left"
-msgstr "Balra fordul"
+msgstr "Le Balra"
 
 #: engines/scumm/metaengine.cpp:783
-#, fuzzy
 msgid "Down Right"
-msgstr "Jobbra fordul"
+msgstr "Le Jobbra"
 
 #: engines/scumm/metaengine.cpp:803
-#, fuzzy
 msgid "Up Left"
-msgstr "Bal"
+msgstr "Fel Balra"
 
 #: engines/scumm/metaengine.cpp:816
-#, fuzzy
 msgid "Up Right"
-msgstr "Jobb"
+msgstr "Fel Jobbra"
 
 #: engines/scumm/metaengine.cpp:828
-#, fuzzy
 msgid "Switch weapon"
-msgstr "Képernyők cseréje"
+msgstr "Fegyver váltása"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:842
@@ -8031,13 +8033,12 @@ msgstr ""
 "és a játékot így adja hozzá a ScummVM a listához."
 
 #: engines/scumm/scumm.cpp:3469
-#, fuzzy
 msgid "Would you like to host or join a network play session?"
-msgstr "Szeretne menteni vagy visszaállítani egy játékot?"
+msgstr "Szeretnél hálózati játékmenetet szervezni vagy csatlakozni?"
 
 #: engines/scumm/scumm.cpp:3469
 msgid "Host"
-msgstr ""
+msgstr "Gazda"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -8724,43 +8725,38 @@ msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Debug"
 
 #: engines/vcruise/vcruise.cpp:76
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
-msgstr "Ehhez a játékhoz HeroCraft almotor szükséges, ami nincs befordítva."
+msgstr "Ez a játék JPEG-támogatást igényel, amely nem lett lefordítva."
 
 #: engines/vcruise/vcruise.cpp:83
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"Ehhez a játék zenéhez az Ogg Vorbis támogatása szükséges, amelyet nem "
+"fordítottak le.\n"
+"A játék továbbra is játszható, de nem lesz benne zene."
 
 #: engines/vcruise/vcruise.cpp:93
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"A játék zenéjéhez MP3-támogatás szükséges, ami nem lett lefordítva.\n"
+"A játék továbbra is játszható, de nem lesz benne zene."
 
 #: engines/vcruise/vcruise.cpp:230
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, the save file doesn't contain valid version "
-#| "information."
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
-"Nem sikerült betölteni a mentést, a mentési fájl nem tartalmaz érvényes "
-"verzióinformációkat."
+"Nem sikerült betölteni a mentést, úgy tűnik, hogy a mentési adatok sérültek."
 
 #: engines/vcruise/vcruise.cpp:235
-#, fuzzy
-#| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
-msgstr "Nem sikerült a mentett játékállás betöltése fájlból"
+msgstr "Nem sikerült a mentett játékállás betöltése fájlból."
 
 #: engines/vcruise/vcruise.cpp:255
-#, fuzzy
-#| msgid "An internal error occurred while attempting to write save game data"
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr "Belső hiba történt a mentett játékadatok írása közben"
+msgstr "Ismeretlen hiba történt a mentett játék betöltése közben."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
