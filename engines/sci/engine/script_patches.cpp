@@ -8370,6 +8370,33 @@ static const uint16 longbowPatchMapPaletteSpeed[] = {
 	PATCH_END
 };
 
+// After rescuing Marian from the fire, closing message boxes too quickly causes
+//  the game to lockup when using the emerald in the next scene. This is a bug
+//  in room 179, the synopsis room that displays messages and awards points.
+//  synop:dispose calls kDisposeScript(806), but script 806 contains the sound
+//  object for the points sound effect. If a sound object is playing while its
+//  script is disposed then the global sounds collection enters an invalid state
+//  and sound cues no longer work.
+//
+// We fix this by patching out the call to kDisposeScript(806) in synop:dispose.
+//  This call is unnecessary because script 806 already unloads itself in every
+//  procedure, and also whenever specialSound:check finishes playing.
+//
+// Applies to: All versions
+// Responsible method: synop:dispose
+static const uint16 longbowSignatureEmeraldLockup[] = {
+	SIG_MAGICDWORD,
+	0x78,                           // push1
+	0x38, SIG_UINT16(0x0326),       // pushi 0326
+	0x43, 0x03, 0x02,               // callk DisposeScript [ DisposeScript 806 ]
+	SIG_END
+};
+
+static const uint16 longbowPatchEmeraldLockup[] = {
+	0x33, 0x05,                     // jmp 05 [ skip DisposeScript ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,    29, "amiga day 1 peasant woman",                   1, longbowSignatureAmigaPeasantWoman,       longbowPatchAmigaPeasantWoman},
@@ -8377,6 +8404,7 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   140, "green man riddles and forest sweep fix",      1, longbowSignatureGreenManForestSweepFix,  longbowPatchGreenManForestSweepFix },
 	{  true,   150, "day 5/6 camp sunset fix",                     2, longbowSignatureCampSunsetFix,           longbowPatchCampSunsetFix },
 	{  true,   150, "day 7 tuck net fix",                          1, longbowSignatureTuckNetFix,              longbowPatchTuckNetFix },
+	{  true,   179, "emerald lockup",                              1, longbowSignatureEmeraldLockup,           longbowPatchEmeraldLockup },
 	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode,            longbowPatchShowHandCode },
 	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix,            longbowPatchBerryBushFix },
 	{  true,   250, "day 5/6 rescue flag fix",                     1, longbowSignatureRescueFlagFix,           longbowPatchRescueFlagFix },
