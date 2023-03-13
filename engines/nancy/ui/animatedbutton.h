@@ -49,7 +49,6 @@ public:
 protected:
 	Common::Array<Common::Rect> _srcRects;
 	uint32 _frameTime;
-	Common::String _sound;
 	bool _alwaysHighlightCursor;
 
 	bool _isActive;

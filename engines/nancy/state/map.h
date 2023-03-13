@@ -44,12 +44,14 @@ namespace State {
 
 class Map : public State, public Common::Singleton<Map> {
 public:
-	enum State { kInit, kRun, kExit };
+	enum State { kInit, kLoad, kRun, kExit };
 	Map();
 	virtual ~Map() = default;
 
 	void process() override;
 	void onStateExit() override;
+	
+	const SoundDescription &getSound() { return _mapSounds[_mapID]; }
 
 protected:
 	class MapViewport : public Nancy::RenderObject {
@@ -62,6 +64,7 @@ protected:
 
 		void loadVideo(const Common::String &filename, const Common::String &palette = Common::String());
 		void playVideo() { _decoder.start(); }
+		void unloadVideo() { _decoder.close(); }
 
 	private:
 		AVFDecoder _decoder;
@@ -78,19 +81,21 @@ protected:
 		Common::Rect labelDest;
 	};
 
-	virtual void init();
+	virtual void init() = 0;
+	virtual void load();
 	virtual void run() = 0;
 	virtual void registerGraphics();
 
 	void setLabel(int labelID);
 
+	Common::Array<Common::String> _mapNames;
+	Common::Array<Common::String> _mapPalettes;
+	Common::Array<SoundDescription> _mapSounds;
+
 	MapViewport _viewport;
 	RenderObject _label;
 	RenderObject _closedLabel;
 	RenderObject _background;
-	SoundDescription _sound;
-
-	Common::Point _cursorPosition;
 
 	State _state;
 	uint16 _mapID;
@@ -122,6 +127,7 @@ private:
 	};
 
 	void init() override;
+	void load() override;
 	void run() override;
 	void registerGraphics() override;
 	
@@ -129,6 +135,8 @@ private:
 
 	MapGlobe _globe;
 	UI::ViewportOrnaments _ornaments;
+
+	Common::Point _cursorPosition;
 };
 
 class Nancy1Map : public Map {
@@ -138,8 +146,11 @@ public:
 
 private:
 	void init() override;
+	void load() override;
 	void run() override;
 	void registerGraphics() override;
+
+	void onStateExit() override;
 
 	UI::Button *_button;
 	bool _mapButtonClicked;

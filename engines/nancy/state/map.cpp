@@ -60,6 +60,9 @@ void Map::process() {
 	case kInit:
 		init();
 		// fall through
+	case kLoad:
+		load();
+		// fall through
 	case kRun:
 		run();
 		break;
@@ -70,23 +73,12 @@ void Map::process() {
 }
 
 void Map::onStateExit() {
-	g_nancy->_sound->stopSound(_sound);
-
-	if (_pickedLocationID != -1) {
-		auto &loc = _locations[_pickedLocationID];
-		NancySceneState.changeScene(loc.scenes[_mapID]);
-
-		g_nancy->_sound->playSound("BUOK");
-	}
-
-	// The two sounds play at the same time if a location was picked
-	g_nancy->_sound->playSound("GLOB");
 	g_nancy->_graphicsManager->clearObjects();
-
-	destroy();
+	_viewport.unloadVideo();
+	_state = kLoad;
 }
 
-void Map::init() {
+void Map::load() {
 	// Get a screenshot of the Scene state and set it as the background
 	// to allow the labels to clear when not hovered
 	const Graphics::ManagedSurface *screen = g_nancy->_graphicsManager->getScreen();
@@ -168,7 +160,6 @@ void Map::MapViewport::loadVideo(const Common::String &filename, const Common::S
 TVDMap::TVDMap() : _ornaments(7), _globe(8, this) {}
 
 void TVDMap::init() {
-	Map::init();	
 	_viewport.init();
 	_label.init();
 	_ornaments.init();
@@ -178,25 +169,23 @@ void TVDMap::init() {
 	Common::Rect textboxScreenPosition = NancySceneState.getTextbox().getScreenPosition();
 
 	if (chunk) {
-		chunk->seek(0x386);
-		_cursorPosition.x = chunk->readUint16LE();
-		_cursorPosition.y = chunk->readUint16LE();
+		chunk->seek(0);
 
-		// Determine which version of the map will be shown
-		if (NancySceneState.getEventFlag(52, kEvOccurred)) {
-			_mapID = 3;										// Storm
-			//
-		} else {
-			// Determine map based on the in-game time
-			Time playerTime = NancySceneState.getPlayerTime();
-			uint hours = playerTime.getHours();
-			if (hours >= 7 && hours < 18) {
-				_mapID = 0; 								// Day
-			} else if (hours >= 19 || hours < 6) {
-				_mapID = 1;									// Night
-			} else {
-				_mapID = 2;									// Dusk/dawn
-			}
+		_mapNames.resize(4);
+		for (uint i = 0; i < 4; ++i) {
+			readFilename(*chunk, _mapNames[i]);
+		}
+
+		_mapPalettes.resize(4);
+		for (uint i = 0; i < 4; ++i) {
+			readFilename(*chunk, _mapPalettes[i]);
+		}
+
+		chunk->skip(4);
+
+		_mapSounds.resize(4);
+		for (uint i = 0; i < 4; ++i) {
+			_mapSounds[i].read(*chunk, SoundDescription::kMenu);
 		}
 
 		chunk->seek(0x1E6);
@@ -214,20 +203,6 @@ void TVDMap::init() {
 
 		_closedLabel.moveTo(newScreenRect);
 		_closedLabel.setTransparent(true);
-		
-		// Load the video
-		chunk->seek(_mapID * 10);
-		Common::String videoName, paletteName;
-		readFilename(*chunk, videoName);
-		chunk->seek(40 + _mapID * 10);
-		readFilename(*chunk, paletteName);
-		_viewport.loadVideo(videoName, paletteName);
-
-		// Load the audio
-		chunk->seek(0x54 + _mapID * 0x20);
-		_sound.read(*chunk, SoundDescription::kMenu);
-		g_nancy->_sound->loadSound(_sound);
-		g_nancy->_sound->playSound("GLOB");
 
 		char buf[30];
 		_locations.resize(7);
@@ -265,32 +240,67 @@ void TVDMap::init() {
 			loc.isActive = true;
 		}
 
-		g_nancy->_cursorManager->setCursorItemID(-1);
+		chunk->seek(0x386);
+		_cursorPosition.x = chunk->readUint16LE();
+		_cursorPosition.y = chunk->readUint16LE();
 	}
-	
+
+	_state = kLoad;
+}
+
+void TVDMap::load() {
+	Map::load();
+
+	// Determine which version of the map will be shown
+	if (NancySceneState.getEventFlag(52, kEvOccurred)) {
+		_mapID = 3;										// Storm
+		//
+	} else {
+		// Determine map based on the in-game time
+		byte timeOfDay = NancySceneState.getPlayerTOD();
+		if (timeOfDay == kPlayerDay) {
+			_mapID = 0; 								// Day
+		} else if (timeOfDay == kPlayerNight) {
+			_mapID = 1;									// Night
+		} else {
+			_mapID = 2;									// Dusk/dawn
+		}
+	}
+
+	_viewport.loadVideo(_mapNames[_mapID], _mapPalettes[_mapID]);
+
+	g_nancy->_cursorManager->setCursorItemID(-1);
+
 	_viewport.setVisible(false);
 	_globe.setOpen(true);
 	_globe.setVisible(true);
-	
+
+	if (!g_nancy->_sound->isSoundPlaying(getSound())) {
+		g_nancy->_sound->loadSound(getSound());
+	}
+
+	g_nancy->_sound->playSound("GLOB");
+
 	registerGraphics();
 	_state = kRun;
 }
 
 void TVDMap::onStateExit() {
-	g_nancy->_sound->stopSound(_sound);
+	if (_pickedLocationID != -1) {
+		auto &loc = _locations[_pickedLocationID];
+		NancySceneState.changeScene(loc.scenes[NancySceneState.getPlayerTOD() == kPlayerDay ? 0 : 1]);
 
-	if (NancySceneState.getPlayerTOD() == kPlayerDay) {
-		_mapID = 0;
+		g_nancy->_sound->playSound("BUOK");
 	} else {
-		_mapID = 1;
+		g_nancy->_sound->stopSound(getSound());
 	}
 
 	Map::onStateExit();
 }
 
 void TVDMap::run() {
-	if (!g_nancy->_sound->isSoundPlaying("GLOB") && !g_nancy->_sound->isSoundPlaying(_sound)) {
-		g_nancy->_sound->playSound(_sound);
+	if (!g_nancy->_sound->isSoundPlaying("GLOB") && !g_nancy->_sound->isSoundPlaying(getSound())) {
+		g_nancy->_sound->playSound(getSound());
 	}
 
 	setLabel(-1);
@@ -312,6 +322,7 @@ void TVDMap::run() {
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
 						_pickedLocationID = i;
 						_globe.setOpen(false);
+						g_nancy->_sound->playSound("GLOB");
 					}
 				}
 
@@ -339,7 +350,7 @@ void TVDMap::MapGlobe::init() {
 		for (uint i = 0; i < 8; ++i) {
 			readRect(*chunk, _srcRects[i]);
 		}
-		
+
 		Common::Rect screenDest;
 		readRect(*chunk, screenDest);
 		moveTo(screenDest);
@@ -355,10 +366,9 @@ void TVDMap::MapGlobe::init() {
 		_gargoyleEyes.setVisible(false);
 
 		_alwaysHighlightCursor = false;
-		_sound = "GLOB";
 		_hotspot = _screenPosition;
 	}
-	
+
 	AnimatedButton::init();
 }
 
@@ -369,6 +379,7 @@ void TVDMap::MapGlobe::registerGraphics() {
 
 void TVDMap::MapGlobe::onClick() {
 	_gargoyleEyes.setVisible(false);
+	g_nancy->_sound->playSound("GLOB");
 }
 
 void TVDMap::MapGlobe::onTrigger() {
@@ -380,6 +391,7 @@ void TVDMap::MapGlobe::onTrigger() {
 		g_nancy->_cursorManager->showCursor(true);
 	} else {
 		_owner->_state = kExit;
+		_nextFrameTime = 0;
 	}
 }
 
@@ -390,14 +402,27 @@ Nancy1Map::~Nancy1Map() {
 }
 
 void Nancy1Map::init() {
-	Map::init();	
 	_viewport.init();
 	_label.init();
-	
+
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("MAP");
 	Common::Rect textboxScreenPosition = NancySceneState.getTextbox().getScreenPosition();
 
 	if (chunk) {
+		chunk->seek(0);
+
+		_mapNames.resize(2);
+		for (uint i = 0; i < 2; ++i) {
+			readFilename(*chunk, _mapNames[i]);
+		}
+
+		chunk->skip(4);
+
+		_mapSounds.resize(2);
+		for (uint i = 0; i < 2; ++i) {
+			_mapSounds[i].read(*chunk, SoundDescription::kMenu);
+		}
+
 		Common::Rect buttonSrc, buttonDest;
 		chunk->seek(0x7A, SEEK_SET);
 		readRect(*chunk, buttonSrc);
@@ -418,31 +443,9 @@ void Nancy1Map::init() {
 
 		_closedLabel.moveTo(newScreenRect);
 
-		setLabel(-1);
-
 		_button = new UI::Button(9, g_nancy->_graphicsManager->_object0, buttonSrc, buttonDest);
 		_button->init();
 		_button->setVisible(true);
-
-		// Determine which version of the map will be shown
-		if (NancySceneState.getEventFlag(40, kEvOccurred) && // Has set up sting
-			NancySceneState.getEventFlag(95, kEvOccurred)) { // Connie chickens
-			_mapID = 1;		// Day	
-		} else {
-			_mapID = 0;		// Night
-		}
-
-		// Load the video
-		chunk->seek(_mapID * 10);
-		Common::String videoName;
-		readFilename(*chunk, videoName);
-		_viewport.loadVideo(videoName);
-
-		// Load the audio
-		chunk->seek(0x18 + _mapID * 0x20);
-		_sound.read(*chunk, SoundDescription::kMenu);
-		g_nancy->_sound->loadSound(_sound);
-		g_nancy->_sound->playSound("GLOB");
 
 		char buf[30];
 		_locations.resize(4);
@@ -456,12 +459,6 @@ void Nancy1Map::init() {
 
 			chunk->seek(0x162 + i * 16);
 			readRect(*chunk, loc.hotspot);
-
-			if (_mapID == 1 && (i % 2) != 0) {
-				loc.isActive = false;
-			} else {
-				loc.isActive = true;
-			}
 
 			loc.scenes.resize(2);
 			for (uint j = 0; j < 2; ++j) {
@@ -481,18 +478,43 @@ void Nancy1Map::init() {
 			loc.labelDest.right = loc.labelDest.left + loc.labelSrc.width() - 1;
 			loc.labelDest.bottom = closedScreenRect.bottom - ((closedScreenRect.bottom - loc.labelSrc.height() - textboxScreenPosition.top) / 2) - 11;
 			loc.labelDest.top = loc.labelDest.bottom - loc.labelSrc.height() + 1;
-		}
 
-		g_nancy->_cursorManager->setCursorItemID(-1);
+			loc.isActive = true;
+		}
 	}
-	
+
+	_state = kLoad;
+}
+
+void Nancy1Map::load() {
+	Map::load();
+
+	// Determine which version of the map will be shown
+	if (NancySceneState.getEventFlag(40, kEvOccurred) &&	// Has set up sting
+		NancySceneState.getEventFlag(95, kEvOccurred)) {	// Connie chickens
+		_mapID = 1;		// Night
+
+		_locations[1].isActive = _locations[3].isActive = false;
+	} else {
+		_mapID = 0;		// Day
+	}
+
+	_viewport.loadVideo(_mapNames[_mapID]);
+
+	setLabel(-1);
+	g_nancy->_cursorManager->setCursorItemID(-1);
+
+	if (!g_nancy->_sound->isSoundPlaying(getSound())) {
+		g_nancy->_sound->loadSound(getSound());
+	}
+
 	registerGraphics();
 	_state = kRun;
 }
 
 void Nancy1Map::run() {
-	if (!g_nancy->_sound->isSoundPlaying("GLOB") && !g_nancy->_sound->isSoundPlaying(_sound)) {
-		g_nancy->_sound->playSound(_sound);
+	if (!g_nancy->_sound->isSoundPlaying("GLOB") && !g_nancy->_sound->isSoundPlaying(getSound())) {
+		g_nancy->_sound->playSound(getSound());
 	}
 
 	NancyInput input = g_nancy->_input->getInput();
@@ -529,6 +551,20 @@ void Nancy1Map::run() {
 void Nancy1Map::registerGraphics() {
 	Map::registerGraphics();
 	_button->registerGraphics();
+}
+
+void Nancy1Map::onStateExit() {
+	if (_pickedLocationID != -1) {
+		auto &loc = _locations[_pickedLocationID];
+		NancySceneState.changeScene(loc.scenes[_mapID]);
+
+		g_nancy->_sound->playSound("BUOK");
+	}
+
+	g_nancy->_sound->stopSound(getSound());
+	g_nancy->_sound->playSound("GLOB");
+
+	Map::onStateExit();
 }
 
 } // End of namespace State

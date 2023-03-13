@@ -30,6 +30,7 @@
 #include "engines/nancy/sound.h"
 
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/state/map.h"
 
 namespace Nancy {
 
@@ -476,13 +477,19 @@ void SoundManager::calculatePanForAllSounds() {
 }
 
 void SoundManager::stopAndUnloadSpecificSounds() {
-	// TODO missing if
+	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+		// Don't stop the map sound in certain scenes
+		uint nextScene = NancySceneState.getNextSceneInfo().sceneID;
+		if (nextScene != 0 && (nextScene < 15 || nextScene > 27)) {
+			stopSound(NancyMapState.getSound());
+		}
+	}
 
 	for (uint i = 0; i < 10; ++i) {
 		stopSound(i);
 	}
 
-	stopSound(_commonSounds["MSND"]);
+	stopSound("MSND");
 }
 
 void SoundManager::initSoundChannels() {

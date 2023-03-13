@@ -81,11 +81,9 @@ void AnimatedButton::handleInput(NancyInput &input) {
 			if (_currentFrame == -1) {
 				onClick();
 				setOpen(true);
-				g_nancy->_sound->playSound(_sound);
 			} else if (_currentFrame == (int)_srcRects.size()) {
 				onClick();
 				setOpen(false);
-				g_nancy->_sound->playSound(_sound);
 			}
 		}
 
