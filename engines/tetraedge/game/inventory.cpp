@@ -364,8 +364,7 @@ void Inventory::removeObject(const Common::String &name) {
 	// Take a copy of the name to be sure as we will be deleting the object
 	const Common::String objname = name;
 	int pageNo = 0;
-	bool finished = false;
-	while (!finished) {
+	while (true) {
 		TeLayout *page = _gui.layout(Common::String::format("page%d", pageNo));
 		if (!page)
 			break;
