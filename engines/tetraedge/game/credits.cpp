@@ -117,7 +117,7 @@ void Credits::enter(bool returnToOptions) {
 		_curveAnim._callbackObj = foreground;
 		_curveAnim._callbackMethod = &TeLayout::setColor;
 		_curveAnim.play();
-		_gui.buttonLayout("quitButton")->onMouseClickValidated().add(this, &Credits::onQuitButton);
+		_gui.buttonLayoutChecked("quitButton")->onMouseClickValidated().add(this, &Credits::onQuitButton);
 
 		//
 		// WORKAROUND: These are set to PanScan ratio 1.0, but with our code
