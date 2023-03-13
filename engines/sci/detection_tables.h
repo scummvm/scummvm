@@ -718,7 +718,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "2f231d31af172ea72ed533fd112f971b", 133458},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, 0, GUIO_STD16	},
-	
+
+	// Eco Quest 2 - PRCA/T&J Russian DOS Floppy
+	{"ecoquest2", "Floppy", {
+		{"resource.map", 0, "9e796f1918b981efd4a76774c1306850", 5658},
+		{"resource.000", 0, "e6c5795620931dcbb4c73ab48e18b898", 4279514},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
+
 	// Eco Quest 2 - Korean DOS Floppy (from swkim01)
     // using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
     {"ecoquest2", "Floppy", {
