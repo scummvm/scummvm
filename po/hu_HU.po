@@ -7284,7 +7284,8 @@ msgstr "Játékok tárolása LAN-on keresztül"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr "Lehetővé teszi a játékmenetek felfedezését a helyi hálózaton keresztül."
+msgstr ""
+"Lehetővé teszi a játékmenetek felfedezését a helyi hálózaton keresztül."
 
 #: engines/scumm/dialogs.cpp:1382
 msgid ""
@@ -7930,9 +7931,9 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
-"Engedélyezi a dalt a játék 3. részének elején, a \"A Pirate I Was Deant To "
-"Be\" címen, amelyet nemzetközi kiadásokban vágtak ki. Vigyázat: "
-"előfordulhat, hogy a feliratokat nem fordítják le teljesen."
+"Engedélyezi a dalt a játék 3. részének elején, a \"A Pirate I Was Deant To Be"
+"\" címen, amelyet nemzetközi kiadásokban vágtak ki. Vigyázat: előfordulhat, "
+"hogy a feliratokat nem fordítják le teljesen."
 
 #: engines/scumm/metaengine.cpp:770
 msgid "Down Left"
