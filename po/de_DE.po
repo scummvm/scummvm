@@ -7394,7 +7394,8 @@ msgstr "Spiele über LAN hosten"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr "Die Spiele-Sitzungen können über dein lokales Netzwerk gefunden werden."
+msgstr ""
+"Die Spiele-Sitzungen können über dein lokales Netzwerk gefunden werden."
 
 #: engines/scumm/dialogs.cpp:1382
 msgid ""
