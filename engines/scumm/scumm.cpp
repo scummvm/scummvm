@@ -2136,7 +2136,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			// of the Mac music via a selected MIDI device.
 			nativeMidiDriver = new IMuseDriver_MacM68k(_mixer);
 			// The Mac driver is never MT-32.
-			_native_mt32 = false;
+			_native_mt32 = enable_gs = false;
 			// Ignore non-native drivers. This also ignores the multi MIDI setting.
 			useOnlyNative = true;
 		} else if (_sound->_musicType == MDT_AMIGA) {
