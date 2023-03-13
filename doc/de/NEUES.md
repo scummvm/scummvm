@@ -24,6 +24,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die von Fargus, ENPY und 7Wolf erstellte russische Version
      von Grim Fandango hinzugefügt.
 
+ SCUMM:
+   - Unterstützung für die entpackten RuSCUMM-Patches für russische Übersetzungen hinzugefügt.
+
  Sherlock:
    - Unterstützung für die chinesische Version von Serrated Scalpel hinzugefügt.
 
