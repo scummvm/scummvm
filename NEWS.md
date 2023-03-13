@@ -24,6 +24,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Russian Grim Fandango translations from Fargus,
      ENPY and 7Wolf.
 
+ SCUMM:
+   - Added support for unpacked RuSCUMM patches for Russian localizations.
+
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
 
