@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-12 02:57+0000\n"
+"POT-Creation-Date: 2023-03-12 23:24+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -5016,7 +5016,7 @@ msgstr ""
 "vez que inicies o xogo.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/runtime.cpp:2291
+#: engines/vcruise/vcruise.cpp:245
 #, fuzzy
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -6454,17 +6454,17 @@ msgstr "Activar/desactivar captura de rato"
 msgid "Force any playing movies to end"
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:2277
+#: engines/mtropolis/saveload.cpp:142
 #, fuzzy
 msgid "Failed to read version information from save file"
 msgstr "Erro ao cargar a partida do ficheiro."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:2284
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:240
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:2298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:250
 #, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
@@ -8781,6 +8781,23 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
+#: engines/vcruise/vcruise.cpp:230
+#, fuzzy
+msgid "Failed to load save, the save data appears to be damaged."
+msgstr ""
+"Esta partida gardada creouse cunha versión diferente do xogo. Non é posible "
+"cargala."
+
+#: engines/vcruise/vcruise.cpp:235
+#, fuzzy
+msgid "Failed to read version information from save file."
+msgstr "Erro ao cargar a partida do ficheiro."
+
+#: engines/vcruise/vcruise.cpp:255
+#, fuzzy
+msgid "An unknown error occurred while attempting to load the saved game."
+msgstr ", erro ao montar o disco"
+
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
 msgstr "Mostrar FPS"
@@ -9691,14 +9708,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Save progress automatically"
 #~ msgstr "Buscar actualizacións automaticamente"
-
-#, fuzzy
-#~ msgid ""
-#~ "Failed to load save, the save file was created by a newer version of "
-#~ "ScummVM."
-#~ msgstr ""
-#~ "Esta partida gardada creouse cunha versión diferente do xogo. Non é "
-#~ "posible cargala."
 
 #, fuzzy
 #~ msgid "Light has run out! "

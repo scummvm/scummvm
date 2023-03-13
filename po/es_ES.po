@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-12 02:57+0000\n"
+"POT-Creation-Date: 2023-03-12 23:24+0000\n"
 "PO-Revision-Date: 2023-03-06 20:38+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4970,7 +4970,7 @@ msgstr ""
 "De lo contrario, este mensaje aparecerá cada vez que se inicie el juego.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/runtime.cpp:2291
+#: engines/vcruise/vcruise.cpp:245
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "La partida guardada se creó con una versión posterior de ScummVM. No se "
@@ -6469,18 +6469,18 @@ msgstr "Alternar superposición de depuración"
 msgid "Force any playing movies to end"
 msgstr "Fuerza a que todos los vídeos que se reproduzcan lleguen a su fin"
 
-#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:2277
+#: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
 msgstr "Fallo al leer la información de versión de la partida guardada"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:2284
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:240
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Fallo al cargar la partida: la partida guardada no contiene una información "
 "de versión válida."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:2298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:250
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -8863,6 +8863,28 @@ msgstr ""
 "La música de este juego requiere soporte para MP3, el cual no está presente "
 "en la compilación.\n"
 "El juego se ejecutará, pero sin música."
+
+#: engines/vcruise/vcruise.cpp:230
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, the save file doesn't contain valid version "
+#| "information."
+msgid "Failed to load save, the save data appears to be damaged."
+msgstr ""
+"Fallo al cargar la partida: la partida guardada no contiene una información "
+"de versión válida."
+
+#: engines/vcruise/vcruise.cpp:235
+#, fuzzy
+#| msgid "Failed to read version information from save file"
+msgid "Failed to read version information from save file."
+msgstr "Fallo al leer la información de versión de la partida guardada"
+
+#: engines/vcruise/vcruise.cpp:255
+#, fuzzy
+#| msgid "An internal error occurred while attempting to write save game data"
+msgid "An unknown error occurred while attempting to load the saved game."
+msgstr "Error interno al intentar escribir los datos de la partida guardada"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"

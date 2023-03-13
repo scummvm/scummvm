@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-12 02:57+0000\n"
+"POT-Creation-Date: 2023-03-12 23:24+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4840,7 +4840,7 @@ msgstr ""
 "יש ללחוץ על אישור כדי להמירם כעת, אחרת תשאלו בפעם הבאה שהמשחק יתחיל.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/runtime.cpp:2291
+#: engines/vcruise/vcruise.cpp:245
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "המשחק שנשמר נוצר באמצעות גרסה חדשה יותר של ScummVM. לא ניתן לטעון."
 
@@ -6262,16 +6262,16 @@ msgstr "מיתוג שכבת ניפוי תקלים"
 msgid "Force any playing movies to end"
 msgstr "סיום מידי של כל הסרטים שמתנגנים"
 
-#: engines/mtropolis/saveload.cpp:142 engines/vcruise/runtime.cpp:2277
+#: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
 msgstr "נכשל בקריאת מידע הגרסה מקובץ השמירה"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/runtime.cpp:2284
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:240
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "טעינת השמירה נכשלה, קובץ השמירה אינו מכיל מידע גרסה תקף."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/runtime.cpp:2298
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:250
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -8548,6 +8548,26 @@ msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+
+#: engines/vcruise/vcruise.cpp:230
+#, fuzzy
+#| msgid ""
+#| "Failed to load save, the save file doesn't contain valid version "
+#| "information."
+msgid "Failed to load save, the save data appears to be damaged."
+msgstr "טעינת השמירה נכשלה, קובץ השמירה אינו מכיל מידע גרסה תקף."
+
+#: engines/vcruise/vcruise.cpp:235
+#, fuzzy
+#| msgid "Failed to read version information from save file"
+msgid "Failed to read version information from save file."
+msgstr "נכשל בקריאת מידע הגרסה מקובץ השמירה"
+
+#: engines/vcruise/vcruise.cpp:255
+#, fuzzy
+#| msgid "An internal error occurred while attempting to write save game data"
+msgid "An unknown error occurred while attempting to load the saved game."
+msgstr "אירעה שגיאה פנימית בעת כתיבת נתוני המשחק שנשמר"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
