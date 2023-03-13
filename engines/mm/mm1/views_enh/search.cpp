@@ -274,14 +274,14 @@ void Search::detectMagicTrap2() {
 
 	if (c._class == PALADIN || c._class == CLERIC) {
 		Sound::sound(SOUND_2);
-		clearSurface();
-		writeString(6, 2, STRING["dialogs.search.bad_class"]);
+		ScrollView::draw();
+		writeLine(2, STRING["dialogs.search.bad_class"], ALIGN_MIDDLE);
 		delaySeconds(4);
 
 	} else if (c._sp == 0) {
 		Sound::sound(SOUND_2);
-		clearSurface();
-		writeString(6, 2, STRING["dialogs.search.no_sp"]);
+		ScrollView::draw();
+		writeLine(2, STRING["dialogs.search.no_sp"], ALIGN_MIDDLE);
 		delaySeconds(4);
 
 	} else {
@@ -290,11 +290,10 @@ void Search::detectMagicTrap2() {
 			g_globals->_treasure.getGems() ? 'Y' : 'N';
 		char trapped = g_globals->_treasure._trapType == 1 ? 'Y' : 'N';
 
-		clearSurface();
-		writeString(5, 1, Common::String::format(
+		ScrollView::draw();
+		writeLine(1, Common::String::format(
 			STRING["dialogs.search.magic_trap"].c_str(),
-			magic, trapped));
-
+			magic, trapped), ALIGN_MIDDLE);
 		delaySeconds(8);
 	}
 }
@@ -350,7 +349,7 @@ void Search::getTreasure() {
 }
 
 void Search::drawTreasure() {
-	writeString(15, 0, STRING["dialogs.search.it_opens"]);
+	writeLine(0, STRING["dialogs.search.it_opens"], ALIGN_MIDDLE);
 
 	// Split up the gold across the party
 	uint32 goldPerPerson = g_globals->_treasure.getGold() /
@@ -366,7 +365,7 @@ void Search::drawTreasure() {
 		c._gold = newGold;
 	}
 	
-	writeString(0, 2, Common::String::format(
+	writeLine(2, Common::String::format(
 		STRING["dialogs.search.each_share"].c_str(),
 		goldPerPerson));
 	g_globals->_treasure.setGold(0);
@@ -381,7 +380,7 @@ void Search::drawTreasure() {
 		uint charNum = getRandomNumber(g_globals->_party.size()) - 1;
 		Character &c = g_globals->_party[charNum];
 
-		writeString(0, _lineNum++, Common::String::format(
+		writeLine(_lineNum++, Common::String::format(
 			STRING["dialogs.search.found_gems"].c_str(),
 			c._name,
 			gems));
@@ -410,7 +409,7 @@ void Search::drawItem() {
 			c._backpack.add(itemId, item->_maxCharges);
 
 			// Add line for found item
-			writeString(0, _lineNum++, Common::String::format(
+			writeLine(_lineNum++, Common::String::format(
 				STRING["dialogs.search.found_item"].c_str(),
 				c._name,
 				item->_name.c_str()
