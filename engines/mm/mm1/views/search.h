@@ -35,8 +35,9 @@ private:
 		FOCUS_GET_TREASURE, GET_TREASURE, GET_ITEMS,
 		GET_ITEMS_DONE
 	};
+	enum OptionMode { OMODE_OPEN, OMODE_REMOVE_TRAP, OMODE_DETECT };
 	Mode _mode = INITIAL;
-	bool _removing = false;
+	OptionMode _optionMode = OMODE_OPEN;
 	byte _val1 = 0;
 	int _lineNum = 0;
 
@@ -56,6 +57,7 @@ private:
 	 * Detect magic/trap
 	 */
 	void detectMagicTrap();
+	void detectMagicTrap2();
 
 	/**
 	 * Select which user to try and remove trap or detect magic

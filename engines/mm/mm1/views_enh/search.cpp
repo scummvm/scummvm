@@ -219,7 +219,7 @@ void Search::timeout() {
 }
 
 void Search::openContainer() {
-	_removing = false;
+	_optionMode = OMODE_OPEN;
 	if (whoWillTry())
 		openContainer2();
 }
@@ -242,7 +242,7 @@ void Search::openContainer2() {
 }
 
 void Search::findRemoveTrap() {
-	_removing = true;
+	_optionMode = OMODE_REMOVE_TRAP;
 	if (whoWillTry())
 		findRemoveTrap2();
 }
@@ -261,6 +261,12 @@ void Search::findRemoveTrap2() {
 }
 
 void Search::detectMagicTrap() {
+	_optionMode = OMODE_DETECT;
+	if (whoWillTry())
+		detectMagicTrap2();
+}
+
+void Search::detectMagicTrap2() {
 	Character &c = *g_globals->_currCharacter;
 	setMode(RESPONSE);
 
@@ -316,10 +322,16 @@ void Search::whoWillTry(int charNum) {
 		// Character selected, proceed with given action
 		g_globals->_currCharacter = &g_globals->_party[charNum];
 
-		if (_removing) {
-			findRemoveTrap2();
-		} else {
+		switch (_optionMode) {
+		case OMODE_OPEN:
 			openContainer2();
+			break;
+		case OMODE_REMOVE_TRAP:
+			findRemoveTrap2();
+			break;
+		case OMODE_DETECT:
+			detectMagicTrap2();
+			break;
 		}
 	}
 }
