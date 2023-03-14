@@ -1052,6 +1052,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Or);
 			DISPATCH_OP(Add);
 			DISPATCH_OP(Sub);
+			DISPATCH_OP(Negate);
 			DISPATCH_OP(CmpEq);
 			DISPATCH_OP(CmpGt);
 			DISPATCH_OP(CmpLt);
@@ -1480,6 +1481,10 @@ bool Runtime::dischargeIdleMouseMove() {
 				interactionID = kPanLeftInteraction;
 			else if (panRelMouse.x >= kPanoramaPanningMarginX)
 				interactionID = kPanRightInteraction;
+			else if (panRelMouse.y <= -kPanoramaPanningMarginY)
+				interactionID = kPanUpInteraction;
+			else if (panRelMouse.y >= kPanoramaPanningMarginY)
+				interactionID = kPanDownInteraction;
 
 			if (interactionID) {
 				// If there's an interaction script for this direction, execute it
@@ -2155,6 +2160,12 @@ void Runtime::detectPanoramaDirections() {
 
 	if (_havePanAnimations)
 		_panoramaDirectionFlags |= kPanoramaHorizFlags;
+
+	if (_havePanDownFromDirection[_direction])
+		_panoramaDirectionFlags |= kPanoramaDownFlag;
+
+	if (_havePanUpFromDirection[_direction])
+		_panoramaDirectionFlags |= kPanoramaUpFlag;
 }
 
 void Runtime::detectPanoramaMouseMovement(uint32 timestamp) {
@@ -2174,7 +2185,7 @@ void Runtime::panoramaActivate() {
 			panCursor |= kPanCursorDraggableHoriz;
 		if (_panoramaDirectionFlags & kPanoramaUpFlag)
 			panCursor |= kPanCursorDraggableUp;
-		if (_panoramaDirectionFlags & kPanoramaUpFlag)
+		if (_panoramaDirectionFlags & kPanoramaDownFlag)
 			panCursor |= kPanCursorDraggableDown;
 
 		cursorID = _panCursors[panCursor];
@@ -2712,9 +2723,9 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
-	animDef.firstFrame = animDef.lastFrame; // Static animation
 
-	changeAnimation(animDef, false);
+	// Static animations start on the last frame
+	changeAnimation(animDef, animDef.lastFrame, false);
 
 	_gameState = kGameStateWaitingForAnimation;
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
@@ -2743,8 +2754,7 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs);
 
-	animDef.firstFrame = animDef.lastFrame;
-	changeAnimation(animDef, false);
+	changeAnimation(animDef, animDef.lastFrame, false);
 
 	_havePendingReturnToIdleState = true;
 	_havePanAnimations = false;
@@ -3170,7 +3180,7 @@ void Runtime::scriptOpVerticalPanSet(bool *flags) {
 
 	uint rDir = baseDirection;
 	uint lDir = baseDirection;
-	for (uint i = 1; i < radius; i++) {
+	for (uint i = 1; i <= radius; i++) {
 		rDir++;
 		if (rDir == kNumDirections)
 			rDir = 0;
@@ -3228,6 +3238,12 @@ void Runtime::scriptOpSub(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
 	_scriptStack.push_back(stackArgs[0] - stackArgs[1]);
+}
+
+void Runtime::scriptOpNegate(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	_scriptStack.push_back(-stackArgs[0]);
 }
 
 void Runtime::scriptOpCmpEq(ScriptArg_t arg) {

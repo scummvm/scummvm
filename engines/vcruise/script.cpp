@@ -363,6 +363,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"+", ProtoOp::kProtoOpScript, ScriptOps::kAdd},
 	{"-", ProtoOp::kProtoOpScript, ScriptOps::kSub},
 	{"not", ProtoOp::kProtoOpScript, ScriptOps::kNot},
+	{"minus", ProtoOp::kProtoOpScript, ScriptOps::kNegate},
 	{"=", ProtoOp::kProtoOpScript, ScriptOps::kCmpEq},
 	{">", ProtoOp::kProtoOpScript, ScriptOps::kCmpGt},
 	{"<", ProtoOp::kProtoOpScript, ScriptOps::kCmpLt},

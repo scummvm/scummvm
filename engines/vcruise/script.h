@@ -111,6 +111,7 @@ enum ScriptOp {
 	kOr,
 	kSub,
 	kAdd,
+	kNegate,
 	kCmpEq,
 	kCmpLt,
 	kCmpGt,

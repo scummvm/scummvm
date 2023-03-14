@@ -583,6 +583,7 @@ private:
 	void scriptOpOr(ScriptArg_t arg);
 	void scriptOpAdd(ScriptArg_t arg);
 	void scriptOpSub(ScriptArg_t arg);
+	void scriptOpNegate(ScriptArg_t arg);
 	void scriptOpCmpEq(ScriptArg_t arg);
 	void scriptOpCmpLt(ScriptArg_t arg);
 	void scriptOpCmpGt(ScriptArg_t arg);
