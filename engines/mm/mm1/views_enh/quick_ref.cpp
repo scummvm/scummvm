@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/quick_ref.h"
+#include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/globals.h"
 
@@ -120,6 +121,11 @@ bool QuickRef::msgAction(const ActionMessage &msg) {
 	{
 		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
 		if (charNum < g_globals->_party.size()) {
+			// If the quickref was launched from a character view,
+			// close QuickRef so the replaceView below replaces it
+			if (dynamic_cast<CharacterInfo *>(g_events->priorView()) != nullptr)
+				close();
+
 			if (isInCombat()) {
 				g_globals->_currCharacter = g_globals->_combatParty[charNum];
 				replaceView("CharacterViewCombat");
