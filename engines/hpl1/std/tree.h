@@ -25,6 +25,7 @@
 #include "common/func.h"
 #include "common/util.h"
 #include "hpl1/std/pair.h"
+#include <assert.h>
 
 namespace Hpl1 {
 
@@ -44,13 +45,23 @@ struct Identity {
 	}
 };
 
+/**
+ * Red-black tree implementation with insertion and deletion algorithms based on the ones
+ * found in Introduction to Algorithms by Cormen, Leiserson, Rivest and Stein
+ */
 template<class ValueType, class Key, class KeyProj, class KeyComp = Common::Less<Key> >
 class Tree {
 public:
+	enum class Color {
+		kRed,
+		kBlack,
+	};
+
 	struct Node {
 		Node *parent;
 		Node *left;
 		Node *right;
+		Color color;
 		ValueType value;
 	};
 
@@ -204,26 +215,42 @@ public:
 	}
 
 	BasicIterator erase(BasicIterator it) {
-		auto const u = it._current;
-		if (!u)
-			return BasicIterator(nullptr);
-		auto v = merge(u->left, u->right);
-		if (u->parent) {
-			auto const p = u->parent;
-			if (p->left == u)
-				p->left = v;
-			else
-				p->right = v;
+		Node *const z = it._current;
+		Node *y = z;
+		assert(y);
+		const auto ret = it++;
+		Color y_prev_color = y->color;
+		Node *x;
+		Node *xp = nullptr;
+		if (!y->left) {
+			x = y->right;
+			xp = y->parent; // since x is put in y's place by the next call
+			transplant(y, y->right);
+		} else if (!y->right) {
+			x = y->left;
+			xp = y->parent;
+			transplant(y, y->left);
 		} else {
-			_root = v;
+			y = leftmost(z->right);
+			y_prev_color = y->color;
+			x = y->right;
+			if (y != z->right) {
+				xp = y->parent;
+				transplant(y, y->right);
+				y->right = z->right;
+				y->right->parent = y;
+			} else {
+				xp = y;
+			}
+			transplant(z, y);
+			y->left = z->left;
+			y->left->parent = y;
+			y->color = z->color;
 		}
-		if (v)
-			v->parent = u->parent;
-		if (u == _leftmost)
-			_leftmost = v ? leftmost(v) : u->parent;
+		if (y_prev_color == Color::kBlack)
+			fixDelete(x, xp);
+		delete z;
 		--_size;
-		auto const ret = ++it;
-		delete u;
 		return ret;
 	}
 
@@ -237,8 +264,8 @@ public:
 		return internalInsert(&_root, val);
 	}
 
-  	// requires that either start is lowerbound of val or start is end()
-  	// otherwise the resulting tree could be unsorted
+	// requires that either start is lowerbound of val or start is end()
+	// otherwise the resulting tree could be unsorted
 	BasicIterator insert(BasicIterator start, const ValueType &val) {
 		if (start == end())
 			return insert(val);
@@ -270,8 +297,8 @@ private:
 		}
 	}
 
-	BasicIterator internalInsert(Node **starting_node, const ValueType &val) {
-		auto it = starting_node;
+	BasicIterator internalInsert(Node **starting_point, const ValueType &val) {
+		auto it = starting_point;
 		Node *parent = nullptr;
 		while (*it) {
 			parent = *it;
@@ -281,17 +308,202 @@ private:
 				it = &(*it)->left;
 			}
 		}
-		*it = new Node{parent, nullptr, nullptr, val};
+		*it = new Node{
+			parent,
+			nullptr,
+			nullptr,
+			Color::kRed,
+			val,
+		};
 		if (!_leftmost || (parent == _leftmost && _leftmost->left == *it))
 			_leftmost = *it;
 		++_size;
-		return BasicIterator(*it);
+		auto ret = BasicIterator{*it};
+		fixInsert(*it);
+		return ret;
 	}
 
 	static Node *leftmost(Node *n) {
 		while (n->left)
 			n = n->left;
 		return n;
+	}
+
+	// neither rotate changes _leftmost
+	void rotateLeft(Node *t) {
+		assert(t);
+		assert(t->right);
+		Node *r = t->right;
+		Node *p = t->parent;
+		// set r->left as t->right
+		t->right = r->left;
+		if (r->left)
+			r->left->parent = t;
+		// set the parent of r
+		r->parent = p;
+		if (!p)
+			_root = r;
+		else if (p->right == t)
+			p->right = r;
+		else
+			p->left = r;
+		// set the parent of t
+		t->parent = r;
+		r->left = t;
+	}
+
+	void rotateRight(Node *t) {
+		assert(t);
+		assert(t->left);
+		Node *l = t->left;
+		Node *p = t->parent;
+		assert(p != l);
+		// set l->right as t->left
+		t->left = l->right;
+		if (l->right)
+			l->right->parent = t;
+		// set the parent of l
+		l->parent = p;
+		if (!p)
+			_root = l;
+		else if (p->right == t)
+			p->right = l;
+		else
+			p->left = l;
+		// set the parent of t
+		l->right = t;
+		t->parent = l;
+	}
+
+	void transplant(Node *t, Node *u) {
+		if (!t->parent) {
+			_root = u;
+		} else if (t == t->parent->left) {
+			t->parent->left = u;
+		} else {
+			t->parent->right = u;
+		}
+		if (u) {
+			u->parent = t->parent;
+		}
+		if (t == _leftmost)
+			_leftmost = u ? leftmost(u) : t->parent;
+	}
+
+	void fixInsert(Node *t) {
+		while (t->parent && t->parent->color == Color::kRed) {
+			Node *p = t->parent;
+			Node *g = p->parent;
+			// cannot be null since p is not _root
+			assert(g);
+			if (p == g->left) {
+				Node *const u = g->right;
+				if (u && u->color == Color::kRed) {
+					p->color = u->color = Color::kBlack;
+					g->color = Color::kRed;
+					t = g;
+				} else {
+					if (t == p->right) {
+						rotateLeft(p);
+						t = p;
+						p = t->parent;
+					}
+					p->color = Color::kBlack;
+					// g is not changed by the previous rotation
+					g->color = Color::kRed;
+					rotateRight(g);
+				}
+			} else {
+				Node *const u = g->left;
+				if (u && u->color == Color::kRed) {
+					p->color = u->color = Color::kBlack;
+					g->color = Color::kRed;
+					t = g;
+				} else {
+					if (t == p->left) {
+						rotateRight(p);
+						t = p;
+						p = t->parent;
+					}
+					p->color = Color::kBlack;
+					g->color = Color::kRed;
+					rotateLeft(g);
+				}
+			}
+		}
+		_root->color = Color::kBlack;
+	}
+
+	void fixDelete(Node *t, Node *p) {
+		while (t != _root && (!t || t->color == Color::kBlack)) {
+			if (t == p->left) {
+				// since the deleted node was black and t is in its
+				// place, it has to have a sibling
+				Node *b = p->right;
+				assert(b);
+				if (b->color == Color::kRed) {
+					b->color = Color::kBlack;
+					p->color = Color::kRed;
+					rotateLeft(p);
+					p = b->left;
+					// since b was red, it had two black children,
+					// the right one now being p->right
+					b = p->right;
+				}
+				if ((!b->left || b->left->color == Color::kBlack) &&
+					(!b->right || b->right->color == Color::kBlack)) {
+					b->color = Color::kRed;
+					t = p;
+					p = p->parent;
+				} else {
+					if (!b->right || b->right->color == Color::kBlack) {
+						// b->left exists, since b->right is black, and it is red
+						// because of one of the above checks
+						b->left->color = Color::kBlack;
+						b->color = Color::kRed;
+						rotateRight(b);
+						b = p->right; // p is not changed by the rotation
+					}
+					b->color = p->color;
+					p->color = Color::kBlack;
+					if (b->right)
+						b->right->color = Color::kBlack;
+					rotateLeft(p);
+					break;
+				}
+			} else { // same as above case but left and right swapped
+				Node *b = p->left;
+				assert(b);
+				if (b->color == Color::kRed) {
+					b->color = Color::kBlack;
+					p->color = Color::kRed;
+					rotateRight(p);
+					p = b->right;
+					b = p->left;
+				}
+				if ((!b->left || b->left->color == Color::kBlack) &&
+					(!b->right || b->right->color == Color::kBlack)) {
+					b->color = Color::kRed;
+					t = p;
+					p = p->parent;
+				} else {
+					if (!b->left || b->left->color == Color::kBlack) {
+						b->right->color = Color::kBlack;
+						b->color = Color::kRed;
+						rotateLeft(b);
+						b = p->left;
+					}
+					b->color = p->color;
+					p->color = Color::kBlack;
+					if (b->left)
+						b->left->color = Color::kBlack;
+					rotateRight(p);
+					break;
+				}
+			}
+		}
+		if (t)
+			t->color = Color::kBlack;
 	}
 };
 
