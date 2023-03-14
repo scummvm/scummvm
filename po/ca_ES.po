@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-13 19:17+0000\n"
-"PO-Revision-Date: 2023-03-09 17:20+0000\n"
+"PO-Revision-Date: 2023-03-15 01:34+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -8446,22 +8446,19 @@ msgid ""
 msgstr ""
 
 #: engines/vcruise/vcruise.cpp:230
-#, fuzzy
-#| msgid "Failed to load saved game from file."
 msgid "Failed to load save, the save data appears to be damaged."
-msgstr "No s'ha pogut carregar la partida desada al fitxer."
+msgstr ""
+"No s'ha pogut carregar la partida desada, sembla que les dades desades estan "
+"malmeses."
 
 #: engines/vcruise/vcruise.cpp:235
-#, fuzzy
-#| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
-msgstr "No s'ha pogut llegir la informació de la versió de la partida desada"
+msgstr "No s'ha pogut llegir la informació de la versió de la partida desada."
 
 #: engines/vcruise/vcruise.cpp:255
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr "S'ha produït un error en escriure la partida desada"
+msgstr ""
+"S'ha produït un error desconegut en intentar carregar la partida desada."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
