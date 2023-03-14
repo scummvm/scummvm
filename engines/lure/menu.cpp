@@ -518,6 +518,14 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	int selectedIndex = 0;
 	bool refreshFlag = true;
 
+#ifdef LURE_CLICKABLE_MENUS
+	Common::Rect r;
+	r.left = Surface::textX();
+	r.right = s->width() - Surface::textX() + 1;
+	r.top = Surface::textY();
+	r.bottom = s->height() - Surface::textY() + 1;
+#endif
+
 	bool bailOut = false;
 
 	while (!bailOut) {
