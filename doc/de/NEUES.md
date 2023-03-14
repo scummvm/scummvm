@@ -33,6 +33,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Sword2:
    - Unterstützung für die chinesische Übersetzung hinzugefügt.
 
+ Ultima:
+   - Reaktionsgeschwindigkeit von Ultima VI verbessert.
+   - Absturz beim Laden von Spielständen in Ultima VI behoben, der auftritt, wenn Dialoge geöffnet sind.
+   - Sortierung der erzeugten Items in Ultima VI korrigiert.
+   - Automatische Ausrüstung von Wurf-Waffen in Ultima VI korrigiert.
+
  Xeen:
    - Die Engine "xeen" wurde für Might & Magic zu "mm" umbenannt.
 
