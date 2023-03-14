@@ -56,13 +56,11 @@ DetectedGame TetraedgeMetaEngineDetection::toDetectedGame(const ADDetectedGame &
 	// The AdvancedDetector model only allows specifying a single supported
 	// game language. Both games support multiple languages
 	if (game.gameId == "syberia" || game.gameId == "syberia2") {
-		const Common::Language *language = getGameLanguages();
-		while (*language != Common::UNK_LANG) {
+		for (const Common::Language *language = getGameLanguages(); *language != Common::UNK_LANG; language++) {
 			// "ru" only present on syberia 1
 			if (game.gameId == "syberia2" && *language == Common::RU_RUS)
 				continue;
 			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(*language));
-			language++;
 		}
 	}
 
