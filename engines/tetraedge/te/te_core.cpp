@@ -177,7 +177,8 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 		"HD/Android-iPhone-iPad",				// for iOS Syb 1
 		"iPhone-iPad",							// for iOS Syb 1
 		"iPhone-iPad/HD",						// for iOS Syb 1
-		"iPhone-iPad/HD/Freemium"				// for iOS Syb 1
+		"iPhone-iPad/HD/Freemium",				// for iOS Syb 1
+		"Android-MacOSX-iPhone-iPad"			// for iOS Syb 1
 	};
 
 	const Common::Path langs[] = {
