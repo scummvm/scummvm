@@ -866,6 +866,17 @@ uint getSizeNextPOT(uint size) {
 	return true;
 }
 
+- (void)getMouseScaleFactorX:(CGFloat *)x andY:(CGFloat *)y {
+	if (_videoContext.overlayInGUI) {
+		// No scaling in overlay
+		*x = (CGFloat)_videoContext.overlayWidth / self.bounds.size.width;
+		*y = (CGFloat)_videoContext.overlayHeight / self.bounds.size.height;
+	} else {
+		*x = (CGFloat)_videoContext.screenWidth / self.bounds.size.width;
+		*y = (CGFloat)_videoContext.screenHeight / self.bounds.size.height;
+	}
+}
+
 - (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y {
 	// We scale the input according to our scale factor to get actual screen
 	// coordinates.

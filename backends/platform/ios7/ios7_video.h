@@ -139,6 +139,7 @@ uint getSizeNextPOT(uint size);
 - (void)addEvent:(InternalEvent)event;
 - (bool)fetchEvent:(InternalEvent *)event;
 
+- (void)getMouseScaleFactorX:(CGFloat *)x andY:(CGFloat *)y;
 - (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y;
 - (BOOL)isTouchControllerConnected;
 - (BOOL)isMouseControllerConnected;
