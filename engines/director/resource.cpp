@@ -692,7 +692,7 @@ bool ProjectorArchive::loadArchive(Common::SeekableReadStream *stream) {
 			size = SWAP_BYTES_32(size);
 		}
 
-		debugC(1, kDebugLoading, "Entry: %s offset %llX tag %s size %d", arr[i].c_str(), stream->pos() - 8, tag2str(tag), size);
+		debugC(1, kDebugLoading, "Entry: %s offset %lX tag %s size %d", arr[i].c_str(), stream->pos() - 8, tag2str(tag), size);
 
 		Entry entry;
 
