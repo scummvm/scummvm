@@ -54,6 +54,7 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 		_stipples[1][i] = 0;
 		_stipples[2][i] = 0;
 		_stipples[3][i] = 0;
+		_colorPair[i] = 0;
 	}
 }
 
@@ -126,6 +127,45 @@ byte getCGAStipple(byte x, int back, int fore) {
 	return st;
 }
 
+void Renderer::fillColorPairArray() {
+	for (int i = 4; i < 15; i++) {
+		byte *entry = (*_colorMap)[i];
+		int c1;
+		if (_renderMode == Common::kRenderCGA)
+			c1 = getCGAPixel(entry[0], 0);
+		else if (_renderMode == Common::kRenderCPC)
+			c1 = getCPCPixel(entry[0], 0);
+		else
+			error("Not implemented");
+
+		//debug("c1 = %d", c1);
+		int c2 = -1;
+
+		for (int j = 0; j < 4; j++) {
+			int k, c;
+			for (k = 0; k < 4; k++) {
+				if (_renderMode == Common::kRenderCGA)
+					c = getCGAPixel(entry[j], k);
+				else if (_renderMode == Common::kRenderCPC)
+					c = getCPCPixel(entry[j], k);
+				else
+					error("Not implemented");
+				//debug("c = %d", c);
+				if (c1 != c) {
+					c2 = c;
+					break;
+				}
+			}
+			if (k != 4)
+				break;
+		}
+		assert(c2 >= 0);
+		assert((c1 < 16) & (c2 < 16));
+		_colorPair[i] = byte(c1) | (byte(c2) << 4);
+		//debug("pair: %x", _colorPair[i]);
+	}
+}
+
 void Renderer::setColorMap(ColorMap *colorMap_) {
 	_colorMap = colorMap_;
 	if (_renderMode == Common::kRenderZX) {
@@ -137,6 +177,7 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 			_stipples[3][i] = entry[3];
 		}
 	} else if (_renderMode == Common::kRenderCPC) {
+		fillColorPairArray();
 		for (int i = 0; i < 15; i++) {
 			byte *entry = (*_colorMap)[i];
 			int i1 = getCPCPixel(entry[0], 0);
@@ -147,14 +188,16 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 			_stipples[3][i] = getCPCStipple(entry[3], i1, i2);
 		}
 	} else if (_renderMode == Common::kRenderCGA) {
-		for (int i = 0; i < 15; i++) {
+		fillColorPairArray();
+		for (int i = 4; i < 15; i++) {
 			byte *entry = (*_colorMap)[i];
-			int i1 = getCGAPixel(entry[0], 0);
-			int i2 = getCGAPixel(entry[0], 1);
-			_stipples[0][i] = getCGAStipple(entry[0], i1, i2);
-			_stipples[1][i] = getCGAStipple(entry[1], i1, i2);
-			_stipples[2][i] = getCGAStipple(entry[2], i1, i2);
-			_stipples[3][i] = getCGAStipple(entry[3], i1, i2);
+			byte pair = _colorPair[i];
+			byte c1 = pair & 0xf;
+			byte c2 = (pair >> 4) & 0xf;
+			_stipples[0][i] = getCGAStipple(entry[0], c1, c2);
+			_stipples[1][i] = getCGAStipple(entry[1], c1, c2);
+			_stipples[2][i] = getCGAStipple(entry[2], c1, c2);
+			_stipples[3][i] = getCGAStipple(entry[3], c1, c2);
 		}
 	}
 }
@@ -198,9 +241,9 @@ bool Renderer::getRGBAtCGA(uint8 index, uint8 &r1, uint8 &g1, uint8 &b1, uint8 &
 		stipple[3] = _stipples[3][index - 1];
 	}
 
-	byte *entry = (*_colorMap)[index - 1];
-	uint8 c1 = getCGAPixel(entry[0], 0);
-	uint8 c2 = getCGAPixel(entry[0], 1);
+	byte pair = _colorPair[index - 1];
+	byte c1 = pair & 0xf;
+	byte c2 = (pair >> 4) & 0xf;
 	readFromPalette(c1, r1, g1, b1);
 	readFromPalette(c2, r2, g2, b2);
 	return true;
