@@ -19,10 +19,12 @@
  *
  */
 
-#ifndef NANCY_UI_ANIMATEDBUTTON_H
-#define NANCY_UI_ANIMATEDBUTTON_H
+#ifndef NANCY_UI_CLOCK_H
+#define NANCY_UI_CLOCK_H
 
 #include "engines/nancy/renderobject.h"
+
+#include "engines/nancy/ui/animatedbutton.h"
 
 namespace Nancy {
 
@@ -30,34 +32,50 @@ struct NancyInput;
 
 namespace UI {
 
-class AnimatedButton : public RenderObject {
+class Clock : public RenderObject {
+	friend class ClockGlobe;
 public:
-	AnimatedButton(uint zOrder);
-	virtual ~AnimatedButton() = default;
+	Clock();
+	virtual ~Clock() = default;
 
 	void init() override;
+	void registerGraphics() override;
 	void updateGraphics() override;
 	void handleInput(NancyInput &input);
 
-	void setOpen(bool open) { _isOpen = open; }
-	void setFrame(int frame);
-	int getCurrentFrame() const { return _currentFrame; }
-	bool isPlaying() const;
-	virtual void onClick() = 0;
-	virtual void onTrigger() = 0;
+	void drawClockHands();
 
 protected:
-	Common::Array<Common::Rect> _srcRects;
-	uint32 _frameTime;
-	bool _alwaysHighlightCursor;
+	class ClockGlobe : public AnimatedButton {
+	public:
+		ClockGlobe(uint zOrder, Clock *owner) : AnimatedButton(zOrder), _owner(owner), _closeTime(0) {}
+		virtual ~ClockGlobe() = default;
 
-	int _currentFrame;
-	uint32 _nextFrameTime;
-	bool _isOpen;
-	Common::Rect _hotspot;
+		void init() override;
+		void updateGraphics() override;
+		void onClick() override;
+		void onTrigger() override;
+
+	private:
+		Clock *_owner;
+
+		uint32 _closeTime;
+		uint32 _timeToKeepOpen;
+	};
+
+	RenderObject _gargoyleEyes;
+	ClockGlobe _globe;
+
+	Common::Array<Common::Rect> _globeSrcRects;
+	Common::Array<Common::Rect> _hoursHandSrcRects;
+	Common::Array<Common::Rect> _minutesHandSrcRects;
+	Common::Array<Common::Rect> _hoursHandDestRects;
+	Common::Array<Common::Rect> _minutesHandDestRects;
+
+	Time _playerTime;
 };
 
 } // End of namespace UI
 } // End of namespace Nancy
 
-#endif // NANCY_UI_ANIMATEDBUTTON_H
+#endif // NANCY_UI_CLOCK_H

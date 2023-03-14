@@ -34,6 +34,7 @@
 
 #include "engines/nancy/ui/button.h"
 #include "engines/nancy/ui/ornaments.h"
+#include "engines/nancy/ui/clock.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
@@ -104,6 +105,7 @@ Scene::Scene() :
 		_helpButton(nullptr),
 		_viewportOrnaments(nullptr),
 		_textboxOrnaments(nullptr),
+		_clock(nullptr),
 		_actionManager(),
 		_difficulty(0),
 		_activePrimaryVideo(nullptr) {}
@@ -113,6 +115,7 @@ Scene::~Scene()  {
 	delete _menuButton;
 	delete _viewportOrnaments;
 	delete _textboxOrnaments;
+	delete _clock;
 }
 
 void Scene::process() {
@@ -337,6 +340,10 @@ void Scene::registerGraphics() {
 	if (_textboxOrnaments) {
 		_textboxOrnaments->registerGraphics();
 		_textboxOrnaments->setVisible(true);
+	}
+
+	if (_clock) {
+		_clock->registerGraphics();
 	}
 
 	_textbox.setVisible(!_shouldClearTextbox);
@@ -637,6 +644,11 @@ void Scene::run() {
 			break;
 		}
 	}
+	
+	// Handle clock before viewport since it overlaps the left hotspot in TVD
+	if (_clock) {
+		_clock->handleInput(input);
+	}
 
 	_viewport.handleInput(input);
 
@@ -648,21 +660,27 @@ void Scene::run() {
 	}
 
 	_actionManager.handleInput(input);
-	_menuButton->handleInput(input);
-	_helpButton->handleInput(input);
 	_textbox.handleInput(input);
 	_inventoryBox.handleInput(input);
 
-	if (_menuButton->_isClicked) {
-		_menuButton->_isClicked = false;
-		g_nancy->_sound->playSound("BUOK");
-		requestStateChange(NancyState::kMainMenu);
-	}
+	if (_menuButton) {
+		_menuButton->handleInput(input);
 
-	if (_helpButton->_isClicked) {
-		_helpButton->_isClicked = false;
-		g_nancy->_sound->playSound("BUOK");
-		requestStateChange(NancyState::kHelp);
+		if (_menuButton->_isClicked) {
+			_menuButton->_isClicked = false;
+			g_nancy->_sound->playSound("BUOK");
+			requestStateChange(NancyState::kMainMenu);
+		}
+	}
+	
+	if (_helpButton) {
+		_helpButton->handleInput(input);
+
+		if (_helpButton->_isClicked) {
+			_helpButton->_isClicked = false;
+			g_nancy->_sound->playSound("BUOK");
+			requestStateChange(NancyState::kHelp);
+		}
 	}
 
 	_actionManager.processActionRecords();
@@ -718,13 +736,16 @@ void Scene::initStaticData() {
 		}
 	}
 	
-	// Init ornaments (TVD only)
+	// Init ornaments and clock (TVD only)
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		_viewportOrnaments = new UI::ViewportOrnaments(9);
 		_viewportOrnaments->init();
 
 		_textboxOrnaments = new UI::TextboxOrnaments(9);
 		_textboxOrnaments->init();
+
+		_clock = new UI::Clock();
+		_clock->init();
 	}
 
 	_state = kLoad;

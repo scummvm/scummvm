@@ -55,6 +55,7 @@ namespace UI {
 class Button;
 class ViewportOrnaments;
 class TextboxOrnaments;
+class Clock;
 }
 
 namespace State {
@@ -244,6 +245,7 @@ private:
 
 	UI::ViewportOrnaments *_viewportOrnaments;
 	UI::TextboxOrnaments *_textboxOrnaments;
+	UI::Clock *_clock;
 
 	// Data
 	SceneState _sceneState;

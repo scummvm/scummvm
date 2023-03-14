@@ -39,8 +39,7 @@ AnimatedButton::AnimatedButton(uint zOrder) :
 	_currentFrame(-1),
 	_nextFrameTime(0),
 	_isOpen(false),
-	_alwaysHighlightCursor(false),
-	_isActive(true) {}
+	_alwaysHighlightCursor(false) {}
 
 void AnimatedButton::init() {
 	setTransparent(true);
@@ -68,15 +67,11 @@ void AnimatedButton::updateGraphics() {
 }
 
 void AnimatedButton::handleInput(NancyInput &input) {
-	if (!_isActive) {
-		return;
-	}
-
 	if (_hotspot.contains(input.mousePos)) {
 		if (_alwaysHighlightCursor || _currentFrame == -1 || _currentFrame == (int)_srcRects.size()) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 		}
-		
+
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			if (_currentFrame == -1) {
 				onClick();
