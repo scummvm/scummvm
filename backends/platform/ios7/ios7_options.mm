@@ -189,6 +189,7 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 }
 
 void OSystem_iOS7::applyBackendSettings() {
+	virtualController(ConfMan.getBool("onscreen_control"));
 	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
 	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
 }
