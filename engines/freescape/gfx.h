@@ -116,6 +116,8 @@ public:
 	void setColorMap(ColorMap *colorMap_);
 	ColorMap *_colorMap;
 	ColorReMap *_colorRemaps;
+	void fillColorPairArray();
+	byte _colorPair[16];
 	int _keyColor;
 	int _inkColor;
 	int _paperColor;
