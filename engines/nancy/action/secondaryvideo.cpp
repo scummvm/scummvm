@@ -28,6 +28,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "common/serializer.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -156,40 +158,30 @@ void PlaySecondaryVideo::handleInput(NancyInput &input) {
 }
 
 void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
+	Common::Serializer ser(&stream, nullptr);
+	ser.setVersion(g_nancy->getGameType());
+
 	readFilename(stream, _filename);
 	readFilename(stream, _paletteFilename);
-	stream.skip(10); // video overlay bitmap filename
+	ser.skip(10); // video overlay bitmap filename
 
-	if (_paletteFilename.size()) {
-		stream.skip(12);
-		// videoSource (HD, CD, cache)
-		// ??
-		// _paletteStart
-		// _paletteSize
-		// hasOverlayBitmap
-		// ignoreHoverAnimation??
-		_videoHotspots = stream.readUint16LE();
-	}
+	ser.skip(12, kGameTypeVampire, kGameTypeVampire);
+	ser.syncAsUint16LE(_videoHotspots, kGameTypeVampire, kGameTypeVampire);
 
-	_loopFirstFrame = stream.readUint16LE();
-	_loopLastFrame = stream.readUint16LE();
-	_onHoverFirstFrame = stream.readUint16LE();
-	_onHoverLastFrame = stream.readUint16LE();
-	_onHoverEndFirstFrame = stream.readUint16LE();
-	_onHoverEndLastFrame = stream.readUint16LE();
+	ser.syncAsUint16LE(_loopFirstFrame);
+	ser.syncAsUint16LE(_loopLastFrame);
+	ser.syncAsUint16LE(_onHoverFirstFrame);
+	ser.syncAsUint16LE(_onHoverLastFrame);
+	ser.syncAsUint16LE(_onHoverEndFirstFrame);
+	ser.syncAsUint16LE(_onHoverEndLastFrame);
 
-	_sceneChange.readData(stream);
+	_sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
+	ser.skip(1, kGameTypeNancy1);
 
-	if (_paletteFilename.size()) {
-		stream.skip(3);
-	} else {
-		stream.skip(1);
-	}
-
-	uint16 numVideoDescs = stream.readUint16LE();
-	_videoDescs.reserve(numVideoDescs);
+	uint16 numVideoDescs;
+	ser.syncAsUint16LE(numVideoDescs);
+	_videoDescs.resize(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {
-		_videoDescs.push_back(SecondaryVideoDescription());
 		_videoDescs[i].readData(stream);
 	}
 }
