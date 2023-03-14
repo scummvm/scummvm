@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-13 19:17+0000\n"
-"PO-Revision-Date: 2023-03-09 07:34+0000\n"
+"PO-Revision-Date: 2023-03-14 07:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -8618,24 +8618,16 @@ msgstr ""
 "ゲームはプレイできますが、音楽は再生されません。"
 
 #: engines/vcruise/vcruise.cpp:230
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, the save file doesn't contain valid version "
-#| "information."
 msgid "Failed to load save, the save data appears to be damaged."
-msgstr "ロードに失敗、セーブファイルに有効なバージョン情報がありません。"
+msgstr "ロード失敗、セーブデータが破損しているようです。"
 
 #: engines/vcruise/vcruise.cpp:235
-#, fuzzy
-#| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
-msgstr "セーブからバージョン情報が読み取れません"
+msgstr "セーブからバージョン情報が読み取れません。"
 
 #: engines/vcruise/vcruise.cpp:255
-#, fuzzy
-#| msgid "An internal error occurred while attempting to write save game data"
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr "ロード失敗、セーブデータ出力時に内部エラーが発生しました"
+msgstr "セーブデータの読み込み時、不明なエラーが発生しました。"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
