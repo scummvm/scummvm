@@ -42,6 +42,7 @@ OpenGLRenderer::OpenGLRenderer(int screenW, int screenH, Common::RenderMode rend
 	_coords = (Coord *)malloc(sizeof(Coord) * kCoordsArraySize);
 	_texturePixelFormat = OpenGLTexture::getRGBAPixelFormat();
 	_isAccelerated = true;
+	_variableStippleArray = nullptr;
 }
 
 OpenGLRenderer::~OpenGLRenderer() {
@@ -276,8 +277,9 @@ void OpenGLRenderer::setStippleData(byte *data) {
 	if (!data)
 		return;
 
-	for (int i = 0; i < 128; i++)
-		_variableStippleArray[i] = data[(i / 16) % 4];
+	_variableStippleArray = data;
+	//for (int i = 0; i < 128; i++)
+	//	_variableStippleArray[i] = data[(i / 16) % 4];
 }
 
 void OpenGLRenderer::useStipple(bool enabled) {
@@ -316,8 +318,8 @@ void OpenGLRenderer::clear(uint8 color) {
 
 void OpenGLRenderer::drawFloor(uint8 color) {
 	uint8 r1, g1, b1, r2, g2, b2;
-	uint32 stipple = 0;
-	assert(getRGBAt(color, r1, g1, b1, r2, g2, b2, (byte *)&stipple)); // TODO: move check inside this function
+	byte *stipple;
+	assert(getRGBAt(color, r1, g1, b1, r2, g2, b2, stipple)); // TODO: move check inside this function
 	glColor3ub(r1, g1, b1);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
