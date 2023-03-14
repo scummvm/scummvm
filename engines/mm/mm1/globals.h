@@ -70,6 +70,7 @@ public:
 	Shared::Xeen::SpriteResource _confirmIcons;
 	Shared::Xeen::SpriteResource _globalSprites;
 	Shared::Xeen::SpriteResource _tileSprites;
+	Shared::Xeen::SpriteResource _escSprites;
 	byte SYMBOLS[20][64];
 	XeenFont _fontNormal;
 	XeenFont _fontReduced;

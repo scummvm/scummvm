@@ -71,9 +71,6 @@ bool Game::msgAction(const ActionMessage &msg) {
 	case KEYBIND_MAP:
 		addView("MapPopup");
 		return true;
-	case KEYBIND_ORDER:
-		addView("Order");
-		return true;
 	case KEYBIND_PROTECT:
 		addView("Protect");
 		return true;
@@ -92,6 +89,8 @@ bool Game::msgAction(const ActionMessage &msg) {
 	case KEYBIND_UNLOCK:
 		send("Unlock", GameMessage("SHOW"));
 		break;
+	//case KEYBIND_ORDER:
+	// Enhanced mode uses Exchange button from Char Info view
 	default:
 		break;
 	}

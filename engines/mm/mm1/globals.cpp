@@ -66,6 +66,7 @@ bool Globals::load(bool isEnhanced) {
 		_confirmIcons.load("confirm.icn");
 		_globalSprites.load("global.icn");
 		_tileSprites.load("town.til");
+		_escSprites.load("esc.icn");
 
 		{
 			Common::File f;

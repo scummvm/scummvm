@@ -505,6 +505,7 @@ enhdialogs:
 		select_portrait: "Select a portrait"
 		select: "\x01""37Select"
 		enter_name: "Enter name:"
+	exchange: "Exhange with whom?"
 	inn:
 		left_click: "Left click potraits to add/remove"
 		right_click: "Right click to view"

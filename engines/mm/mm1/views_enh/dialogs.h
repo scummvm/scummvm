@@ -30,6 +30,7 @@
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/character_select.h"
 #include "mm/mm1/views_enh/characters.h"
+#include "mm/mm1/views_enh/exchange.h"
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/views_enh/game_messages.h"
 #include "mm/mm1/views_enh/main_menu.h"
@@ -55,22 +56,23 @@ namespace ViewsEnh {
 
 struct Dialogs {
 private:
-	ViewsEnh::CreateCharacters _createCharacters;
-	Views::Protect _protect;
-	ViewsEnh::Title _title;
-	ViewsEnh::Characters _characters;
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Locations::Inn _inn;
 	ViewsEnh::Locations::Market _market;
-	ViewsEnh::Search _search;
-	ViewsEnh::Trap _trap;
-	ViewsEnh::Unlock _unlock;
-	ViewsEnh::WhoWillTry _whoWillTry;
 	ViewsEnh::Locations::Tavern _tavern;
 	ViewsEnh::Locations::Temple _temple;
 	ViewsEnh::Locations::Training _training;
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
+	ViewsEnh::CreateCharacters _createCharacters;
+	ViewsEnh::Exchange _exchange;
+	Views::Protect _protect;
+	ViewsEnh::Title _title;
+	ViewsEnh::Characters _characters;
+	ViewsEnh::Search _search;
+	ViewsEnh::Trap _trap;
+	ViewsEnh::Unlock _unlock;
+	ViewsEnh::WhoWillTry _whoWillTry;
 	ViewsEnh::CharacterInfo _characterInfo;
 	ViewsEnh::CharacterSelect _characterSelect;
 	ViewsEnh::Game _game;

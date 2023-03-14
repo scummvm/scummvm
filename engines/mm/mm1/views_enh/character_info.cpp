@@ -130,8 +130,8 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		_cursorCell = EXPANDED_TO_REDUCED(idx);
 		showCursor(true);
 		break;
-	case Common::KEYCODE_RETURN:
-		showAttribute(_cursorCell);
+	case Common::KEYCODE_e:
+		addView("Exchange");
 		break;
 	default:
 		break;
@@ -141,14 +141,18 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool CharacterInfo::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
 		close();
 		return true;
-	} else {
+
+	case KEYBIND_SELECT:
+		showAttribute(_cursorCell);
+		return true;
+
+	default:
 		return PartyView::msgAction(msg);
 	}
-
-	return false;
 }
 
 bool CharacterInfo::msgMouseUp(const MouseUpMessage &msg) {
