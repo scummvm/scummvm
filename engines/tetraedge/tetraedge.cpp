@@ -138,6 +138,10 @@ Common::Language TetraedgeEngine::getGameLanguage() const {
 	return _gameDescription->language;
 }
 
+Common::Platform TetraedgeEngine::getGamePlatform() const {
+	return _gameDescription->platform;
+}
+
 bool TetraedgeEngine::canLoadGameStateCurrently() {
 	return _game && _application && !_application->mainMenu().isEntered();
 }
@@ -177,7 +181,8 @@ Common::Error TetraedgeEngine::loadGameStream(Common::SeekableReadStream *stream
 
 void TetraedgeEngine::configureSearchPaths() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "Resources", 0, 5);
+	if (_gameDescription->platform != Common::kPlatformIOS)
+		SearchMan.addSubDirectoryMatching(gameDataDir, "Resources", 0, 5);
 }
 
 int TetraedgeEngine::getDefaultScreenWidth() const {

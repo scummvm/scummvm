@@ -106,10 +106,19 @@ static int tolua_ExportedFunctions_PlayMovie00(lua_State *L) {
 		return 0;
 	} else if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
 			&& tolua_isnumber(L, 3, 1, &err) && tolua_isnoobj(L, 4, &err)) {
+		// Syberia II macOS - includes volume
 		Common::String s1(tolua_tostring(L, 1, nullptr));
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		double d1 = tolua_tonumber(L, 3, 1.0);
 		PlayMovie(s1, s2, d1);
+		return 0;
+	} else if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+			&& tolua_isstring(L, 3, 0, &err) && tolua_isnoobj(L, 4, &err)) {
+		// iOS version.. sometimes has "video" as 3rd param?
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		Common::String s3(tolua_tostring(L, 2, nullptr));
+		PlayMovie(s1, s2);
 		return 0;
 	}
 	error("#ferror in function 'PlayMovie': %d %d %s", err.index, err.array, err.type);

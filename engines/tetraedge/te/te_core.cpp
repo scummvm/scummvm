@@ -145,7 +145,8 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 	const Common::FSNode gameRoot(ConfMan.get("path"));
 	if (!gameRoot.isDirectory())
 		error("Game directory should be a directory");
-	const Common::FSNode resNode = gameRoot.getChild("Resources");
+	const Common::FSNode resNode = (g_engine->getGamePlatform() == Common::kPlatformMacintosh
+			?  gameRoot.getChild("Resources") : gameRoot);
 	if (!resNode.isDirectory())
 		error("Resources directory should exist in game");
 
@@ -169,7 +170,14 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 		"Part2-Full-Part1",
 		"Part3-Full-Part1",
 		"HD",
-		"HD/PC-MacOSX-Xbox360-PS3"
+		"HD/PC-MacOSX-Xbox360-PS3",
+		"PC-PS3-Android-MacOSX-iPhone-iPad",	// for iOS Syb 1
+		"Android-iPhone-iPad",					// for iOS Syb 1
+		"Android-iPhone-iPad/HD",				// for iOS Syb 1
+		"HD/Android-iPhone-iPad",				// for iOS Syb 1
+		"iPhone-iPad",							// for iOS Syb 1
+		"iPhone-iPad/HD",						// for iOS Syb 1
+		"iPhone-iPad/HD/Freemium"				// for iOS Syb 1
 	};
 
 	const Common::Path langs[] = {

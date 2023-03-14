@@ -77,7 +77,7 @@ void Notifier::launchNextnotifier() {
 
 void Notifier::load() {
 	_gui.load("menus/Notifier.lua");
-	TeLayout *notifierLayout = _gui.layout("notifier");
+	TeLayout *notifierLayout = _gui.layoutChecked("notifier");
 	Game *game = g_engine->getGame();
 	game->addNoScale2Child(notifierLayout);
 	notifierLayout->setVisible(false);
