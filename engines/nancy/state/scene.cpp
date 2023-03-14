@@ -620,8 +620,26 @@ void Scene::run() {
 		_timers.playerTimeNextMinute = currentPlayTime + g_nancy->_playerTimeMinuteLength;
 	}
 
-	// Update the UI elements and handle input
+	handleInput();
+
+	_actionManager.processActionRecords();
+}
+
+void Scene::handleInput() {
 	NancyInput input = g_nancy->_input->getInput();
+
+	// Warp the mouse below the inactive zone during dialogue scenes
+	if (_activePrimaryVideo != nullptr) {
+		const Common::Rect &inactiveZone = g_nancy->_cursorManager->getPrimaryVideoInactiveZone();
+		const Common::Point cursorHotspot = g_nancy->_cursorManager->getCurrentCursorHotspot();
+		Common::Point adjustedMousePos = input.mousePos;
+		adjustedMousePos.y -= cursorHotspot.y;
+
+		if (inactiveZone.bottom > adjustedMousePos.y) {
+			input.mousePos.y = inactiveZone.bottom + cursorHotspot.y;
+			g_system->warpMouse(input.mousePos.x, input.mousePos.y);
+		}
+	}
 
 	// Handle invisible map button
 	// We do this first since TVD's map button overlaps the viewport's right hotspot
@@ -682,8 +700,6 @@ void Scene::run() {
 			requestStateChange(NancyState::kHelp);
 		}
 	}
-
-	_actionManager.processActionRecords();
 }
 
 void Scene::initStaticData() {

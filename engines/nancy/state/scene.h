@@ -183,6 +183,7 @@ private:
 	void init();
 	void load();
 	void run();
+	void handleInput();
 
 	void initStaticData();
 

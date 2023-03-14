@@ -382,18 +382,6 @@ void PlayPrimaryVideoChan0::execute() {
 	}
 }
 
-void PlayPrimaryVideoChan0::handleInput(NancyInput &input) {
-	const Common::Rect &inactiveZone = g_nancy->_cursorManager->getPrimaryVideoInactiveZone();
-	const Common::Point cursorHotspot = g_nancy->_cursorManager->getCurrentCursorHotspot();
-	Common::Point adjustedMousePos = input.mousePos;
-	adjustedMousePos.y -= cursorHotspot.y;
-
-	if (inactiveZone.bottom > adjustedMousePos.y) {
-		input.mousePos.y = inactiveZone.bottom + cursorHotspot.y;
-		g_system->warpMouse(input.mousePos.x, input.mousePos.y);
-	}
-}
-
 void PlayPrimaryVideoChan0::addConditionalDialogue() {
 	for (const auto &res : g_nancy->getStaticData().conditionalDialogue[_conditionalResponseCharacterID]) {
 		bool isSatisfied = true;

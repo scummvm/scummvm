@@ -84,7 +84,6 @@ public:
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
-	void handleInput(NancyInput &input) override;
 
 	// Functions for handling the built-in dialogue responses found in the executable
 	void addConditionalDialogue();
