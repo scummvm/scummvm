@@ -155,6 +155,7 @@ void Events::popView() {
 	if (!_views.empty()) {
 		UIElement *view = focusedView();
 		view->msgFocus(FocusMessage(priorView));
+		view->redraw();
 		view->draw();
 	}
 }
