@@ -77,6 +77,11 @@ struct retro_core_option_v2_category option_cats_us[] = {
 		"Cursor Movement",
 		"Configure cursor movement settings"
 	},
+	{
+		"frameskip",
+		"Frameskip",
+		"Configure frameskip settings"
+	},
 	{ NULL, NULL, NULL },
 };
 
@@ -189,6 +194,68 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 			{NULL, NULL},
 		},
 		"1.0"
+	},
+	{
+		"scummvm_frameskip_type",
+		"Frameskip Mode",
+		NULL,
+		"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Manual' uses the 'Frameskip Threshold (%)' setting. 'Fixed' uses the 'Fixed Frameskip' setting.",
+		NULL,
+		"frameskip",
+		{
+			{ "disabled", NULL },
+			{ "fixed", "Fixed" },
+			{ "auto", "Auto" },
+			{ "manual", "Manual" },
+			{ NULL, NULL },
+		},
+		"auto"
+	},
+	{
+		"scummvm_frameskip_threshold",
+		"Frameskip Threshold (%)",
+		NULL,
+		"When 'Frameskip' is set to 'Manual', specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently.",
+		NULL,
+		"frameskip",
+		{
+			{ "15", NULL },
+			{ "18", NULL },
+			{ "21", NULL },
+			{ "24", NULL },
+			{ "27", NULL },
+			{ "30", NULL },
+			{ "33", NULL },
+			{ "36", NULL },
+			{ "39", NULL },
+			{ "42", NULL },
+			{ "45", NULL },
+			{ "48", NULL },
+			{ "51", NULL },
+			{ "54", NULL },
+			{ "57", NULL },
+			{ "60", NULL },
+			{ NULL, NULL },
+		},
+		"33"
+	},
+	{
+		"scummvm_frameskip_no",
+		"Fixed Frameskip",
+		NULL,
+		"When 'Frameskip' is set to 'Fixed', or if the frontend doesn't support the alternative 'Frameskip' mode, skip rendering at a fixed rate of X frames out of X+1",
+		NULL,
+		"frameskip",
+		{
+			{ "0", "No skipping" },
+			{ "1", "Skip rendering of 1 frames out of 2" },
+			{ "2", "Skip rendering of 2 frames out of 3" },
+			{ "3", "Skip rendering of 3 frames out of 4" },
+			{ "4", "Skip rendering of 4 frames out of 5" },
+			{ "5", "Skip rendering of 5 frames out of 6" },
+			{ NULL, NULL },
+		},
+		"0"
 	},
 	{
 		"scummvm_speed_hack",
