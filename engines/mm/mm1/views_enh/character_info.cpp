@@ -133,6 +133,9 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_e:
 		addView("Exchange");
 		break;
+	case Common::KEYCODE_q:
+		addView("QuickRef");
+		break;
 	default:
 		break;
 	}
