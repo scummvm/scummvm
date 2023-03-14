@@ -931,6 +931,16 @@ uint getSizeNextPOT(uint size) {
 	}
 }
 
+- (void)virtualController:(bool)connect {
+	if (@available(iOS 15.0, *)) {
+		for (GameController *c : _controllers) {
+			if ([c isKindOfClass:GamepadController.class]) {
+				[(GamepadController*)c virtualController:connect];
+			}
+		}
+	}
+}
+
 #if TARGET_OS_IOS
 - (void)interfaceOrientationChanged:(UIInterfaceOrientation)orientation {
 	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];

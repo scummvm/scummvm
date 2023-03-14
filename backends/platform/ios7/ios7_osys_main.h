@@ -207,6 +207,7 @@ public:
 	Common::String getSystemLanguage() const override;
 
 	bool isConnectionLimited() override;
+	void virtualController(bool connect);
 
 	virtual Common::String getDefaultLogFileName() override { return Common::String("/scummvm.log"); }
 

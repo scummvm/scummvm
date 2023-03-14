@@ -440,6 +440,15 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 			return false;
 		}
 
+		case kUIViewSwipeLeft: {
+			// Swipe left
+			bool connect = !ConfMan.getBool("onscreen_control");
+			ConfMan.setBool("onscreen_control", connect);
+			ConfMan.flushToDisk();
+			virtualController(connect);
+			return false;
+		}
+
 		default:
 			break;
 		}

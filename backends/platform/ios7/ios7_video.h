@@ -143,6 +143,7 @@ uint getSizeNextPOT(uint size);
 - (BOOL)isTouchControllerConnected;
 - (BOOL)isMouseControllerConnected;
 - (BOOL)isGamepadControllerConnected;
+- (void)virtualController:(bool)connect;
 @end
 
 #endif
