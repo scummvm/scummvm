@@ -336,7 +336,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _scriptNextInstruction(0), _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
-	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0),
+	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  _loadedArea(0), _lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0) {
@@ -1004,6 +1004,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(ItemRemove);
 			DISPATCH_OP(ItemHighlightSet);
 			DISPATCH_OP(ItemAdd);
+			DISPATCH_OP(ItemHaveSpace);
 			DISPATCH_OP(SetCursor);
 			DISPATCH_OP(SetRoom);
 			DISPATCH_OP(LMB);
@@ -1014,7 +1015,9 @@ bool Runtime::runScript() {
 			DISPATCH_OP(SoundL1);
 			DISPATCH_OP(SoundL2);
 			DISPATCH_OP(SoundL3);
+			DISPATCH_OP(3DSoundS2);
 			DISPATCH_OP(3DSoundL2);
+			DISPATCH_OP(StopAL);
 			DISPATCH_OP(Range);
 			DISPATCH_OP(AddXSound);
 			DISPATCH_OP(ClrXSound);
@@ -1387,6 +1390,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 			_haveIdleAnimations[i] = false;
 
 		_havePendingReturnToIdleState = true;
+		_haveIdleStaticAnimation = false;
 	}
 }
 
@@ -2752,12 +2756,19 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs);
 
+	// QUIRK/BUG WORKAROUND: Static animations don't override other static animations!
+	// In Reah Room05, the script for 0b8 (NGONG) sets the static animation to :NNAWA_NGONG and then
+	// to :NSWIT_SGONG, but NNAWA_NGONG is the correct one, so we must ignore the second static animation
+	if (_haveIdleStaticAnimation)
+		return;
+
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs);
 
 	changeAnimation(animDef, animDef.lastFrame, false);
 
 	_havePendingReturnToIdleState = true;
 	_havePanAnimations = false;
+	_haveIdleStaticAnimation = true;
 
 	_gameState = kGameStateWaitingForAnimation;
 }
@@ -2831,6 +2842,17 @@ void Runtime::scriptOpItemAdd(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
 	inventoryAddItem(stackArgs[0]);
+}
+
+void Runtime::scriptOpItemHaveSpace(ScriptArg_t arg) {
+	for (const InventoryItem &item : _inventory) {
+		if (item.itemID == 0) {
+			_scriptStack.push_back(1);
+			return;
+		}
+	}
+
+	_scriptStack.push_back(0);
 }
 
 void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
@@ -2909,6 +2931,17 @@ void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
 
 	setSound3DParameters(stackArgs[0], stackArgs[2], stackArgs[3], _pendingSoundParams3D);
 	triggerSound(true, stackArgs[0], stackArgs[1], 0, true);
+}
+
+void Runtime::scriptOp3DSoundS2(ScriptArg_t arg) {
+	TAKE_STACK(4);
+
+	setSound3DParameters(stackArgs[0], stackArgs[2], stackArgs[3], _pendingSoundParams3D);
+	triggerSound(false, stackArgs[0], stackArgs[1], 0, true);
+}
+
+void Runtime::scriptOpStopAL(ScriptArg_t arg) {
+	warning("stopaL not implemented yet");
 }
 
 void Runtime::scriptOpAddXSound(ScriptArg_t arg) {

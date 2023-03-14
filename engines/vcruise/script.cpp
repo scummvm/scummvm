@@ -337,6 +337,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"cr?", ProtoOp::kProtoOpScript, ScriptOps::kItemCheck},
 	{"cr!", ProtoOp::kProtoOpScript, ScriptOps::kItemRemove},
 	{"sr!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSet},
+	{"r?", ProtoOp::kProtoOpScript, ScriptOps::kItemHaveSpace},
 	{"r!", ProtoOp::kProtoOpScript, ScriptOps::kItemAdd},
 	{"cursor!", ProtoOp::kProtoOpScript, ScriptOps::kSetCursor},
 	{"room!", ProtoOp::kProtoOpScript, ScriptOps::kSetRoom},
@@ -347,7 +348,8 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"rnd", ProtoOp::kProtoOpScript, ScriptOps::kRandom},
 	{"drop", ProtoOp::kProtoOpScript, ScriptOps::kDrop},
 	{"dup", ProtoOp::kProtoOpScript, ScriptOps::kDup},
-	{"say2", ProtoOp::kProtoOpScript, ScriptOps::kSay3},	// FIXME: Figure out what the difference is between say2 and say3
+	{"say1", ProtoOp::kProtoOpScript, ScriptOps::kSay3}, // FIXME: Figure out what the difference is between the say ops
+	{"say2", ProtoOp::kProtoOpScript, ScriptOps::kSay3}, // FIXME: Figure out what the difference is between the say ops
 	{"say3", ProtoOp::kProtoOpScript, ScriptOps::kSay3},
 	{"say3@", ProtoOp::kProtoOpScript, ScriptOps::kSay3Get},
 	{"setTimer", ProtoOp::kProtoOpScript, ScriptOps::kSetTimer},
@@ -378,7 +380,9 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"soundL1", ProtoOp::kProtoOpScript, ScriptOps::kSoundL1},
 	{"soundL2", ProtoOp::kProtoOpScript, ScriptOps::kSoundL2},
 	{"soundL3", ProtoOp::kProtoOpScript, ScriptOps::kSoundL3},
+	{"3DsoundS2", ProtoOp::kProtoOpScript, ScriptOps::k3DSoundS2},
 	{"3DsoundL2", ProtoOp::kProtoOpScript, ScriptOps::k3DSoundL2},
+	{"stopaL", ProtoOp::kProtoOpScript, ScriptOps::kStopAL},
 	{"range", ProtoOp::kProtoOpScript, ScriptOps::kRange},
 	{"addXsound", ProtoOp::kProtoOpScript, ScriptOps::kAddXSound},
 	{"clrXsound", ProtoOp::kProtoOpScript, ScriptOps::kClrXSound},

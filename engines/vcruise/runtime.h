@@ -534,6 +534,7 @@ private:
 	void scriptOpItemRemove(ScriptArg_t arg);
 	void scriptOpItemHighlightSet(ScriptArg_t arg);
 	void scriptOpItemAdd(ScriptArg_t arg);
+	void scriptOpItemHaveSpace(ScriptArg_t arg);
 
 	void scriptOpSetCursor(ScriptArg_t arg);
 	void scriptOpSetRoom(ScriptArg_t arg);
@@ -545,7 +546,9 @@ private:
 	void scriptOpSoundL1(ScriptArg_t arg);
 	void scriptOpSoundL2(ScriptArg_t arg);
 	void scriptOpSoundL3(ScriptArg_t arg);
+	void scriptOp3DSoundS2(ScriptArg_t arg);
 	void scriptOp3DSoundL2(ScriptArg_t arg);
+	void scriptOpStopAL(ScriptArg_t arg);
 	void scriptOpRange(ScriptArg_t arg);
 	void scriptOpAddXSound(ScriptArg_t arg);
 	void scriptOpClrXSound(ScriptArg_t arg);
@@ -646,6 +649,7 @@ private:
 
 	StaticAnimation _idleAnimations[kNumDirections];
 	bool _haveIdleAnimations[kNumDirections];
+	bool _haveIdleStaticAnimation;
 	StaticAnimParams _pendingStaticAnimParams;
 
 	AnimationDef _postFacingAnimDef;
