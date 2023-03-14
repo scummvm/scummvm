@@ -29,6 +29,14 @@
 
 @implementation GamepadController {
 	GCController *_controller;
+#if TARGET_OS_IOS
+#ifdef __IPHONE_15_0
+	API_AVAILABLE(ios(15.0))
+	GCVirtualController *_virtualController;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualControllerConfiguration *_config;
+#endif
+#endif
 }
 
 @dynamic view;
@@ -42,7 +50,32 @@
 												 name:@"GCControllerDidConnectNotification"
 											   object:nil];
 
+#if TARGET_OS_IOS
+#ifdef __IPHONE_15_0
+	if (@available(iOS 15.0, *)) {
+		// Configure a simple game controller with dPad and A and B buttons
+		_config = [[GCVirtualControllerConfiguration alloc] init];
+		_config.elements = [[NSSet alloc] initWithObjects:GCInputDirectionPad, GCInputButtonA, GCInputButtonB, nil];
+		_virtualController = [[GCVirtualController alloc] initWithConfiguration:_config];
+	}
+#endif
+#endif
 	return self;
+}
+
+- (void)virtualController:(bool)connect {
+#if TARGET_OS_IOS
+#ifdef __IPHONE_15_0
+	if (@available(iOS 15.0, *)) {
+		if (connect && ![self isConnected]) {
+			[_virtualController connectWithReplyHandler:^(NSError * _Nullable error) { }];		}
+		else if (!connect && [self isConnected]) {
+			[_virtualController disconnect];
+			[self setIsConnected:NO];
+		}
+	}
+#endif
+#endif
 }
 
 - (void)controllerDidConnect:(NSNotification *)notification {

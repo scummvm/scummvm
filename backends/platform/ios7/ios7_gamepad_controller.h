@@ -28,6 +28,7 @@ API_AVAILABLE(ios(7.0))
 @interface GamepadController : GameController
 
 - (id)initWithView:(iPhoneView *)view;
+- (void)virtualController:(bool)connect;
 
 @end
 
