@@ -79,10 +79,12 @@ maniac	Maniac Mansion
 	183d7464902d40d00800e8ee1f04117c	1988	de	DOS	V2	V2	-	Fingolfin
 	87f6e8037b7cc996e13474b491a7a98e	1988	it	DOS	V2	V2	from DOTT	Andrea Petrucci
 	0d1b69471605201ef2fa9cec1f5f02d2	1988	es	DOS	V2	V2	-	abnog, Andrea Petrucci
-	f0d294891b813d3dcc525b89bc318815	1988	ru	DOS	V2	V2	-	sev
 
 	40564ec47da48a67787d1f9bd043902a	1988	en	DOS	V2 Demo	V2 Demo	non-interactive	Fingolfin
 	3a988de37118873ad129246b452909c0	1988	ru	DOS	V2 Demo	V2 Demo	non-interactive	sev
+
+	f0d294891b813d3dcc525b89bc318815	1988	ru	DOS	V2	V2	-	Fan translation?, sev
+	06865ea0fae1aeef2d6b96d8ae7ecc41	1988	ru	DOS	V2	V2	-	Fan translation	PRCA RuSCUMM 1.0
 
 zak	Zak McKracken and the Alien Mindbenders
 	254fede2f15dbb32a23760d601b01816	1914	en	C64	V1	-	-
@@ -101,19 +103,21 @@ zak	Zak McKracken and the Alien Mindbenders
 	ff05c07990061d97647f059c48c1d05a	-1	de	Atari	V2	V2	-
 	675d71151e9b5a968c8ce46d9fbf4cbf	1916	en	DOS	V2	V2	-	Kirben
 	debe337f73d660e951ece7c1f1c81add	1916	en	DOS	V2	V2	alt?	Andrea Petrucci
-	52a4bae0746a11d7b1e8554e91a6645c	-1	fr	DOS	V2	V2	-	Andrea Petrucci
+	52a4bae0746a11d7b1e8554e91a6645c	1916	fr	DOS	V2	V2	-	Andrea Petrucci
 	c4787c3e8b5e2dfda90850ee800af00f	-1	fr	DOS	V2	V2	alt?	Qvist
 	cdd760228cf1010c2903f37e788ea31c	1916	de	DOS	V2	V2	-	Fingolfin
 	d06fbe28818fef7bfc45c2cdf0c0849d	1916	de	DOS	V2	V2	from 5.25\" floppies	Nicolas Sauz&egrave;de, Andrea Petrucci
 	1900e501a52fbf55bde6e4196f6d2aa6	-1	it	DOS	V2	V2	-	Andrea Petrucci
 	75ba23fff4fd63fa446c02864f2a5a4b	1916	it	DOS	V2	V2	alt?	Antti Leimi, Andrea Petrucci
-	a77d0efbe786ea7f490c2021dbfa3f2f	-1	ru	DOS	V2	V2	-	sev
 
 	2d4536a56e01da4b02eb021e7770afa2	7520	en	FM-TOWNS	FM-TOWNS	-	-
 	1ca86e2cf9aaa2068738a1e5ba477e60	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
 	ce3edc99cd4f478c5b37104d70c68ca5	-1	jp	FM-TOWNS	FM-TOWNS	-	-	raziel-
 
 	8299d9b8a1b0e7b881bae7a9971dc5e2	1916	en	Atari	V2	Demo	non-interactive	Fingolfin
+
+	a77d0efbe786ea7f490c2021dbfa3f2f	1916	ru	DOS	V2	V2	-	Fan translation	PRCA RuSCUMM v1.0
+#	debe337f73d660e951ece7c1f1c81add	1916	es	DOS	V2	V2	-	Fan translation	Unknown, c. April 2001 (commented out due to unchanged 00.LFL)
 
 indy3	Indiana Jones and the Last Crusade
 	9c0fee288ad564a7d25ec3e841810d79	-1	en	Amiga	EGA	EGA	-	dhewg
@@ -154,6 +158,7 @@ indy3	Indiana Jones and the Last Crusade
 
 	f3c4ed6101b4c26c762b2dfb16b1481d	6295	fr	DOS	VGA	VGA	Fan translation	atp-fr.com, v0.9a
 	cb8feea195746e042368e2b738766d8b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
+	275786f0f6894d1fe1ab5f1d103bb814	6295	ru	DOS	VGA	VGA	Fan translation	
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	5748	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
@@ -167,7 +172,6 @@ loom	Loom
 	73e5ab7dbb9a8061cc6d25df02dbd1e7	5748	en	DOS	EGA	EGA	v1.0 alt	Andrea Petrucci
 	37f56ceb13e401a7ac7d9e6b37fecaf7	5748	en	DOS	EGA	EGA	v1.1 from 16 Mar 90	Kirben, Andrea Petrucci, Peter Eckerlein
 	22f4ea88a09da12df9308ba30bcb7d0f	5748	en	DOS	EGA	EGA	v1.1 from 29 Mar 90	James Grosbeck, Peter Eckerlein
-	cd46c9f122272d02bbf79332ff521898	5748	ru	DOS	EGA	EGA	v1.1 sev
 	b886b0a5d909c7158a914e1d7c1c6c65	-1	fr	DOS	EGA	EGA	-	Andrea Petrucci
 	6f8a22bfa397be1f7ed4b74aba0e397e	5748	fr	DOS	EGA	EGA	v1.2 26 Jun 90	Jorpho
 	470c45b636139bb40716daa1c7edaad0	5748	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Peter Eckerlein
@@ -191,6 +195,10 @@ loom	Loom
 	5a35e36fd777e9c37a49c5b2faca52f9	6108	en	DOS	Demo	EGA Demo	non-interactive	Fingolfin
 	a00554c31d623fdb9fcb0f924b89b42b	5748	en	DOS	Demo	EGA Demo	non-interactive	Adrian C. Fruehwirth
 
+#	37f56ceb13e401a7ac7d9e6b37fecaf7	5748	ru	DOS	EGA	EGA	Fan translation	PRCA RuSCUMM v1.1 (uses custom launcher)
+	cd46c9f122272d02bbf79332ff521898	5748	ru	DOS	EGA	EGA	Fan translation	PRCA RuSCUMM v1.2 16 Mar 07
+	303708df4166067540a5c481eceb04ef	7540	ru	FM-TOWNS	FM-TOWNS	-	Fan translation	PRCA RuSCUMM v1.0 16 Mar 07
+
 monkey	The Secret of Monkey Island
 	c666a998af90d81db447eccba9f72c8d	-1	en	Atari	No AdLib	EGA	-
 	9e5e0fb43bd22f4628719b7501adb717	-1	fr	Atari	No AdLib	EGA	-	Andreas Bylund
@@ -204,7 +212,7 @@ monkey	The Secret of Monkey Island
 	1d05cd189e4908f79b57e78a4402f292	8357	en	DOS	EGA	EGA	4 disk	Andrea Petrucci
 	ce6a4cef315b20fef58a95bc40a2d8d3	8357	fr	DOS	EGA	EGA	4 disk v1.0, 9/7/90 II	Matthieu Milan
 	aa7a07d94ae853f6460be4ce0a1bf530	-1	fr	DOS	EGA	EGA	4 disk v1.0, 9/7/90 II	Parazythum
-	e98b982ceaf9d253d730bde8903233d6	-1	de	DOS	EGA	EGA	4 disk	Joachim Eberhard
+	e98b982ceaf9d253d730bde8903233d6	8357	de	DOS	EGA	EGA	4 disk	Joachim Eberhard
 	477dbafbd66a53c98416dc01aef019ad	8357	it	DOS	EGA	EGA	4 disk	Andrea Petrucci
 	70d575c7cab22463de7b41dc8c97a462	8357	es	DOS	EGA	EGA	4 disk	eientei95
 
@@ -213,9 +221,9 @@ monkey	The Secret of Monkey Island
 	0a212fa35fa8421f31c1f3961272caf0	-1	de	Amiga	VGA	-	V1.1	Andreas Bylund
 	319a4dde52c7960b5aae8a1ec348d918	8347	de	Amiga	VGA	-	V1.2r	ghoostkilla
 	fb66aa42de21675116346213f176a366	8347	it	Amiga	VGA	-	-	Andrea Petrucci
-	870d1e3c86bc50846d808d14a36b4e08	-1	es	Amiga	VGA	-	-	Andreas Bylund
+	870d1e3c86bc50846d808d14a36b4e08	8347	es	Amiga	VGA	-	-	Andreas Bylund
 
-	c7890e038806df2bb5c0c8c6f1986ea2	-1	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
+	c7890e038806df2bb5c0c8c6f1986ea2	8357	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
 	a01fab4a64d47b96e2e58e6b0f825cc7	8347	fr	DOS	VGA	VGA	8 disk v1.0, 6/4/91 II (incomplete MT-32)	Sebast26
 	93f436541c10ce1e8a72cb3878ec0347	8357	es	DOS	VGA	VGA	8 disk v1.0, 23.May.91	eientei95
 	15e03ffbfeddb9c2aebc13dcb2a4a8f4	8357	en	DOS	VGA	VGA	4 disk
@@ -245,11 +253,14 @@ monkey	The Secret of Monkey Island
 	5cac06e42db6037ea491572682c4a004	7607	en	DOS	Demo	EGA Demo	non-contest demo	eientei95
 	771bc18ec6f93837b839c992b211904b	7607	de	DOS	Demo	EGA Demo	-	khalek
 	54a936ad06161ff7bfefcb96200f7bff	7617	en	Amiga	VGA Demo	Demo	-	khalek
+
 	c0c9de81fb965e6cbe77f6e5631ca705	9135	en	DOS	SE Talkie	Unofficial SE Talkie v1.02	lotharsm
 	4252854e7d052cb488b520ba89c3eb6d	9135	de	DOS	SE Talkie	Unofficial SE Talkie v1.01
+
 	2b3744585bc6815ec55dd09f655b7a5b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
 	60c7b33000059b44465b2ce104a52285	-1	ko	DOS	CD	CD	Fan translation	ScummVM-Kor
 	261cd0da05b12917458d1c816a9d2ec9	8955	pl	DOS	CD	CD	Fan translation	SCUMMPL
+	e222c2020a6e6a93bc13d01224ab73df	8357	ru	DOS	VGA	VGA	Fan translation	PRCA RuSCUMM v1.01 24/10/2021
 
 pass	Passport to Adventure
 	e6cd81b25ab1453a8a6d3482118c391e	7857	en	DOS	-	-	v1.0 9/14/90	Fingolfin
@@ -279,13 +290,15 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	e246e02db9630533a40d99c9f54a8e01	10740	en	Mac	-	-	v1.0 11/5/92 alt?	Lars N&aelig;sbye Christensen
 
 	da09e666fc8f5b78d7b0ac65d1a3b56e	11135	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
-	430bc518017b6fac046f58bab6baad5d	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Antti Leimi, Andrea Petrucci
+	430bc518017b6fac046f58bab6baad5d	11135	jp	FM-TOWNS	FM-TOWNS	-	-	Antti Leimi, Andrea Petrucci
 
 	387a544b8b10b26912d8413bab63a853	9770	en	DOS	Demo	Demo	non-interactive, v2.5.1 9/30/91	khalek
+
 	f4d20ab4ce19743a646cb48bd93aee72	10835	en	DOS	SE Talkie	Unofficial SE Talkie v0.2	lotharsm
-	a95baf7746f1be4985ad42126993a744	-1	ko	DOS	-	-	Fan translation	ScummVM-Kor
 	9f0a200df45c1c6c944cda21c134ff50	10835	he	DOS	SE Talkie	Unofficial SE Talkie v0.2	Hebrew fan translation
 	5c80b345c3163605dd5ddf2436f89526	10835	de	DOS	SE Talkie	Unofficial SE Talkie v0.2	German fan translation
+
+	a95baf7746f1be4985ad42126993a744	-1	ko	DOS	-	-	Fan translation	ScummVM-Kor
 	3a4109a905a01a999b69add2b73cd5f4	11135	pl	DOS	-	-	Fan translation	SCUMMPL
 
 atlantis	Indiana Jones and the Fate of Atlantis
@@ -322,9 +335,10 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	99b6f822b0b2612415407865438697d6	11105	en	DOS	-	Demo	non-interactive
 	591bb98948d277f6c91e65db3f26c829	11210	en	Mac	-	Demo	-	einstein95
 	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	FM-TOWNS	Demo	non-interactive	khalek, Fingolfin
-	add05fa3f50d9264f47638516c9496dd	12035	ru	DOS	-	CD	-	RUSCUMM
+
 	32765851cd5ed099f8da36a4a6144c7e	-1	ko	DOS	-	CD	Fan translation	ScummVM-Kor
-	b7479cd302cd82f1cd2b5a12186d1401	12030	ru	DOS	-	Floppy	-	-
+	add05fa3f50d9264f47638516c9496dd	12035	ru	DOS	-	CD	Fan translation	PRCA RuSCUMM v1.00 23/12/2007
+	b7479cd302cd82f1cd2b5a12186d1401	12030	ru	DOS	-	Floppy	Fan translation	PRCA RuSCUMM v1.00 23/12/2007
 
 tentacle	Day of the Tentacle
 	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	Floppy	Floppy	Version A ?
