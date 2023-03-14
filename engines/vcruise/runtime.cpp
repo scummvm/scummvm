@@ -1821,8 +1821,7 @@ void Runtime::triggerSound(bool looping, uint soundID, uint volume, int32 balanc
 			snd.player->play(snd.effectiveVolume, snd.effectiveBalance);
 		} else {
 			// Adjust volume and balance at least
-			snd.player->setVolume(snd.effectiveVolume);
-			snd.player->setBalance(snd.effectiveBalance);
+			snd.player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
 		}
 	} else {
 		snd.player.reset(new AudioPlayer(_mixer, looping ? snd.loopingStream.staticCast<Audio::AudioStream>() : snd.stream.staticCast<Audio::AudioStream>()));
@@ -1889,10 +1888,8 @@ void Runtime::update3DSounds() {
 
 		if (changed) {
 			VCruise::AudioPlayer *player = snd.player.get();
-			if (player) {
-				player->setVolume(snd.effectiveVolume);
-				player->setBalance(snd.effectiveBalance);
-			}
+			if (player)
+				player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
 		}
 	}
 }

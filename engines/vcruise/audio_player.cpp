@@ -75,6 +75,13 @@ void AudioPlayer::setBalance(int8 balance) {
 	_mixer->setChannelBalance(_handle, balance);
 }
 
+void AudioPlayer::setVolumeAndBalance(byte volume, int8 balance) {
+	Common::StackLock lock(_mixer->mutex());
+
+	_mixer->setChannelVolume(_handle, volume);
+	_mixer->setChannelBalance(_handle, balance);
+}
+
 void AudioPlayer::stop() {
 	if (_isPlaying) {
 		_mixer->stopHandle(_handle);

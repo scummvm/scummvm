@@ -47,6 +47,7 @@ public:
 
 	void setVolume(byte volume);
 	void setBalance(int8 balance);
+	void setVolumeAndBalance(byte volume, int8 balance);
 
 private:
 	Common::Mutex _mutex;
