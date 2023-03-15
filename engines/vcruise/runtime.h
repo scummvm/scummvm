@@ -653,6 +653,7 @@ private:
 	StaticAnimation _idleAnimations[kNumDirections];
 	bool _haveIdleAnimations[kNumDirections];
 	bool _haveIdleStaticAnimation;
+	Common::String _idleCurrentStaticAnimation;
 	StaticAnimParams _pendingStaticAnimParams;
 
 	AnimationDef _postFacingAnimDef;

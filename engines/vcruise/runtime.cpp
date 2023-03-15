@@ -2784,6 +2784,7 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs);
 
 	// QUIRK/BUG WORKAROUND: Static animations don't override other static animations!
+	//
 	// In Reah Room05, the script for 0b8 (NGONG) sets the static animation to :NNAWA_NGONG and then
 	// to :NSWIT_SGONG, but NNAWA_NGONG is the correct one, so we must ignore the second static animation
 	if (_haveIdleStaticAnimation)
@@ -2791,11 +2792,19 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs);
 
+	// QUIRK: In the Reah citadel rotor puzzle, all of the "BKOLO" screens execute :DKOLO1_BKOLO1 static but
+	// doing that would replace the transition animation's last frame with the new static animation frame,
+	// blanking out the puzzle, so we must detect if the new static animation is the same as the existing
+	// one and if so, ignore it.
+	if (animDef.animName == _idleCurrentStaticAnimation)
+		return;
+
 	changeAnimation(animDef, animDef.lastFrame, false);
 
 	_havePendingReturnToIdleState = true;
 	_havePanAnimations = false;
 	_haveIdleStaticAnimation = true;
+	_idleCurrentStaticAnimation = animDef.animName;
 
 	_gameState = kGameStateWaitingForAnimation;
 }
