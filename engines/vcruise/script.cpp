@@ -88,6 +88,8 @@ Instruction::Instruction(ScriptOps::ScriptOp paramOp, int32 paramArg) : op(param
 enum ProtoOp {
 	kProtoOpScript, // Use script opcode
 
+	kProtoOpNoop,
+
 	kProtoOpJumpToLabel,
 	kProtoOpLabel,
 
@@ -426,6 +428,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"esc_get@", ProtoOp::kProtoOpScript, ScriptOps::kEscGet},
 	{"backStart", ProtoOp::kProtoOpScript, ScriptOps::kBackStart},
 	{"saveAs", ProtoOp::kProtoOpScript, ScriptOps::kSaveAs},
+	{"allowedSave", ProtoOp::kProtoOpNoop, ScriptOps::kInvalid},
 };
 
 bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::String &token) {
@@ -557,7 +560,7 @@ void ScriptCompiler::codeGenScript(ProtoScript &protoScript, Script &script) {
 	int32 nextLabel = 0;
 
 	// Pass 1: Collect flow control constructs, make all flow control constructs point to the index of the construct,
-	// replace Else, Case, EndIf, EndSwitch, and Default instructions with Label and JumpToLabel.
+	// replace Else, Case, EndIf, EndSwitch, and Default instructions with Label and JumpToLabel.  Clear noops.
 	for (const ProtoInstruction &instr : protoScript.instrs) {
 		switch (instr.protoOp) {
 		case kProtoOpScript:
@@ -689,6 +692,8 @@ void ScriptCompiler::codeGenScript(ProtoScript &protoScript, Script &script) {
 
 			controlFlowStack.pop_back();
 		} break;
+		case kProtoOpNoop:
+			break;
 		default:
 			error("Internal error: Unhandled proto-op");
 			break;
