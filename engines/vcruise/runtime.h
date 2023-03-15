@@ -537,6 +537,7 @@ private:
 	void scriptOpItemHighlightSet(ScriptArg_t arg);
 	void scriptOpItemAdd(ScriptArg_t arg);
 	void scriptOpItemHaveSpace(ScriptArg_t arg);
+	void scriptOpItemClear(ScriptArg_t arg);
 
 	void scriptOpSetCursor(ScriptArg_t arg);
 	void scriptOpSetRoom(ScriptArg_t arg);
@@ -568,6 +569,8 @@ private:
 	void scriptOpSParmX(ScriptArg_t arg);
 	void scriptOpSAnimX(ScriptArg_t arg);
 
+	void scriptOpVolumeDn2(ScriptArg_t arg);
+	void scriptOpVolumeDn3(ScriptArg_t arg);
 	void scriptOpVolumeDn4(ScriptArg_t arg);
 	void scriptOpVolumeUp3(ScriptArg_t arg);
 	void scriptOpRandom(ScriptArg_t arg);

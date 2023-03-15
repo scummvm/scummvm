@@ -1027,6 +1027,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(ItemHighlightSet);
 			DISPATCH_OP(ItemAdd);
 			DISPATCH_OP(ItemHaveSpace);
+			DISPATCH_OP(ItemClear);
 			DISPATCH_OP(SetCursor);
 			DISPATCH_OP(SetRoom);
 			DISPATCH_OP(LMB);
@@ -1057,6 +1058,8 @@ bool Runtime::runScript() {
 			DISPATCH_OP(SParmX);
 			DISPATCH_OP(SAnimX);
 
+			DISPATCH_OP(VolumeDn2);
+			DISPATCH_OP(VolumeDn3);
 			DISPATCH_OP(VolumeDn4);
 			DISPATCH_OP(VolumeUp3);
 			DISPATCH_OP(Random);
@@ -2886,6 +2889,19 @@ void Runtime::scriptOpItemAdd(ScriptArg_t arg) {
 		inventoryAddItem(stackArgs[0]);
 }
 
+void Runtime::scriptOpItemClear(ScriptArg_t arg) {
+	for (uint slot = 0; slot < kNumInventorySlots; slot++) {
+		InventoryItem &item = _inventory[slot];
+
+		if (item.itemID != 0) {
+			item.highlighted = false;
+			item.itemID = 0;
+			item.graphic.reset();
+			drawInventory(slot);
+		}
+	}
+}
+
 void Runtime::scriptOpItemHaveSpace(ScriptArg_t arg) {
 	for (const InventoryItem &item : _inventory) {
 		if (item.itemID == 0) {
@@ -3136,6 +3152,19 @@ void Runtime::scriptOpSAnimX(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	triggerSoundRamp(stackArgs[0], stackArgs[1] * 100, stackArgs[2], false);
+}
+
+void Runtime::scriptOpVolumeDn2(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	// FIXME: Just do this instantly
+	triggerSoundRamp(stackArgs[0], 1, stackArgs[1], false);
+}
+
+void Runtime::scriptOpVolumeDn3(ScriptArg_t arg) {
 	TAKE_STACK(3);
 
 	triggerSoundRamp(stackArgs[0], stackArgs[1] * 100, stackArgs[2], false);
