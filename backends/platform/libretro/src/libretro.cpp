@@ -91,6 +91,7 @@ static uint8 audio_status = 0;
 
 static unsigned retro_audio_buff_occupancy = 0;
 
+float frame_rate;
 static uint16 fps = 0;
 static uint16 sound_len = 0;                // length in samples per frame
 static size_t sound_size = 0;
@@ -368,7 +369,9 @@ void retro_init(void) {
 	else
 		log_cb = NULL;
 
-	audio_buffer_init(SAMPLE_RATE, REFRESH_RATE);
+	frame_rate = environ_cb(RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE, &frame_rate) ? frame_rate : REFRESH_RATE;
+
+	audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
 	update_variables();
 
 	environ_cb(RETRO_ENVIRONMENT_GET_CAN_DUPE, &can_dupe);
@@ -642,7 +645,7 @@ void retro_run(void) {
 		 * available (i.e. when the overlay
 		 * is shown) */
 		if (audio_status & AUDIO_STATUS_MUTE) {
-			audio_buffer_init(SAMPLE_RATE, REFRESH_RATE);
+			audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
 		}
 #endif
 		audio_batch_cb((audio_status & AUDIO_STATUS_MUTE) ? NULL : sound_buffer, count); // Set to NULL to skip sound rendering
