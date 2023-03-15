@@ -143,6 +143,7 @@ MODULE_OBJS += \
 	mm1/views_enh/map.o \
 	mm1/views_enh/map_popup.o \
 	mm1/views_enh/party_view.o \
+	mm1/views_enh/protect.o \
 	mm1/views_enh/quick_ref.o \
 	mm1/views_enh/scroll_popup.o \
 	mm1/views_enh/scroll_text.o \

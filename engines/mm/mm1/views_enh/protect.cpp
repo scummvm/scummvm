@@ -19,79 +19,71 @@
  *
  */
 
-#include "mm/mm1/views/protect.h"
+#include "mm/mm1/views_enh/protect.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
+
+Protect::Protect() : ScrollView("Protect") {
+	setBounds(Common::Rect(0, 0, 320, 200));
+	addButton(&g_globals->_escSprites, Common::Point(120, 166), 0, KEYBIND_ESCAPE);
+}
 
 void Protect::draw() {
-	clearSurface();
-	writeString(STRING["dialogs.protect.title"]);
-	escToGoBack();
+	ScrollView::draw();
+
+	setReduced(false);
+	writeLine(0, STRING["dialogs.protect.title"], ALIGN_MIDDLE);
+	writeString(152, 172, STRING["enhdialogs.misc.go_back"]);
+
+	setReduced(true);
+	int yp = 4;
 
 	// Protection spells
-	_textPos.x = 0;
-	_textPos.y = 2;
 	for (int i = 0; i < 7; ++i) {
+		g_globals->_activeSpells._arr[i] = 3;
 		if (g_globals->_activeSpells._arr[i]) {
-			printProtectionFrom();
-			writeString(STRING[Common::String::format(
-				"dialogs.protect.%d", i + 1)]);
-			printProtectionLevel(i);
+			Common::String line = Common::String::format("%s %s + %d%%",
+				STRING["dialogs.protect.protection"].c_str(),
+				STRING[Common::String::format("dialogs.protect.%d", i + 1)].c_str(),
+				g_globals->_activeSpells._arr[i]);
+			writeString(0, yp += 8, line, ALIGN_MIDDLE);
 		}
 	}
 
 	// Light spell
+	g_globals->_activeSpells._arr[7] = 5;
 	if (g_globals->_activeSpells._arr[7]) {
-		writeString(STRING["dialogs.protect.8"]);
-		writeNumber(g_globals->_activeSpells._arr[7]);
-		writeChar(')');
-		newLine();
+		writeString(0, yp += 8, Common::String::format("%s%d)",
+			STRING["dialogs.protect.8"].c_str(),
+			g_globals->_activeSpells._arr[7]), ALIGN_MIDDLE);
 	}
 
 	// The rest
 	for (int i = 8; i < 18; ++i) {
+		g_globals->_activeSpells._arr[i] = 3;
 		if (i == 13)
-			newLine();
+			yp += 8;
 
 		if (g_globals->_activeSpells._arr[i]) {
-			writeString(STRING[Common::String::format(
-				"dialogs.protect.%d", i + 1)]);
-			newLine();
+			Common::String line = STRING[Common::String::format(
+				"dialogs.protect.%d", i + 1)];
+			if (i == 17) {
+				line += Common::String::format(" %d %s",
+					g_globals->_activeSpells._arr[17],
+					STRING["dialogs.protect.to_attacks"].c_str()
+				);
+			}
+
+			writeString(0, yp += 8, line, ALIGN_MIDDLE);
 		}
 	}
-
-	--_textPos.y;
-	_textPos.x = 13;
-
-	if (g_globals->_activeSpells._arr[17]) {
-		writeNumber(g_globals->_activeSpells._arr[17]);
-		_textPos.x++;
-		writeString(STRING["dialogs.protect.to_attacks"]);
-	}
-}
-
-void Protect::printProtectionFrom() {
-	writeString(STRING["dialogs.protect.protection"]);
-	_textPos.x = 17;
-}
-
-void Protect::printProtectionLevel(uint protectIndex) {
-	_textPos.x = 24;
-	writeChar('+');
-	_textPos.x++;
-	writeNumber(g_globals->_activeSpells._arr[protectIndex]);
-	writeChar('%');
-	newLine();
 }
 
 bool Protect::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
-	case KEYBIND_PROTECT:
-		addView();
-		return true;
 	case KEYBIND_ESCAPE:
 		close();
 		return true;
@@ -102,6 +94,6 @@ bool Protect::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
