@@ -76,7 +76,7 @@ const MapScreenDirectionDef *MapDef::getScreenDirection(uint screen, uint direct
 	return screenDirections[screen][direction].get();
 }
 
-ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), panInteractionID(0), fpsOverride(0) {
+ScriptEnvironmentVars::ScriptEnvironmentVars() : lmb(false), lmbDrag(false), panInteractionID(0), fpsOverride(0), lastHighlightedItem(0) {
 }
 
 void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics::PixelFormat &fmt) {
@@ -249,6 +249,22 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 
 					tokens.push_back(workKey.substr(0, spaceSpanStart));
 					workKey = workKey.substr(spaceSpanEnd, workKey.size() - spaceSpanEnd);
+				}
+
+				// Strip leading and trailing spaces
+				while (tokens.size() > 0) {
+					if (tokens[0].empty()) {
+						tokens.remove_at(0);
+						continue;
+					}
+
+					uint lastIndex = tokens.size() - 1;
+					if (tokens[lastIndex].empty()) {
+						tokens.remove_at(lastIndex);
+						continue;
+					}
+
+					break;
 				}
 
 				if (tokens.size() != 4) {
@@ -1040,6 +1056,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Random);
 			DISPATCH_OP(Drop);
 			DISPATCH_OP(Dup);
+			DISPATCH_OP(Say1);
 			DISPATCH_OP(Say3);
 			DISPATCH_OP(Say3Get);
 			DISPATCH_OP(SetTimer);
@@ -2251,6 +2268,19 @@ void Runtime::inventoryAddItem(uint item) {
 	drawInventory(firstOpenSlot);
 }
 
+void Runtime::inventoryRemoveItem(uint itemID) {
+	for (uint slot = 0; slot < kNumInventorySlots; slot++) {
+		InventoryItem &item = _inventory[slot];
+
+		if (item.itemID == static_cast<uint>(itemID)) {
+			item.highlighted = false;
+			item.itemID = 0;
+			item.graphic.reset();
+			drawInventory(slot);
+		}
+	}
+}
+
 void Runtime::drawInventory(uint slot) {
 	Common::Rect trayRect = _traySection.rect;
 	trayRect.translate(-trayRect.left, -trayRect.top);
@@ -2795,6 +2825,7 @@ void Runtime::scriptOpItemCheck(ScriptArg_t arg) {
 
 	for (const InventoryItem &item : _inventory) {
 		if (item.itemID == static_cast<uint>(stackArgs[0])) {
+			_scriptEnv.lastHighlightedItem = item.itemID;
 			_scriptStack.push_back(1);
 			return;
 		}
@@ -2806,18 +2837,7 @@ void Runtime::scriptOpItemCheck(ScriptArg_t arg) {
 void Runtime::scriptOpItemRemove(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	for (uint slot = 0; slot < kNumInventorySlots; slot++) {
-		InventoryItem &item = _inventory[slot];
-
-		if (item.itemID == static_cast<uint>(stackArgs[0])) {
-			item.highlighted = false;
-			item.itemID = 0;
-			item.graphic.reset();
-			drawInventory(slot);
-		}
-	}
-
-	_scriptStack.push_back(0);
+	inventoryRemoveItem(stackArgs[0]);
 }
 
 void Runtime::scriptOpItemHighlightSet(ScriptArg_t arg) {
@@ -2838,7 +2858,13 @@ void Runtime::scriptOpItemHighlightSet(ScriptArg_t arg) {
 void Runtime::scriptOpItemAdd(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	inventoryAddItem(stackArgs[0]);
+	if (stackArgs[0] == 0) {
+		// Weird special case, happens in Reah when breaking the glass barrier, this is called with 0 as the parameter.
+		// This can't be an inventory clear because it will not clear the crutch, but it does take away the gong beater,
+		// so the only explanation I can think of is that it clears the previously-checked inventory item.
+		inventoryRemoveItem(_scriptEnv.lastHighlightedItem);
+	} else
+		inventoryAddItem(stackArgs[0]);
 }
 
 void Runtime::scriptOpItemHaveSpace(ScriptArg_t arg) {
@@ -3121,6 +3147,17 @@ void Runtime::scriptOpDup(ScriptArg_t arg) {
 
 	_scriptStack.push_back(stackArgs[0]);
 	_scriptStack.push_back(stackArgs[0]);
+}
+
+void Runtime::scriptOpSay1(ScriptArg_t arg) {
+	TAKE_STACK(3);
+
+	warning("Say1 cycles are not implemented yet, playing first sound in the cycle");
+
+	uint soundID = stackArgs[0];
+	// uint cycleLength = stackArgs[2];
+
+	triggerSound(false, soundID, 100, 0, false);
 }
 
 void Runtime::scriptOpSay3(ScriptArg_t arg) {

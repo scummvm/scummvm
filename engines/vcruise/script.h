@@ -99,6 +99,7 @@ enum ScriptOp {
 	kRandom,
 	kDrop,
 	kDup,
+	kSay1,
 	kSay3,
 	kSay3Get,
 	kSetTimer,

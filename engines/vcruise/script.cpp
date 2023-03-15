@@ -348,8 +348,8 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"rnd", ProtoOp::kProtoOpScript, ScriptOps::kRandom},
 	{"drop", ProtoOp::kProtoOpScript, ScriptOps::kDrop},
 	{"dup", ProtoOp::kProtoOpScript, ScriptOps::kDup},
-	{"say1", ProtoOp::kProtoOpScript, ScriptOps::kSay3}, // FIXME: Figure out what the difference is between the say ops
-	{"say2", ProtoOp::kProtoOpScript, ScriptOps::kSay3}, // FIXME: Figure out what the difference is between the say ops
+	{"say1", ProtoOp::kProtoOpScript, ScriptOps::kSay1},
+	{"say2", ProtoOp::kProtoOpScript, ScriptOps::kSay3}, // FIXME: Figure out what the difference is between say2 and say3.  I think say2 is repeatable?  Maybe works as say1 instead?
 	{"say3", ProtoOp::kProtoOpScript, ScriptOps::kSay3},
 	{"say3@", ProtoOp::kProtoOpScript, ScriptOps::kSay3Get},
 	{"setTimer", ProtoOp::kProtoOpScript, ScriptOps::kSetTimer},

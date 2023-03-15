@@ -137,6 +137,7 @@ struct ScriptEnvironmentVars {
 	bool lmbDrag;
 	uint panInteractionID;
 	uint fpsOverride;
+	uint lastHighlightedItem;
 };
 
 struct SfxSound {
@@ -504,6 +505,7 @@ private:
 	bool computeFaceDirectionAnimation(uint desiredDirection, const AnimationDef *&outAnimDef, uint &outInitialFrame, uint &outStopFrame);
 
 	void inventoryAddItem(uint item);
+	void inventoryRemoveItem(uint item);
 	void drawInventory(uint slot);
 	void resetInventoryHighlights();
 
@@ -571,6 +573,7 @@ private:
 	void scriptOpRandom(ScriptArg_t arg);
 	void scriptOpDrop(ScriptArg_t arg);
 	void scriptOpDup(ScriptArg_t arg);
+	void scriptOpSay1(ScriptArg_t arg);
 	void scriptOpSay3(ScriptArg_t arg);
 	void scriptOpSay3Get(ScriptArg_t arg);
 	void scriptOpSetTimer(ScriptArg_t arg);
