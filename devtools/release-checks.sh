@@ -203,6 +203,10 @@ else
 fi
 
 
+###########
+# Release Notes
+###########
+
 echo_n "Checking Release Notes..."
 
 VERSION=`grep SCUMMVM_VERSION base/internal_version.h | awk -F\" '{ print $2 }'`
@@ -224,6 +228,45 @@ if curl -s -I https://downloads.scummvm.org/frs/scummvm/${VERSION}/ReleaseNotes.
 else
   echoOk
 fi
+
+###########
+# MM engine
+###########
+
+echo_n "Checking mm.dat..."
+
+fileDate=`git log -1 dists/engine-data/mm.dat | grep Date | sed 's/Date: //'`
+
+num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_mm/files | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_mm/files; zip -r9 ../../../dists/engine-data/mm.dat .'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+
+
+###########
+# Ultima engine
+###########
+
+echo_n "Checking ultima.dat..."
+
+fileDate=`git log -1 dists/engine-data/ultima.dat | grep Date | sed 's/Date: //'`
+
+num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_ultima/files | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_ultima/files; zip -r9 ../../../dists/engine-data/ultima.dat .'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
 
 
 ###########
