@@ -2230,7 +2230,7 @@ void Runtime::panoramaActivate() {
 }
 
 bool Runtime::computeFaceDirectionAnimation(uint desiredDirection, const AnimationDef *&outAnimDef, uint &outInitialFrame, uint &outStopFrame) {
-	if (_direction == desiredDirection)
+	if (_direction == desiredDirection || !_havePanAnimations)
 		return false;
 
 	uint leftPanDistance = ((_direction + kNumDirections) - desiredDirection) % kNumDirections;
