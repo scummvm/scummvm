@@ -646,5 +646,9 @@ endif
 	@echo Now run
 	@echo -e "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
 
+
+release-checks:
+	devtools/release-checks.sh
+
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap install uninstall
