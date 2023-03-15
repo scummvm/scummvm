@@ -763,7 +763,13 @@ bool Runtime::runGyroIdle() {
 	if (targetState < _gyros.dragCurrentState) {
 		AnimationDef animDef = _gyros.negAnim;
 
-		uint initialFrame = animDef.firstFrame + ((_gyros.maxValue - gyro.currentState) * _gyros.frameSeparation);
+		uint initialFrame = 0;
+
+		if (gyro.wrapAround) {
+			uint maxValuePlusOne = _gyros.maxValue + 1;
+			initialFrame = animDef.firstFrame + ((maxValuePlusOne - gyro.currentState) % maxValuePlusOne * _gyros.frameSeparation);
+		} else
+			initialFrame = animDef.firstFrame + ((_gyros.maxValue - gyro.currentState) * _gyros.frameSeparation);
 
 		// This is intentional instead of setting the stop frame, V-Cruise can overrun the end of the animation.
 		// firstFrame is left alone so playlists are based correctly.
