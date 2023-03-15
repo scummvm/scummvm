@@ -134,6 +134,7 @@ enum ScriptOp {
 	kEscOff,
 	kEscGet,
 	kBackStart,
+	kSaveAs,
 
 	kAnimName,
 	kValueName,

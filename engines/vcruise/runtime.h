@@ -608,6 +608,7 @@ private:
 	void scriptOpEscOff(ScriptArg_t arg);
 	void scriptOpEscGet(ScriptArg_t arg);
 	void scriptOpBackStart(ScriptArg_t arg);
+	void scriptOpSaveAs(ScriptArg_t arg);
 
 	void scriptOpAnimName(ScriptArg_t arg);
 	void scriptOpValueName(ScriptArg_t arg);

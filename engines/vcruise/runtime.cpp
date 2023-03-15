@@ -1097,6 +1097,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(EscOff);
 			DISPATCH_OP(EscGet);
 			DISPATCH_OP(BackStart);
+			DISPATCH_OP(SaveAs);
 
 			DISPATCH_OP(AnimName);
 			DISPATCH_OP(ValueName);
@@ -1614,7 +1615,10 @@ void Runtime::loadMap(Common::SeekableReadStream *stream) {
 					idef.objectType = READ_LE_UINT16(interactionData + 10);
 				}
 
-				_map.screenDirections[screen][direction] = screenDirectionDef;
+				// QUIRK: The stone game in the tower in Reah (Room 06) has two 0cb screens and the second one is damaged,
+				// so it must be ignored.
+				if (!_map.screenDirections[screen][direction])
+					_map.screenDirections[screen][direction] = screenDirectionDef;
 			}
 		}
 	}
@@ -3290,6 +3294,14 @@ void Runtime::scriptOpVerticalPanGet() {
 	bool isInRadius = (rtDirection <= radius || lfDirection <= radius);
 
 	_scriptStack.push_back(isInRadius ? 1 : 0);
+}
+
+void Runtime::scriptOpSaveAs(ScriptArg_t arg) {
+	TAKE_STACK(4);
+
+	// Just ignore this op, it looks like it's for save room remapping of some sort but we allow
+	// saves at any idle screen.
+	(void)stackArgs;
 }
 
 void Runtime::scriptOpNot(ScriptArg_t arg) {

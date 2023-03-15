@@ -271,7 +271,9 @@ void ScriptCompiler::compileRoomScriptSet(RoomScriptSet *rss) {
 			Common::SharedPtr<ScreenScriptSet> sss(new ScreenScriptSet());
 			compileScreenScriptSet(sss.get());
 
-			rss->screenScripts[screenNumber] = sss;
+			// QUIRK: The tower in Reah (Room 06) has two 0cb screens, the second one is bad and must be ignored
+			if (rss->screenScripts.find(screenNumber) == rss->screenScripts.end())
+				rss->screenScripts[screenNumber] = sss;
 		} else {
 			error("Error compiling script at line %i col %i: Expected ~EROOM or ~SCR and found '%s'", static_cast<int>(state._lineNum), static_cast<int>(state._col), token.c_str());
 		}
@@ -420,6 +422,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"esc_off", ProtoOp::kProtoOpScript, ScriptOps::kEscOff},
 	{"esc_get@", ProtoOp::kProtoOpScript, ScriptOps::kEscGet},
 	{"backStart", ProtoOp::kProtoOpScript, ScriptOps::kBackStart},
+	{"saveAs", ProtoOp::kProtoOpScript, ScriptOps::kSaveAs},
 };
 
 bool ScriptCompiler::compileInstructionToken(ProtoScript &script, const Common::String &token) {
