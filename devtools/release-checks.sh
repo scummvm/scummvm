@@ -188,6 +188,10 @@ else
   failPlus
 fi
 
+###########
+# Translations
+###########
+
 echo_n "Checking translations..."
 
 fileDate=`git log -1 gui/themes/translations.dat | grep Date | sed 's/Date: //'`
@@ -229,6 +233,13 @@ else
   echoOk
 fi
 
+#############################################################################
+#
+# Engines go here
+#
+#############################################################################
+
+
 ###########
 # MM engine
 ###########
@@ -246,7 +257,6 @@ if [ "$num_lines" -ne "0" ]; then
 else
   echoOk
 fi
-
 
 
 ###########
