@@ -4564,7 +4564,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("musiccentral96", "Demo", "MC96DEMO.EXE", "6b30dbea5949e64edd66427290b0fd8c", 690031, 404),
 
-	WINGAME1("mylk", "", "mylk.exe", "032b0860a694ece5f64f37cfe1ebdfa0", 904859, 400),
+	WINGAME1("mylk", "", "mylk.exe", "032b0860a694ece5f64f37cfe1ebdfa0", 904859, 404),
 
 	MACGAME1("mysteriousegypt", "",   "Mysterious Egypt",		   "32cb3a881f2d47a7e525370b198b2c5c", 483746, 404),
 	MACGAME1_l("mysteriousegypt", "", "Matka muinaiseen Egyptiin", "17efee018a660458fae80de4364021ac", 483774, Common::FI_FIN, 404),
