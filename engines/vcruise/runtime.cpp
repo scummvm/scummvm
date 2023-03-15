@@ -732,7 +732,7 @@ bool Runtime::runGyroIdle() {
 	int32 deltaCoordinate = 0;
 
 	if (_gyros.isVertical)
-		deltaCoordinate = _mousePos.y - _gyros.dragBasePoint.y;
+		deltaCoordinate = _gyros.dragBasePoint.y - _mousePos.y;
 	else
 		deltaCoordinate = _gyros.dragBasePoint.x - _mousePos.x;
 
