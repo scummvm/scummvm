@@ -134,7 +134,6 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	warning("MKVDecoder::loadStream()");
 
-	_fileStream = stream;
 	_reader = new mkvparser::MkvReader(stream);
 
 	long long pos = 0;
@@ -238,6 +237,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_pBlock = _pBlockEntry->GetBlock();
 	_trackNum = _pBlock->GetTrackNumber();
 	_frameCount = _pBlock->GetFrameCount();
+	_fileStream = stream;
 
 	return true;
 }
@@ -245,7 +245,10 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 void MKVDecoder::close() {
 	VideoDecoder::close();
 
+	delete _fileStream;
+	_fileStream = nullptr;
 	delete _reader;
+	_reader = nullptr;
 }
 
 void MKVDecoder::readNextPacket() {
