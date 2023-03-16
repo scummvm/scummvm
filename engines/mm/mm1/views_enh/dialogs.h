@@ -25,6 +25,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/views_enh/create_characters.h"
 #include "mm/mm1/views/locations/inn.h"
+#include "mm/mm1/views/bash.h"
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/character_select.h"
@@ -82,6 +83,7 @@ private:
 	ViewsEnh::Trap _trap;
 	ViewsEnh::Unlock _unlock;
 	ViewsEnh::WhoWillTry _whoWillTry;
+	Views::Bash _bash;
 public:
 	Dialogs() {}
 };
