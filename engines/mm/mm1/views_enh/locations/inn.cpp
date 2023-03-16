@@ -33,8 +33,8 @@ Inn::Inn() : ScrollView("Inn") {
 	_bounds.setBorderSize(10);
 	_escSprite.load("esc.icn");
 
-	addButton(&_escSprite, Common::Point(135, 166), 0, KEYBIND_ESCAPE, true);
-	addButton(&_escSprite, Common::Point(65, 166), 0, KEYBIND_SELECT, true);
+	addButton(&_escSprite, Common::Point(119, 166), 0, KEYBIND_ESCAPE, true);
+	addButton(&_escSprite, Common::Point(85, 166), 0, KEYBIND_SELECT, true);
 	setButtonEnabled(1, false);
 }
 
@@ -72,9 +72,9 @@ bool Inn::msgFocus(const FocusMessage &msg) {
 void Inn::draw() {
 	setButtonEnabled(1, !_partyChars.empty());
 	if (!_partyChars.empty()) {
-		setButtonPos(0, Common::Point(135, 166));
+		setButtonPos(0, Common::Point(155, 166));
 	} else {
-		setButtonPos(0, Common::Point(105, 166));
+		setButtonPos(0, Common::Point(119, 166));
 	}
 
 	ScrollView::draw();
@@ -126,10 +126,10 @@ void Inn::draw() {
 	}
 
 	if (!_partyChars.empty()) {
-		writeString(80, 168, STRING["enhdialogs.inn.exit"]);
-		writeString(150, 168, STRING["dialogs.misc.go_back"]);
+		writeString(100, 168, STRING["enhdialogs.inn.exit"]);
+		writeString(170, 168, STRING["enhdialogs.misc.go_back"]);
 	} else {
-		writeString(120, 168, STRING["dialogs.misc.go_back"]);
+		writeString(134, 168, STRING["enhdialogs.misc.go_back"]);
 	}
 }
 
