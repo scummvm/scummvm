@@ -105,8 +105,7 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.Predictive.ShowDeletePic") == 1 && g_gui.theme()->supportsImages()) {
 		_button[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
-		((PicButtonWidget *)_button[kDelAct])->useThemeTransparency(true);
-		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelButton));
+		((PicButtonWidget *)_button[kDelAct])->setGfxFromTheme(ThemeEngine::kImageDelButton);
 	} else
 #endif
 		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , Common::U32String(), kDelCmd);
@@ -182,8 +181,7 @@ void PredictiveDialog::reflowLayout() {
 
 	if (g_gui.xmlEval()->getVar("Globals.Predictive.ShowDeletePic") == 1 && g_gui.theme()->supportsImages()) {
 		_button[kDelAct] = new PicButtonWidget(this, "Predictive.Delete", _("Delete char"), kDelCmd);
-		((PicButtonWidget *)_button[kDelAct])->useThemeTransparency(true);
-		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelButton));
+		((PicButtonWidget *)_button[kDelAct])->setGfxFromTheme(ThemeEngine::kImageDelButton);
 	} else {
 		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , Common::U32String(), kDelCmd);
 	}

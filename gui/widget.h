@@ -309,16 +309,12 @@ public:
 	void setGfxFromTheme(const char *name, int statenum = kPicButtonStateEnabled, bool scale = true);
 	void setGfx(int w, int h, int r, int g, int b, int statenum = kPicButtonStateEnabled);
 
-	void useAlpha(int alpha) { _alpha = alpha; }
-	void useThemeTransparency(bool enable) { _transparency = enable; }
 	void setButtonDisplay(bool enable) {_showButton = enable; }
 
 protected:
 	void drawWidget() override;
 
 	Graphics::ManagedSurface _gfx[kPicButtonStateMax + 1];
-	int _alpha;
-	bool _transparency;
 	bool _showButton;
 };
 
@@ -450,15 +446,10 @@ public:
 	void setGfx(int w, int h, int r, int g, int b);
 	void setGfxFromTheme(const char *name);
 
-	void useAlpha(int alpha) { _alpha = alpha; }
-	void useThemeTransparency(bool enable) { _transparency = enable; }
-
 protected:
 	void drawWidget() override;
 
 	Graphics::ManagedSurface _gfx;
-	int _alpha;
-	bool _transparency;
 };
 
 /* ContainerWidget */
