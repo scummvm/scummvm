@@ -19,7 +19,7 @@
  - along with this program.  If not, see <http://www.gnu.org/licenses/>.
  -
  -->
-<layout_info resolution = 'y<400'>
+<layout_info resolution = 'y<H'>
 	<globals>
 		<def var = 'Line.Height' value = '12' scalable = 'yes'/>
 		<def var = 'Font.Height' value = '10' scalable = 'yes'/>
