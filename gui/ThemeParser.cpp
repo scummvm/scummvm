@@ -813,6 +813,11 @@ bool ThemeParser::parserCallback_import(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_layout(ParserNode *node) {
+	if (resolutionCheck(node->values["resolution"]) == false) {
+		node->ignore = true;
+		return true;
+	}
+
 	int spacing = -1;
 
 	if (node->values.contains("spacing")) {
