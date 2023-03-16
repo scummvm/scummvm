@@ -121,7 +121,6 @@ void BitmapFont::load(const Common::String &filename, Common::SeekableReadStream
 			uint16 point = data->readUint16LE();
 			_fwdCharIndex[i] = point ? point : -1;
 		}
-		_scale = 2;
 	} else {
 		// Read character indexes - are the key/value reversed?
 		Common::Array<uint16> revCharIndex;
@@ -153,7 +152,6 @@ void BitmapFont::load(const Common::String &filename, Common::SeekableReadStream
 			if (revCharIndex[i] == i)
 				_fwdCharIndex[revCharIndex[i]] = i;
 		}
-		_scale = 1;
 	}
 
 	// Read character headers
@@ -287,19 +285,15 @@ void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLin
 		int8 fontCol = getCharStartingCol(ch);
 
 		for (int line = 0; line < charBitmapHeight; line++) {
-			int lineOffset = (fontRow + line * _scale);
+			int lineOffset = (fontRow + line);
 			int columnOffset = startColumn + fontCol;
 			int fontOffset = (charBitmapWidth * line);
-			for (int bitmapCol = 0; bitmapCol < charBitmapWidth; bitmapCol++, columnOffset += _scale, fontOffset++) {
+			for (int bitmapCol = 0; bitmapCol < charBitmapWidth; bitmapCol++, columnOffset++, fontOffset++) {
 				byte pixel = getCharData(ch)[fontOffset];
 				if (pixel == 0x80) {
-					for (uint i = 0; i < _scale; i++)
-						for (uint j = 0; j < _scale; j++)
-							buf.setPixel(columnOffset + i, lineOffset + j, blackColor);
+					buf.setPixel(columnOffset, lineOffset, blackColor);
 				} else if (pixel == 0xFF) {
-					for (uint i = 0; i < _scale; i++)
-						for (uint j = 0; j < _scale; j++)
-							buf.setPixel(columnOffset + i, lineOffset + j, color);
+					buf.setPixel(columnOffset, lineOffset, color);
 				}
 			}
 		}
