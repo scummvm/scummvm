@@ -1091,6 +1091,10 @@ bool ThemeParser::resolutionCheck(const Common::String &resolution) {
 			// theme by default
 			token = 375;
 #endif
+		} else if (cur[offset] == 'x') {
+			token = _baseWidth;
+		} else if (cur[offset] == 'y') {
+			token = _baseHeight;
 		} else {
 			token = atoi(cur.c_str() + offset);
 		}
