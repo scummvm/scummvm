@@ -25,7 +25,6 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "graphics/pixelformat.h"
-#include "graphics/svg.h"
 #include "gui/widget.h"
 #include "gui/gui-manager.h"
 
@@ -289,7 +288,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 	_label = text;
 	_align = Graphics::convertTextAlignH(align, g_gui.useRTL() && _useRTL);
 	setFont(font, lang);
-	_fontColor = ThemeEngine::FontColor::kFontColorNormal; 
+	_fontColor = ThemeEngine::FontColor::kFontColorNormal;
 	_useEllipsis = useEllipsis;
 }
 
@@ -300,7 +299,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 	_label = text;
 	_align = Graphics::convertTextAlignH(g_gui.xmlEval()->getWidgetTextHAlign(name), g_gui.useRTL() && _useRTL);
 	setFont(font, lang);
-	_fontColor = ThemeEngine::FontColor::kFontColorNormal; 
+	_fontColor = ThemeEngine::FontColor::kFontColorNormal;
 	_useEllipsis = useEllipsis;
 }
 
@@ -326,7 +325,7 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 }
 
 void StaticTextWidget::setFontColor(const ThemeEngine::FontColor color) {
-	_fontColor = color; 
+	_fontColor = color;
 }
 
 void StaticTextWidget::drawWidget() {
@@ -728,9 +727,9 @@ void CheckboxWidget::setState(bool state) {
 	}
 	sendCommand(_cmd, _state);
 }
-	
+
 void CheckboxWidget::setOverride(bool enable) {
-	_overrideText = enable; 
+	_overrideText = enable;
 }
 
 void CheckboxWidget::drawWidget() {
