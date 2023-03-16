@@ -67,7 +67,7 @@ void Text::loadChineseFont() {
 	_chineseFontLoadAttempted = true;
 
 #if defined(USE_FREETYPE2)
-	_chineseFont.reset(Graphics::loadTTFFontFromArchive("NotoSansSC-Regular.otf", 32, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
+	_chineseFont.reset(Graphics::loadTTFFontFromArchive("NotoSansSC-Regular.otf", 16, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight));
 #endif
 }
 
