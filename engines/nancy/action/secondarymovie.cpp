@@ -149,10 +149,14 @@ void PlaySecondaryMovie::updateGraphics() {
 	if ((_decoder.getCurFrame() == _lastFrame && _playDirection == kPlayMovieForward) ||
 		(_decoder.getCurFrame() == _firstFrame && _playDirection == kPlayMovieReverse) ||
 		_decoder.atEnd()) {
+		
+		// Stop the video and block it from starting again, but also wait for
+		// sound to end before changing state
+		_decoder.stop();
+		_isFinished = true;
+
 		if (!g_nancy->_sound->isSoundPlaying(_sound)) {
 			g_nancy->_sound->stopSound(_sound);
-			_decoder.stop();
-			_isFinished = true;
 			_state = kActionTrigger;
 		}
 	}
