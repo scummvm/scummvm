@@ -72,6 +72,7 @@ void GraphicsDriverBase::BeginSpriteBatch(const Rect &viewport, const SpriteTran
 	_spriteBatchDesc.push_back(SpriteBatchDesc(_actSpriteBatch, viewport, transform, flip, surface));
 	_spriteBatchRange.push_back(std::make_pair(GetLastDrawEntryIndex(), (size_t) SIZE_MAX));
 	_actSpriteBatch = _spriteBatchDesc.size() - 1;
+	_spriteBatchDesc[_actSpriteBatch].Surface.reset();
 	InitSpriteBatch(_actSpriteBatch, _spriteBatchDesc[_actSpriteBatch]);
 }
 
