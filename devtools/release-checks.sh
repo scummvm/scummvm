@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash
 #
 # release-checks.sh - sanity checking for release readiness
 #
@@ -31,7 +31,7 @@ echo_n() {
 }
 
 echoOk() {
-  echo "${GREEN}ok${NC}"
+  echo -e "${GREEN}ok${NC}"
   totalChecks=$((totalChecks+1))
 }
 
@@ -42,16 +42,14 @@ failPlus() {
 
 if [ ! -d ../scummvm-icons ]; then
   echo scummvm-icons repo is missing
-  echo Run
-  echo cd ..\; git clone https://github.com/scummvm/scummvm-icons.git
+  echo -e "${RED}Run cd ..; git clone https://github.com/scummvm/scummvm-icons.git${NC}"
 
   exit 1
 fi
 
 if [ ! -d ../scummvm-shaders ]; then
   echo scummvm-shaders repo is missing
-  echo Run
-  echo cd ..\; git clone https://github.com/scummvm/scummvm-shaders.git
+  echo -e "${RED}Run cd ..; git clone https://github.com/scummvm/scummvm-shaders.git${NC}"
 
   exit 1
 fi
@@ -87,7 +85,7 @@ cd ../scummvm-icons
 num_lines=`git -P log --oneline "--since=$fileDate" default/ | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo "$num_lines unprocessed commits. ${RED}Repack gui/themes/gui-icons.dat${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Repack gui/themes/gui-icons.dat${NC}"
 
   failPlus
 else
@@ -103,7 +101,7 @@ last_md5=`tail -1 LIST|awk -F, '{ print $3 }'`
 num_lines=`git log --oneline ${last_md5}.. | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo "$num_lines unprocessed commits. ${RED}Run 'gen-set.py' in ../scummvm-icons${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'gen-set.py' in ../scummvm-icons${NC}"
 
   failPlus
 else
@@ -125,7 +123,7 @@ cd ../scummvm-shaders
 num_lines=`git -P log --oneline "--since=$fileDate" base/ | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo "$num_lines unprocessed commits. ${RED}Repack gui/themes/shaders.dat${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Repack gui/themes/shaders.dat${NC}"
 
   failPlus
 else
@@ -140,7 +138,7 @@ last_md5=`tail -1 LIST-SHADERS|awk -F, '{ print $3 }'`
 num_lines=`git log --oneline ${last_md5}.. | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo "$num_lines unprocessed commits. ${RED}Run 'gen-shaders.py' in ../scummvm-shaders${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'gen-shaders.py' in ../scummvm-shaders${NC}"
 
   failPlus
 else
@@ -167,7 +165,7 @@ git -P grep ADGF_TESTING | grep -v engines/advancedDetector. | grep -v "engines/
 num_lines=`cat $TMP | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo "$num_lines entries. ${RED}They must be removed:${NC}"
+  echo -e "$num_lines entries. ${RED}They must be removed:${NC}"
   cat $TMP
   echo
 
@@ -183,7 +181,7 @@ echo_n "Checking ideprojects..."
 if [ -f dists/codeblocks/scummvm.cbp ]; then
   echoOk
 else
-  echo "missing. ${RED}Run 'make ideprojects'${NC}"
+  echo -e "missing. ${RED}Run 'make ideprojects'${NC}"
 
   failPlus
 fi
@@ -199,7 +197,7 @@ fileDate=`git log -1 gui/themes/translations.dat | grep Date | sed 's/Date: //'`
 num_lines=`git -P log --oneline "--since=$fileDate" po/ | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo "$num_lines unprocessed commits. ${RED}Run 'make update-translations'${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'make update-translations'${NC}"
 
   failPlus
 else
@@ -216,7 +214,7 @@ echo_n "Checking Release Notes..."
 VERSION=`grep SCUMMVM_VERSION base/internal_version.h | awk -F\" '{ print $2 }'`
 
 if curl -s -I https://downloads.scummvm.org/frs/scummvm/${VERSION}/ReleaseNotes | head -n 1 | grep 404 >/dev/null; then
-  echo "missing. ${RED}Upload to https://downloads.scummvm.org/frs/scummvm/${VERSION}/ReleaseNotes${NC}"
+  echo -e "missing. ${RED}Upload to https://downloads.scummvm.org/frs/scummvm/${VERSION}/ReleaseNotes${NC}"
 
   failPlus
 else
@@ -226,7 +224,7 @@ fi
 echo_n "Checking Release Notes HTML..."
 
 if curl -s -I https://downloads.scummvm.org/frs/scummvm/${VERSION}/ReleaseNotes.html | head -n 1 | grep 404 >/dev/null; then
-  echo "missing. ${RED}Upload to https://downloads.scummvm.org/frs/scummvm/${VERSION}/ReleaseNotes.html${NC}"
+  echo -e "missing. ${RED}Upload to https://downloads.scummvm.org/frs/scummvm/${VERSION}/ReleaseNotes.html${NC}"
 
   failPlus
 else
@@ -251,7 +249,7 @@ fileDate=`git log -1 dists/engine-data/mm.dat | grep Date | sed 's/Date: //'`
 num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_mm/files | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_mm/files; zip -r9 ../../../dists/engine-data/mm.dat .'${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_mm/files; zip -r9 ../../../dists/engine-data/mm.dat .'${NC}"
 
   failPlus
 else
@@ -270,7 +268,7 @@ fileDate=`git log -1 dists/engine-data/ultima.dat | grep Date | sed 's/Date: //'
 num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_ultima/files | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_ultima/files; zip -r9 ../../../dists/engine-data/ultima.dat .'${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_ultima/files; zip -r9 ../../../dists/engine-data/ultima.dat .'${NC}"
 
   failPlus
 else
@@ -284,9 +282,9 @@ fi
 ###########
 
 if [ "$failedChecks" -eq "0" ]; then
-  echo "${GREEN}All ok${NC}"
+  echo -e "${GREEN}All ok${NC}"
 else
-  echo "${RED}Failed $failedChecks checks of $totalChecks"${NC}
+  echo -e "${RED}Failed $failedChecks checks of $totalChecks"${NC}
 fi
 
 
