@@ -1076,7 +1076,7 @@ bool ThemeParser::resolutionCheck(const Common::String &resolution) {
 		if (cur[offset] == 'W') { // Reported threshold width
 			token = 320;
 		} else if (cur[offset] == 'H') { // Reported threshold height
-#ifndef(IPHONE)
+#ifndef IPHONE
 			token = 400;
 #else
 			// HACK. Think about API to move it to OSystem?
