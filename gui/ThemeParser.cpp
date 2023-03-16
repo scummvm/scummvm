@@ -1063,7 +1063,18 @@ bool ThemeParser::resolutionCheck(const Common::String &resolution) {
 			return false;
 		}
 
-		int token = atoi(cur.c_str() + 2);
+		bool eq = false;
+		int offset = 2;
+
+		if (cur[2] == '=') {
+			eq = true;
+			offset++;
+		}
+
+		int token = atoi(cur.c_str() + offset);
+
+		if (eq && val == token)
+			return true;
 
 		// check inverse for unfulfilled requirements
 		if (lt) {
