@@ -1065,6 +1065,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Random);
 			DISPATCH_OP(Drop);
 			DISPATCH_OP(Dup);
+			DISPATCH_OP(Swap);
 			DISPATCH_OP(Say1);
 			DISPATCH_OP(Say3);
 			DISPATCH_OP(Say3Get);
@@ -3197,6 +3198,13 @@ void Runtime::scriptOpDup(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
 	_scriptStack.push_back(stackArgs[0]);
+	_scriptStack.push_back(stackArgs[0]);
+}
+
+void Runtime::scriptOpSwap(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	_scriptStack.push_back(stackArgs[1]);
 	_scriptStack.push_back(stackArgs[0]);
 }
 

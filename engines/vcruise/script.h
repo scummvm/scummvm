@@ -102,6 +102,7 @@ enum ScriptOp {
 	kRandom,
 	kDrop,
 	kDup,
+	kSwap,
 	kSay1,
 	kSay3,
 	kSay3Get,

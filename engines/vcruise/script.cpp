@@ -355,6 +355,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"rnd", ProtoOp::kProtoOpScript, ScriptOps::kRandom},
 	{"drop", ProtoOp::kProtoOpScript, ScriptOps::kDrop},
 	{"dup", ProtoOp::kProtoOpScript, ScriptOps::kDup},
+	{"swap", ProtoOp::kProtoOpScript, ScriptOps::kSwap},
 	{"say1", ProtoOp::kProtoOpScript, ScriptOps::kSay1},
 	{"say2", ProtoOp::kProtoOpScript, ScriptOps::kSay3}, // FIXME: Figure out what the difference is between say2 and say3.  I think say2 is repeatable?  Maybe works as say1 instead?
 	{"say3", ProtoOp::kProtoOpScript, ScriptOps::kSay3},

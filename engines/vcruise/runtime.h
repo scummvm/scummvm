@@ -576,6 +576,7 @@ private:
 	void scriptOpRandom(ScriptArg_t arg);
 	void scriptOpDrop(ScriptArg_t arg);
 	void scriptOpDup(ScriptArg_t arg);
+	void scriptOpSwap(ScriptArg_t arg);
 	void scriptOpSay1(ScriptArg_t arg);
 	void scriptOpSay3(ScriptArg_t arg);
 	void scriptOpSay3Get(ScriptArg_t arg);
