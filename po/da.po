@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-13 19:17+0000\n"
+"POT-Creation-Date: 2023-03-16 15:15+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -2347,7 +2347,7 @@ msgstr ""
 "Du kan ændre indstillingen senere i Diverse-fanebladet\n"
 "i Indstillinger-dialogen."
 
-#: gui/widget.cpp:437 gui/widget.cpp:439 gui/widget.cpp:445 gui/widget.cpp:447
+#: gui/widget.cpp:436 gui/widget.cpp:438 gui/widget.cpp:444 gui/widget.cpp:446
 msgid "Clear value"
 msgstr "Slet værdi"
 

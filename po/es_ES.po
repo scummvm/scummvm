@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-13 19:17+0000\n"
+"POT-Creation-Date: 2023-03-16 15:15+0000\n"
 "PO-Revision-Date: 2023-03-13 10:57+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -2347,7 +2347,7 @@ msgstr ""
 "Puedes cambiar esta opción más adelante\n"
 "en la pestaña Otras del menú de opciones."
 
-#: gui/widget.cpp:437 gui/widget.cpp:439 gui/widget.cpp:445 gui/widget.cpp:447
+#: gui/widget.cpp:436 gui/widget.cpp:438 gui/widget.cpp:444 gui/widget.cpp:446
 msgid "Clear value"
 msgstr "Limpiar contenido"
 

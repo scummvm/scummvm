@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-13 19:17+0000\n"
+"POT-Creation-Date: 2023-03-16 15:15+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -2314,7 +2314,7 @@ msgstr ""
 "Вы можаце наладзіць гэтую функцыю пазьней\n"
 "на картцы „Рознае“ у дыялёгу Наладаў."
 
-#: gui/widget.cpp:437 gui/widget.cpp:439 gui/widget.cpp:445 gui/widget.cpp:447
+#: gui/widget.cpp:436 gui/widget.cpp:438 gui/widget.cpp:444 gui/widget.cpp:446
 msgid "Clear value"
 msgstr "Ачысьціць значэньне"
 
