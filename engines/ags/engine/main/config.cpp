@@ -354,8 +354,12 @@ void apply_config(const ConfigTree &cfg) {
 
 		// User's overrides and hacks
 		_GP(usetup).override_multitasking = CfgReadInt(cfg, "override", "multitasking", -1);
-		String override_os = CfgReadString(cfg, "override", "os");
 		_GP(usetup).override_script_os = -1;
+		// Looks for the existence of the Linux executable
+		if (File::IsFile(Path::ConcatPaths(_GP(usetup).startup_dir, "ags64"))) {
+			_GP(usetup).override_script_os = eOS_Linux;
+		}
+		String override_os = CfgReadString(cfg, "override", "os");
 		if (override_os.CompareNoCase("dos") == 0) {
 			_GP(usetup).override_script_os = eOS_DOS;
 		} else if (override_os.CompareNoCase("win") == 0) {
