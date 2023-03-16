@@ -110,17 +110,17 @@ template <class T> bool Big5Font::drawReal(byte *dest, uint16 textChar, int maxX
 }
 
 bool Big5Font::drawBig5Char(byte *dest, uint16 ch, int maxX, int maxY, uint32 destPitch, byte color, byte outlineColor) const {
-	return drawReal<uint8>(dest, maxX, maxY, destPitch, ch, color, outlineColor, true);
+	return drawReal<uint8>(dest, ch, maxX, maxY, destPitch, color, outlineColor, true);
 }
 
 bool Big5Font::drawBig5Char(Graphics::Surface *surf, uint16 ch, const Common::Point &pt, uint32 color) const {
 	switch(surf->format.bytesPerPixel) {
 	case 4:
-		return drawReal<uint32>((byte*)surf->getBasePtr(pt.x, pt.y), surf->w - pt.x, surf->h - pt.y, surf->pitch, ch, color, 0, false);
+		return drawReal<uint32>((byte*)surf->getBasePtr(pt.x, pt.y), ch, surf->w - pt.x, surf->h - pt.y, surf->pitch, color, 0, false);
 	case 2:
-		return drawReal<uint16>((byte*)surf->getBasePtr(pt.x, pt.y), surf->w - pt.x, surf->h - pt.y, surf->pitch, ch, color, 0, false);
+		return drawReal<uint16>((byte*)surf->getBasePtr(pt.x, pt.y), ch, surf->w - pt.x, surf->h - pt.y, surf->pitch, color, 0, false);
 	case 1:
-		return drawReal<uint8>((byte*)surf->getBasePtr(pt.x, pt.y), surf->w - pt.x, surf->h - pt.y, surf->pitch, ch, color, 0, false);
+		return drawReal<uint8>((byte*)surf->getBasePtr(pt.x, pt.y), ch, surf->w - pt.x, surf->h - pt.y, surf->pitch, color, 0, false);
 	default:
 		error("Big5 font for bpp=%d is not supported", surf->format.bytesPerPixel);
 	}
