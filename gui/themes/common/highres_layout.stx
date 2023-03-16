@@ -150,7 +150,7 @@
 		/>
 	</globals>
 
-	<dialog name = 'Launcher' overlays = 'screen'>
+	<dialog name = 'Launcher' overlays = 'screen' resolution = 'y<=x'>
 		<layout type = 'vertical' align = 'center' padding = '23, 23, 8, 40'>
 			<widget name = 'Logo'
 					width = '287'
@@ -223,6 +223,90 @@
 							type = 'Button'
 					/>
 				</layout>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 6, 0' spacing = '2'>
+				<widget name = 'ListSwitch'
+						height = 'Globals.Button.Height'
+						width = 'Globals.Button.Height'
+				/>
+				<widget name = 'GridSwitch'
+						height = 'Globals.Button.Height'
+						width = 'Globals.Button.Height'
+				/>
+				<space />
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'Launcher' overlays = 'screen' resolution = 'y>x'>
+		<layout type = 'vertical' align = 'center' padding = '23, 23, 8, 92'>
+			<widget name = 'Logo'
+					width = '287'
+					height = '80'
+					rtl = 'no'
+			/>
+			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
+				<widget name = 'SearchPic'
+						width = '16'
+						height = '17'
+						rtl = 'no'
+				/>
+				<widget name = 'Search'
+						width = '120'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'SearchClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+				<space size = '5' />
+				<widget name = 'GroupPic'
+						width = '17'
+						height = '17'
+						rtl = 'no'
+				/>
+				<widget name = 'laGroupPopup'
+						width = '100'
+						type = 'PopUp'
+				/>
+				<space />
+				<widget name = 'Version'
+						width = '310'
+						height = 'Globals.Line.Height'
+						textalign = 'center'
+				/>
+				<space />
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+				<widget name = 'GameList'/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+				<widget name = 'LoadGameButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'AddGameButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'EditGameButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'RemoveGameButton'
+						height = 'Globals.Button.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '2'>
+				<widget name = 'QuitButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'AboutButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'OptionsButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'StartButton'
+						height = 'Globals.Button.Height'
+				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 6, 0' spacing = '2'>
 				<widget name = 'ListSwitch'
