@@ -1076,7 +1076,16 @@ bool ThemeParser::resolutionCheck(const Common::String &resolution) {
 		if (cur[offset] == 'W') { // Reported threshold width
 			token = 320;
 		} else if (cur[offset] == 'H') { // Reported threshold height
+#ifndef IPHONE
 			token = 400;
+#else
+			// HACK. Think about API to move it to OSystem?
+			// iPhone SE (gen3) is 375 × 667 @2, iPhone 14 is 390 × 844 @3
+			//
+			// Hence, we are setting height to 375, so we have highres
+			// theme by default
+			token = 375;
+#endif
 		} else {
 			token = atoi(cur.c_str() + offset);
 		}
