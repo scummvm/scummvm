@@ -1897,8 +1897,11 @@ void Runtime::updateSounds(uint32 timestamp) {
 
 			if (snd.volume != newVolume) {
 				snd.volume = newVolume;
-				if (snd.player)
-					snd.player->setVolume(snd.volume);
+
+				if (snd.player) {
+					computeEffectiveVolumeAndBalance(snd);
+					snd.player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
+				}
 			}
 		}
 	}
