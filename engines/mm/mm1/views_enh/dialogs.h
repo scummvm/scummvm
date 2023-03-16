@@ -36,6 +36,7 @@
 #include "mm/mm1/views_enh/map_popup.h"
 #include "mm/mm1/views_enh/protect.h"
 #include "mm/mm1/views_enh/quick_ref.h"
+#include "mm/mm1/views_enh/rest.h"
 #include "mm/mm1/views_enh/search.h"
 #include "mm/mm1/views_enh/title.h"
 #include "mm/mm1/views_enh/trap.h"
@@ -75,6 +76,7 @@ private:
 	ViewsEnh::MapPopup _mapPopup;
 	ViewsEnh::Protect _protect;
 	ViewsEnh::QuickRef _quickRef;
+	ViewsEnh::Rest _rest;
 	ViewsEnh::Search _search;
 	ViewsEnh::Title _title;
 	ViewsEnh::Trap _trap;

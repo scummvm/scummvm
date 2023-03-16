@@ -540,6 +540,8 @@ enhdialogs:
 			sp: "S.P."
 			ac: "A.C."
 			cond: "Cond"
+	rest:
+		too_dangerous: "Too dangerous to rest here!"		
 	spellbook:
 		title: "Spells for"
 		spell_points: "Spell Pts"
