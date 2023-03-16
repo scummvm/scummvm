@@ -1040,7 +1040,7 @@ bool ThemeParser::resolutionCheck(const Common::String &resolution) {
 		bool lt;
 		int val;
 
-		if (cur.size() < 5) {
+		if (cur.size() < 3) {
 			warning("Invalid theme 'resolution' token '%s'", resolution.c_str());
 			return false;
 		}
@@ -1071,7 +1071,15 @@ bool ThemeParser::resolutionCheck(const Common::String &resolution) {
 			offset++;
 		}
 
-		int token = atoi(cur.c_str() + offset);
+		int token;
+
+		if (cur[offset] == 'W') { // Reported threshold width
+			token = 320;
+		} else if (cur[offset] == 'H') { // Reported threshold height
+			token = 400;
+		} else {
+			token = atoi(cur.c_str() + offset);
+		}
 
 		if (eq && val == token)
 			return true;
