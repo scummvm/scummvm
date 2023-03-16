@@ -204,6 +204,7 @@ protected:
 					XML_PROP(align, false)
 					XML_PROP(padding, false)
 					XML_PROP(spacing, false)
+					XML_PROP(resolution, false)
 
 					XML_KEY(import)
 						XML_PROP(layout, true)
