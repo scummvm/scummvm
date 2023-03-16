@@ -880,7 +880,6 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 				// if ((millis - startTime) / 1000 * frameRate) >= framesDecoded
 				if ((millis - _animStartTime) * static_cast<uint64>(_animFrameRateLock) >= (static_cast<uint64>(_animFramesDecoded) * 1000u))
 					needNewFrame = true;
-				debug("FPS lock: New frame at %u millis and %u decoded? %s", static_cast<uint>(millis - _animStartTime), static_cast<uint>(_animFramesDecoded), needNewFrame ? "yes" : "no");
 			} else {
 				if (_animDecoder->getTimeToNextFrame() == 0)
 					needNewFrame = true;
