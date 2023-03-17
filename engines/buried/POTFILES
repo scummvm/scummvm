@@ -1,4 +1,3 @@
-engines/buried/biochip_view.cpp
 engines/buried/buried.cpp
 engines/buried/metaengine.cpp
 engines/buried/saveload.cpp
