@@ -25,6 +25,7 @@
 #include "common/debug.h"
 #include "common/md5.h"
 #include "common/punycode.h"
+#include "common/translation.h"
 
 #include "gui/error.h"
 
