@@ -27,9 +27,11 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#if 0
 static const byte CONDITION_COLORS[17] = {
 	9, 9, 9, 9, 9, 9, 9, 9, 32, 32, 32, 32, 6, 6, 6, 6, 15
 };
+#endif
 
 static const byte FACE_CONDITION_FRAMES[17] = {
 	2, 2, 2, 1, 1, 4, 4, 4, 3, 2, 4, 3, 3, 5, 6, 7, 0

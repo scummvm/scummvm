@@ -68,7 +68,7 @@ private:
 	Shared::Xeen::SpriteResource _icons;
 	State _state = SELECT_CLASS;
 	NewCharacter _newChar;
-	int _portraitNum = 0;
+	//int _portraitNum = 0;
 
 	/**
 	 * Displays the new character attributes
