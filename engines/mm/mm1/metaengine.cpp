@@ -37,62 +37,62 @@ struct KeybindingRecord {
 };
 
 static const KeybindingRecord MENU_KEYS[] = {
-	{ KEYBIND_ESCAPE, "ESCAPE", "Escape", "ESCAPE", nullptr },
-	{ KEYBIND_SELECT, "SELECT", "Select", "RETURN", nullptr },
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr }, // I18N: ESC key
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", nullptr }, // I18N: Return key
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord PARTY_KEYS[] = {
-	{ KEYBIND_VIEW_PARTY1, "PARTY1", "View Party Member 1", "1", nullptr },
-	{ KEYBIND_VIEW_PARTY2, "PARTY2", "View Party Member 2", "2", nullptr },
-	{ KEYBIND_VIEW_PARTY3, "PARTY3", "View Party Member 3", "3", nullptr },
-	{ KEYBIND_VIEW_PARTY4, "PARTY4", "View Party Member 4", "4", nullptr },
-	{ KEYBIND_VIEW_PARTY5, "PARTY5", "View Party Member 5", "5", nullptr },
-	{ KEYBIND_VIEW_PARTY6, "PARTY6", "View Party Member 6", "6", nullptr },
+	{ KEYBIND_VIEW_PARTY1, "PARTY1", _s("View Party Member 1"), "1", nullptr },
+	{ KEYBIND_VIEW_PARTY2, "PARTY2", _s("View Party Member 2"), "2", nullptr },
+	{ KEYBIND_VIEW_PARTY3, "PARTY3", _s("View Party Member 3"), "3", nullptr },
+	{ KEYBIND_VIEW_PARTY4, "PARTY4", _s("View Party Member 4"), "4", nullptr },
+	{ KEYBIND_VIEW_PARTY5, "PARTY5", _s("View Party Member 5"), "5", nullptr },
+	{ KEYBIND_VIEW_PARTY6, "PARTY6", _s("View Party Member 6"), "6", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord COMBAT_KEYS[] = {
-	{ KEYBIND_COMBAT_ATTACK, "COMBAT_ATTACK", "Attack", "a", nullptr },
-	{ KEYBIND_COMBAT_BLOCK, "COMBAT_BLOCK", "Block", "b", nullptr },
-	{ KEYBIND_COMBAT_CAST, "COMBAT_CAST", "Cast", "c", nullptr },
-	{ KEYBIND_COMBAT_EXCHANGE, "COMBAT_EXCHANGE", "Exchange", "e", nullptr },
-	{ KEYBIND_COMBAT_FIGHT, "COMBAT_FIGHT", "Fight", "f", nullptr },
-	{ KEYBIND_QUICKREF, "QUICKREF", "Quick Reference", "q", nullptr },
-	{ KEYBIND_COMBAT_RETREAT, "COMBAT_RETREAT", "Retreat", "r", nullptr },
-	{ KEYBIND_COMBAT_SHOOT, "COMBAT_SHOOT", "Shoot", "s", nullptr },
-	{ KEYBIND_COMBAT_USE, "COMBAT_USE", "Use", "u", nullptr },
+	{ KEYBIND_COMBAT_ATTACK, "COMBAT_ATTACK", _s("Attack"), "a", nullptr }, // I18N: Combat command in MM1
+	{ KEYBIND_COMBAT_BLOCK, "COMBAT_BLOCK", _s("Block"), "b", nullptr }, // I18N: Combat command in MM1
+	{ KEYBIND_COMBAT_CAST, "COMBAT_CAST", _s("Cast"), "c", nullptr }, // I18N: Combat command in MM1
+	{ KEYBIND_COMBAT_EXCHANGE, "COMBAT_EXCHANGE", _s("Exchange"), "e", nullptr }, // I18N: Combat command in MM1
+	{ KEYBIND_COMBAT_FIGHT, "COMBAT_FIGHT", _s("Fight"), "f", nullptr }, // I18N: Combat command in MM1
+	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick Reference"), "q", nullptr }, // I18N: Combat command in MM1
+	{ KEYBIND_COMBAT_RETREAT, "COMBAT_RETREAT", _s("Retreat"), "r", nullptr }, // I18N: Combat command in MM1
+	{ KEYBIND_COMBAT_SHOOT, "COMBAT_SHOOT", _s("Shoot"), "s", nullptr }, // I18N: Combat command in MM1
+	{ KEYBIND_COMBAT_USE, "COMBAT_USE", _s("Use"), "u", nullptr }, // I18N: Combat command in MM1
 
-	{ KEYBIND_DELAY, "DELAY", "Delay", "d", nullptr },
-	{ KEYBIND_PROTECT, "PROTECT", "Protect", "p", nullptr },
+	{ KEYBIND_DELAY, "DELAY", _s("Delay"), "d", nullptr }, // I18N: Combat command in MM1
+	{ KEYBIND_PROTECT, "PROTECT", _s("Protect"), "p", nullptr }, // I18N: Combat command in MM1
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord NORMAL_KEYS[] = {
-	{ KEYBIND_SELECT, "SELECT", "Select", "RETURN", nullptr },
-	{ KEYBIND_FORWARDS, "FORWARDS", "Forwards", "UP", nullptr },
-	{ KEYBIND_BACKWARDS, "BACKWARDS", "Backwards", "DOWN", nullptr },
-	{ KEYBIND_TURN_LEFT, "TURN_LEFT", "Turn Left", "LEFT", nullptr },
-	{ KEYBIND_TURN_RIGHT, "TURN_RIGHT", "Turn Right", "RIGHT", nullptr },
-	{ KEYBIND_STRAFE_LEFT, "STRAFE_LEFT", "Strafe Left", "C+LEFT", nullptr },
-	{ KEYBIND_STRAFE_RIGHT, "STRAFE_RIGHT", "Strafe Right", "C+RIGHT", nullptr },
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", nullptr }, // I18N: Select party member command in MM1
+	{ KEYBIND_FORWARDS, "FORWARDS", _s("Forwards"), "UP", nullptr }, // I18N: Directionalcommand in MM1
+	{ KEYBIND_BACKWARDS, "BACKWARDS", _s("Backwards"), "DOWN", nullptr }, // I18N: Directionalcommand in MM1
+	{ KEYBIND_TURN_LEFT, "TURN_LEFT", _s("Turn Left"), "LEFT", nullptr },
+	{ KEYBIND_TURN_RIGHT, "TURN_RIGHT", _s("Turn Right"), "RIGHT", nullptr },
+	{ KEYBIND_STRAFE_LEFT, "STRAFE_LEFT", _s("Strafe Left"), "C+LEFT", nullptr },
+	{ KEYBIND_STRAFE_RIGHT, "STRAFE_RIGHT", _s("Strafe Right"), "C+RIGHT", nullptr },
 
-	{ KEYBIND_SPELL, "CAST", "Cast Spell", "c", nullptr },
-	{ KEYBIND_MAP, "MAP", "Show Map", "m", nullptr },
-	{ KEYBIND_MINIMAP, "MINIMAP", "Toggle Minimap", "=", nullptr },
-	{ KEYBIND_ORDER, "ORDER", "Reorder Party", "o", nullptr },
-	{ KEYBIND_PROTECT, "PROTECT", "Protect", "p", nullptr },
-	{ KEYBIND_REST, "REST", "Rest", "r", nullptr },
-	{ KEYBIND_SEARCH, "SEARCH", "Search", "s", nullptr },
-	{ KEYBIND_BASH, "BASH", "Bash", "b", nullptr },
-	{ KEYBIND_UNLOCK, "UNLOCK", "Unlock", "u", nullptr },
-	{ KEYBIND_QUICKREF, "QUICKREF", "Quick Reference", "q", nullptr },
+	{ KEYBIND_SPELL, "CAST", _s("Cast Spell"), "c", nullptr },
+	{ KEYBIND_MAP, "MAP", _s("Show Map"), "m", nullptr },
+	{ KEYBIND_MINIMAP, "MINIMAP", _s("Toggle Minimap"), "=", nullptr },
+	{ KEYBIND_ORDER, "ORDER", _s("Reorder Party"), "o", nullptr },
+	{ KEYBIND_PROTECT, "PROTECT", _s("Protect"), "p", nullptr }, // I18N: Action of hero party in MM1
+	{ KEYBIND_REST, "REST", _s("Rest"), "r", nullptr }, // I18N: Action of hero party in MM1
+	{ KEYBIND_SEARCH, "SEARCH", _s("Search"), "s", nullptr }, // I18N: Action of hero party in MM1
+	{ KEYBIND_BASH, "BASH", _s("Bash"), "b", nullptr }, // I18N: Action of hero party in MM1
+	{ KEYBIND_UNLOCK, "UNLOCK", _s("Unlock"), "u", nullptr }, // I18N: Action of hero party in MM1
+	{ KEYBIND_QUICKREF, "QUICKREF", _s("Quick Reference"), "q", nullptr },
 
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
 static const KeybindingRecord CHEAT_KEYS[] = {
-	{ KEYBIND_CHEAT_GOTO, "CHEAT-GOTO", "Goto location", "A+g", nullptr },
+	{ KEYBIND_CHEAT_GOTO, "CHEAT-GOTO", _s("Goto location"), "A+g", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
@@ -103,26 +103,26 @@ struct KeysRecord {
 };
 
 static const KeysRecord MENU_RECORDS[] = {
-	{ "mm1", "Might and Magic 1 - Menus", MENU_KEYS },
+	{ "mm1", _s("Might and Magic 1 - Menus"), MENU_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
 static const KeysRecord PARTY_MENU_RECORDS[] = {
-	{ "mm1", "Might and Magic 1 - Menus", MENU_KEYS },
-	{ "mm1_party", "Might and Magic 1 - Party", PARTY_KEYS },
+	{ "mm1", _s("Might and Magic 1 - Menus"), MENU_KEYS },
+	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
 static const KeysRecord COMBAT_MENU_RECORDS[] = {
-	{ "mm1_combat", "Might and Magic 1 - Combat", COMBAT_KEYS },
-	{ "mm1_party", "Might and Magic 1 - Party", PARTY_KEYS },
+	{ "mm1_combat", _s("Might and Magic 1 - Combat"), COMBAT_KEYS },
+	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
 static const KeysRecord NORMAL_RECORDS[] = {
-	{ "mm1", "Might and Magic 1", NORMAL_KEYS },
-	{ "mm1_party", "Might and Magic 1 - Party", PARTY_KEYS },
-	{ "mm1_cheats", "Might and Magic 1 - Cheats", CHEAT_KEYS },
+	{ "mm1", _s("Might and Magic 1"), NORMAL_KEYS },
+	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
+	{ "mm1_cheats", _s("Might and Magic 1 - Cheats"), CHEAT_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
