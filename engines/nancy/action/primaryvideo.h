@@ -36,7 +36,7 @@ namespace Action {
 // ActionRecord subclass that handles all NPC dialog and nancy1's intro video
 class PlayPrimaryVideoChan0 : public ActionRecord, public RenderObject {
 
-struct ConditionFlag {
+struct PrimaryVideoFlag {
 	byte type;
 	FlagDescription flag;
 	byte orFlag;
@@ -46,15 +46,15 @@ struct ConditionFlag {
 	void set() const;
 };
 
-struct ConditionFlags {
-	Common::Array<ConditionFlag> conditionFlags;
+struct PrimaryVideoFlags {
+	Common::Array<PrimaryVideoFlag> conditionFlags;
 
 	void read(Common::SeekableReadStream &stream);
 	bool isSatisfied() const;
 };
 
 struct ResponseStruct {
-	ConditionFlags conditionFlags; // 0x01
+	PrimaryVideoFlags conditionFlags; // 0x01
 	Common::String text; // 0x06
 	Common::String soundName; // 0x196
 	SceneChangeDescription sceneChange; // 0x1A0
@@ -64,8 +64,13 @@ struct ResponseStruct {
 };
 
 struct FlagsStruct {
-	ConditionFlags conditions;
-	ConditionFlag flagToSet;
+	PrimaryVideoFlags conditions;
+	PrimaryVideoFlag flagToSet;
+};
+
+struct SceneBranchStruct {
+	PrimaryVideoFlags conditions;
+	SceneChangeDescription sceneChange;
 };
 
 public:
@@ -105,6 +110,7 @@ public:
 
 	Common::Array<ResponseStruct> _responses;
 	Common::Array<FlagsStruct> _flagsStructs;
+	Common::Array<SceneBranchStruct> _sceneBranchStructs;
 
 	AVFDecoder _decoder;
 

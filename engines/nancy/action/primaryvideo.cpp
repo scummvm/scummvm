@@ -37,14 +37,14 @@
 namespace Nancy {
 namespace Action {
 
-void PlayPrimaryVideoChan0::ConditionFlag::read(Common::SeekableReadStream &stream) {
+void PlayPrimaryVideoChan0::PrimaryVideoFlag::read(Common::SeekableReadStream &stream) {
 	type = stream.readByte();
 	flag.label = stream.readSint16LE();
 	flag.flag = stream.readByte();
 	orFlag = stream.readByte();
 }
 
-bool PlayPrimaryVideoChan0::ConditionFlag::isSatisfied() const {
+bool PlayPrimaryVideoChan0::PrimaryVideoFlag::isSatisfied() const {
 	switch (type) {
 	case kFlagEvent:
 		return NancySceneState.getEventFlag(flag);
@@ -55,7 +55,7 @@ bool PlayPrimaryVideoChan0::ConditionFlag::isSatisfied() const {
 	}
 }
 
-void PlayPrimaryVideoChan0::ConditionFlag::set() const {
+void PlayPrimaryVideoChan0::PrimaryVideoFlag::set() const {
 	switch (type) {
 	case kFlagEvent:
 		NancySceneState.setEventFlag(flag);
@@ -73,36 +73,42 @@ void PlayPrimaryVideoChan0::ConditionFlag::set() const {
 	}
 }
 
-void PlayPrimaryVideoChan0::ConditionFlags::read(Common::SeekableReadStream &stream) {
+void PlayPrimaryVideoChan0::PrimaryVideoFlags::read(Common::SeekableReadStream &stream) {
 	uint16 numFlags = stream.readUint16LE();
 
-	conditionFlags.reserve(numFlags);
+	conditionFlags.resize(numFlags);
 	for (uint i = 0; i < numFlags; ++i) {
-		conditionFlags.push_back(ConditionFlag());
-		conditionFlags.back().read(stream);
+		conditionFlags[i].read(stream);
 	}
 }
 
-bool PlayPrimaryVideoChan0::ConditionFlags::isSatisfied() const {
-	bool orFlag = false;
+bool PlayPrimaryVideoChan0::PrimaryVideoFlags::isSatisfied() const {
+	Common::Array<bool> conditionsMet(conditionFlags.size(), false);
 
 	for (uint i = 0; i < conditionFlags.size(); ++i) {
-		const ConditionFlag &cur = conditionFlags[i];
+		if (conditionFlags[i].isSatisfied()) {
+			conditionsMet[i] = true;
+		}
 
-		if (!cur.isSatisfied()) {
-			if (orFlag) {
-				return false;
-			} else {
-				orFlag = true;
+		if (conditionFlags[i].orFlag && i < conditionFlags.size() - 1) {
+			if (conditionsMet[i] == true) {
+				conditionsMet[i + 1] = true;
+				++i;
+			} else if (conditionFlags[i + 1].isSatisfied()) {
+				conditionsMet[i] = true;
+				conditionsMet[i + 1] = true;
+				++i;
 			}
 		}
 	}
 
-	if (orFlag) {
-		return false;
-	} else {
-		return true;
+	for (uint i = 0; i < conditionsMet.size(); ++i) {
+		if (conditionsMet[i] == false) {
+			return false;
+		}
 	}
+
+	return true;
 }
 
 PlayPrimaryVideoChan0::~PlayPrimaryVideoChan0() {
@@ -214,15 +220,17 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 	delete[] rawText;
 
 	uint16 numSceneBranchStructs = stream.readUint16LE();
-	if (numSceneBranchStructs > 0) {
-		// TODO
+	_sceneBranchStructs.resize(numSceneBranchStructs);
+	for (uint i = 0; i < numSceneBranchStructs; ++i) {
+		_sceneBranchStructs[i].conditions.read(stream);
+		_sceneBranchStructs[i].sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);
+		stream.skip(0x32);
 	}
 
 	uint16 numFlagsStructs = stream.readUint16LE();
-	_flagsStructs.reserve(numFlagsStructs);
-	for (uint16 i = 0; i < numFlagsStructs; ++i) {
-		_flagsStructs.push_back(FlagsStruct());
-		FlagsStruct &flagsStruct = _flagsStructs.back();
+	_flagsStructs.resize(numFlagsStructs);
+	for (uint i = 0; i < numFlagsStructs; ++i) {
+		FlagsStruct &flagsStruct = _flagsStructs[i];
 		flagsStruct.conditions.read(stream);
 		flagsStruct.flagToSet.type = stream.readByte();
 		flagsStruct.flagToSet.flag.label = stream.readSint16LE();
@@ -365,7 +373,12 @@ void PlayPrimaryVideoChan0::execute() {
 			if (_pickedResponse != -1) {
 				NancySceneState.changeScene(_responses[_pickedResponse].sceneChange);
 			} else {
-				// Evaluate scene branch structs here
+				for (uint i = 0; i < _sceneBranchStructs.size(); ++i) {
+					if (_sceneBranchStructs[i].conditions.isSatisfied()) {
+						NancySceneState.changeScene(_sceneBranchStructs[i].sceneChange);
+						break;
+					}
+				}
 
 				if (_defaultNextScene == kDefaultNextSceneEnabled) {
 					NancySceneState.changeScene(_sceneChange);
