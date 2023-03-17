@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-16 15:15+0000\n"
+"POT-Creation-Date: 2023-03-17 15:25+0000\n"
 "PO-Revision-Date: 2023-03-06 22:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -73,6 +73,7 @@ msgstr "Вгору"
 #: backends/events/default/default-events.cpp:217
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
 #: engines/buried/saveload.cpp:69 engines/cine/saveload.cpp:863
+#: engines/director/lingo/xlibs/jitdraw3.cpp:129
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:84
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
@@ -140,8 +141,8 @@ msgstr ""
 #: gui/options.cpp:3340 gui/options.cpp:3378 gui/options.cpp:3795
 #: base/main.cpp:643 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
-#: engines/grim/grim.cpp:359 engines/kyra/gui/saveload_eob.cpp:597
-#: engines/kyra/gui/saveload_eob.cpp:630
+#: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
+#: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3480
 #: engines/toon/toon.cpp:1502
@@ -153,8 +154,8 @@ msgstr "Так"
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3340 gui/options.cpp:3378 gui/options.cpp:3795
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
-#: engines/grim/grim.cpp:359 engines/kyra/gui/saveload_eob.cpp:597
-#: engines/kyra/gui/saveload_eob.cpp:630
+#: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
+#: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3480
 #: engines/toon/toon.cpp:1502
@@ -334,7 +335,7 @@ msgstr ""
 #: gui/options.cpp:1600 gui/options.cpp:1617 gui/options.cpp:1631
 #: gui/options.cpp:1671 gui/options.cpp:1687 gui/options.cpp:2084
 #: gui/options.cpp:2492 gui/options.cpp:2545 gui/options.cpp:2760
-#: gui/options.cpp:3220 audio/null.cpp:40
+#: gui/options.cpp:3220 audio/null.cpp:45
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -355,6 +356,7 @@ msgid "Platform:"
 msgstr "Платформа:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2017 gui/options.cpp:2196
+#: backends/graphics/atari/atari-graphics.cpp:565
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "Графіка"
@@ -665,16 +667,18 @@ msgstr ""
 msgid "GUI"
 msgstr "GUI"
 
-#: gui/gui-manager.cpp:157 engines/mohawk/myst.cpp:573
+#: gui/gui-manager.cpp:157 engines/hpl1/metaengine.cpp:96
+#: engines/icb/icb.cpp:93 engines/icb/icb.cpp:163 engines/mohawk/myst.cpp:573
 #: engines/mohawk/riven.cpp:837
 msgid "Interact"
 msgstr "Взаємодія"
 
 #: gui/gui-manager.cpp:168 engines/metaengine.cpp:120
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
-#: engines/grim/grim.cpp:457 engines/grim/grim.cpp:538
-#: engines/scumm/metaengine.cpp:809 engines/twine/metaengine.cpp:472
-#: engines/twine/metaengine.cpp:539 engines/wintermute/keymapper_tables.h:1290
+#: engines/grim/grim.cpp:457 engines/grim/grim.cpp:538 engines/icb/icb.cpp:68
+#: engines/icb/icb.cpp:143 engines/scumm/metaengine.cpp:809
+#: engines/twine/metaengine.cpp:472 engines/twine/metaengine.cpp:539
+#: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1920
@@ -684,9 +688,10 @@ msgstr "Догори"
 
 #: gui/gui-manager.cpp:173 engines/metaengine.cpp:126
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
-#: engines/grim/grim.cpp:462 engines/grim/grim.cpp:543
-#: engines/scumm/metaengine.cpp:776 engines/twine/metaengine.cpp:479
-#: engines/twine/metaengine.cpp:547 engines/wintermute/keymapper_tables.h:1296
+#: engines/grim/grim.cpp:462 engines/grim/grim.cpp:543 engines/icb/icb.cpp:73
+#: engines/icb/icb.cpp:148 engines/scumm/metaengine.cpp:776
+#: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:547
+#: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
 #: engines/wintermute/keymapper_tables.h:1926
@@ -696,9 +701,10 @@ msgstr "Донизу"
 
 #: gui/gui-manager.cpp:178 engines/metaengine.cpp:132
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
-#: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548
-#: engines/scumm/metaengine.cpp:789 engines/twine/metaengine.cpp:494
-#: engines/twine/metaengine.cpp:562 engines/wintermute/keymapper_tables.h:320
+#: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:78
+#: engines/icb/icb.cpp:153 engines/scumm/metaengine.cpp:789
+#: engines/twine/metaengine.cpp:494 engines/twine/metaengine.cpp:562
+#: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
 #: engines/wintermute/keymapper_tables.h:1908
@@ -709,9 +715,10 @@ msgstr "Наліво"
 
 #: gui/gui-manager.cpp:183 engines/metaengine.cpp:138
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
-#: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553
-#: engines/scumm/metaengine.cpp:796 engines/twine/metaengine.cpp:486
-#: engines/twine/metaengine.cpp:555 engines/wintermute/keymapper_tables.h:326
+#: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:83
+#: engines/icb/icb.cpp:158 engines/scumm/metaengine.cpp:796
+#: engines/twine/metaengine.cpp:486 engines/twine/metaengine.cpp:555
+#: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
 #: engines/wintermute/keymapper_tables.h:1914
@@ -2393,6 +2400,8 @@ msgstr ""
 
 #: base/main.cpp:711 base/main.cpp:732
 #: engines/director/lingo/lingo-builtins.cpp:1199
+#: engines/director/lingo/xlibs/jitdraw3.cpp:129
+#: engines/director/lingo/xlibs/jitdraw3.cpp:137
 msgid "Ok"
 msgstr "Гаразд"
 
@@ -2556,8 +2565,12 @@ msgid "<Bad value>"
 msgstr "<Невірне значення>"
 
 #. I18N: Abbreviation for 'bytes' as data size
+#. I18N: Hardware key
 #: common/util.cpp:183 backends/platform/3ds/osystem-events.cpp:48
 #: backends/platform/ds/osystem_ds.cpp:166
+#: backends/platform/sdl/miyoo/miyoo.cpp:59
+#: backends/platform/sdl/miyoo/miyoo.cpp:75
+#: backends/platform/sdl/opendingux/opendingux.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:37
 msgid "B"
 msgstr "B"
@@ -2928,7 +2941,8 @@ msgid "Right Click"
 msgstr "Правий клік"
 
 #: engines/metaengine.cpp:82 engines/grim/grim.cpp:525
-#: engines/hdb/metaengine.cpp:258 engines/mohawk/myst.cpp:596
+#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:128
+#: engines/icb/icb.cpp:188 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:242 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
@@ -3065,15 +3079,15 @@ msgstr ""
 msgid "Starting MIDI dump"
 msgstr "Починаю створення дампу MIDI"
 
-#: audio/mods/paula.cpp:313
+#: audio/mods/paula.cpp:314
 msgid "Amiga Audio emulator"
 msgstr "Аміга Аудіо Емулятор"
 
-#: audio/null.h:43
+#: audio/null.cpp:27
 msgid "No music"
 msgstr "Без музики"
 
-#: audio/softsynth/appleiigs.cpp:32
+#: audio/softsynth/appleiigs.cpp:34
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS Емулятор (НЕ РЕАЛІЗОВАНО)"
 
@@ -3114,15 +3128,15 @@ msgstr "Налаштовую емулятор MT-32"
 msgid "MT-32 emulator"
 msgstr "Емулятор MT-32"
 
-#: audio/softsynth/pcspk.cpp:203
+#: audio/softsynth/pcspk.cpp:204
 msgid "PC Speaker emulator"
 msgstr "Емулятор PC спікера"
 
-#: audio/softsynth/pcspk.cpp:222
+#: audio/softsynth/pcspk.cpp:223
 msgid "IBM PCjr emulator"
 msgstr "Емулятор IBM PCjr"
 
-#: audio/softsynth/sid.cpp:1433
+#: audio/softsynth/sid.cpp:1435
 msgid "C64 Audio emulator"
 msgstr "C64 Аудіо Емулятор"
 
@@ -3252,16 +3266,21 @@ msgstr "Кліки вимкнено"
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Режим дотику у тачскріні - Проліт (клік DPad)"
 
+#. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
+#: backends/fs/android/android-saf-fs.cpp:691
+#: backends/fs/android/android-saf-fs.cpp:695
+msgid "Add a new folder"
+msgstr "Додати нову папку"
+
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
-#: backends/fs/android/android-saf-fs.cpp:797
+#: backends/fs/android/android-saf-fs.cpp:807
 msgid "Choose a new folder"
 msgstr "Вибрати нову папку"
 
-#. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
-#: backends/fs/android/android-saf-fs.h:177
-#: backends/fs/android/android-saf-fs.h:178
-msgid "Add a new folder"
-msgstr "Додати нову папку"
+#: backends/graphics/atari/atari-graphics.cpp:569
+#: backends/graphics/sdl/sdl-graphics.cpp:447
+msgid "Toggle aspect ratio correction"
+msgstr "Перемикання корекції співвідношення сторін"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
@@ -3372,10 +3391,6 @@ msgstr "Перемикання захоплення миші"
 msgid "Save screenshot"
 msgstr "Зберегти екран"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:447
-msgid "Toggle aspect ratio correction"
-msgstr "Перемикання корекції співвідношення сторін"
-
 #: backends/graphics/sdl/sdl-graphics.cpp:454
 msgid "Toggle linear filtered scaling"
 msgstr "Перемикання фільтра лінийний"
@@ -3472,34 +3487,47 @@ msgstr "Лівий курок"
 msgid "Right Shoulder"
 msgstr "Правий курок"
 
+#. I18N: Hardware key
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:57
-#: backends/platform/ds/osystem_ds.cpp:173 backends/platform/sdl/ps3/ps3.cpp:51
-#: backends/platform/sdl/psp2/psp2.cpp:51
+#: backends/platform/ds/osystem_ds.cpp:173
+#: backends/platform/sdl/miyoo/miyoo.cpp:66
+#: backends/platform/sdl/miyoo/miyoo.cpp:82
+#: backends/platform/sdl/opendingux/opendingux.cpp:56
+#: backends/platform/sdl/ps3/ps3.cpp:51 backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "D-pad Up"
 msgstr "Стрілка уверх"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/ds/osystem_ds.cpp:174 backends/platform/sdl/ps3/ps3.cpp:52
-#: backends/platform/sdl/psp2/psp2.cpp:52
+#: backends/platform/ds/osystem_ds.cpp:174
+#: backends/platform/sdl/miyoo/miyoo.cpp:67
+#: backends/platform/sdl/miyoo/miyoo.cpp:83
+#: backends/platform/sdl/opendingux/opendingux.cpp:57
+#: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Down"
 msgstr "Стрілка донизу"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
-#: backends/platform/ds/osystem_ds.cpp:175 backends/platform/sdl/ps3/ps3.cpp:53
-#: backends/platform/sdl/psp2/psp2.cpp:53
+#: backends/platform/ds/osystem_ds.cpp:175
+#: backends/platform/sdl/miyoo/miyoo.cpp:68
+#: backends/platform/sdl/miyoo/miyoo.cpp:84
+#: backends/platform/sdl/opendingux/opendingux.cpp:58
+#: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Left"
 msgstr "Стрілка вліво"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
-#: backends/platform/ds/osystem_ds.cpp:176 backends/platform/sdl/ps3/ps3.cpp:54
-#: backends/platform/sdl/psp2/psp2.cpp:54
+#: backends/platform/ds/osystem_ds.cpp:176
+#: backends/platform/sdl/miyoo/miyoo.cpp:69
+#: backends/platform/sdl/miyoo/miyoo.cpp:85
+#: backends/platform/sdl/opendingux/opendingux.cpp:59
+#: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Right"
 msgstr "Стрілка вправо"
@@ -3513,12 +3541,14 @@ msgid "Right Trigger"
 msgstr "Правий перемикач"
 
 #: backends/keymapper/hardware-input.cpp:276
+#: backends/platform/sdl/opendingux/opendingux.cpp:69
 #: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:59
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "Left Stick X"
 msgstr "Лівий стік вісь X"
 
 #: backends/keymapper/hardware-input.cpp:277
+#: backends/platform/sdl/opendingux/opendingux.cpp:70
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:60
 #: backends/platform/sdl/switch/switch.cpp:59
 msgid "Left Stick Y"
@@ -3778,31 +3808,52 @@ msgstr "Обидва"
 
 #: backends/platform/3ds/osystem-events.cpp:47
 #: backends/platform/ds/osystem_ds.cpp:165
+#: backends/platform/sdl/miyoo/miyoo.cpp:58
+#: backends/platform/sdl/miyoo/miyoo.cpp:74
+#: backends/platform/sdl/opendingux/opendingux.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "A"
 msgstr "A"
 
+#. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:49
 #: backends/platform/ds/osystem_ds.cpp:167
+#: backends/platform/sdl/miyoo/miyoo.cpp:60
+#: backends/platform/sdl/miyoo/miyoo.cpp:76
+#: backends/platform/sdl/opendingux/opendingux.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "X"
 msgstr "X"
 
+#. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:50
 #: backends/platform/ds/osystem_ds.cpp:168
+#: backends/platform/sdl/miyoo/miyoo.cpp:61
+#: backends/platform/sdl/miyoo/miyoo.cpp:77
+#: backends/platform/sdl/opendingux/opendingux.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "Y"
 msgstr "Y"
 
+#. I18N: Hardware key
+#. I18N: ESC key
 #: backends/platform/3ds/osystem-events.cpp:51
-#: backends/platform/ds/osystem_ds.cpp:169 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:47
+#: backends/platform/ds/osystem_ds.cpp:169
+#: backends/platform/sdl/miyoo/miyoo.cpp:62
+#: backends/platform/sdl/miyoo/miyoo.cpp:78
+#: backends/platform/sdl/opendingux/opendingux.cpp:52
+#: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:47
+#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:72
 msgid "Select"
 msgstr "Вибір"
 
+#. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:52
-#: backends/platform/ds/osystem_ds.cpp:170 backends/platform/sdl/ps3/ps3.cpp:46
-#: backends/platform/sdl/psp2/psp2.cpp:48
+#: backends/platform/ds/osystem_ds.cpp:170
+#: backends/platform/sdl/miyoo/miyoo.cpp:63
+#: backends/platform/sdl/miyoo/miyoo.cpp:79
+#: backends/platform/sdl/opendingux/opendingux.cpp:53
+#: backends/platform/sdl/ps3/ps3.cpp:46 backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Start"
 msgstr "Старт"
 
@@ -3816,15 +3867,23 @@ msgstr "ZL"
 msgid "ZR"
 msgstr "ZR"
 
+#. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:55
 #: backends/platform/ds/osystem_ds.cpp:171
+#: backends/platform/sdl/miyoo/miyoo.cpp:64
+#: backends/platform/sdl/miyoo/miyoo.cpp:80
+#: backends/platform/sdl/opendingux/opendingux.cpp:54
 #: backends/platform/sdl/psp2/psp2.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "L"
 msgstr "L"
 
+#. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/ds/osystem_ds.cpp:172
+#: backends/platform/sdl/miyoo/miyoo.cpp:65
+#: backends/platform/sdl/miyoo/miyoo.cpp:81
+#: backends/platform/sdl/opendingux/opendingux.cpp:55
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
@@ -4064,6 +4123,41 @@ msgstr "Ліцензія OFL"
 msgid "BSD License"
 msgstr "Ліцензія BSD"
 
+#: backends/platform/sdl/miyoo/miyoo.cpp:70
+#: backends/platform/sdl/miyoo/miyoo.cpp:86
+#: backends/platform/sdl/ps3/ps3.cpp:59
+msgid "L2"
+msgstr "L2"
+
+#. I18N: Hardware key
+#: backends/platform/sdl/miyoo/miyoo.cpp:71
+#: backends/platform/sdl/miyoo/miyoo.cpp:87
+#: backends/platform/sdl/ps3/ps3.cpp:60
+msgid "R2"
+msgstr "R2"
+
+#. I18N: Hardware key
+#: backends/platform/sdl/miyoo/miyoo.cpp:72
+#: backends/platform/sdl/miyoo/miyoo.cpp:90 engines/grim/grim.cpp:520
+#: engines/grim/grim.cpp:616 engines/hdb/metaengine.cpp:264
+msgid "Menu"
+msgstr "Меню"
+
+#. I18N: Hardware key
+#: backends/platform/sdl/miyoo/miyoo.cpp:88
+#: backends/platform/sdl/opendingux/opendingux.cpp:64
+#: backends/platform/sdl/ps3/ps3.cpp:47
+#: backends/platform/sdl/switch/switch.cpp:44
+msgid "L3"
+msgstr "L3"
+
+#. I18N: Hardware key
+#: backends/platform/sdl/miyoo/miyoo.cpp:89
+#: backends/platform/sdl/ps3/ps3.cpp:48
+#: backends/platform/sdl/switch/switch.cpp:45
+msgid "R3"
+msgstr "R3"
+
 #: backends/platform/sdl/ps3/ps3.cpp:40 backends/platform/sdl/psp2/psp2.cpp:43
 #: engines/dragons/metaengine.cpp:202
 msgid "Cross"
@@ -4083,16 +4177,6 @@ msgstr "Квадрат"
 msgid "PS"
 msgstr "PS"
 
-#: backends/platform/sdl/ps3/ps3.cpp:47
-#: backends/platform/sdl/switch/switch.cpp:44
-msgid "L3"
-msgstr "L3"
-
-#: backends/platform/sdl/ps3/ps3.cpp:48
-#: backends/platform/sdl/switch/switch.cpp:45
-msgid "R3"
-msgstr "R3"
-
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "L1"
 msgstr "L1"
@@ -4100,14 +4184,6 @@ msgstr "L1"
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "R1"
 msgstr "R1"
-
-#: backends/platform/sdl/ps3/ps3.cpp:59
-msgid "L2"
-msgstr "L2"
-
-#: backends/platform/sdl/ps3/ps3.cpp:60
-msgid "R2"
-msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Minus"
@@ -4311,7 +4387,7 @@ msgstr "Завжди використовуйте гострий монохро�
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "Не емулюйте артефакти NTSC для тексту"
 
-#: engines/agi/detection_tables.h:310
+#: engines/agi/detection_tables.h:312
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr "Ранішні гри AGI для Tandy Color Computer ще не підтримуються."
 
@@ -4328,7 +4404,7 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/groovie/metaengine.cpp:49
-#: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:105
+#: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:107
 #: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:40
 #: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
 #: engines/zvision/metaengine.cpp:46
@@ -4338,7 +4414,7 @@ msgstr "Використовувати ориг. екрани збереженн
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/groovie/metaengine.cpp:50
-#: engines/neverhood/dialogs.cpp:49 engines/sci/detection_options.h:106
+#: engines/neverhood/dialogs.cpp:49 engines/sci/detection_options.h:108
 #: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:41
 #: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
 #: engines/zvision/metaengine.cpp:47
@@ -4507,11 +4583,11 @@ msgstr ""
 "Обрання цієї опції буде програвати музику с темпом від DOS-версії гри. "
 "Інакше буде використовуватися швидший темп Windows-версії."
 
-#: engines/agos/metaengine.cpp:75 engines/sci/detection_options.h:93
+#: engines/agos/metaengine.cpp:75 engines/sci/detection_options.h:95
 msgid "Prefer digital sound effects"
 msgstr "Надавати перевагу цифровим звуковим ефектам"
 
-#: engines/agos/metaengine.cpp:76 engines/sci/detection_options.h:94
+#: engines/agos/metaengine.cpp:76 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Віддавати перевагу цифровим звуковим ефектам, а не синтезованим"
 
@@ -4652,7 +4728,7 @@ msgstr "Продовжуйте"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
-#: engines/kyra/detection_tables.h:72
+#: engines/kyra/detection_tables.h:74
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
@@ -4661,30 +4737,30 @@ msgstr "Автор перекладу проти того, щоб його пе�
 #: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
 #: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
 #: engines/groovie/detection.cpp:100 engines/lure/detection.cpp:229
-#: engines/mohawk/detection_tables.h:766 engines/mohawk/detection_tables.h:781
-#: engines/mohawk/detection_tables.h:796 engines/mohawk/detection_tables.h:810
-#: engines/mohawk/detection_tables.h:824 engines/mohawk/detection_tables.h:838
-#: engines/mohawk/detection_tables.h:852 engines/mohawk/detection_tables.h:866
-#: engines/mohawk/detection_tables.h:880 engines/mohawk/detection_tables.h:895
-#: engines/mohawk/detection_tables.h:910 engines/mohawk/detection_tables.h:925
-#: engines/mohawk/detection_tables.h:939 engines/mohawk/detection_tables.h:954
-#: engines/mohawk/detection_tables.h:1198
-#: engines/mohawk/detection_tables.h:1214
-#: engines/mohawk/detection_tables.h:1229
-#: engines/mohawk/detection_tables.h:1275
-#: engines/mohawk/detection_tables.h:1381
-#: engines/mohawk/detection_tables.h:1396
-#: engines/mohawk/detection_tables.h:1411
-#: engines/mohawk/detection_tables.h:1429
-#: engines/mohawk/detection_tables.h:1444
-#: engines/mohawk/detection_tables.h:2477
-#: engines/mohawk/detection_tables.h:2492
-#: engines/mohawk/detection_tables.h:3562
-#: engines/mohawk/detection_tables.h:3577 engines/myst3/detection.cpp:142
-#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5190
-#: engines/sci/detection_tables.h:5198 engines/stark/detection.cpp:319
+#: engines/mohawk/detection_tables.h:768 engines/mohawk/detection_tables.h:783
+#: engines/mohawk/detection_tables.h:798 engines/mohawk/detection_tables.h:812
+#: engines/mohawk/detection_tables.h:826 engines/mohawk/detection_tables.h:840
+#: engines/mohawk/detection_tables.h:854 engines/mohawk/detection_tables.h:868
+#: engines/mohawk/detection_tables.h:882 engines/mohawk/detection_tables.h:897
+#: engines/mohawk/detection_tables.h:912 engines/mohawk/detection_tables.h:927
+#: engines/mohawk/detection_tables.h:941 engines/mohawk/detection_tables.h:956
+#: engines/mohawk/detection_tables.h:1200
+#: engines/mohawk/detection_tables.h:1216
+#: engines/mohawk/detection_tables.h:1231
+#: engines/mohawk/detection_tables.h:1277
+#: engines/mohawk/detection_tables.h:1383
+#: engines/mohawk/detection_tables.h:1398
+#: engines/mohawk/detection_tables.h:1413
+#: engines/mohawk/detection_tables.h:1431
+#: engines/mohawk/detection_tables.h:1446
+#: engines/mohawk/detection_tables.h:2479
+#: engines/mohawk/detection_tables.h:2494
+#: engines/mohawk/detection_tables.h:3564
+#: engines/mohawk/detection_tables.h:3579 engines/myst3/detection.cpp:142
+#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5192
+#: engines/sci/detection_tables.h:5200 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
-#: engines/trecision/detection.cpp:201 engines/zvision/detection_tables.h:127
+#: engines/trecision/detection.cpp:201 engines/zvision/detection_tables.h:129
 msgid "Missing game code"
 msgstr "Відсутній код для гри"
 
@@ -4950,7 +5026,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Ввімкнути режим для людей з погіршенним сприяттям кольору"
 
 #: engines/cge/metaengine.cpp:52 engines/glk/metaengine.cpp:243
-#: engines/griffon/metaengine.cpp:40 engines/sci/detection_options.h:221
+#: engines/griffon/metaengine.cpp:40 engines/sci/detection_options.h:223
 #: engines/supernova/metaengine.cpp:50
 msgid "Enable Text to Speech"
 msgstr "Ввімкнути генератор мови"
@@ -4965,7 +5041,7 @@ msgstr "Ввімкнути генератор мови для об'єктів т
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
-#: engines/mads/metaengine.cpp:109 engines/sci/detection_options.h:222
+#: engines/mads/metaengine.cpp:109 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:51
 #: engines/twine/metaengine.cpp:168
 msgid "Use TTS to read the descriptions (if TTS is available)"
@@ -5064,7 +5140,8 @@ msgstr "Змінити команду"
 
 #: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:152
 #: engines/grim/grim.cpp:497 engines/grim/grim.cpp:593
-#: engines/hdb/metaengine.cpp:251 engines/scumm/help.cpp:223
+#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:99
+#: engines/icb/icb.cpp:98 engines/icb/icb.cpp:168 engines/scumm/help.cpp:223
 #: engines/scumm/help.cpp:232 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247 engines/twine/metaengine.cpp:429
 #: engines/zvision/metaengine.cpp:232
@@ -5277,7 +5354,8 @@ msgstr "Не вдалося видалити файл."
 msgid "Menu / Skip"
 msgstr "Меню / Пропустити"
 
-#: engines/griffon/metaengine.cpp:145 engines/scumm/metaengine.cpp:822
+#: engines/griffon/metaengine.cpp:145 engines/mm/mm1/metaengine.cpp:56
+#: engines/scumm/metaengine.cpp:822
 msgid "Attack"
 msgstr "Атака"
 
@@ -5298,11 +5376,13 @@ msgstr ""
 "Чи ви все ж таки хочете запустити %s?"
 
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:568
+#: engines/hpl1/metaengine.cpp:87 engines/icb/icb.cpp:123
+#: engines/icb/icb.cpp:183
 msgid "Run"
 msgstr "Бігти"
 
-#: engines/grim/grim.cpp:482 engines/scumm/help.cpp:237
-#: engines/scumm/help.cpp:245
+#: engines/grim/grim.cpp:482 engines/hpl1/metaengine.cpp:95
+#: engines/scumm/help.cpp:237 engines/scumm/help.cpp:245
 msgid "Examine"
 msgstr "Розглянути"
 
@@ -5317,11 +5397,6 @@ msgstr "Підібрати/Відкласти"
 #: engines/grim/grim.cpp:502 engines/grim/grim.cpp:598
 msgid "Skip dialog lines"
 msgstr "Пропустити рядки діалогу"
-
-#: engines/grim/grim.cpp:520 engines/grim/grim.cpp:616
-#: engines/hdb/metaengine.cpp:264
-msgid "Menu"
-msgstr "Меню"
 
 #: engines/grim/grim.cpp:558
 msgid "Cycle Objects Up"
@@ -5504,6 +5579,12 @@ msgstr "Змінює управління для швидшого пересув
 msgid "GroovieV2 support is not compiled in"
 msgstr "Підтримку для версії GroovieV2 не скомпільовано"
 
+#: engines/groovie/saveload.cpp:52
+#, fuzzy
+#| msgid "Run server"
+msgid "Reserved"
+msgstr "Запустити сервер"
+
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
 msgstr "Не вдалося записати гру"
@@ -5548,11 +5629,13 @@ msgstr "Рухатись наліво"
 msgid "Move right"
 msgstr "Рухатись направо"
 
-#: engines/hdb/metaengine.cpp:237 engines/scumm/help.cpp:126
-#: engines/scumm/help.cpp:150 engines/scumm/help.cpp:168
-#: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
-#: engines/scumm/help.cpp:222 engines/scumm/help.cpp:248
-#: engines/sky/metaengine.cpp:94 engines/wintermute/keymapper_tables.h:140
+#. I18N: Combat command in MM1
+#: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:64
+#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:150
+#: engines/scumm/help.cpp:168 engines/scumm/help.cpp:196
+#: engines/scumm/help.cpp:211 engines/scumm/help.cpp:222
+#: engines/scumm/help.cpp:248 engines/sky/metaengine.cpp:94
+#: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "Використати"
@@ -5572,6 +5655,87 @@ msgstr "Режим з кров'ю"
 #: engines/hopkins/metaengine.cpp:44 engines/hopkins/metaengine.cpp:56
 msgid "Enable Gore Mode when available"
 msgstr "Ввімкнути режим з кров'ю, якщо є доступний"
+
+#: engines/hpl1/metaengine.cpp:81
+#, fuzzy
+#| msgid "Move Forward"
+msgid "Forward"
+msgstr "Рухатись уперед"
+
+#: engines/hpl1/metaengine.cpp:82
+#, fuzzy
+#| msgid "Move Backward"
+msgid "Backward"
+msgstr "Рухатись назад"
+
+#: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:77
+#, fuzzy
+#| msgid "Slide Left"
+msgid "Strafe Left"
+msgstr "Ковзати наліво"
+
+#: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:78
+#, fuzzy
+#| msgid "Slide Right"
+msgid "Strafe Right"
+msgstr "Ковзати направо"
+
+#: engines/hpl1/metaengine.cpp:85
+#, fuzzy
+#| msgid "Pad Left"
+msgid "Lean Left"
+msgstr "Пад вліво"
+
+#: engines/hpl1/metaengine.cpp:86
+#, fuzzy
+#| msgid "Pad Right"
+msgid "Lean Right"
+msgstr "Пад вправо"
+
+#: engines/hpl1/metaengine.cpp:88
+msgid "Jump"
+msgstr ""
+
+#: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:113
+#: engines/icb/icb.cpp:173
+#, fuzzy
+#| msgid "Touch"
+msgid "Crouch"
+msgstr "Касання"
+
+#: engines/hpl1/metaengine.cpp:92
+#, fuzzy
+#| msgid "Interact"
+msgid "Interact Mode"
+msgstr "Взаємодія"
+
+#: engines/hpl1/metaengine.cpp:93
+#, fuzzy
+#| msgid "Gore Mode"
+msgid "Look Mode"
+msgstr "Режим з кров'ю"
+
+#: engines/hpl1/metaengine.cpp:94
+msgid "Holster"
+msgstr ""
+
+#: engines/hpl1/metaengine.cpp:100
+msgid "Notebook"
+msgstr ""
+
+#: engines/hpl1/metaengine.cpp:101
+msgid "Personal Notes"
+msgstr ""
+
+#: engines/hpl1/metaengine.cpp:102
+#, fuzzy
+#| msgid "Fly straight"
+msgid "Flashlight"
+msgstr "Летіти прямо"
+
+#: engines/hpl1/metaengine.cpp:103
+msgid "Glowstick"
+msgstr ""
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -5613,11 +5777,31 @@ msgstr "Ввімкнути відновлений контент"
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "Додатковий контент, який було вимкнуто в оригінальній грі."
 
-#: engines/kyra/detection_tables.h:70
+#: engines/icb/icb.cpp:88
+msgid "Fire"
+msgstr ""
+
+#: engines/icb/icb.cpp:103
+msgid "Arm"
+msgstr ""
+
+#: engines/icb/icb.cpp:108
+#, fuzzy
+#| msgid "Remove"
+msgid "Remora"
+msgstr "Видалити"
+
+#: engines/icb/icb.cpp:118 engines/icb/icb.cpp:178
+#, fuzzy
+#| msgid "Slide Left"
+msgid "Side Step"
+msgstr "Ковзати наліво"
+
+#: engines/kyra/detection_tables.h:72
 msgid "Missing language specific game code and/or resources."
 msgstr "Відсутній специфічний для мови код гри та/або ресурси."
 
-#: engines/kyra/detection_tables.h:71
+#: engines/kyra/detection_tables.h:73
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
@@ -5625,16 +5809,16 @@ msgstr ""
 "Відсутній специфічний для мови код гри та/або ресурси для цього перекладу "
 "фанатів."
 
-#: engines/kyra/detection_tables.h:73
+#: engines/kyra/detection_tables.h:75
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr "Демо грає прості анімації без використання движка Westwood."
 
-#: engines/kyra/detection_tables.h:1352
+#: engines/kyra/detection_tables.h:1354
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr "Ви додали гру неправильно. Будь ласка, додайте кореневу папку гри."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1368
+#: engines/kyra/detection_tables.h:1370
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
@@ -5759,15 +5943,16 @@ msgstr "Рухатись наліво"
 msgid "Move Right"
 msgstr "Рухатись направо"
 
+#. I18N: Directionalcommand in MM1
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2739 engines/twine/metaengine.cpp:412
-#: engines/zvision/metaengine.cpp:209
+#: engines/mm/mm1/metaengine.cpp:75 engines/pegasus/pegasus.cpp:2739
+#: engines/twine/metaengine.cpp:412 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "Повернутися наліво"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
-#: engines/pegasus/pegasus.cpp:2746 engines/twine/metaengine.cpp:405
-#: engines/zvision/metaengine.cpp:215
+#: engines/mm/mm1/metaengine.cpp:76 engines/pegasus/pegasus.cpp:2746
+#: engines/twine/metaengine.cpp:405 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "Повернутися направо"
 
@@ -5783,7 +5968,7 @@ msgstr "Переключити екран Інвентар/Герой"
 msgid "Camp"
 msgstr "Табір"
 
-#: engines/kyra/engine/eobcommon.cpp:379
+#: engines/kyra/engine/eobcommon.cpp:379 engines/mm/mm1/metaengine.cpp:80
 msgid "Cast Spell"
 msgstr "Використати закляття"
 
@@ -5823,7 +6008,7 @@ msgstr "Атака 2"
 msgid "Attack 3"
 msgstr "Атака 3"
 
-#: engines/kyra/engine/lol.cpp:475
+#: engines/kyra/engine/lol.cpp:475 engines/mm/mm1/metaengine.cpp:81
 msgid "Show Map"
 msgstr "Показати мапу"
 
@@ -5835,7 +6020,8 @@ msgstr "Ковзати наліво"
 msgid "Slide Right"
 msgstr "Ковзати направо"
 
-#: engines/kyra/engine/lol.cpp:482
+#. I18N: Action of hero party in MM1
+#: engines/kyra/engine/lol.cpp:482 engines/mm/mm1/metaengine.cpp:85
 msgid "Rest"
 msgstr "Відпочити"
 
@@ -6012,6 +6198,155 @@ msgstr "Анімований інтерфейс гри"
 #: engines/mads/metaengine.cpp:83 engines/mads/metaengine.cpp:84
 msgid "Naughty game mode"
 msgstr "Відвертий режим гри"
+
+#: engines/mm/mm1/metaengine.cpp:40 engines/twine/metaengine.cpp:443
+#: engines/wintermute/keymapper_tables.h:60
+msgid "Escape"
+msgstr "Втікти"
+
+#: engines/mm/mm1/metaengine.cpp:46
+msgid "View Party Member 1"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:47
+msgid "View Party Member 2"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:48
+msgid "View Party Member 3"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:49
+msgid "View Party Member 4"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:50
+msgid "View Party Member 5"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:51
+msgid "View Party Member 6"
+msgstr ""
+
+#. I18N: Combat command in MM1
+#: engines/mm/mm1/metaengine.cpp:57
+#, fuzzy
+#| msgid "Unlock"
+msgid "Block"
+msgstr "Відкрити"
+
+#. I18N: Combat command in MM1
+#: engines/mm/mm1/metaengine.cpp:58
+msgid "Cast"
+msgstr ""
+
+#. I18N: Combat command in MM1
+#: engines/mm/mm1/metaengine.cpp:59
+msgid "Exchange"
+msgstr ""
+
+#. I18N: Combat command in MM1
+#: engines/mm/mm1/metaengine.cpp:60
+#, fuzzy
+#| msgid "Right"
+msgid "Fight"
+msgstr "Направо"
+
+#. I18N: Combat command in MM1
+#. I18N: Action of hero party in MM1
+#: engines/mm/mm1/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:89
+#, fuzzy
+#| msgid "Preferences"
+msgid "Quick Reference"
+msgstr "Уподобання"
+
+#. I18N: Combat command in MM1
+#: engines/mm/mm1/metaengine.cpp:62
+msgid "Retreat"
+msgstr ""
+
+#. I18N: Combat command in MM1
+#: engines/mm/mm1/metaengine.cpp:63
+msgid "Shoot"
+msgstr ""
+
+#. I18N: Combat command in MM1
+#: engines/mm/mm1/metaengine.cpp:66
+msgid "Delay"
+msgstr ""
+
+#. I18N: Combat command in MM1
+#: engines/mm/mm1/metaengine.cpp:67 engines/mm/mm1/metaengine.cpp:84
+msgid "Protect"
+msgstr ""
+
+#. I18N: Select party member command in MM1
+#: engines/mm/mm1/metaengine.cpp:73
+#, fuzzy
+#| msgid "Move Forward"
+msgid "Forwards"
+msgstr "Рухатись уперед"
+
+#. I18N: Directionalcommand in MM1
+#: engines/mm/mm1/metaengine.cpp:74
+#, fuzzy
+#| msgid "Move Backward"
+msgid "Backwards"
+msgstr "Рухатись назад"
+
+#: engines/mm/mm1/metaengine.cpp:82
+#, fuzzy
+#| msgid "Toggle Combat"
+msgid "Toggle Minimap"
+msgstr "Перемкнути режим бою"
+
+#: engines/mm/mm1/metaengine.cpp:83
+msgid "Reorder Party"
+msgstr ""
+
+#. I18N: Action of hero party in MM1
+#: engines/mm/mm1/metaengine.cpp:86
+#, fuzzy
+#| msgid "Search:"
+msgid "Search"
+msgstr "Пошук:"
+
+#. I18N: Action of hero party in MM1
+#: engines/mm/mm1/metaengine.cpp:87
+msgid "Bash"
+msgstr ""
+
+#. I18N: Action of hero party in MM1
+#: engines/mm/mm1/metaengine.cpp:88 engines/scumm/help.cpp:144
+msgid "Unlock"
+msgstr "Відкрити"
+
+#: engines/mm/mm1/metaengine.cpp:95
+#, fuzzy
+#| msgid "Next location"
+msgid "Goto location"
+msgstr "Наступна локація"
+
+#: engines/mm/mm1/metaengine.cpp:106 engines/mm/mm1/metaengine.cpp:111
+msgid "Might and Magic 1 - Menus"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:112 engines/mm/mm1/metaengine.cpp:118
+#: engines/mm/mm1/metaengine.cpp:124
+msgid "Might and Magic 1 - Party"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:117
+msgid "Might and Magic 1 - Combat"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:123
+msgid "Might and Magic 1"
+msgstr ""
+
+#: engines/mm/mm1/metaengine.cpp:125
+msgid "Might and Magic 1 - Cheats"
+msgstr ""
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
@@ -6746,125 +7081,125 @@ msgstr ""
 msgid "Error loading game resources."
 msgstr "Помилка читання файлу ресурсів гри."
 
-#: engines/sci/detection_options.h:31
+#: engines/sci/detection_options.h:33
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Не робити растрування EGA (фони у повному кольорі)"
 
-#: engines/sci/detection_options.h:32
+#: engines/sci/detection_options.h:34
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Не робити растрування у іграх EGA, графіку буде показано у повному кольорі"
 
-#: engines/sci/detection_options.h:43
+#: engines/sci/detection_options.h:45
 msgid "Enable high resolution graphics"
 msgstr "Ввімкнути графіку високого розгалуження"
 
-#: engines/sci/detection_options.h:44
+#: engines/sci/detection_options.h:46
 msgid "Enable high resolution graphics/content"
 msgstr "Ввімкнути графіку та контент у високому розгалуженні"
 
-#: engines/sci/detection_options.h:55
+#: engines/sci/detection_options.h:57
 msgid "Enable black-lined video"
 msgstr "Ввімкнути відео з чорними лініями"
 
-#: engines/sci/detection_options.h:56
+#: engines/sci/detection_options.h:58
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr "Малювати чорні лінії поверху відео щоб посилити їхню наявну чіткість"
 
-#: engines/sci/detection_options.h:68
+#: engines/sci/detection_options.h:70
 msgid "Use high-quality video scaling"
 msgstr "Використовуйте високоякісне масштабування відео"
 
-#: engines/sci/detection_options.h:69
+#: engines/sci/detection_options.h:71
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr ""
 "Використовувати лінійну фільтрацію для збільшення графіки, якщо можливо"
 
-#: engines/sci/detection_options.h:81
+#: engines/sci/detection_options.h:83
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "Використовуйте високоякісне масштабування \"LarryScale\""
 
-#: engines/sci/detection_options.h:82
+#: engines/sci/detection_options.h:84
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 "Використовуйте спеціальний мультиплікаційний скалер для малювання спрайтів "
 "символів"
 
-#: engines/sci/detection_options.h:117
+#: engines/sci/detection_options.h:119
 msgid "Use CD audio"
 msgstr "Використовувати CD аудіо"
 
-#: engines/sci/detection_options.h:118
+#: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Використовувати CD аудіо замість ігрового аудіо, якщо такі є"
 
-#: engines/sci/detection_options.h:130
+#: engines/sci/detection_options.h:132
 msgid "Use Windows cursors"
 msgstr "Використовувати Windows курсори"
 
-#: engines/sci/detection_options.h:131
+#: engines/sci/detection_options.h:133
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr "Використовувати Windows курсори (менших і монохромних), замість DOS"
 
-#: engines/sci/detection_options.h:143
+#: engines/sci/detection_options.h:145
 msgid "Use silver cursors"
 msgstr "Використовувати срібні курсори"
 
-#: engines/sci/detection_options.h:144
+#: engines/sci/detection_options.h:146
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Використовувати альтернативний набір срібних курсорів, замість звичайних "
 "золотих"
 
-#: engines/sci/detection_options.h:156
+#: engines/sci/detection_options.h:158
 msgid "Enable content censoring"
 msgstr "Ввімкнути цензуру контенту"
 
-#: engines/sci/detection_options.h:157
+#: engines/sci/detection_options.h:159
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Ввімкнути вбудовану додаткову цензуру вмісту гри"
 
-#: engines/sci/detection_options.h:169
+#: engines/sci/detection_options.h:171
 msgid "Upscale videos"
 msgstr "Висококласні відео"
 
-#: engines/sci/detection_options.h:170
+#: engines/sci/detection_options.h:172
 msgid "Upscale videos to double their size"
 msgstr "Подвоїти розмір відео"
 
-#: engines/sci/detection_options.h:182
+#: engines/sci/detection_options.h:184
 msgid "Use RGB rendering"
 msgstr "Використовувати RGB для малювання"
 
-#: engines/sci/detection_options.h:183
+#: engines/sci/detection_options.h:185
 msgid "Use RGB rendering to improve screen transitions"
 msgstr "Використовувати RGB для покращення переходів між екранами"
 
-#: engines/sci/detection_options.h:195
+#: engines/sci/detection_options.h:197
 msgid "Use per-resource modified palettes"
 msgstr "Використовувати декілька палітр"
 
-#: engines/sci/detection_options.h:196
+#: engines/sci/detection_options.h:198
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 "Використовувати палітри для кожного окремого ресурсу для покращення вигляду"
 
-#: engines/sci/detection_options.h:208
+#: engines/sci/detection_options.h:210
 msgid "Enable bearded musicians"
 msgstr "Ввімкнути бородатих музикантів"
 
-#: engines/sci/detection_options.h:209
+#: engines/sci/detection_options.h:211
 msgid "Enable graphics that were disabled for legal reasons"
 msgstr ""
 "Ввімкнути графіку, яку було оригінально вимкнено через юридичні проблеми"
 
-#: engines/sci/detection_options.h:237
+#: engines/sci/detection_options.h:239
 msgid "MIDI mode:"
 msgstr "Режим MIDI:"
 
-#: engines/sci/detection_options.h:238
+#: engines/sci/detection_options.h:240
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -6872,27 +7207,27 @@ msgstr ""
 "Якщо ви використовуєте зовнішні MIDI-пристрої (тобто, через USB-MIDI), "
 "виберіть свій пристрій тут"
 
-#: engines/sci/detection_options.h:243
+#: engines/sci/detection_options.h:245
 msgid "Standard (GM / MT-32)"
 msgstr "Стандартне (GM / MT-32)"
 
-#: engines/sci/detection_options.h:247
+#: engines/sci/detection_options.h:249
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection_options.h:251
+#: engines/sci/detection_options.h:253
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/detection_options.h:255
+#: engines/sci/detection_options.h:257
 msgid "Casio MT-540"
 msgstr "Casio MT-540"
 
-#: engines/sci/detection_options.h:259
+#: engines/sci/detection_options.h:261
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio MT-540 / CSM-1"
 
-#: engines/sci/detection_tables.h:4481
+#: engines/sci/detection_tables.h:4483
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Неповна версія гри. Ви мусите скопіювати дані з усіх CD."
 
@@ -7082,7 +7417,7 @@ msgstr ""
 "Sierra.\n"
 "\n"
 
-#: engines/scumm/detection_internal.h:368
+#: engines/scumm/detection_internal.h:369
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK04.LEC and 903.LFL files.\n"
@@ -7487,10 +7822,6 @@ msgstr "Підібрати"
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 msgid "What is"
 msgstr "Що є"
-
-#: engines/scumm/help.cpp:144
-msgid "Unlock"
-msgstr "Відкрити"
 
 #: engines/scumm/help.cpp:147
 msgid "Put on"
@@ -8339,6 +8670,16 @@ msgstr ""
 "Файл teenagent.dat запаковано, але zlib не було включено в цю программу. "
 "Будь-ласка розпакуйте його"
 
+#: engines/tetraedge/metaengine.cpp:33
+#, fuzzy
+#| msgid "Correct aspect ratio for games"
+msgid "Correct movie aspect ratio"
+msgstr "Коригувати співвідношення сторін для ігор"
+
+#: engines/tetraedge/metaengine.cpp:34
+msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
+msgstr ""
+
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
 msgstr "Saturn CD версія ще не підтримується"
@@ -8572,10 +8913,6 @@ msgstr "Відкрити голомапу"
 msgid "Special Action"
 msgstr "Спеціальна дія"
 
-#: engines/twine/metaengine.cpp:443 engines/wintermute/keymapper_tables.h:60
-msgid "Escape"
-msgstr "Втікти"
-
 #: engines/twine/metaengine.cpp:456
 msgid "Accept"
 msgstr "Прийняти"
@@ -8723,6 +9060,13 @@ msgstr "Ultima VIII Чіти"
 #: engines/ultima/ultima8/metaengine.cpp:193
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Відладка"
+
+#: engines/ultima/ultima8/games/cru_game.cpp:165
+msgid ""
+"Crusader intro movie file missing - check that the FLICS and SOUND "
+"directories have been copied from the CD.  More instructions are on the "
+"wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
+msgstr ""
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
@@ -9889,11 +10233,6 @@ msgstr ""
 #~ msgid "~E~dit Game..."
 #~ msgstr "Реда~г~. гру..."
 
-#, fuzzy
-#~| msgid "Run server"
-#~ msgid "Reserved"
-#~ msgstr "Запустити сервер"
-
 #~ msgid "Swap Menu and Back buttons"
 #~ msgstr "Поміняти місцями кнопки Меню і Назад"
 
@@ -10063,14 +10402,8 @@ msgstr ""
 #~ msgid "DS Controls (right handed):"
 #~ msgstr "Керування DS (для правшів):"
 
-#~ msgid "Pad Left"
-#~ msgstr "Пад вліво"
-
 #~ msgid "Left mouse button"
 #~ msgstr "Ліва кнопка миші"
-
-#~ msgid "Pad Right"
-#~ msgstr "Пад вправо"
 
 #~ msgid "Right mouse button"
 #~ msgstr "Права кнопка миші"
