@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/translation.h"
+
 namespace {
 
 #define FLAGS(x, y, z, a, b, c, d, e, f, id) { Common::UNK_LANG, Common::UNK_LANG, Common::UNK_LANG, Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, c, d, e, f, id }

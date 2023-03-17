@@ -1,4 +1,3 @@
-engines/kyra/detection.cpp
 engines/kyra/detection_tables.h
 engines/kyra/metaengine.cpp
 engines/kyra/engine/eobcommon.cpp

@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
