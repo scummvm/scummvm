@@ -23,6 +23,7 @@
 TMP=release-check.tmp
 
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
@@ -264,6 +265,9 @@ headerlist=`grep \.h$ <<< "$list" | grep -v detection_ | grep -v keymapper_`
 if [ ! -z "$headerlist" ]; then
   num_lines=`wc -l <<< "$headerlist"`
   echo -e "$num_lines headers detected"
+  echo -e "${YELLOW}It is not advised to include common/translation.h in header files."
+  echo -e "The exception is detection_*.h and keymapper_*.h files."
+  echo -e "Putting this include in header could easily lead to missing POTFILES addition.${NC}"
 
   echo "$headerlist"
 
@@ -276,13 +280,13 @@ fi
 echo_n "Checking missing/extra POTFILES..."
 
 # Now get list of includes
-git grep -l "common/translation\.h" | grep -v devtools/create_engine | sort > $TMP
+git grep -l "common/translation\.h" | grep -v devtools/create_engine | grep -v devtools/release-checks.sh | sort > $TMP
 
 res=`diff -  $TMP <<< "$list"`
 
 if [ ! -z "$res" ]; then
     echo -e "${RED}Failed.${NC}"
-    echo "The diff is below. < marks extra files in POTFILES, > marks missing file in POTFILES"
+    echo -e "${YELLOW}The diff is below. < marks extra files in POTFILES, > marks missing file in POTFILES${NC}"
 
     echo "$res"
 
