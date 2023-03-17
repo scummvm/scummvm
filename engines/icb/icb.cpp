@@ -85,47 +85,47 @@ Common::KeymapArray IcbEngine::initKeymapsIcb(const char *target) {
 	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BFIR", _("Fire"));
+	act = new Action("BFIR", _("Fire")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_SPACE));
 	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BUSE", _("Interact"));
+	act = new Action("BUSE", _("Interact")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_LCTRL));
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BINV", _("Inventory"));
+	act = new Action("BINV", _("Inventory")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_RETURN));
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BARM", _("Arm"));
+	act = new Action("BARM", _("Arm")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_LALT));
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BREM", _("Remora"));
+	act = new Action("BREM", _("Remora")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_r));
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BCRU", _("Crouch"));
+	act = new Action("BCRU", _("Crouch")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_x));
 	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BSID", _("Side Step"));
+	act = new Action("BSID", _("Side Step")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_LSHIFT));
 	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BRUN", _("Run"));
+	act = new Action("BRUN", _("Run")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_z));
 	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BPAS", _("Pause"));
+	act = new Action("BPAS", _("Pause")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_BACK");
@@ -160,32 +160,32 @@ Common::KeymapArray IcbEngine::initKeymapsEldorado(const char *target) {
 	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BUSE", _("Interact"));
+	act = new Action("BUSE", _("Interact")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_LCTRL));
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BINV", _("Inventory"));
+	act = new Action("BINV", _("Inventory")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_RETURN));
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BCRU", _("Crouch"));
+	act = new Action("BCRU", _("Crouch")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_x));
 	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BSID", _("Side Step"));
+	act = new Action("BSID", _("Side Step")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_LSHIFT));
 	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BRUN", _("Run"));
+	act = new Action("BRUN", _("Run")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_z));
 	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("BPAS", _("Pause"));
+	act = new Action("BPAS", _("Pause")); // I18N: Action in ICB
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_BACK");
