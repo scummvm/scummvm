@@ -1056,7 +1056,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				bool leftBtnPressed = false, rightBtnPressed = false;
 				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
 			} while (ks.ascii == '+' || ks.ascii == '-');
-			clearBanner();
+
+			if (_game.version > 6)
+				clearBanner();
 
 			pt.clear();
 
