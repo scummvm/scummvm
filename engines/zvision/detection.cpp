@@ -25,7 +25,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/translation.h"
 #include "common/str-array.h"
 
 #include "zvision/detection.h"

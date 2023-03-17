@@ -22,6 +22,8 @@
 #ifndef ZVISION_DETECTION_TABLES_H
 #define ZVISION_DETECTION_TABLES_H
 
+#include "common/translation.h"
+
 namespace ZVision {
 
 static const PlainGameDescriptor zVisionGames[] = {
