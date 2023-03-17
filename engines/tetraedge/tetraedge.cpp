@@ -219,6 +219,7 @@ void TetraedgeEngine::registerConfigDefaults() {
 
 	ConfMan.registerDefault("disable_shadows", false);
 	ConfMan.registerDefault("correct_movie_aspect", true);
+	ConfMan.registerDefault("restore_scenes", false);
 }
 
 

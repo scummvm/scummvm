@@ -135,14 +135,15 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 		const TeVector3f32 winSize = app->getMainWindow().size();
 		float xscale = 1.0f;
 		float yscale = 1.0f;
-		if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
-			TeLayout *bglayout = _bgGui.layoutChecked("background");
-			TeSpriteLayout *rootlayout = Game::findSpriteLayoutByName(bglayout, "root");
-			if (rootlayout) {
-				TeVector2s32 bgSize = rootlayout->_tiledSurfacePtr->tiledTexture()->totalSize();
-				xscale = 800.0f / bgSize._x;
-				yscale = 600.0f / bgSize._y;
-			}
+
+		// Originally this is only done in Syberia 2, but
+		// should be fine to calculate in Syberia 1.
+		TeLayout *bglayout = _bgGui.layoutChecked("background");
+		TeSpriteLayout *rootlayout = Game::findSpriteLayoutByName(bglayout, "root");
+		if (rootlayout) {
+			TeVector2s32 bgSize = rootlayout->_tiledSurfacePtr->tiledTexture()->totalSize();
+			xscale = 800.0f / bgSize._x;
+			yscale = 600.0f / bgSize._y;
 		}
 
 		if (g_engine->getCore()->fileFlagSystemFlag("definition") == "SD") {
@@ -1765,9 +1766,6 @@ void InGameScene::update() {
 }
 
 void InGameScene::updateScroll() {
-	if (g_engine->gameType() != TetraedgeEngine::kSyberia2)
-		return;
-
 	TeLayout *bg = _bgGui.layout("background");
 	if (!bg)
 		return;
@@ -1853,11 +1851,11 @@ void InGameScene::updateViewport(int ival) {
 	const TeVector2f32 offset((0.5f - _scrollOffset.getX()) * _scrollScale.getX(),
 							_scrollOffset.getY() * _scrollScale.getY());
 	const TeVector3f32 winSize = g_engine->getApplication()->getMainWindow().size();
-	float aspectRatio = lsize.getX() / lsize.getY();
+	int x = (winSize.x() - lsize.getX()) / 2.0f + offset.getX();
+	int y = (winSize.y() - lsize.getY()) / 2.0f;
 	for (auto &cam : cameras()) {
+		float aspectRatio = lsize.getX() / lsize.getY();
 		//cam->setSomething(ival);
-		int x = (winSize.x() - lsize.getX()) / 2.0f + offset.getX();
-		int y = (winSize.y() - lsize.getY()) / 2.0f;
 		cam->viewport(x, y, lsize.getX(), lsize.getY());
 		if (g_engine->getApplication()->ratioStretched()) {
 			aspectRatio = (aspectRatio / (winSize.x() / winSize.y())) * 1.333333f;

@@ -26,6 +26,7 @@
 #include "engines/advancedDetector.h"
 
 #define GAMEOPTION_CORRECT_MOVIE_ASPECT GUIO_GAMEOPTIONS1
+#define GAMEOPTION_RESTORE_SCENES GUIO_GAMEOPTIONS2
 
 class TetraedgeMetaEngine : public AdvancedMetaEngine {
 public:

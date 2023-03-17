@@ -64,6 +64,8 @@ public:
 private:
 	void _resume(int nargs);
 
+	void applyScriptWorkarounds(char *buf, const Common::String &fileName);
+
 	lua_State *_luaThread;
 	uint64 _resumeCount;
 	int _bottomRef;

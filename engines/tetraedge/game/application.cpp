@@ -54,7 +54,7 @@ _drawShadows(true) {
 	// the horizontally scrolling scenes don't scroll properly.
 	// For now just default to true.
 	//
-	_ratioStretched = g_engine->gameType() == TetraedgeEngine::kSyberia2;
+	_ratioStretched = true;
 
 	TeCore *core = g_engine->getCore();
 	core->_coreNotReady = true;

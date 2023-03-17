@@ -39,7 +39,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::UNK_LANG,
 		Common::kPlatformMacintosh,
 		ADGF_TESTING,
-		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+		GUIO2(GAMEOPTION_CORRECT_MOVIE_ASPECT, GAMEOPTION_RESTORE_SCENES)
 	},
 
 	// iOS "free" release v1.1.3.  Not supported as we can't properly support
@@ -62,7 +62,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::UNK_LANG,
 		Common::kPlatformIOS,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+		GUIO2(GAMEOPTION_CORRECT_MOVIE_ASPECT, GAMEOPTION_RESTORE_SCENES)
 	},
 
 	// GOG release

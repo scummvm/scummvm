@@ -660,16 +660,40 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	_scene.setCurrentCamera(camname);
 
 	// Special hacks for certain scenes (don't blame me, original does this..)
-	if (scene == "14050") {
-		TeIntrusivePtr<TeCamera> curcamera = _scene.currentCamera();
-		const TeVector3f32 coords(1200.6f, -1937.5f, 1544.1f);
-		curcamera->setPosition(coords);
-	} else if (scene == "34610") {
-		TeIntrusivePtr<TeCamera> curcamera = _scene.currentCamera();
-		const TeVector3f32 coords(-328.243f, 340.303f, -1342.84f);
-		curcamera->setPosition(coords);
-		const TeQuaternion rot(0.003194f, 0.910923f, -0.009496f, -0.412389f);
-		curcamera->setRotation(rot);
+	if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+		if (scene == "14050") {
+			TeIntrusivePtr<TeCamera> curcamera = _scene.currentCamera();
+			const TeVector3f32 coords(1200.6f, -1937.5f, 1544.1f);
+			curcamera->setPosition(coords);
+		} else if (scene == "34610") {
+			TeIntrusivePtr<TeCamera> curcamera = _scene.currentCamera();
+			const TeVector3f32 coords(-328.243f, 340.303f, -1342.84f);
+			curcamera->setPosition(coords);
+			const TeQuaternion rot(0.003194f, 0.910923f, -0.009496f, -0.412389f);
+			curcamera->setRotation(rot);
+		}
+
+		//
+		// WORKAROUND: Fix the camera in the restored scenes
+		//
+		if (zone == "ValStreet" && scene == "11100") {
+			TeIntrusivePtr<TeCamera> cam = _scene.currentCamera();
+			cam->setProjMatrixType(3);
+			cam->setFov(0.5f);
+		} else if (zone == "ValField" && scene == "11170") {
+			TeIntrusivePtr<TeCamera> cam = _scene.currentCamera();
+			cam->setProjMatrixType(3);
+			// TODO: Is camera position right? Kate not visible..
+			// default values:
+			// -494.447998  -79.2976989  1408.5
+			// scene entrance and exit
+			// -184, -143, 1563
+			// -42, -147, 1534
+		} else if (zone == "BarRiverSide" && scene == "24020") {
+			TeIntrusivePtr<TeCamera> cam = _scene.currentCamera();
+			cam->setProjMatrixType(3);
+			cam->setFov(0.5f);
+		}
 	}
 
 	if (logicLuaExists) {

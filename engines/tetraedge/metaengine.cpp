@@ -38,6 +38,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_RESTORE_SCENES,
+		{
+			_s("Restore missing scenes"),
+			_s("Restore some scenes originally in the Windows edition"),
+			"restore_scenes",
+			true,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
