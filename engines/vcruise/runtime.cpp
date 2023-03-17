@@ -27,7 +27,6 @@
 #include "common/random.h"
 #include "common/system.h"
 #include "common/stream.h"
-#include "common/translation.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -2065,7 +2064,7 @@ bool Runtime::parseIndexDef(IndexParseType parseType, uint roomNumber, const Com
 		uint lastFrame = 0;
 		if (sscanf(value.c_str(), "%i, %u, %u", &animNum, &firstFrame, &lastFrame) != 3)
 			error("Malformed room animation def '%s'", value.c_str());
-		
+
 		AnimationDef &animDef = _roomDefs[roomNumber]->animations[key];
 		animDef.animNum = animNum;
 		animDef.firstFrame = firstFrame;
@@ -2097,7 +2096,7 @@ bool Runtime::parseIndexDef(IndexParseType parseType, uint roomNumber, const Com
 
 		if (!sscanf(value.c_str(), "%u", &varSlot))
 			error("Malformed var def '%s'", value.c_str());
-			
+
 		_roomDefs[roomNumber]->vars[key] = varSlot;
 	} break;
 	case kIndexParseTypeVRoom: {
@@ -2691,7 +2690,7 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 		isRight = true;
 	}
 
-	
+
 	uint cursorID = 0;
 	if (_haveHorizPanAnimations) {
 		uint panCursor = 0;
@@ -3473,7 +3472,7 @@ void Runtime::scriptOpGoto(ScriptArg_t arg) {
 	uint newInteraction = static_cast<uint>(stackArgs[0]);
 
 	Common::SharedPtr<Script> newScript = nullptr;
-	
+
 	if (_scriptSet) {
 		RoomScriptSetMap_t::const_iterator roomScriptIt = _scriptSet->roomScripts.find(_roomNumber);
 		if (roomScriptIt != _scriptSet->roomScripts.end()) {
