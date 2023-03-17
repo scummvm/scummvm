@@ -92,6 +92,7 @@ private:
 		Common::Array<ChunkInfo> _chunkInfo;
 		Decompressor *_dec;
 		bool _reversed;
+		bool _compressed;
 	};
 };
 
