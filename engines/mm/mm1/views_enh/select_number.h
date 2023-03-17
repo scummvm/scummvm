@@ -42,7 +42,7 @@ public:
 	virtual ~SelectNumberSubview() {}
 
 	void open(int maxNum, SelectNumberProc callback);
-	void close();
+	void close() override;
 
 	void draw() override;
 	bool msgMouseDown(const MouseDownMessage &msg) override;
