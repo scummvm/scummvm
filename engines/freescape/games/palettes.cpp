@@ -209,9 +209,13 @@ byte kDrillerCGAPaletteRedGreenData[4][3] = {
 };
 
 void FreescapeEngine::swapPalette(uint16 levelID) {
-	if (isAmiga() || isAtariST())
+	if (isAmiga() || isAtariST()) {
+		// The following palette was not available in the demo, so we select another one
+		if (isDemo() && levelID == 32)
+			levelID = 31;
+
 		_gfx->_palette = _paletteByArea[levelID];
-	else if (isSpectrum() || isCPC() || isC64()) {
+	} else if (isSpectrum() || isCPC() || isC64()) {
 		_gfx->_inkColor = _areaMap[levelID]->_inkColor;
 		_gfx->_paperColor = _areaMap[levelID]->_paperColor;
 		_gfx->_underFireBackgroundColor = _areaMap[levelID]->_underFireBackgroundColor;
