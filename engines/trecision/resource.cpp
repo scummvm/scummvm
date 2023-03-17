@@ -24,7 +24,6 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/str.h"
-#include "common/translation.h"
 #include "common/substream.h"
 #include "gui/saveload.h"
 
