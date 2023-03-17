@@ -21,6 +21,9 @@ This file contains essential game data used by Drascula engine.
 encoding.dat:
 This file contains character mapping for CJK encodings to unicode.
 
+freescape.dat:
+This file contains essential game data used byt the Freescape engine.
+
 fonts.dat:
 This file contains set of free TTF fonts used by Glk, ZVision, Wintermute engines and
 our GUI.

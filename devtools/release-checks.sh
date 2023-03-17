@@ -237,6 +237,62 @@ fi
 #
 #############################################################################
 
+##########
+# Dat files
+##########
+
+echo_n "Checking engine-data files..."
+
+# Use # as delimiter, %FILE% for the filename
+declare -a distfiles=(
+  "Makefile.common#DIST_FILES_ENGINEDATA\+=%FILE%"
+  "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"dists/engine-data/%FILE%\"\);"
+  "dists/engine-data/README#%FILE%:"
+  "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/share/scummvm/%FILE% %FILE% scummvm.sw.eoe"
+  "dists/scummvm.rc#%FILE%[	 ]+FILE[	 ]+\"dists/engine-data/%FILE%\""
+  "dists/win32/migration.txt#%FILE%"
+)
+
+IFS=$'\n'  # allow arguments with tabs and spaces
+
+absentFiles=0
+
+for f in dists/engine-data/*
+do
+    # Skip directories
+    if [ -d $f ]; then
+        continue
+    fi
+
+    file=`basename $f`
+
+    # Skip README file
+    if [ $file == "README" -o $file == "create-playground3d-data.sh"  -o $file == "create-testbed-data.sh" ]; then
+        continue
+    fi
+
+    for d in "${distfiles[@]}"
+    do
+        target=`cut -d '#' -f 1 <<< "$d"`
+        pattern=`cut -d '#' -f 2 <<< "$d"`
+
+        res=`sed "s|%FILE%|$file|g" <<< "$pattern"`
+
+        if [ -z $(grep -E "$res" "$target") ]; then
+            echo "$file is absent in $target"
+            absentFiles=$((absentFiles+1))
+        fi
+    done
+done
+
+if [ "$absentFiles" -ne "0" ]; then
+  echo -e "$absentFiles missing files ${RED}Fix them${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
 
 ###########
 # MM engine
