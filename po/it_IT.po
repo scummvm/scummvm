@@ -9160,8 +9160,8 @@ msgid ""
 msgstr ""
 "File del filmato d'introduzione di Crusader non trovato - assicurati di "
 "avere copiato le directory FLICS e SOUND dal CD. Istruzioni aggiuntive sono "
-"disponibili nella wiki: https://wiki.scummvm.org/index."
-"php?title=Crusader:_No_Remorse."
+"disponibili nella wiki: https://wiki.scummvm.org/index.php?title=Crusader:"
+"_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
