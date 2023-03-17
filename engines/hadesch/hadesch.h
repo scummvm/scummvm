@@ -39,7 +39,6 @@
 #include "hadesch/event.h"
 #include "hadesch/herobelt.h"
 #include "hadesch/persistent.h"
-#include "common/translation.h"
 
 #define _hs(x) (x)
 
@@ -48,6 +47,7 @@ struct ADGameDescription;
 namespace Common {
 class SeekableReadStream;
 class PEResources;
+class TranslationManager;
 }
 
 namespace Graphics {

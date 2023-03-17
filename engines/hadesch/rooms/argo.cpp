@@ -22,7 +22,6 @@
  */
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
-#include "common/translation.h"
 
 namespace Hadesch {
 

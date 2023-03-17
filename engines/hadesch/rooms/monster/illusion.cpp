@@ -21,7 +21,6 @@
  *
  */
 
-#include "common/translation.h"
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/rooms/monster.h"

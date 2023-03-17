@@ -23,7 +23,6 @@
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/ambient.h"
-#include "common/translation.h"
 
 namespace Hadesch {
 

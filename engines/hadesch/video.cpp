@@ -31,7 +31,6 @@
 #include "audio/decoders/aiff.h"
 #include "hadesch/pod_file.h"
 #include "hadesch/baptr.h"
-#include "common/translation.h"
 #include "common/macresman.h"
 
 static const int kVideoMaxW = 1280;

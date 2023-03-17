@@ -30,7 +30,6 @@
 #include "audio/decoders/aiff.h"
 #include "hadesch/pod_file.h"
 #include "hadesch/baptr.h"
-#include "common/translation.h"
 
 namespace Hadesch {
 
