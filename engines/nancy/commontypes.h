@@ -113,7 +113,7 @@ struct SceneChangeDescription {
 	uint16 verticalOffset = 0;
 	uint16 continueSceneSound = kLoadSceneSound;
 
-	int8 paletteID = 0; // TVD only
+	int8 paletteID = -1; // TVD only
 
 	void readData(Common::SeekableReadStream &stream, bool longFormat = false);
 };

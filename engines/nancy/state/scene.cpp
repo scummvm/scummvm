@@ -174,7 +174,7 @@ void Scene::onStateExit() {
 	_gameStateRequested = NancyState::kNone;
 }
 
-void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, byte paletteID) {
+void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, int8 paletteID) {
 	if (id == 9999) {
 		return;
 	}
@@ -182,8 +182,12 @@ void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte con
 	_sceneState.nextScene.sceneID = id;
 	_sceneState.nextScene.frameID = frame;
 	_sceneState.nextScene.verticalOffset = verticalOffset;
-	_sceneState.nextScene.paletteID = paletteID;
 	_sceneState.continueSceneSound = continueSceneSound;
+
+	if (paletteID != -1) {
+		_sceneState.nextScene.paletteID = paletteID;
+	}
+
 	_state = kLoad;
 }
 
@@ -561,7 +565,7 @@ void Scene::load() {
 						_sceneState.currentScene.verticalOffset,
 						_sceneState.summary.panningType,
 						_sceneState.summary.videoFormat,
-						_sceneState.summary.palettes.size() ? _sceneState.summary.palettes[_sceneState.currentScene.paletteID] : Common::String());
+						_sceneState.summary.palettes.size() ? _sceneState.summary.palettes[(byte)_sceneState.currentScene.paletteID] : Common::String());
 
 	if (_viewport.getFrameCount() <= 1) {
 		_viewport.disableEdges(kLeft | kRight);
