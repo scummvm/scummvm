@@ -53,7 +53,7 @@ private:
 	Common::Mutex _mutex;
 
 	Audio::SoundHandle _handle;
-	bool _isLooping;
+	//bool _isLooping;
 	bool _isPlaying;
 	bool _exhausted;
 	Audio::Mixer *_mixer;

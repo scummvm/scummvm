@@ -647,7 +647,7 @@ private:
 	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
 	uint _screenNumber;
 	uint _direction;
-	uint _highPrecisionDirection;
+	//uint _highPrecisionDirection;
 
 	GyroState _gyros;
 
@@ -713,7 +713,7 @@ private:
 
 	Common::Array<FrameData> _frameData;
 	Common::Array<FrameData2> _frameData2;
-	uint32 _loadedArea;
+	//uint32 _loadedArea;
 
 	Common::Array<Common::String> _animDefNames;
 	Common::HashMap<Common::String, uint> _animDefNameToIndex;
