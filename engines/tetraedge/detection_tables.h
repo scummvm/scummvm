@@ -54,6 +54,17 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
+	// iOS paid release v1.2.  Not yet tested.
+	{
+		"syberia",
+		nullptr,
+		AD_ENTRY1s("Syberia", "d:1425707556476013e859979562c5d753", 15794272),
+		Common::UNK_LANG,
+		Common::kPlatformIOS,
+		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
 	// GOG release
 	{
 		"syberia2",
@@ -62,6 +73,17 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::UNK_LANG,
 		Common::kPlatformMacintosh,
 		ADGF_TESTING,
+		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
+	},
+
+	// iOS release v1.0.1.  Not yet tested.
+	{
+		"syberia2",
+		nullptr,
+		AD_ENTRY1s("Syberia 2", "d:17d0ded9b87b5096207117bf0cfb5138", 15881248),
+		Common::UNK_LANG,
+		Common::kPlatformIOS,
+		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
