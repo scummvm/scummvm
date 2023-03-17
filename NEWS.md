@@ -19,6 +19,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for GOG.com version.
    - Added detection for alternate Polish version.
 
+ iOS port:
+   - Fix default theme selection on modern devices.
+
  RISC OS port:
    - Fixed crash on RISC OS 5 with games that require lots of RAM.
 
