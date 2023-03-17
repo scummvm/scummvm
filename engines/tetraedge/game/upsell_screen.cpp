@@ -23,8 +23,6 @@
 #include "tetraedge/game/application.h"
 #include "tetraedge/game/upsell_screen.h"
 
-#include "common/translation.h"
-
 namespace Tetraedge {
 
 UpsellScreen::UpsellScreen() {
