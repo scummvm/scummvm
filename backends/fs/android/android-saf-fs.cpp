@@ -54,6 +54,7 @@
 #include "backends/fs/posix/posix-iostream.h"
 
 #include "common/debug.h"
+#include "common/translation.h"
 #include "common/util.h"
 
 jmethodID AndroidSAFFilesystemNode::_MID_getTreeId = 0;
@@ -683,6 +684,15 @@ const char AddSAFFakeNode::SAF_ADD_FAKE_PATH[] = "/saf";
 
 AddSAFFakeNode::~AddSAFFakeNode() {
 	delete _proxied;
+}
+
+Common::U32String AddSAFFakeNode::getDisplayName() const {
+	// I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
+	return Common::U32String::format("\x01<%s>", _("Add a new folder").c_str());
+}
+
+Common::String AddSAFFakeNode::getName() const {
+	return Common::String::format("\x01<%s>", _("Add a new folder").encode().c_str());
 }
 
 AbstractFSNode *AddSAFFakeNode::getChild(const Common::String &name) const {

@@ -24,7 +24,6 @@
 
 #include <jni.h>
 
-#include "common/translation.h"
 #include "backends/fs/abstract-fs.h"
 
 #include "backends/fs/android/android-fs.h"
@@ -174,8 +173,8 @@ public:
 	bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
 
 	// I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
-	Common::U32String getDisplayName() const override { return Common::U32String::format("\x01<%s>", _("Add a new folder").c_str()); };
-	Common::String getName() const override { return Common::String::format("\x01<%s>", _("Add a new folder").encode().c_str()); };
+	Common::U32String getDisplayName() const override;
+	Common::String getName() const override;
 	Common::String getPath() const override;
 
 	bool isDirectory() const override { return true; }
