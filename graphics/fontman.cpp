@@ -23,8 +23,6 @@
 #include "graphics/font.h"
 #include "graphics/fonts/bdf.h"
 
-#include "common/translation.h"
-
 namespace Common {
 DECLARE_SINGLETON(Graphics::FontManager);
 }
