@@ -38,7 +38,6 @@
 #include "ultima/ultima8/metaengine.h"
 
 #include "engines/dialogs.h"
-#include "common/translation.h"
 #include "gui/saveload.h"
 
 namespace Ultima {
