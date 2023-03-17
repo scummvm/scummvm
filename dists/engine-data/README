@@ -16,17 +16,23 @@ Some filenames depend on the edition, these are handled by game flags in engine 
 Those informations were stored in the original executables.
 
 drascula.dat:
-This file contains essential game data used by Drascula engine.
+This file contains essential game data used by the Drascula engine.
 
 encoding.dat:
 This file contains character mapping for CJK encodings to unicode.
 
 freescape.dat:
-This file contains essential game data used byt the Freescape engine.
+This file contains essential game data used by the Freescape engine.
 
 fonts.dat:
 This file contains set of free TTF fonts used by Glk, ZVision, Wintermute engines and
 our GUI.
+
+grim-patch.lab:
+This file contains set of script patches for Grim Fandango.
+
+hadesch_translations.dat:
+This file contains essential data for Hadesch Challenge game.
 
 hugo.dat:
 This file contains all the hardcoded logic, strings and fonts used by Hugo
@@ -44,13 +50,19 @@ macgui.dat:
 The file contains set of offsets for recreation of Classic Mac OS GUI, used
 by Director, MacVenture and WAGE engines.
 
-macventure.dat
+macventure.dat:
 This file contains additional GUI elements used by MacVenture engine.
+
+monkey4-patch.m4b:
+This file contains script patches for Escape from Monkey Island game.
 
 mort.dat:
 File created partially by extracting font data from the French executable. It
 also contains the French and German translation, as well as a custom-made
 English translation.
+
+myst3.dat:
+This file contains essential game data used by the Myst3 game.
 
 nancy.dat:
 File containing various constants, game logic and strings originally embedded

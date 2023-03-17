@@ -88,6 +88,9 @@ nancy.dat              FILE    "dists/engine-data/nancy.dat"
 #if PLUGIN_ENABLED_STATIC(NEVERHOOD)
 neverhood.dat          FILE    "dists/engine-data/neverhood.dat"
 #endif
+#if PLUGIN_ENABLED_STATIC(PRINCE)
+prince_translation.dat FILE    "dists/engine-data/prince_translation.dat"
+#endif
 #if PLUGIN_ENABLED_STATIC(QUEEN)
 queen.tbl              FILE    "dists/engine-data/queen.tbl"
 #endif

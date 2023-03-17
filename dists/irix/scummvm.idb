@@ -22,15 +22,19 @@ f 0644 root sys usr/ScummVM/share/scummvm/cryomni3d.dat cryomni3d.dat scummvm.sw
 f 0644 root sys usr/ScummVM/share/scummvm/drascula.dat drascula.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/encoding.dat encoding.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/fonts.dat fonts.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/grim-patch.lab grim-patch.lab scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/hugo.dat hugo.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/hadesch_translations.dat hadesch_translations.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/kyra.dat kyra.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/lure.dat lure.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/macgui.dat macgui.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/macventure.dat macventure.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/monkey4-patch.m4b monkey4-patch.m4b scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/mort.dat mort.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/myst3.dat myst3.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/nancy.dat nancy.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/neverhood.dat neverhood.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/prince_translation.dat prince_translation.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/queen.tbl queen.tbl scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/sky.cpt sky.cpt scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/supernova.dat supernova.dat scummvm.sw.eoe
@@ -43,9 +47,13 @@ f 0644 root sys usr/ScummVM/share/scummvm/freescape.dat freescape.dat scummvm.sw
 f 0644 root sys usr/ScummVM/share/scummvm/wintermute.zip wintermute.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/mm.dat mm.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/pred.dic pred.dic scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/residualvm.zip residualvm.zip scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/scummclassic.zip scummclassic.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/scummmodern.zip scummmodern.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/scummremastered.zip scummremastered.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/gui-icons.dat gui-icons.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/shaders.dat shaders.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/translations.dat translations.dat scummvm.sw.eoe
 l 0000 root sys usr/bin/scummvm scummvm scummvm.sw.eoe symval(/usr/ScummVM/scummvm)
 f 0644 root sys usr/lib/filetype/local/ScummVM.ftr ScummVM.ftr scummvm.sw.eoe exitop('if test -r $rbase/usr/lib/filetype/Makefile ; then chroot $rbase /sbin/sh -c "cd /usr/lib/filetype ; make -u > /dev/null" ; fi')
 f 0644 root sys usr/lib/filetype/local/iconlib/ScummVM.fti ScummVM.fti scummvm.sw.eoe exitop('if [ -x $rbase/usr/sbin/iconcatalogedit ]; then chroot $rbase /usr/sbin/iconcatalogedit -add "Category:File Name:/usr/ScummVM/scummvm" -syspage Games; fi') removeop('if [ -x $rbase/usr/sbin/iconcatalogedit ]; then chroot $rbase /usr/sbin/iconcatalogedit -remove "Category:File Name:/usr/ScummVM/scummvm" -syspage Games; fi')

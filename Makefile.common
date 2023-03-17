@@ -443,6 +443,9 @@ endif
 ifdef ENABLE_NEVERHOOD
 DIST_FILES_ENGINEDATA+=neverhood.dat
 endif
+ifdef ENABLE_PRINCE
+DIST_FILES_ENGINEDATA+=prince_translation.dat
+endif
 ifdef ENABLE_QUEEN
 DIST_FILES_ENGINEDATA+=queen.tbl
 endif

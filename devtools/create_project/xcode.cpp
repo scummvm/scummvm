@@ -989,6 +989,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("dists/engine-data/mort.dat");
 		files.push_back("dists/engine-data/nancy.dat");
 		files.push_back("dists/engine-data/neverhood.dat");
+		files.push_back("dists/engine-data/prince_translation.dat");
 		files.push_back("dists/engine-data/queen.tbl");
 		files.push_back("dists/engine-data/sky.cpt");
 		files.push_back("dists/engine-data/supernova.dat");
