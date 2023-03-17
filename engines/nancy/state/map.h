@@ -50,7 +50,7 @@ public:
 
 	void process() override;
 	void onStateExit() override;
-	
+
 	const SoundDescription &getSound() { return _mapSounds[_mapID]; }
 
 protected:
@@ -105,7 +105,7 @@ protected:
 
 class TVDMap : public Map {
 	friend class MapGlobe;
-	
+
 public:
 	TVDMap();
 	virtual ~TVDMap() = default;
@@ -130,7 +130,7 @@ private:
 	void load() override;
 	void run() override;
 	void registerGraphics() override;
-	
+
 	void onStateExit() override;
 
 	MapGlobe _globe;
@@ -153,7 +153,7 @@ private:
 	void onStateExit() override;
 
 	UI::Button *_button;
-	bool _mapButtonClicked;
+	//bool _mapButtonClicked;
 };
 
 #define NancyMapState Nancy::State::Map::instance()

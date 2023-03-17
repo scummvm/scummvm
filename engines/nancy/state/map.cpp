@@ -395,7 +395,7 @@ void TVDMap::MapGlobe::onTrigger() {
 	}
 }
 
-Nancy1Map::Nancy1Map() : _button(nullptr), _mapButtonClicked(false) {}
+Nancy1Map::Nancy1Map() : _button(nullptr)/*, _mapButtonClicked(false)*/ {}
 
 Nancy1Map::~Nancy1Map() {
 	delete _button;
