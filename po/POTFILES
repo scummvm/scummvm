@@ -30,7 +30,9 @@ gui/widgets/groupedlist.cpp
 base/main.cpp
 
 common/error.cpp
+common/localization.cpp
 common/rendermode.cpp
+common/translation.cpp
 common/updates.cpp
 common/util.cpp
 
@@ -107,4 +109,7 @@ backends/platform/sdl/psp2/psp2.cpp
 backends/platform/sdl/switch/switch.cpp
 backends/platform/wii/options.cpp
 backends/presence/discord/discord.cpp
+backends/text-to-speech/linux/linux-text-to-speech.cpp
+backends/text-to-speech/macosx/macosx-text-to-speech.mm
+backends/text-to-speech/windows/windows-text-to-speech.cpp
 backends/updates/macosx/macosx-updates.mm
