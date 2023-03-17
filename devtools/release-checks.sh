@@ -160,7 +160,7 @@ echo_n "Checking ADGF_TESTING..."
 #   engines/advancedDetector.h:	ADGF_TESTING         = (1u << 19), ///< Flag to designate not yet officially supported games that are fit for public testing.
 #   engines/ags/detection_tables.h:	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, nullptr, ADGF_TESTING)
 
-git -P grep ADGF_TESTING | grep -v engines/advancedDetector. | grep -v "engines/ags/detection_tables.h:\tDETECTION_ENTRY.ID," >$TMP
+git -P grep ADGF_TESTING | grep -v engines/advancedDetector. | grep -v "engines/ags/detection_tables.h:\tDETECTION_ENTRY.ID," | grep -v devtools/release-checks.sh >$TMP
 
 num_lines=`cat $TMP | wc -l`
 
@@ -287,7 +287,7 @@ do
 done
 
 declare -a themefiles=(
-  "Makefile.common#DIST_FILES_THEMES=.*%FILE%"
+  "Makefile.common#DIST_FILES_THEMES.*%FILE%"
   "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"gui/themes/%FILE%\"\);"
   "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/share/scummvm/%FILE% %FILE% scummvm.sw.eoe"
   "dists/scummvm.rc#%FILE%[	 ]+FILE[	 ]+\"gui/themes/%FILE%\""
