@@ -289,23 +289,13 @@ Common::String AgiMetaEngineDetection::parseAndCustomizeGuiOptions(const Common:
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", domain));
 	const Common::String gid = ConfMan.get("gameid", domain);
 
+	renderOptions = GUIO_RENDEREGA GUIO_RENDERCGA GUIO_RENDERHERCAMBER GUIO_RENDERHERCGREEN
+		GUIO_RENDERAMIGA GUIO_RENDERAPPLE2GS GUIO_RENDERATARIST GUIO_RENDERMACINTOSH;
+
 	switch (platform) {
 	case Common::kPlatformDOS:
-		renderOptions = GUIO_RENDEREGA GUIO_RENDERCGA GUIO_RENDERHERCAMBER GUIO_RENDERHERCGREEN;
 		if (gid.contains("AGI256") || gid.contains("256 Colors"))
 			renderOptions += GUIO_RENDERVGA;
-		break;
-	case Common::kPlatformAmiga:
-		renderOptions = GUIO_RENDERAMIGA;
-		break;
-	case Common::kPlatformApple2GS:
-		renderOptions = GUIO_RENDERAPPLE2GS;
-		break;
-	case Common::kPlatformAtariST:
-		renderOptions = GUIO_RENDERATARIST;
-		break;
-	case Common::kPlatformMacintosh:
-		renderOptions = GUIO_RENDERMACINTOSH;
 		break;
 	default:
 		break;
