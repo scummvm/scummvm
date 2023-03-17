@@ -31,12 +31,14 @@
 
 namespace Chamber {
 
+#if 0
 static const char restart_name[] = "CLEARx.BIN";
 
 #ifdef VERSION_USA
 static const char savegame_name[] = "SCENACx.BIN";
 #else
 static const char savegame_name[] = "SCENAx.BIN";
+#endif
 #endif
 
 #ifdef VERSION_USA
