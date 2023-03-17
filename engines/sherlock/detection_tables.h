@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/translation.h"
+
 namespace Sherlock {
 
 static const SherlockGameDescription gameDescriptions[] = {
