@@ -326,6 +326,50 @@ static int tolua_ExportedFunctions_AddDocument00(lua_State *L) {
 	error("#ferror in function 'AddDocument': %d %d %s", err.index, err.array, err.type);
 }
 
+static bool IsFreemiumUnlocked() {
+	// Only called in demo versions of the game, so the answer is no.
+	return false;
+}
+
+static int tolua_ExportedFunctions_IsFreemiumUnlocked00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnoobj(L, 2, &err)) {
+		bool result = IsFreemiumUnlocked();
+		tolua_pushboolean(L, result);
+		return 1;
+	}
+	error("#ferror in function 'IsFreemiumUnlocked': %d %d %s", err.index, err.array, err.type);
+}
+
+static void ReachedFreemiumLimit() {
+	Application *app = g_engine->getApplication();
+	app->upsellScreen().enter();
+}
+
+static int tolua_ExportedFunctions_ReachedFreemiumLimit00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnoobj(L, 2, &err)) {
+		ReachedFreemiumLimit();
+		return 0;
+	}
+	error("#ferror in function 'ReachedFreemiumLimit': %d %d %s", err.index, err.array, err.type);
+}
+
+static bool IsFacebookLiked() {
+	// Only called in demo versions of the game, so the answer is no.
+	return false;
+}
+
+static int tolua_ExportedFunctions_IsFacebookLiked00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isnoobj(L, 2, &err)) {
+		bool result = IsFacebookLiked();
+		tolua_pushboolean(L, result);
+		return 1;
+	}
+	error("#ferror in function 'IsFacebookLiked': %d %d %s", err.index, err.array, err.type);
+}
+
 static void AddUnrecalAnim(const Common::String &newanim) {
 	Application *app = g_engine->getApplication();
 	Common::Array<Common::String> &anims = app->unrecalAnims();
@@ -2723,8 +2767,10 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "Random", tolua_ExportedFunctions_Random00);
 	tolua_function(L, "SetCharacterMeshVisible", tolua_ExportedFunctions_SetCharacterMeshVisible00);
 	tolua_function(L, "SetRecallageY", tolua_ExportedFunctions_SetRecallageY00);
-	// tolua_function(L, "IsFreemiumUnlocked", tolua_ExportedFunctions_IsFreemiumUnlocked00); // Unused
-	// tolua_function(L, "ReachedFreemiumLimit", tolua_ExportedFunctions_ReachedFreemiumLimit00); // Unused
+	tolua_function(L, "IsFreemiumUnlocked", tolua_ExportedFunctions_IsFreemiumUnlocked00);
+	tolua_function(L, "ReachedFreemiumLimit", tolua_ExportedFunctions_ReachedFreemiumLimit00);
+	tolua_function(L, "IsFacebookLiked", tolua_ExportedFunctions_IsFacebookLiked00);
+
 	tolua_function(L, "AddUnrecalAnim", tolua_ExportedFunctions_AddUnrecalAnim00);
 	tolua_function(L, "UnlockArtwork", tolua_ExportedFunctions_UnlockArtwork00);
 

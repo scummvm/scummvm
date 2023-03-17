@@ -90,6 +90,8 @@ public:
 
 	Common::Platform getGamePlatform() const;
 
+	bool isGameDemo() const;
+
 	/**
 	 * Gets a random number
 	 */

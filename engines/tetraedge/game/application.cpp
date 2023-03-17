@@ -65,7 +65,10 @@ _drawShadows(true) {
 	//
 	core->fileFlagSystemSetFlag("plateform", "MacOSX");
 	core->fileFlagSystemSetFlag("part", "Full");
-	core->fileFlagSystemSetFlag("distributor", "DefaultDistributor");
+	if (g_engine->isGameDemo())
+		core->fileFlagSystemSetFlag("distributor", "Freemium");
+	else
+		core->fileFlagSystemSetFlag("distributor", "DefaultDistributor");
 
 	TeLuaGUI tempGui;
 	tempGui.load("texts/Part.lua");

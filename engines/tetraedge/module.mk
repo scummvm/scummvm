@@ -41,6 +41,7 @@ MODULE_OBJS := \
 	game/question2.o \
 	game/scene_lights_xml_parser.o \
 	game/splash_screens.o \
+	game/upsell_screen.o \
 	game/youki_manager.o \
 	te/micropather.o \
 	te/te_3d_object2.o \

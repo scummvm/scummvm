@@ -42,17 +42,17 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
-	// iOS release v1.1.3
+	// iOS "free" release v1.1.3.  Not supported as we can't properly support
+	// the in-app purchase to enable the full game.
 	{
 		"syberia",
 		nullptr,
 		AD_ENTRY1s("Syberia", "d:be658efbcf4541f56b656f92a05d271a", 15821120),
 		Common::UNK_LANG,
 		Common::kPlatformIOS,
-		ADGF_TESTING,
+		ADGF_UNSUPPORTED | ADGF_DEMO,
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
-
 
 	// GOG release
 	{

@@ -142,6 +142,10 @@ Common::Platform TetraedgeEngine::getGamePlatform() const {
 	return _gameDescription->platform;
 }
 
+bool TetraedgeEngine::isGameDemo() const {
+	return (_gameDescription->flags & ADGF_DEMO) != 0;
+}
+
 bool TetraedgeEngine::canLoadGameStateCurrently() {
 	return _game && _application && !_application->mainMenu().isEntered();
 }
