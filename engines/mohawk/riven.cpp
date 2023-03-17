@@ -201,9 +201,6 @@ Common::Error MohawkEngine_Riven::run() {
 	while (!hasGameEnded())
 		doFrame();
 
-	// Attempt to autosave before exiting from the GMM / when closing the window
-	saveAutosaveIfEnabled();
-
 	return Common::kNoError;
 }
 
@@ -218,6 +215,11 @@ void MohawkEngine_Riven::doFrame() {
 	}
 
 	processInput();
+	
+	if (hasGameEnded()) {
+		// Attempt to autosave before exiting
+		saveAutosaveIfEnabled();
+	}
 
 	_stack->onFrame();
 
