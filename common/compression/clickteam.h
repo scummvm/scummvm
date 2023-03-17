@@ -87,7 +87,7 @@ private:
 		bool _isPatchFile;
 		bool _crcIsXorred;
 		bool _isReferenceMissing;
-		uint16 _field1c;
+		//uint16 _field1c;
 		Common::Array<ClickteamPatchDescriptor> _patchEntries;
 
 		ClickteamFileDescriptor(const ClickteamTag& contentsTag, uint32 off);
