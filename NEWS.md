@@ -6,6 +6,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
   - Fixed playback speed for Theora videos.
 
+ AGI:
+   - Restored possibility to pick arbitrary render mode in Game Options.
+
  HDB:
    - Fixed bug with inability to pick up red envelope with keyboard.
 
