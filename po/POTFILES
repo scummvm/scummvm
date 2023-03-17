@@ -5,6 +5,7 @@ gui/downloaddialog.cpp
 gui/downloadpacksdialog.cpp
 gui/editgamedialog.cpp
 gui/editrecorddialog.cpp
+gui/error.cpp
 gui/filebrowser-dialog.cpp
 gui/fluidsynth-dialog.cpp
 gui/gui-manager.cpp
@@ -68,6 +69,7 @@ backends/events/gph/gph-events.cpp
 backends/events/maemosdl/maemosdl-events.cpp
 backends/events/openpandora/op-events.cpp
 backends/fs/android/android-saf-fs.cpp
+backends/graphics/atari/atari-graphics.cpp
 backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
