@@ -23,7 +23,6 @@
 
 #include "engines/advancedDetector.h"
 #include "common/file.h"
-#include "common/translation.h"
 
 #include "neverhood/dialogs.h"
 #include "neverhood/neverhood.h"
