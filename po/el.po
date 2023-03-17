@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-17 15:25+0000\n"
+"POT-Creation-Date: 2023-03-17 17:40+0000\n"
 "PO-Revision-Date: 2023-03-07 11:29+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -8340,19 +8340,19 @@ msgstr "Πέταξε δεξιά"
 msgid "Fly to lower right"
 msgstr "Πέταξε κάτω δεξιά"
 
-#: engines/scumm/input.cpp:1294
+#: engines/scumm/input.cpp:1296
 msgid "Snap scroll on"
 msgstr "Ενεργή συγκράτηση κύλισης"
 
-#: engines/scumm/input.cpp:1296
+#: engines/scumm/input.cpp:1298
 msgid "Snap scroll off"
 msgstr "Συγκράτηση κύλισης ανενεργή"
 
-#: engines/scumm/input.cpp:1309
+#: engines/scumm/input.cpp:1311
 msgid "Music volume: "
 msgstr "Ένταση μουσικής: "
 
-#: engines/scumm/input.cpp:1326
+#: engines/scumm/input.cpp:1328
 msgid "Subtitle speed: "
 msgstr "Ταχύτητα υποτίτλων: "
 

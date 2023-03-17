@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-17 15:25+0000\n"
+"POT-Creation-Date: 2023-03-17 17:40+0000\n"
 "PO-Revision-Date: 2023-03-13 10:32+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -8241,19 +8241,19 @@ msgstr "Vola a destra"
 msgid "Fly to lower right"
 msgstr "Vola in basso a destra"
 
-#: engines/scumm/input.cpp:1294
+#: engines/scumm/input.cpp:1296
 msgid "Snap scroll on"
 msgstr "Scrolling a scatti"
 
-#: engines/scumm/input.cpp:1296
+#: engines/scumm/input.cpp:1298
 msgid "Snap scroll off"
 msgstr "Scrolling normale"
 
-#: engines/scumm/input.cpp:1309
+#: engines/scumm/input.cpp:1311
 msgid "Music volume: "
 msgstr "Volume musica: "
 
-#: engines/scumm/input.cpp:1326
+#: engines/scumm/input.cpp:1328
 msgid "Subtitle speed: "
 msgstr "Velocità testo: "
 

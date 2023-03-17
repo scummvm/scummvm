@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-17 15:25+0000\n"
+"POT-Creation-Date: 2023-03-17 17:40+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -7734,19 +7734,19 @@ msgstr ""
 msgid "Fly to lower right"
 msgstr ""
 
-#: engines/scumm/input.cpp:1294
+#: engines/scumm/input.cpp:1296
 msgid "Snap scroll on"
 msgstr ""
 
-#: engines/scumm/input.cpp:1296
+#: engines/scumm/input.cpp:1298
 msgid "Snap scroll off"
 msgstr ""
 
-#: engines/scumm/input.cpp:1309
+#: engines/scumm/input.cpp:1311
 msgid "Music volume: "
 msgstr ""
 
-#: engines/scumm/input.cpp:1326
+#: engines/scumm/input.cpp:1328
 msgid "Subtitle speed: "
 msgstr ""
 
