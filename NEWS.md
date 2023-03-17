@@ -39,6 +39,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix ordering of generated items in Ultima VI
    - Fix auto-readying throwing weapons in Ultima VI
 
+ Voyeur:
+   - Added support for German fan translation.
+
  Xeen:
    - Renamed 'xeen' engine to 'mm' for Might & Magic.
 
@@ -60,9 +63,6 @@ For a more comprehensive changelog of the latest experimental code, see:
  Sword2:
    - Added support for GOG.com version.
    - Added detection for alternate Polish version.
-
- Voyeur:
-   - Added support for German fan translation.
 
  iOS port:
    - Fix default theme selection on modern devices.
