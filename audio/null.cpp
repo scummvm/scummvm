@@ -20,7 +20,12 @@
  */
 
 #include "common/error.h"
+#include "common/translation.h"
 #include "audio/null.h"
+
+const char *NullMusicPlugin::getName() const {
+	return _s("No music");
+}
 
 Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_NULL();

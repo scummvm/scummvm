@@ -24,7 +24,6 @@
 
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
-#include "common/translation.h"
 
 /* NULL driver */
 class MidiDriver_NULL : public MidiDriver_MPU401 {
@@ -39,9 +38,7 @@ public:
 
 class NullMusicPlugin : public MusicPluginObject {
 public:
-	virtual const char *getName() const {
-		return _s("No music");
-	}
+	virtual const char *getName() const;
 
 	virtual const char *getId() const {
 		return "null";

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "audio/null.h"
 
 //	Plugin interface

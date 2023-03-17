@@ -26,6 +26,8 @@
 
 #ifndef DISABLE_SID
 
+#include "common/translation.h"
+
 #include "audio/softsynth/sid.h"
 #include "audio/null.h"
 

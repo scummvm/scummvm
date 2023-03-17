@@ -23,6 +23,7 @@
 #include "audio/null.h"
 
 #include "common/queue.h"
+#include "common/translation.h"
 
 namespace Audio {
 

@@ -50,7 +50,6 @@ audio/fmopl.cpp
 audio/mididrv.cpp
 audio/mods/paula.cpp
 audio/null.cpp
-audio/null.h
 audio/softsynth/appleiigs.cpp
 audio/softsynth/cms.cpp
 audio/softsynth/fluidsynth.cpp

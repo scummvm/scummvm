@@ -33,6 +33,7 @@
 #include <math.h>
 
 #include "common/scummsys.h"
+#include "common/translation.h"
 
 #include "audio/mixer.h"
 #include "audio/mods/paula.h"
