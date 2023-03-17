@@ -1,5 +1,3 @@
-#TODO: help_string & usage_string:
-
 gui/about.cpp
 gui/browser.cpp
 gui/chooser.cpp
