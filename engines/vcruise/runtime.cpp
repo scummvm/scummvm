@@ -349,7 +349,7 @@ InventoryItem::InventoryItem() : itemID(0), highlighted(false) {
 }
 
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
-	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _havePanAnimations(0), _loadedRoomNumber(0), _activeScreenNumber(0),
+	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
 	  _scriptNextInstruction(0), _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
@@ -1409,7 +1409,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 			}
 		}
 
-		_havePanAnimations = false;
+		_haveHorizPanAnimations = false;
 		for (uint i = 0; i < kNumDirections; i++) {
 			_havePanUpFromDirection[i] = false;
 			_havePanDownFromDirection[i] = false;
@@ -1509,28 +1509,32 @@ bool Runtime::dischargeIdleMouseMove() {
 		uint interactionID = 0;
 
 		Common::Point panRelMouse = _mousePos - _panoramaAnchor;
-		if (_havePanAnimations) {
+		if (_haveHorizPanAnimations) {
 			if (panRelMouse.x <= -kPanoramaPanningMarginX)
 				interactionID = kPanLeftInteraction;
 			else if (panRelMouse.x >= kPanoramaPanningMarginX)
 				interactionID = kPanRightInteraction;
-			else if (panRelMouse.y <= -kPanoramaPanningMarginY)
+		}
+
+		if (!interactionID) {
+			if (_havePanUpFromDirection[_direction] && panRelMouse.y <= -kPanoramaPanningMarginY) {
 				interactionID = kPanUpInteraction;
-			else if (panRelMouse.y >= kPanoramaPanningMarginY)
+			} else if (_havePanDownFromDirection[_direction] && panRelMouse.y >= kPanoramaPanningMarginY) {
 				interactionID = kPanDownInteraction;
+			}
+		}
 
-			if (interactionID) {
-				// If there's an interaction script for this direction, execute it
-				Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
+		if (interactionID) {
+			// If there's an interaction script for this direction, execute it
+			Common::SharedPtr<Script> script = findScriptForInteraction(interactionID);
 
-				if (script) {
-					resetInventoryHighlights();
+			if (script) {
+				resetInventoryHighlights();
 
-					ScriptEnvironmentVars vars;
-					vars.panInteractionID = interactionID;
-					activateScript(script, vars);
-					return true;
-				}
+				ScriptEnvironmentVars vars;
+				vars.panInteractionID = interactionID;
+				activateScript(script, vars);
+				return true;
 			}
 		}
 	}
@@ -2194,7 +2198,7 @@ Common::SharedPtr<Script> Runtime::findScriptForInteraction(uint interactionID) 
 void Runtime::detectPanoramaDirections() {
 	_panoramaDirectionFlags = 0;
 
-	if (_havePanAnimations)
+	if (_haveHorizPanAnimations)
 		_panoramaDirectionFlags |= kPanoramaHorizFlags;
 
 	if (_havePanDownFromDirection[_direction])
@@ -2215,7 +2219,7 @@ void Runtime::panoramaActivate() {
 	_panoramaAnchor = _mousePos;
 
 	uint cursorID = 0;
-	if (_havePanAnimations) {
+	if (_haveHorizPanAnimations || _havePanUpFromDirection[_direction] || _havePanDownFromDirection[_direction]) {
 		uint panCursor = 0;
 		if (_panoramaDirectionFlags & kPanoramaHorizFlags)
 			panCursor |= kPanCursorDraggableHoriz;
@@ -2235,7 +2239,7 @@ void Runtime::panoramaActivate() {
 }
 
 bool Runtime::computeFaceDirectionAnimation(uint desiredDirection, const AnimationDef *&outAnimDef, uint &outInitialFrame, uint &outStopFrame) {
-	if (_direction == desiredDirection || !_havePanAnimations)
+	if (_direction == desiredDirection || !_haveHorizPanAnimations)
 		return false;
 
 	uint leftPanDistance = ((_direction + kNumDirections) - desiredDirection) % kNumDirections;
@@ -2595,7 +2599,7 @@ void Runtime::scriptOpRotate(ScriptArg_t arg) {
 
 	_panLeftAnimationDef = stackArgsToAnimDef(stackArgs + 0);
 	_panRightAnimationDef = stackArgsToAnimDef(stackArgs + kAnimDefStackArgs);
-	_havePanAnimations = true;
+	_haveHorizPanAnimations = true;
 }
 
 void Runtime::scriptOpAngle(ScriptArg_t arg) {
@@ -2687,7 +2691,7 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 
 	
 	uint cursorID = 0;
-	if (_havePanAnimations) {
+	if (_haveHorizPanAnimations) {
 		uint panCursor = 0;
 		if (_panoramaDirectionFlags & kPanoramaHorizFlags)
 			panCursor |= kPanCursorDraggableHoriz;
@@ -2820,7 +2824,7 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	changeAnimation(animDef, animDef.lastFrame, false);
 
 	_havePendingReturnToIdleState = true;
-	_havePanAnimations = false;
+	_haveHorizPanAnimations = false;
 	_haveIdleStaticAnimation = true;
 	_idleCurrentStaticAnimation = animDef.animName;
 

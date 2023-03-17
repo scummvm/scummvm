@@ -651,7 +651,7 @@ private:
 
 	AnimationDef _panLeftAnimationDef;
 	AnimationDef _panRightAnimationDef;
-	bool _havePanAnimations;
+	bool _haveHorizPanAnimations;
 	bool _havePanUpFromDirection[kNumDirections];
 	bool _havePanDownFromDirection[kNumDirections];
 
