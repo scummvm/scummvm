@@ -33,6 +33,7 @@
 #include "common/util.h"
 #include "common/compression/gzio.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
