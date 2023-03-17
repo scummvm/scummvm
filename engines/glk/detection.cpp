@@ -59,7 +59,6 @@
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/translation.h"
 
 static const DebugChannelDef debugFlagList[] = {
 	{Glk::kDebugCore, "core", "Core engine debug level"},
