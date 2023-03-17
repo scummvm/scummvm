@@ -1996,7 +1996,9 @@ int MacText::getMouseWord(int x, int y) {
 		if (_textLines[row].chunks[j].text.empty())
 			continue;
 		cur += _textLines[row].chunks[j].text.size();
-		if (cur <= col)
+		// Avoid overflowing the word index if we run out of line;
+		// it should count as part of the last chunk
+		if ((cur <= col) && (j < _textLines[row].chunks.size() - 1))
 			index++;
 		else
 			break;
