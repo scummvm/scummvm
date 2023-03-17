@@ -64,6 +64,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Voyeur:
    - Added support for German fan translation.
 
+ iOS port:
+   - Fix default theme selection on modern devices.
+
  RISC OS port:
    - Fixed crash on RISC OS 5 with games that require lots of RAM.
 
