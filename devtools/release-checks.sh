@@ -231,11 +231,68 @@ else
   echoOk
 fi
 
-#############################################################################
-#
-# Engines go here
-#
-#############################################################################
+##########
+# POTFILES
+##########
+
+echo_n "Checking POTFILES duplicates..."
+
+OLDIFS="$IFS"
+IFS=$'\n'  # allow arguments with tabs and spaces
+
+# First, assemble all the files
+
+list=`cat po/POTFILES engines/*/POTFILES | sed '/^$/d' | sort`
+
+dupes=`uniq -c <<<"$list" | grep -v "1 "`
+
+if [ ! -z "$dupes" ]; then
+    num_lines=`wc -l <<< "$dupes"`
+    echo -e "$num_lines dupes detected"
+
+    echo $dupes
+
+  failPlus
+else
+  echoOk
+fi
+
+echo_n "Checking POTFILES header includes..."
+
+headerlist=`grep \.h$ <<< "$list" | grep -v detection_ | grep -v keymapper_`
+
+if [ ! -z "$headerlist" ]; then
+  num_lines=`wc -l <<< "$headerlist"`
+  echo -e "$num_lines headers detected"
+
+  echo "$headerlist"
+
+  failPlus
+else
+  echoOk
+fi
+
+
+echo_n "Checking missing/extra POTFILES..."
+
+# Now get list of includes
+git grep -l "common/translation\.h" | grep -v devtools/create_engine | sort > $TMP
+
+res=`diff -  $TMP <<< "$list"`
+
+if [ ! -z "$res" ]; then
+    echo -e "${RED}Failed.${NC}"
+    echo "The diff is below. < marks extra files in POTFILES, > marks missing file in POTFILES"
+
+    echo "$res"
+
+    failPlus
+else
+  echoOk
+fi
+
+
+IFS="$OLDIFS"
 
 ##########
 # Dat files
@@ -333,6 +390,12 @@ else
   echoOk
 fi
 
+
+#############################################################################
+#
+# Engines go here
+#
+#############################################################################
 
 ###########
 # MM engine
