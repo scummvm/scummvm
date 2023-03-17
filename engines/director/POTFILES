@@ -1,2 +1,3 @@
 engines/director/events.cpp
 engines/director/lingo/lingo-builtins.cpp
+engines/director/lingo/xlibs/jitdraw3.cpp
