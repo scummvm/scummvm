@@ -45,14 +45,14 @@
 #define JOYSTICK_DIR	"/sys/devices/platform/joystick"
 
 static const Common::KeyTableEntry odKeyboardButtons[] = {
-	{ "JOY_A",		Common::KEYCODE_LCTRL,		_s("A")			},
-	{ "JOY_B",		Common::KEYCODE_LALT,		_s("B")			},
-	{ "JOY_X",		Common::KEYCODE_SPACE,		_s("X")			},
-	{ "JOY_Y",		Common::KEYCODE_LSHIFT,		_s("Y")			},
-	{ "JOY_BACK",		Common::KEYCODE_ESCAPE,		_s("Select")		},
-	{ "JOY_START",		Common::KEYCODE_RETURN,		_s("Start")		},
-	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_TAB,		_s("L")			},
-	{ "JOY_RIGHT_SHOULDER", Common::KEYCODE_BACKSPACE,	_s("R")			},
+	{ "JOY_A",		Common::KEYCODE_LCTRL,		_s("A")			}, // I18N: Hardware key
+	{ "JOY_B",		Common::KEYCODE_LALT,		_s("B")			}, // I18N: Hardware key
+	{ "JOY_X",		Common::KEYCODE_SPACE,		_s("X")			}, // I18N: Hardware key
+	{ "JOY_Y",		Common::KEYCODE_LSHIFT,		_s("Y")			}, // I18N: Hardware key
+	{ "JOY_BACK",		Common::KEYCODE_ESCAPE,		_s("Select")		}, // I18N: Hardware key
+	{ "JOY_START",		Common::KEYCODE_RETURN,		_s("Start")		}, // I18N: Hardware key
+	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_TAB,		_s("L")			}, // I18N: Hardware key
+	{ "JOY_RIGHT_SHOULDER", Common::KEYCODE_BACKSPACE,	_s("R")			}, // I18N: Hardware key
 	{ "JOY_UP",		Common::KEYCODE_UP,		_s("D-pad Up")	},
 	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad Down")	},
 	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad Left")	},
@@ -61,7 +61,7 @@ static const Common::KeyTableEntry odKeyboardButtons[] = {
 };
 
 static const Common::HardwareInputTableEntry odJoystickButtons[] = {
-	{ "JOY_LEFT_TRIGGER",	Common::JOYSTICK_BUTTON_LEFT_STICK,	_s("L3")	 },
+	{ "JOY_LEFT_TRIGGER",	Common::JOYSTICK_BUTTON_LEFT_STICK,	_s("L3")	 }, // I18N: Hardware key
 	{ nullptr,		0,					nullptr		 }
 };
 
@@ -206,4 +206,3 @@ Common::HardwareInputSet *OSystem_SDL_Opendingux::getHardwareInputSet() {
 
 	return inputSet;
 }
-

@@ -99,6 +99,9 @@ backends/platform/ios7/ios7_osys_main.cpp
 backends/platform/iphone/osys_events.cpp
 backends/platform/maemo/maemo.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
+backends/platform/sdl/macosx/macosx.cpp
+backends/platform/sdl/miyoo/miyoo.cpp
+backends/platform/sdl/opendingux/opendingux.cpp
 backends/platform/sdl/ps3/ps3.cpp
 backends/platform/sdl/psp2/psp2.cpp
 backends/platform/sdl/switch/switch.cpp
