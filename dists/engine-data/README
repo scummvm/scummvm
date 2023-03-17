@@ -2,7 +2,7 @@ engine-data README
 -------------------------------------------------------------------------------
 
 access.dat:
-This file contains game resource data used by Access engine.
+This file contains game resource data used by the Access engine.
 
 achievements.dat:
 This file contains Achievements and Statistics IDs and localization from Steam and GOG.
@@ -19,7 +19,7 @@ drascula.dat:
 This file contains essential game data used by the Drascula engine.
 
 encoding.dat:
-This file contains character mapping for CJK encodings to unicode.
+This file contains character mapping for CJK encodings to Unicode.
 
 freescape.dat:
 This file contains essential game data used by the Freescape engine.
@@ -29,7 +29,7 @@ This file contains set of free TTF fonts used by Glk, ZVision, Wintermute engine
 our GUI.
 
 grim-patch.lab:
-This file contains set of script patches for Grim Fandango.
+This file contains set of script patches for Grim Fandango game.
 
 hadesch_translations.dat:
 This file contains essential data for Hadesch Challenge game.
@@ -51,7 +51,7 @@ The file contains set of offsets for recreation of Classic Mac OS GUI, used
 by Director, MacVenture and WAGE engines.
 
 macventure.dat:
-This file contains additional GUI elements used by MacVenture engine.
+This file contains additional GUI elements used by the MacVenture engine.
 
 monkey4-patch.m4b:
 This file contains script patches for Escape from Monkey Island game.
@@ -62,7 +62,7 @@ also contains the French and German translation, as well as a custom-made
 English translation.
 
 myst3.dat:
-This file contains essential game data used by the Myst3 game.
+This file contains essential game data used by Myst3 game.
 
 nancy.dat:
 File containing various constants, game logic and strings originally embedded
@@ -102,10 +102,10 @@ toon.dat:
 This file contains all the strings hardcoded in the original executables.
 
 ultima.dat:
-This file contains scripts and game data used by Ultima engine.
+This file contains scripts and game data used by the Ultima engine.
 
 wintermute.zip:
-This file contains additional graphics resources used by Wintermute engine.
+This file contains additional graphics resources used by the Wintermute engine.
 
 mm.dat:
 This file contains all the various strings and data needed for the Might & Magic games.
