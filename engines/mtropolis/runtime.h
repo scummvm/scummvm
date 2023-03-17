@@ -1958,7 +1958,7 @@ private:
 	uint32 _collisionCheckTime;
 
 	Common::WeakPtr<VisualElement> _elementTrackedToCursor;
-	uint32 _elementCursorUpdateTime;
+	//uint32 _elementCursorUpdateTime;
 
 	Common::Array<IPostEffect *> _postEffects;
 

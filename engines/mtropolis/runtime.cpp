@@ -4236,7 +4236,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	  _lastFrameCursor(nullptr), _lastFrameMouseVisible(false), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
 	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _haveCursorElement(false), _sceneGraphChanged(false), _isQuitting(false),
-	  _collisionCheckTime(0), _elementCursorUpdateTime(0), _defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
+	  _collisionCheckTime(0), /*_elementCursorUpdateTime(0), */_defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
 	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer), _multiClickStartTime(0), _multiClickInterval(500), _multiClickCount(0)
 {
 	_random.reset(new Common::RandomSource("mtropolis"));

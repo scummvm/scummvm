@@ -510,7 +510,7 @@ private:
 	MotionType _motionType;
 	uint16 _directionFlags;
 	uint16 _steps;
-	uint32 _delayMSecTimes4800;
+	//uint32 _delayMSecTimes4800;
 };
 
 class DragMotionModifier : public Modifier {
