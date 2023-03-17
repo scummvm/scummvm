@@ -1046,7 +1046,7 @@ void ScummEngine_v60he::o60_seekFilePos() {
 
 	if (slot == -1)
 		return;
-	
+
 	int whence;
 	switch(mode) {
 	case 1:

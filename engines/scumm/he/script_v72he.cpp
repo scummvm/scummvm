@@ -585,7 +585,7 @@ void ScummEngine_v72he::o72_drawObject() {
 			state = 1;
 		y = x = -100;
 		break;
-	case SO_AT:
+	case ScummEngine_v6::SubOpType::SO_AT:
 		state = 1;
 		y = pop();
 		x = pop();
@@ -1262,7 +1262,7 @@ void ScummEngine_v72he::o72_arrayOps() {
 				}
 				break;
 			}
-	case 194:		// SO_FORMATTED_STRING
+	case SO_FORMATTED_STRING: // SO_FORMATTED_STRING
 		decodeScriptString(string);
 		len = resStrLen(string);
 		data = defineArray(array, kStringArray, 0, 0, 0, len);
