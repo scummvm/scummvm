@@ -500,7 +500,7 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override {
-		return (f == kSupportsSavingDuringRuntime || f == kSupportsLoadingDuringRuntime);
+		return (f == kSupportsSavingDuringRuntime || f == kSupportsLoadingDuringRuntime || f == kSupportsReturnToLauncher);
 	}
 
 private:
