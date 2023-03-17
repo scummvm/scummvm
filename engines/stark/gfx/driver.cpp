@@ -27,7 +27,6 @@
 #include "engines/stark/services/settings.h"
 
 #include "common/config-manager.h"
-#include "common/translation.h"
 
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
