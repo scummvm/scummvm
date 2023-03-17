@@ -338,6 +338,8 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"static", ProtoOp::kProtoOpScript, ScriptOps::kStatic},
 	{"yes@", ProtoOp::kProtoOpScript, ScriptOps::kVarLoad},
 	{"yes!", ProtoOp::kProtoOpScript, ScriptOps::kVarStore},
+	{"yesg@", ProtoOp::kProtoOpScript, ScriptOps::kVarGlobalLoad},
+	{"yesg!", ProtoOp::kProtoOpScript, ScriptOps::kVarGlobalStore},
 	{"cr?", ProtoOp::kProtoOpScript, ScriptOps::kItemCheck},
 	{"cr!", ProtoOp::kProtoOpScript, ScriptOps::kItemRemove},
 	{"sr!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSet},

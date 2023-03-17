@@ -531,6 +531,8 @@ private:
 	void scriptOpStatic(ScriptArg_t arg);
 	void scriptOpVarLoad(ScriptArg_t arg);
 	void scriptOpVarStore(ScriptArg_t arg);
+	void scriptOpVarGlobalLoad(ScriptArg_t arg);
+	void scriptOpVarGlobalStore(ScriptArg_t arg);
 
 	void scriptOpItemCheck(ScriptArg_t arg);
 	void scriptOpItemRemove(ScriptArg_t arg);

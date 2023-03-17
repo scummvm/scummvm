@@ -1023,6 +1023,8 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Static);
 			DISPATCH_OP(VarLoad);
 			DISPATCH_OP(VarStore);
+			DISPATCH_OP(VarGlobalLoad);
+			DISPATCH_OP(VarGlobalStore);
 			DISPATCH_OP(ItemCheck);
 			DISPATCH_OP(ItemRemove);
 			DISPATCH_OP(ItemHighlightSet);
@@ -2847,6 +2849,26 @@ void Runtime::scriptOpVarStore(ScriptArg_t arg) {
 	TAKE_STACK(2);
 
 	uint32 varID = (static_cast<uint32>(_roomNumber) << 16) | static_cast<uint32>(stackArgs[1]);
+
+	_variables[varID] = stackArgs[0];
+}
+
+void Runtime::scriptOpVarGlobalLoad(ScriptArg_t arg) {
+	TAKE_STACK(1);
+
+	uint32 varID = static_cast<uint32>(stackArgs[0]);
+
+	Common::HashMap<uint32, int32>::const_iterator it = _variables.find(varID);
+	if (it == _variables.end())
+		_scriptStack.push_back(0);
+	else
+		_scriptStack.push_back(it->_value);
+}
+
+void Runtime::scriptOpVarGlobalStore(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	uint32 varID = static_cast<uint32>(stackArgs[1]);
 
 	_variables[varID] = stackArgs[0];
 }

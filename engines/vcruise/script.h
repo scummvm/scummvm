@@ -61,6 +61,8 @@ enum ScriptOp {
 	kStatic,
 	kVarLoad,
 	kVarStore,
+	kVarGlobalLoad,
+	kVarGlobalStore,
 	kItemCheck,
 	kItemHaveSpace,
 	kItemRemove,
