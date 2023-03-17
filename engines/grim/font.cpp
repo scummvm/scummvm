@@ -276,7 +276,7 @@ void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLin
 
 	for (unsigned int d = 0; d < currentLine.size(); d++) {
 		uint16 ch = uint8(currentLine[d]);
-		if (_isDBCS && d + 1 < currentLine.size()) {
+		if (_isDBCS && (ch & 0x80) &&  d + 1 < currentLine.size()) {
 			ch = (ch << 8) | (currentLine[++d] & 0xff);
 		}
 		int32 charBitmapWidth = getCharBitmapWidth(ch);
