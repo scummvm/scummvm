@@ -22,16 +22,25 @@
 #ifndef MM1_VIEWS_ENH_ITEMS_VIEW_H
 #define MM1_VIEWS_ENH_ITEMS_VIEW_H
 
-#include "mm/mm1/views_enh/yes_no.h"
+#include "mm/mm1/views_enh/party_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class ItemsView : public ScrollView {
+class ItemsView : public PartyView {
 protected:
 	int _selectedItem = -1;
+	Common::Array<int> _items;
+	const Common::Rect _buttonsArea;
+	Shared::Xeen::SpriteResource _btnSprites;
+	Common::StringArray _btnText;
 
+	/**
+	 * Add a button to the buttons bar
+	 */
+	void addButton(int frame, const Common::String &text,
+		Common::KeyCode keycode);
 public:
 	ItemsView(const Common::String &name);
 	virtual ~ItemsView() {}

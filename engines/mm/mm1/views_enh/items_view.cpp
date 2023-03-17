@@ -26,8 +26,22 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-ItemsView::ItemsView(const Common::String &name) : ScrollView(name) {
-	setBounds(Common::Rect(0, 144, 234, 200));
+#define BUTTON_WIDTH 35
+#define EXIT_X 270
+
+ItemsView::ItemsView(const Common::String &name) : PartyView(name),
+		_buttonsArea(Common::Rect(0, 101, 320, 146)) {
+	_bounds = Common::Rect(0, 0, 320, 146);
+}
+
+void ItemsView::addButton(int frame, const Common::String &text,
+		Common::KeyCode keycode) {
+	Common::Point pt(_btnText.size() * BUTTON_WIDTH + 5, 0);
+	if (keycode == Common::KEYCODE_ESCAPE)
+		pt.x = EXIT_X;
+
+	PartyView::addButton(&_btnSprites, pt, frame, keycode);
+	_btnText.push_back(text);
 }
 
 bool ItemsView::msgFocus(const FocusMessage &msg) {
@@ -37,7 +51,28 @@ bool ItemsView::msgFocus(const FocusMessage &msg) {
 }
 
 void ItemsView::draw() {
+	// Manually draw a frame for the entire area to avoid
+	// also drawing the buttons
+	frame();
+	fill();
 
+	// Now draw the buttons area
+	const Common::Rect r = _bounds;
+	_bounds = _buttonsArea;
+	PartyView::draw();
+	_bounds = r;
+
+	// Draw button text
+	setReduced(true);
+	for (uint i = 0; i < _btnText.size(); ++i) {
+		Common::Point pt(i * BUTTON_WIDTH + 5, 122);
+		if (i == (_btnText.size() - 1))
+			pt.x = EXIT_X;
+
+		writeString(pt.x + 18, pt.y, _btnText[i], ALIGN_MIDDLE);
+	}
+
+	// TODO: drawing items
 }
 
 bool ItemsView::msgKeypress(const KeypressMessage &msg) {

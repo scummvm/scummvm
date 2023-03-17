@@ -92,6 +92,13 @@ protected:
 	 * Get the button at the given position
 	 */
 	int getButtonAt(const Common::Point &pos);
+
+	/**
+	 * Return the number of buttons
+	 */
+	size_t getButtonCount() const {
+		return _buttons.size();
+	}
 public:
 	ScrollView(const Common::String &name);
 	ScrollView(const Common::String &name, UIElement *owner);

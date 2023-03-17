@@ -43,6 +43,7 @@
 #include "mm/mm1/views_enh/unlock.h"
 #include "mm/mm1/views_enh/who_will_try.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
+#include "mm/mm1/views_enh/locations/blacksmith_items.h"
 #include "mm/mm1/views_enh/locations/blacksmith.h"
 #include "mm/mm1/views_enh/locations/inn.h"
 #include "mm/mm1/views_enh/locations/market.h"
@@ -60,6 +61,7 @@ struct Dialogs {
 private:
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Locations::Blacksmith _blacksmith;
+	ViewsEnh::Locations::BlacksmithItems _blacksmithItems;
 	ViewsEnh::Locations::Inn _inn;
 	ViewsEnh::Locations::Market _market;
 	ViewsEnh::Locations::Tavern _tavern;

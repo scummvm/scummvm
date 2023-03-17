@@ -27,6 +27,7 @@
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
+namespace Locations {
 
 class BlacksmithItems : public ItemsView {
 public:
@@ -39,6 +40,7 @@ public:
 	bool msgAction(const ActionMessage &msg) override;
 };
 
+} // namespace Location
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
