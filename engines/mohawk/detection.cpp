@@ -24,7 +24,6 @@
 #include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 
 #include "mohawk/detection.h"
 
