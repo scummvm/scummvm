@@ -49,7 +49,7 @@ SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 	SaveStateList list;
 
 	// some Groovie 2 games use save 0 with a garbage name for internal tracking, other games use slot 0 for Open House mode
-	const Common::U32String reservedName = _("Reserved");
+	const Common::U32String reservedName = _("Reserved"); // I18N: Savegame default name in Groovie engine
 	bool hasReserved = false;
 
 	// Get the list of savefiles
