@@ -253,6 +253,7 @@ declare -a distfiles=(
   "dists/win32/migration.txt#%FILE%"
 )
 
+OLDIFS="$IFS"
 IFS=$'\n'  # allow arguments with tabs and spaces
 
 absentFiles=0
@@ -278,12 +279,51 @@ do
 
         res=`sed "s|%FILE%|$file|g" <<< "$pattern"`
 
-        if [ -z $(grep -E "$res" "$target") ]; then
+        if [ -z $(grep -E "$res" "$target" | head -1) ]; then
             echo "$file is absent in $target"
             absentFiles=$((absentFiles+1))
         fi
     done
 done
+
+declare -a themefiles=(
+  "Makefile.common#DIST_FILES_THEMES=.*%FILE%"
+  "devtools/create_project/xcode.cpp#[	 ]+files.push_back\(\"gui/themes/%FILE%\"\);"
+  "dists/irix/scummvm.idb#f 0644 root sys usr/ScummVM/share/scummvm/%FILE% %FILE% scummvm.sw.eoe"
+  "dists/scummvm.rc#%FILE%[	 ]+FILE[	 ]+\"gui/themes/%FILE%\""
+  "dists/win32/migration.txt#%FILE%"
+)
+
+for f in gui/themes/*
+do
+    # Skip directories
+    if [ -d $f ]; then
+        continue
+    fi
+
+    file=`basename $f`
+
+    # Skip README file
+    if [ $file == "scummtheme.py" -o $file == "default.inc" ]; then
+        continue
+    fi
+
+    for d in "${themefiles[@]}"
+    do
+        target=`cut -d '#' -f 1 <<< "$d"`
+        pattern=`cut -d '#' -f 2 <<< "$d"`
+
+        res=`sed "s|%FILE%|$file|g" <<< "$pattern"`
+
+        if [ -z $(grep -E "$res" "$target" | head -1) ]; then
+            echo "$file is absent in $target"
+            absentFiles=$((absentFiles+1))
+        fi
+    done
+done
+
+IFS="$OLDIFS"
+
 
 if [ "$absentFiles" -ne "0" ]; then
   echo -e "$absentFiles missing files ${RED}Fix them${NC}"
