@@ -61,6 +61,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for GOG.com version.
    - Added detection for alternate Polish version.
 
+ Voyeur:
+   - Added support for German fan translation.
+
  RISC OS port:
    - Fixed crash on RISC OS 5 with games that require lots of RAM.
 
