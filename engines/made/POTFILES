@@ -1,3 +1,2 @@
-engines/made/detection.cpp
 engines/made/detection_tables.h
 engines/made/metaengine.cpp
