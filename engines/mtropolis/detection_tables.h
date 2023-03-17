@@ -463,7 +463,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 		MTBOOT_MTI_DEMO_WIN,
 	},
-	
+
 	{ // Uncle Albert's Magical Album (German, Windows)
 	  // Original title: Onkel Alberts geheimnisvolles Notizbuch
 	  // Published by Tivola, 1998
