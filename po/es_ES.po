@@ -9143,8 +9143,8 @@ msgid ""
 msgstr ""
 "Falta el archivo con el vídeo introductorio de Crusader: comprueba que se "
 "hayan copiado los directorios FLICS y SOUND del CD. Para más información, "
-"visita la wiki: https://wiki.scummvm.org/index."
-"php?title=Crusader:_No_Remorse."
+"visita la wiki: https://wiki.scummvm.org/index.php?title=Crusader:"
+"_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
