@@ -22,6 +22,8 @@
 #ifndef SCI_DETECTION_OPTIONS_H
 #define SCI_DETECTION_OPTIONS_H
 
+#include "common/translation.h"
+
 namespace Sci {
 
 const ADExtraGuiOptionsMap optionsList[] = {

@@ -24,7 +24,6 @@
 #include "common/file.h"
 #include "common/hashmap.h"
 #include "common/ptr.h"
-#include "common/translation.h"
 
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
@@ -119,7 +118,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"hoyle4",          "Hoyle Classic Card Games"},
 	{"inndemo",         "ImagiNation Network (INN) Demo"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
-	{"laurabow2",       "Laura Bow II: The Dagger of Amon Ra"}, 
+	{"laurabow2",       "Laura Bow II: The Dagger of Amon Ra"},
 	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero"},	// Note: There was also a SCI0 version of this (further up) called Hero's Quest: So You Want to Be a Hero
 	{"qfg3",            "Quest for Glory III: Wages of War"},
 	{"sq5",             "Space Quest V: The Next Mutation"},

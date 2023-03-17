@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/translation.h"
+
 namespace Sci {
 
 #define GUIO_STD16 GUIO6(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING, GAMEOPTION_TTS)
@@ -1008,7 +1010,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
-	
+
 	// Gabriel Knight 2 - Korean DOS (GOG version) (from swkim01)
 	// using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
 	{"gk2", "", {
@@ -1596,7 +1598,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "143e1c14f15ad0fbfc714f648a65f661", 205330},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
-	
+
 	// King's Quest 4 - English DOS (5 1/4" disks)
 	// Game version 1.000.106
 	// Executable scanning reports 0.000.253
