@@ -74,7 +74,7 @@ void SpiderEngine::runAfterArcade(ArcadeShooting *arc) {
 	_playerFrames.clear();
 
 	if (isDemo() && _restoredContentEnabled) {
-		if (_health == 0)
+		if (_health <= 0)
 			showScore("Spider-man was defeated!");
 		else
 			showScore("Spider-Man saved the day!");
