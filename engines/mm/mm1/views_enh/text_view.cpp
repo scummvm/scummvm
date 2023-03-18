@@ -45,7 +45,7 @@ byte TextView::setTextColor(byte col) {
 	return oldColor;
 }
 
-Graphics::Font *TextView::getFont() const {
+XeenFont *TextView::getFont() const {
 	return _fontReduced ? &g_globals->_fontReduced :
 		&g_globals->_fontNormal;
 }

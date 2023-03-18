@@ -27,7 +27,7 @@ namespace MM1 {
 namespace ViewsEnh {
 
 #define BUTTON_WIDTH 35
-#define EXIT_X 270
+#define EXIT_X 275
 
 ItemsView::ItemsView(const Common::String &name) : PartyView(name),
 		_buttonsArea(Common::Rect(0, 101, 320, 146)) {
@@ -37,10 +37,13 @@ ItemsView::ItemsView(const Common::String &name) : PartyView(name),
 void ItemsView::addButton(int frame, const Common::String &text,
 		Common::KeyCode keycode) {
 	Common::Point pt(_btnText.size() * BUTTON_WIDTH + 5, 0);
-	if (keycode == Common::KEYCODE_ESCAPE)
+	if (keycode == Common::KEYCODE_ESCAPE) {
 		pt.x = EXIT_X;
+		PartyView::addButton(&g_globals->_escSprites, pt, 0, KEYBIND_ESCAPE);
+	} else {
+		PartyView::addButton(&_btnSprites, pt, frame, keycode);
+	}
 
-	PartyView::addButton(&_btnSprites, pt, frame, keycode);
 	_btnText.push_back(text);
 }
 
@@ -69,7 +72,7 @@ void ItemsView::draw() {
 		if (i == (_btnText.size() - 1))
 			pt.x = EXIT_X;
 
-		writeString(pt.x + 18, pt.y, _btnText[i], ALIGN_MIDDLE);
+		writeString(pt.x + 12, pt.y, _btnText[i], ALIGN_MIDDLE);
 	}
 
 	// TODO: drawing items
@@ -79,14 +82,19 @@ bool ItemsView::msgKeypress(const KeypressMessage &msg) {
 	if (endDelay())
 		return true;
 
-	return true;
+	return PartyView::msgKeypress(msg);
 }
 
 bool ItemsView::msgAction(const ActionMessage &msg) {
 	if (endDelay())
 		return true;
 
-	return true;
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		return true;
+	} else {
+		return PartyView::msgAction(msg);
+	}
 }
 
 void ItemsView::timeout() {

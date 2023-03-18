@@ -24,6 +24,7 @@
 
 #include "graphics/font.h"
 #include "mm/mm1/events.h"
+#include "mm/shared/utils/xeen_font.h"
 
 namespace MM {
 namespace MM1 {
@@ -31,7 +32,7 @@ namespace ViewsEnh {
 
 class TextView : public UIElement {
 private:
-	Graphics::Font *getFont() const;
+	XeenFont *getFont() const;
 
 	/**
 	 * Raw write string
