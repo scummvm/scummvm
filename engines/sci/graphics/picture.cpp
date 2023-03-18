@@ -147,7 +147,6 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 	//int16 displaceX, displaceY;
 	byte priority = _priority;
 	byte clearColor;
-	bool compression = true;
 	byte curByte;
 	int16 y, lastY, x, leftX, rightX;
 	int pixelCount;
@@ -176,12 +175,7 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 	pixelCount = width * height;
 	Common::SpanOwner<SciSpan<byte> > celBitmap;
 	celBitmap->allocate(pixelCount, _resource->name());
-
-	if (compression) {
-		unpackCelData(inbuffer, *celBitmap, clearColor, rlePos, literalPos, _resMan->getViewType(), width, false);
-	} else
-		// No compression (some SCI32 pictures)
-		memcpy(celBitmap->getUnsafeDataAt(0, pixelCount), rlePtr.getUnsafeDataAt(0, pixelCount), pixelCount);
+	unpackCelData(inbuffer, *celBitmap, clearColor, rlePos, literalPos, _resMan->getViewType(), width, false);
 
 	Common::Rect displayArea = _coordAdjuster->pictureGetDisplayArea();
 
