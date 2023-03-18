@@ -49,6 +49,11 @@ void ItemsView::addButton(int frame, const Common::String &text,
 
 bool ItemsView::msgFocus(const FocusMessage &msg) {
 	ScrollView::msgFocus(msg);
+
+	// Disable the normal '1' to '6' character selection keybindings,
+	// since we're using them in this dialog for item selection
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+
 	_selectedItem = -1;
 	return true;
 }
@@ -74,13 +79,15 @@ void ItemsView::draw() {
 	}
 
 	// List the items
-	for (uint i = 0; i < _items.size(); ++i) {
+	for (int i = 0; i < (int)_items.size(); ++i) {
 		g_globals->_items.getItem(_items[i]);
 		const Item &item = g_globals->_currItem;
 		const Common::String line = Common::String::format(
 			"%d) %s", i + 1,
 			item._name.c_str()
 		);
+
+		setTextColor(i == _selectedItem ? 15 : 0);
 		writeLine(2 + i, line, ALIGN_LEFT, 10);
 
 		if (_costMode != NO_COST) {
@@ -91,11 +98,21 @@ void ItemsView::draw() {
 	}
 	if (_items.size() == 0)
 		writeLine(2, STRING["enhdialogs.misc.no_items"], ALIGN_LEFT, 10);
+	setTextColor(0);
 }
 
 bool ItemsView::msgKeypress(const KeypressMessage &msg) {
 	if (endDelay())
 		return true;
+
+	if (msg.keycode >= Common::KEYCODE_1 &&
+			msg.keycode <= (int)(Common::KEYCODE_0 + _items.size())) {
+		_selectedItem = msg.keycode - Common::KEYCODE_1;
+		draw();
+
+		itemSelected();
+		return true;
+	}
 
 	return PartyView::msgKeypress(msg);
 }

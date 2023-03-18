@@ -32,7 +32,6 @@ BlacksmithItems::BlacksmithItems() : ItemsView("BlacksmithItems") {
 	addButton(0, STRING["enhdialogs.blacksmith.buttons.weapons"], Common::KEYCODE_w);
 	addButton(2, STRING["enhdialogs.blacksmith.buttons.armor"], Common::KEYCODE_a);
 	addButton(6, STRING["enhdialogs.blacksmith.buttons.misc"], Common::KEYCODE_m);
-	addButton(8, STRING["enhdialogs.blacksmith.buttons.buy"], Common::KEYCODE_b);
 	addButton(10, STRING["enhdialogs.blacksmith.buttons.sell"], Common::KEYCODE_s);
 	addButton(12, STRING["enhdialogs.blacksmith.buttons.exit"], Common::KEYCODE_ESCAPE);
 }
@@ -154,6 +153,10 @@ void BlacksmithItems::populateItems() {
 		for (uint i = 0; i < c._backpack.size(); ++i)
 			_items.push_back(c._backpack[i]._id);
 	}
+}
+
+void BlacksmithItems::itemSelected() {
+	// TODO: buy/sell items
 }
 
 } // namespace Locations

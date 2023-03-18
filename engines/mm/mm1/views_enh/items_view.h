@@ -43,6 +43,12 @@ protected:
 	 */
 	void addButton(int frame, const Common::String &text,
 		Common::KeyCode keycode);
+
+	/**
+	 * Called when an item is selected
+	 */
+	virtual void itemSelected() = 0;
+
 public:
 	ItemsView(const Common::String &name);
 	virtual ~ItemsView() {}

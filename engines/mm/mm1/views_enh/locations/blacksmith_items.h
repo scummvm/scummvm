@@ -50,6 +50,12 @@ private:
 	 */
 	void drawTitle();
 
+protected:
+	/**
+	 * Called when an item is selected
+	 */
+	void itemSelected() override;
+
 public:
 	BlacksmithItems();
 	virtual ~BlacksmithItems() {}
