@@ -41,7 +41,6 @@ bool BlacksmithItems::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
 
 	_mode = WEAPONS_MODE;
-	_buyMode = true;
 	populateItems();
 
 	return true;
@@ -61,7 +60,18 @@ void BlacksmithItems::drawTitle() {
 	if (_mode == MISC_MODE)
 		areaName = STRING["enhdialogs.blacksmith.areas.misc"];
 
-	if (_buyMode) {
+	if (_mode == SELL_MODE) {
+		// Show sell mode title
+		Common::String title = Common::String::format(
+			STRING["enhdialogs.blacksmith.backpack_for"].c_str(),
+			c._name,
+			STRING[Common::String::format("stats.classes.%d", c._class)].c_str()
+		);
+
+		setReduced(false);
+		writeLine(0, title, ALIGN_MIDDLE);
+
+	} else {
 		// Show title with "Available <Area>", "Gold", and "Cost"
 		setReduced(false);
 		Common::String title = Common::String::format("%s %s",
@@ -75,17 +85,6 @@ void BlacksmithItems::drawTitle() {
 		writeString(160, 0, gold);
 
 		writeString(0, 0, STRING["enhdialogs.blacksmith.cost"], ALIGN_RIGHT);
-
-	} else {
-		// Shows a title like "Weapons for Arturius the Paladin"
-		Common::String title = Common::String::format(
-			STRING["enhdialogs.blacksmith.backpack_for"].c_str(),
-			c._name,
-			STRING[Common::String::format("stats.classes.%d", c._class)].c_str()
-		);
-
-		setReduced(false);
-		writeLine(0, title, ALIGN_MIDDLE);
 	}
 }
 
@@ -93,7 +92,33 @@ bool BlacksmithItems::msgKeypress(const KeypressMessage &msg) {
 	if (endDelay())
 		return true;
 
-	return ItemsView::msgKeypress(msg);
+	switch (msg.keycode) {
+	case Common::KEYCODE_w:
+		_mode = WEAPONS_MODE;
+		populateItems();
+		redraw();
+		break;
+	case Common::KEYCODE_a:
+		_mode = ARMOR_MODE;
+		populateItems();
+		redraw();
+		break;
+	case Common::KEYCODE_m:
+		_mode = MISC_MODE;
+		populateItems();
+		redraw();
+		break;
+	case Common::KEYCODE_s:
+		_mode = SELL_MODE;
+		populateItems();
+		redraw();
+		break;
+
+	default:
+		return ItemsView::msgKeypress(msg);
+	}
+
+	return true;
 }
 
 bool BlacksmithItems::msgAction(const ActionMessage &msg) {
@@ -104,13 +129,12 @@ bool BlacksmithItems::msgAction(const ActionMessage &msg) {
 }
 
 void BlacksmithItems::populateItems() {
-	_startingChar = _buyMode ? '1' : 'A';
-	_costMode = _buyMode ? SHOW_COST : SHOW_VALUE;
+	_costMode = (_mode == SELL_MODE) ? SHOW_VALUE : SHOW_COST;
 	_items.clear();
 
-	if (_buyMode) {
+	if (_mode != SELL_MODE) {
 		// Populate the list of items that can be purchased
-		// from the Blacksmith in that category
+		// from the blacksmith in that category
 		int townNum = g_maps->_currentMap->dataByte(Maps::MAP_ID);
 		if (townNum < 1 || townNum >= 6)
 			townNum = 1;

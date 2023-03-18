@@ -34,9 +34,11 @@ class BlacksmithItems : public ItemsView,
 	public BuyWeaponData, public BuyArmorData,
 	public BuyMiscData {
 private:
-	enum BlacksmithMode { WEAPONS_MODE = 0, ARMOR_MODE = 1, MISC_MODE = 2 };
+	enum BlacksmithMode {
+		WEAPONS_MODE = 0, ARMOR_MODE = 1, MISC_MODE = 2,
+		SELL_MODE = 3
+	};
 	BlacksmithMode _mode = WEAPONS_MODE;
-	bool _buyMode = true;
 
 	/**
 	 * Populates the list of items

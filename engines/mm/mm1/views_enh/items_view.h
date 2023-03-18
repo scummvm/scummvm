@@ -32,7 +32,6 @@ class ItemsView : public PartyView {
 protected:
 	enum CostMode { SHOW_COST, SHOW_VALUE, NO_COST };
 	int _selectedItem = -1;
-	char _startingChar = '1';
 	CostMode _costMode = NO_COST;
 	Common::Array<int> _items;
 	const Common::Rect _buttonsArea;

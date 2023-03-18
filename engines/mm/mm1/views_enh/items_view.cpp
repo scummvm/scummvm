@@ -78,7 +78,7 @@ void ItemsView::draw() {
 		g_globals->_items.getItem(_items[i]);
 		const Item &item = g_globals->_currItem;
 		const Common::String line = Common::String::format(
-			"%c) %s", _startingChar + i,
+			"%d) %s", i + 1,
 			item._name.c_str()
 		);
 		writeLine(2 + i, line, ALIGN_LEFT, 10);
