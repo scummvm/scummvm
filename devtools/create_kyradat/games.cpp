@@ -136,6 +136,7 @@ const Game eob1Games[] = {
 
 const Game eob2Games[] = {
 	{ kEoB2, kPlatformDOS, kNoSpecial, EN_ANY },
+	{ kEoB2, kPlatformDOS, kTalkieVersion, ZH_TWN },
 	{ kEoB2, kPlatformDOS, kNoSpecial, DE_DEU },
 	{ kEoB2, kPlatformDOS, kNoSpecial, ES_ESP },
 
@@ -4624,6 +4625,7 @@ const GameNeed gameNeedTable[] = {
 	{ kEoB1, kPlatformSegaCD, kNoSpecial, eob1SegaCDNeed },
 
 	{ kEoB2, kPlatformDOS, kNoSpecial, eob2FloppyNeed },
+	{ kEoB2, kPlatformDOS, kTalkieVersion, eob2FloppyNeed },
 	{ kEoB2, kPlatformAmiga, kNoSpecial, eob2AmigaNeed },
 	//{ kEoB2, kPlatformPC98, kNoSpecial, eob2PC98Need },
 	{ kEoB2, kPlatformFMTowns, kNoSpecial, eob2FMTownsNeed },
