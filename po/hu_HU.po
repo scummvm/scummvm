@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-18 11:02+0000\n"
-"PO-Revision-Date: 2023-03-13 10:57+0000\n"
+"PO-Revision-Date: 2023-03-18 19:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -5574,10 +5574,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "GroovieV2 támogatás nincs lefordítva"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "Szerver futtatás"
+msgstr "Foglalt"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -5651,51 +5649,37 @@ msgid "Enable Gore Mode when available"
 msgstr "Gore mód engedélyezés ha elérhetõ"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "Mozgás elõre"
+msgstr "Elõre"
 
 #: engines/hpl1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "Menj Hátrafelé"
+msgstr "Hátra"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:77
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
-msgstr "Siklás balra"
+msgstr "Ágyútűz Balra"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:78
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
-msgstr "Siklás jobbra"
+msgstr "Ágyútűz Jobbra"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
-#| msgid "Pad Left"
 msgid "Lean Left"
-msgstr "Pad balra"
+msgstr "Sovány Balra"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Pad Right"
 msgid "Lean Right"
-msgstr "Pad Jobbra"
+msgstr "Sovány Jobbra"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "Ugrás"
 
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:113
 #: engines/icb/icb.cpp:173
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "Érintés"
+msgstr "Guggolás"
 
 #: engines/hpl1/metaengine.cpp:92
 #, fuzzy
