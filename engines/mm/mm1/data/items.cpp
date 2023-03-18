@@ -45,7 +45,7 @@ bool ItemsArray::load() {
 		Common::String line = f.readLine();
 		assert(line.size() > 20 && line[0] == '"' && line[15] == '"');
 
-		item._name = Common::String(line.c_str() + 1, line.c_str() + 14);
+		item._name = Common::String(line.c_str() + 1, line.c_str() + 15);
 		line = Common::String(line.c_str() + 16);
 
 		item._disablements = getNextValue(line);
