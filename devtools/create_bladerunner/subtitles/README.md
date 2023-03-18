@@ -186,7 +186,7 @@ python2.7 fontCreator.py -ip folderpathForMIXFiles
 
 Syntax B - To create the subtitle's font:
 ```bash
-python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename [-oe pathToOverrideEncodingTxt] -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--trace]
+python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename [-oe pathToOverrideEncodingTxt] -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [-pxYo yOffsetInPixels] [--noAutoTabCalculation] [--noSpecialGlyphs] [--trace]
 ```
 
 This tool __requires an override encoding text file__ in its Syntax B mode (subtitle font creation). You can specify the path to this file after a "-oe" switch. If you don't provide this path, the script will search for an "overrideEncoding.txt" file in the current working directory.
@@ -257,6 +257,12 @@ __For the creation of subtitles' font mode__, there are six (6) mandatory launch
 5.  kerningForFirstDummyFontGlyph: This is an integer that explicitly indicates the kerning, ie. offset in pixels (on the x-axis) of the first glyph (the one that is repeated twice). This can be measured by observing the indent that your image processing app adds when you enter the first glyph (typically it should be only a few pixels)
 
 6.  whiteSpaceWidthInPixels: This is a positive integer value that sets the width in pixels for the single white space between words for the subtitles in-game.
+
+The "-pxYo" optional switch takes a yOffsetInPixels value: This is an integer value which sets a y-axis offset in pixels adjusting the y-axis positioning of the glyphs in-game. Typically, this is will be a small positive number, eg. "1", which would lower the glyphs on the y-axis by that amount of pixels.
+
+The "--noAutoTabCalculation" optional switch forces the tool to more accurately set the start of each glyph, which can eliminate a x-offset of all the glyphs caused by the automatic tab calculation method.
+
+The "--noSpecialGlyphs" optional switch explicitly indicates to the tool that there are no special (out of order) glyph cases.
 
 The "--trace" optional switch enables extra debug messages to be printed.
 
