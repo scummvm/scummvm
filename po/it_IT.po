@@ -8768,7 +8768,8 @@ msgstr "Ripristina scene mancanti"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
-msgstr "Ripristina alcune scene originariamente presenti nella versione Windows"
+msgstr ""
+"Ripristina alcune scene originariamente presenti nella versione Windows"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
