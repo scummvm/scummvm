@@ -34,10 +34,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chinese translation.
 
  Ultima:
-   - Improve Ultima VI responsiveness
+   - Improve Ultima VI responsiveness.
    - Fix crash loading Ultima VI savegames when dialogs are open.
-   - Fix ordering of generated items in Ultima VI
-   - Fix auto-readying throwing weapons in Ultima VI
+   - Fix ordering of generated items in Ultima VI.
+   - Fix auto-readying throwing weapons in Ultima VI.
 
  Voyeur:
    - Added support for German fan translation.
