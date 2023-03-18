@@ -414,6 +414,8 @@ void FreescapeEngine::processInput() {
 				} else {
 					g_system->lockMouse(false);
 					g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
+					g_system->getEventManager()->purgeMouseEvents();
+					g_system->getEventManager()->purgeKeyboardEvents();
 				}
 				break;
 			case Common::KEYCODE_i:
@@ -443,15 +445,34 @@ void FreescapeEngine::processInput() {
 				g_system->warpMouse(mousePos.x, mousePos.y);
 
 			if (_shootMode) {
-				_crossairPosition = mousePos;
-				if (mousePos.x < _viewArea.left)
-					g_system->warpMouse(_viewArea.left + 1, _crossairPosition.y);
-				else if  (mousePos.x > _viewArea.right)
-					g_system->warpMouse(_viewArea.right - 1, _crossairPosition.y);
-				else if (mousePos.y < _viewArea.top)
-					g_system->warpMouse(_crossairPosition.x, _viewArea.top + 1);
-				else if  (mousePos.y > _viewArea.bottom)
-					g_system->warpMouse(_crossairPosition.x, _viewArea.bottom - 1);
+				{
+					bool shouldWarp = false;
+					_crossairPosition = mousePos;
+					if (mousePos.x < _viewArea.left) {
+						_crossairPosition.x = _viewArea.left + 1;
+						shouldWarp = true;
+					}
+
+					if  (mousePos.x > _viewArea.right) {
+						_crossairPosition.x = _viewArea.right - 1;
+						shouldWarp = true;
+					}
+					if (mousePos.y < _viewArea.top) {
+						_crossairPosition.y =  _viewArea.top + 1;
+						shouldWarp = true;
+					}
+
+					if  (mousePos.y > _viewArea.bottom) {
+						_crossairPosition.y = _viewArea.bottom - 1;
+						shouldWarp = true;
+					}
+
+					if (shouldWarp) {
+						g_system->warpMouse(_crossairPosition.x, _crossairPosition.y);
+						g_system->getEventManager()->purgeMouseEvents();
+						g_system->getEventManager()->purgeKeyboardEvents();
+					}
+				}
 				break;
 			}
 
