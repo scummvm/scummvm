@@ -39,6 +39,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Sortierung der erzeugten Items in Ultima VI korrigiert.
    - Automatische Ausrüstung von Wurf-Waffen in Ultima VI korrigiert.
 
+ Voyeur:
+   - Unterstützung für die deutsche Fan-Übersetzung hinzugefügt.
+
  Xeen:
    - Die Engine "xeen" wurde für Might & Magic zu "mm" umbenannt.
 
