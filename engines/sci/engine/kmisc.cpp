@@ -789,8 +789,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	bool isWindows = (g_sci->getPlatform() == Common::kPlatformWindows) ||
 		             (g_sci->getPlatform() == Common::kPlatformDOS && g_sci->forceHiresGraphics());
 
-	uint16 operation = (argc == 0) ? 0 : argv[0].toUint16();
-
+	uint16 operation = argv[0].toUint16();
 	switch (operation) {
 	case kPlatformUnknown:
 		// For Mac versions, kPlatform(0) with other args has more functionality. Otherwise, fall through.
