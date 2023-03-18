@@ -44,7 +44,7 @@ void Fonts::setVm(SherlockEngine *vm) {
 	_vm = vm;
 	_font = nullptr;
 	_charCount = 0;
-	_isModifiedEucCn = (_vm->getLanguage() == Common::Language::ZH_ANY && _vm->getGameID() == GameType::GType_RoseTattoo);
+	_isModifiedEucCn = (_vm->getLanguage() == Common::Language::ZH_CHN && _vm->getGameID() == GameType::GType_RoseTattoo);
 	_isBig5 = (_vm->getLanguage() == Common::Language::ZH_TWN && _vm->getGameID() == GameType::GType_SerratedScalpel);
 }
 

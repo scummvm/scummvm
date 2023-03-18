@@ -958,7 +958,7 @@ static const FixedTextLanguageEntry fixedTextLanguages[] = {
 	{ Common::ES_ESP,   fixedTextES },
 	{ Common::EN_ANY,   fixedTextEN },
 	{ Common::FR_FRA,   fixedTextFR },
-	{ Common::ZH_ANY,   fixedTextZH },
+	{ Common::ZH_CHN,   fixedTextZH },
 	{ Common::UNK_LANG, fixedTextEN }
 };
 

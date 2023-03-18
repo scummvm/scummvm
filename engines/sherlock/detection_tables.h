@@ -298,7 +298,7 @@ static const SherlockGameDescription gameDescriptions[] = {
 			"rosetattoo",
 			"CD",
 			AD_ENTRY1s("talk.lib", "dfd699efdce02a045f46d15da2d44b76", 582381),
-			Common::ZH_ANY,
+			Common::ZH_CHN,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
