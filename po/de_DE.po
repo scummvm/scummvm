@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-17 17:40+0000\n"
+"POT-Creation-Date: 2023-03-18 00:08+0000\n"
 "PO-Revision-Date: 2023-03-13 19:34+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -8809,6 +8809,14 @@ msgstr "Korrigiere das Seitenverhältnis bei der Darstellung von Spielen"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
+msgstr ""
+
+#: engines/tetraedge/metaengine.cpp:44
+msgid "Restore missing scenes"
+msgstr ""
+
+#: engines/tetraedge/metaengine.cpp:45
+msgid "Restore some scenes originally in the Windows edition"
 msgstr ""
 
 #: engines/tinsel/detection_tables.h:481
