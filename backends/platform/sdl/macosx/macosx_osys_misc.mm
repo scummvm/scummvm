@@ -98,6 +98,24 @@ void OSystem_MacOSX::updateStartSettings(const Common::String & executable, Comm
 		command = "auto-detect";
 		settings["path"] = [gamePath fileSystemRepresentation];
 	}
+
+	// Else if the bundle contains a games directory, add them to the launcher
+	// Should we only do it on first start (if the config file does not yet exist) to avoid adding
+	// backe games removed by the user? That would also speed up subsequent starts.
+	// However doing it always, means that adding more games in the bundle  in the future will
+	// properly add them to the launcher.
+	else {
+		NSString *gamesPath = [[bundle resourcePath] stringByAppendingPathComponent:@"games"];
+		isDir = false;
+		exists = [[NSFileManager defaultManager] fileExistsAtPath:gamesPath isDirectory:&isDir];
+		if (exists && isDir) {
+			// Ause auto-detection
+			command = "add";
+			settings["path"] = [gamesPath fileSystemRepresentation];
+			settings["recursive"] = "true";
+			settings["exit"] = "false";
+		}
+	}
 }
 
 bool OSystem_MacOSX::hasTextInClipboard() {
