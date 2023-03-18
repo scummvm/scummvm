@@ -65,8 +65,6 @@ bool ItemsArray::load() {
 Item *ItemsArray::getItem(byte index) const {
 	assert(index > 0);
 	g_globals->_currItem = (*this)[index - 1];
-	g_globals->_currItem._name = STRING[Common::String::format(
-		"stats.items.%d", (int)index)];
 
 	return &g_globals->_currItem;
 }
