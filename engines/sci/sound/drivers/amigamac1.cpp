@@ -388,8 +388,12 @@ bool MidiPlayer_AmigaMac1::loadInstruments(Common::SeekableReadStream &patch, bo
 
 			noteRange.startNote = patch.readUint16BE();
 
-			if (patch.err() || patch.eos())
+			if (patch.err() || patch.eos()) {
+				if (_instruments[patchIdx] != instrument) {
+					delete instrument;
+				}
 				return false;
+			}
 
 			if (noteRange.startNote == -1)
 				break;
