@@ -36,7 +36,7 @@ ItemsView::ItemsView(const Common::String &name) : PartyView(name),
 
 void ItemsView::addButton(int frame, const Common::String &text,
 		Common::KeyCode keycode) {
-	Common::Point pt(_btnText.size() * BUTTON_WIDTH + 5, 0);
+	Common::Point pt(_btnText.size() * BUTTON_WIDTH + 5, 101);
 	if (keycode == Common::KEYCODE_ESCAPE) {
 		pt.x = EXIT_X;
 		PartyView::addButton(&g_globals->_escSprites, pt, 0, KEYBIND_ESCAPE);
@@ -54,21 +54,19 @@ bool ItemsView::msgFocus(const FocusMessage &msg) {
 }
 
 void ItemsView::draw() {
-	// Manually draw a frame for the entire area to avoid
-	// also drawing the buttons
-	frame();
-	fill();
+	// Draw the outer frame and buttons
+	PartyView::draw();
 
-	// Now draw the buttons area
+	// Draw the frame surrounding the buttons area
 	const Common::Rect r = _bounds;
 	_bounds = _buttonsArea;
-	PartyView::draw();
+	frame();
 	_bounds = r;
 
 	// Draw button text
 	setReduced(true);
 	for (uint i = 0; i < _btnText.size(); ++i) {
-		Common::Point pt(i * BUTTON_WIDTH + 5, 122);
+		Common::Point pt(i * BUTTON_WIDTH + 5, 123);
 		if (i == (_btnText.size() - 1))
 			pt.x = EXIT_X;
 
