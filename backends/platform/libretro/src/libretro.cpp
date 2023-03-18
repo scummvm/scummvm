@@ -92,22 +92,21 @@ static uint8 audio_status = 0;
 static unsigned retro_audio_buff_occupancy = 0;
 
 float frame_rate;
-static uint16 fps = 0;
-static uint16 sound_len = 0;                // length in samples per frame
-static size_t sound_size = 0;
+static uint16 samples_per_frame = 0;                // length in samples per frame
+static size_t samples_per_frame_buffer_size = 0;
 
 static int16_t *sound_buffer = NULL;       // pointer to output buffer
 
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
-	fps = 100.0 * frame_rate;
-	sound_len = (sample_rate * 100 + (fps >> 1)) / fps;
-	sound_size = sound_len << 2 * sizeof(int16_t);
+	samples_per_frame = sample_rate / frame_rate;
+	samples_per_frame_buffer_size = samples_per_frame << 1 * sizeof(int16_t);
+
 	if (sound_buffer)
-		sound_buffer = (int16_t *)realloc(sound_buffer, sound_size);
+		sound_buffer = (int16_t *)realloc(sound_buffer, samples_per_frame_buffer_size);
 	else
-		sound_buffer = (int16_t *)malloc(sound_size);
+		sound_buffer = (int16_t *)malloc(samples_per_frame_buffer_size);
 	if (sound_buffer)
-		memset(sound_buffer, 0, sound_size);
+		memset(sound_buffer, 0, samples_per_frame_buffer_size);
 	else
 		log_cb(RETRO_LOG_ERROR, "audio_buffer_init error.\n");
 
@@ -616,7 +615,7 @@ void retro_run(void) {
 		/* Upload audio */
 		size_t count = 0;
 		if (audio_video_enable & 2) {
-			count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *)sound_buffer, sound_size);
+			count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
 		}
 		audio_status = count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
 
@@ -648,7 +647,7 @@ void retro_run(void) {
 			audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
 		}
 #endif
-		audio_batch_cb((audio_status & AUDIO_STATUS_MUTE) ? NULL : sound_buffer, count); // Set to NULL to skip sound rendering
+		audio_batch_cb((audio_status & AUDIO_STATUS_MUTE) ? NULL : (int16_t *) sound_buffer, count); // Set to NULL to skip sound rendering
 
 		current_frame++;
 	}
@@ -661,7 +660,7 @@ void retro_run(void) {
 	if (audio_status & AUDIO_STATUS_UPDATE_LATENCY){
 		uint32 audio_latency;
 		if (frameskip_type > 1) {
-			float frame_time_msec = 100000.0f / fps;
+			float frame_time_msec = 1000.0f / frame_rate;
 
 			audio_latency = (uint32)((8.0f * frame_time_msec) + 0.5f);
 			audio_latency = (audio_latency + 0x1F) & ~0x1F;
