@@ -61,6 +61,7 @@
 			android:exported="false"
 			android:banner="@drawable/leanback_icon"
 			android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+			android:launchMode="singleInstance"
 			android:screenOrientation="landscape"
 			android:theme="@style/AppTheme"
 			android:windowSoftInputMode="adjustResize">
