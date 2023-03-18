@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-18 00:08+0000\n"
-"PO-Revision-Date: 2023-03-13 19:34+0000\n"
+"PO-Revision-Date: 2023-03-18 07:33+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5629,10 +5629,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "Unterstützung für GroovieV2 ist nicht eingebaut"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "Server starten"
+msgstr "Reserviert"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -5708,85 +5706,65 @@ msgid "Enable Gore Mode when available"
 msgstr "Blutmodus aktivieren, wenn verfügbar"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "Nach vorn bewegen"
+msgstr "Vorwärts"
 
 #: engines/hpl1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "Rückwärts bewegen"
+msgstr "Rückwärts"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:77
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
 msgstr "Nach links rutschen"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:78
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
 msgstr "Nach rechts rutschen"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
-#| msgid "Pad Left"
 msgid "Lean Left"
-msgstr "Steuerkreuz links"
+msgstr "Nach links lehnen"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Pad Right"
 msgid "Lean Right"
-msgstr "Steuerkreuz rechts"
+msgstr "Nach rechts lehnen"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "Springen"
 
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:113
 #: engines/icb/icb.cpp:173
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "Berühren"
+msgstr "Kriechen"
 
 #: engines/hpl1/metaengine.cpp:92
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "Interagieren"
+msgstr "Interaktiver Modus"
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Gore Mode"
 msgid "Look Mode"
-msgstr "Blutmodus"
+msgstr "Betrachtungs-Modus"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
-msgstr ""
+msgstr "Halfter"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "Notizbuch"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "Persönliche Notizen"
 
 #: engines/hpl1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "Geradeaus fliegen"
+msgstr "Taschenlampe"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "Fackel"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -5834,7 +5812,7 @@ msgstr ""
 
 #: engines/icb/icb.cpp:88
 msgid "Fire"
-msgstr ""
+msgstr "Feuer"
 
 #: engines/icb/icb.cpp:103
 msgid "Arm"
@@ -5847,10 +5825,8 @@ msgid "Remora"
 msgstr "Entfernen"
 
 #: engines/icb/icb.cpp:118 engines/icb/icb.cpp:178
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "Nach links rutschen"
+msgstr "Zur Seite treten"
 
 #: engines/kyra/detection_tables.h:72
 msgid "Missing language specific game code and/or resources."
@@ -6269,34 +6245,32 @@ msgstr "Escape-Taste"
 
 #: engines/mm/mm1/metaengine.cpp:46
 msgid "View Party Member 1"
-msgstr ""
+msgstr "Team-Mitglied 1 ansehen"
 
 #: engines/mm/mm1/metaengine.cpp:47
 msgid "View Party Member 2"
-msgstr ""
+msgstr "Team-Mitglied 2 ansehen"
 
 #: engines/mm/mm1/metaengine.cpp:48
 msgid "View Party Member 3"
-msgstr ""
+msgstr "Team-Mitglied 3 ansehen"
 
 #: engines/mm/mm1/metaengine.cpp:49
 msgid "View Party Member 4"
-msgstr ""
+msgstr "Team-Mitglied 4 ansehen"
 
 #: engines/mm/mm1/metaengine.cpp:50
 msgid "View Party Member 5"
-msgstr ""
+msgstr "Team-Mitglied 5 ansehen"
 
 #: engines/mm/mm1/metaengine.cpp:51
 msgid "View Party Member 6"
-msgstr ""
+msgstr "Team-Mitglied 6 ansehen"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:57
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "Schließ auf"
+msgstr "Blocken"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:58
@@ -6306,14 +6280,12 @@ msgstr ""
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "Exchange"
-msgstr ""
+msgstr "Austauschen"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:60
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "Rechts"
+msgstr "Kämpfen"
 
 #. I18N: Combat command in MM1
 #. I18N: Action of hero party in MM1
@@ -6326,58 +6298,50 @@ msgstr "Einstellungen"
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:62
 msgid "Retreat"
-msgstr ""
+msgstr "Zurückweichen"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:63
 msgid "Shoot"
-msgstr ""
+msgstr "Schießen"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:66
 msgid "Delay"
-msgstr ""
+msgstr "Verzögerung"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:67 engines/mm/mm1/metaengine.cpp:84
 msgid "Protect"
-msgstr ""
+msgstr "Schützen"
 
 #. I18N: Select party member command in MM1
 #: engines/mm/mm1/metaengine.cpp:73
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "Nach vorn bewegen"
+msgstr "Vorwärts"
 
 #. I18N: Directionalcommand in MM1
 #: engines/mm/mm1/metaengine.cpp:74
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "Rückwärts bewegen"
+msgstr "Rückwärts"
 
 #: engines/mm/mm1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "Kampfmodus umschalten"
+msgstr "Mini-Karte umschalten"
 
 #: engines/mm/mm1/metaengine.cpp:83
 msgid "Reorder Party"
-msgstr ""
+msgstr "Team neu ordnen"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "Suchen:"
+msgstr "Suchen"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:87
 msgid "Bash"
-msgstr ""
+msgstr "Schlagen"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:88 engines/scumm/help.cpp:144
@@ -6385,31 +6349,29 @@ msgid "Unlock"
 msgstr "Schließ auf"
 
 #: engines/mm/mm1/metaengine.cpp:95
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "Nächster Ort"
+msgstr "Zu Ort gehen"
 
 #: engines/mm/mm1/metaengine.cpp:106 engines/mm/mm1/metaengine.cpp:111
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "Might and Magic 1 - Menüs"
 
 #: engines/mm/mm1/metaengine.cpp:112 engines/mm/mm1/metaengine.cpp:118
 #: engines/mm/mm1/metaengine.cpp:124
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "Might and Magic 1 - Team"
 
 #: engines/mm/mm1/metaengine.cpp:117
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "Might and Magic 1 - Kampf"
 
 #: engines/mm/mm1/metaengine.cpp:123
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "Might and Magic 1"
 
 #: engines/mm/mm1/metaengine.cpp:125
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - Cheats"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
@@ -8802,22 +8764,23 @@ msgstr ""
 "dieser ausführbaren Datei nicht miteingebunden. Bitte entpacken Sie die Datei"
 
 #: engines/tetraedge/metaengine.cpp:33
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "Korrigiere das Seitenverhältnis bei der Darstellung von Spielen"
+msgstr "Korrigiere Video-Seitenverhältnis"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
 msgstr ""
+"Spiele die Zwischensequenzen in Syberia im Format 16:9 ab, anstatt sie auf "
+"den vollen Bildschirm zu strecken"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "Fehlende Szenen weiderherstellen"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
 msgstr ""
+"Stelle einige Szenen wieder her, die in der Windows-Version vorhanden waren"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
@@ -9217,6 +9180,10 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"Die Datei des Intro-Videos fehlt - stelle sicher, dass die Verzeichnisse "
+"FLICS und SOUND von der CD kopiert wurden.  Weitere Informationen findest Du "
+"in unserem Wiki unter https://wiki.scummvm.org/index."
+"php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
