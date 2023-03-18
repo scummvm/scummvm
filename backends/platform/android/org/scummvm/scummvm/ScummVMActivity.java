@@ -131,6 +131,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //	boolean _isPaused = false;
 	private InputMethodManager _inputManager = null;
 
+	// Set to true in onDestroy
+	// This avoids that when C++ terminates we call finish() a second time
+	// This second finish causes termination when we are launched again
+	boolean _finishing = false;
+
 	private final int[][] TextInputKeyboardList =
 	{
 		{ 0, R.xml.qwerty },
@@ -857,6 +862,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+//		Log.d(ScummVM.LOG_TAG, "onCreate");
+
 		super.onCreate(savedInstanceState);
 
 		safSyncObject = new Object();
@@ -935,8 +942,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		                                                        @Override
 		                                                        public void handle(int exitResult) {
 		                                                        	Log.d(ScummVM.LOG_TAG, "Via callback: ScummVM native terminated with code: " + exitResult);
-		                                                        	// call onDestroy()
-		                                                        	finish();
+		                                                        	// call onDestroy() only we we aren't already in it
+		                                                        	if (!_finishing) finish();
 		                                                        }
 		                                                    });
 
@@ -1051,9 +1058,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		super.onDestroy();
 
 		if (_events != null) {
+			_finishing = true;
+
 			_events.clearEventHandler();
 			_events.sendQuitEvent();
 
+			// Make sure the thread is actively polling for events
+			_scummvm.setPause(false);
 			try {
 				// 1s timeout
 				_scummvm_thread.join(1000);
@@ -1061,6 +1072,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
 			}
 
+			_finishing = false;
 			_scummvm = null;
 		}
 
