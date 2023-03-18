@@ -758,11 +758,6 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 		}
 	}
 
-	if (resourceType == kResourceTypeInvalid) {
-		debugPrintf("Resource type '%s' is not valid\n", argv[1]);
-		return true;
-	}
-
 	if (resourceAll) {
 		// "*" used, dump everything of that type
 		Common::List<ResourceId> resources = _engine->getResMan()->listResources(resourceType, -1);
