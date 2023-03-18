@@ -385,6 +385,11 @@ bool AndroidSAFFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode
 		return false;
 	}
 
+	if (!array) {
+		// Fetching children failed: a log error has already been produced in Java code
+		return false;
+	}
+
 	myList.clear();
 
 	jsize size = env->GetArrayLength(array);
