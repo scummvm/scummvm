@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-18 00:08+0000\n"
+"POT-Creation-Date: 2023-03-18 11:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3083,13 +3083,13 @@ msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr ""
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
-#: backends/fs/android/android-saf-fs.cpp:691
-#: backends/fs/android/android-saf-fs.cpp:695
+#: backends/fs/android/android-saf-fs.cpp:696
+#: backends/fs/android/android-saf-fs.cpp:700
 msgid "Add a new folder"
 msgstr ""
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
-#: backends/fs/android/android-saf-fs.cpp:807
+#: backends/fs/android/android-saf-fs.cpp:812
 msgid "Choose a new folder"
 msgstr ""
 
