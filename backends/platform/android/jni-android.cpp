@@ -910,16 +910,18 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 
 		if (value)
 			JNI::_pauseToken = g_engine->pauseEngine();
-		else
+		else if (JNI::_pauseToken.isActive())
 			JNI::_pauseToken.clear();
 	}
 
-	pause = value;
+	if (pause != value) {
+		pause = value;
 
-	if (!pause) {
-		// wake up all threads
-		for (uint i = 0; i < 3; ++i)
-			sem_post(&pause_sem);
+		if (!pause) {
+			// wake up all threads
+			for (uint i = 0; i < 3; ++i)
+				sem_post(&pause_sem);
+		}
 	}
 }
 
