@@ -23,13 +23,31 @@
 #define MM1_VIEWS_ENH_LOCATIONS_BLACKSMITH_ITEMS_H
 
 #include "mm/mm1/views_enh/items_view.h"
+#include "mm/mm1/data/locations.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
-class BlacksmithItems : public ItemsView {
+class BlacksmithItems : public ItemsView,
+	public BuyWeaponData, public BuyArmorData,
+	public BuyMiscData {
+private:
+	enum BlacksmithMode { WEAPONS_MODE = 0, ARMOR_MODE = 1, MISC_MODE = 2 };
+	BlacksmithMode _mode = WEAPONS_MODE;
+	bool _buyMode = true;
+
+	/**
+	 * Populates the list of items
+	 */
+	void populateItems();
+
+	/**
+	 * Displays the title row
+	 */
+	void drawTitle();
+
 public:
 	BlacksmithItems();
 	virtual ~BlacksmithItems() {}

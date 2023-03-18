@@ -426,8 +426,7 @@ dialogs:
 enhdialogs:
 	blacksmith:
 		browse: "\x01""37Browse"
-		for: "for"
-		the: "the"
+		backpack_for: "Backpack for %s the %s"
 		cost: "Cost"
 		gold: "Gold"
 		available: "Available"
@@ -437,12 +436,10 @@ enhdialogs:
 		areas:
 			weapons: "Weapons"
 			armor: "Armor"
-			accessories: "Accessories"
 			misc: "Misc"
 		buttons:
 			weapons: "\x01""37Weap"
 			armor: "\x01""37Armor"
-			accessories: "A\x01""37cces"
 			misc: "\x01""37Misc"
 			buy: "\x01""37Buy"
 			sell: "\x01""37Sell"
@@ -555,6 +552,7 @@ enhdialogs:
 	misc:
 		exit: "Exit"
 		go_back: "Go back"
+		no_items: "Inventory empty"
 	quickref:
 		title: "Quick Reference Chart"
 		headers:

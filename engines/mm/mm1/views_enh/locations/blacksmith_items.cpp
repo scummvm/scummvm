@@ -31,7 +31,6 @@ BlacksmithItems::BlacksmithItems() : ItemsView("BlacksmithItems") {
 	_btnSprites.load("buy.icn");
 	addButton(0, STRING["enhdialogs.blacksmith.buttons.weapons"], Common::KEYCODE_w);
 	addButton(2, STRING["enhdialogs.blacksmith.buttons.armor"], Common::KEYCODE_a);
-	addButton(4, STRING["enhdialogs.blacksmith.buttons.accessories"], Common::KEYCODE_c);
 	addButton(6, STRING["enhdialogs.blacksmith.buttons.misc"], Common::KEYCODE_m);
 	addButton(8, STRING["enhdialogs.blacksmith.buttons.buy"], Common::KEYCODE_b);
 	addButton(10, STRING["enhdialogs.blacksmith.buttons.sell"], Common::KEYCODE_s);
@@ -41,45 +40,96 @@ BlacksmithItems::BlacksmithItems() : ItemsView("BlacksmithItems") {
 bool BlacksmithItems::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
 
+	_mode = WEAPONS_MODE;
+	_buyMode = true;
+	populateItems();
+
 	return true;
 }
 
 void BlacksmithItems::draw() {
 	ItemsView::draw();
+	drawTitle();
+}
 
-	//	writeString(0, 0, STRING["dialogs.game.BlacksmithItems.BlacksmithItems_here"], ALIGN_MIDDLE);
+void BlacksmithItems::drawTitle() {
+	const Character &c = *g_globals->_currCharacter;
+
+	Common::String areaName = STRING["enhdialogs.blacksmith.areas.weapons"];
+	if (_mode == ARMOR_MODE)
+		areaName = STRING["enhdialogs.blacksmith.areas.armor"];
+	if (_mode == MISC_MODE)
+		areaName = STRING["enhdialogs.blacksmith.areas.misc"];
+
+	if (_buyMode) {
+		// Show title with "Available <Area>", "Gold", and "Cost"
+		setReduced(false);
+		Common::String title = Common::String::format("%s %s",
+			STRING["enhdialogs.blacksmith.available"].c_str(),
+			areaName.c_str());
+		writeString(0, 0, title);
+
+		Common::String gold = Common::String::format("%s - %d",
+			STRING["enhdialogs.blacksmith.gold"].c_str(),
+			c._gold);
+		writeString(160, 0, gold);
+
+		writeString(0, 0, STRING["enhdialogs.blacksmith.cost"], ALIGN_RIGHT);
+
+	} else {
+		// Shows a title like "Weapons for Arturius the Paladin"
+		Common::String title = Common::String::format(
+			STRING["enhdialogs.blacksmith.backpack_for"].c_str(),
+			c._name,
+			STRING[Common::String::format("stats.classes.%d", c._class)].c_str()
+		);
+
+		setReduced(false);
+		writeLine(0, title, ALIGN_MIDDLE);
+	}
 }
 
 bool BlacksmithItems::msgKeypress(const KeypressMessage &msg) {
 	if (endDelay())
 		return true;
-	/*
-		if (_mode == CONFIRM) {
-			if (msg.keycode == Common::KEYCODE_n) {
-				close();
-			} else if (msg.keycode == Common::KEYCODE_y) {
-				close();
-				Game::BlacksmithItems::check();
-			}
-		}
-	*/
+
 	return ItemsView::msgKeypress(msg);
 }
 
 bool BlacksmithItems::msgAction(const ActionMessage &msg) {
 	if (endDelay())
 		return true;
-	/*
-	if (_mode == CONFIRM) {
-		if (msg._action == KEYBIND_ESCAPE) {
-			close();
-		} else if (msg._action == KEYBIND_SELECT) {
-			close();
-			Game::BlacksmithItems::check();
-		}
-	}
-	*/
+
 	return ItemsView::msgAction(msg);
+}
+
+void BlacksmithItems::populateItems() {
+	_startingChar = _buyMode ? '1' : 'A';
+	_costMode = _buyMode ? SHOW_COST : SHOW_VALUE;
+	_items.clear();
+
+	if (_buyMode) {
+		// Populate the list of items that can be purchased
+		// from the Blacksmith in that category
+		int townNum = g_maps->_currentMap->dataByte(Maps::MAP_ID);
+		if (townNum < 1 || townNum >= 6)
+			townNum = 1;
+
+		const byte *ITEMS = WEAPONS[townNum - 1];
+		if (_mode == ARMOR_MODE)
+			ITEMS = ARMOR[townNum - 1];
+		if (_mode == MISC_MODE)
+			ITEMS = MISC[townNum - 1];
+
+		for (int i = 0; i < 6; ++i)
+			_items.push_back(ITEMS[i]);
+	} else {
+		// Sell mode, so list the player's inventory
+		const Character &c = *g_globals->_currCharacter;
+
+		for (uint i = 0; i < c._backpack.size(); ++i)
+			_items.push_back(c._backpack[i]._id);
+	}
 }
 
 } // namespace Locations

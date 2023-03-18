@@ -73,7 +73,24 @@ void ItemsView::draw() {
 		writeString(pt.x + 12, pt.y, _btnText[i], ALIGN_MIDDLE);
 	}
 
-	// TODO: drawing items
+	// List the items
+	for (uint i = 0; i < _items.size(); ++i) {
+		g_globals->_items.getItem(_items[i]);
+		const Item &item = g_globals->_currItem;
+		const Common::String line = Common::String::format(
+			"%c) %s", _startingChar + i,
+			item._name.c_str()
+		);
+		writeLine(2 + i, line, ALIGN_LEFT, 10);
+
+		if (_costMode != NO_COST) {
+			int cost = (_costMode == SHOW_COST) ? item._cost : item.getSellCost();
+			writeLine(2 + i, Common::String::format("%d", cost),
+				ALIGN_RIGHT);
+		}
+	}
+	if (_items.size() == 0)
+		writeLine(2, STRING["enhdialogs.misc.no_items"], ALIGN_LEFT, 10);
 }
 
 bool ItemsView::msgKeypress(const KeypressMessage &msg) {
