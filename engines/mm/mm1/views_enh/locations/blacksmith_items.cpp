@@ -215,6 +215,22 @@ void BlacksmithItems::itemConfirmed() {
 	}
 }
 
+int BlacksmithItems::getLineColor() const {
+	const Character &c = *g_globals->_currCharacter;
+	const Item &item = g_globals->_currItem;
+
+	if (_mode == SELL_MODE) {
+		return 0;
+	} else {
+		if (c._class != NONE && c._class <= ROBBER) {
+			if (!(BLACKSMITH_CLASS_USAGE[c._class - 1] & item._disablements))
+				return 0;
+		}
+
+		return 1;
+	}
+}
+
 } // namespace Locations
 } // namespace ViewsEnh
 } // namespace MM1

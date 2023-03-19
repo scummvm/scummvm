@@ -60,6 +60,13 @@ protected:
 	void displayMessage(const Common::String &msg);
 
 	/**
+	 * Get the text color for a line
+	 */
+	virtual int getLineColor() const {
+		return 0;
+	}
+
+	/**
 	 * Called when an item is selected
 	 */
 	virtual void itemSelected() = 0;

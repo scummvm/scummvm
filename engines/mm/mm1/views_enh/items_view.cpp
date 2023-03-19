@@ -88,7 +88,7 @@ void ItemsView::draw() {
 			item._name.c_str()
 		);
 
-		setTextColor(i == _selectedItem ? 15 : 0);
+		setTextColor(i == _selectedItem ? 15 : getLineColor());
 		writeLine(2 + i, line, ALIGN_LEFT, 10);
 
 		if (_costMode != NO_COST) {

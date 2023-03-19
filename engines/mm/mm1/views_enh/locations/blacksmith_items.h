@@ -31,8 +31,8 @@ namespace ViewsEnh {
 namespace Locations {
 
 class BlacksmithItems : public ItemsView,
-	public BuyWeaponData, public BuyArmorData,
-	public BuyMiscData {
+	public BlacksmithData, public BuyWeaponData,
+	public BuyArmorData, public BuyMiscData {
 private:
 	enum BlacksmithMode {
 		WEAPONS_MODE = 0, ARMOR_MODE = 1, MISC_MODE = 2,
@@ -57,6 +57,11 @@ private:
 	void itemConfirmed();
 
 protected:
+	/**
+	 * Get the text color for a line
+	 */
+	int getLineColor() const override;
+
 	/**
 	 * Called when an item is selected
 	 */
