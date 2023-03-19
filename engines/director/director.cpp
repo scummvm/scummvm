@@ -95,6 +95,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_wmWidth = 1024;
 	_wmHeight = 768;
 
+	_fpsLimit = 0;
+
 	_wm = nullptr;
 
 	_gameDataDir = Common::FSNode(ConfMan.get("path"));
