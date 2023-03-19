@@ -101,6 +101,8 @@ Common::String utf8ToPrintable(const Common::String &str);
 
 Common::String decodePlatformEncoding(Common::String input);
 
+Common::String formatStringForDump(const Common::String &str);
+
 inline byte lerpByte(byte a, byte b, int alpha, int span) {
 	int ai = static_cast<int>(a);
 	int bi = static_cast<int>(b);

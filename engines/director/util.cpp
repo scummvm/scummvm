@@ -1201,6 +1201,15 @@ Common::String decodePlatformEncoding(Common::String input) {
 	return input.decode(g_director->getPlatformEncoding());
 }
 
+Common::String formatStringForDump(const Common::String &str) {
+	Common::String format = str;
+	for (int i = 0; i < (int)format.size(); i++) {
+		if (format[i] == '\r')
+			format.replace(i, 1, "\n");
+	}
+	return format;
+}
+
 /////////////////////////////////////////////////////////////
 // String comparison order tables
 //

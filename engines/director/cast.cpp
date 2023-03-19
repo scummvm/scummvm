@@ -1587,8 +1587,12 @@ Common::String Cast::formatCastSummary(int castId = -1) {
 			castMemberInfo ? castMemberInfo->name.c_str() : ""
 		);
 
-		if (castMemberInfo && !castMemberInfo->fileName.empty())
-			result += ", filename=\"" + castMemberInfo->directory + g_director->_dirSeparator + castMemberInfo->fileName + "\"";
+		if (castMemberInfo) {
+			if (!castMemberInfo->fileName.empty())
+				result += ", filename=\"" + castMemberInfo->directory + g_director->_dirSeparator + castMemberInfo->fileName + "\"";
+			if (!castMemberInfo->script.empty())
+				result += ", script=\"" + formatStringForDump(castMemberInfo->script) + "\"";
+		}
 
 		if (!info.empty()) {
 			result += ", ";

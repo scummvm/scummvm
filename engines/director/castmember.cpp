@@ -1440,11 +1440,7 @@ void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 }
 
 Common::String TextCastMember::formatInfo() {
-	Common::String format = _ptext.encode();
-	for (int i = 0; i < (int)format.size(); i++) {
-		if (format[i] == '\r')
-			format.replace(i, 1, "\n");
-	}
+	Common::String format = formatStringForDump(_ptext.encode());
 
 	return Common::String::format(
 		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, editable: %d, text: \"%s\"",
