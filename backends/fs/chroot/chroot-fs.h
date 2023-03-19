@@ -26,12 +26,13 @@
 
 class ChRootFilesystemNode final : public AbstractFSNode {
 	Common::String _root;
+	Common::String _drive;
 	POSIXFilesystemNode *_realNode;
 
-	ChRootFilesystemNode(const Common::String &root, POSIXFilesystemNode *);
+	ChRootFilesystemNode(const Common::String &root, POSIXFilesystemNode *, const Common::String &drive);
 
 public:
-	ChRootFilesystemNode(const Common::String &root, const Common::String &path);
+	ChRootFilesystemNode(const Common::String &root, const Common::String &path, const Common::String &drive = Common::String());
 	~ChRootFilesystemNode() override;
 
 	bool exists() const override;

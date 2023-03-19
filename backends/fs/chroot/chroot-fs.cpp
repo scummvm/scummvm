@@ -23,13 +23,15 @@
 
 #include "backends/fs/chroot/chroot-fs.h"
 
-ChRootFilesystemNode::ChRootFilesystemNode(const Common::String &root, POSIXFilesystemNode *node) {
+ChRootFilesystemNode::ChRootFilesystemNode(const Common::String &root, POSIXFilesystemNode *node, const Common::String &drive) {
 	_root = Common::normalizePath(root, '/');
+	_drive = drive;
 	_realNode = node;
 }
 
-ChRootFilesystemNode::ChRootFilesystemNode(const Common::String &root, const Common::String &path) {
+ChRootFilesystemNode::ChRootFilesystemNode(const Common::String &root, const Common::String &path, const Common::String &drive) {
 	_root = Common::normalizePath(root, '/');
+	_drive = drive;
 	_realNode = new POSIXFilesystemNode(addPathComponent(root, path));
 }
 
@@ -51,10 +53,9 @@ Common::String ChRootFilesystemNode::getName() const {
 
 Common::String ChRootFilesystemNode::getPath() const {
 	Common::String path = _realNode->getPath();
-	if (path.size() > _root.size()) {
-		return Common::String(path.c_str() + _root.size());
-	}
-	return Common::String("/");
+	if (path.size() > _root.size())
+		return _drive + Common::String(path.c_str() + _root.size());
+	return _drive + "/";
 }
 
 bool ChRootFilesystemNode::isDirectory() const {
@@ -66,11 +67,14 @@ bool ChRootFilesystemNode::isReadable() const {
 }
 
 bool ChRootFilesystemNode::isWritable() const {
+	// Assume virtual drives are not writable
+	if (!_drive.empty())
+		return false;
 	return _realNode->isWritable();
 }
 
 AbstractFSNode *ChRootFilesystemNode::getChild(const Common::String &n) const {
-	return new ChRootFilesystemNode(_root, (POSIXFilesystemNode *)_realNode->getChild(n));
+	return new ChRootFilesystemNode(_root, (POSIXFilesystemNode *)_realNode->getChild(n), _drive);
 }
 
 bool ChRootFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
@@ -80,15 +84,16 @@ bool ChRootFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool
 	}
 
 	for (AbstractFSList::iterator i=tmp.begin(); i!=tmp.end(); ++i) {
-		list.push_back(new ChRootFilesystemNode(_root, (POSIXFilesystemNode *) *i));
+		list.push_back(new ChRootFilesystemNode(_root, (POSIXFilesystemNode *) *i, _drive));
 	}
 
 	return true;
 }
 
 AbstractFSNode *ChRootFilesystemNode::getParent() const {
-	if (getPath() == "/") return 0;
-	return new ChRootFilesystemNode(_root, (POSIXFilesystemNode *)_realNode->getParent());
+	if (getPath() == _drive + "/")
+		return nullptr;
+	return new ChRootFilesystemNode(_root, (POSIXFilesystemNode *)_realNode->getParent(), _drive);
 }
 
 Common::SeekableReadStream *ChRootFilesystemNode::createReadStream() {

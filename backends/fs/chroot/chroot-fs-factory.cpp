@@ -47,8 +47,13 @@ AbstractFSNode *ChRootFilesystemFactory::makeCurrentDirectoryFileNode() const {
 		return NULL;
 	}
 
-	if (Common::String(buf).hasPrefix(_root + Common::String("/"))) {
+	Common::String curPath(buf);
+	if (curPath.hasPrefix(_root + Common::String("/"))) {
 		return new ChRootFilesystemNode(_root, buf + _root.size());
+	}
+	for (auto it = _virtualDrives.begin() ; it != _virtualDrives.end() ; ++it) {
+		if (curPath.hasPrefix(it->_value + Common::String("/")))
+			return new ChRootFilesystemNode(it->_value, buf + it->_value.size(), it->_key);
 	}
 
 	return new ChRootFilesystemNode(_root, "/");
@@ -56,7 +61,17 @@ AbstractFSNode *ChRootFilesystemFactory::makeCurrentDirectoryFileNode() const {
 
 AbstractFSNode *ChRootFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	assert(!path.empty());
+	size_t driveEnd = path.findFirstOf('/');
+	if (driveEnd != Common::String::npos && driveEnd > 0) {
+		auto it = _virtualDrives.find(path.substr(0, driveEnd));
+		if (it != _virtualDrives.end())
+			return new ChRootFilesystemNode(it->_value, path.substr(driveEnd), it->_key);
+	}
 	return new ChRootFilesystemNode(_root, path);
+}
+
+void ChRootFilesystemFactory::addVirtualDrive(const Common::String &name, const Common::String &path) {
+	_virtualDrives[name] = path;
 }
 
 #endif
