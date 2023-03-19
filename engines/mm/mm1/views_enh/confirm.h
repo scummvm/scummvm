@@ -19,30 +19,27 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_QUICK_REF_H
-#define MM1_VIEWS_ENH_QUICK_REF_H
+#ifndef MM1_VIEWS_ENH_CONFIRM_H
+#define MM1_VIEWS_ENH_CONFIRM_H
 
-#include "mm/mm1/views_enh/scroll_popup.h"
-#include "mm/mm1/views_enh/map.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class QuickRef : public ScrollPopup {
+class Confirm : public ScrollView {
 private:
-	/**
-	 * Write the line for a single character
-	 */
-	void writeCharacterLine(int charNum);
-
-	bool isInCombat() const;
+	Common::String _msg;
+	YNCallback _callback = nullptr;
 public:
-	QuickRef();
-	virtual ~QuickRef() {}
+	Confirm();
+	virtual ~Confirm() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
+	static void show(const Common::String &msg,
+		YNCallback callback);
+
+	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	void draw() override;
 };

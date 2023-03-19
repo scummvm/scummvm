@@ -28,6 +28,7 @@
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/character_select.h"
 #include "mm/mm1/views_enh/characters.h"
+#include "mm/mm1/views_enh/confirm.h"
 #include "mm/mm1/views_enh/create_characters.h"
 #include "mm/mm1/views_enh/exchange.h"
 #include "mm/mm1/views_enh/game.h"
@@ -72,6 +73,7 @@ private:
 	ViewsEnh::CharacterInfo _characterInfo;
 	ViewsEnh::CharacterSelect _characterSelect;
 	ViewsEnh::Characters _characters;
+	ViewsEnh::Confirm _confirm;
 	ViewsEnh::CreateCharacters _createCharacters;
 	ViewsEnh::Exchange _exchange;
 	ViewsEnh::Game _game;

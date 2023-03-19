@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/locations/blacksmith_items.h"
+#include "mm/mm1/views_enh/confirm.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -39,7 +40,8 @@ BlacksmithItems::BlacksmithItems() : ItemsView("BlacksmithItems") {
 bool BlacksmithItems::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
 
-	_mode = WEAPONS_MODE;
+	if (dynamic_cast<Confirm *>(msg._priorView) == nullptr)
+		_mode = WEAPONS_MODE;
 	populateItems();
 
 	return true;
@@ -156,7 +158,34 @@ void BlacksmithItems::populateItems() {
 }
 
 void BlacksmithItems::itemSelected() {
-	// TODO: buy/sell items
+	Common::String buySell, gold;
+	g_globals->_items.getItem(_items[_selectedItem]);
+	const Item &item = g_globals->_currItem;
+
+	if (_mode != SELL_MODE) {
+		buySell = STRING["enhdialogs.blacksmith.buy"];
+		gold = Common::String::format(
+			STRING["enhdialogs.blacksmith.for_gold"].c_str(),
+			item._cost);
+	} else {
+		buySell = STRING["enhdialogs.blacksmith.sell"];
+		gold = Common::String::format(
+			STRING["enhdialogs.blacksmith.for_gold"].c_str(),
+			item.getSellCost());
+	}
+
+	Common::String msg = Common::String::format(
+		"%s \x02""15%s\x02""00 %s?",
+		buySell.c_str(), item._name.c_str(), gold.c_str());
+	Confirm::show(msg, []() {
+		BlacksmithItems *view = static_cast<BlacksmithItems *>(
+			g_events->focusedView());
+		view->itemConfirmed();
+	});
+}
+
+void BlacksmithItems::itemConfirmed() {
+	// TODO: Actual buy/sell logic
 }
 
 } // namespace Locations

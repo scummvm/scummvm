@@ -47,6 +47,8 @@ bool ItemsArray::load() {
 
 		item._name = Common::String(line.c_str() + 1, line.c_str() + 15);
 		line = Common::String(line.c_str() + 16);
+		while (item._name.lastChar() == ' ')
+			item._name.deleteLastChar();
 
 		item._disablements = getNextValue(line);
 		item._equipMode = (EquipMode)getNextValue(line);

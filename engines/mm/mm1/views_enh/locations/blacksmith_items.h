@@ -50,6 +50,11 @@ private:
 	 */
 	void drawTitle();
 
+	/**
+	 * Called if the buy/sell action has been confirmed
+	 */
+	void itemConfirmed();
+
 protected:
 	/**
 	 * Called when an item is selected

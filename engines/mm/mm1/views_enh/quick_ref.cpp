@@ -145,6 +145,6 @@ bool QuickRef::isInCombat() const {
 	return g_events->isPresent("Combat");
 }
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

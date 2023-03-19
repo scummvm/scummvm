@@ -84,13 +84,22 @@ void XeenFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32
 int XeenFont::getStringWidth(const Common::String &str) const {
 	// Handle not counting character highlighting sequences
 	// as part of the string width
-	size_t p = str.findFirstOf('\x01');
-	if (p == Common::String::npos) {
+	static const char *const CONTROL_CHARS = "\x01\x02";
+	size_t p = str.findFirstOf(CONTROL_CHARS);
+	if (p == Common::String::npos)
 		return Graphics::Font::getStringWidth(str);
-	} else {
-		return Graphics::Font::getStringWidth(
-			Common::String(str.c_str() + p + 3));
-	}
+
+	size_t totalWidth = 0;
+	Common::String strCopy = str;
+	do {
+		totalWidth += Graphics::Font::getStringWidth(
+			Common::String(strCopy.c_str(), strCopy.c_str() + p));
+		strCopy = Common::String(strCopy.c_str() + p + 3);
+		p = strCopy.findFirstOf(CONTROL_CHARS);
+	} while (p != Common::String::npos);
+
+	totalWidth += Graphics::Font::getStringWidth(strCopy);
+	return totalWidth;
 }
 
 } // namespace MM
