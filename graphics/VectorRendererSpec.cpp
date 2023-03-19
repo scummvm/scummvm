@@ -1152,7 +1152,7 @@ drawCircle(int x, int y, int r) {
 		x - r < 0 || y - r < 0 || x == 0 || y == 0 || r <= 0)
 		return;
 
-	bool useClippingVersions = !_clippingArea.contains(Common::Rect(x - r, y - r, x + r, y + r));
+	bool useClippingVersions = !_clippingArea.contains(Common::Rect(x - r, y - r, x + r + 1, y + r + 1));
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
 		&& x + r + Base::_shadowOffset < Base::_activeSurface->w
@@ -1283,7 +1283,7 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 	if (r <= 0)
 		return;
 
-	bool useOriginal = _clippingArea.contains(Common::Rect(x, y, x + w, y + h));
+	bool useOriginal = _clippingArea.contains(Common::Rect(x, y, x + w + 1, y + h + 1));
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
 		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
@@ -4209,7 +4209,7 @@ drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType colo
 
 	} else {
 
-		while (x > 1 + y++) {
+		while (x > y++) {
 			WU_ALGORITHM();
 
 			colorFill<PixelType>(ptr_tl - x - py + 1, ptr_tr + x - py, color);
