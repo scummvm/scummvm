@@ -96,7 +96,7 @@ void OSystem_MacOSX::updateStartSettings(const Common::String & executable, Comm
 	BOOL isDir = false;
 	BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:gamePath isDirectory:&isDir];
 	if (exists && isDir) {
-		// Ause auto-detection
+		// Use auto-detection
 		command = "auto-detect";
 		settings["path"] = [gamePath fileSystemRepresentation];
 		return;
