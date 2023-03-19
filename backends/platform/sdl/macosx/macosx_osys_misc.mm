@@ -27,10 +27,12 @@
 #include "common/file.h"
 
 #include "backends/platform/sdl/macosx/macosx.h"
+#include "base/version.h"
 
 #include <Foundation/NSBundle.h>
 #include <Foundation/NSFileManager.h>
 #include <Foundation/NSArray.h>
+#include <Foundation/NSUserDefaults.h>
 #include <AppKit/NSPasteboard.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
@@ -97,24 +99,29 @@ void OSystem_MacOSX::updateStartSettings(const Common::String & executable, Comm
 		// Ause auto-detection
 		command = "auto-detect";
 		settings["path"] = [gamePath fileSystemRepresentation];
+		return;
 	}
 
-	// Else if the bundle contains a games directory, add them to the launcher
-	// Should we only do it on first start (if the config file does not yet exist) to avoid adding
-	// backe games removed by the user? That would also speed up subsequent starts.
-	// However doing it always, means that adding more games in the bundle  in the future will
-	// properly add them to the launcher.
-	else {
-		NSString *gamesPath = [[bundle resourcePath] stringByAppendingPathComponent:@"games"];
-		isDir = false;
-		exists = [[NSFileManager defaultManager] fileExistsAtPath:gamesPath isDirectory:&isDir];
-		if (exists && isDir) {
-			// Ause auto-detection
-			command = "add";
-			settings["path"] = [gamesPath fileSystemRepresentation];
-			settings["recursive"] = "true";
-			settings["exit"] = "false";
-		}
+	// The rest of the function has some commands executed only the first time after each version change
+	// Check the last version stored in the user settings.
+	NSString *versionString = [NSString stringWithUTF8String:gScummVMFullVersion];
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	NSString *lastVersion = [defaults stringForKey:@"lastVersion"];
+	if (lastVersion && [lastVersion isEqualToString:versionString])
+		return;
+	[defaults setObject:versionString forKey:@"lastVersion"];
+
+	// If the bundle contains a games directory, add them to the launcher
+	NSString *gamesPath = [[bundle resourcePath] stringByAppendingPathComponent:@"games"];
+	isDir = false;
+	exists = [[NSFileManager defaultManager] fileExistsAtPath:gamesPath isDirectory:&isDir];
+	if (exists && isDir) {
+		// Detect and add games
+		command = "add";
+		settings["path"] = [gamesPath fileSystemRepresentation];
+		settings["recursive"] = "true";
+		settings["exit"] = "false";
+		return;
 	}
 }
 
