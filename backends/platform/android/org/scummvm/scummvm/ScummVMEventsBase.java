@@ -48,6 +48,9 @@ public class ScummVMEventsBase implements
 	public static final int JE_BMB_UP = 19;
 	public static final int JE_FMB_DOWN = 20;
 	public static final int JE_FMB_UP = 21;
+
+	public static final int JE_TV_REMOTE = 22;
+
 	public static final int JE_QUIT = 0x1000;
 	public static final int JE_MENU = 0x1001;
 
@@ -369,17 +372,29 @@ public class ScummVMEventsBase implements
 		case KeyEvent.KEYCODE_VOLUME_UP:
 			// We ignore these so that they can be handled by Android.
 			return false;
+
+//		case KeyEvent.KEYCODE_CHANNEL_UP:
+//		case KeyEvent.KEYCODE_CHANNEL_DOWN:
+		case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+		case KeyEvent.KEYCODE_MEDIA_REWIND:
+		case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+			type = JE_TV_REMOTE;
+			break;
+
 		case KeyEvent.KEYCODE_DPAD_UP:
 		case KeyEvent.KEYCODE_DPAD_DOWN:
 		case KeyEvent.KEYCODE_DPAD_LEFT:
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
 		case KeyEvent.KEYCODE_DPAD_CENTER:
-			if (e.getSource() == InputDevice.SOURCE_DPAD) {
-				type = JE_DPAD;
-			} else {
-				type = JE_KEY;
-			}
-			break;
+//			if (e.getSource() == InputDevice.SOURCE_DPAD) {
+//				// When interpreted as JE_DPAD it will work as a mouse (translated in Android backend, events.cpp)
+//				// TODO ASDF is this interfering with Joystick on-screen control?
+//				type = JE_DPAD;
+//			} else {
+//				// When interpreted as JE_GAMEPAD it will be forwarder to ScummVM's keymapper
+//				type = JE_GAMEPAD;
+//			}
+//			break;
 		case KeyEvent.KEYCODE_BUTTON_A:
 		case KeyEvent.KEYCODE_BUTTON_B:
 		case KeyEvent.KEYCODE_BUTTON_C:
@@ -397,6 +412,7 @@ public class ScummVMEventsBase implements
 		case KeyEvent.KEYCODE_BUTTON_MODE:
 			type = JE_GAMEPAD;
 			break;
+
 		case KeyEvent.KEYCODE_BUTTON_1:
 		case KeyEvent.KEYCODE_BUTTON_2:
 		case KeyEvent.KEYCODE_BUTTON_3:
@@ -404,6 +420,7 @@ public class ScummVMEventsBase implements
 			// These are oddly detected with SOURCE_KEYBOARD for joystick so don't bother checking the e.getSource()
 			type = JE_JOYSTICK;
 			break;
+
 		default:
 			if (e.isSystem()) {
 				type = JE_SYS_KEY;
@@ -414,6 +431,7 @@ public class ScummVMEventsBase implements
 		}
 
 		//_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK) + " meta: " + e.getMetaState());
+		//_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " type=" + type + " source=" + e.getSource() + " action= " + action + " arg5= " + e.getRepeatCount());
 		//Log.d(ScummVM.LOG_TAG,"GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK) + " meta: " + e.getMetaState());
 
 		// look in events.cpp for how this is handled
