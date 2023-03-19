@@ -190,7 +190,8 @@ static const ResString string_map_table_v6[] = {
 	{0, "Heap %dK"},
 	{0, "Recalibrating Joystick"},
 	{0, "Joystick Mode"}, // SAMNMAX Floppy
-	{0, "Mouse Mode"}
+	{0, "Mouse Mode"},
+	{0, "Heap %dK, ems %dK"} // Floppy versions
 };
 
 #pragma mark -

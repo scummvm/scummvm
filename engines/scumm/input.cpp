@@ -1091,7 +1091,15 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 
 		if (_game.version > 4 && lastKeyHit.keycode == Common::KEYCODE_k && lastKeyHit.hasFlags(Common::KBD_CTRL) && !isSegaCD) {
-			showBannerAndPause(0, 120, getGUIString(gsHeap), _res->getHeapSize() / 1024);
+			bool useExtendedMsg = _game.id == GID_TENTACLE ||
+				(_game.id == GID_SAMNMAX && (!strcmp(_game.variant, "Floppy") || (_game.features & GF_DEMO)));
+
+			if (useExtendedMsg && VAR_V6_EMSSPACE != 0xFF) {
+				showBannerAndPause(0, 120, getGUIString(gsHeapExt), _res->getHeapSize() / 1024, VAR(VAR_V6_EMSSPACE));
+			} else {
+				showBannerAndPause(0, 120, getGUIString(gsHeap), _res->getHeapSize() / 1024);
+			}
+
 			return;
 		}
 

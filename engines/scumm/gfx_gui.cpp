@@ -3902,6 +3902,9 @@ const char *ScummEngine_v6::getGUIString(int stringId) {
 	case gsMouseMode:
 		resStringId = 38;
 		break;
+	case gsHeapExt:
+		resStringId = 39;
+		break;
 	default:
 		break;
 	}
