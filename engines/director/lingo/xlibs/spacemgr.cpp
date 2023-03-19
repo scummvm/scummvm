@@ -26,6 +26,7 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/xlibs/spacemgr.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -226,12 +227,7 @@ void SpaceMgr::m_parseText(int nargs) {
 
 	Common::String result = *text.u.s;
 	if (debugLevelSet(5)) {
-		Common::String format = result;
-		for (int i = 0; i < (int)format.size(); i++) {
-			if (format[i] == '\r')
-				format.replace(i, 1, "\n");
-		}
-		debugC(5, kDebugXObj, "SpaceMgr::m_parseText:\n%s", format.c_str());
+		debugC(5, kDebugXObj, "SpaceMgr::m_parseText:\n%s", formatStringForDump(result).c_str());
 	}
 
 	Common::StringTokenizer instructions = Common::StringTokenizer(result, "\r");
@@ -319,12 +315,7 @@ void SpaceMgr::m_getCurData(int nargs) {
 	}
 
 	if (debugLevelSet(5)) {
-		Common::String format = result;
-		for (uint i = 0; i < format.size(); i++) {
-			if (format[i] == '\r')
-				format.replace(i, 1, "\n");
-		}
-		debugC(5, kDebugXObj, "SpaceMgr::m_getCurData: %s", format.c_str());
+		debugC(5, kDebugXObj, "SpaceMgr::m_getCurData: %s", formatStringForDump(result).c_str());
 	}
 
 	g_lingo->push(Datum(result));
