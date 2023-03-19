@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-18 21:04+0000\n"
-"PO-Revision-Date: 2023-03-14 07:34+0000\n"
+"PO-Revision-Date: 2023-03-19 08:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5510,10 +5510,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "GroovieV2のサポートはコンパイルされていません"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "サーバーを起動"
+msgstr "予約済み"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -5587,83 +5585,65 @@ msgid "Enable Gore Mode when available"
 msgstr "利用可能ならゴアモードを有効にする"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "前に進む"
+msgstr "前方"
 
 #: engines/hpl1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "後方へ移動"
+msgstr "後方"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:77
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
-msgstr "左へスライド"
+msgstr "左ステップ"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:78
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
-msgstr "右へスライド"
+msgstr "右ステップ"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
 msgid "Lean Left"
-msgstr "左"
+msgstr "左傾"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
 msgid "Lean Right"
-msgstr "右"
+msgstr "右傾"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "ジャンプ"
 
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:113
 #: engines/icb/icb.cpp:173
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "タッチ"
+msgstr "かがむ"
 
 #: engines/hpl1/metaengine.cpp:92
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "作用"
+msgstr "作用モード"
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Gore Mode"
 msgid "Look Mode"
-msgstr "ゴアモード"
+msgstr "注視モード"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
-msgstr ""
+msgstr "ホルスター"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "ノート"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "個人メモ"
 
 #: engines/hpl1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "直進"
+msgstr "懐中電燈"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "ペンライト"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -5707,23 +5687,19 @@ msgstr "オリジナルの実装を有効にしていないコンテンツを追
 
 #: engines/icb/icb.cpp:88
 msgid "Fire"
-msgstr ""
+msgstr "ショット"
 
 #: engines/icb/icb.cpp:103
 msgid "Arm"
-msgstr ""
+msgstr "武器"
 
 #: engines/icb/icb.cpp:108
-#, fuzzy
-#| msgid "Remove"
 msgid "Remora"
-msgstr "削除"
+msgstr "妨害"
 
 #: engines/icb/icb.cpp:118 engines/icb/icb.cpp:178
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "左へスライド"
+msgstr "横ステップ"
 
 #: engines/kyra/detection_tables.h:72
 msgid "Missing language specific game code and/or resources."
@@ -6127,99 +6103,87 @@ msgstr "脱出"
 
 #: engines/mm/mm1/metaengine.cpp:46
 msgid "View Party Member 1"
-msgstr ""
+msgstr "パーティー1を見る"
 
 #: engines/mm/mm1/metaengine.cpp:47
 msgid "View Party Member 2"
-msgstr ""
+msgstr "パーティー2を見る"
 
 #: engines/mm/mm1/metaengine.cpp:48
 msgid "View Party Member 3"
-msgstr ""
+msgstr "パーティー3を見る"
 
 #: engines/mm/mm1/metaengine.cpp:49
 msgid "View Party Member 4"
-msgstr ""
+msgstr "パーティー4を見る"
 
 #: engines/mm/mm1/metaengine.cpp:50
 msgid "View Party Member 5"
-msgstr ""
+msgstr "パーティー5を見る"
 
 #: engines/mm/mm1/metaengine.cpp:51
 msgid "View Party Member 6"
-msgstr ""
+msgstr "パーティー6を見る"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:57
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "解く"
+msgstr "ブロック"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:58
 msgid "Cast"
-msgstr ""
+msgstr "キャスト"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "Exchange"
-msgstr ""
+msgstr "切り替え"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:60
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "右"
+msgstr "戦闘"
 
 #. I18N: Combat command in MM1
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:89
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "環境設定"
+msgstr "簡易マニュアル"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:62
 msgid "Retreat"
-msgstr ""
+msgstr "撤退"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:63
 msgid "Shoot"
-msgstr ""
+msgstr "射撃"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:66
 msgid "Delay"
-msgstr ""
+msgstr "ディレイ"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:67 engines/mm/mm1/metaengine.cpp:84
 msgid "Protect"
-msgstr ""
+msgstr "防御"
 
 #. I18N: Select party member command in MM1
 #: engines/mm/mm1/metaengine.cpp:73
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "前に進む"
+msgstr "前へ"
 
 #. I18N: Directionalcommand in MM1
 #: engines/mm/mm1/metaengine.cpp:74
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "後方へ移動"
+msgstr "後ろへ"
 
 #: engines/mm/mm1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "モードの切替"
+msgstr "ミニマップの切替"
 
 #: engines/mm/mm1/metaengine.cpp:83
 msgid "Reorder Party"
