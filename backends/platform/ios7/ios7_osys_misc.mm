@@ -56,8 +56,13 @@ void OSystem_iOS7::updateStartSettings(const Common::String &executable, Common:
 
 		// If the bundle contains a scummvm.ini, use it as initial config
 		NSString *iniPath = [bundle pathForResource:@"scummvm" ofType:@"ini"];
-		if (iniPath && !settings.contains("initial-cfg"))
+		if (iniPath && !settings.contains("initial-cfg")) {
+#ifdef IPHONE_SANDBOXED
+			settings["initial-cfg"] = "appbundle:/scummvm.ini";
+#else
 			settings["initial-cfg"] = Common::String([iniPath fileSystemRepresentation]);
+#endif
+		}
 
 		// If a command was specified on the command line, do not override it
 		if (!command.empty())
@@ -68,7 +73,11 @@ void OSystem_iOS7::updateStartSettings(const Common::String &executable, Common:
 		if (autorunPath) {
 			Common::File autorun;
 			Common::String line;
+#ifdef IPHONE_SANDBOXED
+			if (autorun.open(Common::FSNode("appbundle:/scummvm-autorun"))) {
+#else
 			if (autorun.open(Common::FSNode([autorunPath fileSystemRepresentation]))) {
+#endif
 				while (!autorun.eos()) {
 					line = autorun.readLine();
 					if (!line.empty() && line[0] != '#')
@@ -85,7 +94,11 @@ void OSystem_iOS7::updateStartSettings(const Common::String &executable, Common:
 		if (exists && isDir) {
 			// Use auto-detection
 			command = "auto-detect";
+#ifdef IPHONE_SANDBOXED
+			settings["path"] = "appbundle:/game";
+#else
 			settings["path"] = [gamePath fileSystemRepresentation];
+#endif
 			return;
 		}
 
@@ -105,7 +118,11 @@ void OSystem_iOS7::updateStartSettings(const Common::String &executable, Common:
 		if (exists && isDir) {
 			// Detect and add games
 			command = "add";
+#ifdef IPHONE_SANDBOXED
+			settings["path"] = "appbundle:/games";
+#else
 			settings["path"] = [gamesPath fileSystemRepresentation];
+#endif
 			settings["recursive"] = "true";
 			settings["exit"] = "false";
 			return;
