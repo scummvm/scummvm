@@ -22,6 +22,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for GOG.com version.
    - Added detection for alternate Polish version.
 
+ Touche:
+   - Added support for Russian translation by old-games.ru.
+
  iOS port:
    - Fix default theme selection on modern devices.
 
