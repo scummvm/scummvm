@@ -161,6 +161,7 @@ void BlacksmithItems::itemSelected() {
 	Common::String buySell, gold;
 	g_globals->_items.getItem(_items[_selectedItem]);
 	const Item &item = g_globals->_currItem;
+	_buySellItem = _selectedItem;
 
 	if (_mode != SELL_MODE) {
 		buySell = STRING["enhdialogs.blacksmith.buy"];
@@ -185,7 +186,33 @@ void BlacksmithItems::itemSelected() {
 }
 
 void BlacksmithItems::itemConfirmed() {
-	// TODO: Actual buy/sell logic
+	Character &c = *g_globals->_currCharacter;
+	Inventory &inv = c._backpack;
+
+	if (_mode == SELL_MODE) {
+		// Give the character the item value, and remove from inventory
+		c._gold += g_globals->_currItem.getSellCost();
+		inv.removeAt(_buySellItem);
+		populateItems();
+
+	} else {
+		auto buyResult = c.buyItem(_items[_buySellItem]);
+		if (buyResult == Character::BUY_SUCCESS)
+			_items.remove_at(_buySellItem);
+		draw();
+
+		switch (buyResult) {
+		case Character::BUY_BACKPACK_FULL:
+			backpackFull();
+			break;
+		case Character::BUY_NOT_ENOUGH_GOLD:
+			notEnoughGold();
+			break;
+		default:
+			displayMessage(STRING["dialogs.blacksmith.thankyou"]);
+			break;
+		}
+	}
 }
 
 } // namespace Locations

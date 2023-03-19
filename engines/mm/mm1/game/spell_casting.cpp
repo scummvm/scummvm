@@ -161,10 +161,10 @@ Common::String SpellCasting::getSpellError() const {
 	Common::String msg;
 	switch (_spellState) {
 	case SS_NOT_ENOUGH_SP:
-		msg = STRING["spells.not_enough_sp"];
+		msg = STRING["dialogs.misc.not_enough_sp"];
 		break;
 	case SS_NOT_ENOUGH_GEMS:
-		msg = STRING["spells.not_enough_gems"];
+		msg = STRING["dialogs.misc.not_enough_gems"];
 		break;
 	case SS_COMBAT_ONLY:
 		msg = STRING["spells.combat_only"];

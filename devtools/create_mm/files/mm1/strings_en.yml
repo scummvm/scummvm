@@ -314,6 +314,10 @@ dialogs:
 		full: "*** Backpack full ***"
 		who_will_try: "Who will try '1'-'%c'"
 		check_condition: "*** Check condition ***"
+		not_enough_gold: "Not enough gold"
+		not_enough_gems: "Not enough gems"
+		not_enough_sp: "Not enough spell points"
+		backpack_full: "Backpack is full"
 	spells:
 		detect_charges: "magic (charges)"
 		fly_to_x: "fly to (a-e): "
@@ -675,9 +679,6 @@ movement:
 view:
 	darkness: "  darkness"
 spells:
-	not_enough_gold: "Not enough gold"
-	not_enough_gems: "Not enough gems"
-	not_enough_sp: "Not enough spell points"
 	done: "Done"
 	combat_only: "Combat only"
 	noncombat_only: "Non combat only"

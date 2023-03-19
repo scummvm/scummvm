@@ -45,6 +45,21 @@ protected:
 		Common::KeyCode keycode);
 
 	/**
+	 * Display a message that the inventory is full
+	 */
+	void backpackFull();
+
+	/**
+	 * Display a message the character doesn't have enough gold
+	 */
+	void notEnoughGold();
+
+	/**
+	 * Display an arbitrary message
+	 */
+	void displayMessage(const Common::String &msg);
+
+	/**
 	 * Called when an item is selected
 	 */
 	virtual void itemSelected() = 0;

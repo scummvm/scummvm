@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views_enh/items_view.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -130,7 +131,26 @@ bool ItemsView::msgAction(const ActionMessage &msg) {
 }
 
 void ItemsView::timeout() {
-	close();
+	redraw();
+}
+
+void ItemsView::backpackFull() {
+	displayMessage(STRING["dialogs.misc.backpack_full"]);
+}
+
+void ItemsView::notEnoughGold() {
+	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
+}
+
+void ItemsView::displayMessage(const Common::String &msg) {
+	SoundMessage infoMsg(msg, ALIGN_MIDDLE);
+	infoMsg._delaySeconds = 3;
+	infoMsg._timeoutCallback = []() {
+		ItemsView *view = static_cast<ItemsView *>(g_events->focusedView());
+		view->timeout();
+	};
+
+	send(infoMsg);
 }
 
 } // namespace ViewsEnh

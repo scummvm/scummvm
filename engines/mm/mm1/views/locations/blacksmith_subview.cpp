@@ -94,7 +94,6 @@ void BlacksmithSubview::selectItem(uint index) {
 		break;
 	default:
 		// Purchased successfully
-		clearSurface();
 		displayMessage(15, STRING["dialogs.blacksmith.thankyou"]);
 		break;
 	}

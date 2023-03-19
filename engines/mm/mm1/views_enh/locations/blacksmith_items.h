@@ -39,6 +39,7 @@ private:
 		SELL_MODE = 3
 	};
 	BlacksmithMode _mode = WEAPONS_MODE;
+	int _buySellItem = -1;
 
 	/**
 	 * Populates the list of items

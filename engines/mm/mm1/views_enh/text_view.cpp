@@ -190,6 +190,7 @@ Common::StringArray TextView::splitLines(const Common::String &str,
 	XeenFont &font = _fontReduced ?
 		g_globals->_fontReduced : g_globals->_fontNormal;
 	const Common::String CONTROL_CHARS = "\x01\x02";
+	bool hasControlChars = str.findFirstOf(CONTROL_CHARS) != Common::String::npos;
 	const char *startP = str.c_str();
 	const char *endP;
 
@@ -211,13 +212,15 @@ Common::StringArray TextView::splitLines(const Common::String &str,
 			while (strWidth > lineWidth) {
 				// Move back to a prior space
 				for (--endP; endP > startP && *endP != ' '; --endP) {
-					// Strings can have a byte value of 1 or 2 (for changing the
-					// color of the next character/all text), followed by 2 characters
-					// for the color. So in such cases, skip over the digits
-					size_t p = Common::String(startP).findLastOf(CONTROL_CHARS);
-					if (p != Common::String::npos && endP >= (startP + p) &&
-						endP < (startP + p + 3))
-						endP = startP + p;
+					if (hasControlChars) {
+						// Strings can have a byte value of 1 or 2 (for changing the
+						// color of the next character/all text), followed by 2 characters
+						// for the color. So in such cases, skip over the digits
+						size_t p = Common::String(startP).findLastOf(CONTROL_CHARS);
+						if (p != Common::String::npos && endP >= (startP + p) &&
+							endP < (startP + p + 3))
+							endP = startP + p;
+					}
 				}
 				assert(endP > startP);
 
