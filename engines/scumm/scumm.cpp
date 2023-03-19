@@ -3412,10 +3412,12 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::pauseEngineIntern(bool pause) {
-	if (pause) {
-		_splayer->pause();
-	} else {
-		_splayer->unpause();
+	if (_splayer) { // We may call it from setupScumm() before _splayer is inited
+		if (pause) {
+			_splayer->pause();
+		} else {
+			_splayer->unpause();
+		}
 	}
 
 	ScummEngine::pauseEngineIntern(pause);
