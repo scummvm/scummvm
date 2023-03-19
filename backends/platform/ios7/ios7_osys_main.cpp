@@ -97,7 +97,16 @@ OSystem_iOS7::OSystem_iOS7() :
 	_touchpadModeEnabled = !iOS7_isBigDevice();
 #ifdef IPHONE_SANDBOXED
 	_chrootBasePath = iOS7_getDocumentsDir();
-	_fsFactory = new ChRootFilesystemFactory(_chrootBasePath);
+	ChRootFilesystemFactory *chFsFactory = new ChRootFilesystemFactory(_chrootBasePath);
+	_fsFactory = chFsFactory;
+	// Add virtual drive for bundle path
+	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+	if (fileUrl) {
+		UInt8 buf[MAXPATHLEN];
+		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf)))
+			chFsFactory->addVirtualDrive("appbundle:", Common::String((const char *)buf));
+		CFRelease(fileUrl);
+	}
 #else
 	_fsFactory = new POSIXFilesystemFactory();
 #endif

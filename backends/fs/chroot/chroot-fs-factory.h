@@ -37,9 +37,12 @@ public:
 	AbstractFSNode *makeRootFileNode() const override;
 	AbstractFSNode *makeCurrentDirectoryFileNode() const override;
 	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
+	
+	void addVirtualDrive(const Common::String &name, const Common::String &path);
 
 private:
 	const Common::String _root;
+	Common::StringMap _virtualDrives;
 };
 
 #endif /* BACKENDS_FS_CHROOT_CHROOT_FS_FACTORY_H */
