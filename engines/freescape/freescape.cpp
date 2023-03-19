@@ -344,6 +344,25 @@ void FreescapeEngine::processInput() {
 		}
 
 		switch (event.type) {
+		case Common::EVENT_JOYBUTTON_DOWN:
+			if (_hasFallen)
+				break;
+			switch (event.joystick.button) {
+			case Common::JOYSTICK_BUTTON_B:
+			case Common::JOYSTICK_BUTTON_DPAD_UP:
+				move(kForwardMovement, _scaleVector.x(), deltaTime);
+				break;
+			case Common::JOYSTICK_BUTTON_DPAD_DOWN:
+				move(kBackwardMovement, _scaleVector.x(), deltaTime);
+				break;
+			case Common::JOYSTICK_BUTTON_DPAD_LEFT:
+				move(kLeftMovement, _scaleVector.y(), deltaTime);
+				break;
+			case Common::JOYSTICK_BUTTON_DPAD_RIGHT:
+				move(kRightMovement, _scaleVector.y(), deltaTime);
+				break;
+			}
+		break;
 		case Common::EVENT_KEYDOWN:
 			if (_hasFallen)
 				break;
