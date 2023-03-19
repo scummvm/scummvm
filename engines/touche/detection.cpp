@@ -105,6 +105,15 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
+	{ // Fanmade translation by Old-Games.ru
+		"touche",
+		"v1.0.2",
+		AD_ENTRY1s("touche.dat", "44c1a7a619d583d458f0c24e881a0b68", 51362582),
+		Common::RU_RUS,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 	{ // demo version
 		"touche",
 		"Demo",

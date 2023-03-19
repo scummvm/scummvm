@@ -66,6 +66,11 @@ private:
 	static const int _polFontSize;
 	static const uint8 _polFontData[];
 
+	/* font data for russian version */
+	static const uint16 _rusFontOffs[];
+	static const int _rusFontSize;
+	static const uint8 _rusFontData[];
+
 	static const uint16 *_fontOffs;
 	static int _fontSize;
 	static const uint8 *_fontData;
