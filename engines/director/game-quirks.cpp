@@ -76,6 +76,9 @@ struct CachedFile {
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
+static void quirkLimit15FPS() {
+	g_director->_fpsLimit = 15;
+}
 
 static void quirk640x480Desktop() {
     g_director->_wmMode &= ~Graphics::kWMModeNoDesktop;
@@ -129,9 +132,16 @@ struct Quirk {
 	Common::Platform platform;
 	void (*quirk)();
 } quirks[] = {
+	// Eastern Mind sets the score to play back at a high frame rate,
+	// however the developers were using slow hardware, so some 
+	// animations play back much faster than intended.
+	// Limit the score framerate to be no higher than 15fps.
+	{ "easternmind", Common::kPlatformMacintosh, &quirkLimit15FPS },
+	{ "easternmind", Common::kPlatformWindows, &quirkLimit15FPS },
+
 	// Rodem expects to be able to track the mouse cursor outside the
 	// window, which is impossible in ScummVM. Giving it a virtual
-	// desktop allows it to work like it would ahve on the original OS.
+	// desktop allows it to work like it would have on the original OS.
 	{ "henachoco05", Common::kPlatformMacintosh, &quirk640x480Desktop },
 	{ "henachoco05", Common::kPlatformWindows, &quirk640x480Desktop },
     // Kids Box opens with a 320x150 splash screen before switching to

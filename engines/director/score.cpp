@@ -466,6 +466,8 @@ void Score::update() {
 		} else if (tempo <= 120) {
 			// FPS
 			_currentFrameRate = tempo;
+			if (g_director->_fpsLimit)
+				_currentFrameRate = MIN(g_director->_fpsLimit, _currentFrameRate);
 			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 			debugC(5, kDebugLoading, "Score::update(): setting _nextFrameTime to %d based on a framerate of %d", _nextFrameTime, tempo);
 		} else {
