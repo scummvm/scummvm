@@ -118,6 +118,7 @@ Shader *ShaderManager::query(ShaderUsage shader) const {
 		return nullptr;
 	}
 
+	assert(_builtIn[shader]);
 	return _builtIn[shader]->clone();
 }
 
