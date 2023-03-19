@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-18 21:04+0000\n"
+"POT-Creation-Date: 2023-03-19 14:49+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -142,7 +142,7 @@ msgstr ""
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3480
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3482
 #: engines/toon/toon.cpp:1502
 msgid "Yes"
 msgstr "Sim"
@@ -155,7 +155,7 @@ msgstr "Sim"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3480
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3482
 #: engines/toon/toon.cpp:1502
 msgid "No"
 msgstr "Não"
@@ -7205,7 +7205,7 @@ msgid "Querying games..."
 msgstr "A guardar jogo..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3486
+#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3488
 msgid "Join"
 msgstr ""
 
@@ -8115,12 +8115,12 @@ msgid ""
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3486
+#: engines/scumm/scumm.cpp:3488
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Deseja guardar ou carregar um jogo?"
 
-#: engines/scumm/scumm.cpp:3486
+#: engines/scumm/scumm.cpp:3488
 msgid "Host"
 msgstr ""
 
