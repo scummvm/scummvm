@@ -44,6 +44,11 @@ void Graphics::setupFont(Common::Language language) {
 		_fontSize = _polFontSize;
 		_fontData = _polFontData;
 		break;
+	case Common::RU_RUS:
+		_fontOffs = _rusFontOffs;
+		_fontSize = _rusFontSize;
+		_fontData = _rusFontData;
+		break;
 	case Common::IT_ITA:
 	case Common::EN_ANY:
 	default:
