@@ -309,11 +309,7 @@ void FileIO::m_readLine(int nargs) {
 	// See D4 Using Lingo p. 323
 
 	g_lingo->push(Datum(""));
-	if (g_director->getPlatform() == Common::kPlatformWindows) {
-		g_lingo->push(Datum("\r"));
-	} else {
-		g_lingo->push(Datum("\n"));
-	}
+	g_lingo->push(Datum("\r"));
 	FileIO::m_readToken(2);
 }
 
@@ -322,11 +318,7 @@ void FileIO::m_readWord(int nargs) {
 	// See D4 Using Lingo p. 323
 
 	g_lingo->push(Datum(" "));
-	if (g_director->getPlatform() == Common::kPlatformWindows) {
-		g_lingo->push(Datum(" \r"));
-	} else {
-		g_lingo->push(Datum(" \n"));
-	}
+	g_lingo->push(Datum(" \r"));
 	FileIO::m_readToken(2);
 }
 
@@ -336,8 +328,6 @@ void FileIO::m_readPict(int nargs) {
 }
 
 bool FileIO::charInMatchString(char ch, const Common::String &matchString) {
-	if (ch == '\r' && g_director->getPlatform() == Common::kPlatformWindows)
-		ch = '\n';
 	return matchString.contains(ch);
 }
 
