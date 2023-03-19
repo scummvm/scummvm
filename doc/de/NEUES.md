@@ -22,6 +22,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die GOG.com-Version hinzugefügt.
    - Unterstützung für eine alternative polnische Version hinzugefügt.
 
+ Touche:
+   - Unterstützung für von old-games.ru erstellte russische Übersetzung hinzugefügt.
+
  iOS-Portierung:
    - Die Auswahl des Standard-Themes funktioniert jetzt auch auf modernen Geräten korrekt.
 
