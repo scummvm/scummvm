@@ -325,9 +325,9 @@ int Net::joinSessionById(int sessionId) {
 		return 0;
 	}
 
-	for (Common::Array<Session>::iterator i = _sessions.begin(); i != _sessions.end(); i++) {
-		if (i->id == sessionId) {
-			return doJoinSession(*i);
+	for (auto &i : _sessions) {
+		if (i.id == sessionId) {
+			return doJoinSession(i);
 		}
 	}
 	warning("Net::joinSessionById(): session %d not found", sessionId);
@@ -341,8 +341,8 @@ int Net::ifSessionExist(int sessionId) {
 		return 0;
 	}
 
-	for (Common::Array<Session>::iterator i = _sessions.begin(); i != _sessions.end(); i++) {
-		if (i->id == sessionId) {
+	for (auto &i : _sessions) {
+		if (i.id == sessionId) {
 			return 1;
 		}
 	}
@@ -928,14 +928,14 @@ void Net::handleSessionServerData(Common::String data) {
 
 					// Check if we already know about this session:
 					bool makeNewSession = true;
-					for (Common::Array<Session>::iterator j = _sessions.begin(); j != _sessions.end(); j++) {
-						if (j->id == sessionData["id"]->asIntegerNumber()) {
+					for (auto &j : _sessions) {
+						if (j.id == sessionData["id"]->asIntegerNumber()) {
 							// Yes we do, Update the timestamp and player count.
 							makeNewSession = false;
-							if (!j->local) {
+							if (!j.local) {
 								// Only update if it's not a local session
-								j->timestamp = g_system->getMillis();
-								j->players = sessionData["players"]->asIntegerNumber();
+								j.timestamp = g_system->getMillis();
+								j.players = sessionData["players"]->asIntegerNumber();
 							}
 							break;
 						}
@@ -1079,22 +1079,22 @@ void Net::handleBroadcastData(Common::String data, Common::String host, int port
 
 				// Check if the session of the game ID (from the internet session server) exists.
 				// if so, update it as a local session and swap the internet-based address to local.
-				for (Common::Array<Session>::iterator i = _sessions.begin(); i != _sessions.end(); i++) {
-					if (i->id == sessionId && !i->local) {
-						i->local = true;
-						i->host = host;
-						i->port = port;
-						i->timestamp = g_system->getMillis();
-						i->players = players;
+				for (auto &i : _sessions) {
+					if (i.id == sessionId && !i.local) {
+						i.local = true;
+						i.host = host;
+						i.port = port;
+						i.timestamp = g_system->getMillis();
+						i.players = players;
 						return;
 					}
 				}
 				// Check if we already know about this session:
-				for (Common::Array<Session>::iterator i = _sessions.begin(); i != _sessions.end(); i++) {
-					if (i->host == host && i->port == port) {
+				for (auto &i : _sessions) {
+					if (i.host == host && i.port == port) {
 						// Yes we do, Update the timestamp and player count.
-						i->timestamp = g_system->getMillis();
-						i->players = players;
+						i.timestamp = g_system->getMillis();
+						i.players = players;
 						return;
 					}
 				}
