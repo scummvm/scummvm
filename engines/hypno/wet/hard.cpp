@@ -144,6 +144,7 @@ void WetEngine::runMainMenu(Code *code) {
 	drawImage(surName, subName.left, subName.top, true);
 	drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
 	_name.clear();
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	bool cont = true;
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -209,6 +210,7 @@ void WetEngine::runMainMenu(Code *code) {
 	_name.toLowercase();
 	bool found = loadProfile(_name);
 
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	if (found || _name.empty()) {
 		menu->free();
 		delete menu;

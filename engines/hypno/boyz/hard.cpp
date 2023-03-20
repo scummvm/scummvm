@@ -73,6 +73,7 @@ void BoyzEngine::runMainMenu(Code *code) {
 		if (posY >= 185)
 			break;
 	}
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
@@ -117,6 +118,7 @@ void BoyzEngine::runMainMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	menu->free();
 	delete menu;
 
