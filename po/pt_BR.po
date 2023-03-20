@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-20 18:27+0000\n"
+"POT-Creation-Date: 2023-03-20 20:44+0000\n"
 "PO-Revision-Date: 2023-03-13 10:57+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -7305,7 +7305,7 @@ msgstr "O formato deste jogo salvo é obsoleto, não foi possível carregá-lo"
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "A versão do jogo salvo é %d, o máximo suportado é %0d"
 
-#: engines/sci/engine/savegame.cpp:1480
+#: engines/sci/engine/savegame.cpp:1481
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
