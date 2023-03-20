@@ -942,8 +942,7 @@ Graphics::RendererType determinateRenderType() {
 	#endif
 
 	#if defined(USE_TINYGL)
-	if (desiredRendererType == Graphics::kRendererTypeTinyGL)
-		return desiredRendererType;
+		return Graphics::kRendererTypeTinyGL;
 	#endif
 
 	return Graphics::kRendererTypeDefault;
