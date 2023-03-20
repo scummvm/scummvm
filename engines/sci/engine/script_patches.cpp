@@ -8832,9 +8832,39 @@ static const uint16 larry5PatchGermanEndingPattiTalker[] = {
 	PATCH_END
 };
 
+// The Hollywood sign in room 190 doesn't respond to clicks or display its
+//  messages. This is a script typo. The author attempted to initialize the
+//  `HollywoodSign` object, but typed the word `sign` instead. The compiler
+//  accepted this because `sign` is the name of a procedure in script 999.
+//  The `init` selector was interpreted as a non-existent property.
+//
+// We fix this by calling HollywoodSign:init instead of sign.
+//
+// Applies to: All versions
+// Responsible method: rm190:init
+static const uint16 larry5SignatureHollywoodSign[] = {
+	0x78,                               // push1
+	0x66, SIG_ADDTOOFFSET(+2),          // pTos ????
+	SIG_MAGICDWORD,
+	0x46, SIG_UINT16(0x03e7),           // calle proc999_0 [ sign(????) ]
+	      SIG_UINT16(0x0000), 0x02,
+	SIG_ADDTOOFFSET(+3),
+	0x72,                               // lofsa tree [ 0x40 bytes before HollywoodSign ]
+	SIG_END
+};
+
+static const uint16 larry5PatchHollywoodSign[] = {
+	0x38, PATCH_SELECTOR16(init),       // pushi init
+	0x39, 0x00,                         // pushi 00
+	0x72, PATCH_GETORIGINALUINT16ADJUST(+14, +0x40), // lofsa HollywoodSign
+	0x4a, 0x04,                         // send 04 [ HollywoodSign init: ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry larry5Signatures[] = {
 	{  true,     0, "update stopGroop client",                     1, larry5SignatureUpdateStopGroopClient,   larry5PatchUpdateStopGroopClient },
+	{  true,   190, "hollywood sign",                              1, larry5SignatureHollywoodSign,           larry5PatchHollywoodSign },
 	{  true,   280, "English-only: fix green card limo bug",       1, larry5SignatureGreenCardLimoBug,        larry5PatchGreenCardLimoBug },
 	{  true,   380, "German-only: Enlarge Patti Textbox",          1, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
 	SCI_SIGNATUREENTRY_TERMINATOR
