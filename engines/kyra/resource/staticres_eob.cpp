@@ -581,8 +581,8 @@ void EoBCoreEngine::initStaticResource() {
 		}
 		break;
 	default:
-		_saveLoadStrings = saveLoadStrings[5];
-		_errorSlotEmptyString = errorSlotEmptyString[7];
+		_saveLoadStrings = saveLoadStrings[0];
+		_errorSlotEmptyString = errorSlotEmptyString[0];
 		break;
 	}
 
