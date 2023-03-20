@@ -8644,7 +8644,8 @@ msgstr "Корректировать соотношение сторон для 
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
-msgstr "Воспроизводить ролики Syberia в 16:9, а не растягивать их на весь экран"
+msgstr ""
+"Воспроизводить ролики Syberia в 16:9, а не растягивать их на весь экран"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
