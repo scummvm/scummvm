@@ -2055,7 +2055,7 @@ const KYRAGameDescription adGameDescs[] = {
 			"eob2",
 			msg_missingLangResources, // Reason for being unsupported
 			AD_ENTRY1s("LEVEL15.INF", "f972f628d21bae404a7d52bb287c0012", -1),
-			Common::ZH_ANY,
+			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_UNSUPPORTED,
 			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
