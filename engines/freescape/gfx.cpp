@@ -441,7 +441,6 @@ Graphics::Surface *Renderer::convertImageFormatIfNecessary(Graphics::ManagedSurf
 	if (!msurface)
 		return nullptr;
 
-	assert(msurface->format != _texturePixelFormat);
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(msurface->rawSurface());
 	byte *palette = (byte *)malloc(sizeof(byte) * 16 * 3);
