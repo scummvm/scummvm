@@ -104,7 +104,8 @@ public:
 			(f == kSupportsLoadingDuringRuntime) ||
 			(f == kSupportsSavingDuringRuntime) ||
 			(f == kSupportsReturnToLauncher) ||
-			(f == kSupportsChangingOptionsDuringRuntime);
+			(f == kSupportsChangingOptionsDuringRuntime) ||
+			(f == kSupportsQuitDialogOverride);
 	};
 
 	bool canLoadGameStateCurrently() override;
