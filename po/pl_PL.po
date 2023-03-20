@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-19 18:26+0000\n"
-"PO-Revision-Date: 2022-10-23 18:43+0000\n"
-"Last-Translator: aquadran <aquadran@gmail.com>\n"
+"PO-Revision-Date: 2023-03-20 15:33+0000\n"
+"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -227,9 +227,9 @@ msgstr "BŁĄD %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Wczytywanie stanu gry..."
+msgstr "Pobieranie listy %S..."
 
 #: gui/downloadpacksdialog.cpp:200
 #, fuzzy
@@ -237,9 +237,9 @@ msgid "Clear Cache"
 msgstr "Wyczyść"
 
 #: gui/downloadpacksdialog.cpp:251
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Pobieranie listy ikon... %d elementów"
+msgstr "Pobieranie listy %S... %d elementów"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
@@ -270,9 +270,9 @@ msgstr "BŁĄD: Ścieżka do ikon nie jest ustawiona"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:426
-#, fuzzy, c-format
+#, c-format
 msgid "No new %S available"
-msgstr "Brak nowych pakietów ikon"
+msgstr "Brak nowych %S"
 
 #: gui/downloadpacksdialog.cpp:462
 #, c-format
@@ -770,7 +770,7 @@ msgstr "Wybierz zaklęcie"
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Początkowe"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
@@ -811,7 +811,7 @@ msgstr ""
 
 #: gui/launcher.cpp:217 gui/launcher.cpp:799
 msgid "Group:"
-msgstr ""
+msgstr "Grupa:"
 
 #: gui/launcher.cpp:219
 msgid "Select a criteria to group the entries"
@@ -1239,9 +1239,8 @@ msgid "Shader Path:"
 msgstr "Ścieżka zapisów:"
 
 #: gui/options.cpp:1652
-#, fuzzy
 msgid "Update Shaders"
-msgstr "Sprawdź aktualizacje:"
+msgstr "Aktualizuj shadery"
 
 #: gui/options.cpp:1652
 #, fuzzy
@@ -3696,7 +3695,7 @@ msgstr "Lub wybierz katalog (działa tylko w przeglądarce Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 msgid "Index of "
-msgstr ""
+msgstr "Indeks "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
 msgid "Error occurred"
@@ -3723,7 +3722,7 @@ msgstr "ScummVM nie mógł przyporządkować wskazanego katalogu."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
 msgid "Index of"
-msgstr ""
+msgstr "Indeks"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:41
 msgid "This is a local webserver index page."
@@ -5384,7 +5383,7 @@ msgstr ""
 #: engines/hpl1/metaengine.cpp:87 engines/icb/icb.cpp:123
 #: engines/icb/icb.cpp:183
 msgid "Run"
-msgstr ""
+msgstr "Uruchom"
 
 #: engines/grim/grim.cpp:482 engines/hpl1/metaengine.cpp:95
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:245
@@ -5630,7 +5629,7 @@ msgstr "Użyj"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
-msgstr ""
+msgstr "Wyczyść punkty orientacyjne"
 
 #: engines/hdb/metaengine.cpp:270
 #, fuzzy
@@ -6116,7 +6115,7 @@ msgstr "Ta układanka jest dostępna tylko w pełnej wersji tej gry."
 #: engines/lure/metaengine.cpp:39 engines/mads/metaengine.cpp:108
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:167
 msgid "TTS Narrator"
-msgstr ""
+msgstr "Narrator TTS"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 #, fuzzy
@@ -6884,13 +6883,12 @@ msgstr ""
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:90
-#, fuzzy
 msgid "NHC replacement:"
-msgstr "Włącz pływające kursory"
+msgstr "Zamiana NHC:"
 
 #: engines/neverhood/dialogs.cpp:96
 msgid "<original>"
-msgstr ""
+msgstr "<oryginalne>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -8602,7 +8600,7 @@ msgstr "Wariant fontu nieobecny w pliku silnika \"%s\"."
 #: engines/toon/toon.cpp:244
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Nie można zapisać stanu gry w slocie %i "
+msgstr "Gra została zapisana w slocie #%d "
 
 #: engines/toon/toon.cpp:248
 #, c-format
@@ -8612,7 +8610,7 @@ msgstr "Szybki zapis w slocie #%d nie powiódł się"
 #: engines/toon/toon.cpp:261
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr "Nie można zapisać szybkiego stany gry w slocie %i"
+msgstr "Szybko wczytano zapis gry #%d"
 
 #: engines/toon/toon.cpp:265
 #, c-format
@@ -8791,7 +8789,7 @@ msgstr "Debugger"
 
 #: engines/twine/metaengine.cpp:308 engines/twine/metaengine.cpp:328
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Normalne zachowanie"
 
 #: engines/twine/metaengine.cpp:313 engines/twine/metaengine.cpp:333
 msgid "Athletic Behaviour"
@@ -8847,12 +8845,12 @@ msgstr "Aktywny"
 
 #: engines/twine/metaengine.cpp:456
 msgid "Accept"
-msgstr ""
+msgstr "Akceptuj"
 
 #: engines/twine/metaengine.cpp:464 engines/twine/metaengine.cpp:516
 #: engines/twine/metaengine.cpp:532
 msgid "Abort"
-msgstr ""
+msgstr "Anuluj"
 
 #: engines/twine/metaengine.cpp:502
 #, fuzzy
@@ -9393,7 +9391,7 @@ msgstr "Debugger"
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
-msgstr ""
+msgstr "Wyjdź"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
@@ -9621,7 +9619,7 @@ msgstr "~P~oprzednia"
 #: engines/wintermute/keymapper_tables.h:1867
 #: engines/wintermute/keymapper_tables.h:1963
 msgid "Settings"
-msgstr ""
+msgstr "Ustawienia"
 
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialogue answer 1"
@@ -9729,7 +9727,7 @@ msgstr "Podwójna liczba klatek"
 
 #: engines/wintermute/keymapper_tables.h:2181
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2186
 msgid "Key i"
@@ -9793,7 +9791,7 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:244
 msgid "Score"
-msgstr ""
+msgstr "Wynik"
 
 #: engines/zvision/metaengine.cpp:250
 msgid "Put away object"
