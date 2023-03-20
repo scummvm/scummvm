@@ -20,14 +20,9 @@
  */
 
 #include "base/plugins.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/md5.h"
-#include "common/str-array.h"
-#include "common/translation.h"
-#include "common/util.h"
+#include "engines/advancedDetector.h"
+
 #include "crab/detection.h"
-#include "crab/detection_tables.h"
 
 const DebugChannelDef CrabMetaEngineDetection::debugFlagList[] = {
 	{ Crab::kDebugGraphics, "Graphics", "Graphics debug level" },
@@ -38,8 +33,30 @@ const DebugChannelDef CrabMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
+static const PlainGameDescriptor crabGames[] = {
+	{"unrest", "Unrest"},
+	{nullptr, nullptr}
+};
+
+namespace Crab {
+
+static const ADGameDescription gameDescriptions[] = {
+	{
+		"Unrest",
+		"",
+		AD_ENTRY1s("Unrest.exe", "bae406538172eb062480f25ea6e387e5", 805376),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE),
+	},
+	AD_TABLE_END_MARKER
+};
+
+}
+
 CrabMetaEngineDetection::CrabMetaEngineDetection() : AdvancedMetaEngineDetection(Crab::gameDescriptions,
-	sizeof(ADGameDescription), Crab::crabGames) {
+	sizeof(ADGameDescription), crabGames) {
 }
 
 REGISTER_PLUGIN_STATIC(CRAB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, CrabMetaEngineDetection);

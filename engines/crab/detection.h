@@ -34,10 +34,6 @@ enum CrabDebugChannels {
 	kDebugScript   = 1 << 4,
 };
 
-extern const PlainGameDescriptor crabGames[];
-
-extern const ADGameDescription gameDescriptions[];
-
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 
 } // End of namespace Crab
@@ -58,7 +54,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Crab (C)";
+		return "Unrest (c) Pyrodactyl Games 2009-2023";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
