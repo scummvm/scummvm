@@ -357,12 +357,13 @@ public:
 
 	uint32 _startTime;
 	uint32 _threadExitTime;
+	uint8 _threadSwitchCaller;
 
 	bool _speed_hack_enabled;
 
 	Audio::MixerImpl *_mixer;
 
-	OSystem_RETRO(bool aEnableSpeedHack) : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _joypadnumpadLast(8), _joypadnumpadActive(false), _mixer(0), _startTime(0), _threadExitTime(10), _speed_hack_enabled(aEnableSpeedHack) {
+	OSystem_RETRO(bool aEnableSpeedHack) : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _joypadnumpadLast(8), _joypadnumpadActive(false), _mixer(0), _startTime(0), _threadExitTime(0), _threadSwitchCaller(0), _speed_hack_enabled(aEnableSpeedHack) {
 		_fsFactory = new FS_SYSTEM_FACTORY();
 		memset(_mouseButtons, 0, sizeof(_mouseButtons));
 		memset(_joypadmouseButtons, 0, sizeof(_joypadmouseButtons));
@@ -496,6 +497,16 @@ public:
 		const uint8_t *src = (const uint8_t *)buf;
 		uint8_t *pix = (uint8_t *)_gameScreen.getPixels();
 		copyRectToSurface(pix, _gameScreen.pitch, src, pitch, x, y, w, h, _gameScreen.format.bytesPerPixel);
+
+		/* In case of consecutive updateScreen calls, additionally switch to main thread when (and if) first copyRectToScreen is called
+		between two updateScreen. This reduces crackling.
+		Consecutive copyRectToScreen other than first are covered by thread switch triggered by pollEvent or delayMillis. */
+		if (! _speed_hack_enabled) {
+			if (!(_threadSwitchCaller & THREAD_SWITCH_RECT) && (_threadSwitchCaller & THREAD_SWITCH_UPDATE)) {
+				retroCheckThread();
+				_threadSwitchCaller |= THREAD_SWITCH_RECT;
+			}
+		}
 	}
 
 	virtual void updateScreen() {
@@ -532,6 +543,15 @@ public:
 				blit_uint32_uint16(_screen, _mouseImage, x, y, _mousePaletteEnabled ? _mousePalette : _gamePalette, _mouseKeyColor);
 				break;
 			}
+		}
+
+		/* Switch to main thread in case of consecutive updateScreen, to avoid losing frames.
+		Non consecutive updateScreen are covered by thread switches triggered by pollEvent or delayMillis. */
+		if (! _speed_hack_enabled && (_threadSwitchCaller & THREAD_SWITCH_UPDATE)) {
+			retroCheckThread();
+			_threadSwitchCaller &= ~THREAD_SWITCH_RECT;
+		} else {
+			_threadSwitchCaller = THREAD_SWITCH_UPDATE;
 		}
 	}
 
@@ -622,17 +642,23 @@ public:
 	}
 
 	void retroCheckThread(uint32 offset = 0) {
-		if (_threadExitTime <= (getMillis() + offset)) {
+		uint32 now = getMillis();
+
+		/* Limit the thread switches triggered by pollEvent or delayMillis to one each 10ms.
+		   Do not limit thread switches due to consecutive updateScreen to avoid losing frames. */
+		if (_threadExitTime <= (now + offset)) {
+			_threadExitTime = now + 10;
 			retro_switch_to_main_thread();
-			_threadExitTime = getMillis() + 10;
+		} else if (_threadSwitchCaller & THREAD_SWITCH_UPDATE){
+			retro_switch_to_main_thread();
 		}
+
+		((DefaultTimerManager *)_timerManager)->handler();
 	}
 
 	virtual bool pollEvent(Common::Event &event) {
+		_threadSwitchCaller = THREAD_SWITCH_POLL;
 		retroCheckThread();
-
-		((DefaultTimerManager *)_timerManager)->handler();
-
 		if (!_events.empty()) {
 			event = _events.front();
 			_events.pop_front();
@@ -660,6 +686,7 @@ public:
 	virtual void delayMillis(uint msecs) {
 		// Implement 'non-blocking' sleep...
 		uint32 start_time = getMillis();
+
 		if (_speed_hack_enabled) {
 			// Use janky inaccurate method...
 			uint32 elapsed_time = 0;
@@ -669,6 +696,7 @@ public:
 				// thread exit time, exit the thread immediately
 				// (i.e. start burning delay time in the main RetroArch
 				// thread as soon as possible...)
+				_threadSwitchCaller = THREAD_SWITCH_DELAY;
 				retroCheckThread(time_remaining);
 				// Check how much delay time remains...
 				elapsed_time = getMillis() - start_time;
@@ -678,20 +706,13 @@ public:
 				} else {
 					time_remaining = 0;
 				}
-				// Have to handle the timer manager here, since some engines
-				// (e.g. dreamweb) sit in a delayMillis() loop waiting for a
-				// timer callback...
-				((DefaultTimerManager *)_timerManager)->handler();
 			}
 		} else {
 			// Use accurate method...
 			while (getMillis() < start_time + msecs) {
 				usleep(1000);
+				_threadSwitchCaller = THREAD_SWITCH_DELAY;
 				retroCheckThread();
-				// Have to handle the timer manager here, since some engines
-				// (e.g. dreamweb) sit in a delayMillis() loop waiting for a
-				// timer callback...
-				((DefaultTimerManager *)_timerManager)->handler();
 			}
 		}
 	}
@@ -750,8 +771,6 @@ public:
 			log_cb(RETRO_LOG_INFO, "%s\n", message);
 	}
 
-	//
-
 	const Graphics::Surface &getScreen() {
 		const Graphics::Surface &srcSurface = (_overlayInGUI) ? _overlay : _gameScreen;
 
@@ -795,7 +814,6 @@ public:
 			*cumulativeXYAcc -= (float)cumulativeXYAcc_int;
 		}
 		*relMouseXY = (int)deltaAcc;
-
 	}
 
 	void processMouse(retro_input_state_t aCallback, int device, float gampad_cursor_speed, float gamepad_acceleration_time, bool analog_response_is_quadratic, int analog_deadzone, float mouse_speed) {
