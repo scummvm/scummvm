@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-19 18:26+0000\n"
-"PO-Revision-Date: 2023-03-20 12:38+0000\n"
+"PO-Revision-Date: 2023-03-20 15:31+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5664,11 +5664,11 @@ msgstr "Назад"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:77
 msgid "Strafe Left"
-msgstr "Наліво"
+msgstr "Стрейф наліво"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:78
 msgid "Strafe Right"
-msgstr "Направо"
+msgstr "Стрейфувати направо"
 
 #: engines/hpl1/metaengine.cpp:85
 msgid "Lean Left"
