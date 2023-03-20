@@ -430,6 +430,7 @@ dialogs:
 enhdialogs:
 	blacksmith:
 		browse: "\x01""37Browse"
+		arms_for: "Equipment for %s the %s"
 		backpack_for: "Backpack for %s the %s"
 		cost: "Cost"
 		gold: "Gold"
@@ -438,7 +439,7 @@ enhdialogs:
 		sell: "Sell"
 		for_gold: "for %d gold"
 		areas:
-			weapons: "Weapons"
+			weapons: "Weapons"	
 			armor: "Armor"
 			misc: "Misc"
 		buttons:
@@ -449,6 +450,13 @@ enhdialogs:
 			sell: "\x01""37Sell"
 			buy: "\x01""37Buy"
 			sell: "\x01""37Sell"
+			arms: "\x01""37Arms"
+			backpack: "\x01""37BkPack"
+			equip: "\x01""37Equip"
+			remove: "\x01""37Rem"
+			discard: "\x01""37Disc"
+			gather: "\x01""37Gath"		
+			use: "\x01""37Use"
 			exit: "Exit"
 	cast_spell:
 		title: "Cast Spell"

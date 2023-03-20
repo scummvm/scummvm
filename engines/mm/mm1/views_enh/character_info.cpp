@@ -130,6 +130,9 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		_cursorCell = EXPANDED_TO_REDUCED(idx);
 		showCursor(true);
 		break;
+	case Common::KEYCODE_i:
+		addView("CharacterInventory");
+		break;
 	case Common::KEYCODE_e:
 		addView("Exchange");
 		break;

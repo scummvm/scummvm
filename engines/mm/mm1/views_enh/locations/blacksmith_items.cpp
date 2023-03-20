@@ -40,8 +40,7 @@ BlacksmithItems::BlacksmithItems() : ItemsView("BlacksmithItems") {
 bool BlacksmithItems::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
 
-	if (dynamic_cast<Confirm *>(msg._priorView) == nullptr)
-		_mode = WEAPONS_MODE;
+	_mode = WEAPONS_MODE;
 	populateItems();
 
 	return true;

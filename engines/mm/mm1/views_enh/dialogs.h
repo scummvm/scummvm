@@ -26,6 +26,7 @@
 #include "mm/mm1/views/bash.h"
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views_enh/character_info.h"
+#include "mm/mm1/views_enh/character_inventory.h"
 #include "mm/mm1/views_enh/character_select.h"
 #include "mm/mm1/views_enh/characters.h"
 #include "mm/mm1/views_enh/confirm.h"
@@ -71,6 +72,7 @@ private:
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
 	ViewsEnh::CharacterInfo _characterInfo;
+	ViewsEnh::CharacterInventory _characterInventory;
 	ViewsEnh::CharacterSelect _characterSelect;
 	ViewsEnh::Characters _characters;
 	ViewsEnh::Confirm _confirm;
