@@ -222,8 +222,7 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 	int selectors = getVarCount();
 
 	if (propertyOffset < 0 || (propertyOffset >> 1) >= selectors) {
-		error("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d])",
-		          propertyOffset, propertyOffset >> 1, selectors - 1);
+		// Scripts contain instructions with invalid properties
 		return -1;
 	}
 
