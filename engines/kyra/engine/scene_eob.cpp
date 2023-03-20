@@ -125,6 +125,11 @@ void EoBCoreEngine::readLevelFileData(int level) {
 	if (!s)
 		error("Failed to load level file LEVEL%d.INF/DRO/ELO/JOT", level);
 
+	if (_flags.gameID == GI_EOB2 && _flags.lang == Common::Language::ZH_TWN) {
+		_screen->loadChineseEOB2LZBitmap(s, 5, 15000);
+		return;
+	}
+
 	if (s->readUint16LE() + 2 == s->size()) {
 		// check for valid compression type
 		if (s->readUint16LE() <= 4) {
