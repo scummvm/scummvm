@@ -4555,6 +4555,9 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 	}
 
 	Resource *resource = _engine->_resMan->findResource(ResourceId(kResourceTypeVocab, 994), false);
+	if (resource == nullptr) {
+		return true;
+	}
 	const Object *obj = s->_segMan->getObject(reg);
 	SciSpan<const uint16> data = resource->subspan<const uint16>(0);
 	uint32 first = atoi(argv[2]);

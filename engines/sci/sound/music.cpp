@@ -958,7 +958,9 @@ void SciMusic::printSongInfo(reg_t obj, Console *con) {
 				con->debugPrintf("Type: MIDI\n");
 				if (song->soundRes) {
 					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId());
-					con->debugPrintf("Channels: %d\n", track->channelCount);
+					if (track) {
+						con->debugPrintf("Channels: %d\n", track->channelCount);
+					}
 				}
 			} else if (song->pStreamAud || song->pLoopStream) {
 				con->debugPrintf("Type: digital audio (%s), sound active: %s\n",

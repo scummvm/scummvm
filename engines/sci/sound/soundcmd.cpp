@@ -190,7 +190,7 @@ reg_t SoundCommandParser::kDoSoundPlay(EngineState *s, int argc, reg_t *argv) {
 void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restoring) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 
-	if (!restoring && isUninterruptableSoundPlaying(obj)) {
+	if (!restoring && musicSlot && isUninterruptableSoundPlaying(obj)) {
 		debugC(kDebugLevelSound, "kDoSound(play): sound %d already playing", musicSlot->resourceId);
 		return;
 	}

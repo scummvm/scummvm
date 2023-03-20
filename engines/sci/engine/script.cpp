@@ -89,6 +89,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 	_nr = script_nr;
 	uint32 scriptSize = script->size();
 	uint32 bufSize = scriptSize;
+	Resource *heap = nullptr;
 
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
 		bufSize += script->getUint16LEAt(0) * 2;
@@ -99,7 +100,10 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		// combined size of the stack and the heap must be 64KB. So far this has
 		// worked for SCI11, SCI2 and SCI21 games. SCI3 games use a different
 		// script format, and they can exceed the 64KB boundary using relocation.
-		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), false);
+		heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), false);
+		if (heap == nullptr) {
+			error("Heap %d not found", script_nr);
+		}
 		bufSize += heap->size();
 
 		// Ensure that the start of the heap resource can be word-aligned.
@@ -136,10 +140,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 	// size
 	_script = _buf->subspan(0, scriptSize, script->name());
 
-	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), false);
-		assert(heap);
-
+	if (heap != nullptr) {
 		SciSpan<byte> outHeap = outBuffer.subspan(scriptSize, heap->size(), heap->name(), 0);
 		heap->copyDataTo(outHeap);
 		_heap = outHeap;

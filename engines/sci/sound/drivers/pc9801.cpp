@@ -1348,7 +1348,10 @@ int MidiDriver_PC9801::open() {
 	}
 
 	ResourceManager *resMan = g_sci->getResMan();
-	if (!loadInstruments(*resMan->findResource(ResourceId(kResourceTypePatch, _version < SCI_VERSION_1_LATE ? 2 : 8), false)))
+	Resource *resource = resMan->findResource(ResourceId(kResourceTypePatch, _version < SCI_VERSION_1_LATE ? 2 : 8), false);
+	if (resource == nullptr)
+		return MERR_CANNOT_CONNECT;
+	if (!loadInstruments(*resource))
 		return MERR_CANNOT_CONNECT;
 
 	if (_version == SCI_VERSION_0_LATE && _channelMask2 == 0x00) {
