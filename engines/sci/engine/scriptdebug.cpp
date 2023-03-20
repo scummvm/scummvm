@@ -316,8 +316,12 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 			} else {
 				if (getSciVersion() == SCI_VERSION_3)
 					debugN("\t(%s)", g_sci->getKernel()->getSelectorName(param_value).c_str());
-				else
-					debugN("\t(%s)", g_sci->getKernel()->getSelectorName(obj->propertyOffsetToId(s->_segMan, param_value)).c_str());
+				else {
+					int propertySelector = obj->propertyOffsetToId(s->_segMan, param_value);
+					if (propertySelector != -1) {
+						debugN("\t(%s)", g_sci->getKernel()->getSelectorName(propertySelector).c_str());
+					}
+				}
 			}
 		}
 	}
