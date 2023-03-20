@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-19 18:26+0000\n"
-"PO-Revision-Date: 2023-03-18 07:33+0000\n"
+"PO-Revision-Date: 2023-03-20 18:01+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5816,13 +5816,11 @@ msgstr "Feuer"
 
 #: engines/icb/icb.cpp:103
 msgid "Arm"
-msgstr ""
+msgstr "Ausrüsten"
 
 #: engines/icb/icb.cpp:108
-#, fuzzy
-#| msgid "Remove"
 msgid "Remora"
-msgstr "Entfernen"
+msgstr "Remora"
 
 #: engines/icb/icb.cpp:118 engines/icb/icb.cpp:178
 msgid "Side Step"
@@ -6290,10 +6288,8 @@ msgstr "Kämpfen"
 #. I18N: Combat command in MM1
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:89
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "Einstellungen"
+msgstr "Kurzreferenz"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:62
@@ -7667,11 +7663,13 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1376
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "Mods für kompetitiven Mehrspieler-Modus aktivieren"
 
 #: engines/scumm/dialogs.cpp:1376
 msgid "Enables custom-made modifications intented for online competitive play."
 msgstr ""
+"Aktiviere zusätzliche Modifikationen, die für den kompetitiven Mehrspieler-"
+"Modus entwickelt wurden."
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Enable connection to Multiplayer Server"
