@@ -295,6 +295,7 @@ else
   echoOk
 fi
 
+rm -f $TMP
 
 IFS="$OLDIFS"
 
