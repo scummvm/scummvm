@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-19 18:26+0000\n"
-"PO-Revision-Date: 2023-03-17 17:04+0000\n"
+"PO-Revision-Date: 2023-03-20 09:52+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8750,11 +8750,11 @@ msgstr ""
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "Restaurar escenas eliminadas"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "Restaura algunas escenas de la versión para Windows"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
