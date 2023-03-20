@@ -171,15 +171,20 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 		"Part3-Full-Part1",
 		"HD",
 		"HD/PC-MacOSX-Xbox360-PS3",
-		"PC-PS3-Android-MacOSX-iPhone-iPad",	// for iOS Syb 1
-		"Android-iPhone-iPad",					// for iOS Syb 1
-		"Android-iPhone-iPad/HD",				// for iOS Syb 1
-		"HD/Android-iPhone-iPad",				// for iOS Syb 1
-		"iPhone-iPad",							// for iOS Syb 1
-		"iPhone-iPad/HD",						// for iOS Syb 1
-		"iPhone-iPad/HD/Freemium",				// for iOS Syb 1
-		"Android-MacOSX-iPhone-iPad",			// for iOS Syb 1
-		"Freemium-BUKAFree/HD"					// for iOS Syb 1
+		"PC-PS3-Android-MacOSX-iPhone-iPad",	// iOS Syb 1
+		"Android-iPhone-iPad",					// iOS Syb 1
+		"Android-iPhone-iPad/HD",				// iOS Syb 1
+		"HD/Android-iPhone-iPad",				// iOS Syb 1
+		"iPhone-iPad",							// iOS Syb 1
+		"iPhone-iPad/HD",						// iOS Syb 1
+		"iPhone-iPad/HD/Freemium",				// iOS Syb 1
+		"Android-MacOSX-iPhone-iPad",			// iOS Syb 1
+		"Freemium-BUKAFree/HD",					// iOS Syb 1
+		"Part3-Full",							// iOS Syb 1 paid
+		"DefaultDistributor-Freemium",			// iOS Syb 1 paid
+		"iPhone-iPad/DefaultDistributor",		// iOS Syb 1 paid
+		"Android-iPhone-iPad/iPhone-iPad",		// iOS Syb 2
+		"PC-MacOSX-Android-iPhone-iPad"			// iOS Syb 2
 	};
 
 	const Common::Path langs[] = {
@@ -188,6 +193,7 @@ Common::FSNode TeCore::findFile(const Common::Path &path) const {
 		"en",
 		"de-es-fr-it-en",
 		"en-es-fr-de-it",
+		"es-en-fr-de-it",
 		"de-en-es-fr-it"
 	};
 
