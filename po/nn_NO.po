@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-19 18:26+0000\n"
+"POT-Creation-Date: 2023-03-20 18:27+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -1013,7 +1013,7 @@ msgstr "Plattform ikkje oppdaga"
 msgid "All"
 msgstr "Alle"
 
-#: gui/launcher.cpp:1570
+#: gui/launcher.cpp:1573
 msgid "Icons per row:"
 msgstr ""
 
@@ -2163,7 +2163,7 @@ msgstr ""
 msgid "Playback"
 msgstr "Spel"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:233
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:248
 msgid "Edit"
 msgstr "Rediger"
 
@@ -2362,11 +2362,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Tøm verdi"
 
-#: gui/widgets/grid.cpp:227
+#: gui/widgets/grid.cpp:242
 msgid "Play"
 msgstr "Spel"
 
-#: gui/widgets/grid.cpp:230
+#: gui/widgets/grid.cpp:245
 #, fuzzy
 msgid "Saves"
 msgstr "Lagre"

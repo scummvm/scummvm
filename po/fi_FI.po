@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-19 18:26+0000\n"
+"POT-Creation-Date: 2023-03-20 18:27+0000\n"
 "PO-Revision-Date: 2023-03-07 22:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -1011,7 +1011,7 @@ msgstr "Alusta ei tiedossa"
 msgid "All"
 msgstr "Kaikki"
 
-#: gui/launcher.cpp:1570
+#: gui/launcher.cpp:1573
 msgid "Icons per row:"
 msgstr "Ikoneita per rivi:"
 
@@ -2138,7 +2138,7 @@ msgstr "Nauhoita"
 msgid "Playback"
 msgstr "Toista"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:233
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:248
 msgid "Edit"
 msgstr "Muokkaa"
 
@@ -2332,11 +2332,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Tyhjennä arvo"
 
-#: gui/widgets/grid.cpp:227
+#: gui/widgets/grid.cpp:242
 msgid "Play"
 msgstr "Pelaa"
 
-#: gui/widgets/grid.cpp:230
+#: gui/widgets/grid.cpp:245
 msgid "Saves"
 msgstr "Tallennukset"
 

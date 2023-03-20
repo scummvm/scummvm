@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-19 18:26+0000\n"
+"POT-Creation-Date: 2023-03-20 18:27+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -1033,7 +1033,7 @@ msgstr ""
 msgid "All"
 msgstr "Alt"
 
-#: gui/launcher.cpp:1570
+#: gui/launcher.cpp:1573
 msgid "Icons per row:"
 msgstr ""
 
@@ -2176,7 +2176,7 @@ msgstr "Grabatu"
 msgid "Playback"
 msgstr "Erreproduzitu"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:233
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:248
 msgid "Edit"
 msgstr "Editatu"
 
@@ -2374,11 +2374,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Balioa kendu"
 
-#: gui/widgets/grid.cpp:227
+#: gui/widgets/grid.cpp:242
 msgid "Play"
 msgstr "Jolastu"
 
-#: gui/widgets/grid.cpp:230
+#: gui/widgets/grid.cpp:245
 #, fuzzy
 msgid "Saves"
 msgstr "Gorde"
