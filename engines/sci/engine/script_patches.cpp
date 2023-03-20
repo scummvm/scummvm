@@ -8861,9 +8861,37 @@ static const uint16 larry5PatchHollywoodSign[] = {
 	PATCH_END
 };
 
+// LSL5's TPrint procedure causes an uninitialized parameter read when printing
+//  messages. This generates many warnings throughout the game. Ideally, we
+//  could suppress these with the workarounds table, but it would take several
+//  entries and bytecode signatures due to all of the callers and versions.
+//  Instead, it can be fixed in all versions with one small script patch.
+//
+// We fix this by removing the uninitialized parameter from TPrint's Print call
+//  and increasing the size of the &rest parameter. TPrint's second parameter is
+//  now only passed to Print when it exists.
+//
+// Applies to: All versions
+// Responsible method: Export 14 in script 0 (TPrint)
+static const uint16 larry5SignatureHTPrintUninitParameter[] = {
+	SIG_MAGICDWORD,
+	0x8f, 0x02,                         // lsp 02 [ often non-existent ]
+	0x59, 0x03,                         // &rest 03
+	0x47, 0xff, 0x00, 0x08,             // calle proc255_0 [ Print ... param2 &rest ]
+	SIG_END
+};
+
+static const uint16 larry5PatchTPrintUninitParameter[] = {
+	0x33, 0x00,                         // jmp 00
+	0x59, 0x02,                         // &rest 02
+	0x47, 0xff, 0x00, 0x06,             // calle proc225_0 [ Print ... &rest ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry larry5Signatures[] = {
 	{  true,     0, "update stopGroop client",                     1, larry5SignatureUpdateStopGroopClient,   larry5PatchUpdateStopGroopClient },
+	{  true,     0, "TPrint uninit parameter",                     1, larry5SignatureHTPrintUninitParameter,  larry5PatchTPrintUninitParameter },
 	{  true,   190, "hollywood sign",                              1, larry5SignatureHollywoodSign,           larry5PatchHollywoodSign },
 	{  true,   280, "English-only: fix green card limo bug",       1, larry5SignatureGreenCardLimoBug,        larry5PatchGreenCardLimoBug },
 	{  true,   380, "German-only: Enlarge Patti Textbox",          1, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
