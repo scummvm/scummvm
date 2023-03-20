@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "common/config-manager.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -76,10 +77,24 @@ void TeSoundManager::stopFreeSound(const Common::String &name) {
 }
 
 void TeSoundManager::setChannelVolume(const Common::String &channel, float vol) {
-	//int channelId = channel.hash();
-	//Audio::Mixer *mixer = g_system->getMixer();
-	//mixer->setChannelVolume(handle, vol * 255);
-	// TODO: store channel volume here.
+	if (channel == "dialog") {
+		ConfMan.setInt("speech_volume", (int)(vol * 255));
+	} else if (channel == "music") {
+		ConfMan.setInt("music_volume", (int)(vol * 255));
+	} else {
+		ConfMan.setInt("sfx_volume", (int)(vol * 255));
+	}
+	g_engine->syncSoundSettings();
+}
+
+float TeSoundManager::getChannelVolume(const Common::String &channel) {
+	if (channel == "dialog") {
+		return ConfMan.getInt("speech_volume") / 255.0f;
+	} else if (channel == "music") {
+		return ConfMan.getInt("music_volume") / 255.0f;
+	} else {
+		return ConfMan.getInt("sfx_volume") / 255.0f;
+	}
 }
 
 void TeSoundManager::update() {
