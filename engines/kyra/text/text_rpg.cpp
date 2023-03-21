@@ -36,7 +36,7 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
 	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1),
 	_pc98TextMode(engine->gameFlags().use16ColorMode && engine->game() == GI_LOL),
-	_waitButtonFont(Screen::FID_6_FNT) {
+	_waitButtonFont(Screen::FID_6_FNT), _isChinese(_vm->gameFlags().lang == Common::Language::ZH_TWN || _vm->gameFlags().lang == Common::Language::ZH_CHN) {
 
 	static const uint8 amigaColorMap[16] = {
 		0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
@@ -183,6 +183,22 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 				_lineWidth += sjisOffs;
 				if (_vm->game() == GI_EOB1 && ((sd->w << 3) - sjisOffs) <= (_textDimData[sdx].column + _lineWidth))
 					printLine(_currentLine);
+				c = parseCommand();
+				continue;
+			}
+		}
+
+		if (_isChinese) {
+			uint8 cu = (uint8) c;
+			if (cu & 0x80) {
+				if ((_textDimData[sdx].column + _lineWidth + Graphics::Big5Font::kChineseTraditionalWidth) > (sd->w << 3))
+					printLine(_currentLine);
+
+				_currentLine[_numCharsLeft++] = c;
+				_currentLine[_numCharsLeft++] = parseCommand();
+				_currentLine[_numCharsLeft] = '\0';
+
+				_lineWidth += Graphics::Big5Font::kChineseTraditionalWidth;
 				c = parseCommand();
 				continue;
 			}
@@ -397,6 +413,13 @@ void TextDisplayer_rpg::printLine(char *str) {
 			}
 		}
 
+		if (_isChinese) {
+			for (int i = 0; i < s; ++i) {
+				if (str[i] & 0x80)
+					twoByteCharOffs = 16;
+			}
+		}
+
 		if ((lw + _textDimData[sdx].column) >= w) {
 			if ((lines - 1) <= _lineCount && _allowPageBreak)
 				// cut off line to leave space for "MORE" button
@@ -414,7 +437,10 @@ void TextDisplayer_rpg::printLine(char *str) {
 
 				for (strPos = 0; strPos < s; ++strPos) {
 					uint8 cu = (uint8) str[strPos];
-					if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
+					if (_isChinese && (cu & 0x80)) {
+						lw += twoByteCharOffs;
+						strPos++;
+					} else if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
 						lw += sjisOffs;
 						strPos++;
 					} else {
