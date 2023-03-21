@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-20 20:44+0000\n"
-"PO-Revision-Date: 2023-03-19 08:34+0000\n"
+"PO-Revision-Date: 2023-03-21 09:34+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6187,19 +6187,17 @@ msgstr "ミニマップの切替"
 
 #: engines/mm/mm1/metaengine.cpp:83
 msgid "Reorder Party"
-msgstr ""
+msgstr "再編成"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "検索："
+msgstr "サーチ"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:87
 msgid "Bash"
-msgstr ""
+msgstr "バッシュ"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:88 engines/scumm/help.cpp:144
@@ -6207,31 +6205,29 @@ msgid "Unlock"
 msgstr "解く"
 
 #: engines/mm/mm1/metaengine.cpp:95
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "次の地点"
+msgstr "そこへ移動"
 
 #: engines/mm/mm1/metaengine.cpp:106 engines/mm/mm1/metaengine.cpp:111
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "Might and Magic 1 - メニュー"
 
 #: engines/mm/mm1/metaengine.cpp:112 engines/mm/mm1/metaengine.cpp:118
 #: engines/mm/mm1/metaengine.cpp:124
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "Might and Magic 1 - パーティー"
 
 #: engines/mm/mm1/metaengine.cpp:117
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "Might and Magic 1 - 戦闘"
 
 #: engines/mm/mm1/metaengine.cpp:123
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "Might and Magic 1"
 
 #: engines/mm/mm1/metaengine.cpp:125
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - チート"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
@@ -8509,22 +8505,20 @@ msgstr ""
 "凍してください"
 
 #: engines/tetraedge/metaengine.cpp:33
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "ゲームの縦横比を調整する"
+msgstr "ムービーの縦横比を補正"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
-msgstr ""
+msgstr "Syberiaのムービーを全画面に引き伸ばさず、16:9で再生します"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "消えたシーンを復元"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "Windows版の一部オリジナルシーンを復元"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
@@ -8910,6 +8904,8 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"Crusaderのイントロムービーが見つかりません - FLICSおよびSOUNDフォルダーがCDからコピーされている事を確認してください。 詳細: "
+"https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
