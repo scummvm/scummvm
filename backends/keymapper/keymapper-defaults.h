@@ -57,7 +57,7 @@ public:
 		KeymapperDefaultBindings::iterator it = findDefaultBinding(keymapId, actionId);
 		if (it != end()) {
 			// Don't allow an input to map to the same action multiple times
-			StringArray& itv = it->_value;
+			StringArray &itv = it->_value;
 
 			Array<String>::const_iterator found = Common::find(itv.begin(), itv.end(), hwInputId);
 			if (found == itv.end()) {
