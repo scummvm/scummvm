@@ -129,7 +129,7 @@ void Map::MapViewport::init() {
 void Map::MapViewport::updateGraphics() {
 	// TODO: One frame plays for longer than it should
 	if (_decoder.getFrameCount() > 1) {
-		if (_decoder.atEnd()) {
+		if (_decoder.endOfVideo()) {
 			_decoder.rewind();
 		}
 
