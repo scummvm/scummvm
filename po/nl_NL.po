@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-20 20:44+0000\n"
-"PO-Revision-Date: 2023-01-13 15:50+0000\n"
+"PO-Revision-Date: 2023-03-21 14:26+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -210,9 +210,9 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %S gedownload"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Download snelheid: %s %S"
+msgstr "Download snelheid: %s %S/s"
 
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
@@ -267,13 +267,11 @@ msgid "No new %S available"
 msgstr "Geen nieuwe %S beschikbaar"
 
 #: gui/downloadpacksdialog.cpp:462
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
-msgstr ""
-"Wilt u echt %s-%s aan pictogram bestanden verwijderen die u eerder gedowload "
-"heeft?"
+msgstr "Wilt u echt %s-%S aan %S verwijderen die u eerder gedowload heeft?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
 msgid "Proceed"
@@ -1144,9 +1142,8 @@ msgid "the filtering setting could not be changed"
 msgstr "de filterinstelling kon niet veranderd worden"
 
 #: gui/options.cpp:855
-#, fuzzy
 msgid "the vsync setting could not be changed"
-msgstr "de volledig-scherminstelling kon niet veranderd worden"
+msgstr "de vsync instelling kon niet veranderd worden"
 
 #: gui/options.cpp:872
 msgid "the shader could not be changed"
@@ -2798,7 +2795,7 @@ msgid "Skip autosave"
 msgstr "Lege auto-opgeslagen spel"
 
 #: engines/engine.cpp:591
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -2806,10 +2803,10 @@ msgid ""
 "needed.\n"
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
-"WAARSCHUWING: Het automatisch opslaan slot heeft een opgeslagen spel genaamd "
-"%S. U kunt of dit spel verplaatsen naar een nieuw slot, het bestaande "
-"opgeslagen spel overschrijven, of automatisch opslaan annuleren (pas na een "
-"restart zult u weer meldingen krijgen)"
+"WAARSCHUWING: Het automatisch opslaan slot heeft al een opgeslagen spel "
+"genaamd %S, en het is tijd voor een autosave.\n"
+"U kunt of dit spel verplaatsen naar een nieuw slot, of verwijderen.\n"
+"U kunt ook deze autosave overslaan (de volgende is over 5 minuten)."
 
 #: engines/engine.cpp:601
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -3256,9 +3253,8 @@ msgstr ""
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:812
-#, fuzzy
 msgid "Choose a new folder"
-msgstr "Selecteer te laden bestand"
+msgstr "Selecteer een nieuwe map"
 
 #: backends/graphics/atari/atari-graphics.cpp:569
 #: backends/graphics/sdl/sdl-graphics.cpp:447
@@ -3999,9 +3995,8 @@ msgid "Remove folder authorizations..."
 msgstr ""
 
 #: backends/platform/android/options.cpp:360
-#, fuzzy
 msgid "Remove"
-msgstr "Spel ~V~erwijderen"
+msgstr "Verwijderen"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -6306,10 +6301,8 @@ msgstr ""
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "Zoeken:"
+msgstr "Zoeken"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:87
@@ -7449,10 +7442,9 @@ msgstr ""
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:109
-#, fuzzy, c-format
-#| msgid "No new %S available"
+#, c-format
 msgid "Found %d available games."
-msgstr "Geen nieuwe %S beschikbaar"
+msgstr "%d beschikbare spellen gevonden."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:280
@@ -9108,16 +9100,12 @@ msgstr ""
 "niet mogelijk."
 
 #: engines/vcruise/vcruise.cpp:235
-#, fuzzy
-#| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
-msgstr "Versie informatie uitlezen uit het opgeslagen bestand is niet gelukt"
+msgstr "Kon de versie van het opgeslagen bestand niet bepalen."
 
 #: engines/vcruise/vcruise.cpp:255
-#, fuzzy
-#| msgid "An error occurred while writing the save game"
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr "Iets ging fout tijdens het opgeslaan van het spel"
+msgstr "Een onbekende fout trad op tijdens het laden van het opgeslagen spel."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
