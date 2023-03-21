@@ -3,9 +3,99 @@
 # This script generates a dists/scummvm.appdata.xml file with multilanguage support.
 # The multilanguage data is extracted from po/*.po files
 
-from xml.dom import minidom
 import re
 import os
+
+appdata_xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2020-2023 The ScummVM Team -->
+<component type="desktop">
+  <id>scummvm.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>ScummVM</name>
+  <summary>Interpreter for numerous adventure games and role-playing games</summary>
+  <summary xml:lang="xy">I18N: One line summary as shown in *nix distributions</summary>
+  <developer_name>The ScummVM Team</developer_name>
+  <provides>
+    <id>scummvm.desktop</id>
+  </provides>
+  <description>
+    <p>
+      ScummVM is a program which allows you to run a wide variety of classic
+      graphical point-and-click adventure games and role-playing games,
+      provided you already have their data files. The clever part about this:
+      ScummVM just replaces the executables shipped with the game,
+      allowing you to play them on systems for which they were never designed!
+    </p>
+    <p xml:lang="xy">I18N: 1 of 3 paragraph of ScummVM description in *nix distributions</p>
+    <p>
+      Currently, ScummVM supports a huge library of adventures with over 250 games in total.
+      It supports many classics published by legendary studios like LucasArts, Sierra On-Line,
+      Revolution Software, Cyan, Inc. and Westwood Studios.
+    </p>
+    <p xml:lang="xy">I18N: 2 of 3 paragraph of ScummVM description in *nix distributions</p>
+    <p>
+      Next to ground-breaking titles like the Monkey Island series, Broken Sword,
+      Myst, Blade Runner and countless other games you will find
+      some really obscure adventures and truly hidden gems to explore.
+    </p>
+    <p xml:lang="xy">I18N: 3 of 3 paragraph of ScummVM description in *nix distributions</p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_1.png</image>
+      <caption>ScummVM Launcher</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_2.png</image>
+      <caption>ScummVM running 'Flight of the Amazon Queen'</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_3.png</image>
+      <caption>ScummVM running 'Beneath a Steel Sky'</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_4.png</image>
+      <caption>ScummVM running 'The Curse of Monkey Island'</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_5.png</image>
+      <caption>ScummVM running a demo of 'Myst'</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://www.scummvm.org</url>
+  <update_contact>scummvm-devel@lists.scummvm.org</update_contact>
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-cartoon">none</content_attribute>
+    <content_attribute id="violence-fantasy">none</content_attribute>
+    <content_attribute id="violence-realistic">none</content_attribute>
+    <content_attribute id="violence-bloodshed">none</content_attribute>
+    <content_attribute id="violence-sexual">none</content_attribute>
+    <content_attribute id="violence-desecration">none</content_attribute>
+    <content_attribute id="violence-slavery">none</content_attribute>
+    <content_attribute id="violence-worship">none</content_attribute>
+    <content_attribute id="drugs-alcohol">none</content_attribute>
+    <content_attribute id="drugs-narcotics">none</content_attribute>
+    <content_attribute id="drugs-tobacco">none</content_attribute>
+    <content_attribute id="sex-nudity">none</content_attribute>
+    <content_attribute id="sex-themes">none</content_attribute>
+    <content_attribute id="sex-homosexuality">none</content_attribute>
+    <content_attribute id="sex-prostitution">none</content_attribute>
+    <content_attribute id="sex-adultery">none</content_attribute>
+    <content_attribute id="sex-appearance">none</content_attribute>
+    <content_attribute id="language-profanity">none</content_attribute>
+    <content_attribute id="language-humor">none</content_attribute>
+    <content_attribute id="language-discrimination">none</content_attribute>
+    <content_attribute id="social-chat">none</content_attribute>
+    <content_attribute id="social-info">none</content_attribute>
+    <content_attribute id="social-audio">none</content_attribute>
+    <content_attribute id="social-location">none</content_attribute>
+    <content_attribute id="social-contacts">none</content_attribute>
+    <content_attribute id="money-purchasing">none</content_attribute>
+    <content_attribute id="money-gambling">none</content_attribute>
+  </content_rating>
+</component>
+'''
 
 
 def extract_summary(file):
@@ -65,275 +155,106 @@ def extract_par3(file):
         return None
 
 
-doc = minidom.Document()
-
-copyright_comment_elem = doc.createComment(
-    " Copyright 2020-2023 The ScummVM Team ")
-doc.appendChild(copyright_comment_elem)
-
-component_elem = doc.createElement("component")
-component_elem.setAttribute("type", "desktop")
-doc.appendChild(component_elem)
-
-
-id_elem = doc.createElement("id")
-id_text = doc.createTextNode("scummvm.desktop")
-id_elem.appendChild(id_text)
-component_elem.appendChild(id_elem)
-
-metadata_license_elem = doc.createElement("metadata_license")
-metadata_license_text = doc.createTextNode("CC0-1.0")
-metadata_license_elem.appendChild(metadata_license_text)
-component_elem.appendChild(metadata_license_elem)
-
-project_license_elem = doc.createElement("project_license")
-project_license_text = doc.createTextNode("GPL-3.0-or-later")
-project_license_elem.appendChild(project_license_text)
-component_elem.appendChild(project_license_elem)
-
-name_elem = doc.createElement("name")
-name_text = doc.createTextNode("ScummVM")
-name_elem.appendChild(name_text)
-component_elem.appendChild(name_elem)
-
-summary_elem = doc.createElement("summary")
-summary_text = doc.createTextNode(
-    "Interpreter for numerous adventure games and role-playing games")
-summary_elem.appendChild(summary_text)
-component_elem.appendChild(summary_elem)
-
 # get file names of all .po files
 file_names = []
 for filename in os.listdir("../po/"):
     if filename.endswith(".po"):
         file_names.append(filename)
 
+file_names.sort()
+
 # summary translations
+summary_translations = ""
+
+# first_translation is used to determine the indentation (first translation will not require any indentation)
+first_translation = True
+
 for file in file_names:
     summary = extract_summary(file)
     if (summary is None):
         continue
-    summary_elem = doc.createElement("summary")
-    summary_text = doc.createTextNode(summary)
-    summary_elem.appendChild(summary_text)
-    lang = file[0] + file[1]
-    summary_elem.setAttribute("xml:lang", lang)
-    component_elem.appendChild(summary_elem)
 
-developer_name_elem = doc.createElement("developer_name")
-developer_name_text = doc.createTextNode("The ScummVM Team")
-developer_name_elem.appendChild(developer_name_text)
-component_elem.appendChild(developer_name_elem)
+    lang = '"' + file[0] + file[1] + '"'
+    summary_translations += ('' if first_translation else '  ') + '<summary xml:lang=' + \
+        lang + '>' + summary + '</summary>\n'
+    first_translation = False
 
-provides_elem = doc.createElement("provides")
-component_elem.appendChild(provides_elem)
+summary_translations = summary_translations.rstrip('\n')
 
-id_elem = doc.createElement("id")
-id_text = doc.createTextNode("scummvm.desktop")
-id_elem.appendChild(id_text)
-provides_elem.appendChild(id_elem)
+regex_pattern = r'<summary xml:lang="xy">I18N: One line summary as shown in \*nix distributions<\/summary>'
 
-description_elem = doc.createElement("description")
-component_elem.appendChild(description_elem)
-
-# paragraph 1
-p_elem = doc.createElement("p")
-p_text = doc.createTextNode('''ScummVM is a program which allows you to run a wide variety of classic
-graphical point-and -click adventure games and role-playing games,
-provided you already have their data files. The clever part about this:
-ScummVM just replaces the executables shipped with the game,
-allowing you to play them on systems for which they were never designed!''')
-p_elem.appendChild(p_text)
-description_elem.appendChild(p_elem)
+appdata_xml_template = re.sub(
+    regex_pattern, summary_translations, appdata_xml_template)
 
 # paragraph 1 translations
+par1_translations = ""
+first_translation = True
+
 for file in file_names:
     par1 = extract_par1(file)
     if (par1 is None):
         continue
 
-    # par1 also contains " (quotes) around the text; so we need to replace them with empty
-    # character otherwise &quot; will appear in scummvm.appdata.xml generated file
+    # par1 also contains " (quotes) around the text; so we need to replace them with empty character
+    # otherwise " (quotes) will appear in scummvm.appdata.xml generated file
     par1 = par1.replace('"', '')
 
-    p_elem = doc.createElement("p")
-    p_text = doc.createTextNode(par1)
-    p_elem.appendChild(p_text)
-    lang = file[0] + file[1]
-    p_elem.setAttribute("xml:lang", lang)
-    description_elem.appendChild(p_elem)
+    lang = '"' + file[0] + file[1] + '"'
+    par1_translations += ('' if first_translation else '    ') + '<p xml:lang=' + \
+        lang + '>' + par1 + '</p>\n'
+    first_translation = False
 
-# paragraph 2
-p_elem = doc.createElement("p")
-p_text = doc.createTextNode('''Currently, ScummVM supports a huge library of adventures with over 250 games in total.
-It supports many classics published by legendary studios like LucasArts, Sierra On-Line,
-Revolution Software, Cyan, Inc. and Westwood Studios.''')
-p_elem.appendChild(p_text)
-description_elem.appendChild(p_elem)
+par1_translations = par1_translations.rstrip('\n')
+
+regex_pattern = r'<p xml:lang="xy">I18N: 1 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
+
+appdata_xml_template = re.sub(
+    regex_pattern, par1_translations, appdata_xml_template)
 
 # paragraph 2 translations
+par2_translations = ""
+first_translation = True
+
 for file in file_names:
     par2 = extract_par2(file)
     if (par2 is None):
         continue
     par2 = par2.replace('"', '')
-    p_elem = doc.createElement("p")
-    p_text = doc.createTextNode(par2)
-    p_elem.appendChild(p_text)
-    lang = file[0] + file[1]
-    p_elem.setAttribute("xml:lang", lang)
-    description_elem.appendChild(p_elem)
 
-# paragraph 3
-p_elem = doc.createElement("p")
-p_text = doc.createTextNode('''Next to ground-breaking titles like the Monkey Island series, Broken Sword,
-Myst, Blade Runner and countless other games you will find
-some really obscure adventures and truly hidden gems to explore.''')
-p_elem.appendChild(p_text)
-description_elem.appendChild(p_elem)
+    lang = '"' + file[0] + file[1] + '"'
+    par2_translations += ('' if first_translation else '    ') + '<p xml:lang=' + \
+        lang + '>' + par2 + '</p>\n'
+    first_translation = False
+
+par2_translations = par2_translations.rstrip('\n')
+
+regex_pattern = r'<p xml:lang="xy">I18N: 2 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
+
+appdata_xml_template = re.sub(
+    regex_pattern, par2_translations, appdata_xml_template)
 
 # paragraph 3 translations
+par3_translations = ""
+first_translation = True
+
 for file in file_names:
     par3 = extract_par3(file)
     if (par3 is None):
         continue
     par3 = par3.replace('"', '')
-    p_elem = doc.createElement("p")
-    p_text = doc.createTextNode(par3)
-    p_elem.appendChild(p_text)
-    lang = file[0] + file[1]
-    p_elem.setAttribute("xml:lang", lang)
-    description_elem.appendChild(p_elem)
 
-screenshots_elem = doc.createElement("screenshots")
-component_elem.appendChild(screenshots_elem)
+    lang = '"' + file[0] + file[1] + '"'
+    par3_translations += ('' if first_translation else '    ') + '<p xml:lang=' + \
+        lang + '>' + par3 + '</p>\n'
+    first_translation = False
 
-screenshot_elem = doc.createElement("screenshot")
-screenshots_elem.appendChild(screenshot_elem)
-screenshot_elem.setAttribute("type", "default")
+par3_translations = par3_translations.rstrip('\n')
 
-image_elem = doc.createElement("image")
-image_text = doc.createTextNode(
-    "https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_1.png")
-image_elem.appendChild(image_text)
-screenshot_elem.appendChild(image_elem)
+regex_pattern = r'<p xml:lang="xy">I18N: 3 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
 
-caption_elem = doc.createElement("caption")
-caption_text = doc.createTextNode("ScummVM Launcher")
-caption_elem.appendChild(caption_text)
-screenshot_elem.appendChild(caption_elem)
-
-screenshot_elem = doc.createElement("screenshot")
-screenshots_elem.appendChild(screenshot_elem)
-
-image_elem = doc.createElement("image")
-image_text = doc.createTextNode(
-    "https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_2.png")
-image_elem.appendChild(image_text)
-screenshot_elem.appendChild(image_elem)
-
-caption_elem = doc.createElement("caption")
-caption_text = doc.createTextNode(
-    "ScummVM running 'Flight of the Amazon Queen'")
-caption_elem.appendChild(caption_text)
-screenshot_elem.appendChild(caption_elem)
-
-screenshot_elem = doc.createElement("screenshot")
-screenshots_elem.appendChild(screenshot_elem)
-
-image_elem = doc.createElement("image")
-image_text = doc.createTextNode(
-    "https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_3.png")
-image_elem.appendChild(image_text)
-screenshot_elem.appendChild(image_elem)
-
-caption_elem = doc.createElement("caption")
-caption_text = doc.createTextNode("ScummVM running 'Beneath a Steel Sky'")
-caption_elem.appendChild(caption_text)
-screenshot_elem.appendChild(caption_elem)
-
-screenshot_elem = doc.createElement("screenshot")
-screenshots_elem.appendChild(screenshot_elem)
-
-image_elem = doc.createElement("image")
-image_text = doc.createTextNode(
-    "https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_4.png")
-image_elem.appendChild(image_text)
-screenshot_elem.appendChild(image_elem)
-
-caption_elem = doc.createElement("caption")
-caption_text = doc.createTextNode(
-    "ScummVM running 'The Curse of Monkey Island'")
-caption_elem.appendChild(caption_text)
-screenshot_elem.appendChild(caption_elem)
-
-screenshot_elem = doc.createElement("screenshot")
-screenshots_elem.appendChild(screenshot_elem)
-
-image_elem = doc.createElement("image")
-image_text = doc.createTextNode(
-    "https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_5.png")
-image_elem.appendChild(image_text)
-screenshot_elem.appendChild(image_elem)
-
-caption_elem = doc.createElement("caption")
-caption_text = doc.createTextNode("ScummVM running a demo of 'Myst'")
-caption_elem.appendChild(caption_text)
-screenshot_elem.appendChild(caption_elem)
-
-url_elem = doc.createElement("url")
-url_text = doc.createTextNode("https://www.scummvm.org")
-url_elem.appendChild(url_text)
-url_elem.setAttribute("type", "homepage")
-component_elem.appendChild(url_elem)
-
-update_contact_elem = doc.createElement("update_contact")
-update_contact_text = doc.createTextNode("scummvm-devel@lists.scummvm.org")
-update_contact_elem.appendChild(update_contact_text)
-component_elem.appendChild(update_contact_elem)
-
-# content ratings
-content_rating_elem = doc.createElement("content_rating")
-content_rating_elem.setAttribute("type", "oars-1.1")
-component_elem.appendChild(content_rating_elem)
-
-content_attribute_ids = {
-    "violence-cartoon": "none",
-    "violence-fantasy": "none",
-    "violence-realistic": "none",
-    "violence-bloodshed": "none",
-    "violence-sexual": "none",
-    "violence-desecration": "none",
-    "violence-slavery": "none",
-    "violence-worship": "none",
-    "drugs-alcohol": "none",
-    "drugs-narcotics": "none",
-    "drugs-tobacco": "none",
-    "sex-nudity": "none",
-    "sex-themes": "none",
-    "sex-homosexuality": "none",
-    "sex-prostitution": "none",
-    "sex-adultery": "none",
-    "sex-appearance": "none",
-    "language-profanity": "none",
-    "language-humor": "none",
-    "language-discrimination": "none",
-    "social-chat": "none",
-    "social-info": "none",
-    "social-audio": "none",
-    "social-location": "none",
-    "social-contacts": "none",
-    "money-purchasing": "none",
-    "money-gambling": "none",
-}
-
-for id in content_attribute_ids:
-    content_attribute_elem = doc.createElement("content_attribute")
-    content_attribute_text = doc.createTextNode(content_attribute_ids[id])
-    content_attribute_elem.appendChild(content_attribute_text)
-    content_attribute_elem.setAttribute("id", id)
-    content_rating_elem.appendChild(content_attribute_elem)
+appdata_xml_template = re.sub(
+    regex_pattern, par3_translations, appdata_xml_template)
 
 # write to scummvm.appdata.xml file
-with open("../dists/scummvm.appdata.xml", "wb") as f:
-    f.write(doc.toprettyxml(indent="  ", encoding="UTF-8"))
+with open("../dists/scummvm.appdata.xml", "w") as f:
+    f.write(appdata_xml_template)
