@@ -155,106 +155,108 @@ def extract_par3(file):
         return None
 
 
-# get file names of all .po files
-file_names = []
-for filename in os.listdir("../po/"):
-    if filename.endswith(".po"):
-        file_names.append(filename)
+def get_summary_translations(po_file_names):
+    summary_translations = ""
 
-file_names.sort()
+    # first_translation is used to determine the indentation (first translation will not require any indentation)
+    first_translation = True
 
-# summary translations
-summary_translations = ""
+    for file in po_file_names:
+        summary = extract_summary(file)
+        if (summary is None):
+            continue
 
-# first_translation is used to determine the indentation (first translation will not require any indentation)
-first_translation = True
+        lang = '"' + file[0] + file[1] + '"'
+        summary_translations += ('' if first_translation else '  ') + '<summary xml:lang=' + \
+            lang + '>' + summary + '</summary>\n'
+        first_translation = False
 
-for file in file_names:
-    summary = extract_summary(file)
-    if (summary is None):
-        continue
+    summary_translations = summary_translations.rstrip('\n')
 
-    lang = '"' + file[0] + file[1] + '"'
-    summary_translations += ('' if first_translation else '  ') + '<summary xml:lang=' + \
-        lang + '>' + summary + '</summary>\n'
-    first_translation = False
+    return summary_translations
 
-summary_translations = summary_translations.rstrip('\n')
 
-regex_pattern = r'<summary xml:lang="xy">I18N: One line summary as shown in \*nix distributions<\/summary>'
+def substitute_summary_translations(summary_translations, xml):
+    pattern = r'<summary xml:lang="xy">I18N: One line summary as shown in \*nix distributions<\/summary>'
 
-appdata_xml_template = re.sub(
-    regex_pattern, summary_translations, appdata_xml_template)
+    appdata_xml = re.sub(pattern, summary_translations, xml)
 
-# paragraph 1 translations
-par1_translations = ""
-first_translation = True
+    return appdata_xml
 
-for file in file_names:
-    par1 = extract_par1(file)
-    if (par1 is None):
-        continue
 
-    # par1 also contains " (quotes) around the text; so we need to replace them with empty character
-    # otherwise " (quotes) will appear in scummvm.appdata.xml generated file
-    par1 = par1.replace('"', '')
+def get_parx_translations(x, po_file_names):
+    parx_translations = ""
+    first_translation = True
 
-    lang = '"' + file[0] + file[1] + '"'
-    par1_translations += ('' if first_translation else '    ') + '<p xml:lang=' + \
-        lang + '>' + par1 + '</p>\n'
-    first_translation = False
+    for file in po_file_names:
+        parx = ""
+        if (x == 1):
+            parx = extract_par1(file)
+        elif (x == 2):
+            parx = extract_par2(file)
+        else:
+            parx = extract_par3(file)
 
-par1_translations = par1_translations.rstrip('\n')
+        if (parx is None):
+            continue
 
-regex_pattern = r'<p xml:lang="xy">I18N: 1 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
+        # parx also contains " (quotes) around the text; so we need to replace them with empty character
+        # otherwise " (quotes) will appear in scummvm.appdata.xml generated file
+        parx = parx.replace('"', '')
 
-appdata_xml_template = re.sub(
-    regex_pattern, par1_translations, appdata_xml_template)
+        lang = '"' + file[0] + file[1] + '"'
+        parx_translations += ('' if first_translation else '    ') + '<p xml:lang=' + \
+            lang + '>' + parx + '</p>\n'
+        first_translation = False
 
-# paragraph 2 translations
-par2_translations = ""
-first_translation = True
+    parx_translations = parx_translations.rstrip('\n')
 
-for file in file_names:
-    par2 = extract_par2(file)
-    if (par2 is None):
-        continue
-    par2 = par2.replace('"', '')
+    return parx_translations
 
-    lang = '"' + file[0] + file[1] + '"'
-    par2_translations += ('' if first_translation else '    ') + '<p xml:lang=' + \
-        lang + '>' + par2 + '</p>\n'
-    first_translation = False
 
-par2_translations = par2_translations.rstrip('\n')
+def substitute_parx_translations(x, parx_translations, xml):
+    pattern = r'<p xml:lang="xy">I18N: 1 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
 
-regex_pattern = r'<p xml:lang="xy">I18N: 2 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
+    if (x == 2):
+        pattern = r'<p xml:lang="xy">I18N: 2 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
+    elif (x == 3):
+        pattern = r'<p xml:lang="xy">I18N: 3 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
 
-appdata_xml_template = re.sub(
-    regex_pattern, par2_translations, appdata_xml_template)
+    appdata_xml = re.sub(pattern, parx_translations, xml)
+    return appdata_xml
 
-# paragraph 3 translations
-par3_translations = ""
-first_translation = True
 
-for file in file_names:
-    par3 = extract_par3(file)
-    if (par3 is None):
-        continue
-    par3 = par3.replace('"', '')
+def get_po_files():
+    po_file_names = []
+    for filename in os.listdir("../po/"):
+        if filename.endswith(".po"):
+            po_file_names.append(filename)
 
-    lang = '"' + file[0] + file[1] + '"'
-    par3_translations += ('' if first_translation else '    ') + '<p xml:lang=' + \
-        lang + '>' + par3 + '</p>\n'
-    first_translation = False
+    po_file_names.sort()
 
-par3_translations = par3_translations.rstrip('\n')
+    return po_file_names
 
-regex_pattern = r'<p xml:lang="xy">I18N: 3 of 3 paragraph of ScummVM description in \*nix distributions<\/p>'
 
-appdata_xml_template = re.sub(
-    regex_pattern, par3_translations, appdata_xml_template)
+def main():
+    po_file_names = get_po_files()
 
-# write to scummvm.appdata.xml file
-with open("../dists/scummvm.appdata.xml", "w") as f:
-    f.write(appdata_xml_template)
+    summary_translations = get_summary_translations(po_file_names)
+    xml = substitute_summary_translations(
+        summary_translations, appdata_xml_template)
+
+    par1_translations = get_parx_translations(1, po_file_names)
+    xml = substitute_parx_translations(1, par1_translations, xml)
+
+    par2_translations = get_parx_translations(2, po_file_names)
+    xml = substitute_parx_translations(2, par2_translations, xml)
+
+    par3_translations = get_parx_translations(3, po_file_names)
+    xml = substitute_parx_translations(3, par3_translations, xml)
+
+    # write to scummvm.appdata.xml file
+    with open("../dists/scummvm.appdat3a.xml", "w") as f:
+        f.write(xml)
+
+
+if __name__ == '__main__':
+    main()
