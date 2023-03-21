@@ -3,7 +3,10 @@ MODULE := engines/crab
 MODULE_OBJS = \
 	crab.o \
 	console.o \
-	metaengine.o
+	metaengine.o \
+	filesystem.o \
+	XMLDoc.o \
+	loaders.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CRAB), DYNAMIC_PLUGIN)
