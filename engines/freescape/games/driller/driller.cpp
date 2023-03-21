@@ -758,7 +758,7 @@ void DrillerEngine::initGameState() {
 }
 
 bool DrillerEngine::checkIfGameEnded() {
-	if (isDemo())
+	if (isDemo() && _demoMode)
 		return (_demoData[_demoIndex + 1] == 0x5f);
 
 	if (_countdown <= 0) {
