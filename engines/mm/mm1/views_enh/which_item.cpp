@@ -31,11 +31,14 @@ WhichItem::WhichItem() : ScrollView("WhichItem") {
 	addButton(&g_globals->_escSprites, Common::Point(70, 0), 0, KEYBIND_ESCAPE);
 }
 
-void WhichItem::show(const Common::String &msg, KeyCallback callback) {
-	WhichItem *view = static_cast<WhichItem *>(g_events->findView("WhichItem"));
-	view->_msg = msg;
-	view->_callback = callback;
-	view->addView();
+bool WhichItem::msgGame(const GameMessage &msg) {
+	if (msg._name == "DISPLAY") {
+		_msg = msg._stringValue;
+		addView();
+		return true;
+	}
+
+	return ScrollView::msgGame(msg);
 }
 
 void WhichItem::draw() {
@@ -47,7 +50,8 @@ bool WhichItem::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode >= Common::KEYCODE_1 &&
 			msg.keycode <= Common::KEYCODE_6) {
 		close();
-		_callback(Common::KeyState(msg.keycode));
+		send("CharacterInventory", GameMessage("ITEM",
+			msg.keycode - Common::KEYCODE_1));
 		return true;
 	} else {
 		return false;
@@ -57,7 +61,7 @@ bool WhichItem::msgKeypress(const KeypressMessage &msg) {
 bool WhichItem::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		close();
-		_callback(Common::KeyState(Common::KEYCODE_ESCAPE));
+		send("CharacterInventory", GameMessage("ITEM", -1));
 		return true;
 	} else {
 		return false;

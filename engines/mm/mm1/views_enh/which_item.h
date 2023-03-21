@@ -31,12 +31,11 @@ namespace ViewsEnh {
 class WhichItem : public ScrollView {
 private:
 	Common::String _msg;
-	KeyCallback _callback = nullptr;
 public:
 	WhichItem();
 	virtual ~WhichItem() {}
 
-	static void show(const Common::String &msg, KeyCallback callback);
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;

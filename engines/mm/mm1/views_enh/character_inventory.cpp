@@ -49,6 +49,17 @@ bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
+bool CharacterInventory::msgGame(const GameMessage &msg) {
+	if (msg._name == "ITEM" && msg._value >= 0 &&
+			msg._value <= (int)_items.size()) {
+		_selectedItem = msg._value;
+		performAction();
+		return true;
+	}
+
+	return false;
+}
+
 void CharacterInventory::draw() {
 	ItemsView::draw();
 	drawTitle();
@@ -84,6 +95,16 @@ bool CharacterInventory::msgKeypress(const KeypressMessage &msg) {
 		populateItems();
 		redraw();
 		break;
+	case Common::KEYCODE_e:
+		selectButton(BTN_EQUIP);
+		break;
+	case Common::KEYCODE_r:
+		selectButton(BTN_REMOVE);
+		break;
+	case Common::KEYCODE_d:
+		selectButton(BTN_DISCARD);
+		break;
+
 	default:
 		return ItemsView::msgKeypress(msg);
 	}
@@ -101,6 +122,7 @@ bool CharacterInventory::msgAction(const ActionMessage &msg) {
 void CharacterInventory::populateItems() {
 	_items.clear();
 	_selectedItem = -1;
+	_selectedButton = BTN_NONE;
 
 	const Character &c = *g_globals->_currCharacter;
 	const Inventory &inv = (_mode == ARMS_MODE) ? c._equipped : c._backpack;
@@ -111,6 +133,62 @@ void CharacterInventory::populateItems() {
 
 void CharacterInventory::itemSelected() {
 	// No implementation
+}
+
+void CharacterInventory::selectButton(SelectedButton btnMode) {
+	_selectedButton = btnMode;
+
+	if (_selectedItem != -1) {
+		performAction();
+	} else {
+		Common::String btn = STRING["enhdialogs.items.equip"];
+		if (btnMode == BTN_REMOVE)
+			btn = STRING["enhdialogs.items.remove"];
+		else if (btnMode == BTN_DISCARD)
+			btn = STRING["enhdialogs.items.discard"];
+
+		send("WhichItem", GameMessage("DISPLAY",
+			Common::String::format("%s %s", btn.c_str(),
+				STRING["enhdialogs.items.which_item"].c_str())
+		));
+	}
+}
+
+void CharacterInventory::performAction() {
+	switch (_selectedButton) {
+	case BTN_EQUIP:
+		equipItem();
+		break;
+	case BTN_REMOVE:
+		removeItem();
+		break;
+
+	case BTN_DISCARD:
+		discardItem();
+		break;
+
+	default:
+		error("No button selected");
+		break;
+	}
+}
+
+
+void CharacterInventory::equipItem() {
+	// TODO
+}
+
+void CharacterInventory::removeItem() {
+	// TODO
+}
+
+void CharacterInventory::discardItem() {
+	Character &c = *g_globals->_currCharacter;
+	Inventory &inv = (_mode == ARMS_MODE) ? c._equipped : c._backpack;
+
+	inv.removeAt(_selectedItem);
+	populateItems();
+	redraw();
 }
 
 } // namespace ViewsEnh

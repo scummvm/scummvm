@@ -34,6 +34,10 @@ private:
 		ARMS_MODE, BACKPACK_MODE
 	};
 	DisplayMode _mode = ARMS_MODE;
+	enum SelectedButton {
+		BTN_NONE, BTN_EQUIP, BTN_REMOVE, BTN_DISCARD
+	};
+	SelectedButton _selectedButton = BTN_NONE;
 
 	/**
 	 * Populates the list of items
@@ -44,6 +48,31 @@ private:
 	 * Displays the title row
 	 */
 	void drawTitle();
+
+	/**
+	 * Selects a button mode
+	 */
+	void selectButton(SelectedButton btnMode);
+
+	/**
+	 * Handle action with selected button mode and selected item
+	 */
+	void performAction();
+
+	/**
+	 * Equip an item
+	 */
+	void equipItem();
+
+	/**
+	 * Unequip an item
+	 */
+	void removeItem();
+
+	/**
+	 * Discard an item
+	 */
+	void discardItem();
 
 protected:
 	/**
@@ -56,6 +85,7 @@ public:
 	virtual ~CharacterInventory() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
