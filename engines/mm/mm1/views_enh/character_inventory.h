@@ -23,12 +23,13 @@
 #define MM1_VIEWS_ENH_CHARACTER_INVENTORY_H
 
 #include "mm/mm1/views_enh/items_view.h"
+#include "mm/mm1/game/equip_remove.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class CharacterInventory : public ItemsView {
+class CharacterInventory : public ItemsView, Game::EquipRemove {
 private:
 	enum DisplayMode {
 		ARMS_MODE, BACKPACK_MODE

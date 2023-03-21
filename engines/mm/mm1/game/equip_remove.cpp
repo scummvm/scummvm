@@ -29,7 +29,7 @@ namespace Game {
 bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &equipError) {
 	Character &c = *g_globals->_currCharacter;
 	uint itemId = c._backpack[index]._id;
-	uint item14 = c._backpack[index]._charges;
+	uint charges = c._backpack[index]._charges;
 
 	int classBit = 0;
 	textPos.x = 0;
@@ -132,7 +132,7 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 	if (equipError.empty()) {
 		// All checks passed, can equip item
 		c._backpack.removeAt(index);
-		uint freeIndex = c._equipped.add(itemId, item14);
+		uint freeIndex = c._equipped.add(itemId, charges);
 
 		if (item._equipMode != EQUIPMODE_0) {
 			if (item._equipMode == IS_EQUIPPABLE) {
@@ -144,38 +144,37 @@ bool EquipRemove::equipItem(int index, Common::Point &textPos, Common::String &e
 		}
 	}
 
-	if (equipError.empty()) {
-		switch (getItemCategory(itemId)) {
-		case ITEMCAT_WEAPON:
-		case ITEMCAT_TWO_HANDED:
-			c._physicalAttr._base = item._val16;
-			c._physicalAttr._current = item._val17;
-			break;
-		case ITEMCAT_MISSILE:
-			c._missileAttr._base = item._val16;
-			c._missileAttr._current = item._val17;
-			break;
-		case ITEMCAT_ARMOR:
-		case ITEMCAT_SHIELD:
-			c._ac._base += item._val17;
-			break;
-		default:
-			break;
-		}
-
-		c.updateResistances();
-		c.updateAttributes();
-		c.updateAC();
+	if (!equipError.empty())
 		return false;
+
+	switch (getItemCategory(itemId)) {
+	case ITEMCAT_WEAPON:
+	case ITEMCAT_TWO_HANDED:
+		c._physicalAttr._base = item._val16;
+		c._physicalAttr._current = item._val17;
+		break;
+	case ITEMCAT_MISSILE:
+		c._missileAttr._base = item._val16;
+		c._missileAttr._current = item._val17;
+		break;
+	case ITEMCAT_ARMOR:
+	case ITEMCAT_SHIELD:
+		c._ac._base += item._val17;
+		break;
+	default:
+		break;
 	}
 
-	return false;
+	c.updateResistances();
+	c.updateAttributes();
+	c.updateAC();
+	return true;
 }
 
 bool EquipRemove::removeItem(int index, Common::Point &textPos, Common::String &removeError) {
 	Character &c = *g_globals->_currCharacter;
 	uint itemId = c._equipped[index]._id;
-	uint item14 = c._equipped[index]._charges;
+	uint charges = c._equipped[index]._charges;
 
 	g_globals->_items.getItem(itemId);
 	const Item &item = g_globals->_currItem;
@@ -192,7 +191,7 @@ bool EquipRemove::removeItem(int index, Common::Point &textPos, Common::String &
 
 	// Shift item to backpack
 	c._equipped.removeAt(index);
-	c._backpack.add(itemId, item14);
+	c._backpack.add(itemId, charges);
 
 	if (item._val10) {
 		// TODO: _equipMode is used as a character offset. Need to

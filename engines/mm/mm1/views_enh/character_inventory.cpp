@@ -43,7 +43,7 @@ bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
 
 	if (dynamic_cast<WhichItem *>(msg._priorView) == nullptr)
-		_mode = ARMS_MODE;
+		_mode = BACKPACK_MODE;
 	populateItems();
 
 	return true;
@@ -175,11 +175,29 @@ void CharacterInventory::performAction() {
 
 
 void CharacterInventory::equipItem() {
-	// TODO
+	Common::String errMsg;
+	Common::Point textPos;
+
+	if (EquipRemove::equipItem(_selectedItem, textPos, errMsg)) {
+		_mode = ARMS_MODE;
+		populateItems();
+		redraw();
+	} else {
+		displayMessage(errMsg);
+	}
 }
 
 void CharacterInventory::removeItem() {
-	// TODO
+	Common::String errMsg;
+	Common::Point textPos;
+
+	if (EquipRemove::removeItem(_selectedItem, textPos, errMsg)) {
+		_mode = BACKPACK_MODE;
+		populateItems();
+		redraw();
+	} else {
+		displayMessage(errMsg);
+	}
 }
 
 void CharacterInventory::discardItem() {
