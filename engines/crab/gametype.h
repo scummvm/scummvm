@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Crab {
+
 #define STATNAME_HEALTH "health"
 #define STATNAME_ATTACK "attack"
 #define STATNAME_DEFENSE "defense"
@@ -7,27 +9,27 @@
 //#define STATNAME_CHARISMA "charisma"
 //#define STATNAME_INTELLIGENCE "intelligence"
 
-namespace pyrodactyl
-{
-	namespace stat
-	{
-		enum StatType
-		{
-			STAT_HEALTH,
-			STAT_ATTACK,
-			STAT_DEFENSE,
-			STAT_SPEED,
-			/*STAT_CHARISMA,
-			STAT_INTELLIGENCE,*/
-			STAT_TOTAL
-		};
-	}
-}
+namespace pyrodactyl {
+
+namespace stat {
+
+enum StatType {
+	STAT_HEALTH,
+	STAT_ATTACK,
+	STAT_DEFENSE,
+	STAT_SPEED,
+	/*STAT_CHARISMA,
+	STAT_INTELLIGENCE,*/
+	STAT_TOTAL
+	};
+
+} // End of namespace stat
+
+} // End of namespace pyrodactyl
 
 enum Align { ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT };
 
-enum Direction
-{
+enum Direction {
 	//An invalid direction, used for collisions
 	DIRECTION_NONE = -1,
 
@@ -47,8 +49,7 @@ enum Direction
 	DIRECTION_TOTAL
 };
 
-enum TextureFlipType
-{
+enum TextureFlipType {
 	//Draw texture normally
 	FLIP_NONE,
 
@@ -73,3 +74,5 @@ enum TextureFlipType
 	//Flipped anti-diagonally and horizontally and vertically - MAXIMUM FLIP
 	FLIP_XYD
 };
+
+} // End of namespace Crab

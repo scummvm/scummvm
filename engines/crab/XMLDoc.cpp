@@ -1,8 +1,9 @@
-#include "stdafx.h"
-#include "XMLDoc.h"
+#include "engines/crab/common_header.h"
+#include "engines/crab/XMLDoc.h"
 
-void XMLDoc::Load(const std::string &filename)
-{
+namespace Crab {
+
+void XMLDoc::Load(const Common::String &filename) {
 	if (ready())
 		doc.clear();
 
@@ -11,10 +12,11 @@ void XMLDoc::Load(const std::string &filename)
 			doc.parse<0>(text);
 }
 
-const rapidxml::xml_document<>* XMLDoc::Doc() const
-{
+const rapidxml::xml_document<>* XMLDoc::Doc() const {
 	if (text != NULL)
 		return &doc;
 	else
 		return NULL;
 }
+
+} // End of namespace Crab

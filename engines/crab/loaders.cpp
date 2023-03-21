@@ -1,12 +1,9 @@
-#include "stdafx.h"
 #include "loaders.h"
 
-using namespace pyrodactyl;
+namespace Crab {
 
-bool NodeValid(rapidxml::xml_node<char> *node, const bool &echo)
-{
-	if (node == NULL)
-	{
+bool NodeValid(rapidxml::xml_node<char> *node, const bool &echo) {
+	if (node == NULL) {
 		/*if (echo)
 			SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", "node not found", NULL);*/
 
@@ -16,10 +13,8 @@ bool NodeValid(rapidxml::xml_node<char> *node, const bool &echo)
 	return true;
 }
 
-bool NodeValid(const std::string &name, rapidxml::xml_node<char> *parent_node, const bool &echo)
-{
-	if (parent_node == NULL)
-	{
+bool NodeValid(const Common::String &name, rapidxml::xml_node<char> *parent_node, const bool &echo) {
+	if (parent_node == NULL) {
 		/*if (echo)
 		{
 		std::string error_msg = "parent node of " + name + " not found \n";
@@ -27,8 +22,7 @@ bool NodeValid(const std::string &name, rapidxml::xml_node<char> *parent_node, c
 		}*/
 		return false;
 	}
-	else if (parent_node->first_node(name.c_str()) == NULL)
-	{
+	else if (parent_node->first_node(name.c_str()) == NULL) {
 		/*if (echo)
 		{
 		std::string error_msg = "child node " + name + " of parent node " + parent_node->name() + " not found \n";
@@ -40,12 +34,10 @@ bool NodeValid(const std::string &name, rapidxml::xml_node<char> *parent_node, c
 	return true;
 }
 
-bool LoadStr(std::string &val, const std::string &name, rapidxml::xml_node<char> *node, const bool &echo)
-{
+bool LoadStr(Common::String &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo) {
 	if (node->first_attribute(name.c_str()) != NULL)
 		val = node->first_attribute(name.c_str())->value();
-	else
-	{
+	else {
 		/*if (echo)
 		{
 		std::string error_msg = "string " + name + " not found in " + node->name() + "\n";
@@ -57,8 +49,10 @@ bool LoadStr(std::string &val, const std::string &name, rapidxml::xml_node<char>
 	return true;
 }
 
+#if 0
+
 bool LoadRect(SDL_Rect &rect, rapidxml::xml_node<char> *node, const bool &echo,
-	const std::string &x_name, const std::string &y_name, const std::string &w_name, const std::string &h_name)
+	const Common::String &x_name, const Common::String &y_name, const Common::String &w_name, const Common::String &h_name)
 {
 	if (LoadNum(rect.x, x_name, node, echo) && LoadNum(rect.y, y_name, node, echo)
 		&& LoadNum(rect.w, w_name, node, echo) && LoadNum(rect.h, h_name, node, echo))
@@ -67,7 +61,7 @@ bool LoadRect(SDL_Rect &rect, rapidxml::xml_node<char> *node, const bool &echo,
 }
 
 bool LoadColor(SDL_Color &col, rapidxml::xml_node<char> *node, const bool &echo,
-	const std::string &r_name, const std::string &g_name, const std::string &b_name)
+	const Common::String &r_name, const Common::String &g_name, const Common::String &b_name)
 {
 	int r = 0, g = 0, b = 0;
 
@@ -82,16 +76,15 @@ bool LoadColor(SDL_Color &col, rapidxml::xml_node<char> *node, const bool &echo,
 	return false;
 }
 
-bool LoadColor(int &col, rapidxml::xml_node<char> *node, const bool &echo)
-{
+#endif
+
+bool LoadColor(int &col, rapidxml::xml_node<char> *node, const bool &echo) {
 	return LoadNum(col, "color", node, echo);
 }
 
-bool LoadBool(bool &var, const std::string &name, rapidxml::xml_node<char> *node, const bool &echo)
-{
-	std::string str;
-	if (LoadStr(str, name, node, echo))
-	{
+bool LoadBool(bool &var, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo) {
+	Common::String str;
+	if (LoadStr(str, name, node, echo)) {
 		if (str == "true")
 			var = true;
 		else
@@ -103,20 +96,17 @@ bool LoadBool(bool &var, const std::string &name, rapidxml::xml_node<char> *node
 	return false;
 }
 
-void SaveBool(const bool &var, const char *name, rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root)
-{
+void SaveBool(const bool &var, const char *name, rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	if (var)
 		root->append_attribute(doc.allocate_attribute(name, "true"));
 	else
 		root->append_attribute(doc.allocate_attribute(name, "false"));
 }
 
-bool LoadStatType(pyrodactyl::stat::StatType &type, rapidxml::xml_node<char> *node, const bool &echo)
-{
+bool LoadStatType(pyrodactyl::stat::StatType &type, rapidxml::xml_node<char> *node, const bool &echo) {
 	using namespace pyrodactyl::stat;
-	std::string str;
-	if (LoadStr(str, "type", node, echo))
-	{
+	Common::String str;
+	if (LoadStr(str, "type", node, echo)) {
 		if (str == STATNAME_HEALTH) type = STAT_HEALTH;
 		else if (str == STATNAME_ATTACK) type = STAT_ATTACK;
 		else if (str == STATNAME_DEFENSE) type = STAT_DEFENSE;
@@ -131,8 +121,7 @@ bool LoadStatType(pyrodactyl::stat::StatType &type, rapidxml::xml_node<char> *no
 	return false;
 }
 
-bool LoadAlign(Align &align, rapidxml::xml_node<char> *node, const bool &echo, const std::string &name)
-{
+bool LoadAlign(Align &align, rapidxml::xml_node<char> *node, const bool &echo, const Common::String &name) {
 	int num = 0;
 	if (LoadNum(num, name, node, echo))
 	{
@@ -143,11 +132,9 @@ bool LoadAlign(Align &align, rapidxml::xml_node<char> *node, const bool &echo, c
 	return false;
 }
 
-bool LoadDirection(Direction &dir, rapidxml::xml_node<char> *node, const bool &echo, const std::string &name)
-{
-	std::string str;
-	if (LoadStr(str, name, node, echo))
-	{
+bool LoadDirection(Direction &dir, rapidxml::xml_node<char> *node, const bool &echo, const Common::String &name) {
+	Common::String str;
+	if (LoadStr(str, name, node, echo)) {
 		if (str == "left")
 			dir = DIRECTION_LEFT;
 		else if (str == "right")
@@ -163,11 +150,9 @@ bool LoadDirection(Direction &dir, rapidxml::xml_node<char> *node, const bool &e
 	return false;
 }
 
-bool LoadTextureFlipType(TextureFlipType &flip, rapidxml::xml_node<char> *node, const bool &echo)
-{
-	std::string str;
-	if (LoadStr(str, "flip", node, echo))
-	{
+bool LoadTextureFlipType(TextureFlipType &flip, rapidxml::xml_node<char> *node, const bool &echo) {
+	Common::String str;
+	if (LoadStr(str, "flip", node, echo)) {
 		if (str == "x")
 			flip = FLIP_X;
 		else if (str == "y")
@@ -183,13 +168,12 @@ bool LoadTextureFlipType(TextureFlipType &flip, rapidxml::xml_node<char> *node, 
 	return false;
 }
 
-unsigned int Version(const std::string &filename)
+unsigned int Version(const Common::String &filename)
 {
 	unsigned int version = 0;
 
 	XMLDoc doc(filename);
-	if (doc.ready())
-	{
+	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.Doc()->first_node();
 		if (NodeValid(node))
 			LoadNum(version, "version", node);
@@ -197,3 +181,5 @@ unsigned int Version(const std::string &filename)
 
 	return version;
 }
+
+} // End of namespace Crab
