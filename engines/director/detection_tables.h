@@ -744,6 +744,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "songbird",			"Solitudes: Songbird Symphony" },
 	{ "stressrelief2",		"Solitudes: Natural Stress Relief II" },
 	{ "tonetrakker",		"Tone Trakker" },
+	{ "xenaonline", 		"Xena: Warrior Princess - On-Line Adventure" },
 
 	// Arabic titles
 	{ "abctrain",			"Alphabet Train" },
@@ -883,6 +884,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bemtoybox",			"妖怪人間ベム データToyBox" },						// Bem Data Toy Box
 	{ "beyondthetime",		"Beyond the Time" },
 	{ "bombreikochiba",		"千葉麗子 BOMB!" },	// Reiko Chiba - Bomb
+	{ "cattheripper",		"Cat the Ripper 13人目の探偵士" }, // Cat the Ripper: 13th Detective
 	{ "cellofania",			"セロファニア" },
 	{ "chinacrisis",		"China Crisis" },
 	{ "chisanaensoka",		"小さな演奏家" },									// Little Musician (Crickets)
@@ -3363,6 +3365,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("catseyeview", "Vol. 2", "Cat'sEyeView vol.2", "6f75a7279e4b05a6bce8c16971e9f244", 483187, 404),
 	MACGAME1("catseyeview", "Vol. 3", "Cat'sEyeView vol.3", "2c94dee7ddad3e6b47c7d62565286007", 484095, 404),
 	WINGAME1("catseyeview", "Vol. 3", "CatsEyeView3.exe", "9ba8ac33552a3053cb1f23679422775e", 1900433, 404),
+
+	WINGAME1t_l("cattheripper", "", "CAT.EXE", "cff4ae8f3e57a00664c1b477a634e708", 748205, Common::JA_JPN, 404),
 
 	MACGAME1("cbible", "", "Children's Bible Stories", "17efee018a660458fae80de4364021ac", 483490, 404),
 	WINGAME1("cbible", "", "CBIBLE.EXE", "d408f781d32337f8a5a9b3655c7d7803", 1727225, 404),
@@ -6559,6 +6563,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Decomposed variant of above filename
 	MACGAME1_l("wrestlelife", "", "xn--2bka6c5fc4b3n0e", "c08abfb9c78cf67386f12b92a7481422", 718728, Common::JA_JPN, 501),
 	WINGAME1t_l("wrestlelife", "", "BATTLE.EXE", "4a212b51566fdde40f0abcd811d335cc", 1394459, Common::JA_JPN, 505),
+
+	SHKGAME1("xenaonline", "", "ux1load.dcr", "451761958df69fc2c8e143250d6bd3c5", 25173, 500),
 
 	// Mac and Windows versions are D4
 	PIPGAME1_l("ybr2", "", "YBR2", "d2531c0b8c0553be7c7cd5f6c6a07b78", 105599, Common::JA_JPN, 501),
