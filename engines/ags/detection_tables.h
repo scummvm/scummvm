@@ -2546,6 +2546,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sabotagenb", "Sabotage on Noegato-Bas" },
 	{ "saddsonissein", "Saddson Issein" },
 	{ "salazarsevilplan", "Salazar's Evil Plan" },
+	{ "salt", "Salt" },
 	{ "samarkand", "Samarkand" },
 	{ "sammysperm", "Sammy Sperm" },
 	{ "sammysquest", "Sammy's Quest" },
@@ -3064,6 +3065,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "tiltor", "TiLTOR" },
 	{ "timeoutjoint", "Time Out of Joint" },
 	{ "timeparadox", "TIME-PARADOX 2009" },
+	{ "timeparadoxdan", "Time Paradox" },  // Dan's Time Paradox Hourgame
 	{ "timeparadoxenk", "Enkerro's Time Paradox" },
 	{ "timequest1", "Time Quest" },
 	{ "timequest2", "Time Quest 2" },
@@ -3751,6 +3753,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// uses unsupported agslua plugin
 	UNSUPPORTED_GAME_ENTRY("allthewaydown", "deepuns3.exe", "6c0b5468657c22d62201e3769cd8d2b3", 29830067),
 	UNSUPPORTED_GAME_ENTRY("barelyfloating", "Barely Floating.exe", "60fbd60394e3616920325eab6eef567c", 1283262682),
+	UNSUPPORTED_GAME_ENTRY("salt", "salt.exe", "652b25e0a5017c737382b7ebb9edad4e", 10247572),
 	// Commercial game that likely uses custom extensions. Not only does it seem
 	// to use AGSController plugin built-in, even when I hooked up AGSController for
 	// the stand-alone AGS 3.5 interpreter, it hangs just like in ScummVM
@@ -3795,7 +3798,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Windows
 	GAME_ENTRY_EN_STEAM("beer", "Beer!.ags", "6f201fd7a19869c85f49c7c471d0479a", 5042748), // Linux
 	GAME_ENTRY_GOG("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556521058), // Eng-Deu v1.1
-	GAME_ENTRY_STEAM("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556512803), // Eng-Deu
+	GAME_ENTRY_STEAM("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556512803), // Eng-Deu Win
+	GAME_ENTRY_STEAM("beyondowlsgard", "Owlsgard.ags", "ec06f55f20c49b5cb2df6c9e16440aeb", 552945167), // Eng-Deu Linux
 	GAME_ENTRY_EN_GOG("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697),
 	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "92af7315126c6da1e9e0c641cd9df200", 67316743),  // v2.2.1
 	GAME_ENTRY_EN_GOG("blackwell1", "Blackwell Legacy.exe", "92af7315126c6da1e9e0c641cd9df200", 67331239),  // v2.2.2
@@ -7853,6 +7857,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("tiltor", "Tiltor.exe", "f120690b506dd63cd7d1112ea6af2f77", 17561878),
 	GAME_ENTRY_EN("timeoutjoint", "timeout.exe", "06a03fe35791b0578068ab1873455463", 1647055),
 	GAME_ENTRY("timeparadox", "REDQUEST.exe", "465f972675db2da6040518221af5b0ba", 32472406),  //Eng-Rus
+	GAME_ENTRY_EN("timeparadoxdan", "Time Paradox.exe", "06a03fe35791b0578068ab1873455463", 1592755),
 	GAME_ENTRY_EN("timeparadoxenk", "timeparadoxenk.exe", "06a03fe35791b0578068ab1873455463", 1840636),
 	GAME_ENTRY("timequest1", "gam.exe", "465f972675db2da6040518221af5b0ba", 5669007),  //Eng-Rus
 	GAME_ENTRY("timequest1", "TQ.exe", "465f972675db2da6040518221af5b0ba", 5671274),  //Eng-Rus v1.1
