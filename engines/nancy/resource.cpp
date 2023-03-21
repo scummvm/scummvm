@@ -625,7 +625,9 @@ const CifTree *ResourceManager::findCifTree(const Common::String &name) const {
 }
 
 void ResourceManager::initialize() {
-	loadCifTree("ciftree", "dat");
+	if (g_nancy->getGameType() != kGameTypeVampire) {
+		loadCifTree("ciftree", "dat");
+	}
 }
 
 bool ResourceManager::getCifInfo(const Common::String &name, CifInfo &info) const {
