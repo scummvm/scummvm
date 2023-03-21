@@ -8904,8 +8904,9 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
-"Crusaderのイントロムービーが見つかりません - FLICSおよびSOUNDフォルダーがCDからコピーされている事を確認してください。 詳細: "
-"https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
+"Crusaderのイントロムービーが見つかりません - FLICSおよびSOUNDフォルダーがCDか"
+"らコピーされている事を確認してください。 詳細: https://wiki.scummvm.org/"
+"index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
