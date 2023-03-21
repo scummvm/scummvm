@@ -4,10 +4,12 @@
 namespace Crab {
 
 void XMLDoc::Load(const Common::String &filename) {
+	const Common::Path path(filename);
+
 	if (ready())
 		doc.clear();
 
-	if (FileOpen(filename.c_str(), text))
+	if (FileOpen(path, text))
 		if (text != NULL)
 			doc.parse<0>(text);
 }
