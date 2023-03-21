@@ -154,6 +154,9 @@ public:
 	virtual void loadAssetsCPCFullGame();
 	virtual void loadAssetsCPCDemo();
 
+	virtual void loadAssetsC64FullGame();
+	virtual void loadAssetsC64Demo();
+
 	virtual void drawDOSUI(Graphics::Surface *surface);
 	virtual void drawZXUI(Graphics::Surface *surface);
 	virtual void drawCPCUI(Graphics::Surface *surface);
@@ -473,6 +476,8 @@ private:
 	void loadAssetsZXFullGame() override;
 
 	void loadAssetsCPCFullGame() override;
+
+	void loadAssetsC64FullGame() override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
