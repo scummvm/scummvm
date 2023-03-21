@@ -23,6 +23,7 @@
 #define MM1_VIEWS_ENH_CHARACTER_INVENTORY_H
 
 #include "mm/mm1/views_enh/items_view.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/game/equip_remove.h"
 
 namespace MM {
@@ -39,6 +40,7 @@ private:
 		BTN_NONE, BTN_EQUIP, BTN_REMOVE, BTN_DISCARD
 	};
 	SelectedButton _selectedButton = BTN_NONE;
+	Character *_initialChar = nullptr;
 
 	/**
 	 * Populates the list of items

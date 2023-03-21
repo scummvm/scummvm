@@ -41,6 +41,8 @@ CharacterInventory::CharacterInventory() : ItemsView("CharacterInventory") {
 
 bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
+	_initialChar = g_globals->_currCharacter;
+	assert(_initialChar);
 
 	if (dynamic_cast<WhichItem *>(msg._priorView) == nullptr)
 		_mode = BACKPACK_MODE;
@@ -136,8 +138,16 @@ void CharacterInventory::itemSelected() {
 }
 
 void CharacterInventory::selectedCharChanged() {
-	populateItems();
-	redraw();
+	// When in combat, the current character can't be changed
+	if (g_events->isInCombat()) {
+		if (g_globals->_currCharacter != _initialChar) {
+			g_globals->_currCharacter = _initialChar;
+			g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
+		}
+	} else {
+		populateItems();
+		redraw();
+	}
 }
 
 void CharacterInventory::selectButton(SelectedButton btnMode) {
