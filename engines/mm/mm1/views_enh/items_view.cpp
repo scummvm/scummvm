@@ -127,6 +127,26 @@ bool ItemsView::msgKeypress(const KeypressMessage &msg) {
 	return PartyView::msgKeypress(msg);
 }
 
+bool ItemsView::msgMouseDown(const MouseDownMessage &msg) {
+	if (msg._pos.x >= (_innerBounds.left + 10) &&
+			msg._pos.x < _innerBounds.right) {
+		int y = msg._pos.y - (_innerBounds.top + 2 * 9);
+
+		if (y >= 0) {
+			int lineNum = y / 9;
+			if (lineNum < (int)_items.size()) {
+				_selectedItem = lineNum;
+				draw();
+
+				itemSelected();
+				return true;
+			}
+		}
+	}
+
+	return PartyView::msgMouseDown(msg);
+}
+
 bool ItemsView::msgAction(const ActionMessage &msg) {
 	if (endDelay())
 		return true;

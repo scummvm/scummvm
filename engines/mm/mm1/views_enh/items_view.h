@@ -84,6 +84,7 @@ public:
 	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	void timeout() override;
 };
