@@ -254,7 +254,7 @@ def main():
     xml = substitute_parx_translations(3, par3_translations, xml)
 
     # write to scummvm.appdata.xml file
-    with open("../dists/scummvm.appdat3a.xml", "w") as f:
+    with open("../dists/scummvm.appdata.xml", "w") as f:
         f.write(xml)
 
 
