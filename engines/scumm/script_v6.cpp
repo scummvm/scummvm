@@ -1503,8 +1503,15 @@ void ScummEngine_v6::o6_getActorRoom() {
 		return;
 	}
 
-	Actor *a = derefActor(act, "o6_getActorRoom");
-	push(a->_room);
+	Actor *a = derefActorSafe(act, "o6_getActorRoom");
+	// This check is in place because at least Full Throttle, despite
+	// only allowing 30 actors, might ask for actor 30 (0-indexed), which
+	// on the original went on to fetch garbage data without crashing.
+	// In our case, instead of erroring out, we handle the issue gracefully.
+	if (a)
+		push(a->_room);
+	else
+		push(0);
 }
 
 void ScummEngine_v6::o6_getActorWalkBox() {
