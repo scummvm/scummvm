@@ -39,6 +39,7 @@ MODULE_OBJS += \
 	mm1/game/game_logic.o \
 	mm1/game/combat.o \
 	mm1/game/encounter.o \
+	mm1/game/equip_remove.o \
 	mm1/game/monster_touch.o \
 	mm1/game/rest.o \
 	mm1/game/spell_casting.o \

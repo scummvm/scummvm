@@ -27,6 +27,7 @@
 #include "mm/mm1/data/character.h"
 #include "mm/mm1/data/items.h"
 #include "mm/mm1/game/spell_casting.h"
+#include "mm/mm1/game/equip_remove.h"
 #include "mm/mm1/views/text_entry.h"
 
 namespace MM {
@@ -36,7 +37,8 @@ namespace Views {
 /**
  * In-game character dialog
  */
-class CharacterInfo : public CharacterBase, MM1::Game::SpellCasting {
+class CharacterInfo : public CharacterBase, MM1::Game::SpellCasting,
+		MM1::Game::EquipRemove {
 private:
 	enum ViewState {
 		DISPLAY, EQUIP, GATHER, REMOVE, SHARE,
