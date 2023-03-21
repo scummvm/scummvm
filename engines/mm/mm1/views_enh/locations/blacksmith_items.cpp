@@ -34,7 +34,7 @@ BlacksmithItems::BlacksmithItems() : ItemsView("BlacksmithItems") {
 	addButton(2, STRING["enhdialogs.blacksmith.buttons.armor"], Common::KEYCODE_a);
 	addButton(6, STRING["enhdialogs.blacksmith.buttons.misc"], Common::KEYCODE_m);
 	addButton(10, STRING["enhdialogs.blacksmith.buttons.sell"], Common::KEYCODE_s);
-	addButton(12, STRING["enhdialogs.blacksmith.buttons.exit"], Common::KEYCODE_ESCAPE);
+	addButton(12, STRING["enhdialogs.misc.exit"], Common::KEYCODE_ESCAPE);
 }
 
 bool BlacksmithItems::msgFocus(const FocusMessage &msg) {

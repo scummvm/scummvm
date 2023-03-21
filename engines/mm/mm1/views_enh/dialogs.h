@@ -43,6 +43,7 @@
 #include "mm/mm1/views_enh/title.h"
 #include "mm/mm1/views_enh/trap.h"
 #include "mm/mm1/views_enh/unlock.h"
+#include "mm/mm1/views_enh/which_item.h"
 #include "mm/mm1/views_enh/who_will_try.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/locations/blacksmith_items.h"
@@ -89,6 +90,7 @@ private:
 	ViewsEnh::Title _title;
 	ViewsEnh::Trap _trap;
 	ViewsEnh::Unlock _unlock;
+	ViewsEnh::WhichItem _whichItem;
 	ViewsEnh::WhoWillTry _whoWillTry;
 	Views::Bash _bash;
 public:

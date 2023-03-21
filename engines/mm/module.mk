@@ -159,6 +159,7 @@ MODULE_OBJS += \
 	mm1/views_enh/title.o \
 	mm1/views_enh/trap.o \
 	mm1/views_enh/unlock.o \
+	mm1/views_enh/which_item.o \
 	mm1/views_enh/who_will_try.o \
 	mm1/views_enh/yes_no.o \
 	mm1/views_enh/interactions/interaction.o \

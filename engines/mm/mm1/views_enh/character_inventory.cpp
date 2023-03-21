@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_inventory.h"
+#include "mm/mm1/views_enh/which_item.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -28,20 +29,21 @@ namespace ViewsEnh {
 
 CharacterInventory::CharacterInventory() : ItemsView("CharacterInventory") {
 	_btnSprites.load("items.icn");
-	addButton(2, STRING["enhdialogs.blacksmith.buttons.arms"], Common::KEYCODE_a);
-	addButton(6, STRING["enhdialogs.blacksmith.buttons.backpack"], Common::KEYCODE_b);
-	addButton(8, STRING["enhdialogs.blacksmith.buttons.equip"], Common::KEYCODE_e);
-	addButton(10, STRING["enhdialogs.blacksmith.buttons.remove"], Common::KEYCODE_r);
-	addButton(12, STRING["enhdialogs.blacksmith.buttons.discard"], Common::KEYCODE_d);
-	addButton(6, STRING["enhdialogs.blacksmith.buttons.gather"], Common::KEYCODE_g);
-	addButton(14, STRING["enhdialogs.blacksmith.buttons.use"], Common::KEYCODE_u);
-	addButton(16, STRING["enhdialogs.blacksmith.buttons.exit"], Common::KEYCODE_ESCAPE);
+	addButton(2, STRING["enhdialogs.items.buttons.arms"], Common::KEYCODE_a);
+	addButton(6, STRING["enhdialogs.items.buttons.backpack"], Common::KEYCODE_b);
+	addButton(8, STRING["enhdialogs.items.buttons.equip"], Common::KEYCODE_e);
+	addButton(10, STRING["enhdialogs.items.buttons.remove"], Common::KEYCODE_r);
+	addButton(12, STRING["enhdialogs.items.buttons.discard"], Common::KEYCODE_d);
+	addButton(6, STRING["enhdialogs.items.buttons.trade"], Common::KEYCODE_t);
+	addButton(14, STRING["enhdialogs.items.buttons.use"], Common::KEYCODE_u);
+	addButton(16, STRING["enhdialogs.misc.exit"], Common::KEYCODE_ESCAPE);
 }
 
 bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
 
-	_mode = ARMS_MODE;
+	if (dynamic_cast<WhichItem *>(msg._priorView) == nullptr)
+		_mode = ARMS_MODE;
 	populateItems();
 
 	return true;
@@ -55,8 +57,8 @@ void CharacterInventory::draw() {
 void CharacterInventory::drawTitle() {
 	const Character &c = *g_globals->_currCharacter;
 	const Common::String fmt = STRING[(_mode == ARMS_MODE) ?
-		"enhdialogs.blacksmith.arms_for" :
-		"enhdialogs.blacksmith.backpack_for"];
+		"enhdialogs.items.arms_for" :
+		"enhdialogs.items.backpack_for"];
 
 	const Common::String title = Common::String::format(fmt.c_str(),
 		c._name,
@@ -82,28 +84,6 @@ bool CharacterInventory::msgKeypress(const KeypressMessage &msg) {
 		populateItems();
 		redraw();
 		break;
-		/*
-	case Common::KEYCODE_w:
-		_mode = WEAPONS_MODE;
-		populateItems();
-		redraw();
-		break;
-	case Common::KEYCODE_a:
-		_mode = ARMOR_MODE;
-		populateItems();
-		redraw();
-		break;
-	case Common::KEYCODE_m:
-		_mode = MISC_MODE;
-		populateItems();
-		redraw();
-		break;
-	case Common::KEYCODE_s:
-		_mode = SELL_MODE;
-		populateItems();
-		redraw();
-		break;
-*/
 	default:
 		return ItemsView::msgKeypress(msg);
 	}
