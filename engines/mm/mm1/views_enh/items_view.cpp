@@ -49,7 +49,7 @@ void ItemsView::addButton(int frame, const Common::String &text,
 }
 
 bool ItemsView::msgFocus(const FocusMessage &msg) {
-	ScrollView::msgFocus(msg);
+	PartyView::msgFocus(msg);
 
 	// Disable the normal '1' to '6' character selection keybindings,
 	// since we're using them in this dialog for item selection
@@ -57,6 +57,15 @@ bool ItemsView::msgFocus(const FocusMessage &msg) {
 
 	_selectedItem = -1;
 	return true;
+}
+
+bool ItemsView::msgGame(const GameMessage &msg) {
+	if (msg._name == "UPDATE") {
+		selectedCharChanged();
+		return true;
+	}
+
+	return PartyView::msgGame(msg);
 }
 
 void ItemsView::draw() {

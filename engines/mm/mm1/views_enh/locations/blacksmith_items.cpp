@@ -184,6 +184,11 @@ void BlacksmithItems::itemSelected() {
 	});
 }
 
+void BlacksmithItems::selectedCharChanged() {
+	populateItems();
+	redraw();
+}
+
 void BlacksmithItems::itemConfirmed() {
 	Character &c = *g_globals->_currCharacter;
 	Inventory &inv = c._backpack;

@@ -57,7 +57,7 @@ bool CharacterInventory::msgGame(const GameMessage &msg) {
 		return true;
 	}
 
-	return false;
+	return ItemsView::msgGame(msg);
 }
 
 void CharacterInventory::draw() {
@@ -133,6 +133,11 @@ void CharacterInventory::populateItems() {
 
 void CharacterInventory::itemSelected() {
 	// No implementation
+}
+
+void CharacterInventory::selectedCharChanged() {
+	populateItems();
+	redraw();
 }
 
 void CharacterInventory::selectButton(SelectedButton btnMode) {

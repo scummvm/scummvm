@@ -81,6 +81,11 @@ protected:
 	 */
 	void itemSelected() override;
 
+	/**
+	 * When the selected character is changed
+	 */
+	void selectedCharChanged() override;
+
 public:
 	CharacterInventory();
 	virtual ~CharacterInventory() {}

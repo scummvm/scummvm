@@ -71,11 +71,17 @@ protected:
 	 */
 	virtual void itemSelected() = 0;
 
+	/**
+	 * When the selected character is changed
+	 */
+	virtual void selectedCharChanged() = 0;
+
 public:
 	ItemsView(const Common::String &name);
 	virtual ~ItemsView() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
