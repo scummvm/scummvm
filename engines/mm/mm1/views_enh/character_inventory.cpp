@@ -41,8 +41,7 @@ CharacterInventory::CharacterInventory() : ItemsView("CharacterInventory") {
 
 bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
-	_initialChar = g_globals->_currCharacter;
-	assert(_initialChar);
+	assert(g_globals->_currCharacter);
 
 	if (dynamic_cast<WhichItem *>(msg._priorView) == nullptr)
 		_mode = BACKPACK_MODE;
@@ -125,6 +124,7 @@ void CharacterInventory::populateItems() {
 	_items.clear();
 	_selectedItem = -1;
 	_selectedButton = BTN_NONE;
+	_initialChar = g_globals->_currCharacter;
 
 	const Character &c = *g_globals->_currCharacter;
 	const Inventory &inv = (_mode == ARMS_MODE) ? c._equipped : c._backpack;
@@ -144,6 +144,10 @@ void CharacterInventory::selectedCharChanged() {
 			g_globals->_currCharacter = _initialChar;
 			g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
 		}
+	} else if (_selectedItem != -1) {
+		// Trade to another character
+		tradeItem(_initialChar);
+
 	} else {
 		populateItems();
 		redraw();
@@ -188,7 +192,6 @@ void CharacterInventory::performAction() {
 	}
 }
 
-
 void CharacterInventory::equipItem() {
 	Common::String errMsg;
 	Common::Point textPos;
@@ -222,6 +225,31 @@ void CharacterInventory::discardItem() {
 	inv.removeAt(_selectedItem);
 	populateItems();
 	redraw();
+}
+
+void CharacterInventory::tradeItem(Character *from) {
+	if (g_globals->_currCharacter == _initialChar)
+		return;
+
+	// Get source and dest inventories
+	Character &cSrc = *_initialChar;
+	Inventory &iSrc = (_mode == ARMS_MODE) ? cSrc._equipped : cSrc._backpack;
+	Character &cDest = *g_globals->_currCharacter;
+	Inventory &iDest = cDest._backpack;
+
+	if (iDest.full()) {
+		g_globals->_currCharacter = _initialChar;
+		backpackFull();
+
+	} else {
+		Inventory::Entry item = iSrc[_selectedItem];
+		iSrc.removeAt(_selectedItem);
+		iDest.add(item._id, item._charges);
+
+		_mode = BACKPACK_MODE;
+		populateItems();
+		redraw();
+	}
 }
 
 } // namespace ViewsEnh

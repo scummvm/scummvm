@@ -77,6 +77,11 @@ private:
 	 */
 	void discardItem();
 
+	/**
+	 * Trade an item to another character
+	 */
+	void tradeItem(Character *from);
+
 protected:
 	/**
 	 * Called when an item is selected
