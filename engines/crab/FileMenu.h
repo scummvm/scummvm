@@ -31,11 +31,11 @@
 #ifndef CRAB_FILEMENU_H
 #define CRAB_FILEMENU_H
 
-#include "FileData.h"
-#include "ImageData.h"
-#include "PageMenu.h"
-#include "TextData.h"
-#include "common_header.h"
+#include "crab/FileData.h"
+#include "crab/ImageData.h"
+#include "crab/PageMenu.h"
+#include "crab/TextData.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace ui {

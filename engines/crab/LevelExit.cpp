@@ -28,7 +28,7 @@
  *
  */
 
-#include "LevelExit.h"
+#include "crab/LevelExit.h"
 
 using namespace pyrodactyl::level;
 

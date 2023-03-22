@@ -29,7 +29,7 @@
  */
 
 
-#include "ResolutionMenu.h"
+#include "crab/ResolutionMenu.h"
 
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::text;

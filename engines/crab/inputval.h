@@ -31,10 +31,10 @@
 #ifndef CRAB_INPUTVAL_H
 #define CRAB_INPUTVAL_H
 
-#include "GameParam.h"
-#include "XMLDoc.h"
-#include "common_header.h"
-#include "loaders.h"
+#include "crab/GameParam.h"
+#include "crab/XMLDoc.h"
+#include "crab/common_header.h"
+#include "crab/loaders.h"
 
 namespace pyrodactyl {
 namespace input {

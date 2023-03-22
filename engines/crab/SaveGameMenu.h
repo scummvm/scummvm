@@ -31,9 +31,9 @@
 #ifndef CRAB_SAVEGAMEMENU_H
 #define CRAB_SAVEGAMEMENU_H
 
-#include "FileMenu.h"
-#include "common_header.h"
-#include "textarea.h"
+#include "crab/FileMenu.h"
+#include "crab/common_header.h"
+#include "crab/textarea.h"
 
 namespace pyrodactyl {
 namespace ui {

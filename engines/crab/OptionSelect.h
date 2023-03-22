@@ -30,10 +30,10 @@
 
 #ifndef CRAB_OPTIONSELECT_H
 #define CRAB_OPTIONSELECT_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "TextData.h"
-#include "button.h"
+#include "crab/TextData.h"
+#include "crab/button.h"
 
 namespace pyrodactyl {
 namespace ui {

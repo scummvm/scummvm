@@ -30,11 +30,11 @@
 
 #ifndef CRAB_STATPREVIEW_H
 #define CRAB_STATPREVIEW_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "Item.h"
-#include "SectionHeader.h"
-#include "StatDrawHelper.h"
+#include "crab/Item.h"
+#include "crab/SectionHeader.h"
+#include "crab/StatDrawHelper.h"
 
 namespace pyrodactyl {
 namespace item {

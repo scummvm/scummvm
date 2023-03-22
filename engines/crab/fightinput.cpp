@@ -28,7 +28,7 @@
  *
  */
 
-#include "fightinput.h"
+#include "crab/fightinput.h"
 
 using namespace pyrodactyl::input;
 

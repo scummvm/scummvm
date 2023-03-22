@@ -30,10 +30,10 @@
 
 #ifndef CRAB_RESOLUTIONMENU_H
 #define CRAB_RESOLUTIONMENU_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "menu.h"
-#include "textarea.h"
+#include "crab/menu.h"
+#include "crab/textarea.h"
 
 namespace pyrodactyl {
 namespace ui {

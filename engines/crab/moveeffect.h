@@ -31,9 +31,9 @@
 #ifndef CRAB_MOVEEFFECT_H
 #define CRAB_MOVEEFFECT_H
 
-#include "common_header.h"
-#include "imageeffect.h"
-#include "musicparam.h"
+#include "crab/common_header.h"
+#include "crab/imageeffect.h"
+#include "crab/musicparam.h"
 
 namespace pyrodactyl {
 namespace anim {

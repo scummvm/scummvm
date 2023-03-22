@@ -31,8 +31,8 @@
 #ifndef CRAB_PAGEMENU_H
 #define CRAB_PAGEMENU_H
 
-#include "common_header.h"
-#include "menu.h"
+#include "crab/common_header.h"
+#include "crab/menu.h"
 
 namespace pyrodactyl {
 namespace ui {

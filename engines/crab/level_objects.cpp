@@ -28,7 +28,7 @@
  *
  */
 
-#include "level_objects.h"
+#include "crab/level_objects.h"
 
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::level;

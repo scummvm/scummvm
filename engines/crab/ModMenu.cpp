@@ -28,7 +28,7 @@
  *
  */
 
-#include "ModMenu.h"
+#include "crab/ModMenu.h"
 
 using namespace pyrodactyl::ui;
 

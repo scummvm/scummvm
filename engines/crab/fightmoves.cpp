@@ -28,7 +28,7 @@
  *
  */
 
-#include "fightmoves.h"
+#include "crab/fightmoves.h"
 
 using namespace pyrodactyl::anim;
 

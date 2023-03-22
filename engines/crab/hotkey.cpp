@@ -28,7 +28,7 @@
  *
  */
 
-#include "hotkey.h"
+#include "crab/hotkey.h"
 
 using namespace pyrodactyl::input;
 

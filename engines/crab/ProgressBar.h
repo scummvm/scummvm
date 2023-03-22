@@ -31,9 +31,9 @@
 #ifndef CRAB_PROGRESSBAR_H
 #define CRAB_PROGRESSBAR_H
 
-#include "ClipButton.h"
-#include "common_header.h"
-#include "timer.h"
+#include "crab/ClipButton.h"
+#include "crab/common_header.h"
+#include "crab/timer.h"
 
 namespace pyrodactyl {
 namespace ui {

@@ -28,7 +28,7 @@
  *
  */
 
-#include "Image.h"
+#include "crab/Image.h"
 
 using namespace pyrodactyl::image;
 

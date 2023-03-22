@@ -28,7 +28,7 @@
  *
  */
 
-#include "PathfindingAgent.h"
+#include "crab/PathfindingAgent.h"
 
 PathfindingAgent::PathfindingAgent(void) : nodeQueue(compareNodes) {
 	grid = NULL;

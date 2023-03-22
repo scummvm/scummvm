@@ -31,10 +31,10 @@
 #ifndef CRAB_GAMEOVERMENU_H
 #define CRAB_GAMEOVERMENU_H
 
-#include "ImageData.h"
-#include "TextData.h"
-#include "common_header.h"
-#include "menu.h"
+#include "crab/ImageData.h"
+#include "crab/TextData.h"
+#include "crab/common_header.h"
+#include "crab/menu.h"
 
 namespace pyrodactyl {
 namespace ui {

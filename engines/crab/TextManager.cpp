@@ -28,8 +28,8 @@
  *
  */
 
-#include "TextManager.h"
-#include "XMLDoc.h"
+#include "crab/TextManager.h"
+#include "crab/XMLDoc.h"
 
 using namespace pyrodactyl::text;
 

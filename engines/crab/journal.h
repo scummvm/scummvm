@@ -31,11 +31,11 @@
 #ifndef CRAB_JOURNAL_H
 #define CRAB_JOURNAL_H
 
-#include "ImageData.h"
-#include "ImageManager.h"
-#include "StateButton.h"
-#include "common_header.h"
-#include "questmenu.h"
+#include "crab/ImageData.h"
+#include "crab/ImageManager.h"
+#include "crab/StateButton.h"
+#include "crab/common_header.h"
+#include "crab/questmenu.h"
 
 #define JE_CUR_NAME "cur"
 #define JE_DONE_NAME "done"

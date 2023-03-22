@@ -29,7 +29,7 @@
  */
 
 
-#include "imageeffect.h"
+#include "crab/imageeffect.h"
 
 using namespace pyrodactyl::anim;
 

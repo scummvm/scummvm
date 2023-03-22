@@ -28,7 +28,7 @@
  *
  */
 
-#include "loaders.h"
+#include "crab/loaders.h"
 
 namespace Crab {
 

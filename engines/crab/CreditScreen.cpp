@@ -28,8 +28,8 @@
  *
  */
 
-#include "CreditScreen.h"
-#include "url.h"
+#include "crab/CreditScreen.h"
+#include "crab/url.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;

@@ -28,7 +28,7 @@
  *
  */
 
-#include "SpriteConstant.h"
+#include "crab/SpriteConstant.h"
 
 using namespace pyrodactyl::ai;
 

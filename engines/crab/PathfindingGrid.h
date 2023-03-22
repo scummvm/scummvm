@@ -31,8 +31,8 @@
 #ifndef CRAB_PATHFINDINGGRID_H
 #define CRAB_PATHFINDINGGRID_H
 
-#include "PathfindingGraphNode.h"
-#include "common_header.h"
+#include "crab/PathfindingGraphNode.h"
+#include "crab/common_header.h"
 #include <math.h>
 
 namespace TMX {

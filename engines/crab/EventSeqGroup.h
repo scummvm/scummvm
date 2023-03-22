@@ -30,9 +30,9 @@
 
 #ifndef CRAB_EVENTSEQGROUP_H
 #define CRAB_EVENTSEQGROUP_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "EventSequence.h"
+#include "crab/EventSequence.h"
 
 namespace pyrodactyl {
 namespace event {

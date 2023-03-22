@@ -31,10 +31,10 @@
 #ifndef CRAB_LOADINGSCREEN_H
 #define CRAB_LOADINGSCREEN_H
 
-#include "Image.h"
-#include "common_header.h"
-#include "timer.h"
-#include "vectors.h"
+#include "crab/Image.h"
+#include "crab/common_header.h"
+#include "crab/timer.h"
+#include "crab/vectors.h"
 
 class LoadingScreen {
 	struct Screen {

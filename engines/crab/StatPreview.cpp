@@ -29,7 +29,7 @@
  */
 
 
-#include "StatPreview.h"
+#include "crab/StatPreview.h"
 
 using namespace pyrodactyl::item;
 

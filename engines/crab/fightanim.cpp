@@ -28,7 +28,7 @@
  *
  */
 
-#include "fightanim.h"
+#include "crab/fightanim.h"
 
 using namespace pyrodactyl::anim;
 

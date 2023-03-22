@@ -28,7 +28,7 @@
  *
  */
 
-#include "engines/crab/filesystem.h"
+#include "crab/filesystem.h"
 #include "common/file.h"
 
 namespace Crab {

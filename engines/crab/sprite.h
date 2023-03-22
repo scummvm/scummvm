@@ -31,19 +31,19 @@
 #ifndef CRAB_SPRITE_H
 #define CRAB_SPRITE_H
 
-#include "ImageManager.h"
-#include "LevelExit.h"
-#include "MusicManager.h"
-#include "PathfindingAgent.h"
-#include "PopUp.h"
-#include "Shape.h"
-#include "SpriteConstant.h"
-#include "animset.h"
-#include "collision.h"
-#include "common_header.h"
-#include "person.h"
-#include "spriteai.h"
-#include "timer.h"
+#include "crab/ImageManager.h"
+#include "crab/LevelExit.h"
+#include "crab/MusicManager.h"
+#include "crab/PathfindingAgent.h"
+#include "crab/PopUp.h"
+#include "crab/Shape.h"
+#include "crab/SpriteConstant.h"
+#include "crab/animset.h"
+#include "crab/collision.h"
+#include "crab/common_header.h"
+#include "crab/person.h"
+#include "crab/spriteai.h"
+#include "crab/timer.h"
 
 class PathfindingAgent;
 

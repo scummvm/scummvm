@@ -31,14 +31,14 @@
 #ifndef CRAB_APP_H
 #define CRAB_APP_H
 
-#include "ImageManager.h"
-#include "MusicManager.h"
-#include "common_header.h"
-#include "game.h"
-#include "gamestates.h"
-#include "mainmenu.h"
-#include "splash.h"
-#include "timer.h"
+#include "crab/ImageManager.h"
+#include "crab/MusicManager.h"
+#include "crab/common_header.h"
+#include "crab/game.h"
+#include "crab/gamestates.h"
+#include "crab/mainmenu.h"
+#include "crab/splash.h"
+#include "crab/timer.h"
 
 class App {
 	void LoadSettings(const std::string &filename);

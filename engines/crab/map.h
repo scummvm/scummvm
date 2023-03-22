@@ -31,16 +31,16 @@
 #ifndef CRAB_MAP_H
 #define CRAB_MAP_H
 
-#include "GameEventInfo.h"
-#include "ImageData.h"
-#include "ImageManager.h"
-#include "MapData.h"
-#include "MapMarkerMenu.h"
-#include "StateButton.h"
-#include "ToggleButton.h"
-#include "common_header.h"
-#include "mapbutton.h"
-#include "triggerset.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ImageData.h"
+#include "crab/ImageManager.h"
+#include "crab/MapData.h"
+#include "crab/MapMarkerMenu.h"
+#include "crab/StateButton.h"
+#include "crab/ToggleButton.h"
+#include "crab/common_header.h"
+#include "crab/mapbutton.h"
+#include "crab/triggerset.h"
 
 namespace pyrodactyl {
 namespace ui {

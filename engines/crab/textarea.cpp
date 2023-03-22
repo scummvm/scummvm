@@ -32,7 +32,7 @@
 // Author:   Arvind
 // Purpose:  TextArea functions
 //=============================================================================
-#include "textarea.h"
+#include "crab/textarea.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;

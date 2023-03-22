@@ -30,9 +30,9 @@
 
 #ifndef CRAB_TILEINFO_H
 #define CRAB_TILEINFO_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "loaders.h"
+#include "crab/loaders.h"
 
 namespace TMX {
 typedef unsigned int GidFormat;

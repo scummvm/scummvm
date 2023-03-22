@@ -31,22 +31,22 @@
 #ifndef CRAB_MAINMENU_H
 #define CRAB_MAINMENU_H
 
-#include "AlphaImage.h"
-#include "CreditScreen.h"
-#include "FileMenu.h"
-#include "ImageData.h"
-#include "KeyBindMenu.h"
-#include "ModMenu.h"
-#include "OptionMenu.h"
-#include "SlideShow.h"
-#include "StateButton.h"
-#include "common_header.h"
-#include "cursor.h"
-#include "gamestate_container.h"
-#include "gamestates.h"
-#include "menu.h"
-#include "slider.h"
-#include "textarea.h"
+#include "crab/AlphaImage.h"
+#include "crab/CreditScreen.h"
+#include "crab/FileMenu.h"
+#include "crab/ImageData.h"
+#include "crab/KeyBindMenu.h"
+#include "crab/ModMenu.h"
+#include "crab/OptionMenu.h"
+#include "crab/SlideShow.h"
+#include "crab/StateButton.h"
+#include "crab/common_header.h"
+#include "crab/cursor.h"
+#include "crab/gamestate_container.h"
+#include "crab/gamestates.h"
+#include "crab/menu.h"
+#include "crab/slider.h"
+#include "crab/textarea.h"
 
 // #define UNREST_DEMO
 

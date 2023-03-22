@@ -28,7 +28,7 @@
  *
  */
 
-#include "eventstore.h"
+#include "crab/eventstore.h"
 
 namespace pyrodactyl {
 namespace event {

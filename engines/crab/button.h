@@ -35,14 +35,14 @@
 #ifndef CRAB_BUTTON_H
 #define CRAB_BUTTON_H
 
-#include "Caption.h"
-#include "HoverInfo.h"
-#include "ImageManager.h"
-#include "MusicManager.h"
-#include "TextManager.h"
-#include "common_header.h"
-#include "element.h"
-#include "hotkey.h"
+#include "crab/Caption.h"
+#include "crab/HoverInfo.h"
+#include "crab/ImageManager.h"
+#include "crab/MusicManager.h"
+#include "crab/TextManager.h"
+#include "crab/common_header.h"
+#include "crab/element.h"
+#include "crab/hotkey.h"
 
 namespace pyrodactyl {
 namespace ui {

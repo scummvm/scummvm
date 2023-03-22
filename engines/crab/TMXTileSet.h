@@ -31,9 +31,9 @@
 #ifndef CRAB_TMXTILESET_H
 #define CRAB_TMXTILESET_H
 
-#include "Image.h"
-#include "TMXLayer.h"
-#include "common_header.h"
+#include "crab/Image.h"
+#include "crab/TMXLayer.h"
+#include "crab/common_header.h"
 
 namespace TMX {
 struct TileSet {

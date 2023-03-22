@@ -31,13 +31,13 @@
 #ifndef CRAB_GAMEEVENT_H
 #define CRAB_GAMEEVENT_H
 
-#include "ImageManager.h"
-#include "common_header.h"
-#include "effect.h"
-#include "eventstore.h"
-#include "person.h"
+#include "crab/ImageManager.h"
+#include "crab/common_header.h"
+#include "crab/effect.h"
+#include "crab/eventstore.h"
+#include "crab/person.h"
 #include "personbase.h"
-#include "triggerset.h"
+#include "crab/triggerset.h"
 
 // An unsigned integer is our event id format
 typedef unsigned int EventID;

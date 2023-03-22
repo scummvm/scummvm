@@ -31,8 +31,8 @@
 #ifndef CRAB_MAPDATA_H
 #define CRAB_MAPDATA_H
 
-#include "Rectangle.h"
-#include "common_header.h"
+#include "crab/Rectangle.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace ui {

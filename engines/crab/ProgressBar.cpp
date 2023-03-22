@@ -28,7 +28,7 @@
  *
  */
 
-#include "ProgressBar.h"
+#include "crab/ProgressBar.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

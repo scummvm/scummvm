@@ -28,7 +28,7 @@
  *
  */
 
-#include "fightmove.h"
+#include "crab/fightmove.h"
 
 using namespace pyrodactyl::anim;
 

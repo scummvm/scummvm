@@ -31,16 +31,16 @@
 #ifndef CRAB_TMXMAP_H
 #define CRAB_TMXMAP_H
 
-#include "ImageManager.h"
-#include "LevelExit.h"
-#include "LevelResult.h"
-#include "MusicArea.h"
-#include "PathfindingGrid.h"
-#include "Shape.h"
-#include "Stairs.h"
-#include "TMXTileSet.h"
-#include "common_header.h"
-#include "spriteai.h"
+#include "crab/ImageManager.h"
+#include "crab/LevelExit.h"
+#include "crab/LevelResult.h"
+#include "crab/MusicArea.h"
+#include "crab/PathfindingGrid.h"
+#include "crab/Shape.h"
+#include "crab/Stairs.h"
+#include "crab/TMXTileSet.h"
+#include "crab/common_header.h"
+#include "crab/spriteai.h"
 
 namespace TMX {
 // For TMX version 1.0, orthogonal maps only

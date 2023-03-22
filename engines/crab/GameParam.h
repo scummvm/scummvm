@@ -31,9 +31,9 @@
 #ifndef CRAB_GAMEPARAM_H
 #define CRAB_GAMEPARAM_H
 
-#include "XMLDoc.h"
-#include "common_header.h"
-#include "loaders.h"
+#include "crab/XMLDoc.h"
+#include "crab/common_header.h"
+#include "crab/loaders.h"
 
 // The index for all levels in the game
 struct LevelPath {

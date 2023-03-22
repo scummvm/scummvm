@@ -28,7 +28,7 @@
  *
  */
 
-#include "Rectangle.h"
+#include "crab/Rectangle.h"
 
 bool Rect::Load(rapidxml::xml_node<char> *node, const bool &echo, const std::string &x_name, const std::string &y_name,
 				const std::string &w_name, const std::string &h_name) {

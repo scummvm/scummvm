@@ -30,9 +30,9 @@
 
 #ifndef CRAB_LEVELRESULT_H
 #define CRAB_LEVELRESULT_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "ImageManager.h"
+#include "crab/ImageManager.h"
 
 enum LevelResultType { LR_NONE,
 					   LR_LEVEL,

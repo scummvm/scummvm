@@ -28,7 +28,7 @@
  *
  */
 
-#include "conversationdata.h"
+#include "crab/conversationdata.h"
 
 using namespace pyrodactyl::event;
 

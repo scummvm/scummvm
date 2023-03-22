@@ -31,9 +31,9 @@
 #ifndef CRAB_SPRITEAI_H
 #define CRAB_SPRITEAI_H
 
-#include "common_header.h"
-#include "movement.h"
-// #include "PathfindingAgent.h"
+#include "crab/common_header.h"
+#include "crab/movement.h"
+#include "crab/PathfindingAgent.h"
 
 // class PathfindingAgent;
 namespace pyrodactyl {

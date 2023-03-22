@@ -28,7 +28,7 @@
  *
  */
 
-#include "person.h"
+#include "crab/person.h"
 
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::people;

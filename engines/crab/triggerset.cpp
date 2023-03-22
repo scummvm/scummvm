@@ -29,7 +29,7 @@
  */
 
 
-#include "triggerset.h"
+#include "crab/triggerset.h"
 
 using namespace pyrodactyl::event;
 

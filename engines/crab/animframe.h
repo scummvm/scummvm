@@ -31,10 +31,10 @@
 #ifndef CRAB_ANIMFRAME_H
 #define CRAB_ANIMFRAME_H
 
-#include "Rectangle.h"
-#include "common_header.h"
-#include "shadow.h"
-#include "vectors.h"
+#include "crab/Rectangle.h"
+#include "crab/common_header.h"
+#include "crab/shadow.h"
+#include "crab/vectors.h"
 
 namespace pyrodactyl {
 namespace anim {

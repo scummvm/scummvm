@@ -28,7 +28,7 @@
  *
  */
 
-#include "PauseMenu.h"
+#include "crab/PauseMenu.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

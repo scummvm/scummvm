@@ -35,15 +35,15 @@
 #ifndef CRAB_SPLASH_H
 #define CRAB_SPLASH_H
 
-#include "ImageManager.h"
-#include "LoadingScreen.h"
-#include "MusicManager.h"
-#include "ScreenSettings.h"
-#include "TextManager.h"
-#include "common_header.h"
-#include "gamestate_container.h"
-#include "gamestates.h"
-#include "timer.h"
+#include "crab/ImageManager.h"
+#include "crab/LoadingScreen.h"
+#include "crab/MusicManager.h"
+#include "crab/ScreenSettings.h"
+#include "crab/TextManager.h"
+#include "crab/common_header.h"
+#include "crab/gamestate_container.h"
+#include "crab/gamestates.h"
+#include "crab/timer.h"
 
 //------------------------------------------------------------------------
 // Purpose: Splash screen class

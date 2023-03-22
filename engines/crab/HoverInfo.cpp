@@ -29,7 +29,7 @@
  */
 
 
-#include "HoverInfo.h"
+#include "crab/HoverInfo.h"
 
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;

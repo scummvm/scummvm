@@ -31,9 +31,9 @@
 #ifndef CRAB_LINE_H
 #define CRAB_LINE_H
 
-#include "ScreenSettings.h"
-#include "common_header.h"
-#include "vectors.h"
+#include "crab/ScreenSettings.h"
+#include "crab/common_header.h"
+#include "crab/vectors.h"
 
 // Find if 2 lines intersect and store the point of intersection
 template<typename T>

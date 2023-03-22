@@ -31,8 +31,8 @@
 #ifndef CRAB_SHAPE_H
 #define CRAB_SHAPE_H
 
-#include "Polygon.h"
-#include "vectors.h"
+#include "crab/Polygon.h"
+#include "crab/vectors.h"
 
 // The kind of shape
 enum ShapeType { SHAPE_RECT,

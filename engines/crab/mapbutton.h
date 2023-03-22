@@ -30,10 +30,10 @@
 
 #ifndef CRAB_MAPBUTTON_H
 #define CRAB_MAPBUTTON_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "menu.h"
-#include "triggerset.h"
+#include "crab/menu.h"
+#include "crab/triggerset.h"
 
 namespace pyrodactyl {
 namespace ui {

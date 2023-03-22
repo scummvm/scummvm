@@ -31,11 +31,11 @@
 #ifndef CRAB_QUESTMENU_H
 #define CRAB_QUESTMENU_H
 
-#include "PageMenu.h"
-#include "QuestText.h"
-#include "StateButton.h"
-#include "common_header.h"
-#include "quest.h"
+#include "crab/PageMenu.h"
+#include "crab/QuestText.h"
+#include "crab/StateButton.h"
+#include "crab/common_header.h"
+#include "crab/quest.h"
 
 namespace pyrodactyl {
 namespace ui {

@@ -35,8 +35,8 @@
 #ifndef CRAB_GAMESTATE_CONTAINER_H
 #define CRAB_GAMESTATE_CONTAINER_H
 
-#include "common_header.h"
-#include "gamestates.h"
+#include "crab/common_header.h"
+#include "crab/gamestates.h"
 
 //------------------------------------------------------------------------
 // Purpose: Game State base class

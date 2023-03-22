@@ -33,7 +33,7 @@
 // Author:   Arvind
 // Purpose:  Splash functions
 //=============================================================================
-#include "splash.h"
+#include "crab/splash.h"
 
 //------------------------------------------------------------------------
 // Purpose: Constructor

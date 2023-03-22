@@ -32,8 +32,8 @@
 // Author:   Arvind
 // Purpose:  Contains the image manager class - used to manage in-game images
 //=============================================================================
-#include "ImageManager.h"
-#include "XMLDoc.h"
+#include "crab/ImageManager.h"
+#include "crab/XMLDoc.h"
 
 using namespace pyrodactyl::image;
 

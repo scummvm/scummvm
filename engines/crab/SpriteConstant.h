@@ -31,8 +31,8 @@
 #ifndef CRAB_SPRITECONSTANT_H
 #define CRAB_SPRITECONSTANT_H
 
-#include "common_header.h"
-#include "vectors.h"
+#include "crab/common_header.h"
+#include "crab/vectors.h"
 
 namespace pyrodactyl {
 namespace ai {

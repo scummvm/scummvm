@@ -31,10 +31,10 @@
 #ifndef CRAB_LOADERS_H
 #define CRAB_LOADERS_H
 
-#include "engines/crab/XMLDoc.h"
-#include "engines/crab/common_header.h"
-#include "engines/crab/gametype.h"
-#include "engines/crab/numstr.h"
+#include "crab/XMLDoc.h"
+#include "crab/common_header.h"
+#include "crab/gametype.h"
+#include "crab/numstr.h"
 
 namespace Crab {
 

@@ -31,9 +31,9 @@
 #ifndef CRAB_IMAGEDATA_H
 #define CRAB_IMAGEDATA_H
 
-#include "ImageManager.h"
-#include "common_header.h"
-#include "element.h"
+#include "crab/ImageManager.h"
+#include "crab/common_header.h"
+#include "crab/element.h"
 
 namespace pyrodactyl {
 namespace ui {

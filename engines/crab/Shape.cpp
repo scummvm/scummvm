@@ -28,7 +28,7 @@
  *
  */
 
-#include "Shape.h"
+#include "crab/Shape.h"
 
 void Shape::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	if (NodeValid("polygon", node, echo)) {

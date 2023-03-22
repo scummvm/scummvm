@@ -31,9 +31,9 @@
 #ifndef CRAB_TEXTDATA_H
 #define CRAB_TEXTDATA_H
 
-#include "TextManager.h"
-#include "common_header.h"
-#include "element.h"
+#include "crab/TextManager.h"
+#include "crab/common_header.h"
+#include "crab/element.h"
 
 namespace pyrodactyl {
 namespace ui {

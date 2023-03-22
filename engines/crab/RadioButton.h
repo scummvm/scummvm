@@ -31,7 +31,7 @@
 #ifndef CRAB_RADIOBUTTON_H
 #define CRAB_RADIOBUTTON_H
 
-#include "ToggleButton.h"
+#include "crab/ToggleButton.h"
 
 namespace pyrodactyl {
 namespace ui {

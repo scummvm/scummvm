@@ -28,7 +28,7 @@
  *
  */
 
-#include "input.h"
+#include "crab/input.h"
 
 namespace pyrodactyl {
 namespace input {

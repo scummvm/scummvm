@@ -35,13 +35,13 @@
 #ifndef CRAB_IMAGEMANAGER_H
 #define CRAB_IMAGEMANAGER_H
 
-#include "GameParam.h"
-#include "Image.h"
-#include "LoadingScreen.h"
-#include "TMXTileSet.h"
-#include "common_header.h"
-#include "cursor.h"
-#include "loaders.h"
+#include "crab/GameParam.h"
+#include "crab/Image.h"
+#include "crab/LoadingScreen.h"
+#include "crab/TMXTileSet.h"
+#include "crab/common_header.h"
+#include "crab/cursor.h"
+#include "crab/loaders.h"
 
 // We use this object as the key for all image assets
 typedef unsigned int ImageKey;

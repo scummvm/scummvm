@@ -28,7 +28,7 @@
  *
  */
 
-#include "ItemSlot.h"
+#include "crab/ItemSlot.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::item;

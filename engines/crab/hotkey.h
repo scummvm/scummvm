@@ -31,8 +31,8 @@
 #ifndef CRAB_HOTKEY_H
 #define CRAB_HOTKEY_H
 
-#include "common_header.h"
-#include "input.h"
+#include "crab/common_header.h"
+#include "crab/input.h"
 
 namespace pyrodactyl {
 namespace input {

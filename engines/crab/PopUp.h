@@ -31,12 +31,12 @@
 #ifndef CRAB_POPUP_H
 #define CRAB_POPUP_H
 
-#include "GameEventInfo.h"
-#include "ParagraphData.h"
-#include "TextManager.h"
-#include "common_header.h"
-#include "effect.h"
-#include "triggerset.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ParagraphData.h"
+#include "crab/TextManager.h"
+#include "crab/common_header.h"
+#include "crab/effect.h"
+#include "crab/triggerset.h"
 
 namespace pyrodactyl {
 namespace anim {

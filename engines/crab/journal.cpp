@@ -28,7 +28,7 @@
  *
  */
 
-#include "journal.h"
+#include "crab/journal.h"
 
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::ui;

@@ -31,9 +31,9 @@
 #ifndef CRAB_RECTANGLE_H
 #define CRAB_RECTANGLE_H
 
-#include "Line.h"
-#include "common_header.h"
-#include "vectors.h"
+#include "crab/Line.h"
+#include "crab/common_header.h"
+#include "crab/vectors.h"
 
 //------------------------------------------------------------------------
 // Purpose: A simple rectangle class

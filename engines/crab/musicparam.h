@@ -30,9 +30,9 @@
 
 #ifndef CRAB_MUSICPARAM_H
 #define CRAB_MUSICPARAM_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "loaders.h"
+#include "crab/loaders.h"
 
 namespace pyrodactyl {
 namespace music {

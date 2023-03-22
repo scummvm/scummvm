@@ -28,7 +28,7 @@
  *
  */
 
-#include "AnimationFrame.h"
+#include "crab/AnimationFrame.h"
 
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::anim;

@@ -30,13 +30,13 @@
 
 #ifndef CRAB_EVENTSEQUENCE_H
 #define CRAB_EVENTSEQUENCE_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "GameEventInfo.h"
-#include "ImageManager.h"
-#include "Inventory.h"
-#include "gameevent.h"
-#include "journal.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ImageManager.h"
+#include "crab/Inventory.h"
+#include "crab/gameevent.h"
+#include "crab/journal.h"
 
 namespace pyrodactyl {
 namespace event {

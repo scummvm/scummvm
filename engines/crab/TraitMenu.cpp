@@ -28,7 +28,7 @@
  *
  */
 
-#include "TraitMenu.h"
+#include "crab/TraitMenu.h"
 
 using namespace pyrodactyl::ui;
 

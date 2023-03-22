@@ -31,9 +31,9 @@
 #ifndef CRAB_ITEMCOLLECTION_H
 #define CRAB_ITEMCOLLECTION_H
 
-#include "ItemMenu.h"
-#include "StatDrawHelper.h"
-#include "common_header.h"
+#include "crab/ItemMenu.h"
+#include "crab/StatDrawHelper.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace item {

@@ -31,9 +31,9 @@
 #ifndef CRAB_PATHFINDINGAGENT_H
 #define CRAB_PATHFINDINGAGENT_H
 
-#include "PathfindingGrid.h"
-#include "PriorityQueue.h"
-#include "vectors.h"
+#include "crab/PathfindingGrid.h"
+#include "crab/PriorityQueue.h"
+#include "crab/vectors.h"
 
 // This class represents the actual pathfinding and following agent that utilizes
 // the pathfinding grid

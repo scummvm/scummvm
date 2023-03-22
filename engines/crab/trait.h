@@ -31,8 +31,8 @@
 #ifndef CRAB_TRAIT_H
 #define CRAB_TRAIT_H
 
-#include "ImageManager.h"
-#include "common_header.h"
+#include "crab/ImageManager.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace people {

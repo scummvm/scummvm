@@ -30,8 +30,8 @@
 
 #ifndef CRAB_TRIGGER_H
 #define CRAB_TRIGGER_H
-#include "GameEventInfo.h"
-#include "common_header.h"
+#include "crab/GameEventInfo.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace event {

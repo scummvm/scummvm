@@ -28,8 +28,8 @@
  *
  */
 
-#include "effect.h"
-#include "MusicManager.h"
+#include "crab/effect.h"
+#include "crab/MusicManager.h"
 
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::music;

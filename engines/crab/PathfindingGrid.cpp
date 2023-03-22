@@ -28,8 +28,8 @@
  *
  */
 
-#include "PathfindingGrid.h"
-#include "TMXMap.h"
+#include "crab/PathfindingGrid.h"
+#include "crab/TMXMap.h"
 
 using namespace TMX;
 

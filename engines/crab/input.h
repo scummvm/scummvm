@@ -31,8 +31,8 @@
 #ifndef CRAB_INPUT_H
 #define CRAB_INPUT_H
 
-#include "common_header.h"
-#include "inputval.h"
+#include "crab/common_header.h"
+#include "crab/inputval.h"
 
 #define ANALOG_PRESSED 2
 

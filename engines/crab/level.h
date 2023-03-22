@@ -31,19 +31,19 @@
 #ifndef CRAB_LEVEL_H
 #define CRAB_LEVEL_H
 
-#include "GameEventInfo.h"
-#include "ImageManager.h"
-#include "ParagraphData.h"
-#include "PathfindingGrid.h"
-#include "TMXMap.h"
-#include "animset.h"
-#include "button.h"
-#include "common_header.h"
-#include "fightmove.h"
-#include "level_objects.h"
-#include "person.h"
-#include "sprite.h"
-#include "talknotify.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ImageManager.h"
+#include "crab/ParagraphData.h"
+#include "crab/PathfindingGrid.h"
+#include "crab/TMXMap.h"
+#include "crab/animset.h"
+#include "crab/button.h"
+#include "crab/common_header.h"
+#include "crab/fightmove.h"
+#include "crab/level_objects.h"
+#include "crab/person.h"
+#include "crab/sprite.h"
+#include "crab/talknotify.h"
 
 namespace pyrodactyl {
 namespace level {

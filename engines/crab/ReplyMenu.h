@@ -31,15 +31,15 @@
 #ifndef CRAB_REPLYMENU_H
 #define CRAB_REPLYMENU_H
 
-#include "GameEventInfo.h"
-#include "ImageData.h"
-#include "PersonHandler.h"
-#include "ReplyButton.h"
-#include "common_header.h"
-#include "conversationdata.h"
-#include "emotion.h"
-#include "eventstore.h"
-#include "menu.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ImageData.h"
+#include "crab/PersonHandler.h"
+#include "crab/ReplyButton.h"
+#include "crab/common_header.h"
+#include "crab/conversationdata.h"
+#include "crab/emotion.h"
+#include "crab/eventstore.h"
+#include "crab/menu.h"
 
 namespace pyrodactyl {
 namespace ui {

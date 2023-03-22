@@ -28,7 +28,7 @@
  *
  */
 
-#include "GeneralSettingMenu.h"
+#include "crab/GeneralSettingMenu.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::music;

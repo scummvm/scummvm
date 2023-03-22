@@ -31,8 +31,8 @@
 #ifndef CRAB_RADIOBUTTONMENU_H
 #define CRAB_RADIOBUTTONMENU_H
 
-#include "RadioButton.h"
-#include "menu.h"
+#include "crab/RadioButton.h"
+#include "crab/menu.h"
 
 namespace pyrodactyl {
 namespace ui {

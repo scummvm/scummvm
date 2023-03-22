@@ -29,7 +29,7 @@
  */
 
 
-#include "HealthIndicator.h"
+#include "crab/HealthIndicator.h"
 
 using namespace pyrodactyl::ui;
 
