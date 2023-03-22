@@ -4604,7 +4604,7 @@ void GUI_EoB::setupSaveMenuSlots() {
 						// have a special 1-byte encoding that must be kept. It is easy to distinguish between GMM descriptions and ingame descriptions due to the '\r' characters
 						// that the auto-generated strings always and the GMM strings never have.
 						for (uint ii = 0; ii < strlen(_saveSlotStringsTemp[i]); ++ii) {
-							if (_saveSlotStringsTemp[i][ii] < 32 && _saveSlotStringsTemp[i][ii] != '\r') // due to the signed char type this will also clean up everything >= 0x80
+						  if ((_saveSlotStringsTemp[i][ii] & 0x80) || (_saveSlotStringsTemp[i][ii] < 32 && _saveSlotStringsTemp[i][ii] != '\r'))
 								_saveSlotStringsTemp[i][ii] = ' ';
 						}
 				}
