@@ -31,11 +31,11 @@
 #ifndef CRAB_GAMEEVENTINFO_H
 #define CRAB_GAMEEVENTINFO_H
 
-#include "Inventory.h"
-#include "StatTemplate.h"
-#include "common_header.h"
-#include "journal.h"
-#include "person.h"
+#include "crab/Inventory.h"
+#include "crab/StatTemplate.h"
+#include "crab/common_header.h"
+#include "crab/journal.h"
+#include "crab/person.h"
 
 namespace pyrodactyl {
 namespace event {

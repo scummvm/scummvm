@@ -31,9 +31,9 @@
 #ifndef CRAB_POLYGON_H
 #define CRAB_POLYGON_H
 
-#include "Rectangle.h"
-#include "common_header.h"
-#include "vectors.h"
+#include "crab/Rectangle.h"
+#include "crab/common_header.h"
+#include "crab/vectors.h"
 
 //------------------------------------------------------------------------
 // Purpose: The result of a collision

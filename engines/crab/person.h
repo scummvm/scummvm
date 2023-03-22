@@ -31,13 +31,13 @@
 #ifndef CRAB_PERSON_H
 #define CRAB_PERSON_H
 
-#include "ImageManager.h"
-#include "Stat.h"
-#include "StatTemplate.h"
-#include "common_header.h"
-#include "opinion.h"
+#include "crab/ImageManager.h"
+#include "crab/Stat.h"
+#include "crab/StatTemplate.h"
+#include "crab/common_header.h"
+#include "crab/opinion.h"
 #include "personbase.h"
-#include "trait.h"
+#include "crab/trait.h"
 
 namespace pyrodactyl {
 namespace people {

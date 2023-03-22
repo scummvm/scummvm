@@ -31,9 +31,9 @@
 #ifndef CRAB_ITEMDESC_H
 #define CRAB_ITEMDESC_H
 
-#include "Item.h"
-#include "ParagraphData.h"
-#include "SectionHeader.h"
+#include "crab/Item.h"
+#include "crab/ParagraphData.h"
+#include "crab/SectionHeader.h"
 
 namespace pyrodactyl {
 namespace ui {

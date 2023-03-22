@@ -35,17 +35,17 @@
 #ifndef CRAB_HUD_H
 #define CRAB_HUD_H
 
-#include "FileMenu.h"
-#include "GameEventInfo.h"
-#include "GameOverMenu.h"
-#include "HealthIndicator.h"
-#include "PauseMenu.h"
-#include "SlideShow.h"
-#include "StateButton.h"
-#include "common_header.h"
-#include "input.h"
-#include "level_objects.h"
-#include "talknotify.h"
+#include "crab/FileMenu.h"
+#include "crab/GameEventInfo.h"
+#include "crab/GameOverMenu.h"
+#include "crab/HealthIndicator.h"
+#include "crab/PauseMenu.h"
+#include "crab/SlideShow.h"
+#include "crab/StateButton.h"
+#include "crab/common_header.h"
+#include "crab/input.h"
+#include "crab/level_objects.h"
+#include "crab/talknotify.h"
 
 namespace pyrodactyl {
 namespace ui {

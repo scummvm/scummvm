@@ -31,13 +31,13 @@
 #ifndef CRAB_PERSONHANDLER_H
 #define CRAB_PERSONHANDLER_H
 
-#include "GameEventInfo.h"
-#include "ProgressBar.h"
-#include "common_header.h"
-#include "dialogbox.h"
-#include "gameevent.h"
-#include "person.h"
-#include "sprite.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ProgressBar.h"
+#include "crab/common_header.h"
+#include "crab/dialogbox.h"
+#include "crab/gameevent.h"
+#include "crab/person.h"
+#include "crab/sprite.h"
 
 namespace pyrodactyl {
 namespace ui {

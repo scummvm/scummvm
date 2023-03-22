@@ -31,10 +31,10 @@
 #ifndef CRAB_SECTIONHEADER_H
 #define CRAB_SECTIONHEADER_H
 
-#include "ImageManager.h"
-#include "TextData.h"
-#include "TextManager.h"
-#include "common_header.h"
+#include "crab/ImageManager.h"
+#include "crab/TextData.h"
+#include "crab/TextManager.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace ui {

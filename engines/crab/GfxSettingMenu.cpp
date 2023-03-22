@@ -28,7 +28,7 @@
  *
  */
 
-#include "GfxSettingMenu.h"
+#include "crab/GfxSettingMenu.h"
 
 using namespace pyrodactyl::ui;
 

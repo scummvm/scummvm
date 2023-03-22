@@ -31,9 +31,9 @@
 #ifndef CRAB_SHADOW_H
 #define CRAB_SHADOW_H
 
-#include "ImageManager.h"
-#include "common_header.h"
-#include "vectors.h"
+#include "crab/ImageManager.h"
+#include "crab/common_header.h"
+#include "crab/vectors.h"
 
 namespace pyrodactyl {
 namespace anim {

@@ -31,9 +31,9 @@
 #ifndef CRAB_TRAITBUTTON_H
 #define CRAB_TRAITBUTTON_H
 
-#include "StateButton.h"
-#include "common_header.h"
-#include "trait.h"
+#include "crab/StateButton.h"
+#include "crab/common_header.h"
+#include "crab/trait.h"
 
 namespace pyrodactyl {
 namespace ui {

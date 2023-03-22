@@ -31,10 +31,10 @@
 #ifndef CRAB_TMXLAYER_H
 #define CRAB_TMXLAYER_H
 
-#include "Image.h"
-#include "Rectangle.h"
-#include "TileInfo.h"
-#include "common_header.h"
+#include "crab/Image.h"
+#include "crab/Rectangle.h"
+#include "crab/TileInfo.h"
+#include "crab/common_header.h"
 
 namespace TMX {
 enum LayerType {

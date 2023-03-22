@@ -28,9 +28,9 @@
  *
  */
 
-#include "TMXMap.h"
-#include "TextManager.h"
-#include "collision.h"
+#include "crab/TMXMap.h"
+#include "crab/TextManager.h"
+#include "crab/collision.h"
 
 using namespace TMX;
 using namespace pyrodactyl::image;

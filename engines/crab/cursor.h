@@ -35,10 +35,10 @@
 #ifndef CRAB_CURSOR_H
 #define CRAB_CURSOR_H
 
-#include "Image.h"
-#include "common_header.h"
-#include "loaders.h"
-#include "vectors.h"
+#include "crab/Image.h"
+#include "crab/common_header.h"
+#include "crab/loaders.h"
+#include "crab/vectors.h"
 
 namespace pyrodactyl {
 namespace input {

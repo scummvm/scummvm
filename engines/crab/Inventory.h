@@ -31,12 +31,12 @@
 #ifndef CRAB_INVENTORY_H
 #define CRAB_INVENTORY_H
 
-#include "ImageData.h"
-#include "ItemCollection.h"
-#include "ItemSlot.h"
-#include "Stat.h"
-#include "button.h"
-#include "common_header.h"
+#include "crab/ImageData.h"
+#include "crab/ItemCollection.h"
+#include "crab/ItemSlot.h"
+#include "crab/Stat.h"
+#include "crab/button.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace ui {

@@ -31,8 +31,8 @@
 #ifndef CRAB_IMAGE_H
 #define CRAB_IMAGE_H
 
-#include "ScreenSettings.h"
-#include "common_header.h"
+#include "crab/ScreenSettings.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace image {

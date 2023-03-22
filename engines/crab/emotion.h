@@ -31,10 +31,10 @@
 #ifndef CRAB_EMOTION_H
 #define CRAB_EMOTION_H
 
-#include "ImageManager.h"
-#include "common_header.h"
-#include "eventstore.h"
-#include "textarea.h"
+#include "crab/ImageManager.h"
+#include "crab/common_header.h"
+#include "crab/eventstore.h"
+#include "crab/textarea.h"
 
 namespace pyrodactyl {
 namespace ui {

@@ -31,9 +31,9 @@
 #ifndef CRAB_FIGHTMOVES_H
 #define CRAB_FIGHTMOVES_H
 
-#include "MusicManager.h"
-#include "common_header.h"
-#include "fightmove.h"
+#include "crab/MusicManager.h"
+#include "crab/common_header.h"
+#include "crab/fightmove.h"
 
 namespace pyrodactyl {
 namespace anim {

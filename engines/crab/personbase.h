@@ -31,8 +31,8 @@
 #ifndef CRAB_PERSONBASE_H
 #define CRAB_PERSONBASE_H
 
-#include "Stat.h"
-#include "common_header.h"
+#include "crab/Stat.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace people {

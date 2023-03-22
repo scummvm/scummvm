@@ -28,7 +28,7 @@
  *
  */
 
-#include "QuestText.h"
+#include "crab/QuestText.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;

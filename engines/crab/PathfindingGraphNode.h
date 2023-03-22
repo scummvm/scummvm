@@ -31,8 +31,8 @@
 #ifndef CRAB_PATHFINDINGGRAPHNODE_H
 #define CRAB_PATHFINDINGGRAPHNODE_H
 
-#include "Rectangle.h"
-#include "vectors.h"
+#include "crab/Rectangle.h"
+#include "crab/vectors.h"
 
 // This is the basic pathfinding node that will construct the pathfinding graph. (SZ)
 // Although Unrest is using a square grid based pathfinding map, this is made to be a general use pathfinding node.

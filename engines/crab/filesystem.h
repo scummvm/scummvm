@@ -30,7 +30,7 @@
 
 #ifndef CRAB_FILESYSTEM_H
 #define CRAB_FILESYSTEM_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
 namespace Crab {
 bool FileOpen(const Common::Path &path, char *&data);

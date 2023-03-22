@@ -31,9 +31,9 @@
 #ifndef CRAB_MAPMARKERMENU_H
 #define CRAB_MAPMARKERMENU_H
 
-#include "StateButton.h"
-#include "common_header.h"
-#include "menu.h"
+#include "crab/StateButton.h"
+#include "crab/common_header.h"
+#include "crab/menu.h"
 
 namespace pyrodactyl {
 namespace ui {

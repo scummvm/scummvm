@@ -28,7 +28,7 @@
  *
  */
 
-#include "PathfindingGraphNode.h"
+#include "crab/PathfindingGraphNode.h"
 
 PathfindingGraphNode::PathfindingGraphNode(void) {
 	id = -1;

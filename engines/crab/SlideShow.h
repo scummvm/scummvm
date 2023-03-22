@@ -31,10 +31,10 @@
 #ifndef CRAB_SLIDESHOW_H
 #define CRAB_SLIDESHOW_H
 
-#include "Image.h"
-#include "ImageData.h"
-#include "button.h"
-#include "common_header.h"
+#include "crab/Image.h"
+#include "crab/ImageData.h"
+#include "crab/button.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace ui {

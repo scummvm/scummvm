@@ -31,10 +31,10 @@
 #ifndef CRAB_TALKNOTIFY_H
 #define CRAB_TALKNOTIFY_H
 
-#include "GameEventInfo.h"
-#include "ImageManager.h"
-#include "common_header.h"
-#include "sprite.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ImageManager.h"
+#include "crab/common_header.h"
+#include "crab/sprite.h"
 
 namespace pyrodactyl {
 namespace level {

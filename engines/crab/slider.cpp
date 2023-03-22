@@ -28,7 +28,7 @@
  *
  */
 
-#include "slider.h"
+#include "crab/slider.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

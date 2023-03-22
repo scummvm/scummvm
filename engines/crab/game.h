@@ -31,19 +31,19 @@
 #ifndef CRAB_GAME_H
 #define CRAB_GAME_H
 
-#include "DevConsole.h"
-#include "GameClock.h"
-#include "GameEventInfo.h"
-#include "ImageManager.h"
-#include "LoadingScreen.h"
-#include "common_header.h"
-#include "cursor.h"
-#include "gameeventmanager.h"
-#include "gamestate_container.h"
-#include "hud.h"
-#include "level.h"
-#include "map.h"
-#include "menu.h"
+#include "crab/DevConsole.h"
+#include "crab/GameClock.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ImageManager.h"
+#include "crab/LoadingScreen.h"
+#include "crab/common_header.h"
+#include "crab/cursor.h"
+#include "crab/gameeventmanager.h"
+#include "crab/gamestate_container.h"
+#include "crab/hud.h"
+#include "crab/level.h"
+#include "crab/map.h"
+#include "crab/menu.h"
 
 class Game : public GameState {
 private:

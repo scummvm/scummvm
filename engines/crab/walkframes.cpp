@@ -29,7 +29,7 @@
  */
 
 
-#include "walkframes.h"
+#include "crab/walkframes.h"
 
 using namespace pyrodactyl::anim;
 using namespace pyrodactyl::people;

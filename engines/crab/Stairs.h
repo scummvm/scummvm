@@ -31,8 +31,8 @@
 #ifndef CRAB_STAIRS_H
 #define CRAB_STAIRS_H
 
-#include "Shape.h"
-#include "common_header.h"
+#include "crab/Shape.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace level {

@@ -31,8 +31,8 @@
 #ifndef CRAB_LEVEL_OBJECTS_H
 #define CRAB_LEVEL_OBJECTS_H
 
-#include "ImageManager.h"
-#include "common_header.h"
+#include "crab/ImageManager.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace level {

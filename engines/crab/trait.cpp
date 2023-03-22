@@ -28,7 +28,7 @@
  *
  */
 
-#include "trait.h"
+#include "crab/trait.h"
 
 using namespace pyrodactyl::people;
 

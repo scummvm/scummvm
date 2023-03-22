@@ -28,7 +28,7 @@
  *
  */
 
-#include "talknotify.h"
+#include "crab/talknotify.h"
 
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::level;

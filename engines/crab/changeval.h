@@ -31,8 +31,8 @@
 #ifndef CRAB_CHANGEVAL_H
 #define CRAB_CHANGEVAL_H
 
-#include "common_header.h"
-#include "opinion.h"
+#include "crab/common_header.h"
+#include "crab/opinion.h"
 
 namespace pyrodactyl {
 namespace event {

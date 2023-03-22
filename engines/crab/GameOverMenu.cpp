@@ -29,7 +29,7 @@
  */
 
 
-#include "GameOverMenu.h"
+#include "crab/GameOverMenu.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

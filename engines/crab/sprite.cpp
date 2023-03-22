@@ -28,7 +28,7 @@
  *
  */
 
-#include "sprite.h"
+#include "crab/sprite.h"
 
 using namespace pyrodactyl::ai;
 using namespace pyrodactyl::anim;

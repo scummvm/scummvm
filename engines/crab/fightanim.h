@@ -31,13 +31,13 @@
 #ifndef CRAB_FIGHTANIM_H
 #define CRAB_FIGHTANIM_H
 
-#include "MusicManager.h"
-#include "common_header.h"
-#include "fightinput.h"
-#include "fm_ai_data.h"
-#include "moveeffect.h"
-#include "shadow.h"
-#include "triggerset.h"
+#include "crab/MusicManager.h"
+#include "crab/common_header.h"
+#include "crab/fightinput.h"
+#include "crab/fm_ai_data.h"
+#include "crab/moveeffect.h"
+#include "crab/shadow.h"
+#include "crab/triggerset.h"
 
 namespace pyrodactyl {
 namespace anim {

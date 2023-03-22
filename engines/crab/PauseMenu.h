@@ -31,15 +31,15 @@
 #ifndef CRAB_PAUSEMENU_H
 #define CRAB_PAUSEMENU_H
 
-#include "FileMenu.h"
-#include "GameEventInfo.h"
-#include "OptionMenu.h"
-#include "SaveGameMenu.h"
-#include "SlideShow.h"
-#include "common_header.h"
-#include "menu.h"
-#include "slider.h"
-#include "textarea.h"
+#include "crab/FileMenu.h"
+#include "crab/GameEventInfo.h"
+#include "crab/OptionMenu.h"
+#include "crab/SaveGameMenu.h"
+#include "crab/SlideShow.h"
+#include "crab/common_header.h"
+#include "crab/menu.h"
+#include "crab/slider.h"
+#include "crab/textarea.h"
 
 namespace pyrodactyl {
 namespace ui {

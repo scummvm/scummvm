@@ -28,7 +28,7 @@
  *
  */
 
-#include "ChapterIntro.h"
+#include "crab/ChapterIntro.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

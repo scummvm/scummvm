@@ -31,14 +31,14 @@
 #ifndef CRAB_PERSONSCREEN_H
 #define CRAB_PERSONSCREEN_H
 
-#include "GameEventInfo.h"
-#include "ImageData.h"
-#include "TraitMenu.h"
-#include "gameevent.h"
-#include "level.h"
-#include "menu.h"
-#include "person.h"
-#include "sprite.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ImageData.h"
+#include "crab/TraitMenu.h"
+#include "crab/gameevent.h"
+#include "crab/level.h"
+#include "crab/menu.h"
+#include "crab/person.h"
+#include "crab/sprite.h"
 
 namespace pyrodactyl {
 namespace ui {

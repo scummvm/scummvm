@@ -28,8 +28,8 @@
  *
  */
 
-#include "AlphaImage.h"
-#include "TextManager.h"
+#include "crab/AlphaImage.h"
+#include "crab/TextManager.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

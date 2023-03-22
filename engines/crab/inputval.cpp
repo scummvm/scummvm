@@ -28,7 +28,7 @@
  *
  */
 
-#include "inputval.h"
+#include "crab/inputval.h"
 
 using namespace pyrodactyl::input;
 

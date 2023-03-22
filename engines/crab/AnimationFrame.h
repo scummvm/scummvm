@@ -31,11 +31,11 @@
 #ifndef CRAB_ANIMATIONFRAME_H
 #define CRAB_ANIMATIONFRAME_H
 
-#include "AnimationEffect.h"
-#include "HoverInfo.h"
-#include "ImageManager.h"
-#include "TextManager.h"
-#include "common_header.h"
+#include "crab/AnimationEffect.h"
+#include "crab/HoverInfo.h"
+#include "crab/ImageManager.h"
+#include "crab/TextManager.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace anim {

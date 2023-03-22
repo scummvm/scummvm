@@ -31,11 +31,11 @@
 #ifndef CRAB_TRAITMENU_H
 #define CRAB_TRAITMENU_H
 
-#include "ParagraphData.h"
-#include "TraitButton.h"
-#include "common_header.h"
-#include "menu.h"
-#include "person.h"
+#include "crab/ParagraphData.h"
+#include "crab/TraitButton.h"
+#include "crab/common_header.h"
+#include "crab/menu.h"
+#include "crab/person.h"
 
 namespace pyrodactyl {
 namespace ui {

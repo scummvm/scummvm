@@ -28,7 +28,7 @@
  *
  */
 
-#include "animset.h"
+#include "crab/animset.h"
 
 using namespace pyrodactyl::anim;
 

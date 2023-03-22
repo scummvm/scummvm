@@ -28,7 +28,7 @@
  *
  */
 
-#include "KeyBindMenu.h"
+#include "crab/KeyBindMenu.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

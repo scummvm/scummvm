@@ -31,13 +31,13 @@
 #ifndef CRAB_ITEMMENU_H
 #define CRAB_ITEMMENU_H
 
-#include "ItemDesc.h"
-#include "ItemSlot.h"
-#include "StatDrawHelper.h"
-#include "StatPreview.h"
-#include "common_header.h"
-#include "menu.h"
-#include "person.h"
+#include "crab/ItemDesc.h"
+#include "crab/ItemSlot.h"
+#include "crab/StatDrawHelper.h"
+#include "crab/StatPreview.h"
+#include "crab/common_header.h"
+#include "crab/menu.h"
+#include "crab/person.h"
 
 namespace pyrodactyl {
 namespace item {

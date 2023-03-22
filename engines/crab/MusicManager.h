@@ -31,9 +31,9 @@
 #ifndef CRAB_MUSICMANAGER_H
 #define CRAB_MUSICMANAGER_H
 
-#include "GameParam.h"
-#include "common_header.h"
-#include "musicparam.h"
+#include "crab/GameParam.h"
+#include "crab/common_header.h"
+#include "crab/musicparam.h"
 
 namespace pyrodactyl {
 namespace music {

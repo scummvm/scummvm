@@ -31,16 +31,16 @@
 #ifndef CRAB_GAMEEVENTMANAGER_H
 #define CRAB_GAMEEVENTMANAGER_H
 
-#include "ChapterIntro.h"
-#include "EventSeqGroup.h"
-#include "PersonHandler.h"
-#include "PersonScreen.h"
-#include "ReplyMenu.h"
-#include "common_header.h"
-#include "hud.h"
-#include "journal.h"
-#include "level.h"
-#include "textarea.h"
+#include "crab/ChapterIntro.h"
+#include "crab/EventSeqGroup.h"
+#include "crab/PersonHandler.h"
+#include "crab/PersonScreen.h"
+#include "crab/ReplyMenu.h"
+#include "crab/common_header.h"
+#include "crab/hud.h"
+#include "crab/journal.h"
+#include "crab/level.h"
+#include "crab/textarea.h"
 
 namespace pyrodactyl {
 namespace event {

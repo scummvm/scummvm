@@ -32,7 +32,7 @@
 // Author:   Arvind
 // Purpose:  Cursor class
 //=============================================================================
-#include "cursor.h"
+#include "crab/cursor.h"
 
 namespace pyrodactyl {
 namespace input {

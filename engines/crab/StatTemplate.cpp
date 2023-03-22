@@ -29,8 +29,8 @@
  */
 
 
-#include "StatTemplate.h"
-#include "XMLDoc.h"
+#include "crab/StatTemplate.h"
+#include "crab/XMLDoc.h"
 
 using namespace pyrodactyl::stat;
 

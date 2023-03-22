@@ -28,8 +28,8 @@
  *
  */
 
-#include "GameEventInfo.h"
-#include "eventstore.h"
+#include "crab/GameEventInfo.h"
+#include "crab/eventstore.h"
 
 namespace pyrodactyl {
 namespace event {

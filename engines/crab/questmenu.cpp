@@ -28,7 +28,7 @@
  *
  */
 
-#include "questmenu.h"
+#include "crab/questmenu.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;

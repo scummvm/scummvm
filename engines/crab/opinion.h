@@ -30,9 +30,9 @@
 
 #ifndef CRAB_OPINION_H
 #define CRAB_OPINION_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "GameParam.h"
+#include "crab/GameParam.h"
 
 namespace pyrodactyl {
 namespace people {

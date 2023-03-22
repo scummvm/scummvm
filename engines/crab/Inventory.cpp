@@ -28,7 +28,7 @@
  *
  */
 
-#include "Inventory.h"
+#include "crab/Inventory.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

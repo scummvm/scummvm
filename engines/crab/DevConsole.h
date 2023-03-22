@@ -31,9 +31,9 @@
 #ifndef CRAB_DEVCONSOLE_H
 #define CRAB_DEVCONSOLE_H
 
-#include "GameEventInfo.h"
-#include "common_header.h"
-#include "textarea.h"
+#include "crab/GameEventInfo.h"
+#include "crab/common_header.h"
+#include "crab/textarea.h"
 
 namespace pyrodactyl {
 namespace ui {

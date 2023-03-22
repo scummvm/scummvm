@@ -28,7 +28,7 @@
  *
  */
 
-#include "MusicArea.h"
+#include "crab/MusicArea.h"
 
 using namespace pyrodactyl::level;
 

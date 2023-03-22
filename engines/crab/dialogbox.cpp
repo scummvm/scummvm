@@ -32,7 +32,7 @@
 // Author:   Arvind
 // Purpose:  Dialog box!
 //=============================================================================
-#include "dialogbox.h"
+#include "crab/dialogbox.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;

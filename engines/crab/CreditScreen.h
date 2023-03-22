@@ -31,12 +31,12 @@
 #ifndef CRAB_CREDITSCREEN_H
 #define CRAB_CREDITSCREEN_H
 
-#include "ImageData.h"
-#include "TextData.h"
-#include "TextManager.h"
-#include "button.h"
-#include "common_header.h"
-#include "timer.h"
+#include "crab/ImageData.h"
+#include "crab/TextData.h"
+#include "crab/TextManager.h"
+#include "crab/button.h"
+#include "crab/common_header.h"
+#include "crab/timer.h"
 
 namespace pyrodactyl {
 namespace ui {

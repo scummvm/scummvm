@@ -31,8 +31,8 @@
 #ifndef CRAB_REPLYBUTTON_H
 #define CRAB_REPLYBUTTON_H
 
-#include "button.h"
-#include "common_header.h"
+#include "crab/button.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace ui {

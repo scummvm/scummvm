@@ -31,10 +31,10 @@
 #ifndef CRAB_CHAPTERINTRO_H
 #define CRAB_CHAPTERINTRO_H
 
-#include "GameEventInfo.h"
-#include "button.h"
-#include "dialogbox.h"
-#include "sprite.h"
+#include "crab/GameEventInfo.h"
+#include "crab/button.h"
+#include "crab/dialogbox.h"
+#include "crab/sprite.h"
 
 namespace pyrodactyl {
 namespace ui {

@@ -31,10 +31,10 @@
 #ifndef CRAB_GENERALSETTINGMENU_H
 #define CRAB_GENERALSETTINGMENU_H
 
-#include "RadioButtonMenu.h"
-#include "ToggleButton.h"
-#include "common_header.h"
-#include "slider.h"
+#include "crab/RadioButtonMenu.h"
+#include "crab/ToggleButton.h"
+#include "crab/common_header.h"
+#include "crab/slider.h"
 
 namespace pyrodactyl {
 namespace ui {

@@ -31,10 +31,10 @@
 #ifndef CRAB_ELEMENT_H
 #define CRAB_ELEMENT_H
 
-#include "ImageManager.h"
-#include "ScreenSettings.h"
-#include "common_header.h"
-#include "vectors.h"
+#include "crab/ImageManager.h"
+#include "crab/ScreenSettings.h"
+#include "crab/common_header.h"
+#include "crab/vectors.h"
 
 namespace pyrodactyl {
 namespace ui {

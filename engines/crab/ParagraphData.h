@@ -31,8 +31,8 @@
 #ifndef CRAB_PARAGRAPHDATA_H
 #define CRAB_PARAGRAPHDATA_H
 
-#include "TextData.h"
-#include "common_header.h"
+#include "crab/TextData.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace ui {

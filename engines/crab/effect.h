@@ -31,11 +31,11 @@
 #ifndef CRAB_EFFECT_H
 #define CRAB_EFFECT_H
 
-#include "GameEventInfo.h"
-#include "XMLDoc.h"
-#include "common_header.h"
-#include "loaders.h"
-#include "person.h"
+#include "crab/GameEventInfo.h"
+#include "crab/XMLDoc.h"
+#include "crab/common_header.h"
+#include "crab/loaders.h"
+#include "crab/person.h"
 
 namespace pyrodactyl {
 namespace event {

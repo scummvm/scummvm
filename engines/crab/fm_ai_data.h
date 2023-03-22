@@ -31,8 +31,8 @@
 #ifndef CRAB_FM_AI_DATA_H
 #define CRAB_FM_AI_DATA_H
 
-#include "common_header.h"
-#include "range.h"
+#include "crab/common_header.h"
+#include "crab/range.h"
 
 namespace pyrodactyl {
 namespace anim {

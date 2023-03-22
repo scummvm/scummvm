@@ -31,8 +31,8 @@
 #ifndef CRAB_FIGHTMOVE_H
 #define CRAB_FIGHTMOVE_H
 
-#include "common_header.h"
-#include "fightanim.h"
+#include "crab/common_header.h"
+#include "crab/fightanim.h"
 
 namespace pyrodactyl {
 namespace anim {

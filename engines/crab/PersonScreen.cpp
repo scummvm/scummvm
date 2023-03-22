@@ -28,7 +28,7 @@
  *
  */
 
-#include "PersonScreen.h"
+#include "crab/PersonScreen.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;

@@ -31,10 +31,10 @@
 #ifndef CRAB_LEVELEXIT_H
 #define CRAB_LEVELEXIT_H
 
-#include "GameEventInfo.h"
-#include "ImageManager.h"
-#include "Shape.h"
-#include "common_header.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ImageManager.h"
+#include "crab/Shape.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace level {

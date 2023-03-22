@@ -35,11 +35,11 @@
 #ifndef CRAB_TEXTAREA_H
 #define CRAB_TEXTAREA_H
 
-#include "HoverInfo.h"
-#include "MusicManager.h"
-#include "TextManager.h"
-#include "common_header.h"
-#include "input.h"
+#include "crab/HoverInfo.h"
+#include "crab/MusicManager.h"
+#include "crab/TextManager.h"
+#include "crab/common_header.h"
+#include "crab/input.h"
 
 namespace pyrodactyl {
 namespace ui {

@@ -29,9 +29,9 @@
  */
 
 
-#include "MusicManager.h"
-#include "ScreenSettings.h"
-#include "XMLDoc.h"
+#include "crab/MusicManager.h"
+#include "crab/ScreenSettings.h"
+#include "crab/XMLDoc.h"
 
 using namespace pyrodactyl::music;
 

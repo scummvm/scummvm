@@ -31,10 +31,10 @@
 #ifndef CRAB_ANIMSET_H
 #define CRAB_ANIMSET_H
 
-#include "common_header.h"
-#include "fightmoves.h"
-#include "shadow.h"
-#include "walkframes.h"
+#include "crab/common_header.h"
+#include "crab/fightmoves.h"
+#include "crab/shadow.h"
+#include "crab/walkframes.h"
 
 namespace pyrodactyl {
 namespace anim {

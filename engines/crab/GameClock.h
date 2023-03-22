@@ -31,8 +31,8 @@
 #ifndef CRAB_GAMECLOCK_H
 #define CRAB_GAMECLOCK_H
 
-#include "common_header.h"
-#include "timer.h"
+#include "crab/common_header.h"
+#include "crab/timer.h"
 
 class GameClock {
 	Timer timer;

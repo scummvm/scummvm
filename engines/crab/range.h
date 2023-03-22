@@ -31,8 +31,8 @@
 #ifndef CRAB_RANGE_H
 #define CRAB_RANGE_H
 
-#include "animframe.h"
-#include "common_header.h"
+#include "crab/animframe.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace anim {

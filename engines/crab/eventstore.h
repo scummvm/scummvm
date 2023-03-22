@@ -31,10 +31,10 @@
 #ifndef CRAB_EVENTSTORE_H
 #define CRAB_EVENTSTORE_H
 
-#include "StateButton.h"
-#include "animation.h"
-#include "common_header.h"
-#include "conversationdata.h"
+#include "crab/StateButton.h"
+#include "crab/animation.h"
+#include "crab/common_header.h"
+#include "crab/conversationdata.h"
 
 namespace pyrodactyl {
 namespace event {

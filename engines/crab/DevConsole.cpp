@@ -28,7 +28,7 @@
  *
  */
 
-#include "DevConsole.h"
+#include "crab/DevConsole.h"
 
 using namespace pyrodactyl::ui;
 

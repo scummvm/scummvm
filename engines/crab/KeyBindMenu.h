@@ -31,10 +31,10 @@
 #ifndef CRAB_KEYBINDMENU_H
 #define CRAB_KEYBINDMENU_H
 
-#include "ImageData.h"
-#include "OptionSelect.h"
-#include "common_header.h"
-#include "menu.h"
+#include "crab/ImageData.h"
+#include "crab/OptionSelect.h"
+#include "crab/common_header.h"
+#include "crab/menu.h"
 
 namespace pyrodactyl {
 namespace ui {

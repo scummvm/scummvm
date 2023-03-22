@@ -30,10 +30,10 @@
 
 #ifndef CRAB_VECTORS_H
 #define CRAB_VECTORS_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "GameParam.h"
-#include "loaders.h"
+#include "crab/GameParam.h"
+#include "crab/loaders.h"
 
 //------------------------------------------------------------------------
 // Purpose: A simple 2D vector class

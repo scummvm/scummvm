@@ -28,7 +28,7 @@
  *
  */
 
-#include "SlideShow.h"
+#include "crab/SlideShow.h"
 
 namespace pyrodactyl {
 namespace ui {

@@ -28,7 +28,7 @@
  *
  */
 
-#include "color.h"
+#include "crab/color.h"
 
 using namespace pyrodactyl::text;
 

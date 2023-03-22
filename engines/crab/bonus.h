@@ -31,8 +31,8 @@
 #ifndef CRAB_BONUS_H
 #define CRAB_BONUS_H
 
-#include "common_header.h"
-#include "loaders.h"
+#include "crab/common_header.h"
+#include "crab/loaders.h"
 
 namespace pyrodactyl {
 namespace stat {

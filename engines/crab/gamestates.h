@@ -30,7 +30,7 @@
 
 #ifndef CRAB_GAMESTATES_H
 #define CRAB_GAMESTATES_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
 //------------------------------------------------------------------------
 // Purpose: Game State Enumerators

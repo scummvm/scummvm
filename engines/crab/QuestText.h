@@ -31,11 +31,11 @@
 #ifndef CRAB_QUESTTEXT_H
 #define CRAB_QUESTTEXT_H
 
-#include "ImageData.h"
-#include "ParagraphData.h"
-#include "button.h"
-#include "common_header.h"
-#include "quest.h"
+#include "crab/ImageData.h"
+#include "crab/ParagraphData.h"
+#include "crab/button.h"
+#include "crab/common_header.h"
+#include "crab/quest.h"
 
 namespace pyrodactyl {
 namespace ui {

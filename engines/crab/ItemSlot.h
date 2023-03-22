@@ -31,10 +31,10 @@
 #ifndef CRAB_ITEMSLOT_H
 #define CRAB_ITEMSLOT_H
 
-#include "ImageManager.h"
-#include "Item.h"
-#include "StateButton.h"
-#include "common_header.h"
+#include "crab/ImageManager.h"
+#include "crab/Item.h"
+#include "crab/StateButton.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace item {

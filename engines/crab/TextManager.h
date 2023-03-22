@@ -31,11 +31,11 @@
 #ifndef CRAB_TEXTMANAGER_H
 #define CRAB_TEXTMANAGER_H
 
-#include "GameParam.h"
-#include "Image.h"
-#include "color.h"
-#include "common_header.h"
-#include "vectors.h"
+#include "crab/GameParam.h"
+#include "crab/Image.h"
+#include "crab/color.h"
+#include "crab/common_header.h"
+#include "crab/vectors.h"
 
 // We use this object as the key for all fonts
 typedef unsigned int FontKey;

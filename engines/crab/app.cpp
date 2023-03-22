@@ -28,7 +28,7 @@
  *
  */
 
-#include "app.h"
+#include "crab/app.h"
 
 bool App::Init() {
 	// Load all SDL subsystems and the TrueType font subsystem

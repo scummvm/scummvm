@@ -28,7 +28,7 @@
  *
  */
 
-#include "TraitButton.h"
+#include "crab/TraitButton.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

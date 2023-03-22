@@ -28,8 +28,8 @@
  *
  */
 
-#include "LoadingScreen.h"
-#include "XMLDoc.h"
+#include "crab/LoadingScreen.h"
+#include "crab/XMLDoc.h"
 
 void LoadingScreen::Load() {
 	const std::string &filename = "res/layout/loading.xml";

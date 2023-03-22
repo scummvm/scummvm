@@ -28,7 +28,7 @@
  *
  */
 
-#include "Stairs.h"
+#include "crab/Stairs.h"
 
 using namespace pyrodactyl::level;
 

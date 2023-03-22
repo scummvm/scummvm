@@ -31,12 +31,12 @@
 #ifndef CRAB_GFXSETTINGMENU_H
 #define CRAB_GFXSETTINGMENU_H
 
-#include "ImageData.h"
-#include "ResolutionMenu.h"
-#include "StateButton.h"
-#include "ToggleButton.h"
-#include "common_header.h"
-#include "slider.h"
+#include "crab/ImageData.h"
+#include "crab/ResolutionMenu.h"
+#include "crab/StateButton.h"
+#include "crab/ToggleButton.h"
+#include "crab/common_header.h"
+#include "crab/slider.h"
 
 namespace pyrodactyl {
 namespace ui {

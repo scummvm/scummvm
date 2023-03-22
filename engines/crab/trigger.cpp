@@ -28,7 +28,7 @@
  *
  */
 
-#include "trigger.h"
+#include "crab/trigger.h"
 
 using namespace pyrodactyl::event;
 

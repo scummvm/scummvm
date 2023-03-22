@@ -30,9 +30,9 @@
 
 #ifndef CRAB_HEALTHINDICATOR_H
 #define CRAB_HEALTHINDICATOR_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "ImageManager.h"
+#include "crab/ImageManager.h"
 
 namespace pyrodactyl {
 namespace ui {

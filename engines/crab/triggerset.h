@@ -31,8 +31,8 @@
 #ifndef CRAB_TRIGGERSET_H
 #define CRAB_TRIGGERSET_H
 
-#include "common_header.h"
-#include "trigger.h"
+#include "crab/common_header.h"
+#include "crab/trigger.h"
 
 namespace pyrodactyl {
 namespace event {

@@ -32,7 +32,7 @@
 // Author:   Arvind
 // Purpose:  The tray where you have inventory, map and GameObjectives icons
 //=============================================================================
-#include "hud.h"
+#include "crab/hud.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

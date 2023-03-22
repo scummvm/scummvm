@@ -30,9 +30,9 @@
 
 #ifndef CRAB_CAPTION_H
 #define CRAB_CAPTION_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "TextData.h"
+#include "crab/TextData.h"
 
 namespace pyrodactyl {
 namespace ui {

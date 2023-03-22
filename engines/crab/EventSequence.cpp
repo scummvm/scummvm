@@ -29,7 +29,7 @@
  */
 
 
-#include "EventSequence.h"
+#include "crab/EventSequence.h"
 
 using namespace pyrodactyl::event;
 

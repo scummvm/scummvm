@@ -31,9 +31,9 @@
 #ifndef CRAB_SCREENSETTINGS_H
 #define CRAB_SCREENSETTINGS_H
 
-#include "GameParam.h"
-#include "common_header.h"
-#include "loaders.h"
+#include "crab/GameParam.h"
+#include "crab/common_header.h"
+#include "crab/loaders.h"
 
 // Our rendering context
 extern SDL_Renderer *gRenderer;

@@ -28,8 +28,8 @@
  *
  */
 
-#include "TMXTileSet.h"
-// #include "TextManager.h"
+#include "crab/TMXTileSet.h"
+#include "crab/TextManager.h"
 
 using namespace TMX;
 

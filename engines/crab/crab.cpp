@@ -59,7 +59,7 @@
 #include "crab/detection.h"
 #include "crab/loaders.h"
 #include "crab/numstr.h"
-#include "engines/crab/XMLDoc.h"
+#include "crab/XMLDoc.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 

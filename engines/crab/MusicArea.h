@@ -31,9 +31,9 @@
 #ifndef CRAB_MUSICAREA_H
 #define CRAB_MUSICAREA_H
 
-#include "Shape.h"
-#include "common_header.h"
-#include "musicparam.h"
+#include "crab/Shape.h"
+#include "crab/common_header.h"
+#include "crab/musicparam.h"
 
 namespace pyrodactyl {
 namespace level {

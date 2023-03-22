@@ -28,8 +28,8 @@
  *
  */
 
-#include "mainmenu.h"
-#include "url.h"
+#include "crab/mainmenu.h"
+#include "crab/url.h"
 
 using namespace pyrodactyl::music;
 using namespace pyrodactyl::image;

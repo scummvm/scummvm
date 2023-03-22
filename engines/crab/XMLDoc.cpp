@@ -28,8 +28,8 @@
  *
  */
 
-#include "engines/crab/XMLDoc.h"
-#include "engines/crab/common_header.h"
+#include "crab/XMLDoc.h"
+#include "crab/common_header.h"
 
 namespace Crab {
 

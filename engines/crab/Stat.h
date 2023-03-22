@@ -30,10 +30,10 @@
 
 #ifndef CRAB_STAT_H
 #define CRAB_STAT_H
-#include "common_header.h"
+#include "crab/common_header.h"
 
-#include "ImageManager.h"
-#include "TextManager.h"
+#include "crab/ImageManager.h"
+#include "crab/TextManager.h"
 
 namespace pyrodactyl {
 namespace stat {

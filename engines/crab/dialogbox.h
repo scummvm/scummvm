@@ -35,10 +35,10 @@
 #ifndef CRAB_DIALOGBOX_H
 #define CRAB_DIALOGBOX_H
 
-#include "GameEventInfo.h"
-#include "ParagraphData.h"
-#include "button.h"
-#include "common_header.h"
+#include "crab/GameEventInfo.h"
+#include "crab/ParagraphData.h"
+#include "crab/button.h"
+#include "crab/common_header.h"
 
 namespace pyrodactyl {
 namespace ui {

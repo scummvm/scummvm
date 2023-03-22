@@ -31,9 +31,9 @@
 #ifndef CRAB_COLLISION_H
 #define CRAB_COLLISION_H
 
-#include "Polygon.h"
-#include "Rectangle.h"
-#include "common_header.h"
+#include "crab/Polygon.h"
+#include "crab/Rectangle.h"
+#include "crab/common_header.h"
 
 // Find if a line and a rectangle intersect
 bool CollideLineRect(int p0_x, int p0_y, int p1_x, int p1_y, const Rect &rect);

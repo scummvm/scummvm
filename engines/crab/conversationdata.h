@@ -31,9 +31,9 @@
 #ifndef CRAB_CONVERSATIONDATA_H
 #define CRAB_CONVERSATIONDATA_H
 
-#include "changeval.h"
-#include "common_header.h"
-#include "triggerset.h"
+#include "crab/changeval.h"
+#include "crab/common_header.h"
+#include "crab/triggerset.h"
 
 namespace pyrodactyl {
 namespace event {

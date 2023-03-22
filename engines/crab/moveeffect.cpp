@@ -28,7 +28,7 @@
  *
  */
 
-#include "moveeffect.h"
+#include "crab/moveeffect.h"
 
 using namespace pyrodactyl::anim;
 

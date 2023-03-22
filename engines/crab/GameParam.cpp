@@ -28,7 +28,7 @@
  *
  */
 
-#include "GameParam.h"
+#include "crab/GameParam.h"
 
 // Temporary values go here
 TempValue gTemp;

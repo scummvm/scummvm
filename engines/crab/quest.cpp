@@ -28,7 +28,7 @@
  *
  */
 
-#include "quest.h"
+#include "crab/quest.h"
 
 using namespace pyrodactyl::event;
 

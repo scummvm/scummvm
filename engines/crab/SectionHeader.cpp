@@ -28,7 +28,7 @@
  *
  */
 
-#include "SectionHeader.h"
+#include "crab/SectionHeader.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;

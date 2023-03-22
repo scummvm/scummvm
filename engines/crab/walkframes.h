@@ -31,11 +31,11 @@
 #ifndef CRAB_WALKFRAMES_H
 #define CRAB_WALKFRAMES_H
 
-#include "animframe.h"
-#include "common_header.h"
-#include "movement.h"
+#include "crab/animframe.h"
+#include "crab/common_header.h"
+#include "crab/movement.h"
 #include "personbase.h"
-#include "timer.h"
+#include "crab/timer.h"
 
 namespace pyrodactyl {
 namespace anim {

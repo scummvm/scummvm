@@ -28,7 +28,7 @@
  *
  */
 
-#include "ScreenSettings.h"
+#include "crab/ScreenSettings.h"
 
 // Our screen settings object
 ScreenSettings gScreenSettings;
