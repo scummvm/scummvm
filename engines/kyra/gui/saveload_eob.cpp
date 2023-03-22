@@ -586,15 +586,16 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 			Common::String temp = Common::String::format(pattern, i);
 			Common::SeekableReadStream *fs = _res->createReadStream(temp);
 			if (fs) {
-				Common::String dsc;
+				Common::U32String dsc;
 				if (_flags.gameID == GI_EOB2) {
 					char descStr[20];
 					fs->read(descStr, 20);
-					dsc = Common::String::format("(\"%s\")", descStr).c_str();
+					dsc = Common::U32String(descStr, _flags.lang == Common::ZH_TWN ? Common::CodePage::kBig5 : Common::CodePage::kLatin1);
+					dsc = "(\"" + dsc + "\")";
 				}
 
 				delete fs;
-				::GUI::MessageDialog dialog(Common::U32String::format(_("The following original saved game file has been found in your game path:\n\n%s %s\n\nDo you wish to use this saved game file with ScummVM?\n\n"), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
+				::GUI::MessageDialog dialog(Common::U32String::format(_("The following original saved game file has been found in your game path:\n\n%s %S\n\nDo you wish to use this saved game file with ScummVM?\n\n"), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
 				if (dialog.runModal() == ::GUI::kMessageOK)
 					origFiles.push_back(temp);
 			}
@@ -707,7 +708,10 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	} else {
 		char tempStr[30];
 		in.read(tempStr, sourcePlatform == Common::kPlatformFMTowns ? 30 : 20);
-		desc = tempStr;
+		if (_flags.lang == Common::ZH_TWN) {
+			desc = Common::U32String(tempStr, Common::CodePage::kBig5).encode(Common::CodePage::kUtf8);
+		} else
+			desc = tempStr;
 	}
 
 	for (int i = 0; i < 6; i++) {
