@@ -268,12 +268,12 @@ void SoundManager::loadCommonSounds() {
 		}
 	}
 
-	// Menu sound is special since it's stored differently and can be
-	// unloaded and loaded again
+	// Menu sound is stored differently
 	chunk = g_nancy->getBootChunkStream("MSND"); // channel 28
 	if (chunk) {
 		SoundDescription &desc = _commonSounds.getOrCreateVal("MSND");
 		desc.read(*chunk, SoundDescription::kMenu);
+		g_nancy->_sound->loadSound(desc);
 	}
 }
 
