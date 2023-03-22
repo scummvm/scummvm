@@ -29,7 +29,6 @@
  */
 
 #include "app.h"
-#include "stdafx.h"
 
 bool App::Init() {
 	// Load all SDL subsystems and the TrueType font subsystem

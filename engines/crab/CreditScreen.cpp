@@ -29,7 +29,6 @@
  */
 
 #include "CreditScreen.h"
-#include "stdafx.h"
 #include "url.h"
 
 using namespace pyrodactyl::ui;

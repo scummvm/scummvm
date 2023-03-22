@@ -29,7 +29,6 @@
  */
 
 #include "url.h"
-#include "stdafx.h"
 
 #ifdef __WIN32__
 #include <ShellAPI.h>

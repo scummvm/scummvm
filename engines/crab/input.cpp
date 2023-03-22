@@ -29,7 +29,6 @@
  */
 
 #include "input.h"
-#include "stdafx.h"
 
 namespace pyrodactyl {
 namespace input {

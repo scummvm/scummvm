@@ -29,7 +29,6 @@
  */
 
 #include "TMXTileSet.h"
-#include "stdafx.h"
 // #include "TextManager.h"
 
 using namespace TMX;

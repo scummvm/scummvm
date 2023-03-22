@@ -29,7 +29,6 @@
  */
 
 #include "ReplyMenu.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;

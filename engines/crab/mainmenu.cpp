@@ -29,7 +29,6 @@
  */
 
 #include "mainmenu.h"
-#include "stdafx.h"
 #include "url.h"
 
 using namespace pyrodactyl::music;

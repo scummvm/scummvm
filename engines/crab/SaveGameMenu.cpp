@@ -29,7 +29,6 @@
  */
 
 #include "SaveGameMenu.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::input;

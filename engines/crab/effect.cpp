@@ -30,7 +30,6 @@
 
 #include "effect.h"
 #include "MusicManager.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::music;

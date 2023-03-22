@@ -30,7 +30,6 @@
 
 #include "LoadingScreen.h"
 #include "XMLDoc.h"
-#include "stdafx.h"
 
 void LoadingScreen::Load() {
 	const std::string &filename = "res/layout/loading.xml";

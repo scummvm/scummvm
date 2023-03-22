@@ -29,7 +29,6 @@
  */
 
 #include "trait.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::people;
 

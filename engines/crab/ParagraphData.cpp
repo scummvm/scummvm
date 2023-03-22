@@ -29,7 +29,6 @@
  */
 
 #include "ParagraphData.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 

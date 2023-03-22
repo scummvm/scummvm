@@ -29,7 +29,6 @@
  */
 
 #include "collision.h"
-#include "stdafx.h"
 
 // Find if a line and a rectangle intersect
 bool CollideLineRect(int p0_x, int p0_y, int p1_x, int p1_y, const Rect &rect) {

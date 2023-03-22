@@ -33,7 +33,6 @@
 // Purpose:  TextArea functions
 //=============================================================================
 #include "textarea.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;

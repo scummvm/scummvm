@@ -29,7 +29,6 @@
  */
 
 #include "ItemCollection.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::people;
 using namespace pyrodactyl::item;

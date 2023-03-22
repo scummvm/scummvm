@@ -29,7 +29,6 @@
  */
 
 #include "person.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::people;

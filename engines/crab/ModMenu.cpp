@@ -29,7 +29,6 @@
  */
 
 #include "ModMenu.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 

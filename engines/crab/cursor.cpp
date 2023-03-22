@@ -33,7 +33,6 @@
 // Purpose:  Cursor class
 //=============================================================================
 #include "cursor.h"
-#include "stdafx.h"
 
 namespace pyrodactyl {
 namespace input {

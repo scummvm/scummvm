@@ -29,7 +29,6 @@
  */
 
 #include "Stairs.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::level;
 

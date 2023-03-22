@@ -29,7 +29,6 @@
  */
 
 #include "fightanim.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::anim;
 

@@ -29,7 +29,6 @@
  */
 
 #include "sprite.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::anim;
 using namespace pyrodactyl::ai;

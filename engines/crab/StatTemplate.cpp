@@ -28,7 +28,6 @@
  *
  */
 
-#include "stdafx.h"
 
 #include "StatTemplate.h"
 #include "XMLDoc.h"

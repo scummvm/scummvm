@@ -29,7 +29,6 @@
  */
 
 #include "GameParam.h"
-#include "stdafx.h"
 
 // Temporary values go here
 TempValue gTemp;

@@ -29,7 +29,6 @@
  */
 
 #include "PathfindingGraphNode.h"
-#include "stdafx.h"
 
 PathfindingGraphNode::PathfindingGraphNode(void) {
 	id = -1;

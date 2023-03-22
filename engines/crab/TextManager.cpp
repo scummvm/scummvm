@@ -30,7 +30,6 @@
 
 #include "TextManager.h"
 #include "XMLDoc.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::text;
 

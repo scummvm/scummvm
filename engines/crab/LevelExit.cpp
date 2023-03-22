@@ -29,7 +29,6 @@
  */
 
 #include "LevelExit.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::level;
 

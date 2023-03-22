@@ -29,7 +29,6 @@
  */
 
 #include "gameevent.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::people;
