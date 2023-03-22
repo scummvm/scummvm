@@ -825,6 +825,49 @@ bool DrillerEngine::checkIfGameEnded() {
 	return false;
 }
 
+void DrillerEngine::onScreenControls(Common::Point mouse) {
+
+	if (isAmiga() || isAtariST()) {
+		Common::Rect arrowFoward(184, 125, 199, 144);
+		Common::Rect arrowLeft(161, 145, 174, 164);
+		Common::Rect arrowRight(207, 145, 222, 164);
+		Common::Rect arrowBack(184, 152, 199, 171);
+		Common::Rect arrowUp(231, 145, 246, 164);
+		Common::Rect arrowDown(254, 145, 269, 164);
+		Common::Rect deployDrill(284, 145, 299, 166);
+		Common::Rect infoScreen(125, 172, 152, 197);
+		Common::Rect saveGame(9, 145, 39, 154);
+		Common::Rect loadGame(9, 156, 39, 164);
+
+		if (arrowFoward.contains(mouse))
+			move(kForwardMovement, _scaleVector.x(), 20.0);
+		else if (arrowLeft.contains(mouse))
+			move(kLeftMovement, _scaleVector.y(), 20.0);
+		else if (arrowRight.contains(mouse))
+			move(kRightMovement, _scaleVector.y(), 20.0);
+		else if (arrowBack.contains(mouse))
+			move(kBackwardMovement, _scaleVector.x(), 20.0);
+		else if (arrowUp.contains(mouse))
+			rise();
+		else if (arrowDown.contains(mouse))
+			lower();
+		else if (deployDrill.contains(mouse))
+			pressedKey(Common::KEYCODE_d);
+		else if (infoScreen.contains(mouse))
+			drawInfoMenu();
+		else if (saveGame.contains(mouse)) {
+			_gfx->setViewport(_fullscreenViewArea);
+			saveGameDialog();
+			_gfx->setViewport(_viewArea);
+		} else if (loadGame.contains(mouse)) {
+			_gfx->setViewport(_fullscreenViewArea);
+			loadGameDialog();
+			_gfx->setViewport(_viewArea);
+		}
+	}
+}
+
+
 Common::Error DrillerEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	for (auto &it : _areaMap) { // All but skip area 255
 		if (it._key == 255)
