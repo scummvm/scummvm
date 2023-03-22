@@ -179,10 +179,13 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 		// turned around while they're jogging to the next base on a pop-up.
 		// The game checks if the runner is forced to the next base (i.e. there's a runner on the base behind them),
 		// and if they are then basepath clicks to turn them around have no effect.
-		// Here we return 0 (false) no matter what, so these clicks now have the desired effect.
+		// Here we return 0 (false) under certain conditions, so these clicks now have the desired effect.
 		if (_game.id == GID_BASEBALL2001 &&
 			_currentRoom == 3 && vm.slot[_currentScript].number == 2076 &&  // This is the script that handles basepath clicks
 			readVar(399) == 1 &&  // This checks that we're playing online
+			readVar(0x8000 + 11) == 1 &&  // The ball is a pop-up
+			readVar(291) < 2 &&  // Less than two outs
+			readVar(300) == 0 &&  // Ball hasn't bounced
 			// This is the array of baserunner status info, and the value in position 8 specifies whether the runner is forced
 			array == 295 && idx1 == 8) {
 			return 0;
