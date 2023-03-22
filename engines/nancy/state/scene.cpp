@@ -211,8 +211,7 @@ void Scene::popScene() {
 }
 
 void Scene::pauseSceneSpecificSounds() {
-	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
-		// Don't stop the map sound in certain scenes
+	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance() && g_nancy->getState() != NancyState::kMap) {
 		uint currentScene = _sceneState.currentScene.sceneID;
 		if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
 			g_nancy->_sound->pauseSound(NancyMapState.getSound(), true);
@@ -226,7 +225,6 @@ void Scene::pauseSceneSpecificSounds() {
 
 void Scene::unpauseSceneSpecificSounds() {
 	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
-		// Don't stop the map sound in certain scenes
 		uint currentScene = _sceneState.currentScene.sceneID;
 		if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
 			g_nancy->_sound->pauseSound(NancyMapState.getSound(), false);
