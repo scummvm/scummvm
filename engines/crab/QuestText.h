@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_QUESTTEXT_H
+#define CRAB_QUESTTEXT_H
 
 #include "ImageData.h"
 #include "ParagraphData.h"
@@ -86,3 +87,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_QUESTTEXT_H

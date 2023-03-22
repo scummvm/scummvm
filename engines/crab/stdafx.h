@@ -28,5 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_STDAFX_H
+#define CRAB_STDAFX_H
 #include "common_header.h"
+
+#endif // CRAB_STDAFX_H

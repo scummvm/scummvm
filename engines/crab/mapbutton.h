@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MAPBUTTON_H
+#define CRAB_MAPBUTTON_H
 #include "common_header.h"
 
 #include "menu.h"
@@ -59,3 +60,5 @@ public:
 typedef Menu<MapButton> MapButtonMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MAPBUTTON_H

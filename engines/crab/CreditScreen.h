@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_CREDITSCREEN_H
+#define CRAB_CREDITSCREEN_H
 
 #include "ImageData.h"
 #include "TextData.h"
@@ -118,3 +119,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_CREDITSCREEN_H

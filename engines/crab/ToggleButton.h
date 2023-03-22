@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TOGGLEBUTTON_H
+#define CRAB_TOGGLEBUTTON_H
 
 #include "button.h"
 #include "common_header.h"
@@ -61,3 +62,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_TOGGLEBUTTON_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_OPINION_H
+#define CRAB_OPINION_H
 #include "common_header.h"
 
 #include "GameParam.h"
@@ -64,3 +65,5 @@ struct Opinion {
 };
 } // End of namespace people
 } // End of namespace pyrodactyl
+
+#endif // CRAB_OPINION_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_ITEM_H
+#define CRAB_ITEM_H
 
 #include "ImageManager.h"
 #include "bonus.h"
@@ -66,3 +67,5 @@ struct Item {
 };
 } // End of namespace item
 } // End of namespace pyrodactyl
+
+#endif // CRAB_ITEM_H

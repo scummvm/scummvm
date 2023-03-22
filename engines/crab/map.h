@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MAP_H
+#define CRAB_MAP_H
 
 #include "GameEventInfo.h"
 #include "ImageData.h"
@@ -137,3 +138,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MAP_H

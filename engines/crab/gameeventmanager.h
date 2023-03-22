@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GAMEEVENTMANAGER_H
+#define CRAB_GAMEEVENTMANAGER_H
 
 #include "ChapterIntro.h"
 #include "EventSeqGroup.h"
@@ -107,3 +108,5 @@ public:
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_GAMEEVENTMANAGER_H

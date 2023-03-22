@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_RANGE_H
+#define CRAB_RANGE_H
 
 #include "animframe.h"
 #include "common_header.h"
@@ -55,3 +56,5 @@ struct Range {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_RANGE_H

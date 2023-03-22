@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  Contains the image manager class - used to manage in-game assets
 //=============================================================================
-#pragma once
+#ifndef CRAB_IMAGEMANAGER_H
+#define CRAB_IMAGEMANAGER_H
 
 #include "GameParam.h"
 #include "Image.h"
@@ -108,3 +109,5 @@ public:
 extern ImageManager gImageManager;
 } // End of namespace image
 } // End of namespace pyrodactyl
+
+#endif // CRAB_IMAGEMANAGER_H

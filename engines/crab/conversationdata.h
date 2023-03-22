@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_CONVERSATIONDATA_H
+#define CRAB_CONVERSATIONDATA_H
 
 #include "changeval.h"
 #include "common_header.h"
@@ -72,3 +73,5 @@ struct ConversationData {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_CONVERSATIONDATA_H

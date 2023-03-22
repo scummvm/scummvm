@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_VECTORS_H
+#define CRAB_VECTORS_H
 #include "common_header.h"
 
 #include "GameParam.h"
@@ -122,3 +123,5 @@ public:
 
 typedef Vector3D<int> Vector3i;
 typedef Vector3D<float> Vector3f;
+
+#endif // CRAB_VECTORS_H

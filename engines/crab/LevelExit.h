@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_LEVELEXIT_H
+#define CRAB_LEVELEXIT_H
 
 #include "GameEventInfo.h"
 #include "ImageManager.h"
@@ -49,3 +50,5 @@ struct Exit {
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+#endif // CRAB_LEVELEXIT_H

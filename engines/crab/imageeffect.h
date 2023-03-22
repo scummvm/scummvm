@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_IMAGEEFFECT_H
+#define CRAB_IMAGEEFFECT_H
 #include "common_header.h"
 
 #include "ImageManager.h"
@@ -49,3 +50,5 @@ struct ImageEffect : public Vector2i {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_IMAGEEFFECT_H

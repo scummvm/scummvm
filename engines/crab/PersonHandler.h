@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PERSONHANDLER_H
+#define CRAB_PERSONHANDLER_H
 
 #include "GameEventInfo.h"
 #include "ProgressBar.h"
@@ -104,3 +105,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_PERSONHANDLER_H

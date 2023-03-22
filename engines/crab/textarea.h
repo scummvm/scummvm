@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  A box for entering text
 //=============================================================================
-#pragma once
+#ifndef CRAB_TEXTAREA_H
+#define CRAB_TEXTAREA_H
 
 #include "HoverInfo.h"
 #include "MusicManager.h"
@@ -74,3 +75,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_TEXTAREA_H

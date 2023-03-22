@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MUSICAREA_H
+#define CRAB_MUSICAREA_H
 
 #include "Shape.h"
 #include "common_header.h"
@@ -63,3 +64,5 @@ public:
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MUSICAREA_H

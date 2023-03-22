@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TALKNOTIFY_H
+#define CRAB_TALKNOTIFY_H
 
 #include "GameEventInfo.h"
 #include "ImageManager.h"
@@ -56,3 +57,5 @@ public:
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+#endif // CRAB_TALKNOTIFY_H

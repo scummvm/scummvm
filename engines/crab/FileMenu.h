@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_FILEMENU_H
+#define CRAB_FILEMENU_H
 
 #include "FileData.h"
 #include "ImageData.h"
@@ -252,3 +253,5 @@ public:
 extern FileMenu<SaveFileData> gLoadMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_FILEMENU_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_ELEMENT_H
+#define CRAB_ELEMENT_H
 
 #include "ImageManager.h"
 #include "ScreenSettings.h"
@@ -76,3 +77,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_ELEMENT_H

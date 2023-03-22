@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_FIGHTMOVES_H
+#define CRAB_FIGHTMOVES_H
 
 #include "MusicManager.h"
 #include "common_header.h"
@@ -99,3 +100,5 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_FIGHTMOVES_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PATHFINDINGGRAPHNODE_H
+#define CRAB_PATHFINDINGGRAPHNODE_H
 
 #include "Rectangle.h"
 #include "vectors.h"
@@ -76,3 +77,5 @@ public:
 	// Return true if the node is adjacent to the otherNode
 	bool AdjacentToNode(PathfindingGraphNode *otherNode);
 };
+
+#endif // CRAB_PATHFINDINGGRAPHNODE_H

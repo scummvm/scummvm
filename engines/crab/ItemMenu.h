@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_ITEMMENU_H
+#define CRAB_ITEMMENU_H
 
 #include "ItemDesc.h"
 #include "ItemSlot.h"
@@ -83,3 +84,5 @@ public:
 };
 } // End of namespace item
 } // End of namespace pyrodactyl
+
+#endif // CRAB_ITEMMENU_H

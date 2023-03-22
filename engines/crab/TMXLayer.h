@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TMXLAYER_H
+#define CRAB_TMXLAYER_H
 
 #include "Image.h"
 #include "Rectangle.h"
@@ -103,3 +104,5 @@ public:
 	bool Load(const std::string &path, rapidxml::xml_node<char> *node);
 };
 } // End of namespace TMX
+
+#endif // CRAB_TMXLAYER_H

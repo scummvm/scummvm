@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TRAITMENU_H
+#define CRAB_TRAITMENU_H
 
 #include "ParagraphData.h"
 #include "TraitButton.h"
@@ -78,3 +79,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_TRAITMENU_H

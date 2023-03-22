@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PARAGRAPHDATA_H
+#define CRAB_PARAGRAPHDATA_H
 
 #include "TextData.h"
 #include "common_header.h"
@@ -48,3 +49,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_PARAGRAPHDATA_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_CHAPTERINTRO_H
+#define CRAB_CHAPTERINTRO_H
 
 #include "GameEventInfo.h"
 #include "button.h"
@@ -60,3 +61,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_CHAPTERINTRO_H

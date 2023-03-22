@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_COLOR_H
+#define CRAB_COLOR_H
 
 #include "XMLDoc.h"
 #include "common_header.h"
@@ -56,3 +57,5 @@ public:
 };
 } // End of namespace text
 } // End of namespace pyrodactyl
+
+#endif // CRAB_COLOR_H

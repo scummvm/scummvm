@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_RADIOBUTTONMENU_H
+#define CRAB_RADIOBUTTONMENU_H
 
 #include "RadioButton.h"
 #include "menu.h"
@@ -79,3 +80,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_RADIOBUTTONMENU_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_LEVELRESULT_H
+#define CRAB_LEVELRESULT_H
 #include "common_header.h"
 
 #include "ImageManager.h"
@@ -48,3 +49,5 @@ struct LevelResult {
 		y = -1;
 	}
 };
+
+#endif // CRAB_LEVELRESULT_H

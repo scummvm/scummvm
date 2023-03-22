@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_KEYBINDMENU_H
+#define CRAB_KEYBINDMENU_H
 
 #include "ImageData.h"
 #include "OptionSelect.h"
@@ -117,3 +118,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_KEYBINDMENU_H

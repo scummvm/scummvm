@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SLIDER_H
+#define CRAB_SLIDER_H
 
 #include "Caption.h"
 #include "ImageData.h"
@@ -79,3 +80,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_SLIDER_H

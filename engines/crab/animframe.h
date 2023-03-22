@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_ANIMFRAME_H
+#define CRAB_ANIMFRAME_H
 
 #include "Rectangle.h"
 #include "common_header.h"
@@ -101,3 +102,5 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_ANIMFRAME_H

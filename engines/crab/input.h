@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_INPUT_H
+#define CRAB_INPUT_H
 
 #include "common_header.h"
 #include "inputval.h"
@@ -137,3 +138,5 @@ public:
 extern InputManager gInput;
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+#endif // CRAB_INPUT_H

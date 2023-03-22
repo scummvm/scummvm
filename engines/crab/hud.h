@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  The tray where you have inventory, map and journal icons
 //=============================================================================
-#pragma once
+#ifndef CRAB_HUD_H
+#define CRAB_HUD_H
 
 #include "FileMenu.h"
 #include "GameEventInfo.h"
@@ -108,3 +109,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_HUD_H

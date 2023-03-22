@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GAMEPARAM_H
+#define CRAB_GAMEPARAM_H
 
 #include "XMLDoc.h"
 #include "common_header.h"
@@ -184,3 +185,5 @@ extern StringPool gStrPool;
 
 // Generate random numbers using this
 extern RandomNumberGen gRandom;
+
+#endif // CRAB_GAMEPARAM_H

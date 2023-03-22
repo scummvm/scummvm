@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  A basic screen that flashes an image for a time interval
 //=============================================================================
-#pragma once
+#ifndef CRAB_SPLASH_H
+#define CRAB_SPLASH_H
 
 #include "ImageManager.h"
 #include "LoadingScreen.h"
@@ -64,3 +65,5 @@ public:
 	// We don't need to save game state here
 	void AutoSave() {}
 };
+
+#endif // CRAB_SPLASH_H

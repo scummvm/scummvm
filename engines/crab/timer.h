@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  Timer class
 //=============================================================================
-#pragma once
+#ifndef CRAB_TIMER_H
+#define CRAB_TIMER_H
 #include "common_header.h"
 
 #include "loaders.h"
@@ -85,3 +86,5 @@ public:
 	const bool Paused() { return paused; }
 	const bool TargetValid() { return target_valid; }
 };
+
+#endif // CRAB_TIMER_H

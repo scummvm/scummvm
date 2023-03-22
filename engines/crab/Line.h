@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_LINE_H
+#define CRAB_LINE_H
 
 #include "ScreenSettings.h"
 #include "common_header.h"
@@ -69,3 +70,5 @@ bool CollideLine(const T &p0_x, const T &p0_y, const T &p1_x, const T &p1_y,
 // Draw a line OpenGL style
 void DrawLine(const int &x1, const int &y1, const int &x2, const int &y2,
 			  const Uint8 &r, const Uint8 &g, const Uint8 &b, const Uint8 &a);
+
+#endif // CRAB_LINE_H

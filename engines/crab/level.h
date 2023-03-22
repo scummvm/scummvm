@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_LEVEL_H
+#define CRAB_LEVEL_H
 
 #include "GameEventInfo.h"
 #include "ImageManager.h"
@@ -193,3 +194,5 @@ public:
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+#endif // CRAB_LEVEL_H

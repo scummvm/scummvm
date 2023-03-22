@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_ANIMATIONEFFECT_H
+#define CRAB_ANIMATIONEFFECT_H
 
 #include "common_header.h"
 #include "loaders.h"
@@ -90,3 +91,5 @@ struct AnimationEffect {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_ANIMATIONEFFECT_H

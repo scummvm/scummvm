@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_IMAGEDATA_H
+#define CRAB_IMAGEDATA_H
 
 #include "ImageManager.h"
 #include "common_header.h"
@@ -58,3 +59,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_IMAGEDATA_H

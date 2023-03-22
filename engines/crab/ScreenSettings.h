@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SCREENSETTINGS_H
+#define CRAB_SCREENSETTINGS_H
 
 #include "GameParam.h"
 #include "common_header.h"
@@ -146,3 +147,5 @@ public:
 };
 
 extern ScreenSettings gScreenSettings;
+
+#endif // CRAB_SCREENSETTINGS_H

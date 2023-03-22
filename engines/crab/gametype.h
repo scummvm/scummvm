@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GAMETYPE_H
+#define CRAB_GAMETYPE_H
 
 namespace Crab {
 
@@ -108,3 +109,5 @@ enum TextureFlipType {
 };
 
 } // End of namespace Crab
+
+#endif // CRAB_GAMETYPE_H

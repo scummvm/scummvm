@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_ITEMSLOT_H
+#define CRAB_ITEMSLOT_H
 
 #include "ImageManager.h"
 #include "Item.h"
@@ -89,3 +90,5 @@ public:
 };
 } // End of namespace item
 } // End of namespace pyrodactyl
+
+#endif // CRAB_ITEMSLOT_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_COLLISION_H
+#define CRAB_COLLISION_H
 
 #include "Polygon.h"
 #include "Rectangle.h"
@@ -45,3 +46,5 @@ template<typename T>
 double Distance2D(const T &p0_x, const T &p0_y, const T &p1_x, const T &p1_y) {
 	return sqrt((p0_x - p1_x) * (p0_x - p1_x) + (p0_y - p1_y) * (p0_y - p1_y));
 }
+
+#endif // CRAB_COLLISION_H

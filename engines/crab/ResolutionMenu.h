@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_RESOLUTIONMENU_H
+#define CRAB_RESOLUTIONMENU_H
 #include "common_header.h"
 
 #include "menu.h"
@@ -76,3 +77,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_RESOLUTIONMENU_H

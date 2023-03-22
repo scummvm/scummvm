@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  Cursor object
 //=============================================================================
-#pragma once
+#ifndef CRAB_CURSOR_H
+#define CRAB_CURSOR_H
 
 #include "Image.h"
 #include "common_header.h"
@@ -84,3 +85,5 @@ public:
 extern Cursor gMouse;
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+#endif // CRAB_CURSOR_H

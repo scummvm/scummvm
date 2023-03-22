@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TMXTILESET_H
+#define CRAB_TMXTILESET_H
 
 #include "Image.h"
 #include "TMXLayer.h"
@@ -95,3 +96,5 @@ public:
 	void Draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos);
 };
 }; // End of namespace TMX
+
+#endif // CRAB_TMXTILESET_H

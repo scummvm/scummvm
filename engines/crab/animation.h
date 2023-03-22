@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB__ANIMATION_H
+#define CRAB__ANIMATION_H
 
 #include "AnimationEffect.h"
 #include "AnimationFrame.h"
@@ -62,3 +63,5 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB__ANIMATION_H

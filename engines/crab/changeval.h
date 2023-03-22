@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_CHANGEVAL_H
+#define CRAB_CHANGEVAL_H
 
 #include "common_header.h"
 #include "opinion.h"
@@ -61,3 +62,5 @@ struct ChangeVal {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_CHANGEVAL_H

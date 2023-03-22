@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PATHFINDINGAGENT_H
+#define CRAB_PATHFINDINGAGENT_H
 
 #include "PathfindingGrid.h"
 #include "PriorityQueue.h"
@@ -161,3 +162,5 @@ public:
 };
 
 bool compareNodes(PlannerNode const *nodeA, PlannerNode const *nodeB);
+
+#endif // CRAB_PATHFINDINGAGENT_H

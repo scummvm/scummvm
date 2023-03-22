@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_NUMSTR_H
+#define CRAB_NUMSTR_H
 #include "common_header.h"
 
 namespace Crab {
@@ -90,3 +91,5 @@ void GetPoint(T &v, Common::String &coords) {
 }
 
 } // End of namespace Crab
+
+#endif // CRAB_NUMSTR_H

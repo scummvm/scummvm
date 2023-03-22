@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TEXTDATA_H
+#define CRAB_TEXTDATA_H
 
 #include "TextManager.h"
 #include "common_header.h"
@@ -61,3 +62,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_TEXTDATA_H

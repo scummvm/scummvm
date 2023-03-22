@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_BONUS_H
+#define CRAB_BONUS_H
 
 #include "common_header.h"
 #include "loaders.h"
@@ -47,3 +48,5 @@ struct Bonus {
 };
 } // End of namespace stat
 } // End of namespace pyrodactyl
+
+#endif // CRAB_BONUS_H

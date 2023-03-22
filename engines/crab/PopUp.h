@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_POPUP_H
+#define CRAB_POPUP_H
 
 #include "GameEventInfo.h"
 #include "ParagraphData.h"
@@ -118,3 +119,5 @@ struct PopUpCollection {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_POPUP_H

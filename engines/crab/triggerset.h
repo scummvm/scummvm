@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TRIGGERSET_H
+#define CRAB_TRIGGERSET_H
 
 #include "common_header.h"
 #include "trigger.h"
@@ -61,3 +62,5 @@ public:
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_TRIGGERSET_H

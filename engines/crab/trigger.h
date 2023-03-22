@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TRIGGER_H
+#define CRAB_TRIGGER_H
 #include "GameEventInfo.h"
 #include "common_header.h"
 
@@ -73,3 +74,5 @@ struct Trigger {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_TRIGGER_H

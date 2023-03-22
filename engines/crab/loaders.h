@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_LOADERS_H
+#define CRAB_LOADERS_H
 
 #include "engines/crab/XMLDoc.h"
 #include "engines/crab/common_header.h"
@@ -132,3 +133,5 @@ bool LoadTextureFlipType(TextureFlipType &flip, rapidxml::xml_node<char> *node, 
 unsigned int Version(const Common::String &filename);
 
 } // End of namespace Crab
+
+#endif // CRAB_LOADERS_H

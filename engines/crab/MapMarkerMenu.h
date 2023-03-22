@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MAPMARKERMENU_H
+#define CRAB_MAPMARKERMENU_H
 
 #include "StateButton.h"
 #include "common_header.h"
@@ -90,3 +91,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MAPMARKERMENU_H

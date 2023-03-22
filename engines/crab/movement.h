@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MOVEMENT_H
+#define CRAB_MOVEMENT_H
 
 #include "Rectangle.h"
 #include "common_header.h"
@@ -83,3 +84,5 @@ struct MovementSet {
 };
 } // End of namespace ai
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MOVEMENT_H

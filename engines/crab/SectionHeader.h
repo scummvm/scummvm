@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SECTIONHEADER_H
+#define CRAB_SECTIONHEADER_H
 
 #include "ImageManager.h"
 #include "TextData.h"
@@ -65,3 +66,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_SECTIONHEADER_H

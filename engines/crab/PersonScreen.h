@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PERSONSCREEN_H
+#define CRAB_PERSONSCREEN_H
 
 #include "GameEventInfo.h"
 #include "ImageData.h"
@@ -72,3 +73,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_PERSONSCREEN_H
