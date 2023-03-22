@@ -26,6 +26,10 @@
 
 namespace Freescape {
 
+void DrillerEngine::initC64() {
+	_viewArea = Common::Rect(32, 16, 288, 119);
+}
+
 void DrillerEngine::loadAssetsC64FullGame() {
 	Common::File file;
 	if (_targetName.hasPrefix("spacestationoblivion")) {
