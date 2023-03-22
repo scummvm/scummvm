@@ -96,6 +96,8 @@ protected:
 	 */
 	void clearSurface() override;
 
+	void drawGraphic(int gfxNum);
+
 public:
 	TextView(const Common::String &name);
 	TextView(const Common::String &name, UIElement *owner);

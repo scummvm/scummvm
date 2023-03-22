@@ -247,6 +247,12 @@ void TextView::clearSurface() {
 	_textPos.x = _textPos.y = 0;
 }
 
+void TextView::drawGraphic(int gfxNum) {
+	const Graphics::ManagedSurface img =
+		g_globals->_monsters.getMonsterImage(gfxNum);
+	getSurface().blitFrom(img, Common::Point(64, 16));
+}
+
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

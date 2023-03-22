@@ -31,6 +31,7 @@
 #include "mm/mm1/views_enh/characters.h"
 #include "mm/mm1/views_enh/confirm.h"
 #include "mm/mm1/views_enh/create_characters.h"
+#include "mm/mm1/views_enh/encounter.h"
 #include "mm/mm1/views_enh/exchange.h"
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/views_enh/game_messages.h"
@@ -78,6 +79,7 @@ private:
 	ViewsEnh::Characters _characters;
 	ViewsEnh::Confirm _confirm;
 	ViewsEnh::CreateCharacters _createCharacters;
+	ViewsEnh::Encounter _encounter;
 	ViewsEnh::Exchange _exchange;
 	ViewsEnh::Game _game;
 	ViewsEnh::GameMessages _gameMessages;

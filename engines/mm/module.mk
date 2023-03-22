@@ -136,6 +136,7 @@ MODULE_OBJS += \
 	mm1/views_enh/confirm.o \
 	mm1/views_enh/create_characters.o \
 	mm1/views_enh/dialogs.o \
+	mm1/views_enh/encounter.o \
 	mm1/views_enh/exchange.o \
 	mm1/views_enh/game.o \
 	mm1/views_enh/game_commands.o \
