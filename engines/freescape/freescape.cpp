@@ -501,13 +501,19 @@ void FreescapeEngine::processInput() {
 		case Common::EVENT_LBUTTONDOWN:
 			if (_hasFallen)
 				break;
-			shoot();
+			if (_viewArea.contains(_crossairPosition))
+				shoot();
+			else
+				onScreenControls(_crossairPosition);
 			break;
 
 		default:
 			break;
 		}
 	}
+}
+
+void FreescapeEngine::onScreenControls(Common::Point mouse) {
 }
 
 void FreescapeEngine::executeMovementConditions() {

@@ -221,6 +221,7 @@ public:
 	void resetInput();
 	void generateDemoInput();
 	virtual void pressedKey(const int keycode);
+	virtual void onScreenControls(Common::Point mouse);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	virtual void checkIfStillInArea();
 	void changePlayerHeight(int index);
@@ -484,6 +485,7 @@ private:
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawC64UI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
+	void onScreenControls(Common::Point mouse) override;
 
 	Graphics::ManagedSurface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
 	Graphics::ManagedSurface *load8bitDemoImage(Common::SeekableReadStream *file, int offset);
