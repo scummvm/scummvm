@@ -105,7 +105,9 @@ bool CharacterInventory::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_d:
 		selectButton(BTN_DISCARD);
 		break;
-
+	case Common::KEYCODE_t:
+		addView("Trade");
+		break;
 	default:
 		return ItemsView::msgKeypress(msg);
 	}

@@ -609,6 +609,14 @@ enhdialogs:
 		donate: "\x01""37Donate"
 		uncurse: "\x01""37Uncurse"
 		realign: "\x01""37Re-align"
+	trade:
+		which: "Trade which:"
+		gems: "\x01""37Gems"
+		gold: "Gol\x01""37d"
+		food: "\x01""37Food"
+		items: "\x01""37Items"
+		how_much: "How much:"
+		items_help: "To trade items, select an item from the inventory, and then select the portrait of the character to trade to"
 	training:
 		title: "Training"
 		train: "\x01""37Train"
