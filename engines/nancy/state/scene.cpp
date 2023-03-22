@@ -31,6 +31,7 @@
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/state/map.h"
 
 #include "engines/nancy/ui/button.h"
 #include "engines/nancy/ui/ornaments.h"
@@ -210,7 +211,13 @@ void Scene::popScene() {
 }
 
 void Scene::pauseSceneSpecificSounds() {
-	// TODO missing if, same condition as the one in SoundManager::stopAndUnloadSpecificSounds
+	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+		// Don't stop the map sound in certain scenes
+		uint currentScene = _sceneState.currentScene.sceneID;
+		if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
+			g_nancy->_sound->pauseSound(NancyMapState.getSound(), true);
+		}
+	}
 
 	for (uint i = 0; i < 10; ++i) {
 		g_nancy->_sound->pauseSound(i, true);
@@ -218,6 +225,14 @@ void Scene::pauseSceneSpecificSounds() {
 }
 
 void Scene::unpauseSceneSpecificSounds() {
+	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+		// Don't stop the map sound in certain scenes
+		uint currentScene = _sceneState.currentScene.sceneID;
+		if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
+			g_nancy->_sound->pauseSound(NancyMapState.getSound(), false);
+		}
+	}
+
 	for (uint i = 0; i < 10; ++i) {
 		g_nancy->_sound->pauseSound(i, false);
 	}
