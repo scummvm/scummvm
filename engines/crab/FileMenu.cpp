@@ -29,7 +29,6 @@
  */
 
 #include "FileMenu.h"
-#include "stdafx.h"
 
 namespace pyrodactyl {
 namespace ui {

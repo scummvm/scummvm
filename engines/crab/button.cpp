@@ -33,7 +33,6 @@
 // Purpose:  Contains the button functions
 //=============================================================================
 #include "button.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

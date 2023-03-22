@@ -29,7 +29,6 @@
  */
 
 #include "Line.h"
-#include "stdafx.h"
 
 //------------------------------------------------------------------------
 // Purpose: Draw a line from start to end

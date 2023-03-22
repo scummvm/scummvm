@@ -29,7 +29,6 @@
  */
 
 #include "ScreenSettings.h"
-#include "stdafx.h"
 
 // Our screen settings object
 ScreenSettings gScreenSettings;

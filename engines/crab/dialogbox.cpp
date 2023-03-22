@@ -33,7 +33,6 @@
 // Purpose:  Dialog box!
 //=============================================================================
 #include "dialogbox.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;

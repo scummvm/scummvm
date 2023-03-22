@@ -29,7 +29,6 @@
  */
 
 #include "SpriteConstant.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ai;
 

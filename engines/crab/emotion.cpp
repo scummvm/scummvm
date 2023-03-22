@@ -29,7 +29,6 @@
  */
 
 #include "emotion.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;

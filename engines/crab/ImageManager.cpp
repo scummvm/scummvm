@@ -34,7 +34,6 @@
 //=============================================================================
 #include "ImageManager.h"
 #include "XMLDoc.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::image;
 

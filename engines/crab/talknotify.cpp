@@ -29,7 +29,6 @@
  */
 
 #include "talknotify.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::level;

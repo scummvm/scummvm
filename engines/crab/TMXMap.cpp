@@ -31,7 +31,6 @@
 #include "TMXMap.h"
 #include "TextManager.h"
 #include "collision.h"
-#include "stdafx.h"
 
 using namespace TMX;
 using namespace pyrodactyl::image;

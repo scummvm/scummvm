@@ -29,7 +29,6 @@
  */
 
 #include "TraitMenu.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 

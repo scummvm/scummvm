@@ -29,7 +29,6 @@
  */
 
 #include "color.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::text;
 

@@ -29,7 +29,6 @@
  */
 
 #include "eventstore.h"
-#include "stdafx.h"
 
 namespace pyrodactyl {
 namespace event {

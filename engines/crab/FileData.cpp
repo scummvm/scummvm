@@ -29,7 +29,6 @@
  */
 
 #include "FileData.h"
-#include "stdafx.h"
 #include <iomanip>
 
 using namespace pyrodactyl::ui;

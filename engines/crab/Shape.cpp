@@ -29,7 +29,6 @@
  */
 
 #include "Shape.h"
-#include "stdafx.h"
 
 void Shape::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	if (NodeValid("polygon", node, echo)) {

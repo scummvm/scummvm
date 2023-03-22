@@ -29,7 +29,6 @@
  */
 
 #include "SlideShow.h"
-#include "stdafx.h"
 
 namespace pyrodactyl {
 namespace ui {

@@ -29,7 +29,6 @@
  */
 
 #include "DevConsole.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 

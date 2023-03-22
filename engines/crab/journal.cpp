@@ -29,7 +29,6 @@
  */
 
 #include "journal.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::ui;

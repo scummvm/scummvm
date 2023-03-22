@@ -29,7 +29,6 @@
  */
 
 #include "animset.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::anim;
 

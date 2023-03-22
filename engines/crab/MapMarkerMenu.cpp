@@ -29,7 +29,6 @@
  */
 
 #include "MapMarkerMenu.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 

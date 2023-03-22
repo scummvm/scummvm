@@ -29,7 +29,6 @@
  */
 
 #include "movement.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ai;
 

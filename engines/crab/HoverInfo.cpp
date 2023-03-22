@@ -28,7 +28,6 @@
  *
  */
 
-#include "stdafx.h"
 
 #include "HoverInfo.h"
 

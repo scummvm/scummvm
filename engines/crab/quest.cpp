@@ -29,7 +29,6 @@
  */
 
 #include "quest.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::event;
 

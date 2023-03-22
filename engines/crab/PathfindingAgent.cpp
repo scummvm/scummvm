@@ -29,7 +29,6 @@
  */
 
 #include "PathfindingAgent.h"
-#include "stdafx.h"
 
 PathfindingAgent::PathfindingAgent(void) : nodeQueue(compareNodes) {
 	grid = NULL;

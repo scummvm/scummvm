@@ -29,7 +29,6 @@
  */
 
 #include "moveeffect.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::anim;
 

@@ -29,7 +29,6 @@
  */
 
 #include "app.h"
-#include "stdafx.h"
 
 int WinMain(int argc, char *args[]) {
 	App app;

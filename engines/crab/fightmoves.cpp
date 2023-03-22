@@ -29,7 +29,6 @@
  */
 
 #include "fightmoves.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::anim;
 

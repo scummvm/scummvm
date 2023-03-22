@@ -29,7 +29,6 @@
  */
 
 #include "fightinput.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::input;
 

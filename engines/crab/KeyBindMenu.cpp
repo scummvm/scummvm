@@ -29,7 +29,6 @@
  */
 
 #include "KeyBindMenu.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;

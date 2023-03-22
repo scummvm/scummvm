@@ -29,7 +29,6 @@
  */
 
 #include "fightmove.h"
-#include "stdafx.h"
 
 using namespace pyrodactyl::anim;
 

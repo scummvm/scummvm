@@ -30,7 +30,6 @@
 
 #include "PathfindingGrid.h"
 #include "TMXMap.h"
-#include "stdafx.h"
 
 using namespace TMX;
 
