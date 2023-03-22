@@ -27,6 +27,10 @@
 
 namespace Freescape {
 
+void DrillerEngine::initCPC() {
+	_viewArea = Common::Rect(36, 16, 284, 117);
+}
+
 byte kCPCPaletteTitleData[4][3] = {
 	{0x00, 0x00, 0x00},
 	{0x00, 0x80, 0xff},

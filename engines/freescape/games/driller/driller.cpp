@@ -41,22 +41,16 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	if (!Common::parseBool(ConfMan.get("automatic_drilling"), _useAutomaticDrilling))
 		error("Failed to parse bool from automatic_drilling option");
 
-	if (isDOS()) {
-		if (_renderMode == Common::kRenderEGA)
-			_viewArea = Common::Rect(40, 16, 280, 117);
-		else if (_renderMode == Common::kRenderCGA)
-			_viewArea = Common::Rect(36, 16, 284, 117);
-		else
-			error("Invalid or unknown render mode");
-	}
+	if (isDOS())
+		initDOS();
 	else if (isAmiga() || isAtariST())
-		_viewArea = Common::Rect(36, 16, 284, 118);
+		initAmigaAtari();
 	else if (isSpectrum())
-		_viewArea = Common::Rect(56, 20, 264, 124);
+		initZX();
 	else if (isCPC())
-		_viewArea = Common::Rect(36, 16, 284, 117);
+		initCPC();
 	else if (isC64())
-		_viewArea = Common::Rect(32, 16, 288, 119);
+		initC64();
 
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
@@ -826,44 +820,30 @@ bool DrillerEngine::checkIfGameEnded() {
 }
 
 void DrillerEngine::onScreenControls(Common::Point mouse) {
-
-	if (isAmiga() || isAtariST()) {
-		Common::Rect arrowFoward(184, 125, 199, 144);
-		Common::Rect arrowLeft(161, 145, 174, 164);
-		Common::Rect arrowRight(207, 145, 222, 164);
-		Common::Rect arrowBack(184, 152, 199, 171);
-		Common::Rect arrowUp(231, 145, 246, 164);
-		Common::Rect arrowDown(254, 145, 269, 164);
-		Common::Rect deployDrill(284, 145, 299, 166);
-		Common::Rect infoScreen(125, 172, 152, 197);
-		Common::Rect saveGame(9, 145, 39, 154);
-		Common::Rect loadGame(9, 156, 39, 164);
-
-		if (arrowFoward.contains(mouse))
-			move(kForwardMovement, _scaleVector.x(), 20.0);
-		else if (arrowLeft.contains(mouse))
-			move(kLeftMovement, _scaleVector.y(), 20.0);
-		else if (arrowRight.contains(mouse))
-			move(kRightMovement, _scaleVector.y(), 20.0);
-		else if (arrowBack.contains(mouse))
-			move(kBackwardMovement, _scaleVector.x(), 20.0);
-		else if (arrowUp.contains(mouse))
-			rise();
-		else if (arrowDown.contains(mouse))
-			lower();
-		else if (deployDrill.contains(mouse))
-			pressedKey(Common::KEYCODE_d);
-		else if (infoScreen.contains(mouse))
-			drawInfoMenu();
-		else if (saveGame.contains(mouse)) {
-			_gfx->setViewport(_fullscreenViewArea);
-			saveGameDialog();
-			_gfx->setViewport(_viewArea);
-		} else if (loadGame.contains(mouse)) {
-			_gfx->setViewport(_fullscreenViewArea);
-			loadGameDialog();
-			_gfx->setViewport(_viewArea);
-		}
+	if (_moveFowardArea.contains(mouse))
+		move(kForwardMovement, _scaleVector.x(), 20.0);
+	else if (_moveLeftArea.contains(mouse))
+		move(kLeftMovement, _scaleVector.y(), 20.0);
+	else if (_moveRightArea.contains(mouse))
+		move(kRightMovement, _scaleVector.y(), 20.0);
+	else if (_moveBackArea.contains(mouse))
+		move(kBackwardMovement, _scaleVector.x(), 20.0);
+	else if (_moveUpArea.contains(mouse))
+		rise();
+	else if (_moveDownArea.contains(mouse))
+		lower();
+	else if (_deployDrillArea.contains(mouse))
+		pressedKey(Common::KEYCODE_d);
+	else if (_infoScreenArea.contains(mouse))
+		drawInfoMenu();
+	else if (_saveGameArea.contains(mouse)) {
+		_gfx->setViewport(_fullscreenViewArea);
+		saveGameDialog();
+		_gfx->setViewport(_viewArea);
+	} else if (_loadGameArea.contains(mouse)) {
+		_gfx->setViewport(_fullscreenViewArea);
+		loadGameDialog();
+		_gfx->setViewport(_viewArea);
 	}
 }
 

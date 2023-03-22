@@ -486,6 +486,22 @@ private:
 	void drawC64UI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
 	void onScreenControls(Common::Point mouse) override;
+	void initAmigaAtari();
+	void initDOS();
+	void initZX();
+	void initCPC();
+	void initC64();
+
+	Common::Rect _moveFowardArea;
+	Common::Rect _moveLeftArea;
+	Common::Rect _moveRightArea;
+	Common::Rect _moveBackArea;
+	Common::Rect _moveUpArea;
+	Common::Rect _moveDownArea;
+	Common::Rect _deployDrillArea;
+	Common::Rect _infoScreenArea;
+	Common::Rect _saveGameArea;
+	Common::Rect _loadGameArea;
 
 	Graphics::ManagedSurface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
 	Graphics::ManagedSurface *load8bitDemoImage(Common::SeekableReadStream *file, int offset);

@@ -217,4 +217,19 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	}
 }
 
+void DrillerEngine::initAmigaAtari() {
+	_viewArea = Common::Rect(36, 16, 284, 118);
+
+	_moveFowardArea = Common::Rect(184, 125, 199, 144);
+	_moveLeftArea = Common::Rect(161, 145, 174, 164);
+	_moveRightArea = Common::Rect(207, 145, 222, 164);
+	_moveBackArea = Common::Rect(184, 152, 199, 171);
+	_moveUpArea = Common::Rect(231, 145, 246, 164);
+	_moveDownArea = Common::Rect(254, 145, 269, 164);
+	_deployDrillArea = Common::Rect(284, 145, 299, 166);
+	_infoScreenArea = Common::Rect(125, 172, 152, 197);
+	_saveGameArea = Common::Rect(9, 145, 39, 154);
+	_loadGameArea = Common::Rect(9, 156, 39, 164);
+}
+
 } // End of namespace Freescape
