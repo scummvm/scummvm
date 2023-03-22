@@ -404,7 +404,6 @@ void SoundManager::stopSound(const Common::String &chunkName) {
 	stopSound(_commonSounds[chunkName]);
 }
 
-// Returns whether the exception was skipped
 void SoundManager::stopAllSounds() {
 	for (uint i = 0; i < 31; ++i) {
 		stopSound(i);
