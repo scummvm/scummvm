@@ -1,25 +1,39 @@
-#include "stdafx.h"
 #include "trigger.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::event;
 
-void Trigger::Load(rapidxml::xml_node<char> *node)
-{
+void Trigger::Load(rapidxml::xml_node<char> *node) {
 	std::string ty;
 	LoadStr(ty, "type", node);
 
-	//Should we throw a warning about missing fields? Depends on the type of trigger
+	// Should we throw a warning about missing fields? Depends on the type of trigger
 	bool echo_op = true, echo_tar = false, echo_sub = true;
 
-	if (ty == "obj") type = TRIG_OBJ;
-	else if (ty == "opinion") { type = TRIG_OPINION; echo_tar = true; }
-	else if (ty == "loc") { type = TRIG_LOC; echo_op = false; }
-	else if (ty == "item") { type = TRIG_ITEM; echo_op = false; }
-	else if (ty == "rect") { type = TRIG_RECT; echo_op = false; }
-	else if (ty == "stat") { type = TRIG_STAT; echo_tar = true; }
-	else if (ty == "diff") { type = TRIG_DIFF; echo_sub = false; }
-	else if (ty == "trait") { type = TRIG_TRAIT; }
-	else type = TRIG_VAR;
+	if (ty == "obj")
+		type = TRIG_OBJ;
+	else if (ty == "opinion") {
+		type = TRIG_OPINION;
+		echo_tar = true;
+	} else if (ty == "loc") {
+		type = TRIG_LOC;
+		echo_op = false;
+	} else if (ty == "item") {
+		type = TRIG_ITEM;
+		echo_op = false;
+	} else if (ty == "rect") {
+		type = TRIG_RECT;
+		echo_op = false;
+	} else if (ty == "stat") {
+		type = TRIG_STAT;
+		echo_tar = true;
+	} else if (ty == "diff") {
+		type = TRIG_DIFF;
+		echo_sub = false;
+	} else if (ty == "trait") {
+		type = TRIG_TRAIT;
+	} else
+		type = TRIG_VAR;
 
 	LoadStr(target, "target", node, echo_tar);
 	LoadStr(subject, "subject", node, echo_sub);
@@ -40,43 +54,41 @@ void Trigger::Load(rapidxml::xml_node<char> *node)
 		negate = false;
 }
 
-bool Trigger::Evaluate(int lhs, int rhs)
-{
-	if (operation == ">" && lhs > rhs)        return true;
-	else if (operation == "=" && lhs == rhs)  return true;
-	else if (operation == "<" && lhs < rhs)   return true;
-	else if (operation == "!=" && lhs != rhs) return true;
-	else if (operation == "<=" && lhs <= rhs) return true;
-	else if (operation == ">=" && lhs >= rhs) return true;
+bool Trigger::Evaluate(int lhs, int rhs) {
+	if (operation == ">" && lhs > rhs)
+		return true;
+	else if (operation == "=" && lhs == rhs)
+		return true;
+	else if (operation == "<" && lhs < rhs)
+		return true;
+	else if (operation == "!=" && lhs != rhs)
+		return true;
+	else if (operation == "<=" && lhs <= rhs)
+		return true;
+	else if (operation == ">=" && lhs >= rhs)
+		return true;
 
 	return false;
 }
 
-bool Trigger::Evaluate(pyrodactyl::event::Info &info)
-{
+bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
 	using namespace pyrodactyl::people;
 	using namespace pyrodactyl::stat;
 
-	switch (type)
-	{
+	switch (type) {
 	case TRIG_OBJ:
-		if (operation == "p")
-		{
+		if (operation == "p") {
 			if (info.TalkKeyDown && info.LastPerson() == val)
 				return true;
 			else
 				return false;
-		}
-		else if (operation == "status")
-		{
+		} else if (operation == "status") {
 			PersonType ty = StringToPersonType(val);
 			if (info.Type(subject) == ty)
 				return true;
 			else
 				return false;
-		}
-		else if (operation == "state")
-		{
+		} else if (operation == "state") {
 			PersonState st = StringToPersonState(val);
 			if (info.State(subject) == st)
 				return true;
@@ -85,11 +97,9 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info)
 		}
 		break;
 
-	case TRIG_OPINION:
-	{
+	case TRIG_OPINION: {
 		Person p;
-		if (info.PersonGet(subject, p))
-		{
+		if (info.PersonGet(subject, p)) {
 			if (target == "like")
 				return Evaluate(p.opinion.val[OPI_LIKE], StringToNumber<int>(val));
 			else if (target == "fear")
@@ -97,8 +107,7 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info)
 			else if (target == "respect")
 				return Evaluate(p.opinion.val[OPI_RESPECT], StringToNumber<int>(val));
 		}
-	}
-		break;
+	} break;
 
 	case TRIG_LOC:
 		return (info.CurLocID() == val);
@@ -111,8 +120,7 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info)
 	case TRIG_RECT:
 		return info.CollideWithTrigger(subject, StringToNumber<int>(val));
 
-	case TRIG_STAT:
-	{
+	case TRIG_STAT: {
 		StatType ty = StringToStatType(target);
 		int sub = 0, value = 0;
 		bool compare_to_var = std::find_if(val.begin(), val.end(), IsChar) != val.end();
@@ -124,15 +132,13 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info)
 			value = StringToNumber<int>(val);
 
 		return Evaluate(sub, value);
-	}
-		break;
+	} break;
 
 	case TRIG_DIFF:
 		return Evaluate(info.IronMan(), StringToNumber<int>(val));
 
 	case TRIG_TRAIT:
-		if (info.PersonValid(target))
-		{
+		if (info.PersonValid(target)) {
 			Person *p = &info.PersonGet(target);
 
 			for (auto &i : p->trait)
@@ -141,8 +147,7 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info)
 		}
 		break;
 
-	case TRIG_VAR:
-	{
+	case TRIG_VAR: {
 		int var_sub = 0, var_val = 0;
 		bool compare_to_var = std::find_if(val.begin(), val.end(), IsChar) != val.end();
 
@@ -153,10 +158,10 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info)
 			var_val = StringToNumber<int>(val);
 
 		return Evaluate(var_sub, var_val);
-	}
-		break;
+	} break;
 
-	default:break;
+	default:
+		break;
 	}
 
 	return false;

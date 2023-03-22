@@ -1,29 +1,25 @@
-#include "stdafx.h"
-#include "XMLDoc.h"
 #include "TextManager.h"
+#include "XMLDoc.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::text;
 
-namespace pyrodactyl
-{
-	namespace text
-	{
-		TextManager gTextManager;
-	}
+namespace pyrodactyl {
+namespace text {
+TextManager gTextManager;
 }
+} // End of namespace pyrodactyl
 
 //------------------------------------------------------------------------
 // Purpose: Initialize, set cache etc
 //------------------------------------------------------------------------
-void TextManager::Init()
-{
-	//First, delete everything that exists
+void TextManager::Init() {
+	// First, delete everything that exists
 	Quit();
 
-	//Load the list of fonts
+	// Load the list of fonts
 	XMLDoc font_list(gFilePath.font);
-	if (font_list.ready())
-	{
+	if (font_list.ready()) {
 		rapidxml::xml_node<char> *node = font_list.Doc()->first_node("fonts");
 
 		LoadNum(cache_size, "cache_size", node);
@@ -33,15 +29,13 @@ void TextManager::Init()
 		if (NodeValid(node->first_node("padding")))
 			pad_bg.Load(node->first_node("padding"));
 
-		for (auto n = node->first_node("font"); n != NULL; n = n->next_sibling("font"))
-		{
+		for (auto n = node->first_node("font"); n != NULL; n = n->next_sibling("font")) {
 			rapidxml::xml_attribute<char> *id, *path, *size;
 			id = n->first_attribute("id");
 			path = n->first_attribute("path");
 			size = n->first_attribute("size");
 
-			if (id != NULL && path != NULL && size != NULL)
-			{
+			if (id != NULL && path != NULL && size != NULL) {
 				unsigned int pos = StringToNumber<unsigned int>(id->value());
 				if (font.size() <= pos)
 					font.resize(pos + 1);
@@ -54,8 +48,7 @@ void TextManager::Init()
 	colpool.Load(gFilePath.colors);
 }
 
-void TextManager::Reset()
-{
+void TextManager::Reset() {
 	cache.clear();
 	cache.resize(cache_size);
 }
@@ -63,8 +56,7 @@ void TextManager::Reset()
 //------------------------------------------------------------------------
 // Purpose: Search cache for rendered text
 //------------------------------------------------------------------------
-int TextManager::Search(const std::string &text, int col, FontKey fontid)
-{
+int TextManager::Search(const std::string &text, int col, FontKey fontid) {
 	int pos = 0;
 	for (auto i = cache.begin(); i != cache.end(); ++i, ++pos)
 		if (i->empty == false && i->text == text && i->EqualCol(col) && i->font == fontid)
@@ -73,8 +65,7 @@ int TextManager::Search(const std::string &text, int col, FontKey fontid)
 	return -1;
 }
 
-int TextManager::FindFreeSlot()
-{
+int TextManager::FindFreeSlot() {
 	int pos = 0;
 	for (auto i = cache.begin(); i != cache.end(); ++i, ++pos)
 		if (i->empty)
@@ -88,8 +79,7 @@ int TextManager::FindFreeSlot()
 //------------------------------------------------------------------------
 // Purpose: Render the SDL surface for text
 //------------------------------------------------------------------------
-SDL_Surface* TextManager::RenderTextBlended(const FontKey &font, const std::string &text, const int &color)
-{
+SDL_Surface *TextManager::RenderTextBlended(const FontKey &font, const std::string &text, const int &color) {
 	if (text.empty())
 		return TTF_RenderText_Blended(GetFont(font), " ", colpool.Get(color));
 
@@ -100,11 +90,9 @@ SDL_Surface* TextManager::RenderTextBlended(const FontKey &font, const std::stri
 // Purpose: Draw text
 //------------------------------------------------------------------------
 void TextManager::Draw(const int &x, const int &y, const std::string &text, const int &color,
-	const FontKey &font, const Align &align, const bool &background)
-{
+					   const FontKey &font, const Align &align, const bool &background) {
 	int pos = Search(text, color, font);
-	if (pos == -1)
-	{
+	if (pos == -1) {
 		pos = FindFreeSlot();
 		SDL_Surface *surf = RenderTextBlended(font, text, color);
 
@@ -119,59 +107,50 @@ void TextManager::Draw(const int &x, const int &y, const std::string &text, cons
 		SDL_FreeSurface(surf);
 	}
 
-	if (background)
-	{
+	if (background) {
 		rect.w = cache[pos].img.W() + (2 * pad_bg.x);
 		rect.h = cache[pos].img.H() + (2 * pad_bg.y);
 
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 128);
 
-		if (align == ALIGN_LEFT)
-		{
+		if (align == ALIGN_LEFT) {
 			rect.x = x - pad_bg.x;
 			rect.y = y - pad_bg.y;
 
 			SDL_RenderFillRect(gRenderer, &rect);
 			cache[pos].img.Draw(x, y);
-		}
-		else if (align == ALIGN_CENTER)
-		{
+		} else if (align == ALIGN_CENTER) {
 			rect.x = x - cache[pos].img.W() / 2 - pad_bg.x;
 			rect.y = y - cache[pos].img.H() / 2 - pad_bg.y;
 
 			SDL_RenderFillRect(gRenderer, &rect);
 			cache[pos].img.Draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
-		}
-		else
-		{
+		} else {
 			rect.x = x - cache[pos].img.W() - pad_bg.x;
 			rect.y = y - pad_bg.y;
 
 			SDL_RenderFillRect(gRenderer, &rect);
 			cache[pos].img.Draw(x - cache[pos].img.W(), y);
 		}
-	}
-	else
-	{
-		if (align == ALIGN_LEFT) cache[pos].img.Draw(x, y);
-		else if (align == ALIGN_CENTER) cache[pos].img.Draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
-		else cache[pos].img.Draw(x - cache[pos].img.W(), y);
+	} else {
+		if (align == ALIGN_LEFT)
+			cache[pos].img.Draw(x, y);
+		else if (align == ALIGN_CENTER)
+			cache[pos].img.Draw(x - cache[pos].img.W() / 2, y - cache[pos].img.H() / 2);
+		else
+			cache[pos].img.Draw(x - cache[pos].img.W(), y);
 	}
 }
 
 void TextManager::Draw(const int &x, int y, const std::string &text, const int &color, const FontKey &font, const Align &align,
-	const unsigned int &line_width, const unsigned int &line_height, const bool &background)
-{
-	for (int start_pos = 0, len = text.length(); start_pos < len; y += line_height)
-	{
+					   const unsigned int &line_width, const unsigned int &line_height, const bool &background) {
+	for (int start_pos = 0, len = text.length(); start_pos < len; y += line_height) {
 		int end_pos = start_pos + 1, last_interrupt = -1;
 		std::string word;
 
-		while (end_pos - start_pos <= line_width)
-		{
-			if (end_pos == len || text[end_pos] == '`')
-			{
+		while (end_pos - start_pos <= line_width) {
+			if (end_pos == len || text[end_pos] == '`') {
 				last_interrupt = end_pos;
 				break;
 			}
@@ -182,14 +161,13 @@ void TextManager::Draw(const int &x, int y, const std::string &text, const int &
 			end_pos++;
 		}
 
-		if (last_interrupt >= 0) //wrap a word around
+		if (last_interrupt >= 0) // wrap a word around
 		{
 			for (int i = 0; i < last_interrupt - start_pos; i++)
 				word += text[start_pos + i];
 
 			start_pos = last_interrupt + 1;
-		}
-		else //word bigger than line, just thunk
+		} else // word bigger than line, just thunk
 		{
 			for (int i = 0; i < end_pos - start_pos; i++)
 				word += text[start_pos + i];
@@ -204,15 +182,12 @@ void TextManager::Draw(const int &x, int y, const std::string &text, const int &
 //------------------------------------------------------------------------
 // Purpose: Quit
 //------------------------------------------------------------------------
-void TextManager::Quit()
-{
+void TextManager::Quit() {
 	for (auto i = font.begin(); i != font.end(); ++i)
 		TTF_CloseFont(*i);
 
-	for (auto i = cache.begin(); i != cache.end(); ++i)
-	{
-		if (i->empty == false)
-		{
+	for (auto i = cache.begin(); i != cache.end(); ++i) {
+		if (i->empty == false) {
 			i->img.Delete();
 			i->empty = true;
 		}

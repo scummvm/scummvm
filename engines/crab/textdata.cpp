@@ -1,13 +1,11 @@
-#include "stdafx.h"
 #include "TextData.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 
-bool TextData::Load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo)
-{
-	if (NodeValid(node, echo))
-	{
+bool TextData::Load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
+	if (NodeValid(node, echo)) {
 		Element::Load(node, parent, echo);
 		LoadFontKey(font, "font", node);
 		LoadNum(col, "color", node);
@@ -19,12 +17,10 @@ bool TextData::Load(rapidxml::xml_node<char> *node, Rect *parent, const bool &ec
 	return false;
 }
 
-void TextData::Draw(const std::string &val, const int &XOffset, const int &YOffset)
-{
+void TextData::Draw(const std::string &val, const int &XOffset, const int &YOffset) {
 	pyrodactyl::text::gTextManager.Draw(x + XOffset, y + YOffset, val, col, font, align, background);
 }
 
-void TextData::DrawColor(const std::string &val, const int &color, const int &XOffset, const int &YOffset)
-{
+void TextData::DrawColor(const std::string &val, const int &color, const int &XOffset, const int &YOffset) {
 	pyrodactyl::text::gTextManager.Draw(x + XOffset, y + YOffset, val, color, font, align, background);
 }

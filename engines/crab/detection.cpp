@@ -25,18 +25,16 @@
 #include "crab/detection.h"
 
 const DebugChannelDef CrabMetaEngineDetection::debugFlagList[] = {
-	{ Crab::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Crab::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Crab::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Crab::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ Crab::kDebugScript, "Script", "Enable debug script dump" },
-	DEBUG_CHANNEL_END
-};
+	{Crab::kDebugGraphics, "Graphics", "Graphics debug level"},
+	{Crab::kDebugPath, "Path", "Pathfinding debug level"},
+	{Crab::kDebugFilePath, "FilePath", "File path debug level"},
+	{Crab::kDebugScan, "Scan", "Scan for unrecognised games"},
+	{Crab::kDebugScript, "Script", "Enable debug script dump"},
+	DEBUG_CHANNEL_END};
 
 static const PlainGameDescriptor crabGames[] = {
 	{"unrest", "Unrest"},
-	{nullptr, nullptr}
-};
+	{nullptr, nullptr}};
 
 namespace Crab {
 
@@ -50,13 +48,12 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE),
 	},
-	AD_TABLE_END_MARKER
-};
+	AD_TABLE_END_MARKER};
 
 }
 
 CrabMetaEngineDetection::CrabMetaEngineDetection() : AdvancedMetaEngineDetection(Crab::gameDescriptions,
-	sizeof(ADGameDescription), crabGames) {
+																				 sizeof(ADGameDescription), crabGames) {
 }
 
 REGISTER_PLUGIN_STATIC(CRAB_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, CrabMetaEngineDetection);

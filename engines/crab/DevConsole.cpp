@@ -1,21 +1,17 @@
-#include "stdafx.h"
 #include "DevConsole.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 
-void DebugConsole::Load(const std::string &filename)
-{
+void DebugConsole::Load(const std::string &filename) {
 	XMLDoc conf(filename);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("debug");
-		if (NodeValid(node))
-		{
+		if (NodeValid(node)) {
 			if (NodeValid("menu", node))
 				menu.Load(node->first_node("menu"));
 
-			if (NodeValid("variable", node))
-			{
+			if (NodeValid("variable", node)) {
 				rapidxml::xml_node<char> *varnode = node->first_node("variable");
 
 				if (NodeValid("bg", varnode))
@@ -37,10 +33,8 @@ void DebugConsole::Load(const std::string &filename)
 	}
 }
 
-void DebugConsole::Draw(pyrodactyl::event::Info &info)
-{
-	switch (state)
-	{
+void DebugConsole::Draw(pyrodactyl::event::Info &info) {
+	switch (state) {
 	case STATE_NORMAL:
 		menu.Draw();
 		break;
@@ -59,33 +53,28 @@ void DebugConsole::Draw(pyrodactyl::event::Info &info)
 		}
 		break;
 
-	default:break;
+	default:
+		break;
 	}
 }
 
-void DebugConsole::HandleEvents(const SDL_Event &Event)
-{
-	switch (state)
-	{
-	case STATE_NORMAL:
-	{
+void DebugConsole::HandleEvents(const SDL_Event &Event) {
+	switch (state) {
+	case STATE_NORMAL: {
 		int choice = menu.HandleEvents(Event);
 		if (choice == 0)
 			state = STATE_VAR;
-	}
-		break;
+	} break;
 	case STATE_VAR:
 		text_field.HandleEvents(Event);
 
 		if (check.HandleEvents(Event))
 			var_name = text_field.text;
 
-		//Control+V pastes clipboard text into text field
-		if (Event.type == SDL_KEYDOWN && Event.key.keysym.scancode == SDL_SCANCODE_V && Event.key.keysym.mod & KMOD_CTRL)
-		{
-			if (SDL_HasClipboardText() == SDL_TRUE)
-			{
-				char* temp = SDL_GetClipboardText();
+		// Control+V pastes clipboard text into text field
+		if (Event.type == SDL_KEYDOWN && Event.key.keysym.scancode == SDL_SCANCODE_V && Event.key.keysym.mod & KMOD_CTRL) {
+			if (SDL_HasClipboardText() == SDL_TRUE) {
+				char *temp = SDL_GetClipboardText();
 				text_field.text = temp;
 				SDL_free(temp);
 			}
@@ -95,10 +84,10 @@ void DebugConsole::HandleEvents(const SDL_Event &Event)
 			state = STATE_NORMAL;
 		break;
 
-	default:break;
+	default:
+		break;
 	}
 }
 
-void DebugConsole::InternalEvents()
-{
+void DebugConsole::InternalEvents() {
 }

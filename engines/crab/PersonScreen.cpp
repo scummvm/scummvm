@@ -1,19 +1,16 @@
-#include "stdafx.h"
 #include "PersonScreen.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 
-void PersonScreen::Load(const std::string &filename)
-{
+void PersonScreen::Load(const std::string &filename) {
 	XMLDoc conf(filename);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("character");
-		if (NodeValid(node))
-		{
+		if (NodeValid(node)) {
 			if (NodeValid("bg", node))
 				bg.Load(node->first_node("bg"));
 
@@ -29,41 +26,34 @@ void PersonScreen::Load(const std::string &filename)
 	}
 }
 
-void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const std::string &id, const SDL_Event &Event)
-{
+void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const std::string &id, const SDL_Event &Event) {
 	if (info.PersonValid(id))
 		menu.HandleEvents(&info.PersonGet(id), Event);
 	else
 		menu.HandleEvents(nullptr, Event);
 }
 
-void PersonScreen::InternalEvents()
-{
+void PersonScreen::InternalEvents() {
 	if (cur_sp != nullptr)
 		cur_sp->DialogUpdateClip(PST_NORMAL);
 }
 
-void PersonScreen::Draw(pyrodactyl::event::Info &info, const std::string &id)
-{
+void PersonScreen::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 	bg.Draw();
 
-	if (info.PersonValid(id))
-	{
+	if (info.PersonValid(id)) {
 		name.Draw(info.PersonGet(id).name);
 		menu.Draw(&info.PersonGet(id));
-	}
-	else
+	} else
 		menu.Draw(nullptr);
 
-	if (cur_sp != nullptr)
-	{
+	if (cur_sp != nullptr) {
 		Rect clip = cur_sp->DialogClip(PST_NORMAL);
 		gImageManager.Draw(img.x, img.y, cur_sp->Img(), &clip);
 	}
 }
 
-void PersonScreen::Cache(Info &info, const std::string &id, pyrodactyl::level::Level &level)
-{
+void PersonScreen::Cache(Info &info, const std::string &id, pyrodactyl::level::Level &level) {
 	cur_sp = level.GetSprite(id);
 
 	if (info.PersonValid(id))
@@ -72,8 +62,7 @@ void PersonScreen::Cache(Info &info, const std::string &id, pyrodactyl::level::L
 		menu.Clear();
 }
 
-void PersonScreen::SetUI()
-{
+void PersonScreen::SetUI() {
 	bg.SetUI();
 	name.SetUI();
 	img.SetUI();

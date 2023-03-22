@@ -1,23 +1,20 @@
-#include "stdafx.h"
 #include "CreditScreen.h"
+#include "stdafx.h"
 #include "url.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 
-void CreditScreen::Reset()
-{
+void CreditScreen::Reset() {
 	start.x = gScreenSettings.cur.w / 2 - 150;
 	start.y = gScreenSettings.cur.h + 20;
 	cur.x = start.x;
 	speed.cur = speed.slow;
 }
 
-void CreditScreen::Load(const std::string &filename)
-{
+void CreditScreen::Load(const std::string &filename) {
 	XMLDoc conf(filename);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("credits");
 
 		if (NodeValid("bg", node))
@@ -41,22 +38,19 @@ void CreditScreen::Load(const std::string &filename)
 		if (NodeValid("twitter", node))
 			back.Load(node->first_node("back"));
 
-		if (NodeValid("fast", node))
-		{
+		if (NodeValid("fast", node)) {
 			rapidxml::xml_node<char> *fnode = node->first_node("fast");
 			fast.Load(fnode);
 			LoadNum(speed.fast, "val", fnode);
 		}
 
-		if (NodeValid("slow", node))
-		{
+		if (NodeValid("slow", node)) {
 			rapidxml::xml_node<char> *snode = node->first_node("slow");
 			slow.Load(snode);
 			LoadNum(speed.slow, "val", snode);
 		}
 
-		if (NodeValid("reverse", node))
-		{
+		if (NodeValid("reverse", node)) {
 			rapidxml::xml_node<char> *rnode = node->first_node("reverse");
 			reverse.Load(rnode);
 			LoadNum(speed.reverse, "val", rnode);
@@ -67,11 +61,9 @@ void CreditScreen::Load(const std::string &filename)
 		if (NodeValid("pause", node))
 			pause.Load(node->first_node("pause"));
 
-		if (NodeValid("text", node))
-		{
+		if (NodeValid("text", node)) {
 			rapidxml::xml_node<char> *tnode = node->first_node("text");
-			for (rapidxml::xml_node<char> *n = tnode->first_node(); n != NULL; n = n->next_sibling())
-			{
+			for (rapidxml::xml_node<char> *n = tnode->first_node(); n != NULL; n = n->next_sibling()) {
 				CreditText t;
 				t.text = n->value();
 				t.heading = (n->name()[0] == 'h');
@@ -81,8 +73,7 @@ void CreditScreen::Load(const std::string &filename)
 	}
 }
 
-bool CreditScreen::HandleEvents(SDL_Event& Event)
-{
+bool CreditScreen::HandleEvents(SDL_Event &Event) {
 	if (slow.HandleEvents(Event) == BUAC_LCLICK)
 		speed.cur = speed.slow;
 	else if (fast.HandleEvents(Event) == BUAC_LCLICK)
@@ -100,8 +91,7 @@ bool CreditScreen::HandleEvents(SDL_Event& Event)
 	return (back.HandleEvents(Event) == BUAC_LCLICK);
 }
 
-void CreditScreen::Draw()
-{
+void CreditScreen::Draw() {
 	bg.Draw();
 
 	slow.Draw();
@@ -117,35 +107,31 @@ void CreditScreen::Draw()
 
 	cur.y = start.y;
 
-	for (auto i = list.begin(); i != list.end(); ++i)
-	{
+	for (auto i = list.begin(); i != list.end(); ++i) {
 		cur.y += paragraph.inc;
 
-		if (i->heading)
-		{
+		if (i->heading) {
 			cur.y += heading.inc;
-			if (cur.y > -30 && cur.y < gScreenSettings.cur.h + 40) //Only draw text if it is actually visible on screen
+			if (cur.y > -30 && cur.y < gScreenSettings.cur.h + 40) // Only draw text if it is actually visible on screen
 				gTextManager.Draw(cur.x, cur.y, i->text, heading.color, heading.font, heading.align);
-		}
-		else if (cur.y > -30 && cur.y < gScreenSettings.cur.h + 40)
+		} else if (cur.y > -30 && cur.y < gScreenSettings.cur.h + 40)
 			gTextManager.Draw(cur.x, cur.y, i->text, paragraph.color, paragraph.font, paragraph.align);
 
-		//If our cur value has reached below the screen, simply exit the loop as we won't draw anything else
+		// If our cur value has reached below the screen, simply exit the loop as we won't draw anything else
 		if (cur.y > gScreenSettings.cur.h + 40)
 			break;
 	}
 
 	start.y -= speed.cur;
 
-	//Sanity check so that we don't scroll too high or low
+	// Sanity check so that we don't scroll too high or low
 	if (start.y > gScreenSettings.cur.h + 40)
 		start.y = gScreenSettings.cur.h + 40;
 	else if (start.y < INT_MIN + 10)
 		start.y = INT_MIN + 10;
 }
 
-void CreditScreen::SetUI()
-{
+void CreditScreen::SetUI() {
 	bg.SetUI();
 	back.SetUI();
 

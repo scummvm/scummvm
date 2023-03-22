@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "map.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
@@ -8,16 +8,12 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Load stuff that can't be modified by the user
 //------------------------------------------------------------------------
-void Map::Load(const std::string &filename, pyrodactyl::event::Info &info)
-{
+void Map::Load(const std::string &filename, pyrodactyl::event::Info &info) {
 	XMLDoc conf(filename);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("map");
-		if (NodeValid(node))
-		{
-			if (NodeValid("img", node))
-			{
+		if (NodeValid(node)) {
+			if (NodeValid("img", node)) {
 				rapidxml::xml_node<char> *imgnode = node->first_node("img");
 				LoadNum(speed, "speed", imgnode);
 
@@ -28,8 +24,7 @@ void Map::Load(const std::string &filename, pyrodactyl::event::Info &info)
 			if (NodeValid("fg", node))
 				fg.Load(node->first_node("fg"));
 
-			if (NodeValid("dim", node))
-			{
+			if (NodeValid("dim", node)) {
 				LoadNum(camera.w, "x", node->first_node("dim"));
 				LoadNum(camera.h, "y", node->first_node("dim"));
 			}
@@ -62,24 +57,20 @@ void Map::Load(const std::string &filename, pyrodactyl::event::Info &info)
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void Map::Draw(pyrodactyl::event::Info &info)
-{
-	//The map graphic is clipped to fit inside the UI
+void Map::Draw(pyrodactyl::event::Info &info) {
+	// The map graphic is clipped to fit inside the UI
 	img_bg.Draw(pos.x, pos.y, &camera);
 
-	if (overlay)
-	{
-		//The overlay needs to be clipped as well, so we must find the intersection of the camera and the clip itself
-		for (auto &i : map.at(cur).reveal)
-		{
+	if (overlay) {
+		// The overlay needs to be clipped as well, so we must find the intersection of the camera and the clip itself
+		for (auto &i : map.at(cur).reveal) {
 			Rect r = i;
 			int X = pos.x + i.x - camera.x, Y = pos.y + i.y - camera.y;
 
-			//Do not draw any area of the clip that is outside the camera bounds
+			// Do not draw any area of the clip that is outside the camera bounds
 
-			//If we're outside the left edges, we need to cull the left point
-			if (X < pos.x)
-			{
+			// If we're outside the left edges, we need to cull the left point
+			if (X < pos.x) {
 				X += camera.x - i.x;
 				r.x += camera.x - i.x;
 				r.w -= camera.x - i.x;
@@ -88,8 +79,7 @@ void Map::Draw(pyrodactyl::event::Info &info)
 					r.w = 0;
 			}
 
-			if (Y < pos.y)
-			{
+			if (Y < pos.y) {
 				Y += camera.y - i.y;
 				r.y += camera.y - i.y;
 				r.h -= camera.y - i.y;
@@ -98,9 +88,11 @@ void Map::Draw(pyrodactyl::event::Info &info)
 					r.h = 0;
 			}
 
-			//If we're outside the right edge, we need to cull the width and height
-			if (X + r.w > pos.x + camera.w) r.w = pos.x + camera.w - X;
-			if (Y + r.h > pos.y + camera.h) r.h = pos.y + camera.h - Y;
+			// If we're outside the right edge, we need to cull the width and height
+			if (X + r.w > pos.x + camera.w)
+				r.w = pos.x + camera.w - X;
+			if (Y + r.h > pos.y + camera.h)
+				r.h = pos.y + camera.h - Y;
 
 			img_overlay.Draw(X, Y, &r);
 		}
@@ -122,8 +114,7 @@ void Map::Draw(pyrodactyl::event::Info &info)
 //------------------------------------------------------------------------
 // Purpose: Center the world map on a spot
 //------------------------------------------------------------------------
-void Map::Center(const Vector2i &vec)
-{
+void Map::Center(const Vector2i &vec) {
 	camera.x = vec.x - camera.w / 2;
 	camera.y = vec.y - camera.h / 2;
 	Validate();
@@ -132,19 +123,22 @@ void Map::Center(const Vector2i &vec)
 //------------------------------------------------------------------------
 // Purpose: Keep the camera in bounds and decide marker visibility
 //------------------------------------------------------------------------
-void Map::Validate()
-{
-	//Make all scroll buttons visible first
+void Map::Validate() {
+	// Make all scroll buttons visible first
 	for (auto &i : scroll.element)
 		i.visible = true;
 
-	//Keep camera in bounds
-	if (camera.x + camera.w > size.x) camera.x = size.x - camera.w;
-	if (camera.y + camera.h > size.y) camera.y = size.y - camera.h;
-	if (camera.x < 0) camera.x = 0;
-	if (camera.y < 0) camera.y = 0;
+	// Keep camera in bounds
+	if (camera.x + camera.w > size.x)
+		camera.x = size.x - camera.w;
+	if (camera.y + camera.h > size.y)
+		camera.y = size.y - camera.h;
+	if (camera.x < 0)
+		camera.x = 0;
+	if (camera.y < 0)
+		camera.y = 0;
 
-	//decide visibility of scroll buttons
+	// decide visibility of scroll buttons
 	scroll.element.at(DIRECTION_RIGHT).visible = !(camera.x == size.x - camera.w);
 	scroll.element.at(DIRECTION_DOWN).visible = !(camera.y == size.y - camera.h);
 	scroll.element.at(DIRECTION_LEFT).visible = !(camera.x == 0);
@@ -154,50 +148,53 @@ void Map::Validate()
 //------------------------------------------------------------------------
 // Purpose: Move
 //------------------------------------------------------------------------
-void Map::Move(const SDL_Event &Event)
-{
-	//Reset the velocity to avoid weirdness
+void Map::Move(const SDL_Event &Event) {
+	// Reset the velocity to avoid weirdness
 	vel.x = 0;
 	vel.y = 0;
 
-	//We don't use the result, but this keeps the button states up to date
+	// We don't use the result, but this keeps the button states up to date
 	scroll.HandleEvents(Event);
 
-	switch (Event.type)
-	{
-	case SDL_MOUSEBUTTONDOWN:
-	{
+	switch (Event.type) {
+	case SDL_MOUSEBUTTONDOWN: {
 		bool click = false;
 		int count = 0;
-		for (auto &i : scroll.element)
-		{
-			if (i.Contains(gMouse.button))
-			{
-				if (count == DIRECTION_UP)         vel.y = -1 * speed;
-				else if (count == DIRECTION_DOWN)  vel.y = speed;
-				else if (count == DIRECTION_RIGHT) vel.x = speed;
-				else if (count == DIRECTION_LEFT)  vel.x = -1 * speed;
+		for (auto &i : scroll.element) {
+			if (i.Contains(gMouse.button)) {
+				if (count == DIRECTION_UP)
+					vel.y = -1 * speed;
+				else if (count == DIRECTION_DOWN)
+					vel.y = speed;
+				else if (count == DIRECTION_RIGHT)
+					vel.x = speed;
+				else if (count == DIRECTION_LEFT)
+					vel.x = -1 * speed;
 
 				click = true;
 			}
 			count++;
 		}
 
-		if (!click)
-		{
+		if (!click) {
 			pan = true;
 			vel.x = 0;
 			vel.y = 0;
-		}
-		else
+		} else
 			pan = false;
-	}
+	} break;
+	case SDL_MOUSEBUTTONUP:
+		pan = false;
 		break;
-	case SDL_MOUSEBUTTONUP: pan = false; break;
-	case SDL_MOUSEMOTION: if (pan){ camera.x -= gMouse.rel.x; camera.y -= gMouse.rel.y; Validate(); } break;
-	default:
-	{
-		//Move the map camera if player presses the direction keys
+	case SDL_MOUSEMOTION:
+		if (pan) {
+			camera.x -= gMouse.rel.x;
+			camera.y -= gMouse.rel.y;
+			Validate();
+		}
+		break;
+	default: {
+		// Move the map camera if player presses the direction keys
 		if (gInput.Equals(IU_UP, Event) == SDL_PRESSED)
 			vel.y = -1 * speed;
 		else if (gInput.Equals(IU_DOWN, Event) == SDL_PRESSED)
@@ -206,7 +203,7 @@ void Map::Move(const SDL_Event &Event)
 			vel.x = speed;
 		else if (gInput.Equals(IU_LEFT, Event) == SDL_PRESSED)
 			vel.x = -1 * speed;
-		//Stop moving when we release a key (but only in that direction)
+		// Stop moving when we release a key (but only in that direction)
 		else if (gInput.Equals(IU_UP, Event) == SDL_RELEASED || gInput.Equals(IU_DOWN, Event) == SDL_RELEASED)
 			vel.y = 0;
 		else if (gInput.Equals(IU_LEFT, Event) == SDL_RELEASED || gInput.Equals(IU_RIGHT, Event) == SDL_RELEASED)
@@ -219,9 +216,8 @@ void Map::Move(const SDL_Event &Event)
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
-void Map::InternalEvents(pyrodactyl::event::Info &info)
-{
-	//The map overlay and button state should be in sync
+void Map::InternalEvents(pyrodactyl::event::Info &info) {
+	// The map overlay and button state should be in sync
 	bu_overlay.state = overlay;
 
 	camera.x += vel.x;
@@ -237,11 +233,9 @@ void Map::InternalEvents(pyrodactyl::event::Info &info)
 //------------------------------------------------------------------------
 // Purpose: Handle Events
 //------------------------------------------------------------------------
-bool Map::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event)
-{
+bool Map::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
 	int choice = travel.HandleEvents(Event, -1 * camera.x, -1 * camera.y);
-	if (choice >= 0)
-	{
+	if (choice >= 0) {
 		cur_loc = travel.element.at(choice).loc;
 		pan = false;
 		return true;
@@ -256,10 +250,8 @@ bool Map::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event)
 	return false;
 }
 
-void Map::SetImage(const unsigned int &val, const bool &force)
-{
-	if (force || (cur != val && val < map.size()))
-	{
+void Map::SetImage(const unsigned int &val, const bool &force) {
+	if (force || (cur != val && val < map.size())) {
 		cur = val;
 
 		img_bg.Delete();
@@ -282,18 +274,15 @@ void Map::SetImage(const unsigned int &val, const bool &force)
 //------------------------------------------------------------------------
 // Purpose: Select the marker corresponding to a quest title
 //------------------------------------------------------------------------
-void Map::SelectDest(const std::string &name)
-{
+void Map::SelectDest(const std::string &name) {
 	marker.SelectDest(name);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Update the status of the fast travel buttons
 //------------------------------------------------------------------------
-void Map::Update(pyrodactyl::event::Info &info)
-{
-	for (auto &i : travel.element)
-	{
+void Map::Update(pyrodactyl::event::Info &info) {
+	for (auto &i : travel.element) {
 		i.unlock.Evaluate(info);
 		i.visible = i.unlock.Result();
 	}
@@ -302,10 +291,8 @@ void Map::Update(pyrodactyl::event::Info &info)
 //------------------------------------------------------------------------
 // Purpose: Add a rectangle to the revealed world map data
 //------------------------------------------------------------------------
-void Map::RevealAdd(const int &id, const Rect &area)
-{
-	if (id < map.size())
-	{
+void Map::RevealAdd(const int &id, const Rect &area) {
+	if (id < map.size()) {
 		for (auto i = map.at(id).reveal.begin(); i != map.at(id).reveal.end(); ++i)
 			if (*i == area)
 				return;
@@ -317,14 +304,10 @@ void Map::RevealAdd(const int &id, const Rect &area)
 //------------------------------------------------------------------------
 // Purpose: Add or remove a destination marker from the world map
 //------------------------------------------------------------------------
-void Map::DestAdd(const std::string &name, const int &x, const int &y)
-{
-	if (cur < map.size())
-	{
-		for (auto i = map.at(cur).dest.begin(); i != map.at(cur).dest.end(); ++i)
-		{
-			if (i->name == name)
-			{
+void Map::DestAdd(const std::string &name, const int &x, const int &y) {
+	if (cur < map.size()) {
+		for (auto i = map.at(cur).dest.begin(); i != map.at(cur).dest.end(); ++i) {
+			if (i->name == name) {
 				i->pos.x = x;
 				i->pos.y = y;
 				return;
@@ -337,14 +320,10 @@ void Map::DestAdd(const std::string &name, const int &x, const int &y)
 	}
 }
 
-void Map::DestDel(const std::string &name)
-{
-	if (cur < map.size())
-	{
-		for (auto i = map.at(cur).dest.begin(); i != map.at(cur).dest.end(); ++i)
-		{
-			if (i->name == name)
-			{
+void Map::DestDel(const std::string &name) {
+	if (cur < map.size()) {
+		for (auto i = map.at(cur).dest.begin(); i != map.at(cur).dest.end(); ++i) {
+			if (i->name == name) {
 				map.at(cur).dest.erase(i);
 				break;
 			}
@@ -357,15 +336,13 @@ void Map::DestDel(const std::string &name)
 //------------------------------------------------------------------------
 // Purpose: Save and load object state
 //------------------------------------------------------------------------
-void Map::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root)
-{
+void Map::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "map");
 
 	child->append_attribute(doc.allocate_attribute("cur", gStrPool.Get(cur)));
 	SaveBool(overlay, "overlay", doc, child);
 
-	for (auto r = map.begin(); r != map.end(); ++r)
-	{
+	for (auto r = map.begin(); r != map.end(); ++r) {
 		rapidxml::xml_node<char> *child_data = doc.allocate_node(rapidxml::node_element, "data");
 		r->SaveState(doc, child_data);
 		child->append_node(child_data);
@@ -374,10 +351,8 @@ void Map::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *roo
 	root->append_node(child);
 }
 
-void Map::LoadState(rapidxml::xml_node<char> *node)
-{
-	if (NodeValid("map", node))
-	{
+void Map::LoadState(rapidxml::xml_node<char> *node) {
+	if (NodeValid("map", node)) {
 		rapidxml::xml_node<char> *mapnode = node->first_node("map");
 		LoadBool(overlay, "overlay", mapnode);
 
@@ -395,8 +370,7 @@ void Map::LoadState(rapidxml::xml_node<char> *node)
 //------------------------------------------------------------------------
 // Purpose: Reset the UI positions in response to change in resolution
 //------------------------------------------------------------------------
-void Map::SetUI()
-{
+void Map::SetUI() {
 	pos.SetUI();
 	fg.SetUI();
 

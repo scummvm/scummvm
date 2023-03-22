@@ -3,28 +3,25 @@
 
 #include <string>
 
-class LevelPaths
-{
+class LevelPaths {
 	std::string layout, asset;
 
 public:
-	LevelPaths()
-	{
+	LevelPaths() {
 		layout = "";
 		asset = "";
 	}
 
-	LevelPaths(const char *Layout, const char *Asset)
-	{
+	LevelPaths(const char *Layout, const char *Asset) {
 		layout = Layout;
 		asset = Asset;
 	}
 
 	const char *LayoutPath() { return layout.c_str(); }
-	void LayoutPath(const char* str) { layout = str; }
+	void LayoutPath(const char *str) { layout = str; }
 
 	const char *AssetPath() { return asset.c_str(); }
-	void AssetPath(const char* str) { asset = str; }
+	void AssetPath(const char *str) { asset = str; }
 };
 
-#endif //LEVELPATHS_H
+#endif // LEVELPATHS_H

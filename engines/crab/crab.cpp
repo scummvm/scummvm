@@ -20,13 +20,16 @@
  */
 
 #include "crab/crab.h"
-#include "crab/detection.h"
-#include "crab/console.h"
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/system.h"
+#include "crab/console.h"
+#include "crab/detection.h"
+#include "crab/loaders.h"
+#include "crab/numstr.h"
+#include "engines/crab/XMLDoc.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 
@@ -35,7 +38,7 @@ namespace Crab {
 CrabEngine *g_engine;
 
 CrabEngine::CrabEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Crab") {
+																		   _gameDescription(gameDesc), _randomSource("Crab") {
 	g_engine = this;
 }
 
@@ -70,7 +73,7 @@ Common::Error CrabEngine::run() {
 	_screen->update();
 
 	// Simple event handling loop
-	byte pal[256 * 3] = { 0 };
+	byte pal[256 * 3] = {0};
 	Common::Event e;
 	int offset = 0;
 

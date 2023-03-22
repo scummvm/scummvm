@@ -22,13 +22,13 @@
 #ifndef CRAB_H
 #define CRAB_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
@@ -44,11 +44,14 @@ class CrabEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
+
 public:
 	Graphics::Screen *_screen = nullptr;
+
 public:
 	CrabEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~CrabEngine() override;
@@ -68,10 +71,9 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override {
-		return
-		    (f == kSupportsLoadingDuringRuntime) ||
-		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher);
+		return (f == kSupportsLoadingDuringRuntime) ||
+			   (f == kSupportsSavingDuringRuntime) ||
+			   (f == kSupportsReturnToLauncher);
 	};
 
 	bool canLoadGameStateCurrently() override {
@@ -98,7 +100,7 @@ public:
 };
 
 extern CrabEngine *g_engine;
-#define SHOULD_QUIT ::Crab::g_engine->shouldQuit()
+#define SHOULD_QUIT::Crab::g_engine->shouldQuit()
 
 } // End of namespace Crab
 

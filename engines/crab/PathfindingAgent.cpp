@@ -1,8 +1,7 @@
-#include "stdafx.h"
 #include "PathfindingAgent.h"
+#include "stdafx.h"
 
-PathfindingAgent::PathfindingAgent(void) : nodeQueue(compareNodes)
-{
+PathfindingAgent::PathfindingAgent(void) : nodeQueue(compareNodes) {
 	grid = NULL;
 
 	destinationSet = false;
@@ -15,12 +14,10 @@ PathfindingAgent::PathfindingAgent(void) : nodeQueue(compareNodes)
 	m_pClickedTile = nullptr;
 }
 
-PathfindingAgent::~PathfindingAgent(void)
-{
+PathfindingAgent::~PathfindingAgent(void) {
 }
 
-void PathfindingAgent::initialize(PathfindingGrid* g)
-{
+void PathfindingAgent::initialize(PathfindingGrid *g) {
 	grid = g;
 
 	nodeBufferDistance = grid->GetCellSize().x / 2.0f;
@@ -28,42 +25,38 @@ void PathfindingAgent::initialize(PathfindingGrid* g)
 	nodeBufferDistance *= nodeBufferDistance;
 }
 
-void PathfindingAgent::SetDestination(Vector2i d, bool r)
-{
+void PathfindingAgent::SetDestination(Vector2i d, bool r) {
 	Vector2f iVec = Vector2f((float)d.x, (float)d.y);
 
 	SetDestination(iVec, r);
 }
 
-void PathfindingAgent::SetDestination(Vector2i d)
-{
+void PathfindingAgent::SetDestination(Vector2i d) {
 	SetDestination(d, true);
 }
 
-void PathfindingAgent::SetDestination(Vector2f d)
-{
+void PathfindingAgent::SetDestination(Vector2f d) {
 	SetDestination(d, true);
 }
 
-void PathfindingAgent::SetDestination(Vector2f d, bool r)
-{
+void PathfindingAgent::SetDestination(Vector2f d, bool r) {
 	if (grid == NULL)
 		return;
 
 	destination = d;
 
-	//TODO: This could be optimized to cache the route somehow... (SZ)
+	// TODO: This could be optimized to cache the route somehow... (SZ)
 	exit();
 
 	m_pStartTile = grid->GetNodeAtPoint(position);
-	//m_pGoalTile = grid->GetNodeAtPoint(d);
+	// m_pGoalTile = grid->GetNodeAtPoint(d);
 
-	//I am now tracking the goal node and the clicked tile separately to solve problems
-	//with hangups and trying to reach un-reachable destinations.
+	// I am now tracking the goal node and the clicked tile separately to solve problems
+	// with hangups and trying to reach un-reachable destinations.
 	m_pClickedTile = grid->GetNodeAtPoint(d);
 	m_pGoalTile = grid->GetNearestOpenNode(d, position);
 
-	PlannerNode* startingNode = new PlannerNode();
+	PlannerNode *startingNode = new PlannerNode();
 	startingNode->SetLocation(m_pStartTile);
 	startingNode->SetHCost((position - destination).Magnitude());
 	startingNode->SetFinalCost((position - destination).Magnitude());
@@ -78,29 +71,23 @@ void PathfindingAgent::SetDestination(Vector2f d, bool r)
 	destinationReachable = r;
 }
 
-void PathfindingAgent::Update(long timeslice)
-{
+void PathfindingAgent::Update(long timeslice) {
 	long prevTime = SDL_GetTicks();
 	long time = timeslice;
 
 	double dTempCost;
 
-	if (solutionFound)
-	{
-		if (m_vSolution.size() > 0)
-		{
+	if (solutionFound) {
+		if (m_vSolution.size() > 0) {
 			float distSqr = (position - m_vSolution.back()->GetPosition()).MagSqr();
-			if (distSqr < nodeBufferDistance)		//Have to find the right deadzone buffer
+			if (distSqr < nodeBufferDistance) // Have to find the right deadzone buffer
 			{
 				m_vSolution.pop_back();
 			}
 		}
-		if (m_vSolution.size() > 0)
-		{
+		if (m_vSolution.size() > 0) {
 			immediateDest = Vector2i(m_vSolution.back()->GetPosition().x, m_vSolution.back()->GetPosition().y);
-		}
-		else
-		{
+		} else {
 			if (destinationReachable)
 				immediateDest = Vector2i((int)destination.x, (int)destination.y);
 			else
@@ -110,61 +97,53 @@ void PathfindingAgent::Update(long timeslice)
 		return;
 	}
 
-	//No nodes, no pathing.
-	if (nodeQueue.empty())
-	{
+	// No nodes, no pathing.
+	if (nodeQueue.empty()) {
 		return;
 	}
 
-	std::map<PathfindingGraphNode*, PlannerNode*>::iterator currentIter;
+	std::map<PathfindingGraphNode *, PlannerNode *>::iterator currentIter;
 
-	do
-	{
-		PlannerNode* current = nodeQueue.front();
+	do {
+		PlannerNode *current = nodeQueue.front();
 		nodeQueue.pop();
 
 		if (current->GetLocation() == m_pGoalTile)
-			//|| //We're done.
+		//|| //We're done.
 		{
-			//m_vSolution = getSolution();
+			// m_vSolution = getSolution();
 			m_vSolution = getPrunedSolution(NULL);
 			solutionFound = true;
 			return;
-		}
-		else if (current->GetLocation()->GetMovementCost() > 0 && current->GetLocation()->AdjacentToNode(m_pClickedTile) && m_pClickedTile->GetMovementCost() < 0)
-		{
+		} else if (current->GetLocation()->GetMovementCost() > 0 && current->GetLocation()->AdjacentToNode(m_pClickedTile) && m_pClickedTile->GetMovementCost() < 0) {
 			m_vSolution = getPrunedSolution(current->GetLocation());
 			solutionFound = true;
 			return;
 		}
 
-		//PathfindingGraphNode* _checkTile;
+		// PathfindingGraphNode* _checkTile;
 
-		//Find the successors
-		//for(int x = -1; x < 2; ++x)
+		// Find the successors
+		// for(int x = -1; x < 2; ++x)
 		//{
 		//	for(int y = -1; y < 2; ++y)
 		//	{
-		std::vector<PathfindingGraphNode*>::iterator i;
+		std::vector<PathfindingGraphNode *>::iterator i;
 
-		for (i = current->location->neighborNodes.begin(); i != current->location->neighborNodes.end(); ++i)
-		{
-			//Get the new tile to check
+		for (i = current->location->neighborNodes.begin(); i != current->location->neighborNodes.end(); ++i) {
+			// Get the new tile to check
 			//_checkTile = m_pTileMap->getTile(current->GetLocation()->getRow() + x, current->GetLocation()->getColumn() + y);
 
-			if ((*i)->GetMovementCost() > 0)
-			{
-				//Compute the temp given cost
+			if ((*i)->GetMovementCost() > 0) {
+				// Compute the temp given cost
 				dTempCost = current->GetGivenCost() + ((*i)->GetMovementCost() * distExact((*i), current->GetLocation()));
 
-				//If it's a duplicate...
+				// If it's a duplicate...
 				currentIter = m_mCreatedList.find((*i));
-				if (currentIter != m_mCreatedList.end())
-				{
-					if (dTempCost < currentIter->second->GetGivenCost())
-					{
-						//If the current planner node has already been added, but the current path is cheaper,
-						//replace it.
+				if (currentIter != m_mCreatedList.end()) {
+					if (dTempCost < currentIter->second->GetGivenCost()) {
+						// If the current planner node has already been added, but the current path is cheaper,
+						// replace it.
 
 						nodeQueue.remove(currentIter->second);
 
@@ -179,55 +158,49 @@ void PathfindingAgent::Update(long timeslice)
 					}
 				}
 
-				//Otherwise...
-				else
-				{
-					PlannerNode* successor = new PlannerNode();
+				// Otherwise...
+				else {
+					PlannerNode *successor = new PlannerNode();
 					successor->SetLocation((*i));
 
-					//Set the new heuristic (distance from node to the goal)
+					// Set the new heuristic (distance from node to the goal)
 					successor->SetHCost(distExact((*i), m_pGoalTile));
 					successor->SetGivenCost(dTempCost);
-					//Final cost is the distance to goal (scaled by 10%) plus the distance of the path.
+					// Final cost is the distance to goal (scaled by 10%) plus the distance of the path.
 					successor->SetFinalCost(successor->GetHCost() * 1.1 + successor->GetGivenCost());
 
 					successor->SetParent(current);
 
 					m_mCreatedList[(*i)] = (successor);
-					nodeQueue.push(successor);	//When the node is pushed onto the PriorityQueue it ends up beings sorted cheapest -> most expensive
+					nodeQueue.push(successor); // When the node is pushed onto the PriorityQueue it ends up beings sorted cheapest -> most expensive
 				}
 			}
 		}
 		//	}
 		//}
 
-		//Update the time
-		if (timeslice != 0)
-		{
+		// Update the time
+		if (timeslice != 0) {
 			time -= (SDL_GetTicks() - prevTime);
 			prevTime = SDL_GetTicks();
 		}
 	} while (!isDone() && (time >= 0 || timeslice == 0));
 
-	noSolution = true;	//You can't get there from here (SZ)
+	noSolution = true; // You can't get there from here (SZ)
 }
 
-bool PathfindingAgent::isDone() const
-{
+bool PathfindingAgent::isDone() const {
 	if (nodeQueue.empty())
 		return true;
 
 	return false;
 }
 
-//Clear everything.
-void PathfindingAgent::exit()
-{
-	std::map<PathfindingGraphNode*, PlannerNode*>::iterator iter;
-	if (!m_mCreatedList.empty())
-	{
-		for (iter = m_mCreatedList.begin(); iter != m_mCreatedList.end(); ++iter)
-		{
+// Clear everything.
+void PathfindingAgent::exit() {
+	std::map<PathfindingGraphNode *, PlannerNode *>::iterator iter;
+	if (!m_mCreatedList.empty()) {
+		for (iter = m_mCreatedList.begin(); iter != m_mCreatedList.end(); ++iter) {
 			delete (*iter).second;
 		}
 	}
@@ -242,37 +215,31 @@ void PathfindingAgent::exit()
 	m_pStartTile = NULL;
 }
 
-void PathfindingAgent::shutdown()
-{
+void PathfindingAgent::shutdown() {
 	exit();
 
 	grid = NULL;
 }
 
-std::vector<PathfindingGraphNode const*> const PathfindingAgent::getSolution(PathfindingGraphNode* destNode) const
-{
-	std::vector<PathfindingGraphNode const*> temp;
+std::vector<PathfindingGraphNode const *> const PathfindingAgent::getSolution(PathfindingGraphNode *destNode) const {
+	std::vector<PathfindingGraphNode const *> temp;
 
-	PlannerNode* current = NULL;
+	PlannerNode *current = NULL;
 
-	if (m_mCreatedList.find(m_pGoalTile) != m_mCreatedList.end())
-	{
+	if (m_mCreatedList.find(m_pGoalTile) != m_mCreatedList.end()) {
 		current = m_mCreatedList.find(m_pGoalTile)->second;
 	}
 
-	//If the dest node passed in is not null, that means we did not reach the goal but came close
-	//so we should start with that node instead when we are constructing our path
-	else if (destNode != NULL)
-	{
+	// If the dest node passed in is not null, that means we did not reach the goal but came close
+	// so we should start with that node instead when we are constructing our path
+	else if (destNode != NULL) {
 		current = m_mCreatedList.find(destNode)->second;
 	}
 
-	//Iterate through the planner nodes to create a vector to return.
-	while (current)
-	{
-		if (current->GetLocation() != m_pStartTile)
-		{
-			//You don't have to path to the start
+	// Iterate through the planner nodes to create a vector to return.
+	while (current) {
+		if (current->GetLocation() != m_pStartTile) {
+			// You don't have to path to the start
 			if (current->GetLocation() != m_pStartTile)
 				temp.push_back(current->GetLocation());
 		}
@@ -283,26 +250,21 @@ std::vector<PathfindingGraphNode const*> const PathfindingAgent::getSolution(Pat
 	return temp;
 }
 
-std::vector<PathfindingGraphNode const*> const PathfindingAgent::getPrunedSolution(PathfindingGraphNode* destNode)
-{
-	std::vector<PathfindingGraphNode const*> temp = getSolution(destNode);
+std::vector<PathfindingGraphNode const *> const PathfindingAgent::getPrunedSolution(PathfindingGraphNode *destNode) {
+	std::vector<PathfindingGraphNode const *> temp = getSolution(destNode);
 
-	std::vector<PathfindingGraphNode const*> returnVec = temp;
+	std::vector<PathfindingGraphNode const *> returnVec = temp;
 
-	//Any node that is not adjacent to an obstacle or an obstacle corner can be removed.
-	for (int i = 0; i < temp.size(); ++i)
-	{
-		if (!temp[i]->AdjacentToObstacle())
-		{
-			if (i > 0 && i < temp.size() - 1)
-			{
-				//This check to see if the node is a "corner" to an obstacle that should not be pruned
-				//to prevent hanging on corners.
-				std::vector<PathfindingGraphNode*> corners = grid->CornerCheck(temp[i - 1], temp[i + 1]);
+	// Any node that is not adjacent to an obstacle or an obstacle corner can be removed.
+	for (int i = 0; i < temp.size(); ++i) {
+		if (!temp[i]->AdjacentToObstacle()) {
+			if (i > 0 && i < temp.size() - 1) {
+				// This check to see if the node is a "corner" to an obstacle that should not be pruned
+				// to prevent hanging on corners.
+				std::vector<PathfindingGraphNode *> corners = grid->CornerCheck(temp[i - 1], temp[i + 1]);
 
-				if (corners.size() == 0)
-				{
-					std::vector<PathfindingGraphNode const*>::iterator theEnd = std::remove(returnVec.begin(), returnVec.end(), temp[i]);
+				if (corners.size() == 0) {
+					std::vector<PathfindingGraphNode const *>::iterator theEnd = std::remove(returnVec.begin(), returnVec.end(), temp[i]);
 					returnVec.erase(theEnd);
 				}
 			}
@@ -312,32 +274,26 @@ std::vector<PathfindingGraphNode const*> const PathfindingAgent::getPrunedSoluti
 	return returnVec;
 }
 
-double PathfindingAgent::distSquared(PathfindingGraphNode* tileA, PathfindingGraphNode* tileB)
-{
+double PathfindingAgent::distSquared(PathfindingGraphNode *tileA, PathfindingGraphNode *tileB) {
 	Vector2f vecTo = tileA->GetPosition() - tileB->GetPosition();
 
 	return vecTo.MagSqr();
 }
 
-double PathfindingAgent::distExact(PathfindingGraphNode* tileA, PathfindingGraphNode* tileB)
-{
+double PathfindingAgent::distExact(PathfindingGraphNode *tileA, PathfindingGraphNode *tileB) {
 	Vector2f vecTo = tileA->GetPosition() - tileB->GetPosition();
 
 	return vecTo.Magnitude();
 }
 
-//This keeps the PriorityQueue organized based on the cost of the paths.
-bool compareNodes(PlannerNode const* nodeA, PlannerNode const* nodeB)
-{
+// This keeps the PriorityQueue organized based on the cost of the paths.
+bool compareNodes(PlannerNode const *nodeA, PlannerNode const *nodeB) {
 	return nodeA->GetFinalCost() > nodeB->GetFinalCost();
 }
 
-bool PathfindingAgent::AdjacentToGoal(PathfindingGraphNode* node)
-{
-	for (auto iter : node->neighborNodes)
-	{
-		if (iter == m_pGoalTile)
-		{
+bool PathfindingAgent::AdjacentToGoal(PathfindingGraphNode *node) {
+	for (auto iter : node->neighborNodes) {
+		if (iter == m_pGoalTile) {
 			return true;
 		}
 	}

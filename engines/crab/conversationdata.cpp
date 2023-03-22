@@ -1,10 +1,9 @@
-#include "stdafx.h"
 #include "conversationdata.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::event;
 
-void ReplyChoice::Load(rapidxml::xml_node<char> *node)
-{
+void ReplyChoice::Load(rapidxml::xml_node<char> *node) {
 	LoadStr(text, "text", node);
 	LoadNum(tone, "tone", node);
 	LoadNum(nextid, "next", node);
@@ -17,8 +16,7 @@ void ReplyChoice::Load(rapidxml::xml_node<char> *node)
 			change.push_back(n);
 }
 
-void ConversationData::Load(rapidxml::xml_node<char> *node)
-{
+void ConversationData::Load(rapidxml::xml_node<char> *node) {
 	for (auto n = node->first_node("reply"); n != NULL; n = n->next_sibling("reply"))
 		reply.push_back(n);
 }

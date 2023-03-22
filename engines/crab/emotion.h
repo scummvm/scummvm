@@ -1,27 +1,24 @@
 #pragma once
 
-#include "common_header.h"
 #include "ImageManager.h"
+#include "common_header.h"
 #include "eventstore.h"
 #include "textarea.h"
 
-namespace pyrodactyl
-{
-	namespace ui
-	{
-		struct EmotionIndicator
-		{
-			//The info for drawing the description
-			TextData text;
+namespace pyrodactyl {
+namespace ui {
+struct EmotionIndicator {
+	// The info for drawing the description
+	TextData text;
 
-			//This array is used to store the corresponding tone values to a reply
-			std::vector<unsigned int> value;
+	// This array is used to store the corresponding tone values to a reply
+	std::vector<unsigned int> value;
 
-			EmotionIndicator(){}
+	EmotionIndicator() {}
 
-			void Load(rapidxml::xml_node<char> *node);
-			void Draw(const int &select);
-			void SetUI();
-		};
-	}
-}
+	void Load(rapidxml::xml_node<char> *node);
+	void Draw(const int &select);
+	void SetUI();
+};
+} // End of namespace ui
+} // End of namespace pyrodactyl

@@ -3,16 +3,16 @@
 
 #include "ImageManager.h"
 
-enum LevelResultType { LR_NONE, LR_LEVEL, LR_GAMEOVER };
+enum LevelResultType { LR_NONE,
+					   LR_LEVEL,
+					   LR_GAMEOVER };
 
-struct LevelResult
-{
+struct LevelResult {
 	LevelResultType type;
 	std::string val;
-	int x,y;
+	int x, y;
 
-	LevelResult() : val("")
-	{
+	LevelResult() : val("") {
 		type = LR_NONE;
 		x = -1;
 		y = -1;

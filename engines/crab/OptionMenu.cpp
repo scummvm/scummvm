@@ -1,31 +1,25 @@
-#include "stdafx.h"
 #include "OptionMenu.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::music;
 
-namespace pyrodactyl
-{
-	namespace ui
-	{
-		OptionMenu gOptionMenu;
-	}
+namespace pyrodactyl {
+namespace ui {
+OptionMenu gOptionMenu;
 }
+} // End of namespace pyrodactyl
 
-void OptionMenu::Load(const std::string &filename)
-{
+void OptionMenu::Load(const std::string &filename) {
 	XMLDoc conf(filename);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("option");
-		if (NodeValid(node))
-		{
+		if (NodeValid(node)) {
 			if (NodeValid("bg", node))
 				bg.Load(node->first_node("bg"));
 
-			if (NodeValid("state", node))
-			{
+			if (NodeValid("state", node)) {
 				menu.Load(node->first_node("state"));
 
 				if (!menu.element.empty())
@@ -44,8 +38,7 @@ void OptionMenu::Load(const std::string &filename)
 			if (NodeValid("general", node))
 				general.Load(node->first_node("general"));
 
-			if (NodeValid("change", node))
-			{
+			if (NodeValid("change", node)) {
 				rapidxml::xml_node<char> *chanode = node->first_node("change");
 
 				if (NodeValid("accept", chanode))
@@ -63,8 +56,7 @@ void OptionMenu::Load(const std::string &filename)
 				if (NodeValid("height", chanode))
 					prompt_h.Load(chanode->first_node("height"));
 
-				if (NodeValid("countdown", chanode))
-				{
+				if (NodeValid("countdown", chanode)) {
 					rapidxml::xml_node<char> *counode = chanode->first_node("countdown");
 					countdown.Load(counode);
 					timer.Load(counode, "time");
@@ -77,8 +69,7 @@ void OptionMenu::Load(const std::string &filename)
 	}
 }
 
-void OptionMenu::Reset()
-{
+void OptionMenu::Reset() {
 	keybind.Reset();
 	state = STATE_GENERAL;
 
@@ -86,37 +77,45 @@ void OptionMenu::Reset()
 		menu.element.at(i).State(i == STATE_GENERAL);
 }
 
-void OptionMenu::Draw(Button &back)
-{
-	if (state < STATE_ENTER_W)
-	{
+void OptionMenu::Draw(Button &back) {
+	if (state < STATE_ENTER_W) {
 		bg.Draw();
 
-		switch (state)
-		{
-		case STATE_GENERAL: general.Draw(); break;
-		case STATE_GRAPHICS: gfx.Draw(); break;
-		case STATE_KEYBOARD: keybind.Draw(); break;
-		case STATE_CONTROLLER: conbind.Draw(); break;
-		default:break;
+		switch (state) {
+		case STATE_GENERAL:
+			general.Draw();
+			break;
+		case STATE_GRAPHICS:
+			gfx.Draw();
+			break;
+		case STATE_KEYBOARD:
+			keybind.Draw();
+			break;
+		case STATE_CONTROLLER:
+			conbind.Draw();
+			break;
+		default:
+			break;
 		}
 
 		menu.Draw();
 		back.Draw();
-	}
-	else
-	{
+	} else {
 		questionbox.Draw();
 
-		switch (state)
-		{
-		case STATE_ENTER_W: prompt_w.Draw(); break;
-		case STATE_ENTER_H: prompt_h.Draw(); break;
+		switch (state) {
+		case STATE_ENTER_W:
+			prompt_w.Draw();
+			break;
+		case STATE_ENTER_H:
+			prompt_h.Draw();
+			break;
 		case STATE_CONFIRM:
 			notice_res.Draw();
 			countdown.Draw(NumberToString(timer.RemainingTicks() / 1000));
 			break;
-		default:break;
+		default:
+			break;
 		}
 
 		accept.Draw();
@@ -124,65 +123,54 @@ void OptionMenu::Draw(Button &back)
 	}
 }
 
-bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event)
-{
-	if (state < STATE_ENTER_W)
-	{
+bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
+	if (state < STATE_ENTER_W) {
 		bg.Draw();
 
-		switch (state)
-		{
-		case STATE_GENERAL: general.HandleEvents(Event); break;
-		case STATE_KEYBOARD: keybind.HandleEvents(Event); break;
-		case STATE_GRAPHICS:
-		{
+		switch (state) {
+		case STATE_GENERAL:
+			general.HandleEvents(Event);
+			break;
+		case STATE_KEYBOARD:
+			keybind.HandleEvents(Event);
+			break;
+		case STATE_GRAPHICS: {
 			int result = gfx.HandleEvents(Event);
-			if (result == 1)
-			{
+			if (result == 1) {
 				state = STATE_CONFIRM;
 				timer.Start();
 				gScreenSettings.SetResolution();
 				gfx.SetInfo();
-			}
-			else if (result == 2)
+			} else if (result == 2)
 				state = STATE_ENTER_W;
-		}
+		} break;
+		default:
 			break;
-		default:break;
 		}
 
 		return HandleTabs(back, Event);
-	}
-	else
-	{
+	} else {
 		questionbox.Draw();
 
-		switch (state)
-		{
+		switch (state) {
 		case STATE_ENTER_W:
-			if (prompt_w.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK)
-			{
+			if (prompt_w.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
 				gScreenSettings.cur.w = StringToNumber<int>(prompt_w.text);
 				state = STATE_ENTER_H;
-			}
-			else if (cancel.HandleEvents(Event) == BUAC_LCLICK)
-			{
+			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
 				gScreenSettings.RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
 			break;
 		case STATE_ENTER_H:
-			if (prompt_h.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK)
-			{
+			if (prompt_h.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
 				gScreenSettings.cur.h = StringToNumber<int>(prompt_h.text);
 				state = STATE_CONFIRM;
 				timer.Start();
 				gScreenSettings.SetResolution();
 				gfx.SetInfo();
-			}
-			else if (cancel.HandleEvents(Event) == BUAC_LCLICK)
-			{
+			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
 				gScreenSettings.RestoreBackup();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
@@ -190,20 +178,18 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event)
 
 			break;
 		case STATE_CONFIRM:
-			if (accept.HandleEvents(Event))
-			{
+			if (accept.HandleEvents(Event)) {
 				state = STATE_GRAPHICS;
 				timer.Stop();
-			}
-			else if (cancel.HandleEvents(Event))
-			{
+			} else if (cancel.HandleEvents(Event)) {
 				gScreenSettings.RestoreBackup();
 				gScreenSettings.SetResolution();
 				gfx.SetInfo();
 				state = STATE_GRAPHICS;
 			}
 			break;
-		default:break;
+		default:
+			break;
 		}
 
 		accept.Draw();
@@ -213,30 +199,34 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event)
 	return false;
 }
 
-bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event)
-{
-	if (back.HandleEvents(Event) == BUAC_LCLICK)
-	{
+bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
+	if (back.HandleEvents(Event) == BUAC_LCLICK) {
 		Reset();
 		return true;
 	}
 
 	int choice = menu.HandleEvents(Event);
-	if (choice >= 0)
-	{
+	if (choice >= 0) {
 		if (choice < 4)
 			for (unsigned i = 0; i < menu.element.size(); ++i)
 				menu.element.at(i).State(i == choice);
 
-		switch (choice)
-		{
-		case 0: state = STATE_GENERAL; break;
-		case 1: state = STATE_GRAPHICS; break;
-		case 2: state = STATE_KEYBOARD; break;
-		case 3: state = STATE_CONTROLLER; break;
+		switch (choice) {
+		case 0:
+			state = STATE_GENERAL;
+			break;
+		case 1:
+			state = STATE_GRAPHICS;
+			break;
+		case 2:
+			state = STATE_KEYBOARD;
+			break;
+		case 3:
+			state = STATE_CONTROLLER;
+			break;
 
 		case 4:
-			//Save settings to file
+			// Save settings to file
 			pyrodactyl::input::gInput.Save();
 			SaveState();
 			general.CreateBackup();
@@ -244,36 +234,34 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event)
 			return true;
 
 		case 5:
-			//Revert all changes made to settings and exit
+			// Revert all changes made to settings and exit
 			pyrodactyl::input::gInput.RestoreBackup();
 			keybind.SetCaption();
 			gScreenSettings.RestoreBackup();
 			general.RestoreBackup();
 
 			SDL_DisplayMode current;
-			if (SDL_GetCurrentDisplayMode(0, &current) == 0)
-			{
+			if (SDL_GetCurrentDisplayMode(0, &current) == 0) {
 				if (gScreenSettings.cur.w != current.w || gScreenSettings.cur.h != current.h)
 					gfx.SetInfo();
 			}
 
 			gScreenSettings.SetResolution();
 			return true;
-		default: break;
+		default:
+			break;
 		}
 	}
 
 	return false;
 }
 
-void OptionMenu::InternalEvents()
-{
-	//Since these states can be changed at any time, we just update it regularly
+void OptionMenu::InternalEvents() {
+	// Since these states can be changed at any time, we just update it regularly
 	gfx.InternalEvents();
 	general.InternalEvents();
 
-	if (state == STATE_CONFIRM && timer.TargetReached())
-	{
+	if (state == STATE_CONFIRM && timer.TargetReached()) {
 		gScreenSettings.RestoreBackup();
 		gScreenSettings.SetResolution();
 		gfx.SetInfo();
@@ -281,8 +269,7 @@ void OptionMenu::InternalEvents()
 	}
 }
 
-void OptionMenu::SaveState()
-{
+void OptionMenu::SaveState() {
 	rapidxml::xml_document<char> doc;
 
 	// xml declaration
@@ -304,8 +291,7 @@ void OptionMenu::SaveState()
 	settingpath += "settings.xml";
 
 	std::ofstream save(settingpath, std::ios::out);
-	if (save.is_open())
-	{
+	if (save.is_open()) {
 		save << xml_as_string;
 		save.close();
 	}
@@ -313,8 +299,7 @@ void OptionMenu::SaveState()
 	doc.clear();
 }
 
-void OptionMenu::SetUI()
-{
+void OptionMenu::SetUI() {
 	bg.SetUI();
 	menu.SetUI();
 

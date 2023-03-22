@@ -2,42 +2,36 @@
 // Author:   Arvind
 // Purpose:  Contains the image manager class - used to manage in-game images
 //=============================================================================
-#include "stdafx.h"
 #include "ImageManager.h"
 #include "XMLDoc.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::image;
 
-//Stuff we use throughout the game
-namespace pyrodactyl
-{
-	namespace image
-	{
-		ImageManager gImageManager;
-	}
+// Stuff we use throughout the game
+namespace pyrodactyl {
+namespace image {
+ImageManager gImageManager;
 }
+} // End of namespace pyrodactyl
 
 //------------------------------------------------------------------------
 // Purpose: Load assets here.
 //------------------------------------------------------------------------
-void ImageManager::LoadMap(const std::string &filename, const MapID &mapid)
-{
+void ImageManager::LoadMap(const std::string &filename, const MapID &mapid) {
 	for (auto it = map[mapid].begin(); it != map[mapid].end(); ++it)
 		it->second.Delete();
 
 	map[mapid].clear();
 	XMLDoc image_list(filename);
-	if (image_list.ready())
-	{
+	if (image_list.ready()) {
 		rapidxml::xml_node<char> *node = image_list.Doc()->first_node("res");
-		for (auto n = node->first_node("image"); n != NULL; n = n->next_sibling("image"))
-		{
+		for (auto n = node->first_node("image"); n != NULL; n = n->next_sibling("image")) {
 			ImageKey key;
-			if (LoadImgKey(key, "name", n))
-			{
-				//Load different images depending on image quality setting
-				//Check if there is a low quality image specified for the asset id
-				//if yes, load it  - if no, just load the higher quality one
+			if (LoadImgKey(key, "name", n)) {
+				// Load different images depending on image quality setting
+				// Check if there is a low quality image specified for the asset id
+				// if yes, load it  - if no, just load the higher quality one
 
 				bool valid = false;
 				std::string path;
@@ -55,8 +49,7 @@ void ImageManager::LoadMap(const std::string &filename, const MapID &mapid)
 			}
 		}
 
-		if (NodeValid("mouse", node, false))
-		{
+		if (NodeValid("mouse", node, false)) {
 			using namespace pyrodactyl::input;
 			gMouse.Quit();
 			gMouse.Load(node->first_node("mouse"));
@@ -64,15 +57,14 @@ void ImageManager::LoadMap(const std::string &filename, const MapID &mapid)
 	}
 }
 
-bool ImageManager::Init()
-{
-	//First, delete everything that exists
+bool ImageManager::Init() {
+	// First, delete everything that exists
 	Quit();
 
-	//Load common assets
+	// Load common assets
 	LoadMap(gFilePath.common, MAP_COMMON);
 
-	//Load main menu assets
+	// Load main menu assets
 	LoadMap(gFilePath.current_r, MAP_CURRENT);
 
 	invalid_img = map[MAP_COMMON][0];
@@ -83,8 +75,7 @@ bool ImageManager::Init()
 //------------------------------------------------------------------------
 // Purpose: Add texture to image map
 //------------------------------------------------------------------------
-void ImageManager::AddTexture(const ImageKey &id, SDL_Surface* surface, int mapindex)
-{
+void ImageManager::AddTexture(const ImageKey &id, SDL_Surface *surface, int mapindex) {
 	if (map[mapindex].count(id) > 0)
 		FreeTexture(id, mapindex);
 
@@ -95,8 +86,7 @@ void ImageManager::AddTexture(const ImageKey &id, SDL_Surface* surface, int mapi
 //------------------------------------------------------------------------
 // Purpose: Get texture for a particular id
 //------------------------------------------------------------------------
-void ImageManager::GetTexture(const ImageKey &id, Image &data)
-{
+void ImageManager::GetTexture(const ImageKey &id, Image &data) {
 	if (map[MAP_CURRENT].count(id) > 0)
 		data = map[MAP_CURRENT][id];
 	else if (map[MAP_COMMON].count(id) > 0)
@@ -105,8 +95,7 @@ void ImageManager::GetTexture(const ImageKey &id, Image &data)
 		data = invalid_img;
 }
 
-Image& ImageManager::GetTexture(const ImageKey &id)
-{
+Image &ImageManager::GetTexture(const ImageKey &id) {
 	if (map[MAP_CURRENT].count(id) > 0)
 		return map[MAP_CURRENT][id];
 	else if (map[MAP_COMMON].count(id) > 0)
@@ -115,8 +104,7 @@ Image& ImageManager::GetTexture(const ImageKey &id)
 	return invalid_img;
 }
 
-bool ImageManager::ValidTexture(const ImageKey &id)
-{
+bool ImageManager::ValidTexture(const ImageKey &id) {
 	if (id != 0 && (map[MAP_CURRENT].count(id) > 0 || map[MAP_COMMON].count(id) > 0))
 		return true;
 
@@ -126,24 +114,21 @@ bool ImageManager::ValidTexture(const ImageKey &id)
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Rect* clip,
-	const TextureFlipType &flip)
-{
+void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Rect *clip,
+						const TextureFlipType &flip) {
 	GetTexture(id).Draw(x, y, clip, flip);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Dim the screen by drawing a 128 alpha black rectangle over it
 //------------------------------------------------------------------------
-void ImageManager::DimScreen()
-{
+void ImageManager::DimScreen() {
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 128);
 	SDL_RenderFillRect(gRenderer, NULL);
 }
 
-void ImageManager::BlackScreen()
-{
+void ImageManager::BlackScreen() {
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 	SDL_RenderFillRect(gRenderer, NULL);
@@ -151,10 +136,8 @@ void ImageManager::BlackScreen()
 //------------------------------------------------------------------------
 // Purpose: free resources
 //------------------------------------------------------------------------
-void ImageManager::Quit()
-{
-	for (int i = 0; i < MAP_TOTAL; i++)
-	{
+void ImageManager::Quit() {
+	for (int i = 0; i < MAP_TOTAL; i++) {
 		for (auto it = map[i].begin(); it != map[i].end(); ++it)
 			it->second.Delete();
 

@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "GeneralSettingMenu.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::music;
@@ -7,10 +7,8 @@ using namespace pyrodactyl::music;
 //------------------------------------------------------------------------
 // Purpose: Load components from file
 //------------------------------------------------------------------------
-void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node)
-{
-	if (NodeValid("volume", node))
-	{
+void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node) {
+	if (NodeValid("volume", node)) {
 		rapidxml::xml_node<char> *musnode = node->first_node("volume");
 
 		if (NodeValid("desc", musnode))
@@ -32,7 +30,7 @@ void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node)
 	if (NodeValid("text_speed", node))
 		text_speed.Load(node->first_node("text_speed"));
 
-	//Sync popup text value with actual value
+	// Sync popup text value with actual value
 	for (auto &i : text_speed.element)
 		i.state = (i.val == gScreenSettings.text_speed);
 }
@@ -40,20 +38,18 @@ void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node)
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-void GeneralSettingMenu::HandleEvents(const SDL_Event &Event)
-{
+void GeneralSettingMenu::HandleEvents(const SDL_Event &Event) {
 	if (vol_music.HandleEvents(Event))
 		gMusicManager.VolMusic(vol_music.Value());
 
 	if (vol_effects.HandleEvents(Event))
 		gMusicManager.VolEffects(vol_effects.Value());
 
-	//No need to change screen here
+	// No need to change screen here
 	if (save_on_exit.HandleEvents(Event))
 		gScreenSettings.save_on_exit = !gScreenSettings.save_on_exit;
 
-	if (mouse_trap.HandleEvents(Event))
-	{
+	if (mouse_trap.HandleEvents(Event)) {
 		gScreenSettings.mouse_trap = !gScreenSettings.mouse_trap;
 		gScreenSettings.SetMouseTrap();
 	}
@@ -66,8 +62,7 @@ void GeneralSettingMenu::HandleEvents(const SDL_Event &Event)
 //------------------------------------------------------------------------
 // Purpose: Sync our buttons with screen settings
 //------------------------------------------------------------------------
-void GeneralSettingMenu::InternalEvents()
-{
+void GeneralSettingMenu::InternalEvents() {
 	save_on_exit.state = gScreenSettings.save_on_exit;
 	mouse_trap.state = gScreenSettings.mouse_trap;
 }
@@ -75,26 +70,24 @@ void GeneralSettingMenu::InternalEvents()
 //------------------------------------------------------------------------
 // Purpose: Draw stuff
 //------------------------------------------------------------------------
-void GeneralSettingMenu::Draw()
-{
-	//Draw volume sliders
+void GeneralSettingMenu::Draw() {
+	// Draw volume sliders
 	notice_volume.Draw();
 	vol_music.Draw();
 	vol_effects.Draw();
 
-	//Draw the auto-save on exit option
+	// Draw the auto-save on exit option
 	save_on_exit.Draw();
 	mouse_trap.Draw();
 
-	//Text speed radio button menu
+	// Text speed radio button menu
 	text_speed.Draw();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Revert to previously backed up settings
 //------------------------------------------------------------------------
-void GeneralSettingMenu::RestoreBackup()
-{
+void GeneralSettingMenu::RestoreBackup() {
 	vol_music.RestoreBackup();
 	gMusicManager.VolMusic(vol_music.Value());
 
@@ -105,8 +98,7 @@ void GeneralSettingMenu::RestoreBackup()
 //------------------------------------------------------------------------
 // Purpose: Set UI positioned on screen size change
 //------------------------------------------------------------------------
-void GeneralSettingMenu::SetUI()
-{
+void GeneralSettingMenu::SetUI() {
 	save_on_exit.SetUI();
 	mouse_trap.SetUI();
 

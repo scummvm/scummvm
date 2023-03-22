@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "sprite.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ai;
 using namespace pyrodactyl::anim;
@@ -9,29 +9,26 @@ using namespace pyrodactyl::event;
 //------------------------------------------------------------------------
 // Purpose: Constructor
 //------------------------------------------------------------------------
-Sprite::Sprite() : img_size(1, 1), vel_mod(1.0f, 1.0f)
-{
+Sprite::Sprite() : img_size(1, 1), vel_mod(1.0f, 1.0f) {
 	dir = DIRECTION_LEFT;
 	layer = -1;
 	image = 0;
 	Visible(true);
 	damage_done = false;
 	hover = false;
-	//pathing.SetSprite(this);
+	// pathing.SetSprite(this);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Load sprite from XML and animations from the index of all animation files
 //------------------------------------------------------------------------
-void Sprite::Load(rapidxml::xml_node<char> *node, std::vector<std::string> &animations)
-{
+void Sprite::Load(rapidxml::xml_node<char> *node, std::vector<std::string> &animations) {
 	using namespace pyrodactyl::image;
 
-	if (NodeValid(node))
-	{
+	if (NodeValid(node)) {
 		LoadStr(id, "id", node);
 
-		//The amount by which the sprite x,y should be multiplied
+		// The amount by which the sprite x,y should be multiplied
 		int multiply = 1;
 		LoadNum(multiply, "multiply", node, false);
 
@@ -75,20 +72,17 @@ void Sprite::Load(rapidxml::xml_node<char> *node, std::vector<std::string> &anim
 //------------------------------------------------------------------------
 // Purpose: Move along x and y axis
 //------------------------------------------------------------------------
-void Sprite::Move(const SpriteConstant &sc)
-{
+void Sprite::Move(const SpriteConstant &sc) {
 	if (target.x == 0.0f && (vel.x > -sc.tweening && vel.x < sc.tweening))
 		vel.x = 0.0f;
-	else
-	{
+	else {
 		vel.x += (target.x - vel.x) * sc.tweening;
 		pos.x += vel.x;
 	}
 
 	if (target.y == 0.0f && (vel.y > -sc.tweening && vel.y < sc.tweening))
 		vel.y = 0.0f;
-	else
-	{
+	else {
 		vel.y += (target.y - vel.y) * sc.tweening;
 		pos.y += vel.y;
 	}
@@ -97,19 +91,14 @@ void Sprite::Move(const SpriteConstant &sc)
 //------------------------------------------------------------------------
 // Purpose: Resolve collision with shapes excluding the level bounding rectangle
 //------------------------------------------------------------------------
-void Sprite::ResolveCollide()
-{
-	//NOTE: we don't check i->intersect here because we do that in the level functions
-	for (auto i = collide_data.begin(); i != collide_data.end(); ++i)
-	{
+void Sprite::ResolveCollide() {
+	// NOTE: we don't check i->intersect here because we do that in the level functions
+	for (auto i = collide_data.begin(); i != collide_data.end(); ++i) {
 		Rect bounds = BoundRect();
-		if (i->type == SHAPE_POLYGON)
-		{
+		if (i->type == SHAPE_POLYGON) {
 			pos.x -= i->data.x;
 			pos.y -= i->data.y;
-		}
-		else
-		{
+		} else {
 			Direction d = bounds.ResolveY(i->data);
 			if (d == DIRECTION_UP)
 				pos.y -= i->data.y + i->data.h - anim_set.bounds.y + anim_set.AnchorY(dir) + 1;
@@ -124,15 +113,14 @@ void Sprite::ResolveCollide()
 		}
 	}
 
-	//Clear the collision data
+	// Clear the collision data
 	collide_data.clear();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Resolve collision with the level bounding rectangle
 //------------------------------------------------------------------------
-void Sprite::ResolveInside(Rect collider)
-{
+void Sprite::ResolveInside(Rect collider) {
 	Rect bounds = BoundRect();
 	Direction d = bounds.ResolveX(collider);
 
@@ -156,9 +144,8 @@ void Sprite::ResolveInside(Rect collider)
 // draw_x = x - clip.w/2, draw_y = y - clip.h
 //------------------------------------------------------------------------
 
-//Used for walking and level geometry collision
-Rect Sprite::BoundRect()
-{
+// Used for walking and level geometry collision
+Rect Sprite::BoundRect() {
 	Rect rect;
 	rect.x = pos.x + anim_set.bounds.x - anim_set.AnchorX(dir);
 	rect.y = pos.y + anim_set.bounds.y - anim_set.AnchorY(dir);
@@ -167,9 +154,8 @@ Rect Sprite::BoundRect()
 	return rect;
 }
 
-//Used for fighting
-Rect Sprite::BoxV()
-{
+// Used for fighting
+Rect Sprite::BoxV() {
 	Rect rect;
 	rect.x = pos.x + box_v.x;
 	rect.y = pos.y + box_v.y;
@@ -178,9 +164,8 @@ Rect Sprite::BoxV()
 	return rect;
 }
 
-//Used for fighting
-Rect Sprite::BoxD()
-{
+// Used for fighting
+Rect Sprite::BoxD() {
 	Rect rect;
 	rect.x = pos.x + box_d.x;
 	rect.y = pos.y + box_d.y;
@@ -189,9 +174,8 @@ Rect Sprite::BoxD()
 	return rect;
 }
 
-//Used for drawing object notifications over stuff
-Rect Sprite::PosRect()
-{
+// Used for drawing object notifications over stuff
+Rect Sprite::PosRect() {
 	Rect rect;
 	rect.x = pos.x - anim_set.AnchorX(dir);
 	rect.y = pos.y - anim_set.AnchorY(dir);
@@ -200,10 +184,9 @@ Rect Sprite::PosRect()
 	return rect;
 }
 
-//The range rectangle is relative to the bounding rectangle, and needs to be updated according to the actual position
-//Used for enemy sprite to find their required spot to attack the player
-Rect Sprite::RangeRect(const Rect &bounds, const Range &range)
-{
+// The range rectangle is relative to the bounding rectangle, and needs to be updated according to the actual position
+// Used for enemy sprite to find their required spot to attack the player
+Rect Sprite::RangeRect(const Rect &bounds, const Range &range) {
 	Rect rect;
 	rect.x = bounds.x + range.val[dir].x;
 	rect.y = bounds.y + range.val[dir].y;
@@ -213,9 +196,8 @@ Rect Sprite::RangeRect(const Rect &bounds, const Range &range)
 	return rect;
 }
 
-//Used for focusing the camera on the sprite
-Vector2i Sprite::CamFocus()
-{
+// Used for focusing the camera on the sprite
+Vector2i Sprite::CamFocus() {
 	Vector2i v;
 	v.x = pos.x + anim_set.focus.x;
 	v.y = pos.y + anim_set.focus.y;
@@ -226,36 +208,31 @@ Vector2i Sprite::CamFocus()
 //------------------------------------------------------------------------
 // Purpose: Draw the sprite
 //------------------------------------------------------------------------
-void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera)
-{
+void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 	using namespace pyrodactyl::image;
 	using namespace pyrodactyl::text;
 
 	int x = pos.x - camera.x - anim_set.AnchorX(dir), y = pos.y - camera.y - anim_set.AnchorY(dir);
 
-	//Draw the shadow image relative to the bottom center of the sprite
+	// Draw the shadow image relative to the bottom center of the sprite
 	ShadowOffset sh = anim_set.Shadow(dir);
-	if (sh.valid)
-	{
-		//Draw using custom offset
+	if (sh.valid) {
+		// Draw using custom offset
 		gImageManager.Draw(x + clip.w / 2 - anim_set.shadow.size.x + sh.x,
-			y + clip.h - anim_set.shadow.size.y + sh.y,
-			anim_set.shadow.img);
-	}
-	else
-	{
-		//Draw using default offset
+						   y + clip.h - anim_set.shadow.size.y + sh.y,
+						   anim_set.shadow.img);
+	} else {
+		// Draw using default offset
 		gImageManager.Draw(x + clip.w / 2 - anim_set.shadow.size.x + anim_set.shadow.offset.x,
-			y + clip.h - anim_set.shadow.size.y + anim_set.shadow.offset.y,
-			anim_set.shadow.img);
+						   y + clip.h - anim_set.shadow.size.y + anim_set.shadow.offset.y,
+						   anim_set.shadow.img);
 	}
 
 	gImageManager.Draw(x, y, image, &clip, anim_set.Flip(dir));
 	img_eff.Draw(x, y);
 
-	if (GameDebug)
-	{
-		//Nice boxes for the frames and box_v, box_d
+	if (GameDebug) {
+		// Nice boxes for the frames and box_v, box_d
 		Rect bounds = BoundRect(), vul = BoxV(), dmg = BoxD(), pos = PosRect();
 		bounds.Draw(-camera.x, -camera.y);
 		pos.Draw(-camera.x, -camera.y, 255, 255, 255);
@@ -263,8 +240,7 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera)
 		vul.Draw(-camera.x, -camera.y, 0, 0, 255);
 
 		FightMove fm;
-		if (anim_set.fight.NextMove(fm))
-		{
+		if (anim_set.fight.NextMove(fm)) {
 			Rect actual_range;
 			actual_range.x = bounds.x + fm.ai.range.val[dir].x;
 			actual_range.y = bounds.y + fm.ai.range.val[dir].y;
@@ -283,15 +259,11 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera)
 
 		gTextManager.Draw(x + 120.0f, y - 60.0f, NumberToString(ai_data.dest.y), 0);*/
 
-		if (pathing.m_vSolution.size() > 0)
-		{
-			for (auto iter = pathing.m_vSolution.begin(); iter != pathing.m_vSolution.end(); ++iter)
-			{
+		if (pathing.m_vSolution.size() > 0) {
+			for (auto iter = pathing.m_vSolution.begin(); iter != pathing.m_vSolution.end(); ++iter) {
 				bool nextToWall = false;
-				for (auto neighbor = (*iter)->neighborNodes.begin(); neighbor != (*iter)->neighborNodes.end(); ++neighbor)
-				{
-					if ((*neighbor)->GetMovementCost() < 0 || (*neighbor)->GetMovementCost() > 1)
-					{
+				for (auto neighbor = (*iter)->neighborNodes.begin(); neighbor != (*iter)->neighborNodes.end(); ++neighbor) {
+					if ((*neighbor)->GetMovementCost() < 0 || (*neighbor)->GetMovementCost() > 1) {
 						nextToWall = true;
 						break;
 					}
@@ -306,23 +278,22 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera)
 			pathing.m_pGoalTile->GetRect().Draw(-camera.x, -camera.y, 0, 0, 200, 254);
 			pathing.m_pStartTile->GetRect().Draw(-camera.x, -camera.y, 0, 200, 0, 254);
 
-			//Draw adjacencies to the goal tile.
+			// Draw adjacencies to the goal tile.
 			/*	for(auto neighbor = pathing.m_pGoalTile->neighborNodes.begin(); neighbor != pathing.m_pGoalTile->neighborNodes.end(); ++neighbor)
 				{
 				(*neighbor)->GetRect().Draw(-camera.x, -camera.y, 200, 0, 0, 254);
 				}*/
 		}
 		Rect destinationRect = Rect((int)pathing.destination.x - 5,
-			(int)pathing.destination.y - 5,
-			10,
-			10);
+									(int)pathing.destination.y - 5,
+									10,
+									10);
 		destinationRect.Draw(-camera.x, -camera.y, 0, 200, 0, 254);
 	}
 }
 
-void Sprite::DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera)
-{
-	//This is different from draw because we draw the popup centered over the head
+void Sprite::DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
+	// This is different from draw because we draw the popup centered over the head
 	int x = pos.x - camera.x - anim_set.AnchorX(dir) + (anim_set.bounds.w / 2);
 	int y = pos.y - camera.y - anim_set.AnchorY(dir);
 
@@ -331,76 +302,71 @@ void Sprite::DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera)
 //------------------------------------------------------------------------
 // Purpose: Handle the movement in a level for the player only
 //------------------------------------------------------------------------
-void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &sc, const SDL_Event &Event)
-{
+void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &sc, const SDL_Event &Event) {
 	int num = 0;
-	info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num); ++num;
+	info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
+	++num;
 	float player_speed = static_cast<float>(num);
 
-	//This is for Diablo style hold-mouse-button-in-direction-of-movement
-	//This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
-	if (!ai_data.dest.active && !gMouse.inside_hud && !gMouse.hover && gMouse.Pressed())
-	{
-		//To find where the click is w.r.t sprite, we need to see where it is being drawn
+	// This is for Diablo style hold-mouse-button-in-direction-of-movement
+	// This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
+	if (!ai_data.dest.active && !gMouse.inside_hud && !gMouse.hover && gMouse.Pressed()) {
+		// To find where the click is w.r.t sprite, we need to see where it is being drawn
 		int x = pos.x - camera.x - anim_set.AnchorX(dir), y = pos.y - camera.y - anim_set.AnchorY(dir);
 
-		//Just use the bound rectangle dimensions
+		// Just use the bound rectangle dimensions
 		Rect b = BoundRect();
 		int w = b.w, h = b.h;
 
-		//X axis
-		if (gMouse.motion.x > x + w)  XVel(player_speed * sc.walk_vel_mod.x);
-		else if (gMouse.motion.x < x) XVel(-player_speed * sc.walk_vel_mod.x);
-		else                          XVel(0.0f);
-
-		//Y axis
-		if (gMouse.motion.y > y + h)  YVel(player_speed * sc.walk_vel_mod.y);
-		else if (gMouse.motion.y < y) YVel(-player_speed * sc.walk_vel_mod.y);
-		else                          YVel(0.0f);
-	}
-	else //Keyboard movement
-	{
-		//Disable destination as soon as player presses a direction key
-		//X axis
-		if (gInput.State(IG_LEFT))
-		{
-			ai_data.dest.active = false;
-			XVel(-player_speed * sc.walk_vel_mod.x);
-		}
-		else if (gInput.State(IG_RIGHT))
-		{
-			ai_data.dest.active = false;
+		// X axis
+		if (gMouse.motion.x > x + w)
 			XVel(player_speed * sc.walk_vel_mod.x);
-		}
-		else if (!ai_data.dest.active)
+		else if (gMouse.motion.x < x)
+			XVel(-player_speed * sc.walk_vel_mod.x);
+		else
 			XVel(0.0f);
 
-		//Y axis
-		if (gInput.State(IG_UP))
-		{
+		// Y axis
+		if (gMouse.motion.y > y + h)
+			YVel(player_speed * sc.walk_vel_mod.y);
+		else if (gMouse.motion.y < y)
+			YVel(-player_speed * sc.walk_vel_mod.y);
+		else
+			YVel(0.0f);
+	} else // Keyboard movement
+	{
+		// Disable destination as soon as player presses a direction key
+		// X axis
+		if (gInput.State(IG_LEFT)) {
+			ai_data.dest.active = false;
+			XVel(-player_speed * sc.walk_vel_mod.x);
+		} else if (gInput.State(IG_RIGHT)) {
+			ai_data.dest.active = false;
+			XVel(player_speed * sc.walk_vel_mod.x);
+		} else if (!ai_data.dest.active)
+			XVel(0.0f);
+
+		// Y axis
+		if (gInput.State(IG_UP)) {
 			ai_data.dest.active = false;
 			YVel(-player_speed * sc.walk_vel_mod.y);
-		}
-		else if (gInput.State(IG_DOWN))
-		{
+		} else if (gInput.State(IG_DOWN)) {
 			ai_data.dest.active = false;
 			YVel(player_speed * sc.walk_vel_mod.y);
-		}
-		else if (!ai_data.dest.active)
+		} else if (!ai_data.dest.active)
 			YVel(0.0f);
 	}
 
 	UpdateMove(input.HandleEvents(Event));
 
-	//This is to prevent one frame of drawing with incorrect parameters
+	// This is to prevent one frame of drawing with incorrect parameters
 	Animate(info);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Set destination for sprite movement
 //------------------------------------------------------------------------
-void Sprite::SetDestPathfinding(const Vector2i &dest, bool reachable)
-{
+void Sprite::SetDestPathfinding(const Vector2i &dest, bool reachable) {
 	ai_data.Dest(dest, true);
 	pathing.SetDestination(dest, reachable);
 }
@@ -408,14 +374,12 @@ void Sprite::SetDestPathfinding(const Vector2i &dest, bool reachable)
 //------------------------------------------------------------------------
 // Purpose: Walking animation
 //------------------------------------------------------------------------
-void Sprite::Walk(const pyrodactyl::people::PersonState &pst)
-{
+void Sprite::Walk(const pyrodactyl::people::PersonState &pst) {
 	img_eff.visible = false;
 
 	bool first_x = true;
 
-	if (ai_data.dest.active)
-	{
+	if (ai_data.dest.active) {
 		Rect b = BoundRect();
 		if (pos.x - ai_data.dest.x > -b.w && pos.x - ai_data.dest.x < b.w)
 			first_x = false;
@@ -429,10 +393,8 @@ void Sprite::Walk(const pyrodactyl::people::PersonState &pst)
 	Walk(reset);
 }
 
-void Sprite::Walk(const bool &reset)
-{
-	if (anim_set.walk.UpdateClip(dir, reset))
-	{
+void Sprite::Walk(const bool &reset) {
+	if (anim_set.walk.UpdateClip(dir, reset)) {
 		clip = anim_set.walk.Clip(dir);
 		box_v = anim_set.walk.BoxV(dir);
 	}
@@ -441,16 +403,14 @@ void Sprite::Walk(const bool &reset)
 //------------------------------------------------------------------------
 // Purpose: Decide which animation to play
 //------------------------------------------------------------------------
-void Sprite::Animate(Info &info)
-{
+void Sprite::Animate(Info &info) {
 	if (input.Idle())
 		Walk(info.State(id));
 	else
 		UpdateFrame(info.State(id));
 }
 
-void Sprite::Animate(const pyrodactyl::people::PersonState &pst)
-{
+void Sprite::Animate(const pyrodactyl::people::PersonState &pst) {
 	Walk(pst);
 }
 
@@ -458,20 +418,16 @@ void Sprite::Animate(const pyrodactyl::people::PersonState &pst)
 // Purpose: We need to find if the vulnerable area of this sprite collides
 // with hitbox (usually the damage area of another sprite)
 //------------------------------------------------------------------------
-bool Sprite::FightCollide(Rect hitbox, Rect enemy_bounds, Range &range, const SpriteConstant &sc)
-{
+bool Sprite::FightCollide(Rect hitbox, Rect enemy_bounds, Range &range, const SpriteConstant &sc) {
 	Rect bounds = BoundRect();
 
-	if (range.valid)
-	{
+	if (range.valid) {
 		Rect actual_range = RangeRect(bounds, range);
 
-		//The second part is a sanity check so the stray hitbox of a sprite 1000 pixels below does not cause damage
+		// The second part is a sanity check so the stray hitbox of a sprite 1000 pixels below does not cause damage
 		if (hitbox.Collide(actual_range) && abs(bounds.y + bounds.h - enemy_bounds.y - enemy_bounds.h) < sc.plane_w)
 			return true;
-	}
-	else
-	{
+	} else {
 		if (hitbox.Collide(bounds) && abs(bounds.y + bounds.h - enemy_bounds.y - enemy_bounds.h) < sc.plane_w)
 			return true;
 	}
@@ -482,15 +438,11 @@ bool Sprite::FightCollide(Rect hitbox, Rect enemy_bounds, Range &range, const Sp
 //------------------------------------------------------------------------
 // Purpose: Update the frame info of the sprite
 //------------------------------------------------------------------------
-void Sprite::UpdateFrame(const pyrodactyl::people::PersonState &pst, const bool &repeat)
-{
+void Sprite::UpdateFrame(const pyrodactyl::people::PersonState &pst, const bool &repeat) {
 	FrameUpdateResult res = anim_set.fight.UpdateFrame(dir);
-	if (res == FUR_SUCCESS)
-	{
+	if (res == FUR_SUCCESS) {
 		AssignFrame();
-	}
-	else if (res == FUR_FAIL)
-	{
+	} else if (res == FUR_FAIL) {
 		damage_done = false;
 		Stop();
 
@@ -501,11 +453,9 @@ void Sprite::UpdateFrame(const pyrodactyl::people::PersonState &pst, const bool 
 	}
 }
 
-void Sprite::AssignFrame()
-{
+void Sprite::AssignFrame() {
 	FightAnimFrame faf;
-	if (anim_set.fight.CurFrame(faf, dir))
-	{
+	if (anim_set.fight.CurFrame(faf, dir)) {
 		clip = faf.clip;
 		BoxV(faf.box_v);
 		BoxD(faf.box_d);
@@ -520,14 +470,11 @@ void Sprite::AssignFrame()
 //------------------------------------------------------------------------
 // Purpose: Update the move info of the player sprite
 //------------------------------------------------------------------------
-void Sprite::UpdateMove(const FightAnimationType &combo)
-{
-	if (combo != FA_IDLE)
-	{
+void Sprite::UpdateMove(const FightAnimationType &combo) {
+	if (combo != FA_IDLE) {
 		if (input.Idle())
 			ForceUpdateMove(combo);
-		else
-		{
+		else {
 			FightAnimFrame faf;
 			if (anim_set.fight.CurFrame(faf, dir))
 				if (faf.branch)
@@ -536,8 +483,7 @@ void Sprite::UpdateMove(const FightAnimationType &combo)
 	}
 }
 
-void Sprite::ForceUpdateMove(const FightAnimationType &combo)
-{
+void Sprite::ForceUpdateMove(const FightAnimationType &combo) {
 	unsigned int index = anim_set.fight.FindMove(combo, input.state);
 	ForceUpdateMove(index);
 }
@@ -545,30 +491,25 @@ void Sprite::ForceUpdateMove(const FightAnimationType &combo)
 //------------------------------------------------------------------------
 // Purpose: Update the move info of the AI or player sprite
 //------------------------------------------------------------------------
-void Sprite::UpdateMove(const unsigned int &index)
-{
+void Sprite::UpdateMove(const unsigned int &index) {
 	if (input.Idle())
 		ForceUpdateMove(index);
 }
 
-void Sprite::ForceUpdateMove(const unsigned int &index)
-{
-	if (anim_set.fight.ForceUpdate(index, input, dir))
-	{
-		//This sets the sprite input to the current move input
+void Sprite::ForceUpdateMove(const unsigned int &index) {
+	if (anim_set.fight.ForceUpdate(index, input, dir)) {
+		// This sets the sprite input to the current move input
 		anim_set.fight.CurCombo(input);
 
 		Stop();
 		AssignFrame();
-	}
-	else
+	} else
 		input.Reset();
 }
 //------------------------------------------------------------------------
 // Purpose: Reset the frame info of the sprite
 //------------------------------------------------------------------------
-void Sprite::ResetFrame(const pyrodactyl::people::PersonState &pst)
-{
+void Sprite::ResetFrame(const pyrodactyl::people::PersonState &pst) {
 	input.Reset();
 	Walk(true);
 	anim_set.fight.Reset();
@@ -580,9 +521,8 @@ void Sprite::ResetFrame(const pyrodactyl::people::PersonState &pst)
 //------------------------------------------------------------------------
 // Purpose: Check if both sprites in the same plane
 //------------------------------------------------------------------------
-bool Sprite::DamageValid(Sprite &s, const SpriteConstant &sc)
-{
-	//Get the y coordinates where these sprites are standing
+bool Sprite::DamageValid(Sprite &s, const SpriteConstant &sc) {
+	// Get the y coordinates where these sprites are standing
 	float Y = pos.y + clip.h, SY = s.pos.y + s.clip.h;
 
 	if (abs(Y - SY) < sc.plane_w)
@@ -594,8 +534,7 @@ bool Sprite::DamageValid(Sprite &s, const SpriteConstant &sc)
 //------------------------------------------------------------------------
 // Purpose: Checks about dealing damage to sprite
 //------------------------------------------------------------------------
-void Sprite::CalcProperties(Info &info)
-{
+void Sprite::CalcProperties(Info &info) {
 	visible.Evaluate(info);
 	anim_set.fight.Evaluate(info);
 }
@@ -603,8 +542,7 @@ void Sprite::CalcProperties(Info &info)
 //------------------------------------------------------------------------
 // Purpose: Checks about dealing damage to sprite
 //------------------------------------------------------------------------
-bool Sprite::TakingDamage(Sprite &sp, const SpriteConstant &sc)
-{
+bool Sprite::TakingDamage(Sprite &sp, const SpriteConstant &sc) {
 	if (DamageValid(sp, sc))
 		if (BoxV().w > 0 && BoxV().h > 0 && sp.BoxD().w > 0 && sp.BoxD().h > 0)
 			if (BoxV().Collide(sp.BoxD()))
@@ -621,14 +559,12 @@ bool Sprite::TakingDamage(Sprite &sp, const SpriteConstant &sc)
 //------------------------------------------------------------------------
 // Purpose: We know we are taking damage, now is the time to update stats
 //------------------------------------------------------------------------
-void Sprite::TakeDamage(Info &info, Sprite &s)
-{
+void Sprite::TakeDamage(Info &info, Sprite &s) {
 	using namespace pyrodactyl::stat;
 	using namespace pyrodactyl::music;
 
 	FightMove f;
-	if (s.anim_set.fight.CurMove(f) && info.PersonValid(s.ID()) && info.PersonValid(id))
-	{
+	if (s.anim_set.fight.CurMove(f) && info.PersonValid(s.ID()) && info.PersonValid(id)) {
 		int dmg = -1 * (f.eff.dmg + info.PersonGet(s.ID()).stat.val[STAT_ATTACK].cur - info.PersonGet(id).stat.val[STAT_DEFENSE].cur);
 		if (dmg >= 0)
 			dmg = -1;
@@ -638,7 +574,7 @@ void Sprite::TakeDamage(Info &info, Sprite &s)
 		int health = 1;
 		info.StatGet(id, STAT_HEALTH, health);
 
-		//Play death animation if dead, hurt animation otherwise
+		// Play death animation if dead, hurt animation otherwise
 		if (health <= 0 && f.eff.death != -1)
 			ForceUpdateMove(f.eff.death);
 		else if (f.eff.hurt != -1)
@@ -656,31 +592,28 @@ void Sprite::TakeDamage(Info &info, Sprite &s)
 // Purpose: We have 2 sprites, *this and s.
 // Check damage between s.box_v and this->box_d and vice versa
 //------------------------------------------------------------------------
-void Sprite::ExchangeDamage(Info &info, Sprite &s, const SpriteConstant &sc)
-{
+void Sprite::ExchangeDamage(Info &info, Sprite &s, const SpriteConstant &sc) {
 	using namespace pyrodactyl::people;
 	using namespace pyrodactyl::stat;
 
-	//This object is taking damage from s
+	// This object is taking damage from s
 	if (!s.damage_done && TakingDamage(s, sc))
 		TakeDamage(info, s);
 
-	//Is the other sprite taking damage from this sprite?
+	// Is the other sprite taking damage from this sprite?
 	if (!damage_done && s.TakingDamage(*this, sc))
 		s.TakeDamage(info, *this);
 
-	//We change the animation to dying in order to give time to the death animation to play out
+	// We change the animation to dying in order to give time to the death animation to play out
 	int num = 0;
 	info.StatGet(s.ID(), STAT_HEALTH, num);
-	if (num <= 0)
-	{
+	if (num <= 0) {
 		info.State(s.ID(), PST_DYING);
 		info.StatChange(s.ID(), STAT_HEALTH, 1);
 	}
 
 	info.StatGet(id, STAT_HEALTH, num);
-	if (num <= 0)
-	{
+	if (num <= 0) {
 		info.State(id, PST_DYING);
 		info.StatChange(id, STAT_HEALTH, 1);
 	}
@@ -689,16 +622,14 @@ void Sprite::ExchangeDamage(Info &info, Sprite &s, const SpriteConstant &sc)
 //------------------------------------------------------------------------
 // Purpose: Update status of ambient dialog via popup object
 //------------------------------------------------------------------------
-void Sprite::InternalEvents(Info &info, const std::string &player_id, std::vector<EventResult> &result, std::vector<EventSeqInfo> &end_seq)
-{
+void Sprite::InternalEvents(Info &info, const std::string &player_id, std::vector<EventResult> &result, std::vector<EventSeqInfo> &end_seq) {
 	popup.InternalEvents(info, player_id, result, end_seq);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Save all sprite positions to save file
 //------------------------------------------------------------------------
-void Sprite::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root)
-{
+void Sprite::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	root->append_attribute(doc.allocate_attribute("id", id.c_str()));
 	root->append_attribute(doc.allocate_attribute("x", gStrPool.Get(pos.x)));
 	root->append_attribute(doc.allocate_attribute("y", gStrPool.Get(pos.y)));
@@ -707,8 +638,7 @@ void Sprite::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *
 //------------------------------------------------------------------------
 // Purpose: Load all sprite positions from save file
 //------------------------------------------------------------------------
-void Sprite::LoadState(rapidxml::xml_node<char> *node)
-{
+void Sprite::LoadState(rapidxml::xml_node<char> *node) {
 	LoadNum(pos.x, "x", node);
 	LoadNum(pos.y, "y", node);
 }

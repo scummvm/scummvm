@@ -1,15 +1,11 @@
-#include "stdafx.h"
 #include "Shape.h"
+#include "stdafx.h"
 
-void Shape::Load(rapidxml::xml_node<char> *node, const bool &echo)
-{
-	if (NodeValid("polygon", node, echo))
-	{
+void Shape::Load(rapidxml::xml_node<char> *node, const bool &echo) {
+	if (NodeValid("polygon", node, echo)) {
 		type = SHAPE_POLYGON;
 		poly.Load(node, rect);
-	}
-	else
-	{
+	} else {
 		rect.Load(node, echo, "x", "y", "width", "height");
 		if (NodeValid("ellipse", node, echo))
 			type = SHAPE_ELLIPSE;
@@ -18,33 +14,27 @@ void Shape::Load(rapidxml::xml_node<char> *node, const bool &echo)
 	}
 }
 
-CollisionData Shape::Collide(Rect box)
-{
+CollisionData Shape::Collide(Rect box) {
 	CollisionData res;
 	res.intersect = rect.Collide(box);
 
-	if (res.intersect)
-	{
+	if (res.intersect) {
 		res.type = type;
-		if (type == SHAPE_POLYGON)
-		{
+		if (type == SHAPE_POLYGON) {
 			PolygonCollisionResult pcr = poly.Collide(box);
 			res.intersect = pcr.intersect;
 			res.data.x = pcr.mtv.x;
 			res.data.y = pcr.mtv.y;
 			return res;
-		}
-		else
+		} else
 			res.data = rect;
 	}
 
 	return res;
 }
 
-bool Shape::Contains(const Vector2i &pos)
-{
-	if (rect.Contains(pos))
-	{
+bool Shape::Contains(const Vector2i &pos) {
+	if (rect.Contains(pos)) {
 		if (type == SHAPE_POLYGON)
 			return poly.Contains(pos.x, pos.y);
 		else
@@ -54,8 +44,7 @@ bool Shape::Contains(const Vector2i &pos)
 	return false;
 }
 
-void Shape::Draw(const int &XOffset, const int &YOffset, const Uint8 &r, const Uint8 &g, const Uint8 &b, const Uint8 &a)
-{
+void Shape::Draw(const int &XOffset, const int &YOffset, const Uint8 &r, const Uint8 &g, const Uint8 &b, const Uint8 &a) {
 	if (type == SHAPE_POLYGON)
 		poly.Draw(XOffset, YOffset, r, g, b, a);
 	else

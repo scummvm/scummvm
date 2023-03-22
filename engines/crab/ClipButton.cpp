@@ -5,14 +5,12 @@
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void ClipButton :: Load(rapidxml::xml_node<char> * node, const bool &echo)
-{
+void ClipButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	Button::Load(node, echo);
 
-	if(NodeValid("clip", node, false))
+	if (NodeValid("clip", node, false))
 		clip.Load(node->first_node("clip"));
-	else
-	{
+	else {
 		clip.x = 0;
 		clip.y = 0;
 		clip.w = gImageManager.GetTexture(img.normal).W();
@@ -20,7 +18,6 @@ void ClipButton :: Load(rapidxml::xml_node<char> * node, const bool &echo)
 	}
 }
 
-void ClipButton :: Draw(const int &XOffset, const int &YOffset)
-{
+void ClipButton::Draw(const int &XOffset, const int &YOffset) {
 	Button::Draw(XOffset, YOffset, &clip);
 }

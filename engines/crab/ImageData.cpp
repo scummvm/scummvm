@@ -1,11 +1,10 @@
-#include "stdafx.h"
 #include "ImageData.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
-void ImageData::Load(rapidxml::xml_node<char> *node, const bool &echo)
-{
+void ImageData::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	LoadImgKey(key, "img", node, echo);
 	LoadBool(crop, "crop", node, false);
 
@@ -15,8 +14,7 @@ void ImageData::Load(rapidxml::xml_node<char> *node, const bool &echo)
 	Element::Load(node, key, echo);
 }
 
-void ImageData::Draw(const int &XOffset, const int &YOffset)
-{
+void ImageData::Draw(const int &XOffset, const int &YOffset) {
 	if (crop)
 		gImageManager.Draw(x + XOffset, y + YOffset, key, &clip);
 	else

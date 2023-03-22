@@ -1,23 +1,20 @@
 #pragma once
-#include "common_header.h"
 #include "button.h"
+#include "common_header.h"
 
-namespace pyrodactyl
-{
-	namespace ui
-	{
-		//Sometimes we need to display a clipped version of the button image
-		class ClipButton : public Button
-		{
-		public:
-			//The clip rectangle
-			Rect clip;
+namespace pyrodactyl {
+namespace ui {
+// Sometimes we need to display a clipped version of the button image
+class ClipButton : public Button {
+public:
+	// The clip rectangle
+	Rect clip;
 
-			ClipButton(){}
-			~ClipButton(){}
+	ClipButton() {}
+	~ClipButton() {}
 
-			void Load(rapidxml::xml_node<char> * node, const bool &echo = true);
-			void Draw(const int &XOffset = 0, const int &YOffset = 0);
-		};
-	}
-}
+	void Load(rapidxml::xml_node<char> *node, const bool &echo = true);
+	void Draw(const int &XOffset = 0, const int &YOffset = 0);
+};
+} // End of namespace ui
+} // End of namespace pyrodactyl

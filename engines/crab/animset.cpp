@@ -1,16 +1,13 @@
-#include "stdafx.h"
 #include "animset.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::anim;
 
-void AnimSet::Load(const std::string &filename)
-{
+void AnimSet::Load(const std::string &filename) {
 	XMLDoc conf(filename);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node();
-		if (NodeValid(node))
-		{
+		if (NodeValid(node)) {
 			fight.Load(node);
 			walk.Load(node);
 
@@ -26,8 +23,7 @@ void AnimSet::Load(const std::string &filename)
 	}
 }
 
-TextureFlipType AnimSet::Flip(const Direction &dir)
-{
+TextureFlipType AnimSet::Flip(const Direction &dir) {
 	TextureFlipType ret;
 	if (fight.Flip(ret, dir))
 		return ret;
@@ -35,16 +31,14 @@ TextureFlipType AnimSet::Flip(const Direction &dir)
 	return walk.Flip(dir);
 }
 
-const ShadowOffset& AnimSet::Shadow(const Direction &dir)
-{
+const ShadowOffset &AnimSet::Shadow(const Direction &dir) {
 	if (fight.ValidMove())
 		return fight.Shadow(dir);
 
 	return walk.Shadow(dir);
 }
 
-const int AnimSet::AnchorX(const Direction &dir)
-{
+const int AnimSet::AnchorX(const Direction &dir) {
 	FightAnimFrame faf;
 	if (fight.CurFrame(faf, dir))
 		return faf.anchor.x;
@@ -52,8 +46,7 @@ const int AnimSet::AnchorX(const Direction &dir)
 	return walk.AnchorX(dir);
 }
 
-const int AnimSet::AnchorY(const Direction &dir)
-{
+const int AnimSet::AnchorY(const Direction &dir) {
 	FightAnimFrame faf;
 	if (fight.CurFrame(faf, dir))
 		return faf.anchor.y;

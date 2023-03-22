@@ -1,65 +1,62 @@
 #pragma once
 
-#include "common_header.h"
 #include "XMLDoc.h"
+#include "common_header.h"
 #include "loaders.h"
 
-//The index for all levels in the game
-struct LevelPath
-{
-	//The file paths
+// The index for all levels in the game
+struct LevelPath {
+	// The file paths
 	std::string layout, asset;
 
-	//The name of the level
+	// The name of the level
 	std::string name;
 
 	LevelPath() : layout(""), asset(""), name("") {}
 
-	void Load(rapidxml::xml_node<char> *node)
-	{
+	void Load(rapidxml::xml_node<char> *node) {
 		LoadStr(name, "name", node);
 		LoadStr(layout, "layout", node);
 		LoadStr(asset, "res", node);
 	}
 };
 
-//Stores all layout paths for the game
-struct FilePaths
-{
-	//Resources common to all levels and states
+// Stores all layout paths for the game
+struct FilePaths {
+	// Resources common to all levels and states
 	std::string common;
 
-	//Mod file location, current mod and their extension
+	// Mod file location, current mod and their extension
 	std::string mod_path, mod_ext, mod_cur;
 
-	//Main menu resources
+	// Main menu resources
 	std::string mainmenu_l, mainmenu_r;
 
-	//Sounds
+	// Sounds
 	std::string sound_effect, sound_music;
 
-	//Fonts and window icon file
+	// Fonts and window icon file
 	std::string font, icon;
 
-	//Save directory and extension
+	// Save directory and extension
 	std::string save_dir, save_ext;
 
-	//The location of the shader index file
+	// The location of the shader index file
 	std::string shaders;
 
-	//The location of the color index file
+	// The location of the color index file
 	std::string colors;
 
-	//The list of levels in the game
+	// The list of levels in the game
 	std::unordered_map<std::string, LevelPath> level;
 
-	//The file path of the current resource file
+	// The file path of the current resource file
 	std::string current_r;
 
-	//The application data path (where saves and settings are stored)
+	// The application data path (where saves and settings are stored)
 	std::string appdata;
 
-	//Has this been loaded?
+	// Has this been loaded?
 	bool loaded;
 
 	FilePaths();
@@ -67,15 +64,13 @@ struct FilePaths
 	void LoadLevel(const std::string &filename);
 };
 
-//Storage pool used for saving numbers as strings
-class StringPool
-{
-	//Store integer strings here
+// Storage pool used for saving numbers as strings
+class StringPool {
+	// Store integer strings here
 	std::unordered_map<int, std::string> pool_i;
 
-	//Store floating point strings here
-	struct FloatString
-	{
+	// Store floating point strings here
+	struct FloatString {
 		float val;
 		std::string str;
 
@@ -85,18 +80,19 @@ class StringPool
 	std::list<FloatString> pool_f;
 
 public:
-	StringPool() { pool_i.clear(); pool_f.clear(); }
+	StringPool() {
+		pool_i.clear();
+		pool_f.clear();
+	}
 
-	const char* Get(const int &num)
-	{
+	const char *Get(const int &num) {
 		if (pool_i.count(num) == 0)
 			pool_i[num] = NumberToString<int>(num);
 
 		return pool_i.at(num).c_str();
 	}
 
-	const char* FGet(const float &num)
-	{
+	const char *FGet(const float &num) {
 		for (auto &i : pool_f)
 			if (i.val == num)
 				return i.str.c_str();
@@ -111,9 +107,8 @@ public:
 	}
 };
 
-//Our source of random numbers
-class RandomNumberGen
-{
+// Our source of random numbers
+class RandomNumberGen {
 	std::random_device rd;
 	std::default_random_engine dre;
 
@@ -123,37 +118,39 @@ public:
 	int Num() { return dre(); }
 };
 
-struct TempValue
-{
-	//Differences between normal mode and iron man mode
-	//save button - iron man saves in existing file
-	//load button - hidden in iron man
-	//exit - saves and exits in iron man
-	//quick save and quick load - operate on the iron man file in iron man mode
+struct TempValue {
+	// Differences between normal mode and iron man mode
+	// save button - iron man saves in existing file
+	// load button - hidden in iron man
+	// exit - saves and exits in iron man
+	// quick save and quick load - operate on the iron man file in iron man mode
 	bool ironman;
 
-	//This is the filename a player chose when selecting "new game" + iron man mode
+	// This is the filename a player chose when selecting "new game" + iron man mode
 	std::string filename;
 
-	//We use this to see whether the player is exiting to main menu or to credits
+	// We use this to see whether the player is exiting to main menu or to credits
 	bool credits;
 
-	TempValue() : filename("No IronMan"){ ironman = false; credits = false; }
+	TempValue() : filename("No IronMan") {
+		ironman = false;
+		credits = false;
+	}
 };
 
-//Our global objects
+// Our global objects
 
-//Where we store some temporary data used in between GameState swapping
+// Where we store some temporary data used in between GameState swapping
 extern TempValue gTemp;
 
-//Whether to draw debug outlines on polygons
+// Whether to draw debug outlines on polygons
 extern bool GameDebug;
 
-//Paths of all files
+// Paths of all files
 extern FilePaths gFilePath;
 
-//Strings are stored here to avoid duplicates and invalid values when writing to XML
+// Strings are stored here to avoid duplicates and invalid values when writing to XML
 extern StringPool gStrPool;
 
-//Generate random numbers using this
+// Generate random numbers using this
 extern RandomNumberGen gRandom;
