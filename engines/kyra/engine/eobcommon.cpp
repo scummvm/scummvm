@@ -591,6 +591,11 @@ void EoBCoreEngine::loadFonts() {
 		_screen->setFontStyles(Screen::FID_8_FNT, Font::kStyleNone);
 		_invFont1 = _invFont2 = _conFont = Screen::FID_8_FNT;
 	}
+
+	if (_flags.lang == Common::ZH_TWN) {
+		_screen->loadFont(Screen::FID_CHINESE_FNT, "FONT8.FNT");
+		_conFont = Screen::FID_CHINESE_FNT;
+	}
 }
 
 Common::Error EoBCoreEngine::go() {
