@@ -442,6 +442,7 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 				case Common::EVENT_RETURN_TO_LAUNCHER:
 					break;
 
+				case Common::EVENT_LBUTTONDOWN:
 				case Common::EVENT_KEYDOWN:
 					bonusCounter = _bonus;
 					drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "BONUS", _bonus), 60, 116, 0, c);
@@ -592,6 +593,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 				case Common::EVENT_RETURN_TO_LAUNCHER:
 					break;
 
+				case Common::EVENT_LBUTTONDOWN:
 				case Common::EVENT_KEYDOWN:
 					if (showedBriefing) {
 						endedBriefing = true;
