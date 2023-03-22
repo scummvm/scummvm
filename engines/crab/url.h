@@ -28,8 +28,11 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_URL_H
+#define CRAB_URL_H
 
 #include <string>
 
 void OpenURL(const std::string &url_str);
+
+#endif // CRAB_URL_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MAINMENU_H
+#define CRAB_MAINMENU_H
 
 #include "AlphaImage.h"
 #include "CreditScreen.h"
@@ -131,3 +132,5 @@ public:
 	// We don't need to save game state here
 	void AutoSave() {}
 };
+
+#endif // CRAB_MAINMENU_H

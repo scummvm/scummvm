@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_HOTKEY_H
+#define CRAB_HOTKEY_H
 
 #include "common_header.h"
 #include "input.h"
@@ -57,3 +58,5 @@ public:
 };
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+#endif // CRAB_HOTKEY_H

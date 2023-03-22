@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TMXMAP_H
+#define CRAB_TMXMAP_H
 
 #include "ImageManager.h"
 #include "LevelExit.h"
@@ -127,3 +128,5 @@ public:
 	std::vector<pyrodactyl::level::Stairs> AreaStairs() { return area_stairs; }
 };
 } // End of namespace TMX
+
+#endif // CRAB_TMXMAP_H

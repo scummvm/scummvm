@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_STAIRS_H
+#define CRAB_STAIRS_H
 
 #include "Shape.h"
 #include "common_header.h"
@@ -47,3 +48,5 @@ public:
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+#endif // CRAB_STAIRS_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_RADIOBUTTON_H
+#define CRAB_RADIOBUTTON_H
 
 #include "ToggleButton.h"
 
@@ -49,3 +50,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_RADIOBUTTON_H

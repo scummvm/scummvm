@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_LEVEL_OBJECTS_H
+#define CRAB_LEVEL_OBJECTS_H
 
 #include "ImageManager.h"
 #include "common_header.h"
@@ -58,3 +59,5 @@ struct PlayerDestMarker {
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+#endif // CRAB_LEVEL_OBJECTS_H

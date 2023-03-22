@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_ITEMDESC_H
+#define CRAB_ITEMDESC_H
 
 #include "Item.h"
 #include "ParagraphData.h"
@@ -67,3 +68,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_ITEMDESC_H

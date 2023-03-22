@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_ANIMSET_H
+#define CRAB_ANIMSET_H
 
 #include "common_header.h"
 #include "fightmoves.h"
@@ -66,3 +67,5 @@ struct AnimSet {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_ANIMSET_H

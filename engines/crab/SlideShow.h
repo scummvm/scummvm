@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SLIDESHOW_H
+#define CRAB_SLIDESHOW_H
 
 #include "Image.h"
 #include "ImageData.h"
@@ -76,3 +77,5 @@ public:
 extern SlideShow gHelpScreen;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_SLIDESHOW_H

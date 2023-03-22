@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SHAPE_H
+#define CRAB_SHAPE_H
 
 #include "Polygon.h"
 #include "vectors.h"
@@ -77,3 +78,5 @@ public:
 	void Draw(const int &XOffset = 0, const int &YOffset = 0,
 			  const Uint8 &r = 0, const Uint8 &g = 0, const Uint8 &b = 0.0f, const Uint8 &a = 255);
 };
+
+#endif // CRAB_SHAPE_H

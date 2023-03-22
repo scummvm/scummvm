@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SPRITECONSTANT_H
+#define CRAB_SPRITECONSTANT_H
 
 #include "common_header.h"
 #include "vectors.h"
@@ -71,3 +72,5 @@ struct SpriteConstant {
 };
 } // End of namespace ai
 } // End of namespace pyrodactyl
+
+#endif // CRAB_SPRITECONSTANT_H

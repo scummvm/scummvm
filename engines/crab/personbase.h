@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PERSONBASE_H
+#define CRAB_PERSONBASE_H
 
 #include "Stat.h"
 #include "common_header.h"
@@ -61,3 +62,5 @@ PersonType StringToPersonType(const std::string &val);
 PersonState StringToPersonState(const std::string &val);
 } // End of namespace people
 } // End of namespace pyrodactyl
+
+#endif // CRAB_PERSONBASE_H

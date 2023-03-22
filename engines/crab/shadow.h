@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SHADOW_H
+#define CRAB_SHADOW_H
 
 #include "ImageManager.h"
 #include "common_header.h"
@@ -70,3 +71,5 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_SHADOW_H

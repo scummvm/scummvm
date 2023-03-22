@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MUSICPARAM_H
+#define CRAB_MUSICPARAM_H
 #include "common_header.h"
 
 #include "loaders.h"
@@ -71,3 +72,5 @@ struct MusicData {
 };
 } // End of namespace music
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MUSICPARAM_H

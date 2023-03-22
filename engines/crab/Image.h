@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_IMAGE_H
+#define CRAB_IMAGE_H
 
 #include "ScreenSettings.h"
 #include "common_header.h"
@@ -80,3 +81,5 @@ public:
 };
 } // End of namespace image
 } // End of namespace pyrodactyl
+
+#endif // CRAB_IMAGE_H

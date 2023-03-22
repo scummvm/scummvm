@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  Dialog box!
 //=============================================================================
-#pragma once
+#ifndef CRAB_DIALOGBOX_H
+#define CRAB_DIALOGBOX_H
 
 #include "GameEventInfo.h"
 #include "ParagraphData.h"
@@ -75,3 +76,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_DIALOGBOX_H

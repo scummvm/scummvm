@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SPRITEAI_H
+#define CRAB_SPRITEAI_H
 
 #include "common_header.h"
 #include "movement.h"
@@ -96,3 +97,5 @@ struct SpriteAIData {
 };
 } // End of namespace ai
 } // End of namespace pyrodactyl
+
+#endif // CRAB_SPRITEAI_H

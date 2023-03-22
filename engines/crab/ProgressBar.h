@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PROGRESSBAR_H
+#define CRAB_PROGRESSBAR_H
 
 #include "ClipButton.h"
 #include "common_header.h"
@@ -107,3 +108,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_PROGRESSBAR_H

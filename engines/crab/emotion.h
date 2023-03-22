@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_EMOTION_H
+#define CRAB_EMOTION_H
 
 #include "ImageManager.h"
 #include "common_header.h"
@@ -52,3 +53,5 @@ struct EmotionIndicator {
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_EMOTION_H

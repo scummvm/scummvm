@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MUSICMANAGER_H
+#define CRAB_MUSICMANAGER_H
 
 #include "GameParam.h"
 #include "common_header.h"
@@ -89,3 +90,5 @@ public:
 extern MusicManager gMusicManager;
 } // End of namespace music
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MUSICMANAGER_H

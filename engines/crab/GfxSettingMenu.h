@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GFXSETTINGMENU_H
+#define CRAB_GFXSETTINGMENU_H
 
 #include "ImageData.h"
 #include "ResolutionMenu.h"
@@ -67,3 +68,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_GFXSETTINGMENU_H

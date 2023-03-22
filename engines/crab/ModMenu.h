@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MODMENU_H
+#define CRAB_MODMENU_H
 
 #include "FileMenu.h"
 #include "common_header.h"
@@ -46,3 +47,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MODMENU_H

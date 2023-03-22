@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TRAIT_H
+#define CRAB_TRAIT_H
 
 #include "ImageManager.h"
 #include "common_header.h"
@@ -68,3 +69,5 @@ struct Trait {
 };
 } // End of namespace people
 } // End of namespace pyrodactyl
+
+#endif // CRAB_TRAIT_H

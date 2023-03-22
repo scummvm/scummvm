@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_FIGHTMOVE_H
+#define CRAB_FIGHTMOVE_H
 
 #include "common_header.h"
 #include "fightanim.h"
@@ -59,3 +60,5 @@ struct FightMove {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_FIGHTMOVE_H

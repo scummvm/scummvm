@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MAPDATA_H
+#define CRAB_MAPDATA_H
 
 #include "Rectangle.h"
 #include "common_header.h"
@@ -65,3 +66,5 @@ struct MapData {
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MAPDATA_H

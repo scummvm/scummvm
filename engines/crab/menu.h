@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  Menu class
 //=============================================================================
-#pragma once
+#ifndef CRAB_MENU_H
+#define CRAB_MENU_H
 
 #include "ImageManager.h"
 #include "button.h"
@@ -311,3 +312,5 @@ public:
 typedef Menu<Button> ButtonMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MENU_H

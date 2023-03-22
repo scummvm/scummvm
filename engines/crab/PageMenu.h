@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PAGEMENU_H
+#define CRAB_PAGEMENU_H
 
 #include "common_header.h"
 #include "menu.h"
@@ -230,3 +231,5 @@ public:
 typedef PageMenu<Button> PageButtonMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_PAGEMENU_H

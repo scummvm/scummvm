@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  The game state virtual class
 //=============================================================================
-#pragma once
+#ifndef CRAB_GAMESTATE_CONTAINER_H
+#define CRAB_GAMESTATE_CONTAINER_H
 
 #include "common_header.h"
 #include "gamestates.h"
@@ -49,3 +50,5 @@ public:
 	virtual void AutoSave() = 0;
 	virtual ~GameState(){};
 };
+
+#endif // CRAB_GAMESTATE_CONTAINER_H

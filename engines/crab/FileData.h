@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_FILEDATA_H
+#define CRAB_FILEDATA_H
 
 #include "XMLDoc.h"
 #include "common_header.h"
@@ -76,3 +77,5 @@ enum { DATA_AUTHOR,
 const int DATA_HOVER_TOTAL = 4;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_FILEDATA_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GAMEOVERMENU_H
+#define CRAB_GAMEOVERMENU_H
 
 #include "ImageData.h"
 #include "TextData.h"
@@ -67,3 +68,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_GAMEOVERMENU_H

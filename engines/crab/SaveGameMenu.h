@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SAVEGAMEMENU_H
+#define CRAB_SAVEGAMEMENU_H
 
 #include "FileMenu.h"
 #include "common_header.h"
@@ -68,3 +69,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_SAVEGAMEMENU_H

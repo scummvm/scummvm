@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PAUSEMENU_H
+#define CRAB_PAUSEMENU_H
 
 #include "FileMenu.h"
 #include "GameEventInfo.h"
@@ -99,3 +100,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_PAUSEMENU_H

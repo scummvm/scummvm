@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_FM_AI_DATA_H
+#define CRAB_FM_AI_DATA_H
 
 #include "common_header.h"
 #include "range.h"
@@ -74,3 +75,5 @@ struct FightMoveAIData {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_FM_AI_DATA_H

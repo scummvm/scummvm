@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_QUESTMENU_H
+#define CRAB_QUESTMENU_H
 
 #include "PageMenu.h"
 #include "QuestText.h"
@@ -93,3 +94,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_QUESTMENU_H

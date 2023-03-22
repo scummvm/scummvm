@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GAME_H
+#define CRAB_GAME_H
 
 #include "DevConsole.h"
 #include "GameClock.h"
@@ -136,3 +137,5 @@ public:
 
 	void SetUI();
 };
+
+#endif // CRAB_GAME_H

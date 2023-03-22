@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_STATDRAWHELPER_H
+#define CRAB_STATDRAWHELPER_H
 #include "common_header.h"
 
 #include "TextData.h"
@@ -69,3 +70,5 @@ public:
 };
 } // End of namespace stat
 } // End of namespace pyrodactyl
+
+#endif // CRAB_STATDRAWHELPER_H

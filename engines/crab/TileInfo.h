@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TILEINFO_H
+#define CRAB_TILEINFO_H
 #include "common_header.h"
 
 #include "loaders.h"
@@ -87,3 +88,5 @@ struct TileInfo {
 	}
 };
 } // End of namespace TMX
+
+#endif // CRAB_TILEINFO_H

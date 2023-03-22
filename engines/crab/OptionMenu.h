@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_OPTIONMENU_H
+#define CRAB_OPTIONMENU_H
 
 #include "GeneralSettingMenu.h"
 #include "GfxSettingMenu.h"
@@ -110,3 +111,5 @@ public:
 extern OptionMenu gOptionMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_OPTIONMENU_H

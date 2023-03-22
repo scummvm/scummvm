@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_STATPREVIEW_H
+#define CRAB_STATPREVIEW_H
 #include "common_header.h"
 
 #include "Item.h"
@@ -52,3 +53,5 @@ struct StatPreview {
 };
 } // End of namespace item
 } // End of namespace pyrodactyl
+
+#endif // CRAB_STATPREVIEW_H

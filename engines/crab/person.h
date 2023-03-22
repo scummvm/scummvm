@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PERSON_H
+#define CRAB_PERSON_H
 
 #include "ImageManager.h"
 #include "Stat.h"
@@ -87,3 +88,5 @@ struct Person {
 typedef std::unordered_map<std::string, Person> PersonMap;
 } // End of namespace people
 } // End of namespace pyrodactyl
+
+#endif // CRAB_PERSON_H

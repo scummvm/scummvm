@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_TEXTMANAGER_H
+#define CRAB_TEXTMANAGER_H
 
 #include "GameParam.h"
 #include "Image.h"
@@ -112,3 +113,5 @@ public:
 extern TextManager gTextManager;
 } // End of namespace text
 } // End of namespace pyrodactyl
+
+#endif // CRAB_TEXTMANAGER_H

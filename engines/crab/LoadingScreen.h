@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_LOADINGSCREEN_H
+#define CRAB_LOADINGSCREEN_H
 
 #include "Image.h"
 #include "common_header.h"
@@ -67,3 +68,5 @@ public:
 };
 
 extern LoadingScreen gLoadScreen;
+
+#endif // CRAB_LOADINGSCREEN_H

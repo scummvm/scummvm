@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_APP_H
+#define CRAB_APP_H
 
 #include "ImageManager.h"
 #include "MusicManager.h"
@@ -56,3 +57,5 @@ public:
 	bool Init();
 	void Run();
 };
+
+#endif // CRAB_APP_H

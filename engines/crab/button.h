@@ -32,7 +32,8 @@
 // Author:   Arvind
 // Purpose:  Button class
 //=============================================================================
-#pragma once
+#ifndef CRAB_BUTTON_H
+#define CRAB_BUTTON_H
 
 #include "Caption.h"
 #include "HoverInfo.h"
@@ -122,3 +123,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_BUTTON_H

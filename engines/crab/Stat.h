@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_STAT_H
+#define CRAB_STAT_H
 #include "common_header.h"
 
 #include "ImageManager.h"
@@ -71,3 +72,5 @@ StatType StringToStatType(const std::string &val);
 const char *StatTypeToString(const StatType &val);
 } // End of namespace stat
 } // End of namespace pyrodactyl
+
+#endif // CRAB_STAT_H

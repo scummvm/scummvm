@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GAMECLOCK_H
+#define CRAB_GAMECLOCK_H
 
 #include "common_header.h"
 #include "timer.h"
@@ -81,3 +82,5 @@ public:
 		return NumberToString(hours) + seperator + NumberToString(minutes) + seperator + NumberToString(seconds);
 	}
 };
+
+#endif // CRAB_GAMECLOCK_H

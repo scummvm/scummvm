@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_ANIMATIONFRAME_H
+#define CRAB_ANIMATIONFRAME_H
 
 #include "AnimationEffect.h"
 #include "HoverInfo.h"
@@ -71,3 +72,5 @@ struct AnimationFrame : public Vector2i {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_ANIMATIONFRAME_H

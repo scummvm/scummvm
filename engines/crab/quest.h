@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_QUEST_H
+#define CRAB_QUEST_H
 
 #include "common_header.h"
 #include "loaders.h"
@@ -59,3 +60,5 @@ struct Quest {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_QUEST_H

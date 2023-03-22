@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_SPRITE_H
+#define CRAB_SPRITE_H
 
 #include "ImageManager.h"
 #include "LevelExit.h"
@@ -236,3 +237,5 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_SPRITE_H

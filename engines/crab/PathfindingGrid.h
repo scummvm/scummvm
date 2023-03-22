@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PATHFINDINGGRID_H
+#define CRAB_PATHFINDINGGRID_H
 
 #include "PathfindingGraphNode.h"
 #include "common_header.h"
@@ -84,3 +85,5 @@ public:
 	// Can be used to find corners that shouldn't be cut.
 	std::vector<PathfindingGraphNode *> CornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2);
 };
+
+#endif // CRAB_PATHFINDINGGRID_H

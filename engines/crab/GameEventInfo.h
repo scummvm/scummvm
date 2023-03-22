@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GAMEEVENTINFO_H
+#define CRAB_GAMEEVENTINFO_H
 
 #include "Inventory.h"
 #include "StatTemplate.h"
@@ -203,3 +204,5 @@ public:
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_GAMEEVENTINFO_H

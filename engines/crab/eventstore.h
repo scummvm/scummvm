@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_EVENTSTORE_H
+#define CRAB_EVENTSTORE_H
 
 #include "StateButton.h"
 #include "animation.h"
@@ -83,3 +84,5 @@ struct GameEventStore {
 extern GameEventStore gEventStore;
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_EVENTSTORE_H

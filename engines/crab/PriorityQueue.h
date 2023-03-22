@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_PRIORITYQUEUE_H
+#define CRAB_PRIORITYQUEUE_H
 
 #include <algorithm>
 #include <deque>
@@ -141,3 +142,5 @@ void PriorityQueue<Node>::enumerate(std::vector<Node const *> &sorted) const {
 	sorted.resize(open.size());
 	std::copy(open.begin(), open.end(), sorted.begin());
 }
+
+#endif // CRAB_PRIORITYQUEUE_H

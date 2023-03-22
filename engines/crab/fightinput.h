@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_FIGHTINPUT_H
+#define CRAB_FIGHTINPUT_H
 
 #include "common_header.h"
 #include "input.h"
@@ -75,3 +76,5 @@ struct FightInput {
 };
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+#endif // CRAB_FIGHTINPUT_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_RECTANGLE_H
+#define CRAB_RECTANGLE_H
 
 #include "Line.h"
 #include "common_header.h"
@@ -80,3 +81,5 @@ public:
 	// Save to file
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name);
 };
+
+#endif // CRAB_RECTANGLE_H

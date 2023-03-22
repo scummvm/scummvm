@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_COMMON_HEADER_H
+#define CRAB_COMMON_HEADER_H
 
 #if 0
 #include <algorithm>
@@ -55,3 +56,5 @@
 
 #define RAPIDXML_NO_EXCEPTIONS
 #include "rapidxml/rapidxml.hpp"
+
+#endif // CRAB_COMMON_HEADER_H

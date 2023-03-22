@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GENERALSETTINGMENU_H
+#define CRAB_GENERALSETTINGMENU_H
 
 #include "RadioButtonMenu.h"
 #include "ToggleButton.h"
@@ -68,3 +69,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_GENERALSETTINGMENU_H

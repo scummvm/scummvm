@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GAMESTATES_H
+#define CRAB_GAMESTATES_H
 #include "common_header.h"
 
 //------------------------------------------------------------------------
@@ -43,3 +44,5 @@ enum GameStateID {
 	GAMESTATE_LOAD_GAME,
 	TOTAL_GAMESTATES // ALWAYS THE LAST VALUE
 };
+
+#endif // CRAB_GAMESTATES_H

@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_OPTIONSELECT_H
+#define CRAB_OPTIONSELECT_H
 #include "common_header.h"
 
 #include "TextData.h"
@@ -67,3 +68,5 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+#endif // CRAB_OPTIONSELECT_H

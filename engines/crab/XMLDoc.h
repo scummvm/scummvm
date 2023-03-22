@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_XMLDOC_H
+#define CRAB_XMLDOC_H
 
 #include "engines/crab/common_header.h"
 #include "engines/crab/filesystem.h"
@@ -59,3 +60,5 @@ public:
 };
 
 } // End of namespace Crab
+
+#endif // CRAB_XMLDOC_H

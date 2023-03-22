@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_MOVEEFFECT_H
+#define CRAB_MOVEEFFECT_H
 
 #include "common_header.h"
 #include "imageeffect.h"
@@ -64,3 +65,5 @@ struct FightMoveEffect {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+#endif // CRAB_MOVEEFFECT_H

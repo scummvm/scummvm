@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_EFFECT_H
+#define CRAB_EFFECT_H
 
 #include "GameEventInfo.h"
 #include "XMLDoc.h"
@@ -111,3 +112,5 @@ struct Effect {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_EFFECT_H

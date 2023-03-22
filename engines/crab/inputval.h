@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_INPUTVAL_H
+#define CRAB_INPUTVAL_H
 
 #include "GameParam.h"
 #include "XMLDoc.h"
@@ -101,3 +102,5 @@ public:
 };
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+#endif // CRAB_INPUTVAL_H

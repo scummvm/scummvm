@@ -28,7 +28,8 @@
  *
  */
 
-#pragma once
+#ifndef CRAB_GAMEEVENT_H
+#define CRAB_GAMEEVENT_H
 
 #include "ImageManager.h"
 #include "common_header.h"
@@ -89,3 +90,5 @@ struct GameEvent {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+#endif // CRAB_GAMEEVENT_H
