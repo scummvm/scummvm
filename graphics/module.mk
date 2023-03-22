@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	fonts/amigafont.o \
 	fonts/bdf.o \
 	fonts/consolefont.o \
+	fonts/dosfont.o \
 	fonts/freetype.o \
 	fonts/macfont.o \
 	fonts/newfont_big.o \
