@@ -1,40 +1,39 @@
 #pragma once
 #include "common_header.h"
 
-#include "button.h"
 #include "TextData.h"
+#include "button.h"
 
-namespace pyrodactyl
-{
-	namespace ui
+namespace pyrodactyl {
+namespace ui {
+class OptionSelect {
+	struct
 	{
-		class OptionSelect
-		{
-			struct
-			{
-				std::vector<std::string> text;
-				TextData data;
+		std::vector<std::string> text;
+		TextData data;
 
-				void Draw(const int &index)
-				{
-					if(index >= 0 && index < text.size())
-						data.Draw(text.at(index));
-				}
-			} option;
+		void Draw(const int &index) {
+			if (index >= 0 && index < text.size())
+				data.Draw(text.at(index));
+		}
+	} option;
 
-			Button prev, next;
-			bool usekeyboard;
+	Button prev, next;
+	bool usekeyboard;
 
-		public:
-			int cur;
+public:
+	int cur;
 
-			OptionSelect() { cur = 0; usekeyboard = false; }
-			void Load(rapidxml::xml_node<char> *node);
-
-			void Draw();
-			bool HandleEvents(const SDL_Event &Event);
-
-			void SetUI();
-		};
+	OptionSelect() {
+		cur = 0;
+		usekeyboard = false;
 	}
-}
+	void Load(rapidxml::xml_node<char> *node);
+
+	void Draw();
+	bool HandleEvents(const SDL_Event &Event);
+
+	void SetUI();
+};
+} // End of namespace ui
+} // End of namespace pyrodactyl

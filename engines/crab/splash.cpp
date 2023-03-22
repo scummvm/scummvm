@@ -9,9 +9,8 @@
 //------------------------------------------------------------------------
 // Purpose: Constructor
 //------------------------------------------------------------------------
-Splash::Splash()
-{
-	//Load the background
+Splash::Splash() {
+	// Load the background
 	background.Load("res/gfx/pyrodactyl.png");
 
 	SetUI();
@@ -22,27 +21,23 @@ Splash::Splash()
 //------------------------------------------------------------------------
 // Purpose: Destructor
 //------------------------------------------------------------------------
-Splash :: ~Splash()
-{
+Splash::~Splash() {
 	background.Delete();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Event/Input Independent InternalEvents
 //------------------------------------------------------------------------
-void Splash::InternalEvents(bool& ShouldChangeState, GameStateID& NewStateID)
-{
-	if (first_run == false)
-	{
+void Splash::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
+	if (first_run == false) {
 		gLoadScreen.Load();
 		pyrodactyl::image::gImageManager.Init();
 		pyrodactyl::text::gTextManager.Init();
 		load_complete = true;
 	}
 
-	//Have we loaded everything? If yes, time to exit
-	if (load_complete)
-	{
+	// Have we loaded everything? If yes, time to exit
+	if (load_complete) {
 		ShouldChangeState = true;
 		NewStateID = GAMESTATE_MAIN_MENU;
 		return;
@@ -52,8 +47,7 @@ void Splash::InternalEvents(bool& ShouldChangeState, GameStateID& NewStateID)
 //------------------------------------------------------------------------
 // Purpose: Drawing function
 //------------------------------------------------------------------------
-void Splash::Draw()
-{
+void Splash::Draw() {
 	background.Draw(x, y);
 	first_run = false;
 }
@@ -61,8 +55,7 @@ void Splash::Draw()
 //------------------------------------------------------------------------
 // Purpose: Reset UI position
 //------------------------------------------------------------------------
-void Splash::SetUI()
-{
+void Splash::SetUI() {
 	x = (gScreenSettings.cur.w - background.W()) / 2;
 	y = (gScreenSettings.cur.h - background.H()) / 2;
 }

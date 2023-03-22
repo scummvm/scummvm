@@ -1,17 +1,14 @@
-#include "stdafx.h"
 #include "KeyBindMenu.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::input;
 
-void KeyBindMenu::Load(rapidxml::xml_node<char> *node)
-{
-	if (NodeValid(node))
-	{
-		if (NodeValid("menu", node))
-		{
+void KeyBindMenu::Load(rapidxml::xml_node<char> *node) {
+	if (NodeValid(node)) {
+		if (NodeValid("menu", node)) {
 			rapidxml::xml_node<char> *menode = node->first_node("menu");
 
 			if (NodeValid("primary", menode))
@@ -36,7 +33,7 @@ void KeyBindMenu::Load(rapidxml::xml_node<char> *node)
 				desc.Load(menode->first_node("desc"));
 		}
 
-		//Initialize the menus
+		// Initialize the menus
 		InitMenu(CON_GAME);
 		InitMenu(CON_UI);
 
@@ -45,27 +42,30 @@ void KeyBindMenu::Load(rapidxml::xml_node<char> *node)
 	}
 }
 
-void KeyBindMenu::StartAndSize(const int &type, int &start, int &size)
-{
-	switch (type)
-	{
-	case CON_GAME: start = IG_START; size = IG_SIZE; break;
-	case CON_UI: start = IU_START; size = IU_SIZE; break;
-	default: break;
+void KeyBindMenu::StartAndSize(const int &type, int &start, int &size) {
+	switch (type) {
+	case CON_GAME:
+		start = IG_START;
+		size = IG_SIZE;
+		break;
+	case CON_UI:
+		start = IU_START;
+		size = IU_SIZE;
+		break;
+	default:
+		break;
 	}
 }
 
-void KeyBindMenu::InitMenu(const int &type)
-{
+void KeyBindMenu::InitMenu(const int &type) {
 	int start = 0, size = 0;
 	StartAndSize(type, start, size);
 
-	//Initialize the menu
+	// Initialize the menu
 	menu[type].element.resize(size * 2);
-	for (int i = 0; i < size * 2; i += 2)
-	{
-		int xoffset = inc.x*(i / 2) + divide.x*((i / 2) / dim.x);
-		int yoffset = inc.y* ((i / 2) % dim.x) + divide.y*((i / 2) / dim.x);
+	for (int i = 0; i < size * 2; i += 2) {
+		int xoffset = inc.x * (i / 2) + divide.x * ((i / 2) / dim.x);
+		int yoffset = inc.y * ((i / 2) % dim.x) + divide.y * ((i / 2) / dim.x);
 
 		menu[type].element.at(i).Init(prim, xoffset, yoffset);
 		menu[type].element.at(i).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].key);
@@ -75,13 +75,11 @@ void KeyBindMenu::InitMenu(const int &type)
 	}
 }
 
-void KeyBindMenu::DrawDesc(const int &type)
-{
+void KeyBindMenu::DrawDesc(const int &type) {
 	int start = 0, size = 0;
 	StartAndSize(type, start, size);
 
-	for (int i = 0; i < size; i++)
-	{
+	for (int i = 0; i < size; i++) {
 		int xoffset = inc.x * i + divide.x * (i / dim.x);
 		int yoffset = inc.y * (i % dim.x) + divide.y * (i / dim.x);
 
@@ -89,37 +87,31 @@ void KeyBindMenu::DrawDesc(const int &type)
 	}
 }
 
-void KeyBindMenu::Draw()
-{
+void KeyBindMenu::Draw() {
 	sel_controls.Draw();
 
 	menu[sel_controls.cur].Draw();
 	DrawDesc(sel_controls.cur);
 }
 
-void KeyBindMenu::SetCaption()
-{
+void KeyBindMenu::SetCaption() {
 	int start = 0, size = 0;
 	StartAndSize(sel_controls.cur, start, size);
 
-	for (int i = 0; i < size * 2; i += 2)
-	{
+	for (int i = 0; i < size * 2; i += 2) {
 		menu[sel_controls.cur].element.at(i).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].key);
 		menu[sel_controls.cur].element.at(i + 1).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].alt);
 	}
 }
 
-void KeyBindMenu::HandleEvents(const SDL_Event &Event)
-{
+void KeyBindMenu::HandleEvents(const SDL_Event &Event) {
 	if (sel_controls.HandleEvents(Event))
 		SetCaption();
 
-	switch (state)
-	{
+	switch (state) {
 	case STATE_NORMAL:
 		choice = menu[sel_controls.cur].HandleEvents(Event);
-		if (choice >= 0)
-		{
+		if (choice >= 0) {
 			prompt.Swap(menu[sel_controls.cur].element.at(choice).caption);
 			state = STATE_KEY;
 			break;
@@ -127,33 +119,28 @@ void KeyBindMenu::HandleEvents(const SDL_Event &Event)
 
 		break;
 	case STATE_KEY:
-		if (Event.type == SDL_KEYDOWN)
-		{
+		if (Event.type == SDL_KEYDOWN) {
 			SwapKey(Event.key.keysym.scancode);
 			SetCaption();
 			menu[sel_controls.cur].element.at(choice).caption.col = prompt.col_prev;
 			state = STATE_NORMAL;
 		}
 		break;
-	default:break;
+	default:
+		break;
 	}
 }
 
-void KeyBindMenu::SwapKey(const SDL_Scancode &find)
-{
+void KeyBindMenu::SwapKey(const SDL_Scancode &find) {
 	int start = 0, size = 0;
 	StartAndSize(sel_controls.cur, start, size);
 	int pos = start + (choice / 2);
 
-	for (int i = start; i < start + size; ++i)
-	{
-		if (gInput.iv[i].key == find)
-		{
+	for (int i = start; i < start + size; ++i) {
+		if (gInput.iv[i].key == find) {
 			gInput.iv[i].key = gInput.iv[pos].key;
 			break;
-		}
-		else if (gInput.iv[i].alt == find)
-		{
+		} else if (gInput.iv[i].alt == find) {
 			gInput.iv[i].alt = gInput.iv[pos].key;
 			break;
 		}
@@ -165,12 +152,11 @@ void KeyBindMenu::SwapKey(const SDL_Scancode &find)
 		gInput.iv[pos].alt = find;
 }
 
-void KeyBindMenu::SetUI()
-{
+void KeyBindMenu::SetUI() {
 	menu[CON_GAME].Clear();
 	menu[CON_UI].Clear();
 
-	//Initialize the menus
+	// Initialize the menus
 	prim.SetUI();
 	alt.SetUI();
 	InitMenu(CON_GAME);

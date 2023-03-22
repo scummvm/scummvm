@@ -21,26 +21,21 @@
 
 #include "common/translation.h"
 
-#include "crab/metaengine.h"
-#include "crab/detection.h"
 #include "crab/crab.h"
+#include "crab/detection.h"
+#include "crab/metaengine.h"
 
 namespace Crab {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"original_menus",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+	{GAMEOPTION_ORIGINAL_SAVELOAD,
+	 {_s("Use original save/load screens"),
+	  _s("Use the original save/load screens instead of the ScummVM ones"),
+	  "original_menus",
+	  false,
+	  0,
+	  0}},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 } // End of namespace Crab
 
@@ -59,7 +54,7 @@ Common::Error CrabMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 
 bool CrabMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
-		(f == kSupportsLoadingDuringStartup);
+		   (f == kSupportsLoadingDuringStartup);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CRAB)

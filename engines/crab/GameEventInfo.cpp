@@ -1,17 +1,14 @@
-#include "stdafx.h"
 #include "GameEventInfo.h"
 #include "eventstore.h"
+#include "stdafx.h"
 
-namespace pyrodactyl
-{
-	namespace event
-	{
-		bool IsChar(char c)
-		{
-			return !isdigit(c);
-		}
-	}
+namespace pyrodactyl {
+namespace event {
+bool IsChar(char c) {
+	return !isdigit(c);
 }
+} // End of namespace event
+} // End of namespace pyrodactyl
 
 using namespace pyrodactyl::people;
 using namespace pyrodactyl::event;
@@ -19,20 +16,16 @@ using namespace pyrodactyl::event;
 //------------------------------------------------------------------------
 // Purpose: Load from xml
 //------------------------------------------------------------------------
-void Info::Load(rapidxml::xml_node<char> *node)
-{
-	if (NodeValid("people", node))
-	{
+void Info::Load(rapidxml::xml_node<char> *node) {
+	if (NodeValid("people", node)) {
 		rapidxml::xml_node<char> *pnode = node->first_node("people");
 
 		stem.Load(pnode->first_attribute("templates")->value());
 
 		XMLDoc conf(pnode->first_attribute("list")->value());
-		if (conf.ready())
-		{
+		if (conf.ready()) {
 			rapidxml::xml_node<char> *cnode = conf.Doc()->first_node("characters");
-			if (NodeValid(cnode))
-			{
+			if (NodeValid(cnode)) {
 				LoadNum(OPINION_MIN, "op_min", cnode);
 				LoadNum(OPINION_MAX, "op_max", cnode);
 
@@ -45,8 +38,7 @@ void Info::Load(rapidxml::xml_node<char> *node)
 	if (NodeValid("objective", node))
 		journal.Load(node->first_node("objective")->first_attribute("layout")->value());
 
-	if (NodeValid("inventory", node))
-	{
+	if (NodeValid("inventory", node)) {
 		rapidxml::xml_node<char> *inode = node->first_node("inventory");
 		inv.Load(inode->first_attribute("layout")->value());
 	}
@@ -55,16 +47,12 @@ void Info::Load(rapidxml::xml_node<char> *node)
 	inv.ItemFile(node->first_node("item")->first_attribute("list")->value());
 }
 
-void Info::LoadPeople(const std::string &filename)
-{
+void Info::LoadPeople(const std::string &filename) {
 	XMLDoc conf(filename);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("people");
-		if (NodeValid(node))
-		{
-			for (auto n = node->first_node(); n != NULL; n = n->next_sibling())
-			{
+		if (NodeValid(node)) {
+			for (auto n = node->first_node(); n != NULL; n = n->next_sibling()) {
 				std::string str;
 				LoadStr(str, "id", n);
 				people[str].Load(n, stem);
@@ -76,14 +64,12 @@ void Info::LoadPeople(const std::string &filename)
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object type
 //------------------------------------------------------------------------
-void Info::Type(const std::string &id, const PersonType &val)
-{
+void Info::Type(const std::string &id, const PersonType &val) {
 	if (people.count(id) > 0)
 		people.at(id).type = val;
 }
 
-PersonType Info::Type(const std::string &id)
-{
+PersonType Info::Type(const std::string &id) {
 	if (people.count(id) > 0)
 		return people.at(id).type;
 
@@ -93,14 +79,12 @@ PersonType Info::Type(const std::string &id)
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object state
 //------------------------------------------------------------------------
-void Info::State(const std::string &id, const PersonState &val)
-{
+void Info::State(const std::string &id, const PersonState &val) {
 	if (people.count(id) > 0)
 		people.at(id).state = val;
 }
 
-PersonState Info::State(const std::string &id)
-{
+PersonState Info::State(const std::string &id) {
 	if (people.count(id) > 0)
 		return people.at(id).state;
 
@@ -110,8 +94,7 @@ PersonState Info::State(const std::string &id)
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about variables
 //------------------------------------------------------------------------
-bool Info::VarGet(const std::string &name, int &val)
-{
+bool Info::VarGet(const std::string &name, int &val) {
 	if (var.count(name) == 0)
 		return false;
 	else
@@ -119,8 +102,7 @@ bool Info::VarGet(const std::string &name, int &val)
 	return true;
 }
 
-void Info::VarSet(const std::string &name, const std::string &val)
-{
+void Info::VarSet(const std::string &name, const std::string &val) {
 	int var_val = 0;
 	bool assign_to_var = std::find_if(val.begin(), val.end(), IsChar) != val.end();
 
@@ -132,53 +114,47 @@ void Info::VarSet(const std::string &name, const std::string &val)
 	var[name] = var_val;
 }
 
-void Info::VarAdd(const std::string &name, const int &val)
-{
+void Info::VarAdd(const std::string &name, const int &val) {
 	if (var.count(name) == 0)
 		VarSet(name, 0);
 
 	var.at(name) += val;
 }
 
-void Info::VarSub(const std::string &name, const int &val)
-{
+void Info::VarSub(const std::string &name, const int &val) {
 	if (var.count(name) == 0)
 		VarSet(name, 0);
 
 	var.at(name) -= val;
 }
 
-void Info::VarMul(const std::string &name, const int &val)
-{
+void Info::VarMul(const std::string &name, const int &val) {
 	if (var.count(name) == 0)
 		VarSet(name, 0);
 
 	var.at(name) *= val;
 }
 
-void Info::VarDiv(const std::string &name, const int &val)
-{
+void Info::VarDiv(const std::string &name, const int &val) {
 	if (var.count(name) == 0)
 		VarSet(name, 0);
 
 	var.at(name) /= val;
 }
 
-void Info::VarDel(const std::string &name)
-{
+void Info::VarDel(const std::string &name) {
 	var.erase(name);
 }
 
 //------------------------------------------------------------------------
 // Purpose: Get/Set person traits
 //------------------------------------------------------------------------
-void Info::TraitAdd(const std::string &per_id, const int &trait_id)
-{
-	if (PersonValid(per_id)) //Valid person id
+void Info::TraitAdd(const std::string &per_id, const int &trait_id) {
+	if (PersonValid(per_id)) // Valid person id
 	{
-		if (trait_id >= 0 && trait_id < gEventStore.trait.size()) //Valid trait id
+		if (trait_id >= 0 && trait_id < gEventStore.trait.size()) // Valid trait id
 		{
-			//Check for duplicate traits, DONT award anything if duplicate found
+			// Check for duplicate traits, DONT award anything if duplicate found
 			Person *p = &PersonGet(per_id);
 
 			for (auto i = p->trait.begin(); i != p->trait.end(); ++i)
@@ -192,18 +168,15 @@ void Info::TraitAdd(const std::string &per_id, const int &trait_id)
 	}
 }
 
-void Info::TraitDel(const std::string &per_id, const int &trait_id)
-{
-	if (PersonValid(per_id)) //Valid person id
+void Info::TraitDel(const std::string &per_id, const int &trait_id) {
+	if (PersonValid(per_id)) // Valid person id
 	{
-		if (trait_id > 0 && trait_id < gEventStore.trait.size()) //Valid trait id
+		if (trait_id > 0 && trait_id < gEventStore.trait.size()) // Valid trait id
 		{
 			Person *p = &PersonGet(per_id);
 
-			for (auto j = p->trait.begin(); j != p->trait.end(); ++j)
-			{
-				if (j->id == trait_id)
-				{
+			for (auto j = p->trait.begin(); j != p->trait.end(); ++j) {
+				if (j->id == trait_id) {
 					p->trait.erase(j);
 					break;
 				}
@@ -215,8 +188,7 @@ void Info::TraitDel(const std::string &per_id, const int &trait_id)
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object opinion
 //------------------------------------------------------------------------
-bool Info::OpinionGet(const std::string &name, const pyrodactyl::people::OpinionType &type, int &val)
-{
+bool Info::OpinionGet(const std::string &name, const pyrodactyl::people::OpinionType &type, int &val) {
 	if (people.count(name) == 0)
 		return false;
 
@@ -224,14 +196,12 @@ bool Info::OpinionGet(const std::string &name, const pyrodactyl::people::Opinion
 	return true;
 }
 
-void Info::OpinionChange(const std::string &name, const pyrodactyl::people::OpinionType &type, int val)
-{
+void Info::OpinionChange(const std::string &name, const pyrodactyl::people::OpinionType &type, int val) {
 	if (people.count(name) > 0)
 		people.at(name).opinion.Change(type, val);
 }
 
-void Info::OpinionSet(const std::string &name, const pyrodactyl::people::OpinionType &type, int val)
-{
+void Info::OpinionSet(const std::string &name, const pyrodactyl::people::OpinionType &type, int val) {
 	if (people.count(name) > 0)
 		people.at(name).opinion.Set(type, val);
 }
@@ -239,8 +209,7 @@ void Info::OpinionSet(const std::string &name, const pyrodactyl::people::Opinion
 //------------------------------------------------------------------------
 // Purpose: Get/Set information about object stats
 //------------------------------------------------------------------------
-bool Info::StatGet(const std::string &name, const pyrodactyl::stat::StatType &type, int &num)
-{
+bool Info::StatGet(const std::string &name, const pyrodactyl::stat::StatType &type, int &num) {
 	if (people.count(name) == 0)
 		return false;
 
@@ -248,14 +217,12 @@ bool Info::StatGet(const std::string &name, const pyrodactyl::stat::StatType &ty
 	return true;
 }
 
-void Info::StatSet(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num)
-{
+void Info::StatSet(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num) {
 	if (people.count(name) > 0)
 		people.at(name).stat.Set(type, num);
 }
 
-void Info::StatChange(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num)
-{
+void Info::StatChange(const std::string &name, const pyrodactyl::stat::StatType &type, const int &num) {
 	if (people.count(name) > 0)
 		people.at(name).stat.Change(type, num);
 }
@@ -263,8 +230,7 @@ void Info::StatChange(const std::string &name, const pyrodactyl::stat::StatType 
 //------------------------------------------------------------------------
 // Purpose: Get person object
 //------------------------------------------------------------------------
-bool Info::PersonGet(const std::string &id, pyrodactyl::people::Person &p)
-{
+bool Info::PersonGet(const std::string &id, pyrodactyl::people::Person &p) {
 	if (people.count(id) == 0)
 		return false;
 
@@ -272,22 +238,18 @@ bool Info::PersonGet(const std::string &id, pyrodactyl::people::Person &p)
 	return true;
 }
 
-bool Info::PersonValid(const std::string &id)
-{
+bool Info::PersonValid(const std::string &id) {
 	return people.count(id) > 0;
 }
 
-pyrodactyl::people::Person& Info::PersonGet(const std::string &id)
-{
-	//Make sure to check PersonValid before doing this!
-	//Only use this to change parts of an object
+pyrodactyl::people::Person &Info::PersonGet(const std::string &id) {
+	// Make sure to check PersonValid before doing this!
+	// Only use this to change parts of an object
 	return people.at(id);
 }
 
-bool Info::CollideWithTrigger(const std::string &id, int rect_index)
-{
-	if (people.count(id) > 0)
-	{
+bool Info::CollideWithTrigger(const std::string &id, int rect_index) {
+	if (people.count(id) > 0) {
 		for (auto i = people.at(id).trig.begin(); i != people.at(id).trig.end(); ++i)
 			if (*i == rect_index)
 				return true;
@@ -299,29 +261,25 @@ bool Info::CollideWithTrigger(const std::string &id, int rect_index)
 //------------------------------------------------------------------------
 // Purpose: Replace all #values with their appropriate names in a string
 //------------------------------------------------------------------------
-void Info::InsertName(std::string &msg)
-{
-	//We scan the dialog for #id values, which we convert to actual NPC names
-	for (unsigned int i = 0; i < msg.size(); ++i)
-	{
-		//The # symbol indicates that the next string until an end character needs to be replaced by the name
-		if (msg.at(i) == '#')
-		{
-			//The position we want to start from, and the length of the substring
+void Info::InsertName(std::string &msg) {
+	// We scan the dialog for #id values, which we convert to actual NPC names
+	for (unsigned int i = 0; i < msg.size(); ++i) {
+		// The # symbol indicates that the next string until an end character needs to be replaced by the name
+		if (msg.at(i) == '#') {
+			// The position we want to start from, and the length of the substring
 			unsigned int start = i, end = i + 1, len = 0;
 
-			//First make sure # wasn't the end of the string
+			// First make sure # wasn't the end of the string
 			for (; end < msg.size(); ++end, ++len)
 				if (msg.at(end) == ',' || msg.at(end) == '.' || msg.at(end) == '!' || msg.at(end) == ' ' ||
 					msg.at(end) == '?' || msg.at(end) == '-' || msg.at(end) == '\'' || msg.at(end) == '\"')
 					break;
 
-			if (end < msg.size())
-			{
-				//We use start+1 here because # isn't part of the id
+			if (end < msg.size()) {
+				// We use start+1 here because # isn't part of the id
 				std::string s = msg.substr(start + 1, len);
 
-				//We use length+1 here because otherwise it lets the last character stay in dialog
+				// We use length+1 here because otherwise it lets the last character stay in dialog
 				if (PersonValid(s))
 					msg.replace(start, len + 1, PersonGet(s).name);
 			}
@@ -329,8 +287,7 @@ void Info::InsertName(std::string &msg)
 	}
 }
 
-std::string Info::GetName(const std::string &id)
-{
+std::string Info::GetName(const std::string &id) {
 	if (PersonValid(id))
 		return PersonGet(id).name;
 
@@ -340,10 +297,8 @@ std::string Info::GetName(const std::string &id)
 //------------------------------------------------------------------------
 // Purpose: Save and load object state
 //------------------------------------------------------------------------
-void Info::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root)
-{
-	for (auto v = var.begin(); v != var.end(); ++v)
-	{
+void Info::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+	for (auto v = var.begin(); v != var.end(); ++v) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "var");
 		child->append_attribute(doc.allocate_attribute("id", v->first.c_str()));
 		child->append_attribute(doc.allocate_attribute("val", gStrPool.Get(v->second)));
@@ -374,20 +329,17 @@ void Info::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	inv.SaveState(doc, root);
 }
 
-void Info::LoadState(rapidxml::xml_node<char> *node)
-{
+void Info::LoadState(rapidxml::xml_node<char> *node) {
 	for (rapidxml::xml_node<char> *v = node->first_node("var"); v != NULL; v = v->next_sibling("var"))
 		var[v->first_attribute("id")->value()] = StringToNumber<int>(v->first_attribute("val")->value());
 
-	for (rapidxml::xml_node<char> *p = node->first_node("object"); p != NULL; p = p->next_sibling("object"))
-	{
+	for (rapidxml::xml_node<char> *p = node->first_node("object"); p != NULL; p = p->next_sibling("object")) {
 		std::string id;
 		LoadStr(id, "id", p);
 		people[id].LoadState(p);
 	}
 
-	if (NodeValid("unread", node))
-	{
+	if (NodeValid("unread", node)) {
 		rapidxml::xml_node<char> *unrnode = node->first_node("unread");
 		LoadBool(unread.inventory, "inventory", unrnode);
 		LoadBool(unread.journal, "journal", unrnode);
@@ -408,8 +360,7 @@ void Info::LoadState(rapidxml::xml_node<char> *node)
 //------------------------------------------------------------------------
 // Purpose: Calculate UI positions after change in screen size
 //------------------------------------------------------------------------
-void Info::SetUI()
-{
+void Info::SetUI() {
 	journal.SetUI();
 	inv.SetUI();
 }

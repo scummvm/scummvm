@@ -1,18 +1,16 @@
-#include "stdafx.h"
 #include "PersonHandler.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 
-void PersonHandler::Load(rapidxml::xml_node<char> *node)
-{
+void PersonHandler::Load(rapidxml::xml_node<char> *node) {
 	if (NodeValid("dialog", node))
 		dlbox.Load(node->first_node("dialog"));
 
-	if (NodeValid("opinion", node))
-	{
+	if (NodeValid("opinion", node)) {
 		rapidxml::xml_node<char> *opnode = node->first_node("opinion");
 
 		if (NodeValid("friendship", opnode))
@@ -25,8 +23,7 @@ void PersonHandler::Load(rapidxml::xml_node<char> *node)
 			opinion[OPI_FEAR].Load(opnode->first_node("fear"));
 	}
 
-	if (NodeValid("image", node))
-	{
+	if (NodeValid("image", node)) {
 		rapidxml::xml_node<char> *imgnode = node->first_node("image");
 		img.Load(imgnode);
 
@@ -42,53 +39,51 @@ void PersonHandler::Load(rapidxml::xml_node<char> *node)
 }
 
 void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const std::string &person_id,
-	const bool &player, pyrodactyl::anim::Sprite *s)
-{
-	//Draw the dialog box background
+						 const bool &player, pyrodactyl::anim::Sprite *s) {
+	// Draw the dialog box background
 	dlbox.Draw(player);
 
-	if (s != NULL)
-	{
+	if (s != NULL) {
 		Rect r = s->DialogClip(Event->state);
 		int x = img.x, y = img.y;
 
-		if (sprite_align.x == ALIGN_CENTER)     x -= r.w / 2;
-		else if (sprite_align.x == ALIGN_RIGHT) x -= r.w;
+		if (sprite_align.x == ALIGN_CENTER)
+			x -= r.w / 2;
+		else if (sprite_align.x == ALIGN_RIGHT)
+			x -= r.w;
 
-		if (sprite_align.y == ALIGN_CENTER)     y -= r.h / 2;
-		else if (sprite_align.y == ALIGN_RIGHT) y -= r.h;
+		if (sprite_align.y == ALIGN_CENTER)
+			y -= r.h / 2;
+		else if (sprite_align.y == ALIGN_RIGHT)
+			y -= r.h;
 
 		gImageManager.Draw(x, y, s->Img(), &r);
 	}
 
-	if (info.PersonValid(person_id))
-	{
+	if (info.PersonValid(person_id)) {
 		name.Draw(info.PersonGet(person_id).name);
 
-		if (!player)
-		{
+		if (!player) {
 			opinion[OPI_LIKE].Draw(info.PersonGet(person_id).opinion.val[OPI_LIKE], OPINION_MAX);
 			opinion[OPI_RESPECT].Draw(info.PersonGet(person_id).opinion.val[OPI_RESPECT], OPINION_MAX);
 			opinion[OPI_FEAR].Draw(info.PersonGet(person_id).opinion.val[OPI_FEAR], OPINION_MAX);
 		}
 	}
 
-	//Draw the journal button
+	// Draw the journal button
 	jb.Draw();
 
-	//Draw the dialog box text
+	// Draw the dialog box text
 	dlbox.Draw(info, Event->dialog);
 }
 
-bool PersonHandler::HandleCommonEvents(const SDL_Event &Event)
-{
+bool PersonHandler::HandleCommonEvents(const SDL_Event &Event) {
 	opinion[OPI_LIKE].HandleEvents(Event);
 	opinion[OPI_RESPECT].HandleEvents(Event);
 	opinion[OPI_FEAR].HandleEvents(Event);
 
-	if (jb.HandleEvents(Event) == BUAC_LCLICK)
-	{
-		//User wants to open their journal
+	if (jb.HandleEvents(Event) == BUAC_LCLICK) {
+		// User wants to open their journal
 		show_journal = true;
 		return true;
 	}
@@ -96,43 +91,37 @@ bool PersonHandler::HandleCommonEvents(const SDL_Event &Event)
 	return false;
 }
 
-bool PersonHandler::HandleDlboxEvents(const SDL_Event &Event)
-{
+bool PersonHandler::HandleDlboxEvents(const SDL_Event &Event) {
 	return dlbox.HandleEvents(Event);
 }
 
-void PersonHandler::InternalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s)
-{
+void PersonHandler::InternalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s) {
 	if (s != NULL)
 		s->DialogUpdateClip(state);
 }
 
-void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const std::string &id, const pyrodactyl::people::OpinionType &type, const int &val)
-{
-	if (info.PersonValid(id))
-	{
-		//First, get the value of the object's opinion
+void PersonHandler::OpinionChange(pyrodactyl::event::Info &info, const std::string &id, const pyrodactyl::people::OpinionType &type, const int &val) {
+	if (info.PersonValid(id)) {
+		// First, get the value of the object's opinion
 		int old = 0;
 		info.OpinionGet(id, type, old);
 
-		//Update the opinion value to the new one
+		// Update the opinion value to the new one
 		info.OpinionChange(id, type, val);
 
-		//Then get the current value of the object's opinion
+		// Then get the current value of the object's opinion
 		int value = 0;
 		info.OpinionGet(id, type, value);
 
-		//Now, send the new and old value of the object's opinion for drawing the change effect
+		// Now, send the new and old value of the object's opinion for drawing the change effect
 		opinion[type].Effect(value, old);
 
 		prev = id;
 	}
 }
 
-void PersonHandler::Reset(const std::string &id)
-{
-	if (prev != id)
-	{
+void PersonHandler::Reset(const std::string &id) {
+	if (prev != id) {
 		using namespace pyrodactyl::people;
 		opinion[OPI_LIKE].Reset();
 		opinion[OPI_RESPECT].Reset();
@@ -140,8 +129,7 @@ void PersonHandler::Reset(const std::string &id)
 	}
 }
 
-void PersonHandler::SetUI()
-{
+void PersonHandler::SetUI() {
 	img.SetUI();
 	name.SetUI();
 	dlbox.SetUI();

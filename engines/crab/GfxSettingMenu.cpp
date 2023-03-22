@@ -1,13 +1,12 @@
-#include "stdafx.h"
 #include "GfxSettingMenu.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 
 //------------------------------------------------------------------------
 // Purpose: Load components from file
 //------------------------------------------------------------------------
-void GfxSettingMenu::Load(rapidxml::xml_node<char> *node)
-{
+void GfxSettingMenu::Load(rapidxml::xml_node<char> *node) {
 	if (NodeValid("resolution", node))
 		resolution.Load(node->first_node("resolution"));
 
@@ -20,8 +19,7 @@ void GfxSettingMenu::Load(rapidxml::xml_node<char> *node)
 	if (NodeValid("border", node))
 		border.Load(node->first_node("border"));
 
-	if (NodeValid("quality", node))
-	{
+	if (NodeValid("quality", node)) {
 		rapidxml::xml_node<char> *qnode = node->first_node("quality");
 		quality.Load(qnode);
 
@@ -36,65 +34,56 @@ void GfxSettingMenu::Load(rapidxml::xml_node<char> *node)
 //------------------------------------------------------------------------
 // Purpose: Draw stuff
 //------------------------------------------------------------------------
-void GfxSettingMenu::Draw()
-{
-	//Window border doesn't matter if you are in fullscreen
+void GfxSettingMenu::Draw() {
+	// Window border doesn't matter if you are in fullscreen
 	if (!gScreenSettings.fullscreen)
 		border.Draw();
 
-	//Draw toggle buttons
+	// Draw toggle buttons
 	brightness.Draw();
 	fullscreen.Draw();
 	vsync.Draw();
 
-	//Quality and resolution can only be changed in the main menu
-	if (!gScreenSettings.in_game)
-	{
-		//Tree quality button
+	// Quality and resolution can only be changed in the main menu
+	if (!gScreenSettings.in_game) {
+		// Tree quality button
 		quality.Draw();
-	}
-	else
-		notice_quality.Draw();//Notice about quality settings
+	} else
+		notice_quality.Draw(); // Notice about quality settings
 
-	//Draw resolution menu
+	// Draw resolution menu
 	resolution.Draw();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Handle input
 //------------------------------------------------------------------------
-int GfxSettingMenu::HandleEvents(const SDL_Event &Event)
-{
-	if (fullscreen.HandleEvents(Event))
-	{
-		//Setting video flags is necessary when toggling fullscreen
+int GfxSettingMenu::HandleEvents(const SDL_Event &Event) {
+	if (fullscreen.HandleEvents(Event)) {
+		// Setting video flags is necessary when toggling fullscreen
 		gScreenSettings.fullscreen = !gScreenSettings.fullscreen;
 		gScreenSettings.SetFullscreen();
 	}
 
-	//Vsync doesn't need to set the change value
-	if (vsync.HandleEvents(Event))
-	{
+	// Vsync doesn't need to set the change value
+	if (vsync.HandleEvents(Event)) {
 		gScreenSettings.vsync = !gScreenSettings.vsync;
 		gScreenSettings.SetVsync();
 	}
 
-	//Quality and resolution can only be changed in the main menu
-	if (!gScreenSettings.in_game)
-	{
+	// Quality and resolution can only be changed in the main menu
+	if (!gScreenSettings.in_game) {
 		if (quality.HandleEvents(Event))
 			gScreenSettings.quality = !gScreenSettings.quality;
 	}
 
-	//Window border doesn't matter if you are in fullscreen
-	if (border.HandleEvents(Event) && !gScreenSettings.fullscreen)
-	{
+	// Window border doesn't matter if you are in fullscreen
+	if (border.HandleEvents(Event) && !gScreenSettings.fullscreen) {
 		gScreenSettings.border = !gScreenSettings.border;
 		gScreenSettings.SetWindowBorder();
 	}
 
-	if (brightness.HandleEvents(Event))
-	{
+	if (brightness.HandleEvents(Event)) {
 		gScreenSettings.gamma = static_cast<float>(brightness.Value()) / 100.0f;
 		gScreenSettings.SetGamma();
 	}
@@ -105,8 +94,7 @@ int GfxSettingMenu::HandleEvents(const SDL_Event &Event)
 //------------------------------------------------------------------------
 // Purpose: Keep button settings synced with our screen settings
 //------------------------------------------------------------------------
-void GfxSettingMenu::InternalEvents()
-{
+void GfxSettingMenu::InternalEvents() {
 	fullscreen.state = gScreenSettings.fullscreen;
 	vsync.state = gScreenSettings.vsync;
 	border.state = gScreenSettings.border;
@@ -116,8 +104,7 @@ void GfxSettingMenu::InternalEvents()
 //------------------------------------------------------------------------
 // Purpose: Rearrange UI when resolution changes
 //------------------------------------------------------------------------
-void GfxSettingMenu::SetUI()
-{
+void GfxSettingMenu::SetUI() {
 	resolution.SetUI();
 
 	fullscreen.SetUI();

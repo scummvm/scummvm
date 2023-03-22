@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "mainmenu.h"
+#include "stdafx.h"
 #include "url.h"
 
 using namespace pyrodactyl::music;
@@ -11,21 +11,17 @@ using namespace pyrodactyl::ui;
 //------------------------------------------------------------------------
 // Purpose: Constructor
 //------------------------------------------------------------------------
-MainMenu::MainMenu()
-{
+MainMenu::MainMenu() {
 	XMLDoc conf(gFilePath.mainmenu_l);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("main_menu");
-		if (NodeValid(node))
-		{
+		if (NodeValid(node)) {
 			me_main.Load(node->first_node("main"));
 			logo.Load(node->first_node("logo"));
 
 			back.Load(node->first_node("back"));
 
-			if (!gOptionMenu.loaded)
-			{
+			if (!gOptionMenu.loaded) {
 				gOptionMenu.Load(node->first_node("option")->first_attribute("path")->value());
 				gOptionMenu.loaded = true;
 			}
@@ -35,8 +31,7 @@ MainMenu::MainMenu()
 
 			{
 				XMLDoc loadconf(node->first_node("load")->first_attribute("path")->value());
-				if (loadconf.ready())
-				{
+				if (loadconf.ready()) {
 					rapidxml::xml_node<char> *loadnode = loadconf.Doc()->first_node("load_menu");
 					if (NodeValid(loadnode))
 						gLoadMenu.Load(loadnode);
@@ -45,23 +40,20 @@ MainMenu::MainMenu()
 
 			{
 				XMLDoc helpconf(node->first_node("help")->first_attribute("path")->value());
-				if (helpconf.ready())
-				{
+				if (helpconf.ready()) {
 					rapidxml::xml_node<char> *hnode = helpconf.Doc()->first_node("help");
 					if (NodeValid(hnode))
 						gHelpScreen.Load(hnode);
 				}
 			}
 
-			if (NodeValid("scene", node))
-			{
+			if (NodeValid("scene", node)) {
 				rapidxml::xml_node<char> *snode = node->first_node("scene");
 
 				if (NodeValid("bg", snode))
 					bg.Load(snode->first_node("bg"));
 
-				if (NodeValid("lights", snode))
-				{
+				if (NodeValid("lights", snode)) {
 					rapidxml::xml_node<char> *lnode = snode->first_node("lights");
 
 					for (rapidxml::xml_node<char> *n = lnode->first_node("img"); n != NULL; n = n->next_sibling("img"))
@@ -69,8 +61,7 @@ MainMenu::MainMenu()
 				}
 			}
 
-			if (NodeValid("difficulty", node))
-			{
+			if (NodeValid("difficulty", node)) {
 				rapidxml::xml_node<char> *dinode = node->first_node("difficulty");
 
 				if (NodeValid("bg", dinode))
@@ -83,8 +74,7 @@ MainMenu::MainMenu()
 					diff.heading.Load(dinode->first_node("heading"));
 			}
 
-			if (NodeValid("prompt", node))
-			{
+			if (NodeValid("prompt", node)) {
 				rapidxml::xml_node<char> *prnode = node->first_node("prompt");
 
 				save.Load(prnode);
@@ -102,15 +92,13 @@ MainMenu::MainMenu()
 					cancel.Load(prnode->first_node("cancel"));
 			}
 
-			if (NodeValid("music", node))
-			{
+			if (NodeValid("music", node)) {
 				LoadNum(music_key.normal, "normal", node->first_node("music"));
 				LoadNum(music_key.credits, "credits", node->first_node("music"));
 			}
 
 #ifdef UNREST_DEMO
-			if (NodeValid("demo", node))
-			{
+			if (NodeValid("demo", node)) {
 				rapidxml::xml_node<char> *denode = node->first_node("demo");
 
 				if (NodeValid("steam", denode))
@@ -134,59 +122,70 @@ MainMenu::MainMenu()
 //------------------------------------------------------------------------
 // Purpose: Event/input handling Events
 //------------------------------------------------------------------------
-void MainMenu::HandleEvents(SDL_Event& Event, bool& ShouldChangeState, GameStateID& NewStateID)
-{
+void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
 	gMouse.HandleEvents(Event);
 
-	if (state != STATE_CREDITS)
-	{
+	if (state != STATE_CREDITS) {
 		int choice = me_main.HandleEvents(Event);
-		if (choice >= 0)
-		{
+		if (choice >= 0) {
 			for (unsigned i = 0; i < me_main.element.size(); ++i)
 				me_main.element.at(i).State(i == choice);
 
-			switch (choice)
-			{
+			switch (choice) {
 			case 0:
-				if (gLoadMenu.SelectNewestFile())
-				{
+				if (gLoadMenu.SelectNewestFile()) {
 					ChangeState(STATE_NORMAL);
 					ShouldChangeState = true;
 					NewStateID = GAMESTATE_LOAD_GAME;
 				}
 				break;
-			case 1: ChangeState(STATE_DIFF); break;
-			case 2:	ChangeState(STATE_LOAD); gLoadMenu.ScanDir(); break;
-			case 3: ChangeState(STATE_OPTIONS); break;
-			case 4:	ChangeState(STATE_MOD); break;
-			case 5:	ChangeState(STATE_HELP); break;
-			case 6:	ChangeState(STATE_CREDITS); credits.Reset(); break;
-			case 7: ShouldChangeState = true; NewStateID = GAMESTATE_EXIT; break;
-			default:break;
+			case 1:
+				ChangeState(STATE_DIFF);
+				break;
+			case 2:
+				ChangeState(STATE_LOAD);
+				gLoadMenu.ScanDir();
+				break;
+			case 3:
+				ChangeState(STATE_OPTIONS);
+				break;
+			case 4:
+				ChangeState(STATE_MOD);
+				break;
+			case 5:
+				ChangeState(STATE_HELP);
+				break;
+			case 6:
+				ChangeState(STATE_CREDITS);
+				credits.Reset();
+				break;
+			case 7:
+				ShouldChangeState = true;
+				NewStateID = GAMESTATE_EXIT;
+				break;
+			default:
+				break;
 			}
 		}
 	}
 
-	if (gInput.Equals(IU_BACK, Event) == SDL_PRESSED || (back.HandleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS)))
-	{
-		if (state == STATE_SAVENAME) ChangeState(STATE_DIFF);
-		else if (state != STATE_NORMAL) ChangeState(STATE_NORMAL);
+	if (gInput.Equals(IU_BACK, Event) == SDL_PRESSED || (back.HandleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
+		if (state == STATE_SAVENAME)
+			ChangeState(STATE_DIFF);
+		else if (state != STATE_NORMAL)
+			ChangeState(STATE_NORMAL);
 	}
 
-	switch (state)
-	{
+	switch (state) {
 #ifdef UNREST_DEMO
 	case STATE_NORMAL:
-		if (steam.HandleEvents(Event) == BUAC_LCLICK)
-		{
-			//Open steam in browser window
+		if (steam.HandleEvents(Event) == BUAC_LCLICK) {
+			// Open steam in browser window
 			OpenURL("https://store.steampowered.com/app/292400/");
 		}
 
-		if (direct.HandleEvents(Event) == BUAC_LCLICK)
-		{
-			//Open humble widget in browser window
+		if (direct.HandleEvents(Event) == BUAC_LCLICK) {
+			// Open humble widget in browser window
 			OpenURL("https://www.humblebundle.com/store/unrest/Udg6Ytd8Dfw");
 		}
 		break;
@@ -202,8 +201,7 @@ void MainMenu::HandleEvents(SDL_Event& Event, bool& ShouldChangeState, GameState
 		break;
 
 	case STATE_LOAD:
-		if (gLoadMenu.HandleEvents(Event))
-		{
+		if (gLoadMenu.HandleEvents(Event)) {
 			ChangeState(STATE_NORMAL);
 			ShouldChangeState = true;
 			NewStateID = GAMESTATE_LOAD_GAME;
@@ -211,37 +209,29 @@ void MainMenu::HandleEvents(SDL_Event& Event, bool& ShouldChangeState, GameState
 		}
 		break;
 
-	case STATE_DIFF:
-	{
+	case STATE_DIFF: {
 		int choice = diff.menu.HandleEvents(Event);
 
-		//First menu option is Non-iron man, second is iron man
-		//For the second choice, we must display a prompt to choose the name of the save game
-		if (choice == 0)
-		{
+		// First menu option is Non-iron man, second is iron man
+		// For the second choice, we must display a prompt to choose the name of the save game
+		if (choice == 0) {
 			gTemp.ironman = false;
 			ShouldChangeState = true;
 			NewStateID = GAMESTATE_NEW_GAME;
-		}
-		else if (choice == 1)
+		} else if (choice == 1)
 			ChangeState(STATE_SAVENAME);
-	}
-		break;
+	} break;
 
 	case STATE_SAVENAME:
-		if (save.HandleEvents(Event) || accept.HandleEvents(Event))
-		{
-			if (save.text != "")
-			{
+		if (save.HandleEvents(Event) || accept.HandleEvents(Event)) {
+			if (save.text != "") {
 				gTemp.filename = save.text;
 				gTemp.ironman = true;
 				ShouldChangeState = true;
 				NewStateID = GAMESTATE_NEW_GAME;
-			}
-			else
+			} else
 				fprintf(stdout, "Please enter a valid filename for the iron man save.\n");
-		}
-		else if (cancel.HandleEvents(Event))
+		} else if (cancel.HandleEvents(Event))
 			ChangeState(STATE_DIFF);
 
 		break;
@@ -255,15 +245,15 @@ void MainMenu::HandleEvents(SDL_Event& Event, bool& ShouldChangeState, GameState
 		gHelpScreen.HandleEvents(Event);
 		break;
 
-	default:break;
+	default:
+		break;
 	}
 }
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
-void MainMenu::InternalEvents(bool& ShouldChangeState, GameStateID& NewStateID)
-{
-	//Make the lights flicker
+void MainMenu::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
+	// Make the lights flicker
 	for (auto &i : lights)
 		i.InternalEvents();
 
@@ -275,48 +265,43 @@ void MainMenu::InternalEvents(bool& ShouldChangeState, GameStateID& NewStateID)
 // Purpose: We need to toggle button visibility
 // and enable/disable keyboard for each state change
 //------------------------------------------------------------------------
-void MainMenu::ChangeState(MenuState ms, const bool &start)
-{
-	//Start = true means this is the first run, and no music is playing
-	//Just play the appropriate music
-	if (start)
-	{
+void MainMenu::ChangeState(MenuState ms, const bool &start) {
+	// Start = true means this is the first run, and no music is playing
+	// Just play the appropriate music
+	if (start) {
 		if (ms == STATE_CREDITS)
 			gMusicManager.PlayMusic(music_key.credits);
 		else
 			gMusicManager.PlayMusic(music_key.normal);
-	}
-	else
-	{
-		//This is not our first run, which means some music track is already playing
-		//Only change tracks when going from main menu->credits or credits->main menu
+	} else {
+		// This is not our first run, which means some music track is already playing
+		// Only change tracks when going from main menu->credits or credits->main menu
 		if (state == STATE_CREDITS && ms != STATE_CREDITS)
 			gMusicManager.PlayMusic(music_key.normal);
 		else if (state != STATE_CREDITS && ms == STATE_CREDITS)
 			gMusicManager.PlayMusic(music_key.credits);
 	}
 
-	//Set current state
+	// Set current state
 	state = ms;
 
-	//We are entering the normal state, i.e outside all menus - reset color of menu items
-	if (state == STATE_NORMAL)
-	{
+	// We are entering the normal state, i.e outside all menus - reset color of menu items
+	if (state == STATE_NORMAL) {
 		for (unsigned i = 0; i < me_main.element.size(); ++i)
 			me_main.element.at(i).State(false);
 	}
 
-	//Enable keyboard navigation if outside all menus, otherwise disable it
+	// Enable keyboard navigation if outside all menus, otherwise disable it
 	me_main.UseKeyboard((state == STATE_NORMAL));
 
-	//Continue button is only enabled if there is a save to load
+	// Continue button is only enabled if there is a save to load
 	me_main.element.at(0).visible = !gLoadMenu.Empty();
 
-	//Enable credits and quit button if outside all menus, otherwise disable it
+	// Enable credits and quit button if outside all menus, otherwise disable it
 	me_main.element.at(6).visible = (state == STATE_NORMAL);
 	me_main.element.at(7).visible = (state == STATE_NORMAL);
 
-	//If switching to help screen, load latest image otherwise remove it from memory
+	// If switching to help screen, load latest image otherwise remove it from memory
 	if (state == STATE_HELP)
 		gHelpScreen.Refresh();
 	else
@@ -326,22 +311,19 @@ void MainMenu::ChangeState(MenuState ms, const bool &start)
 //------------------------------------------------------------------------
 // Purpose: Drawing function
 //------------------------------------------------------------------------
-void MainMenu::Draw()
-{
+void MainMenu::Draw() {
 	bg.Draw();
 
 	for (auto &i : lights)
 		i.Draw();
 
-	switch (state)
-	{
+	switch (state) {
 	case STATE_NORMAL:
-		//Draw the logo
+		// Draw the logo
 		logo.Draw();
 
-		//Draw the game name and mod path if a mod is loaded
-		if (gFilePath.mod_cur != "res/default.xml")
-		{
+		// Draw the game name and mod path if a mod is loaded
+		if (gFilePath.mod_cur != "res/default.xml") {
 			gTextManager.Draw(gScreenSettings.cur.w / 2, gScreenSettings.cur.h / 2, "Unrest", 0, 0, ALIGN_CENTER);
 			gTextManager.Draw(gScreenSettings.cur.w / 2, gScreenSettings.cur.h / 2 + 50, gFilePath.mod_cur, 5, 1, ALIGN_CENTER);
 		}
@@ -399,14 +381,14 @@ void MainMenu::Draw()
 		me_main.Draw();
 		break;
 
-	default:break;
+	default:
+		break;
 	}
 
 	gMouse.Draw();
 }
 
-void MainMenu::SetUI()
-{
+void MainMenu::SetUI() {
 	me_main.SetUI();
 	logo.SetUI();
 

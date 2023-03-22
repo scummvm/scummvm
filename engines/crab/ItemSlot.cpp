@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "ItemSlot.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::item;
@@ -10,14 +10,12 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 // Purpose: Load
 //------------------------------------------------------------------------
-void ItemSlot::Load(rapidxml::xml_node<char> *node)
-{
+void ItemSlot::Load(rapidxml::xml_node<char> *node) {
 	StateButton::Load(node);
 
 	if (node->first_attribute("slot") == NULL)
 		no_type = true;
-	else
-	{
+	else {
 		LoadStr(item_type, "slot", node);
 		no_type = false;
 	}
@@ -32,8 +30,7 @@ void ItemSlot::Load(rapidxml::xml_node<char> *node)
 //------------------------------------------------------------------------
 // Purpose: Initialize from reference item slot
 //------------------------------------------------------------------------
-void ItemSlot::Init(const ItemSlot &ref, const int &XOffset, const int &YOffset)
-{
+void ItemSlot::Init(const ItemSlot &ref, const int &XOffset, const int &YOffset) {
 	StateButton::Init(ref, XOffset, YOffset);
 	canmove = ref.canmove;
 	no_type = ref.no_type;
@@ -44,8 +41,7 @@ void ItemSlot::Init(const ItemSlot &ref, const int &XOffset, const int &YOffset)
 //------------------------------------------------------------------------
 // Purpose: Save state to file
 //------------------------------------------------------------------------
-void ItemSlot::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root)
-{
+void ItemSlot::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	rapidxml::xml_node<char> *child;
 
 	if (category == SLOT_EQUIP)
@@ -62,8 +58,7 @@ void ItemSlot::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 //------------------------------------------------------------------------
 // Purpose: Load state from file
 //------------------------------------------------------------------------
-void ItemSlot::LoadState(rapidxml::xml_node<char> *node)
-{
+void ItemSlot::LoadState(rapidxml::xml_node<char> *node) {
 	item.Load(node);
 	LoadBool(unread, "unread", node);
 
@@ -76,8 +71,7 @@ void ItemSlot::LoadState(rapidxml::xml_node<char> *node)
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void ItemSlot::Draw()
-{
+void ItemSlot::Draw() {
 	StateButton::Draw();
 
 	if (!empty)
@@ -90,8 +84,7 @@ void ItemSlot::Draw()
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-ButtonAction ItemSlot::HandleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset)
-{
+ButtonAction ItemSlot::HandleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
 	ButtonAction ac = StateButton::HandleEvents(Event, XOffset, YOffset);
 	if (ac == BUAC_LCLICK || ac == BUAC_RCLICK)
 		unread = false;
@@ -103,10 +96,8 @@ ButtonAction ItemSlot::HandleEvents(const SDL_Event &Event, const int &XOffset, 
 // Purpose: Exchange items with another slot
 // this object is the current slot, parameter object is target slot
 //------------------------------------------------------------------------
-bool ItemSlot::Swap(ItemSlot &target)
-{
-	if (CanSwap(target))
-	{
+bool ItemSlot::Swap(ItemSlot &target) {
+	if (CanSwap(target)) {
 		Item temp = item;
 		item = target.item;
 		target.item = temp;
@@ -124,10 +115,8 @@ bool ItemSlot::Swap(ItemSlot &target)
 //------------------------------------------------------------------------
 // Purpose: Equip an item
 //------------------------------------------------------------------------
-bool ItemSlot::Equip(Item &i)
-{
-	if ((item_type == i.type || no_type) && empty)
-	{
+bool ItemSlot::Equip(Item &i) {
+	if ((item_type == i.type || no_type) && empty) {
 		item = i;
 		empty = false;
 		unread = true;
@@ -140,8 +129,7 @@ bool ItemSlot::Equip(Item &i)
 //------------------------------------------------------------------------
 // Purpose: Change stats based on item
 //------------------------------------------------------------------------
-void ItemSlot::StatChange(Person &obj, bool increase)
-{
+void ItemSlot::StatChange(Person &obj, bool increase) {
 	if (enabled)
 		item.StatChange(obj, increase);
 }

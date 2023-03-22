@@ -22,22 +22,18 @@
 namespace Crab {
 
 const PlainGameDescriptor crabGames[] = {
-	{ "crab", "Crab" },
-	{ 0, 0 }
-};
+	{"crab", "Crab"},
+	{0, 0}};
 
 const ADGameDescription gameDescriptions[] = {
-	{
-		"crab",
-		nullptr,
-		AD_ENTRY1s("file1.bin", "00000000000000000000000000000000", 11111),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
+	{"crab",
+	 nullptr,
+	 AD_ENTRY1s("file1.bin", "00000000000000000000000000000000", 11111),
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 ADGF_UNSTABLE,
+	 GUIO1(GUIO_NONE)},
 
-	AD_TABLE_END_MARKER
-};
+	AD_TABLE_END_MARKER};
 
 } // End of namespace Crab

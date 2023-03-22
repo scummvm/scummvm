@@ -1,10 +1,9 @@
-#include "stdafx.h"
 #include "moveeffect.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::anim;
 
-FightMoveEffect::FightMoveEffect()
-{
+FightMoveEffect::FightMoveEffect() {
 	activate = -1;
 	hit = -1;
 	dmg = 0;
@@ -13,8 +12,7 @@ FightMoveEffect::FightMoveEffect()
 	death = -1;
 }
 
-void FightMoveEffect::Load(rapidxml::xml_node<char> * node)
-{
+void FightMoveEffect::Load(rapidxml::xml_node<char> *node) {
 	LoadNum(stun, "stun", node);
 	LoadNum(dmg, "damage", node);
 	LoadNum(hurt, "hurt", node);
@@ -23,9 +21,8 @@ void FightMoveEffect::Load(rapidxml::xml_node<char> * node)
 	if (NodeValid("image", node, false))
 		img.Load(node->first_node("image"));
 
-	if (NodeValid("sound", node))
-	{
-		rapidxml::xml_node<char> * soundnode = node->first_node("sound");
+	if (NodeValid("sound", node)) {
+		rapidxml::xml_node<char> *soundnode = node->first_node("sound");
 
 		if (!LoadNum(activate, "activate", soundnode, false))
 			activate = -1;

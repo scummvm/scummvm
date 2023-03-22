@@ -1,27 +1,27 @@
 #pragma once
 
 #if 0
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <map>
-#include <deque>
 #include <algorithm>
-#include <fstream>
 #include <cmath>
 #include <ctime>
-#include <sstream>
-#include <random>
+#include <deque>
+#include <fstream>
 #include <limits.h>
+#include <map>
+#include <random>
+#include <sstream>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
 #endif
 
-#include "common/str.h"
 #include "common/path.h"
+#include "common/str.h"
 
 #define RAPIDXML_NO_EXCEPTIONS
 #include "rapidxml/rapidxml.hpp"

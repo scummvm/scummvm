@@ -5,13 +5,11 @@
 
 using namespace pyrodactyl::stat;
 
-void StatTemplates :: Load(const std::string &filename)
-{
+void StatTemplates::Load(const std::string &filename) {
 	XMLDoc conf(filename);
-	if(conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("templates");
-		for(auto n = node->first_node("stats"); n != NULL; n = n->next_sibling("stats"))
+		for (auto n = node->first_node("stats"); n != NULL; n = n->next_sibling("stats"))
 			collection.push_back(n);
 	}
 }

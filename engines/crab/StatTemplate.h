@@ -3,19 +3,16 @@
 
 #include "Stat.h"
 
-namespace pyrodactyl
-{
-	namespace stat
-	{
-		struct StatTemplates
-		{
-			std::vector<StatGroup> collection;
+namespace pyrodactyl {
+namespace stat {
+struct StatTemplates {
+	std::vector<StatGroup> collection;
 
-		public:
-			StatTemplates(void){}
-			~StatTemplates(void){}
+public:
+	StatTemplates(void) {}
+	~StatTemplates(void) {}
 
-			void Load(const std::string &filename);
-		};
-	}
-}
+	void Load(const std::string &filename);
+};
+} // End of namespace stat
+} // End of namespace pyrodactyl

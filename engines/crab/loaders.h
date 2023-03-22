@@ -1,23 +1,23 @@
 #pragma once
 
-#include "engines/crab/common_header.h"
-#include "engines/crab/numstr.h"
-#include "engines/crab/gametype.h"
 #include "engines/crab/XMLDoc.h"
+#include "engines/crab/common_header.h"
+#include "engines/crab/gametype.h"
+#include "engines/crab/numstr.h"
 
 namespace Crab {
 
-//Function to check if node is valid
-//return true for valid, false otherwise
+// Function to check if node is valid
+// return true for valid, false otherwise
 bool NodeValid(rapidxml::xml_node<char> *node, const bool &echo = true);
 bool NodeValid(const Common::String &name, rapidxml::xml_node<char> *parent_node, const bool &echo = true);
 
-//Functions to load attributes from xml files
-//return true on success, false on failure
+// Functions to load attributes from xml files
+// return true on success, false on failure
 bool LoadStr(Common::String &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo = true);
 
-//Used for loading numerical types
-template <typename T>
+// Used for loading numerical types
+template<typename T>
 bool LoadNum(T &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo = true) {
 	if (node->first_attribute(name.c_str()) != NULL)
 		val = StringToNumber<T>(node->first_attribute(name.c_str())->value());
@@ -33,8 +33,8 @@ bool LoadNum(T &val, const Common::String &name, rapidxml::xml_node<char> *node,
 	return true;
 }
 
-//Used for loading enumerator types that are integers
-template <typename T>
+// Used for loading enumerator types that are integers
+template<typename T>
 bool LoadEnum(T &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo = true) {
 	if (node->first_attribute(name.c_str()) != NULL)
 		val = static_cast<T>(StringToNumber<int>(node->first_attribute(name.c_str())->value()));
@@ -65,8 +65,8 @@ bool LoadColor(int &col, rapidxml::xml_node<char> *node, const bool &echo = true
 
 #endif
 
-//Load two dimensional coordinates
-template <typename T>
+// Load two dimensional coordinates
+template<typename T>
 bool LoadXY(T &x, T &y, rapidxml::xml_node<char> *node, const bool &echo = true) {
 	bool result = LoadNum(x, "x", node, echo);
 	result = LoadNum(y, "y", node, echo) && result;
@@ -74,8 +74,8 @@ bool LoadXY(T &x, T &y, rapidxml::xml_node<char> *node, const bool &echo = true)
 	return result;
 }
 
-//Load three dimensional coordinates
-template <typename T>
+// Load three dimensional coordinates
+template<typename T>
 bool LoadXYZ(T &x, T &y, T &z, rapidxml::xml_node<char> *node, const bool &echo = true) {
 	bool result = LoadNum(x, "x", node, echo);
 	result = LoadNum(y, "y", node, echo) && result;
@@ -84,13 +84,13 @@ bool LoadXYZ(T &x, T &y, T &z, rapidxml::xml_node<char> *node, const bool &echo 
 	return result;
 }
 
-//Load Boolean variable
+// Load Boolean variable
 bool LoadBool(bool &var, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo = true);
 
-//Write Boolean variable to file
+// Write Boolean variable to file
 void SaveBool(const bool &var, const char *name, rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);
 
-//Functions to load various type of objects
+// Functions to load various type of objects
 bool LoadStatType(pyrodactyl::stat::StatType &type, rapidxml::xml_node<char> *node, const bool &echo = true);
 
 bool LoadAlign(Align &align, rapidxml::xml_node<char> *node, const bool &echo = true, const Common::String &name = "align");
@@ -98,7 +98,7 @@ bool LoadDirection(Direction &dir, rapidxml::xml_node<char> *node, const bool &e
 
 bool LoadTextureFlipType(TextureFlipType &flip, rapidxml::xml_node<char> *node, const bool &echo = true);
 
-//Check the version of a file
+// Check the version of a file
 unsigned int Version(const Common::String &filename);
 
 } // End of namespace Crab

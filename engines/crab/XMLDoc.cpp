@@ -1,5 +1,5 @@
-#include "engines/crab/common_header.h"
 #include "engines/crab/XMLDoc.h"
+#include "engines/crab/common_header.h"
 
 namespace Crab {
 
@@ -14,7 +14,7 @@ void XMLDoc::Load(const Common::String &filename) {
 			doc.parse<0>(text);
 }
 
-const rapidxml::xml_document<>* XMLDoc::Doc() const {
+const rapidxml::xml_document<> *XMLDoc::Doc() const {
 	if (text != NULL)
 		return &doc;
 	else

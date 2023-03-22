@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "journal.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::ui;
@@ -7,14 +7,11 @@ using namespace pyrodactyl::ui;
 //------------------------------------------------------------------------
 // Purpose: Load game
 //------------------------------------------------------------------------
-void Journal::Load(const std::string &filename)
-{
+void Journal::Load(const std::string &filename) {
 	XMLDoc conf(filename);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("objectives");
-		if (NodeValid(node))
-		{
+		if (NodeValid(node)) {
 			if (NodeValid("bg", node))
 				bg.Load(node->first_node("bg"));
 
@@ -35,23 +32,19 @@ void Journal::Load(const std::string &filename)
 //------------------------------------------------------------------------
 // Purpose: Prepare a new character's journal
 //------------------------------------------------------------------------
-void Journal::Init(const std::string &id)
-{
+void Journal::Init(const std::string &id) {
 	int found = false;
 
 	for (auto &i : journal)
-		if (i.id == id)
-		{
+		if (i.id == id) {
 			found = true;
 			break;
 		}
 
-	if (!found)
-	{
+	if (!found) {
 		Group g;
 		g.id = id;
-		for (int i = 0; i < JE_TOTAL; ++i)
-		{
+		for (int i = 0; i < JE_TOTAL; ++i) {
 			g.menu[i] = ref;
 			g.menu[i].UseKeyboard(true);
 			g.menu[i].AssignPaths();
@@ -63,18 +56,16 @@ void Journal::Init(const std::string &id)
 //------------------------------------------------------------------------
 // Purpose: Select a category
 //------------------------------------------------------------------------
-void Journal::Select(const std::string &id, const int &choice)
-{
+void Journal::Select(const std::string &id, const int &choice) {
 	for (unsigned int i = 0; i < category.element.size(); ++i)
 		category.element.at(i).State(false);
 
 	category.element.at(choice).State(true);
 	select = choice;
 
-	//Always find valid journal group first
+	// Always find valid journal group first
 	for (auto &jo : journal)
-		if (jo.id == id)
-		{
+		if (jo.id == id) {
 			jo.menu[choice].unread = false;
 			break;
 		}
@@ -83,15 +74,13 @@ void Journal::Select(const std::string &id, const int &choice)
 //------------------------------------------------------------------------
 // Purpose: Draw stuff
 //------------------------------------------------------------------------
-void Journal::Draw(const std::string &id)
-{
+void Journal::Draw(const std::string &id) {
 	bg.Draw();
 	category.Draw();
 
-	//Always find valid journal group first
+	// Always find valid journal group first
 	for (auto &jo : journal)
-		if (jo.id == id)
-		{
+		if (jo.id == id) {
 			int count = 0;
 			for (auto i = category.element.begin(); i != category.element.end() && count < JE_TOTAL; ++i, ++count)
 				if (jo.menu[count].unread)
@@ -107,16 +96,14 @@ void Journal::Draw(const std::string &id)
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
-bool Journal::HandleEvents(const std::string &id, const SDL_Event &Event)
-{
+bool Journal::HandleEvents(const std::string &id, const SDL_Event &Event) {
 	int choice = category.HandleEvents(Event);
 	if (choice >= 0 && choice < category.element.size())
 		Select(id, choice);
 
-	//Check if select is valid
-	if (select >= 0 && select < JE_TOTAL)
-	{
-		//Always find valid journal group first
+	// Check if select is valid
+	if (select >= 0 && select < JE_TOTAL) {
+		// Always find valid journal group first
 		for (auto &jo : journal)
 			if (jo.id == id)
 				return jo.menu[select].HandleEvents(bu_map, marker_title, Event);
@@ -128,17 +115,21 @@ bool Journal::HandleEvents(const std::string &id, const SDL_Event &Event)
 //------------------------------------------------------------------------
 // Purpose: Add an entry to journal
 //------------------------------------------------------------------------
-void Journal::Add(const std::string &id, const std::string &Category, const std::string &Title, const std::string &Text)
-{
-	//Always find valid journal group first
+void Journal::Add(const std::string &id, const std::string &Category, const std::string &Title, const std::string &Text) {
+	// Always find valid journal group first
 	for (auto &jo : journal)
-		if (jo.id == id)
-		{
-			if (Category == JE_CUR_NAME)          { jo.menu[JE_CUR].Add(Title, Text); }
-			else if (Category == JE_DONE_NAME)    { jo.menu[JE_DONE].Add(Title, Text); }
-			else if (Category == JE_PEOPLE_NAME)  { jo.menu[JE_PEOPLE].Add(Title, Text); }
-			else if (Category == JE_LOCATION_NAME){ jo.menu[JE_LOCATION].Add(Title, Text); }
-			else if (Category == JE_HISTORY_NAME) { jo.menu[JE_HISTORY].Add(Title, Text); }
+		if (jo.id == id) {
+			if (Category == JE_CUR_NAME) {
+				jo.menu[JE_CUR].Add(Title, Text);
+			} else if (Category == JE_DONE_NAME) {
+				jo.menu[JE_DONE].Add(Title, Text);
+			} else if (Category == JE_PEOPLE_NAME) {
+				jo.menu[JE_PEOPLE].Add(Title, Text);
+			} else if (Category == JE_LOCATION_NAME) {
+				jo.menu[JE_LOCATION].Add(Title, Text);
+			} else if (Category == JE_HISTORY_NAME) {
+				jo.menu[JE_HISTORY].Add(Title, Text);
+			}
 
 			break;
 		}
@@ -147,12 +138,10 @@ void Journal::Add(const std::string &id, const std::string &Category, const std:
 //------------------------------------------------------------------------
 // Purpose: Set the marker of a quest
 //------------------------------------------------------------------------
-void Journal::Marker(const std::string &id, const std::string &Title, const bool &val)
-{
-	//Always find valid journal group first
+void Journal::Marker(const std::string &id, const std::string &Title, const bool &val) {
+	// Always find valid journal group first
 	for (auto &jo : journal)
-		if (jo.id == id)
-		{
+		if (jo.id == id) {
 			jo.menu[JE_CUR].Marker(Title, val);
 			break;
 		}
@@ -161,32 +150,26 @@ void Journal::Marker(const std::string &id, const std::string &Title, const bool
 //------------------------------------------------------------------------
 // Purpose: Move an entry from one category to another
 //------------------------------------------------------------------------
-void Journal::Move(const std::string &id, const std::string &Title, const bool &completed)
-{
+void Journal::Move(const std::string &id, const std::string &Title, const bool &completed) {
 	JournalCategory source, destination;
-	if (completed)
-	{
+	if (completed) {
 		source = JE_CUR;
 		destination = JE_DONE;
-	}
-	else
-	{
+	} else {
 		source = JE_DONE;
 		destination = JE_CUR;
 	}
 
-	//Always find valid journal group first
+	// Always find valid journal group first
 	for (auto &jo : journal)
-		if (jo.id == id)
-		{
-			//Find the quest chain in the source menu
+		if (jo.id == id) {
+			// Find the quest chain in the source menu
 			unsigned int index = 0;
 			for (auto i = jo.menu[source].quest.begin(); i != jo.menu[source].quest.end(); ++i, ++index)
 				if (i->title == Title)
 					break;
 
-			if (index < jo.menu[source].quest.size())
-			{
+			if (index < jo.menu[source].quest.size()) {
 				jo.menu[destination].Add(jo.menu[source].quest.at(index));
 				jo.menu[source].Erase(index);
 			}
@@ -198,25 +181,20 @@ void Journal::Move(const std::string &id, const std::string &Title, const bool &
 //------------------------------------------------------------------------
 // Purpose: Open a specific entry in the journal
 //------------------------------------------------------------------------
-void Journal::Open(const std::string &id, const JournalCategory &Category, const std::string &Title)
-{
-	//Always find valid journal group first
+void Journal::Open(const std::string &id, const JournalCategory &Category, const std::string &Title) {
+	// Always find valid journal group first
 	for (auto &jo : journal)
-		if (jo.id == id)
-		{
-			if (Category >= 0 && Category < category.element.size())
-			{
-				//If category passes the valid check, select it
+		if (jo.id == id) {
+			if (Category >= 0 && Category < category.element.size()) {
+				// If category passes the valid check, select it
 				Select(id, Category);
 
-				//Perform validity check on select, just in case
-				if (select > 0 && select < JE_TOTAL)
-				{
-					//Search for the title with same name
+				// Perform validity check on select, just in case
+				if (select > 0 && select < JE_TOTAL) {
+					// Search for the title with same name
 					for (unsigned int num = 0; num < jo.menu[select].quest.size(); ++num)
-						if (jo.menu[select].quest[num].title == Title)
-						{
-							//Found it, switch to this
+						if (jo.menu[select].quest[num].title == Title) {
+							// Found it, switch to this
 							jo.menu[select].Select(num);
 							break;
 						}
@@ -230,10 +208,8 @@ void Journal::Open(const std::string &id, const JournalCategory &Category, const
 //------------------------------------------------------------------------
 // Purpose: Load save game stuff
 //------------------------------------------------------------------------
-void Journal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root)
-{
-	for (auto &m : journal)
-	{
+void Journal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+	for (auto &m : journal) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "journal");
 		child->append_attribute(doc.allocate_attribute("id", m.id.c_str()));
 
@@ -246,18 +222,15 @@ void Journal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 	}
 }
 
-void Journal::LoadState(rapidxml::xml_node<char> *node)
-{
-	for (rapidxml::xml_node<char> *n = node->first_node("journal"); n != NULL; n = n->next_sibling("journal"))
-	{
+void Journal::LoadState(rapidxml::xml_node<char> *node) {
+	for (rapidxml::xml_node<char> *n = node->first_node("journal"); n != NULL; n = n->next_sibling("journal")) {
 		std::string id;
 		LoadStr(id, "id", n);
 
 		Init(id);
 
 		for (auto &i : journal)
-			if (i.id == id)
-			{
+			if (i.id == id) {
 				i.menu[JE_CUR].LoadState(n->first_node(JE_CUR_NAME));
 				i.menu[JE_DONE].LoadState(n->first_node(JE_DONE_NAME));
 				i.menu[JE_PEOPLE].LoadState(n->first_node(JE_PEOPLE_NAME));
@@ -270,8 +243,7 @@ void Journal::LoadState(rapidxml::xml_node<char> *node)
 //------------------------------------------------------------------------
 // Purpose: Adjust UI elements
 //------------------------------------------------------------------------
-void Journal::SetUI()
-{
+void Journal::SetUI() {
 	bg.SetUI();
 	category.SetUI();
 	ref.SetUI();

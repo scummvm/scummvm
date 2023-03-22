@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "level.h"
+#include "stdafx.h"
 
 using namespace TMX;
 using namespace pyrodactyl::stat;
@@ -12,66 +12,58 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Draw the level
 //------------------------------------------------------------------------
-void Level::Draw(pyrodactyl::event::Info &info)
-{
+void Level::Draw(pyrodactyl::event::Info &info) {
 	SetCamera();
 	SortObjectsToDraw();
 
-	//Background sprites are assumed to be sorted by their layer count
+	// Background sprites are assumed to be sorted by their layer count
 	auto b = background.begin();
 
 	unsigned int layer_count = 0u;
-	for (auto l = terrain.layer.begin(); l != terrain.layer.end(); ++l, ++layer_count)
-	{
-		//Draw the background sprites
-		for (; b != background.end(); ++b)
-		{
-			if (b->layer > layer_count) //We don't have any sprites to draw at this layer
+	for (auto l = terrain.layer.begin(); l != terrain.layer.end(); ++l, ++layer_count) {
+		// Draw the background sprites
+		for (; b != background.end(); ++b) {
+			if (b->layer > layer_count) // We don't have any sprites to draw at this layer
 				break;
 			else if (b->layer == layer_count && b->Visible())
 				b->Draw(info, camera);
 		}
 
-		//Draw the normal sprites if this is the layer for it
+		// Draw the normal sprites if this is the layer for it
 		if (layer_count == terrain.sprite_layer)
 			DrawObjects(info);
 
-		//Draw the terrain layer
+		// Draw the terrain layer
 		gImageManager.tileset.Draw(*l, camera, terrain.tile_size, objects[player_index].PosRect());
 	}
 
-	//Draw the background sprites
-	for (; b != background.end(); ++b)
-	{
-		if (b->layer > layer_count) //We don't have any sprites to draw at this layer
+	// Draw the background sprites
+	for (; b != background.end(); ++b) {
+		if (b->layer > layer_count) // We don't have any sprites to draw at this layer
 			break;
 		else if (b->layer >= layer_count && b->Visible())
 			b->Draw(info, camera);
 	}
 
-	//This is to ensure we don't miss out on drawing sprites
+	// This is to ensure we don't miss out on drawing sprites
 	if (layer_count <= terrain.sprite_layer)
 		DrawObjects(info);
 
-	//Fliers are drawn above every sprite but below popup text
-	for (auto &i : fly)
-	{
-		//Only draw if it is supposed to be flying
+	// Fliers are drawn above every sprite but below popup text
+	for (auto &i : fly) {
+		// Only draw if it is supposed to be flying
 		if (i.ai_data.walk.enabled)
 			i.Draw(info, camera);
 	}
 
-	//Draw popup text over all level layers
-	for (auto &i : objects)
-	{
-		//Only draw popups for visible sprites
-		if (i.Visible())
-		{
+	// Draw popup text over all level layers
+	for (auto &i : objects) {
+		// Only draw popups for visible sprites
+		if (i.Visible()) {
 			if (i.PopupShow())
 				i.DrawPopup(pop, camera);
-			else
-			{
-				//Only draw their name if they are
+			else {
+				// Only draw their name if they are
 				//(a) hovered over by the mouse, OR
 				//(b) are in talk range and don't have popup text over their head
 				if (i.hover || (info.LastPerson() == i.ID() && !i.PopupShow()))
@@ -87,52 +79,39 @@ void Level::Draw(pyrodactyl::event::Info &info)
 //------------------------------------------------------------------------
 // Purpose: Draw sprites and prop layers in sequences according to depth
 //------------------------------------------------------------------------
-void Level::DrawObjects(pyrodactyl::event::Info &info)
-{
-	//Draw player destination marker
+void Level::DrawObjects(pyrodactyl::event::Info &info) {
+	// Draw player destination marker
 	if (objects[player_index].ai_data.dest.active)
 		dest_marker.Draw(objects[player_index].ai_data.dest, camera);
 
-	if (terrain.prop.empty())
-	{
-		for (auto& entry : obj_seq)
-		{
+	if (terrain.prop.empty()) {
+		for (auto &entry : obj_seq) {
 			if (entry.second->Visible() && LayerVisible(entry.second))
 				entry.second->Draw(info, camera);
 		}
-	}
-	else
-	{
+	} else {
 		auto a = terrain.prop.begin();
 		auto b = obj_seq.begin();
 
-		while (a != terrain.prop.end() && b != obj_seq.end())
-		{
+		while (a != terrain.prop.end() && b != obj_seq.end()) {
 			auto obj = b->second;
-			if (a->pos.y + a->pos.h < obj->Y() + obj->H())
-			{
+			if (a->pos.y + a->pos.h < obj->Y() + obj->H()) {
 				gImageManager.tileset.Draw(*a, camera, terrain.tile_size, objects[player_index].PosRect());
 				++a;
-			}
-			else
-			{
+			} else {
 				if (obj->Visible() && LayerVisible(obj))
 					obj->Draw(info, camera);
 				++b;
 			}
 		}
 
-		if (a == terrain.prop.end())
-		{
-			for (; b != obj_seq.end(); ++b)
-			{
+		if (a == terrain.prop.end()) {
+			for (; b != obj_seq.end(); ++b) {
 				auto obj = b->second;
 				if (obj->Visible() && LayerVisible(obj))
 					obj->Draw(info, camera);
 			}
-		}
-		else if (b == obj_seq.end())
-		{
+		} else if (b == obj_seq.end()) {
 			for (; a != terrain.prop.end(); ++a)
 				gImageManager.tileset.Draw(*a, camera, terrain.tile_size, objects[player_index].PosRect());
 		}
@@ -142,34 +121,35 @@ void Level::DrawObjects(pyrodactyl::event::Info &info)
 //------------------------------------------------------------------------
 // Purpose: Sort objects to draw them according to their Y coordinates
 //------------------------------------------------------------------------
-bool Level :: operator() (int i, int j)
-{
+bool Level::operator()(int i, int j) {
 	return objects[i].Y() + objects[i].H() < objects[j].Y() + objects[j].H();
 }
 
-void Level::SortObjectsToDraw()
-{
-	//add each object to the map to sort it
+void Level::SortObjectsToDraw() {
+	// add each object to the map to sort it
 	obj_seq.clear();
-	for (auto& object : objects)
-		obj_seq.insert(std::pair<int, Sprite*>(object.Y() + object.H(), &object));
+	for (auto &object : objects)
+		obj_seq.insert(std::pair<int, Sprite *>(object.Y() + object.H(), &object));
 }
 
 //------------------------------------------------------------------------
 // Purpose: Center the camera on the player for scrolling levels
 //------------------------------------------------------------------------
-void Level::SetCamera()
-{
-	//Use the focus points of sprites
+void Level::SetCamera() {
+	// Use the focus points of sprites
 	Vector2i focus = objects[player_index].CamFocus();
 
-	//Center the camera over the player
+	// Center the camera over the player
 	camera.x = focus.x - (gScreenSettings.cur.w / 2);
 	camera.y = focus.y - (gScreenSettings.cur.h / 2);
 
-	//Keep the camera in bounds
-	if (camera.x > terrain.W() - camera.w) camera.x = terrain.W() - camera.w;
-	if (camera.y > terrain.H() - camera.h) camera.y = terrain.H() - camera.h;
-	if (camera.x < 0) camera.x = 0;
-	if (camera.y < 0) camera.y = 0;
+	// Keep the camera in bounds
+	if (camera.x > terrain.W() - camera.w)
+		camera.x = terrain.W() - camera.w;
+	if (camera.y > terrain.H() - camera.h)
+		camera.y = terrain.H() - camera.h;
+	if (camera.x < 0)
+		camera.x = 0;
+	if (camera.y < 0)
+		camera.y = 0;
 }

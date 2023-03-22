@@ -1,13 +1,11 @@
-#include "stdafx.h"
 #include "input.h"
+#include "stdafx.h"
 
-namespace pyrodactyl
-{
-	namespace input
-	{
-		InputManager gInput;
-	}
+namespace pyrodactyl {
+namespace input {
+InputManager gInput;
 }
+} // End of namespace pyrodactyl
 
 using namespace pyrodactyl::input;
 using namespace boost::filesystem;
@@ -15,18 +13,15 @@ using namespace boost::filesystem;
 //------------------------------------------------------------------------
 // Purpose: Return pressed/depressed state of key
 //------------------------------------------------------------------------
-const bool InputManager::State(const InputType &val)
-{
+const bool InputManager::State(const InputType &val) {
 	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 	if (keystate[iv[val].key] || keystate[iv[val].alt])
 		return true;
 
-	if (controller != nullptr)
-	{
+	if (controller != nullptr) {
 		if (iv[val].c_bu >= 0 && SDL_GameControllerGetButton(controller, iv[val].c_bu) == SDL_PRESSED)
 			return true;
-		else if (iv[val].c_ax.id != SDL_CONTROLLER_AXIS_INVALID)
-		{
+		else if (iv[val].c_ax.id != SDL_CONTROLLER_AXIS_INVALID) {
 			int av = SDL_GameControllerGetAxis(controller, iv[val].c_ax.id);
 			return (iv[val].c_ax.greater && av > iv[val].c_ax.val) || (!iv[val].c_ax.greater && av < iv[val].c_ax.val);
 		}
@@ -39,27 +34,37 @@ const bool InputManager::State(const InputType &val)
 // Purpose: Check for controller and keyboard input simultaneously
 // Return value 2 is a special case used for analog stick hotkey input
 //------------------------------------------------------------------------
-const int InputManager::Equals(const InputType &val, const SDL_Event &Event)
-{
-	switch (Event.type)
-	{
-	case SDL_KEYDOWN: if (iv[val].Equals(Event.key)) return SDL_PRESSED; break;
-	case SDL_KEYUP:   if (iv[val].Equals(Event.key)) return SDL_RELEASED; break;
+const int InputManager::Equals(const InputType &val, const SDL_Event &Event) {
+	switch (Event.type) {
+	case SDL_KEYDOWN:
+		if (iv[val].Equals(Event.key))
+			return SDL_PRESSED;
+		break;
+	case SDL_KEYUP:
+		if (iv[val].Equals(Event.key))
+			return SDL_RELEASED;
+		break;
 
-	case SDL_CONTROLLERBUTTONDOWN: if (iv[val].Equals(Event.cbutton)) return SDL_PRESSED; break;
-	case SDL_CONTROLLERBUTTONUP:   if (iv[val].Equals(Event.cbutton)) return SDL_RELEASED; break;
+	case SDL_CONTROLLERBUTTONDOWN:
+		if (iv[val].Equals(Event.cbutton))
+			return SDL_PRESSED;
+		break;
+	case SDL_CONTROLLERBUTTONUP:
+		if (iv[val].Equals(Event.cbutton))
+			return SDL_RELEASED;
+		break;
 
 	case SDL_CONTROLLERAXISMOTION:
-		//HACK to make left analog stick work in menus and right analog stick work in hotkeys
-		if (iv[val].Equals(Event.caxis))
-		{
+		// HACK to make left analog stick work in menus and right analog stick work in hotkeys
+		if (iv[val].Equals(Event.caxis)) {
 			if (iv[val].c_ax.id == SDL_CONTROLLER_AXIS_LEFTX || iv[val].c_ax.id == SDL_CONTROLLER_AXIS_LEFTY)
 				return SDL_PRESSED;
 			else
 				return ANALOG_PRESSED;
 		}
 		break;
-	default: break;
+	default:
+		break;
 	}
 
 	return -1;
@@ -68,29 +73,22 @@ const int InputManager::Equals(const InputType &val, const SDL_Event &Event)
 //------------------------------------------------------------------------
 // Purpose: Load from file
 //------------------------------------------------------------------------
-void InputManager::Init()
-{
+void InputManager::Init() {
 	const std::string DEFAULT_FILENAME = "res/controls.xml";
 
 	std::string filename = gFilePath.appdata;
 	filename += "controls.xml";
 
-	if (!is_regular_file(filename))
-	{
-		//The other file does not exist, just use the default file
+	if (!is_regular_file(filename)) {
+		// The other file does not exist, just use the default file
 		Load(DEFAULT_FILENAME);
-	}
-	else
-	{
-		//We are using the other file, check if it is up to date or not
-		if (Version(DEFAULT_FILENAME) > Version(filename))
-		{
-			//The game has been updated to a different control scheme, use the default file
+	} else {
+		// We are using the other file, check if it is up to date or not
+		if (Version(DEFAULT_FILENAME) > Version(filename)) {
+			// The game has been updated to a different control scheme, use the default file
 			Load(DEFAULT_FILENAME);
-		}
-		else
-		{
-			//The version set by the player is fine, just use that
+		} else {
+			// The version set by the player is fine, just use that
 			Load(filename);
 		}
 	}
@@ -101,14 +99,11 @@ void InputManager::Init()
 //------------------------------------------------------------------------
 // Purpose: Load key & controller binding settings from file
 //------------------------------------------------------------------------
-void InputManager::Load(const std::string &filename)
-{
+void InputManager::Load(const std::string &filename) {
 	XMLDoc control_list(filename);
-	if (control_list.ready())
-	{
+	if (control_list.ready()) {
 		rapidxml::xml_node<char> *node = control_list.Doc()->first_node("controls");
-		if (NodeValid(node))
-		{
+		if (NodeValid(node)) {
 			LoadNum(version, "version", node);
 
 			int i = 0;
@@ -121,10 +116,8 @@ void InputManager::Load(const std::string &filename)
 //------------------------------------------------------------------------
 // Purpose: Initialize the controller if it is plugged in
 //------------------------------------------------------------------------
-void InputManager::AddController()
-{
-	if (SDL_NumJoysticks() > 0)
-	{
+void InputManager::AddController() {
+	if (SDL_NumJoysticks() > 0) {
 		if (SDL_IsGameController(0))
 			controller = SDL_GameControllerOpen(0);
 		else
@@ -132,28 +125,23 @@ void InputManager::AddController()
 	}
 }
 
-void InputManager::HandleController(const SDL_Event &Event)
-{
-	if (Event.type == SDL_CONTROLLERDEVICEREMOVED && controller != nullptr)
-	{
+void InputManager::HandleController(const SDL_Event &Event) {
+	if (Event.type == SDL_CONTROLLERDEVICEREMOVED && controller != nullptr) {
 		SDL_GameControllerClose(controller);
 		controller = nullptr;
-	}
-	else if (Event.type == SDL_CONTROLLERDEVICEADDED && controller == nullptr)
+	} else if (Event.type == SDL_CONTROLLERDEVICEADDED && controller == nullptr)
 		AddController();
 }
 
 //------------------------------------------------------------------------
 // Purpose: Create and restore backup
 //------------------------------------------------------------------------
-void InputManager::CreateBackup()
-{
+void InputManager::CreateBackup() {
 	for (int i = 0; i < IT_TOTAL; ++i)
 		backup[i] = iv[i];
 }
 
-void InputManager::RestoreBackup()
-{
+void InputManager::RestoreBackup() {
 	for (int i = 0; i < IT_TOTAL; ++i)
 		iv[i] = backup[i];
 }
@@ -161,8 +149,7 @@ void InputManager::RestoreBackup()
 //------------------------------------------------------------------------
 // Purpose: Save to file
 //------------------------------------------------------------------------
-void InputManager::Save()
-{
+void InputManager::Save() {
 	rapidxml::xml_document<char> doc;
 
 	std::string filename = gFilePath.appdata;
@@ -185,8 +172,7 @@ void InputManager::Save()
 	rapidxml::print(std::back_inserter(xml_as_string), doc);
 
 	std::ofstream save(filename, std::ios::out);
-	if (save.is_open())
-	{
+	if (save.is_open()) {
 		save << xml_as_string;
 		save.close();
 	}

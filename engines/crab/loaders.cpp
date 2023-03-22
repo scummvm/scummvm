@@ -21,8 +21,7 @@ bool NodeValid(const Common::String &name, rapidxml::xml_node<char> *parent_node
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
 		}*/
 		return false;
-	}
-	else if (parent_node->first_node(name.c_str()) == NULL) {
+	} else if (parent_node->first_node(name.c_str()) == NULL) {
 		/*if (echo)
 		{
 		std::string error_msg = "child node " + name + " of parent node " + parent_node->name() + " not found \n";
@@ -107,10 +106,14 @@ bool LoadStatType(pyrodactyl::stat::StatType &type, rapidxml::xml_node<char> *no
 	using namespace pyrodactyl::stat;
 	Common::String str;
 	if (LoadStr(str, "type", node, echo)) {
-		if (str == STATNAME_HEALTH) type = STAT_HEALTH;
-		else if (str == STATNAME_ATTACK) type = STAT_ATTACK;
-		else if (str == STATNAME_DEFENSE) type = STAT_DEFENSE;
-		else if (str == STATNAME_SPEED) type = STAT_SPEED;
+		if (str == STATNAME_HEALTH)
+			type = STAT_HEALTH;
+		else if (str == STATNAME_ATTACK)
+			type = STAT_ATTACK;
+		else if (str == STATNAME_DEFENSE)
+			type = STAT_DEFENSE;
+		else if (str == STATNAME_SPEED)
+			type = STAT_SPEED;
 		/*else if (str == STATNAME_CHARISMA) type = STAT_CHARISMA;
 		else if (str == STATNAME_INTELLIGENCE) type = STAT_INTELLIGENCE;*/
 		else
@@ -123,8 +126,7 @@ bool LoadStatType(pyrodactyl::stat::StatType &type, rapidxml::xml_node<char> *no
 
 bool LoadAlign(Align &align, rapidxml::xml_node<char> *node, const bool &echo, const Common::String &name) {
 	int num = 0;
-	if (LoadNum(num, name, node, echo))
-	{
+	if (LoadNum(num, name, node, echo)) {
 		align = static_cast<Align>(num);
 		return true;
 	}
@@ -168,8 +170,7 @@ bool LoadTextureFlipType(TextureFlipType &flip, rapidxml::xml_node<char> *node, 
 	return false;
 }
 
-unsigned int Version(const Common::String &filename)
-{
+unsigned int Version(const Common::String &filename) {
 	unsigned int version = 0;
 
 	XMLDoc doc(filename);

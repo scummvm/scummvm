@@ -1,10 +1,9 @@
-#include "common/file.h"
 #include "engines/crab/filesystem.h"
+#include "common/file.h"
 
 namespace Crab {
 
-bool FileOpen(const Common::Path &path, char* &data)
-{
+bool FileOpen(const Common::Path &path, char *&data) {
 	if (data != NULL)
 		delete[] data;
 
@@ -34,4 +33,4 @@ bool PathCompare(const path &p1, const path &p2)
 }
 #endif
 
-} // namespace Crab
+} // End of namespace Crab

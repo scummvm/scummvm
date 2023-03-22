@@ -1,10 +1,9 @@
-#include "stdafx.h"
 #include "fightmove.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::anim;
 
-void FightMove::Load(rapidxml::xml_node<char> *node)
-{
+void FightMove::Load(rapidxml::xml_node<char> *node) {
 	frames[DIRECTION_DOWN].Load(node->first_node("down"));
 	frames[DIRECTION_UP].Load(node->first_node("up"));
 	frames[DIRECTION_LEFT].Load(node->first_node("left"));

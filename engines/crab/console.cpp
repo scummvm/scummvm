@@ -24,7 +24,7 @@
 namespace Crab {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
+	registerCmd("test", WRAP_METHOD(Console, Cmd_test));
 }
 
 Console::~Console() {

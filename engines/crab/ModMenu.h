@@ -1,22 +1,18 @@
 #pragma once
 
-#include "common_header.h"
 #include "FileMenu.h"
+#include "common_header.h"
 
-namespace pyrodactyl
-{
-	namespace ui
-	{
-		class ModMenu : public FileMenu<ModFileData>
-		{
-		public:
+namespace pyrodactyl {
+namespace ui {
+class ModMenu : public FileMenu<ModFileData> {
+public:
+	ModMenu() {}
+	~ModMenu() {}
 
-			ModMenu(){}
-			~ModMenu(){}
-
-			void Load(const std::string &filename);
-			bool HandleEvents(const SDL_Event &Event);
-			void Draw();
-		};
-	}
-}
+	void Load(const std::string &filename);
+	bool HandleEvents(const SDL_Event &Event);
+	void Draw();
+};
+} // End of namespace ui
+} // End of namespace pyrodactyl

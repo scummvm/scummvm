@@ -2,8 +2,8 @@
 // Author:   Arvind
 // Purpose:  Dialog box!
 //=============================================================================
-#include "stdafx.h"
 #include "dialogbox.h"
+#include "stdafx.h"
 
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
@@ -13,8 +13,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Load stuff
 //------------------------------------------------------------------------
-void GameDialogBox::Load(rapidxml::xml_node<char> *node)
-{
+void GameDialogBox::Load(rapidxml::xml_node<char> *node) {
 	LoadImgKey(bg, "bg", node);
 	LoadImgKey(bg_p, "bg_p", node);
 	pos.Load(node, bg);
@@ -29,8 +28,7 @@ void GameDialogBox::Load(rapidxml::xml_node<char> *node)
 //------------------------------------------------------------------------
 // Purpose: Draw the dialog box background
 //------------------------------------------------------------------------
-void GameDialogBox::Draw(const bool &player)
-{
+void GameDialogBox::Draw(const bool &player) {
 	if (player)
 		gImageManager.Draw(pos.x, pos.y, bg_p);
 	else
@@ -40,9 +38,8 @@ void GameDialogBox::Draw(const bool &player)
 //------------------------------------------------------------------------
 // Purpose: Draw the dialog box text
 //------------------------------------------------------------------------
-void GameDialogBox::Draw(pyrodactyl::event::Info &info, std::string &message)
-{
-	//Create a copy of the string
+void GameDialogBox::Draw(pyrodactyl::event::Info &info, std::string &message) {
+	// Create a copy of the string
 	std::string msg = message;
 	info.InsertName(msg);
 
@@ -52,13 +49,11 @@ void GameDialogBox::Draw(pyrodactyl::event::Info &info, std::string &message)
 //------------------------------------------------------------------------
 // Purpose: Handle input
 //------------------------------------------------------------------------
-bool GameDialogBox::HandleEvents(const SDL_Event &Event)
-{
+bool GameDialogBox::HandleEvents(const SDL_Event &Event) {
 	return (button.HandleEvents(Event) == BUAC_LCLICK);
 }
 
-void GameDialogBox::SetUI()
-{
+void GameDialogBox::SetUI() {
 	pos.SetUI();
 	text.SetUI(&pos);
 	button.SetUI();

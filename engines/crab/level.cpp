@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "level.h"
+#include "stdafx.h"
 
 using namespace TMX;
 using namespace pyrodactyl::stat;
@@ -14,8 +14,7 @@ using namespace pyrodactyl::event;
 // Purpose: We re-use the same level object each time
 // this function cleans up everything to make it good as new (get it)
 //------------------------------------------------------------------------
-void Level::Reset()
-{
+void Level::Reset() {
 	if (player_index > 0 && objects.size() > player_index)
 		objects[player_index].pathing.shutdown();
 
@@ -39,8 +38,7 @@ void Level::Reset()
 //------------------------------------------------------------------------
 // Purpose: Get index of a sprite in the object array
 //------------------------------------------------------------------------
-pyrodactyl::anim::Sprite *Level::GetSprite(const std::string &id)
-{
+pyrodactyl::anim::Sprite *Level::GetSprite(const std::string &id) {
 	int count = 0;
 	for (auto i = objects.begin(); i != objects.end(); ++i, ++count)
 		if (i->ID() == id)
@@ -52,8 +50,7 @@ pyrodactyl::anim::Sprite *Level::GetSprite(const std::string &id)
 //------------------------------------------------------------------------
 // Purpose: Figure visibility and let the AI see what moves are allowed
 //------------------------------------------------------------------------
-void Level::CalcProperties(Info &info)
-{
+void Level::CalcProperties(Info &info) {
 	for (auto i = objects.begin(); i != objects.end(); ++i)
 		i->CalcProperties(info);
 }
@@ -61,16 +58,12 @@ void Level::CalcProperties(Info &info)
 //------------------------------------------------------------------------
 // Purpose: Handle the level movement
 //------------------------------------------------------------------------
-void Level::HandleEvents(Info &info, const SDL_Event &Event)
-{
-	if (!gMouse.inside_hud)
-	{
-		if (Event.type == SDL_MOUSEBUTTONDOWN)
-		{
-			//Only go to path if our mouse is a normal walking cursor
-			if (!gMouse.hover)
-			{
-				//The destination coordinate is set by adding camera position to click position
+void Level::HandleEvents(Info &info, const SDL_Event &Event) {
+	if (!gMouse.inside_hud) {
+		if (Event.type == SDL_MOUSEBUTTONDOWN) {
+			// Only go to path if our mouse is a normal walking cursor
+			if (!gMouse.hover) {
+				// The destination coordinate is set by adding camera position to click position
 				Vector2i dest = gMouse.button;
 				dest.x += camera.x;
 				dest.y += camera.y;
@@ -92,17 +85,16 @@ void Level::HandleEvents(Info &info, const SDL_Event &Event)
 //------------------------------------------------------------------------
 // Purpose: Swap the player sprites
 //------------------------------------------------------------------------
-void Level::PlayerID(const std::string &ID, const int &X, const int &Y)
-{
+void Level::PlayerID(const std::string &ID, const int &X, const int &Y) {
 	int index = 0;
-	for (auto i = objects.begin(); i != objects.end(); ++i, ++index)
-	{
-		if (i->ID() == ID)
-		{
+	for (auto i = objects.begin(); i != objects.end(); ++i, ++index) {
+		if (i->ID() == ID) {
 			player_index = index;
 
-			if (X != -1) i->X(X);
-			if (Y != -1) i->Y(Y);
+			if (X != -1)
+				i->X(X);
+			if (Y != -1)
+				i->Y(Y);
 
 			break;
 		}
@@ -112,8 +104,7 @@ void Level::PlayerID(const std::string &ID, const int &X, const int &Y)
 //------------------------------------------------------------------------
 // Purpose: Rearrange stuff after resolution change
 //------------------------------------------------------------------------
-void Level::SetUI()
-{
+void Level::SetUI() {
 	camera.w = gScreenSettings.cur.w;
 	camera.h = gScreenSettings.cur.h;
 	SetCamera();

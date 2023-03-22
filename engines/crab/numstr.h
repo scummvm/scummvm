@@ -3,7 +3,7 @@
 
 namespace Crab {
 
-template <typename T>
+template<typename T>
 Common::String NumberToString(T Number) {
 	Common::String res;
 	const T Num = Number;
@@ -32,7 +32,7 @@ Common::String NumberToString(T Number) {
 	return revStr;
 }
 
-template <typename T>
+template<typename T>
 T StringToNumber(char *Text) {
 	T result = 0;
 	char *num = Text;
@@ -46,17 +46,17 @@ T StringToNumber(char *Text) {
 	return Text[0] == '-' ? -result : result;
 }
 
-template <typename T>
+template<typename T>
 T StringToNumber(const Common::String &Text) {
-	return StringToNumber<T>(const_cast<char*>(Text.c_str()));
+	return StringToNumber<T>(const_cast<char *>(Text.c_str()));
 }
 
-template <typename T>
-void GetPoint(T &v, Common::String& coords) {
+template<typename T>
+void GetPoint(T &v, Common::String &coords) {
 	int comma = coords.findFirstOf(',');
 
-	v.x = StringToNumber<int>( coords.substr(0,comma) );
-	v.y = StringToNumber<int>( coords.substr(comma+1));
+	v.x = StringToNumber<int>(coords.substr(0, comma));
+	v.y = StringToNumber<int>(coords.substr(comma + 1));
 }
 
 } // End of namespace Crab

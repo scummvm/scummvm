@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "level.h"
+#include "stdafx.h"
 
 using namespace TMX;
 using namespace pyrodactyl::stat;
@@ -12,8 +12,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Used to sort background sprites
 //------------------------------------------------------------------------
-bool CompSpriteLayer(const Sprite &a, const Sprite &b)
-{
+bool CompSpriteLayer(const Sprite &a, const Sprite &b) {
 	return (a.layer < b.layer);
 }
 
@@ -21,15 +20,12 @@ bool CompSpriteLayer(const Sprite &a, const Sprite &b)
 // Purpose: Load the level
 //------------------------------------------------------------------------
 void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
-	pyrodactyl::event::TriggerSet &game_over, const int &player_x, const int &player_y)
-{
+				 pyrodactyl::event::TriggerSet &game_over, const int &player_x, const int &player_y) {
 	Reset();
 	XMLDoc conf(filename);
-	if (conf.ready())
-	{
+	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("level");
-		if (NodeValid(node))
-		{
+		if (NodeValid(node)) {
 			std::string vis;
 			LoadStr(vis, "map", node, false);
 			if (vis == "false")
@@ -40,14 +36,12 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 			if (NodeValid("preview", node))
 				LoadStr(preview_path, "path", node->first_node("preview"));
 
-			if (NodeValid("music", node))
-			{
+			if (NodeValid("music", node)) {
 				LoadNum(music.id, "id", node->first_node("music"));
 				pyrodactyl::music::gMusicManager.PlayMusic(music.id);
 			}
 
-			if (NodeValid("map", node))
-			{
+			if (NodeValid("map", node)) {
 				rapidxml::xml_node<char> *mapnode = node->first_node("map");
 				std::string path, tmxfile;
 				LoadStr(path, "path", mapnode);
@@ -55,7 +49,7 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 
 				terrain.Load(path, tmxfile);
 
-				//Remember to load the terrain data before constructing the pathfinding grid
+				// Remember to load the terrain data before constructing the pathfinding grid
 				pathfindingGrid.SetupNodes(terrain);
 
 				terrain.grid = &pathfindingGrid;
@@ -63,29 +57,24 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 				if (NodeValid("loc", mapnode))
 					map_loc.Load(mapnode->first_node("loc"));
 
-				if (NodeValid("clip", mapnode))
-				{
+				if (NodeValid("clip", mapnode)) {
 					rapidxml::xml_node<char> *clipnode = mapnode->first_node("clip");
 					LoadNum(map_clip.id, "id", clipnode);
 					map_clip.rect.Load(clipnode);
 				}
 			}
 
-			if (NodeValid("sprites", node))
-			{
+			if (NodeValid("sprites", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("sprites");
 				int count = 0;
-				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling(), ++count)
-				{
+				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling(), ++count) {
 					Sprite s;
 					s.Load(n, anim_set);
 
 					std::string str = n->name();
-					if (str == "player")
-					{
+					if (str == "player") {
 						player_index = objects.size();
-						if (player_x != -1 && player_y != -1)
-						{
+						if (player_x != -1 && player_y != -1) {
 							s.X(player_x);
 							s.Y(player_y);
 						}
@@ -95,11 +84,9 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 				}
 			}
 
-			if (NodeValid("background", node))
-			{
+			if (NodeValid("background", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("background");
-				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling())
-				{
+				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
 					Sprite s;
 					s.Load(n, anim_set);
 					background.push_back(s);
@@ -108,23 +95,20 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 				std::sort(background.begin(), background.end(), CompSpriteLayer);
 			}
 
-			if (NodeValid("fly", node))
-			{
+			if (NodeValid("fly", node)) {
 				rapidxml::xml_node<char> *spritenode = node->first_node("fly");
-				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling())
-				{
+				for (auto n = spritenode->first_node(); n != NULL; n = n->next_sibling()) {
 					Sprite s;
 					s.Load(n, anim_set);
 
-					//Set the timer target for the first time
+					// Set the timer target for the first time
 					s.ai_data.walk.timer.Target(sc_default.fly.delay_min + (gRandom.Num() % sc_default.fly.delay_max));
 
 					fly.push_back(s);
 				}
 			}
 
-			if (NodeValid("movement", node))
-			{
+			if (NodeValid("movement", node)) {
 				rapidxml::xml_node<char> *movnode = node->first_node("movement");
 				for (auto n = movnode->first_node("set"); n != NULL; n = n->next_sibling("set"))
 					move_set.push_back(n);
@@ -136,9 +120,8 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 			game_over.Clear();
 			if (NodeValid("game_over", node, false))
 				game_over.Load(node->first_node("game_over"));
-			else if (player_index < objects.size())
-			{
-				//The default lose condition is the death of the player
+			else if (player_index < objects.size()) {
+				// The default lose condition is the death of the player
 				using namespace pyrodactyl::event;
 				Trigger t;
 				t.type = TRIG_STAT;
@@ -159,28 +142,23 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 //------------------------------------------------------------------------
 // Purpose: Build an index of all animation files, called once at start
 //------------------------------------------------------------------------
-void Level::LoadMoves(const std::string &filename)
-{
+void Level::LoadMoves(const std::string &filename) {
 	XMLDoc mov_list(filename);
-	if (mov_list.ready())
-	{
+	if (mov_list.ready()) {
 		rapidxml::xml_node<char> *node = mov_list.Doc()->first_node("movelist");
-		for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set"))
-		{
+		for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set")) {
 			unsigned int pos = anim_set.size();
 
 			LoadNum(pos, "id", n);
 			if (pos >= anim_set.size())
 				anim_set.resize(pos + 1);
 
-			//See if there is an alternate moveset for low quality setting
-			//If no, just load the regular one
-			if (!gScreenSettings.quality)
-			{
+			// See if there is an alternate moveset for low quality setting
+			// If no, just load the regular one
+			if (!gScreenSettings.quality) {
 				if (!LoadStr(anim_set[pos], "path_low", n))
 					LoadStr(anim_set[pos], "path", n);
-			}
-			else
+			} else
 				LoadStr(anim_set[pos], "path", n);
 		}
 	}
@@ -189,11 +167,9 @@ void Level::LoadMoves(const std::string &filename)
 //------------------------------------------------------------------------
 // Purpose: Load the default sprite constant parameters
 //------------------------------------------------------------------------
-void Level::LoadConst(const std::string &filename)
-{
+void Level::LoadConst(const std::string &filename) {
 	XMLDoc doc(filename);
-	if (doc.ready())
-	{
+	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.Doc()->first_node("constant");
 		if (NodeValid(node))
 			sc_default.Load(node);
@@ -203,12 +179,10 @@ void Level::LoadConst(const std::string &filename)
 //------------------------------------------------------------------------
 // Purpose: Save all sprite positions to save file
 //------------------------------------------------------------------------
-void Level::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root)
-{
+void Level::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
 	root->append_attribute(doc.allocate_attribute("player_index", gStrPool.Get(player_index)));
 
-	for (auto &i : objects)
-	{
+	for (auto &i : objects) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "sprite");
 		i.SaveState(doc, child);
 		root->append_node(child);
@@ -218,8 +192,7 @@ void Level::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *r
 //------------------------------------------------------------------------
 // Purpose: Load all sprite positions from save file
 //------------------------------------------------------------------------
-void Level::LoadState(rapidxml::xml_node<char> *node)
-{
+void Level::LoadState(rapidxml::xml_node<char> *node) {
 	LoadNum(player_index, "player_index", node);
 
 	auto i = objects.begin();
