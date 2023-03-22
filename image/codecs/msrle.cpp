@@ -55,9 +55,10 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 	byte *data = (byte *) _surface->getPixels();
 	uint16 width  = _surface->w;
 	uint16 height = _surface->h;
+	uint16 pitch = _surface->pitch;
 
-	byte *output     = data + ((height - 1) * width);
-	byte *output_end = data + ((height)     * width);
+	byte *output     = data + ((height - 1) * pitch);
+	byte *output_end = data + ((height)     * pitch) - (pitch - width);
 
 	while (!stream.eos()) {
 		byte count = stream.readByte();
@@ -69,7 +70,7 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 
 				x = 0;
 				y--;
-				output = data + (y * width);
+				output = data + (y * pitch);
 
 			} else if (value == 1) {
 				// End of image
@@ -89,7 +90,7 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 					return;
 				}
 
-				output = data + ((y * width) + x);
+				output = data + ((y * pitch) + x);
 
 			} else {
 				// Copy data
