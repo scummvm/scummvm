@@ -238,7 +238,7 @@ public:
 	}
 
 	void setStyles(int styles) override { _border = (styles & kStyleBorder); _singleByte->setStyles(styles); }
-	int getHeight() const override { return MAX(_big5->getFontHeight() + 1, _singleByte->getHeight()); }
+	int getHeight() const override { return MAX(_big5->getFontHeight(), _singleByte->getHeight()); }
 	int getWidth() const override { return MAX(_big5->kChineseTraditionalWidth + 2, _singleByte->getWidth()); }
 	void setColorMap(const uint8 *src) override { _colorMap = src; _singleByte->setColorMap(src); }
 	int getCharWidth(uint16 c) const override;
@@ -264,6 +264,7 @@ public:
 	~OldDOSFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
+	bool loadPCBIOSTall();
 	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }

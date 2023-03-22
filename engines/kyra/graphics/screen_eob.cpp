@@ -37,6 +37,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/sjis.h"
+#include "graphics/fonts/dosfont.h"
 
 #define EXPLOSION_ANIM_DURATION 750
 #define VORTEX_ANIM_DURATION 750
@@ -1659,6 +1660,13 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	} else if (_isSegaCD) {
 		fnt = new SegaCDFont(_vm->gameFlags().lang, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp),
 			_vm->staticres()->loadRawData(kEoB1CharWidthTable1, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable2, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable3, temp));
+	} else if (fontId == FID_CHINESE_FNT && _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::ZH_TWN) {
+		// We wrap all fonts in Big5 support but FID_CHINESE additionally attempts to match height
+		OldDOSFont *ofnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
+		ofnt->loadPCBIOSTall();
+		fnt = new ChineseTwoByteFontEoB(_big5, ofnt);
+		fnt->setColorMap(_textColorsMap);
+		return true;
 	} else {
 		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
 		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
@@ -1935,6 +1943,34 @@ OldDOSFont::~OldDOSFont() {
 		delete[] _cgaDitheringTable;
 		_cgaDitheringTable = 0;
 	}
+}
+
+bool OldDOSFont::loadPCBIOSTall() {
+	unload();
+
+	_numGlyphs = 128;
+	_width = 8;
+	const int originalBytesPerGlyph = 8;
+	const int originalHeight = 8;
+	const int bytesPerGlyph = 15;
+	_height = originalHeight * 2 - 1;
+	_data = new uint8[_numGlyphs * bytesPerGlyph + _numGlyphs * sizeof(uint16)];
+	assert(_data);
+
+	_bitmapOffsets = (uint16 *)_data;
+
+	for (int i = 0; i < _numGlyphs; ++i) {
+		_bitmapOffsets[i] = _numGlyphs * sizeof(uint16) + i * bytesPerGlyph;
+		byte *optr = _data + _bitmapOffsets[i];
+		const byte *iptr = Graphics::DosFont::fontData_PCBIOS + i * originalBytesPerGlyph;
+		*optr++ = *iptr++;
+		for (int j = 1; j < originalHeight; j++) {
+			*optr++ = *iptr;
+			*optr++ = *iptr++;
+		}
+	}
+
+	return true;
 }
 
 bool OldDOSFont::load(Common::SeekableReadStream &file) {
