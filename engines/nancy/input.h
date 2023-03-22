@@ -75,15 +75,7 @@ enum NancyAction {
 	kNancyActionMoveRight,
 	kNancyActionMoveFast,
 	kNancyActionLeftClick,
-	kNancyActionRightClick,
-	kNancyActionFastConvoToggle,
-	kNancyActionEndConvoToggle,
-	kNancyActionReloadSave,
-	kNancyActionRequestMainMenu,
-	kNancyActionRequestSaveLoad,
-	kNancyActionRequestSetupMenu,
-	kNancyActionRequestCredits,
-	kNancyActionRequestMap
+	kNancyActionRightClick
 };
 
 public:
