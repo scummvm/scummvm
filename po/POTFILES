@@ -38,6 +38,7 @@ common/translation.cpp
 common/updates.cpp
 common/util.cpp
 
+dists/android.strings.xml.cpp
 dists/scummvm.appdata.xml.cpp
 
 engines/achievements.cpp
