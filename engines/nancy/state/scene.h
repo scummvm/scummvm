@@ -266,7 +266,6 @@ private:
 
 	State _state;
 
-	bool _isComingFromMenu = true;
 	bool _shouldClearTextbox = true;
 };
 

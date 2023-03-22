@@ -177,7 +177,6 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 			s->onStateExit();
 		}
 
-		// TODO until the game's own menus are implemented we simply open the GMM
 		openMainMenuDialog();
 
 		if (shouldQuit()) {

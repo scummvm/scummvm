@@ -409,7 +409,6 @@ void WinGame::execute() {
 	g_nancy->_sound->stopAndUnloadSpecificSounds();
 	g_nancy->setState(NancyState::kCredits, NancyState::kMainMenu);
 
-	// TODO replace with destroy()?
 	NancySceneState.resetStateToInit();
 	_isDone = true;
 }
