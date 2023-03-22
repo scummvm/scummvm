@@ -623,22 +623,6 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	// See: backends/keymapper/remap-widget.cpp:	kCloseCmd        = 'CLOS'
 	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
 
-	// By default DPAD directions will be used for virtual mouse in GUI context
-	// If the user wants to remap them, they will be able to navigate to Global Options -> Keymaps and do so.
-	// In some devices (eg. Android TV) with only the remote control as input, it is impossible to navigate the launcher GUI,
-	// if the DPAD actions are mapped to "up", "down", "left", "right" directions.
-	// TODO If full key-based (ie. non-mouse) navigation of the ScummVM GUI is implemented,
-	// we can revert back to the core behavior of DPAD being mapped to "up", "down", "left", "right" directions.
-	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "VMOUSEUP", "JOY_UP");
-	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "VMOUSEDOWN", "JOY_DOWN");
-	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "VMOUSELEFT", "JOY_LEFT");
-	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "VMOUSERIGHT", "JOY_RIGHT");
-	//keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionInteract, "JOY_CENTER");
-	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveUp, nullptr);
-	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveDown, nullptr);
-	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveLeft, nullptr);
-	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveRight, nullptr);
-
 	return keymapperDefaultBindings;
 }
 
