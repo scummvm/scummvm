@@ -31,21 +31,26 @@
 #ifndef CRAB_APP_H
 #define CRAB_APP_H
 
-#include "crab/ImageManager.h"
-#include "crab/MusicManager.h"
+#include "crab/crab.h"
+//#include "crab/ImageManager.h"
+//#include "crab/MusicManager.h"
 #include "crab/common_header.h"
-#include "crab/game.h"
+//#include "crab/game.h"
 #include "crab/gamestates.h"
-#include "crab/mainmenu.h"
-#include "crab/splash.h"
+#include "crab/gamestate_container.h"
+#include "crab/ScreenSettings.h"
+//#include "crab/mainmenu.h"
+//#include "crab/splash.h"
 #include "crab/timer.h"
 
+namespace Crab {
+
 class App {
-	void LoadSettings(const std::string &filename);
+	void LoadSettings(const Common::String &filename);
 
 public:
 	App(void) {
-#ifdef __APPLE__
+#if 0
 		// OS X .app files need to set the working directory
 		char *working_directory = SDL_GetBasePath();
 		chdir(working_directory);
@@ -57,5 +62,7 @@ public:
 	bool Init();
 	void Run();
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_APP_H
