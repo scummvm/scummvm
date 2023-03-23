@@ -56,6 +56,9 @@ bool CharacterInventory::msgGame(const GameMessage &msg) {
 		_selectedItem = msg._value;
 		performAction();
 		return true;
+	} else if (msg._name == "TRADE") {
+		trade(msg._stringValue, msg._value);
+		return true;
 	}
 
 	return ItemsView::msgGame(msg);
@@ -251,6 +254,19 @@ void CharacterInventory::tradeItem(Character *from) {
 		_mode = BACKPACK_MODE;
 		populateItems();
 		redraw();
+	}
+}
+
+void CharacterInventory::trade(const Common::String &mode, int amount) {
+	assert(isFocused());
+
+	// TODO: implement
+	if (mode == "GEMS") {
+
+	} else if (mode == "GOLD") {
+
+	} else if (mode == "FOOD") {
+
 	}
 }
 

@@ -22,31 +22,45 @@
 #ifndef MM1_VIEWS_ENH_TRADE_H
 #define MM1_VIEWS_ENH_TRADE_H
 
-#include "mm/mm1/views_enh/party_view.h"
+#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/text_entry.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class Trade : public PartyView {
+class Trade : public ScrollView {
 private:
-	enum TradeMode { TRADE_OPTIONS };
+	enum TradeMode { TRADE_OPTIONS, TRADE_GEMS, TRADE_GOLD, TRADE_FOOD };
+	const char *const TRADE_NAMES[4] = { nullptr, "GEMS", "GOLD", "FOOD" };
 	TradeMode _mode = TRADE_OPTIONS;
 	Shared::Xeen::SpriteResource _btnIcons;
+	TextEntry _textEntry;
 
 	/**
 	  * Set the display mode
 	  */
 	void setMode(TradeMode mode);
 
+	/**
+	 * Draw the option modes
+	 */
 	void drawOptions();
+
+	/**
+	 * Called when an amount is entered
+	 */
+	void amountEntered(uint amount);
+
 public:
 	Trade();
 	virtual ~Trade() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace ViewsEnh

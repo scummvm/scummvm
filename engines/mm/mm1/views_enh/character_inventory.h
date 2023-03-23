@@ -82,6 +82,11 @@ private:
 	 */
 	void tradeItem(Character *from);
 
+	/**
+	 * Trade gems, gold, or food
+	 */
+	void trade(const Common::String &mode, int amount);
+
 protected:
 	/**
 	 * Called when an item is selected

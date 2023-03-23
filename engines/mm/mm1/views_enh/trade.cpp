@@ -26,7 +26,7 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-Trade::Trade() : PartyView("Trade") {
+Trade::Trade() : ScrollView("Trade") {
 	setBounds(Common::Rect(0, 144, 234, 200));
 }
 
@@ -34,23 +34,62 @@ bool Trade::msgFocus(const FocusMessage &msg) {
 	setMode(TRADE_OPTIONS);
 	_btnIcons.load("view.icn");
 
-	return PartyView::msgFocus(msg);
+	return ScrollView::msgFocus(msg);
+}
+
+bool Trade::msgUnfocus(const UnfocusMessage &msg) {
+	_btnIcons.clear();
+	return ScrollView::msgUnfocus(msg);
 }
 
 void Trade::draw() {
-	PartyView::draw();
-	_btnIcons.clear();
+	ScrollView::draw();
 
 	switch (_mode) {
 	case TRADE_OPTIONS:
 		drawOptions();
 		break;
+	default:
+		writeString(0, 5, STRING["enhdialogs.trade.how_much"]);
+		break;
 	}
 }
 
 bool Trade::msgKeypress(const KeypressMessage &msg) {
+	switch (_mode) {
+	case TRADE_OPTIONS:
+		switch (msg.keycode) {
+		case Common::KEYCODE_g:
+			setMode(TRADE_GEMS);
+			break;
+		case Common::KEYCODE_d:
+			setMode(TRADE_GOLD);
+			break;
+		case Common::KEYCODE_f:
+			setMode(TRADE_FOOD);
+			break;
+		case Common::KEYCODE_i:
+			close();
+			send(InfoMessage(STRING["enhdialogs.trade.items_help"]));
+			break;
+		default:
+			break;
+		}
+
+	default:
+		break;
+	}
 
 	return true;
+}
+
+bool Trade::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return false;
 }
 
 void Trade::setMode(TradeMode mode) {
@@ -63,9 +102,23 @@ void Trade::setMode(TradeMode mode) {
 		addButton(&_btnIcons, Common::Point(80, 0), 32, Common::KEYCODE_g);
 		addButton(&_btnIcons, Common::Point(158, 0), 34, Common::KEYCODE_d);
 		addButton(&_btnIcons, Common::Point(80, 20), 36, Common::KEYCODE_f);
-		addButton(&_btnIcons, Common::Point(158, 20), 38, Common::KEYCODE_i);
+		addButton(&_btnIcons, Common::Point(158, 20), 26, Common::KEYCODE_i);
 		addButton(&g_globals->_escSprites, Common::Point(0, 20), 0, KEYBIND_ESCAPE);
 		break;
+
+	default:
+		// How much
+		draw();
+		_textEntry.display(70, 157, 5, true,
+			[]() {
+				g_events->close();
+			},
+			[](const Common::String &str) {
+				Trade *view = static_cast<Trade *>(g_events->focusedView());
+				int amount = atoi(str.c_str());
+				view->amountEntered(amount);
+			}
+		);
 	}
 }
 
@@ -76,6 +129,11 @@ void Trade::drawOptions() {
 	writeString(186, 5, STRING["enhdialogs.trade.gems"]);
 	writeString(108, 25, STRING["enhdialogs.trade.food"]);
 	writeString(186, 25, STRING["enhdialogs.trade.items"]);
+}
+
+void Trade::amountEntered(uint amount) {
+	close();
+	send("CharacterInventory", GameMessage("TRADE", TRADE_NAMES[_mode], amount));
 }
 
 } // namespace ViewsEnh

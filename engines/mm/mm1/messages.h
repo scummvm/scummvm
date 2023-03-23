@@ -94,8 +94,9 @@ struct GameMessage : public Message {
 		_name(name), _value(-1) {}
 	GameMessage(const Common::String &name, int value) : Message(),
 		_name(name), _value(value) {}
-	GameMessage(const Common::String &name, const Common::String &value) :
-		Message(), _name(name), _stringValue(value), _value(-1) {}
+	GameMessage(const Common::String &name, const Common::String &strValue,
+			int intValue = -1) :
+		Message(), _name(name), _stringValue(strValue), _value(intValue) {}
 };
 
 struct HeaderMessage : public Message {
