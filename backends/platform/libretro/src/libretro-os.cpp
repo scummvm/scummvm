@@ -642,13 +642,11 @@ public:
 	}
 
 	void retroCheckThread(uint32 offset = 0) {
-		uint32 now = getMillis();
-
 		/* Limit the thread switches triggered by pollEvent or delayMillis to one each 10ms.
 		   Do not limit thread switches due to consecutive updateScreen to avoid losing frames. */
-		if (_threadExitTime <= (now + offset)) {
-			_threadExitTime = now + 10;
+		if (_threadExitTime <= (getMillis() + offset)) {
 			retro_switch_to_main_thread();
+			_threadExitTime = getMillis() + 10;
 		} else if (_threadSwitchCaller & THREAD_SWITCH_UPDATE){
 			retro_switch_to_main_thread();
 		}
