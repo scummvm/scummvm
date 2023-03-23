@@ -707,10 +707,17 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 
 				if (res) {
 					bitmapCast->_img = decoder;
+					bitmapCast->_external = true;
 
 					const Graphics::Surface *surf = decoder->getSurface();
-					bitmapCast->_size = surf->pitch * surf->h + decoder->getPaletteColorCount() * 3;
+					if (decoder->hasPalette()) {
+						bitmapCast->_size = surf->pitch * surf->h + decoder->getPaletteColorCount() * 3;
+						// For BMPs this sometimes gets set to 16 in the cast record,
+						// we should go with what the target image has.
+						bitmapCast->_bitsPerPixel = 8;
+					}
 
+					debugC(5, kDebugImages, "Cast::loadBitmapData(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %x", imgId, surf->w, surf->h, bitmapCast->_flags1, bitmapCast->_flags2, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
 					delete pic;
 					return;
 				} else {

@@ -105,6 +105,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_clut = 0;
 	_ditheredTargetClut = 0;
 	_bitsPerPixel = 0;
+	_external = false;
 
 	if (version < kFileVer400) {
 		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled
@@ -221,6 +222,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Image::ImageDecode
 	_flags1 = flags1;
 	_flags2 = 0;
 	_tag = 0;
+	_external = false;
 }
 
 BitmapCastMember::~BitmapCastMember() {
@@ -320,14 +322,20 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 				break;
 			// 8bpp - if using a different palette, and we're not doing a color cycling operation, convert using nearest colour matching
 			case 8:
-				// Only redither 8-bit images if we have the flag set
-				if (!movie->_remapPalettesWhenNeeded)
+				// Only redither 8-bit images if we have the flag set, or it is external
+				if (!movie->_remapPalettesWhenNeeded && !_external)
 					break;
-				if (castPaletteId != currentPaletteId && !isColorCycling) {
+				if (_external || (castPaletteId != currentPaletteId && !isColorCycling)) {
 					const auto pals = g_director->getLoadedPalettes();
 					int palIndex = pals.contains(castPaletteId) ? castPaletteId : kClutSystemMac;
 					const PaletteV4 &srcPal = pals.getVal(palIndex);
-					_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+
+					// If it is an external image, use the included palette.
+					// For BMP images especially, they'll often have the right colors
+					// but in the wrong palette order.
+					const byte *palPtr = _external ? pal : srcPal.palette;
+					int palLength = _external ? _img->getPaletteColorCount() * 3 : srcPal.length;
+					_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, palPtr, palLength, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
 				}
 				break;
 			default:
@@ -339,14 +347,16 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 				// Save the palette ID so we can check if a redraw is required
 				_ditheredTargetClut = currentPaletteId;
 
-				// Finally, the first and last colours in the palette are special. No matter what the palette remap
-				// does, we need to scrub those to be the same.
-				const Graphics::Surface *src = _img->getSurface();
-				for (int y = 0; y < src->h; y++) {
-					for (int x = 0; x < src->w; x++) {
-						const int test = *(const byte *)src->getBasePtr(x, y);
-						if (test == 0 || test == (1 << _bitsPerPixel) - 1) {
-							*(byte *)_ditheredImg->getBasePtr(x, y) = test == 0 ? 0x00 : 0xff;
+				if (!_external) {
+					// Finally, the first and last colours in the palette are special. No matter what the palette remap
+					// does, we need to scrub those to be the same.
+					const Graphics::Surface *src = _img->getSurface();
+					for (int y = 0; y < src->h; y++) {
+						for (int x = 0; x < src->w; x++) {
+							const int test = *(const byte *)src->getBasePtr(x, y);
+							if (test == 0 || test == (1 << _bitsPerPixel) - 1) {
+								*(byte *)_ditheredImg->getBasePtr(x, y) = test == 0 ? 0x00 : 0xff;
+							}
 						}
 					}
 				}
