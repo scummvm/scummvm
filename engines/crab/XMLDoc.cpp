@@ -31,6 +31,12 @@
 #include "crab/XMLDoc.h"
 #include "crab/common_header.h"
 
+namespace rapidxml {
+	void parse_error_handler(char const* what, void* where) {
+		warning("RapidXML error handler: %s", what);
+	}
+}
+
 namespace Crab {
 
 void XMLDoc::Load(const Common::String &filename) {
