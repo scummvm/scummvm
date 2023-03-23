@@ -78,6 +78,7 @@ enum GameState {
 	kGameStateWaitingForFacingToAnim,		// Waiting for a blocking animation to complete, then playing _postFacingAnimDef and switching to kGameStateWaitingForAnimation
 	kGameStateQuit,							// Quitting
 	kGameStateIdle,							// Waiting for input events
+	kGameStateDelay,						// Waiting for delay completion time
 	kGameStateScript,						// Running a script
 	kGameStateGyroIdle,						// Waiting for mouse movement to run a gyro
 	kGameStateGyroAnimation,				// Animating a gyro
@@ -443,6 +444,7 @@ private:
 	typedef int32 StackValue_t;
 
 	bool runIdle();
+	bool runDelay();
 	bool runHorizontalPan(bool isRight);
 	bool runScript();
 	bool runWaitForAnimation();
@@ -667,6 +669,8 @@ private:
 	bool _haveIdleStaticAnimation;
 	Common::String _idleCurrentStaticAnimation;
 	StaticAnimParams _pendingStaticAnimParams;
+
+	uint32 _delayCompletionTime;
 
 	AnimationDef _postFacingAnimDef;
 

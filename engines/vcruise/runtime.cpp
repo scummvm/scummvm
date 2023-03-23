@@ -355,6 +355,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  /*_loadedArea(0), */_lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
+	  _delayCompletionTime(0),
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0) {
 
@@ -458,6 +459,9 @@ bool Runtime::runFrame() {
 			return false;
 		case kGameStateIdle:
 			moreActions = runIdle();
+			break;
+		case kGameStateDelay:
+			moreActions = runDelay();
 			break;
 		case kGameStatePanLeft:
 			moreActions = runHorizontalPan(false);
@@ -618,6 +622,15 @@ bool Runtime::runIdle() {
 	}
 
 	// Yield
+	return false;
+}
+
+bool Runtime::runDelay() {
+	if (g_system->getMillis() >= _delayCompletionTime) {
+		_gameState = kGameStateScript;
+		return true;
+	}
+
 	return false;
 }
 
@@ -3326,8 +3339,8 @@ void Runtime::scriptOpGetTimer(ScriptArg_t arg) {
 void Runtime::scriptOpDelay(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	warning("Delay opcode is not implemented yet");
-	(void)stackArgs;
+	_gameState = kGameStateDelay;
+	_delayCompletionTime = g_system->getMillis() + stackArgs[0];
 }
 
 void Runtime::scriptOpLoSet(ScriptArg_t arg) {
