@@ -587,32 +587,34 @@ function actor_init(actor, alignment)
    --actor weapon
    chance = 2
    for i,v in ipairs(actor_base[23]) do
-      if v >= 36 and v <= 38 then --spear, throwing axe, dagger
-         qty = math.random(6, 12)
-      else
-         qty = 1
-      end
-
-      for j=1,qty do
-         obj = Obj.new(v)
-         obj.status = 57
-         if v == 90 then
-            obj.qty = 1
+      if math.random(1,chance) == 1 then
+         if v >= 36 and v <= 38 then --spear, throwing axe, dagger
+            qty = math.random(6, 12)
          else
-            obj.qty = 0
+            qty = 1
          end
-         Actor.inv_add_obj(actor, obj)
-         Actor.inv_ready_obj(actor, obj)
-         if v == 41 or v == 54 then --bow, magic bow
-            obj = Obj.new(55) --arrow
-            obj.status = 49
-            obj.qty = math.random(12, 24)
+
+         for j=1,qty do
+            obj = Obj.new(v)
+            obj.status = 57
+            if v == 90 then
+               obj.qty = 1
+            else
+               obj.qty = 0
+            end
             Actor.inv_add_obj(actor, obj)
-         elseif v == 42 or v == 50 then --crossbow, triple crossbow
-            obj = Obj.new(56) --bolt
-            obj.status = 49
-            obj.qty = math.random(12, 24)
-            Actor.inv_add_obj(actor, obj)
+            Actor.inv_ready_obj(actor, obj)
+            if v == 41 or v == 54 then --bow, magic bow
+               obj = Obj.new(55) --arrow
+               obj.status = 49
+               obj.qty = math.random(12, 24)
+               Actor.inv_add_obj(actor, obj)
+            elseif v == 42 or v == 50 then --crossbow, triple crossbow
+               obj = Obj.new(56) --bolt
+               obj.status = 49
+               obj.qty = math.random(12, 24)
+               Actor.inv_add_obj(actor, obj)
+            end
          end
       end
 
