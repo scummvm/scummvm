@@ -9283,8 +9283,8 @@ msgid ""
 msgstr ""
 "Το αρχείο με την εισαγωγική ταινία του Crusader δεν βρέθηκε - βεβαιώστε ότι "
 "αντιγράφτηκαν από το CD οι κατάλογοι FLICS και SOUND.  Περαιτέρω οδηγίες θα "
-"βρείτε στο βίκι: https://wiki.scummvm.org/index."
-"php?title=Crusader:_No_Remorse."
+"βρείτε στο βίκι: https://wiki.scummvm.org/index.php?title=Crusader:"
+"_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
