@@ -35,16 +35,19 @@
 #ifndef CRAB_SPLASH_H
 #define CRAB_SPLASH_H
 
-#include "crab/ImageManager.h"
-#include "crab/LoadingScreen.h"
-#include "crab/MusicManager.h"
+#include "crab/crab.h"
+//#include "crab/ImageManager.h"
+//#include "crab/LoadingScreen.h"
+//#include "crab/MusicManager.h"
+#include "crab/Image.h"
 #include "crab/ScreenSettings.h"
-#include "crab/TextManager.h"
+//#include "crab/TextManager.h"
 #include "crab/common_header.h"
 #include "crab/gamestate_container.h"
 #include "crab/gamestates.h"
 #include "crab/timer.h"
 
+namespace Crab {
 //------------------------------------------------------------------------
 // Purpose: Splash screen class
 //------------------------------------------------------------------------
@@ -57,7 +60,7 @@ class Splash : public GameState {
 public:
 	Splash();
 	~Splash();
-	void HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {}
+	void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {}
 	void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
 	void Draw();
 	void SetUI();
@@ -65,5 +68,7 @@ public:
 	// We don't need to save game state here
 	void AutoSave() {}
 };
+
+}
 
 #endif // CRAB_SPLASH_H
