@@ -611,8 +611,8 @@ enhdialogs:
 		realign: "\x01""37Re-align"
 	trade:
 		which: "Trade which:"
-		gems: "\x01""37Gems"
-		gold: "Gol\x01""37d"
+		gems: "Ge\x01""37ms"
+		gold: "\x01""37Gold"
 		food: "\x01""37Food"
 		items: "\x01""37Items"
 		how_much: "How much:"

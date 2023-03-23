@@ -61,10 +61,10 @@ bool Trade::msgKeypress(const KeypressMessage &msg) {
 	switch (_mode) {
 	case TRADE_OPTIONS:
 		switch (msg.keycode) {
-		case Common::KEYCODE_g:
+		case Common::KEYCODE_m:
 			setMode(TRADE_GEMS);
 			break;
-		case Common::KEYCODE_d:
+		case Common::KEYCODE_g:
 			setMode(TRADE_GOLD);
 			break;
 		case Common::KEYCODE_f:
