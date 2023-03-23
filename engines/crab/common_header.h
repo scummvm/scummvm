@@ -58,6 +58,7 @@
 #include "common/rect.h"
 #include "common/stream.h"
 #include "common/file.h"
+#include "common/events.h"
 
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"

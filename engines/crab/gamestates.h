@@ -32,6 +32,8 @@
 #define CRAB_GAMESTATES_H
 #include "crab/common_header.h"
 
+namespace Crab {
+
 //------------------------------------------------------------------------
 // Purpose: Game State Enumerators
 //------------------------------------------------------------------------
@@ -44,5 +46,7 @@ enum GameStateID {
 	GAMESTATE_LOAD_GAME,
 	TOTAL_GAMESTATES // ALWAYS THE LAST VALUE
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_GAMESTATES_H

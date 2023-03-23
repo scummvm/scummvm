@@ -30,6 +30,8 @@
 
 #include "crab/GameParam.h"
 
+namespace Crab {
+
 // Temporary values go here
 TempValue gTemp;
 
@@ -43,7 +45,7 @@ bool GameDebug = false;
 StringPool gStrPool;
 
 // Generate random numbers using this
-RandomNumberGen gRandom;
+//RandomNumberGen gRandom;
 
 FilePaths::FilePaths() : common("res/levels/common.xml"),
 						 mod_path("mods/"),
@@ -63,12 +65,16 @@ FilePaths::FilePaths() : common("res/levels/common.xml"),
 	level.clear();
 	loaded = false;
 
+#if 0
 	char *path = SDL_GetPrefPath("Pyrodactyl", "Unrest");
 	appdata = path;
 	SDL_free(path);
+#endif
+	warning("FilePaths::FilePaths() setting appdata directory to game dir");
+	appdata = "./";
 }
 
-void FilePaths::LoadLevel(const std::string &filename) {
+void FilePaths::LoadLevel(const Common::String &filename) {
 	level.clear();
 	XMLDoc lev_list(filename);
 	if (lev_list.ready()) {
@@ -78,7 +84,7 @@ void FilePaths::LoadLevel(const std::string &filename) {
 			LevelPath l;
 			l.Load(n);
 
-			std::string id;
+			Common::String id;
 			LoadStr(id, "id", n);
 
 			level[id] = l;
@@ -86,7 +92,7 @@ void FilePaths::LoadLevel(const std::string &filename) {
 	}
 }
 
-void FilePaths::Load(const std::string &filename) {
+void FilePaths::Load(const Common::String &filename) {
 	XMLDoc settings(filename);
 	if (settings.ready()) {
 		rapidxml::xml_node<char> *node = settings.Doc()->first_node("paths");
@@ -142,18 +148,23 @@ void FilePaths::Load(const std::string &filename) {
 				LoadStr(save_dir, "dir", savenode);
 				LoadStr(save_ext, "ext", savenode);
 
-				std::string custom_path;
+				Common::String custom_path;
 				if (LoadStr(custom_path, "custom", savenode)) {
+#if 0
 					using namespace boost::filesystem;
 
 					path customdir(custom_path);
 					if (exists(customdir) && is_directory(customdir)) {
 						appdata = custom_path;
 					}
+#endif
+					warning("In FilePaths::Load(), customPath : %s", custom_path.c_str());
 				}
 			}
 
 			loaded = true;
 		}
 	}
+}
+
 }
