@@ -35,6 +35,8 @@
 //=============================================================================
 #include "crab/timer.h"
 
+namespace Crab {
+
 Timer::Timer() {
 	// Initialize the variables
 	start_ticks = 0;
@@ -45,7 +47,7 @@ Timer::Timer() {
 	started = false;
 }
 
-void Timer::Load(rapidxml::xml_node<char> *node, const std::string &name, const bool &echo) {
+void Timer::Load(rapidxml::xml_node<char> *node, const Common::String &name, const bool &echo) {
 	target_valid = LoadNum(target_ticks, name, node, echo);
 }
 
@@ -57,7 +59,10 @@ void Timer::Start() {
 	paused = false;
 
 	// Get the current clock time
+#if 0
 	start_ticks = SDL_GetTicks();
+#endif
+	start_ticks = g_system->getMillis();
 }
 
 void Timer::Stop() {
@@ -68,7 +73,7 @@ void Timer::Stop() {
 	paused = false;
 }
 
-Uint32 Timer::Ticks() {
+uint32 Timer::Ticks() {
 	// If the timer is running
 	if (started == true) {
 		// If the timer is paused
@@ -77,7 +82,10 @@ Uint32 Timer::Ticks() {
 			return paused_ticks;
 		} else {
 			// Return the current time minus the start time
+#if 0
 			return SDL_GetTicks() - start_ticks;
+#endif
+			return g_system->getMillis() - start_ticks;
 		}
 	}
 	// If the timer isn't running
@@ -91,7 +99,10 @@ void Timer::Pause() {
 		paused = true;
 
 		// Calculate the paused ticks
+#if 0
 		paused_ticks = SDL_GetTicks() - start_ticks;
+#endif
+		paused_ticks = g_system->getMillis() - start_ticks;
 	}
 }
 
@@ -102,8 +113,10 @@ void Timer::Resume() {
 		paused = false;
 
 		// Reset the starting ticks
+#if 0
 		start_ticks = SDL_GetTicks() - paused_ticks;
-
+#endif
+		paused_ticks = g_system->getMillis() - start_ticks;
 		// Reset the paused ticks
 		paused_ticks = 0;
 	}
@@ -118,3 +131,5 @@ bool Timer::TargetReached(const float &factor) {
 
 	return false;
 }
+
+} // End of namespace Crab
