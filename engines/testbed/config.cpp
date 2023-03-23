@@ -175,8 +175,7 @@ void TestbedInteractionDialog::addText(uint w, uint h, const Common::String text
 		xOffset = _xOffset;
 	}
 	_yOffset += yPadding;
-	GUI::StaticTextWidget *widget = new GUI::StaticTextWidget(this, xOffset, _yOffset, w, h, text, textAlign);
-	widget->resize(xOffset, _yOffset, w, h);
+	new GUI::StaticTextWidget(this, xOffset, _yOffset, w, h, true, text, textAlign);
 	_yOffset += h;
 }
 
@@ -185,24 +184,21 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 		xOffset = _xOffset;
 	}
 	_yOffset += yPadding;
-	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name, Common::U32String(), cmd));
-	_buttonArray.back()->resize(xOffset, _yOffset, w, h);
+	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, true, name, Common::U32String(), cmd));
 	_yOffset += h;
 }
 
 void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, const Common::Array<Common::U32String> &strArray, uint yPadding) {
 	_yOffset += yPadding;
-	GUI::ListWidget *list = new GUI::ListWidget(this, x, y, w, h);
-	list->resize(x, y, w, h);
+	GUI::ListWidget *list = new GUI::ListWidget(this, x, y, w, h, true);
 	list->setEditable(false);
 	list->setNumberingMode(GUI::kListNumberingOff);
 	list->setList(strArray);
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd) {
-	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, Common::U32String(), cmd));
-	_buttonArray.back()->resize(x, y, w, h);
+void TestbedInteractionDialog::addButtonXY(uint x, uint /*y*/, uint w, uint h, const Common::String name, uint32 cmd) {
+	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, true, name, Common::U32String(), cmd));
 }
 
 void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
