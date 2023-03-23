@@ -19,49 +19,51 @@
  *
  */
 
-#include "mm/mm1/views_enh/which_item.h"
+#include "mm/mm1/views_enh/which_character.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-WhichItem::WhichItem() : ScrollView("WhichItem") {
+WhichCharacter::WhichCharacter() : PartyView("WhichCharacter") {
 	_bounds = Common::Rect(50, 103, 266, 139);
 	addButton(&g_globals->_escSprites, Common::Point(176, 0), 0, KEYBIND_ESCAPE);
 }
 
-bool WhichItem::msgGame(const GameMessage &msg) {
-	if (msg._name == "DISPLAY") {
-		_msg = msg._stringValue;
-		addView();
-		return true;
-	}
-
-	return ScrollView::msgGame(msg);
+bool WhichCharacter::msgFocus(const FocusMessage &msg) {
+	_initialChar = g_globals->_currCharacter;
+	return PartyView::msgFocus(msg);
 }
 
-void WhichItem::draw() {
-	ScrollView::draw();
-	writeString(10, 5, _msg);
+void WhichCharacter::draw() {
+	PartyView::draw();
+	writeString(10, 5, STRING["enhdialogs.trade.dest"]);
 }
 
-bool WhichItem::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode >= Common::KEYCODE_1 &&
-			msg.keycode <= Common::KEYCODE_6) {
+bool WhichCharacter::msgGame(const GameMessage &msg) {
+	if (msg._name == "UPDATE") {
+		int charNum = g_globals->_party.indexOf(g_globals->_currCharacter);
+		g_globals->_currCharacter = _initialChar;
+
 		close();
-		send("CharacterInventory", GameMessage("ITEM",
-			msg.keycode - Common::KEYCODE_1));
+		send("CharacterInventory", GameMessage("TRADE_DEST", charNum));
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
-bool WhichItem::msgAction(const ActionMessage &msg) {
+bool WhichCharacter::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		close();
-		send("CharacterInventory", GameMessage("ITEM", -1));
+		send("CharacterInventory", GameMessage("TRADE_DEST", -1));
+		return true;
+	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
+			msg._action <= KEYBIND_VIEW_PARTY6) {
+		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
+		if (charNum < g_globals->_party.size())
+			send("CharacterInventory", GameMessage("TRADE_DEST", charNum));
 		return true;
 	} else {
 		return false;

@@ -41,6 +41,8 @@ private:
 	};
 	SelectedButton _selectedButton = BTN_NONE;
 	Character *_initialChar = nullptr;
+	Common::String _tradeMode;
+	int _tradeAmount;
 
 	/**
 	 * Populates the list of items
@@ -85,7 +87,7 @@ private:
 	/**
 	 * Trade gems, gold, or food
 	 */
-	void trade(const Common::String &mode, int amount);
+	void trade(const Common::String &mode, int amount, Character *destChar);
 
 protected:
 	/**

@@ -162,6 +162,7 @@ MODULE_OBJS += \
 	mm1/views_enh/trade.o \
 	mm1/views_enh/trap.o \
 	mm1/views_enh/unlock.o \
+	mm1/views_enh/which_character.o \
 	mm1/views_enh/which_item.o \
 	mm1/views_enh/who_will_try.o \
 	mm1/views_enh/yes_no.o \

@@ -31,8 +31,10 @@ Trade::Trade() : ScrollView("Trade") {
 }
 
 bool Trade::msgFocus(const FocusMessage &msg) {
-	setMode(TRADE_OPTIONS);
 	_btnIcons.load("view.icn");
+
+	if (dynamic_cast<TextEntry *>(msg._priorView) == nullptr)
+		setMode(TRADE_OPTIONS);
 
 	return ScrollView::msgFocus(msg);
 }

@@ -19,55 +19,31 @@
  *
  */
 
-#include "mm/mm1/views_enh/which_item.h"
-#include "mm/mm1/globals.h"
+#ifndef MM1_VIEWS_ENH_WHICH_CHARACTER_H
+#define MM1_VIEWS_ENH_WHICH_CHARACTER_H
+
+#include "mm/mm1/views_enh/party_view.h"
+#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-WhichItem::WhichItem() : ScrollView("WhichItem") {
-	_bounds = Common::Rect(50, 103, 266, 139);
-	addButton(&g_globals->_escSprites, Common::Point(176, 0), 0, KEYBIND_ESCAPE);
-}
+class WhichCharacter : public PartyView {
+private:
+	Character *_initialChar = nullptr;
+public:
+	WhichCharacter();
+	virtual ~WhichCharacter() {}
 
-bool WhichItem::msgGame(const GameMessage &msg) {
-	if (msg._name == "DISPLAY") {
-		_msg = msg._stringValue;
-		addView();
-		return true;
-	}
-
-	return ScrollView::msgGame(msg);
-}
-
-void WhichItem::draw() {
-	ScrollView::draw();
-	writeString(10, 5, _msg);
-}
-
-bool WhichItem::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode >= Common::KEYCODE_1 &&
-			msg.keycode <= Common::KEYCODE_6) {
-		close();
-		send("CharacterInventory", GameMessage("ITEM",
-			msg.keycode - Common::KEYCODE_1));
-		return true;
-	} else {
-		return false;
-	}
-}
-
-bool WhichItem::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
-		close();
-		send("CharacterInventory", GameMessage("ITEM", -1));
-		return true;
-	} else {
-		return false;
-	}
-}
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgGame(const GameMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+};
 
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
+
+#endif

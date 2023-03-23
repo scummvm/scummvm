@@ -57,7 +57,13 @@ bool CharacterInventory::msgGame(const GameMessage &msg) {
 		performAction();
 		return true;
 	} else if (msg._name == "TRADE") {
-		trade(msg._stringValue, msg._value);
+		_tradeMode = msg._stringValue;
+		_tradeAmount = msg._value;
+		addView("WhichCharacter");
+		return true;
+	} else if (msg._name == "TRADE_DEST") {
+		if (msg._value != -1)
+			trade(_tradeMode, _tradeAmount, &g_globals->_party[msg._value]);
 		return true;
 	}
 
@@ -257,7 +263,7 @@ void CharacterInventory::tradeItem(Character *from) {
 	}
 }
 
-void CharacterInventory::trade(const Common::String &mode, int amount) {
+void CharacterInventory::trade(const Common::String &mode, int amount, Character *destChar) {
 	assert(isFocused());
 
 	// TODO: implement

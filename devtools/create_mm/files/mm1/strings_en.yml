@@ -616,6 +616,7 @@ enhdialogs:
 		food: "\x01""37Food"
 		items: "\x01""37Items"
 		how_much: "How much:"
+		dest: "Trade to whom?"
 		items_help: "To trade items, select an item from the inventory, and then select the portrait of the character to trade to"
 	training:
 		title: "Training"
