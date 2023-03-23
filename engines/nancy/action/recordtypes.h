@@ -76,7 +76,7 @@ protected:
 	Common::String getRecordTypeName() const override { return "Hot1FrExitSceneChange"; }
 };
 
-class HotMultiframeMultisceneChange : public Unimplemented {
+class HotMultiframeMultisceneChange : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
