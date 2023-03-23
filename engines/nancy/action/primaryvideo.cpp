@@ -283,8 +283,11 @@ void PlayPrimaryVideoChan0::execute() {
 
 		_state = kRun;
 		NancySceneState.setActivePrimaryVideo(this);
+
+		// Do not fall through to give the execution one loop for event flag changes
+		// This fixes TVD scene 750
+		break;
 	}
-		// fall through
 	case kRun:
 		if (!_hasDrawnTextbox) {
 			_hasDrawnTextbox = true;
