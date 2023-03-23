@@ -70,7 +70,7 @@ protected:
 	Widget		*_firstWidget;
 
 public:
-	GuiObject(int x, int y, int w, int h);
+	GuiObject(int x, int y, int w, int h, bool scale = false);
 	GuiObject(const Common::String &name);
 	~GuiObject() override;
 

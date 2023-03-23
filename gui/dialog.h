@@ -68,7 +68,7 @@ private:
 	int		_result;
 
 public:
-	Dialog(int x, int y, int w, int h);
+	Dialog(int x, int y, int w, int h, bool scale = false);
 	Dialog(const Common::String &name);
 
 	virtual int runModal();
