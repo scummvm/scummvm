@@ -68,12 +68,14 @@
 
 namespace Crab {
 
+class App;
 struct CrabGameDescription;
 
 class CrabEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	App *_app;
 
 protected:
 	// Engine APIs
@@ -131,7 +133,7 @@ public:
 };
 
 extern CrabEngine *g_engine;
-#define SHOULD_QUIT::Crab::g_engine->shouldQuit()
+#define SHOULD_QUIT ::Crab::g_engine->shouldQuit()
 
 } // End of namespace Crab
 
