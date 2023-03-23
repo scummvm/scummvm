@@ -1965,6 +1965,20 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		ConfMan.set(key, value, useSessionDomain ? Common::ConfigManager::kSessionDomain : Common::ConfigManager::kTransientDomain);
 	}
 
+	// In non-release builds, if themepath and extrapath are not defined yet, add them to the session path so that it works out
+	// of the box when building and running in tree.
+#if !defined(RELEASE_BUILD) && !defined(WIN32)
+	#define ADD_DEFAULT_PATH(key, path) \
+		if (!ConfMan.hasKey(key)) { \
+			Common::FSNode node(path); \
+			if (node.exists() && node.isDirectory() && node.isReadable()) \
+				ConfMan.set(key, path, Common::ConfigManager::kSessionDomain); \
+		}
+
+	ADD_DEFAULT_PATH("themepath", "gui/themes/")
+	ADD_DEFAULT_PATH("extrapath", "dists/engine-data/")
+#endif
+
 	return false;
 }
 
