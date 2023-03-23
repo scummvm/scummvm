@@ -34,6 +34,7 @@
 
 namespace Crab {
 bool FileOpen(const Common::Path &path, char *&data);
+bool FileOpen(const Common::Path &path, Common::File *file);
 #if 0
     bool PathCompare(const boost::filesystem::path &p1, const boost::filesystem::path &p2);
 #endif

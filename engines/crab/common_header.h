@@ -53,6 +53,14 @@
 
 #include "common/path.h"
 #include "common/str.h"
+#include "common/hashmap.h"
+#include "common/list.h"
+#include "common/rect.h"
+#include "common/stream.h"
+#include "common/file.h"
+
+#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 #define RAPIDXML_NO_EXCEPTIONS
 #include "crab/rapidxml/rapidxml.hpp"

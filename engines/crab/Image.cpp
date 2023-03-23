@@ -28,14 +28,27 @@
  *
  */
 
+#include "crab/crab.h"
 #include "crab/Image.h"
+#include "image/png.h"
+
+using ImageDecoder = Image::PNGDecoder;
+
+namespace Crab {
 
 using namespace pyrodactyl::image;
-
 //------------------------------------------------------------------------
 // Purpose: Load a texture
 //------------------------------------------------------------------------
-bool Image::Load(SDL_Surface *surface) {
+bool Image::Load(Graphics::Surface *surface) {
+	Delete();
+
+	texture->create(surface->w, surface->h, surface->format);
+	texture->copyFrom(*surface);
+	w = surface->w;
+	h = surface->h;
+	return true;
+#if 0
 	// Create texture from surface pixels
 	texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 	if (texture == NULL) {
@@ -47,13 +60,32 @@ bool Image::Load(SDL_Surface *surface) {
 	w = surface->w;
 	h = surface->h;
 	return true;
+#endif
 }
 
-bool Image::Load(const std::string &path) {
+bool Image::Load(const Common::String &path) {
 	// Get rid of preexisting texture
 	Delete();
 
 	// Load image at specified path
+	Common::File file;
+	ImageDecoder decoder;
+
+	if (FileOpen(path, &file) && decoder.loadStream(file)) {
+		const Graphics::Surface *s = decoder.getSurface();
+		texture = new Graphics::Surface();
+		texture->copyFrom(*s);
+		w = s->w;
+		h = s->h;
+
+		file.close();
+	}
+
+	warning("Image::Load() Image Texture(%s): w: %d h: %d", path.c_str(), w, h);
+
+	return texture != nullptr;
+
+#if 0
 	SDL_Surface *loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL) {
 		fprintf(stderr, "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
@@ -74,8 +106,8 @@ bool Image::Load(const std::string &path) {
 	}
 
 	// Return success
-
 	return texture != NULL;
+#endif
 }
 
 bool Image::Load(rapidxml::xml_node<char> *node, const char *name) {
@@ -88,7 +120,10 @@ bool Image::Load(rapidxml::xml_node<char> *node, const char *name) {
 //------------------------------------------------------------------------
 // Purpose: Draw a texture to the screen without cropping
 //------------------------------------------------------------------------
-void Image::Draw(const int &x, const int &y, SDL_Rect *clip, const TextureFlipType &flip) {
+void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFlipType &flip) {
+
+	g_engine->_renderSurface->copyRectToSurface(texture->getPixels(), texture->pitch, x, y, texture->w, texture->h);
+#if 0
 	// Set rendering space and render to screen
 	SDL_Rect renderQuad = {x, y, w, h};
 
@@ -138,6 +173,8 @@ void Image::Draw(const int &x, const int &y, SDL_Rect *clip, const TextureFlipTy
 	default:
 		break;
 	}
+#endif
+
 }
 
 //------------------------------------------------------------------------
@@ -145,9 +182,12 @@ void Image::Draw(const int &x, const int &y, SDL_Rect *clip, const TextureFlipTy
 //------------------------------------------------------------------------
 void Image::Delete() {
 	if (texture != nullptr) {
-		SDL_DestroyTexture(texture);
+		texture->free();
+		delete texture;
 		texture = nullptr;
 		w = 0;
 		h = 0;
 	}
 }
+
+} // End of namespace Crab

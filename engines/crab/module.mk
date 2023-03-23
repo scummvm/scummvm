@@ -6,7 +6,9 @@ MODULE_OBJS = \
 	metaengine.o \
 	filesystem.o \
 	XMLDoc.o \
-	loaders.o
+	loaders.o \
+	ScreenSettings.o \
+	Image.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CRAB), DYNAMIC_PLUGIN)
