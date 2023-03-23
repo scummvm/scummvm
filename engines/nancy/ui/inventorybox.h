@@ -57,15 +57,15 @@ public:
 	void registerGraphics() override;
 	void handleInput(NancyInput &input);
 
-	// To be called from Scene
-	void addItem(int16 itemID);
-	void removeItem(int16 itemID);
-
 	ItemDescription getItemDescription(uint id) const { return _itemDescriptions[id]; }
 
 	void onScrollbarMove();
 
 private:
+	// These are private since they should only be called from Scene
+	void addItem(int16 itemID);
+	void removeItem(int16 itemID);
+
 	void onReorder();
 	void setHotspots(uint pageNr);
 
