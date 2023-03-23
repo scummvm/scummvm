@@ -28,6 +28,7 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
+#include "image/jpeg.h"
 #include "image/pict.h"
 
 #include "director/director.h"
@@ -685,21 +686,35 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 
 			Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(path);
 			if (file) {
-				Image::PICTDecoder *pict = new Image::PICTDecoder();
+				// Detect the filetype. Director will ignore file extensions, as do we.
+				Image::ImageDecoder *decoder = nullptr;
+				uint32 fileType = file->readUint32BE();
+				file->seek(0);
 
-				bool res = pict->loadStream(*file);
+				if ((fileType >> 16) == MKTAG16('B', 'M')) {
+					// Windows Bitmap file
+					decoder = new Image::BitmapDecoder();
+				} else if ((fileType == 0xffd8ffe0) || (fileType == 0xffd8ffe1) || (fileType == 0xffd8ffe2)) {
+					// JPEG file
+					decoder = new Image::JPEGDecoder();
+				} else {
+					// Well... Director allowed someone to add it, so it must be a PICT. No further questions!
+					decoder = new Image::PICTDecoder();
+				}
+
+				bool res = decoder->loadStream(*file);
 				delete file;
 
 				if (res) {
-					bitmapCast->_img = pict;
+					bitmapCast->_img = decoder;
 
-					const Graphics::Surface *surf = pict->getSurface();
-					bitmapCast->_size = surf->pitch * surf->h + pict->getPaletteColorCount() * 3;
+					const Graphics::Surface *surf = decoder->getSurface();
+					bitmapCast->_size = surf->pitch * surf->h + decoder->getPaletteColorCount() * 3;
 
 					delete pic;
 					return;
 				} else {
-					delete pict;
+					delete decoder;
 					warning("BUILDBOT: Cast::loadBitmapData(): wrong format for external picture '%s'", path.toString().c_str());
 				}
 			} else {
