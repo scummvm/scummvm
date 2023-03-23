@@ -38,17 +38,21 @@
 #include "crab/common_header.h"
 #include "crab/gamestates.h"
 
+namespace Crab {
+
 //------------------------------------------------------------------------
 // Purpose: Game State base class
 //------------------------------------------------------------------------
 class GameState {
 public:
-	virtual void HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) = 0;
+	virtual void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) = 0;
 	virtual void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) = 0;
 	virtual void Draw() = 0;
 	virtual void SetUI() = 0;
 	virtual void AutoSave() = 0;
 	virtual ~GameState(){};
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_GAMESTATE_CONTAINER_H

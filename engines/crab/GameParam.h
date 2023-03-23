@@ -35,13 +35,15 @@
 #include "crab/common_header.h"
 #include "crab/loaders.h"
 
+namespace Crab {
+
 // The index for all levels in the game
 struct LevelPath {
 	// The file paths
-	std::string layout, asset;
+	Common::String layout, asset;
 
 	// The name of the level
-	std::string name;
+	Common::String name;
 
 	LevelPath() : layout(""), asset(""), name("") {}
 
@@ -55,60 +57,62 @@ struct LevelPath {
 // Stores all layout paths for the game
 struct FilePaths {
 	// Resources common to all levels and states
-	std::string common;
+	Common::String common;
 
 	// Mod file location, current mod and their extension
-	std::string mod_path, mod_ext, mod_cur;
+	Common::String mod_path, mod_ext, mod_cur;
 
 	// Main menu resources
-	std::string mainmenu_l, mainmenu_r;
+	Common::String mainmenu_l, mainmenu_r;
 
 	// Sounds
-	std::string sound_effect, sound_music;
+	Common::String sound_effect, sound_music;
 
 	// Fonts and window icon file
-	std::string font, icon;
+	Common::String font, icon;
 
 	// Save directory and extension
-	std::string save_dir, save_ext;
+	Common::String save_dir, save_ext;
 
 	// The location of the shader index file
-	std::string shaders;
+	Common::String shaders;
 
 	// The location of the color index file
-	std::string colors;
+	Common::String colors;
 
 	// The list of levels in the game
-	std::unordered_map<std::string, LevelPath> level;
+	Common::HashMap<Common::String, LevelPath> level;
 
 	// The file path of the current resource file
-	std::string current_r;
+	Common::String current_r;
 
 	// The application data path (where saves and settings are stored)
-	std::string appdata;
+	Common::String appdata;
 
 	// Has this been loaded?
 	bool loaded;
 
 	FilePaths();
-	void Load(const std::string &filename);
-	void LoadLevel(const std::string &filename);
+	void Load(const Common::String &filename);
+	void LoadLevel(const Common::String &filename);
 };
 
 // Storage pool used for saving numbers as strings
 class StringPool {
 	// Store integer strings here
-	std::unordered_map<int, std::string> pool_i;
+	// std::unordered_map<int, Common::String> pool_i;
+	Common::HashMap<int, Common::String> pool_i;
 
 	// Store floating point strings here
 	struct FloatString {
 		float val;
-		std::string str;
+		Common::String str;
 
 		FloatString() { val = 0.0f; }
 	};
 
-	std::list<FloatString> pool_f;
+	// std::list<FloatString> pool_f;
+	Common::List<FloatString> pool_f;
 
 public:
 	StringPool() {
@@ -117,10 +121,16 @@ public:
 	}
 
 	const char *Get(const int &num) {
+#if 0
 		if (pool_i.count(num) == 0)
 			pool_i[num] = NumberToString<int>(num);
 
 		return pool_i.at(num).c_str();
+#endif
+		if (pool_i.contains(num) == false)
+			pool_i[num] = NumberToString<int>(num);
+
+		return pool_i.getVal(num).c_str();
 	}
 
 	const char *FGet(const float &num) {
@@ -130,15 +140,16 @@ public:
 
 		FloatString fs;
 		fs.val = num;
-		fs.str = NumberToString<float>(num);
+		//fs.str = NumberToString<float>(num);
 		pool_f.push_back(fs);
 
-		auto ret = pool_f.rbegin();
-		return ret->str.c_str();
+		auto ret = pool_f.back();
+		return ret.str.c_str();
 	}
 };
 
 // Our source of random numbers
+#if 0
 class RandomNumberGen {
 	std::random_device rd;
 	std::default_random_engine dre;
@@ -148,6 +159,7 @@ public:
 
 	int Num() { return dre(); }
 };
+#endif
 
 struct TempValue {
 	// Differences between normal mode and iron man mode
@@ -158,7 +170,7 @@ struct TempValue {
 	bool ironman;
 
 	// This is the filename a player chose when selecting "new game" + iron man mode
-	std::string filename;
+	Common::String filename;
 
 	// We use this to see whether the player is exiting to main menu or to credits
 	bool credits;
@@ -184,6 +196,8 @@ extern FilePaths gFilePath;
 extern StringPool gStrPool;
 
 // Generate random numbers using this
-extern RandomNumberGen gRandom;
+//extern RandomNumberGen gRandom;
+
+}
 
 #endif // CRAB_GAMEPARAM_H
