@@ -30,14 +30,17 @@
 
 #include "crab/ScreenSettings.h"
 
+namespace Crab {
+
 // Our screen settings object
 ScreenSettings gScreenSettings;
 
 // Our global renderer
-SDL_Renderer *gRenderer = nullptr;
+//SDL_Renderer *gRenderer = nullptr;
+Graphics::Surface *gRendererSurface = nullptr;
 
 // Our global window object
-SDL_Window *gWindow = nullptr;
+//SDL_Window *gWindow = nullptr;
 
 void ScreenSettings::Load(rapidxml::xml_node<char> *node) {
 	LoadNum(cur.w, "w", node);
@@ -58,6 +61,7 @@ void ScreenSettings::Load(rapidxml::xml_node<char> *node) {
 }
 
 void ScreenSettings::SetVideoFlags() {
+#if 0
 	if (fullscreen) {
 		// Window border doesn't matter in fullscreen mode
 		videoflags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN;
@@ -67,6 +71,7 @@ void ScreenSettings::SetVideoFlags() {
 		else
 			videoflags = SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS;
 	}
+#endif
 }
 
 void ScreenSettings::CreateBackup() {
@@ -88,6 +93,7 @@ void ScreenSettings::RestoreBackup() {
 }
 
 void ScreenSettings::SetResolution() {
+#if 0
 	// Check the current window flags
 	Uint32 flags = SDL_GetWindowFlags(gWindow);
 
@@ -103,32 +109,41 @@ void ScreenSettings::SetResolution() {
 	}
 
 	change_interface = true;
+#endif
 }
 
 void ScreenSettings::SetFullscreen() {
 	SetVideoFlags();
+#if 0
 	SDL_SetWindowFullscreen(gWindow, videoflags);
+#endif
 }
 
 void ScreenSettings::SetWindowBorder() {
+#if 0
 	if (border)
 		SDL_SetWindowBordered(gWindow, SDL_TRUE);
 	else
 		SDL_SetWindowBordered(gWindow, SDL_FALSE);
+#endif
 }
 
 void ScreenSettings::SetVsync() {
+#if 0
 	if (vsync)
 		SDL_SetHint("SDL_HINT_RENDER_VSYNC", "1");
 	else
 		SDL_SetHint("SDL_HINT_RENDER_VSYNC", "0");
+#endif
 }
 
 void ScreenSettings::SetMouseTrap() {
+#if 0
 	if (mouse_trap)
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 	else
 		SDL_SetRelativeMouseMode(SDL_FALSE);
+#endif
 }
 
 void ScreenSettings::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
@@ -152,3 +167,5 @@ void ScreenSettings::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node
 	root->append_node(child);
 	CreateBackup();
 }
+
+} // End of namespace Crab

@@ -31,8 +31,12 @@
 #ifndef CRAB_IMAGE_H
 #define CRAB_IMAGE_H
 
+#include "image/png.h"
 #include "crab/ScreenSettings.h"
+#include "crab/filesystem.h"
 #include "crab/common_header.h"
+
+namespace Crab {
 
 namespace pyrodactyl {
 namespace image {
@@ -42,44 +46,62 @@ class Image {
 	int w, h;
 
 	// The actual hardware texture
-	SDL_Texture *texture;
+	//SDL_Texture *texture;
+	Graphics::Surface *texture;
 
 public:
 	Image() : texture(nullptr), w(0), h(0) {}
 	~Image() {}
 
 	// Set color modulation
-	void Color(const Uint8 &r, const Uint8 &g, const Uint8 &b) { SDL_SetTextureColorMod(texture, r, g, b); }
+	void Color(const uint8 &r, const uint8 &g, const uint8 &b) {
+#if 0
+		SDL_SetTextureColorMod(texture, r, g, b);
+#endif
+		warning("Setting color modulation for texture: %d %d %d", r, g, b);
+	}
 
 	// Set blending
+#if 0
 	void BlendMode(const SDL_BlendMode &mode) { SDL_SetTextureBlendMode(texture, mode); }
+#endif
 
 	// Set alpha modulation
-	int Alpha(const Uint8 &alpha) { return SDL_SetTextureAlphaMod(texture, alpha); }
+	int Alpha(const uint8 &alpha) {
+#if 0
+		return SDL_SetTextureAlphaMod(texture, alpha);
+#endif
+		warning("Setting alpha modulation for texture: %d ", alpha);
+		return 0;
+	}
 
 	// Get alpha modulation
-	Uint8 Alpha() {
-		Uint8 res = 255;
+	uint8 Alpha() {
+		uint8 res = 255;
+#if 0
 		SDL_GetTextureAlphaMod(texture, &res);
+#endif
 		return res;
 	}
 
 	// Load the image
-	bool Load(const std::string &path);
+	bool Load(const Common::String &path);
 	bool Load(rapidxml::xml_node<char> *node, const char *name);
-	bool Load(SDL_Surface *surface);
+	bool Load(Graphics::Surface *surface);
 
 	// Draw the openGL texture
-	void Draw(const int &x, const int &y, SDL_Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
+	void Draw(const int &x, const int &y, Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
 
 	// Delete the openGL texture
 	void Delete();
 
-	const int W() { return w; }
-	const int H() { return h; }
-	const bool Valid() { return texture != nullptr; }
+	int W() { return w; }
+	int H() { return h; }
+	bool Valid() { return texture != nullptr; }
 };
 } // End of namespace image
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_IMAGE_H

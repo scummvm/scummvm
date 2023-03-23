@@ -35,11 +35,16 @@
 #include "crab/common_header.h"
 #include "crab/loaders.h"
 
+
+namespace Crab {
+
+#if 0
 // Our rendering context
 extern SDL_Renderer *gRenderer;
 
 // Our window
 extern SDL_Window *gWindow;
+#endif
 
 struct Dimension {
 	int w, h;
@@ -76,7 +81,7 @@ public:
 	float gamma;
 
 	// The video flags
-	Uint32 videoflags;
+	uint32 videoflags;
 
 	// should we save on exit?
 	bool save_on_exit;
@@ -100,7 +105,7 @@ public:
 		mouse_trap = false;
 		gamma = 1.0f;
 		text_speed = 1.0f;
-		videoflags = SDL_WINDOW_SHOWN;
+		videoflags = 0; //SDL_WINDOW_SHOWN;
 	}
 };
 
@@ -139,7 +144,7 @@ public:
 	void SetFullscreen();
 	void SetWindowBorder();
 	void SetVsync();
-	void SetGamma() { SDL_SetWindowBrightness(gWindow, gamma); }
+	void SetGamma() { }//SDL_SetWindowBrightness(gWindow, gamma); }
 	void SetMouseTrap();
 
 	void Load(rapidxml::xml_node<char> *node);
@@ -147,5 +152,7 @@ public:
 };
 
 extern ScreenSettings gScreenSettings;
+
+}
 
 #endif // CRAB_SCREENSETTINGS_H

@@ -81,6 +81,7 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
+	Graphics::ManagedSurface *_renderSurface = nullptr;
 
 public:
 	CrabEngine(OSystem *syst, const ADGameDescription *gameDesc);

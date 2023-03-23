@@ -29,7 +29,6 @@
  */
 
 #include "crab/filesystem.h"
-#include "common/file.h"
 
 namespace Crab {
 
@@ -52,6 +51,18 @@ bool FileOpen(const Common::Path &path, char *&data) {
 	// read the file into data
 	file.read(data, len);
 	file.close();
+
+	return true;
+}
+
+bool FileOpen(const Common::Path &path, Common::File *file) {
+	if (file->isOpen())
+		file->close();
+
+	if (!file->open(path)) {
+		warning("Unable to open file %s", path.toString().c_str());
+		return false;
+	}
 
 	return true;
 }
