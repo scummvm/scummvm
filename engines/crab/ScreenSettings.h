@@ -134,7 +134,7 @@ public:
 	}
 	~ScreenSettings() {}
 
-	const bool ValidDimension(Dimension d) { return d.w <= desktop.w && d.h <= desktop.h; }
+	bool ValidDimension(Dimension d) { return d.w <= desktop.w && d.h <= desktop.h; }
 
 	void SetVideoFlags();
 	void CreateBackup();
