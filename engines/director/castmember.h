@@ -152,6 +152,7 @@ public:
 
 	uint32 _tag;
 	bool _noMatte;
+	bool _external;
 };
 
 class DigitalVideoCastMember : public CastMember {
