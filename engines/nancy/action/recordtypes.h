@@ -291,9 +291,12 @@ protected:
 	Common::String getRecordTypeName() const override { return "AddInventoryNoHS"; }
 };
 
-class RemoveInventoryNoHS : public Unimplemented {
+class RemoveInventoryNoHS : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	uint _itemID;
 
 protected:
 	Common::String getRecordTypeName() const override { return "RemoveInventoryNoHS"; }

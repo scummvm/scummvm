@@ -426,7 +426,15 @@ void AddInventoryNoHS::execute() {
 }
 
 void RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
-	stream.skip(2);
+	_itemID = stream.readUint16LE();
+}
+
+void RemoveInventoryNoHS::execute() {
+	if (NancySceneState.hasItem(_itemID) == kInvHolding) {
+		NancySceneState.removeItemFromInventory(_itemID, false);
+	}
+
+	_isDone = true;
 }
 
 void DifficultyLevel::readData(Common::SeekableReadStream &stream) {
