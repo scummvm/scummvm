@@ -1022,6 +1022,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Static);
 			DISPATCH_OP(VarLoad);
 			DISPATCH_OP(VarStore);
+			DISPATCH_OP(VarAddAndStore);
 			DISPATCH_OP(VarGlobalLoad);
 			DISPATCH_OP(VarGlobalStore);
 			DISPATCH_OP(ItemCheck);
@@ -1042,6 +1043,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(SoundL3);
 			DISPATCH_OP(3DSoundS2);
 			DISPATCH_OP(3DSoundL2);
+			DISPATCH_OP(3DSoundL3);
 			DISPATCH_OP(StopAL);
 			DISPATCH_OP(Range);
 			DISPATCH_OP(AddXSound);
@@ -1104,12 +1106,15 @@ bool Runtime::runScript() {
 			DISPATCH_OP(EscGet);
 			DISPATCH_OP(BackStart);
 			DISPATCH_OP(SaveAs);
+			DISPATCH_OP(Save0);
+			DISPATCH_OP(Exit);
 
 			DISPATCH_OP(AnimName);
 			DISPATCH_OP(ValueName);
 			DISPATCH_OP(VarName);
 			DISPATCH_OP(SoundName);
 			DISPATCH_OP(CursorName);
+			DISPATCH_OP(Dubbing);
 
 			DISPATCH_OP(CheckValue);
 			DISPATCH_OP(Jump);
@@ -2852,6 +2857,18 @@ void Runtime::scriptOpVarStore(ScriptArg_t arg) {
 	_variables[varID] = stackArgs[0];
 }
 
+void Runtime::scriptOpVarAddAndStore(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	uint32 varID = (static_cast<uint32>(_roomNumber) << 16) | static_cast<uint32>(stackArgs[0]);
+
+	Common::HashMap<uint32, int32>::iterator it = _variables.find(varID);
+	if (it == _variables.end())
+		_variables[varID] = stackArgs[1];
+	else
+		it->_value += stackArgs[1];
+}
+
 void Runtime::scriptOpVarGlobalLoad(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
@@ -3021,6 +3038,13 @@ void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
 	triggerSound(true, stackArgs[0], stackArgs[1], 0, true);
 }
 
+void Runtime::scriptOp3DSoundL3(ScriptArg_t arg) {
+	TAKE_STACK(5);
+
+	setSound3DParameters(stackArgs[0], stackArgs[3], stackArgs[4], _pendingSoundParams3D);
+	triggerSound(true, stackArgs[0], stackArgs[1], stackArgs[2], true);
+}
+
 void Runtime::scriptOp3DSoundS2(ScriptArg_t arg) {
 	TAKE_STACK(4);
 
@@ -3156,8 +3180,8 @@ void Runtime::scriptOpSParmX(ScriptArg_t arg) {
 	_pendingStaticAnimParams.repeatDelay = stackArgs[1];
 	_pendingStaticAnimParams.lockInteractions = (stackArgs[2] != 0);
 
-	if (_pendingStaticAnimParams.lockInteractions)
-		error("Locking interactions for animation is not implemented yet");
+	//if (_pendingStaticAnimParams.lockInteractions)
+	//	error("Locking interactions for animation is not implemented yet");
 }
 
 void Runtime::scriptOpSAnimX(ScriptArg_t arg) {
@@ -3368,6 +3392,14 @@ void Runtime::scriptOpSaveAs(ScriptArg_t arg) {
 	// Just ignore this op, it looks like it's for save room remapping of some sort but we allow
 	// saves at any idle screen.
 	(void)stackArgs;
+}
+
+void Runtime::scriptOpSave0(ScriptArg_t arg) {
+	warning("save0 op not implemented");
+}
+
+void Runtime::scriptOpExit(ScriptArg_t arg) {
+	warning("exit op not implemented");
 }
 
 void Runtime::scriptOpNot(ScriptArg_t arg) {
@@ -3594,6 +3626,10 @@ void Runtime::scriptOpCursorName(ScriptArg_t arg) {
 	}
 
 	_scriptStack.push_back(namedCursorIt->_value);
+}
+
+void Runtime::scriptOpDubbing(ScriptArg_t arg) {
+	warning("Dubbing op not implemented");
 }
 
 void Runtime::scriptOpCheckValue(ScriptArg_t arg) {

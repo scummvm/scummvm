@@ -531,6 +531,7 @@ private:
 	void scriptOpStatic(ScriptArg_t arg);
 	void scriptOpVarLoad(ScriptArg_t arg);
 	void scriptOpVarStore(ScriptArg_t arg);
+	void scriptOpVarAddAndStore(ScriptArg_t arg);
 	void scriptOpVarGlobalLoad(ScriptArg_t arg);
 	void scriptOpVarGlobalStore(ScriptArg_t arg);
 
@@ -553,6 +554,7 @@ private:
 	void scriptOpSoundL3(ScriptArg_t arg);
 	void scriptOp3DSoundS2(ScriptArg_t arg);
 	void scriptOp3DSoundL2(ScriptArg_t arg);
+	void scriptOp3DSoundL3(ScriptArg_t arg);
 	void scriptOpStopAL(ScriptArg_t arg);
 	void scriptOpRange(ScriptArg_t arg);
 	void scriptOpAddXSound(ScriptArg_t arg);
@@ -615,12 +617,15 @@ private:
 	void scriptOpEscGet(ScriptArg_t arg);
 	void scriptOpBackStart(ScriptArg_t arg);
 	void scriptOpSaveAs(ScriptArg_t arg);
+	void scriptOpSave0(ScriptArg_t arg);
+	void scriptOpExit(ScriptArg_t arg);
 
 	void scriptOpAnimName(ScriptArg_t arg);
 	void scriptOpValueName(ScriptArg_t arg);
 	void scriptOpVarName(ScriptArg_t arg);
 	void scriptOpSoundName(ScriptArg_t arg);
 	void scriptOpCursorName(ScriptArg_t arg);
+	void scriptOpDubbing(ScriptArg_t arg);
 
 	void scriptOpCheckValue(ScriptArg_t arg);
 	void scriptOpJump(ScriptArg_t arg);

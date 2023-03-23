@@ -61,6 +61,7 @@ enum ScriptOp {
 	kStatic,
 	kVarLoad,
 	kVarStore,
+	kVarAddAndStore,
 	kVarGlobalLoad,
 	kVarGlobalStore,
 	kItemCheck,
@@ -81,6 +82,7 @@ enum ScriptOp {
 	kSoundL3,
 	k3DSoundS2,
 	k3DSoundL2,
+	k3DSoundL3,
 	kStopAL,
 	kRange,
 	kAddXSound,
@@ -141,12 +143,15 @@ enum ScriptOp {
 	kEscGet,
 	kBackStart,
 	kSaveAs,
+	kSave0,
+	kExit,
 
 	kAnimName,
 	kValueName,
 	kVarName,
 	kSoundName,
 	kCursorName,
+	kDubbing,
 
 	kCheckValue,	// Check if stack top is equal to arg.  If it is, pop the argument, otherwise leave it on the stack and skip the next instruction.
 	kJump,			// Offset instruction index by arg.

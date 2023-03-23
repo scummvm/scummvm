@@ -152,6 +152,7 @@ private:
 	bool parseNumber(const Common::String &token, uint32 &outNumber) const;
 	static bool parseDecNumber(const Common::String &token, uint start, uint32 &outNumber);
 	static bool parseHexNumber(const Common::String &token, uint start, uint32 &outNumber);
+	static bool parseBinNumber(const Common::String &token, uint start, uint32 &outNumber);
 	void expectNumber(uint32 &outNumber);
 
 	void compileRoomScriptSet(RoomScriptSet *rss);
@@ -165,6 +166,7 @@ private:
 	enum NumberParsingMode {
 		kNumberParsingDec,
 		kNumberParsingHex,
+		kNumberParsingBin,
 	};
 
 	TextParser &_parser;
@@ -191,6 +193,8 @@ bool ScriptCompiler::parseNumber(const Common::String &token, uint32 &outNumber)
 			return parseDecNumber(token, 0, outNumber);
 		case kNumberParsingHex:
 			return parseHexNumber(token, 0, outNumber);
+		case kNumberParsingBin:
+			return parseBinNumber(token, 0, outNumber);
 		default:
 			error("Unknown number parsing mode");
 			return false;
@@ -219,6 +223,23 @@ bool ScriptCompiler::parseHexNumber(const Common::String &token, uint start, uin
 	uint num = 0;
 	if (!sscanf(token.c_str() + start, "%x", &num))
 		return false;
+
+	outNumber = num;
+	return true;
+}
+
+bool ScriptCompiler::parseBinNumber(const Common::String &token, uint start, uint32 &outNumber) {
+	if (start == token.size())
+		return false;
+
+	uint num = 0;
+	for (char c : token) {
+		num <<= 1;
+		if (c == '1')
+			num |= 1;
+		else if (c != '0')
+			return false;
+	}
 
 	outNumber = num;
 	return true;
@@ -313,6 +334,12 @@ void ScriptCompiler::compileScreenScriptSet(ScreenScriptSet *sss) {
 			_numberParsingMode = kNumberParsingDec;
 		} else if (token == "HEX") {
 			_numberParsingMode = kNumberParsingHex;
+		} else if (token == "BIN") {
+			_numberParsingMode = kNumberParsingBin;
+		} else if (token == "dubbing") {
+			Common::String dubbingName;
+			_parser.expectToken(dubbingName, _blamePath);
+			protoScript.instrs.push_back(ProtoInstruction(ScriptOps::kDubbing, indexString(dubbingName)));
 		} else if (compileInstructionToken(protoScript, token)) {
 			// Nothing
 		} else {
@@ -340,6 +367,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"yes!", ProtoOp::kProtoOpScript, ScriptOps::kVarStore},
 	{"yesg@", ProtoOp::kProtoOpScript, ScriptOps::kVarGlobalLoad},
 	{"yesg!", ProtoOp::kProtoOpScript, ScriptOps::kVarGlobalStore},
+	{"setaX+!", ProtoOp::kProtoOpScript, ScriptOps::kVarAddAndStore},
 	{"cr?", ProtoOp::kProtoOpScript, ScriptOps::kItemCheck},
 	{"cr!", ProtoOp::kProtoOpScript, ScriptOps::kItemRemove},
 	{"sr!", ProtoOp::kProtoOpScript, ScriptOps::kItemHighlightSet},
@@ -392,6 +420,7 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"soundL3", ProtoOp::kProtoOpScript, ScriptOps::kSoundL3},
 	{"3DsoundS2", ProtoOp::kProtoOpScript, ScriptOps::k3DSoundS2},
 	{"3DsoundL2", ProtoOp::kProtoOpScript, ScriptOps::k3DSoundL2},
+	{"3DsoundL3", ProtoOp::kProtoOpScript, ScriptOps::k3DSoundL3},
 	{"stopaL", ProtoOp::kProtoOpScript, ScriptOps::kStopAL},
 	{"range", ProtoOp::kProtoOpScript, ScriptOps::kRange},
 	{"addXsound", ProtoOp::kProtoOpScript, ScriptOps::kAddXSound},
@@ -431,6 +460,8 @@ static ScriptNamedInstruction g_namedInstructions[] = {
 	{"esc_get@", ProtoOp::kProtoOpScript, ScriptOps::kEscGet},
 	{"backStart", ProtoOp::kProtoOpScript, ScriptOps::kBackStart},
 	{"saveAs", ProtoOp::kProtoOpScript, ScriptOps::kSaveAs},
+	{"save0", ProtoOp::kProtoOpNoop, ScriptOps::kSave0},
+	{"exit", ProtoOp::kProtoOpNoop, ScriptOps::kExit},
 	{"allowedSave", ProtoOp::kProtoOpNoop, ScriptOps::kInvalid},
 };
 
