@@ -70,8 +70,9 @@ private:
 	Screen_EoB *_screen;
 
 	struct Config {
-		Config(const char *const *str, const char *const *cpsfiles, const uint8 **cpsdata, const char *const *pal, const DarkMoonShapeDef **shp, const DarkMoonAnimCommand **anim, bool loadScenePalette, bool paletteFading, bool animCmdRestorePalette, bool shapeBackgroundFading, int animPalOffset, int animType1ShapeDim, bool animCmd5SetPalette, int animCmd5ExtraPage) : strings(str), cpsFiles(cpsfiles), cpsData(cpsdata), palFiles(pal), shapeDefs(shp), animData(anim), loadScenePal(loadScenePalette), palFading(paletteFading), animCmdRestorePal(animCmdRestorePalette), shpBackgroundFading(shapeBackgroundFading), animPalOffs(animPalOffset), animCmd1ShapeFrame(animType1ShapeDim), animCmd5SetPal(animCmd5SetPalette), animCmd5AltPage(animCmd5ExtraPage) {}
+		Config(const char *const *str, const char *const *cpsfiles, const char *vocPat, const uint8 **cpsdata, const char *const *pal, const DarkMoonShapeDef **shp, const DarkMoonAnimCommand **anim, bool loadScenePalette, bool paletteFading, bool animCmdRestorePalette, bool shapeBackgroundFading, int animPalOffset, int animType1ShapeDim, bool animCmd5SetPalette, int animCmd5ExtraPage) : strings(str), voicePattern(vocPat), cpsFiles(cpsfiles), cpsData(cpsdata), palFiles(pal), shapeDefs(shp), animData(anim), loadScenePal(loadScenePalette), palFading(paletteFading), animCmdRestorePal(animCmdRestorePalette), shpBackgroundFading(shapeBackgroundFading), animPalOffs(animPalOffset), animCmd1ShapeFrame(animType1ShapeDim), animCmd5SetPal(animCmd5SetPalette), animCmd5AltPage(animCmd5ExtraPage) {}
 		const char *const *strings;
+		const char *voicePattern;
 		const char *const *cpsFiles;
 		const uint8 **cpsData;
 		const char *const *palFiles;
@@ -1149,6 +1150,8 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	delete[] _config->cpsData;
 	delete _config;
 
+	_vm->_sound->voiceStop(&_vm->_speechHandle);
+
 	_screen->enableHiColorMode(true);
 	_screen->clearCurPage();
 	_screen->setFont(_prevFont);
@@ -1422,6 +1425,11 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 	}
 
 	Common::String str = _config->strings[index];
+
+	if (_config->voicePattern) {
+		_vm->_sound->voicePlay(Common::String::format(_config->voicePattern, index + 1).c_str(), &_vm->_speechHandle);
+	}
+
 	const ScreenDim *dm = _screen->_curDim;
 	int fontHeight = (_vm->gameFlags().platform == Common::kPlatformPC98) ? (_screen->getFontHeight() << 1) : (_screen->getFontHeight() + 1);
 	int xAlignFactor = (_vm->gameFlags().platform == Common::kPlatformPC98) ? 2 : 1;
@@ -1488,6 +1496,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 		_config = new Config(
 			_vm->staticres()->loadStrings(kEoB2IntroStrings, size),
 			_vm->staticres()->loadStrings(kEoB2IntroCPSFiles, size),
+			_vm->_flags.isTalkie ? "EOB%d" : nullptr,
 			new const uint8*[16],
 			_vm->_flags.platform == Common::kPlatformAmiga ? 0 : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA),
 			new const DarkMoonShapeDef*[16],
@@ -1521,6 +1530,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 		_config = new Config(
 			_vm->staticres()->loadStrings(kEoB2FinaleStrings, size),
 			_vm->staticres()->loadStrings(kEoB2FinaleCPSFiles, size),
+			_vm->_flags.isTalkie ? "EOBF%d" : nullptr,
 			new const uint8*[13],
 			_vm->_flags.platform == Common::kPlatformAmiga ? _palFilesFinaleAmiga : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA),
 			new const DarkMoonShapeDef*[13],
