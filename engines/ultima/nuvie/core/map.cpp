@@ -762,16 +762,21 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 				   uint8 flags, LineTestResult &Result, uint32 skip, Obj *excluded_obj) {
 	//  standard Bresenham's algorithm.
-	int deltax = abs(end_x - start_x);
-	int deltay = abs(end_y - start_y);
+	//  input tile coordinates are scaled up by 16 during line calculation
+	//  and scaled back down before testing for collisions. this matches original
+	//  game behaviour.
+	int deltax = abs(end_x - start_x) << 4;
+	int deltay = abs(end_y - start_y) << 4;
 
-	int x = start_x;
-	int y = start_y;
+	int x = (start_x << 4) + 8; // start at the center of the tile
+	int y = (start_y << 4) + 8;
 	int d;
 	int xinc1, xinc2;
 	int yinc1, yinc2;
 	int dinc1, dinc2;
 	uint32 count;
+	int xtile = start_x;
+	int ytile = start_y;
 
 
 	if (deltax >= deltay) {
@@ -806,10 +811,6 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 	}
 
 	for (uint32 i = 0; i < count; i++) {
-		//  test the current location
-		if ((i >= skip) && (testIntersection(x, y, level, flags, Result, excluded_obj) == true))
-			return  true;
-
 		if (d < 0) {
 			d += dinc1;
 			x += xinc1;
@@ -819,6 +820,13 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 			x += xinc2;
 			y += yinc2;
 		}
+		if( x >> 4 == xtile && y >> 4 == ytile)
+			continue; //  we are still on the previous tile so skip the test
+		xtile = x >> 4;
+		ytile = y >> 4;
+		//  test the current location
+		if ((i >= skip) && (testIntersection(xtile, ytile, level, flags, Result, excluded_obj) == true))
+			return true;
 	}
 
 	return  false;
