@@ -1149,7 +1149,7 @@ bool Events::lookAtCursor(bool delayed, uint16 x, uint16 y, uint8 z, Obj *obj, A
 
 	if (obj && obj->is_on_map() && ((obj->status & OBJ_STATUS_INVISIBLE) || map_window->tile_is_black(x, y, obj))) {
 		Obj *bottom_obj = obj_manager->get_obj(x, y, z, false);
-		if (game->get_game_type() == NUVIE_GAME_U6 && bottom_obj->obj_n == OBJ_U6_SECRET_DOOR // hack for frame 2
+		if (bottom_obj && game->get_game_type() == NUVIE_GAME_U6 && bottom_obj->obj_n == OBJ_U6_SECRET_DOOR // hack for frame 2
 		        && !map_window->tile_is_black(x, y, bottom_obj))
 			obj = bottom_obj;
 		else
