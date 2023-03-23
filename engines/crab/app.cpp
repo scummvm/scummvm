@@ -28,9 +28,14 @@
  *
  */
 
+#include "common/events.h"
 #include "crab/app.h"
 
+namespace Crab {
+
 bool App::Init() {
+
+#if 0
 	// Load all SDL subsystems and the TrueType font subsystem
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Unable to initialize SDL", "Please install libsdl2", NULL);
@@ -47,13 +52,14 @@ bool App::Init() {
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Unable to initialize PNG support", "Please install libsdl2_image", NULL);
 		return false;
 	}
+#endif
 
 	// Load paths for important files
 	gFilePath.Load("res/paths.xml");
 
 	// Initialize Steam
 	// SteamAPI_Init();
-
+#if 0
 	// Load the settings corresponding to the latest version
 	{
 		const std::string DEFAULT_FILENAME = "res/settings.xml";
@@ -113,12 +119,16 @@ bool App::Init() {
 
 	// Initial check for controllers on the system
 	pyrodactyl::input::gInput.AddController();
-
+#endif
+	LoadSettings("res/settings.xml");
+	gScreenSettings.cur.w = 1920;
+	gScreenSettings.cur.h = 1080;
 	gScreenSettings.in_game = false;
 	return true;
 }
 
 void App::Run() {
+	Init();
 	// State IDs
 	GameStateID CurrentStateID = GAMESTATE_NULL, NextStateID = GAMESTATE_TITLE;
 	bool ShouldChangeState = true;
@@ -126,7 +136,7 @@ void App::Run() {
 	// Set the current game state object
 	GameState *CurrentState = NULL;
 	Timer fps;
-	SDL_Event Event;
+	Common::Event e;
 	int fpscount = 0, fpsval = 1, lasts = 0;
 
 	// While the user hasn't quit - This is the main game loop
@@ -145,7 +155,7 @@ void App::Run() {
 			// Change the state
 			switch (NextStateID) {
 			case GAMESTATE_TITLE:
-				CurrentState = new Splash();
+				//CurrentState = new Splash();
 				gScreenSettings.in_game = false;
 
 				// Now apply all settings - except resolution because that's already set at the start
@@ -157,16 +167,17 @@ void App::Run() {
 				break;
 
 			case GAMESTATE_MAIN_MENU:
-				CurrentState = new MainMenu();
+				//CurrentState = new MainMenu();
 				gScreenSettings.in_game = false;
 				break;
 
 			case GAMESTATE_NEW_GAME:
-				CurrentState = new Game();
+			//	CurrentState = new Game();
 				gScreenSettings.in_game = true;
 				break;
 
 			case GAMESTATE_LOAD_GAME:
+#if 0
 				if (boost::filesystem::exists(pyrodactyl::ui::gLoadMenu.SelectedPath()))
 					CurrentState = new Game(pyrodactyl::ui::gLoadMenu.SelectedPath());
 				else
@@ -174,6 +185,7 @@ void App::Run() {
 
 				gScreenSettings.in_game = true;
 				break;
+#endif
 
 			default:
 				// Encountering an undefined state, exit with an error code
@@ -193,6 +205,7 @@ void App::Run() {
 		// Do state InternalEvents
 		CurrentState->InternalEvents(ShouldChangeState, NextStateID);
 
+#if 0
 		while (SDL_PollEvent(&Event)) {
 			// Do state Event handling
 			CurrentState->HandleEvents(Event, ShouldChangeState, NextStateID);
@@ -213,6 +226,7 @@ void App::Run() {
 				GameDebug = !GameDebug;
 			pyrodactyl::input::gInput.HandleController(Event);
 		}
+#endif
 
 		// Do we have to reposition our interface?
 		if (gScreenSettings.change_interface) {
@@ -223,6 +237,7 @@ void App::Run() {
 		// Do state Drawing
 		CurrentState->Draw();
 
+#if 0
 		if (GameDebug) {
 			if (SDL_GetTicks() - lasts > 1000) {
 				lasts = SDL_GetTicks();
@@ -234,17 +249,29 @@ void App::Run() {
 			if (CurrentStateID >= 0)
 				pyrodactyl::text::gTextManager.Draw(0, 0, NumberToString(fpsval), 0);
 		}
+#endif
+		const Graphics::ManagedSurface *s = g_engine->_renderSurface;
+		g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
+		g_system->updateScreen();
 
+#if 0
 		// Update the screen
 		SDL_RenderPresent(gRenderer);
+#endif
 
 		// Cap the frame rate
-		if (fps.Ticks() < 1000u / gScreenSettings.fps)
+		if (fps.Ticks() < 1000u / gScreenSettings.fps) {
+#if 0
 			SDL_Delay((1000u / gScreenSettings.fps) - fps.Ticks());
+#endif
+			uint32 delay = (1000u / gScreenSettings.fps) - fps.Ticks();
+			warning("Delay by %d ms", delay);
+			g_system->delayMillis(delay);
+		}
 	}
 }
 
-void App::LoadSettings(const std::string &filename) {
+void App::LoadSettings(const Common::String &filename) {
 	XMLDoc settings(filename);
 	if (settings.ready()) {
 		rapidxml::xml_node<char> *node = settings.Doc()->first_node("settings");
@@ -257,12 +284,15 @@ void App::LoadSettings(const std::string &filename) {
 				gScreenSettings.Load(node->first_node("screen"));
 
 			// Start the sound subsystem
+#if 0
 			pyrodactyl::music::gMusicManager.Load(node);
+#endif
 		}
 	}
 }
 
 App::~App() {
+#if 0
 	// SteamAPI_Shutdown();
 
 	pyrodactyl::image::gImageManager.Quit();
@@ -286,4 +316,8 @@ App::~App() {
 
 	// Quit SDL
 	SDL_Quit();
+#endif
+
 }
+
+} // End of namespace Crab
