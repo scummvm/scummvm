@@ -84,6 +84,7 @@ protected:
 		bool isPanning = false;
 		Audio::SeekableAudioStream *stream = nullptr;
 		Audio::SoundHandle handle;
+		bool isPersistent = false;
 	};
 
 	void initSoundChannels();

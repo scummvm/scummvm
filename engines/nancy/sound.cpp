@@ -265,6 +265,7 @@ void SoundManager::loadCommonSounds() {
 			SoundDescription &desc = _commonSounds.getOrCreateVal(s);
 			desc.read(*chunk, SoundDescription::kNormal);
 			g_nancy->_sound->loadSound(desc);
+			_channels[desc.channelID].isPersistent = true;
 		}
 	}
 
@@ -274,6 +275,7 @@ void SoundManager::loadCommonSounds() {
 		SoundDescription &desc = _commonSounds.getOrCreateVal("MSND");
 		desc.read(*chunk, SoundDescription::kMenu);
 		g_nancy->_sound->loadSound(desc);
+		_channels[desc.channelID].isPersistent = true;
 	}
 }
 
@@ -389,9 +391,13 @@ void SoundManager::stopSound(uint16 channelID) {
 	if (isSoundPlaying(channelID)) {
 		_mixer->stopHandle(chan.handle);
 	}
-	chan.name = Common::String();
-	delete chan.stream;
-	chan.stream = nullptr;
+
+	// Persistent sounds only stop playing but do not get unloaded
+	if (!chan.isPersistent) {
+		chan.name = Common::String();
+		delete chan.stream;
+		chan.stream = nullptr;
+	}
 }
 
 void SoundManager::stopSound(const SoundDescription &description) {
