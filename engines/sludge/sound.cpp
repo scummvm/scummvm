@@ -315,7 +315,7 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 
 	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
 	uint curr_ptr = readStream->pos();
-	Audio::RewindableAudioStream *stream = Audio::makeWAVStream(readStream->readStream(length), DisposeAfterUse::NO);
+	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(readStream->readStream(length), DisposeAfterUse::NO);
 
 #ifdef USE_VORBIS
 	if (!stream) {
