@@ -35,6 +35,8 @@
 //=============================================================================
 #include "crab/splash.h"
 
+namespace Crab {
+
 //------------------------------------------------------------------------
 // Purpose: Constructor
 //------------------------------------------------------------------------
@@ -59,9 +61,11 @@ Splash::~Splash() {
 //------------------------------------------------------------------------
 void Splash::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 	if (first_run == false) {
-		gLoadScreen.Load();
+		// gLoadScreen.Load();
+#if 0
 		pyrodactyl::image::gImageManager.Init();
 		pyrodactyl::text::gTextManager.Init();
+#endif
 		load_complete = true;
 	}
 
@@ -85,6 +89,9 @@ void Splash::Draw() {
 // Purpose: Reset UI position
 //------------------------------------------------------------------------
 void Splash::SetUI() {
+	warning("gScreenSettings cur w : %d h : %d", gScreenSettings.cur.w, gScreenSettings.cur.h);
 	x = (gScreenSettings.cur.w - background.W()) / 2;
 	y = (gScreenSettings.cur.h - background.H()) / 2;
+}
+
 }

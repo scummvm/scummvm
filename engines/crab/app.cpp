@@ -155,7 +155,7 @@ void App::Run() {
 			// Change the state
 			switch (NextStateID) {
 			case GAMESTATE_TITLE:
-				//CurrentState = new Splash();
+				CurrentState = new Splash();
 				gScreenSettings.in_game = false;
 
 				// Now apply all settings - except resolution because that's already set at the start

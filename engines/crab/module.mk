@@ -8,7 +8,11 @@ MODULE_OBJS = \
 	XMLDoc.o \
 	loaders.o \
 	ScreenSettings.o \
-	Image.o
+	GameParam.o \
+	Image.o \
+	timer.o \
+	app.o \
+	splash.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CRAB), DYNAMIC_PLUGIN)

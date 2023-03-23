@@ -40,7 +40,7 @@
 #include "crab/gamestate_container.h"
 #include "crab/ScreenSettings.h"
 //#include "crab/mainmenu.h"
-//#include "crab/splash.h"
+#include "crab/splash.h"
 #include "crab/timer.h"
 
 namespace Crab {
