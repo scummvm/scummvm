@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-22 20:20+0000\n"
-"PO-Revision-Date: 2023-03-07 11:29+0000\n"
+"PO-Revision-Date: 2023-03-23 08:09+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -5702,10 +5702,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "Η υποστήριξη της GroovieV2 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "Εκτέλεση διακομιστή"
+msgstr "Κατειλημμένο"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -5780,85 +5778,65 @@ msgid "Enable Gore Mode when available"
 msgstr "Ενεργοποίηση Λειτουργίας Αίματος όταν υπάρχει διαθεσιμότητα"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "Προχώρησε Μπροστά"
+msgstr "Προς τα εμπρός"
 
 #: engines/hpl1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "Κίνηση προς τα πίσω"
+msgstr "Προς τα πίσω"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:77
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
-msgstr "Ολίσθηση Αριστερά"
+msgstr "Πλάγια στα Αριστερά"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:78
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
-msgstr "Ολίσθηση Δεξιά"
+msgstr "Πλάγια στα Δεξιά"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
-#| msgid "Pad Left"
 msgid "Lean Left"
-msgstr "Pad Αριστερά"
+msgstr "Κλίση Αριστερά"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Pad Right"
 msgid "Lean Right"
-msgstr "Pad Δεξιά"
+msgstr "Κλίση Δεξιά"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "Άλμα"
 
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:113
 #: engines/icb/icb.cpp:173
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "Αφή"
+msgstr "Σκυφτά"
 
 #: engines/hpl1/metaengine.cpp:92
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "Αλληλεπίδραση"
+msgstr "Σε Αλληλεπίδραση"
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Gore Mode"
 msgid "Look Mode"
-msgstr "Λειτουργία Αίματος"
+msgstr "Σε Επισκόπηση"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
-msgstr ""
+msgstr "Στη θήκη"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "Σημειωματάριο"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "Προσωπικές Σημειώσεις"
 
 #: engines/hpl1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "Πέταξε ευθεία"
+msgstr "Φακός"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "Ράβδος φωτός"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -5906,23 +5884,19 @@ msgstr ""
 
 #: engines/icb/icb.cpp:88
 msgid "Fire"
-msgstr ""
+msgstr "Πυροβόλησε"
 
 #: engines/icb/icb.cpp:103
 msgid "Arm"
-msgstr ""
+msgstr "Όπλισε"
 
 #: engines/icb/icb.cpp:108
-#, fuzzy
-#| msgid "Remove"
 msgid "Remora"
-msgstr "Αφαίρεση"
+msgstr "Όπλο στη θήκη"
 
 #: engines/icb/icb.cpp:118 engines/icb/icb.cpp:178
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "Ολίσθηση Αριστερά"
+msgstr "Βήμα πλάγια"
 
 #: engines/kyra/detection_tables.h:72
 msgid "Missing language specific game code and/or resources."
@@ -6343,115 +6317,101 @@ msgstr "Πλήκτρο Escape"
 
 #: engines/mm/mm1/metaengine.cpp:46
 msgid "View Party Member 1"
-msgstr ""
+msgstr "Δες το 1ο Μέλος Ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:47
 msgid "View Party Member 2"
-msgstr ""
+msgstr "Δες το 2ο Μέλος Ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:48
 msgid "View Party Member 3"
-msgstr ""
+msgstr "Δες το 3ο Μέλος Ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:49
 msgid "View Party Member 4"
-msgstr ""
+msgstr "Δες το 4ο Μέλος Ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:50
 msgid "View Party Member 5"
-msgstr ""
+msgstr "Δες το 5ο Μέλος Ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:51
 msgid "View Party Member 6"
-msgstr ""
+msgstr "Δες το 6ο Μέλος Ομάδας"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:57
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "Ξεκλείδωσε"
+msgstr "Μπλόκαρε"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:58
 msgid "Cast"
-msgstr ""
+msgstr "Ρίξε ξόρκι"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "Exchange"
-msgstr ""
+msgstr "Ανταλλαγή"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:60
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "Δεξιά"
+msgstr "Μάχη"
 
 #. I18N: Combat command in MM1
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:89
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "Προτιμήσεις"
+msgstr "Γρήγορη Αναφορά"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:62
 msgid "Retreat"
-msgstr ""
+msgstr "Οπισθοχώρηση"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:63
 msgid "Shoot"
-msgstr ""
+msgstr "Πυροβόλησε"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:66
 msgid "Delay"
-msgstr ""
+msgstr "Καθυστέρησε"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:67 engines/mm/mm1/metaengine.cpp:84
 msgid "Protect"
-msgstr ""
+msgstr "Προστάτευσε"
 
 #. I18N: Select party member command in MM1
 #: engines/mm/mm1/metaengine.cpp:73
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "Προχώρησε Μπροστά"
+msgstr "Προς τα εμπρός"
 
 #. I18N: Directionalcommand in MM1
 #: engines/mm/mm1/metaengine.cpp:74
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "Κίνηση προς τα πίσω"
+msgstr "Προς τα πίσω"
 
 #: engines/mm/mm1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
+msgstr "Εναλλαγή Συνοπτικού Χάρτη"
 
 #: engines/mm/mm1/metaengine.cpp:83
 msgid "Reorder Party"
-msgstr ""
+msgstr "Αναδιάταξη Ομάδας"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "Αναζήτηση:"
+msgstr "Ψάξε"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:87
 msgid "Bash"
-msgstr ""
+msgstr "Χτύπα"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:88 engines/scumm/help.cpp:144
@@ -6459,31 +6419,29 @@ msgid "Unlock"
 msgstr "Ξεκλείδωσε"
 
 #: engines/mm/mm1/metaengine.cpp:95
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "Επόμενο μέρος"
+msgstr "Πήγαινε στην περιοχή"
 
 #: engines/mm/mm1/metaengine.cpp:106 engines/mm/mm1/metaengine.cpp:111
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "Might and Magic 1 - Μενού"
 
 #: engines/mm/mm1/metaengine.cpp:112 engines/mm/mm1/metaengine.cpp:118
 #: engines/mm/mm1/metaengine.cpp:124
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "Might and Magic 1 - Ομάδα"
 
 #: engines/mm/mm1/metaengine.cpp:117
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "Might and Magic 1 - Μάχη"
 
 #: engines/mm/mm1/metaengine.cpp:123
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "Might and Magic 1"
 
 #: engines/mm/mm1/metaengine.cpp:125
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - Κόλπα (Cheats)"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
@@ -8908,22 +8866,22 @@ msgstr ""
 "σε αυτό το εκτελέσιμο. Παρακαλώ αποσυμπιέστε το"
 
 #: engines/tetraedge/metaengine.cpp:33
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "Διόρθωση αναλογίας διαστάσεων για παιχνίδια"
+msgstr "Διόρθωση αναλογίας διαστάσεων ταινιών"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
 msgstr ""
+"Αναπαραγωγή των σκηνών στο Syberia σε διαστάσεις 16:9, αντί να απλώνεται η "
+"εικόνα σε διαστάσεις πλήρους οθόνης"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "Επαναφορά σκηνών που λείπουν"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "Επαναφέρει κάποιες σκηνές που υπήρχαν στην έκδοση για Windows"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
@@ -9323,6 +9281,10 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"Το αρχείο με την εισαγωγική ταινία του Crusader δεν βρέθηκε - βεβαιώστε ότι "
+"αντιγράφτηκαν από το CD οι κατάλογοι FLICS και SOUND.  Περαιτέρω οδηγίες θα "
+"βρείτε στο βίκι: https://wiki.scummvm.org/index."
+"php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
@@ -9348,28 +9310,20 @@ msgstr ""
 "Μπορείτε να παίξετε το παιχνίδι, αλλά χωρίς μουσική."
 
 #: engines/vcruise/vcruise.cpp:230
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, the save file doesn't contain valid version "
-#| "information."
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
-"Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Το αρχείο αποθηκευσης δεν "
-"περιέχει έγκυρση πληροφορία έκδοσης."
+"Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού. Το αρχείο αποθηκευσης δείχνει να "
+"είναι κατεστραμμένο."
 
 #: engines/vcruise/vcruise.cpp:235
-#, fuzzy
-#| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
-msgstr "Η ανάγνωση της έκδοσης από το αρχείο αποθηκευμένου παιχνιδιού απέτυχε"
+msgstr "Η ανάγνωση της έκδοσης από το αρχείο αποθηκευμένου παιχνιδιού απέτυχε."
 
 #: engines/vcruise/vcruise.cpp:255
-#, fuzzy
-#| msgid "An internal error occurred while attempting to write save game data"
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
-"Παρουσιάστηκε εσωτερικό σφάλμα κατά την απόπειρα εγγραφής δεδομένων του "
-"αποθηκευμένου παιχνιδιού"
+"Παρουσιάστηκε άγνωστο σφάλμα κατά την απόπειρα φόρτωσης του αποθηκευμένου "
+"παιχνιδιού."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
