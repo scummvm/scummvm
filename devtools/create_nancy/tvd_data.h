@@ -72,7 +72,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _tvdConditionalDialogue 
         { { 0x4A, kTrue }, { 0x52, kFalse }, { 0x11, kFalse } },
         { { 0x3, kFalse } } },
     {   10, 750, "FIC_10",
-        { { 0x21, kTrue }, { 0xE, kTrue } },
+        { { 0x21, kTrue }, { 0xE, kFalse } },
         { { 0x9, kTrue } } },
     {   9, 749, "FIC_11",
         { { 0x21, kTrue }, { 0x5D, kFalse } },
@@ -434,7 +434,7 @@ const Common::Array<Common::Array<const char *>> _tvdConditionalDialogueTexts = 
     "<c1>W<c0>ould you know how I could get an owl feather?<h><n>",
     "<c1>H<c0>ow could I get Mr. Richards to lend me his new dagger?<h><n>",
     // 70
-    "<c1>D<c0>o you know where I could find a black candle, Aunt Judith?<h><n>"
+    "<c1>D<c0>o you know where I could find a black candle, Aunt Judith?<h><n>",
     "<c1>D<c0>o you remember the old ghost story about Adelaide Chambers, Aunt Judith? A book in the library says she was buried with gold. Do you think it's true?<h><n>",
     "<c1>I<c0> want to buy something from the art gallery, Aunt Judith. Can you help me?<h><n>",
     "<c1>D<c0>o you know anything about runes, Aunt Judith? Bonnie said one of her's is missing and I'd like to get her another one.<h><n>",
