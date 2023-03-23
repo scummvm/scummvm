@@ -37,8 +37,8 @@ namespace GUI {
  * ...
  */
 
-Dialog::Dialog(int x, int y, int w, int h)
-	: GuiObject(x, y, w, h),
+Dialog::Dialog(int x, int y, int w, int h, bool scale)
+	: GuiObject(x, y, w, h, scale),
 	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _tickleWidget(nullptr), _visible(false),
 	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	// Some dialogs like LauncherDialog use internally a fixed size, even though

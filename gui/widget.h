@@ -114,6 +114,7 @@ public:
 	static bool containsWidgetInChain(Widget *start, Widget *search);
 
 public:
+	Widget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip = Common::U32String());
 	Widget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String());
 	Widget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String());
 	~Widget() override;
@@ -205,6 +206,7 @@ protected:
 	bool _useEllipsis;
 
 public:
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, Graphics::TextAlign align, const Common::U32String &tooltip = Common::U32String(), ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold, Common::Language lang = Common::UNK_LANG, bool useEllipsis = true);
 	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, Graphics::TextAlign align, const Common::U32String &tooltip = Common::U32String(), ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold, Common::Language lang = Common::UNK_LANG, bool useEllipsis = true);
 	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String(), ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold, Common::Language lang = Common::UNK_LANG, bool useEllipsis = true);
 	void setValue(int value);
@@ -231,6 +233,7 @@ protected:
 	uint8	_lowresHotkey;
 	Common::U32String _lowresLabel;
 public:
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
 	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
 	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
 
@@ -260,6 +263,7 @@ protected:
 /* DropdownButtonWidget */
 class DropdownButtonWidget : public ButtonWidget {
 public:
+	DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
 	DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
 	DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
 
@@ -295,6 +299,7 @@ protected:
 /* PicButtonWidget */
 class PicButtonWidget : public ButtonWidget {
 public:
+	PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 	PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 	PicButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 	~PicButtonWidget() override;
@@ -324,6 +329,7 @@ protected:
 	bool _overrideText; 
 	int _spacing;
 public:
+	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 
@@ -373,6 +379,7 @@ protected:
 	int _value;
 
 public:
+	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, RadiobuttonGroup *group, int value, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint8 hotkey = 0);
 	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint8 hotkey = 0);
 	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint8 hotkey = 0);
 
@@ -400,6 +407,7 @@ protected:
 	bool	_isDragging;
 	uint	_labelWidth;
 public:
+	SliderWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	SliderWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	SliderWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 
@@ -432,6 +440,7 @@ protected:
 /* GraphicsWidget */
 class GraphicsWidget : public Widget {
 public:
+	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip = Common::U32String());
 	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String());
 	GraphicsWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String());
 	~GraphicsWidget() override;
@@ -455,7 +464,7 @@ protected:
 /* ContainerWidget */
 class ContainerWidget : public Widget {
 public:
-	ContainerWidget(GuiObject *boss, int x, int y, int w, int h);
+	ContainerWidget(GuiObject *boss, int x, int y, int w, int h, bool scale = false);
 	ContainerWidget(GuiObject *boss, const Common::String &name);
 	~ContainerWidget() override;
 
@@ -538,7 +547,7 @@ private:
 	ScrollContainerWidget *_scrollContainer;
 };
 
-ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0);
+ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0, bool scale = false);
 const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h, bool filtering = false);
 
 } // End of namespace GUI

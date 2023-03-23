@@ -30,11 +30,18 @@ namespace GUI {
 
 #define SCALEVALUE(val) (val > 0 ? val * g_gui.getScaleFactor() : val)
 
-GuiObject::GuiObject(int x, int y, int w, int h) : _useRTL(true), _firstWidget(nullptr) {
-	_x = x;
-	_y = y;
-	_w = w;
-	_h = h;
+GuiObject::GuiObject(int x, int y, int w, int h, bool scale) : _useRTL(true), _firstWidget(nullptr) {
+	if (scale) {
+		_x = SCALEVALUE(x);
+		_y = SCALEVALUE(y);
+		_w = SCALEVALUE(w);
+		_h = SCALEVALUE(h);
+	} else {
+		_x = x;
+		_y = y;
+		_w = w;
+		_h = h;
+	}
 }
 
 GuiObject::GuiObject(const Common::String &name)

@@ -75,8 +75,8 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_topPadding = _bottomPadding = 0;
 }
 
-ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd)
-	: EditableWidget(boss, x, y, w, h, tooltip), _cmd(cmd) {
+ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip, uint32 cmd)
+	: EditableWidget(boss, x, y, w, h, scale, tooltip), _cmd(cmd) {
 
 	_entriesPerPage = 0;
 	_scrollBarWidth = 0;
@@ -114,6 +114,10 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U
 	_topPadding = _bottomPadding = 0;
 
 	_scrollBarWidth = 0;
+}
+
+ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd)
+	: ListWidget(boss, x, y, w, h, false, tooltip, cmd) {
 }
 
 void ListWidget::copyListData(const Common::U32StringArray &list) {
