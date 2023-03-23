@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-22 20:20+0000\n"
+"POT-Creation-Date: 2023-03-23 15:44+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -144,7 +144,7 @@ msgstr ""
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3482
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3478
 #: engines/toon/toon.cpp:1502
 msgid "Yes"
 msgstr "Ja"
@@ -157,7 +157,7 @@ msgstr "Ja"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3482
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3478
 #: engines/toon/toon.cpp:1502
 msgid "No"
 msgstr "Nei"
@@ -4567,7 +4567,7 @@ msgstr "Gjenopprett"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2801
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2797
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4575,7 +4575,7 @@ msgid ""
 "%s"
 msgstr "Kunne ikkje laste lagra spel frå fil."
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2788
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2784
 #, fuzzy, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4583,7 +4583,7 @@ msgid ""
 "%s"
 msgstr "Klarte ikkje lagre speltilstand til fil."
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2817
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2813
 #, fuzzy, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7377,7 +7377,7 @@ msgid "Querying games..."
 msgstr "Lagrar spel..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3488
+#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3484
 msgid "Join"
 msgstr ""
 
@@ -8268,7 +8268,7 @@ msgid ""
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3377
+#: engines/scumm/scumm.cpp:3373
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -8278,12 +8278,12 @@ msgstr ""
 "må du ha datafilane til Maniac Mansion i «Maniac»-mappa inni «Tentacle»-"
 "spelmappa, og spelet må vere lagt til i ScummVM."
 
-#: engines/scumm/scumm.cpp:3488
+#: engines/scumm/scumm.cpp:3484
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Vil du åpne eller lagre spelet?"
 
-#: engines/scumm/scumm.cpp:3488
+#: engines/scumm/scumm.cpp:3484
 msgid "Host"
 msgstr ""
 
