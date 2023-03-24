@@ -974,15 +974,15 @@ maps:
 		training: "\"Amazonia's Training\""
 
 		blacksmith_inside: "\"Busily forging a long sword,an extremely\nbeautiful young girl says with a\nseductive smile, \"Can i help you (Y/N)?\""
-		inn_inside: "lara, the inkeepers voluptuous\ndaughter, asks if you will be spending\nthe night... sign in (Y/N)?"
+		inn_inside: "Lara, the inkeepers voluptuous\ndaughter, asks if you will be spending\nthe night... sign in (Y/N)?"
 		market_inside: "From behind the fruit stand\na sultry voice asks, \"See anything\nyou like (Y/N)?\""
 		temple_inside: "The once magnificent temple shows\nsigns of neglect and decay. the high\npriestess asks,\"Need help (Y/N)?\""
 		training_inside: "A tall, muscular female clad in leather\narmor approaches asking, \"Strangers,\nare you here for training (Y/N)?\""
 
 		males_drained: "Males are drained!"
 		secret: "A sensuous female voice speaks from\nwithin an intoxicating mist,\n\"You've discovered my secret!\""
-		zam0: "Note: zam 12,2"
-		zam1: "\"I am zam, astral brother of zom and\nonly living male residing in portsmith\n"
+		zam0: "Note: Zam 12,2"
+		zam1: "\"I am Zam, astral brother of Zom and\nonly living male residing in Portsmith\n"
 		zam2: "My clue is c-15\""
 		zam3: "You're not the couriers!\""
 
