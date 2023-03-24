@@ -32,17 +32,15 @@ Waypoints::Waypoints(BladeRunnerEngine *vm, int count) {
 }
 
 void Waypoints::getXYZ(int waypointId, float *x, float *y, float *z) const {
-	*x = 0;
-	*y = 0;
-	*z = 0;
-
 	if (waypointId < 0 || waypointId >= _count || !_waypoints[waypointId].present) {
-		return;
+		*x = 0;
+		*y = 0;
+		*z = 0;
+	} else {
+		*x = _waypoints[waypointId].position.x;
+		*y = _waypoints[waypointId].position.y;
+		*z = _waypoints[waypointId].position.z;
 	}
-
-	*x = _waypoints[waypointId].position.x;
-	*y = _waypoints[waypointId].position.y;
-	*z = _waypoints[waypointId].position.z;
 }
 
 int Waypoints::getSetId(int waypointId) const {
