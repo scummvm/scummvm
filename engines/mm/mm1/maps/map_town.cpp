@@ -46,7 +46,7 @@ void MapTown::inn() {
 	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.inn_inside", _mapIndex)],
 		[]() {
-			g_events->send("Inn", GameMessage("DISPLAY"));
+			g_events->replaceView("Inn", true);
 		}
 	));
 }
