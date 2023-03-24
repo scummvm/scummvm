@@ -338,7 +338,6 @@ class PlayDigiSoundAndDie : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
-	// TODO subclass into Play and Stop (?)
 
 	SoundDescription _sound;
 	SceneChangeDescription _sceneChange;

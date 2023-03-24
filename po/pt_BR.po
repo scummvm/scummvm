@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-20 20:44+0000\n"
-"PO-Revision-Date: 2023-03-13 10:57+0000\n"
+"POT-Creation-Date: 2023-03-24 20:20+0000\n"
+"PO-Revision-Date: 2023-03-23 18:34+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -68,7 +68,7 @@ msgstr "Para cima"
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:457
 #: gui/saveload-dialog.cpp:528 gui/saveload-dialog.cpp:830
 #: gui/saveload-dialog.cpp:1223 gui/shaderbrowser-dialog.cpp:81
-#: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:643
+#: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:595
 #: engines/engine.cpp:739 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -139,12 +139,12 @@ msgstr ""
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
 #: gui/options.cpp:3340 gui/options.cpp:3378 gui/options.cpp:3795
-#: base/main.cpp:643 backends/events/default/default-events.cpp:193
+#: base/main.cpp:595 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3482
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3478
 #: engines/toon/toon.cpp:1502
 msgid "Yes"
 msgstr "Sim"
@@ -157,7 +157,7 @@ msgstr "Sim"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3482
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3478
 #: engines/toon/toon.cpp:1502
 msgid "No"
 msgstr "Não"
@@ -2351,12 +2351,12 @@ msgstr "Jogar"
 msgid "Saves"
 msgstr "Salvamentos"
 
-#: base/main.cpp:643
+#: base/main.cpp:595
 msgid "Bad config file format. overwrite?"
 msgstr "Formato de arquivo de configuração inválido. substituir?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:692
+#: base/main.cpp:644
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2400,7 +2400,7 @@ msgstr ""
 "As etapas 2 e 3 precisam ser executadas apenas uma vez para todos os seus "
 "jogos."
 
-#: base/main.cpp:711 base/main.cpp:732
+#: base/main.cpp:663 base/main.cpp:684
 #: engines/director/lingo/lingo-builtins.cpp:1199
 #: engines/director/lingo/xlibs/jitdraw3.cpp:129
 #: engines/director/lingo/xlibs/jitdraw3.cpp:137
@@ -2409,12 +2409,12 @@ msgstr "Ok"
 
 #. I18N: A button caption to dismiss amessage and read it later
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:713 base/main.cpp:734
+#: base/main.cpp:665 base/main.cpp:686
 msgid "Read Later"
 msgstr "Ler mais Tarde"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:720
+#: base/main.cpp:672
 msgid ""
 "In this new version of ScummVM Android, significant changes were made to the "
 "file access system to allow support for modern versions of the Android "
@@ -2443,11 +2443,11 @@ msgstr ""
 "navegador ScummVM.\n"
 "  4. Navegue por esta pasta até os dados do seu jogo."
 
-#: base/main.cpp:830
+#: base/main.cpp:782
 msgid "Error running game:"
 msgstr "Erro ao executar o jogo:"
 
-#: base/main.cpp:877
+#: base/main.cpp:829
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 "Não foi possível encontrar nenhuma engine capaz de rodar o jogo selecionado"
@@ -2843,7 +2843,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ERRO: Não foi possível copiar o jogo salvo para um novo slot"
 
 #: engines/engine.cpp:628 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:257 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:266 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Salvamento automático"
@@ -4528,7 +4528,7 @@ msgstr "Restaurar"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Salvar ou carregar rapidamente não é suportado neste local"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2801
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2797
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4539,7 +4539,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2788
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2784
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4550,7 +4550,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2817
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2813
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -4743,7 +4743,7 @@ msgstr "Continuar"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
-#: engines/kyra/detection_tables.h:74
+#: engines/kyra/detection_tables.h:75
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
@@ -5605,10 +5605,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "O suporte a GroovieV2 não está compilado"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "Iniciar servidor"
+msgstr "Reservado"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -5682,85 +5680,65 @@ msgid "Enable Gore Mode when available"
 msgstr "Habilita Modo Sangrento quando disponível"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "Mover para Frente"
+msgstr "Avançar"
 
 #: engines/hpl1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "Mover para Trás"
+msgstr "Retroceder"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:77
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
-msgstr "Deslizar para Esquerda"
+msgstr "Deslocar para Esquerda"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:78
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
-msgstr "Deslizar para Direita"
+msgstr "Deslocar para Direita"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
-#| msgid "Pad Left"
 msgid "Lean Left"
-msgstr "Direcional para Esquerda"
+msgstr "Inclinar para Esquerda"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Pad Right"
 msgid "Lean Right"
-msgstr "Direcional para Direita"
+msgstr "Inclinar para Direita"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "Pular"
 
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:113
 #: engines/icb/icb.cpp:173
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "Touch"
+msgstr "Agachar"
 
 #: engines/hpl1/metaengine.cpp:92
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "Interagir"
+msgstr "Modo de Interação"
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Gore Mode"
 msgid "Look Mode"
-msgstr "Modo Sangrento"
+msgstr "Modo de Visão"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
-msgstr ""
+msgstr "Coldre"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "Bloco de Notas"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "Anotações"
 
 #: engines/hpl1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "Voar reto"
+msgstr "Lanterna"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "Bastão Luminoso"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -5806,29 +5784,25 @@ msgstr ""
 
 #: engines/icb/icb.cpp:88
 msgid "Fire"
-msgstr ""
+msgstr "Disparar"
 
 #: engines/icb/icb.cpp:103
 msgid "Arm"
-msgstr ""
+msgstr "Apontar"
 
 #: engines/icb/icb.cpp:108
-#, fuzzy
-#| msgid "Remove"
 msgid "Remora"
-msgstr "Remover"
+msgstr "Rêmora"
 
 #: engines/icb/icb.cpp:118 engines/icb/icb.cpp:178
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "Deslizar para Esquerda"
+msgstr "Passo Lateral"
 
-#: engines/kyra/detection_tables.h:72
+#: engines/kyra/detection_tables.h:73
 msgid "Missing language specific game code and/or resources."
 msgstr "Falta o código do jogo específico do idioma e/ou recursos."
 
-#: engines/kyra/detection_tables.h:73
+#: engines/kyra/detection_tables.h:74
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
@@ -5836,16 +5810,16 @@ msgstr ""
 "Falta o código do jogo específico do idioma e/ou recursos para esta tradução "
 "de fã."
 
-#: engines/kyra/detection_tables.h:75
+#: engines/kyra/detection_tables.h:76
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr "Demonstração reproduz animações simples sem usar a engine de Westwood."
 
-#: engines/kyra/detection_tables.h:1354
+#: engines/kyra/detection_tables.h:1367
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr "Você adicionou o jogo incorretamente. Adicione a pasta raiz do jogo."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1370
+#: engines/kyra/detection_tables.h:1383
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
@@ -6238,115 +6212,101 @@ msgstr "Fugir"
 
 #: engines/mm/mm1/metaengine.cpp:46
 msgid "View Party Member 1"
-msgstr ""
+msgstr "Ver Integrante 1"
 
 #: engines/mm/mm1/metaengine.cpp:47
 msgid "View Party Member 2"
-msgstr ""
+msgstr "Ver Integrante 2"
 
 #: engines/mm/mm1/metaengine.cpp:48
 msgid "View Party Member 3"
-msgstr ""
+msgstr "Ver Integrante 3"
 
 #: engines/mm/mm1/metaengine.cpp:49
 msgid "View Party Member 4"
-msgstr ""
+msgstr "Ver Integrante 4"
 
 #: engines/mm/mm1/metaengine.cpp:50
 msgid "View Party Member 5"
-msgstr ""
+msgstr "Ver Integrante 5"
 
 #: engines/mm/mm1/metaengine.cpp:51
 msgid "View Party Member 6"
-msgstr ""
+msgstr "Ver Integrante 6"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:57
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "Destravar"
+msgstr "Bloquear"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:58
 msgid "Cast"
-msgstr ""
+msgstr "Lançar"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "Exchange"
-msgstr ""
+msgstr "Trocar"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:60
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "Direita"
+msgstr "Atacar"
 
 #. I18N: Combat command in MM1
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:89
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "Preferências"
+msgstr "Referência Rápida"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:62
 msgid "Retreat"
-msgstr ""
+msgstr "Recuar"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:63
 msgid "Shoot"
-msgstr ""
+msgstr "Atirar"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:66
 msgid "Delay"
-msgstr ""
+msgstr "Adiar"
 
 #. I18N: Combat command in MM1
 #: engines/mm/mm1/metaengine.cpp:67 engines/mm/mm1/metaengine.cpp:84
 msgid "Protect"
-msgstr ""
+msgstr "Proteger"
 
 #. I18N: Select party member command in MM1
 #: engines/mm/mm1/metaengine.cpp:73
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "Mover para Frente"
+msgstr "Avançar"
 
 #. I18N: Directionalcommand in MM1
 #: engines/mm/mm1/metaengine.cpp:74
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "Mover para Trás"
+msgstr "Retroceder"
 
 #: engines/mm/mm1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "Alternar Modo de Combate"
+msgstr "Alternar Minimapa"
 
 #: engines/mm/mm1/metaengine.cpp:83
 msgid "Reorder Party"
-msgstr ""
+msgstr "Reorganizar Equipe"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "Pesquisar:"
+msgstr "Pesquisar"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:87
 msgid "Bash"
-msgstr ""
+msgstr "Golpear"
 
 #. I18N: Action of hero party in MM1
 #: engines/mm/mm1/metaengine.cpp:88 engines/scumm/help.cpp:144
@@ -6354,31 +6314,29 @@ msgid "Unlock"
 msgstr "Destravar"
 
 #: engines/mm/mm1/metaengine.cpp:95
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "Local seguinte"
+msgstr "Ir para local"
 
 #: engines/mm/mm1/metaengine.cpp:106 engines/mm/mm1/metaengine.cpp:111
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "Might and Magic 1 - Menus"
 
 #: engines/mm/mm1/metaengine.cpp:112 engines/mm/mm1/metaengine.cpp:118
 #: engines/mm/mm1/metaengine.cpp:124
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "Might and Magic 1 - Equipe"
 
 #: engines/mm/mm1/metaengine.cpp:117
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "Might and Magic 1 - Combate"
 
 #: engines/mm/mm1/metaengine.cpp:123
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "Might and Magic 1"
 
 #: engines/mm/mm1/metaengine.cpp:125
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - Trapaças"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
@@ -7488,7 +7446,7 @@ msgid "Querying games..."
 msgstr "Consultando jogos..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3488
+#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3484
 msgid "Join"
 msgstr "Juntar-se"
 
@@ -8418,7 +8376,7 @@ msgstr ""
 "recursos necessários para usar música MT-32. Será utilizado AdLib em seu "
 "lugar."
 
-#: engines/scumm/scumm.cpp:3377
+#: engines/scumm/scumm.cpp:3373
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -8429,11 +8387,11 @@ msgstr ""
 "'Maniac' dentro do diretório do jogo Tentacle, e o jogo precisa ser "
 "adicionado ao ScummVM."
 
-#: engines/scumm/scumm.cpp:3488
+#: engines/scumm/scumm.cpp:3484
 msgid "Would you like to host or join a network play session?"
 msgstr "Gostaria de hospedar ou participar de uma sessão de jogo em rede?"
 
-#: engines/scumm/scumm.cpp:3488
+#: engines/scumm/scumm.cpp:3484
 msgid "Host"
 msgstr "Hospedar"
 
@@ -8745,22 +8703,20 @@ msgstr ""
 "executável. Favor descompactá-lo"
 
 #: engines/tetraedge/metaengine.cpp:33
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "Corrige proporção para os jogos"
+msgstr "Corrigir proporção dos vídeos"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
-msgstr ""
+msgstr "Reproduz cenas de Syberia em 16:9, em vez de estender para tela cheia"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "Restaurar cenas ausentes"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "Restaura algumas cenas exclusivas da edição para Windows"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
@@ -9151,6 +9107,9 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"Falta o arquivo do vídeo de introdução de Crusader - verifique se os "
+"diretórios FLICS e SOUND foram copiados do CD.  Mais instruções no wiki: "
+"https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
@@ -9911,6 +9870,11 @@ msgstr ""
 "do GNU. Você precisará de todas as fontes do pacote de fontes que você "
 "escolher, ex., LiberationMono, LiberationSans e LiberationSerif, ou "
 "FreeMono, FreeSans e FreeSerif respectivamente."
+
+#, fuzzy
+#~| msgid "D-pad Left"
+#~ msgid "D-pad Center"
+#~ msgstr "D-pad para Esquerda"
 
 #~ msgid "Overwrite"
 #~ msgstr "Sobrescrever"

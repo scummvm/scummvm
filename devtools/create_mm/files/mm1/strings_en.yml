@@ -182,9 +182,10 @@ dialogs:
 			1: "an elven wizard"
 			2: "a gnome robber"
 			3: "a dwarf paladin\npainted a black & white checkered motif"
-			4: "a human cleric"
-			5: "a blue dragon"
-			6: "a gray minotaur"			
+			4: "a h-orc archer"
+			5: "a human cleric"
+			6: "a blue dragon"
+			7: "a gray minotaur"			
 		messages:
 			0: "Services rendered, secrets unfold\nthe brothers together\nlead to treasures untold\n\nfive towns you must travel\nfor this quest to unravel"
 			1: "Seek the wizard ranalou\nin his lair at the korin bluffs\nsix castles he will send you to\nbut doom will be quite tough!\ncruelty and kindness\nmeasured throughout\njudgement day is then sought out"
@@ -611,11 +612,12 @@ enhdialogs:
 		realign: "\x01""37Re-align"
 	trade:
 		which: "Trade which:"
-		gems: "\x01""37Gems"
-		gold: "Gol\x01""37d"
+		gems: "Ge\x01""37ms"
+		gold: "\x01""37Gold"
 		food: "\x01""37Food"
 		items: "\x01""37Items"
 		how_much: "How much:"
+		dest: "Trade to whom?"
 		items_help: "To trade items, select an item from the inventory, and then select the portrait of the character to trade to"
 	training:
 		title: "Training"
@@ -971,18 +973,20 @@ maps:
 		temple: "\"Temple Succubon\""
 		training: "\"Amazonia's Training\""
 
-		blacksmith_inside: "\"Busily forging a long sword,an extremely\nbeautiful young girl says with a\nseductive smile, \"Can i help you (Y/N)?\""
-		inn_inside: "lara, the inkeepers voluptuous\ndaughter, asks if you will be spending\nthe night... sign in (Y/N)?"
+		blacksmith_inside: "Busily forging a long sword,an extremely\nbeautiful young girl says with a\nseductive smile, \"Can i help you (Y/N)?\""
+		inn_inside: "Lara, the inkeepers voluptuous\ndaughter, asks if you will be spending\nthe night... sign in (Y/N)?"
 		market_inside: "From behind the fruit stand\na sultry voice asks, \"See anything\nyou like (Y/N)?\""
-		temple_inside: "The once magnificent temple shows\nsigns of neglect and decay. the high\npriestess asks,\"Need help (Y/N)?\""
+		temple_inside: "The once magnificent temple shows\nsigns of neglect and decay. The high\npriestess asks, \"Need help (Y/N)?\""
 		training_inside: "A tall, muscular female clad in leather\narmor approaches asking, \"Strangers,\nare you here for training (Y/N)?\""
 
 		males_drained: "Males are drained!"
 		secret: "A sensuous female voice speaks from\nwithin an intoxicating mist,\n\"You've discovered my secret!\""
-		zam0: "Note: zam 12,2"
-		zam1: "\"I am zam, astral brother of zom and\nonly living male residing in portsmith\n"
+		zam0: "Note: Zam 12,2"
+		zam1: "\"I am Zam, astral brother of Zom and\nonly living male residing in Portsmith\n"
 		zam2: "My clue is c-15\""
 		zam3: "You're not the couriers!\""
+	emap01:
+		blacksmith_inside: "Busily forging a long sword, an extremely beautiful young girl says with a seductive smile, \"Can i help you (Y/N)?\""
 
 	map02:
 		blacksmith: "\"Swampside supplies\""

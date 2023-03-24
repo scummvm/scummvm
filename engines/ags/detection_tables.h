@@ -3893,6 +3893,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484767783),  // v1.01
 	GAME_ENTRY_EN_GOG("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484767190),  // v1.02
 	GAME_ENTRY_EN_GOG("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484783215),  // v1.04
+	GAME_ENTRY_EN_GOG("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484795246),  // v1.05
 	GAME_ENTRY_EN_STEAM("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026),
 	GAME_ENTRY_EN("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 82185295),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOLAUNCHLOAD("excavationhb", "ac2game.dat", "e5553f7c45d26d5fbc8b376a859bb87c", 563281442, AGSSPRITEFONT_CLIFFTOP), // Mac
@@ -5107,6 +5108,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("boilerroom", "brb.exe", "27343924ddad3be0b97bdcaa71858b1b", 4299483),
 	GAME_ENTRY_EN("boltaction", "BAction.exe", "7435dda89567847b6f6ae5211cbdffde", 91472413),
 	GAME_ENTRY_EN("bone", "Bone.exe", "eaa4f4b14a9fb5bb59aca188d765b41e", 4079499),
+	GAME_ENTRY_EN("boogiebum", "Feb16Mags.exe", "2ca80bd50763378b72cd1e1cf25afac3", 4664112),
 	GAME_ENTRY_EN("boogiebum", "BoogieBum.exe", "2ca80bd50763378b72cd1e1cf25afac3", 4882195),
 	GAME_ENTRY_EN("bookofspells4", "BOS4.exe", "db4d303868b86e28a8eca1a4181ea288", 4537869),
 	GAME_ENTRY_EN_PLATFORM("bookofspellscomplete", "bos2.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 5724377, "Beta"),
@@ -5118,7 +5120,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("boxland", "OROW 2008.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 5988324),
 	GAME_ENTRY_EN("boyindahood", "boy in da hood.exe", "afe40dc1416dd51e896ee0444d799f07", 12260759),
 	GAME_ENTRY_EN("bradbradsonkeyquest", "badness.exe", "0500aacb6c176d47ac0f8158f055db83", 1190580),
-	GAME_ENTRY_LANG("braquagegringotts", "Braquage à Grin.exe", "06a03fe35791b0578068ab1873455463", 86953263, Common::FR_FRA),
+	GAME_ENTRY_LANG("braquagegringotts", "xn--Braquage  Grin.exe-nrb", "06a03fe35791b0578068ab1873455463", 86953263, Common::FR_FRA),
 	GAME_ENTRY_EN("breakage", "Breakage.exe", "973f6b65820ca1f4e19704a49be99d76", 727818639),
 	GAME_ENTRY_EN("breakdown", "breakdown.exe", "710ac163c281a5a539ffe2386264b990", 5273352),
 	GAME_ENTRY_EN("breakingcharacter", "Breaking character.exe", "615e73fc1874e92d60a1996c2330ea36", 23803957),
@@ -6051,7 +6053,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("iwantout", "I_want_out!.ags", "7db3059844c14f1d817f68b958b66f45", 22718900),
 	GAME_ENTRY("iwanttodie", "ElMito.exe", "f120690b506dd63cd7d1112ea6af2f77", 11304944),  // Eng-Esp
 	GAME_ENTRY_LANG("iwanttodie", "QuieroMorir.exe", "f120690b506dd63cd7d1112ea6af2f77", 11304944, Common::ES_ESP),
-	GAME_ENTRY("iwanttodieremake", "IWTD.exe", "981e60a9be515bb56c634856462abbc7", 62882828),  // Eng-Esp
+	GAME_ENTRY_EN("iwanttodieremake", "IWTD.exe", "981e60a9be515bb56c634856462abbc7", 62882828),
+	GAME_ENTRY_LANG("iwanttodieremake", "QM.exe", "981e60a9be515bb56c634856462abbc7", 62486182, Common::ES_ESP),
+	GAME_ENTRY_PLATFORM("iwanttodieremake", "QM.exe", "981e60a9be515bb56c634856462abbc7", 62806610, "Galician"),
 	GAME_ENTRY_EN("iwwhiiwwhitomirotpgthegame", "IWWHIIWWHITOMIROTPG - The Game.exe", "5fd79c32d2b8bbd589f6254d611d2742", 3576019),
 	GAME_ENTRY_EN("jack", "JACK.exe", "615e73fc1874e92d60a1996c2330ea36", 243357628),
 	GAME_ENTRY("jacktrasheaterch1", "carrin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2376923),  //En-It
@@ -6184,6 +6188,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("lancethepenguin", "LanceThePenguin.exe", "a524cbb1c51589903c4043b98917f1d9", 3838581),
 	GAME_ENTRY_LANG("laodiseadelfracaso2", "La Odisea II.exe", "0710e2ec71042617f565c01824f0cf3c", 3083622, Common::ES_ESP),
 	GAME_ENTRY_EN_PLATFORM("larrylotter", "Warthogs.exe", "06a03fe35791b0578068ab1873455463", 3387147, "MAGS"),
+	GAME_ENTRY_EN_PLATFORM("larrylotter", "Warthogs.exe", "06a03fe35791b0578068ab1873455463", 3481314, "MAGS"),
 	GAME_ENTRY("lasol", "LaSol.exe", "615e73fc1874e92d60a1996c2330ea36", 19677458),  // Multilang
 	GAME_ENTRY_EN("lastclown", "ZOM.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 867344),
 	GAME_ENTRY_EN("lastlightpost", "LastLightPost.exe", "981e60a9be515bb56c634856462abbc7", 65705119),
@@ -7527,7 +7532,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("subatomic", "LD48-23.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 25655660),
 	GAME_ENTRY_EN("subwaycrisis", "Ludum Dare 43.ags", "97341b3ddd7a0eb8ae4a247fe25dc082", 3508218),  // Linux
 	GAME_ENTRY_EN("subwaycrisis", "Ludum Dare 43.exe", "78f88f71bbef277d93cbe10f1d2ac404", 5996042),  // Windows
-	GAME_ENTRY_LANG("suenanfantasmas", "SueñanLosFantasmas.exe", "50a7ba44a0d5499628de2a46bb4a9e97", 71071264, Common::ES_ESP),  // Windows
+	GAME_ENTRY_LANG("suenanfantasmas", "xn--SueanLosFantasmas.exe-ebc", "50a7ba44a0d5499628de2a46bb4a9e97", 71071264, Common::ES_ESP),  // Windows
 	GAME_ENTRY_LANG("suenanfantasmas", "SuenanLosFantasmas.ags", "4092234ccc703586b54d86900550baa0", 67828236, Common::ES_ESP),  // Linux
 	GAME_ENTRY_EN("summerwoes", "MAGSAugust.exe", "7921b41f852d8dd62922d87cc69d9e83", 4896812),
 	GAME_ENTRY_EN("sunriseparadise", "Sunrise Paradise.exe", "838f62e456d4fbab9c3754c9d70d2b89", 13430921),
@@ -8140,6 +8145,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("evildead4", "evil dead.exe", "465f972675db2da6040518221af5b0ba", 2141432,Common::RU_RUS),
 	GAME_ENTRY_LANG("goodman", "goodman.exe", "465f972675db2da6040518221af5b0ba", 2699578,Common::RU_RUS),
 	GAME_ENTRY_LANG("prisonersofice", "newyearq.exe", "b26aa198e5175000f037b84d8a4038f5", 84723231, Common::RU_RUS),
+	GAME_ENTRY_LANG("prisonersofice", "newyearq.exe", "b26aa198e5175000f037b84d8a4038f5", 88100040, Common::RU_RUS),
 
 
 	{ AD_TABLE_END_MARKER, nullptr, nullptr }

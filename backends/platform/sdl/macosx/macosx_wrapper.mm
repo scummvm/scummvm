@@ -25,83 +25,12 @@
 #include "backends/platform/sdl/macosx/macosx_wrapper.h"
 #include "backends/platform/sdl/macosx/macosx-compat.h"
 
-#include <AppKit/NSPasteboard.h>
 #include <Foundation/NSArray.h>
 #include <Foundation/NSBundle.h>
 #include <Foundation/NSPathUtilities.h>
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CFString.h>
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
-#define NSPasteboardTypeString NSStringPboardType
-#endif
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-// https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Cocoa64BitGuide/64BitChangesCocoa/64BitChangesCocoa.html
-#if __LP64__ || NS_BUILD_32_LIKE_64
-typedef unsigned long NSUInteger;
-#else
-typedef unsigned int NSUInteger;
-#endif
-
-// Those are not defined in the 10.4 SDK, but they are defined when targeting
-// Mac OS X 10.4 or above in the 10.5 SDK, and they do work with 10.4.
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-enum {
-	NSUTF32StringEncoding = 0x8c000100,
-	NSUTF32BigEndianStringEncoding = 0x98000100,
-	NSUTF32LittleEndianStringEncoding = 0x9c000100
-};
-#endif
-#endif
-
-bool hasTextInClipboardMacOSX() {
-	return [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObject:NSPasteboardTypeString]] != nil;
-}
-
-Common::U32String getTextFromClipboardMacOSX() {
-	if (!hasTextInClipboardMacOSX())
-		return Common::U32String();
-
-	NSPasteboard *pb = [NSPasteboard generalPasteboard];
-	NSString *str = [pb  stringForType:NSPasteboardTypeString];
-	if (![str respondsToSelector:@selector(getBytes:maxLength:usedLength:encoding:options:range:remainingRange:)])
-		return Common::U32String();
-
-	// If translations are supported, use the current TranslationManager charset and otherwise
-	// use ASCII. If the string cannot be represented using the requested encoding we get a null
-	// pointer below, which is fine as ScummVM would not know what to do with the string anyway.
-#ifdef SCUMM_LITTLE_ENDIAN
-	NSStringEncoding stringEncoding = NSUTF32LittleEndianStringEncoding;
-#else
-	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
-#endif
-	NSUInteger textLength = [str length];
-	uint32 *text = new uint32[textLength];
-	if (![str getBytes:text maxLength:4*textLength usedLength:NULL encoding: stringEncoding options:0 range:NSMakeRange(0, textLength) remainingRange:NULL]) {
-		delete[] text;
-		return Common::U32String();
-	}
-	Common::U32String u32String(text, textLength);
-	delete[] text;
-
-	return u32String;
-}
-
-bool setTextInClipboardMacOSX(const Common::U32String &text) {
-	NSPasteboard *pb = [NSPasteboard generalPasteboard];
-	[pb declareTypes:[NSArray arrayWithObject:NSPasteboardTypeString] owner:nil];
-
-#ifdef SCUMM_LITTLE_ENDIAN
-	NSStringEncoding stringEncoding = NSUTF32LittleEndianStringEncoding;
-#else
-	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
-#endif
-	NSString *nsstring = [[NSString alloc] initWithBytes:text.c_str() length:4*text.size() encoding: stringEncoding];
-	bool status =  [pb setString:nsstring forType:NSPasteboardTypeString];
-	[nsstring release];
-	return status;
-}
+#include <CoreFoundation/CFBundle.h>
 
 Common::String getDesktopPathMacOSX() {
 	// The recommended method is to use NSFileManager.
@@ -133,4 +62,11 @@ Common::String getAppSupportPathMacOSX() {
 	if (path == nil)
 		return Common::String();
 	return Common::String([path fileSystemRepresentation]) + "/ScummVM";
+}
+
+Common::String getMacBundleName() {
+	NSString *appName = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleNameKey];
+	if (!appName)
+		return Common::String("ScummVM");
+	return Common::String([appName UTF8String]);
 }

@@ -84,8 +84,7 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 	// Process the lines
 	clear();
 	for (const auto &line : msg._lines)
-		addText(line._text, line.y, 0,
-			(line.x > 0) ? ALIGN_MIDDLE : line._align, 0);
+		addText(line._text, -1, 0, (line.x > 0) ? ALIGN_MIDDLE : line._align, 0);
 
 	if (msg._delaySeconds)
 		delaySeconds(msg._delaySeconds);

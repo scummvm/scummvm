@@ -164,18 +164,6 @@ bool OSystem_MacOSX::displayLogFile() {
 	return err != noErr;
 }
 
-bool OSystem_MacOSX::hasTextInClipboard() {
-	return hasTextInClipboardMacOSX();
-}
-
-Common::U32String OSystem_MacOSX::getTextFromClipboard() {
-	return getTextFromClipboardMacOSX();
-}
-
-bool OSystem_MacOSX::setTextInClipboard(const Common::U32String &text) {
-	return setTextInClipboardMacOSX(text);
-}
-
 bool OSystem_MacOSX::openUrl(const Common::String &url) {
 	CFURLRef urlRef = CFURLCreateWithBytes (NULL, (const UInt8*)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
 	OSStatus err = LSOpenCFURLRef(urlRef, NULL);
@@ -231,7 +219,7 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 }
 
 Common::String OSystem_MacOSX::getDefaultConfigFileName() {
-	const Common::String baseConfigName = "Library/Preferences/ScummVM Preferences";
+	const Common::String baseConfigName = "Library/Preferences/" + getMacBundleName() + " Preferences";
 
 	Common::String configFile;
 
@@ -258,7 +246,9 @@ Common::String OSystem_MacOSX::getDefaultLogFileName() {
 		return Common::String();
 	}
 
-	return Common::String(prefix) + "/Library/Logs/scummvm.log";
+	Common::String appName = getMacBundleName();
+	appName.toLowercase();
+	return Common::String(prefix) + "/Library/Logs/" + appName + ".log";
 }
 
 Common::String OSystem_MacOSX::getDefaultIconsPath() {

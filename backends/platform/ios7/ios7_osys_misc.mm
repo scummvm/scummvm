@@ -22,8 +22,16 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/platform/ios7/ios7_osys_main.h"
+// Needs to be included first as system headers redefine NO and YES, which clashes
+// with the DisposeAfterUse::Flag enum used in Common stream classes.
+#include "common/file.h"
 
+#include "backends/platform/ios7/ios7_osys_main.h"
+#include "base/version.h"
+
+#include <Foundation/NSBundle.h>
+#include <Foundation/NSFileManager.h>
+#include <Foundation/NSUserDefaults.h>
 #include <UIKit/UIKit.h>
 #include <SystemConfiguration/SCNetworkReachability.h>
 #include "backends/platform/ios7/ios7_app_delegate.h"
@@ -35,6 +43,91 @@ static inline void execute_on_main_thread_async(void (^block)(void)) {
 	} else {
 		dispatch_async(dispatch_get_main_queue(), block);
 	}
+}
+
+void OSystem_iOS7::updateStartSettings(const Common::String &executable, Common::String &command, Common::StringMap &settings, Common::StringArray& additionalArgs) {
+		NSBundle* bundle = [NSBundle mainBundle];
+		// Check if scummvm is running from an app bundle
+		if (!bundle || ![bundle bundleIdentifier]) {
+			// Use default autostart implementation
+			EventsBaseBackend::updateStartSettings(executable, command, settings, additionalArgs);
+			return;
+		}
+
+		// If the bundle contains a scummvm.ini, use it as initial config
+		NSString *iniPath = [bundle pathForResource:@"scummvm" ofType:@"ini"];
+		if (iniPath && !settings.contains("initial-cfg")) {
+#ifdef IPHONE_SANDBOXED
+			settings["initial-cfg"] = "appbundle:/scummvm.ini";
+#else
+			settings["initial-cfg"] = Common::String([iniPath fileSystemRepresentation]);
+#endif
+		}
+
+		// If a command was specified on the command line, do not override it
+		if (!command.empty())
+			return;
+
+		// Check if we have an autorun file with additional arguments
+		NSString *autorunPath = [bundle pathForResource:@"scummvm-autorun" ofType:nil];
+		if (autorunPath) {
+			Common::File autorun;
+			Common::String line;
+#ifdef IPHONE_SANDBOXED
+			if (autorun.open(Common::FSNode("appbundle:/scummvm-autorun"))) {
+#else
+			if (autorun.open(Common::FSNode([autorunPath fileSystemRepresentation]))) {
+#endif
+				while (!autorun.eos()) {
+					line = autorun.readLine();
+					if (!line.empty() && line[0] != '#')
+						additionalArgs.push_back(line);
+				}
+			}
+			autorun.close();
+		}
+
+		// If the bundle contains a game directory, auto-detect it
+		NSString *gamePath = [[bundle resourcePath] stringByAppendingPathComponent:@"game"];
+		BOOL isDir = false;
+		BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:gamePath isDirectory:&isDir];
+		if (exists && isDir) {
+			// Use auto-detection
+			command = "auto-detect";
+#ifdef IPHONE_SANDBOXED
+			settings["path"] = "appbundle:/game";
+#else
+			settings["path"] = [gamePath fileSystemRepresentation];
+#endif
+			return;
+		}
+
+		// The rest of the function has some commands executed only the first time after each version change
+		// Check the last version stored in the user settings.
+		NSString *versionString = [NSString stringWithUTF8String:gScummVMFullVersion];
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+		NSString *lastVersion = [defaults stringForKey:@"lastVersion"];
+		if (lastVersion && [lastVersion isEqualToString:versionString])
+			return;
+		[defaults setObject:versionString forKey:@"lastVersion"];
+
+		// If the bundle contains a games directory, add them to the launcher
+		NSString *gamesPath = [[bundle resourcePath] stringByAppendingPathComponent:@"games"];
+		isDir = false;
+		exists = [[NSFileManager defaultManager] fileExistsAtPath:gamesPath isDirectory:&isDir];
+		if (exists && isDir) {
+			// Detect and add games
+			command = "add";
+#ifdef IPHONE_SANDBOXED
+			settings["path"] = "appbundle:/games";
+#else
+			settings["path"] = [gamesPath fileSystemRepresentation];
+#endif
+			settings["recursive"] = "true";
+			settings["exit"] = "false";
+			return;
+		}
+
 }
 
 Common::String OSystem_iOS7::getSystemLanguage() const {

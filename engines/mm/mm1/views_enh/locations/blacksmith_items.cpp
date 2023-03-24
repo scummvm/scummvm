@@ -184,7 +184,7 @@ void BlacksmithItems::itemSelected() {
 	});
 }
 
-void BlacksmithItems::selectedCharChanged() {
+void BlacksmithItems::charSwitched(Character *priorChar) {
 	populateItems();
 	redraw();
 }

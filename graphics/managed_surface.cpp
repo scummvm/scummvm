@@ -32,14 +32,14 @@ ManagedSurface::ManagedSurface() :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr),
 		_transparentColor(0),_transparentColorSet(false), _paletteSet(false) {
-	Common::fill(&_palette[0], &_palette[256], 0);
+	memset(_palette, 0, sizeof(_palette));
 }
 
 ManagedSurface::ManagedSurface(const ManagedSurface &surf) :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr),
 		_transparentColor(0), _transparentColorSet(false), _paletteSet(false) {
-	Common::fill(&_palette[0], &_palette[256], 0);
+	memset(_palette, 0, sizeof(_palette));
 	*this = surf;
 }
 
@@ -47,7 +47,7 @@ ManagedSurface::ManagedSurface(int width, int height) :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr),
 		_transparentColor(0), _transparentColorSet(false), _paletteSet(false) {
-	Common::fill(&_palette[0], &_palette[256], 0);
+	memset(_palette, 0, sizeof(_palette));
 	create(width, height);
 }
 
@@ -55,7 +55,7 @@ ManagedSurface::ManagedSurface(int width, int height, const Graphics::PixelForma
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr),
 		_transparentColor(0), _transparentColorSet(false), _paletteSet(false) {
-	Common::fill(&_palette[0], &_palette[256], 0);
+	memset(_palette, 0, sizeof(_palette));
 	create(width, height, pixelFormat);
 }
 
@@ -63,7 +63,7 @@ ManagedSurface::ManagedSurface(ManagedSurface &surf, const Common::Rect &bounds)
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr),
 		_transparentColor(0), _transparentColorSet(false), _paletteSet(false) {
-	Common::fill(&_palette[0], &_palette[256], 0);
+	memset(_palette, 0, sizeof(_palette));
 	create(surf, bounds);
 }
 
@@ -132,7 +132,7 @@ ManagedSurface &ManagedSurface::operator=(const ManagedSurface &surf) {
 		_transparentColorSet = surf._transparentColorSet;
 		_transparentColor = surf._transparentColor;
 		_paletteSet = surf._paletteSet;
-		Common::copy(&surf._palette[0], &surf._palette[256], _palette);
+		memcpy(_palette, surf._palette, sizeof(_palette));
 	}
 
 	return *this;
@@ -176,7 +176,7 @@ void ManagedSurface::create(ManagedSurface &surf, const Common::Rect &bounds) {
 	_transparentColorSet = surf._transparentColorSet;
 	_transparentColor = surf._transparentColor;
 	_paletteSet = surf._paletteSet;
-	Common::copy(&surf._palette[0], &surf._palette[256], _palette);
+	memcpy(_palette, surf._palette, sizeof(_palette));
 }
 
 void ManagedSurface::free() {
@@ -205,7 +205,7 @@ void ManagedSurface::copyFrom(const ManagedSurface &surf) {
 	_transparentColorSet = surf._transparentColorSet;
 	_transparentColor = surf._transparentColor;
 	_paletteSet = surf._paletteSet;
-	Common::copy(&surf._palette[0], &surf._palette[256], _palette);
+	memcpy(_palette, surf._palette, sizeof(_palette));
 }
 
 void ManagedSurface::copyFrom(const Surface &surf) {
@@ -223,7 +223,7 @@ void ManagedSurface::copyFrom(const Surface &surf) {
 	_transparentColorSet = false;
 	_transparentColor = 0;
 	_paletteSet = false;
-	Common::fill(&_palette[0], &_palette[256], 0);
+	memset(_palette, 0, sizeof(_palette));
 }
 
 void ManagedSurface::blitFrom(const Surface &src) {
@@ -271,7 +271,7 @@ void ManagedSurface::blitFrom(const ManagedSurface &src, const Common::Rect &src
 }
 
 void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRect,
-		const Common::Rect &destRect, const uint32 *srcPalette) {
+		const Common::Rect &destRect, const byte *srcPalette) {
 
 	if (destRect.isEmpty())
 		return;
@@ -300,12 +300,8 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 
 
 	uint32 alphaMask = 0;
-	if (srcFormat.isCLUT8()) {
-		alphaMask = 0xff000000u;
-	} else {
-		if (srcFormat.aBits() > 0)
-			alphaMask = (((static_cast<uint32>(1) << (srcFormat.aBits() - 1)) - 1) * 2 + 1) << srcFormat.aShift;
-	}
+	if (srcFormat.aBits() > 0)
+		alphaMask = (((static_cast<uint32>(1) << (srcFormat.aBits() - 1)) - 1) * 2 + 1) << srcFormat.aShift;
 
 	const bool noScale = scaleX == SCALE_THRESHOLD && scaleY == SCALE_THRESHOLD;
 	for (int destY = destRect.top, scaleYCtr = 0; destY < destRect.bottom; ++destY, scaleYCtr += scaleY) {
@@ -343,28 +339,23 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 			}
 
 			uint32 col = 0;
-			if (srcFormat.isCLUT8()) {
-				assert(srcPalette != nullptr);	// Catch the cases when palette is missing
-				// Get the palette color
-				col = srcPalette[*srcVal];
-			} else {
-				// Use the src's pixel format to split up the source pixel
-				if (srcFormat.bytesPerPixel == 1)
-					col = *reinterpret_cast<const uint8 *>(srcVal);
-				else if (srcFormat.bytesPerPixel == 2)
-					col = *reinterpret_cast<const uint16 *>(srcVal);
-				else if (srcFormat.bytesPerPixel == 4)
-					col = *reinterpret_cast<const uint32 *>(srcVal);
-				else
-					col = READ_UINT24(srcVal);
-			}
+			// Use the src's pixel format to split up the source pixel
+			if (srcFormat.bytesPerPixel == 1)
+				col = *reinterpret_cast<const uint8 *>(srcVal);
+			else if (srcFormat.bytesPerPixel == 2)
+				col = *reinterpret_cast<const uint16 *>(srcVal);
+			else if (srcFormat.bytesPerPixel == 4)
+				col = *reinterpret_cast<const uint32 *>(srcVal);
+			else
+				col = READ_UINT24(srcVal);
 
-			const bool isOpaque = ((col & alphaMask) == alphaMask);
+			const bool isOpaque = srcFormat.isCLUT8() ? true : ((col & alphaMask) == alphaMask);
+			const bool isTransparent = srcFormat.isCLUT8() ? false : ((col & alphaMask) == 0);
 
 			uint32 destPixel = 0;
 
 			// Need to check isOpaque in case alpha mask is 0
-			if (!isOpaque && (col & alphaMask) == 0) {
+			if (!isOpaque && isTransparent) {
 				// Completely transparent, so skip
 				continue;
 			} else if (isOpaque && isSameFormat) {
@@ -376,10 +367,10 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 
 				// Different format or partially transparent
 				if (srcFormat.isCLUT8()) {
-					rSrc = col & 0xff;
-					gSrc = (col >> 8) & 0xff;
-					bSrc = (col >> 16) & 0xff;
-					aSrc = (col >> 24) & 0xff;
+					rSrc = srcPalette[(col * 3) + 0];
+					gSrc = srcPalette[(col * 3) + 1];
+					bSrc = srcPalette[(col * 3) + 2];
+					aSrc = 0xff;
 				} else {
 					srcFormat.colorToARGB(col, aSrc, rSrc, gSrc, bSrc);
 				}
@@ -505,24 +496,22 @@ void ManagedSurface::transBlitFrom(const ManagedSurface &src, const Common::Rect
 		const Surface *mask, bool maskOnly) {
 	if (transColor == (uint32)-1 && src._transparentColorSet)
 		transColor = src._transparentColor;
-	const uint32 *srcPalette = src._paletteSet ? src._palette : nullptr;
-	const uint32 *dstPalette = _paletteSet ? _palette : nullptr;
+	const byte *srcPalette = src._paletteSet ? src._palette : nullptr;
+	const byte *dstPalette = _paletteSet ? _palette : nullptr;
 
 	transBlitFromInner(src._innerSurface, srcRect, destRect, transColor, flipped, overrideColor,
 		srcAlpha, srcPalette, dstPalette, mask, maskOnly);
 }
 
-static uint findBestColor(const uint32 *palette, byte cr, byte cg, byte cb) {
+static uint findBestColor(const byte *palette, byte cr, byte cg, byte cb) {
 	uint bestColor = 0;
 	double min = 0xFFFFFFFF;
 
 	for (uint i = 0; i < 256; ++i) {
-		uint col = palette[i];
-
-		int rmean = ((col & 0xff) + cr) / 2;
-		int r = (col & 0xff) - cr;
-		int g = ((col >> 8) & 0xff) - cg;
-		int b = ((col >> 16) & 0xff) - cb;
+		int rmean = (*(palette + 3 * i + 0) + cr) / 2;
+		int r = *(palette + 3 * i + 0) - cr;
+		int g = *(palette + 3 * i + 1) - cg;
+		int b = *(palette + 3 * i + 2) - cb;
 
 		double dist = sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
 		if (min > dist) {
@@ -534,15 +523,21 @@ static uint findBestColor(const uint32 *palette, byte cr, byte cg, byte cb) {
 	return bestColor;
 }
 
-static byte *createPaletteLookup(const uint32 *srcPalette, const uint32 *dstPalette) {
+static byte *createPaletteLookup(const byte *srcPalette, const byte *dstPalette) {
 	byte *lookup = new byte[256];
 
 	for (int i = 0; i < 256; i++) {
-		uint col = srcPalette[i];
-		if (col == dstPalette[i]) {
+		byte rSrc = srcPalette[(i * 3) + 0];
+		byte gSrc = srcPalette[(i * 3) + 1];
+		byte bSrc = srcPalette[(i * 3) + 2];
+		byte rDst = dstPalette[(i * 3) + 0];
+		byte gDst = dstPalette[(i * 3) + 1];
+		byte bDst = dstPalette[(i * 3) + 2];
+
+		if (rSrc == rDst && gSrc == gDst && bSrc == bDst) {
 			lookup[i] = i;
 		} else {
-			lookup[i] = findBestColor(dstPalette, col & 0xff, (col >> 8) & 0xff, (col >> 16) & 0xff);
+			lookup[i] = findBestColor(dstPalette, rSrc, gSrc, bSrc);
 		}
 	}
 
@@ -551,18 +546,17 @@ static byte *createPaletteLookup(const uint32 *srcPalette, const uint32 *dstPale
 
 template<typename TSRC, typename TDEST>
 void transBlitPixel(TSRC srcVal, TDEST &destVal, const Graphics::PixelFormat &srcFormat, const Graphics::PixelFormat &destFormat,
-		uint32 overrideColor, uint32 srcAlpha, const uint32 *srcPalette, const byte *lookup) {
+		uint32 overrideColor, uint32 srcAlpha, const byte *srcPalette, const byte *lookup) {
 	// Decode and re-encode each pixel
 	byte aSrc, rSrc, gSrc, bSrc;
 	if (srcFormat.isCLUT8()) {
 		assert(srcPalette != nullptr);	// Catch the cases when palette is missing
 
 		// Get the palette color
-		const uint32 col = srcPalette[srcVal];
-		rSrc = col & 0xff;
-		gSrc = (col >> 8) & 0xff;
-		bSrc = (col >> 16) & 0xff;
-		aSrc = (col >> 24) & 0xff;
+		rSrc = srcPalette[(srcVal * 3) + 0];
+		gSrc = srcPalette[(srcVal * 3) + 1];
+		bSrc = srcPalette[(srcVal * 3) + 2];
+		aSrc = 0xff;
 	} else {
 		srcFormat.colorToARGB(srcVal, aSrc, rSrc, gSrc, bSrc);
 	}
@@ -598,7 +592,7 @@ void transBlitPixel(TSRC srcVal, TDEST &destVal, const Graphics::PixelFormat &sr
 
 template<>
 void transBlitPixel<byte, byte>(byte srcVal, byte &destVal, const Graphics::PixelFormat &srcFormat, const Graphics::PixelFormat &destFormat,
-		uint32 overrideColor, uint32 srcAlpha, const uint32 *srcPalette, const byte *lookup) {
+		uint32 overrideColor, uint32 srcAlpha, const byte *srcPalette, const byte *lookup) {
 	if (srcAlpha == 0) {
 		// Completely transparent, so skip
 		return;
@@ -612,8 +606,8 @@ void transBlitPixel<byte, byte>(byte srcVal, byte &destVal, const Graphics::Pixe
 
 template<typename TSRC, typename TDEST>
 void transBlit(const Surface &src, const Common::Rect &srcRect, ManagedSurface &dest, const Common::Rect &destRect,
-		TSRC transColor, bool flipped, uint32 overrideColor, uint32 srcAlpha, const uint32 *srcPalette,
-		const uint32 *dstPalette, const Surface *mask, bool maskOnly) {
+		TSRC transColor, bool flipped, uint32 overrideColor, uint32 srcAlpha, const byte *srcPalette,
+		const byte *dstPalette, const Surface *mask, bool maskOnly) {
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
 	byte rst = 0, gst = 0, bst = 0, rdt = 0, gdt = 0, bdt = 0;
@@ -704,7 +698,7 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, ManagedSurface &
 
 void ManagedSurface::transBlitFromInner(const Surface &src, const Common::Rect &srcRect,
 		const Common::Rect &destRect, uint32 transColor, bool flipped, uint32 overrideColor,
-		uint32 srcAlpha, const uint32 *srcPalette, const uint32 *dstPalette, const Surface *mask, bool maskOnly) {
+		uint32 srcAlpha, const byte *srcPalette, const byte *dstPalette, const Surface *mask, bool maskOnly) {
 	if (src.w == 0 || src.h == 0 || destRect.width() == 0 || destRect.height() == 0)
 		return;
 
@@ -750,23 +744,12 @@ void ManagedSurface::clear(uint32 color) {
 
 void ManagedSurface::grabPalette(byte *colors, uint start, uint num) const {
 	assert(start < 256 && (start + num) <= 256);
-	const uint32 *src = &_palette[start];
-
-	for (; num > 0; --num, colors += 3) {
-		uint32 p = *src++;
-		colors[0] =  p        & 0xff;
-		colors[1] = (p >> 8)  & 0xff;
-		colors[2] = (p >> 16) & 0xff;
-	}
+	memcpy(colors, _palette + 3 * start, 3 * num);
 }
 
 void ManagedSurface::setPalette(const byte *colors, uint start, uint num) {
 	assert(start < 256 && (start + num) <= 256);
-	uint32 *dest = &_palette[start];
-
-	for (; num > 0; --num, colors += 3) {
-		*dest++ = colors[0] | (colors[1] << 8) | (colors[2] << 16) | (0xff << 24);
-	}
+	memcpy(_palette + 3 * start, colors, 3 * num);
 
 	_paletteSet = true;
 

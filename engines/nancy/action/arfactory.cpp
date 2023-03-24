@@ -37,7 +37,6 @@
 namespace Nancy {
 namespace Action {
 
-// TODO put this function in a subclass
 ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	type -= 0xA;
 	switch (type) {

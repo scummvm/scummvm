@@ -31,6 +31,7 @@
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/state/scene.h"
+#include "engines/nancy/state/map.h"
 
 #include "engines/nancy/ui/button.h"
 #include "engines/nancy/ui/ornaments.h"
@@ -210,7 +211,13 @@ void Scene::popScene() {
 }
 
 void Scene::pauseSceneSpecificSounds() {
-	// TODO missing if, same condition as the one in SoundManager::stopAndUnloadSpecificSounds
+	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+		// Don't stop the map sound in certain scenes
+		uint currentScene = _sceneState.currentScene.sceneID;
+		if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
+			g_nancy->_sound->pauseSound(NancyMapState.getSound(), true);
+		}
+	}
 
 	for (uint i = 0; i < 10; ++i) {
 		g_nancy->_sound->pauseSound(i, true);
@@ -218,6 +225,14 @@ void Scene::pauseSceneSpecificSounds() {
 }
 
 void Scene::unpauseSceneSpecificSounds() {
+	if (g_nancy->getGameType() == kGameTypeVampire && Nancy::State::Map::hasInstance()) {
+		// Don't stop the map sound in certain scenes
+		uint currentScene = _sceneState.currentScene.sceneID;
+		if (currentScene == 0 || (currentScene >= 15 && currentScene <= 27)) {
+			g_nancy->_sound->pauseSound(NancyMapState.getSound(), false);
+		}
+	}
+
 	for (uint i = 0; i < 10; ++i) {
 		g_nancy->_sound->pauseSound(i, false);
 	}
@@ -383,7 +398,6 @@ void Scene::synchronize(Common::Serializer &ser) {
 		ser.syncAsUint32LE((uint32 &)_flags.logicConditions[i].timestamp);
 	}
 
-	// TODO hardcoded inventory size
 	auto &order = getInventoryBox()._order;
 	uint prevSize = getInventoryBox()._order.size();
 	getInventoryBox()._order.resize(g_nancy->getStaticData().numItems);
@@ -405,7 +419,6 @@ void Scene::synchronize(Common::Serializer &ser) {
 		getInventoryBox().onReorder();
 	}
 
-	// TODO hardcoded inventory size
 	ser.syncArray(_flags.items.data(), g_nancy->getStaticData().numItems, Common::Serializer::Byte);
 	ser.syncAsSint16LE(_flags.heldItem);
 	g_nancy->_cursorManager->setCursorItemID(_flags.heldItem);
@@ -420,7 +433,6 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 	g_nancy->setTotalPlayTime((uint32)_timers.lastTotalTime);
 
-	// TODO hardcoded number of event flags
 	ser.syncArray(_flags.eventFlags.data(), g_nancy->getStaticData().numEventFlags, Common::Serializer::Byte);
 
 	ser.syncArray<uint16>(_flags.sceneHitCount, (uint16)2001, Common::Serializer::Uint16LE);
@@ -594,13 +606,6 @@ void Scene::load() {
 }
 
 void Scene::run() {
-	if (_isComingFromMenu) {
-		// TODO
-	}
-
-	_isComingFromMenu = false;
-
-
 	if (_gameStateRequested != NancyState::kNone) {
 		g_nancy->setState(_gameStateRequested);
 

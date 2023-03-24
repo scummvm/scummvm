@@ -19,52 +19,49 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_TRADE_H
-#define MM1_VIEWS_ENH_TRADE_H
-
-#include "mm/mm1/views_enh/scroll_view.h"
-#include "mm/mm1/views_enh/text_entry.h"
+#include "mm/mm1/views_enh/which_character.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class Trade : public ScrollView {
-private:
-	enum TradeMode { TRADE_OPTIONS, TRADE_GEMS, TRADE_GOLD, TRADE_FOOD };
-	const char *const TRADE_NAMES[4] = { nullptr, "GEMS", "GOLD", "FOOD" };
-	TradeMode _mode = TRADE_OPTIONS;
-	Shared::Xeen::SpriteResource _btnIcons;
-	TextEntry _textEntry;
+WhichCharacter::WhichCharacter() : PartyView("WhichCharacter") {
+	_bounds = Common::Rect(50, 103, 266, 139);
+	addButton(&g_globals->_escSprites, Common::Point(176, 0), 0, KEYBIND_ESCAPE);
+}
 
-	/**
-	  * Set the display mode
-	  */
-	void setMode(TradeMode mode);
+void WhichCharacter::draw() {
+	PartyView::draw();
+	writeString(10, 5, STRING["enhdialogs.trade.dest"]);
+}
 
-	/**
-	 * Draw the option modes
-	 */
-	void drawOptions();
+bool WhichCharacter::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
+		close();
+		send("CharacterInventory", GameMessage("TRADE_DEST", -1));
+		return true;
 
-	/**
-	 * Called when an amount is entered
-	 */
-	void amountEntered(uint amount);
+	case KEYBIND_VIEW_PARTY1:
+	case KEYBIND_VIEW_PARTY2:
+	case KEYBIND_VIEW_PARTY3:
+	case KEYBIND_VIEW_PARTY4:
+	case KEYBIND_VIEW_PARTY5:
+	case KEYBIND_VIEW_PARTY6: {
+		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
+		if (charNum < g_globals->_party.size()) {
+			close();
+			send("CharacterInventory", GameMessage("TRADE_DEST", charNum));
+		}
+		return true;
+	}
 
-public:
-	Trade();
-	virtual ~Trade() {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-};
+	default:
+		return PartyView::msgAction(msg);
+	}
+}
 
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
-
-#endif

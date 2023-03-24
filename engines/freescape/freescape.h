@@ -154,6 +154,9 @@ public:
 	virtual void loadAssetsCPCFullGame();
 	virtual void loadAssetsCPCDemo();
 
+	virtual void loadAssetsC64FullGame();
+	virtual void loadAssetsC64Demo();
+
 	virtual void drawDOSUI(Graphics::Surface *surface);
 	virtual void drawZXUI(Graphics::Surface *surface);
 	virtual void drawCPCUI(Graphics::Surface *surface);
@@ -218,6 +221,7 @@ public:
 	void resetInput();
 	void generateDemoInput();
 	virtual void pressedKey(const int keycode);
+	virtual bool onScreenControls(Common::Point mouse);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	virtual void checkIfStillInArea();
 	void changePlayerHeight(int index);
@@ -474,11 +478,30 @@ private:
 
 	void loadAssetsCPCFullGame() override;
 
+	void loadAssetsC64FullGame() override;
+
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawZXUI(Graphics::Surface *surface) override;
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawC64UI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
+	bool onScreenControls(Common::Point mouse) override;
+	void initAmigaAtari();
+	void initDOS();
+	void initZX();
+	void initCPC();
+	void initC64();
+
+	Common::Rect _moveFowardArea;
+	Common::Rect _moveLeftArea;
+	Common::Rect _moveRightArea;
+	Common::Rect _moveBackArea;
+	Common::Rect _moveUpArea;
+	Common::Rect _moveDownArea;
+	Common::Rect _deployDrillArea;
+	Common::Rect _infoScreenArea;
+	Common::Rect _saveGameArea;
+	Common::Rect _loadGameArea;
 
 	Graphics::ManagedSurface *load8bitTitleImage(Common::SeekableReadStream *file, int offset);
 	Graphics::ManagedSurface *load8bitDemoImage(Common::SeekableReadStream *file, int offset);

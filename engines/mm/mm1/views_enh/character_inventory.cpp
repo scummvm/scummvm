@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views_enh/character_inventory.h"
 #include "mm/mm1/views_enh/which_item.h"
+#include "mm/mm1/data/locations.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -55,6 +56,15 @@ bool CharacterInventory::msgGame(const GameMessage &msg) {
 			msg._value <= (int)_items.size()) {
 		_selectedItem = msg._value;
 		performAction();
+		return true;
+	} else if (msg._name == "TRADE") {
+		_tradeMode = msg._stringValue;
+		_tradeAmount = msg._value;
+		addView("WhichCharacter");
+		return true;
+	} else if (msg._name == "TRADE_DEST") {
+		if (msg._value != -1)
+			trade(_tradeMode, _tradeAmount, &g_globals->_party[msg._value]);
 		return true;
 	}
 
@@ -126,7 +136,6 @@ void CharacterInventory::populateItems() {
 	_items.clear();
 	_selectedItem = -1;
 	_selectedButton = BTN_NONE;
-	_initialChar = g_globals->_currCharacter;
 
 	const Character &c = *g_globals->_currCharacter;
 	const Inventory &inv = (_mode == ARMS_MODE) ? c._equipped : c._backpack;
@@ -135,25 +144,28 @@ void CharacterInventory::populateItems() {
 		_items.push_back(inv[i]._id);
 }
 
-void CharacterInventory::itemSelected() {
-	// No implementation
+bool CharacterInventory::canSwitchChar() {
+	// When in combat, the current character can't be changed
+	return !g_events->isInCombat();
 }
 
-void CharacterInventory::selectedCharChanged() {
-	// When in combat, the current character can't be changed
-	if (g_events->isInCombat()) {
-		if (g_globals->_currCharacter != _initialChar) {
-			g_globals->_currCharacter = _initialChar;
-			g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
-		}
-	} else if (_selectedItem != -1) {
-		// Trade to another character
-		tradeItem(_initialChar);
-
-	} else {
-		populateItems();
-		redraw();
+bool CharacterInventory::canSwitchToChar(Character *dst) {
+	if (_selectedItem != -1) {
+		tradeItem(dst);
+		return false;
 	}
+
+	return true;
+}
+
+void CharacterInventory::charSwitched(Character *priorChar) {
+	PartyView::charSwitched(priorChar);
+	populateItems();
+	redraw();
+}
+
+void CharacterInventory::itemSelected() {
+	// No implementation
 }
 
 void CharacterInventory::selectButton(SelectedButton btnMode) {
@@ -229,18 +241,17 @@ void CharacterInventory::discardItem() {
 	redraw();
 }
 
-void CharacterInventory::tradeItem(Character *from) {
-	if (g_globals->_currCharacter == _initialChar)
+void CharacterInventory::tradeItem(Character *dst) {
+	if (dst == g_globals->_currCharacter)
 		return;
 
 	// Get source and dest inventories
-	Character &cSrc = *_initialChar;
+	Character &cSrc = *g_globals->_currCharacter;
 	Inventory &iSrc = (_mode == ARMS_MODE) ? cSrc._equipped : cSrc._backpack;
-	Character &cDest = *g_globals->_currCharacter;
+	Character &cDest = *dst;
 	Inventory &iDest = cDest._backpack;
 
 	if (iDest.full()) {
-		g_globals->_currCharacter = _initialChar;
 		backpackFull();
 
 	} else {
@@ -248,10 +259,29 @@ void CharacterInventory::tradeItem(Character *from) {
 		iSrc.removeAt(_selectedItem);
 		iDest.add(item._id, item._charges);
 
-		_mode = BACKPACK_MODE;
 		populateItems();
 		redraw();
 	}
+}
+
+void CharacterInventory::trade(const Common::String &mode, int amount, Character *destChar) {
+	assert(isFocused());
+	Character &src = *g_globals->_currCharacter;
+
+	if (mode == "GEMS") {
+		src._gems -= amount;
+		destChar->_gems = MIN(destChar->_gems + amount, 0xffff);
+
+	} else if (mode == "GOLD") {
+		src._gold -= amount;
+		destChar->_gold += amount;
+
+	} else if (mode == "FOOD") {
+		src._food -= amount;
+		destChar->_food = MIN(destChar->_food + amount, MAX_FOOD);
+	}
+
+	redraw();
 }
 
 } // namespace ViewsEnh

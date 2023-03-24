@@ -63,22 +63,25 @@ void ScrollText::addText(const Common::String &s,
 		int lineNum, byte color, TextAlign align, int xp) {
 	const int LINE_HEIGHT = 10;
 	Common::String str = s;
+
+	if (lineNum == -1)
+		lineNum = (int)_lines.size();
 	Common::Point pt(xp, lineNum * LINE_HEIGHT);
 
 	// Split the lines
 	Common::StringArray lines = splitLines(s);
 
 	// Add them in
-	for (uint i = 0; i < lines.size(); ++i, ++lineNum, pt.y += LINE_HEIGHT)
+	for (uint i = 0; i < lines.size(); ++i, ++lineNum, pt.y += LINE_HEIGHT) {
 		_lines.push_back(Line(lines[i], pt, color, align));
+	}
 }
 
 void ScrollText::draw() {
 	ScrollView::draw();
 
 	// Iterate through displaying any text
-	for (Lines::const_iterator i = begin();
-		i != end(); ++i) {
+	for (Lines::const_iterator i = begin(); i != end(); ++i) {
 		setTextColor(i->_color);
 		writeString(i->_pos.x, i->_pos.y, i->_str, i->_align);
 	}

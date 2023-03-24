@@ -218,7 +218,6 @@ void ActionManager::processActionRecords() {
 
 						break;
 					case DependencyType::kElapsedPlayerTime:
-						// TODO almost definitely wrong, as the original engine treats player time differently
 						if (NancySceneState._timers.playerTime >= dep.timeData) {
 							dep.satisfied = true;
 						}

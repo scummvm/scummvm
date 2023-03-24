@@ -22,7 +22,6 @@
 #include "common/config-manager.h"
 
 #include "engines/nancy/detection.h"
-//#include "engines/nancy/dialogs.h"
 
 const char *const directoryGlobs[] = {
 	"game",
@@ -32,9 +31,9 @@ const char *const directoryGlobs[] = {
 };
 
 static const DebugChannelDef debugFlagList[] = {
-	{Nancy::kDebugEngine, "Engine", "Engine debug level"},
-	{Nancy::kDebugActionRecord, "ActionRecord", "Action Record debug level"},
-	{Nancy::kDebugScene, "Scene", "Scene debug level"},
+	{ Nancy::kDebugEngine, "Engine", "Engine debug level" },
+	{ Nancy::kDebugActionRecord, "ActionRecord", "Action Record debug level" },
+	{ Nancy::kDebugScene, "Scene", "Scene debug level" },
 	DEBUG_CHANNEL_END
 };
 

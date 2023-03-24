@@ -355,6 +355,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  _animFrameRateLock(0), _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
 	  /*_loadedArea(0), */_lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
+	  _delayCompletionTime(0),
 	  _panoramaState(kPanoramaStateInactive),
 	  _listenerX(0), _listenerY(0), _listenerAngle(0) {
 
@@ -458,6 +459,9 @@ bool Runtime::runFrame() {
 			return false;
 		case kGameStateIdle:
 			moreActions = runIdle();
+			break;
+		case kGameStateDelay:
+			moreActions = runDelay();
 			break;
 		case kGameStatePanLeft:
 			moreActions = runHorizontalPan(false);
@@ -618,6 +622,15 @@ bool Runtime::runIdle() {
 	}
 
 	// Yield
+	return false;
+}
+
+bool Runtime::runDelay() {
+	if (g_system->getMillis() >= _delayCompletionTime) {
+		_gameState = kGameStateScript;
+		return true;
+	}
+
 	return false;
 }
 
@@ -1022,6 +1035,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(Static);
 			DISPATCH_OP(VarLoad);
 			DISPATCH_OP(VarStore);
+			DISPATCH_OP(VarAddAndStore);
 			DISPATCH_OP(VarGlobalLoad);
 			DISPATCH_OP(VarGlobalStore);
 			DISPATCH_OP(ItemCheck);
@@ -1042,6 +1056,7 @@ bool Runtime::runScript() {
 			DISPATCH_OP(SoundL3);
 			DISPATCH_OP(3DSoundS2);
 			DISPATCH_OP(3DSoundL2);
+			DISPATCH_OP(3DSoundL3);
 			DISPATCH_OP(StopAL);
 			DISPATCH_OP(Range);
 			DISPATCH_OP(AddXSound);
@@ -1104,12 +1119,15 @@ bool Runtime::runScript() {
 			DISPATCH_OP(EscGet);
 			DISPATCH_OP(BackStart);
 			DISPATCH_OP(SaveAs);
+			DISPATCH_OP(Save0);
+			DISPATCH_OP(Exit);
 
 			DISPATCH_OP(AnimName);
 			DISPATCH_OP(ValueName);
 			DISPATCH_OP(VarName);
 			DISPATCH_OP(SoundName);
 			DISPATCH_OP(CursorName);
+			DISPATCH_OP(Dubbing);
 
 			DISPATCH_OP(CheckValue);
 			DISPATCH_OP(Jump);
@@ -2852,6 +2870,18 @@ void Runtime::scriptOpVarStore(ScriptArg_t arg) {
 	_variables[varID] = stackArgs[0];
 }
 
+void Runtime::scriptOpVarAddAndStore(ScriptArg_t arg) {
+	TAKE_STACK(2);
+
+	uint32 varID = (static_cast<uint32>(_roomNumber) << 16) | static_cast<uint32>(stackArgs[0]);
+
+	Common::HashMap<uint32, int32>::iterator it = _variables.find(varID);
+	if (it == _variables.end())
+		_variables[varID] = stackArgs[1];
+	else
+		it->_value += stackArgs[1];
+}
+
 void Runtime::scriptOpVarGlobalLoad(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
@@ -3021,6 +3051,13 @@ void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
 	triggerSound(true, stackArgs[0], stackArgs[1], 0, true);
 }
 
+void Runtime::scriptOp3DSoundL3(ScriptArg_t arg) {
+	TAKE_STACK(5);
+
+	setSound3DParameters(stackArgs[0], stackArgs[3], stackArgs[4], _pendingSoundParams3D);
+	triggerSound(true, stackArgs[0], stackArgs[1], stackArgs[2], true);
+}
+
 void Runtime::scriptOp3DSoundS2(ScriptArg_t arg) {
 	TAKE_STACK(4);
 
@@ -3156,8 +3193,8 @@ void Runtime::scriptOpSParmX(ScriptArg_t arg) {
 	_pendingStaticAnimParams.repeatDelay = stackArgs[1];
 	_pendingStaticAnimParams.lockInteractions = (stackArgs[2] != 0);
 
-	if (_pendingStaticAnimParams.lockInteractions)
-		error("Locking interactions for animation is not implemented yet");
+	//if (_pendingStaticAnimParams.lockInteractions)
+	//	error("Locking interactions for animation is not implemented yet");
 }
 
 void Runtime::scriptOpSAnimX(ScriptArg_t arg) {
@@ -3302,8 +3339,8 @@ void Runtime::scriptOpGetTimer(ScriptArg_t arg) {
 void Runtime::scriptOpDelay(ScriptArg_t arg) {
 	TAKE_STACK(1);
 
-	warning("Delay opcode is not implemented yet");
-	(void)stackArgs;
+	_gameState = kGameStateDelay;
+	_delayCompletionTime = g_system->getMillis() + stackArgs[0];
 }
 
 void Runtime::scriptOpLoSet(ScriptArg_t arg) {
@@ -3368,6 +3405,14 @@ void Runtime::scriptOpSaveAs(ScriptArg_t arg) {
 	// Just ignore this op, it looks like it's for save room remapping of some sort but we allow
 	// saves at any idle screen.
 	(void)stackArgs;
+}
+
+void Runtime::scriptOpSave0(ScriptArg_t arg) {
+	warning("save0 op not implemented");
+}
+
+void Runtime::scriptOpExit(ScriptArg_t arg) {
+	warning("exit op not implemented");
 }
 
 void Runtime::scriptOpNot(ScriptArg_t arg) {
@@ -3594,6 +3639,10 @@ void Runtime::scriptOpCursorName(ScriptArg_t arg) {
 	}
 
 	_scriptStack.push_back(namedCursorIt->_value);
+}
+
+void Runtime::scriptOpDubbing(ScriptArg_t arg) {
+	warning("Dubbing op not implemented");
 }
 
 void Runtime::scriptOpCheckValue(ScriptArg_t arg) {

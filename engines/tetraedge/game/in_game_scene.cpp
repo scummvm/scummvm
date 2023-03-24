@@ -1775,6 +1775,9 @@ void InGameScene::updateScroll() {
 		error("No root layout in the background");
 	_scrollOffset = TeVector2f32();
 	TeIntrusivePtr<TeTiledTexture> rootTex = root->_tiledSurfacePtr->tiledTexture();
+	// During startup root texture is not yet loaded
+	if (!rootTex)
+		return;
 	const TeVector2s32 texSize = rootTex->totalSize();
 	if (texSize._x < 801) {
 		if (texSize._y < 601) {

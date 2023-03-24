@@ -59,15 +59,6 @@ bool ItemsView::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool ItemsView::msgGame(const GameMessage &msg) {
-	if (msg._name == "UPDATE") {
-		selectedCharChanged();
-		return true;
-	}
-
-	return PartyView::msgGame(msg);
-}
-
 void ItemsView::draw() {
 	// Draw the outer frame and buttons
 	PartyView::draw();

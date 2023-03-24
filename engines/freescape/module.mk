@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	games/dark/dos.o \
 	games/driller/amiga.o \
 	games/driller/atari.o \
+	games/driller/c64.o \
 	games/driller/cpc.o \
 	games/driller/dos.o \
 	games/driller/driller.o \

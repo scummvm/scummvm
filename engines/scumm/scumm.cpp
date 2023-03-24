@@ -2220,20 +2220,16 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 
 void ScummEngine::syncSoundSettings() {
 	if (isUsingOriginalGUI() && _game.version > 6) {
-		if (ConfMan.hasKey("original_gui_text_status", _targetName)) {
-			_voiceMode = ConfMan.getInt("original_gui_text_status");
-		} else if (ConfMan.hasKey("subtitles", _targetName) && ConfMan.hasKey("speech_mute", _targetName)){
-			int guiTextStatus = 0;
-			if (ConfMan.getBool("speech_mute")) {
-				guiTextStatus = 2;
-			} else if (ConfMan.getBool("subtitles")) {
-				guiTextStatus = 1;
-			}
-
-			// Let's set it now so we don't have to do the conversion the next time...
-			ConfMan.setInt("original_gui_text_status", guiTextStatus);
-			_voiceMode = guiTextStatus;
+		int guiTextStatus = 0;
+		if (ConfMan.getBool("speech_mute")) {
+			guiTextStatus = 2;
+		} else if (ConfMan.getBool("subtitles")) {
+			guiTextStatus = 1;
 		}
+
+		// Mainly used by COMI
+		ConfMan.setInt("original_gui_text_status", guiTextStatus);
+		_voiceMode = guiTextStatus;
 
 		if (VAR_VOICE_MODE != 0xFF)
 			VAR(VAR_VOICE_MODE) = _voiceMode;

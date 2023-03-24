@@ -40,7 +40,8 @@ private:
 		BTN_NONE, BTN_EQUIP, BTN_REMOVE, BTN_DISCARD
 	};
 	SelectedButton _selectedButton = BTN_NONE;
-	Character *_initialChar = nullptr;
+	Common::String _tradeMode;
+	int _tradeAmount;
 
 	/**
 	 * Populates the list of items
@@ -82,7 +83,22 @@ private:
 	 */
 	void tradeItem(Character *from);
 
+	/**
+	 * Trade gems, gold, or food
+	 */
+	void trade(const Common::String &mode, int amount, Character *destChar);
+
 protected:
+	/**
+	 * Return true if the selected character can be switched
+	 */
+	bool canSwitchChar() override;
+
+	/**
+	 * Returns true if the destination character can be switched to
+	 */
+	bool canSwitchToChar(Character *dst) override;
+
 	/**
 	 * Called when an item is selected
 	 */
@@ -91,7 +107,7 @@ protected:
 	/**
 	 * When the selected character is changed
 	 */
-	void selectedCharChanged() override;
+	void charSwitched(Character *priorChar) override;
 
 public:
 	CharacterInventory();

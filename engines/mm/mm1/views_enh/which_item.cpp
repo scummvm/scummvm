@@ -28,7 +28,7 @@ namespace ViewsEnh {
 
 WhichItem::WhichItem() : ScrollView("WhichItem") {
 	_bounds = Common::Rect(50, 103, 266, 139);
-	addButton(&g_globals->_escSprites, Common::Point(70, 0), 0, KEYBIND_ESCAPE);
+	addButton(&g_globals->_escSprites, Common::Point(176, 0), 0, KEYBIND_ESCAPE);
 }
 
 bool WhichItem::msgGame(const GameMessage &msg) {
@@ -43,7 +43,7 @@ bool WhichItem::msgGame(const GameMessage &msg) {
 
 void WhichItem::draw() {
 	ScrollView::draw();
-	writeString(0, 0, _msg);
+	writeString(10, 5, _msg);
 }
 
 bool WhichItem::msgKeypress(const KeypressMessage &msg) {

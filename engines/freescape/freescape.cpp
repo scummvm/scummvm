@@ -501,13 +501,27 @@ void FreescapeEngine::processInput() {
 		case Common::EVENT_LBUTTONDOWN:
 			if (_hasFallen)
 				break;
-			shoot();
+			mousePos = event.mouse;
+			{
+				bool touchedScreenControls = false;
+
+				#if defined(__ANDROID__) || defined(IPHONE)
+				touchedScreenControls = onScreenControls(mousePos);
+				#endif
+
+				if (!touchedScreenControls && _viewArea.contains(_crossairPosition))
+					shoot();
+			}
 			break;
 
 		default:
 			break;
 		}
 	}
+}
+
+bool FreescapeEngine::onScreenControls(Common::Point mouse) {
+	return false;
 }
 
 void FreescapeEngine::executeMovementConditions() {

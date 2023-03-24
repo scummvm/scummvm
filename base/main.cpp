@@ -42,7 +42,6 @@
 #include "common/debug-channels.h" /* for debug manager */
 #include "common/events.h"
 #include "gui/EventRecorder.h"
-#include "common/file.h"
 #include "common/fs.h"
 #ifdef ENABLE_EVENTRECORDER
 #include "common/recorderfile.h"
@@ -420,91 +419,44 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Parse the command line
 	Common::StringMap settings;
-	Common::String autoCommand;
-	bool autodetect = false;
-
-	// Check for the autorun name
-	if (argc && argv && argv[0]) {
-		const char *s = strrchr(argv[0], '/');
-
-		if (!s)
-			s = strrchr(argv[0], '\\');
-
-		const char *appName =s ? (s + 1) : argv[0];
-
-		if (!scumm_strnicmp(appName, "scummvm-auto", strlen("scummvm-auto"))) {
-			warning("Will run in autodetection mode");
-			autodetect = true;
-		}
-	}
-
-	Common::StringArray autorunArgs;
-
-	// Check for the autorun file
-	if (Common::File::exists("scummvm-autorun")) {
-		// Okay, the file exists. We open it and if it is empty, then run in the autorun mode
-		// If the file is not empty, we read command line arguments from it, one per line
-		warning("Autorun file is detected");
-
-		Common::File autorun;
-		Common::String line;
-		Common::String res;
-
-		autorunArgs.push_back(argc && argv ? argv[0] : "");
-
-		if (autorun.open("scummvm-autorun")) {
-			while (!autorun.eos()) {
-				line = autorun.readLine();
-
-				if (!line.empty() && line[0] != '#') {
-					autorunArgs.push_back(line);
-
-					res += Common::String::format("\"%s\" ", line.c_str());
-				}
-			}
-		}
-
-		if (!res.empty())
-			warning("Autorun command: %s", res.c_str());
-		else
-			warning("Empty autorun file");
-
-		autorun.close();
-
-		autodetect = true;
-	}
-
-	if (autodetect) {
-		if (autorunArgs.size() > 1) {
-			uint argumentsSize = autorunArgs.size();
-			char **arguments = (char **)malloc(argumentsSize * sizeof(char *));
-
-			for (uint i = 0; i < argumentsSize; i++) {
-				arguments[i] = (char *)malloc(autorunArgs[i].size() + 1);
-				Common::strlcpy(arguments[i], autorunArgs[i].c_str(), autorunArgs[i].size() + 1);
-			}
-
-			autoCommand = Base::parseCommandLine(settings, argumentsSize, arguments);
-
-			for (uint i = 0; i < argumentsSize; i++)
-				free(arguments[i]);
-
-			free(arguments);
-		} else {
-			// Simulate autodetection
-			const char * const arguments[] = { "scummvm-auto", "-p", ".", "--auto-detect" };
-
-			warning("Running autodetection");
-
-			autoCommand = Base::parseCommandLine(settings, ARRAYSIZE(arguments), arguments);
-		}
-	}
-
 	command = Base::parseCommandLine(settings, argc, argv);
 
-	// We allow overriding the automatic command
-	if (command.empty())
-		command = autoCommand;
+	// Check for backend start settings
+	Common::String executable;
+	if (argc && argv && argv[0]) {
+		const char *s = strrchr(argv[0], '/');
+		if (!s)
+			s = strrchr(argv[0], '\\');
+		executable = s ? (s + 1) : argv[0];
+	}
+	Common::StringArray additionalArgs;
+	system.updateStartSettings(executable, command, settings, additionalArgs);
+
+	if (!additionalArgs.empty()) {
+		// Parse those additional command line arguments.
+		additionalArgs.insert_at(0, executable);
+		uint argumentsSize = additionalArgs.size();
+		char **arguments = (char **)malloc(argumentsSize * sizeof(char *));
+		for (uint i = 0; i < argumentsSize; i++) {
+			arguments[i] = (char *)malloc(additionalArgs[i].size() + 1);
+			Common::strlcpy(arguments[i], additionalArgs[i].c_str(), additionalArgs[i].size() + 1);
+		}
+
+		Common::StringMap additionalSettings;
+		Common::String additionalCommand = Base::parseCommandLine(additionalSettings, argumentsSize, arguments);
+
+		for (uint i = 0; i < argumentsSize; i++)
+			free(arguments[i]);
+		free(arguments);
+
+		// Merge additional settings and command with command line. Command line has priority.
+		if (command.empty())
+			command = additionalCommand;
+		for (Common::StringMap::const_iterator x = additionalSettings.begin(); x != additionalSettings.end(); ++x) {
+			if (!settings.contains(x->_key))
+				settings[x->_key] = x->_value;
+		}
+	}
 
 	// Load the config file (possibly overridden via command line):
 	Common::String initConfigFilename;

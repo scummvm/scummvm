@@ -33,6 +33,12 @@
 #define AUDIO_STATUS_BUFFER_UNDERRUN    (1 << 3)
 #define AUDIO_STATUS_UPDATE_LATENCY     (1 << 4)
 
+// Thread switch caller
+#define THREAD_SWITCH_POLL              (1 << 0)
+#define THREAD_SWITCH_DELAY             (1 << 1)
+#define THREAD_SWITCH_UPDATE            (1 << 2)
+#define THREAD_SWITCH_RECT              (1 << 3)
+
 // Preliminary scan results
 #define TEST_GAME_OK_TARGET_FOUND        0
 #define TEST_GAME_OK_ID_FOUND            1

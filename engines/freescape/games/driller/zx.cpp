@@ -25,6 +25,10 @@
 
 namespace Freescape {
 
+void DrillerEngine::initZX() {
+	_viewArea = Common::Rect(56, 20, 264, 124);
+}
+
 void DrillerEngine::loadAssetsZXFullGame() {
 	Common::File file;
 	file.open("driller.zx.title");

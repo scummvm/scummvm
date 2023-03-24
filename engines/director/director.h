@@ -262,6 +262,7 @@ public:
 	uint32 _wmMode;
 	uint16 _wmWidth;
 	uint16 _wmHeight;
+	byte _fpsLimit;
 
 private:
 	byte _currentPalette[768];
