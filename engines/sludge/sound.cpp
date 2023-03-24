@@ -23,6 +23,7 @@
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/mods/mod_xm_s3m.h"
+#include "audio/mods/impulsetracker.h"
 
 #include "sludge/errors.h"
 #include "sludge/fileset.h"
@@ -224,7 +225,12 @@ bool SoundManager::playMOD(int f, int a, int fromTrack) {
 		return fatal("Sound reading failed");
 	}
 	Audio::RewindableAudioStream *mod = Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO, fromTrack);
-
+#ifdef USE_MIKMOD
+	if (!mod) {
+		// Try impulse tracker if failed!
+		mod = Audio::makeImpulseTrackerStream(memImage, DisposeAfterUse::NO);
+	}
+#endif
 	if (!mod) {
 		warning("Could not load MOD file");
 		g_sludge->_resMan->finishAccess();
