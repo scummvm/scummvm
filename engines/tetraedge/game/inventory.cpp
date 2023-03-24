@@ -551,6 +551,11 @@ Common::Error Inventory::syncStateWithCount(Common::Serializer &s, uint nitems) 
 		error("Unexpected number of elems syncing inventory");
 
 	if (s.isLoading()) {
+		_invObjects.clear();
+		_selectedObject = nullptr;
+		// Clear the layout if needed
+		if (_gui.loaded())
+			updateLayout();
 #ifdef TETRAEDGE_DEBUG_SAVELOAD
 		debug("Inventory::syncState: --- Loading %d inventory items: ---", nitems);
 #endif
