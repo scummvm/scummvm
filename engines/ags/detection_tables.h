@@ -5118,7 +5118,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("boxland", "OROW 2008.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 5988324),
 	GAME_ENTRY_EN("boyindahood", "boy in da hood.exe", "afe40dc1416dd51e896ee0444d799f07", 12260759),
 	GAME_ENTRY_EN("bradbradsonkeyquest", "badness.exe", "0500aacb6c176d47ac0f8158f055db83", 1190580),
-	GAME_ENTRY_LANG("braquagegringotts", "Braquage à Grin.exe", "06a03fe35791b0578068ab1873455463", 86953263, Common::FR_FRA),
+	GAME_ENTRY_LANG("braquagegringotts", "xn--Braquage  Grin.exe-nrb", "06a03fe35791b0578068ab1873455463", 86953263, Common::FR_FRA),
 	GAME_ENTRY_EN("breakage", "Breakage.exe", "973f6b65820ca1f4e19704a49be99d76", 727818639),
 	GAME_ENTRY_EN("breakdown", "breakdown.exe", "710ac163c281a5a539ffe2386264b990", 5273352),
 	GAME_ENTRY_EN("breakingcharacter", "Breaking character.exe", "615e73fc1874e92d60a1996c2330ea36", 23803957),
@@ -7527,7 +7527,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("subatomic", "LD48-23.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 25655660),
 	GAME_ENTRY_EN("subwaycrisis", "Ludum Dare 43.ags", "97341b3ddd7a0eb8ae4a247fe25dc082", 3508218),  // Linux
 	GAME_ENTRY_EN("subwaycrisis", "Ludum Dare 43.exe", "78f88f71bbef277d93cbe10f1d2ac404", 5996042),  // Windows
-	GAME_ENTRY_LANG("suenanfantasmas", "SueñanLosFantasmas.exe", "50a7ba44a0d5499628de2a46bb4a9e97", 71071264, Common::ES_ESP),  // Windows
+	GAME_ENTRY_LANG("suenanfantasmas", "xn--SueanLosFantasmas.exe-ebc", "50a7ba44a0d5499628de2a46bb4a9e97", 71071264, Common::ES_ESP),  // Windows
 	GAME_ENTRY_LANG("suenanfantasmas", "SuenanLosFantasmas.ags", "4092234ccc703586b54d86900550baa0", 67828236, Common::ES_ESP),  // Linux
 	GAME_ENTRY_EN("summerwoes", "MAGSAugust.exe", "7921b41f852d8dd62922d87cc69d9e83", 4896812),
 	GAME_ENTRY_EN("sunriseparadise", "Sunrise Paradise.exe", "838f62e456d4fbab9c3754c9d70d2b89", 13430921),
