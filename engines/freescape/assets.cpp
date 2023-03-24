@@ -63,9 +63,6 @@ void FreescapeEngine::loadAssetsDemo() {
 		loadAssetsDOSDemo();
 	} else
 		error("Unsupported demo for Driller");
-
-	_demoMode = !_disableDemoMode;
-	_angleRotationIndex = 0;
 }
 
 void FreescapeEngine::loadAssetsAtariDemo() {
