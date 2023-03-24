@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-24 20:12+0000\n"
+"POT-Creation-Date: 2023-03-24 20:20+0000\n"
 "PO-Revision-Date: 2023-03-20 15:31+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4728,7 +4728,7 @@ msgstr "Продовжуйте"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
-#: engines/kyra/detection_tables.h:74
+#: engines/kyra/detection_tables.h:75
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
@@ -5771,11 +5771,11 @@ msgstr "Ремора"
 msgid "Side Step"
 msgstr "Крок в сторону"
 
-#: engines/kyra/detection_tables.h:72
+#: engines/kyra/detection_tables.h:73
 msgid "Missing language specific game code and/or resources."
 msgstr "Відсутній специфічний для мови код гри та/або ресурси."
 
-#: engines/kyra/detection_tables.h:73
+#: engines/kyra/detection_tables.h:74
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
@@ -5783,16 +5783,16 @@ msgstr ""
 "Відсутній специфічний для мови код гри та/або ресурси для цього перекладу "
 "фанатів."
 
-#: engines/kyra/detection_tables.h:75
+#: engines/kyra/detection_tables.h:76
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr "Демо грає прості анімації без використання движка Westwood."
 
-#: engines/kyra/detection_tables.h:1354
+#: engines/kyra/detection_tables.h:1367
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr "Ви додали гру неправильно. Будь ласка, додайте кореневу папку гри."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1370
+#: engines/kyra/detection_tables.h:1383
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
