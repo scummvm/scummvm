@@ -127,6 +127,8 @@ void PlayPrimaryVideoChan0::init() {
 		error("Couldn't load video file %s", _videoName.c_str());
 	}
 
+	_decoder.seekToFrame(_startFrame);
+
 	if (!_paletteName.empty()) {
 		GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
 		setTransparent(true);
@@ -144,6 +146,10 @@ void PlayPrimaryVideoChan0::updateGraphics() {
 
 	if (!_decoder.isPlaying()) {
 		_decoder.start();
+	}
+
+	if (_decoder.getCurFrame() == _endFrame) {
+		_decoder.pauseVideo(true);
 	}
 
 	if (_decoder.needsUpdate()) {
@@ -175,8 +181,11 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 
 	ser.skip(2);
 	ser.syncAsUint16LE(_videoFormat);
-	ser.skip(0x13, kGameTypeVampire, kGameTypeVampire);
-	ser.skip(0xF, kGameTypeNancy1);
+	ser.skip(3); // Quality
+	ser.skip(4, kGameTypeVampire, kGameTypeVampire); // paletteStart, paletteSize
+	ser.syncAsUint16LE(_startFrame);
+	ser.syncAsUint16LE(_endFrame);
+	ser.skip(8);
 
 	ser.skip(0x10); // Bounds
 	readRect(stream, _screenPosition);
@@ -193,10 +202,8 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 	ser.syncAsByte(_goodbyeResponseCharacterID);
 	ser.syncAsByte(_defaultNextScene);
 	ser.syncAsByte(_popNextScene);
-	_sceneChange.readData(stream);
-
-	ser.skip(0x35, kGameTypeVampire, kGameTypeVampire);
-	ser.skip(0x32, kGameTypeNancy1);
+	_sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
+	ser.skip(0x32);
 
 	uint16 numResponses = 0;
 	ser.syncAsUint16LE(numResponses);
@@ -316,7 +323,7 @@ void PlayPrimaryVideoChan0::execute() {
 			}
 		}
 
-		if (!g_nancy->_sound->isSoundPlaying(_sound) && _decoder.endOfVideo()) {
+		if (!g_nancy->_sound->isSoundPlaying(_sound) && (_decoder.endOfVideo() || _decoder.getCurFrame() == _endFrame)) {
 			g_nancy->_sound->stopSound(_sound);
 
 			if (_responses.size() == 0) {

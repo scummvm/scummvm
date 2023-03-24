@@ -102,6 +102,9 @@ public:
 	SoundDescription _sound;
 	SoundDescription _responseGenericSound;
 
+	uint16 _startFrame = 0;
+	int16 _endFrame = 0;
+
 	byte _conditionalResponseCharacterID = 0;
 	byte _goodbyeResponseCharacterID = 0;
 	byte _defaultNextScene = kDefaultNextSceneEnabled;
