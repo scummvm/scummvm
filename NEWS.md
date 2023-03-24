@@ -27,6 +27,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  iOS port:
    - Fix default theme selection on modern devices.
+   - Better support for autostart configurations.
+
+ macOS port:
+   - Better support for autostart configurations.
 
  RISC OS port:
    - Fixed crash on RISC OS 5 with games that require lots of RAM.
