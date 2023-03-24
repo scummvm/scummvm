@@ -251,7 +251,7 @@ void TVDMap::load() {
 	Map::load();
 
 	// Determine which version of the map will be shown
-	if (NancySceneState.getEventFlag(52, kEvOccurred)) {
+	if (NancySceneState.getEventFlag(82, kEvOccurred)) {
 		_mapID = 3;										// Storm
 		//
 	} else {
