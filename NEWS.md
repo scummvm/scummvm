@@ -24,6 +24,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Russian Grim Fandango translations from Fargus,
      ENPY and 7Wolf.
 
+ Kyra:
+   - Added support for Kyra1 Amiga French release and DOS Czech fan translation.
+   - Improved game controls menu accuracy for all platforms.
+
  SCUMM:
    - Added support for unpacked RuSCUMM patches for Russian localizations.
 
