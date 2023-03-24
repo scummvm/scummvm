@@ -76,6 +76,7 @@ enum {
 	JE_BMB_UP = 19,
 	JE_FMB_DOWN = 20,
 	JE_FMB_UP = 21,
+	JE_TV_REMOTE = 22,
 	JE_QUIT = 0x1000,
 	JE_MENU = 0x1001
 };
@@ -551,6 +552,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case AKEYCODE_DPAD_LEFT:
 		// fall through
 		case AKEYCODE_DPAD_RIGHT:
+			// Treat as mouse movement
 			if (arg1 != AKEY_EVENT_ACTION_DOWN)
 				return;
 
@@ -586,6 +588,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			return;
 
 		case AKEYCODE_DPAD_CENTER:
+			// Treat as mouse click (left click)
 			switch (arg1) {
 			case AKEY_EVENT_ACTION_DOWN:
 				e.type = Common::EVENT_LBUTTONDOWN;
@@ -606,6 +609,49 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			return;
 		}
+
+	case JE_TV_REMOTE:
+		switch (arg1) {
+		case AKEY_EVENT_ACTION_DOWN:
+			e.type = Common::EVENT_KEYDOWN;
+			break;
+
+		case AKEY_EVENT_ACTION_UP:
+			e.type = Common::EVENT_KEYUP;
+			break;
+
+		default:
+			LOGE("unhandled jaction on key: %d", arg1);
+			return;
+		}
+
+		switch (arg2) {
+		case AKEYCODE_MEDIA_FAST_FORWARD:
+		// fall through
+		case AKEYCODE_MEDIA_REWIND:
+		// fall through
+		case AKEYCODE_MEDIA_PLAY_PAUSE:
+			// Treat as keyboard presses, since they have equivalent hardware keyboard keys
+			e.kbd.keycode = jkeymap[arg2];
+			if (arg5 > 0) {
+				e.kbdRepeat = true;
+			}
+			break;
+
+		 // Unfortunately CHANNEL_UP or CHANNEL_DOWN do not trigger for the Fire TV Stick remote (3rd gen)
+		 // despite the documentation (https://developer.amazon.com/docs/fire-tv/remote-input.html)
+		 // so there's no way as of yet to test for them.
+		 // TODO Maybe enable them anyway? Should we create hardware input keys for them in the main code?
+//		 case AKEYCODE_CHANNEL_UP:
+//		 // fall through
+//		 case AKEYCODE_CHANNEL_DOWN:
+//			break;
+
+		}
+
+		pushEvent(e);
+
+		return;
 
 	case JE_DOWN:
 //		LOGD("JE_DOWN");
@@ -1160,6 +1206,27 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case AKEYCODE_BUTTON_THUMBR:
 			e.joystick.button = Common::JOYSTICK_BUTTON_RIGHT_STICK;
 			break;
+
+		case AKEYCODE_DPAD_UP:
+			e.joystick.button = Common::JOYSTICK_BUTTON_DPAD_UP;
+			break;
+
+		case AKEYCODE_DPAD_DOWN:
+			e.joystick.button = Common::JOYSTICK_BUTTON_DPAD_DOWN;
+			break;
+
+		case AKEYCODE_DPAD_LEFT:
+			e.joystick.button = Common::JOYSTICK_BUTTON_DPAD_LEFT;
+			break;
+
+		case AKEYCODE_DPAD_RIGHT:
+			e.joystick.button = Common::JOYSTICK_BUTTON_DPAD_RIGHT;
+			break;
+
+//		case AKEYCODE_DPAD_CENTER:
+//			// TODO This needs to be defined (backends/keymapper/hardware-input.cpp and common/events.h)
+//			e.joystick.button = Common::JOYSTICK_BUTTON_DPAD_CENTER;
+//			break;
 
 		default:
 			LOGW("unmapped gamepad key: %d", arg2);
