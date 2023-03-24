@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views_enh/character_inventory.h"
 #include "mm/mm1/views_enh/which_item.h"
+#include "mm/mm1/data/locations.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -265,15 +266,22 @@ void CharacterInventory::tradeItem(Character *dst) {
 
 void CharacterInventory::trade(const Common::String &mode, int amount, Character *destChar) {
 	assert(isFocused());
+	Character &src = *g_globals->_currCharacter;
 
-	// TODO: implement
 	if (mode == "GEMS") {
+		src._gems -= amount;
+		destChar->_gems = MIN(destChar->_gems + amount, 0xffff);
 
 	} else if (mode == "GOLD") {
+		src._gold -= amount;
+		destChar->_gold += amount;
 
 	} else if (mode == "FOOD") {
-
+		src._food -= amount;
+		destChar->_food = MIN(destChar->_food + amount, MAX_FOOD);
 	}
+
+	redraw();
 }
 
 } // namespace ViewsEnh
