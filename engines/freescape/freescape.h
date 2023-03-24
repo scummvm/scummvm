@@ -221,7 +221,7 @@ public:
 	void resetInput();
 	void generateDemoInput();
 	virtual void pressedKey(const int keycode);
-	virtual void onScreenControls(Common::Point mouse);
+	virtual bool onScreenControls(Common::Point mouse);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	virtual void checkIfStillInArea();
 	void changePlayerHeight(int index);
@@ -485,7 +485,7 @@ private:
 	void drawCPCUI(Graphics::Surface *surface) override;
 	void drawC64UI(Graphics::Surface *surface) override;
 	void drawAmigaAtariSTUI(Graphics::Surface *surface) override;
-	void onScreenControls(Common::Point mouse) override;
+	bool onScreenControls(Common::Point mouse) override;
 	void initAmigaAtari();
 	void initDOS();
 	void initZX();

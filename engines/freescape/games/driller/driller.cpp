@@ -819,32 +819,43 @@ bool DrillerEngine::checkIfGameEnded() {
 	return false;
 }
 
-void DrillerEngine::onScreenControls(Common::Point mouse) {
-	if (_moveFowardArea.contains(mouse))
+bool DrillerEngine::onScreenControls(Common::Point mouse) {
+	if (_moveFowardArea.contains(mouse)) {
 		move(kForwardMovement, _scaleVector.x(), 20.0);
-	else if (_moveLeftArea.contains(mouse))
+		return true;
+	} else if (_moveLeftArea.contains(mouse)) {
 		move(kLeftMovement, _scaleVector.y(), 20.0);
-	else if (_moveRightArea.contains(mouse))
+		return true;
+	} else if (_moveRightArea.contains(mouse)) {
 		move(kRightMovement, _scaleVector.y(), 20.0);
-	else if (_moveBackArea.contains(mouse))
+		return true;
+	} else if (_moveBackArea.contains(mouse)) {
 		move(kBackwardMovement, _scaleVector.x(), 20.0);
-	else if (_moveUpArea.contains(mouse))
+		return true;
+	} else if (_moveUpArea.contains(mouse)) {
 		rise();
-	else if (_moveDownArea.contains(mouse))
+		return true;
+	} else if (_moveDownArea.contains(mouse)) {
 		lower();
-	else if (_deployDrillArea.contains(mouse))
+		return true;
+	} else if (_deployDrillArea.contains(mouse)) {
 		pressedKey(Common::KEYCODE_d);
-	else if (_infoScreenArea.contains(mouse))
+		return true;
+	} else if (_infoScreenArea.contains(mouse)) {
 		drawInfoMenu();
-	else if (_saveGameArea.contains(mouse)) {
+		return true;
+	} else if (_saveGameArea.contains(mouse)) {
 		_gfx->setViewport(_fullscreenViewArea);
 		saveGameDialog();
 		_gfx->setViewport(_viewArea);
+		return true;
 	} else if (_loadGameArea.contains(mouse)) {
 		_gfx->setViewport(_fullscreenViewArea);
 		loadGameDialog();
 		_gfx->setViewport(_viewArea);
+		return true;
 	}
+	return false;
 }
 
 
