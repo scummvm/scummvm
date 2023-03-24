@@ -57,7 +57,7 @@ private:
 	void spellSelected();
 
 protected:
-	bool canSwitchChar() const override;
+	bool canSwitchChar() override;
 
 public:
 	Spellbook();

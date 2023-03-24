@@ -30,15 +30,11 @@ namespace MM1 {
 namespace ViewsEnh {
 
 class WhichCharacter : public PartyView {
-private:
-	Character *_initialChar = nullptr;
 public:
 	WhichCharacter();
 	virtual ~WhichCharacter() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
-	bool msgGame(const GameMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 };
 

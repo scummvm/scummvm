@@ -31,42 +31,34 @@ WhichCharacter::WhichCharacter() : PartyView("WhichCharacter") {
 	addButton(&g_globals->_escSprites, Common::Point(176, 0), 0, KEYBIND_ESCAPE);
 }
 
-bool WhichCharacter::msgFocus(const FocusMessage &msg) {
-	_initialChar = g_globals->_currCharacter;
-	return PartyView::msgFocus(msg);
-}
-
 void WhichCharacter::draw() {
 	PartyView::draw();
 	writeString(10, 5, STRING["enhdialogs.trade.dest"]);
 }
 
-bool WhichCharacter::msgGame(const GameMessage &msg) {
-	if (msg._name == "UPDATE") {
-		int charNum = g_globals->_party.indexOf(g_globals->_currCharacter);
-		g_globals->_currCharacter = _initialChar;
-
-		close();
-		send("CharacterInventory", GameMessage("TRADE_DEST", charNum));
-		return true;
-	}
-
-	return false;
-}
-
 bool WhichCharacter::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
 		close();
 		send("CharacterInventory", GameMessage("TRADE_DEST", -1));
 		return true;
-	} else if (msg._action >= KEYBIND_VIEW_PARTY1 &&
-			msg._action <= KEYBIND_VIEW_PARTY6) {
+
+	case KEYBIND_VIEW_PARTY1:
+	case KEYBIND_VIEW_PARTY2:
+	case KEYBIND_VIEW_PARTY3:
+	case KEYBIND_VIEW_PARTY4:
+	case KEYBIND_VIEW_PARTY5:
+	case KEYBIND_VIEW_PARTY6: {
 		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
-		if (charNum < g_globals->_party.size())
+		if (charNum < g_globals->_party.size()) {
+			close();
 			send("CharacterInventory", GameMessage("TRADE_DEST", charNum));
+		}
 		return true;
-	} else {
-		return false;
+	}
+
+	default:
+		return PartyView::msgAction(msg);
 	}
 }
 

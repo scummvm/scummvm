@@ -135,7 +135,6 @@ void CharacterInventory::populateItems() {
 	_items.clear();
 	_selectedItem = -1;
 	_selectedButton = BTN_NONE;
-	_initialChar = g_globals->_currCharacter;
 
 	const Character &c = *g_globals->_currCharacter;
 	const Inventory &inv = (_mode == ARMS_MODE) ? c._equipped : c._backpack;
@@ -144,25 +143,28 @@ void CharacterInventory::populateItems() {
 		_items.push_back(inv[i]._id);
 }
 
-void CharacterInventory::itemSelected() {
-	// No implementation
+bool CharacterInventory::canSwitchChar() {
+	// When in combat, the current character can't be changed
+	return !g_events->isInCombat();
 }
 
-void CharacterInventory::selectedCharChanged() {
-	// When in combat, the current character can't be changed
-	if (g_events->isInCombat()) {
-		if (g_globals->_currCharacter != _initialChar) {
-			g_globals->_currCharacter = _initialChar;
-			g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
-		}
-	} else if (_selectedItem != -1) {
-		// Trade to another character
-		tradeItem(_initialChar);
-
-	} else {
-		populateItems();
-		redraw();
+bool CharacterInventory::canSwitchToChar(Character *dst) {
+	if (_selectedItem != -1) {
+		tradeItem(dst);
+		return false;
 	}
+
+	return true;
+}
+
+void CharacterInventory::charSwitched(Character *priorChar) {
+	PartyView::charSwitched(priorChar);
+	populateItems();
+	redraw();
+}
+
+void CharacterInventory::itemSelected() {
+	// No implementation
 }
 
 void CharacterInventory::selectButton(SelectedButton btnMode) {
@@ -238,18 +240,17 @@ void CharacterInventory::discardItem() {
 	redraw();
 }
 
-void CharacterInventory::tradeItem(Character *from) {
-	if (g_globals->_currCharacter == _initialChar)
+void CharacterInventory::tradeItem(Character *dst) {
+	if (dst == g_globals->_currCharacter)
 		return;
 
 	// Get source and dest inventories
-	Character &cSrc = *_initialChar;
+	Character &cSrc = *g_globals->_currCharacter;
 	Inventory &iSrc = (_mode == ARMS_MODE) ? cSrc._equipped : cSrc._backpack;
-	Character &cDest = *g_globals->_currCharacter;
+	Character &cDest = *dst;
 	Inventory &iDest = cDest._backpack;
 
 	if (iDest.full()) {
-		g_globals->_currCharacter = _initialChar;
 		backpackFull();
 
 	} else {
@@ -257,7 +258,6 @@ void CharacterInventory::tradeItem(Character *from) {
 		iSrc.removeAt(_selectedItem);
 		iDest.add(item._id, item._charges);
 
-		_mode = BACKPACK_MODE;
 		populateItems();
 		redraw();
 	}

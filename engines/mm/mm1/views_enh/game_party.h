@@ -39,6 +39,7 @@ private:
 	Shared::Xeen::SpriteResource _dseFace;
 	bool _highlightOn = false;
 
+	void highlightChar(uint charNum);
 public:
 	GameParty(UIElement *owner);
 	virtual ~GameParty() {}
@@ -48,13 +49,8 @@ public:
 	 */
 	void draw() override;
 
-	/**
-	 * Handle game messages
-	 */
 	bool msgGame(const GameMessage &msg) override;
-
 	bool msgMouseDown(const MouseDownMessage &msg) override;
-
 	bool msgAction(const ActionMessage &msg) override;
 };
 

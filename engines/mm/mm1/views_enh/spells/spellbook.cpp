@@ -65,7 +65,7 @@ bool Spellbook::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-bool Spellbook::canSwitchChar() const {
+bool Spellbook::canSwitchChar() {
 	return !g_events->isInCombat();
 }
 

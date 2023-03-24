@@ -70,7 +70,7 @@ protected:
 	/**
 	 * When the selected character is changed
 	 */
-	void selectedCharChanged() override;
+	void charSwitched(Character *priorChar) override;
 
 public:
 	BlacksmithItems();
