@@ -182,9 +182,10 @@ dialogs:
 			1: "an elven wizard"
 			2: "a gnome robber"
 			3: "a dwarf paladin\npainted a black & white checkered motif"
-			4: "a human cleric"
-			5: "a blue dragon"
-			6: "a gray minotaur"			
+			4: "a h-orc archer"
+			5: "a human cleric"
+			6: "a blue dragon"
+			7: "a gray minotaur"			
 		messages:
 			0: "Services rendered, secrets unfold\nthe brothers together\nlead to treasures untold\n\nfive towns you must travel\nfor this quest to unravel"
 			1: "Seek the wizard ranalou\nin his lair at the korin bluffs\nsix castles he will send you to\nbut doom will be quite tough!\ncruelty and kindness\nmeasured throughout\njudgement day is then sought out"
