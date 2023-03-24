@@ -6613,7 +6613,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	SHKGAME1("50ftchicken", "",		   "chicken.dcr",  "55fa0c9afa4ee4102b50258544fc28d4", 442575, 600),
 
 	// Published by Future Soft of Nasr City, Cairo
-	WINGAME1_l("abctrain", "", "abc.exe", "a593079aecf5bd938ce75264cac24b2d", 2091687, Common::AR_ARB, 600),
+	// TODO: needs confirmation
+	WINGAME2_l("abctrain", "",	"abc.exe", "d:8a5c4896a411b2b1db73f3ada7142547", 2091687,
+								"Xyz.dxr", "d:e3a7e0ade70f67fb3bdef3ee809912dd", 451604, Common::AR_ARB, 600),
 
 	// Mini-game from X-Fools that can also be launched separately
 	MACGAME1("abductthis", "", "Abduct This!", "41fa2186d635be3094403c75b5f44d4b", 115391, 600),
@@ -6646,8 +6648,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("bananaspack", "", "_Fun_Pack.exe", "a593079aecf5bd938ce75264cac24b2d", 1508656, 600),
 	WINGAME1("bananasparty", "", "_Party_Time.exe", "a593079aecf5bd938ce75264cac24b2d", 1508811, 600),
 
-	WINGAME2("barbnail", "", "LAUNCH.EXE", "518a98696fe1122e08410b0f157f21bf", 1758656,
-							 "intro.dxr",  "8732eb742a8bbfd6de5c55b22e41317b", 2549490, 602),
+	WINGAME2("barbnail", "", "LAUNCH.EXE",		 "d:518a98696fe1122e08410b0f157f21bf", 1758656,
+							 "assets/intro.dxr", "d:8732eb742a8bbfd6de5c55b22e41317b", 2549490, 602),
 
 	// from Australian PC User, December 1998
 	WINDEMO1t("bcsinkfloat", "", "BLUE204.EXE", "a7d531197a24161364c0f69c86972702", 1492403, 600),
