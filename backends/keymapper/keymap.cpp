@@ -256,19 +256,13 @@ StringArray Keymap::getActionDefaultMappings(Action *action) {
 	if (_backendDefaultBindings) {
 		KeymapperDefaultBindings::const_iterator it = _backendDefaultBindings->findDefaultBinding(_id, action->id);
 		if (it != _backendDefaultBindings->end()) {
-			if (it->_value.empty()) {
-				return StringArray();
-			}
-			return StringArray(1, it->_value);
+			return it->_value;
 		}
 
 		// If no keymap-specific default mapping was found, look for a standard action binding
 		it = _backendDefaultBindings->findDefaultBinding(kStandardActionsKeymapName, action->id);
 		if (it != _backendDefaultBindings->end()) {
-			if (it->_value.empty()) {
-				return StringArray();
-			}
-			return StringArray(1, it->_value);
+			return it->_value;
 		}
 	}
 
