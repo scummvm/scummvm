@@ -5731,20 +5731,17 @@ define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
 #
 # Check for libmikmod to be present
 #
-echocheck "libmikmod"
 if test "$_libmikmod" != "no"; then
 
 	# Look for the mikmod-config script
 	find_libmikmodconfig
 
+	echocheck "libmikmod"
+
 	if test -z "$_libmikmodconfig"; then
 		_libmikmod=no
 	else
-		if test -n "$_staticlibpath"; then
-			LIBMIKMOD_LIBS=`$_libmikmodconfig --static-libs`
-		else
-			LIBMIKMOD_LIBS=`$_libmikmodconfig --libs`
-		fi
+		LIBMIKMOD_LIBS=`$_libmikmodconfig --libs`
 		LIBMIKMOD_CFLAGS=`$_libmikmodconfig --cflags`
 
 		if test "$_libmikmod" = "auto"; then
@@ -5758,18 +5755,19 @@ if test "$_libmikmod" != "no"; then
 				return 0;
 			}
 EOF
-		cc_check $LIBMIKMOD_CFLAGS $LIBMIKMOD_LIBS && _libmikmod=yes
+			cc_check $LIBMIKMOD_CFLAGS $LIBMIKMOD_LIBS && _libmikmod=yes
 		fi
 
 		if test "$_libmikmod" = "yes"; then
 			append_var LIBS "$LIBMIKMOD_LIBS"
 			append_var INCLUDES "$LIBMIKMOD_CFLAGS"
 		fi
+
+		echo "$_libmikmod"
+
 	fi
 
 fi
-
-echo "$_libmikmod"
 
 define_in_config_if_yes "$_libmikmod" "USE_MIKMOD"
 
