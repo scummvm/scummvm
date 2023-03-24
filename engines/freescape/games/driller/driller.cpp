@@ -78,6 +78,11 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	Math::Vector3d drillBaseSize = Math::Vector3d(3, 2, 3);
 	_drillBase = new GeometricObject(kCubeType, 0, 0, drillBaseOrigin, drillBaseSize, nullptr, nullptr, FCLInstructionVector(), "");
 	assert(!_drillBase->isDestroyed() && !_drillBase->isInvisible());
+
+	if (isDemo()) {
+		_demoMode = !_disableDemoMode; // All the driller demos are non-interactive
+		_angleRotationIndex = 0;
+	}
 }
 
 DrillerEngine::~DrillerEngine() {
