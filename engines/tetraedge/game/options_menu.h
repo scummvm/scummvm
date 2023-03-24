@@ -34,18 +34,19 @@ public:
 	void enter() override;
 	void leave() override;
 
+private:
 	bool onCloseTuto();
 	bool onCreditsButton();
 	bool onDialogVolumeMinusButton();
 	bool onDialogVolumePlusButton();
 	bool onMusicVolumeMinusButton();
 	bool onMusicVolumePlusButton();
-	bool onPrivacyPolicyButton();
+	bool onPrivacyPolicyButton() { return false; }
 	bool onQuitButton();
 	bool onSFXVolumeMinusButton();
 	bool onSFXVolumePlusButton();
-	bool onSupportButton();
-	bool onTermsOfServiceButton();
+	bool onSupportButton() { return false; }
+	bool onTermsOfServiceButton() { return false; }
 	bool onVideoVolumeMinusButton();
 	bool onVideoVolumePlusButton();
 	bool onVisibleTuto();
@@ -56,12 +57,13 @@ public:
 	void updateSFXVolumeJauge();
 	void updateVideoVolumeJauge();
 
-private:
+	// Not in the original, but to extract some common code..
+	void updateJauge(const Common::String &chan, const Common::String &spriteName);
 
-	//  TODO: work out virtual thing here TeLuaGUI _gui2;
-
+	TeLuaGUI _gui2;
 	TeMusic _music1;
 	TeMusic _music2;
+	int _tutoPage;
 };
 
 } // end namespace Tetraedge

@@ -29,6 +29,7 @@
 #include "tetraedge/game/credits.h"
 #include "tetraedge/game/global_bonus_menu.h"
 #include "tetraedge/game/main_menu.h"
+#include "tetraedge/game/options_menu.h"
 #include "tetraedge/game/loc_file.h"
 #include "tetraedge/game/owner_error_menu.h"
 #include "tetraedge/game/splash_screens.h"
@@ -92,6 +93,7 @@ public:
 	BonusMenu &bonusMenu() { return _bonusMenu; }
 	GlobalBonusMenu &globalBonusMenu() { return _globalBonusMenu; }
 	MainMenu &mainMenu() { return _mainMenu; }
+	OptionsMenu &optionsMenu() { return _optionsMenu; }
 	TeMusic &music() { return _music; }
 	Credits &credits() { return _credits; }
 	UpsellScreen &upsellScreen() { return _upsellScreen; }
@@ -154,6 +156,7 @@ private:
 	GlobalBonusMenu _globalBonusMenu;
 	BonusMenu _bonusMenu;
 	MainMenu _mainMenu;
+	OptionsMenu _optionsMenu;
 	Credits _credits;
 	OwnerErrorMenu _ownerErrorMenu;
 	SplashScreens _splashScreens;

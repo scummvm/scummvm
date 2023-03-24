@@ -288,7 +288,15 @@ bool MainMenu::onNewGameConfirmed() {
 }
 
 bool MainMenu::onOptionsButtonValidated() {
-	g_engine->openConfigDialog();
+	if (ConfMan.getBool("use_scummvm_options")) {
+		g_engine->openConfigDialog();
+	} else {
+		Application *app = g_engine->getApplication();
+		app->captureFade();
+		leave();
+		app->optionsMenu().enter();
+		app->fade();
+	}
 	return true;
 }
 

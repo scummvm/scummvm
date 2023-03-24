@@ -151,7 +151,7 @@ void Credits::leave() {
 		_timer.stop();
 		_gui.unload();
 		if (_returnToOptions) {
-			error("TODO: Implement returning to options menu");
+			app->optionsMenu().enter();
 		} else {
 			// WORKAROUND: Ensure game is left before opening menu to
 			// stop inventory button appearing in menu.
