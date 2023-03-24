@@ -168,6 +168,7 @@ _opengl_game_shaders=auto
 _tinygl=yes
 _readline=auto
 _freetype2=auto
+_libmikmod=auto
 _taskbar=auto
 _updates=no
 _libunity=auto
@@ -240,11 +241,13 @@ _sparklepath=
 _pkgconfig=pkg-config
 _sdlconfig=sdl2-config
 _libcurlconfig=curl-config
+_libmikmodconfig=libmikmod-config
 _freetypeconfig=freetype-config
 _freetype_found="false"
 _sdlpath="$PATH"
 _freetypepath="$PATH"
 _libcurlpath="$PATH"
+_libmikmodpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
@@ -542,6 +545,40 @@ find_libcurlconfig() {
 	IFS="$ac_save_ifs"
 
 	if test -z "$_libcurlconfig"; then
+		echo "none found!"
+	fi
+}
+
+#
+# Determine libmikmod-config
+#
+find_libmikmodconfig() {
+	echo_n "Looking for mikmod-config... "
+	libmikmodconfigs="$_libmikmodconfig"
+	_libmikmodconfig=
+
+	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
+	for path_dir in $_libmikmodpath; do
+		#reset separator to parse mikmodconfig
+		IFS=":"
+		for libmikmodconfig in $libmikmodconfigs; do
+			if test -f "$path_dir/$libmikmodconfig" ; then
+				_libmikmodconfig="$path_dir/$libmikmodconfig"
+				echo $_libmikmodconfig
+				# Save the prefix
+				_libmikmodpath=$path_dir
+				if test `basename $path_dir` = bin ; then
+					_libmikmodpath=`dirname $path_dir`
+				fi
+				# break at first mikmod-config found in path
+				break 2
+			fi
+		done
+	done
+
+	IFS="$ac_save_ifs"
+
+	if test -z "$_libmikmodconfig"; then
 		echo "none found!"
 	fi
 }
@@ -974,6 +1011,9 @@ Optional Libraries:
   --with-mpeg2-prefix=DIR  prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
 
+  --with-mikmod-prefix=DIR    Prefix where libmikmod is installed (optional)
+  --enable-mikmod             enable mikmod module for playing various sound formats like impulsetracker [autodetect]
+
   --with-a52-prefix=DIR    Prefix where liba52 is installed (optional)
   --enable-a52             enable a52 codec for MPEG decoder [autodetect]
 
@@ -1162,6 +1202,8 @@ for ac_option in $@; do
 	--disable-nasm)               _nasm=no               ;;
 	--enable-mpeg2)               _mpeg2=yes             ;;
 	--disable-mpeg2)              _mpeg2=no              ;;
+	--enable-mikmod)              _libmikmod=yes         ;;
+	--disable-mikmod)             _libmikmod=no          ;;
 	--enable-a52)                 _a52=yes               ;;
 	--disable-a52)                _a52=no                ;;
 	--disable-jpeg)               _jpeg=no               ;;
@@ -1454,6 +1496,10 @@ for ac_option in $@; do
 	--with-libcurl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_libcurlpath="$arg:$arg/bin"
+		;;
+	--with-mikmod-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_libmikmodpath="$arg:$arg/bin"
 		;;
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5681,6 +5727,51 @@ echocheck "libcurl"
 echo "$_libcurl"
 
 define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
+
+#
+# Check for libmikmod to be present
+#
+echocheck "libmikmod"
+if test "$_libmikmod" != "no"; then
+
+	# Look for the mikmod-config script
+	find_libmikmodconfig
+
+	if test -z "$_libmikmodconfig"; then
+		_libmikmod=no
+	else
+		if test -n "$_staticlibpath"; then
+			LIBMIKMOD_LIBS=`$_libmikmodconfig --static-libs`
+		else
+			LIBMIKMOD_LIBS=`$_libmikmodconfig --libs`
+		fi
+		LIBMIKMOD_CFLAGS=`$_libmikmodconfig --cflags`
+
+		if test "$_libmikmod" = "auto"; then
+			_libmikmod=no
+
+			cat > $TMPC << EOF
+			#include <mikmod.h>
+			int main(void) {
+				SAMPLE *spl = Sample_Load("abcd");
+				Sample_Free(spl);
+				return 0;
+			}
+EOF
+		cc_check $LIBMIKMOD_CFLAGS $LIBMIKMOD_LIBS && _libmikmod=yes
+		fi
+
+		if test "$_libmikmod" = "yes"; then
+			append_var LIBS "$LIBMIKMOD_LIBS"
+			append_var INCLUDES "$LIBMIKMOD_CFLAGS"
+		fi
+	fi
+
+fi
+
+echo "$_libmikmod"
+
+define_in_config_if_yes "$_libmikmod" "USE_MIKMOD"
 
 #
 # Check whether to build cloud integration support

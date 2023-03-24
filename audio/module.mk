@@ -43,6 +43,7 @@ MODULE_OBJS := \
 	decoders/wma.o \
 	decoders/xa.o \
 	decoders/xan_dpcm.o \
+	mods/impulsetracker.o \
 	mods/infogrames.o \
 	mods/maxtrax.o \
 	mods/mod_xm_s3m.o \
