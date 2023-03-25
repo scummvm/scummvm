@@ -90,6 +90,7 @@ public:
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	static Common::String getScummVMBasePath();
 	static Common::String getScummVMConfigPath();
+	static Common::String getScummVMLogPath();
 	static jint getAndroidSDKVersionId();
 
 	static inline bool haveSurface();
@@ -149,6 +150,7 @@ private:
 	static jmethodID _MID_getTouchMode;
 	static jmethodID _MID_getScummVMBasePath;
 	static jmethodID _MID_getScummVMConfigPath;
+	static jmethodID _MID_getScummVMLogPath;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;

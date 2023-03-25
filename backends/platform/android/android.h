@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+//#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #ifndef _ANDROID_H_
 #define _ANDROID_H_
@@ -53,6 +54,8 @@ extern const char *android_log_tag;
 #define LOGI(fmt, args...) _ANDROID_LOG(ANDROID_LOG_INFO, fmt, ##args)
 #define LOGW(fmt, args...) _ANDROID_LOG(ANDROID_LOG_WARN, fmt, ##args)
 #define LOGE(fmt, args...) _ANDROID_LOG(ANDROID_LOG_ERROR, fmt, ##args)
+
+#define MAX_ANDROID_SCUMMVM_LOG_FILESIZE_IN_BYTES (100*1024)
 
 #ifdef ANDROID_DEBUG_ENTER
 #define ENTER(fmt, args...) LOGD("%s(" fmt ")", __FUNCTION__, ##args)
@@ -167,6 +170,11 @@ private:
 
 	TouchControls _touchControls;
 
+	Common::String _defaultConfigFileName;
+	Common::String _defaultLogFileName;
+
+//	FILE *_scvmLogFilePtr;
+
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	// Cached dlopen object
 	mutable void *_gles2DL;
@@ -178,6 +186,7 @@ public:
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 	Common::String getDefaultConfigFileName() override;
+	Common::String getDefaultLogFileName() override;
 
 	void registerDefaultSettings(const Common::String &target) const override;
 	GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;

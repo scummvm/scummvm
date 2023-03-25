@@ -77,6 +77,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	private Version _currentScummVMVersion;
 	private File _configScummvmFile;
+	private File _logScummvmFile;
 	private File _actualScummVMDataDir;
 	private File _possibleExternalScummVMDir;
 	boolean _externalPathAvailableForReadAccess;
@@ -794,6 +795,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		protected String getScummVMLogPath() {
+			if (_logScummvmFile != null) {
+				return _logScummvmFile.getPath();
+			} else return "";
+		}
+
+		@Override
 		protected String[] getSysArchives() {
 			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _actualScummVMDataDir.getPath());
 			if (_externalPathAvailableForReadAccess) {
@@ -865,6 +873,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		Log.d(ScummVM.LOG_TAG, "onCreate");
 
 		super.onCreate(savedInstanceState);
+
+		setLogFile();
 
 		safSyncObject = new Object();
 
@@ -1154,6 +1164,34 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		} else {
 //			showSystemMouseCursor(true);
 //		}
+	}
+
+	private void setLogFile() {
+		// NOTE: our LOG file scummvm.log is created directly inside the ScummVM internal app path
+		_logScummvmFile = new File(getFilesDir(), "scummvm.log");
+		try {
+			if (_logScummvmFile.exists() || !_logScummvmFile.createNewFile()) {
+				Log.d(ScummVM.LOG_TAG, "ScummVM Log file already exists!");
+				Log.d(ScummVM.LOG_TAG, "Existing ScummVM Log: " + _logScummvmFile.getPath());
+			} else {
+				Log.d(ScummVM.LOG_TAG, "An empty ScummVM log file was created!");
+				Log.d(ScummVM.LOG_TAG, "New ScummVM log: " + _logScummvmFile.getPath());
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			new AlertDialog.Builder(this)
+				.setTitle(R.string.no_log_file_title)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setMessage(R.string.no_log_file)
+				.setNegativeButton(R.string.quit,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
+				.show();
+			return;
+		}
 	}
 
 	// TODO setSystemUiVisibility is introduced in API 11 and deprecated in API 30 - When we move to API 30 we will have to replace this code
@@ -1897,7 +1935,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	}
 
 	// clear up any possibly deprecated assets (when upgrading to a new version)
-	// Don't remove the scummvm.ini file!
+	// Don't remove the scummvm.ini nor the scummvm.log file!
 	// Remove any files not in the filesItenary, even in a sideUpgrade
 	// Remove any files in the filesItenary only if not a sideUpgrade
 	private void internalAppFolderCleanup(String[] filesItenary, boolean sideUpgrade) {
@@ -1908,6 +1946,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				for (File extfile : extfiles) {
 					if (extfile.isFile()) {
 						if (extfile.getName().compareToIgnoreCase("scummvm.ini") != 0
+							&& extfile.getName().compareToIgnoreCase("scummvm.log") != 0
 							&& (!containsStringEntry(filesItenary, extfile.getName())
 							|| !sideUpgrade)
 						) {
