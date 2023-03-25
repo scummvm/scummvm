@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 23:26+0000\n"
+"PO-Revision-Date: 2023-03-25 23:27+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -6299,21 +6299,23 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
-msgstr ""
+msgstr "~ تم~ تمكين الانتقالات"
 
 #: engines/mohawk/dialogs.cpp:118
 msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"التبديل بين تشغيل انتقالات الشاشة أو إيقاف تشغيلها. سيمكنك إيقاف تشغيل "
+"انتقالات الشاشة من التنقل بسرعة أكبر خلال اللعبة."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "تشغيل لعبة ذبابة الغموض بالفيلم"
 
 #: engines/mohawk/dialogs.cpp:122
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "لم يتم تشغيل فيلم Myst fly بواسطة المحرك الأصلي."
 
 #. I18N:
 #. This Option is for hard-of-hearing.
@@ -6324,52 +6326,56 @@ msgstr ""
 #.
 #: engines/mohawk/dialogs.cpp:134
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr ""
+msgstr "تحسين لغز العصر السيلانيتي ~ إمكانية الوصول~"
 
 #: engines/mohawk/dialogs.cpp:135
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
-msgstr ""
+msgstr "السماح بحل ألغاز العصر السيلانيتي الصوتية بهامش خطأ أكبر."
 
 #: engines/mohawk/dialogs.cpp:138
 msgid "Simulate loading times of old CD drives"
-msgstr ""
+msgstr "محاكاة أوقات تحميل محركات الأقراص المضغوطة القديمة"
 
 #: engines/mohawk/dialogs.cpp:139
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
+"قم بمحاكاة أوقات تحميل محركات الأقراص المضغوطة القديمة عن طريق إضافة تأخير "
+"عشوائي أثناء انتقالات المشهد."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:146
 msgid "~D~rop Page"
-msgstr ""
+msgstr "~ إفلات ~الصفحة"
 
 #: engines/mohawk/dialogs.cpp:150
 msgid "Show ~M~ap"
-msgstr ""
+msgstr "عرض ~ الخريطة ~"
 
 #: engines/mohawk/dialogs.cpp:155
 msgid "Main Men~u~"
-msgstr ""
+msgstr "~القائمة~ الرئيسية"
 
 #: engines/mohawk/dialogs.cpp:287
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "سيتم تطبيق اللغة الجديدة بعد إعادة تشغيل اللعبة."
 
 #: engines/mohawk/dialogs.cpp:359
 msgid "~W~ater Effect Enabled"
-msgstr ""
+msgstr "~ تأثير الماء ممكن"
 
 #: engines/mohawk/dialogs.cpp:359
 msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
+"يبدل استخدام مقاطع فيديو QuickTime للتأثيرات المرئية المتعلقة بالأسطح "
+"المائية (التموجات والأمواج وما إلى ذلك)."
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
-msgstr ""
+msgstr "الانتقالات:"
 
 #: engines/mohawk/dialogs.cpp:361
 msgid ""
