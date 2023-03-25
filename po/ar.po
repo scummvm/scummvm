@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 23:27+0000\n"
+"PO-Revision-Date: 2023-03-25 23:29+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -6498,45 +6498,45 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:503
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "تفتقد ملفات البيانات الممزقة المطلوبة التالية:\n"
 
 #: engines/mohawk/riven.cpp:865
 msgid "Move forward"
-msgstr ""
+msgstr "تقدم إلى الأمام"
 
 #: engines/mohawk/riven.cpp:871
 msgid "Move forward left"
-msgstr ""
+msgstr "تحرك للأمام إلى اليسار"
 
 #: engines/mohawk/riven.cpp:875
 msgid "Move forward right"
-msgstr ""
+msgstr "تقدم يمينًا"
 
 #: engines/mohawk/riven.cpp:879
 msgid "Move backwards"
-msgstr ""
+msgstr "ارجع للخلف"
 
 #: engines/mohawk/riven.cpp:885 engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2122
 #: engines/wintermute/keymapper_tables.h:2223
 msgid "Turn left"
-msgstr ""
+msgstr "انعطف لليسار"
 
 #: engines/mohawk/riven.cpp:891 engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2128
 #: engines/wintermute/keymapper_tables.h:2230
 msgid "Turn right"
-msgstr ""
+msgstr "انعطف يمينا"
 
 #: engines/mohawk/riven.cpp:897
 msgid "Look up"
-msgstr ""
+msgstr "ابحث عن"
 
 #: engines/mohawk/riven.cpp:902
 msgid "Look down"
-msgstr ""
+msgstr "أنظر للأسفل"
 
 #: engines/mohawk/riven.cpp:908
 msgid "Play intro videos"
