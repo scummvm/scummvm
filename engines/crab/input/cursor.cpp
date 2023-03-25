@@ -32,7 +32,9 @@
 // Author:   Arvind
 // Purpose:  Cursor class
 //=============================================================================
-#include "crab/cursor.h"
+#include "crab/input/cursor.h"
+
+namespace Crab {
 
 namespace pyrodactyl {
 namespace input {
@@ -79,9 +81,10 @@ void Cursor::Load(rapidxml::xml_node<char> *node) {
 //------------------------------------------------------------------------
 // Purpose: Handle Events
 //------------------------------------------------------------------------
-void Cursor::HandleEvents(const SDL_Event &Event) {
+void Cursor::HandleEvents(const Common::Event &event) {
 	gMouse.hover = false;
-	if (Event.type == SDL_MOUSEMOTION) {
+#if 0
+	if (event.type == SDL_MOUSEMOTION) {
 		motion.x = Event.motion.x;
 		motion.y = Event.motion.y;
 
@@ -96,12 +99,32 @@ void Cursor::HandleEvents(const SDL_Event &Event) {
 		button.x = Event.button.x;
 		button.y = Event.button.y;
 	}
+#endif
+
+	if (event.type == Common::EVENT_MOUSEMOVE) {
+		motion.x = event.mouse.x;
+		motion.y = event.mouse.y;
+
+		rel.x = event.relMouse.x;
+		rel.y = event.relMouse.y;
+	} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+		pressed = true;
+
+		button.x = event.mouse.x;
+		button.y = event.mouse.y;
+	} else if (event.type == Common::EVENT_LBUTTONUP) {
+		pressed = false;
+
+		button.x = event.mouse.x;
+		button.y = event.mouse.y;
+	}
 }
 
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Cursor::Draw() {
+	//warning("Drawing cursor: %d %d", motion.x, motion.y);
 	if (hover) {
 		if (pressed)
 			img_hover_s.Draw(motion.x + hover_offset.x, motion.y + hover_offset.y);
@@ -114,3 +137,5 @@ void Cursor::Draw() {
 			img.Draw(motion.x, motion.y);
 	}
 }
+
+} // End of namespace Crab
