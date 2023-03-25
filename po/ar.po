@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 23:11+0000\n"
+"PO-Revision-Date: 2023-03-25 23:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -5946,28 +5946,28 @@ msgstr "الهجوم 3"
 
 #: engines/kyra/engine/lol.cpp:475 engines/mm/mm1/metaengine.cpp:97
 msgid "Show Map"
-msgstr ""
+msgstr "عرض الخريطة"
 
 #: engines/kyra/engine/lol.cpp:478
 msgid "Slide Left"
-msgstr ""
+msgstr "الشريحة إلى اليسار"
 
 #: engines/kyra/engine/lol.cpp:479
 msgid "Slide Right"
-msgstr ""
+msgstr "انزلاق لليمين"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/kyra/engine/lol.cpp:482 engines/mm/mm1/metaengine.cpp:103
 msgid "Rest"
-msgstr ""
+msgstr "استراحة"
 
 #: engines/kyra/engine/lol.cpp:483
 msgid "Options"
-msgstr ""
+msgstr "خيارات"
 
 #: engines/kyra/engine/lol.cpp:484
 msgid "Choose Spell"
-msgstr ""
+msgstr "اختر Spell"
 
 #: engines/kyra/gui/saveload_eob.cpp:597
 #, c-format
@@ -5979,6 +5979,12 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
+"تم العثور على ملف اللعبة الأصلي المحفوظ التالي في مسار لعبتك:\n"
+"\n"
+"%s . %s \n"
+"\n"
+"هل ترغب في استخدام ملف اللعبة المحفوظ هذا مع ScummVM؟\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:630
 #, c-format
@@ -5986,6 +5992,8 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"تم العثور على ملف لعبة محفوظ في الفتحة المحددة%d. الكتابة فوق؟\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:663
 #, c-format
@@ -5996,6 +6004,11 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"تم استيراد%d من الألعاب المحفوظة الأصلية بنجاح إلى\n"
+"ScummVM. إذا كنت تريد استيراد اللعبة المحفوظة يدويًا في وقت لاحق ، فسترغب في "
+"ذلك\n"
+"تحتاج إلى فتح وحدة تصحيح ScummVM واستخدام الأمر \"import_savefile\".\n"
+"\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
 msgid ""
@@ -6010,6 +6023,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"يتطلب إصدار AMIGA ملفات الخطوط التالية:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6 / 6\n"
+"EOBF8.FONT\n"
+"EOBF8 / 8\n"
+"\n"
+"إذا استخدمت المثبت الأصلي لتثبيت هذه الملفات\n"
+"يجب أن يكون موجودًا في مجلد \"Fonts /\" لنظام AmigaDOS.\n"
+"يرجى نسخها في دليل بيانات لعبة EOB.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:287
 msgid ""
@@ -6032,211 +6055,232 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"يتطلب إصدار AMIGA ملفات الخطوط التالية:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6 / 6\n"
+"EOBF8.FONT\n"
+"EOBF8 / 8\n"
+"\n"
+"هذه نسخة مترجمة (غير إنجليزية) من EOB II تستخدم أحرفًا محددة للغة\n"
+"الواردة فقط في ملفات الخطوط المحددة التي تأتي مع لعبتك. لا يمكنك استخدام "
+"الخط\n"
+"ملفات من الإصدار الإنجليزي أو من أي لعبة EOB I والتي يبدو أنها ما تفعله.\n"
+"\n"
+"ستستمر اللعبة ، لكن لن يتم عرض أحرف اللغة المحددة.\n"
+"يرجى نسخ ملفات الخط الصحيحة إلى دليل بيانات لعبة EOB II.\n"
+"\n"
 
 #: engines/lab/engine.cpp:124
 msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
+"هذه نسخة تجريبية من لعبة Windows. لتشغيل النسخة الكاملة ، ستحتاج إلى استخدام "
+"المترجم الفوري وشراء مفتاح من Wyrmkeep"
 
 #: engines/lab/processroom.cpp:329
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
 msgstr ""
+"هذه نهاية النسخة التجريبية. يمكنك لعب اللعبة الكاملة باستخدام المترجم الأصلي "
+"من Wyrmkeep"
 
 #: engines/lab/speciallocks.cpp:148
 msgid "This puzzle is not available in the trial version of the game"
-msgstr ""
+msgstr "هذا اللغز غير متوفر في الإصدار التجريبي من اللعبة"
 
 #: engines/lure/metaengine.cpp:39 engines/mads/metaengine.cpp:108
 #: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:167
 msgid "TTS Narrator"
-msgstr ""
+msgstr "الراوي TTS"
 
 #: engines/made/detection_tables.h:445 engines/made/detection_tables.h:462
 msgid "The game is using unsupported engine"
-msgstr ""
+msgstr "اللعبة تستخدم محرك غير مدعوم"
 
 #: engines/made/metaengine.cpp:34
 msgid "Play a digital soundtrack during the opening movie"
-msgstr ""
+msgstr "قم بتشغيل مقطع صوتي رقمي أثناء افتتاح الفيلم"
 
 #: engines/made/metaengine.cpp:35
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
+"إذا تم تحديدها ، فستستخدم اللعبة مسارًا صوتيًا رقميًا أثناء المقدمة. وإلا ، "
+"فسيتم تشغيل موسيقى MIDI."
 
 #: engines/mads/metaengine.cpp:47
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "واجهة سهلة للماوس"
 
 #: engines/mads/metaengine.cpp:48
 msgid "Shows object names when hovering the mouse over them"
-msgstr ""
+msgstr "يظهر أسماء الكائنات عند تحريك الماوس فوقها"
 
 #: engines/mads/metaengine.cpp:59 engines/mads/metaengine.cpp:60
 msgid "Animated inventory items"
-msgstr ""
+msgstr "عناصر المخزون المتحركة"
 
 #: engines/mads/metaengine.cpp:71 engines/mads/metaengine.cpp:72
 msgid "Animated game interface"
-msgstr ""
+msgstr "واجهة اللعبة المتحركة"
 
 #: engines/mads/metaengine.cpp:83 engines/mads/metaengine.cpp:84
 msgid "Naughty game mode"
-msgstr ""
+msgstr "وضع اللعبة المشاغب"
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/twine/metaengine.cpp:443
 #: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
-msgstr ""
+msgstr "يهرب"
 
 #: engines/mm/mm1/metaengine.cpp:48
 msgid "View Party Member 1"
-msgstr ""
+msgstr "عرض عضو المجموعة 1"
 
 #: engines/mm/mm1/metaengine.cpp:49
 msgid "View Party Member 2"
-msgstr ""
+msgstr "عرض عضو المجموعة 2"
 
 #: engines/mm/mm1/metaengine.cpp:50
 msgid "View Party Member 3"
-msgstr ""
+msgstr "عرض عضو المجموعة 3"
 
 #: engines/mm/mm1/metaengine.cpp:51
 msgid "View Party Member 4"
-msgstr ""
+msgstr "عرض عضو المجموعة 4"
 
 #: engines/mm/mm1/metaengine.cpp:52
 msgid "View Party Member 5"
-msgstr ""
+msgstr "عرض عضو المجموعة 5"
 
 #: engines/mm/mm1/metaengine.cpp:53
 msgid "View Party Member 6"
-msgstr ""
+msgstr "عرض عضو المجموعة 6"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:61
 msgid "Block"
-msgstr ""
+msgstr "حاجز"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:63
 msgid "Cast"
-msgstr ""
+msgstr "يقذف"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:65
 msgid "Exchange"
-msgstr ""
+msgstr "تبادل"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:67
 msgid "Fight"
-msgstr ""
+msgstr "تقاتل"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/mm/mm1/metaengine.cpp:110
 msgid "Quick Reference"
-msgstr ""
+msgstr "مرجع سريع"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
 msgid "Retreat"
-msgstr ""
+msgstr "تراجع"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
 msgid "Shoot"
-msgstr ""
+msgstr "أطلق النار"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:78
 msgid "Delay"
-msgstr ""
+msgstr "تأخير"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:80 engines/mm/mm1/metaengine.cpp:101
 msgid "Protect"
-msgstr ""
+msgstr "يحمي"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:88
 msgid "Forwards"
-msgstr ""
+msgstr "المهاجمون"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:90
 msgid "Backwards"
-msgstr ""
+msgstr "إلى الوراء"
 
 #: engines/mm/mm1/metaengine.cpp:98
 msgid "Toggle Minimap"
-msgstr ""
+msgstr "تبديل الخريطة المصغرة"
 
 #: engines/mm/mm1/metaengine.cpp:99
 msgid "Reorder Party"
-msgstr ""
+msgstr "إعادة ترتيب الحزب"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Search"
-msgstr ""
+msgstr "يبحث"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:107
 msgid "Bash"
-msgstr ""
+msgstr "سحق"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:109 engines/scumm/help.cpp:144
 msgid "Unlock"
-msgstr ""
+msgstr "فتح القفل"
 
 #: engines/mm/mm1/metaengine.cpp:116
 msgid "Goto location"
-msgstr ""
+msgstr "انتقل إلى الموقع"
 
 #: engines/mm/mm1/metaengine.cpp:127 engines/mm/mm1/metaengine.cpp:132
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "القوة والسحر 1 - القوائم"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:139
 #: engines/mm/mm1/metaengine.cpp:145
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "القوة والسحر 1 - الحفلة"
 
 #: engines/mm/mm1/metaengine.cpp:138
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "القوة والسحر 1 - القتال"
 
 #: engines/mm/mm1/metaengine.cpp:144
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "القوة والسحر 1"
 
 #: engines/mm/mm1/metaengine.cpp:146
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "القوة والسحر 1 - غش"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
 #, c-format
 msgid "Could not locate engine data %s"
-msgstr ""
+msgstr "تعذر تحديد موقع بيانات المحرك%s"
 
 #: engines/mm/shared/utils/engine_data.cpp:295
 #: engines/ultima/shared/engine/data_archive.cpp:98
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr ""
+msgstr "بيانات المحرك قديمة. توقع٪ %d %d ، لكن حصلت على الإصدار%d %d"
 
 #: engines/mm/xeen/saves.cpp:294
 msgid "Failed to autosave"
-msgstr ""
+msgstr "فشل الحفظ التلقائي"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:113 engines/mohawk/dialogs.cpp:358
