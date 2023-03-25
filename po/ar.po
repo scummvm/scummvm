@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 22:06+0000\n"
+"PO-Revision-Date: 2023-03-25 22:10+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -2201,100 +2201,100 @@ msgstr "التالي"
 
 #: gui/saveload-dialog.cpp:834
 msgid "Prev"
-msgstr ""
+msgstr "السابق"
 
 #: gui/saveload-dialog.cpp:1035
 msgid "New Save"
-msgstr ""
+msgstr "حفظ جديد"
 
 #: gui/saveload-dialog.cpp:1035
 msgid "Create a new saved game"
-msgstr ""
+msgstr "إنشاء لعبة جديدة محفوظة"
 
 #: gui/saveload-dialog.cpp:1167
 msgid "Name: "
-msgstr ""
+msgstr "الاسم: "
 
 #: gui/saveload-dialog.cpp:1243
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "أدخل وصفًا للفتحة %d:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "اختر تظليل من القائمة أدناه (أو اختر ملفًا بدلاً من ذلك)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "اختر ملفًا بدلاً من ذلك ..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "اختر تظليل من نظام الملفات"
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
-msgstr ""
+msgstr "حدد تظليل"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
-msgstr ""
+msgstr "حدد موضوعًا"
 
 #: gui/ThemeEngine.cpp:276
 msgid "Disabled GFX"
-msgstr ""
+msgstr "المعطلة GFX"
 
 #: gui/ThemeEngine.cpp:276
 msgctxt "lowres"
 msgid "Disabled GFX"
-msgstr ""
+msgstr "المعطلة GFX"
 
 #: gui/ThemeEngine.cpp:277
 msgid "Standard renderer"
-msgstr ""
+msgstr "العارض القياسي"
 
 #: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:1016
 msgid "Standard"
-msgstr ""
+msgstr "معيار"
 
 #: gui/ThemeEngine.cpp:279
 msgid "Antialiased renderer"
-msgstr ""
+msgstr "عارض مصقول"
 
 #: gui/ThemeEngine.cpp:279
 msgid "Antialiased"
-msgstr ""
+msgstr "الحواف المحسّنة"
 
 #: gui/unknown-game-dialog.cpp:48
 msgid "Add anyway"
-msgstr ""
+msgstr "أضف على أي حال"
 
 #: gui/unknown-game-dialog.cpp:57
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "نسخ إلى الحافظة"
 
 #: gui/unknown-game-dialog.cpp:63
 msgid "Report game"
-msgstr ""
+msgstr "الإبلاغ عن اللعبة"
 
 #: gui/unknown-game-dialog.cpp:100
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
-msgstr ""
+msgstr "استخدم الزر أدناه لنسخ معلومات اللعبة المطلوبة إلى الحافظة الخاصة بك."
 
 #: gui/unknown-game-dialog.cpp:105
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "يمكنك أيضًا الإبلاغ عن لعبتك مباشرةً إلى متتبع الأخطاء."
 
 #: gui/unknown-game-dialog.cpp:155
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "تم نسخ جميع المعلومات الضرورية حول لعبتك في الحافظة"
 
 #: gui/unknown-game-dialog.cpp:157
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "فشل نسخ معلومات اللعبة إلى الحافظة!"
 
 #: gui/updates-dialog.cpp:48
 msgid ""
@@ -2302,28 +2302,33 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
+"يدعم ScummVM الآن البحث التلقائي عن التحديثات\n"
+"الأمر الذي يتطلب الوصول إلى الإنترنت. هل \n"
+"ترغب في تمكين هذه الميزة؟"
 
 #: gui/updates-dialog.cpp:51
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"يمكنك تغيير هذا الإعداد لاحقًا في علامة تبويب المتفرقات\n"
+"في مربع حوار الخيارات."
 
 #: gui/widget.cpp:448 gui/widget.cpp:450 gui/widget.cpp:456 gui/widget.cpp:458
 msgid "Clear value"
-msgstr ""
+msgstr "قيمة واضحة"
 
 #: gui/widgets/grid.cpp:242
 msgid "Play"
-msgstr ""
+msgstr "العب"
 
 #: gui/widgets/grid.cpp:245
 msgid "Saves"
-msgstr ""
+msgstr "احفظ"
 
 #: base/main.cpp:595
 msgid "Bad config file format. overwrite?"
-msgstr ""
+msgstr "تنسيق ملف التكوين غير صالح. الكتابة عليه؟"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:644
@@ -2348,19 +2353,35 @@ msgid ""
 "\n"
 "Steps 2 and 3 need to be done only once for all of your games."
 msgstr ""
+"في هذا الإصدار الجديد من ScummVM Android ، تم إجراء تغييرات كبيرة على نظام "
+"الوصول إلى الملفات للسماح بدعم الإصدارات الحديثة من نظام التشغيل Android.\n"
+"إذا وجدت أن ألعابك المضافة الحالية أو المسارات المخصصة لم تعد تعمل ، فالرجاء "
+"تعديل هذه المسارات وهذه المرة استخدم نظام SAF للتصفح إلى المواقع المطلوبة.\n"
+"للقيام بذلك:\n"
+"\n"
+"  1. لكل لعبة لا يتم العثور على بياناتها ، انتقل إلى علامة التبويب \"المسارات"
+"\" في \"خيارات اللعبة\" وقم بتغيير \"مسار اللعبة\"\n"
+"  2. داخل متصفح الملفات ScummVM ، استخدم \"اذهب للأعلى\" حتى تصل إلى المجلد "
+"\"جذر\" حيث سترى الخيار \"<إضافة مجلد جديد>\".\n"
+"  3. اختر ذلك ، ثم تصفح وحدد المجلد \"الأصل\" للمجلدات الفرعية للألعاب ، على "
+"سبيل المثال \"بطاقة SD> ألعابي\". انقر فوق \"استخدام هذا المجلد\".\n"
+"  4. بعد ذلك ، سيظهر مجلد جديد \"ألعابي\" في المجلد \"جذر\" لمتصفح ScummVM.\n"
+"  5. تصفح هذا المجلد للوصول إلى بيانات اللعبة.\n"
+"\n"
+"يجب تنفيذ الخطوتين 2 و 3 مرة واحدة فقط لجميع ألعابك."
 
 #: base/main.cpp:663 base/main.cpp:684
 #: engines/director/lingo/lingo-builtins.cpp:1199
 #: engines/director/lingo/xlibs/jitdraw3.cpp:129
 #: engines/director/lingo/xlibs/jitdraw3.cpp:137
 msgid "Ok"
-msgstr ""
+msgstr "حسنا"
 
 #. I18N: A button caption to dismiss amessage and read it later
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:665 base/main.cpp:686
 msgid "Read Later"
-msgstr ""
+msgstr "اقرأ لاحقا"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:672
@@ -2378,74 +2399,84 @@ msgid ""
 "the ScummVM browser.\n"
 "  4. Browse through this folder to your game data."
 msgstr ""
+"في هذا الإصدار الجديد من ScummVM Android ، تم إجراء تغييرات كبيرة على نظام "
+"الوصول إلى الملفات للسماح بدعم الإصدارات الحديثة من نظام التشغيل Android.\n"
+"وبالتالي ، تحتاج إلى إعداد SAF لتتمكن من إضافة الألعاب.\n"
+"\n"
+"  1. داخل متصفح الملفات ScummVM ، استخدم \"اذهب للأعلى\" حتى تصل إلى المجلد "
+"\"جذر\" حيث سترى الخيار \"<إضافة مجلد جديد>\".\n"
+"  2. اختر ذلك ، ثم تصفح وحدد المجلد \"الأصل\" للمجلدات الفرعية للألعاب ، على "
+"سبيل المثال \"بطاقةألعابيSD> \". انقر فوق \"استخدام هذا المجلد\".\n"
+"  3. بعد ذلك ، سيظهر مجلد جديد \"ألعابي\" في المجلد \"جذر\" لمتصفح ScummVM.\n"
+"  4. تصفح هذا المجلد للوصول إلى بيانات اللعبة."
 
 #: base/main.cpp:782
 msgid "Error running game:"
-msgstr ""
+msgstr "خطأ في تشغيل اللعبة:"
 
 #: base/main.cpp:829
 msgid "Could not find any engine capable of running the selected game"
-msgstr ""
+msgstr "تعذر العثور على أي محرك قادر على تشغيل اللعبة المحددة"
 
 #: common/error.cpp:37
 msgid "No error"
-msgstr ""
+msgstr "لا خطأ"
 
 #: common/error.cpp:39
 msgid "Game data not found"
-msgstr ""
+msgstr "لم يتم العثور على بيانات اللعبة"
 
 #: common/error.cpp:41
 msgid "Game id not supported"
-msgstr ""
+msgstr "معرّف اللعبة غير مدعوم"
 
 #: common/error.cpp:43
 msgid "Unsupported color mode"
-msgstr ""
+msgstr "وضع اللون غير مدعوم"
 
 #: common/error.cpp:45
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "فشلت تهيئة جهاز الصوت"
 
 #: common/error.cpp:48
 msgid "Read permission denied"
-msgstr ""
+msgstr "تم رفض إذن القراءة"
 
 #: common/error.cpp:50
 msgid "Write permission denied"
-msgstr ""
+msgstr "تم رفض إذن الكتابة"
 
 #: common/error.cpp:53
 msgid "Path does not exist"
-msgstr ""
+msgstr "المسار غير موجود"
 
 #: common/error.cpp:55
 msgid "Path not a directory"
-msgstr ""
+msgstr "المسار ليس مجلدا"
 
 #: common/error.cpp:57
 msgid "Path not a file"
-msgstr ""
+msgstr "المسار ليس ملف"
 
 #: common/error.cpp:60
 msgid "Cannot create file"
-msgstr ""
+msgstr "لا يمكن إنشاء ملف"
 
 #: common/error.cpp:62
 msgid "Reading data failed"
-msgstr ""
+msgstr "فشلت قراءة البيانات"
 
 #: common/error.cpp:64
 msgid "Writing data failed"
-msgstr ""
+msgstr "فشل في كتابة البيانات"
 
 #: common/error.cpp:67
 msgid "Could not find suitable engine plugin"
-msgstr ""
+msgstr "تعذر العثور على البرنامج المساعد المناسب للمحرك"
 
 #: common/error.cpp:69
 msgid "Engine plugin does not support saved games"
-msgstr ""
+msgstr "المكوِّن الإضافي للمحرك لا يدعم الألعاب المحفوظة"
 
 #: common/error.cpp:72
 msgid "User canceled"
