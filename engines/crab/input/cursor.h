@@ -35,10 +35,12 @@
 #ifndef CRAB_CURSOR_H
 #define CRAB_CURSOR_H
 
-#include "crab/Image.h"
+#include "crab/image/Image.h"
 #include "crab/common_header.h"
 #include "crab/loaders.h"
 #include "crab/vectors.h"
+
+namespace Crab {
 
 namespace pyrodactyl {
 namespace input {
@@ -76,14 +78,16 @@ public:
 	void Reset();
 
 	void Load(rapidxml::xml_node<char> *node);
-	void HandleEvents(const SDL_Event &Event);
+	void HandleEvents(const Common::Event &event);
 
 	void Draw();
-	const bool Pressed() { return pressed; }
+	bool Pressed() { return pressed; }
 };
 
 extern Cursor gMouse;
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+};
 
 #endif // CRAB_CURSOR_H
