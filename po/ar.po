@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 22:10+0000\n"
+"PO-Revision-Date: 2023-03-25 22:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -2480,59 +2480,59 @@ msgstr "المكوِّن الإضافي للمحرك لا يدعم الألعا�
 
 #: common/error.cpp:72
 msgid "User canceled"
-msgstr ""
+msgstr "ألغى المستخدم"
 
 #: common/error.cpp:76
 msgid "Unknown error"
-msgstr ""
+msgstr "خطأ غير معروف"
 
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:34
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules Green"
 
 #: common/rendermode.cpp:35
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules Amber"
 
 #: common/rendermode.cpp:44
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 Colors)"
 
 #: common/rendermode.cpp:45
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 Colors)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:50
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "أبيض /أسود Macintosh"
 
 #: common/rendermode.cpp:86
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules Green"
 
 #: common/rendermode.cpp:87
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules Amber"
 
 #: common/updates.cpp:57
 msgid "Daily"
-msgstr ""
+msgstr "يوميًا"
 
 #: common/updates.cpp:59
 msgid "Weekly"
-msgstr ""
+msgstr "أسبوعي"
 
 #: common/updates.cpp:61
 msgid "Monthly"
-msgstr ""
+msgstr "شهريا"
 
 #: common/updates.cpp:63
 msgid "<Bad value>"
-msgstr ""
+msgstr "<قيمة سيئة>"
 
 #. I18N: Abbreviation for 'bytes' as data size
 #. I18N: Hardware key
@@ -2543,32 +2543,32 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:37
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:189
 msgid "KB"
-msgstr ""
+msgstr "KB"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:194
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:200
 msgid "GB"
-msgstr ""
+msgstr "GB"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:206
 msgid "TB"
-msgstr ""
+msgstr "TB"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:32
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "مترجم للعديد من ألعاب المغامرات ولعب الأدوار"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:37
@@ -2579,6 +2579,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM هو برنامج يسمح لك بتشغيل مجموعة متنوعة من ألعاب المغامرات وألعاب "
+"تقمص الأدوار الرسومية والتأشير والنقر ، بشرط أن يكون لديك بالفعل ملفات "
+"البيانات الخاصة بهم. الجزء الذكي في هذا الأمر: يستبدل ScummVM الملفات "
+"التنفيذية التي يتم شحنها مع اللعبة ، مما يتيح لك تشغيلها على أنظمة لم يتم "
+"تصميمها من أجلها مطلقًا!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:45
@@ -2588,6 +2593,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"حاليًا ، تدعم ScummVM مكتبة ضخمة من المغامرات تضم أكثر من 4000 لعبة في "
+"المجموع. وهو يدعم العديد من الكلاسيكيات التي نشرتها الاستوديوهات الأسطورية "
+"مثل LucasArts و Sierra On-Line و Revolution Software و Cyan، Inc. و Westwood "
+"Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:51
@@ -2596,47 +2605,51 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"بجانب العناوين الرائدة مثل سلسلة Monkey Island و Broken Sword و Myst و Blade "
+"Runner وعدد لا يحصى من الألعاب الأخرى ، ستجد بعض المغامرات الغامضة حقًا "
+"والأحجار الكريمة المخفية حقًا لاستكشافها."
 
 #: engines/achievements.cpp:231
 msgid "Achievement unlocked!"
-msgstr ""
+msgstr "تم الحصول على الإنجاز!"
 
 #: engines/advancedDetector.cpp:235
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
+"تم اكتشاف نسخة غير شرعية من اللعبة. نحن لا نقدم أي دعم في مثل هذه الحالات"
 
 #: engines/dialogs.cpp:68
 msgid "~R~esume"
-msgstr ""
+msgstr "ا~ستئناف"
 
 #: engines/dialogs.cpp:70
 msgid "~L~oad"
-msgstr ""
+msgstr "~ت~حميل"
 
 #: engines/dialogs.cpp:74 backends/platform/3ds/options-dialog.cpp:45
 msgid "~S~ave"
-msgstr ""
+msgstr "~ ح~فظ"
 
 #: engines/dialogs.cpp:78
 msgid "~O~ptions"
-msgstr ""
+msgstr "~ خ~ يارات"
 
 #: engines/dialogs.cpp:83
 msgid "~H~elp"
-msgstr ""
+msgstr "~ م~ساعدة"
 
 #: engines/dialogs.cpp:87
 msgid "~A~bout"
-msgstr ""
+msgstr "~ب~شأن"
 
 #: engines/dialogs.cpp:90 engines/dialogs.cpp:166
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "~ ال~عودة إلى المشغل"
 
 #: engines/dialogs.cpp:92 engines/dialogs.cpp:168
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "~ ال~عودة إلى المشغل"
 
 #: engines/dialogs.cpp:100 engines/engine.cpp:932 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -2656,7 +2669,7 @@ msgstr ""
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:751 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
-msgstr ""
+msgstr "حفظ اللعبة:"
 
 #: engines/dialogs.cpp:100 engines/engine.cpp:932 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -2679,7 +2692,7 @@ msgstr ""
 #: engines/wage/saveload.cpp:751 engines/zvision/file/save_manager.cpp:48
 #: engines/zvision/metaengine.cpp:262
 msgid "Save"
-msgstr ""
+msgstr "يحفظ"
 
 #: engines/dialogs.cpp:130
 msgid ""
@@ -2687,6 +2700,9 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
+"عذرًا ، لا يوفر هذا المحرك حاليًا تعليمات داخل اللعبة. يرجى الرجوع إلى الملف "
+"التمهيدي للحصول على المعلومات الأساسية ، وللحصول على إرشادات حول كيفية "
+"الحصول على مزيد من المساعدة."
 
 #: engines/dialogs.cpp:214 engines/pegasus/pegasus.cpp:417
 #, c-format
@@ -2694,49 +2710,51 @@ msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
+"فشل حفظ اللعبة (%s)! يرجى الرجوع إلى الملف التمهيدي للحصول على المعلومات "
+"الأساسية ، وللحصول على إرشادات حول كيفية الحصول على مزيد من المساعدة."
 
 #: engines/dialogs.cpp:354
 msgid "~O~K"
-msgstr ""
+msgstr "~ح~سنا"
 
 #: engines/dialogs.cpp:355
 msgid "~C~ancel"
-msgstr ""
+msgstr "~إ~لغاء"
 
 #: engines/engine.cpp:364
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr ""
+msgstr "تعذر التبديل إلى الدقة 'x%d%d'."
 
 #: engines/engine.cpp:373
 msgid "Could not initialize color format."
-msgstr ""
+msgstr "تعذرت تهيئة تنسيق اللون."
 
 #: engines/engine.cpp:382
 #, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr ""
+msgstr "تعذر التبديل إلى وضع الفيديو '%s'."
 
 #: engines/engine.cpp:390
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr ""
+msgstr "تعذر التبديل إلى وضع التمدد '%s'."
 
 #: engines/engine.cpp:397
 msgid "Could not apply aspect ratio setting."
-msgstr ""
+msgstr "تعذر تطبيق إعداد نسبة العرض إلى الارتفاع."
 
 #: engines/engine.cpp:402
 msgid "Could not apply fullscreen setting."
-msgstr ""
+msgstr "تعذر تطبيق إعداد ملء الشاشة."
 
 #: engines/engine.cpp:407
 msgid "Could not apply filtering setting."
-msgstr ""
+msgstr "تعذر تطبيق إعداد التصفية."
 
 #: engines/engine.cpp:475
 msgid "Error"
-msgstr ""
+msgstr "خطأ"
 
 #: engines/engine.cpp:538
 msgid ""
@@ -2746,6 +2764,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
+"يبدو أنك تلعب هذه اللعبة مباشرة\n"
+"من القرص المضغوط. من المعروف أن هذا يسبب مشاكل ،\n"
+"ولذلك فمن المستحسن أن تنسخ\n"
+"ملفات البيانات على القرص الثابت الخاص بك بدلاً من ذلك.\n"
+"راجع الوثائق (قرص مضغوط صوتي) للحصول على التفاصيل."
 
 #: engines/engine.cpp:561
 msgid ""
@@ -2755,10 +2778,15 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
+"تحتوي هذه اللعبة على مسارات صوتية على قرصها المضغوط. هؤلاء\n"
+"يجب نسخ المسارات من القرص المضغوط باستخدام\n"
+"أداة مناسبة لاستخراج الصوت من القرص المضغوط بتنسيق\n"
+"من أجل الاستماع إلى موسيقى اللعبة.\n"
+"راجع الوثائق (قرص مضغوط صوتي) للحصول على التفاصيل."
 
 #: engines/engine.cpp:589
 msgid "Skip autosave"
-msgstr ""
+msgstr "تخطي الحفظ التلقائي"
 
 #: engines/engine.cpp:591
 #, c-format
@@ -2769,20 +2797,26 @@ msgid ""
 "needed.\n"
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
+"تحذير: تحتوي فتحة الحفظ التلقائي على لعبة محفوظة باسم%S ، والحفظ التلقائي "
+"معلق.\n"
+"يرجى نقل هذه اللعبة المحفوظة إلى فتحة جديدة ، أو حذفها إذا لم تعد هناك حاجة "
+"إليها.\n"
+"بدلاً من ذلك ، يمكنك تخطي الحفظ التلقائي (ستتم المطالبة مرة أخرى خلال 5 "
+"دقائق)."
 
 #: engines/engine.cpp:601
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "خطأ: تعذر نسخ لعبة الحفظ إلى فتحة جديدة"
 
 #: engines/engine.cpp:628 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:266 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
-msgstr ""
+msgstr "الحفظ التلقائي"
 
 #: engines/engine.cpp:636
 msgid "Error occurred making autosave"
-msgstr ""
+msgstr "حدث خطأ أثناء إجراء الحفظ التلقائي"
 
 #: engines/engine.cpp:711
 #, c-format
@@ -2790,10 +2824,12 @@ msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
+"فشل تحميل اللعبة المحفوظة (%s)! يرجى الرجوع إلى README للحصول على معلومات "
+"أساسية ، وللحصول على إرشادات حول كيفية الحصول على مزيد من المساعدة."
 
 #: engines/engine.cpp:735
 msgid "WARNING: "
-msgstr ""
+msgstr "تحذير: "
 
 #: engines/engine.cpp:735
 msgid " Shall we still run the game?"
