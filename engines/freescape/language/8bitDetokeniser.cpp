@@ -55,8 +55,8 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		 1};
 
 	detokenisedStream += Common::String::format("CONDITION FLAG: %x\n", tokenisedCondition[0]);
-	Token::Type newConditional;
-	Token::Type oldConditional;
+	Token::Type newConditional = Token::UNKNOWN;
+	Token::Type oldConditional = Token::UNKNOWN;
 
 	while (bytePointer < sizeOfTokenisedContent) {
 		// get the conditional type of the next operation
