@@ -29,7 +29,7 @@
  */
 
 #include "crab/crab.h"
-#include "crab/Image.h"
+#include "crab/image/Image.h"
 #include "image/png.h"
 
 using ImageDecoder = Image::PNGDecoder;

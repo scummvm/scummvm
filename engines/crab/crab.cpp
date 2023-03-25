@@ -56,7 +56,6 @@
 #include "common/system.h"
 #include "crab/console.h"
 #include "crab/detection.h"
-#include "crab/Image.h"
 #include "crab/ScreenSettings.h"
 #include "crab/app.h"
 #include "engines/util.h"
