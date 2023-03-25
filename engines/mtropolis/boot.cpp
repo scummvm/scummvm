@@ -26,6 +26,7 @@
 #include "common/compression/stuffit.h"
 #include "common/compression/vise.h"
 #include "common/formats/winexe.h"
+#include "common/compression/installshieldv3_archive.h"
 #include "common/compression/zlib.h"
 
 #include "graphics/maccursor.h"
@@ -181,8 +182,10 @@ private:
 	bool _isRetail;
 	bool _isEnglish;
 	bool _isJapanese;
+	bool _isGermanWithInstaller;
 
 	void unpackMacRetailInstaller(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files);
+	void unpackGermanWinRetailInstaller(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files);
 	Common::SharedPtr<Obsidian::WordGameData> loadWinWordGameData();
 	Common::SharedPtr<Obsidian::WordGameData> loadMacWordGameData();
 
@@ -194,6 +197,7 @@ ObsidianGameDataHandler::ObsidianGameDataHandler(const Game &game, const MTropol
 	_isEnglish = (gameDesc.desc.language == Common::EN_ANY);
 	_isJapanese = (gameDesc.desc.language == Common::JA_JPN);
 	_isRetail = ((gameDesc.desc.flags & ADGF_DEMO) == 0);
+	_isGermanWithInstaller = (gameDesc.bootID == MTBOOT_OBSIDIAN_RETAIL_WIN_DE_DISC);
 }
 
 struct MacInstallerUnpackRequest {
@@ -212,6 +216,9 @@ struct MacVISE3InstallerUnpackRequest {
 void ObsidianGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) {
 	if (_isMac && _isRetail)
 		unpackMacRetailInstaller(persistentResources, files);
+
+	if (_isGermanWithInstaller)
+		unpackGermanWinRetailInstaller(persistentResources, files);
 }
 
 void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) {
@@ -274,6 +281,41 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 		ident.stream = startupStream;
 		files.push_back(ident);
 	}
+}
+
+void ObsidianGameDataHandler::unpackGermanWinRetailInstaller(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) {
+	Common::SharedPtr<Common::InstallShieldV3> isa(new Common::InstallShieldV3());
+
+	if (!isa->open("_SETUP.1"))
+		error("Couldn't open installer archive");
+
+	persistentResources.push_back(PersistentResource<Common::Archive>::wrap(_installerArchive));
+
+	FileIdentification ident;
+
+	Common::Array<FileIdentification> newIdents;
+
+	ident.category = MTFT_PLAYER;
+	ident.fileName = "Obsidian.exe";
+	ident.stream.reset(isa->createReadStreamForMember("Group1\\Obsidian.exe"));
+	newIdents.push_back(ident);
+
+	ident.category = MTFT_EXTENSION;
+	ident.fileName = "Obsidian.c95";
+	ident.stream.reset(isa->createReadStreamForMember("Group2\\Obsidian.c95"));
+	newIdents.push_back(ident);
+
+	ident.category = MTFT_EXTENSION;
+	ident.fileName = "MCURSORS.C95";
+	ident.stream.reset(isa->createReadStreamForMember("Group2\\MCURSORS.C95"));
+	newIdents.push_back(ident);
+
+	for (const FileIdentification &newIdent : newIdents) {
+		if (!newIdent.stream)
+			error("Failed to open archive file '%s'", newIdent.fileName.c_str());
+	}
+
+	files.push_back(newIdents);
 }
 
 void ObsidianGameDataHandler::categorizeSpecialFiles(Common::Array<FileIdentification> &files) {
@@ -788,12 +830,21 @@ const ManifestFile obsidianDemoWinEnFiles7[] = {
 	{nullptr, MTFT_AUTO}
 };
 
-
-
-const ManifestFile obsidianRetailWinDeFiles[] = {
+const ManifestFile obsidianRetailWinDeInstalledFiles[] = {
 	{"Obsidian.exe", MTFT_PLAYER},
 	{"Obsidian.c95", MTFT_EXTENSION},
 	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"Obsidian Data 1.MPL", MTFT_MAIN},
+	{"Obsidian Data 2.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 3.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 4.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 5.MPX", MTFT_ADDITIONAL},
+	{"Obsidian Data 6.MPX", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile obsidianRetailWinDeDiscFiles[] = {
+	{"_SETUP.1", MTFT_SPECIAL},
 	{"Obsidian Data 1.MPL", MTFT_MAIN},
 	{"Obsidian Data 2.MPX", MTFT_ADDITIONAL},
 	{"Obsidian Data 3.MPX", MTFT_ADDITIONAL},
@@ -980,11 +1031,19 @@ const Game games[] = {
 		&obsidianRetailEnSubtitlesDef,
 		GameDataHandlerFactory<ObsidianGameDataHandler>::create
 	},
-	// Obsidian - Retail - Windows - German
+	// Obsidian - Retail - Windows - German - Installed
 	{
-		MTBOOT_OBSIDIAN_RETAIL_WIN_DE,
-		obsidianRetailWinDeFiles,
+		MTBOOT_OBSIDIAN_RETAIL_WIN_DE_INSTALLED,
+		obsidianRetailWinDeInstalledFiles,
 		obsidianRetailWinDirectories,
+		nullptr,
+		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+	},
+	// Obsidian - Retail - Windows - German - Disc
+	{
+		MTBOOT_OBSIDIAN_RETAIL_WIN_DE_DISC,
+		obsidianRetailWinDeDiscFiles,
+		nullptr,
 		nullptr,
 		GameDataHandlerFactory<ObsidianGameDataHandler>::create
 	},

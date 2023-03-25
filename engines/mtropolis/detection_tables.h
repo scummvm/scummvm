@@ -130,7 +130,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			"obsidian",
 			"installed, CD",
 			{
-				//{ "Obsidian.exe",		 0, "0b50a779136ae6c9cc8bcfa3148c1127", 762368 },
+				{ "Obsidian.exe",		 0, "0b50a779136ae6c9cc8bcfa3148c1127", 762368 },
 				//{ "Obsidian.c95",		 0, "fea68ff30ff319cdab30b79d2850a480", 145920 },
 				//{ "MCURSORS.C95",		 0, "dcbe480913eebf233d0cdc33809bf048", 87040 },
 				{ "Obsidian Data 1.MPL", 0, "f96fc3a3a0a645009265c74c5fcb2c6a", 18972392 },
@@ -148,7 +148,32 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		},
 		GID_OBSIDIAN,
 		0,
-		MTBOOT_OBSIDIAN_RETAIL_WIN_DE,
+		MTBOOT_OBSIDIAN_RETAIL_WIN_DE_INSTALLED,
+	},
+	{
+		// Obsidian, German Windows, CD
+		// Released via the "ProSieben Mystery" series
+		{
+			"obsidian",
+			"CD",
+			{
+				{ "_SETUP.1",			 0, "79c3a087043eb540a6e796d89a5add47", 8586799 },
+				{ "OBSIDIAN DATA 1.MPL", 0, "f96fc3a3a0a645009265c74c5fcb2c6a", 18972392 },
+				//{ "OBSIDIAN DATA 2.MPX", 0, "b42a5a7bc36b2de2f9882e8a05435857", 559682181 },
+				//{ "OBSIDIAN DATA 3.MPX", 0, "d4cb1a43d129019f8c2172a09cbedf2a", 614519546 },
+				//{ "OBSIDIAN DATA 4.MPX", 0, "ae3095e5ac0a3a8984758ee76420e9b1", 591403514 },
+				//{ "OBSIDIAN DATA 5.MPX", 0, "e8939423008a47c77735e16d7391a947", 578314080 },
+				//{ "OBSIDIAN DATA 6.MPX", 0, "1295c1fe1a9113dbf2764b7024bf759d", 552452074 },
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS)
+		},
+		GID_OBSIDIAN,
+		0,
+		MTBOOT_OBSIDIAN_RETAIL_WIN_DE_DISC,
 	},
 	{
 		// Obsidian, Italian Windows, installed
