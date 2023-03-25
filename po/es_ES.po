@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-20 09:52+0000\n"
+"PO-Revision-Date: 2023-03-25 22:23+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1589,14 +1589,12 @@ msgid "ScummVM config path: "
 msgstr "Config. de ScummVM: "
 
 #: gui/options.cpp:2504
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "Config. de ScummVM: "
+msgstr "Registros de ScummVM: "
 
 #: gui/options.cpp:2509
 msgid "View"
-msgstr ""
+msgstr "Ver"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2516 gui/options.cpp:3257
@@ -1697,10 +1695,8 @@ msgstr ""
 "aleatorios"
 
 #: gui/options.cpp:2637
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Menú de depuración"
+msgstr "Nivel de depuración:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2641 gui/options.cpp:2789
@@ -1710,7 +1706,7 @@ msgstr "Ninguno"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2647
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (todo)"
 
 #: gui/options.cpp:2651
 msgid "Enable Discord integration"
