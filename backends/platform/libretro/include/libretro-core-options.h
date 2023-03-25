@@ -259,7 +259,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 	},
 	{
 		"scummvm_allow_timing_inaccuracies",
-		"Allow Timing Inaccuracies (Restart)",
+		"Allow Timing Inaccuracies",
 		NULL,
 		"Allow timing inaccuracies that reduces CPU requirements. Though most timing deviations are imperceptible, in some cases it may introduce audio sync/timing issues, hence this option should be enabled only if full speed cannot be reached otherwise.",
 		NULL,

@@ -194,7 +194,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 	},
 	{
 		"scummvm_allow_timing_inaccuracies",
-		"Consenti inaccuratezze di timing (riavvio necessario)",
+		"Consenti inaccuratezze di timing",
 		NULL,
 		"Consente inaccuratezze di timing che riducono significativamente le richeste di CPU. Anche se la maggior parte delle inaccuratezze sono impercettibili, in alcuni casi potrebbe introdurre problemi di sincronizzazione audio, quindi questa opzione andrebbe abilitata solo se il raggiungimento della piena velocità non è possibile in altro modo.",
 		NULL,

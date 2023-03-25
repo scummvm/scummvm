@@ -319,6 +319,8 @@ static Common::String s_saveDir;
 
 Common::List<Common::Event> _events;
 
+extern bool timing_inaccuracies_is_enabled(void);
+
 class OSystem_RETRO : public EventsBaseBackend, public PaletteManager {
 public:
 	Graphics::Surface _screen;
@@ -359,11 +361,9 @@ public:
 	uint32 _threadExitTime;
 	uint8 _threadSwitchCaller;
 
-	bool _speed_hack_enabled;
-
 	Audio::MixerImpl *_mixer;
 
-	OSystem_RETRO(bool aEnableSpeedHack) : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _joypadnumpadLast(8), _joypadnumpadActive(false), _mixer(0), _startTime(0), _threadExitTime(0), _threadSwitchCaller(0), _speed_hack_enabled(aEnableSpeedHack) {
+	OSystem_RETRO() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _joypadnumpadLast(8), _joypadnumpadActive(false), _mixer(0), _startTime(0), _threadExitTime(0), _threadSwitchCaller(0) {
 		_fsFactory = new FS_SYSTEM_FACTORY();
 		memset(_mouseButtons, 0, sizeof(_mouseButtons));
 		memset(_joypadmouseButtons, 0, sizeof(_joypadmouseButtons));
@@ -501,7 +501,7 @@ public:
 		/* In a series of consecutive updateScreen calls, additionally switch directly to main thread when
 		(and if) first copyRectToScreen is called between two updateScreen. This reduces audio crackling.
 		Consecutive copyRectToScreen other than first are covered by thread switch triggered by pollEvent or delayMillis. */
-		if (! _speed_hack_enabled) {
+		if (! timing_inaccuracies_is_enabled()) {
 			if (!(_threadSwitchCaller & THREAD_SWITCH_RECT) && (_threadSwitchCaller & THREAD_SWITCH_UPDATE)) {
 				retro_switch_to_main_thread();
 				_threadSwitchCaller |= THREAD_SWITCH_RECT;
@@ -547,11 +547,13 @@ public:
 
 		/* Switch directly to main thread in case of consecutive updateScreen, to avoid losing frames.
 		Non consecutive updateScreen are covered by thread switches triggered by pollEvent or delayMillis. */
-		if (! _speed_hack_enabled && (_threadSwitchCaller & THREAD_SWITCH_UPDATE)) {
-			retro_switch_to_main_thread();
-			_threadSwitchCaller &= ~THREAD_SWITCH_RECT;
-		} else {
-			_threadSwitchCaller = THREAD_SWITCH_UPDATE;
+		if (! timing_inaccuracies_is_enabled()) {
+			if (_threadSwitchCaller & THREAD_SWITCH_UPDATE) {
+				retro_switch_to_main_thread();
+				_threadSwitchCaller &= ~THREAD_SWITCH_RECT;
+			} else {
+				_threadSwitchCaller = THREAD_SWITCH_UPDATE;
+			}
 		}
 	}
 
@@ -686,7 +688,7 @@ public:
 		// Implement 'non-blocking' sleep...
 		uint32 start_time = getMillis();
 
-		if (_speed_hack_enabled) {
+		if (timing_inaccuracies_is_enabled()) {
 			// Use janky inaccurate method...
 			uint32 elapsed_time = 0;
 			uint32 time_remaining = msecs;
@@ -1289,8 +1291,8 @@ public:
 
 };
 
-OSystem *retroBuildOS(bool aEnableSpeedHack) {
-	return new OSystem_RETRO(aEnableSpeedHack);
+OSystem *retroBuildOS() {
+	return new OSystem_RETRO();
 }
 
 const Graphics::Surface &getScreen() {

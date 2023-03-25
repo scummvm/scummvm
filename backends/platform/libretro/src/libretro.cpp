@@ -72,7 +72,7 @@ static bool analog_response_is_quadratic = false;
 static float mouse_speed = 1.0f;
 static float gamepad_acceleration_time = 0.2f;
 
-static bool speed_hack_is_enabled = false;
+static bool timing_inaccuracies_enabled = false;
 
 char cmd_params[20][200];
 char cmd_params_num;
@@ -178,10 +178,10 @@ static void update_variables(void) {
 
 	var.key = "scummvm_allow_timing_inaccuracies";
 	var.value = NULL;
-	speed_hack_is_enabled = false;
+	timing_inaccuracies_enabled = false;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
 		if (strcmp(var.value, "enabled") == 0)
-			speed_hack_is_enabled = true;
+			timing_inaccuracies_enabled = true;
 	}
 
 	var.key = "scummvm_frameskip_threshold";
@@ -213,6 +213,10 @@ static void update_variables(void) {
 		set_audio_buffer_status();
 		audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
 	}
+}
+
+bool timing_inaccuracies_is_enabled(){
+	return timing_inaccuracies_enabled;
 }
 
 void parse_command_params(char *cmdline) {
@@ -441,7 +445,7 @@ void retro_init(void) {
 		retroSetSaveDir(".");
 	}
 
-	g_system = retroBuildOS(speed_hack_is_enabled);
+	g_system = retroBuildOS();
 }
 
 void retro_deinit(void) {
