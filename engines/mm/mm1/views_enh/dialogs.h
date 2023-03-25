@@ -29,6 +29,7 @@
 #include "mm/mm1/views_enh/character_inventory.h"
 #include "mm/mm1/views_enh/character_select.h"
 #include "mm/mm1/views_enh/characters.h"
+#include "mm/mm1/views_enh/combat.h"
 #include "mm/mm1/views_enh/confirm.h"
 #include "mm/mm1/views_enh/create_characters.h"
 #include "mm/mm1/views_enh/encounter.h"
@@ -79,6 +80,7 @@ private:
 	ViewsEnh::CharacterInventory _characterInventory;
 	ViewsEnh::CharacterSelect _characterSelect;
 	ViewsEnh::Characters _characters;
+	ViewsEnh::Combat _combat;
 	ViewsEnh::Confirm _confirm;
 	ViewsEnh::CreateCharacters _createCharacters;
 	ViewsEnh::Encounter _encounter;

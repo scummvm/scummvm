@@ -133,6 +133,7 @@ MODULE_OBJS += \
 	mm1/views_enh/character_select.o \
 	mm1/views_enh/character_view.o \
 	mm1/views_enh/characters.o \
+	mm1/views_enh/combat.o \
 	mm1/views_enh/confirm.o \
 	mm1/views_enh/create_characters.o \
 	mm1/views_enh/dialogs.o \
