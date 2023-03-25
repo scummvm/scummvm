@@ -23,6 +23,7 @@
 #define MM1_VIEWS_ENH_ENCOUNTER_H
 
 #include "mm/mm1/views_enh/yes_no.h"
+#include "mm/shared/xeen/sprites.h"
 #include "mm/mm1/events.h"
 
 namespace MM {
@@ -41,6 +42,7 @@ private:
 	enum BribeType { BRIBE_GOLD, BRIBE_GEMS, BRIBE_FOOD };
 	BribeType _bribeType = BRIBE_GOLD;
 	Common::String _bribeTypeStr;
+	Shared::Xeen::SpriteResource _btnSprites;
 
 	/**
 	 * Set display mode

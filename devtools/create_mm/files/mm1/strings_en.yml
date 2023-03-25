@@ -530,6 +530,12 @@ enhdialogs:
 		select_portrait: "Select a portrait"
 		select: "\x01""37Select"
 		enter_name: "Enter name:"
+	encounter:
+		options: "Options:"
+		attack: "\x01""37Attack"
+		bribe: "\x01""37Bribe"
+		retreat: "\x01""37Retreat"
+		surrender: "\x01""37Surrender"
 	exchange: "Exhange with whom?"
 	inn:
 		left_click: "Left click potraits to add/remove"

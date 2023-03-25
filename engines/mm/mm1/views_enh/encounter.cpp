@@ -31,6 +31,7 @@ namespace ViewsEnh {
 
 Encounter::Encounter() : YesNo("Encounter") {
 	setDisplayArea(false);
+	_btnSprites.load("combat.icn");
 }
 
 bool Encounter::msgFocus(const FocusMessage &msg) {
@@ -82,8 +83,13 @@ void Encounter::draw() {
 
 	case ENCOUNTER_OPTIONS: {
 		// Write the encounter options
-		writeString(0, 21, STRING["dialogs.encounter.options1"]);
-		writeString(10, 22, STRING["dialogs.encounter.options2"]);
+		setReduced(false);
+		writeString(0, 5, STRING["enhdialogs.encounter.options"]);
+		setReduced(true);
+		writeString(88, 5, STRING["enhdialogs.encounter.attack"]);
+		writeString(164, 5, STRING["enhdialogs.encounter.retreat"]);
+		writeString(88, 25, STRING["enhdialogs.encounter.bribe"]);
+		writeString(164, 25, STRING["enhdialogs.encounter.surrender"]);
 		break;
 	}
 
@@ -423,6 +429,14 @@ void Encounter::setMode(Mode newMode) {
 
 	if (_mode == SURPRISED_MONSTERS || _mode == BRIBE)
 		openYesNo();
+
+	clearButtons();
+	if (_mode == ENCOUNTER_OPTIONS) {
+		addButton(&_btnSprites, Common::Point(60, 0), 0, Common::KEYCODE_a);
+		addButton(&_btnSprites, Common::Point(136, 0), 8, Common::KEYCODE_r);
+		addButton(&_btnSprites, Common::Point(60, 20), 2, Common::KEYCODE_b);
+		addButton(&_btnSprites, Common::Point(136, 20), 12, Common::KEYCODE_s);
+	}
 }
 
 } // namespace ViewsEnh
