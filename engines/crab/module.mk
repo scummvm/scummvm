@@ -10,6 +10,8 @@ MODULE_OBJS = \
 	ScreenSettings.o \
 	GameParam.o \
 	image/Image.o \
+	image/ImageManager.o \
+	input/cursor.o \
 	timer.o \
 	app.o \
 	splash.o
