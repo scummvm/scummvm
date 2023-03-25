@@ -224,11 +224,14 @@ bool SoundManager::playMOD(int f, int a, int fromTrack) {
 	if (memImage->size() != (int)length || readStream->err()) {
 		return fatal("Sound reading failed");
 	}
-	Audio::RewindableAudioStream *mod = Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO, fromTrack);
+	Audio::RewindableAudioStream *mod = nullptr;
+
+	if (Audio::probeModXmS3m(memImage))
+		mod = Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO, fromTrack);
 #ifdef USE_MIKMOD
 	if (!mod) {
-		// Try impulse tracker if failed!
-		mod = Audio::makeImpulseTrackerStream(memImage, DisposeAfterUse::NO);
+		if (Audio::probeImpulseTracker(memImage))
+			mod = Audio::makeImpulseTrackerStream(memImage, DisposeAfterUse::NO);
 	}
 #endif
 	if (!mod) {
