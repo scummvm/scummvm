@@ -69,6 +69,7 @@ namespace {
 #define EOB_PC98_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, Kyra::GI_EOB1)
 #define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
 #define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
+#define EOB2_TALKIE_FLAGS FLAGS(false, false, true, false, false, false, false, false, false, Kyra::GI_EOB2)
 
 static const char msg_missingLangResources[]			= _s("Missing language specific game code and/or resources.");
 static const char msg_fanTrans_missingLangResources[]	= _s("Missing language specific game code and/or resources for this fan translation.");
@@ -2060,7 +2061,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
 		},
-		EOB2_FLAGS
+		EOB2_TALKIE_FLAGS
 	},
 
 	{
