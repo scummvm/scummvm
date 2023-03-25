@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
 "PO-Revision-Date: 2023-03-25 23:21+0000\n"
-"Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
 "Language: ar\n"
@@ -7002,86 +7002,89 @@ msgstr ""
 
 #: engines/sci/detection_options.h:158
 msgid "Enable content censoring"
-msgstr ""
+msgstr "تمكين الرقابة على المحتوى"
 
 #: engines/sci/detection_options.h:159
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "قم بتمكين الرقابة على المحتوى الاختياري المدمج في اللعبة"
 
 #: engines/sci/detection_options.h:171
 msgid "Upscale videos"
-msgstr ""
+msgstr "مقاطع فيديو راقية"
 
 #: engines/sci/detection_options.h:172
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "مقاطع فيديو راقية لمضاعفة حجمها"
 
 #: engines/sci/detection_options.h:184
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "استخدم عرض RGB"
 
 #: engines/sci/detection_options.h:185
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "استخدم عرض RGB لتحسين انتقالات الشاشة"
 
 #: engines/sci/detection_options.h:197
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "استخدام لوحات معدلة لكل مورد"
 
 #: engines/sci/detection_options.h:198
 msgid "Use custom per-resource palettes to improve visuals"
-msgstr ""
+msgstr "استخدم لوحات مخصصة لكل مورد لتحسين المرئيات"
 
 #: engines/sci/detection_options.h:210
 msgid "Enable bearded musicians"
-msgstr ""
+msgstr "تمكين الموسيقيين الملتحين"
 
 #: engines/sci/detection_options.h:211
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "تمكين الرسومات التي تم تعطيلها لأسباب قانونية"
 
 #: engines/sci/detection_options.h:239
 msgid "MIDI mode:"
-msgstr ""
+msgstr "وضع MIDI:"
 
 #: engines/sci/detection_options.h:240
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
+"عند استخدام أجهزة MIDI خارجية (على سبيل المثال من خلال USB-MIDI) ، حدد جهازك "
+"هنا"
 
 #: engines/sci/detection_options.h:245
 msgid "Standard (GM / MT-32)"
-msgstr ""
+msgstr "قياسي (GM / MT-32)"
 
 #: engines/sci/detection_options.h:249
 msgid "Roland D-110 / D-10 / D-20"
-msgstr ""
+msgstr "Roland D-110 / D-10 / D-20"
 
 #: engines/sci/detection_options.h:253
 msgid "Yamaha FB-01"
-msgstr ""
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_options.h:257
 msgid "Casio MT-540"
-msgstr ""
+msgstr "Casio MT-540"
 
 #: engines/sci/detection_options.h:261
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:4483
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
+"تم اكتشاف لعبة غير مكتملة. يجب عليك نسخ البيانات من جميع الأقراص المضغوطة."
 
 #: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:370
 msgid "(Autosave)"
-msgstr ""
+msgstr "(الحفظ التلقائي)"
 
 #: engines/sci/engine/kgraphics32.cpp:361
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr ""
+msgstr "الرجاء استخدام عارض خارجي لفتح ملف تعليمات اللعبة:%s"
 
 #: engines/sci/engine/kmisc.cpp:894
 msgid ""
@@ -7089,31 +7092,34 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"منطق البوكر مشفر بشكل ثابت في DLL خارجي ، ولم يتم تنفيذه بعد. يوجد بعض "
+"المنطق الوهمي في الوقت الحالي ، حيث يتم اختيار تصرفات الخصم بشكل عشوائي"
 
 #: engines/sci/engine/savegame.cpp:1467
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "شكل هذه اللعبة المحفوظة قديم وغير قادر على تحميلها"
 
 #: engines/sci/engine/savegame.cpp:1469
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "إصدار Savegame هو%d ، الحد الأقصى المعتمد هو%0d"
 
 #: engines/sci/engine/savegame.cpp:1481
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"تم إنشاء هذه اللعبة المحفوظة بإصدار مختلف من اللعبة ، غير قادر على تحميلها"
 
 #: engines/sci/graphics/video32.cpp:68
 #, c-format
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
-msgstr ""
+msgstr "لا يمكن تشغيل فيديو٪%dbpp على نظام بعمق ألوان أقصى يبلغ 8 بت لكل بكسل"
 
 #: engines/sci/metaengine.cpp:301
 msgid "SCI32 support not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم SCI32 بتنسيق"
 
 #: engines/sci/resource/resource.cpp:863
 msgid ""
@@ -7121,6 +7127,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"تم اكتشاف موارد اللعبة المفقودة أو التالفة. قد لا تعمل بعض ميزات اللعبة بشكل "
+"صحيح. يرجى التحقق من وحدة التحكم للحصول على مزيد من المعلومات ، والتحقق من "
+"أن ملفات اللعبة الخاصة بك صالحة."
 
 #: engines/sci/sci.cpp:398
 msgid ""
@@ -7130,6 +7139,10 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"تم تمكين الترجمات ، لكن الترجمة في King's Quest 7 لم تكن مكتملة ومعطلة في "
+"نسخة إصدار اللعبة. يسمح ScummVM بإعادة تمكين الترجمات ، ولكن نظرًا لإزالتها "
+"من اللعبة الأصلية ، فإنها لا تعرض دائمًا بشكل صحيح أو تعكس خطاب اللعبة "
+"الفعلي. هذا ليس خطأ ScummVM - إنها مشكلة في أصول اللعبة."
 
 #: engines/sci/sci.cpp:422
 msgid ""
@@ -7143,6 +7156,14 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"لقد اخترت General MIDI كجهاز صوت. قدمت Sierra دعمًا لما بعد السوق ل General "
+"MIDI لهذه اللعبة في \"General MIDI Utility\". من فضلك ، قم بتطبيق هذا "
+"التصحيح للاستمتاع بموسيقى MIDI مع هذه اللعبة. بمجرد الحصول عليه ، يمكنك فك "
+"ضغط جميع ملفات * .PAT المضمنة في مجلد الإضافات ScummVM وسيضيف ScummVM "
+"التصحيح المناسب تلقائيًا. بدلاً من ذلك ، يمكنك اتباع التعليمات الموجودة في "
+"ملف READ.ME المضمن في التصحيح وإعادة تسمية ملف * .PAT المرتبط إلى 4.PAT "
+"ووضعه في مجلد اللعبة. بدون هذا التصحيح ، ستبدو موسيقى MIDI العامة لهذه "
+"اللعبة مشوهة بشكل سيئ."
 
 #: engines/sci/sci.cpp:441
 msgid ""
@@ -7152,16 +7173,22 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"لعبتك مصححة برقعة نصية من صنع المعجبين. تم الإبلاغ عن تسبب هذه التصحيحات في "
+"حدوث مشكلات ، حيث تقوم بتعديل نصوص اللعبة على نطاق واسع. لا تحدث المشكلات "
+"التي تُصلحها هذه التصحيحات في ScummVM ، لذا يُنصح بإزالة هذا التصحيح من مجلد "
+"اللعبة لتجنب حدوث أخطاء و / أو مشكلات غير متوقعة لاحقًا."
 
 #: engines/sci/sci.cpp:520
 msgid "Download patch"
-msgstr ""
+msgstr "تحميل الباتش"
 
 #: engines/sci/sci.cpp:521
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
+"(أو انقر فوق الزر \"تنزيل التصحيح\". ولكن لاحظ أنه يتم تنزيله فقط ، وسيتعين "
+"عليك المتابعة من هناك)\n"
 
 #: engines/sci/sci.cpp:528
 msgid ""
@@ -7172,6 +7199,12 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
+"يحتوي GK2 على ترجمات من صنع المعجبين ، وهي متاحة بفضل الأشخاص الطيبين في "
+"SierraHelp.\n"
+"\n"
+"تثبيت:\n"
+"- تنزيل http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles."
+"zip\n"
 
 #: engines/sci/sci.cpp:863
 msgid ""
@@ -7181,12 +7214,18 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"يتم عرض الأحرف المحفوظة داخل ScummVM تلقائيًا. يجب وضع ملفات الأحرف المحفوظة "
+"في المترجم الشفهي الأصلي في دليل الألعاب المحفوظة في ScummVM ويجب إضافة "
+"بادئة اعتمادًا على اللعبة التي تم حفظها فيها: 'qfg1-' ل Quest for Glory 1 ، "
+"'qfg2-' ل Quest for Glory 2. مثال: \"qfg2-thief.sav\"."
 
 #: engines/sci/sound/music.cpp:166
 msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"يتطلب برنامج تشغيل الصوت المحدد الملف (الملفات) التالية:\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:169
 msgid ""
@@ -7203,6 +7242,18 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"تم عمل بعض برامج تشغيل الصوت (على الأقل لبعض الألعاب)\n"
+"متاح من قبل Sierra كبقع ما بعد البيع وبالتالي قد لا\n"
+"تم تثبيتها كجزء من إعداد اللعبة الأصلي.\n"
+"\n"
+"يرجى نسخ هذه الملفات إلى دليل بيانات اللعبة.\n"
+"\n"
+"ومع ذلك ، يرجى ملاحظة أن الملف (الملفات) قد لا يكون متاحًا\n"
+"بشكل منفصل ولكن فقط كمحتوى لحزم الموارد (المصححة).\n"
+"في هذه الحالة ، قد تحتاج إلى تطبيق تصحيح Sierra الأصلي.\n"
+"\n"
 
 #: engines/scumm/detection_internal.h:369
 msgid ""
@@ -7213,49 +7264,55 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
+"لا يمكن تشغيل هذا الإصدار من Monkey Island ، لأن Limited Run Games قدمت "
+"ملفات DISK04.LEC و 903.LFL تالفة.\n"
+"\n"
+"يرجى الاتصال بالدعم الفني الخاص بهم للحصول على الملفات البديلة ، أو ابحث على "
+"الإنترنت عن بعض الأدلة التي يمكن أن تساعدك في استعادة الملفات الصالحة من "
+"مقالب KryoFlux التي قدمتها أيضًا شركة Limited Run Games."
 
 #. I18N: Retrieving list of online multiplayer games
 #: engines/scumm/dialog-sessionselector.cpp:51
 msgid "Querying games..."
-msgstr ""
+msgstr "جاري الاستعلام عن الألعاب ..."
 
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:60 engines/scumm/scumm.cpp:3484
 msgid "Join"
-msgstr ""
+msgstr "ينضم"
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:110
 #, c-format
 msgid "Found %d available games."
-msgstr ""
+msgstr "تم العثور على%d لعبة متوفرة."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:280
 msgid "~P~revious"
-msgstr ""
+msgstr "~ ال~سابق"
 
 #. I18N: Next page button
 #: engines/scumm/dialogs.cpp:282
 msgid "~N~ext"
-msgstr ""
+msgstr "~ ال~تالي"
 
 #: engines/scumm/dialogs.cpp:955
 msgid "Speech Only"
-msgstr ""
+msgstr "الكلام فقط"
 
 #: engines/scumm/dialogs.cpp:956
 msgid "Speech and Subtitles"
-msgstr ""
+msgstr "الكلام والترجمات"
 
 #: engines/scumm/dialogs.cpp:957
 msgid "Subtitles Only"
-msgstr ""
+msgstr "الترجمة فقط"
 
 #: engines/scumm/dialogs.cpp:965
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr ""
+msgstr "الكلام والغواصات"
 
 #: engines/scumm/dialogs.cpp:1011
 msgid "Select a Proficiency Level."
