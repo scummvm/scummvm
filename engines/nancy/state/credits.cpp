@@ -80,7 +80,7 @@ void Credits::init() {
 	_background.registerGraphics();
 	_text.registerGraphics();
 
-	g_nancy->_cursorManager->showCursor(false);
+	g_nancy->setMouseEnabled(false);
 
 	_state = kRun;
 }
@@ -91,7 +91,7 @@ void Credits::run() {
 	if (input.input & NancyInput::kLeftMouseButtonDown) {
 		_state = kInit;
 		g_nancy->_sound->stopSound(_sound);
-		g_nancy->_cursorManager->showCursor(true);
+		g_nancy->setMouseEnabled(true);
 		_fullTextSurface.free();
 		g_nancy->setState(NancyState::kMainMenu);
 		return;

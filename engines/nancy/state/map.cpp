@@ -387,7 +387,7 @@ void TVDMap::MapGlobe::onTrigger() {
 		_owner->_viewport.setVisible(true);
 		_owner->_viewport.playVideo();
 		g_system->warpMouse(_owner->_cursorPosition.x, _owner->_cursorPosition.y);
-		g_nancy->_cursorManager->showCursor(true);
+		g_nancy->setMouseEnabled(true);
 	} else {
 		_owner->_state = kExit;
 		_nextFrameTime = 0;

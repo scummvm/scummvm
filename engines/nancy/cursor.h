@@ -31,6 +31,8 @@ namespace Nancy {
 class NancyEngine;
 
 class CursorManager {
+	friend class NancyEngine;
+
 public:
 	enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kExit = 3, kNormalArrow, kHotspotArrow };
 
@@ -45,13 +47,14 @@ public:
 	void setCursor(CursorType type, int16 itemID);
 	void setCursorType(CursorType type);
 	void setCursorItemID(int16 itemID);
-	void showCursor(bool shouldShow);
 
 	const Common::Point &getCurrentCursorHotspot() { return _cursors[_curCursorID].hotspot;}
 	const Common::Rect &getPrimaryVideoInactiveZone() { return _primaryVideoInactiveZone; }
 	const Common::Point &getPrimaryVideoInitialPos() { return _primaryVideoInitialPos; }
 
 private:
+	void showCursor(bool shouldShow);
+
 	struct Cursor {
 		Common::Rect bounds;
 		Common::Point hotspot;

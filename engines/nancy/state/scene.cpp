@@ -677,7 +677,7 @@ void Scene::handleInput() {
 					requestStateChange(NancyState::kMap);
 
 					if (g_nancy->getGameType() == kGameTypeVampire) {
-						g_nancy->_cursorManager->showCursor(false);
+						g_nancy->setMouseEnabled(false);
 					}
 				}
 
@@ -766,7 +766,7 @@ void Scene::initStaticData() {
 		_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, helpSrc, helpDest);
 		_menuButton->init();
 		_helpButton->init();
-		g_nancy->_cursorManager->showCursor(true);
+		g_nancy->setMouseEnabled(true);
 	}
 
 	if (g_nancy->getGameType() == kGameTypeNancy1) {

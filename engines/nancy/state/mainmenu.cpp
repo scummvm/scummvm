@@ -64,7 +64,7 @@ void MainMenu::init() {
 	_background.registerGraphics();
 
 	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
-	g_nancy->_cursorManager->showCursor(true);
+	g_nancy->setMouseEnabled(true);
 
 	if (!g_nancy->_sound->isSoundPlaying("MSND")) {
 		g_nancy->_sound->playSound("MSND");
