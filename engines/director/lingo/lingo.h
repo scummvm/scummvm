@@ -47,6 +47,7 @@ struct LingoArchive;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
 struct Node;
+struct Picture;
 class AbstractObject;
 class Cast;
 class ScriptContext;

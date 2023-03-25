@@ -35,6 +35,7 @@
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/movie.h"
+#include "director/picture.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
 
@@ -103,10 +104,10 @@ void Window::testFontScaling() {
 
 	x = 10;
 	for (int i = 0; i < kNumBuiltinTiles; i++) {
-		Image::ImageDecoder *tile = g_director->getTile(i);
-		surface.blitFrom(tile->getSurface(), Common::Point(x, 250));
+		Picture *tile = g_director->getTile(i);
+		surface.blitFrom(tile->_surface, Common::Point(x, 250));
 
-		x += tile->getSurface()->w + 10;
+		x += tile->_surface.w + 10;
 	}
 
 	Common::String path = pathMakeRelative("blend2.pic");

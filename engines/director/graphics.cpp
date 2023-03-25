@@ -28,6 +28,7 @@
 #include "director/castmember.h"
 #include "director/movie.h"
 #include "director/images.h"
+#include "director/picture.h"
 #include "director/window.h"
 
 namespace Director {
@@ -58,8 +59,10 @@ void DirectorEngine::loadPatterns() {
 	for (int i = 0; i < ARRAYSIZE(builtinTiles); i++) {
 		Common::MemoryReadStream stream(builtinTiles[i].ptr, builtinTiles[i].size);
 
-		_builtinTiles[i].img = new BITDDecoder(builtinTiles[i].w, builtinTiles[i].h, 8, builtinTiles[i].w, macPalette, kFileVer300);
-		_builtinTiles[i].img->loadStream(stream);
+		auto decoder = new BITDDecoder(builtinTiles[i].w, builtinTiles[i].h, 8, builtinTiles[i].w, macPalette, kFileVer300);
+		decoder->loadStream(stream);
+		_builtinTiles[i].img = new Picture(*decoder);
+		delete decoder;
 
 		_builtinTiles[i].rect = Common::Rect(0, 0, builtinTiles[i].w, builtinTiles[i].h);
 	}
@@ -70,7 +73,7 @@ Graphics::MacPatterns &DirectorEngine::getPatterns() {
 	return _director3QuickDrawPatterns;
 }
 
-Image::ImageDecoder *DirectorEngine::getTile(int num) {
+Picture *DirectorEngine::getTile(int num) {
 	TilePatternEntry *tile = &getCurrentMovie()->getCast()->_tiles[num];
 
 	if (tile->bitmapId.isNull())
@@ -92,7 +95,7 @@ Image::ImageDecoder *DirectorEngine::getTile(int num) {
 		return _builtinTiles[num].img;
 	}
 
-	return ((BitmapCastMember *)member)->_img;
+	return ((BitmapCastMember *)member)->_picture;
 }
 
 const Common::Rect &DirectorEngine::getTileRect(int num) {
@@ -265,7 +268,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 			int x1 = p->ms->tileRect->left + (p->ms->pd->fillOriginX + x) % p->ms->tileRect->width();
 			int y1 = p->ms->tileRect->top  + (p->ms->pd->fillOriginY + y) % p->ms->tileRect->height();
 
-			src = p->ms->tile->getSurface()->getPixel(x1, y1);
+			src = p->ms->tile->_surface.getPixel(x1, y1);
 		} else {
 			// Get the pixel that macDrawPixel will give us, but store it to apply the
 			// ink later

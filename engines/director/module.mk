@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	images.o \
 	metaengine.o \
 	movie.o \
+	picture.o \
 	resource.o \
 	score.o \
 	sound.o \

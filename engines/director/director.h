@@ -128,20 +128,17 @@ struct MacShape {
 	int lineSize;
 	uint pattern;
 
-	Image::ImageDecoder *tile;
+	Picture *tile;
 	const Common::Rect *tileRect;
 
 	Graphics::MacPlotData *pd;
 };
 
 struct PatternTile {
-	Image::ImageDecoder *img = 0;
+	Picture *img = nullptr;
 	Common::Rect rect;
 
-	~PatternTile() {
-		if (img)
-			delete img;
-	}
+	~PatternTile();
 };
 
 const int SCALE_THRESHOLD = 0x100;
@@ -199,7 +196,7 @@ public:
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 
 	void loadPatterns();
-	Image::ImageDecoder *getTile(int num);
+	Picture *getTile(int num);
 	const Common::Rect &getTileRect(int num);
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
