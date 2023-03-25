@@ -1767,9 +1767,9 @@ void LB::b_objectp(int nargs) {
 }
 
 void LB::b_pictureP(int nargs) {
-	g_lingo->pop();
-	warning("STUB: b_pictureP");
-	g_lingo->push(Datum(0));
+	Datum d = g_lingo->pop();
+	Datum res((d.type == PICTUREREF) ? 1 : 0);
+	g_lingo->push(res);
 }
 
 void LB::b_stringp(int nargs) {

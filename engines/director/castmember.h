@@ -137,6 +137,8 @@ public:
 
 	Common::String formatInfo() override;
 
+	PictureReference *getPicture() const;
+	void setPicture(PictureReference &picture);
 	void setPicture(Image::ImageDecoder &image, bool adjustSize);
 
 	Picture *_picture = nullptr;

@@ -963,7 +963,8 @@ Datum BitmapCastMember::getField(int field) {
 		d = _clut;
 		break;
 	case kThePicture:
-		warning("STUB: BitmapCastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		d.type = PICTUREREF;
+		d.u.picture = getPicture();
 		break;
 	default:
 		d = CastMember::getField(field);
@@ -993,7 +994,12 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 		_clut = d.asInt();
 		return true;
 	case kThePicture:
-		warning("STUB: BitmapCastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		if (d.type == PICTUREREF && d.u.picture != nullptr) {
+			setPicture(*d.u.picture);
+			return true;
+		} else {
+			warning("BitmapCastMember::setField(): Wrong Datum type %d for kThePicture (or nullptr)", d.type);
+		}
 		return false;
 	default:
 		break;

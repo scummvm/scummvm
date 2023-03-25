@@ -357,6 +357,7 @@ enum DatumType {
 	MENUREF,
 	OBJECT,
 	PARRAY,
+	PICTUREREF,
 	POINT,
 	PROPREF,
 	RECT,
