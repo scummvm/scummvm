@@ -251,14 +251,18 @@ void Viewport::setVerticalScroll(uint scroll) {
 	_drawSurface.create(_fullFrame, sourceBounds);
 	_needsRedraw = true;
 
-	if (scroll == getMaxScroll()) {
-		disableEdges(kDown);
-		enableEdges(kUp);
-	} else if (scroll == 0) {
-		disableEdges(kUp);
-		enableEdges(kDown);
+	if (getMaxScroll() > 0) {
+		if (scroll == getMaxScroll()) {
+			disableEdges(kDown);
+			enableEdges(kUp);
+		} else if (scroll == 0) {
+			disableEdges(kUp);
+			enableEdges(kDown);
+		} else {
+			enableEdges(kUp | kDown);
+		}
 	} else {
-		enableEdges(kUp | kDown);
+		disableEdges(kUp | kDown);
 	}
 }
 
