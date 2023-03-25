@@ -225,6 +225,20 @@ RewindableAudioStream *makeImpulseTrackerStream(Common::SeekableReadStream *stre
 	return impulseTrackerMod;
 }
 
+bool probeImpulseTracker(Common::SeekableReadStream *st) {
+	int32 setPos = st->pos();
+
+	// xm file
+	char sigIt[4] = { 0 };
+	st->read(sigIt, 4);
+	st->seek(setPos);
+	if (!memcmp(sigIt, "IMPM", 4)) {
+		return true;
+	}
+
+	return false;
+}
+
 } // End of namespace Audio
 
 #endif // #ifdef USE_MIKMOD

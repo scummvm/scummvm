@@ -47,9 +47,13 @@ class RewindableAudioStream;
  * @param disposeAfterUse   whether to delete the stream after use
  * @return  a new AudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeImpulseTrackerStream(
-    Common::SeekableReadStream *stream,
-    DisposeAfterUse::Flag disposeAfterUse);
+RewindableAudioStream *makeImpulseTrackerStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+
+/**
+ * Check if the stream is one of the supported formats
+ */
+bool probeImpulseTracker(Common::SeekableReadStream *stream);
+
 } // End of namespace Audio
 
 #endif // #ifdef USE_MIKMOD
