@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 16:11+0000\n"
-"PO-Revision-Date: 2023-03-20 15:31+0000\n"
+"PO-Revision-Date: 2023-03-25 19:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -1581,14 +1581,12 @@ msgid "ScummVM config path: "
 msgstr "Файл настроек ScummVM: "
 
 #: gui/options.cpp:2496
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "Файл настроек ScummVM: "
+msgstr "Файл лога ScummVM: "
 
 #: gui/options.cpp:2497
 msgid "View"
-msgstr ""
+msgstr "Просмотреть"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2504 gui/options.cpp:3243
@@ -1690,10 +1688,8 @@ msgid "Seed for initializing all random number generators"
 msgstr "Значение для инициализации всех генераторов случайных чисел"
 
 #: gui/options.cpp:2625
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Меню отладки"
+msgstr "Уровень отладки:"
 
 #: gui/options.cpp:2628 gui/options.cpp:2775
 msgid "None"
@@ -1701,7 +1697,7 @@ msgstr "Нет"
 
 #: gui/options.cpp:2633
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (все)"
 
 #: gui/options.cpp:2637
 msgid "Enable Discord integration"
