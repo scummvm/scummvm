@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 22:58+0000\n"
+"PO-Revision-Date: 2023-03-25 23:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -5240,87 +5240,87 @@ msgstr "لا أعرف كلمة \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
-msgstr ""
+msgstr "لا أفهم.\n"
 
 #: engines/glk/alan2/alan2.cpp:75
 msgid "This is too short to be a valid Alan2 file."
-msgstr ""
+msgstr "هذا أقصر من أن يكون ملف Alan2 صالحًا."
 
 #: engines/glk/alan2/alan2.cpp:81
 msgid "This is not a valid Alan2 file."
-msgstr ""
+msgstr "هذا ليس ملف Alan2 صالحًا."
 
 #: engines/glk/comprehend/game.cpp:321
 msgid "Savegame"
-msgstr ""
+msgstr "حفظ اللعبة"
 
 #: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
-msgstr ""
+msgstr "تم تبديل نافذة الصورة\n"
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "هذا قصير جدًا ليكون ملف Glulx صالحًا."
 
 #: engines/glk/glulx/glulx.cpp:86
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "هذا ليس ملف Glulx صالحًا."
 
 #: engines/glk/glulx/glulx.cpp:93
 msgid "This Glulx file is too old a version to execute."
-msgstr ""
+msgstr "ملف Glulx هذا إصدار قديم جدًا بحيث يتعذر تنفيذه."
 
 #: engines/glk/glulx/glulx.cpp:97
 msgid "This Glulx file is too new a version to execute."
-msgstr ""
+msgstr "يعد ملف Glulx هذا إصدارًا جديدًا جدًا بحيث يتعذر تنفيذه."
 
 #: engines/glk/quest/quest.cpp:44
 msgid "Could not start Quest game"
-msgstr ""
+msgstr "لا يمكن بدء لعبة السعي"
 
 #: engines/glk/scott/scott.cpp:681
 msgid "Saved.\n"
-msgstr ""
+msgstr "محفوظ.\n"
 
 #: engines/glk/zcode/zcode.cpp:144
 msgid "Error writing save file\n"
-msgstr ""
+msgstr "خطأ في كتابة ملف الحفظ\n"
 
 #: engines/glk/hugo/hugo.cpp:182
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "ملف rs غير صحيح."
 
 #: engines/glk/hugo/hugo.cpp:189
 msgid "Save file created by different version."
-msgstr ""
+msgstr "حفظ الملف الذي تم إنشاؤه بواسطة إصدار مختلف."
 
 #: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1488
 #: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:582
 msgid "Failed to load saved game from file."
-msgstr ""
+msgstr "فشل تحميل اللعبة المحفوظة من ملف."
 
 #: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1407
 #: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:595
 msgid "Failed to save game to file."
-msgstr ""
+msgstr "فشل حفظ اللعبة في ملف."
 
 #: engines/gob/inter_v5.cpp:106
 msgid "Failed to delete file."
-msgstr ""
+msgstr "فشل حذف الملف."
 
 #: engines/griffon/metaengine.cpp:109
 msgid "Menu / Skip"
-msgstr ""
+msgstr "القائمة / تخطي"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/griffon/metaengine.cpp:145 engines/mm/mm1/metaengine.cpp:59
 #: engines/scumm/metaengine.cpp:822
 msgid "Attack"
-msgstr ""
+msgstr "هجوم"
 
 #: engines/griffon/metaengine.cpp:159
 msgid "Speed Up Cutscene"
-msgstr ""
+msgstr "تسريع المشهد"
 
 #: engines/grim/grim.cpp:354
 #, c-format
@@ -5329,54 +5329,57 @@ msgid ""
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
+"اكتشف ScummVM بعض المشكلات في ملفات بيانات اللعبة.\n"
+"ومع ذلك ، فقد يتسبب تشغيل ScummVM في حدوث أخطاء في اللعبة أو حتى تعطلها.\n"
+"هل مازلت تريد تشغيل%s؟"
 
 #. I18N: Action in In Cold Blood
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:568
 #: engines/hpl1/metaengine.cpp:87 engines/icb/icb.cpp:131
 #: engines/icb/icb.cpp:197
 msgid "Run"
-msgstr ""
+msgstr "ركض"
 
 #: engines/grim/grim.cpp:482 engines/hpl1/metaengine.cpp:95
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:245
 msgid "Examine"
-msgstr ""
+msgstr "يفحص"
 
 #: engines/grim/grim.cpp:487 engines/grim/grim.cpp:583
 msgid "Use/Talk"
-msgstr ""
+msgstr "استخدم / تحدث"
 
 #: engines/grim/grim.cpp:492 engines/grim/grim.cpp:588
 msgid "Pick up/Put away"
-msgstr ""
+msgstr "التقط / ضع بعيدا"
 
 #: engines/grim/grim.cpp:502 engines/grim/grim.cpp:598
 msgid "Skip dialog lines"
-msgstr ""
+msgstr "تخطي خطوط الحوار"
 
 #: engines/grim/grim.cpp:558
 msgid "Cycle Objects Up"
-msgstr ""
+msgstr "Cycle Objects Up"
 
 #: engines/grim/grim.cpp:563
 msgid "Cycle Objects Down"
-msgstr ""
+msgstr "Cycle Objects Down"
 
 #: engines/grim/grim.cpp:573
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "خروج سريع للغرفة"
 
 #: engines/grim/grim.cpp:578
 msgid "Examine/Look"
-msgstr ""
+msgstr "افحص / انظر"
 
 #: engines/grim/grim.cpp:1354
 msgid "Error: the game could not be saved."
-msgstr ""
+msgstr "خطأ: لا يمكن حفظ اللعبة."
 
 #: engines/grim/inputdialog.cpp:79
 msgid "Input text"
-msgstr ""
+msgstr "أدخل نصآ"
 
 #: engines/grim/md5check.cpp:594
 #, c-format
@@ -5387,6 +5390,11 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"قد يكون ملف بيانات اللعبة%s تالفًا.\n"
+"إذا كنت متأكدًا من أنه ليس كذلك ، فيرجى تزويد فريق ScummVM بالكود التالي ، "
+"جنبًا إلى جنب مع اسم الملف واللغة ووصف إصدار اللعبة (على سبيل المثال ، dvd-"
+"box أو jewelcase):\n"
+"%s"
 
 #: engines/grim/md5check.cpp:603
 #, c-format
@@ -5395,6 +5403,9 @@ msgid ""
 "It may be missing or you may not have the rights to open it.\n"
 "Go to %s to see a list of the needed files."
 msgstr ""
+"تعذر فتح الملف%s لفحصه.\n"
+"قد يكون مفقودًا أو قد لا يكون لديك الحق في فتحه.\n"
+"انتقل إلى%s لمشاهدة قائمة بالملفات المطلوبة."
 
 #: engines/grim/md5checkdialog.cpp:41
 msgid ""
@@ -5403,28 +5414,34 @@ msgid ""
 "This may take a while, please wait.\n"
 "Successive runs will not check them again."
 msgstr ""
+"سيتحقق ScummVM الآن من ملفات بيانات اللعبة ، للتأكد من حصولك على أفضل تجربة "
+"لعب.\n"
+"قد يستغرق هذا بعض الوقت ، يرجى الانتظار.\n"
+"عمليات التشغيل المتتالية لن تتحقق منها مرة أخرى."
 
 #: engines/grim/metaengine.cpp:37
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "تحميل تصحيح المستخدم (غير مدعوم)"
 
 #: engines/grim/metaengine.cpp:38
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
+"تحميل تصحيح المستخدم. يرجى ملاحظة أن فريق ScummVM لا يقدم الدعم لاستخدام مثل "
+"هذه التصحيحات."
 
 #: engines/grim/metaengine.cpp:48 engines/zvision/metaengine.cpp:221
 msgid "Show FPS"
-msgstr ""
+msgstr "اظهار عدد FPS"
 
 #: engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "اعرض معدل FPS الحالي أثناء اللعب."
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم Escape from Monkey Island بتنسيق"
 
 #: engines/grim/resource.cpp:102
 #, c-format
@@ -5434,6 +5451,10 @@ msgid ""
 "%s\n"
 "and put it in the game data files directory"
 msgstr ""
+"التصحيح الأصلي ل Grim Fandango\n"
+"مفقود. يرجى تنزيله من\n"
+"%s\n"
+"ووضعها في دليل ملفات بيانات اللعبة"
 
 #: engines/grim/resource.cpp:107
 #, c-format
@@ -5444,6 +5465,10 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language!"
 msgstr ""
+"الرقعة الأصلية ل Escape from Monkey Island مفقودة.\n"
+"الرجاء تنزيله من%s\n"
+"ووضعها في دليل ملفات بيانات اللعبة.\n"
+"انتبه لتنزيل الإصدار الصحيح حسب لغة اللعبة!"
 
 #: engines/grim/emi/sound/emisound.cpp:655
 msgid ""
@@ -5456,26 +5481,35 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
+"خطأ: لم يتم العثور على مسارات موسيقية كافية!\n"
+"يحتوي Escape from Monkey Island على نسختين من FullMonkeyMap.imt ،\n"
+"تحتاج إلى نسخ كلا الملفين من كلا القرصين المضغوط إلى Textures / وإعادة "
+"تسميته\n"
+"على النحو التالي للحصول على دعم الموسيقى داخل اللعبة:\n"
+"القرص المضغوط 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"القرص المضغوط 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"بدلاً من ذلك ، تحتوي نسخة Steam أو GOG على FullMonkeyMap.imt مدمج"
 
 #: engines/groovie/metaengine.cpp:37
 msgid "Fast movie speed"
-msgstr ""
+msgstr "سرعة الفيلم السريع"
 
 #: engines/groovie/metaengine.cpp:38
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "قم بتشغيل الأفلام بسرعة متزايدة"
 
 #: engines/groovie/metaengine.cpp:61 engines/groovie/metaengine.cpp:73
 msgid "Easier AI"
-msgstr ""
+msgstr "AI أسهل"
 
 #: engines/groovie/metaengine.cpp:62 engines/groovie/metaengine.cpp:74
 msgid "Decrease the difficulty of AI puzzles"
-msgstr ""
+msgstr "تقليل صعوبة ألغاز الذكاء الاصطناعي"
 
 #: engines/groovie/metaengine.cpp:85
 msgid "Updated Credits Music"
-msgstr ""
+msgstr "تحديث الاعتمادات الموسيقى"
 
 #: engines/groovie/metaengine.cpp:86
 msgid ""
