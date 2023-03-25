@@ -86,7 +86,7 @@ static BOOL memoryReaderRead(MREADER *reader, void *ptr, size_t size) {
 		return 0;
 
 	uint32 receivedBytes = mr->stream->read(ptr, size);
-	
+
 	if (receivedBytes < size)
 		return 0; // not enough remaining bytes (or error)
 
@@ -106,7 +106,7 @@ static int memoryReaderGet(MREADER *reader) {
 static int memoryReaderSeek(MREADER *reader, long offset, int whence) {
 	MikMemoryReader *mr;
 	mr = (MikMemoryReader *)reader;
-	
+
 	if (!reader || !mr->stream)
 		return -1;
 
@@ -179,7 +179,7 @@ ImpulseTrackerMod::ImpulseTrackerMod(Common::SeekableReadStream *stream, Dispose
 	// Set flags
 	md_mode |= DMODE_SOFT_MUSIC | DMODE_NOISEREDUCTION;
 	md_mixfreq = getRate();
-	
+
 	if (MikMod_Init("")) {
 		warning("ImpulseTrackerMod::ImpulseTrackerMod(): Could not initialize sound, reason: %s",
 		        MikMod_strerror(MikMod_errno));
@@ -207,10 +207,10 @@ ImpulseTrackerMod::ImpulseTrackerMod(Common::SeekableReadStream *stream, Dispose
 
 ImpulseTrackerMod::~ImpulseTrackerMod() {
 	Player_Stop();
-	
+
 	if (_mod)
 		Player_Free(_mod);
-		
+
 	if (_reader)
 		free(_reader);
 
