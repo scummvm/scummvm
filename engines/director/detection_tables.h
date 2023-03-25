@@ -3801,15 +3801,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t_l("fuzzyfloppy2", "", "ROTONDA.EXE", "99b7160243ac5807dc1e39c603284620", 701131, Common::IT_ITA, 404),
 
-	MACGAME2_l("gate1", "", "THE_GATE",		"8ea9e9a699c61edddffd79ddd0c994d7", 290654,
-							"start.Dxr",	"f4f0efc5c519b3ebd63c6d3f8e343967", 5622, Common::JA_JPN, 402),
-	MACGAME2_l("gate2", "", "THE_GATE",		"8ea9e9a699c61edddffd79ddd0c994d7", 290654,
-							"start.Dxr",	"27456dc17d056a822d5c8a3c046dc0d2", 5618, Common::JA_JPN, 402),
-	MACGAME2_l("gate3", "", "THE_GATE",		"33f733b2809b94c3301096902f642b6e", 290654,
-							"start.Dxr",	"662bb0fe055817639198f4b9851496de", 5636, Common::JA_JPN, 402),
-	WINGAME1_l("gate1", "", "THE_GATE.EXE", "dd0bb1a07ad5b5d4489ac8f54e6ada2e", 712014, Common::JA_JPN, 402),
-	WINGAME1_l("gate2", "", "THE_GATE.EXE", "0818b5c0ced885b5ebcef1bfd9523405", 711962, Common::JA_JPN, 402),
-	WINGAME1_l("gate3", "", "THE_GATE.EXE", "48f4e49459ad83330521457642875406", 712003, Common::JA_JPN, 402),
+	MACGAME2_l("gate1", "", "xn--HD-g73avcj4g7a5726ctwzw3ca1i6i/THE_GATE",		 "r:8ea9e9a699c61edddffd79ddd0c994d7", 290398,
+							"xn--HD-g73avcj4g7a5726ctwzw3ca1i6i/start.Dxr",		 "d:c0dc44cff1eef9c5f7fb2ca2dacbb847", 5494, Common::JA_JPN, 402),
+	MACGAME2_l("gate2", "", "xn--HDG2-rw3c5o2dpa9kzb2170dd4tzyda5j4k/THE_GATE",	 "r:8ea9e9a699c61edddffd79ddd0c994d7", 290398,
+							"xn--HDG2-rw3c5o2dpa9kzb2170dd4tzyda5j4k/start.Dxr", "d:50ef75d97ae88a825ae76043df8fbe3e", 5490, Common::JA_JPN, 402),
+	MACGAME2_l("gate3", "", "xn--HDG3-rw3c5o2dpa9kzb2170dd4tzyda5j4k/THE_GATE",	 "r:33f733b2809b94c3301096902f642b6e", 290398,
+							"xn--HDG3-rw3c5o2dpa9kzb2170dd4tzyda5j4k/start.Dxr", "d:b159b55850dfb88cf9898323d582e9de", 5508, Common::JA_JPN, 402),
+	WINGAME1_l("gate1", "", "_FILES_/THE_GATE.EXE", "d:dd0bb1a07ad5b5d4489ac8f54e6ada2e", 712014, Common::JA_JPN, 402),
+	WINGAME1_l("gate2", "", "_FILES_/THE_GATE.EXE", "d:0818b5c0ced885b5ebcef1bfd9523405", 711962, Common::JA_JPN, 402),
+	WINGAME1_l("gate3", "", "_FILES_/THE_GATE.EXE", "d:48f4e49459ad83330521457642875406", 712003, Common::JA_JPN, 402),
 
 	MACDEMO1_l("gecrs", "Demo", "GECRS 8MB", "0666ae690e459d3d0d91800ebd94de46", 290426, Common::JA_JPN, 402),
 
@@ -3819,25 +3819,30 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original German Mac filename is Mäusejagd
 	// Original multilingual Mac filename is Gröna Musikmössen
 	// International release plays in English, Danish, Finnish, Swedish, Norwegian
-	MACGAME1("ggmd", "", "Grona Musikmossen",			"8c50fe295dd0e2e523d430e8d6fba448", 483791, 404),
-	MACGAME1_l("ggmd", "", "xn--Musejagd-0za",			"ea646eccc9a53f44ce082459d4809a06", 483490, Common::DE_DEU, 404),
-	MACGAME1_l("ggmd", "", "Help! Muizen in 't hotel!", "e6833f1ce3b022f0128e4c80a55bcd46", 285538, Common::NL_NLD, 404),
-	WINGAME1("ggmd", "",   "KMDGM.EXE",					"c45bac8f730cae2e2a174dbc14deff7b", 690021, 404),
-	WINGAME2_l("ggmd", "", "MAUSJAGD.EXE",				"04d63d66464bce6356f9d70d83487838", 1302352,
-						   "SHARED.DXR",				"15f0add56f03a01a98b076f4792608f6", 389060, Common::DE_DEU, 404),
-	WINGAME1_l("ggmd", "", "MUIZEN.EXE",				"97f8977dae92d12cc8f9c7deff5e8f8d", 1483435, Common::NL_NLD, 404),
-	MACGAME1("ggmdmaze", "", "Mouse Maze",				"17efee018a660458fae80de4364021ac", 482866, 404),
-	WINGAME1("ggmdmaze", "", "MOUSMAZE.EXE",			"c306a1b1065c2ffe0ce2bfc0d58c52b4", 1690622, 404),
-	MACGAME1_l("ggmdpics", "", "Gallery",				"ea646eccc9a53f44ce082459d4809a06", 483490, Common::DE_DEU, 404),
-	MACGAME1_l("ggmdpics", "", "Galerij",				"ea646eccc9a53f44ce082459d4809a06", 483774, Common::NL_NLD, 404),
-	WINGAME2_l("ggmdpics", "", "GALLERY.EXE",			"c476512cadbbcffc6af5cfee8670f8f7", 5099674,
-							   "SHARED.DXR",			"15f0add56f03a01a98b076f4792608f6", 389060, Common::DE_DEU, 404),
-	WINGAME1_l("ggmdpics", "", "GALERIJ.EXE",			"c476512cadbbcffc6af5cfee8670f8f7", 5099674, Common::NL_NLD, 404),
-	MACGAME1("ggmdsuper", "", "SuperGame",				"17efee018a660458fae80de4364021ac", 482866, 404),
-	MACGAME1_l("ggmdsuper", "", "Super Spel",			"17efee018a660458fae80de4364021ac", 482866, Common::NL_NLD, 404),
-	WINGAME1("ggmdsuper", "", "SUPRGAME.EXE",			"5da9f151d28659d83cb381ceca7493f1", 740518, 404),
-	WINGAME2_l("ggmdsuper", "", "SUPER.EXE",			"5da9f151d28659d83cb381ceca7493f1", 740518,
-								"GGMDMENU.DXR",			"019cea5d103d926591e3845b9516997b", 283120, Common::NL_NLD, 404),
+	MACGAME1("ggmd", "",   "xn--Grna Musikmssen-9sbj",								"r:8c50fe295dd0e2e523d430e8d6fba448", 483535, 404),
+	MACGAME1_l("ggmd", "", "xn--Musejagd mit Ton-vnb/xn--Musejagd-0za",				"r:ea646eccc9a53f44ce082459d4809a06", 483490, Common::DE_DEU, 404),
+	MACGAME1_l("ggmd", "", "muizen in \'t hotel, geluid/Help! Muizen in 't hotel!", "r:e6833f1ce3b022f0128e4c80a55bcd46", 285282, Common::NL_NLD, 404),
+	WINGAME1("ggmd", "",   "KMDGM.EXE",	   "d:c45bac8f730cae2e2a174dbc14deff7b", 690021, 404),
+	WINGAME2_l("ggmd", "", "MAUSJAGD.EXE", "d:04d63d66464bce6356f9d70d83487838", 1302352,
+						   "SHARED.DXR",   "d:15f0add56f03a01a98b076f4792608f6", 389060, Common::DE_DEU, 404),
+	WINGAME1_l("ggmd", "", "MUIZEN.EXE",   "d:97f8977dae92d12cc8f9c7deff5e8f8d", 1483435, Common::NL_NLD, 404),
+
+	MACGAME1("ggmdmaze", "", "MouseMaze/Mouse Maze",	 "r:17efee018a660458fae80de4364021ac", 482610, 404),
+	MACGAME1_l("ggmdmaze", "", "Muizen Doolhof/Doolhof", "r:17efee018a660458fae80de4364021ac", 482610, Common::NL_NLD, 404),
+	WINGAME1("ggmdmaze", "", "MOUSMAZE/MOUSMAZE.EXE",	 "d:c306a1b1065c2ffe0ce2bfc0d58c52b4", 1690622, 404),
+	WINGAME1_l("ggmdmaze", "", "DOOLHOF/DOOLHOF.EXE",	 "t:f6e5f9987043c6c23f07ae9564998078", 1690622, Common::NL_NLD, 404),
+
+	MACGAME1_l("ggmdpics", "", "Gallery",	  "r:ea646eccc9a53f44ce082459d4809a06", 483490, Common::DE_DEU, 404),
+	MACGAME1_l("ggmdpics", "", "Galerij",	  "r:ea646eccc9a53f44ce082459d4809a06", 483518, Common::NL_NLD, 404),
+	WINGAME2_l("ggmdpics", "", "GALLERY.EXE", "d:c476512cadbbcffc6af5cfee8670f8f7", 5099674,
+							   "SHARED.DXR",  "d:15f0add56f03a01a98b076f4792608f6", 389060, Common::DE_DEU, 404),
+	WINGAME1_l("ggmdpics", "", "GALERIJ.EXE", "d:c476512cadbbcffc6af5cfee8670f8f7", 5099674, Common::NL_NLD, 404),
+
+	MACGAME1("ggmdsuper", "", "SuperGame/SuperGame",	 "r:17efee018a660458fae80de4364021ac", 482610, 404),
+	MACGAME1_l("ggmdsuper", "", "Super Spel/Super Spel", "r:17efee018a660458fae80de4364021ac", 482610, Common::NL_NLD, 404),
+	WINGAME1("ggmdsuper", "", "SUPER/SUPRGAME.EXE",		 "d:5da9f151d28659d83cb381ceca7493f1", 740518, 404),
+	WINGAME2_l("ggmdsuper", "", "SUPER/SUPER.EXE",		 "d:5da9f151d28659d83cb381ceca7493f1", 740518,
+								"SUPER/GGMDMENU.DXR",	 "d:019cea5d103d926591e3845b9516997b", 283120, Common::NL_NLD, 404),
 
 	MACGAME1("gigglecity", "",	   "Infinity City",		 "e6833f1ce3b022f0128e4c80a55bcd46", 285282, 404),
 	WINGAME2("gigglecity", "",	   "INFINITY.EXE",		 "07b919509db761c7910f5677216b588d", 3228770,
@@ -3846,24 +3851,24 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("gigglecity", "Demo", "ICDEMO.EXE",		 "f8eb3a346a02193cec8bc14497b73a8f", 802018, 404),
 
 	// Demo is found on Pantsylvania CD
-	MACGAME1("gigglefarm", "",	   "AlphaBonk Farm PowerMac", "bcd3c718db258701496b3c5bcb827ef2", 502333, 404),
-	MACDEMO1("gigglefarm", "Demo", "AlphaBonk Farm Demo",	  "bcd3c718db258701496b3c5bcb827ef2", 502333, 404),
+	MACGAME1("gigglefarm", "",	   "AlphaBonk Farm PowerMac", "r:db9b7f11aea52a294d2986a94a184000", 78678, 404),
+	MACDEMO1("gigglefarm", "Demo", "AlphaBonk Farm Demo",	  "r:bcd3c718db258701496b3c5bcb827ef2", 502077, 404),
 	WINGAME1("gigglefarm", "",	   "ALPHBNK.EXE", "9720ed078d3318e7dc51f1480e1280f0", 740982, 404),
 	WINDEMO1("gigglefarm", "Demo", "ABFDEMO.EXE", "6ccff5b1e2541065b66ce6b33b2ade9f", 8517847, 404),
 
-	MACGAME1("gigglevania", "", "Pantsylvania", "d9082ba24e164f376ffb3090c43fa997", 304149, 404),
+	MACGAME1("gigglevania", "", "Pantsylvania", "r:d9082ba24e164f376ffb3090c43fa997", 303893, 404),
 	WINGAME2("gigglevania", "", "PANTS.EXE",	"1b10e3c6f6a47971802fe835642130ce", 697317,
 								"INTRO.DXR",	"41101e9d94da0a627e75f5b93ae22f48", 5008606, 404),
 
 	// CD-ROM Expanded Album by Ion, Los Angeles and Cryptic, San Francisco (1994)
 	// European distribution by BMG Interactive, New York
-	MACGAME1("gingerbreadman", "", "Gingerbread Man", "dc5a87dda7a0daf46604515f7d2cca66", 311476, 403),
+	MACGAME1("gingerbreadman", "", "Gingerbread Man", "r:dc5a87dda7a0daf46604515f7d2cca66", 311220, 403),
 	WINGAME1("gingerbreadman", "", "GBMAN.EXE", "e35da92f92ee7750a02b979a28492d7d", 696963, 404),
 	MACDEMO1("gingerbreadman", "Demo", "Gingerbread Man Demo", "dc5a87dda7a0daf46604515f7d2cca66", 307880, 403),
 
-	MACGAME1("godigital", "Vol.1 No.1",	"Go Digital vol.1 no.1", "dc5a87dda7a0daf46604515f7d2cca66", 291322, 403),
-	MACGAME1("godigital", "Vol.1 No.2", "Go Digital vol 1 # 2",  "97474208c44c78f26bef8b2011d341aa", 482838, 404),
-	MACGAME1("godigital", "Vol.2 No.1", "GoDigital3",			 "e6833f1ce3b022f0128e4c80a55bcd46", 284630, 404),
+	MACGAME1("godigital", "Vol.1 No.1",	"Go Digital vol.1 no.1", "r:dc5a87dda7a0daf46604515f7d2cca66", 291066, 403),
+	MACGAME1("godigital", "Vol.1 No.2", "Go Digital vol 1 # 2",  "r:97474208c44c78f26bef8b2011d341aa", 482582, 404),
+	MACGAME1("godigital", "Vol.2 No.1", "GoDigital3",			 "r:e6833f1ce3b022f0128e4c80a55bcd46", 284374, 404),
 	WINGAME1("godigital", "Vol.1 No.1",	"GODIGIT.EXE", "8183e02291e69b19c9b1b149a8036ffd", 34247559, 404),
 	WINGAME1("godigital", "Vol.1 No.2", "GODIGIT.EXE", "7ce7407982b9c3abfab010432a0b9b96", 703515, 404),
 	WINGAME1("godigital", "Vol.2 No.1", "GODIG3.EXE",  "601b468f1e0e22319b7abd5c0d1787e7", 889427, 404),
@@ -3871,7 +3876,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("goldilocks", "Sampler", "Goldilocks Gamebook Sampler", "cbce20666bfe47a9533331c6be1e6039", 285267, 403),
 	// from http://web.archive.org/web/20051126063716id_/http://www.beachware.com/download/goldsea.exe (self-extracting ZIP)
 	WINDEMO1t("goldilocks", "Sampler", "GOLDILKS.EXE", "a59533f9043f9e642fc17d39c843d55b", 1894363, 404),
-	WINDEMO1t("goldilocks", "Sampler", "GOLDILKS.EXE", "a59533f9043f9e642fc17d39c843d55b", 1894348, 404),	// if extracted using 7zip
 
 	// Both versions require installation
 	// Mac: "Gord@k Mac Installer", VISE 3.5 installer
@@ -3879,8 +3883,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1( "gordak", "", "GORDAK",		"5f48d38b0c9b9c8790796d1eb1525713", 486726, 404),
 	WINGAME1t("gordak", "", "GordakCD.exe", "0d9d03bf2462f22aed3cd3e7d49018df", 737262, 404),
 
-	MACDEMO2_l("greetingstudio", "Demo", "Click Me",   "17efee018a660458fae80de4364021ac", 484351,
-										 "MAIN.DIR",   "f5f8e6c76bb0659fc80fa2c1c263afa9", 3016176, Common::JA_JPN, 404),
+	MACDEMO2_l("greetingstudio", "Demo", "Click Me",   "r:17efee018a660458fae80de4364021ac", 484095,
+										 "MAIN.DIR",   "d:f5f8e6c76bb0659fc80fa2c1c263afa9", 3016176, Common::JA_JPN, 404),
 	WINDEMO1_l("greetingstudio", "Demo", "SHOWME.EXE", "711b37028bca19093720fcb281c08b4d", 754977, Common::JA_JPN, 404),
 
 	MACDEMO1("grolier", "Catalog", "Grolier Products", "f5033f237ad1b1639fc46d01a82ac380", 283274, 404),
@@ -3890,25 +3894,32 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"GIGAMAT.DXR", "ab5960b3e663600388b5cc1b29f4920e", 744020, Common::FR_FRA, 404),
 
 	// Full game is D5
-	MACDEMO1("gundam0079", "Demo", "Gundam Demo", "01be45e7241194dad07938e7059b88e3", 483376, 400),
+	MACDEMO1("gundam0079", "Demo", "Gundam Demo", "r:01be45e7241194dad07938e7059b88e3", 483120, 404),
 
 	MACGAME1("guns", "", "Multimedia Guns", "01be45e7241194dad07938e7059b88e3", 486671, 404),
 	WINGAME2("guns", "", "GUNS.EXE", "43342caa10c6dc46f983787da1b625b7", 1636235,
 						 "DATA/MAINMENU/MAINMENU.PIC", "9453f965417c5cb5c22d78bb3ce84a4f", 260166, 404),
 
-	MACGAME1("gusbuds", "",		"MMV Product Demos for PowerMac", "692f6732b6d7deaa00c9b3df57bb30ce", 60324, 404),
-	MACDEMO1("guscarn", "Demo", "Carnival Demo 4 you",			  "67f572196550aedb1f9523d782022be0", 481482, 404),
-	MACDEMO1("gusolis", "Demo", "Cyberopolis DEMO",				  "77f4098988d5386794d1530065f514cd", 304217, 400),
-	MACGAME1("guspark", "",		"Gus goes to CyberStone Park",	  "ccfbfc1a0ac231db40a250babaa6ad7c", 285538, 404),
-	MACDEMO1("gustown", "Demo", "Gus Goes To CyberTown DEMO",	  "77f4098988d5386794d1530065f514cd", 304217, 400),
+	MACGAME1("gusbuds", "",		"MMV Product Demos for PowerMac", "r:692f6732b6d7deaa00c9b3df57bb30ce", 60068, 404),
+	WINGAME1("gusbuds", "",		"MMVDEMOS.EXE",					  "d:71d4ad9e9dc92a81561476d4d9813492", 692037, 404),
+
+	MACDEMO1("guscarn", "Demo", "Carnival Demo 4 you", "r:67f572196550aedb1f9523d782022be0", 481226, 404),
+
+	MACDEMO1("gusolis", "Demo", "Cyberopolis DEMO", "r:77f4098988d5386794d1530065f514cd", 303961, 404),
+
+	MACGAME1("guspark", "",		"Gus goes to CyberStone Park", "r:ccfbfc1a0ac231db40a250babaa6ad7c", 285282, 404),
+	MACGAME1("guspark", "",		"Gus goes to CyberStone Park", "r:ccfbfc1a0ac231db40a250babaa6ad7c", 288490, 404),
+	WINGAME1("guspark", "",		"PCINST/CYBSTONE.EXE", "d:ac22c7568c90ab4af7396148521f446e", 707439, 404),
+	WINGAME2("guspark", "",		"CYBSTONE.EXE",		   "d:dc0be57ab8e9f9b54de24ac41b1b4854", 703913,
+								"CONTENT/INTRO.DIR",   "d:05fbf807ea9b766a12c2c08483cc6fa7", 1082406, 404),
+	WINGAME2_l("guspark", "",	"CYBSTONE.EXE",		   "d:dc0be57ab8e9f9b54de24ac41b1b4854", 703913,
+								"CONTENT/INTRO.DIR",   "d:fb97a887ac99dcb5a1a78520cc00c7d9", 1092858, Common::PT_BRA, 404),
+
+	MACDEMO1("gustown", "Demo", "Gus Goes To CyberTown DEMO", "r:77f4098988d5386794d1530065f514cd", 303961, 404),
 	// Guus in Cyberstad (demo)
 	WINDEMO2_l("gustown", "Demo", "GUUS.EXE",	  "775eb4d8a78916b10e7531eebc758dd2", 8319869,
 								  "STRAAT.DIR",	  "3f8a0dbad3f6af64d23bf2fc257bdd3d", 3286688, Common::NL_NLD, 404),
 
-	WINGAME1("gusbuds", "",		"MMVDEMOS.EXE", "71d4ad9e9dc92a81561476d4d9813492", 692037, 404),
-
-	WINGAME1("guspark", "",		"CYBSTONE.EXE", "ac22c7568c90ab4af7396148521f446e", 707439, 400),
-	WINGAME1_l("guspark", "",	"CYBSTONE.EXE", "dc0be57ab8e9f9b54de24ac41b1b4854", 703913, Common::PT_BRA, 404),
 
 	// Disc 1 is called Haight, Disc 2 is called Ashbury. You can start either one.
 	// Mac partition contains three mini-games that can be launched directly from Finder
