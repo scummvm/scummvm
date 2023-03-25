@@ -96,6 +96,12 @@ public:
 	static inline bool swapBuffers();
 	static bool initSurface();
 	static void deinitSurface();
+	static int eglVersion() {
+		if (_egl_version) {
+			return _egl_version;
+		}
+		return fetchEGLVersion();
+	}
 
 	static void setAudioPause();
 	static void setAudioPlay();
@@ -120,6 +126,8 @@ private:
 	static jobject _jobj_egl;
 	static jobject _jobj_egl_display;
 	static jobject _jobj_egl_surface;
+	// cached EGL version
+	static int _egl_version;
 
 	static Common::Archive *_asset_archive;
 	static OSystem_Android *_system;
@@ -145,6 +153,7 @@ private:
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;
 	static jmethodID _MID_deinitSurface;
+	static jmethodID _MID_eglVersion;
 	static jmethodID _MID_getNewSAFTree;
 	static jmethodID _MID_getSAFTrees;
 	static jmethodID _MID_findSAFTree;
@@ -185,6 +194,7 @@ private:
 	static PauseToken _pauseToken;
 
 	static JNIEnv *fetchEnv();
+	static int fetchEGLVersion();
 };
 
 inline bool JNI::haveSurface() {

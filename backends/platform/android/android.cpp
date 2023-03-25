@@ -46,6 +46,7 @@
 #include <sys/system_properties.h>
 #include <time.h>
 #include <unistd.h>
+#include <dlfcn.h>
 
 #include "common/util.h"
 #include "common/textconsole.h"
@@ -167,6 +168,9 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_touch_pt_dt(),
 	_eventScaleX(100),
 	_eventScaleY(100),
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+	_gles2DL(nullptr),
+#endif
 	// TODO put these values in some option dlg?
 	_touch_mode(TOUCH_MODE_TOUCHPAD),
 	_touchpad_scale(66),
@@ -849,8 +853,24 @@ int OSystem_Android::getGraphicsMode() const {
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 void *OSystem_Android::getOpenGLProcAddress(const char *name) const {
-	// This exists since Android 2.3 (API Level 9)
-	return (void *)eglGetProcAddress(name);
+	// eglGetProcAddress exists since Android 2.3 (API Level 9)
+	// EGL 1.5+ supports loading core functions too: try to optimize
+	if (JNI::eglVersion() >= 0x00010005) {
+		return (void *)eglGetProcAddress(name);
+	}
+
+	if (!_gles2DL) {
+		_gles2DL = dlopen("libGLESv2.so", RTLD_NOW | RTLD_LOCAL);
+		if (!_gles2DL) {
+			error("Can't load libGLESv2.so with old EGL context");
+		}
+	}
+
+	void *ptr = dlsym(_gles2DL, name);
+	if (!ptr) {
+		ptr = (void *)eglGetProcAddress(name);
+	}
+	return ptr;
 }
 #endif
 

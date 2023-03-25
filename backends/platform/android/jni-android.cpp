@@ -66,6 +66,7 @@ jobject JNI::_jobj_audio_track = 0;
 jobject JNI::_jobj_egl = 0;
 jobject JNI::_jobj_egl_display = 0;
 jobject JNI::_jobj_egl_surface = 0;
+int JNI::_egl_version = 0;
 
 Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
@@ -98,6 +99,7 @@ jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
 jmethodID JNI::_MID_deinitSurface = 0;
+jmethodID JNI::_MID_eglVersion = 0;
 jmethodID JNI::_MID_getNewSAFTree = 0;
 jmethodID JNI::_MID_getSAFTrees = 0;
 jmethodID JNI::_MID_findSAFTree = 0;
@@ -637,6 +639,23 @@ void JNI::deinitSurface() {
 	}
 }
 
+int JNI::fetchEGLVersion() {
+	JNIEnv *env = JNI::getEnv();
+
+	_egl_version = env->CallIntMethod(_jobj, _MID_eglVersion);
+
+	if (env->ExceptionCheck()) {
+		LOGE("eglVersion failed");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		_egl_version = 0;
+	}
+
+	return _egl_version;
+}
+
 void JNI::setAudioPause() {
 	JNIEnv *env = JNI::getEnv();
 
@@ -731,6 +750,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
+	FIND_METHOD(, eglVersion, "()I");
 	FIND_METHOD(, getNewSAFTree,
 	            "(ZZLjava/lang/String;Ljava/lang/String;)Lorg/scummvm/scummvm/SAFFSTree;");
 	FIND_METHOD(, getSAFTrees, "()[Lorg/scummvm/scummvm/SAFFSTree;");
@@ -738,6 +758,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
+	_egl_version = 0;
 
 	env->DeleteLocalRef(cls);
 
