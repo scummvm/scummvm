@@ -47,7 +47,8 @@ SessionSelectorDialog::SessionSelectorDialog(Scumm::ScummEngine_v90he *vm)
 	_timestamp = 0;
 
 	_queryProgressText = new GUI::StaticTextWidget(this, "SessionSelector.QueryProgressText",
-						_("Querying games...")); // I18N: Retrieving list of online multiplayer games
+ 						// I18N: Retrieving list of online multiplayer games
+ 						_("Querying games..."));
 
 	_queryProgressText->setAlign(Graphics::kTextAlignCenter);
 

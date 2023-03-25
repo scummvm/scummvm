@@ -2637,12 +2637,14 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	new StaticTextWidget(boss, prefix + "DebugLevelPopupDesc", _("Debug level:"));
 	_debugLevelPopUp = new PopUpWidget(boss, prefix + "DebugLevelPopup");
 
-	_debugLevelPopUp->appendEntry(_("None"), -1); // I18N: Debug level -1, no messages
+	// I18N: Debug level -1, no messages
+	_debugLevelPopUp->appendEntry(_("None"), -1);
 
 	for (int i = 0; i < 11; i++)
 		_debugLevelPopUp->appendEntry(Common::U32String::format("%d", i), i);
 
-	_debugLevelPopUp->appendEntry(_("11 (all)"), 11); // I18N: Debug level 11, all messages
+	// I18N: Debug level 11, all messages
+	_debugLevelPopUp->appendEntry(_("11 (all)"), 11);
 
 #ifdef USE_DISCORD
 	_discordRpcCheckbox = new CheckboxWidget(boss, prefix + "DiscordRpc",

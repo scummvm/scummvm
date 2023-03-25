@@ -55,39 +55,63 @@
 
 static const Common::KeyTableEntry odKeyboardButtons[] = {
 #ifdef MIYOOMINI
-	{ "JOY_A",		Common::KEYCODE_SPACE,		_s("A")			}, // I18N: Hardware key
-	{ "JOY_B",		Common::KEYCODE_LCTRL,		_s("B")			}, // I18N: Hardware key
-	{ "JOY_X",		Common::KEYCODE_LSHIFT,		_s("X")			}, // I18N: Hardware key
-	{ "JOY_Y",		Common::KEYCODE_LALT,		_s("Y")			}, // I18N: Hardware key
-	{ "JOY_BACK",		Common::KEYCODE_RCTRL,		_s("Select")		}, // I18N: Hardware key
-	{ "JOY_START",		Common::KEYCODE_RETURN,		_s("Start")		}, // I18N: Hardware key
-	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_e,		_s("L")			}, // I18N: Hardware key
-	{ "JOY_RIGHT_SHOULDER", Common::KEYCODE_t,		_s("R")			}, // I18N: Hardware key
+	// I18N: Hardware key
+	{ "JOY_A",		Common::KEYCODE_SPACE,		_s("A")			},
+	// I18N: Hardware key
+	{ "JOY_B",		Common::KEYCODE_LCTRL,		_s("B")			},
+	// I18N: Hardware key
+	{ "JOY_X",		Common::KEYCODE_LSHIFT,		_s("X")			},
+	// I18N: Hardware key
+	{ "JOY_Y",		Common::KEYCODE_LALT,		_s("Y")			},
+	// I18N: Hardware key
+	{ "JOY_BACK",		Common::KEYCODE_RCTRL,		_s("Select")		},
+	// I18N: Hardware key
+	{ "JOY_START",		Common::KEYCODE_RETURN,		_s("Start")		},
+	// I18N: Hardware key
+	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_e,		_s("L")			},
+	// I18N: Hardware key
+	{ "JOY_RIGHT_SHOULDER", Common::KEYCODE_t,		_s("R")			},
 	{ "JOY_UP",		Common::KEYCODE_UP,		_s("D-pad Up")	},
 	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad Down")	},
 	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad Left")	},
 	{ "JOY_RIGHT",		Common::KEYCODE_RIGHT,		_s("D-pad Right")	},
-	{ "JOY_LEFT_STICK",     Common::KEYCODE_TAB,		_s("L2")		}, // I18N: Hardware key
-	{ "JOY_RIGHT_STICK",    Common::KEYCODE_BACKSPACE,	_s("R2")		}, // I18N: Hardware key
-	{ "JOY_GUIDE",		Common::KEYCODE_ESCAPE,		_s("Menu")	 	}, // I18N: Hardware key
+	// I18N: Hardware key
+	{ "JOY_LEFT_STICK",     Common::KEYCODE_TAB,		_s("L2")		},
+	// I18N: Hardware key
+	{ "JOY_RIGHT_STICK",    Common::KEYCODE_BACKSPACE,	_s("R2")		},
+	// I18N: Hardware key
+	{ "JOY_GUIDE",		Common::KEYCODE_ESCAPE,		_s("Menu")	 	},
 #else
-	{ "JOY_A",		Common::KEYCODE_LALT,		_s("A")			}, // I18N: Hardware key
-	{ "JOY_B",		Common::KEYCODE_LCTRL,		_s("B")			}, // I18N: Hardware key
-	{ "JOY_X",		Common::KEYCODE_LSHIFT,		_s("X")			}, // I18N: Hardware key
-	{ "JOY_Y",		Common::KEYCODE_SPACE,		_s("Y")			}, // I18N: Hardware key
-	{ "JOY_BACK",		Common::KEYCODE_ESCAPE,		_s("Select")		}, // I18N: Hardware key
-	{ "JOY_START",		Common::KEYCODE_RETURN,		_s("Start")		}, // I18N: Hardware key
-	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_TAB,		_s("L")			}, // I18N: Hardware key
-	{ "JOY_RIGHT_SHOULDER", Common::KEYCODE_BACKSPACE,	_s("R")			}, // I18N: Hardware key
+	// I18N: Hardware key
+	{ "JOY_A",		Common::KEYCODE_LALT,		_s("A")			},
+	// I18N: Hardware key
+	{ "JOY_B",		Common::KEYCODE_LCTRL,		_s("B")			},
+	// I18N: Hardware key
+	{ "JOY_X",		Common::KEYCODE_LSHIFT,		_s("X")			},
+	// I18N: Hardware key
+	{ "JOY_Y",		Common::KEYCODE_SPACE,		_s("Y")			},
+	// I18N: Hardware key
+	{ "JOY_BACK",		Common::KEYCODE_ESCAPE,		_s("Select")		},
+	// I18N: Hardware key
+	{ "JOY_START",		Common::KEYCODE_RETURN,		_s("Start")		},
+	// I18N: Hardware key
+	{ "JOY_LEFT_SHOULDER",	Common::KEYCODE_TAB,		_s("L")			},
+	// I18N: Hardware key
+	{ "JOY_RIGHT_SHOULDER", Common::KEYCODE_BACKSPACE,	_s("R")			},
 	{ "JOY_UP",		Common::KEYCODE_UP,		_s("D-pad Up")	},
 	{ "JOY_DOWN",		Common::KEYCODE_DOWN,		_s("D-pad Down")	},
 	{ "JOY_LEFT",		Common::KEYCODE_LEFT,		_s("D-pad Left")	},
 	{ "JOY_RIGHT",		Common::KEYCODE_RIGHT,		_s("D-pad Right")	},
-	{ "JOY_LEFT_STICK",     Common::KEYCODE_PAGEUP,		_s("L2")		}, // I18N: Hardware key
-	{ "JOY_RIGHT_STICK",    Common::KEYCODE_PAGEDOWN,	_s("R2")		}, // I18N: Hardware key
-	{ "JOY_LEFT_TRIGGER",	Common::KEYCODE_RALT,		_s("L3")	 	}, // I18N: Hardware key
-	{ "JOY_RIGHT_TRIGGER",	Common::KEYCODE_RSHIFT,		_s("R3")	 	}, // I18N: Hardware key
-	{ "JOY_GUIDE",		Common::KEYCODE_RCTRL,		_s("Menu")	 	}, // I18N: Hardware key
+	// I18N: Hardware key
+	{ "JOY_LEFT_STICK",     Common::KEYCODE_PAGEUP,		_s("L2")		},
+	// I18N: Hardware key
+	{ "JOY_RIGHT_STICK",    Common::KEYCODE_PAGEDOWN,	_s("R2")		},
+	// I18N: Hardware key
+	{ "JOY_LEFT_TRIGGER",	Common::KEYCODE_RALT,		_s("L3")	 	},
+	// I18N: Hardware key
+	{ "JOY_RIGHT_TRIGGER",	Common::KEYCODE_RSHIFT,		_s("R3")	 	},
+	// I18N: Hardware key
+	{ "JOY_GUIDE",		Common::KEYCODE_RCTRL,		_s("Menu")	 	},
 #endif
 	{nullptr,			Common::KEYCODE_INVALID,	nullptr			}
 };
