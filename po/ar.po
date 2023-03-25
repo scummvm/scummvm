@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 22:53+0000\n"
+"PO-Revision-Date: 2023-03-25 22:58+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -4935,21 +4935,21 @@ msgstr "قم بإنهاء اللعبة"
 
 #: engines/buried/buried.cpp:584
 msgid "Are you sure you want to quit?"
-msgstr ""
+msgstr "هل أنت متأكد من أنك تريد الخروج؟"
 
 #: engines/buried/buried.cpp:594
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr ""
+msgstr "اللعبة الآن متوقفة مؤقتًا. انقر فوق \"موافق\" للمتابعة."
 
 #. I18N: This option allows the user to skip cutscenes.
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/buried/metaengine.cpp:40 engines/kyra/metaengine.cpp:61
 msgid "Skip support"
-msgstr ""
+msgstr "تخطي الدعم"
 
 #: engines/buried/metaengine.cpp:41
 msgid "Allow cutscenes to be skipped"
-msgstr ""
+msgstr "السماح بتخطي المشاهد"
 
 #: engines/buried/saveload.cpp:66
 msgid ""
@@ -4961,33 +4961,40 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"اكتشف ScummVM أنك قمت بحفظ الألعاب التي يجب تحويلها من تنسيق اللعبة الأصلي "
+"المحفوظ.\n"
+"لم يعد تنسيق اللعبة الأصلي المحفوظ مدعومًا بشكل مباشر ، لذا لن تتمكن من "
+"تحميل ألعابك إذا لم تقم بتحويلها.\n"
+"\n"
+"اضغط على \"موافق\" لتحويلها الآن ، وإلا فسيُطلب منك مرة أخرى في المرة "
+"التالية التي تبدأ فيها اللعبة.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
 #: engines/vcruise/vcruise.cpp:245
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
-msgstr ""
+msgstr "تم إنشاء اللعبة المحفوظة بإصدار أحدث من ScummVM. غير قادر على التحميل."
 
 #: engines/cge/metaengine.cpp:39 engines/cge2/metaengine.cpp:42
 msgid "Color Blind Mode"
-msgstr ""
+msgstr "وضع عمى الألوان"
 
 #: engines/cge/metaengine.cpp:40 engines/cge2/metaengine.cpp:43
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "قم بتمكين وضع عمى الألوان افتراضيًا"
 
 #: engines/cge/metaengine.cpp:52 engines/glk/metaengine.cpp:243
 #: engines/griffon/metaengine.cpp:40 engines/sci/detection_options.h:223
 #: engines/supernova/metaengine.cpp:50
 msgid "Enable Text to Speech"
-msgstr ""
+msgstr "تمكين تحويل النص إلى كلام"
 
 #: engines/cge/metaengine.cpp:53
 msgid "Use TTS to read text in the game (if TTS is available)"
-msgstr ""
+msgstr "استخدم TTS لقراءة النص في اللعبة (إذا كان TTS متاحًا)"
 
 #: engines/cge2/metaengine.cpp:55
 msgid "Enable Text to Speech for Objects and Options"
-msgstr ""
+msgstr "تمكين تحويل النص إلى كلام للكائنات والخيارات"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -4995,37 +5002,39 @@ msgstr ""
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:51
 #: engines/twine/metaengine.cpp:168
 msgid "Use TTS to read the descriptions (if TTS is available)"
-msgstr ""
+msgstr "استخدم TTS لقراءة الأوصاف (إذا كانت TTS متوفرة)"
 
 #: engines/cge2/metaengine.cpp:67 engines/dreamweb/metaengine.cpp:73
 msgid "Enable Text to Speech for Subtitles"
-msgstr ""
+msgstr "تمكين تحويل النص إلى كلام للترجمات"
 
 #: engines/cge2/metaengine.cpp:68 engines/dreamweb/metaengine.cpp:74
 msgid "Use TTS to read the subtitles (if TTS is available)"
-msgstr ""
+msgstr "استخدم TTS لقراءة الترجمة (إذا كان TTS متاحًا)"
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
-msgstr ""
+msgstr "استخدم مربعات الحوار الشفافة في 16 مشهدًا ملونًا"
 
 #: engines/cine/metaengine.cpp:54
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
 msgstr ""
+"استخدم مربعات الحوار الشفافة في 16 مشهدًا ملونًا حتى إذا لم يدعمها إصدار "
+"اللعبة الأصلي"
 
 #: engines/cine/metaengine.cpp:158
 msgid "Unnamed autosave"
-msgstr ""
+msgstr "حفظ تلقائي بدون اسم"
 
 #: engines/cine/metaengine.cpp:160 engines/cine/metaengine.cpp:232
 msgid "Unnamed savegame"
-msgstr ""
+msgstr "حفظ اللعبة بدون اسم"
 
 #: engines/cine/metaengine.cpp:177 engines/cine/metaengine.cpp:240
 msgid "Empty autosave"
-msgstr ""
+msgstr "الحفظ التلقائي الفارغ"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -5033,16 +5042,20 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+"تحذير: تستخدم لعبة الحفظ التي تقوم بتحميلها تنسيقًا معطلًا مؤقتًا. سوف تنكسر "
+"الأشياء. يرجى التفكير في بدء عملية التخفي من بدء استخدام ألعاب حفظ جديدة."
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم Versailles 1685"
 
 #: engines/director/events.cpp:90
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
 msgstr ""
+"اللعبة تمنع الإقلاع عن التدخين في هذه اللحظة. هل أنت متأكد أنك تريد الإقلاع "
+"على أي حال؟"
 
 #: engines/dragons/dragons.cpp:1885
 #, c-format
@@ -5052,6 +5065,10 @@ msgid ""
 "%s for details on how to properly extract the DTSPEECH.XA and *.STR files "
 "from your game disc."
 msgstr ""
+"خطأ: لم يتم استخراج الملف '%s' بشكل صحيح.\n"
+"يرجى الرجوع إلى صفحة ويكي\n"
+"%s للحصول على تفاصيل حول كيفية استخراج ملفات DTSPEECH.XA و * .STR بشكل صحيح "
+"من قرص اللعبة."
 
 #: engines/dragons/metaengine.cpp:122
 #, c-format
@@ -5063,14 +5080,20 @@ msgid ""
 "\n"
 " See %s"
 msgstr ""
+"خطأ: يبدو أنه تم استخراج ملفات بيانات اللعبة بشكل غير صحيح.\n"
+"\n"
+"يجب عليك فقط استخراج ملفات STR و XA باستخدام الطريقة الخاصة. يجب نسخ الباقي "
+"بشكل طبيعي من القرص المضغوط الخاص باللعبة.\n"
+"\n"
+" انظر%s"
 
 #: engines/dragons/metaengine.cpp:137
 msgid "Action"
-msgstr ""
+msgstr "فعل"
 
 #: engines/dragons/metaengine.cpp:143
 msgid "Change Command"
-msgstr ""
+msgstr "تغيير الأمر"
 
 #. I18N: Action in In Cold Blood
 #: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:152
@@ -5081,16 +5104,16 @@ msgstr ""
 #: engines/scumm/help.cpp:247 engines/twine/metaengine.cpp:429
 #: engines/zvision/metaengine.cpp:232
 msgid "Inventory"
-msgstr ""
+msgstr "قائمة الجرد"
 
 #: engines/dragons/metaengine.cpp:154 engines/scumm/help.cpp:84
 #: engines/scumm/help.cpp:87
 msgid "Enter"
-msgstr ""
+msgstr "يدخل"
 
 #: engines/dragons/metaengine.cpp:220
 msgid "Debug Graphics"
-msgstr ""
+msgstr "تصحيح الرسومات"
 
 #: engines/drascula/saveload.cpp:46
 msgid ""
@@ -5102,111 +5125,118 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"اكتشف ScummVM أن لديك ألعابًا محفوظة قديمة ل Drascula يجب تحويلها.\n"
+"لم يعد تنسيق اللعبة المحفوظ القديم مدعومًا ، لذا لن تتمكن من تحميل ألعابك "
+"إذا لم تقم بتحويلها.\n"
+"\n"
+"اضغط على \"موافق\" لتحويلها الآن ، وإلا فسيُطلب منك مرة أخرى في المرة "
+"التالية التي تبدأ فيها اللعبة.\n"
 
 #: engines/dreamweb/metaengine.cpp:48
 msgid "Use bright palette mode"
-msgstr ""
+msgstr "استخدم وضع لوح الألوان الساطع"
 
 #: engines/dreamweb/metaengine.cpp:49
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "اعرض الرسومات باستخدام لوحة الألوان الساطعة للعبة"
 
 #: engines/dreamweb/metaengine.cpp:61
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
-msgstr ""
+msgstr "تمكين تحويل النص إلى كلام للكائنات والخيارات واقتباس الكتاب المقدس"
 
 #: engines/freescape/metaengine.cpp:35
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "أصوات مسجلة مسبقًا"
 
 #: engines/freescape/metaengine.cpp:36
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
+"استخدم أصواتًا مسجلة مسبقًا عالية الجودة بدلاً من محاكاة سماعات الكمبيوتر"
 
 #: engines/freescape/metaengine.cpp:46
 msgid "Extended timer"
-msgstr ""
+msgstr "الموقت الممتد"
 
 #: engines/freescape/metaengine.cpp:47
 msgid "Start the game timer at 99:59:59"
-msgstr ""
+msgstr "ابدأ مؤقت اللعبة في الساعة 99:59:59"
 
 #: engines/freescape/metaengine.cpp:57
 msgid "Automatic drilling"
-msgstr ""
+msgstr "حفر آلي"
 
 #: engines/freescape/metaengine.cpp:58
 msgid "Allow to succefully drill in any part of the area in Driller"
-msgstr ""
+msgstr "اسمح للحفر بنجاح في أي جزء من المنطقة في عامل الحفر"
 
 #: engines/freescape/metaengine.cpp:68
 msgid "Disable demo mode"
-msgstr ""
+msgstr "تعطيل الوضع التجريبي"
 
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
-msgstr ""
+msgstr "لا تقم مطلقًا بتنشيط الوضع التجريبي"
 
 #: engines/freescape/metaengine.cpp:79
 msgid "Disable sensors"
-msgstr ""
+msgstr "تعطيل أجهزة الاستشعار"
 
 #: engines/freescape/metaengine.cpp:80
 msgid "Sensors will not shoot the player"
-msgstr ""
+msgstr "لن تقوم أجهزة الاستشعار بإطلاق النار على اللاعب"
 
 #: engines/freescape/metaengine.cpp:90
 msgid "Disable falling"
-msgstr ""
+msgstr "تعطيل السقوط"
 
 #: engines/freescape/metaengine.cpp:91
 msgid "Player cannot fall over edges"
-msgstr ""
+msgstr "لا يمكن للاعب أن يسقط فوق الحواف"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
-msgstr ""
+msgstr "[ اضغط اي زر للخروج ]"
 
 #: engines/glk/quetzal.cpp:147 engines/glk/quetzal.cpp:156
 msgid "Untitled Savegame"
-msgstr ""
+msgstr "حفظ لعبة بلا عنوان"
 
 #: engines/glk/metaengine.cpp:244
 msgid "Use TTS to read the text"
-msgstr ""
+msgstr "استخدم TTS لقراءة النص"
 
 #: engines/glk/metaengine.cpp:251
 msgid "Also read input text"
-msgstr ""
+msgstr "اقرأ أيضًا إدخال النص"
 
 #: engines/glk/metaengine.cpp:252
 msgid "Use TTS to read the input text"
-msgstr ""
+msgstr "استخدم TTS لقراءة نص الإدخال"
 
 #: engines/glk/adrift/os_glk.cpp:2815
 msgid "Loading game...\n"
-msgstr ""
+msgstr "تحميل اللعبة...\n"
 
 #: engines/glk/advsys/advsys.cpp:34
 msgid "Could not start AdvSys game"
-msgstr ""
+msgstr "تعذر بدء لعبة AdvSys"
 
 #: engines/glk/advsys/advsys.cpp:47 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
-msgstr ""
+msgstr "عذرًا ، لا يمكن استعادة لعبة savegame"
 
 #: engines/glk/advsys/vm.cpp:314
 msgid "Sorry, the savegame couldn't be created"
-msgstr ""
+msgstr "عذرًا ، لا يمكن إنشاء لعبة savegame"
 
 #: engines/glk/advsys/vm.cpp:560
 msgid "Speak up! I can't hear you!\n"
-msgstr ""
+msgstr "تكلم! لا أستطيع أن أسمعك!\n"
 
 #: engines/glk/advsys/vm.cpp:596
 #, c-format
 msgid "I don't know the word \"%s\".\n"
-msgstr ""
+msgstr "لا أعرف كلمة \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
