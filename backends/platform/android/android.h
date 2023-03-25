@@ -167,6 +167,10 @@ private:
 
 	TouchControls _touchControls;
 
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+	// Cached dlopen object
+	mutable void *_gles2DL;
+#endif
 public:
 	bool pollEvent(Common::Event &event) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
