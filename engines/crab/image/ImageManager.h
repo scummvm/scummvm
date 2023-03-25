@@ -36,12 +36,14 @@
 #define CRAB_IMAGEMANAGER_H
 
 #include "crab/GameParam.h"
-#include "crab/Image.h"
-#include "crab/LoadingScreen.h"
-#include "crab/TMXTileSet.h"
+#include "crab/Image/Image.h"
+//#include "crab/LoadingScreen.h"
+//#include "crab/TMXTileSet.h"
 #include "crab/common_header.h"
-#include "crab/cursor.h"
+#include "crab/input/cursor.h"
 #include "crab/loaders.h"
+
+namespace Crab {
 
 // We use this object as the key for all image assets
 typedef unsigned int ImageKey;
@@ -52,12 +54,14 @@ typedef unsigned int ImageKey;
 namespace pyrodactyl {
 namespace image {
 // We store images here
-typedef std::unordered_map<ImageKey, Image> TextureMap;
+typedef Common::HashMap<ImageKey, Image> TextureMap;
 
 // Two image maps are used in the game - current (changes with level) and common
-enum MapID { MAP_CURRENT,
-			 MAP_COMMON,
-			 MAP_TOTAL };
+enum MapID {
+	MAP_CURRENT,
+	MAP_COMMON,
+	MAP_TOTAL
+};
 
 class ImageManager {
 	// Assets are stored in images
@@ -69,7 +73,7 @@ class ImageManager {
 
 public:
 	// The tile sets used in the level
-	TMX::TileSetGroup tileset;
+	//TMX::TileSetGroup tileset;
 
 	// This image is used to notify player about changes to quests and inventory
 	ImageKey notify;
@@ -85,16 +89,16 @@ public:
 	// image related stuff
 
 	// Load all images specified in an xml file in a map
-	void LoadMap(const std::string &filename, const MapID &mapid = MAP_CURRENT);
+	void LoadMap(const Common::String &filename, const MapID &mapid = MAP_CURRENT);
 
-	void AddTexture(const ImageKey &id, SDL_Surface *surface, int mapindex = MAP_COMMON);
+	void AddTexture(const ImageKey &id, Graphics::Surface *surface, int mapindex = MAP_COMMON);
 	void FreeTexture(const ImageKey &id, int mapindex = MAP_COMMON) { map[mapindex][id].Delete(); }
 	void GetTexture(const ImageKey &id, Image &data);
 	Image &GetTexture(const ImageKey &id);
 	bool ValidTexture(const ImageKey &id);
 
 	void Draw(const int &x, const int &y, const ImageKey &id,
-			  Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
+			  Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
 
 	void DimScreen();
 	void BlackScreen();
@@ -109,5 +113,7 @@ public:
 extern ImageManager gImageManager;
 } // End of namespace image
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_IMAGEMANAGER_H

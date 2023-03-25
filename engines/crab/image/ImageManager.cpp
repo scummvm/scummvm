@@ -32,8 +32,10 @@
 // Author:   Arvind
 // Purpose:  Contains the image manager class - used to manage in-game images
 //=============================================================================
-#include "crab/ImageManager.h"
+#include "crab/image/ImageManager.h"
 #include "crab/XMLDoc.h"
+
+namespace Crab {
 
 using namespace pyrodactyl::image;
 
@@ -47,9 +49,9 @@ ImageManager gImageManager;
 //------------------------------------------------------------------------
 // Purpose: Load assets here.
 //------------------------------------------------------------------------
-void ImageManager::LoadMap(const std::string &filename, const MapID &mapid) {
+void ImageManager::LoadMap(const Common::String &filename, const MapID &mapid) {
 	for (auto it = map[mapid].begin(); it != map[mapid].end(); ++it)
-		it->second.Delete();
+		it->_value.Delete();
 
 	map[mapid].clear();
 	XMLDoc image_list(filename);
@@ -63,7 +65,7 @@ void ImageManager::LoadMap(const std::string &filename, const MapID &mapid) {
 				// if yes, load it  - if no, just load the higher quality one
 
 				bool valid = false;
-				std::string path;
+				Common::String path;
 
 				if (!gScreenSettings.quality)
 					valid = LoadStr(path, "path_low", n, false);
@@ -74,7 +76,10 @@ void ImageManager::LoadMap(const std::string &filename, const MapID &mapid) {
 				if (valid)
 					map[mapid][key].Load(path);
 				else
+					error("ImageManager::LoadMap : Unable to load image id %u from %s!", key, path.c_str());
+#if 0
 					fprintf(stderr, "Unable to load image id %u from %s! SDL Error: %s\n", key, path.c_str(), SDL_GetError());
+#endif
 			}
 		}
 
@@ -104,37 +109,39 @@ bool ImageManager::Init() {
 //------------------------------------------------------------------------
 // Purpose: Add texture to image map
 //------------------------------------------------------------------------
-void ImageManager::AddTexture(const ImageKey &id, SDL_Surface *surface, int mapindex) {
-	if (map[mapindex].count(id) > 0)
+void ImageManager::AddTexture(const ImageKey &id, Graphics::Surface *surface, int mapindex) {
+	if (map[mapindex].contains(id))
 		FreeTexture(id, mapindex);
 
 	map[mapindex][id].Load(surface);
+#if 0
 	SDL_FreeSurface(surface);
+#endif
 }
 
 //------------------------------------------------------------------------
 // Purpose: Get texture for a particular id
 //------------------------------------------------------------------------
 void ImageManager::GetTexture(const ImageKey &id, Image &data) {
-	if (map[MAP_CURRENT].count(id) > 0)
+	if (map[MAP_CURRENT].contains(id))
 		data = map[MAP_CURRENT][id];
-	else if (map[MAP_COMMON].count(id) > 0)
+	else if (map[MAP_COMMON].contains(id))
 		data = map[MAP_COMMON][id];
 	else
 		data = invalid_img;
 }
 
 Image &ImageManager::GetTexture(const ImageKey &id) {
-	if (map[MAP_CURRENT].count(id) > 0)
+	if (map[MAP_CURRENT].contains(id))
 		return map[MAP_CURRENT][id];
-	else if (map[MAP_COMMON].count(id) > 0)
+	else if (map[MAP_COMMON].contains(id))
 		return map[MAP_COMMON][id];
 
 	return invalid_img;
 }
 
 bool ImageManager::ValidTexture(const ImageKey &id) {
-	if (id != 0 && (map[MAP_CURRENT].count(id) > 0 || map[MAP_COMMON].count(id) > 0))
+	if (id != 0 && (map[MAP_CURRENT].contains(id) || map[MAP_COMMON].contains(id)))
 		return true;
 
 	return false;
@@ -143,7 +150,7 @@ bool ImageManager::ValidTexture(const ImageKey &id) {
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------
-void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Rect *clip,
+void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Common::Rect *clip,
 						const TextureFlipType &flip) {
 	GetTexture(id).Draw(x, y, clip, flip);
 }
@@ -152,15 +159,19 @@ void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Rect *cl
 // Purpose: Dim the screen by drawing a 128 alpha black rectangle over it
 //------------------------------------------------------------------------
 void ImageManager::DimScreen() {
+#if 0
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 128);
 	SDL_RenderFillRect(gRenderer, NULL);
+#endif
 }
 
 void ImageManager::BlackScreen() {
+#if 0
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 	SDL_RenderFillRect(gRenderer, NULL);
+#endif
 }
 //------------------------------------------------------------------------
 // Purpose: free resources
@@ -168,10 +179,12 @@ void ImageManager::BlackScreen() {
 void ImageManager::Quit() {
 	for (int i = 0; i < MAP_TOTAL; i++) {
 		for (auto it = map[i].begin(); it != map[i].end(); ++it)
-			it->second.Delete();
+			it->_value.Delete();
 
 		map[i].clear();
 	}
 
 	invalid_img.Delete();
 }
+
+} // End of namespace Crab
