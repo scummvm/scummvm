@@ -550,6 +550,30 @@ Common::String BitmapCastMember::formatInfo() {
 	);
 }
 
+PictureReference *BitmapCastMember::getPicture() const {
+	auto picture = new PictureReference;
+
+	// Not sure if we can make the assumption that the owning
+	// BitmapCastMember will live as long as any reference,
+	// so we'll make a copy of the Picture.
+	picture->_picture = new Picture(*_picture);
+
+	return picture;
+}
+
+void BitmapCastMember::setPicture(PictureReference &picture) {
+	delete _picture;
+	_picture = new Picture(*picture._picture);
+
+	// Force redither
+	delete _ditheredImg;
+	_ditheredImg = nullptr;
+
+	// Make sure we get redrawn
+	setModified(true);
+	// TODO: Should size be adjusted?
+}
+
 void BitmapCastMember::setPicture(Image::ImageDecoder &image, bool adjustSize) {
 	delete _picture;
 	_picture = new Picture(image);

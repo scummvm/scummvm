@@ -938,6 +938,9 @@ void Datum::reset() {
 		case MENUREF:
 			delete u.menu;
 			break;
+		case PICTUREREF:
+			delete u.picture;
+			break;
 		default:
 			warning("Datum::reset(): Unprocessed REF type %d", type);
 			break;
@@ -1163,6 +1166,9 @@ Common::String Datum::asString(bool printonly) const {
 	case MENUREF:
 		s = Common::String::format("menu(%d, %d)", u.menu->menuIdNum, u.menu->menuItemIdNum);
 		break;
+	case PICTUREREF:
+		s = Common::String::format("picture: %p", (void*)u.picture->_picture);
+		break;
 	default:
 		warning("Incorrect operation asString() for type: %s", type2str());
 	}
@@ -1228,6 +1234,8 @@ const char *Datum::type2str(bool ilk) const {
 		return ilk ? "object" : "OBJECT";
 	case PARRAY:
 		return ilk ? "proplist" : "PARRAY";
+	case PICTUREREF:
+		return ilk ? "picture" :  "PICTUREREF";
 	case POINT:
 		return ilk ? "point" : "POINT";
 	case PROPREF:
@@ -1267,6 +1275,8 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 		return u.obj == d.u.obj;
 	case CASTREF:
 		return *u.cast == *d.u.cast;
+	case PICTUREREF:
+		return 0; // Original always returns 0 on picture reference comparison
 	default:
 		break;
 	}

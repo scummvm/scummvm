@@ -41,6 +41,7 @@ namespace Director {
 
 struct ChunkReference;
 struct MenuReference;
+struct PictureReference;
 struct TheEntity;
 struct TheEntityField;
 struct LingoArchive;
@@ -144,6 +145,7 @@ struct Datum {	/* interpreter stack type */
 		ChunkReference *cref; /* CHUNKREF */
 		CastMemberID *cast;	/* CASTREF, FIELDREF */
 		MenuReference *menu; /* MENUREF	*/
+		PictureReference *picture; /* PICTUREREF */
 	} u;
 
 	int *refCount;
@@ -207,6 +209,13 @@ struct MenuReference {
 	Common::String *menuItemIdStr;
 
 	MenuReference();
+};
+
+struct PictureReference {
+	Picture *_picture = nullptr;
+	~PictureReference() {
+		delete _picture;
+	}
 };
 
 struct PCell {

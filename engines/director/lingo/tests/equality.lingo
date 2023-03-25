@@ -19,3 +19,8 @@ scummvmAssert("<Object:#FileIO" > 0)
 
 -- Invalid comparisons should return FALSE
 scummvmAssert(not (#test <= 0))
+
+-- Picture comparisons are always false, even between the exact same cast.
+set a to the picture of cast 1
+scummvmAssert(a <> a)
+scummvmAssert(a <> the picture of cast 1)   -- always false
