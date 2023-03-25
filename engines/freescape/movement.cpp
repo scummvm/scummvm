@@ -92,7 +92,7 @@ void FreescapeEngine::shoot() {
 
 		executeObjectConditions(gobj, true, false);
 	}
-	executeLocalGlobalConditions(true, false); // Only execute "on shot" room/global conditions
+	executeLocalGlobalConditions(true, false, false); // Only execute "on shot" room/global conditions
 }
 
 void FreescapeEngine::changePlayerHeight(int index) {

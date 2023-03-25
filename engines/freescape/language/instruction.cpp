@@ -72,11 +72,11 @@ void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, b
 		_firstSound = true;
 		_objExecutingCodeSize = obj->getSize();
 		debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
-		executeCode(obj->_condition, shot, collided);
+		executeCode(obj->_condition, shot, collided, false); // TODO: check this last parameter
 	}
 }
 
-void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided) {
+void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided, bool timer) {
 	if (isCastle())
 		return;
 	debugC(1, kFreescapeDebugCode, "Executing room conditions");
@@ -85,17 +85,17 @@ void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided) {
 
 	for (uint i = 0; i < conditions.size(); i++) {
 		debugC(1, kFreescapeDebugCode, "%s", conditionSources[i].c_str());
-		executeCode(conditions[i], shot, collided);
+		executeCode(conditions[i], shot, collided, timer);
 	}
 
 	debugC(1, kFreescapeDebugCode, "Executing global conditions (%d)", _conditions.size());
 	for (uint i = 0; i < _conditions.size(); i++) {
 		debugC(1, kFreescapeDebugCode, "%s", _conditionSources[i].c_str());
-		executeCode(_conditions[i], shot, collided);
+		executeCode(_conditions[i], shot, collided, timer);
 	}
 }
 
-void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided) {
+void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer) {
 	assert(!(shot && collided));
 	int ip = 0;
 	int codeSize = code.size();
@@ -109,13 +109,19 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			break;
 		case Token::COLLIDEDQ:
 			if (collided)
-				executeCode(*instruction._thenInstructions, shot, collided);
+				executeCode(*instruction._thenInstructions, shot, collided, timer);
 			// else branch is always empty
 			assert(instruction._elseInstructions == nullptr);
 			break;
 		case Token::SHOTQ:
 			if (shot)
-				executeCode(*instruction._thenInstructions, shot, collided);
+				executeCode(*instruction._thenInstructions, shot, collided, timer);
+			// else branch is always empty
+			assert(instruction._elseInstructions == nullptr);
+			break;
+		case Token::TIMERQ:
+			if (timer)
+				executeCode(*instruction._thenInstructions, shot, collided, timer);
 			// else branch is always empty
 			assert(instruction._elseInstructions == nullptr);
 			break;
