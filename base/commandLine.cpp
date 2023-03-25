@@ -1928,6 +1928,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	// Finally, store the command line settings into the config manager.
 	static const char * const sessionSettings[] = {
 		"config",
+		"logfile",
 		"initial-cfg",
 		"fullscreen",
 		"gfx-mode",
