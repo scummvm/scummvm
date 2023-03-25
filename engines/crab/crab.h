@@ -84,10 +84,12 @@ protected:
 public:
 	Graphics::Screen *_screen = nullptr;
 	Graphics::ManagedSurface *_renderSurface = nullptr;
+	Common::FSNode _gameDataDir;
 
 public:
 	CrabEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~CrabEngine() override;
+	void initializePath(const Common::FSNode &gamePath) override;
 
 	uint32 getFeatures() const;
 
