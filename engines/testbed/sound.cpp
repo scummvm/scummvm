@@ -209,11 +209,15 @@ TestExitStatus SoundSubsystem::modPlayback() {
 		if (!f.isOpen())
 			continue;
 
-		Audio::RewindableAudioStream *mod = Audio::makeModXmS3mStream(&f, DisposeAfterUse::NO);
+		Audio::RewindableAudioStream *mod = nullptr;
+
+		if (Audio::probeModXmS3m(&f))
+			mod = Audio::makeModXmS3mStream(&f, DisposeAfterUse::NO);
+
 #ifdef USE_MIKMOD
 		if (!mod) {
-			// Try impulse tracker if failed!
-			mod = Audio::makeImpulseTrackerStream(&f, DisposeAfterUse::NO);
+			if (Audio::probeImpulseTracker(&f))
+				mod = Audio::makeImpulseTrackerStream(&f, DisposeAfterUse::NO);
 		}
 #endif
 		if (!mod) {
