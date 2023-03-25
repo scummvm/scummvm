@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 23:29+0000\n"
-"Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
+"PO-Revision-Date: 2023-03-25 23:32+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
 "Language: ar\n"
@@ -6548,7 +6548,7 @@ msgstr "أنظر للأسفل"
 
 #: engines/mohawk/riven.cpp:908
 msgid "Play intro videos"
-msgstr ""
+msgstr "تشغيل مقاطع الفيديو التمهيدية"
 
 #: engines/mohawk/riven_stack.cpp:203
 msgid ""
@@ -6734,70 +6734,75 @@ msgstr "انتقل إلى حفظ / تحميل القائمة"
 
 #: engines/nancy/input.cpp:223
 msgid "Reload last save"
-msgstr ""
+msgstr "إعادة تحميل آخر حفظ"
 
 #: engines/nancy/input.cpp:228
 msgid "Go to setup menu"
-msgstr ""
+msgstr "اذهب إلى قائمة الإعداد"
 
 #: engines/nancy/input.cpp:233
 msgid "Show credits"
-msgstr ""
+msgstr "إظهار الاعتمادات"
 
 #: engines/nancy/input.cpp:238
 msgid "Go to map screen"
-msgstr ""
+msgstr "انتقل إلى شاشة الخريطة"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
-msgstr ""
+msgstr "خطاب اللاعب"
 
 #: engines/nancy/dialogs.cpp:40
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
-msgstr ""
+msgstr "تفعيل كلام اللاعب. يعمل فقط إذا تم تمكين الكلام في إعدادات الصوت."
 
 #: engines/nancy/dialogs.cpp:41
 msgid "Character Speech"
-msgstr ""
+msgstr "خطاب الشخصية"
 
 #: engines/nancy/dialogs.cpp:41
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
-msgstr ""
+msgstr "تفعيل خطاب NPC. يعمل فقط إذا تم تمكين الكلام في إعدادات الصوت."
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Use original menus"
-msgstr ""
+msgstr "استخدم القوائم الأصلية"
 
 #: engines/nancy/dialogs.cpp:42
 msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
+"استخدم القوائم الرئيسية وقوائم الحفظ / التحميل والإعداد الخاصة بالمحرك "
+"الأصلي. لا يزال من الممكن الوصول إلى القائمة الرئيسية العالمية ل ScummVM من "
+"خلال خريطة المفاتيح الخاصة بها."
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:45
 msgid "Enable Second Chance"
-msgstr ""
+msgstr "تمكين الفرصة الثانية"
 
 #: engines/nancy/dialogs.cpp:45
 msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
+"قم بتمكين ميزة الفرصة الثانية ، والتي تحفظ تلقائيًا في مشاهد محددة. يؤدي "
+"تمكين هذا إلى تعطيل عمليات الحفظ التلقائي المحددة بوقت."
 
 #: engines/nancy/dialogs.cpp:47
 msgid "Speech Options"
-msgstr ""
+msgstr "خيارات الكلام"
 
 #: engines/nancy/dialogs.cpp:48
 msgid "Engine Options"
-msgstr ""
+msgstr "خيارات المحرك"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "تخطي مشاهد القصة المصورة في Hall of Records"
 
 #: engines/neverhood/dialogs.cpp:54
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
@@ -7901,19 +7906,19 @@ msgstr "العنصر الأوسط الأيمن"
 
 #: engines/scumm/help.cpp:279 engines/scumm/help.cpp:284
 msgid "Switching characters:"
-msgstr ""
+msgstr "تبديل الشخصيات:"
 
 #: engines/scumm/help.cpp:281
 msgid "Second kid"
-msgstr ""
+msgstr "الطفل الثاني"
 
 #: engines/scumm/help.cpp:282
 msgid "Third kid"
-msgstr ""
+msgstr "الطفل الثالث"
 
 #: engines/scumm/help.cpp:291
 msgid "Toggle Inventory/IQ Points display"
-msgstr ""
+msgstr "تبديل عرض الجرد / نقاط الذكاء"
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Keyboard/Mouse Fighting (*)"
@@ -8046,6 +8051,8 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"الإصدار Lite من Putt-Putt يحفظ Zoo iOS غير مدعوم لتجنب القرصنة.\n"
+"النسخة الكاملة متاحة للشراء من متجر iTunes."
 
 #: engines/scumm/metaengine.cpp:460
 msgid "HE v71+ support is not compiled in"
@@ -8080,6 +8087,8 @@ msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"قم بقص الـ 40 بكسل الإضافية في الجزء السفلي من الشاشة ، لجعلها قياسية "
+"بارتفاع 200 بكسل ، مما يسمح باستخدام \"تصحيح نسبة العرض إلى الارتفاع\""
 
 #: engines/scumm/metaengine.cpp:631
 msgid "Play simplified music"
@@ -8090,6 +8099,8 @@ msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
+"من المفترض أن تكون هذه الموسيقى مخصصة لأجهزة Mac منخفضة الجودة ، وتستخدم "
+"قناة واحدة فقط."
 
 #: engines/scumm/metaengine.cpp:640
 msgid "Enable smooth scrolling"
@@ -8107,7 +8118,7 @@ msgstr ""
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
-msgstr ""
+msgstr "اجعل التمرير أقل سلاسة أثناء حركة الكاميرا السريعة في المقدمة."
 
 #: engines/scumm/metaengine.cpp:677
 msgid ""
@@ -8182,12 +8193,16 @@ msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
+"تعذر العثور على ملف Macintosh القابل للتنفيذ \"Loom\". موسيقى عالية الدقة\n"
+"سيتم تعطيل إصدارات الخط والمؤشر."
 
 #: engines/scumm/scumm.cpp:1198
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"تعذر العثور على ملف Macintosh القابل للتنفيذ \"Monkey Island\" لقراءة ملف\n"
+"أدوات من. سيتم تعطيل الموسيقى."
 
 #: engines/scumm/scumm.cpp:1549
 msgid ""
@@ -8202,12 +8217,16 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
+"يتطلب دعم MIDI الأصلي ترقية Roland من LucasArts ،\n"
+"لكن%s مفقود. استخدام AdLib بدلاً من ذلك."
 
 #: engines/scumm/scumm.cpp:2037
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
+"من المعروف أن هذه النسخة الخاصة من Monkey Island 1 تفتقد بعضًا منها\n"
+"الموارد المطلوبة ل MT-32. استخدام AdLib بدلاً من ذلك."
 
 #: engines/scumm/scumm.cpp:3373
 msgid ""
@@ -8222,7 +8241,7 @@ msgstr ""
 
 #: engines/scumm/scumm.cpp:3484
 msgid "Host"
-msgstr ""
+msgstr "يستضيف"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -8254,6 +8273,7 @@ msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"اعرض أسماء النقاط الفعالة فقط بعد النقر فعليًا على نقطة فعالة أو زر إجراء"
 
 #: engines/sherlock/metaengine.cpp:75
 msgid "Show character portraits"
@@ -8332,6 +8352,8 @@ msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"عند تمكين التصفية الخطية ، تصبح رسومات الخلفية أكثر سلاسة في وضع ملء الشاشة ،"
+" على حساب بعض التفاصيل."
 
 #: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:132
 msgid "Enable font anti-aliasing"
@@ -8380,6 +8402,8 @@ msgstr ""
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
+"تم العثور على إصدار غير صحيح من ملف بيانات المحرك '%s'. توقع%d لكن حصلت "
+"على%d."
 
 #: engines/supernova/supernova.cpp:486
 #, c-format
@@ -8396,6 +8420,8 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"فشل حفظ حالة اللعبة المؤقتة. تأكد من تعيين دليل حفظ اللعبة في ScummVM وأنه "
+"يمكنك الكتابة إليه."
 
 #: engines/supernova/supernova.cpp:834
 msgid "Failed to load temporary game state."
@@ -8442,6 +8468,8 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
+"الهدف من اللعبة المحفوظة الجديدة موجود بالفعل!\n"
+"هل ترغب في الاحتفاظ باللعبة المحفوظة القديمة (%s) أم اللعبة الجديدة (%s)؟\n"
 
 #: engines/sword1/control.cpp:1263
 msgid "Keep the old one"
@@ -8482,6 +8510,8 @@ msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"يتم ضغط ملف teenagent.dat ولم يتم تضمين zlib في هذا الملف القابل للتنفيذ. من "
+"فضلك فك الضغط"
 
 #: engines/tetraedge/metaengine.cpp:33
 msgid "Correct movie aspect ratio"
@@ -8556,7 +8586,7 @@ msgstr ""
 #: engines/twine/metaengine.cpp:57
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
-msgstr ""
+msgstr "الأصل كان لديه فقط أجهزة حفظ تلقائية. هذا يسمح لك بالحفظ وقتما تشاء."
 
 #: engines/twine/metaengine.cpp:67
 msgid "Enable debug mode"
@@ -8732,12 +8762,12 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:456
 msgid "Accept"
-msgstr ""
+msgstr "يقبل"
 
 #: engines/twine/metaengine.cpp:464 engines/twine/metaengine.cpp:516
 #: engines/twine/metaengine.cpp:532
 msgid "Abort"
-msgstr ""
+msgstr "ألغى"
 
 #: engines/twine/metaengine.cpp:502
 msgid "Next Page"
@@ -8866,7 +8896,7 @@ msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Crusader"
-msgstr ""
+msgstr "الصليبي"
 
 #: engines/ultima/ultima8/metaengine.cpp:178
 msgid "Ultima VIII Cheats"
@@ -8882,6 +8912,9 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"ملف فيلم المقدمة الصليبية مفقود - تحقق من نسخ أدلة FLICS و SOUND من القرص "
+"المضغوط. المزيد من التعليمات موجودة على الويكي: https://wiki.scummvm.org/"
+"index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
@@ -8892,12 +8925,17 @@ msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"تتطلب الموسيقى الخاصة بهذه اللعبة دعم Ogg Vorbis ، والذي لم يتم تجميعه "
+"بتنسيق.\n"
+"ستستمر اللعبة في اللعب ، لكن لن تحتوي على أي موسيقى."
 
 #: engines/vcruise/vcruise.cpp:93
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"تتطلب الموسيقى الخاصة بهذه اللعبة دعم MP3 ، والذي لم يتم تجميعه بتنسيق.\n"
+"ستستمر اللعبة في اللعب ، لكن لن تحتوي على أي موسيقى."
 
 #: engines/vcruise/vcruise.cpp:230
 msgid "Failed to load save, the save data appears to be damaged."
@@ -8917,7 +8955,7 @@ msgstr ""
 
 #: engines/wintermute/metaengine.cpp:43
 msgid "Show the current number of frames per second in the upper left corner"
-msgstr ""
+msgstr "اعرض العدد الحالي للإطارات في الثانية في الزاوية اليسرى العليا"
 
 #: engines/wintermute/metaengine.cpp:54
 msgid "Sprite bilinear filtering (SLOW)"
@@ -8964,6 +9002,8 @@ msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
+"تتطلب هذه اللعبة قدرات ثلاثية الأبعاد ، والتي لم يتم تجميعها فيها. على هذا "
+"النحو ، فمن المحتمل أن تكون غير قابلة للتشغيل كليًا أو جزئيًا."
 
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
@@ -9231,7 +9271,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
-msgstr ""
+msgstr "خرج"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
