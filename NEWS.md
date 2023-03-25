@@ -12,6 +12,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
   - Added optional dependency for libvpx.
+  - Added optional dependency for libmikmod.
 
  Asylum:
    - Added support for Chinese Sanitarium.
