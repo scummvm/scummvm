@@ -160,6 +160,13 @@ void Events::popView() {
 	}
 }
 
+void Events::redrawViews() {
+	for (uint i = 0; i < _views.size(); ++i) {
+		_views[i]->redraw();
+		_views[i]->draw();
+	}
+}
+
 bool Events::isPresent(const Common::String &name) const {
 	for (uint i = 0; i < _views.size(); ++i) {
 		if (_views[i]->_name == name)

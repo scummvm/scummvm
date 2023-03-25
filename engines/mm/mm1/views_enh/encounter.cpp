@@ -29,12 +29,12 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-Encounter::Encounter() : ScrollView("Encounter") {
+Encounter::Encounter() : YesNo("Encounter") {
 	setDisplayArea(false);
 }
 
 bool Encounter::msgFocus(const FocusMessage &msg) {
-	_mode = ALERT;
+	setMode(ALERT);
 	return true;
 }
 
@@ -52,7 +52,7 @@ void Encounter::draw() {
 	setReduced(false);
 
 	if (_mode != ALERT) {
-		ScrollView::draw();
+		YesNo::draw();
 	}
 
 	switch (_mode) {
@@ -158,8 +158,10 @@ void Encounter::draw() {
 			Sound::sound(SOUND_2);
 		}
 
-		_mode = BATTLE;
+		setMode(BATTLE);
 	}
+
+	setDisplayArea(false);
 }
 
 void Encounter::timeout() {
@@ -170,18 +172,18 @@ void Encounter::timeout() {
 	case ALERT:
 		// Finished displaying initial encounter alert
 		if (enc._encounterType == Game::FORCE_SURPRISED) {
-			_mode = SURPRISED_BY_MONSTERS;
+			setMode(SURPRISED_BY_MONSTERS);
 		} else if (enc._encounterType == Game::NORMAL_SURPRISED ||
 			/* ENCOUNTER_OPTIONS */
 			g_engine->getRandomNumber(100) > map[Maps::MAP_21]) {
 			// Potentially surprised. Check for guard dog spell
 			if (g_globals->_activeSpells._s.guard_dog ||
 				g_engine->getRandomNumber(100) > map[Maps::MAP_20])
-				_mode = ENCOUNTER_OPTIONS;
+				setMode(ENCOUNTER_OPTIONS);
 			else
-				_mode = SURPRISED_BY_MONSTERS;
+				setMode(SURPRISED_BY_MONSTERS);
 		} else {
-			_mode = SURPRISED_MONSTERS;
+			setMode(SURPRISED_MONSTERS);
 		}
 		break;
 
@@ -204,7 +206,7 @@ bool Encounter::msgKeypress(const KeypressMessage &msg) {
 	switch (_mode) {
 	case SURPRISED_MONSTERS:
 		if (msg.keycode == Common::KEYCODE_y) {
-			_mode = ENCOUNTER_OPTIONS;
+			setMode(ENCOUNTER_OPTIONS);
 			redraw();
 		} else if (msg.keycode == Common::KEYCODE_n) {
 			encounterEnded();
@@ -233,7 +235,7 @@ bool Encounter::msgKeypress(const KeypressMessage &msg) {
 	case BRIBE:
 		if (msg.keycode == Common::KEYCODE_y) {
 			if (getRandomNumber(100) > map[Maps::MAP_BRIBE_THRESHOLD]) {
-				_mode = NOT_ENOUGH;
+				setMode(NOT_ENOUGH);
 				redraw();
 			} else {
 				switch (_bribeType) {
@@ -251,7 +253,7 @@ bool Encounter::msgKeypress(const KeypressMessage &msg) {
 				encounterEnded();
 			}
 		} else if (msg.keycode == Common::KEYCODE_n) {
-			_mode = ENCOUNTER_OPTIONS;
+			setMode(ENCOUNTER_OPTIONS);
 			redraw();
 		}
 		break;
@@ -276,7 +278,7 @@ void Encounter::attack() {
 		increaseAlignments();
 	}
 
-	_mode = COMBAT;
+	setMode(COMBAT);
 	redraw();
 }
 
@@ -287,7 +289,7 @@ void Encounter::bribe() {
 		if (!enc._bribeAlignmentCtr)
 			decreaseAlignments();
 
-		_mode = NO_RESPONSE;
+		setMode(NO_RESPONSE);
 		redraw();
 
 	} else if (getRandomNumber(7) == 5 && !enc._bribeFleeCtr) {
@@ -295,7 +297,7 @@ void Encounter::bribe() {
 		encounterEnded();
 
 	} else {
-		_mode = BRIBE;
+		setMode(BRIBE);
 
 		int val = getRandomNumber(100);
 		if (val < 6) {
@@ -323,14 +325,14 @@ void Encounter::retreat() {
 		flee();
 	} else if (val > map[Maps::MAP_FLEE_THRESHOLD]) {
 		// Nowhere to run depending on the map
-		_mode = NOWHERE_TO_RUN;
+		setMode(NOWHERE_TO_RUN);
 		redraw();
 	} else if (enc._monsterList.size() < g_globals->_party.size() || !enc.checkSurroundParty()) {
 		// Only allow fleeing if the number of monsters
 		// are less than the size of the party
 		flee();
 	} else {
-		_mode = SURROUNDED;
+		setMode(SURROUNDED);
 		redraw();
 	}
 }
@@ -341,7 +343,7 @@ void Encounter::surrender() {
 
 	if (getRandomNumber(100) > map[Maps::MAP_SURRENDER_THRESHOLD] ||
 			getRandomNumber(100) > enc._fleeThreshold) {
-		_mode = SURRENDER_FAILED;
+		setMode(SURRENDER_FAILED);
 		redraw();
 	} else {
 		g_maps->_mapPos.x = map[Maps::MAP_SURRENDER_X];
@@ -411,6 +413,16 @@ void Encounter::increaseAlignments() {
 				enc.changeCharAlignment(NEUTRAL);
 		}
 	}
+}
+
+void Encounter::setMode(Mode newMode) {
+	if (_mode == SURPRISED_MONSTERS || _mode == BRIBE)
+		closeYesNo();
+
+	_mode = newMode;
+
+	if (_mode == SURPRISED_MONSTERS || _mode == BRIBE)
+		openYesNo();
 }
 
 } // namespace ViewsEnh

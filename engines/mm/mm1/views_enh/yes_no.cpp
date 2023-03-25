@@ -27,6 +27,18 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+void YesNo::openYesNo() {
+	_subviewVisible = true;
+	redraw();
+}
+
+void YesNo::closeYesNo() {
+	_subviewVisible = false;
+
+	// Redraw the prior views to remove yes/no area
+	g_events->redrawViews();
+}
+
 void YesNo::draw() {
 	if (_subviewVisible)
 		_subview.draw();
@@ -35,14 +47,14 @@ void YesNo::draw() {
 }
 
 bool YesNo::msgMouseDown(const MouseDownMessage &msg) {
-	if (_subview.msgMouseDown(msg))
+	if (_subviewVisible && _subview.msgMouseDown(msg))
 		return true;
 
 	return ScrollView::msgMouseDown(msg);
 }
 
 bool YesNo::msgMouseUp(const MouseUpMessage &msg) {
-	if (_subview.msgMouseUp(msg))
+	if (_subviewVisible && _subview.msgMouseUp(msg))
 		return true;
 
 	return ScrollView::msgMouseUp(msg);

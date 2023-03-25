@@ -46,18 +46,12 @@ protected:
 	/**
 	 * Start displaying the yes/no subview
 	 */
-	void openYesNo() {
-		_subviewVisible = true;
-		redraw();
-	}
+	void openYesNo();
 
 	/**
 	 * Stop displaying the subview
 	 */
-	void closeYesNo() {
-		_subviewVisible = false;
-		redraw();
-	}
+	void closeYesNo();
 
 public:
 	YesNo(const Common::String &name) : ScrollView(name) {}

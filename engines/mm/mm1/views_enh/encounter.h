@@ -22,14 +22,14 @@
 #ifndef MM1_VIEWS_ENH_ENCOUNTER_H
 #define MM1_VIEWS_ENH_ENCOUNTER_H
 
+#include "mm/mm1/views_enh/yes_no.h"
 #include "mm/mm1/events.h"
-#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class Encounter : public ScrollView {
+class Encounter : public YesNo {
 private:
 	enum Mode {
 		ALERT, SURPRISED_BY_MONSTERS, SURPRISED_MONSTERS,
@@ -41,6 +41,11 @@ private:
 	enum BribeType { BRIBE_GOLD, BRIBE_GEMS, BRIBE_FOOD };
 	BribeType _bribeType = BRIBE_GOLD;
 	Common::String _bribeTypeStr;
+
+	/**
+	 * Set display mode
+	 */
+	void setMode(Mode newMode);
 
 	/**
 	 * Sets the display area

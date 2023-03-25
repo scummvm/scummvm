@@ -316,6 +316,13 @@ public:
 	void popView();
 
 	/**
+	 * Redraws the views in order. This is used in rare cases
+	 * where a view draws outside it's defined area, and needs
+	 * to restore whether the background was before
+	 */
+	void redrawViews();
+
+	/**
 	 * Returns the currently focused view, if any
 	 */
 	UIElement *focusedView() const {
