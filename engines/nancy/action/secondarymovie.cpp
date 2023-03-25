@@ -93,14 +93,21 @@ void PlaySecondaryMovie::init() {
 	if (!_decoder.loadFile(_videoName + ".avf")) {
 		error("Couldn't load video file %s", _videoName.c_str());
 	}
+
 	_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphicsManager->getInputPixelFormat());
+	
 	if (_paletteName.size()) {
 		GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
+		GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
 	}
 
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		setTransparent(true);
 		_fullFrame.setTransparentColor(_drawSurface.getTransparentColor());
+		
+		// TVD uses empty video files during the endgame ceremony
+		// This makes sure the screen doesn't go black while the sound is playing
+		_drawSurface.clear(_drawSurface.getTransparentColor());
 	}
 
 	_screenPosition = _drawSurface.getBounds();
