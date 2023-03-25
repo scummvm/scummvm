@@ -71,7 +71,7 @@ namespace Audio {
 
 class AudioStream;
 
-/*
+/**
  * Factory function for ModXmS3mStream streams. Reads all data from the
  * given ReadStream and creates an AudioStream from this. No reference
  * to the 'stream' object is kept, so you can safely delete it after
@@ -89,6 +89,11 @@ RewindableAudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream,
 		DisposeAfterUse::Flag disposeAfterUse,
 		int initialPos = 0,
 		int rate = 48000, int interpolation = 0);
+
+/**
+ * Check if the stream is one of the supported formats
+ */
+bool probeModXmS3m(Common::SeekableReadStream *stream);
 
 } // End of namespace Audio
 

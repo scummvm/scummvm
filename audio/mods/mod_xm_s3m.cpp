@@ -1374,4 +1374,45 @@ RewindableAudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream, Di
 	return soundStream;
 }
 
+bool probeModXmS3m(Common::SeekableReadStream *st) {
+	int32 setPos = st->pos();
+
+	// xm file
+	char sigXm[18] = { 0 };
+	st->read(sigXm, 17);
+	st->seek(setPos);
+	if (!memcmp(sigXm, "Extended Module: ", 17)) {
+		return true;
+	}
+
+	// s3m file
+	char sigS3m[4];
+	st->skip(44);
+	st->read(sigS3m, 4);
+	st->seek(setPos);
+	if (!memcmp(sigS3m, "SCRM", 4)) {
+		st->seek(setPos);
+		return true;
+	}
+
+	// amf file
+	char sigAmf[25] = {};
+	st->read(sigAmf, 24);
+	st->seek(setPos);
+	if (!memcmp(sigAmf, "ASYLUM Music Format V1.0", 24)) {
+		return true;
+	}
+
+	// mod file
+	char sigMod[4];
+	st->skip(1080);
+	st->read(sigMod, 4);
+	st->seek(setPos);
+	if (!memcmp(sigMod, "M.K.", 4) || !memcmp(sigMod, "M!K!", 4)) {
+		return true;
+	}
+
+	return false;
+}
+
 } // End of namespace Audio
