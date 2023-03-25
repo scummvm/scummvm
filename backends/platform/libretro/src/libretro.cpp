@@ -594,17 +594,15 @@ void retro_run(void) {
 	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &audio_video_enable);
 
 	bool skip_frame = false;
-	retro_switch_to_emu_thread();
+	size_t samples_count = 0;
 
 	if (g_system) {
-		poll_cb();
-		retroProcessMouse(input_cb, retro_device, gampad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
-
 		/* ScummVM is not based on fixed framerate like libretro, and engines/scripts
 		can call multiple screen updates between two retro_run calls. Hence if consecutive screen updates
 		are detected we will loop within the same retro_run call until next pollEvent or
 		delayMillis call in ScummVM thread.
 		*/
+
 		do {
 			if (frameskip_type && can_dupe) {
 				if (audio_status & (AUDIO_STATUS_BUFFER_SUPPORT | AUDIO_STATUS_BUFFER_ACTIVE)){
@@ -622,12 +620,15 @@ void retro_run(void) {
 				} else
 					skip_frame = !(current_frame % frameskip_no == 0);
 			}
+
+			retro_switch_to_emu_thread();
+
 			/* Upload audio */
-			size_t count = 0;
+			samples_count = 0;
 			if (audio_video_enable & 2) {
-				count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
+				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
 			}
-			audio_status = count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
+			audio_status = samples_count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
 
 			/* No frame skipping if there is no incoming audio (e.g. GUI) */
 			skip_frame = skip_frame && ! (audio_status & AUDIO_STATUS_MUTE);
@@ -657,14 +658,14 @@ void retro_run(void) {
 				audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
 			}
 #endif
-			audio_batch_cb((audio_status & AUDIO_STATUS_MUTE) ? NULL : (int16_t *) sound_buffer, count); // Set to NULL to skip sound rendering
+			audio_batch_cb((audio_status & AUDIO_STATUS_MUTE) ? NULL : (int16_t *) sound_buffer, samples_count); // Set to NULL to skip sound rendering
 
 			current_frame++;
 
-			if (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE)
-				retro_switch_to_emu_thread();
-
 		} while (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
+
+		poll_cb();
+		retroProcessMouse(input_cb, retro_device, gampad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
 	}
 
 	bool updated = false;
