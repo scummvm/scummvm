@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 22:37+0000\n"
+"PO-Revision-Date: 2023-03-25 22:45+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -3934,118 +3934,118 @@ msgstr "وضع التكبير قيد التشغيل"
 
 #: backends/platform/3ds/osystem-events.cpp:428
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "وضع التكبير متوقف. إعادة تنشيط وضع السحب ..."
 
 #: backends/platform/3ds/osystem-events.cpp:430
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "وضع التكبير متوقف"
 
 #: backends/platform/android/options.cpp:118
 msgid "Show On-screen control"
-msgstr ""
+msgstr "إظهار التحكم على الشاشة"
 
 #: backends/platform/android/options.cpp:119
 msgid "Choose the preferred touch mode:"
-msgstr ""
+msgstr "اختر وضع اللمس المفضل:"
 
 #: backends/platform/android/options.cpp:121
 msgid "In menus"
-msgstr ""
+msgstr "في القوائم"
 
 #: backends/platform/android/options.cpp:123
 #: backends/platform/android/options.cpp:141
 #: backends/platform/android/options.cpp:142
 msgid "Touchpad emulation"
-msgstr ""
+msgstr "مضاهاة لوحة اللمس"
 
 #: backends/platform/android/options.cpp:124
 #: backends/platform/android/options.cpp:144
 #: backends/platform/android/options.cpp:145
 msgid "Direct mouse"
-msgstr ""
+msgstr "الماوس المباشر"
 
 #: backends/platform/android/options.cpp:125
 #: backends/platform/android/options.cpp:147
 #: backends/platform/android/options.cpp:148
 msgid "Gamepad emulation"
-msgstr ""
+msgstr "مضاهاة لوحة الألعاب"
 
 #: backends/platform/android/options.cpp:131
 msgid "In 2D games"
-msgstr ""
+msgstr "في الألعاب ثنائية الأبعاد"
 
 #: backends/platform/android/options.cpp:133
 msgid "In 3D games"
-msgstr ""
+msgstr "في الألعاب ثلاثية الأبعاد"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:153
 msgid "Remove folder authorizations..."
-msgstr ""
+msgstr "إزالة تراخيص المجلد ..."
 
 #: backends/platform/android/options.cpp:360
 msgid "Remove"
-msgstr ""
+msgstr "يزيل"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
-msgstr ""
+msgstr "غير مقيس"
 
 #: backends/platform/ds/ds-graphics.cpp:282
 msgid "Hardware scale (fast, but low quality)"
-msgstr ""
+msgstr "مقياس الأجهزة (سريع ، ولكن بجودة منخفضة)"
 
 #: backends/platform/ds/ds-graphics.cpp:283
 msgid "Software scale (good quality, but slower)"
-msgstr ""
+msgstr "مقياس البرمجيات (نوعية جيدة ، ولكن أبطأ)"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:348
 #: backends/platform/ios7/ios7_osys_events.cpp:479
 #: backends/platform/iphone/osys_events.cpp:299
 msgid "Mouse-click-and-drag mode enabled."
-msgstr ""
+msgstr "تم تمكين وضع النقر والسحب بالماوس."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:350
 #: backends/platform/ios7/ios7_osys_events.cpp:481
 #: backends/platform/iphone/osys_events.cpp:301
 msgid "Mouse-click-and-drag mode disabled."
-msgstr ""
+msgstr "تم تعطيل وضع النقر والسحب بالماوس."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:361
 #: backends/platform/ios7/ios7_osys_events.cpp:500
 #: backends/platform/iphone/osys_events.cpp:312
 msgid "Touchpad mode enabled."
-msgstr ""
+msgstr "تم تمكين وضع لوحة اللمس."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:363
 #: backends/platform/ios7/ios7_osys_events.cpp:502
 #: backends/platform/iphone/osys_events.cpp:314
 msgid "Touchpad mode disabled."
-msgstr ""
+msgstr "تم تعطيل وضع لوحة اللمس."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
-msgstr ""
+msgstr "وضعية النقر"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Hide ScummVM"
-msgstr ""
+msgstr "إخفاء ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "Hide Others"
-msgstr ""
+msgstr "إخفاء الآخرين"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "Show All"
-msgstr ""
+msgstr "عرض الكل"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:255
 msgid "Window"
-msgstr ""
+msgstr "نافذة"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:257
 msgid "Minimize"
-msgstr ""
+msgstr "تصغير"
 
 #. I18N: This keymap opens KIA's HELP tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4054,64 +4054,64 @@ msgstr ""
 #: backends/platform/sdl/macosx/appmenu_osx.mm:262
 #: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
-msgstr ""
+msgstr "المساعدة"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:267
 msgid "User Manual"
-msgstr ""
+msgstr "دليل الاستخدام"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:269
 msgid "General Information"
-msgstr ""
+msgstr "معلومات عامة"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:270
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "ما الجديد في ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:272
 msgid "Credits"
-msgstr ""
+msgstr "الاعتمادات"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:273
 msgid "GPL License"
-msgstr ""
+msgstr "رخصة GPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:274
 msgid "LGPL License"
-msgstr ""
+msgstr "ترخيص LGPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:275
 msgid "Freefont License"
-msgstr ""
+msgstr "ترخيص Freefont"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:276
 msgid "OFL License"
-msgstr ""
+msgstr "رخصة OFL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:277
 msgid "BSD License"
-msgstr ""
+msgstr "رخصةBSD"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
 #: backends/platform/sdl/miyoo/miyoo.cpp:106
 #: backends/platform/sdl/ps3/ps3.cpp:59
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:81
 #: backends/platform/sdl/miyoo/miyoo.cpp:108
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:520
 #: engines/grim/grim.cpp:616 engines/hdb/metaengine.cpp:264
 msgid "Menu"
-msgstr ""
+msgstr "القائمة"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:110
@@ -4119,183 +4119,183 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:47
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:112
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:40 backends/platform/sdl/psp2/psp2.cpp:43
 #: engines/dragons/metaengine.cpp:202
 msgid "Cross"
-msgstr ""
+msgstr "يعبر"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
 #: engines/dragons/metaengine.cpp:196
 msgid "Circle"
-msgstr ""
+msgstr "دائرة"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:184
 msgid "Square"
-msgstr ""
+msgstr "مربع"
 
 #: backends/platform/sdl/ps3/ps3.cpp:45
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Minus"
-msgstr ""
+msgstr "ناقص"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 #: backends/platform/sdl/switch/switch.cpp:43
 msgid "Plus"
-msgstr ""
+msgstr "زائد"
 
 #: backends/platform/wii/options.cpp:50
 msgid "Video"
-msgstr ""
+msgstr "فيديو"
 
 #: backends/platform/wii/options.cpp:53
 msgid "Current video mode:"
-msgstr ""
+msgstr "وضع الفيديو الحالي:"
 
 #: backends/platform/wii/options.cpp:55
 msgid "Double-strike"
-msgstr ""
+msgstr "ضربة مزدوجة"
 
 #: backends/platform/wii/options.cpp:59
 msgid "Horizontal underscan:"
-msgstr ""
+msgstr "أفقي أسفل المسح الضوئي:"
 
 #: backends/platform/wii/options.cpp:65
 msgid "Vertical underscan:"
-msgstr ""
+msgstr "عمودي تحت المسح:"
 
 #: backends/platform/wii/options.cpp:70
 msgid "Input"
-msgstr ""
+msgstr "الإدخال"
 
 #: backends/platform/wii/options.cpp:73
 msgid "GC Pad sensitivity:"
-msgstr ""
+msgstr "حساسية GC Pad:"
 
 #: backends/platform/wii/options.cpp:79
 msgid "GC Pad acceleration:"
-msgstr ""
+msgstr "تسريع لوحة GC:"
 
 #: backends/platform/wii/options.cpp:85
 msgid "DVD"
-msgstr ""
+msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:88 backends/platform/wii/options.cpp:100
 msgid "Status:"
-msgstr ""
+msgstr "حالة:"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Unknown"
-msgstr ""
+msgstr "مجهول"
 
 #: backends/platform/wii/options.cpp:92
 msgid "Mount DVD"
-msgstr ""
+msgstr "حمل DVD"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Unmount DVD"
-msgstr ""
+msgstr "إلغاء تحميل DVD"
 
 #: backends/platform/wii/options.cpp:97
 msgid "SMB"
-msgstr ""
+msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:105
 msgid "Server:"
-msgstr ""
+msgstr "الخادم:"
 
 #: backends/platform/wii/options.cpp:109
 msgid "Share:"
-msgstr ""
+msgstr "يشارك:"
 
 #: backends/platform/wii/options.cpp:117
 msgid "Password:"
-msgstr ""
+msgstr "كلمة المرور:"
 
 #: backends/platform/wii/options.cpp:120
 msgid "Init network"
-msgstr ""
+msgstr "الشبكة الأولية"
 
 #: backends/platform/wii/options.cpp:122
 msgid "Mount SMB"
-msgstr ""
+msgstr "تحميل SMB"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Unmount SMB"
-msgstr ""
+msgstr "قم بإلغاء تحميل SMB"
 
 #: backends/platform/wii/options.cpp:142
 msgid "DVD Mounted successfully"
-msgstr ""
+msgstr "تم تركيب DVD بنجاح"
 
 #: backends/platform/wii/options.cpp:145
 msgid "Error while mounting the DVD"
-msgstr ""
+msgstr "خطأ أثناء تركيب قرص DVD"
 
 #: backends/platform/wii/options.cpp:147
 msgid "DVD not mounted"
-msgstr ""
+msgstr "DVD غير مثبت"
 
 #: backends/platform/wii/options.cpp:160
 msgid "Network up, share mounted"
-msgstr ""
+msgstr "شبكة تصل ، حصة محمولة"
 
 #: backends/platform/wii/options.cpp:162
 msgid "Network up"
-msgstr ""
+msgstr "تصل الشبكة"
 
 #: backends/platform/wii/options.cpp:165
 msgid ", error while mounting the share"
-msgstr ""
+msgstr "، خطأ أثناء تصاعد الحصة"
 
 #: backends/platform/wii/options.cpp:167
 msgid ", share not mounted"
-msgstr ""
+msgstr "، حصة غير مثبتة"
 
 #: backends/platform/wii/options.cpp:173
 msgid "Network down"
-msgstr ""
+msgstr "الشبكة معطلة"
 
 #: backends/platform/wii/options.cpp:177
 msgid "Initializing network"
-msgstr ""
+msgstr "جارٍ تهيئة الشبكة"
 
 #: backends/platform/wii/options.cpp:181
 msgid "Timeout while initializing network"
-msgstr ""
+msgstr "انتهت المهلة أثناء تهيئة الشبكة"
 
 #: backends/platform/wii/options.cpp:185
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr ""
+msgstr "لم تتم تهيئة الشبكة (%d)"
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
-msgstr ""
+msgstr "منصة الإطلاق"
 
 #: backends/updates/macosx/macosx-updates.mm:73
 msgid "Check for Updates..."
-msgstr ""
+msgstr "تحقق من وجود تحديثات..."
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:933
 #: engines/hugo/hugo.cpp:424 engines/lure/lure.cpp:57
@@ -4304,7 +4304,7 @@ msgstr ""
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5359
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr ""
+msgstr "غير قادر على تحديد موقع ملف بيانات المحرك '%s'."
 
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:949
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:66
@@ -4312,7 +4312,7 @@ msgstr ""
 #: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5372
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr ""
+msgstr "ملف بيانات المحرك '%s' تالف."
 
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:960
 #: engines/hugo/hugo.cpp:446 engines/lure/lure.cpp:69
@@ -4323,42 +4323,44 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
+"تم العثور على إصدار غير صحيح من ملف بيانات المحرك '%s'. توقع %d . %dلكن تم "
+"الحصول على .%d.%d"
 
 #: engines/adl/metaengine.cpp:44
 msgid "TV emulation"
-msgstr ""
+msgstr "مضاهاة التلفزيون"
 
 #: engines/adl/metaengine.cpp:45
 msgid "Emulate composite output to an NTSC TV"
-msgstr ""
+msgstr "محاكاة الإخراج المركب على تلفزيون NTSC"
 
 #: engines/adl/metaengine.cpp:56 engines/adl/metaengine.cpp:68
 msgid "Color graphics"
-msgstr ""
+msgstr "رسومات ملونة"
 
 #: engines/adl/metaengine.cpp:57 engines/adl/metaengine.cpp:69
 msgid "Use color graphics instead of monochrome"
-msgstr ""
+msgstr "استخدم رسومات ملونة بدلاً من أحادية اللون"
 
 #: engines/adl/metaengine.cpp:80
 msgid "Show scanlines"
-msgstr ""
+msgstr "إظهار خطوط المسح"
 
 #: engines/adl/metaengine.cpp:81
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr ""
+msgstr "قم بتغميق كل خط مسح ضوئي آخر لتقليد مظهر CRT"
 
 #: engines/adl/metaengine.cpp:92
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "استخدم دائمًا نصًا أحادي اللون حادًا"
 
 #: engines/adl/metaengine.cpp:93
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "لا تقم بمحاكاة عناصر NTSC للنص"
 
 #: engines/agi/detection_tables.h:312
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
-msgstr ""
+msgstr "لم يتم دعم ألعاب AGI المبكرة للكمبيوتر الملون حتى الآن."
 
 #: engines/agi/font.cpp:1096
 msgid ""
@@ -4366,6 +4368,9 @@ msgid ""
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
 "game directory"
 msgstr ""
+"تعذر فتح / استخدام ملف \"hgc_font\" لخط Hercules hires.\n"
+"إذا كان لديك مثل هذا الملف في لعبة AGI (Sierra) أخرى ، فيمكنك نسخه إلى دليل "
+"اللعبة"
 
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/drascula/metaengine.cpp:38
@@ -4375,7 +4380,7 @@ msgstr ""
 #: engines/trecision/metaengine.cpp:37 engines/ultima/metaengine.cpp:44
 #: engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "استخدم شاشات الحفظ / التحميل الأصلية"
 
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/drascula/metaengine.cpp:39
@@ -4385,30 +4390,31 @@ msgstr ""
 #: engines/trecision/metaengine.cpp:38 engines/ultima/metaengine.cpp:45
 #: engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
-msgstr ""
+msgstr "استخدم شاشات الحفظ / التحميل الأصلية بدلاً من شاشات ScummVM"
 
 #: engines/agi/metaengine.cpp:131
 msgid "Use an alternative palette"
-msgstr ""
+msgstr "استخدم لوحة بديلة"
 
 #: engines/agi/metaengine.cpp:132
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"استخدم لوحة ألوان بديلة ، مشتركة لجميع ألعاب Amiga. كان هذا هو السلوك القديم"
 
 #: engines/agi/metaengine.cpp:143
 msgid "Mouse support"
-msgstr ""
+msgstr "دعم الماوس"
 
 #: engines/agi/metaengine.cpp:144
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
-msgstr ""
+msgstr "تمكن دعم الماوس. يسمح باستخدام الماوس للحركة وفي قوائم اللعبة."
 
 #: engines/agi/metaengine.cpp:155
 msgid "Use Hercules hires font"
-msgstr ""
+msgstr "استخدم خط Hercules hires"
 
 #: engines/agi/metaengine.cpp:156
 msgid "Uses Hercules hires font, when font file is available."
