@@ -56,14 +56,17 @@ void XeenFont::setColors(uint index) {
 }
 
 int XeenFont::getCharWidth(uint32 chr) const {
-	assert(chr < 128);
+	assert(chr < 256);
 	return _widths[chr & 0x7f];
 }
 
 void XeenFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-	assert(chr < 128);
+	assert(chr < 256);
 	if (chr == 'g' || chr == 'p' || chr == 'q' || chr == 'y')
 		++y;
+
+	bool isInverse = (chr >= 128);
+	chr &= 0x7f;
 
 	const uint16 *src = &_data[chr * FONT_HEIGHT];
 	for (int yCtr = 0; yCtr < FONT_HEIGHT; ++yCtr, ++src) {
@@ -75,8 +78,12 @@ void XeenFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32
 
 		for (int xCtr = 0; xCtr < _widths[chr];
 				++xCtr, ++dest, srcVal >>= 2) {
-			if ((srcVal & 3) && (x + xCtr) >= 0 && (x + xCtr) < dst->w)
-				*dest = _colors[srcVal & 3];
+			if ((x + xCtr) >= 0 && (x + xCtr) < dst->w) {
+				if (isInverse)
+					*dest = (srcVal & 3) ? 2 : 0;
+				else if (srcVal & 3)
+					*dest = _colors[srcVal & 3];
+			}
 		}
 	}
 }

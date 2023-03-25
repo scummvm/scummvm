@@ -50,10 +50,9 @@ XeenFont *TextView::getFont() const {
 		&g_globals->_fontNormal;
 }
 
-void TextView::writeChar(char c) {
-	assert((unsigned char)c < 0x80);
+void TextView::writeChar(unsigned char c) {
 	XeenFont::setColors(_colorsNum);
-	Graphics::Font &font = *getFont();
+	XeenFont &font = *getFont();
 
 	if (c == '\r' || c == '\n') {
 		_textPos.x = 0;
@@ -74,7 +73,7 @@ void TextView::writeChar(char c) {
 	}
 }
 
-void TextView::writeChar(int x, int y, char c) {
+void TextView::writeChar(int x, int y, unsigned char c) {
 	_textPos.x = x;
 	_textPos.y = y;
 	writeChar(c);
