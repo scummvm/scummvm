@@ -12,6 +12,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Allgemein:
    - libvpx wurde als neue, optionale Abhängigkeit hinzugefügt. 
+   - libmikmod wurde als neue, optionale Abhängigkeit hinzugefügt.
 
  Asylum:
    - Unterstützung für die chinesische Version von Sanitarium hinzugefügt.
@@ -23,6 +24,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die chinesische Version von Grim Fandango hinzugefügt.
    - Unterstützung für die von Fargus, ENPY und 7Wolf erstellte russische Version
      von Grim Fandango hinzugefügt.
+
+ Kyra:
+   - Unterstützung für die französische Amiga-Version von Kyra1 und die tschechische DOS-Fan-Übersetzung hinzugefügt.
+   - Spielsteuerung und Menüdarstellung für alle Plattformen verbessert.
 
  SCUMM:
    - Unterstützung für die entpackten RuSCUMM-Patches für russische Übersetzungen hinzugefügt.
@@ -50,6 +55,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Allgemein:
   - Die Wiedergabe-Geschwindigkeit von Theora-Videos wurde korrigiert.
+  - Log-Betrachter für die scummvm.log-Datei hinzugefügt.
+  - Das Debug-Level kann nun in der ScummVM-GUI angepasst werden.
 
  AGI:
    - In den Spiel-Optionen kann jetzt wieder ein beliebiger Render-Modus ausgewählt werden.
@@ -72,6 +79,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  iOS-Portierung:
    - Die Auswahl des Standard-Themes funktioniert jetzt auch auf modernen Geräten korrekt.
+   - Verbesserte Unterstützung für Autostart-Konfigurationen.
+
+ macOS-Portierung:
+   - Verbesserte Unterstützung für Autostart-Konfigurationen.
 
  RISC OS-Portierung:
    - Absturz unter RISC OS 5 bei der Nutzung von Spielen, die viel RAM benötigen, behoben.
