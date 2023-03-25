@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 22:29+0000\n"
+"PO-Revision-Date: 2023-03-25 22:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -3367,95 +3367,95 @@ msgstr "تبديل المقياس الخطي المفلتر"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:461
 msgid "Cycle through stretch modes"
-msgstr ""
+msgstr "التنقل بين أوضاع التمدد"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:467
 msgid "Increase the scale factor"
-msgstr ""
+msgstr "زيادة معامل القياس"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:473
 msgid "Decrease the scale factor"
-msgstr ""
+msgstr "إنقاص عامل القياس"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:479
 msgid "Switch to the next scaler"
-msgstr ""
+msgstr "قم بالتبديل إلى القشارة التالية"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:484
 msgid "Switch to the previous scaler"
-msgstr ""
+msgstr "قم بالتبديل إلى القشارة السابقة"
 
 #: backends/keymapper/hardware-input.cpp:244
 msgid "Left Mouse Button"
-msgstr ""
+msgstr "زر الفأرة الايسر"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Right Mouse Button"
-msgstr ""
+msgstr "زر الفأرة الأيمن"
 
 #: backends/keymapper/hardware-input.cpp:246
 msgid "Middle Mouse Button"
-msgstr ""
+msgstr "زر الفأر الأوسط"
 
 #: backends/keymapper/hardware-input.cpp:247
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "عجلة الفأرة فوق"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "عجلة الفأرة لأسفل"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "X1 Mouse Button"
-msgstr ""
+msgstr "زر الفأرة X1"
 
 #: backends/keymapper/hardware-input.cpp:250
 msgid "X2 Mouse Button"
-msgstr ""
+msgstr "زر الفأرة X2"
 
 #: backends/keymapper/hardware-input.cpp:255
 msgid "Joy A"
-msgstr ""
+msgstr "عصا التحكم A"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy B"
-msgstr ""
+msgstr "عصا التحكم B"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy X"
-msgstr ""
+msgstr "عصا التحكم X"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy Y"
-msgstr ""
+msgstr "عصا التحكم Y"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Back"
-msgstr ""
+msgstr "عصا التحكم خلف"
 
 #: backends/keymapper/hardware-input.cpp:260
 msgid "Joy Guide"
-msgstr ""
+msgstr "عصا التحكم مرشد"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Start"
-msgstr ""
+msgstr "عصا التحكم بدأ"
 
 #: backends/keymapper/hardware-input.cpp:262
 msgid "Left Stick"
-msgstr ""
+msgstr "العصا اليسرى"
 
 #: backends/keymapper/hardware-input.cpp:263
 msgid "Right Stick"
-msgstr ""
+msgstr "العصا اليمنى"
 
 #: backends/keymapper/hardware-input.cpp:264 engines/dragons/metaengine.cpp:208
 msgid "Left Shoulder"
-msgstr ""
+msgstr "الكتف الأيسر"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:214
 msgid "Right Shoulder"
-msgstr ""
+msgstr "الكتف الأيمن"
 
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:57
@@ -3466,7 +3466,7 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:51 backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "D-pad Up"
-msgstr ""
+msgstr "D-pad لأعلى"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
@@ -3477,7 +3477,7 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Down"
-msgstr ""
+msgstr "D-pad لأسفل"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
@@ -3488,7 +3488,7 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Left"
-msgstr ""
+msgstr "D-pad اليسار"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
@@ -3499,78 +3499,78 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Right"
-msgstr ""
+msgstr "D-pad الأيمن"
 
 #: backends/keymapper/hardware-input.cpp:274
 msgid "Left Trigger"
-msgstr ""
+msgstr "الزناد الأيسر"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Right Trigger"
-msgstr ""
+msgstr "الزناد الأيمن"
 
 #: backends/keymapper/hardware-input.cpp:276
 #: backends/platform/sdl/opendingux/opendingux.cpp:78
 #: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:59
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "Left Stick X"
-msgstr ""
+msgstr "العصا اليسرى X"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/opendingux/opendingux.cpp:79
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:60
 #: backends/platform/sdl/switch/switch.cpp:59
 msgid "Left Stick Y"
-msgstr ""
+msgstr "العصا اليسرى Y"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:61
 #: backends/platform/sdl/switch/switch.cpp:60
 msgid "Right Stick X"
-msgstr ""
+msgstr "العصا اليمنى X"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:62
 #: backends/platform/sdl/switch/switch.cpp:61
 msgid "Right Stick Y"
-msgstr ""
+msgstr "العصا اليمنى Y"
 
 #: backends/keymapper/remap-widget.cpp:295
 #: backends/keymapper/remap-widget.cpp:325
 msgid "Reset to defaults"
-msgstr ""
+msgstr "إعادة التعيين إلى الإعدادات الافتراضية"
 
 #: backends/keymapper/remap-widget.cpp:296
 msgid "Clear mapping"
-msgstr ""
+msgstr "مسح الخرائط"
 
 #: backends/keymapper/virtual-mouse.cpp:156
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "رفع زر الماوس الوهمية"
 
 #: backends/keymapper/virtual-mouse.cpp:161
 msgid "Virtual mouse down"
-msgstr ""
+msgstr "الاسفل زر الماوس الوهمية"
 
 #: backends/keymapper/virtual-mouse.cpp:166
 msgid "Virtual mouse left"
-msgstr ""
+msgstr "اليسار زر الماوس الوهمية"
 
 #: backends/keymapper/virtual-mouse.cpp:171
 msgid "Virtual mouse right"
-msgstr ""
+msgstr "الأيمن زر الماوس الوهمية"
 
 #: backends/keymapper/virtual-mouse.cpp:176
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "إبطاء الماوس الوهمية"
 
 #: backends/midi/windows.cpp:168
 msgid "Windows MIDI"
-msgstr ""
+msgstr "Windows MIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:59
 msgid "Can't create directory here!"
-msgstr ""
+msgstr "لا يمكن إنشاء مجلد هنا!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:65
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:72
@@ -3585,190 +3585,194 @@ msgstr ""
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:62
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:136
 msgid "Invalid path!"
-msgstr ""
+msgstr "مسار غير صالح!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:83
 msgid "Parent directory doesn't exists!"
-msgstr ""
+msgstr "المجلد الأصلي غير موجود!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:87
 msgid "Can't create a directory within a file!"
-msgstr ""
+msgstr "لا يمكن إنشاء مجلد داخل ملف!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:97
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:140
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "يوجد ملف بهذا الاسم في المجلد الأصل!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:103
 msgid "Failed to create the directory!"
-msgstr ""
+msgstr "فشل إنشاء المجلد!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:110
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:119
 msgid "Directory created successfully!"
-msgstr ""
+msgstr "تم إنشاء المجلد بنجاح!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:121
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:203
 msgid "Back to parent directory"
-msgstr ""
+msgstr "العودة إلى المجلد الأصل"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:66
 msgid "The file doesn't exist!"
-msgstr ""
+msgstr "الملف غير موجود!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:70
 msgid "Can't download a directory!"
-msgstr ""
+msgstr "لا يمكن تنزيل مجلد!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:75
 msgid "Failed to read the file!"
-msgstr ""
+msgstr "فشلت قراءة الملف!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:58
 msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
+"الصفحة غير متوفرة بدون الموارد. تأكد من أن الملف www.root.zip من توزيع "
+"ScummVM متاح في \"themepath\"."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:222
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 msgid "Create directory"
-msgstr ""
+msgstr "أنشئ مجلد"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 msgid "Upload files"
-msgstr ""
+msgstr "تحميل الملفات"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 msgid "Type new directory name:"
-msgstr ""
+msgstr "اكتب اسم المجلد الجديد:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Select a file to upload:"
-msgstr ""
+msgstr "حدد الملف المراد تحميله:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
 msgid "Or select a directory (works in Chrome only):"
-msgstr ""
+msgstr "أو حدد مجلدًا (يعمل في Chrome فقط):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 msgid "Index of "
-msgstr ""
+msgstr "دليل ل "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
 msgid "Error occurred"
-msgstr ""
+msgstr "حدث خطأ"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:80
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:44
 msgid "File system root"
-msgstr ""
+msgstr "جذر نظام الملفات"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "Saved games"
-msgstr ""
+msgstr "ألعاب محفوظة"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:118
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:83
 msgid "Parent directory"
-msgstr ""
+msgstr "المجلد الأصل"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:217
 msgid "ScummVM couldn't list the directory you specified."
-msgstr ""
+msgstr "تعذر على ScummVM سرد الدليل الذي حددته."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
 msgid "Index of"
-msgstr ""
+msgstr "دليل ل"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:41
 msgid "This is a local webserver index page."
-msgstr ""
+msgstr "هذه صفحة فهرس خادم ويب محلي."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "Open Files manager"
-msgstr ""
+msgstr "افتح مدير الملفات"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:66
 msgid "The parent directory doesn't exist!"
-msgstr ""
+msgstr "المجلد الأصل غير موجود!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:70
 msgid "Can't upload into a file!"
-msgstr ""
+msgstr "لا يمكن التحميل في ملف!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:197
 msgid "Back to the files manager"
-msgstr ""
+msgstr "العودة إلى مدير الملفات"
 
 #: backends/networking/sdl_net/localwebserver.cpp:126
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
+"فشل بدء خادم الويب المحلي.\n"
+"تحقق مما إذا كان المنفذ المحدد لا يستخدم من قبل تطبيق آخر وحاول مرة أخرى."
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:68
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:110
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "طلب غير صالح: الرؤوس طويلة جدًا!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:154
 msgid "Failed to upload the file!"
-msgstr ""
+msgstr "فشل تحميل الملف!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:183
 msgid "No file was passed!"
-msgstr ""
+msgstr "لم يتم تمرير أي ملف!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:201
 msgid "Uploaded successfully!"
-msgstr ""
+msgstr "تم الرفع بنجاح!"
 
 #: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:283
 msgid "~C~lose"
-msgstr ""
+msgstr "~أ~غلق"
 
 #: backends/platform/3ds/options-dialog.cpp:47
 msgid "Show mouse cursor"
-msgstr ""
+msgstr "إظهار مؤشر الماوس"
 
 #: backends/platform/3ds/options-dialog.cpp:50
 msgid "Snap to edges"
-msgstr ""
+msgstr "انجذاب إلى الحواف"
 
 #: backends/platform/3ds/options-dialog.cpp:53
 msgid "Stretch to fit"
-msgstr ""
+msgstr "تمتد لتلائم"
 
 #: backends/platform/3ds/options-dialog.cpp:56
 msgid "Use Screen:"
-msgstr ""
+msgstr "استخدام الشاشة:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr ""
+msgstr "قمة"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgctxt "3ds-screen"
 msgid "Bottom"
-msgstr ""
+msgstr "قاع"
 
 #: backends/platform/3ds/options-dialog.cpp:60
 msgctxt "3ds-screen"
 msgid "Both"
-msgstr ""
+msgstr "كلاهما"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:47
@@ -3778,7 +3782,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:49
@@ -3788,7 +3792,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:50
@@ -3798,7 +3802,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #. I18N: Hardware key
 #. I18N: Return key
@@ -3811,7 +3815,7 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:47
 #: engines/mm/mm1/metaengine.cpp:43 engines/mm/mm1/metaengine.cpp:86
 msgid "Select"
-msgstr ""
+msgstr "Select"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:52
@@ -3821,17 +3825,17 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:46 backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:56
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:55
@@ -3842,7 +3846,7 @@ msgstr ""
 #: backends/platform/sdl/psp2/psp2.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:56
@@ -3853,76 +3857,80 @@ msgstr ""
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:65
 msgid "C-Pad X"
-msgstr ""
+msgstr "C-Pad X"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad Y"
-msgstr ""
+msgstr "C-Pad Y"
 
 #: backends/platform/3ds/osystem-events.cpp:71
 #: backends/platform/ds/osystem_ds.cpp:185
 msgid "Touch"
-msgstr ""
+msgstr "يلمس"
 
 #: backends/platform/3ds/osystem-events.cpp:311
 msgid "Toggle Drag Mode"
-msgstr ""
+msgstr "تبديل وضع السحب"
 
 #: backends/platform/3ds/osystem-events.cpp:316
 msgid "Toggle Magnify Mode"
-msgstr ""
+msgstr "تبديل وضع التكبير"
 
 #: backends/platform/3ds/osystem-events.cpp:321
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "افتح إعدادات 3DS"
 
 #: backends/platform/3ds/osystem-events.cpp:359
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"وضع التكبير متوقف. إعادة تنشيط وضع السحب.\n"
+"العودة إلى المشغل ..."
 
 #: backends/platform/3ds/osystem-events.cpp:361
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "وضع التكبير متوقف. العودة إلى المشغل ..."
 
 #: backends/platform/3ds/osystem-events.cpp:395
 msgid "Hover Mode"
-msgstr ""
+msgstr "وضع التحويم"
 
 #: backends/platform/3ds/osystem-events.cpp:399
 msgid "Drag Mode"
-msgstr ""
+msgstr "وضع السحب"
 
 #: backends/platform/3ds/osystem-events.cpp:401
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
-msgstr ""
+msgstr "لا يمكن التبديل إلى وضع السحب أثناء تشغيل وضع التكبير"
 
 #: backends/platform/3ds/osystem-events.cpp:408
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "لا يمكن تنشيط وضع التكبير في القوائم."
 
 #: backends/platform/3ds/osystem-events.cpp:411
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"يمكن فقط تنشيط وضع التكبير\n"
+" عند تمكين كلتا الشاشتين."
 
 #: backends/platform/3ds/osystem-events.cpp:413
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "الدقة داخل اللعبة صغيرة جدًا بحيث لا يمكن تكبيرها."
 
 #: backends/platform/3ds/osystem-events.cpp:419
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "وضع التكبير قيد التشغيل. التبديل إلى وضع التحويم ..."
 
 #: backends/platform/3ds/osystem-events.cpp:421
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "وضع التكبير قيد التشغيل"
 
 #: backends/platform/3ds/osystem-events.cpp:428
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
