@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 16:55+0000\n"
-"Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
+"PO-Revision-Date: 2023-03-25 22:06+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
 "Language: ar\n"
@@ -1749,7 +1749,7 @@ msgstr "المساحة المستخدمة:"
 
 #: gui/options.cpp:2698
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "المساحة المستخدمة بواسطة ألعاب ScummVM المحفوظة على وحدة التخزين هذه"
 
 #: gui/options.cpp:2701
 msgid "Last sync:"
@@ -1783,7 +1783,7 @@ msgstr "ابدأ مزامنة الألعاب المحفوظة"
 #: gui/options.cpp:2710
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "يمكنك تنزيل ملفات اللعبة من مجلد ScummVM على السحابة:"
 
 #: gui/options.cpp:2712
 msgid "You can download game files from your cloud ScummVM folder:"
@@ -1987,211 +1987,217 @@ msgstr "حدد مجلدًا للملفات الإضافية"
 
 #: gui/options.cpp:3190
 msgid "Select directory for plugins"
-msgstr ""
+msgstr "حدد دليل المكونات الإضافية"
 
 #: gui/options.cpp:3203
 msgid "Select directory for Files Manager /root/"
-msgstr ""
+msgstr "حدد مجلدًا لمدير الملفات / الجذر /"
 
 #: gui/options.cpp:3219
 msgid "icon packs"
-msgstr ""
+msgstr "حزم الرموز"
 
 #: gui/options.cpp:3230
 msgid "shader packs"
-msgstr ""
+msgstr "حزم تظليل"
 
 #: gui/options.cpp:3365
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"فشل في فتح الرابط!\n"
+"الرجاء الانتقال إلى هذه الصفحة يدويًا."
 
 #: gui/options.cpp:3390
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "تخزين آخر يعمل الآن. هل تريد مقاطعته؟"
 
 #: gui/options.cpp:3399 gui/options.cpp:3437
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "انتظر حتى انتهاء التخزين الحالي وحاول مرة أخرى."
 
 #: gui/options.cpp:3412
 msgid "Connecting..."
-msgstr ""
+msgstr "توصيل..."
 
 #: gui/options.cpp:3428
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "هذا التخزين يعمل الآن. هل تريد مقاطعته؟"
 
 #: gui/options.cpp:3633 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
-msgstr ""
+msgstr "<الآن>"
 
 #: gui/options.cpp:3742
 msgid "Stop server"
-msgstr ""
+msgstr "إيقاف الخادم"
 
 #: gui/options.cpp:3743
 msgid "Stop local webserver"
-msgstr ""
+msgstr "أوقف خادم الويب المحلي"
 
 #: gui/options.cpp:3795
 msgid "Storage connected."
-msgstr ""
+msgstr "التخزين متصل."
 
 #: gui/options.cpp:3797
 msgid "Failed to connect storage."
-msgstr ""
+msgstr "فشل توصيل وحدة التخزين."
 
 #: gui/options.cpp:3799
 msgid "Failed to connect storage: "
-msgstr ""
+msgstr "فشل توصيل وحدة التخزين: "
 
 #: gui/options.cpp:3819
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"الطلب فشل.\n"
+"تحقق من اتصالك بالإنترنت."
 
 #: gui/options.cpp:3843
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
+"جب عرض نمط الاختبار.\n"
+"هل تريد الاحتفاظ بإعدادات قشارة الظل هذه؟"
 
 #: gui/options.cpp:3846
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "يتم الإرجاع تلقائيًا خلال %d ثواني"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
-msgstr ""
+msgstr "أدخل النص"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
 msgid "#  next"
-msgstr ""
+msgstr "التالي"
 
 #: gui/predictivedialog.cpp:102
 msgid "add"
-msgstr ""
+msgstr "يضيف"
 
 #: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:184
 msgid "Delete char"
-msgstr ""
+msgstr "حذف الحرف"
 
 #: gui/predictivedialog.cpp:112 gui/predictivedialog.cpp:188
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:114 gui/predictivedialog.cpp:599
 msgid "*  Pre"
-msgstr ""
+msgstr "تنبأ"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:602
 msgid "*  Num"
-msgstr ""
+msgstr "أعداد"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:605
 msgid "*  Abc"
-msgstr ""
+msgstr "أ ب ج"
 
 #: gui/recorderdialog.cpp:67
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "مسجل أو تشغيل اللعب"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:213
 #: gui/saveload-dialog.cpp:461 gui/saveload-dialog.cpp:528
 #: engines/engine.cpp:588
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: gui/recorderdialog.cpp:74
 msgid "Record"
-msgstr ""
+msgstr "سِجِلّ"
 
 #: gui/recorderdialog.cpp:75
 msgid "Playback"
-msgstr ""
+msgstr "تشغيل"
 
 #: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:248
 msgid "Edit"
-msgstr ""
+msgstr "يحرر"
 
 #: gui/recorderdialog.cpp:143 gui/recorderdialog.cpp:302
 #: gui/recorderdialog.cpp:309
 msgid "Author: "
-msgstr ""
+msgstr "مؤلف: "
 
 #: gui/recorderdialog.cpp:145 gui/recorderdialog.cpp:303
 #: gui/recorderdialog.cpp:310
 msgid "Notes: "
-msgstr ""
+msgstr "ملاحظات "
 
 #: gui/recorderdialog.cpp:212
 msgid "Do you really want to delete this record?"
-msgstr ""
+msgstr "هل تريد حقًا حذف هذا السجل؟"
 
 #: gui/recorderdialog.cpp:229
 msgid "Unknown Author"
-msgstr ""
+msgstr "مؤلف مجهول"
 
 #: gui/remotebrowser.cpp:128
 msgid "ScummVM could not access the directory!"
-msgstr ""
+msgstr "لم يتمكن ScummVM من الوصول إلى المجلد!"
 
 #: gui/saveload-dialog.cpp:56
 msgid "Downloading saves..."
-msgstr ""
+msgstr "جارٍ تنزيل عمليات الحفظ ..."
 
 #: gui/saveload-dialog.cpp:65
 msgid "Run in background"
-msgstr ""
+msgstr "شغل في الخلفية"
 
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s%S / %s%S, %s / %s الملفات)"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No date saved"
-msgstr ""
+msgstr "لم يتم حفظ التاريخ"
 
 #: gui/saveload-dialog.cpp:453 gui/saveload-dialog.cpp:633
 msgid "No time saved"
-msgstr ""
+msgstr "لم يتم حفظ التاريخ"
 
 #: gui/saveload-dialog.cpp:454 gui/saveload-dialog.cpp:634
 msgid "No playtime saved"
-msgstr ""
+msgstr "لم يتم حفظ وقت اللعب"
 
 #: gui/saveload-dialog.cpp:527
 msgid "Do you really want to delete this saved game?"
-msgstr ""
+msgstr "هل تريد حقًا حذف هذه اللعبة المحفوظة؟"
 
 #: gui/saveload-dialog.cpp:659 gui/saveload-dialog.cpp:1174
 msgid "Date: "
-msgstr ""
+msgstr "التاريخ: "
 
 #: gui/saveload-dialog.cpp:663 gui/saveload-dialog.cpp:1180
 msgid "Time: "
-msgstr ""
+msgstr "الوقت: "
 
 #: gui/saveload-dialog.cpp:669 gui/saveload-dialog.cpp:1188
 msgid "Playtime: "
-msgstr ""
+msgstr "وقت اللعب: "
 
 #: gui/saveload-dialog.cpp:682 gui/saveload-dialog.cpp:768
 msgid "Untitled saved game"
-msgstr ""
+msgstr "لعبة محفوظة بدون عنوان"
 
 #: gui/saveload-dialog.cpp:831
 msgid "Next"
-msgstr ""
+msgstr "التالي"
 
 #: gui/saveload-dialog.cpp:834
 msgid "Prev"
