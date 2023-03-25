@@ -154,7 +154,7 @@ public:
 	}
 
 	// RewindableAudioStream API
-	bool rewind() {
+	bool rewind() override {
 		Player_SetPosition(0);
 		return true;
 	}
