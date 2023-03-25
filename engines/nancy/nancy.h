@@ -85,6 +85,8 @@ public:
 	bool canSaveGameStateCurrently() override;
 	bool canSaveAutosaveCurrently() override;
 
+	void secondChance();
+
 	const char *getCopyrightString() const;
 	uint32 getGameFlags() const;
 	const char *getGameId() const;

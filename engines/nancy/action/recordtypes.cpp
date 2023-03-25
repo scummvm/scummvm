@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
-
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/resource.h"
@@ -300,15 +298,7 @@ void SaveContinueGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void SaveContinueGame::execute() {
-	if (ConfMan.getBool("second_chance")) {
-		if (_state == kBegin) {
-			// Slight hack, skip first call to let the graphics render once and provide the correct thumbnail
-			_state = kRun;
-			return;
-		}
-
-		g_nancy->saveGameState(g_nancy->getAutosaveSlot(), "Second Chance", true);
-	}
+	g_nancy->secondChance();
 	_isDone = true;
 }
 

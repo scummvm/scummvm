@@ -127,6 +127,22 @@ bool NancyEngine::canSaveAutosaveCurrently() {
 	}
 }
 
+void NancyEngine::secondChance() {
+	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
+	Common::String name = "SECOND CHANCE";
+
+	// Overwrite an existing second chance if possible
+	for (auto &save : saves) {
+		if (save.getDescription() == name) {
+			saveGameState(save.getSaveSlot(), name, true);
+			return;
+		}
+	}
+
+	// If no second chance slot exists, create a new one
+	saveGameState(saves.size(), name, true);
+}
+
 bool NancyEngine::hasFeature(EngineFeature f) const {
 	return  (f == kSupportsReturnToLauncher) ||
 			(f == kSupportsLoadingDuringRuntime) ||
