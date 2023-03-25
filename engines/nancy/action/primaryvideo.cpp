@@ -326,7 +326,15 @@ void PlayPrimaryVideoChan0::execute() {
 		if (!g_nancy->_sound->isSoundPlaying(_sound) && (_decoder.endOfVideo() || _decoder.getCurFrame() == _endFrame)) {
 			g_nancy->_sound->stopSound(_sound);
 
-			if (_responses.size() == 0) {
+			bool hasResponses = false;
+			for (auto &res : _responses) {
+				if (res.isOnScreen) {
+					hasResponses = true;
+					break;
+				}
+			}
+
+			if (!hasResponses) {
 				// NPC has finished talking with no responses available, auto-advance to next scene
 				_state = kActionTrigger;
 			} else {
