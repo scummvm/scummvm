@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 23:04+0000\n"
+"PO-Revision-Date: 2023-03-25 23:11+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -5515,74 +5515,76 @@ msgstr "تحديث الاعتمادات الموسيقى"
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
+"قم بتشغيل أغنية The Final Hour أثناء الاعتمادات بدلاً من إعادة استخدام أغاني "
+"MIDI"
 
 #: engines/groovie/metaengine.cpp:97
 msgid "Slim Left/Right Hotspots"
-msgstr ""
+msgstr "نقاط فعالة يسار / يمين رفيعة"
 
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
-msgstr ""
+msgstr "تقليص النقاط الفعالة على الجانبين الأيمن والأيسر للخروج من الألغاز"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
-msgstr ""
+msgstr "وضع Speedrun"
 
 #: engines/groovie/metaengine.cpp:110
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "يؤثر على عناصر التحكم لإعادة توجيه اللعبة بسرعة"
 
 #: engines/groovie/metaengine.cpp:144
 msgid "GroovieV2 support is not compiled in"
-msgstr ""
+msgstr "لا يتم تجميع دعم GroovieV2 بتنسيق"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
-msgstr ""
+msgstr "محجوز"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
-msgstr ""
+msgstr "فشل حفظ اللعبة"
 
 #: engines/groovie/script.cpp:849 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
-msgstr ""
+msgstr "هل ترغب في حفظ أو استعادة لعبة؟"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
 msgid "The Minotaur minigame is not supported yet. Skipping"
-msgstr ""
+msgstr "لعبة Minotaur الصغيرة غير مدعومة حتى الآن. التخطي"
 
 #: engines/hadesch/rooms/medisle.cpp:647
 msgid "The Medusa minigame is not supported yet. Skipping"
-msgstr ""
+msgstr "لعبة ميدوسا الصغيرة ليست مدعومة حتى الآن. التخطي"
 
 #: engines/hadesch/rooms/troy.cpp:505
 msgid "The Troy minigame is not supported yet. Skipping"
-msgstr ""
+msgstr "لعبة تروي المصغرة ليست مدعومة بعد. التخطي"
 
 #: engines/hdb/metaengine.cpp:44
 msgid "Enable cheat mode"
-msgstr ""
+msgstr "تفعيل وضع الغش"
 
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "تصبح معلومات التصحيح واختيار المستوى متاحين"
 
 #: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
 msgid "Move up"
-msgstr ""
+msgstr "تحرك"
 
 #: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
 msgid "Move down"
-msgstr ""
+msgstr "تحرك لأسفل"
 
 #: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
 msgid "Move left"
-msgstr ""
+msgstr "تحرك يسارا"
 
 #: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
 msgid "Move right"
-msgstr ""
+msgstr "تحرك يمينا"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:75
@@ -5593,163 +5595,164 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
-msgstr ""
+msgstr "يستخدم"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
-msgstr ""
+msgstr "نقاط الطريق واضحة"
 
 #: engines/hdb/metaengine.cpp:270
 msgid "Debug"
-msgstr ""
+msgstr "تصحيح"
 
 #: engines/hopkins/metaengine.cpp:43 engines/hopkins/metaengine.cpp:55
 msgid "Gore Mode"
-msgstr ""
+msgstr "وضع جور"
 
 #: engines/hopkins/metaengine.cpp:44 engines/hopkins/metaengine.cpp:56
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "قم بتمكين وضع Gore عند توفره"
 
 #: engines/hpl1/metaengine.cpp:81
 msgid "Forward"
-msgstr ""
+msgstr "إلى الأمام"
 
 #: engines/hpl1/metaengine.cpp:82
 msgid "Backward"
-msgstr ""
+msgstr "الى الوراء"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:93
 msgid "Strafe Left"
-msgstr ""
+msgstr "مهاجم اليسار"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:94
 msgid "Strafe Right"
-msgstr ""
+msgstr "مهاجم الأيمن"
 
 #: engines/hpl1/metaengine.cpp:85
 msgid "Lean Left"
-msgstr ""
+msgstr "العجاف اليسار"
 
 #: engines/hpl1/metaengine.cpp:86
 msgid "Lean Right"
-msgstr ""
+msgstr "العجاف الأيمن"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "القفز"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:119
 #: engines/icb/icb.cpp:185
 msgid "Crouch"
-msgstr ""
+msgstr "انحنى"
 
 #: engines/hpl1/metaengine.cpp:92
 msgid "Interact Mode"
-msgstr ""
+msgstr "وضع التفاعل"
 
 #: engines/hpl1/metaengine.cpp:93
 msgid "Look Mode"
-msgstr ""
+msgstr "وضع البحث"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
-msgstr ""
+msgstr "الحافظة"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "دفتر"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "مذكرات شخصية"
 
 #: engines/hpl1/metaengine.cpp:102
 msgid "Flashlight"
-msgstr ""
+msgstr "مصباح يدوي"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "عصا توهج"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
-msgstr ""
+msgstr "تفعيل الغش الأصلي"
 
 #: engines/hypno/metaengine.cpp:34
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "السماح بالغش باستخدام مفتاح C."
 
 #: engines/hypno/metaengine.cpp:44
 msgid "Enable infinite health cheat"
-msgstr ""
+msgstr "تفعيل خداع صحي لانهائي"
 
 #: engines/hypno/metaengine.cpp:45
 msgid "Player health will never decrease (except for game over scenes)."
-msgstr ""
+msgstr "لن تنخفض صحة اللاعب أبدًا (باستثناء اللعبة فوق المشاهد)."
 
 #: engines/hypno/metaengine.cpp:55
 msgid "Enable infinite ammo cheat"
-msgstr ""
+msgstr "تفعيل خداع الذخيرة اللانهائي"
 
 #: engines/hypno/metaengine.cpp:56
 msgid "Player ammo will never decrease."
-msgstr ""
+msgstr "لن تنخفض ذخيرة اللاعب أبدًا."
 
 #: engines/hypno/metaengine.cpp:66
 msgid "Unlock all levels"
-msgstr ""
+msgstr "افتح جميع المستويات"
 
 #: engines/hypno/metaengine.cpp:67
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "ستكون جميع المستويات متاحة للعب."
 
 #: engines/hypno/metaengine.cpp:77
 msgid "Enable restored content"
-msgstr ""
+msgstr "تمكين المحتوى المستعاد"
 
 #: engines/hypno/metaengine.cpp:78
 msgid "Add additional content that is not enabled the original implementation."
-msgstr ""
+msgstr "أضف محتوى إضافيًا لم يتم تمكين التنفيذ الأصلي."
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "نار"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "ذراع"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
 msgid "Remora"
-msgstr ""
+msgstr "Remora"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
 msgid "Side Step"
-msgstr ""
+msgstr "خطوة جانبية"
 
 #: engines/kyra/detection_tables.h:73
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "رمز اللعبة و / أو الموارد الخاصة بلغة معينة مفقودة."
 
 #: engines/kyra/detection_tables.h:74
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"لا يتوفر رمز اللعبة و / أو الموارد الخاصة باللغة المحددة لترجمة المعجبين هذه."
 
 #: engines/kyra/detection_tables.h:76
 msgid "Demo plays simple animations without using Westwood's Engine."
-msgstr ""
+msgstr "يعرض العرض التوضيحي رسومًا متحركة بسيطة بدون استخدام محرك Westwood."
 
 #: engines/kyra/detection_tables.h:1367
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr ""
+msgstr "لقد أضفت اللعبة بشكل غير صحيح. الرجاء إضافة المجلد الجذر للعبة."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1383
@@ -5757,185 +5760,189 @@ msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
 msgstr ""
+"لقد أضفت اللعبة بشكل غير صحيح. ملف GAME.DAT هو صورة ISO وتحتاج إلى استخراج "
+"ملفات بيانات اللعبة منه."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/metaengine.cpp:48
 msgid "Studio audience"
-msgstr ""
+msgstr "جمهور الاستوديو"
 
 #: engines/kyra/metaengine.cpp:49
 msgid "Enable studio audience"
-msgstr ""
+msgstr "تمكين جمهور الاستوديو"
 
 #: engines/kyra/metaengine.cpp:62
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "السماح بتخطي النص والمشاهد"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/metaengine.cpp:74
 msgid "Helium mode"
-msgstr ""
+msgstr "وضع الهيليوم"
 
 #: engines/kyra/metaengine.cpp:75
 msgid "Enable helium mode"
-msgstr ""
+msgstr "تفعيل وضع الهيليوم"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/metaengine.cpp:90
 msgid "Smooth scrolling"
-msgstr ""
+msgstr "التمرير السلس"
 
 #: engines/kyra/metaengine.cpp:91
 msgid "Enable smooth scrolling when walking"
-msgstr ""
+msgstr "تمكين التمرير السلس عند المشي"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/metaengine.cpp:105
 msgid "Floating cursors"
-msgstr ""
+msgstr "المؤشرات العائمة"
 
 #: engines/kyra/metaengine.cpp:106
 msgid "Enable floating cursors"
-msgstr ""
+msgstr "تفعيل المؤشرات العائمة"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
 #: engines/kyra/metaengine.cpp:119
 msgid "Suggest save names"
-msgstr ""
+msgstr "اقترح حفظ الأسماء"
 
 #: engines/kyra/metaengine.cpp:120
 msgid "Autogenerated naming suggestions for savegames"
-msgstr ""
+msgstr "اقتراحات تسمية مُنشأة تلقائيًا ل savegames"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/metaengine.cpp:134
 msgid "HP bar graphs"
-msgstr ""
+msgstr "الرسوم البيانية الشريطية HP"
 
 #: engines/kyra/metaengine.cpp:135
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "تفعيل الرسوم البيانية لشريط نقاط الوصول"
 
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/metaengine.cpp:147
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "قتال زر L / R مبادلة"
 
 #: engines/kyra/metaengine.cpp:148
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "الزر الأيسر للهجوم ، الزر الأيمن لالتقاط العناصر"
 
 #: engines/kyra/metaengine.cpp:241
 msgid "Lands of Lore support is not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم \"Lands of Lore\""
 
 #: engines/kyra/metaengine.cpp:251
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"يتطلب EOB II FM-TOWNS دعم أوضاع ألوان 16 بت والتي لم يتم تنشيطها في بنية "
+"ScummVM الخاصة بك"
 
 #: engines/kyra/metaengine.cpp:257
 msgid "Eye of Beholder support is not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم \"عين الناظر\""
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:468
 #: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/ultima8/metaengine.cpp:142
 msgid "Interact via Left Click"
-msgstr ""
+msgstr "تفاعل عبر النقر بزر الماوس الأيسر"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/ultima8/metaengine.cpp:148
 msgid "Interact via Right Click"
-msgstr ""
+msgstr "تفاعل عبر النقر بزر الماوس الأيمن"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:476
 #: engines/twine/metaengine.cpp:391
 msgid "Move Forward"
-msgstr ""
+msgstr "تحرك إلى الأمام"
 
 #: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:477
 msgid "Move Back"
-msgstr ""
+msgstr "ارجع للوراء"
 
 #: engines/kyra/engine/eobcommon.cpp:372
 msgid "Move Left"
-msgstr ""
+msgstr "تحرك يسارا"
 
 #: engines/kyra/engine/eobcommon.cpp:373
 msgid "Move Right"
-msgstr ""
+msgstr "تحرك يمينا"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
 #: engines/mm/mm1/metaengine.cpp:91 engines/pegasus/pegasus.cpp:2739
 #: engines/twine/metaengine.cpp:412 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
-msgstr ""
+msgstr "انعطف لليسار"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
 #: engines/mm/mm1/metaengine.cpp:92 engines/pegasus/pegasus.cpp:2746
 #: engines/twine/metaengine.cpp:405 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
-msgstr ""
+msgstr "انعطف يمينا"
 
 #: engines/kyra/engine/eobcommon.cpp:376
 msgid "Open/Close Inventory"
-msgstr ""
+msgstr "فتح / إغلاق الجرد"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Switch Inventory/Character screen"
-msgstr ""
+msgstr "تبديل شاشة الجرد / الحرف"
 
 #: engines/kyra/engine/eobcommon.cpp:378
 msgid "Camp"
-msgstr ""
+msgstr "معسكر"
 
 #: engines/kyra/engine/eobcommon.cpp:379 engines/mm/mm1/metaengine.cpp:96
 msgid "Cast Spell"
-msgstr ""
+msgstr "يلقي تعويذة"
 
 #: engines/kyra/engine/eobcommon.cpp:382
 msgid "Spell Level 1"
-msgstr ""
+msgstr "تعويذة المستوى 1"
 
 #: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 2"
-msgstr ""
+msgstr "تعويذة المستوى 2"
 
 #: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 3"
-msgstr ""
+msgstr "تعويذة المستوى 3"
 
 #: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 4"
-msgstr ""
+msgstr "تعويذة المستوى 4"
 
 #: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 5"
-msgstr ""
+msgstr "تعويذة المستوى 5"
 
 #: engines/kyra/engine/eobcommon.cpp:388
 msgid "Spell Level 6"
-msgstr ""
+msgstr "تعويذة المستوى 6"
 
 #: engines/kyra/engine/lol.cpp:472
 msgid "Attack 1"
-msgstr ""
+msgstr "الهجوم 1"
 
 #: engines/kyra/engine/lol.cpp:473
 msgid "Attack 2"
-msgstr ""
+msgstr "الهجوم 2"
 
 #: engines/kyra/engine/lol.cpp:474
 msgid "Attack 3"
-msgstr ""
+msgstr "الهجوم 3"
 
 #: engines/kyra/engine/lol.cpp:475 engines/mm/mm1/metaengine.cpp:97
 msgid "Show Map"
