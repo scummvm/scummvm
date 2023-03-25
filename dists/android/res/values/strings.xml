@@ -19,8 +19,8 @@
 	<!-- <string name="no_external_files_dir_access">Unable to access external storage
 		to retrieve ScummVM config info! Please grant storage access permissions to
 		the ScummVM app, in order to function properly!</string> -->
-	<!-- <string name="no_log_file_title">Log File Error</string> -->
-	<!-- <string name="no_log_file">Unable to read ScummVM log file or create a new one!</string> -->
+	<string name="no_log_file_title">Log File Error</string>
+	<string name="no_log_file">Unable to read ScummVM log file or create a new one!</string>
 	<string name="no_config_file_title">Config File Error</string>
 	<string name="no_config_file">Unable to read ScummVM config file or create a new one!</string>
 	<string name="no_save_path_title">Save Path Error</string>
