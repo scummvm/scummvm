@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 22:23+0000\n"
+"PO-Revision-Date: 2023-03-25 22:29+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -3137,23 +3137,27 @@ msgstr ""
 
 #: backends/cloud/storage.cpp:350
 msgid "Download complete."
-msgstr ""
+msgstr "تم التحميل."
 
 #: backends/cloud/storage.cpp:360
 msgid "Download failed."
-msgstr ""
+msgstr "التحميل فشل."
 
 #: backends/events/default/default-events.cpp:193
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
+"هل تريد حقًا العودة إلى المشغل؟\n"
+"سيتم فقد أي تقدم غير محفوظ."
 
 #: backends/events/default/default-events.cpp:217
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
+"هل حقا تريد الاستقالة؟\n"
+"سيتم فقد أي تقدم غير محفوظ."
 
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
@@ -3163,186 +3167,186 @@ msgstr ""
 #: engines/scumm/help.cpp:82 engines/zvision/metaengine.cpp:272
 #: engines/zvision/metaengine.cpp:290
 msgid "Quit"
-msgstr ""
+msgstr "غادر"
 
 #: backends/events/default/default-events.cpp:332
 msgid "Global"
-msgstr ""
+msgstr "عاميا"
 
 #: backends/events/default/default-events.cpp:335
 #: engines/twine/metaengine.cpp:361
 msgid "Global Main Menu"
-msgstr ""
+msgstr "القائمة الرئيسية العامية"
 
 #: backends/events/default/default-events.cpp:345
 msgid "Display keyboard"
-msgstr ""
+msgstr "العرض لوحة مفاتيح"
 
 #: backends/events/default/default-events.cpp:352
 msgid "Toggle mute"
-msgstr ""
+msgstr "تبديل كتم الصوت"
 
 #: backends/events/default/default-events.cpp:380
 msgid "Open Debugger"
-msgstr ""
+msgstr "افتح المصحح"
 
 #: backends/events/gph/gph-events.cpp:411
 #: backends/events/gph/gph-events.cpp:454
 #: backends/events/openpandora/op-events.cpp:156
 msgid "Touchscreen 'Tap Mode' - Left Click"
-msgstr ""
+msgstr "شاشة اللمس \"وضع ضغط\" - النقر بزر الماوس الأيسر"
 
 #: backends/events/gph/gph-events.cpp:413
 #: backends/events/gph/gph-events.cpp:456
 #: backends/events/openpandora/op-events.cpp:158
 msgid "Touchscreen 'Tap Mode' - Right Click"
-msgstr ""
+msgstr "شاشة اللمس \"وضع اللمس\" - انقر بزر الماوس الأيمن"
 
 #: backends/events/gph/gph-events.cpp:415
 #: backends/events/gph/gph-events.cpp:458
 #: backends/events/openpandora/op-events.cpp:160
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
-msgstr ""
+msgstr "شاشة اللمس \"وضع النقر\" - تحوم (بدون نقرة)"
 
 #: backends/events/gph/gph-events.cpp:435
 msgid "Maximum Volume"
-msgstr ""
+msgstr "الصوت الأقصى"
 
 #: backends/events/gph/gph-events.cpp:437
 msgid "Increasing Volume"
-msgstr ""
+msgstr "زيادة حجم الصوت"
 
 #: backends/events/gph/gph-events.cpp:443
 msgid "Minimal Volume"
-msgstr ""
+msgstr "حجم الصوت الأدنى"
 
 #: backends/events/gph/gph-events.cpp:445
 msgid "Decreasing Volume"
-msgstr ""
+msgstr "تقليل الحجم صوت"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:100
 msgid "Clicking Enabled"
-msgstr ""
+msgstr "النقر ممكّن"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:100
 msgid "Clicking Disabled"
-msgstr ""
+msgstr "النقر معطل"
 
 #: backends/events/openpandora/op-events.cpp:162
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr ""
+msgstr "شاشة اللمس \"وضع النقر\" - تحوم (نقرات DPad)"
 
 #. I18N: This is displayed in the file browser to let the user choose a new folder for Android Storage Attached Framework
 #: backends/fs/android/android-saf-fs.cpp:696
 #: backends/fs/android/android-saf-fs.cpp:700
 msgid "Add a new folder"
-msgstr ""
+msgstr "أضف مجلدًا جديدًا"
 
 #. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:812
 msgid "Choose a new folder"
-msgstr ""
+msgstr "اختر مجلدًا جديدًا"
 
 #: backends/graphics/atari/atari-graphics.cpp:594
 #: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle aspect ratio correction"
-msgstr ""
+msgstr "تبديل تصحيح نسبة العرض إلى الارتفاع"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:371
 msgid "Center"
-msgstr ""
+msgstr "المركز"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:257
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "تحجيم مثالي للبكسل"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
-msgstr ""
+msgstr "تحجيم البكسل عادل"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
-msgstr ""
+msgstr "تناسب النافذة"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:260
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
-msgstr ""
+msgstr "تمتد إلى النافذة"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:261
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
-msgstr ""
+msgstr "ملائمة للنافذة (3: 4)"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:713
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "الدقة:%d %dx"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2634
 msgid "Enabled aspect ratio correction"
-msgstr ""
+msgstr "تمكين تصحيح نسبة العرض إلى الارتفاع"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2640
 msgid "Disabled aspect ratio correction"
-msgstr ""
+msgstr "تعطيل نسبة العرض إلى الارتفاع المعطل"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:743
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2656
 msgid "Filtering enabled"
-msgstr ""
+msgstr "التصفية ممكّنة"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:745
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2658
 msgid "Filtering disabled"
-msgstr ""
+msgstr "تعطيل تصفية"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2685
 msgid "Stretch mode"
-msgstr ""
+msgstr "وضع التمدد"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgid "SDL Surface"
-msgstr ""
+msgstr "سطح SDL"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2600
 msgid "Active graphics filter:"
-msgstr ""
+msgstr "مرشح الرسومات النشط:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:362
 #, c-format
 msgid "Saved screenshot '%s'"
-msgstr ""
+msgstr "لقطة شاشة محفوظة '%s'"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:371
 msgid "Could not save screenshot"
-msgstr ""
+msgstr "تعذر حفظ لقطة الشاشة"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Windowed mode"
-msgstr ""
+msgstr "وضع إطارات"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:84
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "تبديل ملء الشاشة"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:97
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
-msgstr ""
+msgstr "تبديل التقاط الفأرة"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
 #: engines/wintermute/keymapper_tables.h:646
@@ -3355,11 +3359,11 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1862
 #: engines/wintermute/keymapper_tables.h:1895
 msgid "Save screenshot"
-msgstr ""
+msgstr "حفظ لقطة شاشة"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:454
 msgid "Toggle linear filtered scaling"
-msgstr ""
+msgstr "تبديل المقياس الخطي المفلتر"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:461
 msgid "Cycle through stretch modes"
