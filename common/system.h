@@ -1699,6 +1699,14 @@ public:
 	virtual Common::String getDefaultConfigFileName();
 
 	/**
+	 * Get the default file name (or even path) where the scummvm.log
+	 * will be saved.
+	 *
+	 * Note that not all ports can use this.
+	 */
+	virtual Common::String getDefaultLogFileName() { return Common::String(); }
+
+	/**
 	 * Register the default values for the settings the backend uses into the
 	 * configuration manager.
 	 *
