@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 16:11+0000\n"
-"PO-Revision-Date: 2023-03-25 07:34+0000\n"
+"PO-Revision-Date: 2023-03-25 16:39+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -7490,84 +7490,84 @@ msgstr ""
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "تبديل لوحة المفاتيح / قتال الماوس (*)"
 
 #: engines/scumm/help.cpp:294
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* قتال لوحة المفاتيح قيد التشغيل دائمًا ،"
 
 #: engines/scumm/help.cpp:295
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr "  لذلك على الرغم من الرسالة داخل اللعبة هذا"
 
 #: engines/scumm/help.cpp:296
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr "  في الواقع يقوم بتبديل / إيقاف تشغيل قتال الماوس"
 
 #: engines/scumm/help.cpp:303
 msgid "Fighting controls (numpad):"
-msgstr ""
+msgstr "ضوابط القتال (Numpad):"
 
 #: engines/scumm/help.cpp:304 engines/scumm/help.cpp:305
 #: engines/scumm/help.cpp:306
 msgid "Step back"
-msgstr ""
+msgstr "خطوة للخلف"
 
 #: engines/scumm/help.cpp:307
 msgid "Block high"
-msgstr ""
+msgstr "كتلة عالية"
 
 #: engines/scumm/help.cpp:308
 msgid "Block middle"
-msgstr ""
+msgstr "منتصف الكتلة"
 
 #: engines/scumm/help.cpp:309
 msgid "Block low"
-msgstr ""
+msgstr "كتلة منخفضة"
 
 #: engines/scumm/help.cpp:310
 msgid "Punch high"
-msgstr ""
+msgstr "لكمة عالية"
 
 #: engines/scumm/help.cpp:311
 msgid "Punch middle"
-msgstr ""
+msgstr "لكمة منتصف"
 
 #: engines/scumm/help.cpp:312
 msgid "Punch low"
-msgstr ""
+msgstr "لكمة منخفضة"
 
 #: engines/scumm/help.cpp:314
 msgid "Sucker punch"
-msgstr ""
+msgstr "لكمة مصاصة"
 
 #: engines/scumm/help.cpp:317
 msgid "These are for Indy on left."
-msgstr ""
+msgstr "هذه تخص إندي على اليسار."
 
 #: engines/scumm/help.cpp:318
 msgid "When Indy is on the right,"
-msgstr ""
+msgstr "عندما يكون إندي على اليمين ،"
 
 #: engines/scumm/help.cpp:319
 msgid "7, 4, and 1 are switched with"
-msgstr ""
+msgstr "يتم تبديل 7 و 4 و 1 ب"
 
 #: engines/scumm/help.cpp:320
 msgid "9, 6, and 3, respectively."
-msgstr ""
+msgstr "9 و 6 و 3 على التوالي."
 
 #: engines/scumm/help.cpp:329
 msgid "Biplane controls (numpad):"
-msgstr ""
+msgstr "الضوابط ذات السطحين (لوحة الأرقام):"
 
 #: engines/scumm/help.cpp:330
 msgid "Fly to upper left"
-msgstr ""
+msgstr "انتقل إلى أعلى اليسار"
 
 #: engines/scumm/help.cpp:331
 msgid "Fly to left"
-msgstr ""
+msgstr "تحرك إلى اليسار"
 
 #: engines/scumm/help.cpp:332
 msgid "Fly to lower left"
