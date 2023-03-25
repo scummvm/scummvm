@@ -43,6 +43,11 @@ private:
 	Common::String _bribeTypeStr;
 
 	/**
+	 * Sets the display area
+	 */
+	void setDisplayArea(bool largeArea);
+
+	/**
 	 * Handles the end of the encounter
 	 */
 	void encounterEnded();

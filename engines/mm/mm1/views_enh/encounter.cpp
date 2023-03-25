@@ -30,7 +30,7 @@ namespace MM1 {
 namespace ViewsEnh {
 
 Encounter::Encounter() : ScrollView("Encounter") {
-	setBounds(Common::Rect(0, 144, 234, 200));
+	setDisplayArea(false);
 }
 
 bool Encounter::msgFocus(const FocusMessage &msg) {
@@ -38,20 +38,36 @@ bool Encounter::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
+void Encounter::setDisplayArea(bool largeArea) {
+	if (largeArea)
+		setBounds(Common::Rect(0, 0, 234, 144));
+	else
+		setBounds(Common::Rect(0, 144, 234, 200));
+}
+
 void Encounter::draw() {
 	Game::Encounter &enc = g_globals->_encounters;
-	Graphics::ManagedSurface s = getSurface();
 
-	if (_mode != ALERT)
+	setDisplayArea(false);
+	if (_mode != ALERT) {
+		// Clear the commands area
+		send("GameCommands", GameMessage("COMBAT", "ENCOUNTER"));
 		ScrollView::draw();
+	}
 
 	switch (_mode) {
-	case ALERT:
-		for (int y = 6; y <= 8; ++y)
-			writeLine(y, "            ", ALIGN_MIDDLE);
+	case ALERT: {
+		setDisplayArea(true);
+		Graphics::ManagedSurface s = getSurface();
+		Common::Point pt((_innerBounds.left + _innerBounds.right) / 2,
+			(_innerBounds.top + _innerBounds.bottom) / 2);
+		s.fillRect(Common::Rect(pt.x - 50, pt.y - 9, pt.x + 50, pt.y + 18), 0);
+
+		setTextColor(4);
 		writeLine(7, STRING["dialogs.encounter.title"], ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
+	}
 
 	case SURPRISED_BY_MONSTERS:
 		writeLine(0, STRING["dialogs.encounter.surprised"], ALIGN_MIDDLE);
@@ -115,6 +131,7 @@ void Encounter::draw() {
 
 	if (_mode != ALERT) {
 		// Display the monster
+		setDisplayArea(true);
 		drawGraphic(enc._monsterImgNum);
 
 		// Write the monster list
@@ -130,7 +147,8 @@ void Encounter::draw() {
 			_mode == NOWHERE_TO_RUN || _mode == SURRENDER_FAILED ||
 			_mode == SURPRISED_BY_MONSTERS) {
 		if (enc._alignmentsChanged) {
-			writeString(8, 23, STRING["dialogs.encounter.alignment_slips"]);
+			setDisplayArea(false);
+			writeLine(3, STRING["dialogs.encounter.alignment_slips"]);
 			Sound::sound(SOUND_2);
 		}
 
