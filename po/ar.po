@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 16:11+0000\n"
-"PO-Revision-Date: 2023-03-25 16:39+0000\n"
+"PO-Revision-Date: 2023-03-25 16:55+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -819,7 +819,7 @@ msgstr "بشأن ScummVM"
 
 #: gui/launcher.cpp:251
 msgid "Global ~O~ptions..."
-msgstr ""
+msgstr "~ال~خيارات العامة..."
 
 #: gui/launcher.cpp:251
 msgid "Change global ScummVM options"
@@ -828,7 +828,7 @@ msgstr "تغيير إعدادات ScummVM العالمة"
 #: gui/launcher.cpp:251
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr ""
+msgstr "~ال~خيارات العامة..."
 
 #: gui/launcher.cpp:255
 msgid "~A~dd Game..."
@@ -845,7 +845,7 @@ msgstr "~أ~ضف اللعبة ..."
 
 #: gui/launcher.cpp:258
 msgid "~R~emove Game"
-msgstr ""
+msgstr "~إ~زالة اللعبة"
 
 #: gui/launcher.cpp:258
 msgid "Remove game from the list. The game data files stay intact"
@@ -941,7 +941,7 @@ msgstr "عرض شبكي"
 
 #: gui/launcher.cpp:1064
 msgid "~S~tart"
-msgstr ""
+msgstr "~ا~بدأ"
 
 #: gui/launcher.cpp:1064
 msgid "Start selected game"
@@ -949,7 +949,7 @@ msgstr "ابدأ اللعبة المختارة"
 
 #: gui/launcher.cpp:1067
 msgid "~L~oad..."
-msgstr ""
+msgstr "~ح~مل..."
 
 #: gui/launcher.cpp:1067
 msgid "Load saved game for selected game"
@@ -961,7 +961,7 @@ msgstr "سِجِلّ..."
 
 #: gui/launcher.cpp:1075
 msgid "~G~ame Options..."
-msgstr ""
+msgstr "~خ~يارات اللعبة..."
 
 #: gui/launcher.cpp:1075
 msgid "Change game options"
@@ -970,7 +970,7 @@ msgstr "تغيير إعدادات اللعبة"
 #: gui/launcher.cpp:1075
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr ""
+msgstr "~خ~يارات اللعبة..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -1500,120 +1500,124 @@ msgstr "تجاهل التغييرات وأغلق مربع الحوار"
 
 #: gui/options.cpp:2350
 msgid "Apply"
-msgstr ""
+msgstr "تطبق"
 
 #: gui/options.cpp:2350
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "طبق التغييرات دون إغلاق مربع الحوار"
 
 #: gui/options.cpp:2351
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "قم بتطبيق التغييرات وأغلق مربع الحوار"
 
 #: gui/options.cpp:2435
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "إعدادات FluidSynth"
 
 #: gui/options.cpp:2449
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
+"يحدد مكان وضع الألعاب المحفوظة. يشير اللون الأحمر إلى أن القيمة مؤقتة ولن "
+"يتم حفظها"
 
 #: gui/options.cpp:2454
 msgid "Theme Path:"
-msgstr ""
+msgstr "مسار الموضوع:"
 
 #: gui/options.cpp:2456
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr ""
+msgstr "مسار الموضوع:"
 
 #: gui/options.cpp:2462
 msgid "Icon Path:"
-msgstr ""
+msgstr "مسار الرمز:"
 
 #: gui/options.cpp:2464
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr ""
+msgstr "مسار الرمز:"
 
 #: gui/options.cpp:2465
 msgctxt "path"
 msgid "Default"
-msgstr ""
+msgstr "الافتراضي"
 
 #: gui/options.cpp:2470 gui/options.cpp:2472 gui/options.cpp:2473
 msgid "Specifies path to additional data used by all games or ScummVM"
-msgstr ""
+msgstr "يحدد مسار البيانات الإضافية التي تستخدمها جميع الألعاب أو ScummVM"
 
 #: gui/options.cpp:2479
 msgid "Plugins Path:"
-msgstr ""
+msgstr "مسار الإضافات:"
 
 #: gui/options.cpp:2481
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr ""
+msgstr "مسار الإضافات:"
 
 #: gui/options.cpp:2491
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "مسار تكوين ScummVM: "
 
 #: gui/options.cpp:2496
 msgid "ScummVM log path: "
-msgstr ""
+msgstr "مسار سجل ScummVM: "
 
 #: gui/options.cpp:2497
 msgid "View"
-msgstr ""
+msgstr "منظر"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2504 gui/options.cpp:3243
 msgid "Last browser path: "
-msgstr ""
+msgstr "آخر مسار للمتصفح: "
 
 #: gui/options.cpp:2509
 msgid "Theme:"
-msgstr ""
+msgstr "الفكرة الرئيسية:"
 
 #: gui/options.cpp:2514
 msgid "GUI scale:"
-msgstr ""
+msgstr "مقياس GUI:"
 
 #: gui/options.cpp:2521
 msgid "GUI renderer:"
-msgstr ""
+msgstr "عارضGUI:"
 
 #: gui/options.cpp:2534
 msgid "Return to the launcher when leaving a game"
-msgstr ""
+msgstr "ارجع إلى المشغّل عند مغادرة اللعبة"
 
 #: gui/options.cpp:2535
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
+"ارجع إلى المشغل عند مغادرة لعبة بدلاً من إغلاق ScummVM\n"
+"(هذه الميزة لا تدعم جميع الألعاب)."
 
 #: gui/options.cpp:2542
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "اطلب التأكيد عند الخروج"
 
 #: gui/options.cpp:2543
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "أطلب الإذن عند إغلاق ScummVM أو مغادرة اللعبة."
 
 #: gui/options.cpp:2549
 msgid "GUI language:"
-msgstr ""
+msgstr "لغة GUI:"
 
 #: gui/options.cpp:2549
 msgid "Language of ScummVM GUI"
-msgstr ""
+msgstr "لغة ScummVM GUI"
 
 #: gui/options.cpp:2575
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr ""
+msgstr "قم بتبديل لغة ScummVM GUI إلى لغة اللعبة"
 
 #: gui/options.cpp:2576
 msgid ""
@@ -1621,118 +1625,124 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
+"عند بدء اللعبة ، قم بتغيير لغة ScummVM GUI إلى لغة اللعبة. وبهذه الطريقة ، "
+"إذا كانت إحدى الألعاب تستخدم مربعات حفظ وتحميل ScummVM ، فستكون بنفس لغة "
+"اللعبة."
 
 #: gui/options.cpp:2588
 msgid "Use native system file browser"
-msgstr ""
+msgstr "ستخدم متصفح ملفات النظام الأصلي"
 
 #: gui/options.cpp:2589
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"استخدم متصفح ملفات النظام الأصلي بدلاً من متصفح ScummVM لتحديد ملف أو مجلد."
 
 #: gui/options.cpp:2597
 msgid "Update Icons"
-msgstr ""
+msgstr "تحديث الرموز"
 
 #: gui/options.cpp:2597
 msgid "Check for updates of icon packs"
-msgstr ""
+msgstr "تحقق من وجود تحديثات لحزم الرموز"
 
 #: gui/options.cpp:2604
 msgid "Autosave:"
-msgstr ""
+msgstr "الحفظ التلقائي:"
 
 #: gui/options.cpp:2606
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr ""
+msgstr "الحفظ التلقائي:"
 
 #: gui/options.cpp:2617
 msgid "Random seed:"
-msgstr ""
+msgstr "البذور عشوائي:"
 
 #: gui/options.cpp:2617
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "البذور لتهيئة جميع مولدات الأرقام العشوائية"
 
 #: gui/options.cpp:2625
 msgid "Debug level:"
-msgstr ""
+msgstr "مستوى التصحيح:"
 
 #: gui/options.cpp:2628 gui/options.cpp:2775
 msgid "None"
-msgstr ""
+msgstr "لا شئ"
 
 #: gui/options.cpp:2633
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (الكل)"
 
 #: gui/options.cpp:2637
 msgid "Enable Discord integration"
-msgstr ""
+msgstr "تمكين تكامل Discord"
 
 #: gui/options.cpp:2638
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
+"اعرض معلومات حول الألعاب التي تلعبها على Discord إذا كان عميل Discord قيد "
+"التشغيل."
 
 #: gui/options.cpp:2648 gui/updates-dialog.cpp:85
 msgid "Update check:"
-msgstr ""
+msgstr "التحقق من التحديث:"
 
 #: gui/options.cpp:2648
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "كم مرة للتحقق من تحديثات ScummVM"
 
 #: gui/options.cpp:2659
 msgid "Check now"
-msgstr ""
+msgstr "تأكد الان"
 
 #: gui/options.cpp:2667
 msgid "Active storage:"
-msgstr ""
+msgstr "التخزين المفعل:"
 
 #: gui/options.cpp:2667
 msgid "Active cloud storage"
-msgstr ""
+msgstr "التخزين السحابي المفعل"
 
 #: gui/options.cpp:2676
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
+msgstr "4. لم يتم تمكين التخزين بعد. تحقق من صحة اسم المستخدم وقم بتمكينه:"
 
 #: gui/options.cpp:2678
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
+msgstr "4. لم يتم تمكين التخزين بعد. تحقق من صحة اسم المستخدم وقم بتمكينه:"
 
 #: gui/options.cpp:2679
 msgid "Enable storage"
-msgstr ""
+msgstr "تمكين التخزين"
 
 #: gui/options.cpp:2679
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "أكد أنك تريد استخدام هذا الحساب لهذا التخزين"
 
 #: gui/options.cpp:2681 backends/platform/wii/options.cpp:113
 msgid "Username:"
-msgstr ""
+msgstr "اسم المستخدم:"
 
 #: gui/options.cpp:2681
 msgid "Username used by this storage"
-msgstr ""
+msgstr "اسم المستخدم مستخدم بواسطة هذا التخزين"
 
 #: gui/options.cpp:2682
 msgid "<none>"
-msgstr ""
+msgstr "<لا شيء>"
 
 #: gui/options.cpp:2684
 msgid "Used space:"
-msgstr ""
+msgstr "المساحة المستخدمة:"
 
 #: gui/options.cpp:2684
 msgid "Space used by ScummVM's saved games on this storage"
@@ -1740,32 +1750,32 @@ msgstr ""
 
 #: gui/options.cpp:2687
 msgid "Last sync:"
-msgstr ""
+msgstr "آخر مزامنة:"
 
 #: gui/options.cpp:2687
 msgid "When was the last time saved games were synced with this storage"
-msgstr ""
+msgstr "متى كانت آخر مرة تمت فيها مزامنة الألعاب المحفوظة مع وحدة التخزين هذه"
 
 #: gui/options.cpp:2688 gui/options.cpp:3614
 msgid "<never>"
-msgstr ""
+msgstr "<أبدا>"
 
 #: gui/options.cpp:2690
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
+msgstr "تتم مزامنة الألعاب المحفوظة تلقائيًا عند التشغيل وبعد الحفظ والتحميل."
 
 #: gui/options.cpp:2692
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
+msgstr "تتم مزامنة الألعاب المحفوظة تلقائيًا عند التشغيل وبعد الحفظ والتحميل."
 
 #: gui/options.cpp:2693
 msgid "Sync now"
-msgstr ""
+msgstr "زامن الآن"
 
 #: gui/options.cpp:2693
 msgid "Start saved games sync"
-msgstr ""
+msgstr "ابدأ مزامنة الألعاب المحفوظة"
 
 #: gui/options.cpp:2696
 msgctxt "lowres"
@@ -1774,137 +1784,137 @@ msgstr ""
 
 #: gui/options.cpp:2698
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "يمكنك تنزيل ملفات اللعبة من مجلد ScummVM على السحابة:"
 
 #: gui/options.cpp:2699
 msgid "Download game files"
-msgstr ""
+msgstr "تحميل ملفات اللعبة"
 
 #: gui/options.cpp:2699
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "افتح مربع حوار مدير التنزيلات"
 
 #: gui/options.cpp:2702
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "لتغيير حساب وحدة التخزين هذه ، افصل الاتصال ثم اتصل مرة أخرى:"
 
 #: gui/options.cpp:2704
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "لتغيير حساب وحدة التخزين هذه ، افصل الاتصال ثم اتصل مرة أخرى:"
 
 #: gui/options.cpp:2705
 msgid "Disconnect"
-msgstr ""
+msgstr "قطع الاتصال"
 
 #: gui/options.cpp:2705
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "توقف عن استخدام هذا التخزين على هذا الجهاز"
 
 #: gui/options.cpp:2708
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "هذا التخزين غير متصل بعد! للاتصال،"
 
 #: gui/options.cpp:2710
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "هذا التخزين غير متصل بعد! للاتصال،"
 
 #: gui/options.cpp:2711
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. افتح هذا الرابط:"
 
 #: gui/options.cpp:2714
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. احصل على الرمز وأدخله هنا:"
 
 #: gui/options.cpp:2716
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. احصل على الرمز وأدخله هنا:"
 
 #: gui/options.cpp:2718
 msgid "Paste"
-msgstr ""
+msgstr "لصق"
 
 #: gui/options.cpp:2718
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "الصق الكود من الحافظة"
 
 #: gui/options.cpp:2719
 msgid "3. Connect"
-msgstr ""
+msgstr "3. اتصل"
 
 #: gui/options.cpp:2719
 msgid "Connect your cloud storage account"
-msgstr ""
+msgstr "قم بتوصيل حساب التخزين السحابي الخاص بك"
 
 #: gui/options.cpp:2728
 msgid "Run server"
-msgstr ""
+msgstr "تشغيل الخادم"
 
 #: gui/options.cpp:2728
 msgid "Run local webserver"
-msgstr ""
+msgstr "قم بتشغيل خادم الويب المحلي"
 
 #: gui/options.cpp:2729 gui/options.cpp:3729
 msgid "Not running"
-msgstr ""
+msgstr "لا يعمل"
 
 #: gui/options.cpp:2733
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr ""
+msgstr "/ الجذر / المسار:"
 
 #: gui/options.cpp:2733 gui/options.cpp:2735 gui/options.cpp:2736
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr ""
+msgstr "حدد الدليل الذي سيتم عرضه ك / جذر / في مدير الملفات"
 
 #: gui/options.cpp:2735
 msgid "/root/ Path:"
-msgstr ""
+msgstr "/ الجذر / المسار:"
 
 #: gui/options.cpp:2741
 msgid "Server's port:"
-msgstr ""
+msgstr "منفذ الخادم:"
 
 #: gui/options.cpp:2741
 msgid "Port for server to use"
-msgstr ""
+msgstr "منفذ للخادم للاستخدام"
 
 #: gui/options.cpp:2746
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "قم بتشغيل الخادم لإدارة الملفات باستخدام المتصفح (في نفس الشبكة)."
 
 #: gui/options.cpp:2747
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "إغلاق خيارات الحوار سيوقف الخادم."
 
 #: gui/options.cpp:2749
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "قم بتشغيل الخادم لإدارة الملفات باستخدام المتصفح (في نفس الشبكة)."
 
 #: gui/options.cpp:2750
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "إغلاق خيارات الحوار سيوقف الخادم."
 
 #: gui/options.cpp:2762
 msgid "Use Text to speech"
-msgstr ""
+msgstr "استخدم تحويل النص إلى كلام"
 
 #: gui/options.cpp:2762
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "سوف أقرأ النص في واجهة المستخدم الرسومية على الماوس."
 
 #: gui/options.cpp:2836
 msgid "Ignore"
-msgstr ""
+msgstr "تجاهل"
 
 #: gui/options.cpp:2837
 msgid "Disable autosave"
-msgstr ""
+msgstr "تعطيل الحفظ التلقائي"
 
 #: gui/options.cpp:2838
 msgid ""
@@ -1914,54 +1924,63 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"تحذير: تم تمكين الحفظ التلقائي. تحتوي بعض ألعابك على محفوظة ألعاب موجودة في "
+"فتحة الحفظ التلقائي. يمكنك إما نقل الحفظات الحالية إلى فتحات جديدة ، أو "
+"تعطيل الحفظ التلقائي ، أو التجاهل (ستتم مطالبتك عندما يكون الحفظ التلقائي "
+"على وشك الكتابة فوق الحفظ).\n"
+"قائمة الألعاب:\n"
 
 #: gui/options.cpp:2847
 msgid ""
 "\n"
 "And more..."
 msgstr ""
+"\n"
+"والمزيد ..."
 
 #: gui/options.cpp:2848 engines/engine.cpp:594
 msgid "Move"
-msgstr ""
+msgstr "تحرك"
 
 #: gui/options.cpp:2861
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "خطأ: فشل في نقل الألعاب المحفوظة التالية:\n"
 
 #: gui/options.cpp:2953
 msgid "Failed to change cloud storage!"
-msgstr ""
+msgstr "فشل في تغيير التخزين السحابي!"
 
 #: gui/options.cpp:2956
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "التخزين السحابي الآخر منشط بالفعل."
 
 #: gui/options.cpp:3067
 msgid "Theme does not support selected language!"
-msgstr ""
+msgstr "الموضوع لا يدعم اللغة المختارة!"
 
 #: gui/options.cpp:3070
 msgid "Theme cannot be loaded!"
-msgstr ""
+msgstr "لا يمكن تحميل المظهر!"
 
 #: gui/options.cpp:3073
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"ستتم استعادة الإعدادات المتنوعة."
 
 #: gui/options.cpp:3145
 msgid "Select directory for GUI themes"
-msgstr ""
+msgstr "حدد مجلدًا لموضوعات واجهة المستخدم الرسومية"
 
 #: gui/options.cpp:3155
 msgid "Select directory for GUI launcher thumbnails"
-msgstr ""
+msgstr "حدد مجلدًا للصور المصغرة لمشغل واجهة المستخدم الرسومية"
 
 #: gui/options.cpp:3165
 msgid "Select directory for extra files"
-msgstr ""
+msgstr "حدد مجلدًا للملفات الإضافية"
 
 #: gui/options.cpp:3176
 msgid "Select directory for plugins"
