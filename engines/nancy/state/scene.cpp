@@ -595,18 +595,18 @@ void Scene::load() {
 		_viewport.disableEdges(kLeft | kRight);
 	}
 
-	if (_sceneState.summary.videoFormat == 1) {
+	if (_sceneState.summary.videoFormat == kSmallVideoFormat) {
 		// TODO
-	} else if (_sceneState.summary.videoFormat == 2) {
+	} else if (_sceneState.summary.videoFormat == kLargeVideoFormat) {
 		// always start from the bottom
 		_sceneState.currentScene.verticalOffset = _viewport.getMaxScroll();
 	} else {
 		error("Unrecognized Scene summary chunk video file format");
 	}
 
-	if (_sceneState.summary.videoFormat == 1) {
+	if (_sceneState.summary.videoFormat == kSmallVideoFormat) {
 		// TODO
-	} else if (_sceneState.summary.videoFormat == 2) {
+	} else if (_sceneState.summary.videoFormat == kLargeVideoFormat) {
 		if (_viewport.getMaxScroll() == 0) {
 			_viewport.disableEdges(kUp | kDown);
 		}

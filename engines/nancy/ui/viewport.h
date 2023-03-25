@@ -49,7 +49,7 @@ public:
 		_movementLastFrame(0),
 		_edgesMask(0),
 		_currentFrame(0),
-		_videoFormat(0),
+		_videoFormat(kLargeVideoFormat),
 		_stickyCursorPos(-1, -1),
 		_panningType(kPanNone) {}
 

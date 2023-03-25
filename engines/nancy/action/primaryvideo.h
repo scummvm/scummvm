@@ -96,7 +96,7 @@ public:
 
 	Common::String _videoName;
 	Common::String _paletteName;
-	uint _videoFormat = 2;
+	uint _videoFormat = kLargeVideoFormat;
 	Common::String _text;
 
 	SoundDescription _sound;

@@ -153,7 +153,7 @@ void PlayPrimaryVideoChan0::updateGraphics() {
 	}
 
 	if (_decoder.needsUpdate()) {
-		GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _drawSurface, _videoFormat == 1);
+		GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _drawSurface, _videoFormat == kSmallVideoFormat);
 
 		_needsRedraw = true;
 	}

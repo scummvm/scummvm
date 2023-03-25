@@ -55,6 +55,7 @@ public:
 	// Common::String _bitmapOverlayFilename
 
 	// TVD only
+	uint16 _videoFormat = kLargeVideoFormat;
 	uint16 _videoHotspots = kVideoHotspots;
 
 	uint16 _loopFirstFrame = 0; // 0x1E
