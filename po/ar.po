@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 23:18+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2023-03-25 23:21+0000\n"
+"Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
 "Language: ar\n"
@@ -7325,7 +7325,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1248
 msgid "Intro Adjust:"
-msgstr ""
+msgstr "ضبط المقدمة:"
 
 #: engines/scumm/dialogs.cpp:1252
 msgid ""
@@ -7333,10 +7333,13 @@ msgid ""
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
+"عند تشغيل مسار المقدمة ، العب من هذه النقطة فيه. استخدم هذا إذا تم قطع "
+"الموسيقى قبل الأوان ، أو إذا كنت غير راضٍ عن الطريقة التي تتزامن بها "
+"الموسيقى مع المقدمة."
 
 #: engines/scumm/dialogs.cpp:1261
 msgid "Outlook Adjust:"
-msgstr ""
+msgstr "ضبط الآفاق:"
 
 #: engines/scumm/dialogs.cpp:1265
 msgid ""
@@ -7344,48 +7347,56 @@ msgid ""
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
 msgstr ""
+"تعد موسيقى outlook جزءًا من مسار المقدمة. اضبط الموضع في المسار الذي يبدأ "
+"عنده اللعب. استخدم هذا إذا تم قطع الموسيقى ، أو إذا سمعت جزءًا من الموسيقى "
+"السابقة."
 
 #: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:667
 msgid "Load modded audio"
-msgstr ""
+msgstr "تحميل الصوت المعدل"
 
 #: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:668
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr ""
+"استبدل الموسيقى والمؤثرات الصوتية ومقاطع الكلام بملفات صوتية معدلة ، إن وجدت."
 
 #: engines/scumm/dialogs.cpp:1367
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "خادم متعدد اللاعبين:"
 
 #: engines/scumm/dialogs.cpp:1373
 msgid "Online Server:"
-msgstr ""
+msgstr "الخادم عبر الإنترنت:"
 
 #: engines/scumm/dialogs.cpp:1374
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
 msgstr ""
+"عنوان الخادم المراد الاتصال به للعب عبر الإنترنت. يجب أن يبدأ إما بمخططات "
+"\"https://\" أو \"http://\"."
 
 #: engines/scumm/dialogs.cpp:1376
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "تمكين التعديلات التنافسية عبر الإنترنت"
 
 #: engines/scumm/dialogs.cpp:1376
 msgid "Enables custom-made modifications intented for online competitive play."
-msgstr ""
+msgstr "تمكن من إجراء تعديلات مخصصة مصممة للعب التنافسي عبر الإنترنت."
 
 #: engines/scumm/dialogs.cpp:1380
 msgid "Enable connection to Multiplayer Server"
-msgstr ""
+msgstr "تمكين الاتصال بخادم متعدد اللاعبين"
 
 #: engines/scumm/dialogs.cpp:1380
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
 msgstr ""
+"يبدل الاتصال بالخادم الذي يسمح باستضافة الألعاب متعددة اللاعبين عبر الإنترنت "
+"والانضمام إليها عبر الإنترنت."
 
 #: engines/scumm/dialogs.cpp:1381
 msgid "Host games over LAN"
