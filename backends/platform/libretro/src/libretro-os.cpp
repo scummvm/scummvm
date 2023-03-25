@@ -463,6 +463,9 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const {
 		Common::List<Graphics::PixelFormat> result;
 
+		/* Palette - most games */
+		result.push_back(Graphics::PixelFormat::createFormatCLUT8());
+
 		/* RGBA8888 */
 		result.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
@@ -473,8 +476,6 @@ public:
 		/* RGB555 - fmtowns */
 		result.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
 
-		/* Palette - most games */
-		result.push_back(Graphics::PixelFormat::createFormatCLUT8());
 		return result;
 	}
 
