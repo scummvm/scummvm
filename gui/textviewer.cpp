@@ -157,6 +157,14 @@ void TextViewerDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 	switch (cmd) {
 	case kSetPositionCmd:
 		_currentPos = _scrollBar->_currentPos;
+
+		if (_currentPos < 0) {
+			_currentPos = 0;
+		}
+		if ((_currentPos + _linesPerPage) >= (int)_linesArray.size()) {
+			_currentPos = MAX<int32>(_linesArray.size() - _linesPerPage, 0);
+		}
+
 		drawDialog(kDrawLayerForeground);
 		break;
 	default:
@@ -199,7 +207,7 @@ void TextViewerDialog::handleKeyDown(Common::KeyState state) {
 		_currentPos = 0;
 	}
 	if ((_currentPos + _linesPerPage) >= (int)_linesArray.size()) {
-		_currentPos = _linesArray.size() - _linesPerPage;
+		_currentPos = MAX<int32>(_linesArray.size() - _linesPerPage, 0);
 	}
 
 	drawDialog(kDrawLayerForeground);
