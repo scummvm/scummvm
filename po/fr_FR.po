@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-24 20:20+0000\n"
+"POT-Creation-Date: 2023-03-25 10:27+0000\n"
 "PO-Revision-Date: 2023-03-18 10:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2360,7 +2360,7 @@ msgstr ""
 "Vous pouvez changer ce réglage plus tard dans\n"
 "l'onglet Divers des options ScummVM."
 
-#: gui/widget.cpp:436 gui/widget.cpp:438 gui/widget.cpp:444 gui/widget.cpp:446
+#: gui/widget.cpp:448 gui/widget.cpp:450 gui/widget.cpp:456 gui/widget.cpp:458
 msgid "Clear value"
 msgstr "Effacer la valeur"
 
