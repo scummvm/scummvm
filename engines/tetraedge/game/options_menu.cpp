@@ -27,6 +27,8 @@
 
 namespace Tetraedge {
 
+static const float EPSILON = 1.192093e-07f;
+
 static Common::String pageStr(int i) {
 	return Common::String::format("page%d", i);
 }
@@ -307,8 +309,8 @@ void OptionsMenu::updateJauge(const Common::String &chan, const Common::String &
 		if (!sprite)
 			break;
 		bool enableSprite = false;
-		if (i * (1.0f / n) - FLT_EPSILON <= chanVol) {
-			enableSprite = chanVol < (i + 1) * (1.0f / n) - FLT_EPSILON;
+		if (i * (1.0f / n) - EPSILON <= chanVol) {
+			enableSprite = chanVol < (i + 1) * (1.0f / n) - EPSILON;
 		}
 		sprite->setVisible(enableSprite);
 
