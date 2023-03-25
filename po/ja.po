@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 18:44+0000\n"
+"POT-Creation-Date: 2023-03-25 19:54+0000\n"
 "PO-Revision-Date: 2023-03-25 18:49+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -80,7 +80,7 @@ msgstr "上へ"
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
-#: engines/scumm/dialog-sessionselector.cpp:62 engines/sword1/control.cpp:888
+#: engines/scumm/dialog-sessionselector.cpp:63 engines/sword1/control.cpp:888
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "キャンセル"
@@ -134,7 +134,7 @@ msgstr "接続が制限されているようです。ダウンロードしても
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3388 gui/options.cpp:3426 gui/options.cpp:3843
+#: gui/options.cpp:3390 gui/options.cpp:3428 gui/options.cpp:3845
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
@@ -148,7 +148,7 @@ msgstr "はい"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:409 gui/launcher.cpp:438 gui/launcher.cpp:481
-#: gui/options.cpp:3388 gui/options.cpp:3426 gui/options.cpp:3843
+#: gui/options.cpp:3390 gui/options.cpp:3428 gui/options.cpp:3845
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -328,8 +328,8 @@ msgstr "ゲームの言語です。スペイン語版を英語版に変換はし
 #: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1587
 #: gui/options.cpp:1602 gui/options.cpp:1619 gui/options.cpp:1633
 #: gui/options.cpp:1673 gui/options.cpp:1689 gui/options.cpp:2086
-#: gui/options.cpp:2511 gui/options.cpp:2564 gui/options.cpp:2789
-#: gui/options.cpp:3255 audio/null.cpp:45
+#: gui/options.cpp:2511 gui/options.cpp:2564 gui/options.cpp:2791
+#: gui/options.cpp:3257 audio/null.cpp:45
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:138 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -500,22 +500,22 @@ msgstr "統計"
 #: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1191
 #: gui/options.cpp:2374 gui/options.cpp:2376 gui/options.cpp:2381
 #: gui/options.cpp:2414 gui/options.cpp:2457 gui/options.cpp:2473
-#: gui/options.cpp:2482 gui/options.cpp:2908 gui/options.cpp:2910
-#: gui/options.cpp:2914 gui/options.cpp:2923 gui/options.cpp:3236
-#: gui/options.cpp:3242 gui/options.cpp:3249 gui/options.cpp:3274
-#: gui/options.cpp:3285
+#: gui/options.cpp:2482 gui/options.cpp:2910 gui/options.cpp:2912
+#: gui/options.cpp:2916 gui/options.cpp:2925 gui/options.cpp:3238
+#: gui/options.cpp:3244 gui/options.cpp:3251 gui/options.cpp:3276
+#: gui/options.cpp:3287
 msgctxt "path"
 msgid "None"
 msgstr "未設定"
 
 #: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
 #: gui/editgamedialog.cpp:601 gui/options.cpp:2373 gui/options.cpp:2375
-#: gui/options.cpp:2907 gui/options.cpp:2909 gui/options.cpp:3239
-#: gui/options.cpp:3245 backends/platform/wii/options.cpp:55
+#: gui/options.cpp:2909 gui/options.cpp:2911 gui/options.cpp:3241
+#: gui/options.cpp:3247 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "デフォルト"
 
-#: gui/editgamedialog.cpp:523 gui/options.cpp:3279
+#: gui/editgamedialog.cpp:523 gui/options.cpp:3281
 msgid "Select SoundFont"
 msgstr "SoundFontファイルを選択してください"
 
@@ -523,11 +523,11 @@ msgstr "SoundFontファイルを選択してください"
 msgid "Select additional game directory"
 msgstr "ゲームの追加データのフォルダーを選択してください"
 
-#: gui/editgamedialog.cpp:575 gui/options.cpp:3141
+#: gui/editgamedialog.cpp:575 gui/options.cpp:3143
 msgid "Select directory for saved games"
 msgstr "セーブデータのフォルダーを選択してください"
 
-#: gui/editgamedialog.cpp:582 gui/options.cpp:3148
+#: gui/editgamedialog.cpp:582 gui/options.cpp:3150
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "選択されたディレクトリーに保存できません。別の場所を選択してください。"
 
@@ -658,8 +658,9 @@ msgstr "FluidSynthの設定を全てリセットしてもよろしいですか?"
 msgid "GUI"
 msgstr "GUI"
 
+#. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:157 engines/hpl1/metaengine.cpp:96
-#: engines/icb/icb.cpp:93 engines/icb/icb.cpp:163 engines/mohawk/myst.cpp:573
+#: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:573
 #: engines/mohawk/riven.cpp:837
 msgid "Interact"
 msgstr "作用"
@@ -667,7 +668,7 @@ msgstr "作用"
 #: gui/gui-manager.cpp:168 engines/metaengine.cpp:120
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:457 engines/grim/grim.cpp:538 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:143 engines/scumm/metaengine.cpp:809
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:809
 #: engines/twine/metaengine.cpp:472 engines/twine/metaengine.cpp:539
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -680,7 +681,7 @@ msgstr "上"
 #: gui/gui-manager.cpp:173 engines/metaengine.cpp:126
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:462 engines/grim/grim.cpp:543 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:148 engines/scumm/metaengine.cpp:776
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:776
 #: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:547
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -693,7 +694,7 @@ msgstr "下"
 #: gui/gui-manager.cpp:178 engines/metaengine.cpp:132
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:153 engines/scumm/metaengine.cpp:789
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:789
 #: engines/twine/metaengine.cpp:494 engines/twine/metaengine.cpp:562
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -707,7 +708,7 @@ msgstr "左"
 #: gui/gui-manager.cpp:183 engines/metaengine.cpp:138
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:158 engines/scumm/metaengine.cpp:796
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:796
 #: engines/twine/metaengine.cpp:486 engines/twine/metaengine.cpp:555
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -1036,7 +1037,7 @@ msgstr ""
 "新しくゲーム%d件をリストに追加しました。他にゲーム%d件が既に追加されていま"
 "す..."
 
-#: gui/message.cpp:218 gui/message.cpp:222 gui/options.cpp:2724
+#: gui/message.cpp:218 gui/message.cpp:222 gui/options.cpp:2726
 msgid "Open URL"
 msgstr "URLを開く"
 
@@ -1576,7 +1577,7 @@ msgid "View"
 msgstr "表示"
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2516 gui/options.cpp:3255
+#: gui/options.cpp:2516 gui/options.cpp:3257
 msgid "Last browser path: "
 msgstr "最後に使用したブラウザーのパス： "
 
@@ -1674,19 +1675,21 @@ msgstr "乱数ジェネレーターを初期するためのシード値"
 msgid "Debug level:"
 msgstr "デバッグLV："
 
-#: gui/options.cpp:2640 gui/options.cpp:2787
+#. I18N: Debug level -1, no messages
+#: gui/options.cpp:2641 gui/options.cpp:2789
 msgid "None"
 msgstr "なし"
 
-#: gui/options.cpp:2645
+#. I18N: Debug level 11, all messages
+#: gui/options.cpp:2647
 msgid "11 (all)"
 msgstr "11(全て)"
 
-#: gui/options.cpp:2649
+#: gui/options.cpp:2651
 msgid "Enable Discord integration"
 msgstr "Discordとの連携を可能にする"
 
-#: gui/options.cpp:2650
+#: gui/options.cpp:2652
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
@@ -1694,240 +1697,240 @@ msgstr ""
 "Discordクライアントが起動していれば、Discordでプレイ中のゲームの情報を表示し"
 "ます。"
 
-#: gui/options.cpp:2660 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2662 gui/updates-dialog.cpp:85
 msgid "Update check:"
 msgstr "アップデートの確認："
 
-#: gui/options.cpp:2660
+#: gui/options.cpp:2662
 msgid "How often to check ScummVM updates"
 msgstr "ScummVMのアップデートの自動確認の頻度"
 
-#: gui/options.cpp:2671
+#: gui/options.cpp:2673
 msgid "Check now"
 msgstr "今すぐ確認"
 
-#: gui/options.cpp:2679
+#: gui/options.cpp:2681
 msgid "Active storage:"
 msgstr "使用中ストレージ："
 
-#: gui/options.cpp:2679
+#: gui/options.cpp:2681
 msgid "Active cloud storage"
 msgstr "使用中のクラウドストレージ"
 
-#: gui/options.cpp:2688
+#: gui/options.cpp:2690
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "４。ストレージが無効です。ユーザー名を確かめて有効にしてください："
 
-#: gui/options.cpp:2690
+#: gui/options.cpp:2692
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "４。ストレージが無効です。ユーザー名を確かめて有効にしてください："
 
-#: gui/options.cpp:2691
+#: gui/options.cpp:2693
 msgid "Enable storage"
 msgstr "有効にする"
 
-#: gui/options.cpp:2691
+#: gui/options.cpp:2693
 msgid "Confirm you want to use this account for this storage"
 msgstr "ストレージにこのアカウントを使うことを確認する"
 
-#: gui/options.cpp:2693 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2695 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "ユーザー名："
 
-#: gui/options.cpp:2693
+#: gui/options.cpp:2695
 msgid "Username used by this storage"
 msgstr "このストーレジのユーザー名"
 
-#: gui/options.cpp:2694
+#: gui/options.cpp:2696
 msgid "<none>"
 msgstr "＜なし＞"
 
-#: gui/options.cpp:2696
+#: gui/options.cpp:2698
 msgid "Used space:"
 msgstr "使用容量："
 
-#: gui/options.cpp:2696
+#: gui/options.cpp:2698
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "ScummVMのセーブデータの現在使用中容量"
 
-#: gui/options.cpp:2699
+#: gui/options.cpp:2701
 msgid "Last sync:"
 msgstr "前回の同期："
 
-#: gui/options.cpp:2699
+#: gui/options.cpp:2701
 msgid "When was the last time saved games were synced with this storage"
 msgstr "前回クラウドストーレジにセーブデータを同期した時"
 
-#: gui/options.cpp:2700 gui/options.cpp:3633
+#: gui/options.cpp:2702 gui/options.cpp:3635
 msgid "<never>"
 msgstr "＜無い＞"
 
-#: gui/options.cpp:2702
+#: gui/options.cpp:2704
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
-#: gui/options.cpp:2704
+#: gui/options.cpp:2706
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "セーブデータはゲームを起動する時とロード／セーブする時に自動に同期されます。"
 
-#: gui/options.cpp:2705
+#: gui/options.cpp:2707
 msgid "Sync now"
 msgstr "今すぐ同期"
 
-#: gui/options.cpp:2705
+#: gui/options.cpp:2707
 msgid "Start saved games sync"
 msgstr "セーブデータの同期を始まる"
 
-#: gui/options.cpp:2708
+#: gui/options.cpp:2710
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
-#: gui/options.cpp:2710
+#: gui/options.cpp:2712
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "ScummVMのクラウドフォルダーからセーブデータをダウンロードすることができます："
 
-#: gui/options.cpp:2711
+#: gui/options.cpp:2713
 msgid "Download game files"
 msgstr "ゲームデータをダウンロードする"
 
-#: gui/options.cpp:2711
+#: gui/options.cpp:2713
 msgid "Open downloads manager dialog"
 msgstr "ダウンロード管理のダイアログを開く"
 
-#: gui/options.cpp:2714
+#: gui/options.cpp:2716
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "アカウントを変えるには一旦切断してから再接続してください："
 
-#: gui/options.cpp:2716
+#: gui/options.cpp:2718
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "アカウントを変えるには一旦切断してから再接続してください："
 
-#: gui/options.cpp:2717
+#: gui/options.cpp:2719
 msgid "Disconnect"
 msgstr "切断"
 
-#: gui/options.cpp:2717
+#: gui/options.cpp:2719
 msgid "Stop using this storage on this device"
 msgstr "このデバイスでストーレジの使用を停止する"
 
-#: gui/options.cpp:2720
+#: gui/options.cpp:2722
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
 msgstr "まだ接続していません！接続するには、"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2724
 msgid "This storage is not connected yet! To connect,"
 msgstr "まだ接続していません！接続するには、"
 
-#: gui/options.cpp:2723
+#: gui/options.cpp:2725
 msgid "1. Open this link:"
 msgstr "１。このリンクを開いて："
 
-#: gui/options.cpp:2726
+#: gui/options.cpp:2728
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "２。コードを取得して、ここに入力して："
 
-#: gui/options.cpp:2728
+#: gui/options.cpp:2730
 msgid "2. Get the code and enter it here:"
 msgstr "２。コードを取得して、ここに入力して："
 
-#: gui/options.cpp:2730
+#: gui/options.cpp:2732
 msgid "Paste"
 msgstr "貼り付け"
 
-#: gui/options.cpp:2730
+#: gui/options.cpp:2732
 msgid "Paste code from clipboard"
 msgstr "クリップボードから貼り付ける"
 
-#: gui/options.cpp:2731
+#: gui/options.cpp:2733
 msgid "3. Connect"
 msgstr "３。接続する"
 
-#: gui/options.cpp:2731
+#: gui/options.cpp:2733
 msgid "Connect your cloud storage account"
 msgstr "クラウドストーレジを接続する"
 
-#: gui/options.cpp:2740
+#: gui/options.cpp:2742
 msgid "Run server"
 msgstr "サーバーを起動"
 
-#: gui/options.cpp:2740
+#: gui/options.cpp:2742
 msgid "Run local webserver"
 msgstr "ローカルサーバーを起動する"
 
-#: gui/options.cpp:2741 gui/options.cpp:3748
+#: gui/options.cpp:2743 gui/options.cpp:3750
 msgid "Not running"
 msgstr "停止中"
 
-#: gui/options.cpp:2745
+#: gui/options.cpp:2747
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/root/ フォルダー:"
 
-#: gui/options.cpp:2745 gui/options.cpp:2747 gui/options.cpp:2748
+#: gui/options.cpp:2747 gui/options.cpp:2749 gui/options.cpp:2750
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "ファイルマネジャーの/root/に使うフォルダーを選択する"
 
-#: gui/options.cpp:2747
+#: gui/options.cpp:2749
 msgid "/root/ Path:"
 msgstr "/root/ フォルダー:"
 
-#: gui/options.cpp:2753
+#: gui/options.cpp:2755
 msgid "Server's port:"
 msgstr "サーバーのポート番号："
 
-#: gui/options.cpp:2753
+#: gui/options.cpp:2755
 msgid "Port for server to use"
 msgstr "使用するサーバーのポート番号"
 
-#: gui/options.cpp:2758
+#: gui/options.cpp:2760
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
-
-#: gui/options.cpp:2759
-msgctxt "lowres"
-msgid "Closing options dialog will stop the server."
-msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
 
 #: gui/options.cpp:2761
+msgctxt "lowres"
+msgid "Closing options dialog will stop the server."
+msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
+
+#: gui/options.cpp:2763
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "サーバーを起動し、ファイルをブラウザーで管理します(同一ネットワーク内のみ)。"
 
-#: gui/options.cpp:2762
+#: gui/options.cpp:2764
 msgid "Closing options dialog will stop the server."
 msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
 
-#: gui/options.cpp:2774
+#: gui/options.cpp:2776
 msgid "Use Text to speech"
 msgstr "テキストの読み上げ機能を使用する"
 
-#: gui/options.cpp:2774
+#: gui/options.cpp:2776
 msgid "Will read text in gui on mouse over."
 msgstr "マウスオーバーで文字を読み上げます。"
 
-#: gui/options.cpp:2848
+#: gui/options.cpp:2850
 msgid "Ignore"
 msgstr "無視"
 
-#: gui/options.cpp:2849
+#: gui/options.cpp:2851
 msgid "Disable autosave"
 msgstr "オートセーブを無効化"
 
-#: gui/options.cpp:2850
+#: gui/options.cpp:2852
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -1940,7 +1943,7 @@ msgstr ""
 "この警告を無視できます(上書き前に確認されます)。\n"
 "対象のゲーム：\n"
 
-#: gui/options.cpp:2859
+#: gui/options.cpp:2861
 msgid ""
 "\n"
 "And more..."
@@ -1948,31 +1951,31 @@ msgstr ""
 "\n"
 "続きを表示..."
 
-#: gui/options.cpp:2860 engines/engine.cpp:594
+#: gui/options.cpp:2862 engines/engine.cpp:594
 msgid "Move"
 msgstr "移動"
 
-#: gui/options.cpp:2873
+#: gui/options.cpp:2875
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "エラー：セーブデータの移動に失敗しました:\n"
 
-#: gui/options.cpp:2965
+#: gui/options.cpp:2967
 msgid "Failed to change cloud storage!"
 msgstr "クラウドストレージの変更に失敗しました!"
 
-#: gui/options.cpp:2968
+#: gui/options.cpp:2970
 msgid "Another cloud storage is already active."
 msgstr "他のクラウドストーレジは既に使用中です。"
 
-#: gui/options.cpp:3079
+#: gui/options.cpp:3081
 msgid "Theme does not support selected language!"
 msgstr "テーマは選択された言語をサポートしていません!"
 
-#: gui/options.cpp:3082
+#: gui/options.cpp:3084
 msgid "Theme cannot be loaded!"
 msgstr "テーマを読み込みできませんでした！"
 
-#: gui/options.cpp:3085
+#: gui/options.cpp:3087
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1980,35 +1983,35 @@ msgstr ""
 "\n"
 "設定を復元します。"
 
-#: gui/options.cpp:3157
+#: gui/options.cpp:3159
 msgid "Select directory for GUI themes"
 msgstr "GUIテーマのフォルダーを選択してください"
 
-#: gui/options.cpp:3167
+#: gui/options.cpp:3169
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "GUIランチャーのサムネイルフォルダーを選択"
 
-#: gui/options.cpp:3177
+#: gui/options.cpp:3179
 msgid "Select directory for extra files"
 msgstr "追加ファイルのフォルダーを選択してください"
 
-#: gui/options.cpp:3188
+#: gui/options.cpp:3190
 msgid "Select directory for plugins"
 msgstr "プラグインのフォルダーを選択してください"
 
-#: gui/options.cpp:3201
+#: gui/options.cpp:3203
 msgid "Select directory for Files Manager /root/"
 msgstr "ルートディレクトリーとして使用するフォルダーを選択してください"
 
-#: gui/options.cpp:3217
+#: gui/options.cpp:3219
 msgid "icon packs"
 msgstr "アイコンパック"
 
-#: gui/options.cpp:3228
+#: gui/options.cpp:3230
 msgid "shader packs"
 msgstr "シェーダーパック"
 
-#: gui/options.cpp:3363
+#: gui/options.cpp:3365
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -2016,47 +2019,47 @@ msgstr ""
 "URLを開けませんでした!\n"
 "このページに手動で遷移してください。"
 
-#: gui/options.cpp:3388
+#: gui/options.cpp:3390
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "すでに別のストレージが使用されています。切断してもよろしいですか?"
 
-#: gui/options.cpp:3397 gui/options.cpp:3435
+#: gui/options.cpp:3399 gui/options.cpp:3437
 msgid "Wait until current Storage finishes up and try again."
 msgstr "ストレージへのアップロード完了後に再実施してください。"
 
-#: gui/options.cpp:3410
+#: gui/options.cpp:3412
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: gui/options.cpp:3426
+#: gui/options.cpp:3428
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "ストレージを使用中です。切断してもよろしいですか?"
 
-#: gui/options.cpp:3631 backends/cloud/cloudmanager.cpp:156
+#: gui/options.cpp:3633 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
 msgstr "＜只今＞"
 
-#: gui/options.cpp:3740
+#: gui/options.cpp:3742
 msgid "Stop server"
 msgstr "サーバーを停止"
 
-#: gui/options.cpp:3741
+#: gui/options.cpp:3743
 msgid "Stop local webserver"
 msgstr "ローカルサーバーを停止する"
 
-#: gui/options.cpp:3793
+#: gui/options.cpp:3795
 msgid "Storage connected."
 msgstr "ストーレジ接続済み。"
 
-#: gui/options.cpp:3795
+#: gui/options.cpp:3797
 msgid "Failed to connect storage."
 msgstr "ストレージの接続に失敗しました。"
 
-#: gui/options.cpp:3797
+#: gui/options.cpp:3799
 msgid "Failed to connect storage: "
 msgstr "ストレージの接続に失敗しました： "
 
-#: gui/options.cpp:3817
+#: gui/options.cpp:3819
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2064,7 +2067,7 @@ msgstr ""
 "リクエストが完了しませんでした。\n"
 "インターネットへの接続状態を確認してください。"
 
-#: gui/options.cpp:3841
+#: gui/options.cpp:3843
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
@@ -2072,7 +2075,7 @@ msgstr ""
 "テストパターンが表示されるはずです。\n"
 "このシェーダースケーラの設定を維持しますか?"
 
-#: gui/options.cpp:3844
+#: gui/options.cpp:3846
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr "%d秒後に自動で復帰します"
@@ -2545,9 +2548,9 @@ msgstr "<不正な値>"
 #. I18N: Hardware key
 #: common/util.cpp:183 backends/platform/3ds/osystem-events.cpp:48
 #: backends/platform/ds/osystem_ds.cpp:166
-#: backends/platform/sdl/miyoo/miyoo.cpp:59
-#: backends/platform/sdl/miyoo/miyoo.cpp:75
-#: backends/platform/sdl/opendingux/opendingux.cpp:49
+#: backends/platform/sdl/miyoo/miyoo.cpp:61
+#: backends/platform/sdl/miyoo/miyoo.cpp:88
+#: backends/platform/sdl/opendingux/opendingux.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:37
 msgid "B"
 msgstr "B"
@@ -2907,9 +2910,10 @@ msgstr "中クリック"
 msgid "Right Click"
 msgstr "右クリック"
 
+#. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:82 engines/grim/grim.cpp:525
-#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:128
-#: engines/icb/icb.cpp:188 engines/mohawk/myst.cpp:596
+#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
+#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:242 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
@@ -3456,13 +3460,12 @@ msgstr "LBボタン"
 msgid "Right Shoulder"
 msgstr "RBボタン"
 
-#. I18N: Hardware key
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:57
 #: backends/platform/ds/osystem_ds.cpp:173
-#: backends/platform/sdl/miyoo/miyoo.cpp:66
-#: backends/platform/sdl/miyoo/miyoo.cpp:82
-#: backends/platform/sdl/opendingux/opendingux.cpp:56
+#: backends/platform/sdl/miyoo/miyoo.cpp:74
+#: backends/platform/sdl/miyoo/miyoo.cpp:101
+#: backends/platform/sdl/opendingux/opendingux.cpp:64
 #: backends/platform/sdl/ps3/ps3.cpp:51 backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "D-pad Up"
@@ -3471,9 +3474,9 @@ msgstr "十字キー(上)"
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/ds/osystem_ds.cpp:174
-#: backends/platform/sdl/miyoo/miyoo.cpp:67
-#: backends/platform/sdl/miyoo/miyoo.cpp:83
-#: backends/platform/sdl/opendingux/opendingux.cpp:57
+#: backends/platform/sdl/miyoo/miyoo.cpp:75
+#: backends/platform/sdl/miyoo/miyoo.cpp:102
+#: backends/platform/sdl/opendingux/opendingux.cpp:65
 #: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Down"
@@ -3482,9 +3485,9 @@ msgstr "十字キー(下)"
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/ds/osystem_ds.cpp:175
-#: backends/platform/sdl/miyoo/miyoo.cpp:68
-#: backends/platform/sdl/miyoo/miyoo.cpp:84
-#: backends/platform/sdl/opendingux/opendingux.cpp:58
+#: backends/platform/sdl/miyoo/miyoo.cpp:76
+#: backends/platform/sdl/miyoo/miyoo.cpp:103
+#: backends/platform/sdl/opendingux/opendingux.cpp:66
 #: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Left"
@@ -3493,9 +3496,9 @@ msgstr "十字キー(左)"
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/ds/osystem_ds.cpp:176
-#: backends/platform/sdl/miyoo/miyoo.cpp:69
-#: backends/platform/sdl/miyoo/miyoo.cpp:85
-#: backends/platform/sdl/opendingux/opendingux.cpp:59
+#: backends/platform/sdl/miyoo/miyoo.cpp:77
+#: backends/platform/sdl/miyoo/miyoo.cpp:104
+#: backends/platform/sdl/opendingux/opendingux.cpp:67
 #: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Right"
@@ -3510,14 +3513,14 @@ msgid "Right Trigger"
 msgstr "右トリガー"
 
 #: backends/keymapper/hardware-input.cpp:276
-#: backends/platform/sdl/opendingux/opendingux.cpp:69
+#: backends/platform/sdl/opendingux/opendingux.cpp:78
 #: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:59
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "Left Stick X"
 msgstr "左スティック横"
 
 #: backends/keymapper/hardware-input.cpp:277
-#: backends/platform/sdl/opendingux/opendingux.cpp:70
+#: backends/platform/sdl/opendingux/opendingux.cpp:79
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:60
 #: backends/platform/sdl/switch/switch.cpp:59
 msgid "Left Stick Y"
@@ -3775,11 +3778,12 @@ msgctxt "3ds-screen"
 msgid "Both"
 msgstr "両面"
 
+#. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:47
 #: backends/platform/ds/osystem_ds.cpp:165
-#: backends/platform/sdl/miyoo/miyoo.cpp:58
-#: backends/platform/sdl/miyoo/miyoo.cpp:74
-#: backends/platform/sdl/opendingux/opendingux.cpp:48
+#: backends/platform/sdl/miyoo/miyoo.cpp:59
+#: backends/platform/sdl/miyoo/miyoo.cpp:86
+#: backends/platform/sdl/opendingux/opendingux.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "A"
 msgstr "A"
@@ -3787,9 +3791,9 @@ msgstr "A"
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:49
 #: backends/platform/ds/osystem_ds.cpp:167
-#: backends/platform/sdl/miyoo/miyoo.cpp:60
-#: backends/platform/sdl/miyoo/miyoo.cpp:76
-#: backends/platform/sdl/opendingux/opendingux.cpp:50
+#: backends/platform/sdl/miyoo/miyoo.cpp:63
+#: backends/platform/sdl/miyoo/miyoo.cpp:90
+#: backends/platform/sdl/opendingux/opendingux.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "X"
 msgstr "X"
@@ -3797,31 +3801,32 @@ msgstr "X"
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:50
 #: backends/platform/ds/osystem_ds.cpp:168
-#: backends/platform/sdl/miyoo/miyoo.cpp:61
-#: backends/platform/sdl/miyoo/miyoo.cpp:77
-#: backends/platform/sdl/opendingux/opendingux.cpp:51
+#: backends/platform/sdl/miyoo/miyoo.cpp:65
+#: backends/platform/sdl/miyoo/miyoo.cpp:92
+#: backends/platform/sdl/opendingux/opendingux.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "Y"
 msgstr "Y"
 
 #. I18N: Hardware key
-#. I18N: ESC key
+#. I18N: Return key
+#. I18N: Select party member command in Might & Magic 1
 #: backends/platform/3ds/osystem-events.cpp:51
 #: backends/platform/ds/osystem_ds.cpp:169
-#: backends/platform/sdl/miyoo/miyoo.cpp:62
-#: backends/platform/sdl/miyoo/miyoo.cpp:78
-#: backends/platform/sdl/opendingux/opendingux.cpp:52
+#: backends/platform/sdl/miyoo/miyoo.cpp:67
+#: backends/platform/sdl/miyoo/miyoo.cpp:94
+#: backends/platform/sdl/opendingux/opendingux.cpp:57
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:47
-#: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:72
+#: engines/mm/mm1/metaengine.cpp:43 engines/mm/mm1/metaengine.cpp:86
 msgid "Select"
 msgstr "セレクト"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/ds/osystem_ds.cpp:170
-#: backends/platform/sdl/miyoo/miyoo.cpp:63
-#: backends/platform/sdl/miyoo/miyoo.cpp:79
-#: backends/platform/sdl/opendingux/opendingux.cpp:53
+#: backends/platform/sdl/miyoo/miyoo.cpp:69
+#: backends/platform/sdl/miyoo/miyoo.cpp:96
+#: backends/platform/sdl/opendingux/opendingux.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:46 backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Start"
 msgstr "スタート"
@@ -3839,9 +3844,9 @@ msgstr "ZR"
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:55
 #: backends/platform/ds/osystem_ds.cpp:171
-#: backends/platform/sdl/miyoo/miyoo.cpp:64
-#: backends/platform/sdl/miyoo/miyoo.cpp:80
-#: backends/platform/sdl/opendingux/opendingux.cpp:54
+#: backends/platform/sdl/miyoo/miyoo.cpp:71
+#: backends/platform/sdl/miyoo/miyoo.cpp:98
+#: backends/platform/sdl/opendingux/opendingux.cpp:61
 #: backends/platform/sdl/psp2/psp2.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "L"
@@ -3850,9 +3855,9 @@ msgstr "L"
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/ds/osystem_ds.cpp:172
-#: backends/platform/sdl/miyoo/miyoo.cpp:65
-#: backends/platform/sdl/miyoo/miyoo.cpp:81
-#: backends/platform/sdl/opendingux/opendingux.cpp:55
+#: backends/platform/sdl/miyoo/miyoo.cpp:73
+#: backends/platform/sdl/miyoo/miyoo.cpp:100
+#: backends/platform/sdl/opendingux/opendingux.cpp:63
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
@@ -4091,36 +4096,37 @@ msgstr "OFLライセンス"
 msgid "BSD License"
 msgstr "BSDライセンス"
 
-#: backends/platform/sdl/miyoo/miyoo.cpp:70
-#: backends/platform/sdl/miyoo/miyoo.cpp:86
+#. I18N: Hardware key
+#: backends/platform/sdl/miyoo/miyoo.cpp:79
+#: backends/platform/sdl/miyoo/miyoo.cpp:106
 #: backends/platform/sdl/ps3/ps3.cpp:59
 msgid "L2"
 msgstr "L2"
 
 #. I18N: Hardware key
-#: backends/platform/sdl/miyoo/miyoo.cpp:71
-#: backends/platform/sdl/miyoo/miyoo.cpp:87
+#: backends/platform/sdl/miyoo/miyoo.cpp:81
+#: backends/platform/sdl/miyoo/miyoo.cpp:108
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "R2"
 msgstr "R2"
 
 #. I18N: Hardware key
-#: backends/platform/sdl/miyoo/miyoo.cpp:72
-#: backends/platform/sdl/miyoo/miyoo.cpp:90 engines/grim/grim.cpp:520
+#: backends/platform/sdl/miyoo/miyoo.cpp:83
+#: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:520
 #: engines/grim/grim.cpp:616 engines/hdb/metaengine.cpp:264
 msgid "Menu"
 msgstr "メニュー"
 
 #. I18N: Hardware key
-#: backends/platform/sdl/miyoo/miyoo.cpp:88
-#: backends/platform/sdl/opendingux/opendingux.cpp:64
+#: backends/platform/sdl/miyoo/miyoo.cpp:110
+#: backends/platform/sdl/opendingux/opendingux.cpp:73
 #: backends/platform/sdl/ps3/ps3.cpp:47
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "L3"
 msgstr "L3"
 
 #. I18N: Hardware key
-#: backends/platform/sdl/miyoo/miyoo.cpp:89
+#: backends/platform/sdl/miyoo/miyoo.cpp:112
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "R3"
@@ -5091,10 +5097,11 @@ msgstr "アクション"
 msgid "Change Command"
 msgstr "コマンドを変更"
 
+#. I18N: Action in In Cold Blood
 #: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:152
 #: engines/grim/grim.cpp:497 engines/grim/grim.cpp:593
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:99
-#: engines/icb/icb.cpp:98 engines/icb/icb.cpp:168 engines/scumm/help.cpp:223
+#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:223
 #: engines/scumm/help.cpp:232 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247 engines/twine/metaengine.cpp:429
 #: engines/zvision/metaengine.cpp:232
@@ -5305,7 +5312,8 @@ msgstr "ファイルを削除できません。"
 msgid "Menu / Skip"
 msgstr "メニュー/スキップ"
 
-#: engines/griffon/metaengine.cpp:145 engines/mm/mm1/metaengine.cpp:56
+#. I18N: Combat command in Might & Magic 1
+#: engines/griffon/metaengine.cpp:145 engines/mm/mm1/metaengine.cpp:59
 #: engines/scumm/metaengine.cpp:822
 msgid "Attack"
 msgstr "攻撃"
@@ -5326,9 +5334,10 @@ msgstr ""
 "す。\n"
 "それでも%sを実行しますか?"
 
+#. I18N: Action in In Cold Blood
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:568
-#: engines/hpl1/metaengine.cpp:87 engines/icb/icb.cpp:123
-#: engines/icb/icb.cpp:183
+#: engines/hpl1/metaengine.cpp:87 engines/icb/icb.cpp:131
+#: engines/icb/icb.cpp:197
 msgid "Run"
 msgstr "走る"
 
@@ -5573,8 +5582,8 @@ msgstr "左に行く"
 msgid "Move right"
 msgstr "右に行く"
 
-#. I18N: Combat command in MM1
-#: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:64
+#. I18N: Combat command in Might & Magic 1
+#: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:75
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:150
 #: engines/scumm/help.cpp:168 engines/scumm/help.cpp:196
 #: engines/scumm/help.cpp:211 engines/scumm/help.cpp:222
@@ -5608,11 +5617,11 @@ msgstr "前方"
 msgid "Backward"
 msgstr "後方"
 
-#: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:77
+#: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:93
 msgid "Strafe Left"
 msgstr "左ステップ"
 
-#: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:78
+#: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:94
 msgid "Strafe Right"
 msgstr "右ステップ"
 
@@ -5628,8 +5637,9 @@ msgstr "右傾"
 msgid "Jump"
 msgstr "ジャンプ"
 
-#: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:113
-#: engines/icb/icb.cpp:173
+#. I18N: Action in In Cold Blood
+#: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:119
+#: engines/icb/icb.cpp:185
 msgid "Crouch"
 msgstr "かがむ"
 
@@ -5701,19 +5711,23 @@ msgstr "復元されたコンテンツを有効にする"
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "オリジナルの実装を有効にしていないコンテンツを追加します。"
 
-#: engines/icb/icb.cpp:88
+#. I18N: Action in In Cold Blood
+#: engines/icb/icb.cpp:89
 msgid "Fire"
 msgstr "ショット"
 
-#: engines/icb/icb.cpp:103
+#. I18N: Action in In Cold Blood
+#: engines/icb/icb.cpp:107
 msgid "Arm"
 msgstr "武器"
 
-#: engines/icb/icb.cpp:108
+#. I18N: Action in In Cold Blood
+#: engines/icb/icb.cpp:113
 msgid "Remora"
 msgstr "妨害"
 
-#: engines/icb/icb.cpp:118 engines/icb/icb.cpp:178
+#. I18N: Action in In Cold Blood
+#: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
 msgid "Side Step"
 msgstr "横ステップ"
 
@@ -5862,15 +5876,14 @@ msgstr "左に行く"
 msgid "Move Right"
 msgstr "右に行く"
 
-#. I18N: Directionalcommand in MM1
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/mm/mm1/metaengine.cpp:75 engines/pegasus/pegasus.cpp:2739
+#: engines/mm/mm1/metaengine.cpp:91 engines/pegasus/pegasus.cpp:2739
 #: engines/twine/metaengine.cpp:412 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "左に曲がる"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
-#: engines/mm/mm1/metaengine.cpp:76 engines/pegasus/pegasus.cpp:2746
+#: engines/mm/mm1/metaengine.cpp:92 engines/pegasus/pegasus.cpp:2746
 #: engines/twine/metaengine.cpp:405 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "右に曲がる"
@@ -5887,7 +5900,7 @@ msgstr "インベントリー/キャラクター画面の切り替え"
 msgid "Camp"
 msgstr "キャンプ"
 
-#: engines/kyra/engine/eobcommon.cpp:379 engines/mm/mm1/metaengine.cpp:80
+#: engines/kyra/engine/eobcommon.cpp:379 engines/mm/mm1/metaengine.cpp:96
 msgid "Cast Spell"
 msgstr "魔法を詠唱"
 
@@ -5927,7 +5940,7 @@ msgstr "攻撃２"
 msgid "Attack 3"
 msgstr "攻撃３"
 
-#: engines/kyra/engine/lol.cpp:475 engines/mm/mm1/metaengine.cpp:81
+#: engines/kyra/engine/lol.cpp:475 engines/mm/mm1/metaengine.cpp:97
 msgid "Show Map"
 msgstr "地図を表示"
 
@@ -5939,8 +5952,8 @@ msgstr "左へスライド"
 msgid "Slide Right"
 msgstr "右へスライド"
 
-#. I18N: Action of hero party in MM1
-#: engines/kyra/engine/lol.cpp:482 engines/mm/mm1/metaengine.cpp:85
+#. I18N: Action of hero party in Might & Magic 1
+#: engines/kyra/engine/lol.cpp:482 engines/mm/mm1/metaengine.cpp:103
 msgid "Rest"
 msgstr "休む"
 
@@ -6112,136 +6125,137 @@ msgstr "アニメーション化されたインターフェイス"
 msgid "Naughty game mode"
 msgstr "いたずらゲームモード"
 
-#: engines/mm/mm1/metaengine.cpp:40 engines/twine/metaengine.cpp:443
+#. I18N: ESC key
+#: engines/mm/mm1/metaengine.cpp:41 engines/twine/metaengine.cpp:443
 #: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "脱出"
 
-#: engines/mm/mm1/metaengine.cpp:46
+#: engines/mm/mm1/metaengine.cpp:48
 msgid "View Party Member 1"
 msgstr "パーティー1を見る"
 
-#: engines/mm/mm1/metaengine.cpp:47
+#: engines/mm/mm1/metaengine.cpp:49
 msgid "View Party Member 2"
 msgstr "パーティー2を見る"
 
-#: engines/mm/mm1/metaengine.cpp:48
+#: engines/mm/mm1/metaengine.cpp:50
 msgid "View Party Member 3"
 msgstr "パーティー3を見る"
 
-#: engines/mm/mm1/metaengine.cpp:49
+#: engines/mm/mm1/metaengine.cpp:51
 msgid "View Party Member 4"
 msgstr "パーティー4を見る"
 
-#: engines/mm/mm1/metaengine.cpp:50
+#: engines/mm/mm1/metaengine.cpp:52
 msgid "View Party Member 5"
 msgstr "パーティー5を見る"
 
-#: engines/mm/mm1/metaengine.cpp:51
+#: engines/mm/mm1/metaengine.cpp:53
 msgid "View Party Member 6"
 msgstr "パーティー6を見る"
 
-#. I18N: Combat command in MM1
-#: engines/mm/mm1/metaengine.cpp:57
+#. I18N: Combat command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:61
 msgid "Block"
 msgstr "ブロック"
 
-#. I18N: Combat command in MM1
-#: engines/mm/mm1/metaengine.cpp:58
+#. I18N: Combat command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:63
 msgid "Cast"
 msgstr "キャスト"
 
-#. I18N: Combat command in MM1
-#: engines/mm/mm1/metaengine.cpp:59
+#. I18N: Combat command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:65
 msgid "Exchange"
 msgstr "切り替え"
 
-#. I18N: Combat command in MM1
-#: engines/mm/mm1/metaengine.cpp:60
+#. I18N: Combat command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:67
 msgid "Fight"
 msgstr "戦闘"
 
-#. I18N: Combat command in MM1
-#. I18N: Action of hero party in MM1
-#: engines/mm/mm1/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:89
+#. I18N: Combat command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:69 engines/mm/mm1/metaengine.cpp:110
 msgid "Quick Reference"
 msgstr "簡易マニュアル"
 
-#. I18N: Combat command in MM1
-#: engines/mm/mm1/metaengine.cpp:62
+#. I18N: Combat command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:71
 msgid "Retreat"
 msgstr "撤退"
 
-#. I18N: Combat command in MM1
-#: engines/mm/mm1/metaengine.cpp:63
+#. I18N: Combat command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:73
 msgid "Shoot"
 msgstr "射撃"
 
-#. I18N: Combat command in MM1
-#: engines/mm/mm1/metaengine.cpp:66
+#. I18N: Combat command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:78
 msgid "Delay"
 msgstr "ディレイ"
 
-#. I18N: Combat command in MM1
-#: engines/mm/mm1/metaengine.cpp:67 engines/mm/mm1/metaengine.cpp:84
+#. I18N: Combat command in Might & Magic 1
+#. I18N: Action of hero party in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:80 engines/mm/mm1/metaengine.cpp:101
 msgid "Protect"
 msgstr "防御"
 
-#. I18N: Select party member command in MM1
-#: engines/mm/mm1/metaengine.cpp:73
+#. I18N: Party arrangement command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:88
 msgid "Forwards"
 msgstr "前へ"
 
-#. I18N: Directionalcommand in MM1
-#: engines/mm/mm1/metaengine.cpp:74
+#. I18N: Party arrangement command in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:90
 msgid "Backwards"
 msgstr "後ろへ"
 
-#: engines/mm/mm1/metaengine.cpp:82
+#: engines/mm/mm1/metaengine.cpp:98
 msgid "Toggle Minimap"
 msgstr "ミニマップの切替"
 
-#: engines/mm/mm1/metaengine.cpp:83
+#: engines/mm/mm1/metaengine.cpp:99
 msgid "Reorder Party"
 msgstr "再編成"
 
-#. I18N: Action of hero party in MM1
-#: engines/mm/mm1/metaengine.cpp:86
+#. I18N: Action of hero party in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:105
 msgid "Search"
 msgstr "サーチ"
 
-#. I18N: Action of hero party in MM1
-#: engines/mm/mm1/metaengine.cpp:87
+#. I18N: Action of hero party in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:107
 msgid "Bash"
 msgstr "バッシュ"
 
-#. I18N: Action of hero party in MM1
-#: engines/mm/mm1/metaengine.cpp:88 engines/scumm/help.cpp:144
+#. I18N: Action of hero party in Might & Magic 1
+#: engines/mm/mm1/metaengine.cpp:109 engines/scumm/help.cpp:144
 msgid "Unlock"
 msgstr "解く"
 
-#: engines/mm/mm1/metaengine.cpp:95
+#: engines/mm/mm1/metaengine.cpp:116
 msgid "Goto location"
 msgstr "そこへ移動"
 
-#: engines/mm/mm1/metaengine.cpp:106 engines/mm/mm1/metaengine.cpp:111
+#: engines/mm/mm1/metaengine.cpp:127 engines/mm/mm1/metaengine.cpp:132
 msgid "Might and Magic 1 - Menus"
 msgstr "Might and Magic 1 - メニュー"
 
-#: engines/mm/mm1/metaengine.cpp:112 engines/mm/mm1/metaengine.cpp:118
-#: engines/mm/mm1/metaengine.cpp:124
+#: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:139
+#: engines/mm/mm1/metaengine.cpp:145
 msgid "Might and Magic 1 - Party"
 msgstr "Might and Magic 1 - パーティー"
 
-#: engines/mm/mm1/metaengine.cpp:117
+#: engines/mm/mm1/metaengine.cpp:138
 msgid "Might and Magic 1 - Combat"
 msgstr "Might and Magic 1 - 戦闘"
 
-#: engines/mm/mm1/metaengine.cpp:123
+#: engines/mm/mm1/metaengine.cpp:144
 msgid "Might and Magic 1"
 msgstr "Might and Magic 1"
 
-#: engines/mm/mm1/metaengine.cpp:125
+#: engines/mm/mm1/metaengine.cpp:146
 msgid "Might and Magic 1 - Cheats"
 msgstr "Might and Magic 1 - チート"
 
@@ -7297,17 +7311,18 @@ msgstr ""
 "テクニカルサポートに連絡して修正版をもらうか、Limited Run Games提供のKryoFlux"
 "ダンプから有効なファイルを抽出するガイドをオンラインで検索してください。"
 
-#: engines/scumm/dialog-sessionselector.cpp:50
+#. I18N: Retrieving list of online multiplayer games
+#: engines/scumm/dialog-sessionselector.cpp:51
 msgid "Querying games..."
 msgstr "ゲームに照会中..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:59 engines/scumm/scumm.cpp:3484
+#: engines/scumm/dialog-sessionselector.cpp:60 engines/scumm/scumm.cpp:3484
 msgid "Join"
 msgstr "参加"
 
 #. I18N: Online multiplayer games were found
-#: engines/scumm/dialog-sessionselector.cpp:109
+#: engines/scumm/dialog-sessionselector.cpp:110
 #, c-format
 msgid "Found %d available games."
 msgstr "利用可能な%dが見つかりました。"
