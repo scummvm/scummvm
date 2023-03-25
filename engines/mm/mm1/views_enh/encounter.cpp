@@ -49,9 +49,9 @@ void Encounter::draw() {
 	Game::Encounter &enc = g_globals->_encounters;
 
 	setDisplayArea(false);
+	setReduced(false);
+
 	if (_mode != ALERT) {
-		// Clear the commands area
-		send("GameCommands", GameMessage("COMBAT", "ENCOUNTER"));
 		ScrollView::draw();
 	}
 
@@ -76,7 +76,7 @@ void Encounter::draw() {
 		break;
 
 	case SURPRISED_MONSTERS:
-		writeLine(1, STRING["dialogs.encounter.surprise"], ALIGN_MIDDLE);
+		writeLine(0, STRING["dialogs.encounter.surprise"], ALIGN_MIDDLE);
 		writeLine(2, STRING["dialogs.encounter.approach"], ALIGN_MIDDLE);
 		break;
 
@@ -88,40 +88,40 @@ void Encounter::draw() {
 	}
 
 	case NOWHERE_TO_RUN:
-		writeString(11, 21, STRING["dialogs.encounter.nowhere_to_run"]);
+		writeLine(0, STRING["dialogs.encounter.nowhere_to_run"], ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
 	case SURROUNDED:
-		writeString(5, 21, STRING["dialogs.encounter.surround"]);
+		writeLine(0, STRING["dialogs.encounter.surround"], ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
 	case SURRENDER_FAILED:
-		writeString(2, 21, STRING["dialogs.encounter.surrender_failed"]);
+		writeLine(0, STRING["dialogs.encounter.surrender_failed"], ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
 	case NO_RESPONSE:
-		writeString(12, 21, STRING["dialogs.encounter.no_response"]);
+		writeLine(0, STRING["dialogs.encounter.no_response"], ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
 	case BRIBE:
 		enc._bribeFleeCtr++;
 		enc._bribeAlignmentCtr++;
-		writeString(5, 21, Common::String::format(
+		writeLine(0, Common::String::format(
 			STRING["dialogs.encounter.give_up"].c_str(),
-			_bribeTypeStr.c_str()));
+			_bribeTypeStr.c_str()), ALIGN_MIDDLE);
 		break;
 
 	case NOT_ENOUGH:
-		writeString(14, 21, STRING["dialogs.encounter.not_enough"]);
+		writeLine(0, STRING["dialogs.encounter.not_enough"], ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
 	case COMBAT:
-		writeString(16, 21, STRING["dialogs.encounter.combat"]);
+		writeLine(0, STRING["dialogs.encounter.combat"], ALIGN_MIDDLE);
 		delaySeconds(2);
 		break;
 
@@ -134,11 +134,17 @@ void Encounter::draw() {
 		setDisplayArea(true);
 		drawGraphic(enc._monsterImgNum);
 
+		setBounds(Common::Rect(160, 10, 310, 140));
+		Graphics::ManagedSurface monArea = getSurface();
+		monArea.clear();
+
 		// Write the monster list
+		setReduced(true);
+		setTextColor(4);
 		for (uint i = 0; i < enc._monsterList.size(); ++i) {
-			writeChar(22, i, 'A' + i);
-			writeString(") ");
-			writeString(enc._monsterList[i]._name);
+			writeString(12, 4 + i * 8,
+				Common::String::format("%c)", 'A' + i), ALIGN_RIGHT);
+			writeString(18, 4 + i * 8, enc._monsterList[i]._name.c_str());
 		}
 	}
 
@@ -148,7 +154,7 @@ void Encounter::draw() {
 			_mode == SURPRISED_BY_MONSTERS) {
 		if (enc._alignmentsChanged) {
 			setDisplayArea(false);
-			writeLine(3, STRING["dialogs.encounter.alignment_slips"]);
+			writeLine(3, STRING["dialogs.encounter.alignment_slips"], ALIGN_MIDDLE);
 			Sound::sound(SOUND_2);
 		}
 
