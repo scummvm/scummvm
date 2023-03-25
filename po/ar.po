@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
 "PO-Revision-Date: 2023-03-25 23:26+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
 "Language: ar\n"
@@ -7485,41 +7485,43 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1381
 msgid "Host games over LAN"
-msgstr ""
+msgstr "استضف الألعاب عبر الشبكة المحلية"
 
 #: engines/scumm/dialogs.cpp:1381
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr ""
+msgstr "يسمح باكتشاف جلسات اللعبة عبر شبكة المنطقة المحلية الخاصة بك."
 
 #: engines/scumm/dialogs.cpp:1383
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
 msgstr ""
+"عنوان الخادم المراد الاتصال به لاستضافة جلسات الألعاب عبر الإنترنت والانضمام "
+"إليها."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
-msgstr ""
+msgstr "أوامر لوحة المفاتيح الشائعة:"
 
 #: engines/scumm/help.cpp:73
 msgid "Save / Load dialog"
-msgstr ""
+msgstr "حفظ / تحميل الحوار"
 
 #: engines/scumm/help.cpp:74
 msgid "Skip line of text"
-msgstr ""
+msgstr "تخطي سطر النص"
 
 #: engines/scumm/help.cpp:75
 msgid "Esc"
-msgstr ""
+msgstr "خروج"
 
 #: engines/scumm/help.cpp:76 engines/wintermute/keymapper_tables.h:2136
 msgid "Space"
-msgstr ""
+msgstr "فضاء"
 
 #: engines/scumm/help.cpp:76
 msgid "Pause game"
-msgstr ""
+msgstr "وقفة اللعبة"
 
 #: engines/scumm/help.cpp:77 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:93 engines/scumm/help.cpp:94
@@ -7527,355 +7529,355 @@ msgstr ""
 #: engines/scumm/help.cpp:97 engines/scumm/help.cpp:98
 #: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
 msgid "Ctrl"
-msgstr ""
+msgstr "يتحكم"
 
 #: engines/scumm/help.cpp:77
 msgid "Load saved game 1-10"
-msgstr ""
+msgstr "تحميل اللعبة المحفوظة 1-10"
 
 #: engines/scumm/help.cpp:78 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:98
 #: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
 msgid "Alt"
-msgstr ""
+msgstr "بديل"
 
 #: engines/scumm/help.cpp:78
 msgid "Save game 1-10"
-msgstr ""
+msgstr "حفظ اللعبة 1-10"
 
 #: engines/scumm/help.cpp:85
 msgid "Music volume up / down"
-msgstr ""
+msgstr "رفع / خفض مستوى صوت الموسيقى"
 
 #: engines/scumm/help.cpp:86
 msgid "Text speed slower / faster"
-msgstr ""
+msgstr "سرعة النص أبطأ / أسرع"
 
 #: engines/scumm/help.cpp:87
 msgid "Simulate left mouse button"
-msgstr ""
+msgstr "محاكاة زر الماوس الأيسر"
 
 #: engines/scumm/help.cpp:88 engines/wintermute/keymapper_tables.h:2191
 msgid "Tab"
-msgstr ""
+msgstr "Tab"
 
 #: engines/scumm/help.cpp:88
 msgid "Simulate right mouse button"
-msgstr ""
+msgstr "محاكاة زر الفأرة الأيمن"
 
 #: engines/scumm/help.cpp:91
 msgid "Special keyboard commands:"
-msgstr ""
+msgstr "أوامر لوحة المفاتيح الخاصة:"
 
 #: engines/scumm/help.cpp:92
 msgid "Show / Hide console"
-msgstr ""
+msgstr "إظهار / إخفاء وحدة التحكم"
 
 #: engines/scumm/help.cpp:93
 msgid "Start the debugger"
-msgstr ""
+msgstr "ابدأ المصحح"
 
 #: engines/scumm/help.cpp:94
 msgid "Show memory consumption"
-msgstr ""
+msgstr "إظهار استهلاك الذاكرة"
 
 #: engines/scumm/help.cpp:95
 msgid "Run in fast mode (*)"
-msgstr ""
+msgstr "تشغيل في الوضع السريع (*)"
 
 #: engines/scumm/help.cpp:96
 msgid "Run in really fast mode (*)"
-msgstr ""
+msgstr "تشغيل في الوضع السريع حقًا (*)"
 
 #: engines/scumm/help.cpp:98
 msgid "Switch between graphics filters"
-msgstr ""
+msgstr "التبديل بين مرشحات الرسوم"
 
 #: engines/scumm/help.cpp:99
 msgid "Increase / Decrease scale factor"
-msgstr ""
+msgstr "زيادة / إنقاص عامل القياس"
 
 #: engines/scumm/help.cpp:100
 msgid "Toggle aspect-ratio correction"
-msgstr ""
+msgstr "تبديل تصحيح نسبة العرض إلى الارتفاع"
 
 #: engines/scumm/help.cpp:105
 msgid "* Note that using ctrl-f and"
-msgstr ""
+msgstr "* لاحظ أن استخدام ctrl-f و"
 
 #: engines/scumm/help.cpp:106
 msgid "  ctrl-g are not recommended"
-msgstr ""
+msgstr "  ctrl-g غير مستحسن"
 
 #: engines/scumm/help.cpp:107
 msgid "  since they may cause crashes"
-msgstr ""
+msgstr "  لأنها قد تسبب حوادث"
 
 #: engines/scumm/help.cpp:108
 msgid "  or incorrect game behavior."
-msgstr ""
+msgstr "  أو سلوك اللعبة غير الصحيح."
 
 #: engines/scumm/help.cpp:112
 msgid "Spinning drafts on the keyboard:"
-msgstr ""
+msgstr "المسودات الدوارة على لوحة المفاتيح:"
 
 #: engines/scumm/help.cpp:114
 msgid "Main game controls:"
-msgstr ""
+msgstr "ضوابط اللعبة الرئيسية:"
 
 #: engines/scumm/help.cpp:119 engines/scumm/help.cpp:134
 #: engines/scumm/help.cpp:159
 msgid "Push"
-msgstr ""
+msgstr "Push"
 
 #: engines/scumm/help.cpp:120 engines/scumm/help.cpp:135
 #: engines/scumm/help.cpp:160
 msgid "Pull"
-msgstr ""
+msgstr "يحذب"
 
 #: engines/scumm/help.cpp:121 engines/scumm/help.cpp:136
 #: engines/scumm/help.cpp:161 engines/scumm/help.cpp:195
 #: engines/scumm/help.cpp:205
 msgid "Give"
-msgstr ""
+msgstr "يعطي"
 
 #: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
 #: engines/scumm/help.cpp:162 engines/scumm/help.cpp:188
 #: engines/scumm/help.cpp:206
 msgid "Open"
-msgstr ""
+msgstr "يفتح"
 
 #: engines/scumm/help.cpp:124
 msgid "Go to"
-msgstr ""
+msgstr "اذهب إلى"
 
 #: engines/scumm/help.cpp:125
 msgid "Get"
-msgstr ""
+msgstr "يحصل"
 
 #: engines/scumm/help.cpp:127 engines/scumm/help.cpp:139
 msgid "Read"
-msgstr ""
+msgstr "يقرأ"
 
 #: engines/scumm/help.cpp:128 engines/scumm/help.cpp:145
 msgid "New kid"
-msgstr ""
+msgstr "طفل جديد"
 
 #: engines/scumm/help.cpp:129 engines/scumm/help.cpp:151
 #: engines/scumm/help.cpp:169
 msgid "Turn on"
-msgstr ""
+msgstr "شغله"
 
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:152
 #: engines/scumm/help.cpp:170
 msgid "Turn off"
-msgstr ""
+msgstr "أطفأ"
 
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:192 engines/wintermute/keymapper_tables.h:1540
 msgid "Walk to"
-msgstr ""
+msgstr "امشي الى"
 
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:208
 #: engines/scumm/help.cpp:225 engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
-msgstr ""
+msgstr "يلتقط"
 
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 msgid "What is"
-msgstr ""
+msgstr "ما هو"
 
 #: engines/scumm/help.cpp:147
 msgid "Put on"
-msgstr ""
+msgstr "وضعت على"
 
 #: engines/scumm/help.cpp:148
 msgid "Take off"
-msgstr ""
+msgstr "اخلع"
 
 #: engines/scumm/help.cpp:154
 msgid "Fix"
-msgstr ""
+msgstr "يصلح"
 
 #: engines/scumm/help.cpp:156
 msgid "Switch"
-msgstr ""
+msgstr "يُحوّل"
 
 #: engines/scumm/help.cpp:164 engines/scumm/help.cpp:226
 msgid "Look"
-msgstr ""
+msgstr "ينظر"
 
 #: engines/scumm/help.cpp:171 engines/scumm/help.cpp:221
 msgid "Talk"
-msgstr ""
+msgstr "يتحدث"
 
 #: engines/scumm/help.cpp:172
 msgid "Travel"
-msgstr ""
+msgstr "يسافر"
 
 #: engines/scumm/help.cpp:173
 msgid "To Henry / To Indy"
-msgstr ""
+msgstr "إلى هنري / إلى إندي"
 
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:177
 msgid "play C minor on distaff"
-msgstr ""
+msgstr "لعب C طفيفة على Distaff"
 
 #: engines/scumm/help.cpp:178
 msgid "play D on distaff"
-msgstr ""
+msgstr "تشغيل D على Distaff"
 
 #: engines/scumm/help.cpp:179
 msgid "play E on distaff"
-msgstr ""
+msgstr "لعب E على Distaff"
 
 #: engines/scumm/help.cpp:180
 msgid "play F on distaff"
-msgstr ""
+msgstr "لعب E على Distaff"
 
 #: engines/scumm/help.cpp:181
 msgid "play G on distaff"
-msgstr ""
+msgstr "العب G على Distaff"
 
 #: engines/scumm/help.cpp:182
 msgid "play A on distaff"
-msgstr ""
+msgstr "تشغيل A على Distaff"
 
 #: engines/scumm/help.cpp:183
 msgid "play B on distaff"
-msgstr ""
+msgstr "لعب B على Distaff"
 
 #: engines/scumm/help.cpp:184
 msgid "play C major on distaff"
-msgstr ""
+msgstr "تلعب C الكبرى على Distaff"
 
 #: engines/scumm/help.cpp:190 engines/scumm/help.cpp:212
 msgid "puSh"
-msgstr ""
+msgstr "يدفع"
 
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:213
 msgid "pull (Yank)"
-msgstr ""
+msgstr "سحب (يانك)"
 
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:210
 #: engines/scumm/help.cpp:246 engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1558
 msgid "Talk to"
-msgstr ""
+msgstr "تحدث الي"
 
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:209
 #: engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1534
 msgid "Look at"
-msgstr ""
+msgstr "ينظر الى"
 
 #: engines/scumm/help.cpp:198
 msgid "turn oN"
-msgstr ""
+msgstr "شغله"
 
 #: engines/scumm/help.cpp:199
 msgid "turn oFf"
-msgstr ""
+msgstr "أطفأ"
 
 #: engines/scumm/help.cpp:215
 msgid "KeyUp"
-msgstr ""
+msgstr "KeyUp"
 
 #: engines/scumm/help.cpp:215
 msgid "Highlight prev dialogue"
-msgstr ""
+msgstr "تسليط الضوء على الحوار السابق"
 
 #: engines/scumm/help.cpp:216
 msgid "KeyDown"
-msgstr ""
+msgstr "KeyDown"
 
 #: engines/scumm/help.cpp:216
 msgid "Highlight next dialogue"
-msgstr ""
+msgstr "قم بتمييز الحوار التالي"
 
 #: engines/scumm/help.cpp:220
 msgid "Walk"
-msgstr ""
+msgstr "يمشي"
 
 #: engines/scumm/help.cpp:224
 msgid "Object"
-msgstr ""
+msgstr "Object"
 
 #: engines/scumm/help.cpp:227
 msgid "Black and White / Color"
-msgstr ""
+msgstr "أبيض وأسود / ملون"
 
 #: engines/scumm/help.cpp:230
 msgid "Eyes"
-msgstr ""
+msgstr "عيون"
 
 #: engines/scumm/help.cpp:231
 msgid "Tongue"
-msgstr ""
+msgstr "لسان"
 
 #: engines/scumm/help.cpp:233
 msgid "Punch"
-msgstr ""
+msgstr "لكمة"
 
 #: engines/scumm/help.cpp:234
 msgid "Kick"
-msgstr ""
+msgstr "ركلة"
 
 #: engines/scumm/help.cpp:238
 msgid "Regular cursor"
-msgstr ""
+msgstr "المؤشر العادي"
 
 #. I18N: Comm is a communication device
 #: engines/scumm/help.cpp:241
 msgid "Comm"
-msgstr ""
+msgstr "إتصالات"
 
 #: engines/scumm/help.cpp:244
 msgid "Save / Load / Options"
-msgstr ""
+msgstr "حفظ / تحميل / خيارات"
 
 #: engines/scumm/help.cpp:255
 msgid "Other game controls:"
-msgstr ""
+msgstr "ضوابط اللعبة الأخرى:"
 
 #: engines/scumm/help.cpp:257 engines/scumm/help.cpp:267
 msgid "Inventory:"
-msgstr ""
+msgstr "قائمة الجرد:"
 
 #: engines/scumm/help.cpp:258 engines/scumm/help.cpp:274
 msgid "Scroll list up"
-msgstr ""
+msgstr "قائمة التمرير لأعلى"
 
 #: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
 msgid "Scroll list down"
-msgstr ""
+msgstr "قائمة التمرير لأسفل"
 
 #: engines/scumm/help.cpp:260 engines/scumm/help.cpp:268
 msgid "Upper left item"
-msgstr ""
+msgstr "العنصر العلوي الأيسر"
 
 #: engines/scumm/help.cpp:261 engines/scumm/help.cpp:270
 msgid "Lower left item"
-msgstr ""
+msgstr "العنصر السفلي الأيسر"
 
 #: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
 msgid "Upper right item"
-msgstr ""
+msgstr "البند الأيمن العلوي"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:273
 msgid "Lower right item"
-msgstr ""
+msgstr "البند الأيمن السفلي"
 
 #: engines/scumm/help.cpp:269
 msgid "Middle left item"
-msgstr ""
+msgstr "العنصر الأيسر الأوسط"
 
 #: engines/scumm/help.cpp:272
 msgid "Middle right item"
-msgstr ""
+msgstr "العنصر الأوسط الأيمن"
 
 #: engines/scumm/help.cpp:279 engines/scumm/help.cpp:284
 msgid "Switching characters:"
