@@ -2493,7 +2493,19 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 		configPathWidget->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 
 	Common::U32String logPath = g_system->getDefaultLogFileName();
-	new StaticTextWidget(boss, prefix + "LogPath", _("ScummVM log path: ") + logPath, logPath);
+	bool colorOverride = false;
+
+	if (ConfMan.hasKey("logfile")) {
+		logPath = ConfMan.get("logfile");
+
+		if (ConfMan.isKeyTemporary("logfile"))
+			colorOverride = true;
+	}
+	_logPath = new StaticTextWidget(boss, prefix + "LogPath", _("ScummVM log path: ") + logPath, logPath);
+
+	if (colorOverride)
+		_logPath->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+
 	new ButtonWidget(boss, prefix + "ViewButton", _("View"), Common::U32String(), kViewLogCmd);
 
 	Common::U32String browserPath = _("<default>");
@@ -3244,7 +3256,14 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 
 		break;
 	case kViewLogCmd: {
-		TextViewerDialog viewer(g_system->getDefaultLogFileName());
+		Common::String logPath;
+
+		if (ConfMan.hasKey("logfile"))
+			logPath = ConfMan.get("logfile");
+		else
+			logPath = g_system->getDefaultLogFileName();
+
+		TextViewerDialog viewer(logPath);
 		viewer.runModal();
 		g_gui.scheduleTopDialogRedraw();
 		break;
