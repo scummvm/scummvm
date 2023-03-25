@@ -102,6 +102,11 @@ Common::Error CrabEngine::run() {
 	return Common::kNoError;
 }
 
+void CrabEngine::initializePath(const Common::FSNode &gamePath) {
+	Engine::initializePath(gamePath);
+	SearchMan.addDirectory("res", gamePath, 0, 5);
+}
+
 Common::Error CrabEngine::syncGame(Common::Serializer &s) {
 	// The Serializer has methods isLoading() and isSaving()
 	// if you need to specific steps; for example setting
