@@ -2400,6 +2400,8 @@ void GlobalOptionsDialog::build() {
 			_autosavePeriodPopUp->setSelected(i);
 	}
 
+	_debugLevelPopUp->setSelected(gDebugLevel + 1);
+
 	ThemeEngine::GraphicsMode mode = ThemeEngine::findMode(ConfMan.get("gui_renderer"));
 	if (mode == ThemeEngine::kGfxDisabled)
 		mode = ThemeEngine::_defaultRendererMode;
@@ -2619,6 +2621,16 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 
 	_randomSeed = new EditTextWidget(boss, prefix + "RandomSeedEditText", seed, Common::U32String());
 	_randomSeedClearButton = addClearButton(boss, prefix + "RandomSeedClearButton", kRandomSeedClearCmd);
+
+	new StaticTextWidget(boss, prefix + "DebugLevelPopupDesc", _("Debug level:"));
+	_debugLevelPopUp = new PopUpWidget(boss, prefix + "DebugLevelPopup");
+
+	_debugLevelPopUp->appendEntry(_("None"), -1); // I18N: Debug level -1, no messages
+
+	for (int i = 0; i < 11; i++)
+		_debugLevelPopUp->appendEntry(Common::U32String::format("%d", i), i);
+
+	_debugLevelPopUp->appendEntry(_("11 (all)"), 11); // I18N: Debug level 11, all messages
 
 #ifdef USE_DISCORD
 	_discordRpcCheckbox = new CheckboxWidget(boss, prefix + "DiscordRpc",
@@ -2913,6 +2925,12 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.setInt("autosave_period", autosavePeriod, _domain);
 	else
 		_autosavePeriodPopUp->setSelected(0);
+
+	if (gDebugLevel != _debugLevelPopUp->getSelectedTag()) {
+		gDebugLevel = _debugLevelPopUp->getSelectedTag();
+
+		warning("Debug level set to %d", gDebugLevel);
+	}
 
 #ifdef USE_UPDATES
 	if (g_system->getUpdateManager()) {
