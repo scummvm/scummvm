@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
 "PO-Revision-Date: 2023-03-25 23:27+0000\n"
-"Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
 "Language: ar\n"
@@ -6618,63 +6618,65 @@ msgstr ""
 
 #: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:39
 msgid "Start with debugger"
-msgstr ""
+msgstr "ابدأ بمصحح الأخطاء"
 
 #: engines/mtropolis/metaengine.cpp:108 engines/vcruise/metaengine.cpp:40
 msgid "Starts with the debugger dashboard active."
-msgstr ""
+msgstr "يبدأ مع تنشيط لوحة معلومات مصحح الأخطاء."
 
 #: engines/mtropolis/metaengine.cpp:160
 msgid "Toggle debug overlay"
-msgstr ""
+msgstr "تبديل تراكب التصحيح"
 
 #: engines/mtropolis/metaengine.cpp:165
 msgid "Force any playing movies to end"
-msgstr ""
+msgstr "فرض إنهاء تشغيل أي أفلام"
 
 #: engines/mtropolis/saveload.cpp:142
 msgid "Failed to read version information from save file"
-msgstr ""
+msgstr "فشلت قراءة معلومات الإصدار من حفظ الملف"
 
 #: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:240
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
-msgstr ""
+msgstr "فشل تحميل الحفظ ، ملف الحفظ لا يحتوي على معلومات إصدار صالحة."
 
 #: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:250
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
 msgstr ""
+"تم إنشاء اللعبة المحفوظة بإصدار سابق غير متوافق من ScummVM. غير قادر على "
+"التحميل."
 
 #: engines/mtropolis/saveload.cpp:174
 msgid "Failed to load save, an error occurred when reading the save game data."
-msgstr ""
+msgstr "فشل تحميل الحفظ ، حدث خطأ أثناء قراءة بيانات حفظ اللعبة."
 
 #: engines/mtropolis/saveload.cpp:234
 msgid "An internal error occurred while attempting to write save game data"
-msgstr ""
+msgstr "حدث خطأ داخلي أثناء محاولة كتابة حفظ بيانات اللعبة"
 
 #: engines/mtropolis/saveload.cpp:242
 msgid "An error occurred while writing the save game"
-msgstr ""
+msgstr "حدث خطأ أثناء كتابة لعبة الحفظ"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr ""
+msgstr "غير قادر على تحديد موقع ملف بيانات المحرك '%s'"
 
 #: engines/myst3/detection.cpp:179 engines/myst3/detection.cpp:193
 msgid "PS2 version is not yet supported"
-msgstr ""
+msgstr "إصدار PS2 غير مدعوم حتى الآن"
 
 #: engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
-msgstr ""
+msgstr "تعديل الشاشة العريضة"
 
 #: engines/myst3/metaengine.cpp:41
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "تمكين عرض الشاشة العريضة في وضع ملء الشاشة."
 
 #: engines/myst3/myst3.cpp:363
 #, c-format
@@ -6685,38 +6687,42 @@ msgid ""
 "The updates can be downloaded from:\n"
 "%s"
 msgstr ""
+"لم يتم تحديث هذا الإصدار من Myst III بآخر تصحيح رسمي.\n"
+"الرجاء تثبيت التحديث الرسمي المطابق للغة لعبتك.\n"
+"يمكن تنزيل التحديثات من:\n"
+"%s"
 
 #: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:748
 msgid "Invalid file name for saving"
-msgstr ""
+msgstr "اسم ملف غير صالح للحفظ"
 
 #: engines/nancy/input.cpp:157
 msgid "Left Click Interact"
-msgstr ""
+msgstr "انقر بزر الماوس الأيسر تفاعل"
 
 #: engines/nancy/input.cpp:164
 msgid "Right Click Interact"
-msgstr ""
+msgstr "انقر بزر الماوس الأيمن تفاعل"
 
 #: engines/nancy/input.cpp:195
 msgid "Fast move modifier"
-msgstr ""
+msgstr "معدل التحرك السريع"
 
 #: engines/nancy/input.cpp:203
 msgid "Toggle fast conversation mode"
-msgstr ""
+msgstr "تبديل وضع المحادثة السريع"
 
 #: engines/nancy/input.cpp:208
 msgid "Toggle end conversation mode"
-msgstr ""
+msgstr "تبديل وضع إنهاء المحادثة"
 
 #: engines/nancy/input.cpp:213
 msgid "Go to main menu"
-msgstr ""
+msgstr "اذهب إلى القائمة الرئيسية"
 
 #: engines/nancy/input.cpp:218
 msgid "Go to save/load menu"
-msgstr ""
+msgstr "انتقل إلى حفظ / تحميل القائمة"
 
 #: engines/nancy/input.cpp:223
 msgid "Reload last save"
