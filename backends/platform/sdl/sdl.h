@@ -158,7 +158,6 @@ protected:
 	virtual AudioCDManager *createAudioCDManager();
 
 	// Logging
-	virtual Common::String getDefaultLogFileName() { return Common::String(); }
 	virtual Common::WriteStream *createLogFile();
 	Backends::Log::Log *_logger;
 
