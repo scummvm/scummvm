@@ -176,7 +176,7 @@ static void update_variables(void) {
 		mouse_speed = (float)atof(var.value);
 	}
 
-	var.key = "scummvm_speed_hack";
+	var.key = "scummvm_allow_timing_inaccuracies";
 	var.value = NULL;
 	speed_hack_is_enabled = false;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {

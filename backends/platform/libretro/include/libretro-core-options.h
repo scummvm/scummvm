@@ -258,10 +258,10 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"0"
 	},
 	{
-		"scummvm_speed_hack",
-		"Speed Hack (Restart)",
+		"scummvm_allow_timing_inaccuracies",
+		"Allow Timing Inaccuracies (Restart)",
 		NULL,
-		"Enables a speed hack that significantly reduces CPU requirements by allowing subtle timing inaccuracies. This hack is considered 'safe' - it should cause no errors, and most timing deviations are imperceptible. It remains a hack, though, and users of desktop-class machines are advised to keep it disabled. On low power hardware (weak Android devices, single board computers), this hack is essential for full speed operation of the core.",
+		"Allow timing inaccuracies that reduces CPU requirements. Though most timing deviations are imperceptible, in some cases it may introduce audio sync/timing issues, hence this option should be enabled only if full speed cannot be reached otherwise.",
 		NULL,
 		NULL,
 		{
@@ -269,7 +269,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 			{"enabled", NULL},
 			{NULL, NULL},
 		},
-#if defined(ANDROID) || defined(DINGUX) || defined(_3DS)
+#if defined(DINGUX) || defined(_3DS)
 		"enabled"
 #else
 		"disabled"

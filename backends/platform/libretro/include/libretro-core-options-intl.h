@@ -193,10 +193,10 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
-		"scummvm_speed_hack",
-		"Speed Hack (riavvio necessario)",
+		"scummvm_allow_timing_inaccuracies",
+		"Consenti inaccuratezze di timing (riavvio necessario)",
 		NULL,
-		"Modalità che riduce significativamente le richeste di CPU consentendo lievi inaccuratezze di timing. Questo 'hack' è considerato 'sicuro' - non dovrebbe causare errori e la maggior parte delle inaccuratezze sono impercettibili. Rimane comunque un hack, e gli utenti con macchine di classe desktop dovrebbero lasciarlo disabilitato. Su hardware a basse prestazioni (vecchi device Android, computer su singola scheda), questo hack è essenziale per il funzionamento del core a velocità piena.",
+		"Consente inaccuratezze di timing che riducono significativamente le richeste di CPU. Anche se la maggior parte delle inaccuratezze sono impercettibili, in alcuni casi potrebbe introdurre problemi di sincronizzazione audio, quindi questa opzione andrebbe abilitata solo se il raggiungimento della piena velocità non è possibile in altro modo.",
 		NULL,
 		NULL,
 		{
