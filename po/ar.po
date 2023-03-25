@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
 "PO-Revision-Date: 2023-03-25 23:18+0000\n"
-"Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
 "Language: ar\n"
@@ -6285,7 +6285,7 @@ msgstr "فشل الحفظ التلقائي"
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:113 engines/mohawk/dialogs.cpp:358
 msgid "~Z~ip Mode Activated"
-msgstr ""
+msgstr "~ Zip ~ الوضع المنشط"
 
 #: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
 msgid ""
@@ -6293,6 +6293,9 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"عند التنشيط ، يؤدي النقر فوق عنصر أو منطقة بمؤشر صاعقة البرق إلى نقلك مباشرةً"
+" إلى هناك ، متخطياً الشاشات الوسيطة. يمكنك فقط \"الضغط\" على منطقة محددة كنت "
+"قد زرتها بالفعل."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -6989,12 +6992,13 @@ msgstr ""
 
 #: engines/sci/detection_options.h:145
 msgid "Use silver cursors"
-msgstr ""
+msgstr "استخدم المؤشرات الفضية"
 
 #: engines/sci/detection_options.h:146
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
+"استخدم مجموعة بديلة من المؤشرات الفضية بدلاً من المؤشرات الذهبية العادية"
 
 #: engines/sci/detection_options.h:158
 msgid "Enable content censoring"
