@@ -72,16 +72,15 @@ bool Image::Load(const Common::String &path) {
 	ImageDecoder decoder;
 
 	if (FileOpen(path, &file) && decoder.loadStream(file)) {
-		const Graphics::Surface *s = decoder.getSurface();
-		texture = new Graphics::Surface();
-		texture->copyFrom(*s);
-		w = s->w;
-		h = s->h;
+		texture = new Graphics::ManagedSurface(decoder.getSurface());
+		w = texture->w;
+		h = texture->h;
 
 		file.close();
-	}
 
-	warning("Image::Load() Image Texture(%s): w: %d h: %d", path.c_str(), w, h);
+		warning("Image::Load() Image Texture(%s): w: %d h: %d", path.c_str(), w, h);
+
+	}
 
 	return texture != nullptr;
 
@@ -122,7 +121,8 @@ bool Image::Load(rapidxml::xml_node<char> *node, const char *name) {
 //------------------------------------------------------------------------
 void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFlipType &flip) {
 
-	g_engine->_renderSurface->copyRectToSurface(texture->getPixels(), texture->pitch, x, y, texture->w, texture->h);
+	g_engine->_renderSurface->blitFrom(*texture, Common::Point(x, y));
+	//g_engine->_renderSurface->copyRectToSurface(texture->getPixels(), texture->pitch, x, y, texture->w, texture->h);
 #if 0
 	// Set rendering space and render to screen
 	SDL_Rect renderQuad = {x, y, w, h};

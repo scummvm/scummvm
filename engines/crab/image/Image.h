@@ -47,7 +47,7 @@ class Image {
 
 	// The actual hardware texture
 	//SDL_Texture *texture;
-	Graphics::Surface *texture;
+	Graphics::ManagedSurface *texture;
 
 public:
 	Image() : texture(nullptr), w(0), h(0) {}
