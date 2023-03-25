@@ -100,8 +100,9 @@ void Lightning::run() {
 				beginLightning(2, 22, 65);
 			}
 		}
+
+		break;
 	}
-		// fall through
 	case kBegin:
 		g_nancy->_graphicsManager->grabViewportObjects(_viewportObjs);
 
