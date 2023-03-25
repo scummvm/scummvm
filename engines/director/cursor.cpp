@@ -27,6 +27,7 @@
 #include "director/cursor.h"
 #include "director/movie.h"
 #include "director/castmember.h"
+#include "director/picture.h"
 
 namespace Director {
 
@@ -92,15 +93,15 @@ void Cursor::readFromCast(Datum cursorCasts) {
 	for (int y = 0; y < 16; y++) {
 		const byte *cursor = nullptr, *mask = nullptr;
 
-		if (y < cursorBitmap->_img->getSurface()->h &&
-				y < maskBitmap->_img->getSurface()->h) {
-			cursor = (const byte *)cursorBitmap->_img->getSurface()->getBasePtr(0, y);
-			mask = (const byte *)maskBitmap->_img->getSurface()->getBasePtr(0, y);
+		if (y < cursorBitmap->_picture->_surface.h &&
+				y < maskBitmap->_picture->_surface.h) {
+			cursor = (const byte *)cursorBitmap->_picture->_surface.getBasePtr(0, y);
+			mask = (const byte *)maskBitmap->_picture->_surface.getBasePtr(0, y);
 		}
 
 		for (int x = 0; x < 16; x++) {
-			if (x >= cursorBitmap->_img->getSurface()->w ||
-					x >= maskBitmap->_img->getSurface()->w) {
+			if (x >= cursorBitmap->_picture->_surface.w ||
+					x >= maskBitmap->_picture->_surface.w) {
 				cursor = mask = nullptr;
 			}
 

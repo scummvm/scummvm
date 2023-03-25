@@ -57,6 +57,7 @@ namespace Director {
 class AudioDecoder;
 struct CastMemberInfo;
 class Channel;
+struct Picture;
 struct Resource;
 class Sprite;
 class Stxt;
@@ -136,7 +137,9 @@ public:
 
 	Common::String formatInfo() override;
 
-	Image::ImageDecoder *_img;
+	void setPicture(Image::ImageDecoder &image, bool adjustSize);
+
+	Picture *_picture = nullptr;
 	Graphics::Surface *_ditheredImg;
 	Graphics::FloodFill *_matte;
 
