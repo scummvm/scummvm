@@ -41,8 +41,6 @@ private:
 
 	GUI::CheckboxWidget *_playerSpeechCheckbox;
 	GUI::CheckboxWidget *_characterSpeechCheckbox;
-	GUI::CheckboxWidget *_originalMenusCheckbox;
-	GUI::CheckboxWidget *_secondChanceCheckbox;
 };
 
 } // End of namespace Nancy

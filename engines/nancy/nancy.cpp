@@ -312,12 +312,6 @@ void NancyEngine::bootGameEngine() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "art");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "font");
 
-	// Register default settings
-	ConfMan.registerDefault("player_speech", true);
-	ConfMan.registerDefault("character_speech", true);
-	ConfMan.registerDefault("original_menus", false);
-	ConfMan.registerDefault("second_chance", false);
-
 	// Load archive if running a compressed variant
 	if (isCompressed()) {
 		Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
