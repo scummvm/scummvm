@@ -276,8 +276,8 @@ public:
 	Math::Vector3d _objExecutingCodeSize;
 	virtual void executeMovementConditions();
 	void executeObjectConditions(GeometricObject *obj, bool shot, bool collided);
-	void executeLocalGlobalConditions(bool shot, bool collided);
-	void executeCode(FCLInstructionVector &code, bool shot, bool collided);
+	void executeLocalGlobalConditions(bool shot, bool collided, bool timer);
+	void executeCode(FCLInstructionVector &code, bool shot, bool collided, bool timer);
 
 	// Instructions
 	void executeIncrementVariable(FCLInstruction &instruction);
@@ -531,7 +531,6 @@ public:
 
 	int _lastTenSeconds;
 	void updateTimeVariables() override;
-	void executeMovementConditions() override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawFullscreenMessage(Common::String message);

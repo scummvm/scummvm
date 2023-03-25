@@ -201,27 +201,20 @@ void DarkEngine::checkIfStillInArea() {
 		FreescapeEngine::checkIfStillInArea();
 }
 
-void DarkEngine::executeMovementConditions() {
-	// Only execute "on collision" room/global conditions
-	if (_currentArea->getAreaFlags() == 1)
-		executeLocalGlobalConditions(false, true);
-}
-
 void DarkEngine::updateTimeVariables() {
 	// This function only executes "on collision" room/global conditions
 	int seconds, minutes, hours;
 	getTimeFromCountdown(seconds, minutes, hours);
 	if (_lastTenSeconds != seconds / 10) {
 		_lastTenSeconds = seconds / 10;
-		if (_currentArea->getAreaFlags() == 0)
-			executeLocalGlobalConditions(false, true);
+		executeLocalGlobalConditions(false, false, true);
 	}
 
 	if (_lastMinute != minutes) {
 		_lastMinute = minutes;
 		_gameStateVars[0x1e] += 1;
 		_gameStateVars[0x1f] += 1;
-		executeLocalGlobalConditions(false, true);
+		executeLocalGlobalConditions(false, true, false);
 	}
 }
 

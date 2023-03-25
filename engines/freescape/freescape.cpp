@@ -526,7 +526,7 @@ bool FreescapeEngine::onScreenControls(Common::Point mouse) {
 
 void FreescapeEngine::executeMovementConditions() {
 	// Only execute "on collision" room/global conditions
-	executeLocalGlobalConditions(false, true);
+	executeLocalGlobalConditions(false, true, false);
 }
 
 void FreescapeEngine::updateTimeVariables() {
@@ -537,7 +537,7 @@ void FreescapeEngine::updateTimeVariables() {
 		_lastMinute = minutes;
 		_gameStateVars[0x1e] += 1;
 		_gameStateVars[0x1f] += 1;
-		executeLocalGlobalConditions(false, true); // Only execute "on collision" room/global conditions
+		executeLocalGlobalConditions(false, true, false); // Only execute "on collision" room/global conditions
 	}
 }
 
