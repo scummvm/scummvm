@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 22:15+0000\n"
+"PO-Revision-Date: 2023-03-25 22:23+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -2833,7 +2833,7 @@ msgstr "تحذير: "
 
 #: engines/engine.cpp:735
 msgid " Shall we still run the game?"
-msgstr ""
+msgstr " هل ما زلنا ندير اللعبة؟"
 
 #: engines/engine.cpp:736
 msgid ""
@@ -2841,28 +2841,33 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
+"تحذير: اللعبة التي أنت على وشك أن تبدأها ليست مدعومة بالكامل من قبل ScummVM. "
+"على هذا النحو ، من المحتمل أن تكون غير مستقرة ، وأي لعبة محفوظة تقوم "
+"بإنشائها قد لا تعمل في الإصدارات المستقبلية من ScummVM."
 
 #: engines/engine.cpp:739 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
-msgstr ""
+msgstr "ابدأ على أي حال"
 
 #: engines/engine.cpp:757
 msgid "This game is not supported."
-msgstr ""
+msgstr "هذه اللعبة غير مدعومة."
 
 #: engines/engine.cpp:757
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr ""
+"هذه اللعبة غير مدعومة للسبب التالي:\n"
+"\n"
 
 #: engines/engine.cpp:899
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "تحميل اللعبة غير متوفر حاليا"
 
 #: engines/engine.cpp:928
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "حفظ اللعبة غير متوفر حاليا"
 
 #: engines/game.cpp:200
 #, c-format
@@ -2872,35 +2877,39 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"يبدو أن اللعبة في '%s' هي لعبة غير معروفة.\n"
+"\n"
+"الرجاء إبلاغ فريق ScummVM بالبيانات التالية على%s مع اسم اللعبة التي حاولت "
+"إضافتها وإصدارها ولغتها وما إلى ذلك.:"
 
 #: engines/game.cpp:204
 #, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr ""
+msgstr "معرّفات اللعبة المتطابقة لمحرك%s:"
 
 #: engines/metaengine.cpp:61
 msgid "Default game keymap"
-msgstr ""
+msgstr "خريطة مفاتيح اللعبة الافتراضية"
 
 #: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:161
 #: engines/asylum/metaengine.cpp:158 engines/hdb/metaengine.cpp:207
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
-msgstr ""
+msgstr "الزر الأيسر"
 
 #: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:165
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
-msgstr ""
+msgstr "النقر الأوسط"
 
 #: engines/metaengine.cpp:76 backends/platform/maemo/maemo.cpp:169
 #: engines/asylum/metaengine.cpp:164 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
-msgstr ""
+msgstr "انقر على اليمين"
 
 #. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:82 engines/grim/grim.cpp:525
@@ -2909,11 +2918,11 @@ msgstr ""
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:242 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
-msgstr ""
+msgstr "يوقف"
 
 #: engines/metaengine.cpp:88 engines/parallaction/metaengine.cpp:139
 msgid "Game menu"
-msgstr ""
+msgstr "قائمة اللعبة"
 
 #: engines/metaengine.cpp:95 engines/grim/grim.cpp:508
 #: engines/grim/grim.cpp:604 engines/mohawk/myst.cpp:567
@@ -2924,15 +2933,15 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1716
 #: engines/wintermute/keymapper_tables.h:2110
 msgid "Skip"
-msgstr ""
+msgstr "يتخطى"
 
 #: engines/metaengine.cpp:102 engines/sky/metaengine.cpp:120
 msgid "Skip line"
-msgstr ""
+msgstr "تخطي الخط"
 
 #: engines/metaengine.cpp:109
 msgid "Predictive input dialog"
-msgstr ""
+msgstr "حوار الإدخال التنبئي"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
@@ -2942,60 +2951,60 @@ msgstr ""
 #: engines/grim/grim.cpp:610 engines/sky/metaengine.cpp:100
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
-msgstr ""
+msgstr "تأكد"
 
 #: engines/metaengine.cpp:390
 msgid "Autosave on"
-msgstr ""
+msgstr "تم تشغيل الحفظ التلقائي"
 
 #: engines/metaengine.cpp:390
 msgid "Autosave off"
-msgstr ""
+msgstr "إيقاف الحفظ التلقائي"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:177
 msgid "OpenGL"
-msgstr ""
+msgstr "OpenGL"
 
 #: graphics/renderer.cpp:36
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "برنامج OpenGL مع تظليل"
 
 #: graphics/renderer.cpp:44
 msgctxt "lowres"
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "برنامج OpenGL مع تظليل"
 
 #: audio/adlib.cpp:2303
 msgid "AdLib emulator"
-msgstr ""
+msgstr "محاكي AdLib"
 
 #: audio/fmopl.cpp:81
 msgid "MAME OPL emulator"
-msgstr ""
+msgstr "محاكي MAME OPL"
 
 #: audio/fmopl.cpp:83
 msgid "DOSBox OPL emulator"
-msgstr ""
+msgstr "محاكي DOSBox OPL"
 
 #: audio/fmopl.cpp:86
 msgid "Nuked OPL emulator"
-msgstr ""
+msgstr "محاكي Nuked OPL"
 
 #: audio/fmopl.cpp:89
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Direct FM"
 
 #: audio/fmopl.cpp:92
 msgid "OPL2LPT"
-msgstr ""
+msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:93
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:96
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
@@ -3003,11 +3012,13 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
+"لم يتم العثور على جهاز الصوت المحدد '%s' (على سبيل المثال ، ربما تم إيقاف "
+"تشغيله أو قطع اتصاله)."
 
 #: audio/mididrv.cpp:220 audio/mididrv.cpp:234 audio/mididrv.cpp:272
 #: audio/mididrv.cpp:289
 msgid "Attempting to fall back to the next available device..."
-msgstr ""
+msgstr "محاولة الرجوع إلى الجهاز التالي المتاح ..."
 
 #: audio/mididrv.cpp:233
 #, c-format
@@ -3015,6 +3026,7 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
+"لا يمكن استخدام جهاز الصوت المحدد '%s'. انظر ملف السجل لمزيد من المعلومات."
 
 #: audio/mididrv.cpp:271
 #, c-format
@@ -3022,6 +3034,8 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
+"لم يتم العثور على جهاز الصوت المفضل '%s' (على سبيل المثال ، ربما تم إيقاف "
+"تشغيله أو قطع اتصاله)."
 
 #: audio/mididrv.cpp:288
 #, c-format
@@ -3029,83 +3043,88 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
+"لا يمكن استخدام جهاز الصوت المفضل '%s'. انظر ملف السجل لمزيد من المعلومات."
 
 #: audio/mididrv.cpp:453
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "بدء تفريغ MIDI"
 
 #: audio/mods/paula.cpp:314
 msgid "Amiga Audio emulator"
-msgstr ""
+msgstr "محاكي Amiga Audio"
 
 #: audio/null.cpp:27
 msgid "No music"
-msgstr ""
+msgstr "لا موسيقى"
 
 #: audio/softsynth/appleiigs.cpp:34
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
-msgstr ""
+msgstr "محاكي Apple II GS (غير مطبق)"
 
 #: audio/softsynth/cms.cpp:372
 msgid "Creative Music System emulator"
-msgstr ""
+msgstr "محاكي نظام الموسيقى الإبداعي"
 
 #: audio/softsynth/fluidsynth.cpp:301
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
+"يتطلب FluidSynth إعداد \"soundfont\". يرجى تحديده في ScummVM GUI في علامة "
+"تبويب MIDI. الموسيقى متوقفة."
 
 #: audio/softsynth/fluidsynth.cpp:455
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
-msgstr ""
+msgstr "FluidSynth: فشل تحميل SoundFont '%s' المخصص. الموسيقى متوقفة."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:31
 msgid "FM-Towns Audio"
-msgstr ""
+msgstr "الصوت FM-Towns"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:56
 msgid "PC-98 Audio"
-msgstr ""
+msgstr "صوتPC-98"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:81
 msgid "SegaCD Audio"
-msgstr ""
+msgstr "صوت SegaCD"
 
 #: audio/softsynth/mt32.cpp:169
 msgid "Initializing MT-32 Emulator"
-msgstr ""
+msgstr "جاري تهيئة برنامج محاكاة MT-32"
 
 #: audio/softsynth/mt32.cpp:436
 msgid "MT-32 emulator"
-msgstr ""
+msgstr "محاكي MT-32"
 
 #: audio/softsynth/pcspk.cpp:204
 msgid "PC Speaker emulator"
-msgstr ""
+msgstr "محاكي سماعات الكمبيوتر"
 
 #: audio/softsynth/pcspk.cpp:223
 msgid "IBM PCjr emulator"
-msgstr ""
+msgstr "محاكي IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1435
 msgid "C64 Audio emulator"
-msgstr ""
+msgstr "محاكي الصوت C64"
 
 #: backends/cloud/cloudmanager.cpp:155
 msgid "<syncing...>"
-msgstr ""
+msgstr "<مزامنة ...>"
 
 #: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "تم إلغاء مزامنة الألعاب المحفوظة."
 
 #: backends/cloud/storage.cpp:244
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"فشلت مزامنة الألعاب المحفوظة.\n"
+"تحقق من اتصالك بالإنترنت."
 
 #: backends/cloud/storage.cpp:348
 #, c-format
@@ -3113,6 +3132,8 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"تم التحميل.\n"
+"فشل تحميل%u ملفات."
 
 #: backends/cloud/storage.cpp:350
 msgid "Download complete."
