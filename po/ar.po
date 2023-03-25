@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 23:21+0000\n"
+"PO-Revision-Date: 2023-03-25 23:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -6541,6 +6541,8 @@ msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
+"استكشاف ما بعد هذه النقطة متاح فقط في النسخة الكاملة من\n"
+"اللعبة."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:428
 msgid ""
@@ -6550,47 +6552,57 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"في هذه المرحلة ، سيكون Riven Demo\n"
+"اسأل عما إذا كنت ترغب في فتح مستعرض ويب\n"
+"لنقلك إلى متجر Red Orb للشراء\n"
+"اللعبة. لا يستطيع ScummVM فعل ذلك و\n"
+"لم يعد الموقع موجودًا."
 
 #: engines/mtropolis/metaengine.cpp:52
 msgid "16:9 widescreen mod"
-msgstr ""
+msgstr "شاشة عريضة 9: 16"
 
 #: engines/mtropolis/metaengine.cpp:53
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
 msgstr ""
+"يزيل تنسيق letterbox وينقل بعض عناصر العرض ، مما يؤدي إلى تحسين التغطية على "
+"شاشات العرض العريضة"
 
 #: engines/mtropolis/metaengine.cpp:63
 msgid "Improved music mixing"
-msgstr ""
+msgstr "تحسين خلط الموسيقى"
 
 #: engines/mtropolis/metaengine.cpp:64
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
 msgstr ""
+"يُمكّن خلاط MIDI الديناميكي ، مما يحسن الجودة ، ولكن يتصرف بشكل أقل مثل "
+"mTropolis Player."
 
 #: engines/mtropolis/metaengine.cpp:74
 msgid "Autosave at progress points"
-msgstr ""
+msgstr "الحفظ التلقائي في نقاط التقدم"
 
 #: engines/mtropolis/metaengine.cpp:75
 msgid "Automatically saves the game after completing puzzles and chapters."
-msgstr ""
+msgstr "يحفظ اللعبة تلقائيًا بعد الانتهاء من الألغاز والفصول."
 
 #: engines/mtropolis/metaengine.cpp:85
 msgid "Enable short transitions"
-msgstr ""
+msgstr "تفعيل الانتقالات القصيرة"
 
 #: engines/mtropolis/metaengine.cpp:86
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
+"يُمكّن الانتقالات التي تم تعيينها على الحد الأقصى للمعدل بدلاً من تخطيها."
 
 #: engines/mtropolis/metaengine.cpp:96
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "قم بتمكين الترجمات للحصول على مؤثرات صوتية مهمة"
 
 #: engines/mtropolis/metaengine.cpp:97
 msgid ""
@@ -6769,32 +6781,32 @@ msgstr ""
 
 #: engines/neverhood/dialogs.cpp:54
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "يسمح للاعب بتخطي مشاهد لوحة القصة في Hall of Records"
 
 #: engines/neverhood/dialogs.cpp:58
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "توسيع نطاق صناعة مقاطع الفيديو إلى ملء الشاشة"
 
 #: engines/neverhood/dialogs.cpp:59
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "قم بتوسيع نطاق صناعة مقاطع الفيديو ، بحيث تستخدم الشاشة بأكملها"
 
 #: engines/neverhood/dialogs.cpp:63
 msgid "Repeat useful Willie's hint"
-msgstr ""
+msgstr "كرر تلميحWillie's hint"
 
 #: engines/neverhood/dialogs.cpp:64
 msgid "Repeat actual useful hint by Willie"
-msgstr ""
+msgstr "كرر تلميحًا مفيدًا فعليًا بواسطة ويلي"
 
 #. I18N: NHC is a file extension
 #: engines/neverhood/dialogs.cpp:90
 msgid "NHC replacement:"
-msgstr ""
+msgstr "استبدال NHC:"
 
 #: engines/neverhood/dialogs.cpp:96
 msgid "<original>"
-msgstr ""
+msgstr "<أصلي>"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -6802,22 +6814,24 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
+"لا يمكن حفظ اللعبة في الفتحة%i\n"
+"\n"
 
 #: engines/parallaction/saveload.cpp:193
 msgid "Load file"
-msgstr ""
+msgstr "تحميل الملف"
 
 #: engines/parallaction/saveload.cpp:200
 msgid "Loading game..."
-msgstr ""
+msgstr "تحميل اللعبة..."
 
 #: engines/parallaction/saveload.cpp:208
 msgid "Save file"
-msgstr ""
+msgstr "احفظ الملف"
 
 #: engines/parallaction/saveload.cpp:215
 msgid "Saving game..."
-msgstr ""
+msgstr "حفظ اللعبة ..."
 
 #: engines/parallaction/saveload.cpp:268
 msgid ""
@@ -6828,10 +6842,16 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
+"اكتشف ScummVM أن لديك ألعابًا محفوظة قديمة ل Nippon Safes يجب إعادة تسميتها."
+"\n"
+"لم تعد الأسماء القديمة مدعومة ، لذا لن تتمكن من تحميل ألعابك إذا لم تقم "
+"بتحويلها.\n"
+"\n"
+"اضغط على \"موافق\" لتحويلها الآن ، وإلا فسيتم سؤالك في المرة القادمة.\n"
 
 #: engines/parallaction/saveload.cpp:315
 msgid "ScummVM successfully converted all your saved games."
-msgstr ""
+msgstr "نجح ScummVM في تحويل جميع ألعابك المحفوظة."
 
 #: engines/parallaction/saveload.cpp:317
 msgid ""
@@ -6840,86 +6860,90 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
+"قام ScummVM بطباعة بعض التحذيرات في نافذة وحدة التحكم الخاصة بك ولا يمكنه "
+"ضمان تحويل جميع ملفاتك.\n"
+"\n"
+"الرجاء إبلاغ الفريق."
 
 #: engines/pegasus/pegasus.cpp:2723
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "لأعلى / تكبير / تحريك للأمام / فتح الأبواب"
 
 #: engines/pegasus/pegasus.cpp:2731
 msgid "Down/Zoom Out"
-msgstr ""
+msgstr "لأسفل / تصغير"
 
 #: engines/pegasus/pegasus.cpp:2753
 msgid "Action/Select"
-msgstr ""
+msgstr "إجراء / تحديد"
 
 #: engines/pegasus/pegasus.cpp:2773
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "عرض / إخفاء علبة المخزون"
 
 #: engines/pegasus/pegasus.cpp:2780
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "عرض / إخفاء علبة الرقائق الحيوية"
 
 #: engines/pegasus/pegasus.cpp:2788
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "تبديل عرض بيانات المركز"
 
 #: engines/pegasus/pegasus.cpp:2795
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "عرض / إخفاء شاشة المعلومات"
 
 #: engines/pegasus/pegasus.cpp:2802
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "عرض / إخفاء قائمة الإيقاف المؤقت"
 
 #: engines/pegasus/pegasus.cpp:2809
 msgid "Toggle Chatty AI"
-msgstr ""
+msgstr "تبديل Chatty AI"
 
 #: engines/pink/gui.cpp:279
 msgid "This menu item is not yet implemented"
-msgstr ""
+msgstr "لم يتم تنفيذ عنصر القائمة هذا بعد"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
-msgstr ""
+msgstr "تتطلب 3DO Plumbers دعم RGB."
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
-msgstr ""
+msgstr "مقدمة بديلة"
 
 #: engines/queen/metaengine.cpp:37
 msgid "Use an alternative game intro (CD version only)"
-msgstr ""
+msgstr "استخدم مقدمة لعبة بديلة (إصدار القرص المضغوط فقط)"
 
 #: engines/queen/metaengine.cpp:47
 msgid "Improved font"
-msgstr ""
+msgstr "خط محسن"
 
 #: engines/queen/metaengine.cpp:48
 msgid "Use an easier to read custom font"
-msgstr ""
+msgstr "استخدام أسهل لقراءة الخط المخصص"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
 msgid "Windows Trial version is not supported"
-msgstr ""
+msgstr "نسخة Windows التجريبية غير مدعومة"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:902
 msgid "macOS Trial version is not supported"
-msgstr ""
+msgstr "الإصدار التجريبي من macOS غير مدعوم"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:928
 msgid "Pocket PC Trial version is not supported"
-msgstr ""
+msgstr "الإصدار التجريبي لجهاز كمبيوتر الجيب غير مدعوم"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
-msgstr ""
+msgstr "ليس لدي دعم الفم لم يتم تجميعه في"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -6928,67 +6952,71 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"تعذر العثور على ملفات تعريف أداة AdLib\n"
+"%s و%s. بدون هذه الملفات ،\n"
+"لن تبدو الموسيقى مثل اللعبة الأصلية."
 
 #: engines/saga/saga.cpp:395
 msgid "Error loading game resources."
-msgstr ""
+msgstr "خطأ في تحميل موارد اللعبة."
 
 #: engines/sci/detection_options.h:33
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "تخطي تدرج ألوان EGA (خلفيات ملونة كاملة)"
 
 #: engines/sci/detection_options.h:34
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr ""
+msgstr "تخطي ممر التردد في ألعاب EGA ، يتم عرض الرسومات بألوان كاملة"
 
 #: engines/sci/detection_options.h:45
 msgid "Enable high resolution graphics"
-msgstr ""
+msgstr "تمكين الرسومات عالية الدقة"
 
 #: engines/sci/detection_options.h:46
 msgid "Enable high resolution graphics/content"
-msgstr ""
+msgstr "تمكين الرسومات عالية الدقة / المحتوى"
 
 #: engines/sci/detection_options.h:57
 msgid "Enable black-lined video"
-msgstr ""
+msgstr "تفعيل الفيديو ذو الخط الأسود"
 
 #: engines/sci/detection_options.h:58
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "ارسم خطوطًا سوداء فوق مقاطع الفيديو لزيادة حدتها الظاهرة"
 
 #: engines/sci/detection_options.h:70
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "استخدم تحجيم الفيديو عالي الجودة"
 
 #: engines/sci/detection_options.h:71
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr ""
+msgstr "استخدم الاستيفاء الخطي عند ترقية مقاطع الفيديو ، حيثما أمكن ذلك"
 
 #: engines/sci/detection_options.h:83
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr ""
+msgstr "استخدام مقياس السليل السائل \"LarryScale\" عالي الجودة"
 
 #: engines/sci/detection_options.h:84
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr ""
+msgstr "استخدم قشارة كرتونية خاصة لرسم النقوش المتحركة"
 
 #: engines/sci/detection_options.h:119
 msgid "Use CD audio"
-msgstr ""
+msgstr "استخدم قرص مضغوط صوتي"
 
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
+"استخدم القرص المضغوط الصوتي بدلاً من الصوت داخل اللعبة ، إذا كان ذلك متاحًا"
 
 #: engines/sci/detection_options.h:132
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "استخدم مؤشرات Windows"
 
 #: engines/sci/detection_options.h:133
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr ""
+msgstr "استخدم مؤشرات Windows (أصغر وأحادية اللون) بدلاً من مؤشرات DOS"
 
 #: engines/sci/detection_options.h:145
 msgid "Use silver cursors"
