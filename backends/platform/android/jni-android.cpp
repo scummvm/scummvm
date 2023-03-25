@@ -95,6 +95,7 @@ jmethodID JNI::_MID_setTouchMode = 0;
 jmethodID JNI::_MID_getTouchMode = 0;
 jmethodID JNI::_MID_getScummVMBasePath;
 jmethodID JNI::_MID_getScummVMConfigPath;
+jmethodID JNI::_MID_getScummVMLogPath;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
@@ -513,7 +514,7 @@ Common::String JNI::getScummVMBasePath() {
 	jstring pathObj = (jstring)env->CallObjectMethod(_jobj, _MID_getScummVMBasePath);
 
 	if (env->ExceptionCheck()) {
-		LOGE("Failed to get ScummVM base path");
+		LOGE("Failed to get ScummVM base folder path");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -538,7 +539,7 @@ Common::String JNI::getScummVMConfigPath() {
 	jstring pathObj = (jstring)env->CallObjectMethod(_jobj, _MID_getScummVMConfigPath);
 
 	if (env->ExceptionCheck()) {
-		LOGE("Failed to get ScummVM base path");
+		LOGE("Failed to get ScummVM config file path");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -557,6 +558,30 @@ Common::String JNI::getScummVMConfigPath() {
 	return path;
 }
 
+Common::String JNI::getScummVMLogPath() {
+	JNIEnv *env = JNI::getEnv();
+
+	jstring pathObj = (jstring)env->CallObjectMethod(_jobj, _MID_getScummVMLogPath);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Failed to get ScummVM log file path");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return Common::String();
+	}
+
+	Common::String path;
+	const char *pathP = env->GetStringUTFChars(pathObj, 0);
+	if (pathP != 0) {
+		path = Common::String(pathP);
+		env->ReleaseStringUTFChars(pathObj, pathP);
+	}
+	env->DeleteLocalRef(pathObj);
+
+	return path;
+}
 
 // The following adds assets folder to search set.
 // However searching and retrieving from "assets" on Android this is slow
@@ -746,6 +771,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getTouchMode, "()I");
 	FIND_METHOD(, getScummVMBasePath, "()Ljava/lang/String;");
 	FIND_METHOD(, getScummVMConfigPath, "()Ljava/lang/String;");
+	FIND_METHOD(, getScummVMLogPath, "()Ljava/lang/String;");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");

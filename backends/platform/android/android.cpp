@@ -40,6 +40,14 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
+#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
+#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
+#define FORBIDDEN_SYMBOL_EXCEPTION_ftell
+#define FORBIDDEN_SYMBOL_EXCEPTION_fflush
+
 #include <EGL/egl.h>
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -180,7 +188,10 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_secondPointerId(-1),
 	_thirdPointerId(-1),
 	_trackball_scale(2),
-	_joystick_scale(10) {
+	_joystick_scale(10),
+	_defaultConfigFileName(""),
+	_defaultLogFileName("") {
+//	_scvmLogFilePtr(nullptr) {
 
 	LOGI("Running on: [%s] [%s] [%s] [%s] [%s] SDK:%s ABI:%s",
 			getSystemProperty("ro.product.manufacturer").c_str(),
@@ -232,6 +243,12 @@ OSystem_Android::~OSystem_Android() {
 
 	// Uninitialize surface now to avoid it to be done later when touch controls are destroyed
 	dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->deinitSurface();
+
+//	// close log file
+//	if (_scvmLogFilePtr != nullptr) {
+//		fflush(_scvmLogFilePtr);
+//		fclose(_scvmLogFilePtr);
+//	}
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {
@@ -405,6 +422,19 @@ void OSystem_Android::initBackend() {
 
 	_main_thread = pthread_self();
 
+//	// Open log file
+//	if (!getDefaultLogFileName().empty()) {
+//		_scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "a");
+//		if (_scvmLogFilePtr != nullptr) {
+//			LOGD("Opened log file for writing upon initializing backend");
+//		} else {
+//			LOGE("Error when opening log file for writing upon initializing backend");
+//		}
+//	} else {
+//		LOGE("Error: log file path not known yet, upon initializing backend");
+//	}
+
+
 	// Warning: ConfMan.registerDefault() can be used for a Session of ScummVM
 	//          but:
 	//              1. The values will NOT persist to storage
@@ -531,7 +561,18 @@ void OSystem_Android::initBackend() {
 }
 
 Common::String OSystem_Android::getDefaultConfigFileName() {
-	return JNI::getScummVMConfigPath();
+	// if possible, skip JNI call which is more costly (performance wise)
+	if (_defaultConfigFileName.empty()) {
+		_defaultConfigFileName = JNI::getScummVMConfigPath();
+	}
+	return _defaultConfigFileName;
+}
+
+Common::String OSystem_Android::getDefaultLogFileName() {
+	if (_defaultLogFileName.empty()) {
+		_defaultLogFileName = JNI::getScummVMLogPath();
+	}
+	return _defaultLogFileName;
 }
 
 bool OSystem_Android::hasFeature(Feature f) {
@@ -727,6 +768,42 @@ void OSystem_Android::logMessage(LogMessageType::Type type, const char *message)
 	case LogMessageType::kError:
 		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, message);
 		break;
+	}
+
+	if (!getDefaultLogFileName().empty()) {
+		// open for append by default
+		FILE *_scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "a");
+
+		// TODO Do we need to worry about threading/synchronization here?
+		if (_scvmLogFilePtr != nullptr) {
+			long sz = ftell(_scvmLogFilePtr);
+			if (sz > MAX_ANDROID_SCUMMVM_LOG_FILESIZE_IN_BYTES) {
+				fclose(_scvmLogFilePtr);
+				__android_log_write(ANDROID_LOG_WARN, android_log_tag, "Default log file is bigger than 100KB. It will be overwritten!");
+				if (!getDefaultLogFileName().empty()) {
+					// Create the log file from scratch overwriting the previous one
+					_scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "w");
+					if (_scvmLogFilePtr == nullptr) {
+						__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Could not open default log file for rewrite!");
+						return;
+					}
+				} else {
+					__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Log file path is not known!");
+					return;
+				}
+			}
+
+			fputs(message, _scvmLogFilePtr);
+			fwrite("\n", 1, 1, _scvmLogFilePtr);
+			// close log file
+			fflush(_scvmLogFilePtr);
+			fclose(_scvmLogFilePtr);
+		} else {
+			__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Could not open default log file for writing/appending.");
+			__android_log_write(ANDROID_LOG_ERROR, android_log_tag, getDefaultLogFileName().c_str());
+		}
+	}   else {
+		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Error: log file path not known yet, upon initializing backend");
 	}
 }
 
