@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	saveload.o \
 	saveload-dialog.o \
 	shaderbrowser-dialog.o \
+	textviewer.o \
 	themebrowser.o \
 	ThemeEngine.o \
 	ThemeEval.o \
