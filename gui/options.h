@@ -310,10 +310,11 @@ protected:
 	// Misc controls
 	//
 	StaticTextWidget *_autosavePeriodPopUpDesc;
-	PopUpWidget *_autosavePeriodPopUp;
+	PopUpWidget      *_autosavePeriodPopUp;
 	StaticTextWidget *_randomSeedDesc;
 	EditTextWidget   *_randomSeed;
 	ButtonWidget	 *_randomSeedClearButton;
+	PopUpWidget      *_debugLevelPopUp;
 
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;
