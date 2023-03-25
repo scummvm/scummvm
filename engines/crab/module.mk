@@ -9,7 +9,7 @@ MODULE_OBJS = \
 	loaders.o \
 	ScreenSettings.o \
 	GameParam.o \
-	Image.o \
+	image/Image.o \
 	timer.o \
 	app.o \
 	splash.o
