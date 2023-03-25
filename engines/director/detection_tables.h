@@ -3366,7 +3366,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("catseyeview", "Vol. 3", "Cat'sEyeView vol.3", "2c94dee7ddad3e6b47c7d62565286007", 484095, 404),
 	WINGAME1("catseyeview", "Vol. 3", "CatsEyeView3.exe", "9ba8ac33552a3053cb1f23679422775e", 1900433, 404),
 
-	WINGAME1t_l("cattheripper", "", "CAT.EXE", "cff4ae8f3e57a00664c1b477a634e708", 748205, Common::JA_JPN, 404),
+	WINGAME2_l("cattheripper", "CD 1", "CAT/CAT.EXE", "t:cff4ae8f3e57a00664c1b477a634e708", 748205,
+								   	   "CAT/OP2.DIR", "t:8592bfff06139adb0cecb8b7ee087068", 693042, Common::JA_JPN, 404),
+	WINGAME2_l("cattheripper", "CD 2", "CAT/CAT.EXE", "t:cff4ae8f3e57a00664c1b477a634e708", 748159,
+								   	   "CAT/OP2.DIR", "t:8592bfff06139adb0cecb8b7ee087068", 693042, Common::JA_JPN, 404),
 
 	MACGAME1("cbible", "", "Children's Bible Stories", "17efee018a660458fae80de4364021ac", 483490, 404),
 	WINGAME1("cbible", "", "CBIBLE.EXE", "d408f781d32337f8a5a9b3655c7d7803", 1727225, 404),
