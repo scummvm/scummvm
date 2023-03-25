@@ -498,12 +498,12 @@ public:
 		uint8_t *pix = (uint8_t *)_gameScreen.getPixels();
 		copyRectToSurface(pix, _gameScreen.pitch, src, pitch, x, y, w, h, _gameScreen.format.bytesPerPixel);
 
-		/* In case of consecutive updateScreen calls, additionally switch to main thread when (and if) first copyRectToScreen is called
-		between two updateScreen. This reduces crackling.
+		/* In a series of consecutive updateScreen calls, additionally switch directly to main thread when
+		(and if) first copyRectToScreen is called between two updateScreen. This reduces audio crackling.
 		Consecutive copyRectToScreen other than first are covered by thread switch triggered by pollEvent or delayMillis. */
 		if (! _speed_hack_enabled) {
 			if (!(_threadSwitchCaller & THREAD_SWITCH_RECT) && (_threadSwitchCaller & THREAD_SWITCH_UPDATE)) {
-				retroCheckThread();
+				retro_switch_to_main_thread();
 				_threadSwitchCaller |= THREAD_SWITCH_RECT;
 			}
 		}
@@ -545,10 +545,10 @@ public:
 			}
 		}
 
-		/* Switch to main thread in case of consecutive updateScreen, to avoid losing frames.
+		/* Switch directly to main thread in case of consecutive updateScreen, to avoid losing frames.
 		Non consecutive updateScreen are covered by thread switches triggered by pollEvent or delayMillis. */
 		if (! _speed_hack_enabled && (_threadSwitchCaller & THREAD_SWITCH_UPDATE)) {
-			retroCheckThread();
+			retro_switch_to_main_thread();
 			_threadSwitchCaller &= ~THREAD_SWITCH_RECT;
 		} else {
 			_threadSwitchCaller = THREAD_SWITCH_UPDATE;
@@ -642,16 +642,17 @@ public:
 	}
 
 	void retroCheckThread(uint32 offset = 0) {
-		/* Limit the thread switches triggered by pollEvent or delayMillis to one each 10ms.
-		   Do not limit thread switches due to consecutive updateScreen to avoid losing frames. */
+		/* Limit the thread switches triggered by pollEvent or delayMillis to one each 10ms. */
 		if (_threadExitTime <= (getMillis() + offset)) {
 			retro_switch_to_main_thread();
 			_threadExitTime = getMillis() + 10;
-		} else if (_threadSwitchCaller & THREAD_SWITCH_UPDATE){
-			retro_switch_to_main_thread();
 		}
 
 		((DefaultTimerManager *)_timerManager)->handler();
+	}
+
+	uint8 getThreadSwitchCaller(){
+		return _threadSwitchCaller;
 	}
 
 	virtual bool pollEvent(Common::Event &event) {
@@ -1322,4 +1323,8 @@ void retroKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key
 
 void retroReset() {
 	dynamic_cast<OSystem_RETRO *>(g_system)->Reset();
+}
+
+uint8 getThreadSwitchCaller(){
+	return dynamic_cast<OSystem_RETRO *>(g_system)->getThreadSwitchCaller();
 }

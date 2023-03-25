@@ -596,60 +596,71 @@ void retro_run(void) {
 		poll_cb();
 		retroProcessMouse(input_cb, retro_device, gampad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
 
-		if (frameskip_type && can_dupe) {
-			if (audio_status & (AUDIO_STATUS_BUFFER_SUPPORT | AUDIO_STATUS_BUFFER_ACTIVE)){
-				switch (frameskip_type) {
-				case 1:
+		/* ScummVM is not based on fixed framerate like libretro, and engines/scripts
+		can call multiple screen updates between two retro_run calls. Hence if consecutive screen updates
+		are detected we will loop within the same retro_run call until next pollEvent or
+		delayMillis call in ScummVM thread.
+		*/
+		do {
+			if (frameskip_type && can_dupe) {
+				if (audio_status & (AUDIO_STATUS_BUFFER_SUPPORT | AUDIO_STATUS_BUFFER_ACTIVE)){
+					switch (frameskip_type) {
+					case 1:
+						skip_frame = !(current_frame % frameskip_no == 0);
+						break;
+					case 2:
+						skip_frame = (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN);
+						break;
+					case 3:
+						skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
+						break;
+					}
+				} else
 					skip_frame = !(current_frame % frameskip_no == 0);
-					break;
-				case 2:
-					skip_frame = (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN);
-					break;
-				case 3:
-					skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
-					break;
-				}
-			} else
-				skip_frame = !(current_frame % frameskip_no == 0);
-		}
-		/* Upload audio */
-		size_t count = 0;
-		if (audio_video_enable & 2) {
-			count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
-		}
-		audio_status = count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
+			}
+			/* Upload audio */
+			size_t count = 0;
+			if (audio_video_enable & 2) {
+				count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
+			}
+			audio_status = count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
 
-		/* No frame skipping if there is no incoming audio (e.g. GUI) */
-		skip_frame = skip_frame && ! (audio_status & AUDIO_STATUS_MUTE);
+			/* No frame skipping if there is no incoming audio (e.g. GUI) */
+			skip_frame = skip_frame && ! (audio_status & AUDIO_STATUS_MUTE);
 
-		if ((!skip_frame && frameskip_counter) || frameskip_counter >= FRAMESKIP_MAX) {
-			if (frameskip_counter)
-				log_cb(RETRO_LOG_WARN, "%d frame(s) skipped\n",frameskip_counter);
-			skip_frame        = false;
-			frameskip_counter = 0;
-		} else if (skip_frame)
-			frameskip_counter++;
+			if ((!skip_frame && frameskip_counter) || frameskip_counter >= FRAMESKIP_MAX) {
+				if (frameskip_counter)
+					log_cb(RETRO_LOG_WARN, "%d frame(s) skipped\n",frameskip_counter);
+				skip_frame        = false;
+				frameskip_counter = 0;
+			} else if (skip_frame)
+				frameskip_counter++;
 
-		if ((audio_video_enable & 1) && !skip_frame) {
-			const Graphics::Surface &screen = getScreen();
-			video_cb(screen.getPixels(), screen.w, screen.h, screen.pitch);
-		} else {
-			video_cb(NULL, 0, 0, 0); // Set to NULL to skip frame rendering
-		}
+			if ((audio_video_enable & 1) && !skip_frame) {
+				const Graphics::Surface &screen = getScreen();
+				video_cb(screen.getPixels(), screen.w, screen.h, screen.pitch);
+			} else {
+				video_cb(NULL, 0, 0, 0); // Set to NULL to skip frame rendering
+			}
 
 #if defined(_3DS)
-		/* Hack: 3DS will produce static noise
-		 * unless we manually send a zeroed
-		 * audio buffer when no samples are
-		 * available (i.e. when the overlay
-		 * is shown) */
-		if (audio_status & AUDIO_STATUS_MUTE) {
-			audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
-		}
+			/* Hack: 3DS will produce static noise
+			 * unless we manually send a zeroed
+			 * audio buffer when no samples are
+			 * available (i.e. when the overlay
+			 * is shown) */
+			if (audio_status & AUDIO_STATUS_MUTE) {
+				audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
+			}
 #endif
-		audio_batch_cb((audio_status & AUDIO_STATUS_MUTE) ? NULL : (int16_t *) sound_buffer, count); // Set to NULL to skip sound rendering
+			audio_batch_cb((audio_status & AUDIO_STATUS_MUTE) ? NULL : (int16_t *) sound_buffer, count); // Set to NULL to skip sound rendering
 
-		current_frame++;
+			current_frame++;
+
+			if (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE)
+				retro_switch_to_emu_thread();
+
+		} while (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 	}
 
 	bool updated = false;
