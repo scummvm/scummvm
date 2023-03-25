@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
-"PO-Revision-Date: 2023-03-25 22:45+0000\n"
+"PO-Revision-Date: 2023-03-25 22:53+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -4418,25 +4418,27 @@ msgstr "استخدم خط Hercules hires"
 
 #: engines/agi/metaengine.cpp:156
 msgid "Uses Hercules hires font, when font file is available."
-msgstr ""
+msgstr "يستخدم خط Hercules hires ، عندما يكون ملف الخط متاحًا."
 
 #: engines/agi/metaengine.cpp:167
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "توقف عند إدخال الأوامر"
 
 #: engines/agi/metaengine.cpp:168
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"يعرض نافذة موجه الأوامر ويوقف اللعبة مؤقتًا (كما هو الحال في SCI) بدلاً من "
+"موجه الوقت الفعلي."
 
 #: engines/agi/metaengine.cpp:179
 msgid "Add speed menu"
-msgstr ""
+msgstr "إضافة قائمة السرعة"
 
 #: engines/agi/metaengine.cpp:180
 msgid "Add game speed menu (similar to PC version)"
-msgstr ""
+msgstr "أضف قائمة سرعة اللعبة (على غرار إصدار الكمبيوتر الشخصي)"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
@@ -4455,7 +4457,7 @@ msgstr ""
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3859
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
-msgstr ""
+msgstr "استرجاع لعبة:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:273
@@ -4475,11 +4477,11 @@ msgstr ""
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3859
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
-msgstr ""
+msgstr "استرجع"
 
 #: engines/agos/saveload.cpp:139
 msgid "Quick load or save game isn't supported in this location"
-msgstr ""
+msgstr "لا يتم دعم التحميل السريع أو حفظ اللعبة في هذا الموقع"
 
 #: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2797
 #, c-format
@@ -4488,6 +4490,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"فشل تحميل اللعبة المحفوظة من ملف:\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2784
 #, c-format
@@ -4496,6 +4501,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"فشل حفظ اللعبة في ملف:\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2813
 #, c-format
@@ -4504,15 +4512,18 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"تم حفظ اللعبة بنجاح في الملف:\n"
+"\n"
+"%s"
 
 #: engines/agos/animation.cpp:576
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr ""
+msgstr "ملف Cutscene '%s' غير موجود!"
 
 #: engines/agos/metaengine.cpp:42
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "وضع AdLib OPL3"
 
 #: engines/agos/metaengine.cpp:43
 msgid ""
@@ -4520,10 +4531,12 @@ msgid ""
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
+"عند تحديد AdLib ، سيتم استخدام ميزات OPL3. اعتمادًا على اللعبة ، سيمنع هذا "
+"قطع الملاحظات وإضافة ملاحظات أو أدوات إضافية و / أو إضافة استريو."
 
 #: engines/agos/metaengine.cpp:53 engines/agos/metaengine.cpp:64
 msgid "Use DOS version music tempos"
-msgstr ""
+msgstr "استخدام الموسيقى الإصدار DOS"
 
 #: engines/agos/metaengine.cpp:54 engines/agos/metaengine.cpp:65
 msgid ""
@@ -4531,26 +4544,28 @@ msgid ""
 "version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
 msgstr ""
+"سيؤدي تحديد هذا الخيار إلى تشغيل الموسيقى باستخدام الإيقاع المستخدم في إصدار "
+"DOS من اللعبة. خلاف ذلك ، سيتم استخدام سرعة إصدار Windows بشكل أسرع."
 
 #: engines/agos/metaengine.cpp:75 engines/sci/detection_options.h:95
 msgid "Prefer digital sound effects"
-msgstr ""
+msgstr "تفضل المؤثرات الصوتية الرقمية"
 
 #: engines/agos/metaengine.cpp:76 engines/sci/detection_options.h:96
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "تفضل المؤثرات الصوتية الرقمية بدلاً من المؤثرات المركبة"
 
 #: engines/agos/metaengine.cpp:86
 msgid "Disable fade-out effects"
-msgstr ""
+msgstr "تعطيل تأثيرات التلاشي"
 
 #: engines/agos/metaengine.cpp:87
 msgid "Don't fade every screen to black when leaving a room."
-msgstr ""
+msgstr "لا تتلاشى كل شاشة إلى اللون الأسود عند مغادرة الغرفة."
 
 #: engines/agos/metaengine.cpp:170
 msgid "AGOS 2 support is not compiled in"
-msgstr ""
+msgstr "لا يتم تجميع دعم AGOS 2 بتنسيق"
 
 #: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -4560,66 +4575,73 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
+"يبدو أنك تستخدم جهاز MIDI عام ،\n"
+"لكن لعبتك تدعم فقط Roland MT32 MIDI.\n"
+"نحاول تعيين أدوات Roland MT32 إلى\n"
+"منها MIDI العامة. لا يزال من الممكن أن\n"
+"بعض المسارات تبدو غير صحيحة."
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
-msgstr ""
+msgstr "لغة اللعبة:"
 
 #: engines/ags/dialogs.cpp:58
 msgid "Language to use for multilingual games"
-msgstr ""
+msgstr "لغة لاستخدامها في الألعاب متعددة اللغات"
 
 #: engines/ags/dialogs.cpp:78
 msgid "Force antialiased text"
-msgstr ""
+msgstr "فرض نص متحيز"
 
 #: engines/ags/dialogs.cpp:78
 msgid "Use antialiasing to draw text even if the game does not ask for it"
-msgstr ""
+msgstr "استخدم منع الحواف لرسم النص حتى لو لم تطلبه اللعبة"
 
 #: engines/ags/ags.cpp:132
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
-msgstr ""
+msgstr "تستخدم اللعبة المحددة إصدارًا لما قبل 2.5 من محرك AGS ، وهو غير مدعوم."
 
 #: engines/ags/ags.cpp:140
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
+"تحتوي اللعبة المحددة على ملف بيانات أكبر من 2 جيجا بايت ، وهو غير مدعوم "
+"بواسطة إصدار ScummVM لديك حتى الآن."
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
-msgstr ""
+msgstr "عرض الإصدار"
 
 #: engines/asylum/metaengine.cpp:120 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
-msgstr ""
+msgstr "تحميل سريع"
 
 #: engines/asylum/metaengine.cpp:125 engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
-msgstr ""
+msgstr "الحفظ السريع"
 
 #: engines/asylum/metaengine.cpp:130
 msgid "Switch to Sarah"
-msgstr ""
+msgstr "قم بالتبديل إلى \"سارة\""
 
 #: engines/asylum/metaengine.cpp:135
 msgid "Switch to Grimwall"
-msgstr ""
+msgstr "قم بالتبديل إلى Grimwall"
 
 #: engines/asylum/metaengine.cpp:140
 msgid "Switch to Olmec"
-msgstr ""
+msgstr "قم بالتبديل إلى Olmec"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
-msgstr ""
+msgstr "إظهار قائمة داخل اللعبة"
 
 #: engines/asylum/metaengine.cpp:152
 msgid "Open character inventory"
-msgstr ""
+msgstr "فتح جرد الشخصية"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -4628,18 +4650,19 @@ msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
 msgstr ""
+"تحذير: محاولة تحميل اللعبة المحفوظة من إصدار سابق: الإصدار%s / الإصدار%d"
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
 msgid "Load anyway"
-msgstr ""
+msgstr "حمل على أي حال"
 
 #: engines/bladerunner/bladerunner.cpp:398
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "فشل تهيئة الموارد"
 
 #: engines/bladerunner/bladerunner.cpp:1166
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "لم يتم العثور على مورد اللعبة المطلوب"
 
 #: engines/bladerunner/bladerunner.cpp:2748
 msgid ""
@@ -4647,6 +4670,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"تحذير: تم حفظ هذه اللعبة في وضع المحتوى المقطوع المستعاد ، لكنك تلعب في وضع "
+"المحتوى الأصلي. سيتم تعديل الوضع لاستعادة المحتوى المقطوع لهذه الجلسة حتى "
+"تنتهي من اللعبة تمامًا."
 
 #: engines/bladerunner/bladerunner.cpp:2750
 msgid ""
@@ -4654,10 +4680,13 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"تحذير: تم حفظ هذه اللعبة في وضع المحتوى المقطوع المستعاد ، لكنك تلعب في وضع "
+"المحتوى الأصلي. سيتم تعديل الوضع لاستعادة المحتوى المقطوع لهذه الجلسة حتى "
+"تنتهي من اللعبة تمامًا."
 
 #: engines/bladerunner/bladerunner.cpp:2752
 msgid "Continue"
-msgstr ""
+msgstr "مواصلة"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
@@ -4665,7 +4694,7 @@ msgstr ""
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
-msgstr ""
+msgstr "لا يرغب مترجم المعجب في دمج ترجمته في ScummVM."
 
 #: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
 #: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
@@ -4695,7 +4724,7 @@ msgstr ""
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
 #: engines/trecision/detection.cpp:201 engines/zvision/detection_tables.h:129
 msgid "Missing game code"
-msgstr ""
+msgstr "رمز اللعبة مفقود"
 
 #. I18N: Blade Runner Enhanced Edition is a trademark, so please keep the capitalization
 #. for Enhanced Edition as is.
@@ -4704,90 +4733,96 @@ msgid ""
 "Enhanced Edition not supported. Please, use the original files which are "
 "part of the release."
 msgstr ""
+"الإصدار المحسن غير مدعوم. من فضلك ، استخدم الملفات الأصلية التي هي جزء من "
+"الإصدار."
 
 #: engines/bladerunner/metaengine.cpp:45
 msgid "Sitcom mode"
-msgstr ""
+msgstr "وضع المسرحية الهزلية"
 
 #: engines/bladerunner/metaengine.cpp:46
 msgid "Game will add laughter after actor's line or narration"
-msgstr ""
+msgstr "ستضيف اللعبة الضحك بعد خط الممثل أو السرد"
 
 #: engines/bladerunner/metaengine.cpp:56
 msgid "Shorty mode"
-msgstr ""
+msgstr "وضع قليل"
 
 #: engines/bladerunner/metaengine.cpp:57
 msgid "Game will shrink the actors and make their voices high pitched"
-msgstr ""
+msgstr "ستعمل اللعبة على تقليص عدد الممثلين وجعل أصواتهم عالية النبرة"
 
 #: engines/bladerunner/metaengine.cpp:67
 msgid "Frame limiter high performance mode"
-msgstr ""
+msgstr "وضع محدد الإطار عالي الأداء"
 
 #: engines/bladerunner/metaengine.cpp:68
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
 msgstr ""
+"قد ينتج عن هذا الوضع استخدام عالي لوحدة المعالجة المركزية! يتجنب استخدام "
+"وظيفة delayMillis ()."
 
 #: engines/bladerunner/metaengine.cpp:78
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "الحد الأقصى للإطارات في الثانية"
 
 #: engines/bladerunner/metaengine.cpp:79
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
+"يستهدف هذا الوضع 120 إطارًا في الثانية كحد أقصى. عند التعطيل ، تستهدف اللعبة "
+"60 إطارًا في الثانية"
 
 #: engines/bladerunner/metaengine.cpp:89
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "قم بتعطيل استنزاف قدرة التحمل السريع الخاص ب McCoy"
 
 #: engines/bladerunner/metaengine.cpp:90
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
-msgstr ""
+msgstr "عند الجري ، لن يبدأ McCoy في التباطؤ بمجرد توقف اللاعب عن النقر بالماوس"
 
 #: engines/bladerunner/metaengine.cpp:100
 msgid "Show subtitles during text crawl"
-msgstr ""
+msgstr "إظهار الترجمات أثناء الزحف إلى النص"
 
 #: engines/bladerunner/metaengine.cpp:101
 msgid "During the intro cutscene, show subtitles during the text crawl"
-msgstr ""
+msgstr "أثناء قص المقدمة ، اعرض الترجمات أثناء الزحف إلى النص"
 
 #: engines/bladerunner/metaengine.cpp:111
 msgid "Fix credits for voice actors"
-msgstr ""
+msgstr "إصلاح الاعتمادات لممثلي الصوت"
 
 #: engines/bladerunner/metaengine.cpp:112
 msgid ""
 "Updates the end credits with corrected credits for the Spanish voice actors"
-msgstr ""
+msgstr "يحدّث الاعتمادات النهائية بالاعتمادات المصححة لممثلي الصوت الإسبان"
 
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:199
 msgid "common shortcuts"
-msgstr ""
+msgstr "الاختصارات الشائعة"
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:201
 msgid "main game shortcuts"
-msgstr ""
+msgstr "اختصارات اللعبة الرئيسية"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:203
 msgid "KIA only shortcuts"
-msgstr ""
+msgstr "الاختصاراتKIA فقط"
 
 #. I18N: This keymap is the main way for the user interact with the game.
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 #: engines/bladerunner/metaengine.cpp:210
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr ""
+msgstr "المشي / النظر / التحدث / تحديد / التصوير"
 
 #. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4795,13 +4830,13 @@ msgstr ""
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:220
 msgid "Toggle Combat"
-msgstr ""
+msgstr "تبديل القتال"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:75
 #: engines/scumm/metaengine.cpp:835 engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
-msgstr ""
+msgstr "تخطي المشهد"
 
 #. I18N: This keymap allows skipping the current line of dialogue.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4809,7 +4844,7 @@ msgstr ""
 #. SKIP PAST CURRENT LINE OF DIALOGUE
 #: engines/bladerunner/metaengine.cpp:242
 msgid "Skip dialogue"
-msgstr ""
+msgstr "تخطي الحوار"
 
 #. I18N: This keymap toggles between opening the KIA in the Game Options tab, and closing the KIA.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4817,7 +4852,7 @@ msgstr ""
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
 msgid "Game Options"
-msgstr ""
+msgstr "خيارات اللعبة"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -4826,29 +4861,29 @@ msgstr ""
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:264
 msgid "Open KIA Database"
-msgstr ""
+msgstr "افتح قاعدة بيانات KIA"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
 msgid "Delete Selected Saved Game"
-msgstr ""
+msgstr "حذف اللعبة المحفوظة المختارة"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:296
 msgid "Scroll Up"
-msgstr ""
+msgstr "انتقل إلى أعلى"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
 #: engines/bladerunner/metaengine.cpp:303
 msgid "Scroll Down"
-msgstr ""
+msgstr "Scroll حرك الفأرة لأسفل"
 
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:311
 msgid "Toggle Clue Privacy"
-msgstr ""
+msgstr "تبديل مفتاح الخصوصية"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4856,7 +4891,7 @@ msgstr ""
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/pegasus/pegasus.cpp:2824
 msgid "Save Game"
-msgstr ""
+msgstr "حفظ اللعبة"
 
 #. I18N: This keymap opens KIA's LOAD GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4864,7 +4899,7 @@ msgstr ""
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/pegasus/pegasus.cpp:2830
 msgid "Load Game"
-msgstr ""
+msgstr "تحميل لعبة"
 
 #. I18N: This keymap opens KIA's CRIME SCENE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4872,7 +4907,7 @@ msgstr ""
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:348
 msgid "Crime Scene Database"
-msgstr ""
+msgstr "قاعدة بيانات مسرح الجريمة"
 
 #. I18N: This keymap opens KIA's SUSPECT DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4880,7 +4915,7 @@ msgstr ""
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:357
 msgid "Suspect Database"
-msgstr ""
+msgstr "قاعدة بيانات المشتبه بهم"
 
 #. I18N: This keymap opens KIA's CLUE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4888,7 +4923,7 @@ msgstr ""
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:366
 msgid "Clue Database"
-msgstr ""
+msgstr "قاعدة بيانات الدليل"
 
 #. I18N: This keymap opens KIA's QUIT GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4896,7 +4931,7 @@ msgstr ""
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:225
 msgid "Quit Game"
-msgstr ""
+msgstr "قم بإنهاء اللعبة"
 
 #: engines/buried/buried.cpp:584
 msgid "Are you sure you want to quit?"
