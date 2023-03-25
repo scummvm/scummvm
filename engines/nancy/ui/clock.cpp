@@ -161,7 +161,7 @@ void Clock::ClockGlobe::init() {
 
 void Clock::ClockGlobe::updateGraphics() {
 	AnimatedButton::updateGraphics();
-	if (_isOpen && !isPlaying() && g_nancy->getTotalPlayTime() > _closeTime) {
+	if (_isOpen && !isPlaying() && g_nancy->getTotalPlayTime() > _closeTime && _isVisible) {
 		setOpen(false);
 		_owner->_gargoyleEyes.setVisible(false);
 		g_nancy->_sound->playSound("GLOB");

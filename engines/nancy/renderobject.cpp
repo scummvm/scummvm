@@ -134,8 +134,8 @@ Common::Rect RenderObject::convertToLocal(const Common::Rect &screen) const {
 	if (_drawSurface.w != _screenPosition.width() || _drawSurface.h != _screenPosition.height()) {
 		Common::Rect srcBounds = _drawSurface.getBounds();
 
-		float scaleX = (float)_screenPosition.width() / srcBounds.width();
-		float scaleY = (float)_screenPosition.height() / srcBounds.height();
+		float scaleX = (float)srcBounds.width() / _screenPosition.width();
+		float scaleY = (float)srcBounds.height() / _screenPosition.height();
 
 		ret.left = (ret.left - srcBounds.left) * scaleX;
 		ret.right = (ret.right - srcBounds.left) * scaleX;
