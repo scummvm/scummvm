@@ -3673,7 +3673,9 @@ if test -n "$_host"; then
 			# auto -> no
 			if test "$_release_build" = "yes"; then
 				# --enable-release
-				append_var DEFINES "-DNDEBUG"
+				append_var DEFINES  "-DNDEBUG"
+				append_var CXXFLAGS "-I$HOME/gnu-tools/m68000/m68k-atari-mint/sys-root/opt/mintlib-dlmalloc/include"
+				append_var LDFLAGS  "-L$HOME/gnu-tools/m68000/m68k-atari-mint/sys-root/opt/mintlib-dlmalloc/lib/m68020-60"
 			fi
 
 			_seq_midi=no
