@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 16:11+0000\n"
-"PO-Revision-Date: 2023-03-21 09:34+0000\n"
+"PO-Revision-Date: 2023-03-25 18:49+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1568,14 +1568,12 @@ msgid "ScummVM config path: "
 msgstr "ScummVMの設定パス： "
 
 #: gui/options.cpp:2496
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "ScummVMの設定パス： "
+msgstr "ScummVMのログ： "
 
 #: gui/options.cpp:2497
 msgid "View"
-msgstr ""
+msgstr "表示"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2504 gui/options.cpp:3243
@@ -1673,10 +1671,8 @@ msgid "Seed for initializing all random number generators"
 msgstr "乱数ジェネレーターを初期するためのシード値"
 
 #: gui/options.cpp:2625
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "デバッグメニュー"
+msgstr "デバッグLV："
 
 #: gui/options.cpp:2628 gui/options.cpp:2775
 msgid "None"
@@ -1684,7 +1680,7 @@ msgstr "なし"
 
 #: gui/options.cpp:2633
 msgid "11 (all)"
-msgstr ""
+msgstr "11(全て)"
 
 #: gui/options.cpp:2637
 msgid "Enable Discord integration"
