@@ -1615,7 +1615,8 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	memset(_textColor, 0, 3);
 
 	_screen->setScreenPalette(*_palettes[0]);
-	_prevFont = _screen->setFont(_vm->gameFlags().platform == Common::kPlatformFMTowns ? Screen::FID_SJIS_LARGE_FNT : Screen::FID_8_FNT);
+	_prevFont = _screen->setFont(_vm->gameFlags().lang == Common::Language::ZH_TWN ? Screen::FID_CHINESE_FNT :
+				     _vm->gameFlags().platform == Common::kPlatformFMTowns ? Screen::FID_SJIS_LARGE_FNT : Screen::FID_8_FNT);
 	_screen->hideMouse();
 
 	_vm->delay(150);
