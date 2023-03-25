@@ -51,6 +51,10 @@ class SliderPuzzle;
 class PlayPrimaryVideoChan0;
 }
 
+namespace Misc {
+class Lightning;
+}
+
 namespace UI {
 class Button;
 class ViewportOrnaments;
@@ -179,6 +183,9 @@ public:
 	void setActivePrimaryVideo(Action::PlayPrimaryVideoChan0 *activeVideo);
 	Action::PlayPrimaryVideoChan0 *getActivePrimaryVideo();
 
+	// The Vampire Diaries only;
+	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
+
 private:
 	void init();
 	void load();
@@ -258,6 +265,8 @@ private:
 	int16 _lastHintCharacter;
 	int16 _lastHintID;
 	NancyState::NancyState _gameStateRequested;
+
+	Misc::Lightning *_lightning;
 
 	Common::Rect _mapHotspot;
 

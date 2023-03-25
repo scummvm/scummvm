@@ -22,25 +22,31 @@
 #ifndef NANCY_ACTION_LIGHTNING_H
 #define NANCY_ACTION_LIGHTNING_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/commontypes.h"
 
 namespace Nancy {
-namespace Action {
 
-class LightningOn : public ActionRecord {
+class RenderObject;
+
+namespace Misc {
+
+// Special class that handles The Vampire Diaries' lightning screen effect.
+// Activated by the LightningOn action record as well as at the endgame section
+class Lightning {
 public:
-	enum LightningState { kStartPulse, kPulse, kThunder };
+	enum LightningState { kBegin, kStartPulse, kPulse, kThunder, kNotRunning };
 
-	LightningOn() = default;
-	virtual ~LightningOn();
+	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
+	void endLightning();
+	
+	void run();
 
-	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
-
+private:
 	void handlePulse(bool on);
 	void handleThunder();
 
-	LightningState _lightningState = kStartPulse;
+	bool _isRunning = false;
+	LightningState _state = kNotRunning;
 
 	int16 _minRGBPercent = 0;
 	int16 _maxRGBPercent = 0;
@@ -62,12 +68,9 @@ public:
 
 	Common::Array<RenderObject *> _viewportObjs;
 	Common::Array<byte *> _viewportObjOriginalPalettes;
-
-protected:
-	Common::String getRecordTypeName() const override { return "LightningOn"; }
 };
 
-} // End of namespace Action
+} // End of namespace Misc
 } // End of namespace Nancy
 
 #endif // NANCY_ACTION_LIGHTNING_H

@@ -117,6 +117,19 @@ protected:
 	Common::String getRecordTypeName() const override { return "PaletteNextScene"; }
 };
 
+class LightningOn : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	int16 _distance;
+	uint16 _pulseTime;
+	int16 _rgbPercent;
+
+protected:
+	Common::String getRecordTypeName() const override { return "LightningOn"; }
+};
+
 class MapCall : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;

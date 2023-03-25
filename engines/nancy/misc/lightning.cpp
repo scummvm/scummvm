@@ -23,15 +23,15 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/nancy.h"
 
-#include "engines/nancy/state/scene.h"
+#include "engines/nancy/misc/lightning.h"
 
-#include "engines/nancy/action/lightning.h"
+#include "engines/nancy/state/scene.h"
 
 #include "common/stream.h"
 #include "common/random.h"
 
 namespace Nancy {
-namespace Action {
+namespace Misc {
 
 void editPalette(byte *colors, uint percent) {
 	float alpha = (float) percent / 100;
@@ -42,17 +42,7 @@ void editPalette(byte *colors, uint percent) {
 	}
 }
 
-LightningOn::~LightningOn() {
-	for (byte *palette : _viewportObjOriginalPalettes) {
-		delete[] palette;
-	}
-}
-
-void LightningOn::readData(Common::SeekableReadStream &stream) {
-	int16 distance = stream.readSint16LE();
-	uint16 pulseTime = stream.readUint16LE();
-	int16 rgbPercent = stream.readSint16LE();
-
+void Lightning::beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent) {
 	int16 midpoint;
 	float delta;
 
@@ -81,11 +71,38 @@ void LightningOn::readData(Common::SeekableReadStream &stream) {
 	_minSoundStartDelay = MAX<int16>(250, midpoint - delta);
 	_maxSoundStartDelay = midpoint + delta; // No minimum value, probably a bug
 
-	stream.skip(0x4); // paletteStart, paletteSize
+	_state = kBegin;
 }
 
-void LightningOn::execute() {
-	if (_state == kBegin) {
+void Lightning::endLightning() {
+	_state = kNotRunning;
+
+	_viewportObjs.clear();
+	_viewportObjOriginalPalettes.clear();
+}
+
+void Lightning::run() {
+	switch (_state) {
+	case kNotRunning: {
+		// Check if the endgame has started
+		if (NancySceneState.getEventFlag(82)) {
+			uint16 sceneID = NancySceneState.getSceneInfo().sceneID;
+
+			// Check if we're inside an appropriate scene
+			if ((sceneID < 152) ||
+				(sceneID > 177 && sceneID < 230) ||
+				(sceneID > 230 && sceneID < 233) ||
+				(sceneID > 235 && sceneID < 318) ||
+				(sceneID > 326 && sceneID < 334) ||
+				(sceneID > 341 && sceneID < 1726) ||
+				(sceneID > 1731)) {
+				
+				beginLightning(2, 22, 65);
+			}
+		}
+	}
+		// fall through
+	case kBegin:
 		g_nancy->_graphicsManager->grabViewportObjects(_viewportObjs);
 
 		for (RenderObject *obj : _viewportObjs) {
@@ -97,22 +114,20 @@ void LightningOn::execute() {
 			obj->grabPalette(_viewportObjOriginalPalettes.back());
 		}
 
-		_state = kRun;
-	}
-
-	switch (_lightningState) {
+		_state = kStartPulse;
+		// fall through
 	case kStartPulse:
 		_nextStateTime = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minPulseLength, _maxPulseLength);
 		handleThunder();
 		handlePulse(true);
-		_lightningState = kPulse;
+		_state = kPulse;
 		break;
 	case kPulse:
 		if (g_nancy->getTotalPlayTime() > _nextStateTime) {
 
 			_nextStateTime = g_nancy->getTotalPlayTime() + g_nancy->_randomSource->getRandomNumberRngSigned(_minInterPulseDelay, _maxInterPulseDelay);
 
-			_lightningState = kThunder;
+			_state = kThunder;
 
 			if (!g_nancy->_sound->isSoundPlaying("TH1")) {
 				_nextSoundToPlay = 0;
@@ -131,7 +146,7 @@ void LightningOn::execute() {
 		break;
 	case kThunder:
 		if (g_nancy->getTotalPlayTime() > _nextStateTime) {
-			_lightningState = kStartPulse;
+			_state = kStartPulse;
 		}
 
 		handleThunder();
@@ -139,7 +154,7 @@ void LightningOn::execute() {
 	}
 }
 
-void LightningOn::handlePulse(bool on) {
+void Lightning::handlePulse(bool on) {
 	for (uint i = 0; i < _viewportObjs.size(); ++i) {
 		RenderObject *obj = _viewportObjs[i];
 
@@ -159,17 +174,19 @@ void LightningOn::handlePulse(bool on) {
 	}
 }
 
-void LightningOn::handleThunder() {
+void Lightning::handleThunder() {
 	if (_nextSoundToPlay == 0) {
 		if (g_nancy->getTotalPlayTime() > _nextSoundTime0) {
 			g_nancy->_sound->playSound("TH1");
+			_nextSoundToPlay = -1;
 		}
 	} else if (_nextSoundToPlay == 1) {
 		if (g_nancy->getTotalPlayTime() > _nextSoundTime1) {
 			g_nancy->_sound->playSound("TH2");
+			_nextSoundToPlay = -1;
 		}
 	}
 }
 
 } // End of namespace Action
-} // End of namespace Nancy
+} // End of namespace Misc

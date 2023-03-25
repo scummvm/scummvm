@@ -199,6 +199,18 @@ void PaletteNextScene::execute() {
 	_isDone = true;
 }
 
+void LightningOn::readData(Common::SeekableReadStream &stream) {
+	_distance = stream.readSint16LE();
+	_pulseTime = stream.readUint16LE();
+	_rgbPercent = stream.readSint16LE();
+	stream.skip(4);
+}
+
+void LightningOn::execute() {
+	NancySceneState.beginLightning(_distance, _pulseTime, _rgbPercent);
+	_isDone = true;
+}
+
 void MapCall::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }

@@ -37,6 +37,8 @@
 #include "engines/nancy/ui/ornaments.h"
 #include "engines/nancy/ui/clock.h"
 
+#include "engines/nancy/misc/lightning.h"
+
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
 }
@@ -109,7 +111,8 @@ Scene::Scene() :
 		_clock(nullptr),
 		_actionManager(),
 		_difficulty(0),
-		_activePrimaryVideo(nullptr) {}
+		_activePrimaryVideo(nullptr),
+		_lightning(nullptr) {}
 
 Scene::~Scene()  {
 	delete _helpButton;
@@ -117,6 +120,7 @@ Scene::~Scene()  {
 	delete _viewportOrnaments;
 	delete _textboxOrnaments;
 	delete _clock;
+	delete _lightning;
 }
 
 void Scene::process() {
@@ -516,6 +520,10 @@ void Scene::init() {
 		_state = kLoad;
 	}
 
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		_lightning = new Misc::Lightning();
+	}
+
 	registerGraphics();
 	g_nancy->_graphicsManager->redrawAll();
 }
@@ -526,6 +534,12 @@ void Scene::setActivePrimaryVideo(Action::PlayPrimaryVideoChan0 *activeVideo) {
 
 Action::PlayPrimaryVideoChan0 *Scene::getActivePrimaryVideo() {
 	return _activePrimaryVideo;
+}
+
+void Scene::beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent) {
+	if (_lightning) {
+		_lightning->beginLightning(distance, pulseTime, rgbPercent);
+	}
 }
 
 void Scene::load() {
@@ -630,6 +644,10 @@ void Scene::run() {
 	handleInput();
 
 	_actionManager.processActionRecords();
+
+	if (_lightning) {
+		_lightning->run();
+	}
 }
 
 void Scene::handleInput() {
@@ -782,6 +800,10 @@ void Scene::clearSceneData() {
 
 	clearLogicConditions();
 	_actionManager.clearActionRecords();
+
+	if (_lightning) {
+		_lightning->endLightning();
+	}
 }
 
 } // End of namespace State
