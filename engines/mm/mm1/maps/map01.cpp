@@ -122,6 +122,7 @@ void Map01::special08() {
 	send(SoundMessage(
 		STRING["maps.map01.secret"],
 		[](const Common::KeyState &) {
+			g_events->close();
 			Game::Encounter &enc = g_globals->_encounters;
 			enc.clearMonsters();
 
