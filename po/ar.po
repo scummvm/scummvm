@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-25 21:02+0000\n"
 "PO-Revision-Date: 2023-03-25 23:29+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
 "Language: ar\n"
@@ -6382,58 +6382,60 @@ msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"يضبط سرعة انتقالات الشاشة. سيمكنك تعطيل انتقالات الشاشة من التنقل بسرعة أكبر "
+"خلال اللعبة."
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
-msgstr ""
+msgstr "أسرع"
 
 #: engines/mohawk/dialogs.cpp:367
 msgid "Normal"
-msgstr ""
+msgstr "طبيعي"
 
 #: engines/mohawk/dialogs.cpp:368
 msgid "Best"
-msgstr ""
+msgstr "أفضل"
 
 #: engines/mohawk/metaengine.cpp:292
 msgid "Myst ME support not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم Myst ME بتنسيق"
 
 #: engines/mohawk/metaengine.cpp:297
 msgid "Myst support not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع الدعم الغامض في"
 
 #: engines/mohawk/metaengine.cpp:304
 msgid "Riven support not compiled in"
-msgstr ""
+msgstr "دعم ممزق لم يتم تجميعه"
 
 #: engines/mohawk/metaengine.cpp:318
 msgid "CSTime support not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم CSTime بتنسيق"
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
-msgstr ""
+msgstr "اللعبة متوقفة مؤقتًا. اضغط على أى زر للاستمرار."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:819
 msgid "Open main menu"
-msgstr ""
+msgstr "افتح القائمة الرئيسية"
 
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:843
 msgid "Load game state"
-msgstr ""
+msgstr "تحميل حالة اللعبة"
 
 #: engines/mohawk/myst.cpp:584 engines/mohawk/riven.cpp:848
 msgid "Save game state"
-msgstr ""
+msgstr "حفظ حالة اللعبة"
 
 #: engines/mohawk/myst.cpp:589 engines/mohawk/riven.cpp:853
 msgid "Show options menu"
-msgstr ""
+msgstr "إظهار قائمة الخيارات"
 
 #: engines/mohawk/myst.cpp:601
 msgid "Drop page"
-msgstr ""
+msgstr "إفلات الصفحة"
 
 #: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1526
 #: engines/wintermute/keymapper_tables.h:1673
@@ -6442,7 +6444,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1764
 #: engines/wintermute/keymapper_tables.h:1797
 msgid "Show map"
-msgstr ""
+msgstr "عرض الخريطة"
 
 #: engines/mohawk/myst_stacks/menu.cpp:282
 #: engines/mohawk/riven_stacks/aspit.cpp:348
@@ -6450,51 +6452,57 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
+"هل أنت متأكد أنك تريد تحميل لعبة محفوظة؟ سيتم فقدان كل التقدم غير المحفوظة."
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
-msgstr ""
+msgstr "لعبة تحميل"
 
 #: engines/mohawk/myst_stacks/menu.cpp:299
 #: engines/mohawk/riven_stacks/aspit.cpp:370
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"هل أنت متأكد أنك تريد بدء لعبة جديدة؟ سيتم فقدان كل التقدم غير المحفوظة."
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid "New game"
-msgstr ""
+msgstr "لعبة جديدة"
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr ""
+msgstr "هل أنت متأكد من أنك تريد الخروج؟ سيتم فقدان كل التقدم غير المحفوظة."
 
 #: engines/mohawk/myst_stacks/preview.cpp:89
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "لا يمكنك ترك المكتبة في العرض التوضيحي."
 
 #: engines/mohawk/riven.cpp:156
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
+"أنت تفتقد الملف القابل للتنفيذ Riven. ملف Windows القابل للتنفيذ هو \"riven."
+"exe\" أو \"rivendmo.exe\". "
 
 #: engines/mohawk/riven.cpp:157
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"يعمل أيضًا استخدام ملف المثبت \"arcriven.z\". بالإضافة إلى ذلك ، يمكنك "
+"استخدام ملف Mac القابل للتنفيذ \"Riven\"."
 
 #: engines/mohawk/riven.cpp:169
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
-msgstr ""
+msgstr "أنت تفتقد \"extras.mhk\". يعمل أيضًا استخدام ملف المثبت \"arcriven.z\"."
 
 #: engines/mohawk/riven.cpp:503
 msgid "You are missing the following required Riven data files:\n"
