@@ -810,6 +810,12 @@
 			</layout>
 			<widget name = 'ConfigPath' height = 'Globals.Line.Height' />
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'LogPath' height = 'Globals.Line.Height' />
+				<widget name = 'ViewButton'
+						type = 'Button'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
 				<widget name = 'BrowserPath'
 						height = 'Globals.Line.Height'
 				/>

@@ -29,6 +29,7 @@
 #include "gui/widgets/tab.h"
 #include "gui/ThemeEval.h"
 #include "gui/launcher.h"
+#include "gui/textviewer.h"
 
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/remap-widget.h"
@@ -106,6 +107,7 @@ enum {
 	kScalerPopUpCmd			= 'scPU',
 	kFullscreenToggled		= 'oful',
 	kRandomSeedClearCmd     = 'rndc',
+	kViewLogCmd             = 'vwlg',
 };
 
 enum {
@@ -2484,10 +2486,13 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	Common::U32String confPath = ConfMan.getCustomConfigFileName();
 	if (confPath.empty())
 		confPath = g_system->getDefaultConfigFileName();
-	StaticTextWidget* configPathWidget = new StaticTextWidget(boss, prefix + "ConfigPath", _("ScummVM config path: ") + confPath, confPath);
+	StaticTextWidget *configPathWidget = new StaticTextWidget(boss, prefix + "ConfigPath", _("ScummVM config path: ") + confPath, confPath);
 	if (ConfMan.isKeyTemporary("config"))
 		configPathWidget->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 
+	Common::U32String logPath = g_system->getDefaultLogFileName();
+	new StaticTextWidget(boss, prefix + "LogPath", _("ScummVM log path: ") + logPath, logPath);
+	new ButtonWidget(boss, prefix + "ViewButton", _("View"), Common::U32String(), kViewLogCmd);
 
 	Common::U32String browserPath = _("<default>");
 	if (ConfMan.hasKey("browser_lastpath"))
@@ -3220,6 +3225,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_browserPath->setLabel(_("Last browser path: ") + _("<default>"));
 
 		break;
+	case kViewLogCmd: {
+		TextViewerDialog viewer(g_system->getDefaultLogFileName());
+		viewer.runModal();
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	}
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	case kRootPathClearCmd:
