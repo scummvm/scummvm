@@ -1,4 +1,4 @@
-ScummVM 2.7.0.4 - OPENPANDORA README - HOW TO INSTALL
+ScummVM 2.7.0.2 - OPENPANDORA README - HOW TO INSTALL
 ------------------------------------------------------------------------
 
 Please refer to the:
