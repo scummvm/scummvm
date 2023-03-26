@@ -146,6 +146,7 @@
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Bold.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Bold.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
+				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Bold.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSansBold.ttf'/>
 		</font>
 		<font	id = 'text_default'
@@ -155,6 +156,7 @@
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
 		<font	resolution = 'y>=H'
@@ -164,6 +166,7 @@
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Bold.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Bold.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
+				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Bold.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSansBold.ttf'/>
 		</font>
 		<font	id = 'text_button'
@@ -173,6 +176,7 @@
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
 		<font	resolution = 'y>=H'
@@ -182,6 +186,7 @@
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
 		<font	id = 'text_normal'
@@ -191,6 +196,7 @@
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
 		<font	id = 'tooltip_normal'
@@ -200,6 +206,7 @@
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
 				<language id = 'zh*' scalable_file = 'NotoSansTC-Regular.otf'/>
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
+				<language id = 'ar'  scalable_file = 'NotoNaskhArabic-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
 		<font	resolution = 'y>799'
