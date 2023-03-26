@@ -41,9 +41,13 @@ Picture::~Picture() {
 
 void Picture::copyPalette(const byte *src, int numColors) {
 	delete[] _palette;
-	_paletteColors = numColors;
-	_palette = new byte[getPaletteSize()]();
-	memcpy(_palette, src, getPaletteSize());
+	if (src) {
+		_paletteColors = numColors;
+		_palette = new byte[getPaletteSize()]();
+		memcpy(_palette, src, getPaletteSize());
+	} else {
+		_paletteColors = 0;
+	}
 }
 
 } // End of namespace Director
