@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 08:45+0000\n"
-"PO-Revision-Date: 2023-03-07 22:34+0000\n"
+"PO-Revision-Date: 2023-03-26 11:21+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1580,14 +1580,12 @@ msgid "ScummVM config path: "
 msgstr "ScummVM:n asetuspolku: "
 
 #: gui/options.cpp:2504
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "ScummVM:n asetuspolku: "
+msgstr "ScummVM:n lokitiedostopolku: "
 
 #: gui/options.cpp:2509
 msgid "View"
-msgstr ""
+msgstr "Tarkastele"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2516 gui/options.cpp:3257
@@ -1687,10 +1685,8 @@ msgid "Seed for initializing all random number generators"
 msgstr "Satunnaislukugeneraattorien alustusarvo"
 
 #: gui/options.cpp:2637
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Debug-valikko"
+msgstr "Debug-taso:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2641 gui/options.cpp:2789
@@ -1700,7 +1696,7 @@ msgstr "Ei mikään"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2647
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (kaikki)"
 
 #: gui/options.cpp:2651
 msgid "Enable Discord integration"
@@ -5598,10 +5594,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "GroovieV2-tukea ei ole käännetty mukaan"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "Käynnistä palvelin"
+msgstr "Varattu"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -5675,86 +5669,66 @@ msgid "Enable Gore Mode when available"
 msgstr "Aktivoi hurmemoodi jos saatavilla"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "Liiku eteenpäin"
+msgstr "Eteenpäin"
 
 #: engines/hpl1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "Liiku taaksepäin"
+msgstr "Taaksepäin"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
-msgstr "Liu'u vasemmalle"
+msgstr "Vasemmalle"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:94
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
-msgstr "Liu'u oikealle"
+msgstr "Oikealle"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
-#| msgid "Pad Left"
 msgid "Lean Left"
-msgstr "Pad vasemmalle"
+msgstr "Nojaa vasemmalle"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
-#| msgid "Pad Right"
 msgid "Lean Right"
-msgstr "Pad oikealle"
+msgstr "Nojaa oikealle"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
-msgstr ""
+msgstr "Hyppää"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:119
 #: engines/icb/icb.cpp:185
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "Kosketus"
+msgstr "Kyykisty"
 
 #: engines/hpl1/metaengine.cpp:92
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "Käytä"
+msgstr "Käyttötila"
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Gore Mode"
 msgid "Look Mode"
-msgstr "Hurmemoodi"
+msgstr "Katselutila"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
-msgstr ""
+msgstr "Laita taskuun"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "Muistikirja"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "Muistiinpanot"
 
 #: engines/hpl1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "Lennä suoraan"
+msgstr "Taskulamppu"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "Valotikku"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -5799,26 +5773,22 @@ msgstr "Lisää sisältöä joka ei ole nähtävissä alkuperäisessä toteutuks
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "Ammu"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "Ase esiin"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
-#, fuzzy
-#| msgid "Remove"
 msgid "Remora"
-msgstr "Poista"
+msgstr "Remora"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "Liu'u vasemmalle"
+msgstr "Sivuaskel"
 
 #: engines/kyra/detection_tables.h:73
 msgid "Missing language specific game code and/or resources."
@@ -6227,115 +6197,101 @@ msgstr "Esc"
 
 #: engines/mm/mm1/metaengine.cpp:48
 msgid "View Party Member 1"
-msgstr ""
+msgstr "Tutki ryhmän jäsentä 1"
 
 #: engines/mm/mm1/metaengine.cpp:49
 msgid "View Party Member 2"
-msgstr ""
+msgstr "Tutki ryhmän jäsentä 2"
 
 #: engines/mm/mm1/metaengine.cpp:50
 msgid "View Party Member 3"
-msgstr ""
+msgstr "Tutki ryhmän jäsentä 3"
 
 #: engines/mm/mm1/metaengine.cpp:51
 msgid "View Party Member 4"
-msgstr ""
+msgstr "Tutki ryhmän jäsentä 4"
 
 #: engines/mm/mm1/metaengine.cpp:52
 msgid "View Party Member 5"
-msgstr ""
+msgstr "Tutki ryhmän jäsentä 5"
 
 #: engines/mm/mm1/metaengine.cpp:53
 msgid "View Party Member 6"
-msgstr ""
+msgstr "Tutki ryhmän jäsentä 6"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:61
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "Avaa lukko"
+msgstr "Torju"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:63
 msgid "Cast"
-msgstr ""
+msgstr "Loihdi"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:65
 msgid "Exchange"
-msgstr ""
+msgstr "Vaihda paikkoja"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:67
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "Oikea"
+msgstr "Taistele"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/mm/mm1/metaengine.cpp:110
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "Asetukset"
+msgstr "Pikaviite"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
 msgid "Retreat"
-msgstr ""
+msgstr "Peräänny"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
 msgid "Shoot"
-msgstr ""
+msgstr "Ammu"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:78
 msgid "Delay"
-msgstr ""
+msgstr "Viive"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:80 engines/mm/mm1/metaengine.cpp:101
 msgid "Protect"
-msgstr ""
+msgstr "Suojelu"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:88
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "Liiku eteenpäin"
+msgstr "Eteenpäin"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:90
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "Liiku taaksepäin"
+msgstr "Taaksepäin"
 
 #: engines/mm/mm1/metaengine.cpp:98
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "Taistelumoodi päälle / pois"
+msgstr "Pikkukartta päälle / pois"
 
 #: engines/mm/mm1/metaengine.cpp:99
 msgid "Reorder Party"
-msgstr ""
+msgstr "Uudelleenjärjestä ryhmä"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "Etsi:"
+msgstr "Etsi"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:107
 msgid "Bash"
-msgstr ""
+msgstr "Runno"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:109 engines/scumm/help.cpp:144
@@ -6343,31 +6299,29 @@ msgid "Unlock"
 msgstr "Avaa lukko"
 
 #: engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "Seuraava lokaatio"
+msgstr "Mene sijaintiin"
 
 #: engines/mm/mm1/metaengine.cpp:127 engines/mm/mm1/metaengine.cpp:132
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "Might and Magic 1 - Valikot"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:139
 #: engines/mm/mm1/metaengine.cpp:145
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "Might and Magic 1 - Ryhmä"
 
 #: engines/mm/mm1/metaengine.cpp:138
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "Might and Magic 1 - Taistelu"
 
 #: engines/mm/mm1/metaengine.cpp:144
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "Might and Magic 1"
 
 #: engines/mm/mm1/metaengine.cpp:146
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - Huijaukset"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
@@ -8635,22 +8589,21 @@ msgstr ""
 "ScummVM:ään. Pura teenagent.dat"
 
 #: engines/tetraedge/metaengine.cpp:33
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "Korjaa pelien kuvasuhde"
+msgstr "Korjaa videoiden kuvasuhde"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
 msgstr ""
+"Toista Syberia:n välivideot 16:9 kuvasuhteessa koko ruudun täyttämisen sijaan"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "Palauta puuttuvat näkymät"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "Palauta jotkin Windows-versiossa olleet näkymät"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
@@ -9041,6 +8994,9 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"Crusader:in introvideon tiedostoa ei löydy - tarkista että FLICS- ja SOUND-"
+"kansiot on kopioiutu CD:ltä. Lisää ohjeita WIKI:ssä: https://wiki.scummvm."
+"org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
@@ -9067,26 +9023,17 @@ msgstr ""
 "Peli toimii silti, mutta ilman musiikkia."
 
 #: engines/vcruise/vcruise.cpp:230
-#, fuzzy
-#| msgid ""
-#| "Failed to load save, the save file doesn't contain valid version "
-#| "information."
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
-"Pelitallenteen lukeminen epäonnistui, tallenne ei sisällä validia "
-"versioinformaatiota."
+"Pelitallenteen lukeminen epäonnistui, tallenne vaikuttaa olevan vaurioitunut."
 
 #: engines/vcruise/vcruise.cpp:235
-#, fuzzy
-#| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
-msgstr "Pelitallenteen version lukeminen epäonnistui"
+msgstr "Pelitallenteen version lukeminen epäonnistui."
 
 #: engines/vcruise/vcruise.cpp:255
-#, fuzzy
-#| msgid "An internal error occurred while attempting to write save game data"
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr "Sisäinen virhe pelitallennusta kirjoittaessa"
+msgstr "Tuntematon virhe pelitallennusta ladatessa."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
