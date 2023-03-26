@@ -91,6 +91,7 @@ public:
 	void open(SDLNet_SocketSet set, TCPsocket socket);
 	void readHeaders();
 	bool readContent(Common::WriteStream *stream);
+	bool readFirstContent(Common::WriteStream *stream);
 	bool readBlockHeaders(Common::WriteStream *stream);
 	bool readBlockContent(Common::WriteStream *stream);
 	void setHandler(ClientHandler *handler);
