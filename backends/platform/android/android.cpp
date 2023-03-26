@@ -43,10 +43,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_fopen
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-//#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
-//#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
 #define FORBIDDEN_SYMBOL_EXCEPTION_ftell
-//#define FORBIDDEN_SYMBOL_EXCEPTION_fflush
 
 #include <EGL/egl.h>
 #include <sys/time.h>
@@ -595,6 +592,9 @@ Common::WriteStream *OSystem_Android::createLogFileForAppending() {
 
 	FILE *scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "a");
 	if (scvmLogFilePtr != nullptr) {
+		// We check for log file size; if it's too big, we rewrite it.
+		// This happens only upon app launch, in initBackend() when createLogFileForAppending() is called
+		// NOTE: We don't check for file size each time we write a log message.
 		long sz = ftell(scvmLogFilePtr);
 		if (sz > MAX_ANDROID_SCUMMVM_LOG_FILESIZE_IN_BYTES) {
 			fclose(scvmLogFilePtr);
