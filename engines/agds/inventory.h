@@ -37,7 +37,18 @@ class AGDSEngine;
 
 class Inventory {
 	class AGDSEngine* _engine;
-	typedef Common::Array<ObjectPtr> EntriesType;
+	struct Entry {
+		Common::String name;
+		bool hasObject;
+		ObjectPtr object;
+
+		void reset() {
+			name.clear();
+			hasObject = false;
+			object.reset();
+		}
+	};
+	typedef Common::Array<Entry> EntriesType;
 	EntriesType _entries;
 	bool _enabled;
 	bool _visible;
@@ -45,7 +56,7 @@ class Inventory {
 public:
 	static const int kMaxSize = 35;
 
-	Inventory(AGDSEngine* _engine);
+	Inventory(AGDSEngine* engine);
 	~Inventory();
 
 	void load(Common::ReadStream* stream);
@@ -70,7 +81,7 @@ public:
 	bool remove(const Common::String &name);
 	void removeGaps();
 
-	ObjectPtr get(int index) const;
+	ObjectPtr get(int index);
 	int find(const Common::String &name) const;
 	ObjectPtr find(const Common::Point pos) const;
 
