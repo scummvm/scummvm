@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 08:45+0000\n"
-"PO-Revision-Date: 2023-03-26 10:55+0000\n"
+"PO-Revision-Date: 2023-03-26 11:04+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -9604,27 +9604,27 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:203
 msgid "Look Down"
-msgstr ""
+msgstr "أنظر للأسفل"
 
 #: engines/zvision/metaengine.cpp:238
 msgid "Spellbook"
-msgstr ""
+msgstr "كتاب تعويذات"
 
 #: engines/zvision/metaengine.cpp:244
 msgid "Score"
-msgstr ""
+msgstr "نتيجة"
 
 #: engines/zvision/metaengine.cpp:250
 msgid "Put away object"
-msgstr ""
+msgstr "ضع الجسم بعيدا"
 
 #: engines/zvision/metaengine.cpp:256
 msgid "Extract coin"
-msgstr ""
+msgstr "استخراج العملة"
 
 #: engines/zvision/metaengine.cpp:277
 msgid "Preferences"
-msgstr ""
+msgstr "التفضيلات"
 
 #: engines/zvision/zvision.cpp:309
 msgid ""
@@ -9637,6 +9637,13 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"قبل لعب هذه اللعبة ، ستحتاج إلى نسخ الخطوط المطلوبة إلى دليل ScummVM "
+"للإضافات ، أو إلى دليل اللعبة. في نظام Windows ، ستحتاج إلى ملفات الخطوط "
+"التالية من دليل خطوط Windows: Times New Roman و Century Schoolbook و "
+"Garamond و Courier New و Arial. بدلاً من ذلك ، يمكنك تنزيل Liberation Fonts "
+"أو حزمة GNU FreeFont. ستحتاج إلى جميع الخطوط من حزمة الخطوط التي تختارها ، "
+"مثل LiberationMono و LiberationSans و LiberationSerif أو FreeMono و FreeSans "
+"و FreeSerif على التوالي."
 
 #~ msgid "Toggle fast conversation mode"
 #~ msgstr "تبديل وضع المحادثة السريع"
