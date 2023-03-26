@@ -40,6 +40,9 @@ UNAVAILABLE_DEPS :=
 check_deps_availability = $(shell [ $(1) = 0 ] && echo $(2))
 
 USE_HIGHRES      ?= 1
+ifeq ($(USE_HIGHRES),1)
+DEFINES  += -DUSE_HIGHRES
+endif
 UNAVAILABLE_DEPS += $(call check_deps_availability, $(USE_HIGHRES), highres)
 
 USE_FLUIDSYNTH   ?= 1
