@@ -110,7 +110,7 @@ void dgMemoryAllocator::SetAllocatorsCallback(dgMemAlloc memAlloc, dgMemFree mem
 }
 
 void *dgMemoryAllocator::MallocLow(dgInt32 workingSize, dgInt32 alignment) {
-	NEWTON_ASSERT(alignment >= DG_MEMORY_GRANULARITY);
+	NEWTON_ASSERT(alignment >= memoryGranularity);
 	NEWTON_ASSERT(((-alignment) & (alignment - 1)) == 0);
 	dgInt32 size = workingSize + alignment * 2;
 	void *const ptr = m_malloc(dgUnsigned32(size));
@@ -139,19 +139,19 @@ void dgMemoryAllocator::FreeLow(void *const retPtr) {
 	m_free(info->m_ptr, dgUnsigned32(info->m_size));
 }
 
-// alloca memory on pool that are quantized to DG_MEMORY_GRANULARITY
-// if memory size is larger than DG_MEMORY_BIN_ENTRIES then the memory is not placed into a pool
+// alloca memory on pool that are quantized to memoryGranularity
+// if memory size is larger than memoryBinEntries then the memory is not placed into a pool
 void *dgMemoryAllocator::Malloc(dgInt32 memsize) {
-	NEWTON_ASSERT(dgInt32(sizeof(dgMemoryCacheEntry) + sizeof(dgInt32) + sizeof(dgInt32)) <= DG_MEMORY_GRANULARITY);
+	NEWTON_ASSERT(dgInt32(sizeof(dgMemoryCacheEntry) + sizeof(dgInt32) + sizeof(dgInt32)) <= memoryGranularity);
 
-	dgInt32 size = memsize + DG_MEMORY_GRANULARITY - 1;
-	size &= (-DG_MEMORY_GRANULARITY);
+	dgInt32 size = memsize + memoryGranularity - 1;
+	size &= -memoryGranularity;
 
-	dgInt32 paddedSize = size + DG_MEMORY_GRANULARITY;
-	dgInt32 entry = paddedSize >> DG_MEMORY_GRANULARITY_BITS;
+	dgInt32 paddedSize = size + memoryGranularity;
+	dgInt32 entry = paddedSize / memoryGranularity;
 
 	void *ptr;
-	if (entry >= DG_MEMORY_BIN_ENTRIES) {
+	if (entry >= memoryBinEntries) {
 		ptr = MallocLow(size);
 	} else {
 		if (!m_memoryDirectory[entry].m_cache) {
@@ -177,7 +177,7 @@ void *dgMemoryAllocator::Malloc(dgInt32 memsize) {
 				dgMemoryCacheEntry *const cashe = (dgMemoryCacheEntry *) charPtr;
 				cashe->m_next = (dgMemoryCacheEntry *)(charPtr + paddedSize);
 				cashe->m_prev = (dgMemoryCacheEntry *)(charPtr - paddedSize);
-				dgMemoryInfo *const info = ((dgMemoryInfo *)(charPtr + DG_MEMORY_GRANULARITY)) - 1;
+				dgMemoryInfo *const info = ((dgMemoryInfo *)(charPtr + memoryGranularity)) - 1;
 				info->SaveInfo(this, bin, entry, m_emumerator, memsize);
 				charPtr += paddedSize;
 			}
@@ -194,7 +194,7 @@ void *dgMemoryAllocator::Malloc(dgInt32 memsize) {
 			cashe->m_next->m_prev = NULL;
 		}
 
-		ptr = ((char *) cashe) + DG_MEMORY_GRANULARITY;
+		ptr = ((char *) cashe) + memoryGranularity;
 
 		dgMemoryInfo *info;
 		info = ((dgMemoryInfo *)(ptr)) - 1;
@@ -211,22 +211,22 @@ void *dgMemoryAllocator::Malloc(dgInt32 memsize) {
 	return ptr;
 }
 
-// alloca memory on pool that are quantized to DG_MEMORY_GRANULARITY
-// if memory size is larger than DG_MEMORY_BIN_ENTRIES then the memory is not placed into a pool
+// allocate memory on pool that are quantized to memoryGranularity
+// if memory size is larger than memoryBinEntries then the memory is not placed into a pool
 void dgMemoryAllocator::Free(void *const retPtr) {
 	dgMemoryInfo *const info = ((dgMemoryInfo *)(retPtr)) - 1;
 	NEWTON_ASSERT(info->m_allocator == this);
 
 	dgInt32 entry = info->m_size;
 
-	if (entry >= DG_MEMORY_BIN_ENTRIES) {
+	if (entry >= memoryBinEntries) {
 		FreeLow(retPtr);
 	} else {
 #ifdef __TRACK_MEMORY_LEAKS__
 		m_leaklTracker.RemoveBlock(retPtr);
 #endif
 
-		dgMemoryCacheEntry *const cashe = (dgMemoryCacheEntry *)(((char *)retPtr) - DG_MEMORY_GRANULARITY) ;
+		dgMemoryCacheEntry *const cashe = (dgMemoryCacheEntry *)(((char *)retPtr) - memoryGranularity) ;
 
 		dgMemoryCacheEntry *const tmpCashe = m_memoryDirectory[entry].m_cache;
 		if (tmpCashe) {
@@ -241,8 +241,8 @@ void dgMemoryAllocator::Free(void *const retPtr) {
 		dgMemoryBin *const bin = (dgMemoryBin *) info->m_ptr;
 
 #ifdef _DEBUG
-		NEWTON_ASSERT((bin->m_info.m_stepInBites - DG_MEMORY_GRANULARITY) > 0);
-		memset(retPtr, 0, bin->m_info.m_stepInBites - DG_MEMORY_GRANULARITY);
+		NEWTON_ASSERT((bin->m_info.m_stepInBites - memoryGranularity) > 0);
+		memset(retPtr, 0, bin->m_info.m_stepInBites - memoryGranularity);
 #endif
 
 		bin->m_info.m_count--;

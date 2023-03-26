@@ -78,16 +78,10 @@ dgInt32 dgGetMemoryUsed();
 
 
 class dgMemoryAllocator {
-#ifdef __x86_64__
-#define DG_MEMORY_GRANULARITY_BITS      6
-#else
-#define DG_MEMORY_GRANULARITY_BITS      5
-#endif
-#define DG_MEMORY_GRANULARITY               (1 << DG_MEMORY_GRANULARITY_BITS)
-#define DG_MEMORY_SIZE                      (1024 - 64)
-#define DG_MEMORY_BIN_SIZE                  (1024 * 16)
-#define DG_MEMORY_BIN_ENTRIES               (DG_MEMORY_SIZE / DG_MEMORY_GRANULARITY)
-
+	static constexpr dgInt32 memoryGranularity = sizeof(void*) * 8;
+	static constexpr dgInt32 memorySize = 1024 - 64;
+	static constexpr dgInt32 memoryBinSize = 1024 * 16;
+	static constexpr dgInt32 memoryBinEntries = memorySize / memoryGranularity;
 public:
 
 	class dgMemoryBin {
@@ -101,7 +95,7 @@ public:
 			dgMemoryBin *m_prev;
 		};
 
-		char m_pool[DG_MEMORY_BIN_SIZE - sizeof(dgMemoryBinInfo) - DG_MEMORY_GRANULARITY * 2];
+		char m_pool[memoryBinSize - sizeof(dgMemoryBinInfo) - memoryGranularity * 2];
 		dgMemoryBinInfo m_info;
 	};
 
@@ -173,7 +167,7 @@ public:
 	void operator delete (void *const ptr);
 	dgInt32 GetMemoryUsed() const;
 	void SetAllocatorsCallback(dgMemAlloc memAlloc, dgMemFree memFree);
-	void *MallocLow(dgInt32 size, dgInt32 alignment = DG_MEMORY_GRANULARITY);
+	void *MallocLow(dgInt32 size, dgInt32 alignment = memoryGranularity);
 	void FreeLow(void *const retPtr);
 	void *Malloc(dgInt32 memsize);
 	void Free(void *const retPtr);
@@ -186,7 +180,7 @@ protected:
 	dgInt32 m_memoryUsed;
 	dgMemFree m_free;
 	dgMemAlloc m_malloc;
-	dgMemDirectory m_memoryDirectory[DG_MEMORY_BIN_ENTRIES + 1];
+	dgMemDirectory m_memoryDirectory[memoryBinEntries + 1];
 
 #ifdef __TRACK_MEMORY_LEAKS__
 	dgMemoryLeaksTracker m_leaklTracker;
