@@ -103,6 +103,15 @@ void Client::readHeaders() {
 bool Client::readContent(Common::WriteStream *stream) {
 	if (!readMoreIfNeeded())
 		return false;
+	_reader.setMode(RM_HTTP_GENERIC);
+	_reader.setContent(_stream);
+	return _reader.readContent(stream);
+}
+
+bool Client::readFirstContent(Common::WriteStream *stream) {
+	if (!readMoreIfNeeded())
+		return false;
+	_reader.setMode(RM_POST_FORM_MULTIPART);
 	_reader.setContent(_stream);
 	return _reader.readFirstContent(stream);
 }
