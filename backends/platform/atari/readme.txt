@@ -102,7 +102,7 @@ rectangles and this port offers following options to render them:
 Direct rendering (vsync on/off) - present only with the SuperVidel
 Single buffering (vsync on/off)
 Double buffering (vsync always on, the checkbox is ignored)
-Triple buffering (vsync always off, the checkbox just selects a different kind)
+Triple buffering (vsync always off, the checkbox is ignored)
 
 Direct rendering:
 ~~~~~~~~~~~~~~~~~

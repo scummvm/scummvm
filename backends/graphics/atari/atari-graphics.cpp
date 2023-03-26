@@ -108,7 +108,7 @@ void AtariGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		break;
 	case OSystem::Feature::kFeatureVSync:
 		debug("setFeatureState(kFeatureVSync): %d", enable);
-		_guiVsync = enable;
+		_guiVsync = std::make_pair(enable, true);
 		break;
 	default:
 		[[fallthrough]];
@@ -125,8 +125,16 @@ bool AtariGraphicsManager::getFeatureState(OSystem::Feature f) const {
 		//return isOverlayVisible();
 		return true;
 	case OSystem::Feature::kFeatureVSync:
-		//debug("getFeatureState(kFeatureVSync): %d", _currentState.vsync);
-		return _currentState.vsync;
+		//debug("getFeatureState(kFeatureVSync): based on mode %d", (int)_currentState.mode);
+		switch (_currentState.mode) {
+		case GraphicsMode::DirectRendering:
+		case GraphicsMode::SingleBuffering:
+			return _guiVsync.second ? _guiVsync.first : ConfMan.getBool("vsync");
+		case GraphicsMode::DoubleBuffering:
+			return true;
+		case GraphicsMode::TripleBuffering:
+			return false;
+		}
 	default:
 		return false;
 	}
@@ -135,25 +143,10 @@ bool AtariGraphicsManager::getFeatureState(OSystem::Feature f) const {
 bool AtariGraphicsManager::setGraphicsMode(int mode, uint flags) {
 	debug("setGraphicsMode: %d, %d", mode, flags);
 
-	if (mode >= 0 && mode <= 3) {
-		_pendingState.mode = (GraphicsMode)mode;
+	GraphicsMode graphicsMode = (GraphicsMode)mode;
 
-		switch (_pendingState.mode) {
-		case GraphicsMode::DirectRendering:
-		case GraphicsMode::SingleBuffering:
-			_pendingState.vsync = _guiVsync;
-			break;
-		case GraphicsMode::DoubleBuffering:
-			_pendingState.vsync = true;
-			break;
-		case GraphicsMode::TripleBuffering:
-			_pendingState.vsync = false;
-			break;
-		}
-
-		// overwrite in case GUI is open again
-		ConfMan.setBool("vsync", _pendingState.vsync);
-
+	if (graphicsMode >= GraphicsMode::DirectRendering && graphicsMode <= GraphicsMode::TripleBuffering) {
+		_pendingState.mode = graphicsMode;
 		return true;
 	}
 
@@ -161,7 +154,7 @@ bool AtariGraphicsManager::setGraphicsMode(int mode, uint flags) {
 }
 
 void AtariGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-	debug("initSize: %d, %d, %d (vsync: %d, mode: %d)", width, height, format ? format->bytesPerPixel : 1, _pendingState.vsync, (int)_pendingState.mode);
+	debug("initSize: %d, %d, %d", width, height, format ? format->bytesPerPixel : 1);
 
 	_pendingState.width = width;
 	_pendingState.height = height;
@@ -203,9 +196,13 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 	_buffer[BACK_BUFFER1]->reset();
 	_buffer[BACK_BUFFER2]->reset();
 
-	_workScreen = _buffer[(int)_pendingState.mode <= 1 ? FRONT_BUFFER : BACK_BUFFER1];
+	_workScreen = _buffer[_pendingState.mode <= GraphicsMode::SingleBuffering ? FRONT_BUFFER : BACK_BUFFER1];
 	_screenSurface.init(_pendingState.width, _pendingState.height, _pendingState.width,
 		_workScreen->p, _screenSurface.format);
+
+	// in case of resolution change from GUI
+	if (_oldWorkScreen)
+		_oldWorkScreen = _workScreen;
 
 	// some games do not initialize their viewport entirely
 	if (_pendingState.mode != GraphicsMode::DirectRendering) {
@@ -228,6 +225,8 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 	warpMouse(_pendingState.width / 2, _pendingState.height / 2);
 
 	_currentState = _pendingState;
+
+	debug("endGFXTransaction: vsync: %d (based on mode %d)", getFeatureState(OSystem::Feature::kFeatureVSync), (int)_currentState.mode);
 
 	return OSystem::kTransactionSuccess;
 }
@@ -257,10 +256,10 @@ void AtariGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, i
 
 		_dirtyScreenRect = Common::Rect(x, y, x + w, y + h);
 
-		bool vsync = _currentState.vsync;
-		_currentState.vsync = false;
+		auto vsync = _guiVsync;
+		_guiVsync = std::make_pair(false, true);
 		updateScreen();
-		_currentState.vsync = vsync;
+		_guiVsync = vsync;
 	}
 }
 
@@ -276,10 +275,10 @@ void AtariGraphicsManager::unlockScreen() {
 	} else {
 		_dirtyScreenRect = Common::Rect(_screenSurface.w, _screenSurface.h);
 
-		bool vsync = _currentState.vsync;
-		_currentState.vsync = false;
+		auto vsync = _guiVsync;
+		_guiVsync = std::make_pair(false, true);
 		updateScreen();
-		_currentState.vsync = vsync;
+		_guiVsync = vsync;
 	}
 }
 
@@ -399,7 +398,7 @@ void AtariGraphicsManager::updateScreen() {
 		_oldAspectRatioCorrection = _aspectRatioCorrection;
 	}
 
-	if (_currentState.vsync & screenUpdated)
+	if (!isOverlayVisible() && (getFeatureState(OSystem::Feature::kFeatureVSync) & screenUpdated))
 		waitForVbl();
 #endif
 	//debug("end of updateScreen");
@@ -477,7 +476,7 @@ void AtariGraphicsManager::clearOverlay() {
 	if (_overlaySurface.w / w == 2 && _overlaySurface.h / h == 2) {
 		upscale = true;
 		vOffset *= 2;
-	} else if (vOffset != 0) {
+	} else if (_overlaySurface.w / w != 1 && _overlaySurface.h / h != 1) {
 		warning("Unknown overlay (%d, %d) / screen (%d, %d) ratio",
 			_overlaySurface.w, _overlaySurface.h, w, h);
 		return;
@@ -670,19 +669,21 @@ void AtariGraphicsManager::waitForVbl() const {
 }
 
 bool AtariGraphicsManager::updateDirect() {
+	bool &cursorPositionChanged = _workScreen->cursorPositionChanged;
+	bool &cursorSurfaceChanged  = _workScreen->cursorSurfaceChanged;
+	Common::Rect &oldCursorRect = _workScreen->oldCursorRect;
+
 	bool updated = false;
 
 	if (_cursor.outOfScreen)
 		return updated;
 
-	bool drawCursor = _workScreen->cursorPositionChanged || _workScreen->cursorSurfaceChanged;
+	bool drawCursor = cursorPositionChanged || cursorSurfaceChanged;
 
 	if (!drawCursor && _cursor.visible && !_dirtyScreenRect.isEmpty())
 		drawCursor = _dirtyScreenRect.intersects(_cursor.dstRect);
 
 	static Graphics::Surface cachedCursorSurface;
-
-	Common::Rect &oldCursorRect = _workScreen->oldCursorRect;
 
 	if (!oldCursorRect.isEmpty() && !_dirtyScreenRect.isEmpty()) {
 		const Common::Rect intersectingRect = _dirtyScreenRect.findIntersectingRect(oldCursorRect);
@@ -699,7 +700,7 @@ bool AtariGraphicsManager::updateDirect() {
 
 	_dirtyScreenRect = Common::Rect();
 
-	if ((_workScreen->cursorPositionChanged || !_cursor.visible) && !oldCursorRect.isEmpty()) {
+	if ((cursorPositionChanged || !_cursor.visible) && !oldCursorRect.isEmpty()) {
 		_screenSurface.copyRectToSurface(
 			cachedCursorSurface,
 			oldCursorRect.left, oldCursorRect.top,
@@ -727,7 +728,7 @@ bool AtariGraphicsManager::updateDirect() {
 			_cursor.srcRect,
 			_cursor.keycolor);
 
-		_workScreen->cursorPositionChanged = _workScreen->cursorSurfaceChanged = false;
+		cursorPositionChanged = cursorSurfaceChanged = false;
 		oldCursorRect = _cursor.dstRect;
 
 		updated = true;
@@ -737,8 +738,14 @@ bool AtariGraphicsManager::updateDirect() {
 }
 
 bool AtariGraphicsManager::updateBuffered(const Graphics::Surface &srcSurface, Graphics::Surface &dstSurface, const DirtyRects &dirtyRects) {
+	// workscreen related setting; these are used even if called repeatedly
+	// for double and triple buffering
+	bool &cursorPositionChanged = _workScreen->cursorPositionChanged;
+	bool &cursorSurfaceChanged  = _workScreen->cursorSurfaceChanged;
+	Common::Rect &oldCursorRect = _workScreen->oldCursorRect;
+
 	bool updated = false;
-	bool drawCursor = _workScreen->cursorPositionChanged || _workScreen->cursorSurfaceChanged;;
+	bool drawCursor = cursorPositionChanged || cursorSurfaceChanged;;
 
 	for (auto it = dirtyRects.begin(); it != dirtyRects.end(); ++it) {
 		if (!drawCursor && !_cursor.outOfScreen && _cursor.visible)
@@ -752,9 +759,7 @@ bool AtariGraphicsManager::updateBuffered(const Graphics::Surface &srcSurface, G
 	if (_cursor.outOfScreen)
 		return updated;
 
-	Common::Rect &oldCursorRect = _workScreen->oldCursorRect;
-
-	if ((_workScreen->cursorPositionChanged || !_cursor.visible) && !oldCursorRect.isEmpty()) {
+	if ((cursorPositionChanged || !_cursor.visible) && !oldCursorRect.isEmpty()) {
 		alignRect(dstSurface, oldCursorRect);
 		copyRectToSurface(
 			dstSurface, srcSurface,
@@ -773,7 +778,7 @@ bool AtariGraphicsManager::updateBuffered(const Graphics::Surface &srcSurface, G
 			_cursor.dstRect.left, _cursor.dstRect.top,
 			_cursor.srcRect, _cursor.keycolor, _cursor.palette);
 
-		_workScreen->cursorPositionChanged = _workScreen->cursorSurfaceChanged = false;
+		cursorPositionChanged = cursorSurfaceChanged = false;
 		oldCursorRect = _cursor.dstRect;
 
 		updated = true;

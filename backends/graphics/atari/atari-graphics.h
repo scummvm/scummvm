@@ -25,6 +25,7 @@
 #include "backends/graphics/graphics.h"
 
 #include <mint/osbind.h>
+#include <utility>	// std::pair
 #include <vector>
 
 #include "common/events.h"
@@ -112,13 +113,18 @@ protected:
 	};
 
 	struct GraphicsState {
+		GraphicsState(GraphicsMode mode_)
+			: mode(mode_)
+			, width(0)
+			, height(0) {
+		}
+
 		GraphicsMode mode;
 		int width;
 		int height;
 		Graphics::PixelFormat format;
-		bool vsync;
 	};
-	GraphicsState _pendingState = {};
+	GraphicsState _pendingState{ (GraphicsMode)getDefaultGraphicsMode() };
 
 private:
 	enum {
@@ -185,9 +191,9 @@ private:
 	bool _vgaMonitor = true;
 	bool _aspectRatioCorrection = false;
 	bool _oldAspectRatioCorrection = false;
-	bool _guiVsync = true;
+	std::pair<bool, bool> _guiVsync;	// poor man's std::optional (first - value, second - has_value)
 
-	GraphicsState _currentState = {};
+	GraphicsState _currentState{ (GraphicsMode)getDefaultGraphicsMode() };
 
 	enum PendingScreenChange {
 		kPendingScreenChangeNone	= 0,
