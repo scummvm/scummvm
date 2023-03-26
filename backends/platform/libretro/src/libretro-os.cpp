@@ -463,18 +463,22 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const {
 		Common::List<Graphics::PixelFormat> result;
 
-		/* Palette - most games */
-		result.push_back(Graphics::PixelFormat::createFormatCLUT8());
-
+#ifdef SCUMM_LITTLE_ENDIAN
 		/* RGBA8888 */
 		result.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-
+#else
+		/* ABGR8888 */
+		result.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
 #ifdef FRONTEND_SUPPORTS_RGB565
 		/* RGB565 - overlay */
 		result.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 #endif
 		/* RGB555 - fmtowns */
 		result.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15));
+
+		/* Palette - most games */
+		result.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
 		return result;
 	}
