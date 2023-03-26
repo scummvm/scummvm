@@ -801,7 +801,7 @@ void GuiManager::setLanguageRTL() {
 	}
 #ifdef USE_TRANSLATION
 	Common::String language = TransMan.getCurrentLanguage();
-	if (language.equals("he")) {		// GUI TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
+	if (language.equals("he") || language.equals("ar")) {		// GUI TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
 		_useRTL = true;
 		return;
 	}
