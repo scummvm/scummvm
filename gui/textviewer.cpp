@@ -125,8 +125,6 @@ void TextViewerDialog::reflowLayout() {
 	_lineWidth = (_w - scrollbarWidth - _padX * 2) / _charWidth;
 	_linesPerPage = (_h - _padY * 2 - buttonOffset) / _lineHeight;
 
-	warning("Lines: %d", _linesPerPage);
-
 	_scrollBar->setPos(_w - scrollbarWidth - 1, 0);
 	_scrollBar->setSize(scrollbarWidth, _h - buttonOffset);
 }
