@@ -250,7 +250,7 @@ void MetaEngine::parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDe
 	int hour = (header->time >> 8) & 0xFF;
 	int minutes = header->time & 0xFF;
 	desc->setSaveTime(hour, minutes);
-	desc->setPlayTime(header->playtime * 1000);
+	desc->setPlayTime(header->playtime);
 
 	desc->setDescription(header->description);
 }
