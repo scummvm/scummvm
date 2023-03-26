@@ -243,7 +243,9 @@ void OpenGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 		copyToVertexArray(0, v0);
 		copyToVertexArray(1, v1);
 		glVertexPointer(3, GL_FLOAT, 0, _verts);
+		glLineWidth(MAX(1, g_system->getWidth() / 192));
 		glDrawArrays(GL_LINES, 0, 2);
+		glLineWidth(1);
 		glDisableClientState(GL_VERTEX_ARRAY);
 		return;
 	}
