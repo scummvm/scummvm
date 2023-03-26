@@ -41,6 +41,10 @@
 
 #include <android/bitmap.h>
 
+#include "backends/platform/android/android.h"
+#include "backends/platform/android/jni-android.h"
+#include "backends/platform/android/asset-archive.h"
+
 #include "base/main.h"
 #include "base/version.h"
 #include "common/config-manager.h"
@@ -48,10 +52,6 @@
 #include "common/textconsole.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
-
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/asset-archive.h"
-#include "backends/platform/android/jni-android.h"
 
 __attribute__ ((visibility("default")))
 jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {

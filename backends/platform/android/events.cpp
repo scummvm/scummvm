@@ -40,8 +40,8 @@
 
 #include <android/input.h>
 
-#include "backends/graphics/android/android-graphics.h"
 #include "backends/platform/android/android.h"
+#include "backends/graphics/android/android-graphics.h"
 #include "backends/platform/android/jni-android.h"
 
 // floating point. use sparingly
