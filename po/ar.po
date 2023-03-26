@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 08:45+0000\n"
-"PO-Revision-Date: 2023-03-26 11:11+0000\n"
+"PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -655,7 +655,7 @@ msgstr "هل تريد حقًا إعادة تعيين جميع إعدادات Flu
 
 #: gui/gui-manager.cpp:153 gui/options.cpp:2289
 msgid "GUI"
-msgstr "واجهة المستخدم الرسومية"
+msgstr "الواجهة"
 
 #. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:157 engines/hpl1/metaengine.cpp:96
