@@ -23,6 +23,7 @@
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/objects/global.h"
 #include "freescape/objects/connections.h"
 
 namespace Freescape {
@@ -65,7 +66,7 @@ void DarkEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset)
 	assert(!_areaMap.contains(255));
 	ObjectMap *globalObjectsByID = new ObjectMap;
 	file->seek(offset);
-	for (int i = 0; i < 22; i++) {
+	for (int i = 0; i < 23; i++) {
 		Object *gobj = load8bitObject(file);
 		assert(gobj);
 		assert(!globalObjectsByID->contains(gobj->getObjectID()));
@@ -74,6 +75,48 @@ void DarkEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset)
 	}
 
 	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
+}
+
+void DarkEngine::addECDs(Area *area) {
+	GlobalStructure *rs = (GlobalStructure *)area->entranceWithID(255);
+	debugC(1, kFreescapeDebugParser, "ECD positions:");
+	for (uint i = 0; i < rs->_structure.size(); i = i + 3) {
+		int x = 32 * rs->_structure[i];
+		int y = 32 * rs->_structure[i + 1];
+		int z = 32 * rs->_structure[i + 2];
+
+		debugC(1, kFreescapeDebugParser, "%d %d %d", x, y, z);
+		if (x == 0 && y == 0 && z == 0) {
+			debugC(1, kFreescapeDebugParser, "Skiping ECD zero position");
+			continue;
+		}
+		addECD(area, Math::Vector3d(x, y, z), i / 3);
+	}
+}
+
+void DarkEngine::addECD(Area *area, const Math::Vector3d position, int index) {
+	GeometricObject *obj = nullptr;
+	Math::Vector3d origin = position;
+
+	int16 id = 227 + index * 6;
+	int heightLastObject = 0;
+	for (int i = 0; i < 4; i++) {
+		debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
+		obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
+		assert(obj);
+		// Set position for object
+		origin.setValue(0, origin.x());
+		origin.setValue(1, origin.y() + heightLastObject);
+		origin.setValue(2, origin.z());
+
+		obj = (GeometricObject *)obj->duplicate();
+		obj->setOrigin(origin);
+		obj->makeVisible();
+		area->addObject(obj);
+
+		heightLastObject = obj->getSize().y();
+		id--;
+	}
 }
 
 void DarkEngine::initGameState() {
