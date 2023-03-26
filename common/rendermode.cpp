@@ -30,10 +30,12 @@ namespace Common {
 
 
 const RenderModeDescription g_renderModes[] = {
-	// I18N: Hercules is graphics card name
+	// I18N: Hercules is a graphics card name, Green is color
 	{ "hercGreen", _s("Hercules Green"), kRenderHercG },
+	// I18N: Hercules is a graphics card name, Amber is color
 	{ "hercAmber", _s("Hercules Amber"), kRenderHercA },
 	{ "cga", "CGA", kRenderCGA },
+	// I18N: Composite is a video mode of RGB composite channels
 	{ "cgaComp", "CGA Composite", kRenderCGAComp },
 	// I18N: CGA black-and-white
 	{ "cgaBW", "CGA b/w", kRenderCGA_BW },
