@@ -133,7 +133,7 @@ NancyInput InputManager::getInput() const {
 		ret.input = 0;
 	}
 
-	if (_mouseEnabled) {
+	if (_mouseEnabled || g_nancy->getState() == NancyState::kCredits) {
 		ret.mousePos = g_nancy->getEventManager()->getMousePos();
 	} else {
 		ret.eatMouseInput();

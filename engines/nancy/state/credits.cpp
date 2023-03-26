@@ -48,6 +48,7 @@ void Credits::process() {
 }
 
 void Credits::init() {
+	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
 	Common::SeekableReadStream *cred = g_nancy->getBootChunkStream("CRED");
 	cred->seek(0);
 
@@ -55,22 +56,24 @@ void Credits::init() {
 	readFilename(*cred, imageName);
 	_background.init(imageName);
 
-	readFilename(*cred, imageName);
+	_textNames.resize(isVampire ? 7 : 1);
+	for (Common::String &str : _textNames) {
+		readFilename(*cred, str);
+	}
 
+	Common::Rect rect;
 	cred->skip(0x20); // Skip the src and dest rectangles
-	readRect(*cred, _text._screenPosition);
+	readRect(*cred, rect);
+	_textSurface.moveTo(rect);
 	cred->skip(0x10);
 	_updateTime = cred->readUint16LE();
 	_pixelsToScroll = cred->readUint16LE();
 	_sound.read(*cred, SoundDescription::kMenu);
 
-	g_nancy->_resource->loadImage(imageName, _fullTextSurface);
+	drawTextSurface(0);
 
-	Common::Rect src = _text._screenPosition;
-	src.moveTo(Common::Point());
-	_fullTextSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
-	_text._drawSurface.create(_fullTextSurface, src);
-	_text.init();
+	_textSurface._drawSurface.create(_fullTextSurface, _textSurface.getBounds());
+	_textSurface.init();
 
 	g_nancy->_sound->stopSound("MSND");
 
@@ -78,7 +81,7 @@ void Credits::init() {
 	g_nancy->_sound->playSound(_sound);
 
 	_background.registerGraphics();
-	_text.registerGraphics();
+	_textSurface.registerGraphics();
 
 	g_nancy->setMouseEnabled(false);
 
@@ -101,17 +104,38 @@ void Credits::run() {
 	if (currentTime >= _nextUpdateTime) {
 		_nextUpdateTime = currentTime + _updateTime;
 
-		Common::Rect newSrc = _text._screenPosition;
-		newSrc.moveTo(_text._drawSurface.getOffsetFromOwner());
+		Common::Rect newSrc = _textSurface.getScreenPosition();
+		newSrc.moveTo(_textSurface._drawSurface.getOffsetFromOwner());
 		newSrc.translate(0, _pixelsToScroll);
 
 		if (newSrc.bottom > _fullTextSurface.h) {
 			newSrc.moveTo(Common::Point());
+			if (_textNames.size() > 1) {
+				drawTextSurface(_currentTextImage == _textNames.size() - 1 ? 0 : _currentTextImage + 1);
+			}
 		}
 
-		_text._drawSurface.create(_fullTextSurface, newSrc);
-		_text._needsRedraw = true;
+		_textSurface._drawSurface.create(_fullTextSurface, newSrc);
+		_textSurface.setVisible(true);
 	}
+}
+
+void Credits::drawTextSurface(uint id) {
+	Graphics::ManagedSurface image;
+	uint surfaceHeight = _textSurface.getBounds().height();
+	g_nancy->_resource->loadImage(_textNames[id], image);
+	_fullTextSurface.create(image.w, image.h + (surfaceHeight * 2), g_nancy->_graphicsManager->getInputPixelFormat());
+	_fullTextSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+	_fullTextSurface.clear(_fullTextSurface.getTransparentColor());
+	_fullTextSurface.blitFrom(image, Common::Point(0, surfaceHeight));
+
+	if (image.hasPalette()) {
+		uint8 palette[256 * 3];
+		image.grabPalette(palette, 0, 256);
+		_fullTextSurface.setPalette(palette, 0, 256);
+	}
+
+	_currentTextImage = id;
 }
 
 } // End of namespace State
