@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 08:45+0000\n"
-"PO-Revision-Date: 2023-03-26 11:06+0000\n"
+"PO-Revision-Date: 2023-03-26 11:11+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -234,7 +234,7 @@ msgstr "تحميل القائمة %S %d إدخالات"
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr "تم الكشف عن %d حزمة جديدة , %S .%s"
+msgstr "تم الكشف عن%d حزمة جديدة ،%s%S"
 
 #: gui/downloadpacksdialog.cpp:263
 msgid "Download"
@@ -4323,8 +4323,8 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
-"تم العثور على إصدار غير صحيح من ملف بيانات المحرك '%s'. توقع %d . %dلكن تم "
-"الحصول على .%d.%d"
+"تم العثور على إصدار غير صحيح من ملف بيانات المحرك '%s'. توقع %d.%d لكن تم "
+"الحصول على%d.%d."
 
 #: engines/adl/metaengine.cpp:44
 msgid "TV emulation"
@@ -8024,8 +8024,8 @@ msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
-"قم بقص الـ 40 بكسل الإضافية في الجزء السفلي من الشاشة ، لجعلها قياسية "
-"بارتفاع 200 بكسل ، مما يسمح باستخدام \"تصحيح نسبة العرض إلى الارتفاع\""
+"قم بقص ال 40 بكسل الإضافية في الجزء السفلي من الشاشة ، لجعلها قياسية بارتفاع "
+"200 بكسل ، مما يسمح باستخدام \"تصحيح نسبة العرض إلى الارتفاع\""
 
 #: engines/scumm/metaengine.cpp:631
 msgid "Play simplified music"
