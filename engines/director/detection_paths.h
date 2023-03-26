@@ -29,8 +29,6 @@ const char *directoryGlobs[] = {
 	"win_data",						// L-ZONE
 	"data",
 	"gadget",						// Gadget
-	"vnc",
-	"vnc2",							// Virtual Nightclub
 	"program",						// Arc Media products
 	"demodata",						// Edmark demos
 	"media",						// Gundam
@@ -39,10 +37,8 @@ const char *directoryGlobs[] = {
 	"module_2",						// Takeru
 	"simpdata",
 	"simpsons",						// Simpsons Cartoon Studio
-	"dane",							// Polish Kontyngent '99 catalog
 	"datas",						// O!KAY! subscription from Domino Verlag
 	"daten",						// Bibi Blocksberg games (German)
-	"source",						// Grand Prix 2006 directory
 	"data_k",
 	"data_1",
 	"data_2",						// JumpStart World
@@ -80,7 +76,6 @@ const char *directoryGlobs[] = {
 	"polis",
 	"poliisi",
 	"cd_data",						// Polis
-	"fusion macintosh folder",		// Fusion
 	"oslo",							// Oslo's Tools & Gadgets
 	"ojo2000",
 	"stuff",						// Abrapalabra
@@ -95,7 +90,6 @@ const char *directoryGlobs[] = {
 	"dayfiles",
 	"xmasfun",						// Fisher-Price Xmas Fun
 	"95instal",						// Fisher-Price Little People
-	"01",					   		// Doing it in C++
 	"freading",
 	"fsetup",						// My First Reading Words (Eureka)
 	"english",

@@ -3484,8 +3484,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("crybaby", "", "crybaby.exe", "e67c787e86a948dcac23fd0d533f53ab", 1211165, 404),
 
 	// From Personal Computer World (UK) disc no. 4 - Dec 1996
-	WINDEMO2("ctrain", "Demo", "DEMO.EXE", "d8226e09cff86cece90b52bc9eeaac7b", 1585550,
-							   "01.DIR",   "63a263078c15a7352a3a6c0494e1d304", 1374398, 404),
+	WINDEMO2("ctrain", "Demo", "DEMO.EXE",  "d:d8226e09cff86cece90b52bc9eeaac7b", 1585550,
+							   "01/01.DIR", "d:63a263078c15a7352a3a6c0494e1d304", 1374398, 404),
 
 	// Curio City (キュリオ シティ) is a quarterly series of virtual mall and entertainment CD-ROMs
 	// issued by Mitsui & Co. to promote its Curio City shopping services.
@@ -5267,9 +5267,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1t("vote", "Demo", "VOTEDEMO.EXE", "9730557013fd18686943f3787c030f23", 7679955, 404),
 
-	MACGAME1("vnc", "", "VNC", "0c7bbb4b24823e5ab871cb4c1d6f3710", 486116, 404),
-	WINGAME1("vnc", "", "VNC.EXE", "40ba00213a10164eb6e01847108f9b21", 1086869, 404),
-	WINGAME1("vnc", "Beta", "VNC.EXE", "e6f284971c09f19e3277aa8ebcf58cbd", 726643, 404),
+	MACGAME2("vnc", "", "VNC/VNC", 		   "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 485860,
+						"VNC2/SHARED.Dxr", "d:f215be3e2d40e68035725c14b262e9f5", 4525536, 404),
+	WINGAME2("vnc", "", "VNC/VNC.EXE",	   "d:40ba00213a10164eb6e01847108f9b21", 1086869,
+						"VNC2/SHARED.DXR", "d:f215be3e2d40e68035725c14b262e9f5", 4525536, 404),
+	WINGAME2("vnc", "Beta", "VNC/VNC.EXE", 	   "d:e6f284971c09f19e3277aa8ebcf58cbd", 726643,
+							"VNC2/SHARED.DIR", "d:e3145060a7349e99e5b7ceffef000bad", 2782000, 404),
 
 	// Mac version requires installation, 'Install Voodoo Lounge', StuffIt
 	MACGAME1("voodoolounge",  "",	   "Voodoo Lounge", "b7e69c37b7355022d400c14aa97c5d54", 502080, 404),
@@ -6836,8 +6839,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("fpready1", "Acorn Arcade Demo v1.0w", "1st Grade Demo", "c387e039049babcadf92d4e104136735", 1031912, 602),
 	WINDEMO1t("fpready1", "Acorn Arcade Demo v1.0w", "FIRST95.EXE", "8095efb3ed13755b7ebbe2e0d61f1821", 1498587, 602),
 
-	MACGAME1("fusion", "", "Start FUSION Mac", "3849d7cd0cdbe4f46333879cbed56492", 1029165, 600),
-	WINGAME1("fusion", "", "FUSION.exe", "518a98696fe1122e08410b0f157f21bf", 1513751, 602),
+	MACGAME2("fusion", "", "FUSION Macintosh folder/Start FUSION Mac", "r:3849d7cd0cdbe4f46333879cbed56492", 1028909,
+						   "FUS_DATA/A_INTRO.Dxr",					   "d:e6e7042dc739d42254bdbe5b74e26f0d", 481228, 600),
+	WINGAME2("fusion", "", "FUSION.exe", 							   "d:518a98696fe1122e08410b0f157f21bf", 1513751,
+						   "FUS_DATA/A_INTRO.Dxr",					   "d:e6e7042dc739d42254bdbe5b74e26f0d", 481228, 600),
 
 	// Contains previews for educational and religious products for children and adults
 	// Miscellaneous section contains an art package and an encyclopedia on pregnancy and birth
@@ -6997,8 +7002,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("kingandi", "", "King&I.exe", "518a98696fe1122e08410b0f157f21bf", 1967220, 602),
 
-	WINGAME2_l("kontyngent99", "", "START.EXE", "d62438566e44826960fc16c5c23dbe43", 1513041,
-								   "MAIN.DXR",	"98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
+	WINGAME2_l("kontyngent99", "", "START.EXE",		"d:d62438566e44826960fc16c5c23dbe43", 1513041,
+								   "DANE/MAIN.DXR",	"d:98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
 
 	// Published by Future Soft of Nasr City, Cairo
 	WINGAME1_l("ktaralarkam", "", "123.exe", "a593079aecf5bd938ce75264cac24b2d", 2748951, Common::AR_ARB, 600),
@@ -8388,9 +8393,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("garygadget5", "",     "WillyRaumschiff.exe", "6b9dc16e1d307150bfec28729b59a523", 2185322, Common::DE_DEU, 900),
 	WINGAME1_l("garygadget5", "",     "Miel5.exe",           "7202313e2b177197b62e84dcf24d1292", 4253422, Common::NL_NLD, 900),
 
-	MACGAME2("gp2006", "", "CLICK ME",	"d483e955df901222145267d2ad729ea2", 233800,
-						   "Intro.cxt", "c7d1f703b3cfa4d134f601d17f8563a1", 673544, 900),
-	WINGAME1("gp2006", "", "CLICK_ME.EXE", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2182372, 900),
+	MACGAME2("gp2006", "", "CLICK ME",		   "r:d483e955df901222145267d2ad729ea2", 233544,
+						   "SOURCE/Intro.cxt", "d:c7d1f703b3cfa4d134f601d17f8563a1", 673544, 900),
+	WINGAME2("gp2006", "", "CLICK_ME.EXE", 	   "d:c612aa43e7ef55aa4fd2e1085fb1ef7a", 2182372,
+						   "SOURCE/Intro.cxt", "d:976a238d9dce0ea4a6544cf1fd2bd2fc", 673416, 900),
 
 	// Language selection in German, English, French
 	// Use Mac OS X executable in osx folder on disc
