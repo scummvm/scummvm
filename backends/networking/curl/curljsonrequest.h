@@ -40,9 +40,6 @@ protected:
 	Common::MemoryWriteStreamDynamic _contentsStream;
 	byte *_buffer;
 
-	/** Prepares raw bytes from _contentsStream to be parsed with Common::JSON::parse(). */
-	char *getPreparedContents();
-
 	/** Sets FINISHED state and passes the JSONValue * into user's callback in JsonResponse. */
 	virtual void finishJson(Common::JSONValue *json);
 
