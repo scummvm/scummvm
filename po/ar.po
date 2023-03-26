@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 08:45+0000\n"
-"PO-Revision-Date: 2023-03-26 11:04+0000\n"
+"PO-Revision-Date: 2023-03-26 11:06+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -9400,60 +9400,60 @@ msgstr "القدرة: الصوت"
 
 #: engines/wintermute/keymapper_tables.h:1082
 msgid "Ability: Esence"
-msgstr ""
+msgstr "القدرة: الجوهر"
 
 #: engines/wintermute/keymapper_tables.h:1087
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "القدرة: طارد الأرواح الشريرة"
 
 #: engines/wintermute/keymapper_tables.h:1200
 msgid "Show hints / Dance move"
-msgstr ""
+msgstr "إظهار تلميحات / حركة الرقص"
 
 #: engines/wintermute/keymapper_tables.h:1207
 msgid "Dance move up"
-msgstr ""
+msgstr "الرقص يتحرك"
 
 #: engines/wintermute/keymapper_tables.h:1213
 msgid "Dance move down"
-msgstr ""
+msgstr "الرقص يتحرك لأسفل"
 
 #: engines/wintermute/keymapper_tables.h:1219
 msgid "Dance move left"
-msgstr ""
+msgstr "تحرك الرقص إلى اليسار"
 
 #: engines/wintermute/keymapper_tables.h:1225
 msgid "Dance move right"
-msgstr ""
+msgstr "الرقص يتحرك الأيمن"
 
 #: engines/wintermute/keymapper_tables.h:1283
 msgid "Cancel input"
-msgstr ""
+msgstr "إلغاء الإدخال"
 
 #: engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
-msgstr ""
+msgstr "تبديل الترجمة"
 
 #: engines/wintermute/keymapper_tables.h:1409
 msgid "Hide hints"
-msgstr ""
+msgstr "إخفاء التلميحات"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1464
 msgid "Shift key"
-msgstr ""
+msgstr "مفتاح التحول"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1566
 msgid "Chapayev's action"
-msgstr ""
+msgstr "عمل Chapayev"
 
 #: engines/wintermute/keymapper_tables.h:1614
 #: engines/wintermute/keymapper_tables.h:1867
 #: engines/wintermute/keymapper_tables.h:1963
 msgid "Settings"
-msgstr ""
+msgstr "إعدادات"
 
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialogue answer 1"
@@ -9461,103 +9461,103 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1624
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "إجابة الحوار 2"
 
 #: engines/wintermute/keymapper_tables.h:1629
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "إجابة الحوار 3"
 
 #: engines/wintermute/keymapper_tables.h:1634
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "إجابة الحوار 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Spin wheel slower"
-msgstr ""
+msgstr "عجلة الدوران أبطأ"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1653
 msgid "Spin wheel faster"
-msgstr ""
+msgstr "عجلة تدور بشكل أسرع"
 
 #: engines/wintermute/keymapper_tables.h:1731
 msgid "Zoom out"
-msgstr ""
+msgstr "تصغير"
 
 #: engines/wintermute/keymapper_tables.h:1738
 msgid "Zoom in"
-msgstr ""
+msgstr "تكبير"
 
 #: engines/wintermute/keymapper_tables.h:1751
 #: engines/wintermute/keymapper_tables.h:1957
 msgid "Show journal"
-msgstr ""
+msgstr "عرض المجلة"
 
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1884
 msgid "Bezier window"
-msgstr ""
+msgstr "نافذة Bezier"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1901
 msgid "Droid's action"
-msgstr ""
+msgstr "عمل Droid"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:2009
 msgid "Rotate"
-msgstr ""
+msgstr "استدارة"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/wintermute/keymapper_tables.h:2035
 msgid "Drop"
-msgstr ""
+msgstr "يسقط"
 
 #: engines/wintermute/keymapper_tables.h:2043
 msgid "Player 1: Up"
-msgstr ""
+msgstr "اللاعب 1: فوق"
 
 #: engines/wintermute/keymapper_tables.h:2048
 msgid "Player 1: Left"
-msgstr ""
+msgstr "اللاعب 1: اليسار"
 
 #: engines/wintermute/keymapper_tables.h:2053
 msgid "Player 1: Down"
-msgstr ""
+msgstr "اللاعب 1: يسقط"
 
 #: engines/wintermute/keymapper_tables.h:2058
 msgid "Player 1: Right"
-msgstr ""
+msgstr "اللاعب 1: الأيمن"
 
 #: engines/wintermute/keymapper_tables.h:2063
 msgid "Player 2: Up"
-msgstr ""
+msgstr "اللاعب 2: للأعلى"
 
 #: engines/wintermute/keymapper_tables.h:2068
 msgid "Player 2: Left"
-msgstr ""
+msgstr "اللاعب 2: اليسار"
 
 #: engines/wintermute/keymapper_tables.h:2073
 msgid "Player 2: Down"
-msgstr ""
+msgstr "اللاعب 2: يسقط"
 
 #: engines/wintermute/keymapper_tables.h:2078
 msgid "Player 2: Right"
-msgstr ""
+msgstr "اللاعب 2: الأيمن"
 
 #. I18N: Displays a debug FPS counter
 #: engines/wintermute/keymapper_tables.h:2084
 msgid "Debug FPS"
-msgstr ""
+msgstr "تصحيح أخطاء FPS"
 
 #: engines/wintermute/keymapper_tables.h:2181
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2186
 msgid "Key i"
-msgstr ""
+msgstr "مفتاح i"
 
 #: engines/zvision/file/save_manager.cpp:221
 #, c-format
@@ -9565,42 +9565,44 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+"تستخدم هذه اللعبة المحفوظة الإصدار%u ، لكن هذا المحرك يدعم الإصدار%d فقط. "
+"ستحتاج إلى إصدار محدث من المحرك لاستخدام هذه اللعبة المحفوظة."
 
 #: engines/zvision/metaengine.cpp:58
 msgid "Double FPS"
-msgstr ""
+msgstr "مزدوج FPS"
 
 #: engines/zvision/metaengine.cpp:59
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "زيادة معدل الإطارات من 30 إلى 60 إطارًا في الثانية"
 
 #: engines/zvision/metaengine.cpp:70
 msgid "Enable Venus"
-msgstr ""
+msgstr "تمكين فينوس"
 
 #: engines/zvision/metaengine.cpp:71
 msgid "Enable the Venus help system"
-msgstr ""
+msgstr "قم بتمكين نظام المساعدة Venus"
 
 #: engines/zvision/metaengine.cpp:82
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "تعطيل الرسوم المتحركة أثناء الدوران"
 
 #: engines/zvision/metaengine.cpp:83
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "تعطيل الرسوم المتحركة أثناء تشغيل وضع البانوراما"
 
 #: engines/zvision/metaengine.cpp:94
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "استخدم فيديو MPEG عالي الدقة"
 
 #: engines/zvision/metaengine.cpp:95
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
-msgstr ""
+msgstr "استخدم فيديو MPEG من إصدار DVD بدلاً من دقة AVI الأقل"
 
 #: engines/zvision/metaengine.cpp:197
 msgid "Look Up"
-msgstr ""
+msgstr "انظر الى أعلى"
 
 #: engines/zvision/metaengine.cpp:203
 msgid "Look Down"
