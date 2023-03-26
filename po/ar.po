@@ -4784,7 +4784,8 @@ msgstr "قم بتعطيل استنزاف قدرة التحمل السريع ال
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
-msgstr "عند الجري ، لن يبدأ McCoy في التباطؤ بمجرد توقف اللاعب عن النقر بالماوس"
+msgstr ""
+"عند الجري ، لن يبدأ McCoy في التباطؤ بمجرد توقف اللاعب عن النقر بالماوس"
 
 #: engines/bladerunner/metaengine.cpp:100
 msgid "Show subtitles during text crawl"
@@ -4963,11 +4964,11 @@ msgid ""
 msgstr ""
 "اكتشف ScummVM أنك قمت بحفظ الألعاب التي يجب تحويلها من تنسيق اللعبة الأصلي "
 "المحفوظ.\n"
-"لم يعد تنسيق اللعبة الأصلي المحفوظ مدعومًا بشكل مباشر ، لذا لن تتمكن من "
-"تحميل ألعابك إذا لم تقم بتحويلها.\n"
+"لم يعد تنسيق اللعبة الأصلي المحفوظ مدعومًا بشكل مباشر ، لذا لن تتمكن من تحميل "
+"ألعابك إذا لم تقم بتحويلها.\n"
 "\n"
-"اضغط على \"موافق\" لتحويلها الآن ، وإلا فسيُطلب منك مرة أخرى في المرة "
-"التالية التي تبدأ فيها اللعبة.\n"
+"اضغط على \"موافق\" لتحويلها الآن ، وإلا فسيُطلب منك مرة أخرى في المرة التالية "
+"التي تبدأ فيها اللعبة.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
 #: engines/vcruise/vcruise.cpp:245
@@ -5126,11 +5127,11 @@ msgid ""
 "time you start the game.\n"
 msgstr ""
 "اكتشف ScummVM أن لديك ألعابًا محفوظة قديمة ل Drascula يجب تحويلها.\n"
-"لم يعد تنسيق اللعبة المحفوظ القديم مدعومًا ، لذا لن تتمكن من تحميل ألعابك "
-"إذا لم تقم بتحويلها.\n"
+"لم يعد تنسيق اللعبة المحفوظ القديم مدعومًا ، لذا لن تتمكن من تحميل ألعابك إذا "
+"لم تقم بتحويلها.\n"
 "\n"
-"اضغط على \"موافق\" لتحويلها الآن ، وإلا فسيُطلب منك مرة أخرى في المرة "
-"التالية التي تبدأ فيها اللعبة.\n"
+"اضغط على \"موافق\" لتحويلها الآن ، وإلا فسيُطلب منك مرة أخرى في المرة التالية "
+"التي تبدأ فيها اللعبة.\n"
 
 #: engines/dreamweb/metaengine.cpp:48
 msgid "Use bright palette mode"
@@ -5150,8 +5151,7 @@ msgstr "أصوات مسجلة مسبقًا"
 
 #: engines/freescape/metaengine.cpp:36
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
-msgstr ""
-"استخدم أصواتًا مسجلة مسبقًا عالية الجودة بدلاً من محاكاة سماعات الكمبيوتر"
+msgstr "استخدم أصواتًا مسجلة مسبقًا عالية الجودة بدلاً من محاكاة سماعات الكمبيوتر"
 
 #: engines/freescape/metaengine.cpp:46
 msgid "Extended timer"
@@ -6293,8 +6293,8 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
-"عند التنشيط ، يؤدي النقر فوق عنصر أو منطقة بمؤشر صاعقة البرق إلى نقلك مباشرةً"
-" إلى هناك ، متخطياً الشاشات الوسيطة. يمكنك فقط \"الضغط\" على منطقة محددة كنت "
+"عند التنشيط ، يؤدي النقر فوق عنصر أو منطقة بمؤشر صاعقة البرق إلى نقلك مباشرةً "
+"إلى هناك ، متخطياً الشاشات الوسيطة. يمكنك فقط \"الضغط\" على منطقة محددة كنت "
 "قد زرتها بالفعل."
 
 #: engines/mohawk/dialogs.cpp:117
@@ -6611,8 +6611,7 @@ msgstr "تفعيل الانتقالات القصيرة"
 #: engines/mtropolis/metaengine.cpp:86
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
-msgstr ""
-"يُمكّن الانتقالات التي تم تعيينها على الحد الأقصى للمعدل بدلاً من تخطيها."
+msgstr "يُمكّن الانتقالات التي تم تعيينها على الحد الأقصى للمعدل بدلاً من تخطيها."
 
 #: engines/mtropolis/metaengine.cpp:96
 msgid "Enable subtitles for important sound effects"
@@ -6867,8 +6866,7 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"اكتشف ScummVM أن لديك ألعابًا محفوظة قديمة ل Nippon Safes يجب إعادة تسميتها."
-"\n"
+"اكتشف ScummVM أن لديك ألعابًا محفوظة قديمة ل Nippon Safes يجب إعادة تسميتها.\n"
 "لم تعد الأسماء القديمة مدعومة ، لذا لن تتمكن من تحميل ألعابك إذا لم تقم "
 "بتحويلها.\n"
 "\n"
@@ -7213,10 +7211,10 @@ msgstr ""
 "MIDI لهذه اللعبة في \"General MIDI Utility\". من فضلك ، قم بتطبيق هذا "
 "التصحيح للاستمتاع بموسيقى MIDI مع هذه اللعبة. بمجرد الحصول عليه ، يمكنك فك "
 "ضغط جميع ملفات * .PAT المضمنة في مجلد الإضافات ScummVM وسيضيف ScummVM "
-"التصحيح المناسب تلقائيًا. بدلاً من ذلك ، يمكنك اتباع التعليمات الموجودة في "
-"ملف READ.ME المضمن في التصحيح وإعادة تسمية ملف * .PAT المرتبط إلى 4.PAT "
-"ووضعه في مجلد اللعبة. بدون هذا التصحيح ، ستبدو موسيقى MIDI العامة لهذه "
-"اللعبة مشوهة بشكل سيئ."
+"التصحيح المناسب تلقائيًا. بدلاً من ذلك ، يمكنك اتباع التعليمات الموجودة في ملف "
+"READ.ME المضمن في التصحيح وإعادة تسمية ملف * .PAT المرتبط إلى 4.PAT ووضعه في "
+"مجلد اللعبة. بدون هذا التصحيح ، ستبدو موسيقى MIDI العامة لهذه اللعبة مشوهة "
+"بشكل سيئ."
 
 #: engines/sci/sci.cpp:441
 msgid ""
@@ -7406,8 +7404,7 @@ msgid ""
 "for a more complete experience."
 msgstr ""
 "اسمح للعبة باستخدام الواجهة الرسومية داخل المحرك وقائمة الحفظ / التحميل "
-"الأصلية. استخدمه مع \"طلب التأكيد عند الخروج\" للحصول على تجربة أكثر "
-"اكتمالاً."
+"الأصلية. استخدمه مع \"طلب التأكيد عند الخروج\" للحصول على تجربة أكثر اكتمالاً."
 
 #: engines/scumm/dialogs.cpp:1078
 msgid "Overture Timing:"
@@ -7444,8 +7441,8 @@ msgid ""
 "syncs up with the intro."
 msgstr ""
 "عند تشغيل مسار المقدمة ، العب من هذه النقطة فيه. استخدم هذا إذا تم قطع "
-"الموسيقى قبل الأوان ، أو إذا كنت غير راضٍ عن الطريقة التي تتزامن بها "
-"الموسيقى مع المقدمة."
+"الموسيقى قبل الأوان ، أو إذا كنت غير راضٍ عن الطريقة التي تتزامن بها الموسيقى "
+"مع المقدمة."
 
 #: engines/scumm/dialogs.cpp:1261
 msgid "Outlook Adjust:"
@@ -8352,8 +8349,8 @@ msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
-"عند تمكين التصفية الخطية ، تصبح رسومات الخلفية أكثر سلاسة في وضع ملء الشاشة ،"
-" على حساب بعض التفاصيل."
+"عند تمكين التصفية الخطية ، تصبح رسومات الخلفية أكثر سلاسة في وضع ملء "
+"الشاشة ، على حساب بعض التفاصيل."
 
 #: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:132
 msgid "Enable font anti-aliasing"
@@ -8402,8 +8399,8 @@ msgstr ""
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
-"تم العثور على إصدار غير صحيح من ملف بيانات المحرك '%s'. توقع%d لكن حصلت "
-"على%d."
+"تم العثور على إصدار غير صحيح من ملف بيانات المحرك '%s'. توقع%d لكن حصلت على"
+"%d."
 
 #: engines/supernova/supernova.cpp:486
 #, c-format
