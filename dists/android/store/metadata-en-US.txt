@@ -32,12 +32,12 @@ For full release notes see https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.ht
 
 *** Beta release name:
 
-2.7.0.2 (beta 3)
+2.7.0.4 (beta 4)
 
 *** Beta release notes:
 <en-US>
-- Faster app loading time
 - Fixed a number of reported app crashes
-- Reintroduced support of devices at API level 16 (Android 4.1) as minimum
+- Added ScummVM log view in Global Options Paths Tab
+- Implemented basic support for some TV remotes
 - Full release notes for 2.7.0 are at: https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
 </en-US>
