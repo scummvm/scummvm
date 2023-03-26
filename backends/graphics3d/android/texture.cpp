@@ -36,6 +36,9 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "backends/platform/android/android.h"
+#include "backends/platform/android/jni-android.h"
+
 #include "base/main.h"
 #include "graphics/surface.h"
 #include "graphics/opengl/shader.h"
@@ -45,8 +48,6 @@
 #include "common/array.h"
 #include "common/util.h"
 
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/jni-android.h"
 #include "backends/graphics3d/android/texture.h"
 
 // Supported GL extensions

@@ -18,12 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-//#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #ifndef _ANDROID_H_
 #define _ANDROID_H_
 
 #if defined(__ANDROID__)
+
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
@@ -34,7 +35,8 @@
 #include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
-
+#include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/log/log.h"
 #include "backends/platform/android/touchcontrols.h"
 
 #include <pthread.h>
@@ -110,46 +112,15 @@ private:
 
 	bool _timer_thread_exit;
 	pthread_t _timer_thread;
-	static void *timerThreadFunc(void *arg);
 
 	bool _audio_thread_exit;
 	pthread_t _audio_thread;
-	static void *audioThreadFunc(void *arg);
 
 	bool _virtkeybd_on;
 
 	Audio::MixerImpl *_mixer;
 	timeval _startTime;
 
-	Common::String getSystemProperty(const char *name) const;
-
-public:
-	enum {
-		TOUCH_MODE_TOUCHPAD = 0,
-		TOUCH_MODE_MOUSE = 1,
-		TOUCH_MODE_GAMEPAD = 2,
-		TOUCH_MODE_MAX = 3
-	};
-
-	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
-	virtual ~OSystem_Android();
-
-	void initBackend() override;
-
-	bool hasFeature(OSystem::Feature f) override;
-	void setFeatureState(OSystem::Feature f, bool enable) override;
-	bool getFeatureState(OSystem::Feature f) override;
-
-public:
-	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
-	void pushEvent(const Common::Event &event);
-	void pushEvent(const Common::Event &event1, const Common::Event &event2);
-
-	TouchControls &getTouchControls() { return _touchControls; }
-	void applyTouchSettings(bool _3dMode, bool overlayShown);
-	void setupTouchMode(int oldValue, int newValue);
-
-private:
 	Common::Queue<Common::Event> _event_queue;
 	Common::Event _queuedEvent;
 	uint32 _queuedEventTime;
@@ -172,14 +143,47 @@ private:
 
 	Common::String _defaultConfigFileName;
 	Common::String _defaultLogFileName;
+	Common::String _systemPropertiesSummaryStr;
+	Common::String _systemSDKdetectedStr;
 
-//	FILE *_scvmLogFilePtr;
+	Backends::Log::Log *_logger;
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
 	// Cached dlopen object
 	mutable void *_gles2DL;
 #endif
+
+	static void *timerThreadFunc(void *arg);
+	static void *audioThreadFunc(void *arg);
+	Common::String getSystemProperty(const char *name) const;
+
+	Common::WriteStream *createLogFileForAppending();
+
 public:
+	enum {
+		TOUCH_MODE_TOUCHPAD = 0,
+		TOUCH_MODE_MOUSE = 1,
+		TOUCH_MODE_GAMEPAD = 2,
+		TOUCH_MODE_MAX = 3
+	};
+
+	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
+	virtual ~OSystem_Android();
+
+	void initBackend() override;
+
+	bool hasFeature(OSystem::Feature f) override;
+	void setFeatureState(OSystem::Feature f, bool enable) override;
+	bool getFeatureState(OSystem::Feature f) override;
+
+	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
+	void pushEvent(const Common::Event &event);
+	void pushEvent(const Common::Event &event1, const Common::Event &event2);
+
+	TouchControls &getTouchControls() { return _touchControls; }
+	void applyTouchSettings(bool _3dMode, bool overlayShown);
+	void setupTouchMode(int oldValue, int newValue);
+
 	bool pollEvent(Common::Event &event) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
 	Common::KeymapArray getGlobalKeymaps() override;
@@ -224,6 +228,7 @@ public:
 #ifdef ANDROID_DEBUG_GL_CALLS
 	bool isRunningInMainThread() { return pthread_self() == _main_thread; }
 #endif
+
 };
 
 #endif

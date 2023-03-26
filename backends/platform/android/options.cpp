@@ -36,10 +36,10 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "backends/fs/android/android-fs-factory.h"
-#include "backends/fs/android/android-saf-fs.h"
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
+#include "backends/fs/android/android-fs-factory.h"
+#include "backends/fs/android/android-saf-fs.h"
 
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
