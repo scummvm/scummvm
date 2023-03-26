@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 15:42+0000\n"
-"PO-Revision-Date: 2021-03-21 08:24+0000\n"
-"Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
+"PO-Revision-Date: 2023-03-26 16:25+0000\n"
+"Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
 "Language: hi\n"
@@ -1219,19 +1219,17 @@ msgid "Scaler:"
 msgstr ""
 
 #: gui/options.cpp:1645
-#, fuzzy
 msgid "Shader:"
-msgstr "शेडर"
+msgstr "शेडर:"
 
 #: gui/options.cpp:1645 gui/options.cpp:1647 gui/options.cpp:1648
 msgid "Specifies path to the shader used for scaling the game screen"
 msgstr ""
 
 #: gui/options.cpp:1647
-#, fuzzy
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "शेडर"
+msgstr "शेडर पथ:"
 
 #: gui/options.cpp:1654
 msgid "Update Shaders"
@@ -1951,7 +1949,9 @@ msgstr ""
 msgid ""
 "\n"
 "And more..."
-msgstr "नया गेम जोड़ें (A)..."
+msgstr ""
+"\n"
+"नया गेम जोड़ें (A)..."
 
 #: gui/options.cpp:2862 engines/engine.cpp:594
 #, fuzzy
@@ -2783,9 +2783,8 @@ msgid "WARNING: "
 msgstr ""
 
 #: engines/engine.cpp:735
-#, fuzzy
 msgid " Shall we still run the game?"
-msgstr "गेम का पूरा नाम"
+msgstr " क्या आप गेम को चलाना चाहेंगे?"
 
 #: engines/engine.cpp:736
 msgid ""
@@ -3888,9 +3887,8 @@ msgstr ""
 #: backends/platform/android/options.cpp:123
 #: backends/platform/android/options.cpp:141
 #: backends/platform/android/options.cpp:142
-#, fuzzy
 msgid "Touchpad emulation"
-msgstr "विकल्प(O)..."
+msgstr "टचपैड एमुलेशन"
 
 #: backends/platform/android/options.cpp:124
 #: backends/platform/android/options.cpp:144
@@ -3901,9 +3899,8 @@ msgstr ""
 #: backends/platform/android/options.cpp:125
 #: backends/platform/android/options.cpp:147
 #: backends/platform/android/options.cpp:148
-#, fuzzy
 msgid "Gamepad emulation"
-msgstr "विकल्प(O)..."
+msgstr "गेमपैड़ एमुलेशन"
 
 #: backends/platform/android/options.cpp:131
 msgid "In 2D games"
@@ -4483,9 +4480,8 @@ msgid "Don't fade every screen to black when leaving a room."
 msgstr ""
 
 #: engines/agos/metaengine.cpp:170
-#, fuzzy
 msgid "AGOS 2 support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "AGOS 2 सपोर्ट कम्पाइल नहीं है"
 
 #: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -4757,9 +4753,8 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
-#, fuzzy
 msgid "Game Options"
-msgstr "विकल्प(O)..."
+msgstr "गेम  विकल्प(O)..."
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -4950,9 +4945,8 @@ msgid ""
 msgstr ""
 
 #: engines/cryomni3d/metaengine.cpp:145
-#, fuzzy
 msgid "Versailles 1685 support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "Versailles 1685 सपोर्ट कम्पाइल नहीं है"
 
 #: engines/director/events.cpp:90
 msgid ""
@@ -5313,9 +5307,8 @@ msgid "Show the current FPS-rate, while you play."
 msgstr ""
 
 #: engines/grim/metaengine.cpp:92
-#, fuzzy
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "Escape from Monkey Island सपोर्ट कम्पाइल नहीं है"
 
 #: engines/grim/resource.cpp:102
 #, c-format
@@ -5390,9 +5383,8 @@ msgid "Affects the controls for fast forwarding the game"
 msgstr ""
 
 #: engines/groovie/metaengine.cpp:144
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "GroovieV2 सपोर्ट कम्पाइल नहीं है"
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
@@ -5705,9 +5697,8 @@ msgid "Left button to attack, right button to pick up items"
 msgstr ""
 
 #: engines/kyra/metaengine.cpp:241
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "Lands of Lore सपोर्ट कम्पाइल नहीं है"
 
 #: engines/kyra/metaengine.cpp:251
 msgid ""
@@ -5716,9 +5707,8 @@ msgid ""
 msgstr ""
 
 #: engines/kyra/metaengine.cpp:257
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "Eye of Beholder सपोर्ट कम्पाइल नहीं है"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:468
 #: engines/ultima/ultima4/metaengine.cpp:224
@@ -5836,7 +5826,6 @@ msgid "Rest"
 msgstr ""
 
 #: engines/kyra/engine/lol.cpp:483
-#, fuzzy
 msgid "Options"
 msgstr "विकल्प(O)..."
 
@@ -6063,10 +6052,8 @@ msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "तलाशें:"
+msgstr "खोजें:"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:107
@@ -6225,24 +6212,20 @@ msgid "Best"
 msgstr ""
 
 #: engines/mohawk/metaengine.cpp:292
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "Myst ME सपोर्ट कम्पाइल नहीं है"
 
 #: engines/mohawk/metaengine.cpp:297
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "Myst सपोर्ट कम्पाइल नहीं है"
 
 #: engines/mohawk/metaengine.cpp:304
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "Riven सपोर्ट कम्पाइल नहीं है"
 
 #: engines/mohawk/metaengine.cpp:318
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "CSTime सपोर्ट कम्पाइल नहीं है"
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
@@ -6545,9 +6528,8 @@ msgid ""
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:43
-#, fuzzy
 msgid "Speech Options"
-msgstr "विकल्प(O)..."
+msgstr "बोली के विकल्प(O)..."
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -8649,9 +8631,8 @@ msgid "Hero Craft support is not compiled in"
 msgstr "सुविधा बनाए गए:"
 
 #: engines/wintermute/metaengine.cpp:124
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "Wintermute3D सपोर्ट कम्पाइल नहीं है"
 
 #: engines/wintermute/wintermute.cpp:148
 msgid "This game requires PNG, JPEG and Vorbis support."
