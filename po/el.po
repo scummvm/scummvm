@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 08:45+0000\n"
-"PO-Revision-Date: 2023-03-23 08:09+0000\n"
+"PO-Revision-Date: 2023-03-26 11:30+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1600,14 +1600,12 @@ msgid "ScummVM config path: "
 msgstr "Διαδρομή Ρυθμίσεων: "
 
 #: gui/options.cpp:2504
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "Διαδρομή Ρυθμίσεων: "
+msgstr "Διαδρομή Αρχείου Καταγραφής: "
 
 #: gui/options.cpp:2509
 msgid "View"
-msgstr ""
+msgstr "Επισκόπηση"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2516 gui/options.cpp:3257
@@ -1710,10 +1708,8 @@ msgid "Seed for initializing all random number generators"
 msgstr "Φύτρα (seed) για την αρχικοποίηση όλων των γεννητριών τυχαίων αριθμών"
 
 #: gui/options.cpp:2637
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Μενού Αποσφαλμάτωσης"
+msgstr "Επίπεδο Αποσφαλμάτωσης:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2641 gui/options.cpp:2789
@@ -1723,7 +1719,7 @@ msgstr "Δεν έχει προσδιοριστεί"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2647
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (όλα)"
 
 #: gui/options.cpp:2651
 msgid "Enable Discord integration"
