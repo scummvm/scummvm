@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "common/tokenizer.h"
+#include "common/translation.h"
 
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -45,9 +46,11 @@ TextViewerDialog::TextViewerDialog(Common::String fname)
 	_lineHeight = _font->getFontHeight() + 2;
 
 	// Add scrollbar
-	_scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
-	_scrollBar = new ScrollBarWidget(this, _w - _scrollbarWidth - 1, 0, _scrollbarWidth, _h);
+	_scrollBar = new ScrollBarWidget(this, 0, 0, 1, 1);
 	_scrollBar->setTarget(this);
+
+	// I18N: Close dialog button
+	_closeButton = new ButtonWidget(this, 0, 0, 1, 1, _("Close"), Common::U32String(), kCloseCmd);
 
 	_currentPos = 0;
 	_scrollLine = _linesPerPage - 1;
@@ -107,12 +110,25 @@ void TextViewerDialog::reflowLayout() {
 	_padX = _w * kPadX;
 	_padY = _h * kPadY;
 
-	// Calculate depending values
-	_lineWidth = (_w - _scrollbarWidth - _padX * 2) / _charWidth;
-	_linesPerPage = (_h - _padY * 2) / _lineHeight;
+	int16 bW = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
+	int16 bH = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
+	int16 padR = g_gui.xmlEval()->getVar("Globals.Padding.Right", 5);
+	int16 padB = g_gui.xmlEval()->getVar("Globals.Padding.Bottom", 5);
+	int16 scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
-	_scrollBar->setPos(_w - _scrollbarWidth - 1, 0);
-	_scrollBar->setSize(_scrollbarWidth, _h);
+	int16 buttonOffset = bH + padB;
+
+	_closeButton->setPos(_w - bW - padR, _h - buttonOffset);
+	_closeButton->setSize(bW, bH);
+
+	// Calculate depending values
+	_lineWidth = (_w - scrollbarWidth - _padX * 2) / _charWidth;
+	_linesPerPage = (_h - _padY * 2 - buttonOffset) / _lineHeight;
+
+	warning("Lines: %d", _linesPerPage);
+
+	_scrollBar->setPos(_w - scrollbarWidth - 1, 0);
+	_scrollBar->setSize(scrollbarWidth, _h - buttonOffset);
 }
 
 void TextViewerDialog::open() {
@@ -166,6 +182,9 @@ void TextViewerDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 		}
 
 		drawDialog(kDrawLayerForeground);
+		break;
+	case kCloseCmd:
+		close();
 		break;
 	default:
 		return;

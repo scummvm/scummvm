@@ -42,7 +42,6 @@ private:
 	int	_currentPos;
 	int	_scrollLine;
 
-	int _scrollbarWidth;
 	int _charWidth;
 	int _lineHeight;
 	int _padX, _padY;
@@ -50,6 +49,7 @@ private:
 	Common::StringArray _linesArray;
 
 	ScrollBarWidget *_scrollBar;
+	ButtonWidget *_closeButton;
 
 	Common::String _fname;
 	const Graphics::Font *_font = nullptr;
