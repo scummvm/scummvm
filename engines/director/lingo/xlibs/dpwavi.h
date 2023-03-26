@@ -19,46 +19,31 @@
  *
  */
 
-/*************************************
- *
- * USED IN:
- * Secrets of the Pyramids (Mac)
- * Mindscape's Wonder Land (Mac)
- * Grackon's Curse (Mac)
- * Return to Jurassic (Mac)
- * Ednovation demos (Mac)
- *
- *************************************/
-
-#include "director/director.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-object.h"
-#include "director/lingo/xlibs/darkenscreen.h"
-
+#ifndef DIRECTOR_LINGO_XLIBS_DPWAVI_H
+#define DIRECTOR_LINGO_XLIBS_DPWAVI_H
 
 namespace Director {
 
-const char *DarkenScreen::xlibName = "darkenScreen";
-const char *DarkenScreen::fileNames[] = {
-	"darkenScreen",
-	0
+class DPwAVIXObject : public Object<DPwAVIXObject> {
+public:
+	DPwAVIXObject(ObjectType objType);
 };
 
-static BuiltinProto builtins[] = {
-	{ "darkenScreen", DarkenScreen::m_darkenscreen, 0, 0, 300, HBLTIN },
-	{ nullptr, nullptr, 0, 0, 0, VOIDSYM }
-};
+namespace DPwAVI {
 
-void DarkenScreen::open(int type) {
-	g_lingo->initBuiltIns(builtins);
-}
+extern const char *xlibName;
+extern const char *fileNames[];
 
-void DarkenScreen::close(int type) {
-	g_lingo->cleanupBuiltIns(builtins);
-}
+void open(int type);
+void close(int type);
 
-void DarkenScreen::m_darkenscreen(int nargs) {
-	g_lingo->printSTUBWithArglist("DarkenScreen::m_darkenscreen", nargs);
-}
+void m_new(int nargs);
+void m_startup(int nargs);
+void m_quit(int nargs);
+void m_verb(int nargs);
+
+} // End of namespace DPwAVI
 
 } // End of namespace Director
+
+#endif
