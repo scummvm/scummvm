@@ -855,7 +855,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ir!]",                NULL,            kUnLoad_workarounds },
 	// ^ We allow invalid references here (e.g. bug #6600), since they will be invalidated anyway by the call itself
 	{ MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(Wait),              SIG_SCI16, SIGFOR_ALL,    "i",                     NULL,            NULL },
+	{ MAP_CALL(Wait),              SIG_SCI16, SIGFOR_ALL,    "i",                     NULL,            kWait_workarounds },
 
 	// Unimplemented SCI0-SCI1.1 unused functions, always mapped to kDummy
 	{ MAP_DUMMY(InspectObj),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },

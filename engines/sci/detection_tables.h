@@ -5314,6 +5314,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC_HIRESFONTS },
 
+	// Space Quest 1 VGA Remake - English Non-Interactive Demo
+	// Earlier version of demo, doesn't include view patch files for musicians
+	// SCI interpreter version 1.000.181
+	{"sq1sci", "SCI/Demo", {
+		{"resource.map", 0, "3ff264347ca7b3335144bddc1f3a76ac", 642},
+		{"resource.001", 0, "fd99ea43f57576ded7c86036996346cf", 549177},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
+
 	// Space Quest 1 VGA Remake - English Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.000.181
 	{"sq1sci", "SCI/Demo", {
