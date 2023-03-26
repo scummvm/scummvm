@@ -48,6 +48,12 @@ void DarkEngine::loadAssetsDOSDemo() {
 		load8bitBinary(&file, 0xa700, 16);
 		_border = load8bitBinImage(&file, 0x210);
 		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+
+		for (auto &it : _areaMap) {
+			if (!it._value->entranceWithID(255))
+				continue;
+			addECDs(it._value);
+		}
 	} else if (_renderMode == Common::kRenderCGA) {
 		//loadBundledImages();
 		file.open("DSIDEC.EXE");

@@ -539,6 +539,8 @@ public:
 
 private:
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
+	void addECDs(Area *area);
+	void addECD(Area *area, const Math::Vector3d position, int index);
 };
 
 class EclipseEngine : public FreescapeEngine {
