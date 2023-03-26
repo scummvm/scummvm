@@ -20,6 +20,7 @@ gui/recorderdialog.cpp
 gui/remotebrowser.cpp
 gui/saveload-dialog.cpp
 gui/shaderbrowser-dialog.cpp
+gui/textviewer.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
 gui/unknown-game-dialog.cpp
