@@ -11908,6 +11908,52 @@ static const uint16 phant1CopyChaseFilePatch[] = {
 	PATCH_END
 };
 
+// Clicking "Start New Game" when all 10 saves are in the chapter 7 chase
+//  crashes the game. Room 901 is supposed to prompt the player to delete one of
+//  their saves first, but in delete mode this room only shows regular saves,
+//  not chase saves. If all of the saves are chase saves then the screen is
+//  unexpectedly empty, and it crashes when trying to select a default icon.
+//
+// We fix this by showing all saves when in delete mode. This fixes the obscure
+//  bug and makes it easier to manage saves. Room 91 sets flag 152 when there
+//  are 10 saves to put room 901 in delete mode. Now that flag is tested before
+//  the save type to determine if a save should be displayed.
+//
+// Applies to: All versions
+// Responsible method: selectGameRoom:init
+// Fixes bug: #14361
+static const uint16 phant1DeleteSaveSignature[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x06,                     // bnt 06
+	0x35, 0x00,                     // ldi 00
+	0xa5, 0x02,                     // sat 02 [ temp2 = 0, redundant ]
+	0x33, SIG_ADDTOOFFSET(+1),      // jmp    [ exit cond ]
+	SIG_ADDTOOFFSET(+7),
+	0x31, 0x17,                     // bnt 17
+	SIG_ADDTOOFFSET(+11),
+	0x36,                           // push
+	0x35, 0x02,                     // ldi 02
+	0x12,                           // and
+	0x31, 0x06,                     // bnt 06
+	0x35, 0x01,                     // ldi 01
+	SIG_END
+};
+
+static const uint16 phant1DeleteSavePatch[] = {
+	0x2f, PATCH_GETORIGINALBYTEADJUST(7, +6), // bt [ exit cond ]
+	0x78,                                     // push1
+	0x38, PATCH_UINT16(0x0098),               // pushi 0098
+	0x45, 0x03, PATCH_UINT16(0x0002),         // callb proc0_3 [ is flag 152 set? ]
+	0xa5, 0x02,                               // sat 02 [ show save in delete mode ]
+	PATCH_GETORIGINALBYTES(8, 7),
+	0x31, 0x1d,                               // bnt 1d
+	PATCH_GETORIGINALBYTES(17, 11),
+	0x7a,                                     // push2
+	0x12,                                     // and
+	0x31, 0x04,                               // bnt 04
+	PATCH_END
+};
+
 // During the chase, the west exit in room 46980 has incorrect logic which kills
 //  the player if they went to the crypt with the crucifix, among other bugs.
 //
@@ -12079,6 +12125,7 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,    26, "fix video 2020 censorship",                   1, phant1Video2020CensorSignature,  phant1Video2020CensorPatch },
 	{  true,    33, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	{  true,   901, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   901, "fix delete save",                             1, phant1DeleteSaveSignature,       phant1DeleteSavePatch },
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SavedVolumeSignature,      phant1SavedVolumePatch },
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
 	{  true, 20200, "fix chapter 5 wine cask hotspot",             1, phant1WineCaskHotspotSignature,  phant1WineCaskHotspotPatch },
