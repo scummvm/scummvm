@@ -33,6 +33,7 @@ public:
 	static Common::ArchiveMemberList listArchive();
 	static Common::SeekableReadStream *getArchiveFile(Common::String name);
 	static Common::String readEverythingFromStream(Common::SeekableReadStream *const stream);
+	static Common::SeekableReadStream *makeResponseStreamFromString(Common::String response);
 
 	static Common::String normalizePath(const Common::String &path);
 	static bool hasForbiddenCombinations(const Common::String &path);
