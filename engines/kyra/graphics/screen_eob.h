@@ -82,6 +82,7 @@ public:
 
 	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool encode8bit = false, const uint8 *cgaMapping = 0);
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...) override;
+	void drawT1Shape(uint8 pageNum, const byte *t1data, int x, int y, int sd);
 	const uint8 *scaleShape(const uint8 *shapeData, int blockDistance);
 	const uint8 *scaleShapeStep(const uint8 *shp);
 	const uint8 *generateShapeOverlay(const uint8 *shp, const uint8 *fadingTable);

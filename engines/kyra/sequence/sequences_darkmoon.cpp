@@ -92,6 +92,7 @@ private:
 
 	Palette *_palettes[13];
 	uint8 *_fadingTables[7];
+	byte *_t1cps;
 
 	const uint8 **_shapes;
 
@@ -1126,7 +1127,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 		delete[] items[i].str;
 }
 
-DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, DarkmoonSequenceHelper::Mode mode) : _system(system), _vm(vm), _screen(screen), _fadePalIndex(0) {
+DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, DarkmoonSequenceHelper::Mode mode) : _system(system), _vm(vm), _screen(screen), _fadePalIndex(0), _t1cps(nullptr) {
 	init(mode);
 }
 
@@ -1144,6 +1145,8 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	for (int i = 0; i < 54; i++)
 		delete[] _shapes[i];
 	delete[] _shapes;
+
+	delete[] _t1cps;
 
 	delete[] _config->animData;
 	delete[] _config->shapeDefs;
@@ -1323,15 +1326,35 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 
 		case 3:
 		case 4:
+		case 101: { // ScummVM extension
+			int isT1 = s->command == 101;
+			int shapeWidth = 0, shapeHeight = 0;
 			// fade shape in or out or restore background
 			if (!_config->shpBackgroundFading)
 				break;
 
+			if (isT1 && !_t1cps) {
+				_t1cps = new byte[64000];
+				memset(_t1cps, 0, 4);
+				Common::ScopedPtr<Common::SeekableReadStream> srcStream(_vm->resource()->createReadStream("T1.CPS"));
+				if (srcStream)
+					Screen_EoB::eob2ChineseLZUncompress(_t1cps, 64000, srcStream.get());
+			}
+			if (isT1) {
+				shapeWidth = READ_LE_UINT16(_t1cps);
+				shapeHeight = READ_LE_UINT16(_t1cps + 2);
+			} else {
+				shapeWidth = (_shapes[s->obj][2] + 1) << 3;
+				shapeHeight = _shapes[s->obj][3];
+			}
+
 			if (_vm->_configRenderMode == Common::kRenderEGA) {
-				if (palIndex)
+				if (palIndex && isT1)
+					_screen->drawT1Shape(0, _t1cps, s->x1, y, 0);
+				else if (palIndex)
 					_screen->drawShape(0, _shapes[s->obj], s->x1, y, 0);
 				else
-					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 0, Screen::CR_NO_P_CHECK);
+					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, shapeWidth, shapeHeight, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->updateScreen();
 				delay(s->delay /** 7*/);
 			} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
@@ -1343,7 +1366,7 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 					_screen->drawShape(4, _shapes[obj], s->x1 & 7, 0, 0);
 					_screen->copyRegion(0, 0, s->x1, s->y1, (_shapes[obj][2] + 1) << 3, _shapes[obj][3], 4, 0, Screen::CR_NO_P_CHECK);
 				} else {
-					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 0, Screen::CR_NO_P_CHECK);
+					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, shapeWidth, shapeHeight, 2, 0, Screen::CR_NO_P_CHECK);
 				}
 				_screen->updateScreen();
 
@@ -1357,11 +1380,14 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 				if (palIndex) {
 					_screen->setFadeTable(_fadingTables[palIndex - 1]);
 
-					_screen->copyRegion(s->x1 - 8, s->y1 - 8, 0, 0, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 4, Screen::CR_NO_P_CHECK);
-					_screen->drawShape(4, _shapes[s->obj], s->x1 & 7, 0, 0);
-					_screen->copyRegion(0, 0, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 4, 0, Screen::CR_NO_P_CHECK);
+					_screen->copyRegion(s->x1 - 8, s->y1 - 8, 0, 0, shapeWidth, shapeHeight, 2, 4, Screen::CR_NO_P_CHECK);
+					if (isT1)
+						_screen->drawT1Shape(4, _t1cps, 0, 0, 0);
+					else
+						_screen->drawShape(4, _shapes[s->obj], s->x1 & 7, 0, 0);
+					_screen->copyRegion(0, 0, s->x1, s->y1, shapeWidth, shapeHeight, 4, 0, Screen::CR_NO_P_CHECK);
 				} else {
-					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 0, Screen::CR_NO_P_CHECK);
+					_screen->copyRegion(s->x1 - 8, s->y1 - 8, s->x1, s->y1, shapeWidth, shapeHeight, 2, 0, Screen::CR_NO_P_CHECK);
 				}
 				_screen->updateScreen();
 
@@ -1370,6 +1396,7 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 				_screen->setShapeFadingLevel(0);
 			}
 			break;
+		}
 
 		case 5:
 			// copy region
