@@ -43,10 +43,10 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_fopen
 #define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
+//#define FORBIDDEN_SYMBOL_EXCEPTION_fputs
+//#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
 #define FORBIDDEN_SYMBOL_EXCEPTION_ftell
-#define FORBIDDEN_SYMBOL_EXCEPTION_fflush
+//#define FORBIDDEN_SYMBOL_EXCEPTION_fflush
 
 #include <EGL/egl.h>
 #include <sys/time.h>
@@ -56,14 +56,14 @@
 #include <unistd.h>
 #include <dlfcn.h>
 
-#include "common/util.h"
-#include "common/textconsole.h"
-#include "common/rect.h"
-#include "common/queue.h"
-#include "common/mutex.h"
-#include "common/events.h"
-#include "common/config-manager.h"
-#include "graphics/cursorman.h"
+#include "backends/platform/android/android.h"
+#include "backends/platform/android/jni-android.h"
+#include "backends/fs/android/android-fs.h"
+#include "backends/fs/android/android-fs-factory.h"
+#include "backends/fs/posix/posix-iostream.h"
+
+#include "backends/graphics/android/android-graphics.h"
+#include "backends/graphics3d/android/android-graphics3d.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/events/default/default-events.h"
@@ -75,12 +75,14 @@
 #include "backends/keymapper/keymapper-defaults.h"
 #include "backends/keymapper/standard-actions.h"
 
-#include "backends/graphics/android/android-graphics.h"
-#include "backends/graphics3d/android/android-graphics3d.h"
-#include "backends/platform/android/jni-android.h"
-#include "backends/platform/android/android.h"
-#include "backends/fs/android/android-fs.h"
-#include "backends/fs/android/android-fs-factory.h"
+#include "common/util.h"
+#include "common/textconsole.h"
+#include "common/rect.h"
+#include "common/queue.h"
+#include "common/mutex.h"
+#include "common/events.h"
+#include "common/config-manager.h"
+#include "graphics/cursorman.h"
 
 const char *android_log_tag = "ScummVM";
 
@@ -190,23 +192,29 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_trackball_scale(2),
 	_joystick_scale(10),
 	_defaultConfigFileName(""),
-	_defaultLogFileName("") {
-//	_scvmLogFilePtr(nullptr) {
+	_defaultLogFileName(""),
+	_systemPropertiesSummaryStr(""),
+	_systemSDKdetectedStr(""),
+	_logger(nullptr) {
 
-	LOGI("Running on: [%s] [%s] [%s] [%s] [%s] SDK:%s ABI:%s",
-			getSystemProperty("ro.product.manufacturer").c_str(),
-			getSystemProperty("ro.product.model").c_str(),
-			getSystemProperty("ro.product.brand").c_str(),
-			getSystemProperty("ro.build.fingerprint").c_str(),
-			getSystemProperty("ro.build.display.id").c_str(),
-			getSystemProperty("ro.build.version.sdk").c_str(),
-			getSystemProperty("ro.product.cpu.abi").c_str());
+	_systemPropertiesSummaryStr = Common::String::format("Running on: [%s] [%s] [%s] [%s] [%s] SDK:%s ABI:%s\n",
+	                                                   getSystemProperty("ro.product.manufacturer").c_str(),
+	                                                   getSystemProperty("ro.product.model").c_str(),
+	                                                   getSystemProperty("ro.product.brand").c_str(),
+	                                                   getSystemProperty("ro.build.fingerprint").c_str(),
+	                                                   getSystemProperty("ro.build.display.id").c_str(),
+	                                                   getSystemProperty("ro.build.version.sdk").c_str(),
+	                                                   getSystemProperty("ro.product.cpu.abi").c_str()) ;
+
+	LOGI("%s", _systemPropertiesSummaryStr.c_str());
 	// JNI::getAndroidSDKVersionId() should be identical to the result from ("ro.build.version.sdk"),
 	// though getting it via JNI is maybe the most reliable option (?)
 	// Also __system_property_get which is used by getSystemProperty() is being deprecated in recent NDKs
 
 	int sdkVersion = JNI::getAndroidSDKVersionId();
-	LOGI("SDK Version: %d", sdkVersion);
+
+	_systemSDKdetectedStr = Common::String::format("SDK Version: %d\n", sdkVersion) ;
+	LOGI("%s", _systemSDKdetectedStr.c_str());
 
 	AndroidFilesystemFactory &fsFactory = AndroidFilesystemFactory::instance();
 	if (sdkVersion >= 24) {
@@ -244,11 +252,8 @@ OSystem_Android::~OSystem_Android() {
 	// Uninitialize surface now to avoid it to be done later when touch controls are destroyed
 	dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->deinitSurface();
 
-//	// close log file
-//	if (_scvmLogFilePtr != nullptr) {
-//		fflush(_scvmLogFilePtr);
-//		fclose(_scvmLogFilePtr);
-//	}
+	delete _logger;
+	_logger = nullptr;
 }
 
 void *OSystem_Android::timerThreadFunc(void *arg) {
@@ -422,18 +427,25 @@ void OSystem_Android::initBackend() {
 
 	_main_thread = pthread_self();
 
-//	// Open log file
-//	if (!getDefaultLogFileName().empty()) {
-//		_scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "a");
-//		if (_scvmLogFilePtr != nullptr) {
-//			LOGD("Opened log file for writing upon initializing backend");
-//		} else {
-//			LOGE("Error when opening log file for writing upon initializing backend");
-//		}
-//	} else {
-//		LOGE("Error: log file path not known yet, upon initializing backend");
-//	}
+	if (!_logger)
+		_logger = new Backends::Log::Log(this);
 
+	if (_logger) {
+		Common::WriteStream *logFile = createLogFileForAppending();
+		if (logFile) {
+			_logger->open(logFile);
+
+			if (!_systemPropertiesSummaryStr.empty())
+				_logger->print(_systemPropertiesSummaryStr.c_str());
+
+			if (!_systemSDKdetectedStr.empty())
+				_logger->print(_systemSDKdetectedStr.c_str());
+		} else {
+			LOGE("Error when opening log file for writing upon initializing backend");
+			//_logger->close();
+			_logger = nullptr;
+		}
+	}
 
 	// Warning: ConfMan.registerDefault() can be used for a Session of ScummVM
 	//          but:
@@ -573,6 +585,37 @@ Common::String OSystem_Android::getDefaultLogFileName() {
 		_defaultLogFileName = JNI::getScummVMLogPath();
 	}
 	return _defaultLogFileName;
+}
+
+Common::WriteStream *OSystem_Android::createLogFileForAppending() {
+	if (getDefaultLogFileName().empty()) {
+		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Log file path is not known upon create attempt!");
+		return nullptr;
+	}
+
+	FILE *scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "a");
+	if (scvmLogFilePtr != nullptr) {
+		long sz = ftell(scvmLogFilePtr);
+		if (sz > MAX_ANDROID_SCUMMVM_LOG_FILESIZE_IN_BYTES) {
+			fclose(scvmLogFilePtr);
+			__android_log_write(ANDROID_LOG_WARN, android_log_tag, "Default log file is bigger than 100KB. It will be overwritten!");
+			if (!getDefaultLogFileName().empty()) {
+				// Create the log file from scratch overwriting the previous one
+				scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "w");
+				if (scvmLogFilePtr == nullptr) {
+					__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Could not open default log file for rewrite!");
+					return nullptr;
+				}
+			} else {
+				__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Log file path is not known upon rewrite attempt!");
+				return nullptr;
+			}
+		}
+	} else {
+		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Could not open default log file for writing/appending.");
+		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, getDefaultLogFileName().c_str());
+	}
+	return new PosixIoStream(scvmLogFilePtr);
 }
 
 bool OSystem_Android::hasFeature(Feature f) {
@@ -770,41 +813,10 @@ void OSystem_Android::logMessage(LogMessageType::Type type, const char *message)
 		break;
 	}
 
-	if (!getDefaultLogFileName().empty()) {
-		// open for append by default
-		FILE *_scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "a");
+	// Then log into file (via the logger)
+	if (_logger)
+		_logger->print(message);
 
-		// TODO Do we need to worry about threading/synchronization here?
-		if (_scvmLogFilePtr != nullptr) {
-			long sz = ftell(_scvmLogFilePtr);
-			if (sz > MAX_ANDROID_SCUMMVM_LOG_FILESIZE_IN_BYTES) {
-				fclose(_scvmLogFilePtr);
-				__android_log_write(ANDROID_LOG_WARN, android_log_tag, "Default log file is bigger than 100KB. It will be overwritten!");
-				if (!getDefaultLogFileName().empty()) {
-					// Create the log file from scratch overwriting the previous one
-					_scvmLogFilePtr = fopen(getDefaultLogFileName().c_str(), "w");
-					if (_scvmLogFilePtr == nullptr) {
-						__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Could not open default log file for rewrite!");
-						return;
-					}
-				} else {
-					__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Log file path is not known!");
-					return;
-				}
-			}
-
-			fputs(message, _scvmLogFilePtr);
-			fwrite("\n", 1, 1, _scvmLogFilePtr);
-			// close log file
-			fflush(_scvmLogFilePtr);
-			fclose(_scvmLogFilePtr);
-		} else {
-			__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Could not open default log file for writing/appending.");
-			__android_log_write(ANDROID_LOG_ERROR, android_log_tag, getDefaultLogFileName().c_str());
-		}
-	}   else {
-		__android_log_write(ANDROID_LOG_ERROR, android_log_tag, "Error: log file path not known yet, upon initializing backend");
-	}
 }
 
 Common::String OSystem_Android::getSystemLanguage() const {

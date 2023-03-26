@@ -36,13 +36,12 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "graphics/blit.h"
-
-#include "backends/graphics/opengl/pipelines/pipeline.h"
-
-#include "backends/graphics/android/android-graphics.h"
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
+#include "backends/graphics/android/android-graphics.h"
+#include "backends/graphics/opengl/pipelines/pipeline.h"
+
+#include "graphics/blit.h"
 
 static void loadBuiltinTexture(JNI::BitmapResources resource, OpenGL::Surface *surf) {
 	const Graphics::Surface *src = JNI::getBitmapResource(resource);

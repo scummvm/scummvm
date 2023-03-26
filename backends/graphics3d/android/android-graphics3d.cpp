@@ -36,14 +36,15 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "backends/platform/android/android.h"
+#include "backends/platform/android/jni-android.h"
+
 #include "common/tokenizer.h"
 #include "graphics/blit.h"
 #include "graphics/opengl/shader.h"
 #include "graphics/opengl/context.h"
 
 #include "backends/graphics3d/android/android-graphics3d.h"
-#include "backends/platform/android/android.h"
-#include "backends/platform/android/jni-android.h"
 
 // These helper macros let us setup our context only when the game has different settings than us
 #define CONTEXT_SAVE_STATE(gl_param) GLboolean saved ## gl_param; GLCALL(saved ## gl_param = glIsEnabled(gl_param))
