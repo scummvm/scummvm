@@ -213,9 +213,7 @@ struct MenuReference {
 
 struct PictureReference {
 	Picture *_picture = nullptr;
-	~PictureReference() {
-		delete _picture;
-	}
+	~PictureReference();
 };
 
 struct PCell {

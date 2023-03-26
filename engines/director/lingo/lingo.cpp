@@ -29,6 +29,7 @@
 #include "director/castmember.h"
 #include "director/frame.h"
 #include "director/movie.h"
+#include "director/picture.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/window.h"
@@ -1750,6 +1751,10 @@ CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLi
 void Lingo::exposeXObject(const char *name, Datum obj) {
 	_globalvars[name] = obj;
 	_globalvars[name].ignoreGlobal = true;
+}
+
+PictureReference::~PictureReference() {
+	delete _picture;
 }
 
 } // End of namespace Director
