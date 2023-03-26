@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 08:45+0000\n"
-"PO-Revision-Date: 2023-03-26 10:27+0000\n"
+"PO-Revision-Date: 2023-03-26 10:43+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -8395,27 +8395,29 @@ msgstr "فشل تحميل حالة اللعبة المؤقتة."
 
 #: engines/supernova/metaengine.cpp:38
 msgid "Improved mode"
-msgstr ""
+msgstr "الوضع المحسن"
 
 #: engines/supernova/metaengine.cpp:39
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
+"يزيل بعض الإجراءات المتكررة ، ويضيف إمكانية تغيير الأفعال عن طريق لوحة "
+"المفاتيح"
 
 #: engines/sword1/animation.cpp:529
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "لا يمكن تشغيل مقطع دفق PSX ' %s' في وضع paletted"
 
 #: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:456
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr ""
+msgstr "تم العثور على قطع MPEG-2 ولكن تم إنشاء ScummVM بدون دعم MPEG-2"
 
 #: engines/sword1/animation.cpp:567 engines/sword2/animation.cpp:465
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr ""
+msgstr "لم يتم العثور على Cutscene '%s'"
 
 #: engines/sword1/control.cpp:886
 msgid ""
@@ -8427,6 +8429,12 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"اكتشف ScummVM أن لديك ألعابًا محفوظة قديمة ل Broken Sword 1 يجب تحويلها.\n"
+"لم يعد تنسيق اللعبة المحفوظ القديم مدعومًا ، لذا لن تتمكن من تحميل ألعابك "
+"إذا لم تقم بتحويلها.\n"
+"\n"
+"اضغط على \"موافق\" لتحويلها الآن ، وإلا فسيُطلب منك مرة أخرى في المرة "
+"التالية التي تبدأ فيها اللعبة.\n"
 
 #: engines/sword1/control.cpp:1260
 #, c-format
@@ -8439,37 +8447,38 @@ msgstr ""
 
 #: engines/sword1/control.cpp:1263
 msgid "Keep the old one"
-msgstr ""
+msgstr "احتفظ بالقديم"
 
 #: engines/sword1/control.cpp:1263
 msgid "Keep the new one"
-msgstr ""
+msgstr "احتفظ بالجديد"
 
 #: engines/sword1/logic.cpp:1634
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr ""
+msgstr "هذه نهاية العرض التوضيحي ل Broken Sword 1"
 
 #: engines/sword2/animation.cpp:426
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr ""
+msgstr "تم العثور على مشاهد PSX ولكن تم إنشاء ScummVM بدون دعم ألوان RGB"
 
 #: engines/sword2/metaengine.cpp:46
 msgid "Show object labels"
-msgstr ""
+msgstr "إظهار تسميات الكائن"
 
 #: engines/sword2/metaengine.cpp:47
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "إظهار تسميات الكائنات عند تمرير الماوس"
 
 #: engines/sword25/metaengine.cpp:35
 msgid "Use English speech"
-msgstr ""
+msgstr "استخدم خطاب اللغة الإنجليزية"
 
 #: engines/sword25/metaengine.cpp:36
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"استخدم التحدث باللغة الإنجليزية بدلاً من الألمانية لكل لغة أخرى غير الألمانية"
 
 #: engines/teenagent/resources.cpp:120
 msgid ""
@@ -8481,73 +8490,73 @@ msgstr ""
 
 #: engines/tetraedge/metaengine.cpp:33
 msgid "Correct movie aspect ratio"
-msgstr ""
+msgstr "تصحيح نسبة أبعاد الفيلم"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
-msgstr ""
+msgstr "قم بتشغيل مقاطع Syberia في 9: 16 ، بدلاً من التمدد إلى ملء الشاشة"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "استعادة المشاهد المفقودة"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "استعادة بعض المشاهد في الأصل في إصدار Windows"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
-msgstr ""
+msgstr "نسخة Saturn CD غير مدعومة حتى الآن"
 
 #: engines/tony/tony.cpp:248
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "متغير الخط غير موجود في ملف بيانات المحرك '%s'."
 
 #: engines/toon/toon.cpp:244
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
+msgstr "اللعبة المحفوظة في الفتحة #%d "
 
 #: engines/toon/toon.cpp:248
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "تعذر الحفظ السريع في الفتحة #%d"
 
 #: engines/toon/toon.cpp:261
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
+msgstr "تحميل سريع للعبة المحفوظة #%d"
 
 #: engines/toon/toon.cpp:265
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr ""
+msgstr "تعذر التحميل السريع للعبة المحفوظة #%d"
 
 #: engines/toon/toon.cpp:1502
 msgid "Are you sure you want to exit?"
-msgstr ""
+msgstr "هل أنت متأكد أنك تريد الخروج؟"
 
 #: engines/toon/toon.cpp:1906
 #, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr ""
+msgstr "غير قادر على تحديد موقع ملف البيانات '%s'."
 
 #: engines/twine/detection.cpp:174
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr ""
+msgstr "يتطلب هذا الإصدار ملف Giflib الذي لم يتم تجميعه في ScummVM"
 
 #: engines/twine/metaengine.cpp:44
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "تفعيل تصادم الجدران"
 
 #: engines/twine/metaengine.cpp:45
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "تمكين ضرر الاصطدام الأصلي بالحائط"
 
 #: engines/twine/metaengine.cpp:56
 msgid "Disable save menu"
-msgstr ""
+msgstr "تعطيل قائمة الحفظ"
 
 #: engines/twine/metaengine.cpp:57
 msgid ""
@@ -8556,147 +8565,147 @@ msgstr "الأصل كان لديه فقط أجهزة حفظ تلقائية. هذ
 
 #: engines/twine/metaengine.cpp:67
 msgid "Enable debug mode"
-msgstr ""
+msgstr "تفعيل وضع التصحيح"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable the debug mode"
-msgstr ""
+msgstr "قم بتمكين وضع التصحيح"
 
 #: engines/twine/metaengine.cpp:78
 msgid "Enable audio CD"
-msgstr ""
+msgstr "تفعيل القرص المضغوط الصوتي"
 
 #: engines/twine/metaengine.cpp:79
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "قم بتمكين مسار الصوت الأصلي على القرص المضغوط"
 
 #: engines/twine/metaengine.cpp:89
 msgid "Enable sound"
-msgstr ""
+msgstr "تمكين الصوت"
 
 #: engines/twine/metaengine.cpp:90
 msgid "Enable the sound for the game"
-msgstr ""
+msgstr "تفعيل الصوت للعبة"
 
 #: engines/twine/metaengine.cpp:100
 msgid "Enable voices"
-msgstr ""
+msgstr "تمكين الأصوات"
 
 #: engines/twine/metaengine.cpp:101
 msgid "Enable the voices for the game"
-msgstr ""
+msgstr "تمكين الأصوات للعبة"
 
 #: engines/twine/metaengine.cpp:111
 msgid "Enable text"
-msgstr ""
+msgstr "تمكين النص"
 
 #: engines/twine/metaengine.cpp:112
 msgid "Enable the text for the game"
-msgstr ""
+msgstr "قم بتمكين النص للعبة"
 
 #: engines/twine/metaengine.cpp:122
 msgid "Enable movies"
-msgstr ""
+msgstr "تمكين الأفلام"
 
 #: engines/twine/metaengine.cpp:123
 msgid "Enable the cutscenes for the game"
-msgstr ""
+msgstr "تمكين المشاهد للعبة"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable mouse"
-msgstr ""
+msgstr "تمكين الماوس"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Enable the mouse for the UI"
-msgstr ""
+msgstr "قم بتمكين الماوس لواجهة المستخدم"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Use the USA version"
-msgstr ""
+msgstr "استخدم إصدار الولايات المتحدة الأمريكية"
 
 #: engines/twine/metaengine.cpp:145
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "قم بتمكين أعلام الإصدار المحدد للولايات المتحدة الأمريكية"
 
 #: engines/twine/metaengine.cpp:155 engines/ultima/metaengine.cpp:88
 msgid "Enable high resolution"
-msgstr ""
+msgstr "تفعيل الدقة العالية"
 
 #: engines/twine/metaengine.cpp:156 engines/ultima/metaengine.cpp:89
 msgid "Enable a higher resolution for the game"
-msgstr ""
+msgstr "قم بتمكين دقة أعلى للعبة"
 
 #: engines/twine/metaengine.cpp:247
 msgid "Debug Next Room"
-msgstr ""
+msgstr "تصحيح الغرفة التالية"
 
 #: engines/twine/metaengine.cpp:252
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "تصحيح أخطاء الغرفة السابقة"
 
 #: engines/twine/metaengine.cpp:257
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "تصحيح الأخطاء تطبيق Celling Grid"
 
 #: engines/twine/metaengine.cpp:262
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "التصحيح زيادة فهرس شبكة Celling"
 
 #: engines/twine/metaengine.cpp:267
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "تصحيح ، تصغير فهرس شبكة Celling"
 
 #: engines/twine/metaengine.cpp:272
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "تصحيح شبكة لأعلى الكاميرا"
 
 #: engines/twine/metaengine.cpp:277
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "تصحيح شبكة الكاميرا لأسفل"
 
 #: engines/twine/metaengine.cpp:282
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "تصحيح شبكة الكاميرا اليسرى"
 
 #: engines/twine/metaengine.cpp:288
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "تصحيح شبكة الكاميرا الأيمن"
 
 #: engines/twine/metaengine.cpp:293
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "ضع الممثل في وسط الشاشة"
 
 #: engines/twine/metaengine.cpp:298
 msgid "Debug Menu"
-msgstr ""
+msgstr "قائمة التصحيح"
 
 #: engines/twine/metaengine.cpp:303
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "تنفيذ قائمة التصحيح"
 
 #: engines/twine/metaengine.cpp:308 engines/twine/metaengine.cpp:328
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "السلوك الطبيعي"
 
 #: engines/twine/metaengine.cpp:313 engines/twine/metaengine.cpp:333
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "السلوك الرياضي"
 
 #: engines/twine/metaengine.cpp:318 engines/twine/metaengine.cpp:338
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "سلوك عدواني"
 
 #: engines/twine/metaengine.cpp:323 engines/twine/metaengine.cpp:343
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "سلوك متحفظ"
 
 #: engines/twine/metaengine.cpp:348
 msgid "Behaviour Action"
-msgstr ""
+msgstr "سلوك العمل"
 
 #: engines/twine/metaengine.cpp:354
 msgid "Change Behaviour"
-msgstr ""
+msgstr "تغيير السلوك"
 
 #: engines/twine/metaengine.cpp:366
 msgid "Options Menu"
@@ -8704,27 +8713,27 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:378
 msgid "Use Selected Object"
-msgstr ""
+msgstr "استخدم الكائن المحدد"
 
 #: engines/twine/metaengine.cpp:384
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "رمي الكرة السحرية"
 
 #: engines/twine/metaengine.cpp:398
 msgid "Move Backward"
-msgstr ""
+msgstr "تحرك للخلف"
 
 #: engines/twine/metaengine.cpp:419
 msgid "Use Protopack"
-msgstr ""
+msgstr "استخدم حزمة Proto"
 
 #: engines/twine/metaengine.cpp:424
 msgid "Open Holomap"
-msgstr ""
+msgstr "افتح خريطة Holo"
 
 #: engines/twine/metaengine.cpp:437
 msgid "Special Action"
-msgstr ""
+msgstr "عمل خاص"
 
 #: engines/twine/metaengine.cpp:456
 msgid "Accept"
@@ -8737,51 +8746,51 @@ msgstr "ألغى"
 
 #: engines/twine/metaengine.cpp:502
 msgid "Next Page"
-msgstr ""
+msgstr "الصفحة التالية"
 
 #: engines/twine/metaengine.cpp:569
 msgid "Previous location"
-msgstr ""
+msgstr "الموقع السابق"
 
 #: engines/twine/metaengine.cpp:574
 msgid "Next location"
-msgstr ""
+msgstr "الموقع التالي"
 
 #: engines/twine/parser/text.cpp:34
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr ""
+msgstr "تشغيل دقة عالية"
 
 #: engines/twine/parser/text.cpp:35
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr ""
+msgstr "دقة عالية معطلة"
 
 #: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr ""
+msgstr "تشغيل تصادم الجدار"
 
 #: engines/twine/parser/text.cpp:37
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr ""
+msgstr "إيقاف الاصطدام بالحائط"
 
 #: engines/ultima/metaengine.cpp:55
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "تفعيل تخطي الإطارات"
 
 #: engines/ultima/metaengine.cpp:56
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
+msgstr "اسمح للعبة بتخطي إطارات الرسوم المتحركة عند تشغيلها ببطء شديد."
 
 #: engines/ultima/metaengine.cpp:66
 msgid "Enable frame limiting"
-msgstr ""
+msgstr "تمكين تحديد الإطار"
 
 #: engines/ultima/metaengine.cpp:67
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
+msgstr "يحد من سرعة اللعبة لمنع الجري بسرعة كبيرة."
 
 #: engines/ultima/metaengine.cpp:77
 msgid "Enable cheats"
