@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 08:45+0000\n"
-"PO-Revision-Date: 2023-03-26 10:43+0000\n"
+"PO-Revision-Date: 2023-03-26 10:55+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
@@ -8709,7 +8709,7 @@ msgstr "تغيير السلوك"
 
 #: engines/twine/metaengine.cpp:366
 msgid "Options Menu"
-msgstr ""
+msgstr "قائمة الخيارات"
 
 #: engines/twine/metaengine.cpp:378
 msgid "Use Selected Object"
@@ -8794,80 +8794,80 @@ msgstr "يحد من سرعة اللعبة لمنع الجري بسرعة كبي�
 
 #: engines/ultima/metaengine.cpp:77
 msgid "Enable cheats"
-msgstr ""
+msgstr "تمكين غش"
 
 #: engines/ultima/metaengine.cpp:78
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
+msgstr "السماح بالغش عن طريق الأوامر والقائمة عند النقر فوق المشغل."
 
 #: engines/ultima/metaengine.cpp:99
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "تشغيل أصوات خطوات القدم"
 
 #: engines/ultima/metaengine.cpp:100
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "يصدر صوتًا عندما يتحرك اللاعب."
 
 #: engines/ultima/metaengine.cpp:110
 msgid "Enable jump to mouse position"
-msgstr ""
+msgstr "تمكين الانتقال إلى موضع الماوس"
 
 #: engines/ultima/metaengine.cpp:111
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
+msgstr "يستهدف القفز أثناء عدم الحركة مؤشر الماوس بدلاً من الاتجاه فقط."
 
 #: engines/ultima/metaengine.cpp:121
 msgid "Enable font replacement"
-msgstr ""
+msgstr "تفعيل استبدال الخط"
 
 #: engines/ultima/metaengine.cpp:122
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "يستبدل خطوط اللعبة بالخطوط المقدمة"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/metaengine.cpp:144
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "الكاميرا تتحرك مع كاتم الصوت"
 
 #: engines/ultima/metaengine.cpp:145
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
-msgstr ""
+msgstr "تتعقب الكاميرا حركة المشغل بدلاً من الانجذاب إلى مواضع محددة."
 
 #: engines/ultima/metaengine.cpp:155
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "قم دائمًا بتمكين عيد الفصح عيد الميلاد"
 
 #: engines/ultima/metaengine.cpp:156
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "قم بتمكين موسيقى عيد الميلاد في أي وقت من السنة."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "تعذر العثور على ملف بيانات ultima.dat الصحيح"
 
 #: engines/ultima/nuvie/nuvie.cpp:387
 #, c-format
 msgid "loading quick save %d"
-msgstr ""
+msgstr "تحميل سريع حفظ%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:392
 #, c-format
 msgid "saving quick save %d"
-msgstr ""
+msgstr "حفظ سريع%d"
 
 #: engines/ultima/nuvie/metaengine.cpp:38
 msgid "Original Save"
-msgstr ""
+msgstr "الأصل حفظ"
 
 #: engines/ultima/nuvie/save/save_game.cpp:211
 msgid "Transfer Character"
-msgstr ""
+msgstr "نقل الحرف"
 
 #: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima الثامن"
 
 #: engines/ultima/ultima8/metaengine.cpp:135
 msgid "Crusader"
@@ -8875,11 +8875,11 @@ msgstr "الصليبي"
 
 #: engines/ultima/ultima8/metaengine.cpp:178
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "غش Ultima الثامن"
 
 #: engines/ultima/ultima8/metaengine.cpp:193
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "تصحيح أخطاء Ultima VIII"
 
 #: engines/ultima/ultima8/games/cru_game.cpp:165
 msgid ""
@@ -8893,7 +8893,7 @@ msgstr ""
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
-msgstr ""
+msgstr "تتطلب هذه اللعبة دعم JPEG ، والذي لم يتم تجميعه بتنسيق."
 
 #: engines/vcruise/vcruise.cpp:83
 msgid ""
@@ -8914,19 +8914,19 @@ msgstr ""
 
 #: engines/vcruise/vcruise.cpp:230
 msgid "Failed to load save, the save data appears to be damaged."
-msgstr ""
+msgstr "فشل تحميل الحفظ ، يبدو أن بيانات الحفظ تالفة."
 
 #: engines/vcruise/vcruise.cpp:235
 msgid "Failed to read version information from save file."
-msgstr ""
+msgstr "فشلت قراءة معلومات الإصدار من حفظ الملف."
 
 #: engines/vcruise/vcruise.cpp:255
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr ""
+msgstr "حدث خطأ غير معروف أثناء محاولة تحميل اللعبة المحفوظة."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "إظهار عداد FPS"
 
 #: engines/wintermute/metaengine.cpp:43
 msgid "Show the current number of frames per second in the upper left corner"
@@ -8934,43 +8934,45 @@ msgstr "اعرض العدد الحالي للإطارات في الثانية ف
 
 #: engines/wintermute/metaengine.cpp:54
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "تصفية Sprite ثنائية الخطوط (بطيئة)"
 
 #: engines/wintermute/metaengine.cpp:55
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "قم بتطبيق التصفية ثنائية الخطوط على الكائنات الحية الفردية"
 
 #: engines/wintermute/metaengine.cpp:67
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "فرض استخدام جهاز عرض ثنائي الأبعاد (ألعاب ثنائية الأبعاد فقط)"
 
 #: engines/wintermute/metaengine.cpp:68
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"يفرض هذا الإعداد على ScummVM استخدام عارض ثنائي الأبعاد أثناء تشغيل الألعاب "
+"ثنائية الأبعاد"
 
 #: engines/wintermute/metaengine.cpp:112
 msgid "FoxTail support is not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم FoxTail بتنسيق"
 
 #: engines/wintermute/metaengine.cpp:118
 msgid "Hero Craft support is not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم Hero Craft بتنسيق"
 
 #: engines/wintermute/metaengine.cpp:124
 msgid "Wintermute3D support is not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم Wintermute3D بتنسيق"
 
 #: engines/wintermute/wintermute.cpp:148
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "تتطلب هذه اللعبة دعم PNG و JPEG و Vorbis."
 
 #: engines/wintermute/wintermute.cpp:159
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr ""
+msgstr "تتطلب هذه اللعبة محرك FoxTail الفرعي ، والذي لم يتم تجميعه بتنسيق."
 
 #: engines/wintermute/wintermute.cpp:170
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr ""
+msgstr "تتطلب هذه اللعبة محرك فرعي HeroCraft ، والذي لم يتم تجميعه في."
 
 #: engines/wintermute/wintermute.cpp:181
 msgid ""
@@ -8985,20 +8987,20 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:2116
 #: engines/wintermute/keymapper_tables.h:2216
 msgid "Walk forward"
-msgstr ""
+msgstr "السير إلى الأمام"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
 msgid "Walk backward"
-msgstr ""
+msgstr "السير إلى الوراء"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:174
 #: engines/wintermute/keymapper_tables.h:685
 #: engines/wintermute/keymapper_tables.h:1855
 msgid "Show scene geometry"
-msgstr ""
+msgstr "إظهار هندسة المشهد"
 
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
@@ -9008,7 +9010,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1231
 #: engines/wintermute/keymapper_tables.h:1255
 msgid "Previous page"
-msgstr ""
+msgstr "الصفحة السابقة"
 
 #: engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
@@ -9018,7 +9020,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1236
 #: engines/wintermute/keymapper_tables.h:1260
 msgid "Next page"
-msgstr ""
+msgstr "الصفحة التالية"
 
 #: engines/wintermute/keymapper_tables.h:239
 #: engines/wintermute/keymapper_tables.h:262
@@ -9046,7 +9048,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1983
 #: engines/wintermute/keymapper_tables.h:2103
 msgid "Show hints"
-msgstr ""
+msgstr "تلميحات المعرض"
 
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:396
@@ -9059,7 +9061,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1688
 #: engines/wintermute/keymapper_tables.h:1950
 msgid "Show inventory"
-msgstr ""
+msgstr "عرض المخزون"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:332
@@ -9070,7 +9072,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1932
 #: engines/wintermute/keymapper_tables.h:1990
 msgid "GUI variant A"
-msgstr ""
+msgstr "متغير واجهة المستخدم الرسومية A"
 
 #: engines/wintermute/keymapper_tables.h:276
 #: engines/wintermute/keymapper_tables.h:339
@@ -9081,115 +9083,115 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1938
 #: engines/wintermute/keymapper_tables.h:1996
 msgid "GUI variant B"
-msgstr ""
+msgstr "متغير واجهة المستخدم الرسومية B"
 
 #: engines/wintermute/keymapper_tables.h:283
 #: engines/wintermute/keymapper_tables.h:414
 #: engines/wintermute/keymapper_tables.h:547
 #: engines/wintermute/keymapper_tables.h:1117
 msgid "Phone cancel button"
-msgstr ""
+msgstr "زر إلغاء الهاتف"
 
 #: engines/wintermute/keymapper_tables.h:288
 #: engines/wintermute/keymapper_tables.h:419
 #: engines/wintermute/keymapper_tables.h:552
 #: engines/wintermute/keymapper_tables.h:1122
 msgid "Phone up button"
-msgstr ""
+msgstr "زر الهاتف"
 
 #: engines/wintermute/keymapper_tables.h:294
 #: engines/wintermute/keymapper_tables.h:425
 #: engines/wintermute/keymapper_tables.h:558
 #: engines/wintermute/keymapper_tables.h:1128
 msgid "Phone down button"
-msgstr ""
+msgstr "زر الهاتف لأسفل"
 
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:360
 msgid "Alternative action"
-msgstr ""
+msgstr "عمل بديل"
 
 #: engines/wintermute/keymapper_tables.h:431
 #: engines/wintermute/keymapper_tables.h:564
 #: engines/wintermute/keymapper_tables.h:1134
 msgid "Phone 0 button"
-msgstr ""
+msgstr "زر الهاتف 0"
 
 #: engines/wintermute/keymapper_tables.h:436
 #: engines/wintermute/keymapper_tables.h:569
 #: engines/wintermute/keymapper_tables.h:1139
 #: engines/wintermute/keymapper_tables.h:1817
 msgid "Phone 1 button"
-msgstr ""
+msgstr "زر الهاتف 1"
 
 #: engines/wintermute/keymapper_tables.h:441
 #: engines/wintermute/keymapper_tables.h:574
 #: engines/wintermute/keymapper_tables.h:1144
 #: engines/wintermute/keymapper_tables.h:1822
 msgid "Phone 2 button"
-msgstr ""
+msgstr "زر الهاتف 2"
 
 #: engines/wintermute/keymapper_tables.h:446
 #: engines/wintermute/keymapper_tables.h:579
 #: engines/wintermute/keymapper_tables.h:1149
 #: engines/wintermute/keymapper_tables.h:1827
 msgid "Phone 3 button"
-msgstr ""
+msgstr "زر الهاتف 3"
 
 #: engines/wintermute/keymapper_tables.h:451
 #: engines/wintermute/keymapper_tables.h:584
 #: engines/wintermute/keymapper_tables.h:1154
 msgid "Phone 4 button"
-msgstr ""
+msgstr "زر الهاتف 4"
 
 #: engines/wintermute/keymapper_tables.h:456
 #: engines/wintermute/keymapper_tables.h:589
 #: engines/wintermute/keymapper_tables.h:1159
 msgid "Phone 5 button"
-msgstr ""
+msgstr "زر الهاتف 5"
 
 #: engines/wintermute/keymapper_tables.h:461
 #: engines/wintermute/keymapper_tables.h:594
 #: engines/wintermute/keymapper_tables.h:1164
 msgid "Phone 6 button"
-msgstr ""
+msgstr "زر الهاتف 6"
 
 #: engines/wintermute/keymapper_tables.h:466
 #: engines/wintermute/keymapper_tables.h:599
 #: engines/wintermute/keymapper_tables.h:1169
 msgid "Phone 7 button"
-msgstr ""
+msgstr "زر الهاتف 7"
 
 #: engines/wintermute/keymapper_tables.h:471
 #: engines/wintermute/keymapper_tables.h:604
 #: engines/wintermute/keymapper_tables.h:1174
 msgid "Phone 8 button"
-msgstr ""
+msgstr "زر الهاتف 8"
 
 #: engines/wintermute/keymapper_tables.h:476
 #: engines/wintermute/keymapper_tables.h:609
 #: engines/wintermute/keymapper_tables.h:1179
 msgid "Phone 9 button"
-msgstr ""
+msgstr "زر الهاتف 9"
 
 #: engines/wintermute/keymapper_tables.h:481
 #: engines/wintermute/keymapper_tables.h:614
 #: engines/wintermute/keymapper_tables.h:1184
 msgid "Phone * button"
-msgstr ""
+msgstr "زر الهاتف *"
 
 #: engines/wintermute/keymapper_tables.h:486
 #: engines/wintermute/keymapper_tables.h:619
 #: engines/wintermute/keymapper_tables.h:1189
 msgid "Phone # button"
-msgstr ""
+msgstr "زر الهاتف #"
 
 #: engines/wintermute/keymapper_tables.h:664
 #: engines/wintermute/keymapper_tables.h:1366
 #: engines/wintermute/keymapper_tables.h:1422
 msgid "Show help"
-msgstr ""
+msgstr "عرض المساعدة"
 
 #: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
@@ -9203,7 +9205,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1969
 #: engines/wintermute/keymapper_tables.h:2171
 msgid "Scroll up"
-msgstr ""
+msgstr "انتقل إلى أعلى"
 
 #: engines/wintermute/keymapper_tables.h:677
 #: engines/wintermute/keymapper_tables.h:878
@@ -9217,21 +9219,21 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1976
 #: engines/wintermute/keymapper_tables.h:2176
 msgid "Scroll down"
-msgstr ""
+msgstr "حرك الفأرة لأسفل"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Change shadow type"
-msgstr ""
+msgstr "تغيير نوع الظل"
 
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
 msgid "Volume max"
-msgstr ""
+msgstr "الصوت الأقصى"
 
 #. I18N: Displays a debug interface with a CLI for various features
 #: engines/wintermute/keymapper_tables.h:706
 msgid "Show debug parser"
-msgstr ""
+msgstr "إظهار المحلل اللغوي لتصحيح الأخطاء"
 
 #. I18N: Displays a debug text message
 #: engines/wintermute/keymapper_tables.h:714
@@ -9240,7 +9242,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1833
 #: engines/wintermute/keymapper_tables.h:1878
 msgid "Debug print"
-msgstr ""
+msgstr "طباعة التصحيح"
 
 #. I18N: Exits the game
 #: engines/wintermute/keymapper_tables.h:720
@@ -9251,28 +9253,28 @@ msgstr "خرج"
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
 msgid "Light helper window"
-msgstr ""
+msgstr "نافذة مساعد الضوء"
 
 #: engines/wintermute/keymapper_tables.h:751
 msgid "Run forward"
-msgstr ""
+msgstr "اركض للأمام"
 
 #: engines/wintermute/keymapper_tables.h:756
 msgid "Run backward"
-msgstr ""
+msgstr "اركض للخلف"
 
 #: engines/wintermute/keymapper_tables.h:761
 msgid "Turn left fast"
-msgstr ""
+msgstr "انعطف إلى اليسار بسرعة"
 
 #: engines/wintermute/keymapper_tables.h:766
 msgid "Turn right fast"
-msgstr ""
+msgstr "استدر لليمين بسرعة"
 
 #. I18N: Displays a blueprint with robot parts
 #: engines/wintermute/keymapper_tables.h:772
 msgid "Show blueprint"
-msgstr ""
+msgstr "عرض المخطط"
 
 #: engines/wintermute/keymapper_tables.h:792
 #: engines/wintermute/keymapper_tables.h:1587
@@ -9280,7 +9282,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1803
 #: engines/wintermute/keymapper_tables.h:2089
 msgid "Next action"
-msgstr ""
+msgstr "الحدث التالي"
 
 #: engines/wintermute/keymapper_tables.h:799
 #: engines/wintermute/keymapper_tables.h:1595
@@ -9288,114 +9290,114 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1810
 #: engines/wintermute/keymapper_tables.h:2097
 msgid "Previous action"
-msgstr ""
+msgstr "الإجراء السابق"
 
 #: engines/wintermute/keymapper_tables.h:826
 msgid "Volume off"
-msgstr ""
+msgstr "إطفاء الصوت"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
-msgstr ""
+msgstr "تغيير حجم الخط"
 
 #: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
-msgstr ""
+msgstr "حفظ اللعبة"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "سرعة المشي: منخفضة"
 
 #: engines/wintermute/keymapper_tables.h:940
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "سرعة المشي: متوسطة"
 
 #: engines/wintermute/keymapper_tables.h:945
 msgid "Walking speed: High"
-msgstr ""
+msgstr "سرعة المشي: عالية"
 
 #: engines/wintermute/keymapper_tables.h:955
 #: engines/wintermute/keymapper_tables.h:1314
 #: engines/wintermute/keymapper_tables.h:1872
 msgid "Cancel waiting"
-msgstr ""
+msgstr "إلغاء الانتظار"
 
 #: engines/wintermute/keymapper_tables.h:965
 msgid "First page"
-msgstr ""
+msgstr "الصفحة الأولى"
 
 #: engines/wintermute/keymapper_tables.h:970
 msgid "Last page"
-msgstr ""
+msgstr "آخر صفحة"
 
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "سرعة المشي: فائقة السرعة ميجا"
 
 #: engines/wintermute/keymapper_tables.h:994
 msgid "Show game credits"
-msgstr ""
+msgstr "إظهار اعتمادات اللعبة"
 
 #: engines/wintermute/keymapper_tables.h:999
 msgid "Play selected music record"
-msgstr ""
+msgstr "تشغيل سجل الموسيقى المحدد"
 
 #: engines/wintermute/keymapper_tables.h:1004
 msgid "Select next music record"
-msgstr ""
+msgstr "حدد التسجيل الموسيقي التالي"
 
 #: engines/wintermute/keymapper_tables.h:1009
 msgid "Play note 1: A"
-msgstr ""
+msgstr "تشغيل الملاحظة 1: A"
 
 #: engines/wintermute/keymapper_tables.h:1014
 msgid "Play note 2: F#"
-msgstr ""
+msgstr "تشغيل الملاحظة 2: #F"
 
 #: engines/wintermute/keymapper_tables.h:1019
 msgid "Play note 3: D#"
-msgstr ""
+msgstr "تشغيل الملاحظة 3: #D"
 
 #: engines/wintermute/keymapper_tables.h:1024
 msgid "Play note 4: C#"
-msgstr ""
+msgstr "تشغيل الملاحظة 4: #D"
 
 #: engines/wintermute/keymapper_tables.h:1029
 msgid "Play note 5: E"
-msgstr ""
+msgstr "تشغيل الملاحظة 5: E"
 
 #: engines/wintermute/keymapper_tables.h:1034
 msgid "Play note 6: G#"
-msgstr ""
+msgstr "تشغيل الملاحظة 6: G#"
 
 #: engines/wintermute/keymapper_tables.h:1039
 msgid "Play note 7: B"
-msgstr ""
+msgstr "تشغيل الملاحظة 7: B"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "القدرة: التحريك الذهني"
 
 #: engines/wintermute/keymapper_tables.h:1057
 msgid "Ability: Push"
-msgstr ""
+msgstr "القدرة: ادفع"
 
 #: engines/wintermute/keymapper_tables.h:1062
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "القدرة: البرق"
 
 #: engines/wintermute/keymapper_tables.h:1067
 msgid "Ability: Light"
-msgstr ""
+msgstr "القدرة: ضوء"
 
 #: engines/wintermute/keymapper_tables.h:1072
 msgid "Ability: Wind"
-msgstr ""
+msgstr "القدرة: ريح"
 
 #: engines/wintermute/keymapper_tables.h:1077
 msgid "Ability: Sound"
-msgstr ""
+msgstr "القدرة: الصوت"
 
 #: engines/wintermute/keymapper_tables.h:1082
 msgid "Ability: Esence"
