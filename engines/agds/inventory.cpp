@@ -57,20 +57,29 @@ void Inventory::visible(bool visible) {
 int Inventory::free() const {
 	int free = 0;
 	for (uint i = 0; i < _entries.size(); ++i)
-		if (!_entries[i])
+		if (!_entries[i].hasObject)
 			++free;
 	return free;
 }
 
-ObjectPtr Inventory::get(int index) const {
-	return index >= 0 && index < kMaxSize? _entries[index]: ObjectPtr();
+ObjectPtr Inventory::get(int index) {
+	if (index >= 0 && index < kMaxSize) {
+		auto & entry = _entries[index];
+		if (entry.hasObject && !entry.object)
+			entry.object = _engine->runObject(entry.name);
+		return entry.object;
+	}
+	return {};
 }
 
 int Inventory::add(const ObjectPtr & object) {
 	object->persistent(false);
 	for (uint i = 0; i < _entries.size(); ++i) {
-		if (!_entries[i]) {
-			_entries[i] = object;
+		auto & entry = _entries[i];
+		if (!entry.hasObject) {
+			entry.name = object->getName();
+			entry.object = object;
+			entry.hasObject = true;
 			return i;
 		}
 	}
@@ -80,9 +89,9 @@ int Inventory::add(const ObjectPtr & object) {
 bool Inventory::remove(const Common::String &name) {
 	bool removed = false;
 	for (uint i = 0; i < _entries.size(); ++i) {
-		auto & object = _entries[i];
-		if (object && object->getName() == name) {
-			object.reset();
+		auto & entry = _entries[i];
+		if (entry.hasObject && entry.name == name) {
+			entry.reset();
 			removed = true;
 		}
 	}
@@ -92,7 +101,8 @@ bool Inventory::remove(const Common::String &name) {
 void Inventory::removeGaps() {
 	auto n = _entries.size();
 	for (uint src = 0, dst = 0; src < n; ++src) {
-		if (_entries[src])
+		auto & entry = _entries[src];
+		if (entry.hasObject)
 		{
 			if (dst != src)
 			{
@@ -107,18 +117,21 @@ void Inventory::removeGaps() {
 }
 
 int Inventory::find(const Common::String &name) const {
-	for (uint i = 0; i < _entries.size(); ++i)
-		if (_entries[i] && _entries[i]->getName() == name)
+	for (uint i = 0; i < _entries.size(); ++i) {
+		auto & entry = _entries[i];
+		if (entry.hasObject && entry.name == name)
 			return i;
+	}
 	return -1;
 }
 
 ObjectPtr Inventory::find(const Common::Point pos) const {
 	for (uint i = 0; i < _entries.size(); ++i) {
-		auto & object = _entries[i];
-		if (!object)
+		auto & entry = _entries[i];
+		if (!entry.object)
 			continue;
 
+		auto & object = entry.object;
 		auto picture = object->getPicture();
 		if (picture) {
 			auto rect = picture->getRect();
@@ -138,29 +151,24 @@ void Inventory::clear() {
 
 void Inventory::load(Common::ReadStream* stream) {
 	clear();
-	int n = kMaxSize;
-	while(n--) {
+	for(int i = 0; i < kMaxSize; ++i) {
 		Common::String name = readString(stream);
 		int refcount = stream->readUint32LE();
 		int objectPtr = stream->readUint32LE();
 		if (!name.empty() && refcount) {
-			debug("inventory: %s %d %d", name.c_str(), refcount, objectPtr);
-			add(_engine->runObject(name));
+			debug("load inventory object: %s %d %d", name.c_str(), refcount, objectPtr);
+			auto & entry = _entries[i];
+			entry.name = name;
+			entry.hasObject = true;
 		}
 	}
 }
 
 void Inventory::save(Common::WriteStream* stream) const {
 	for(auto & entry : _entries) {
-		if (entry) {
-			writeString(stream, entry->getName());
-			stream->writeUint32LE(1);
-			stream->writeSint32LE(-1);
-		} else {
-			writeString(stream, Common::String());
-			stream->writeUint32LE(0);
-			stream->writeSint32LE(0);
-		}
+		writeString(stream, entry.name);
+		stream->writeUint32LE(entry.hasObject? 1: 0);
+		stream->writeSint32LE(entry.hasObject? -1: 0);
 	}
 }
 
