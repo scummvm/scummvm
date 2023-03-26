@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 16:02+0000\n"
-"PO-Revision-Date: 2023-03-26 16:25+0000\n"
+"PO-Revision-Date: 2023-03-26 16:37+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -22,9 +22,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
-#, fuzzy, c-format
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(%s को बनाया गया)"
+msgstr "(%s को बनाया गया %s के इस्तेमाल से )"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
@@ -220,18 +220,18 @@ msgstr ""
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list..."
-msgstr "डाउनलोड पूरा हुआ।"
+msgstr "%S लिस्ट डाउनलोड हो रही है।"
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
 msgstr ""
 
 #: gui/downloadpacksdialog.cpp:251
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "डाउनलोड पूरा हुआ।"
+msgstr "%S लिस्ट डाउनलोड हो रही है %d एंट्रीज के साथ"
 
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
@@ -785,17 +785,15 @@ msgstr ""
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
 msgctxt "group"
 msgid "Language"
-msgstr "भाषा:"
+msgstr "भाषा"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
 msgctxt "group"
 msgid "Platform"
-msgstr "प्लैटफॉर्म:"
+msgstr "प्लैटफॉर्म"
 
 #: gui/launcher.cpp:212
 msgid "Select Group by"
@@ -820,7 +818,6 @@ msgstr "ScummVM बंद करें"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
 #: gui/launcher.cpp:253
-#, fuzzy
 msgid "A~b~out"
 msgstr "जानकारी(B)..."
 
@@ -1952,7 +1949,6 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:2861
-#, fuzzy
 msgid ""
 "\n"
 "And more..."
@@ -2609,7 +2605,6 @@ msgid "~S~ave"
 msgstr ""
 
 #: engines/dialogs.cpp:78
-#, fuzzy
 msgid "~O~ptions"
 msgstr "विकल्प(O)..."
 
@@ -4761,7 +4756,7 @@ msgstr ""
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
 msgid "Game Options"
-msgstr "गेम  विकल्प(O)..."
+msgstr "गेम विकल्प(O)..."
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -6060,7 +6055,7 @@ msgstr ""
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Search"
-msgstr "खोजें:"
+msgstr "खोजें"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:107
@@ -6693,9 +6688,8 @@ msgid "Pocket PC Trial version is not supported"
 msgstr ""
 
 #: engines/saga/metaengine.cpp:114
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "I Have No Mouth सपोर्ट नहीं कम्पाइल किया गया"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -6889,9 +6883,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/metaengine.cpp:301
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "SCI32 सपोर्ट नहीं कम्पाइल किया गया"
 
 #: engines/sci/resource/resource.cpp:863
 msgid ""
@@ -7307,9 +7300,8 @@ msgid "Spinning drafts on the keyboard:"
 msgstr ""
 
 #: engines/scumm/help.cpp:114
-#, fuzzy
 msgid "Main game controls:"
-msgstr "खेल के विकल्प चुनें"
+msgstr "मुख्य खेल के कंट्रोल:"
 
 #: engines/scumm/help.cpp:119 engines/scumm/help.cpp:134
 #: engines/scumm/help.cpp:159
@@ -7531,9 +7523,8 @@ msgid "Save / Load / Options"
 msgstr ""
 
 #: engines/scumm/help.cpp:255
-#, fuzzy
 msgid "Other game controls:"
-msgstr "खेल के विकल्प चुनें"
+msgstr "दूसरे खेल के कंट्रोल चुनें:"
 
 #: engines/scumm/help.cpp:257 engines/scumm/help.cpp:267
 msgid "Inventory:"
@@ -7720,14 +7711,12 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:460
-#, fuzzy
 msgid "HE v71+ support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "HE v71+ सपोर्ट नहीं कम्पाइल हुआ"
 
 #: engines/scumm/metaengine.cpp:484
-#, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "SCUMM v7-8 सपोर्ट नहीं कम्पाइल हुआ"
 
 #: engines/scumm/metaengine.cpp:604
 msgid "Show Object Line"
@@ -8575,9 +8564,8 @@ msgid ""
 msgstr ""
 
 #: engines/vcruise/vcruise.cpp:76
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
-msgstr "सुविधा बनाए गए:"
+msgstr "यह गेम JPEG सपोर्ट नहीं मांगता, जो कम्पिल नहीं हुआ।"
 
 #: engines/vcruise/vcruise.cpp:83
 msgid ""
@@ -8628,14 +8616,12 @@ msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
 
 #: engines/wintermute/metaengine.cpp:112
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "FoxTail सपोर्ट नहीं कम्पाइल हुआ"
 
 #: engines/wintermute/metaengine.cpp:118
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "सुविधा बनाए गए:"
+msgstr "HeroCraft सपोर्ट नहीं कम्पाइल हुआ"
 
 #: engines/wintermute/metaengine.cpp:124
 msgid "Wintermute3D support is not compiled in"
