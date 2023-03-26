@@ -38,7 +38,7 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/ini-file.h"
+#include "common/formats/ini-file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/system.h"
