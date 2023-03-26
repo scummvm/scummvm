@@ -275,7 +275,7 @@ void ScummVMRendererGraphicsDriver::InitSpriteBatch(size_t index, const SpriteBa
 	const int src_h = desc.Viewport.GetHeight() / desc.Transform.ScaleY;
 	// Surface was prepared externally (common for room cameras)
 	if (desc.Surface != nullptr) {
-		batch.Surface = std::static_pointer_cast<Bitmap>(desc.Surface);
+		batch.Surface = desc.Surface;
 		batch.Opaque = true;
 		batch.IsVirtualScreen = false;
 	}
