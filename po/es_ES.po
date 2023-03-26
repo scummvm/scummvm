@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2023-03-25 22:23+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -5697,19 +5697,19 @@ msgstr "Activar trucos"
 msgid "Debug info and level selection becomes available"
 msgstr "Desbloquea la información de depuración y el selector de nivel"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "Mover hacia arriba"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "Mover hacia abajo"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "Mover hacia la izquierda"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "Mover hacia la derecha"
 
@@ -6861,49 +6861,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Nombre del archivo de partida inválido"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "Interactuar con el botón izquierdo"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "Interactuar con el botón derecho"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "Modificador de movimiento rápido"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "Acelerar conversaciones"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "Terminar conversaciones"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "Ir al menú principal"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "Ir al menú de guardado/carga"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "Cargar la última partida guardada"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "Ir al menú de configuración"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "Mostrar créditos"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "Ir a la pantalla del mapa"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6927,40 +6895,9 @@ msgstr ""
 "Activa las voces de los PNJs. Esta opción solo surtirá efecto si las voces "
 "están activadas en las opciones de audio."
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "Usar menús originales"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-"Utiliza los menús principal, de guardado, de carga y de opciones que trae el "
-"juego. El menú principal global de ScummVM sigue estan accesible a través de "
-"su botón asignado."
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "Activar segunda oportunidad"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-"Activa el sistema de segundas oportunidades, que guarda automáticamente el "
-"progreso en escenas concretas. Esta opción desactiva los autoguardados "
-"periódicos."
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "Opciones de voces"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "Opciones de motor"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9953,6 +9890,55 @@ msgstr ""
 "Necesitarás todas las fuentes del paquete que prefieras, por ejemplo, "
 "LiberationMono, LiberationSans y LiberationSerif, o FreeMono, FreeSans y "
 "FreeSerif respectivamente."
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Acelerar conversaciones"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Terminar conversaciones"
+
+#~ msgid "Go to main menu"
+#~ msgstr "Ir al menú principal"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "Ir al menú de guardado/carga"
+
+#~ msgid "Reload last save"
+#~ msgstr "Cargar la última partida guardada"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "Ir al menú de configuración"
+
+#~ msgid "Show credits"
+#~ msgstr "Mostrar créditos"
+
+#~ msgid "Go to map screen"
+#~ msgstr "Ir a la pantalla del mapa"
+
+#~ msgid "Use original menus"
+#~ msgstr "Usar menús originales"
+
+#~ msgid ""
+#~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
+#~ "Global Main Menu can still be accessed through its keymap."
+#~ msgstr ""
+#~ "Utiliza los menús principal, de guardado, de carga y de opciones que trae "
+#~ "el juego. El menú principal global de ScummVM sigue estan accesible a "
+#~ "través de su botón asignado."
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "Activar segunda oportunidad"
+
+#~ msgid ""
+#~ "Enable the Second Chance feature, which automatically saves at specific "
+#~ "scenes. Enabling this disables timed autosaves."
+#~ msgstr ""
+#~ "Activa el sistema de segundas oportunidades, que guarda automáticamente "
+#~ "el progreso en escenas concretas. Esta opción desactiva los autoguardados "
+#~ "periódicos."
+
+#~ msgid "Engine Options"
+#~ msgstr "Opciones de motor"
 
 #, fuzzy
 #~| msgid "D-pad Left"

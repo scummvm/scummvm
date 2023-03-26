@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5580,19 +5580,19 @@ msgstr "치트 모드 활성화"
 msgid "Debug info and level selection becomes available"
 msgstr "디버그 정보와 레벨 선택이 가능해집니다"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "위로 이동"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "아래로 이동"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "왼쪽으로 이동"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "오른쪽으로 이동"
 
@@ -6754,49 +6754,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "잘못된 저장 파일 이름"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "왼쪽 클릭 상호 작용"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "오른쪽 클릭 상호 작용"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "빠른 이동 변경"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "빠른 대화 모드 토글"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "대화 종료 모드 토글"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "메인 메뉴로 이동"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "저장/불러오기 메뉴로 이동"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "마지막 저장을 다시 불러오기"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "셋업 메뉴로 이동"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "크레딧 표시"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "지도 화면으로 이동"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6819,38 +6787,9 @@ msgid ""
 msgstr ""
 "NPC 음성을 활성화합니다. 오디오 설정에서 음성이 활성화된 경우만 동작합니다."
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "원본 메뉴 사용"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-"원본 엔진의 메인, 저장/불러오기, 셋업 메뉴를 사용합니다. ScummVM의 전역 메인 "
-"메뉴도 설정된 키를 사용해 접근 가능합니다."
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "Second Chance 활성화"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-"특정 씬에서 자동 저장하는 Second Chance 기능을 활성화합니다. 이 기능을 활성화"
-"하면 시간별 자동 저장 기능이 비활성화됩니다."
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "음성 옵션"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "엔진 옵션"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9745,6 +9684,53 @@ msgstr ""
 "다. 선택한 글꼴 패키지의 모든 글꼴이 필요할 수 있습니다. 예: LiberationMono, "
 "LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각"
 "각 필요함."
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "빠른 대화 모드 토글"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "대화 종료 모드 토글"
+
+#~ msgid "Go to main menu"
+#~ msgstr "메인 메뉴로 이동"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "저장/불러오기 메뉴로 이동"
+
+#~ msgid "Reload last save"
+#~ msgstr "마지막 저장을 다시 불러오기"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "셋업 메뉴로 이동"
+
+#~ msgid "Show credits"
+#~ msgstr "크레딧 표시"
+
+#~ msgid "Go to map screen"
+#~ msgstr "지도 화면으로 이동"
+
+#~ msgid "Use original menus"
+#~ msgstr "원본 메뉴 사용"
+
+#~ msgid ""
+#~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
+#~ "Global Main Menu can still be accessed through its keymap."
+#~ msgstr ""
+#~ "원본 엔진의 메인, 저장/불러오기, 셋업 메뉴를 사용합니다. ScummVM의 전역 메"
+#~ "인 메뉴도 설정된 키를 사용해 접근 가능합니다."
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "Second Chance 활성화"
+
+#~ msgid ""
+#~ "Enable the Second Chance feature, which automatically saves at specific "
+#~ "scenes. Enabling this disables timed autosaves."
+#~ msgstr ""
+#~ "특정 씬에서 자동 저장하는 Second Chance 기능을 활성화합니다. 이 기능을 활"
+#~ "성화하면 시간별 자동 저장 기능이 비활성화됩니다."
+
+#~ msgid "Engine Options"
+#~ msgstr "엔진 옵션"
 
 #, fuzzy
 #~| msgid "D-pad Left"

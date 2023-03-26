@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -5532,19 +5532,19 @@ msgstr "אפשר מצב רמאות"
 msgid "Debug info and level selection becomes available"
 msgstr "מידע על ניפוי באגים ובחירת הרמה הופך לזמין"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "תזוזה מעלה"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "תזוזה מטה"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "תזוזה שמאלה"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "תזוזה ימינה"
 
@@ -6693,49 +6693,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "שם קובץ לא חוקי לשמירה"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "פעולת לחיצה שמאלית"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "פעולת לחיצה ימנית"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "מקש תזוזה מהירה"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "מיתוג מצב שיחה מהירה"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "מיתוג מצב סיום שיחה"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "חזרה לתפריט הראשי"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "מעבר אל תפריט שמירה/טעינה"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "טעינת השמירה האחרונה מחדש"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "מעבר לתפריט התקנה"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "הצגת כתוביות סיום"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "מעבר למסך מפה"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6755,38 +6723,9 @@ msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr "הפעלת דיבור דמויות שאינן השחקן. פעיל רק כאשר הדיבור מופעל בהגדרות שמע."
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "שימוש בתפריטים מקוריים"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-"שימוש בתפריט הראשי ותפריטי התקנה, שמירה/טעינה מקוריים. ניתן לגשת לתפריט "
-"הראשי המקיף של ScummVM באמצעות מיפוי המקשים."
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "הפעלת הזדמנות שניה"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-"הפעלת תכונת הזדמנות שניה, שמאפשרת שמירה אוטומטית במסכים מסוימים. הפעלת תכונה "
-"זו מבטלת שמירות אוטומטיות מתוזמנות."
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "אפשרויות דיבור"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "אפשרויות מנוע"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9675,6 +9614,53 @@ msgstr ""
 "New ו-Arial. לחלופין,ניתן להוריד את חבילת GNU FreeFont או גופני Liberation. "
 "יש להעתיק את כל הגופנים מהחבילה שנבחרה, לדוגמה, FreeMono, FreeSans ו-"
 "FreeSerif או LiberationMono, LiberationSans ו-LiberationSerif בהתאמה."
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "מיתוג מצב שיחה מהירה"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "מיתוג מצב סיום שיחה"
+
+#~ msgid "Go to main menu"
+#~ msgstr "חזרה לתפריט הראשי"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "מעבר אל תפריט שמירה/טעינה"
+
+#~ msgid "Reload last save"
+#~ msgstr "טעינת השמירה האחרונה מחדש"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "מעבר לתפריט התקנה"
+
+#~ msgid "Show credits"
+#~ msgstr "הצגת כתוביות סיום"
+
+#~ msgid "Go to map screen"
+#~ msgstr "מעבר למסך מפה"
+
+#~ msgid "Use original menus"
+#~ msgstr "שימוש בתפריטים מקוריים"
+
+#~ msgid ""
+#~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
+#~ "Global Main Menu can still be accessed through its keymap."
+#~ msgstr ""
+#~ "שימוש בתפריט הראשי ותפריטי התקנה, שמירה/טעינה מקוריים. ניתן לגשת לתפריט "
+#~ "הראשי המקיף של ScummVM באמצעות מיפוי המקשים."
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "הפעלת הזדמנות שניה"
+
+#~ msgid ""
+#~ "Enable the Second Chance feature, which automatically saves at specific "
+#~ "scenes. Enabling this disables timed autosaves."
+#~ msgstr ""
+#~ "הפעלת תכונת הזדמנות שניה, שמאפשרת שמירה אוטומטית במסכים מסוימים. הפעלת "
+#~ "תכונה זו מבטלת שמירות אוטומטיות מתוזמנות."
+
+#~ msgid "Engine Options"
+#~ msgstr "אפשרויות מנוע"
 
 #, fuzzy
 #~| msgid "D-pad Left"

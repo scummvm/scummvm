@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -5358,19 +5358,19 @@ msgstr ""
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr ""
 
@@ -6426,48 +6426,16 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
-msgstr ""
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr ""
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr ""
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr ""
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr ""
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr ""
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr ""
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "顯示製作者名單"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:40
@@ -6488,34 +6456,9 @@ msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr ""
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr ""
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "語音選項"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "引擎選項"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9262,6 +9205,12 @@ msgstr ""
 "载 Liberation Fonts 或 GNU FreeFont 这两套字体包，并二选一。你会需要用到其中"
 "任意一套中的全部字体，也就是：LiberationMono，LiberationSans 和"
 "LiberationSerif ，或者 FreeMono，FreeSans 和 FreeSerif。"
+
+#~ msgid "Show credits"
+#~ msgstr "顯示製作者名單"
+
+#~ msgid "Engine Options"
+#~ msgstr "引擎選項"
 
 #~ msgid "Cancel autosave"
 #~ msgstr "取消自動存檔"

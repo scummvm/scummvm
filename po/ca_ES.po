@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2023-03-15 01:34+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5587,19 +5587,19 @@ msgstr "Habilita el mode amb trucs (cheats)"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "Mou amunt"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "Mou avall"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "Mou a l'esquerra"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "Mou a la dreta"
 
@@ -6681,49 +6681,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Nom de fitxer no válid per desar la partida"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "Interacciona amb el clic esquerre"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "Interacciona amb el clic dret"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "Modificador de moviment ràpid"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "Commuta el mode de conversa ràpida"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "Commuta el mode de conversa final"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "Ves al menú principal"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "Ves al menú de desar/carregar"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "Torna a carregar l'última partida desada"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "Ves al menú de configuració"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "Mostra els crèdits"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "Ves a la pantalla del mapa"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6743,34 +6711,9 @@ msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "Utilitza els menús originals"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "Habilita la Segona Oportunitat"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "Opcions de veus"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "Opcions del motor"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9556,6 +9499,39 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Commuta el mode de conversa ràpida"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Commuta el mode de conversa final"
+
+#~ msgid "Go to main menu"
+#~ msgstr "Ves al menú principal"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "Ves al menú de desar/carregar"
+
+#~ msgid "Reload last save"
+#~ msgstr "Torna a carregar l'última partida desada"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "Ves al menú de configuració"
+
+#~ msgid "Show credits"
+#~ msgstr "Mostra els crèdits"
+
+#~ msgid "Go to map screen"
+#~ msgstr "Ves a la pantalla del mapa"
+
+#~ msgid "Use original menus"
+#~ msgstr "Utilitza els menús originals"
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "Habilita la Segona Oportunitat"
+
+#~ msgid "Engine Options"
+#~ msgstr "Opcions del motor"
 
 #, fuzzy
 #~| msgid "D-pad Left"

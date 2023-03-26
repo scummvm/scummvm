@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2023-03-25 18:49+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5566,19 +5566,19 @@ msgstr "チートモードを有効化"
 msgid "Debug info and level selection becomes available"
 msgstr "デバッグ情報とレベル選択を利用可能にする"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "上"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "下"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "左に行く"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "右に行く"
 
@@ -6696,49 +6696,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "無効なセーブファイル名です"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "左クリックで会話"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "右クリックで会話"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "高速移動の修正"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "高速会話モードの切り替え"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "会話スキップモードの切り替え"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "メインメニューへ"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "セーブ/ロードメニューへ"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "最後にセーブしたデータをリロード"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "セットアップメニューへ"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "クレジットを表示"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "マップ画面へ"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6762,39 +6730,9 @@ msgstr ""
 "NPCスピーチを有効にします。オーディオ設定でスピーチが有効になっている場合のみ"
 "動作します。"
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "オリジナルのメニューを使用"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-"オリジナルエンジンのメインメニュー、セーブ/ロードメニュー、セットアップメ"
-"ニューを使用します。ScummVMの総合メインメニューは、キーマップからもアクセスで"
-"きます。"
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "セカンド・チャンス(オートセーブ)を有効化"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-"特定のシーンでオートセーブする「セカンド・チャンス」機能を有効化します。この"
-"場合、一定間隔でオートセーブする機能が無効化されます。"
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "スピーチオプション"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "エンジンオプション"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9693,6 +9631,54 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "高速会話モードの切り替え"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "会話スキップモードの切り替え"
+
+#~ msgid "Go to main menu"
+#~ msgstr "メインメニューへ"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "セーブ/ロードメニューへ"
+
+#~ msgid "Reload last save"
+#~ msgstr "最後にセーブしたデータをリロード"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "セットアップメニューへ"
+
+#~ msgid "Show credits"
+#~ msgstr "クレジットを表示"
+
+#~ msgid "Go to map screen"
+#~ msgstr "マップ画面へ"
+
+#~ msgid "Use original menus"
+#~ msgstr "オリジナルのメニューを使用"
+
+#~ msgid ""
+#~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
+#~ "Global Main Menu can still be accessed through its keymap."
+#~ msgstr ""
+#~ "オリジナルエンジンのメインメニュー、セーブ/ロードメニュー、セットアップメ"
+#~ "ニューを使用します。ScummVMの総合メインメニューは、キーマップからもアクセ"
+#~ "スできます。"
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "セカンド・チャンス(オートセーブ)を有効化"
+
+#~ msgid ""
+#~ "Enable the Second Chance feature, which automatically saves at specific "
+#~ "scenes. Enabling this disables timed autosaves."
+#~ msgstr ""
+#~ "特定のシーンでオートセーブする「セカンド・チャンス」機能を有効化します。こ"
+#~ "の場合、一定間隔でオートセーブする機能が無効化されます。"
+
+#~ msgid "Engine Options"
+#~ msgstr "エンジンオプション"
 
 #, fuzzy
 #~| msgid "D-pad Left"

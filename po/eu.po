@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -5692,22 +5692,22 @@ msgstr "Gaitu helio modua"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 #, fuzzy
 msgid "Move up"
 msgstr "Atzera mugitu"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 #, fuzzy
 msgid "Move down"
 msgstr "Eskuinera irristatu"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 #, fuzzy
 msgid "Move left"
 msgstr "Ezkerrera irristatu"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 #, fuzzy
 msgid "Move right"
 msgstr "Eskuinera irristatu"
@@ -6847,60 +6847,20 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Sartu gordetzeko fitxategi-izena"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 #, fuzzy
 msgid "Left Click Interact"
 msgstr "Ezker-klika"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "Eskuin-klika behin"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 #, fuzzy
 msgid "Fast move modifier"
 msgstr "Modu bizkorra"
-
-#: engines/nancy/input.cpp:203
-#, fuzzy
-msgid "Toggle fast conversation mode"
-msgstr "Modu bizkorra"
-
-#: engines/nancy/input.cpp:208
-#, fuzzy
-msgid "Toggle end conversation mode"
-msgstr "Modu bizkorra"
-
-#: engines/nancy/input.cpp:213
-#, fuzzy
-msgid "Go to main menu"
-msgstr "It~z~uli abiarazlera"
-
-#: engines/nancy/input.cpp:218
-#, fuzzy
-msgid "Go to save/load menu"
-msgstr "Sartu partida gordeak dituen diskoa"
-
-#: engines/nancy/input.cpp:223
-#, fuzzy
-msgid "Reload last save"
-msgstr "Ez dago datarik gordeta"
-
-#: engines/nancy/input.cpp:228
-#, fuzzy
-msgid "Go to setup menu"
-msgstr "Aukerak"
-
-#: engines/nancy/input.cpp:233
-#, fuzzy
-msgid "Show credits"
-msgstr "Saguaren kurtsorea erakutsi"
-
-#: engines/nancy/input.cpp:238
-#, fuzzy
-msgid "Go to map screen"
-msgstr "Heldutako korritze barra gaituta"
 
 #: engines/nancy/dialogs.cpp:40
 #, fuzzy
@@ -6921,38 +6881,10 @@ msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:42
-#, fuzzy
-msgid "Use original menus"
-msgstr "Erabili jatorrizko gorde/kargatu pantailak"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-#, fuzzy
-msgid "Enable Second Chance"
-msgstr "Gaitu helio modua"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 #, fuzzy
 msgid "Speech Options"
 msgstr "Ahotsak bakarrik"
-
-#: engines/nancy/dialogs.cpp:48
-#, fuzzy
-msgid "Engine Options"
-msgstr "Aukerak"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9916,6 +9848,50 @@ msgstr ""
 "ditzazkezu. Aukeratutako paketeko letra-tipo guztiak beharko dituzu, hau da, "
 "LiberationMono, LiberationSans eta LiberationSerif, edo FreeMono, FreeSans "
 "eta FreeSerif hurrenez hurren."
+
+#, fuzzy
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Modu bizkorra"
+
+#, fuzzy
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Modu bizkorra"
+
+#, fuzzy
+#~ msgid "Go to main menu"
+#~ msgstr "It~z~uli abiarazlera"
+
+#, fuzzy
+#~ msgid "Go to save/load menu"
+#~ msgstr "Sartu partida gordeak dituen diskoa"
+
+#, fuzzy
+#~ msgid "Reload last save"
+#~ msgstr "Ez dago datarik gordeta"
+
+#, fuzzy
+#~ msgid "Go to setup menu"
+#~ msgstr "Aukerak"
+
+#, fuzzy
+#~ msgid "Show credits"
+#~ msgstr "Saguaren kurtsorea erakutsi"
+
+#, fuzzy
+#~ msgid "Go to map screen"
+#~ msgstr "Heldutako korritze barra gaituta"
+
+#, fuzzy
+#~ msgid "Use original menus"
+#~ msgstr "Erabili jatorrizko gorde/kargatu pantailak"
+
+#, fuzzy
+#~ msgid "Enable Second Chance"
+#~ msgstr "Gaitu helio modua"
+
+#, fuzzy
+#~ msgid "Engine Options"
+#~ msgstr "Aukerak"
 
 #, fuzzy
 #~ msgid "D-pad Center"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2023-03-18 19:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5634,19 +5634,19 @@ msgstr "Csaló mód engedélyezés"
 msgid "Debug info and level selection becomes available"
 msgstr "Hibakeresési információ és szintválasztás elérhetõvé válik"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "Mozgás fel"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "Mozgás le"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "Mozgás balra"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "Mozgás jobbra"
 
@@ -6814,49 +6814,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Érvénytelen fájlnév a mentéshez"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "Bal Katt Interakció"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "Jobb Katt Interakció"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "Gyors mozgás módosító"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "Váltás gyors beszélgetési módra"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "Váltás beszélgetés vége módra"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "Vissza a fő menübe"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "Menj a ment/betölt menübe"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "Utolsó mentés újratöltése"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "Lépj a beállítás menübe"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "Kreditek megjelenítése"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "Ugrás a térkép képernyőre"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6880,38 +6848,9 @@ msgstr ""
 "Engedélyezi az NPC beszédet. Csak akkor működik, ha a beszéd engedélyezve "
 "van az Audio beállításokban."
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "Eredeti menük használata"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-"Használja az eredeti motor fő, mentés/betöltés és beállítási menüt. A "
-"ScummVM globális főmenüje továbbra is elérhető a billentyűzeten keresztül."
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "Engedélyezi a Második Esélyt"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-"Engedélyezi a Második Esély funkciót, mely automatikusan ment bizonyos "
-"helyeken. Ennek engedélyezése letiltja az időzített automatikus mentést."
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "Beszéd Beállítások"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "Motor Opciók"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9857,6 +9796,53 @@ msgstr ""
 "FreeFont csomagot. Szükséged lesz az összes betűtípusra a választott "
 "betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
 "vagy FreeMono, FreeSans és FreeSerif választhatóan."
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Váltás gyors beszélgetési módra"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Váltás beszélgetés vége módra"
+
+#~ msgid "Go to main menu"
+#~ msgstr "Vissza a fő menübe"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "Menj a ment/betölt menübe"
+
+#~ msgid "Reload last save"
+#~ msgstr "Utolsó mentés újratöltése"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "Lépj a beállítás menübe"
+
+#~ msgid "Show credits"
+#~ msgstr "Kreditek megjelenítése"
+
+#~ msgid "Go to map screen"
+#~ msgstr "Ugrás a térkép képernyőre"
+
+#~ msgid "Use original menus"
+#~ msgstr "Eredeti menük használata"
+
+#~ msgid ""
+#~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
+#~ "Global Main Menu can still be accessed through its keymap."
+#~ msgstr ""
+#~ "Használja az eredeti motor fő, mentés/betöltés és beállítási menüt. A "
+#~ "ScummVM globális főmenüje továbbra is elérhető a billentyűzeten keresztül."
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "Engedélyezi a Második Esélyt"
+
+#~ msgid ""
+#~ "Enable the Second Chance feature, which automatically saves at specific "
+#~ "scenes. Enabling this disables timed autosaves."
+#~ msgstr ""
+#~ "Engedélyezi a Második Esély funkciót, mely automatikusan ment bizonyos "
+#~ "helyeken. Ennek engedélyezése letiltja az időzített automatikus mentést."
+
+#~ msgid "Engine Options"
+#~ msgstr "Motor Opciók"
 
 #, fuzzy
 #~| msgid "D-pad Left"

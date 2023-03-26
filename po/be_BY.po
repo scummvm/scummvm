@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -5625,19 +5625,19 @@ msgstr "Уключыць рэжым c чытамі"
 msgid "Debug info and level selection becomes available"
 msgstr "Робяцца даступнымі адладачная інфармацыя і выбар узроўня"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "Рухацца ўгару"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "Рухацца ўніз"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "Рухацца налева"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "Рухацца направа"
 
@@ -6791,60 +6791,20 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Няправільнае імя файла для запісу"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 #, fuzzy
 msgid "Left Click Interact"
 msgstr "Левая пстрычка"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "Адна правая пстрычка"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 #, fuzzy
 msgid "Fast move modifier"
 msgstr "Хуткі рэжым"
-
-#: engines/nancy/input.cpp:203
-#, fuzzy
-msgid "Toggle fast conversation mode"
-msgstr "Пераключыць хуткі рэжым"
-
-#: engines/nancy/input.cpp:208
-#, fuzzy
-msgid "Toggle end conversation mode"
-msgstr "Пераключыць хуткі рэжым"
-
-#: engines/nancy/input.cpp:213
-#, fuzzy
-msgid "Go to main menu"
-msgstr "Г~а~лоўнае меню"
-
-#: engines/nancy/input.cpp:218
-#, fuzzy
-msgid "Go to save/load menu"
-msgstr "Устаўце дыск з захаваннямі"
-
-#: engines/nancy/input.cpp:223
-#, fuzzy
-msgid "Reload last save"
-msgstr "Дата не запісана"
-
-#: engines/nancy/input.cpp:228
-#, fuzzy
-msgid "Go to setup menu"
-msgstr "Паказаць меню опцый"
-
-#: engines/nancy/input.cpp:233
-#, fuzzy
-msgid "Show credits"
-msgstr "Паказаць аўтараў гульні"
-
-#: engines/nancy/input.cpp:238
-#, fuzzy
-msgid "Go to map screen"
-msgstr "Захаваць скрыншот"
 
 #: engines/nancy/dialogs.cpp:40
 #, fuzzy
@@ -6865,38 +6825,10 @@ msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:42
-#, fuzzy
-msgid "Use original menus"
-msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытання гульні"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-#, fuzzy
-msgid "Enable Second Chance"
-msgstr "Уключыць рэжым c чытамі"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 #, fuzzy
 msgid "Speech Options"
 msgstr "Толькі агучка"
-
-#: engines/nancy/dialogs.cpp:48
-#, fuzzy
-msgid "Engine Options"
-msgstr "Опцыі"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9839,6 +9771,50 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Пераключыць хуткі рэжым"
+
+#, fuzzy
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Пераключыць хуткі рэжым"
+
+#, fuzzy
+#~ msgid "Go to main menu"
+#~ msgstr "Г~а~лоўнае меню"
+
+#, fuzzy
+#~ msgid "Go to save/load menu"
+#~ msgstr "Устаўце дыск з захаваннямі"
+
+#, fuzzy
+#~ msgid "Reload last save"
+#~ msgstr "Дата не запісана"
+
+#, fuzzy
+#~ msgid "Go to setup menu"
+#~ msgstr "Паказаць меню опцый"
+
+#, fuzzy
+#~ msgid "Show credits"
+#~ msgstr "Паказаць аўтараў гульні"
+
+#, fuzzy
+#~ msgid "Go to map screen"
+#~ msgstr "Захаваць скрыншот"
+
+#, fuzzy
+#~ msgid "Use original menus"
+#~ msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытання гульні"
+
+#, fuzzy
+#~ msgid "Enable Second Chance"
+#~ msgstr "Уключыць рэжым c чытамі"
+
+#, fuzzy
+#~ msgid "Engine Options"
+#~ msgstr "Опцыі"
 
 #, fuzzy
 #~| msgid "D-pad Left"

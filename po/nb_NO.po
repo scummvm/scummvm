@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2023-03-08 14:02+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -5660,19 +5660,19 @@ msgstr "Aktiver juksemodus"
 msgid "Debug info and level selection becomes available"
 msgstr "Debug-informasjon og nivåvalg blir tilgjengelig"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "Gå oppover"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "Gå nedover"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "Gå til venstre"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "Gå til høyre"
 
@@ -6859,49 +6859,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Ugyldig filnavn for lagring"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "Samhandle med venstreklikk"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "Samhandle med høyreklikk"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "Modifikator for hurtig bevegelse"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "Bytt til modus for raske samtaler"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "Bytt til modus for å avslutte samtaler"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "Gå til hovedmeny"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "Gå til meny for lagring/lasting"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "Last forrige lagrede spill på nytt"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "Gå til konfigurasjonsmeny"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "Vis medvirkende"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "Gå til kartskjerm"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6922,40 +6890,9 @@ msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr "Aktiver NPC-tale. Virker kun om tale er aktivert i lydinnstillingene."
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "Bruk de opprinnelige menyene"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-"Bruk spillmotorens originale menyer (hovedmeny, lagre/laste og "
-"spilloppsett). ScummVMs globale hovedmeny kan fortsatt åpnes via den "
-"dedikerte snarveien."
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "Aktiver Second Chance"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-"Aktiver Second Chance-funksjonen, som automatisk lagrer ved spesifikke "
-"scener. Aktivering av denne funksjonen skrur av tidsbasert automatisk "
-"lagring."
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "Talealternativer"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "Spillmotoralternativer"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9937,6 +9874,55 @@ msgstr ""
 "Liberation Fonts-pakken eller GNU FreeFont-pakken. Du trenger alle fontene "
 "fra fontpakken du velger å bruke, dvs. enten LiberationMono, LiberationSans "
 "og LiberationSerif eller FreeMono, FreeSans og FreeSerif."
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Bytt til modus for raske samtaler"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Bytt til modus for å avslutte samtaler"
+
+#~ msgid "Go to main menu"
+#~ msgstr "Gå til hovedmeny"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "Gå til meny for lagring/lasting"
+
+#~ msgid "Reload last save"
+#~ msgstr "Last forrige lagrede spill på nytt"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "Gå til konfigurasjonsmeny"
+
+#~ msgid "Show credits"
+#~ msgstr "Vis medvirkende"
+
+#~ msgid "Go to map screen"
+#~ msgstr "Gå til kartskjerm"
+
+#~ msgid "Use original menus"
+#~ msgstr "Bruk de opprinnelige menyene"
+
+#~ msgid ""
+#~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
+#~ "Global Main Menu can still be accessed through its keymap."
+#~ msgstr ""
+#~ "Bruk spillmotorens originale menyer (hovedmeny, lagre/laste og "
+#~ "spilloppsett). ScummVMs globale hovedmeny kan fortsatt åpnes via den "
+#~ "dedikerte snarveien."
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "Aktiver Second Chance"
+
+#~ msgid ""
+#~ "Enable the Second Chance feature, which automatically saves at specific "
+#~ "scenes. Enabling this disables timed autosaves."
+#~ msgstr ""
+#~ "Aktiver Second Chance-funksjonen, som automatisk lagrer ved spesifikke "
+#~ "scener. Aktivering av denne funksjonen skrur av tidsbasert automatisk "
+#~ "lagring."
+
+#~ msgid "Engine Options"
+#~ msgstr "Spillmotoralternativer"
 
 #, fuzzy
 #~| msgid "D-pad Left"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -5671,22 +5671,22 @@ msgstr "Slå på heliummodus"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 #, fuzzy
 msgid "Move up"
 msgstr "Beveg Bakover"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 #, fuzzy
 msgid "Move down"
 msgstr "Skli til Høyre"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 #, fuzzy
 msgid "Move left"
 msgstr "Skli til Venstre"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 #, fuzzy
 msgid "Move right"
 msgstr "Skli til Høyre"
@@ -6815,60 +6815,20 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Skriv inn filnamn for lagring"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 #, fuzzy
 msgid "Left Click Interact"
 msgstr "Venstreklikk"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "Høgreklikk ein gong"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 #, fuzzy
 msgid "Fast move modifier"
 msgstr "Rask modus"
-
-#: engines/nancy/input.cpp:203
-#, fuzzy
-msgid "Toggle fast conversation mode"
-msgstr "Rask modus"
-
-#: engines/nancy/input.cpp:208
-#, fuzzy
-msgid "Toggle end conversation mode"
-msgstr "Rask modus"
-
-#: engines/nancy/input.cpp:213
-#, fuzzy
-msgid "Go to main menu"
-msgstr "Tilbake til Oppsta~r~tar"
-
-#: engines/nancy/input.cpp:218
-#, fuzzy
-msgid "Go to save/load menu"
-msgstr "Sett in lagre/laste speldisk"
-
-#: engines/nancy/input.cpp:223
-#, fuzzy
-msgid "Reload last save"
-msgstr "Ingen dato lagra"
-
-#: engines/nancy/input.cpp:228
-#, fuzzy
-msgid "Go to setup menu"
-msgstr "Val"
-
-#: engines/nancy/input.cpp:233
-#, fuzzy
-msgid "Show credits"
-msgstr "Vis muspeikar"
-
-#: engines/nancy/input.cpp:238
-#, fuzzy
-msgid "Go to map screen"
-msgstr "Bytt karakter"
 
 #: engines/nancy/dialogs.cpp:40
 #, fuzzy
@@ -6889,38 +6849,10 @@ msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:42
-#, fuzzy
-msgid "Use original menus"
-msgstr "Nytt opprinnelege skjermar for lagring/lasting"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-#, fuzzy
-msgid "Enable Second Chance"
-msgstr "Slå på heliummodus"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 #, fuzzy
 msgid "Speech Options"
 msgstr "Berre Tale"
-
-#: engines/nancy/dialogs.cpp:48
-#, fuzzy
-msgid "Engine Options"
-msgstr "Val"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9866,6 +9798,50 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Rask modus"
+
+#, fuzzy
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Rask modus"
+
+#, fuzzy
+#~ msgid "Go to main menu"
+#~ msgstr "Tilbake til Oppsta~r~tar"
+
+#, fuzzy
+#~ msgid "Go to save/load menu"
+#~ msgstr "Sett in lagre/laste speldisk"
+
+#, fuzzy
+#~ msgid "Reload last save"
+#~ msgstr "Ingen dato lagra"
+
+#, fuzzy
+#~ msgid "Go to setup menu"
+#~ msgstr "Val"
+
+#, fuzzy
+#~ msgid "Show credits"
+#~ msgstr "Vis muspeikar"
+
+#, fuzzy
+#~ msgid "Go to map screen"
+#~ msgstr "Bytt karakter"
+
+#, fuzzy
+#~ msgid "Use original menus"
+#~ msgstr "Nytt opprinnelege skjermar for lagring/lasting"
+
+#, fuzzy
+#~ msgid "Enable Second Chance"
+#~ msgstr "Slå på heliummodus"
+
+#, fuzzy
+#~ msgid "Engine Options"
+#~ msgstr "Val"
 
 #, fuzzy
 #~ msgid "D-pad Center"

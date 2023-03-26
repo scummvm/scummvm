@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2023-03-07 22:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5631,19 +5631,19 @@ msgstr "Salli huijaustila"
 msgid "Debug info and level selection becomes available"
 msgstr "Debuggaustiedot ja tason valinta tulevat saataville"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "Liiku ylöspäin"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "Liiku alaspäin"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "Liiku vasemmalle"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "Liiku oikealle"
 
@@ -6817,49 +6817,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Viallinen tiedostonnimi tallennukselle"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "Interaktio vasemmalla hiirennapilla"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "Interaktio oikealla hiirennapilla"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "Nopea liike"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "Nopea puhe päälle / pois"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "Puheenlopetustila päälle / pois"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "Mene päävalikkoon"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "Mene tallennus/lataus valikkoon"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "Lataa viimeisin tallennus"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "Mene asetusvalikkoon"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "Näytä lopputekstit"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "Mene karttanäkymään"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6881,39 +6849,9 @@ msgid ""
 msgstr ""
 "Hahmojen puhe kuulluviin. Toimii vain jos puhe on päällä ääniasetuksissa."
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "Käytä alkuperäisiä valikkoja"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-"Käytä alkuperäisen pelimoottorin pää-, lataus/tallennus- ja asetusvalikkoja. "
-"ScummVM:n globaali päävalikko on silti avattavissa sen pikanäppäimellä."
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "Toinen mahdollisuus päälle"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-"Laita päälle Toinen mahdollisuus-ominaisuus, joka automaattisesti tallentaa "
-"pelin tietyissä kohtauksissa. Tämän päällelaittaminen poistaa automaattiset "
-"talleennukset käytöstä."
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "Puheasetukset"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "Pelimoottorin asetukset"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9878,6 +9816,55 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Nopea puhe päälle / pois"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Puheenlopetustila päälle / pois"
+
+#~ msgid "Go to main menu"
+#~ msgstr "Mene päävalikkoon"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "Mene tallennus/lataus valikkoon"
+
+#~ msgid "Reload last save"
+#~ msgstr "Lataa viimeisin tallennus"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "Mene asetusvalikkoon"
+
+#~ msgid "Show credits"
+#~ msgstr "Näytä lopputekstit"
+
+#~ msgid "Go to map screen"
+#~ msgstr "Mene karttanäkymään"
+
+#~ msgid "Use original menus"
+#~ msgstr "Käytä alkuperäisiä valikkoja"
+
+#~ msgid ""
+#~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
+#~ "Global Main Menu can still be accessed through its keymap."
+#~ msgstr ""
+#~ "Käytä alkuperäisen pelimoottorin pää-, lataus/tallennus- ja "
+#~ "asetusvalikkoja. ScummVM:n globaali päävalikko on silti avattavissa sen "
+#~ "pikanäppäimellä."
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "Toinen mahdollisuus päälle"
+
+#~ msgid ""
+#~ "Enable the Second Chance feature, which automatically saves at specific "
+#~ "scenes. Enabling this disables timed autosaves."
+#~ msgstr ""
+#~ "Laita päälle Toinen mahdollisuus-ominaisuus, joka automaattisesti "
+#~ "tallentaa pelin tietyissä kohtauksissa. Tämän päällelaittaminen poistaa "
+#~ "automaattiset talleennukset käytöstä."
+
+#~ msgid "Engine Options"
+#~ msgstr "Pelimoottorin asetukset"
 
 #, fuzzy
 #~| msgid "D-pad Left"

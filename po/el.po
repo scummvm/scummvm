@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2023-03-23 08:09+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5763,19 +5763,19 @@ msgstr "Ενεργοποίηση cheat"
 msgid "Debug info and level selection becomes available"
 msgstr "Γίνεται διαθέσιμη πληροφορία και επιλογή επιπέδου αποσφαλμάτωσης"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "Κίνηση πάνω"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "Κίνηση κάτω"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "Κίνηση αριστερά"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "Κίνηση δεξιά"
 
@@ -6947,49 +6947,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "Αριστερό Κλικ για Αλληλεπίδραση"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "Δεξί Κλικ για αλληλεπίδραση"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "Ρύθμιση γρήγορης κίνησης"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "Εναλλαγή λειτουργίας γρήγορων διαλόγων"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "Εναλλαγή λειτουργίας τερματισμού διαλόγων"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "Επιστροφή στο κεντρικό μενού"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "Φόρτωση τελευταίου αποθηκευμένου παιχνιδιού"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "Άνοιγμα μενού ρυθμίσεων"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "Προβολή συντελεστών"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "Άνοιγμα οθόνης χάρτη"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -7013,40 +6981,9 @@ msgstr ""
 "Ενεργοποίηση ομιλίας για τους μη-χειριζόμενους χαρακτήρες (NPC). Προϋποθέτει "
 "να είναι ενεργοποιημένη η ομιλία στις ρυθμίσεις Ήχου."
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "Χρήση αρχικών μενού"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-"Χρήση κεντρικού μενού, αποθήκευσης/φόρτωσης, και ρυθμίσεων της πρωτότυπης "
-"μηχανής. Το Καθολικό Κεντρικό Μενού του ScummVM (GMM) θα παραμείνει "
-"προσβάσιμο από τη σχετική συντόμευση (keymap)."
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "Ενεργοποίηση Δεύτερης Ευκαιρίας"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-"Ενεργοποίησης της δυνατότητας Δεύτερης Ευκαιρίας (Second Chance), που "
-"αποθηκεύει αυτόματα το παιχνίδι σε συγκεκριμένες σκηνές. Όταν είναι ενεργή, "
-"απενεργοποιείται η αυτόματη αποθήκευση σε τακτικά χρονικά διαστήματα."
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "Επιλογές Ομιλίας"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "Επιλογές Μηχανής"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -10092,6 +10029,56 @@ msgstr ""
 "Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Εναλλαγή λειτουργίας γρήγορων διαλόγων"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Εναλλαγή λειτουργίας τερματισμού διαλόγων"
+
+#~ msgid "Go to main menu"
+#~ msgstr "Επιστροφή στο κεντρικό μενού"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
+
+#~ msgid "Reload last save"
+#~ msgstr "Φόρτωση τελευταίου αποθηκευμένου παιχνιδιού"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "Άνοιγμα μενού ρυθμίσεων"
+
+#~ msgid "Show credits"
+#~ msgstr "Προβολή συντελεστών"
+
+#~ msgid "Go to map screen"
+#~ msgstr "Άνοιγμα οθόνης χάρτη"
+
+#~ msgid "Use original menus"
+#~ msgstr "Χρήση αρχικών μενού"
+
+#~ msgid ""
+#~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
+#~ "Global Main Menu can still be accessed through its keymap."
+#~ msgstr ""
+#~ "Χρήση κεντρικού μενού, αποθήκευσης/φόρτωσης, και ρυθμίσεων της πρωτότυπης "
+#~ "μηχανής. Το Καθολικό Κεντρικό Μενού του ScummVM (GMM) θα παραμείνει "
+#~ "προσβάσιμο από τη σχετική συντόμευση (keymap)."
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "Ενεργοποίηση Δεύτερης Ευκαιρίας"
+
+#~ msgid ""
+#~ "Enable the Second Chance feature, which automatically saves at specific "
+#~ "scenes. Enabling this disables timed autosaves."
+#~ msgstr ""
+#~ "Ενεργοποίησης της δυνατότητας Δεύτερης Ευκαιρίας (Second Chance), που "
+#~ "αποθηκεύει αυτόματα το παιχνίδι σε συγκεκριμένες σκηνές. Όταν είναι "
+#~ "ενεργή, απενεργοποιείται η αυτόματη αποθήκευση σε τακτικά χρονικά "
+#~ "διαστήματα."
+
+#~ msgid "Engine Options"
+#~ msgstr "Επιλογές Μηχανής"
 
 #, fuzzy
 #~| msgid "D-pad Left"

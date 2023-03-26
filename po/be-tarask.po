@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -5601,19 +5601,19 @@ msgstr "Далучыць рэжым махляваньня"
 msgid "Debug info and level selection becomes available"
 msgstr "Выбар роўню ды інфармацыя пра наладжваньне робяцца даступнымі"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 msgid "Move up"
 msgstr "Рухацца ўгару"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 msgid "Move down"
 msgstr "Рухацца ўніз"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr "Рухацца налева"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 msgid "Move right"
 msgstr "Рухацца направа"
 
@@ -6787,49 +6787,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Няпэўная назва файлу для захаваньня"
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr "Інтэракцыя левым пстрыкам"
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 msgid "Right Click Interact"
 msgstr "Інтэракцыя правым пстрыкам"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
 msgstr "Вызначнік хуткага руху"
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr "Далучыць рэжым хуткай размовы"
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr "Далучыць рэжым канцу размовы"
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr "Да галоўнага мэню"
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr "Да мэню захаваньня/заладваньня"
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr "Заладаваць апошнюю гульню"
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr "Да мэню наладаў"
-
-#: engines/nancy/input.cpp:233
-msgid "Show credits"
-msgstr "Паказаць тытры"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
-msgstr "Да экрану мапы"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6852,39 +6820,9 @@ msgstr ""
 "Далучыць агучку не гульцовых пэрсанажаў. Працуе толькі, калі агучка далуча ў "
 "наладах гуку."
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr "Выкарыстоўваць арыґінальныя мэню"
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-"Выкарыстоўваць арыґінальныя мэню рухавіка: галоўнае, захаваньня/заладаваньня "
-"й наладнае. Перасьці да галоўнага мэню ScummVM усё шчэ можна будзе цераз "
-"клявішу."
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-msgid "Enable Second Chance"
-msgstr "Далучыць „Другі шанец“"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-"Далучыць функцыю „Другога шанцу“, які аўтаматычна захоўвае ў пэўных месцах. "
-"Далучэньне гэтага адлучае пачасныя аўтазахаваньні."
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 msgid "Speech Options"
 msgstr "Налады агучкі"
-
-#: engines/nancy/dialogs.cpp:48
-msgid "Engine Options"
-msgstr "Налады рухавіку"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9802,6 +9740,54 @@ msgstr ""
 "ці пак GNU FreeFont. Вам спатрэбяцца ўсе шрыфты выбранага паку, а менавіта: "
 "LiberationMono, LiberationSans and LiberationSerif, or FreeMono, FreeSans і "
 "FreeSerif адпаведна."
+
+#~ msgid "Toggle fast conversation mode"
+#~ msgstr "Далучыць рэжым хуткай размовы"
+
+#~ msgid "Toggle end conversation mode"
+#~ msgstr "Далучыць рэжым канцу размовы"
+
+#~ msgid "Go to main menu"
+#~ msgstr "Да галоўнага мэню"
+
+#~ msgid "Go to save/load menu"
+#~ msgstr "Да мэню захаваньня/заладваньня"
+
+#~ msgid "Reload last save"
+#~ msgstr "Заладаваць апошнюю гульню"
+
+#~ msgid "Go to setup menu"
+#~ msgstr "Да мэню наладаў"
+
+#~ msgid "Show credits"
+#~ msgstr "Паказаць тытры"
+
+#~ msgid "Go to map screen"
+#~ msgstr "Да экрану мапы"
+
+#~ msgid "Use original menus"
+#~ msgstr "Выкарыстоўваць арыґінальныя мэню"
+
+#~ msgid ""
+#~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
+#~ "Global Main Menu can still be accessed through its keymap."
+#~ msgstr ""
+#~ "Выкарыстоўваць арыґінальныя мэню рухавіка: галоўнае, захаваньня/"
+#~ "заладаваньня й наладнае. Перасьці да галоўнага мэню ScummVM усё шчэ можна "
+#~ "будзе цераз клявішу."
+
+#~ msgid "Enable Second Chance"
+#~ msgstr "Далучыць „Другі шанец“"
+
+#~ msgid ""
+#~ "Enable the Second Chance feature, which automatically saves at specific "
+#~ "scenes. Enabling this disables timed autosaves."
+#~ msgstr ""
+#~ "Далучыць функцыю „Другога шанцу“, які аўтаматычна захоўвае ў пэўных "
+#~ "месцах. Далучэньне гэтага адлучае пачасныя аўтазахаваньні."
+
+#~ msgid "Engine Options"
+#~ msgstr "Налады рухавіку"
 
 #, fuzzy
 #~| msgid "D-pad Left"

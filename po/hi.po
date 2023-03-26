@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-25 21:02+0000\n"
+"POT-Creation-Date: 2023-03-26 08:45+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -5425,21 +5425,21 @@ msgstr ""
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:171
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
 #, fuzzy
 msgid "Move up"
 msgstr "नीचे देखो"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:177
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
 #, fuzzy
 msgid "Move down"
 msgstr "नीचे देखो"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:183
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
 msgid "Move left"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:189
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
 #, fuzzy
 msgid "Move right"
 msgstr "दायें मुड़िए"
@@ -6511,50 +6511,17 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/nancy/input.cpp:157
+#: engines/nancy/input.cpp:156
 msgid "Left Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:164
+#: engines/nancy/input.cpp:163
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "दाहिने"
 
-#: engines/nancy/input.cpp:195
+#: engines/nancy/input.cpp:194
 msgid "Fast move modifier"
-msgstr ""
-
-#: engines/nancy/input.cpp:203
-msgid "Toggle fast conversation mode"
-msgstr ""
-
-#: engines/nancy/input.cpp:208
-msgid "Toggle end conversation mode"
-msgstr ""
-
-#: engines/nancy/input.cpp:213
-msgid "Go to main menu"
-msgstr ""
-
-#: engines/nancy/input.cpp:218
-msgid "Go to save/load menu"
-msgstr ""
-
-#: engines/nancy/input.cpp:223
-msgid "Reload last save"
-msgstr ""
-
-#: engines/nancy/input.cpp:228
-msgid "Go to setup menu"
-msgstr ""
-
-#: engines/nancy/input.cpp:233
-#, fuzzy
-msgid "Show credits"
-msgstr "छिपी हुई files दिखाये"
-
-#: engines/nancy/input.cpp:238
-msgid "Go to map screen"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:40
@@ -6575,36 +6542,9 @@ msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:42
-msgid "Use original menus"
-msgstr ""
-
-#: engines/nancy/dialogs.cpp:42
-msgid ""
-"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
-"Main Menu can still be accessed through its keymap."
-msgstr ""
-
-#. I18N: Second Chance is the name of the original engine's autosave system
-#: engines/nancy/dialogs.cpp:45
-#, fuzzy
-msgid "Enable Second Chance"
-msgstr "खेल का पूरा नाम"
-
-#: engines/nancy/dialogs.cpp:45
-msgid ""
-"Enable the Second Chance feature, which automatically saves at specific "
-"scenes. Enabling this disables timed autosaves."
-msgstr ""
-
-#: engines/nancy/dialogs.cpp:47
+#: engines/nancy/dialogs.cpp:43
 #, fuzzy
 msgid "Speech Options"
-msgstr "विकल्प(O)..."
-
-#: engines/nancy/dialogs.cpp:48
-#, fuzzy
-msgid "Engine Options"
 msgstr "विकल्प(O)..."
 
 #: engines/neverhood/dialogs.cpp:53
@@ -9411,6 +9351,18 @@ msgstr ""
 "हैं। आपको अपने चुने पैकेज के सारे फॉन्ट की आवश्यकता होगी, यानी की Liberation fonts से "
 "LiberationMono, LiberationSans और LiberationSerif, या GNU FreeFont से "
 "FreeMono, FreeSans और FreeSerif."
+
+#, fuzzy
+#~ msgid "Show credits"
+#~ msgstr "छिपी हुई files दिखाये"
+
+#, fuzzy
+#~ msgid "Enable Second Chance"
+#~ msgstr "खेल का पूरा नाम"
+
+#, fuzzy
+#~ msgid "Engine Options"
+#~ msgstr "विकल्प(O)..."
 
 #, fuzzy
 #~ msgid "D-pad Center"
