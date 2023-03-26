@@ -485,7 +485,7 @@ void Combat::clearArea(const Common::Rect &r) {
 
 
 void Combat::resetBottom() {
-	clearArea(Common::Rect(0, BOTTOM_Y, 320, 200));
+	clearArea(Common::Rect(0, 19 * LINE_H, 320, 200));
 	_allowFight = _allowShoot = false;
 	_allowCast = _allowAttack = false;
 }
