@@ -218,6 +218,8 @@ public:
 
 	bool isConnectionLimited() override;
 
+	virtual Common::String getDefaultLogFileName() { return Common::String("/var/mobile/.scummvm.log"); }
+
 protected:
 	void initVideoContext();
 	void updateOutputSurface();
