@@ -31,12 +31,12 @@ https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit an
 Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.html
 
 *** Beta release name:
-2.7.0.2 (beta 3)
+2.7.0.4 (beta 4)
 
 *** Beta release notes:
 <de-DE>
-- Schnellere App-Ladezeit
 - Eine Reihe von gemeldeten App-Abstürzen wurde behoben
-- Unterstützung von Geräten mit mindestens API-Level 16 (Android 4.1) wieder eingeführt
+- Das ScummVM-Log kann jetzt im "Pfade"-Tab der GUI eingesehen werden
+- Grundlegende Unterstützung für einige TV-Fernbedienungen hinzugefügt.
 - Vollständige Versionshinweise für 2.7.0 findest Du unter: https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
 </de-DE>
