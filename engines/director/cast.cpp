@@ -718,6 +718,7 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 
 					debugC(5, kDebugImages, "Cast::loadBitmapData(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %x", imgId, surf->w, surf->h, bitmapCast->_flags1, bitmapCast->_flags2, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
 					delete pic;
+					delete decoder;
 					return;
 				} else {
 					delete decoder;
