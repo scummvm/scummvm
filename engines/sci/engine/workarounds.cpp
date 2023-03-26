@@ -1139,6 +1139,12 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index-range,   workaround
+const SciWorkaroundEntry kWait_workarounds[] = {
+	{ GID_SQ1,             1,     1,  0,              "demo1", "changeState",             nullptr,     0,     0, { WORKAROUND_IGNORE, 0 } }, // DEMO: calls kWait with no parameters
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kScrollWindowAdd_workarounds[] = {
 	{ GID_PHANTASMAGORIA, 45, 64907,  0,   "ScrollableWindow", "addString",               nullptr,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // ScrollWindow interface passes the last two parameters twice
 	SCI_WORKAROUNDENTRY_TERMINATOR
