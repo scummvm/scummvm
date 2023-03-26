@@ -82,6 +82,11 @@ void ScrollView::resetSelectedButton() {
 void ScrollView::draw() {
 	frame();
 	fill();
+
+	drawButtons();
+}
+
+void ScrollView::drawButtons() {
 	setTextColor(0);
 
 	Graphics::ManagedSurface s = getSurface();

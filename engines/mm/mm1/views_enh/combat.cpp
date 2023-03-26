@@ -30,6 +30,10 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#define MONSTERS_X 120
+#define BOTTOM_Y 120
+#define LINE_H 8
+
 Combat::Combat() : ScrollView("Combat") {
 }
 
@@ -156,6 +160,7 @@ void Combat::draw() {
 	writePartyNumbers();
 	writeMonsters();
 	writeParty();
+	return; //***DEBUG***
 
 	switch (_mode) {
 	case SELECT_OPTION:
@@ -450,29 +455,54 @@ void Combat::writeShootOption() {
 	writeString(30, 20, STRING["dialogs.combat.shoot"]);
 }
 
+void Combat::clearSurface() {
+	frame();
+	fill();
+
+	clearBottom();
+
+	drawButtons();
+}
+
+void Combat::clearBottom() {
+	_bounds = Common::Rect(0, BOTTOM_Y, 320, 200);
+	frame();
+	fill();
+
+	_bounds = Common::Rect(0, 0, 320, 200);
+}
+
+void Combat::clearArea(const Common::Rect &r) {
+	Graphics::ManagedSurface s = getSurface();
+	Common::Rect area = r;
+	area.translate(_innerBounds.left, _innerBounds.top);
+	area.right = MIN(area.right, _innerBounds.right);
+
+	s.fillRect(area, 0x99);
+}
+
+
 void Combat::resetBottom() {
-	clearLines(20, 24);
+	clearBottom();
 	_allowFight = _allowShoot = false;
 	_allowCast = _allowAttack = false;
 }
 
 void Combat::writeStaticContent() {
+	setReduced(false);
 	writeString(0, 0, STRING["dialogs.combat.combat"]);
-	writeString(0, 1, STRING["dialogs.combat.round"]);
-	writeString(0, 7, STRING["dialogs.combat.delay"]);
-	writeString(0, 8, STRING["dialogs.combat.protect"]);
-	writeString(0, 9, STRING["dialogs.combat.quickref"]);
-	writeString(0, 10, STRING["dialogs.combat.view_char"]);
-	writeString(0, 12, STRING["dialogs.combat.handicap"]);
-
-	_textPos = Common::Point(0, 15);
-	for (int i = 0; i < 40; ++i)
-		writeChar('-');
+	writeString(0, 7 * LINE_H, STRING["dialogs.combat.delay"]);
+	writeString(0, 8 * LINE_H, STRING["dialogs.combat.protect"]);
+	writeString(0, 9 * LINE_H, STRING["dialogs.combat.quickref"]);
+	writeString(0, 10 * LINE_H, STRING["dialogs.combat.view_char"]);
 }
 
 void Combat::writeHandicap() {
-	writeString(0, 13, "          ");
-	_textPos.x = 0;
+	writeString(0, 12 * LINE_H, STRING["dialogs.combat.handicap"]);
+
+	clearArea(Common::Rect(0, 13 * LINE_H, 100, 14 * LINE_H));
+
+	_textPos = Common::Point(0, 13 * LINE_H);
 
 	switch (_handicap) {
 	case HANDICAP_EVEN:
@@ -490,40 +520,34 @@ void Combat::writeHandicap() {
 }
 
 void Combat::writeRound() {
-	writeNumber(7, 1, _roundNum);
+	writeString(0, LINE_H, Common::String::format("%s%d",
+		STRING["dialogs.combat.round"].c_str(), _roundNum));
 }
 
 void Combat::writePartyNumbers() {
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
-		writeChar(2 + 4 * (i % 2), 3 + (i / 2),
+		writeChar((2 + 4 * (i % 2)) * 8, (3 + (i / 2)) * LINE_H,
 			g_globals->_combatParty[i]->_canAttack ? '+' : ' ');
 		writeChar('1' + i);
 	}
 }
 
 void Combat::writeMonsters() {
-	if (_remainingMonsters.empty()) {
-		_textPos = Common::Point(10, 0);
-		writeSpaces(30);
-	} else {
-		for (int i = 0; i < (int)_remainingMonsters.size(); ++i) {
-			_textPos = Common::Point(11, i);
-			writeChar(i < _attackersCount ? '+' : ' ');
-			unsigned char c = 'A' + i;
-			if ((i == _activeMonsterNum) && (_mode == MONSTER_ADVANCES ||
-				_mode == MONSTER_ATTACK || _mode == MONSTER_SPELL))
-				c |= 0x80;
+	Common::String mStr = "A)";
+	setReduced(true);
 
-			writeChar(c);
-			writeString(") ");
-			writeString(_remainingMonsters[i]->_name);
-			writeMonsterStatus(i);
-		}
-	}
+	for (int i = 0; i < (int)_remainingMonsters.size(); ++i) {
+		writeString(MONSTERS_X, i * LINE_H, (i < _attackersCount) ? "+" : " ");
 
-	for (; _textPos.y < 15; _textPos.y++) {
-		_textPos.x = 10;
-		writeSpaces(30);
+		unsigned char c = 'A' + i;
+		if ((i == _activeMonsterNum) && (_mode == MONSTER_ADVANCES ||
+			_mode == MONSTER_ATTACK || _mode == MONSTER_SPELL))
+			c |= 0x80;
+		mStr.setChar(c, 0);
+		writeString(MONSTERS_X + 16, i * LINE_H, mStr, ALIGN_RIGHT);
+
+		writeString(MONSTERS_X + 22, i * LINE_H, _remainingMonsters[i]->_name);
+		writeMonsterStatus(i);
 	}
 }
 
@@ -549,13 +573,14 @@ void Combat::writeMonsterStatus(int monsterNum) {
 	} else if (_monsterP->_hp != _monsterP->_defaultHP) {
 		writeDots();
 		writeString(STRING["dialogs.combat.status.wounded"]);
-	} else {
-		writeSpaces(40 - _textPos.x);
 	}
 }
 
 void Combat::writeDots() {
-	while (_textPos.x < 30)
+	const int dotWidth = getStringWidth(".");
+	_textPos.x = ((_textPos.x + dotWidth - 1) / dotWidth) * dotWidth;
+
+	while (_textPos.x < 240)
 		writeChar('.');
 }
 
@@ -564,7 +589,7 @@ void Combat::writeParty() {
 
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
 		const Character &c = *g_globals->_combatParty[i];
-		writeString(21 * (i % 2), 16 + (i / 2),
+		writeString(160 * (i % 2), (15 + (i / 2)) * LINE_H,
 			Common::String::format("%c%c) %s",
 				(c._condition == 0) ? ' ' : '*',
 				'1' + i,
@@ -575,7 +600,7 @@ void Combat::writeParty() {
 }
 
 void Combat::clearPartyArea() {
-	clearLines(16, 18);
+	clearArea(Common::Rect(0, 15 * LINE_H, 320, 18 * LINE_H));
 }
 
 void Combat::writeDefeat() {

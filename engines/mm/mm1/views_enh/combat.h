@@ -57,6 +57,10 @@ private:
 	void writeAttackOptions();
 	void writeCastOption();
 	void writeShootOption();
+
+	void clearSurface();
+	void clearBottom();
+	void clearArea(const Common::Rect &r);
 	void resetBottom();
 
 	/**

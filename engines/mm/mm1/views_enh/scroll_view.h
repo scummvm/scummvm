@@ -99,6 +99,12 @@ protected:
 	size_t getButtonCount() const {
 		return _buttons.size();
 	}
+
+	/**
+	 * Draws the buttons
+	 */
+	void drawButtons();
+
 public:
 	ScrollView(const Common::String &name);
 	ScrollView(const Common::String &name, UIElement *owner);
