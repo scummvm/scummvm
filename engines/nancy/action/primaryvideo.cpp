@@ -163,10 +163,6 @@ void PlayPrimaryVideoChan0::updateGraphics() {
 
 void PlayPrimaryVideoChan0::onPause(bool pause) {
 	_decoder.pauseVideo(pause);
-
-	if (!pause) {
-		registerGraphics();
-	}
 }
 
 void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {

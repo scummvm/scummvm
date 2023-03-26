@@ -143,10 +143,6 @@ void PlaySecondaryVideo::updateGraphics() {
 
 void PlaySecondaryVideo::onPause(bool pause) {
 	_decoder.pauseVideo(pause);
-
-	if (!pause) {
-		registerGraphics();
-	}
 }
 
 void PlaySecondaryVideo::handleInput(NancyInput &input) {

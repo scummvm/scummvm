@@ -129,13 +129,15 @@ public:
 
 	Common::Rect _textboxScreenPosition;
 
+protected:
+	Common::Error run() override;
+	void pauseEngineIntern(bool pause) override;
+
 private:
 	struct GameFlow {
 		NancyState::NancyState curState = NancyState::kNone;
 		NancyState::NancyState prevState = NancyState::kNone;
 	};
-
-	Common::Error run() override;
 
 	void bootGameEngine();
 

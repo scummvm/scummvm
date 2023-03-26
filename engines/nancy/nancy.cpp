@@ -188,20 +188,10 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 		}
 
 		// Do not use the original engine's menus, call the GMM instead
-		State::State *s = getStateObject(_gameFlow.curState);
-		if (s) {
-			s->onStateExit();
-		}
-
 		openMainMenuDialog();
 
 		if (shouldQuit()) {
 			return;
-		}
-
-		s = getStateObject(_gameFlow.curState);
-		if (s) {
-			s->onStateEnter();
 		}
 
 		_input->forceCleanInput();
@@ -296,6 +286,15 @@ Common::Error NancyEngine::run() {
 		State::MainMenu::instance().destroy();
 
 	return Common::kNoError;
+}
+
+void NancyEngine::pauseEngineIntern(bool pause) {
+	State::State *s = getStateObject(_gameFlow.curState);
+	if (pause) {
+		s->onStateExit();
+	} else {
+		s->onStateEnter();
+	}
 }
 
 void NancyEngine::bootGameEngine() {
