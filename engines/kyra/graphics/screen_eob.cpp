@@ -762,6 +762,65 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 	return shp;
 }
 
+void Screen_EoB::drawT1Shape(uint8 pageNum, const byte *t1data, int x, int y, int sd) {
+	const byte *src = t1data;
+	int width = READ_LE_UINT16(t1data);
+	int height = READ_LE_UINT16(t1data + 2);
+	src += 4;
+
+	const ScreenDim *dm = getScreenDim(sd);
+	setShapeFrame(dm->sx, dm->sy, dm->sx + dm->w, dm->sy + dm->h);
+	int fx = dm->sx << 3;
+	int fy = dm->sy;
+	int fw = dm->w << 3;
+	int fh = dm->h;
+
+	int rX = fx + x;
+	int rY = fy + y;
+	int rW = (fx + fw) - rX;
+	int rH = (fy + fh) - rY;
+	int dX = 0, dY = 0;
+
+	if (rX < 0) {
+		dX = -rX;
+		rX = 0;
+	}
+
+	if (rY < 0) {
+		dY = -rY;
+		rY = 0;
+	}
+
+	if (dX >= width || dY >= height)
+		return;
+
+	if (rW > width - dX)
+		rW = width - dX;
+	if (rH > height - rY)
+		rH = height - dY;
+	if (rW <= 0 || rH <= 0)
+		return;
+
+	if (pageNum == 0 || pageNum == 1)
+		addDirtyRect(rX, rY, rW, rH);
+
+	int dH = rH;
+	uint8 *dstL = getPagePtr(pageNum) + rY * _bytesPerPixel * SCREEN_W;
+	src += dY * width;
+
+	while (dH--) {
+		const uint8 *src2 = src + dX;
+		uint8 *dst = dstL + rX * _bytesPerPixel;
+
+		for (int i = 0; i < rW; i++, src2++, dst += _bytesPerPixel)
+			if (*src2)
+				drawShapeSetPixel(dst, *src2);
+
+		dstL += SCREEN_W * _bytesPerPixel;
+		src += width;
+	}
+}
+
 void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
 	uint8 *dst = getPagePtr(pageNum);
 	const uint8 *src = shapeData;
