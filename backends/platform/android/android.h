@@ -24,8 +24,6 @@
 
 #if defined(__ANDROID__)
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-
 #include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
