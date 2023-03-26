@@ -507,10 +507,9 @@ void Cast::loadCast() {
 		debug("STUB: Unhandled VWtc resource");
 	}
 
-	// Tape Key resource. Perhaps a lookup for labels?
-	// TODO: Is this a score resource?
+	// Tape Key resource. Used as a lookup for labels in early Directors, later dropped
 	if (_castArchive->hasResource(MKTAG('V', 'W', 't', 'k'), -1)) {
-		debug("STUB: Unhandled VWtk resource");
+		debugC(4, kDebugLoading, "VWtk resource skipped");
 	}
 
 	// External sound files
@@ -564,8 +563,9 @@ void Cast::loadCast() {
 	}
 
 	// External Cast Reference resources
+	// Used only by authoring tools for referring to the external casts
 	if (_castArchive->hasResource(MKTAG('S', 'C', 'R', 'F'), -1)) {
-		debug("STUB: Unhandled 'SCRF' resource");
+		debugC(4, kDebugLoading, "'SCRF' resource skipped");
 	}
 
 	// Score Order List resources
