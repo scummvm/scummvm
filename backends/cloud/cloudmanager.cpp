@@ -282,6 +282,31 @@ void CloudManager::connectStorage(uint32 index, Common::String code, Networking:
 	// thus, no memory leak happens
 }
 
+void CloudManager::connectStorage(uint32 index, Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb) {
+	freeStorages();
+
+	switch (index) {
+	case kStorageDropboxId:
+		new Dropbox::DropboxStorage(codeFlowJson, cb);
+		break;
+	case kStorageOneDriveId:
+		//new OneDrive::OneDriveStorage(code, cb); // TODO: more clouds
+		break;
+	case kStorageGoogleDriveId:
+		//new GoogleDrive::GoogleDriveStorage(code, cb);
+		break;
+	case kStorageBoxId:
+		//new Box::BoxStorage(code, cb);
+		break;
+	default:
+		break;
+	}
+	// in these constructors Storages request token using the passed code // TODO: rewrite
+	// when the token is received, they call replaceStorage()
+	// or removeStorage(), if some error occurred
+	// thus, no memory leak happens
+}
+
 void CloudManager::disconnectStorage(uint32 index) {
 	if (index >= kStorageTotal)
 		error("CloudManager::disconnectStorage: invalid index passed");

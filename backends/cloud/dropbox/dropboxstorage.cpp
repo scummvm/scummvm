@@ -46,6 +46,10 @@ DropboxStorage::DropboxStorage(Common::String code, Networking::ErrorCallback cb
 	getAccessToken(code, cb);
 }
 
+DropboxStorage::DropboxStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb) : BaseStorage() {
+	codeFlowComplete(cb, codeFlowJson);
+}
+
 DropboxStorage::~DropboxStorage() {}
 
 Common::String DropboxStorage::cloudProvider() { return "dropbox"; }
