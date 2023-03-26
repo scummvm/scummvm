@@ -2506,7 +2506,10 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	if (colorOverride)
 		_logPath->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 
-	new ButtonWidget(boss, prefix + "ViewButton", _("View"), Common::U32String(), kViewLogCmd);
+	ButtonWidget *viewButton = new ButtonWidget(boss, prefix + "ViewButton", _("View"), Common::U32String(), kViewLogCmd);
+
+	if (logPath.empty())
+		viewButton->setEnabled(false);
 
 	Common::U32String browserPath = _("<default>");
 	if (ConfMan.hasKey("browser_lastpath"))
