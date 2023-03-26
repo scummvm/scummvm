@@ -337,18 +337,12 @@ void NancyEngine::bootGameEngine() {
 	addBootChunk("BSUM", boot->getChunkStream("BSUM"));
 	readBootSummary(*boot);
 
-	// Data chunks found in BOOT. These get used in many places in the engine,
-	// so we always keep them in memory
-	Common::String names[] = {
-		"INTR", "HINT", "LOGO", "SPUZ", "INV",
-		"FONT", "MENU", "HELP", "CRED", "LOAD",
-		"MAP", "CD", "TBOX", "CURS", "VIEW", "MSND",
-		"BUOK", "BUDE", "BULS", "GLOB", "SLID",
-		"SET", "CURT", "CANT", "TH1", "TH2",
-		"QUOT", "TMOD", "CLOK", "SPEC"
-	};
+	// Load all data chunks found in BOOT. These get used in a lot of places
+	// across the engine, so we always keep them in memory
+	Common::Array<Common::String> bootChunkNames;
+	boot->list(bootChunkNames);
 
-	for (auto const &n : names) {
+	for (auto const &n : bootChunkNames) {
 		addBootChunk(n, boot->getChunkStream(n));
 	}
 
