@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-26 08:45+0000\n"
-"PO-Revision-Date: 2023-03-25 23:32+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2023-03-26 10:27+0000\n"
+"Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ar/>\n"
 "Language: ar\n"
@@ -6622,6 +6622,8 @@ msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
+"تمكين ترجمات للتأثيرات الصوتية المهمة. قد يقلل هذا من صعوبة ألغاز التعرف على "
+"الصوت والألعاب الصغيرة."
 
 #: engines/mtropolis/metaengine.cpp:107 engines/vcruise/metaengine.cpp:39
 msgid "Start with debugger"
@@ -7938,47 +7940,47 @@ msgstr "تحرك إلى اليسار"
 
 #: engines/scumm/help.cpp:332
 msgid "Fly to lower left"
-msgstr ""
+msgstr "تحرك إلى أسفل اليسار"
 
 #: engines/scumm/help.cpp:333
 msgid "Fly upwards"
-msgstr ""
+msgstr "تطير لأعلى"
 
 #: engines/scumm/help.cpp:334
 msgid "Fly straight"
-msgstr ""
+msgstr "تطير بشكل مستقيم"
 
 #: engines/scumm/help.cpp:335
 msgid "Fly down"
-msgstr ""
+msgstr "طر للأسفل"
 
 #: engines/scumm/help.cpp:336
 msgid "Fly to upper right"
-msgstr ""
+msgstr "انتقل إلى أعلى اليمين"
 
 #: engines/scumm/help.cpp:337
 msgid "Fly to right"
-msgstr ""
+msgstr "انتقل إلى اليمين"
 
 #: engines/scumm/help.cpp:338
 msgid "Fly to lower right"
-msgstr ""
+msgstr "انتقل إلى أسفل اليمين"
 
 #: engines/scumm/input.cpp:1304
 msgid "Snap scroll on"
-msgstr ""
+msgstr "التقط التمرير على"
 
 #: engines/scumm/input.cpp:1306
 msgid "Snap scroll off"
-msgstr ""
+msgstr "التقط التمرير للخارج"
 
 #: engines/scumm/input.cpp:1319
 msgid "Music volume: "
-msgstr ""
+msgstr "طبقة صوت الموسيقا: "
 
 #: engines/scumm/input.cpp:1336
 msgid "Subtitle speed: "
-msgstr ""
+msgstr "سرعة الترجمة: "
 
 #: engines/scumm/metaengine.cpp:363
 msgid ""
@@ -7991,31 +7993,31 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:460
 msgid "HE v71+ support is not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم HE v71 + بتنسيق"
 
 #: engines/scumm/metaengine.cpp:484
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr ""
+msgstr "لم يتم تجميع دعم SCUMM v7-8 بتنسيق"
 
 #: engines/scumm/metaengine.cpp:604
 msgid "Show Object Line"
-msgstr ""
+msgstr "إظهار خط الكائن"
 
 #: engines/scumm/metaengine.cpp:605
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "اعرض أسماء الكائنات في أسفل الشاشة"
 
 #: engines/scumm/metaengine.cpp:613
 msgid "Use NES Classic Palette"
-msgstr ""
+msgstr "استخدم لوحة NES الكلاسيكية"
 
 #: engines/scumm/metaengine.cpp:614
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr ""
+msgstr "استخدم لوحة ألوان أكثر حيادية تحاكي عن كثب NES Classic"
 
 #: engines/scumm/metaengine.cpp:622
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "تقليم ألعاب FM-TOWNS حتى ارتفاع 200 بكسل"
 
 #: engines/scumm/metaengine.cpp:623
 msgid ""
@@ -8027,7 +8029,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:631
 msgid "Play simplified music"
-msgstr ""
+msgstr "قم بتشغيل موسيقى مبسطة"
 
 #: engines/scumm/metaengine.cpp:632
 msgid ""
@@ -8039,15 +8041,15 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:640
 msgid "Enable smooth scrolling"
-msgstr ""
+msgstr "تمكين التمرير السلس"
 
 #: engines/scumm/metaengine.cpp:641
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(بدلاً من التمرير العادي بخطوات 8 بكسل)"
 
 #: engines/scumm/metaengine.cpp:649
 msgid "Allow semi-smooth scrolling"
-msgstr ""
+msgstr "السماح بالتمرير شبه السلس"
 
 #: engines/scumm/metaengine.cpp:650
 msgid ""
@@ -8061,10 +8063,13 @@ msgid ""
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
+"اسمح للعبة باستخدام الواجهة الرسومية داخل المحرك وقائمة الحفظ / التحميل "
+"الأصلية. استخدمه مع \"طلب التأكيد عند الخروج\" للحصول على تجربة أكثر "
+"اكتمالاً."
 
 #: engines/scumm/metaengine.cpp:686
 msgid "Enable low latency audio mode"
-msgstr ""
+msgstr "تفعيل وضع الصوت منخفض التأخير"
 
 #: engines/scumm/metaengine.cpp:687
 msgid ""
@@ -8072,10 +8077,12 @@ msgid ""
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
+"يسمح للعبة باستخدام الصوت منخفض التأخير ، على حساب دقة الصوت. يوصى بتمكين "
+"هذه الميزة فقط إذا واجهت مشكلات زمن انتقال الصوت أثناء اللعب العادي."
 
 #: engines/scumm/metaengine.cpp:696
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
-msgstr ""
+msgstr "تفعيل أغنية \"A Pirate I was Meant To Be\""
 
 #: engines/scumm/metaengine.cpp:697
 msgid ""
@@ -8083,31 +8090,34 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
+"قم بتمكين الأغنية في بداية الجزء 3 من اللعبة ، \"A Pirate I Was Meant To Be\""
+" ، والتي تم قطعها في الإصدارات الدولية. احذر من ذلك: قد لا تتم ترجمة "
+"الترجمات بشكل كامل."
 
 #: engines/scumm/metaengine.cpp:770
 msgid "Down Left"
-msgstr ""
+msgstr "اسفل اليسار"
 
 #: engines/scumm/metaengine.cpp:783
 msgid "Down Right"
-msgstr ""
+msgstr "أسفل اليمين"
 
 #: engines/scumm/metaengine.cpp:803
 msgid "Up Left"
-msgstr ""
+msgstr "أعلى اليسار"
 
 #: engines/scumm/metaengine.cpp:816
 msgid "Up Right"
-msgstr ""
+msgstr "أعلى اليمين"
 
 #: engines/scumm/metaengine.cpp:828
 msgid "Switch weapon"
-msgstr ""
+msgstr "تبديل السلاح"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:842
 msgid "Win the bike fight cheat"
-msgstr ""
+msgstr "كسب الغش في معركة الدراجة"
 
 #: engines/scumm/scumm.cpp:281
 msgid ""
@@ -8116,12 +8126,19 @@ msgid ""
 "Aspect ratio correction can be achieved by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"لقد قمت بتمكين \"تصحيح نسبة العرض إلى الارتفاع\". ومع ذلك ، فإن الدقة "
+"الطبيعية ل FM-TOWNS هي 240 × 320 ، مما لا يسمح بتصحيح نسبة العرض إلى "
+"الارتفاع.\n"
+"يمكن تحقيق تصحيح نسبة العرض إلى الارتفاع عن طريق خفض الدقة إلى 200 ×300 ، "
+"تحت علامة تبويب \"المحرك\"."
 
 #: engines/scumm/scumm.cpp:1150
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
+"تعذر العثور على \"Indy\" Macintosh القابل للتنفيذ. سوف الخطوط عالية الدقة\n"
+"يتم تعطيل."
 
 #: engines/scumm/scumm.cpp:1176
 msgid ""
@@ -8145,6 +8162,9 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
+"تم اكتشاف ملفات صوتية مضغوطة باستخدام أدوات ScummVM ؛ * .BUN / *. SOU\n"
+"لم يعد الضغط مدعومًا لهذه اللعبة ، وسيتم تعطيل الصوت.\n"
+"يرجى نسخ اللعبة من الوسائط الأصلية دون ضغط."
 
 #: engines/scumm/scumm.cpp:2021
 #, c-format
@@ -8169,10 +8189,13 @@ msgid ""
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
+"عادة ، سيبدأ Maniac Mansion الآن. ولكن لكي يعمل ذلك ، يجب أن تكون ملفات "
+"اللعبة الخاصة ب Maniac Mansion في دليل \"Maniac\" داخل دليل لعبة Tentacle ، "
+"ويجب إضافة اللعبة إلى ScummVM."
 
 #: engines/scumm/scumm.cpp:3484
 msgid "Would you like to host or join a network play session?"
-msgstr ""
+msgstr "هل ترغب في استضافة أو الانضمام إلى جلسة لعب على الشبكة؟"
 
 #: engines/scumm/scumm.cpp:3484
 msgid "Host"
@@ -8183,6 +8206,8 @@ msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
+"يفتقد إصدار AMIGA (على الأقل) الملف (الملفات) التالية:\n"
+"\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:665
 msgid ""
@@ -8190,18 +8215,21 @@ msgid ""
 "Please copy these file(s) into the game data directory.\n"
 "\n"
 msgstr ""
+"\n"
+"يرجى نسخ هذه الملفات في دليل بيانات اللعبة.\n"
+"\n"
 
 #: engines/sherlock/metaengine.cpp:51
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "انتقالات المشهد البيكسيلات"
 
 #: engines/sherlock/metaengine.cpp:52
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "عند تغيير المشاهد ، يتم إجراء انتقال عشوائي للبكسل"
 
 #: engines/sherlock/metaengine.cpp:63
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "لا تظهر النقاط الفعالة عند تحريك الماوس"
 
 #: engines/sherlock/metaengine.cpp:64
 msgid ""
@@ -8212,75 +8240,75 @@ msgstr ""
 
 #: engines/sherlock/metaengine.cpp:75
 msgid "Show character portraits"
-msgstr ""
+msgstr "اعرض صور الشخصيات"
 
 #: engines/sherlock/metaengine.cpp:76
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "عرض صور الشخصيات عند التحدث"
 
 #: engines/sherlock/metaengine.cpp:87
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "قم بتمرير الحوارات إلى العرض"
 
 #: engines/sherlock/metaengine.cpp:88
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "قم بتمرير مربعات حوار واجهة المستخدم إلى العرض بدلاً من عرضها على الفور"
 
 #: engines/sherlock/metaengine.cpp:99
 msgid "Transparent windows"
-msgstr ""
+msgstr "نوافذ شفافة"
 
 #: engines/sherlock/metaengine.cpp:100
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "اعرض النوافذ ذات الخلفية الشفافة جزئيًا"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "حجم ملف بيانات المحرك \"sky.cpt\" غير صحيح."
 
 #: engines/sky/metaengine.cpp:88
 msgid "Walk / Look / Talk"
-msgstr ""
+msgstr "المشي / النظر / الحديث"
 
 #: engines/sky/metaengine.cpp:106
 msgid "Skip / Close"
-msgstr ""
+msgstr "تخطي / إغلاق"
 
 #: engines/sky/metaengine.cpp:114
 msgid "Open control panel"
-msgstr ""
+msgstr "افتح لوحة التحكم"
 
 #: engines/sky/metaengine.cpp:130
 msgid "Toggle fast mode"
-msgstr ""
+msgstr "تبديل الوضع السريع"
 
 #: engines/sky/metaengine.cpp:135
 msgid "Toggle really fast mode"
-msgstr ""
+msgstr "تبديل الوضع السريع حقًا"
 
 #: engines/sky/metaengine.cpp:154
 msgid "Floppy intro"
-msgstr ""
+msgstr "مقدمة مرنة"
 
 #: engines/sky/metaengine.cpp:155
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "استخدم مقدمة النسخة المرنة (إصدار القرص المضغوط فقط)"
 
 #: engines/sky/metaengine.cpp:233
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
-msgstr ""
+msgstr "تحذير: لا يدعم هذا المحرك حذف فتحة الحفظ التلقائي"
 
 #: engines/stark/metaengine.cpp:37
 msgid "Load modded assets"
-msgstr ""
+msgstr "تحميل الأصول المعدلة"
 
 #: engines/stark/metaengine.cpp:38
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "تمكين تحميل أصول الاستبدال الخارجية."
 
 #: engines/stark/metaengine.cpp:48
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "قم بتمكين التصفية الخطية لصور الخلفيات"
 
 #: engines/stark/metaengine.cpp:49
 msgid ""
@@ -8292,19 +8320,19 @@ msgstr ""
 
 #: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:132
 msgid "Enable font anti-aliasing"
-msgstr ""
+msgstr "تمكين تنعيم الخط"
 
 #: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:133
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
+msgstr "عند تمكين صقل الخط ، يصبح النص أكثر تجانسًا."
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
-msgstr ""
+msgstr "عارض البرامج لا يدعم الأصول المعدلة"
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
-msgstr ""
+msgstr "تنقصك ملفات البيانات الموصى بها:"
 
 #: engines/stark/stark.cpp:305
 msgid ""
@@ -8312,25 +8340,28 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"مطلوب مجلد \"الخطوط\" لتجربة نمط النص كما تم تصميمه. من المعروف أن إصدار "
+"Steam يفتقده. يمكنك الحصول على الخطوط من الإصدار التجريبي للعبة."
 
 #: engines/stark/stark.cpp:312
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"يوصى باستخدام \"gui.ini\" للحصول على إعدادات الخط المناسبة لترجمة اللعبة."
 
 #: engines/stark/stark.cpp:318
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
-msgstr ""
+msgstr "يوصى باستخدام \"language.ini\" للحصول على مربعات حوار تأكيد مترجمة."
 
 #: engines/stark/stark.cpp:324
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "يوصى باستخدام \"game.exe\" للحصول على مربعات حوار تأكيد مصممة."
 
 #: engines/supernova/supernova.cpp:192
 #, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr ""
+msgstr "غير قادر على تحديد موقع النص للغة%s في ملف بيانات المحرك."
 
 #: engines/supernova/supernova.cpp:476
 #, c-format
@@ -8343,12 +8374,12 @@ msgstr ""
 #: engines/supernova/supernova.cpp:486
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "تعذر العثور على كتلة للجزء%d"
 
 #: engines/supernova/supernova.cpp:529
 #, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr ""
+msgstr "تعذر العثور على '%s' في مجلد اللعبة أو ملف بيانات المحرك."
 
 #: engines/supernova/supernova.cpp:833
 msgid ""
@@ -8360,7 +8391,7 @@ msgstr ""
 
 #: engines/supernova/supernova.cpp:834
 msgid "Failed to load temporary game state."
-msgstr ""
+msgstr "فشل تحميل حالة اللعبة المؤقتة."
 
 #: engines/supernova/metaengine.cpp:38
 msgid "Improved mode"
