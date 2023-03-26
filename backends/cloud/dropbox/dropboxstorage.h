@@ -51,6 +51,10 @@ protected:
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	DropboxStorage(Common::String code, Networking::ErrorCallback cb);
+
+	/** This constructor uses JSON acquired via OAuth code flow to get tokens. */
+	DropboxStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb);
+
 	virtual ~DropboxStorage();
 
 	/**

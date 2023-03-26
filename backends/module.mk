@@ -28,7 +28,6 @@ MODULE_OBJS := \
 	timer/default/default-timer.o
 
 ifdef USE_CLOUD
-
 ifdef USE_LIBCURL
 MODULE_OBJS += \
 	cloud/basestorage.o \
@@ -99,6 +98,15 @@ MODULE_OBJS += \
 	networking/sdl_net/localwebserver.o \
 	networking/sdl_net/reader.o \
 	networking/sdl_net/uploadfileclienthandler.o
+endif
+
+ifdef USE_CLOUD
+ifdef USE_LIBCURL
+ifdef USE_SDL_NET
+MODULE_OBJS += \
+	networking/sdl_net/handlers/connectcloudhandler.o
+endif
+endif
 endif
 
 # ENet networking source files.

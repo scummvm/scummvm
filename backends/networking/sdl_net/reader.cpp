@@ -218,7 +218,7 @@ void Reader::parseFirstLine(const Common::String &headersToParse) {
 			}
 
 			//check that method is supported
-			if (methodParsed != "GET" && methodParsed != "PUT" && methodParsed != "POST")
+			if (methodParsed != "GET" && methodParsed != "PUT" && methodParsed != "POST" && methodParsed != "OPTIONS")
 				bad = true;
 
 			//check that HTTP/<VERSION> is OK

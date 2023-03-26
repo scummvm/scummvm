@@ -74,6 +74,11 @@ LocalWebserver::LocalWebserver(): _set(nullptr), _serverSocket(nullptr), _timerS
 	addPathHandler("/upload", &_uploadFileHandler);
 	addPathHandler("/list", &_listAjaxHandler);
 	addPathHandler("/filesAJAX", &_filesAjaxPageHandler);
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+	addPathHandler("/connect_cloud", &_connectCloudHandler);
+#endif // USE_LIBCURL
+#endif // USE_CLOUD
 	_defaultHandler = &_resourceHandler;
 }
 
