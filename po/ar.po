@@ -9457,7 +9457,7 @@ msgstr "إعدادات"
 
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "إجابة الحوار 1"
 
 #: engines/wintermute/keymapper_tables.h:1624
 msgid "Dialogue answer 2"
