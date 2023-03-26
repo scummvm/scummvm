@@ -58,7 +58,7 @@ private:
 	void writeCastOption();
 	void writeShootOption();
 
-	void clearSurface();
+	void clearSurface() override;
 	void clearBottom();
 	void clearArea(const Common::Rect &r);
 	void resetBottom();
