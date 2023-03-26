@@ -34,7 +34,6 @@ typedef void (*SelectNumberProc)(int choiceNum);
 class SelectNumberSubview : public ScrollView {
 private:
 	SelectNumberProc _callback = nullptr;
-	Graphics::ManagedSurface _button;
 	int _maxNumber = 0;
 
 public:

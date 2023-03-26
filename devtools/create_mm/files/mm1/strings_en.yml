@@ -513,6 +513,15 @@ enhdialogs:
 		title: "Select target"
 	characters:
 		left_click: "Left click portraits to view"
+	combat:
+		attack: "\x01""37Attack(A)"
+		cast: "\x01""37Cast"
+		fight: "\x01""37Fight(+)"
+		shoot: "\x01""37Shoot"
+		exchange: "\x01""37Exchange"
+		use: "\x01""37Use"
+		retreat: "\x01""37Retreat"
+		block: "\x01""37Block"
 	create_characters:
 		intellect: "Intellect ="
 		might: "Might ="

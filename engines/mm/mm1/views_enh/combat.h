@@ -62,6 +62,8 @@ private:
 	void clearBottom();
 	void clearArea(const Common::Rect &r);
 	void resetBottom();
+	void writeBottomText(int x, int line, const Common::String &msg);
+	void writeOption(uint col, uint row, const Common::String &msg);
 
 	/**
 	 * Write the encounter handicap

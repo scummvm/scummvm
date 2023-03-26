@@ -41,6 +41,17 @@ Globals::~Globals() {
 	g_globals = nullptr;
 }
 
+void Globals::createBlankButton() {
+	// Get the Escape glyph we'll use as a base
+	Shared::Xeen::SpriteResource escSprite;
+	escSprite.load("esc.icn");
+	_blankButton.create(20, 20);
+	_blankButton.clear(255);
+	_blankButton.setTransparentColor(255);
+	escSprite.draw(&_blankButton, 0, Common::Point(0, 0));
+	_blankButton.fillRect(Common::Rect(2, 2, 18, 18), 0x9f);
+}
+
 bool Globals::load(bool isEnhanced) {
 	// Initialise engine data for the game
 	Common::U32String errMsg;
@@ -67,6 +78,8 @@ bool Globals::load(bool isEnhanced) {
 		_globalSprites.load("global.icn");
 		_tileSprites.load("town.til");
 		_escSprites.load("esc.icn");
+
+		createBlankButton();
 
 		{
 			Common::File f;

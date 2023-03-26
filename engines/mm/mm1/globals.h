@@ -64,6 +64,11 @@ public:
 	bool _encountersOn = true;
 	bool _allSpells = false;
 
+	/**
+	 * Creates a blank button with no inner glyph
+	 */
+	void createBlankButton();
+
 public:
 	// Enhanced mode globals
 	Shared::Xeen::SpriteResource _mainIcons;
@@ -71,6 +76,7 @@ public:
 	Shared::Xeen::SpriteResource _globalSprites;
 	Shared::Xeen::SpriteResource _tileSprites;
 	Shared::Xeen::SpriteResource _escSprites;
+	Graphics::ManagedSurface _blankButton;
 	byte SYMBOLS[20][64];
 	XeenFont _fontNormal;
 	XeenFont _fontReduced;

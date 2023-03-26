@@ -47,15 +47,6 @@ bool SelectNumber::msgMouseDown(const MouseDownMessage &msg) {
 
 SelectNumberSubview::SelectNumberSubview() : ScrollView("SelectNumberSubview") {
 	_bounds = Common::Rect(234, 144, 320, 200);
-
-	// Get the Escape glyph we'll use as a base
-	Shared::Xeen::SpriteResource escSprite;
-	escSprite.load("esc.icn");
-	_button.create(20, 20);
-	_button.clear(255);
-	_button.setTransparentColor(255);
-	escSprite.draw(&_button, 0, Common::Point(0, 0));
-	_button.fillRect(Common::Rect(2, 2, 18, 18), 0x9f);
 }
 
 void SelectNumberSubview::open(int maxNum, SelectNumberProc callback) {
@@ -80,7 +71,7 @@ void SelectNumberSubview::draw() {
 
 	for (int i = 0; i < _maxNumber; ++i) {
 		
-		s.blitFrom(_button, Common::Point((i % 3) * 22 + 8,
+		s.blitFrom(g_globals->_blankButton, Common::Point((i % 3) * 22 + 8,
 			(i / 3) * 22 + 4));
 		writeString((i % 3) * 22 + 10, (i / 3) * 22 + 2,
 			Common::String::format("%d", i + 1), ALIGN_MIDDLE);

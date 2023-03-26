@@ -160,7 +160,6 @@ void Combat::draw() {
 	writePartyNumbers();
 	writeMonsters();
 	writeParty();
-	return; //***DEBUG***
 
 	switch (_mode) {
 	case SELECT_OPTION:
@@ -377,11 +376,11 @@ void Combat::writeAllOptions() {
 	assert(g_globals->_currCharacter &&
 		g_globals->_currCharacter == g_globals->_combatParty[_currentChar]);
 	const Character &c = *g_globals->_currCharacter;
-	writeString(0, 20, STRING["dialogs.combat.options_for"]);
-	writeString(0, 22, c._name);
+	writeBottomText(0, 0, STRING["dialogs.combat.options_for"]);
+	writeBottomText(0, 2, c._name);
 
 	// Highlight the currently active character
-	writeChar(3 + 4 * (_currentChar % 2), 3 + (_currentChar / 2),
+	writeChar((2 + 4 * (_currentChar % 2)) * 8 + 8, (3 + (_currentChar / 2)) * LINE_H,
 		(unsigned char)'1' + _currentChar + 0x80);
 
 	bool testShoot;
@@ -405,8 +404,10 @@ void Combat::writeAllOptions() {
 		_allowCast = true;
 	}
 
-	writeString(16, 22, STRING["dialogs.combat.exchange_use"]);
-	writeString(16, 23, STRING["dialogs.combat.retreat_block"]);
+	writeOption(0, 2, STRING["enhdialogs.combat.exchange"]);
+	writeOption(1, 2, STRING["enhdialogs.combat.use"]);
+	writeOption(0, 3, STRING["enhdialogs.combat.retreat"]);
+	writeOption(1, 3, STRING["enhdialogs.combat.block"]);
 }
 
 void Combat::writeDelaySelect() {
@@ -443,16 +444,16 @@ void Combat::writeShootSelect() {
 }
 
 void Combat::writeAttackOptions() {
-	writeString(16, 20, STRING["dialogs.combat.attack"]);
-	writeString(16, 21, STRING["dialogs.combat.fight"]);
+	writeOption(0, 0, STRING["dialogs.combat.attack"]);
+	writeOption(0, 1, STRING["dialogs.combat.fight"]);
 }
 
 void Combat::writeCastOption() {
-	writeString(30, 21, STRING["dialogs.combat.cast"]);
+	writeOption(1, 1, STRING["dialogs.combat.cast"]);
 }
 
 void Combat::writeShootOption() {
-	writeString(30, 20, STRING["dialogs.combat.shoot"]);
+	writeString(1, 0, STRING["dialogs.combat.shoot"]);
 }
 
 void Combat::clearSurface() {
@@ -477,15 +478,37 @@ void Combat::clearArea(const Common::Rect &r) {
 	Common::Rect area = r;
 	area.translate(_innerBounds.left, _innerBounds.top);
 	area.right = MIN(area.right, _innerBounds.right);
+	area.bottom = MIN(area.bottom, _innerBounds.bottom);
 
 	s.fillRect(area, 0x99);
 }
 
 
 void Combat::resetBottom() {
-	clearBottom();
+	clearArea(Common::Rect(0, BOTTOM_Y, 320, 200));
 	_allowFight = _allowShoot = false;
 	_allowCast = _allowAttack = false;
+}
+
+void Combat::writeBottomText(int x, int line, const Common::String &msg) {
+	writeString(x, (line + 19) * LINE_H, msg);
+}
+
+void Combat::writeOption(uint col, uint row, const Common::String &msg) {
+	assert(col < 2 && row < 4);
+	int x = col ? 240 : 100;
+	int y = (row + 19) * LINE_H;
+
+	// Create an 8x8 blank button
+	Graphics::ManagedSurface btnSmall(8, 8);
+	btnSmall.blitFrom(g_globals->_blankButton, Common::Rect(0, 0, 20, 20),
+		Common::Rect(0, 0, 8, 8));
+
+	Graphics::ManagedSurface s = getSurface();
+	s.blitFrom(btnSmall, Common::Point(x + _innerBounds.left,
+		y + _innerBounds.top));
+
+	writeBottomText(x + 12, row, msg);
 }
 
 void Combat::writeStaticContent() {
