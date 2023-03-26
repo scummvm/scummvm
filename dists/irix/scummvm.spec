@@ -1,5 +1,5 @@
 product scummvm
-    id "ScummVM 2.7.0.2"
+    id "ScummVM 2.7.0.4"
     image sw
         id "software"
         version 18
