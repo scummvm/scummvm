@@ -41,11 +41,12 @@ android {
         targetSdkVersion 33
 
         versionName "2.8.0"
-        versionCode 105
+        versionCode 109
         // versioncode must be incremented for each market upload
-        // ScummVM 2.8.0:   105 - 108 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
-        // ScummVM 2.7.x:   101 - 104 (reserved for potential beta or 2.7.x bugfix builds)
+        // ScummVM 2.8.0:   109 - 112 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.7.x:   105 - 108 (reserve for potential beta or bug fix release)
         // Historical version codes:
+        // ScummVM 2.7.0.4: 101 - 104 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (beta 4 on Play Store)
         // ScummVM 2.7.0.2:  97 - 100 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (beta 3 on Play Store)
         // ScummVM 2.7.0.1:  93 -  96 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (beta 2 on Play Store)
         // ScummVM 2.7.0:    89 -  92 (arm-v7a, arm64-v8a, x86, x86_64 respectively) (beta 1 on Play Store)
