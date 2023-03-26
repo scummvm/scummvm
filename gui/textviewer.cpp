@@ -75,6 +75,12 @@ bool TextViewerDialog::loadFile(Common::String &fname) {
 
 	Common::SeekableReadStream *stream = file.createReadStream();
 
+	if (!stream) {
+		warning("TextViewerDialog::loadFile(): Cannot load file %s", fname.c_str());
+
+		return false;
+	}
+
 	warning("TextViewerDialog::loadFile(): File size is: %ld", stream->size());
 
 	_linesArray.clear();
