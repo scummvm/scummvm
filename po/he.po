@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-26 12:21+0000\n"
+"POT-Creation-Date: 2023-03-26 15:42+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2481,34 +2481,35 @@ msgstr "בוטל על ידי המשתמש"
 msgid "Unknown error"
 msgstr "שגיאה לא ידועה"
 
-#. I18N: Hercules is graphics card name
+#. I18N: Hercules is a graphics card name, Green is color
 #: common/rendermode.cpp:34
 msgid "Hercules Green"
 msgstr "הרקולס ירוק"
 
-#: common/rendermode.cpp:35
+#. I18N: Hercules is a graphics card name, Amber is color
+#: common/rendermode.cpp:36
 msgid "Hercules Amber"
 msgstr "הרקולס ענבר"
 
-#: common/rendermode.cpp:44
+#: common/rendermode.cpp:46
 msgid "PC-9821 (256 Colors)"
 msgstr "PC-9821 (256 צבעים)"
 
-#: common/rendermode.cpp:45
+#: common/rendermode.cpp:47
 msgid "PC-9801 (16 Colors)"
 msgstr "PC-9801 (16 צבעים)"
 
 #. I18N: Macintosh black-and-white
-#: common/rendermode.cpp:50
+#: common/rendermode.cpp:52
 msgid "Macintosh b/w"
 msgstr "מקינטוש שחור לבן"
 
-#: common/rendermode.cpp:86
+#: common/rendermode.cpp:88
 msgctxt "lowres"
 msgid "Hercules Green"
 msgstr "הרקולס ירוק"
 
-#: common/rendermode.cpp:87
+#: common/rendermode.cpp:89
 msgctxt "lowres"
 msgid "Hercules Amber"
 msgstr "הרקולס ענבר"
