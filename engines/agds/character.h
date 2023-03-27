@@ -39,9 +39,11 @@ typedef Common::SharedPtr<Object> ObjectPtr;
 class Animation;
 
 class Character {
+	using FogPtr = Common::ScopedPtr<Graphics::Surface>;
 	AGDSEngine *	_engine;
 	ObjectPtr		_object;
 	Animation *		_animation;
+	FogPtr			_fog;
 	bool			_jokes;
 	Common::String 	_name;
 	Common::String	_processName;
@@ -55,6 +57,7 @@ class Character {
 	int _direction;
 	int _jokesDirection;
 	int _movementDirections;
+	int _fogMinZ, _fogMaxZ;
 
 	struct AnimationDescription {
 		struct Frame {
@@ -69,11 +72,8 @@ class Character {
 	const AnimationDescription * _description;
 
 public:
-	Character(AGDSEngine * engine, const Common::String & name):
-		_engine(engine), _name(name), _object(), _animation(nullptr), _jokes(false),
-		_enabled(true), _visible(true), _stopped(false),
-		_phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
-	}
+	Character(AGDSEngine * engine, const Common::String & name);
+	~Character();
 
 	void associate(const Common::String &name);
 
@@ -141,6 +141,9 @@ public:
 	int getDirectionForMovement(Common::Point delta);
 
 	int z() const;
+
+	void reset();
+	void setFog(Graphics::Surface * surface, int minZ, int maxZ);
 };
 
 

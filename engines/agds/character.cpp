@@ -32,10 +32,20 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "graphics/surface.h"
 
 #include <math.h>
 
 namespace AGDS {
+
+Character::Character(AGDSEngine * engine, const Common::String & name):
+	_engine(engine), _name(name), _object(), _animation(nullptr), _jokes(false),
+	_enabled(true), _visible(true), _stopped(false),
+	_phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
+}
+
+Character::~Character() {
+}
 
 void Character::load(Common::SeekableReadStream *stream) {
 	debug("loading character...");
@@ -111,19 +121,16 @@ void Character::loadState(Common::ReadStream* stream) {
 	debug("character at %d, %d, dir: %d", x, y, dir);
 	position(Common::Point(x, y));
 	direction(dir);
-	int n = 2;
-	while(n--) {
-		int v = stream->readUint16LE();
-		debug("savegame character leftover: %d", v);
-	}
+	_visible = stream->readUint16LE();
+	_enabled = stream->readUint16LE();
 }
 
 void Character::saveState(Common::WriteStream* stream) const {
 	stream->writeUint16LE(_pos.x);
 	stream->writeUint16LE(_pos.y);
 	stream->writeUint16LE(_direction);
-	stream->writeUint16LE(1);
-	stream->writeUint16LE(1);
+	stream->writeUint16LE(_visible);
+	stream->writeUint16LE(_enabled);
 }
 
 
@@ -225,6 +232,17 @@ int Character::z() const {
 	return g_system->getHeight() - y;
 }
 
+void Character::reset() {
+	_fog.reset();
+	_visible = false;
+}
+
+
+void Character::setFog(Graphics::Surface * surface, int minZ, int maxZ) {
+	_fog.reset(surface);
+	_fogMinZ = minZ;
+	_fogMaxZ = maxZ;
+}
 
 int Character::getDirectionForMovement(Common::Point delta) {
 	auto angle = atan2(delta.y, delta.x);

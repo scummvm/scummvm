@@ -341,7 +341,7 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	_currentScreen = new Screen(this, screenObject, loadingType, previousScreenName);
 
 	if (_currentCharacter)
-		_currentCharacter->visible(false);
+		_currentCharacter->reset();
 
 	runProcess(screenObject);
 
