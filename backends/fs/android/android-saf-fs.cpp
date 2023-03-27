@@ -798,7 +798,7 @@ void AddSAFFakeNode::makeProxySAF() const {
 		return;
 	}
 
-	// I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
+	// I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
 	jobject saftree = JNI::getNewSAFTree(true, true, "", _("Choose a new folder"));
 	if (!saftree) {
 		return;
