@@ -27,6 +27,7 @@
 #include "sci/debug.h"
 #include "sci/event.h"
 #include "sci/resource/resource.h"
+#include "sci/version.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
