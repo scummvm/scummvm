@@ -24,6 +24,7 @@
 #define AGDS_FONT_H
 
 #include "graphics/font.h"
+#include "common/ptr.h"
 
 namespace Graphics {
 	struct TransparentSurface;
@@ -32,7 +33,7 @@ namespace Graphics {
 namespace AGDS {
 
 class Font : public Graphics::Font {
-	Graphics::TransparentSurface * _surface;
+	Common::ScopedPtr<Graphics::TransparentSurface> _surface;
 	int		_glyphW, _glyphH;
 	int		_cellW, _cellH;
 	uint8	_width[0x100];
