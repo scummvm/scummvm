@@ -48,6 +48,10 @@ OneDriveStorage::OneDriveStorage(Common::String code, Networking::ErrorCallback 
 	getAccessToken(code, cb);
 }
 
+OneDriveStorage::OneDriveStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb) {
+	codeFlowComplete(cb, codeFlowJson);
+}
+
 OneDriveStorage::~OneDriveStorage() {}
 
 Common::String OneDriveStorage::cloudProvider() { return "onedrive"; }

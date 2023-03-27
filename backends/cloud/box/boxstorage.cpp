@@ -48,6 +48,10 @@ BoxStorage::BoxStorage(Common::String code, Networking::ErrorCallback cb) {
 	getAccessToken(code, cb);
 }
 
+BoxStorage::BoxStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb) {
+	codeFlowComplete(cb, codeFlowJson);
+}
+
 BoxStorage::~BoxStorage() {}
 
 Common::String BoxStorage::cloudProvider() { return "box"; }
