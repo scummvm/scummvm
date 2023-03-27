@@ -541,8 +541,9 @@ bool Runtime::bootGame(bool newGame) {
 	}
 
 	if (_gameID == GID_REAH) {
-		_animSpeedRotation = Fraction(64, 3);
-		_animSpeedWalk = Fraction(16, 1);
+		_animSpeedRotation = Fraction(21, 1);	// Probably accurate
+		_animSpeedStaticAnim = Fraction(21, 1); // Probably accurate
+		_animSpeedWalk = Fraction(16, 1);		// Possibly not accurate
 	}
 
 	return true;
@@ -585,7 +586,8 @@ bool Runtime::runIdle() {
 		// Try to re-trigger
 		StaticAnimation &sanim = _idleAnimations[_direction];
 		if (sanim.nextStartTime <= timestamp) {
-			changeAnimation(sanim.animDefs[sanim.currentAlternation], false);
+			const AnimationDef &animDef = sanim.animDefs[sanim.currentAlternation];
+			changeAnimation(animDef, animDef.firstFrame, false, _animSpeedStaticAnim);
 			_animPlayWhileIdle = true;
 		}
 	}
@@ -2736,13 +2738,7 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 
 	uint cursorID = 0;
 	if (_haveHorizPanAnimations) {
-		uint panCursor = 0;
-		if (_panoramaDirectionFlags & kPanoramaHorizFlags)
-			panCursor |= kPanCursorDraggableHoriz;
-		if (_panoramaDirectionFlags & kPanoramaUpFlag)
-			panCursor |= kPanCursorDraggableUp;
-		if (_panoramaDirectionFlags & kPanoramaUpFlag)
-			panCursor |= kPanCursorDraggableDown;
+		uint panCursor = kPanCursorDraggableHoriz;
 
 		if (isRight)
 			panCursor |= kPanCursorDirectionRight;
@@ -2776,7 +2772,13 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 	_direction = stackArgs[kAnimDefStackArgs + 1];
 	_havePendingScreenChange = true;
 
-	changeToCursor(_cursors[kCursorArrow]);
+	uint cursorID = kCursorArrow;
+	if (_scriptEnv.panInteractionID == kPanUpInteraction)
+		cursorID = _panCursors[kPanCursorDraggableUp | kPanCursorDirectionUp];
+	else if (_scriptEnv.panInteractionID == kPanDownInteraction)
+		cursorID = _panCursors[kPanCursorDraggableDown | kPanCursorDirectionDown];
+
+	changeToCursor(_cursors[cursorID]);
 }
 
 void Runtime::scriptOpAnimN(ScriptArg_t arg) {
@@ -2865,7 +2867,7 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	if (animDef.animName == _idleCurrentStaticAnimation)
 		return;
 
-	changeAnimation(animDef, animDef.lastFrame, false);
+	changeAnimation(animDef, animDef.lastFrame, false, _animSpeedStaticAnim);
 
 	_havePendingReturnToIdleState = true;
 	_haveHorizPanAnimations = false;

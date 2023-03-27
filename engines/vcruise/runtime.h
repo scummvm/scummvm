@@ -779,6 +779,7 @@ private:
 	int32 _listenerAngle;
 
 	Fraction _animSpeedRotation;
+	Fraction _animSpeedStaticAnim;
 	Fraction _animSpeedWalk;
 
 	static const uint kAnimDefStackArgs = 8;
