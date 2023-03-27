@@ -45,8 +45,29 @@ void Inter_Adibou1::setupOpcodesFunc() {
 }
 
 void Inter_Adibou1::setupOpcodesGob() {
+	OPCODEGOB(2, oAdibou1_fillAreaAtPoint);
 	OPCODEGOB(10, oAdibou1_getAppliNameFromId);
 	OPCODEGOB(11, oAdibou1_listApplications);
+}
+
+void Inter_Adibou1::oAdibou1_fillAreaAtPoint(OpGobParams &params) {
+	uint16 varX = _vm->_game->_script->readUint16();
+	uint16 varY = _vm->_game->_script->readUint16();
+	uint16 varSpriteIndex = _vm->_game->_script->readUint16();
+	uint16 varColor = _vm->_game->_script->readUint16();
+
+	int16 x = VAR(varX);
+	int16 y = VAR(varY);
+	int16 spriteIndex = VAR(varSpriteIndex);
+	int16 color = VAR(varColor);
+
+	SurfacePtr destSprite = _vm->_draw->_spritesArray[spriteIndex];
+	if (!destSprite) {
+		warning("oAdibou1_fillAreaAtPoint(): Sprite %d does not exist", spriteIndex);
+		return;
+	}
+
+	destSprite->fillAreaAtPoint(x, y, color);
 }
 
 void Inter_Adibou1::oAdibou1_getAppliNameFromId(OpGobParams &params) {
