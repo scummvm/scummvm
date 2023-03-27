@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-27 07:24+0000\n"
-"PO-Revision-Date: 2023-03-26 16:37+0000\n"
+"PO-Revision-Date: 2023-03-27 16:45+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -209,7 +209,7 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %S डाउनलोड कर लिया"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:370
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S/s"
 msgstr "डाउनलोड की गति: %s %S"
 
@@ -239,9 +239,8 @@ msgid "Detected %d new packs, %s %S"
 msgstr ""
 
 #: gui/downloadpacksdialog.cpp:263
-#, fuzzy
 msgid "Download"
-msgstr "नीचे"
+msgstr "डाउनलोड"
 
 #: gui/downloadpacksdialog.cpp:287
 #, c-format
@@ -375,12 +374,10 @@ msgid "Backend"
 msgstr ""
 
 #: gui/editgamedialog.cpp:222
-#, fuzzy
 msgid "Override global backend settings"
-msgstr "ग्लोबल ऑडियो सेटिंग्स को ओवरराइड करें"
+msgstr "ग्लोबल बैकएन्ड सेटिंग्स को ओवरराइड करें"
 
 #: gui/editgamedialog.cpp:224
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "ग्लोबल ऑडियो सेटिंग्स को ओवरराइड करें"
@@ -512,23 +509,20 @@ msgstr "कोई नहीं"
 #: gui/editgamedialog.cpp:601 gui/options.cpp:2373 gui/options.cpp:2375
 #: gui/options.cpp:2912 gui/options.cpp:2914 gui/options.cpp:3244
 #: gui/options.cpp:3250 backends/platform/wii/options.cpp:55
-#, fuzzy
 msgid "Default"
-msgstr "<अनुपस्थिति>"
+msgstr "डिफ़ॉल्ट"
 
 #: gui/editgamedialog.cpp:523 gui/options.cpp:3284
 msgid "Select SoundFont"
 msgstr ""
 
 #: gui/editgamedialog.cpp:562
-#, fuzzy
 msgid "Select additional game directory"
 msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
 
 #: gui/editgamedialog.cpp:575 gui/options.cpp:3146
-#, fuzzy
 msgid "Select directory for saved games"
-msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
+msgstr "उस फोल्डर को चुने जिसमे सेव किये हुए गेम है"
 
 #: gui/editgamedialog.cpp:582 gui/options.cpp:3153
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -565,9 +559,8 @@ msgid "Do you really want to overwrite the file?"
 msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:68
-#, fuzzy
 msgid "Reverb"
-msgstr "कभी नहीँ"
+msgstr "रीवर्ब"
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
 msgid "Active"
@@ -748,7 +741,6 @@ msgstr ""
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
-#, fuzzy
 msgctxt "group"
 msgid "None"
 msgstr "कोई नहीं"
@@ -766,7 +758,6 @@ msgstr ""
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
 msgctxt "group"
 msgid "Engine"
 msgstr "इंजन"
@@ -827,19 +818,17 @@ msgstr "ScummVM के बारे में जानकारी"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 #: gui/launcher.cpp:255
-#, fuzzy
 msgid "Global ~O~ptions..."
-msgstr "विकल्प(O)..."
+msgstr "ग्लोबल विकल्प(O)..."
 
 #: gui/launcher.cpp:255
 msgid "Change global ScummVM options"
 msgstr "ScummVM के ग्लोबल विकल्प बदलें"
 
 #: gui/launcher.cpp:255
-#, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "विकल्प(O)..."
+msgstr "ग्लोबल विकल्प(O)..."
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:260
@@ -851,10 +840,9 @@ msgid "Add games to the list"
 msgstr ""
 
 #: gui/launcher.cpp:260
-#, fuzzy
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr "खेल add करे..."
+msgstr "गेम add करे..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
 #: gui/launcher.cpp:264
@@ -866,10 +854,9 @@ msgid "Remove game from the list. The game data files stay intact"
 msgstr "गेम सूचि से हटा दें। गेम की फाइलें नहीं हटेंगी"
 
 #: gui/launcher.cpp:264
-#, fuzzy
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "खेल हटा डे (R)"
+msgstr "गेम हटा डे (R)"
 
 #. I18N: Button caption. Mass add games
 #: gui/launcher.cpp:267
@@ -878,10 +865,9 @@ msgstr "अनेक गेम जोड़ें..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
 #: gui/launcher.cpp:270
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "अनेक खेल add करे..."
+msgstr "अनेक गेम add करे..."
 
 #: gui/launcher.cpp:278 gui/launcher.cpp:776 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
@@ -935,9 +921,8 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 
 #: gui/launcher.cpp:610
-#, fuzzy
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr "ScummVM ये directory खोल नहीं पाया!"
+msgstr "ScummVM इस डायरेक्टरी में कोई गेम नहीं ढूंढ पाया!"
 
 #. I18N: Unknown game variant
 #: gui/launcher.cpp:626
@@ -969,35 +954,31 @@ msgid "~L~oad..."
 msgstr ""
 
 #: gui/launcher.cpp:1075
-#, fuzzy
 msgid "Load saved game for selected game"
-msgstr "इस चयनित खेल को शुरू करें"
+msgstr "चयनित खेल के लिए गेम लोड करे"
 
 #: gui/launcher.cpp:1077
 msgid "Record..."
 msgstr ""
 
 #: gui/launcher.cpp:1083
-#, fuzzy
 msgid "~G~ame Options..."
-msgstr "विकल्प(O)..."
+msgstr "गेम विकल्प(O)..."
 
 #: gui/launcher.cpp:1083
 msgid "Change game options"
 msgstr "गेम के विकल्प चुनें"
 
 #: gui/launcher.cpp:1083
-#, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "विकल्प(O)..."
+msgstr "गेम विकल्प(O)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1172 gui/launcher.cpp:1361
-#, fuzzy
 msgid "Unknown Engine"
-msgstr "इंजन"
+msgstr "अनजान इंजन"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
@@ -1067,9 +1048,8 @@ msgid "Edit record description"
 msgstr ""
 
 #: gui/onscreendialog.cpp:107
-#, fuzzy
 msgid "Switch to Game"
-msgstr "खेल"
+msgstr "गेम पर स्विच करे"
 
 #: gui/onscreendialog.cpp:109
 msgid "Fast replay"
@@ -1118,7 +1098,6 @@ msgstr ""
 #: gui/options.cpp:446 gui/options.cpp:761 gui/options.cpp:861
 #: gui/options.cpp:866 gui/options.cpp:889 gui/options.cpp:894
 #: gui/options.cpp:1098 gui/options.cpp:1648
-#, fuzzy
 msgctxt "shader"
 msgid "None"
 msgstr "कोई नहीं"
@@ -1275,9 +1254,8 @@ msgid "Disabled"
 msgstr ""
 
 #: gui/options.cpp:1699
-#, fuzzy
 msgid "Filter graphics"
-msgstr "ग्राफिक्स"
+msgstr "फ़िल्टर ग्राफिक्स"
 
 #: gui/options.cpp:1699
 msgid "Use linear filtering when scaling graphics"
@@ -1437,7 +1415,6 @@ msgid "Subs"
 msgstr ""
 
 #: gui/options.cpp:1872
-#, fuzzy
 msgctxt "lowres"
 msgid "Both"
 msgstr "दोनों"
@@ -1562,10 +1539,9 @@ msgid "Icon Path:"
 msgstr ""
 
 #: gui/options.cpp:2465
-#, fuzzy
 msgctxt "path"
 msgid "Default"
-msgstr "<अनुपस्थिति>"
+msgstr "डिफ़ॉल्ट"
 
 #: gui/options.cpp:2470 gui/options.cpp:2472 gui/options.cpp:2473
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1602,9 +1578,8 @@ msgid "Theme:"
 msgstr ""
 
 #: gui/options.cpp:2529
-#, fuzzy
 msgid "GUI scale:"
-msgstr "भाषा:"
+msgstr "GUI साइज:"
 
 #: gui/options.cpp:2536
 msgid "GUI renderer:"
@@ -1629,9 +1604,8 @@ msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr ""
 
 #: gui/options.cpp:2564
-#, fuzzy
 msgid "GUI language:"
-msgstr "भाषा:"
+msgstr "GUI भाषा:"
 
 #: gui/options.cpp:2564
 msgid "Language of ScummVM GUI"
@@ -1689,7 +1663,6 @@ msgstr ""
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2644 gui/options.cpp:2792
-#, fuzzy
 msgid "None"
 msgstr "कोई नहीं"
 
@@ -1776,7 +1749,6 @@ msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 
 #: gui/options.cpp:2705 gui/options.cpp:3638
-#, fuzzy
 msgid "<never>"
 msgstr "कभी नहीँ"
 
@@ -1794,9 +1766,8 @@ msgid "Sync now"
 msgstr ""
 
 #: gui/options.cpp:2710
-#, fuzzy
 msgid "Start saved games sync"
-msgstr "इस चयनित खेल को शुरू करें"
+msgstr "सेव गेम sync शुरू करे"
 
 #: gui/options.cpp:2713
 msgctxt "lowres"
@@ -1808,9 +1779,8 @@ msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 
 #: gui/options.cpp:2716
-#, fuzzy
 msgid "Download game files"
-msgstr "डाउनलोड की गति: %s %S"
+msgstr "गेम फाइल डाउनलोड करे"
 
 #: gui/options.cpp:2716
 msgid "Open downloads manager dialog"
@@ -1935,9 +1905,8 @@ msgid "Ignore"
 msgstr ""
 
 #: gui/options.cpp:2854
-#, fuzzy
 msgid "Disable autosave"
-msgstr "रद्द करदो"
+msgstr "ऑटोसेव डिसएबल करे"
 
 #: gui/options.cpp:2855
 msgid ""
@@ -1957,9 +1926,8 @@ msgstr ""
 "नया गेम जोड़ें (A)..."
 
 #: gui/options.cpp:2865 engines/engine.cpp:594
-#, fuzzy
 msgid "Move"
-msgstr "नीचे देखो"
+msgstr "चलें"
 
 #: gui/options.cpp:2878
 msgid "ERROR: Failed to move the following saved games:\n"
@@ -1988,24 +1956,20 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:3162
-#, fuzzy
 msgid "Select directory for GUI themes"
-msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
+msgstr "GUI themes के लिए डायरेक्टरी सेलेक्ट करे"
 
 #: gui/options.cpp:3172
-#, fuzzy
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
+msgstr "launcher thumbnails के लिए डायरेक्टरी सेलेक्ट करे"
 
 #: gui/options.cpp:3182
-#, fuzzy
 msgid "Select directory for extra files"
-msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
+msgstr "एक्स्ट्रा फाइल्स के लिए डायरेक्टरी सेलेक्ट करे"
 
 #: gui/options.cpp:3193
-#, fuzzy
 msgid "Select directory for plugins"
-msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
+msgstr "उस फोल्डर को चुने जिसमे गेम plugins है"
 
 #: gui/options.cpp:3206
 #, fuzzy
