@@ -1015,8 +1015,9 @@ void Process::restartAnimation() {
 			animation->rewind();
 		}
 		animation->resume();
-		animation->decodeNextFrameIfNoFrame();
-		_engine->setGlobal(phaseVar, animation->phase() - 1);
+		animation->onScreen(true);
+		auto phase = animation->phase();
+		_engine->setGlobal(phaseVar, phase > 0? phase - 1: 0);
 	} else {
 		warning("no animation with phase var %s found", phaseVar.c_str());
 		_engine->setGlobal(phaseVar, -1);
@@ -1075,7 +1076,7 @@ void Process::pauseAnimation() {
 		animation->pause();
 		if (arg > 0) {
 			//1, 2 stop (2 with rewind)
-			animation->freeFrame();
+			animation->onScreen(false);
 			if (arg == 2) {
 				animation->rewind();
 				_engine->setGlobal(phaseVar, 0);
