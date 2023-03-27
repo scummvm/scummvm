@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-27 07:24+0000\n"
+"POT-Creation-Date: 2023-03-27 11:12+0000\n"
 "PO-Revision-Date: 2023-03-26 11:21+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3289,7 +3289,7 @@ msgstr "Kosketusnäytön 'Tap moodi' - Hover (DPad klikkaus)"
 msgid "Add a new folder"
 msgstr "Luo kansio"
 
-#. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
+#. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:812
 msgid "Choose a new folder"
 msgstr "Valitse uusi kansio"

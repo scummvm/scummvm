@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-27 07:24+0000\n"
+"POT-Creation-Date: 2023-03-27 11:12+0000\n"
 "PO-Revision-Date: 2023-03-27 16:42+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -3321,7 +3321,7 @@ msgstr "Touchscreen 'Tap Mode' - Passaggio del cursore (clic DPad)"
 msgid "Add a new folder"
 msgstr "Aggiungi cartella"
 
-#. I18N: This may be displayed in the Android UI used to add a Sotrage Attach Framework authorization
+#. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:812
 msgid "Choose a new folder"
 msgstr "Seleziona cartella"
