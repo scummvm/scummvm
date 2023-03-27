@@ -26,10 +26,24 @@ import android.os.Build;
 public class ExternalStorage {
 	public static final String SD_CARD = "sdCard";
 	public static final String EXTERNAL_SD_CARD = "externalSdCard";
-	public static final String DATA_DIRECTORY = "ScummVM data";
-	public static final String DATA_DIRECTORY_INT = "ScummVM data (Int)";
-	public static final String DATA_DIRECTORY_EXT = "ScummVM data (Ext)";
 
+	// User data is an system wide folder (typically, but maybe not always, "/data/") where apps can store data in their own subfolder.
+	// While this folder does exists in newer Android OS versions it is most likely not *directly* usable.
+	public static final String DATA_DIRECTORY = "User data (System Wide)";
+
+	// Internal App Data folder is a folder that is guaranteed to always be available for access.
+	// Only the app (here ScummVM) can write and read under this folder.
+	// It is used to store configuration file(s), log file(s), the default saved games folder, the default icons folder, and distribution data files.
+	// The folder's contents are kept kept upon upgrading to a compatible newer version of the app.
+	// It is wiped when downgrading, uninstalling or explicitly cleaning the application's data from the Android System Apps menu options.
+	// The storage for this folder is assigned from internal device storage (ie. not external physical SD Card).
+	public static final String DATA_DIRECTORY_INT = "ScummVM data (Internal)";
+
+	// External App Data folder is a folder that is NOT guaranteed to always be available for access.
+	// Only the app (here ScummVM) can write under this folder, but other apps have read access to the folder's contents.
+	// The folder's contents are kept upon upgrading to a compatible newer version of the app.
+	// It is wiped when downgrading, uninstalling or explicitly cleaning the application's data from the Android System Apps menu options.
+	public static final String DATA_DIRECTORY_EXT = "ScummVM data (External)";
 
 	// Find candidate removable sd card paths
 	// Code reference: https://stackoverflow.com/a/54411385
@@ -463,8 +477,10 @@ public class ExternalStorage {
 				map.add(Environment.getDataDirectory().getAbsolutePath());
 			}
 		}
+
 		map.add(DATA_DIRECTORY_INT);
 		map.add(ctx.getFilesDir().getPath());
+
 		map.add(DATA_DIRECTORY_EXT);
 		if (ctx.getExternalFilesDir(null) != null) {
 			map.add(ctx.getExternalFilesDir(null).getPath());
