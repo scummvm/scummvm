@@ -1047,7 +1047,7 @@ void Process::animationNextFrame() {
 
 void Process::signalAnimationEnd() {
 	Common::String phaseVar = popString();
-	debug("restartAnimation %s", phaseVar.c_str());
+	debug("signalAnimationEnd %s", phaseVar.c_str());
 	if (phaseVar.empty()) {
 		warning("no phaseVar");
 		return;
