@@ -271,6 +271,14 @@ struct InventoryItem {
 	bool highlighted;
 };
 
+struct Fraction {
+	Fraction();
+	Fraction(uint pNumerator, uint pDenominator);
+
+	uint numerator;
+	uint denominator;
+};
+
 class Runtime {
 public:
 	enum LoadGameOutcome {
@@ -480,6 +488,7 @@ private:
 	void changeMusicTrack(int musicID);
 	void changeAnimation(const AnimationDef &animDef, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
+	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride, const Fraction &defaultFrameRate);
 
 	void setSound3DParameters(uint soundID, int32 x, int32 y, const SoundParams3D &soundParams3D);
 	void triggerSound(bool looping, uint soundID, uint volume, int32 balance, bool is3D);
@@ -713,7 +722,7 @@ private:
 	uint _animFirstFrame;
 	uint _animLastFrame;
 	uint _animStopFrame;
-	uint _animFrameRateLock;
+	Fraction _animFrameRateLock;
 	Common::Rect _animConstraintRect;
 	uint32 _animStartTime;
 	uint32 _animFramesDecoded;
@@ -766,6 +775,9 @@ private:
 	int32 _listenerX;
 	int32 _listenerY;
 	int32 _listenerAngle;
+
+	Fraction _animSpeedRotation;
+	Fraction _animSpeedWalk;
 
 	static const uint kAnimDefStackArgs = 8;
 
