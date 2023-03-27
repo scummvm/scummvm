@@ -563,6 +563,9 @@ void TwinEEngine::playIntro() {
 	if (isLba1Classic()) {
 		abort |= _screens->loadBitmapDelay("Logo2Point21_640_480_256.bmp", 3);
 		if (!abort) {
+			abort |= _screens->adelineLogo();
+		}
+		if (!abort) {
 			abort |= _screens->loadBitmapDelay("TLBA1C_640_480_256.bmp", 3);
 		}
 	} else {
