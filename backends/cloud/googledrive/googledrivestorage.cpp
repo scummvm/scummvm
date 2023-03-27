@@ -49,6 +49,10 @@ GoogleDriveStorage::GoogleDriveStorage(Common::String code, Networking::ErrorCal
 	getAccessToken(code, cb);
 }
 
+GoogleDriveStorage::GoogleDriveStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb) {
+	codeFlowComplete(cb, codeFlowJson);
+}
+
 GoogleDriveStorage::~GoogleDriveStorage() {}
 
 Common::String GoogleDriveStorage::cloudProvider() { return "gdrive"; }

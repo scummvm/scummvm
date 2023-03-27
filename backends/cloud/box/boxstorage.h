@@ -55,6 +55,10 @@ protected:
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	BoxStorage(Common::String code, Networking::ErrorCallback cb);
+
+	/** This constructor extracts tokens from JSON acquired via OAuth code flow. */
+	BoxStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb);
+
 	virtual ~BoxStorage();
 
 	/**

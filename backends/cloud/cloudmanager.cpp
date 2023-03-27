@@ -290,19 +290,19 @@ void CloudManager::connectStorage(uint32 index, Networking::JsonResponse codeFlo
 		new Dropbox::DropboxStorage(codeFlowJson, cb);
 		break;
 	case kStorageOneDriveId:
-		//new OneDrive::OneDriveStorage(code, cb); // TODO: more clouds
+		new OneDrive::OneDriveStorage(codeFlowJson, cb);
 		break;
 	case kStorageGoogleDriveId:
-		//new GoogleDrive::GoogleDriveStorage(code, cb);
+		new GoogleDrive::GoogleDriveStorage(codeFlowJson, cb);
 		break;
 	case kStorageBoxId:
-		//new Box::BoxStorage(code, cb);
+		new Box::BoxStorage(codeFlowJson, cb);
 		break;
 	default:
 		break;
 	}
-	// in these constructors Storages request token using the passed code // TODO: rewrite
-	// when the token is received, they call replaceStorage()
+	// in these constructors Storages extract tokens from the passed JSON
+	// they call replaceStorage(), if the tokens are found,
 	// or removeStorage(), if some error occurred
 	// thus, no memory leak happens
 }
