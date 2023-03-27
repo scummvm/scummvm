@@ -1292,10 +1292,6 @@ Common::Array<reg_t> Script::listObjectReferences() const {
 	return tmp;
 }
 
-bool Script::offsetIsObject(uint32 offset) const {
-	return _buf->getUint16SEAt(offset + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER;
-}
-
 void Script::applySaidWorkarounds() {
 	// WORKAROUND: SQ3 version 1.018 has a messy vocab problem.
 	// Sierra added the vocab entry "scout" to this version at group id 0x953

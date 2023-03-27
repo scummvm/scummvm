@@ -125,7 +125,11 @@ public:
 	void syncLocalsBlock(SegManager *segMan);
 	ObjMap &getObjectMap() { return _objects; }
 	const ObjMap &getObjectMap() const { return _objects; }
-	bool offsetIsObject(uint32 offset) const;
+
+	// speed optimization: inline due to frequent calling
+	bool offsetIsObject(uint32 offset) const {
+		return _buf->getUint16SEAt(offset + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER;
+	}
 
 public:
 	Script();
