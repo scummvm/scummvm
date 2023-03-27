@@ -43,6 +43,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash loading Ultima VI savegames when dialogs are open.
    - Fix ordering of generated items in Ultima VI.
    - Fix auto-readying throwing weapons in Ultima VI.
+   - Fix Ultima VI crash opening new-style spellbook gump.
+   - Fix Ultima VI actor doll and gump colors.
+   - Fix Ultima VI crash using look action on walls.
 
  Voyeur:
    - Added support for German fan translation.
