@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-27 07:24+0000\n"
-"PO-Revision-Date: 2023-03-26 11:30+0000\n"
+"PO-Revision-Date: 2023-03-27 11:20+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -9129,31 +9129,29 @@ msgid "Wall collision off"
 msgstr "Ανενεργή σύγκρουση με τοίχους"
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgid "Language not detected"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "Δεν ανιχνεύτηκε η γλώσσα"
+msgstr "Επιλογή γλώσσας"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
 msgid "Voices: None"
-msgstr ""
+msgstr "Φωνές: Χωρίς"
 
 #: engines/twine/parser/text.cpp:40
 msgctxt "Options menu"
 msgid "Voices: English"
-msgstr ""
+msgstr "Φωνές: Αγγλικά"
 
 #: engines/twine/parser/text.cpp:41
 msgctxt "Options menu"
 msgid "Voices: French"
-msgstr ""
+msgstr "Φωνές: Γαλλικά"
 
 #: engines/twine/parser/text.cpp:42
 msgctxt "Options menu"
 msgid "Voices: German"
-msgstr ""
+msgstr "Φωνές: Γερμανικά"
 
 #: engines/ultima/metaengine.cpp:55
 msgid "Enable frame skipping"
@@ -9283,16 +9281,12 @@ msgstr ""
 "_No_Remorse."
 
 #: engines/vcruise/metaengine.cpp:50
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "Μεταβάσεις:"
+msgstr "Γρηγορότερες κινήσεις"
 
 #: engines/vcruise/metaengine.cpp:51
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Speeds up animations."
-msgstr "Επιλογές Ομιλίας"
+msgstr "Επιταχύνει τις κινήσεις (animations) των χαρακτήρων."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
