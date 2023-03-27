@@ -101,6 +101,11 @@ public:
 	void visible(bool visible) {
 		_visible = visible;
 	}
+
+	bool visible() const {
+		return _visible;
+	}
+
 	bool active() const {
 		return _enabled && _visible && !_stopped;
 	}

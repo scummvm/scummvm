@@ -308,7 +308,7 @@ void AGDSEngine::saveScreenPatch() {
 	if (!patch)
 		patch = PatchPtr(new Patch());
 	_currentScreen->save(patch);
-	patch->characterPresent = _currentCharacter != nullptr;
+	patch->characterPresent = _currentCharacter != nullptr && _currentCharacter->visible();
 	if (_currentCharacter) {
 		patch->characterPosition = _currentCharacter->position();
 		patch->characterDirection = _currentCharacter->direction();
@@ -340,11 +340,15 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	auto screenObject = loadObject(name, Common::String(), !hasScreenPatch);
 	_currentScreen = new Screen(this, screenObject, loadingType, previousScreenName);
 
+	if (_currentCharacter)
+		_currentCharacter->visible(false);
+
 	runProcess(screenObject);
 
 	if (doPatch) {
 		_currentScreen->load(patch);
 		if (_currentCharacter && patch->characterPresent) {
+			_currentCharacter->visible(true);
 			_currentCharacter->position(patch->characterPosition);
 			_currentCharacter->direction(patch->characterDirection);
 		}
@@ -1191,8 +1195,6 @@ void AGDSEngine::loadNextScreen() {
 		_nextScreenType = ScreenLoadingType::Normal;
 		loadScreen(nextScreenName, nextScreenType);
 	}
-	if (_currentCharacter)
-		_currentCharacter->visible(true);
 }
 
 Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
