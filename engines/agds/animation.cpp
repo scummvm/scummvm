@@ -34,7 +34,7 @@ Animation::Animation(AGDSEngine *engine, const Common::String &name) :
 	_engine(engine), _name(name), _flic(), _frame(),
 	_frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
 	_phase(0), _paused(false), _speed(100), _z(0),
-	_delay(0), _random(0), _scale(1) {
+	_delay(0), _random(0), _scale(1), _onScreen(true) {
 }
 
 Animation::~Animation() {
@@ -88,6 +88,7 @@ bool Animation::load(Common::SeekableReadStream *stream, const Common::String &f
 	if (flic->loadStream(stream)) {
 		_frames = flic->getFrameCount();
 		_flic = flic;
+		decodeNextFrame();
 		return true;
 	} else {
 		_frames = 0;
@@ -122,17 +123,22 @@ void Animation::rewind() {
 	_flic->rewind();
 }
 
+void Animation::onScreen(bool onScreen) {
+	_onScreen = onScreen;
+}
+
 bool Animation::tick() {
 	if (!_flic && _frame) { //static frame
 		return true;
 	}
 
-	if (_paused || (_phaseVarControlled && !_frame)) {
+	if (_paused || !_frame || (_phaseVarControlled && !_onScreen)) {
 		return true;
 	}
 
 	if (_phaseVarControlled && _engine->getGlobal(_phaseVar) == -2) {
 		debug("phase var %s signalled deleting of animation", _phaseVar.c_str());
+		freeFrame();
 		return false;
 	}
 
@@ -143,13 +149,16 @@ bool Animation::tick() {
 
 	bool eov = _phase >= _frames;
 	if (_phaseVarControlled && eov) {
-		freeFrame();
 		_engine->setGlobal(_phaseVar, -1);
+		onScreen(false);
 		return true;
 	}
 
 	if (!eov)
+	{
 		decodeNextFrame();
+		onScreen(true);
+	}
 
 	if (!_process.empty()) {
 		if (!_phaseVar.empty())
@@ -172,14 +181,14 @@ bool Animation::tick() {
 		return false;
 	}
 
-	if (eov)
+	if (eov && frames() > 1)
 		rewind();
 	return true;
 }
 
 void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst) const {
 	dst += _position;
-	if (_frame) {
+	if (_frame && _onScreen) {
 		Common::Rect srcRect = _frame->getRect();
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
 			_frame->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);

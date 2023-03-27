@@ -54,12 +54,11 @@ class Animation {
 	int					_delay;
 	int					_random;
 	float				_scale;
+	bool				_onScreen;
 
 public:
 	Animation(AGDSEngine *engine, const Common::String &name);
 	~Animation();
-
-	void freeFrame();
 
 	bool hasFrame() const {
 		return _frame != nullptr;
@@ -114,6 +113,7 @@ public:
 
 	void phaseVarControlled(bool controlled) {
 		_phaseVarControlled = controlled;
+		_onScreen = !controlled;
 	}
 
 	bool paused() const {
@@ -153,18 +153,18 @@ public:
 		return _phase;
 	}
 
+	void onScreen(bool onScreen);
+
 	bool load(Common::SeekableReadStream *stream, const Common::String &fname);
 	void paint(Graphics::Surface & backbuffer, Common::Point dst) const;
 	int width() const;
 	int height() const;
 	bool tick();
 
-	void decodeNextFrameIfNoFrame() {
-		if (!_frame)
-			decodeNextFrame();
-	}
-
 	void decodeNextFrame();
+
+private:
+	void freeFrame();
 };
 
 
