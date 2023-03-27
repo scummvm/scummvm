@@ -21,7 +21,6 @@
 
 #include <stdio.h>
 #include <time.h>
-#include <unistd.h>
 
 #include <mint/cookie.h>
 #include <mint/osbind.h>
@@ -61,6 +60,10 @@
 extern "C" void atari_ikbd_init();
 extern "C" void atari_ikbd_shutdown();
 
+extern "C" void atari_200hz_init();
+extern "C" void atari_200hz_shutdown();
+extern "C" volatile uint32 counter_200hz;
+
 extern void nf_init(void);
 extern void nf_print(const char* msg);
 
@@ -76,14 +79,20 @@ OSystem_Atari::~OSystem_Atari() {
 		_video_initialized = false;
 	}
 
+	if (_200hz_initialized) {
+		Supexec(atari_200hz_shutdown);
+		_200hz_initialized = false;
+	}
+
 	if (_ikbd_initialized) {
 		Supexec(atari_ikbd_shutdown);
 		_ikbd_initialized = false;
 	}
 }
 
-static void ikbd_and_video_restore() {
+static void critical_restore() {
 	Supexec(asm_screen_falcon_restore);
+	Supexec(atari_200hz_shutdown);
 	Supexec(atari_ikbd_shutdown);
 }
 
@@ -111,8 +120,6 @@ void OSystem_Atari::initBackend() {
 
 	nf_init();
 
-	_startTime = clock();
-
 	_timerManager = new DefaultTimerManager();
 	_savefileManager = new DefaultSaveFileManager("saves");
 
@@ -136,10 +143,15 @@ void OSystem_Atari::initBackend() {
 	Supexec(atari_ikbd_init);
 	_ikbd_initialized = true;
 
+	Supexec(atari_200hz_init);
+	_200hz_initialized = true;
+
 	Supexec(asm_screen_falcon_save);
 	_video_initialized = true;
 
-	Setexc(VEC_PROCTERM, ikbd_and_video_restore);
+	(void)Setexc(VEC_PROCTERM, critical_restore);
+
+	_startTime = counter_200hz;
 
 	BaseBackend::initBackend();
 }
@@ -150,11 +162,12 @@ Common::MutexInternal *OSystem_Atari::createMutex() {
 
 uint32 OSystem_Atari::getMillis(bool skipRecord) {
 	// CLOCKS_PER_SEC is 200, so no need to use floats
-	return 1000 * (clock() - _startTime) / CLOCKS_PER_SEC;
+	return 1000 * (counter_200hz - _startTime) / CLOCKS_PER_SEC;
 }
 
 void OSystem_Atari::delayMillis(uint msecs) {
-	usleep(msecs * 1000);
+	const uint32 threshold = getMillis() + msecs;
+	while (getMillis() < threshold);
 }
 
 void OSystem_Atari::getTimeAndDate(TimeDate &td, bool skipRecord) const {

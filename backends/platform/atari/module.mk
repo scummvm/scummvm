@@ -2,6 +2,7 @@ MODULE := backends/platform/atari
 
 MODULE_OBJS := \
 	osystem_atari.o \
+	atari_200hz.o \
 	atari_ikbd.o \
 	native_features.o
 

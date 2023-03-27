@@ -52,6 +52,7 @@ private:
 	long _startTime;
 
 	bool _video_initialized = false;
+	bool _200hz_initialized = false;
 	bool _ikbd_initialized = false;
 };
 
