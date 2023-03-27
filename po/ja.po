@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-27 04:11+0000\n"
+"POT-Creation-Date: 2023-03-27 07:24+0000\n"
 "PO-Revision-Date: 2023-03-25 18:49+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -670,7 +670,7 @@ msgstr "作用"
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:457 engines/grim/grim.cpp:538 engines/icb/icb.cpp:68
 #: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:809
-#: engines/twine/metaengine.cpp:472 engines/twine/metaengine.cpp:539
+#: engines/twine/metaengine.cpp:461 engines/twine/metaengine.cpp:528
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
@@ -683,7 +683,7 @@ msgstr "上"
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:462 engines/grim/grim.cpp:543 engines/icb/icb.cpp:73
 #: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:776
-#: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:547
+#: engines/twine/metaengine.cpp:468 engines/twine/metaengine.cpp:536
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
@@ -696,7 +696,7 @@ msgstr "下"
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:789
-#: engines/twine/metaengine.cpp:494 engines/twine/metaengine.cpp:562
+#: engines/twine/metaengine.cpp:483 engines/twine/metaengine.cpp:551
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
@@ -710,7 +710,7 @@ msgstr "左"
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:796
-#: engines/twine/metaengine.cpp:486 engines/twine/metaengine.cpp:555
+#: engines/twine/metaengine.cpp:475 engines/twine/metaengine.cpp:544
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
@@ -2924,7 +2924,7 @@ msgstr "右クリック"
 #: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:125
-#: engines/twine/metaengine.cpp:242 engines/wintermute/keymapper_tables.h:1608
+#: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
 msgstr "一時停止"
 
@@ -3186,7 +3186,7 @@ msgid "Global"
 msgstr "全般"
 
 #: backends/events/default/default-events.cpp:335
-#: engines/twine/metaengine.cpp:361
+#: engines/twine/metaengine.cpp:350
 msgid "Global Main Menu"
 msgstr "メインメニュー"
 
@@ -3267,7 +3267,7 @@ msgstr "縦横比修正の切替"
 #: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
-#: engines/twine/metaengine.cpp:371
+#: engines/twine/metaengine.cpp:360
 msgid "Center"
 msgstr "中央"
 
@@ -5012,7 +5012,7 @@ msgstr "オブジェクト、オプションを読み上げる"
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
 #: engines/mads/metaengine.cpp:109 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:51
-#: engines/twine/metaengine.cpp:168
+#: engines/twine/metaengine.cpp:157
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
@@ -5112,7 +5112,7 @@ msgstr "コマンドを変更"
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:99
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:223
 #: engines/scumm/help.cpp:232 engines/scumm/help.cpp:239
-#: engines/scumm/help.cpp:247 engines/twine/metaengine.cpp:429
+#: engines/scumm/help.cpp:247 engines/twine/metaengine.cpp:418
 #: engines/zvision/metaengine.cpp:232
 msgid "Inventory"
 msgstr "インベントリー"
@@ -5869,7 +5869,7 @@ msgid "Interact via Right Click"
 msgstr "右クリックでインタラクト"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:476
-#: engines/twine/metaengine.cpp:391
+#: engines/twine/metaengine.cpp:380
 msgid "Move Forward"
 msgstr "前に進む"
 
@@ -5887,13 +5887,13 @@ msgstr "右に行く"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
 #: engines/mm/mm1/metaengine.cpp:91 engines/pegasus/pegasus.cpp:2739
-#: engines/twine/metaengine.cpp:412 engines/zvision/metaengine.cpp:209
+#: engines/twine/metaengine.cpp:401 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "左に曲がる"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
 #: engines/mm/mm1/metaengine.cpp:92 engines/pegasus/pegasus.cpp:2746
-#: engines/twine/metaengine.cpp:405 engines/zvision/metaengine.cpp:215
+#: engines/twine/metaengine.cpp:394 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "右に曲がる"
 
@@ -6094,7 +6094,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "このパズルを体験版でプレイする事はできません"
 
 #: engines/lure/metaengine.cpp:39 engines/mads/metaengine.cpp:108
-#: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:167
+#: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr "音声合成によるナレーション"
 
@@ -6135,7 +6135,7 @@ msgid "Naughty game mode"
 msgstr "いたずらゲームモード"
 
 #. I18N: ESC key
-#: engines/mm/mm1/metaengine.cpp:41 engines/twine/metaengine.cpp:443
+#: engines/mm/mm1/metaengine.cpp:41 engines/twine/metaengine.cpp:432
 #: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "脱出"
@@ -8583,171 +8583,163 @@ msgid "Enable the sound for the game"
 msgstr "ゲームの音声を有効にする"
 
 #: engines/twine/metaengine.cpp:100
-msgid "Enable voices"
-msgstr "音声を有効にする"
-
-#: engines/twine/metaengine.cpp:101
-msgid "Enable the voices for the game"
-msgstr "ゲーム音声を有効にする"
-
-#: engines/twine/metaengine.cpp:111
 msgid "Enable text"
 msgstr "テキスト表示を有効にする"
 
-#: engines/twine/metaengine.cpp:112
+#: engines/twine/metaengine.cpp:101
 msgid "Enable the text for the game"
 msgstr "ゲームテキストの表示を有効にする"
 
-#: engines/twine/metaengine.cpp:122
+#: engines/twine/metaengine.cpp:111
 msgid "Enable movies"
 msgstr "ムービーを有効にする"
 
-#: engines/twine/metaengine.cpp:123
+#: engines/twine/metaengine.cpp:112
 msgid "Enable the cutscenes for the game"
 msgstr "ゲーム内ムービーを有効にする"
 
-#: engines/twine/metaengine.cpp:133
+#: engines/twine/metaengine.cpp:122
 msgid "Enable mouse"
 msgstr "マウス操作を有効にする"
 
-#: engines/twine/metaengine.cpp:134
+#: engines/twine/metaengine.cpp:123
 msgid "Enable the mouse for the UI"
 msgstr "マウスでのUI操作を有効にする"
 
-#: engines/twine/metaengine.cpp:144
+#: engines/twine/metaengine.cpp:133
 msgid "Use the USA version"
 msgstr "北米版を使用する"
 
-#: engines/twine/metaengine.cpp:145
+#: engines/twine/metaengine.cpp:134
 msgid "Enable the USA specific version flags"
 msgstr "北米版のバージョンフラグを有効にする"
 
-#: engines/twine/metaengine.cpp:155 engines/ultima/metaengine.cpp:88
+#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:88
 msgid "Enable high resolution"
 msgstr "ハイレゾを有効化"
 
-#: engines/twine/metaengine.cpp:156 engines/ultima/metaengine.cpp:89
+#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:89
 msgid "Enable a higher resolution for the game"
 msgstr "ゲームのハイレゾを有効化"
 
-#: engines/twine/metaengine.cpp:247
+#: engines/twine/metaengine.cpp:236
 msgid "Debug Next Room"
 msgstr "次のルームをデバッグ"
 
-#: engines/twine/metaengine.cpp:252
+#: engines/twine/metaengine.cpp:241
 msgid "Debug Previous Room"
 msgstr "前のルームをデバッグ"
 
-#: engines/twine/metaengine.cpp:257
+#: engines/twine/metaengine.cpp:246
 msgid "Debug Apply Celling Grid"
 msgstr "天井グリッドを適用"
 
-#: engines/twine/metaengine.cpp:262
+#: engines/twine/metaengine.cpp:251
 msgid "Debug Increase Celling Grid Index"
 msgstr "天井グリッドのインデックスを増やす"
 
-#: engines/twine/metaengine.cpp:267
+#: engines/twine/metaengine.cpp:256
 msgid "Debug Decrease Celling Grid Index"
 msgstr "天井グリッドのインデックスを減らす"
 
-#: engines/twine/metaengine.cpp:272
+#: engines/twine/metaengine.cpp:261
 msgid "Debug Grid Camera Up"
 msgstr "グリッドカメラを上へ"
 
-#: engines/twine/metaengine.cpp:277
+#: engines/twine/metaengine.cpp:266
 msgid "Debug Grid Camera Down"
 msgstr "グリッドカメラを下へ"
 
-#: engines/twine/metaengine.cpp:282
+#: engines/twine/metaengine.cpp:271
 msgid "Debug Grid Camera Left"
 msgstr "グリッドカメラを左へ"
 
-#: engines/twine/metaengine.cpp:288
+#: engines/twine/metaengine.cpp:277
 msgid "Debug Grid Camera Right"
 msgstr "グリッドカメラを右へ"
 
-#: engines/twine/metaengine.cpp:293
+#: engines/twine/metaengine.cpp:282
 msgid "Place actor at center of screen"
 msgstr "アクターを画面中央に配置"
 
-#: engines/twine/metaengine.cpp:298
+#: engines/twine/metaengine.cpp:287
 msgid "Debug Menu"
 msgstr "デバッグメニュー"
 
-#: engines/twine/metaengine.cpp:303
+#: engines/twine/metaengine.cpp:292
 msgid "Debug Menu Execute"
 msgstr "デバッグメニューを実行"
 
-#: engines/twine/metaengine.cpp:308 engines/twine/metaengine.cpp:328
+#: engines/twine/metaengine.cpp:297 engines/twine/metaengine.cpp:317
 msgid "Normal Behaviour"
 msgstr "通常の行動"
 
-#: engines/twine/metaengine.cpp:313 engines/twine/metaengine.cpp:333
+#: engines/twine/metaengine.cpp:302 engines/twine/metaengine.cpp:322
 msgid "Athletic Behaviour"
 msgstr "競技用の行動"
 
-#: engines/twine/metaengine.cpp:318 engines/twine/metaengine.cpp:338
+#: engines/twine/metaengine.cpp:307 engines/twine/metaengine.cpp:327
 msgid "Aggressive Behaviour"
 msgstr "攻撃的な行動"
 
-#: engines/twine/metaengine.cpp:323 engines/twine/metaengine.cpp:343
+#: engines/twine/metaengine.cpp:312 engines/twine/metaengine.cpp:332
 msgid "Discreet Behaviour"
 msgstr "慎重な行動"
 
-#: engines/twine/metaengine.cpp:348
+#: engines/twine/metaengine.cpp:337
 msgid "Behaviour Action"
 msgstr "行動を実行"
 
-#: engines/twine/metaengine.cpp:354
+#: engines/twine/metaengine.cpp:343
 msgid "Change Behaviour"
 msgstr "行動を変更"
 
-#: engines/twine/metaengine.cpp:366
+#: engines/twine/metaengine.cpp:355
 msgid "Options Menu"
 msgstr "設定"
 
-#: engines/twine/metaengine.cpp:378
+#: engines/twine/metaengine.cpp:367
 msgid "Use Selected Object"
 msgstr "選択したオブジェクトを使用"
 
-#: engines/twine/metaengine.cpp:384
+#: engines/twine/metaengine.cpp:373
 msgid "Throw Magic Ball"
 msgstr "マジックボールを投げる"
 
-#: engines/twine/metaengine.cpp:398
+#: engines/twine/metaengine.cpp:387
 msgid "Move Backward"
 msgstr "後方へ移動"
 
-#: engines/twine/metaengine.cpp:419
+#: engines/twine/metaengine.cpp:408
 msgid "Use Protopack"
 msgstr "プロトパックを使用"
 
-#: engines/twine/metaengine.cpp:424
+#: engines/twine/metaengine.cpp:413
 msgid "Open Holomap"
 msgstr "ホログラムマップを開く"
 
-#: engines/twine/metaengine.cpp:437
+#: engines/twine/metaengine.cpp:426
 msgid "Special Action"
 msgstr "スペシャルアクション"
 
-#: engines/twine/metaengine.cpp:456
+#: engines/twine/metaengine.cpp:445
 msgid "Accept"
 msgstr "受け入れる"
 
-#: engines/twine/metaengine.cpp:464 engines/twine/metaengine.cpp:516
-#: engines/twine/metaengine.cpp:532
+#: engines/twine/metaengine.cpp:453 engines/twine/metaengine.cpp:505
+#: engines/twine/metaengine.cpp:521
 msgid "Abort"
 msgstr "停止"
 
-#: engines/twine/metaengine.cpp:502
+#: engines/twine/metaengine.cpp:491
 msgid "Next Page"
 msgstr "次のページ"
 
-#: engines/twine/metaengine.cpp:569
+#: engines/twine/metaengine.cpp:558
 msgid "Previous location"
 msgstr "前の地点"
 
-#: engines/twine/metaengine.cpp:574
+#: engines/twine/metaengine.cpp:563
 msgid "Next location"
 msgstr "次の地点"
 
@@ -8770,6 +8762,33 @@ msgstr "壁の衝突判定ON"
 msgctxt "Options menu"
 msgid "Wall collision off"
 msgstr "壁の衝突判定OFF"
+
+#: engines/twine/parser/text.cpp:38
+#, fuzzy
+#| msgid "Language not detected"
+msgctxt "Options menu"
+msgid "Language selection"
+msgstr "検出されない言語"
+
+#: engines/twine/parser/text.cpp:39
+msgctxt "Options menu"
+msgid "Voices: None"
+msgstr ""
+
+#: engines/twine/parser/text.cpp:40
+msgctxt "Options menu"
+msgid "Voices: English"
+msgstr ""
+
+#: engines/twine/parser/text.cpp:41
+msgctxt "Options menu"
+msgid "Voices: French"
+msgstr ""
+
+#: engines/twine/parser/text.cpp:42
+msgctxt "Options menu"
+msgid "Voices: German"
+msgstr ""
 
 #: engines/ultima/metaengine.cpp:55
 msgid "Enable frame skipping"
@@ -9652,6 +9671,12 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid "Enable voices"
+#~ msgstr "音声を有効にする"
+
+#~ msgid "Enable the voices for the game"
+#~ msgstr "ゲーム音声を有効にする"
 
 #~ msgid "Toggle fast conversation mode"
 #~ msgstr "高速会話モードの切り替え"

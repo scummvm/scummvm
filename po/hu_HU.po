@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-27 04:11+0000\n"
+"POT-Creation-Date: 2023-03-27 07:24+0000\n"
 "PO-Revision-Date: 2023-03-18 19:34+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -673,7 +673,7 @@ msgstr "Interakció"
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:457 engines/grim/grim.cpp:538 engines/icb/icb.cpp:68
 #: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:809
-#: engines/twine/metaengine.cpp:472 engines/twine/metaengine.cpp:539
+#: engines/twine/metaengine.cpp:461 engines/twine/metaengine.cpp:528
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
@@ -686,7 +686,7 @@ msgstr "Fel"
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:462 engines/grim/grim.cpp:543 engines/icb/icb.cpp:73
 #: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:776
-#: engines/twine/metaengine.cpp:479 engines/twine/metaengine.cpp:547
+#: engines/twine/metaengine.cpp:468 engines/twine/metaengine.cpp:536
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
@@ -699,7 +699,7 @@ msgstr "Le"
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:789
-#: engines/twine/metaengine.cpp:494 engines/twine/metaengine.cpp:562
+#: engines/twine/metaengine.cpp:483 engines/twine/metaengine.cpp:551
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
@@ -713,7 +713,7 @@ msgstr "Bal"
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:796
-#: engines/twine/metaengine.cpp:486 engines/twine/metaengine.cpp:555
+#: engines/twine/metaengine.cpp:475 engines/twine/metaengine.cpp:544
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
@@ -2964,7 +2964,7 @@ msgstr "Jobb katt"
 #: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:125
-#: engines/twine/metaengine.cpp:242 engines/wintermute/keymapper_tables.h:1608
+#: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
 msgstr "Szünet"
 
@@ -3224,7 +3224,7 @@ msgid "Global"
 msgstr "Globális"
 
 #: backends/events/default/default-events.cpp:335
-#: engines/twine/metaengine.cpp:361
+#: engines/twine/metaengine.cpp:350
 msgid "Global Main Menu"
 msgstr "Globális Fõmenü"
 
@@ -3305,7 +3305,7 @@ msgstr "Képarány korrekció váltása"
 #: backends/graphics/opengl/opengl-graphics.cpp:256
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
-#: engines/twine/metaengine.cpp:371
+#: engines/twine/metaengine.cpp:360
 msgid "Center"
 msgstr "Közepe"
 
@@ -5067,7 +5067,7 @@ msgstr "Szövegfelolvasó engedélyezése az Objektumok és Opciókban"
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
 #: engines/mads/metaengine.cpp:109 engines/sci/detection_options.h:224
 #: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:51
-#: engines/twine/metaengine.cpp:168
+#: engines/twine/metaengine.cpp:157
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Használja a TTS-t a leírás olvasásához (ha a TTS elérhetõ)"
 
@@ -5168,7 +5168,7 @@ msgstr "Utasítás Változtatás"
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:99
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:223
 #: engines/scumm/help.cpp:232 engines/scumm/help.cpp:239
-#: engines/scumm/help.cpp:247 engines/twine/metaengine.cpp:429
+#: engines/scumm/help.cpp:247 engines/twine/metaengine.cpp:418
 #: engines/zvision/metaengine.cpp:232
 msgid "Inventory"
 msgstr "Tárgylista"
@@ -5952,7 +5952,7 @@ msgid "Interact via Right Click"
 msgstr "Interakció jobb kattintással"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:476
-#: engines/twine/metaengine.cpp:391
+#: engines/twine/metaengine.cpp:380
 msgid "Move Forward"
 msgstr "Mozgás elõre"
 
@@ -5970,13 +5970,13 @@ msgstr "Mozgás jobbra"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
 #: engines/mm/mm1/metaengine.cpp:91 engines/pegasus/pegasus.cpp:2739
-#: engines/twine/metaengine.cpp:412 engines/zvision/metaengine.cpp:209
+#: engines/twine/metaengine.cpp:401 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
 msgstr "Balra fordul"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
 #: engines/mm/mm1/metaengine.cpp:92 engines/pegasus/pegasus.cpp:2746
-#: engines/twine/metaengine.cpp:405 engines/zvision/metaengine.cpp:215
+#: engines/twine/metaengine.cpp:394 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
 msgstr "Jobbra fordul"
 
@@ -6182,7 +6182,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Ez a puzzle nem érhetõ el a játék próbaverziójában"
 
 #: engines/lure/metaengine.cpp:39 engines/mads/metaengine.cpp:108
-#: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:167
+#: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:156
 msgid "TTS Narrator"
 msgstr "TTS Narrátor"
 
@@ -6223,7 +6223,7 @@ msgid "Naughty game mode"
 msgstr "Pajkos játékmód"
 
 #. I18N: ESC key
-#: engines/mm/mm1/metaengine.cpp:41 engines/twine/metaengine.cpp:443
+#: engines/mm/mm1/metaengine.cpp:41 engines/twine/metaengine.cpp:432
 #: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr "Escape"
@@ -8742,171 +8742,163 @@ msgid "Enable the sound for the game"
 msgstr "Engedélyezi a játék hangját"
 
 #: engines/twine/metaengine.cpp:100
-msgid "Enable voices"
-msgstr "Hangok engedélyezése"
-
-#: engines/twine/metaengine.cpp:101
-msgid "Enable the voices for the game"
-msgstr "Engedélyezi a játék hangjait"
-
-#: engines/twine/metaengine.cpp:111
 msgid "Enable text"
 msgstr "Szöveg engedélyezése"
 
-#: engines/twine/metaengine.cpp:112
+#: engines/twine/metaengine.cpp:101
 msgid "Enable the text for the game"
 msgstr "Engedélyezi a játék feliratait"
 
-#: engines/twine/metaengine.cpp:122
+#: engines/twine/metaengine.cpp:111
 msgid "Enable movies"
 msgstr "Filmek engedélyezve"
 
-#: engines/twine/metaengine.cpp:123
+#: engines/twine/metaengine.cpp:112
 msgid "Enable the cutscenes for the game"
 msgstr "Engedélyezi a játék átvezető jeleneteit"
 
-#: engines/twine/metaengine.cpp:133
+#: engines/twine/metaengine.cpp:122
 msgid "Enable mouse"
 msgstr "Egér engedélyezve"
 
-#: engines/twine/metaengine.cpp:134
+#: engines/twine/metaengine.cpp:123
 msgid "Enable the mouse for the UI"
 msgstr "Engedélyezi az egeret az UI számára"
 
-#: engines/twine/metaengine.cpp:144
+#: engines/twine/metaengine.cpp:133
 msgid "Use the USA version"
 msgstr "USA verzió használata"
 
-#: engines/twine/metaengine.cpp:145
+#: engines/twine/metaengine.cpp:134
 msgid "Enable the USA specific version flags"
 msgstr "Engedélyezi az USA-specifikus verziójelzőket"
 
-#: engines/twine/metaengine.cpp:155 engines/ultima/metaengine.cpp:88
+#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:88
 msgid "Enable high resolution"
 msgstr "Nagy felbontás engedélyezése"
 
-#: engines/twine/metaengine.cpp:156 engines/ultima/metaengine.cpp:89
+#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:89
 msgid "Enable a higher resolution for the game"
 msgstr "Nagyobb felbontás engedélyezése a játékhoz"
 
-#: engines/twine/metaengine.cpp:247
+#: engines/twine/metaengine.cpp:236
 msgid "Debug Next Room"
 msgstr "Következő szoba Debug"
 
-#: engines/twine/metaengine.cpp:252
+#: engines/twine/metaengine.cpp:241
 msgid "Debug Previous Room"
 msgstr "Előző szoba Debug"
 
-#: engines/twine/metaengine.cpp:257
+#: engines/twine/metaengine.cpp:246
 msgid "Debug Apply Celling Grid"
 msgstr "Debug Cella rács alkalmazása"
 
-#: engines/twine/metaengine.cpp:262
+#: engines/twine/metaengine.cpp:251
 msgid "Debug Increase Celling Grid Index"
 msgstr "Debug Cella rács Index növelése"
 
-#: engines/twine/metaengine.cpp:267
+#: engines/twine/metaengine.cpp:256
 msgid "Debug Decrease Celling Grid Index"
 msgstr "Debug Cella rács Index csökkentése"
 
-#: engines/twine/metaengine.cpp:272
+#: engines/twine/metaengine.cpp:261
 msgid "Debug Grid Camera Up"
 msgstr "Debug rács Kamera Fel"
 
-#: engines/twine/metaengine.cpp:277
+#: engines/twine/metaengine.cpp:266
 msgid "Debug Grid Camera Down"
 msgstr "Debug rács Kamera Le"
 
-#: engines/twine/metaengine.cpp:282
+#: engines/twine/metaengine.cpp:271
 msgid "Debug Grid Camera Left"
 msgstr "Debug rács Kamera Bal"
 
-#: engines/twine/metaengine.cpp:288
+#: engines/twine/metaengine.cpp:277
 msgid "Debug Grid Camera Right"
 msgstr "Debug rács Kamera Jobb"
 
-#: engines/twine/metaengine.cpp:293
+#: engines/twine/metaengine.cpp:282
 msgid "Place actor at center of screen"
 msgstr "Helyezd a színészt a képernyő közepére"
 
-#: engines/twine/metaengine.cpp:298
+#: engines/twine/metaengine.cpp:287
 msgid "Debug Menu"
 msgstr "Debug Menü"
 
-#: engines/twine/metaengine.cpp:303
+#: engines/twine/metaengine.cpp:292
 msgid "Debug Menu Execute"
 msgstr "Debug Menü Végrehajtás"
 
-#: engines/twine/metaengine.cpp:308 engines/twine/metaengine.cpp:328
+#: engines/twine/metaengine.cpp:297 engines/twine/metaengine.cpp:317
 msgid "Normal Behaviour"
 msgstr "Normális viselkedés"
 
-#: engines/twine/metaengine.cpp:313 engines/twine/metaengine.cpp:333
+#: engines/twine/metaengine.cpp:302 engines/twine/metaengine.cpp:322
 msgid "Athletic Behaviour"
 msgstr "Sportos viselkedés"
 
-#: engines/twine/metaengine.cpp:318 engines/twine/metaengine.cpp:338
+#: engines/twine/metaengine.cpp:307 engines/twine/metaengine.cpp:327
 msgid "Aggressive Behaviour"
 msgstr "Agresszív viselkedés"
 
-#: engines/twine/metaengine.cpp:323 engines/twine/metaengine.cpp:343
+#: engines/twine/metaengine.cpp:312 engines/twine/metaengine.cpp:332
 msgid "Discreet Behaviour"
 msgstr "Diszkrét viselkedés"
 
-#: engines/twine/metaengine.cpp:348
+#: engines/twine/metaengine.cpp:337
 msgid "Behaviour Action"
 msgstr "Viselkedés Akció"
 
-#: engines/twine/metaengine.cpp:354
+#: engines/twine/metaengine.cpp:343
 msgid "Change Behaviour"
 msgstr "Viselkedés változtatás"
 
-#: engines/twine/metaengine.cpp:366
+#: engines/twine/metaengine.cpp:355
 msgid "Options Menu"
 msgstr "Opciók Menü"
 
-#: engines/twine/metaengine.cpp:378
+#: engines/twine/metaengine.cpp:367
 msgid "Use Selected Object"
 msgstr "Használd a Kiválasztott objektumot"
 
-#: engines/twine/metaengine.cpp:384
+#: engines/twine/metaengine.cpp:373
 msgid "Throw Magic Ball"
 msgstr "Dobd el a Varázslabdát"
 
-#: engines/twine/metaengine.cpp:398
+#: engines/twine/metaengine.cpp:387
 msgid "Move Backward"
 msgstr "Menj Hátrafelé"
 
-#: engines/twine/metaengine.cpp:419
+#: engines/twine/metaengine.cpp:408
 msgid "Use Protopack"
 msgstr "Használ Protopackot"
 
-#: engines/twine/metaengine.cpp:424
+#: engines/twine/metaengine.cpp:413
 msgid "Open Holomap"
 msgstr "Holomap megnyitás"
 
-#: engines/twine/metaengine.cpp:437
+#: engines/twine/metaengine.cpp:426
 msgid "Special Action"
 msgstr "Speciális Akció"
 
-#: engines/twine/metaengine.cpp:456
+#: engines/twine/metaengine.cpp:445
 msgid "Accept"
 msgstr "Elfogad"
 
-#: engines/twine/metaengine.cpp:464 engines/twine/metaengine.cpp:516
-#: engines/twine/metaengine.cpp:532
+#: engines/twine/metaengine.cpp:453 engines/twine/metaengine.cpp:505
+#: engines/twine/metaengine.cpp:521
 msgid "Abort"
 msgstr "Megszakít"
 
-#: engines/twine/metaengine.cpp:502
+#: engines/twine/metaengine.cpp:491
 msgid "Next Page"
 msgstr "Következő Oldal"
 
-#: engines/twine/metaengine.cpp:569
+#: engines/twine/metaengine.cpp:558
 msgid "Previous location"
 msgstr "Előző hely"
 
-#: engines/twine/metaengine.cpp:574
+#: engines/twine/metaengine.cpp:563
 msgid "Next location"
 msgstr "Következő hely"
 
@@ -8929,6 +8921,33 @@ msgstr "Fali ütközés be"
 msgctxt "Options menu"
 msgid "Wall collision off"
 msgstr "Fali ütközés ki"
+
+#: engines/twine/parser/text.cpp:38
+#, fuzzy
+#| msgid "Language not detected"
+msgctxt "Options menu"
+msgid "Language selection"
+msgstr "Nyelv nincs észlelve"
+
+#: engines/twine/parser/text.cpp:39
+msgctxt "Options menu"
+msgid "Voices: None"
+msgstr ""
+
+#: engines/twine/parser/text.cpp:40
+msgctxt "Options menu"
+msgid "Voices: English"
+msgstr ""
+
+#: engines/twine/parser/text.cpp:41
+msgctxt "Options menu"
+msgid "Voices: French"
+msgstr ""
+
+#: engines/twine/parser/text.cpp:42
+msgctxt "Options menu"
+msgid "Voices: German"
+msgstr ""
 
 #: engines/ultima/metaengine.cpp:55
 msgid "Enable frame skipping"
@@ -9817,6 +9836,12 @@ msgstr ""
 "FreeFont csomagot. Szükséged lesz az összes betűtípusra a választott "
 "betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
 "vagy FreeMono, FreeSans és FreeSerif választhatóan."
+
+#~ msgid "Enable voices"
+#~ msgstr "Hangok engedélyezése"
+
+#~ msgid "Enable the voices for the game"
+#~ msgstr "Engedélyezi a játék hangjait"
 
 #~ msgid "Toggle fast conversation mode"
 #~ msgstr "Váltás gyors beszélgetési módra"
