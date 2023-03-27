@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-27 07:24+0000\n"
-"PO-Revision-Date: 2023-03-27 16:45+0000\n"
+"PO-Revision-Date: 2023-03-27 16:49+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: gui/about.cpp:103
 #, c-format
 msgid "(built on %s with %s)"
-msgstr "(%s को बनाया गया %s के इस्तेमाल से )"
+msgstr "(%s को बनाया गया %s )"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
