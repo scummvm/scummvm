@@ -1638,7 +1638,10 @@ void Process::fogOnCharacter() {
 	int arg2 = pop();
 	int arg1 = pop();
 	Common::String name = popText();
-	debug("fogOnCharacter %s %d %d", name.c_str(), arg1, arg2);
+	debug("fogOnCharacter %s z: [%d,%d]", name.c_str(), arg1, arg2);
+	Character *character = _engine->currentCharacter();
+	if (character)
+		character->setFog(_engine->loadPicture(name), arg1, arg2);
 }
 
 void Process::setRain() {
