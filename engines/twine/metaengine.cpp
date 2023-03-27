@@ -95,22 +95,11 @@ static const ADExtraGuiOptionsMap twineOptionsList[] = {
 		}
 	},
 	{
-		GAMEOPTION_VOICES,
-		{
-			_s("Enable voices"),
-			_s("Enable the voices for the game"),
-			"voice",
-			true,
-			0,
-			0
-		}
-	},
-	{
 		GAMEOPTION_TEXT,
 		{
 			_s("Enable text"),
 			_s("Enable the text for the game"),
-			"displaytext",
+			"subtitles",
 			true,
 			0,
 			0

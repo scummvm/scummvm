@@ -480,7 +480,7 @@ bool Movies::playSmkMovie(const char *name, int index) {
 	decoder.start();
 
 	decoder.setAudioTrack(0); // music
-	if (_engine->_cfgfile.Voice) {
+	if (ConfMan.getInt("audio_language") > 0) {
 		int additionalAudioTrack = -1;
 		if (!scumm_strnicmp(name, "INTRO", 5)) {
 			switch (_engine->getGameLang()) {

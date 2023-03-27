@@ -271,7 +271,6 @@ Common::Error TwinEEngine::run() {
 	debug("(c) 1994 by Adeline Software International, All Rights Reserved.");
 
 	ConfMan.registerDefault("usehighres", false);
-	ConfMan.registerDefault("wallcollision", false);
 
 	const Common::String &gameTarget = ConfMan.getActiveDomainName();
 	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
@@ -463,11 +462,13 @@ static int getLanguageTypeIndex(const char *languageName) {
 
 void TwinEEngine::initConfigurations() {
 	// TODO: use existing entries for some of the settings - like volume and so on.
+	ConfMan.registerDefault("wallcollision", false);
 
 	const char *lng = Common::getLanguageDescription(_gameLang);
-	_cfgfile.LanguageId = getLanguageTypeIndex(lng);
-	_cfgfile.Voice = ConfGetBoolOrDefault("voice", true);
-	_cfgfile.FlagDisplayText = ConfGetBoolOrDefault("displaytext", true);
+	_cfgfile._languageId = getLanguageTypeIndex(lng);
+	ConfMan.registerDefault("audio_language", LanguageTypes[_cfgfile._languageId].voice);
+
+	_cfgfile.FlagDisplayText = ConfGetBoolOrDefault("displaytext", true); // TODO: use subtitles
 	const Common::String midiType = ConfGetOrDefault("miditype", "auto");
 	if (midiType == "None") {
 		_cfgfile.MidiType = MIDIFILE_NONE;

@@ -586,6 +586,11 @@ enum class TextId : int16 {
 	kCustomHighResOptionOff = -3,
 	kCustomWallCollisionOn = -4,
 	kCustomWallCollisionOff = -5,
+	kCustomLanguageOption = -6,
+	kCustomVoicesNone = -7,
+	kCustomVoicesEnglish = -8,
+	kCustomVoicesFrench = -9,
+	kCustomVoicesGerman = -10,
 
 	// ------ lba2
 

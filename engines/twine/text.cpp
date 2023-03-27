@@ -77,11 +77,20 @@ void Text::initVoxBank(TextBankId bankIdx) {
 	if ((int)bankIdx < 0 || (int)bankIdx >= ARRAYSIZE(LanguageSuffixTypes)) {
 		error("bankIdx is out of bounds: %i", (int)bankIdx);
 	}
-	// get the correct vox hqr file
-	_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->_cfgfile.LanguageId].id, LanguageSuffixTypes[(int)bankIdx]);
-	_currentOggBaseFile = Common::String::format("%s%s_", LanguageTypes[_engine->_cfgfile.LanguageId].id, LanguageSuffixTypes[(int)bankIdx]);
-	// TODO: loop through other languages and take the scummvm settings regarding voices into account...
+	// get the correct vox hqr file - english is the default
+	_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[0].id, LanguageSuffixTypes[(int)bankIdx]);
+	_currentOggBaseFile = Common::String::format("%s%s_", LanguageTypes[0].id, LanguageSuffixTypes[(int)bankIdx]);
 
+	const int voice = ConfMan.getInt("audio_language");
+	const int32 length = ARRAYSIZE(LanguageTypes);
+	for (int32 i = 0; i < length; i++) {
+		if (LanguageTypes[i].voice == voice) {
+			_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[i].id, LanguageSuffixTypes[(int)bankIdx]);
+			_currentOggBaseFile = Common::String::format("%s%s_", LanguageTypes[i].id, LanguageSuffixTypes[(int)bankIdx]);
+			return;
+		}
+	}
+	warning("Could not find voice mapping for %i", voice);
 	// TODO check the rest to reverse
 }
 
@@ -99,7 +108,8 @@ bool Text::initVoxToPlay(const TextEntry *text) {
 		return false;
 	}
 
-	if (!_engine->_cfgfile.Voice) {
+	const int voice = ConfMan.getInt("audio_language");
+	if (voice <= 0) {
 		debug(3, "Voices are disabled");
 		return false;
 	}
@@ -108,7 +118,7 @@ bool Text::initVoxToPlay(const TextEntry *text) {
 }
 
 bool Text::playVox(const TextEntry *text) {
-	if (!_engine->_cfgfile.Voice) {
+	if (ConfMan.getInt("audio_language") <= 0) {
 		return false;
 	}
 	if (text == nullptr) {

@@ -156,6 +156,7 @@ private:
 	MenuSettings _newGameMenuState;
 	MenuSettings _advOptionsMenuState;
 	MenuSettings _optionsMenuState;
+	MenuSettings _languageMenuState;
 
 	// objectRotation
 	int16 _itemAngle[NUM_INVENTORY_ITEMS];
@@ -180,6 +181,7 @@ private:
 	int32 advoptionsMenu();
 	/** Used to run the volume menu */
 	int32 volumeMenu();
+	int32 languageMenu();
 	/** Used to run the save game management menu */
 	int32 savemanageMenu();
 	void drawInfoMenu(int16 left, int16 top, int16 width);

@@ -60,13 +60,14 @@ namespace TwinE {
 static const struct TwinELanguage {
 	const char *name;
 	const char *id;
+	const int voice;
 } LanguageTypes[] = {
-	{"English", "EN_"},
-	{"French", "FR_"},
-	{"German", "DE_"},
-	{"Spanish", "SP_"},
-	{"Italian", "IT_"},
-	{"Portuguese", ""}};
+	{"English", "EN_", 1},
+	{"French", "FR_", 2},
+	{"German", "DE_", 3},
+	{"Spanish", "SP_", 1},
+	{"Italian", "IT_", 1},
+	{"Portuguese", "", 1}};
 
 enum MidiFileType {
 	MIDIFILE_NONE,
@@ -88,8 +89,7 @@ enum MovieType {
 	All the settings with (*) means they are new and only exist in this engine. */
 struct ConfigFile {
 	/** Index into the LanguageTypes array. */
-	int32 LanguageId = 0;
-	bool Voice = true;
+	int32 _languageId = 0;
 	/** Enable/Disable game dialogues */
 	bool FlagDisplayText = false;
 	/** Flag to display game debug */

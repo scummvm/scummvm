@@ -35,6 +35,11 @@ void TextData::initCustomTexts(TextBankId textBankId) {
 		add(textBankId, TextEntry{_c("High resolution off", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomHighResOptionOff});
 		add(textBankId, TextEntry{_c("Wall collision on", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomWallCollisionOn});
 		add(textBankId, TextEntry{_c("Wall collision off", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomWallCollisionOff});
+		add(textBankId, TextEntry{_c("Language selection", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomLanguageOption});
+		add(textBankId, TextEntry{_c("Voices: None", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesNone});
+		add(textBankId, TextEntry{_c("Voices: English", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesEnglish});
+		add(textBankId, TextEntry{_c("Voices: French", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesFrench});
+		add(textBankId, TextEntry{_c("Voices: German", "Options menu").encode(Common::CodePage::kDos850), -1, TextId::kCustomVoicesGerman});
 	}
 }
 

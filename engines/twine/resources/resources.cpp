@@ -195,7 +195,7 @@ void Resources::initResources() {
 
 	const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
 	for (int32 i = 0; i < textEntryCount / 2; ++i) {
-		if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->_cfgfile.LanguageId, _engine->isLBA1(), textEntryCount)) {
+		if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->_cfgfile._languageId, _engine->isLBA1(), textEntryCount)) {
 			error("HQR ERROR: Parsing textbank %i failed", i);
 		}
 	}

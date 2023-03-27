@@ -67,7 +67,8 @@ enum MenuButtonTypesEnum {
 	kShadowSettings = 7,
 	kSceneryZoom = 8,
 	kHighResolution = 9,
-	kWallCollision = 10
+	kWallCollision = 10,
+	kVoice = 11
 };
 }
 
@@ -123,11 +124,19 @@ static MenuSettings createGiveUpSaveMenu() {
 	return settings;
 }
 
+static MenuSettings createLanguageMenu(bool lba1) {
+	MenuSettings settings;
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kCustomVoicesEnglish, MenuButtonTypes::kVoice);
+	return settings;
+}
+
 static MenuSettings createOptionsMenu(bool lba1) {
 	MenuSettings settings;
 	settings.addButton(TextId::kReturnMenu);
 	settings.addButton(TextId::kVolumeSettings);
 	settings.addButton(TextId::kSaveManage);
+	settings.addButton(TextId::kCustomLanguageOption);
 	settings.addButton(TextId::kAdvanced);
 	return settings;
 }
@@ -183,6 +192,7 @@ Menu::Menu(TwinEEngine *engine) {
 	_engine = engine;
 
 	_optionsMenuState = _priv::createOptionsMenu(engine->isLBA1());
+	_languageMenuState = _priv::createLanguageMenu(engine->isLBA1());
 	_giveUpMenuWithSaveState = _priv::createGiveUpSaveMenu();
 	_volumeMenuState = _priv::createVolumeMenu();
 	_saveManageMenuState = _priv::createSaveManageMenu();
@@ -396,6 +406,17 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 			default:
 				break;
 			}
+		} else if (menuSettings == &_languageMenuState) {
+			int16 id = menuSettings->getButtonState(i);
+			switch (id) {
+			case MenuButtonTypes::kVoice: {
+				const int voiceLanguage = ConfMan.getInt("audio_language");
+				menuSettings->setButtonTextId(i, (TextId)((int)TextId::kCustomVoicesNone - voiceLanguage));
+				break;
+			}
+			default:
+				break;
+			}
 		}
 		const int32 menuItemId = menuSettings->getButtonState(i);
 		const char *text = menuSettings->getButtonText(_engine->_text, i);
@@ -517,6 +538,28 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 					const bool highRes = ConfMan.getBool("wallcollision");
 					ConfMan.setBool("wallcollision", !highRes);
 					startMillis = loopMillis;
+				}
+				break;
+			default:
+				break;
+			}
+		} else if (menuSettings == &_languageMenuState) {
+			switch (id) {
+			case MenuButtonTypes::kVoice:
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
+					int voiceLanguage = ConfMan.getInt("audio_language");
+					--voiceLanguage;
+					if (voiceLanguage < 0) {
+						voiceLanguage = 3;
+					}
+					ConfMan.setInt("audio_language", voiceLanguage);
+				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
+					int voiceLanguage = ConfMan.getInt("audio_language");
+					++voiceLanguage;
+					if (voiceLanguage > 3) {
+						voiceLanguage = 0;
+					}
+					ConfMan.setInt("audio_language", voiceLanguage);
 				}
 				break;
 			default:
@@ -714,6 +757,26 @@ int32 Menu::volumeMenu() {
 	return 0;
 }
 
+int32 Menu::languageMenu() {
+	_engine->restoreFrontBuffer();
+
+	ScopedCursor scoped(_engine);
+	for (;;) {
+		switch (processMenu(&_languageMenuState)) {
+		case (int32)TextId::kReturnMenu:
+			return 0;
+		case kQuitEngine:
+			return kQuitEngine;
+		case (int32)MenuButtonTypes::kVoice:
+		default:
+			warning("Unknown menu button handled");
+			break;
+		}
+	}
+
+	return 0;
+}
+
 void Menu::inGameOptionsMenu() {
 	_engine->_text->initDial(TextBankId::Options_and_menus);
 	_optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
@@ -738,6 +801,9 @@ int32 Menu::optionsMenu() {
 		}
 		case (int32)TextId::kVolumeSettings: {
 			checkMenuQuit(volumeMenu()) break;
+		}
+		case (int32)TextId::kCustomLanguageOption: {
+			checkMenuQuit(languageMenu()) break;
 		}
 		case (int32)TextId::kSaveManage: {
 			checkMenuQuit(savemanageMenu()) break;
