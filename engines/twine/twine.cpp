@@ -145,25 +145,17 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 		SearchMan.addSubDirectoryMatching(gameDataDir, "common/music");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "common/midi");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/images");
-		if (_gameLang == Common::Language::DE_DEU) {
-			SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/de_voice");
-		} else if (_gameLang == Common::Language::EN_ANY || _gameLang == Common::Language::EN_GRB || _gameLang == Common::Language::EN_USA) {
-			SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/en_voice");
-		} else if (_gameLang == Common::Language::FR_FRA) {
-			SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/fr_voice");
-		}
+		SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/de_voice");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/en_voice");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/fr_voice");
 	}
 
 	if (isDotEmuEnhanced()) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/hqr");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/fla");
-		if (_gameLang == Common::Language::DE_DEU) {
-			SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/vox/de_voice");
-		} else if (_gameLang == Common::Language::EN_ANY || _gameLang == Common::Language::EN_GRB || _gameLang == Common::Language::EN_USA) {
-			SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/vox/en_voice");
-		} else if (_gameLang == Common::Language::FR_FRA) {
-			SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/vox/fr_voice");
-		}
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/vox/de_voice");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/vox/en_voice");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/vox/fr_voice");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources");
 #ifdef USE_MAD
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/music");
