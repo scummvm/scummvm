@@ -187,7 +187,7 @@ public:
 	const char *look(uint16 x, uint16 y, uint8 level);
 
 	bool lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
-	              uint8 flags, LineTestResult &Result, uint32 skip = 0, Obj *excluded_obj = NULL); // excluded_obj only works for LT_HitUnpassable
+	              uint8 flags, LineTestResult &Result, uint32 skip = 0, Obj *excluded_obj = NULL, bool want_screen_space = false); // excluded_obj only works for LT_HitUnpassable
 
 	bool testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResult &Result, Obj *excluded_obj = NULL); // excluded_obj only works for LT_HitUnpassable
 
