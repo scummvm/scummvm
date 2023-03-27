@@ -26,9 +26,9 @@
 #include "common/serializer.h"
 #include "common/textconsole.h"
 
-#include "sci/sci.h"			// for the SCI versions
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/util.h"
+#include "sci/version.h"
 
 namespace Sci {
 

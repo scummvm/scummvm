@@ -21,6 +21,7 @@
 
 #include "sci/util.h"
 #include "sci/sci.h"
+#include "sci/version.h"
 
 namespace Sci {
 

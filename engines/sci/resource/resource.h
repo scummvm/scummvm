@@ -30,6 +30,7 @@
 #include "sci/resource/decompressor.h"
 #include "sci/sci.h"
 #include "sci/util.h"
+#include "sci/version.h"
 
 namespace Common {
 class File;
@@ -141,6 +142,17 @@ enum ResVersion {
 	kResVersionSci2,
 	kResVersionSci3
 };
+
+/**
+ * Same as Sci::getSciVersion, but this version doesn't assert on unknown SCI
+ * versions. Only used by the fallback detector.
+ */
+SciVersion getSciVersionForDetection();
+
+/**
+ * Convenience function converting an SCI version into a human-readable string.
+ */
+const char *getSciVersionDesc(SciVersion version);
 
 class ResourceManager;
 class ResourceSource;

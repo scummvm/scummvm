@@ -398,22 +398,6 @@ private:
  */
 extern SciEngine *g_sci;
 
-/**
- * Convenience function to obtain the active SCI version.
- */
-SciVersion getSciVersion();
-
-/**
- * Same as above, but this version doesn't assert on unknown SCI versions.
- * Only used by the fallback detector
- */
-SciVersion getSciVersionForDetection();
-
-/**
- * Convenience function converting an SCI version into a human-readable string.
- */
-const char *getSciVersionDesc(SciVersion version);
-
 } // End of namespace Sci
 
 #endif // SCI_SCI_H
