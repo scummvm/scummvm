@@ -47,6 +47,7 @@ struct VCruiseGameDescription {
 
 
 #define GAMEOPTION_LAUNCH_DEBUG					GUIO_GAMEOPTIONS1
+#define GAMEOPTION_FAST_ANIMATIONS				GUIO_GAMEOPTIONS2
 
 
 } // End of namespace VCruise

@@ -169,6 +169,10 @@ Common::Error VCruiseEngine::run() {
 		_runtime->setDebugMode(true);
 	}
 
+	if (ConfMan.getBool("vcruise_fast_animations")) {
+		_runtime->setFastAnimationMode(true);
+	}
+
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
 		if (saveSlot >= 0) {

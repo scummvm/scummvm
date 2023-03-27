@@ -356,7 +356,7 @@ Fraction::Fraction(uint pNumerator, uint pDenominator) : numerator(pNumerator), 
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
-	  _scriptNextInstruction(0), _escOn(false), _debugMode(false), _panoramaDirectionFlags(0),
+	  _scriptNextInstruction(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
@@ -451,6 +451,10 @@ void Runtime::setDebugMode(bool debugMode) {
 		_debugMode = true;
 		_gameDebugBackBuffer.init(_gameSection.rect, _gameSection.surf->format);
 	}
+}
+
+void Runtime::setFastAnimationMode(bool fastAnimationMode) {
+	_fastAnimationMode = fastAnimationMode;
 }
 
 bool Runtime::runFrame() {
@@ -1835,7 +1839,7 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 		_animFrameRateLock = Fraction(_scriptEnv.fpsOverride, 1);
 		_scriptEnv.fpsOverride = 0;
 	} else {
-		if (_animDecoder && _animDecoder->getAudioTrackCount() == 0)
+		if (!_fastAnimationMode && _animDecoder && _animDecoder->getAudioTrackCount() == 0)
 			_animFrameRateLock = defaultFrameRate;
 	}
 

@@ -299,6 +299,7 @@ public:
 
 	void loadCursors(const char *exeName);
 	void setDebugMode(bool debugMode);
+	void setFastAnimationMode(bool fastAnimationMode);
 
 	bool runFrame();
 	void drawFrame();
@@ -698,6 +699,7 @@ private:
 
 	bool _escOn;
 	bool _debugMode;
+	bool _fastAnimationMode;
 
 	VCruiseGameID _gameID;
 
