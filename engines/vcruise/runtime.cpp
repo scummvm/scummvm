@@ -543,7 +543,7 @@ bool Runtime::bootGame(bool newGame) {
 	if (_gameID == GID_REAH) {
 		_animSpeedRotation = Fraction(21, 1);	// Probably accurate
 		_animSpeedStaticAnim = Fraction(21, 1); // Probably accurate
-		_animSpeedWalk = Fraction(16, 1);		// Possibly not accurate
+		_animSpeedDefault = Fraction(16, 1);    // Possibly not accurate
 	}
 
 	return true;
@@ -732,7 +732,7 @@ bool Runtime::runWaitForFacingToAnim() {
 	continuePlayingAnimation(true, true, animEnded);
 
 	if (animEnded) {
-		changeAnimation(_postFacingAnimDef, _postFacingAnimDef.firstFrame, true, _animSpeedWalk);
+		changeAnimation(_postFacingAnimDef, _postFacingAnimDef.firstFrame, true, _animSpeedDefault);
 		_gameState = kGameStateWaitingForAnimation;
 		return true;
 	}
@@ -806,7 +806,7 @@ bool Runtime::runGyroIdle() {
 		// firstFrame is left alone so playlists are based correctly.
 		animDef.lastFrame = initialFrame + _gyros.frameSeparation;
 
-		changeAnimation(animDef, initialFrame, false);
+		changeAnimation(animDef, initialFrame, false, _animSpeedDefault);
 
 		gyro.logState();
 		gyro.currentState--;
@@ -827,7 +827,7 @@ bool Runtime::runGyroIdle() {
 		// firstFrame is left alone so playlists are based correctly.
 		animDef.lastFrame = initialFrame + _gyros.frameSeparation;
 
-		changeAnimation(animDef, initialFrame, false);
+		changeAnimation(animDef, initialFrame, false, _animSpeedDefault);
 
 		gyro.logState();
 		gyro.currentState++;
@@ -2765,7 +2765,7 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 		changeAnimation(*faceDirectionAnimDef, initialFrame, false, _animSpeedRotation);
 		_gameState = kGameStateWaitingForFacingToAnim;
 	} else {
-		changeAnimation(animDef, animDef.firstFrame, true, _animSpeedWalk);
+		changeAnimation(animDef, animDef.firstFrame, true, _animSpeedDefault);
 		_gameState = kGameStateWaitingForAnimation;
 	}
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];
@@ -2838,7 +2838,7 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	TAKE_STACK(kAnimDefStackArgs + 2);
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
-	changeAnimation(animDef, animDef.firstFrame, true, _animSpeedWalk);
+	changeAnimation(animDef, animDef.firstFrame, true, _animSpeedDefault);
 
 	_gameState = kGameStateWaitingForAnimation;
 	_screenNumber = stackArgs[kAnimDefStackArgs + 0];

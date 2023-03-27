@@ -780,7 +780,7 @@ private:
 
 	Fraction _animSpeedRotation;
 	Fraction _animSpeedStaticAnim;
-	Fraction _animSpeedWalk;
+	Fraction _animSpeedDefault;
 
 	static const uint kAnimDefStackArgs = 8;
 
