@@ -54,13 +54,6 @@ void ScummEngine::clearGfxUsageBit(int strip, int bit) {
 	gfxUsageBits[3 * strip + bit / 32] &= ~(1 << (bit % 32));
 }
 
-bool ScummEngine::testGfxUsageBit(int strip, int bit) {
-	assert(strip >= 0 && strip < ARRAYSIZE(gfxUsageBits) / 3);
-	assert(1 <= bit && bit <= 96);
-	bit--;
-	return (gfxUsageBits[3 * strip + bit / 32] & (1 << (bit % 32))) != 0;
-}
-
 bool ScummEngine::testGfxAnyUsageBits(int strip) {
 	// Exclude the DIRTY and RESTORED bits from the test
 	uint32 bitmask[3] = { 0xFFFFFFFF, 0xFFFFFFFF, 0x3FFFFFFF };
