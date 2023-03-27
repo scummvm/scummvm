@@ -32,10 +32,10 @@ void initTitlesGfx() {
 	Graphics::ModeWithFormatList modes = {
 #ifdef USE_HIGHRES
 		// First try for a 640x480 mode
-		Graphics::ModeWithFormat(640, 480),
+		Graphics::ModeWithFormat(640, 480, Graphics::PixelFormat::createFormatCLUT8()),
 #endif
 		// System doesn't support it, so fall back on 320x240 mode
-		Graphics::ModeWithFormat(320, 240),
+		Graphics::ModeWithFormat(320, 240, Graphics::PixelFormat::createFormatCLUT8()),
 	};
 
 	initGraphicsAny(modes);
