@@ -759,17 +759,22 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 
 //	returns true if a line hits something travelling from (start_x, start_y) to
 //	(end_x, end_y).  If a hit occurs Result is filled in with the relevant info.
+//	If want_screen_space is true input tile coordinates are multiplied by 16 for
+//	line calculation and scaled back down before testing for collisions. The
+//	original game does this for projectiles.
 bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
-				   uint8 flags, LineTestResult &Result, uint32 skip, Obj *excluded_obj) {
+				   uint8 flags, LineTestResult &Result, uint32 skip, Obj *excluded_obj,
+				   bool want_screen_space) {
 	//  standard Bresenham's algorithm.
-	//  input tile coordinates are scaled up by 16 during line calculation
-	//  and scaled back down before testing for collisions. this matches original
-	//  game behaviour.
-	int deltax = abs(end_x - start_x) << 4;
-	int deltay = abs(end_y - start_y) << 4;
-
-	int x = (start_x << 4) + 8; // start at the center of the tile
-	int y = (start_y << 4) + 8;
+	uint8 scale_factor_log2 = 0;
+	if (want_screen_space)
+		scale_factor_log2 = 4; //  set scale factor to 16
+	int deltax = abs(end_x - start_x) << scale_factor_log2;
+	int deltay = abs(end_y - start_y) << scale_factor_log2;
+	int x = (start_x << scale_factor_log2);
+	int y = (start_y << scale_factor_log2);
+	x += ((1 << scale_factor_log2) >> 1); //  start at the center of the tile
+	y += ((1 << scale_factor_log2) >> 1); //  when in screen space
 	int d;
 	int xinc1, xinc2;
 	int yinc1, yinc2;
@@ -811,6 +816,15 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 	}
 
 	for (uint32 i = 0; i < count; i++) {
+		//  only test for collision if tile coordinates have changed
+		if ((scale_factor_log2 == 0 || x >> scale_factor_log2 != xtile || y >> scale_factor_log2 != ytile)) {
+			xtile = x >> scale_factor_log2; //  scale back down to tile
+			ytile = y >> scale_factor_log2; //  space if necessary
+			//  test the current location
+			if ((i >= skip) && (testIntersection(xtile, ytile, level, flags, Result, excluded_obj) == true))
+				return true;
+		}
+
 		if (d < 0) {
 			d += dinc1;
 			x += xinc1;
@@ -820,13 +834,6 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 			x += xinc2;
 			y += yinc2;
 		}
-		if( x >> 4 == xtile && y >> 4 == ytile)
-			continue; //  we are still on the previous tile so skip the test
-		xtile = x >> 4;
-		ytile = y >> 4;
-		//  test the current location
-		if ((i >= skip) && (testIntersection(xtile, ytile, level, flags, Result, excluded_obj) == true))
-			return true;
 	}
 
 	return  false;
