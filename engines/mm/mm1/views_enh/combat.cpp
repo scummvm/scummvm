@@ -348,6 +348,28 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
+bool Combat::msgMouseUp(const MouseUpMessage &msg) {
+	const char *const BTN_KEYS = "afreubsc";
+
+	for (int col = 0; col < 3; ++col) {
+		for (int row = 0; row < 3; ++row) {
+			if (col != 2 || row != 2) {
+				Common::Rect r = getOptionButtonRect(col, row);
+				if (r.contains(msg._pos)) {
+					char c = BTN_KEYS[col * 3 + row];
+					msgKeypress(KeypressMessage(Common::KeyState(
+						(Common::KeyCode)(Common::KEYCODE_a + (c - 'a')),
+						c
+					)));
+					return true;
+				}
+			}
+		}
+	}
+
+	return ScrollView::msgMouseUp(msg);
+}
+
 void Combat::writeOptions() {
 	resetBottom();
 
@@ -404,10 +426,11 @@ void Combat::writeAllOptions() {
 		_allowCast = true;
 	}
 
-	writeOption(0, 2, STRING["enhdialogs.combat.exchange"]);
-	writeOption(1, 2, STRING["enhdialogs.combat.use"]);
-	writeOption(0, 3, STRING["enhdialogs.combat.retreat"]);
-	writeOption(1, 3, STRING["enhdialogs.combat.block"]);
+	writeOption(0, 2, 'R', STRING["enhdialogs.combat.retreat"]);
+
+	writeOption(1, 0, 'E', STRING["enhdialogs.combat.exchange"]);
+	writeOption(1, 1, 'U', STRING["enhdialogs.combat.use"]);
+	writeOption(1, 2, 'B', STRING["enhdialogs.combat.block"]);
 }
 
 void Combat::writeDelaySelect() {
@@ -444,16 +467,16 @@ void Combat::writeShootSelect() {
 }
 
 void Combat::writeAttackOptions() {
-	writeOption(0, 0, STRING["dialogs.combat.attack"]);
-	writeOption(0, 1, STRING["dialogs.combat.fight"]);
+	writeOption(0, 0, 'A', STRING["dialogs.combat.attack"]);
+	writeOption(0, 1, 'F', STRING["dialogs.combat.fight"]);
 }
 
 void Combat::writeCastOption() {
-	writeOption(1, 1, STRING["dialogs.combat.cast"]);
+	writeOption(2, 1, 'C', STRING["dialogs.combat.cast"]);
 }
 
 void Combat::writeShootOption() {
-	writeString(1, 0, STRING["dialogs.combat.shoot"]);
+	writeOption(2, 0, 'S', STRING["dialogs.combat.shoot"]);
 }
 
 void Combat::clearSurface() {
@@ -494,21 +517,36 @@ void Combat::writeBottomText(int x, int line, const Common::String &msg) {
 	writeString(x, (line + 19) * LINE_H, msg);
 }
 
-void Combat::writeOption(uint col, uint row, const Common::String &msg) {
-	assert(col < 2 && row < 4);
-	int x = col ? 240 : 100;
-	int y = (row + 19) * LINE_H;
+#define BTN_SIZE 10
 
-	// Create an 8x8 blank button
-	Graphics::ManagedSurface btnSmall(8, 8);
+Common::Rect Combat::getOptionButtonRect(uint col, uint row) {
+	assert(col < 3 && row < 3);
+
+	const int x = 80 + col * 80;
+	const int y = (19 * LINE_H) + row * BTN_SIZE;
+	return Common::Rect(x, y, x + BTN_SIZE, y + BTN_SIZE);
+}
+
+void Combat::writeOption(uint col, uint row, char c, const Common::String &msg) {
+	Common::Rect r = getOptionButtonRect(col, row);
+	const int x = r.left;
+	const int y = r.top;
+	const int textY = y + (BTN_SIZE - 8) / 2 + 1;
+
+	// Create an 16x16 blank button
+	Graphics::ManagedSurface btnSmall(BTN_SIZE, BTN_SIZE);
 	btnSmall.blitFrom(g_globals->_blankButton, Common::Rect(0, 0, 20, 20),
-		Common::Rect(0, 0, 8, 8));
+		Common::Rect(0, 0, BTN_SIZE, BTN_SIZE));
 
+	// Display button and write character in the middle
 	Graphics::ManagedSurface s = getSurface();
 	s.blitFrom(btnSmall, Common::Point(x + _innerBounds.left,
 		y + _innerBounds.top));
+	writeString(x + (BTN_SIZE / 2) + 1, textY,
+		Common::String::format("%c", c), ALIGN_MIDDLE);
 
-	writeBottomText(x + 12, row, msg);
+	// Write text to the right of the button
+	writeString(x + BTN_SIZE + 4, textY, msg);
 }
 
 void Combat::writeStaticContent() {

@@ -63,7 +63,8 @@ private:
 	void clearArea(const Common::Rect &r);
 	void resetBottom();
 	void writeBottomText(int x, int line, const Common::String &msg);
-	void writeOption(uint col, uint row, const Common::String &msg);
+	Common::Rect getOptionButtonRect(uint col, uint row);
+	void writeOption(uint col, uint row, char c, const Common::String &msg);
 
 	/**
 	 * Write the encounter handicap
@@ -274,6 +275,11 @@ public:
 	 * Handles keypresses
 	 */
 	bool msgKeypress(const KeypressMessage &msg) override;
+
+	/**
+	 * Handle mouse up messages
+	 */
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 
 	/**
 	 * Key binder actions
