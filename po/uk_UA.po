@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-26 23:05+0000\n"
+"POT-Creation-Date: 2023-03-27 04:11+0000\n"
 "PO-Revision-Date: 2023-03-25 19:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -5042,7 +5042,7 @@ msgstr ""
 "наступному запуску гри.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:245
+#: engines/vcruise/vcruise.cpp:249
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Цей файл зі збереженою грою було створено у новішій версії ScummVM. Не зможу "
@@ -6730,14 +6730,14 @@ msgstr "Примусове програвання роликів до кінця
 msgid "Failed to read version information from save file"
 msgstr "Не вдалося завантажити інформацію про версію зі збереження гри"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:240
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:244
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Не вдалося завантажити гру, у файлі збереження відсутня інформація про "
 "версію."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:250
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:254
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9013,6 +9013,18 @@ msgstr ""
 "скопійовано з CD. Подальші інструкції можна знайти на Вікі: https://wiki."
 "scummvm.org/index.php?title=Crusader:_No_Remorse."
 
+#: engines/vcruise/metaengine.cpp:50
+#, fuzzy
+#| msgid "Transitions:"
+msgid "Faster animations"
+msgstr "Переходи:"
+
+#: engines/vcruise/metaengine.cpp:51
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Speeds up animations."
+msgstr "Налаштування озвучки"
+
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "Ця гра потребує підтримки JPEG, яка відсутня у збірці."
@@ -9033,15 +9045,15 @@ msgstr ""
 "Музика у цій грі потребує підтримки MP3, яка відсутня у збірці.\n"
 "Гра запуститься, але музика буде відсутня."
 
-#: engines/vcruise/vcruise.cpp:230
+#: engines/vcruise/vcruise.cpp:234
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "Не вдалося завантажити гру, файл збереження виглядає пошкодженим."
 
-#: engines/vcruise/vcruise.cpp:235
+#: engines/vcruise/vcruise.cpp:239
 msgid "Failed to read version information from save file."
 msgstr "Не вдалося завантажити інформацію про версію зі збереження гри."
 
-#: engines/vcruise/vcruise.cpp:255
+#: engines/vcruise/vcruise.cpp:259
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Виникла невідома помилка під час спроби завантаження збереження гри."
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-26 23:05+0000\n"
+"POT-Creation-Date: 2023-03-27 04:11+0000\n"
 "PO-Revision-Date: 2023-03-25 18:49+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -5076,7 +5076,7 @@ msgstr ""
 "wenn Du das Spiel erneut startest.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:245
+#: engines/vcruise/vcruise.cpp:249
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 "Dieser Spielstand wurde mit einer neueren Version von ScummVM erstellt und "
@@ -6807,14 +6807,14 @@ msgstr ""
 "Die Versions-Informationen konnten nicht aus der Spielstand-Datei ausgelesen "
 "werden"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:240
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:244
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 "Spielstand konnte nicht geladen werden, da die Spielstand-Datei keine "
 "gültigen Versions-Informationen enthält."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:250
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:254
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -9160,6 +9160,18 @@ msgstr ""
 "in unserem Wiki unter https://wiki.scummvm.org/index.php?title=Crusader:"
 "_No_Remorse."
 
+#: engines/vcruise/metaengine.cpp:50
+#, fuzzy
+#| msgid "Transitions:"
+msgid "Faster animations"
+msgstr "Übergänge:"
+
+#: engines/vcruise/metaengine.cpp:51
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Speeds up animations."
+msgstr "Sprachausgabe-Optionen"
+
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "Dieses Spiel benötigt JPEG-Unterstützung, die nicht vorhanden ist."
@@ -9182,19 +9194,19 @@ msgstr ""
 "nicht vorhanden ist.\n"
 "Das Spiel wird spielbar sein, jedoch ohne Musik wiedergegeben."
 
-#: engines/vcruise/vcruise.cpp:230
+#: engines/vcruise/vcruise.cpp:234
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 "Spielstand konnte nicht geladen werden, da die Spielstand-Datei vermutlich "
 "beschädigt ist."
 
-#: engines/vcruise/vcruise.cpp:235
+#: engines/vcruise/vcruise.cpp:239
 msgid "Failed to read version information from save file."
 msgstr ""
 "Die Versions-Informationen konnten nicht aus der Spielstand-Datei ausgelesen "
 "werden."
 
-#: engines/vcruise/vcruise.cpp:255
+#: engines/vcruise/vcruise.cpp:259
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ""
 "Beim Versuch, die Spielstand-Dateien zu laden, ist ein unbekannte Fehler "

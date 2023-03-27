@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-26 23:05+0000\n"
+"POT-Creation-Date: 2023-03-27 04:11+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5072,7 +5072,7 @@ msgstr ""
 "spuštění této hry.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:245
+#: engines/vcruise/vcruise.cpp:249
 #, fuzzy
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "Uložená hra byla vytvořena v jiné verzi hry, nelze ji načíst"
@@ -6762,12 +6762,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr "Načteni hry ze souboru selhalo."
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:240
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:244
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:250
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:254
 #, fuzzy
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
@@ -9000,6 +9000,17 @@ msgid ""
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
 
+#: engines/vcruise/metaengine.cpp:50
+#, fuzzy
+#| msgid "Transitions:"
+msgid "Faster animations"
+msgstr "Přechody:"
+
+#: engines/vcruise/metaengine.cpp:51
+#, fuzzy
+msgid "Speeds up animations."
+msgstr "Pouze Řeč"
+
 #: engines/vcruise/vcruise.cpp:76
 #, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
@@ -9017,17 +9028,17 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:230
+#: engines/vcruise/vcruise.cpp:234
 #, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "Uložená hra byla vytvořena v jiné verzi hry, nelze ji načíst"
 
-#: engines/vcruise/vcruise.cpp:235
+#: engines/vcruise/vcruise.cpp:239
 #, fuzzy
 msgid "Failed to read version information from save file."
 msgstr "Načteni hry ze souboru selhalo."
 
-#: engines/vcruise/vcruise.cpp:255
+#: engines/vcruise/vcruise.cpp:259
 #, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr ", chyba při připojování sdílení"

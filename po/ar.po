@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-26 23:05+0000\n"
+"POT-Creation-Date: 2023-03-27 04:11+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -4981,7 +4981,7 @@ msgstr ""
 "التي تبدأ فيها اللعبة.\n"
 
 #: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
-#: engines/vcruise/vcruise.cpp:245
+#: engines/vcruise/vcruise.cpp:249
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr "تم إنشاء اللعبة المحفوظة بإصدار أحدث من ScummVM. غير قادر على التحميل."
 
@@ -6655,12 +6655,12 @@ msgstr "فرض إنهاء تشغيل أي أفلام"
 msgid "Failed to read version information from save file"
 msgstr "فشلت قراءة معلومات الإصدار من حفظ الملف"
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:240
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:244
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr "فشل تحميل الحفظ ، ملف الحفظ لا يحتوي على معلومات إصدار صالحة."
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:250
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:254
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -8900,6 +8900,18 @@ msgstr ""
 "المضغوط. المزيد من التعليمات موجودة على الويكي: https://wiki.scummvm.org/"
 "index.php?title=Crusader:_No_Remorse."
 
+#: engines/vcruise/metaengine.cpp:50
+#, fuzzy
+#| msgid "Transitions:"
+msgid "Faster animations"
+msgstr "الانتقالات:"
+
+#: engines/vcruise/metaengine.cpp:51
+#, fuzzy
+#| msgid "Speech Options"
+msgid "Speeds up animations."
+msgstr "خيارات الكلام"
+
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
 msgstr "تتطلب هذه اللعبة دعم JPEG ، والذي لم يتم تجميعه بتنسيق."
@@ -8921,15 +8933,15 @@ msgstr ""
 "تتطلب الموسيقى الخاصة بهذه اللعبة دعم MP3 ، والذي لم يتم تجميعه بتنسيق.\n"
 "ستستمر اللعبة في اللعب ، لكن لن تحتوي على أي موسيقى."
 
-#: engines/vcruise/vcruise.cpp:230
+#: engines/vcruise/vcruise.cpp:234
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr "فشل تحميل الحفظ ، يبدو أن بيانات الحفظ تالفة."
 
-#: engines/vcruise/vcruise.cpp:235
+#: engines/vcruise/vcruise.cpp:239
 msgid "Failed to read version information from save file."
 msgstr "فشلت قراءة معلومات الإصدار من حفظ الملف."
 
-#: engines/vcruise/vcruise.cpp:255
+#: engines/vcruise/vcruise.cpp:259
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "حدث خطأ غير معروف أثناء محاولة تحميل اللعبة المحفوظة."
 
