@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-27 07:24+0000\n"
-"PO-Revision-Date: 2023-03-27 16:49+0000\n"
+"PO-Revision-Date: 2023-03-27 17:00+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -40,7 +40,7 @@ msgstr "छिपी हुई फाइलें दिखायें"
 
 #: gui/browser.cpp:74
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Hidden attributes के मार्क वाली फाइल्स दिखाए"
 
 #: gui/browser.cpp:78 gui/remotebrowser.cpp:56
 msgid "Go up"
@@ -216,7 +216,7 @@ msgstr "डाउनलोड की गति: %s %S"
 #: gui/downloadpacksdialog.cpp:158
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "त्रुटि %d:%s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:186 gui/downloadpacksdialog.cpp:241
@@ -226,7 +226,7 @@ msgstr "%S लिस्ट डाउनलोड हो रही है।"
 
 #: gui/downloadpacksdialog.cpp:200
 msgid "Clear Cache"
-msgstr ""
+msgstr "Cache क्लियर करें"
 
 #: gui/downloadpacksdialog.cpp:251
 #, c-format
@@ -236,7 +236,7 @@ msgstr "%S लिस्ट डाउनलोड हो रही है %d ए�
 #: gui/downloadpacksdialog.cpp:261
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "%d नए पैक डिटेक्ट हुए, %s.%S"
 
 #: gui/downloadpacksdialog.cpp:263
 msgid "Download"
@@ -245,7 +245,7 @@ msgstr "डाउनलोड"
 #: gui/downloadpacksdialog.cpp:287
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
+msgstr "डाउनलोड संपूर्ण हुआ, %d पैक डाउनलोड हुआ %s.%S"
 
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:293 gui/downloadpacksdialog.cpp:384
@@ -258,13 +258,13 @@ msgstr "बंद करें"
 
 #: gui/downloadpacksdialog.cpp:391 gui/downloadpacksdialog.cpp:438
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "त्रुटि: कोई आइकॉन path सेट नहीं"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:426
 #, c-format
 msgid "No new %S available"
-msgstr ""
+msgstr "कोई नया %S उपलब्ध नहीं"
 
 #: gui/downloadpacksdialog.cpp:462
 #, c-format
@@ -272,10 +272,12 @@ msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
+"आप %s.%S डाटा हटाने वाले हैं, %S डिलीट होने वाली है. क्या आप आगे बढ़ना "
+"चाहेंगे?"
 
 #: gui/downloadpacksdialog.cpp:462 gui/updates-dialog.cpp:115
 msgid "Proceed"
-msgstr ""
+msgstr "आगे बढ़ें"
 
 #: gui/editgamedialog.cpp:131 engines/dialogs.cpp:276
 msgid "Game"
