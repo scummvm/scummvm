@@ -336,12 +336,18 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	bool doPatch = patch && loadingType != ScreenLoadingType::SaveOrLoad;
 	bool hasScreenPatch = doPatch && patch->screenSaved;
 
+	if (_currentScreen) {
+		if (_currentCharacter) {
+			_currentCharacter->reset();
+			if (loadingType != ScreenLoadingType::Normal) {
+				_currentCharacter->visible(false);
+			}
+		}
+	}
+
 	_currentScreenName = name;
 	auto screenObject = loadObject(name, Common::String(), !hasScreenPatch);
 	_currentScreen = new Screen(this, screenObject, loadingType, previousScreenName);
-
-	if (_currentCharacter)
-		_currentCharacter->reset();
 
 	runProcess(screenObject);
 

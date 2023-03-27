@@ -234,9 +234,7 @@ int Character::z() const {
 
 void Character::reset() {
 	_fog.reset();
-	_visible = false;
 }
-
 
 void Character::setFog(Graphics::Surface * surface, int minZ, int maxZ) {
 	_fog.reset(surface);

@@ -107,7 +107,7 @@ public:
 	}
 
 	bool active() const {
-		return _enabled && _visible && !_stopped;
+		return _enabled && _visible;
 	}
 
 	void animate(const Common::String &processName, Common::Point pos, int direction, int speed);
