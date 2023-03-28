@@ -19,6 +19,13 @@
  *
  */
 
+
+/*
+ *  The MCI documentation is: https://learn.microsoft.com/en-us/windows/win32/multimedia/mci
+ *  Based on sources from Wine: https://github.com/wine-mirror/wine/blob/master/dlls/winmm/mci.c
+ *  Table structure and algorithms also described in: https://patentimages.storage.googleapis.com/ad/06/7a/48766ca9df6fbc/US6397263.pdf
+ */
+
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 
@@ -259,7 +266,7 @@ static MCIError getString(const Common::String &name, uint &idx, Common::String 
         str = name.substr(idx, i_end - idx);
         idx = i_end + 1;
     }
-    debugC(5, kDebugLingoExec, "get_string: \"%s\"", str.c_str());
+    debugC(5, kDebugLingoExec, "get_string(): Got string \"%s\"", str.c_str());
     return MCIERR_NO_ERROR;
 }
 
@@ -276,7 +283,7 @@ static void createTokenList(Common::StringArray &tokenList, const Common::String
     }
 }
 
-MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCmd) {
+static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCmd) {
     Common::StringArray token_list;
     createTokenList(token_list, name);
 
@@ -297,6 +304,7 @@ MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCmd) {
         i_table++;
     }
 
+    debugC(5, kDebugLingoExec, "parseMCICommand(): tableStart: %d, tableEnd: %d", tableStart, tableEnd);
     assert(tableStart >= 0 && tableEnd > 0);
 
     auto cmd = table[tableStart];
@@ -388,13 +396,13 @@ MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCmd) {
                 break;
                 }
             default: 
-                warning("Unhandled command type.");
+                warning("parseMCICommand(): Unhandled command type.");
                 return MCIERR_UNRECOGNISED_COMMAND;
             }
         }
 
         if (!found) {
-            warning("Parameter %s not found in table", token_list[i_token].c_str());
+            warning("parseMCICommand(): Parameter %s not found in table", token_list[i_token].c_str());
             return MCIERR_UNRECOGNISED_COMMAND;
         }
     }
@@ -413,7 +421,7 @@ void Lingo::func_mci(const Common::String &name) {
 			Common::File *file = new Common::File();
 
 			if (!file->open(parsedCmd.device)) {
-				warning("Failed to open %s", parsedCmd.device.c_str());
+				warning("func_mci(): Failed to open %s", parsedCmd.device.c_str());
 				delete file;
 				return;
 			}
@@ -426,15 +434,15 @@ void Lingo::func_mci(const Common::String &name) {
                     _audioAliases[parsedCmd.parameters["alias"].string] = sound;
                 }
 			} else {
-				warning("Unhandled audio type %s", parsedCmd.parameters["type"].string.c_str());
+				warning("func_mci(): Unhandled audio type %s", parsedCmd.parameters["type"].string.c_str());
 			}
 		}
 		break;
 	case MCI_PLAY: {
-			warning("MCI play file: %s, from: %d, to: %d", parsedCmd.device.c_str(), parsedCmd.parameters["from"].integer, parsedCmd.parameters["to"].integer);
+			warning("func_mci(): MCI play file: %s, from: %d, to: %d", parsedCmd.device.c_str(), parsedCmd.parameters["from"].integer, parsedCmd.parameters["to"].integer);
 
 			if (!_audioAliases.contains(parsedCmd.device)) {
-				warning("Unknown alias %s", parsedCmd.device.c_str());
+				warning("func_mci(): Unknown alias %s", parsedCmd.device.c_str());
 				return;
 			}
 
@@ -445,7 +453,7 @@ void Lingo::func_mci(const Common::String &name) {
 		}
 		break;
 	default:
-		warning("Unhandled MCI command: %d", parsedCmd.id); /* TODO: Convert MCITokenType into string */
+		warning("func_mci: Unhandled MCI command: %d", parsedCmd.id); /* TODO: Convert MCITokenType into string */
 	}
 }
 
