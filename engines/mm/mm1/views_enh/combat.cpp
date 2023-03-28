@@ -766,8 +766,8 @@ void Combat::writeMonsterAttack() {
 		attackStyle.c_str(),
 		c._name
 	);
-	writeString(0, 20, line);
-	writeString(0, 21, getAttackString());
+	writeBottomText(0, 0, line);
+	writeBottomText(0, 1, getAttackString());
 
 	if (_damage) {
 		// Attacks wake up sleeping characters
@@ -778,13 +778,13 @@ void Combat::writeMonsterAttack() {
 		// This returns a text line to display, and can also
 		// adjust the damage amount. Another reason why we
 		// can't actually apply damage until here
-		int yp = 22;
+		int yp = 2;
 		if (monsterTouch(line))
-			writeString(0, yp++, line);
+			writeBottomText(0, yp++, line);
 
 		Common::String damageStr = subtractDamageFromChar();
 		if (!damageStr.empty())
-			writeString(0, yp, damageStr);
+			writeBottomText(0, yp, damageStr);
 	}
 }
 
@@ -869,7 +869,7 @@ void Combat::writeMessage() {
 void Combat::writeCharAttackDamage() {
 	resetBottom();
 
-	writeString(0, 20, Common::String::format("%s %s %s",
+	writeBottomText(0, 0, Common::String::format("%s %s %s",
 		g_globals->_currCharacter->_name,
 		STRING[_isShooting ? "dialogs.combat.shoots" :
 		"dialogs.combat.attacks"].c_str(),
@@ -877,10 +877,10 @@ void Combat::writeCharAttackDamage() {
 	));
 	_isShooting = false;
 
-	writeString(0, 21, getAttackString());
+	writeBottomText(0, 1, getAttackString());
 
 	if (_monsterP->_status == MONFLAG_DEAD) {
-		writeString(0, 22, Common::String::format("%s %s",
+		writeBottomText(0, 2, Common::String::format("%s %s",
 			_monsterP->_name.c_str(),
 			STRING["dialogs.combat.goes_down"].c_str()));
 	}
