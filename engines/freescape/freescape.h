@@ -522,7 +522,6 @@ public:
 	void titleScreen() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
-	void checkIfStillInArea() override;
 	void pressedKey(const int keycode) override;
 	void executePrint(FCLInstruction &instruction) override;
 
@@ -541,6 +540,7 @@ private:
 	void loadGlobalObjects(Common::SeekableReadStream *file, int offset);
 	void addECDs(Area *area);
 	void addECD(Area *area, const Math::Vector3d position, int index);
+	void addWalls(Area *area);
 };
 
 class EclipseEngine : public FreescapeEngine {

@@ -50,8 +50,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
 
 		for (auto &it : _areaMap) {
-			if (!it._value->entranceWithID(255))
-				continue;
+			addWalls(it._value);
 			addECDs(it._value);
 		}
 	} else if (_renderMode == Common::kRenderCGA) {
@@ -89,8 +88,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 
 		// TODO: load objects
 		for (auto &it : _areaMap) {
-			if (!it._value->entranceWithID(255))
-				continue;
+			addWalls(it._value);
 			addECDs(it._value);
 		}
 	} else if (_renderMode == Common::kRenderCGA) {

@@ -27,6 +27,29 @@
 
 namespace Freescape {
 
+FCLInstructionVector *duplicateCondition(FCLInstructionVector *condition) {
+	if (!condition)
+		return nullptr;
+
+	FCLInstructionVector *copy = new FCLInstructionVector();
+	for (uint i = 0; i < condition->size(); i++) {
+		copy->push_back((*condition)[i].duplicate());
+	}
+	return copy;
+}
+
+FCLInstruction FCLInstruction::duplicate() {
+	FCLInstruction copy(_type);
+	copy.setSource(_source);
+	copy.setDestination(_destination);
+	copy.setAdditional(_additional);
+
+	copy._thenInstructions = duplicateCondition(_thenInstructions);
+	copy._elseInstructions = duplicateCondition(_elseInstructions);
+
+	return copy;
+}
+
 FCLInstruction::FCLInstruction(Token::Type type_) {
 	_source = 0;
 	_destination = 0;
