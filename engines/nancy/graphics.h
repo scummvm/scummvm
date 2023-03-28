@@ -38,6 +38,8 @@ public:
 
 	void init();
 	void draw();
+	
+	void loadFonts(Common::SeekableReadStream *chunkStream);
 
 	void addObject(RenderObject *object);
 	void removeObject(RenderObject *object);
@@ -66,7 +68,6 @@ public:
 	Graphics::PixelFormat _screenPixelFormat;
 
 private:
-	void loadFonts();
 	void blitToScreen(const RenderObject &src, Common::Rect dest);
 
 	static int objectComparator(const void *a, const void *b);

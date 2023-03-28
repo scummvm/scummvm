@@ -44,8 +44,6 @@ void GraphicsManager::init() {
 	_screen.clear();
 
 	g_nancy->_resource->loadImage(g_nancy->_imageChunks["OB0"].imageName, _object0);
-
-	loadFonts();
 }
 
 void GraphicsManager::draw() {
@@ -104,6 +102,18 @@ void GraphicsManager::draw() {
 
 	// Draw the screen
 	_screen.update();
+}
+
+void GraphicsManager::loadFonts(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	while (chunkStream->pos() < chunkStream->size() - 1) {
+		_fonts.push_back(Font());
+		_fonts.back().read(*chunkStream);
+	}
+
+	delete chunkStream;
 }
 
 void GraphicsManager::addObject(RenderObject *object) {
@@ -275,16 +285,6 @@ void GraphicsManager::grabViewportObjects(Common::Array<RenderObject *> &inArray
 		if (obj->isViewportRelative()) {
 			inArray.push_back(obj);
 		}
-	}
-}
-
-void GraphicsManager::loadFonts() {
-	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("FONT");
-
-	chunk->seek(0);
-	while (chunk->pos() < chunk->size() - 1) {
-		_fonts.push_back(Font());
-		_fonts.back().read(*chunk);
 	}
 }
 

@@ -356,7 +356,15 @@ void NancyEngine::bootGameEngine() {
 	_helpData = new HELP(boot->getChunkStream("HELP"));
 	_creditsData = new CRED(boot->getChunkStream("CRED"));
 
+	// For now we ignore the potential for more than one of each of these
+	_imageChunks.setVal("OB0", boot->getChunkStream("OB0"));
+	_imageChunks.setVal("FR0", boot->getChunkStream("FR0"));
+	_imageChunks.setVal("LG0", boot->getChunkStream("LG0"));
+
 	_cursorManager->init(boot->getChunkStream("CURS"));
+
+	_graphicsManager->init();
+	_graphicsManager->loadFonts(boot->getChunkStream("FONT"));
 
 	auto *chunkStream = boot->getChunkStream("MAP");
 	if (chunkStream) {
@@ -368,11 +376,6 @@ void NancyEngine::bootGameEngine() {
 		_hintData = new HINT(chunkStream);
 	}
 
-	// For now we ignore the potential for more than one of each of these
-	_imageChunks.setVal("OB0", boot->getChunkStream("OB0"));
-	_imageChunks.setVal("FR0", boot->getChunkStream("FR0"));
-	_imageChunks.setVal("LG0", boot->getChunkStream("LG0"));
-
 	// Load all data chunks found in BOOT. These get used in a lot of places
 	// across the engine, so we always keep them in memory
 	Common::Array<Common::String> bootChunkNames;
@@ -383,8 +386,6 @@ void NancyEngine::bootGameEngine() {
 	}
 
 	_sound->loadCommonSounds();
-
-	_graphicsManager->init();
 
 	delete boot;
 }
