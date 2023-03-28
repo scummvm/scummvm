@@ -73,6 +73,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_viewportData = nullptr;
 	_inventoryData = nullptr;
 	_textboxData = nullptr;
+	_mapData = nullptr;
 }
 
 NancyEngine::~NancyEngine() {
@@ -88,6 +89,7 @@ NancyEngine::~NancyEngine() {
 	delete _viewportData;
 	delete _inventoryData;
 	delete _textboxData;
+	delete _mapData;
 }
 
 NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
@@ -345,6 +347,11 @@ void NancyEngine::bootGameEngine() {
 	_viewportData = new VIEW(boot->getChunkStream("VIEW"));
 	_inventoryData = new INV(boot->getChunkStream("INV"));
 	_textboxData = new TBOX(boot->getChunkStream("TBOX"));
+
+	auto *chunkStream = boot->getChunkStream("MAP");
+	if (chunkStream) {
+		_mapData = new MAP(chunkStream);
+	}
 
 	// Load all data chunks found in BOOT. These get used in a lot of places
 	// across the engine, so we always keep them in memory

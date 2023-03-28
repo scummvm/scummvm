@@ -178,4 +178,94 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
+MAP::MAP(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	Common::Serializer s(chunkStream, nullptr);
+	s.setVersion(g_nancy->getGameType());
+	uint numLocations = s.getVersion() == kGameTypeVampire ? 7 : 4;
+	uint numMaps = s.getVersion() == kGameTypeVampire ? 4 : 2;
+
+	mapNames.resize(numMaps);
+	for (uint i = 0; i < numMaps; ++i) {
+		readFilename(*chunkStream, mapNames[i]);
+	}
+
+	if (s.getVersion() == kGameTypeVampire) {
+		mapPaletteNames.resize(numMaps);
+		for (uint i = 0; i < numMaps; ++i) {
+			readFilename(*chunkStream, mapPaletteNames[i]);
+		}
+	}
+
+	s.skip(4);
+
+	sounds.resize(numMaps);
+	for (uint i = 0; i < numMaps; ++i) {
+		sounds[i].read(*chunkStream, SoundDescription::kMenu);
+	}
+
+	s.skip(0x20);
+
+	if (s.getVersion() == kGameTypeVampire) {
+		s.syncAsUint16LE(globeFrameTime);
+
+		globeSrcs.resize(8);
+		for (uint i = 0; i < 8; ++i) {
+			readRect(*chunkStream, globeSrcs[i]);
+		}
+
+		readRect(*chunkStream, globeDest);
+	}
+
+	if (s.getVersion() == kGameTypeNancy1) {
+		s.skip(2);
+		readRect(*chunkStream, buttonSrc);
+		readRect(*chunkStream, buttonDest);
+	}
+
+	locations.resize(numLocations);
+	for (uint i = 0; i < numLocations; ++i) {
+		readRect(*chunkStream, locations[i].labelSrc);
+	}
+
+	readRect(*chunkStream, closedLabelSrc);
+
+	if (s.getVersion() == kGameTypeVampire) {
+		readRect(*chunkStream, globeGargoyleSrc);
+		readRect(*chunkStream, globeGargoyleDest);
+	}
+
+	char buf[30];
+
+	for (uint i = 0; i < numLocations; ++i) {
+		s.syncBytes((byte *)buf, 30);
+		buf[29] = '\0';
+		locations[i].description = buf;
+	}
+
+	for (uint i = 0; i < numLocations; ++i) {
+		readRect(*chunkStream, locations[i].hotspot);
+	}
+
+	s.skip(numLocations * 2);
+	s.skip(0x10);
+
+	s.syncAsUint16LE(cursorPosition.x);
+	s.syncAsUint16LE(cursorPosition.y);
+
+	for (uint j = 0; j < 2; ++j) {
+		for (uint i = 0; i < numLocations; ++i) {
+			SceneChangeDescription &sc = locations[i].scenes[j];
+			s.syncAsUint16LE(sc.sceneID);
+			s.syncAsUint16LE(sc.frameID);
+			s.syncAsUint16LE(sc.verticalOffset);
+			s.syncAsUint16LE(sc.paletteID, kGameTypeVampire, kGameTypeVampire);
+		}
+	}
+
+	delete chunkStream;
+}
+
 } // End of namespace Nancy

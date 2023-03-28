@@ -746,19 +746,13 @@ void Scene::initStaticData() {
 	
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		_mapHotspot = bsum->mapButtonHotspot;
+	} else if (g_nancy->_mapData) {
+		_mapHotspot = g_nancy->_mapData->buttonDest;
 	}
 
 	_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->menuButtonSrc, bsum->menuButtonDest);
 	_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->helpButtonSrc, bsum->helpButtonDest);
 	g_nancy->setMouseEnabled(true);
-
-	if (g_nancy->getGameType() == kGameTypeNancy1) {
-		chunk = g_nancy->getBootChunkStream("MAP");
-		if (chunk) {
-			chunk->seek(0x8A);
-			readRect(*chunk, _mapHotspot);
-		}
-	}
 	
 	// Init ornaments and clock (TVD only)
 	if (g_nancy->getGameType() == kGameTypeVampire) {

@@ -104,6 +104,39 @@ struct TBOX {
 	uint16 fontID;
 };
 
+struct MAP {
+	struct Location {
+		Common::String description;
+		Common::Rect hotspot;
+		SceneChangeDescription scenes[2];
+
+		Common::Rect labelSrc;
+	};
+
+	MAP(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<Common::String> mapNames;
+	Common::Array<Common::String> mapPaletteNames;
+	Common::Array<SoundDescription> sounds;
+
+	// Globe section, TVD only
+	uint16 globeFrameTime;
+	Common::Array<Common::Rect> globeSrcs;
+	Common::Rect globeDest;
+	Common::Rect globeGargoyleSrc;
+	Common::Rect globeGargoyleDest;
+
+	// Button section, nancy1 only
+	Common::Rect buttonSrc;
+	Common::Rect buttonDest;
+
+	Common::Rect closedLabelSrc;
+
+	Common::Array<Location> locations;
+
+	Common::Point cursorPosition;
+};
+
 } // End of namespace Nancy
 
 #endif // NANCY_ENGINEDATA_H

@@ -119,6 +119,7 @@ public:
 	VIEW *_viewportData;
 	INV *_inventoryData;
 	TBOX *_textboxData;
+	MAP *_mapData;
 
 protected:
 	Common::Error run() override;
