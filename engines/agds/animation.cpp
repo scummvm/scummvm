@@ -186,13 +186,47 @@ bool Animation::tick() {
 	return true;
 }
 
-void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst) const {
+void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics::TransparentSurface *mask, int maskAlpha) const {
 	dst += _position;
-	if (_frame && _onScreen) {
-		Common::Rect srcRect = _frame->getRect();
-		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
-			_frame->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
-	}
+	if (!_frame || !_onScreen)
+		return;
+
+	Common::Rect srcRect = _frame->getRect();
+	if (!Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
+		return;
+
+	if (mask) {
+		int invMaskAlpha = 255 - maskAlpha;
+		auto subFrame = _frame->getSubArea(srcRect);
+		auto subMask = mask->getSubArea(srcRect);
+		byte * dstPixels = static_cast<byte *>(backbuffer.getBasePtr(dst.x, dst.y));
+		const byte * srcPixels = static_cast<byte *>(subFrame.getPixels());
+		const byte * maskPixels = static_cast<byte *>(subMask.getPixels());
+		for(int y = 0; y != srcRect.height(); ++y) {
+			byte *dstRow = dstPixels;
+			const byte *srcRow = srcPixels;
+			const byte *maskRow = maskPixels;
+			for(int x = 0; x != srcRect.width(); ++x) {
+				uint8 srcA = *srcRow++;
+				++dstRow;
+				++maskRow;
+				uint8 invSrcA = 255 - srcA;
+				if (srcA != 0) {
+					for(int n = 3; n--; ++dstRow) {
+						*dstRow = ((*dstRow * invSrcA + *srcRow++ * srcA) * invMaskAlpha + *maskRow++ * maskAlpha * srcA) / 65025;
+					}
+				} else {
+					srcRow += 3;
+					dstRow += 3;
+					maskRow += 3;
+				}
+			}
+			dstPixels += backbuffer.pitch;
+			srcPixels += subFrame.pitch;
+			maskPixels += subMask.pitch;
+		}
+	} else
+		_frame->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
 }
 
 int Animation::width() const {

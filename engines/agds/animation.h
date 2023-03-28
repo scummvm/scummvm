@@ -156,7 +156,7 @@ public:
 	void onScreen(bool onScreen);
 
 	bool load(Common::SeekableReadStream *stream, const Common::String &fname);
-	void paint(Graphics::Surface & backbuffer, Common::Point dst) const;
+	void paint(Graphics::Surface & backbuffer, Common::Point dst, Graphics::TransparentSurface *mask = nullptr, int maskAlpha = 0) const;
 	int width() const;
 	int height() const;
 	bool tick();
