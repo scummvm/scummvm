@@ -40,7 +40,8 @@ int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
 }
 
 Screen::Screen(AGDSEngine * engine, ObjectPtr object, ScreenLoadingType loadingType, const Common::String &prevScreen) :
-	_engine(engine), _object(object), _name(object->getName()), _loadingType(loadingType), _previousScreen(prevScreen),
+	_engine(engine), _object(object), _background(nullptr),
+	_name(object->getName()), _loadingType(loadingType), _previousScreen(prevScreen),
 	_children(&ObjectZCompare), _animations(&AnimationZCompare), _applyingPatch(false),
 	_characterNear(g_system->getHeight()), _characterFar(g_system->getHeight()) {
 	add(object);
@@ -54,20 +55,12 @@ void Screen::scrollTo(Common::Point scroll) {
 	int windowW = g_system->getWidth();
 	int windowH = g_system->getHeight();
 
-	ObjectPtr background;
-	for(uint i = 0, n = _children.size(); i < n; ++i) {
-		auto & child = _children.data()[i];
-		if (child->getPicture()) {
-			background = child;
-			break;
-		}
-	}
-	if (!background) {
+	if (!_background) {
 		_scroll.x = _scroll.y = 0;
 		return;
 	}
 
-	auto rect = background->getRect();
+	auto rect = _background->getRect();
 	int w = rect.width(), h = rect.height();
 	debug("picture size %dx%d", w, h);
 	if (scroll.x + windowW > w)

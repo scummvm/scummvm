@@ -54,6 +54,7 @@ class Screen {
 
 	AGDSEngine *	_engine;
 	ObjectPtr		_object;
+	Object *		_background;
 	Common::Point	_scroll;
 	Common::String	_name;
 	ScreenLoadingType _loadingType;
@@ -131,6 +132,10 @@ public:
 		bool found = remove(object);
 		if (found)
 			add(object);
+	}
+
+	void setBackground(Object * object) {
+		_background = object;
 	}
 
 	bool remove(const Common::String & name);
