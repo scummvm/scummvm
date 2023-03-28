@@ -358,14 +358,33 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 		KEYBIND_COMBAT_SHOOT, KEYBIND_COMBAT_CAST
 	};
 
-	for (int col = 0; col < 3; ++col) {
-		for (int row = 0; row < 3; ++row) {
-			if (col != 2 || row != 2) {
-				Common::Rect r = getOptionButtonRect(col, row);
-				if (r.contains(msg._pos)) {
-					msgAction(ActionMessage(BTN_ACTIONS[col * 3 + row]));
-					return true;
+	if (_mode == SELECT_OPTION && _option == OPTION_NONE) {
+		// Check for option buttons being pressed
+		for (int col = 0; col < 3; ++col) {
+			for (int row = 0; row < 3; ++row) {
+				if (col != 2 || row != 2) {
+					Common::Rect r = getOptionButtonRect(col, row);
+					if (r.contains(msg._pos)) {
+						msgAction(ActionMessage(BTN_ACTIONS[col * 3 + row]));
+						return true;
+					}
 				}
+			}
+		}
+	}
+
+	if (_mode == SELECT_OPTION && (_option == OPTION_SHOOT ||
+			_option == OPTION_FIGHT)) {
+		// Check for entries in the monster list being pressed
+		if (msg._pos.x >= MONSTERS_X && msg._pos.x < 310
+				&& msg._pos.y >= _innerBounds.top && msg._pos.y < 100) {
+			uint monsterNum = (msg._pos.y - _innerBounds.top) / LINE_H;
+			if (monsterNum < _remainingMonsters.size()) {
+				char c = 'a' + monsterNum;
+				msgKeypress(KeypressMessage(Common::KeyState(
+					(Common::KeyCode)(Common::KEYCODE_a + (c - 'a')), c
+				)));
+				return true;
 			}
 		}
 	}
@@ -599,6 +618,7 @@ void Combat::writePartyNumbers() {
 void Combat::writeMonsters() {
 	Common::String mStr = "A)";
 	setReduced(true);
+	clearArea(Common::Rect(MONSTERS_X, 0, 320, 100));
 
 	for (int i = 0; i < (int)_remainingMonsters.size(); ++i) {
 		writeString(MONSTERS_X, i * LINE_H, (i < _attackersCount) ? "+" : " ");
