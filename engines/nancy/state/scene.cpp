@@ -490,17 +490,10 @@ void Scene::init() {
 
 	changeScene(g_nancy->_bootSummary->firstScene);
 
-	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("HINT");
-
-	if (chunk) {
-		chunk->seek(0);
-
+	if (g_nancy->_hintData) {
 		_hintsRemaining.clear();
 
-		_hintsRemaining.reserve(3);
-		for (uint i = 0; i < 3; ++i) {
-			_hintsRemaining.push_back(chunk->readByte());
-		}
+		_hintsRemaining = g_nancy->_hintData->numHints;
 
 		_lastHintCharacter = _lastHintID = -1;
 	}

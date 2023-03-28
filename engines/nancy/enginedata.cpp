@@ -268,6 +268,61 @@ MAP::MAP(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
+HELP::HELP(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	readFilename(*chunkStream, imageName);
+
+	chunkStream->skip(20);
+	buttonDest.left = chunkStream->readUint16LE();
+	buttonDest.top = chunkStream->readUint16LE();
+	buttonDest.right = chunkStream->readUint16LE();
+	buttonDest.bottom = chunkStream->readUint16LE();
+	buttonSrc.left = chunkStream->readUint16LE();
+	buttonSrc.top = chunkStream->readUint16LE();
+	buttonSrc.right = chunkStream->readUint16LE();
+	buttonSrc.bottom = chunkStream->readUint16LE();
+
+	delete chunkStream;
+}
+
+CRED::CRED(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
+	chunkStream->seek(0);
+
+	readFilename(*chunkStream, imageName);
+
+	textNames.resize(isVampire ? 7 : 1);
+	for (Common::String &str : textNames) {
+		readFilename(*chunkStream, str);
+	}
+
+	chunkStream->skip(0x20);
+	readRect(*chunkStream, textScreenPosition);
+	chunkStream->skip(0x10);
+
+	updateTime = chunkStream->readUint16LE();
+	pixelsToScroll = chunkStream->readUint16LE();
+	sound.read(*chunkStream, SoundDescription::kMenu);
+
+	delete chunkStream;
+}
+
+HINT::HINT(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	numHints.resize(chunkStream->size());
+	for (uint i = 0; i < chunkStream->size(); ++i) {
+		numHints[i] = chunkStream->readByte();
+	}
+
+	delete chunkStream;
+}
+
 ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 

@@ -120,6 +120,9 @@ public:
 	INV *_inventoryData;
 	TBOX *_textboxData;
 	MAP *_mapData;
+	HELP *_helpData;
+	CRED *_creditsData;
+	HINT *_hintData;
 
 	Common::HashMap<Common::String, ImageChunk> _imageChunks;
 

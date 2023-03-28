@@ -38,7 +38,7 @@ namespace State {
 class Credits : public State, public Common::Singleton<Credits> {
 public:
 	enum State { kInit, kRun };
-	Credits() : _state(kInit), _background(), _textSurface(1), _pixelsToScroll(0), _currentTextImage(0) {}
+	Credits() : _state(kInit), _background(), _textSurface(1), _currentTextImage(0), _creditsData(nullptr) {}
 
 	// State API
 	void process() override;
@@ -50,17 +50,13 @@ protected:
 
 	void drawTextSurface(uint id);
 
+	CRED *_creditsData;
 	State _state;
 	UI::FullScreenImage _background;
 	RenderObject _textSurface;
 	Time _nextUpdateTime;
 	Graphics::ManagedSurface _fullTextSurface;
-	
-	Common::Array<Common::String> _textNames;
 	uint _currentTextImage;
-	Time _updateTime; // 0x54
-	uint16 _pixelsToScroll; // 0x56
-	SoundDescription _sound; // 0x58, kMenu?
 };
 
 #define NancyCreditsState Nancy::State::Credits::instance()

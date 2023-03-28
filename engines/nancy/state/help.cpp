@@ -63,25 +63,11 @@ void Help::process() {
 }
 
 void Help::init() {
-	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("HELP");
+	HELP *helpData = g_nancy->_helpData;
+	assert(helpData);
+	_image.init(helpData->imageName);
 
-	chunk->seek(0);
-	Common::String imageName;
-	readFilename(*chunk, imageName);
-	_image.init(imageName);
-
-	chunk->skip(20);
-	Common::Rect buttonSrc, buttonDest;
-	buttonDest.left = chunk->readUint16LE();
-	buttonDest.top = chunk->readUint16LE();
-	buttonDest.right = chunk->readUint16LE();
-	buttonDest.bottom = chunk->readUint16LE();
-	buttonSrc.left = chunk->readUint16LE();
-	buttonSrc.top = chunk->readUint16LE();
-	buttonSrc.right = chunk->readUint16LE();
-	buttonSrc.bottom = chunk->readUint16LE();
-
-	_button = new UI::Button(5, _image._drawSurface, buttonSrc, buttonDest);
+	_button = new UI::Button(5, _image._drawSurface, helpData->buttonSrc, helpData->buttonDest);
 	_button->init();
 
 	_state = kBegin;

@@ -48,27 +48,11 @@ void Credits::process() {
 }
 
 void Credits::init() {
-	bool isVampire = g_nancy->getGameType() == kGameTypeVampire;
-	Common::SeekableReadStream *cred = g_nancy->getBootChunkStream("CRED");
-	cred->seek(0);
+	_creditsData = g_nancy->_creditsData;
+	assert(_creditsData);
 
-	Common::String imageName;
-	readFilename(*cred, imageName);
-	_background.init(imageName);
-
-	_textNames.resize(isVampire ? 7 : 1);
-	for (Common::String &str : _textNames) {
-		readFilename(*cred, str);
-	}
-
-	Common::Rect rect;
-	cred->skip(0x20); // Skip the src and dest rectangles
-	readRect(*cred, rect);
-	_textSurface.moveTo(rect);
-	cred->skip(0x10);
-	_updateTime = cred->readUint16LE();
-	_pixelsToScroll = cred->readUint16LE();
-	_sound.read(*cred, SoundDescription::kMenu);
+	_background.init(_creditsData->imageName);
+	_textSurface.moveTo(_creditsData->textScreenPosition);
 
 	drawTextSurface(0);
 
@@ -77,8 +61,8 @@ void Credits::init() {
 
 	g_nancy->_sound->stopSound("MSND");
 
-	g_nancy->_sound->loadSound(_sound);
-	g_nancy->_sound->playSound(_sound);
+	g_nancy->_sound->loadSound(_creditsData->sound);
+	g_nancy->_sound->playSound(_creditsData->sound);
 
 	_background.registerGraphics();
 	_textSurface.registerGraphics();
@@ -93,7 +77,7 @@ void Credits::run() {
 
 	if (input.input & NancyInput::kLeftMouseButtonDown) {
 		_state = kInit;
-		g_nancy->_sound->stopSound(_sound);
+		g_nancy->_sound->stopSound(_creditsData->sound);
 		g_nancy->setMouseEnabled(true);
 		_fullTextSurface.free();
 		g_nancy->setState(NancyState::kMainMenu);
@@ -102,16 +86,16 @@ void Credits::run() {
 
 	Time currentTime = g_nancy->getTotalPlayTime();
 	if (currentTime >= _nextUpdateTime) {
-		_nextUpdateTime = currentTime + _updateTime;
+		_nextUpdateTime = currentTime + _creditsData->updateTime;
 
 		Common::Rect newSrc = _textSurface.getScreenPosition();
 		newSrc.moveTo(_textSurface._drawSurface.getOffsetFromOwner());
-		newSrc.translate(0, _pixelsToScroll);
+		newSrc.translate(0, _creditsData->pixelsToScroll);
 
 		if (newSrc.bottom > _fullTextSurface.h) {
 			newSrc.moveTo(Common::Point());
-			if (_textNames.size() > 1) {
-				drawTextSurface(_currentTextImage == _textNames.size() - 1 ? 0 : _currentTextImage + 1);
+			if (_creditsData->textNames.size() > 1) {
+				drawTextSurface(_currentTextImage == _creditsData->textNames.size() - 1 ? 0 : _currentTextImage + 1);
 			}
 		}
 
@@ -123,7 +107,7 @@ void Credits::run() {
 void Credits::drawTextSurface(uint id) {
 	Graphics::ManagedSurface image;
 	uint surfaceHeight = _textSurface.getBounds().height();
-	g_nancy->_resource->loadImage(_textNames[id], image);
+	g_nancy->_resource->loadImage(_creditsData->textNames[id], image);
 	_fullTextSurface.create(image.w, image.h + (surfaceHeight * 2), g_nancy->_graphicsManager->getInputPixelFormat());
 	_fullTextSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
 	_fullTextSurface.clear(_fullTextSurface.getTransparentColor());

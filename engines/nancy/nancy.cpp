@@ -74,6 +74,9 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_inventoryData = nullptr;
 	_textboxData = nullptr;
 	_mapData = nullptr;
+	_helpData = nullptr;
+	_creditsData = nullptr;
+	_hintData = nullptr;
 }
 
 NancyEngine::~NancyEngine() {
@@ -90,6 +93,9 @@ NancyEngine::~NancyEngine() {
 	delete _inventoryData;
 	delete _textboxData;
 	delete _mapData;
+	delete _helpData;
+	delete _creditsData;
+	delete _hintData;
 }
 
 NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
@@ -347,12 +353,19 @@ void NancyEngine::bootGameEngine() {
 	_viewportData = new VIEW(boot->getChunkStream("VIEW"));
 	_inventoryData = new INV(boot->getChunkStream("INV"));
 	_textboxData = new TBOX(boot->getChunkStream("TBOX"));
+	_helpData = new HELP(boot->getChunkStream("HELP"));
+	_creditsData = new CRED(boot->getChunkStream("CRED"));
 
 	_cursorManager->init(boot->getChunkStream("CURS"));
 
 	auto *chunkStream = boot->getChunkStream("MAP");
 	if (chunkStream) {
 		_mapData = new MAP(chunkStream);
+	}
+
+	chunkStream = boot->getChunkStream("HINT");
+	if (chunkStream) {
+		_hintData = new HINT(chunkStream);
 	}
 
 	// For now we ignore the potential for more than one of each of these

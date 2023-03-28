@@ -137,6 +137,31 @@ struct MAP {
 	Common::Point cursorPosition;
 };
 
+struct HELP {
+	HELP(Common::SeekableReadStream *chunkStream);
+
+	Common::String imageName;
+	Common::Rect buttonSrc;
+	Common::Rect buttonDest;
+};
+
+struct CRED {
+	CRED(Common::SeekableReadStream *chunkStream);
+
+	Common::String imageName;
+	Common::Array<Common::String> textNames;
+	Common::Rect textScreenPosition;
+	uint16 updateTime;
+	uint16 pixelsToScroll;
+	SoundDescription sound;
+};
+
+struct HINT {
+	HINT(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<uint16> numHints;
+};
+
 struct ImageChunk {
 	ImageChunk() : width(0), height(0) {}
 	ImageChunk(Common::SeekableReadStream *chunkStream);
