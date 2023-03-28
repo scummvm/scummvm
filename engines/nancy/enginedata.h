@@ -137,6 +137,15 @@ struct MAP {
 	Common::Point cursorPosition;
 };
 
+struct ImageChunk {
+	ImageChunk() : width(0), height(0) {}
+	ImageChunk(Common::SeekableReadStream *chunkStream);
+
+	Common::String imageName;
+	uint16 width;
+	uint16 height;
+};
+
 } // End of namespace Nancy
 
 #endif // NANCY_ENGINEDATA_H

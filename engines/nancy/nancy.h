@@ -121,6 +121,8 @@ public:
 	TBOX *_textboxData;
 	MAP *_mapData;
 
+	Common::HashMap<Common::String, ImageChunk> _imageChunks;
+
 protected:
 	Common::Error run() override;
 	void pauseEngineIntern(bool pause) override;

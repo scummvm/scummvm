@@ -43,10 +43,7 @@ void GraphicsManager::init() {
 	_screen.setTransparentColor(getTransColor());
 	_screen.clear();
 
-	Common::SeekableReadStream *ob = g_nancy->getBootChunkStream("OB0");
-	ob->seek(0);
-
-	g_nancy->_resource->loadImage(ob->readString(), _object0);
+	g_nancy->_resource->loadImage(g_nancy->_imageChunks["OB0"].imageName, _object0);
 
 	loadFonts();
 }

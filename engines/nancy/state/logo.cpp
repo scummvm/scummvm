@@ -55,10 +55,8 @@ void Logo::onStateExit() {
 }
 
 void Logo::init() {
-	Common::SeekableReadStream *lg = g_nancy->getBootChunkStream("LG0");
-	lg->seek(0);
 
-	_logoImage.init(lg->readString());
+	_logoImage.init(g_nancy->_imageChunks["LG0"].imageName);
 	_logoImage.registerGraphics();
 
 	_state = kStartSound;

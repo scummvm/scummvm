@@ -355,6 +355,11 @@ void NancyEngine::bootGameEngine() {
 		_mapData = new MAP(chunkStream);
 	}
 
+	// For now we ignore the potential for more than one of each of these
+	_imageChunks.setVal("OB0", boot->getChunkStream("OB0"));
+	_imageChunks.setVal("FR0", boot->getChunkStream("FR0"));
+	_imageChunks.setVal("LG0", boot->getChunkStream("LG0"));
+
 	// Load all data chunks found in BOOT. These get used in a lot of places
 	// across the engine, so we always keep them in memory
 	Common::Array<Common::String> bootChunkNames;

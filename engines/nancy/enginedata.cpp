@@ -268,4 +268,15 @@ MAP::MAP(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
+ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	readFilename(*chunkStream, imageName);
+	width = chunkStream->readUint16LE();
+	height = chunkStream->readUint16LE();
+
+	delete chunkStream;
+}
+
 } // End of namespace Nancy

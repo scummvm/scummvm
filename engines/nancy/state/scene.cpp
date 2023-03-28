@@ -728,14 +728,7 @@ void Scene::handleInput() {
 }
 
 void Scene::initStaticData() {
-	Common::SeekableReadStream *chunk;
-
-	chunk = g_nancy->getBootChunkStream("FR0");
-	chunk->seek(0);
-	if (chunk) {
-		_frame.init(chunk->readString());
-	}
-
+	_frame.init(g_nancy->_imageChunks["FR0"].imageName);
 	_viewport.init();
 	_textbox.init();
 	_inventoryBox.init();
