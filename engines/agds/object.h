@@ -179,7 +179,7 @@ public:
 
 	void region(RegionPtr region);
 
-	RegionPtr region() const {
+	const RegionPtr& region() const {
 		return _region;
 	}
 
