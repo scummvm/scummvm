@@ -2641,7 +2641,7 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	_debugLevelPopUp = new PopUpWidget(boss, prefix + "DebugLevelPopup");
 
 	// I18N: Debug level -1, no messages
-	_debugLevelPopUp->appendEntry(_("None"), -1);
+	_debugLevelPopUp->appendEntry(_("None"), (uint32)-1);
 
 	for (int i = 0; i < 11; i++)
 		_debugLevelPopUp->appendEntry(Common::U32String::format("%d", i), i);
@@ -2943,8 +2943,8 @@ void GlobalOptionsDialog::apply() {
 	else
 		_autosavePeriodPopUp->setSelected(0);
 
-	if (gDebugLevel != (int)_debugLevelPopUp->getSelectedTag()) {
-		gDebugLevel = _debugLevelPopUp->getSelectedTag();
+	if (gDebugLevel != (int32)(_debugLevelPopUp->getSelectedTag())) {
+		gDebugLevel = (int32)(_debugLevelPopUp->getSelectedTag());
 
 		warning("Debug level set to %d", gDebugLevel);
 	}
