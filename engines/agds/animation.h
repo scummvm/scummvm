@@ -40,6 +40,7 @@ class Animation {
 	Common::String		_name;
 	Video::FlicDecoder *_flic;
 	Graphics::TransparentSurface *_frame;
+	Graphics::TransparentSurface *_scaledFrame;
 	int					_frames;
 	Common::Point		_position;
 	Common::String		_process;
@@ -142,9 +143,7 @@ public:
 		return _z;
 	}
 
-	void scale(float scale) {
-		_scale = scale;
-	}
+	void scale(float scale);
 	float scale() const {
 		return _scale;
 	}
@@ -164,7 +163,9 @@ public:
 	void decodeNextFrame();
 
 private:
+	void rescaleCurrentFrame();
 	void freeFrame();
+	void freeScaledFrame();
 };
 
 
