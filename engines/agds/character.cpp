@@ -32,7 +32,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 #include <math.h>
 
@@ -222,7 +222,17 @@ void Character::paint(Graphics::Surface &backbuffer, Common::Point pos) const {
 
 	pos.y -= _animation->height();
 	pos.x -= _animation->width() / 2;
-	_animation->paint(backbuffer, pos);
+
+	int fogAlpha = 0;
+	if (_fog) {
+		auto z = this->z();
+		if (z >= _fogMinZ && z < _fogMaxZ) {
+			fogAlpha = 255 * (z - _fogMinZ) / (_fogMaxZ - _fogMinZ);
+		} else if (z >= _fogMaxZ) {
+			fogAlpha = 255;
+		}
+	}
+	_animation->paint(backbuffer, pos, _fog.get(), fogAlpha);
 }
 
 int Character::z() const {
@@ -236,7 +246,7 @@ void Character::reset() {
 	_fog.reset();
 }
 
-void Character::setFog(Graphics::Surface * surface, int minZ, int maxZ) {
+void Character::setFog(Graphics::TransparentSurface * surface, int minZ, int maxZ) {
 	_fog.reset(surface);
 	_fogMinZ = minZ;
 	_fogMaxZ = maxZ;
