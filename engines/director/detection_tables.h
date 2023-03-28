@@ -787,6 +787,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "beestenboel",		"Beestenboel Zoölogic" },
 	{ "boeboekshaboe",		"Boeboeks: Hop hop haboe!" },
 	{ "boeboekstocht",		"Boeboeks: de toch naar opa Kakadoris" },
+	{ "dtovenaargeheim",	"De Dwaze Tovenaar en het Geheim van het Vermiste Jongetje" },
 	{ "fcdk",				"F.C. De Kampioenen: Op Zoek Naar Neroke" },
 	{ "griezelbus1",		"De Griezelbus 1" },
 	{ "kjoeties",			"Invasie van de Kjoeties" },
@@ -5743,6 +5744,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Other versions are D4
 	MACGAME1_l("draculassecret", "", "Dracula.PPC", "65f0701cced8f5c64813e1e0353f0510", 108119, Common::FR_FRA, 501),
 
+	// Demo is D7
+	WINGAME1_l("dtovenaargeheim", "", "DWAZ9598.EXE", "t:a9463471c761c65fe7bf095c6f4d5185", 1446615, Common::NL_NLD, 500),
+
 	// Published by Bibliographisches Institut & F.A. Brockhaus AG
 	// Contains previews for:
 	// - Mein erstes Lexikon
@@ -7491,6 +7495,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Found as Enhanced CD content on WOW 2000 Christian Rock compilation
 	WINDEMO1("dotsafe", "Demo", "DOTSAFE.EXE", "c1a2e8b7e41fa204009324a9c7db1030", 19795672, 700),
+
+	// Game is D5
+	WINDEMO1_l("dtovenaargeheim", "", "De dwaze tovenaar demo.exe", "t:dd2da01f1211c6e6a1ccca58fe4c9d96", 2595836, Common::NL_NLD, 702),
 
 	WINGAME2("easports2000", "", "PC.EXE",	  "c1a2e8b7e41fa204009324a9c7db1030", 2212134,
 								 "INTRO.DXR", "209cd844f714140413eb58c3a69db454", 5179191, 700),
