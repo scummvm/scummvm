@@ -34,7 +34,7 @@ Animation::Animation(AGDSEngine *engine, const Common::String &name) :
 	_engine(engine), _name(name), _flic(), _frame(), _scaledFrame(),
 	_frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
 	_phase(0), _paused(false), _speed(100), _z(0),
-	_delay(0), _random(0), _scale(1), _onScreen(true) {
+	_delay(0), _random(0), _scale(1), _onScreen(true), _visibleHeight(0) {
 }
 
 Animation::~Animation() {
@@ -115,11 +115,26 @@ void Animation::scale(float scale) {
 }
 
 void Animation::rescaleCurrentFrame() {
-	if (_scale == 1 || !_frame)
-		return;
-
-	freeScaledFrame();
-	_scaledFrame = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
+	if (_scale != 1 && _frame) {
+		freeScaledFrame();
+		_scaledFrame = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
+	}
+	auto *frame = _scaledFrame? _scaledFrame: _frame;
+	if (frame) {
+		uint h = frame->h, w = frame->w;
+		for(uint i = 0; i != h; ++i) {
+			uint y = h - 1 - i;
+			auto * ptr = static_cast<uint32*>(frame->getBasePtr(0, y));
+			for(uint x = 0; x != w; ++x) {
+				uint8 a, r, g, b;
+				frame->format.colorToARGB(*ptr++, a, r, g, b);
+				if (a != 0) {
+					_visibleHeight = h - i;
+					return;
+				}
+			}
+		}
+	}
 }
 
 void Animation::decodeNextFrame() {
@@ -249,11 +264,14 @@ void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics
 		frame->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
 }
 
-int Animation::width() const {
+uint Animation::width() const {
 	return _flic ? _flic->getWidth() * _scale: 0;
 }
-int Animation::height() const {
+uint Animation::height() const {
 	return _flic ? _flic->getHeight() * _scale: 0;
+}
+uint Animation::visibleHeight() const {
+	return _visibleHeight;
 }
 
 } // namespace AGDS

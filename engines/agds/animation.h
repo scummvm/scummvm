@@ -56,6 +56,7 @@ class Animation {
 	int					_random;
 	float				_scale;
 	bool				_onScreen;
+	uint				_visibleHeight;
 
 public:
 	Animation(AGDSEngine *engine, const Common::String &name);
@@ -156,8 +157,9 @@ public:
 
 	bool load(Common::SeekableReadStream *stream, const Common::String &fname);
 	void paint(Graphics::Surface & backbuffer, Common::Point dst, Graphics::TransparentSurface *mask = nullptr, int maskAlpha = 0) const;
-	int width() const;
-	int height() const;
+	uint width() const;
+	uint height() const;
+	uint visibleHeight() const;
 	bool tick();
 
 	void decodeNextFrame();
