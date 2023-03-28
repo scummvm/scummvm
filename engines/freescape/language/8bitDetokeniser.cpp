@@ -42,7 +42,7 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 	// we'll want to convert them into runs of "if shot? then", "if collided? then" or "if timer? then",
 	// and we'll want to start that from the top
 	FCLInstructionVector *conditionalInstructions = new FCLInstructionVector();
-	FCLInstruction currentInstruction;
+	FCLInstruction currentInstruction = FCLInstruction(Token::UNKNOWN);
 
 	// this lookup table tells us how many argument bytes to read per opcode
 	uint8 argumentsRequiredByOpcode[49] =

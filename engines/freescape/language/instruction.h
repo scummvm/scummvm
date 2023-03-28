@@ -44,6 +44,8 @@ public:
 	Token::Type getType();
 	void setBranches(FCLInstructionVector *thenBranch, FCLInstructionVector *elseBranch);
 
+	FCLInstruction duplicate();
+
 	int32 _source;
 	int32 _additional;
 	int32 _destination;

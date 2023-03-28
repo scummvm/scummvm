@@ -78,6 +78,9 @@ void DarkEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset)
 }
 
 void DarkEngine::addECDs(Area *area) {
+	if (!area->entranceWithID(255))
+		return;
+
 	GlobalStructure *rs = (GlobalStructure *)area->entranceWithID(255);
 	debugC(1, kFreescapeDebugParser, "ECD positions:");
 	for (uint i = 0; i < rs->_structure.size(); i = i + 3) {
@@ -91,6 +94,29 @@ void DarkEngine::addECDs(Area *area) {
 			continue;
 		}
 		addECD(area, Math::Vector3d(x, y, z), i / 3);
+	}
+}
+
+void DarkEngine::addWalls(Area *area) {
+	if (!area->entranceWithID(254))
+		return;
+
+	AreaConnections *cons = (AreaConnections *)area->entranceWithID(254);
+	debugC(1, kFreescapeDebugParser, "Adding walls for area %d:", area->getAreaID());
+	int id = 240;
+	for (uint i = 1; i < cons->_connections.size(); i = i + 2) {
+		int target = cons->_connections[i];
+		debugC(1, kFreescapeDebugParser, "Connection to %d using id: %d", target, id);
+		if (target > 0) {
+			area->addObjectFromArea(id, _areaMap[255]);
+			GeometricObject *gobj = (GeometricObject *)area->objectWithID(id);
+			assert((*(gobj->_condition[1]._thenInstructions))[0].getType() == Token::Type::GOTO);
+			assert((*(gobj->_condition[1]._thenInstructions))[0]._destination == 0);
+			(*(gobj->_condition[1]._thenInstructions))[0].setSource(target);
+		} else
+			area->addObjectFromArea(id + 1, _areaMap[255]);
+
+		id = id + 2;
 	}
 }
 
@@ -218,30 +244,6 @@ void DarkEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_j) {
 		_flyMode = !_flyMode;
 	}
-}
-
-void DarkEngine::checkIfStillInArea() {
-	AreaConnections *cons = (AreaConnections *)_currentArea->entranceWithID(254);
-	if (!cons) {
-		FreescapeEngine::checkIfStillInArea();
-		return;
-	}
-
-	int nextAreaID = 0;
-
-	if (_position.z() >= 4064 - 16)
-		nextAreaID = cons->_connections[1];
-	else if (_position.x() >= 4064 - 16)
-		nextAreaID = cons->_connections[3];
-	else if (_position.z() <= 16)
-		nextAreaID = cons->_connections[5];
-	else if (_position.x() <= 16)
-		nextAreaID = cons->_connections[7];
-
-	if (nextAreaID > 0)
-		gotoArea(nextAreaID, 0);
-	else
-		FreescapeEngine::checkIfStillInArea();
 }
 
 void DarkEngine::updateTimeVariables() {
