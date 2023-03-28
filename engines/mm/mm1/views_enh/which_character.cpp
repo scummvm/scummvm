@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/which_character.h"
+#include "mm/mm1/views_enh/combat.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -32,15 +33,27 @@ WhichCharacter::WhichCharacter() : PartyView("WhichCharacter") {
 }
 
 void WhichCharacter::draw() {
+	if (dynamic_cast<Combat *>(g_events->priorView()) != nullptr) {
+		// For combat view, draw a frame that the party view will be inside
+		const Common::Rect old = _bounds;
+		_bounds = Common::Rect(0, 144, 320, 200);
+		frame();
+		fill();
+
+		_bounds = old;
+		g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
+	}
+
 	PartyView::draw();
-	writeString(10, 5, STRING["enhdialogs.trade.dest"]);
+	writeString(10, 5, STRING[g_events->isInCombat() ?
+		"enhdialogs.misc.exchange" : "enhdialogs.trade.dest"]);
 }
 
 bool WhichCharacter::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
 	case KEYBIND_ESCAPE:
 		close();
-		send("CharacterInventory", GameMessage("TRADE_DEST", -1));
+		selectCharacter(-1);
 		return true;
 
 	case KEYBIND_VIEW_PARTY1:
@@ -52,13 +65,21 @@ bool WhichCharacter::msgAction(const ActionMessage &msg) {
 		uint charNum = msg._action - KEYBIND_VIEW_PARTY1;
 		if (charNum < g_globals->_party.size()) {
 			close();
-			send("CharacterInventory", GameMessage("TRADE_DEST", charNum));
+			selectCharacter(charNum);
 		}
 		return true;
 	}
 
 	default:
 		return PartyView::msgAction(msg);
+	}
+}
+
+void WhichCharacter::selectCharacter(int charNum) {
+	if (dynamic_cast<Combat *>(g_events->focusedView()) != nullptr) {
+		send("Combat", GameMessage("EXCHANGE", charNum));
+	} else {
+		send("CharacterInventory", GameMessage("TRADE_DEST", charNum));
 	}
 }
 

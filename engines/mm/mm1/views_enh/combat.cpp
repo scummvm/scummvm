@@ -99,6 +99,12 @@ bool Combat::msgGame(const GameMessage &msg) {
 
 		setMode(SPELL_RESULT);
 		return true;
+
+	} else if (msg._name == "EXCHANGE" && msg._value != -1) {
+		int charNum = msg._value;
+		if (g_globals->_combatParty[charNum] != g_globals->_currCharacter)
+			exchangeWith(charNum);
+		return true;
 	}
 
 	return false;
@@ -942,13 +948,20 @@ void Combat::setOption(SelectedOption option) {
 		KeybindingMode::KBMODE_MENUS);
 	_option = option;
 
-	clearButtons();
-	if (option != OPTION_NONE) {
-		addButton(&g_globals->_escSprites, Common::Point(0, 164),
-			0, KEYBIND_ESCAPE);
-	}
+	if (option == OPTION_EXCHANGE) {
+		// Show the view to select which character
+		_option = OPTION_NONE;
+		addView("WhichCharacter");
 
-	redraw();
+	} else {
+		clearButtons();
+		if (option != OPTION_NONE) {
+			addButton(&g_globals->_escSprites, Common::Point(0, 164),
+				0, KEYBIND_ESCAPE);
+		}
+
+		redraw();
+	}
 }
 
 void Combat::displaySpellResult(const InfoMessage &msg) {

@@ -399,7 +399,7 @@ dialogs:
 		set_delay: "Set delay (0-9):"
 		delay_currently: "(currently= %d)"
 		infiltration: "infiltrates the ranks!"
-		exchange_places: "exchange places with (1-%c)?"
+		exchange_places: "Exchange places with (1-%c)?"
 		status:
 			0: "(paralyze)"
 			1: "(webbed)  "
@@ -595,6 +595,7 @@ enhdialogs:
 		exit: "Exit"
 		go_back: "Go back"
 		no_items: "Inventory empty"
+		exchange: "Exchange with whom?"
 	quickref:
 		title: "Quick Reference Chart"
 		headers:

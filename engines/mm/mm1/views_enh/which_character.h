@@ -30,6 +30,9 @@ namespace MM1 {
 namespace ViewsEnh {
 
 class WhichCharacter : public PartyView {
+private:
+	void selectCharacter(int charNum);
+
 public:
 	WhichCharacter();
 	virtual ~WhichCharacter() {}
