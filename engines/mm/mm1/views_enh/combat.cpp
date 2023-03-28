@@ -119,7 +119,7 @@ void Combat::draw() {
 		delaySeconds(1);
 		return;
 	case MONSTER_ADVANCES:
-		writeString(0, 20, _monsterName);
+		writeBottomText(0, 0, _monsterName);
 		writeString(STRING["dialogs.combat.advances"]);
 		writeSpaces(30);
 		writeRound();
@@ -463,9 +463,8 @@ void Combat::writeAllOptions() {
 }
 
 void Combat::writeDelaySelect() {
-	error("TODO: delay select");
-	writeString(0, 20, STRING["dialogs.combat.set_delay"]);
-	writeString(0, 23, Common::String::format(
+	writeBottomText(0, 0, STRING["dialogs.combat.set_delay"]);
+	writeBottomText(0, 3, Common::String::format(
 		STRING["dialogs.combat.delay_currently"].c_str(),
 		g_globals->_delay));
 }
@@ -794,7 +793,7 @@ void Combat::writeInfiltration() {
 		STRING["dialogs.combat.infiltration"].c_str());
 
 	resetBottom();
-	writeString(0, 20, line);
+	writeBottomText(0, 0, line);
 	Sound::sound(SOUND_2);
 	Sound::sound(SOUND_2);
 }
@@ -806,13 +805,13 @@ void Combat::writeWaitsForOpening() {
 	);
 
 	resetBottom();
-	writeString(0, 20, line);
+	writeBottomText(0, 0, line);
 }
 
 void Combat::writeSpellResult() {
 	for (uint i = 0; i < _spellResult._lines.size(); ++i) {
 		const Line &l = _spellResult._lines[i];
-		writeString(l.x, l.y + 20, l._text);
+		writeBottomText(l.x, l.y, l._text);
 	}
 }
 
@@ -889,7 +888,7 @@ void Combat::writeCharAttackDamage() {
 void Combat::writeCharAttackNoEffect() {
 	resetBottom();
 
-	writeString(0, 20, Common::String::format("%s %s %s",
+	writeBottomText(0, 0, Common::String::format("%s %s %s",
 		g_globals->_currCharacter->_name,
 		STRING[_isShooting ? "dialogs.combat.shoots" :
 		"dialogs.combat.attacks"].c_str(),
@@ -897,7 +896,7 @@ void Combat::writeCharAttackNoEffect() {
 	));
 	_isShooting = false;
 
-	writeString(0, 21, STRING["dialogs.combat.weapon_no_effect"]);
+	writeBottomText(0, 1, STRING["dialogs.combat.weapon_no_effect"]);
 }
 
 Common::String Combat::getAttackString() {
