@@ -39,6 +39,7 @@ Combat::Combat() : ScrollView("Combat") {
 
 void Combat::setMode(Mode newMode) {
 	_mode = newMode;
+	clearButtons();
 
 	if (newMode == SELECT_OPTION) {
 		_option = OPTION_NONE;
@@ -277,6 +278,13 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	if (endDelay())
 		return true;
 
+	if (_mode == SELECT_OPTION && _option != OPTION_NONE &&
+		msg._action == KEYBIND_ESCAPE) {
+		_option = OPTION_NONE;
+		combatLoop();
+		return true;
+	}
+
 	if (_mode != SELECT_OPTION || (_option != OPTION_NONE &&
 			_option != OPTION_EXCHANGE))
 		return false;
@@ -335,12 +343,6 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	case KEYBIND_COMBAT_USE:
 		use();
 		break;
-	case KEYBIND_ESCAPE:
-		if (_mode == SELECT_OPTION) {
-			_option = OPTION_NONE;
-			combatLoop();
-		}
-		break;
 	default:
 		break;
 	}
@@ -372,7 +374,8 @@ bool Combat::msgMouseUp(const MouseUpMessage &msg) {
 }
 
 void Combat::writeOptions() {
-	resetBottom();
+	if (_option != OPTION_NONE)
+		writeString(30, 170, STRING["enhdialogs.misc.go_back"]);
 
 	switch (_option) {
 	case OPTION_NONE:
@@ -435,36 +438,34 @@ void Combat::writeAllOptions() {
 }
 
 void Combat::writeDelaySelect() {
-	resetBottom();
+	error("TODO: delay select");
 	writeString(0, 20, STRING["dialogs.combat.set_delay"]);
 	writeString(0, 23, Common::String::format(
 		STRING["dialogs.combat.delay_currently"].c_str(),
 		g_globals->_delay));
-	escToGoBack(0, 23);
 }
 
 void Combat::writeExchangeSelect() {
-	resetBottom();
-	writeString(7, 20, Common::String::format(
+	writeBottomText(0, 1, Common::String::format(
 		STRING["dialogs.combat.exchange_places"].c_str(),
-		'0' + g_globals->_combatParty.size()));
-	escToGoBack(12, 23);
+		'0' + g_globals->_combatParty.size()),
+		ALIGN_MIDDLE);
 }
 
 void Combat::writeFightSelect() {
 	_attackableCount = MIN(_attackersCount, (int)_remainingMonsters.size());
 
-	writeString(10, 20, Common::String::format(
-		STRING["dialogs.combat.fight_which"].c_str(), 'A' + _attackableCount - 1));
-	escToGoBack(12, 23);
+	writeBottomText(0, 1, Common::String::format(
+		STRING["dialogs.combat.fight_which"].c_str(), 'A' + _attackableCount - 1),
+		ALIGN_MIDDLE);
 }
 
 void Combat::writeShootSelect() {
 	_attackableCount = MIN(_attackersCount, (int)_remainingMonsters.size());
 
-	writeString(10, 20, Common::String::format(
-		STRING["dialogs.combat.shoot_which"].c_str(), 'A' + _attackableCount - 1));
-	escToGoBack(12, 23);
+	writeBottomText(0, 1, Common::String::format(
+		STRING["dialogs.combat.shoot_which"].c_str(), 'A' + _attackableCount - 1),
+		ALIGN_MIDDLE);
 }
 
 void Combat::writeAttackOptions() {
@@ -514,8 +515,9 @@ void Combat::resetBottom() {
 	_allowCast = _allowAttack = false;
 }
 
-void Combat::writeBottomText(int x, int line, const Common::String &msg) {
-	writeString(x, (line + 19) * LINE_H, msg);
+void Combat::writeBottomText(int x, int line, const Common::String &msg,
+		TextAlign align) {
+	writeString(x, (line + 19) * LINE_H, msg, align);
 }
 
 #define BTN_SIZE 10
@@ -919,6 +921,13 @@ void Combat::setOption(SelectedOption option) {
 		KeybindingMode::KBMODE_PARTY_MENUS :
 		KeybindingMode::KBMODE_MENUS);
 	_option = option;
+
+	clearButtons();
+	if (option != OPTION_NONE) {
+		addButton(&g_globals->_escSprites, Common::Point(0, 164),
+			0, KEYBIND_ESCAPE);
+	}
+
 	redraw();
 }
 

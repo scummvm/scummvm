@@ -34,7 +34,6 @@ private:
 	// TODO: Stuff to refactor
 	void writeSpaces(int count) { error("TODO"); }
 	void clearLines(int y1, int y2) { error("TODO"); }
-	void escToGoBack(int x, int y) { error("TODO"); }
 
 private:
 	LineArray _monsterSpellLines;
@@ -62,7 +61,8 @@ private:
 	void clearBottom();
 	void clearArea(const Common::Rect &r);
 	void resetBottom();
-	void writeBottomText(int x, int line, const Common::String &msg);
+	void writeBottomText(int x, int line, const Common::String &msg,
+		TextAlign align = ALIGN_LEFT);
 	Common::Rect getOptionButtonRect(uint col, uint row);
 	void writeOption(uint col, uint row, char c, const Common::String &msg);
 
