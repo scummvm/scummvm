@@ -204,6 +204,18 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		},
 		NULL
 	},
+	{
+		"scummvm_auto_performance_tuner",
+		"Regolazione automatica performance",
+		NULL,
+		"Cambio automatico delle impostazioni di performance e salto dei fotogrammi se vengono rilevate performance scadenti durante il gioco. 'Consenti inaccuratezze di timing' e 'Salto dei fotogrammi Auto' saranno temporaneamente abilitati in sequenza per la sola sessione di gioco, se necessario. Le singole impostazioni salvate non saranno modificate.",
+		NULL,
+		NULL,
+		{
+			{NULL, NULL},
+		},
+		NULL
+	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
 

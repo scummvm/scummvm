@@ -275,6 +275,20 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"disabled"
 #endif
 	},
+	{
+		"scummvm_auto_performance_tuner",
+		"Auto performance tuner",
+		NULL,
+		"In-game automatic change of performance/frameskip settings if low performances are detected. 'Allow Timing Inaccuracies' and 'Auto Frameskip' will be temporarily set on in sequence, if necessary, for the current game session only. Single saved settings will not be affected.",
+		NULL,
+		NULL,
+		{
+			{"disabled", NULL},
+			{"enabled", NULL},
+			{NULL, NULL},
+		},
+		"enabled"
+	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
 
