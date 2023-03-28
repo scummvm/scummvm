@@ -44,6 +44,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("cif_export", WRAP_METHOD(NancyConsole, Cmd_cifExport));
 	registerCmd("cif_list", WRAP_METHOD(NancyConsole, Cmd_cifList));
 	registerCmd("cif_info", WRAP_METHOD(NancyConsole, Cmd_cifInfo));
+	registerCmd("chunk_export", WRAP_METHOD(NancyConsole, Cmd_chunkExport));
 	registerCmd("chunk_hexdump", WRAP_METHOD(NancyConsole, Cmd_chunkHexDump));
 	registerCmd("chunk_list", WRAP_METHOD(NancyConsole, Cmd_chunkList));
 	registerCmd("show_image", WRAP_METHOD(NancyConsole, Cmd_showImage));
@@ -202,6 +203,50 @@ bool NancyConsole::Cmd_cifInfo(int argc, const char **argv) {
 	}
 
 	debugPrintf("%s", g_nancy->_resource->getCifDescription((argc == 2 ? "ciftree" : argv[2]), argv[1]).c_str());
+	return true;
+}
+
+bool NancyConsole::Cmd_chunkExport(int argc, const char **argv) {
+	if (argc < 3 || argc > 4) {
+		debugPrintf("Exports an IFF chunk\n");
+		debugPrintf("Usage: %s <iffname> <chunkname> [index]\n", argv[0]);
+		return true;
+	}
+
+	IFF iff(argv[1]);
+	if (!iff.load()) {
+		debugPrintf("Failed to load IFF '%s'\n", argv[1]);
+		return true;
+	}
+
+	const byte *buf;
+	uint size;
+
+	char idStr[4] = { ' ', ' ', ' ', ' ' };
+	uint len = strlen(argv[2]);
+	memcpy(idStr, argv[2], (len <= 4 ? len : 4));
+	uint32 id = READ_BE_UINT32(idStr);
+	uint index = 0;
+
+	if (argc == 4)
+		index = atoi(argv[3]);
+
+	buf = iff.getChunk(id, size, index);
+	if (!buf) {
+		debugPrintf("Failed to find chunk '%s' (index %d) in IFF '%s'\n", argv[2], index, argv[1]);
+		return true;
+	}
+
+	Common::DumpFile dumpfile;
+	Common::String filename = g_nancy->getGameId();
+	filename += '_';
+	filename += argv[1];
+	filename += '_';
+	filename += argv[2];
+	filename += ".dat";
+	dumpfile.open(filename);
+	dumpfile.write(buf, size);
+	dumpfile.close();
 	return true;
 }
 
