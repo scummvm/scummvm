@@ -288,10 +288,11 @@ MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCmd) {
 
     /* Find the table section corresponding to the command's verb. */
     for (auto& cmd : table) {
-        if (cmd.data_type == MCI_COMMAND_HEAD && cmd.keystr == verb) {
+        if ((tableStart < 0) && (cmd.data_type == MCI_COMMAND_HEAD) && (cmd.keystr == verb)) {
             tableStart = i_table;
-        } else if (tableStart >= 0 && cmd.data_type == MCI_END_COMMAND) {
+        } else if ((tableStart >= 0) && (cmd.data_type == MCI_END_COMMAND)) {
             tableEnd = i_table;
+            break;
         }
         i_table++;
     }
