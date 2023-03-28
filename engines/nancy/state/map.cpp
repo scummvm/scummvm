@@ -112,16 +112,8 @@ void Map::setLabel(int labelID) {
 }
 
 void Map::MapViewport::init() {
-	Common::SeekableReadStream *viewChunk = g_nancy->getBootChunkStream("VIEW");
-
-	if (viewChunk) {
-		viewChunk->seek(0);
-		Common::Rect dest;
-		readRect(*viewChunk, dest);
-		moveTo(dest);
-
-		_drawSurface.create(dest.width(), dest.height(), g_nancy->_graphicsManager->getInputPixelFormat());
-	}
+	moveTo(g_nancy->_viewportData->screenPosition);
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 
 	RenderObject::init();
 }
@@ -165,7 +157,7 @@ void TVDMap::init() {
 	_globe.init();
 
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("MAP");
-	Common::Rect textboxScreenPosition = NancySceneState.getTextbox().getScreenPosition();
+	Common::Rect textboxScreenPosition =g_nancy->_bootSummary->textboxScreenPosition;
 
 	if (chunk) {
 		chunk->seek(0);

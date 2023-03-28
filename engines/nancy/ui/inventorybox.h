@@ -57,8 +57,6 @@ public:
 	void registerGraphics() override;
 	void handleInput(NancyInput &input);
 
-	ItemDescription getItemDescription(uint id) const { return _itemDescriptions[id]; }
-
 	void onScrollbarMove();
 
 private:
@@ -71,9 +69,8 @@ private:
 
 	class Curtains : public RenderObject {
 	public:
-		Curtains(InventoryBox *parent) :
+		Curtains() :
 			RenderObject(9),
-			_parent(parent),
 			_soundTriggered(false),
 			_areOpen(false),
 			_curFrame(0) {}
@@ -85,8 +82,6 @@ private:
 		void setOpen(bool open) { _areOpen = open; }
 
 		void setAnimationFrame(uint frame);
-
-		InventoryBox *_parent;
 
 		uint _curFrame;
 		Time _nextFrameTime;
@@ -109,16 +104,6 @@ private:
 
 	Common::Array<int16> _order;
 	ItemHotspot _itemHotspots[4];
-
-	// INV contents
-	//...
-	Common::Array<Common::Rect> _curtainsSrc; // 0xD6
-	// _screenPosition 0x1B6
-	uint16 _curtainsFrameTime; // 0x1C6
-	Common::String _inventoryCursorsImageName; // 0x1D2, should this be here?
-
-	Common::Rect _emptySpace; // 0x1E4
-	Common::Array<ItemDescription> _itemDescriptions; // 0x1F4
 };
 
 } // End of namespace UI

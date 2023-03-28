@@ -39,9 +39,7 @@ namespace UI {
 InventoryBox::InventoryBox() :
 		RenderObject(6),
 		_scrollbar(nullptr),
-		_curtains(this),
-		_scrollbarPos(0),
-		_curtainsFrameTime(0) {}
+		_scrollbarPos(0) {}
 
 InventoryBox::~InventoryBox() {
 	_fullInventorySurface.free();
@@ -49,51 +47,10 @@ InventoryBox::~InventoryBox() {
 }
 
 void InventoryBox::init() {
-	Common::SeekableReadStream &stream = *g_nancy->getBootChunkStream("INV");
-	stream.seek(0, SEEK_SET);
-
 	_order.clear();
 
-	Common::Rect scrollbarSrcBounds;
-	readRect(stream, scrollbarSrcBounds);
-	Common::Point scrollbarDefaultPos;
-	scrollbarDefaultPos.x = stream.readUint16LE();
-	scrollbarDefaultPos.y = stream.readUint16LE();
-	uint16 scrollbarMaxScroll = stream.readUint16LE();
-
-	stream.seek(0xD6, SEEK_SET);
-
-	uint numFrames = g_nancy->getStaticData().numCurtainAnimationFrames;
-	_curtainsSrc.resize(numFrames * 2);
-	for (uint i = 0; i < numFrames * 2; ++i) {
-		readRect(stream, _curtainsSrc[i]);
-	}
-
-	readRect(stream, _screenPosition);
-	_curtainsFrameTime = stream.readUint16LE();
-
-	Common::String inventoryBoxIconsImageName;
-	readFilename(stream, inventoryBoxIconsImageName);
-	readFilename(stream, _inventoryCursorsImageName);
-
-	stream.skip(8);
-	readRect(stream, _emptySpace);
-
-	char itemName[20];
-	uint itemNameLength = g_nancy->getGameType() == kGameTypeVampire ? 15 : 20;
-
-	_itemDescriptions.reserve(g_nancy->getStaticData().numItems);
-	for (uint i = 0; i < g_nancy->getStaticData().numItems; ++i) {
-		stream.read(itemName, itemNameLength);
-		itemName[itemNameLength - 1] = '\0';
-		_itemDescriptions.push_back(ItemDescription());
-		ItemDescription &desc = _itemDescriptions.back();
-		desc.name = Common::String(itemName);
-		desc.keepItem = stream.readUint16LE();
-		readRect(stream, desc.sourceRect);
-	}
-
-	g_nancy->_resource->loadImage(inventoryBoxIconsImageName, _iconsSurface);
+	moveTo(g_nancy->_inventoryData->inventoryScreenPosition);
+	g_nancy->_resource->loadImage(g_nancy->_inventoryData->inventoryBoxIconsImageName, _iconsSurface);
 
 	_fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((g_nancy->getStaticData().numItems / 4) + 1), g_nancy->_graphicsManager->getScreenPixelFormat());
 	Common::Rect sourceRect = _screenPosition;
@@ -110,7 +67,10 @@ void InventoryBox::init() {
 
 	RenderObject::init();
 
-	_scrollbar = new Scrollbar(9, scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
+	_scrollbar = new Scrollbar(	9,
+								g_nancy->_inventoryData->scrollbarSrcBounds,
+								g_nancy->_inventoryData->scrollbarDefaultPos,
+								g_nancy->_inventoryData->scrollbarMaxScroll - g_nancy->_inventoryData->scrollbarDefaultPos.y);
 	_scrollbar->init();
 	_curtains.init();
 }
@@ -188,7 +148,7 @@ void InventoryBox::onReorder() {
 		dest.moveTo((i % 2) * dest.width(), (i / 2) * dest.height());
 		Common::Point destPoint = Common::Point (dest.left, dest.top);
 
-		_fullInventorySurface.blitFrom(_iconsSurface, _itemDescriptions[_order[i]].sourceRect, destPoint);
+		_fullInventorySurface.blitFrom(_iconsSurface, g_nancy->_inventoryData->itemDescriptions[_order[i]].sourceRect, destPoint);
 	}
 
 	if (_order.size() > 0) {
@@ -227,7 +187,9 @@ void InventoryBox::onScrollbarMove() {
 }
 
 void InventoryBox::Curtains::init() {
-	Common::Rect bounds = _parent->getBounds();
+	moveTo(g_nancy->_inventoryData->inventoryScreenPosition);
+	Common::Rect bounds = _screenPosition;
+	bounds.moveTo(0, 0);
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 
 	if (g_nancy->getGameType() == kGameTypeVampire) {
@@ -236,7 +198,6 @@ void InventoryBox::Curtains::init() {
 		_drawSurface.setPalette(palette, 0, 256);
 	}
 
-	_screenPosition = _parent->getScreenPosition();
 	_nextFrameTime = 0;
 	setAnimationFrame(_curFrame);
 
@@ -250,7 +211,7 @@ void InventoryBox::Curtains::updateGraphics() {
 	if (_areOpen) {
 		if (_curFrame < g_nancy->getStaticData().numCurtainAnimationFrames && time > _nextFrameTime) {
 			setAnimationFrame(++_curFrame);
-			_nextFrameTime = time + _parent->_curtainsFrameTime;
+			_nextFrameTime = time + g_nancy->_inventoryData->curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
@@ -260,7 +221,7 @@ void InventoryBox::Curtains::updateGraphics() {
 	} else {
 		if (_curFrame > 0 && time > _nextFrameTime) {
 			setAnimationFrame(--_curFrame);
-			_nextFrameTime = time + _parent->_curtainsFrameTime;
+			_nextFrameTime = time + g_nancy->_inventoryData->curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
@@ -289,11 +250,11 @@ void InventoryBox::Curtains::setAnimationFrame(uint frame) {
 	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 
 	// Draw left shade
-	srcRect = _parent->_curtainsSrc[frame * 2];
+	srcRect = g_nancy->_inventoryData->curtainAnimationSrcs[frame * 2];
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 
 	// Draw right shade
-	srcRect = _parent->_curtainsSrc[frame * 2 + 1];
+	srcRect = g_nancy->_inventoryData->curtainAnimationSrcs[frame * 2 + 1];
 	destPoint.x = getBounds().width() - srcRect.width();
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 

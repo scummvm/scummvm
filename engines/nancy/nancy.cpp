@@ -68,10 +68,11 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_cursorManager = new CursorManager();
 
 	_resource = nullptr;
-	_startTimeHours = 0;
-	_overrideMovementTimeDeltas = false;
-	_horizontalEdgesSize = 0;
-	_verticalEdgesSize = 0;
+
+	_bootSummary = nullptr;
+	_viewportData = nullptr;
+	_inventoryData = nullptr;
+	_textboxData = nullptr;
 }
 
 NancyEngine::~NancyEngine() {
@@ -82,6 +83,11 @@ NancyEngine::~NancyEngine() {
 	delete _cursorManager;
 	delete _input;
 	delete _sound;
+
+	delete _bootSummary;
+	delete _viewportData;
+	delete _inventoryData;
+	delete _textboxData;
 }
 
 NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
@@ -334,8 +340,11 @@ void NancyEngine::bootGameEngine() {
 		error("Failed to load boot script");
 	preloadCals(*boot);
 
-	addBootChunk("BSUM", boot->getChunkStream("BSUM"));
-	readBootSummary(*boot);
+	// Load BOOT chunks data
+	_bootSummary = new BSUM(boot->getChunkStream("BSUM"));
+	_viewportData = new VIEW(boot->getChunkStream("VIEW"));
+	_inventoryData = new INV(boot->getChunkStream("INV"));
+	_textboxData = new TBOX(boot->getChunkStream("TBOX"));
 
 	// Load all data chunks found in BOOT. These get used in a lot of places
 	// across the engine, so we always keep them in memory
@@ -424,70 +433,6 @@ void NancyEngine::preloadCals(const IFF &boot) {
 		debugC(1, kDebugEngine, "No PCAL chunk found");
 }
 
-void NancyEngine::readChunkList(const IFF &boot, Common::Serializer &ser, const Common::String &prefix) {
-	byte numChunks = 0;
-	ser.syncAsByte(numChunks);
-	for (byte i = 0; i < numChunks; ++ i) {
-		Common::String name = Common::String::format("%s%d", prefix.c_str(), i);
-		addBootChunk(name, boot.getChunkStream(name));
-	}
-}
-
-void NancyEngine::readBootSummary(const IFF &boot) {
-	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
-	bsum->seek(0);
-
-	// Use a serializer to handle several games' BSUMs in the same function
-	Common::Serializer ser(bsum, nullptr);
-	ser.setVersion(_gameDescription->gameType);
-
-	ser.skip(0x71, kGameTypeVampire, kGameTypeVampire);
-	ser.skip(0xA3, kGameTypeNancy1, kGameTypeNancy1);
-	ser.skip(0x9D, kGameTypeNancy2, kGameTypeNancy3);
-	ser.syncAsUint16LE(_firstScene.sceneID);
-	ser.skip(12, kGameTypeVampire, kGameTypeVampire); // Palette
-	ser.syncAsUint16LE(_firstScene.frameID);
-	ser.syncAsUint16LE(_firstScene.verticalOffset);
-	ser.syncAsUint16LE(_startTimeHours);
-	ser.syncAsUint16LE(_startTimeMinutes);
-
-	ser.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
-
-	readChunkList(boot, ser, "FR"); // frames
-	readChunkList(boot, ser, "LG"); // logos
-
-	if (ser.getVersion() == kGameTypeNancy3) {
-		readChunkList(boot, ser, "PLG"); // partner logos
-	}
-
-	readChunkList(boot, ser, "OB"); // objects
-
-	ser.skip(0x28, kGameTypeVampire, kGameTypeVampire);
-	ser.skip(0x10, kGameTypeNancy1, kGameTypeNancy1);
-	ser.skip(0x20, kGameTypeNancy2, kGameTypeNancy3);
-	readRect(*bsum, _textboxScreenPosition);
-
-	ser.skip(0x5E, kGameTypeVampire, kGameTypeVampire);
-	ser.skip(0x59, kGameTypeNancy1, kGameTypeNancy1);
-	ser.skip(0x89, kGameTypeNancy2, kGameTypeNancy3);
-	ser.syncAsUint16LE(_horizontalEdgesSize);
-	ser.syncAsUint16LE(_verticalEdgesSize);
-	ser.skip(0x1A, kGameTypeVampire, kGameTypeVampire);
-	ser.skip(0x1C, kGameTypeNancy1);
-	int16 time = 0;
-	ser.syncAsSint16LE(time);
-	_playerTimeMinuteLength = time;
-	ser.skip(2);
-	ser.syncAsByte(_overrideMovementTimeDeltas);
-
-	if (_overrideMovementTimeDeltas) {
-		ser.syncAsSint16LE(time);
-		_slowMovementTimeDelta = time;
-		ser.syncAsSint16LE(time);
-		_fastMovementTimeDelta = time;
-	}
-}
-
 void NancyEngine::readDatFile() {
 	Common::SeekableReadStream *datFile = SearchMan.createReadStreamForMember("nancy.dat");
 	if (!datFile) {
@@ -519,14 +464,11 @@ void NancyEngine::readDatFile() {
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
-	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
-	bsum->seek(0);
+	assert(_bootSummary);
 
 	// Sync boot summary header, which includes full game title
 	ser.syncVersion(kSavegameVersion);
-	char buf[90];
-	bsum->read(buf, 90);
-	ser.matchBytes(buf, 90);
+	ser.matchBytes((char *)_bootSummary->header, 90);
 
 	// Sync scene and action records
 	NancySceneState.synchronize(ser);

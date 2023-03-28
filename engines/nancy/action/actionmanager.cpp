@@ -77,7 +77,7 @@ void ActionManager::handleInput(NancyInput &input) {
 
 					// Re-add the object to the inventory unless it's marked as a one-time use
 					if (rec->_itemRequired == heldItem && rec->_itemRequired != -1) {
-						if (NancySceneState.getInventoryBox().getItemDescription(heldItem).keepItem == kInvItemKeepAlways) {
+						if (g_nancy->_inventoryData->itemDescriptions[heldItem].keepItem == kInvItemKeepAlways) {
 							NancySceneState.addItemToInventory(heldItem);
 						}
 

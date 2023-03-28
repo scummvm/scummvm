@@ -87,9 +87,9 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE((uint32 &)slowMoveTimeDelta);
 	ser.syncAsUint16LE((uint32 &)fastMoveTimeDelta);
 
-	if (g_nancy->_overrideMovementTimeDeltas) {
-		slowMoveTimeDelta = g_nancy->_slowMovementTimeDelta;
-		fastMoveTimeDelta = g_nancy->_fastMovementTimeDelta;
+	if (g_nancy->_bootSummary->overrideMovementTimeDeltas) {
+		slowMoveTimeDelta = g_nancy->_bootSummary->slowMovementTimeDelta;
+		fastMoveTimeDelta = g_nancy->_bootSummary->fastMovementTimeDelta;
 	}
 
 	delete[] buf;
@@ -249,7 +249,7 @@ void Scene::setPlayerTime(Time time, byte relative) {
 		_timers.playerTime = _timers.playerTime.getDays() * 86400000 + time;
 	}
 
-	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + g_nancy->_playerTimeMinuteLength;
+	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + g_nancy->_bootSummary->playerTimeMinuteLength;
 }
 
 byte Scene::getPlayerTOD() const {
@@ -481,14 +481,14 @@ void Scene::init() {
 	_flags.items.resize(g_nancy->getStaticData().numItems, kInvEmpty);
 
 	_timers.lastTotalTime = 0;
-	_timers.playerTime = g_nancy->_startTimeHours * 3600000;
+	_timers.playerTime = g_nancy->_bootSummary->startTimeHours * 3600000;
 	_timers.sceneTime = 0;
 	_timers.timerTime = 0;
 	_timers.timerIsActive = false;
 	_timers.playerTimeNextMinute = 0;
 	_timers.pushedPlayTime = 0;
 
-	changeScene(g_nancy->_firstScene);
+	changeScene(g_nancy->_bootSummary->firstScene);
 
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("HINT");
 
@@ -638,7 +638,7 @@ void Scene::run() {
 	// Calculate the in-game time (playerTime)
 	if (currentPlayTime > _timers.playerTimeNextMinute) {
 		_timers.playerTime += 60000; // Add a minute
-		_timers.playerTimeNextMinute = currentPlayTime + g_nancy->_playerTimeMinuteLength;
+		_timers.playerTimeNextMinute = currentPlayTime + g_nancy->_bootSummary->playerTimeMinuteLength;
 	}
 
 	handleInput();
@@ -741,33 +741,16 @@ void Scene::initStaticData() {
 	_inventoryBox.init();
 
 	// Init buttons
-	chunk = g_nancy->getBootChunkStream("BSUM");
-	if (chunk) {
-		chunk->seek(0);
-		Common::Serializer ser(chunk, nullptr);
-		ser.setVersion(g_nancy->getGameType());
-
-		// TVD checks if the _entire_ cursor is within the bounds of the hotspot,
-		// which results in the actual hotspot being about a quarter of the size 
-		// it should be. This is stupid so we sacrifice some accuracy and ignore it.
-		ser.skip(0x136, kGameTypeVampire, kGameTypeVampire);
-		if (ser.getVersion() == kGameTypeVampire) {
-			readRect(*chunk, _mapHotspot);
-		}
-
-		ser.skip(0x30, kGameTypeVampire, kGameTypeVampire);
-		ser.skip(0x184, kGameTypeNancy1);
-		Common::Rect menuSrc, helpSrc, menuDest, helpDest;
-		readRect(*chunk, menuSrc);
-		readRect(*chunk, helpSrc);
-		readRect(*chunk, menuDest);
-		readRect(*chunk, helpDest);
-		_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, menuSrc, menuDest);
-		_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, helpSrc, helpDest);
-		_menuButton->init();
-		_helpButton->init();
-		g_nancy->setMouseEnabled(true);
+	BSUM *bsum = g_nancy->_bootSummary;
+	assert(bsum);
+	
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		_mapHotspot = bsum->mapButtonHotspot;
 	}
+
+	_menuButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->menuButtonSrc, bsum->menuButtonDest);
+	_helpButton = new UI::Button(5, g_nancy->_graphicsManager->_object0, bsum->helpButtonSrc, bsum->helpButtonDest);
+	g_nancy->setMouseEnabled(true);
 
 	if (g_nancy->getGameType() == kGameTypeNancy1) {
 		chunk = g_nancy->getBootChunkStream("MAP");

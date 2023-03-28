@@ -30,11 +30,7 @@
 namespace Nancy {
 
 void CursorManager::init() {
-	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("INV");
-	chunk->seek(0xD6 + g_nancy->getStaticData().numCurtainAnimationFrames * 0x20 + 0x1C);
-	Common::String inventoryCursorsImageName = chunk->readString();
-
-	chunk = g_nancy->getBootChunkStream("CURS");
+	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("CURS");
 	chunk->seek(0);
 	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * 4;
 	_cursors.reserve(numCursors);
@@ -52,7 +48,7 @@ void CursorManager::init() {
 	_primaryVideoInitialPos.x = chunk->readUint16LE();
 	_primaryVideoInitialPos.y = chunk->readUint16LE();
 
-	g_nancy->_resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
+	g_nancy->_resource->loadImage(g_nancy->_inventoryData->inventoryCursorsImageName, _invCursorsSurface);
 
 	setCursor(kNormalArrow, -1);
 	showCursor(false);

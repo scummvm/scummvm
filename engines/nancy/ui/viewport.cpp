@@ -36,18 +36,12 @@ namespace UI {
 
 // does NOT put the object in a valid state until loadVideo is called
 void Viewport::init() {
-	Common::SeekableReadStream *viewChunk = g_nancy->getBootChunkStream("VIEW");
-	viewChunk->seek(0);
+	moveTo(g_nancy->_viewportData->screenPosition);
 
-	Common::Rect dest;
-	readRect(*viewChunk, dest);
-	viewChunk->skip(16); // skip viewport source rect
-	readRect(*viewChunk, _format1Bounds);
-	readRect(*viewChunk, _format2Bounds);
-
-	_screenPosition = dest;
-
-	setEdgesSize(g_nancy->_verticalEdgesSize, g_nancy->_verticalEdgesSize, g_nancy->_horizontalEdgesSize, g_nancy->_horizontalEdgesSize);
+	setEdgesSize(	g_nancy->_bootSummary->verticalEdgesSize,
+					g_nancy->_bootSummary->verticalEdgesSize,
+					g_nancy->_bootSummary->horizontalEdgesSize,
+					g_nancy->_bootSummary->horizontalEdgesSize);
 
 	RenderObject::init();
 }
@@ -280,16 +274,6 @@ void Viewport::scrollDown(uint delta) {
 
 uint16 Viewport::getMaxScroll() const {
 	return _fullFrame.h - _drawSurface.h - (g_nancy->getGameType() == kGameTypeVampire ? 1 : 0);
-}
-
-Common::Rect Viewport::getBoundsByFormat(uint format) const {
-	if (format == 1) {
-		return _format1Bounds;
-	} else if (format == 2) {
-		return _format2Bounds;
-	} else {
-		return Common::Rect();
-	}
 }
 
 // Convert a viewport-space rectangle to screen coordinates

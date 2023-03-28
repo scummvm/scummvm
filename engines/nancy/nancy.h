@@ -30,6 +30,7 @@
 #include "nancy/detection.h"
 #include "nancy/time.h"
 #include "nancy/commontypes.h"
+#include "nancy/enginedata.h"
 
 namespace Common {
 class RandomSource;
@@ -113,21 +114,11 @@ public:
 
 	Common::RandomSource *_randomSource;
 
-	// BSUM data
-	SceneChangeDescription _firstScene;
-
-	uint16 _startTimeHours;
-	uint16 _startTimeMinutes;
-
-	bool _overrideMovementTimeDeltas;
-	Time _slowMovementTimeDelta;
-	Time _fastMovementTimeDelta;
-	Time _playerTimeMinuteLength;
-
-	uint _horizontalEdgesSize;
-	uint _verticalEdgesSize;
-
-	Common::Rect _textboxScreenPosition;
+	// BOOT chunks data
+	BSUM *_bootSummary;
+	VIEW *_viewportData;
+	INV *_inventoryData;
+	TBOX *_textboxData;
 
 protected:
 	Common::Error run() override;
@@ -147,9 +138,7 @@ private:
 	void clearBootChunks();
 
 	void preloadCals(const IFF &boot);
-	void readChunkList(const IFF &boot, Common::Serializer &ser, const Common::String &prefix);
 
-	void readBootSummary(const IFF &boot);
 	void readDatFile();
 
 	Common::Error synchronize(Common::Serializer &serializer);

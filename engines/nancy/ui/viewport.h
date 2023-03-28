@@ -73,8 +73,6 @@ public:
 	uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y; }
 	uint16 getMaxScroll() const;
 
-	Common::Rect getBoundsByFormat(uint format) const; // used by video
-
 	Common::Rect convertViewportToScreen(const Common::Rect &viewportRect) const;
 	Common::Rect convertScreenToViewport(const Common::Rect &viewportRect) const;
 
