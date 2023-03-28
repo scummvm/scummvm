@@ -28,6 +28,7 @@
 #include "agds/patch.h"
 #include "agds/region.h"
 #include "common/system.h"
+#include "graphics/transparent_surface.h"
 
 namespace AGDS {
 
@@ -79,7 +80,14 @@ void Screen::scrollTo(Common::Point scroll) {
 
 float Screen::getZScale(int y) const
 {
-	int dy = g_system->getHeight() - y;
+	int h = g_system->getHeight();
+	if (_background) {
+		auto rect = _background->getRect();
+		if (rect.bottom < h)
+			h = rect.bottom;
+	}
+
+	int dy = h - y;
 	if (dy > _characterNear) {
 		if (dy < _characterFar)
 			return 1.0f * (_characterFar - dy) / (_characterFar - _characterNear);
