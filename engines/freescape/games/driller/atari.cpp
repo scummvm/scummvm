@@ -43,7 +43,7 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 
 	loadFonts(&file, 0x8a32);
 	loadMessagesFixedSize(&file, 0xc5d8, 14, 20);
-	loadGlobalObjects(&file, 0xbccc);
+	loadGlobalObjects(&file, 0xbccc, 8);
 	load8bitBinary(&file, 0x29b3c, 16);
 	loadPalettes(&file, 0x296fa);
 	loadSoundsFx(&file, 0x30da6, 25);
@@ -87,7 +87,7 @@ void DrillerEngine::loadAssetsAtariDemo() {
 
 	loadFonts(&file, 0x7bc);
 	loadMessagesFixedSize(&file, 0x3b90, 14, 20);
-	loadGlobalObjects(&file, 0x3946);
+	loadGlobalObjects(&file, 0x3946, 8);
 
 	file.close();
 	file.open("soundfx");

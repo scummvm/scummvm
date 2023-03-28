@@ -62,21 +62,6 @@ void DarkEngine::titleScreen() {
 	}
 }
 
-void DarkEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset) {
-	assert(!_areaMap.contains(255));
-	ObjectMap *globalObjectsByID = new ObjectMap;
-	file->seek(offset);
-	for (int i = 0; i < 23; i++) {
-		Object *gobj = load8bitObject(file);
-		assert(gobj);
-		assert(!globalObjectsByID->contains(gobj->getObjectID()));
-		debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());
-		(*globalObjectsByID)[gobj->getObjectID()] = gobj;
-	}
-
-	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
-}
-
 void DarkEngine::addECDs(Area *area) {
 	if (!area->entranceWithID(255))
 		return;

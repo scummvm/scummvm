@@ -44,7 +44,7 @@ void DrillerEngine::loadAssetsAmigaFullGame() {
 
 		loadFonts(&file, 0x8940);
 		loadMessagesFixedSize(&file, 0xc66e, 14, 20);
-		loadGlobalObjects(&file, 0xbd62);
+		loadGlobalObjects(&file, 0xbd62, 8);
 		load8bitBinary(&file, 0x29c16, 16);
 		loadPalettes(&file, 0x297d4);
 		loadSoundsFx(&file, 0x30e80, 25);
@@ -69,7 +69,7 @@ void DrillerEngine::loadAssetsAmigaFullGame() {
 
 		loadFonts(&file, 0xa62);
 		loadMessagesFixedSize(&file, 0x499a, 14, 20);
-		loadGlobalObjects(&file, 0x4098);
+		loadGlobalObjects(&file, 0x4098, 8);
 		load8bitBinary(&file, 0x21a3e, 16);
 		loadPalettes(&file, 0x215fc);
 
@@ -120,7 +120,7 @@ void DrillerEngine::loadAssetsAmigaDemo() {
 
 	loadFonts(&file, 0xa30);
 	loadMessagesFixedSize(&file, 0x3960, 14, 20);
-	loadGlobalObjects(&file, 0x3716);
+	loadGlobalObjects(&file, 0x3716, 8);
 
 	file.close();
 	file.open("soundfx");

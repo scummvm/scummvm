@@ -38,13 +38,13 @@ void DrillerEngine::loadAssetsC64FullGame() {
 		loadMessagesFixedSize(&file, 0x167a, 14, 20);
 		//loadFonts(&file, 0xae54);
 		load8bitBinary(&file, 0x8e02, 4);
-		loadGlobalObjects(&file, 0x1855);
+		loadGlobalObjects(&file, 0x1855, 8);
 	} else if (_targetName.hasPrefix("driller")) {
 		file.open("driller.c64.data");
 		loadMessagesFixedSize(&file, 0x167a - 0x400, 14, 20);
 		//loadFonts(&file, 0xae54);
 		load8bitBinary(&file, 0x8e02 - 0x400, 4);
-		loadGlobalObjects(&file, 0x1855 - 0x400);
+		loadGlobalObjects(&file, 0x1855 - 0x400, 8);
 	} else
 		error("Unknown C64 release");
 }

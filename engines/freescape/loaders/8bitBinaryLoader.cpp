@@ -801,4 +801,20 @@ void FreescapeEngine::loadMessagesVariableSize(Common::SeekableReadStream *file,
 	}
 }
 
+void FreescapeEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset, int size) {
+	assert(!_areaMap.contains(255));
+	ObjectMap *globalObjectsByID = new ObjectMap;
+	file->seek(offset);
+	for (int i = 0; i < size; i++) {
+		Object *gobj = load8bitObject(file);
+		assert(gobj);
+		assert(!globalObjectsByID->contains(gobj->getObjectID()));
+		debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());
+		(*globalObjectsByID)[gobj->getObjectID()] = gobj;
+	}
+
+	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
+}
+
+
 } // namespace Freescape

@@ -186,25 +186,6 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	resetInput();
 }
 
-void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset) {
-	assert(!_areaMap.contains(255));
-	ObjectMap *globalObjectsByID = new ObjectMap;
-	file->seek(offset);
-	for (int i = 0; i < 8; i++) {
-		if (isDOS() && isDemo()) // The DOS demo has a few missing objects
-			if (i == 5)
-				break;
-
-		Object *gobj = load8bitObject(file);
-		assert(gobj);
-		assert(!globalObjectsByID->contains(gobj->getObjectID()));
-		debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());
-		(*globalObjectsByID)[gobj->getObjectID()] = gobj;
-	}
-
-	_areaMap[255] = new Area(255, 0, globalObjectsByID, nullptr);
-}
-
 void DrillerEngine::loadAssetsFullGame() {
 	FreescapeEngine::loadAssetsFullGame();
 	/*
