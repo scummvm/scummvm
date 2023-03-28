@@ -2943,7 +2943,7 @@ void GlobalOptionsDialog::apply() {
 	else
 		_autosavePeriodPopUp->setSelected(0);
 
-	if (gDebugLevel != _debugLevelPopUp->getSelectedTag()) {
+	if (gDebugLevel != (int)_debugLevelPopUp->getSelectedTag()) {
 		gDebugLevel = _debugLevelPopUp->getSelectedTag();
 
 		warning("Debug level set to %d", gDebugLevel);
