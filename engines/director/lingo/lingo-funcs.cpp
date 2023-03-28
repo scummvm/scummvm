@@ -131,7 +131,7 @@ static CmdTableRow table[] = {
   { ""               ,0x00000000L  ,-1         ,MCI_END_COMMAND }   ,
 };
 
-static MCIError get_string(const Common::String &name, uint &idx, Common::String &str) {
+static MCIError getString(const Common::String &name, uint &idx, Common::String &str) {
     uint i_end; 
     if (name[int(idx)] == '"' || name[int(idx)] == '\'') { /* Quoted string */
         char quote = name[int(idx)];
@@ -141,8 +141,7 @@ static MCIError get_string(const Common::String &name, uint &idx, Common::String
         }
         str = name.substr(idx + 1, i_end - idx - 1);
         idx = int(i_end + 2);
-    }
-    else { /* No quotes, so just find the next space */
+    } else { /* No quotes, so just find the next space */
         i_end = name.findFirstOf(' ', idx);
         if (i_end == Common::String::npos) {
             i_end = name.size();
@@ -157,24 +156,22 @@ static MCIError get_string(const Common::String &name, uint &idx, Common::String
 
         
 
-static void create_token_list(Common::Array<Common::String> &token_list, const Common::String &name)
-{
+static void createTokenList(Common::Array<Common::String> &tokenList, const Common::String &name) {
     uint idx = 0; 
 
     while (idx < name.size()) {
         Common::String str;
-        MCIError err = get_string(name, idx, str);
+        MCIError err = getString(name, idx, str);
         if (err != MCIERR_NO_ERROR) {
             break;
         }
-        token_list.push_back(str);
+        tokenList.push_back(str);
     }
 }
 
-MCIError parse_mci_command(const Common::String &name, MCICommand &parsed_cmd) 
-{
+MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCmd) {
     Common::Array<Common::String> token_list;
-    create_token_list(token_list, name);
+    createTokenList(token_list, name);
 
     uint i_token = 0;
     int i_table = 0;
@@ -186,8 +183,7 @@ MCIError parse_mci_command(const Common::String &name, MCICommand &parsed_cmd)
     for (auto& cmd : table) {
         if (cmd.data_type == MCI_COMMAND_HEAD && cmd.keystr == verb) {
             tableStart = i_table;
-        }
-        else if (tableStart >= 0 && cmd.data_type == MCI_END_COMMAND) {
+        } else if (tableStart >= 0 && cmd.data_type == MCI_END_COMMAND) {
             tableEnd = i_table;
         }
         i_table++;
@@ -196,11 +192,11 @@ MCIError parse_mci_command(const Common::String &name, MCICommand &parsed_cmd)
     assert(tableStart >= 0 && tableEnd > 0);
 
     auto cmd = table[tableStart];
-    parsed_cmd.id = (MCITokenType)cmd.flag;
-    parsed_cmd.flags = cmd.num;
+    parsedCmd.id = (MCITokenType)cmd.flag;
+    parsedCmd.flags = cmd.num;
 
     /* The MCI device will ALWAYS be the second token. */
-    parsed_cmd.device = token_list[1];
+    parsedCmd.device = token_list[1];
 
     /* Parse the rest of the arguments */
     i_token = 2;
@@ -220,65 +216,74 @@ MCIError parse_mci_command(const Common::String &name, MCICommand &parsed_cmd)
             cmdtable = &table[i_table];
 
             switch (cmd_type) {
-                case MCI_CONSTANT:
-                    c_cmdtable = cmdtable; inConst = true; cflag = flag;
-                    break;
-                case MCI_END_CONSTANT:
-                    c_cmdtable = nullptr; inConst = false; cflag = 0;
-                    break;
-                default: break;
+            case MCI_CONSTANT:
+                c_cmdtable = cmdtable; 
+                inConst = true;
+                cflag = flag;
+                break;
+            case MCI_END_CONSTANT:
+                c_cmdtable = nullptr;
+                inConst = false;
+                cflag = 0;
+                break;
+            default: break;
             }
 
-            if (token != table[i_table].keystr) continue;
+            if (token != table[i_table].keystr) 
+                continue;
 
             found = true;
 
             switch (cmd_type) {
-                case MCI_COMMAND_HEAD:
-                case MCI_RETURN:
-                case MCI_END_COMMAND:
-                case MCI_END_COMMAND_LIST:
-                case MCI_CONSTANT:
-                case MCI_END_CONSTANT:
-                    break;
-                case MCI_FLAG:
-                    parsed_cmd.flags |= flag;
-                    i_token++;
-                    break;
-                case MCI_INTEGER:
-                    {
-                    if (inConst) { /* Handle the case where we've hit a MCI_INTEGER which is inside a MCI_CONSTANT block. */
-                        MCITokenData token_data;
-                        if (parsed_cmd.parameters.tryGetVal(c_cmdtable->keystr, token_data)) {
-                            token_data.integer |= flag;
-                        }
-                        else {
-                            token_data.type = MCI_CONSTANT;
-                            token_data.integer |= flag;
-                            parsed_cmd.parameters[c_cmdtable->keystr] = token_data;
-                        }
-                        parsed_cmd.flags |= cflag;
-                        inConst = false;
+            case MCI_COMMAND_HEAD:
+            case MCI_RETURN:
+            case MCI_END_COMMAND:
+            case MCI_END_COMMAND_LIST:
+            case MCI_CONSTANT:
+            case MCI_END_CONSTANT:
+                break;
+            case MCI_FLAG:
+                parsedCmd.flags |= flag;
+                i_token++;
+                break;
+            case MCI_INTEGER: {
+                if (inConst) { /* Handle the case where we've hit a MCI_INTEGER which is inside a MCI_CONSTANT block. */
+                    MCITokenData token_data;
+                    if (parsedCmd.parameters.tryGetVal(c_cmdtable->keystr, token_data)) {
+                        token_data.integer |= flag;
                     }
                     else {
-                        parsed_cmd.flags |= flag;
-                        MCITokenData token_data; token_data.type = MCI_INTEGER; token_data.integer = atoi(token_list[++i_token].c_str());
-                        parsed_cmd.parameters[token] = token_data;
+                        token_data.type = MCI_CONSTANT;
+                        token_data.integer |= flag;
+                        parsedCmd.parameters[c_cmdtable->keystr] = token_data;
                     }
-                    i_token++;
-                    break;
-                    }
-                case MCI_STRING:
-                    {
-                    parsed_cmd.flags |= flag;
-                    MCITokenData token_data; token_data.type = MCI_STRING; token_data.string = token_list[++i_token];
-                    parsed_cmd.parameters[token] = token_data;
-                    i_token++;
-                    break;
-                    }
-                default: 
-                    warning("Unhandled command type.");
-                    return MCIERR_UNRECOGNISED_COMMAND;
+                    parsedCmd.flags |= cflag;
+                    inConst = false;
+                }
+                else {
+                    parsedCmd.flags |= flag;
+
+                    MCITokenData token_data;
+                    token_data.type = MCI_INTEGER;
+                    token_data.integer = atoi(token_list[++i_token].c_str());
+                    parsedCmd.parameters[token] = token_data;
+                }
+                i_token++;
+                break;
+                }
+            case MCI_STRING: {
+                parsedCmd.flags |= flag;
+
+                MCITokenData token_data;
+                token_data.type = MCI_STRING;
+                token_data.string = token_list[++i_token];
+                parsedCmd.parameters[token] = token_data;
+                i_token++;
+                break;
+                }
+            default: 
+                warning("Unhandled command type.");
+                return MCIERR_UNRECOGNISED_COMMAND;
             }
         }
 
@@ -293,51 +298,49 @@ MCIError parse_mci_command(const Common::String &name, MCICommand &parsed_cmd)
 
 void Lingo::func_mci(const Common::String &name) {
 
-    MCICommand parsed_cmd;
-    parse_mci_command(name, parsed_cmd);
+    MCICommand parsedCmd;
+    parseMCICommand(name, parsedCmd);
 
-	switch (parsed_cmd.id) {
-	case MCI_OPEN:
-		{
+	switch (parsedCmd.id) {
+	case MCI_OPEN: {
 
 			Common::File *file = new Common::File();
 
-			if (!file->open(parsed_cmd.device)) {
-				warning("Failed to open %s", parsed_cmd.device.c_str());
+			if (!file->open(parsedCmd.device)) {
+				warning("Failed to open %s", parsedCmd.device.c_str());
 				delete file;
 				return;
 			}
 
-            parsed_cmd.parameters["type"].string.toLowercase(); /* In the case the open command type has something like WaveAudio instead of waveaudio */
+            parsedCmd.parameters["type"].string.toLowercase(); /* In the case the open command type has something like WaveAudio instead of waveaudio */
 
-			if (parsed_cmd.parameters["type"].string == "waveaudio") {
+			if (parsedCmd.parameters["type"].string == "waveaudio") {
 				Audio::AudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-                if (parsed_cmd.parameters.contains("alias"))
+                if (parsedCmd.parameters.contains("alias"))
                 {
-                    _audioAliases[parsed_cmd.parameters["alias"].string] = sound;
+                    _audioAliases[parsedCmd.parameters["alias"].string] = sound;
                 }
 			} else {
-				warning("Unhandled audio type %s", parsed_cmd.parameters["type"].string.c_str());
+				warning("Unhandled audio type %s", parsedCmd.parameters["type"].string.c_str());
 			}
 		}
 		break;
-	case MCI_PLAY:
-		{
-			warning("MCI play file: %s, from: %d, to: %d", parsed_cmd.device.c_str(), parsed_cmd.parameters["from"].integer, parsed_cmd.parameters["to"].integer);
+	case MCI_PLAY: {
+			warning("MCI play file: %s, from: %d, to: %d", parsedCmd.device.c_str(), parsedCmd.parameters["from"].integer, parsedCmd.parameters["to"].integer);
 
-			if (!_audioAliases.contains(parsed_cmd.device)) {
-				warning("Unknown alias %s", parsed_cmd.device.c_str());
+			if (!_audioAliases.contains(parsedCmd.device)) {
+				warning("Unknown alias %s", parsedCmd.device.c_str());
 				return;
 			}
 
-			uint32 from = parsed_cmd.parameters["from"].integer;
-			uint32 to = parsed_cmd.parameters["to"].integer;
+			uint32 from = parsedCmd.parameters["from"].integer;
+			uint32 to = parsedCmd.parameters["to"].integer;
 
-			_vm->getCurrentWindow()->getSoundManager()->playMCI(*_audioAliases[parsed_cmd.device], from, to);
+			_vm->getCurrentWindow()->getSoundManager()->playMCI(*_audioAliases[parsedCmd.device], from, to);
 		}
 		break;
 	default:
-		warning("Unhandled MCI command: %d", parsed_cmd.id); /* TODO: Convert MCITokenType into string */
+		warning("Unhandled MCI command: %d", parsedCmd.id); /* TODO: Convert MCITokenType into string */
 	}
 }
 
