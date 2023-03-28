@@ -316,8 +316,7 @@ void Lingo::func_mci(const Common::String &name) {
 
 			if (parsedCmd.parameters["type"].string == "waveaudio") {
 				Audio::AudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-                if (parsedCmd.parameters.contains("alias"))
-                {
+                if (parsedCmd.parameters.contains("alias")) {
                     _audioAliases[parsedCmd.parameters["alias"].string] = sound;
                 }
 			} else {
@@ -334,7 +333,8 @@ void Lingo::func_mci(const Common::String &name) {
 			}
 
 			uint32 from = parsedCmd.parameters["from"].integer;
-			uint32 to = parsedCmd.parameters["to"].integer;
+			uint32 to = parsedCmd.parameters.contains("to") ? parsedCmd.parameters["to"].integer : -1;
+
 
 			_vm->getCurrentWindow()->getSoundManager()->playMCI(*_audioAliases[parsedCmd.device], from, to);
 		}
