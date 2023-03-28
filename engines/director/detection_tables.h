@@ -3933,39 +3933,42 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac partition contains three mini-games that can be launched directly from Finder
 	// Original Mac game filenames are Tune ◊ In, Turn ◊ On, Drop ◊ Out
 	// Demos are found on CD-ROM La Revista Nº6 (Spain) from Zinco Multimedia
-	MACGAME1("haight", "Haight",   "Haight-Ashbury in the Sixties", "c9c25d0d249d529680302a81c30852d0", 493066, 404),
-	MACDEMO1("haight", "Demo",     "Haight-Ashbury Short",          "c9c25d0d249d529680302a81c30852d0", 539498, 404),
-	MACGAME1("haight", "Tune In",  "Tune In",                       "c9c25d0d249d529680302a81c30852d0", 493066, 404),
-	MACGAME1("haight", "Turn On",  "Turn On",                       "c9c25d0d249d529680302a81c30852d0", 493066, 404),
-	MACGAME1("haight", "Drop Out", "Drop Out",                      "c9c25d0d249d529680302a81c30852d0", 539498, 404),
-	WINGAME1("haight", "Haight",   "HAIGHT.EXE",                    "f309096bd3eb9f45283d7218bb8f1c88", 821499, 404),
-	WINDEMO1("haight", "Demo",     "HAROCK.EXE",                    "cd0ffd0e7612cd60aadaf42a7b4f480c", 821041, 404),
-	WINDEMO1t("haight", "Demo",	   "HAROCK.EXE",					"5ceb3361a90e783c42991de65984b3ca", 820913, 404),
+	MACGAME1("haight", "Haight",   "Haight-Ashbury in the Sixties", "r:c9c25d0d249d529680302a81c30852d0", 492810, 404),
+	MACGAME1("haight", "Haight",   "Haight-Ashbury in the Sixties", "r:c9c25d0d249d529680302a81c30852d0", 539270, 404),
+	MACDEMO1("haight", "Demo",     "Haight-Ashbury Short",          "r:c9c25d0d249d529680302a81c30852d0", 539242, 404),
+	MACGAME1("haight", "Tune In",  "xn--Tune  In-3e4e",             "r:c9c25d0d249d529680302a81c30852d0", 492810, 404),
+	MACGAME1("haight", "Turn On",  "xn--Turn  On-3e4e",             "r:c9c25d0d249d529680302a81c30852d0", 492810, 404),
+	MACGAME1("haight", "Drop Out", "xn--Drop  Out-u61f",            "r:c9c25d0d249d529680302a81c30852d0", 539242, 404),
+	WINGAME1("haight", "Haight",   "HAIGHT.EXE",                    "d:f309096bd3eb9f45283d7218bb8f1c88", 821499, 404),
+	WINDEMO1("haight", "Demo",     "HAROCK.EXE",                    "d:cd0ffd0e7612cd60aadaf42a7b4f480c", 821041, 404),
+	WINDEMO1("haight", "Demo",	   "HAROCK.EXE",					"t:5ceb3361a90e783c42991de65984b3ca", 820913, 404),
 
 	// Different releases of hamsterland1 allow choice of language on the opening screen
 	// English is always available, along with one alternate language
 	// Dutch version was localized by Pride Kids Interactive of Ede, Netherlands
-	MACGAME2_l("hamsterland1", "", "Hamsterland", "bcd3c718db258701496b3c5bcb827ef2", 483774,
-								   "AIRDK",		  "f74f18a9d454db63465dac151a6b5706", 8425728, Common::DA_DNK, 400),
-	MACGAME2_l("hamsterland1", "", "Hamsterland", "bcd3c718db258701496b3c5bcb827ef2", 483774,
-								   "AIRSW",		  "ccf7c642796c5aeb9fee4c663bdd02d9", 7588992, Common::SE_SWE, 400),
-	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE", "2bb6e93d9aab502f46dbf163d51eb785", 785327,
-								   "AIRDK",		  "ad98bbbd724e31a8a125e284a74d0241", 8425546, Common::DA_DNK, 400),
-	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE", "a0d2cfdf10ec14c00338329277bc8acc", 727653,
-								   "AIRSP",		  "9b5b82d488b96b2fcf5e78ec8769e29a", 8432260, Common::ES_ESP, 400),
-	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE", "11669580c1f85b8caa4cd02373e7c947", 785221,
-								   "AIRNL",		  "369dbec85b84239ea1ee10d647723243", 8426154, Common::NL_NLD, 404),
-	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE", "2bb6e93d9aab502f46dbf163d51eb785", 785327,
-								   "AIRSW",		  "410efb55564b8eb2042eea61d0f8025b", 7588828, Common::SE_SWE, 400),
+	MACGAME2_l("hamsterland1", "", "xn--Hamsterland-t35f", "r:bcd3c718db258701496b3c5bcb827ef2", 483518,
+								   "MEDIA/AIRDK",		   "d:ad98bbbd724e31a8a125e284a74d0241", 8425546, Common::DA_DNK, 404),
+	MACGAME2_l("hamsterland1", "", "xn--Hamsterland-t35f", "r:bcd3c718db258701496b3c5bcb827ef2", 483518,
+								   "MEDIA/AIRSW",		   "d:410efb55564b8eb2042eea61d0f8025b", 7588828, Common::SE_SWE, 404),
+	MACGAME2_l("hamsterland1", "", "Hamsterland",		   "r:bcd3c718db258701496b3c5bcb827ef2", 483518,
+								   "MEDIA/AIRNL",		   "d:369dbec85b84239ea1ee10d647723243", 8426154, Common::NL_NLD, 404),
+	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE",		   "d:2bb6e93d9aab502f46dbf163d51eb785", 785327,
+								   "MEDIA/AIRDK",		   "d:ad98bbbd724e31a8a125e284a74d0241", 8425546, Common::DA_DNK, 404),
+	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE",		   "d:2bb6e93d9aab502f46dbf163d51eb785", 785327,
+								   "MEDIA/AIRSW",		   "d:410efb55564b8eb2042eea61d0f8025b", 7588828, Common::SE_SWE, 404),
+	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE",		   "d:11669580c1f85b8caa4cd02373e7c947", 785221,
+								   "MEDIA/AIRNL",		   "d:369dbec85b84239ea1ee10d647723243", 8426154, Common::NL_NLD, 404),
+	WINGAME2_l("hamsterland1", "", "HAMSTER.EXE",		   "d:a0d2cfdf10ec14c00338329277bc8acc", 727653,
+								   "MEDIA/AIRSP",		   "d:9b5b82d488b96b2fcf5e78ec8769e29a", 8432260, Common::ES_ESP, 404),
 
 	// Original Mac filename is La Máquina del Tiempo
-	MACGAME1_l("hamsterland2", "", "La Maquina del Tiempo", "2c7d0c0d55cbe3f622c7d68cedb671e0", 483774, Common::ES_ESP, 400),
-	WINGAME1_l("hamsterland2", "", "HL2SP.EXE", "8dd22b8bde300c9fb5b66808905300f7", 875665, Common::ES_ESP, 400),
-	MACGAME1("hamsterland2", "", "The Time Machine", "2c7d0c0d55cbe3f622c7d68cedb671e0", 483774, 400),
-	WINGAME1("hamsterland2", "", "HL2EN.EXE", "4c812a63165c1f50242e879aae62718d", 859681, 400),
+	MACGAME1_l("hamsterland2", "", "xn--La Mquina del Tiempo-lxb", "r:2c7d0c0d55cbe3f622c7d68cedb671e0", 483518, Common::ES_ESP, 404),
+	MACGAME1("hamsterland2", "",   "The Time Machine",			   "r:2c7d0c0d55cbe3f622c7d68cedb671e0", 483518, 404),
+	WINGAME1_l("hamsterland2", "", "HL2SP.EXE",					   "d:8dd22b8bde300c9fb5b66808905300f7", 875665, Common::ES_ESP, 404),
+	WINGAME1("hamsterland2", "",   "HL2EN.EXE",					   "d:4c812a63165c1f50242e879aae62718d", 859681, 404),
 
 	// Sampler is found on AlphaBonk Farm and probably elsewhere
-	MACGAME1("headbone", "Sampler", "Headbone CD-ROM Sampler", "5bbb193a8785c70abe2a4d86b99e1536", 304126, 404),
+	MACGAME1("headbone", "Sampler", "Headbone CD-ROM Sampler", "r:5bbb193a8785c70abe2a4d86b99e1536", 303870, 404),
 	WINGAME2("headbone", "Sampler", "SAMPLER.EXE",  "b083372f35bfaa97f68cfa7f9bb5222e", 2132572,
 									"DemoMain.dxr", "d16606eadccdb21f654f4b4264fc996a", 2711628, 404),
 
@@ -3997,7 +4000,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("henachocogala", "", "galacle", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 
 	// Mac version is D3
-	WINGAME1t("hhouse", "",			"HHOUSE.EXE",  "b0486032820bc6a413dd836650f8b0c3", 3181345, 400),
+	WINGAME1t("hhouse", "",			"HHOUSE.EXE",  "b0486032820bc6a413dd836650f8b0c3", 3181345, 404),
 	WINDEMO1("hhouse", "1995 Demo", "HAUNTED.EXE", "5b7e970d8b8dec473e31cc6815c03bf6", 1166813, 404),
 
 	MACGAME1_l("hibino", "", "INTERACTIVE EXHIBITION ppc", "422270206b9bd6aff43bbe95047f6ce9", 59757, Common::JA_JPN, 404),
@@ -4010,26 +4013,33 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Found on Uki Uki 3 CD
 	// Original movie filename is デモ
-	MACDEMO2_l("himejijo", "Demo", "Macromedia Player", "de889febf08007ca7ac501a952cfba6f", 457275,
+	// First entry is unconfimed
+	MACDEMO2_l("himejijo", "Demo", "Macromedia Player", "de889febf08007ca7ac501a952cfba6f", 457019,
 								   "Demo",				"88c318f3e821b4a76f8ff67bb97c002f", 6736268, Common::JA_JPN, 400),
+	MACDEMO2_l("himejijo", "Demo", "Macromedia Player", "r:de889febf08007ca7ac501a952cfba6f", 457019,
+								   "xn--edkuc",			"r:4ca934f513ff2a0d75b22ea29662a228", 6611457, Common::JA_JPN, 400),
 
 	WINGAME2("hkbigfun", "", "KITTY.EXE", "42e600e8a917de593f4048428ec8d8b8", 703689,
 							 "KINTRO",	  "b3fc8f8073f442573a371729d242c6c6", 971508, 404),
 
-	MACGAME1("horobroy", "", "Rob Roy", "01be45e7241194dad07938e7059b88e3", 483382, 404),
-	WINGAME1("horobroy", "", "ROBROY.EXE", "65d06b5fef155a2473434571aff5bc29", 2047746, 400),
+	MACGAME1("horobroy", "", "Rob Roy",		"r:01be45e7241194dad07938e7059b88e3", 483126, 404),
+	WINGAME1("horobroy", "", "ROBROY.EXE",	"d:65d06b5fef155a2473434571aff5bc29", 2047746, 400),
+	WINGAME1("horobroy", "", "ROBROY.EXE",	"d:6b339ff6cb7a40e4dd794049ef93600d", 29786023, 404),
 
-	MACGAME1("horrortour1", "",	  "ZEDDAS(7M)", "da0da5d543b237051975ad70bec129f4", 483443, 404),
-	WINGAME1("horrortour1", "",	  "ZEDDAS.EXE", "d3ce91f305dd0f4d2f5e9ff6d4e41a3b", 741818, 404),
+	MACGAME1("horrortour1", "",	  "ZEDDAS(7M)",		"r:da0da5d543b237051975ad70bec129f4", 483187, 404),
+	WINGAME1("horrortour1", "",	  "ZEDDAS.EXE",		"d:d3ce91f305dd0f4d2f5e9ff6d4e41a3b", 741818, 404),
+	MACGAME2_l("horrortour1", "", "HorrorTour(7M)", "r:b7e69c37b7355022d400c14aa97c5d54", 483187,
+								  "MOVIE/A00W.DXR", "d:772a21f2ab11134c6ec34f8c0fda3335", 8182870, Common::JA_JPN, 404),
+	WINGAME2_l("horrortour1", "", "HORROR.EXE", 	"d:b16ecf8ebc02142c742b8a9acc935d52", 752425,
+								  "MOVIE/A00W.DXR", "d:772a21f2ab11134c6ec34f8c0fda3335", 8182870, Common::JA_JPN, 404),
+
 	WINGAME2_l("horrortour1", "", "HORROR.EXE", "b16ecf8ebc02142c742b8a9acc935d52", 752425,
 								  "HORROR.DAT", "42f0450d970a95f0dd47727988996ce9", 450, Common::ZH_TWN, 404),
 
-	MACGAME1_l("horrortour1", "", "HorrorTour(7M)", "b7e69c37b7355022d400c14aa97c5d54", 483443, Common::JA_JPN, 404),
-	WINGAME2_l("horrortour1", "", "HORROR.EXE", 	"b16ecf8ebc02142c742b8a9acc935d52", 752425,
-								  "MOVIE/A00W.DXR", "772a21f2ab11134c6ec34f8c0fda3335", 8182870, Common::JA_JPN, 404),
-	MACGAME1_l("horrortour2", "", "ZEDDAS PowerPC", "da7d3f1d85bdb99518b586c40d2a673e", 60013, Common::JA_JPN, 400),
-	WINGAME2_l("horrortour2", "", "HT2.EXE",		   "499d8545ee2325b18d3f09fb2c0fc26e", 698029,
-								  "NEWHT2/A002AW.DIR", "fa060cc849870e9f7821033a61edeb89", 6262642, Common::JA_JPN, 404),
+	MACGAME2_l("horrortour2", "", "ZEDDAS PowerPC",		"r:da7d3f1d85bdb99518b586c40d2a673e", 59757,
+								  "NEWHT2/A002AW.DIR",	"d:fa060cc849870e9f7821033a61edeb89", 6262642, Common::JA_JPN, 404),
+	WINGAME2_l("horrortour2", "", "HT2.EXE",		    "d:499d8545ee2325b18d3f09fb2c0fc26e", 698029,
+								  "NEWHT2/A002AW.DIR",  "d:fa060cc849870e9f7821033a61edeb89", 6262642, Common::JA_JPN, 404),
 
 	// Developed by Michael Eleftheriades
 	// Mac version from The Mac CD-ROM 6
@@ -4054,8 +4064,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("hotwheelsrigor", "", "RIGOR.EXE", "db508eeafce0c568a6fab9254e3cfbe4", 1443043, 404),
 	WINGAME1t("hotwheelswiener", "", "WIENER.EXE", "6d0228018fb293aa6e48b2a51e273e4d", 1391592, 404),
 
-	MACGAME1("hunchback", "", "Hunchback", "17efee018a660458fae80de4364021ac", 481226, 404),
-	WINGAME1t("hunchback", "", "HUNCH.EXE", "27d1a388006a4b2d63b1810248a55b14", 25837061, 404),
+	MACGAME1("hunchback", "", "Hunchback",			   "r:17efee018a660458fae80de4364021ac", 481226, 404),
+	WINGAME2("hunchback", "", "HUNCH.EXE",			   "t:27d1a388006a4b2d63b1810248a55b14", 25837061,
+							  "QTMOVIES/HUNCHIN3.MOV", "t:f3ce12ed7e2cd0a52a957388c074e916", 384506, 404),
 
 	WINGAME2("id4p1", "", "SUPREME.EXE", "629eb9a5d991a2dbe380804e8c37043a", 1664965,
 						  "ALIEN.ICO",	 "fcd97560b8b3f7404f9119bc06bbd5b5", 766, 404),
