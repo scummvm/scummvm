@@ -31,7 +31,7 @@
 namespace AGDS {
 
 Animation::Animation(AGDSEngine *engine, const Common::String &name) :
-	_engine(engine), _name(name), _flic(), _frame(),
+	_engine(engine), _name(name), _flic(), _frame(), _scaledFrame(),
 	_frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
 	_phase(0), _paused(false), _speed(100), _z(0),
 	_delay(0), _random(0), _scale(1), _onScreen(true) {
@@ -42,7 +42,16 @@ Animation::~Animation() {
 	delete _flic;
 }
 
+void Animation::freeScaledFrame() {
+	if (_scaledFrame) {
+		_scaledFrame->free();
+		delete _scaledFrame;
+		_scaledFrame = nullptr;
+	}
+}
+
 void Animation::freeFrame() {
+	freeScaledFrame();
 	if (_frame) {
 		_frame->free();
 		delete _frame;
@@ -80,6 +89,7 @@ bool Animation::load(Common::SeekableReadStream *stream, const Common::String &f
 
 	if (fname.hasSuffixIgnoreCase(".bmp")) {
 		_frame = _engine->loadPicture(fname);
+		rescaleCurrentFrame();
 		_frames = 1;
 		return true;
 	}
@@ -96,6 +106,22 @@ bool Animation::load(Common::SeekableReadStream *stream, const Common::String &f
 	}
 }
 
+void Animation::scale(float scale) {
+	if (scale != _scale) {
+		debug("changing scale to %g", scale);
+		_scale = scale;
+		rescaleCurrentFrame();
+	}
+}
+
+void Animation::rescaleCurrentFrame() {
+	if (_scale == 1 || !_frame)
+		return;
+
+	freeScaledFrame();
+	_scaledFrame = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
+}
+
 void Animation::decodeNextFrame() {
 	auto frame = _flic->decodeNextFrame();
 	if (!frame) {
@@ -107,14 +133,7 @@ void Animation::decodeNextFrame() {
 	freeFrame();
 	_delay = _flic->getCurFrameDelay() * _speed / 4000; //40 == 1000 / 25, 25 fps
 	_frame = _engine->convertToTransparent(frame->convertTo(_engine->pixelFormat(), _flic->getPalette()));
-
-	if (_scale != 1) {
-		auto f = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
-		if (f) {
-			freeFrame();
-			_frame = f;
-		}
-	}
+	rescaleCurrentFrame();
 	++_phase;
 }
 
@@ -188,16 +207,17 @@ bool Animation::tick() {
 
 void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics::TransparentSurface *mask, int maskAlpha) const {
 	dst += _position;
-	if (!_frame || !_onScreen)
+	auto *frame = _scaledFrame? _scaledFrame: _frame;
+	if (!frame || !_onScreen)
 		return;
 
-	Common::Rect srcRect = _frame->getRect();
+	Common::Rect srcRect = frame->getRect();
 	if (!Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
 		return;
 
 	if (mask) {
 		int invMaskAlpha = 255 - maskAlpha;
-		auto subFrame = _frame->getSubArea(srcRect);
+		auto subFrame = frame->getSubArea(srcRect);
 		auto subMask = mask->getSubArea(srcRect);
 		byte * dstPixels = static_cast<byte *>(backbuffer.getBasePtr(dst.x, dst.y));
 		const byte * srcPixels = static_cast<byte *>(subFrame.getPixels());
@@ -226,7 +246,7 @@ void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics
 			maskPixels += subMask.pitch;
 		}
 	} else
-		_frame->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
+		frame->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
 }
 
 int Animation::width() const {

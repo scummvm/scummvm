@@ -141,8 +141,8 @@ void Character::direction(int dir) {
 	if (dir < 0)
 		return;
 
-	//_animationPos = Common::Point();
-	//animate(dir, 100, false);
+	_animationPos = Common::Point();
+	animate(dir, 100, false);
 }
 
 void Character::moveTo(const Common::String & processName, Common::Point dst, int dir) {
