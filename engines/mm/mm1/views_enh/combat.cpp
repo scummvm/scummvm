@@ -678,13 +678,13 @@ void Combat::writeParty() {
 
 	for (uint i = 0; i < g_globals->_combatParty.size(); ++i) {
 		const Character &c = *g_globals->_combatParty[i];
-		writeString(160 * (i % 2), (15 + (i / 2)) * LINE_H,
-			Common::String::format("%c%c) %s",
-				(c._condition == 0) ? ' ' : '*',
-				'1' + i,
-				c._name
-			)
-		);
+		const int x = 160 * (i % 2);
+		const int y = (15 + (i / 2)) * LINE_H;
+
+		writeChar(x, y, (c._condition == 0) ? ' ' : '*');
+		writeString(x + 15, y, Common::String::format("%c)", '1' + i), ALIGN_RIGHT);
+		writeChar(' ');
+		writeString(c._name);
 	}
 }
 
