@@ -571,12 +571,6 @@ Common::Error AGDSEngine::run() {
 						break;
 					}
 
-					if (_currentCharacter && _currentCharacter->active()) {
-						// FIXME: some object requires character to be in "trap" region
-						// Remove this after movement implementation.
-						_currentCharacter->moveTo(Common::String(), _mouse, -1);
-					}
-
 					auto objects = _currentScreen->find(_mouse);
 					if (objects.empty() && !_currentInventoryObject) { //allow inventory to be selected
 						auto object = _inventory.find(_mouse);
@@ -621,6 +615,11 @@ Common::Error AGDSEngine::run() {
 							break;
 						} else {
 							debug("no handler found");
+							if (_currentCharacter && _currentCharacter->active()) {
+								// FIXME: some object requires character to be in "trap" region
+								// Remove this after movement implementation.
+								_currentCharacter->moveTo(Common::String(), _mouse, -1);
+							}
 							auto scroll = _currentScreen->scrollPosition();
 							scroll.x += _mouse.x - g_system->getWidth() / 2;
 							_currentScreen->scrollTo(scroll);
