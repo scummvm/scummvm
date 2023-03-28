@@ -29,24 +29,25 @@
 
 namespace Nancy {
 
-void CursorManager::init() {
-	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("CURS");
-	chunk->seek(0);
+void CursorManager::init(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
 	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * 4;
-	_cursors.reserve(numCursors);
+	_cursors.resize(numCursors);
+
 	for (uint i = 0; i < numCursors; ++i) {
-		_cursors.push_back(Cursor());
-		chunk->seek(i * 16, SEEK_SET);
-		Cursor &cur = _cursors.back();
-		readRect(*chunk, cur.bounds);
-		chunk->seek(numCursors * 16 + i * 8, SEEK_SET);
-		cur.hotspot.x = chunk->readUint32LE();
-		cur.hotspot.y = chunk->readUint32LE();
+		readRect(*chunkStream, _cursors[i].bounds);
 	}
 
-	readRect(*chunk, _primaryVideoInactiveZone);
-	_primaryVideoInitialPos.x = chunk->readUint16LE();
-	_primaryVideoInitialPos.y = chunk->readUint16LE();
+	for (uint i = 0; i < numCursors; ++i) {
+		_cursors[i].hotspot.x = chunkStream->readUint32LE();
+		_cursors[i].hotspot.y = chunkStream->readUint32LE();
+	}
+
+	readRect(*chunkStream, _primaryVideoInactiveZone);
+	_primaryVideoInitialPos.x = chunkStream->readUint16LE();
+	_primaryVideoInitialPos.y = chunkStream->readUint16LE();
 
 	g_nancy->_resource->loadImage(g_nancy->_inventoryData->inventoryCursorsImageName, _invCursorsSurface);
 
@@ -54,6 +55,8 @@ void CursorManager::init() {
 	showCursor(false);
 
 	_isInitialized = true;
+	
+	delete chunkStream;
 }
 
 void CursorManager::setCursor(CursorType type, int16 itemID) {

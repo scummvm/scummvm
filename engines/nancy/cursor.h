@@ -42,7 +42,7 @@ public:
 		_curCursorType(kNormal),
 		_curCursorID(0) {}
 
-	void init();
+	void init(Common::SeekableReadStream *chunkStream);
 
 	void setCursor(CursorType type, int16 itemID);
 	void setCursorType(CursorType type);

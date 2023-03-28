@@ -348,6 +348,8 @@ void NancyEngine::bootGameEngine() {
 	_inventoryData = new INV(boot->getChunkStream("INV"));
 	_textboxData = new TBOX(boot->getChunkStream("TBOX"));
 
+	_cursorManager->init(boot->getChunkStream("CURS"));
+
 	auto *chunkStream = boot->getChunkStream("MAP");
 	if (chunkStream) {
 		_mapData = new MAP(chunkStream);
@@ -364,10 +366,9 @@ void NancyEngine::bootGameEngine() {
 
 	_sound->loadCommonSounds();
 
-	delete boot;
-
 	_graphicsManager->init();
-	_cursorManager->init();
+
+	delete boot;
 }
 
 State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
