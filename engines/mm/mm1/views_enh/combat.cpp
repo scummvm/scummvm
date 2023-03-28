@@ -349,18 +349,19 @@ bool Combat::msgAction(const ActionMessage &msg) {
 }
 
 bool Combat::msgMouseUp(const MouseUpMessage &msg) {
-	const char *const BTN_KEYS = "afreubsc";
+	const KeybindingAction BTN_ACTIONS[8] = {
+		KEYBIND_COMBAT_ATTACK, KEYBIND_COMBAT_FIGHT,
+		KEYBIND_COMBAT_RETREAT, KEYBIND_COMBAT_EXCHANGE,
+		KEYBIND_COMBAT_USE, KEYBIND_COMBAT_BLOCK,
+		KEYBIND_COMBAT_SHOOT, KEYBIND_COMBAT_CAST
+	};
 
 	for (int col = 0; col < 3; ++col) {
 		for (int row = 0; row < 3; ++row) {
 			if (col != 2 || row != 2) {
 				Common::Rect r = getOptionButtonRect(col, row);
 				if (r.contains(msg._pos)) {
-					char c = BTN_KEYS[col * 3 + row];
-					msgKeypress(KeypressMessage(Common::KeyState(
-						(Common::KeyCode)(Common::KEYCODE_a + (c - 'a')),
-						c
-					)));
+					msgAction(ActionMessage(BTN_ACTIONS[col * 3 + row]));
 					return true;
 				}
 			}
