@@ -144,6 +144,10 @@ void Character::direction(int dir) {
 	if (dir < 0)
 		return;
 
+	if (_jokes && _phase < _frames) {
+		debug("direction(%d) set during active animation, ignored", dir);
+		return;
+	}
 	_animationPos = Common::Point();
 	animate(dir, 100, false);
 }
