@@ -308,6 +308,7 @@ bool Combat::msgAction(const ActionMessage &msg) {
 				if (g_globals->_combatParty[charNum] != g_globals->_currCharacter)
 					exchangeWith(charNum);
 			} else {
+				clearBottom();
 				g_globals->_currCharacter = g_globals->_combatParty[charNum];
 				addView("CharacterViewCombat");
 			}

@@ -84,6 +84,15 @@ public:
 	void draw() override;
 };
 
+class CharacterInfoCombat : public CharacterInfo {
+public:
+	CharacterInfoCombat() : CharacterInfo() {
+		_name = "CharacterViewCombat";
+	}
+	virtual ~CharacterInfoCombat() {
+	}
+};
+
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

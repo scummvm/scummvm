@@ -77,6 +77,7 @@ private:
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
 	ViewsEnh::CharacterInfo _characterInfo;
+	ViewsEnh::CharacterInfoCombat _characterInfoCombat;
 	ViewsEnh::CharacterInventory _characterInventory;
 	ViewsEnh::CharacterSelect _characterSelect;
 	ViewsEnh::Characters _characters;
