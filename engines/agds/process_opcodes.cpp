@@ -1389,6 +1389,7 @@ void Process::setScreenBackground() {
 	debug("setScreenBackground");
 	_object->z(g_system->getHeight());
 	_engine->getCurrentScreen()->update(_object);
+	_engine->getCurrentScreen()->setBackground(_object.get());
 }
 
 void Process::loadTextFromObject() {
