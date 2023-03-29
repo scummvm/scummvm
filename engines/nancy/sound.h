@@ -36,6 +36,8 @@ class SeekableAudioStream;
 
 namespace Nancy {
 
+class IFF;
+
 class NancyEngine;
 
 class SoundManager {
@@ -43,7 +45,7 @@ public:
 	SoundManager();
 	~SoundManager();
 
-	void loadCommonSounds();
+	void loadCommonSounds(IFF *boot);
 
 	// Load a sound into a channel without starting it
 	void loadSound(const SoundDescription &description, bool panning = false);

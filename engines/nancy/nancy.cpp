@@ -390,6 +390,8 @@ void NancyEngine::bootGameEngine() {
 		_clockData = new CLOK(chunkStream);
 	}
 
+	_sound->loadCommonSounds(boot);
+
 	// Load all data chunks found in BOOT. These get used in a lot of places
 	// across the engine, so we always keep them in memory
 	Common::Array<Common::String> bootChunkNames;
@@ -398,8 +400,6 @@ void NancyEngine::bootGameEngine() {
 	for (auto const &n : bootChunkNames) {
 		addBootChunk(n, boot->getChunkStream(n));
 	}
-
-	_sound->loadCommonSounds();
 
 	delete boot;
 }

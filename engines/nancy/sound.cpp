@@ -28,6 +28,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
+#include "engines/nancy/iff.h"
 
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/state/map.h"
@@ -252,7 +253,7 @@ SoundManager::SoundManager() {
 	initSoundChannels();
 }
 
-void SoundManager::loadCommonSounds() {
+void SoundManager::loadCommonSounds(IFF *boot) {
 	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
 	Common::String chunkNames[] = {
 		"CANT", "CURT", "GLOB", "SLID", "BULS", "BUDE", "BUOK", "TH1", "TH2",
@@ -260,22 +261,26 @@ void SoundManager::loadCommonSounds() {
 
 	Common::SeekableReadStream *chunk = nullptr;
 	for (auto const &s : chunkNames) {
-		chunk = g_nancy->getBootChunkStream(s);
+		chunk = boot->getChunkStream(s);
 		if (chunk) {
 			SoundDescription &desc = _commonSounds.getOrCreateVal(s);
 			desc.read(*chunk, SoundDescription::kNormal);
 			g_nancy->_sound->loadSound(desc);
 			_channels[desc.channelID].isPersistent = true;
+
+			delete chunk;
 		}
 	}
 
 	// Menu sound is stored differently
-	chunk = g_nancy->getBootChunkStream("MSND"); // channel 28
+	chunk = boot->getChunkStream("MSND"); // channel 28
 	if (chunk) {
 		SoundDescription &desc = _commonSounds.getOrCreateVal("MSND");
 		desc.read(*chunk, SoundDescription::kMenu);
 		g_nancy->_sound->loadSound(desc);
 		_channels[desc.channelID].isPersistent = true;
+
+		delete chunk;
 	}
 }
 
