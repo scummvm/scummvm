@@ -81,12 +81,6 @@ void Screen::scrollTo(Common::Point scroll) {
 float Screen::getZScale(int y) const
 {
 	int h = g_system->getHeight();
-	if (_background) {
-		auto rect = _background->getRect();
-		if (rect.bottom < h)
-			h = rect.bottom;
-	}
-
 	int dy = h - y;
 	if (dy > _characterNear) {
 		if (dy < _characterFar)
