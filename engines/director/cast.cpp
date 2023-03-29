@@ -623,7 +623,7 @@ void Cast::loadPaletteData(PaletteCastMember *member) {
 		paletteId = member->_children[0].index;
 	} else if (_version < kFileVer400) {
 		// For D3 and below, palette IDs are stored in the CLUT resource as cast ID + 1024
-		paletteId = member->getID() + 1024;
+		paletteId = member->getID() + _castIDoffset;
 	} else {
 		warning("Cast::loadPaletteData(): Expected 1 child for palette cast, got %d", member->_children.size());
 	}
@@ -634,14 +634,22 @@ void Cast::loadPaletteData(PaletteCastMember *member) {
 }
 
 void Cast::loadFilmLoopData(FilmLoopCastMember *member) {
-	if (_version >= kFileVer400 && _version < kFileVer500) {
+	if (_version < kFileVer400) {
+		// Director 3 and below should have a SCVW resource
+		uint16 filmLoopId = member->getID() + _castIDoffset;
+		uint32 tag = MKTAG('S', 'C', 'V', 'W');
+		Common::SeekableReadStreamEndian *loop = _castArchive->getResource(tag, filmLoopId);
+		debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
+		member->loadFilmLoopData(*loop);
+		delete loop;
+	} else if (_version >= kFileVer400 && _version < kFileVer500) {
 		if (member->_children.size() == 1) {
 			uint16 filmLoopId = member->_children[0].index;
 			uint32 tag = member->_children[0].tag;
 			if (_castArchive->hasResource(tag, filmLoopId)) {
 				Common::SeekableReadStreamEndian *loop = _castArchive->getResource(tag, filmLoopId);
 				debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
-				member->loadFilmLoopData(*loop);
+				member->loadFilmLoopDataV4(*loop);
 				delete loop;
 			} else {
 				warning("Cast::loadFilmLoopData(): Film loop not found");
@@ -1022,6 +1030,10 @@ void Cast::loadCastDataVWCR(Common::SeekableReadStreamEndian &stream) {
 		case kCastPalette:
 			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) PaletteCastMember", id, numToCastNum(id));
 			_loadedCast->setVal(id, new PaletteCastMember(this, id, stream, _version));
+			break;
+		case kCastFilmLoop:
+			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) FilmLoopCastMember", id, numToCastNum(id));
+			_loadedCast->setVal(id, new FilmLoopCastMember(this, id, stream, _version));
 			break;
 		default:
 			warning("Cast::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
@@ -1603,8 +1615,12 @@ Common::String Cast::formatCastSummary(int castId = -1) {
 		CastMember *castMember = getCastMember(*it);
 		CastMemberInfo *castMemberInfo = getCastMemberInfo(*it);
 		Common::String info = castMember->formatInfo();
-		result += Common::String::format("%5d: type=%s, name=\"%s\"",
-			*it, castType2str(castMember->_type),
+		result += Common::String::format("%5d", *it);
+		if (_version < kFileVer400) {
+			result += Common::String::format(" (%s)", numToCastNum(*it));
+		}
+		result += Common::String::format(": type=%s, name=\"%s\"",
+			castType2str(castMember->_type),
 			castMemberInfo ? castMemberInfo->name.c_str() : ""
 		);
 
