@@ -77,7 +77,7 @@ struct eob2ChineseLZInStream {
 };
 }
 
-Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, _screenDimTable, _screenDimTableCount), _cursorColorKey16Bit(0x8000) {
+Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, vm->gameFlags().lang == Common::Language::ZH_TWN ? _screenDimTableZH : _screenDimTableIntl, _screenDimTableCount), _cursorColorKey16Bit(0x8000) {
 	_dsBackgroundFading = false;
 	_dsShapeFadingLevel = 0;
 	_dsBackgroundFadingXOffs = 0;
