@@ -530,8 +530,6 @@ void EoBCoreEngine::initStaticResource() {
 		{   "Abbr.",    "Leerer Slot",		"Speichern",    "  Laden"       },
 		{	" < < ",	"Posizione Vuota",	"Salva",		"Carica"	    },
 		{	"Anular",	"Sin Uso",			"Grabar",		"Cargar"	    },
-		{   0,          0,					0,					0			},
-		{	0,          0,					0,					0			},
 		{   "Cancel",   "\x82""d""\x82\x8d\x82\x90\x82\x94\x82\x99\x81""@""\x82\x92\x82\x85\x82\x87\x82\x89\x82\x8f\x82\x8e",		"Select save area",    "Select load data"     },
 		{   "\x82\xe2\x82\xdf\x82\xe9",   "\x8b\xf3\x82\xab\x97\xcc\x88\xe6",	"\x82\xc7\x82\xb1\x82\xc9\x83""Z""\x81""|""\x83""u""\x82\xb5\x82\xdc\x82\xb7\x82\xa9\x81""H",	"\x82\xc7\x82\xea\x82\xf0\x83\x8d\x81""|""\x83""h""\x82\xb5\x82\xdc\x82\xb7\x82\xa9\x81""H"    }
 	};
@@ -549,7 +547,7 @@ void EoBCoreEngine::initStaticResource() {
 	switch (_flags.lang) {
 	case Common::EN_ANY: {
 		if (_flags.platform == Common::kPlatformSegaCD) {
-			_saveLoadStrings = saveLoadStrings[6];
+			_saveLoadStrings = saveLoadStrings[4];
 			_errorSlotEmptyString = errorSlotEmptyString[5];
 		} else {
 			_saveLoadStrings = saveLoadStrings[0];
@@ -571,7 +569,7 @@ void EoBCoreEngine::initStaticResource() {
 		break;
 	case Common::JA_JPN:
 		if (_flags.platform == Common::kPlatformSegaCD) {
-			_saveLoadStrings = saveLoadStrings[7];
+			_saveLoadStrings = saveLoadStrings[5];
 			_errorSlotEmptyString = errorSlotEmptyString[6];
 		} else {
 			// EOB II FM-Towns uses English here.
