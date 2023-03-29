@@ -246,10 +246,11 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 }
 
 void AGDSEngine::runProcess(const ObjectPtr &object, uint ip) {
+	const auto & objectName = object->getName();
 	debug("starting process %s:%04x", object->getName().c_str(), ip);
 	for(uint i = 0; i < _processes.size(); ++i) {
 		auto &process = _processes[i];
-		if (ip != 0 && process && process->entryPoint() == ip) {
+		if (ip != 0 && process && process->getName() == objectName && process->entryPoint() == ip) {
 			debug("found existing process, skipping...");
 			return;
 		}
