@@ -31,8 +31,8 @@ namespace hpl {
 class VertexBufferTGL : public iVertexBuffer {
 public:
 	VertexBufferTGL(iLowLevelGraphics *apLowLevelGraphics, tVertexFlag aFlags,
-					 eVertexBufferDrawType aDrawType, eVertexBufferUsageType aUsageType,
-					 int alReserveVtxSize, int alReserveIdxSize);
+					eVertexBufferDrawType aDrawType, eVertexBufferUsageType aUsageType,
+					int alReserveVtxSize, int alReserveIdxSize);
 	~VertexBufferTGL();
 
 	void AddVertex(tVertexFlag aType, const cVector3f &avVtx);
@@ -83,7 +83,7 @@ private:
 	bool mbHasShadowDouble;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // USE_TINYGL
 

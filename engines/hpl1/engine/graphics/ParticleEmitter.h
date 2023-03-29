@@ -28,13 +28,13 @@
 #ifndef HPL_PARTICLE_EMITTER_H
 #define HPL_PARTICLE_EMITTER_H
 
+#include "common/array.h"
+#include "common/list.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/list.h"
 #include "hpl1/std/map.h"
-#include "common/array.h"
 
 namespace hpl {
 
@@ -236,6 +236,6 @@ protected:
 typedef Hpl1::Std::map<tString, iParticleEmitterData *> tParticleEmitterDataMap;
 typedef tParticleEmitterDataMap::iterator tParticleEmitterDataMapIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PARTICLE_EMITTER_H

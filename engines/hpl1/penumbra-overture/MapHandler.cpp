@@ -241,7 +241,7 @@ cEffectLightFlash::~cEffectLightFlash() {
 //-----------------------------------------------------------------------
 
 void cEffectLightFlash::Update(float afTimeStep) {
-	/*cColor Col = */mpLight->GetDiffuseColor();
+	/*cColor Col = */ mpLight->GetDiffuseColor();
 	// Log("Update...\n");
 	if (mbIsDying == false) {
 		if (mpLight->IsFading() == false) {
@@ -1053,8 +1053,8 @@ void cMapHandler::RenderItemEffect() {
 			if (gpuProgram) {
 				gpuProgram->Bind();
 				gpuProgram->SetMatrixf("worldViewProj",
-						eGpuProgramMatrix_ViewProjection,
-						eGpuProgramMatrixOp_Identity);
+									   eGpuProgramMatrix_ViewProjection,
+									   eGpuProgramMatrixOp_Identity);
 				gpuProgram->SetColor3f("ambientColor", pItem->GetFlashAlpha());
 			}
 
@@ -1133,8 +1133,8 @@ void cMapHandler::OnPostSceneDraw() {
 
 	mpInit->mpGame->GetGraphics()->GetLowLevel()->SetDepthTestActive(false);
 
-	/*cVector3f vMin = */mpScene->GetWorld3D()->GetPhysicsWorld()->GetWorldSizeMin();
-	/*cVector3f vMax = */mpScene->GetWorld3D()->GetPhysicsWorld()->GetWorldSizeMax();
+	/*cVector3f vMin = */ mpScene->GetWorld3D()->GetPhysicsWorld()->GetWorldSizeMin();
+	/*cVector3f vMax = */ mpScene->GetWorld3D()->GetPhysicsWorld()->GetWorldSizeMax();
 
 	// mpInit->mpGame->GetGraphics()->GetLowLevel()->DrawBoxMaxMin(vMax,vMin,cColor(1,0,1));
 
@@ -1169,7 +1169,7 @@ void cMapHandler::OnPostSceneDraw() {
 
 	GIt = m_mapGameEntities.begin();
 	for (; GIt != m_mapGameEntities.end(); ++GIt) {
-		//iGameEntity *pEntity = GIt->second;
+		// iGameEntity *pEntity = GIt->second;
 
 		// if(pEntity->GetBodyNum()<=0) continue;
 
@@ -1621,7 +1621,7 @@ void cMapHandler::PreUpdate(double afTimeSinceVisit) {
 
 	mbPreUpdating = true;
 
-	//unsigned long lStart = mpInit->mpGame->GetSystem()->GetLowLevel()->getTime();
+	// unsigned long lStart = mpInit->mpGame->GetSystem()->GetLowLevel()->getTime();
 
 	// Enable all physic bodies
 	cPhysicsBodyIterator bodyIt = pPhysicsWorld->GetBodyIterator();
@@ -1659,7 +1659,7 @@ void cMapHandler::PreUpdate(double afTimeSinceVisit) {
 		mpInit->mpGame->GetSound()->GetSoundHandler()->SetSilent(false);
 	}
 
-	//unsigned long lTime = mpInit->mpGame->GetSystem()->GetLowLevel()->getTime() - lStart;
+	// unsigned long lTime = mpInit->mpGame->GetSystem()->GetLowLevel()->getTime() - lStart;
 
 	// Log("PREUPDATE time: %d\n",lTime);
 

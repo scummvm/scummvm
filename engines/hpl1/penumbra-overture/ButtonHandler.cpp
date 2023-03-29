@@ -50,7 +50,7 @@ struct cButtonHandlerAction {
 	bool mbConfig;
 };
 
-static const char* const gsLastPlayerAction = "GlowStick";
+static const char *const gsLastPlayerAction = "GlowStick";
 static constexpr cButtonHandlerAction gvDefaultActions[] = {
 	{"Forward", "Keyboard", eKey_w, true},
 	{"Backward", "Keyboard", eKey_s, true},
@@ -107,7 +107,7 @@ static constexpr cButtonHandlerAction gvDefaultActions[] = {
 #ifdef __APPLE__
 	{"QuitGame", "Keyboard", eKeyModifier_META | eKey_q, false},
 #endif
-	{"LockInput","Keyboard", eKey_k, false},
+	{"LockInput", "Keyboard", eKey_k, false},
 	{"Screenshot", "Keyboard", eKey_F12, false},
 
 	//{"Hit","Keyboard",eKey_h,false},
@@ -115,8 +115,7 @@ static constexpr cButtonHandlerAction gvDefaultActions[] = {
 	//{"Taunt","Keyboard",eKey_t,false},
 	{"PrintLog", "Keyboard", eKey_l, false},
 
-	{"", "", 0, false}
-};
+	{"", "", 0, false}};
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS

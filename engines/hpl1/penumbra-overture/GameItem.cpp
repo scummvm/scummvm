@@ -48,7 +48,7 @@ void cGameItem_InViewRay::SetUp(iPhysicsBody *apSkipBody) {
 }
 
 bool cGameItem_InViewRay::OnIntersect(iPhysicsBody *apBody, cPhysicsRayParams *apParams) {
-	//float &fDist = apParams->mfDist;
+	// float &fDist = apParams->mfDist;
 
 	// Must be positive
 	if (apParams->mfT < 0 || apParams->mfT > 1)

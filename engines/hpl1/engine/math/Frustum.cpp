@@ -305,7 +305,7 @@ void cFrustum::UpdateEndPoints() {
 	float fYAngle = mfFOV * 0.5f * mfAspect;
 
 	cVector3f vForward = m_mtxModelView.GetForward();
-	//cVector3f vUp = m_mtxModelView.GetUp();
+	// cVector3f vUp = m_mtxModelView.GetUp();
 	cVector3f vRight = m_mtxModelView.GetRight();
 
 	// Point the forward vec in different dirs.

@@ -35,7 +35,7 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 cKeyboardSDL::cKeyboardSDL(cLowLevelInputSDL *apLowLevelInputSDL) : iKeyboard("SDL Portable Keyboard") {
-  	_lowLevelSystem = apLowLevelInputSDL;
+	_lowLevelSystem = apLowLevelInputSDL;
 
 	_downKeys.set_size(eKey_LastEnum);
 	_downKeys.clear();
@@ -337,8 +337,7 @@ void cKeyboardSDL::processEvent(const Common::Event &ev) {
 		_downKeys.set(key);
 		_modifiers = convertModifiers(ev.kbd.flags);
 		_pressedKeys.push(cKeyPress(key, ev.kbd.ascii, _modifiers));
-	}
-	else
+	} else
 		_downKeys.unset(key);
 }
 

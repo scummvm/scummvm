@@ -19,25 +19,21 @@
  *
  */
 
-#include "common/system.h"
 #include "common/str.h"
+#include "common/system.h"
 
 namespace Hpl1 {
 
-class StaticString
-{
+class StaticString {
 public:
-	constexpr StaticString(const char *str) : _str(str)
-	{
+	constexpr StaticString(const char *str) : _str(str) {
 	}
 
-	const char *c_str() const
-	{
+	const char *c_str() const {
 		return _str;
 	}
 
-	operator Common::String()
-	{
+	operator Common::String() {
 		return _str;
 	}
 
@@ -45,14 +41,12 @@ private:
 	const char *_str = "";
 };
 
-inline bool operator==(const StaticString &lhs, const StaticString &rhs)
-{
+inline bool operator==(const StaticString &lhs, const StaticString &rhs) {
 	return scumm_stricmp(lhs.c_str(), rhs.c_str()) == 0;
 }
 
-inline bool operator<(const StaticString &lhs, const StaticString &rhs)
-{
+inline bool operator<(const StaticString &lhs, const StaticString &rhs) {
 	return scumm_stricmp(lhs.c_str(), rhs.c_str()) < 0;
 }
 
-}
+} // namespace Hpl1

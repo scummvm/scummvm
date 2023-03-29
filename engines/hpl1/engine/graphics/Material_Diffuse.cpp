@@ -75,8 +75,8 @@ iMaterial *cMaterialType_Diffuse::Create(const tString &asName, iLowLevelGraphic
 
 	if (!apLowLevelGraphics->GetCaps(eGraphicCaps_GL_GpuPrograms) || iMaterial::GetQuality() == eMaterialQuality_VeryLow) {
 		return hplNew(cMaterial_Flat, (asName, apLowLevelGraphics,
-								apImageManager, apTextureManager, apRenderer,
-								apProgramManager, aPicture, apRenderer3D));
+									   apImageManager, apTextureManager, apRenderer,
+									   apProgramManager, aPicture, apRenderer3D));
 	}
 	if (iMaterial::GetQuality() >= eMaterialQuality_High) {
 		return hplNew(cMaterial_Diffuse, (asName, apLowLevelGraphics,

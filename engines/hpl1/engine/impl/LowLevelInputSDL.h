@@ -28,9 +28,9 @@
 #ifndef HPL_LOWLEVELINPUT_SDL_H
 #define HPL_LOWLEVELINPUT_SDL_H
 
-#include "hpl1/engine/input/LowLevelInput.h"
-#include "common/events.h"
 #include "common/array.h"
+#include "common/events.h"
+#include "hpl1/engine/input/LowLevelInput.h"
 
 namespace hpl {
 
@@ -41,6 +41,7 @@ class iKeyboard;
 class cLowLevelInputSDL : public iLowLevelInput {
 	friend class cKeyboardSDL;
 	friend class cMouseSDL;
+
 public:
 	cLowLevelInputSDL(iLowLevelGraphics *apLowLevelGraphics);
 	~cLowLevelInputSDL();
@@ -58,6 +59,6 @@ private:
 	iLowLevelGraphics *_lowLevelGraphics;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LOWLEVELINPUT_SDL_H

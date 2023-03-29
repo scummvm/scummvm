@@ -55,6 +55,6 @@ private:
 	tIntVec mvImageHandle;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_IMAGE_ENTITY_MANAGER_H

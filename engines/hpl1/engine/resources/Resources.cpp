@@ -35,7 +35,6 @@
 #include "hpl1/engine/resources/ImageEntityManager.h"
 #include "hpl1/engine/resources/ImageManager.h"
 #include "hpl1/engine/resources/LanguageFile.h"
-#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/MaterialManager.h"
 #include "hpl1/engine/resources/MeshLoaderHandler.h"
 #include "hpl1/engine/resources/MeshManager.h"
@@ -46,6 +45,7 @@
 #include "hpl1/engine/resources/TextureManager.h"
 #include "hpl1/engine/resources/TileSetManager.h"
 #include "hpl1/engine/resources/VideoManager.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/scene/Area2D.h"
 #include "hpl1/engine/system/System.h"
 

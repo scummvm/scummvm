@@ -284,7 +284,7 @@ void cGameEnemyState_Worm_Hunt::OnUpdate(float afTimeStep) {
 	if (mfUpdatePathCount <= 0) {
 		mfUpdatePathCount = mfUpdateFreq;
 
-		/*cAINodeContainer *pNodeCont = */mpEnemy->GetMover()->GetNodeContainer();
+		/*cAINodeContainer *pNodeCont = */ mpEnemy->GetMover()->GetNodeContainer();
 
 		// Check if there is a free path to the player
 		if (mbLostPlayer == false && mpMover->FreeDirectPathToChar(mpPlayer->GetCharacterBody())) {
@@ -692,7 +692,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 	// Calculate direction vectors
 	if (vMovement.SqrLength() > 0.00001f)
 		mvRootGoalForward = cMath::Vector3Normalize(vMovement);
-	//else
+	// else
 	//	mvRootGoalForward = mvRootGoalForward;
 
 	// Rotate vectors to get closer to goal

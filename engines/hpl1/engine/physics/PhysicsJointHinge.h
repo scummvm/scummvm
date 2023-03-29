@@ -71,6 +71,6 @@ protected:
 	float mfMinAngle;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_JOINT_HINGE_H

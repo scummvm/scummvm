@@ -28,8 +28,8 @@
 #ifndef HPL_SOUND_CHANNEL_H
 #define HPL_SOUND_CHANNEL_H
 
-#include "hpl1/engine/math/MathTypes.h"
 #include "common/list.h"
+#include "hpl1/engine/math/MathTypes.h"
 
 namespace hpl {
 class iSoundData;
@@ -184,6 +184,6 @@ protected:
 typedef Common::List<iSoundChannel *> tSoundChannelList;
 typedef tSoundChannelList::iterator tSoundChannelListIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SOUND_CHANNEL_H

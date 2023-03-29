@@ -110,6 +110,6 @@ protected:
 	cSurfaceData *mpSurfaceData;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_MATERIAL_H

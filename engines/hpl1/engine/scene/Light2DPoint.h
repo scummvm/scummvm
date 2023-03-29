@@ -43,6 +43,6 @@ public:
 	int Render(iLowLevelGraphics *apLowLevel, int alFirstIndex);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LIGHTPOINT2D_H

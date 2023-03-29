@@ -103,6 +103,6 @@ private:
 	iAIState *mpCurrentState;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_STATE_MACHINE_H

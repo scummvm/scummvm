@@ -334,9 +334,9 @@ void cGame::Run() {
 
 	// reset the mouse, really reset the damn thing :P
 	for (int i = 0; i < 10; i++)
-		//mpInput->GetMouse()->Reset();
+		// mpInput->GetMouse()->Reset();
 
-	Log("Game Running\n");
+		Log("Game Running\n");
 	Log("--------------------------------------------------------\n");
 
 	mfFrameTime = 0;
@@ -422,7 +422,7 @@ void cGame::Run() {
 		// Log("----\nCreations made: %d\n------\n",cMemoryManager::GetCreationCount());
 		//}
 
-		//g_system->delayMillis(10);
+		// g_system->delayMillis(10);
 	}
 	Log("--------------------------------------------------------\n\n");
 

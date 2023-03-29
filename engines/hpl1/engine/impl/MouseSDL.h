@@ -28,8 +28,8 @@
 #ifndef HPL_MOUSE_SDL_H
 #define HPL_MOUSE_SDL_H
 
-#include "hpl1/engine/input/Mouse.h"
 #include "common/bitarray.h"
+#include "hpl1/engine/input/Mouse.h"
 
 namespace Common {
 struct Event;

@@ -101,6 +101,6 @@ protected:
 	cGuiGfxElement *mvGfxCorners[4];
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_TEXT_BOX_H

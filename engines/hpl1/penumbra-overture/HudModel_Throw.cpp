@@ -27,15 +27,14 @@
 
 #include "hpl1/penumbra-overture/HudModel_Throw.h"
 
+#include "hpl1/penumbra-overture/AttackHandler.h"
+#include "hpl1/penumbra-overture/GameEnemy.h"
+#include "hpl1/penumbra-overture/GameEntity.h"
 #include "hpl1/penumbra-overture/Init.h"
+#include "hpl1/penumbra-overture/Inventory.h"
+#include "hpl1/penumbra-overture/MapHandler.h"
 #include "hpl1/penumbra-overture/Player.h"
 #include "hpl1/penumbra-overture/PlayerHelper.h"
-#include "hpl1/penumbra-overture/AttackHandler.h"
-#include "hpl1/penumbra-overture/GameEntity.h"
-#include "hpl1/penumbra-overture/GameEnemy.h"
-#include "hpl1/penumbra-overture/MapHandler.h"
-#include "hpl1/penumbra-overture/Inventory.h"
-
 
 /////////////////////////////////////////////////////////////////////////
 // HUD MODEL THROW
@@ -43,8 +42,7 @@
 
 //-----------------------------------------------------------------------
 
-cHudModel_Throw::cHudModel_Throw() : iHudModel(ePlayerHandType_Throw)
-{
+cHudModel_Throw::cHudModel_Throw() : iHudModel(ePlayerHandType_Throw) {
 	mbButtonDown = false;
 
 	mfChargeCount = 0;
@@ -52,122 +50,111 @@ cHudModel_Throw::cHudModel_Throw() : iHudModel(ePlayerHandType_Throw)
 
 //-----------------------------------------------------------------------
 
-void cHudModel_Throw::LoadData(TiXmlElement *apRootElem)
-{
+void cHudModel_Throw::LoadData(TiXmlElement *apRootElem) {
 	////////////////////////////////////////////////
-	//Load the MAIN element.
+	// Load the MAIN element.
 	TiXmlElement *pMeleeElem = apRootElem->FirstChildElement("THROW");
-	if(pMeleeElem==NULL){
+	if (pMeleeElem == NULL) {
 		Error("Couldn't load THROW element from XML document\n");
 		return;
 	}
-	
-	//mbDrawDebug = cString::ToBool(pMeleeElem->Attribute("DrawDebug"),false);
-	mChargePose = GetPoseFromElem("ChargePose",pMeleeElem);
 
-	mfChargeTime = cString::ToFloat(pMeleeElem->Attribute("ChargeTime"),0);
-	mfMinImpulse = cString::ToFloat(pMeleeElem->Attribute("MinImpulse"),0);
-	mfMaxImpulse = cString::ToFloat(pMeleeElem->Attribute("MaxImpulse"),0);
+	// mbDrawDebug = cString::ToBool(pMeleeElem->Attribute("DrawDebug"),false);
+	mChargePose = GetPoseFromElem("ChargePose", pMeleeElem);
 
-	mfReloadTime = cString::ToFloat(pMeleeElem->Attribute("ReloadTime"),0);
+	mfChargeTime = cString::ToFloat(pMeleeElem->Attribute("ChargeTime"), 0);
+	mfMinImpulse = cString::ToFloat(pMeleeElem->Attribute("MinImpulse"), 0);
+	mfMaxImpulse = cString::ToFloat(pMeleeElem->Attribute("MaxImpulse"), 0);
 
-	mvTorque = cString::ToVector3f(pMeleeElem->Attribute("Torque"),0);
+	mfReloadTime = cString::ToFloat(pMeleeElem->Attribute("ReloadTime"), 0);
 
-	msThrowEntity = cString::ToString(pMeleeElem->Attribute("ThrowEntity"),"");
+	mvTorque = cString::ToVector3f(pMeleeElem->Attribute("Torque"), 0);
 
-	msChargeSound = cString::ToString(pMeleeElem->Attribute("ChargeSound"),"");
-	msThrowSound = cString::ToString(pMeleeElem->Attribute("ThrowSound"),"");
+	msThrowEntity = cString::ToString(pMeleeElem->Attribute("ThrowEntity"), "");
+
+	msChargeSound = cString::ToString(pMeleeElem->Attribute("ChargeSound"), "");
+	msThrowSound = cString::ToString(pMeleeElem->Attribute("ThrowSound"), "");
 }
 
 //-----------------------------------------------------------------------
 
-void cHudModel_Throw::OnStart()
-{
+void cHudModel_Throw::OnStart() {
 	mbButtonDown = false;
 	mfChargeCount = 0;
 }
 
 //-----------------------------------------------------------------------
 
-void cHudModel_Throw::ResetExtraData()
-{
+void cHudModel_Throw::ResetExtraData() {
 	mbButtonDown = false;
 	mfChargeCount = 0;
 }
 
 //-----------------------------------------------------------------------
 
-bool cHudModel_Throw::UpdatePoseMatrix(cMatrixf& aPoseMtx, float afTimeStep)
-{
-	if(mbButtonDown)
-	{
-		mfChargeCount += afTimeStep / mfChargeTime; 
-		if(mfChargeCount > 1) mfChargeCount = 1;
+bool cHudModel_Throw::UpdatePoseMatrix(cMatrixf &aPoseMtx, float afTimeStep) {
+	if (mbButtonDown) {
+		mfChargeCount += afTimeStep / mfChargeTime;
+		if (mfChargeCount > 1)
+			mfChargeCount = 1;
+	} else {
+		mfChargeCount -= afTimeStep * 4;
+		if (mfChargeCount < 0)
+			mfChargeCount = 0;
 	}
-	else
-	{
-		mfChargeCount -= afTimeStep*4;
-		if(mfChargeCount < 0) mfChargeCount = 0;
-	}
-	
+
 	cMatrixf mtxA = mEquipPose.ToMatrix();
 	cMatrixf mtxB = mChargePose.ToMatrix();
-	aPoseMtx = cMath::MatrixSlerp(mfChargeCount,mtxA,mtxB,true);
+	aPoseMtx = cMath::MatrixSlerp(mfChargeCount, mtxA, mtxB, true);
 
 	return true;
 }
 
 //-----------------------------------------------------------------------
 
-void cHudModel_Throw::OnAttackDown()
-{
-	if(mState == eHudModelState_Idle)
-	{
+void cHudModel_Throw::OnAttackDown() {
+	if (mState == eHudModelState_Idle) {
 		mbButtonDown = true;
-		
-		if(msChargeSound != "")
-		{
+
+		if (msChargeSound != "") {
 			cSoundHandler *pSoundHandler = mpInit->mpGame->GetSound()->GetSoundHandler();
-			pSoundHandler->PlayGui(msChargeSound,false,1.0f);
+			pSoundHandler->PlayGui(msChargeSound, false, 1.0f);
 		}
 	}
 }
 
 //-----------------------------------------------------------------------
 
-void cHudModel_Throw::OnAttackUp()
-{
-	if(mbButtonDown == false) return;
-	
+void cHudModel_Throw::OnAttackUp() {
+	if (mbButtonDown == false)
+		return;
+
 	mbButtonDown = false;
-	
-	//Play sound
-	if(msThrowSound != "")
-	{
+
+	// Play sound
+	if (msThrowSound != "") {
 		cSoundHandler *pSoundHandler = mpInit->mpGame->GetSound()->GetSoundHandler();
-		pSoundHandler->PlayGui(msThrowSound,false,1.0f);
+		pSoundHandler->PlayGui(msThrowSound, false, 1.0f);
 	}
 
 	///////////////////////////////
-	//Create entity
+	// Create entity
 	cCamera3D *pCam = mpInit->mpPlayer->GetCamera();
-	
-	cVector3f vRot = cVector3f(pCam->GetPitch(),pCam->GetYaw(), pCam->GetRoll());
+
+	cVector3f vRot = cVector3f(pCam->GetPitch(), pCam->GetYaw(), pCam->GetRoll());
 	cMatrixf mtxStart = cMath::MatrixRotate(vRot, eEulerRotationOrder_XYZ);
 	mtxStart.SetTranslation(pCam->GetPosition());
-	
-	iEntity3D *pEntity = mpInit->mpGame->GetScene()->GetWorld3D()->CreateEntity("Throw",mtxStart,
-																				msThrowEntity, true);
-	if(pEntity)
-	{
-		iGameEntity *pEntity2 = mpInit->mpMapHandler->GetLatestEntity();
-		
-		float fImpulse = mfMinImpulse * (1 - mfChargeCount) + mfMaxImpulse * mfChargeCount;
-		
-		cVector3f vRot2 =cMath::MatrixMul(mtxStart.GetRotation(),mvTorque);
 
-        for(int i=0; i< pEntity2->GetBodyNum(); ++i)
-		{
+	iEntity3D *pEntity = mpInit->mpGame->GetScene()->GetWorld3D()->CreateEntity("Throw", mtxStart,
+																				msThrowEntity, true);
+	if (pEntity) {
+		iGameEntity *pEntity2 = mpInit->mpMapHandler->GetLatestEntity();
+
+		float fImpulse = mfMinImpulse * (1 - mfChargeCount) + mfMaxImpulse * mfChargeCount;
+
+		cVector3f vRot2 = cMath::MatrixMul(mtxStart.GetRotation(), mvTorque);
+
+		for (int i = 0; i < pEntity2->GetBodyNum(); ++i) {
 			iPhysicsBody *pBody = pEntity2->GetBody(i);
 			pBody->AddImpulse(pCam->GetForward() * fImpulse);
 			pBody->AddTorque(vRot2);
@@ -177,30 +164,27 @@ void cHudModel_Throw::OnAttackUp()
 	mpInit->mpPlayer->GetHidden()->UnHide();
 
 	//////////////////////
-	//Reset animations
+	// Reset animations
 
-	mfChargeCount = 0; 
+	mfChargeCount = 0;
 
 	mfTime = -mfReloadTime;
 	mState = eHudModelState_Equip;
 
 	//////////////////////
-	//Decrease item amount
+	// Decrease item amount
 	mpItem->AddCount(-1);
-	if(mpItem->GetCount()<=0)
-	{
+	if (mpItem->GetCount() <= 0) {
 		mfTime = 0.0f;
 		mpInit->mpInventory->RemoveItem(mpItem);
-		mpInit->mpPlayerHands->SetCurrentModel(1,"");
+		mpInit->mpPlayerHands->SetCurrentModel(1, "");
 		mpInit->mpPlayer->ChangeState(ePlayerState_Normal);
 	}
-
 }
 
 //-----------------------------------------------------------------------
 
-bool cHudModel_Throw::OnMouseMove(const cVector2f &avMovement)
-{
+bool cHudModel_Throw::OnMouseMove(const cVector2f &avMovement) {
 	return false;
 }
 

@@ -63,13 +63,13 @@ public:
 
 private:
 	tWString msFile;
-	//cFileSearcher *mpFileSearcher;
+	// cFileSearcher *mpFileSearcher;
 
 	TiXmlDocument *mpXmlDoc;
 
 	const char *GetCharArray(tString asLevel, tString asName);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_CONFIGFILE_H

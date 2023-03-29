@@ -29,8 +29,8 @@
 
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/graphics/VertexBuffer.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/graphics/Mesh.h"
@@ -48,7 +48,7 @@
 
 namespace hpl {
 
-#define GetAdress(sStr)                      \
+#define GetAdress(sStr)                    \
 	if (sStr.size() > 0 && sStr[0] == '#') \
 		sStr = cString::Sub(sStr, 1);
 //////////////////////////////////////////////////////////////////////////
@@ -748,7 +748,7 @@ void cMeshLoaderCollada::LoadColladaScene(TiXmlElement *apRootElem, cColladaNode
 
 	// Log("Node. %s, type: %s\n",pNode->msId.c_str(),pNode->msType.c_str());
 
-	//cVector3f vTranslation = cVector3f(0, 0, 0);
+	// cVector3f vTranslation = cVector3f(0, 0, 0);
 
 	///////////////////////////////////////////////////////////
 	// Iterate through all of the transforms.
@@ -1290,7 +1290,7 @@ void cMeshLoaderCollada::LoadGeometry(TiXmlElement *apRootElem, tColladaGeometry
 		}
 		int lTriElements = 0;
 
-		/*int lTriCount = */cString::ToInt(pTriElem->Attribute("count"), 0);
+		/*int lTriCount = */ cString::ToInt(pTriElem->Attribute("count"), 0);
 		Geometry.msMaterial = cString::ToString(pTriElem->Attribute("material"), "");
 		GetAdress(Geometry.msMaterial);
 

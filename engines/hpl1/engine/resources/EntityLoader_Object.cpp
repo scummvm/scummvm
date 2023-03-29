@@ -544,8 +544,8 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 		cMeshEntity *pEntityCopy = mpEntity;
 		cMesh *pMeshCopy = mpMesh;
 		for (int i = 0; i < pMeshCopy->GetReferenceNum(); i++) {
-			/*iEntity3D *pRef = */mpMesh->CreateReferenceInWorld(asName, pMeshCopy->GetReference(i), pEntityCopy,
-															 apWorld, a_mtxTransform);
+			/*iEntity3D *pRef = */ mpMesh->CreateReferenceInWorld(asName, pMeshCopy->GetReference(i), pEntityCopy,
+																  apWorld, a_mtxTransform);
 			// if(pPS) mvParticleSystems.push_back(pPS);
 		}
 		return pEntityCopy;

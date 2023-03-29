@@ -64,6 +64,6 @@ protected:
 	cGuiGfxElement *mvGfxBox[2][2];
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_CHECK_BOX_H

@@ -159,7 +159,7 @@ float cAnimationTrack::GetKeyFramesAtTime(float afTime, cKeyFrame **apKeyFrameA,
 
 		// Get T between end to start again. (the last frame doesn't mean the anim is over.
 		//  In that case wrap to the first frame).
-		//float fDeltaT = fTotalAnimLength - (*apKeyFrameA)->time;
+		// float fDeltaT = fTotalAnimLength - (*apKeyFrameA)->time;
 
 		// If animation time is >= max time might as well just return the last frame.
 		// Not sure if this is good for some looping anims, in that case check the code.

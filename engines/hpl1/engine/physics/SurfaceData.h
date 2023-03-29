@@ -197,6 +197,6 @@ protected:
 	tSurfaceImpactDataVec mvHitData;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SURFACE_DATA_H

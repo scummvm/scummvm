@@ -28,10 +28,10 @@
 #ifndef HPL_LIGHT2D_H
 #define HPL_LIGHT2D_H
 
+#include "common/list.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/scene/Entity2D.h"
 #include "hpl1/engine/scene/Light.h"
-#include "common/list.h"
 
 namespace hpl {
 
@@ -59,6 +59,6 @@ protected:
 typedef Common::List<iLight2D *> tLightList;
 typedef tLightList::iterator tLightListIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LIGHT2D_H

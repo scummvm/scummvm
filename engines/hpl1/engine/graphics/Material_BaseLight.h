@@ -109,6 +109,6 @@ protected:
 	iGpuProgram *_shaders[eBaseLightProgram_LastEnum];
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIAL_BASE_LIGHT_H

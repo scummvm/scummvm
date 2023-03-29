@@ -28,8 +28,8 @@
 #ifndef HPL_OCCLUSION_QUERY_OGL_H
 #define HPL_OCCLUSION_QUERY_OGL_H
 
-#include "hpl1/engine/graphics/OcclusionQuery.h"
 #include "common/scummsys.h"
+#include "hpl1/engine/graphics/OcclusionQuery.h"
 
 #ifdef USE_OPENGL
 
@@ -50,7 +50,7 @@ public:
 	unsigned int mlQueryId;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // USE_OPENGL
 #endif // HPL_OCCLUSION_QUERY_H

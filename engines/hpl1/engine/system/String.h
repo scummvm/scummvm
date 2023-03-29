@@ -201,6 +201,6 @@ public:
 private:
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_STRING_H

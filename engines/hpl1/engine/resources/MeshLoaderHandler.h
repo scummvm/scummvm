@@ -32,8 +32,8 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
-#include "hpl1/engine/resources/MeshLoader.h"
 #include "common/list.h"
+#include "hpl1/engine/resources/MeshLoader.h"
 
 namespace hpl {
 
@@ -72,6 +72,6 @@ private:
 	cScene *mpScene;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MESH_LOADER_HANDLER_H

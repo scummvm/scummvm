@@ -32,8 +32,8 @@
 #include "hpl1/engine/sound/SoundChannel.h"
 #include "hpl1/engine/sound/SoundEntityData.h"
 #include "hpl1/engine/sound/SoundHandler.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

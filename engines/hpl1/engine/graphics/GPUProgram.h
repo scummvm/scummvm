@@ -99,10 +99,11 @@ public:
 	virtual bool SetMatrixf(const tString &asName, const cMatrixf &mMtx) = 0;
 	virtual bool SetMatrixf(const tString &asName, eGpuProgramMatrix mType,
 							eGpuProgramMatrixOp mOp) = 0;
+
 protected:
 	static bool mbDebugInfo;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GPU_PROGRAM_H

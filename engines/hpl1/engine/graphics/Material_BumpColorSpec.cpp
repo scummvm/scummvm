@@ -74,8 +74,8 @@ iMaterial *cMaterialType_BumpColorSpec::Create(const tString &asName, iLowLevelG
 
 	if (!apLowLevelGraphics->GetCaps(eGraphicCaps_GL_GpuPrograms) || iMaterial::GetQuality() == eMaterialQuality_VeryLow) {
 		return hplNew(cMaterial_Flat, (asName, apLowLevelGraphics,
-								apImageManager, apTextureManager, apRenderer,
-								apProgramManager, aPicture, apRenderer3D));
+									   apImageManager, apTextureManager, apRenderer,
+									   apProgramManager, aPicture, apRenderer3D));
 	}
 	if (iMaterial::GetQuality() >= eMaterialQuality_High) {
 		if (apLowLevelGraphics->GetCaps(eGraphicCaps_MaxTextureImageUnits) >= 7) {

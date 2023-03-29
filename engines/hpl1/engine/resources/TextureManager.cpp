@@ -26,16 +26,16 @@
  */
 
 #include "hpl1/engine/resources/TextureManager.h"
-#include "hpl1/engine/graphics/bitmap2D.h"
+#include "hpl1/debug.h"
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/graphics/Texture.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/resources/FileSearcher.h"
-#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/Resources.h"
-#include "hpl1/engine/system/low_level_system.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/system/String.h"
-#include "hpl1/debug.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -398,7 +398,7 @@ iTexture *cTextureManager::CreateFlatTexture(const tString &asName, bool abUseMi
 
 		// Create the texture and load from bitmap
 		pTexture.reset(mpGraphics->GetLowLevel()->CreateTexture(asName, abUseMipMaps, aType,
-															aTarget));
+																aTarget));
 		if (!pTexture) {
 			EndLoad();
 			return nullptr;

@@ -32,17 +32,17 @@
 #include "hpl1/engine/graphics/GfxObject.h"
 #include "hpl1/engine/graphics/GraphicsDrawer.h"
 
-#include "hpl1/engine/resources/ResourceImage.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
+#include "hpl1/engine/resources/ResourceImage.h"
 
-#include "hpl1/engine/gui/Gui.h"
-#include "hpl1/engine/gui/GuiGfxElement.h"
-#include "hpl1/debug.h"
-#include "hpl1/string.h"
-#include "common/ptr.h"
 #include "common/array.h"
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "hpl1/algorithms.h"
+#include "hpl1/debug.h"
+#include "hpl1/engine/gui/Gui.h"
+#include "hpl1/engine/gui/GuiGfxElement.h"
+#include "hpl1/string.h"
 
 namespace hpl {
 
@@ -142,7 +142,7 @@ void FontData::loadNextGlyph(const TiXmlElement *charIt, BitmapArray &bitmaps, c
 void FontData::loadGlyphs(const TiXmlElement *charsRoot, BitmapArray &bitmaps, const cVector2l &fontSize) {
 	const TiXmlElement *charIt = charsRoot->FirstChildElement("char");
 	Hpl1::resizeAndFill(_glyphs, 3000, nullptr);
-	for(; charIt != nullptr; charIt = charIt->NextSiblingElement("char"))
+	for (; charIt != nullptr; charIt = charIt->NextSiblingElement("char"))
 		loadNextGlyph(charIt, bitmaps, fontSize);
 }
 

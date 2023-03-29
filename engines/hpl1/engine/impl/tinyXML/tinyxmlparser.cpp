@@ -22,8 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-#include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "common/util.h"
+#include "hpl1/engine/impl/tinyXML/tinyxml.h"
 
 //#define DEBUG_PARSER
 #if defined(DEBUG_PARSER)
@@ -137,11 +137,11 @@ void TiXmlBase::ConvertUTF32ToUTF8(unsigned long input, char *output, int *lengt
 		return Common::isAlpha(anyByte);
 	else
 		return 1; // What else to do? The unicode set is huge...get the english ones right.
-	//	}
-	//	else
-	//	{
-	//		return isalpha( anyByte );
-	//	}
+				  //	}
+				  //	else
+				  //	{
+				  //		return isalpha( anyByte );
+				  //	}
 }
 
 /*static*/ int TiXmlBase::IsAlphaNum(unsigned char anyByte, TiXmlEncoding /*encoding*/) {
@@ -156,11 +156,11 @@ void TiXmlBase::ConvertUTF32ToUTF8(unsigned long input, char *output, int *lengt
 		return Common::isAlnum(anyByte);
 	else
 		return 1; // What else to do? The unicode set is huge...get the english ones right.
-	//	}
-	//	else
-	//	{
-	//		return isalnum( anyByte );
-	//	}
+				  //	}
+				  //	else
+				  //	{
+				  //		return isalnum( anyByte );
+				  //	}
 }
 
 class TiXmlParsingData {

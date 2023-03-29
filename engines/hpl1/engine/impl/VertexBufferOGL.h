@@ -28,11 +28,10 @@
 #ifndef HPL_VERTEXBUFFER_OGL_H
 #define HPL_VERTEXBUFFER_OGL_H
 
-#include "hpl1/engine/graphics/VertexBuffer.h"
 #include "common/scummsys.h"
+#include "hpl1/engine/graphics/VertexBuffer.h"
 
 #ifdef USE_OPENGL
-
 
 namespace hpl {
 
@@ -91,7 +90,7 @@ private:
 	bool mbHasShadowDouble;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // USE_OPENGL
 #endif // HPL_RENDERER3D_OGL_H

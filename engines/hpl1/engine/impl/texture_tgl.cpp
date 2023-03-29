@@ -429,9 +429,9 @@ bool TGLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 	// Log("Loading %s  %d x %d\n",msName.c_str(), pSrc->GetWidth(), pSrc->GetHeight());
 	// Log("Channels: %d Format: %x\n",lChannels, format);
 	tglTexImage2D(GLTarget, 0, internalFormat, _width, _height,
-					0, format, TGL_UNSIGNED_BYTE, pPixelSrc);
+				  0, format, TGL_UNSIGNED_BYTE, pPixelSrc);
 
-	//if (tglGetError() != TGL_NO_ERROR)
+	// if (tglGetError() != TGL_NO_ERROR)
 	//	return false;
 
 	if (mbUseMipMaps && mTarget != eTextureTarget_Rect)

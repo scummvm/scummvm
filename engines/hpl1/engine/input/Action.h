@@ -104,6 +104,6 @@ private:
 	double mfTimeCount;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_ACTION_H

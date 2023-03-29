@@ -225,7 +225,7 @@ public:
 	void OnAnimationOver(const tString &asName);
 
 private:
-	//bool mbCheckAnim;
+	// bool mbCheckAnim;
 };
 
 //-----------------------------------------
@@ -252,7 +252,7 @@ private:
 	bool mbCheckAnim;
 	int mlPrevToughness;
 
-	//int mlStuckAtMaxCount;
+	// int mlStuckAtMaxCount;
 };
 
 //-----------------------------------------

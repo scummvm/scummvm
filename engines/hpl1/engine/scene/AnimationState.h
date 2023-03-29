@@ -185,6 +185,6 @@ private:
 	float mfFadeStep;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_ANIMATION_STATE_H

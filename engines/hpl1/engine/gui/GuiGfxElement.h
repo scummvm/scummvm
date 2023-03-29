@@ -134,6 +134,6 @@ private:
 	bool mbFlushed;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GUI_GFX_ELEMENT_H

@@ -36,6 +36,6 @@ Common::ScopedPtr<Graphics::Surface> createViewportScreenshot();
 
 bool useOpenGL();
 
-}
+} // namespace Hpl1
 
 #endif

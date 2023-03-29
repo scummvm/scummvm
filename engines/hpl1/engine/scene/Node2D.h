@@ -28,9 +28,9 @@
 #ifndef HPL_NODE2D_H
 #define HPL_NODE2D_H
 
+#include "common/list.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Node.h"
-#include "common/list.h"
 
 namespace hpl {
 
@@ -56,6 +56,6 @@ private:
 	cVector3f mvScale;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_NODE2D_H

@@ -448,10 +448,10 @@ void cPhysicsWorldNewton::CastRay(iPhysicsRayCallback *apCallback,
 //-----------------------------------------------------------------------
 
 // Fix found in HPL2 (https://github.com/FrictionalGames/AmnesiaTheDarkDescent)
-static void correctNormal(cVector3f& normal, const cVector3f& collidePoint, const cVector3f& shapeCenter) {
+static void correctNormal(cVector3f &normal, const cVector3f &collidePoint, const cVector3f &shapeCenter) {
 	cVector3f vCenterToCollidePoint = collidePoint - shapeCenter;
-	//A check if the normal points in the wrong direction.
-	if(cMath::Vector3Dot(vCenterToCollidePoint, normal)>0)
+	// A check if the normal points in the wrong direction.
+	if (cMath::Vector3Dot(vCenterToCollidePoint, normal) > 0)
 		normal = normal * -1;
 }
 
@@ -512,7 +512,7 @@ bool cPhysicsWorldNewton::CheckShapeCollision(iCollideShape *apShapeA, const cMa
 					CollPoint.mvPoint.z = mpTempPoints[lVertex + 2];
 
 					if (correctNormalDirection && apShapeA->GetType() != eCollideShapeType_Mesh)
-						correctNormal(CollPoint.mvNormal, CollPoint.mvPoint,a_mtxA.GetTranslation());
+						correctNormal(CollPoint.mvNormal, CollPoint.mvPoint, a_mtxA.GetTranslation());
 				}
 
 				lCollideDataStart += lNum;
@@ -555,7 +555,7 @@ bool cPhysicsWorldNewton::CheckShapeCollision(iCollideShape *apShapeA, const cMa
 			CollPoint.mvPoint.z = mpTempPoints[lVertex + 2];
 
 			if (correctNormalDirection && apShapeA->GetType() != eCollideShapeType_Mesh)
-				correctNormal(CollPoint.mvNormal, CollPoint.mvPoint,a_mtxA.GetTranslation());
+				correctNormal(CollPoint.mvNormal, CollPoint.mvPoint, a_mtxA.GetTranslation());
 		}
 
 		aCollideData.mlNumOfPoints = lNum;

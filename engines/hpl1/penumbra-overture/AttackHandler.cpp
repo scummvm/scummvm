@@ -210,7 +210,7 @@ bool cAttackHandler::CreateShapeAttack(iCollideShape *apShape, const cMatrixf &a
 	Common::List<iPhysicsBody *>::iterator it = lstTempBodies.begin();
 	for (; it != lstTempBodies.end(); ++it) {
 		iPhysicsBody *pBody = *it;
-		/*float fMass = */pBody->GetMass();
+		/*float fMass = */ pBody->GetMass();
 
 		if (pBody->IsActive() == false)
 			continue;

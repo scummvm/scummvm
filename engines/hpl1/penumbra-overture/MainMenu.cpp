@@ -27,6 +27,10 @@
 
 #include "hpl1/penumbra-overture/MainMenu.h"
 
+#include "common/savefile.h"
+#include "hpl1/debug.h"
+#include "hpl1/graphics.h"
+#include "hpl1/hpl1.h"
 #include "hpl1/penumbra-overture/ButtonHandler.h"
 #include "hpl1/penumbra-overture/EffectHandler.h"
 #include "hpl1/penumbra-overture/GraphicsHelper.h"
@@ -36,11 +40,6 @@
 #include "hpl1/penumbra-overture/Player.h"
 #include "hpl1/penumbra-overture/PlayerHelper.h"
 #include "hpl1/penumbra-overture/SaveHandler.h"
-#include "hpl1/hpl1.h"
-#include "hpl1/debug.h"
-#include "common/savefile.h"
-#include "hpl1/graphics.h"
-
 
 float gfMenuFadeAmount;
 bool gbMustRestart = false;
@@ -501,7 +500,7 @@ void cMainMenuWidget_List::OnDraw() {
 		if ((int)i - mlFirstRow >= mlMaxRows)
 			break;
 
-		if (mlSelected ==(int)i) {
+		if (mlSelected == (int)i) {
 			mpFont->draw(vPos, mvFontSize, cColor(0.95f, 1), eFontAlign_Left, mvEntries[i]);
 			mpDrawer->DrawGfxObject(mpBackGfx, vPos + cVector3f(0, 2, -1),
 									cVector2f(mvSize.x - 5, mvFontSize.y),
@@ -1022,7 +1021,7 @@ public:
 		}
 
 		gpLanguageText->msText = cString::To16Char(cString::SetFileExt(mvFiles[mlCurrentFile], ""));
-		mpInit->msLanguageFile =mvFiles[mlCurrentFile];
+		mpInit->msLanguageFile = mvFiles[mlCurrentFile];
 
 		if (mpInit->mpMapHandler->GetCurrentMapName() != "") {
 			gbMustRestart = true;
@@ -1065,11 +1064,11 @@ cMainMenuWidget_Text *gpFSAAText = NULL;
 cMainMenuWidget_Text *gpDoFText = NULL;
 
 constexpr cVector2l gvResolutions[] = {cVector2l(640, 480), cVector2l(800, 600), cVector2l(1024, 768),
-							 cVector2l(1152, 864), cVector2l(1280, 720), cVector2l(1280, 768),
-							 cVector2l(1280, 800), cVector2l(1280, 960), cVector2l(1280, 1024),
-							 cVector2l(1360, 768), cVector2l(1360, 1024), cVector2l(1400, 1050),
-							 cVector2l(1440, 900), cVector2l(1680, 1050), cVector2l(1600, 1200),
-							 cVector2l(1920, 1080), cVector2l(1920, 1200)};
+									   cVector2l(1152, 864), cVector2l(1280, 720), cVector2l(1280, 768),
+									   cVector2l(1280, 800), cVector2l(1280, 960), cVector2l(1280, 1024),
+									   cVector2l(1360, 768), cVector2l(1360, 1024), cVector2l(1400, 1050),
+									   cVector2l(1440, 900), cVector2l(1680, 1050), cVector2l(1600, 1200),
+									   cVector2l(1920, 1080), cVector2l(1920, 1200)};
 int glResolutionNum = 17;
 
 constexpr const char *gvTextureQuality[] = {"High", "Medium", "Low"};
@@ -1546,7 +1545,7 @@ public:
 	}
 
 private:
-	//cMainMenuWidget_Text *mpKeyWidget;
+	// cMainMenuWidget_Text *mpKeyWidget;
 	tString msActionName;
 };
 
@@ -2503,7 +2502,7 @@ void cMainMenu::CreateWidgets() {
 	float fKeyTextXAdd = 195;
 
 	// Key buttons
-	/*cInput *pInput = */mpInit->mpGame->GetInput();
+	/*cInput *pInput = */ mpInit->mpGame->GetInput();
 	vPos = vTextStart; // cVector3f(400, 260, 40);
 	vPos.y += 46;
 	vPos.x += 15;

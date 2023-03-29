@@ -43,12 +43,10 @@ namespace hpl {
 
 tSoundEntityGlobalCallbackList *cSoundEntity::mlstGlobalCallbacks = nullptr;
 
-void cSoundEntity::initGlobalCallbackList()
-{
+void cSoundEntity::initGlobalCallbackList() {
 	cSoundEntity::mlstGlobalCallbacks = new tSoundEntityGlobalCallbackList;
 }
-void cSoundEntity::finalizeGlobalCallbackList()
-{
+void cSoundEntity::finalizeGlobalCallbackList() {
 	delete cSoundEntity::mlstGlobalCallbacks;
 }
 

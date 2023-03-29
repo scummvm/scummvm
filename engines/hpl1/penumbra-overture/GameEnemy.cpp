@@ -610,10 +610,10 @@ void iGameEnemy::OnDraw() {
 		sStateName = cString::To16Char(gvStateName[mlCurrentState]);
 	mpInit->mpDefaultFont->draw(cVector3f(5, 48, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
 								Common::U32String::format("Health: %f State: %S Moving: %d Stuck: %f MaxViewDist: %f", mfHealth,
-								sStateName.c_str(),
-								mpMover->IsMoving(),
-								mpMover->GetStuckCounter(),
-								gfCurrentMaxViewDist));
+														  sStateName.c_str(),
+														  mpMover->IsMoving(),
+														  mpMover->GetStuckCounter(),
+														  gfCurrentMaxViewDist));
 	mpInit->mpDefaultFont->draw(cVector3f(5, 64, 100), 14, cColor(1, 1, 1, 1), eFontAlign_Left,
 								Common::U32String::format("Speed: %f", mpMover->GetCharBody()->GetMoveSpeed(eCharDir_Forward)));
 

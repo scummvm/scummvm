@@ -93,6 +93,6 @@ public:
 	}
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIAL_MODULATIVE_X_2_H

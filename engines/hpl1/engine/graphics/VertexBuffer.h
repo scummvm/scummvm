@@ -169,6 +169,6 @@ protected:
 	bool mbTangents;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RENDERER3D_H

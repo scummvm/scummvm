@@ -42,7 +42,7 @@ public:
 	LowLevelResources(iLowLevelGraphics *lowLevelGraphics) : _lowLevelGraphics(lowLevelGraphics) {
 	}
 
-	//Returns a list of files in a directory matching a pattern
+	// Returns a list of files in a directory matching a pattern
 	void findFilesInDir(tStringList &fileList, tString dir, tString pattern);
 
 	void getSupportedImageFormats(tStringList &formats);
@@ -50,10 +50,11 @@ public:
 
 	void addMeshLoaders(cMeshLoaderHandler *ml);
 	void addVideoLoaders(cVideoManager *vm);
+
 private:
 	iLowLevelGraphics *_lowLevelGraphics;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LOWLEVELRESOURCES_H

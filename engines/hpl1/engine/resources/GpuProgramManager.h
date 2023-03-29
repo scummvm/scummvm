@@ -59,6 +59,6 @@ private:
 	iLowLevelGraphics *mpLowLevelGraphics;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GPU_PROGRAM_MANAGER_H

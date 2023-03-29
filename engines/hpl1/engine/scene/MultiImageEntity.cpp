@@ -27,12 +27,12 @@
 
 #include "hpl1/engine/scene/MultiImageEntity.h"
 
+#include "hpl1/debug.h"
 #include "hpl1/engine/scene/Node2D.h"
 #include "hpl1/engine/scene/Scene.h"
 #include "hpl1/engine/scene/World2D.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
-#include "hpl1/debug.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

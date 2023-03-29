@@ -88,6 +88,6 @@ private:
 	cFrameBitmap *CreateBitmapFrame(cVector2l avSize);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RESOURCEMANAGER_H

@@ -125,6 +125,6 @@ private:
 	void GetFrameNum(TiXmlElement *apElement);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_IMAGE_ENTITY_DATA_H

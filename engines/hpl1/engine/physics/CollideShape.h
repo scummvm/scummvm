@@ -89,6 +89,6 @@ protected:
 	cBoundingVolume mBoundingVolume;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_COLLIDE_SHAPE_H

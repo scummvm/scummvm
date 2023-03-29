@@ -28,8 +28,8 @@
 #include "hpl1/engine/ai/AI.h"
 
 #include "hpl1/engine/ai/AINodeGenerator.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/MemoryManager.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

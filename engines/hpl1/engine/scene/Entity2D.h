@@ -77,6 +77,6 @@ protected:
 typedef Common::List<iEntity2D *> tEntity2DList;
 typedef tEntity2DList::iterator tEntity2DListIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_ENTITY2D_H

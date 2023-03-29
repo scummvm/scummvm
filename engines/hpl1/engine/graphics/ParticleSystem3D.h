@@ -143,6 +143,6 @@ private:
 	bool mbFirstUpdate;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PARTICLE_SYSTEM_3D_H

@@ -56,6 +56,6 @@ private:
 	static unsigned LimitCallback(const NewtonJoint *pHinge, NewtonHingeSliderUpdateDesc *pDesc);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_JOINT_HINGE_NEWTON_H

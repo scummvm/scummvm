@@ -345,7 +345,6 @@ void cEffect_SaveEffect::NormalSaveUpdate(float afTimeStep) {
 		mpInit->mpSaveHandler->AutoSave(_W("spot"), 10);
 		break;
 	}
-
 	}
 }
 

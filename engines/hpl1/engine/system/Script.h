@@ -221,7 +221,7 @@
 #define AS_MAX_PORTABILITY
 #if defined(AS_MAX_PORTABILITY)
 #define SCRIPT_REGISTER_FUNC(funcname) \
-	Common::String(GenericScript::funcname##_return) + " "  + Common::String(#funcname) + " ("  + Common::String(GenericScript::funcname##_arg) + ")", GenericScript::funcname##_Generic, asCALL_GENERIC
+	Common::String(GenericScript::funcname##_return) + " " + Common::String(#funcname) + " (" + Common::String(GenericScript::funcname##_arg) + ")", GenericScript::funcname##_Generic, asCALL_GENERIC
 #else
 #define SCRIPT_REGISTER_FUNC(funcname) \
 	GenericScript::funcname##_return + " " #funcname " (" + GenericScript::funcname##_arg + ")", (void *)funcname, asCALL_STDCALL
@@ -254,6 +254,6 @@ public:
 	virtual bool Run(int alHandle) = 0;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SCRIPT_H

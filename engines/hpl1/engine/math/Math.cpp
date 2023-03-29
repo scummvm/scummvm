@@ -46,8 +46,7 @@ int cMath::RandRectl(int alMin, int alMax) {
 //-----------------------------------------------------------------------
 
 float cMath::RandRectf(float afMin, float afMax) {
-	float fRand =  static_cast<float>(Hpl1::g_engine->getRandomNumber(UINT_MAX))
-		/ static_cast<float>(UINT_MAX);
+	float fRand = static_cast<float>(Hpl1::g_engine->getRandomNumber(UINT_MAX)) / static_cast<float>(UINT_MAX);
 
 	return afMin + fRand * (afMax - afMin);
 }
@@ -1147,10 +1146,10 @@ cVector3f cMath::MatrixToEulerAngles(const cMatrixf &a_mtxA, eEulerRotationOrder
 
 const char *cMath::MatrixToChar(const cMatrixf &a_mtxA) {
 	snprintf(mpTempChar, 1024, "[%.3f, %.3f, %.3f, %.3f] [%.3f, %.3f, %.3f, %.3f] [%.3f, %.3f, %.3f, %.3f] [%.3f, %.3f, %.3f, %.3f]",
-			a_mtxA.m[0][0], a_mtxA.m[0][1], a_mtxA.m[0][2], a_mtxA.m[0][3],
-			a_mtxA.m[1][0], a_mtxA.m[1][1], a_mtxA.m[1][2], a_mtxA.m[1][3],
-			a_mtxA.m[2][0], a_mtxA.m[2][1], a_mtxA.m[2][2], a_mtxA.m[2][3],
-			a_mtxA.m[3][0], a_mtxA.m[3][1], a_mtxA.m[3][2], a_mtxA.m[3][3]);
+			 a_mtxA.m[0][0], a_mtxA.m[0][1], a_mtxA.m[0][2], a_mtxA.m[0][3],
+			 a_mtxA.m[1][0], a_mtxA.m[1][1], a_mtxA.m[1][2], a_mtxA.m[1][3],
+			 a_mtxA.m[2][0], a_mtxA.m[2][1], a_mtxA.m[2][2], a_mtxA.m[2][3],
+			 a_mtxA.m[3][0], a_mtxA.m[3][1], a_mtxA.m[3][2], a_mtxA.m[3][3]);
 
 	return mpTempChar;
 }
@@ -1202,8 +1201,8 @@ bool cMath::CreateTriTangentVectors(float *apDestArray,
 	// Log("Num of indices: %d\n",alIndexNum);
 	// Log("Num of vertrices: %d\n",alVertexNum);
 
-	Hpl1::resizeAndFill(vTempTangents1, alVertexNum, cVector3f(0,0,0));
-	Hpl1::resizeAndFill(vTempTangents2, alVertexNum, cVector3f(0,0,0));
+	Hpl1::resizeAndFill(vTempTangents1, alVertexNum, cVector3f(0, 0, 0));
+	Hpl1::resizeAndFill(vTempTangents2, alVertexNum, cVector3f(0, 0, 0));
 
 	// Iterate through the triangles
 	for (int triIdx = 0; triIdx < alIndexNum; triIdx += 3) {

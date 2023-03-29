@@ -27,8 +27,8 @@
 
 #include "hpl1/engine/gui/GuiSkin.h"
 
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 

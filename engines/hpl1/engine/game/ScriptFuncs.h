@@ -70,6 +70,6 @@ public:
 					 cGame *apGame);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SCRIPT_FUNCS_H

@@ -28,9 +28,9 @@
 #ifndef HPL_GRIDMAP2D_H
 #define HPL_GRIDMAP2D_H
 
+#include "common/array.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "common/array.h"
 #include "hpl1/std/map.h"
 
 namespace hpl {
@@ -197,6 +197,6 @@ private:
 	cVector2l mvMaxGridSpan;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GRIDMAP2D_H

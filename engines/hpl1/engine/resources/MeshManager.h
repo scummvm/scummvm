@@ -52,6 +52,6 @@ private:
 	cResources *mpResources;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MESH_MANAGER_H

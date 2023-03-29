@@ -81,6 +81,6 @@ private:
 	cRenderList *mpRenderList;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GRAPHICS_H

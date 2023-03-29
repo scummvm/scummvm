@@ -495,7 +495,7 @@ void cPlayerHands::SetCurrentModel(int alNum, const tString &asName) {
 
 		iHudModel *pHandModel = it->second;
 
-		/*cWorld3D *pWorld = */mpInit->mpGame->GetScene()->GetWorld3D();
+		/*cWorld3D *pWorld = */ mpInit->mpGame->GetScene()->GetWorld3D();
 
 		if (mvCurrentHudModels[alNum]) {
 			if (mvCurrentHudModels[alNum] != pHandModel) {
@@ -612,10 +612,10 @@ void cPlayerHands::UpdatePrevPostions() {
 	float fRotNum = 0;
 	float fPosNum = 0;
 
-	//float fRotMulStart = 1.0f;
-	//float fRotMulEnd = 0.1f;
-	//float fSize = (float)mlstRotations.size();
-	//float fD = (fRotMulStart - fRotMulEnd) / fSize;
+	// float fRotMulStart = 1.0f;
+	// float fRotMulEnd = 0.1f;
+	// float fSize = (float)mlstRotations.size();
+	// float fD = (fRotMulStart - fRotMulEnd) / fSize;
 	float fMul = 1.0f; // fRotMulEnd;
 
 	for (tVector3fListIt it = mlstRotations.begin(); it != mlstRotations.end(); ++it) {

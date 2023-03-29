@@ -28,10 +28,10 @@
 #ifndef HPL_GUI_TYPES_H
 #define HPL_GUI_TYPES_H
 
+#include "common/list.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "common/list.h"
 
 namespace hpl {
 

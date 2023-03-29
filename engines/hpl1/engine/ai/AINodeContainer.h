@@ -31,9 +31,9 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
-#include "hpl1/engine/physics/PhysicsWorld.h"
-#include "common/list.h"
 #include "common/array.h"
+#include "common/list.h"
+#include "hpl1/engine/physics/PhysicsWorld.h"
 
 namespace hpl {
 
@@ -298,6 +298,6 @@ private:
 	float mfMaxHeight;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_AI_NODE_CONTAINER_H

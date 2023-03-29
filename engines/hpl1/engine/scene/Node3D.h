@@ -28,9 +28,9 @@
 #ifndef HPL_NODE3D_H
 #define HPL_NODE3D_H
 
+#include "common/list.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Node.h"
-#include "common/list.h"
 
 namespace hpl {
 
@@ -123,6 +123,6 @@ private:
 	cNode3D *mpParent;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_NODE3D_H

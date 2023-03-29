@@ -28,11 +28,11 @@
 #ifndef HPL_LOWLEVELGRAPHICS_H
 #define HPL_LOWLEVELGRAPHICS_H
 
-#include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Texture.h"
 #include "hpl1/engine/graphics/VertexBuffer.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
@@ -421,6 +421,6 @@ public:
 	virtual void SwapBuffers() = 0;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LOWLEVELGRAPHICS_H

@@ -60,6 +60,6 @@ private:
 	eInputDeviceType mType;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_INPUTDEVICE_H

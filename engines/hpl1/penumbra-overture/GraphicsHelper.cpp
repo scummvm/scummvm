@@ -109,7 +109,7 @@ void cGraphicsHelper::DrawLoadingScreen(const tString &asFile) {
 			DrawTexture(pTex, cVector3f(0, 0, 0), cVector2f(800, 600), cColor(1, 1));
 
 		mpFont->draw(cVector3f(400, 300, 50), 22, cColor(1, 1), eFontAlign_Center,
-					kTranslate("LoadTexts", "Loading"));
+					 kTranslate("LoadTexts", "Loading"));
 
 		mpDrawer->DrawAll();
 

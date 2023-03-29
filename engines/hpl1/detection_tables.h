@@ -34,8 +34,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO0()
-	},
+		GUIO0()},
 	// GOG release
 	{
 		"penumbraoverture",
@@ -44,8 +43,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO0()
-	},
+		GUIO0()},
 
 	AD_TABLE_END_MARKER};
 

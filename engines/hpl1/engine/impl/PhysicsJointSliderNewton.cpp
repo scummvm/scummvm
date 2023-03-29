@@ -30,8 +30,8 @@
 #include "hpl1/engine/impl/PhysicsBodyNewton.h"
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"
 
-#include "hpl1/engine/system/low_level_system.h"
 #include "common/str.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

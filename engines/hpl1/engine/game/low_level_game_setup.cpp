@@ -20,21 +20,20 @@
  */
 
 #include "hpl1/engine/game/low_level_game_setup.h"
-#include "hpl1/engine/system/low_level_system.h"
-#include "hpl1/engine/impl/low_level_graphics_tgl.h"
 #include "hpl1/engine/impl/KeyboardSDL.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 #include "hpl1/engine/impl/LowLevelInputSDL.h"
 #include "hpl1/engine/impl/LowLevelPhysicsNewton.h"
-#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
 #include "hpl1/engine/impl/MouseSDL.h"
+#include "hpl1/engine/impl/low_level_graphics_tgl.h"
+#include "hpl1/engine/resources/low_level_resources.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/graphics.h"
 
 namespace hpl {
 
-static iLowLevelGraphics *createLowLevelGfx()
-{
+static iLowLevelGraphics *createLowLevelGfx() {
 #ifdef USE_OPENGL
 	if (Hpl1::useOpenGL())
 		return hplNew(cLowLevelGraphicsSDL, ());

@@ -70,6 +70,6 @@ public:
 	}
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIAL_DIFFUSE_ALPHA2D_H

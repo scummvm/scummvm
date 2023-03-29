@@ -91,6 +91,6 @@ typedef tEntityList::iterator tEntityListIt;
 
 typedef cSTLIterator<iEntity *, tEntityList, tEntityListIt> cEntityIterator;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_ENTITY2D_H

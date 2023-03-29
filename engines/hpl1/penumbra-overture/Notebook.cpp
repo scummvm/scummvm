@@ -308,7 +308,7 @@ void cNotebookState_TaskList::OnDraw() {
 	//////////////////////////////////
 	// Page number
 	mpTextFont->draw(cVector3f(400, 490, 16), 15, cColor(0.05f, mpNotebook->GetAlpha()), eFontAlign_Center,
-					Common::U32String::format("%d", mlCurrentPage + 1));
+					 Common::U32String::format("%d", mlCurrentPage + 1));
 
 	//////////////////////////////////
 	// Draw arrows back and forward

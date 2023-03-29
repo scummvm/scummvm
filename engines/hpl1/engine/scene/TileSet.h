@@ -28,11 +28,11 @@
 #ifndef HPL_TILESET_H
 #define HPL_TILESET_H
 
+#include "common/array.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
 #include "hpl1/engine/scene/TileData.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/array.h"
 
 class TiXmlElement;
 
@@ -74,6 +74,6 @@ private:
 	void GetTileNum(TiXmlElement *apElement);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_TILESET_H

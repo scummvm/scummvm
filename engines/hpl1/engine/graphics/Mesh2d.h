@@ -28,10 +28,10 @@
 #ifndef HPL_MESH2D_H
 #define HPL_MESH2D_H
 
+#include "common/array.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/array.h"
 
 namespace hpl {
 class cMesh2DEdge {
@@ -108,6 +108,6 @@ private:
 	void CalculateEdges(eTileRotation aRotation, tVertexVec &aVtx, tUIntVec &aIdx);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MESH2D_H

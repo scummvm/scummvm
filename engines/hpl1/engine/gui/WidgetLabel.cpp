@@ -27,8 +27,8 @@
 
 #include "hpl1/engine/gui/WidgetLabel.h"
 
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/graphics/font_data.h"
 

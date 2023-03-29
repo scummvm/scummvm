@@ -130,6 +130,6 @@ private:
 	bool mbShadowPlanesNeedUpdate;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_BOUNDING_VOLUME_H

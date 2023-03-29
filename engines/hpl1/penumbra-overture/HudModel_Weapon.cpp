@@ -582,7 +582,7 @@ void cHudModel_WeaponMelee::Attack() {
 	while (it.HasNext()) {
 		iPhysicsBody *pBody = it.Next();
 
-		/*float fMass = */pBody->GetMass();
+		/*float fMass = */ pBody->GetMass();
 
 		if (pBody->IsActive() == false)
 			continue;

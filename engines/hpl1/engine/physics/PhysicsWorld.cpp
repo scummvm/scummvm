@@ -38,8 +38,8 @@
 #include "hpl1/engine/physics/SurfaceData.h"
 #include "hpl1/engine/scene/PortalContainer.h"
 #include "hpl1/engine/scene/World3D.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/System.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -82,7 +82,7 @@ void iPhysicsWorld::Update(float afTimeStep) {
 
 	////////////////////////////////////
 	// Update character bodies
-	//unsigned int lTime = GetApplicationTime();
+	// unsigned int lTime = GetApplicationTime();
 	tCharacterBodyListIt CharIt = mlstCharBodies.begin();
 	for (; CharIt != mlstCharBodies.end(); ++CharIt) {
 		iCharacterBody *pBody = *CharIt;
@@ -105,7 +105,7 @@ void iPhysicsWorld::Update(float afTimeStep) {
 
 	////////////////////////////////////
 	// Simulate the physics
-	//lTime = GetApplicationTime();
+	// lTime = GetApplicationTime();
 	Simulate(afTimeStep);
 	// LogUpdate(" Updating lowlevel physics took %d ms\n",mpWorld3D->GetSystem()->GetLowLevel()->GetTime() - lTime);
 

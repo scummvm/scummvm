@@ -112,5 +112,5 @@ private:
 	void SetMaterial(iMaterial *apMaterial);
 };
 
-}     // namespace hpl
+} // namespace hpl
 #endif // HPL_TILEDATA_H

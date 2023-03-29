@@ -123,7 +123,7 @@ public:
 class cPlayerState_Message : public iPlayerState {
 private:
 	ePlayerMoveState mPrevMoveState;
-	//ePlayerState mPrevState;
+	// ePlayerState mPrevState;
 
 public:
 	cPlayerState_Message(cInit *apInit, cPlayer *apPlayer);

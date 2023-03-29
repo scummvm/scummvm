@@ -28,13 +28,13 @@
 #ifndef HPL_BITMAP2D_H
 #define HPL_BITMAP2D_H
 
+#include "common/ptr.h"
+#include "common/rect.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/LowLevelPicture.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "graphics/pixelformat.h"
-#include "common/ptr.h"
-#include "common/rect.h"
-#include "graphics/surface.h"
 #include "image/image_decoder.h"
 
 namespace hpl {
@@ -76,6 +76,6 @@ private:
 typedef Common::Array<Bitmap2D *> tBitmap2DVec;
 typedef Common::Array<Bitmap2D *>::iterator tBitmap2DVecIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_BITMAP2D_H

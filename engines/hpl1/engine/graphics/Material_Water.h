@@ -106,6 +106,6 @@ public:
 	}
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIAL_WATER_H

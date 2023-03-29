@@ -62,6 +62,6 @@ protected:
 	cColor mColor;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_IMAGE_H

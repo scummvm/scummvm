@@ -519,7 +519,7 @@ int TiXmlElement::QueryDoubleAttribute(const std::string &name, double *dval) co
 #endif
 
 void TiXmlElement::SetAttribute(const char *name, int val) {
-	Common::String sval = Common::String::format("%d", val); 
+	Common::String sval = Common::String::format("%d", val);
 	SetAttribute(name, sval.c_str());
 }
 
@@ -532,7 +532,7 @@ void TiXmlElement::SetAttribute(const std::string &name, int val) {
 #endif
 
 void TiXmlElement::SetDoubleAttribute(const char *name, double val) {
-	Common::String sval = Common::String::format("%f", val); 
+	Common::String sval = Common::String::format("%f", val);
 	SetAttribute(name, sval.c_str());
 }
 
@@ -590,7 +590,7 @@ void TiXmlElement::Print(Common::WriteStream &file, int depth) const {
 
 	const TiXmlAttribute *attrib;
 	for (attrib = attributeSet.First(); attrib; attrib = attrib->Next()) {
-		file.writeString(" "); 
+		file.writeString(" ");
 		attrib->Print(file, depth);
 	}
 
@@ -810,8 +810,8 @@ bool TiXmlDocument::LoadFile(Common::SeekableReadStream &file, TiXmlEncoding enc
 			// Newline character. No special rules for this. Append all the characters
 			// since the last string, and include the newline.
 			data += Common::String(lastPos, (p - lastPos + 1)); // append, include the newline
-			++p;                                     // move past the newline
-			lastPos = p;                             // and point to the new buffer (may be 0)
+			++p;                                                // move past the newline
+			lastPos = p;                                        // and point to the new buffer (may be 0)
 			assert(p <= (buf + length));
 		} else if (*p == 0xd) {
 			// Carriage return. Append what we have so far, then
@@ -854,7 +854,7 @@ bool TiXmlDocument::LoadFile(Common::SeekableReadStream &file, TiXmlEncoding enc
 bool TiXmlDocument::SaveFile(const char *filename) const {
 	// The old c stuff lives on...
 	Common::DumpFile df;
-	df.open(filename); 
+	df.open(filename);
 	if (df.isOpen()) {
 		bool result = SaveFile(df);
 		return result;
@@ -868,9 +868,9 @@ bool TiXmlDocument::SaveFile(Common::WriteStream &fp) const {
 		const unsigned char TIXML_UTF_LEAD_0 = 0xefU;
 		const unsigned char TIXML_UTF_LEAD_1 = 0xbbU;
 		const unsigned char TIXML_UTF_LEAD_2 = 0xbfU;
-		fp.writeByte(TIXML_UTF_LEAD_0); 
-		fp.writeByte(TIXML_UTF_LEAD_1); 
-		fp.writeByte(TIXML_UTF_LEAD_2); 
+		fp.writeByte(TIXML_UTF_LEAD_0);
+		fp.writeByte(TIXML_UTF_LEAD_1);
+		fp.writeByte(TIXML_UTF_LEAD_2);
 	}
 	Print(fp, 0);
 	return !fp.err();
@@ -900,7 +900,7 @@ TiXmlNode *TiXmlDocument::Clone() const {
 void TiXmlDocument::Print(Common::WriteStream &cfile, int depth) const {
 	for (const TiXmlNode *node = FirstChild(); node; node = node->NextSibling()) {
 		node->Print(cfile, depth);
-		cfile.writeString("\n"); 
+		cfile.writeString("\n");
 	}
 }
 
@@ -994,12 +994,12 @@ int TiXmlAttribute::QueryDoubleValue(double *dval) const {
 }
 
 void TiXmlAttribute::SetIntValue(int _value) {
-	Common::String sval = Common::String::format("%d", _value); 
+	Common::String sval = Common::String::format("%d", _value);
 	SetValue(sval.c_str());
 }
 
 void TiXmlAttribute::SetDoubleValue(double _value) {
-	Common::String sval = Common::String::format("%f", _value); 
+	Common::String sval = Common::String::format("%f", _value);
 	SetValue(sval.c_str());
 }
 

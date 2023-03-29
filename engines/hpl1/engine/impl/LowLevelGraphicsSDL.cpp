@@ -25,8 +25,8 @@
  * This file is part of HPL1 Engine.
  */
 
-#include "hpl1/engine/graphics/font_data.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
+#include "hpl1/engine/graphics/font_data.h"
 
 #include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/graphics/font_data.h"
@@ -41,9 +41,8 @@
 #include "engines/util.h"
 #include "hpl1/debug.h"
 #include "hpl1/engine/impl/OcclusionQueryOGL.h"
-#include "hpl1/opengl.h"
 #include "hpl1/graphics.h"
-
+#include "hpl1/opengl.h"
 
 #ifdef USE_OPENGL
 
@@ -1770,4 +1769,4 @@ void cLowLevelGraphicsSDL::SetMatrixMode(eMatrix type) {
 
 } // namespace hpl
 
-#endif //USE_OPENGL
+#endif // USE_OPENGL

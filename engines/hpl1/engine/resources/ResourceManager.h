@@ -101,6 +101,6 @@ protected:
 	static int mlTabCount;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RESOURCEMANAGER_H

@@ -57,6 +57,6 @@ private:
 	cResources *mpResources;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SCRIPT_MANAGER_H

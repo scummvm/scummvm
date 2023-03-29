@@ -26,8 +26,9 @@
  */
 
 #include "hpl1/engine/graphics/Material_Fallback02_BaseLight.h"
-#include "hpl1/engine/graphics/Material_BaseLight.h"
+#include "common/algorithm.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
+#include "hpl1/engine/graphics/Material_BaseLight.h"
 #include "hpl1/engine/graphics/Renderer2D.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/resources/GpuProgramManager.h"
@@ -35,9 +36,8 @@
 #include "hpl1/engine/scene/Camera.h"
 #include "hpl1/engine/scene/Light.h"
 #include "hpl1/engine/scene/Light3DSpot.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
-#include "common/algorithm.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -56,7 +56,7 @@ iMaterial_Fallback02_BaseLight::iMaterial_Fallback02_BaseLight(
 	Common::fill(_gpuPrograms, _gpuPrograms + eBaseLightProgram_LastEnum, nullptr);
 
 	_gpuPrograms[eBaseLightProgram_Point1] = mpProgramManager->CreateProgram("hpl1_Fallback02_Diffuse_Light_p1", "hpl1_Fallback02_Diffuse_Light_p1");
-	//the second pass is the same as the second pass of fallback01
+	// the second pass is the same as the second pass of fallback01
 	_gpuPrograms[eBaseLightProgram_Point2] = mpProgramManager->CreateProgram("hpl1_Fallback02_Diffuse_Light_p2", "hpl1_Fallback01_Diffuse_Light_p2");
 	_gpuPrograms[eBaseLightProgram_Spot1] = mpProgramManager->CreateProgram("hpl1_Fallback02_Diffuse_Light_p1", "hpl1_Fallback02_Diffuse_Light_p1");
 	_gpuPrograms[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram("hpl1_Fallback02_Diffuse_Light_Spot_p2", "hpl1_Fallback02_Diffuse_Light_Spot_p2");

@@ -28,8 +28,8 @@
 #ifndef HPL_MEMORY_MANAGER_H
 #define HPL_MEMORY_MANAGER_H
 
-#include "hpl1/std/map.h"
 #include "common/str.h"
+#include "hpl1/std/map.h"
 
 #define hplNew(classType, constructor) \
 	new classType constructor

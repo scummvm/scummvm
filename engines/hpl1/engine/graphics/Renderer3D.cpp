@@ -73,8 +73,6 @@ cRenderSettings::cRenderSettings() {
 
 //-----------------------------------------------------------------------
 
-
-
 cRenderer3D::cRenderer3D(iLowLevelGraphics *apLowLevelGraphics, cResources *apResources,
 						 cMeshCreator *apMeshCreator, cRenderList *apRenderList) {
 	Hpl1::logInfo(Hpl1::kDebugGraphics, "%s", "Creating Renderer3D\n");
@@ -615,7 +613,7 @@ void cRenderer3D::RenderFog(cCamera3D *apCamera) {
 																			  *pMtx));
 
 			_solidFogProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
-											 eGpuProgramMatrixOp_Identity);
+										 eGpuProgramMatrixOp_Identity);
 		}
 		//////////////////
 		// NULL Model view matrix (static)
@@ -623,7 +621,7 @@ void cRenderer3D::RenderFog(cCamera3D *apCamera) {
 			mpLowLevelGraphics->SetMatrix(eMatrix_ModelView, apCamera->GetViewMatrix());
 
 			_solidFogProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
-											 eGpuProgramMatrixOp_Identity);
+										 eGpuProgramMatrixOp_Identity);
 		}
 
 		pObject->GetVertexBuffer()->Bind();
@@ -770,7 +768,7 @@ void cRenderer3D::RenderOcclusionQueries(cCamera3D *apCamera) {
 			// Set the vertex program matrix.
 			if (_diffuseProgram)
 				_diffuseProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
-												eGpuProgramMatrixOp_Identity);
+											eGpuProgramMatrixOp_Identity);
 
 			if (mbLog)
 				Log(" Setting matrix %d\n", pObject->mpMatrix);
@@ -873,7 +871,7 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 		mRenderSettings.mpTexture[i] = NULL;
 	}*/
 
-	/*cVector3f vForward = */apCamera->GetForward();
+	/*cVector3f vForward = */ apCamera->GetForward();
 
 	//////////////////////////////////
 	// Iterate the query objects
@@ -1112,8 +1110,8 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 				mRenderSettings.mbMatrixWasNULL = true;
 			}
 			refractProgram->SetMatrixf("worldViewProj",
-										   eGpuProgramMatrix_ViewProjection,
-										   eGpuProgramMatrixOp_Identity);
+									   eGpuProgramMatrix_ViewProjection,
+									   eGpuProgramMatrixOp_Identity);
 
 			// Eye position
 			if (pMaterial->GetRefractionUsesEye()) {
@@ -1324,8 +1322,8 @@ void cRenderer3D::RenderTrans(cCamera3D *apCamera) {
 		if (mRenderSettings.gpuProgram && bSetVtxProgMatrix) {
 			// Might be quicker if this is set directly
 			mRenderSettings.gpuProgram->SetMatrixf("worldViewProj",
-														eGpuProgramMatrix_ViewProjection,
-														eGpuProgramMatrixOp_Identity);
+												   eGpuProgramMatrix_ViewProjection,
+												   eGpuProgramMatrixOp_Identity);
 			if (mRenderSettings.gpuProgramSetup) {
 				mRenderSettings.gpuProgramSetup->SetupMatrix(pModelMatrix, &mRenderSettings);
 			}

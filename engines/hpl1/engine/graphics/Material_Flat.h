@@ -87,6 +87,6 @@ public:
 	}
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIAL_FLAT_H

@@ -213,7 +213,7 @@ iEntity2D *cGridMap2DRectIt::Next() {
 //-----------------------------------------------------------------------
 
 void cGridMap2DRectIt::GetGridObject() {
-	//bool bEnd = false;
+	// bool bEnd = false;
 
 	switch (mlType) {
 	//// GLOBAL OBJECTS //////////////////

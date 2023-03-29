@@ -93,8 +93,8 @@ struct cPhysicsRayParams {
 	constexpr cPhysicsRayParams() {}
 	float mfT = 0;
 	float mfDist = 0;
-	cVector3f mvNormal = {0,0,0};
-	cVector3f mvPoint = {0,0,0};
+	cVector3f mvNormal = {0, 0, 0};
+	cVector3f mvPoint = {0, 0, 0};
 };
 
 class iPhysicsRayCallback {
@@ -268,6 +268,6 @@ protected:
 	bool mbSaveContactPoints;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_WORLD_H

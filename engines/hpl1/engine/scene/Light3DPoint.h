@@ -48,7 +48,7 @@ class cLight3DPoint : public iLight3D {
 
 public:
 	cLight3DPoint(tString asName, cResources *apResources);
-	virtual ~cLight3DPoint() = default; 
+	virtual ~cLight3DPoint() = default;
 
 	// SaveObject implementation
 	virtual iSaveData *CreateSaveData();
@@ -62,6 +62,6 @@ private:
 	bool CreateClipRect(cRect2l &aCliprect, cRenderSettings *apRenderSettings, iLowLevelGraphics *apLowLevelGraphics);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LIGHT3D_POINT_H

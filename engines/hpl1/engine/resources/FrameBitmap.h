@@ -86,6 +86,6 @@ private:
 	bool mbIsLocked;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_FRAMEBITMAP_H

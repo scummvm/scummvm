@@ -55,6 +55,6 @@ public:
 					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIAL_BUMPE_H

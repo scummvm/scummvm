@@ -144,9 +144,9 @@ public:
 	void OnFlashlight(const cVector3f &avPosition) {}
 
 private:
-	//float mfTimer;
-	//float mfBackAngle;
-	//bool mbBackwards;
+	// float mfTimer;
+	// float mfBackAngle;
+	// bool mbBackwards;
 };
 
 //-----------------------------------------

@@ -28,11 +28,11 @@
 #ifndef HPL_NODE_H
 #define HPL_NODE_H
 
+#include "common/list.h"
 #include "hpl1/engine/game/SaveGame.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Entity.h"
 #include "hpl1/engine/system/Container.h"
-#include "common/list.h"
 
 namespace hpl {
 
@@ -85,6 +85,6 @@ protected:
 	bool mbActive;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_NODE_H

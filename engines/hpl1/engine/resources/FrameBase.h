@@ -50,6 +50,6 @@ protected:
 	int mlPicCount;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_FRAMEBASE_H

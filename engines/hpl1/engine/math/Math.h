@@ -496,6 +496,6 @@ public:
 							bool *apIsDoubleSided);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATH_H

@@ -135,11 +135,12 @@ public:
 	 * \param alMillisecs
 	 */
 	void sleep(const unsigned int millisecs);
+
 private:
 	asIScriptEngine *_scriptEngine;
 	int _handleCount;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LOWLEVELSYSTEM_H

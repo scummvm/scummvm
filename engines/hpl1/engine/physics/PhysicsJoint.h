@@ -306,6 +306,6 @@ protected:
 	void LimitEffect(cJointLimitEffect *pEffect);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_JOINT_H

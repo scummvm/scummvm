@@ -78,6 +78,6 @@ private:
 	void GetXYIntersection(const cVector2f &avPosA, cVector2f *avXIntersect, cVector2f *avYIntersect);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_TILEMAP_LINE_IT_H

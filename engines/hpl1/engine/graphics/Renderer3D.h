@@ -261,6 +261,6 @@ private:
 	tRendererDebugFlag mDebugFlags;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RENDERER3D_H

@@ -26,11 +26,11 @@
  */
 
 #include "hpl1/engine/impl/MouseSDL.h"
+#include "common/bitarray.h"
+#include "common/events.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/impl/LowLevelInputSDL.h"
 #include "hpl1/engine/input/InputTypes.h"
-#include "common/bitarray.h"
-#include "common/events.h"
 
 namespace hpl {
 
@@ -91,16 +91,16 @@ static void setMouseState(const int state, Common::BitArray &states) {
 void cMouseSDL::processEvent(const Common::Event &ev) {
 	if (!Common::isMouseEvent(ev))
 		return;
-	//const cVector2f screenSize = _lowLevelGraphics->GetScreenSize();
-	//const cVector2f virtualSize = _lowLevelGraphics->GetVirtualSize();
+	// const cVector2f screenSize = _lowLevelGraphics->GetScreenSize();
+	// const cVector2f virtualSize = _lowLevelGraphics->GetVirtualSize();
 	if (ev.type == Common::EVENT_MOUSEMOVE) {
 		_absMousePos = cVector2f(ev.mouse.x, ev.mouse.y);
-		//mvMouseAbsPos = (mvMouseAbsPos / screenSize) * virtualSize;
+		// mvMouseAbsPos = (mvMouseAbsPos / screenSize) * virtualSize;
 	} else {
 		setMouseState(ev.type, _buttonState);
 	}
 	_relMousePos = cVector2f(ev.relMouse.x, ev.relMouse.y);
-	//mvMouseRelPos = (mvMouseRelPos / screenSize) * virtualSize;
+	// mvMouseRelPos = (mvMouseRelPos / screenSize) * virtualSize;
 }
 
 void cMouseSDL::Update() {

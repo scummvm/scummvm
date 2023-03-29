@@ -28,6 +28,7 @@
 #ifndef HPL_SUB_MESH_ENTITY_H
 #define HPL_SUB_MESH_ENTITY_H
 
+#include "common/array.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Renderable.h"
 #include "hpl1/engine/math/MathTypes.h"
@@ -35,7 +36,6 @@
 #include "hpl1/engine/scene/Entity3D.h"
 #include "hpl1/engine/scene/SectorVisibility.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/array.h"
 #include "hpl1/std/map.h"
 #include "hpl1/std/multimap.h"
 
@@ -180,6 +180,6 @@ typedef Common::Array<cSubMeshEntity *>::iterator tSubMeshEntityVecIt;
 typedef Hpl1::Std::multimap<tString, cSubMeshEntity *> tSubMeshEntityMap;
 typedef tSubMeshEntityMap::iterator tSubMeshEntityMapIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SUB_MESH_ENTITY_H

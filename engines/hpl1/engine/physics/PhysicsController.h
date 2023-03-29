@@ -229,6 +229,6 @@ protected:
 	bool mbLogInfo;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_CONTROLLER_H

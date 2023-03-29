@@ -33,8 +33,8 @@
 #include "hpl1/engine/system/Container.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
-#include "hpl1/engine/math/BoundingVolume.h"
 #include "common/list.h"
+#include "hpl1/engine/math/BoundingVolume.h"
 
 namespace hpl {
 
@@ -168,6 +168,6 @@ private:
 	void UpdateWorldTransform();
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_ENTITY3D_H

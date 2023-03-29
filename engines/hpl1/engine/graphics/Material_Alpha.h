@@ -93,6 +93,6 @@ public:
 	}
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIAL_ALPHA_H

@@ -28,9 +28,9 @@
 #ifndef HPL_RENDERER_POST_EFFECTS_H
 #define HPL_RENDERER_POST_EFFECTS_H
 
+#include "common/list.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "common/list.h"
 #include "hpl1/std/set.h"
 
 namespace hpl {
@@ -178,6 +178,6 @@ private:
 	bool mbActive;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RENDERER_POST_EFFECTS_H

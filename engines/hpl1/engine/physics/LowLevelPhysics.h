@@ -42,6 +42,6 @@ public:
 	virtual iPhysicsWorld *CreateWorld() = 0;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LOWLEVELPHYSICS_H

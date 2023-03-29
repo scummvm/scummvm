@@ -232,7 +232,7 @@ tString cString::ReplaceCharTo(tString aString, tString asOldChar, tString asNew
 	if (asNewChar != "") {
 		for (int i = 0; i < (int)aString.size(); i++) {
 			if (aString[i] == asOldChar[0])
-				aString.setChar(asNewChar[0],i);
+				aString.setChar(asNewChar[0], i);
 		}
 		return aString;
 	} else {

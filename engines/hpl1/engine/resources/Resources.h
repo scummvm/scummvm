@@ -245,6 +245,6 @@ private:
 	tWString mwsEmptyString;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RESOURCES_H

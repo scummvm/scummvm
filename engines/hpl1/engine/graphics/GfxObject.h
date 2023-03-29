@@ -28,8 +28,8 @@
 #ifndef HPL_GFX_OBJECT_H
 #define HPL_GFX_OBJECT_H
 
-#include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "common/array.h"
+#include "hpl1/engine/graphics/GraphicsTypes.h"
 
 namespace hpl {
 
@@ -51,7 +51,7 @@ public:
 private:
 	tVertexVec mvVtx;
 	iMaterial *mpMat;
-	//float mfZ;
+	// float mfZ;
 	bool mbIsImage;
 
 	tString msSourceFile;
@@ -60,6 +60,6 @@ private:
 typedef Common::Array<cGfxObject> tGfxObjectVec;
 typedef tGfxObjectVec::iterator tGfxObjectVecIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GFX_OBJECT_H

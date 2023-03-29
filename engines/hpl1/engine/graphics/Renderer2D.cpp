@@ -32,9 +32,9 @@
 #include "hpl1/engine/graphics/RenderObject2D.h"
 #include "hpl1/engine/graphics/Texture.h"
 #include "hpl1/engine/math/Math.h"
-#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/resources/TextureManager.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/scene/Camera2D.h"
 #include "hpl1/engine/scene/GridMap2D.h"
 #include "hpl1/engine/scene/Light2D.h"
@@ -752,10 +752,10 @@ void cRenderer2D::FindShadowPoints(tMesh2DEdgeVec *apEdgeVec, cVector2f avLightP
 	cVector2f vEdgeNormal;
 	cVector2f vLightNormal;
 
-	//int lPrevWasShadow = -1;
-	//int lFirstWasShadow = -1;
+	// int lPrevWasShadow = -1;
+	// int lFirstWasShadow = -1;
 	mlShadowPointSize = 0;
-	//int lMaxEdge = (int)apEdgeVec->size() - 1;
+	// int lMaxEdge = (int)apEdgeVec->size() - 1;
 
 	for (int i = 0; i < (int)apEdgeVec->size(); i++) {
 		int point = (*apEdgeVec)[i].mlStartIndex;
@@ -778,7 +778,7 @@ void cRenderer2D::FindShadowPoints(tMesh2DEdgeVec *apEdgeVec, cVector2f avLightP
 
 int cRenderer2D::CreateVertexes(cVector2f vLightPos, cRect2f LightRect, float fRadius, bool bNonFit,
 								cVector2f vTilePos, tVertexVec *apVtxVec, cColor ShadowColor, int lFirstIndex, float fSourceSize) {
-	//int lNum = 0;
+	// int lNum = 0;
 
 	// Walk through the edges
 	for (int idx = 0; idx < mlShadowPointSize; idx++) {

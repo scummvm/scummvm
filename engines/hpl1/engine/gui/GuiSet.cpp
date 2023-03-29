@@ -30,9 +30,9 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
 
-#include "hpl1/engine/graphics/font_data.h"
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
+#include "hpl1/engine/graphics/font_data.h"
 
 #include "hpl1/engine/resources/FileSearcher.h"
 #include "hpl1/engine/resources/FrameBitmap.h"
@@ -377,7 +377,7 @@ void cGuiSet::DrawFont(const tWString &asText,
 					   const cVector2f &avSize, const cColor &aColor,
 					   eFontAlign aAlign, eGuiMaterial aMaterial) {
 	int lCount = 0;
-	//float lXAdd = 0;
+	// float lXAdd = 0;
 	cVector3f vPos = avPos;
 
 	if (aAlign == eFontAlign_Center) {
@@ -586,9 +586,9 @@ void cGuiSet::DestroyWidget(iWidget *apWidget) {
 void cGuiSet::CreatePopUpMessageBox(const tWString &asLabel, const tWString &asText,
 									const tWString &asButton1, const tWString &asButton2,
 									void *apCallbackObject, tGuiCallbackFunc apCallback) {
-	/* cGuiPopUpMessageBox *pMessageBox = */(void)hplNew(cGuiPopUpMessageBox, (this, asLabel, asText,
-																	asButton1, asButton2,
-																	apCallbackObject, apCallback));
+	/* cGuiPopUpMessageBox *pMessageBox = */ (void)hplNew(cGuiPopUpMessageBox, (this, asLabel, asText,
+																				asButton1, asButton2,
+																				apCallbackObject, apCallback));
 }
 
 //-----------------------------------------------------------------------

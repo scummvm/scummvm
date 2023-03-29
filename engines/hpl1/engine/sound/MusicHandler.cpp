@@ -26,15 +26,15 @@
  */
 
 #include "hpl1/engine/sound/MusicHandler.h"
+#include "hpl1/debug.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/resources/SoundManager.h"
 #include "hpl1/engine/sound/LowLevelSound.h"
 #include "hpl1/engine/sound/SoundChannel.h"
 #include "hpl1/engine/sound/SoundData.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
-#include "hpl1/debug.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

@@ -410,6 +410,6 @@ protected:
 	Common::Array<iPhysicsBody *> mvExtraBodies;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_CHARACTER_BODY_H

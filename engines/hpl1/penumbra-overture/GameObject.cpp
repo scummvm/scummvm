@@ -646,8 +646,8 @@ void cGameObject::BreakAction() {
 	//////////////////
 	// Particle System
 	if (mBreakProps.msPS != "") {
-		/*cParticleSystem3D *pPS = */pWorld->CreateParticleSystem("Break", mBreakProps.msPS, cVector3f(1, 1, 1),
-															  pParentBody->GetWorldMatrix());
+		/*cParticleSystem3D *pPS = */ pWorld->CreateParticleSystem("Break", mBreakProps.msPS, cVector3f(1, 1, 1),
+																   pParentBody->GetWorldMatrix());
 	}
 
 	//////////////////

@@ -88,6 +88,6 @@ private:
 	bool mbFlipH;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MULTI_IMAGE_ENTITY_H

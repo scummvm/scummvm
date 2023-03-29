@@ -35,13 +35,13 @@
 
 class TiXmlElement;
 
-#define kSaveData_LoadFromBegin(aClass)  \
-	super::LoadFromSaveData(apSaveData); \
+#define kSaveData_LoadFromBegin(aClass)                                        \
+	super::LoadFromSaveData(apSaveData);                                       \
 	cSaveData_##aClass *pData = static_cast<cSaveData_##aClass *>(apSaveData); \
 	assert(pData != nullptr);
 
-#define kSaveData_SaveToBegin(aClass)  \
-	super::SaveToSaveData(apSaveData); \
+#define kSaveData_SaveToBegin(aClass)                                          \
+	super::SaveToSaveData(apSaveData);                                         \
 	cSaveData_##aClass *pData = static_cast<cSaveData_##aClass *>(apSaveData); \
 	assert(pData != nullptr);
 
@@ -234,6 +234,6 @@ private:
 
 //---------------------------------------------------------
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SAVE_GAME_H

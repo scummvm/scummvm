@@ -28,8 +28,8 @@
 #include "hpl1/engine/resources/LanguageFile.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "hpl1/engine/resources/FileSearcher.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/resources/FileSearcher.h"
 #include "hpl1/engine/resources/Resources.h"

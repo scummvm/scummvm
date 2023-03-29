@@ -31,6 +31,7 @@ namespace Std {
 template<class Key, class Val, class CompFunc = Common::Less<Key> >
 class map {
 	using TreeT = Tree<pair<Key, Val>, Key, PairKey<Key, Val>, CompFunc>;
+
 public:
 	using value_type = pair<Key, Val>;
 	using iterator = typename TreeT::BasicIterator;

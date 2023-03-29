@@ -174,6 +174,6 @@ private:
 	int LoadTileData(cTile *apTile, tString *asData, int alStart);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WOLRD2D_H

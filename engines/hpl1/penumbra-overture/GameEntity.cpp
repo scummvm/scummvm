@@ -296,7 +296,7 @@ void iGameEntity::SetSoundEntity(cSoundEntity *apSound) {
 void iGameEntity::PlayerPick() {
 	//////////////////////
 	// Script stuff
-	/*cWorld3D *pWorld = */mpInit->mpGame->GetScene()->GetWorld3D();
+	/*cWorld3D *pWorld = */ mpInit->mpGame->GetScene()->GetWorld3D();
 	if (mvCallbackScripts[eGameEntityScriptType_PlayerPick]) {
 		tString sCommand = GetScriptCommand(eGameEntityScriptType_PlayerPick);
 		mpInit->RunScriptCommand(sCommand);
@@ -309,7 +309,7 @@ void iGameEntity::PlayerInteract() {
 	//////////////////////
 	// Script stuff
 	if (GetPickedDistance() <= mfMaxInteractDist) {
-		/*cWorld3D *pWorld = */mpInit->mpGame->GetScene()->GetWorld3D();
+		/*cWorld3D *pWorld = */ mpInit->mpGame->GetScene()->GetWorld3D();
 		if (mvCallbackScripts[eGameEntityScriptType_PlayerInteract]) {
 			tString sCommand = GetScriptCommand(eGameEntityScriptType_PlayerInteract);
 			mpInit->RunScriptCommand(sCommand);
@@ -323,7 +323,7 @@ void iGameEntity::PlayerExamine() {
 	//////////////////////
 	// Script stuff
 	if (GetPickedDistance() <= mfMaxExamineDist) {
-		/*cWorld3D *pWorld = */mpInit->mpGame->GetScene()->GetWorld3D();
+		/*cWorld3D *pWorld = */ mpInit->mpGame->GetScene()->GetWorld3D();
 		if (mvCallbackScripts[eGameEntityScriptType_PlayerExamine]) {
 			tString sCommand = GetScriptCommand(eGameEntityScriptType_PlayerExamine);
 			mpInit->RunScriptCommand(sCommand);
@@ -465,7 +465,7 @@ void iGameEntity::OnUpdate(float afTimeStep) {
 	////////////////////////////////////////////
 	/// Script Collide test stuff
 	iPhysicsWorld *pPhysicsWorld = mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
-	/*cWorld3D *pWorld = */mpInit->mpGame->GetScene()->GetWorld3D();
+	/*cWorld3D *pWorld = */ mpInit->mpGame->GetScene()->GetWorld3D();
 
 	////////////////
 	// If entity has character body add it to the array and then remove.

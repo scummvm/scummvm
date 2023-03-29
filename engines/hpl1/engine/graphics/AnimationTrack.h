@@ -97,6 +97,6 @@ private:
 	cAnimation *mpParent;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_ANIMATION_TRACK_H

@@ -77,6 +77,6 @@ private:
 	cResources *mpResources;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LANGUAGE_FILE_H

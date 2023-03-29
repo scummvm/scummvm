@@ -35,10 +35,10 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/Container.h"
 
+#include "common/savefile.h"
+#include "hpl1/debug.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "hpl1/hpl1.h"
-#include "hpl1/debug.h"
-#include "common/savefile.h"
 #include "hpl1/serialize.h"
 
 namespace hpl {
@@ -108,12 +108,10 @@ tSerializeSavedClassMap *cSerializeClass::m_mapSavedClasses;
 bool cSerializeClass::mbDataSetup = false;
 char cSerializeClass::msTempCharArray[2048];
 
-void cSerializeClass::initSaveClassesMap()
-{
+void cSerializeClass::initSaveClassesMap() {
 	cSerializeClass::m_mapSavedClasses = new tSerializeSavedClassMap;
 }
-void cSerializeClass::finalizeSaveClassesMap()
-{
+void cSerializeClass::finalizeSaveClassesMap() {
 	delete cSerializeClass::m_mapSavedClasses;
 }
 
@@ -125,7 +123,7 @@ void cSerializeClass::finalizeSaveClassesMap()
 
 static bool gbLog = false;
 static int glTabs = 0;
-static const char* gsTabString = "";
+static const char *gsTabString = "";
 
 const char *GetTabs() {
 	return gsTabString;
@@ -260,8 +258,8 @@ bool cSerializeClass::LoadFromFile(iSerializable *apData, const tWString &asFile
 	g_engine->setTotalPlayTime(header.playtime);
 	if (pXmlDoc.LoadFile(*saveFile) == false) {
 		Hpl1::logError(Hpl1::kDebugResourceLoading | Hpl1::kDebugSaves,
-			"Couldn't load saved class file '%S' from %s!\n", asFile.c_str(),
-			pXmlDoc.ErrorDesc());
+					   "Couldn't load saved class file '%S' from %s!\n", asFile.c_str(),
+					   pXmlDoc.ErrorDesc());
 		return false;
 	}
 
@@ -414,13 +412,13 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	case eSerializeType_Matrixf: {
 		cMatrixf &Mtx = PointerValue(pVal, cMatrixf);
 		snprintf(msTempCharArray, 2048, "%f %f %f %f "
-								 "%f %f %f %f "
-								 "%f %f %f %f "
-								 "%f %f %f %f",
-				Mtx.m[0][0], Mtx.m[0][1], Mtx.m[0][2], Mtx.m[0][3],
-				Mtx.m[1][0], Mtx.m[1][1], Mtx.m[1][2], Mtx.m[1][3],
-				Mtx.m[2][0], Mtx.m[2][1], Mtx.m[2][2], Mtx.m[2][3],
-				Mtx.m[3][0], Mtx.m[3][1], Mtx.m[3][2], Mtx.m[3][3]);
+										"%f %f %f %f "
+										"%f %f %f %f "
+										"%f %f %f %f",
+				 Mtx.m[0][0], Mtx.m[0][1], Mtx.m[0][2], Mtx.m[0][3],
+				 Mtx.m[1][0], Mtx.m[1][1], Mtx.m[1][2], Mtx.m[1][3],
+				 Mtx.m[2][0], Mtx.m[2][1], Mtx.m[2][2], Mtx.m[2][3],
+				 Mtx.m[3][0], Mtx.m[3][1], Mtx.m[3][2], Mtx.m[3][3]);
 		return msTempCharArray;
 		break;
 	}
@@ -767,7 +765,7 @@ void cSerializeClass::LoadArray(TiXmlElement *apElement, iSerializable *apData, 
 	tString sName = cString::ToString(apElement->Attribute("name"), "");
 	tString sClassType = cString::ToString(apElement->Attribute("class_type"), "");
 	eSerializeType type = cString::ToInt(apElement->Attribute("type"), eSerializeMainType_NULL);
-	//size_t lSize = cString::ToInt(apElement->Attribute("size"), 0);
+	// size_t lSize = cString::ToInt(apElement->Attribute("size"), 0);
 
 	if (gbLog) {
 		Log("%s Begin Saving array: '%s' classtype: %s type %d\n", GetTabs(), sName.c_str(), sClassType.c_str(), type);

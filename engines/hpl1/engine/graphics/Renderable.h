@@ -149,6 +149,6 @@ protected:
 	float mfZ;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RENDERABLE_H

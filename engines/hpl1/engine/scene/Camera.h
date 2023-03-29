@@ -50,6 +50,6 @@ public:
 	virtual eCameraType GetType() = 0;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_CAMERA_H

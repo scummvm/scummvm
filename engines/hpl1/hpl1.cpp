@@ -19,23 +19,23 @@
  *
  */
 
-#include "hpl1/penumbra-overture/Init.h"
-#include "hpl1/penumbra-overture/MainMenu.h"
-#include "hpl1/penumbra-overture/SaveHandler.h"
-#include "hpl1/engine/system/String.h"
-#include "engine/engine.h"
 #include "hpl1/hpl1.h"
+#include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "engine/engine.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
-#include "hpl1/detection.h"
 #include "hpl1/debug.h"
-#include "audio/mixer.h"
-#include "common/savefile.h"
+#include "hpl1/detection.h"
+#include "hpl1/engine/system/String.h"
+#include "hpl1/penumbra-overture/Init.h"
+#include "hpl1/penumbra-overture/MainMenu.h"
+#include "hpl1/penumbra-overture/SaveHandler.h"
 
 namespace Hpl1 {
 
@@ -58,7 +58,7 @@ Common::String Hpl1Engine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
-static Common::String getStartupSave(MetaEngine *meta, const char* target) {
+static Common::String getStartupSave(MetaEngine *meta, const char *target) {
 	if (ConfMan.hasKey("save_slot")) {
 		const int saveSlot = ConfMan.getInt("save_slot");
 		const SaveStateDescriptor saveInfo = meta->querySaveMetaInfos(target, saveSlot);
@@ -106,7 +106,7 @@ Common::String Hpl1Engine::createSaveFile(const Common::String &internalName) {
 
 static Common::String findSaveFile(const SaveStateList &saves, const Common::String &internalName) {
 	for (auto &s : saves) {
-		if(s.getDescription() == internalName)
+		if (s.getDescription() == internalName)
 			return g_engine->getSaveStateName(s.getSaveSlot());
 	}
 	logWarning(kDebugSaves | kDebugFilePath, "save file for save %s does not exist", internalName.c_str());

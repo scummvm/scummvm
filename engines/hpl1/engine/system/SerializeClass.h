@@ -102,66 +102,66 @@ typedef unsigned int eSerializeMainType;
 /**
  * This inits a class and must be first in a serializable class
  */
-#define kSerializableClassInit(aClass)                            \
-public:                                                           \
-	const static char *msSerialize_Name;                        \
-	const static char *msSerialize_ParentName;                  \
+#define kSerializableClassInit(aClass)                      \
+public:                                                     \
+	const static char *msSerialize_Name;                    \
+	const static char *msSerialize_ParentName;              \
 	static cSerializeMemberField *mpSerialize_MemberFields; \
-	virtual ~aClass() = default; \
+	virtual ~aClass() = default;                            \
 	virtual tString Serialize_GetTopClass() { return #aClass; }
 
-#define kSerializableClassInit_nodestructor(aClass)                            \
-public:                                                           \
-        const static char *msSerialize_Name;                        \
-        const static char *msSerialize_ParentName;                  \
-        static cSerializeMemberField *mpSerialize_MemberFields; \
+#define kSerializableClassInit_nodestructor(aClass)         \
+public:                                                     \
+	const static char *msSerialize_Name;                    \
+	const static char *msSerialize_ParentName;              \
+	static cSerializeMemberField *mpSerialize_MemberFields; \
 	virtual tString Serialize_GetTopClass() { return #aClass; }
 
 /**
  * Declared in the cpp-file of the class to be serialized. Class must have parent!
  */
-#define kBeginSerialize(aClass, aParent)                                                                                                                    \
-	namespace SerializeNamespace_##aClass {                                                                                                                 \
-		extern cSerializeMemberField mvTempMemberFields[];                                                                                                  \
-	}                                                                                                                                                       \
-	const char *aClass::msSerialize_Name = #aClass;                                                                                                       \
-	const char *aClass::msSerialize_ParentName = #aParent;                                                                                                \
-	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                                        \
-	namespace SerializeNamespace_##aClass {                                                                                                                 \
-		typedef aClass tVarClass;                                                                                                                           \
+#define kBeginSerialize(aClass, aParent)                                                                       \
+	namespace SerializeNamespace_##aClass {                                                                    \
+		extern cSerializeMemberField mvTempMemberFields[];                                                     \
+	}                                                                                                          \
+	const char *aClass::msSerialize_Name = #aClass;                                                            \
+	const char *aClass::msSerialize_ParentName = #aParent;                                                     \
+	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields; \
+	namespace SerializeNamespace_##aClass {                                                                    \
+		typedef aClass tVarClass;                                                                              \
 		cSerializeMemberField mvTempMemberFields[] = {
 
-#define kBeginSerializeBase(aClass)                                                                                                                   \
-	namespace SerializeNamespace_##aClass {                                                                                                           \
-		extern cSerializeMemberField mvTempMemberFields[];                                                                                            \
-	}                                                                                                                                                 \
-	const char *aClass::msSerialize_Name = #aClass;                                                                                                 \
-	const char *aClass::msSerialize_ParentName = "";                                                                                                \
-	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                                  \
-	namespace SerializeNamespace_##aClass {                                                                                                           \
-		typedef aClass tVarClass;                                                                                                                     \
+#define kBeginSerializeBase(aClass)                                                                            \
+	namespace SerializeNamespace_##aClass {                                                                    \
+		extern cSerializeMemberField mvTempMemberFields[];                                                     \
+	}                                                                                                          \
+	const char *aClass::msSerialize_Name = #aClass;                                                            \
+	const char *aClass::msSerialize_ParentName = "";                                                           \
+	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields; \
+	namespace SerializeNamespace_##aClass {                                                                    \
+		typedef aClass tVarClass;                                                                              \
 		cSerializeMemberField mvTempMemberFields[] = {
 
-#define kBeginSerializeVirtual(aClass, aParent)                                                                                                 \
-	namespace SerializeNamespace_##aClass {                                                                                                     \
-		extern cSerializeMemberField mvTempMemberFields[];                                                                                      \
-	}                                                                                                                                           \
-	const char *aClass::msSerialize_Name = #aClass;                                                                                           \
-	const char *aClass::msSerialize_ParentName = #aParent;                                                                                    \
-	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                            \
-	namespace SerializeNamespace_##aClass {                                                                                                     \
-		typedef aClass tVarClass;                                                                                                               \
+#define kBeginSerializeVirtual(aClass, aParent)                                                                \
+	namespace SerializeNamespace_##aClass {                                                                    \
+		extern cSerializeMemberField mvTempMemberFields[];                                                     \
+	}                                                                                                          \
+	const char *aClass::msSerialize_Name = #aClass;                                                            \
+	const char *aClass::msSerialize_ParentName = #aParent;                                                     \
+	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields; \
+	namespace SerializeNamespace_##aClass {                                                                    \
+		typedef aClass tVarClass;                                                                              \
 		cSerializeMemberField mvTempMemberFields[] = {
 
-#define kBeginSerializeBaseVirtual(aClass)                                                                                                \
-	namespace SerializeNamespace_##aClass {                                                                                               \
-		extern cSerializeMemberField mvTempMemberFields[];                                                                                \
-	}                                                                                                                                     \
-	const char *aClass::msSerialize_Name = #aClass;                                                                                     \
-	const char *aClass::msSerialize_ParentName = "";                                                                                    \
-	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields;                      \
-	namespace SerializeNamespace_##aClass {                                                                                               \
-		typedef aClass tVarClass;                                                                                                         \
+#define kBeginSerializeBaseVirtual(aClass)                                                                     \
+	namespace SerializeNamespace_##aClass {                                                                    \
+		extern cSerializeMemberField mvTempMemberFields[];                                                     \
+	}                                                                                                          \
+	const char *aClass::msSerialize_Name = #aClass;                                                            \
+	const char *aClass::msSerialize_ParentName = "";                                                           \
+	cSerializeMemberField *aClass::mpSerialize_MemberFields = SerializeNamespace_##aClass::mvTempMemberFields; \
+	namespace SerializeNamespace_##aClass {                                                                    \
+		typedef aClass tVarClass;                                                                              \
 		cSerializeMemberField mvTempMemberFields[] = {
 
 /**
@@ -205,15 +205,15 @@ public:                                                           \
 class cSerializeMemberField {
 public:
 	constexpr cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
-						  eSerializeMainType aMainType) : msName(asName), msClassName(""), mlOffset(alOffset), mlSize(alSize), mType(alType), mMainType(aMainType), mlArraySize(0) {
+									eSerializeMainType aMainType) : msName(asName), msClassName(""), mlOffset(alOffset), mlSize(alSize), mType(alType), mMainType(aMainType), mlArraySize(0) {
 	}
 
 	constexpr cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
-						  eSerializeMainType aMainType, size_t alArraySize) : msName(asName), msClassName(""), mlOffset(alOffset), mlSize(alSize), mType(alType), mMainType(aMainType), mlArraySize(alArraySize) {
+									eSerializeMainType aMainType, size_t alArraySize) : msName(asName), msClassName(""), mlOffset(alOffset), mlSize(alSize), mType(alType), mMainType(aMainType), mlArraySize(alArraySize) {
 	}
 
 	constexpr cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
-						  eSerializeMainType aMainType, Hpl1::StaticString asClassName) : msName(asName), msClassName(asClassName), mlOffset(alOffset), mlSize(alSize), mType(alType), mMainType(aMainType), mlArraySize(0) {
+									eSerializeMainType aMainType, Hpl1::StaticString asClassName) : msName(asName), msClassName(asClassName), mlOffset(alOffset), mlSize(alSize), mType(alType), mMainType(aMainType), mlArraySize(0) {
 	}
 
 	Hpl1::StaticString msName;
@@ -248,17 +248,15 @@ struct cSerializeSavedClass {
 public:
 	constexpr cSerializeSavedClass() = default;
 	constexpr cSerializeSavedClass(const char *asName, const char *asParent,
-						 cSerializeMemberField *apMemberFields, size_t alSize,
-						 iSerializable *(*apCreateFunc)()) : msName(asName), msParentName(asParent), mpMemberFields(apMemberFields),
-						 mlSize(alSize), mpCreateFunc(apCreateFunc)
-	{}
+								   cSerializeMemberField *apMemberFields, size_t alSize,
+								   iSerializable *(*apCreateFunc)()) : msName(asName), msParentName(asParent), mpMemberFields(apMemberFields),
+																	   mlSize(alSize), mpCreateFunc(apCreateFunc) {}
 
 	const char *msName = "";
 	const char *msParentName = "";
 	cSerializeMemberField *mpMemberFields = nullptr;
 	size_t mlSize = 0;
 	iSerializable *(*mpCreateFunc)() = nullptr;
-
 };
 
 //-------------------------------------------------

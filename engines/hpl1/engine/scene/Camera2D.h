@@ -72,6 +72,6 @@ private:
 	cVector2l mvClipArea;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_CAMERA2D_H

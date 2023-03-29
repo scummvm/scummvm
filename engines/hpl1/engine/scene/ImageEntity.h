@@ -28,9 +28,9 @@
 #ifndef HPL_IMAGE_ENTITY_H
 #define HPL_IMAGE_ENTITY_H
 
+#include "common/array.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/scene/Entity2D.h"
-#include "common/array.h"
 
 class TiXmlElement;
 
@@ -135,6 +135,6 @@ private:
 typedef Common::Array<cImageEntity *> tImageEntityVec;
 typedef tImageEntityVec::iterator tImageEntityVecIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_IMAGE_ENTITY_H

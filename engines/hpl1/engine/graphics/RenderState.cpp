@@ -469,8 +469,8 @@ void iRenderState::SetMatrixMode(cRenderSettings *apSettings) {
 	if (apSettings->gpuProgram) {
 		// Might be quicker if this is set directly
 		apSettings->gpuProgram->SetMatrixf("worldViewProj",
-												eGpuProgramMatrix_ViewProjection,
-												eGpuProgramMatrixOp_Identity);
+										   eGpuProgramMatrix_ViewProjection,
+										   eGpuProgramMatrixOp_Identity);
 		if (apSettings->gpuProgramSetup) {
 			apSettings->gpuProgramSetup->SetupMatrix(mpModelMatrix, apSettings);
 		}
@@ -497,7 +497,7 @@ void iRenderState::SetMatrixMode(cRenderSettings *apSettings) {
 						Log("SpotLightViewProj ");
 					cLight3DSpot *pSpotLight = static_cast<cLight3DSpot *>(apSettings->mpLight);
 					apSettings->gpuProgram->SetMatrixf("spotViewProj",
-															cMath::MatrixMul(pSpotLight->GetViewProjMatrix(), *mpModelMatrix));
+													   cMath::MatrixMul(pSpotLight->GetViewProjMatrix(), *mpModelMatrix));
 				}
 			} else {
 				// Light position

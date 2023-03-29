@@ -42,6 +42,6 @@ public:
 private:
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_NODE_STATE_H

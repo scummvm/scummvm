@@ -35,8 +35,8 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Light3D.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/set.h"
 #include "hpl1/std/multiset.h"
+#include "hpl1/std/set.h"
 
 namespace hpl {
 
@@ -219,6 +219,6 @@ private:
 	cGraphics *mpGraphics;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RENDER_LIST_H

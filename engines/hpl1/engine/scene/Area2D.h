@@ -63,6 +63,6 @@ private:
 	cVector3f mvCustom;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_AREA2D_H

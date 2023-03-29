@@ -28,8 +28,8 @@
 #ifndef HPL_QUATERNION_H
 #define HPL_QUATERNION_H
 
-#include "hpl1/engine/math/hplMatrix.h"
 #include "hpl1/engine/math/Vector3.h"
+#include "hpl1/engine/math/hplMatrix.h"
 
 namespace hpl {
 
@@ -64,6 +64,6 @@ public:
 private:
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_QUATERNION_H

@@ -28,14 +28,14 @@
 #ifndef HPL_RENDERER2D_H
 #define HPL_RENDERER2D_H
 
+#include "common/list.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/graphics/Mesh2d.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Light2D.h"
-#include "common/list.h"
-#include "hpl1/std/set.h"
 #include "hpl1/std/multiset.h"
+#include "hpl1/std/set.h"
 
 namespace hpl {
 
@@ -140,6 +140,6 @@ private:
 	inline bool ClipPoints(cVector3f *avPoint, cRect2f aRect, cVector2f avPos, float afSize);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RENDERER2D_H

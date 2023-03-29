@@ -47,6 +47,6 @@ private:
 	int mlHandle;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_FRAMETEXTURE_H

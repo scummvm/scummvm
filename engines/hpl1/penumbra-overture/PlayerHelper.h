@@ -332,7 +332,7 @@ private:
 	float mfClosestDist;
 	iPhysicsBody *mpClosestBody;
 
-	//iTexture *mpTextureCache;
+	// iTexture *mpTextureCache;
 
 	cInit *mpInit;
 
@@ -421,8 +421,8 @@ private:
 
 	int mlAmount;
 
-	//cLight3DPoint *mpLight;
-	//cMeshEntity *mpMeshEntity;
+	// cLight3DPoint *mpLight;
+	// cMeshEntity *mpMeshEntity;
 
 	cInit *mpInit;
 	cGraphicsDrawer *mpDrawer;

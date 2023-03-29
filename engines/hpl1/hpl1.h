@@ -22,6 +22,7 @@
 #ifndef HPL1_HPL1_H
 #define HPL1_HPL1_H
 
+#include "common/bitarray.h"
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
@@ -33,7 +34,6 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
-#include "common/bitarray.h"
 
 #include "hpl1/detection.h"
 
@@ -47,7 +47,7 @@ class Hpl1Engine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	cInit* _gameInit;
+	cInit *_gameInit;
 
 protected:
 	// Engine APIs

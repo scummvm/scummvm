@@ -30,9 +30,9 @@
 
 #include "hpl1/engine/resources/ResourceBase.h"
 
+#include "common/array.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "common/array.h"
 
 namespace hpl {
 

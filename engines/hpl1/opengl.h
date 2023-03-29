@@ -22,10 +22,10 @@
 #ifndef HPL1_OPENGL_H
 #define HPL1_OPENGL_H
 
-#include "graphics/opengl/system_headers.h"
-#include "graphics/opengl/context.h"
 #include "common/ptr.h"
 #include "common/scummsys.h"
+#include "graphics/opengl/context.h"
+#include "graphics/opengl/system_headers.h"
 
 #ifdef USE_OPENGL
 
@@ -41,10 +41,15 @@ void checkOGLErrors(const char *function, const char *file, int line);
 
 Common::ScopedPtr<Graphics::Surface> createGLViewportScreenshot();
 
-}
+} // namespace Hpl1
 
-#define GL_CHECK(x) {x; ::Hpl1::checkOGLErrors(__func__, __FILE__, __LINE__);}
-#define GL_CHECK_FN() {::Hpl1::checkOGLErrors(__func__, __FILE__, __LINE__);}
+#define GL_CHECK(x)                                           \
+	{                                                         \
+		x;                                                    \
+		::Hpl1::checkOGLErrors(__func__, __FILE__, __LINE__); \
+	}
+#define GL_CHECK_FN() \
+	{ ::Hpl1::checkOGLErrors(__func__, __FILE__, __LINE__); }
 
 #endif // USE_OPENGL
 #endif // HPL1_OPENGL_H

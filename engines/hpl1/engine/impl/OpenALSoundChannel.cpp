@@ -26,9 +26,9 @@
  */
 
 #include "hpl1/engine/impl/OpenALSoundChannel.h"
+#include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
 #include "hpl1/engine/impl/OpenALSoundData.h"
 #include "hpl1/engine/resources/SoundManager.h"
-#include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
 
 #include "audio/mixer.h"
 #include "common/system.h"
@@ -97,7 +97,7 @@ void cOpenALSoundChannel::Play() {
 	Hpl1::logInfo(Hpl1::kDebugAudio, "playing sound channel from data %s\n", mpData->GetName().c_str());
 	if (!_lowLevelSound->playChannel(this)) {
 		Hpl1::logWarning(Hpl1::kDebugAudio, "sound channel from data %s could not be played\n",
-			mpData->GetName().c_str());
+						 mpData->GetName().c_str());
 	}
 	SetVolume(mfVolume);
 	if (mbLooping)
@@ -189,7 +189,7 @@ void cOpenALSoundChannel::SetPosition(const cVector3f &avPos) {
 //-----------------------------------------------------------------------
 
 void cOpenALSoundChannel::SetVelocity(const cVector3f &avVel) {
-  	mvVelocity = avVel;
+	mvVelocity = avVel;
 #if 0
 	OAL_Source_SetAttributes ( mlChannel, mvPosition.v, mvVelocity.v );
 #endif

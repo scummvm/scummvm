@@ -53,6 +53,6 @@ private:
 	cInput *mpInput;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_ACTIONMOUSEBUTTON_H

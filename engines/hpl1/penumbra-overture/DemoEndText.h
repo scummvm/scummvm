@@ -61,7 +61,7 @@ private:
 	cInit *mpInit;
 	cGraphicsDrawer *mpDrawer;
 
-	//FontData *mpFont;
+	// FontData *mpFont;
 
 	bool mbActive;
 

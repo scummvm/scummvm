@@ -80,6 +80,6 @@ protected:
 	cVector3f mvPin;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_JOINT_SCREW_H

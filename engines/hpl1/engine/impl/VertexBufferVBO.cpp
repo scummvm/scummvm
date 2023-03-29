@@ -32,7 +32,6 @@
 
 #ifdef USE_OPENGL
 
-
 namespace hpl {
 
 #define BUFFER_OFFSET(i) ((void *)(i * sizeof(float)))

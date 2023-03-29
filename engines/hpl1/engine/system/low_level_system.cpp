@@ -20,8 +20,8 @@
  */
 
 #include "hpl1/engine/impl/SqScript.h"
-#include "hpl1/engine/libraries/angelscript/add-ons/scriptstdstring.h"
 #include "hpl1/engine/libraries/angelscript/add-ons/scriptarray.h"
+#include "hpl1/engine/libraries/angelscript/add-ons/scriptstdstring.h"
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
 #include "hpl1/engine/system/String.h"
 
@@ -34,14 +34,14 @@ namespace hpl {
 
 static void scriptEngineLog(const asSMessageInfo *msg) {
 	switch (msg->type) {
-		case asMSGTYPE_ERROR:
-			Hpl1::logError(Hpl1::kDebugScripts, "%s (%d, %d) : %s\n", msg->section, msg->row, msg->col, msg->message);
-			break;
-		case asMSGTYPE_WARNING:
-			Hpl1::logWarning(Hpl1::kDebugScripts, "%s (%d, %d) : %s\n", msg->section, msg->row, msg->col, msg->message);
-			break;
-		case asMSGTYPE_INFORMATION:
-			Hpl1::logInfo(Hpl1::kDebugScripts, "%s (%d, %d) : %s\n", msg->section, msg->row, msg->col, msg->message);
+	case asMSGTYPE_ERROR:
+		Hpl1::logError(Hpl1::kDebugScripts, "%s (%d, %d) : %s\n", msg->section, msg->row, msg->col, msg->message);
+		break;
+	case asMSGTYPE_WARNING:
+		Hpl1::logWarning(Hpl1::kDebugScripts, "%s (%d, %d) : %s\n", msg->section, msg->row, msg->col, msg->message);
+		break;
+	case asMSGTYPE_INFORMATION:
+		Hpl1::logInfo(Hpl1::kDebugScripts, "%s (%d, %d) : %s\n", msg->section, msg->row, msg->col, msg->message);
 	}
 }
 

@@ -20,16 +20,16 @@
  */
 
 #include "hpl1/opengl.h"
-#include "hpl1/debug.h"
 #include "common/rect.h"
-#include "graphics/surface.h"
 #include "common/system.h"
+#include "graphics/surface.h"
+#include "hpl1/debug.h"
 
 #ifdef USE_OPENGL
 
 namespace Hpl1 {
 
-static const char* getErrorString(const GLenum code) {
+static const char *getErrorString(const GLenum code) {
 	switch (code) {
 	case GL_INVALID_ENUM:
 		return "GL_INVALID_ENUM";
@@ -43,10 +43,9 @@ static const char* getErrorString(const GLenum code) {
 
 void checkOGLErrors(const char *function, const char *file, int line) {
 	GLenum code;
-	while((code = glGetError()) != GL_NO_ERROR)
+	while ((code = glGetError()) != GL_NO_ERROR)
 		logError(kDebugOpenGL, "Opengl error: \'%s\' in function %s (%s:%d)\n", getErrorString(code), function, file, line);
 }
-
 
 static Common::Rect getGLViewport() {
 	int viewportSize[4];

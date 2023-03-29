@@ -28,12 +28,12 @@
 #ifndef HPL_MESH_LOADER_COLLADA_H
 #define HPL_MESH_LOADER_COLLADA_H
 
+#include "common/list.h"
 #include "hpl1/engine/graphics/VertexBuffer.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/physics/PhysicsJoint.h"
 #include "hpl1/engine/resources/MeshLoader.h"
 #include "hpl1/engine/system/MemoryManager.h"
-#include "common/list.h"
 
 class TiXmlElement;
 
@@ -553,6 +553,6 @@ private:
 	cVector3f GetVectorScaleFromPtr(float *apVec);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MESH_LOADER_COLLADA_H

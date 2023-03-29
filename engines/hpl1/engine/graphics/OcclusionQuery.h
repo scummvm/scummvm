@@ -54,6 +54,6 @@ public:
 	virtual unsigned int GetSampleCount() = 0;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_OCCLUSION_QUERY_H

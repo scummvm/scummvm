@@ -30,8 +30,8 @@
 #include "hpl1/engine/sound/LowLevelSound.h"
 #include "hpl1/engine/sound/Sound.h"
 #include "hpl1/engine/sound/SoundData.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/debug.h"
 

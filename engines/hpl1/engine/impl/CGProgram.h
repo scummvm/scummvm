@@ -28,10 +28,10 @@
 #ifndef HPL_CGPROGRAM_H
 #define HPL_CGPROGRAM_H
 
+#include "common/scummsys.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/scummsys.h"
 
 #ifdef USE_OPENGL
 
@@ -61,6 +61,7 @@ public:
 	bool SetMatrixf(const tString &asName, const cMatrixf &mMtx);
 	bool SetMatrixf(const tString &asName, eGpuProgramMatrix mType,
 					eGpuProgramMatrixOp mOp);
+
 private:
 	OpenGL::Shader *_shader;
 
@@ -69,7 +70,7 @@ private:
 	tString msEntry;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // USE_OPENGL
 #endif // HPL_CGPROGRAM_H

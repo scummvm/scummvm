@@ -28,8 +28,8 @@
 #ifndef HPL_LOWLEVELPHYSICS_NEWTON_H
 #define HPL_LOWLEVELPHYSICS_NEWTON_H
 
-#include "hpl1/engine/physics/LowLevelPhysics.h"
 #include "hpl1/engine/libraries/newton/Newton.h"
+#include "hpl1/engine/physics/LowLevelPhysics.h"
 
 namespace hpl {
 
@@ -41,6 +41,6 @@ public:
 	iPhysicsWorld *CreateWorld();
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LOWLEVELPHYSICS_NEWTON_H

@@ -73,6 +73,6 @@ private:
 	void GetTile();
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_TILEMAP_RECT_IT_H

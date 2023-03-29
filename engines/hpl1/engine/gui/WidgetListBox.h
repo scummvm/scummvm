@@ -95,6 +95,6 @@ protected:
 	cWidgetSlider *mpSlider;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_LIST_BOX_H

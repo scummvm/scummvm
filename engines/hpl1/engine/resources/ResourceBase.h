@@ -28,8 +28,8 @@
 #ifndef HPL_RESOURCEBASE_H
 #define HPL_RESOURCEBASE_H
 
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -90,6 +90,6 @@ protected:
 	bool mbLogDestruction;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RESOURCEBASE_H

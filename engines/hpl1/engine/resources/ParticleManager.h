@@ -81,6 +81,6 @@ private:
 	// tParticleSystemData3DMap m_mapData3D;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PARTICLE_SYSTEM_MANAGER_H

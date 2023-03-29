@@ -54,6 +54,6 @@ protected:
 
 //--------------------------------------
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_BASE_CLASSES_H

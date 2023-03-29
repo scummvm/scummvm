@@ -34,8 +34,8 @@
 #include "hpl1/engine/game/Updateable.h"
 #include "hpl1/engine/scene/Camera3D.h"
 
-#include "hpl1/engine/resources/MeshLoader.h"
 #include "common/list.h"
+#include "hpl1/engine/resources/MeshLoader.h"
 
 namespace hpl {
 
@@ -160,6 +160,6 @@ private:
 	tStringSet m_setLoadedMaps;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SCENE_H

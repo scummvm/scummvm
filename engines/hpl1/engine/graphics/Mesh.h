@@ -36,8 +36,8 @@
 #include "hpl1/engine/physics/CollideShape.h"
 #include "hpl1/engine/physics/PhysicsJoint.h"
 
-#include "hpl1/engine/scene/Light3D.h"
 #include "common/array.h"
+#include "hpl1/engine/scene/Light3D.h"
 #include "hpl1/std/map.h"
 #include "hpl1/std/multimap.h"
 
@@ -349,6 +349,6 @@ private:
 	tMeshReferenceVec mvReferences;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MESH_H

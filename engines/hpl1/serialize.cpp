@@ -24,7 +24,6 @@
 #include "hpl1/engine/engine.h"
 #include "hpl1/engine/system/SerializeClass.h"
 
-#include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/ButtonHandler.h"
 #include "hpl1/penumbra-overture/GameArea.h"
 #include "hpl1/penumbra-overture/GameDamageArea.h"
@@ -41,6 +40,7 @@
 #include "hpl1/penumbra-overture/GameScripts.h"
 #include "hpl1/penumbra-overture/GameStickArea.h"
 #include "hpl1/penumbra-overture/GameSwingDoor.h"
+#include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/MapHandler.h"
 #include "hpl1/penumbra-overture/Player.h"
 
@@ -166,4 +166,4 @@ void serializeInit() {
 	nSerializeTempClasses = 0;
 }
 
-} // namespace hpl
+} // namespace Hpl1

@@ -52,7 +52,7 @@ public:
 	 * \return
 	 */
 	FontData *CreateFontData(const tString &asName, int alSize = 16, unsigned short alFirstChar = 32,
-							  unsigned short alLastChar = 255);
+							 unsigned short alLastChar = 255);
 
 	void Destroy(iResourceBase *apResource);
 	void Unload(iResourceBase *apResource);
@@ -63,6 +63,6 @@ private:
 	cGui *mpGui;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_FONT_MANAGER_H

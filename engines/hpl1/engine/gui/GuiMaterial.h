@@ -48,6 +48,6 @@ protected:
 	iLowLevelGraphics *mpLowLevelGraphics;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GUI_MATERIAL_H

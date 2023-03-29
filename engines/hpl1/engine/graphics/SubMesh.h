@@ -129,6 +129,6 @@ private:
 	cMesh *mpParent;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SUB_MESH_H

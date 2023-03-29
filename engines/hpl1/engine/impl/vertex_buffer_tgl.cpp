@@ -23,8 +23,8 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
 
-#include "hpl1/debug.h"
 #include "graphics/tinygl/tinygl.h"
+#include "hpl1/debug.h"
 
 namespace hpl {
 
@@ -35,8 +35,8 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 VertexBufferTGL::VertexBufferTGL(iLowLevelGraphics *apLowLevelGraphics, tVertexFlag aFlags,
-								   eVertexBufferDrawType aDrawType, eVertexBufferUsageType aUsageType,
-								   int alReserveVtxSize, int alReserveIdxSize) : iVertexBuffer(apLowLevelGraphics, aFlags, aDrawType, aUsageType, alReserveVtxSize, alReserveIdxSize) {
+								 eVertexBufferDrawType aDrawType, eVertexBufferUsageType aUsageType,
+								 int alReserveVtxSize, int alReserveIdxSize) : iVertexBuffer(apLowLevelGraphics, aFlags, aDrawType, aUsageType, alReserveVtxSize, alReserveIdxSize) {
 	if (alReserveVtxSize > 0) {
 		for (int i = 0; i < klNumOfVertexFlags; i++) {
 			if (aFlags & kvVertexFlags[i]) {
@@ -213,34 +213,38 @@ void VertexBufferTGL::Transform(const cMatrixf &a_mtxTransform) {
 //-----------------------------------------------------------------------
 
 void VertexBufferTGL::Draw(eVertexBufferDrawType aDrawType) {
-  		eVertexBufferDrawType drawType = aDrawType == eVertexBufferDrawType_LastEnum ? mDrawType : aDrawType;
+	eVertexBufferDrawType drawType = aDrawType == eVertexBufferDrawType_LastEnum ? mDrawType : aDrawType;
 
-		///////////////////////////////
-		//Get the draw type
-		TGLenum mode = TGL_TRIANGLES;
-		if(drawType==eVertexBufferDrawType_Quad)		mode = TGL_QUADS;
-		else if(drawType==eVertexBufferDrawType_Lines)	mode = TGL_LINE_STRIP;
+	///////////////////////////////
+	// Get the draw type
+	TGLenum mode = TGL_TRIANGLES;
+	if (drawType == eVertexBufferDrawType_Quad)
+		mode = TGL_QUADS;
+	else if (drawType == eVertexBufferDrawType_Lines)
+		mode = TGL_LINE_STRIP;
 
+	int lSize = mlElementNum;
+	if (mlElementNum < 0)
+		lSize = GetIndexNum();
 
-		int lSize = mlElementNum;
-		if(mlElementNum<0) lSize = GetIndexNum();
-
-		tglDrawElements(mode,lSize,TGL_UNSIGNED_INT, &mvIndexArray[0]);
+	tglDrawElements(mode, lSize, TGL_UNSIGNED_INT, &mvIndexArray[0]);
 }
 
 void VertexBufferTGL::DrawIndices(unsigned int *apIndices, int alCount,
-								   eVertexBufferDrawType aDrawType) {
-  		eVertexBufferDrawType drawType = aDrawType == eVertexBufferDrawType_LastEnum ? mDrawType : aDrawType;
+								  eVertexBufferDrawType aDrawType) {
+	eVertexBufferDrawType drawType = aDrawType == eVertexBufferDrawType_LastEnum ? mDrawType : aDrawType;
 
-		///////////////////////////////
-		//Get the draw type
-		TGLenum mode = TGL_TRIANGLES;
-		if(drawType==eVertexBufferDrawType_Quad)		mode = TGL_QUADS;
-		else if(drawType==eVertexBufferDrawType_Lines)	mode = TGL_LINE_STRIP;
+	///////////////////////////////
+	// Get the draw type
+	TGLenum mode = TGL_TRIANGLES;
+	if (drawType == eVertexBufferDrawType_Quad)
+		mode = TGL_QUADS;
+	else if (drawType == eVertexBufferDrawType_Lines)
+		mode = TGL_LINE_STRIP;
 
-		//////////////////////////////////
-		//Bind and draw the buffer
-		tglDrawElements(mode, alCount, TGL_UNSIGNED_INT, apIndices);
+	//////////////////////////////////
+	// Bind and draw the buffer
+	tglDrawElements(mode, alCount, TGL_UNSIGNED_INT, apIndices);
 }
 
 //-----------------------------------------------------------------------
@@ -258,8 +262,8 @@ void VertexBufferTGL::UnBind() {
 
 iVertexBuffer *VertexBufferTGL::CreateCopy(eVertexBufferUsageType aUsageType) {
 	VertexBufferTGL *pVtxBuff = hplNew(VertexBufferTGL, (mpLowLevelGraphics,
-														   mVertexFlags, mDrawType, aUsageType,
-														   GetVertexNum(), GetIndexNum()));
+														 mVertexFlags, mDrawType, aUsageType,
+														 GetVertexNum(), GetIndexNum()));
 
 	// Copy the vertices to the new buffer.
 	for (int i = 0; i < klNumOfVertexFlags; i++) {
@@ -388,50 +392,40 @@ unsigned int VertexBufferTGL::GetIndex(tVertexFlag aType, unsigned alIdx) {
 //-----------------------------------------------------------------------
 
 void VertexBufferTGL::SetVertexStates(tVertexFlag aFlags) {
-  		/// POSITION /////////////////////////
-		if(aFlags & eVertexFlag_Position){
-			tglEnableClientState(TGL_VERTEX_ARRAY);
-			int idx = cMath::Log2ToInt(eVertexFlag_Position);
-			tglVertexPointer(kvVertexElements[idx],TGL_FLOAT, sizeof(float)*kvVertexElements[idx], &mvVertexArray[idx][0]);
-		}
-		else
-		{
-			tglDisableClientState(TGL_VERTEX_ARRAY);
-		}
+	/// POSITION /////////////////////////
+	if (aFlags & eVertexFlag_Position) {
+		tglEnableClientState(TGL_VERTEX_ARRAY);
+		int idx = cMath::Log2ToInt(eVertexFlag_Position);
+		tglVertexPointer(kvVertexElements[idx], TGL_FLOAT, sizeof(float) * kvVertexElements[idx], &mvVertexArray[idx][0]);
+	} else {
+		tglDisableClientState(TGL_VERTEX_ARRAY);
+	}
 
-		/// COLOR 0 /////////////////////////
-		if(aFlags & eVertexFlag_Color0)
-		{
-			tglEnableClientState(TGL_COLOR_ARRAY);
-			int idx = cMath::Log2ToInt(eVertexFlag_Color0);
-			tglColorPointer(kvVertexElements[idx],TGL_FLOAT, sizeof(float)*kvVertexElements[idx], &mvVertexArray[idx][0]);
-		}
-		else
-		{
-			tglDisableClientState(TGL_COLOR_ARRAY);
-		}
+	/// COLOR 0 /////////////////////////
+	if (aFlags & eVertexFlag_Color0) {
+		tglEnableClientState(TGL_COLOR_ARRAY);
+		int idx = cMath::Log2ToInt(eVertexFlag_Color0);
+		tglColorPointer(kvVertexElements[idx], TGL_FLOAT, sizeof(float) * kvVertexElements[idx], &mvVertexArray[idx][0]);
+	} else {
+		tglDisableClientState(TGL_COLOR_ARRAY);
+	}
 
-		/// NORMAL /////////////////////////
-		if(aFlags & eVertexFlag_Normal)
-		{
-			tglEnableClientState(TGL_NORMAL_ARRAY);
-			tglNormalPointer(TGL_FLOAT, sizeof(float)*3, &mvVertexArray[cMath::Log2ToInt(eVertexFlag_Normal)][0]);
-		}
-		else
-		{
-			tglDisableClientState(TGL_NORMAL_ARRAY);
-		}
+	/// NORMAL /////////////////////////
+	if (aFlags & eVertexFlag_Normal) {
+		tglEnableClientState(TGL_NORMAL_ARRAY);
+		tglNormalPointer(TGL_FLOAT, sizeof(float) * 3, &mvVertexArray[cMath::Log2ToInt(eVertexFlag_Normal)][0]);
+	} else {
+		tglDisableClientState(TGL_NORMAL_ARRAY);
+	}
 
-		/// TEXTURE 0 /////////////////////////
-		if(aFlags & eVertexFlag_Texture0)
-		{
-			tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
-			int idx =  cMath::Log2ToInt(eVertexFlag_Texture0);
-			tglTexCoordPointer(kvVertexElements[idx],TGL_FLOAT,sizeof(float)*kvVertexElements[idx],&mvVertexArray[idx][0]);
-		}
-		else {
-			tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
-		}
+	/// TEXTURE 0 /////////////////////////
+	if (aFlags & eVertexFlag_Texture0) {
+		tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
+		int idx = cMath::Log2ToInt(eVertexFlag_Texture0);
+		tglTexCoordPointer(kvVertexElements[idx], TGL_FLOAT, sizeof(float) * kvVertexElements[idx], &mvVertexArray[idx][0]);
+	} else {
+		tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
+	}
 #if 0
 		/// TEXTURE 1 /////////////////////////
 		if(aFlags & eVertexFlag_Texture1){

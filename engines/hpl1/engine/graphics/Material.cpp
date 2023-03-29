@@ -33,8 +33,8 @@
 #include "hpl1/engine/resources/ImageManager.h"
 #include "hpl1/engine/resources/TextureManager.h"
 #include "hpl1/engine/scene/Camera.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

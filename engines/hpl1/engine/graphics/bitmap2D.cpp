@@ -20,14 +20,14 @@
  */
 
 #include "hpl1/engine/graphics/bitmap2D.h"
-#include "hpl1/debug.h"
+#include "common/file.h"
 #include "common/rect.h"
-#include "image/png.h"
-#include "image/jpeg.h"
-#include "image/tga.h"
+#include "hpl1/debug.h"
 #include "image/bmp.h"
 #include "image/gif.h"
-#include "common/file.h"
+#include "image/jpeg.h"
+#include "image/png.h"
+#include "image/tga.h"
 
 namespace hpl {
 
@@ -70,17 +70,16 @@ Bitmap2D::Bitmap2D(const tString &filepath, const tString &type, const Graphics:
 }
 
 Bitmap2D::Bitmap2D(const cVector2l &size, const Graphics::PixelFormat &format)
-: LowLevelPicture("none"), _isSurfaceActive(true) {
+	: LowLevelPicture("none"), _isSurfaceActive(true) {
 	create(size, format);
 }
-
 
 void Bitmap2D::drawToBitmap(Bitmap2D &dest, const cVector2l &at, Common::Rect srcSubrect) {
 	if (!dest._isSurfaceActive)
 		dest.copyDecoder();
 	if (dest._surface.w == 0 || dest._surface.h == 0 || activeSurface().w == 0 || activeSurface().h == 0)
 		return; // font loading can use bitmaps with 0 width
-	if(srcSubrect.right == 0 && srcSubrect.bottom == 0)
+	if (srcSubrect.right == 0 && srcSubrect.bottom == 0)
 		srcSubrect = Common::Rect(activeSurface().w, activeSurface().h);
 
 	if (activeSurface().format != dest._surface.format)
@@ -109,7 +108,7 @@ static uint32 quantizeColor(const cColor &col, const Graphics::PixelFormat &form
 }
 
 void Bitmap2D::fillRect(const cRect2l &rect, const cColor &color) {
-	if(!_isSurfaceActive)
+	if (!_isSurfaceActive)
 		copyDecoder();
 
 	const uint32 qcol = quantizeColor(color, _surface.format);
@@ -117,8 +116,7 @@ void Bitmap2D::fillRect(const cRect2l &rect, const cColor &color) {
 		rect.x,
 		rect.y,
 		rect.w <= 0 ? rect.x + _surface.w : rect.x + rect.w,
-		rect.h <= 0 ? rect.y + _surface.w : rect.y + rect.h
-	);
+		rect.h <= 0 ? rect.y + _surface.w : rect.y + rect.h);
 	_surface.fillRect(surfaceRect, qcol);
 }
 
@@ -162,7 +160,7 @@ void Bitmap2D::copyRedToAlpha() {
 }
 
 void Bitmap2D::copyDecoder(const Graphics::PixelFormat &format) {
-	_surface.copyFrom(*( _decoder->getSurface()));
+	_surface.copyFrom(*(_decoder->getSurface()));
 	if (format.bytesPerPixel != 0)
 		_surface.convertToInPlace(format);
 	_isSurfaceActive = true;
@@ -170,15 +168,14 @@ void Bitmap2D::copyDecoder(const Graphics::PixelFormat &format) {
 }
 
 const Graphics::Surface &Bitmap2D::activeSurface() const {
-	if(_isSurfaceActive)
+	if (_isSurfaceActive)
 		return _surface;
 	return *(_decoder->getSurface());
 }
 
 Bitmap2D::~Bitmap2D() {
-	if(_isSurfaceActive)
+	if (_isSurfaceActive)
 		_surface.free();
 }
-
 
 } // namespace hpl

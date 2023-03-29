@@ -90,6 +90,6 @@ protected:
 	static bool mbUseFastMaterial;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MESH_LOADER_H

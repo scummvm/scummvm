@@ -53,7 +53,7 @@ cActionKeyboard::cActionKeyboard(tString asName, cInput *apInput, int aKey) : iA
 //-----------------------------------------------------------------------
 
 bool cActionKeyboard::IsTriggerd() {
-  	return mpInput->GetKeyboard()->KeyIsDown(mKey) &&
+	return mpInput->GetKeyboard()->KeyIsDown(mKey) &&
 		   ((mpInput->GetKeyboard()->GetModifier() & mMod) > 0 || mMod == eKeyModifier_NONE);
 }
 //-----------------------------------------------------------------------

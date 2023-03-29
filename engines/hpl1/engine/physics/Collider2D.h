@@ -84,6 +84,6 @@ private:
 						   float &afMin, float &afMax);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_COLLIDER2D_H

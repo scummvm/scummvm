@@ -25,10 +25,10 @@
  * This file is part of HPL1 Engine.
  */
 
-#include "hpl1/engine/libraries/angelscript/add-ons/scripthelper.h"
 #include "hpl1/engine/impl/SqScript.h"
 #include "common/file.h"
 #include "hpl1/debug.h"
+#include "hpl1/engine/libraries/angelscript/add-ons/scripthelper.h"
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/String.h"

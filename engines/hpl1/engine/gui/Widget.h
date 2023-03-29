@@ -28,10 +28,10 @@
 #ifndef HPL_WIDGET_H
 #define HPL_WIDGET_H
 
+#include "common/array.h"
+#include "common/list.h"
 #include "hpl1/engine/gui/GuiTypes.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include "common/list.h"
-#include "common/array.h"
 
 namespace hpl {
 
@@ -238,6 +238,6 @@ private:
 	bool mbPositionIsUpdated;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_H

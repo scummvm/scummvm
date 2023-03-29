@@ -28,11 +28,11 @@
 #ifndef HPL_GUI_SET_H
 #define HPL_GUI_SET_H
 
+#include "common/list.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/gui/GuiTypes.h"
-#include "common/list.h"
-#include "hpl1/std/set.h"
 #include "hpl1/std/multiset.h"
+#include "hpl1/std/set.h"
 
 namespace hpl {
 
@@ -333,6 +333,6 @@ private:
 	bool mbDestroyingSet;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GUI_SET_H

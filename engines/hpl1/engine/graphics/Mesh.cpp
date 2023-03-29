@@ -367,7 +367,7 @@ void cMesh::CreateNodeBodies(iPhysicsBody **apRootBodyPtr, Common::Array<iPhysic
 			iCollideShape *pShape = CreateCollideShapeFromCollider(pColl, apPhysicsWorld);
 			vShapes.push_back(pShape);
 
-			/*cMatrixf mtxOffset = */pShape->GetOffset();
+			/*cMatrixf mtxOffset = */ pShape->GetOffset();
 			// Log("Created shape size: %s at %s. Mtx: %s\n",pShape->GetSize().ToString().c_str(),
 			//					pShape->GetOffset().GetTranslation().ToString().c_str(),
 			//					mtxOffset.ToString().c_str());

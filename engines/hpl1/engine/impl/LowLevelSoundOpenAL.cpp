@@ -29,9 +29,9 @@
 #include "hpl1/engine/impl/OpenALSoundChannel.h"
 #include "hpl1/engine/impl/OpenALSoundData.h"
 #include "hpl1/engine/impl/OpenALSoundEnvironment.h"
+#include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/String.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include "hpl1/engine/math/Math.h"
 
 #include "audio/mixer.h"
 #include "common/system.h"
@@ -45,8 +45,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cLowLevelSoundOpenAL::cLowLevelSoundOpenAL() :
-	_activeChannels(MAX_ACTIVE_CHANNELS, nullptr) {
+cLowLevelSoundOpenAL::cLowLevelSoundOpenAL() : _activeChannels(MAX_ACTIVE_CHANNELS, nullptr) {
 	mvFormats[0] = "OGG";
 	mvFormats[1] = "WAV";
 	mvFormats[2] = "";
@@ -188,7 +187,7 @@ void cLowLevelSoundOpenAL::FadeSoundEnvironment(iSoundEnvironment *apSourceSound
 
 static cOpenALSoundChannel **findBestSlot(Common::Array<cOpenALSoundChannel *> &slots, int priority) {
 	cOpenALSoundChannel **best = slots.end();
-	for(auto it = slots.begin(); it != slots.end(); ++it) {
+	for (auto it = slots.begin(); it != slots.end(); ++it) {
 		if (*it == nullptr || !(*it)->IsPlaying())
 			return it;
 		if ((*it)->GetPriority() < priority)
@@ -203,7 +202,7 @@ bool cLowLevelSoundOpenAL::playChannel(cOpenALSoundChannel *channel) {
 		if (*slot != nullptr) {
 			if ((*slot)->IsPlaying()) {
 				Hpl1::logInfo(Hpl1::kDebugAudio, "evicting sound from data %s from mixer slot\n",
-					(*slot)->mpData->GetName().c_str());
+							  (*slot)->mpData->GetName().c_str());
 			}
 			(*slot)->Stop();
 		}

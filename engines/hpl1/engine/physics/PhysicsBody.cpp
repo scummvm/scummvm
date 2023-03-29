@@ -44,8 +44,8 @@
 
 #include "hpl1/engine/scene/Node3D.h"
 
-#include "hpl1/engine/math/Math.h"
 #include "common/algorithm.h"
+#include "hpl1/engine/math/Math.h"
 
 namespace hpl {
 

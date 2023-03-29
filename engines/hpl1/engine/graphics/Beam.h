@@ -167,6 +167,6 @@ private:
 	cColor mColor;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_BEAM_H

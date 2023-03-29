@@ -111,6 +111,6 @@ protected:
 	int mlPriority;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SOUND_DATA_H

@@ -68,6 +68,6 @@ private:
 
 //-----------------------------------------------------------------------
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_COLLIDER_ENTITY_H

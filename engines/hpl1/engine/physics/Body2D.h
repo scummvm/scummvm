@@ -30,9 +30,9 @@
 
 #include "hpl1/engine/math/MathTypes.h"
 
+#include "common/list.h"
 #include "hpl1/engine/scene/Entity2D.h"
 #include "hpl1/std/map.h"
-#include "common/list.h"
 
 namespace hpl {
 
@@ -181,6 +181,6 @@ private:
 	void AddPosXY(cVector2f avPosAdd);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_BODY_H

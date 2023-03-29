@@ -177,7 +177,7 @@ private:
 	cGfxObject *mpGfxObjectAdditive;
 	cGraphicsDrawer *mpDrawer;
 
-	//cInventoryItem *mpItem;
+	// cInventoryItem *mpItem;
 
 	bool mbCanBeDropped;
 	bool mbHasCount;

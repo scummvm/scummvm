@@ -28,10 +28,10 @@
 #ifndef HPL_A_STAR_H
 #define HPL_A_STAR_H
 
+#include "common/list.h"
 #include "hpl1/engine/game/GameTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/list.h"
 
 namespace hpl {
 
@@ -123,6 +123,6 @@ private:
 	tAStarNodeSet m_setClosedList;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_A_STAR_H

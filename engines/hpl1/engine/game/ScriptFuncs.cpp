@@ -58,10 +58,10 @@
 #include "hpl1/engine/sound/SoundData.h"
 #include "hpl1/engine/sound/SoundEntityData.h"
 #include "hpl1/engine/sound/SoundHandler.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/Script.h"
 #include "hpl1/engine/system/String.h"
 #include "hpl1/engine/system/System.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -394,7 +394,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetParticleSystemActive, string, bool)
  * \param X Y and Z the variables of the particle system.
  **/
 static void CreateParticleSystem(tString asName, tString asType, tString asArea,
-										   float afX, float afY, float afZ) {
+								 float afX, float afY, float afZ) {
 	cAreaEntity *pArea = gpScene->GetWorld3D()->GetAreaEntity(asArea);
 	if (pArea == NULL) {
 		Warning("Couldn't find area '%s'\n", asArea.c_str());
@@ -456,7 +456,7 @@ SCRIPT_DEFINE_FUNC_1(void, KillParticleSystem, string)
  * \param asEndArea
  */
 static void CreateBeam(tString asName, tString asFile,
-								 tString asStartArea, tString asEndArea) {
+					   tString asStartArea, tString asEndArea) {
 	cAreaEntity *pStartArea = gpScene->GetWorld3D()->GetAreaEntity(asStartArea);
 	if (pStartArea == NULL) {
 		Warning("Couldn't find area '%s'\n", asStartArea.c_str());
@@ -518,7 +518,7 @@ SCRIPT_DEFINE_FUNC_1(void, DestroyBeam, string)
  * \param afTime The amount of seconds the fade should last.
  **/
 static void FadeLight3D(tString asName, float afR, float afG, float afB, float afA,
-								  float afRadius, float afTime) {
+						float afRadius, float afTime) {
 	iLight3D *pLight = gpScene->GetWorld3D()->GetLight(asName);
 	if (pLight == NULL) {
 		Warning("Couldn't find light '%s'\n", asName.c_str());
@@ -633,17 +633,17 @@ SCRIPT_DEFINE_FUNC_2(void, SetLight3DFlickerActive, string, bool)
  * \param afOffFadeLength Fade length from on to off.
  **/
 static void SetLight3DFlicker(tString asName,
-										float afR, float afG, float afB, float afA,
-										float afRadius,
+							  float afR, float afG, float afB, float afA,
+							  float afRadius,
 
-										float afOnMinLength, float afOnMaxLength,
-										tString asOnSound, tString asOnPS,
+							  float afOnMinLength, float afOnMaxLength,
+							  tString asOnSound, tString asOnPS,
 
-										float afOffMinLength, float afOffMaxLength,
-										tString asOffSound, tString asOffPS,
+							  float afOffMinLength, float afOffMaxLength,
+							  tString asOffSound, tString asOffPS,
 
-										bool abFade,
-										float afOnFadeLength, float afOffFadeLength) {
+							  bool abFade,
+							  float afOnFadeLength, float afOffFadeLength) {
 	iLight3D *pLight = gpScene->GetWorld3D()->GetLight(asName);
 	if (pLight == NULL) {
 		Warning("Couldn't find light '%s'\n", asName.c_str());
@@ -674,7 +674,7 @@ SCRIPT_DEFINE_FUNC_17(void, SetLight3DFlicker, string,
  * \param asArea The area to create at.
  */
 static void CreateSoundEntity(tString asName, tString asFile,
-										tString asArea) {
+							  tString asArea) {
 	cAreaEntity *pArea = gpScene->GetWorld3D()->GetAreaEntity(asArea);
 	if (pArea == NULL) {
 		Warning("Couldn't find area '%s'\n", asArea.c_str());
@@ -798,7 +798,7 @@ SCRIPT_DEFINE_FUNC_2(void, PlayGuiSound, string, float)
  * \param asFunc The script function to be called. Must be in the current script file. "" = disabled.
  **/
 static void SetJointCallback(tString asJointName, tString asType,
-									   tString asFunc) {
+							 tString asFunc) {
 	iPhysicsJoint *pJoint = gpScene->GetWorld3D()->GetPhysicsWorld()->GetJoint(asJointName);
 	if (pJoint == NULL) {
 		Warning("Couldn't find joint '%s'\n", asJointName.c_str());
@@ -903,7 +903,7 @@ SCRIPT_DEFINE_FUNC_2(void, ChangeJointController, string, string)
  * \param afValue Value to set it to.
  **/
 static void SetJointControllerPropertyFloat(tString asJointName, tString asCtrlName,
-													  tString asProperty, float afValue) {
+											tString asProperty, float afValue) {
 	iPhysicsJoint *pJoint = gpScene->GetWorld3D()->GetPhysicsWorld()->GetJoint(asJointName);
 	if (pJoint == NULL) {
 		Warning("Couldn't find joint '%s'\n", asJointName.c_str());
@@ -1197,7 +1197,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetJointProperty, string, string, float)
  * \param afZ force in the z direction. (in newton, kg*m/s^2)
  **/
 static void AddBodyForce(tString asBodyName, tString asCoordType,
-								   float afX, float afY, float afZ) {
+						 float afX, float afY, float afZ) {
 	iPhysicsBody *pBody = gpScene->GetWorld3D()->GetPhysicsWorld()->GetBody(asBodyName);
 	if (pBody == NULL) {
 		Warning("Couldn't find Body '%s'\n", asBodyName.c_str());
@@ -1238,7 +1238,7 @@ SCRIPT_DEFINE_FUNC_5(void, AddBodyForce, string, string, float, float, float)
  * \param afZ velocity in the z direction. (in m/s)
  **/
 static void AddBodyImpulse(tString asBodyName, tString asCoordType,
-									 float afX, float afY, float afZ) {
+						   float afX, float afY, float afZ) {
 	iPhysicsBody *pBody = gpScene->GetWorld3D()->GetPhysicsWorld()->GetBody(asBodyName);
 	if (pBody == NULL) {
 		Warning("Couldn't find Body '%s'\n", asBodyName.c_str());

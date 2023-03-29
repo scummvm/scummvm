@@ -28,9 +28,9 @@
 #ifndef HPL_SOUNDSOURCE_H
 #define HPL_SOUNDSOURCE_H
 
+#include "common/list.h"
 #include "hpl1/engine/scene/Entity2D.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/list.h"
 
 class TiXmlElement;
 
@@ -91,6 +91,6 @@ private:
 typedef Common::List<cSoundSource *> tSoundSourceList;
 typedef tSoundSourceList::iterator tSoundSourceListIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SOUNDSOURCE_H

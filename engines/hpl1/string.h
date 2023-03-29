@@ -30,6 +30,6 @@ int stoi(const Common::String &str, int resultWhenEmpty = 0);
 
 Common::String fileDir(const Common::String &path);
 
-}
+} // namespace Hpl1
 
 #endif

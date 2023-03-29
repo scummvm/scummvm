@@ -22,8 +22,8 @@
 #ifndef HPL_OCCLUSION_QUERY_TGL_H
 #define HPL_OCCLUSION_QUERY_TGL_H
 
-#include "hpl1/engine/graphics/OcclusionQuery.h"
 #include "common/scummsys.h"
+#include "hpl1/engine/graphics/OcclusionQuery.h"
 
 #ifdef USE_TINYGL
 
@@ -36,11 +36,11 @@ public:
 
 	void Begin() override {}
 	void End() override {}
-	bool FetchResults() override {return true;}
-	unsigned int GetSampleCount() override {return 0;}
+	bool FetchResults() override { return true; }
+	unsigned int GetSampleCount() override { return 0; }
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // USE_TINYGL
 

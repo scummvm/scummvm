@@ -91,6 +91,6 @@ private:
 	LowLevelSystem *mpLowLevelSystem;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LOGICTIMER_H

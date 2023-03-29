@@ -53,6 +53,6 @@ private:
 	cAINodeGenerator *mpAINodeGenerator;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_AI_H

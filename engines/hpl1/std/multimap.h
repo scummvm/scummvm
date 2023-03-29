@@ -22,16 +22,17 @@
 #ifndef HPL1_STD_MULTIMAP_H
 #define HPL1_STD_MULTIMAP_H
 
-#include "hpl1/std/tree.h"
 #include "hpl1/std/pair.h"
+#include "hpl1/std/tree.h"
 
 namespace Hpl1 {
 
 namespace Std {
 
-template<class Key, class Val, class CompFunc = Common::Less<Key>>
+template<class Key, class Val, class CompFunc = Common::Less<Key> >
 class multimap {
 	using TreeT = Tree<pair<Key, Val>, Key, PairKey<Key, Val>, CompFunc>;
+
 public:
 	using value_type = pair<Key, Val>;
 	using iterator = typename TreeT::BasicIterator;

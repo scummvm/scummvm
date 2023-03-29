@@ -123,7 +123,7 @@ cGameSwingDoor::cGameSwingDoor(cInit *apInit, const tString &asName) : iGameEnti
 //-----------------------------------------------------------------------
 
 cGameSwingDoor::~cGameSwingDoor(void) {
-	/*iPhysicsWorld *pPhysicsWorld = */mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
+	/*iPhysicsWorld *pPhysicsWorld = */ mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
 
 	// for(size_t i=0; i<mvStopControllers.size(); ++i)
 	//{
@@ -305,13 +305,13 @@ void cGameSwingDoor::BreakAction() {
 		mpInit->mpPlayer->ChangeState(ePlayerState_Normal);
 	}
 
-	/*cBoundingVolume *pBV = */mpMeshEntity->GetBoundingVolume();
+	/*cBoundingVolume *pBV = */ mpMeshEntity->GetBoundingVolume();
 
 	//////////////////
 	// Particle System
 	if (msBreakPS != "") {
-		/*cParticleSystem3D *pPS = */pWorld->CreateParticleSystem("Break", msBreakPS, cVector3f(1, 1, 1),
-															  pDynBody->GetWorldMatrix());
+		/*cParticleSystem3D *pPS = */ pWorld->CreateParticleSystem("Break", msBreakPS, cVector3f(1, 1, 1),
+																   pDynBody->GetWorldMatrix());
 	}
 
 	//////////////////

@@ -48,10 +48,10 @@
 #include "hpl1/engine/scene/Node2D.h"
 #include "hpl1/engine/scene/SoundSource.h"
 #include "hpl1/engine/scene/TileMap.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/MemoryManager.h"
 #include "hpl1/engine/system/Script.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/graphics/Renderer2D.h"
 

@@ -61,6 +61,6 @@ private:
 	cGraphics *mpGraphics;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIALHANDLER_H

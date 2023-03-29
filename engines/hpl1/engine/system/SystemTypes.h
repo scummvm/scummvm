@@ -28,11 +28,11 @@
 #ifndef HPL_SYSTEM_TYPES_H
 #define HPL_SYSTEM_TYPES_H
 
-#include "hpl1/engine/system/Container.h"
+#include "common/array.h"
 #include "common/list.h"
 #include "common/str.h"
-#include "common/array.h"
 #include "hpl1/algorithms.h"
+#include "hpl1/engine/system/Container.h"
 #include "hpl1/std/set.h"
 
 namespace hpl {
@@ -517,6 +517,6 @@ private:
 	CONT *mpCont;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SYSTEM_TYPES_H

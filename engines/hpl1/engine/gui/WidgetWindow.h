@@ -28,10 +28,9 @@
 #ifndef HPL_WIDGET_WINDOW_H
 #define HPL_WIDGET_WINDOW_H
 
-#include "hpl1/engine/gui/Widget.h"
-#include "common/list.h"
 #include "common/array.h"
-
+#include "common/list.h"
+#include "hpl1/engine/gui/Widget.h"
 
 namespace hpl {
 
@@ -76,6 +75,6 @@ protected:
 	bool mbMoving;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_H

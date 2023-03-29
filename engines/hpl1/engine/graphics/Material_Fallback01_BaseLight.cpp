@@ -26,18 +26,18 @@
  */
 
 #include "hpl1/engine/graphics/Material_Fallback01_BaseLight.h"
-#include "hpl1/engine/graphics/Renderer3D.h"
+#include "common/algorithm.h"
 #include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/Renderer2D.h"
+#include "hpl1/engine/graphics/Renderer3D.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/resources/GpuProgramManager.h"
 #include "hpl1/engine/resources/TextureManager.h"
 #include "hpl1/engine/scene/Camera.h"
 #include "hpl1/engine/scene/Light.h"
 #include "hpl1/engine/scene/Light3DSpot.h"
-#include "hpl1/engine/system/String.h"
 #include "hpl1/engine/scene/PortalContainer.h"
-#include "common/algorithm.h"
+#include "hpl1/engine/system/String.h"
 
 //#include <GL/GLee.h>
 

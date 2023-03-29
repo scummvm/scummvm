@@ -23,16 +23,16 @@
 
 #include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/graphics/font_data.h"
+#include "hpl1/engine/impl/occlusion_query_tgl.h"
+#include "hpl1/engine/impl/texture_tgl.h"
 #include "hpl1/engine/impl/vertex_buffer_tgl.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include "hpl1/engine/impl/texture_tgl.h"
-#include "hpl1/engine/impl/occlusion_query_tgl.h"
 
 #include "common/algorithm.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "hpl1/debug.h"
 #include "graphics/tinygl/tinygl.h"
+#include "hpl1/debug.h"
 #include "hpl1/graphics.h"
 
 namespace hpl {
@@ -347,7 +347,7 @@ LowLevelGraphicsTGL::~LowLevelGraphicsTGL() {
 }
 
 bool LowLevelGraphicsTGL::Init(int alWidth, int alHeight, int alBpp, int abFullscreen,
-								int alMultisampling, const tString &asWindowCaption) {
+							   int alMultisampling, const tString &asWindowCaption) {
 	mvScreenSize.x = alWidth;
 	mvScreenSize.y = alHeight;
 	mlBpp = alBpp;
@@ -420,8 +420,8 @@ void LowLevelGraphicsTGL::SetupGL() {
 	tglEnableClientState(TGL_TEXTURE_COORD_ARRAY); // Tex coords
 	tglDisableClientState(TGL_NORMAL_ARRAY);
 	// Disable the once not used.
-	//tglDisableClientState(TGL_INDEX_ARRAY); // color index
-	//tglDisableClientState(TGL_EDGE_FLAG_ARRAY);
+	// tglDisableClientState(TGL_INDEX_ARRAY); // color index
+	// tglDisableClientState(TGL_EDGE_FLAG_ARRAY);
 
 	///// END BATCH ARRAY STUFF ///////////////
 
@@ -564,7 +564,7 @@ iTexture *LowLevelGraphicsTGL::CreateTexture(const tString &asName, bool abUseMi
 //-----------------------------------------------------------------------
 
 iTexture *LowLevelGraphicsTGL::CreateTexture(Bitmap2D *apBmp, bool abUseMipMaps, eTextureType aType,
-											  eTextureTarget aTarget) {
+											 eTextureTarget aTarget) {
 	if (aTarget != eTextureTarget_2D)
 		return nullptr;
 	TGLTexture *pTex = hplNew(TGLTexture, ("", &mpPixelFormat, this, aType, abUseMipMaps, aTarget));
@@ -575,7 +575,7 @@ iTexture *LowLevelGraphicsTGL::CreateTexture(Bitmap2D *apBmp, bool abUseMipMaps,
 //-----------------------------------------------------------------------
 
 iTexture *LowLevelGraphicsTGL::CreateTexture(const cVector2l &avSize, int alBpp, cColor aFillCol,
-											  bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget) {
+											 bool abUseMipMaps, eTextureType aType, eTextureTarget aTarget) {
 	if (aTarget != eTextureTarget_2D)
 		return nullptr;
 
@@ -706,7 +706,7 @@ void LowLevelGraphicsTGL::SetTexture(unsigned int alUnit, iTexture *apTex) {
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::SetActiveTextureUnit(unsigned int alUnit) {
-	//tglActiveTexture(GL_TEXTURE0 + alUnit);
+	// tglActiveTexture(GL_TEXTURE0 + alUnit);
 }
 
 //-----------------------------------------------------------------------
@@ -717,9 +717,9 @@ void LowLevelGraphicsTGL::SetTextureEnv(eTextureParam aParam, int alVal) {
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::SetTextureConstantColor(const cColor &color) {
-	//float vColor[] = {color.r, color.g, color.b, color.a};
+	// float vColor[] = {color.r, color.g, color.b, color.a};
 
-	//tglTexEnvfv(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_COLOR, &vColor[0]);
+	// tglTexEnvfv(TGL_TEXTURE_ENV, TGL_TEXTURE_ENV_COLOR, &vColor[0]);
 }
 
 //-----------------------------------------------------------------------
@@ -731,7 +731,7 @@ void LowLevelGraphicsTGL::SetColor(const cColor &aColor) {
 //-----------------------------------------------------------------------
 
 iVertexBuffer *LowLevelGraphicsTGL::CreateVertexBuffer(tVertexFlag aFlags,
-														eVertexBufferDrawType aDrawType, eVertexBufferUsageType aUsageType, int alReserveVtxSize, int alReserveIdxSize) {
+													   eVertexBufferDrawType aDrawType, eVertexBufferUsageType aUsageType, int alReserveVtxSize, int alReserveIdxSize) {
 
 	return hplNew(VertexBufferTGL, (this, aFlags, aDrawType, aUsageType, alReserveVtxSize, alReserveIdxSize));
 }
@@ -765,7 +765,7 @@ void LowLevelGraphicsTGL::SwapBuffers() {
 	Graphics::Surface glBuffer;
 	TinyGL::getSurfaceRef(glBuffer);
 	g_system->copyRectToScreen(glBuffer.getPixels(), glBuffer.pitch,
-									0, 0, glBuffer.w, glBuffer.h);
+							   0, 0, glBuffer.w, glBuffer.h);
 	g_system->updateScreen();
 }
 
@@ -843,7 +843,7 @@ void LowLevelGraphicsTGL::ClearScreen() {
 		bitmask |= TGL_COLOR_BUFFER_BIT;
 	if (mbClearDepth)
 		bitmask |= TGL_DEPTH_BUFFER_BIT;
-	//if (mbClearStencil)
+	// if (mbClearStencil)
 	//	bitmask |= TGL_STENCIL_BUFFER_BIT;
 
 	tglClear(bitmask);
@@ -927,18 +927,18 @@ void LowLevelGraphicsTGL::SetStencilActive(bool abX) {
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::SetStencil(eStencilFunc aFunc, int alRef, unsigned int aMask,
-									  eStencilOp aFailOp, eStencilOp aZFailOp, eStencilOp aZPassOp) {
+									 eStencilOp aFailOp, eStencilOp aZFailOp, eStencilOp aZPassOp) {
 	tglStencilFunc(GetGLStencilFuncEnum(aFunc), alRef, aMask);
 
 	tglStencilOp(GetGLStencilOpEnum(aFailOp), GetGLStencilOpEnum(aZFailOp),
-						 GetGLStencilOpEnum(aZPassOp));
+				 GetGLStencilOpEnum(aZPassOp));
 }
 
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::SetStencilTwoSide(eStencilFunc aFrontFunc, eStencilFunc aBackFunc,
-											 int alRef, unsigned int aMask, eStencilOp aFrontFailOp, eStencilOp aFrontZFailOp, eStencilOp aFrontZPassOp,
-											 eStencilOp aBackFailOp, eStencilOp aBackZFailOp, eStencilOp aBackZPassOp) {
+											int alRef, unsigned int aMask, eStencilOp aFrontFailOp, eStencilOp aFrontZFailOp, eStencilOp aFrontZPassOp,
+											eStencilOp aBackFailOp, eStencilOp aBackZFailOp, eStencilOp aBackZPassOp) {
 	error("Only single sided stencil supported");
 }
 
@@ -976,7 +976,7 @@ void LowLevelGraphicsTGL::SetScissorActive(bool toggle) {
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::SetScissorRect(const cRect2l &aRect) {
-	//tglScissor(aRect.x, (mvScreenSize.y - aRect.y - 1) - aRect.h, aRect.w, aRect.h);
+	// tglScissor(aRect.x, (mvScreenSize.y - aRect.y - 1) - aRect.h, aRect.w, aRect.h);
 }
 
 //-----------------------------------------------------------------------
@@ -997,7 +997,7 @@ void LowLevelGraphicsTGL::SetBlendFunc(eBlendFunc aSrcFactor, eBlendFunc aDestFa
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::SetBlendFuncSeparate(eBlendFunc aSrcFactorColor, eBlendFunc aDestFactorColor,
-												eBlendFunc aSrcFactorAlpha, eBlendFunc aDestFactorAlpha) {
+											   eBlendFunc aSrcFactorAlpha, eBlendFunc aDestFactorAlpha) {
 	HPL1_UNIMPLEMENTED(LowLevelGraphicsTGL::SetBlendFuncSeparate);
 }
 
@@ -1125,7 +1125,7 @@ void LowLevelGraphicsTGL::AddVertexToBatch(const cVertex *apVtx, const cMatrixf 
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::AddVertexToBatch_Size2D(const cVertex *apVtx, const cVector3f *avTransform,
-												   const cColor *apCol, const float &mfW, const float &mfH) {
+												  const cColor *apCol, const float &mfW, const float &mfH) {
 	// Coord
 	mpVertexArray[mlVertexCount + 0] = avTransform->x + mfW;
 	mpVertexArray[mlVertexCount + 1] = avTransform->y + mfH;
@@ -1152,7 +1152,7 @@ void LowLevelGraphicsTGL::AddVertexToBatch_Size2D(const cVertex *apVtx, const cV
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::AddVertexToBatch_Raw(const cVector3f &avPos, const cColor &aColor,
-												const cVector3f &avTex) {
+											   const cVector3f &avTex) {
 	// Coord
 	mpVertexArray[mlVertexCount + 0] = avPos.x;
 	mpVertexArray[mlVertexCount + 1] = avPos.y;
@@ -1311,19 +1311,19 @@ void LowLevelGraphicsTGL::DrawSphere(const cVector3f &avPos, float afRadius, cCo
 		// X Circle:
 		for (float a = 0; a < k2Pif; a += afAngleStep) {
 			tglVertex3f(avPos.x, avPos.y + sin(a) * afRadius,
-					   avPos.z + cos(a) * afRadius);
+						avPos.z + cos(a) * afRadius);
 
 			tglVertex3f(avPos.x, avPos.y + sin(a + afAngleStep) * afRadius,
-					   avPos.z + cos(a + afAngleStep) * afRadius);
+						avPos.z + cos(a + afAngleStep) * afRadius);
 		}
 
 		// Y Circle:
 		for (float a = 0; a < k2Pif; a += afAngleStep) {
 			tglVertex3f(avPos.x + cos(a) * afRadius, avPos.y,
-					   avPos.z + sin(a) * afRadius);
+						avPos.z + sin(a) * afRadius);
 
 			tglVertex3f(avPos.x + cos(a + afAngleStep) * afRadius, avPos.y,
-					   avPos.z + sin(a + afAngleStep) * afRadius);
+						avPos.z + sin(a + afAngleStep) * afRadius);
 		}
 
 		// Z Circle:
@@ -1331,8 +1331,8 @@ void LowLevelGraphicsTGL::DrawSphere(const cVector3f &avPos, float afRadius, cCo
 			tglVertex3f(avPos.x + cos(a) * afRadius, avPos.y + sin(a) * afRadius, avPos.z);
 
 			tglVertex3f(avPos.x + cos(a + afAngleStep) * afRadius,
-					   avPos.y + sin(a + afAngleStep) * afRadius,
-					   avPos.z);
+						avPos.y + sin(a + afAngleStep) * afRadius,
+						avPos.z);
 		}
 	}
 	tglEnd();
@@ -1393,7 +1393,7 @@ void LowLevelGraphicsTGL::DrawLineCircle2D(const cVector2f &avCenter, float afRa
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::CopyContextToTexure(iTexture *apTex, const cVector2l &avPos,
-											   const cVector2l &avSize, const cVector2l &avTexOffset) {
+											  const cVector2l &avSize, const cVector2l &avTexOffset) {
 #if 0
 	if (apTex == nullptr)
 		return;
@@ -1491,10 +1491,10 @@ void LowLevelGraphicsTGL::SetVtxBatchStates(tVtxBatchFlag flags) {
 	}
 
 	if (flags & eVtxBatchFlag_Texture0) {
-		//tglClientActiveTexture(TGL_TEXTURE);
+		// tglClientActiveTexture(TGL_TEXTURE);
 		tglEnableClientState(TGL_TEXTURE_COORD_ARRAY);
 	} else {
-		//tglClientActiveTextureARB(TGL_TEXTURE0_ARB);
+		// tglClientActiveTextureARB(TGL_TEXTURE0_ARB);
 		tglDisableClientState(TGL_TEXTURE_COORD_ARRAY);
 	}
 #if 0

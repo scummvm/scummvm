@@ -102,7 +102,7 @@ public:
 
 private:
 	static int BuoyancyPlaneCallback(const int alCollisionID, void *apContext,
-								 const float *afGlobalSpaceMatrix, float *afGlobalSpacePlane);
+									 const float *afGlobalSpaceMatrix, float *afGlobalSpacePlane);
 	static void OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix, int);
 	static void OnUpdateCallback(NewtonBody *apBody, float, int);
 
@@ -129,6 +129,6 @@ private:
 	cVector3f mvTotalTorque;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_BODY_NEWTON_H

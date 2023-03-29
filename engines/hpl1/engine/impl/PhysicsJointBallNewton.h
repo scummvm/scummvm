@@ -52,6 +52,6 @@ public:
 private:
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_JOINT_BALL_NEWTON_H

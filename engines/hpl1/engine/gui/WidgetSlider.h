@@ -115,6 +115,6 @@ protected:
 	cGuiGfxElement *mpGfxBackground;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_SLIDER_H

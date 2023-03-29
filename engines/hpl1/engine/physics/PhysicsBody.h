@@ -327,6 +327,6 @@ protected:
 	bool mbCollide;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_BODY_H

@@ -31,9 +31,9 @@
 #include "hpl1/engine/sound/SoundData.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
-#include "common/str.h"
 #include "audio/audiostream.h"
 #include "common/ptr.h"
+#include "common/str.h"
 
 namespace hpl {
 
@@ -41,7 +41,7 @@ class cLowLevelSoundOpenAL;
 
 class cOpenALSoundData : public iSoundData {
 public:
-	cOpenALSoundData(tString asName, bool abStream, cLowLevelSoundOpenAL* lowLevelSound);
+	cOpenALSoundData(tString asName, bool abStream, cLowLevelSoundOpenAL *lowLevelSound);
 	~cOpenALSoundData();
 
 	bool CreateFromFile(const tString &asFile);
@@ -57,6 +57,6 @@ private:
 	cLowLevelSoundOpenAL *_lowLevelSound;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_OPENAL_SOUND_DATA_H

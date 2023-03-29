@@ -78,6 +78,6 @@ private:
 	Common::Array<cVector3f> mvAttributes;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GUI_SKIN_H

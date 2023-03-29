@@ -78,6 +78,6 @@ protected:
 	cGuiGfxElement *mvGfxCorners[4];
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_FRAME_H

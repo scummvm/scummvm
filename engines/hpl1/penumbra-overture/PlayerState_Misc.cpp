@@ -864,7 +864,7 @@ bool cPlayerState_Climb::OnMoveForwards(float afMul, float afTimeStep) {
 	return false;
 }
 bool cPlayerState_Climb::OnMoveSideways(float afMul, float afTimeStep) {
-	/*iCharacterBody *pCharBody = */mpPlayer->GetCharacterBody();
+	/*iCharacterBody *pCharBody = */ mpPlayer->GetCharacterBody();
 
 	return false;
 }

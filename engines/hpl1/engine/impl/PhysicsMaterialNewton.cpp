@@ -34,8 +34,8 @@
 #include "hpl1/engine/physics/PhysicsMaterial.h"
 #include "hpl1/engine/physics/SurfaceData.h"
 
-#include "hpl1/engine/system/low_level_system.h"
 #include "common/util.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
@@ -157,9 +157,9 @@ void cPhysicsMaterialNewton::UpdateMaterials() {
 		cPhysicsMaterialNewton *pMat = static_cast<cPhysicsMaterialNewton *>(MatIt.Next());
 
 		ePhysicsMaterialCombMode frictionMode = (ePhysicsMaterialCombMode)MAX(mFrictionMode,
-																				   pMat->mFrictionMode);
+																			  pMat->mFrictionMode);
 		ePhysicsMaterialCombMode elasticityMode = (ePhysicsMaterialCombMode)MAX(mElasticityMode,
-																					 pMat->mElasticityMode);
+																				pMat->mElasticityMode);
 
 		// If the material is the same do not blend.
 		if (pMat == this) {
@@ -350,7 +350,8 @@ void ContactProcessor::endProcessing() {
 void cPhysicsMaterialNewton::ProcessContactCallback(const NewtonJoint *joint, float, int) {
 	ContactProcessor processor(joint);
 
-	while (processor.processNext()) {}
+	while (processor.processNext()) {
+	}
 	processor.endProcessing();
 }
 

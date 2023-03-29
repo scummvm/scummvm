@@ -395,7 +395,7 @@ void cSDLTexture::SetFilter(eTextureFilter aFilter) {
 //-----------------------------------------------------------------------
 
 void cSDLTexture::SetAnisotropyDegree(float afX) {
-//gl 4.6
+// gl 4.6
 #if 0
   	if(!mpLowLevelGraphics->GetCaps(eGraphicCaps_AnisotropicFiltering)) return;
 	if(afX < 1.0f) return;
@@ -529,7 +529,7 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 		// Log("OldSize: %d x %d ",mlWidth,mlHeight);
 
 		int lOldW = _width;
-		//int lOldH = _height;
+		// int lOldH = _height;
 
 		int lSizeDiv = (int)pow((float)2, (int)mlSizeLevel);
 
@@ -582,7 +582,7 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 					 GL_UNSIGNED_BYTE, pPixelSrc);
 	else
 		glTexImage2D(GLTarget, 0, internalFormat, _width, _height,
-					0, format, GL_UNSIGNED_BYTE, pPixelSrc);
+					 0, format, GL_UNSIGNED_BYTE, pPixelSrc);
 
 	if (glGetError() != GL_NO_ERROR)
 		return false;
@@ -654,4 +654,4 @@ GLenum cSDLTexture::GetGLWrap(eTextureWrap aMode) {
 
 } // namespace hpl
 
-#endif //USE_OPENGL
+#endif // USE_OPENGL

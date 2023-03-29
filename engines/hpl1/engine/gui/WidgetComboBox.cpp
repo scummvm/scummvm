@@ -418,7 +418,7 @@ bool cWidgetComboBox::OnMouseLeave(cGuiMessageData &aData) {
 //-----------------------------------------------------------------------
 
 bool cWidgetComboBox::OnLostFocus(cGuiMessageData &aData) {
-	/*cVector3f vLocal = */WorldToLocalPosition(aData.mvPos);
+	/*cVector3f vLocal = */ WorldToLocalPosition(aData.mvPos);
 
 	if (mbMenuOpen && mpSlider->IsEnabled() == false) {
 		CloseMenu();

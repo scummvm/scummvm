@@ -28,11 +28,11 @@
 #ifndef HPL_LIGHT3D_H
 #define HPL_LIGHT3D_H
 
+#include "common/list.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Renderable.h"
 #include "hpl1/engine/scene/Entity3D.h"
 #include "hpl1/engine/scene/Light.h"
-#include "common/list.h"
 #include "hpl1/std/set.h"
 
 class TiXmlElement;
@@ -223,6 +223,6 @@ protected:
 typedef Common::List<iLight3D *> tLight3DList;
 typedef tLight3DList::iterator tLight3DListIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LIGHT3D_H

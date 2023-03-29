@@ -25,6 +25,7 @@
  * This file is part of Penumbra Overture.
  */
 
+#include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/penumbra-overture/ButtonHandler.h"
 #include "hpl1/penumbra-overture/GameArea.h"
@@ -42,7 +43,6 @@
 #include "hpl1/penumbra-overture/GameScripts.h"
 #include "hpl1/penumbra-overture/GameStickArea.h"
 #include "hpl1/penumbra-overture/GameSwingDoor.h"
-#include "hpl1/penumbra-overture/Init.h"
 #include "hpl1/penumbra-overture/MapHandler.h"
 #include "hpl1/penumbra-overture/Player.h"
 

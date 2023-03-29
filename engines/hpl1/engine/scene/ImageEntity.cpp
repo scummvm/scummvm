@@ -35,8 +35,8 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/resources/ImageEntityManager.h"
 #include "hpl1/engine/resources/Resources.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

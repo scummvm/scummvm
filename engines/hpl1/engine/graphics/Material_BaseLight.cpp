@@ -95,7 +95,7 @@ iMaterial_BaseLight::iMaterial_BaseLight(const tString &asLightVertexProgram,
 	} else {
 		mbUsesTwoPassSpot = true;
 		tString sSpotFragProgram1 = "Diffuse_Light_Spot_pass1"; // cString::Sub(asLightFragmentProgram,0, (int)asLightFragmentProgram.size() - 5) +
-																	  //			"Spot_fp_pass1.cg";
+																//			"Spot_fp_pass1.cg";
 		tString sSpotFragProgram2 = asLightFragmentProgram + "_Spot_pass2";
 		_shaders[eBaseLightProgram_Spot1] = mpProgramManager->CreateProgram(sSpotVtxProgram, sSpotFragProgram1);
 		_shaders[eBaseLightProgram_Spot2] = mpProgramManager->CreateProgram(sSpotVtxProgram, sSpotFragProgram2);

@@ -109,6 +109,6 @@ private:
 	ePhysicsAccuracy mAccuracy;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PHYSICS_WORLD_NEWTON_H

@@ -28,9 +28,9 @@
 #ifndef HPL_LOWLEVEL_PICTURE_H
 #define HPL_LOWLEVEL_PICTURE_H
 
+#include "common/system.h"
 #include "hpl1/engine/system/String.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/system.h"
 
 namespace hpl {
 
@@ -61,6 +61,6 @@ private:
 	tString _path;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LOWLEVEL_PICTURE_H

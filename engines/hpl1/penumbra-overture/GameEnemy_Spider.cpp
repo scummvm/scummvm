@@ -234,7 +234,7 @@ void cGameEnemyState_Spider_Hunt::OnUpdate(float afTimeStep) {
 		if (mfUpdatePathCount <= 0) {
 			mfUpdatePathCount = mfUpdateFreq;
 
-			/*cAINodeContainer *pNodeCont = */mpEnemy->GetMover()->GetNodeContainer();
+			/*cAINodeContainer *pNodeCont = */ mpEnemy->GetMover()->GetNodeContainer();
 
 			// Check if there is a free path to the player
 			if (mbLostPlayer == false && mpMover->FreeDirectPathToChar(mpPlayer->GetCharacterBody())) {
@@ -559,7 +559,7 @@ void cGameEnemyState_Spider_KnockDown::OnUpdate(float afTimeStep) {
 		if (mfTimer <= 0) {
 			// Get the forward vector from root bone (the right vector)
 			cNodeIterator StateIt = mpEnemy->GetMeshEntity()->GetRootNode()->GetChildIterator();
-			//cBoneState *pBoneState = static_cast<cBoneState *>(StateIt.Next());
+			// cBoneState *pBoneState = static_cast<cBoneState *>(StateIt.Next());
 
 			// Play animation and fade physics
 			float fFadeTime = 0.7f;
@@ -576,10 +576,10 @@ void cGameEnemyState_Spider_KnockDown::OnUpdate(float afTimeStep) {
 			// Calculate values
 			cVector3f vPosition;
 			cVector3f vAngles;
-			/*cMatrixf mtxTransform = */mpEnemy->GetMeshEntity()->CalculateTransformFromSkeleton(&vPosition, &vAngles);
+			/*cMatrixf mtxTransform = */ mpEnemy->GetMeshEntity()->CalculateTransformFromSkeleton(&vPosition, &vAngles);
 
 			cVector3f vGroundPos = vPosition;
-			/*bool bFoundGround = */mpEnemy->GetGroundFinder()->GetGround(vPosition, cVector3f(0, -1, 0), &vGroundPos, NULL);
+			/*bool bFoundGround = */ mpEnemy->GetGroundFinder()->GetGround(vPosition, cVector3f(0, -1, 0), &vGroundPos, NULL);
 
 			// Set body
 			iCharacterBody *pCharBody = mpEnemy->GetMover()->GetCharBody();

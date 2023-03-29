@@ -32,8 +32,8 @@
 #include "hpl1/engine/sound/LowLevelSound.h"
 #include "hpl1/engine/sound/SoundChannel.h"
 #include "hpl1/engine/sound/SoundData.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/physics/PhysicsBody.h"
 #include "hpl1/engine/physics/PhysicsWorld.h"
@@ -732,7 +732,7 @@ void cSoundHandler::UpdateDistanceVolume3D(cSoundEntry *apEntry, float afTimeSte
 			// Log(" max distance ");
 		} else {
 			float fVolume = 0;
-			//bool bBlocked = false;
+			// bool bBlocked = false;
 
 			////////////////////////////////////////
 			// Check if sound is blocked.
@@ -759,7 +759,7 @@ void cSoundHandler::UpdateDistanceVolume3D(cSoundEntry *apEntry, float afTimeSte
 					}
 
 					pSound->SetFiltering(true, 0xF);
-					//bBlocked = true;
+					// bBlocked = true;
 				} else {
 					// pSound->SetFiltering(false, 0xF);
 

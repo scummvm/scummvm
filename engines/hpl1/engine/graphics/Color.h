@@ -28,9 +28,9 @@
 #ifndef HPL_COLOR_H
 #define HPL_COLOR_H
 
-#include "hpl1/engine/system/SystemTypes.h"
-#include "common/list.h"
 #include "common/array.h"
+#include "common/list.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
@@ -67,6 +67,6 @@ typedef tColorList::iterator tColorListIt;
 typedef Common::Array<cColor> tColorVec;
 typedef tColorVec::iterator tColorVecIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_COLOR_H

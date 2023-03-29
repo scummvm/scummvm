@@ -22,14 +22,14 @@
 #include "hpl1/metaengine.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
-#include "common/translation.h"
-#include "hpl1/detection.h"
-#include "hpl1/hpl1.h"
-#include "hpl1/graphics.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
+#include "hpl1/detection.h"
+#include "hpl1/graphics.h"
+#include "hpl1/hpl1.h"
 
 const char *Hpl1MetaEngine::getName() const {
 	return "hpl1";
@@ -52,7 +52,7 @@ bool Hpl1MetaEngine::hasFeature(MetaEngineFeature f) const {
 
 void Hpl1MetaEngine::getSavegameThumbnail(Graphics::Surface &thumbnail) {
 	Common::ScopedPtr<Graphics::Surface> screen = Hpl1::createViewportScreenshot();
-	Common::ScopedPtr<Graphics::Surface> scaledScreen(screen->scale( kThumbnailWidth, kThumbnailHeight2));
+	Common::ScopedPtr<Graphics::Surface> scaledScreen(screen->scale(kThumbnailWidth, kThumbnailHeight2));
 	scaledScreen->convertToInPlace(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	thumbnail.copyFrom(*scaledScreen);
 	screen->free();

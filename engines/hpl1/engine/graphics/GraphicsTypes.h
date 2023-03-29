@@ -28,10 +28,10 @@
 #ifndef HPL_GRAPHICSTYPES_H
 #define HPL_GRAPHICSTYPES_H
 
+#include "common/array.h"
+#include "common/list.h"
 #include "hpl1/engine/graphics/Color.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "common/list.h"
-#include "common/array.h"
 
 namespace hpl {
 

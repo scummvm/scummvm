@@ -95,6 +95,6 @@ private:
 	cResources *mpResources;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_TEXTURE_MANAGER_H

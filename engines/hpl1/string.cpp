@@ -33,7 +33,7 @@ Common::String fileDir(const Common::String &path) {
 	size_t last = path.findLastOf("/");
 	if (last == Common::String::npos)
 		return "";
-	return path.substr(0, last+1);
+	return path.substr(0, last + 1);
 }
 
-}
+} // namespace Hpl1

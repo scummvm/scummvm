@@ -28,12 +28,12 @@
 #ifndef HPL_TEXTURE_H
 #define HPL_TEXTURE_H
 
-#include "hpl1/engine/graphics/bitmap2D.h"
+#include "common/array.h"
+#include "graphics/pixelformat.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/LowLevelPicture.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
 #include "hpl1/engine/resources/ResourceBase.h"
-#include "graphics/pixelformat.h"
-#include "common/array.h"
 
 namespace hpl {
 
@@ -199,6 +199,6 @@ protected:
 typedef Common::Array<iTexture *> tTextureVec;
 typedef tTextureVec::iterator tTextureVecIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_TEXTURE_H

@@ -23,8 +23,8 @@
 #define HPL_TEXTURE_TGL_H
 
 #include "hpl1/engine/graphics/Texture.h"
-#include "hpl1/engine/impl/low_level_graphics_tgl.h"
 #include "hpl1/engine/graphics/bitmap2D.h"
+#include "hpl1/engine/impl/low_level_graphics_tgl.h"
 
 #ifdef USE_TINYGL
 
@@ -33,8 +33,8 @@ namespace hpl {
 class TGLTexture : public iTexture {
 public:
 	TGLTexture(const tString &asName, Graphics::PixelFormat *apPxlFmt, iLowLevelGraphics *apLowLevelGraphics,
-				eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
-				bool abCompress = false);
+			   eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
+			   bool abCompress = false);
 	~TGLTexture();
 
 	bool CreateFromBitmap(Bitmap2D *pBmp);
@@ -73,7 +73,7 @@ public:
 	/// SDL / OGL Specific ///////////
 
 	unsigned int GetTextureHandle();
-	//cPBuffer *GetPBuffer() { return mpPBuffer; }
+	// cPBuffer *GetPBuffer() { return mpPBuffer; }
 
 private:
 	bool CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx);
@@ -92,7 +92,7 @@ private:
 	float mfTimeDir;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // USE_TINYGL
 

@@ -56,6 +56,6 @@ private:
 	iPhysicsBody *mpColliderBody;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_BONE_STATE_H

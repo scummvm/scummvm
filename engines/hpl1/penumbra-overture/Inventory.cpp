@@ -37,8 +37,8 @@
 #include "hpl1/penumbra-overture/RadioHandler.h"
 #include "hpl1/penumbra-overture/SaveHandler.h"
 
-#include "hpl1/penumbra-overture/GlobalInit.h"
 #include "hpl1/algorithms.h"
+#include "hpl1/penumbra-overture/GlobalInit.h"
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
@@ -1435,7 +1435,7 @@ void cInventory::AddCombineCallback(const tString &asItem1, const tString &asIte
 
 template<typename Map>
 void removeCallbacks(Map &callbackMap, const tString &fn) {
-	auto newEnd = Hpl1::removeIf(callbackMap.begin(), callbackMap.end(), [&](typename Map::value_type& p) -> bool {
+	auto newEnd = Hpl1::removeIf(callbackMap.begin(), callbackMap.end(), [&](typename Map::value_type &p) -> bool {
 		if (p.second->msFunction == fn) {
 			hplDelete(p.second);
 			return true;

@@ -74,6 +74,6 @@ private:
 	tVideoStreamLoaderList mlstVideoLoaders;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_VIDEO_MANAGER_H

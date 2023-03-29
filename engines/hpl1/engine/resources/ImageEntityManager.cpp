@@ -26,13 +26,13 @@
  */
 
 #include "hpl1/engine/resources/ImageEntityManager.h"
+#include "common/algorithm.h"
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/graphics/ImageEntityData.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/resources/Resources.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
-#include "common/algorithm.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

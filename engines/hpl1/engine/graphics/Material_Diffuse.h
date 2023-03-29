@@ -60,6 +60,6 @@ private:
 	int mlTechLevel;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIAL_DIFFUSE_H

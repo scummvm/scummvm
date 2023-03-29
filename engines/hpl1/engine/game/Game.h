@@ -220,6 +220,6 @@ private:
 	cGui *mpGui;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GAME_H

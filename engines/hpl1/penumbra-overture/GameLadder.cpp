@@ -195,7 +195,7 @@ float cGameLadder::GetHeight() {
 //-----------------------------------------------------------------------
 
 cVector3f cGameLadder::GetStartRotation() {
-	/*iCharacterBody *pCharBody = */mpInit->mpPlayer->GetCharacterBody();
+	/*iCharacterBody *pCharBody = */ mpInit->mpPlayer->GetCharacterBody();
 
 	return cMath::GetAngleFromPoints3D(cVector3f(0, 0, 0), GetForward() * -1);
 }

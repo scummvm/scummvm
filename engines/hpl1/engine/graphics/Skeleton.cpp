@@ -28,8 +28,8 @@
 #include "hpl1/engine/graphics/Skeleton.h"
 
 #include "hpl1/engine/graphics/Bone.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/MemoryManager.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

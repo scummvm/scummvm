@@ -28,8 +28,8 @@
 #ifndef HPL_VERTEXBUFFER_VBO_H
 #define HPL_VERTEXBUFFER_VBO_H
 
-#include "hpl1/engine/graphics/VertexBuffer.h"
 #include "common/scummsys.h"
+#include "hpl1/engine/graphics/VertexBuffer.h"
 
 #ifdef USE_OPENGL
 
@@ -97,7 +97,7 @@ private:
 	bool mbCompiled;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // USE_OPENGL
 #endif // HPL_RENDERER3D_VBO_H

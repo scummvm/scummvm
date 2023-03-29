@@ -172,7 +172,7 @@ void cGameLiquidArea::Update(float afTimeStep) {
 	while (bodyIt.HasNext()) {
 		iPhysicsBody *pBody = static_cast<iPhysicsBody *>(bodyIt.Next());
 
-		/*iGameEntity *pEntity = (iGameEntity *)*/pBody->GetUserData();
+		/*iGameEntity *pEntity = (iGameEntity *)*/ pBody->GetUserData();
 
 		if (pBody->GetCollide() && pBody->IsActive()) {
 			if (pBody->GetMass() == 0 && pBody->IsCharacter() == false)

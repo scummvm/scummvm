@@ -158,7 +158,7 @@ SCRIPT_DEFINE_FUNC_1(string, GetActionKeyString, string)
 //-----------------------------------------------------------------------
 
 static void AddMessageTrans(tString asTransCat,
-									  tString asTransName) {
+							tString asTransName) {
 	cInit *mpInit = gpInit;
 	gpInit->mpGameMessageHandler->Add(kTranslate(asTransCat, asTransName));
 }
@@ -182,7 +182,7 @@ SCRIPT_DEFINE_FUNC(void, AddMessageTempString)
 //-----------------------------------------------------------------------
 
 static void AddSubTitleTrans(tString asTransCat,
-									   tString asTransName, float afTime) {
+							 tString asTransName, float afTime) {
 	cInit *mpInit = gpInit;
 	gpInit->mpEffectHandler->GetSubTitle()->Add(kTranslate(asTransCat, asTransName), afTime, false);
 }
@@ -206,7 +206,7 @@ SCRIPT_DEFINE_FUNC_1(void, AddSubTitleTempString, float)
 //-----------------------------------------------------------------------
 
 static void AddRadioMessage(tString asTransCat, tString asTransName,
-									  tString asSound) {
+							tString asSound) {
 	cInit *mpInit = gpInit;
 	gpInit->mpRadioHandler->Add(kTranslate(asTransCat, asTransName), asSound);
 }
@@ -227,7 +227,7 @@ static void SetInventoryMessage(tString asMessage) {
 SCRIPT_DEFINE_FUNC_1(void, SetInventoryMessage, string)
 
 static void SetInventoryMessageTrans(tString asTransCat,
-											   tString asTransName) {
+									 tString asTransName) {
 	cInit *mpInit = gpInit;
 	gpInit->mpInventory->SetMessage(kTranslate(asTransCat, asTransName));
 }
@@ -243,9 +243,9 @@ SCRIPT_DEFINE_FUNC_1(void, SetMessagesOverCallback, string)
 //-----------------------------------------------------------------------
 
 static void ChangeMap(tString asMapFile, tString asMapPos,
-								tString asStartSound, tString asStopSound,
-								float afFadeOutTime, float afFadeInTime,
-								tString asLoadTextCat, tString asLoadTextEntry) {
+					  tString asStartSound, tString asStopSound,
+					  float afFadeOutTime, float afFadeInTime,
+					  tString asLoadTextCat, tString asLoadTextEntry) {
 	// if(gpInit->mpRadioHandler->IsActive()) return;
 
 	gpInit->mpMapHandler->ChangeMap(asMapFile, asMapPos, asStartSound, asStopSound,
@@ -277,7 +277,7 @@ SCRIPT_DEFINE_FUNC_2(void, AddNotebookTaskText, string, string)
 //-----------------------------------------------------------------------
 
 static void AddNotebookTask(tString asName, tString asTransCat,
-									  tString asTransEntry) {
+							tString asTransEntry) {
 	cInit *mpInit = gpInit;
 	gpInit->mpNotebook->AddTask(asName, kTranslate(asTransCat, asTransEntry));
 }
@@ -293,7 +293,7 @@ SCRIPT_DEFINE_FUNC_1(void, RemoveNotebookTask, string)
 //-----------------------------------------------------------------------
 
 static void AddNotebookNote(tString asNameCat, tString asNameEntry,
-									  tString asTextCat, tString asTextEntry) {
+							tString asTextCat, tString asTextEntry) {
 	cInit *mpInit = gpInit;
 	gpInit->mpNotebook->AddNote(kTranslate(asNameCat, asNameEntry), asTextCat, asTextEntry);
 }
@@ -302,7 +302,7 @@ SCRIPT_DEFINE_FUNC_4(void, AddNotebookNote, string, string, string, string)
 //-----------------------------------------------------------------------
 
 static void StartNumericalPanel(tString asName, int alCode1, int alCode2, int alCode3, int alCode4,
-										  float afDifficulty, tString asCallback) {
+								float afDifficulty, tString asCallback) {
 	gpInit->mpNumericalPanel->SetActive(true);
 	tIntVec vCode;
 	vCode.resize(4);
@@ -376,7 +376,7 @@ static void SetWaveGravityActive(bool abX) {
 SCRIPT_DEFINE_FUNC_1(void, SetWaveGravityActive, bool)
 
 static void SetupWaveGravity(float afMaxAngle, float afSwingLength,
-									   float afGravitySize, tString asAxis) {
+							 float afGravitySize, tString asAxis) {
 	int lDir = cString::ToLowerCase(asAxis) == "x" ? 0 : 1;
 
 	gpInit->mpEffectHandler->GetWaveGravity()->Setup(cMath::ToRad(afMaxAngle), afSwingLength, afGravitySize, lDir);
@@ -435,7 +435,7 @@ SCRIPT_DEFINE_FUNC_1(void, SetConstantFocusOnEntity, string)
 //-----------------------------------------------------------------------
 
 static void PlayGameMusic(tString asFile, float afVolume, float afFadeStep,
-									bool abLoop, int alPrio) {
+						  bool abLoop, int alPrio) {
 	gpInit->mpMusicHandler->Play(asFile, abLoop, afVolume, afFadeStep, alPrio);
 }
 SCRIPT_DEFINE_FUNC_5(void, PlayGameMusic, string, float, float, bool, int)
@@ -457,8 +457,8 @@ SCRIPT_DEFINE_FUNC_4(void, StartScreenShake, float, float, float, float)
 //-----------------------------------------------------------------------
 
 static void CreateLightFlashAtArea(tString asArea, float afRadius,
-											 float afR, float afG, float afB, float afA,
-											 float afAddTime, float afNegTime) {
+								   float afR, float afG, float afB, float afA,
+								   float afAddTime, float afNegTime) {
 	cAreaEntity *pArea = gpInit->mpGame->GetScene()->GetWorld3D()->GetAreaEntity(asArea);
 	if (pArea == NULL) {
 		Error("Could not find area '%s'\n", asArea.c_str());
@@ -477,9 +477,9 @@ SCRIPT_DEFINE_FUNC_8(void, CreateLightFlashAtArea, string, float, float, float, 
 //-----------------------------------------------------------------------
 
 static void CreateSplashDamage(tString asAreaName, float afRadius,
-										 float afMinDamage, float afMaxDamge,
-										 float afMinForce, float afMaxForce,
-										 float afMaxImpulse, int alStrength) {
+							   float afMinDamage, float afMaxDamge,
+							   float afMinForce, float afMaxForce,
+							   float afMaxImpulse, int alStrength) {
 	///////////////////
 	// Get area
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asAreaName);
@@ -730,7 +730,7 @@ SCRIPT_DEFINE_FUNC_3(void, GiveItem, string, string, int)
 //-----------------------------------------------------------------------
 
 static void ReplaceEntity(tString asName, tString asBodyName,
-									tString asNewName, tString asNewFile) {
+						  tString asNewName, tString asNewFile) {
 	GAME_ENTITY_BEGIN(asName)
 
 	if (pEntity->GetBodyNum() == 0) {
@@ -839,8 +839,8 @@ SCRIPT_DEFINE_FUNC_2(void, SetGameEntityMaxInteractDist, string, float)
 //-----------------------------------------------------------------------
 
 static void SetGameEntityDescriptionTrans(tString asName,
-													tString asTransCat,
-													tString asTransName) {
+										  tString asTransCat,
+										  tString asTransName) {
 	cInit *mpInit = gpInit;
 	GAME_ENTITY_BEGIN(asName)
 
@@ -852,8 +852,8 @@ SCRIPT_DEFINE_FUNC_3(void, SetGameEntityDescriptionTrans, string, string, string
 //-----------------------------------------------------------------------
 
 static void SetGameEntityDescriptionOnceTrans(tString asName,
-														tString asTransCat,
-														tString asTransName) {
+											  tString asTransCat,
+											  tString asTransName) {
 	cInit *mpInit = gpInit;
 	GAME_ENTITY_BEGIN(asName)
 
@@ -873,8 +873,8 @@ static void SetGameEntityDescription(tString asName, tString asMessage) {
 SCRIPT_DEFINE_FUNC_2(void, SetGameEntityDescription, string, string)
 
 static void SetGameEntityGameNameTrans(tString asName,
-												 tString asTransCat,
-												 tString asTransName) {
+									   tString asTransCat,
+									   tString asTransName) {
 	cInit *mpInit = gpInit;
 	GAME_ENTITY_BEGIN(asName)
 
@@ -885,8 +885,8 @@ SCRIPT_DEFINE_FUNC_3(void, SetGameEntityGameNameTrans, string, string, string)
 //-----------------------------------------------------------------------
 
 static void ChangeEntityAnimation(tString asName,
-											tString asAnimation,
-											bool abLoop) {
+								  tString asAnimation,
+								  bool abLoop) {
 	GAME_ENTITY_BEGIN(asName)
 
 	pEntity->GetMeshEntity()->PlayName(asAnimation, abLoop, true);
@@ -912,7 +912,7 @@ SCRIPT_DEFINE_FUNC_3(void, DamageEntity, string, float, int)
 //-----------------------------------------------------------------------
 
 static void SetDoorState(tString asName,
-								   tString asState) {
+						 tString asState) {
 	/*iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if(pEntity==NULL || pEntity->GetType() != eGameEntityType_Door)
 	{
@@ -956,9 +956,9 @@ SCRIPT_DEFINE_FUNC_2(void, SetObjectInteractMode, string, string)
 //-----------------------------------------------------------------------
 
 static void SetupLink(tString asName,
-								tString asMapFile, tString asMapPos,
-								tString asStartSound, tString asStopSound,
-								float afFadeOutTime, float afFadeInTime) {
+					  tString asMapFile, tString asMapPos,
+					  tString asStartSound, tString asStopSound,
+					  float afFadeOutTime, float afFadeInTime) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Link) {
 		Warning("Couldn't find object entity '%s'\n", asName.c_str());
@@ -981,10 +981,10 @@ SCRIPT_DEFINE_FUNC_7(void, SetupLink, string, string, string, string, string, fl
 //-----------------------------------------------------------------------
 
 static void SetupLinkLoadText(tString asName,
-										tString asMapFile, tString asMapPos,
-										tString asStartSound, tString asStopSound,
-										float afFadeOutTime, float afFadeInTime,
-										tString asTextCat, tString asTextEntry) {
+							  tString asMapFile, tString asMapPos,
+							  tString asStartSound, tString asStopSound,
+							  float afFadeOutTime, float afFadeInTime,
+							  tString asTextCat, tString asTextEntry) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Link) {
 		Warning("Couldn't find object entity '%s'\n", asName.c_str());
@@ -1048,7 +1048,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetAreaCustomIcon, string, string)
 //-----------------------------------------------------------------------
 
 static void AddEnemyPatrolNode(tString asEnemy, tString asNode, float afTime,
-										 tString asAnimation) {
+							   tString asAnimation) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEnemy);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Enemy) {
 		Warning("Couldn't find enemy entity '%s'\n", asEnemy.c_str());
@@ -1165,11 +1165,11 @@ SCRIPT_DEFINE_FUNC_2(void, SetDoorLocked, string, bool)
 //-----------------------------------------------------------------------
 
 static void SetupStickArea(tString asArea, bool abCanDeatch,
-									 bool abMoveBody, bool abRotateBody,
-									 bool abCheckCenterInArea, float afPoseTime,
-									 tString asAttachSound, tString asDetachSound,
-									 tString asAttachPS, tString asDetachPS,
-									 tString asAttachFunc, tString asDetachFunc) {
+						   bool abMoveBody, bool abRotateBody,
+						   bool abCheckCenterInArea, float afPoseTime,
+						   tString asAttachSound, tString asDetachSound,
+						   tString asAttachPS, tString asDetachPS,
+						   tString asAttachFunc, tString asDetachFunc) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asArea);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_StickArea) {
 		Warning("Couldn't find stick area '%s'\n", asArea.c_str());
@@ -1250,9 +1250,9 @@ SCRIPT_DEFINE_FUNC_2(void, SetLampLitChangeCallback, string, string)
 //-----------------------------------------------------------------------
 
 static void SetupLadder(tString asName,
-								  tString asAttachSound,
-								  tString asClimbUpSound,
-								  tString asClimbDownSound) {
+						tString asAttachSound,
+						tString asClimbUpSound,
+						tString asClimbDownSound) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Ladder) {
 		Warning("Couldn't find ladder '%s'\n", asName.c_str());
@@ -1269,8 +1269,8 @@ SCRIPT_DEFINE_FUNC_4(void, SetupLadder, string, string, string, string)
 //-----------------------------------------------------------------------
 
 static void SetupDamageArea(tString asName, float afDamage,
-									  float afUpdatesPerSec, int alStrength,
-									  bool abDisableObjects, bool abDisableEnemies) {
+							float afUpdatesPerSec, int alStrength,
+							bool abDisableObjects, bool abDisableEnemies) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_DamageArea) {
 		Warning("Couldn't find damage area '%s'\n", asName.c_str());
@@ -1289,10 +1289,10 @@ SCRIPT_DEFINE_FUNC_6(void, SetupDamageArea, string, float, float, int, bool, boo
 //-----------------------------------------------------------------------
 
 static void SetupForceArea(tString asName,
-									 float afMaxForce, float afConstant,
-									 float afDestSpeed, float afMaxMass,
-									 bool abMulWithMass, bool abForceAtPoint,
-									 bool abAffectBodies, bool abAffectCharacters) {
+						   float afMaxForce, float afConstant,
+						   float afDestSpeed, float afMaxMass,
+						   bool abMulWithMass, bool abForceAtPoint,
+						   bool abAffectBodies, bool abAffectCharacters) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_ForceArea) {
 		Warning("Couldn't find force area '%s'\n", asName.c_str());
@@ -1314,11 +1314,11 @@ SCRIPT_DEFINE_FUNC_9(void, SetupForceArea, string, float, float, float, float, b
 //-----------------------------------------------------------------------
 
 static void SetupLiquidArea(tString asName,
-									  float afDensity, float afLinearViscosity,
-									  float afAngularViscosity,
-									  tString asPhysicsMaterial,
-									  float fR, float fG, float fB,
-									  bool abHasWaves) {
+							float afDensity, float afLinearViscosity,
+							float afAngularViscosity,
+							tString asPhysicsMaterial,
+							float fR, float fG, float fB,
+							bool abHasWaves) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_LiquidArea) {
 		Warning("Couldn't find liquid area '%s'\n", asName.c_str());
@@ -1341,8 +1341,8 @@ SCRIPT_DEFINE_FUNC_9(void, SetupLiquidArea, string, float, float, float, string,
 //-----------------------------------------------------------------------
 
 static void SetupSaveArea(tString asName,
-									tString asMessageCat, tString asMessageEntry,
-									tString asSound) {
+						  tString asMessageCat, tString asMessageEntry,
+						  tString asSound) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_SaveArea) {
 		Warning("Couldn't find save area '%s'\n", asName.c_str());
@@ -1380,9 +1380,9 @@ static eGameCollideScriptType GetGameCollideScriptType(const tString &asType) {
 //////////////////////////////
 
 static void AddEntityCollideCallback(tString asType,
-											   tString asDestName,
-											   tString asEntityName,
-											   tString asFuncName) {
+									 tString asDestName,
+									 tString asEntityName,
+									 tString asFuncName) {
 	if (cString::ToLowerCase(asDestName) == "player") {
 		eGameCollideScriptType type = GetGameCollideScriptType(asType);
 
@@ -1406,8 +1406,8 @@ SCRIPT_DEFINE_FUNC_4(void, AddEntityCollideCallback, string, string, string, str
 //////////////////////////////
 
 static void RemoveEntityCollideCallback(tString asType,
-												  tString asDestName,
-												  tString asEntityName) {
+										tString asDestName,
+										tString asEntityName) {
 	if (cString::ToLowerCase(asDestName) == "player") {
 		eGameCollideScriptType type = GetGameCollideScriptType(asType);
 
@@ -1453,8 +1453,8 @@ static eGameEntityScriptType GetGameScriptType(const tString &asType) {
 /////////////////////
 
 static void AddEntityCallback(tString asType,
-										tString asDestName,
-										tString asFuncName) {
+							  tString asDestName,
+							  tString asFuncName) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asDestName);
 	if (pEntity == NULL) {
 		Warning("Couldn't find entity '%s'\n", asDestName.c_str());
@@ -1472,7 +1472,7 @@ SCRIPT_DEFINE_FUNC_3(void, AddEntityCallback, string, string, string)
 /////////////////////
 
 static void RemoveEntityCallback(tString asType,
-										   tString asDestName) {
+								 tString asDestName) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asDestName);
 	if (pEntity == NULL) {
 		Warning("Couldn't find entity '%s'\n", asDestName.c_str());
@@ -1494,7 +1494,7 @@ SCRIPT_DEFINE_FUNC_2(void, RemoveEntityCallback, string, string)
 //-----------------------------------------------------------------------
 
 static void CreateSoundEntityAt(tString asType, tString asDestName,
-										  tString asSoundName, tString asSoundFile) {
+								tString asSoundName, tString asSoundFile) {
 	cWorld3D *pWorld = gpInit->mpGame->GetScene()->GetWorld3D();
 	iPhysicsWorld *pPhysicsWorld = gpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
 
@@ -1744,8 +1744,7 @@ void cGameScripts::Init() {
 	pLowLevelSystem->addScriptFunc(SCRIPT_REGISTER_FUNC(CreateSoundEntityAt));
 }
 
-void cGameScripts::finalize()
-{
+void cGameScripts::finalize() {
 	delete gsTempString;
 }
 

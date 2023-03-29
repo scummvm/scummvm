@@ -63,24 +63,34 @@ cCollideShapeNewton::cCollideShapeNewton(eCollideShapeType aType, const cVector3
 	////////////////////////////////////////////
 	// Create Newton collision
 
-  	switch(aType) {
-	case eCollideShapeType_Null:		mpNewtonCollision = NewtonCreateNull(apNewtonWorld); break;
+	switch (aType) {
+	case eCollideShapeType_Null:
+		mpNewtonCollision = NewtonCreateNull(apNewtonWorld);
+		break;
 
-	case eCollideShapeType_Box:			mpNewtonCollision = NewtonCreateBox(apNewtonWorld,
+	case eCollideShapeType_Box:
+		mpNewtonCollision = NewtonCreateBox(apNewtonWorld,
 											mvSize.x, mvSize.y, mvSize.z,
-											0, pMtx); break;
+											0, pMtx);
+		break;
 
-	case eCollideShapeType_Sphere:		mpNewtonCollision = NewtonCreateSphere(apNewtonWorld,
-											mvSize.x, mvSize.y, mvSize.z,
-											0, pMtx); break;
+	case eCollideShapeType_Sphere:
+		mpNewtonCollision = NewtonCreateSphere(apNewtonWorld,
+											   mvSize.x, mvSize.y, mvSize.z,
+											   0, pMtx);
+		break;
 
-	case eCollideShapeType_Cylinder:	mpNewtonCollision = NewtonCreateCylinder(apNewtonWorld,
-											mvSize.x, mvSize.y,
-											0, pMtx); break;
+	case eCollideShapeType_Cylinder:
+		mpNewtonCollision = NewtonCreateCylinder(apNewtonWorld,
+												 mvSize.x, mvSize.y,
+												 0, pMtx);
+		break;
 
-	case eCollideShapeType_Capsule:		mpNewtonCollision = NewtonCreateCapsule(apNewtonWorld,
-											mvSize.x, mvSize.y,
-											0, pMtx); break;
+	case eCollideShapeType_Capsule:
+		mpNewtonCollision = NewtonCreateCapsule(apNewtonWorld,
+												mvSize.x, mvSize.y,
+												0, pMtx);
+		break;
 	default:
 		break;
 	}
@@ -123,8 +133,8 @@ cCollideShapeNewton::cCollideShapeNewton(eCollideShapeType aType, const cVector3
 
 cCollideShapeNewton::~cCollideShapeNewton() {
 	// Release Newton Collision
-	if(mpNewtonCollision)
-		NewtonReleaseCollision(mpNewtonWorld,mpNewtonCollision);
+	if (mpNewtonCollision)
+		NewtonReleaseCollision(mpNewtonWorld, mpNewtonCollision);
 	// Release all subshapes (for compound objects)
 	for (int i = 0; i < (int)mvSubShapes.size(); i++) {
 		mpWorld->DestroyShape(mvSubShapes[i]);
@@ -223,7 +233,7 @@ void cCollideShapeNewton::CreateFromShapeVec(tCollideShapeVec &avShapes) {
 	}
 
 	mpNewtonCollision = NewtonCreateCompoundCollision(mpNewtonWorld, (int)vNewtonColliders.size(),
-														&vNewtonColliders[0], 0);
+													  &vNewtonColliders[0], 0);
 
 	// Create bounding volume
 	cVector3f vFinalMax = avShapes[0]->GetBoundingVolume().GetMax();

@@ -897,8 +897,8 @@ public:
 };
 
 void cPlayer::Update(float afTimeStep) {
-	//cSystem *pSystem = mpInit->mpGame->GetSystem();
-	//unsigned int lTime = pSystem->GetLowLevel()->getTime();
+	// cSystem *pSystem = mpInit->mpGame->GetSystem();
+	// unsigned int lTime = pSystem->GetLowLevel()->getTime();
 	iPhysicsWorld *pPhysicsWorld = mpScene->GetWorld3D()->GetPhysicsWorld();
 
 	// LogUpdate("  Death\n");
@@ -930,8 +930,8 @@ void cPlayer::Update(float afTimeStep) {
 	}
 	//LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);*/
 
-	//lTime = pSystem->GetLowLevel()->getTime();
-	// LogUpdate("  misc\n");
+	// lTime = pSystem->GetLowLevel()->getTime();
+	//  LogUpdate("  misc\n");
 	//////////////////////
 	// Reset roll
 	mpInit->mpPlayer->GetCamera()->SetRoll(0);
@@ -951,28 +951,28 @@ void cPlayer::Update(float afTimeStep) {
 	/////////////////////////////////////////////////
 	// Flashlight
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  flashlight");
 	mpFlashLight->Update(afTimeStep);
 
 	/////////////////////////////////////////////////
 	// Glowstick
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  glowstick\n");
 	mpGlowStick->Update(afTimeStep);
 
 	/////////////////////////////////////////////////
 	// Flare
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  flare\n");
 	mpFlare->Update(afTimeStep);
 
 	/////////////////////////////////////////////////
 	// Lean
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  more misc\n");
 	mpLean->Update(afTimeStep);
 
@@ -999,17 +999,17 @@ void cPlayer::Update(float afTimeStep) {
 	////////////////////////////////////////
 	// Hidden
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  hidden\n");
 	mpHidden->Update(afTimeStep);
 
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  collide scripts\n");
 	/////////////////////////////////////////////////
 	// Collide script
 	pPhysicsWorld = mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
-	/*cWorld3D *pWorld = */mpInit->mpGame->GetScene()->GetWorld3D();
+	/*cWorld3D *pWorld = */ mpInit->mpGame->GetScene()->GetWorld3D();
 	cCollideData collideData;
 	collideData.SetMaxSize(1);
 
@@ -1105,7 +1105,7 @@ void cPlayer::Update(float afTimeStep) {
 		mlGroundCount--;
 
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  Check For ground\n");
 	//////////////////////////////
 	// Cast ray and check for ground.
@@ -1121,7 +1121,7 @@ void cPlayer::Update(float afTimeStep) {
 	//////////////////////////////
 	// Update movement
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  Movement\n");
 
 	if (mbMoving == false)
@@ -1135,7 +1135,7 @@ void cPlayer::Update(float afTimeStep) {
 	//////////////////////////////
 	// Update camera pos add
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  Camera pos\n");
 	if (mpCharBody) {
 		float fYAdd = mfCameraHeightAdd + mpHeadMove->GetPos() + mfHeightAdd + mpDeath->GetHeighAdd() +
@@ -1161,7 +1161,7 @@ void cPlayer::Update(float afTimeStep) {
 	SetPickedBody(NULL);
 
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
-	//lTime = pSystem->GetLowLevel()->getTime();
+	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  state %d\n",mState);
 	if (mpInit->mpInventory->IsActive() == false &&
 		mpInit->mpNotebook->IsActive() == false) {
@@ -1376,8 +1376,7 @@ void cPlayer::OnDraw() {
 
 	// DEBUG: health
 	if (mbShowHealth) {
-		mpFont->draw(cVector3f(5, 5, 0), 12, cColor(1, 1, 1, 1), eFontAlign_Left, Common::U32String::format("Health: %.0f",
-					 mfHealth));
+		mpFont->draw(cVector3f(5, 5, 0), 12, cColor(1, 1, 1, 1), eFontAlign_Left, Common::U32String::format("Health: %.0f", mfHealth));
 	}
 
 	// DEBUG: misc
@@ -1427,15 +1426,15 @@ void cPlayer::OnDraw() {
 			}
 			mpFont->draw(cVector3f((float)lCol * 250, 26 + (float)lRow * 11, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left,
 						 Common::U32String::format("%S(%.2f (%.2f %.2f)->%.2f", cString::To16Char(vSoundNames[i]).c_str(),
-						 pEntry->mpSound->GetVolume(),
-						 pEntry->mfNormalVolumeMul,
-						 pEntry->mfNormalVolumeFadeSpeed,
-						 pEntry->mfNormalVolumeFadeDest,
-						 pEntry->mpSound->GetPriority(),
-						 pEntry->mpSound->GetElapsedTime(),
-						 pEntry->mpSound->GetTotalTime()
+												   pEntry->mpSound->GetVolume(),
+												   pEntry->mfNormalVolumeMul,
+												   pEntry->mfNormalVolumeFadeSpeed,
+												   pEntry->mfNormalVolumeFadeDest,
+												   pEntry->mpSound->GetPriority(),
+												   pEntry->mpSound->GetElapsedTime(),
+												   pEntry->mpSound->GetTotalTime()
 
-			));
+													   ));
 			//								pEntry->mpSound->GetPriority(),
 			//								pEntry->mpSound->IsBufferUnderrun()?1:0);
 
@@ -1453,12 +1452,12 @@ void cPlayer::OnDraw() {
 			iSoundChannel *pChannel = pMusic->mpStream;
 			mpFont->draw(cVector3f(5, 18 + 70, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left,
 						 Common::U32String::format("Music: '%S' vol: %.2f playing: %d prio: %d elapsed: %.2f total time: %.2f",
-						 cString::To16Char(pChannel->GetData()->GetName()).c_str(),
-						 pChannel->GetVolume(),
-						 pChannel->IsPlaying(),
-						 pChannel->GetPriority(),
-						 pChannel->GetElapsedTime(),
-						 pChannel->GetTotalTime()));
+												   cString::To16Char(pChannel->GetData()->GetName()).c_str(),
+												   pChannel->GetVolume(),
+												   pChannel->IsPlaying(),
+												   pChannel->GetPriority(),
+												   pChannel->GetElapsedTime(),
+												   pChannel->GetTotalTime()));
 		}
 	}
 

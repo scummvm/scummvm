@@ -37,8 +37,8 @@
 
 #include "hpl1/engine/scene/SubMeshEntity.h"
 
-#include "hpl1/engine/scene/AnimationState.h"
 #include "common/array.h"
+#include "hpl1/engine/scene/AnimationState.h"
 #include "hpl1/std/map.h"
 
 namespace hpl {
@@ -282,6 +282,6 @@ private:
 
 //-----------------------------------------------------------------------
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MESH_ENTITY_H

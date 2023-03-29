@@ -61,6 +61,6 @@ void logInfo(uint32 channels, const char *fmt, Args... args) {
 	debugCN(kDebugLevelLog, channels, fmt, args...);
 }
 
-}
+} // namespace Hpl1
 
 #endif

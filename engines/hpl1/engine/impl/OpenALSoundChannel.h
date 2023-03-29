@@ -28,13 +28,13 @@
 #ifndef HPL_OPENAL_SOUND_CHANNEL_H
 #define HPL_OPENAL_SOUND_CHANNEL_H
 
-#include "hpl1/engine/impl/OpenALSoundData.h"
-#include "hpl1/engine/sound/SoundChannel.h"
-#include "hpl1/engine/sound/SoundData.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/file.h"
 #include "common/str.h"
-#include "audio/audiostream.h"
+#include "hpl1/engine/impl/OpenALSoundData.h"
+#include "hpl1/engine/sound/SoundChannel.h"
+#include "hpl1/engine/sound/SoundData.h"
 
 //#include "OALWrapper/OAL_Funcs.h"
 
@@ -44,8 +44,9 @@ class cLowLevelSoundOpenAL;
 
 class cOpenALSoundChannel : public iSoundChannel {
 	friend class cLowLevelSoundOpenAL;
+
 public:
-	cOpenALSoundChannel(cOpenALSoundData *soundData, Audio::SeekableAudioStream* audioStream, cSoundManager *apSoundManger, cLowLevelSoundOpenAL *lowLevelSound, int priority);
+	cOpenALSoundChannel(cOpenALSoundData *soundData, Audio::SeekableAudioStream *audioStream, cSoundManager *apSoundManger, cLowLevelSoundOpenAL *lowLevelSound, int priority);
 	~cOpenALSoundChannel();
 
 	void Play();
@@ -86,12 +87,12 @@ private:
 	Audio::SeekableAudioStream *_audioStream;
 	cLowLevelSoundOpenAL *_lowLevelSound;
 	int _priority;
-	//int mlDefaultFreq;
+	// int mlDefaultFreq;
 
-	//float mfPosition[3];
-	//float mfVelocity[3];
+	// float mfPosition[3];
+	// float mfVelocity[3];
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_OPENAL_CHANNEL_H

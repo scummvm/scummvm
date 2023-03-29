@@ -85,7 +85,6 @@ public:
 private:
 	iGpuProgram *_diffuseProgram;
 	iGpuProgram *_diffuseReflectProgram;
-
 };
 
 class cMaterialType_EnvMap_Reflect : public iMaterialType {
@@ -104,6 +103,6 @@ public:
 	}
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MATERIAL_ENVMAP_REFLECT_H

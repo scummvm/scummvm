@@ -27,8 +27,8 @@
 
 #include "hpl1/engine/resources/FileSearcher.h"
 #include "hpl1/engine/resources/low_level_resources.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/hpl1.h"
 
 namespace hpl {
@@ -70,7 +70,7 @@ void cFileSearcher::AddDirectory(tString asPath, tString asMask) {
 		for (const auto &f : lstFileNames) {
 			m_mapFiles.insert(tFilePathMap::value_type(
 				cString::ToLowerCase(f),
-				cString::SetFilePath(f, asPath))); 
+				cString::SetFilePath(f, asPath)));
 		}
 	}
 }

@@ -58,6 +58,6 @@ private:
 	char *LoadCharBuffer(const tString &asFileName, int &alLength);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SCRIPT_H

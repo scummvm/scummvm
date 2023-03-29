@@ -226,6 +226,6 @@ private:
 	}
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_BINTREE_H

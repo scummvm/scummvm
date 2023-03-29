@@ -32,13 +32,13 @@
 #include "hpl1/engine/impl/SDLTexture.h"
 #include "hpl1/engine/system/low_level_system.h"
 
-#include "hpl1/engine/system/String.h"
 #include "hpl1/engine/math/Math.h"
+#include "hpl1/engine/system/String.h"
 
-#include "hpl1/opengl.h"
-#include "hpl1/debug.h"
 #include "common/array.h"
 #include "common/str.h"
+#include "hpl1/debug.h"
+#include "hpl1/opengl.h"
 #include "math/matrix4.h"
 
 namespace hpl {
@@ -141,7 +141,7 @@ bool cCGProgram::SetMatrixf(const tString &asName, const cMatrixf &mMtx) {
 
 bool cCGProgram::SetMatrixf(const tString &asName, eGpuProgramMatrix mType,
 							eGpuProgramMatrixOp mOp) {
-  	if (mType != eGpuProgramMatrix_ViewProjection)
+	if (mType != eGpuProgramMatrix_ViewProjection)
 		error("unsupported shader matrix %d", mOp);
 	Math::Matrix4 modelView, projection;
 	glGetFloatv(GL_PROJECTION_MATRIX, projection.getData());

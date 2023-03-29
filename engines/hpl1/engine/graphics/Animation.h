@@ -28,11 +28,11 @@
 #ifndef HPL_ANIMATION_H
 #define HPL_ANIMATION_H
 
+#include "common/array.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/array.h"
 
 namespace hpl {
 
@@ -74,6 +74,6 @@ private:
 	tAnimationTrackVec mvTracks;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_ANIMATION_H

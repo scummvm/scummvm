@@ -27,8 +27,8 @@
 
 #include "hpl1/engine/system/System.h"
 #include "hpl1/engine/system/LogicTimer.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

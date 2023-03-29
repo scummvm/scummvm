@@ -197,9 +197,9 @@ void cPlayerState_Grab::OnDraw() {
 //-----------------------------------------------------------------------
 
 void cPlayerState_Grab::OnPostSceneDraw() {
-	/*iLowLevelGraphics *pLowGfx = */mpInit->mpGame->GetGraphics()->GetLowLevel();
+	/*iLowLevelGraphics *pLowGfx = */ mpInit->mpGame->GetGraphics()->GetLowLevel();
 
-	/*cVector3f vPickPoint = */cMath::MatrixMul(mpPushBody->GetWorldMatrix(), mvRelPickPoint);
+	/*cVector3f vPickPoint = */ cMath::MatrixMul(mpPushBody->GetWorldMatrix(), mvRelPickPoint);
 
 	// pLowGfx->DrawSphere(vPickPoint, 0.2f, cColor(1,1,1,1));
 	// pLowGfx->DrawSphere(mvCurrentDisered, 0.2f, cColor(1,1,1,1));
@@ -894,8 +894,8 @@ bool cPlayerState_Push::OnMoveForwards(float afMul, float afTimeStep) {
 
 			if (bCollide) {
 				cVector3f vPos = mpPlayer->GetCharacterBody()->GetPosition();
-				//cVector3f vOldPos = vPos;
-				//cVector3f vNewPos;
+				// cVector3f vOldPos = vPos;
+				// cVector3f vNewPos;
 				vPos += mvForward * -1 * (fPosAdd + 0.1f);
 				mpPlayer->GetCharacterBody()->SetPosition(vPos);
 

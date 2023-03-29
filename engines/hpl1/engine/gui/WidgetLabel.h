@@ -69,6 +69,6 @@ protected:
 	int mlMaxCharacters;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_LABEL_H

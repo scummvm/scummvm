@@ -72,6 +72,6 @@ private:
 	iRenderObject2DRenderer *mpCustomRenderer;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_RENDEROBJECT2D_H

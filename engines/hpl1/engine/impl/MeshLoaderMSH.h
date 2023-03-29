@@ -69,6 +69,6 @@ private:
 	const char *GetVertexName(tVertexFlag aFlag);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_MESH_LOADER_MSH_H

@@ -28,10 +28,10 @@
 #ifndef HPL_PORTAL_CONTAINER_H
 #define HPL_PORTAL_CONTAINER_H
 
+#include "common/list.h"
 #include "hpl1/engine/graphics/Renderable.h"
 #include "hpl1/engine/math/BoundingVolume.h"
 #include "hpl1/engine/scene/RenderableContainer.h"
-#include "common/list.h"
 #include "hpl1/std/map.h"
 #include "hpl1/std/set.h"
 
@@ -306,6 +306,6 @@ private:
 	int mlEntityIterateCount;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PORTAL_CONTAINER_H

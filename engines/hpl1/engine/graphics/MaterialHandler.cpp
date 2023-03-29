@@ -73,7 +73,7 @@ iMaterial *cMaterialHandler::Create(tString asMatName, eMaterialPicture mPicType
 
 iMaterial *cMaterialHandler::Create(const tString &asName, tString asMatName, eMaterialPicture mPicType) {
 	iMaterial *pMat = NULL;
-	//cResourceImage *pImage = NULL;
+	// cResourceImage *pImage = NULL;
 	unsigned int lIdCount = 1;
 
 	for (tMaterialTypeListIt it = mlstMatTypes.begin(); it != mlstMatTypes.end(); it++) {

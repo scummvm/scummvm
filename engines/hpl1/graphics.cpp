@@ -21,8 +21,8 @@
 
 #include "hpl1/graphics.h"
 
-#include "graphics/opengl/context.h"
 #include "common/config-manager.h"
+#include "graphics/opengl/context.h"
 #include "graphics/surface.h"
 #include "hpl1/opengl.h"
 
@@ -31,7 +31,7 @@ namespace Hpl1 {
 bool areShadersAvailable() {
 #ifdef USE_OPENGL
 	return useOpenGL() && OpenGLContext.enginesShadersSupported &&
-		(!ConfMan.hasKey("renderer") || ConfMan.get("renderer") == "opengl_shaders");
+		   (!ConfMan.hasKey("renderer") || ConfMan.get("renderer") == "opengl_shaders");
 #endif
 	return false;
 }
@@ -50,4 +50,4 @@ bool useOpenGL() {
 	return false;
 }
 
-}
+} // namespace Hpl1

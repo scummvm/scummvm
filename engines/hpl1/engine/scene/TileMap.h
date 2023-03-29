@@ -28,13 +28,13 @@
 #ifndef HPL_TILEMAP_H
 #define HPL_TILEMAP_H
 
+#include "common/array.h"
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Camera2D.h"
 #include "hpl1/engine/scene/TileLayer.h"
 #include "hpl1/engine/scene/TileMapIt.h"
 #include "hpl1/engine/scene/TileSet.h"
-#include "common/array.h"
 
 namespace hpl {
 
@@ -96,6 +96,6 @@ private:
 	inline void RenderTileData(cTile *apTile, int alLayer);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_TILEMAP_H

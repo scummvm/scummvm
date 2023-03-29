@@ -28,11 +28,11 @@
 #ifndef HPL_TILE_H
 #define HPL_TILE_H
 
+#include "common/list.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/TileData.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "common/list.h"
 
 namespace hpl {
 
@@ -75,6 +75,6 @@ private:
 typedef Common::List<cTile *> tTileList;
 typedef tTileList::iterator tTileListIt;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_TILE_H

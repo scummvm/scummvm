@@ -29,10 +29,10 @@
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/resources/FrameBitmap.h"
 #include "hpl1/engine/resources/FrameTexture.h"
-#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/ResourceImage.h"
-#include "hpl1/engine/system/low_level_system.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 

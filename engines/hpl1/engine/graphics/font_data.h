@@ -28,13 +28,13 @@
 #ifndef HPL_FONTDATA_H
 #define HPL_FONTDATA_H
 
-#include "hpl1/engine/graphics/GraphicsTypes.h"
-#include "hpl1/engine/math/MathTypes.h"
-#include "hpl1/engine/resources/low_level_resources.h"
-#include "hpl1/engine/resources/ResourceBase.h"
-#include "hpl1/engine/system/SystemTypes.h"
 #include "common/array.h"
 #include "common/ptr.h"
+#include "hpl1/engine/graphics/GraphicsTypes.h"
+#include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/resources/ResourceBase.h"
+#include "hpl1/engine/resources/low_level_resources.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 class TiXmlElement;
 
@@ -51,7 +51,7 @@ class cGui;
 class Glyph {
 public:
 	Glyph(cGfxObject *apObject, cGuiGfxElement *apGuiGfx, const cVector2f &avOffset,
-		   const cVector2f &avSize, float afAdvance);
+		  const cVector2f &avSize, float afAdvance);
 	~Glyph();
 
 	cGfxObject *_gfxObject;
@@ -70,7 +70,7 @@ public:
 	~FontData();
 
 	bool createFromFontFile(const tString &asFileName, int alSize, unsigned short alFirstChar,
-									unsigned short alLastChar);
+							unsigned short alLastChar);
 
 	bool createFromBitmapFile(const tString &asFileName);
 
@@ -157,12 +157,12 @@ private:
 	cVector2f _sizeRatio;
 
 	Glyph *createGlyph(Bitmap2D *apBmp, const cVector2l &avOffset, const cVector2l &avSize,
-						const cVector2l &avFontSize, int alAdvance);
+					   const cVector2l &avFontSize, int alAdvance);
 	void addGlyph(Glyph *apGlyph);
-	void loadGlyphs(const TiXmlElement *charsRoot, Common::Array<Common::SharedPtr<Bitmap2D>> &bitmaps, const cVector2l &fontSize);
-	void loadNextGlyph(const TiXmlElement *charIt, Common::Array<Common::SharedPtr<Bitmap2D>> &bitmaps, const cVector2l &fontSize);
+	void loadGlyphs(const TiXmlElement *charsRoot, Common::Array<Common::SharedPtr<Bitmap2D> > &bitmaps, const cVector2l &fontSize);
+	void loadNextGlyph(const TiXmlElement *charIt, Common::Array<Common::SharedPtr<Bitmap2D> > &bitmaps, const cVector2l &fontSize);
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_FONTDATA_H

@@ -51,6 +51,6 @@ private:
 	LowLevelSystem *mpLowLevelSystem;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SYSTEM_H

@@ -29,9 +29,9 @@
 
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/graphics/VertexBuffer.h"
-#include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
 #include "hpl1/engine/system/System.h"
+#include "hpl1/engine/system/low_level_system.h"
 
 #include "hpl1/engine/scene/ColliderEntity.h"
 #include "hpl1/engine/scene/Light3DPoint.h"
@@ -929,7 +929,7 @@ cMesh *cMeshLoaderCollada::LoadMesh(const tString &asFile, tMeshLoadFlag aFlags)
 			if (pTrack == NULL)
 				continue;
 			if (pSkeleton) {
-				//cBone *pBone = pSkeleton->GetBoneByName(pTrack->GetName());
+				// cBone *pBone = pSkeleton->GetBoneByName(pTrack->GetName());
 				int lBoneIdx = pSkeleton->GetBoneIndexByName(pTrack->GetName());
 				pTrack->SetNodeIndex(lBoneIdx);
 			} else {
@@ -1089,7 +1089,7 @@ cAnimation *cMeshLoaderCollada::LoadAnimation(const tString &asFile) {
 			if (pTrack == NULL)
 				continue;
 			if (pSkeleton) {
-				//cBone *pBone = pSkeleton->GetBoneByName(pTrack->GetName());
+				// cBone *pBone = pSkeleton->GetBoneByName(pTrack->GetName());
 				int lBoneIdx = pSkeleton->GetBoneIndexByName(pTrack->GetName());
 				pTrack->SetNodeIndex(lBoneIdx);
 			} else {
@@ -1753,7 +1753,7 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 				Error("Too few params in billboard entity entity '%s'\n", apNode->msName.c_str());
 			} else {
 				cVector2f vSize(apNode->mvScale.x, apNode->mvScale.y);
-				//float fOffset = apNode->mvScale.z;
+				// float fOffset = apNode->mvScale.z;
 
 				tString sName = vParams[vParams.size() - 1];
 				tString sFile = "";
@@ -1804,7 +1804,7 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 					sName = vParams[1];
 					sType = cString::Sub(apNode->msName, 4 + (int)sName.size() + 1);
 					pPS = apWorld->CreateParticleSystem(sName, sType, apNode->mvScale,
-																		   apNode->m_mtxWorldTransform);
+														apNode->m_mtxWorldTransform);
 
 					if (pPS == NULL) {
 						Error("Couldn't load particle system '%s' with type '%s'\n",

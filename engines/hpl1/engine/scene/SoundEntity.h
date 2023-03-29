@@ -105,7 +105,7 @@ public:
 
 	bool IsStopped();
 	bool IsFadingOut();
-	float getFadingSpeed() {return _fadeSpeed;}
+	float getFadingSpeed() { return _fadeSpeed; }
 	bool GetRemoveWhenOver();
 
 	void SetVolume(float afX) { mfVolume = afX; }
@@ -169,9 +169,9 @@ private:
 
 	float _fadeSpeed;
 
-	static tSoundEntityGlobalCallbackList* mlstGlobalCallbacks;
+	static tSoundEntityGlobalCallbackList *mlstGlobalCallbacks;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_SOUND_ENTITY_H

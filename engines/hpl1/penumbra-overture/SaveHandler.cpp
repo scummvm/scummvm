@@ -27,6 +27,9 @@
 
 #include "hpl1/penumbra-overture/SaveHandler.h"
 
+#include "common/savefile.h"
+#include "hpl1/debug.h"
+#include "hpl1/hpl1.h"
 #include "hpl1/penumbra-overture/GameEntity.h"
 #include "hpl1/penumbra-overture/GameMusicHandler.h"
 #include "hpl1/penumbra-overture/GraphicsHelper.h"
@@ -36,10 +39,7 @@
 #include "hpl1/penumbra-overture/Notebook.h"
 #include "hpl1/penumbra-overture/Player.h"
 #include "hpl1/penumbra-overture/RadioHandler.h"
-#include "hpl1/hpl1.h"
 #include "hpl1/string.h"
-#include "common/savefile.h"
-#include "hpl1/debug.h"
 
 //////////////////////////////////////////////////////////////////////////
 // SAVED WORLD
@@ -308,7 +308,7 @@ void cSaveHandler::SaveData(const tString &asName) {
 //-----------------------------------------------------------------------
 
 void cSaveHandler::LoadData(const tString &asName) {
-	/*cWorld3D *pWorld = */mpInit->mpGame->GetScene()->GetWorld3D();
+	/*cWorld3D *pWorld = */ mpInit->mpGame->GetScene()->GetWorld3D();
 	cSavedWorld *pSavedWorld = mpSavedGame->GetSavedWorld(asName);
 
 	///////////////////////
@@ -336,7 +336,7 @@ void cSaveHandler::LoadData(const tString &asName) {
 
 	///////////////////////
 	// Inventory callbacks
-	//cInventory *pInventory = mpInit->mpInventory;
+	// cInventory *pInventory = mpInit->mpInventory;
 
 	///////////////////////
 	// Use callbacks
@@ -565,14 +565,14 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 	sMapName = cString::ReplaceCharToW(sMapName, _W(":"), _W(" "));
 	cDate date = mpInit->mpGame->GetSystem()->GetLowLevel()->getDate();
 	tWString sFile = Common::U32String::format("%S: %S %d-%d-%d %d:%d:%d",
-			 asDir.c_str(),
-			 sMapName.c_str(),
-			 date.year,
-			 date.month + 1,
-			 date.month_day,
-			 date.hours,
-			 date.minutes,
-			 date.seconds);
+											   asDir.c_str(),
+											   sMapName.c_str(),
+											   date.year,
+											   date.month + 1,
+											   date.month_day,
+											   date.hours,
+											   date.minutes,
+											   date.seconds);
 	SaveGameToFile(sFile);
 
 	mpInit->mpGame->ResetLogicTimer();
@@ -581,7 +581,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 //-----------------------------------------------------------------------
 
 void cSaveHandler::AutoLoad(const tWString &asDir) {
-	tWString latestSave = GetLatest( asDir + _W(":*"));
+	tWString latestSave = GetLatest(asDir + _W(":*"));
 	LoadGameFromFile(latestSave);
 	mpInit->mpGame->ResetLogicTimer();
 }
@@ -634,7 +634,7 @@ Common::String firstSave(const Common::StringArray &saves, DateCmp cmp) {
 	if (saves.empty())
 		return "";
 	cDate latestDate = cSaveHandler::parseDate(saves.front());
-	const Common::String* latestSave = &saves.front();
+	const Common::String *latestSave = &saves.front();
 	for (auto it = saves.begin() + 1; it != saves.end(); ++it) {
 		cDate d = cSaveHandler::parseDate(*it);
 		if (cmp(d, latestDate)) {
@@ -648,7 +648,7 @@ Common::String firstSave(const Common::StringArray &saves, DateCmp cmp) {
 void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMask, int alMaxFiles) {
 	const Common::StringArray saves = Hpl1::g_engine->listInternalSaves(asDir + asMask);
 	if (static_cast<int>(saves.size()) > alMaxFiles) {
-		const Common::String oldest = firstSave(saves, [](const cDate& a, const cDate &b){return a < b;});
+		const Common::String oldest = firstSave(saves, [](const cDate &a, const cDate &b) { return a < b; });
 		Hpl1::logInfo(Hpl1::kDebugSaves, "removing save %s\n", oldest.c_str());
 		Hpl1::g_engine->removeSaveFile(oldest);
 	}
@@ -658,7 +658,7 @@ void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMa
 
 tWString cSaveHandler::GetLatest(const tWString &asMask) {
 	Common::StringArray saves = Hpl1::g_engine->listInternalSaves(asMask);
-	return firstSave(saves, [](const cDate& a, const cDate &b){return a > b;});
+	return firstSave(saves, [](const cDate &a, const cDate &b) { return a > b; });
 }
 
 //-----------------------------------------------------------------------

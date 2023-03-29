@@ -34,8 +34,8 @@
 #include "hpl1/engine/graphics/Texture.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/resources/GpuProgramManager.h"
-#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/resources/Resources.h"
+#include "hpl1/engine/resources/low_level_resources.h"
 #include "hpl1/engine/scene/Scene.h"
 #include "hpl1/engine/system/low_level_system.h"
 
@@ -421,7 +421,7 @@ void cRendererPostEffects::RenderDepthOfField() {
 			mpLowLevelGraphics->SetMatrix(eMatrix_ModelView, cMath::MatrixMul(pCam->GetViewMatrix(), *pMtx));
 
 			_depthOfFieldProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
-										 eGpuProgramMatrixOp_Identity);
+											 eGpuProgramMatrixOp_Identity);
 		}
 		//////////////////
 		// NULL Model view matrix (static)
@@ -429,7 +429,7 @@ void cRendererPostEffects::RenderDepthOfField() {
 			mpLowLevelGraphics->SetMatrix(eMatrix_ModelView, pCam->GetViewMatrix());
 
 			_depthOfFieldProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
-										 eGpuProgramMatrixOp_Identity);
+											 eGpuProgramMatrixOp_Identity);
 		}
 
 		pObject->GetVertexBuffer()->Bind();
@@ -466,7 +466,7 @@ void cRendererPostEffects::RenderMotionBlur() {
 	iTexture *pScreenTexture = mpScreenBuffer[mImageTrailData.mlCurrentBuffer == 0 ? 1 : 0];
 
 	// Size of the virtual screen
-	/*cVector2f vVirtSize = */mpLowLevelGraphics->GetVirtualSize();
+	/*cVector2f vVirtSize = */ mpLowLevelGraphics->GetVirtualSize();
 
 	// Copy screen to texture
 	mpLowLevelGraphics->CopyContextToTexure(pScreenTexture, 0, cVector2l((int)mvScreenSize.x, (int)mvScreenSize.y));
@@ -489,8 +489,8 @@ void cRendererPostEffects::RenderMotionBlur() {
 	_motionBlurProgram->Bind();
 	_motionBlurProgram->SetFloat("blurScale", mfMotionBlurAmount);
 	_motionBlurProgram->SetVec2f("halfScreenSize",
-							 cVector2f((float)pScreenTexture->getWidth() / 2.0f,
-									   (float)pScreenTexture->getHeight() / 2.0f));
+								 cVector2f((float)pScreenTexture->getWidth() / 2.0f,
+										   (float)pScreenTexture->getHeight() / 2.0f));
 
 	mpLowLevelGraphics->SetTexture(0, pScreenTexture);
 
@@ -508,7 +508,7 @@ void cRendererPostEffects::RenderMotionBlur() {
 			mpLowLevelGraphics->SetMatrix(eMatrix_ModelView, cMath::MatrixMul(pCam->GetViewMatrix(), *pMtx));
 
 			_motionBlurProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
-									   eGpuProgramMatrixOp_Identity);
+										   eGpuProgramMatrixOp_Identity);
 
 			cMatrixf mtxModelView = cMath::MatrixMul(pCam->GetViewMatrix(), *pMtx);
 			cMatrixf mtxPrevModelView = cMath::MatrixMul(pCam->GetPrevView(), mtxPrev);
@@ -525,7 +525,7 @@ void cRendererPostEffects::RenderMotionBlur() {
 			mpLowLevelGraphics->SetMatrix(eMatrix_ModelView, pCam->GetViewMatrix());
 
 			_motionBlurProgram->SetMatrixf("worldViewProj", eGpuProgramMatrix_ViewProjection,
-									   eGpuProgramMatrixOp_Identity);
+										   eGpuProgramMatrixOp_Identity);
 
 			const cMatrixf &mtxModelView = pCam->GetViewMatrix();
 			const cMatrixf &mtxPrevModelView = pCam->GetPrevView();
@@ -580,7 +580,7 @@ void cRendererPostEffects::RenderBloom() {
 	RenderBlurTexture(mpBloomBlurTexture, pScreenTexture, mfBloomSpread);
 
 	// Size of blur texture
-	/*cVector2f vBlurSize = */cVector2f((float)mpBloomBlurTexture->getWidth(), (float)mpBloomBlurTexture->getHeight());
+	/*cVector2f vBlurSize = */ cVector2f((float)mpBloomBlurTexture->getWidth(), (float)mpBloomBlurTexture->getHeight());
 
 	// Size of the virtual screen
 	cVector2f vVirtSize = mpLowLevelGraphics->GetVirtualSize();

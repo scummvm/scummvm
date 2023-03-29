@@ -47,6 +47,6 @@ protected:
 	cGuiSkin *mpSkin;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_WIDGET_FRAME_H

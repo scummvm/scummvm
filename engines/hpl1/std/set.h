@@ -27,9 +27,10 @@
 namespace Hpl1 {
 namespace Std {
 
-template<class T, class CompFn = Common::Less<T>>
+template<class T, class CompFn = Common::Less<T> >
 class set {
 	using TreeT = Tree<T, T, Identity<T>, CompFn>;
+
 public:
 	using iterator = typename TreeT::BasicIterator;
 	using const_iterator = typename TreeT::ConstIterator;
@@ -111,6 +112,7 @@ public:
 			++total;
 		return total;
 	}
+
 private:
 	static bool CompareEq(const T &a, const T &b) {
 		return !CompFn()(a, b) && !CompFn()(b, a);

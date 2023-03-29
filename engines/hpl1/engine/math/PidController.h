@@ -28,8 +28,8 @@
 #ifndef HPL_PID_CONTROLLER_H
 #define HPL_PID_CONTROLLER_H
 
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/algorithms.h"
+#include "hpl1/engine/math/MathTypes.h"
 
 namespace hpl {
 
@@ -130,6 +130,6 @@ private:
 typedef cPidController<float> cPidControllerf;
 typedef cPidController<cVector3f> cPidControllerVec3;
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_PID_CONTROLLER_H

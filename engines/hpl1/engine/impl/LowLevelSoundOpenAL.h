@@ -28,8 +28,8 @@
 #ifndef HPL_LOWLEVELSOUND_OPENAL_H
 #define HPL_LOWLEVELSOUND_OPENAL_H
 
-#include "hpl1/engine/sound/LowLevelSound.h"
 #include "common/array.h"
+#include "hpl1/engine/sound/LowLevelSound.h"
 
 namespace Audio {
 
@@ -86,6 +86,6 @@ private:
 	bool mbNullEffectAttached;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_LOWLEVELSOUND_OPENAL_H

@@ -28,10 +28,10 @@
 #ifndef HPL_SDL_TEXTURE_H
 #define HPL_SDL_TEXTURE_H
 
-#include "hpl1/engine/graphics/Texture.h"
-#include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
-#include "hpl1/engine/graphics/bitmap2D.h"
 #include "common/scummsys.h"
+#include "hpl1/engine/graphics/Texture.h"
+#include "hpl1/engine/graphics/bitmap2D.h"
+#include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 
 #ifdef USE_OPENGL
 
@@ -80,7 +80,7 @@ public:
 	/// SDL / OGL Specific ///////////
 
 	unsigned int GetTextureHandle();
-	//cPBuffer *GetPBuffer() { return mpPBuffer; }
+	// cPBuffer *GetPBuffer() { return mpPBuffer; }
 
 private:
 	bool CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx);
@@ -99,7 +99,7 @@ private:
 	float mfTimeDir;
 };
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // USE_OPENGL
 #endif // HPL_SDL_TEXTURE_H

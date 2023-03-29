@@ -89,6 +89,6 @@ public:
 
 //-----------------------------------------
 
-}     // namespace hpl
+} // namespace hpl
 
 #endif // HPL_GUI_MATERIAL_BASIC_TYPES_H
