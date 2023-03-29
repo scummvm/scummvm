@@ -315,14 +315,26 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 
 	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
 	uint curr_ptr = readStream->pos();
-	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(readStream->readStream(length), DisposeAfterUse::NO);
+		
+	uint32 tag = readStream->readUint32BE();
+	readStream->seek(curr_ptr);
+
+	Audio::RewindableAudioStream *stream = nullptr;
+	if (tag == MKTAG('R', 'I', 'f', 'f')) {
+		stream = Audio::makeWAVStream(readStream->readStream(length), DisposeAfterUse::NO);
+	}
 
 #ifdef USE_VORBIS
-	if (!stream) {
-		readStream->seek(curr_ptr);
+	if (tag == MKTAG('O', 'g', 'g', 'S')) {
 		stream = Audio::makeVorbisStream(readStream->readStream(length), DisposeAfterUse::NO);
-	}
+	} 
 #endif
+
+	if (!stream) {
+		warning("Unsupported sound format");
+		delete stream;
+	}
+
 	g_sludge->_resMan->finishAccess();
 
 	if (stream) {
