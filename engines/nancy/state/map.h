@@ -77,7 +77,7 @@ protected:
 
 	void setLabel(int labelID);
 
-	MAP *mapData;
+	MAP *_mapData;
 
 	MapViewport _viewport;
 	RenderObject _label;
