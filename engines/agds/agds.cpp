@@ -750,11 +750,6 @@ Common::Error AGDSEngine::run() {
 void AGDSEngine::playFilm(Process &process, const Common::String &video, const Common::String &audio, const Common::String &subtitles) {
 	delete _mjpgPlayer;
 	_mjpgPlayer = nullptr;
-	if (_fastMode) {
-		debug("fast mode, skipping film");
-		process.activate();
-		return;
-	}
 
 	_filmProcess = process.getName();
 	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video), subtitles);
