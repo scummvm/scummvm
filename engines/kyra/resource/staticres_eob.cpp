@@ -1764,13 +1764,11 @@ void DarkMoonEngine::initStaticResource() {
 			"Escoge Fichero",
 			"\r\r   Un momento\r   por favor..."
 		},
-		{
-			0, 0, 0, 0
-		}
 	};
 
 	switch(_flags.lang) {
 		case Common::EN_ANY:
+		default:
 			_errorSlotNoNameString = errorSlotNoNameString[0];
 			_transferStringsScummVM = transferStringsScummVM[0];
 			break;
@@ -1782,9 +1780,6 @@ void DarkMoonEngine::initStaticResource() {
 			_errorSlotNoNameString = errorSlotNoNameString[2];
 			_transferStringsScummVM = transferStringsScummVM[2];
 			break;
-		default:
-			_errorSlotNoNameString = errorSlotNoNameString[3];
-			_transferStringsScummVM = transferStringsScummVM[3];
 	}
 
 }
