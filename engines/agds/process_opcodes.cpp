@@ -913,10 +913,15 @@ void Process::stub174() {
 	debug("stub174: set mouse relative mode");
 }
 
-void Process::stub192() {
+void Process::objectIgnoreRegion() {
 	int value = pop();
-	Common::String name = popString();
-	debug("stub192: %s: set some object flag to %d", name.c_str(), value);
+	Common::String objectName = popString();
+	debug("objectIgnoreRegion: %s %d", objectName.c_str(), value);
+	auto object = _engine->getCurrentScreenObject(objectName);
+	if (object)
+		object->ignoreRegion(value > 0);
+	else
+		warning("objectIgnoreRegion: object %s not found", objectName.c_str());
 }
 
 void Process::removeGapsFromInventory() {

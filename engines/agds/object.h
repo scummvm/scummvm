@@ -88,6 +88,7 @@ private:
 	bool							_alive;
 	bool							_persistent;
 	bool							_allowInitialise;
+	bool							_ignoreRegion;
 
 private:
 	void freeRotated();
@@ -108,6 +109,13 @@ public:
 	}
 	bool persistent() const {
 		return _persistent;
+	}
+
+	void ignoreRegion(bool ignoreRegion) {
+		_ignoreRegion = ignoreRegion;
+	}
+	bool ignoreRegion() const {
+		return _ignoreRegion;
 	}
 
 	void readStringTable(unsigned resOffset, uint16 resCount);
