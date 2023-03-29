@@ -77,6 +77,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_helpData = nullptr;
 	_creditsData = nullptr;
 	_hintData = nullptr;
+	_clockData = nullptr;
 }
 
 NancyEngine::~NancyEngine() {
@@ -96,6 +97,7 @@ NancyEngine::~NancyEngine() {
 	delete _helpData;
 	delete _creditsData;
 	delete _hintData;
+	delete _clockData;
 }
 
 NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
@@ -374,6 +376,11 @@ void NancyEngine::bootGameEngine() {
 	chunkStream = boot->getChunkStream("HINT");
 	if (chunkStream) {
 		_hintData = new HINT(chunkStream);
+	}
+
+	chunkStream = boot->getChunkStream("CLOK");
+	if (chunkStream) {
+		_clockData = new CLOK(chunkStream);
 	}
 
 	// Load all data chunks found in BOOT. These get used in a lot of places

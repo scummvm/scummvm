@@ -63,14 +63,9 @@ protected:
 		uint32 _timeToKeepOpen;
 	};
 
+	CLOK *_clockData;
 	RenderObject _gargoyleEyes;
 	ClockGlobe _globe;
-
-	Common::Array<Common::Rect> _globeSrcRects;
-	Common::Array<Common::Rect> _hoursHandSrcRects;
-	Common::Array<Common::Rect> _minutesHandSrcRects;
-	Common::Array<Common::Rect> _hoursHandDestRects;
-	Common::Array<Common::Rect> _minutesHandDestRects;
 
 	Time _playerTime;
 };

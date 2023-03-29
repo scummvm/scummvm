@@ -123,6 +123,7 @@ public:
 	HELP *_helpData;
 	CRED *_creditsData;
 	HINT *_hintData;
+	CLOK *_clockData;
 
 	Common::HashMap<Common::String, ImageChunk> _imageChunks;
 

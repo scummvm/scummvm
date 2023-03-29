@@ -323,6 +323,49 @@ HINT::HINT(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
+CLOK::CLOK(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	Common::Serializer s(chunkStream, nullptr);
+	s.setVersion(g_nancy->getGameType());
+
+	animSrcs.resize(8);
+	for (uint i = 0; i < 8; ++i) {
+		readRect(*chunkStream, animSrcs[i]);
+	}
+
+	hoursHandSrcs.resize(12);
+	for (uint i = 0; i < 12; ++i) {
+		readRect(*chunkStream, hoursHandSrcs[i]);
+	}
+
+	minutesHandSrcs.resize(4);
+	for (uint i = 0; i < 4; ++i) {
+		readRect(*chunkStream, minutesHandSrcs[i]);
+	}
+
+	readRect(*chunkStream, screenPosition);
+
+	hoursHandDests.resize(12);
+	for (uint i = 0; i < 12; ++i) {
+		readRect(*chunkStream, hoursHandDests[i]);
+	}
+
+	minutesHandDests.resize(4);
+	for (uint i = 0; i < 4; ++i) {
+		readRect(*chunkStream, minutesHandDests[i]);
+	}
+
+	readRect(*chunkStream, gargoyleEyesSrc);
+	readRect(*chunkStream, gargoyleEyesDest);
+
+	s.syncAsUint32LE(timeToKeepOpen);
+	s.syncAsUint16LE(frameTime);
+
+	delete chunkStream;
+}
+
 ImageChunk::ImageChunk(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 
