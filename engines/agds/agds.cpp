@@ -336,13 +336,8 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	bool doPatch = patch && loadingType != ScreenLoadingType::SaveOrLoad;
 	bool hasScreenPatch = doPatch && patch->screenSaved;
 
-	if (_currentScreen) {
-		if (_currentCharacter) {
-			_currentCharacter->reset();
-			if (loadingType != ScreenLoadingType::Normal) {
-				_currentCharacter->visible(false);
-			}
-		}
+	if (_currentCharacter) {
+		_currentCharacter->reset();
 	}
 
 	_currentScreenName = name;
@@ -615,10 +610,13 @@ Common::Error AGDSEngine::run() {
 							break;
 						} else {
 							debug("no handler found");
-							if (_currentCharacter && _currentCharacter->active()) {
-								// FIXME: some object requires character to be in "trap" region
-								// Remove this after movement implementation.
-								_currentCharacter->moveTo(Common::String(), _mouse, -1);
+							if (_currentCharacter && _currentCharacter->active() && _currentScreen && _currentScreen->region()) {
+								auto & region = _currentScreen->region();
+								if (region->pointIn(_mouse)) {
+									// FIXME: some object requires character to be in "trap" region
+									// Remove this after movement implementation.
+									_currentCharacter->moveTo(Common::String(), _mouse, -1);
+								}
 							}
 							auto scroll = _currentScreen->scrollPosition();
 							scroll.x += _mouse.x - g_system->getWidth() / 2;
