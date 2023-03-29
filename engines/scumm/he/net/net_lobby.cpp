@@ -214,6 +214,9 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 	case OP_NET_CALL_PLAYER:
 		challengePlayer(args[0], args[1]);
 		break;
+	case OP_NET_PING_OPPONENT:
+		// TODO
+		break;
 	case OP_NET_RECEIVER_BUSY:
 		sendBusy(args[0]);
 		break;
@@ -249,6 +252,9 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 		break;
 	case OP_NET_GET_POPULATION:
 		getPopulation(args[0], args[1]);
+		break;
+	case OP_NET_UNKNOWN_2229:
+		// TODO
 		break;
 	case OP_NET_CHANGE_ICON:
 		setIcon(args[0]);

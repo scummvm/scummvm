@@ -48,6 +48,7 @@
 
 // MAIA (Updater) opcodes.
 #define OP_NET_CHECK_INTERNET_STATUS	3001
+#define OP_NET_SHUT_DOWN_MAIA			3004
 
 
 namespace Scumm {
@@ -87,7 +88,7 @@ int LogicHEbaseball2001::startOfFrame() {
 
 int32 LogicHEbaseball2001::dispatch(int op, int numArgs, int32 *args) {
 #if defined(USE_ENET) && defined(USE_LIBCURL)
-	if (op > 2120 && op < 3003 && op != OP_NET_CHECK_INTERNET_STATUS) 
+	if (op > 2120 && op < 3003 && op != OP_NET_CHECK_INTERNET_STATUS)
 		return _vm->_lobby->dispatch(op, numArgs, args);
 #endif
 
@@ -163,6 +164,9 @@ case OP_NET_INIT:
 		// Internet.
 		res = 1;
 #endif
+		break;
+
+	case OP_NET_SHUT_DOWN_MAIA:
 		break;
 
 	default:

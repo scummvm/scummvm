@@ -51,6 +51,7 @@
 
 // MAIA (Updater) opcodes.
 #define OP_NET_CHECK_INTERNET_STATUS	3001
+#define OP_NET_SHUT_DOWN_MAIA			3004
 
 
 namespace Scumm {
@@ -159,6 +160,10 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		netRemoteStartScript(numArgs, args);
 		break;
 
+	case OP_NET_CLOSE_PROVIDER:
+		res = _vm->_net->closeProvider();
+		break;
+
 	case OP_NET_QUERY_SESSIONS:
 #ifdef USE_LIBCURL
 		if (_vm->_lobby->_sessionId) {
@@ -214,6 +219,9 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 		// Internet.
 		res = 1;
 #endif
+		break;
+
+	case OP_NET_SHUT_DOWN_MAIA:
 		break;
 
 	case 1493: case 1494: case 1495: case 1496:
@@ -507,10 +515,6 @@ int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
 		break;
 
 #ifdef USE_ENET
-	case OP_NET_CLOSE_PROVIDER:
-		res = _vm->_net->closeProvider();
-		break;
-
 	case OP_NET_QUERY_SESSIONS:
 		if (_requestedSessionIndex > -1)
 			// Emulate that we've found a session.

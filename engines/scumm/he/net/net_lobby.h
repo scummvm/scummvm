@@ -42,6 +42,7 @@
 #define OP_NET_GET_PLAYERS_INFO					2207
 #define OP_NET_START_HOSTING_GAME				2208
 #define OP_NET_CALL_PLAYER						2209
+#define OP_NET_PING_OPPONENT					2211
 #define OP_NET_RECEIVER_BUSY					2212
 #define OP_NET_COUNTER_CHALLENGE				2213
 #define OP_NET_GET_PROFILE						2214
@@ -57,6 +58,7 @@
 #define OP_NET_UPDATE_PROFILE_ARRAY				2225
 #define OP_NET_LOCATE_PLAYER					2226
 #define OP_NET_GET_POPULATION					2227
+#define OP_NET_UNKNOWN_2229						2229
 // Used in baseball to get news, poll and banner.
 #define OP_NET_DOWNLOAD_FILE					2238
 
