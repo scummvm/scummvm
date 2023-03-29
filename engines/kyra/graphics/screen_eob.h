@@ -202,7 +202,8 @@ private:
 	const uint16 _cursorColorKey16Bit;
 
 	static const uint8 _egaMatchTable[];
-	static const ScreenDim _screenDimTable[];
+	static const ScreenDim _screenDimTableIntl[];
+	static const ScreenDim _screenDimTableZH[];
 	static const int _screenDimTableCount;
 
 	// SegaCD specific
