@@ -104,7 +104,7 @@ public:
 		return _loadingType;
 	}
 
-	RegionPtr region() const {
+	const RegionPtr & region() const {
 		return _region;
 	}
 
