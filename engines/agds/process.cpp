@@ -242,7 +242,7 @@ void Process::run() {
 		case kExitCodeLoadInventoryObject:
 			deactivate();
 			_object->lock();
-			_engine->inventory().add(_engine->runObject(getExitArg1()));
+			_engine->inventory().add(getExitArg1());
 			_object->unlock();
 			activate();
 			restart = true;

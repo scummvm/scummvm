@@ -72,7 +72,23 @@ ObjectPtr Inventory::get(int index) {
 	return {};
 }
 
+int Inventory::add(const Common::String & name) {
+	int idx = find(name);
+	if (idx >= 0) {
+		warning("Double adding object %s, skipping...", name.c_str());
+		return idx;
+	}
+	return add(_engine->runObject(name));
+}
+
 int Inventory::add(const ObjectPtr & object) {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		auto & entry = _entries[i];
+		if (entry.hasObject && entry.object == object) {
+			warning("Double adding object pointer %s, skipping...", object->getName().c_str());
+			return i;
+		}
+	}
 	object->persistent(false);
 	for (uint i = 0; i < _entries.size(); ++i) {
 		auto & entry = _entries[i];
