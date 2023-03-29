@@ -260,17 +260,17 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 	}
 }
 
-ObjectPtr Screen::find(Common::Point pos) const {
-	ObjectPtr topObject;
+Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
+	Common::Array<ObjectPtr> objects;
+	objects.reserve(_children.size());
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
 		auto visiblePos = (object->scale() >= 0)? pos + _scroll: pos;
 		if (object->pointIn(visiblePos) && object->alive()) {
-			if (!topObject || topObject->z() > object->z())
-				topObject = object;
+			objects.insert_at(0, object);
 		}
 	}
-	return topObject;
+	return objects;
 }
 
 Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {

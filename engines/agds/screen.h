@@ -143,7 +143,7 @@ public:
 
 	void tick();
 	void paint(Graphics::Surface & backbuffer) const;
-	ObjectPtr find(Common::Point pos) const;
+	Common::Array<ObjectPtr> find(Common::Point pos) const;
 	ObjectPtr find(const Common::String &name);
 	KeyHandler findKeyHandler(const Common::String &keyName);
 	Animation * findAnimationByPhaseVar(const Common::String &phaseVar);
