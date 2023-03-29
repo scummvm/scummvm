@@ -1580,7 +1580,12 @@ void Process::setCharacter() {
 void Process::setCharacterDirection() {
 	int dir = pop();
 	Common::String name = popString();
-	debug("setCharacterDirection stub %s %d", name.c_str(), dir);
+	debug("setCharacterDirection %s %d", name.c_str(), dir);
+	auto character = _engine->getCharacter(name);
+	if (character) {
+		character->direction(dir);
+	} else
+		warning("no character %s", name.c_str());
 }
 
 void Process::pointCharacter() {
