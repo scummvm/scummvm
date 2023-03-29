@@ -1714,12 +1714,13 @@ void Process::stub231() {
 	debug("stub231 %d %d", arg1, arg2);
 }
 
-void Process::stub233() {
+void Process::objectFreePictureAndAnimation() {
 	Common::String name = popString();
-	debug("stub233 %s unload picture?", name.c_str());
+	debug("objectFreePictureAndAnimation %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
 	if (object) {
-		object->setPicture(NULL);
+		object->setAnimation(nullptr);
+		object->setPicture(nullptr);
 	}
 }
 

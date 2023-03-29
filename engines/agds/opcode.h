@@ -250,7 +250,7 @@ enum Opcode {
 	kStub230						= 230,
 	kStub231						= 231,
 	kStub232						= 232,
-	kStub233						= 233,
+	kObjectFreePictureAndAnimation	= 233,
 	kGetSampleVolume				= 234,
 	kStub235						= 235,
 	kUserEnabled					= 236,
@@ -469,7 +469,7 @@ enum Opcode {
 	OP_U(kOnKey, onKey) \
 	OP(kGetSampleVolume, getSampleVolume) \
 	OP(kStub231, stub231) \
-	OP(kStub233, stub233) \
+	OP(kObjectFreePictureAndAnimation, objectFreePictureAndAnimation) \
 	OP(kStub235, stub235) \
 	OP(kUserEnabled, userEnabled) \
 	OP(kSetCharacterNotifyVars, setCharacterNotifyVars) \
