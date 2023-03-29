@@ -372,7 +372,6 @@ void iRenderState::setGpuProgMode(cRenderSettings *settings) {
 	if (gpuProgram != settings->gpuProgram) {
 		if (gpuProgram != settings->gpuProgram) {
 			if (gpuProgram) {
-				Hpl1::logInfo(Hpl1::kDebugRenderer, "binding shader: '%s'\n", gpuProgram->GetName().c_str());
 				gpuProgram->Bind();
 
 				if (gpuProgramSetup) {
@@ -391,7 +390,6 @@ void iRenderState::setGpuProgMode(cRenderSettings *settings) {
 				settings->mbUsesLight = mbUsesLight;
 				settings->mbUsesEye = mbUsesEye;
 			} else {
-				Hpl1::logInfo(Hpl1::kDebugRenderer, "unbinding current shader: '%s'\n", settings->gpuProgram->GetName().c_str());
 				settings->gpuProgram->UnBind();
 			}
 			settings->gpuProgram = gpuProgram;

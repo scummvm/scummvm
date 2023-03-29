@@ -90,12 +90,14 @@ void cCGProgram::destroy() {
 //-----------------------------------------------------------------------
 
 void cCGProgram::Bind() {
+	Hpl1::logInfo(Hpl1::kDebugShaders, "binding shader %s\n", GetName().c_str());
 	_shader->use();
 }
 
 //-----------------------------------------------------------------------
 
 void cCGProgram::UnBind() {
+	Hpl1::logInfo(Hpl1::kDebugShaders, "unbinding shader %s\n", GetName().c_str());
 	_shader->unbind();
 }
 
