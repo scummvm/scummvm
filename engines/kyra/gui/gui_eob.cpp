@@ -49,6 +49,12 @@ Button *EoBCoreEngine::gui_getButton(Button *buttonList, int index) {
 void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 	_screen->loadEoBBitmap("PLAYFLD", _cgaMappingDeco, 5, 3, 2);
 	int cp = _screen->setCurPage(2);
+	if (_flags.lang == Common::Language::ZH_TWN) {
+		Screen::FontId of = _screen->setFont(Screen::FID_CHINESE_FNT);
+		_screen->fillRect(290, 180, 318, 194, guiSettings()->colors.fill);
+		_screen->printShadedText("\xbf\xef?" /* 選? */, 292, 181, guiSettings()->colors.guiColorYellow, guiSettings()->colors.fill, guiSettings()->colors.guiColorBlack, -1);
+		_screen->setFont(of);
+	}
 	gui_drawCompass(true);
 
 	if (refresh && !_sceneDrawPage2)
