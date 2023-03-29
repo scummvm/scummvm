@@ -100,9 +100,6 @@ public:
 	NancyState::NancyState getState() { return _gameFlow.curState; }
 	void setToPreviousState();
 
-	// Chunks found in BOOT get extracted and cached at startup, this function lets other classes access them
-	Common::SeekableReadStream *getBootChunkStream(const Common::String &name) const;
-
 	void setMouseEnabled(bool enabled);
 
 	// Managers
@@ -142,9 +139,6 @@ private:
 
 	State::State *getStateObject(NancyState::NancyState state) const;
 
-	bool addBootChunk(const Common::String &name, Common::SeekableReadStream *stream);
-	void clearBootChunks();
-
 	void preloadCals(const IFF &boot);
 
 	void readDatFile();
@@ -161,8 +155,6 @@ private:
 	OSystem *_system;
 
 	const NancyGameDescription *_gameDescription;
-
-	Common::HashMap<Common::String, Common::SeekableReadStream *> _bootChunks;
 };
 
 extern NancyEngine *g_nancy;

@@ -82,7 +82,6 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 }
 
 NancyEngine::~NancyEngine() {
-	clearBootChunks();
 	delete _randomSource;
 
 	delete _graphicsManager;
@@ -346,7 +345,6 @@ void NancyEngine::bootGameEngine() {
 	// Setup mixer
 	syncSoundSettings();
 
-	clearBootChunks();
 	IFF *boot = new IFF("boot");
 	if (!boot->load())
 		error("Failed to load boot script");
@@ -392,15 +390,6 @@ void NancyEngine::bootGameEngine() {
 
 	_sound->loadCommonSounds(boot);
 
-	// Load all data chunks found in BOOT. These get used in a lot of places
-	// across the engine, so we always keep them in memory
-	Common::Array<Common::String> bootChunkNames;
-	boot->list(bootChunkNames);
-
-	for (auto const &n : bootChunkNames) {
-		addBootChunk(n, boot->getChunkStream(n));
-	}
-
 	delete boot;
 }
 
@@ -421,28 +410,6 @@ State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 	default:
 		return nullptr;
 	}
-}
-
-bool NancyEngine::addBootChunk(const Common::String &name, Common::SeekableReadStream *stream) {
-	if (!stream)
-		return false;
-	_bootChunks[name] = stream;
-	return true;
-}
-
-Common::SeekableReadStream *NancyEngine::getBootChunkStream(const Common::String &name) const {
-	if (_bootChunks.contains(name)) {
-		return _bootChunks[name];
-	} else {
-		return nullptr;
-	}
-}
-
-void NancyEngine::clearBootChunks() {
-	for (auto const& i : _bootChunks) {
-		delete i._value;
-	}
-	_bootChunks.clear();
 }
 
 void NancyEngine::preloadCals(const IFF &boot) {

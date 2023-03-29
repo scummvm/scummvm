@@ -54,7 +54,7 @@ void MainMenu::onStateExit() {
 }
 
 void MainMenu::init() {
-	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("MENU");
+	/*Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("MENU");
 	chunk->seek(0);
 
 	Common::String imageName;
@@ -91,7 +91,7 @@ void MainMenu::init() {
 		rect.bottom = chunk->readSint16LE();
 	}
 
-	_buttonDown.registerGraphics();
+	_buttonDown.registerGraphics();*/
 
 	_state = kRun;
 }
