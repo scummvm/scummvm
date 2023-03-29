@@ -120,7 +120,7 @@ void Character::visible(bool visible) {
 void Character::loadState(Common::ReadStream* stream) {
 	int x = stream->readUint16LE();
 	int y = stream->readUint16LE();
-	int dir = stream->readUint16LE();
+	int dir = stream->readSint16LE();
 	debug("character at %d, %d, dir: %d", x, y, dir);
 	position(Common::Point(x, y));
 	direction(dir);
