@@ -563,18 +563,20 @@ void cRenderer3D::InitSkyBox() {
 
 //-----------------------------------------------------------------------
 
+static void clearTextures(uint start, cRenderSettings &rendererSettings, iLowLevelGraphics *lowLevelGfx) {
+	for (uint i = start; i < MAX_TEXTUREUNITS; ++i) {
+		if (rendererSettings.mpTexture[i]) {
+			lowLevelGfx->SetTexture(i, nullptr);
+			rendererSettings.mpTexture[i] = nullptr;
+		}
+	}
+}
+
 void cRenderer3D::RenderFog(cCamera3D *apCamera) {
 	if (mRenderSettings.mbFogActive == false || !_solidFogProgram)
 		return;
-	int i;
-	//////////////////////////////////
-	// Set textures to NULL
-	for (i = 0; i < MAX_TEXTUREUNITS; ++i) {
-		if (mRenderSettings.mpTexture[i]) {
-			mpLowLevelGraphics->SetTexture(i, NULL);
-			mRenderSettings.mpTexture[i] = NULL;
-		}
-	}
+
+	clearTextures(0, mRenderSettings, mpLowLevelGraphics);
 
 	//////////////////////////////////
 	// Set fog program
@@ -585,7 +587,6 @@ void cRenderer3D::RenderFog(cCamera3D *apCamera) {
 	_solidFogProgram->SetColor3f("fogColor", mRenderSettings.mFogColor);
 	_solidFogProgram->SetFloat("fogStart", mRenderSettings.mfFogStart);
 	_solidFogProgram->SetFloat("fogEnd", mRenderSettings.mfFogEnd);
-
 
 	//////////////////////////////////
 	// Blend mode
@@ -639,7 +640,7 @@ void cRenderer3D::RenderSkyBox(cCamera3D *apCamera) {
 	if (mbSkyBoxActive == false)
 		return;
 
-	Hpl1::logInfo(Hpl1::kDebugRenderer, "%s", "Drawing skybox");
+	Hpl1::logInfo(Hpl1::kDebugRenderer, "%s\n", "Drawing skybox");
 
 	if (mRenderSettings.gpuProgram) {
 		mRenderSettings.gpuProgram->UnBind();
@@ -655,14 +656,7 @@ void cRenderer3D::RenderSkyBox(cCamera3D *apCamera) {
 			Log(" Setting Vertex Buffer: NULL\n");
 	}
 
-	for (int i = 1; i < MAX_TEXTUREUNITS; ++i) {
-		if (mRenderSettings.mpTexture[i]) {
-			mpLowLevelGraphics->SetTexture(i, NULL);
-			mRenderSettings.mpTexture[i] = NULL;
-			if (mbLog)
-				Log(" Setting Texture %d : NULL\n", i);
-		}
-	}
+	clearTextures(1, mRenderSettings, mpLowLevelGraphics);
 
 	mRenderSettings.mbMatrixWasNULL = false;
 
