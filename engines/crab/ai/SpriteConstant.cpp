@@ -30,6 +30,8 @@
 
 #include "crab/SpriteConstant.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ai;
 
 FlyerConstant::FlyerConstant() : start(10, 40), vel(8.0f, 0.0f) {
@@ -66,3 +68,5 @@ void SpriteConstant::Load(rapidxml::xml_node<char> *node) {
 	if (NodeValid("fly", node))
 		fly.Load(node->first_node("fly"));
 }
+
+} // End of namespace Crab

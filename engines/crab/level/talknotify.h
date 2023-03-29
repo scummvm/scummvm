@@ -36,6 +36,8 @@
 #include "crab/common_header.h"
 #include "crab/sprite.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace level {
 class TalkNotify {
@@ -57,5 +59,7 @@ public:
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_TALKNOTIFY_H

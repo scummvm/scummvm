@@ -31,6 +31,8 @@
 
 #include "crab/EventSequence.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::event;
 
 //------------------------------------------------------------------------
@@ -141,3 +143,5 @@ void EventSequence::LoadState(rapidxml::xml_node<char> *node) {
 	if (next.empty())
 		next.push_back(0);
 }
+
+} // End of namespace Crab

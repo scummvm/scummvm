@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/timer.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class ProgressBar : public ClipButton {
@@ -108,5 +110,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_PROGRESSBAR_H

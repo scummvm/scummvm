@@ -36,6 +36,8 @@
 #include "crab/common_header.h"
 #include "crab/menu.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class KeyBindMenu {
@@ -118,5 +120,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_KEYBINDMENU_H

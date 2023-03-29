@@ -30,8 +30,12 @@
 
 #include "crab/FileMenu.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 FileMenu<SaveFileData> gLoadMenu;
 }
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab

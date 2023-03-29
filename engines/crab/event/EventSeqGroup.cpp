@@ -31,6 +31,8 @@
 
 #include "crab/EventSeqGroup.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::event;
 
 void EventSeqGroup::EndSeq(const unsigned int &id) {
@@ -93,3 +95,5 @@ void EventSeqGroup::LoadState(rapidxml::xml_node<char> *node) {
 				seq[id].LoadState(n);
 		}
 }
+
+} // End of namespace Crab

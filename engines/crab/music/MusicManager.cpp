@@ -33,6 +33,8 @@
 #include "crab/ScreenSettings.h"
 #include "crab/XMLDoc.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::music;
 
 namespace pyrodactyl {
@@ -144,3 +146,5 @@ void MusicManager::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<c
 	child->append_attribute(doc.allocate_attribute("chunk_size", gStrPool.Get(chunksize)));
 	root->append_node(child);
 }
+
+} // End of namespace Crab

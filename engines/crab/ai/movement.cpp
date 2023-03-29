@@ -30,6 +30,8 @@
 
 #include "crab/movement.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ai;
 
 //------------------------------------------------------------------------
@@ -60,3 +62,5 @@ bool MovementSet::InternalEvents(const Rect rect) {
 
 	return false;
 }
+
+} // End of namespace Crab

@@ -31,6 +31,8 @@
 
 #include "crab/imageeffect.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 
 void ImageEffect::Load(rapidxml::xml_node<char> *node) {
@@ -44,3 +46,5 @@ void ImageEffect::Draw(const int &XOffset, const int &YOffset) {
 	if (visible)
 		pyrodactyl::image::gImageManager.Draw(x + XOffset, y + YOffset, img);
 }
+
+} // End of namespace Crab

@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/menu.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 // Sometimes we need multiple pages in a menu, this object does that
@@ -231,5 +233,7 @@ public:
 typedef PageMenu<Button> PageButtonMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_PAGEMENU_H

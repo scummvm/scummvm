@@ -32,6 +32,8 @@
 #include "crab/TextManager.h"
 #include "crab/collision.h"
 
+namespace Crab {
+
 using namespace TMX;
 using namespace pyrodactyl::image;
 
@@ -403,3 +405,5 @@ bool TMXMap::CollideWithMusic(const Rect rect, pyrodactyl::level::MusicInfo &mus
 //------------------------------------------------------------------------
 // Purpose: Path finding functions
 //------------------------------------------------------------------------
+
+} // End of namespace Crab

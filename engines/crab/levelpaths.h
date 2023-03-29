@@ -33,6 +33,8 @@
 
 #include <string>
 
+namespace Crab {
+
 class LevelPaths {
 	std::string layout, asset;
 
@@ -53,5 +55,7 @@ public:
 	const char *AssetPath() { return asset.c_str(); }
 	void AssetPath(const char *str) { asset = str; }
 };
+
+} // End of namespace Crab
 
 #endif // LEVELPATHS_H

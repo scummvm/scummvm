@@ -34,6 +34,8 @@
 #include "crab/RadioButton.h"
 #include "crab/menu.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class RadioButtonMenu : public Menu<RadioButton> {
@@ -80,5 +82,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_RADIOBUTTONMENU_H

@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/textarea.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class DebugConsole {
@@ -69,5 +71,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_DEVCONSOLE_H

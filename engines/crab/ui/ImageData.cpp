@@ -30,6 +30,8 @@
 
 #include "crab/ImageData.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -49,3 +51,5 @@ void ImageData::Draw(const int &XOffset, const int &YOffset) {
 	else
 		gImageManager.Draw(x + XOffset, y + YOffset, key);
 }
+
+} // End of namespace Crab

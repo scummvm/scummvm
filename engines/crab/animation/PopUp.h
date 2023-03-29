@@ -38,6 +38,8 @@
 #include "crab/effect.h"
 #include "crab/triggerset.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 struct PopUp {
@@ -119,5 +121,7 @@ struct PopUpCollection {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_POPUP_H

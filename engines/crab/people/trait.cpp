@@ -30,6 +30,8 @@
 
 #include "crab/trait.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::people;
 
 //------------------------------------------------------------------------
@@ -68,3 +70,5 @@ void Trait::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *r
 
 	root->append_node(child);
 }
+
+} // End of namespace Crab

@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/trait.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class TraitButton : public StateButton {
@@ -58,5 +60,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_TRAITBUTTON_H

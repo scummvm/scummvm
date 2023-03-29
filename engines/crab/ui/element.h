@@ -36,6 +36,8 @@
 #include "crab/common_header.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class Element : public Rect {
@@ -77,5 +79,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ELEMENT_H

@@ -31,6 +31,8 @@
 #include "crab/mainmenu.h"
 #include "crab/url.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::music;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::text;
@@ -448,3 +450,5 @@ void MainMenu::SetUI() {
 	direct.SetUI();
 #endif
 }
+
+} // End of namespace Crab

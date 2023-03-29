@@ -30,6 +30,8 @@
 
 #include "crab/color.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::text;
 
 void ColorPool::Load(const std::string &filename) {
@@ -51,3 +53,5 @@ SDL_Color &ColorPool::Get(const int &num) {
 
 	return pool.at(num);
 }
+
+} // End of namespace Crab

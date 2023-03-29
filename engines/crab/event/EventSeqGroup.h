@@ -34,6 +34,8 @@
 
 #include "crab/EventSequence.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 class EventSeqGroup {
@@ -65,5 +67,7 @@ public:
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_EVENTSEQGROUP_H

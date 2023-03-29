@@ -36,6 +36,8 @@
 #include "crab/Shape.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace level {
 struct Exit {
@@ -50,5 +52,7 @@ struct Exit {
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_LEVELEXIT_H

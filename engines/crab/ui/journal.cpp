@@ -30,6 +30,8 @@
 
 #include "crab/journal.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::ui;
 
@@ -281,3 +283,5 @@ void Journal::SetUI() {
 		for (auto i = 0; i < JE_TOTAL; ++i)
 			m.menu[i].SetUI();
 }
+
+} // End of namespace Crab

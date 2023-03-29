@@ -30,6 +30,8 @@
 
 #include "crab/person.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::people;
 
@@ -146,3 +148,5 @@ void Person::LoadState(rapidxml::xml_node<char> *node) {
 			trait.push_back(n);
 	}
 }
+
+} // End of namespace Crab

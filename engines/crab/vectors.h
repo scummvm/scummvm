@@ -35,6 +35,8 @@
 #include "crab/GameParam.h"
 #include "crab/loaders.h"
 
+namespace Crab {
+
 //------------------------------------------------------------------------
 // Purpose: A simple 2D vector class
 //------------------------------------------------------------------------
@@ -123,5 +125,7 @@ public:
 
 typedef Vector3D<int> Vector3i;
 typedef Vector3D<float> Vector3f;
+
+} // End of namespace Crab
 
 #endif // CRAB_VECTORS_H

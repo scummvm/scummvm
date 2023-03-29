@@ -33,7 +33,10 @@
 
 #include "crab/PathfindingGraphNode.h"
 #include "crab/common_header.h"
-#include <math.h>
+
+namespace Crab {
+
+include <math.h>
 
 namespace TMX {
 class TMXMap;
@@ -85,5 +88,7 @@ public:
 	// Can be used to find corners that shouldn't be cut.
 	std::vector<PathfindingGraphNode *> CornerCheck(const PathfindingGraphNode *node1, const PathfindingGraphNode *node2);
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_PATHFINDINGGRID_H

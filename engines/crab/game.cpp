@@ -30,6 +30,8 @@
 
 #include "crab/game.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::input;
@@ -705,3 +707,5 @@ void Game::SetUI() {
 	info.SetUI();
 	level.SetUI();
 }
+
+} // End of namespace Crab

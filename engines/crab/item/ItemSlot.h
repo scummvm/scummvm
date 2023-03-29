@@ -36,6 +36,8 @@
 #include "crab/StateButton.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace item {
 enum SlotType { SLOT_EQUIP,
@@ -90,5 +92,7 @@ public:
 };
 } // End of namespace item
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ITEMSLOT_H

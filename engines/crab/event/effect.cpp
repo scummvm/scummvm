@@ -31,6 +31,8 @@
 #include "crab/effect.h"
 #include "crab/MusicManager.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::music;
 
@@ -284,3 +286,5 @@ bool Effect::Execute(pyrodactyl::event::Info &info, const std::string &player_id
 
 	return false;
 }
+
+} // End of namespace Crab

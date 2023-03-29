@@ -35,6 +35,8 @@
 #include "crab/TextData.h"
 #include "crab/button.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class OptionSelect {
@@ -68,5 +70,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_OPTIONSELECT_H

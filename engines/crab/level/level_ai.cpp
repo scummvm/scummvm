@@ -30,6 +30,8 @@
 
 #include "crab/level.h"
 
+namespace Crab {
+
 using namespace TMX;
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::anim;
@@ -213,3 +215,5 @@ bool Level::PlayerInCombat(Info &info) {
 
 	return false;
 }
+
+} // End of namespace Crab

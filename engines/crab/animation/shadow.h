@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 struct ShadowData {
@@ -71,5 +73,7 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_SHADOW_H

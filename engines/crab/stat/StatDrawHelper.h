@@ -35,6 +35,8 @@
 #include "crab/TextData.h"
 #include "crab/person.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace stat {
 struct StatInfo {
@@ -70,5 +72,7 @@ public:
 };
 } // End of namespace stat
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_STATDRAWHELPER_H

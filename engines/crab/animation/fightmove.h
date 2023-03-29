@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/fightanim.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 // All info for a single fighting move in all four directions
@@ -60,5 +62,7 @@ struct FightMove {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_FIGHTMOVE_H

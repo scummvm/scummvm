@@ -30,6 +30,8 @@
 
 #include "crab/MapMarkerMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 
 //------------------------------------------------------------------------
@@ -130,3 +132,5 @@ void MapMarkerMenu::SetUI() {
 	player.SetUI();
 	menu.SetUI();
 }
+
+} // End of namespace Crab

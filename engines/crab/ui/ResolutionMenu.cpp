@@ -31,6 +31,8 @@
 
 #include "crab/ResolutionMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
@@ -130,3 +132,5 @@ void ResolutionMenu::SetUI() {
 	ref.SetUI();
 	ButtonMenu::SetUI();
 }
+
+} // End of namespace Crab

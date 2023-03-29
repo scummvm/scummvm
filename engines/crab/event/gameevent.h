@@ -39,6 +39,8 @@
 #include "personbase.h"
 #include "crab/triggerset.h"
 
+namespace Crab {
+
 // An unsigned integer is our event id format
 typedef unsigned int EventID;
 
@@ -90,5 +92,7 @@ struct GameEvent {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_GAMEEVENT_H

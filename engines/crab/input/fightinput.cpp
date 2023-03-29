@@ -30,6 +30,8 @@
 
 #include "crab/fightinput.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::input;
 
 void FightInput::Load(rapidxml::xml_node<char> *node) {
@@ -45,3 +47,5 @@ FightAnimationType FightInput::HandleEvents(const SDL_Event &Event) {
 
 	return FA_IDLE;
 }
+
+} // End of namespace Crab

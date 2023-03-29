@@ -30,6 +30,8 @@
 
 #include "crab/ReplyMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
@@ -140,3 +142,5 @@ void ReplyMenu::SetUI() {
 	bg.SetUI();
 	tone.SetUI();
 }
+
+} // End of namespace Crab

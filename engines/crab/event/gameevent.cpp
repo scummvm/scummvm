@@ -30,6 +30,8 @@
 
 #include "crab/gameevent.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::people;
 
@@ -85,3 +87,5 @@ void GameEvent::Load(rapidxml::xml_node<char> *node) {
 		effect.push_back(e);
 	}
 }
+
+} // End of namespace Crab

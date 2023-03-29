@@ -31,6 +31,8 @@
 #include "crab/PathfindingGrid.h"
 #include "crab/TMXMap.h"
 
+namespace Crab {
+
 using namespace TMX;
 
 PathfindingGrid::PathfindingGrid(void) {
@@ -254,3 +256,5 @@ PathfindingGraphNode *PathfindingGrid::GetNearestOpenNode(Vector2f nodePos, Vect
 
 	return NULL;
 }
+
+} // End of namespace Crab

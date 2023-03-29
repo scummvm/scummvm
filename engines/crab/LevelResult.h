@@ -34,6 +34,8 @@
 
 #include "crab/ImageManager.h"
 
+namespace Crab {
+
 enum LevelResultType { LR_NONE,
 					   LR_LEVEL,
 					   LR_GAMEOVER };
@@ -49,5 +51,7 @@ struct LevelResult {
 		y = -1;
 	}
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_LEVELRESULT_H

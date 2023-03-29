@@ -30,6 +30,8 @@
 
 #include "crab/StateButton.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -85,3 +87,5 @@ void StateButton::Img(const StateButtonImage &sbi) {
 
 	img_set = sbi;
 }
+
+} // End of namespace Crab

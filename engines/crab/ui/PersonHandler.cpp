@@ -30,6 +30,8 @@
 
 #include "crab/PersonHandler.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
@@ -167,3 +169,5 @@ void PersonHandler::SetUI() {
 	for (auto i = 0; i < pyrodactyl::people::OPI_TOTAL; ++i)
 		opinion[i].SetUI();
 }
+
+} // End of namespace Crab

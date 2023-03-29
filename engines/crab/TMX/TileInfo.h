@@ -34,6 +34,8 @@
 
 #include "crab/loaders.h"
 
+namespace Crab {
+
 namespace TMX {
 typedef unsigned int GidFormat;
 
@@ -88,5 +90,7 @@ struct TileInfo {
 	}
 };
 } // End of namespace TMX
+
+} // End of namespace Crab
 
 #endif // CRAB_TILEINFO_H

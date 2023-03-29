@@ -30,6 +30,8 @@
 
 #include "crab/map.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
@@ -412,3 +414,5 @@ void Map::SetUI() {
 
 	CalcBounds();
 }
+
+} // End of namespace Crab

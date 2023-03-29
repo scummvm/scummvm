@@ -34,6 +34,8 @@
 
 #include "crab/GameParam.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace people {
 // What each opinion type is
@@ -65,5 +67,7 @@ struct Opinion {
 };
 } // End of namespace people
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_OPINION_H

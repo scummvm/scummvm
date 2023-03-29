@@ -30,6 +30,8 @@
 
 #include "crab/Polygon.h"
 
+namespace Crab {
+
 // Calculate the distance between [minA, maxA] and [minB, maxB]
 // The distance will be negative if the intervals overlap
 float IntervalDistance(float minA, float maxA, float minB, float maxB) {
@@ -267,3 +269,5 @@ void Polygon2D::Draw(const int &XOffset, const int &YOffset, const Uint8 &r, con
 		DrawLine(p1.x + XOffset, p1.y + YOffset, p2.x + XOffset, p2.y + YOffset, r, g, b, a);
 	}
 }
+
+} // End of namespace Crab

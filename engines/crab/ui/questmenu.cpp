@@ -30,6 +30,8 @@
 
 #include "crab/questmenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;
 
@@ -238,3 +240,5 @@ void QuestMenu::SetUI() {
 	menu.SetUI();
 	text.SetUI();
 }
+
+} // End of namespace Crab

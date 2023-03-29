@@ -31,6 +31,8 @@
 #include "crab/LoadingScreen.h"
 #include "crab/XMLDoc.h"
 
+namespace Crab {
+
 void LoadingScreen::Load() {
 	const std::string &filename = "res/layout/loading.xml";
 	XMLDoc doc(filename);
@@ -83,3 +85,5 @@ void LoadingScreen::Quit() {
 }
 
 LoadingScreen gLoadScreen;
+
+} // End of namespace Crab

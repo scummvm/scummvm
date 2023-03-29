@@ -47,6 +47,8 @@
 #include "crab/level_objects.h"
 #include "crab/talknotify.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 enum HUDSignal { HS_NONE = -1,
@@ -109,5 +111,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_HUD_H

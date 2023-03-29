@@ -30,6 +30,8 @@
 
 #include "crab/TraitMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 
 void TraitMenu::Load(rapidxml::xml_node<char> *node) {
@@ -117,3 +119,5 @@ void TraitMenu::SetUI() {
 	desc.SetUI();
 	menu.SetUI();
 }
+
+} // End of namespace Crab

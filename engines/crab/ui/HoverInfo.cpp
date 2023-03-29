@@ -31,6 +31,8 @@
 
 #include "crab/HoverInfo.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
@@ -51,3 +53,5 @@ void HoverInfo::Draw(const int &XOffset, const int &YOffset) {
 	if (enabled)
 		TextData::Draw(text, XOffset, YOffset);
 }
+
+} // End of namespace Crab

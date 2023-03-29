@@ -31,6 +31,8 @@
 
 #include "crab/Stat.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace stat {
 StatType StringToStatType(const std::string &val) {
@@ -108,3 +110,5 @@ void Stat::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	child->append_attribute(doc.allocate_attribute("max", gStrPool.Get(max)));
 	root->append_node(child);
 }
+
+} // End of namespace Crab

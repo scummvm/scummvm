@@ -33,6 +33,10 @@
 
 #include <string>
 
+namespace Crab {
+
 void OpenURL(const std::string &url_str);
+
+} // End of namespace Crab
 
 #endif // CRAB_URL_H

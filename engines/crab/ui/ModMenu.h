@@ -34,6 +34,8 @@
 #include "crab/FileMenu.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class ModMenu : public FileMenu<ModFileData> {
@@ -47,5 +49,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MODMENU_H

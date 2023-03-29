@@ -30,6 +30,8 @@
 
 #include "crab/animation.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::anim;
 
@@ -60,3 +62,5 @@ void Animation::Reset() {
 	for (auto i = frame.begin(); i != frame.end(); ++i)
 		i->Reset();
 }
+
+} // End of namespace Crab

@@ -42,6 +42,8 @@
 #include "crab/common_header.h"
 #include "crab/spriteai.h"
 
+namespace Crab {
+
 namespace TMX {
 // For TMX version 1.0, orthogonal maps only
 class TMXMap {
@@ -128,5 +130,7 @@ public:
 	std::vector<pyrodactyl::level::Stairs> AreaStairs() { return area_stairs; }
 };
 } // End of namespace TMX
+
+} // End of namespace Crab
 
 #endif // CRAB_TMXMAP_H

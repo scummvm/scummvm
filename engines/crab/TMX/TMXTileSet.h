@@ -35,6 +35,8 @@
 #include "crab/TMXLayer.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace TMX {
 struct TileSet {
 	// The name of the tileset
@@ -96,5 +98,7 @@ public:
 	void Draw(MapLayer &layer, const Rect &camera, const Vector2i &tile_size, const Rect &player_pos);
 };
 }; // End of namespace TMX
+
+} // End of namespace Crab
 
 #endif // CRAB_TMXTILESET_H

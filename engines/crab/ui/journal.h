@@ -37,6 +37,8 @@
 #include "crab/common_header.h"
 #include "crab/questmenu.h"
 
+namespace Crab {
+
 #define JE_CUR_NAME "cur"
 #define JE_DONE_NAME "done"
 #define JE_PEOPLE_NAME "people"
@@ -115,5 +117,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_JOURNAL_H

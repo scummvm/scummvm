@@ -30,6 +30,8 @@
 
 #include "crab/moveeffect.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 
 FightMoveEffect::FightMoveEffect() {
@@ -60,3 +62,5 @@ void FightMoveEffect::Load(rapidxml::xml_node<char> *node) {
 			activate = -1;
 	}
 }
+
+} // End of namespace Crab

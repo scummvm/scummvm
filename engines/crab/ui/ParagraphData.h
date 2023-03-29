@@ -34,6 +34,8 @@
 #include "crab/TextData.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class ParagraphData : public TextData {
@@ -49,5 +51,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_PARAGRAPHDATA_H

@@ -30,6 +30,8 @@
 
 #include "crab/sprite.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ai;
 using namespace pyrodactyl::anim;
 using namespace pyrodactyl::input;
@@ -671,3 +673,5 @@ void Sprite::LoadState(rapidxml::xml_node<char> *node) {
 	LoadNum(pos.x, "x", node);
 	LoadNum(pos.y, "y", node);
 }
+
+} // End of namespace Crab

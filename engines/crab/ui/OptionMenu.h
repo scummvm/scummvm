@@ -40,6 +40,8 @@
 #include "crab/common_header.h"
 #include "crab/slider.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class OptionMenu {
@@ -111,5 +113,7 @@ public:
 extern OptionMenu gOptionMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_OPTIONMENU_H

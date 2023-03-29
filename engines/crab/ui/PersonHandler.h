@@ -39,6 +39,8 @@
 #include "crab/person.h"
 #include "crab/sprite.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class PersonHandler {
@@ -105,5 +107,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_PERSONHANDLER_H

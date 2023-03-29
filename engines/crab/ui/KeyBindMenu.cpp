@@ -30,6 +30,8 @@
 
 #include "crab/KeyBindMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::text;
@@ -194,3 +196,5 @@ void KeyBindMenu::SetUI() {
 	desc.SetUI();
 	sel_controls.SetUI();
 }
+
+} // End of namespace Crab

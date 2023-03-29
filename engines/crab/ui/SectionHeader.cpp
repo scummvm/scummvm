@@ -30,6 +30,8 @@
 
 #include "crab/SectionHeader.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
@@ -84,3 +86,5 @@ void SectionHeader::Draw(const std::string &str, const int &XOffset, const int &
 
 	TextData::Draw(str, XOffset, YOffset);
 }
+
+} // End of namespace Crab

@@ -30,6 +30,8 @@
 
 #include "crab/PopUp.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 using namespace pyrodactyl::event;
 
@@ -126,3 +128,5 @@ void PopUpCollection::Draw(const int &x, const int &y, pyrodactyl::ui::Paragraph
 	if (cur >= 0 && cur < element.size())
 		element.at(cur).Draw(x, y, pop, camera);
 }
+
+} // End of namespace Crab

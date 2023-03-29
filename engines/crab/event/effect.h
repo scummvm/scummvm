@@ -37,6 +37,8 @@
 #include "crab/loaders.h"
 #include "crab/person.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 enum EventResultType {
@@ -112,5 +114,7 @@ struct Effect {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_EFFECT_H

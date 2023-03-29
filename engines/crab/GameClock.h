@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/timer.h"
 
+namespace Crab {
+
 class GameClock {
 	Timer timer;
 	Uint32 start;
@@ -82,5 +84,7 @@ public:
 		return NumberToString(hours) + seperator + NumberToString(minutes) + seperator + NumberToString(seconds);
 	}
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_GAMECLOCK_H

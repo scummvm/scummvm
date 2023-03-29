@@ -41,6 +41,8 @@
 #include "crab/slider.h"
 #include "crab/textarea.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 enum PauseSignal { PS_NONE,
@@ -100,5 +102,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_PAUSEMENU_H

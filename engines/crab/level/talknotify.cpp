@@ -30,6 +30,8 @@
 
 #include "crab/talknotify.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::level;
 using namespace pyrodactyl::image;
@@ -54,3 +56,5 @@ void TalkNotify::Draw(pyrodactyl::event::Info &info, pyrodactyl::anim::Sprite &s
 
 	gTextManager.Draw(pos.x - camera.x, pos.y - camera.y, text, col, font, align, true);
 }
+
+} // End of namespace Crab

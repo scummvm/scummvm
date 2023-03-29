@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/inputval.h"
 
+namespace Crab {
+
 #define ANALOG_PRESSED 2
 
 namespace pyrodactyl {
@@ -138,5 +140,7 @@ public:
 extern InputManager gInput;
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_INPUT_H

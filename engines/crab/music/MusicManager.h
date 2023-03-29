@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/musicparam.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace music {
 class MusicManager {
@@ -90,5 +92,7 @@ public:
 extern MusicManager gMusicManager;
 } // End of namespace music
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MUSICMANAGER_H

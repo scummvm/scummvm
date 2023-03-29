@@ -42,6 +42,8 @@
 #include "crab/level.h"
 #include "crab/textarea.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 class Manager {
@@ -108,5 +110,7 @@ public:
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_GAMEEVENTMANAGER_H

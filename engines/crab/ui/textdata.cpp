@@ -30,6 +30,8 @@
 
 #include "crab/TextData.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 
@@ -53,3 +55,5 @@ void TextData::Draw(const std::string &val, const int &XOffset, const int &YOffs
 void TextData::DrawColor(const std::string &val, const int &color, const int &XOffset, const int &YOffset) {
 	pyrodactyl::text::gTextManager.Draw(x + XOffset, y + YOffset, val, color, font, align, background);
 }
+
+} // End of namespace Crab

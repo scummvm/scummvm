@@ -37,6 +37,8 @@
 #include "crab/common_header.h"
 #include "crab/quest.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class QuestMenu {
@@ -94,5 +96,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_QUESTMENU_H

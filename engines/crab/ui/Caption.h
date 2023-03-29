@@ -34,6 +34,8 @@
 
 #include "crab/TextData.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 // Caption for buttons
@@ -57,5 +59,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_CAPTION_H

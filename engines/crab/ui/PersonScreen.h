@@ -40,6 +40,8 @@
 #include "crab/person.h"
 #include "crab/sprite.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class PersonScreen {
@@ -73,5 +75,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_PERSONSCREEN_H

@@ -30,6 +30,8 @@
 
 #include "crab/collision.h"
 
+namespace Crab {
+
 // Find if a line and a rectangle intersect
 bool CollideLineRect(int p0_x, int p0_y, int p1_x, int p1_y, const Rect &rect) {
 	int q0_x = rect.x;
@@ -217,3 +219,5 @@ bool LineOfSight(const Rect &a, const Rect &b, const Rect &obstacle) {
 //
 //	return result;
 // }
+
+} // End of namespace Crab

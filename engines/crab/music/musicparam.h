@@ -34,6 +34,8 @@
 
 #include "crab/loaders.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace music {
 // We use this object as key for music tracks
@@ -72,5 +74,7 @@ struct MusicData {
 };
 } // End of namespace music
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MUSICPARAM_H

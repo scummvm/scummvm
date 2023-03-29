@@ -30,6 +30,8 @@
 
 #include "crab/PersonScreen.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::image;
@@ -97,3 +99,5 @@ void PersonScreen::SetUI() {
 	img.SetUI();
 	menu.SetUI();
 }
+
+} // End of namespace Crab

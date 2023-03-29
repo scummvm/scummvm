@@ -30,6 +30,8 @@
 
 #include "crab/PauseMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -134,3 +136,5 @@ void PauseMenu::SetUI() {
 	menu.SetUI();
 	save.SetUI();
 }
+
+} // End of namespace Crab

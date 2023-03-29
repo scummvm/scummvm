@@ -30,6 +30,8 @@
 
 #include "crab/Item.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::item;
 using namespace pyrodactyl::stat;
@@ -115,3 +117,5 @@ void Item::StatChange(Person &obj, bool increase) {
 void Item::Draw(const int &x, const int &y) {
 	gImageManager.Draw(x, y, img);
 }
+
+} // End of namespace Crab

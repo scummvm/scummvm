@@ -35,6 +35,8 @@
 #include "crab/PriorityQueue.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 // This class represents the actual pathfinding and following agent that utilizes
 // the pathfinding grid
 class PlannerNode {
@@ -162,5 +164,7 @@ public:
 };
 
 bool compareNodes(PlannerNode const *nodeA, PlannerNode const *nodeB);
+
+} // End of namespace Crab
 
 #endif // CRAB_PATHFINDINGAGENT_H

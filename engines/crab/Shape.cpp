@@ -30,6 +30,8 @@
 
 #include "crab/Shape.h"
 
+namespace Crab {
+
 void Shape::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	if (NodeValid("polygon", node, echo)) {
 		type = SHAPE_POLYGON;
@@ -79,3 +81,5 @@ void Shape::Draw(const int &XOffset, const int &YOffset, const Uint8 &r, const U
 	else
 		rect.Draw(XOffset, YOffset, r, g, b, a);
 }
+
+} // End of namespace Crab

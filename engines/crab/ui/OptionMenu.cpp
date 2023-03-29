@@ -30,6 +30,8 @@
 
 #include "crab/OptionMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::music;
@@ -349,3 +351,5 @@ void OptionMenu::SetUI() {
 	accept.SetUI();
 	cancel.SetUI();
 }
+
+} // End of namespace Crab

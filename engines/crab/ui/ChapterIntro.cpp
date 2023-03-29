@@ -30,6 +30,8 @@
 
 #include "crab/ChapterIntro.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -63,3 +65,5 @@ void ChapterIntro::Draw(pyrodactyl::event::Info &info, std::string &text,
 		gImageManager.Draw(pos.x, pos.y, cur_sp->Img(), &clip);
 	}
 }
+
+} // End of namespace Crab

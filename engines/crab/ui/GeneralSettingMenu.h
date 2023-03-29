@@ -36,6 +36,8 @@
 #include "crab/common_header.h"
 #include "crab/slider.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class GeneralSettingMenu {
@@ -69,5 +71,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_GENERALSETTINGMENU_H

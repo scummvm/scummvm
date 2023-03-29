@@ -31,6 +31,8 @@
 #include "crab/GameEventInfo.h"
 #include "crab/eventstore.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 bool IsChar(char c) {
@@ -393,3 +395,5 @@ void Info::SetUI() {
 	journal.SetUI();
 	inv.SetUI();
 }
+
+} // End of namespace Crab
