@@ -204,12 +204,14 @@ void FileIO::m_new(int nargs) {
 	Common::String option = d1.asString();
 	Common::String path = d2.asString();
 	Common::String origpath = path;
+	char dirSeparator = g_director->_dirSeparator;
 
 	Common::String prefix = g_director->getTargetName() + '-';
 
 	if (option.hasPrefix("?")) {
 		option = option.substr(1);
 		Common::String mask = prefix + "*.txt";
+		dirSeparator = '/';
 
 		GUI::FileBrowserDialog browser(nullptr, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str());
 		if (browser.runModal() <= 0) {
@@ -222,8 +224,8 @@ void FileIO::m_new(int nargs) {
 	}
 
 	// Enforce target to the created files so they do not mix up
-	Common::String filename = lastPathComponent(path, '/');
-	Common::String dir = firstPathComponents(path, '/');
+	Common::String filename = lastPathComponent(path, dirSeparator);
+	Common::String dir = firstPathComponents(path, dirSeparator);
 
 	if (!filename.hasPrefixIgnoreCase(prefix))
 		filename = dir + prefix + filename;
