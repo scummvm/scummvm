@@ -203,6 +203,12 @@ int DarkMoonEngine::mainMenu() {
 
 int DarkMoonEngine::mainMenuLoop() {
 	int sel = -1;
+
+	if (_flags.lang == Common::Language::ZH_TWN) {
+		_screen->modifyScreenDim(6, 10, 72, 21, 40);
+		_screen->setFont(Screen::FID_CHINESE_FNT);
+	}
+
 	do {
 		_screen->setScreenDim(6);
 		_gui->simpleMenu_setup(6, 0, _mainMenuStrings, -1, 0, 0, _configRenderMode == Common::kRenderCGA ? 1 : guiSettings()->colors.guiColorWhite, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.guiColorBlack);
