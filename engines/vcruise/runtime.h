@@ -195,6 +195,8 @@ struct CachedSound {
 	Common::SharedPtr<Audio::AudioStream> loopingStream;
 	Common::SharedPtr<AudioPlayer> player;
 
+	uint id;
+
 	uint rampStartVolume;
 	uint rampEndVolume;
 	uint32 rampRatePerMSec;
@@ -450,7 +452,39 @@ private:
 	};
 
 	typedef int32 ScriptArg_t;
-	typedef int32 StackValue_t;
+	typedef int32 StackInt_t;
+
+	struct StackValue {
+		enum StackValueType {
+			kNumber,
+			kString,
+		};
+
+		union ValueUnion {
+			StackInt_t i;
+			Common::String s;
+
+			ValueUnion();
+			explicit ValueUnion(StackInt_t iVal);
+			explicit ValueUnion(const Common::String &strVal);
+			explicit ValueUnion(Common::String &&strVal);
+			~ValueUnion();
+		};
+
+		StackValue();
+		StackValue(const StackValue &other);
+		StackValue(StackValue &&other);
+		explicit StackValue(StackInt_t i);
+		explicit StackValue(const Common::String &str);
+		explicit StackValue(Common::String &&str);
+		~StackValue();
+
+		StackValue &operator=(const StackValue &other);
+		StackValue &operator=(StackValue &&other);
+
+		StackValueType type;
+		ValueUnion value;
+	};
 
 	bool runIdle();
 	bool runDelay();
@@ -475,7 +509,10 @@ private:
 
 	void loadIndex();
 	void findWaves();
-	void loadWave(uint soundID, const Common::String &soundName, const Common::ArchiveMemberPtr &archiveMemberPtr);
+	Common::SharedPtr<CachedSound> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
+	void resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, CachedSound *&outWave);
+	void resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, CachedSound *&outWave);
+
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
@@ -491,14 +528,14 @@ private:
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride, const Fraction &defaultFrameRate);
 
-	void setSound3DParameters(uint soundID, int32 x, int32 y, const SoundParams3D &soundParams3D);
-	void triggerSound(bool looping, uint soundID, uint volume, int32 balance, bool is3D);
-	void triggerSoundRamp(uint soundID, uint durationMSec, uint newVolume, bool terminateOnCompletion);
+	void setSound3DParameters(CachedSound &sound, int32 x, int32 y, const SoundParams3D &soundParams3D);
+	void triggerSound(bool looping, CachedSound &sound, uint volume, int32 balance, bool is3D);
+	void triggerSoundRamp(CachedSound &sound, uint durationMSec, uint newVolume, bool terminateOnCompletion);
 	void updateSounds(uint32 timestamp);
 	void update3DSounds();
 	bool computeEffectiveVolumeAndBalance(CachedSound &snd);
 
-	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
+	AnimationDef stackArgsToAnimDef(const StackInt_t *args) const;
 	void pushAnimDef(const AnimationDef &animDef);
 
 	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
@@ -657,8 +694,8 @@ private:
 
 	uint _panCursors[kPanCursorMaxCount];
 
-	Common::HashMap<Common::String, StackValue_t> _namedCursors;
-	Common::HashMap<StackValue_t, uint> _scriptCursorIDToResourceIDOverride;
+	Common::HashMap<Common::String, StackInt_t> _namedCursors;
+	Common::HashMap<StackInt_t, uint> _scriptCursorIDToResourceIDOverride;
 
 	OSystem *_system;
 	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
@@ -708,7 +745,7 @@ private:
 
 	Common::SharedPtr<Script> _activeScript;
 	uint _scriptNextInstruction;
-	Common::Array<StackValue_t> _scriptStack;
+	Common::Array<StackValue> _scriptStack;
 	ScriptEnvironmentVars _scriptEnv;
 
 	Common::SharedPtr<Common::RandomSource> _rng;
@@ -769,7 +806,7 @@ private:
 	Common::Array<OSEvent> _pendingEvents;
 
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _waves;
-	Common::HashMap<uint, Common::SharedPtr<CachedSound> > _cachedSounds;
+	Common::Array<Common::SharedPtr<CachedSound> > _activeSounds;
 	SoundParams3D _pendingSoundParams3D;
 
 	Common::Array<TriggeredOneShot> _triggeredOneShots;

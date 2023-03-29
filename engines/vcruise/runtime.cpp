@@ -87,6 +87,70 @@ void Runtime::RenderSection::init(const Common::Rect &paramRect, const Graphics:
 Runtime::OSEvent::OSEvent() : type(kOSEventTypeInvalid), keyCode(static_cast<Common::KeyCode>(0)) {
 }
 
+Runtime::StackValue::ValueUnion::ValueUnion() {
+}
+
+Runtime::StackValue::ValueUnion::ValueUnion(StackInt_t iVal) : i(iVal) {
+}
+
+Runtime::StackValue::ValueUnion::ValueUnion(const Common::String &strVal) : s(strVal) {
+}
+
+Runtime::StackValue::ValueUnion::ValueUnion(Common::String &&strVal) : s(Common::move(strVal)) {
+}
+
+Runtime::StackValue::ValueUnion::~ValueUnion() {
+}
+
+Runtime::StackValue::StackValue() : type(kNumber), value(0) {
+	new (&value) ValueUnion(0);
+}
+
+Runtime::StackValue::StackValue(const StackValue &other) : type(kNumber), value(0) {
+	(*this) = other;
+}
+
+Runtime::StackValue::StackValue(StackValue &&other) : type(kNumber), value(0) {
+	(*this) = Common::move(other);
+}
+
+Runtime::StackValue::StackValue(StackInt_t i) : type(kNumber), value(i) {
+}
+
+Runtime::StackValue::StackValue(const Common::String &str) : type(kString), value(str) {
+}
+
+Runtime::StackValue::StackValue(Common::String &&str) : type(kString), value(Common::move(str)) {
+}
+
+Runtime::StackValue::~StackValue() {
+	value.~ValueUnion();
+}
+
+Runtime::StackValue &Runtime::StackValue::operator=(const StackValue &other) {
+	value.~ValueUnion();
+
+	if (other.type == StackValue::kNumber)
+		new (&value) ValueUnion(other.value.i);
+
+	if (other.type == StackValue::kString)
+		new (&value) ValueUnion(other.value.s);
+
+	return *this;
+}
+
+Runtime::StackValue &Runtime::StackValue::operator=(StackValue &&other) {
+	value.~ValueUnion();
+
+	if (other.type == StackValue::kNumber)
+		new (&value) ValueUnion(other.value.i);
+
+	if (other.type == StackValue::kString)
+		new (&value) ValueUnion(Common::move(other.value.s));
+
+	return *this;
+}
+
 Runtime::Gyro::Gyro() {
 	reset();
 }
@@ -304,7 +368,7 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 }
 
 CachedSound::CachedSound()
-	: rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
+	: id(0), rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
 	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), x(0), y(0), z(0) {
 }
 
@@ -1373,24 +1437,90 @@ void Runtime::findWaves() {
 	}
 }
 
-void Runtime::loadWave(uint soundID, const Common::String &soundName, const Common::ArchiveMemberPtr &archiveMemberPtr) {
+Common::SharedPtr<CachedSound> Runtime::loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr) {
+	for (const Common::SharedPtr<CachedSound> &activeSound : _activeSounds) {
+		if (activeSound->name == soundName)
+			return activeSound;
+	}
+
 	Common::SeekableReadStream *stream = archiveMemberPtr->createReadStream();
 	if (!stream) {
 		warning("Couldn't open read stream for sound '%s'", soundName.c_str());
-		return;
+		return nullptr;
 	}
 
 	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 	if (!audioStream) {
 		warning("Couldn't open audio stream for sound '%s'", soundName.c_str());
-		return;
+		return nullptr;
 	}
 
 	Common::SharedPtr<CachedSound> cachedSound(new CachedSound());
-	_cachedSounds[soundID] = cachedSound;
 
 	cachedSound->stream.reset(audioStream);
 	cachedSound->name = soundName;
+	cachedSound->id = soundID;
+
+	bool foundExisting = false;
+	for (Common::SharedPtr<CachedSound> &existingSound : _activeSounds) {
+		if (existingSound->id == soundID) {
+			existingSound = cachedSound;
+			foundExisting = true;
+			break;
+		}
+	}
+
+	if (!foundExisting)
+		_activeSounds.push_back(cachedSound);
+
+	return cachedSound;
+}
+
+void Runtime::resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, CachedSound *&outWave) {
+	Common::String sndName = soundName;
+
+	uint soundID = 0;
+	for (uint i = 0; i < 4; i++)
+		soundID = soundID * 10u + (sndName[i] - '0');
+
+	sndName.toLowercase();
+
+	outSoundID = soundID;
+	outWave = nullptr;
+
+	for (const Common::SharedPtr<CachedSound> &snd : _activeSounds) {
+		if (snd->name == sndName) {
+			outWave = snd.get();
+			return;
+		}
+	}
+
+	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator waveIt = _waves.find(sndName);
+
+	if (waveIt != _waves.end()) {
+		Common::SharedPtr<CachedSound> snd = loadWave(sndName, soundID, waveIt->_value);
+		outWave = snd.get();
+	}
+}
+
+void Runtime::resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, CachedSound *&outWave) {
+	outSoundID = 0;
+	outWave = nullptr;
+
+	if (stackValue.type == StackValue::kNumber) {
+		outSoundID = stackValue.value.i;
+
+		for (const Common::SharedPtr<CachedSound> &snd : _activeSounds) {
+			if (snd->id == static_cast<uint>(stackValue.value.i)) {
+				outWave = snd.get();
+				break;
+			}
+		}
+		return;
+	}
+
+	if (stackValue.type == StackValue::kString)
+		resolveSoundByName(stackValue.value.s, outSoundID, outWave);
 }
 
 void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
@@ -1853,28 +1983,13 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 	debug(1, "Animation last frame set to %u", animDef.lastFrame);
 }
 
-void Runtime::setSound3DParameters(uint soundID, int32 x, int32 y, const SoundParams3D &soundParams3D) {
-	Common::HashMap<uint, Common::SharedPtr<CachedSound> >::iterator it = _cachedSounds.find(soundID);
-	if (it == _cachedSounds.end()) {
-		warning("Couldn't set sound parameters for sound ID %u, the sound wasn't loaded", soundID);
-		return;
-	}
-
-	CachedSound &snd = *it->_value;
+void Runtime::setSound3DParameters(CachedSound &snd, int32 x, int32 y, const SoundParams3D &soundParams3D) {
 	snd.x = x;
 	snd.y = y;
 	snd.params3D = soundParams3D;
 }
 
-void Runtime::triggerSound(bool looping, uint soundID, uint volume, int32 balance, bool is3D) {
-	Common::HashMap<uint, Common::SharedPtr<CachedSound> >::iterator it = _cachedSounds.find(soundID);
-	if (it == _cachedSounds.end()) {
-		warning("Couldn't trigger sound ID %u, the sound wasn't loaded", soundID);
-		return;
-	}
-
-	CachedSound &snd = *it->_value;
-
+void Runtime::triggerSound(bool looping, CachedSound &snd, uint volume, int32 balance, bool is3D) {
 	snd.volume = volume;
 	snd.balance = balance;
 	snd.is3D = is3D;
@@ -1911,13 +2026,7 @@ void Runtime::triggerSound(bool looping, uint soundID, uint volume, int32 balanc
 	}
 }
 
-void Runtime::triggerSoundRamp(uint soundID, uint durationMSec, uint newVolume, bool terminateOnCompletion) {
-	Common::HashMap<uint, Common::SharedPtr<CachedSound> >::const_iterator it = _cachedSounds.find(soundID);
-	if (it == _cachedSounds.end())
-		return;
-
-	CachedSound &snd = *it->_value;
-
+void Runtime::triggerSoundRamp(CachedSound &snd, uint durationMSec, uint newVolume, bool terminateOnCompletion) {
 	snd.rampStartVolume = snd.volume;
 	snd.rampEndVolume = newVolume;
 	snd.rampTerminateOnCompletion = terminateOnCompletion;
@@ -1931,8 +2040,8 @@ void Runtime::triggerSoundRamp(uint soundID, uint durationMSec, uint newVolume, 
 void Runtime::updateSounds(uint32 timestamp) {
 	Common::Array<uint> condemnedSounds;
 
-	for (const Common::HashMap<uint, Common::SharedPtr<CachedSound> >::Node &node : _cachedSounds) {
-		CachedSound &snd = *node._value;
+	for (uint sndIndex = 0; sndIndex < _activeSounds.size(); sndIndex++) {
+		CachedSound &snd = *_activeSounds[sndIndex];
 
 		if (snd.rampRatePerMSec) {
 			uint ramp = snd.rampRatePerMSec * (timestamp - snd.rampStartTime);
@@ -1941,7 +2050,7 @@ void Runtime::updateSounds(uint32 timestamp) {
 				snd.rampRatePerMSec = 0;
 				newVolume = snd.rampEndVolume;
 				if (snd.rampTerminateOnCompletion)
-					condemnedSounds.push_back(node._key);
+					condemnedSounds.push_back(sndIndex);
 			} else {
 				uint rampedVolume = (snd.rampStartVolume * (65536u - ramp)) + (snd.rampEndVolume * ramp);
 				newVolume = rampedVolume >> 16;
@@ -1958,13 +2067,19 @@ void Runtime::updateSounds(uint32 timestamp) {
 		}
 	}
 
-	for (uint id : condemnedSounds)
-		_cachedSounds.erase(id);
+	// condemnedSounds must be sorted
+	if (condemnedSounds.size()) {
+		uint numDeleted = 0;
+		for (uint index : condemnedSounds) {
+			_activeSounds.remove_at(index - numDeleted);
+			numDeleted++;
+		}
+	}
 }
 
 void Runtime::update3DSounds() {
-	for (const Common::HashMap<uint, Common::SharedPtr<CachedSound> >::Node &node : _cachedSounds) {
-		CachedSound &snd = *node._value;
+	for (const Common::SharedPtr<CachedSound> &sndPtr : _activeSounds) {
+		CachedSound &snd = *sndPtr;
 
 		if (!snd.is3D)
 			continue;
@@ -2044,7 +2159,7 @@ bool Runtime::computeEffectiveVolumeAndBalance(CachedSound &snd) {
 	return changed;
 }
 
-AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
+AnimationDef Runtime::stackArgsToAnimDef(const StackInt_t *args) const {
 	AnimationDef def;
 	def.animNum = args[0];
 	def.firstFrame = args[1];
@@ -2061,14 +2176,14 @@ AnimationDef Runtime::stackArgsToAnimDef(const StackValue_t *args) const {
 }
 
 void Runtime::pushAnimDef(const AnimationDef &animDef) {
-	_scriptStack.push_back(animDef.animNum);
-	_scriptStack.push_back(animDef.firstFrame);
-	_scriptStack.push_back(animDef.lastFrame);
+	_scriptStack.push_back(StackValue(animDef.animNum));
+	_scriptStack.push_back(StackValue(animDef.firstFrame));
+	_scriptStack.push_back(StackValue(animDef.lastFrame));
 
-	_scriptStack.push_back(animDef.constraintRect.left);
-	_scriptStack.push_back(animDef.constraintRect.top);
-	_scriptStack.push_back(animDef.constraintRect.right);
-	_scriptStack.push_back(animDef.constraintRect.bottom);
+	_scriptStack.push_back(StackValue(animDef.constraintRect.left));
+	_scriptStack.push_back(StackValue(animDef.constraintRect.top));
+	_scriptStack.push_back(StackValue(animDef.constraintRect.right));
+	_scriptStack.push_back(StackValue(animDef.constraintRect.bottom));
 
 	uint animNameIndex = 0;
 	Common::HashMap<Common::String, uint>::const_iterator nameIt = _animDefNameToIndex.find(animDef.animName);
@@ -2079,7 +2194,7 @@ void Runtime::pushAnimDef(const AnimationDef &animDef) {
 	} else
 		animNameIndex = nameIt->_value;
 
-	_scriptStack.push_back(animNameIndex);
+	_scriptStack.push_back(StackValue(animNameIndex));
 }
 
 void Runtime::activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars) {
@@ -2610,26 +2725,66 @@ Runtime::LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 #endif
 
 #define PEEK_STACK(n)                                                                         \
-	if (this->_scriptStack.size() < (n)) {                                                      \
+	if (this->_scriptStack.size() < (n)) {                                                    \
 		error("Script stack underflow");                                                      \
 		return;                                                                               \
 	}                                                                                         \
-	const ScriptArg_t *stackArgs = &this->_scriptStack[this->_scriptStack.size() - (n)]
+	const StackValue *stackArgs = &this->_scriptStack[this->_scriptStack.size() - (n)]
 
 
-#define TAKE_STACK(n)                                                                         \
-	StackValue_t stackArgs[n];                                                                \
+#define TAKE_STACK_INT_NAMED(n, arrayName)                                                    \
+	StackInt_t arrayName[n];                                                                  \
 	do {                                                                                      \
 		const uint stackSize = _scriptStack.size();                                           \
 		if (stackSize < (n)) {                                                                \
 			error("Script stack underflow");                                                  \
 			return;                                                                           \
 		}                                                                                     \
-		const StackValue_t *stackArgsPtr = &this->_scriptStack[stackSize - (n)];              \
-		for (uint i = 0; i < (n); i++)                                                        \
-			stackArgs[i] = stackArgsPtr[i];                                                   \
+		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)];                \
+		for (uint i = 0; i < (n); i++) {                                                      \
+			if (stackArgsPtr[i].type != StackValue::kNumber)                                  \
+				error("Expected op argument %u to be a number");                              \
+			arrayName[i] = stackArgsPtr[i].value.i;                                           \
+		}                                                                                     \
 		this->_scriptStack.resize(stackSize - (n));                                           \
 	} while (false)
+
+#define TAKE_STACK_INT(n) TAKE_STACK_INT_NAMED(n, stackArgs)
+
+#define TAKE_STACK_STR_NAMED(n, arrayName)                                     \
+	Common::String arrayName[n];                                               \
+	do {                                                                       \
+		const uint stackSize = _scriptStack.size();                            \
+		if (stackSize < (n)) {                                                 \
+			error("Script stack underflow");                                   \
+			return;                                                            \
+		}                                                                      \
+		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)]; \
+		for (uint i = 0; i < (n); i++) {                                       \
+			if (stackArgsPtr[i].type != StackValue::kNumber)                   \
+				error("Expected op argument %u to be a string");               \
+			arrayName[i] = Common::move(stackArgsPtr[i].value.s);              \
+		}                                                                      \
+		this->_scriptStack.resize(stackSize - (n));                            \
+	} while (false)
+
+#define TAKE_STACK_STR(n) TAKE_STACK_STR_NAMED(n, stackArgs)
+
+#define TAKE_STACK_VAR_NAMED(n, arrayName)                                     \
+	StackValue arrayName[n];                                                   \
+	do {                                                                       \
+		const uint stackSize = _scriptStack.size();                            \
+		if (stackSize < (n)) {                                                 \
+			error("Script stack underflow");                                   \
+			return;                                                            \
+		}                                                                      \
+		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)]; \
+		for (uint i = 0; i < (n); i++)                                         \
+			arrayName[i] = Common::move(stackArgsPtr[i]);                      \
+		this->_scriptStack.resize(stackSize - (n));                            \
+	} while (false)
+
+#define TAKE_STACK_VAR(n) TAKE_STACK_VAR_NAMED(n, stackArgs)
 
 #define OPCODE_STUB(op)                           \
 	void Runtime::scriptOp##op(ScriptArg_t arg) { \
@@ -2637,11 +2792,11 @@ Runtime::LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 	}
 
 void Runtime::scriptOpNumber(ScriptArg_t arg) {
-	_scriptStack.push_back(arg);
+	_scriptStack.push_back(StackValue(arg));
 }
 
 void Runtime::scriptOpRotate(ScriptArg_t arg) {
-	TAKE_STACK(kAnimDefStackArgs + kAnimDefStackArgs);
+	TAKE_STACK_INT(kAnimDefStackArgs + kAnimDefStackArgs);
 
 	_panLeftAnimationDef = stackArgsToAnimDef(stackArgs + 0);
 	_panRightAnimationDef = stackArgsToAnimDef(stackArgs + kAnimDefStackArgs);
@@ -2649,28 +2804,28 @@ void Runtime::scriptOpRotate(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpAngle(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
-	_scriptStack.push_back((stackArgs[0] == static_cast<StackValue_t>(_direction)) ? 1 : 0);
+	_scriptStack.push_back(StackValue((stackArgs[0] == static_cast<StackInt_t>(_direction)) ? 1 : 0));
 }
 
 void Runtime::scriptOpAngleGGet(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
-	if (stackArgs[0] < 0 || stackArgs[0] >= static_cast<StackValue_t>(GyroState::kNumGyros))
+	if (stackArgs[0] < 0 || stackArgs[0] >= static_cast<StackInt_t>(GyroState::kNumGyros))
 		error("Invalid gyro index in angleGGet op");
 
-	_scriptStack.push_back(_gyros.gyros[stackArgs[0]].currentState);
+	_scriptStack.push_back(StackValue(_gyros.gyros[stackArgs[0]].currentState));
 }
 
 void Runtime::scriptOpSpeed(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	_scriptEnv.fpsOverride = stackArgs[0];
 }
 
 void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
-	TAKE_STACK(kAnimDefStackArgs + 2);
+	TAKE_STACK_INT(kAnimDefStackArgs + 2);
 
 	if (stackArgs[kAnimDefStackArgs] != 0)
 		warning("sanimL second operand wasn't zero (what does that do?)");
@@ -2691,7 +2846,7 @@ void Runtime::scriptOpSAnimL(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpChangeL(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	// ChangeL changes the screen number, but it also forces screen entry scripts to replay, which is
 	// needed for things like the fountain.
@@ -2752,7 +2907,7 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpAnimF(ScriptArg_t arg) {
-	TAKE_STACK(kAnimDefStackArgs + 3);
+	TAKE_STACK_INT(kAnimDefStackArgs + 3);
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
 
@@ -2782,7 +2937,7 @@ void Runtime::scriptOpAnimF(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpAnimN(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	const AnimationDef *faceDirectionAnimDef = nullptr;
 	uint initialFrame = 0;
@@ -2800,7 +2955,7 @@ void Runtime::scriptOpAnimN(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpAnimG(ScriptArg_t arg) {
-	TAKE_STACK(kAnimDefStackArgs * 2 + 1);
+	TAKE_STACK_INT(kAnimDefStackArgs * 2 + 1);
 
 	_gyros.posAnim = stackArgsToAnimDef(stackArgs + 0);
 	_gyros.negAnim = stackArgsToAnimDef(stackArgs + kAnimDefStackArgs);
@@ -2819,7 +2974,7 @@ void Runtime::scriptOpAnimG(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpAnimS(ScriptArg_t arg) {
-	TAKE_STACK(kAnimDefStackArgs + 2);
+	TAKE_STACK_INT(kAnimDefStackArgs + 2);
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
 
@@ -2835,7 +2990,7 @@ void Runtime::scriptOpAnimS(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpAnim(ScriptArg_t arg) {
-	TAKE_STACK(kAnimDefStackArgs + 2);
+	TAKE_STACK_INT(kAnimDefStackArgs + 2);
 
 	AnimationDef animDef = stackArgsToAnimDef(stackArgs + 0);
 	changeAnimation(animDef, animDef.firstFrame, true, _animSpeedDefault);
@@ -2849,7 +3004,7 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpStatic(ScriptArg_t arg) {
-	TAKE_STACK(kAnimDefStackArgs);
+	TAKE_STACK_INT(kAnimDefStackArgs);
 
 	// QUIRK/BUG WORKAROUND: Static animations don't override other static animations!
 	//
@@ -2878,19 +3033,19 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpVarLoad(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	uint32 varID = (static_cast<uint32>(_roomNumber) << 16) | static_cast<uint32>(stackArgs[0]);
 
 	Common::HashMap<uint32, int32>::const_iterator it = _variables.find(varID);
 	if (it == _variables.end())
-		_scriptStack.push_back(0);
+		_scriptStack.push_back(StackValue(0));
 	else
-		_scriptStack.push_back(it->_value);
+		_scriptStack.push_back(StackValue(it->_value));
 }
 
 void Runtime::scriptOpVarStore(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	uint32 varID = (static_cast<uint32>(_roomNumber) << 16) | static_cast<uint32>(stackArgs[1]);
 
@@ -2898,7 +3053,7 @@ void Runtime::scriptOpVarStore(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpVarAddAndStore(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	uint32 varID = (static_cast<uint32>(_roomNumber) << 16) | static_cast<uint32>(stackArgs[0]);
 
@@ -2910,19 +3065,19 @@ void Runtime::scriptOpVarAddAndStore(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpVarGlobalLoad(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	uint32 varID = static_cast<uint32>(stackArgs[0]);
 
 	Common::HashMap<uint32, int32>::const_iterator it = _variables.find(varID);
 	if (it == _variables.end())
-		_scriptStack.push_back(0);
+		_scriptStack.push_back(StackValue(0));
 	else
-		_scriptStack.push_back(it->_value);
+		_scriptStack.push_back(StackValue(it->_value));
 }
 
 void Runtime::scriptOpVarGlobalStore(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	uint32 varID = static_cast<uint32>(stackArgs[1]);
 
@@ -2930,27 +3085,27 @@ void Runtime::scriptOpVarGlobalStore(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpItemCheck(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	for (const InventoryItem &item : _inventory) {
 		if (item.itemID == static_cast<uint>(stackArgs[0])) {
 			_scriptEnv.lastHighlightedItem = item.itemID;
-			_scriptStack.push_back(1);
+			_scriptStack.push_back(StackValue(1));
 			return;
 		}
 	}
 
-	_scriptStack.push_back(0);
+	_scriptStack.push_back(StackValue(0));
 }
 
 void Runtime::scriptOpItemRemove(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	inventoryRemoveItem(stackArgs[0]);
 }
 
 void Runtime::scriptOpItemHighlightSet(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	bool isHighlighted = (stackArgs[1] != 0);
 
@@ -2965,7 +3120,7 @@ void Runtime::scriptOpItemHighlightSet(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpItemAdd(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	if (stackArgs[0] == 0) {
 		// Weird special case, happens in Reah when breaking the glass barrier, this is called with 0 as the parameter.
@@ -2992,23 +3147,23 @@ void Runtime::scriptOpItemClear(ScriptArg_t arg) {
 void Runtime::scriptOpItemHaveSpace(ScriptArg_t arg) {
 	for (const InventoryItem &item : _inventory) {
 		if (item.itemID == 0) {
-			_scriptStack.push_back(1);
+			_scriptStack.push_back(StackValue(1));
 			return;
 		}
 	}
 
-	_scriptStack.push_back(0);
+	_scriptStack.push_back(StackValue(0));
 }
 
 void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	if (stackArgs[0] < 0 || static_cast<uint>(stackArgs[0]) >= _cursors.size())
 		error("Invalid cursor ID");
 
 	uint resolvedCursorID = stackArgs[0];
 
-	Common::HashMap<StackValue_t, uint>::const_iterator overrideIt = _scriptCursorIDToResourceIDOverride.find(resolvedCursorID);
+	Common::HashMap<StackInt_t, uint>::const_iterator overrideIt = _scriptCursorIDToResourceIDOverride.find(resolvedCursorID);
 	if (overrideIt != _scriptCursorIDToResourceIDOverride.end())
 		resolvedCursorID = overrideIt->_value;
 
@@ -3016,7 +3171,7 @@ void Runtime::scriptOpSetCursor(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpSetRoom(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	_roomNumber = stackArgs[0];
 }
@@ -3036,60 +3191,115 @@ void Runtime::scriptOpLMB1(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpSoundS1(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	triggerSound(false, stackArgs[0], 100, 0, false);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSound(false, *cachedSound, 100, 0, false);
 }
 
 void Runtime::scriptOpSoundS2(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT_NAMED(1, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	triggerSound(false, stackArgs[0], stackArgs[1], 0, false);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSound(false, *cachedSound, sndParamArgs[0], 0, false);
 }
 
 void Runtime::scriptOpSoundS3(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	triggerSound(false, stackArgs[0], stackArgs[1], stackArgs[2], false);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSound(false, *cachedSound, sndParamArgs[0], sndParamArgs[1], false);
 }
 
 void Runtime::scriptOpSoundL1(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	triggerSound(true, stackArgs[0], 100, 0, false);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSound(true, *cachedSound, 100, 0, false);
 }
 
 void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT_NAMED(1, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	triggerSound(true, stackArgs[0], stackArgs[1], 0, false);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSound(true, *cachedSound, sndParamArgs[0], 0, false);
 }
 
 void Runtime::scriptOpSoundL3(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	triggerSound(true, stackArgs[0], stackArgs[1], stackArgs[2], false);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], false);
 }
 
 void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
-	TAKE_STACK(4);
+	TAKE_STACK_INT_NAMED(3, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	setSound3DParameters(stackArgs[0], stackArgs[2], stackArgs[3], _pendingSoundParams3D);
-	triggerSound(true, stackArgs[0], stackArgs[1], 0, true);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+
+	if (cachedSound) {
+		setSound3DParameters(*cachedSound, sndParamArgs[1], sndParamArgs[2], _pendingSoundParams3D);
+		triggerSound(true, *cachedSound, sndParamArgs[0], 0, true);
+	}
 }
 
 void Runtime::scriptOp3DSoundL3(ScriptArg_t arg) {
-	TAKE_STACK(5);
+	TAKE_STACK_INT_NAMED(4, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	setSound3DParameters(stackArgs[0], stackArgs[3], stackArgs[4], _pendingSoundParams3D);
-	triggerSound(true, stackArgs[0], stackArgs[1], stackArgs[2], true);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+
+	if (cachedSound) {
+		setSound3DParameters(*cachedSound, sndParamArgs[2], sndParamArgs[3], _pendingSoundParams3D);
+		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], true);
+	}
 }
 
 void Runtime::scriptOp3DSoundS2(ScriptArg_t arg) {
-	TAKE_STACK(4);
+	TAKE_STACK_INT_NAMED(3, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	setSound3DParameters(stackArgs[0], stackArgs[2], stackArgs[3], _pendingSoundParams3D);
-	triggerSound(false, stackArgs[0], stackArgs[1], 0, true);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+
+	if (cachedSound) {
+		setSound3DParameters(*cachedSound, sndParamArgs[1], sndParamArgs[2], _pendingSoundParams3D);
+		triggerSound(false, *cachedSound, sndParamArgs[0], 0, true);
+	}
 }
 
 void Runtime::scriptOpStopAL(ScriptArg_t arg) {
@@ -3097,7 +3307,7 @@ void Runtime::scriptOpStopAL(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpAddXSound(ScriptArg_t arg) {
-	TAKE_STACK(4);
+	TAKE_STACK_INT(4);
 
 	warning("AddXSound not implemented yet");
 	(void)stackArgs;
@@ -3112,14 +3322,14 @@ void Runtime::scriptOpStopSndLA(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpStopSndLO(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	warning("StopSndLO not implemented yet");
 	(void)stackArgs;
 }
 
 void Runtime::scriptOpRange(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT(3);
 
 	_pendingSoundParams3D.minRange = stackArgs[0];
 	_pendingSoundParams3D.maxRange = stackArgs[1];
@@ -3127,27 +3337,27 @@ void Runtime::scriptOpRange(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpMusic(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	changeMusicTrack(stackArgs[0]);
 }
 
 void Runtime::scriptOpMusicUp(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	warning("Music volume ramp up is not implemented");
 	(void)stackArgs;
 }
 
 void Runtime::scriptOpMusicDn(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	warning("Music volume ramp down is not implemented");
 	(void)stackArgs;
 }
 
 void Runtime::scriptOpParm0(ScriptArg_t arg) {
-	TAKE_STACK(4);
+	TAKE_STACK_INT(4);
 
 	if (stackArgs[0] < 0 || static_cast<uint>(stackArgs[0]) >= GyroState::kNumGyros)
 		error("Invalid gyro index for Parm0");
@@ -3161,7 +3371,7 @@ void Runtime::scriptOpParm0(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpParm1(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT(3);
 
 	if (stackArgs[0] < 0 || static_cast<uint>(stackArgs[0]) >= GyroState::kNumGyros)
 		error("Invalid gyro index for Parm1");
@@ -3176,7 +3386,7 @@ void Runtime::scriptOpParm1(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpParm2(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT(3);
 
 	_gyros.completeInteraction = stackArgs[0];
 	_gyros.failureInteraction = stackArgs[1];
@@ -3187,7 +3397,7 @@ void Runtime::scriptOpParm2(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpParm3(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	if (stackArgs[0] < 0 || static_cast<uint>(stackArgs[0]) >= GyroState::kNumGyros)
 		error("Invalid gyro index for Parm3");
@@ -3199,7 +3409,7 @@ void Runtime::scriptOpParm3(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpParmG(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT(3);
 
 	int32 gyroSlot = stackArgs[0];
 	int32 dragMargin = stackArgs[1];
@@ -3214,7 +3424,7 @@ void Runtime::scriptOpParmG(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpSParmX(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT(3);
 
 	_pendingStaticAnimParams.initialDelay = stackArgs[0];
 	_pendingStaticAnimParams.repeatDelay = stackArgs[1];
@@ -3225,7 +3435,7 @@ void Runtime::scriptOpSParmX(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpSAnimX(ScriptArg_t arg) {
-	TAKE_STACK(kAnimDefStackArgs * 2 + 1);
+	TAKE_STACK_INT(kAnimDefStackArgs * 2 + 1);
 
 	AnimationDef animDef1 = stackArgsToAnimDef(stackArgs + 0);
 	AnimationDef animDef2 = stackArgsToAnimDef(stackArgs + kAnimDefStackArgs);
@@ -3246,113 +3456,158 @@ void Runtime::scriptOpSAnimX(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_VAR_NAMED(1, sndIDArgs);
 
-	triggerSoundRamp(stackArgs[0], stackArgs[1] * 100, stackArgs[2], false);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSoundRamp(*cachedSound, sndParamArgs[0] * 100, sndParamArgs[1], false);
 }
 
 void Runtime::scriptOpVolumeDn2(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT_NAMED(1, sndParamArgs);
+	TAKE_STACK_VAR_NAMED(1, sndIDArgs);
+
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
 
 	// FIXME: Just do this instantly
-	triggerSoundRamp(stackArgs[0], 1, stackArgs[1], false);
+	if (cachedSound)
+		triggerSoundRamp(*cachedSound, 1, sndParamArgs[0], false);
 }
 
 void Runtime::scriptOpVolumeDn3(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_VAR_NAMED(1, sndIDArgs);
 
-	triggerSoundRamp(stackArgs[0], stackArgs[1] * 100, stackArgs[2], false);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSoundRamp(*cachedSound, sndParamArgs[0] * 100, sndParamArgs[1], false);
 }
 
 void Runtime::scriptOpVolumeDn4(ScriptArg_t arg) {
-	TAKE_STACK(4);
+	TAKE_STACK_INT_NAMED(3, sndParamArgs);
+	TAKE_STACK_VAR_NAMED(1, sndIDArgs);
 
-	triggerSoundRamp(stackArgs[0], stackArgs[1] * 100, stackArgs[2], stackArgs[3] != 0);
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
+
+	if (cachedSound)
+		triggerSoundRamp(*cachedSound, sndParamArgs[0] * 100, sndParamArgs[1], sndParamArgs[2] != 0);
 }
 
 void Runtime::scriptOpRandom(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	if (stackArgs[0] == 0)
-		_scriptStack.push_back(0);
+		_scriptStack.push_back(StackValue(0));
 	else
-		_scriptStack.push_back(_rng->getRandomNumber(stackArgs[0] - 1));
+		_scriptStack.push_back(StackValue(_rng->getRandomNumber(stackArgs[0] - 1)));
 }
 
 void Runtime::scriptOpDrop(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_VAR(1);
 	(void)stackArgs;
 }
 
 void Runtime::scriptOpDup(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_VAR(1);
 
 	_scriptStack.push_back(stackArgs[0]);
 	_scriptStack.push_back(stackArgs[0]);
 }
 
 void Runtime::scriptOpSwap(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_VAR(2);
 
-	_scriptStack.push_back(stackArgs[1]);
-	_scriptStack.push_back(stackArgs[0]);
+	_scriptStack.push_back(Common::move(stackArgs[1]));
+	_scriptStack.push_back(Common::move(stackArgs[0]));
 }
 
 void Runtime::scriptOpSay1(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	warning("Say1 cycles are not implemented yet, playing first sound in the cycle");
 
-	uint soundID = stackArgs[0];
-	// uint cycleLength = stackArgs[2];
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
-	triggerSound(false, soundID, 100, 0, false);
+	// uint ? = sndParamArgs[0];
+	// uint cycleLength = sndParamArgs[1];
+
+	if (cachedSound)
+		triggerSound(false, *cachedSound, 100, 0, false);
 }
 
 void Runtime::scriptOpSay3(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	TriggeredOneShot oneShot;
-	oneShot.soundID = stackArgs[0];
-	oneShot.uniqueSlot = stackArgs[1];
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
-	// The third param seems to control sound interruption, but say3 is a Reah-only op and it's only ever 1.
-	if (stackArgs[2] != 1)
-		error("Invalid interrupt arg for say3, only 1 is supported.");
+	if (cachedSound) {
+		TriggeredOneShot oneShot;
+		oneShot.soundID = soundID;
+		oneShot.uniqueSlot = sndParamArgs[0];
 
-	if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
-		triggerSound(false, oneShot.soundID, 100, 0, false);
-		_triggeredOneShots.push_back(oneShot);
+		// The third param seems to control sound interruption, but say3 is a Reah-only op and it's only ever 1.
+		if (sndParamArgs[1] != 1)
+			error("Invalid interrupt arg for say3, only 1 is supported.");
+
+		if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
+			triggerSound(false, *cachedSound, 100, 0, false);
+			_triggeredOneShots.push_back(oneShot);
+		}
 	}
 }
 
 void Runtime::scriptOpSay3Get(ScriptArg_t arg) {
-	TAKE_STACK(3);
+	TAKE_STACK_INT_NAMED(2, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	TriggeredOneShot oneShot;
-	oneShot.soundID = stackArgs[0];
-	oneShot.uniqueSlot = stackArgs[1];
+	StackInt_t soundID = 0;
+	CachedSound *cachedSound = nullptr;
+	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
-	// The third param seems to control sound interruption, but say3 is a Reah-only op and it's only ever 1.
-	if (stackArgs[2] != 1)
-		error("Invalid interrupt arg for say3, only 1 is supported.");
+	if (cachedSound) {
+		TriggeredOneShot oneShot;
+		oneShot.soundID = soundID;
+		oneShot.uniqueSlot = sndParamArgs[0];
 
-	if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
-		triggerSound(false, oneShot.soundID, 100, 0, false);
-		_triggeredOneShots.push_back(oneShot);
-		_scriptStack.push_back(oneShot.soundID);
+		// The third param seems to control sound interruption, but say3 is a Reah-only op and it's only ever 1.
+		if (sndParamArgs[1] != 1)
+			error("Invalid interrupt arg for say3, only 1 is supported.");
+
+		if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
+			triggerSound(false, *cachedSound, 100, 0, false);
+			_triggeredOneShots.push_back(oneShot);
+			_scriptStack.push_back(StackValue(soundID));
+		} else
+			_scriptStack.push_back(StackValue(0));
 	} else
-		_scriptStack.push_back(0);
+		_scriptStack.push_back(StackValue(0));
 }
 
 void Runtime::scriptOpSetTimer(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	_timers[static_cast<uint>(stackArgs[0])] = g_system->getMillis() + static_cast<uint32>(stackArgs[1]) * 1000u;
 }
 
 void Runtime::scriptOpGetTimer(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	bool isCompleted = true;
 
@@ -3360,11 +3615,11 @@ void Runtime::scriptOpGetTimer(ScriptArg_t arg) {
 	if (timerIt != _timers.end())
 		isCompleted = (g_system->getMillis() >= timerIt->_value);
 
-	_scriptStack.push_back(isCompleted ? 1 : 0);
+	_scriptStack.push_back(StackValue(isCompleted ? 1 : 0));
 }
 
 void Runtime::scriptOpDelay(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	_gameState = kGameStateDelay;
 	_delayCompletionTime = g_system->getMillis() + stackArgs[0];
@@ -3387,7 +3642,7 @@ void Runtime::scriptOpHiGet(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpVerticalPanSet(bool *flags) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	uint baseDirection = static_cast<uint>(stackArgs[0]) % kNumDirections;
 	uint radius = stackArgs[1];
@@ -3411,7 +3666,7 @@ void Runtime::scriptOpVerticalPanSet(bool *flags) {
 }
 
 void Runtime::scriptOpVerticalPanGet() {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	// In any scenario where this is used, there is a corresponding hi/lo set and this only ever triggers off of interactions,
 	// so don't really even need to check anything other than the facing direction?
@@ -3423,11 +3678,11 @@ void Runtime::scriptOpVerticalPanGet() {
 
 	bool isInRadius = (rtDirection <= radius || lfDirection <= radius);
 
-	_scriptStack.push_back(isInRadius ? 1 : 0);
+	_scriptStack.push_back(StackValue(isInRadius ? 1 : 0));
 }
 
 void Runtime::scriptOpSaveAs(ScriptArg_t arg) {
-	TAKE_STACK(4);
+	TAKE_STACK_INT(4);
 
 	// Just ignore this op, it looks like it's for save room remapping of some sort but we allow
 	// saves at any idle screen.
@@ -3443,103 +3698,103 @@ void Runtime::scriptOpExit(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpNot(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
-	_scriptStack.push_back((stackArgs[0] == 0) ? 1 : 0);
+	_scriptStack.push_back(StackValue((stackArgs[0] == 0) ? 1 : 0));
 }
 
 void Runtime::scriptOpAnd(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
-	_scriptStack.push_back((stackArgs[0] != 0 && stackArgs[1] != 0) ? 1 : 0);
+	_scriptStack.push_back(StackValue((stackArgs[0] != 0 && stackArgs[1] != 0) ? 1 : 0));
 }
 
 void Runtime::scriptOpOr(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
-	_scriptStack.push_back((stackArgs[0] != 0 || stackArgs[1] != 0) ? 1 : 0);
+	_scriptStack.push_back(StackValue((stackArgs[0] != 0 || stackArgs[1] != 0) ? 1 : 0));
 }
 
 void Runtime::scriptOpAdd(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
-	_scriptStack.push_back(stackArgs[0] + stackArgs[1]);
+	_scriptStack.push_back(StackValue(stackArgs[0] + stackArgs[1]));
 }
 
 void Runtime::scriptOpSub(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
-	_scriptStack.push_back(stackArgs[0] - stackArgs[1]);
+	_scriptStack.push_back(StackValue(stackArgs[0] - stackArgs[1]));
 }
 
 void Runtime::scriptOpNegate(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
-	_scriptStack.push_back(-stackArgs[0]);
+	_scriptStack.push_back(StackValue(-stackArgs[0]));
 }
 
 void Runtime::scriptOpCmpEq(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
-	_scriptStack.push_back((stackArgs[0] == stackArgs[1]) ? 1 : 0);
+	_scriptStack.push_back(StackValue((stackArgs[0] == stackArgs[1]) ? 1 : 0));
 }
 
 void Runtime::scriptOpCmpLt(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
-	_scriptStack.push_back((stackArgs[0] < stackArgs[1]) ? 1 : 0);
+	_scriptStack.push_back(StackValue((stackArgs[0] < stackArgs[1]) ? 1 : 0));
 }
 
 void Runtime::scriptOpCmpGt(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
-	_scriptStack.push_back((stackArgs[0] > stackArgs[1]) ? 1 : 0);
+	_scriptStack.push_back(StackValue((stackArgs[0] > stackArgs[1]) ? 1 : 0));
 }
 
 void Runtime::scriptOpBitLoad(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 
-	_scriptStack.push_back((stackArgs[0] >> stackArgs[1]) & 1);
+	_scriptStack.push_back(StackValue((stackArgs[0] >> stackArgs[1]) & 1));
 }
 
 void Runtime::scriptOpBitSet0(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	ScriptArg_t bitMask = static_cast<ScriptArg_t>(1) << stackArgs[1];
-	_scriptStack.push_back(stackArgs[0] & ~bitMask);
+	_scriptStack.push_back(StackValue(stackArgs[0] & ~bitMask));
 }
 
 void Runtime::scriptOpBitSet1(ScriptArg_t arg) {
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 
 	ScriptArg_t bitMask = static_cast<ScriptArg_t>(1) << stackArgs[1];
-	_scriptStack.push_back(stackArgs[0] | bitMask);
+	_scriptStack.push_back(StackValue(stackArgs[0] | bitMask));
 }
 
 void Runtime::scriptOpDisc1(ScriptArg_t arg) {
 	// Disc check, always pass
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 	(void)stackArgs;
-	_scriptStack.push_back(1);
+	_scriptStack.push_back(StackValue(1));
 }
 
 void Runtime::scriptOpDisc2(ScriptArg_t arg) {
 	// Disc check, always pass
-	TAKE_STACK(2);
+	TAKE_STACK_INT(2);
 	(void)stackArgs;
-	_scriptStack.push_back(1);
+	_scriptStack.push_back(StackValue(1));
 }
 
 void Runtime::scriptOpDisc3(ScriptArg_t arg) {
 	// Disc check, always pass
-	TAKE_STACK(3);
+	TAKE_STACK_INT(3);
 	(void)stackArgs;
-	_scriptStack.push_back(1);
+	_scriptStack.push_back(StackValue(1));
 }
 
 void Runtime::scriptOpGoto(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	uint newInteraction = static_cast<uint>(stackArgs[0]);
 
@@ -3569,7 +3824,7 @@ void Runtime::scriptOpGoto(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpEscOn(ScriptArg_t arg) {
-	TAKE_STACK(1);
+	TAKE_STACK_INT(1);
 
 	_escOn = (stackArgs[0] != 0);
 }
@@ -3611,7 +3866,7 @@ void Runtime::scriptOpValueName(ScriptArg_t arg) {
 	if (it == roomDef->values.end())
 		error("Value '%s' doesn't exist in room %i", varName.c_str(), static_cast<int>(_roomNumber));
 
-	_scriptStack.push_back(it->_value);
+	_scriptStack.push_back(StackValue(it->_value));
 }
 
 void Runtime::scriptOpVarName(ScriptArg_t arg) {
@@ -3628,44 +3883,23 @@ void Runtime::scriptOpVarName(ScriptArg_t arg) {
 	if (it == roomDef->vars.end())
 		error("Var '%s' doesn't exist in room %i", varName.c_str(), static_cast<int>(_roomNumber));
 
-	_scriptStack.push_back(it->_value);
+	_scriptStack.push_back(StackValue(it->_value));
 }
 
 void Runtime::scriptOpSoundName(ScriptArg_t arg) {
-	Common::String sndName = _scriptSet->strings[arg];
-
-	uint soundID = 0;
-	for (uint i = 0; i < 4; i++)
-		soundID = soundID * 10u + (sndName[i] - '0');
-
-	sndName.toLowercase();
-
-	Common::HashMap<uint, Common::SharedPtr<CachedSound> >::const_iterator cachedSoundIt = _cachedSounds.find(soundID);
-	if (cachedSoundIt != _cachedSounds.end() && cachedSoundIt->_value->name != sndName) {
-		_cachedSounds.erase(cachedSoundIt);
-		cachedSoundIt = _cachedSounds.end();
-	}
-
-	if (cachedSoundIt == _cachedSounds.end()) {
-		Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator waveIt = _waves.find(sndName);
-
-		if (waveIt != _waves.end())
-			loadWave(soundID, sndName, waveIt->_value);
-	}
-
-	_scriptStack.push_back(soundID);
+	_scriptStack.push_back(StackValue(_scriptSet->strings[arg]));
 }
 
 void Runtime::scriptOpCursorName(ScriptArg_t arg) {
 	const Common::String &cursorName = _scriptSet->strings[arg];
 
-	Common::HashMap<Common::String, StackValue_t>::const_iterator namedCursorIt = _namedCursors.find(cursorName);
+	Common::HashMap<Common::String, StackInt_t>::const_iterator namedCursorIt = _namedCursors.find(cursorName);
 	if (namedCursorIt == _namedCursors.end()) {
 		error("Unimplemented cursor name '%s'", cursorName.c_str());
 		return;
 	}
 
-	_scriptStack.push_back(namedCursorIt->_value);
+	_scriptStack.push_back(StackValue(namedCursorIt->_value));
 }
 
 void Runtime::scriptOpDubbing(ScriptArg_t arg) {
@@ -3675,7 +3909,7 @@ void Runtime::scriptOpDubbing(ScriptArg_t arg) {
 void Runtime::scriptOpCheckValue(ScriptArg_t arg) {
 	PEEK_STACK(1);
 
-	if (arg == stackArgs[0])
+	if (stackArgs[0].type == StackValue::kNumber && stackArgs[0].value.i == arg)
 		_scriptStack.pop_back();
 	else
 		_scriptNextInstruction++;
@@ -3685,7 +3919,12 @@ void Runtime::scriptOpJump(ScriptArg_t arg) {
 	_scriptNextInstruction = arg;
 }
 
-#undef TAKE_STACK
+#undef TAKE_STACK_STR
+#undef TAKE_STACK_STR_NAMED
+#undef TAKE_STACK_INT
+#undef TAKE_STACK_INT_NAMED
+#undef TAKE_STACK_VAR
+#undef TAKE_STACK_VAR_NAMED
 #undef PEEK_STACK
 #undef OPCODE_STUB
 
