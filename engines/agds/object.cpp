@@ -41,7 +41,8 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
                                                                                  _clickHandler(0), _examineHandler(0), _userUseHandler(0),
 																				 _throwHandler(0), _useOnHandler(0),
                                                                                  _alpha(255), _scale(100), _locked(false), _alive(true),
-																				 _persistent(true), _allowInitialise(true) {
+																				 _persistent(true), _allowInitialise(true),
+																				 _ignoreRegion(false) {
 	uint16 id = stream->readUint16LE();
 	debug("id: 0x%02x %u", id, id);
 
@@ -242,7 +243,7 @@ bool Object::pointIn(Common::Point pos) {
 		return true;
 
 
-	if (_region && _region->pointIn(pos))
+	if (!_ignoreRegion && _region && _region->pointIn(pos))
 		return true;
 
 	return false;

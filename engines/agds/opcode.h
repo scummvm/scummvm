@@ -209,7 +209,7 @@ enum Opcode {
 	kInventoryFindObjectByName		= 189,
 	kSetObjectScale					= 190,
 	kStub191						= 191,
-	kStub192						= 192,
+	kObjectIgnoreRegion				= 192,
 	kRemoveGapsFromInventory		= 193,
 	kSampleAmbient					= 194,
 	kGetObjectPictureWidth			= 195,
@@ -415,7 +415,7 @@ enum Opcode {
 	OP(kSetSampleVolume, setSampleVolume) \
 	OP(kStub173, stub173) \
 	OP(kStub174, stub174) \
-	OP(kStub192, stub192) \
+	OP(kObjectIgnoreRegion, objectIgnoreRegion) \
 	OP(kQuit, quit) \
 	OP(kStartNewGame, startNewGame) \
 	OP(kDisableInventory, disableInventory) \
