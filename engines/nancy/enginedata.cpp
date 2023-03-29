@@ -108,16 +108,14 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 	s.skip(0xC0);
 
 	uint numFrames = g_nancy->getStaticData().numCurtainAnimationFrames;
-	curtainAnimationSrcs.resize(numFrames * 2);
-	for (uint i = 0; i < numFrames * 2; ++i) {
-		readRect(*chunkStream, curtainAnimationSrcs[i]);
-	}
 
-	readRect(*chunkStream, inventoryScreenPosition);
+	readRectArray(s, curtainAnimationSrcs, numFrames * 2);
+
+	readRect(s, inventoryScreenPosition);
 	s.syncAsUint16LE(curtainsFrameTime);
 
-	readFilename(*chunkStream, inventoryBoxIconsImageName);
-	readFilename(*chunkStream, inventoryCursorsImageName);
+	readFilename(s, inventoryBoxIconsImageName);
+	readFilename(s, inventoryCursorsImageName);
 
 	s.skip(0x18);
 	byte itemName[20];
@@ -132,7 +130,7 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 		itemName[itemNameLength - 1] = '\0';
 		item.name = (char *)itemName;
 		s.syncAsUint16LE(item.keepItem);
-		readRect(*chunkStream, item.sourceRect);
+		readRect(s, item.sourceRect);
 	}
 
 	delete chunkStream;
@@ -187,17 +185,8 @@ MAP::MAP(Common::SeekableReadStream *chunkStream) {
 	uint numLocations = s.getVersion() == kGameTypeVampire ? 7 : 4;
 	uint numMaps = s.getVersion() == kGameTypeVampire ? 4 : 2;
 
-	mapNames.resize(numMaps);
-	for (uint i = 0; i < numMaps; ++i) {
-		readFilename(*chunkStream, mapNames[i]);
-	}
-
-	if (s.getVersion() == kGameTypeVampire) {
-		mapPaletteNames.resize(numMaps);
-		for (uint i = 0; i < numMaps; ++i) {
-			readFilename(*chunkStream, mapPaletteNames[i]);
-		}
-	}
+	readFilenameArray(s, mapNames, numMaps);
+	readFilenameArray(s, mapPaletteNames, numMaps, kGameTypeVampire, kGameTypeVampire);
 
 	s.skip(4);
 
@@ -208,34 +197,24 @@ MAP::MAP(Common::SeekableReadStream *chunkStream) {
 
 	s.skip(0x20);
 
-	if (s.getVersion() == kGameTypeVampire) {
-		s.syncAsUint16LE(globeFrameTime);
+	s.syncAsUint16LE(globeFrameTime, kGameTypeVampire, kGameTypeVampire);
+	readRectArray(s, globeSrcs, 8, kGameTypeVampire, kGameTypeVampire);
+	readRect(s, globeDest, kGameTypeVampire, kGameTypeVampire);
 
-		globeSrcs.resize(8);
-		for (uint i = 0; i < 8; ++i) {
-			readRect(*chunkStream, globeSrcs[i]);
-		}
-
-		readRect(*chunkStream, globeDest);
-	}
-
-	if (s.getVersion() == kGameTypeNancy1) {
-		s.skip(2);
-		readRect(*chunkStream, buttonSrc);
-		readRect(*chunkStream, buttonDest);
-	}
+	s.skip(2, kGameTypeNancy1, kGameTypeNancy1);
+	readRect(s, buttonSrc, kGameTypeNancy1, kGameTypeNancy1);
+	readRect(s, buttonDest, kGameTypeNancy1, kGameTypeNancy1);
 
 	locations.resize(numLocations);
+
 	for (uint i = 0; i < numLocations; ++i) {
 		readRect(*chunkStream, locations[i].labelSrc);
 	}
 
-	readRect(*chunkStream, closedLabelSrc);
+	readRect(s, closedLabelSrc);
 
-	if (s.getVersion() == kGameTypeVampire) {
-		readRect(*chunkStream, globeGargoyleSrc);
-		readRect(*chunkStream, globeGargoyleDest);
-	}
+	readRect(s, globeGargoyleSrc, kGameTypeVampire, kGameTypeVampire);
+	readRect(s, globeGargoyleDest, kGameTypeVampire, kGameTypeVampire);
 
 	char buf[30];
 
@@ -346,32 +325,15 @@ CLOK::CLOK(Common::SeekableReadStream *chunkStream) {
 	Common::Serializer s(chunkStream, nullptr);
 	s.setVersion(g_nancy->getGameType());
 
-	animSrcs.resize(8);
-	for (uint i = 0; i < 8; ++i) {
-		readRect(*chunkStream, animSrcs[i]);
-	}
+	readRectArray(s, animSrcs, 8);
 
-	hoursHandSrcs.resize(12);
-	for (uint i = 0; i < 12; ++i) {
-		readRect(*chunkStream, hoursHandSrcs[i]);
-	}
+	readRectArray(s, hoursHandSrcs, 12);
+	readRectArray(s, minutesHandSrcs, 4);
 
-	minutesHandSrcs.resize(4);
-	for (uint i = 0; i < 4; ++i) {
-		readRect(*chunkStream, minutesHandSrcs[i]);
-	}
+	readRect(s, screenPosition);
 
-	readRect(*chunkStream, screenPosition);
-
-	hoursHandDests.resize(12);
-	for (uint i = 0; i < 12; ++i) {
-		readRect(*chunkStream, hoursHandDests[i]);
-	}
-
-	minutesHandDests.resize(4);
-	for (uint i = 0; i < 4; ++i) {
-		readRect(*chunkStream, minutesHandDests[i]);
-	}
+	readRectArray(s, hoursHandDests, 12);
+	readRectArray(s, minutesHandDests, 4);
 
 	readRect(*chunkStream, gargoyleEyesSrc);
 	readRect(*chunkStream, gargoyleEyesDest);

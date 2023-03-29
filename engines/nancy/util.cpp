@@ -36,12 +36,85 @@ void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
 	}
 }
 
+void readRect(Common::Serializer &stream, Common::Rect &inRect, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	Common::Serializer::Version version = stream.getVersion();
+	if (version >= minVersion && version <= maxVersion) {
+		stream.syncAsUint32LE(inRect.left);
+		stream.syncAsUint32LE(inRect.top);
+		stream.syncAsUint32LE(inRect.right);
+		stream.syncAsUint32LE(inRect.bottom);
+
+		// TVD's rects are non-inclusive
+		if (version > kGameTypeVampire) {
+			++inRect.right;
+			++inRect.bottom;
+		}
+	}
+}
+
+void readRectArray(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num) {
+	inArray.resize(num);
+	for (Common::Rect &rect : inArray) {
+		readRect(stream, rect);
+	}
+}
+
+void readRectArray(Common::Serializer &stream, Common::Array<Common::Rect> &inArray, uint num, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	Common::Serializer::Version version = stream.getVersion();
+	if (version >= minVersion && version <= maxVersion) {
+		inArray.resize(num);
+		for (Common::Rect &rect : inArray) {
+			stream.syncAsUint32LE(rect.left);
+			stream.syncAsUint32LE(rect.top);
+			stream.syncAsUint32LE(rect.right);
+			stream.syncAsUint32LE(rect.bottom);
+
+			// TVD's rects are non-inclusive
+			if (version > kGameTypeVampire) {
+				++rect.right;
+				++rect.bottom;
+			}
+		}
+	}
+}
+
 // Reads an 8-character filename from a 10-character source
 void readFilename(Common::SeekableReadStream &stream, Common::String &inString) {
 	char buf[10];
 	stream.read(buf, 10);
 	buf[9] = '\0';
 	inString = buf;
+}
+
+// Reads an 8-character filename from a 10-character source
+void readFilename(Common::Serializer &stream, Common::String &inString, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	Common::Serializer::Version version = stream.getVersion();
+	if (version >= minVersion && version <= maxVersion) {
+		char buf[10];
+		stream.syncBytes((byte *)buf, 10);
+		buf[9] = '\0';
+		inString = buf;
+	}
+}
+
+void readFilenameArray(Common::SeekableReadStream &stream, Common::Array<Common::String> &inArray, uint num) {
+	inArray.resize(num);
+	for (Common::String &str : inArray) {
+		readFilename(stream, str);
+	}
+}
+
+void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String> &inArray, uint num, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	Common::Serializer::Version version = stream.getVersion();
+	if (version >= minVersion && version <= maxVersion) {
+		inArray.resize(num);
+		char buf[10];
+		for (Common::String &str : inArray) {
+			stream.syncBytes((byte *)buf, 10);
+			buf[9] = '\0';
+			str = buf;
+		}
+	}
 }
 
 } // End of namespace Nancy

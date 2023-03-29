@@ -170,10 +170,7 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 	ser.setVersion(g_nancy->getGameType());
 
 	readFilename(stream, _videoName);
-
-	if (ser.getVersion() == kGameTypeVampire) {
-		readFilename(stream, _paletteName);
-	}
+	readFilename(ser, _paletteName, kGameTypeVampire, kGameTypeVampire);
 
 	ser.skip(2);
 	ser.syncAsUint16LE(_videoFormat);

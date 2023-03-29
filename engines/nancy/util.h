@@ -22,12 +22,19 @@
 #define NANCY_UTIL_H
 
 #include "common/rect.h"
-#include "common/stream.h"
+#include "common/serializer.h"
 
 namespace Nancy {
 
 void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect);
+void readRect(Common::Serializer &stream, Common::Rect &inRect, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+void readRectArray(Common::SeekableReadStream &stream, Common::Array<Common::Rect> &inArray, uint num);
+void readRectArray(Common::Serializer &stream, Common::Array<Common::Rect> &inArray, uint num, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+
 void readFilename(Common::SeekableReadStream &stream, Common::String &inString);
+void readFilename(Common::Serializer &stream, Common::String &inString, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+void readFilenameArray(Common::SeekableReadStream &stream, Common::Array<Common::String> &inArray, uint num);
+void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String> &inArray, uint num, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 
 } // End of namespace Nancy
 
