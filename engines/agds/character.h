@@ -98,10 +98,7 @@ public:
 		_enabled = enabled;
 	}
 
-	void visible(bool visible) {
-		_visible = visible;
-	}
-
+	void visible(bool visible);
 	bool visible() const {
 		return _visible;
 	}

@@ -40,7 +40,7 @@ namespace AGDS {
 
 Character::Character(AGDSEngine * engine, const Common::String & name):
 	_engine(engine), _name(name), _object(), _animation(nullptr), _jokes(false),
-	_enabled(true), _visible(true), _stopped(false),
+	_enabled(true), _visible(false), _stopped(false),
 	_phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 }
 
@@ -113,6 +113,9 @@ void Character::associate(const Common::String &name) {
 	_engine->runObject(_object);
 }
 
+void Character::visible(bool visible) {
+	_visible = visible;
+}
 
 void Character::loadState(Common::ReadStream* stream) {
 	int x = stream->readUint16LE();
@@ -149,6 +152,7 @@ void Character::moveTo(const Common::String & processName, Common::Point dst, in
 	debug("character move %d,%d %d", dst.x, dst.y, dir);
 	_processName = processName;
 	_pos = dst;
+	_visible = true;
 	direction(dir);
 }
 
@@ -156,6 +160,7 @@ void Character::animate(int direction, int speed, bool jokes) {
 	if (direction == -1)
 		return;
 
+	_visible = true;
 	_stopped = false;
 	auto character = jokes? _engine->jokes(): this;
 	_description = character->animationDescription(direction);
@@ -244,6 +249,7 @@ int Character::z() const {
 
 void Character::reset() {
 	_fog.reset();
+	_visible = false;
 }
 
 void Character::setFog(Graphics::TransparentSurface * surface, int minZ, int maxZ) {
