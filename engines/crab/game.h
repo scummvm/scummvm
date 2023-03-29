@@ -45,6 +45,8 @@
 #include "crab/map.h"
 #include "crab/menu.h"
 
+namespace Crab {
+
 class Game : public GameState {
 private:
 	enum State {
@@ -137,5 +139,7 @@ public:
 
 	void SetUI();
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_GAME_H

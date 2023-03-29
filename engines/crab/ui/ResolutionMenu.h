@@ -35,6 +35,8 @@
 #include "crab/menu.h"
 #include "crab/textarea.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class ResolutionMenu : public ButtonMenu {
@@ -77,5 +79,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_RESOLUTIONMENU_H

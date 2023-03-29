@@ -30,6 +30,8 @@
 
 #include "crab/QuestText.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::input;
@@ -156,3 +158,5 @@ void QuestText::SetUI() {
 	next.SetUI();
 	status.SetUI();
 }
+
+} // End of namespace Crab

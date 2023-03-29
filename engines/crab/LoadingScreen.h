@@ -36,6 +36,8 @@
 #include "crab/timer.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 class LoadingScreen {
 	struct Screen {
 		// The background image
@@ -68,5 +70,7 @@ public:
 };
 
 extern LoadingScreen gLoadScreen;
+
+} // End of namespace Crab
 
 #endif // CRAB_LOADINGSCREEN_H

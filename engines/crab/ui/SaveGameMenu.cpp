@@ -30,6 +30,8 @@
 
 #include "crab/SaveGameMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::input;
 
@@ -138,3 +140,5 @@ void GameSaveMenu::SetUI() {
 	FileMenu<SaveFileData>::SetUI();
 	ta_name.SetUI();
 }
+
+} // End of namespace Crab

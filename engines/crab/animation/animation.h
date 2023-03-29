@@ -36,6 +36,8 @@
 #include "common_header.h"
 #include "timer.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 class Animation {
@@ -63,5 +65,7 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB__ANIMATION_H

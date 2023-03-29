@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/loaders.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class FileData {
@@ -77,5 +79,7 @@ enum { DATA_AUTHOR,
 const int DATA_HOVER_TOTAL = 4;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_FILEDATA_H

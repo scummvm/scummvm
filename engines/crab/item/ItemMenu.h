@@ -39,6 +39,8 @@
 #include "crab/menu.h"
 #include "crab/person.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace item {
 // The menu is used to handle interactions like the player clicking on an item to equip it
@@ -84,5 +86,7 @@ public:
 };
 } // End of namespace item
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ITEMMENU_H

@@ -36,6 +36,8 @@
 #include "crab/eventstore.h"
 #include "crab/textarea.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 struct EmotionIndicator {
@@ -53,5 +55,7 @@ struct EmotionIndicator {
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_EMOTION_H

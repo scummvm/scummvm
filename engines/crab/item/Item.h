@@ -36,6 +36,8 @@
 #include "crab/common_header.h"
 #include "crab/person.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace item {
 struct Item {
@@ -67,5 +69,7 @@ struct Item {
 };
 } // End of namespace item
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ITEM_H

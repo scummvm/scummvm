@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/trigger.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 class TriggerSet {
@@ -62,5 +64,7 @@ public:
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_TRIGGERSET_H

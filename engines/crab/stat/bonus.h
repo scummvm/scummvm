@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/loaders.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace stat {
 // Stat bonuses for an item
@@ -48,5 +50,7 @@ struct Bonus {
 };
 } // End of namespace stat
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_BONUS_H

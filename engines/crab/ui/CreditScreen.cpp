@@ -31,6 +31,8 @@
 #include "crab/CreditScreen.h"
 #include "crab/url.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 
@@ -173,3 +175,5 @@ void CreditScreen::SetUI() {
 	twitter.SetUI();
 	website.SetUI();
 }
+
+} // End of namespace Crab

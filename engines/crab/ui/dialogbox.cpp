@@ -34,6 +34,8 @@
 //=============================================================================
 #include "crab/dialogbox.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
@@ -87,3 +89,5 @@ void GameDialogBox::SetUI() {
 	text.SetUI(&pos);
 	button.SetUI();
 }
+
+} // End of namespace Crab

@@ -31,6 +31,8 @@
 #include "crab/TextManager.h"
 #include "crab/XMLDoc.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::text;
 
 namespace pyrodactyl {
@@ -222,3 +224,5 @@ void TextManager::Quit() {
 		}
 	}
 }
+
+} // End of namespace Crab

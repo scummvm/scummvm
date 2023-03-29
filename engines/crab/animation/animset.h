@@ -36,6 +36,8 @@
 #include "crab/shadow.h"
 #include "crab/walkframes.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 // Container for all the possible animations an object can have
@@ -67,5 +69,7 @@ struct AnimSet {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ANIMSET_H

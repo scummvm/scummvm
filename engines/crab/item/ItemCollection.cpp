@@ -30,6 +30,8 @@
 
 #include "crab/ItemCollection.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::people;
 using namespace pyrodactyl::item;
 using namespace pyrodactyl::ui;
@@ -140,3 +142,5 @@ void ItemCollection::SetUI() {
 	for (auto i = item.begin(); i != item.end(); ++i)
 		i->second.SetUI();
 }
+
+} // End of namespace Crab

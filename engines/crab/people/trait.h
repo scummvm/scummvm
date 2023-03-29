@@ -34,6 +34,8 @@
 #include "crab/ImageManager.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace people {
 struct Trait {
@@ -69,5 +71,7 @@ struct Trait {
 };
 } // End of namespace people
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_TRAIT_H

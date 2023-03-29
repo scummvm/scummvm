@@ -31,6 +31,8 @@
 
 #include "crab/ClipButton.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -50,3 +52,5 @@ void ClipButton::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 void ClipButton::Draw(const int &XOffset, const int &YOffset) {
 	Button::Draw(XOffset, YOffset, &clip);
 }
+
+} // End of namespace Crab

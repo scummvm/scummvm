@@ -31,6 +31,8 @@
 
 #include "crab/StatDrawHelper.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::people;
@@ -78,3 +80,5 @@ void StatDrawHelper::DrawInfo(const Person &obj) {
 	for (int i = 0; i < STAT_TOTAL; i++)
 		info[i].Draw(obj.stat.val[i].cur, obj.stat.val[i].max);
 }
+
+} // End of namespace Crab

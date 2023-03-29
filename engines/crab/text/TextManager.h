@@ -37,6 +37,8 @@
 #include "crab/common_header.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 // We use this object as the key for all fonts
 typedef unsigned int FontKey;
 
@@ -113,5 +115,7 @@ public:
 extern TextManager gTextManager;
 } // End of namespace text
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_TEXTMANAGER_H

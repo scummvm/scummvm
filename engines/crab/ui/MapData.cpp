@@ -30,6 +30,8 @@
 
 #include "crab/MapData.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 
 void MapData::Load(rapidxml::xml_node<char> *node) {
@@ -84,3 +86,5 @@ void MapData::LoadState(rapidxml::xml_node<char> *node) {
 		}
 	}
 }
+
+} // End of namespace Crab

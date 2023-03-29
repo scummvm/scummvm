@@ -35,6 +35,8 @@
 #include "crab/input.h"
 #include "crab/loaders.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace input {
 // The animations a sprite can play
@@ -76,5 +78,7 @@ struct FightInput {
 };
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_FIGHTINPUT_H

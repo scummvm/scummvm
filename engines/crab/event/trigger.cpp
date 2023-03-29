@@ -30,6 +30,8 @@
 
 #include "crab/trigger.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::event;
 
 void Trigger::Load(rapidxml::xml_node<char> *node) {
@@ -195,3 +197,5 @@ bool Trigger::Evaluate(pyrodactyl::event::Info &info) {
 
 	return false;
 }
+
+} // End of namespace Crab

@@ -44,6 +44,8 @@
 #include "crab/element.h"
 #include "crab/hotkey.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 enum ButtonAction { BUAC_IGNORE,
@@ -123,5 +125,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_BUTTON_H

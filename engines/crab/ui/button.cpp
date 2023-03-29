@@ -34,6 +34,8 @@
 //=============================================================================
 #include "crab/button.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
@@ -195,3 +197,5 @@ void Button::SetUI(Rect *parent) {
 	tooltip.SetUI(this);
 	caption.SetUI(this);
 }
+
+} // End of namespace Crab

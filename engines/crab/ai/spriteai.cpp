@@ -30,6 +30,8 @@
 
 #include "crab/sprite.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 using namespace pyrodactyl::ai;
 
@@ -307,3 +309,5 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 		}
 	}
 }
+
+} // End of namespace Crab

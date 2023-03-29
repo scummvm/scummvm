@@ -30,6 +30,8 @@
 
 #include "crab/url.h"
 
+namespace Crab {
+
 #ifdef __WIN32__
 #include <ShellAPI.h>
 #include <windows.h>
@@ -63,3 +65,5 @@ void OpenURL(const std::string &url_str) {
 	system(command.c_str());
 #endif
 }
+
+} // End of namespace Crab

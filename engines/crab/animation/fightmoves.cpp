@@ -30,6 +30,8 @@
 
 #include "crab/fightmoves.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 
 //------------------------------------------------------------------------
@@ -195,3 +197,5 @@ bool FightMoves::Flip(TextureFlipType &flip, Direction d) {
 
 	return false;
 }
+
+} // End of namespace Crab

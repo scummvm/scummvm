@@ -31,6 +31,8 @@
 
 #include "crab/OptionSelect.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
@@ -87,3 +89,5 @@ void OptionSelect::SetUI() {
 	prev.SetUI();
 	next.SetUI();
 }
+
+} // End of namespace Crab

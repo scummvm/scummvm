@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/opinion.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 struct ChangeVal {
@@ -62,5 +64,7 @@ struct ChangeVal {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_CHANGEVAL_H

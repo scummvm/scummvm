@@ -29,7 +29,10 @@
  */
 
 #include "crab/FileData.h"
-#include <iomanip>
+
+namespace Crab {
+
+include <iomanip>
 
 using namespace pyrodactyl::ui;
 
@@ -86,3 +89,5 @@ ModFileData::ModFileData(boost::filesystem::path filepath) : FileData(filepath) 
 		}
 	}
 }
+
+} // End of namespace Crab

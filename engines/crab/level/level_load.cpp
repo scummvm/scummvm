@@ -30,6 +30,8 @@
 
 #include "crab/level.h"
 
+namespace Crab {
+
 using namespace TMX;
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::anim;
@@ -228,3 +230,5 @@ void Level::LoadState(rapidxml::xml_node<char> *node) {
 	for (auto *n = node->first_node("sprite"); n != NULL && i != objects.end(); n = n->next_sibling("sprite"), ++i)
 		i->LoadState(n);
 }
+
+} // End of namespace Crab

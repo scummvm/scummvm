@@ -37,6 +37,8 @@
 #include "personbase.h"
 #include "crab/timer.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 enum WalkAnimType { WT_STAND,
@@ -100,5 +102,7 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_WALKFRAMES_H

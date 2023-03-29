@@ -39,6 +39,8 @@
 #include "personbase.h"
 #include "crab/trait.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace people {
 struct Person {
@@ -88,5 +90,7 @@ struct Person {
 typedef std::unordered_map<std::string, Person> PersonMap;
 } // End of namespace people
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_PERSON_H

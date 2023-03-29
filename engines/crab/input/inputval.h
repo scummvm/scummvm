@@ -36,6 +36,8 @@
 #include "crab/common_header.h"
 #include "crab/loaders.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace input {
 class InputVal {
@@ -102,5 +104,7 @@ public:
 };
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_INPUTVAL_H

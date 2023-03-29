@@ -30,6 +30,8 @@
 
 #include "crab/animframe.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 
 void AnimFrame::Load(rapidxml::xml_node<char> *node, const Rect &VBOX, const Uint32 &rep, const int &AX, const int &AY) {
@@ -103,3 +105,5 @@ bool AnimationFrames::UpdateClip() {
 const AnimFrame &AnimationFrames::CurrentFrame() {
 	return frame.at(current_clip);
 }
+
+} // End of namespace Crab

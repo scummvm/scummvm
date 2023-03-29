@@ -30,6 +30,8 @@
 
 #include "crab/ToggleButton.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -59,3 +61,5 @@ ButtonAction ToggleButton::HandleEvents(const SDL_Event &Event, const int &XOffs
 
 	return action;
 }
+
+} // End of namespace Crab

@@ -34,6 +34,8 @@
 #include "crab/Shape.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace level {
 class Stairs : public Shape {
@@ -48,5 +50,7 @@ public:
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_STAIRS_H

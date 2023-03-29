@@ -35,6 +35,8 @@
 #include "crab/ParagraphData.h"
 #include "crab/SectionHeader.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class ItemDesc {
@@ -68,5 +70,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ITEMDESC_H

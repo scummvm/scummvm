@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ai {
 // These parameters control aspects of sprites flying across the screen
@@ -72,5 +74,7 @@ struct SpriteConstant {
 };
 } // End of namespace ai
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_SPRITECONSTANT_H

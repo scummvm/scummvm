@@ -31,6 +31,8 @@
 
 #include "crab/TMXLayer.h"
 
+namespace Crab {
+
 using namespace TMX;
 
 bool Layer::Load(rapidxml::xml_node<char> *node) {
@@ -102,3 +104,5 @@ bool MapLayer::Load(const std::string &path, rapidxml::xml_node<char> *node) {
 
 	return false;
 }
+
+} // End of namespace Crab

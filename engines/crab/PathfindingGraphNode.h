@@ -34,6 +34,8 @@
 #include "crab/Rectangle.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 // This is the basic pathfinding node that will construct the pathfinding graph. (SZ)
 // Although Unrest is using a square grid based pathfinding map, this is made to be a general use pathfinding node.
 class PathfindingGraphNode {
@@ -77,5 +79,7 @@ public:
 	// Return true if the node is adjacent to the otherNode
 	bool AdjacentToNode(PathfindingGraphNode *otherNode);
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_PATHFINDINGGRAPHNODE_H

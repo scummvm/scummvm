@@ -30,6 +30,8 @@
 
 #include "crab/element.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -130,3 +132,5 @@ void Element::SetUI(Rect *parent) {
 		}
 	}
 }
+
+} // End of namespace Crab

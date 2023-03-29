@@ -30,6 +30,8 @@
 
 #include "crab/ModMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 
 void ModMenu::Load(const std::string &filename) {
@@ -117,3 +119,5 @@ void ModMenu::Draw() {
 	} else if (hover)
 		Reset();
 }
+
+} // End of namespace Crab

@@ -42,6 +42,8 @@
 #include "crab/mapbutton.h"
 #include "crab/triggerset.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class Map {
@@ -138,5 +140,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MAP_H

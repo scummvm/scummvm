@@ -32,6 +32,8 @@
 #include "crab/StatTemplate.h"
 #include "crab/XMLDoc.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::stat;
 
 void StatTemplates::Load(const std::string &filename) {
@@ -42,3 +44,5 @@ void StatTemplates::Load(const std::string &filename) {
 			collection.push_back(n);
 	}
 }
+
+} // End of namespace Crab

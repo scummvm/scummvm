@@ -30,6 +30,8 @@
 
 #include "crab/slider.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
@@ -110,3 +112,5 @@ void Slider::SetUI() {
 	knob.w = gImageManager.GetTexture(knob.img.normal).W();
 	knob.h = gImageManager.GetTexture(knob.img.normal).H();
 }
+
+} // End of namespace Crab

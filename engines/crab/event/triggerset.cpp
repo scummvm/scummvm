@@ -31,6 +31,8 @@
 
 #include "crab/triggerset.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::event;
 
 void TriggerSet::Load(rapidxml::xml_node<char> *node) {
@@ -70,3 +72,5 @@ bool TriggerSet::Evaluate(pyrodactyl::event::Info &info) {
 
 	return result;
 }
+
+} // End of namespace Crab

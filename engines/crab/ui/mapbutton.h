@@ -35,6 +35,8 @@
 #include "crab/menu.h"
 #include "crab/triggerset.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class MapButton : public Button {
@@ -60,5 +62,7 @@ public:
 typedef Menu<MapButton> MapButtonMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MAPBUTTON_H

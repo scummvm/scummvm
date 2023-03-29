@@ -48,6 +48,8 @@
 #include "crab/slider.h"
 #include "crab/textarea.h"
 
+namespace Crab {
+
 // #define UNREST_DEMO
 
 //------------------------------------------------------------------------
@@ -132,5 +134,7 @@ public:
 	// We don't need to save game state here
 	void AutoSave() {}
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_MAINMENU_H

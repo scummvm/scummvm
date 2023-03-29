@@ -37,6 +37,8 @@
 #include "crab/TextManager.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 struct AnimationFrame : public Vector2i {
@@ -72,5 +74,7 @@ struct AnimationFrame : public Vector2i {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ANIMATIONFRAME_H

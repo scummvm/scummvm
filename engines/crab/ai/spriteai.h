@@ -35,6 +35,8 @@
 #include "crab/movement.h"
 #include "crab/PathfindingAgent.h"
 
+namespace Crab {
+
 // class PathfindingAgent;
 namespace pyrodactyl {
 namespace ai {
@@ -97,5 +99,7 @@ struct SpriteAIData {
 };
 } // End of namespace ai
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_SPRITEAI_H

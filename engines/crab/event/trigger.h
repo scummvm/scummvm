@@ -33,6 +33,8 @@
 #include "crab/GameEventInfo.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 enum RelOp { OP_AND,
@@ -74,5 +76,7 @@ struct Trigger {
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_TRIGGER_H

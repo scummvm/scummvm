@@ -30,6 +30,8 @@
 
 #include "crab/fightanim.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 
 //------------------------------------------------------------------------
@@ -80,3 +82,5 @@ void FightAnimFrames::Load(rapidxml::xml_node<char> *node) {
 		}
 	}
 }
+
+} // End of namespace Crab

@@ -30,6 +30,8 @@
 
 #include "crab/ItemSlot.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::item;
 using namespace pyrodactyl::input;
@@ -162,3 +164,5 @@ void ItemSlot::StatChange(Person &obj, bool increase) {
 	if (enabled)
 		item.StatChange(obj, increase);
 }
+
+} // End of namespace Crab

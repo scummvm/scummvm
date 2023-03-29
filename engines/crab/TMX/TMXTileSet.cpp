@@ -31,6 +31,8 @@
 #include "crab/TMXTileSet.h"
 #include "crab/TextManager.h"
 
+namespace Crab {
+
 using namespace TMX;
 
 void TileSet::Load(const std::string &path, rapidxml::xml_node<char> *node) {
@@ -162,3 +164,5 @@ void TileSetGroup::Draw(MapLayer &layer, const Rect &camera, const Vector2i &til
 		}
 	}
 }
+
+} // End of namespace Crab

@@ -36,6 +36,8 @@
 #include "crab/TileInfo.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace TMX {
 enum LayerType {
 	// Run of the mill layer full of tiles
@@ -104,5 +106,7 @@ public:
 	bool Load(const std::string &path, rapidxml::xml_node<char> *node);
 };
 } // End of namespace TMX
+
+} // End of namespace Crab
 
 #endif // CRAB_TMXLAYER_H

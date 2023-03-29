@@ -30,6 +30,8 @@
 
 #include "crab/level_objects.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::level;
 
@@ -42,3 +44,5 @@ void PlayerDestMarker::Load(rapidxml::xml_node<char> *node) {
 void PlayerDestMarker::Draw(const Vector2i &pos, const Rect &camera) {
 	gImageManager.Draw(pos.x - (size.x / 2) - camera.x, pos.y - (size.y / 2) - camera.y, img);
 }
+
+} // End of namespace Crab

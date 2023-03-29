@@ -45,6 +45,8 @@
 #include "crab/sprite.h"
 #include "crab/talknotify.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace level {
 class Level {
@@ -194,5 +196,7 @@ public:
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_LEVEL_H

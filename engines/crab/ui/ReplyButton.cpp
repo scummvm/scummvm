@@ -30,6 +30,8 @@
 
 #include "crab/ReplyButton.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
@@ -82,3 +84,5 @@ void ReplyButton::Cache(const std::string &val, const int &spacing, const int &b
 	if (orig.y < bottom_edge)
 		y = bottom_edge + spacing;
 }
+
+} // End of namespace Crab

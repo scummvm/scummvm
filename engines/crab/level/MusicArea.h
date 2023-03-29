@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/musicparam.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace level {
 struct MusicInfo {
@@ -64,5 +66,7 @@ public:
 };
 } // End of namespace level
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MUSICAREA_H

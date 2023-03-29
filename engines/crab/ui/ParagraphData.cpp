@@ -30,6 +30,8 @@
 
 #include "crab/ParagraphData.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 
 bool ParagraphData::Load(rapidxml::xml_node<char> *node, Rect *parent, const bool &echo) {
@@ -42,3 +44,5 @@ bool ParagraphData::Load(rapidxml::xml_node<char> *node, Rect *parent, const boo
 void ParagraphData::Draw(const std::string &val, const int &XOffset, const int &YOffset) {
 	pyrodactyl::text::gTextManager.Draw(x + XOffset, y + YOffset, val, col, font, align, line.x, line.y);
 }
+
+} // End of namespace Crab

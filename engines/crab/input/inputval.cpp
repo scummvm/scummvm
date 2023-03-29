@@ -30,6 +30,8 @@
 
 #include "crab/inputval.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::input;
 
 InputVal::InputVal() {
@@ -100,3 +102,5 @@ const bool InputVal::Equals(const SDL_ControllerButtonEvent &Event) {
 const bool InputVal::Equals(const SDL_KeyboardEvent &Event) {
 	return (key == Event.keysym.scancode || alt == Event.keysym.scancode);
 }
+
+} // End of namespace Crab

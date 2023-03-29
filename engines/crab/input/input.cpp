@@ -30,6 +30,8 @@
 
 #include "crab/input.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace input {
 InputManager gInput;
@@ -209,3 +211,5 @@ void InputManager::Save() {
 	doc.clear();
 	CreateBackup();
 }
+
+} // End of namespace Crab

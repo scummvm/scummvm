@@ -31,6 +31,8 @@
 
 #include "crab/StatPreview.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::item;
 
 void StatPreview::Load(rapidxml::xml_node<char> *node) {
@@ -60,3 +62,5 @@ void StatPreview::Draw(Item &item, pyrodactyl::stat::StatDrawHelper &helper) {
 		}
 	}
 }
+
+} // End of namespace Crab

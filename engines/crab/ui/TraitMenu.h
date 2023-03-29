@@ -37,6 +37,8 @@
 #include "crab/menu.h"
 #include "crab/person.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class TraitMenu {
@@ -79,5 +81,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_TRAITMENU_H

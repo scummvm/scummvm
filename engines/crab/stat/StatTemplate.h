@@ -34,6 +34,8 @@
 
 #include "crab/Stat.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace stat {
 struct StatTemplates {
@@ -47,5 +49,7 @@ public:
 };
 } // End of namespace stat
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_STATTEMPLATE_H

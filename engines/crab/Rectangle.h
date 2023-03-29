@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 //------------------------------------------------------------------------
 // Purpose: A simple rectangle class
 //------------------------------------------------------------------------
@@ -81,5 +83,7 @@ public:
 	// Save to file
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *name);
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_RECTANGLE_H

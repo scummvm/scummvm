@@ -30,6 +30,8 @@
 
 #include "crab/level.h"
 
+namespace Crab {
+
 using namespace TMX;
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::anim;
@@ -142,3 +144,5 @@ bool Level::CollidingWithLevel(Info &info, Sprite &s) {
 	// If we are colliding with something, return true
 	return !s.collide_data.empty();
 }
+
+} // End of namespace Crab

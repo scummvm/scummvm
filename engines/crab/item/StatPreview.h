@@ -36,6 +36,8 @@
 #include "crab/SectionHeader.h"
 #include "crab/StatDrawHelper.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace item {
 struct StatPreview {
@@ -53,5 +55,7 @@ struct StatPreview {
 };
 } // End of namespace item
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_STATPREVIEW_H

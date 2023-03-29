@@ -37,6 +37,8 @@
 #include "crab/journal.h"
 #include "crab/person.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 bool IsChar(char c);
@@ -204,5 +206,7 @@ public:
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_GAMEEVENTINFO_H

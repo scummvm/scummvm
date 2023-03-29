@@ -34,6 +34,8 @@
 //=============================================================================
 #include "crab/textarea.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::input;
@@ -89,3 +91,5 @@ void TextArea::Draw() {
 	title.Draw();
 	TextData::Draw(text + "_");
 }
+
+} // End of namespace Crab

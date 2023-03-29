@@ -31,6 +31,8 @@
 
 #include "crab/opinion.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace people {
 int OPINION_MIN = 0, OPINION_MAX = 100;
@@ -75,3 +77,5 @@ void Opinion::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> 
 	child->append_attribute(doc.allocate_attribute("respect", gStrPool.Get(val[OPI_RESPECT])));
 	root->append_node(child);
 }
+
+} // End of namespace Crab

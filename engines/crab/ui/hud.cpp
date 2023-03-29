@@ -34,6 +34,8 @@
 //=============================================================================
 #include "crab/hud.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
@@ -157,3 +159,5 @@ void HUD::SetUI() {
 	pause.SetUI();
 	back.SetUI();
 }
+
+} // End of namespace Crab

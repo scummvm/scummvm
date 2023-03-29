@@ -30,6 +30,8 @@
 
 #include "crab/GeneralSettingMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::music;
 
@@ -136,3 +138,5 @@ void GeneralSettingMenu::SetUI() {
 
 	text_speed.SetUI();
 }
+
+} // End of namespace Crab

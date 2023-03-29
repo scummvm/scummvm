@@ -31,6 +31,8 @@
 
 #include "crab/GameOverMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -71,3 +73,5 @@ void GameOverMenu::SetUI() {
 	title.SetUI();
 	menu.SetUI();
 }
+
+} // End of namespace Crab

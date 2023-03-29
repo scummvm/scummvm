@@ -30,6 +30,8 @@
 
 #include "crab/Line.h"
 
+namespace Crab {
+
 //------------------------------------------------------------------------
 // Purpose: Draw a line from start to end
 //------------------------------------------------------------------------
@@ -38,3 +40,5 @@ void DrawLine(const int &x1, const int &y1, const int &x2, const int &y2,
 	SDL_SetRenderDrawColor(gRenderer, r, g, b, a);
 	SDL_RenderDrawLine(gRenderer, x1, y1, x2, y2);
 }
+
+} // End of namespace Crab

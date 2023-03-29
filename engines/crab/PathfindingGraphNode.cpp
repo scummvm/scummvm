@@ -30,6 +30,8 @@
 
 #include "crab/PathfindingGraphNode.h"
 
+namespace Crab {
+
 PathfindingGraphNode::PathfindingGraphNode(void) {
 	id = -1;
 	movementCost = -1.0f;
@@ -94,3 +96,5 @@ bool PathfindingGraphNode::AdjacentToNode(PathfindingGraphNode *otherNode) {
 //{
 //	return neighborNodes;
 //}
+
+} // End of namespace Crab

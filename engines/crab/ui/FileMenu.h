@@ -37,6 +37,8 @@
 #include "crab/TextData.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 // Used for menus that are responsible for reading multiple files from disk
@@ -253,5 +255,7 @@ public:
 extern FileMenu<SaveFileData> gLoadMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_FILEMENU_H

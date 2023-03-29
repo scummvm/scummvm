@@ -36,6 +36,8 @@
 #include "crab/dialogbox.h"
 #include "crab/sprite.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 class ChapterIntro {
@@ -61,5 +63,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_CHAPTERINTRO_H

@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/fightmove.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 enum FrameUpdateResult { FUR_FAIL,
@@ -100,5 +102,7 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_FIGHTMOVES_H

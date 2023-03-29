@@ -30,6 +30,8 @@
 
 #include "crab/fightmove.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 
 void FightMove::Load(rapidxml::xml_node<char> *node) {
@@ -50,3 +52,5 @@ void FightMove::Load(rapidxml::xml_node<char> *node) {
 	if (NodeValid("ai", node, false))
 		ai.Load(node->first_node("ai"));
 }
+
+} // End of namespace Crab

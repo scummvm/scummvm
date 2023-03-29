@@ -30,6 +30,8 @@
 
 #include "crab/level.h"
 
+namespace Crab {
+
 using namespace TMX;
 using namespace pyrodactyl::stat;
 using namespace pyrodactyl::anim;
@@ -182,3 +184,5 @@ void Level::SetCamera() {
 	if (camera.y < 0)
 		camera.y = 0;
 }
+
+} // End of namespace Crab

@@ -30,6 +30,8 @@
 
 #include "crab/DevConsole.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 
 void DebugConsole::Load(const std::string &filename) {
@@ -120,3 +122,5 @@ void DebugConsole::HandleEvents(const SDL_Event &Event) {
 
 void DebugConsole::InternalEvents() {
 }
+
+} // End of namespace Crab

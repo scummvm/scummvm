@@ -31,6 +31,8 @@
 
 #include "crab/walkframes.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 using namespace pyrodactyl::people;
 
@@ -149,3 +151,5 @@ bool WalkFrames::Type(const Vector2f &vel, Direction &dir, const pyrodactyl::peo
 
 	return false;
 }
+
+} // End of namespace Crab

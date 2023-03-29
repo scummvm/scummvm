@@ -35,6 +35,8 @@
 #include "crab/StatDrawHelper.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace item {
 // All the items owned by characters controlled by the player
@@ -89,5 +91,7 @@ public:
 };
 } // End of namespace item
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ITEMCOLLECTION_H

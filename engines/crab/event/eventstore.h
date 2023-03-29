@@ -36,6 +36,8 @@
 #include "crab/common_header.h"
 #include "crab/conversationdata.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 // This structure is responsible for storing the special data structures for events like replies, conversations
@@ -84,5 +86,7 @@ struct GameEventStore {
 extern GameEventStore gEventStore;
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_EVENTSTORE_H

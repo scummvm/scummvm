@@ -35,6 +35,8 @@
 #include "crab/imageeffect.h"
 #include "crab/musicparam.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 struct FightMoveEffect {
@@ -65,5 +67,7 @@ struct FightMoveEffect {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MOVEEFFECT_H

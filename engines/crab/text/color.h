@@ -35,6 +35,8 @@
 #include "crab/common_header.h"
 #include "crab/loaders.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace text {
 // Storage pool for saving colors from one file, then using them
@@ -57,5 +59,7 @@ public:
 };
 } // End of namespace text
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_COLOR_H

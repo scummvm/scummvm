@@ -30,6 +30,8 @@
 
 #include "crab/ProgressBar.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -112,3 +114,5 @@ void ProgressBar::Effect(const int &value, const int &prev) {
 		type = NONE;
 	}
 }
+
+} // End of namespace Crab

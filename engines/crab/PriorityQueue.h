@@ -35,6 +35,8 @@
 #include <deque>
 #include <vector>
 
+namespace Crab {
+
 //! \brief The open heap used by all cost-based search algorithms.
 //!
 //! This class template is basically a thin wrapper on top of both the <code>std::deque</code>
@@ -142,5 +144,7 @@ void PriorityQueue<Node>::enumerate(std::vector<Node const *> &sorted) const {
 	sorted.resize(open.size());
 	std::copy(open.begin(), open.end(), sorted.begin());
 }
+
+} // End of namespace Crab
 
 #endif // CRAB_PRIORITYQUEUE_H

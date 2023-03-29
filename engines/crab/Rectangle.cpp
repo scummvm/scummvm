@@ -30,6 +30,8 @@
 
 #include "crab/Rectangle.h"
 
+namespace Crab {
+
 bool Rect::Load(rapidxml::xml_node<char> *node, const bool &echo, const std::string &x_name, const std::string &y_name,
 				const std::string &w_name, const std::string &h_name) {
 	return LoadNum(x, x_name, node, echo) && LoadNum(y, y_name, node, echo) && LoadNum(w, w_name, node, echo) && LoadNum(h, h_name, node, echo);
@@ -100,3 +102,5 @@ void Rect::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 	child->append_attribute(doc.allocate_attribute("h", gStrPool.Get(h)));
 	root->append_node(child);
 }
+
+} // End of namespace Crab

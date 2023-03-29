@@ -45,6 +45,8 @@
 #include "crab/spriteai.h"
 #include "crab/timer.h"
 
+namespace Crab {
+
 class PathfindingAgent;
 
 namespace pyrodactyl {
@@ -237,5 +239,7 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_SPRITE_H

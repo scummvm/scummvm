@@ -35,6 +35,8 @@
 #include "crab/ImageManager.h"
 #include "crab/TextManager.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace stat {
 struct Stat {
@@ -72,5 +74,7 @@ StatType StringToStatType(const std::string &val);
 const char *StatTypeToString(const StatType &val);
 } // End of namespace stat
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_STAT_H

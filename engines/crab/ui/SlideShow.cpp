@@ -30,6 +30,8 @@
 
 #include "crab/SlideShow.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 SlideShow gHelpScreen;
@@ -111,3 +113,5 @@ void SlideShow::SetUI() {
 	prev.SetUI();
 	next.SetUI();
 }
+
+} // End of namespace Crab

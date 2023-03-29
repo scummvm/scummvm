@@ -30,6 +30,8 @@
 
 #include "crab/MusicArea.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::level;
 
 void MusicArea::Load(rapidxml::xml_node<char> *node, const bool &echo) {
@@ -50,3 +52,5 @@ void MusicArea::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 		}
 	}
 }
+
+} // End of namespace Crab

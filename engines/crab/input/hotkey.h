@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/input.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace input {
 // This class is built to integrate the input check for hotkeys bound to buttons
@@ -58,5 +60,7 @@ public:
 };
 } // End of namespace input
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_HOTKEY_H

@@ -38,6 +38,8 @@
 #include "crab/gameevent.h"
 #include "crab/journal.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 class EventSequence {
@@ -78,5 +80,7 @@ public:
 };
 } // End of namespace event
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_EVENTSEQUENCE_H

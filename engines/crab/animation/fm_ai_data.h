@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/range.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 enum AIMoveType {
@@ -75,5 +77,7 @@ struct FightMoveAIData {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_FM_AI_DATA_H

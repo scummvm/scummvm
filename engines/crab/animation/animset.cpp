@@ -30,6 +30,8 @@
 
 #include "crab/animset.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::anim;
 
 void AnimSet::Load(const std::string &filename) {
@@ -82,3 +84,5 @@ const int AnimSet::AnchorY(const Direction &dir) {
 
 	return walk.AnchorY(dir);
 }
+
+} // End of namespace Crab

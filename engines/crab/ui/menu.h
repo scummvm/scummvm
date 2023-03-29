@@ -39,6 +39,8 @@
 #include "crab/button.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 template<typename T>
@@ -312,5 +314,7 @@ public:
 typedef Menu<Button> ButtonMenu;
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MENU_H

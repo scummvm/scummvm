@@ -30,6 +30,8 @@
 
 #include "crab/hotkey.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::input;
 
 void HotKey::Load(rapidxml::xml_node<char> *node) {
@@ -57,3 +59,5 @@ const char *HotKey::Name() {
 
 	return "";
 }
+
+} // End of namespace Crab

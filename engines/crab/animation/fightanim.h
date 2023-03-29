@@ -39,6 +39,8 @@
 #include "crab/shadow.h"
 #include "crab/triggerset.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 // A single frame of a fighting move
@@ -103,5 +105,7 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_FIGHTANIM_H

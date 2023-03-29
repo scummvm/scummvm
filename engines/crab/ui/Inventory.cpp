@@ -30,6 +30,8 @@
 
 #include "crab/Inventory.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::item;
@@ -127,3 +129,5 @@ void Inventory::SetUI() {
 	collection.SetUI();
 	money.SetUI();
 }
+
+} // End of namespace Crab

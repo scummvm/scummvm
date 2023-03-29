@@ -34,6 +34,8 @@
 #include "crab/Stat.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace people {
 // What each type is, and what it does
@@ -62,5 +64,7 @@ PersonType StringToPersonType(const std::string &val);
 PersonState StringToPersonState(const std::string &val);
 } // End of namespace people
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_PERSONBASE_H

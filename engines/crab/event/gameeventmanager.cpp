@@ -30,6 +30,8 @@
 
 #include "crab/gameeventmanager.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::people;
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::level;
@@ -349,3 +351,5 @@ void Manager::SetUI() {
 	textin.SetUI();
 	per.SetUI();
 }
+
+} // End of namespace Crab

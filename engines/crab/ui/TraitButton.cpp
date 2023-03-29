@@ -30,6 +30,8 @@
 
 #include "crab/TraitButton.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
@@ -62,3 +64,5 @@ void TraitButton::Empty() {
 	trait_img = 0;
 	caption.text = "";
 }
+
+} // End of namespace Crab

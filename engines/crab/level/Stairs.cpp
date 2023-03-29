@@ -30,6 +30,8 @@
 
 #include "crab/Stairs.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::level;
 
 void Stairs::Load(rapidxml::xml_node<char> *node, const bool &echo) {
@@ -48,3 +50,5 @@ void Stairs::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 		}
 	}
 }
+
+} // End of namespace Crab

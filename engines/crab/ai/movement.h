@@ -36,6 +36,8 @@
 #include "crab/timer.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ai {
 struct MovementSet {
@@ -84,5 +86,7 @@ struct MovementSet {
 };
 } // End of namespace ai
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MOVEMENT_H

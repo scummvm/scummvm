@@ -30,6 +30,8 @@
 
 #include "crab/eventstore.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace event {
 GameEventStore gEventStore;
@@ -100,3 +102,5 @@ void GameEventStore::SetAchievement(const int &id) {
 	}
 	*/
 }
+
+} // End of namespace Crab

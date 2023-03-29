@@ -30,6 +30,8 @@
 
 #include "crab/LevelExit.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::level;
 
 void Exit::Load(rapidxml::xml_node<char> *node) {
@@ -51,3 +53,5 @@ void Exit::Load(rapidxml::xml_node<char> *node) {
 		}
 	}
 }
+
+} // End of namespace Crab

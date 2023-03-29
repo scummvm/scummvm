@@ -31,6 +31,8 @@
 
 #include "crab/Caption.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::text;
 using namespace pyrodactyl::ui;
 
@@ -56,3 +58,5 @@ void Caption::Draw(bool selected, const int &XOffset, const int &YOffset) {
 			TextData::Draw(text, XOffset, YOffset);
 	}
 }
+
+} // End of namespace Crab

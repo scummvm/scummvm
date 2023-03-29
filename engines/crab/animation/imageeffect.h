@@ -34,6 +34,8 @@
 
 #include "crab/ImageManager.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 struct ImageEffect : public Vector2i {
@@ -50,5 +52,7 @@ struct ImageEffect : public Vector2i {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_IMAGEEFFECT_H

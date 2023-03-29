@@ -30,6 +30,8 @@
 
 #include "crab/PathfindingAgent.h"
 
+namespace Crab {
+
 PathfindingAgent::PathfindingAgent(void) : nodeQueue(compareNodes) {
 	grid = NULL;
 
@@ -329,3 +331,5 @@ bool PathfindingAgent::AdjacentToGoal(PathfindingGraphNode *node) {
 
 	return false;
 }
+
+} // End of namespace Crab

@@ -34,6 +34,8 @@
 #include "crab/button.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 struct StateButtonImage {
@@ -85,5 +87,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_STATEBUTTON_H

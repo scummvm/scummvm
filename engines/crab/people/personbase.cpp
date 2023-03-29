@@ -31,6 +31,8 @@
 
 #include "personbase.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::stat;
 
 namespace pyrodactyl {
@@ -62,3 +64,5 @@ PersonState StringToPersonState(const std::string &val) {
 }
 } // End of namespace people
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab

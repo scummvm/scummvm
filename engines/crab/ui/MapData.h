@@ -34,6 +34,8 @@
 #include "crab/Rectangle.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 struct MapData {
@@ -66,5 +68,7 @@ struct MapData {
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_MAPDATA_H

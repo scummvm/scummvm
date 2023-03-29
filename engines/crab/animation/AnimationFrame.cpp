@@ -30,6 +30,8 @@
 
 #include "crab/AnimationFrame.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::image;
 using namespace pyrodactyl::anim;
 
@@ -93,3 +95,5 @@ DrawType AnimationFrame::InternalEvents(const Uint32 &timestamp) {
 
 	return DRAW_SAME;
 }
+
+} // End of namespace Crab

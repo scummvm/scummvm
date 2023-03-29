@@ -30,6 +30,8 @@
 
 #include "crab/quest.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::event;
 
 Quest::Quest(const std::string &Title, const std::string &Text, const bool &Unread, const bool &Marker) : title(Title) {
@@ -62,3 +64,5 @@ void Quest::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *r
 
 	root->append_node(child);
 }
+
+} // End of namespace Crab

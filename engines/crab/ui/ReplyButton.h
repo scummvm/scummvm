@@ -34,6 +34,8 @@
 #include "crab/button.h"
 #include "crab/common_header.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace ui {
 // This button is used to draw multiple lines of text instead of an image
@@ -74,5 +76,7 @@ public:
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_REPLYBUTTON_H

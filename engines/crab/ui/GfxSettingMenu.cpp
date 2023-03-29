@@ -30,6 +30,8 @@
 
 #include "crab/GfxSettingMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 
 //------------------------------------------------------------------------
@@ -144,3 +146,5 @@ void GfxSettingMenu::SetUI() {
 	notice_quality.SetUI();
 	brightness.SetUI();
 }
+
+} // End of namespace Crab

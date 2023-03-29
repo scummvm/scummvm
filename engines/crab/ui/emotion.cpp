@@ -30,6 +30,8 @@
 
 #include "crab/emotion.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::event;
 
@@ -48,3 +50,5 @@ void EmotionIndicator::Draw(const int &select) {
 void EmotionIndicator::SetUI() {
 	text.SetUI();
 }
+
+} // End of namespace Crab

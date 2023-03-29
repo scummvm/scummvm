@@ -34,6 +34,8 @@
 #include "crab/Polygon.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 // The kind of shape
 enum ShapeType { SHAPE_RECT,
 				 SHAPE_POLYGON,
@@ -78,5 +80,7 @@ public:
 	void Draw(const int &XOffset = 0, const int &YOffset = 0,
 			  const Uint8 &r = 0, const Uint8 &g = 0, const Uint8 &b = 0.0f, const Uint8 &a = 255);
 };
+
+} // End of namespace Crab
 
 #endif // CRAB_SHAPE_H

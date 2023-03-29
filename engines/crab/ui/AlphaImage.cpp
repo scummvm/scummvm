@@ -31,6 +31,8 @@
 #include "crab/AlphaImage.h"
 #include "crab/TextManager.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::image;
 
@@ -68,3 +70,5 @@ void AlphaImage::Draw(const int &XOffset, const int &YOffset) {
 	if (gImageManager.ValidTexture(img))
 		gImageManager.GetTexture(img).Draw(pos.x + XOffset, pos.y + YOffset);
 }
+
+} // End of namespace Crab

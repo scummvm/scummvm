@@ -34,6 +34,8 @@
 #include "crab/common_header.h"
 #include "crab/loaders.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 // Types of fade effects
@@ -91,5 +93,7 @@ struct AnimationEffect {
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ANIMATIONEFFECT_H

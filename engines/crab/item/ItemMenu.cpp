@@ -30,6 +30,8 @@
 
 #include "crab/ItemMenu.h"
 
+namespace Crab {
+
 using namespace pyrodactyl::ui;
 using namespace pyrodactyl::item;
 using namespace pyrodactyl::people;
@@ -163,3 +165,5 @@ bool ItemMenu::Swap(ItemMenu &target, int index) {
 
 	return false;
 }
+
+} // End of namespace Crab

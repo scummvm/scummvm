@@ -36,6 +36,8 @@
 #include "crab/shadow.h"
 #include "crab/vectors.h"
 
+namespace Crab {
+
 namespace pyrodactyl {
 namespace anim {
 struct AnimFrame {
@@ -102,5 +104,7 @@ public:
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
+
+} // End of namespace Crab
 
 #endif // CRAB_ANIMFRAME_H
