@@ -39,6 +39,7 @@ const DebugChannelDef Hpl1MetaEngineDetection::debugFlagList[] = {
 	{Hpl1::kDebugSaves, "Saves", "Channel for debugging game saving and loading"},
 	{Hpl1::kDebugTextures, "Textures", "Texture debug channel"},
 	{Hpl1::kDebugScripts, "Scripts", "Scripts debug channel"},
+	{Hpl1::kDebugShaders, "Shaders", "Shaders debug channel"},
 	DEBUG_CHANNEL_END};
 
 Hpl1MetaEngineDetection::Hpl1MetaEngineDetection() : AdvancedMetaEngineDetection(Hpl1::GAME_DESCRIPTIONS,
