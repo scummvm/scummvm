@@ -185,6 +185,7 @@ loom	Loom
 	5d88b9d6a88e6f8e90cded9d01b7f082	8307	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein, Fingolfin
 	0354ee0d14cde1264ec762261c04c14a	585728	en	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
 	b4a677bf27c010a747975705108ff1e6	393572	en	Mac	Steam	Steam	Steam Version	Filippos Karapetis
+	c7689be9f82426f9a7c8906f62e64ab1	592280	en	Windows	Steam	Amazon	Amazon Games Launcher	Fancy2209
 
 	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
@@ -414,6 +415,7 @@ dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin
 	aad201302286c1cfee92321cd406e427	811008	All	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
 	d93cc8be628ed5d3b3a29188fc7105d3	1061296	All	Mac	Steam	Steam	Steam Version	Filippos Karapetis
+	a940b79c6f1e83f607573ed71ab891ec	458752	All	Windows	Steam	Amazon	Amazon Games Launcher	Fancy2209
 	d62047a6729349ab36f7ee065bf26509	-1	ru	All	-	-	-	sev
 	ebdd2fbc995a321605375dc57766db79	16304	ru	All	-	With Subtitles	-	sev
 	35a2d3040fa512f8232d9e443319d84d	659335495	en	Mac	-	-	Mac bundle	Fingolfin
