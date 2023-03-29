@@ -57,6 +57,7 @@ class Animation {
 	float				_scale;
 	bool				_onScreen;
 	uint				_visibleHeight;
+	uint 				_visibleCenter;
 
 public:
 	Animation(AGDSEngine *engine, const Common::String &name);
@@ -159,7 +160,12 @@ public:
 	void paint(Graphics::Surface & backbuffer, Common::Point dst, Graphics::TransparentSurface *mask = nullptr, int maskAlpha = 0) const;
 	uint width() const;
 	uint height() const;
-	uint visibleHeight() const;
+	uint visibleHeight() const {
+		return _visibleHeight;
+	}
+	uint visibleCenter() const {
+		return _visibleCenter;
+	}
 	bool tick();
 
 	void decodeNextFrame();

@@ -226,7 +226,7 @@ void Character::paint(Graphics::Surface &backbuffer, Common::Point pos) const {
 	pos += _pos + _animationPos;
 
 	pos.y -= _animation->visibleHeight();
-	pos.x -= _animation->width() / 2;
+	pos.x -= _animation->visibleCenter();
 
 	int fogAlpha = 0;
 	if (_fog) {
