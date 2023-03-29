@@ -320,7 +320,7 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 	readStream->seek(curr_ptr);
 
 	Audio::RewindableAudioStream *stream = nullptr;
-	if (tag == MKTAG('R', 'I', 'f', 'f')) {
+	if (tag == MKTAG('R', 'I', 'F', 'F')) {
 		stream = Audio::makeWAVStream(readStream->readStream(length), DisposeAfterUse::NO);
 	}
 
