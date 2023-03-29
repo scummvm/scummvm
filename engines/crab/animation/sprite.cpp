@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/sprite.h"
+#include "crab/animation/sprite.h"
 
 namespace Crab {
 

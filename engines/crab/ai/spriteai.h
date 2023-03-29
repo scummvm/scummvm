@@ -32,7 +32,7 @@
 #define CRAB_SPRITEAI_H
 
 #include "crab/common_header.h"
-#include "crab/movement.h"
+#include "crab/ai/movement.h"
 #include "crab/PathfindingAgent.h"
 
 namespace Crab {

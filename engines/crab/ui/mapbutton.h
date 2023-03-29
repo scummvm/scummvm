@@ -32,8 +32,8 @@
 #define CRAB_MAPBUTTON_H
 #include "crab/common_header.h"
 
-#include "crab/menu.h"
-#include "crab/triggerset.h"
+#include "crab/ui/menu.h"
+#include "crab/event/triggerset.h"
 
 namespace Crab {
 

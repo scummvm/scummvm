@@ -32,7 +32,7 @@
 #define CRAB_CHANGEVAL_H
 
 #include "crab/common_header.h"
-#include "crab/opinion.h"
+#include "crab/people/opinion.h"
 
 namespace Crab {
 

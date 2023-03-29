@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/PersonScreen.h"
+#include "crab/ui/PersonScreen.h"
 
 namespace Crab {
 

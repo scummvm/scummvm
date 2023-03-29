@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/ToggleButton.h"
+#include "crab/ui/ToggleButton.h"
 
 namespace Crab {
 

@@ -31,10 +31,10 @@
 #ifndef CRAB_WALKFRAMES_H
 #define CRAB_WALKFRAMES_H
 
-#include "crab/animframe.h"
+#include "crab/animation/animframe.h"
 #include "crab/common_header.h"
-#include "crab/movement.h"
-#include "personbase.h"
+#include "crab/ai/movement.h"
+#include "crab/people/personbase.h"
 #include "crab/timer.h"
 
 namespace Crab {

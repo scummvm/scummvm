@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/Stat.h"
+#include "crab/stat/Stat.h"
 
 namespace Crab {
 

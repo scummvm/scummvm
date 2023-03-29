@@ -32,7 +32,7 @@
 #define CRAB_FIGHTMOVE_H
 
 #include "crab/common_header.h"
-#include "crab/fightanim.h"
+#include "crab/animation/fightanim.h"
 
 namespace Crab {
 

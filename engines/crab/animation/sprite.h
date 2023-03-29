@@ -31,18 +31,18 @@
 #ifndef CRAB_SPRITE_H
 #define CRAB_SPRITE_H
 
-#include "crab/ImageManager.h"
-#include "crab/LevelExit.h"
-#include "crab/MusicManager.h"
+#include "crab/image/ImageManager.h"
+#include "crab/level/LevelExit.h"
+#include "crab/music/MusicManager.h"
 #include "crab/PathfindingAgent.h"
-#include "crab/PopUp.h"
+#include "crab/animation/PopUp.h"
 #include "crab/Shape.h"
-#include "crab/SpriteConstant.h"
-#include "crab/animset.h"
+#include "crab/ai/SpriteConstant.h"
+#include "crab/animation/animset.h"
 #include "crab/collision.h"
 #include "crab/common_header.h"
-#include "crab/person.h"
-#include "crab/spriteai.h"
+#include "crab/people/person.h"
+#include "crab/ai/spriteai.h"
 #include "crab/timer.h"
 
 namespace Crab {

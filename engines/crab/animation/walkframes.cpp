@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/walkframes.h"
+#include "crab/animation/walkframes.h"
 
 namespace Crab {
 

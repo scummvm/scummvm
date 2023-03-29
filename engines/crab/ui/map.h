@@ -31,16 +31,16 @@
 #ifndef CRAB_MAP_H
 #define CRAB_MAP_H
 
-#include "crab/GameEventInfo.h"
-#include "crab/ImageData.h"
-#include "crab/ImageManager.h"
-#include "crab/MapData.h"
-#include "crab/MapMarkerMenu.h"
-#include "crab/StateButton.h"
-#include "crab/ToggleButton.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/ui/ImageData.h"
+#include "crab/image/ImageManager.h"
+#include "crab/ui/MapData.h"
+#include "crab/ui/MapMarkerMenu.h"
+#include "crab/ui/StateButton.h"
+#include "crab/ui/ToggleButton.h"
 #include "crab/common_header.h"
-#include "crab/mapbutton.h"
-#include "crab/triggerset.h"
+#include "crab/ui/mapbutton.h"
+#include "crab/event/triggerset.h"
 
 namespace Crab {
 

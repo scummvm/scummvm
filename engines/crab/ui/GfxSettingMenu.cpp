@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/GfxSettingMenu.h"
+#include "crab/ui/GfxSettingMenu.h"
 
 namespace Crab {
 

@@ -32,7 +32,7 @@
 #define CRAB_EVENTSEQGROUP_H
 #include "crab/common_header.h"
 
-#include "crab/EventSequence.h"
+#include "crab/event/EventSequence.h"
 
 namespace Crab {
 

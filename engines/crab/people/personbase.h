@@ -31,7 +31,7 @@
 #ifndef CRAB_PERSONBASE_H
 #define CRAB_PERSONBASE_H
 
-#include "crab/Stat.h"
+#include "crab/stat/Stat.h"
 #include "crab/common_header.h"
 
 namespace Crab {

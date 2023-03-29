@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/imageeffect.h"
+#include "crab/animation/imageeffect.h"
 
 namespace Crab {
 

@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/MusicArea.h"
+#include "crab/level/MusicArea.h"
 
 namespace Crab {
 

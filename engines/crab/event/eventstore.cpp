@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/eventstore.h"
+#include "crab/event/eventstore.h"
 
 namespace Crab {
 

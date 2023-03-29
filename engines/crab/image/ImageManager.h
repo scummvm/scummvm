@@ -36,9 +36,9 @@
 #define CRAB_IMAGEMANAGER_H
 
 #include "crab/GameParam.h"
-#include "crab/Image/Image.h"
+#include "crab/image/Image.h"
 //#include "crab/LoadingScreen.h"
-//#include "crab/TMXTileSet.h"
+//#include "crab/TMX/TMXTileSet.h"
 #include "crab/common_header.h"
 #include "crab/input/cursor.h"
 #include "crab/loaders.h"

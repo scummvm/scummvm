@@ -31,12 +31,12 @@
 #ifndef CRAB_POPUP_H
 #define CRAB_POPUP_H
 
-#include "crab/GameEventInfo.h"
-#include "crab/ParagraphData.h"
-#include "crab/TextManager.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/ui/ParagraphData.h"
+#include "crab/text/TextManager.h"
 #include "crab/common_header.h"
-#include "crab/effect.h"
-#include "crab/triggerset.h"
+#include "crab/event/effect.h"
+#include "crab/event/triggerset.h"
 
 namespace Crab {
 

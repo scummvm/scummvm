@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/TraitButton.h"
+#include "crab/ui/TraitButton.h"
 
 namespace Crab {
 

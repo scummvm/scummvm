@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/ImageData.h"
+#include "crab/ui/ImageData.h"
 
 namespace Crab {
 

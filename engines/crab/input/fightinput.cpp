@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/fightinput.h"
+#include "crab/input/fightinput.h"
 
 namespace Crab {
 

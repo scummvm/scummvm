@@ -31,7 +31,7 @@
 #ifndef CRAB_ELEMENT_H
 #define CRAB_ELEMENT_H
 
-#include "crab/ImageManager.h"
+#include "crab/image/ImageManager.h"
 #include "crab/ScreenSettings.h"
 #include "crab/common_header.h"
 #include "crab/vectors.h"

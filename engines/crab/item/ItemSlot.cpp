@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/ItemSlot.h"
+#include "crab/item/ItemSlot.h"
 
 namespace Crab {
 

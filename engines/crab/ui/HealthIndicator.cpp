@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/HealthIndicator.h"
+#include "crab/ui/HealthIndicator.h"
 
 namespace Crab {
 

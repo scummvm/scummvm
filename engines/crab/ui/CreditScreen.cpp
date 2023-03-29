@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/CreditScreen.h"
+#include "crab/ui/CreditScreen.h"
 #include "crab/url.h"
 
 namespace Crab {

@@ -31,10 +31,10 @@
 #ifndef CRAB_GAMEOVERMENU_H
 #define CRAB_GAMEOVERMENU_H
 
-#include "crab/ImageData.h"
-#include "crab/TextData.h"
+#include "crab/ui/ImageData.h"
+#include "crab/ui/TextData.h"
 #include "crab/common_header.h"
-#include "crab/menu.h"
+#include "crab/ui/menu.h"
 
 namespace Crab {
 

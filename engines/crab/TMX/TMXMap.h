@@ -31,16 +31,16 @@
 #ifndef CRAB_TMXMAP_H
 #define CRAB_TMXMAP_H
 
-#include "crab/ImageManager.h"
-#include "crab/LevelExit.h"
+#include "crab/image/ImageManager.h"
+#include "crab/level/LevelExit.h"
 #include "crab/LevelResult.h"
-#include "crab/MusicArea.h"
+#include "crab/level/MusicArea.h"
 #include "crab/PathfindingGrid.h"
 #include "crab/Shape.h"
-#include "crab/Stairs.h"
-#include "crab/TMXTileSet.h"
+#include "crab/level/Stairs.h"
+#include "crab/TMX/TMXTileSet.h"
 #include "crab/common_header.h"
-#include "crab/spriteai.h"
+#include "crab/ai/spriteai.h"
 
 namespace Crab {
 

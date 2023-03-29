@@ -31,16 +31,16 @@
 #ifndef CRAB_GAMEEVENTMANAGER_H
 #define CRAB_GAMEEVENTMANAGER_H
 
-#include "crab/ChapterIntro.h"
-#include "crab/EventSeqGroup.h"
-#include "crab/PersonHandler.h"
-#include "crab/PersonScreen.h"
-#include "crab/ReplyMenu.h"
+#include "crab/ui/ChapterIntro.h"
+#include "crab/event/EventSeqGroup.h"
+#include "crab/ui/PersonHandler.h"
+#include "crab/ui/PersonScreen.h"
+#include "crab/ui/ReplyMenu.h"
 #include "crab/common_header.h"
-#include "crab/hud.h"
-#include "crab/journal.h"
-#include "crab/level.h"
-#include "crab/textarea.h"
+#include "crab/ui/hud.h"
+#include "crab/ui/journal.h"
+#include "crab/level/level.h"
+#include "crab/ui/textarea.h"
 
 namespace Crab {
 

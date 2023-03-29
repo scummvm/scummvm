@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/fightmove.h"
+#include "crab/animation/fightmove.h"
 
 namespace Crab {
 

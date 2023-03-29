@@ -35,9 +35,9 @@
 #ifndef CRAB_DIALOGBOX_H
 #define CRAB_DIALOGBOX_H
 
-#include "crab/GameEventInfo.h"
-#include "crab/ParagraphData.h"
-#include "crab/button.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/ui/ParagraphData.h"
+#include "crab/ui/button.h"
 #include "crab/common_header.h"
 
 namespace Crab {

@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/level.h"
+#include "crab/level/level.h"
 
 namespace Crab {
 

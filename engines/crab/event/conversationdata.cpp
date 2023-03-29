@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/conversationdata.h"
+#include "crab/event/conversationdata.h"
 
 namespace Crab {
 

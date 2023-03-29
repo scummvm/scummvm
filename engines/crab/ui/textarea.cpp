@@ -32,7 +32,7 @@
 // Author:   Arvind
 // Purpose:  TextArea functions
 //=============================================================================
-#include "crab/textarea.h"
+#include "crab/ui/textarea.h"
 
 namespace Crab {
 

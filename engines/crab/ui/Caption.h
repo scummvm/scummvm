@@ -32,7 +32,7 @@
 #define CRAB_CAPTION_H
 #include "crab/common_header.h"
 
-#include "crab/TextData.h"
+#include "crab/ui/TextData.h"
 
 namespace Crab {
 

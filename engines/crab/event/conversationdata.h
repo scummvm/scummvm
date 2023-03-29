@@ -31,9 +31,9 @@
 #ifndef CRAB_CONVERSATIONDATA_H
 #define CRAB_CONVERSATIONDATA_H
 
-#include "crab/changeval.h"
+#include "crab/event/changeval.h"
 #include "crab/common_header.h"
-#include "crab/triggerset.h"
+#include "crab/event/triggerset.h"
 
 namespace Crab {
 

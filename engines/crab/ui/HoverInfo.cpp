@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/HoverInfo.h"
+#include "crab/ui/HoverInfo.h"
 
 namespace Crab {
 

@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/PauseMenu.h"
+#include "crab/ui/PauseMenu.h"
 
 namespace Crab {
 

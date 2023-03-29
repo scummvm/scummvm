@@ -31,10 +31,10 @@
 #ifndef CRAB_SLIDER_H
 #define CRAB_SLIDER_H
 
-#include "crab/Caption.h"
-#include "crab/ImageData.h"
-#include "crab/ImageManager.h"
-#include "crab/button.h"
+#include "crab/ui/Caption.h"
+#include "crab/ui/ImageData.h"
+#include "crab/image/ImageManager.h"
+#include "crab/ui/button.h"
 #include "crab/common_header.h"
 
 namespace Crab {

@@ -31,13 +31,13 @@
 #ifndef CRAB_PERSON_H
 #define CRAB_PERSON_H
 
-#include "crab/ImageManager.h"
-#include "crab/Stat.h"
-#include "crab/StatTemplate.h"
+#include "crab/image/ImageManager.h"
+#include "crab/stat/Stat.h"
+#include "crab/stat/StatTemplate.h"
 #include "crab/common_header.h"
-#include "crab/opinion.h"
-#include "personbase.h"
-#include "crab/trait.h"
+#include "crab/people/opinion.h"
+#include "crab/people/personbase.h"
+#include "crab/people/trait.h"
 
 namespace Crab {
 

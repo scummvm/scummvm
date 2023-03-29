@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/quest.h"
+#include "crab/event/quest.h"
 
 namespace Crab {
 

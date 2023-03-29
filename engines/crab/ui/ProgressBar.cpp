@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/ProgressBar.h"
+#include "crab/ui/ProgressBar.h"
 
 namespace Crab {
 

@@ -29,7 +29,7 @@
  */
 
 
-#include "personbase.h"
+#include "crab/people/personbase.h"
 
 namespace Crab {
 

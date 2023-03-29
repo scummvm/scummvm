@@ -32,7 +32,7 @@
 #define CRAB_PAGEMENU_H
 
 #include "crab/common_header.h"
-#include "crab/menu.h"
+#include "crab/ui/menu.h"
 
 namespace Crab {
 

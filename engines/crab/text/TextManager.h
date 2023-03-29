@@ -32,8 +32,8 @@
 #define CRAB_TEXTMANAGER_H
 
 #include "crab/GameParam.h"
-#include "crab/Image.h"
-#include "crab/color.h"
+#include "crab/image/Image.h"
+#include "crab/text/color.h"
 #include "crab/common_header.h"
 #include "crab/vectors.h"
 

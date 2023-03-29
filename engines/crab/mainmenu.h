@@ -31,22 +31,22 @@
 #ifndef CRAB_MAINMENU_H
 #define CRAB_MAINMENU_H
 
-#include "crab/AlphaImage.h"
-#include "crab/CreditScreen.h"
-#include "crab/FileMenu.h"
-#include "crab/ImageData.h"
-#include "crab/KeyBindMenu.h"
-#include "crab/ModMenu.h"
-#include "crab/OptionMenu.h"
-#include "crab/SlideShow.h"
-#include "crab/StateButton.h"
+#include "crab/ui/AlphaImage.h"
+#include "crab/ui/CreditScreen.h"
+#include "crab/ui/FileMenu.h"
+#include "crab/ui/ImageData.h"
+#include "crab/ui/KeyBindMenu.h"
+#include "crab/ui/ModMenu.h"
+#include "crab/ui/OptionMenu.h"
+#include "crab/ui/SlideShow.h"
+#include "crab/ui/StateButton.h"
 #include "crab/common_header.h"
-#include "crab/cursor.h"
+#include "crab/input/cursor.h"
 #include "crab/gamestate_container.h"
 #include "crab/gamestates.h"
-#include "crab/menu.h"
-#include "crab/slider.h"
-#include "crab/textarea.h"
+#include "crab/ui/menu.h"
+#include "crab/ui/slider.h"
+#include "crab/ui/textarea.h"
 
 namespace Crab {
 

@@ -28,8 +28,8 @@
  *
  */
 
-#include "crab/effect.h"
-#include "crab/MusicManager.h"
+#include "crab/event/effect.h"
+#include "crab/music/MusicManager.h"
 
 namespace Crab {
 

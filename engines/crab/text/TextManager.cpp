@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/TextManager.h"
+#include "crab/text/TextManager.h"
 #include "crab/XMLDoc.h"
 
 namespace Crab {

@@ -35,11 +35,11 @@
 #ifndef CRAB_TEXTAREA_H
 #define CRAB_TEXTAREA_H
 
-#include "crab/HoverInfo.h"
-#include "crab/MusicManager.h"
-#include "crab/TextManager.h"
+#include "crab/ui/HoverInfo.h"
+#include "crab/music/MusicManager.h"
+#include "crab/text/TextManager.h"
 #include "crab/common_header.h"
-#include "crab/input.h"
+#include "crab/input/input.h"
 
 namespace Crab {
 

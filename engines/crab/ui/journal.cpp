@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/journal.h"
+#include "crab/ui/journal.h"
 
 namespace Crab {
 

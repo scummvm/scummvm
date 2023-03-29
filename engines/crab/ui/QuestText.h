@@ -31,11 +31,11 @@
 #ifndef CRAB_QUESTTEXT_H
 #define CRAB_QUESTTEXT_H
 
-#include "crab/ImageData.h"
-#include "crab/ParagraphData.h"
-#include "crab/button.h"
+#include "crab/ui/ImageData.h"
+#include "crab/ui/ParagraphData.h"
+#include "crab/ui/button.h"
 #include "crab/common_header.h"
-#include "crab/quest.h"
+#include "crab/event/quest.h"
 
 namespace Crab {
 

@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/SpriteConstant.h"
+#include "crab/ai/SpriteConstant.h"
 
 namespace Crab {
 

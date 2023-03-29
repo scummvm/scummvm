@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/Caption.h"
+#include "crab/ui/Caption.h"
 
 namespace Crab {
 

@@ -31,12 +31,12 @@
 #ifndef CRAB_GFXSETTINGMENU_H
 #define CRAB_GFXSETTINGMENU_H
 
-#include "crab/ImageData.h"
-#include "crab/ResolutionMenu.h"
-#include "crab/StateButton.h"
-#include "crab/ToggleButton.h"
+#include "crab/ui/ImageData.h"
+#include "crab/ui/ResolutionMenu.h"
+#include "crab/ui/StateButton.h"
+#include "crab/ui/ToggleButton.h"
 #include "crab/common_header.h"
-#include "crab/slider.h"
+#include "crab/ui/slider.h"
 
 namespace Crab {
 

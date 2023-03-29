@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/KeyBindMenu.h"
+#include "crab/ui/KeyBindMenu.h"
 
 namespace Crab {
 

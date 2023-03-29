@@ -32,7 +32,7 @@
 #define CRAB_STATTEMPLATE_H
 #include "crab/common_header.h"
 
-#include "crab/Stat.h"
+#include "crab/stat/Stat.h"
 
 namespace Crab {
 

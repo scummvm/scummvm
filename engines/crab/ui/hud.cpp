@@ -32,7 +32,7 @@
 // Author:   Arvind
 // Purpose:  The tray where you have inventory, map and GameObjectives icons
 //=============================================================================
-#include "crab/hud.h"
+#include "crab/ui/hud.h"
 
 namespace Crab {
 

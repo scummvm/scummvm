@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/DevConsole.h"
+#include "crab/ui/DevConsole.h"
 
 namespace Crab {
 

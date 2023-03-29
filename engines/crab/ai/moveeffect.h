@@ -32,8 +32,8 @@
 #define CRAB_MOVEEFFECT_H
 
 #include "crab/common_header.h"
-#include "crab/imageeffect.h"
-#include "crab/musicparam.h"
+#include "crab/animation/imageeffect.h"
+#include "crab/music/musicparam.h"
 
 namespace Crab {
 

@@ -32,11 +32,11 @@
 #define CRAB_EVENTSEQUENCE_H
 #include "crab/common_header.h"
 
-#include "crab/GameEventInfo.h"
-#include "crab/ImageManager.h"
-#include "crab/Inventory.h"
-#include "crab/gameevent.h"
-#include "crab/journal.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/image/ImageManager.h"
+#include "crab/ui/Inventory.h"
+#include "crab/event/gameevent.h"
+#include "crab/ui/journal.h"
 
 namespace Crab {
 

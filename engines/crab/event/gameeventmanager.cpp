@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/gameeventmanager.h"
+#include "crab/event/gameeventmanager.h"
 
 namespace Crab {
 

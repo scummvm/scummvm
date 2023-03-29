@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/ResolutionMenu.h"
+#include "crab/ui/ResolutionMenu.h"
 
 namespace Crab {
 
