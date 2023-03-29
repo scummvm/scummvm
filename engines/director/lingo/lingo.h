@@ -403,6 +403,7 @@ public:
 	char *readString() { char *s = getString(_state->pc); _state->pc += calcStringAlignment(s); return s; }
 	char *getString(uint pc) { return (char *)(&((*_state->script)[_state->pc])); }
 
+	Datum getVoid();
 	void pushVoid();
 
 	void printSTUBWithArglist(const char *funcname, int nargs, const char *prefix = "STUB:");
