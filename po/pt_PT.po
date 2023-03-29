@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-27 11:12+0000\n"
+"POT-Creation-Date: 2023-03-29 18:17+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -354,7 +354,7 @@ msgid "Platform:"
 msgstr "Plataforma:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2019 gui/options.cpp:2198
-#: backends/graphics/atari/atari-graphics.cpp:590
+#: backends/graphics/atari/atari-graphics.cpp:589
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "Gráficos"
@@ -3253,7 +3253,7 @@ msgstr ""
 msgid "Choose a new folder"
 msgstr "Escolher ficheiro para carregar"
 
-#: backends/graphics/atari/atari-graphics.cpp:594
+#: backends/graphics/atari/atari-graphics.cpp:593
 #: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle aspect ratio correction"
 msgstr "Alternar correção da taxa de proporção"

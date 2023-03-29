@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-27 11:12+0000\n"
+"POT-Creation-Date: 2023-03-29 18:17+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -352,7 +352,7 @@ msgid "Platform:"
 msgstr "Plattform:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2019 gui/options.cpp:2198
-#: backends/graphics/atari/atari-graphics.cpp:590
+#: backends/graphics/atari/atari-graphics.cpp:589
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "Grafikk"
@@ -3295,7 +3295,7 @@ msgstr ""
 msgid "Choose a new folder"
 msgstr "Vel fil for lasting"
 
-#: backends/graphics/atari/atari-graphics.cpp:594
+#: backends/graphics/atari/atari-graphics.cpp:593
 #: backends/graphics/sdl/sdl-graphics.cpp:447
 #, fuzzy
 msgid "Toggle aspect ratio correction"
