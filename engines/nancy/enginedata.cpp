@@ -323,6 +323,22 @@ HINT::HINT(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
+SPUZ::SPUZ(Common::SeekableReadStream *chunkStream) {
+	assert(chunkStream);
+
+	chunkStream->seek(0);
+	tileOrder.resize(3);
+
+	for (uint i = 0; i < 3; ++i) {
+		tileOrder[i].resize(36);
+		for (uint j = 0; j < 36; ++j) {
+			tileOrder[i][j] = chunkStream->readSint16LE();
+		}
+	}
+	
+	delete chunkStream;
+}
+
 CLOK::CLOK(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 

@@ -43,6 +43,9 @@ void SliderPuzzle::init() {
 }
 
 void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
+	_spuzData = g_nancy->_sliderPuzzleData;
+	assert(_spuzData);
+
 	readFilename(stream, _imageName);
 
 	_width = stream.readUint16LE();
@@ -116,17 +119,13 @@ void SliderPuzzle::execute() {
 		init();
 		registerGraphics();
 		if (!NancySceneState._sliderPuzzleState.playerHasTriedPuzzle) {
-			Common::SeekableReadStream *spuz = g_nancy->getBootChunkStream("SPUZ");
 			NancySceneState._sliderPuzzleState.playerTileOrder.clear();
-			spuz->seek(NancySceneState.getDifficulty() * 0x48);
+			NancySceneState._sliderPuzzleState.playerTileOrder.resize(_height);
 			for (uint y = 0; y < _height; ++y) {
-				NancySceneState._sliderPuzzleState.playerTileOrder.push_back(Common::Array<int16>());
-
+				NancySceneState._sliderPuzzleState.playerTileOrder[y].resize(_width);
 				for (uint x = 0; x < _width; ++x) {
-					NancySceneState._sliderPuzzleState.playerTileOrder.back().push_back(spuz->readSint16LE());
+					NancySceneState._sliderPuzzleState.playerTileOrder[y][x] = _spuzData->tileOrder[NancySceneState.getDifficulty()][y * 6 + x];
 				}
-
-				spuz->skip((6 - _width) * 2);
 			}
 
 			NancySceneState._sliderPuzzleState.playerHasTriedPuzzle = true;

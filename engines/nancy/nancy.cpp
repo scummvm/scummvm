@@ -77,6 +77,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	_helpData = nullptr;
 	_creditsData = nullptr;
 	_hintData = nullptr;
+	_sliderPuzzleData = nullptr;
 	_clockData = nullptr;
 }
 
@@ -97,6 +98,7 @@ NancyEngine::~NancyEngine() {
 	delete _helpData;
 	delete _creditsData;
 	delete _hintData;
+	delete _sliderPuzzleData;
 	delete _clockData;
 }
 
@@ -376,6 +378,11 @@ void NancyEngine::bootGameEngine() {
 	chunkStream = boot->getChunkStream("HINT");
 	if (chunkStream) {
 		_hintData = new HINT(chunkStream);
+	}
+
+	chunkStream = boot->getChunkStream("SPUZ");
+	if (chunkStream) {
+		_sliderPuzzleData = new SPUZ(chunkStream);
 	}
 
 	chunkStream = boot->getChunkStream("CLOK");

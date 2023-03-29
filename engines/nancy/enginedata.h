@@ -162,6 +162,12 @@ struct HINT {
 	Common::Array<uint16> numHints;
 };
 
+struct SPUZ {
+	SPUZ(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<Common::Array<int16>> tileOrder;
+};
+
 struct CLOK {
 	CLOK(Common::SeekableReadStream *chunkStream);
 

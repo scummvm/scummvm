@@ -31,6 +31,8 @@ class Serializer;
 }
 
 namespace Nancy {
+
+struct SPUZ;
 namespace Action {
 
 class SliderPuzzle: public ActionRecord, public RenderObject {
@@ -45,6 +47,8 @@ public:
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 	void onPause(bool pause) override;
+
+	SPUZ *_spuzData = nullptr;
 
 	Common::String _imageName; // 0x00
 	uint16 _width = 0; // 0xA
