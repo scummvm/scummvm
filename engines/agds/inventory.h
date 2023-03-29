@@ -77,6 +77,7 @@ public:
 
 	void visible(bool visible);
 
+	int add(const Common::String &name);
 	int add(const ObjectPtr & object);
 	bool remove(const Common::String &name);
 	void removeGaps();

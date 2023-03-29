@@ -139,11 +139,9 @@ bool Console::inventoryAdd(int argc, const char **argv) {
 		debugPrintf("usage: %s inv.object\n", argv[0]);
 		return true;
 	}
-	auto object = _engine->runObject(argv[1]);
-	if (!object) {
-		debugPrintf("failed to load %s\n", argv[1]);
-	}
-	_engine->inventory().add(object);
+	int idx = _engine->inventory().add(argv[1]);
+	debugPrintf("add = %d\n", idx);
+
 	detach();
 	return true;
 }
