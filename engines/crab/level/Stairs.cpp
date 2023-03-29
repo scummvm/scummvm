@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/Stairs.h"
+#include "crab/level/Stairs.h"
 
 namespace Crab {
 

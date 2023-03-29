@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/ClipButton.h"
+#include "crab/ui/ClipButton.h"
 
 namespace Crab {
 

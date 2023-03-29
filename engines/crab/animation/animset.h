@@ -32,9 +32,9 @@
 #define CRAB_ANIMSET_H
 
 #include "crab/common_header.h"
-#include "crab/fightmoves.h"
-#include "crab/shadow.h"
-#include "crab/walkframes.h"
+#include "crab/animation/fightmoves.h"
+#include "crab/animation/shadow.h"
+#include "crab/animation/walkframes.h"
 
 namespace Crab {
 

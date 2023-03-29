@@ -31,11 +31,11 @@
 #ifndef CRAB_JOURNAL_H
 #define CRAB_JOURNAL_H
 
-#include "crab/ImageData.h"
-#include "crab/ImageManager.h"
-#include "crab/StateButton.h"
+#include "crab/ui/ImageData.h"
+#include "crab/image/ImageManager.h"
+#include "crab/ui/StateButton.h"
 #include "crab/common_header.h"
-#include "crab/questmenu.h"
+#include "crab/ui/questmenu.h"
 
 namespace Crab {
 

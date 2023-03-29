@@ -31,9 +31,9 @@
 #ifndef CRAB_DEVCONSOLE_H
 #define CRAB_DEVCONSOLE_H
 
-#include "crab/GameEventInfo.h"
+#include "crab/event/GameEventInfo.h"
 #include "crab/common_header.h"
-#include "crab/textarea.h"
+#include "crab/ui/textarea.h"
 
 namespace Crab {
 

@@ -31,14 +31,14 @@
 #ifndef CRAB_OPTIONMENU_H
 #define CRAB_OPTIONMENU_H
 
-#include "crab/GeneralSettingMenu.h"
-#include "crab/GfxSettingMenu.h"
-#include "crab/ImageData.h"
-#include "crab/KeyBindMenu.h"
-#include "crab/StateButton.h"
-#include "crab/ToggleButton.h"
+#include "crab/ui/GeneralSettingMenu.h"
+#include "crab/ui/GfxSettingMenu.h"
+#include "crab/ui/ImageData.h"
+#include "crab/ui/KeyBindMenu.h"
+#include "crab/ui/StateButton.h"
+#include "crab/ui/ToggleButton.h"
 #include "crab/common_header.h"
-#include "crab/slider.h"
+#include "crab/ui/slider.h"
 
 namespace Crab {
 

@@ -32,7 +32,7 @@
 #define CRAB_INPUT_H
 
 #include "crab/common_header.h"
-#include "crab/inputval.h"
+#include "crab/input/inputval.h"
 
 namespace Crab {
 

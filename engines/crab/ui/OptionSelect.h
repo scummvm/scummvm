@@ -32,8 +32,8 @@
 #define CRAB_OPTIONSELECT_H
 #include "crab/common_header.h"
 
-#include "crab/TextData.h"
-#include "crab/button.h"
+#include "crab/ui/TextData.h"
+#include "crab/ui/button.h"
 
 namespace Crab {
 

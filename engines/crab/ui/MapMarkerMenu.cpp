@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/MapMarkerMenu.h"
+#include "crab/ui/MapMarkerMenu.h"
 
 namespace Crab {
 

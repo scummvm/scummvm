@@ -28,8 +28,8 @@
  *
  */
 
-#include "crab/TMXTileSet.h"
-#include "crab/TextManager.h"
+#include "crab/TMX/TMXTileSet.h"
+#include "crab/text/TextManager.h"
 
 namespace Crab {
 

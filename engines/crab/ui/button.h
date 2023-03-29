@@ -35,14 +35,14 @@
 #ifndef CRAB_BUTTON_H
 #define CRAB_BUTTON_H
 
-#include "crab/Caption.h"
-#include "crab/HoverInfo.h"
-#include "crab/ImageManager.h"
-#include "crab/MusicManager.h"
-#include "crab/TextManager.h"
+#include "crab/ui/Caption.h"
+#include "crab/ui/HoverInfo.h"
+#include "crab/image/ImageManager.h"
+#include "crab/music/MusicManager.h"
+#include "crab/text/TextManager.h"
 #include "crab/common_header.h"
-#include "crab/element.h"
-#include "crab/hotkey.h"
+#include "crab/ui/element.h"
+#include "crab/input/hotkey.h"
 
 namespace Crab {
 

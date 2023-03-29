@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/person.h"
+#include "crab/people/person.h"
 
 namespace Crab {
 

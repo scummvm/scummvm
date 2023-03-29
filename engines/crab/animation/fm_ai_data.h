@@ -32,7 +32,7 @@
 #define CRAB_FM_AI_DATA_H
 
 #include "crab/common_header.h"
-#include "crab/range.h"
+#include "crab/animation/range.h"
 
 namespace Crab {
 

@@ -31,9 +31,9 @@
 #ifndef CRAB_TMXLAYER_H
 #define CRAB_TMXLAYER_H
 
-#include "crab/Image.h"
+#include "crab/image/Image.h"
 #include "crab/Rectangle.h"
-#include "crab/TileInfo.h"
+#include "crab/TMX/TileInfo.h"
 #include "crab/common_header.h"
 
 namespace Crab {

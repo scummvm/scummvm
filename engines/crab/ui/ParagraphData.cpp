@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/ParagraphData.h"
+#include "crab/ui/ParagraphData.h"
 
 namespace Crab {
 

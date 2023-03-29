@@ -31,7 +31,7 @@
 #ifndef CRAB_STATEBUTTON_H
 #define CRAB_STATEBUTTON_H
 
-#include "crab/button.h"
+#include "crab/ui/button.h"
 #include "crab/common_header.h"
 
 namespace Crab {

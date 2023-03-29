@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/trigger.h"
+#include "crab/event/trigger.h"
 
 namespace Crab {
 

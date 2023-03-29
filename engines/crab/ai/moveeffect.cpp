@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/moveeffect.h"
+#include "crab/ai/moveeffect.h"
 
 namespace Crab {
 

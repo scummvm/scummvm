@@ -31,10 +31,10 @@
 #ifndef CRAB_CHAPTERINTRO_H
 #define CRAB_CHAPTERINTRO_H
 
-#include "crab/GameEventInfo.h"
-#include "crab/button.h"
-#include "crab/dialogbox.h"
-#include "crab/sprite.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/ui/button.h"
+#include "crab/ui/dialogbox.h"
+#include "crab/animation/sprite.h"
 
 namespace Crab {
 

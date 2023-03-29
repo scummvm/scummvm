@@ -31,19 +31,19 @@
 #ifndef CRAB_LEVEL_H
 #define CRAB_LEVEL_H
 
-#include "crab/GameEventInfo.h"
-#include "crab/ImageManager.h"
-#include "crab/ParagraphData.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/image/ImageManager.h"
+#include "crab/ui/ParagraphData.h"
 #include "crab/PathfindingGrid.h"
-#include "crab/TMXMap.h"
-#include "crab/animset.h"
-#include "crab/button.h"
+#include "crab/TMX/TMXMap.h"
+#include "crab/animation/animset.h"
+#include "crab/ui/button.h"
 #include "crab/common_header.h"
-#include "crab/fightmove.h"
-#include "crab/level_objects.h"
-#include "crab/person.h"
-#include "crab/sprite.h"
-#include "crab/talknotify.h"
+#include "crab/animation/fightmove.h"
+#include "crab/level/level_objects.h"
+#include "crab/people/person.h"
+#include "crab/animation/sprite.h"
+#include "crab/level/talknotify.h"
 
 namespace Crab {
 

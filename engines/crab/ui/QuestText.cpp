@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/QuestText.h"
+#include "crab/ui/QuestText.h"
 
 namespace Crab {
 

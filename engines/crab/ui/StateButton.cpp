@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/StateButton.h"
+#include "crab/ui/StateButton.h"
 
 namespace Crab {
 

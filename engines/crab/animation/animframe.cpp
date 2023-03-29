@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/animframe.h"
+#include "crab/animation/animframe.h"
 
 namespace Crab {
 

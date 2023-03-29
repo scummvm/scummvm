@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/Inventory.h"
+#include "crab/ui/Inventory.h"
 
 namespace Crab {
 

@@ -31,14 +31,14 @@
 #ifndef CRAB_PERSONSCREEN_H
 #define CRAB_PERSONSCREEN_H
 
-#include "crab/GameEventInfo.h"
-#include "crab/ImageData.h"
-#include "crab/TraitMenu.h"
-#include "crab/gameevent.h"
-#include "crab/level.h"
-#include "crab/menu.h"
-#include "crab/person.h"
-#include "crab/sprite.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/ui/ImageData.h"
+#include "crab/ui/TraitMenu.h"
+#include "crab/event/gameevent.h"
+#include "crab/level/level.h"
+#include "crab/ui/menu.h"
+#include "crab/people/person.h"
+#include "crab/animation/sprite.h"
 
 namespace Crab {
 

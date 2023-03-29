@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/SectionHeader.h"
+#include "crab/ui/SectionHeader.h"
 
 namespace Crab {
 

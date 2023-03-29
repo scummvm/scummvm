@@ -31,10 +31,10 @@
 #ifndef CRAB_EMOTION_H
 #define CRAB_EMOTION_H
 
-#include "crab/ImageManager.h"
+#include "crab/image/ImageManager.h"
 #include "crab/common_header.h"
-#include "crab/eventstore.h"
-#include "crab/textarea.h"
+#include "crab/event/eventstore.h"
+#include "crab/ui/textarea.h"
 
 namespace Crab {
 

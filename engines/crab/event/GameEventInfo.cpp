@@ -28,8 +28,8 @@
  *
  */
 
-#include "crab/GameEventInfo.h"
-#include "crab/eventstore.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/event/eventstore.h"
 
 namespace Crab {
 

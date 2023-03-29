@@ -31,13 +31,13 @@
 #ifndef CRAB_FIGHTANIM_H
 #define CRAB_FIGHTANIM_H
 
-#include "crab/MusicManager.h"
+#include "crab/music/MusicManager.h"
 #include "crab/common_header.h"
-#include "crab/fightinput.h"
-#include "crab/fm_ai_data.h"
-#include "crab/moveeffect.h"
-#include "crab/shadow.h"
-#include "crab/triggerset.h"
+#include "crab/input/fightinput.h"
+#include "crab/animation/fm_ai_data.h"
+#include "crab/ai/moveeffect.h"
+#include "crab/animation/shadow.h"
+#include "crab/event/triggerset.h"
 
 namespace Crab {
 

@@ -36,12 +36,12 @@
 #define CRAB_SPLASH_H
 
 #include "crab/crab.h"
-#include "crab/ImageManager.h"
+#include "crab/image/ImageManager.h"
 //#include "crab/LoadingScreen.h"
-//#include "crab/MusicManager.h"
+//#include "crab/music/MusicManager.h"
 //#include "crab/image/Image.h"
 #include "crab/ScreenSettings.h"
-//#include "crab/TextManager.h"
+//#include "crab/text/TextManager.h"
 #include "crab/common_header.h"
 #include "crab/gamestate_container.h"
 #include "crab/gamestates.h"

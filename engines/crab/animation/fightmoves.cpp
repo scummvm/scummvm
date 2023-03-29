@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/fightmoves.h"
+#include "crab/animation/fightmoves.h"
 
 namespace Crab {
 

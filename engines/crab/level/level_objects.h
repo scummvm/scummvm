@@ -31,7 +31,7 @@
 #ifndef CRAB_LEVEL_OBJECTS_H
 #define CRAB_LEVEL_OBJECTS_H
 
-#include "crab/ImageManager.h"
+#include "crab/image/ImageManager.h"
 #include "crab/common_header.h"
 
 namespace Crab {

@@ -33,7 +33,7 @@
 
 #include "crab/Rectangle.h"
 #include "crab/common_header.h"
-#include "crab/shadow.h"
+#include "crab/animation/shadow.h"
 #include "crab/vectors.h"
 
 namespace Crab {

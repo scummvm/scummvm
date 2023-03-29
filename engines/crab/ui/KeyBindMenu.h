@@ -31,10 +31,10 @@
 #ifndef CRAB_KEYBINDMENU_H
 #define CRAB_KEYBINDMENU_H
 
-#include "crab/ImageData.h"
-#include "crab/OptionSelect.h"
+#include "crab/ui/ImageData.h"
+#include "crab/ui/OptionSelect.h"
 #include "crab/common_header.h"
-#include "crab/menu.h"
+#include "crab/ui/menu.h"
 
 namespace Crab {
 

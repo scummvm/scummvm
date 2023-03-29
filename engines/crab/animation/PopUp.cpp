@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/PopUp.h"
+#include "crab/animation/PopUp.h"
 
 namespace Crab {
 

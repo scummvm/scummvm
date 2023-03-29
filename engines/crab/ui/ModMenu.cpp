@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/ModMenu.h"
+#include "crab/ui/ModMenu.h"
 
 namespace Crab {
 

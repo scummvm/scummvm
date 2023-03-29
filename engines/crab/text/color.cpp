@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/color.h"
+#include "crab/text/color.h"
 
 namespace Crab {
 

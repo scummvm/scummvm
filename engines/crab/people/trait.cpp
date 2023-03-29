@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/trait.h"
+#include "crab/people/trait.h"
 
 namespace Crab {
 

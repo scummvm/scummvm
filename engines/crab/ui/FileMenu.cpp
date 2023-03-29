@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/FileMenu.h"
+#include "crab/ui/FileMenu.h"
 
 namespace Crab {
 

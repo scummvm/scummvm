@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/questmenu.h"
+#include "crab/ui/questmenu.h"
 
 namespace Crab {
 

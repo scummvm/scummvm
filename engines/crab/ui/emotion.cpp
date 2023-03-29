@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/emotion.h"
+#include "crab/ui/emotion.h"
 
 namespace Crab {
 

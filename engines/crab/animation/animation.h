@@ -28,13 +28,13 @@
  *
  */
 
-#ifndef CRAB__ANIMATION_H
-#define CRAB__ANIMATION_H
+#ifndef CRAB_ANIMATION_H
+#define CRAB_ANIMATION_H
 
-#include "AnimationEffect.h"
-#include "AnimationFrame.h"
-#include "common_header.h"
-#include "timer.h"
+#include "crab/animation/AnimationEffect.h"
+#include "crab/animation/AnimationFrame.h"
+#include "crab/common_header.h"
+#include "crab/timer.h"
 
 namespace Crab {
 

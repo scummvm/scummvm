@@ -31,10 +31,10 @@
 #ifndef CRAB_FILEMENU_H
 #define CRAB_FILEMENU_H
 
-#include "crab/FileData.h"
-#include "crab/ImageData.h"
-#include "crab/PageMenu.h"
-#include "crab/TextData.h"
+#include "crab/ui/FileData.h"
+#include "crab/ui/ImageData.h"
+#include "crab/ui/PageMenu.h"
+#include "crab/ui/TextData.h"
 #include "crab/common_header.h"
 
 namespace Crab {

@@ -31,7 +31,7 @@
 #ifndef CRAB_MODMENU_H
 #define CRAB_MODMENU_H
 
-#include "crab/FileMenu.h"
+#include "crab/ui/FileMenu.h"
 #include "crab/common_header.h"
 
 namespace Crab {

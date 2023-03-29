@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/ReplyMenu.h"
+#include "crab/ui/ReplyMenu.h"
 
 namespace Crab {
 

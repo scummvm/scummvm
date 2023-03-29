@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/EventSeqGroup.h"
+#include "crab/event/EventSeqGroup.h"
 
 namespace Crab {
 

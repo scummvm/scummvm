@@ -28,8 +28,8 @@
  *
  */
 
-#include "crab/TMXMap.h"
-#include "crab/TextManager.h"
+#include "crab/TMX/TMXMap.h"
+#include "crab/text/TextManager.h"
 #include "crab/collision.h"
 
 namespace Crab {

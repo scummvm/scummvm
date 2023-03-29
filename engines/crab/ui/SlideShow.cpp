@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/SlideShow.h"
+#include "crab/ui/SlideShow.h"
 
 namespace Crab {
 

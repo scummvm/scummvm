@@ -31,11 +31,11 @@
 #ifndef CRAB_QUESTMENU_H
 #define CRAB_QUESTMENU_H
 
-#include "crab/PageMenu.h"
-#include "crab/QuestText.h"
-#include "crab/StateButton.h"
+#include "crab/ui/PageMenu.h"
+#include "crab/ui/QuestText.h"
+#include "crab/ui/StateButton.h"
 #include "crab/common_header.h"
-#include "crab/quest.h"
+#include "crab/event/quest.h"
 
 namespace Crab {
 

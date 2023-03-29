@@ -33,7 +33,7 @@
 
 #include "crab/GameParam.h"
 #include "crab/common_header.h"
-#include "crab/musicparam.h"
+#include "crab/music/musicparam.h"
 
 namespace Crab {
 

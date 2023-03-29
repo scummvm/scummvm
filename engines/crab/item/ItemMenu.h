@@ -31,13 +31,13 @@
 #ifndef CRAB_ITEMMENU_H
 #define CRAB_ITEMMENU_H
 
-#include "crab/ItemDesc.h"
-#include "crab/ItemSlot.h"
-#include "crab/StatDrawHelper.h"
-#include "crab/StatPreview.h"
+#include "crab/ui/ItemDesc.h"
+#include "crab/item/ItemSlot.h"
+#include "crab/stat/StatDrawHelper.h"
+#include "crab/item/StatPreview.h"
 #include "crab/common_header.h"
-#include "crab/menu.h"
-#include "crab/person.h"
+#include "crab/ui/menu.h"
+#include "crab/people/person.h"
 
 namespace Crab {
 

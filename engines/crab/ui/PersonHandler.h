@@ -31,13 +31,13 @@
 #ifndef CRAB_PERSONHANDLER_H
 #define CRAB_PERSONHANDLER_H
 
-#include "crab/GameEventInfo.h"
-#include "crab/ProgressBar.h"
+#include "crab/event/GameEventInfo.h"
+#include "crab/ui/ProgressBar.h"
 #include "crab/common_header.h"
-#include "crab/dialogbox.h"
-#include "crab/gameevent.h"
-#include "crab/person.h"
-#include "crab/sprite.h"
+#include "crab/ui/dialogbox.h"
+#include "crab/event/gameevent.h"
+#include "crab/people/person.h"
+#include "crab/animation/sprite.h"
 
 namespace Crab {
 

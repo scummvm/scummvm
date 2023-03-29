@@ -28,8 +28,8 @@
  *
  */
 
-#include "crab/AlphaImage.h"
-#include "crab/TextManager.h"
+#include "crab/ui/AlphaImage.h"
+#include "crab/text/TextManager.h"
 
 namespace Crab {
 

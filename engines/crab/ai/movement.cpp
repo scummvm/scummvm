@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/movement.h"
+#include "crab/ai/movement.h"
 
 namespace Crab {
 

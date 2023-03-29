@@ -31,9 +31,9 @@
 #ifndef CRAB_SECTIONHEADER_H
 #define CRAB_SECTIONHEADER_H
 
-#include "crab/ImageManager.h"
-#include "crab/TextData.h"
-#include "crab/TextManager.h"
+#include "crab/image/ImageManager.h"
+#include "crab/ui/TextData.h"
+#include "crab/text/TextManager.h"
 #include "crab/common_header.h"
 
 namespace Crab {

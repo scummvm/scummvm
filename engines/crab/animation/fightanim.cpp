@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/fightanim.h"
+#include "crab/animation/fightanim.h"
 
 namespace Crab {
 

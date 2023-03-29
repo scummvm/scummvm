@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/TraitMenu.h"
+#include "crab/ui/TraitMenu.h"
 
 namespace Crab {
 

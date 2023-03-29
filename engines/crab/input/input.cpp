@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/input.h"
+#include "crab/input/input.h"
 
 namespace Crab {
 

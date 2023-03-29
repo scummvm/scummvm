@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/slider.h"
+#include "crab/ui/slider.h"
 
 namespace Crab {
 

@@ -31,11 +31,11 @@
 #ifndef CRAB_EFFECT_H
 #define CRAB_EFFECT_H
 
-#include "crab/GameEventInfo.h"
+#include "crab/event/GameEventInfo.h"
 #include "crab/XMLDoc.h"
 #include "crab/common_header.h"
 #include "crab/loaders.h"
-#include "crab/person.h"
+#include "crab/people/person.h"
 
 namespace Crab {
 

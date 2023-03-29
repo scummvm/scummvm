@@ -32,7 +32,7 @@
 // Author:   Arvind
 // Purpose:  Dialog box!
 //=============================================================================
-#include "crab/dialogbox.h"
+#include "crab/ui/dialogbox.h"
 
 namespace Crab {
 

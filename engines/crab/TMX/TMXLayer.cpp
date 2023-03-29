@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/TMXLayer.h"
+#include "crab/TMX/TMXLayer.h"
 
 namespace Crab {
 

@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/LevelExit.h"
+#include "crab/level/LevelExit.h"
 
 namespace Crab {
 

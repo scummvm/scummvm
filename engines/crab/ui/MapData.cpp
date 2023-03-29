@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/MapData.h"
+#include "crab/ui/MapData.h"
 
 namespace Crab {
 

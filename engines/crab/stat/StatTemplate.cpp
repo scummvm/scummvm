@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/StatTemplate.h"
+#include "crab/stat/StatTemplate.h"
 #include "crab/XMLDoc.h"
 
 namespace Crab {

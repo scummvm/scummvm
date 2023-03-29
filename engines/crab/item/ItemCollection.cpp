@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/ItemCollection.h"
+#include "crab/item/ItemCollection.h"
 
 namespace Crab {
 

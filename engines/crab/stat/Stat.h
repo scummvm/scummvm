@@ -32,8 +32,8 @@
 #define CRAB_STAT_H
 #include "crab/common_header.h"
 
-#include "crab/ImageManager.h"
-#include "crab/TextManager.h"
+#include "crab/image/ImageManager.h"
+#include "crab/text/TextManager.h"
 
 namespace Crab {
 

@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/GameOverMenu.h"
+#include "crab/ui/GameOverMenu.h"
 
 namespace Crab {
 

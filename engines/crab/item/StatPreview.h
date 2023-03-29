@@ -32,9 +32,9 @@
 #define CRAB_STATPREVIEW_H
 #include "crab/common_header.h"
 
-#include "crab/Item.h"
-#include "crab/SectionHeader.h"
-#include "crab/StatDrawHelper.h"
+#include "crab/item/Item.h"
+#include "crab/ui/SectionHeader.h"
+#include "crab/stat/StatDrawHelper.h"
 
 namespace Crab {
 

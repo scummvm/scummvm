@@ -31,10 +31,10 @@
 #ifndef CRAB_GENERALSETTINGMENU_H
 #define CRAB_GENERALSETTINGMENU_H
 
-#include "crab/RadioButtonMenu.h"
-#include "crab/ToggleButton.h"
+#include "crab/ui/RadioButtonMenu.h"
+#include "crab/ui/ToggleButton.h"
 #include "crab/common_header.h"
-#include "crab/slider.h"
+#include "crab/ui/slider.h"
 
 namespace Crab {
 

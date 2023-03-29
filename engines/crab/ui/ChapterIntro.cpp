@@ -28,7 +28,7 @@
  *
  */
 
-#include "crab/ChapterIntro.h"
+#include "crab/ui/ChapterIntro.h"
 
 namespace Crab {
 

@@ -29,7 +29,7 @@
  */
 
 #include "crab/PathfindingGrid.h"
-#include "crab/TMXMap.h"
+#include "crab/TMX/TMXMap.h"
 
 namespace Crab {
 

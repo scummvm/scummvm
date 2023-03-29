@@ -31,10 +31,10 @@
 #ifndef CRAB_EVENTSTORE_H
 #define CRAB_EVENTSTORE_H
 
-#include "crab/StateButton.h"
-#include "crab/animation.h"
+#include "crab/ui/StateButton.h"
+#include "crab/animation/animation.h"
 #include "crab/common_header.h"
-#include "crab/conversationdata.h"
+#include "crab/event/conversationdata.h"
 
 namespace Crab {
 

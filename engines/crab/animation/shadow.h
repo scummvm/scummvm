@@ -31,7 +31,7 @@
 #ifndef CRAB_SHADOW_H
 #define CRAB_SHADOW_H
 
-#include "crab/ImageManager.h"
+#include "crab/image/ImageManager.h"
 #include "crab/common_header.h"
 #include "crab/vectors.h"
 

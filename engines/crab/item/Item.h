@@ -31,10 +31,10 @@
 #ifndef CRAB_ITEM_H
 #define CRAB_ITEM_H
 
-#include "crab/ImageManager.h"
-#include "crab/bonus.h"
+#include "crab/image/ImageManager.h"
+#include "crab/stat/bonus.h"
 #include "crab/common_header.h"
-#include "crab/person.h"
+#include "crab/people/person.h"
 
 namespace Crab {
 

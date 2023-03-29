@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/MusicManager.h"
+#include "crab/music/MusicManager.h"
 #include "crab/ScreenSettings.h"
 #include "crab/XMLDoc.h"
 

@@ -29,7 +29,7 @@
  */
 
 
-#include "crab/opinion.h"
+#include "crab/people/opinion.h"
 
 namespace Crab {
 
