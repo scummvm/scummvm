@@ -186,14 +186,20 @@ struct SoundParams3D {
 	uint unknownRange;
 };
 
-struct CachedSound {
-	CachedSound();
-	~CachedSound();
+struct SoundCache {
+	~SoundCache();
 
-	Common::String name;
 	Common::SharedPtr<Audio::SeekableAudioStream> stream;
 	Common::SharedPtr<Audio::AudioStream> loopingStream;
 	Common::SharedPtr<AudioPlayer> player;
+};
+
+struct SoundInstance {
+	SoundInstance();
+	~SoundInstance();
+
+	Common::String name;
+	Common::SharedPtr<SoundCache> cache;
 
 	uint id;
 
@@ -215,6 +221,8 @@ struct CachedSound {
 	int32 z;
 
 	SoundParams3D params3D;
+
+	uint32 evictTime;
 };
 
 struct TriggeredOneShot {
@@ -509,9 +517,10 @@ private:
 
 	void loadIndex();
 	void findWaves();
-	Common::SharedPtr<CachedSound> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
-	void resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, CachedSound *&outWave);
-	void resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, CachedSound *&outWave);
+	Common::SharedPtr<SoundInstance> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
+	SoundCache *loadCache(SoundInstance &sound);
+	void resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, SoundInstance *&outWave);
+	void resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, SoundInstance *&outWave);
 
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void returnToIdleState();
@@ -528,12 +537,13 @@ private:
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride, const Fraction &defaultFrameRate);
 
-	void setSound3DParameters(CachedSound &sound, int32 x, int32 y, const SoundParams3D &soundParams3D);
-	void triggerSound(bool looping, CachedSound &sound, uint volume, int32 balance, bool is3D);
-	void triggerSoundRamp(CachedSound &sound, uint durationMSec, uint newVolume, bool terminateOnCompletion);
+	void setSound3DParameters(SoundInstance &sound, int32 x, int32 y, const SoundParams3D &soundParams3D);
+	void triggerSound(bool looping, SoundInstance &sound, uint volume, int32 balance, bool is3D);
+	void triggerSoundRamp(SoundInstance &sound, uint durationMSec, uint newVolume, bool terminateOnCompletion);
+	void stopSound(SoundInstance &sound);
 	void updateSounds(uint32 timestamp);
 	void update3DSounds();
-	bool computeEffectiveVolumeAndBalance(CachedSound &snd);
+	bool computeEffectiveVolumeAndBalance(SoundInstance &snd);
 
 	AnimationDef stackArgsToAnimDef(const StackInt_t *args) const;
 	void pushAnimDef(const AnimationDef &animDef);
@@ -806,7 +816,7 @@ private:
 	Common::Array<OSEvent> _pendingEvents;
 
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _waves;
-	Common::Array<Common::SharedPtr<CachedSound> > _activeSounds;
+	Common::Array<Common::SharedPtr<SoundInstance> > _activeSounds;
 	SoundParams3D _pendingSoundParams3D;
 
 	Common::Array<TriggeredOneShot> _triggeredOneShots;
@@ -829,6 +839,11 @@ private:
 	static const uint kSaveGameIdentifier = 0x53566372;
 	static const uint kSaveGameCurrentVersion = 2;
 	static const uint kSaveGameEarliestSupportedVersion = 2;
+
+	static const uint kSoundCacheSize = 16;
+
+	Common::Pair<Common::String, Common::SharedPtr<SoundCache> > _soundCache[kSoundCacheSize];
+	uint _soundCacheIndex;
 };
 
 } // End of namespace VCruise

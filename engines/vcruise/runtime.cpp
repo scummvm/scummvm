@@ -367,12 +367,7 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 	}
 }
 
-CachedSound::CachedSound()
-	: id(0), rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
-	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), x(0), y(0), z(0) {
-}
-
-CachedSound::~CachedSound() {
+SoundCache::~SoundCache() {
 	// Dispose player first so playback stops
 	this->player.reset();
 
@@ -380,6 +375,14 @@ CachedSound::~CachedSound() {
 	this->loopingStream.reset();
 
 	this->stream.reset();
+}
+
+SoundInstance::SoundInstance()
+	: id(0), rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
+	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), x(0), y(0), z(0), evictTime(0) {
+}
+
+SoundInstance::~SoundInstance() {
 }
 
 TriggeredOneShot::TriggeredOneShot() : soundID(0), uniqueSlot(0) {
@@ -427,7 +430,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &roo
 	  /*_loadedArea(0), */_lmbDown(false), _lmbDragging(false), _lmbReleaseWasClick(false), _lmbDownTime(0),
 	  _delayCompletionTime(0),
 	  _panoramaState(kPanoramaStateInactive),
-	  _listenerX(0), _listenerY(0), _listenerAngle(0) {
+	  _listenerX(0), _listenerY(0), _listenerAngle(0), _soundCacheIndex(0) {
 
 	for (uint i = 0; i < kNumDirections; i++) {
 		_haveIdleAnimations[i] = false;
@@ -1437,8 +1440,8 @@ void Runtime::findWaves() {
 	}
 }
 
-Common::SharedPtr<CachedSound> Runtime::loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr) {
-	for (const Common::SharedPtr<CachedSound> &activeSound : _activeSounds) {
+Common::SharedPtr<SoundInstance> Runtime::loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr) {
+	for (const Common::SharedPtr<SoundInstance> &activeSound : _activeSounds) {
 		if (activeSound->name == soundName)
 			return activeSound;
 	}
@@ -1455,28 +1458,72 @@ Common::SharedPtr<CachedSound> Runtime::loadWave(const Common::String &soundName
 		return nullptr;
 	}
 
-	Common::SharedPtr<CachedSound> cachedSound(new CachedSound());
+	Common::SharedPtr<SoundInstance> soundInstance(new SoundInstance());
 
-	cachedSound->stream.reset(audioStream);
-	cachedSound->name = soundName;
-	cachedSound->id = soundID;
+	soundInstance->name = soundName;
+	soundInstance->id = soundID;
 
 	bool foundExisting = false;
-	for (Common::SharedPtr<CachedSound> &existingSound : _activeSounds) {
+	for (Common::SharedPtr<SoundInstance> &existingSound : _activeSounds) {
 		if (existingSound->id == soundID) {
-			existingSound = cachedSound;
+			existingSound = soundInstance;
 			foundExisting = true;
 			break;
 		}
 	}
 
 	if (!foundExisting)
-		_activeSounds.push_back(cachedSound);
+		_activeSounds.push_back(soundInstance);
 
-	return cachedSound;
+	return soundInstance;
 }
 
-void Runtime::resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, CachedSound *&outWave) {
+SoundCache *Runtime::loadCache(SoundInstance &sound) {
+	if (sound.cache)
+		return sound.cache.get();
+
+	// See if this is already in the cache
+	for (const Common::Pair<Common::String, Common::SharedPtr<SoundCache> > &cacheItem : _soundCache) {
+		if (cacheItem.first == sound.name) {
+			sound.cache = cacheItem.second;
+			return sound.cache.get();
+		}
+	}
+
+	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator waveIt = _waves.find(sound.name);
+
+	if (waveIt == _waves.end())
+		return nullptr;
+
+	Common::SeekableReadStream *stream = waveIt->_value->createReadStream();
+	if (!stream) {
+		warning("Couldn't open read stream for sound '%s'", sound.name.c_str());
+		return nullptr;
+	}
+
+	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	if (!audioStream) {
+		warning("Couldn't open audio stream for sound '%s'", sound.name.c_str());
+		return nullptr;
+	}
+
+	Common::SharedPtr<SoundCache> cachedSound(new SoundCache());
+
+	cachedSound->stream.reset(audioStream);
+
+	_soundCache[_soundCacheIndex].first = sound.name;
+	_soundCache[_soundCacheIndex].second = cachedSound;
+
+	_soundCacheIndex++;
+	if (_soundCacheIndex == kSoundCacheSize)
+		_soundCacheIndex = 0;
+
+	sound.cache = cachedSound;
+
+	return cachedSound.get();
+}
+
+void Runtime::resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, SoundInstance *&outWave) {
 	Common::String sndName = soundName;
 
 	uint soundID = 0;
@@ -1488,7 +1535,7 @@ void Runtime::resolveSoundByName(const Common::String &soundName, StackInt_t &ou
 	outSoundID = soundID;
 	outWave = nullptr;
 
-	for (const Common::SharedPtr<CachedSound> &snd : _activeSounds) {
+	for (const Common::SharedPtr<SoundInstance> &snd : _activeSounds) {
 		if (snd->name == sndName) {
 			outWave = snd.get();
 			return;
@@ -1498,19 +1545,19 @@ void Runtime::resolveSoundByName(const Common::String &soundName, StackInt_t &ou
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator waveIt = _waves.find(sndName);
 
 	if (waveIt != _waves.end()) {
-		Common::SharedPtr<CachedSound> snd = loadWave(sndName, soundID, waveIt->_value);
+		Common::SharedPtr<SoundInstance> snd = loadWave(sndName, soundID, waveIt->_value);
 		outWave = snd.get();
 	}
 }
 
-void Runtime::resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, CachedSound *&outWave) {
+void Runtime::resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, SoundInstance *&outWave) {
 	outSoundID = 0;
 	outWave = nullptr;
 
 	if (stackValue.type == StackValue::kNumber) {
 		outSoundID = stackValue.value.i;
 
-		for (const Common::SharedPtr<CachedSound> &snd : _activeSounds) {
+		for (const Common::SharedPtr<SoundInstance> &snd : _activeSounds) {
 			if (snd->id == static_cast<uint>(stackValue.value.i)) {
 				outWave = snd.get();
 				break;
@@ -1983,50 +2030,57 @@ void Runtime::changeAnimation(const AnimationDef &animDef, uint initialFrame, bo
 	debug(1, "Animation last frame set to %u", animDef.lastFrame);
 }
 
-void Runtime::setSound3DParameters(CachedSound &snd, int32 x, int32 y, const SoundParams3D &soundParams3D) {
+void Runtime::setSound3DParameters(SoundInstance &snd, int32 x, int32 y, const SoundParams3D &soundParams3D) {
 	snd.x = x;
 	snd.y = y;
 	snd.params3D = soundParams3D;
 }
 
-void Runtime::triggerSound(bool looping, CachedSound &snd, uint volume, int32 balance, bool is3D) {
+void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 balance, bool is3D) {
 	snd.volume = volume;
 	snd.balance = balance;
 	snd.is3D = is3D;
 
 	computeEffectiveVolumeAndBalance(snd);
 
+	SoundCache *cache = loadCache(snd);
+
 	// Reset if looping state changes
-	if (snd.loopingStream && !looping) {
-		snd.player.reset();
-		snd.loopingStream.reset();
-		snd.stream->rewind();
+	if (cache->loopingStream && !looping) {
+		cache->player.reset();
+		cache->loopingStream.reset();
+		cache->stream->rewind();
 	}
 
-	if (!snd.loopingStream && looping)
-		snd.player.reset();
+	if (!cache->loopingStream && looping)
+		cache->player.reset();
 
 	// Construct looping stream if needed and none exists
-	if (looping && !snd.loopingStream)
-		snd.loopingStream.reset(new Audio::LoopingAudioStream(snd.stream.get(), 0, DisposeAfterUse::NO, true));
+	if (looping && !cache->loopingStream)
+		cache->loopingStream.reset(new Audio::LoopingAudioStream(cache->stream.get(), 0, DisposeAfterUse::NO, true));
 
-	if (snd.player) {
+	if (cache->player) {
 		// If there is already a player and this is non-looping, start over
 		if (!looping) {
-			snd.player->stop();
-			snd.stream->rewind();
-			snd.player->play(snd.effectiveVolume, snd.effectiveBalance);
+			cache->player->stop();
+			cache->stream->rewind();
+			cache->player->play(snd.effectiveVolume, snd.effectiveBalance);
 		} else {
 			// Adjust volume and balance at least
-			snd.player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
+			cache->player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
 		}
 	} else {
-		snd.player.reset(new AudioPlayer(_mixer, looping ? snd.loopingStream.staticCast<Audio::AudioStream>() : snd.stream.staticCast<Audio::AudioStream>()));
-		snd.player->play(snd.effectiveVolume, snd.effectiveBalance);
+		cache->player.reset(new AudioPlayer(_mixer, looping ? cache->loopingStream.staticCast<Audio::AudioStream>() : cache->stream.staticCast<Audio::AudioStream>()));
+		cache->player->play(snd.effectiveVolume, snd.effectiveBalance);
 	}
+
+	if (looping)
+		snd.evictTime = 0;
+	else
+		snd.evictTime = g_system->getMillis(true) + static_cast<uint32>(cache->stream->getLength().msecs()) + 20000u;
 }
 
-void Runtime::triggerSoundRamp(CachedSound &snd, uint durationMSec, uint newVolume, bool terminateOnCompletion) {
+void Runtime::triggerSoundRamp(SoundInstance &snd, uint durationMSec, uint newVolume, bool terminateOnCompletion) {
 	snd.rampStartVolume = snd.volume;
 	snd.rampEndVolume = newVolume;
 	snd.rampTerminateOnCompletion = terminateOnCompletion;
@@ -2037,11 +2091,20 @@ void Runtime::triggerSoundRamp(CachedSound &snd, uint durationMSec, uint newVolu
 		snd.rampRatePerMSec = 65536 / durationMSec;
 }
 
-void Runtime::updateSounds(uint32 timestamp) {
-	Common::Array<uint> condemnedSounds;
+void Runtime::stopSound(SoundInstance &sound) {
+	if (!sound.cache)
+		return;
 
+	if (sound.cache->player)
+		sound.cache->player->stop();
+
+	sound.cache.reset();
+	sound.evictTime = g_system->getMillis(true) + 20000u;
+}
+
+void Runtime::updateSounds(uint32 timestamp) {
 	for (uint sndIndex = 0; sndIndex < _activeSounds.size(); sndIndex++) {
-		CachedSound &snd = *_activeSounds[sndIndex];
+		SoundInstance &snd = *_activeSounds[sndIndex];
 
 		if (snd.rampRatePerMSec) {
 			uint ramp = snd.rampRatePerMSec * (timestamp - snd.rampStartTime);
@@ -2050,7 +2113,7 @@ void Runtime::updateSounds(uint32 timestamp) {
 				snd.rampRatePerMSec = 0;
 				newVolume = snd.rampEndVolume;
 				if (snd.rampTerminateOnCompletion)
-					condemnedSounds.push_back(sndIndex);
+					stopSound(snd);
 			} else {
 				uint rampedVolume = (snd.rampStartVolume * (65536u - ramp)) + (snd.rampEndVolume * ramp);
 				newVolume = rampedVolume >> 16;
@@ -2059,27 +2122,26 @@ void Runtime::updateSounds(uint32 timestamp) {
 			if (snd.volume != newVolume) {
 				snd.volume = newVolume;
 
-				if (snd.player) {
-					computeEffectiveVolumeAndBalance(snd);
-					snd.player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
+				if (snd.cache) {
+					SoundCache *cache = snd.cache.get();
+					if (cache->player) {
+						computeEffectiveVolumeAndBalance(snd);
+						cache->player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
+					}
 				}
 			}
 		}
-	}
 
-	// condemnedSounds must be sorted
-	if (condemnedSounds.size()) {
-		uint numDeleted = 0;
-		for (uint index : condemnedSounds) {
-			_activeSounds.remove_at(index - numDeleted);
-			numDeleted++;
+		if (snd.evictTime && snd.evictTime <= timestamp) {
+			snd.cache.reset();
+			snd.evictTime = 0;
 		}
 	}
 }
 
 void Runtime::update3DSounds() {
-	for (const Common::SharedPtr<CachedSound> &sndPtr : _activeSounds) {
-		CachedSound &snd = *sndPtr;
+	for (const Common::SharedPtr<SoundInstance> &sndPtr : _activeSounds) {
+		SoundInstance &snd = *sndPtr;
 
 		if (!snd.is3D)
 			continue;
@@ -2087,14 +2149,19 @@ void Runtime::update3DSounds() {
 		bool changed = computeEffectiveVolumeAndBalance(snd);
 
 		if (changed) {
-			VCruise::AudioPlayer *player = snd.player.get();
-			if (player)
-				player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
+			if (snd.cache) {
+				SoundCache *cache = snd.cache.get();
+				if (cache) {
+					VCruise::AudioPlayer *player = cache->player.get();
+					if (player)
+						player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
+				}
+			}
 		}
 	}
 }
 
-bool Runtime::computeEffectiveVolumeAndBalance(CachedSound &snd) {
+bool Runtime::computeEffectiveVolumeAndBalance(SoundInstance &snd) {
 	uint effectiveVolume = snd.volume;
 	int32 effectiveBalance = snd.balance;
 
@@ -3194,7 +3261,7 @@ void Runtime::scriptOpSoundS1(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
@@ -3206,7 +3273,7 @@ void Runtime::scriptOpSoundS2(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
@@ -3218,7 +3285,7 @@ void Runtime::scriptOpSoundS3(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
@@ -3229,7 +3296,7 @@ void Runtime::scriptOpSoundL1(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
@@ -3241,7 +3308,7 @@ void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
@@ -3253,7 +3320,7 @@ void Runtime::scriptOpSoundL3(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
@@ -3265,7 +3332,7 @@ void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound) {
@@ -3279,7 +3346,7 @@ void Runtime::scriptOp3DSoundL3(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound) {
@@ -3293,7 +3360,7 @@ void Runtime::scriptOp3DSoundS2(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound) {
@@ -3460,7 +3527,7 @@ void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) {
 	TAKE_STACK_VAR_NAMED(1, sndIDArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
@@ -3472,7 +3539,7 @@ void Runtime::scriptOpVolumeDn2(ScriptArg_t arg) {
 	TAKE_STACK_VAR_NAMED(1, sndIDArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
 
 	// FIXME: Just do this instantly
@@ -3485,7 +3552,7 @@ void Runtime::scriptOpVolumeDn3(ScriptArg_t arg) {
 	TAKE_STACK_VAR_NAMED(1, sndIDArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
@@ -3497,7 +3564,7 @@ void Runtime::scriptOpVolumeDn4(ScriptArg_t arg) {
 	TAKE_STACK_VAR_NAMED(1, sndIDArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
@@ -3539,7 +3606,7 @@ void Runtime::scriptOpSay1(ScriptArg_t arg) {
 	warning("Say1 cycles are not implemented yet, playing first sound in the cycle");
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	// uint ? = sndParamArgs[0];
@@ -3554,7 +3621,7 @@ void Runtime::scriptOpSay3(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound) {
@@ -3578,7 +3645,7 @@ void Runtime::scriptOpSay3Get(ScriptArg_t arg) {
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
 	StackInt_t soundID = 0;
-	CachedSound *cachedSound = nullptr;
+	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound) {
