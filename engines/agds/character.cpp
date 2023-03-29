@@ -217,6 +217,7 @@ void Character::tick() {
 		if (_phase >= _frames) {
 			_phase = -1;
 			_frames = 0;
+			direction(_direction);
 		}
 		_engine->reactivate(_processName, true);
 	}
