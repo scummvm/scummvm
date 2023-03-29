@@ -685,8 +685,13 @@ Common::Error AGDSEngine::run() {
 			mouseCursor = _defaultMouseCursor;
 
 		if (userEnabled()) {
-			auto picture = _currentInventoryObject? _currentInventoryObject->getPicture(): nullptr;
-			if (picture) {
+			if (auto *cursor = _currentInventoryObject? _currentInventoryObject->getMouseCursor(): nullptr) {
+				cursor->tick();
+				auto pos = _mouse;
+				pos.x -= cursor->visibleCenter();
+				pos.y -= cursor->visibleHeight() / 2;
+				cursor->paint(*backbuffer, pos);
+			} else if (auto *picture = _currentInventoryObject? _currentInventoryObject->getPicture(): nullptr) {
 				Common::Rect srcRect = picture->getRect();
 				Common::Point dst = _mouse;
 				dst.x -= srcRect.width() / 2;
