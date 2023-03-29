@@ -1003,6 +1003,137 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 		stream.hexdump(size);
 		stream.seek(pos);
 	}
+	uint16 channelSize = 16;
+	FilmLoopFrame newFrame;
+
+	while (stream.pos() < size) {
+		uint16 frameSize = stream.readUint16BE() - 2;
+		if (debugChannelSet(5, kDebugLoading)) {
+			debugC(5, kDebugLoading, "Frame entry:");
+			stream.hexdump(frameSize);
+		}
+
+		while (frameSize > 0) {
+			int msgWidth = stream.readByte() * 2;
+			int order = stream.readByte() * 2 - 0x20;
+			frameSize -= 2;
+			debugC(8, kDebugLoading, "Message: msgWidth %d, order %d", msgWidth, order);
+			if (debugChannelSet(8, kDebugLoading)) {
+				stream.hexdump(msgWidth);
+			}
+
+			int fieldPosition = order;
+			int finishPosition = order + msgWidth;
+			while (fieldPosition < finishPosition) {
+				int channel = (fieldPosition / channelSize);
+				int channelOffset = fieldPosition % channelSize;
+
+				Sprite sprite(nullptr);
+				sprite._movie = g_director->getCurrentMovie();
+				if (newFrame.sprites.contains(channel)) {
+					sprite = newFrame.sprites.getVal(channel);
+				}
+				sprite._spriteType = kCastMemberSprite;
+				sprite._puppet = 1;
+				sprite._stretch = 1;
+
+				switch (channelOffset) {
+				case kSpritePositionUnk1:
+					stream.readByte();
+					fieldPosition++;
+					break;
+				case kSpritePositionEnabled:
+					sprite._enabled = stream.readByte() != 0;
+					fieldPosition++;
+					break;
+				case kSpritePositionUnk2:
+					stream.readUint16BE();
+					fieldPosition += 2;
+					break;
+				case kSpritePositionFlags:
+					sprite._thickness = stream.readByte();
+					sprite._inkData = stream.readByte();
+					sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
+
+					if (sprite._inkData & 0x40)
+						sprite._trails = 1;
+					else
+						sprite._trails = 0;
+
+					fieldPosition += 2;
+					break;
+				case kSpritePositionCastId:
+					sprite.setCast(CastMemberID(stream.readUint16(), 0));
+					fieldPosition += 2;
+					break;
+				case kSpritePositionY:
+					sprite._startPoint.y = stream.readUint16();
+					fieldPosition += 2;
+					break;
+				case kSpritePositionX:
+					sprite._startPoint.x = stream.readUint16();
+					fieldPosition += 2;
+					break;
+				case kSpritePositionWidth:
+					sprite._width = stream.readUint16();
+					fieldPosition += 2;
+					break;
+				case kSpritePositionHeight:
+					sprite._height = stream.readUint16();
+					fieldPosition += 2;
+					break;
+				default:
+					stream.readUint16BE();
+					fieldPosition += 2;
+					break;
+				}
+				newFrame.sprites.setVal(channel, sprite);
+			}
+
+			frameSize -= msgWidth;
+		}
+
+		for (Common::HashMap<int, Sprite>::iterator s = newFrame.sprites.begin(); s != newFrame.sprites.end(); ++s) {
+			debugC(5, kDebugLoading, "Sprite: channel %d, castId %s, bbox %d %d %d %d", s->_key,
+					s->_value._castId.asString().c_str(), s->_value._startPoint.x, s->_value._startPoint.y,
+					s->_value._width, s->_value._height);
+
+			Common::Point topLeft = s->_value._startPoint + s->_value.getRegistrationOffset();
+			Common::Rect spriteBbox(
+				topLeft.x,
+				topLeft.y,
+				topLeft.x + s->_value._width,
+				topLeft.y + s->_value._height
+			);
+			if (!((spriteBbox.width() == 0) && (spriteBbox.height() == 0))) {
+				if ((_initialRect.width() == 0) && (_initialRect.height() == 0)) {
+					_initialRect = spriteBbox;
+				} else {
+					_initialRect.extend(spriteBbox);
+				}
+			}
+			debugC(8, kDebugLoading, "New bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+
+		}
+
+		_frames.push_back(newFrame);
+
+	}
+	debugC(5, kDebugLoading, "Full bounding box: %d %d %d %d", _initialRect.left, _initialRect.top, _initialRect.width(), _initialRect.height());
+}
+
+void FilmLoopCastMember::loadFilmLoopDataV4(Common::SeekableReadStreamEndian &stream) {
+	_initialRect = Common::Rect();
+	_frames.clear();
+
+	uint32 size = stream.readUint32BE();
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "SCVW body:");
+		uint32 pos = stream.pos();
+		stream.seek(0);
+		stream.hexdump(size);
+		stream.seek(pos);
+	}
 	uint32 framesOffset = stream.readUint32BE();
 	if (debugChannelSet(5, kDebugLoading)) {
 		debugC(5, kDebugLoading, "SCVW header:");
