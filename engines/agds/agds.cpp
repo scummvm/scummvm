@@ -566,62 +566,60 @@ Common::Error AGDSEngine::run() {
 						break;
 					}
 
-					auto objects = _currentScreen->find(_mouse);
-					if (objects.empty() && !_currentInventoryObject) { //allow inventory to be selected
-						auto object = _inventory.find(_mouse);
-						if (object)
-							objects.push_back(object);
+					auto object = _currentScreen->find(_mouse);
+					if (!object && !_currentInventoryObject) { //allow inventory to be selected
+						object = _inventory.find(_mouse);
 					}
+					if (!object)
+						break;
 
-					for(auto & object : objects) {
-						debug("found object %s", object->getName().c_str());
-						uint ip = 0;
-						if (lclick) {
-							if (_currentInventoryObject) {
-								ip = object->getUseHandler(_currentInventoryObject->getName());
-								if (!ip) {
-									ip = _currentInventoryObject->useOnHandler();
-									if (ip)
-										object = _currentInventoryObject;
-								}
-								if (ip)
-									debug("found use handler for current inventory object %s", _currentInventoryObject->getName().c_str());
-							}
+					debug("found object %s", object->getName().c_str());
+					uint ip = 0;
+					if (lclick) {
+						if (_currentInventoryObject) {
+							ip = object->getUseHandler(_currentInventoryObject->getName());
 							if (!ip) {
-								ip = object->getClickHandler();
-								if (ip)
-									debug("found click handler");
-							}
-						} else {
-							if (_currentInventoryObject) {
-								ip = _currentInventoryObject->throwHandler();
+								ip = _currentInventoryObject->useOnHandler();
 								if (ip)
 									object = _currentInventoryObject;
-							} else {
-								ip = object->getExamineHandler();
 							}
 							if (ip)
-								debug("found examine handler");
+								debug("found use handler for current inventory object %s", _currentInventoryObject->getName().c_str());
 						}
-
-						if (ip) {
-							debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
-							runProcess(object, ip);
-							break;
+						if (!ip) {
+							ip = object->getClickHandler();
+							if (ip)
+								debug("found click handler");
+						}
+					} else {
+						if (_currentInventoryObject) {
+							ip = _currentInventoryObject->throwHandler();
+							if (ip)
+								object = _currentInventoryObject;
 						} else {
-							debug("no handler found");
-							if (_currentCharacter && _currentCharacter->active() && _currentScreen && _currentScreen->region()) {
-								auto & region = _currentScreen->region();
-								if (region->pointIn(_mouse)) {
-									// FIXME: some object requires character to be in "trap" region
-									// Remove this after movement implementation.
-									_currentCharacter->moveTo(Common::String(), _mouse, -1);
-								}
-							}
-							auto scroll = _currentScreen->scrollPosition();
-							scroll.x += _mouse.x - g_system->getWidth() / 2;
-							_currentScreen->scrollTo(scroll);
+							ip = object->getExamineHandler();
 						}
+						if (ip)
+							debug("found examine handler");
+					}
+
+					if (ip) {
+						debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
+						runProcess(object, ip);
+						break;
+					} else {
+						debug("no handler found");
+						if (_currentCharacter && _currentCharacter->active() && _currentScreen && _currentScreen->region()) {
+							auto & region = _currentScreen->region();
+							if (region->pointIn(_mouse)) {
+								// FIXME: some object requires character to be in "trap" region
+								// Remove this after movement implementation.
+								_currentCharacter->moveTo(Common::String(), _mouse, -1);
+							}
+						}
+						auto scroll = _currentScreen->scrollPosition();
+						scroll.x += _mouse.x - g_system->getWidth() / 2;
+						_currentScreen->scrollTo(scroll);
 					}
 				}
 				break;
@@ -640,33 +638,23 @@ Common::Error AGDSEngine::run() {
 		Animation *mouseCursor = NULL;
 
 		if (userEnabled() && _currentScreen) {
-			auto objects = _currentScreen->find(_mouse);
-			if (objects.empty()) {
-				auto object = _inventory.find(_mouse);
-				if (object)
-					objects.push_back(object);
+			auto object = _currentScreen->find(_mouse);
+			if (!object) {
+				object = _inventory.find(_mouse);
 			}
 
-
-			Animation *cursor = nullptr;
-			for(auto & object : objects) {
-				cursor = object->getMouseCursor();
-				if (cursor)
-					break;
-			}
+			Animation *cursor = object? object->getMouseCursor(): nullptr;
 
 			if (cursor)
 				mouseCursor = cursor;
 
-			for(auto & object : objects) {
-				if (!object->title().empty()) {
-					auto & title = object->title();
-					auto font = getFont(getSystemVariable("objtext_font")->getInteger());
-					int w = font->getStringWidth(title);
-					int x = getSystemVariable("objtext_x")->getInteger() - w / 2;
-					int y = getSystemVariable("objtext_y")->getInteger();
-					font->drawString(backbuffer, title, x, y, backbuffer->w - x, 0);
-				}
+			if (object && !object->title().empty()) {
+				auto & title = object->title();
+				auto font = getFont(getSystemVariable("objtext_font")->getInteger());
+				int w = font->getStringWidth(title);
+				int x = getSystemVariable("objtext_x")->getInteger() - w / 2;
+				int y = getSystemVariable("objtext_y")->getInteger();
+				font->drawString(backbuffer, title, x, y, backbuffer->w - x, 0);
 			}
 		}
 
@@ -1035,8 +1023,8 @@ void AGDSEngine::tickCharacter() {
 		return;
 
 	auto pos = _currentCharacter->position();
-	auto objects = _currentScreen->find(pos);
-	for(auto & object: objects) {
+	auto object = _currentScreen->find(pos);
+	if (object) {
 		auto region = object->getTrapRegion();
 		if (region && region->pointIn(pos)) {
 			debug("starting trap process");
