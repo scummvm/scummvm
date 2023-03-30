@@ -20,6 +20,8 @@
  */
 
 #include "mm/mm1/views_enh/character_inventory.h"
+#include "mm/mm1/views_enh/game_messages.h"
+#include "mm/mm1/views_enh/trade.h"
 #include "mm/mm1/views_enh/which_item.h"
 #include "mm/mm1/data/locations.h"
 #include "mm/mm1/globals.h"
@@ -44,7 +46,9 @@ bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
 	assert(g_globals->_currCharacter);
 
-	if (dynamic_cast<WhichItem *>(msg._priorView) == nullptr)
+	if (dynamic_cast<WhichItem *>(msg._priorView) == nullptr &&
+		dynamic_cast<Trade *>(msg._priorView) == nullptr &&
+		dynamic_cast<GameMessages *>(msg._priorView) == nullptr)
 		_mode = BACKPACK_MODE;
 	populateItems();
 
