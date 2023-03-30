@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-29 23:13+0000\n"
-"PO-Revision-Date: 2023-03-28 12:34+0000\n"
+"PO-Revision-Date: 2023-03-30 13:16+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3514,10 +3514,8 @@ msgid "D-pad Right"
 msgstr "十字キー(右)"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "十字キー(左)"
+msgstr "十字キー(中央)"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
