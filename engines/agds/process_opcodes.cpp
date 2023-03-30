@@ -564,8 +564,21 @@ void Process::attachInventoryObjectToMouse(bool flag) {
 }
 
 void Process::returnCurrentInventoryObject() {
-	debug("returnCurrentInventoryObject");
-	_engine->returnCurrentInventoryObject();
+	auto object = _engine->currentInventoryObject();
+	if (!object) {
+		warning("no current inventory object");
+		return;
+	}
+
+	auto name = object->getName();
+	debug("returnCurrentInventoryObject %s", name.c_str());
+	auto screen = _engine->getCurrentScreen();
+	if (screen) {
+		_object->lock();
+		screen->remove(object);
+		_object->unlock();
+	}
+	suspend(kExitCodeLoadInventoryObject, name);
 }
 
 void Process::attachInventoryObjectToMouse0() {
@@ -1195,10 +1208,6 @@ void Process::tell(bool npc, const Common::String &sound) {
 	Common::String region = popString();
 	debug("%s '%s' '%s' '%s'", npc? "npcSay": "playerSay", region.c_str(), text.c_str(), sound.c_str());
 	_engine->tell(*this, region, text, sound, npc);
-
-	//close inventory here if close flag was set
-	Common::String inventoryClose = _engine->getSystemVariable("inv_close")->getString();
-	suspend(!inventoryClose.empty()? kExitCodeCloseInventory: kExitCodeSuspend);
 }
 
 void Process::npcSay() {

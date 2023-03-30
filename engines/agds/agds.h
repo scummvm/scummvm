@@ -261,8 +261,6 @@ public:
 
 	void currentInventoryObject(const ObjectPtr & object);
 	void resetCurrentInventoryObject();
-	void returnCurrentInventoryObject();
-
 	const ObjectPtr & currentInventoryObject() const {
 		return _currentInventoryObject;
 	}
