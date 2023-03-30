@@ -83,6 +83,11 @@ T StringToNumber(const Common::String &Text) {
 }
 
 template<typename T>
+T StringToNumber(const std::string &Text) {
+	return StringToNumber<T>(const_cast<char *>(Text.c_str()));
+}
+
+template<typename T>
 void GetPoint(T &v, Common::String &coords) {
 	int comma = coords.findFirstOf(',');
 
