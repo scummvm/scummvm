@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-29 23:13+0000\n"
-"PO-Revision-Date: 2023-03-27 16:42+0000\n"
+"PO-Revision-Date: 2023-03-30 10:40+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3581,10 +3581,8 @@ msgid "D-pad Right"
 msgstr "D-pad Destra"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "D-pad Sinistra"
+msgstr "D-pad Centro"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
