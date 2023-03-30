@@ -97,9 +97,9 @@ void DialogsXObj::m_new(int nargs) {
 }
 
 void DialogsXObj::m_putFile(int nargs) {
-	Common::String title = g_lingo->pop().asString();
-	Common::String name = g_lingo->pop().asString();
 	Common::String extn = g_lingo->pop().asString();
+	Common::String name = g_lingo->pop().asString();
+	Common::String title = g_lingo->pop().asString();
 
 	Common::String prefix = g_director->getTargetName() + '-';
 	Common::String mask = prefix + "*." + extn + ".txt";
@@ -121,9 +121,9 @@ void DialogsXObj::m_putFile(int nargs) {
 }
 
 void DialogsXObj::m_getFile(int nargs) {
-	Common::String title = g_lingo->pop().asString();
-	Common::String name = g_lingo->pop().asString();
 	Common::String extn = g_lingo->pop().asString();
+	Common::String name = g_lingo->pop().asString();
+	Common::String title = g_lingo->pop().asString();
 
 	Common::String prefix = g_director->getTargetName() + '-';
 	Common::String mask = prefix + "*." + extn + ".txt";
