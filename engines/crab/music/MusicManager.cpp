@@ -47,18 +47,31 @@ MusicManager gMusicManager;
 // Purpose: Clear stored data
 //------------------------------------------------------------------------
 void MusicManager::FreeMusic() {
+	warning("STUB: MusicManager::FreeMusic()");
+
+#if 0
 	Mix_FreeMusic(bg.track);
+#endif
+
 }
 
 void MusicManager::FreeChunk() {
+	warning("STUB: MusicManager::FreeChunk()");
+
+#if 0
 	for (auto i = effect.begin(); i != effect.end(); ++i)
 		Mix_FreeChunk(i->second);
+#endif
+
 }
 
 //------------------------------------------------------------------------
 // Purpose: Play or queue music
 //------------------------------------------------------------------------
 void MusicManager::PlayMusic(const MusicKey &id) {
+	warning("STUB: MusicManager::PlayMusic()");
+
+#if 0
 	if (bg.id != id) {
 		XMLDoc track_list(gFilePath.sound_music);
 		if (track_list.ready()) {
@@ -75,20 +88,30 @@ void MusicManager::PlayMusic(const MusicKey &id) {
 		if (bg.track != NULL)
 			Mix_FadeInMusic(bg.track, -1, bg.fade_in_duration);
 	}
+#endif
+
 }
 
 //------------------------------------------------------------------------
 // Purpose: Play or queue sound effects
 //------------------------------------------------------------------------
 void MusicManager::PlayEffect(const ChunkKey &id, const int &loops) {
+	warning("STUB: MusicManager::PlayEffect()");
+
+#if 0
 	if (effect.count(id) > 0)
 		Mix_PlayChannel(-1, effect[id], loops);
+#endif
+
 }
 
 //------------------------------------------------------------------------
 // Purpose: Initialize the music subsystem (currently SDL_mixer) and load sound effects
 //------------------------------------------------------------------------
 bool MusicManager::Load(rapidxml::xml_node<char> *node) {
+	warning("STUB: MusicManager::Load()");
+
+#if 0
 	// Initialize music parameters
 	int volume_mus = 100, volume_eff = 100;
 
@@ -133,11 +156,15 @@ bool MusicManager::Load(rapidxml::xml_node<char> *node) {
 			}
 		}
 	}
+#endif
 
 	return true;
 }
 
 void MusicManager::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+	warning("STUB: MusicManager::SaveState()");
+
+#if 0
 	rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "sound");
 	child->append_attribute(doc.allocate_attribute("music", gStrPool.Get(Mix_VolumeMusic(-1))));
 	child->append_attribute(doc.allocate_attribute("effects", gStrPool.Get(Mix_Volume(0, -1))));
@@ -145,6 +172,7 @@ void MusicManager::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<c
 	child->append_attribute(doc.allocate_attribute("channels", gStrPool.Get(channels)));
 	child->append_attribute(doc.allocate_attribute("chunk_size", gStrPool.Get(chunksize)));
 	root->append_node(child);
+#endif
 }
 
 } // End of namespace Crab

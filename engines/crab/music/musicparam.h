@@ -50,19 +50,24 @@ struct MusicData {
 	// The id of this track
 	MusicKey id;
 
+#if 0
 	// The track data
 	Mix_Music *track;
+#endif
 
 	// Sound parameters
-	Uint32 fade_in_duration;
+	uint32 fade_in_duration;
 
 	MusicData() {
 		id = -1;
+#if 0
 		track = nullptr;
+#endif
 		fade_in_duration = 100;
 	}
 
 	void Load(rapidxml::xml_node<char> *node) {
+#if 0
 		LoadNum(id, "id", node);
 		LoadNum(fade_in_duration, "fade_in", node);
 
@@ -70,6 +75,7 @@ struct MusicData {
 			Mix_FreeMusic(track);
 
 		track = Mix_LoadMUS(node->first_attribute("path")->value());
+#endif
 	}
 };
 } // End of namespace music
