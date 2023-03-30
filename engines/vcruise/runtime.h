@@ -216,13 +216,14 @@ struct SoundInstance {
 	int32 effectiveBalance;
 
 	bool is3D;
+	bool isLooping;
 	int32 x;
 	int32 y;
 	int32 z;
 
 	SoundParams3D params3D;
 
-	uint32 evictTime;
+	uint32 endTime;
 };
 
 struct TriggeredOneShot {

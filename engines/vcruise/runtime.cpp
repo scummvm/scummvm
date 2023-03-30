@@ -379,7 +379,7 @@ SoundCache::~SoundCache() {
 
 SoundInstance::SoundInstance()
 	: id(0), rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
-	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), x(0), y(0), z(0), evictTime(0) {
+	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), x(0), y(0), z(0), endTime(0) {
 }
 
 SoundInstance::~SoundInstance() {
@@ -2040,6 +2040,7 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 
 	snd.volume = volume;
 	snd.balance = balance;
 	snd.is3D = is3D;
+	snd.isLooping = looping;
 
 	computeEffectiveVolumeAndBalance(snd);
 
@@ -2075,9 +2076,9 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 
 	}
 
 	if (looping)
-		snd.evictTime = 0;
+		snd.endTime = 0;
 	else
-		snd.evictTime = g_system->getMillis(true) + static_cast<uint32>(cache->stream->getLength().msecs()) + 20000u;
+		snd.endTime = g_system->getMillis(true) + static_cast<uint32>(cache->stream->getLength().msecs()) + 1000u;
 }
 
 void Runtime::triggerSoundRamp(SoundInstance &snd, uint durationMSec, uint newVolume, bool terminateOnCompletion) {
@@ -2099,7 +2100,7 @@ void Runtime::stopSound(SoundInstance &sound) {
 		sound.cache->player->stop();
 
 	sound.cache.reset();
-	sound.evictTime = g_system->getMillis(true) + 20000u;
+	sound.endTime = 0;
 }
 
 void Runtime::updateSounds(uint32 timestamp) {
@@ -2132,9 +2133,10 @@ void Runtime::updateSounds(uint32 timestamp) {
 			}
 		}
 
-		if (snd.evictTime && snd.evictTime <= timestamp) {
+		// Cache-evict stopped sounds
+		if (snd.endTime && snd.endTime <= timestamp) {
 			snd.cache.reset();
-			snd.evictTime = 0;
+			snd.endTime = 0;
 		}
 	}
 }
