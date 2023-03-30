@@ -204,7 +204,6 @@ void Dialog::processDirective(Common::String line) {
 			}
 			debug("dialog value %s = %d (0x%04x), sample index: %d", line.c_str(), value, value, _currentSoundIndex);
 			_engine->getSystemVariable("dialog_var")->setInteger(value);
-			_engine->reactivate(_dialogProcessName, "dialog", true);
 		} else
 			warning("invalid dialog directive: %s", line.c_str());
 	}
