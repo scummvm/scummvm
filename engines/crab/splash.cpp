@@ -33,6 +33,7 @@
 // Author:   Arvind
 // Purpose:  Splash functions
 //=============================================================================
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/splash.h"
 
 namespace Crab {

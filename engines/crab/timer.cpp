@@ -33,6 +33,7 @@
 // Author:   Arvind
 // Purpose:  Timer functions
 //=============================================================================
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/timer.h"
 
 namespace Crab {

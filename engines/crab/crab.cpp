@@ -50,7 +50,6 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #include "crab/crab.h"
 #include "common/config-manager.h"

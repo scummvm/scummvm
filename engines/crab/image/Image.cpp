@@ -27,6 +27,7 @@
  * Licensed under MIT
  *
  */
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "crab/crab.h"
 #include "crab/image/Image.h"
