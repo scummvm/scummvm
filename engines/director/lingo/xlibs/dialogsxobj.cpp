@@ -47,7 +47,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
-#include "director/lingo/xlibs/dialogs.h"
+#include "director/lingo/xlibs/dialogsxobj.h"
 
 namespace Director {
 

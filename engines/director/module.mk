@@ -51,7 +51,7 @@ MODULE_OBJS = \
 	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/darkenscreen.o \
 	lingo/xlibs/developerStack.o \
-	lingo/xlibs/dialogs.o \
+	lingo/xlibs/dialogsxobj.o \
 	lingo/xlibs/dpwavi.o \
 	lingo/xlibs/dpwqtw.o \
 	lingo/xlibs/draw.o \
