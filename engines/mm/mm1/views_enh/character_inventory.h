@@ -25,19 +25,21 @@
 #include "mm/mm1/views_enh/items_view.h"
 #include "mm/mm1/data/character.h"
 #include "mm/mm1/game/equip_remove.h"
+#include "mm/mm1/game/use_item.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class CharacterInventory : public ItemsView, Game::EquipRemove {
+class CharacterInventory : public ItemsView, public Game::EquipRemove,
+		public Game::UseItem {
 private:
 	enum DisplayMode {
 		ARMS_MODE, BACKPACK_MODE
 	};
 	DisplayMode _mode = ARMS_MODE;
 	enum SelectedButton {
-		BTN_NONE, BTN_EQUIP, BTN_REMOVE, BTN_DISCARD
+		BTN_NONE, BTN_EQUIP, BTN_REMOVE, BTN_DISCARD, BTN_USE
 	};
 	SelectedButton _selectedButton = BTN_NONE;
 	Common::String _tradeMode;
@@ -77,6 +79,11 @@ private:
 	 * Discard an item
 	 */
 	void discardItem();
+
+	/**
+	 * Use an item
+	 */
+	void useItem();
 
 	/**
 	 * Trade an item to another character

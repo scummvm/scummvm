@@ -122,6 +122,9 @@ bool CharacterInventory::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_t:
 		addView("Trade");
 		break;
+	case Common::KEYCODE_u:
+		selectButton(BTN_USE);
+		break;
 	default:
 		return ItemsView::msgKeypress(msg);
 	}
@@ -183,6 +186,8 @@ void CharacterInventory::selectButton(SelectedButton btnMode) {
 			btn = STRING["enhdialogs.items.remove"];
 		else if (btnMode == BTN_DISCARD)
 			btn = STRING["enhdialogs.items.discard"];
+		else if (btnMode == BTN_USE)
+			btn = STRING["enhdialogs.items.use"];
 
 		send("WhichItem", GameMessage("DISPLAY",
 			Common::String::format("%s %s", btn.c_str(),
@@ -202,6 +207,10 @@ void CharacterInventory::performAction() {
 
 	case BTN_DISCARD:
 		discardItem();
+		break;
+
+	case BTN_USE:
+		useItem();
 		break;
 
 	default:
@@ -234,6 +243,18 @@ void CharacterInventory::removeItem() {
 	} else {
 		displayMessage(errMsg);
 	}
+}
+
+void CharacterInventory::useItem() {
+	Character &c = *g_globals->_currCharacter;
+	Inventory &inv = (_mode == ARMS_MODE) ? c._equipped : c._backpack;
+	Inventory::Entry *invEntry = &inv[_selectedItem];
+	Common::String msg;
+
+	if (g_events->isInCombat())
+		msg = Game::UseItem::combatUseItem(inv, *invEntry, _mode == BACKPACK_MODE);
+	else
+		msg = Game::UseItem::nonCombatUseItem(inv, *invEntry, _mode == BACKPACK_MODE);
 }
 
 void CharacterInventory::discardItem() {

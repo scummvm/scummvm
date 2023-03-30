@@ -239,7 +239,7 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 			break;
 		}
 
-		if (dynamic_cast<Views::Combat *>(g_events->priorView()) != nullptr)
+		if (g_events->isInCombat())
 			combatUseItem(*inv, *invEntry, msg.keycode >= Common::KEYCODE_a);
 		else
 			nonCombatUseItem(*inv, *invEntry, msg.keycode >= Common::KEYCODE_a);
