@@ -79,14 +79,23 @@ int Inventory::add(const Common::String & name) {
 		warning("Double adding object %s, skipping...", name.c_str());
 		return idx;
 	}
-	return add(_engine->runObject(name));
+	for (uint i = 0; i < _entries.size(); ++i) {
+		auto & entry = _entries[i];
+		if (!entry.hasObject) {
+			entry.name = name;
+			entry.object.reset();
+			entry.hasObject = true;
+			return i;
+		}
+	}
+	return idx;
 }
 
 int Inventory::add(const ObjectPtr & object) {
 	for (uint i = 0; i < _entries.size(); ++i) {
 		auto & entry = _entries[i];
-		if (entry.hasObject && entry.object == object) {
-			warning("Double adding object pointer %s, skipping...", object->getName().c_str());
+		if (entry.hasObject && entry.name == object->getName()) {
+			warning("Double adding object [pointer] %s, skipping...", object->getName().c_str());
 			return i;
 		}
 	}

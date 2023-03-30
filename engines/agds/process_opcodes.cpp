@@ -575,10 +575,12 @@ void Process::returnCurrentInventoryObject() {
 	auto screen = _engine->getCurrentScreen();
 	if (screen) {
 		_object->lock();
+		object->lock();
 		screen->remove(object);
+		object->unlock();
 		_object->unlock();
 	}
-	suspend(kExitCodeLoadInventoryObject, name);
+	_engine->inventory().add(object);
 }
 
 void Process::attachInventoryObjectToMouse0() {
