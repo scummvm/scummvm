@@ -429,8 +429,6 @@ void Combat::writeOptions() {
 }
 
 void Combat::writeAllOptions() {
-	assert(g_globals->_currCharacter &&
-		g_globals->_currCharacter == g_globals->_combatParty[_currentChar]);
 	const Character &c = *g_globals->_currCharacter;
 	writeBottomText(0, 0, STRING["dialogs.combat.options_for"]);
 	writeBottomText(0, 2, c._name);
