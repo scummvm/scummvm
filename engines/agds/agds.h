@@ -124,7 +124,7 @@ public:
 	void runObject(const ObjectPtr &object);
 	void runProcess(const ObjectPtr &object, uint ip = 0);
 	void stopProcess(const Common::String & name);
-	void reactivate(const Common::String &name, bool runNow = false);
+	void reactivate(const Common::String &name, const char *where, bool runNow = false);
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name, ScreenLoadingType type, bool savePatch = true);
