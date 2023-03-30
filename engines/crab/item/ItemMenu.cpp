@@ -69,6 +69,7 @@ void ItemMenu::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 		i->SaveState(doc, root);
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handles drag n' drop - return type is Boolean because we only need to communicate stat changes
 //------------------------------------------------------------------------
@@ -80,6 +81,7 @@ void ItemMenu::HandleEvents(const SDL_Event &Event, const int &XOffset, const in
 			element.at(i).State(i == select_index);
 	}
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Draw the slot backgrounds first, then the items

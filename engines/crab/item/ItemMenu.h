@@ -70,7 +70,9 @@ public:
 	void Init(const ItemSlot &ref, const Vector2i &inc, const unsigned int &rows,
 			  const unsigned int &cols, const bool &keyboard);
 
+#if 0
 	void HandleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
+#endif
 	/* pyrodactyl::people::Person &obj,*/
 
 	bool Swap(ItemMenu &target, int index);
