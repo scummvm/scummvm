@@ -602,7 +602,7 @@ void Process::fadeObject() {
 
 void Process::onObjectUse(uint16 size) {
 	Common::String arg = popString();
-	debug("register use object handler %s -> 0x%04x", arg.c_str(), _ip);
+	debug("use [handler] on %s -> 0x%04x", arg.c_str(), _ip);
 	_object->setUseHandler(arg, _ip);
 	_ip += size;
 }
