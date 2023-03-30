@@ -31,6 +31,8 @@ MODULE_OBJS = \
 	stat/Stat.o \
 	stat/StatDrawHelper.o \
 	stat/StatTemplate.o \
+	text/color.o \
+	text/TextManager.o \
 	timer.o \
 	app.o \
 	splash.o
