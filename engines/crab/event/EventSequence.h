@@ -34,9 +34,10 @@
 
 #include "crab/event/GameEventInfo.h"
 #include "crab/image/ImageManager.h"
-#include "crab/ui/Inventory.h"
+#include "crab/music/MusicManager.h"
+//#include "crab/ui/Inventory.h"
 #include "crab/event/gameevent.h"
-#include "crab/ui/journal.h"
+//#include "crab/ui/journal.h"
 
 namespace Crab {
 

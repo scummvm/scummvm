@@ -31,10 +31,10 @@
 #ifndef CRAB_GAMEEVENTINFO_H
 #define CRAB_GAMEEVENTINFO_H
 
-#include "crab/ui/Inventory.h"
+//#include "crab/ui/Inventory.h"
 #include "crab/stat/StatTemplate.h"
 #include "crab/common_header.h"
-#include "crab/ui/journal.h"
+//#include "crab/ui/journal.h"
 #include "crab/people/person.h"
 
 namespace Crab {
@@ -79,10 +79,10 @@ class Info {
 
 public:
 	// The player's one stop shop for objectives and lore
-	pyrodactyl::ui::Journal journal;
+	//pyrodactyl::ui::Journal journal;
 
 	// The current player inventory
-	pyrodactyl::ui::Inventory inv;
+	//pyrodactyl::ui::Inventory inv;
 
 	// This structure keeps track of unread indicators
 	struct UnreadData {
@@ -184,10 +184,12 @@ public:
 
 	// Draw the inventory
 	void InvDraw(const std::string &id) {
+#if 0
 		if (var.count(money_var) > 0)
 			inv.Draw(people.at(id), var.at(money_var));
 		else
 			inv.Draw(people.at(id), 0);
+#endif
 	}
 
 	// Get whether game is iron man or not

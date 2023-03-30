@@ -31,7 +31,7 @@
 #ifndef CRAB_COMMON_HEADER_H
 #define CRAB_COMMON_HEADER_H
 
-//#include <algorithm>
+#include <algorithm>
 #include <cmath>
 //#include <ctime>
 #include <deque>

@@ -39,6 +39,9 @@ using namespace pyrodactyl::event;
 // Purpose: Load
 //------------------------------------------------------------------------
 void EventSequence::Load(const std::string &filename) {
+	warning("STUB: EventSequence::Load()");
+
+#if 0
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("events");
@@ -47,6 +50,7 @@ void EventSequence::Load(const std::string &filename) {
 			events.push_back(e);
 		}
 	}
+#endif
 }
 
 //------------------------------------------------------------------------

@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/event/GameEventInfo.h"
 #include "crab/event/eventstore.h"
 
@@ -48,6 +49,9 @@ using namespace pyrodactyl::event;
 // Purpose: Load from xml
 //------------------------------------------------------------------------
 void Info::Load(rapidxml::xml_node<char> *node) {
+	warning("STUB: Info::Load()");
+
+#if 0
 	if (NodeValid("people", node)) {
 		rapidxml::xml_node<char> *pnode = node->first_node("people");
 
@@ -76,9 +80,13 @@ void Info::Load(rapidxml::xml_node<char> *node) {
 
 	CurLocID(node->first_node("level")->first_attribute("start")->value());
 	inv.ItemFile(node->first_node("item")->first_attribute("list")->value());
+#endif
 }
 
 void Info::LoadPeople(const std::string &filename) {
+	warning("STUB: Info::LoadPeople()");
+
+#if 0
 	XMLDoc conf(filename);
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("people");
@@ -90,6 +98,7 @@ void Info::LoadPeople(const std::string &filename) {
 			}
 		}
 	}
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -329,6 +338,9 @@ std::string Info::GetName(const std::string &id) {
 // Purpose: Save and load object state
 //------------------------------------------------------------------------
 void Info::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root) {
+	warning("Info::SaveState()");
+
+#if 0
 	for (auto v = var.begin(); v != var.end(); ++v) {
 		rapidxml::xml_node<char> *child = doc.allocate_node(rapidxml::node_element, "var");
 		child->append_attribute(doc.allocate_attribute("id", v->first.c_str()));
@@ -358,9 +370,13 @@ void Info::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *ro
 
 	journal.SaveState(doc, root);
 	inv.SaveState(doc, root);
+#endif
 }
 
 void Info::LoadState(rapidxml::xml_node<char> *node) {
+	warning("STUB: Info::LoadState()");
+
+#if 0
 	for (rapidxml::xml_node<char> *v = node->first_node("var"); v != NULL; v = v->next_sibling("var"))
 		var[v->first_attribute("id")->value()] = StringToNumber<int>(v->first_attribute("val")->value());
 
@@ -386,14 +402,19 @@ void Info::LoadState(rapidxml::xml_node<char> *node) {
 
 	journal.LoadState(node);
 	inv.LoadState(node);
+#endif
 }
 
 //------------------------------------------------------------------------
 // Purpose: Calculate UI positions after change in screen size
 //------------------------------------------------------------------------
 void Info::SetUI() {
+	warning("STUB: Info::SetUI()");
+
+#if 0
 	journal.SetUI();
 	inv.SetUI();
+#endif
 }
 
 } // End of namespace Crab
