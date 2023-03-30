@@ -47,7 +47,8 @@ void Inventory::visible(bool visible) {
 			_engine->runObject(inv_close);
 	} else {
 		debug("opening inventory...");
-		removeGaps();
+		if (!_engine->currentInventoryObject())
+			removeGaps();
 		Common::String inv_open = _engine->getSystemVariable("inv_open")->getString();
 		if (!inv_open.empty())
 			_engine->runObject(inv_open);
