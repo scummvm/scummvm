@@ -13,10 +13,13 @@ MODULE_OBJS = \
 	image/ImageManager.o \
 	input/cursor.o \
 	item/Item.o \
-	item/ItemCollection.o \
-	item/ItemMenu.o \
-	item/ItemSlot.o \
-	item/StatPreview.o \
+	people/opinion.o \
+	people/person.o \
+	people/personbase.o \
+	people/trait.o \
+	stat/Stat.o \
+	stat/StatDrawHelper.o \
+	stat/StatTemplate.o \
 	timer.o \
 	app.o \
 	splash.o
