@@ -32,7 +32,7 @@
 #define CRAB_STATDRAWHELPER_H
 #include "crab/common_header.h"
 
-#include "crab/ui/TextData.h"
+//#include "crab/ui/TextData.h"
 #include "crab/people/person.h"
 
 namespace Crab {
@@ -41,10 +41,10 @@ namespace pyrodactyl {
 namespace stat {
 struct StatInfo {
 	// Used to draw stat value and description
-	pyrodactyl::ui::TextData desc;
+	//pyrodactyl::ui::TextData desc;
 	std::string text;
 
-	Rect dim;
+	//Rect dim;
 	ImageKey full, empty;
 	bool active;
 

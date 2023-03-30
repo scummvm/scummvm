@@ -33,7 +33,7 @@
 #include "crab/common_header.h"
 
 #include "crab/image/ImageManager.h"
-#include "crab/text/TextManager.h"
+//#include "crab/text/TextManager.h"
 
 namespace Crab {
 

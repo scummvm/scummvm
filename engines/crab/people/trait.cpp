@@ -39,7 +39,7 @@ using namespace pyrodactyl::people;
 //------------------------------------------------------------------------
 void Trait::Load(rapidxml::xml_node<char> *node) {
 	LoadStr(id_str, "id", node);
-	id = StringToNumber<int>(id_str);
+	id = StringToNumber<int>(id_str.c_str());
 
 	LoadStr(name, "name", node);
 	LoadStr(desc, "desc", node);
