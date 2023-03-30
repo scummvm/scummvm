@@ -614,21 +614,22 @@ Common::Error AGDSEngine::run() {
 									if (ip)
 										debug("found use handler");
 								}
-								if (!ip) {
+								if (!ip && !_currentInventoryObject) {
 									ip = object->getClickHandler();
 									if (ip) {
 										debug("found click handler");
 										runObject = object;
 									}
 								}
-							} else {
+							} else if (!_currentInventoryObject) {
 								ip = object->getExamineHandler();
 								if (ip) {
 									debug("found examine handler");
 									runObject = object;
 								}
 							}
-
+							if (runObject)
+								break;
 						}
 					}
 					if (runObject) {
