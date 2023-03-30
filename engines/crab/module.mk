@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	image/ImageManager.o \
 	input/cursor.o \
 	item/Item.o \
+	music/MusicManager.o \
 	people/opinion.o \
 	people/person.o \
 	people/personbase.o \
