@@ -43,6 +43,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Absturz beim Laden von Spielständen in Ultima VI behoben, der auftritt, wenn Dialoge geöffnet sind.
    - Sortierung der erzeugten Items in Ultima VI korrigiert.
    - Automatische Ausrüstung von Wurf-Waffen in Ultima VI korrigiert.
+   - Absturz in Ultima VI beim Öffnen der neuen Zauberbuch-Oberfläche behoben.
+   - Fehlerhafte Farbdarstellung bei Charakteren und der Benutzeroberfläche in Ultima VI korrigiert.
+   - Absturz in Ultima VI behoben, der auftritt, wenn Wände betrachtet werden.
 
  Voyeur:
    - Unterstützung für die deutsche Fan-Übersetzung hinzugefügt.
