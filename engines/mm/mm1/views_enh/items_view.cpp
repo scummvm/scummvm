@@ -72,11 +72,13 @@ void ItemsView::draw() {
 	// Draw button text
 	setReduced(true);
 	for (uint i = 0; i < _btnText.size(); ++i) {
-		Common::Point pt(i * BUTTON_WIDTH + 5, 123);
-		if (i == (_btnText.size() - 1))
-			pt.x = EXIT_X;
+		if (isButtonEnabled(i)) {
+			Common::Point pt(i * BUTTON_WIDTH + 5, 123);
+			if (i == (_btnText.size() - 1))
+				pt.x = EXIT_X;
 
-		writeString(pt.x + 12, pt.y, _btnText[i], ALIGN_MIDDLE);
+			writeString(pt.x + 12, pt.y, _btnText[i], ALIGN_MIDDLE);
+		}
 	}
 
 	// List the items

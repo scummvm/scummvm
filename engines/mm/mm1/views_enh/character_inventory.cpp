@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_inventory.h"
+#include "mm/mm1/views_enh/combat.h"
 #include "mm/mm1/views_enh/game_messages.h"
 #include "mm/mm1/views_enh/trade.h"
 #include "mm/mm1/views_enh/which_item.h"
@@ -45,6 +46,10 @@ CharacterInventory::CharacterInventory() : ItemsView("CharacterInventory") {
 bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 	ItemsView::msgFocus(msg);
 	assert(g_globals->_currCharacter);
+
+	bool inCombat = g_events->isInCombat();
+	for (int i = 2; i < 7; ++i)
+		setButtonEnabled(i, !inCombat);
 
 	if (dynamic_cast<WhichItem *>(msg._priorView) == nullptr &&
 		dynamic_cast<Trade *>(msg._priorView) == nullptr &&
@@ -104,32 +109,39 @@ bool CharacterInventory::msgKeypress(const KeypressMessage &msg) {
 		_mode = ARMS_MODE;
 		populateItems();
 		redraw();
-		break;
+		return true;
 	case Common::KEYCODE_b:
 		_mode = BACKPACK_MODE;
 		populateItems();
 		redraw();
-		break;
-	case Common::KEYCODE_e:
-		selectButton(BTN_EQUIP);
-		break;
-	case Common::KEYCODE_r:
-		selectButton(BTN_REMOVE);
-		break;
-	case Common::KEYCODE_d:
-		selectButton(BTN_DISCARD);
-		break;
-	case Common::KEYCODE_t:
-		addView("Trade");
-		break;
-	case Common::KEYCODE_u:
-		selectButton(BTN_USE);
-		break;
+		return true;
 	default:
-		return ItemsView::msgKeypress(msg);
+		break;
 	}
 
-	return true;
+	if (!g_events->isInCombat()) {
+		switch (msg.keycode) {
+		case Common::KEYCODE_e:
+			selectButton(BTN_EQUIP);
+			return true;
+		case Common::KEYCODE_r:
+			selectButton(BTN_REMOVE);
+			return true;
+		case Common::KEYCODE_d:
+			selectButton(BTN_DISCARD);
+			return true;
+		case Common::KEYCODE_t:
+			addView("Trade");
+			return true;
+		case Common::KEYCODE_u:
+			selectButton(BTN_USE);
+			return true;
+		default:
+			break;
+		}
+	}
+
+	return ItemsView::msgKeypress(msg);
 }
 
 bool CharacterInventory::msgAction(const ActionMessage &msg) {
@@ -172,7 +184,9 @@ void CharacterInventory::charSwitched(Character *priorChar) {
 }
 
 void CharacterInventory::itemSelected() {
-	// No implementation
+	if (g_events->isInCombat() && dynamic_cast<Combat *>(g_events) != nullptr) {
+		useItem();
+	}
 }
 
 void CharacterInventory::selectButton(SelectedButton btnMode) {

@@ -149,6 +149,13 @@ public:
 	}
 
 	/**
+	 * Return true if a button is enabled
+	 */
+	bool isButtonEnabled(int buttonNum) const {
+		return _buttons[buttonNum]._enabled;
+	}
+
+	/**
 	 * Set a button's position
 	 */
 	void setButtonPos(int buttonNum, const Common::Point &pos) {
