@@ -564,7 +564,7 @@ void Process::attachInventoryObjectToMouse(bool flag) {
 }
 
 void Process::returnCurrentInventoryObject() {
-	auto object = _engine->currentInventoryObject();
+	auto object = _engine->popCurrentInventoryObject();
 	if (!object) {
 		warning("no current inventory object");
 		return;

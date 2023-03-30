@@ -66,8 +66,6 @@ public:
 		return _enabled;
 	}
 	void enable(bool enabled) {
-		if (!enabled)
-			visible(false);
 		_enabled = enabled;
 	}
 

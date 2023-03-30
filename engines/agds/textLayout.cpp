@@ -4,6 +4,7 @@
 #include "agds/character.h"
 #include "agds/object.h"
 #include "agds/process.h"
+#include "agds/systemVariable.h"
 #include "common/debug.h"
 
 namespace AGDS {
@@ -29,7 +30,9 @@ void TextLayout::reset(AGDSEngine &engine) {
 			engine.setGlobal(var, 0);
 		}
 		engine.reactivate(_process);
-		engine.inventory().enable(true);
+		if (engine.getSystemVariable("tell_close_inv")->getInteger()) {
+			engine.inventory().enable(true);
+		}
 	}
 }
 

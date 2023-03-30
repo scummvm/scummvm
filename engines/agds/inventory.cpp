@@ -40,12 +40,12 @@ void Inventory::visible(bool visible) {
 
 	_visible = visible;
 
-	if (!_enabled || !visible) {
+	if (!visible) {
 		debug("closing inventory...");
 		Common::String inv_close = _engine->getSystemVariable("inv_close")->getString();
 		if (!inv_close.empty())
 			_engine->runObject(inv_close);
-	} else if (enabled() && visible) {
+	} else {
 		debug("opening inventory...");
 		removeGaps();
 		Common::String inv_open = _engine->getSystemVariable("inv_open")->getString();
@@ -142,6 +142,9 @@ int Inventory::find(const Common::String &name) const {
 }
 
 ObjectPtr Inventory::find(const Common::Point pos) const {
+	if (!_enabled)
+		return {};
+
 	for (uint i = 0; i < _entries.size(); ++i) {
 		auto & entry = _entries[i];
 		if (!entry.object)
@@ -156,7 +159,7 @@ ObjectPtr Inventory::find(const Common::Point pos) const {
 				return object;
 		}
 	}
-	return ObjectPtr();
+	return {};
 }
 
 void Inventory::clear() {
