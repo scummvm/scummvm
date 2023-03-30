@@ -45,6 +45,9 @@ TextManager gTextManager;
 // Purpose: Initialize, set cache etc
 //------------------------------------------------------------------------
 void TextManager::Init() {
+	warning("STUB: TextManager::Init()");
+
+#if 0
 	// First, delete everything that exists
 	Quit();
 
@@ -77,6 +80,7 @@ void TextManager::Init() {
 	}
 
 	colpool.Load(gFilePath.colors);
+#endif
 }
 
 void TextManager::Reset() {
@@ -110,18 +114,23 @@ int TextManager::FindFreeSlot() {
 //------------------------------------------------------------------------
 // Purpose: Render the SDL surface for text
 //------------------------------------------------------------------------
+#if 0
 SDL_Surface *TextManager::RenderTextBlended(const FontKey &font, const std::string &text, const int &color) {
 	if (text.empty())
 		return TTF_RenderText_Blended(GetFont(font), " ", colpool.Get(color));
 
 	return TTF_RenderText_Blended(GetFont(font), text.c_str(), colpool.Get(color));
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Draw text
 //------------------------------------------------------------------------
 void TextManager::Draw(const int &x, const int &y, const std::string &text, const int &color,
 					   const FontKey &font, const Align &align, const bool &background) {
+	warning("STUB: TextManager::Draw()");
+
+#if 0
 	int pos = Search(text, color, font);
 	if (pos == -1) {
 		pos = FindFreeSlot();
@@ -172,6 +181,7 @@ void TextManager::Draw(const int &x, const int &y, const std::string &text, cons
 		else
 			cache[pos].img.Draw(x - cache[pos].img.W(), y);
 	}
+#endif
 }
 
 void TextManager::Draw(const int &x, int y, const std::string &text, const int &color, const FontKey &font, const Align &align,
@@ -214,6 +224,9 @@ void TextManager::Draw(const int &x, int y, const std::string &text, const int &
 // Purpose: Quit
 //------------------------------------------------------------------------
 void TextManager::Quit() {
+	warning("TextManager::Quit()");
+
+#if 0
 	for (auto i = font.begin(); i != font.end(); ++i)
 		TTF_CloseFont(*i);
 
@@ -223,6 +236,7 @@ void TextManager::Quit() {
 			i->empty = true;
 		}
 	}
+#endif
 }
 
 } // End of namespace Crab
