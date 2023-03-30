@@ -217,6 +217,7 @@ struct SoundInstance {
 
 	bool is3D;
 	bool isLooping;
+	bool isSpeech;
 	int32 x;
 	int32 y;
 	int32 z;
@@ -539,7 +540,7 @@ private:
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride, const Fraction &defaultFrameRate);
 
 	void setSound3DParameters(SoundInstance &sound, int32 x, int32 y, const SoundParams3D &soundParams3D);
-	void triggerSound(bool looping, SoundInstance &sound, uint volume, int32 balance, bool is3D);
+	void triggerSound(bool looping, SoundInstance &sound, uint volume, int32 balance, bool is3D, bool isSpeech);
 	void triggerSoundRamp(SoundInstance &sound, uint durationMSec, uint newVolume, bool terminateOnCompletion);
 	void stopSound(SoundInstance &sound);
 	void updateSounds(uint32 timestamp);

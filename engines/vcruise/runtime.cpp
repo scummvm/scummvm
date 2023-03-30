@@ -275,7 +275,7 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 
 			sample->memoryStream.reset(new Common::MemoryReadStream(&sample->soundData[0], static_cast<uint32>(size)));
 			sample->audioStream.reset(Audio::makeWAVStream(sample->memoryStream.get(), DisposeAfterUse::NO));
-			sample->audioPlayer.reset(new AudioPlayer(mixer, sample->audioStream));
+			sample->audioPlayer.reset(new AudioPlayer(mixer, sample->audioStream, Audio::Mixer::kSFXSoundType));
 
 			this->sounds[keyValue.key] = sample;
 		}
@@ -379,7 +379,7 @@ SoundCache::~SoundCache() {
 
 SoundInstance::SoundInstance()
 	: id(0), rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
-	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), x(0), y(0), z(0), endTime(0) {
+	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), isSpeech(false), x(0), y(0), z(0), endTime(0) {
 }
 
 SoundInstance::~SoundInstance() {
@@ -1924,7 +1924,7 @@ void Runtime::changeMusicTrack(int track) {
 		if (Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(wavFile, DisposeAfterUse::YES)) {
 			Common::SharedPtr<Audio::AudioStream> loopingStream(Audio::makeLoopingAudioStream(audioStream, 0));
 
-			_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream));
+			_musicPlayer.reset(new AudioPlayer(_mixer, loopingStream, Audio::Mixer::kMusicSoundType));
 			_musicPlayer->play(100, 0);
 		}
 	} else {
@@ -2036,11 +2036,12 @@ void Runtime::setSound3DParameters(SoundInstance &snd, int32 x, int32 y, const S
 	snd.params3D = soundParams3D;
 }
 
-void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 balance, bool is3D) {
+void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 balance, bool is3D, bool isSpeech) {
 	snd.volume = volume;
 	snd.balance = balance;
 	snd.is3D = is3D;
 	snd.isLooping = looping;
+	snd.isSpeech = isSpeech;
 
 	computeEffectiveVolumeAndBalance(snd);
 
@@ -2060,6 +2061,8 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 
 	if (looping && !cache->loopingStream)
 		cache->loopingStream.reset(new Audio::LoopingAudioStream(cache->stream.get(), 0, DisposeAfterUse::NO, true));
 
+	const Audio::Mixer::SoundType soundType = (isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType);
+
 	if (cache->player) {
 		// If there is already a player and this is non-looping, start over
 		if (!looping) {
@@ -2071,7 +2074,7 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 
 			cache->player->setVolumeAndBalance(snd.effectiveVolume, snd.effectiveBalance);
 		}
 	} else {
-		cache->player.reset(new AudioPlayer(_mixer, looping ? cache->loopingStream.staticCast<Audio::AudioStream>() : cache->stream.staticCast<Audio::AudioStream>()));
+		cache->player.reset(new AudioPlayer(_mixer, looping ? cache->loopingStream.staticCast<Audio::AudioStream>() : cache->stream.staticCast<Audio::AudioStream>(), soundType));
 		cache->player->play(snd.effectiveVolume, snd.effectiveBalance);
 	}
 
@@ -3267,7 +3270,7 @@ void Runtime::scriptOpSoundS1(ScriptArg_t arg) {
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
-		triggerSound(false, *cachedSound, 100, 0, false);
+		triggerSound(false, *cachedSound, 100, 0, false, false);
 }
 
 void Runtime::scriptOpSoundS2(ScriptArg_t arg) {
@@ -3279,7 +3282,7 @@ void Runtime::scriptOpSoundS2(ScriptArg_t arg) {
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
-		triggerSound(false, *cachedSound, sndParamArgs[0], 0, false);
+		triggerSound(false, *cachedSound, sndParamArgs[0], 0, false, false);
 }
 
 void Runtime::scriptOpSoundS3(ScriptArg_t arg) {
@@ -3291,7 +3294,7 @@ void Runtime::scriptOpSoundS3(ScriptArg_t arg) {
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
-		triggerSound(false, *cachedSound, sndParamArgs[0], sndParamArgs[1], false);
+		triggerSound(false, *cachedSound, sndParamArgs[0], sndParamArgs[1], false, false);
 }
 
 void Runtime::scriptOpSoundL1(ScriptArg_t arg) {
@@ -3302,7 +3305,7 @@ void Runtime::scriptOpSoundL1(ScriptArg_t arg) {
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
-		triggerSound(true, *cachedSound, 100, 0, false);
+		triggerSound(true, *cachedSound, 100, 0, false, false);
 }
 
 void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
@@ -3314,7 +3317,7 @@ void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
-		triggerSound(true, *cachedSound, sndParamArgs[0], 0, false);
+		triggerSound(true, *cachedSound, sndParamArgs[0], 0, false, false);
 }
 
 void Runtime::scriptOpSoundL3(ScriptArg_t arg) {
@@ -3326,7 +3329,7 @@ void Runtime::scriptOpSoundL3(ScriptArg_t arg) {
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
 	if (cachedSound)
-		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], false);
+		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], false, false);
 }
 
 void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
@@ -3339,7 +3342,7 @@ void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
 
 	if (cachedSound) {
 		setSound3DParameters(*cachedSound, sndParamArgs[1], sndParamArgs[2], _pendingSoundParams3D);
-		triggerSound(true, *cachedSound, sndParamArgs[0], 0, true);
+		triggerSound(true, *cachedSound, sndParamArgs[0], 0, true, false);
 	}
 }
 
@@ -3353,7 +3356,7 @@ void Runtime::scriptOp3DSoundL3(ScriptArg_t arg) {
 
 	if (cachedSound) {
 		setSound3DParameters(*cachedSound, sndParamArgs[2], sndParamArgs[3], _pendingSoundParams3D);
-		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], true);
+		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], true, false);
 	}
 }
 
@@ -3367,7 +3370,7 @@ void Runtime::scriptOp3DSoundS2(ScriptArg_t arg) {
 
 	if (cachedSound) {
 		setSound3DParameters(*cachedSound, sndParamArgs[1], sndParamArgs[2], _pendingSoundParams3D);
-		triggerSound(false, *cachedSound, sndParamArgs[0], 0, true);
+		triggerSound(false, *cachedSound, sndParamArgs[0], 0, true, false);
 	}
 }
 
@@ -3615,7 +3618,7 @@ void Runtime::scriptOpSay1(ScriptArg_t arg) {
 	// uint cycleLength = sndParamArgs[1];
 
 	if (cachedSound)
-		triggerSound(false, *cachedSound, 100, 0, false);
+		triggerSound(false, *cachedSound, 100, 0, false, true);
 }
 
 void Runtime::scriptOpSay3(ScriptArg_t arg) {
@@ -3636,7 +3639,7 @@ void Runtime::scriptOpSay3(ScriptArg_t arg) {
 			error("Invalid interrupt arg for say3, only 1 is supported.");
 
 		if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
-			triggerSound(false, *cachedSound, 100, 0, false);
+			triggerSound(false, *cachedSound, 100, 0, false, true);
 			_triggeredOneShots.push_back(oneShot);
 		}
 	}
@@ -3660,7 +3663,7 @@ void Runtime::scriptOpSay3Get(ScriptArg_t arg) {
 			error("Invalid interrupt arg for say3, only 1 is supported.");
 
 		if (Common::find(_triggeredOneShots.begin(), _triggeredOneShots.end(), oneShot) == _triggeredOneShots.end()) {
-			triggerSound(false, *cachedSound, 100, 0, false);
+			triggerSound(false, *cachedSound, 100, 0, false, true);
 			_triggeredOneShots.push_back(oneShot);
 			_scriptStack.push_back(StackValue(soundID));
 		} else
