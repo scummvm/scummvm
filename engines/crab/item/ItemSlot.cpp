@@ -103,6 +103,9 @@ void ItemSlot::LoadState(rapidxml::xml_node<char> *node) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void ItemSlot::Draw() {
+
+	warning("STUB: ItemSlot::Draw()");
+#if 0
 	StateButton::Draw();
 
 	if (!empty)
@@ -110,8 +113,10 @@ void ItemSlot::Draw() {
 
 	if (unread)
 		pyrodactyl::image::gImageManager.NotifyDraw(x + w, y);
+#endif
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
@@ -122,6 +127,7 @@ ButtonAction ItemSlot::HandleEvents(const SDL_Event &Event, const int &XOffset, 
 
 	return ac;
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Exchange items with another slot

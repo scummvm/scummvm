@@ -12,6 +12,11 @@ MODULE_OBJS = \
 	image/Image.o \
 	image/ImageManager.o \
 	input/cursor.o \
+	item/Item.o \
+	item/ItemCollection.o \
+	item/ItemMenu.o \
+	item/ItemSlot.o \
+	item/StatPreview.o \
 	timer.o \
 	app.o \
 	splash.o

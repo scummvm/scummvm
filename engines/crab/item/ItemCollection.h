@@ -70,7 +70,10 @@ public:
 	~ItemCollection() {}
 
 	void Load(rapidxml::xml_node<char> *node);
+
+#if 0
 	void HandleEvents(const std::string &char_id, const SDL_Event &Event);
+#endif
 
 	void Init(const std::string &char_id);
 	void Draw(const std::string &char_id);
