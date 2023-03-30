@@ -147,7 +147,10 @@ ObjectPtr Screen::find(const Common::String &name) {
 bool Screen::remove(const ObjectPtr &object) {
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		if (*i == object) {
-			_children.erase(i);
+			if (object->locked())
+				object->alive(false);
+			else
+				_children.erase(i);
 			return true;
 		}
 	}
@@ -158,7 +161,10 @@ bool Screen::remove(const Common::String &name) {
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		const ObjectPtr & object = *i;
 		if (object->getName() == name) {
-			_children.erase(i);
+			if (object->locked())
+				object->alive(false);
+			else
+				_children.erase(i);
 			return true;
 		}
 	}
