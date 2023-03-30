@@ -811,7 +811,7 @@ void AGDSEngine::skipFilm() {
 	}
 	_tellTextTimer = 0;
 	_textLayout.reset(*this);
-	reactivate(_filmProcess);
+	reactivate(_filmProcess, "skipFilm");
 }
 
 int AGDSEngine::appendToSharedStorage(const Common::String &value) {
@@ -1350,14 +1350,14 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 }
 
 
-void AGDSEngine::reactivate(const Common::String &name, bool runNow) {
+void AGDSEngine::reactivate(const Common::String &name, const char *where, bool runNow) {
 	if (name.empty())
 		return;
 
 	for(uint i = 0; i < _processes.size(); ++i) {
 		ProcessPtr &process = _processes[i];
 		if (process && process->getName() == name) {
-			debug("reactivate %s now: %d", name.c_str(), runNow);
+			debug("reactivate %s now: %d, %s", name.c_str(), runNow, where);
 			process->activate();
 			if (runNow)
 				process->run();

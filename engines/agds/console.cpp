@@ -91,7 +91,7 @@ bool Console::activate(int argc, const char **argv) {
 		debugPrintf("usage: %s object_id\n", argv[0]);
 		return true;
 	}
-	_engine->reactivate(argv[1]);
+	_engine->reactivate(argv[1], "console");
 	detach();
 	return false;
 }

@@ -132,7 +132,7 @@ bool Dialog::tick() {
 
 		debug("end of dialog, running %s", _dialogParentProcessName.c_str());
 		dialog_var->setInteger(-2);
-		_engine->reactivate(_dialogParentProcessName);
+		_engine->reactivate(_dialogParentProcessName, "end of dialog");
 		_dialogParentProcessName.clear();
 		return false;
 	}
@@ -204,7 +204,7 @@ void Dialog::processDirective(Common::String line) {
 			}
 			debug("dialog value %s = %d (0x%04x), sample index: %d", line.c_str(), value, value, _currentSoundIndex);
 			_engine->getSystemVariable("dialog_var")->setInteger(value);
-			_engine->reactivate(_dialogProcessName, true);
+			_engine->reactivate(_dialogProcessName, "dialog", true);
 		} else
 			warning("invalid dialog directive: %s", line.c_str());
 	}

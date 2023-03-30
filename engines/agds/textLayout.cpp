@@ -29,7 +29,7 @@ void TextLayout::reset(AGDSEngine &engine) {
 		if (!var.empty()) {
 			engine.setGlobal(var, 0);
 		}
-		engine.reactivate(_process);
+		engine.reactivate(_process, "text layout reset");
 		if (engine.getSystemVariable("tell_close_inv")->getInteger()) {
 			engine.inventory().enable(true);
 		}

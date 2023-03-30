@@ -219,7 +219,7 @@ void Character::tick() {
 			_frames = 0;
 			direction(_direction);
 		}
-		_engine->reactivate(_processName, true);
+		_engine->reactivate(_processName, "character", true);
 	}
 }
 

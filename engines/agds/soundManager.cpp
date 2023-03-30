@@ -56,7 +56,7 @@ void SoundManager::tick() {
 				_engine->setGlobal(phaseVar, 0);
 			}
 		} else if (!active)
-			_engine->reactivate(sound.process);
+			_engine->reactivate(sound.process, "sound inactive");
 	}
 }
 
@@ -128,7 +128,7 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 		if (!phaseVar.empty())
 			_engine->setGlobal(phaseVar, _engine->getGlobal(phaseVar)? 1: 0);
 		else
-			_engine->reactivate(process);
+			_engine->reactivate(process, "no sound");
 		return -1;
 	}
 	Audio::SoundHandle handle;
