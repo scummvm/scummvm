@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-29 23:13+0000\n"
-"PO-Revision-Date: 2023-03-15 01:34+0000\n"
+"PO-Revision-Date: 2023-03-31 04:35+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -1596,14 +1596,12 @@ msgid "ScummVM config path: "
 msgstr "Directori de configuració de ScummVM: "
 
 #: gui/options.cpp:2504
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "Directori de configuració de ScummVM: "
+msgstr "Directori de registre de ScummVM: "
 
 #: gui/options.cpp:2509
 msgid "View"
-msgstr ""
+msgstr "Visualitza"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2519 gui/options.cpp:3260
@@ -1702,10 +1700,8 @@ msgid "Seed for initializing all random number generators"
 msgstr "Llavor per a inicialitzar tots els generadors de nombres aleatoris"
 
 #: gui/options.cpp:2640
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Menú de depuració"
+msgstr "Nivell de depuració:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2644 gui/options.cpp:2792
@@ -1715,7 +1711,7 @@ msgstr "Cap"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2650
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (tot)"
 
 #: gui/options.cpp:2654
 msgid "Enable Discord integration"
@@ -3549,10 +3545,8 @@ msgid "D-pad Right"
 msgstr "D-pad dreta"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "D-pad esquerra"
+msgstr "Centre del D-pad"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
@@ -4902,7 +4896,7 @@ msgstr "només dreceres del KIA"
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 #: engines/bladerunner/metaengine.cpp:210
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr ""
+msgstr "Caminar / Veure / Parlar / Seleccionar / Disparar"
 
 #. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4941,13 +4935,13 @@ msgstr "Opcions del joc"
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:264
 msgid "Open KIA Database"
-msgstr ""
+msgstr "Obre la base de dades del KIA"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
 msgid "Delete Selected Saved Game"
-msgstr ""
+msgstr "Suprimeix la partida desada seleccionada"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:296
@@ -4987,7 +4981,7 @@ msgstr "Carrega la partida"
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:348
 msgid "Crime Scene Database"
-msgstr ""
+msgstr "Base de dades de l'escena del crim"
 
 #. I18N: This keymap opens KIA's SUSPECT DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4995,7 +4989,7 @@ msgstr ""
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:357
 msgid "Suspect Database"
-msgstr ""
+msgstr "Base de dades de sospitosos"
 
 #. I18N: This keymap opens KIA's CLUE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -5003,7 +4997,7 @@ msgstr ""
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:366
 msgid "Clue Database"
-msgstr ""
+msgstr "Base de dades de pistes"
 
 #. I18N: This keymap opens KIA's QUIT GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -5053,6 +5047,7 @@ msgstr ""
 #: engines/vcruise/vcruise.cpp:249
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
+"El joc es va crear amb una nova versió de ScummVM. No s'ha pogut carregar."
 
 #: engines/cge/metaengine.cpp:39 engines/cge2/metaengine.cpp:42
 msgid "Color Blind Mode"
@@ -5083,6 +5078,8 @@ msgstr "Activa la conversió de text a veu per als objectes i les opcions"
 #: engines/twine/metaengine.cpp:157
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
+"Utilitza TTS per a llegir les descripcions (si la conversió de text a veu "
+"(TTS) està disponible)"
 
 #: engines/cge2/metaengine.cpp:67 engines/dreamweb/metaengine.cpp:73
 msgid "Enable Text to Speech for Subtitles"
@@ -5095,13 +5092,15 @@ msgstr ""
 
 #: engines/cine/metaengine.cpp:53
 msgid "Use transparent dialog boxes in 16 color scenes"
-msgstr ""
+msgstr "Usa quadres de diàleg transparents en escenes de 16 colors"
 
 #: engines/cine/metaengine.cpp:54
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
 msgstr ""
+"Usa quadres de diàleg transparents en escenes de 16 colors fins i tot si la "
+"versió original del joc no els admet"
 
 #: engines/cine/metaengine.cpp:158
 msgid "Unnamed autosave"
@@ -5158,7 +5157,7 @@ msgstr "Acció"
 
 #: engines/dragons/metaengine.cpp:143
 msgid "Change Command"
-msgstr ""
+msgstr "Canvia l'ordre"
 
 #. I18N: Action in In Cold Blood
 #: engines/dragons/metaengine.cpp:149 engines/griffon/metaengine.cpp:152
@@ -5208,27 +5207,28 @@ msgstr "Mostra els gràfics utilitzant la paleta brillant del joc"
 
 #: engines/dreamweb/metaengine.cpp:61
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
-msgstr ""
+msgstr "Activa el text a veu per a objectes, opcions i la cita de la Bíblia"
 
 #: engines/freescape/metaengine.cpp:35
 msgid "Prerecorded sounds"
-msgstr ""
+msgstr "Sons pregravats"
 
 #: engines/freescape/metaengine.cpp:36
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
+"Usa sons pregravats d'alta qualitat en lloc de l'emulació de l'altaveu del PC"
 
 #: engines/freescape/metaengine.cpp:46
 msgid "Extended timer"
-msgstr ""
+msgstr "Temporitzador ampliat"
 
 #: engines/freescape/metaengine.cpp:47
 msgid "Start the game timer at 99:59:59"
-msgstr ""
+msgstr "Inicia el temporitzador de la partida a 99:59:59"
 
 #: engines/freescape/metaengine.cpp:57
 msgid "Automatic drilling"
-msgstr ""
+msgstr "Perforació automàtica"
 
 #: engines/freescape/metaengine.cpp:58
 msgid "Allow to succefully drill in any part of the area in Driller"
@@ -5569,10 +5569,8 @@ msgid "GroovieV2 support is not compiled in"
 msgstr "No s'ha compilat el suport per a GroovieV2"
 
 #: engines/groovie/saveload.cpp:52
-#, fuzzy
-#| msgid "Run server"
 msgid "Reserved"
-msgstr "Executa el servidor"
+msgstr "Reservat"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -5646,38 +5644,28 @@ msgid "Enable Gore Mode when available"
 msgstr ""
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forward"
-msgstr "Mou endavant"
+msgstr "Endavant"
 
 #: engines/hpl1/metaengine.cpp:82
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backward"
-msgstr "Mou cap enrere"
+msgstr "Enrere"
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Strafe Left"
 msgstr "Mou a l'esquerra"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:94
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Strafe Right"
 msgstr "Mou a la dreta"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
 msgid "Lean Left"
-msgstr "Mou a l'esquerra"
+msgstr "Inclineu-vos a l'esquerra"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
 msgid "Lean Right"
-msgstr "Mou a la dreta"
+msgstr "Inclineu-vos a la dreta"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
@@ -5686,22 +5674,16 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:89 engines/icb/icb.cpp:119
 #: engines/icb/icb.cpp:185
-#, fuzzy
-#| msgid "Touch"
 msgid "Crouch"
-msgstr "Toca"
+msgstr "Ajupir-se"
 
 #: engines/hpl1/metaengine.cpp:92
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "Interaccionar"
+msgstr "Mode d'interacció"
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Look down"
 msgid "Look Mode"
-msgstr "Mira avall"
+msgstr "Mode de vista"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
@@ -5716,10 +5698,8 @@ msgid "Personal Notes"
 msgstr ""
 
 #: engines/hpl1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "Vola recte"
+msgstr "Llanterna"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
@@ -5777,17 +5757,13 @@ msgstr ""
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
-#, fuzzy
-#| msgid "Remove"
 msgid "Remora"
-msgstr "Suprimeix"
+msgstr "Remora"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "Mou a l'esquerra"
+msgstr "Pas lateral"
 
 #: engines/kyra/detection_tables.h:73
 msgid "Missing language specific game code and/or resources."
@@ -6169,10 +6145,8 @@ msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:61
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "Desbloqueja"
+msgstr "Bloqueja"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:63
@@ -6186,17 +6160,13 @@ msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:67
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "Dreta"
+msgstr "Lluita"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/mm/mm1/metaengine.cpp:110
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "Preferències"
+msgstr "Referència ràpida"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
@@ -6221,23 +6191,17 @@ msgstr ""
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:88
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "Mou endavant"
+msgstr "Endavant"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:90
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "Mou cap enrere"
+msgstr "Enrere"
 
 #: engines/mm/mm1/metaengine.cpp:98
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "Mode de combat"
+msgstr "Commuta el mapa en miniatura"
 
 #: engines/mm/mm1/metaengine.cpp:99
 msgid "Reorder Party"
@@ -6245,10 +6209,8 @@ msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "Cerca:"
+msgstr "Cerca"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:107
@@ -6261,10 +6223,8 @@ msgid "Unlock"
 msgstr "Desbloqueja"
 
 #: engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "Ubicació següent"
+msgstr "Ves a la ubicació"
 
 #: engines/mm/mm1/metaengine.cpp:127 engines/mm/mm1/metaengine.cpp:132
 msgid "Might and Magic 1 - Menus"
@@ -8371,10 +8331,8 @@ msgstr ""
 "Descomprimiu-lo, si us plau"
 
 #: engines/tetraedge/metaengine.cpp:33
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "Corregeix la relació d'aspecte dels jocs"
+msgstr "Corregeix la relació d'aspecte dels vídeos"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
@@ -8653,11 +8611,9 @@ msgid "Wall collision off"
 msgstr "Col·lisió amb parets desactivada"
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgid "Language not detected"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "No s'ha detectat l'idioma"
+msgstr "Selecció d'idioma"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
@@ -8792,16 +8748,12 @@ msgid ""
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:50
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "Transicions:"
+msgstr "Animacions més ràpides"
 
 #: engines/vcruise/metaengine.cpp:51
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Speeds up animations."
-msgstr "Opcions de veus"
+msgstr "Accelera les animacions."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
