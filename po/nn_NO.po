@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-29 18:17+0000\n"
+"POT-Creation-Date: 2023-03-29 23:13+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -3577,15 +3577,20 @@ msgstr "Skli til Venstre"
 msgid "D-pad Right"
 msgstr "Skli til Høyre"
 
-#: backends/keymapper/hardware-input.cpp:274
+#: backends/keymapper/hardware-input.cpp:270
+#, fuzzy
+msgid "D-pad Center"
+msgstr "Skli til Venstre"
+
+#: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
 msgstr ""
 
-#: backends/keymapper/hardware-input.cpp:275
+#: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
 msgstr ""
 
-#: backends/keymapper/hardware-input.cpp:276
+#: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/opendingux/opendingux.cpp:78
 #: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:59
 #: backends/platform/sdl/switch/switch.cpp:58
@@ -3593,7 +3598,7 @@ msgstr ""
 msgid "Left Stick X"
 msgstr "Venstreklikk"
 
-#: backends/keymapper/hardware-input.cpp:277
+#: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/opendingux/opendingux.cpp:79
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:60
 #: backends/platform/sdl/switch/switch.cpp:59
@@ -3601,14 +3606,14 @@ msgstr "Venstreklikk"
 msgid "Left Stick Y"
 msgstr "Venstreklikk"
 
-#: backends/keymapper/hardware-input.cpp:278
+#: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:61
 #: backends/platform/sdl/switch/switch.cpp:60
 #, fuzzy
 msgid "Right Stick X"
 msgstr "Høgreklikk"
 
-#: backends/keymapper/hardware-input.cpp:279
+#: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:62
 #: backends/platform/sdl/switch/switch.cpp:61
 #, fuzzy
@@ -9886,10 +9891,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Engine Options"
 #~ msgstr "Val"
-
-#, fuzzy
-#~ msgid "D-pad Center"
-#~ msgstr "Skli til Venstre"
 
 #, fuzzy
 #~ msgid "Cancel autosave"

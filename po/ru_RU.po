@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-29 18:17+0000\n"
+"POT-Creation-Date: 2023-03-29 23:13+0000\n"
 "PO-Revision-Date: 2023-03-25 19:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -3562,35 +3562,41 @@ msgstr "Стрелка влево"
 msgid "D-pad Right"
 msgstr "Стрелка вправо"
 
-#: backends/keymapper/hardware-input.cpp:274
+#: backends/keymapper/hardware-input.cpp:270
+#, fuzzy
+#| msgid "D-pad Left"
+msgid "D-pad Center"
+msgstr "Стрелка влево"
+
+#: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
 msgstr "Левый триггер"
 
-#: backends/keymapper/hardware-input.cpp:275
+#: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
 msgstr "Правый триггер"
 
-#: backends/keymapper/hardware-input.cpp:276
+#: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/opendingux/opendingux.cpp:78
 #: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:59
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "Left Stick X"
 msgstr "Левый стик ось X"
 
-#: backends/keymapper/hardware-input.cpp:277
+#: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/opendingux/opendingux.cpp:79
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:60
 #: backends/platform/sdl/switch/switch.cpp:59
 msgid "Left Stick Y"
 msgstr "Левый стик ось Y"
 
-#: backends/keymapper/hardware-input.cpp:278
+#: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:61
 #: backends/platform/sdl/switch/switch.cpp:60
 msgid "Right Stick X"
 msgstr "Правый стик ось X"
 
-#: backends/keymapper/hardware-input.cpp:279
+#: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:62
 #: backends/platform/sdl/switch/switch.cpp:61
 msgid "Right Stick Y"
@@ -9872,11 +9878,6 @@ msgstr ""
 
 #~ msgid "Engine Options"
 #~ msgstr "Опции движка"
-
-#, fuzzy
-#~| msgid "D-pad Left"
-#~ msgid "D-pad Center"
-#~ msgstr "Стрелка влево"
 
 #~ msgid "Overwrite"
 #~ msgstr "Перетереть"
