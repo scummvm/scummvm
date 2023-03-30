@@ -82,6 +82,15 @@ bool Globals::load(bool isEnhanced) {
 		createBlankButton();
 
 		{
+			// Load the Xeen game screen background
+			Common::File f;
+			if (!f.open("back.raw"))
+				error("Could not load background");
+			_gameBackground.create(320, 200);
+			f.read(_gameBackground.getPixels(), 320 * 200);
+		}
+
+		{
 			Common::File f;
 			if (!f.open("symbols.bin"))
 				error("Could not load symbols.bin");

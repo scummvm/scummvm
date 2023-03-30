@@ -77,6 +77,7 @@ public:
 	Shared::Xeen::SpriteResource _tileSprites;
 	Shared::Xeen::SpriteResource _escSprites;
 	Graphics::ManagedSurface _blankButton;
+	Graphics::ManagedSurface _gameBackground;
 	byte SYMBOLS[20][64];
 	XeenFont _fontNormal;
 	XeenFont _fontReduced;

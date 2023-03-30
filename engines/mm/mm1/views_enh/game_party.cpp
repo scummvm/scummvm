@@ -50,6 +50,11 @@ GameParty::GameParty(UIElement *owner) : TextView("GameParty", owner),
 
 void GameParty::draw() {
 	Graphics::ManagedSurface s = getSurface();
+
+	// Draw Xeen background
+	s.blitFrom(g_globals->_gameBackground, Common::Rect(0, 144, 320, 200),
+		Common::Point(0, 0));
+
 	_restoreSprites.draw(&s, 0, Common::Point(8, 5));
 
 	// Handle drawing the party faces

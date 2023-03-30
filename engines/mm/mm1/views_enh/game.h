@@ -35,7 +35,6 @@ namespace ViewsEnh {
 
 class Game : public Views::TextView {
 private:
-	Graphics::ManagedSurface _bg;
 	ViewsEnh::GameView _view;
 	GameCommands _commands;
 	GameParty _party;

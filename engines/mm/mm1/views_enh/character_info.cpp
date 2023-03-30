@@ -195,6 +195,7 @@ bool CharacterInfo::msgMouseUp(const MouseUpMessage &msg) {
 
 void CharacterInfo::draw() {
 	ScrollView::draw();
+
 	drawTitle();
 	drawIcons();
 	drawStats();

@@ -33,13 +33,6 @@ Game::Game() : TextView("Game"),
 		_commands(this),
 		_party(this) {
 	_view.setBounds(Common::Rect(8, 15, 224, 130));
-
-	// Load the Xeen background
-	Common::File f;
-	if (!f.open("back.raw"))
-		error("Could not load background");
-	_bg.create(320, 200);
-	f.read(_bg.getPixels(), 320 * 200);
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {
@@ -54,7 +47,7 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 
 void Game::draw() {
 	Graphics::ManagedSurface s = getSurface();
-	s.blitFrom(_bg);
+	s.blitFrom(g_globals->_gameBackground);
 
 	UIElement::draw();
 }
