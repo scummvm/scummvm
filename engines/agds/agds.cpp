@@ -582,10 +582,16 @@ Common::Error AGDSEngine::run() {
 								runObject = _currentInventoryObject;
 							}
 						} else {
-							ip = _currentInventoryObject->throwHandler();
+							ip = _currentInventoryObject->getUseHandler(_currentInventoryObject->getName());
 							if (ip) {
-								debug("found throw handler in current inventory object");
+								debug("found self use handler");
 								runObject = _currentInventoryObject;
+							} else {
+								ip = _currentInventoryObject->throwHandler();
+								if (ip) {
+									debug("found throw handler in current inventory object");
+									runObject = _currentInventoryObject;
+								}
 							}
 						}
 					}
