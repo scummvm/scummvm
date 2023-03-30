@@ -84,7 +84,7 @@ private:
 	uint							_trapHandler;
 	int								_alpha;
 	int								_scale;
-	bool							_locked;
+	uint							_locked;
 	bool							_alive;
 	bool							_persistent;
 	bool							_allowInitialise;
@@ -298,10 +298,10 @@ public:
 	}
 
 	bool locked() const {
-		return _locked;
+		return _locked != 0;
 	}
-	void lock() { _locked = true; }
-	void unlock() { _locked = false; }
+	void lock();
+	void unlock();
 
 	bool alive() const
 	{ return _alive; }

@@ -40,7 +40,7 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
                                                                                  _pos(), _z(10),
                                                                                  _clickHandler(0), _examineHandler(0), _userUseHandler(0),
 																				 _throwHandler(0), _useOnHandler(0),
-                                                                                 _alpha(255), _scale(100), _locked(false), _alive(true),
+                                                                                 _alpha(255), _scale(100), _locked(0), _alive(true),
 																				 _persistent(true), _allowInitialise(true),
 																				 _ignoreRegion(false) {
 	uint16 id = stream->readUint16LE();
@@ -65,6 +65,16 @@ Object::~Object() {
 		_picture->free();
 		delete _picture;
 	}
+}
+
+void Object::lock() {
+	++_locked;
+}
+
+void Object::unlock() {
+	if (_locked == 0)
+		error("%s: object lock counter underrun", _name.c_str());
+	--_locked;
 }
 
 void Object::freeRotated() {

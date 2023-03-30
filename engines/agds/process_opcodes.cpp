@@ -277,22 +277,11 @@ void Process::removeScreenObject() {
 		return;
 	}
 
-	auto object = screen->find(name);
-	if (object) {
-		if (object->alive()) {
-			if (name == _object->getName() || object->locked()) {
-				debug("removeScreenObject: %s: removing object from its own body (sic)", name.c_str());
-				object->alive(false);
-			} else if (screen && screen->remove(name)) {
-				int index = _engine->inventory().find(name);
-				if (index < 0)
-					_engine->stopProcess(name);
-			} else
-				warning("removeScreenObject: object %s not found", name.c_str());
-		} else
-			warning("removeScreenObject: object %s already removed", name.c_str());
-	} else
-		warning("cannot find object %s", name.c_str());
+	_object->lock();
+	if (!screen->remove(name)) {
+		warning("removeScreenObject: object %s not found", name.c_str());
+	}
+	_object->unlock();
 }
 
 void Process::loadFont() {
@@ -791,8 +780,10 @@ void Process::screenObjectPatchDecRef() {
 	} else {
 		Screen *screen = _engine->getCurrentScreen();
 		if (screen) {
+			_object->lock();
 			if (!screen->remove(objectName))
 				warning("screenRemoveObjectSavePatch: object %s not found", objectName.c_str());
+			_object->unlock();
 		}
 	}
 }
@@ -1304,7 +1295,10 @@ void Process::inventoryAddObject() {
 void Process::inventoryRemoveObject() {
 	Common::String name = popString();
 	debug("inventoryRemoveObject %s", name.c_str());
+	_object->lock();
 	_engine->inventory().remove(name);
+	_engine->getCurrentScreen()->remove(name);
+	_object->unlock();
 }
 
 void Process::inventoryFindObjectByName() {
