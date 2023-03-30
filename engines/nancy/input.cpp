@@ -40,13 +40,9 @@ void InputManager::processEvents() {
 	while (g_nancy->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case EVENT_KEYDOWN:
-			if (event.kbd.keycode == KEYCODE_q && event.kbd.flags & Common::KBD_CTRL) {
-				// Quit
-				g_nancy->quitGame();
-			} else {
-				// Push all other keyboard events into an array and let getInput() callers handle them
-				_otherKbdInput.push_back(event.kbd);
-			}
+			// Push all keyboard events into an array and let getInput() callers handle them
+			_otherKbdInput.push_back(event.kbd);
+			_inputBeginState = g_nancy->getState();
 			break;
 		case EVENT_CUSTOM_ENGINE_ACTION_START:
 			_inputBeginState = g_nancy->getState();
@@ -138,6 +134,7 @@ NancyInput InputManager::getInput() const {
 	} else {
 		ret.eatMouseInput();
 	}
+	
 	return ret;
 }
 
