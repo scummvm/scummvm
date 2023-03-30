@@ -92,5 +92,6 @@ void retroSetSaveDir(const char *aPath);
 void retroKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers);
 
 uint8 getThreadSwitchCaller(void);
+bool isInGUI(void);
 
 #endif
