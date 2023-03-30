@@ -325,6 +325,7 @@ private:
 
 	// Retrieve information
 	ValueList& getResourceFiles(const BuildSetup &setup) const;
+	std::string getLibString(std::string libName, bool xcframework) const;
 
 	// Hash generation
 	std::string getHash(std::string key);

@@ -248,6 +248,7 @@ struct BuildSetup {
 	bool useCanonicalLibNames; ///< Whether to use canonical libraries names or default ones
 	bool useStaticDetection;   ///< Whether to link detection features inside the executable or not.
 	bool useWindowsUnicode;    ///< Whether to use Windows Unicode APIs or ANSI APIs.
+	bool useXCFramework;       ///< Whether to use Apple XCFrameworks instead of static libraries
 
 	BuildSetup() {
 		devTools = false;
@@ -258,6 +259,7 @@ struct BuildSetup {
 		useCanonicalLibNames = false;
 		useStaticDetection = true;
 		useWindowsUnicode = true;
+		useXCFramework = false;
 	}
 
 	bool featureEnabled(std::string feature) const;
