@@ -56,7 +56,7 @@ Common::String UseItem::combatUseItem(Inventory &inv, Inventory::Entry &invEntry
 
 				g_globals->_party.updateAC();
 				msg = STRING["dialogs.character.use_combat.done"];
-				return false;
+				return "";
 			}
 		} else {
 			msg = STRING["dialogs.character.use_combat.no_charges_left"];
@@ -97,7 +97,7 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 
 				g_globals->_party.updateAC();
 				msg = STRING["spells.done"];
-				return false;
+				return "";
 			}
 		} else {
 			msg = STRING["dialogs.character.use_noncombat.no_charges_left"];
