@@ -9,6 +9,16 @@ MODULE_OBJS = \
 	loaders.o \
 	ScreenSettings.o \
 	GameParam.o \
+	event/conversationdata.o \
+	event/effect.o \
+	event/EventSeqGroup.o \
+	event/EventSequence.o \
+	event/eventstore.o \
+	event/gameevent.o \
+	event/GameEventInfo.o \
+	event/quest.o \
+	event/trigger.o \
+	event/triggerset.o \
 	image/Image.o \
 	image/ImageManager.o \
 	input/cursor.o \

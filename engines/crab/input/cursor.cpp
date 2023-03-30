@@ -32,6 +32,7 @@
 // Author:   Arvind
 // Purpose:  Cursor class
 //=============================================================================
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/input/cursor.h"
 
 namespace Crab {
