@@ -321,12 +321,6 @@ public:
 	 */
 	virtual void displaySpellResult(const InfoMessage &msg) = 0;
 
-	/**
-	 * Disable the flags for allowing attacks for
-	 * the current character
-	 */
-	virtual void disableAttacks() = 0;
-
 	void iterateMonsters1();
 	void iterateMonsters2();
 	void resetDestMonster();

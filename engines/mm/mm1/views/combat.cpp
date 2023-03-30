@@ -94,6 +94,10 @@ bool Combat::msgGame(const GameMessage &msg) {
 
 		setMode(SPELL_RESULT);
 		return true;
+
+	} else if (msg._name == "DISABLE_ATTACKS") {
+		disableAttacks();
+		return true;
 	}
 
 	return false;

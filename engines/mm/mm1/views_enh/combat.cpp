@@ -105,6 +105,10 @@ bool Combat::msgGame(const GameMessage &msg) {
 		if (g_globals->_combatParty[charNum] != g_globals->_currCharacter)
 			exchangeWith(charNum);
 		return true;
+
+	} else if (msg._name == "DISABLE_ATTACKS") {
+		disableAttacks();
+		return true;
 	}
 
 	return false;

@@ -65,9 +65,7 @@ Common::String UseItem::combatUseItem(Inventory &inv, Inventory::Entry &invEntry
 		msg = STRING["dialogs.character.use_combat.not_equipped"];
 	}
 
-	Game::Combat *combat = dynamic_cast<Game::Combat *>(g_events->priorView());
-	assert(combat);
-	combat->disableAttacks();
+	g_events->send("Combat", GameMessage("DISABLE_ATTACKS"));
 
 	return msg;
 }
@@ -107,10 +105,6 @@ Common::String UseItem::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEn
 	} else {
 		msg = STRING["dialogs.character.use_noncombat.not_equipped"];
 	}
-
-	Game::Combat *combat = dynamic_cast<Game::Combat *>(g_events->priorView());
-	assert(combat);
-	combat->disableAttacks();
 
 	return msg;
 }
