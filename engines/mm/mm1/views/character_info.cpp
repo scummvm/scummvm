@@ -21,7 +21,6 @@
 
 #include "mm/mm1/views/character_info.h"
 #include "mm/mm1/views/combat.h"
-#include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/utils/strings.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -109,7 +108,7 @@ void CharacterInfo::draw() {
 void CharacterInfo::timeout() {
 	switch (_state) {
 	case USE:
-		if (dynamic_cast<Views::Combat *>(g_events->priorView()) != nullptr) {
+		if (g_events->isInCombat()) {
 			close();
 		} else {
 			_state = DISPLAY;
@@ -395,92 +394,17 @@ void CharacterInfo::tradeHowMuch() {
 }
 
 void CharacterInfo::combatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped) {
-	Item *item = g_globals->_items.getItem(invEntry._id);
-	Common::String msg;
-
-	if (!item->_effectId) {
-		msg = STRING["dialogs.character.use_combat.no_special_power"];
-
-	} else if (item->_equipMode == IS_EQUIPPABLE || isEquipped) {
-		if (invEntry._charges) {
-			g_globals->_combatEffectCtr++;
-			inv.removeCharge(&invEntry);
-
-			if (item->_effectId == 0xff) {
-				setSpell(item->_spellId, 0, 0);
-				Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
-
-			} else {
-				// TODO: find out area of Character _effectId is used as an offset for
-				error("TODO: _effectId used as a character offset to increase attribute?");
-
-				if (g_globals->_combatEffectCtr)
-					(isEquipped ? &g_globals->_currCharacter->_equipped :
-						&g_globals->_currCharacter->_backpack)->removeCharge(&invEntry);
-
-				clearLines(20, 24);
-				writeString(14, 22, STRING["dialogs.character.use_combat.done"]);
-				Sound::sound(SOUND_2);
-				g_globals->_party.updateAC();
-				delaySeconds(2);
-				return;
-			}
-		} else {
-			msg = STRING["dialogs.character.use_combat.no_charges_left"];
-		}
-	} else {
-		msg = STRING["dialogs.character.use_combat.not_equipped"];
-	}
-
+	Common::String msg = Game::UseItem::combatUseItem(inv, invEntry, isEquipped);
 	clearLines(20, 24);
-	static_cast<Views::Combat *>(g_events->priorView())->disableAttacks();
-
 	writeString(8, 21, msg);
 	delaySeconds(3);
 }
 
 void CharacterInfo::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped) {
-	Item *item = g_globals->_items.getItem(invEntry._id);
-	Common::String msg;
-
-	if (!item->_effectId) {
-		msg = STRING["dialogs.character.use_noncombat.no_special_power"];
-
-	} else if (item->_equipMode == IS_EQUIPPABLE || isEquipped) {
-		if (invEntry._charges) {
-			g_globals->_nonCombatEffectCtr++;
-			inv.removeCharge(&invEntry);
-
-			if (item->_effectId == 0xff) {
-				setSpell(item->_spellId, 0, 0);
-				Game::SpellsParty::cast(_spellIndex, g_globals->_currCharacter);
-
-			} else {
-				// TODO: find out area of Character _effectId is used as an offset for
-				error("TODO: _effectId used as a character offset to increase attribute?");
-
-				if (g_globals->_nonCombatEffectCtr)
-					(isEquipped ? &g_globals->_currCharacter->_equipped :
-						&g_globals->_currCharacter->_backpack)->removeCharge(&invEntry);
-
-				clearLines(20, 24);
-				writeString(14, 22, STRING["spells.done"]);
-				Sound::sound(SOUND_2);
-				g_globals->_party.updateAC();
-				delaySeconds(2);
-				return;
-			}
-		} else {
-			msg = STRING["dialogs.character.use_noncombat.no_charges_left"];
-		}
-	} else {
-		msg = STRING["dialogs.character.use_noncombat.not_equipped"];
-	}
+	Common::String msg = Game::UseItem::nonCombatUseItem(inv, invEntry, isEquipped);
 
 	clearLines(20, 24);
-	static_cast<Views::Combat *>(g_events->priorView())->disableAttacks();
-
-	writeString(9, 21, msg);
+	writeString(8, 21, msg);
 	delaySeconds(3);
 }
 

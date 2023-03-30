@@ -230,7 +230,7 @@ public:
 	 * Disable the flags for allowing attacks for
 	 * the current character
 	 */
-	void disableAttacks();
+	void disableAttacks() override;
 
 	/**
 	 * Called when the view is focused

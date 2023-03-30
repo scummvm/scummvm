@@ -45,6 +45,7 @@ MODULE_OBJS += \
 	mm1/game/spell_casting.o \
 	mm1/game/spells_party.o \
 	mm1/game/spells_monsters.o \
+	mm1/game/use_item.o \
 	mm1/game/view_base.o \
 	mm1/gfx/dta.o \
 	mm1/gfx/gfx.o \
