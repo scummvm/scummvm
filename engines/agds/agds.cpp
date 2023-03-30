@@ -553,7 +553,15 @@ Common::Error AGDSEngine::run() {
 							region->show(this);
 						}
 					}
-					_inventory.visible(_inventoryRegion ? !_mouseMap.disabled() && _inventoryRegion->pointIn(_mouse) : false);
+					if (_inventoryRegion && _inventory.enabled()) {
+						if (_mouseMap.disabled()) {
+							_inventory.visible(false);
+						} else {
+							if (_userEnabled) {
+								_inventory.visible(_inventoryRegion->pointIn(_mouse));
+							}
+						}
+					}
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -576,7 +584,7 @@ Common::Error AGDSEngine::run() {
 						} else {
 							ip = _currentInventoryObject->throwHandler();
 							if (ip) {
-								debug("found handler in current inventory object");
+								debug("found throw handler in current inventory object");
 								runObject = _currentInventoryObject;
 							}
 						}
@@ -947,8 +955,9 @@ void AGDSEngine::addSystemVar(const Common::String &name, SystemVariable *var) {
 }
 
 void AGDSEngine::tell(Process &process, const Common::String &regionName, Common::String text, Common::String sound, bool npc) {
-	if (getSystemVariable("tell_close_inv")->getInteger())
-		_inventory.visible(false);
+	if (getSystemVariable("tell_close_inv")->getInteger()) {
+		_inventory.enable(false);
+	}
 
 	int font_id = getSystemVariable(npc? "npc_tell_font": "tell_font")->getInteger();
 	Common::Point pos;
@@ -1362,13 +1371,17 @@ void AGDSEngine::currentInventoryObject(const ObjectPtr & object) {
 	_currentInventoryObject = object;
 }
 
-void AGDSEngine::resetCurrentInventoryObject() {
+ObjectPtr AGDSEngine::popCurrentInventoryObject() {
 	auto object = _currentInventoryObject;
+	_currentInventoryObject.reset();
+	return object;
+}
+
+void AGDSEngine::resetCurrentInventoryObject() {
+	auto object = popCurrentInventoryObject();
 	if (!object)
 		return;
-
 	debug("returnCurrentInventoryObject %s", object->getName().c_str());
-	_currentInventoryObject.reset();
 	_inventory.add(object);
 	runObject(object);
 }
