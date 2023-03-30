@@ -78,7 +78,7 @@ private:
 
 	struct LibraryProps : Library {
 		LibraryProps(const char *_feature, const char *_pkgConfig = nullptr, SDLVersion _sdlVersion = kSDLVersionAny) :
-			Library({_feature, _pkgConfig, _sdlVersion, nullptr}) {}
+			Library({_feature, _pkgConfig, _sdlVersion, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}) {}
 		LibraryProps &LibrariesVar(const char *var) { librariesVar = var; return *this; }
 		LibraryProps &Libraries(const char *libs) { libraries = libs; return *this; }
 		LibraryProps &WinLibraries(const char *libs) { winLibraries = libs; return *this; }
