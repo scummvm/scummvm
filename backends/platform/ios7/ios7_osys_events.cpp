@@ -177,11 +177,12 @@ bool OSystem_iOS7::handleEvent_touchFirstDown(Common::Event &event, int x, int y
 	// secondary finger is lifted. Need to make sure we get out of that mode.
 	_secondaryTapped = false;
 
-	if (_touchpadModeEnabled) {
-		_lastPadX = x;
-		_lastPadY = y;
-	} else
+	_lastPadX = x;
+	_lastPadY = y;
+
+	if (!_touchpadModeEnabled) {
 		warpMouse(x, y);
+	}
 
 	if (_mouseClickAndDragEnabled) {
 		event.type = Common::EVENT_LBUTTONDOWN;
@@ -289,12 +290,12 @@ bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, in
 	//printf("Mouse dragged at (%u, %u)\n", x, y);
 	int mouseNewPosX;
 	int mouseNewPosY;
-	if (_touchpadModeEnabled) {
-		int deltaX = _lastPadX - x;
-		int deltaY = _lastPadY - y;
-		_lastPadX = x;
-		_lastPadY = y;
+	int deltaX = _lastPadX - x;
+	int deltaY = _lastPadY - y;
+	_lastPadX = x;
+	_lastPadY = y;
 
+	if (_touchpadModeEnabled) {
 		mouseNewPosX = (int)(_videoContext->mouseX - (int)((float)deltaX * getMouseSpeed()));
 		mouseNewPosY = (int)(_videoContext->mouseY - (int)((float)deltaY * getMouseSpeed()));
 
@@ -317,6 +318,8 @@ bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, in
 	}
 
 	event.type = Common::EVENT_MOUSEMOVE;
+	event.relMouse.x = deltaX;
+	event.relMouse.y = deltaY;
 	event.mouse.x = mouseNewPosX;
 	event.mouse.y = mouseNewPosY;
 	warpMouse(mouseNewPosX, mouseNewPosY);
