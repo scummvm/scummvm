@@ -640,17 +640,19 @@ Common::Error AGDSEngine::run() {
 						}
 					} else {
 						debug("no handler found");
-						if (_currentCharacter && _currentCharacter->active() && _currentScreen && _currentScreen->region()) {
-							auto & region = _currentScreen->region();
-							if (region->pointIn(_mouse)) {
-								// FIXME: some object requires character to be in "trap" region
-								// Remove this after movement implementation.
-								_currentCharacter->moveTo(Common::String(), _mouse, -1);
+						if (lclick) {
+							if (_currentCharacter && _currentCharacter->active() && _currentScreen && _currentScreen->region()) {
+								auto & region = _currentScreen->region();
+								if (region->pointIn(_mouse)) {
+									// FIXME: some object requires character to be in "trap" region
+									// Remove this after movement implementation.
+									_currentCharacter->moveTo(Common::String(), _mouse, -1);
+								}
 							}
+							auto scroll = _currentScreen->scrollPosition();
+							scroll.x += _mouse.x - g_system->getWidth() / 2;
+							_currentScreen->scrollTo(scroll);
 						}
-						auto scroll = _currentScreen->scrollPosition();
-						scroll.x += _mouse.x - g_system->getWidth() / 2;
-						_currentScreen->scrollTo(scroll);
 					}
 				}
 				break;
