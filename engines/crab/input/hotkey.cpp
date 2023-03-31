@@ -38,6 +38,7 @@ void HotKey::Load(rapidxml::xml_node<char> *node) {
 	LoadEnum(input, "input", node);
 }
 
+#if 0
 bool HotKey::HandleEvents(const SDL_Event &Event) {
 	if (input > IT_NONE && input < IT_TOTAL) {
 		int result = gInput.Equals(input, Event);
@@ -52,10 +53,15 @@ bool HotKey::HandleEvents(const SDL_Event &Event) {
 
 	return false;
 }
+#endif
 
 const char *HotKey::Name() {
+	warning("STUB: HotKey::Name()");
+
+#if 0
 	if (input > IT_NONE && input < IT_TOTAL)
 		return SDL_GetScancodeName(gInput.iv[input].key);
+#endif
 
 	return "";
 }

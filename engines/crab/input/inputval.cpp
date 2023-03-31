@@ -35,15 +35,23 @@ namespace Crab {
 using namespace pyrodactyl::input;
 
 InputVal::InputVal() {
+	warning("STUB: InputVal::InputVal()");
+
+#if 0
 	key = SDL_SCANCODE_UNKNOWN;
 	alt = SDL_SCANCODE_UNKNOWN;
 	c_bu = SDL_CONTROLLER_BUTTON_INVALID;
+#endif
+
 }
 
 //------------------------------------------------------------------------
 // Purpose: Load input values
 //------------------------------------------------------------------------
 void InputVal::LoadState(rapidxml::xml_node<char> *node) {
+	warning("STUB: InputVal::LoadState()");
+
+#if 0
 	LoadStr(name, "name", node);
 	LoadEnum(key, "key", node);
 	LoadEnum(alt, "alt", node);
@@ -51,12 +59,16 @@ void InputVal::LoadState(rapidxml::xml_node<char> *node) {
 
 	if (NodeValid("axis", node, false))
 		c_ax.LoadState(node->first_node("axis"));
+#endif
 }
 
 //------------------------------------------------------------------------
 // Purpose: Save them
 //------------------------------------------------------------------------
 void InputVal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *title) {
+	warning("STUB: InputVal::SaveState()");
+
+#if 0
 	rapidxml::xml_node<char> *child;
 	child = doc.allocate_node(rapidxml::node_element, title);
 
@@ -69,8 +81,10 @@ void InputVal::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 		c_ax.SaveState(doc, child);
 
 	root->append_node(child);
+#endif
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: See if we have been using the analog sticks
 //------------------------------------------------------------------------
@@ -102,5 +116,6 @@ const bool InputVal::Equals(const SDL_ControllerButtonEvent &Event) {
 const bool InputVal::Equals(const SDL_KeyboardEvent &Event) {
 	return (key == Event.keysym.scancode || alt == Event.keysym.scancode);
 }
+#endif
 
 } // End of namespace Crab

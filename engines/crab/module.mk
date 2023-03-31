@@ -22,6 +22,10 @@ MODULE_OBJS = \
 	image/Image.o \
 	image/ImageManager.o \
 	input/cursor.o \
+	input/fightinput.o \
+	input/hotkey.o \
+	input/input.o \
+	input/inputval.o \
 	item/Item.o \
 	music/MusicManager.o \
 	people/opinion.o \
