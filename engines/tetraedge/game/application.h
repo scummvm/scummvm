@@ -63,18 +63,13 @@ public:
 	void showLoadingIcon(bool show);
 	void saveCorrupted(const Common::String &fname);
 
-	void drawBack();
-	void drawFront();
 	void performRender();
-	//void preloadTextrue(); does nothing..
+	//void preloadTextrue(); does nothing
 
 	void fade();
 	void blackFade();
 	void captureFade();
 	bool isFading();
-	bool onBlackFadeAnimationFinished();
-	bool onMainWindowSizeChanged();
-	bool onMousePositionChanged(const Common::Point &p);
 
 	bool isLockCursor();
 	bool isLockPad();
@@ -87,8 +82,6 @@ public:
 	void getSavegameThumbnail(Graphics::Surface &thumb);
 
 	Common::String getHelpText(const Common::String &key);
-
-	const char *inAppUnlockFullVersionID();
 
 	BonusMenu &bonusMenu() { return _bonusMenu; }
 	GlobalBonusMenu &globalBonusMenu() { return _globalBonusMenu; }
@@ -120,6 +113,15 @@ public:
 	bool ratioStretched() const { return _ratioStretched; }
 
 private:
+	void drawBack();
+	void drawFront();
+
+	const char *inAppUnlockFullVersionID();
+
+	bool onBlackFadeAnimationFinished();
+	bool onMainWindowSizeChanged();
+	bool onMousePositionChanged(const Common::Point &p);
+
 	bool _finishedGame;
 	bool _finishedFremium;
 

@@ -1754,7 +1754,7 @@ static int tolua_ExportedFunctions_SetCharacterLookChar00(lua_State *L) {
 }
 
 static uint Random(uint max) {
-	return g_engine->getGame()->randomSource().getRandomNumber(max - 1);
+	return g_engine->getRandomNumber(max - 1);
 }
 
 static int tolua_ExportedFunctions_Random00(lua_State *L) {

@@ -52,8 +52,8 @@ _sceneCharacterVisibleFromLoad(false), _isCharacterWalking(false),
 _lastCharMoveMousePos(0.0f, 0.0f), _randomSoundFinished(false),
 _previousMousePos(-1, -1), _markersVisible(true), _saveRequested(false),
 _gameLoadState(0), _luaShowOwnerError(false), _score(0), _warped(false),
-_firstInventory(true), _randomSource("SyberiaGameRandom"), _frameCounter(0),
-_warpFadeFlag(false), _dialogsTold(0), _runModeEnabled(true) {
+_firstInventory(true), _frameCounter(0), _warpFadeFlag(false),
+_dialogsTold(0), _runModeEnabled(true) {
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		_objectsTakenBits[i] = false;
 	}
@@ -1375,11 +1375,13 @@ bool Game::onVideoFinished() {
 	return false;
 }
 
+/* Unused
 void Game::pauseMovie() {
 	_music.pause();
 	TeSpriteLayout *sprite = _inGameGui.spriteLayoutChecked("video");
 	sprite->pause();
 }
+*/
 
 bool Game::playMovie(const Common::String &vidPath, const Common::String &musicPath, float volume /* = 1.0f */) {
 	Application *app = g_engine->getApplication();
@@ -1438,7 +1440,7 @@ void Game::playRandomSound(const Common::String &name) {
 
 	if (!_randomSoundFinished) {
 		_randomSoundTimer.start();
-		int r = _randomSource.getRandomNumber(RAND_MAX);
+		int r = g_engine->getRandomNumber(RAND_MAX);
 		float f = (r + 1 + (r / 100) * -100);
 		uint64 time = 1000000;
 		if (f >= 25.0) {
@@ -1454,7 +1456,7 @@ void Game::playRandomSound(const Common::String &name) {
 		for (auto *snd : sndlist) {
 			total += snd->_f1;
 		}
-		int r = _randomSource.getRandomNumber(RAND_MAX);
+		int r = g_engine->getRandomNumber(RAND_MAX);
 		float total2 = 0.0;
 		uint i = 0;
 		while (i < sndlist.size() && total2 <= r * 4.656613e-10 * total) {

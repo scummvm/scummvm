@@ -83,23 +83,15 @@ public:
 
 	//enum EGameScoreID {}; // Not needed?
 
-	bool addAnimToSet(const Common::String &path);
 	void addArtworkUnlocked(const Common::String &name, bool notify);
 	void addNoScale2Child(TeLayout *layout);
-	void addNoScale2Children();
-	void addNoScaleChildren();
 	void addRandomSound(const Common::String &s1, const Common::String &s2, float f1, float f2);
 	void addToBag(const Common::String &objname);
 	void addToHand(const Common::String &objname);
 	void addToScore(int score);
-	void attachButtonsLayoutGoto() {}; // does nothing?
-	void createButtonsLayoutGoto() {}; // does nothing?
-	void deleteButtonsLayoutGoto() {}; // does nothing?
 
 	bool changeWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag);
-	bool changeWarp2(const Common::String &zone, const Common::String &scene, bool fadeFlag);
 
-	void deleteNoScale();
 	void draw();
 	void enter(); // will load game if _loadName is set.
 	// Note: game uses ILayouts here..
@@ -109,9 +101,6 @@ public:
 	void finishFreemium();
 	void finishGame();
 	void initLoadedBackupData();
-	void initNoScale();
-	void initScene(bool param_1, const Common::String &scenePath);
-	bool initWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag);
 	bool isDocumentOpened();
 	bool isMouse() { return false; }
 	bool isMoviePlaying();
@@ -119,39 +108,18 @@ public:
 					  const Common::String &param_4, float param_5);
 	void leave(bool flag);
 	void loadBackup(const Common::String &path);
-	bool loadCharacter(const Common::String &name);
 	bool loadPlayerCharacter(const Common::String &name);
 	bool loadScene(const Common::String &name);
 
 	// Not in original. Load unlocked artwork from ScummVM config.
 	void loadUnlockedArtwork();
 
-	bool onAnswered(const Common::String &val);
-	bool onCallNumber(Common::String val);
-	bool onCharacterAnimationFinished(const Common::String &val);
-	bool onCharacterAnimationPlayerFinished(const Common::String &val);
-	bool onDialogFinished(const Common::String &val);
-	bool onDisplacementFinished();
-	bool onDisplacementPlayerFinished();
-	bool onFinishedCheckBackup(bool result);
-	bool onFinishedLoadingBackup(const Common::String &val);
-	bool onFinishedSavingBackup(int something);
-	bool onInventoryButtonValidated();
-	bool onLockVideoButtonValidated();
-	bool onMarkersVisible(TeCheckboxLayout::State state);
-	bool onMouseClick(const Common::Point &pt);
-	bool onMouseMove();
-	bool onSkipVideoButtonValidated();
-	bool onVideoFinished();
-
-	void pauseMovie();
-	void pauseSounds() {}; // does nothing?
+	//void pauseMovie(); // Unused
+	//void pauseSounds() {}; // Unused, does nothing?
 	bool playMovie(const Common::String &vidPath, const Common::String &musicPath, float volume = 1.0f);
 	void playRandomSound(const Common::String &name);
 	void playSound(const Common::String &name, int param_2, float volume);
 	void removeNoScale2Child(TeLayout *layout);
-	void removeNoScale2Children();
-	void removeNoScaleChildren();
 	void resetPreviousMousePos();
 	void resumeMovie();
 	void resumeSounds() {}; // does nothing?
@@ -160,7 +128,7 @@ public:
 	void setCurrentObjectSprite(const Common::String &spritePath);
 	bool showMarkers(bool val);
 	bool startAnimation(const Common::String &animName, int loopcount, bool reversed);
-	void startAnimationPart(const Common::String &param_1, int param_2, int param_3, int param_4, bool param_5) {};
+	// void startAnimationPart(const Common::String &param_1, int param_2, int param_3, int param_4, bool param_5) {}; // Unused.
 	void stopSound(const Common::String &name);
 	Common::Error syncGame(Common::Serializer &s); // Basically replaces saveBackup from original..
 	bool unloadCharacter(const Common::String &character);
@@ -200,7 +168,6 @@ public:
 	void setPosPlayer(const TeVector3f32 &pos) { _posPlayer = pos; }
 	TeTimer &walkTimer() { return _walkTimer; }
 	void setExitZone(const Common::String &zone) { _exitZone = zone; }
-	Common::RandomSource &randomSource() { return _randomSource; }
 	void setLoadName(const Common::String &loadName) { _loadName = loadName; }
 	bool hasLoadName() const { return !_loadName.empty(); }
 	bool isArtworkUnlocked(const Common::String &name) const;
@@ -210,6 +177,45 @@ public:
 	bool runModeEnabled() const { return _runModeEnabled; }
 
 private:
+	bool addAnimToSet(const Common::String &path);
+	void addNoScale2Children();
+	void addNoScaleChildren();
+
+	void attachButtonsLayoutGoto() {}; // does nothing?
+	void createButtonsLayoutGoto() {}; // does nothing?
+	void deleteButtonsLayoutGoto() {}; // does nothing?
+
+	bool changeWarp2(const Common::String &zone, const Common::String &scene, bool fadeFlag);
+
+	void deleteNoScale();
+
+	void initNoScale();
+	void initScene(bool param_1, const Common::String &scenePath);
+	bool initWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag);
+
+	bool loadCharacter(const Common::String &name);
+
+	bool onAnswered(const Common::String &val);
+	bool onCallNumber(Common::String val);
+	bool onCharacterAnimationFinished(const Common::String &val);
+	bool onCharacterAnimationPlayerFinished(const Common::String &val);
+	bool onDialogFinished(const Common::String &val);
+	bool onDisplacementFinished();
+	bool onDisplacementPlayerFinished();
+	bool onFinishedCheckBackup(bool result);
+	bool onFinishedLoadingBackup(const Common::String &val);
+	bool onFinishedSavingBackup(int something);
+	bool onInventoryButtonValidated();
+	bool onLockVideoButtonValidated();
+	bool onMarkersVisible(TeCheckboxLayout::State state);
+	bool onMouseClick(const Common::Point &pt);
+	bool onMouseMove();
+	bool onSkipVideoButtonValidated();
+	bool onVideoFinished();
+
+	void removeNoScale2Children();
+	void removeNoScaleChildren();
+
 	bool _luaShowOwnerError;
 	bool _running;
 	bool _entered;
@@ -280,7 +286,6 @@ private:
 	bool _saveRequested;
 	bool _randomSoundFinished;
 
-	Common::RandomSource _randomSource;
 	RandomSound *_randomSound;
 	TeTimer _randomSoundTimer;
 
