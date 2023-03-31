@@ -95,11 +95,8 @@ bool Dialog::tick() {
 	if (_dialogScriptPos >= n) {
 
 		if (!_dialogProcessName.empty()) {
-			_dialogProcessName.clear();
-
 			debug("end of dialog, running %s", _dialogParentProcessName.c_str());
 			dialog_var->setInteger(-2);
-			_dialogParentProcessName.clear();
 			_engine->reactivate(_dialogParentProcessName, "end of dialog");
 		}
 
