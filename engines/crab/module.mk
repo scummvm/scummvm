@@ -9,6 +9,9 @@ MODULE_OBJS = \
 	loaders.o \
 	ScreenSettings.o \
 	GameParam.o \
+	ai/moveeffect.o \
+	ai/movement.o \
+	ai/SpriteConstant.o \
 	animation/animation.o \
 	animation/AnimationFrame.o \
 	animation/animframe.o \
