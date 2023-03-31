@@ -204,14 +204,14 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"scummvm_frameskip_type",
 		"Frameskip Mode",
 		NULL,
-		"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Manual' uses the 'Frameskip Threshold (%)' setting. 'Fixed' uses the 'Fixed Frameskip' setting.",
+		"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Threshold' uses the 'Frameskip Threshold (%)' setting. 'Fixed' uses the 'Fixed Frameskip' setting.",
 		NULL,
 		"frameskip",
 		{
 			{ "disabled", NULL },
 			{ "fixed", "Fixed" },
 			{ "auto", "Auto" },
-			{ "manual", "Manual" },
+			{ "manual", "Threshold" },
 			{ NULL, NULL },
 		},
 		"auto"
@@ -220,7 +220,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"scummvm_frameskip_threshold",
 		"Frameskip Threshold (%)",
 		NULL,
-		"When 'Frameskip' is set to 'Manual', specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently.",
+		"When 'Frameskip' is set to 'Threshold', specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently.",
 		NULL,
 		"frameskip",
 		{

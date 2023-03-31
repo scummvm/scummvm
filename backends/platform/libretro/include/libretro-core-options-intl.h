@@ -155,14 +155,14 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"scummvm_frameskip_type",
 		"Salto dei fotogrammi",
 		NULL,
-		"Salto dei fotogrammi per evitare buffer under-run audio (crackling). Migliora le prestazioni a discapito della fluidità video. 'Auto' salta i fotogrammi su indicazione del frontend, 'Manuale' usa l'impostazione di 'Soglia minima buffer audio (%)', 'Fisso' usa l'impostazione 'Salto dei fotogrammi fisso'.",
+		"Salto dei fotogrammi per evitare buffer under-run audio (crackling). Migliora le prestazioni a discapito della fluidità video. 'Auto' salta i fotogrammi su indicazione del frontend, 'Soglia' usa l'impostazione di 'Soglia minima buffer audio (%)', 'Fisso' usa l'impostazione 'Salto dei fotogrammi fisso'.",
 		NULL,
 		"frameskip",
 		{
 			{ "disabled", NULL },
 			{ "fixed", "Fisso" },
 			{ "auto", "Auto" },
-			{ "manual", "Manuale" },
+			{ "manual", "Soglia" },
 			{ NULL, NULL },
 		},
 		NULL
@@ -171,7 +171,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"scummvm_frameskip_threshold",
 		"Soglia minima buffer audio (%)",
 		NULL,
-		"Quando 'Salto dei fotogrammi' è impostato su 'Manuale', specifica la soglia minima del buffer audio al di sotto della quale il fotogramma viene saltato. Valori più alti riducono il rischio di crackling al costo di un salto di fotogrammi più frequente.",
+		"Quando 'Salto dei fotogrammi' è impostato su 'Soglia', specifica la soglia minima del buffer audio al di sotto della quale il fotogramma viene saltato. Valori più alti riducono il rischio di crackling al costo di un salto di fotogrammi più frequente.",
 		NULL,
 		"frameskip",
 		{
