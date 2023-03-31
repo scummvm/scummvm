@@ -526,17 +526,15 @@ msgstr "उस फोल्डर को चुने जिसमे सेव 
 
 #: gui/editgamedialog.cpp:582 gui/options.cpp:3153
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr ""
-"चुनी हुई डायरेक्टरी में सेव नहीं किया जा सकत। कृपया कोई और फोल्डर सेलेक्ट "
-"करे।"
+msgstr "चुनी हुई डायरेक्टरी में सेव नहीं किया जा सकत। कृपया कोई और फोल्डर सेलेक्ट करे।"
 
 #: gui/editgamedialog.cpp:587
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
-"सेव गेम sync फीचर नॉन डीफॉल्ट डायरेक्ट्रीज के लिए काम नहीं करत। अगर आप सेव "
-"गेम्स को sync करना चाहते है तोह डिफ़ॉल्ट डायरेक्टरी इस्तेमाल करे।"
+"सेव गेम sync फीचर नॉन डीफॉल्ट डायरेक्ट्रीज के लिए काम नहीं करत। अगर आप सेव गेम्स को "
+"sync करना चाहते है तोह डिफ़ॉल्ट डायरेक्टरी इस्तेमाल करे।"
 
 #: gui/editgamedialog.cpp:613
 msgid "This game ID is already taken. Please choose another one."
