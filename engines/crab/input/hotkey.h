@@ -56,7 +56,10 @@ public:
 	const char *Name();
 
 	void Load(rapidxml::xml_node<char> *node);
+
+#if 0
 	bool HandleEvents(const SDL_Event &Event);
+#endif
 };
 } // End of namespace input
 } // End of namespace pyrodactyl

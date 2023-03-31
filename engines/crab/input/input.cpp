@@ -39,12 +39,15 @@ InputManager gInput;
 } // End of namespace pyrodactyl
 
 using namespace pyrodactyl::input;
-using namespace boost::filesystem;
+//using namespace boost::filesystem;
 
 //------------------------------------------------------------------------
 // Purpose: Return pressed/depressed state of key
 //------------------------------------------------------------------------
 const bool InputManager::State(const InputType &val) {
+	warning("STUB: InputManager::State()");
+
+#if 0
 	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 	if (keystate[iv[val].key] || keystate[iv[val].alt])
 		return true;
@@ -57,10 +60,12 @@ const bool InputManager::State(const InputType &val) {
 			return (iv[val].c_ax.greater && av > iv[val].c_ax.val) || (!iv[val].c_ax.greater && av < iv[val].c_ax.val);
 		}
 	}
+#endif
 
 	return false;
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Check for controller and keyboard input simultaneously
 // Return value 2 is a special case used for analog stick hotkey input
@@ -100,14 +105,18 @@ const int InputManager::Equals(const InputType &val, const SDL_Event &Event) {
 
 	return -1;
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Load from file
 //------------------------------------------------------------------------
 void InputManager::Init() {
+	warning("STUB: InputManager::Init()");
+
+#if 0
 	const std::string DEFAULT_FILENAME = "res/controls.xml";
 
-	std::string filename = gFilePath.appdata;
+	std::string filename = gFilePath.appdata.c_str();
 	filename += "controls.xml";
 
 	if (!is_regular_file(filename)) {
@@ -125,13 +134,14 @@ void InputManager::Init() {
 	}
 
 	CreateBackup();
+#endif
 }
 
 //------------------------------------------------------------------------
 // Purpose: Load key & controller binding settings from file
 //------------------------------------------------------------------------
 void InputManager::Load(const std::string &filename) {
-	XMLDoc control_list(filename);
+	XMLDoc control_list(filename.c_str());
 	if (control_list.ready()) {
 		rapidxml::xml_node<char> *node = control_list.Doc()->first_node("controls");
 		if (NodeValid(node)) {
@@ -148,14 +158,19 @@ void InputManager::Load(const std::string &filename) {
 // Purpose: Initialize the controller if it is plugged in
 //------------------------------------------------------------------------
 void InputManager::AddController() {
+	warning("STUB: InputManager::AddController()");
+
+#if 0
 	if (SDL_NumJoysticks() > 0) {
 		if (SDL_IsGameController(0))
 			controller = SDL_GameControllerOpen(0);
 		else
 			SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "Controller not recognized", "Unsupported device", NULL);
 	}
+#endif
 }
 
+#if 0
 void InputManager::HandleController(const SDL_Event &Event) {
 	if (Event.type == SDL_CONTROLLERDEVICEREMOVED && controller != nullptr) {
 		SDL_GameControllerClose(controller);
@@ -163,6 +178,7 @@ void InputManager::HandleController(const SDL_Event &Event) {
 	} else if (Event.type == SDL_CONTROLLERDEVICEADDED && controller == nullptr)
 		AddController();
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Create and restore backup
@@ -181,6 +197,9 @@ void InputManager::RestoreBackup() {
 // Purpose: Save to file
 //------------------------------------------------------------------------
 void InputManager::Save() {
+	warning("STUB: InputManager::Save()");
+
+#if 0
 	rapidxml::xml_document<char> doc;
 
 	std::string filename = gFilePath.appdata;
@@ -210,6 +229,7 @@ void InputManager::Save() {
 
 	doc.clear();
 	CreateBackup();
+#endif
 }
 
 } // End of namespace Crab

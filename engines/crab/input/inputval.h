@@ -46,15 +46,15 @@ public:
 	std::string name;
 
 	// Keyboard keys
-	SDL_Scancode key, alt;
+	//SDL_Scancode key, alt;
 
 	// Controller button
-	SDL_GameControllerButton c_bu;
+	//SDL_GameControllerButton c_bu;
 
 	// The controller axis
 	struct AxisData {
 		// The axis
-		SDL_GameControllerAxis id;
+		//SDL_GameControllerAxis id;
 
 		// Value of controller axis - because controller axes have a range of values
 		int val;
@@ -68,14 +68,18 @@ public:
 		bool toggle;
 
 		AxisData() {
+			warning("STUB: AxisData::AxisDAta()");
+
+#if 0
 			id = SDL_CONTROLLER_AXIS_INVALID;
 			val = 0;
 			toggle = false;
 			greater = false;
+#endif
 		}
 
 		void LoadState(rapidxml::xml_node<char> *node) {
-			LoadEnum(id, "id", node);
+			//LoadEnum(id, "id", node);
 			LoadNum(val, "val", node);
 			LoadBool(greater, "greater", node);
 		}
@@ -84,7 +88,7 @@ public:
 			rapidxml::xml_node<char> *child;
 			child = doc.allocate_node(rapidxml::node_element, "axis");
 
-			child->append_attribute(doc.allocate_attribute("id", gStrPool.Get(id)));
+			//child->append_attribute(doc.allocate_attribute("id", gStrPool.Get(id)));
 			child->append_attribute(doc.allocate_attribute("val", gStrPool.Get(val)));
 
 			SaveBool(greater, "greater", doc, child);
@@ -95,9 +99,11 @@ public:
 
 	InputVal();
 
+#if 0
 	const bool Equals(const SDL_KeyboardEvent &val);
 	const bool Equals(const SDL_ControllerButtonEvent &Event);
 	const bool Equals(const SDL_ControllerAxisEvent &Event);
+#endif
 
 	void LoadState(rapidxml::xml_node<char> *node);
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root, const char *title);

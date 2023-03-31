@@ -96,13 +96,17 @@ class InputManager {
 
 public:
 	InputManager() {
-		controller = nullptr;
+		//controller = nullptr;
 		version = 0;
 	}
 	~InputManager() {}
 	void Quit() {
+		warning("STUB: InputManager::Quit()");
+
+#if 0
 		if (controller != nullptr)
 			SDL_GameControllerClose(controller);
+#endif
 	}
 
 	// NOTE: The lower level arrays can have buttons in common, but buttons cannot be common within these arrays
@@ -112,11 +116,13 @@ public:
 	InputVal iv[IT_TOTAL];
 
 	// Our controller object
-	SDL_GameController *controller;
+	//SDL_GameController *controller;
 
 	// These functions check if the value of a key matches the input values
 	// Returns SDL_PRESSED for pressing a button, SDL_RELEASED for releasing a button and -1 if no input
+#if 0
 	const int Equals(const InputType &val, const SDL_Event &Event);
+#endif
 
 	// These functions return true if key is pressed, false otherwise
 	const bool State(const InputType &val);
@@ -127,8 +133,10 @@ public:
 	// Initialize the controller if it is plugged in
 	void AddController();
 
+#if 0
 	// Handle plugging and unplugging of controllers on the fly
 	void HandleController(const SDL_Event &Event);
+#endif
 
 	// Initialize the input system
 	void Init();

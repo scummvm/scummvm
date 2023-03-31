@@ -39,6 +39,7 @@ void FightInput::Load(rapidxml::xml_node<char> *node) {
 	LoadNum(state, "state", node);
 }
 
+#if 0
 FightAnimationType FightInput::HandleEvents(const SDL_Event &Event) {
 	if (gInput.State(IG_ATTACK))
 		return FA_ATTACK;
@@ -47,5 +48,6 @@ FightAnimationType FightInput::HandleEvents(const SDL_Event &Event) {
 
 	return FA_IDLE;
 }
+#endif
 
 } // End of namespace Crab

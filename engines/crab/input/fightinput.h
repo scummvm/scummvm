@@ -74,7 +74,10 @@ struct FightInput {
 	bool Idle() { return type == FA_IDLE; }
 
 	void Load(rapidxml::xml_node<char> *node);
+
+#if 0
 	FightAnimationType HandleEvents(const SDL_Event &Event);
+#endif
 };
 } // End of namespace input
 } // End of namespace pyrodactyl
