@@ -67,6 +67,9 @@ MODULE_OBJS = \
 	app.o \
 	splash.o \
 	Line.o \
+	PathfindingAgent.o \
+	PathfindingGraphNode.o \
+	PathfindingGrid.o \
 	Polygon.o \
 	Rectangle.o \
 	Shape.o
