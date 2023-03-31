@@ -45,7 +45,7 @@ class Animation {
 	std::vector<AnimationFrame> frame;
 
 	// Length of the entire animation in milliseconds
-	Uint32 length;
+	uint32 length;
 
 	// Keep track of the time
 	Timer timer;

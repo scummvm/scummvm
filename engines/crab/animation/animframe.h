@@ -45,7 +45,7 @@ struct AnimFrame {
 	Rect clip;
 
 	// The duration for which the frame must be repeated on screen
-	Uint32 repeat;
+	uint32 repeat;
 
 	// The anchor point of the frame
 	Vector2i anchor;
@@ -56,7 +56,7 @@ struct AnimFrame {
 	AnimFrame() { repeat = 0; }
 
 	void Load(rapidxml::xml_node<char> *node, const Rect &VBOX,
-			  const Uint32 &REP = 0, const int &AX = 0, const int &AY = 0);
+			  const uint32 &REP = 0, const int &AX = 0, const int &AY = 0);
 };
 
 class AnimationFrames {
@@ -76,7 +76,7 @@ public:
 
 	// The global repeat value for all the frames
 	// If this is 0, then use individual frame values
-	Uint32 repeat;
+	uint32 repeat;
 
 	// The global anchor value for all the frames
 	// If this is 0, then use individual frame values

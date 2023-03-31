@@ -42,13 +42,13 @@ Animation::Animation(rapidxml::xml_node<char> *node) {
 }
 
 void Animation::Draw() {
-	Uint32 timestamp = timer.Ticks();
+	uint32 timestamp = timer.Ticks();
 	for (auto i = frame.begin(); i != frame.end(); ++i)
 		i->Draw(timestamp);
 }
 
 bool Animation::InternalEvents(DrawType &game_draw) {
-	Uint32 timestamp = timer.Ticks();
+	uint32 timestamp = timer.Ticks();
 	for (auto i = frame.begin(); i != frame.end(); ++i) {
 		DrawType result = i->InternalEvents(timestamp);
 		// if (result != DRAW_SAME)
