@@ -856,9 +856,6 @@ void AtariGraphicsManager::Cursor::update(const Graphics::Surface &screen, bool 
 }
 
 void AtariGraphicsManager::Cursor::updatePosition(int deltaX, int deltaY, const Graphics::Surface &screen) {
-	if (!visible)
-		return;
-
 	x += deltaX;
 	y += deltaY;
 
