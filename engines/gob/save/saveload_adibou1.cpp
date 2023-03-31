@@ -33,11 +33,149 @@ SaveLoad_Adibou1::SaveFile SaveLoad_Adibou1::_saveFiles[] = {
 SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
 	SaveLoad(vm) {
 
-	_saveFiles[0].handler = _bouHandler = new FakeFileHandler(vm);
+	_saveFiles[0].handler = _bouHandler = new GameFileHandler(vm, targetName, "bouinf");
 }
 
 SaveLoad_Adibou1::~SaveLoad_Adibou1() {
 	delete _bouHandler;
+}
+
+SaveLoad_Adibou1::GameFileHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
+	SlotFileStatic(vm, base, ext) {
+}
+
+SaveLoad_Adibou1::GameFileHandler::File::~File() {
+}
+
+
+SaveLoad_Adibou1::GameFileHandler::GameFileHandler(GobEngine *vm, const Common::String &target, const Common::String &ext) :
+	SaveHandler(vm), _file(vm, target, ext) {
+}
+
+SaveLoad_Adibou1::GameFileHandler::~GameFileHandler() {
+}
+
+int32 SaveLoad_Adibou1::GameFileHandler::getSize() {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return -1;
+
+	SaveReader reader(1, 0, fileName);
+	SaveHeader header;
+
+	if (!reader.load())
+		return -1;
+
+	if (!reader.readPartHeader(0, &header))
+		return -1;
+
+	// Return the part's size
+	return header.getSize();
+}
+
+bool SaveLoad_Adibou1::GameFileHandler::load(int16 dataVar, int32 size, int32 offset) {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	if (size == 0) {
+		uint32 varSize = SaveHandler::getVarSize(_vm);
+		// Indicator to load all variables
+		dataVar = 0;
+		size = (int32) varSize;
+	}
+
+	int32 fileSize = getSize();
+	if (fileSize < 0)
+		return false;
+
+	SaveReader reader(1, 0, fileName);
+	SavePartVars vars(_vm, fileSize);
+
+	if (!reader.load()) {
+		return false;
+	}
+
+	if (!reader.readPart(0, &vars)) {
+		return false;
+	}
+
+	if (!vars.writeInto((uint16) dataVar, offset, size)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool SaveLoad_Adibou1::GameFileHandler::save(const byte *ptrRaw, int16 dataVar, int32 size, int32 offset) {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	if (size == 0) {
+		// Indicator to save all variables
+		dataVar = 0;
+		uint32 varSize = SaveHandler::getVarSize(_vm);
+		size = (int32) varSize;
+	}
+
+	int32 fileSize = getSize();
+	int32 newFileSize = size;
+	if (fileSize > 0) {
+		newFileSize = MAX<int32>(fileSize, size + offset);
+	}
+
+	SavePartVars vars(_vm, newFileSize);
+	if (fileSize > 0
+		&&
+		(offset > 0 || size < fileSize)) {
+		// Load data from file, as some of it will not be overwritten
+		SaveReader reader(1, 0, fileName);
+		if (!reader.load()) {
+			return false;
+		}
+
+		if (fileSize == newFileSize) {
+			// We can use the same SavePartVars object
+			if (!reader.readPart(0, &vars)) {
+				return false;
+			}
+		} else {
+			// We need to use a temporary SavePartVars object to load data
+			SavePartVars vars_from_file(_vm, fileSize);
+			if (!reader.readPart(0, &vars_from_file)) {;
+				return false;
+			}
+
+			// Copy data from temporary SavePartVars object to the real one
+			vars.readFromRaw(vars_from_file.data(), 0, fileSize);
+		}
+	}
+
+	SaveWriter writer(1, 0, fileName);
+	if (ptrRaw) {
+		// Write data from raw pointer
+		vars.readFromRaw(ptrRaw, offset, size);
+	} else {
+		// Write data from variables
+		if (!vars.readFrom((uint16) dataVar, offset, size))
+			return false;
+	}
+
+	return writer.writePart(0, &vars);
+}
+
+bool SaveLoad_Adibou1::GameFileHandler::save(int16 dataVar, int32 size, int32 offset) {
+	return save(nullptr, dataVar, size, offset);
+}
+
+bool SaveLoad_Adibou1::GameFileHandler::deleteFile() {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	SaveWriter writer(1, 0, fileName);
+	return writer.deleteFile();
 }
 
 const SaveLoad_Adibou1::SaveFile *SaveLoad_Adibou1::getSaveFile(const char *fileName) const {
