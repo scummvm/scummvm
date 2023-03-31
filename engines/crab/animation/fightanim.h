@@ -64,7 +64,7 @@ struct FightAnimFrame : public AnimFrame {
 	}
 
 	void Load(rapidxml::xml_node<char> *node, const Rect &VBOX,
-			  const Uint32 &REP = 0, const int &AX = 0, const int &AY = 0);
+			  const uint32 &REP = 0, const int &AX = 0, const int &AY = 0);
 };
 
 // All data related to a single fighting move in a single direction
@@ -85,7 +85,7 @@ public:
 
 	// The amount of time in milliseconds each animation frame needs to be on screen
 	// If this is zero then use the value in each individual frame
-	Uint32 repeat;
+	uint32 repeat;
 
 	// The global anchor value for all the frames
 	// If this is 0, then use individual frame values

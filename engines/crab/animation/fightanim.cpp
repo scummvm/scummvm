@@ -37,7 +37,7 @@ using namespace pyrodactyl::anim;
 //------------------------------------------------------------------------
 // Purpose: Load a single frame of a fighting move
 //------------------------------------------------------------------------
-void FightAnimFrame::Load(rapidxml::xml_node<char> *node, const Rect &VBOX, const Uint32 &rep, const int &AX, const int &AY) {
+void FightAnimFrame::Load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uint32 &rep, const int &AX, const int &AY) {
 	AnimFrame::Load(node, VBOX, rep, AX, AY);
 
 	if (NodeValid("box_d", node, false))

@@ -37,6 +37,7 @@
 #include "crab/common_header.h"
 #include "crab/event/effect.h"
 #include "crab/event/triggerset.h"
+#include "crab/timer.h"
 
 namespace Crab {
 
