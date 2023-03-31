@@ -544,6 +544,8 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_DPAD:
+		// For now, this behavior, emulating mouse movement and left mouse clicking here for DPAD button presses,
+		// is no longer used.
 		switch (arg2) {
 		case AKEYCODE_DPAD_UP:
 		// fall through
@@ -1198,7 +1200,19 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case AKEYCODE_BUTTON_R1:
 			e.joystick.button = Common::JOYSTICK_BUTTON_RIGHT_SHOULDER;
 			break;
-
+//		// NOTE As of yet JOYSTICK_BUTTON_LEFT_TRIGGER, JOYSTICK_BUTTON_RIGHT_TRIGGER are missing as "buttons" from the hardware-input source code
+//		// There are controllers like PS5's DualSense that trigger these buttons presses, albeit for wrong buttons (Create and Menu gamepad buttons)
+//		// which could be due to Android OS not fully supporting them.
+//		// PS3's DS3 also triggers these button presses but also generates a movement event so perhaps we can capture them that way
+//		// (as generic joystick movement, "JOYSTICK_AXIS_LEFT_TRIGGER", "JOYSTICK_AXIS_RIGHT_TRIGGER" hardware-input).
+//		case AKEYCODE_BUTTON_L2:
+//			e.joystick.button = Common::JOYSTICK_BUTTON_LEFT_TRIGGER;
+//			break;
+//
+//		case AKEYCODE_BUTTON_R2:
+//			e.joystick.button = Common::JOYSTICK_BUTTON_RIGHT_TRIGGER;
+//			break;
+//
 		case AKEYCODE_BUTTON_THUMBL:
 			e.joystick.button = Common::JOYSTICK_BUTTON_LEFT_STICK;
 			break;
@@ -1223,10 +1237,9 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			e.joystick.button = Common::JOYSTICK_BUTTON_DPAD_RIGHT;
 			break;
 
-//		case AKEYCODE_DPAD_CENTER:
-//			// TODO This needs to be defined (backends/keymapper/hardware-input.cpp and common/events.h)
-//			e.joystick.button = Common::JOYSTICK_BUTTON_DPAD_CENTER;
-//			break;
+		case AKEYCODE_DPAD_CENTER:
+			e.joystick.button = Common::JOYSTICK_BUTTON_DPAD_CENTER;
+			break;
 
 		default:
 			LOGW("unmapped gamepad key: %d", arg2);

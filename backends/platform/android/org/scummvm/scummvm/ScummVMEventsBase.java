@@ -385,20 +385,17 @@ public class ScummVMEventsBase implements
 		case KeyEvent.KEYCODE_DPAD_LEFT:
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
 		case KeyEvent.KEYCODE_DPAD_CENTER:
-			if ((e.getSource() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD) {
-				// When interpreted as JE_DPAD it will work as a mouse (translated in Android backend, events.cpp)
-				// This is a case for FireTV Stick remote control's DPAD
-				// The remote control itself is: InputDevice.SOURCE_DPAD | InputDevice.SOURCE_KEYBOARD
-				// since it also has "buttons" for fast-forward, play/pause toggle, and rewind.
-				// TODO Evaluate merging this case with setting the type as "JE_GAMEPAD"
-				// and delegating the key mapping to ScummVM's keymapper
-				type = JE_DPAD;
-			} else {
-				// When interpreted as JE_GAMEPAD it will be forwarded to ScummVM's keymapper
-				type = JE_GAMEPAD;
-			}
-			break;
-
+			// NOTE 1 For now, we're handling DPAD keys as JE_GAMEPAD events, regardless the source InputDevice
+			//        We delegate these keypresses to ScummVM's keymapper as JOYSTICK_BUTTON_DPAD presses. 
+			//        (JOYSTICK_BUTTON_DPAD_UP, JOYSTICK_BUTTON_DPAD_DOWN, JOYSTICK_BUTTON_DPAD_LEFT, JOYSTICK_BUTTON_DPAD_RIGHT and JOYSTICK_BUTTON_DPAD_CENTER)
+			//        By default mapped to virtual mouse (VMOUSE).
+			//        As virtual mouse, cursor may be too fast/hard to control, so it's recommended to set and use a VMOUSESLOW binding too.
+			//        TODO Maybe add a checkbox in backend to toggle virtual mouse slow/fast, so that the user does not have to press two buttons
+			//        at the same time. (Simultaneous button pressing may work on physical TV remote controls, but may not work on apps for remote controls)
+			// NOTE 2 Modern gamepads/ game controllers treat the "DPAD" cross buttons as HATs that produce movement events
+			// and *not* DPAD_UP/DOWN/LEFT/RIGHT button press events. Hence, for those controllers these DPAD key events won't be triggered.
+			//
+			// fall-through
 		case KeyEvent.KEYCODE_BUTTON_A:
 		case KeyEvent.KEYCODE_BUTTON_B:
 		case KeyEvent.KEYCODE_BUTTON_C:
@@ -422,6 +419,7 @@ public class ScummVMEventsBase implements
 		case KeyEvent.KEYCODE_BUTTON_3:
 		case KeyEvent.KEYCODE_BUTTON_4:
 			// These are oddly detected with SOURCE_KEYBOARD for joystick so don't bother checking the e.getSource()
+			// Tested on a Saitek ST200 USB Control Stick & Throttle
 			type = JE_JOYSTICK;
 			break;
 
