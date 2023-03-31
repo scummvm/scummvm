@@ -187,6 +187,8 @@ bool EggManager::spawn_egg(Obj *egg, uint8 hatch_probability) {
 
 				if (gametype == NUVIE_GAME_U6 && obj->obj_n == OBJ_U6_SILVER_SERPENT) //U6 silver serpents only hatch once per egg.
 					qty = 1;
+				else if (egg->qty != 100) // egg qty 100: do not randomize spawn count
+					qty = (NUVIE_RAND() % qty) + 1; // try to spawn 1 to qty entities
 
 				for (i = 0; i < qty; i++) {
 					if ((gametype == NUVIE_GAME_U6 && (obj->obj_n >= OBJ_U6_GIANT_RAT || obj->obj_n == OBJ_U6_CHEST))
@@ -205,16 +207,12 @@ bool EggManager::spawn_egg(Obj *egg, uint8 hatch_probability) {
 								actor_manager->toss_actor_get_location(egg->x, egg->y, egg->z, 4, 4, &actor_loc);
 						}
 						uint8 worktype = get_worktype(obj);
-						if (actor_manager->create_temp_actor(obj->obj_n, obj->status, actor_loc.x, actor_loc.y, actor_loc.z, alignment, worktype, &new_actor) && prev_actor) {
+						actor_manager->create_temp_actor(obj->obj_n, obj->status, actor_loc.x, actor_loc.y, actor_loc.z, alignment, worktype, &new_actor);
 							/*
 							// try to group actors of the same type first (FIXME: maybe this should use alignment/quality)
 							if(prev_actor->get_obj_n() != new_actor->get_obj_n() || !actor_manager->toss_actor(new_actor, 3, 2) || !actor_manager->toss_actor(new_actor, 2, 3))
 							    actor_manager->toss_actor(new_actor, 4, 4);
 							*/
-							hatch_probability = NUVIE_RAND() % 100;
-							if (hatch_probability > egg->qty)
-								break; // chance to stop spawning actors
-						}
 					} else {
 						/* spawn temp object */
 						spawned_obj = new Obj();
