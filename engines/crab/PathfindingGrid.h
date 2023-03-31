@@ -31,12 +31,11 @@
 #ifndef CRAB_PATHFINDINGGRID_H
 #define CRAB_PATHFINDINGGRID_H
 
+#include <math.h>
 #include "crab/PathfindingGraphNode.h"
 #include "crab/common_header.h"
 
 namespace Crab {
-
-include <math.h>
 
 namespace TMX {
 class TMXMap;
