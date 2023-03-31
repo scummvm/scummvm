@@ -39,7 +39,7 @@
 #include "crab/music/MusicManager.h"
 #include "crab/text/TextManager.h"
 #include "crab/common_header.h"
-#include "crab/input/input.h"
+//#include "crab/input/input.h"
 
 namespace Crab {
 
@@ -67,7 +67,11 @@ public:
 	~TextArea(void) {}
 
 	void Load(rapidxml::xml_node<char> *node);
+
+#if 0
 	bool HandleEvents(const SDL_Event &Event, bool numbers_only = false);
+#endif
+
 	void Draw();
 
 	void SetUI() {

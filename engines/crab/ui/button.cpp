@@ -63,8 +63,8 @@ void Button::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	LoadNum(se_click, "click", node, echo);
 	LoadNum(se_hover, "hover", node, echo);
 
-	if (NodeValid("hotkey", node, false))
-		hotkey.Load(node->first_node("hotkey"));
+	//if (NodeValid("hotkey", node, false))
+	//	hotkey.Load(node->first_node("hotkey"));
 
 	tooltip.Load(node->first_node("tooltip"), this);
 	caption.Load(node->first_node("caption"), this);
@@ -101,6 +101,9 @@ void Button::Reset() {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Button::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
+	warning("STUB: Button::Draw()");
+
+#if 0
 	if (visible) {
 		if (mousepressed) {
 			gImageManager.Draw(x + XOffset, y + YOffset, img.select, clip);
@@ -117,9 +120,13 @@ void Button::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
 			caption.Draw(false, XOffset, YOffset);
 		}
 	}
+#endif
 }
 
 void Button::ImageCaptionOnlyDraw(const int &XOffset, const int &YOffset, Rect *clip) {
+	warning("STUB: Button::ImageCaptionOnly()");
+
+#if 0
 	if (visible) {
 		if (mousepressed) {
 			gImageManager.Draw(x + XOffset, y + YOffset, img.select, clip);
@@ -132,6 +139,7 @@ void Button::ImageCaptionOnlyDraw(const int &XOffset, const int &YOffset, Rect *
 			caption.Draw(false, XOffset, YOffset);
 		}
 	}
+#endif
 }
 
 void Button::HoverInfoOnlyDraw(const int &XOffset, const int &YOffset, Rect *clip) {
@@ -141,6 +149,7 @@ void Button::HoverInfoOnlyDraw(const int &XOffset, const int &YOffset, Rect *cli
 	}
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle input and stuff
 //------------------------------------------------------------------------
@@ -190,6 +199,7 @@ ButtonAction Button::HandleEvents(const SDL_Event &Event, const int &XOffset, co
 
 	return BUAC_IGNORE;
 }
+#endif
 
 void Button::SetUI(Rect *parent) {
 	Element::SetUI(parent);

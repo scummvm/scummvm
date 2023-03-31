@@ -56,6 +56,7 @@ void Slider::Load(rapidxml::xml_node<char> *node, const int &Min, const int &Max
 	CreateBackup();
 }
 
+#if 0
 bool Slider::HandleEvents(const SDL_Event &Event) {
 	// A person is moving the knob
 	if (knob.HandleEvents(Event) == BUAC_GRABBED) {
@@ -84,6 +85,7 @@ bool Slider::HandleEvents(const SDL_Event &Event) {
 
 	return false;
 }
+#endif
 
 void Slider::Draw() {
 	bar.Draw();

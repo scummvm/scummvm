@@ -42,7 +42,7 @@
 #include "crab/text/TextManager.h"
 #include "crab/common_header.h"
 #include "crab/ui/element.h"
-#include "crab/input/hotkey.h"
+//#include "crab/input/hotkey.h"
 
 namespace Crab {
 
@@ -102,7 +102,7 @@ public:
 	Caption caption;
 
 	// A hotkey is a keyboard key(s) that are equivalent to pressing a button
-	pyrodactyl::input::HotKey hotkey;
+	//pyrodactyl::input::HotKey hotkey;
 
 	Button();
 	~Button() {}
@@ -117,7 +117,10 @@ public:
 	ButtonImage Img() { return img; }
 
 	void Draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
+
+#if 0
 	ButtonAction HandleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
+#endif
 
 	// Special functions to only draw parts of a button (used in special situations like world map)
 	void ImageCaptionOnlyDraw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);

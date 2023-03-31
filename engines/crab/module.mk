@@ -35,6 +35,24 @@ MODULE_OBJS = \
 	text/TextManager.o \
 	TMX/TMXLayer.o \
 	TMX/TMXTileSet.o \
+	ui/button.o \
+	ui/ClipButton.o \
+	ui/CreditScreen.o \
+	ui/Caption.o \
+	ui/element.o \
+	ui/HealthIndicator.o \
+	ui/HoverInfo.o \
+	ui/ImageData.o \
+	ui/MapData.o \
+	ui/ParagraphData.o \
+	ui/SectionHeader.o \
+	ui/slider.o \
+	ui/SlideShow.o \
+	ui/StateButton.o \
+	ui/textarea.o \
+	ui/textdata.o \
+	ui/ToggleButton.o \
+	ui/TraitButton.o \
 	timer.o \
 	app.o \
 	splash.o \

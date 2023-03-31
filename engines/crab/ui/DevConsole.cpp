@@ -35,7 +35,7 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 
 void DebugConsole::Load(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("debug");
 		if (NodeValid(node)) {
@@ -78,7 +78,7 @@ void DebugConsole::Draw(pyrodactyl::event::Info &info) {
 		{
 			int temp = 0;
 			if (info.VarGet(var_name, temp))
-				value.Draw(NumberToString(temp));
+				value.Draw(NumberToString(temp).c_str());
 			else
 				value.Draw("Does not exist.");
 		}
@@ -89,6 +89,7 @@ void DebugConsole::Draw(pyrodactyl::event::Info &info) {
 	}
 }
 
+#if 0
 void DebugConsole::HandleEvents(const SDL_Event &Event) {
 	switch (state) {
 	case STATE_NORMAL: {
@@ -119,6 +120,7 @@ void DebugConsole::HandleEvents(const SDL_Event &Event) {
 		break;
 	}
 }
+#endif
 
 void DebugConsole::InternalEvents() {
 }

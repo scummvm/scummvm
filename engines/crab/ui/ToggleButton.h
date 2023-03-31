@@ -60,7 +60,10 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node);
 	void Draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
+
+#if 0
 	ButtonAction HandleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
+#endif
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

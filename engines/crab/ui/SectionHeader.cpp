@@ -37,6 +37,9 @@ using namespace pyrodactyl::text;
 using namespace pyrodactyl::image;
 
 void SectionHeader::Load(rapidxml::xml_node<char> *node) {
+	warning("STUB: SectionHeader::Load()");
+
+#if 0
 	if (TextData::Load(node, NULL, false)) {
 		LoadStr(text, "text", node);
 		text.insert(0, " ");
@@ -71,6 +74,8 @@ void SectionHeader::Load(rapidxml::xml_node<char> *node) {
 
 		SDL_FreeSurface(surf);
 	}
+#endif
+
 }
 
 void SectionHeader::Draw(const int &XOffset, const int &YOffset) {

@@ -27,7 +27,7 @@
  * Licensed under MIT
  *
  */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/SlideShow.h"
 
 namespace Crab {
@@ -52,12 +52,12 @@ void SlideShow::Load(rapidxml::xml_node<char> *node) {
 
 		if (NodeValid("prev", node)) {
 			prev.Load(node->first_node("prev"));
-			prev.hotkey.Set(IU_PREV);
+			//prev.hotkey.Set(IU_PREV);
 		}
 
 		if (NodeValid("next", node)) {
 			next.Load(node->first_node("next"));
-			next.hotkey.Set(IU_NEXT);
+			//next.hotkey.Set(IU_NEXT);
 		}
 
 		path.clear();
@@ -84,6 +84,7 @@ void SlideShow::Draw() {
 		next.Draw();
 }
 
+#if 0
 void SlideShow::HandleEvents(const SDL_Event &Event) {
 	using namespace pyrodactyl::input;
 
@@ -99,12 +100,17 @@ void SlideShow::HandleEvents(const SDL_Event &Event) {
 			Refresh();
 		}
 }
+#endif
 
 void SlideShow::Refresh() {
+	warning("SlideShow::Refresh()");
+
+#if 0
 	img.Delete();
 
 	if (index >= 0 && index < path.size())
 		img.Load(path.at(index));
+#endif
 }
 
 void SlideShow::SetUI() {
