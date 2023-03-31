@@ -75,10 +75,9 @@ bool CurlSocket::connect(Common::String url) {
 		// Just connect to the host, do not do any transfers.
 		curl_easy_setopt(_easy, CURLOPT_CONNECT_ONLY, 1L);
 
-		// Uncomment this to disable SSL certificate verification
-		// (e.g. self-signed certs).
-		// curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0L);
-
+#ifdef ANDROID_PLAIN_PORT
+		curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0L);
+#endif
 		CURLcode res = curl_easy_perform(_easy);
 		if (res != CURLE_OK) {
 			warning("libcurl: Failed to connect: %s", curl_easy_strerror(res));
@@ -164,4 +163,3 @@ size_t CurlSocket::recv(void *data, int maxLen) {
 }
 
 } // End of namespace Networking
-
