@@ -92,8 +92,19 @@ bool Dialog::tick() {
 	}
 
 	uint n = _dialogScript.size();
-	if (_dialogScriptPos >= n)
+	if (_dialogScriptPos >= n) {
+
+		if (!_dialogProcessName.empty()) {
+			_dialogProcessName.clear();
+
+			debug("end of dialog, running %s", _dialogParentProcessName.c_str());
+			dialog_var->setInteger(-2);
+			_dialogParentProcessName.clear();
+			_engine->reactivate(_dialogParentProcessName, "end of dialog");
+		}
+
 		return false;
+	}
 
 	Common::String &line = _dialogLine;
 	line.clear();
@@ -127,15 +138,6 @@ bool Dialog::tick() {
 		dialog_var->setInteger(-3);
 	}
 
-	if (_dialogScriptPos >= n && !_dialogProcessName.empty()) {
-		_dialogProcessName.clear();
-
-		debug("end of dialog, running %s", _dialogParentProcessName.c_str());
-		dialog_var->setInteger(-2);
-		_engine->reactivate(_dialogParentProcessName, "end of dialog");
-		_dialogParentProcessName.clear();
-		return false;
-	}
 	return true;
 }
 
