@@ -75,6 +75,9 @@ bool CurlSocket::connect(Common::String url) {
 		// Just connect to the host, do not do any transfers.
 		curl_easy_setopt(_easy, CURLOPT_CONNECT_ONLY, 1L);
 
+		// On Android, libcurl won't connect to SSL connections
+		// with VERIFYPEER enabled because we do not ship
+		// with a CA bundle.  So let's disable it.
 #ifdef ANDROID_PLAIN_PORT
 		curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0L);
 #endif
@@ -163,3 +166,4 @@ size_t CurlSocket::recv(void *data, int maxLen) {
 }
 
 } // End of namespace Networking
+
