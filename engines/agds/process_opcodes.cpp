@@ -773,7 +773,8 @@ void Process::screenObjectPatchIncRef() {
 			debug("increment refcount for object %s, result: %d", objectName.c_str(), refs);
 		}
 	} else {
-		debug("screenObjectPatchIncRef: current screen, skipping patch");
+		debug("screenObjectPatchIncRef: current screen, loading object");
+		suspend(kExitCodeLoadScreenObject, objectName);
 	}
 }
 
