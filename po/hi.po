@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-29 23:13+0000\n"
-"PO-Revision-Date: 2023-03-27 17:00+0000\n"
+"PO-Revision-Date: 2023-03-31 16:44+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -371,7 +371,7 @@ msgstr "कीमैप"
 
 #: gui/editgamedialog.cpp:219 gui/options.cpp:2239 engines/dialogs.cpp:324
 msgid "Backend"
-msgstr ""
+msgstr "बैकेंड"
 
 #: gui/editgamedialog.cpp:222
 msgid "Override global backend settings"
@@ -441,57 +441,57 @@ msgstr "ग्लोबल MT-32 सेटिंग्स को ओवररा
 
 #: gui/editgamedialog.cpp:299 gui/options.cpp:2281
 msgid "Paths"
-msgstr ""
+msgstr "पाथ"
 
 #: gui/editgamedialog.cpp:301 gui/options.cpp:2283
 msgctxt "lowres"
 msgid "Paths"
-msgstr ""
+msgstr "पाथ"
 
 #: gui/editgamedialog.cpp:308
 msgid "Game Path:"
-msgstr ""
+msgstr "गेम पाथ:"
 
 #: gui/editgamedialog.cpp:310
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr ""
+msgstr "गेम पाथ:"
 
 #: gui/editgamedialog.cpp:315 gui/options.cpp:2470
 msgid "Extra Path:"
-msgstr ""
+msgstr "अन्य पाथ:"
 
 #: gui/editgamedialog.cpp:315 gui/editgamedialog.cpp:317
 #: gui/editgamedialog.cpp:318
 msgid "Specifies path to additional data used by the game"
-msgstr ""
+msgstr "गेम में इस्तेमाल होने वाले अतिरिक्त डाटा का पाथ बताता है"
 
 #: gui/editgamedialog.cpp:317 gui/options.cpp:2472
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr ""
+msgstr "अन्य पाथ :"
 
 #: gui/editgamedialog.cpp:324 gui/options.cpp:2446
 msgid "Save Path:"
-msgstr ""
+msgstr "सेव पाथ:"
 
 #: gui/editgamedialog.cpp:324 gui/editgamedialog.cpp:326
 #: gui/editgamedialog.cpp:327 gui/options.cpp:2446 gui/options.cpp:2448
 msgid "Specifies where your saved games are put"
-msgstr ""
+msgstr "आपके सेव गेम का पाथ निर्धारित करता है"
 
 #: gui/editgamedialog.cpp:326 gui/options.cpp:2448
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr ""
+msgstr "सेव पाथ:"
 
 #: gui/editgamedialog.cpp:338 engines/dialogs.cpp:339
 msgid "Achievements"
-msgstr ""
+msgstr "उपलब्धिया"
 
 #: gui/editgamedialog.cpp:342 engines/dialogs.cpp:343
 msgid "Statistics"
-msgstr ""
+msgstr "आंकड़े"
 
 #: gui/editgamedialog.cpp:366 gui/editgamedialog.cpp:468
 #: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1191
@@ -514,7 +514,7 @@ msgstr "डिफ़ॉल्ट"
 
 #: gui/editgamedialog.cpp:523 gui/options.cpp:3284
 msgid "Select SoundFont"
-msgstr ""
+msgstr "साउंड फॉन्ट सेलेक्ट करे"
 
 #: gui/editgamedialog.cpp:562
 msgid "Select additional game directory"
@@ -527,16 +527,20 @@ msgstr "उस फोल्डर को चुने जिसमे सेव 
 #: gui/editgamedialog.cpp:582 gui/options.cpp:3153
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
+"चुनी हुई डायरेक्टरी में सेव नहीं किया जा सकत। कृपया कोई और फोल्डर सेलेक्ट "
+"करे।"
 
 #: gui/editgamedialog.cpp:587
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"सेव गेम sync फीचर नॉन डीफॉल्ट डायरेक्ट्रीज के लिए काम नहीं करत। अगर आप सेव "
+"गेम्स को sync करना चाहते है तोह डिफ़ॉल्ट डायरेक्टरी इस्तेमाल करे।"
 
 #: gui/editgamedialog.cpp:613
 msgid "This game ID is already taken. Please choose another one."
-msgstr ""
+msgstr "यह गेम ID पहले से चुनी जा चुकी है, कृपया कोई और ID चुने।"
 
 #: gui/editrecorddialog.cpp:57
 msgid "Author:"
@@ -548,11 +552,11 @@ msgstr "टिप्पणियाँ:"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
-msgstr ""
+msgstr "फाइल लोड करने के लिए चुने"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "सेव करने के लिए फाइल का नाम रखें"
 
 #: gui/filebrowser-dialog.cpp:136
 msgid "Do you really want to overwrite the file?"
