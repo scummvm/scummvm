@@ -141,7 +141,7 @@ void EggManager::spawn_eggs(uint16 x, uint16 y, uint8 z, bool teleport) {
 			if (((*egg)->obj->status & OBJ_STATUS_EGG_ACTIVE) == 0) {
 				(*egg)->obj->status |= OBJ_STATUS_EGG_ACTIVE;
 
-				hatch_probability = NUVIE_RAND() % 100;
+				hatch_probability = (NUVIE_RAND() % 100) + 1;
 				DEBUG(0, LEVEL_DEBUGGING, "Checking Egg (%x,%x,%x). Rand: %d Probability: %d%%", (*egg)->obj->x, (*egg)->obj->y, (*egg)->obj->z, hatch_probability, (*egg)->obj->qty);
 
 				DEBUG(1, LEVEL_DEBUGGING, " Align: %s", get_actor_alignment_str(quality % 10));
