@@ -57,8 +57,8 @@ void Dead::writeLine(int y) {
 		writeChar(i == 0 || i == 39 ? '+' : '-');
 }
 
-bool Dead::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_RETURN) {
+bool Dead::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_SELECT) {
 		replaceView("MainMenu");
 		return true;
 	}
