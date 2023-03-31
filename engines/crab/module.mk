@@ -15,7 +15,13 @@ MODULE_OBJS = \
 	animation/animation.o \
 	animation/AnimationFrame.o \
 	animation/animframe.o \
+	animation/fightanim.o \
+	animation/fightmove.o \
+	animation/fightmoves.o \
 	animation/imageeffect.o \
+	animation/PopUp.o \
+	animation/sprite.o \
+	animation/walkframes.o \
 	event/conversationdata.o \
 	event/effect.o \
 	event/EventSeqGroup.o \

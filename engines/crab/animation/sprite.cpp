@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/animation/sprite.h"
 
 namespace Crab {
@@ -240,6 +241,9 @@ Vector2i Sprite::CamFocus() {
 // Purpose: Draw the sprite
 //------------------------------------------------------------------------
 void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
+	warning("STUB: Sprite::Draw()");
+
+#if 0
 	using namespace pyrodactyl::image;
 	using namespace pyrodactyl::text;
 
@@ -321,6 +325,7 @@ void Sprite::Draw(pyrodactyl::event::Info &info, const Rect &camera) {
 									10);
 		destinationRect.Draw(-camera.x, -camera.y, 0, 200, 0, 254);
 	}
+#endif
 }
 
 void Sprite::DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
@@ -330,6 +335,8 @@ void Sprite::DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
 
 	popup.Draw(x, y, pop, camera);
 }
+
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle the movement in a level for the player only
 //------------------------------------------------------------------------
@@ -393,6 +400,7 @@ void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &
 	// This is to prevent one frame of drawing with incorrect parameters
 	Animate(info);
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Set destination for sprite movement
