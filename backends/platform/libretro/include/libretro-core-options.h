@@ -82,6 +82,11 @@ struct retro_core_option_v2_category option_cats_us[] = {
 		"Frameskip",
 		"Configure frameskip settings"
 	},
+	{
+		"performance",
+		"Performance",
+		"Configure performance settings"
+	},
 	{ NULL, NULL, NULL },
 };
 
@@ -258,12 +263,26 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"0"
 	},
 	{
+		"scummvm_auto_performance_tuner",
+		"Auto performance tuner",
+		NULL,
+		"In-game automatic change of performance/frameskip settings if low performances are detected. 'Allow Timing Inaccuracies' and 'Auto Frameskip' will be temporarily set on in sequence, if necessary, for the current game session only. Single saved settings will not be affected.",
+		NULL,
+		"performance",
+		{
+			{"disabled", NULL},
+			{"enabled", NULL},
+			{NULL, NULL},
+		},
+		"enabled"
+	},
+	{
 		"scummvm_allow_timing_inaccuracies",
 		"Allow Timing Inaccuracies",
 		NULL,
 		"Allow timing inaccuracies that reduces CPU requirements. Though most timing deviations are imperceptible, in some cases it may introduce audio sync/timing issues, hence this option should be enabled only if full speed cannot be reached otherwise.",
 		NULL,
-		NULL,
+		"performance",
 		{
 			{"disabled", NULL},
 			{"enabled", NULL},
@@ -274,20 +293,6 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 #else
 		"disabled"
 #endif
-	},
-	{
-		"scummvm_auto_performance_tuner",
-		"Auto performance tuner",
-		NULL,
-		"In-game automatic change of performance/frameskip settings if low performances are detected. 'Allow Timing Inaccuracies' and 'Auto Frameskip' will be temporarily set on in sequence, if necessary, for the current game session only. Single saved settings will not be affected.",
-		NULL,
-		NULL,
-		{
-			{"disabled", NULL},
-			{"enabled", NULL},
-			{NULL, NULL},
-		},
-		"enabled"
 	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };

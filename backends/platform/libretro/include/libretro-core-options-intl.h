@@ -80,6 +80,11 @@ struct retro_core_option_v2_category option_cats_it[] = {
 		"Salto dei fotogrammi",
 		"Impostazioni per il salto dei fotogrammi"
 	},
+	{
+		"performance",
+		NULL,
+		"Impostazioni relative alle performance"
+	},
 	{ NULL, NULL, NULL },
 };
 
@@ -193,10 +198,10 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
-		"scummvm_allow_timing_inaccuracies",
-		"Consenti inaccuratezze di timing",
+		"scummvm_auto_performance_tuner",
+		"Regolazione automatica performance",
 		NULL,
-		"Consente inaccuratezze di timing che riducono significativamente le richeste di CPU. Anche se la maggior parte delle inaccuratezze sono impercettibili, in alcuni casi potrebbe introdurre problemi di sincronizzazione audio, quindi questa opzione andrebbe abilitata solo se il raggiungimento della piena velocità non è possibile in altro modo.",
+		"Cambio automatico delle impostazioni di performance e salto dei fotogrammi se vengono rilevate performance scadenti durante il gioco. 'Consenti inaccuratezze di timing' e 'Salto dei fotogrammi Auto' saranno temporaneamente abilitati in sequenza per la sola sessione di gioco, se necessario. Le singole impostazioni salvate non saranno modificate.",
 		NULL,
 		NULL,
 		{
@@ -205,10 +210,10 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
-		"scummvm_auto_performance_tuner",
-		"Regolazione automatica performance",
+		"scummvm_allow_timing_inaccuracies",
+		"Consenti inaccuratezze di timing",
 		NULL,
-		"Cambio automatico delle impostazioni di performance e salto dei fotogrammi se vengono rilevate performance scadenti durante il gioco. 'Consenti inaccuratezze di timing' e 'Salto dei fotogrammi Auto' saranno temporaneamente abilitati in sequenza per la sola sessione di gioco, se necessario. Le singole impostazioni salvate non saranno modificate.",
+		"Consente inaccuratezze di timing che riducono significativamente le richeste di CPU. Anche se la maggior parte delle inaccuratezze sono impercettibili, in alcuni casi potrebbe introdurre problemi di sincronizzazione audio, quindi questa opzione andrebbe abilitata solo se il raggiungimento della piena velocità non è possibile in altro modo.",
 		NULL,
 		NULL,
 		{
