@@ -40,7 +40,7 @@ AnimationFrame::AnimationFrame(rapidxml::xml_node<char> *node) : eff(node) {
 	LoadImgKey(img, "img", node);
 	LoadNum(start, "start", node);
 	LoadNum(finish, "finish", node);
-	LoadColor(col, node);
+	//LoadColor(col, node);
 
 	if (NodeValid("text", node, false))
 		text.Load(node->first_node("text"));
@@ -62,7 +62,10 @@ void AnimationFrame::Reset() {
 	}
 }
 
-void AnimationFrame::Draw(const Uint32 &timestamp) {
+void AnimationFrame::Draw(const uint32 &timestamp) {
+	warning("STUB: AnimationFrame::Draw()");
+
+#if 0
 	// Only draw the frame in the specified duration
 	if (timestamp >= start && timestamp <= finish) {
 		// Fill the screen with the color indicated
@@ -73,9 +76,11 @@ void AnimationFrame::Draw(const Uint32 &timestamp) {
 		gImageManager.Draw(x, y, img);
 		text.Draw();
 	}
+#endif
 }
 
-DrawType AnimationFrame::InternalEvents(const Uint32 &timestamp) {
+DrawType AnimationFrame::InternalEvents(const uint32 &timestamp) {
+
 	// Vary alpha according to the effect values in the variation time frame
 	if (timestamp >= eff.start && timestamp <= eff.finish) {
 		// These equations courtesy of linear algebra

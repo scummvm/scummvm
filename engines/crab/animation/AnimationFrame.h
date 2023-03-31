@@ -41,12 +41,21 @@ namespace Crab {
 
 namespace pyrodactyl {
 namespace anim {
+
+// Make linker happy by temporarily defining SDL_COLOR
+struct SDL_Color {
+	uint32 r;
+	uint32 g;
+	uint32 b;
+	uint32 a;
+};
+
 struct AnimationFrame : public Vector2i {
 	// The image drawn in this frame
 	ImageKey img;
 
 	// This is the time in we draw the frame milliseconds relative to the start of the entire animation
-	Uint32 start, finish;
+	uint32 start, finish;
 
 	// The effect applied to the image
 	AnimationEffect eff;
@@ -69,8 +78,8 @@ struct AnimationFrame : public Vector2i {
 	AnimationFrame(rapidxml::xml_node<char> *node);
 
 	void Reset();
-	void Draw(const Uint32 &timestamp);
-	DrawType InternalEvents(const Uint32 &timestamp);
+	void Draw(const uint32 &timestamp);
+	DrawType InternalEvents(const uint32 &timestamp);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl

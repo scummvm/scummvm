@@ -9,6 +9,10 @@ MODULE_OBJS = \
 	loaders.o \
 	ScreenSettings.o \
 	GameParam.o \
+	animation/animation.o \
+	animation/AnimationFrame.o \
+	animation/animframe.o \
+	animation/imageeffect.o \
 	event/conversationdata.o \
 	event/effect.o \
 	event/EventSeqGroup.o \
@@ -49,6 +53,8 @@ MODULE_OBJS = \
 	ui/ImageData.o \
 	ui/MapData.o \
 	ui/ParagraphData.o \
+	ui/ProgressBar.o \
+	ui/QuestText.o \
 	ui/SectionHeader.o \
 	ui/slider.o \
 	ui/SlideShow.o \

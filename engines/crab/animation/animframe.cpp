@@ -34,7 +34,7 @@ namespace Crab {
 
 using namespace pyrodactyl::anim;
 
-void AnimFrame::Load(rapidxml::xml_node<char> *node, const Rect &VBOX, const Uint32 &rep, const int &AX, const int &AY) {
+void AnimFrame::Load(rapidxml::xml_node<char> *node, const Rect &VBOX, const uint32 &rep, const int &AX, const int &AY) {
 	clip.Load(node);
 
 	if (rep == 0)
@@ -86,10 +86,13 @@ void AnimationFrames::Load(rapidxml::xml_node<char> *node) {
 		}
 	}
 
+#if 0
 	if (random)
 		current_clip = gRandom.Num() % frame.size();
 	else
 		current_clip = 0;
+#endif
+	current_clip = 0;
 }
 
 bool AnimationFrames::UpdateClip() {

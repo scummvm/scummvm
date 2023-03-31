@@ -54,7 +54,7 @@ struct AnimationEffect {
 	FadeType type;
 
 	// The duration of the effect relative to the start of this animation
-	Uint32 start, finish;
+	uint32 start, finish;
 
 	// Warning: the only way to start drawing the game again is having another animation event with DRAW_START
 	DrawType draw_game;
