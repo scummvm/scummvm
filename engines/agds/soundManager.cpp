@@ -33,8 +33,8 @@
 namespace AGDS {
 
 void SoundManager::tick() {
-	for (SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
-		Sound &sound = *i;
+	for (auto it = _sounds.begin(); it != _sounds.end(); ) {
+		Sound &sound = *it;
 		auto &phaseVar = sound.phaseVar;
 
 		bool active = playing(sound.id);
@@ -55,8 +55,12 @@ void SoundManager::tick() {
 				_mixer->stopID(sound.id);
 				_engine->setGlobal(phaseVar, 0);
 			}
-		} else if (!active)
+			++it;
+		} else if (!active) {
 			_engine->reactivate(sound.process, "sound inactive");
+			it = _sounds.erase(it);
+		} else
+			++it;
 	}
 }
 
