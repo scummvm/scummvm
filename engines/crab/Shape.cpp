@@ -75,7 +75,7 @@ bool Shape::Contains(const Vector2i &pos) {
 	return false;
 }
 
-void Shape::Draw(const int &XOffset, const int &YOffset, const Uint8 &r, const Uint8 &g, const Uint8 &b, const Uint8 &a) {
+void Shape::Draw(const int &XOffset, const int &YOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
 	if (type == SHAPE_POLYGON)
 		poly.Draw(XOffset, YOffset, r, g, b, a);
 	else

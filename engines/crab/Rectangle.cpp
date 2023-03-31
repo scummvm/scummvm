@@ -34,7 +34,7 @@ namespace Crab {
 
 bool Rect::Load(rapidxml::xml_node<char> *node, const bool &echo, const std::string &x_name, const std::string &y_name,
 				const std::string &w_name, const std::string &h_name) {
-	return LoadNum(x, x_name, node, echo) && LoadNum(y, y_name, node, echo) && LoadNum(w, w_name, node, echo) && LoadNum(h, h_name, node, echo);
+	return LoadNum(x, x_name.c_str(), node, echo) && LoadNum(y, y_name.c_str(), node, echo) && LoadNum(w, w_name.c_str(), node, echo) && LoadNum(h, h_name.c_str(), node, echo);
 }
 
 bool Rect::Collide(Rect box) {
@@ -85,7 +85,7 @@ void Rect::Flip(const TextureFlipType &flip, const Vector2i &axis) {
 		y = 2 * axis.y - y - h;
 }
 
-void Rect::Draw(const int &XOffset, const int &YOffset, const Uint8 &r, const Uint8 &g, const Uint8 &b, const Uint8 &a) {
+void Rect::Draw(const int &XOffset, const int &YOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
 	int X = x + XOffset, Y = y + YOffset;
 
 	DrawLine(X, Y, X + w, Y, r, g, b, a);

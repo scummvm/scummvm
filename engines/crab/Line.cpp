@@ -36,9 +36,13 @@ namespace Crab {
 // Purpose: Draw a line from start to end
 //------------------------------------------------------------------------
 void DrawLine(const int &x1, const int &y1, const int &x2, const int &y2,
-			  const Uint8 &r, const Uint8 &g, const Uint8 &b, const Uint8 &a) {
+			  const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
+	warning("STUB: DrawLine()");
+
+#if 0
 	SDL_SetRenderDrawColor(gRenderer, r, g, b, a);
 	SDL_RenderDrawLine(gRenderer, x1, y1, x2, y2);
+#endif
 }
 
 } // End of namespace Crab

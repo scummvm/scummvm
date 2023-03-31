@@ -71,7 +71,7 @@ bool CollideLine(const T &p0_x, const T &p0_y, const T &p1_x, const T &p1_y,
 
 // Draw a line OpenGL style
 void DrawLine(const int &x1, const int &y1, const int &x2, const int &y2,
-			  const Uint8 &r, const Uint8 &g, const Uint8 &b, const Uint8 &a);
+			  const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a);
 
 } // End of namespace Crab
 

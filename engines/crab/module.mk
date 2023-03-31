@@ -35,7 +35,11 @@ MODULE_OBJS = \
 	text/TextManager.o \
 	timer.o \
 	app.o \
-	splash.o
+	splash.o \
+	Line.o \
+	Polygon.o \
+	Rectangle.o \
+	Shape.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CRAB), DYNAMIC_PLUGIN)
