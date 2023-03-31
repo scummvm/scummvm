@@ -46,7 +46,7 @@ struct MovementSet {
 		Rect target;
 
 		// The time the sprite waits before it starts moving to pos
-		Uint32 delay;
+		uint32 delay;
 
 		Movement(rapidxml::xml_node<char> *node) {
 			target.Load(node);

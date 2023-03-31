@@ -207,6 +207,9 @@ void Sprite::Flee(pyrodactyl::event::Info &info, std::vector<pyrodactyl::level::
 // Purpose: AI routine for fighting the player
 //------------------------------------------------------------------------
 void Sprite::Attack(pyrodactyl::event::Info &info, Sprite &target_sp, const SpriteConstant &sc) {
+	warning("STUB: Sprite::Attack()");
+
+#if 0
 	switch (ai_data.fight.state) {
 	case FIGHTSTATE_GETNEXTMOVE: {
 		ai_data.fight.state = FIGHTSTATE_GETINRANGE;
@@ -245,9 +248,13 @@ void Sprite::Attack(pyrodactyl::event::Info &info, Sprite &target_sp, const Spri
 	default:
 		break;
 	}
+#endif
 }
 
 void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
+	warning("STUB: Sprite::FlyAround()");
+
+#if 0
 	// Is this sprite flying right now?
 	if (ai_data.walk.enabled) {
 		// We're flying towards the left edge
@@ -308,6 +315,7 @@ void Sprite::FlyAround(const Rect &camera, const SpriteConstant &sc) {
 			ai_data.walk.enabled = true;
 		}
 	}
+#endif
 }
 
 } // End of namespace Crab

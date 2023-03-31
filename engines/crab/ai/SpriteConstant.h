@@ -44,7 +44,7 @@ struct FlyerConstant {
 	Vector2i start;
 
 	// The value of the delay for fliers
-	Uint32 delay_min, delay_max;
+	uint32 delay_min, delay_max;
 
 	// The velocity of fliers
 	Vector2f vel;
