@@ -1462,7 +1462,13 @@ void Inter_v2::o2_checkData(OpFuncParams &params) {
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d", file.c_str(), size);
 
 	WRITE_VAR_OFFSET(varOff, (size == -1) ? -1 : 50);
-	WRITE_VAR(16, (uint32) size);
+	// WORKAROUND: the "current hotspot" variable (also VAR(16)) is sometimes corrupted here before being read.
+	// We skip writing the file size into VAR(16) here as a workaround (the value is not used anyway).
+	// In some versions of Adibou 1, this sometimes triggers the "quit" action instead of starting
+	// a chosen Read/Count application.
+	// Note: a similar issue has been found in Adibou 2, see o7_checkData().
+	if (_vm->getGameType() != kGameTypeAdibou1  || !_vm->isCurrentTot("KID.TOT"))
+		WRITE_VAR(16, (uint32) size);
 }
 
 void Inter_v2::o2_readData(OpFuncParams &params) {
