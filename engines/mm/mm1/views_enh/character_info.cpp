@@ -94,6 +94,15 @@ bool CharacterInfo::msgUnfocus(const UnfocusMessage &msg) {
 	return PartyView::msgUnfocus(msg);
 }
 
+bool CharacterInfo::msgGame(const GameMessage &msg) {
+	if (msg._name == "USE") {
+		g_events->send("CharacterInventory", GameMessage("USE"));
+		return true;
+	}
+
+	return false;
+}
+
 bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	int idx;
 

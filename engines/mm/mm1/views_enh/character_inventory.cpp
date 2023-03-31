@@ -53,8 +53,10 @@ bool CharacterInventory::msgFocus(const FocusMessage &msg) {
 
 	if (dynamic_cast<WhichItem *>(msg._priorView) == nullptr &&
 		dynamic_cast<Trade *>(msg._priorView) == nullptr &&
-		dynamic_cast<GameMessages *>(msg._priorView) == nullptr)
+		dynamic_cast<GameMessages *>(msg._priorView) == nullptr) {
 		_mode = BACKPACK_MODE;
+		_selectedButton = BTN_NONE;
+	}
 	populateItems();
 
 	return true;
@@ -74,6 +76,10 @@ bool CharacterInventory::msgGame(const GameMessage &msg) {
 	} else if (msg._name == "TRADE_DEST") {
 		if (msg._value != -1)
 			trade(_tradeMode, _tradeAmount, &g_globals->_party[msg._value]);
+		return true;
+	} else if (msg._name == "USE") {
+		// Combat use item mode
+		addView();
 		return true;
 	}
 
@@ -154,7 +160,6 @@ bool CharacterInventory::msgAction(const ActionMessage &msg) {
 void CharacterInventory::populateItems() {
 	_items.clear();
 	_selectedItem = -1;
-	_selectedButton = BTN_NONE;
 
 	const Character &c = *g_globals->_currCharacter;
 	const Inventory &inv = (_mode == ARMS_MODE) ? c._equipped : c._backpack;
@@ -184,7 +189,7 @@ void CharacterInventory::charSwitched(Character *priorChar) {
 }
 
 void CharacterInventory::itemSelected() {
-	if (g_events->isInCombat() && dynamic_cast<Combat *>(g_events) != nullptr) {
+	if (g_events->isInCombat() && dynamic_cast<Combat *>(g_events->priorView()) != nullptr) {
 		useItem();
 	}
 }
@@ -269,6 +274,8 @@ void CharacterInventory::useItem() {
 		msg = Game::UseItem::combatUseItem(inv, *invEntry, _mode == BACKPACK_MODE);
 	else
 		msg = Game::UseItem::nonCombatUseItem(inv, *invEntry, _mode == BACKPACK_MODE);
+
+	displayMessage(msg);
 }
 
 void CharacterInventory::discardItem() {

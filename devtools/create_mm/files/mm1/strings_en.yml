@@ -52,15 +52,15 @@ dialogs:
 		cast_spell: "cast spell:  level="
 		number: "number="
 		use_combat:
-			use_no_special_power: "no special power"
-			use_not_equipped: "not equipped"
-			no_charges_left: "no charges left"
-			done: "done"
+			no_special_power: "No special power"
+			not_equipped: "Not equipped"
+			no_charges_left: "No charges left"
+			done: "Done"
 		use_noncombat:
-			no_special_power: "*** no special power ***"
-			not_equipped: "*** not equipped ***"
-			no_charges_left: "*** no charges left ***"
-			done: "*** done ***"
+			no_special_power: "*** No special power ***"
+			not_equipped: "*** Not equipped ***"
+			no_charges_left: "*** No charges left ***"
+			done: "*** Done ***"
 	create_characters:
 		title: "Create New Characters"
 		intellect: "intellect...="
