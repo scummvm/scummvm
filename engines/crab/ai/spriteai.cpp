@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/animation/sprite.h"
 
 namespace Crab {

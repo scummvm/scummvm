@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	GameParam.o \
 	ai/moveeffect.o \
 	ai/movement.o \
+	ai/spriteai.o \
 	ai/SpriteConstant.o \
 	animation/animation.o \
 	animation/AnimationFrame.o \
