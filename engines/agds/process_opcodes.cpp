@@ -1669,8 +1669,9 @@ void Process::setRain() {
 }
 
 void Process::setRainDensity() {
+	int change = pop();
 	int density = pop();
-	debug("setRainDensity stub: %d", density);
+	debug("setRainDensity stub: %d (change: %d)", density, change);
 
 }
 
