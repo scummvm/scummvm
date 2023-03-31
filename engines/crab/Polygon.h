@@ -90,7 +90,7 @@ public:
 	void Project(const Vector2f &axis, float &min, float &max) const;
 
 	void Draw(const int &XOffset = 0, const int &YOffset = 0,
-			  const Uint8 &r = 0, const Uint8 &g = 0, const Uint8 &b = 0.0f, const Uint8 &a = 255);
+			  const uint8 &r = 0, const uint8 &g = 0, const uint8 &b = 0.0f, const uint8 &a = 255);
 };
 
 } // End of namespace Crab

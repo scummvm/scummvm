@@ -257,7 +257,7 @@ bool Polygon2D::Contains(const float &X, const float &Y) {
 	return result;
 }
 
-void Polygon2D::Draw(const int &XOffset, const int &YOffset, const Uint8 &r, const Uint8 &g, const Uint8 &b, const Uint8 &a) {
+void Polygon2D::Draw(const int &XOffset, const int &YOffset, const uint8 &r, const uint8 &g, const uint8 &b, const uint8 &a) {
 	Vector2f p1, p2;
 	for (int i = 0; i < point.size(); i++) {
 		p1 = point[i];
