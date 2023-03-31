@@ -1376,7 +1376,6 @@ void AGDSEngine::stopProcess(const Common::String & name) {
 }
 
 void AGDSEngine::currentInventoryObject(const ObjectPtr & object) {
-	resetCurrentInventoryObject();
 	_currentInventoryObject = object;
 }
 
