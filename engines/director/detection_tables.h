@@ -831,6 +831,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "dudenmeyer",			"Duden/Meyer Multimedia sampler" },
 	{ "flaschenfahrrad",	"Das Verkehrs-Lernspiel: Fred und das Flaschenfahrrad" },
 	{ "girlspack",			"Girl's Pack!" },
+	{ "glitzerschuppen",	"Der Regenbogenfisch Die Suche Nach Den Glitzerschuppen" },
 	{ "globiabc",			"Globi's ABC" },
 	{ "janoschpanama",		"JANOSCH: Oh, wie schön ist Panama" },
 	{ "janoschverkehr",		"JANOSCH: Tiger und Bär im Straßenverkehr" },
@@ -851,6 +852,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ravensburger",		"Ravensburger Interactive Demo-Sampler" },
 	{ "raveshuttle",		"Rave Shuttle: The Cosmic Challenge" },
 	{ "ritterrost",			"Ritter Rost - Die Eiserne Burg" },
+	{ "sachabenteuer",		"Toggolino Sachabenteuer" },
 	{ "tkkgkit",			"TKKG: Identikit" },
 	{ "zwergnase",			"Zwerg Nase: Ein interaktives Märchen" },
 
@@ -7561,6 +7563,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Real name involves a non-printing 0x81 between words
 	WINGAME1t_l("gasbook8", "Yutanpo Shirane - Super peeper 31", "xn--SuperyQPeeperyQ31.exe-1ai", "3d23c86681f6badff5d4187a5b99bb89", 2594498, Common::JA_JPN, 702),
 
+	MACGAME1_l("glitzerschuppen", "", "GLITZERSCHUPPEN",	 "r:dec72b4b6f8e97f1ea24361794bf0bdf", 116459, Common::DE_DEU, 702),
+	WINGAME1_l("glitzerschuppen", "", "Glitzerschuppen.exe", "t:b04230237024e1c8e7f4d3920acba08a", 1820762, Common::DE_DEU, 702),
+
 	// Found on アクティブマスコット・ハイジ (Heidi Desktop Mascot) software from Inner Brain, Shinjuku, Tokyo
 	// Installers for the screen savers and other applications also use Director
 	// Original calculator filenames are ハイジ電卓１.exe, ハイジ電卓２.exe, ハイジ電卓３.exe
@@ -8612,6 +8617,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pixeline8", "Classic", "Pixeline (Classic)",	"9f46cf3fafcf6bfe5ec9a04303cabf3c", 211958, Common::DA_DNK, 1010),
 	MACGAME1_l("pixeline8", "", "Pixeline og Kong Gulerod", 	"b5d3018832a36c7314a8daeebc5f16b0", 281297, Common::DA_DNK, 1010),
 	WINGAME1_l("pixeline8", "", "Pixeline og Kong Gulerod.exe",	"2f4cf44dd0b636a83c93997a620069b7", 3062430, Common::DA_DNK, 1010),
+
+	MACGAME1_l("sachabenteuer", "", "Sachabenteuer",	 "r:d1857fd32b640a3f5051d0f9c97b06e2", 306387, Common::DE_DEU, 1000),
+	WINGAME1_l("sachabenteuer", "", "Sachabenteuer.exe", "t:d68980c038dab21c7462eb6a90259eaa", 620410, Common::DE_DEU, 1000),
 
 	// Found on AOL 9.0 trial CD
 	WINGAME1("seinfeldondvd", "", "SEINFELD.EXE", "827e5af88f4c096652a1523dc28c9bf4", 3572626, 1000),
