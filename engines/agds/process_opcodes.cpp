@@ -554,6 +554,7 @@ void Process::loadMouseCursorFromObject() {
 }
 
 void Process::attachInventoryObjectToMouse(bool flag) {
+	//FIXME: check that flag == true means re-adding current object back to inventory.
 	Common::String name = popString();
 	debug("attachInventoryObjectToMouse %s %d", name.c_str(), flag);
 	auto object = _engine->getCurrentScreenObject(name);
