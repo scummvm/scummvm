@@ -86,7 +86,7 @@ struct Monster {
 	byte _ac = 0;
 
 	Common::String getDisplayName() const {
-		return Common::String::format("|%s|", _name.c_str());
+		return _name;
 	}
 };
 
