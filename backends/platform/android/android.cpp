@@ -713,8 +713,8 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 
 	// By default DPAD directions will be used for virtual mouse in GUI context
 	// If the user wants to remap them, they will be able to navigate to Global Options -> Keymaps and do so.
-	// In some devices (eg. Android TV) with only the remote control as input, it is impossible to navigate the launcher GUI,
-	// if the DPAD actions are mapped to "up", "down", "left", "right" directions.
+	// In some devices (eg. Android TV) with only the remote control as DPAD input, it is impossible to navigate the launcher GUI,
+	// if the DPAD actions are mapped to "UP", "DOWN", "LEFT", "RIGHT" directions (GUI context) and not mouse cursor movement.
 	// TODO If/when full key-based (ie. non-mouse) navigation of the ScummVM GUI is implemented,
 	// we can revert back to the core behavior of DPAD being mapped to "up", "down", "left", "right" directions.
 	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, "VMOUSEUP", "JOY_LEFT_STICK_Y-");
@@ -725,13 +725,16 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, "VMOUSELEFT", "JOY_LEFT");
 	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, "VMOUSERIGHT", "JOY_LEFT_STICK_X+");
 	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, "VMOUSERIGHT", "JOY_RIGHT");
+	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, "VMOUSESLOW", "JOY_RIGHT_SHOULDER");
+	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, "VMOUSESLOW", "AUDIOPLAYPAUSE");
 	keymapperDefaultBindings->addDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionInteract, "JOY_A");
-	// TODO Needs JOY_CENTER to be defined
-	//keymapperDefaultBindings->addDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionInteract, "JOY_CENTER");
-	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveUp, nullptr);
-	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveDown, nullptr);
-	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveLeft, nullptr);
-	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveRight, nullptr);
+	keymapperDefaultBindings->addDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionInteract, "JOY_CENTER");
+	keymapperDefaultBindings->addDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionInteract, "SELECT");
+	// NOTE using nullptr as the third argument clears the bindings for the action.
+	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveUp, "UP");
+	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveDown, "DOWN");
+	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveLeft, "LEFT");
+	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, Common::kStandardActionMoveRight, "RIGHT");
 
 	return keymapperDefaultBindings;
 }
