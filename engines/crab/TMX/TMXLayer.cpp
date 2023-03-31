@@ -28,7 +28,7 @@
  *
  */
 
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/TMX/TMXLayer.h"
 
 namespace Crab {
@@ -43,6 +43,9 @@ bool Layer::Load(rapidxml::xml_node<char> *node) {
 }
 
 bool MapLayer::Load(const std::string &path, rapidxml::xml_node<char> *node) {
+	warning("STUB: MapLayer::Load()");
+
+#if 0
 	if (Layer::Load(node)) {
 		if (NodeValid("image", node, false)) {
 			type = LAYER_IMAGE;
@@ -101,6 +104,7 @@ bool MapLayer::Load(const std::string &path, rapidxml::xml_node<char> *node) {
 
 		return true;
 	}
+#endif
 
 	return false;
 }
