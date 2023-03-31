@@ -44,7 +44,7 @@ class ProgressBar : public ClipButton {
 	Timer timer;
 
 	// The total time for which the change effect must be shown
-	Uint32 notify_rate;
+	uint32 notify_rate;
 
 	// Are we currently displaying the effect?
 	bool changed;

@@ -54,6 +54,7 @@ void TextArea::Load(rapidxml::xml_node<char> *node) {
 	}
 }
 
+#if 0
 bool TextArea::HandleEvents(const SDL_Event &Event, bool numbers_only) {
 	// If a key was pressed
 	if (Event.type == SDL_TEXTINPUT) {
@@ -84,6 +85,8 @@ bool TextArea::HandleEvents(const SDL_Event &Event, bool numbers_only) {
 
 	return false;
 }
+#endif
+
 //------------------------------------------------------------------------
 // Purpose: Draw
 //------------------------------------------------------------------------

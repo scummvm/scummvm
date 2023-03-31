@@ -66,7 +66,9 @@ public:
 	void Load(const std::string &filename);
 	void Draw(pyrodactyl::event::Info &info);
 
+#if 0
 	void HandleEvents(const SDL_Event &Event);
+#endif
 	void InternalEvents();
 };
 } // End of namespace ui

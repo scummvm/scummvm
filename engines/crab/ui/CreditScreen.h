@@ -114,7 +114,9 @@ public:
 	void Load(const std::string &filename);
 	void Reset();
 
+#if 0
 	bool HandleEvents(SDL_Event &Event);
+#endif
 	void Draw();
 
 	void SetUI();

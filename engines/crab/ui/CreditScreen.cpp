@@ -29,7 +29,7 @@
  */
 
 #include "crab/ui/CreditScreen.h"
-#include "crab/url.h"
+//#include "crab/url.h"
 
 namespace Crab {
 
@@ -44,7 +44,7 @@ void CreditScreen::Reset() {
 }
 
 void CreditScreen::Load(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("credits");
 
@@ -104,6 +104,7 @@ void CreditScreen::Load(const std::string &filename) {
 	}
 }
 
+#if 0
 bool CreditScreen::HandleEvents(SDL_Event &Event) {
 	if (slow.HandleEvents(Event) == BUAC_LCLICK)
 		speed.cur = speed.slow;
@@ -121,6 +122,7 @@ bool CreditScreen::HandleEvents(SDL_Event &Event) {
 
 	return (back.HandleEvents(Event) == BUAC_LCLICK);
 }
+#endif
 
 void CreditScreen::Draw() {
 	bg.Draw();

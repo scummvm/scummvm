@@ -70,7 +70,9 @@ public:
 	void Clear() { img.Delete(); }
 
 	void Load(rapidxml::xml_node<char> *node);
+#if 0
 	void HandleEvents(const SDL_Event &Event);
+#endif
 	void Draw();
 
 	void SetUI();
