@@ -33,6 +33,8 @@ MODULE_OBJS = \
 	stat/StatTemplate.o \
 	text/color.o \
 	text/TextManager.o \
+	TMX/TMXLayer.o \
+	TMX/TMXTileSet.o \
 	timer.o \
 	app.o \
 	splash.o \
