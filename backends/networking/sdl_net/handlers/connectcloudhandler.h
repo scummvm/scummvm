@@ -33,12 +33,17 @@ class ConnectCloudHandler: public BaseHandler {
 	void handleError(Client &client, Common::String message) const;
 	void setJsonResponseHandler(Client &client, Common::String type, Common::String message) const;
 
+	Networking::ErrorCallback _storageConnectionCallback;
+
 public:
 	ConnectCloudHandler();
 	virtual ~ConnectCloudHandler();
 
 	virtual void handle(Client &client);
 	virtual bool minimalModeSupported() { return true; }
+
+	void setStorageConnectionCallback(Networking::ErrorCallback cb) { _storageConnectionCallback = cb; }
+	void storageConnected(const Networking::ErrorResponse& response) const;
 };
 
 class ConnectCloudClientHandler : public ClientHandler {
