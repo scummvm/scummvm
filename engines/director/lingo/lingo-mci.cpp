@@ -62,9 +62,9 @@ enum MCIDataType {
     MCI_END_COMMAND_LIST,
     MCI_CONSTANT,
     MCI_END_CONSTANT,
-    MCI_RETURN, 
+    MCI_RETURN,
 
-    MCI_FLAG, 
+    MCI_FLAG,
     MCI_INTEGER,
     MCI_STRING,
     MCI_RECT,
@@ -248,7 +248,8 @@ static CmdTableRow table[] = {
   };
 
 static MCIError getString(const Common::String &name, uint &idx, Common::String &str) {
-    uint i_end; 
+    uint i_end;
+
     if (name[idx] == '"' || name[idx] == '\'') { /* Quoted string */
         char quote = name[idx];
         i_end = name.findFirstOf(quote, idx + 1);
@@ -266,16 +267,18 @@ static MCIError getString(const Common::String &name, uint &idx, Common::String 
         str = name.substr(idx, i_end - idx);
         idx = i_end + 1;
     }
+
     debugC(5, kDebugLingoExec, "get_string(): Got string \"%s\"", str.c_str());
     return MCIERR_NO_ERROR;
 }
 
 static void createTokenList(Common::StringArray &tokenList, const Common::String &name) {
-    uint idx = 0; 
+    uint idx = 0;
 
     while (idx < name.size()) {
         Common::String str;
         MCIError err = getString(name, idx, str);
+
         if (err != MCIERR_NO_ERROR) {
             break;
         }
@@ -318,7 +321,6 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
     i_token = 2;
 
     while (i_token < token_list.size()) {
-
         bool found = false;
         bool inConst = false;
         int flag, cflag;
@@ -326,26 +328,28 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
         auto& token = token_list[i_token];
 
         for (i_table = tableStart; i_table < tableEnd; i_table++) {
-
             MCIDataType cmd_type = table[i_table].data_type;
             flag = table[i_table].flag;
             cmdtable = &table[i_table];
 
             switch (cmd_type) {
             case MCI_CONSTANT:
-                c_cmdtable = cmdtable; 
+                c_cmdtable = cmdtable;
                 inConst = true;
                 cflag = flag;
                 break;
+
             case MCI_END_CONSTANT:
                 c_cmdtable = nullptr;
                 inConst = false;
                 cflag = 0;
                 break;
-            default: break;
+
+            default:
+                break;
             }
 
-            if (token != table[i_table].keystr) 
+            if (token != table[i_table].keystr)
                 continue;
 
             found = true;
@@ -358,10 +362,12 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
             case MCI_CONSTANT:
             case MCI_END_CONSTANT:
                 break;
+
             case MCI_FLAG:
                 parsedCmd.flags |= flag;
                 i_token++;
                 break;
+
             case MCI_INTEGER: {
                 if (inConst) { /* Handle the case where we've hit a MCI_INTEGER which is inside a MCI_CONSTANT block. */
                     MCITokenData token_data;
@@ -385,6 +391,7 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
                 i_token++;
                 break;
                 }
+
             case MCI_STRING: {
                 parsedCmd.flags |= flag;
 
@@ -395,7 +402,8 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
                 i_token++;
                 break;
                 }
-            default: 
+
+            default:
                 warning("parseMCICommand(): Unhandled command type.");
                 return MCIERR_UNRECOGNISED_COMMAND;
             }
@@ -437,6 +445,7 @@ void Lingo::func_mci(const Common::String &name) {
         }
         }
         break;
+
     case MCI_PLAY: {
         warning("func_mci(): MCI play file: %s, from: %d, to: %d", parsedCmd.device.c_str(), parsedCmd.parameters["from"].integer, parsedCmd.parameters["to"].integer);
 
@@ -451,6 +460,7 @@ void Lingo::func_mci(const Common::String &name) {
         _vm->getCurrentWindow()->getSoundManager()->playMCI(*_audioAliases[parsedCmd.device], from, to);
         }
         break;
+
     default:
         warning("func_mci: Unhandled MCI command: %d", parsedCmd.id); /* TODO: Convert MCITokenType into string */
     }
