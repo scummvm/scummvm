@@ -20,7 +20,7 @@
  */
 
 #include "tetraedge/game/game_sound.h"
-#include "tetraedge/game/game.h"
+#include "tetraedge/game/syberia_game.h"
 #include "tetraedge/tetraedge.h"
 
 #include "tetraedge/te/te_lua_thread.h"
@@ -31,11 +31,12 @@ GameSound::GameSound() {
 }
 
 bool GameSound::onSoundStopped() {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	if (!game->luaContext().isCreated())
 		return false;
 
-	Common::Array<Game::YieldedCallback> &callbacks = game->yieldedCallbacks();
+	Common::Array<SyberiaGame::YieldedCallback> &callbacks = game->yieldedCallbacks();
 	for (uint i = 0; i < callbacks.size(); i++) {
 		if (callbacks[i]._luaFnName == "OnFreeSoundFinished" && callbacks[i]._luaParam == _name) {
 			TeLuaThread *thread = callbacks[i]._luaThread;

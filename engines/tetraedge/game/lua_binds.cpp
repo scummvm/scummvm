@@ -27,6 +27,7 @@
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/lua_binds.h"
 #include "tetraedge/game/object3d.h"
+#include "tetraedge/game/syberia_game.h"
 #include "tetraedge/to_lua.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_lua_thread.h"
@@ -131,11 +132,12 @@ static int tolua_ExportedFunctions_PlayMovieAndWaitForEnd00(lua_State *L) {
 		Common::String s2(tolua_tostring(L, 2, nullptr));
 		PlayMovie(s1, s2);
 
-		Game::YieldedCallback callback;
+		SyberiaGame::YieldedCallback callback;
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnMovieFinished";
 		callback._luaParam = s1;
-		Game *game = g_engine->getGame();
+		SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+		assert(game);
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1)
 				warning("PlayMovieAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
@@ -147,7 +149,8 @@ static int tolua_ExportedFunctions_PlayMovieAndWaitForEnd00(lua_State *L) {
 }
 
 static void AddRandomSound(const Common::String &s1, const Common::String &s2, float f1, float f2){
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->addRandomSound(s1, s2, f1, f2);
 }
 
@@ -219,7 +222,8 @@ static int tolua_ExportedFunctions_TakeObject00(lua_State *L) {
 }
 
 static void TakeObjectInHand(const Common::String &obj) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	// TODO: Set global _lastHitObjectName?? How is it used?
 	//game->luaContext().setGlobal(_lastHitObjectName, true);
 	if (!obj.empty())
@@ -391,7 +395,8 @@ static int tolua_ExportedFunctions_AddUnrecalAnim00(lua_State *L) {
 }
 
 static void UnlockArtwork(const Common::String &name) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->addArtworkUnlocked(name, true);
 	Application *app = g_engine->getApplication();
 	app->saveOptions("options.xml");
@@ -442,7 +447,8 @@ static int tolua_ExportedFunctions_SetCharacterPlayerVisible00(lua_State *L) {
 }
 
 static void MoveCharacterPlayerDisabled(bool val) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->_movePlayerCharacterDisabled = val;
 }
 
@@ -714,11 +720,12 @@ int tolua_ExportedFunctions_StartAnimationAndWaitForEnd00(lua_State *L) {
 		bool b1 = tolua_toboolean(L, 3, false);
 		StartAnimation(s1, d1, b1);
 
-		Game::YieldedCallback callback;
+		SyberiaGame::YieldedCallback callback;
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnFinishedAnim";
 		callback._luaParam = s1;
-		Game *game = g_engine->getGame();
+		SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+		assert(game);
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1)
 				warning("StartAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
@@ -732,7 +739,8 @@ int tolua_ExportedFunctions_StartAnimationAndWaitForEnd00(lua_State *L) {
 }
 
 static void RequestAutoSave() {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->setSaveRequested();
 }
 
@@ -985,12 +993,13 @@ static int tolua_ExportedFunctions_SetCharacterAnimationAndWaitForEnd00(lua_Stat
 		double f4 = tolua_tonumber(L, 6, 9999.0);
 		SetCharacterAnimation(s1, s2, b1, b2, (int)f3, (int)f4);
 
-		Game::YieldedCallback callback;
+		SyberiaGame::YieldedCallback callback;
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnCharacterAnimationFinished";
 		callback._luaParam = s1;
 		callback._luaParam2 = s2;
-		Game *game = g_engine->getGame();
+		SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+		assert(game);
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1 && cb._luaParam2 == s2)
 				warning("SetCharacterAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
@@ -1039,12 +1048,13 @@ static int tolua_ExportedFunctions_BlendCharacterAnimationAndWaitForEnd00(lua_St
 		bool b2 = tolua_toboolean(L, 5, false);
 		BlendCharacterAnimation(s1, s2, f1, b1, b2);
 
-		Game::YieldedCallback callback;
+		SyberiaGame::YieldedCallback callback;
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnCharacterAnimationFinished";
 		callback._luaParam = s1;
 		callback._luaParam2 = s2;
-		Game *game = g_engine->getGame();
+		SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+		assert(game);
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1 && cb._luaParam2 == s2)
 				warning("BlendCharacterAnimationAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
@@ -1341,7 +1351,8 @@ static int tolua_ExportedFunctions_HideBillboard00(lua_State *L) {
 }
 
 static void UnlockAchievement(int val) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->addToScore(val);
 }
 
@@ -1394,10 +1405,11 @@ static int tolua_ExportedFunctions_WaitAndWaitForEnd00(lua_State *L) {
 		double d = tolua_tonumber(L, 1, 0.0);
 		Wait(d);
 
-		Game::YieldedCallback callback;
+		SyberiaGame::YieldedCallback callback;
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnWaitFinished";
-		Game *game = g_engine->getGame();
+		SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+		assert(game);
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName)
 				warning("WaitAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
@@ -1488,11 +1500,12 @@ static int tolua_ExportedFunctions_LaunchDialogAndWaitForEnd00(lua_State *L) {
 		float f2 = tolua_tonumber(L, 5, 0.0);
 		LaunchDialog(s1, f1, s2, s3, f2);
 
-		Game::YieldedCallback callback;
+		SyberiaGame::YieldedCallback callback;
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnDialogFinished";
 		callback._luaParam = s1;
-		Game *game = g_engine->getGame();
+		SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+		assert(game);
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == callback._luaParam)
 				warning("LaunchDialogAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
@@ -1539,7 +1552,8 @@ static int tolua_ExportedFunctions_HideAnswers00(lua_State *L) {
 }
 
 static void PushTask(const Common::String &s1, const Common::String &s2) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->objectif().pushObjectif(s1, s2);
 }
 
@@ -1555,7 +1569,8 @@ static int tolua_ExportedFunctions_PushTask00(lua_State *L) {
 }
 
 static void DeleteTask(const Common::String &s1, const Common::String &s2) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->objectif().deleteObjectif(s1, s2);
 }
 
@@ -1574,7 +1589,8 @@ static int tolua_ExportedFunctions_DeleteTask00(lua_State *L) {
 }
 
 static void SetVisibleButtonHelp(bool val) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->objectif().setVisibleButtonHelp(val);
 }
 
@@ -1609,7 +1625,8 @@ static int tolua_ExportedFunctions_TestFileFlagSystemFlag00(lua_State *L) {
 }
 
 static void ExitZone(const Common::String &zone) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->setExitZone(zone);
 }
 
@@ -1915,11 +1932,12 @@ static int tolua_ExportedFunctions_PlaySoundAndWaitForEnd00(lua_State *L) {
 		double d2 = tolua_tonumber(L, 3, 1.0);
 		PlaySound(s1, d1, d2);
 
-		Game::YieldedCallback callback;
+		SyberiaGame::YieldedCallback callback;
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnFreeSoundFinished";
 		callback._luaParam = s1;
-		Game *game = g_engine->getGame();
+		SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+		assert(game);
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName && cb._luaParam == s1)
 				warning("PlaySoundAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
@@ -1946,7 +1964,8 @@ static int tolua_ExportedFunctions_StopSound00(lua_State *L) {
 }
 
 static void PlayRandomSound(const Common::String &name) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->playRandomSound(name);
 }
 
@@ -2132,7 +2151,8 @@ static int tolua_ExportedFunctions_CurrentCharacterAnimation00(lua_State *L) {
 }
 
 static void LoadCharacter(const Common::String &name) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->loadCharacter(name);
 }
 
@@ -2147,7 +2167,8 @@ static int tolua_ExportedFunctions_LoadCharacter00(lua_State *L) {
 }
 
 static void UnloadCharacter(const Common::String &name) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->unloadCharacter(name);
 }
 
@@ -2192,10 +2213,11 @@ static int tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00(lua_State *L) 
 		float f2 = tolua_tonumber(L, 4, 0.0);
 		MoveCharacterTo(s1, s2, f1, f2);
 
-		Game::YieldedCallback callback;
+		SyberiaGame::YieldedCallback callback;
 		callback._luaThread = TeLuaThread::threadFromState(L);
 		callback._luaFnName = "OnDisplacementFinished";
-		Game *game = g_engine->getGame();
+		SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+		assert(game);
 		for (const auto &cb : game->yieldedCallbacks()) {
 			if (cb._luaFnName == callback._luaFnName)
 				warning("MoveCharacterToAndWaitForEnd: Reentrency error, your are already in a yielded/sync function call");
@@ -2207,7 +2229,8 @@ static int tolua_ExportedFunctions_MoveCharacterToAndWaitForEnd00(lua_State *L) 
 }
 
 static void MoveCharacterPlayerTo(float x, float y, float z, bool walkFlag) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	if (game->_movePlayerCharacterDisabled)
 		return;
 
@@ -2263,7 +2286,8 @@ static int tolua_ExportedFunctions_MoveCharacterPlayerTo00(lua_State *L) {
 }
 
 static void EnableRunMode(bool val) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	game->setRunModeEnabled(val);
 }
 
@@ -2278,7 +2302,8 @@ static int tolua_ExportedFunctions_EnableRunMode00(lua_State *L) {
 }
 
 static void SetModelPlayer(const Common::String &name) {
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	Character *character = game->scene()._character;
 
 	if (!character) {

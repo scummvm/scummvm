@@ -23,7 +23,7 @@
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
-#include "tetraedge/game/game.h"
+#include "tetraedge/game/syberia_game.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_lua_thread.h"
 #include "tetraedge/te/te_scrolling_layout.h"
@@ -53,20 +53,23 @@ void DocumentsBrowser::hideDocument() {
 	Game *game = g_engine->getGame();
 
 	bool callFn = true;
-	Common::Array<Game::YieldedCallback> &yieldedcallbacks = game->yieldedCallbacks();
-	for (uint i = 0; i < yieldedcallbacks.size(); i++) {
-		if (yieldedcallbacks[i]._luaFnName == "OnDocumentClosed" &&
-			yieldedcallbacks[i]._luaParam == docName) {
-			yieldedcallbacks.remove_at(i);
-			if (yieldedcallbacks[i]._luaThread) {
-				yieldedcallbacks[i]._luaThread->resume();
-				callFn = false;
+	SyberiaGame *sybgame = dynamic_cast<SyberiaGame *>(game);
+	if (sybgame) {
+		Common::Array<SyberiaGame::YieldedCallback> &yieldedcallbacks = sybgame->yieldedCallbacks();
+		for (uint i = 0; i < yieldedcallbacks.size(); i++) {
+			if (yieldedcallbacks[i]._luaFnName == "OnDocumentClosed" &&
+				yieldedcallbacks[i]._luaParam == docName) {
+				yieldedcallbacks.remove_at(i);
+				if (yieldedcallbacks[i]._luaThread) {
+					yieldedcallbacks[i]._luaThread->resume();
+					callFn = false;
+				}
+				break;
 			}
-			break;
 		}
+		if (callFn)
+			game->luaScript().execute("OnDocumentClosed", docName);
 	}
-	if (callFn)
-		game->luaScript().execute("OnDocumentClosed", docName);
 
 	app->fade();
 }

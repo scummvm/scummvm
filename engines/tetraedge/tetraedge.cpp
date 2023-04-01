@@ -31,7 +31,7 @@
 #include "engines/dialogs.h"
 #include "graphics/palette.h"
 
-#include "tetraedge/game/game.h"
+#include "tetraedge/game/syberia_game.h"
 #include "tetraedge/game/application.h"
 #include "tetraedge/game/character.h"
 #include "tetraedge/te/te_core.h"
@@ -99,7 +99,7 @@ TeCore *TetraedgeEngine::getCore() {
 
 Game *TetraedgeEngine::getGame() {
 	if (_game == nullptr)
-		_game = new Game();
+		_game = new SyberiaGame();
 	return _game;
 }
 

@@ -22,7 +22,7 @@
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/youki_manager.h"
 #include "tetraedge/game/character.h"
-#include "tetraedge/game/game.h"
+#include "tetraedge/game/syberia_game.h"
 
 namespace Tetraedge {
 
@@ -52,7 +52,8 @@ void YoukiManager::update() {
 	if (g_engine->gameType() != TetraedgeEngine::kSyberia2 || !_followKate)
 		return;
 
-	Game *game = g_engine->getGame();
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 	Character *youki = game->scene().character("Youki");
 	if (!youki || !youki->freeMoveZone())
 		return;

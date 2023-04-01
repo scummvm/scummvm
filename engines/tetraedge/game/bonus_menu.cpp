@@ -24,7 +24,7 @@
 #include "common/textconsole.h"
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
-#include "tetraedge/game/game.h"
+#include "tetraedge/game/syberia_game.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_input_mgr.h"
 
@@ -39,6 +39,8 @@ void BonusMenu::enter(const Common::String &scriptName) {
 		error("BonusMenu::enter: failed to load %s", scriptName.c_str());
 	Application *app = g_engine->getApplication();
 	app->frontLayout().addChild(layoutChecked("menu"));
+	SyberiaGame *game = dynamic_cast<SyberiaGame *>(g_engine->getGame());
+	assert(game);
 
 	buttonLayoutChecked("quitButton")->onMouseClickValidated().add(this, &BonusMenu::onQuitButton);
 
@@ -65,7 +67,7 @@ void BonusMenu::enter(const Common::String &scriptName) {
 		if (btn->childCount() <= 4)
 			error("expected save button to have >4 children");
 		const Common::String artName = btn->child(4)->name();
-		btn->setEnable(g_engine->getGame()->isArtworkUnlocked(artName));
+		btn->setEnable(game->isArtworkUnlocked(artName));
 
 		btnNo++;
 	}
