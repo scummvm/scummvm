@@ -1,6 +1,7 @@
 gui/about.cpp
 gui/browser.cpp
 gui/chooser.cpp
+gui/cloudconnectionwizard.cpp
 gui/downloaddialog.cpp
 gui/downloadpacksdialog.cpp
 gui/editgamedialog.cpp
