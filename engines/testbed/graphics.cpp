@@ -1033,8 +1033,8 @@ TestExitStatus GFXtests::copyRectToScreen() {
 
 	for (int i = origFont->getFontHeight(); i <= 20; i++) {
 
-		//const Graphics::BdfFont *font = Graphics::BdfFont::scaleFont(origFont, i);
-		const Graphics::BdfFont *font = origFont;
+		const Graphics::BdfFont *font = Graphics::BdfFont::scaleFont(origFont, i);
+		//const Graphics::BdfFont *font = origFont;
 		int width = font->getStringWidth(text);
 
 		Common::Rect bbox = font->getBoundingBox(text, x, y, g_system->getWidth());

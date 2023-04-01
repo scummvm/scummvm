@@ -28,6 +28,7 @@
 #include "graphics/surface.h"
 
 #define DRAWDEBUG 0
+#define DEBUGSCALING 1
 
 namespace Graphics {
 
@@ -726,6 +727,8 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	return new BdfFont(data, DisposeAfterUse::YES);
 }
 
+static void magnifyGray(Surface *src, int *dstGray, int width, int height, float scale);
+
 BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 	if (!src) {
 		warning("BdfFont::scaleFont(): Empty font reference in scale font");
@@ -742,7 +745,18 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 		return nullptr;
 	}
 
+	Graphics::Surface srcSurf, tmpSurf;
+	srcSurf.create(MAX(src->getFontSize() * 2, newSize * 2), MAX(src->getFontSize() * 2, newSize * 2),
+				PixelFormat::createFormatCLUT8());
+	int dstGraySize = newSize * 20 * newSize;
+	int *dstGray = (int *)malloc(dstGraySize * sizeof(int));
+
+	tmpSurf.create(MAX(src->getFontSize() * 2, newSize * 2), MAX(src->getFontSize() * 2 + 2, newSize * 2 + 2),
+				PixelFormat::createFormatCLUT8());
+
 	float scale = (float)newSize / (float)src->getFontSize();
+	int graylen = 2;
+	// float scale = 1.0f;
 
 	BdfFontData data;
 
@@ -767,11 +781,13 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 	data.slant = slant;
 
 	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
+	// int newbitwidth = 0;
 	for (int i = 0; i < data.numCharacters; ++i) {
-		boxes[i].width = (int)(roundf((float)src->_data.boxes[i].width * scale));
-		boxes[i].height = (int)(roundf((float)src->_data.boxes[i].height * scale));
-		boxes[i].xOffset = (int)(roundf((float)src->_data.boxes[i].xOffset * scale));
-		boxes[i].yOffset = (int)(roundf((float)src->_data.boxes[i].yOffset * scale));
+		boxes[i].width = (int)(roundf(((float)src->_data.boxes[i].width)*scale));
+		boxes[i].height = (int)(roundf(((float)src->_data.boxes[i].height)*scale));
+		boxes[i].xOffset = (int)(roundf((float)src->_data.boxes[i].xOffset*scale));
+		boxes[i].yOffset = (int)(roundf((float)src->_data.boxes[i].yOffset*scale));
+		// newbitwidth += (boxes[i].width + 7 + 2) & ~0x7;
 	}
 	data.boxes = boxes;
 
@@ -787,59 +803,160 @@ BdfFont *BdfFont::scaleFont(const BdfFont *src, int newSize) {
 		const BdfBoundingBox &box = data.boxes ? data.boxes[i] : data.defaultBox;
 		const BdfBoundingBox &srcBox = data.boxes ? src->_data.boxes[i] : src->_data.defaultBox;
 
+		int hs = srcBox.height;
+		int h = box.height;
+		int ws = srcBox.width;
+		int w = box.width;
+		// warning("BdfFont::scaleFont(): %d %d %d %d", hs, h, ws, w);
+		int grayLevel = hs * ws / graylen;
+		int srcPitch = (ws + 7) / 8;
+		int dstPitch = (w + 7) / 8 ;
+		// warning("BdfFont::scaleFont(): %d %d", srcPitch, dstPitch);
+
+#if DEBUGSCALING
+		int ccc = 'c';
+		// dododo = i == ccc;
+#endif
+
+		srcSurf.fillRect(Common::Rect(srcSurf.w, srcSurf.h), 0);
+		src->drawChar(&srcSurf, i + src->_data.firstCharacter, 0, 0, 1);
+		memset(dstGray, 0, dstGraySize * sizeof(int));
+		magnifyGray(&srcSurf, dstGray, ws, hs, scale);
+
+
+
 		if (src->_data.bitmaps[i]) {
-			const int bytes = ((box.width + 7) / 8) * box.height; // Dimensions have been already corrected
+			const int bytes = dstPitch * h; // Dimensions have been already corrected
+			// const int bytes = w * h;
 			bitmaps[i] = new byte[bytes];
 
-			int srcPitch = (srcBox.width + 7) / 8;
-			int dstPitch = (box.width + 7) / 8;
-
 			byte *ptr = bitmaps[i];
+			int *grayPtr = dstGray;
+			for (int y = 0; y < h; y++) {
+				byte *dst = (byte *)srcSurf.getBasePtr(0, y);
 
-			for (int y = 0; y < box.height; y++) {
-				const byte *srcd = (const byte *)&src->_data.bitmaps[i][((int)((float)y / scale)) * srcPitch];
+				for (int x = 0; x < dstPitch; x++, grayPtr++, dst++) {
+#if DEBUGSCALING
+				if (i == ccc) {
+					if (*grayPtr)
+						debugN(1, "%3d ", *grayPtr);
+					else
+						debugN(1, "    ");
+				}
+#endif
+					if (*grayPtr > grayLevel)
+						*dst = 1;
+					else
+						*dst = 0;
+				}
+#if DEBUGSCALING
+			if (i == ccc)
+				debug(1, "");
+#endif
+			}
+			for (int y = 0; y < h; y++) {
+				// const byte *srcd = (const byte *)&src->_data.bitmaps[i][((int)((float)y / scale)) * srcPitch];
+				byte *srcd = (byte *)srcSurf.getBasePtr(0, y);
 				byte *dst = ptr;
 				byte b = 0;
 
-				for (int x = 0; x < box.width; x++) {
+				for (int x = 0; x < w; x++,srcd++) {
 					b <<= 1;
-
-					int sx = (int)(roundf((float)x / scale));
-
-					if (srcd[sx / 8] & (0x80 >> (sx % 8))) {
+					// int sx = (int)(roundf((float)x / scale));
+					if (*srcd == 1) {
+					// if (srcd[sx / 8] & (0x80 >> (sx % 8))) {
 						b |= 1;
-#if DRAWDEBUG
-						debugN("#");
-					} else {
-						debugN(" ");
-#endif
 					}
-
 					if (x % 8 == 7) {
 						*dst++ = b;
 						b = 0;
 					}
 				}
-#if DRAWDEBUG
-				debug("");
+#if DEBUGSCALING
+			if (i == ccc) {
+				debugN(1, "--> %d ", grayLevel);
+
+				grayPtr = &dstGray[y * w];
+				for (int x = 0; x < w; x++, grayPtr++)
+					debugN("%c", *grayPtr > grayLevel ? '#' : '.');
+			}
 #endif
-
-				if (((box.width - 1) % 8)) {
-					b <<= 7 - ((box.width - 1) % 8);
+				if (((w - 1) % 8)) {
+#if DEBUGSCALING
+				if (i == ccc)
+					debugN("  --- %02x (w: %d bw: %d << %d)", b, w, w, 7 - ((w - 1) % 8));
+#endif
+					b <<= 7 - ((w - 1) % 8);
 					*dst = b;
+#if DEBUGSCALING
+				if (i == ccc)
+					debugN("  --- %02x ", b);
+#endif
 				}
-
+// #if DEBUGSCALING
+// 			if (i == ccc) {
+// 				byte *srcRow = data._bitImage + y * data._rowWords;
+// 				for (uint16 x = 0; x < glyph->bitmapWidth; x++) {
+// 					uint16 bitmapOffset = glyph->bitmapOffset + x;
+// 					debugN("%c", srcRow[bitmapOffset / 8] & (1 << (7 - (bitmapOffset % 8))) ? '*' : '.');
+// 				}
+// 				debugN("\n");
+// 			}
+// #endif
 				ptr += dstPitch;
 			}
-
 		} else {
-			bitmaps[i] = 0;
+			bitmaps[i] = 0 	;
 		}
 	}
-
 	data.bitmaps = bitmaps;
 
 	return new BdfFont(data, DisposeAfterUse::YES);
+}
+
+#define wholedivide(x, y)	(((x)+((y)-1))/(y))
+
+static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float scale) {
+	int newbbw = bbw * scale;
+	int newbbh = bbh * scale;
+	int x_ = x * newbbw;
+	int y_ = y * newbbh;
+	int x1 = x_ + newbbw;
+	int y1 = y_ + newbbh;
+
+	int newxbegin = x_ / bbw;
+	int newybegin = y_ / bbh;
+	int newxend = wholedivide(x1, bbw);
+	int newyend = wholedivide(y1, bbh);
+
+	for (int newy = newybegin; newy < newyend; newy++) {
+		for (int newx = newxbegin; newx < newxend; newx++) {
+			int newX = newx * bbw;
+			int newY = newy * bbh;
+			int newX1 = newX + bbw;
+			int newY1 = newY + bbh;
+			dstGray[newy * newbbw + newx] += (MIN(x1, newX1) - MAX(x_, newX)) *
+											 (MIN(y1, newY1) - MAX(y_, newY));
+		}
+	}
+}
+
+static void magnifyGray(Surface *src, int *dstGray, int width, int height, float scale) {
+	for (uint16 y = 0; y < height; y++) {
+		for (uint16 x = 0; x < width; x++) {
+			if (*((byte *)src->getBasePtr(x, y)) == 1)
+				countupScore(dstGray, x, y, width, height, scale);
+// #if DEBUGSCALING
+// 			if (dododo)
+// 				debugN("%c", *((byte *)src->getBasePtr(x, y)) == 1 ? '*' : ' ');
+// #endif
+		}
+
+// #if DEBUGSCALING
+// 		if (dododo)
+// 			debugN("\n");
+// #endif
+	}
 }
 
 } // End of namespace Graphics
