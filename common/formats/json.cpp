@@ -63,7 +63,7 @@ namespace Common {
 */
 JSON::JSON() {}
 
-char *JSON::getPreparedContents(Common::MemoryWriteStreamDynamic &stream) {
+char *JSON::untaintContents(Common::MemoryWriteStreamDynamic &stream) {
 	// write one more byte in the end
 	byte zero[1] = {0};
 	stream.write(zero, 1);

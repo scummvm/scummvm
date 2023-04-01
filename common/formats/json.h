@@ -153,7 +153,7 @@ class JSON {
 
 public:
 	/** Prepares raw bytes in a given stream to be parsed with Common::JSON::parse(). */
-	static char *getPreparedContents(Common::MemoryWriteStreamDynamic &stream);
+	static char *untaintContents(Common::MemoryWriteStreamDynamic &stream);
 
 	static JSONValue *parse(const char *data);
 	static String stringify(const JSONValue *value);

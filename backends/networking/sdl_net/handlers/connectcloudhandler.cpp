@@ -110,7 +110,7 @@ void ConnectCloudClientHandler::handle(Client *client) {
 	if (!client->readContent(&_clientContent))
 		return;
 
-	char *contents = Common::JSON::getPreparedContents(_clientContent);
+	char *contents = Common::JSON::untaintContents(_clientContent);
 	Common::JSONValue *json = Common::JSON::parse(contents);
 	if (json == nullptr) {
 		handleError(*client, "Not Acceptable", 406);
@@ -120,6 +120,7 @@ void ConnectCloudClientHandler::handle(Client *client) {
 	Networking::ErrorCallback callback = new Common::Callback<ConnectCloudClientHandler, Networking::ErrorResponse>(this, &ConnectCloudClientHandler::storageConnectionCallback);
 	Networking::JsonResponse jsonResponse(nullptr, json);
 	if (!CloudMan.connectStorage(jsonResponse, callback)) { // JSON doesn't have "storage" in it or it was invalid
+		delete json;
 		delete callback;
 		handleError(*client, "Not Acceptable", 406);
 	}

@@ -31,18 +31,11 @@
 #include "common/memstream.h"
 #include "common/translation.h"
 
-#include "gui/browser.h"
-#include "gui/shaderbrowser-dialog.h"
-#include "gui/themebrowser.h"
 #include "gui/message.h"
 #include "gui/gui-manager.h"
-#include "gui/options.h"
 #include "gui/widget.h"
 #include "gui/widgets/edittext.h"
-#include "gui/widgets/popup.h"
 #include "gui/widgets/scrollcontainer.h"
-#include "gui/widgets/tab.h"
-#include "gui/ThemeEval.h"
 
 namespace GUI {
 
@@ -455,7 +448,7 @@ void CloudConnectionWizard::manualModeConnect() {
 		_label1->setLabel(Common::U32String());
 
 	// get the code entered
-	Common::String code = "";
+	Common::String code;
 	if (_codeBox)
 		code = _codeBox->getEditString().encode();
 	if (code.size() == 0)
@@ -489,13 +482,8 @@ void CloudConnectionWizard::manualModeConnect() {
 	// parse JSON and display message if failed
 	Common::MemoryWriteStreamDynamic jsonStream(DisposeAfterUse::YES);
 	jsonStream.write(code.c_str(), code.size());
-	char *contents = Common::JSON::getPreparedContents(jsonStream);
+	char *contents = Common::JSON::untaintContents(jsonStream);
 	Common::JSONValue *json = Common::JSON::parse(contents);
-	if (json == nullptr) {
-		if (_label1)
-			_label1->setLabel(_("There is likely a mistake in the code."));
-		return;
-	}
 
 	// pass JSON to the manager
 	_connecting = true;
@@ -503,6 +491,7 @@ void CloudConnectionWizard::manualModeConnect() {
 	Networking::JsonResponse jsonResponse(nullptr, json);
 	if (!CloudMan.connectStorage(jsonResponse, callback)) { // no "storage" in JSON (or invalid one)
 		_connecting = false;
+		delete json;
 		delete callback;
 		if (_label1)
 			_label1->setLabel(_("There is likely a mistake in the code."));
