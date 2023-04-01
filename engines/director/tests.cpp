@@ -83,7 +83,7 @@ void Window::testFontScaling() {
 		Common::Rect bbox = font->getBoundingBox(text, x, y, w);
 		surface.frameRect(bbox, 15);
 
-		font->drawString(&surface, text, x, y, width, 0);
+		font->drawString(&surface, text, x, y, width, 0xFF);
 
 		x += width + 1;
 	}

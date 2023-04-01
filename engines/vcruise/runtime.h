@@ -184,16 +184,27 @@ struct SoundParams3D {
 	// Not sure what this does.  It's always shorter than the min range but after many tests, I've been
 	// unable to detect any level changes from altering this parameter.
 	uint unknownRange;
+
+	void write(Common::WriteStream *stream) const;
+	void read(Common::ReadStream *stream);
 };
 
-struct CachedSound {
-	CachedSound();
-	~CachedSound();
+struct SoundCache {
+	~SoundCache();
 
-	Common::String name;
 	Common::SharedPtr<Audio::SeekableAudioStream> stream;
 	Common::SharedPtr<Audio::AudioStream> loopingStream;
 	Common::SharedPtr<AudioPlayer> player;
+};
+
+struct SoundInstance {
+	SoundInstance();
+	~SoundInstance();
+
+	Common::String name;
+	Common::SharedPtr<SoundCache> cache;
+
+	uint id;
 
 	uint rampStartVolume;
 	uint rampEndVolume;
@@ -208,11 +219,14 @@ struct CachedSound {
 	int32 effectiveBalance;
 
 	bool is3D;
+	bool isLooping;
+	bool isSpeech;
 	int32 x;
 	int32 y;
-	int32 z;
 
 	SoundParams3D params3D;
+
+	uint32 endTime;
 };
 
 struct TriggeredOneShot {
@@ -223,6 +237,9 @@ struct TriggeredOneShot {
 
 	uint soundID;
 	uint uniqueSlot;
+
+	void write(Common::WriteStream *stream) const;
+	void read(Common::ReadStream *stream);
 };
 
 struct StaticAnimParams {
@@ -231,6 +248,9 @@ struct StaticAnimParams {
 	uint initialDelay;
 	uint repeatDelay;
 	bool lockInteractions;
+
+	void write(Common::WriteStream *stream) const;
+	void read(Common::ReadStream *stream);
 };
 
 struct StaticAnimation {
@@ -279,19 +299,85 @@ struct Fraction {
 	uint denominator;
 };
 
-class Runtime {
-public:
-	enum LoadGameOutcome {
-		kLoadGameOutcomeSucceeded,
+enum LoadGameOutcome {
+	kLoadGameOutcomeSucceeded,
 
-		kLoadGameOutcomeSaveDataCorrupted,
+	kLoadGameOutcomeSaveDataCorrupted,
 
-		kLoadGameOutcomeMissingVersion,
-		kLoadGameOutcomeInvalidVersion,
-		kLoadGameOutcomeSaveIsTooNew,
-		kLoadGameOutcomeSaveIsTooOld,
+	kLoadGameOutcomeMissingVersion,
+	kLoadGameOutcomeInvalidVersion,
+	kLoadGameOutcomeSaveIsTooNew,
+	kLoadGameOutcomeSaveIsTooOld,
+};
+
+struct SaveGameSnapshot {
+	SaveGameSnapshot();
+
+	void write(Common::WriteStream *stream) const;
+	LoadGameOutcome read(Common::ReadStream *stream);
+
+	static const uint kSaveGameIdentifier = 0x53566372;
+	static const uint kSaveGameCurrentVersion = 2;
+	static const uint kSaveGameEarliestSupportedVersion = 2;
+
+	struct InventoryItem {
+		InventoryItem();
+
+		uint itemID;
+		bool highlighted;
+
+		void write(Common::WriteStream *stream) const;
+		void read(Common::ReadStream *stream);
 	};
 
+	struct Sound {
+		Sound();
+
+		Common::String name;
+		uint id;
+		uint volume;
+		int32 balance;
+
+		bool is3D;
+		bool isLooping;
+		bool isSpeech;
+
+		int32 x;
+		int32 y;
+
+		SoundParams3D params3D;
+
+		void write(Common::WriteStream *stream) const;
+		void read(Common::ReadStream *stream);
+	};
+
+	uint roomNumber;
+	uint screenNumber;
+	uint direction;
+
+	bool escOn;
+	int musicTrack;
+
+	uint loadedAnimation;
+	uint animDisplayingFrame;
+
+	StaticAnimParams pendingStaticAnimParams;
+	SoundParams3D pendingSoundParams3D;
+
+	int32 listenerX;
+	int32 listenerY;
+	int32 listenerAngle;
+
+	Common::Array<InventoryItem> inventory;
+	Common::Array<Sound> sounds;
+	Common::Array<TriggeredOneShot> triggeredOneShots;
+
+	Common::HashMap<uint32, int32> variables;
+	Common::HashMap<uint, uint32> timers;
+};
+
+class Runtime {
+public:
 	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
 	virtual ~Runtime();
 
@@ -311,6 +397,9 @@ public:
 
 	bool canSave() const;
 	bool canLoad() const;
+
+	void recordSaveGameSnapshot();
+	void restoreSaveGameSnapshot();
 
 	void saveGame(Common::WriteStream *stream) const;
 	LoadGameOutcome loadGame(Common::ReadStream *stream);
@@ -450,7 +539,39 @@ private:
 	};
 
 	typedef int32 ScriptArg_t;
-	typedef int32 StackValue_t;
+	typedef int32 StackInt_t;
+
+	struct StackValue {
+		enum StackValueType {
+			kNumber,
+			kString,
+		};
+
+		union ValueUnion {
+			StackInt_t i;
+			Common::String s;
+
+			ValueUnion();
+			explicit ValueUnion(StackInt_t iVal);
+			explicit ValueUnion(const Common::String &strVal);
+			explicit ValueUnion(Common::String &&strVal);
+			~ValueUnion();
+		};
+
+		StackValue();
+		StackValue(const StackValue &other);
+		StackValue(StackValue &&other);
+		explicit StackValue(StackInt_t i);
+		explicit StackValue(const Common::String &str);
+		explicit StackValue(Common::String &&str);
+		~StackValue();
+
+		StackValue &operator=(const StackValue &other);
+		StackValue &operator=(StackValue &&other);
+
+		StackValueType type;
+		ValueUnion value;
+	};
 
 	bool runIdle();
 	bool runDelay();
@@ -475,7 +596,11 @@ private:
 
 	void loadIndex();
 	void findWaves();
-	void loadWave(uint soundID, const Common::String &soundName, const Common::ArchiveMemberPtr &archiveMemberPtr);
+	Common::SharedPtr<SoundInstance> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
+	SoundCache *loadCache(SoundInstance &sound);
+	void resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, SoundInstance *&outWave);
+	void resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, SoundInstance *&outWave);
+
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void returnToIdleState();
 	void changeToCursor(const Common::SharedPtr<Graphics::WinCursorGroup> &cursor);
@@ -491,14 +616,15 @@ private:
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride);
 	void changeAnimation(const AnimationDef &animDef, uint initialFrame, bool consumeFPSOverride, const Fraction &defaultFrameRate);
 
-	void setSound3DParameters(uint soundID, int32 x, int32 y, const SoundParams3D &soundParams3D);
-	void triggerSound(bool looping, uint soundID, uint volume, int32 balance, bool is3D);
-	void triggerSoundRamp(uint soundID, uint durationMSec, uint newVolume, bool terminateOnCompletion);
+	void setSound3DParameters(SoundInstance &sound, int32 x, int32 y, const SoundParams3D &soundParams3D);
+	void triggerSound(bool looping, SoundInstance &sound, uint volume, int32 balance, bool is3D, bool isSpeech);
+	void triggerSoundRamp(SoundInstance &sound, uint durationMSec, uint newVolume, bool terminateOnCompletion);
+	void stopSound(SoundInstance &sound);
 	void updateSounds(uint32 timestamp);
 	void update3DSounds();
-	bool computeEffectiveVolumeAndBalance(CachedSound &snd);
+	bool computeEffectiveVolumeAndBalance(SoundInstance &snd);
 
-	AnimationDef stackArgsToAnimDef(const StackValue_t *args) const;
+	AnimationDef stackArgsToAnimDef(const StackInt_t *args) const;
 	void pushAnimDef(const AnimationDef &animDef);
 
 	void activateScript(const Common::SharedPtr<Script> &script, const ScriptEnvironmentVars &envVars);
@@ -657,8 +783,8 @@ private:
 
 	uint _panCursors[kPanCursorMaxCount];
 
-	Common::HashMap<Common::String, StackValue_t> _namedCursors;
-	Common::HashMap<StackValue_t, uint> _scriptCursorIDToResourceIDOverride;
+	Common::HashMap<Common::String, StackInt_t> _namedCursors;
+	Common::HashMap<StackInt_t, uint> _scriptCursorIDToResourceIDOverride;
 
 	OSystem *_system;
 	uint _roomNumber;	// Room number can be changed independently of the loaded room, the screen doesn't change until a command changes it
@@ -708,12 +834,13 @@ private:
 
 	Common::SharedPtr<Script> _activeScript;
 	uint _scriptNextInstruction;
-	Common::Array<StackValue_t> _scriptStack;
+	Common::Array<StackValue> _scriptStack;
 	ScriptEnvironmentVars _scriptEnv;
 
 	Common::SharedPtr<Common::RandomSource> _rng;
 
 	Common::SharedPtr<AudioPlayer> _musicPlayer;
+	int _musicTrack;
 	SfxData _sfxData;
 
 	Common::SharedPtr<Video::AVIDecoder> _animDecoder;
@@ -769,7 +896,7 @@ private:
 	Common::Array<OSEvent> _pendingEvents;
 
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _waves;
-	Common::HashMap<uint, Common::SharedPtr<CachedSound> > _cachedSounds;
+	Common::Array<Common::SharedPtr<SoundInstance> > _activeSounds;
 	SoundParams3D _pendingSoundParams3D;
 
 	Common::Array<TriggeredOneShot> _triggeredOneShots;
@@ -789,9 +916,12 @@ private:
 	static const int kPanoramaPanningMarginX = 11;
 	static const int kPanoramaPanningMarginY = 11;
 
-	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 2;
-	static const uint kSaveGameEarliestSupportedVersion = 2;
+	static const uint kSoundCacheSize = 16;
+
+	Common::Pair<Common::String, Common::SharedPtr<SoundCache> > _soundCache[kSoundCacheSize];
+	uint _soundCacheIndex;
+
+	Common::SharedPtr<SaveGameSnapshot> _saveGame;
 };
 
 } // End of namespace VCruise

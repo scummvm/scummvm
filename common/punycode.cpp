@@ -175,7 +175,7 @@ String punycode_encode(const U32String &src) {
 
 		if ((m - n) > (SMAX - delta) / (h + 1)) {
 			// OVERFLOW
-			warning("punycode_encode: overflow1");
+			warning("punycode_encode: overflow1 for string (%s)", src.encode().c_str());
 			return src;
 		}
 
@@ -186,7 +186,7 @@ String punycode_encode(const U32String &src) {
 			if (src[si] < n) {
 				if (++delta == 0) {
 					// OVERFLOW
-					warning("punycode_encode: overflow2");
+					warning("punycode_encode: overflow2 for string (%s)", src.encode().c_str());
 					return src;
 				}
 			} else if (src[si] == n) {
@@ -279,7 +279,7 @@ U32String punycode_decode(const String &src1) {
 			di = src.findLastOf('-');
 
 			if (di == String::npos) {
-				warning("punycode_decode: malformed string");
+				warning("punycode_decode: malformed string for string (%s)", src1.c_str());
 				return src1;
 			}
 		} else {
@@ -307,20 +307,20 @@ U32String punycode_decode(const String &src1) {
 
 		for (size_t w = 1, k = BASE; true; k += BASE) {
 			if (si >= (int)src.size()) {
-				warning("punycode_decode: incorrect digit");
+				warning("punycode_decode: incorrect digit for string (%s)", src1.c_str());
 				return src1;
 			}
 
 			size_t digit = decode_digit(src[si++]);
 
 			if (digit == SMAX) {
-				warning("punycode_decode: incorrect digit");
+				warning("punycode_decode: incorrect digit2 for string (%s)", src1.c_str());
 				return src1;
 			}
 
 			if (digit > (SMAX - i) / w) {
 				// OVERFLOW
-				warning("punycode_decode: overflow1");
+				warning("punycode_decode: overflow1 for string (%s)", src1.c_str());
 				return src1;
 			}
 
@@ -341,7 +341,7 @@ U32String punycode_decode(const String &src1) {
 
 			if (w > SMAX / (BASE - t)) {
 				// OVERFLOW
-				warning("punycode_decode: overflow2");
+				warning("punycode_decode: overflow2 for string (%s)", src1.c_str());
 				return src1;
 			}
 
@@ -352,7 +352,7 @@ U32String punycode_decode(const String &src1) {
 
 		if (i / (di + 1) > SMAX - n) {
 			// OVERFLOW
-				warning("punycode_decode: overflow3");
+				warning("punycode_decode: overflow3 for string (%s)", src1.c_str());
 			return src1;
 		}
 
