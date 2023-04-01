@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-29 23:13+0000\n"
-"PO-Revision-Date: 2023-03-26 11:21+0000\n"
+"PO-Revision-Date: 2023-04-01 21:26+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -3549,10 +3549,8 @@ msgid "D-pad Right"
 msgstr "D-pad oikealle"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "D-pad vasemmalle"
+msgstr "D-pad keskiö"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
@@ -8889,31 +8887,29 @@ msgid "Wall collision off"
 msgstr "Seinien törmäystarkistus pois päältä"
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgid "Language not detected"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "Kieli ei tiedossa"
+msgstr "Kielivalinta"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
 msgid "Voices: None"
-msgstr ""
+msgstr "Puhe: Ei"
 
 #: engines/twine/parser/text.cpp:40
 msgctxt "Options menu"
 msgid "Voices: English"
-msgstr ""
+msgstr "Puhe: Englanti"
 
 #: engines/twine/parser/text.cpp:41
 msgctxt "Options menu"
 msgid "Voices: French"
-msgstr ""
+msgstr "Puhe: Ranska"
 
 #: engines/twine/parser/text.cpp:42
 msgctxt "Options menu"
 msgid "Voices: German"
-msgstr ""
+msgstr "Puhe: Saksa"
 
 #: engines/ultima/metaengine.cpp:55
 msgid "Enable frame skipping"
@@ -9033,16 +9029,12 @@ msgstr ""
 "org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/metaengine.cpp:50
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "Siirtymät:"
+msgstr "Nopeammat animaatiot"
 
 #: engines/vcruise/metaengine.cpp:51
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Speeds up animations."
-msgstr "Puheasetukset"
+msgstr "Nopeuttaa animaatioita."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
