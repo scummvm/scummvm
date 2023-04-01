@@ -28,8 +28,8 @@
 namespace GUI {
 
 void saveGUISnapshot(Graphics::Surface surf, const Common::String &filename);
-void dumpDialogs(const Common::String &dialogName, int resolution, const Common::String &lang);
-void dumpAllDialogs();
+void dumpDialogs(const Common::String &message, int resolution, const Common::String &lang);
+void dumpAllDialogs(const Common::String &message = "test");
 
 } // End of namespace GUI
 

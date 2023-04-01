@@ -27,8 +27,10 @@
 #include "common/translation.h"
 
 #include "gui/ThemeEngine.h"
+#include "gui/about.h"
 #include "gui/gui-manager.h"
 #include "gui/launcher.h"
+#include "gui/message.h"
 
 #include "image/png.h"
 
@@ -45,7 +47,7 @@ void saveGUISnapshot(Graphics::Surface surf, const Common::String &filename) {
 	}
 }
 
-void dumpDialogs(const Common::String &dialogName, int res, const Common::String &lang) {
+void dumpDialogs(const Common::String &message, int res, const Common::String &lang) {
 	// Update GUI language
 	TransMan.setLanguage(lang);
 
@@ -57,17 +59,34 @@ void dumpDialogs(const Common::String &dialogName, int res, const Common::String
 	Graphics::Surface surf;
 	surf.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
 
+	Common::String filename = Common::String::format("%d-%s.png", res, lang.c_str());
+
+	// MessageDialog
+	GUI::MessageDialog messageDialog(message);
+	messageDialog.runModal();     // For rendering
+	messageDialog.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "message-" + filename);
+
+	// AboutDialog
+	GUI::AboutDialog aboutDialog;
+	aboutDialog.runModal();     // For rendering
+	aboutDialog.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "about-" + filename);
+	aboutDialog.close();
+
 	// LauncherDialog
 	GUI::LauncherChooser chooser;
 	chooser.selectLauncher();
 	chooser.runModal();
 	g_system->grabOverlay(surf);
-
-	Common::String filename = Common::String::format("%d-%s.png", res, lang.c_str());
-	saveGUISnapshot(surf, filename);
+	saveGUISnapshot(surf, "launcher-" + filename);
 }
 
-void dumpAllDialogs() {
+void dumpAllDialogs(const Common::String &message) {
 	auto originalLang = TransMan.getCurrentLanguage();
 	int original_window_width = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
 	int original_window_height = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
@@ -82,7 +101,7 @@ void dumpAllDialogs() {
 		// Iterating through the resolutions doesn't work so you have to manually change it here.
 		// TODO: Find a way to iterate through the resolutions using code.
 		Common::Array<int> res_to_test = {800, 640, 320};
-		dumpDialogs("test", res_to_test[0], lang);
+		dumpDialogs(message, res_to_test[0], lang);
 	}
 
 	TransMan.setLanguage(originalLang);
