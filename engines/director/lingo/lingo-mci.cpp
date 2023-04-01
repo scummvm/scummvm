@@ -324,7 +324,7 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
         bool found = false;
         bool inConst = false;
         int flag, cflag = 0;
-        CmdTableRow *cmdtable, *c_cmdtable = cmdtable;
+        CmdTableRow *cmdtable, *c_cmdtable = nullptr;
         auto& token = token_list[i_token];
 
         for (i_table = tableStart; i_table < tableEnd; i_table++) {
@@ -404,7 +404,7 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
                 }
 
             default:
-                warning("parseMCICommand(): Unhandled command type.");
+                warning("parseMCICommand(): Unhandled command type %d", cmd_type);
                 return MCIERR_UNRECOGNISED_COMMAND;
             }
         }
