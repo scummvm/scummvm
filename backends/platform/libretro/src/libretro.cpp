@@ -679,12 +679,6 @@ void retro_run(void) {
 			else if (frameskip_type == 3)
 				skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
 
-			/* Retrieve audio */
-			samples_count = 0;
-			if ((audio_video_enable & 2) && !isInGUI()) {
-				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
-			}
-			audio_status = samples_count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
 
 			/* No frame skipping if there is no incoming audio (e.g. GUI) or if frontend does not support frame skipping*/
 			skip_frame = skip_frame && !(audio_status & AUDIO_STATUS_MUTE)  && can_dupe;
@@ -702,6 +696,13 @@ void retro_run(void) {
 			/* Switch to ScummVM thread, unless frameskipping is ongoing */
 			if (!skip_frame)
 				retro_switch_to_emu_thread();
+
+			/* Retrieve audio */
+			samples_count = 0;
+			if ((audio_video_enable & 2) && !isInGUI()) {
+				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
+			}
+			audio_status = samples_count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
 
 			/* Retrieve video */
 			if ((audio_video_enable & 1) && !skip_frame) {
