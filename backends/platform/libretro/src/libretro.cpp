@@ -699,7 +699,7 @@ void retro_run(void) {
 
 			/* Retrieve audio */
 			samples_count = 0;
-			if ((audio_video_enable & 2) && !isInGUI()) {
+			if (audio_video_enable & 2) {
 				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
 			}
 			audio_status = samples_count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);

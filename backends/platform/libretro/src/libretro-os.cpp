@@ -662,10 +662,6 @@ public:
 		return _threadSwitchCaller;
 	}
 
-	bool isInGUI(){
-		return _overlayVisible && _overlayInGUI;
-	}
-
 	virtual bool pollEvent(Common::Event &event) {
 		_threadSwitchCaller = THREAD_SWITCH_POLL;
 		retroCheckThread();
@@ -1338,8 +1334,4 @@ void retroReset() {
 
 uint8 getThreadSwitchCaller(){
 	return dynamic_cast<OSystem_RETRO *>(g_system)->getThreadSwitchCaller();
-}
-
-bool isInGUI(){
-	return dynamic_cast<OSystem_RETRO *>(g_system)->isInGUI();
 }
