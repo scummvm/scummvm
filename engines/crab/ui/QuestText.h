@@ -81,8 +81,9 @@ public:
 
 	// Reset the value of current page
 	void Reset() { current_page = 0; }
-
+#if 0
 	void HandleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event);
+#endif
 	void Draw(pyrodactyl::event::Quest &q);
 
 	void SetUI();
