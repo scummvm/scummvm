@@ -56,11 +56,13 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, Networkin
 	if (json == nullptr) {
 		debug(9, "BaseStorage::codeFlowComplete: got NULL instead of JSON!");
 		success = false;
+		callbackMessage = "Incorrect JSON.";
 	}
 
 	if (success && !json->isObject()) {
 		debug(9, "BaseStorage::codeFlowComplete: passed JSON is not an object!");
 		success = false;
+		callbackMessage = "Incorrect JSON.";
 	}
 
 	Common::JSONObject result;
@@ -70,6 +72,7 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, Networkin
 			warning("BaseStorage: bad response, no 'error' attribute passed");
 			debug(9, "%s", json->stringify(true).c_str());
 			success = false;
+			callbackMessage = "Incorrect JSON.";
 		}
 	}
 
@@ -87,6 +90,7 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, Networkin
 		warning("BaseStorage: bad response, no 'oauth' attribute passed");
 		debug(9, "%s", json->stringify(true).c_str());
 		success = false;
+		callbackMessage = "Incorrect JSON.";
 	}
 
 	Common::JSONObject oauth;
@@ -98,6 +102,7 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, Networkin
 			warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
 			debug(9, "%s", json->stringify(true).c_str());
 			success = false;
+			callbackMessage = "Incorrect JSON.";
 		}
 	}
 

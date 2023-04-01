@@ -112,11 +112,12 @@ void ConnectCloudClientHandler::handle(Client *client) {
 		return;
 	}
 
+	Networking::ErrorCallback callback = new Common::Callback<ConnectCloudClientHandler, Networking::ErrorResponse>(this, &ConnectCloudClientHandler::storageConnectionCallback);
 	Networking::JsonResponse jsonResponse(nullptr, json);
-	CloudMan.connectStorage(
-		Cloud::kStorageDropboxId, jsonResponse, // TODO: determine the correct id
-		new Common::Callback<ConnectCloudClientHandler, Networking::ErrorResponse>(this, &ConnectCloudClientHandler::storageConnectionCallback)
-	);
+	if (!CloudMan.connectStorage(jsonResponse, callback)) { // JSON doesn't have "storage" in it or it was invalid
+		delete callback;
+		handleError(*client, "Not Acceptable", 406);
+	}
 }
 
 void ConnectCloudClientHandler::storageConnectionCallback(Networking::ErrorResponse response) {
