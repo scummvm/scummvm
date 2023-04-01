@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
+//import android.util.Log;
 import android.view.MotionEvent;
 import android.view.InputDevice;
 
@@ -183,15 +183,14 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 		// Check that the event came from a joystick
 		if (((event.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK
 			 || (event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0)) {
-			int action = event.getActionMasked();
-			if (action == MotionEvent.ACTION_MOVE) {
-
+			switch(event.getActionMasked()) {
+			case MotionEvent.ACTION_MOVE:
 				// Process all historical movement samples in the batch
 				final int historySize = event.getHistorySize();
 
 				// Process the movements starting from the
 				// earliest historical position in the batch
-				for (int i = 0; i < historySize; i++) {
+				for (int i = 0; i < historySize; ++i) {
 					// Process the event at historical position i
 					//Log.d(ScummVM.LOG_TAG, "JOYSTICK - onGenericMotionEvent(m) hist: ");
 					processJoystickInput(event, i);
@@ -201,6 +200,28 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 				//Log.d(ScummVM.LOG_TAG, "JOYSTICK - onGenericMotionEvent(m): "  );
 				processJoystickInput(event, -1);
 				return true;
+
+			default:
+				break;
+			}
+		} else if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
+			// TODO Check if we need to handle other cases of InputDevice SOURCE_CLASS_POINTER for GenericMotionEvent, that are not ACTION_SCROLL
+			//Log.d(ScummVM.LOG_TAG, "MOUSE PHYSICAL POINTER - onGenericMotionEvent(m) ");
+			//
+			// Check that the event might be a mouse scroll wheel
+			// Code inspired from https://stackoverflow.com/a/33086042
+			switch (event.getActionMasked()) {
+			case MotionEvent.ACTION_SCROLL:
+				//Log.d(ScummVM.LOG_TAG, "MOUSE PHYSICAL POINTER - ACTION SCROLL");
+				// This action is not a touch event so it is delivered to
+				// View#onGenericMotionEvent(MotionEvent) rather than View#onTouchEvent(MotionEvent).
+				if (_mouseHelper != null) {
+					return _mouseHelper.onMouseEvent(event, false);
+				}
+				break;
+
+			default:
+				break;
 			}
 		}
 		// this basically returns false since the super just returns false
