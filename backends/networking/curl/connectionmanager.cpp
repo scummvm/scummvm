@@ -99,7 +99,15 @@ uint32 ConnectionManager::getCloudRequestsPeriodInMicroseconds() {
 }
 
 const char *ConnectionManager::getCaCertPath() {
-#if defined(DATA_PATH)
+#if defined(__ANDROID__)
+	Common::ArchiveMemberPtr member = SearchMan.getMember("cacert.pem");
+	Common::FSNode *node = dynamic_cast<Common::FSNode *>(member.get());
+	if (!node) {
+		return nullptr;
+	}
+
+	return node->getPath().c_str();
+#elif defined(DATA_PATH)
 	static enum {
 		kNotInitialized,
 		kFileNotFound,
