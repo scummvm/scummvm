@@ -38,7 +38,7 @@
 
 namespace Immortal {
 
-enum Tile : uint8 {
+enum RoomTile : uint8 {
 	kTileFloor,
 	kTileUpper5,
 	kTileUpper3,
