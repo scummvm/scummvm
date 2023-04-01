@@ -3673,6 +3673,7 @@ if test -n "$_host"; then
 			if test "$_release_build" = "yes"; then
 				# --enable-release
 				append_var DEFINES  "-DNDEBUG"
+				append_var DEFINES  "-DDISABLE_TEXT_CONSOLE"
 				append_var CXXFLAGS "-I$HOME/gnu-tools/m68000/m68k-atari-mint/sys-root/opt/mintlib-dlmalloc/include"
 				append_var LDFLAGS  "-L$HOME/gnu-tools/m68000/m68k-atari-mint/sys-root/opt/mintlib-dlmalloc/lib/m68020-60"
 			fi
@@ -3974,6 +3975,7 @@ case $_backend in
 		#append_var DEFINES "-DDISABLE_SID"
 		#append_var DEFINES "-DDISABLE_NES_APU"
 		#append_var DEFINES "-DDISABLE_DOSBOX_OPL"
+		#append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
 		append_var ASFLAGS "-m68030"
 		append_var CXXFLAGS "-m68020-60"
 		append_var LDFLAGS "-m68020-60"
