@@ -679,8 +679,6 @@ void retro_run(void) {
 			else if (frameskip_type == 3)
 				skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
 
-			retro_switch_to_emu_thread();
-
 			/* Retrieve audio */
 			samples_count = 0;
 			if ((audio_video_enable & 2) && !isInGUI()) {
@@ -700,6 +698,10 @@ void retro_run(void) {
 			/* Keep on skipping frames if flagged */
 			} else if (skip_frame)
 				frameskip_counter++;
+
+			/* Switch to ScummVM thread, unless frameskipping is ongoing */
+			if (!skip_frame)
+				retro_switch_to_emu_thread();
 
 			/* Retrieve video */
 			if ((audio_video_enable & 1) && !skip_frame) {
