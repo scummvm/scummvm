@@ -184,6 +184,9 @@ struct SoundParams3D {
 	// Not sure what this does.  It's always shorter than the min range but after many tests, I've been
 	// unable to detect any level changes from altering this parameter.
 	uint unknownRange;
+
+	void write(Common::WriteStream *stream) const;
+	void read(Common::ReadStream *stream);
 };
 
 struct SoundCache {
@@ -220,7 +223,6 @@ struct SoundInstance {
 	bool isSpeech;
 	int32 x;
 	int32 y;
-	int32 z;
 
 	SoundParams3D params3D;
 
@@ -235,6 +237,9 @@ struct TriggeredOneShot {
 
 	uint soundID;
 	uint uniqueSlot;
+
+	void write(Common::WriteStream *stream) const;
+	void read(Common::ReadStream *stream);
 };
 
 struct StaticAnimParams {
@@ -243,6 +248,9 @@ struct StaticAnimParams {
 	uint initialDelay;
 	uint repeatDelay;
 	bool lockInteractions;
+
+	void write(Common::WriteStream *stream) const;
+	void read(Common::ReadStream *stream);
 };
 
 struct StaticAnimation {
@@ -291,19 +299,85 @@ struct Fraction {
 	uint denominator;
 };
 
-class Runtime {
-public:
-	enum LoadGameOutcome {
-		kLoadGameOutcomeSucceeded,
+enum LoadGameOutcome {
+	kLoadGameOutcomeSucceeded,
 
-		kLoadGameOutcomeSaveDataCorrupted,
+	kLoadGameOutcomeSaveDataCorrupted,
 
-		kLoadGameOutcomeMissingVersion,
-		kLoadGameOutcomeInvalidVersion,
-		kLoadGameOutcomeSaveIsTooNew,
-		kLoadGameOutcomeSaveIsTooOld,
+	kLoadGameOutcomeMissingVersion,
+	kLoadGameOutcomeInvalidVersion,
+	kLoadGameOutcomeSaveIsTooNew,
+	kLoadGameOutcomeSaveIsTooOld,
+};
+
+struct SaveGameSnapshot {
+	SaveGameSnapshot();
+
+	void write(Common::WriteStream *stream) const;
+	LoadGameOutcome read(Common::ReadStream *stream);
+
+	static const uint kSaveGameIdentifier = 0x53566372;
+	static const uint kSaveGameCurrentVersion = 2;
+	static const uint kSaveGameEarliestSupportedVersion = 2;
+
+	struct InventoryItem {
+		InventoryItem();
+
+		uint itemID;
+		bool highlighted;
+
+		void write(Common::WriteStream *stream) const;
+		void read(Common::ReadStream *stream);
 	};
 
+	struct Sound {
+		Sound();
+
+		Common::String name;
+		uint id;
+		uint volume;
+		int32 balance;
+
+		bool is3D;
+		bool isLooping;
+		bool isSpeech;
+
+		int32 x;
+		int32 y;
+
+		SoundParams3D params3D;
+
+		void write(Common::WriteStream *stream) const;
+		void read(Common::ReadStream *stream);
+	};
+
+	uint roomNumber;
+	uint screenNumber;
+	uint direction;
+
+	bool escOn;
+	int musicTrack;
+
+	uint loadedAnimation;
+	uint animDisplayingFrame;
+
+	StaticAnimParams pendingStaticAnimParams;
+	SoundParams3D pendingSoundParams3D;
+
+	int32 listenerX;
+	int32 listenerY;
+	int32 listenerAngle;
+
+	Common::Array<InventoryItem> inventory;
+	Common::Array<Sound> sounds;
+	Common::Array<TriggeredOneShot> triggeredOneShots;
+
+	Common::HashMap<uint32, int32> variables;
+	Common::HashMap<uint, uint32> timers;
+};
+
+class Runtime {
+public:
 	Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID);
 	virtual ~Runtime();
 
@@ -323,6 +397,9 @@ public:
 
 	bool canSave() const;
 	bool canLoad() const;
+
+	void recordSaveGameSnapshot();
+	void restoreSaveGameSnapshot();
 
 	void saveGame(Common::WriteStream *stream) const;
 	LoadGameOutcome loadGame(Common::ReadStream *stream);
@@ -763,6 +840,7 @@ private:
 	Common::SharedPtr<Common::RandomSource> _rng;
 
 	Common::SharedPtr<AudioPlayer> _musicPlayer;
+	int _musicTrack;
 	SfxData _sfxData;
 
 	Common::SharedPtr<Video::AVIDecoder> _animDecoder;
@@ -838,14 +916,12 @@ private:
 	static const int kPanoramaPanningMarginX = 11;
 	static const int kPanoramaPanningMarginY = 11;
 
-	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 2;
-	static const uint kSaveGameEarliestSupportedVersion = 2;
-
 	static const uint kSoundCacheSize = 16;
 
 	Common::Pair<Common::String, Common::SharedPtr<SoundCache> > _soundCache[kSoundCacheSize];
 	uint _soundCacheIndex;
+
+	Common::SharedPtr<SaveGameSnapshot> _saveGame;
 };
 
 } // End of namespace VCruise

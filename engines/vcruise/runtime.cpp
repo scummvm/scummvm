@@ -379,7 +379,7 @@ SoundCache::~SoundCache() {
 
 SoundInstance::SoundInstance()
 	: id(0), rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
-	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), isSpeech(false), x(0), y(0), z(0), endTime(0) {
+	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), isSpeech(false), x(0), y(0), endTime(0) {
 }
 
 SoundInstance::~SoundInstance() {
@@ -396,7 +396,29 @@ bool TriggeredOneShot::operator!=(const TriggeredOneShot &other) const {
 	return !((*this) == other);
 }
 
+void TriggeredOneShot::write(Common::WriteStream *stream) const {
+	stream->writeUint32BE(soundID);
+	stream->writeUint32BE(uniqueSlot);
+}
+
+void TriggeredOneShot::read(Common::ReadStream *stream) {
+	soundID = stream->readUint32BE();
+	uniqueSlot = stream->readUint32BE();
+}
+
 StaticAnimParams::StaticAnimParams() : initialDelay(0), repeatDelay(0), lockInteractions(false) {
+}
+
+void StaticAnimParams::write(Common::WriteStream *stream) const {
+	stream->writeUint32BE(initialDelay);
+	stream->writeUint32BE(repeatDelay);
+	stream->writeByte(lockInteractions ? 1 : 0);
+}
+
+void StaticAnimParams::read(Common::ReadStream *stream) {
+	initialDelay = stream->readUint32BE();
+	repeatDelay = stream->readUint32BE();
+	lockInteractions = (stream->readByte() != 0);
 }
 
 StaticAnimation::StaticAnimation() : currentAlternation(0), nextStartTime(0) {
@@ -411,6 +433,18 @@ FrameData2::FrameData2() : x(0), y(0), angle(0), frameNumberInArea(0), unknown(0
 SoundParams3D::SoundParams3D() : minRange(0), maxRange(0), unknownRange(0) {
 }
 
+void SoundParams3D::write(Common::WriteStream *stream) const {
+	stream->writeUint32BE(minRange);
+	stream->writeUint32BE(maxRange);
+	stream->writeUint32BE(unknownRange);
+}
+
+void SoundParams3D::read(Common::ReadStream *stream) {
+	minRange = stream->readUint32BE();
+	maxRange = stream->readUint32BE();
+	unknownRange = stream->readUint32BE();
+}
+
 InventoryItem::InventoryItem() : itemID(0), highlighted(false) {
 }
 
@@ -420,10 +454,195 @@ Fraction::Fraction() : numerator(0), denominator(1) {
 Fraction::Fraction(uint pNumerator, uint pDenominator) : numerator(pNumerator), denominator(pDenominator) {
 }
 
+SaveGameSnapshot::InventoryItem::InventoryItem() : itemID(0), highlighted(false) {
+}
+
+void SaveGameSnapshot::InventoryItem::write(Common::WriteStream *stream) const {
+	stream->writeUint32BE(itemID);
+	stream->writeByte(highlighted ? 1 : 0);
+}
+
+void SaveGameSnapshot::InventoryItem::read(Common::ReadStream *stream) {
+	itemID = stream->readUint32BE();
+	highlighted = (stream->readByte() != 0);
+}
+
+SaveGameSnapshot::Sound::Sound() : id(0), volume(0), balance(0), is3D(false), isLooping(false), isSpeech(false), x(0), y(0) {
+}
+
+void SaveGameSnapshot::Sound::write(Common::WriteStream *stream) const {
+	stream->writeUint32BE(name.size());
+	stream->writeString(name);
+
+	stream->writeUint32BE(id);
+	stream->writeUint32BE(volume);
+	stream->writeSint32BE(balance);
+
+	stream->writeByte(is3D ? 1 : 0);
+	stream->writeByte(isLooping ? 1 : 0);
+	stream->writeByte(isSpeech ? 1 : 0);
+
+	stream->writeSint32BE(x);
+	stream->writeSint32BE(y);
+
+	params3D.write(stream);
+}
+
+void SaveGameSnapshot::Sound::read(Common::ReadStream *stream) {
+	uint nameLen = stream->readUint32BE();
+
+	if (stream->eos() || stream->err() || nameLen > 256)
+		nameLen = 0;
+
+	name = stream->readString(0, nameLen);
+
+	id = stream->readUint32BE();
+	volume = stream->readUint32BE();
+	balance = stream->readSint32BE();
+
+	is3D = (stream->readByte() != 0);
+	isLooping = (stream->readByte() != 0);
+	isSpeech = (stream->readByte() != 0);
+
+	x = stream->readSint32BE();
+	y = stream->readSint32BE();
+
+	params3D.read(stream);
+}
+
+SaveGameSnapshot::SaveGameSnapshot() : roomNumber(0), screenNumber(0), direction(0), escOn(false), musicTrack(0), loadedAnimation(0),
+									   animDisplayingFrame(0), listenerX(0), listenerY(0), listenerAngle(0) {
+}
+
+void SaveGameSnapshot::write(Common::WriteStream *stream) const {
+	stream->writeUint32BE(kSaveGameIdentifier);
+	stream->writeUint32BE(kSaveGameCurrentVersion);
+
+	stream->writeUint32BE(roomNumber);
+	stream->writeUint32BE(screenNumber);
+	stream->writeUint32BE(direction);
+
+	stream->writeByte(escOn ? 1 : 0);
+	stream->writeSint32BE(musicTrack);
+
+	stream->writeUint32BE(loadedAnimation);
+	stream->writeUint32BE(animDisplayingFrame);
+
+	pendingStaticAnimParams.write(stream);
+	pendingSoundParams3D.write(stream);
+
+	stream->writeSint32BE(listenerX);
+	stream->writeSint32BE(listenerY);
+	stream->writeSint32BE(listenerAngle);
+
+	stream->writeUint32BE(inventory.size());
+	stream->writeUint32BE(sounds.size());
+	stream->writeUint32BE(triggeredOneShots.size());
+
+	stream->writeUint32BE(variables.size());
+	stream->writeUint32BE(timers.size());
+
+	for (const InventoryItem &invItem : inventory)
+		invItem.write(stream);
+
+	for (const Sound &sound : sounds)
+		sound.write(stream);
+
+	for (const TriggeredOneShot &triggeredOneShot : triggeredOneShots)
+		triggeredOneShot.write(stream);
+
+	for (const Common::HashMap<uint32, int32>::Node &var : variables) {
+		stream->writeUint32BE(var._key);
+		stream->writeSint32BE(var._value);
+	}
+
+	for (const Common::HashMap<uint, uint32>::Node &timer : timers) {
+		stream->writeUint32BE(timer._key);
+		stream->writeUint32BE(timer._value);
+	}
+}
+
+LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
+	uint32 saveIdentifier = stream->readUint32BE();
+	uint32 saveVersion = stream->readUint32BE();
+
+	if (stream->eos() || stream->err())
+		return kLoadGameOutcomeMissingVersion;
+
+	if (saveIdentifier != kSaveGameIdentifier)
+		return kLoadGameOutcomeInvalidVersion;
+
+	if (saveVersion > kSaveGameCurrentVersion)
+		return kLoadGameOutcomeSaveIsTooNew;
+
+	if (saveVersion < kSaveGameEarliestSupportedVersion)
+		return kLoadGameOutcomeSaveIsTooOld;
+
+	
+	roomNumber = stream->readUint32BE();
+	screenNumber = stream->readUint32BE();
+	direction = stream->readUint32BE();
+
+	escOn = (stream->readByte() != 0);
+	musicTrack = stream->readSint32BE();
+
+	loadedAnimation = stream->readUint32BE();
+	animDisplayingFrame = stream->readUint32BE();
+
+	pendingStaticAnimParams.read(stream);
+	pendingSoundParams3D.read(stream);
+
+	listenerX = stream->readSint32BE();
+	listenerY = stream->readSint32BE();
+	listenerAngle = stream->readSint32BE();
+
+	uint numInventory = stream->readUint32BE();
+	uint numSounds = stream->readUint32BE();
+	uint numOneShots = stream->readUint32BE();
+
+	uint numVars = stream->readUint32BE();
+	uint numTimers = stream->readUint32BE();
+
+	if (stream->eos() || stream->err())
+		return kLoadGameOutcomeSaveDataCorrupted;
+
+	inventory.resize(numInventory);
+	sounds.resize(numSounds);
+	triggeredOneShots.resize(numOneShots);
+
+	for (uint i = 0; i < numInventory; i++)
+		inventory[i].read(stream);
+
+	for (uint i = 0; i < numSounds; i++)
+		sounds[i].read(stream);
+
+	for (uint i = 0; i < numOneShots; i++)
+		triggeredOneShots[i].read(stream);
+
+	for (uint i = 0; i < numVars; i++) {
+		uint32 key = stream->readUint32BE();
+		int32 value = stream->readSint32BE();
+
+		variables[key] = value;
+	}
+
+	for (uint i = 0; i < numTimers; i++) {
+		uint32 key = stream->readUint32BE();
+		uint32 value = stream->readUint32BE();
+
+		timers[key] = value;
+	}
+
+	if (stream->eos() || stream->err())
+		return kLoadGameOutcomeSaveDataCorrupted;
+
+	return kLoadGameOutcomeSucceeded;
+}
+
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
-	  _scriptNextInstruction(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _panoramaDirectionFlags(0),
+	  _scriptNextInstruction(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _musicTrack(0), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
@@ -1633,6 +1852,8 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 		_havePendingReturnToIdleState = true;
 		_haveIdleStaticAnimation = false;
+
+		recordSaveGameSnapshot();
 	}
 }
 
@@ -1916,7 +2137,11 @@ void Runtime::loadFrameData2(Common::SeekableReadStream *stream) {
 }
 
 void Runtime::changeMusicTrack(int track) {
+	if (track == _musicTrack)
+		return;
+
 	_musicPlayer.reset();
+	_musicTrack = track;
 
 	Common::String wavFileName = Common::String::format("Sfx/Music-%02i.wav", static_cast<int>(track));
 	Common::File *wavFile = new Common::File();
@@ -2652,136 +2877,185 @@ void Runtime::onKeyDown(Common::KeyCode keyCode) {
 }
 
 bool Runtime::canSave() const {
-	return _gameState == kGameStateIdle;
+	return !!_saveGame;
 }
 
 bool Runtime::canLoad() const {
 	return _gameState == kGameStateIdle;
 }
 
-void Runtime::saveGame(Common::WriteStream *stream) const {
-	stream->writeUint32BE(kSaveGameIdentifier);
-	stream->writeUint32BE(kSaveGameCurrentVersion);
-
-	stream->writeUint32BE(_roomNumber);
-	stream->writeUint32BE(_screenNumber);
-	stream->writeUint32BE(_direction);
-
-	Common::Array<uint32> variableIDs;
-	Common::Array<uint> timerIDs;
+void Runtime::recordSaveGameSnapshot() {
+	_saveGame.reset();
 
 	uint32 timeBase = g_system->getMillis();
 
-	for (const Common::HashMap<uint32, int32>::Node &varNode : _variables)
-		variableIDs.push_back(varNode._key);
+	Common::SharedPtr<SaveGameSnapshot> snapshot(new SaveGameSnapshot());
+
+	_saveGame = snapshot;
+
+	for (const InventoryItem &inventoryItem : _inventory) {
+		SaveGameSnapshot::InventoryItem saveItem;
+		saveItem.itemID = inventoryItem.itemID;
+		saveItem.highlighted = inventoryItem.highlighted;
+
+		snapshot->inventory.push_back(saveItem);
+	}
+
+	snapshot->roomNumber = _roomNumber;
+	snapshot->screenNumber = _screenNumber;
+	snapshot->direction = _direction;
+
+	snapshot->pendingStaticAnimParams = _pendingStaticAnimParams;
+
+	snapshot->variables = _variables;
 
 	for (const Common::HashMap<uint, uint32>::Node &timerNode : _timers)
-		timerIDs.push_back(timerNode._key);
+		snapshot->timers[timerNode._key] = timerNode._value - timeBase;
 
-	Common::sort(variableIDs.begin(), variableIDs.end());
-	Common::sort(timerIDs.begin(), timerIDs.end());
+	snapshot->escOn = _escOn;
 
-	stream->writeUint32BE(variableIDs.size());
-	stream->writeUint32BE(timerIDs.size());
+	snapshot->musicTrack = _musicTrack;
 
-	for (uint32 variableKey : variableIDs) {
-		Common::HashMap<uint32, int32>::const_iterator it = _variables.find(variableKey);
-		assert(it != _variables.end());
+	snapshot->loadedAnimation = _loadedAnimation;
+	snapshot->animDisplayingFrame = _animDisplayingFrame;
 
-		stream->writeUint32BE(variableKey);
-		stream->writeSint32BE(it->_value);
+	for (const Common::SharedPtr<SoundInstance> &soundPtr : _activeSounds) {
+		const SoundInstance &sound = *soundPtr;
+
+		SaveGameSnapshot::Sound saveSound;
+		saveSound.name = sound.name;
+
+		saveSound.id = sound.id;
+
+		saveSound.volume = sound.volume;
+		saveSound.balance = sound.balance;
+
+		// Skip ramp
+		if (sound.rampRatePerMSec != 0)
+			saveSound.volume = sound.rampEndVolume;
+
+		saveSound.is3D = sound.is3D;
+		saveSound.isLooping = sound.isLooping;
+		saveSound.isSpeech = sound.isSpeech;
+		saveSound.x = sound.x;
+		saveSound.y = sound.y;
+
+		saveSound.params3D = sound.params3D;
+
+		snapshot->sounds.push_back(saveSound);
 	}
 
-	for (uint timerKey : timerIDs) {
-		Common::HashMap<uint, uint32>::const_iterator it = _timers.find(timerKey);
-		assert(it != _timers.end());
+	snapshot->pendingSoundParams3D = _pendingSoundParams3D;
 
-		stream->writeUint32BE(timerKey);
-		stream->writeUint32BE(it->_value - timeBase);
-	}
+	snapshot->triggeredOneShots = _triggeredOneShots;
 
-	for (const InventoryItem &item : _inventory)
-		stream->writeUint32BE(item.itemID);
+	snapshot->listenerX = _listenerX;
+	snapshot->listenerY = _listenerY;
+	snapshot->listenerAngle = _listenerAngle;
 }
 
-Runtime::LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
-	assert(canLoad());
-
-	uint32 saveGameID = stream->readUint32BE();
-	uint32 saveVersion = stream->readUint32BE();
-
-	if (stream->err() || stream->eos())
-		return kLoadGameOutcomeMissingVersion;
-
-	if (saveGameID != kSaveGameIdentifier)
-		return kLoadGameOutcomeInvalidVersion;
-
-	if (saveVersion > kSaveGameCurrentVersion)
-		return kLoadGameOutcomeSaveIsTooNew;
-
-	if (saveVersion < kSaveGameEarliestSupportedVersion)
-		return kLoadGameOutcomeSaveIsTooOld;
-
+void Runtime::restoreSaveGameSnapshot() {
 	uint32 timeBase = g_system->getMillis();
 
-	uint32 roomNumber = stream->readUint32BE();
-	uint32 screenNumber = stream->readUint32BE();
-	uint32 direction = stream->readUint32BE();
+	for (uint i = 0; i < kNumInventorySlots && i < _saveGame->inventory.size(); i++) {
+		const SaveGameSnapshot::InventoryItem &saveItem = _saveGame->inventory[i];
 
-	uint32 numVars = stream->readUint32BE();
-	uint32 numTimers = stream->readUint32BE();
+		_inventory[i].itemID = saveItem.itemID;
+		_inventory[i].highlighted = saveItem.highlighted;
 
-	if (stream->err() || stream->eos())
-		return kLoadGameOutcomeSaveDataCorrupted;
-
-	Common::HashMap<uint32, int32> vars;
-	Common::HashMap<uint, uint32> timers;
-
-	for (uint32 i = 0; i < numVars; i++) {
-		uint32 varID = stream->readUint32BE();
-		int32 varValue = stream->readSint32BE();
-
-		vars[varID] = varValue;
+		if (saveItem.itemID) {
+			Common::String itemFileName = getFileNameForItemGraphic(saveItem.itemID);
+			_inventory[i].graphic = loadGraphic(itemFileName, false);
+		} else {
+			_inventory[i].graphic.reset();
+		}
 	}
 
-	for (uint32 i = 0; i < numTimers; i++) {
-		uint timerID = stream->readUint32BE();
-		uint32 timerValue = stream->readUint32BE();
+	_roomNumber = _saveGame->roomNumber;
+	_screenNumber = _saveGame->screenNumber;
+	_direction = _saveGame->direction;
 
-		timers[timerID] = timerValue + timeBase;
+	_pendingStaticAnimParams = _saveGame->pendingStaticAnimParams;
+
+	_variables.clear();
+	_variables = _saveGame->variables;
+
+	_timers.clear();
+
+	for (const Common::HashMap<uint, uint32>::Node &timerNode : _saveGame->timers)
+		_timers[timerNode._key] = timerNode._value + timeBase;
+
+	_escOn = _saveGame->escOn;
+
+	changeMusicTrack(_saveGame->musicTrack);
+
+	// Stop all sounds since the player instances are stored in the sound cache.
+	for (Common::SharedPtr<SoundInstance> &snd : _activeSounds)
+		stopSound(*snd);
+
+	_activeSounds.clear();
+
+	_pendingSoundParams3D = _saveGame->pendingSoundParams3D;
+
+	_triggeredOneShots = _saveGame->triggeredOneShots;
+
+	_listenerX = _saveGame->listenerX;
+	_listenerY = _saveGame->listenerY;
+	_listenerAngle = _saveGame->listenerAngle;
+
+	for (const SaveGameSnapshot::Sound &sound : _saveGame->sounds) {
+		Common::SharedPtr<SoundInstance> si(new SoundInstance());
+
+		si->name = sound.name;
+		si->id = sound.id;
+		si->volume = sound.volume;
+		si->balance = sound.balance;
+		si->is3D = sound.is3D;
+		si->isLooping = sound.isLooping;
+		si->isSpeech = sound.isSpeech;
+		si->x = sound.x;
+		si->y = sound.y;
+		si->params3D = sound.params3D;
+
+		_activeSounds.push_back(si);
+
+		if (sound.isLooping)
+			triggerSound(true, *si, si->volume, si->balance, si->is3D, si->isSpeech);
 	}
 
-	uint inventoryItems[kNumInventorySlots];
+	uint anim = _saveGame->loadedAnimation;
+	uint frame = _saveGame->animDisplayingFrame;
 
-	for (uint i = 0; i < kNumInventorySlots; i++)
-		inventoryItems[i] = stream->readUint32BE();
+	AnimationDef animDef;
+	animDef.animNum = anim;
+	animDef.firstFrame = frame;
+	animDef.lastFrame = frame;
 
-	if (stream->err() || stream->eos())
-		return kLoadGameOutcomeSaveDataCorrupted;
+	changeAnimation(animDef, false);
 
-	if (direction >= kNumDirections)
-		return kLoadGameOutcomeSaveDataCorrupted;
+	_gameState = kGameStateWaitingForAnimation;
 
-	// Load succeeded
-	_variables = Common::move(vars);
-	_timers = Common::move(timers);
+	_havePendingScreenChange = true;
+	_forceScreenChange = true;
+}
 
-	for (uint i = 0; i < kNumInventorySlots; i++) {
-		_inventory[i].itemID = inventoryItems[i];
-		_inventory[i].highlighted = false;
-		_inventory[i].graphic.reset();
+void Runtime::saveGame(Common::WriteStream *stream) const {
+	_saveGame->write(stream);
+}
 
-		if (inventoryItems[i] != 0)
-			_inventory[i].graphic = loadGraphic(getFileNameForItemGraphic(inventoryItems[i]), false);
+LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
+	assert(canLoad());
 
-		drawInventory(i);
-	}
+	Common::SharedPtr<SaveGameSnapshot> snapshot(new SaveGameSnapshot());
+	LoadGameOutcome outcome = snapshot->read(stream);
 
-	_direction = direction;
-	changeToScreen(roomNumber, screenNumber);
-	_havePendingReturnToIdleState = true;
+	if (outcome != kLoadGameOutcomeSucceeded)
+		return outcome;
 
-	return kLoadGameOutcomeSucceeded;
+	_saveGame = snapshot;
+	restoreSaveGameSnapshot();
+
+	return outcome;
 }
 
 #ifdef PEEK_STACK
