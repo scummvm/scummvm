@@ -323,8 +323,8 @@ static MCIError parseMCICommand(const Common::String &name, MCICommand &parsedCm
     while (i_token < token_list.size()) {
         bool found = false;
         bool inConst = false;
-        int flag, cflag;
-        CmdTableRow *cmdtable, *c_cmdtable;
+        int flag, cflag = 0;
+        CmdTableRow *cmdtable, *c_cmdtable = cmdtable;
         auto& token = token_list[i_token];
 
         for (i_table = tableStart; i_table < tableEnd; i_table++) {
