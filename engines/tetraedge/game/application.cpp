@@ -87,6 +87,11 @@ _drawShadows(true) {
 
 	// Note: original has an app run timer, but it's never used?
 
+	if (g_engine->gameType() == TetraedgeEngine::kAmerzone)
+		_defaultCursor = "2D/arrow6.png";
+	else
+		_defaultCursor = "pictures/cursor.png";
+
 	loadOptions("options.xml");
 }
 
@@ -168,21 +173,23 @@ void Application::create() {
 	_loc.load(textFileNode);
 	core->addLoc(&_loc);
 
-	const Common::Path helpMenuPath("menus/help/help_");
-	Common::Path helpMenuFilePath;
-	i = 0;
-	while (i < ARRAYSIZE(allLangs)) {
-		helpMenuFilePath = helpMenuPath.append(core->language() + ".xml");
-		if (Common::File::exists(helpMenuFilePath))
-			break;
-		core->language(allLangs[i]);
-		i++;
-	}
-	if (i == ARRAYSIZE(allLangs)) {
-		error("Couldn't find menus/help/help_[lang].xml for any language.");
-	}
+	if (g_engine->gameType() != TetraedgeEngine::kAmerzone) {
+		const Common::Path helpMenuPath("menus/help/help_");
+		Common::Path helpMenuFilePath;
+		i = 0;
+		while (i < ARRAYSIZE(allLangs)) {
+			helpMenuFilePath = helpMenuPath.append(core->language() + ".xml");
+			if (Common::File::exists(helpMenuFilePath))
+				break;
+			core->language(allLangs[i]);
+			i++;
+		}
+		if (i == ARRAYSIZE(allLangs)) {
+			error("Couldn't find menus/help/help_[lang].xml for any language.");
+		}
 
-	_helpGui.load(helpMenuFilePath);
+		_helpGui.load(helpMenuFilePath);
+	}
 
 	// TODO: set TeCore field 0x74 and 0x78 to true here? Do they do anything?");
 
@@ -229,7 +236,7 @@ void Application::create() {
 	g_system->showMouse(false);
 	//mainWindow->setNativeCursorVisible(false);
 
-	_mouseCursorLayout.load("pictures/cursor.png");
+	_mouseCursorLayout.load(_defaultCursor);
 	_mouseCursorLayout.setAnchor(TeVector3f32(0.3f, 0.1f, 0.0f));
 	_frontOrientationLayout.addChild(&_mouseCursorLayout);
 

@@ -29,6 +29,17 @@ const PlainGameDescriptor GAME_NAMES[] = {
 };
 
 const ADGameDescription GAME_DESCRIPTIONS[] = {
+	// Amerzone GOG release
+	{
+		"amerzone",
+		nullptr,
+		AD_ENTRY1s("MacOS/Amerzone", "d:cde4144aeea5a99602ee903554585178", 6380272),
+		Common::UNK_LANG,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+
 	// GOG and Steam releases
 	// Note: Full sum of GOG and Steam are different,
 	// but size and first 5000 bytes are the same.

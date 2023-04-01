@@ -31,7 +31,7 @@ InventoryMenu::InventoryMenu() {
 
 void InventoryMenu::enter() {
 	Application *app = g_engine->getApplication();
-	app->mouseCursorLayout().load("pictures/cursor.png");
+	app->mouseCursorLayout().load(app->defaultCursor());
 
 	_gui.layoutChecked("inventoryMenu")->setVisible(true);
 	onInventoryButton();

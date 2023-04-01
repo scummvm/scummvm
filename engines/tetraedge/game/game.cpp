@@ -1265,12 +1265,10 @@ bool Game::onMouseMove() {
 	if (!_entered)
 		return false;
 
-	const Common::String DEFAULT_CURSOR("pictures/cursor.png");
-
 	Application *app = g_engine->getApplication();
 
 	if (app->isLockCursor()) {
-		app->mouseCursorLayout().load(DEFAULT_CURSOR);
+		app->mouseCursorLayout().load(app->defaultCursor());
 		return false;
 	}
 
@@ -1292,7 +1290,7 @@ bool Game::onMouseMove() {
 	if (cellphone->isMouseIn(mouseLoc)) {
 		skipFullSearch = true;
 		if (!cellbg->visible() && _objectif.isMouseIn(mouseLoc)) {
-			app->mouseCursorLayout().load(DEFAULT_CURSOR);
+			app->mouseCursorLayout().load(app->defaultCursor());
 			return false;
 		}
 	}

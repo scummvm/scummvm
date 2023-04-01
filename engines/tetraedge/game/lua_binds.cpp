@@ -78,7 +78,7 @@ static int tolua_ExportedFunctions_LoadObjectMaterials01(lua_State *L) {
 
 static void PlayMovie(const Common::String &vidpath, const Common::String &musicpath) {
 	Application *app = g_engine->getApplication();
-	app->mouseCursorLayout().load("pictures/cursor.png");
+	app->mouseCursorLayout().load(app->defaultCursor());
 	Game *game = g_engine->getGame();
 	game->playMovie(vidpath, musicpath);
 }

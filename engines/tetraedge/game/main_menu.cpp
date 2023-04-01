@@ -68,19 +68,27 @@ void MainMenu::enter() {
 	app->captureFade();
 
 	_entered = true;
-	load("menus/mainMenu/mainMenu.lua");
+	const char *luaFile = (g_engine->gameType() == TetraedgeEngine::kAmerzone ? "GUI/MainMenu.lua" : "menus/mainMenu/mainMenu.lua");
+	load(luaFile);
+
+	TeLayout *menuLayout = layoutChecked("menu");
+	appSpriteLayout.addChild(menuLayout);
 
 	//
 	// WORKAROUND: This is set to PanScan ratio 1.0, but with our code
 	// but that shrinks it down to pillarboxed.  Force back to full size.
 	//
-	layoutChecked("background")->setRatioMode(TeILayout::RATIO_MODE_NONE);
+	TeLayout *background;
+	if (layout("background"))
+		background = layoutChecked("background");
+	else
+		background = dynamic_cast<TeLayout *>(menuLayout->child(0));
+	assert(background);
+	background->setRatioMode(TeILayout::RATIO_MODE_NONE);
 
-	TeLayout *menuLayout = layoutChecked("menu");
-	appSpriteLayout.addChild(menuLayout);
 
 	app->mouseCursorLayout().setVisible(true);
-	app->mouseCursorLayout().load("pictures/cursor.png");
+	app->mouseCursorLayout().load(app->defaultCursor());
 
 	TeMusic &music = app->music();
 	if (music.isPlaying()) {
