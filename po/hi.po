@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-29 23:13+0000\n"
-"PO-Revision-Date: 2023-04-01 06:17+0000\n"
+"PO-Revision-Date: 2023-04-01 06:29+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -4651,9 +4651,8 @@ msgstr ""
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:201
-#, fuzzy
 msgid "main game shortcuts"
-msgstr "खेल के विकल्प चुनें"
+msgstr "main गेम शॉर्टकट्स"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:203
@@ -4713,15 +4712,13 @@ msgstr ""
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:296
-#, fuzzy
 msgid "Scroll Up"
-msgstr "नीचे देखो"
+msgstr "ऊपर स्क्रॉल करें"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
 #: engines/bladerunner/metaengine.cpp:303
-#, fuzzy
 msgid "Scroll Down"
-msgstr "नीचे देखो"
+msgstr "नीचे स्क्रॉल करें"
 
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
@@ -4734,18 +4731,16 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/pegasus/pegasus.cpp:2824
-#, fuzzy
 msgid "Save Game"
-msgstr "खेल हटा डे (R)"
+msgstr "गेम सेव करें"
 
 #. I18N: This keymap opens KIA's LOAD GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/pegasus/pegasus.cpp:2830
-#, fuzzy
 msgid "Load Game"
-msgstr "खेल"
+msgstr "गेम लोड करें"
 
 #. I18N: This keymap opens KIA's CRIME SCENE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4776,9 +4771,8 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:225
-#, fuzzy
 msgid "Quit Game"
-msgstr "खेल"
+msgstr "गेम quit करें"
 
 #: engines/buried/buried.cpp:584
 msgid "Are you sure you want to quit?"
@@ -4825,9 +4819,8 @@ msgstr ""
 #: engines/cge/metaengine.cpp:52 engines/glk/metaengine.cpp:243
 #: engines/griffon/metaengine.cpp:40 engines/sci/detection_options.h:223
 #: engines/supernova/metaengine.cpp:50
-#, fuzzy
 msgid "Enable Text to Speech"
-msgstr "खेल का पूरा नाम"
+msgstr "Text से Speech इनेबल करें"
 
 #: engines/cge/metaengine.cpp:53
 msgid "Use TTS to read text in the game (if TTS is available)"
