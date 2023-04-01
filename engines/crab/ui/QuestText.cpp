@@ -104,7 +104,7 @@ void QuestText::Draw(pyrodactyl::event::Quest &q) {
 	total_page = page_count + 1;
 
 	// Update the text
-	status.text = NumberToString(current_page + 1) + " of " + NumberToString(total_page);
+	status.text = (NumberToString(current_page + 1) + " of " + NumberToString(total_page)).c_str();
 
 	// Now, start drawing the quest
 	status.Draw();
@@ -135,6 +135,7 @@ void QuestText::Draw(pyrodactyl::event::Quest &q) {
 	}
 }
 
+#if 0
 void QuestText::HandleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event) {
 	if (current_page > 0 && prev.HandleEvents(Event) == BUAC_LCLICK) {
 		current_page--;
@@ -150,6 +151,7 @@ void QuestText::HandleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event
 			current_page = total_page - 1;
 	}
 }
+#endif
 
 void QuestText::SetUI() {
 	ParagraphData::SetUI();
