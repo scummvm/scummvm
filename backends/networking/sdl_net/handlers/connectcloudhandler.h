@@ -50,7 +50,7 @@ class ConnectCloudClientHandler : public ClientHandler {
 	const ConnectCloudHandler *_cloudHandler;
 	Common::MemoryWriteStreamDynamic _clientContent;
 	Client *_client;
-	static const int32 SUSPICIOUS_CONTENT_SIZE = 512 * 1024; // 512 KB should be enough for any cloud JSON
+	static const int32 SUSPICIOUS_CONTENT_SIZE = 640 * 1024; // 640K ought to be enough for anybody
 
 	void respond(Client &client, Common::String response, long responseCode = 200) const;
 	void respondWithJson(Client &client, bool error, Common::String message, long responseCode = 200) const;

@@ -49,7 +49,7 @@ void CurlJsonRequest::handle() {
 				warning("CurlJsonRequest: unable to write all the bytes into MemoryWriteStreamDynamic");
 
 		if (_stream->eos()) {
-			char *contents = Common::JSON::getPreparedContents(_contentsStream);
+			char *contents = Common::JSON::untaintContents(_contentsStream);
 			Common::JSONValue *json = Common::JSON::parse(contents);
 			if (json) {
 				finishJson(json); //it's JSON even if's not 200 OK? That's fine!..
