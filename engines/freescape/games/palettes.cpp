@@ -209,6 +209,9 @@ byte kDrillerCGAPaletteRedGreenData[4][3] = {
 };
 
 void FreescapeEngine::swapPalette(uint16 levelID) {
+	if (!_border)
+		return;
+
 	if (isAmiga() || isAtariST()) {
 		// The following palette was not available in the demo, so we select another one
 		if (isDemo() && levelID == 32)
