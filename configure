@@ -6267,7 +6267,8 @@ test "x$prefix" = xNONE && prefix=/usr/local
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 case $_host_os in
-	ds | mingw*)
+	android | ds | mingw*)
+		# Android don't have a fixed prefix
 		# Windows stores all the external data files in executable file.
 		;;
 	*)
@@ -6278,6 +6279,9 @@ esac
 case $_host in
 	3ds)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$datadir/plugins\\\""
+		;;
+	android-*)
+		# Android don't have a fixed prefix
 		;;
 	ds)
 		;;
