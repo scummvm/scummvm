@@ -406,7 +406,6 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 			_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
 			Common::U32String dialogMsg;
 			if (_mouseClickAndDragEnabled) {
-				_touchpadModeEnabled = false;
 				dialogMsg = _("Mouse-click-and-drag mode enabled.");
 			} else
 				dialogMsg = _("Mouse-click-and-drag mode disabled.");
