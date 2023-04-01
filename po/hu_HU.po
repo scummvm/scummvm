@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-03-29 23:13+0000\n"
-"PO-Revision-Date: 2023-03-18 19:34+0000\n"
+"PO-Revision-Date: 2023-04-01 12:35+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1582,14 +1582,12 @@ msgid "ScummVM config path: "
 msgstr "ScummVM konfigurációs path: "
 
 #: gui/options.cpp:2504
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "ScummVM konfigurációs path: "
+msgstr "ScummVM log útvonal: "
 
 #: gui/options.cpp:2509
 msgid "View"
-msgstr ""
+msgstr "Nézet"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2519 gui/options.cpp:3260
@@ -1688,10 +1686,8 @@ msgid "Seed for initializing all random number generators"
 msgstr "Mag az összes véletlenszám-generátor inicializálásához"
 
 #: gui/options.cpp:2640
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Debug Menü"
+msgstr "Hibakeresési szint:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2644 gui/options.cpp:2792
@@ -1701,7 +1697,7 @@ msgstr "Semmi"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2650
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (mind)"
 
 #: gui/options.cpp:2654
 msgid "Enable Discord integration"
@@ -3552,10 +3548,8 @@ msgid "D-pad Right"
 msgstr "D-pad Jobb"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "D-pad Bal"
+msgstr "D-pad Közép"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
@@ -5727,20 +5721,16 @@ msgid "Crouch"
 msgstr "Guggolás"
 
 #: engines/hpl1/metaengine.cpp:92
-#, fuzzy
-#| msgid "Interact"
 msgid "Interact Mode"
-msgstr "Interakció"
+msgstr "Interakció Mód"
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Gore Mode"
 msgid "Look Mode"
-msgstr "Gore Mód"
+msgstr "Néző Mód"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
-msgstr ""
+msgstr "Pisztolytáska"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
