@@ -87,6 +87,10 @@ static uint8 frameskip_threshold;
 static uint32 frameskip_counter = 0;
 static uint8 frameskip_events = 0;
 
+static uint8 reduce_framerate_type = 0;
+static uint8 reduce_framerate_shift = 0;
+static uint8 reduce_framerate_countdown = 0;
+
 static bool can_dupe = false;
 static uint8 audio_status = 0;
 
@@ -102,14 +106,15 @@ static uint8 performance_switch = 0;
 
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 	samples_per_frame = sample_rate / frame_rate;
+
 	samples_per_frame_buffer_size = samples_per_frame << 1 * sizeof(int16_t);
 
 	if (sound_buffer)
-		sound_buffer = (int16_t *)realloc(sound_buffer, samples_per_frame_buffer_size);
+		sound_buffer = (int16_t *)realloc(sound_buffer, samples_per_frame_buffer_size << REDUCE_FRAMERATE_SHIFT_MAX);
 	else
-		sound_buffer = (int16_t *)malloc(samples_per_frame_buffer_size);
+		sound_buffer = (int16_t *)malloc(samples_per_frame_buffer_size << REDUCE_FRAMERATE_SHIFT_MAX);
 	if (sound_buffer)
-		memset(sound_buffer, 0, samples_per_frame_buffer_size);
+		memset(sound_buffer, 0, samples_per_frame_buffer_size << REDUCE_FRAMERATE_SHIFT_MAX);
 	else
 		log_cb(RETRO_LOG_ERROR, "audio_buffer_init error.\n");
 
@@ -131,7 +136,7 @@ static void retro_audio_buff_status_cb(bool active, unsigned occupancy, bool und
 }
 
 static void set_audio_buffer_status() {
-	if (frameskip_type > 1 || (performance_switch & PERF_SWITCH_ON)) {
+	if (frameskip_type > 1 || (performance_switch & PERF_SWITCH_ON) || reduce_framerate_type) {
 		struct retro_audio_buffer_status_callback buf_status_cb;
 		buf_status_cb.callback = retro_audio_buff_status_cb;
 		audio_status = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, &buf_status_cb) ? (audio_status | AUDIO_STATUS_BUFFER_SUPPORT) : (audio_status & ~AUDIO_STATUS_BUFFER_SUPPORT);
@@ -151,6 +156,10 @@ static void increase_performance() {
 		retro_msg.msg = "Auto performance tuner: 'Allow Timing Inaccuracies' enabled";
 		log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
 		performance_switch |= PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
+	} else if (reduce_framerate_type != REDUCE_FRAMERATE_SHIFT_AUTO && !(performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
+		retro_msg.msg = "Auto performance tuner: 'Auto reduce framerate' enabled";
+		log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Auto reduce framerate' enabled.\n");
+		performance_switch |= PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
 	} else if (frameskip_type != 2 && !(performance_switch & PERF_SWITCH_ENABLE_AUTO_FRAMESKIP)) {
 		retro_msg.msg = "Auto performance tuner: 'Auto frameskip' enabled";
 		log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Auto frameskip' enabled.\n");
@@ -239,6 +248,19 @@ static void update_variables(void) {
 			frameskip_type = 3;
 	}
 
+	var.key = "scummvm_reduce_framerate_type";
+	var.value = NULL;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		if (strcmp(var.value, "disabled") == 0)
+			reduce_framerate_type = 0;
+		else if (strcmp(var.value, "auto") == 0)
+			reduce_framerate_type = REDUCE_FRAMERATE_SHIFT_AUTO;
+		else if (strcmp(var.value, "half") == 0)
+			reduce_framerate_type = REDUCE_FRAMERATE_SHIFT_HALF;
+		else if (strcmp(var.value, "quarter") == 0)
+			reduce_framerate_type = REDUCE_FRAMERATE_SHIFT_QUARTER;
+	}
+
 	var.key = "scummvm_auto_performance_tuner";
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
 		if (strcmp(var.value, "enabled") == 0) {
@@ -253,21 +275,31 @@ static void update_variables(void) {
 
 	set_audio_buffer_status();
 
-	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT) && frameskip_type > 1) {
-		log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
-		retro_msg.msg = "Selected frameskip mode not available";
-		environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
-		frameskip_type = 0;
-	}
-	if (old_frameskip_type != frameskip_type) {
-		audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
+	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT)) {
+		if (frameskip_type > 1) {
+			log_cb(RETRO_LOG_WARN, "Selected frameskip mode not available.\n");
+			retro_msg.msg = "Selected frameskip mode not available";
+			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+			frameskip_type = 0;
+		}
+
+		if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_AUTO) {
+			log_cb(RETRO_LOG_WARN, "Auto reduce framerate not available.\n");
+			retro_msg.msg = "Auto reduce framerate not available";
+			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+			reduce_framerate_type = 0;
+		}
+
+		if (performance_switch) {
+			log_cb(RETRO_LOG_WARN, "Auto performance tuner not available.\n");
+			retro_msg.msg = "Auto performance tuner not available";
+			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+			performance_switch = 0;
+		}
 	}
 
-	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT) && performance_switch) {
-		log_cb(RETRO_LOG_WARN, "Auto performance tuner not available.\n");
-		retro_msg.msg = "Auto performance tuner not available";
-		environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
-		performance_switch = 0;
+	if (old_frameskip_type != frameskip_type) {
+		audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
 	}
 
 
@@ -671,6 +703,25 @@ void retro_run(void) {
 				}
 			}
 
+			/* Framerate reduction using sound buffer size */
+			if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_AUTO || (performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
+				if ((audio_status & AUDIO_STATUS_BUFFER_UNDERRUN) && !(audio_status & AUDIO_STATUS_MUTE)) {
+					if (reduce_framerate_shift < REDUCE_FRAMERATE_SHIFT_MAX)
+						reduce_framerate_shift++;
+					reduce_framerate_countdown = REDUCE_FRAMERATE_TAIL;
+				}
+				if (reduce_framerate_countdown)
+					reduce_framerate_countdown--;
+				else
+					reduce_framerate_shift = 0;
+			} else if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_HALF) {
+				reduce_framerate_shift = 1;
+			} else if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_QUARTER) {
+				reduce_framerate_shift = 2;
+			} else {
+				reduce_framerate_shift = 0;
+			}
+
 			/* Determine frameskip need based on settings */
 			if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ENABLE_AUTO_FRAMESKIP))
 				skip_frame = (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN);
@@ -700,7 +751,7 @@ void retro_run(void) {
 			/* Retrieve audio */
 			samples_count = 0;
 			if (audio_video_enable & 2) {
-				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
+				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size << reduce_framerate_shift);
 			}
 			audio_status = samples_count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
 
@@ -739,7 +790,7 @@ void retro_run(void) {
 
 	if (audio_status & AUDIO_STATUS_UPDATE_LATENCY){
 		uint32 audio_latency;
-		if (frameskip_type > 1 || (performance_switch & PERF_SWITCH_ON)) {
+		if (frameskip_type > 1 || (performance_switch & PERF_SWITCH_ON) || reduce_framerate_type) {
 			float frame_time_msec = 1000.0f / frame_rate;
 
 			audio_latency = (uint32)((8.0f * frame_time_msec) + 0.5f);

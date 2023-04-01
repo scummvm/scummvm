@@ -37,8 +37,16 @@
 #define PERF_SWITCH_FRAMESKIP_EVENTS              REFRESH_RATE * 2
 #define PERF_SWITCH_ON                            (1 << 0)
 #define PERF_SWITCH_ENABLE_TIMING_INACCURACIES    (1 << 1)
-#define PERF_SWITCH_ENABLE_AUTO_FRAMESKIP         (1 << 2)
-#define PERF_SWITCH_OVER                          (1 << 3)
+#define PERF_SWITCH_ENABLE_REDUCE_FRAMERATE       (1 << 2)
+#define PERF_SWITCH_ENABLE_AUTO_FRAMESKIP         (1 << 3)
+#define PERF_SWITCH_OVER                          (1 << 4)
+
+// Reduce framerate
+#define REDUCE_FRAMERATE_TAIL           REFRESH_RATE / 2
+#define REDUCE_FRAMERATE_SHIFT_MAX      2
+#define REDUCE_FRAMERATE_SHIFT_AUTO     1
+#define REDUCE_FRAMERATE_SHIFT_HALF     2
+#define REDUCE_FRAMERATE_SHIFT_QUARTER  3
 
 // Thread switch caller
 #define THREAD_SWITCH_POLL              (1 << 0)
