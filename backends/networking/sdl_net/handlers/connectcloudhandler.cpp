@@ -34,12 +34,17 @@
 
 namespace Networking {
 
-ConnectCloudHandler::ConnectCloudHandler() {}
+ConnectCloudHandler::ConnectCloudHandler() : _storageConnectionCallback(nullptr) {}
 
 ConnectCloudHandler::~ConnectCloudHandler() {}
 
 void ConnectCloudHandler::handle(Client &client) {
 	client.setHandler(new ConnectCloudClientHandler(this));
+}
+
+void ConnectCloudHandler::storageConnected(const Networking::ErrorResponse &response) const {
+	if (_storageConnectionCallback)
+		(*_storageConnectionCallback)(response);
 }
 
 //
@@ -129,10 +134,11 @@ void ConnectCloudClientHandler::storageConnectionCallback(Networking::ErrorRespo
 		}
 
 		handleError(*_client, message, 200);
-		return;
+	} else {
+		handleSuccess(*_client, "Storage connected.");
 	}
-	
-	handleSuccess(*_client, "Storage connected.");
+
+	_cloudHandler->storageConnected(response);
 }
 
 } // End of namespace Networking

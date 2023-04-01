@@ -109,6 +109,12 @@ public:
 	bool isRunning();
 	static uint32 getPort();
 
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+	void setStorageConnectionCallback(Networking::ErrorCallback cb) { _connectCloudHandler.setStorageConnectionCallback(cb); }
+#endif // USE_LIBCURL
+#endif // USE_CLOUD
+
 	static void setClientGetHandler(Client &client, Common::String response, long code = 200, const char *mimeType = nullptr);
 	static void setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code = 200, const char *mimeType = nullptr);
 	static void setClientRedirectHandler(Client &client, Common::String response, Common::String location, const char *mimeType = nullptr);
