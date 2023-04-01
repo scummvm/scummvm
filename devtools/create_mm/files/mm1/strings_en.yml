@@ -1028,6 +1028,17 @@ maps:
 		zom1: "\"I am zom, astral brother of zam.\n"
 		zom2: "My clue is 1-15.\""
 		zom3: "You're not the couriers!\""
+	emap02:
+		resistances: "Resistances"
+		morango: "Morango the mystic asks, \"Who shall i measure?\""
+		magic: "Magic"
+		fire: "Fire"
+		cold: "Cold"
+		electricity: "Elc"
+		acid: "Acid"
+		fear: "Fear"
+		poison: "Poison"
+		sleep: "Sleep"
 
 	map03:
 		blacksmith: "\"Mystical Metal Works\""
