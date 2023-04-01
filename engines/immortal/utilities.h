@@ -26,6 +26,18 @@
 
 namespace Immortal {
 
+// The source uses nK many times throughout, which seems to be a compiler macro for n * 1024, ie. Kb
+enum Kilobyte {
+	k1K  = 0x400,			// 1024
+	k2K  = 0x800,			// 2048
+	k3K  = 0xC00, 			// 3072
+	k4K  = 0x1000,			// 4096
+	k6K  = 0x1800,			// 6144
+	k8K  = 0x2000,			// 8192
+	k10K = 0x2800,			// 10240
+	k16K = 0x4000			// 16384
+};
+
 enum BitMask16 : uint16 {
 	kMaskLow   = 0x00FF,
 	kMaskHigh  = 0xFF00,
@@ -34,7 +46,6 @@ enum BitMask16 : uint16 {
 	kMaskHLow  = 0x0F00,
 	kMaskLHigh = 0x00F0,
 	kMaskNeg   = 0x8000,
-	kMask12Bit = 0x0F9F                                 // Compression code (pos, 00, len) is stored in lower 12 bits of word
 };
 
 enum BitMask8 : uint8 {
