@@ -33,15 +33,28 @@ ifneq ($(DIST_FILES_SHADERS),)
 	$(INSTALL) -c -m 644 $(DIST_FILES_SHADERS) $(PATH_BUILD_ASSETS)/shaders
 endif
 
+ifdef DIST_ANDROID_CACERT_PEM
+$(PATH_BUILD_ASSETS)/cacert.pem: $(DIST_ANDROID_CACERT_PEM) | $(PATH_BUILD_ASSETS)
+	$(INSTALL) -c -m 644 $(DIST_ANDROID_CACERT_PEM) $(PATH_BUILD_ASSETS)/cacert.pem
+else
+ifdef USE_CURL
+$(PATH_BUILD_ASSETS)/cacert.pem: | $(PATH_BUILD_ASSETS)
+	$(QUIET_CURL)$(CURL) -s https://curl.se/ca/cacert.pem --time-cond $(PATH_BUILD_ASSETS)/cacert.pem --output $(PATH_BUILD_ASSETS)/cacert.pem
+androidcacert: | $(PATH_BUILD_ASSETS)
+	$(QUIET_CURL)$(CURL) -s https://curl.se/ca/cacert.pem --time-cond $(PATH_BUILD_ASSETS)/cacert.pem --output $(PATH_BUILD_ASSETS)/cacert.pem
+.PHONY: androidcacert
+endif
+endif
+
 $(PATH_BUILD_LIBSCUMMVM): libscummvm.so | $(PATH_BUILD)
 	$(INSTALL) -d  $(PATH_BUILD_LIB)
 	$(INSTALL) -c -m 644 libscummvm.so $(PATH_BUILD_LIBSCUMMVM)
 
-$(APK_MAIN): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
+$(APK_MAIN): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_ASSETS)/cacert.pem $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
 	(cd $(PATH_BUILD); ./gradlew assembleDebug)
 	$(CP) $(PATH_BUILD)/build/outputs/apk/debug/$(APK_MAIN) $@
 
-$(APK_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
+$(APK_MAIN_RELEASE): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_ASSETS)/cacert.pem $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
 	(cd $(PATH_BUILD); ./gradlew assembleRelease)
 	$(CP) $(PATH_BUILD)/build/outputs/apk/release/$(APK_MAIN_RELEASE) $@
 

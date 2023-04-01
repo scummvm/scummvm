@@ -92,7 +92,7 @@ void NetworkReadStream::initCurl(const char *url, curl_slist *headersList) {
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
-#if defined NINTENDO_SWITCH || defined ANDROID_PLAIN_PORT || defined PSP2
+#if defined NINTENDO_SWITCH || defined PSP2
 	curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
 
