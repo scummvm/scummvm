@@ -97,6 +97,9 @@ void CloudConnectionWizard::showStep(Step newStep) {
 		return;
 
 	switch (_currentStep) {
+	case Step::NONE:
+		break;
+
 	case Step::MODE_SELECT:
 		hideStepModeSelect();
 		break;
@@ -133,6 +136,9 @@ void CloudConnectionWizard::showStep(Step newStep) {
 	_currentStep = newStep;
 
 	switch (_currentStep) {
+	case Step::NONE:
+		break;
+
 	case Step::MODE_SELECT:
 		showStepModeSelect();
 		break;
@@ -228,8 +234,9 @@ void CloudConnectionWizard::refreshStepQuickMode1(bool displayAsStopped) {
 		_button0->setTooltip(_(serverIsRunning ? "Stop local webserver" : "Run local webserver"));
 	}
 
-	if (_label2) {		
-		_label2->setLabel(serverIsRunning ? LocalServer.getAddress() : _("Not running"));
+	if (_label2) {
+		Common::U32String address = LocalServer.getAddress();
+		_label2->setLabel(serverIsRunning ? address : _("Not running"));
 	}
 }
 
@@ -597,6 +604,9 @@ void CloudConnectionWizard::handleCommand(CommandSender *sender, uint32 cmd, uin
 		case Step::MANUAL_MODE_STEP_2:
 			manualModeConnect();
 			break;
+
+		default:
+			break;
 		}
 		break;
 
@@ -617,6 +627,9 @@ void CloudConnectionWizard::handleCommand(CommandSender *sender, uint32 cmd, uin
 
 		case Step::MANUAL_MODE_FAILURE:
 			showStep(Step::MANUAL_MODE_STEP_2);
+			break;
+
+		default:
 			break;
 		}
 		break;
