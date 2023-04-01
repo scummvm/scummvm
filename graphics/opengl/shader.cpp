@@ -92,6 +92,7 @@ static const GLchar *readFile(const Common::String &filename) {
 	SearchMan.addDirectory("STARK_SHADERS", "engines/stark", 0, 2);
 	SearchMan.addDirectory("WINTERMUTE_SHADERS", "engines/wintermute/base/gfx/opengl", 0, 2);
 	SearchMan.addDirectory("PLAYGROUND3D_SHADERS", "engines/playground3d", 0, 2);
+	SearchMan.addDirectory("FREESCAPE_SHADERS", "engines/freescape", 0, 2);
 	SearchMan.addDirectory("HPL1_SHADERS", "engines/hpl1/engine/impl", 0, 2);
 #endif
 
@@ -111,6 +112,7 @@ static const GLchar *readFile(const Common::String &filename) {
 	SearchMan.remove("STARK_SHADERS");
 	SearchMan.remove("WINTERMUTE_SHADERS");
 	SearchMan.remove("PLAYGROUND3D_SHADERS");
+	SearchMan.remove("FREESCAPE_SHADERS");
 	SearchMan.remove("HPL1_SHADERS");
 #endif
 

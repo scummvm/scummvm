@@ -1,0 +1,12 @@
+in vec3 position;
+
+uniform mat4 mvpMatrix;
+uniform vec3 color;
+
+varying vec4 var_color;
+
+void main()
+{
+	var_color = vec4(color, 1.0);
+    gl_Position = mvpMatrix * vec4(position, 1.0);
+}
