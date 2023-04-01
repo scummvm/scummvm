@@ -223,8 +223,8 @@ void CloudConnectionWizard::refreshStepQuickMode1(bool displayAsStopped) {
 		_nextStepButton->setEnabled(serverIsRunning);
 
 	if (_button0) {
-		_button0->setLabel(_(serverIsRunning ? "Stop server" : "Run server"));
-		_button0->setTooltip(_(serverIsRunning ? "Stop local webserver" : "Run local webserver"));
+		_button0->setLabel(serverIsRunning ? _("Stop server") : _("Run server"));
+		_button0->setTooltip(serverIsRunning ? _("Stop local webserver") : _("Run local webserver"));
 	}
 
 	if (_label2) {
@@ -298,7 +298,7 @@ void CloudConnectionWizard::showStepManualMode1() {
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line1", _("Open this link in your browser:"));
 	_button0 = new ButtonWidget(_container, "ConnectionWizard_ManualModeStep1.OpenLinkButton", Common::U32String("https://cloud.scummvm.org/"), _("Open URL"), kCloudConnectionWizardOpenUrlStorageCmd);
 
-	_label1 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line2", _("When it fails to pass the code to ScummVM,"));
+	_label1 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line2", _("When it fails to pass JSON code to ScummVM,"));
 	_label2 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line3", _("find it on Troubleshooting section of the page,"));
 	_label3 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep1.Line4", _("and go to the next step here."));
 }
@@ -320,7 +320,7 @@ void CloudConnectionWizard::showStepManualMode2() {
 	showBackButton();
 	showNextButton();
 
-	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep2.Line1", _("Copy the code from your browser here and press Next:"));
+	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep2.Line1", _("Copy JSON code from browser here and press Next:"));
 	_codeBox = new EditTextWidget(_container, "ConnectionWizard_ManualModeStep2.CodeBox", Common::U32String(), Common::U32String(), 0, 0, ThemeEngine::kFontStyleConsole);
 	_button0 = new ButtonWidget(_container, "ConnectionWizard_ManualModeStep2.PasteButton", _("Paste"), _("Paste code from clipboard"), kCloudConnectionWizardPasteCodeCmd);
 	_label1 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep2.Line2", Common::U32String());
@@ -343,7 +343,7 @@ void CloudConnectionWizard::showStepManualModeFailure() {
 	showBackButton();
 
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line1", _("Cloud storage was not connected."));
-	_label1 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line2", _("Make sure you copied the code correctly and try again."));
+	_label1 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line2", _("Make sure JSON code was copied correctly and retry."));
 	_label2 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line3", _("It it doesn't work, try from the beginning."));
 	_label3 = new StaticTextWidget(_container, "ConnectionWizard_Failure.Line4", _("Error message: ") + _errorMessage, Common::U32String(), ThemeEngine::kFontStyleNormal);
 	_label3->setEnabled(false);
@@ -494,7 +494,8 @@ void CloudConnectionWizard::manualModeConnect() {
 		delete json;
 		delete callback;
 		if (_label1)
-			_label1->setLabel(_("There is likely a mistake in the code."));
+			// I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
+			_label1->setLabel(_("JSON code contents is malformed."));
 		return;
 	}
 
@@ -514,8 +515,14 @@ void CloudConnectionWizard::manualModeConnect() {
 void CloudConnectionWizard::manualModeStorageConnectionCallback(Networking::ErrorResponse response) {
 	if (response.failed || response.interrupted) {
 		if (response.failed) {
+			const char *knownErrorMessages[] = {
+				_s("OK"),
+				_s("Incorrect JSON.") // see "cloud/basestorage.cpp"
+			};
+
 			_errorMessage = _(response.response.c_str());
 		} else {
+			// I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 			_errorMessage = _("Interrupted.");
 		}
 
