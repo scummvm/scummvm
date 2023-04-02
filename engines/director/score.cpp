@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
@@ -1076,8 +1078,20 @@ void Score::screenShot() {
 	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), Common::punycode_encodefilename(_movie->getMacName()).c_str());
 	Common::String filename = dumpScriptName(prefix.c_str(), kMovieScript, g_director->_framesRan, "png");
 
+	const char *buildNumber = getenv("BUILD_NUMBER");
+
+	// If we are running inside of buildbot
+	if (buildNumber) {
+		// ./dumps/theapartment/25/xn--Main Menu-zd0e-19.png
+		if (ConfMan.hasKey("screenshotpath"))
+			filename = Common::String::format("%s/%s/%s/%s-%d.png", ConfMan.get("screenshotpath").c_str(),
+				g_director->getTargetName().c_str(), buildNumber, prefix.c_str(), g_director->_framesRan);
+	}
+
+	debug("Dumping screenshot to %s", filename.c_str());
+
 	Common::DumpFile screenshotFile;
-	if (screenshotFile.open(filename)) {
+	if (screenshotFile.open(filename, true)) {
 #ifdef USE_PNG
 		Image::writePNG(screenshotFile, *newSurface);
 #else
