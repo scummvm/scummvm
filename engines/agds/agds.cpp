@@ -697,6 +697,7 @@ Common::Error AGDSEngine::run() {
 					int x = getSystemVariable("objtext_x")->getInteger() - w / 2;
 					int y = getSystemVariable("objtext_y")->getInteger();
 					font->drawString(backbuffer, title, x, y, backbuffer->w - x, 0);
+					break;
 				}
 			}
 		}
