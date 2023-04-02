@@ -89,11 +89,13 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node);
 
+#if 0
 	// Handle events for the three opinion bars and journal - used in both dialog box and reply events
 	bool HandleCommonEvents(const SDL_Event &Event);
 
 	// Handle events for the dialog box
 	bool HandleDlboxEvents(const SDL_Event &Event);
+#endif
 
 	void InternalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s);
 

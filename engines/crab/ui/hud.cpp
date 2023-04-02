@@ -32,6 +32,7 @@
 // Author:   Arvind
 // Purpose:  The tray where you have inventory, map and GameObjectives icons
 //=============================================================================
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/hud.h"
 
 namespace Crab {
@@ -41,7 +42,7 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::input;
 
 void HUD::Load(const std::string &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("hud");
 		if (NodeValid(node)) {
@@ -83,6 +84,9 @@ void HUD::Load(const std::string &filename, pyrodactyl::level::TalkNotify &tn, p
 }
 
 void HUD::Draw(pyrodactyl::event::Info &info, const std::string &id) {
+	warning("STUB: HUD::Draw()");
+
+#if 0
 	bg.Draw();
 	menu.Draw();
 
@@ -105,6 +109,7 @@ void HUD::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 		gImageManager.Draw(menu.element.at(HS_MAP).x + menu.element.at(HS_MAP).w - clip.w / 2,
 						   menu.element.at(HS_MAP).y - clip.h / 2, notify_anim, &clip);
 	}
+#endif
 }
 
 void HUD::InternalEvents(bool ShowMap) {
@@ -120,6 +125,7 @@ void HUD::InternalEvents(bool ShowMap) {
 	}
 }
 
+#if 0
 HUDSignal HUD::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
 	gMouse.inside_hud = bg.Contains(gMouse.motion.x, gMouse.motion.y);
 
@@ -136,6 +142,7 @@ HUDSignal HUD::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Even
 
 	return static_cast<HUDSignal>(choice);
 }
+#endif
 
 void HUD::State(const int &val) {
 	int count = 0;
@@ -144,11 +151,15 @@ void HUD::State(const int &val) {
 }
 
 void HUD::SetTooltip() {
+	warning("STUB: HUD::SetTooltip()");
+
+#if 0
 	int count = 0;
 	for (auto i = menu.element.begin(); i != menu.element.end() && count < tooltip.size(); ++i, ++count)
 		i->tooltip.text = tooltip.at(count) + " (" + i->hotkey.Name() + ")";
 
 	menu.element.at(HS_PAUSE).tooltip.text = tooltip.at(HS_PAUSE) + " (" + SDL_GetScancodeName(gInput.iv[IG_PAUSE].key) + ")";
+#endif
 }
 
 void HUD::SetUI() {

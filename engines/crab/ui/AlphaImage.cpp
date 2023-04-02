@@ -44,7 +44,7 @@ void AlphaImage::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 	LoadNum(alpha.max, "max", node);
 	LoadNum(alpha.change, "inc", node);
 
-	alpha.cur = alpha.min + gRandom.Num() % (alpha.max - alpha.min - 1);
+	alpha.cur = alpha.max; //alpha.cur = alpha.min + gRandom.Num() % (alpha.max - alpha.min - 1);
 }
 
 void AlphaImage::InternalEvents() {

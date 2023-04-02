@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/PersonHandler.h"
 
 namespace Crab {
@@ -71,6 +72,9 @@ void PersonHandler::Load(rapidxml::xml_node<char> *node) {
 
 void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameEvent *Event, const std::string &person_id,
 						 const bool &player, pyrodactyl::anim::Sprite *s) {
+	warning("STUB: PersonHandler::Draw()");
+
+#if 0
 	// Draw the dialog box background
 	dlbox.Draw(player);
 
@@ -106,8 +110,10 @@ void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 
 	// Draw the dialog box text
 	dlbox.Draw(info, Event->dialog);
+#endif
 }
 
+#if 0
 bool PersonHandler::HandleCommonEvents(const SDL_Event &Event) {
 	opinion[OPI_LIKE].HandleEvents(Event);
 	opinion[OPI_RESPECT].HandleEvents(Event);
@@ -125,6 +131,7 @@ bool PersonHandler::HandleCommonEvents(const SDL_Event &Event) {
 bool PersonHandler::HandleDlboxEvents(const SDL_Event &Event) {
 	return dlbox.HandleEvents(Event);
 }
+#endif
 
 void PersonHandler::InternalEvents(const pyrodactyl::people::PersonState &state, pyrodactyl::anim::Sprite *s) {
 	if (s != NULL)

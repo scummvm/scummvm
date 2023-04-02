@@ -60,8 +60,11 @@ public:
 	~ReplyMenu() {}
 
 	void Load(const std::string &filename);
+
+#if 0
 	int HandleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
 					 const std::string &cur_id, PersonHandler &oh, const SDL_Event &Event);
+#endif
 
 	void Draw();
 	void Cache(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat);

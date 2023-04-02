@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/ReplyMenu.h"
 
 namespace Crab {
@@ -41,7 +42,7 @@ using namespace pyrodactyl::event;
 using namespace pyrodactyl::people;
 
 void ReplyMenu::Load(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("conversation");
 		if (NodeValid(node)) {
@@ -60,6 +61,7 @@ void ReplyMenu::Load(const std::string &filename) {
 	}
 }
 
+#if 0
 int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string &cur_id, PersonHandler &oh, const SDL_Event &Event) {
 	// After that, check if the user has clicked on any reply option
 	int choice = Menu<ReplyButton>::HandleEvents(Event);
@@ -95,6 +97,7 @@ int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string
 
 	return -1;
 }
+#endif
 
 void ReplyMenu::Draw() {
 	bg.Draw();
@@ -105,6 +108,9 @@ void ReplyMenu::Draw() {
 }
 
 void ReplyMenu::Cache(Info &info, ConversationData &dat) {
+	warning("STUB: ReplyMenu::Cache()");
+
+#if 0
 	// Some replies are locked, which means the other replies move up and take their place -
 	// which is why we need two count variables
 	unsigned int reply_count = 0, element_count = 0;
@@ -135,6 +141,7 @@ void ReplyMenu::Cache(Info &info, ConversationData &dat) {
 	// Unused element buttons are hidden
 	for (; element_count < element.size(); element_count++)
 		element.at(element_count).visible = false;
+	#endif
 }
 
 void ReplyMenu::SetUI() {

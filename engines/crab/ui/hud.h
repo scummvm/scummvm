@@ -99,7 +99,10 @@ public:
 	void State(const int &val);
 
 	void Load(const std::string &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm);
+
+#if 0
 	HUDSignal HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
+#endif
 
 	void Draw(pyrodactyl::event::Info &info, const std::string &id);
 
