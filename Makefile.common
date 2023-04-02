@@ -513,6 +513,9 @@ endif
 ifdef ENABLE_HPL1
 DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/hpl1/engine/impl/shaders/*)
 endif
+ifdef ENABLE_FREESCAPE
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/freescape/shaders/*)
+endif
 endif
 
 .PHONY: all clean distclean plugins dist-src clean-toplevel manual
