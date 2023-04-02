@@ -56,11 +56,7 @@
 	// The code only compils with the iOS 9.0+ SDK, and only works on iOS 9.0
 	// or above.
 #ifdef __IPHONE_9_0
-#if __has_builtin(__builtin_available)
 	if ( @available(iOS 9,*) ) {
-#else
-	if ( [self respondsToSelector:@selector(inputAssistantItem)] ) {
-#endif
 		UITextInputAssistantItem* item = [self inputAssistantItem];
 		if (item) {
 			item.leadingBarButtonGroups = @[];
