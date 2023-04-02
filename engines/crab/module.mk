@@ -53,6 +53,7 @@ MODULE_OBJS = \
 	text/TextManager.o \
 	TMX/TMXLayer.o \
 	TMX/TMXTileSet.o \
+	ui/AlphaImage.o \
 	ui/button.o \
 	ui/Caption.o \
 	ui/ChapterIntro.o \
@@ -67,6 +68,7 @@ MODULE_OBJS = \
 	ui/GfxSettingMenu.o \
 	ui/HealthIndicator.o \
 	ui/HoverInfo.o \
+	ui/hud.o \
 	ui/ImageData.o \
 	ui/Inventory.o \
 	ui/journal.o \
@@ -79,10 +81,12 @@ MODULE_OBJS = \
 	ui/OptionSelect.o \
 	ui/ParagraphData.o \
 	ui/PauseMenu.o \
+	ui/PersonHandler.o \
 	ui/ProgressBar.o \
 	ui/questmenu.o \
 	ui/QuestText.o \
 	ui/ReplyButton.o \
+	ui/ReplyMenu.o \
 	ui/ResolutionMenu.o \
 	ui/SaveGameMenu.o \
 	ui/SectionHeader.o \
