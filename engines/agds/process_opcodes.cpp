@@ -277,9 +277,17 @@ void Process::removeScreenObject() {
 		return;
 	}
 
-	_object->lock();
-	if (!screen->remove(name)) {
+	auto object = screen->find(name);
+	if (!object) {
 		warning("removeScreenObject: object %s not found", name.c_str());
+		return;
+	}
+
+	_object->lock();
+	screen->remove(object);
+	if (!object->locked()) {
+		_engine->stopProcess(name);
+		_engine->soundManager().stopAllFrom(name);
 	}
 	_object->unlock();
 }
