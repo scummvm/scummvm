@@ -8,6 +8,8 @@ MODULE_OBJS = \
 	XMLDoc.o \
 	loaders.o \
 	ScreenSettings.o \
+	collision.o \
+	game.o \
 	GameParam.o \
 	ai/moveeffect.o \
 	ai/movement.o \
@@ -120,7 +122,9 @@ MODULE_OBJS = \
 	timer.o \
 	app.o \
 	splash.o \
+	LoadingScreen.o \
 	Line.o \
+	mainmenu.o \
 	PathfindingAgent.o \
 	PathfindingGraphNode.o \
 	PathfindingGrid.o \

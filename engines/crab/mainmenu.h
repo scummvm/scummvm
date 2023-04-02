@@ -123,7 +123,10 @@ class MainMenu : public GameState {
 public:
 	MainMenu();
 	~MainMenu() {}
+
+#if 0
 	void HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
+#endif
 	void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
 
 	void Draw();

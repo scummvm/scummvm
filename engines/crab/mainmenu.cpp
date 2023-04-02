@@ -150,6 +150,8 @@ MainMenu::MainMenu() {
 	gTemp.credits = false;
 	gFilePath.current_r = gFilePath.mainmenu_r;
 }
+
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Event/input handling Events
 //------------------------------------------------------------------------
@@ -280,6 +282,7 @@ void MainMenu::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameState
 		break;
 	}
 }
+#endif
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
@@ -356,7 +359,7 @@ void MainMenu::Draw() {
 		// Draw the game name and mod path if a mod is loaded
 		if (gFilePath.mod_cur != "res/default.xml") {
 			gTextManager.Draw(gScreenSettings.cur.w / 2, gScreenSettings.cur.h / 2, "Unrest", 0, 0, ALIGN_CENTER);
-			gTextManager.Draw(gScreenSettings.cur.w / 2, gScreenSettings.cur.h / 2 + 50, gFilePath.mod_cur, 5, 1, ALIGN_CENTER);
+			//gTextManager.Draw(gScreenSettings.cur.w / 2, gScreenSettings.cur.h / 2 + 50, gFilePath.mod_cur, 5, 1, ALIGN_CENTER);
 		}
 
 		me_main.Draw();
