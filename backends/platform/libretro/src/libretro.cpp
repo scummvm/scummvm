@@ -154,6 +154,16 @@ static void increase_performance() {
 	retro_msg.duration = 3000;
 	retro_msg.msg = "";
 
+	if (!(performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES)) {
+		performance_switch |= PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES;
+		if (consecutive_screen_updates) {
+			retro_msg.msg = "Auto performance tuner: 'Show consecutive screen updates' disabled";
+			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Show consecutive screen updates' disabled.\n");
+			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+			return;
+		}
+	}
+
 	if (!(performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES)) {
 		performance_switch |= PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
 		if (!timing_inaccuracies_enabled) {
@@ -336,7 +346,10 @@ bool timing_inaccuracies_is_enabled(){
 }
 
 bool consecutive_screen_updates_is_enabled(){
-	return consecutive_screen_updates;
+	if (performance_switch & PERF_SWITCH_ON)
+		return !(performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES);
+	else
+		return consecutive_screen_updates;
 }
 
 void parse_command_params(char *cmdline) {

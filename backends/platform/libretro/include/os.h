@@ -35,11 +35,12 @@
 
 // Performance switcher
 #define PERF_SWITCH_FRAMESKIP_EVENTS              REFRESH_RATE * 2
-#define PERF_SWITCH_ON                            (1 << 0)
-#define PERF_SWITCH_ENABLE_TIMING_INACCURACIES    (1 << 1)
-#define PERF_SWITCH_ENABLE_REDUCE_FRAMERATE       (1 << 2)
-#define PERF_SWITCH_ENABLE_AUTO_FRAMESKIP         (1 << 3)
-#define PERF_SWITCH_OVER                          (1 << 4)
+#define PERF_SWITCH_ON                                  (1 << 0)
+#define PERF_SWITCH_ENABLE_TIMING_INACCURACIES          (1 << 1)
+#define PERF_SWITCH_ENABLE_REDUCE_FRAMERATE             (1 << 2)
+#define PERF_SWITCH_ENABLE_AUTO_FRAMESKIP               (1 << 3)
+#define PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES  (1 << 4)
+#define PERF_SWITCH_OVER                                (1 << 5)
 
 // Reduce framerate
 #define REDUCE_FRAMERATE_TAIL           REFRESH_RATE / 2
