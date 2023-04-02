@@ -51,7 +51,9 @@ class GameSaveMenu : public FileMenu<SaveFileData> {
 	// The index of the selected button
 	int index;
 
+#if 0
 	void AddButton(boost::filesystem::path p, unsigned int &slot_index, unsigned int &menu_index);
+#endif
 
 public:
 	GameSaveMenu() {
@@ -64,7 +66,10 @@ public:
 	bool DisableHotkeys() { return state == STATE_NAME; }
 
 	void Load(rapidxml::xml_node<char> *node);
+
+#if 0
 	bool HandleEvents(const SDL_Event &Event);
+#endif
 	void Draw();
 
 	void SetUI();

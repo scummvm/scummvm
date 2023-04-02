@@ -71,7 +71,10 @@ public:
 
 	void Load(const std::string &filename);
 	void Draw(pyrodactyl::people::Person &obj, const int &money_val);
+
+#if 0
 	void HandleEvents(const std::string &char_id, const SDL_Event &Event);
+#endif
 
 	void LoadState(rapidxml::xml_node<char> *node);
 	void SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char> *root);

@@ -64,7 +64,10 @@ public:
 	void Load(rapidxml::xml_node<char> *node);
 
 	void Draw();
+
+#if 0
 	bool HandleEvents(const SDL_Event &Event);
+#endif
 
 	void SetUI();
 };

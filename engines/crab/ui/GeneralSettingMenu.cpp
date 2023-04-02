@@ -45,11 +45,11 @@ void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node) {
 		if (NodeValid("desc", musnode))
 			notice_volume.Load(musnode->first_node("desc"));
 
-		if (NodeValid("music", musnode))
-			vol_music.Load(musnode->first_node("music"), 0, MIX_MAX_VOLUME, gMusicManager.VolMusic());
+	//	if (NodeValid("music", musnode))
+	//		vol_music.Load(musnode->first_node("music"), 0, MIX_MAX_VOLUME, gMusicManager.VolMusic());
 
-		if (NodeValid("effects", musnode))
-			vol_effects.Load(musnode->first_node("effects"), 0, MIX_MAX_VOLUME, gMusicManager.VolEffects());
+	//	if (NodeValid("effects", musnode))
+	//		vol_effects.Load(musnode->first_node("effects"), 0, MIX_MAX_VOLUME, gMusicManager.VolEffects());
 	}
 
 	if (NodeValid("mouse_trap", node))
@@ -66,6 +66,7 @@ void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node) {
 		i.state = (i.val == gScreenSettings.text_speed);
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
@@ -89,6 +90,7 @@ void GeneralSettingMenu::HandleEvents(const SDL_Event &Event) {
 	if (result >= 0)
 		gScreenSettings.text_speed = text_speed.element.at(result).val;
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Sync our buttons with screen settings

@@ -71,10 +71,18 @@ public:
 	void Load(rapidxml::xml_node<char> *node);
 	void Draw();
 
+#if 0
 	// Return 1 if one of resolution buttons is pressed, 2 if custom button is pressed, 0 otherwise
 	int HandleEvents(const SDL_Event &Event);
+#endif
 
-	void SetInfo() { info.text = def_info + NumberToString(gScreenSettings.cur.w) + " x " + NumberToString(gScreenSettings.cur.h); }
+	void SetInfo() {
+		info.text = def_info;
+		info.text += NumberToString(gScreenSettings.cur.w).c_str();
+		info.text += " x ";
+		info.text += NumberToString(gScreenSettings.cur.h).c_str();
+	}
+
 	void SetUI();
 };
 } // End of namespace ui

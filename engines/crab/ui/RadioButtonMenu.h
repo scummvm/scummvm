@@ -62,6 +62,7 @@ public:
 		Menu::Draw(XOffset, YOffset);
 	}
 
+#if 0
 	int HandleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
 		int result = Menu::HandleEvents(Event, XOffset, YOffset);
 
@@ -74,6 +75,7 @@ public:
 
 		return result;
 	}
+#endif
 
 	void SetUI() {
 		Menu::SetUI();

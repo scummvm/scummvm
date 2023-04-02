@@ -43,7 +43,7 @@ OptionMenu gOptionMenu;
 } // End of namespace pyrodactyl
 
 void OptionMenu::Load(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("option");
 		if (NodeValid(node)) {
@@ -143,7 +143,7 @@ void OptionMenu::Draw(Button &back) {
 			break;
 		case STATE_CONFIRM:
 			notice_res.Draw();
-			countdown.Draw(NumberToString(timer.RemainingTicks() / 1000));
+			countdown.Draw(NumberToString(timer.RemainingTicks() / 1000).c_str());
 			break;
 		default:
 			break;
@@ -154,6 +154,7 @@ void OptionMenu::Draw(Button &back) {
 	}
 }
 
+#if 0
 bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 	if (state < STATE_ENTER_W) {
 		bg.Draw();
@@ -230,6 +231,7 @@ bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 	return false;
 }
 
+
 bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 	if (back.HandleEvents(Event) == BUAC_LCLICK) {
 		Reset();
@@ -286,6 +288,7 @@ bool OptionMenu::HandleTabs(Button &back, const SDL_Event &Event) {
 
 	return false;
 }
+#endif
 
 void OptionMenu::InternalEvents() {
 	// Since these states can be changed at any time, we just update it regularly
@@ -301,6 +304,9 @@ void OptionMenu::InternalEvents() {
 }
 
 void OptionMenu::SaveState() {
+	warning("STUB: OptionMenu::SaveState()");
+
+#if 0
 	rapidxml::xml_document<char> doc;
 
 	// xml declaration
@@ -328,6 +334,7 @@ void OptionMenu::SaveState() {
 	}
 
 	doc.clear();
+#endif
 }
 
 void OptionMenu::SetUI() {

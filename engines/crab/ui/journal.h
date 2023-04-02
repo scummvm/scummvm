@@ -98,7 +98,9 @@ public:
 	void Draw(const std::string &id);
 
 	// Return true if "go to map" is selected
+#if 0
 	bool HandleEvents(const std::string &id, const SDL_Event &Event);
+#endif
 
 	void Add(const std::string &id, const std::string &Category, const std::string &Title, const std::string &Text);
 	void Move(const std::string &id, const std::string &Title, const bool &completed);

@@ -64,13 +64,13 @@ void QuestMenu::Load(rapidxml::xml_node<char> *node) {
 			if (NodeValid("normal", tabnode)) {
 				rapidxml::xml_node<char> *nornode = tabnode->first_node("normal");
 				img_n.Load(nornode);
-				LoadColor(col_n, nornode);
+				//LoadColor(col_n, nornode);
 			}
 
 			if (NodeValid("select", tabnode)) {
 				rapidxml::xml_node<char> *selnode = tabnode->first_node("select");
 				img_s.Load(selnode);
-				LoadColor(col_s, selnode);
+				//LoadColor(col_s, selnode);
 			}
 		}
 
@@ -148,6 +148,7 @@ void QuestMenu::Draw(Button &bu_map) {
 	}
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
@@ -180,6 +181,7 @@ bool QuestMenu::HandleEvents(Button &bu_map, std::string &map_title, const SDL_E
 
 	return false;
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Select an entry

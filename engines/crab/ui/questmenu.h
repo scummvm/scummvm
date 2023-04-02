@@ -76,7 +76,10 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node);
 	void Draw(Button &bu_map);
+
+#if 0
 	bool HandleEvents(Button &bu_map, std::string &map_title, const SDL_Event &Event);
+#endif
 
 	void UseKeyboard(const bool &val) { menu.UseKeyboard(val); }
 	void AssignPaths() { menu.AssignPaths(); }

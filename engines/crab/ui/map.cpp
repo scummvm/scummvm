@@ -40,7 +40,7 @@ using namespace pyrodactyl::input;
 // Purpose: Load stuff that can't be modified by the user
 //------------------------------------------------------------------------
 void Map::Load(const std::string &filename, pyrodactyl::event::Info &info) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("map");
 		if (NodeValid(node)) {
@@ -89,6 +89,9 @@ void Map::Load(const std::string &filename, pyrodactyl::event::Info &info) {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Map::Draw(pyrodactyl::event::Info &info) {
+	warning("STUB: Map::Draw()");
+
+#if 0
 	// The map graphic is clipped to fit inside the UI
 	img_bg.Draw(pos.x, pos.y, &camera);
 
@@ -140,6 +143,7 @@ void Map::Draw(pyrodactyl::event::Info &info) {
 	marker.Draw(pos, player_pos, camera);
 
 	scroll.Draw();
+#endif
 }
 
 //------------------------------------------------------------------------
@@ -176,6 +180,7 @@ void Map::Validate() {
 	scroll.element.at(DIRECTION_UP).visible = !(camera.y == 0);
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Move
 //------------------------------------------------------------------------
@@ -243,6 +248,7 @@ void Map::Move(const SDL_Event &Event) {
 	}
 	}
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Internal Events
@@ -261,6 +267,7 @@ void Map::InternalEvents(pyrodactyl::event::Info &info) {
 	marker.InternalEvents(pos, player_pos, camera, bounds);
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle Events
 //------------------------------------------------------------------------
@@ -280,6 +287,7 @@ bool Map::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
 
 	return false;
 }
+#endif
 
 void Map::SetImage(const unsigned int &val, const bool &force) {
 	if (force || (cur != val && val < map.size())) {
@@ -288,8 +296,8 @@ void Map::SetImage(const unsigned int &val, const bool &force) {
 		img_bg.Delete();
 		img_overlay.Delete();
 
-		img_bg.Load(map.at(cur).path_bg);
-		img_overlay.Load(map.at(cur).path_overlay);
+		img_bg.Load(map.at(cur).path_bg.c_str());
+		img_overlay.Load(map.at(cur).path_overlay.c_str());
 
 		size.x = img_bg.W();
 		size.y = img_bg.H();

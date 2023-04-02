@@ -43,9 +43,9 @@ void ReplyButton::Load(rapidxml::xml_node<char> *node) {
 	if (NodeValid("text", node)) {
 		rapidxml::xml_node<char> *tenode = node->first_node("text");
 
-		LoadColor(col_b, tenode->first_node("col_b"));
-		LoadColor(col_s, tenode->first_node("col_s"));
-		LoadColor(col_h, tenode->first_node("col_h"));
+		//LoadColor(col_b, tenode->first_node("col_b"));
+		//LoadColor(col_s, tenode->first_node("col_s"));
+		//LoadColor(col_h, tenode->first_node("col_h"));
 		LoadNum(font, "font", tenode);
 		LoadAlign(align, tenode);
 
@@ -66,6 +66,9 @@ void ReplyButton::Draw(const int &XOffset, const int &YOffset) {
 }
 
 void ReplyButton::Cache(const std::string &val, const int &spacing, const int &bottom_edge, Rect *parent) {
+	warning("STUB: ReplyButton::Cache()");
+
+#if 0
 	text = val;
 
 	// Find out about the font
@@ -83,6 +86,7 @@ void ReplyButton::Cache(const std::string &val, const int &spacing, const int &b
 
 	if (orig.y < bottom_edge)
 		y = bottom_edge + spacing;
+#endif
 }
 
 } // End of namespace Crab

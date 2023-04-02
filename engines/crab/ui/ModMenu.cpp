@@ -35,7 +35,7 @@ namespace Crab {
 using namespace pyrodactyl::ui;
 
 void ModMenu::Load(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("mod_menu");
 
@@ -71,12 +71,13 @@ void ModMenu::Load(const std::string &filename) {
 			hov[DATA_WEBSITE].Load(offnode->first_node("website_title"));
 		}
 
-		extension = gFilePath.mod_ext;
-		directory = gFilePath.mod_path;
+		extension = gFilePath.mod_ext.c_str();
+		directory = gFilePath.mod_path.c_str();
 		ScanDir();
 	}
 }
 
+#if 0
 bool ModMenu::HandleEvents(const SDL_Event &Event) {
 	int choice = menu.HandleEvents(Event);
 	if (choice >= 0) {
@@ -86,6 +87,7 @@ bool ModMenu::HandleEvents(const SDL_Event &Event) {
 
 	return false;
 }
+#endif
 
 void ModMenu::Draw() {
 	bg.Draw();
@@ -102,8 +104,8 @@ void ModMenu::Draw() {
 		if (!img.loaded || prev_hover != i) {
 			img.loaded = true;
 			prev_hover = i;
-			if (!img.preview.Load(slot_info[i].preview))
-				img.preview.Load(img.no_preview_path);
+			if (!img.preview.Load(slot_info[i].preview.c_str()))
+				img.preview.Load(img.no_preview_path.c_str());
 		}
 
 		hover = true;

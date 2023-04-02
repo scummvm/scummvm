@@ -74,7 +74,10 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node);
 	void Draw(const pyrodactyl::people::Person *obj);
+
+#if 0
 	void HandleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event);
+#endif
 
 	void Cache(const pyrodactyl::people::Person &obj);
 	void SetUI();

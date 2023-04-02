@@ -109,6 +109,9 @@ public:
 	void SelectedPath(const std::string &val) { selected = val; }
 
 	void ScanDir() {
+		warning("STUB: FileMenu::ScanDir()");
+
+#if 0
 		using namespace boost::filesystem;
 
 		slot_info.clear();
@@ -133,6 +136,7 @@ public:
 			create_directories(filedir);
 
 		menu.AssignPaths();
+#endif
 	}
 
 	void Load(rapidxml::xml_node<char> *node) {
@@ -168,11 +172,12 @@ public:
 			hov[DATA_PLAYERNAME].Load(offnode->first_node("player_name_title"));
 		}
 
-		extension = gFilePath.save_ext;
-		directory = gFilePath.appdata + gFilePath.save_dir;
+		extension = gFilePath.save_ext.c_str();
+		directory = (gFilePath.appdata + gFilePath.save_dir).c_str();
 		ScanDir();
 	}
 
+#if 0
 	bool HandleEvents(const SDL_Event &Event) {
 		int choice = menu.HandleEvents(Event);
 		if (choice >= 0) {
@@ -184,6 +189,7 @@ public:
 
 		return false;
 	}
+#endif
 
 	void Draw() {
 		bg.Draw();
@@ -204,8 +210,8 @@ public:
 			if (!img.loaded || prev_hover != i) {
 				img.loaded = true;
 				prev_hover = i;
-				if (!img.preview.Load(slot_info[i].preview))
-					img.preview.Load(img.no_preview_path);
+				if (!img.preview.Load(slot_info[i].preview.c_str()))
+					img.preview.Load(img.no_preview_path.c_str());
 			}
 
 			hover = true;

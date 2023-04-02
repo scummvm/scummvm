@@ -42,6 +42,7 @@ void GameSaveMenu::Load(rapidxml::xml_node<char> *node) {
 	FileMenu<SaveFileData>::Load(node);
 }
 
+#if 0
 void GameSaveMenu::AddButton(boost::filesystem::path p, unsigned int &slot_index, unsigned int &menu_index) {
 	slot_info.push_back(SaveFileData(p));
 	menu.Add(slot_index, menu_index);
@@ -119,6 +120,7 @@ bool GameSaveMenu::HandleEvents(const SDL_Event &Event) {
 
 	return false;
 }
+#endif
 
 void GameSaveMenu::Draw() {
 	bg.Draw();
