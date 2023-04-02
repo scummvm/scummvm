@@ -35,7 +35,7 @@ namespace Crab {
 using namespace pyrodactyl::anim;
 
 void AnimSet::Load(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node();
 		if (NodeValid(node)) {
