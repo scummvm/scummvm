@@ -91,6 +91,8 @@ static uint8 reduce_framerate_type = 0;
 static uint8 reduce_framerate_shift = 0;
 static uint8 reduce_framerate_countdown = 0;
 
+static bool consecutive_screen_updates = false;
+
 static bool can_dupe = false;
 static uint8 audio_status = 0;
 
@@ -273,6 +275,14 @@ static void update_variables(void) {
 			performance_switch = 0;
 	}
 
+	var.key = "scummvm_consecutive_screen_updates";
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		if (strcmp(var.value, "enabled") == 0) {
+			consecutive_screen_updates = true;
+		} else
+			consecutive_screen_updates = false;
+	}
+
 	set_audio_buffer_status();
 
 	if (!(audio_status & AUDIO_STATUS_BUFFER_SUPPORT)) {
@@ -307,6 +317,10 @@ static void update_variables(void) {
 
 bool timing_inaccuracies_is_enabled(){
 	return timing_inaccuracies_enabled || (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES);
+}
+
+bool consecutive_screen_updates_is_enabled(){
+	return consecutive_screen_updates;
 }
 
 void parse_command_params(char *cmdline) {

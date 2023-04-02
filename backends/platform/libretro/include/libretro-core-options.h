@@ -277,6 +277,20 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"enabled"
 	},
 	{
+		"scummvm_consecutive_screen_updates",
+		"Show consecutive screen updates",
+		NULL,
+		"While libretro is FPS bounded, ScummVM can update the screen independently from the refresh rate set. If this option is enabled, all consecutive ScummVM screen updates will be captured and processed within the same retro_run call, improving accuracy (e.g. see titles effects in Legend of Kyrandia intro) but increasing the execution time of that retro_run loop. Otherwise only last screen update of a consecutive series will be shown. If 'Allow Timing Inaccuracies' is enabled, this setting will be ignored and disabled.",
+		NULL,
+		"performance",
+		{
+			{"disabled", NULL},
+			{"enabled", NULL},
+			{NULL, NULL},
+		},
+		"enabled"
+	},
+	{
 		"scummvm_allow_timing_inaccuracies",
 		"Allow Timing Inaccuracies",
 		NULL,
