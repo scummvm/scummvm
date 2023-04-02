@@ -68,31 +68,36 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 	private float repeatingX = 0.0f;
 	private float repeatingY = 0.0f;
 
-	private static float getCenteredAxis(MotionEvent event, InputDevice device, int axis, int historyPos) {
-		final InputDevice.MotionRange range = device.getMotionRange(axis, event.getSource());
+	private static float getCenteredAxis(MotionEvent event, InputDevice device, int axisId, int historyPos) {
+		final InputDevice.MotionRange range = device.getMotionRange(axisId, event.getSource());
 		final int actionPointerIndex = event.getActionIndex();
 
 		// A joystick at rest does not always report an absolute position of
 		// (0,0). Use the getFlat() method to determine the range of values
 		// bounding the joystick axis center.
 		if (range != null) {
-			final float flat = range.getFlat();
+			final float axisFlat = range.getFlat();
+			final float axisMin = range.getMin();
+//			final float axisMax = range.getMax();
+			final float axisRange = range.getRange();
+//			final float axisRes = range.getResolution();
+//			final float axisFuzz = range.getFuzz();
 
-//			if (axis == MotionEvent.AXIS_X
-//				|| axis == MotionEvent.AXIS_HAT_X
-//				|| axis == MotionEvent.AXIS_Z) {
-//				Log.d(ScummVM.LOG_TAG, "Flat X= " + flat);
+//			if (axisId == MotionEvent.AXIS_X
+//				|| axisId == MotionEvent.AXIS_HAT_X
+//				|| axisId == MotionEvent.AXIS_Z) {
+//				Log.d(ScummVM.LOG_TAG, "Flat X= " + axisFlat);
 //			} else {
-//				Log.d(ScummVM.LOG_TAG, "Flat Y= " + flat);
+//				Log.d(ScummVM.LOG_TAG, "Flat Y= " + axisFlat);
 //			}
 
-			float axisVal = (historyPos < 0) ? event.getAxisValue( range.getAxis(), actionPointerIndex) : event.getHistoricalAxisValue( range.getAxis(), actionPointerIndex, historyPos);
+			float axisVal = (historyPos < 0) ? event.getAxisValue( axisId, actionPointerIndex) : event.getHistoricalAxisValue( axisId, actionPointerIndex, historyPos);
 			// Normalize
-			final float value =  (axisVal - range.getMin() ) / range.getRange() * 2.0f - 1.0f;
+			final float value =  (axisVal - axisMin ) / axisRange * 2.0f - 1.0f;
 
 			// Ignore axis values that are within the 'flat' region of the
 			// joystick axis center.
-			if (Math.abs(value) > flat) {
+			if (Math.abs(value) > axisFlat) {
 				return value;
 			}
 		}
@@ -205,11 +210,14 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 				break;
 			}
 		} else if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
-			// TODO Check if we need to handle other cases of InputDevice SOURCE_CLASS_POINTER for GenericMotionEvent, that are not ACTION_SCROLL
 			//Log.d(ScummVM.LOG_TAG, "MOUSE PHYSICAL POINTER - onGenericMotionEvent(m) ");
 			//
-			// Check that the event might be a mouse scroll wheel
+			// Check that the event might be a mouse scroll wheel (ACTION_SCROLL)
 			// Code inspired from https://stackoverflow.com/a/33086042
+			//
+			// NOTE Other GenericMotionEvent are also triggered for InputDevice of SOURCE_CLASS_POINTER (eg. physical mouse).
+			// These seem to be for button down/up events, which are handled along with pushing a JE_MOVE event
+			// in MouseHelper's onMouseEvent() called from ScummVMEventsBase onTouch().
 			switch (event.getActionMasked()) {
 			case MotionEvent.ACTION_SCROLL:
 				//Log.d(ScummVM.LOG_TAG, "MOUSE PHYSICAL POINTER - ACTION SCROLL");
