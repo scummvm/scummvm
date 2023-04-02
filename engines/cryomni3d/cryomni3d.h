@@ -104,7 +104,7 @@ private:
 	void pauseEngineIntern(bool) override;
 
 public:
-	Image::ImageDecoder *loadHLZ(const Common::String &filename);
+	Image::ImageDecoder *loadHLZ(const Common::Path &filepath);
 
 	void fillSurface(byte color);
 	/* We use CursorMan because it avoids problems with cursors in GMM */
@@ -112,10 +112,10 @@ public:
 	void setCursor(uint cursorId) const;
 	bool showMouse(bool visible) { return CursorMan.showMouse(visible); }
 	typedef void (CryOmni3DEngine::*HNMCallback)(uint frameNum);
-	void playHNM(const Common::String &filename,
+	void playHNM(const Common::Path &filepath,
 	             Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
 	             HNMCallback beforeDraw = nullptr, HNMCallback afterDraw = nullptr);
-	bool displayHLZ(const Common::String &filename, uint32 timeout = uint(-1));
+	bool displayHLZ(const Common::Path &filepath, uint32 timeout = uint(-1));
 
 	bool pollEvents();
 	Common::Point getMousePos();
@@ -128,13 +128,6 @@ public:
 	void waitMouseRelease();
 	void setAutoRepeatClick(uint millis);
 	DragStatus getDragStatus() { return _dragStatus; }
-
-	Common::String prepareFileName(const Common::String &baseName, const char *extension) const {
-		const char *const extensions[] = { extension, nullptr };
-		return prepareFileName(baseName, extensions);
-	}
-	virtual Common::String prepareFileName(const Common::String &baseName,
-	                                       const char *const *extensions) const;
 
 	virtual bool displayToolbar(const Graphics::Surface *original) = 0;
 	virtual bool hasPlaceDocumentation() = 0;

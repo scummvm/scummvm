@@ -37,7 +37,7 @@ class CryoFont : public Graphics::Font {
 public:
 	CryoFont() : _height(0), _maxAdvance(0) { }
 
-	void load(const Common::String &fontFile);
+	void load(const Common::Path &fontFile);
 
 	virtual int getFontHeight() const { return _height; }
 	virtual int getMaxCharWidth() const { return _maxAdvance; }

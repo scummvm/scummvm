@@ -31,7 +31,7 @@ CryoExtFont::~CryoExtFont() {
 	delete _crf;
 }
 
-void CryoExtFont::load(const Common::String &fontFile, Common::CodePage codepage) {
+void CryoExtFont::load(const Common::Path &fontFile, Common::CodePage codepage) {
 	// For now only CP950 is supported
 	assert(codepage == Common::kWindows950);
 
@@ -40,7 +40,7 @@ void CryoExtFont::load(const Common::String &fontFile, Common::CodePage codepage
 	Common::File *crf = new Common::File();
 
 	if (!crf->open(fontFile)) {
-		error("can't open file %s", fontFile.c_str());
+		error("can't open file %s", fontFile.toString().c_str());
 	}
 
 	_crf = crf;
@@ -63,16 +63,16 @@ void CryoExtFont::load(const Common::String &fontFile, Common::CodePage codepage
 	_crf->read(_comment, sizeof(_comment));
 	//debug("Comment %s", _comment);
 
-	Common::String offsetsFile = fontFile;
+	Common::String offsetsFile = fontFile.getLastComponent().toString();
 	offsetsFile.setChar('I', offsetsFile.size() - 1);
-	loadOffsets(offsetsFile);
+	loadOffsets(fontFile.getParent().appendComponent(offsetsFile));
 }
 
-void CryoExtFont::loadOffsets(const Common::String &offsetsFile) {
+void CryoExtFont::loadOffsets(const Common::Path &offsetsFile) {
 	Common::File cri;
 
 	if (!cri.open(offsetsFile)) {
-		error("can't open file %s", offsetsFile.c_str());
+		error("can't open file %s", offsetsFile.toString().c_str());
 	}
 
 	uint32 counts = cri.size() / sizeof(uint32);

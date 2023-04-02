@@ -127,7 +127,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 	byte volumeForeColor = 243;
 
 	Graphics::ManagedSurface optionsSurface;
-	Image::ImageDecoder *imageDecoder = loadHLZ("option.hlz");
+	Image::ImageDecoder *imageDecoder = loadHLZ(getFilePath(kFileTypeMenu, "option.hlz"));
 	const Graphics::Surface *bgFrame = imageDecoder->getSurface();
 
 	optionsSurface.create(bgFrame->w, bgFrame->h, bgFrame->format);
@@ -300,9 +300,10 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 						// Finished dragging
 						_mixer->stopID(SoundIds::kOrgue);
 						do {
+							Common::Path orguePath(getFilePath(kFileTypeSound, "ORGUE.WAV"));
 							Common::File *audioFile = new Common::File();
-							if (!audioFile->open("ORGUE.WAV")) {
-								warning("Failed to open sound file %s", "ORGUE.WAV");
+							if (!audioFile->open(orguePath)) {
+								warning("Failed to open sound file %s", orguePath.toString().c_str());
 								delete audioFile;
 								break;
 							}
@@ -1001,7 +1002,7 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 	waitMouseRelease();
 
 	Graphics::ManagedSurface creditsSurface;
-	Image::ImageDecoder *imageDecoder = loadHLZ("credits.hlz");
+	Image::ImageDecoder *imageDecoder = loadHLZ(getFilePath(kFileTypeMenu, "credits.hlz"));
 	if (!imageDecoder) {
 		return;
 	}
@@ -1025,8 +1026,9 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 	_fontManager.setCharSpacing(1);
 	_fontManager.setSurface(&creditsSurface);
 
+	Common::Path creditsPath(getFilePath(kFileTypeText, _localizedFilenames[LocalizedFilenames::kCredits]));
 	Common::File creditsFile;
-	if (!creditsFile.open(_localizedFilenames[LocalizedFilenames::kCredits])) {
+	if (!creditsFile.open(creditsPath)) {
 		warning("Failed to open credits file: %s",
 		        _localizedFilenames[LocalizedFilenames::kCredits].c_str());
 		delete imageDecoder;

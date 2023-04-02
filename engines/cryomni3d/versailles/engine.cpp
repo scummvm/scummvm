@@ -79,10 +79,36 @@ bool CryOmni3DEngine_Versailles::hasFeature(EngineFeature f) const {
 }
 
 void CryOmni3DEngine_Versailles::initializePath(const Common::FSNode &gamePath) {
-	// All files are named uniquely so just add the main directory with a large enough depth and in flat mode
-	// That should do it
-	SearchMan.setIgnoreClashes(true);
-	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 5, true);
+	// This works if the user has installed the game as required in the Wiki
+	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 4, false);
+
+	// CDs/DVD path
+	SearchMan.addSubDirectoryMatching(gamePath, "datas_v", 0, 4, false);
+
+	// If user has copied CDs in different directories
+	SearchMan.addSubDirectoryMatching(gamePath, "datas_v1", 0, 4, false);
+	SearchMan.addSubDirectoryMatching(gamePath, "datas_v2", 0, 4, false);
+
+	// Default hard-drive path location on CD
+	if (getPlatform() == Common::kPlatformMacintosh) {
+		switch (getLanguage()) {
+			case Common::DE_DEU:
+				SearchMan.addSubDirectoryMatching(gamePath, "versailles ordner/datav_hd", 0, 3, false);
+				break;
+			case Common::EN_ANY:
+				SearchMan.addSubDirectoryMatching(gamePath, "versailles folder/datav_hd", 0, 3, false);
+				break;
+			case Common::FR_FRA:
+				SearchMan.addSubDirectoryMatching(gamePath, "dossier versailles/datav_hd", 0, 3, false);
+				break;
+			default:
+				// We don't know any other variant but don't error out
+				break;
+		}
+	} else {
+		SearchMan.addSubDirectoryMatching(gamePath, "install/data", 0, 3, false);
+		SearchMan.addSubDirectoryMatching(gamePath, "install/datas_v", 0, 3, false);
+	}
 }
 
 Common::Error CryOmni3DEngine_Versailles::run() {
@@ -96,7 +122,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	_gameVariables.resize(GameVariables::kMax);
 	_omni3dMan.init(75. / 180. * M_PI);
 
-	_dialogsMan.loadGTO(_localizedFilenames[LocalizedFilenames::kDialogs]);
+	_dialogsMan.loadGTO(getFilePath(kFileTypeGTO, _localizedFilenames[LocalizedFilenames::kDialogs]));
 	setupDialogVariables();
 	setupDialogShows();
 
@@ -130,10 +156,10 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	// Documentation is needed by noone at init time, let's do it last
 	initDocPeopleRecord();
 	_docManager.init(&_sprites, &_fontManager, &_messages, this,
-	                 _localizedFilenames[LocalizedFilenames::kAllDocs],
-	                 getFeatures() & GF_VERSAILLES_LINK_LOCALIZED ?
+	                 getFilePath(kFileTypeText, _localizedFilenames[LocalizedFilenames::kAllDocs]),
+	                 getFilePath(kFileTypeText, getFeatures() & GF_VERSAILLES_LINK_LOCALIZED ?
 	                 _localizedFilenames[LocalizedFilenames::kLinksDocs] :
-	                 "lien_doc.txt");
+	                 "lien_doc.txt"));
 
 	_countdownSurface.create(40, 15, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -256,47 +282,231 @@ bool CryOmni3DEngine_Versailles::shouldAbort() {
 	return _isPlaying && _abortCommand != kAbortNoAbort;
 }
 
-Common::String CryOmni3DEngine_Versailles::prepareFileName(const Common::String &baseName,
-		const char *const *extensions) const {
+static bool checkFilePath(const Common::Path &basePath, Common::String &baseName, const char * const *extensions, Common::Path &fullPath) {
+	if (!extensions) {
+		fullPath = basePath.appendComponent(baseName);
+		debug(3, "Trying file %s", fullPath.toString().c_str());
+		return Common::File::exists(fullPath);
+	}
+
+	int extBegin = baseName.size();
+	while (*extensions != nullptr) {
+		baseName += *extensions;
+		fullPath = basePath.appendComponent(baseName);
+		debug(3, "Trying file %s", fullPath.toString().c_str());
+		if (Common::File::exists(fullPath)) {
+			return true;
+		}
+		baseName.erase(extBegin);
+		extensions++;
+	}
+
+	return false;
+}
+
+Common::Path CryOmni3DEngine_Versailles::getFilePath(FileType fileType,
+		const Common::String &baseName) const {
+	const char **extensions = nullptr;
+	bool hasLevel = false;
+	const char *baseDir = nullptr;
+
+	switch (fileType) {
+		case kFileTypeAnimacti:
+		case kFileTypeDialAnim:
+		case kFileTypeWarpHNM: {
+			static const char *extensions_[] = { "hnm", nullptr };
+			extensions = extensions_;
+			break;
+		}
+		case kFileTypeTransScene: {
+			static const char *extensions_[] = { "hns", "hnm", nullptr };
+			extensions = extensions_;
+			break;
+		}
+		case kFileTypeDocBg:
+		case kFileTypeFixedImg:
+		case kFileTypeMenu:
+		case kFileTypeObject:
+		case kFileTypeTransSceneI:
+		case kFileTypeWarpCyclo: {
+			static const char *extensions_[] = { "hlz", nullptr };
+			extensions = extensions_;
+			break;
+		}
+		case kFileTypeDialSound:
+		case kFileTypeMusic:
+		case kFileTypeSound: {
+			static const char *extensions_[] = { "wav", nullptr };
+			extensions = extensions_;
+			break;
+		}
+		case kFileTypeFont:
+		case kFileTypeGTO:
+		case kFileTypeSaveGameVisit:
+		case kFileTypeSprite:
+		case kFileTypeSpriteBmp:
+		case kFileTypeText:
+		case kFileTypeWAM:
+			break;
+		default:
+			error("Invalid file type");
+	}
+
+	switch (fileType) {
+		case kFileTypeAnimacti:
+			baseDir = "animacti/level%d";
+			hasLevel = true;
+			break;
+		case kFileTypeDocBg:
+			baseDir = "basedoc/fonds";
+			break;
+		case kFileTypeDialAnim:
+			baseDir = "dial/flc_dial";
+			break;
+		case kFileTypeDialSound:
+			baseDir = "dial/voix";
+			break;
+		case kFileTypeFixedImg:
+			baseDir = "img_fix/level%d";
+			hasLevel = true;
+			break;
+		case kFileTypeFont:
+			baseDir = "fonts";
+			break;
+		case kFileTypeGTO:
+			baseDir = "gto";
+			break;
+		case kFileTypeMenu:
+			baseDir = "menu";
+			break;
+		case kFileTypeMusic:
+			baseDir = "music";
+			break;
+		case kFileTypeObject:
+			baseDir = "objets";
+			break;
+		case kFileTypeSaveGameVisit:
+			baseDir = "savegame/visite";
+			break;
+		case kFileTypeTransSceneI:
+		case kFileTypeTransScene:
+			baseDir = "sc_trans";
+			break;
+		case kFileTypeSound:
+			baseDir = "sound";
+			break;
+		case kFileTypeSprite:
+			baseDir = "spr8col";
+			break;
+		case kFileTypeSpriteBmp:
+			baseDir = "spr8col/bmpOK";
+			break;
+		case kFileTypeText:
+			baseDir = "textes";
+			break;
+		case kFileTypeWAM:
+			baseDir = "wam";
+			break;
+		case kFileTypeWarpCyclo:
+			baseDir = "warp/level%d/cyclo";
+			hasLevel = true;
+			break;
+		case kFileTypeWarpHNM:
+			baseDir = "warp/level%d/hnm";
+			hasLevel = true;
+			break;
+		default:
+			error("Invalid file type");
+	}
+
 	Common::String baseName_(baseName);
-	if (getPlatform() != Common::kPlatformMacintosh) {
-		// Replace dashes by underscores for PC versions
+	if ((getPlatform() != Common::kPlatformMacintosh) ||
+		(getLanguage() != Common::FR_FRA)) {
+		// Replace dashes by underscores for all versions except Mac FR
 		char *p = baseName_.begin();
 		while ((p = strchr(p, '-')) != nullptr) {
 			*p = '_';
 			p++;
 		}
 	}
-	return CryOmni3DEngine::prepareFileName(baseName_, extensions);
+
+	if (extensions) {
+		// We will rewrite the extension: strip the provided one
+		// or append the extension dot
+		int lastDotPos = baseName_.findLastOf('.');
+		if (lastDotPos > -1) {
+			baseName_.erase(lastDotPos + 1);
+		} else {
+			baseName_ += ".";
+		}
+	}
+
+	// We are ready, build path and check
+	Common::Path basePath;
+	if (hasLevel) {
+		basePath = Common::String::format(baseDir, _currentLevel);
+	} else {
+		basePath = baseDir;
+	}
+
+	Common::Path fullPath;
+	if (checkFilePath(basePath, baseName_, extensions, fullPath)) {
+		return fullPath;
+	}
+
+	if (!hasLevel) {
+		warning("Failed to find file %s in %s", baseName.c_str(), baseDir);
+		return baseName;
+	}
+
+	assert(baseName_.size() > 0);
+	if (baseName_[0] < '1' ||
+			baseName_[0] > '7' ||
+			uint(baseName_[0] - '0') == _currentLevel) {
+		warning("Failed to find file %s in %s (level %d)", baseName.c_str(), baseDir, _currentLevel);
+		return baseName;
+	}
+
+	int fileLevel = baseName_[0] - '0';
+	basePath = Common::String::format(baseDir, fileLevel);
+
+	if (checkFilePath(basePath, baseName_, extensions, fullPath)) {
+		return fullPath;
+	}
+
+	warning("Failed to find file %s in %s (levels %d and %d)", baseName.c_str(), baseDir, _currentLevel, fileLevel);
+	return baseName;
 }
 
 void CryOmni3DEngine_Versailles::setupFonts() {
-	Common::Array<Common::String> fonts;
+	Common::Array<Common::Path> fonts;
 
 	// Explainations below are based on original binaries, debug is not used in this engine
 	// Fonts loaded are not always the same: FR Mac and EN DOS don't use the same font for debug doc/unused
 	// The important is that the loaded one is present in all versions
 
+#define ADD_FONT(f) fonts.push_back(getFilePath(kFileTypeFont, f))
+
 	if (getLanguage() == Common::ZH_TWN) {
-		fonts.push_back("tw13.CRF"); // 0: Doc titles
-		fonts.push_back("tw18.CRF"); // 1: Menu and T0 in credits
-		fonts.push_back("tw13.CRF"); // 2: T1 and T3 in credits
-		fonts.push_back("tw12.CRF"); // 3: Menu title, options messages boxes buttons
-		fonts.push_back("tw12.CRF"); // 4: T2 in credits, text in docs
-		fonts.push_back("tw12.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
-		fonts.push_back("tw12.CRF"); // 6: T5 in credits, doc subtitle
-		fonts.push_back("tw12.CRF"); // 7: dialogs texts
-		fonts.push_back("tw12.CRF"); // 8: unused
-		fonts.push_back("tw12.CRF"); // 9: Warp messages texts
-		fonts.push_back("tw12.CRF"); // 10: debug
+		ADD_FONT("tw13.CRF"); // 0: Doc titles
+		ADD_FONT("tw18.CRF"); // 1: Menu and T0 in credits
+		ADD_FONT("tw13.CRF"); // 2: T1 and T3 in credits
+		ADD_FONT("tw12.CRF"); // 3: Menu title, options messages boxes buttons
+		ADD_FONT("tw12.CRF"); // 4: T2 in credits, text in docs
+		ADD_FONT("tw12.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
+		ADD_FONT("tw12.CRF"); // 6: T5 in credits, doc subtitle
+		ADD_FONT("tw12.CRF"); // 7: dialogs texts
+		ADD_FONT("tw12.CRF"); // 8: unused
+		ADD_FONT("tw12.CRF"); // 9: Warp messages texts
+		ADD_FONT("tw12.CRF"); // 10: debug
 
 		_fontManager.loadFonts(fonts, Common::kWindows950);
 		return;
 	} else if (getLanguage() == Common::JA_JPN) {
-		_fontManager.loadTTFList("FONTS_JP.LST", Common::kWindows932);
+		_fontManager.loadTTFList(getFilePath(kFileTypeFont, "FONTS_JP.LST"), Common::kWindows932);
 		return;
 	} else if (getLanguage() == Common::KO_KOR) {
-		_fontManager.loadTTFList("FONTS_KR.LST", Common::kWindows949);
+		_fontManager.loadTTFList(getFilePath(kFileTypeFont, "FONTS_KR.LST"), Common::kWindows949);
 		return;
 	}
 
@@ -304,78 +514,80 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 	uint8 fontsSet = getFeatures() & GF_VERSAILLES_FONTS_MASK;
 	switch (fontsSet) {
 	case GF_VERSAILLES_FONTS_NUMERIC:
-		fonts.push_back("font01.CRF"); // 0: Doc titles
-		fonts.push_back("font02.CRF"); // 1: Menu and T0 in credits
-		fonts.push_back("font03.CRF"); // 2: T1 and T3 in credits
-		fonts.push_back("font04.CRF"); // 3: Menu title, options messages boxes buttons
-		fonts.push_back("font05.CRF"); // 4: T2 in credits, text in docs
-		fonts.push_back("font06.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
-		fonts.push_back("font07.CRF"); // 6: T5 in credits, doc subtitle
-		fonts.push_back("font08.CRF"); // 7: dialogs texts
-		fonts.push_back("font09.CRF"); // 8: unused
-		fonts.push_back("font10.CRF"); // 9: Warp messages texts
-		fonts.push_back("font11.CRF"); // 10: debug
+		ADD_FONT("font01.CRF"); // 0: Doc titles
+		ADD_FONT("font02.CRF"); // 1: Menu and T0 in credits
+		ADD_FONT("font03.CRF"); // 2: T1 and T3 in credits
+		ADD_FONT("font04.CRF"); // 3: Menu title, options messages boxes buttons
+		ADD_FONT("font05.CRF"); // 4: T2 in credits, text in docs
+		ADD_FONT("font06.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
+		ADD_FONT("font07.CRF"); // 6: T5 in credits, doc subtitle
+		ADD_FONT("font08.CRF"); // 7: dialogs texts
+		ADD_FONT("font09.CRF"); // 8: unused
+		ADD_FONT("font10.CRF"); // 9: Warp messages texts
+		ADD_FONT("font11.CRF"); // 10: debug
 		break;
 	case GF_VERSAILLES_FONTS_SET_A:
-		fonts.push_back("garamB18.CRF"); // 0: Doc titles
-		fonts.push_back("garamB22.CRF"); // 1: Menu and T0 in credits
-		//fonts.push_back("geneva15.CRF");
-		fonts.push_back("geneva14.CRF"); // 3: T1 and T3 in credits
-		fonts.push_back("geneva13.CRF"); // 4: Menu title, options messages boxes buttons
-		fonts.push_back("geneva12.CRF"); // 5: T2 in credits, text in docs
-		fonts.push_back("geneva10.CRF"); // 6: objects description in toolbar, options messages boxes text, T4 in credits
-		fonts.push_back("geneva9.CRF");  // 7: T5 in credits, doc subtitle
-		//fonts.push_back("helvet24.CRF");
-		fonts.push_back("helvet16.CRF"); // 9: dialogs texts
-		//fonts.push_back("helvet14.CRF");
-		//fonts.push_back("helvet13.CRF");
-		//fonts.push_back("helvet12.CRF");
-		//fonts.push_back("helvet11.CRF");
-		//fonts.push_back("helvet9.CRF");
-		//fonts.push_back("fruitL9.CRF");
-		fonts.push_back("fruitL10.CRF"); // 16: debug doc
-		//fonts.push_back("fruitL11.CRF");
-		//fonts.push_back("fruitL12.CRF");
-		//fonts.push_back("fruitL13.CRF");
-		//fonts.push_back("fruitL14.CRF");
-		//fonts.push_back("fruitL16.CRF");
-		fonts.push_back("fruitL18.CRF"); // 22: Warp messages texts
-		//fonts.push_back("arial11.CRF");
-		fonts.push_back("MPW12.CRF");    // 24: debug
-		//fonts.push_back("MPW9.CRF");
+		ADD_FONT("garamB18.CRF"); // 0: Doc titles
+		ADD_FONT("garamB22.CRF"); // 1: Menu and T0 in credits
+		//ADD_FONT("geneva15.CRF");
+		ADD_FONT("geneva14.CRF"); // 3: T1 and T3 in credits
+		ADD_FONT("geneva13.CRF"); // 4: Menu title, options messages boxes buttons
+		ADD_FONT("geneva12.CRF"); // 5: T2 in credits, text in docs
+		ADD_FONT("geneva10.CRF"); // 6: objects description in toolbar, options messages boxes text, T4 in credits
+		ADD_FONT("geneva9.CRF");  // 7: T5 in credits, doc subtitle
+		//ADD_FONT("helvet24.CRF");
+		ADD_FONT("helvet16.CRF"); // 9: dialogs texts
+		//ADD_FONT("helvet14.CRF");
+		//ADD_FONT("helvet13.CRF");
+		//ADD_FONT("helvet12.CRF");
+		//ADD_FONT("helvet11.CRF");
+		//ADD_FONT("helvet9.CRF");
+		//ADD_FONT("fruitL9.CRF");
+		ADD_FONT("fruitL10.CRF"); // 16: debug doc
+		//ADD_FONT("fruitL11.CRF");
+		//ADD_FONT("fruitL12.CRF");
+		//ADD_FONT("fruitL13.CRF");
+		//ADD_FONT("fruitL14.CRF");
+		//ADD_FONT("fruitL16.CRF");
+		ADD_FONT("fruitL18.CRF"); // 22: Warp messages texts
+		//ADD_FONT("arial11.CRF");
+		ADD_FONT("MPW12.CRF");    // 24: debug
+		//ADD_FONT("MPW9.CRF");
 
 		// This file isn't even loaded by MacOS executable
-		//fonts.push_back("garamB20.CRF");
+		//ADD_FONT("garamB20.CRF");
 		break;
 	case GF_VERSAILLES_FONTS_SET_B:
-		fonts.push_back("garamB18.CRF"); // 0: Doc titles
-		fonts.push_back("garamB22.CRF"); // 1: Menu and T0 in credits
-		fonts.push_back("geneva14.CRF"); // 2: T1 and T3 in credits
-		fonts.push_back("geneva13.CRF"); // 3: Menu title, options messages boxes buttons
-		fonts.push_back("geneva12.CRF"); // 4: T2 in credits, text in docs
-		fonts.push_back("geneva10.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
-		fonts.push_back("geneva9.CRF");  // 6: T5 in credits, doc subtitle
-		fonts.push_back("helvet16.CRF"); // 7: dialogs texts
-		fonts.push_back("helvet12.CRF"); // 8: debug doc
-		fonts.push_back("fruitL18.CRF"); // 9: Warp messages texts
-		fonts.push_back("MPW12.CRF");    // 10: debug
+		ADD_FONT("garamB18.CRF"); // 0: Doc titles
+		ADD_FONT("garamB22.CRF"); // 1: Menu and T0 in credits
+		ADD_FONT("geneva14.CRF"); // 2: T1 and T3 in credits
+		ADD_FONT("geneva13.CRF"); // 3: Menu title, options messages boxes buttons
+		ADD_FONT("geneva12.CRF"); // 4: T2 in credits, text in docs
+		ADD_FONT("geneva10.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
+		ADD_FONT("geneva9.CRF");  // 6: T5 in credits, doc subtitle
+		ADD_FONT("helvet16.CRF"); // 7: dialogs texts
+		ADD_FONT("helvet12.CRF"); // 8: debug doc
+		ADD_FONT("fruitL18.CRF"); // 9: Warp messages texts
+		ADD_FONT("MPW12.CRF");    // 10: debug
 		break;
 	case GF_VERSAILLES_FONTS_SET_C:
-		fonts.push_back("garamB18.CRF"); // 0: Doc titles
-		fonts.push_back("garamB22.CRF"); // 1: Menu and T0 in credits
-		fonts.push_back("geneva14.CRF"); // 2: T1 and T3 in credits
-		fonts.push_back("geneva13.CRF"); // 3: Menu title, options messages boxes buttons
-		fonts.push_back("helvet12.CRF"); // 4: T2 in credits, text in docs
-		fonts.push_back("geneva10.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
-		fonts.push_back("geneva9.CRF");  // 6: T5 in credits, doc subtitle
-		fonts.push_back("helvet16.CRF"); // 7: dialogs texts
-		fonts.push_back("helvet12.CRF"); // 8: debug doc
-		fonts.push_back("fruitL18.CRF"); // 9: Warp messages texts
-		fonts.push_back("MPW12.CRF");    // 10: debug
+		ADD_FONT("garamB18.CRF"); // 0: Doc titles
+		ADD_FONT("garamB22.CRF"); // 1: Menu and T0 in credits
+		ADD_FONT("geneva14.CRF"); // 2: T1 and T3 in credits
+		ADD_FONT("geneva13.CRF"); // 3: Menu title, options messages boxes buttons
+		ADD_FONT("helvet12.CRF"); // 4: T2 in credits, text in docs
+		ADD_FONT("geneva10.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
+		ADD_FONT("geneva9.CRF");  // 6: T5 in credits, doc subtitle
+		ADD_FONT("helvet16.CRF"); // 7: dialogs texts
+		ADD_FONT("helvet12.CRF"); // 8: debug doc
+		ADD_FONT("fruitL18.CRF"); // 9: Warp messages texts
+		ADD_FONT("MPW12.CRF");    // 10: debug
 		break;
 	default:
 		error("Font set invalid");
 	}
+
+#undef ADD_FONT
 
 	// Use a SBCS codepage as a placeholder, we won't convert characters anyway
 	_fontManager.loadFonts(fonts, Common::kWindows1250);
@@ -384,9 +596,9 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 void CryOmni3DEngine_Versailles::setupSprites() {
 	Common::File file;
 
-	Common::String fName = getLanguage() == Common::ZH_TWN ? "allsprtw.bin" : "all_spr.bin";
+	Common::String fName = (getLanguage() == Common::ZH_TWN ? "allsprtw.bin" : "all_spr.bin");
 
-	if (!file.open(fName)) {
+	if (!file.open(getFilePath(kFileTypeSprite, fName))) {
 		error("Failed to open all_spr.bin file");
 	}
 	_sprites.loadSprites(file);
@@ -423,7 +635,7 @@ void CryOmni3DEngine_Versailles::loadCursorsPalette() {
 
 	Common::File file;
 
-	if (!file.open("bou1_cA.bmp")) {
+	if (!file.open(getFilePath(kFileTypeSpriteBmp, "bou1_cA.bmp"))) {
 		error("Failed to open BMP file");
 	}
 
@@ -661,10 +873,11 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	// In original game the HNM player just doesn't render the cursor
 	bool cursorWasVisible = showMouse(false);
 
-	if (level == -2) {
-		if (getLanguage() == Common::DE_DEU && Common::File::exists("RAVENSBG.HLZ")) {
+	if (level == -2 && getLanguage() == Common::DE_DEU) {
+		Common::Path ravensbgPath(getFilePath(kFileTypeTransSceneI, "RAVENSBG"));
+		if (Common::File::exists(ravensbgPath)) {
 			// Display one more copyright
-			if (displayHLZ("RAVENSBG", 5000)) {
+			if (displayHLZ(ravensbgPath, 5000)) {
 				clearKeys();
 				fadeOutPalette();
 				if (shouldAbort()) {
@@ -691,10 +904,11 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 		return;
 	}
 
-	if (level == -2) {
-		if (getLanguage() == Common::JA_JPN && Common::File::exists("jvclogo.hnm")) {
+	if (level == -2 && getLanguage() == Common::JA_JPN) {
+		Common::Path jvcPath(getFilePath(kFileTypeTransScene, "jvclogo.hnm"));
+		if (Common::File::exists(jvcPath)) {
 			// Display one more copyright
-			playHNM("jvclogo.hnm", Audio::Mixer::kMusicSoundType);
+			playHNM(jvcPath, Audio::Mixer::kMusicSoundType);
 			clearKeys();
 			if (shouldAbort()) {
 				return;
@@ -771,9 +985,9 @@ void CryOmni3DEngine_Versailles::initNewLevel(int level) {
 
 void CryOmni3DEngine_Versailles::setupLevelWarps(int level) {
 	Common::File wamFile;
-	Common::String wamFName = Common::String::format("level%d.wam", level);
-	if (!wamFile.open(wamFName)) {
-		error("Can't open WAM file '%s'", wamFName.c_str());
+	Common::Path wamPath = getFilePath(kFileTypeWAM, Common::String::format("level%d.wam", level));
+	if (!wamFile.open(wamPath)) {
+		error("Can't open WAM file '%s'", wamPath.toString().c_str());
 	}
 	_wam.loadStream(wamFile);
 
@@ -945,9 +1159,9 @@ void CryOmni3DEngine_Versailles::doGameOver() {
 	fillSurface(0);
 	// This test is not really relevant because it's for 2CDs edition but let's follow the code
 	if (_currentLevel < 4) {
-		playInGameVideo("1gameove");
+		playInGameAnimVideo("1gameove");
 	} else {
-		playInGameVideo("4gameove");
+		playInGameAnimVideo("4gameove");
 	}
 	fillSurface(0);
 	_abortCommand = kAbortGameOver;
@@ -977,7 +1191,7 @@ void CryOmni3DEngine_Versailles::doPlaceChange() {
 					delete _currentWarpImage;
 				}
 				debug("Loading warp %s", warpFile.c_str());
-				_currentWarpImage = loadHLZ(warpFile);
+				_currentWarpImage = loadHLZ(getFilePath(kFileTypeWarpCyclo, warpFile));
 				if (!_currentWarpImage) {
 					error("Can't load warp %s", warpFile.c_str());
 				}
@@ -1053,7 +1267,7 @@ void CryOmni3DEngine_Versailles::executeTransition(uint nextPlaceId) {
 	} else if (animation != "") {
 		_fadedPalette = false;
 		// Normally transitions don't overwrite the cursors colors and game doesn't restore palette
-		playInGameVideo(animation, false);
+		playInGameVideo(getFilePath(kFileTypeWarpHNM, animation), false);
 	}
 
 	_omni3dMan.setAlpha(transition->dstAlpha);
@@ -1095,7 +1309,7 @@ void CryOmni3DEngine_Versailles::executeTransition(uint nextPlaceId) {
 		} else if (animation != "") {
 			_fadedPalette = false;
 			// Normally transitions don't overwrite the cursors colors and game doesn't restore palette
-			playInGameVideo(animation, false);
+			playInGameVideo(getFilePath(kFileTypeWarpHNM, animation), false);
 		}
 
 		_nextPlaceId = nextNextPlaceId;
@@ -1500,7 +1714,7 @@ void CryOmni3DEngine_Versailles::collectObject(Object *obj, const ZonFixedImage 
 
 void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 		DisplayObjectHook hook) {
-	Image::ImageDecoder *imageDecoder = loadHLZ(imgName);
+	Image::ImageDecoder *imageDecoder = loadHLZ(getFilePath(kFileTypeObject, imgName));
 	if (!imageDecoder) {
 		error("Can't display object");
 	}
@@ -1621,7 +1835,7 @@ uint CryOmni3DEngine_Versailles::getFakeTransition(uint actionId) const {
 	return 0;
 }
 
-void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
+void CryOmni3DEngine_Versailles::playInGameVideo(const Common::Path &filename,
 		bool restoreCursorPalette) {
 	if (!_isPlaying) {
 		return;
@@ -1653,7 +1867,7 @@ void CryOmni3DEngine_Versailles::playSubtitledVideo(const Common::String &filena
 	        it->_value.size() == 0) {
 		// No subtitle, don't try to handle them frame by frame
 		// Videos are like music because if you mute music in game it will mute videos soundtracks
-		playHNM(filename, Audio::Mixer::kMusicSoundType);
+		playHNM(getFilePath(kFileTypeTransScene, filename), Audio::Mixer::kMusicSoundType);
 		return;
 	}
 
@@ -1673,7 +1887,7 @@ void CryOmni3DEngine_Versailles::playSubtitledVideo(const Common::String &filena
 	_fontManager.setCharSpacing(1);
 
 	// Videos are like music because if you mute music in game it will mute videos soundtracks
-	playHNM(filename, Audio::Mixer::kMusicSoundType,
+	playHNM(getFilePath(kFileTypeTransScene, filename), Audio::Mixer::kMusicSoundType,
 	        static_cast<HNMCallback>(&CryOmni3DEngine_Versailles::drawVideoSubtitles), nullptr);
 
 	clearKeys();
@@ -1726,13 +1940,13 @@ void CryOmni3DEngine_Versailles::loadBMPs(const char *pattern, Graphics::Surface
 	Common::File file;
 
 	for (uint i = 0; i < count; i++) {
-		Common::String bmp = Common::String::format(pattern, i);
+		Common::Path bmp = getFilePath(kFileTypeSpriteBmp, Common::String::format(pattern, i));
 
 		if (!file.open(bmp)) {
-			error("Failed to open BMP file: %s", bmp.c_str());
+			error("Failed to open BMP file: %s", bmp.toString().c_str());
 		}
 		if (!bmpDecoder.loadStream(file)) {
-			error("Failed to load BMP file: %s", bmp.c_str());
+			error("Failed to load BMP file: %s", bmp.toString().c_str());
 		}
 		bmps[i].copyFrom(*bmpDecoder.getSurface());
 		bmpDecoder.destroy();

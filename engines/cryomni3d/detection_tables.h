@@ -592,7 +592,9 @@ static const char *directoryGlobs[] = {
 	/* Mac Setup */
 	/* Versailles Folder/DATAV_HD/TEXTES/LIEN_DOC.TXT
 	 * Versailles Folder/Versailles */
-	"*Versailles*",
+	"Versailles Ordner",
+	"Versailles Folder",
+	"Dossier Versailles",
 	"DATAV_HD",
 	/* lien_doc.* */
 	"TEXTES",

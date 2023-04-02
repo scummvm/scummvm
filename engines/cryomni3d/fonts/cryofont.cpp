@@ -27,11 +27,11 @@
 
 namespace CryOmni3D {
 
-void CryoFont::load(const Common::String &fontFile) {
+void CryoFont::load(const Common::Path &fontFile) {
 	Common::File crf;
 
 	if (!crf.open(fontFile)) {
-		error("can't open file %s", fontFile.c_str());
+		error("can't open file %s", fontFile.toString().c_str());
 	}
 
 	byte magic[8];
