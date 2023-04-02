@@ -22,7 +22,7 @@
 #ifndef MM1_VIEWS_ENH_INTERACTIONS_INTERACTION_H
 #define MM1_VIEWS_ENH_INTERACTIONS_INTERACTION_H
 
-#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/views_enh/party_view.h"
 #include "mm/shared/xeen/sprites.h"
 
 namespace MM {
@@ -30,7 +30,7 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-class Interaction : public ScrollView {
+class Interaction : public PartyView {
 private:
 	Shared::Xeen::SpriteResource _frame;
 	Shared::Xeen::SpriteResource _portrait;
@@ -42,6 +42,10 @@ protected:
 	bool _animated = true;
 	int _portraitNum = 0;
 protected:
+	bool selectCharByDefault() const override {
+		return false;
+	}
+
 	/**
 	 * Handles any action/press
 	 */

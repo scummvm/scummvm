@@ -28,8 +28,7 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-Resistances::Resistances() : Interaction("Resistances", 4),
-		PartyView("Resistances") {
+Resistances::Resistances() : Interaction("Resistances", 4) {
 	_title = STRING["maps.emap02.resistances"];
 }
 
@@ -47,7 +46,15 @@ void Resistances::draw() {
 }
 
 void Resistances::viewAction() {
-	// ?
+	// When already showing resistances, any click/key will close view
+	if (_lines.empty())
+		close();
+}
+
+void Resistances::charSwitched(Character *priorChar) {
+	Interaction::charSwitched(priorChar);
+	_lines.clear();
+	redraw();
 }
 
 } // namespace Interactions

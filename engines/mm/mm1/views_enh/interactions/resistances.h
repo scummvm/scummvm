@@ -23,19 +23,23 @@
 #define MM1_VIEWS_ENH_INTERACTIONS_RESISTANCES_H
 
 #include "mm/mm1/views_enh/interactions/interaction.h"
-#include "mm/mm1/views_enh/party_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-class Resistances : public Interaction, public PartyView {
+class Resistances : public Interaction {
 protected:
 	/**
 	 * Handles any action/press
 	 */
 	void viewAction() override;
+
+	/**
+	 * Called when the selected character has been switched
+	 */
+	void charSwitched(Character *priorChar) override;
 
 public:
 	Resistances();
