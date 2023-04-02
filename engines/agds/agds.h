@@ -238,7 +238,6 @@ public:
 	}
 
 	void tickInventory();
-	void tickCharacter();
 
 	void playSoundSync(int syncSoundId) {
 		_syncSoundId = syncSoundId;
