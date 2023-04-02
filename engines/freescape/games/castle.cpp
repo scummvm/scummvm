@@ -56,24 +56,53 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filen
 	return (new Common::MemoryReadStream(encryptedBuffer, size));
 }
 
+extern byte kEGADefaultPaletteData[16][3];
+
 void CastleEngine::loadAssetsDOSFullGame() {
+	Common::File file;
 	Common::SeekableReadStream *stream = nullptr;
 
-	stream = decryptFile("CMLE");
-	loadMessagesVariableSize(stream, 0x11, 164);
-	delete stream;
+	if (_renderMode == Common::kRenderEGA) {
+		file.open("CMOE.DAT");
+		_title = load8bitBinImage(&file, 0x0);
+		_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
 
-	stream = decryptFile("CMEDF");
-	load8bitBinary(stream, 0, 16);
-	for (auto &it : _areaMap)
-		it._value->addStructure(_areaMap[255]);
-	delete stream;
+		file.close();
 
+		file.open("CME.DAT");
+		_border = load8bitBinImage(&file, 0x0);
+		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+
+		file.close();
+
+		stream = decryptFile("CMLE");
+		loadMessagesVariableSize(stream, 0x11, 164);
+		delete stream;
+
+		stream = decryptFile("CMEDF");
+		load8bitBinary(stream, 0, 16);
+		for (auto &it : _areaMap)
+			it._value->addStructure(_areaMap[255]);
+		delete stream;
+	} else
+		error("Not implemented yet");
 	// CPC
 	// file = gameDir.createReadStreamForMember("cm.bin");
 	// if (file == nullptr)
 	//	error("Failed to open cm.bin");
 	// load8bitBinary(file, 0x791a, 16);
+}
+
+void CastleEngine::titleScreen() {
+	if (isAmiga() || isAtariST()) // These releases has their own screens
+		return;
+
+	if (_title) {
+		drawTitle();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(3000);
+	}
 }
 
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {

@@ -464,20 +464,14 @@ private:
 	void addSkanner(Area *area);
 
 	void loadAssetsFullGame() override;
-
 	void loadAssetsAtariFullGame() override;
 	void loadAssetsAtariDemo() override;
-
 	void loadAssetsAmigaFullGame() override;
 	void loadAssetsAmigaDemo() override;
-
 	void loadAssetsDOSFullGame() override;
 	void loadAssetsDOSDemo() override;
-
 	void loadAssetsZXFullGame() override;
-
 	void loadAssetsCPCFullGame() override;
-
 	void loadAssetsC64FullGame() override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
@@ -560,6 +554,7 @@ class CastleEngine : public FreescapeEngine {
 public:
 	CastleEngine(OSystem *syst, const ADGameDescription *gd);
 
+	void titleScreen() override;
 	void loadAssetsDOSFullGame() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
