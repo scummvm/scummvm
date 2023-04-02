@@ -24,6 +24,7 @@
 #include "gob/inter.h"
 #include "gob/game.h"
 #include "gob/script.h"
+#include "gob/save/saveload.h"
 
 
 namespace Gob {
@@ -45,10 +46,53 @@ void Inter_Adibou1::setupOpcodesFunc() {
 }
 
 void Inter_Adibou1::setupOpcodesGob() {
+	OPCODEGOB(0, oAdibou1_writeSprite);
+	OPCODEGOB(1, oAdibou1_readSprite);
 	OPCODEGOB(2, oAdibou1_fillAreaAtPoint);
 	OPCODEGOB(10, oAdibou1_getAppliNameFromId);
 	OPCODEGOB(11, oAdibou1_listApplications);
 }
+
+void Inter_Adibou1::oAdibou1_writeSprite(OpGobParams &params) {
+	int16 spriteIndex = _vm->_game->_script->readInt16();
+	uint16 varResult = _vm->_game->_script->readUint16();
+	uint16 varFileName = _vm->_game->_script->readUint16();
+
+	WRITE_VAR(varResult, 0);
+
+	const char *filename = GET_VAR_STR(varFileName);
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad ? _vm->_saveLoad->getSaveMode(filename) : SaveLoad::kSaveModeNone;
+	if (mode == SaveLoad::kSaveModeSave) {
+		if (_vm->_saveLoad->save(filename, 0, -spriteIndex - 1, 0)) {
+			WRITE_VAR(varResult, 1);
+		}
+	} else if (mode == SaveLoad::kSaveModeIgnore)
+		return;
+	else if (mode == SaveLoad::kSaveModeNone)
+		warning("Attempted to write to file \"%s\"", filename);
+}
+
+void Inter_Adibou1::oAdibou1_readSprite(OpGobParams &params) {
+	int16 spriteIndex = _vm->_game->_script->readInt16();
+	uint16 varResult = _vm->_game->_script->readUint16();
+	uint16 varFileName = _vm->_game->_script->readUint16();
+
+	WRITE_VAR(varResult, 0);
+
+	const char *filename = GET_VAR_STR(varFileName);
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad ? _vm->_saveLoad->getSaveMode(filename) : SaveLoad::kSaveModeNone;
+	if (mode == SaveLoad::kSaveModeSave) {
+		if (_vm->_saveLoad->load(filename, 0, -spriteIndex - 1, 0)) {
+			WRITE_VAR(varResult, 1);
+		}
+	} else if (mode == SaveLoad::kSaveModeIgnore)
+		return;
+	else if (mode == SaveLoad::kSaveModeNone)
+		warning("Attempted to write to file \"%s\"", filename);
+}
+
 
 void Inter_Adibou1::oAdibou1_fillAreaAtPoint(OpGobParams &params) {
 	uint16 varX = _vm->_game->_script->readUint16();

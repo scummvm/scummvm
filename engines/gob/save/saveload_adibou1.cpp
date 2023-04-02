@@ -28,16 +28,81 @@ namespace Gob {
 
 SaveLoad_Adibou1::SaveFile SaveLoad_Adibou1::_saveFiles[] = {
 	{ "bou.inf", kSaveModeSave, nullptr, "adibou1"},
+	{ "dessin.inf", kSaveModeSave, nullptr, "paint game drawing"},
 };
 
 SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
 	SaveLoad(vm) {
 
 	_saveFiles[0].handler = _bouHandler = new GameFileHandler(vm, targetName, "bouinf");
+	_saveFiles[1].handler = _drawingHandler = new SpriteHandler(vm, targetName, "drawing");
 }
 
 SaveLoad_Adibou1::~SaveLoad_Adibou1() {
 	delete _bouHandler;
+}
+
+SaveLoad_Adibou1::SpriteHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
+	SlotFileStatic(vm, base, ext) {
+}
+
+SaveLoad_Adibou1::SpriteHandler::File::~File() {
+}
+
+SaveLoad_Adibou1::SpriteHandler::SpriteHandler(GobEngine *vm, const Common::String &target, const Common::String &ext)
+	: TempSpriteHandler(vm), _file(vm, target, ext) {
+}
+
+SaveLoad_Adibou1::SpriteHandler::~SpriteHandler() {
+}
+
+int32 SaveLoad_Adibou1::SpriteHandler::getSize() {
+	Common::String fileName = _file.build();
+
+	if (fileName.empty())
+		return -1;;
+
+	SaveReader reader(1, 0, fileName);
+	SaveHeader header;
+
+	if (!reader.load())
+		return -1;
+
+	if (!reader.readPartHeader(0, &header))
+		return -1;
+
+	// Return the part's size
+	return header.getSize();
+}
+
+bool SaveLoad_Adibou1::SpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
+	if (!TempSpriteHandler::createFromSprite(dataVar, size, offset))
+		return false;
+
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	SaveReader reader(1, 0, fileName);
+	if (!reader.load())
+		return false;
+
+	if (!reader.readPart(0, _sprite))
+		return false;
+
+	return TempSpriteHandler::load(dataVar, size, offset);
+}
+
+bool SaveLoad_Adibou1::SpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
+	if (!TempSpriteHandler::save(dataVar, size, offset))
+		return false;
+
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	SaveWriter writer(1, 0, fileName);
+	return writer.writePart(0, _sprite);
 }
 
 SaveLoad_Adibou1::GameFileHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :

@@ -540,6 +540,8 @@ protected:
 	void setupOpcodesFunc() override;
 	void setupOpcodesGob() override;
 
+	void oAdibou1_writeSprite(OpGobParams &params);
+	void oAdibou1_readSprite(OpGobParams &params);
 	void oAdibou1_fillAreaAtPoint(OpGobParams &params);
 	void oAdibou1_getAppliNameFromId(OpGobParams &params);
 	void oAdibou1_listApplications(OpGobParams &params);
