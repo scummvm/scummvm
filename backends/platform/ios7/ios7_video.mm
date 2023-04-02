@@ -686,14 +686,23 @@ uint getSizeNextPOT(uint size) {
 		[self rebuildFrameBuffer];
 	}
 
-	BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height); // UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation]);
+#if TARGET_OS_IOS
+	UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationUnknown;
+	if (@available(iOS 13.0, *)) {
+		interfaceOrientation = [[[self window] windowScene] interfaceOrientation];
+	} else {
+		interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+	}
+	BOOL isLandscape = UIInterfaceOrientationIsLandscape(interfaceOrientation);
+#else // TVOS
+	BOOL isLandscape = YES;
+#endif
 
 	int screenWidth, screenHeight;
 	if (isLandscape) {
 		screenWidth = MAX(_renderBufferWidth, _renderBufferHeight);
 		screenHeight = MIN(_renderBufferWidth, _renderBufferHeight);
-	}
-	else {
+	} else {
 		screenWidth = MIN(_renderBufferWidth, _renderBufferHeight);
 		screenHeight = MAX(_renderBufferWidth, _renderBufferHeight);
 	}
@@ -794,9 +803,16 @@ uint getSizeNextPOT(uint size) {
 		CGRect newFrame = screenSize;
 #if TARGET_OS_IOS
 		UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
-		UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+		UIInterfaceOrientation orientation = UIInterfaceOrientationUnknown;
+		if (@available(iOS 13.0, *)) {
+			orientation = [[[self window] windowScene] interfaceOrientation];
+		} else {
+			orientation = [[UIApplication sharedApplication] statusBarOrientation];
+		}
 		if ( orientation == UIInterfaceOrientationPortrait ) {
 			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y + inset.top, screenSize.size.width, screenSize.size.height - inset.top);
+		} else if ( orientation == UIInterfaceOrientationPortraitUpsideDown ) {
+			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width, screenSize.size.height - inset.top);
 		} else if ( orientation == UIInterfaceOrientationLandscapeLeft ) {
 			newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width - inset.right, screenSize.size.height);
 		} else if ( orientation == UIInterfaceOrientationLandscapeRight ) {
@@ -920,11 +936,9 @@ uint getSizeNextPOT(uint size) {
 }
 
 #if TARGET_OS_IOS
-- (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
+- (void)interfaceOrientationChanged:(UIInterfaceOrientation)orientation {
 	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
-
-	BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height);
-	if (isLandscape) {
+	if (UIInterfaceOrientationIsLandscape(orientation)) {
 		[self hideKeyboard];
 	} else {
 		[self showKeyboard];
