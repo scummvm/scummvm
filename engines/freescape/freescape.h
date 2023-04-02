@@ -556,6 +556,7 @@ public:
 
 	void titleScreen() override;
 	void loadAssetsDOSFullGame() override;
+	void drawUI() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
