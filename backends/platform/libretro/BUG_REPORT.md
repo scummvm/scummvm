@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## Description
+### Description
 [Description of the bug]
 
 ### Expected behavior
