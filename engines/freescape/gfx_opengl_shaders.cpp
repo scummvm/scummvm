@@ -167,14 +167,23 @@ void OpenGLShaderRenderer::renderSensorShoot(byte color, const Math::Vector3d se
 	glLineWidth(1);*/
 }
 
-void OpenGLShaderRenderer::renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
-	/*uint8 a, r, g, b;
+// TODO: move inside the shader?
+float remap(float f, float s) {
+	return 2. * f / s - 1;
+}
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, _screenW, _screenH, 0, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+void OpenGLShaderRenderer::renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
+	uint8 a, r, g, b;
+
+	Math::Matrix4 identity;
+	identity(0, 0) = 1.0;
+	identity(1, 1) = 1.0;
+	identity(2, 2) = 1.0;
+	identity(3, 3) = 1.0;
+
+	_triangleShader->use();
+	_triangleShader->setUniform("mvpMatrix", identity);
+
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
 		r = g = b = 255;
 	} else {
@@ -188,28 +197,31 @@ void OpenGLShaderRenderer::renderPlayerShoot(byte color, const Common::Point pos
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
-	glColor3ub(r, g, b);
+	useColor(r, g, b);
 
 	glLineWidth(5); // It will not work in every OpenGL implementation since the
 					 // spec doesn't require support for line widths other than 1
-	glEnableClientState(GL_VERTEX_ARRAY);
-	copyToVertexArray(0, Math::Vector3d(viewArea.left, viewArea.height() + viewArea.top, 0));
-	copyToVertexArray(1, Math::Vector3d(position.x, position.y, 0));
-	copyToVertexArray(2, Math::Vector3d(viewArea.left, viewArea.height() + viewArea.top + 3, 0));
-	copyToVertexArray(3, Math::Vector3d(position.x, position.y, 0));
+	copyToVertexArray(0, Math::Vector3d(remap(viewArea.left, _screenW), remap(viewArea.height() - viewArea.top,  _screenH), 0));
+	copyToVertexArray(1, Math::Vector3d(remap(position.x,  _screenW), remap(_screenH - position.y, _screenH), 0));
 
-	copyToVertexArray(4, Math::Vector3d(viewArea.right, viewArea.height() + viewArea.top, 0));
-	copyToVertexArray(5, Math::Vector3d(position.x, position.y, 0));
-	copyToVertexArray(6, Math::Vector3d(viewArea.right, viewArea.height() + viewArea.top + 3, 0));
-	copyToVertexArray(7, Math::Vector3d(position.x, position.y, 0));
+	copyToVertexArray(2, Math::Vector3d(remap(viewArea.left, _screenW), remap(viewArea.height() - viewArea.top + 3, _screenH), 0));
+	copyToVertexArray(3, Math::Vector3d(remap(position.x, _screenW), remap(_screenH - position.y, _screenH), 0));
 
-	glVertexPointer(3, GL_FLOAT, 0, _verts);
+	copyToVertexArray(4, Math::Vector3d(remap(viewArea.right, _screenW), remap(_screenH - viewArea.bottom, _screenH), 0));
+	copyToVertexArray(5, Math::Vector3d(remap(position.x,  _screenW), remap(_screenH - position.y, _screenH), 0));
+
+	copyToVertexArray(6, Math::Vector3d(remap(viewArea.right, _screenW), remap(_screenH - viewArea.bottom + 3, _screenH), 0));
+	copyToVertexArray(7, Math::Vector3d(remap(position.x,  _screenW), remap(_screenH - position.y, _screenH), 0));
+
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, 8 * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 	glDrawArrays(GL_LINES, 0, 8);
-	glDisableClientState(GL_VERTEX_ARRAY);
+
 	glLineWidth(1);
 
 	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);*/
+	glDepthMask(GL_TRUE);
 }
 
 void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
