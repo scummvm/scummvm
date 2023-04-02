@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/PersonScreen.h"
 
 namespace Crab {
@@ -38,7 +39,7 @@ using namespace pyrodactyl::image;
 using namespace pyrodactyl::people;
 
 void PersonScreen::Load(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("character");
 		if (NodeValid(node)) {
@@ -57,12 +58,14 @@ void PersonScreen::Load(const std::string &filename) {
 	}
 }
 
+#if 0
 void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const std::string &id, const SDL_Event &Event) {
 	if (info.PersonValid(id))
 		menu.HandleEvents(&info.PersonGet(id), Event);
 	else
 		menu.HandleEvents(nullptr, Event);
 }
+#endif
 
 void PersonScreen::InternalEvents() {
 	if (cur_sp != nullptr)
@@ -70,6 +73,9 @@ void PersonScreen::InternalEvents() {
 }
 
 void PersonScreen::Draw(pyrodactyl::event::Info &info, const std::string &id) {
+	warning("STUB: PersonScreen::Draw()");
+
+#if 0
 	bg.Draw();
 
 	if (info.PersonValid(id)) {
@@ -82,6 +88,7 @@ void PersonScreen::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 		Rect clip = cur_sp->DialogClip(PST_NORMAL);
 		gImageManager.Draw(img.x, img.y, cur_sp->Img(), &clip);
 	}
+#endif
 }
 
 void PersonScreen::Cache(Info &info, const std::string &id, pyrodactyl::level::Level &level) {
