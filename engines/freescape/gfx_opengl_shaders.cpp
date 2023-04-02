@@ -216,25 +216,28 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 	assert(vertices.size() >= 2);
 	const Math::Vector3d &v0 = vertices[0];
 
-	/*if (vertices.size() == 2) {
+	_triangleShader->use();
+	_triangleShader->setUniform("mvpMatrix", _mvpMatrix);
+
+	if (vertices.size() == 2) {
 		const Math::Vector3d &v1 = vertices[1];
 		if (v0 == v1)
 			return;
 
-		glEnableClientState(GL_VERTEX_ARRAY);
 		copyToVertexArray(0, v0);
 		copyToVertexArray(1, v1);
-		glVertexPointer(3, GL_FLOAT, 0, _verts);
-		glLineWidth(MAX(1, g_system->getWidth() / 192));
-		glDrawArrays(GL_LINES, 0, 2);
-		glLineWidth(1);
-		glDisableClientState(GL_VERTEX_ARRAY);
-		return;
-	}*/
 
-	//glEnableClientState(GL_VERTEX_ARRAY);
-	_triangleShader->use();
-	_triangleShader->setUniform("mvpMatrix", _mvpMatrix);
+		glLineWidth(MAX(1, g_system->getWidth() / 192));
+
+		glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+		glBufferData(GL_ARRAY_BUFFER, 2 * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		glDrawArrays(GL_LINES, 0, 2);
+
+		glLineWidth(1);
+		return;
+	}
+
 	uint vi = 0;
 	for (uint i = 1; i < vertices.size() - 1; i++) { // no underflow since vertices.size() > 2
 		const Math::Vector3d &v1 = vertices[i];
@@ -247,11 +250,8 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
 	glBufferData(GL_ARRAY_BUFFER, (vi + 3) * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-	//glEnableVertexAttribArray(0);
 
 	glDrawArrays(GL_TRIANGLES, 0, vi + 3);
-	//glDisableVertexAttribArray(0);
-	//glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void OpenGLShaderRenderer::polygonOffset(bool enabled) {
