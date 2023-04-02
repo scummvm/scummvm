@@ -159,12 +159,8 @@ public:
 	}
 	void activate();
 	void deactivate();
-	void done() {
-		_status = kStatusDone;
-	}
-	void fail() {
-		_status = kStatusError;
-	}
+	void done();
+	void fail();
 
 	bool finished() const {
 		return _status == kStatusDone || _status == kStatusError;

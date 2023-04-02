@@ -200,6 +200,16 @@ void Process::deactivate() {
 	}
 }
 
+void Process::done() {
+	_status = kStatusDone;
+	if (!_stack.empty())
+		warning("process %s finished with non-empty stack", getName().c_str());
+}
+void Process::fail() {
+	_status = kStatusError;
+}
+
+
 void Process::run() {
 	bool restart = true;
 	while(_status != kStatusDone && _status != kStatusError && restart) {
