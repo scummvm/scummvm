@@ -284,8 +284,8 @@ shaders/hpl1_refract_water.vertex                      FILE   "engines/hpl1/engi
 #if PLUGIN_ENABLED_STATIC(FREESCAPE)
 shaders/freescape_bitmap.fragment    FILE    "engines/freescape/shaders/freescape_bitmap.fragment"
 shaders/freescape_bitmap.vertex      FILE    "engines/freescape/shaders/freescape_bitmap.vertex"
-shaders/freescape_triangle.fragment  FILE    "engines/freescape/shaders/freescape_cube.fragment"
-shaders/freescape_triangle.vertex    FILE    "engines/freescape/shaders/freescape_cube.vertex"
+shaders/freescape_triangle.fragment  FILE    "engines/freescape/shaders/freescape_triangle.fragment"
+shaders/freescape_triangle.vertex    FILE    "engines/freescape/shaders/freescape_triangle.vertex"
 #endif
 #endif
 #endif
