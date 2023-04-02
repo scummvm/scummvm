@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/game.h"
 
 namespace Crab {
@@ -40,10 +41,10 @@ using namespace pyrodactyl::input;
 // Purpose: Loading stuff
 //------------------------------------------------------------------------
 void Game::StartNewGame() {
-	Init(gFilePath.mod_cur);
+	Init(gFilePath.mod_cur.c_str());
 	LoadLevel(info.CurLocID());
 	info.IronMan(gTemp.ironman);
-	savefile.ironman = gTemp.filename;
+	savefile.ironman = gTemp.filename.c_str();
 	clock.Start();
 	hud.pause.UpdateMode(info.IronMan());
 
@@ -51,7 +52,7 @@ void Game::StartNewGame() {
 }
 
 void Game::LoadGame(const std::string &filename) {
-	Init(gFilePath.mod_cur);
+	Init(gFilePath.mod_cur.c_str());
 	LoadState(filename);
 }
 
@@ -64,7 +65,7 @@ void Game::Init(const std::string &filename) {
 	gem.Init();
 	info.Init();
 
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("config");
 
@@ -73,7 +74,7 @@ void Game::Init(const std::string &filename) {
 		std::string path;
 		if (NodeValid("level", node)) {
 			LoadStr(path, "list", node->first_node("level"));
-			gFilePath.LoadLevel(path);
+			gFilePath.LoadLevel(path.c_str());
 		}
 
 		if (NodeValid("hud", node)) {
@@ -112,6 +113,9 @@ void Game::Init(const std::string &filename) {
 }
 
 bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
+	warning("STUB: Game::LoadLevel()");
+
+#if 0
 	if (gFilePath.level.count(id) > 0) {
 		gLoadScreen.Draw();
 
@@ -145,10 +149,12 @@ bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
 		info.journal.Init(level.PlayerID());
 		return true;
 	}
+#endif
 
 	return false;
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
@@ -301,6 +307,7 @@ void Game::HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &
 		}
 	}
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: InternalEvents
@@ -504,7 +511,7 @@ void Game::ApplyResult(LevelResult result) {
 // Purpose: Save/load game
 //------------------------------------------------------------------------
 void Game::LoadState(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("save");
 		if (NodeValid(node)) {
@@ -542,6 +549,9 @@ void Game::LoadState(const std::string &filename) {
 // Purpose: Write game state to file
 //------------------------------------------------------------------------
 void Game::SaveState(const std::string &filename, const bool &overwrite) {
+	warning("STUB: Game::SaveState()");
+
+#if 0
 	rapidxml::xml_document<char> doc;
 
 	// xml declaration
@@ -633,6 +643,7 @@ void Game::SaveState(const std::string &filename, const bool &overwrite) {
 
 	doc.clear();
 	hud.pause.ScanDir();
+#endif
 }
 //------------------------------------------------------------------------
 // Purpose: Quit the game

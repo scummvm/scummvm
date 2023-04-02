@@ -27,7 +27,7 @@
  * Licensed under MIT
  *
  */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/LoadingScreen.h"
 #include "crab/XMLDoc.h"
 
@@ -35,7 +35,7 @@ namespace Crab {
 
 void LoadingScreen::Load() {
 	const std::string &filename = "res/layout/loading.xml";
-	XMLDoc doc(filename);
+	XMLDoc doc(filename.c_str());
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.Doc()->first_node("loading");
 		if (NodeValid(node)) {
@@ -63,10 +63,11 @@ void LoadingScreen::Draw() {
 	text.Draw((gScreenSettings.cur.w - text.W()) / 2, (gScreenSettings.cur.h - text.H()) / 2);
 
 	// Update the screen
-	SDL_RenderPresent(gRenderer);
+	//SDL_RenderPresent(gRenderer);
 }
 
 void LoadingScreen::Dim() {
+#if 0
 	// This is used when starting or loading a game from the main menu in order to dim the screen
 	// until an actual loading screen is drawn
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
@@ -75,6 +76,7 @@ void LoadingScreen::Dim() {
 
 	// Update the screen
 	SDL_RenderPresent(gRenderer);
+#endif
 }
 
 void LoadingScreen::Quit() {

@@ -114,7 +114,14 @@ private:
 	// A nice simple function for saving games
 	void CreateSaveGame(const SaveGameType &savetype);
 
-	std::string FullPath(const std::string &filename) { return gFilePath.appdata + gFilePath.save_dir + filename + gFilePath.save_ext; }
+	std::string FullPath(const std::string &filename) {
+		std::string res = gFilePath.appdata.c_str();
+		res += gFilePath.save_dir.c_str();
+		res += filename;
+		res += gFilePath.save_ext.c_str();
+
+		return res;
+	}
 
 	// Load the current player image
 	void PlayerImg() { hud.PlayerImg(pyrodactyl::event::gEventStore.img.at(info.PlayerImg())); }
@@ -126,7 +133,9 @@ public:
 
 	void Init(const std::string &filename);
 
+#if 0
 	void HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
+#endif
 	void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID);
 	void Draw();
 

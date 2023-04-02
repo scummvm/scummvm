@@ -61,7 +61,9 @@ public:
 	LoadingScreen() { cur = 0; };
 	~LoadingScreen(){};
 
-	void Change() { cur = gRandom.Num() % screen.size(); }
+	void Change() {
+	//	cur = gRandom.Num() % screen.size();
+	}
 
 	void Load();
 	void Draw();
