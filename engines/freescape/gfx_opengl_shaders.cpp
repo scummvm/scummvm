@@ -59,6 +59,9 @@ OpenGLShaderRenderer::OpenGLShaderRenderer(int screenW, int screenH, Common::Ren
 OpenGLShaderRenderer::~OpenGLShaderRenderer() {
 	OpenGL::Shader::freeBuffer(_triangleVBO);
 	delete _triangleShader;
+	OpenGL::Shader::freeBuffer(_bitmapVBO);
+	delete _bitmapShader;
+	free(_verts);
 }
 
 Texture *OpenGLShaderRenderer::createTexture(const Graphics::Surface *surface) {
