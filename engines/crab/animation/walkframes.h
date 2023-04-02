@@ -93,8 +93,8 @@ public:
 
 	const ShadowOffset &Shadow(Direction d) { return set[cur].frames[d].shadow; }
 
-	const int AnchorX(Direction d) { return set[cur].frames[d].CurrentFrame().anchor.x; }
-	const int AnchorY(Direction d) { return set[cur].frames[d].CurrentFrame().anchor.y; }
+	int AnchorX(Direction d) { return set[cur].frames[d].CurrentFrame().anchor.x; }
+	int AnchorY(Direction d) { return set[cur].frames[d].CurrentFrame().anchor.y; }
 
 	// Dialog box related
 	Rect DialogClip(const pyrodactyl::people::PersonState &state);

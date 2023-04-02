@@ -64,8 +64,8 @@ struct AnimSet {
 	TextureFlipType Flip(const Direction &dir);
 	const ShadowOffset &Shadow(const Direction &dir);
 
-	const int AnchorX(const Direction &dir);
-	const int AnchorY(const Direction &dir);
+	int AnchorX(const Direction &dir);
+	int AnchorY(const Direction &dir);
 };
 } // End of namespace anim
 } // End of namespace pyrodactyl
