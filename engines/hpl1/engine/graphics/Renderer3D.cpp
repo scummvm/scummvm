@@ -643,8 +643,6 @@ void cRenderer3D::RenderSkyBox(cCamera3D *apCamera) {
 	if (mRenderSettings.gpuProgram) {
 		mRenderSettings.gpuProgram->UnBind();
 		mRenderSettings.gpuProgram = nullptr;
-		if (mbLog)
-			Log(" Setting Vertex program: NULL\n");
 	}
 
 	if (mRenderSettings.mpVtxBuffer) {
@@ -662,7 +660,7 @@ void cRenderer3D::RenderSkyBox(cCamera3D *apCamera) {
 
 	// Calculate the size of the sky box need to just touch the far clip plane.
 	float fFarClip = apCamera->GetFarClipPlane();
-	float fSide = sqrt((fFarClip * fFarClip) / 3) * 0.95f;
+	float fSide = fFarClip / sqrt(3) * 0.95f;
 	mtxSky.m[0][0] = fSide;
 	mtxSky.m[1][1] = fSide;
 	mtxSky.m[2][2] = fSide;
