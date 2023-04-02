@@ -1446,7 +1446,10 @@ void ScummEngine_v5::o5_getObjectState() {
 
 void ScummEngine_v5::o5_getRandomNr() {
 	getResultPos();
-	setResult(_rnd.getRandomNumber(getVarOrDirectByte(PARAM_1)));
+	int rnd = _rnd.getRandomNumber(getVarOrDirectByte(PARAM_1));
+	setResult(rnd);
+
+	debug(6, "o5_getRandomNr(): %d", rnd);
 }
 
 void ScummEngine_v5::o5_isScriptRunning() {

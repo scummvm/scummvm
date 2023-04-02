@@ -45,7 +45,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _tvdConditionalDialogue 
 },
 {   // Mrs. Flowers, 20 responses
     {   19, 759, "FIC_01",
-        { { 0x4, kFalse }, { 0x9, kTrue } },
+        { { 0x4, kFalse }, { 0x49, kTrue } },
         { { 0x7, kFalse } } },
     {   18, 758, "FIC_02",
         { { 0x7, kFalse }, { 0x4F, kTrue } },
@@ -60,7 +60,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _tvdConditionalDialogue 
         { { 0xD, kFalse }, { 0x1C, kTrue } },
         { { 0x14, kFalse } } },
     {   14, 754, "FIC_06",
-        { { 0x4A, kTrue }, { 0x52, kFalse }, { 0x2, kFalse } },
+        { { 0x4A, kTrue }, { 0x52, kFalse }, { 0x1, kFalse } },
         { { 0x10, kFalse } } },
     {   13, 753, "FIC_07",
         { { 0x4A, kTrue }, { 0x52, kFalse }, { 0x9, kFalse } },
@@ -125,10 +125,10 @@ const Common::Array<Common::Array<ConditionalDialogue>> _tvdConditionalDialogue 
         { { 0xD, kFalse }, { 0x1C, kTrue } },
         { } },
     {   25, 924, "BIC_05",
-        { { 0xA, kFalse }, { 0x47, kTrue }, { 0x3c, kTrue } },
-        { { 0xD, kFalse } } },
+        { { 0xA, kFalse }, { 0x47, kTrue }, { 0x3C, kTrue } },
+        { { 0xB, kFalse } } },
     {   24, 923, "BIC_06",
-        { { 0x4A, kTrue }, { 0x2, kFalse } },
+        { { 0x4A, kTrue }, { 0x1, kFalse } },
         { { 0x10, kFalse } } },
     {   23, 922, "BIC_07",
         { { 0x4A, kTrue }, { 0x4, kFalse } },
@@ -163,16 +163,16 @@ const Common::Array<Common::Array<ConditionalDialogue>> _tvdConditionalDialogue 
         { } },
     {   42, 351, "SIC_01",
         { { 0x52, kFalse }, { 0x4, kFalse }, { 0x49, kTrue } },
-        { { 0x7, kTrue } } },
+        { { 0x7, kFalse } } },
     {   41, 350, "SIC_02",
         { { 0x52, kFalse }, { 0x10, kFalse }, { 0x18, kTrue } },
         { { 0x14, kFalse } } },
     {   40, 349, "SIC_03",
         { { 0x52, kFalse }, { 0xD, kFalse }, { 0x1C, kTrue } },
-        { { 0xD, kFalse } } },
+        { { 0xB, kFalse } } },
     {   39, 348, "SIC_04",
         { { 0x52, kFalse }, { 0xA, kFalse }, { 0x47, kTrue }, { 0x3C, kTrue } },
-        { { 0xD, kFalse } } },
+        { { 0xB, kFalse } } },
     {   38, 347, "SIC_05",
         { { 0x52, kFalse }, { 0x4A, kTrue }, { 0x1, kFalse } },
         { { 0x10, kFalse } } },
@@ -296,7 +296,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _tvdConditionalDialogue 
 },
 {   // Mikhail, 6 responses
     {   80, 452, "MIC_01",
-        { { 0x10, kFalse }, { 0x49, kTrue } },
+        { { 0x10, kFalse } },
         { { 0xD, kTrue }, { 0x14, kFalse } } },
     {   79, 451, "MIC_02",
         { { 0x4A, kTrue }, { 0x1, kFalse } },
@@ -323,15 +323,15 @@ static Common::Array<Goodbye> _tvdGoodbyes = {
     { "EGBYE", {    { { 1108 }, {}, NOFLAG } } },
     // Mrs. Flowers
     { "FLOWBYE", {  { { 1112, 1113, 1114 }, { { 0x3E, kFalse } }, NOFLAG },
-                    { { 1109, 1110, 1111 }, {}, NOFLAG  } } },
+                    { { 1109, 1110, 1111 }, {}, NOFLAG } } },
     // Bonnie
     { "BONBYE", {   { { 1103, 1104, 1105 }, { { 0x3E, kTrue } }, NOFLAG },
                     { { 997 }, { { 0x3E, kFalse }, { 0x15, kTrue }, { 0x1B, kTrue }, { 0x20, kTrue }, { 0x3F, kTrue } }, { 0x41, kTrue } },
-                    { { 1100, 1101, 1102 }, {}, NOFLAG  } } },
+                    { { 1100, 1101, 1102 }, {}, NOFLAG } } },
     // Caroline; S1142.IFF appears to be missing
     { "CAROLBYE", { { { 1140, 1141/*, 1142,*/ }, { { 0x3E, kFalse }, { 0x42, kTrue } }, NOFLAG },
                     { { 1115, 1116, 1117 }, { { 0x3E, kFalse }, { 0x42, kFalse } }, NOFLAG },
-                    { { 1119 }, {}, NOFLAG  } } },
+                    { { 1119 }, {}, NOFLAG } } },
     // Stefan
     { "STEFBYE", {  { { 1121, 1122, 1123 }, { { 0x23, kTrue }, { 0x42, kTrue } }, NOFLAG },
                     { { 1150 }, {}, NOFLAG } } },
@@ -461,33 +461,6 @@ const Common::Array<Common::Array<const char *>> _tvdGoodbyeTexts = { {
     "<c1>I<c0> guess it's time for me to go..<h>", // RICHBYE
     "<c1>b<c0>ye.<h>", // EGBYE, again
 } };
-
-const Common::Array<const char *> _tvdItemNames = {
-    "Maker Note",
-    "Magic Book",
-    "Feather",
-    "Vervain",
-    "Crypt Key",
-    "Jewelry Box",
-    "House Key",
-    "Dagger",
-    "Class Ring",
-    "Mortar And Pestle",
-    "Mask",
-    "Lapis Jewel",
-    "Case Key",
-    "Gold Coin",
-    "Matches",
-    "White Candle",
-    "Black Candle",
-    "Fence Piece",
-    "Ring Of Power",
-    "Shovel",
-    "Perth Rune",
-    "Rune Bag",
-    "Confederate Hat",
-    "Clock Key"
-};
 
 const Common::Array<const char *> _tvdEventFlagNames = {
     "Aristocrat Bonnie told about mikhails bgnd",

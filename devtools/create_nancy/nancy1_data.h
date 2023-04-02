@@ -648,20 +648,6 @@ const Common::Array<const char *> _nancy1TelephoneRinging = {
     "Hudki...  <n><e>"  // Russian
 };
 
-const Common::Array<const char *> _nancy1ItemNames = {
-    "Bolt Cutter",
-    "Calling Card",
-    "Coins",
-    "Glass Cutter",
-    "Gun",
-    "Keys",
-    "Soup Ladle",
-    "Video Tape",
-    "Work Gloves",
-    "Silver Library Key",
-    "TV VCR Remote Control"
-};
-
 const Common::Array<const char *> _nancy1EventFlagNames = {
     "Tried the locker",
     "Locker open",

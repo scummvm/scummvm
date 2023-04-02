@@ -55,7 +55,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 		_gameDescription(gd),
 		_system(syst),
 		_datFileMajorVersion(0),
-		_datFileMinorVersion(1) {
+		_datFileMinorVersion(2) {
 
 	g_nancy = this;
 

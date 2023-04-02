@@ -1439,6 +1439,8 @@ void ScummEngine_v6::o6_getRandomNumber() {
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
+
+	debug(6, "o6_getRandomNumber(): %d", rnd);
 }
 
 void ScummEngine_v6::o6_getRandomNumberRange() {
@@ -1466,6 +1468,8 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
+
+	debug(6, "o6_getRandomNumberRange(): %d (min: %d, max: %d)", rnd, min, max);
 }
 
 void ScummEngine_v6::o6_isScriptRunning() {

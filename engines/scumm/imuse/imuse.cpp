@@ -79,7 +79,7 @@ IMuseInternal::~IMuseInternal() {
 	// interrupt us, and then do the rest outside
 	// the mutex.
 	{
-		Common::StackLock lock(_mutex, "IMuseInternal::~IMuseInternal()");
+		Common::StackLock lock(_mutex);
 		_initialized = false;
 		stopAllSounds_internal();
 	}
@@ -341,7 +341,7 @@ void IMuseInternal::init_parts() {
 ////////////////////////////////////////
 
 void IMuseInternal::on_timer(MidiDriver *midi) {
-	Common::StackLock lock(_mutex, "IMuseInternal::on_timer()");
+	Common::StackLock lock(_mutex);
 	if (_paused || !_initialized)
 		return;
 
@@ -351,7 +351,7 @@ void IMuseInternal::on_timer(MidiDriver *midi) {
 }
 
 void IMuseInternal::pause(bool paused) {
-	Common::StackLock lock(_mutex, "IMuseInternal::pause()");
+	Common::StackLock lock(_mutex);
 	if (_paused == paused)
 		return;
 	int vol = _music_volume;
@@ -386,7 +386,7 @@ static void syncWithSerializer(Common::Serializer &s, ImTrigger &it) {
 }
 
 void IMuseInternal::saveLoadIMuse(Common::Serializer &s, ScummEngine *scumm, bool fixAfterLoad) {
-	Common::StackLock lock(_mutex, "IMuseInternal::saveLoadIMuse()");
+	Common::StackLock lock(_mutex);
 
 	int i;
 
@@ -451,18 +451,18 @@ void IMuseInternal::saveLoadIMuse(Common::Serializer &s, ScummEngine *scumm, boo
 }
 
 bool IMuseInternal::get_sound_active(int sound) const {
-	Common::StackLock lock(_mutex, "IMuseInternal::get_sound_active()");
+	Common::StackLock lock(_mutex);
 	return getSoundStatus_internal(sound, false) != 0;
 }
 
 int32 IMuseInternal::doCommand(int numargs, int a[]) {
-	Common::StackLock lock(_mutex, "IMuseInternal::doCommand()");
+	Common::StackLock lock(_mutex);
 	return doCommand_internal(numargs, a);
 }
 
 
 uint32 IMuseInternal::property(int prop, uint32 value) {
-	Common::StackLock lock(_mutex, "IMuseInternal::property()");
+	Common::StackLock lock(_mutex);
 	switch (prop) {
 	case IMuse::PROP_TEMPO_BASE:
 		// This is a specified as a percentage of normal
@@ -491,12 +491,12 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 void IMuseInternal::addSysexHandler(byte mfgID, sysexfunc handler) {
 	// TODO: Eventually support multiple sysEx handlers and pay
 	// attention to the client-supplied manufacturer ID.
-	Common::StackLock lock(_mutex, "IMuseInternal::property()");
+	Common::StackLock lock(_mutex);
 	_sysex = handler;
 }
 
 void IMuseInternal::startSoundWithNoteOffset(int sound, int offset) {
-	Common::StackLock lock(_mutex, "IMuseInternal::startSound()");
+	Common::StackLock lock(_mutex);
 	startSound_internal(sound, offset);
 }
 
@@ -507,7 +507,7 @@ void IMuseInternal::startSoundWithNoteOffset(int sound, int offset) {
 ////////////////////////////////////////
 
 void IMuseInternal::setMusicVolume(int vol) {
-	Common::StackLock lock(_mutex, "IMuseInternal::setMusicVolume()");
+	Common::StackLock lock(_mutex);
 	if (vol > 255)
 		vol = 255;
 	if (_music_volume == vol)
@@ -522,27 +522,27 @@ void IMuseInternal::setMusicVolume(int vol) {
 }
 
 void IMuseInternal::startSound(int sound) {
-	Common::StackLock lock(_mutex, "IMuseInternal::startSound()");
+	Common::StackLock lock(_mutex);
 	startSound_internal(sound);
 }
 
 void IMuseInternal::stopSound(int sound) {
-	Common::StackLock lock(_mutex, "IMuseInternal::stopSound()");
+	Common::StackLock lock(_mutex);
 	stopSound_internal(sound);
 }
 
 void IMuseInternal::stopAllSounds() {
-	Common::StackLock lock(_mutex, "IMuseInternal::stopAllSounds()");
+	Common::StackLock lock(_mutex);
 	stopAllSounds_internal();
 }
 
 int IMuseInternal::getSoundStatus(int sound) const {
-	Common::StackLock lock(_mutex, "IMuseInternal::getSoundStatus()");
+	Common::StackLock lock(_mutex);
 	return getSoundStatus_internal(sound, true);
 }
 
 int IMuseInternal::getMusicTimer() {
-	Common::StackLock lock(_mutex, "IMuseInternal::getMusicTimer()");
+	Common::StackLock lock(_mutex);
 	int best_time = 0;
 	const Player *player = _players;
 	for (int i = ARRAYSIZE(_players); i; i--, player++) {

@@ -290,12 +290,6 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 
 	// Read debug strings
 	num = stream.readUint16LE();
-	itemNames.resize(num);
-	for (uint16 i = 0; i < num; ++i) {
-		itemNames[i] = stream.readString();
-	}
-
-	num = stream.readUint16LE();
 	eventFlagNames.resize(num);
 	for (uint16 i = 0; i < num; ++i) {
 		eventFlagNames[i] = stream.readString();

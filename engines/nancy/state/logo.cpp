@@ -24,6 +24,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/graphics.h"
 
 #include "engines/nancy/state/logo.h"
 
@@ -38,6 +39,9 @@ void Logo::process() {
 	switch (_state) {
 	case kInit:
 		init();
+		break;
+	case kPlayIntroVideo:
+		playIntroVideo();
 		break;
 	case kStartSound:
 		startSound();
@@ -55,11 +59,36 @@ void Logo::onStateExit() {
 }
 
 void Logo::init() {
-
 	_logoImage.init(g_nancy->_imageChunks["LG0"].imageName);
 	_logoImage.registerGraphics();
 
-	_state = kStartSound;
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		_tvdVideoDecoder.loadFile("VAMPINTR.AVI");
+		_tvdVideoDecoder.start();
+		_videoObj.moveTo(Common::Rect(0, 0, 640, 480));
+		_videoObj._drawSurface.create(_tvdVideoDecoder.getWidth(), _tvdVideoDecoder.getHeight(), _tvdVideoDecoder.getPixelFormat());
+		_videoObj.setPalette(_tvdVideoDecoder.getPalette());
+		_videoObj.registerGraphics();
+		_videoObj.setVisible(true);
+		_state = kPlayIntroVideo;
+	} else {
+		_state = kStartSound;
+	}
+}
+
+// The Vampire Diaries originally shipped with a launcher that could either start the game
+// or play an introduction video. We don't bother giving the player a choice, and just
+// play the video before the game logo
+void Logo::playIntroVideo() {
+	if (_tvdVideoDecoder.needsUpdate()) {
+		_videoObj._drawSurface.blitFrom(_tvdVideoDecoder.decodeNextFrame());
+		_videoObj.setVisible(true);
+	}
+	if (_tvdVideoDecoder.endOfVideo() || (g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
+		_state = kStartSound;
+		_videoObj.setVisible(false);
+		_tvdVideoDecoder.close();
+	}
 }
 
 void Logo::startSound() {

@@ -461,7 +461,7 @@ bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
 				case DependencyType::kInventory :
 					debugPrintf("kInventory, item %u, %s, %s",
 						dep.label,
-						g_nancy->getStaticData().itemNames[dep.label].c_str(),
+						g_nancy->_inventoryData->itemDescriptions[dep.label].name.c_str(),
 						dep.condition == kInvHolding ? "kInvHolding" : "kInvEmpty");
 					break;
 				case DependencyType::kEvent :
@@ -508,7 +508,7 @@ bool NancyConsole::Cmd_listAcionRecords(int argc, const char **argv) {
 				case DependencyType::kCursorType :
 					debugPrintf("kCursorType, item %u, %s, %s",
 						dep.label,
-						g_nancy->getStaticData().itemNames[dep.label].c_str(),
+						g_nancy->_inventoryData->itemDescriptions[dep.label].name.c_str(),
 						dep.condition == ActionManager::kCursInvHolding ? "kCursInvHolding" : "kCursInvNotHolding");
 					break;
 				case DependencyType::kPlayerTOD :
@@ -671,7 +671,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 		for (uint i = 0; i < numItems; ++i) {
 			debugPrintf("\nItem %u, %s, %s",
 				i,
-				g_nancy->getStaticData().itemNames[i].c_str(),
+				g_nancy->_inventoryData->itemDescriptions[i].name.c_str(),
 				NancySceneState.hasItem(i) == kInvHolding ? "kInvHolding" : "kInvEmpty");
 		}
 	} else {
@@ -683,7 +683,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 			}
 			debugPrintf("\nItem %u, %s, %s",
 				flagID,
-				g_nancy->getStaticData().itemNames[flagID].c_str(),
+				g_nancy->_inventoryData->itemDescriptions[flagID].name.c_str(),
 				NancySceneState.hasItem(i) == kInvHolding ? "kInvHolding" : "kInvEmpty");
 
 		}
@@ -717,12 +717,12 @@ bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
 			NancySceneState.addItemToInventory(itemID);
 			debugPrintf("Added item %i, %s, to inventory\n",
 				itemID,
-				g_nancy->getStaticData().itemNames[itemID].c_str());
+				g_nancy->_inventoryData->itemDescriptions[itemID].name.c_str());
 		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
 			NancySceneState.removeItemFromInventory(itemID, false);
 			debugPrintf("Removed item %i, %s, from inventory\n",
 				itemID,
-				g_nancy->getStaticData().itemNames[itemID].c_str());
+				g_nancy->_inventoryData->itemDescriptions[itemID].name.c_str());
 		} else {
 			debugPrintf("Invalid value %s\n", argv[i + 1]);
 			continue;

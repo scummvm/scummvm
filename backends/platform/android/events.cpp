@@ -1154,6 +1154,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_MOUSE_WHEEL_UP:
+		// Rolling wheel upwards
 		e.type = Common::EVENT_WHEELUP;
 		e.mouse.x = arg1;
 		e.mouse.y = arg2;
@@ -1164,6 +1165,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_MOUSE_WHEEL_DOWN:
+		// Rolling wheel downwards
 		e.type = Common::EVENT_WHEELDOWN;
 		e.mouse.x = arg1;
 		e.mouse.y = arg2;
