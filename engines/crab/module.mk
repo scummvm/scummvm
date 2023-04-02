@@ -73,6 +73,7 @@ MODULE_OBJS = \
 	ui/ChapterIntro.o \
 	ui/ClipButton.o \
 	ui/CreditScreen.o \
+	ui/DevConsole.o \
 	ui/dialogbox.o \
 	ui/element.o \
 	ui/emotion.o \
@@ -96,6 +97,7 @@ MODULE_OBJS = \
 	ui/ParagraphData.o \
 	ui/PauseMenu.o \
 	ui/PersonHandler.o \
+	ui/PersonScreen.o \
 	ui/ProgressBar.o \
 	ui/questmenu.o \
 	ui/QuestText.o \
