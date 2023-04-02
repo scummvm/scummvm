@@ -67,14 +67,6 @@
 	[_window setRootViewController:_controller];
 	[_window makeKeyAndVisible];
 
-#if TARGET_OS_IOS
-	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-	                                         selector:@selector(didRotate:)
-	                                             name:@"UIDeviceOrientationDidChangeNotification"
-	                                           object:nil];
-#endif
-
 	// Force creation of the shared instance on the main thread
 	iOS7_buildSharedOSystemInstance();
 
@@ -98,8 +90,16 @@
 	// Make sure we have the correct orientation in case the orientation was changed while
 	// the app was inactive.
 #if TARGET_OS_IOS
-	UIDeviceOrientation screenOrientation = [[UIDevice currentDevice] orientation];
-	[_view deviceOrientationChanged:screenOrientation];
+	UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationUnknown;
+	if (@available(iOS 13.0, *)) {
+		interfaceOrientation = [[[_view window] windowScene] interfaceOrientation];
+	} else {
+		interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+	}
+	if (interfaceOrientation != UIInterfaceOrientationUnknown) {
+		[_view interfaceOrientationChanged:interfaceOrientation];
+		[_controller setCurrentOrientation: interfaceOrientation];
+	}
 #endif
 }
 
@@ -122,13 +122,6 @@
 
 - (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
 	_restoreState = YES;
-}
-
-- (void)didRotate:(NSNotification *)notification {
-#if TARGET_OS_IOS
-	UIDeviceOrientation screenOrientation = [[UIDevice currentDevice] orientation];
-	[_view deviceOrientationChanged:screenOrientation];
-#endif
 }
 
 + (iOS7AppDelegate *)iOS7AppDelegate {

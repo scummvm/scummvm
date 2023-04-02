@@ -25,7 +25,15 @@
 #include <UIKit/UIKit.h>
 
 
-@interface iOS7ScummVMViewController : UIViewController
+@interface iOS7ScummVMViewController : UIViewController {
+#if TARGET_OS_IOS
+	UIInterfaceOrientation currentOrientation;
+#endif
+}
+
+#if TARGET_OS_IOS
+-(void) setCurrentOrientation:(UIInterfaceOrientation)orientation;
+#endif
 
 @end
 
