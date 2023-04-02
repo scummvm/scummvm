@@ -90,6 +90,11 @@ void InventoryBox::registerGraphics() {
 }
 
 void InventoryBox::handleInput(NancyInput &input) {
+	// Disable input when primary video is playing
+	if (NancySceneState.getActivePrimaryVideo()) {
+		return;
+	}
+
 	if (_order.size()) {
 		_scrollbar->handleInput(input);
 	}
