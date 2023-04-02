@@ -75,13 +75,13 @@ void OpenGLShaderRenderer::init() {
 	_verts = (Vertex *)malloc(sizeof(Vertex) * kVertexArraySize);
 
 	static const char *triangleAttributes[] = { "position", nullptr };
-	_triangleShader = OpenGL::Shader::fromFiles("triangle", triangleAttributes);
+	_triangleShader = OpenGL::Shader::fromFiles("freescape_triangle", triangleAttributes);
 	_triangleVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(Vertex) * kVertexArraySize, _verts, GL_DYNAMIC_DRAW);
 	// TODO: Check if 3 * sizeof(float) == sizeof(Vertex)
 	_triangleShader->enableVertexAttribute("position", _triangleVBO, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
 
 	static const char *bitmapAttributes[] = { "position", "texcoord", nullptr };
-	_bitmapShader = OpenGL::Shader::fromFiles("bitmap", bitmapAttributes);
+	_bitmapShader = OpenGL::Shader::fromFiles("freescape_bitmap", bitmapAttributes);
 	_bitmapVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(bitmapVertices), bitmapVertices);
 	_bitmapShader->enableVertexAttribute("position", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_bitmapShader->enableVertexAttribute("texcoord", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
