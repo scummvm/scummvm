@@ -50,16 +50,14 @@ void GameEventStore::AddConv(rapidxml::xml_node<char> *node, unsigned int &index
 }
 
 void GameEventStore::Load(const std::string &filename) {
-	warning("STUB: GameEventStore::Load()");
 
-#if 0
 	// Request current user stats from Steam
 	// m_pSteamUserStats = SteamUserStats();
 
 	// if (m_pSteamUserStats != nullptr)
 	// m_pSteamUserStats->RequestCurrentStats();
 
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("store");
 
@@ -90,7 +88,6 @@ void GameEventStore::Load(const std::string &filename) {
 				trait.push_back(n);
 		}
 	}
-#endif
 }
 
 void GameEventStore::SetAchievement(const int &id) {
