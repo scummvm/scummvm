@@ -46,6 +46,15 @@ MODULE_OBJS = \
 	item/ItemMenu.o \
 	item/ItemSlot.o \
 	item/StatPreview.o \
+	level/level_ai.o \
+	level/level_collide.o \
+	level/level_load.o \
+	level/level_objects.o \
+	level/level.o \
+	level/LevelExit.o \
+	level/MusicArea.o \
+	level/Stairs.o \
+	level/talknotify.o \
 	music/MusicManager.o \
 	people/opinion.o \
 	people/person.o \

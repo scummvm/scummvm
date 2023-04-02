@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/level/level.h"
 
 namespace Crab {
@@ -53,7 +54,7 @@ bool CompSpriteLayer(const Sprite &a, const Sprite &b) {
 void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 				 pyrodactyl::event::TriggerSet &game_over, const int &player_x, const int &player_y) {
 	Reset();
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("level");
 		if (NodeValid(node)) {
@@ -133,7 +134,8 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 					s.Load(n, anim_set);
 
 					// Set the timer target for the first time
-					s.ai_data.walk.timer.Target(sc_default.fly.delay_min + (gRandom.Num() % sc_default.fly.delay_max));
+					//s.ai_data.walk.timer.Target(sc_default.fly.delay_min + (gRandom.Num() % sc_default.fly.delay_max));
+					s.ai_data.walk.timer.Target(sc_default.fly.delay_max);
 
 					fly.push_back(s);
 				}
@@ -174,7 +176,7 @@ void Level::Load(const std::string &filename, pyrodactyl::event::Info &info,
 // Purpose: Build an index of all animation files, called once at start
 //------------------------------------------------------------------------
 void Level::LoadMoves(const std::string &filename) {
-	XMLDoc mov_list(filename);
+	XMLDoc mov_list(filename.c_str());
 	if (mov_list.ready()) {
 		rapidxml::xml_node<char> *node = mov_list.Doc()->first_node("movelist");
 		for (auto n = node->first_node("set"); n != NULL; n = n->next_sibling("set")) {
@@ -199,7 +201,7 @@ void Level::LoadMoves(const std::string &filename) {
 // Purpose: Load the default sprite constant parameters
 //------------------------------------------------------------------------
 void Level::LoadConst(const std::string &filename) {
-	XMLDoc doc(filename);
+	XMLDoc doc(filename.c_str());
 	if (doc.ready()) {
 		rapidxml::xml_node<char> *node = doc.Doc()->first_node("constant");
 		if (NodeValid(node))

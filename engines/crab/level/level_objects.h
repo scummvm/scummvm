@@ -33,6 +33,7 @@
 
 #include "crab/image/ImageManager.h"
 #include "crab/common_header.h"
+#include "crab/Rectangle.h"
 
 namespace Crab {
 
