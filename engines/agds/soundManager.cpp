@@ -97,6 +97,21 @@ void SoundManager::stopAll() {
 	_sounds.clear();
 }
 
+void SoundManager::stopAllFrom(const Common::String &process) {
+	for (auto i = _sounds.begin(); i != _sounds.end(); ) {
+		auto &sound = *i;
+		if (sound.process == process) {
+			_mixer->stopID(sound.id);
+			if (!sound.phaseVar.empty())
+				_engine->setGlobal(sound.phaseVar, 0);
+			i = _sounds.erase(i);
+		} else {
+			++i;
+		}
+	}
+}
+
+
 int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int volume, int pan, int id) {
 	debug("SoundMan::play(process: '%s', resource: '%s', filename: '%s', phaseVar: '%s', start: %d, volume: %d, pan: %d, id: %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, volume, pan, id);
 	if (filename.empty())
