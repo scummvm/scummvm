@@ -31,8 +31,8 @@
 #ifndef CRAB_EVENTSTORE_H
 #define CRAB_EVENTSTORE_H
 
-//#include "crab/ui/StateButton.h"
-//#include "crab/animation/animation.h"
+#include "crab/ui/StateButton.h"
+#include "crab/animation/animation.h"
 #include "crab/common_header.h"
 #include "crab/event/conversationdata.h"
 
@@ -46,7 +46,7 @@ struct GameEventStore {
 	std::vector<ConversationData> con;
 
 	// Data related to animations
-	//std::vector<pyrodactyl::anim::Animation> anim;
+	std::vector<pyrodactyl::anim::Animation> anim;
 
 	// Data related to the tones of a character
 	struct ToneData {
@@ -57,7 +57,7 @@ struct GameEventStore {
 	std::vector<ToneData> tone;
 
 	// We need to change player character images when switching between characters
-	//std::vector<pyrodactyl::ui::StateButtonImage> img;
+	std::vector<pyrodactyl::ui::StateButtonImage> img;
 
 	// The set of traits for various characters
 	std::vector<pyrodactyl::people::Trait> trait;
@@ -75,7 +75,7 @@ struct GameEventStore {
 
 	void Clear() {
 		con.clear();
-	//	anim.clear();
+		anim.clear();
 	}
 	void Load(const std::string &filename);
 

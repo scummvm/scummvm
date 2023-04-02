@@ -31,6 +31,7 @@ MODULE_OBJS = \
 	event/eventstore.o \
 	event/gameevent.o \
 	event/GameEventInfo.o \
+	event/gameeventmanager.o \
 	event/quest.o \
 	event/trigger.o \
 	event/triggerset.o \

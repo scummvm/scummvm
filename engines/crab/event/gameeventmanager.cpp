@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/event/gameeventmanager.h"
 
 namespace Crab {
@@ -92,6 +93,7 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 	}
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
@@ -177,6 +179,8 @@ void Manager::HandleEvents(Info &info, const std::string &player_id, SDL_Event &
 		EndSequence(info.CurLocID());
 	}
 }
+#endif
+
 //------------------------------------------------------------------------
 // Purpose: Internal Events
 //------------------------------------------------------------------------
