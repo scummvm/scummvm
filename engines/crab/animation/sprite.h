@@ -161,8 +161,8 @@ public:
 
 	const std::string &ID() { return id; }
 
-	const int W() { return clip.w; }
-	const int H() { return clip.h; }
+	int W() { return clip.w; }
+	int H() { return clip.h; }
 
 	const ImageKey &Img() { return image; }
 	Rect DialogClip(const pyrodactyl::people::PersonState &state) { return anim_set.walk.DialogClip(state); }
@@ -178,7 +178,7 @@ public:
 	Vector2i CamFocus();
 
 	double DistSq(const Sprite &s);
-	void EffectImg(bool visible) { img_eff.visible = visible; }
+	void EffectImg(bool vis) { img_eff.visible = vis; }
 	bool LastFrame() { return anim_set.fight.LastFrame(); }
 
 	bool TakingDamage(Sprite &sp, const pyrodactyl::ai::SpriteConstant &sc);
