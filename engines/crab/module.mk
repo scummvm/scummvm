@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	animation/animation.o \
 	animation/AnimationFrame.o \
 	animation/animframe.o \
+	animation/animset.o \
 	animation/fightanim.o \
 	animation/fightmove.o \
 	animation/fightmoves.o \
