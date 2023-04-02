@@ -49,6 +49,7 @@ MODULE_OBJS = \
 	item/StatPreview.o \
 	level/level_ai.o \
 	level/level_collide.o \
+	level/level_draw.o \
 	level/level_load.o \
 	level/level_objects.o \
 	level/level.o \
@@ -68,6 +69,7 @@ MODULE_OBJS = \
 	text/TextManager.o \
 	TMX/TMXLayer.o \
 	TMX/TMXTileSet.o \
+	TMX/TMXMap.o \
 	ui/AlphaImage.o \
 	ui/button.o \
 	ui/Caption.o \
