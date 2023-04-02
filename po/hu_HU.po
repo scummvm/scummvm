@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-29 23:13+0000\n"
+"POT-Creation-Date: 2023-04-02 19:40+0000\n"
 "PO-Revision-Date: 2023-04-01 12:35+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5643,19 +5643,19 @@ msgstr "Csaló mód engedélyezés"
 msgid "Debug info and level selection becomes available"
 msgstr "Hibakeresési információ és szintválasztás elérhetõvé válik"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
 msgid "Move up"
 msgstr "Mozgás fel"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
 msgid "Move down"
 msgstr "Mozgás le"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
 msgid "Move left"
 msgstr "Mozgás balra"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:185
 msgid "Move right"
 msgstr "Mozgás jobbra"
 
@@ -6819,15 +6819,15 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Érvénytelen fájlnév a mentéshez"
 
-#: engines/nancy/input.cpp:156
+#: engines/nancy/input.cpp:153
 msgid "Left Click Interact"
 msgstr "Bal Katt Interakció"
 
-#: engines/nancy/input.cpp:163
+#: engines/nancy/input.cpp:160
 msgid "Right Click Interact"
 msgstr "Jobb Katt Interakció"
 
-#: engines/nancy/input.cpp:194
+#: engines/nancy/input.cpp:191
 msgid "Fast move modifier"
 msgstr "Gyors mozgás módosító"
 

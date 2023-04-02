@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-29 23:13+0000\n"
+"POT-Creation-Date: 2023-04-02 19:40+0000\n"
 "PO-Revision-Date: 2023-03-30 13:16+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5579,19 +5579,19 @@ msgstr "チートモードを有効化"
 msgid "Debug info and level selection becomes available"
 msgstr "デバッグ情報とレベル選択を利用可能にする"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
 msgid "Move up"
 msgstr "上"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
 msgid "Move down"
 msgstr "下"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
 msgid "Move left"
 msgstr "左に行く"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:185
 msgid "Move right"
 msgstr "右に行く"
 
@@ -6709,15 +6709,15 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "無効なセーブファイル名です"
 
-#: engines/nancy/input.cpp:156
+#: engines/nancy/input.cpp:153
 msgid "Left Click Interact"
 msgstr "左クリックで会話"
 
-#: engines/nancy/input.cpp:163
+#: engines/nancy/input.cpp:160
 msgid "Right Click Interact"
 msgstr "右クリックで会話"
 
-#: engines/nancy/input.cpp:194
+#: engines/nancy/input.cpp:191
 msgid "Fast move modifier"
 msgstr "高速移動の修正"
 

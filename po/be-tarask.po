@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-29 23:13+0000\n"
+"POT-Creation-Date: 2023-04-02 19:40+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -5616,19 +5616,19 @@ msgstr "Далучыць рэжым махляваньня"
 msgid "Debug info and level selection becomes available"
 msgstr "Выбар роўню ды інфармацыя пра наладжваньне робяцца даступнымі"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
 msgid "Move up"
 msgstr "Рухацца ўгару"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
 msgid "Move down"
 msgstr "Рухацца ўніз"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
 msgid "Move left"
 msgstr "Рухацца налева"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:185
 msgid "Move right"
 msgstr "Рухацца направа"
 
@@ -6802,15 +6802,15 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Няпэўная назва файлу для захаваньня"
 
-#: engines/nancy/input.cpp:156
+#: engines/nancy/input.cpp:153
 msgid "Left Click Interact"
 msgstr "Інтэракцыя левым пстрыкам"
 
-#: engines/nancy/input.cpp:163
+#: engines/nancy/input.cpp:160
 msgid "Right Click Interact"
 msgstr "Інтэракцыя правым пстрыкам"
 
-#: engines/nancy/input.cpp:194
+#: engines/nancy/input.cpp:191
 msgid "Fast move modifier"
 msgstr "Вызначнік хуткага руху"
 
