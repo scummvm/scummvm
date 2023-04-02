@@ -462,33 +462,6 @@ const Common::Array<Common::Array<const char *>> _tvdGoodbyeTexts = { {
     "<c1>b<c0>ye.<h>", // EGBYE, again
 } };
 
-const Common::Array<const char *> _tvdItemNames = {
-    "Maker Note",
-    "Magic Book",
-    "Feather",
-    "Vervain",
-    "Crypt Key",
-    "Jewelry Box",
-    "House Key",
-    "Dagger",
-    "Class Ring",
-    "Mortar And Pestle",
-    "Mask",
-    "Lapis Jewel",
-    "Case Key",
-    "Gold Coin",
-    "Matches",
-    "White Candle",
-    "Black Candle",
-    "Fence Piece",
-    "Ring Of Power",
-    "Shovel",
-    "Perth Rune",
-    "Rune Bag",
-    "Confederate Hat",
-    "Clock Key"
-};
-
 const Common::Array<const char *> _tvdEventFlagNames = {
     "Aristocrat Bonnie told about mikhails bgnd",
     "AskedCandle asked about a black candle",

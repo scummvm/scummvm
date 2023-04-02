@@ -24,7 +24,7 @@
 #include "nancy1_data.h"
 
 #define NANCYDAT_MAJOR_VERSION 0
-#define NANCYDAT_MINOR_VERSION 1
+#define NANCYDAT_MINOR_VERSION 2
 
 #define NANCYDAT_NUM_GAMES 2
 
@@ -76,7 +76,6 @@ void writeGameData( File &output,
                     const Common::Array<Common::Array<const char *>> *goodbyeTexts,
                     const Common::Array<Common::Array<const char *>> *hintTexts,
                     const Common::Array<const char *> *ringingTexts,
-                    const Common::Array<const char *> &itemNames,
                     const Common::Array<const char *> &eventFlagNames) {
     
     // Write game constants
@@ -140,9 +139,6 @@ void writeGameData( File &output,
         output.writeUint16(0);
     }
 
-    // Write item names
-    writeToFile(output, itemNames);
-
     // Write event flag names
     writeToFile(output, eventFlagNames);
 }
@@ -180,7 +176,6 @@ int main(int argc, char *argv[]) {
                     &_tvdGoodbyeTexts,
                     nullptr,
                     nullptr,
-                    _tvdItemNames,
                     _tvdEventFlagNames);
     
     // Nancy Drew: Secrets Can Kill data
@@ -195,7 +190,6 @@ int main(int argc, char *argv[]) {
                     &_nancy1GoodbyeTexts,
                     &_nancy1HintTexts,
                     &_nancy1TelephoneRinging,
-                    _nancy1ItemNames,
                     _nancy1EventFlagNames);
 
     // Write the offsets for each game in the header
