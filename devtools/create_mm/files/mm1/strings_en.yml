@@ -1052,13 +1052,16 @@ maps:
 		blacksmith_inside: "A young gnome materializes, asking,\n\"Would you be wanting my services(Y/N)?\""
 		inn_inside: "An eerie silence pervades the deserted\ninn. suddenly, a ghostly apparition\nappears, asking, \"Sign in (Y/N)?\""
 		market_inside: "A faint outline of a man appears,\nsaying, \"Need some feed (Y/N)?\""
-		temple_inside: "Bright lights swirl throughout the room.a horrifying voice shrieks,\n\"Need help (Y/N)?\""
+		temple_inside: "Bright lights swirl throughout the room.A horrifying voice shrieks,\n\"Need help (Y/N)?\""
 		training_inside: "Several empty suits of armor approach\nasking, \"Need training (Y/N)?\""
 
 		telgoran1: "An elf dressed in robes approaches...\n\n"
 		telgoran2: "\"Friends, I am telgoran. This scroll you\nhave brought me will be very helpful\n(+2500 exp) Here's 1500 gold for your\nservices. I'll tell you a secret, if\ntreasure is what you want...\""
 		telgoran3: "\"The brothers you must find...\nPortsmith and Algary are combined.\"" 
 		telgoran4: "\"You're not the couriers!\""
+	emap03:
+		blacksmith_inside: "A young gnome materializes, asking,\n\"Would you be wanting my services (Y/N)?\""
+		temple_inside: "Bright lights swirl throughout the room. A horrifying voice shrieks,\n\"Need help (Y/N)?\""
 
 	map04:
 		blacksmith: "\"Current Trends Ironworks\""
