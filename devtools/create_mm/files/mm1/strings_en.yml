@@ -1073,16 +1073,18 @@ maps:
 
 		blacksmith_inside: "A boistrous half-orc proclaims,\n\"We carry the very latest,\nbrowse (Y/N)?\""
 		inn_inside: "Adjusting his spectacles, an elderly\ngnome eyes the party and asks,\n\"Signing in (Y/N)?\""
-		market_inside: "The chef says,\"i only serve the best!\nHungry (Y/N)?\""
+		market_inside: "The chef says,\"I only serve the best!\nHungry (Y/N)?\""
 		training_inside: "Three huge armor clad knights bark in\nunison, \"Want a good workout (Y/N)?\""
 		temple_inside: "Several fat clerics welcome you.\nNeed help (Y/N)?"
 
 		agar1: "The wizard Agar speaks:\n\n"
 		agar2: "\"You have done well to bring me this\nscroll. (+1000 exp) Now take it to my\nprotege Telgoran in Dusk.\""
-		agar3: "\"I have no business with you. begone!\""
+		agar3: "\"I have no business with you. Begone!\""
 		guards: "Town guards: you're under arrest!\n\na)Attack b)Bribe c)Run d)Surrender"
 		sentence: "High court sentence: years= "
 		treasure: "Town treasure, steal (Y/N)?"
+	emap04:
+		guards: "Town guards: you're under arrest!\n\nA) Attack B) Bribe C) Run D) Surrender"
 
 	map05:
 		arena: "\"The Arena\""
