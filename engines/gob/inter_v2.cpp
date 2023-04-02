@@ -379,7 +379,7 @@ void Inter_v2::o2_initMult() {
 	_vm->_draw->_spriteBottom = _vm->_mult->_animHeight;
 	_vm->_draw->_destSpriteX = 0;
 	_vm->_draw->_destSpriteY = 0;
-	_vm->_draw->spriteOperation(0);
+	_vm->_draw->spriteOperation(DRAW_BLITSURF);
 
 	debugC(4, kDebugGraphics, "o2_initMult: x = %d, y = %d, w = %d, h = %d",
 		  _vm->_mult->_animLeft, _vm->_mult->_animTop,
