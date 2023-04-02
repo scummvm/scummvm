@@ -804,6 +804,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// French titles
 	{ "1contre100",			"1 contre 100" },
+	{ "adibouhumain",		"Adibou: Aventure dans le corps humain" },
 	{ "adiboumots",			"Adibou: Joue avec les mots et les nombres (5-6 ans)" },
 	{ "affaires1",			"Affaires à suivre: L'Île diabolique" },
 	{ "boulebill",			"Boule et Bill: Au Voleur!" },
@@ -8501,6 +8502,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2_l("1contre100", "", "start.exe", "00541c08177b6d55a3df893bcfccc843", 2764454,
 								 "main.dxr",  "c2bf555f6209e51a1c8cce29c8e6534f", 43315121, Common::FR_FRA, 1010),
+
+	WINGAME1_l("adibouhumain", "", "Adibou_CH.exe", "t:d955b857b9e506d1e3141ca4d81b59d5", 2633827, Common::FR_FRA, 1010),
 
 	WINGAME1_l("adiboumots", "", "ADBR_EX56.exe", "t:aee1d0997a82c796292b59d9c398ca20", 3872922, Common::FR_FRA, 1010),
 
