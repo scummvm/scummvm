@@ -1878,6 +1878,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Decomposed variant of the above
 	MACGAME1_l("japanart07", "", "xn-- -17t4bh9etpa0pa0nxb5n6jma0692i", "f5277c53bacd27936158dd3867e587e2", 392401, Common::JA_JPN, 310),
 
+	// Original filename is '眠れぬ夜の小さなお話'
+	MACGAME1t_l("nemurenu", "", "xn--t8jva7dgk2pt90zv6ev54ednzb", "8b642579d69604d2e08da5b7f70e403c", 392381, Common::JA_JPN, 311),
+
 	MACGAME1_l("overringunder", "", "Over-Ring-Under", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 910381, Common::JA_JPN, 300),
 
 	// Original filename is ~LEGEND OF PSY•S CITY~
