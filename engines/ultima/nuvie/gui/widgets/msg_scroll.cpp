@@ -881,7 +881,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 	if (button == 1) { // left click == select word
 		if (input_mode) {
 			token_str = get_token_string_at_pos(x, y);
-			if (permit_input != NULL) {
+			if (permit_input != NULL && token_str.length()) {
 				if (strchr(permit_input, token_str[0])
 				        || strchr(permit_input, tolower(token_str[0]))) {
 					input_buf_add_char(token_str[0]);

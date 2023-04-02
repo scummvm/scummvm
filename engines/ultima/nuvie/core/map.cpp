@@ -759,19 +759,29 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 
 //	returns true if a line hits something travelling from (start_x, start_y) to
 //	(end_x, end_y).  If a hit occurs Result is filled in with the relevant info.
+//	If want_screen_space is true input tile coordinates are multiplied by 16 for
+//	line calculation and scaled back down before testing for collisions. The
+//	original game does this for projectiles.
 bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
-				   uint8 flags, LineTestResult &Result, uint32 skip, Obj *excluded_obj) {
+				   uint8 flags, LineTestResult &Result, uint32 skip, Obj *excluded_obj,
+				   bool want_screen_space) {
 	//  standard Bresenham's algorithm.
-	int deltax = abs(end_x - start_x);
-	int deltay = abs(end_y - start_y);
-
-	int x = start_x;
-	int y = start_y;
+	uint8 scale_factor_log2 = 0;
+	if (want_screen_space)
+		scale_factor_log2 = 4; //  set scale factor to 16
+	int deltax = abs(end_x - start_x) << scale_factor_log2;
+	int deltay = abs(end_y - start_y) << scale_factor_log2;
+	int x = (start_x << scale_factor_log2);
+	int y = (start_y << scale_factor_log2);
+	x += ((1 << scale_factor_log2) >> 1); //  start at the center of the tile
+	y += ((1 << scale_factor_log2) >> 1); //  when in screen space
 	int d;
 	int xinc1, xinc2;
 	int yinc1, yinc2;
 	int dinc1, dinc2;
 	uint32 count;
+	int xtile = start_x;
+	int ytile = start_y;
 
 
 	if (deltax >= deltay) {
@@ -806,9 +816,14 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 	}
 
 	for (uint32 i = 0; i < count; i++) {
-		//  test the current location
-		if ((i >= skip) && (testIntersection(x, y, level, flags, Result, excluded_obj) == true))
-			return  true;
+		//  only test for collision if tile coordinates have changed
+		if ((scale_factor_log2 == 0 || x >> scale_factor_log2 != xtile || y >> scale_factor_log2 != ytile)) {
+			xtile = x >> scale_factor_log2; //  scale back down to tile
+			ytile = y >> scale_factor_log2; //  space if necessary
+			//  test the current location
+			if ((i >= skip) && (testIntersection(xtile, ytile, level, flags, Result, excluded_obj) == true))
+				return true;
+		}
 
 		if (d < 0) {
 			d += dinc1;

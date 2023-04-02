@@ -76,7 +76,9 @@ enum {
 	JE_BMB_UP = 19,
 	JE_FMB_DOWN = 20,
 	JE_FMB_UP = 21,
-	JE_TV_REMOTE = 22,
+	JE_MOUSE_WHEEL_UP = 22,
+	JE_MOUSE_WHEEL_DOWN = 23,
+	JE_TV_REMOTE = 24,
 	JE_QUIT = 0x1000,
 	JE_MENU = 0x1001
 };
@@ -1146,6 +1148,26 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		e.type = Common::EVENT_X2BUTTONUP;
 		e.mouse.x = arg1;
 		e.mouse.y = arg2;
+
+		pushEvent(e);
+
+		return;
+
+	case JE_MOUSE_WHEEL_UP:
+		e.type = Common::EVENT_WHEELUP;
+		e.mouse.x = arg1;
+		e.mouse.y = arg2;
+//		e.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+
+		pushEvent(e);
+
+		return;
+
+	case JE_MOUSE_WHEEL_DOWN:
+		e.type = Common::EVENT_WHEELDOWN;
+		e.mouse.x = arg1;
+		e.mouse.y = arg2;
+//		e.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
 
 		pushEvent(e);
 

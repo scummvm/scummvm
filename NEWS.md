@@ -46,6 +46,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix Ultima VI crash opening new-style spellbook gump.
    - Fix Ultima VI actor doll and gump colors.
    - Fix Ultima VI crash using look action on walls.
+   - Fix several other miscellaneous crashes.
+   - Fix spawners and projectiles to more closely match the original.
 
  Voyeur:
    - Added support for German fan translation.

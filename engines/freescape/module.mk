@@ -36,6 +36,11 @@ MODULE_OBJS += \
 	gfx_tinygl_texture.o
 endif
 
+ifdef USE_OPENGL_SHADERS
+MODULE_OBJS += \
+	gfx_opengl_shaders.o
+endif
+
 ifdef USE_OPENGL
 MODULE_OBJS += \
 	gfx_opengl.o \

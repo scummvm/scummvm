@@ -328,6 +328,16 @@ bool Events::handleEvent(const Common::Event *event_) {
 	if (game->user_paused())
 		return true;
 
+	// if input was requested, handle it first so other events do not interfere
+	if (input.get_text && scroll->has_input()) {
+		if (active_alt_code) {
+			endAction(); // exit INPUT_MODE
+			alt_code_input(scroll->get_input().c_str());
+		} else {
+			doAction();
+		}
+	}
+
 	switch (event_->type) {
 	case Common::EVENT_MOUSEMOVE:
 		break;
@@ -348,14 +358,6 @@ bool Events::handleEvent(const Common::Event *event_) {
 		break;
 	}
 
-	if (input.get_text && scroll->has_input()) {
-		if (active_alt_code) {
-			endAction(); // exit INPUT_MODE
-			alt_code_input(scroll->get_input().c_str());
-		} else {
-			doAction();
-		}
-	}
 	return true;
 }
 

@@ -30,7 +30,7 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-Interaction::Interaction(const Common::String &name, int portrait) : ScrollView(name) {
+Interaction::Interaction(const Common::String &name, int portrait) : PartyView(name) {
 	_bounds = Common::Rect(8, 8, 224, 140);
 	_frame.load("frame.fac");
 	_portrait.load(Common::String::format("face%02d.fac", portrait));
@@ -46,16 +46,16 @@ bool Interaction::msgGame(const GameMessage &msg) {
 		return true;
 	}
 
-	return ScrollView::msgGame(msg);
+	return PartyView::msgGame(msg);
 }
 
 bool Interaction::msgUnfocus(const UnfocusMessage &msg) {
-	ScrollView::msgUnfocus(msg);
+	PartyView::msgUnfocus(msg);
 	return true;
 }
 
 void Interaction::draw() {
-  	ScrollView::draw();
+  	PartyView::draw();
 
 	Graphics::ManagedSurface s = getSurface();
 	_frame.draw(&s, 0, Common::Point(8, 8));
@@ -67,14 +67,14 @@ void Interaction::draw() {
 	}
 
 	for (uint i = 0; i < _lines.size(); ++i) {
-		writeLine(6 + i, _lines[i], ALIGN_MIDDLE);
+		writeLine(i, _lines[i], ALIGN_MIDDLE);
 	}
 }
 
 bool Interaction::tick() {
 	if (_animated && ++_tickCtr >= 10) {
 		_tickCtr = 0;
-		_portraitFrameNum = g_engine->getRandomNumber(0, 3);
+		_portraitFrameNum = g_engine->getRandomNumber(0, 2);
 		redraw();
 	}
 
@@ -101,7 +101,6 @@ bool Interaction::msgAction(const ActionMessage &msg) {
 	} else if (msg._action == KEYBIND_SELECT) {
 		// ***DEBUG*** - Used for cycling through portraits.
 		// To let me pick good portraits from Xeen
-		_animated = false;
 		_lines.clear();
 		++_portraitNum;
 		_portrait.load(Common::String::format("face%02d.fac", _portraitNum));
@@ -109,7 +108,7 @@ bool Interaction::msgAction(const ActionMessage &msg) {
 		Interaction::draw();
 		writeNumber(20, 70, _portraitNum);
 
-	} else {
+	} else if (!PartyView::msgAction(msg)) {
 		viewAction();
 	}
 
@@ -117,7 +116,10 @@ bool Interaction::msgAction(const ActionMessage &msg) {
 }
 
 bool Interaction::msgMouseDown(const MouseDownMessage &msg) {
-	viewAction();
+	if (!PartyView::msgMouseDown(msg)) {
+		viewAction();
+	}
+
 	return true;
 }
 

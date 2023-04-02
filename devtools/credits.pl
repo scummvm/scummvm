@@ -657,6 +657,10 @@ begin_credits("Credits");
 				add_person("Manuel Alfayate", "vanfanel", "");
 			end_section();
 
+			begin_section("Libretro");
+				add_person("Giovanni Cascione", "spleen1981", "");
+			end_section();
+
 		end_section();
 
 		begin_section("Other subsystems", "other_subsystems");

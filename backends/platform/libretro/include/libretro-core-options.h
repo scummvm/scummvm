@@ -82,6 +82,11 @@ struct retro_core_option_v2_category option_cats_us[] = {
 		"Frameskip",
 		"Configure frameskip settings"
 	},
+	{
+		"performance",
+		"Performance",
+		"Configure performance settings"
+	},
 	{ NULL, NULL, NULL },
 };
 
@@ -199,14 +204,14 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"scummvm_frameskip_type",
 		"Frameskip Mode",
 		NULL,
-		"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Manual' uses the 'Frameskip Threshold (%)' setting. 'Fixed' uses the 'Fixed Frameskip' setting.",
+		"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Threshold' uses the 'Frameskip Threshold (%)' setting. 'Fixed' uses the 'Fixed Frameskip' setting.",
 		NULL,
 		"frameskip",
 		{
 			{ "disabled", NULL },
 			{ "fixed", "Fixed" },
 			{ "auto", "Auto" },
-			{ "manual", "Manual" },
+			{ "manual", "Threshold" },
 			{ NULL, NULL },
 		},
 		"auto"
@@ -215,7 +220,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"scummvm_frameskip_threshold",
 		"Frameskip Threshold (%)",
 		NULL,
-		"When 'Frameskip' is set to 'Manual', specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently.",
+		"When 'Frameskip' is set to 'Threshold', specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently.",
 		NULL,
 		"frameskip",
 		{
@@ -258,12 +263,26 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"0"
 	},
 	{
+		"scummvm_auto_performance_tuner",
+		"Auto performance tuner",
+		NULL,
+		"In-game automatic change of performance/frameskip settings if low performances are detected. 'Allow Timing Inaccuracies' and 'Auto Frameskip' will be temporarily set on in sequence, if necessary, for the current game session only. Single saved settings will not be affected.",
+		NULL,
+		"performance",
+		{
+			{"disabled", NULL},
+			{"enabled", NULL},
+			{NULL, NULL},
+		},
+		"enabled"
+	},
+	{
 		"scummvm_allow_timing_inaccuracies",
 		"Allow Timing Inaccuracies",
 		NULL,
 		"Allow timing inaccuracies that reduces CPU requirements. Though most timing deviations are imperceptible, in some cases it may introduce audio sync/timing issues, hence this option should be enabled only if full speed cannot be reached otherwise.",
 		NULL,
-		NULL,
+		"performance",
 		{
 			{"disabled", NULL},
 			{"enabled", NULL},
@@ -274,6 +293,22 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 #else
 		"disabled"
 #endif
+	},
+	{
+		"scummvm_reduce_framerate_type",
+		"Reduce framerate",
+		NULL,
+		"Reduces current framerate to reduce CPU requirements. 'Auto' mode temporarily reduces the framerate as needed when audio buffer underrun is detected, while the in the other modes the reduction is constant.",
+		NULL,
+		"performance",
+		{
+			{ "disabled", NULL },
+			{ "auto", "Auto" },
+			{ "half", "1/2 of current framerate" },
+			{ "quarter", "1/4 of current framerate" },
+			{ NULL, NULL },
+		},
+		"disabled"
 	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };

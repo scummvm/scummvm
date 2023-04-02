@@ -673,7 +673,6 @@ bool ObjManager::is_stackable(Obj *obj) {
 		case OBJ_U6_BREAD: // 0x80, // loaf of bread
 		case OBJ_U6_MEAT_PORTION: // 0x81, // portion of meat
 		case OBJ_U6_FLASK_OF_OIL: // 0x53, // flask of oil
-		case OBJ_U6_EGG: // 0x14F, // egg
 		case OBJ_U6_GOLD_NUGGET: // 0x59, // gold nugget
 		case OBJ_U6_ZU_YLEM: // 0x5B, // Zu Ylem
 		case OBJ_U6_SNAKE_VENOM: // 0x5C, // silver snake venom
