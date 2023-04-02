@@ -191,7 +191,7 @@ public:
 	}
 
 	// Get whether game is iron man or not
-	const bool IronMan() { return ironman; }
+	bool IronMan() { return ironman; }
 	void IronMan(const bool &val) { ironman = val; }
 	void LoadIronMan(rapidxml::xml_node<char> *node) {
 		std::string str;
