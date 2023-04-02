@@ -38,7 +38,7 @@
 #include "crab/GameParam.h"
 #include "crab/image/Image.h"
 //#include "crab/LoadingScreen.h"
-//#include "crab/TMX/TMXTileSet.h"
+#include "crab/TMX/TMXTileSet.h"
 #include "crab/common_header.h"
 #include "crab/input/cursor.h"
 #include "crab/loaders.h"
@@ -73,7 +73,7 @@ class ImageManager {
 
 public:
 	// The tile sets used in the level
-	//TMX::TileSetGroup tileset;
+	TMX::TileSetGroup tileset;
 
 	// This image is used to notify player about changes to quests and inventory
 	ImageKey notify;

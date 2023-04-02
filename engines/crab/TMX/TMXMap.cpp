@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/TMX/TMXMap.h"
 #include "crab/text/TextManager.h"
 #include "crab/collision.h"
@@ -62,7 +63,7 @@ TMXMap::TMXMap() {
 //------------------------------------------------------------------------
 
 void TMXMap::Load(const std::string &path, std::string filename) {
-	XMLDoc conf(path + filename);
+	XMLDoc conf((path + filename).c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("map");
 		if (NodeValid(node)) {
@@ -249,6 +250,7 @@ void TMXMap::Reset() {
 // Purpose: Draw functions
 //------------------------------------------------------------------------
 void TMXMap::DrawDebug(const Rect &camera) {
+#if 0
 	using namespace pyrodactyl::text;
 
 	for (auto i = area_trig.begin(); i != area_trig.end(); ++i)
@@ -311,6 +313,7 @@ void TMXMap::DrawDebug(const Rect &camera) {
 	prev = *j;
 	}
 	}*/
+#endif
 }
 
 //------------------------------------------------------------------------
