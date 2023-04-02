@@ -794,11 +794,7 @@ uint getSizeNextPOT(uint size) {
 	// So for now disable this code when compiled with an older SDK, which means it is only
 	// available when running on iOS 11+ if it has been compiled on iOS 11+
 #ifdef __IPHONE_11_0
-#if __has_builtin(__builtin_available)
 	if ( @available(iOS 11, tvOS 11, *) ) {
-#else
-	if ( [[[UIApplication sharedApplication] keyWindow] respondsToSelector:@selector(safeAreaInsets)] ) {
-#endif
 		CGRect screenSize = [[UIScreen mainScreen] bounds];
 		CGRect newFrame = screenSize;
 #if TARGET_OS_IOS
