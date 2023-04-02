@@ -29,6 +29,7 @@ namespace Gob {
 SaveLoad_Adibou1::SaveFile SaveLoad_Adibou1::_saveFiles[] = {
 	{ "bou.inf", kSaveModeSave, nullptr, "adibou1"},
 	{ "dessin.inf", kSaveModeSave, nullptr, "paint game drawing"},
+	{ "const.inf", kSaveModeSave, nullptr, "construction game"},
 };
 
 SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
@@ -36,6 +37,7 @@ SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
 
 	_saveFiles[0].handler = _bouHandler = new GameFileHandler(vm, targetName, "bouinf");
 	_saveFiles[1].handler = _drawingHandler = new SpriteHandler(vm, targetName, "drawing");
+	_saveFiles[2].handler = _constructionHandler = new GameFileHandler(vm, targetName, "construction");
 }
 
 SaveLoad_Adibou1::~SaveLoad_Adibou1() {

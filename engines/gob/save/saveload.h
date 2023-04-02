@@ -350,6 +350,7 @@ protected:
 	static SaveFile _saveFiles[];
 
 	GameFileHandler *_bouHandler;
+	GameFileHandler *_constructionHandler;
 	SpriteHandler   *_drawingHandler;
 
 	SaveHandler *getHandler(const char *fileName) const override;
