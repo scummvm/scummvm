@@ -46,7 +46,7 @@ bool NodeValid(const Common::String &name, rapidxml::xml_node<char> *parent_node
 // Functions to load attributes from xml files
 // return true on success, false on failure
 bool LoadStr(Common::String &val, const Common::String &name, rapidxml::xml_node<char> *node, const bool &echo = true);
-static inline bool LoadStr(std::string &val, const std::string &name, rapidxml::xml_node<char> *node, const bool &echo = true) {}
+bool LoadStr(std::string &val, const std::string &name, rapidxml::xml_node<char> *node, const bool &echo = true);
 
 // Used for loading numerical types
 template<typename T>

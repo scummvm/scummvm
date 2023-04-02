@@ -78,6 +78,21 @@ bool LoadStr(Common::String &val, const Common::String &name, rapidxml::xml_node
 	return true;
 }
 
+bool LoadStr(std::string &val, const std::string &name, rapidxml::xml_node<char> *node, const bool &echo) {
+	if (node->first_attribute(name.c_str()) != NULL)
+		val = node->first_attribute(name.c_str())->value();
+	else {
+		/*if (echo)
+		{
+		std::string error_msg = "string " + name + " not found in " + node->name() + "\n";
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING, "XML error", error_msg.c_str(), NULL);
+		}*/
+		return false;
+	}
+
+	return true;
+}
+
 #if 0
 
 bool LoadRect(SDL_Rect &rect, rapidxml::xml_node<char> *node, const bool &echo,
