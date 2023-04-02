@@ -154,23 +154,36 @@ static void increase_performance() {
 	retro_msg.duration = 3000;
 	retro_msg.msg = "";
 
-	if (!timing_inaccuracies_enabled && !(performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES)) {
-		retro_msg.msg = "Auto performance tuner: 'Allow Timing Inaccuracies' enabled";
-		log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
+	if (!(performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES)) {
 		performance_switch |= PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
-	} else if (reduce_framerate_type != REDUCE_FRAMERATE_SHIFT_AUTO && !(performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
-		retro_msg.msg = "Auto performance tuner: 'Auto reduce framerate' enabled";
-		log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Auto reduce framerate' enabled.\n");
-		performance_switch |= PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
-	} else if (frameskip_type != 2 && !(performance_switch & PERF_SWITCH_ENABLE_AUTO_FRAMESKIP)) {
-		retro_msg.msg = "Auto performance tuner: 'Auto frameskip' enabled";
-		log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Auto frameskip' enabled.\n");
-		performance_switch |= PERF_SWITCH_ENABLE_AUTO_FRAMESKIP;
-	} else
-		performance_switch |= PERF_SWITCH_OVER;
+		if (!timing_inaccuracies_enabled) {
+			retro_msg.msg = "Auto performance tuner: 'Allow Timing Inaccuracies' enabled";
+			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
+			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+			return;
+		}
+	}
 
-	if (retro_msg.msg[0] != '\0')
-		environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+	if (!(performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
+		performance_switch |= PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
+		if (reduce_framerate_type != REDUCE_FRAMERATE_SHIFT_AUTO) {
+			retro_msg.msg = "Auto performance tuner: 'Auto reduce framerate' enabled";
+			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Auto reduce framerate' enabled.\n");
+			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+			return;
+		}
+	}
+
+	if (!(performance_switch & PERF_SWITCH_ENABLE_AUTO_FRAMESKIP)) {
+		performance_switch |= PERF_SWITCH_ENABLE_AUTO_FRAMESKIP;
+		if (frameskip_type != 2) {
+			retro_msg.msg = "Auto performance tuner: 'Auto frameskip' enabled";
+			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Auto frameskip' enabled.\n");
+			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
+		}
+	}
+
+	performance_switch |= PERF_SWITCH_OVER;
 }
 
 static void update_variables(void) {
@@ -316,7 +329,10 @@ static void update_variables(void) {
 }
 
 bool timing_inaccuracies_is_enabled(){
-	return timing_inaccuracies_enabled || (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES);
+	if (performance_switch & PERF_SWITCH_ON)
+		return (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES);
+	else
+		return timing_inaccuracies_enabled;
 }
 
 bool consecutive_screen_updates_is_enabled(){
