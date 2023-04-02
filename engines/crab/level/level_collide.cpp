@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/level/level.h"
 
 namespace Crab {
@@ -42,6 +43,7 @@ using namespace pyrodactyl::input;
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::music;
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: See if player clicked on a sprite they are colliding with
 //------------------------------------------------------------------------
@@ -77,7 +79,7 @@ bool Level::ContainsClick(const std::string &id, const SDL_Event &Event) {
 
 	return false;
 }
-
+#endif
 //------------------------------------------------------------------------
 // Purpose: Find if a layer is visible (used only for objects with layers associated with them)
 //------------------------------------------------------------------------

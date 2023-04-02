@@ -28,6 +28,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/level/level.h"
 
 namespace Crab {
@@ -86,6 +87,7 @@ void Level::CalcProperties(Info &info) {
 		i->CalcProperties(info);
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle the level movement
 //------------------------------------------------------------------------
@@ -112,6 +114,7 @@ void Level::HandleEvents(Info &info, const SDL_Event &Event) {
 
 	objects[player_index].HandleEvents(info, camera, sc_default, Event);
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Swap the player sprites
