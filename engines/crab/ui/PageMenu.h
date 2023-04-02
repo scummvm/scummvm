@@ -96,7 +96,7 @@ public:
 	void CurrentPage(int &val) { current_page = val; }
 
 	// Get the index of the hovered element in the menu
-	const int HoverIndex() {
+	int HoverIndex() {
 		if (menu.at(current_page).HoverIndex() >= 0)
 			return (current_page * elements_per_page) + menu.at(current_page).HoverIndex();
 
@@ -104,8 +104,8 @@ public:
 	}
 
 	// Get the base position of the elements
-	const int BaseX(const int &count) { return ref.x + inc.x * (count % cols); }
-	const int BaseY(const int &count) { return ref.y + inc.y * (count / cols); }
+	int BaseX(const int &count) { return ref.x + inc.x * (count % cols); }
+	int BaseY(const int &count) { return ref.y + inc.y * (count / cols); }
 
 	// This is used to get the coordinates of a button
 	const int &CurX(const int &count) { return menu[current_page].element[count].x; }

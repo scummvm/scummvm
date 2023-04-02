@@ -273,7 +273,7 @@ public:
 	//------------------------------------------------------------------------
 	void UseKeyboard(const bool &val) { use_keyboard = val; }
 	void Clear() { element.clear(); }
-	const int HoverIndex() { return hover_index; }
+	int HoverIndex() { return hover_index; }
 
 	//------------------------------------------------------------------------
 	// Purpose: Assign traversal paths

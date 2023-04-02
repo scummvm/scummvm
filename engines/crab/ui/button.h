@@ -113,7 +113,7 @@ public:
 	void Init(const Button &ref, const int &XOffset = 0, const int &YOffset = 0);
 
 	void Img(Button &b) { img = b.img; }
-	void Img(ButtonImage &img) { this->img = img; }
+	void Img(ButtonImage &image) { img = image; }
 	ButtonImage Img() { return img; }
 
 	void Draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);

@@ -44,7 +44,7 @@ using namespace pyrodactyl::input;
 //------------------------------------------------------------------------
 // Purpose: Return pressed/depressed state of key
 //------------------------------------------------------------------------
-const bool InputManager::State(const InputType &val) {
+bool InputManager::State(const InputType &val) {
 	warning("STUB: InputManager::State()");
 
 #if 0

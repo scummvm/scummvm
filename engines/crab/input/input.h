@@ -125,7 +125,7 @@ public:
 #endif
 
 	// These functions return true if key is pressed, false otherwise
-	const bool State(const InputType &val);
+	bool State(const InputType &val);
 
 	void CreateBackup();
 	void RestoreBackup();

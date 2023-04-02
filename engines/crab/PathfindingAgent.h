@@ -71,8 +71,8 @@ public:
 	void SetParent(PlannerNode *p) { parent = p; }
 	void SetChild(PlannerNode *c) { child = c; }
 	void SetHCost(double c) { cost = c; }
-	void SetFinalCost(double cost) { finalCost = cost; }
-	void SetGivenCost(double cost) { givenCost = cost; }
+	void SetFinalCost(double c) { finalCost = c; }
+	void SetGivenCost(double c) { givenCost = c; }
 };
 
 class PathfindingAgent {
