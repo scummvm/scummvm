@@ -58,6 +58,23 @@ protected:
 	 */
 	void addText(const Common::String &str);
 
+	/**
+	 * Write out a line
+	 */
+	void writeLine(int lineNum, const Common::String &str,
+		TextAlign align = ALIGN_LEFT, int xp = 0) {
+		PartyView::writeLine(6 + lineNum, str, align, xp);
+	}
+
+	/**
+	 * Write out a line
+	 */
+	void writeLine(int lineNum, int value,
+		TextAlign align = ALIGN_LEFT, int xp = 0) {
+		PartyView::writeLine(6 + lineNum,
+			Common::String::format("%d", value), align, xp);
+	}
+
 public:
 	Interaction(const Common::String &name, int portrait);
 

@@ -67,7 +67,7 @@ void Interaction::draw() {
 	}
 
 	for (uint i = 0; i < _lines.size(); ++i) {
-		writeLine(6 + i, _lines[i], ALIGN_MIDDLE);
+		writeLine(i, _lines[i], ALIGN_MIDDLE);
 	}
 }
 

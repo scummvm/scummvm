@@ -1030,7 +1030,6 @@ maps:
 		zom3: "You're not the couriers!\""
 	emap02:
 		resistances: "Resistances"
-		morango: "Morango the mystic asks, \"Who shall i measure?\""
 		magic: "Magic"
 		fire: "Fire"
 		cold: "Cold"
