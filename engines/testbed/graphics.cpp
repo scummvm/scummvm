@@ -1028,7 +1028,7 @@ TestExitStatus GFXtests::copyRectToScreen() {
 
 	Graphics::Surface *screen = g_system->lockScreen();
 
-	const char *text = "d";
+	const char *text = "a";
 	const Graphics::BdfFont *origFont = (const Graphics::BdfFont *)FontMan.getFontByName("helvB12.bdf");
 
 	for (int i = origFont->getFontHeight(); i <= 20; i++) {
