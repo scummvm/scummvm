@@ -63,6 +63,8 @@ void CastleEngine::loadAssetsDOSFullGame() {
 	Common::SeekableReadStream *stream = nullptr;
 
 	if (_renderMode == Common::kRenderEGA) {
+		_viewArea = Common::Rect(39, 31, 278, 150);
+
 		file.open("CMOE.DAT");
 		_title = load8bitBinImage(&file, 0x0);
 		_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
@@ -125,6 +127,28 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->clear(_currentArea->_skyColor);
 	} else
 		_gfx->_keyColor = 255;
+}
+
+void CastleEngine::drawUI() {
+	_gfx->setViewport(_fullscreenViewArea);
+
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
+	surface->fillRect(_fullscreenViewArea, gray);
+	drawCrossair(surface);
+
+	if (!_uiTexture)
+		_uiTexture = _gfx->createTexture(surface);
+	else
+		_uiTexture->update(surface);
+
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+
+	surface->free();
+	delete surface;
+
+	_gfx->setViewport(_viewArea);
 }
 
 Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
