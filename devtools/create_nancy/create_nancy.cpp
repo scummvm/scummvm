@@ -22,11 +22,12 @@
 #include "file.h"
 #include "tvd_data.h"
 #include "nancy1_data.h"
+#include "nancy2_data.h"
 
 #define NANCYDAT_MAJOR_VERSION 0
 #define NANCYDAT_MINOR_VERSION 2
 
-#define NANCYDAT_NUM_GAMES 2
+#define NANCYDAT_NUM_GAMES 3
 
 /**
  * Format specifications for nancy.dat:
@@ -191,6 +192,20 @@ int main(int argc, char *argv[]) {
                     &_nancy1HintTexts,
                     &_nancy1TelephoneRinging,
                     _nancy1EventFlagNames);
+	
+	// Nancy Drew: Stay Tuned for Danger data
+    gameOffsets.push_back(output.pos());
+	writeGameData(  output,
+                    _nancy2Constants,
+                    _nancy2LanguagesOrder,
+                    &_nancy2ConditionalDialogue,
+                    &_nancy2Goodbyes,
+                    nullptr,
+                    &_nancy2ConditionalDialogueTexts,
+                    &_nancy2GoodbyeTexts,
+                    nullptr,
+                    &_nancy2TelephoneRinging,
+                    _nancy2EventFlagNames);
 
     // Write the offsets for each game in the header
     output.seek(offsetsOffset);
