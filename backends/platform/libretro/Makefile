@@ -18,7 +18,7 @@ ifeq ($(shell uname -a),)
 endif
 
 ifeq ($(BUILD_64BIT),)
-ifeq (,$(findstring 64,$(platform)))
+ifeq (,$(findstring 64,$(platform) $(TOOLSET)))
    BUILD_64BIT := 0
 else
    BUILD_64BIT := 1

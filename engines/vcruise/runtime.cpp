@@ -3089,7 +3089,7 @@ LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)];                \
 		for (uint i = 0; i < (n); i++) {                                                      \
 			if (stackArgsPtr[i].type != StackValue::kNumber)                                  \
-				error("Expected op argument %u to be a number");                              \
+				error("Expected op argument %u to be a number", i);                           \
 			arrayName[i] = stackArgsPtr[i].value.i;                                           \
 		}                                                                                     \
 		this->_scriptStack.resize(stackSize - (n));                                           \
@@ -3108,7 +3108,7 @@ LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)]; \
 		for (uint i = 0; i < (n); i++) {                                       \
 			if (stackArgsPtr[i].type != StackValue::kNumber)                   \
-				error("Expected op argument %u to be a string");               \
+				error("Expected op argument %u to be a string", i);            \
 			arrayName[i] = Common::move(stackArgsPtr[i].value.s);              \
 		}                                                                      \
 		this->_scriptStack.resize(stackSize - (n));                            \
@@ -3888,8 +3888,9 @@ void Runtime::scriptOpSay1(ScriptArg_t arg) {
 	SoundInstance *cachedSound = nullptr;
 	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
 
-	// uint ? = sndParamArgs[0];
-	// uint cycleLength = sndParamArgs[1];
+	// uint unk = sndParamArgs[0];
+	uint cycleLength = sndParamArgs[1];
+	debug(5, "Say1 cycle length: %u", cycleLength);
 
 	if (cachedSound)
 		triggerSound(false, *cachedSound, 100, 0, false, true);

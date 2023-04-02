@@ -1083,6 +1083,12 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_sprite.fragment");
 			files.push_back("engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex");
 		}
+		if (CONTAINS_DEFINE(setup.defines, "ENABLE_FREESCAPE")) {
+			files.push_back("engines/freescape/shaders/freescape_bitmap.fragment");
+			files.push_back("engines/freescape/shaders/freescape_bitmap.vertex");
+			files.push_back("engines/freescape/shaders/freescape_triangle.fragment");
+			files.push_back("engines/freescape/shaders/freescape_triange.vertex");
+		}
 		files.push_back("icons/scummvm.icns");
 		files.push_back("AUTHORS");
 		files.push_back("COPYING");

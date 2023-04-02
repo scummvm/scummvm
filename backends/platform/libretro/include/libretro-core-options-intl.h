@@ -80,6 +80,11 @@ struct retro_core_option_v2_category option_cats_it[] = {
 		"Salto dei fotogrammi",
 		"Impostazioni per il salto dei fotogrammi"
 	},
+	{
+		"performance",
+		NULL,
+		"Impostazioni relative alle performance"
+	},
 	{ NULL, NULL, NULL },
 };
 
@@ -150,14 +155,14 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"scummvm_frameskip_type",
 		"Salto dei fotogrammi",
 		NULL,
-		"Salto dei fotogrammi per evitare buffer under-run audio (crackling). Migliora le prestazioni a discapito della fluidità video. 'Auto' salta i fotogrammi su indicazione del frontend, 'Manuale' usa l'impostazione di 'Soglia minima buffer audio (%)', 'Fisso' usa l'impostazione 'Salto dei fotogrammi fisso'.",
+		"Salto dei fotogrammi per evitare buffer under-run audio (crackling). Migliora le prestazioni a discapito della fluidità video. 'Auto' salta i fotogrammi su indicazione del frontend, 'Soglia' usa l'impostazione di 'Soglia minima buffer audio (%)', 'Fisso' usa l'impostazione 'Salto dei fotogrammi fisso'.",
 		NULL,
 		"frameskip",
 		{
 			{ "disabled", NULL },
 			{ "fixed", "Fisso" },
 			{ "auto", "Auto" },
-			{ "manual", "Manuale" },
+			{ "manual", "Soglia" },
 			{ NULL, NULL },
 		},
 		NULL
@@ -166,7 +171,7 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"scummvm_frameskip_threshold",
 		"Soglia minima buffer audio (%)",
 		NULL,
-		"Quando 'Salto dei fotogrammi' è impostato su 'Manuale', specifica la soglia minima del buffer audio al di sotto della quale il fotogramma viene saltato. Valori più alti riducono il rischio di crackling al costo di un salto di fotogrammi più frequente.",
+		"Quando 'Salto dei fotogrammi' è impostato su 'Soglia', specifica la soglia minima del buffer audio al di sotto della quale il fotogramma viene saltato. Valori più alti riducono il rischio di crackling al costo di un salto di fotogrammi più frequente.",
 		NULL,
 		"frameskip",
 		{
@@ -193,6 +198,18 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
+		"scummvm_auto_performance_tuner",
+		"Regolazione automatica performance",
+		NULL,
+		"Cambio automatico delle impostazioni di performance e salto dei fotogrammi se vengono rilevate performance scadenti durante il gioco. 'Consenti inaccuratezze di timing' e 'Salto dei fotogrammi Auto' saranno temporaneamente abilitati in sequenza per la sola sessione di gioco, se necessario. Le singole impostazioni salvate non saranno modificate.",
+		NULL,
+		NULL,
+		{
+			{NULL, NULL},
+		},
+		NULL
+	},
+	{
 		"scummvm_allow_timing_inaccuracies",
 		"Consenti inaccuratezze di timing",
 		NULL,
@@ -204,6 +221,22 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		},
 		NULL
 	},
+	{
+		"scummvm_reduce_framerate_type",
+		"Riduzione del framerate",
+		NULL,
+		"Riduce il framerate corrente per abbassare le richieste di CPU. La modalità 'Auto' riduce temporaneamente il framerate quando Reduces current framerate to reduce CPU requirements. 'Auto' mode temporarily reduces the framerate as needed when audio buffer underrun is detected, while the in the other modes the reduction is constant.",
+		NULL,
+		NULL,
+		{
+			{ "disabled", NULL },
+			{ "auto", "Auto" },
+			{ "half", "1/2 del framerate attuale" },
+			{ "quarter", "1/4 del framerate attuale" },
+			{ NULL, NULL },
+		},
+		NULL
+        },
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
 

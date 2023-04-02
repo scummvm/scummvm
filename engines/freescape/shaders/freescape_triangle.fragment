@@ -1,0 +1,8 @@
+OUTPUT
+
+varying vec4 var_color;
+
+void main()
+{
+    outColor = var_color;
+}

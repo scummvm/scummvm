@@ -22,6 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <curl/curl.h>
 #include "backends/networking/curl/socket.h"
+#include "backends/networking/curl/connectionmanager.h"
 #include "common/debug.h"
 #include "common/system.h"
 
@@ -75,12 +76,18 @@ bool CurlSocket::connect(Common::String url) {
 		// Just connect to the host, do not do any transfers.
 		curl_easy_setopt(_easy, CURLOPT_CONNECT_ONLY, 1L);
 
-		// On Android, libcurl won't connect to SSL connections
+		// libcurl won't connect to SSL connections
 		// with VERIFYPEER enabled because we do not ship
-		// with a CA bundle.  So let's disable it.
-#ifdef ANDROID_PLAIN_PORT
-		curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0L);
+		// with a CA bundle in these platforms.
+		// So let's disable it.
+#if defined NINTENDO_SWITCH || defined PSP2
+		curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
+		const char *caCertPath = ConnMan.getCaCertPath();
+		if (caCertPath) {
+			curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath);
+		}
+
 		CURLcode res = curl_easy_perform(_easy);
 		if (res != CURLE_OK) {
 			warning("libcurl: Failed to connect: %s", curl_easy_strerror(res));

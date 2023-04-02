@@ -925,6 +925,9 @@ Graphics::RendererType determinateRenderType() {
 #if defined(USE_OPENGL_GAME)
 						Graphics::kRendererTypeOpenGL |
 #endif
+#if defined(USE_OPENGL_SHADERS)
+			Graphics::kRendererTypeOpenGLShaders |
+#endif
 #if defined(USE_TINYGL)
 						Graphics::kRendererTypeTinyGL |
 #endif
@@ -937,6 +940,11 @@ Graphics::RendererType determinateRenderType() {
 
 	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 		if (matchingRendererType == Graphics::kRendererTypeOpenGL)
+			return matchingRendererType;
+	#endif
+
+	#if defined(USE_OPENGL_SHADERS)
+		if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders)
 			return matchingRendererType;
 	#endif
 
@@ -962,6 +970,12 @@ Renderer *createRenderer(int screenW, int screenH, Common::RenderMode renderMode
 	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 		if (rendererType == Graphics::kRendererTypeOpenGL) {
 			return CreateGfxOpenGL(screenW, screenH, renderMode);
+		}
+	#endif
+
+	#if defined(USE_OPENGL_SHADERS)
+		if (rendererType == Graphics::kRendererTypeOpenGLShaders) {
+			return CreateGfxOpenGLShader(screenW, screenH, renderMode);
 		}
 	#endif
 

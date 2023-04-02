@@ -3377,8 +3377,7 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
 		android-arm-v7a | android-arm64-v8a | android-x86 | android-x86_64 | ouya)
-			# also __ANDROID__ is defined by Clang in the NDK
-			DEFINES="$DEFINES -D__ANDROID_PLAIN_PORT__ -DANDROID_PLAIN_PORT"
+			# __ANDROID__ is defined by Clang in the NDK
 			# we link a .so as default
 			append_var LDFLAGS "-shared"
 			append_var LDFLAGS "-Wl,-Bsymbolic,--no-undefined"
@@ -6736,7 +6735,8 @@ test "x$prefix" = xNONE && prefix=/usr/local
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 case $_host_os in
-	ds | mingw*)
+	android | ds | mingw*)
+		# Android don't have a fixed prefix
 		# Windows stores all the external data files in executable file.
 		;;
 	*)
@@ -6747,6 +6747,9 @@ esac
 case $_host in
 	3ds)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$datadir/plugins\\\""
+		;;
+	android-*)
+		# Android don't have a fixed prefix
 		;;
 	ds)
 		;;
