@@ -41,6 +41,10 @@ MODULE_OBJS = \
 	input/input.o \
 	input/inputval.o \
 	item/Item.o \
+	item/ItemCollection.o \
+	item/ItemMenu.o \
+	item/ItemSlot.o \
+	item/StatPreview.o \
 	music/MusicManager.o \
 	people/opinion.o \
 	people/person.o \
