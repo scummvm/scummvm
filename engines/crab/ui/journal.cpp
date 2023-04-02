@@ -39,7 +39,7 @@ using namespace pyrodactyl::ui;
 // Purpose: Load game
 //------------------------------------------------------------------------
 void Journal::Load(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("objectives");
 		if (NodeValid(node)) {
@@ -124,6 +124,7 @@ void Journal::Draw(const std::string &id) {
 		}
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle user input
 //------------------------------------------------------------------------
@@ -142,6 +143,7 @@ bool Journal::HandleEvents(const std::string &id, const SDL_Event &Event) {
 
 	return false;
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Add an entry to journal

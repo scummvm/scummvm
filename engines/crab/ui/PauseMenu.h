@@ -84,7 +84,10 @@ public:
 	}
 
 	void Load(rapidxml::xml_node<char> *node);
+
+#if 0
 	PauseSignal HandleEvents(const SDL_Event &Event, Button &back);
+#endif
 
 	// Returns true if inside options menu, false otherwise
 	bool Draw(Button &back);

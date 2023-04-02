@@ -56,9 +56,11 @@ void GameOverMenu::Load(rapidxml::xml_node<char> *node) {
 	}
 }
 
+#if 0
 int GameOverMenu::HandleEvents(const SDL_Event &Event) {
 	return menu.HandleEvents(Event);
 }
+#endif
 
 void GameOverMenu::Draw() {
 	bg.Draw();

@@ -64,6 +64,7 @@ void OptionSelect::Draw() {
 		next.Draw();
 }
 
+#if 0
 bool OptionSelect::HandleEvents(const SDL_Event &Event) {
 	using namespace pyrodactyl::input;
 
@@ -83,6 +84,7 @@ bool OptionSelect::HandleEvents(const SDL_Event &Event) {
 
 	return false;
 }
+#endif
 
 void OptionSelect::SetUI() {
 	option.data.SetUI();

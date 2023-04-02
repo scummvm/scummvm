@@ -108,11 +108,16 @@ public:
 	~KeyBindMenu() {}
 
 	void Reset() { state = STATE_NORMAL; }
+
+#if 0
 	void SwapKey(const SDL_Scancode &find);
+#endif
 	bool DisableHotkeys() { return state != STATE_NORMAL; }
 
 	void Load(rapidxml::xml_node<char> *node);
+#if 0
 	void HandleEvents(const SDL_Event &Event);
+#endif
 	void SetCaption();
 
 	void Draw();

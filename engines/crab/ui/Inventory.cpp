@@ -41,7 +41,7 @@ using namespace pyrodactyl::people;
 // Purpose: Load layout
 //------------------------------------------------------------------------
 void Inventory::Load(const std::string &filename) {
-	XMLDoc conf(filename);
+	XMLDoc conf(filename.c_str());
 	if (conf.ready()) {
 		rapidxml::xml_node<char> *node = conf.Doc()->first_node("inventory");
 		if (NodeValid(node)) {
@@ -61,7 +61,7 @@ void Inventory::Load(const std::string &filename) {
 
 void Inventory::LoadItem(const std::string &char_id, const std::string &id) {
 	Item i;
-	XMLDoc item_list(itemfile);
+	XMLDoc item_list(itemfile.c_str());
 	if (item_list.ready()) {
 		rapidxml::xml_node<char> *node = item_list.Doc()->first_node("items");
 		for (auto n = node->first_node("item"); n != NULL; n = n->next_sibling("item")) {
@@ -95,10 +95,11 @@ void Inventory::Draw(Person &obj, const int &money_val) {
 	// helper.DrawInfo(obj);
 	collection.Draw(obj.id /*, helper*/);
 
-	money.caption.text = NumberToString(money_val);
+	money.caption.text = NumberToString(money_val).c_str();
 	money.Draw();
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle events
 //------------------------------------------------------------------------
@@ -106,6 +107,7 @@ void Inventory::HandleEvents(const std::string &char_id, const SDL_Event &Event)
 	collection.HandleEvents(char_id, Event);
 	money.HandleEvents(Event);
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Load and save items

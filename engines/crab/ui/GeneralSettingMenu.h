@@ -56,7 +56,11 @@ public:
 	~GeneralSettingMenu() {}
 
 	void Load(rapidxml::xml_node<char> *node);
+
+#if 0
 	void HandleEvents(const SDL_Event &Event);
+#endif
+
 	void InternalEvents();
 
 	void Draw();

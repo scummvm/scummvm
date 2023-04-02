@@ -86,6 +86,7 @@ void GfxSettingMenu::Draw() {
 	resolution.Draw();
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle input
 //------------------------------------------------------------------------
@@ -121,6 +122,7 @@ int GfxSettingMenu::HandleEvents(const SDL_Event &Event) {
 
 	return resolution.HandleEvents(Event);
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Keep button settings synced with our screen settings

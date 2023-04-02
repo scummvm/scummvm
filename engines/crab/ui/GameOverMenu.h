@@ -60,10 +60,17 @@ public:
 	GameOverMenu(void) { cur = 0; }
 	~GameOverMenu(void) {}
 
-	void Reset() { cur = gRandom.Num() % quote.size(); }
+	void Reset() {
+	warning("STUB: GameOverMenu::Reset()");
+#if 0
+		cur = gRandom.Num() % quote.size();
+#endif
+	}
 
 	void Load(rapidxml::xml_node<char> *node);
+#if 0
 	int HandleEvents(const SDL_Event &Event);
+#endif
 	void Draw();
 
 	void SetUI();

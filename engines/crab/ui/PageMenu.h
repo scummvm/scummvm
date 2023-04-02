@@ -133,7 +133,11 @@ public:
 			m->SetUI();
 	}
 
-	void UpdateInfo() { info = NumberToString(current_page + 1) + " of " + NumberToString(menu.size()); }
+	void UpdateInfo() {
+		info = NumberToString(current_page + 1).c_str();
+		info += " of ";
+		info += NumberToString(menu.size()).c_str();
+	}
 
 	void Load(rapidxml::xml_node<char> *node) {
 		using namespace pyrodactyl::input;
@@ -196,6 +200,7 @@ public:
 		UpdateInfo();
 	}
 
+#if 0
 	int HandleEvents(const SDL_Event &Event) {
 		using namespace pyrodactyl::input;
 
@@ -217,6 +222,7 @@ public:
 
 		return menu.at(current_page).HandleEvents(Event);
 	}
+#endif
 
 	void Draw() {
 		status.Draw(info);

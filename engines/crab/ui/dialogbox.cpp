@@ -77,12 +77,15 @@ void GameDialogBox::Draw(pyrodactyl::event::Info &info, std::string &message) {
 	text.Draw(message);
 	button.Draw();
 }
+
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle input
 //------------------------------------------------------------------------
 bool GameDialogBox::HandleEvents(const SDL_Event &Event) {
 	return (button.HandleEvents(Event) == BUAC_LCLICK);
 }
+#endif
 
 void GameDialogBox::SetUI() {
 	pos.SetUI();

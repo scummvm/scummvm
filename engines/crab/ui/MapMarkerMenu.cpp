@@ -78,6 +78,7 @@ void MapMarkerMenu::Draw(const Element &pos, const Vector2i &player_pos, const R
 		i.HoverInfoOnlyDraw(offset_m.x, offset_m.y);
 }
 
+#if 0
 //------------------------------------------------------------------------
 // Purpose: Handle Events
 //------------------------------------------------------------------------
@@ -98,6 +99,7 @@ void MapMarkerMenu::HandleEvents(const Element &pos, const Vector2i &player_pos,
 		}
 	}
 }
+#endif
 
 //------------------------------------------------------------------------
 // Purpose: Internal Events

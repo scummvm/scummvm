@@ -118,11 +118,15 @@ public:
 	void Load(const std::string &filename, pyrodactyl::event::Info &info);
 
 	void Draw(pyrodactyl::event::Info &info);
+#if 0
 	bool HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
+#endif
 	void InternalEvents(pyrodactyl::event::Info &info);
 
 	void Center(const Vector2i &pos);
+#if 0
 	void Move(const SDL_Event &Event);
+#endif
 	void Validate();
 
 	void RevealAdd(const int &id, const Rect &area);

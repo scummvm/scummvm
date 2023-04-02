@@ -54,17 +54,37 @@ MODULE_OBJS = \
 	TMX/TMXLayer.o \
 	TMX/TMXTileSet.o \
 	ui/button.o \
+	ui/Caption.o \
+	ui/ChapterIntro.o \
 	ui/ClipButton.o \
 	ui/CreditScreen.o \
-	ui/Caption.o \
+	ui/dialogbox.o \
 	ui/element.o \
+	ui/emotion.o \
+	ui/FileMenu.o \
+	ui/GameOverMenu.o \
+	ui/GeneralSettingMenu.o \
+	ui/GfxSettingMenu.o \
 	ui/HealthIndicator.o \
 	ui/HoverInfo.o \
 	ui/ImageData.o \
+	ui/Inventory.o \
+	ui/journal.o \
+	ui/KeyBindMenu.o \
+	ui/map.o \
 	ui/MapData.o \
+	ui/MapMarkerMenu.o \
+	ui/ModMenu.o \
+	ui/OptionMenu.o \
+	ui/OptionSelect.o \
 	ui/ParagraphData.o \
+	ui/PauseMenu.o \
 	ui/ProgressBar.o \
+	ui/questmenu.o \
 	ui/QuestText.o \
+	ui/ReplyButton.o \
+	ui/ResolutionMenu.o \
+	ui/SaveGameMenu.o \
 	ui/SectionHeader.o \
 	ui/slider.o \
 	ui/SlideShow.o \
@@ -73,6 +93,7 @@ MODULE_OBJS = \
 	ui/textdata.o \
 	ui/ToggleButton.o \
 	ui/TraitButton.o \
+	ui/TraitMenu.o \
 	timer.o \
 	app.o \
 	splash.o \

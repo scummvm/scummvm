@@ -89,6 +89,9 @@ void KeyBindMenu::StartAndSize(const int &type, int &start, int &size) {
 }
 
 void KeyBindMenu::InitMenu(const int &type) {
+	warning("STUB: KeyBindMenu::InitMenu()");
+
+#if 0
 	int start = 0, size = 0;
 	StartAndSize(type, start, size);
 
@@ -104,6 +107,7 @@ void KeyBindMenu::InitMenu(const int &type) {
 		menu[type].element.at(i + 1).Init(alt, xoffset, yoffset);
 		menu[type].element.at(i + 1).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].alt);
 	}
+#endif
 }
 
 void KeyBindMenu::DrawDesc(const int &type) {
@@ -126,6 +130,9 @@ void KeyBindMenu::Draw() {
 }
 
 void KeyBindMenu::SetCaption() {
+	warning("STUB: KeyBindMenu::SetCaption()");
+
+#if 0
 	int start = 0, size = 0;
 	StartAndSize(sel_controls.cur, start, size);
 
@@ -133,8 +140,10 @@ void KeyBindMenu::SetCaption() {
 		menu[sel_controls.cur].element.at(i).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].key);
 		menu[sel_controls.cur].element.at(i + 1).caption.text = SDL_GetScancodeName(gInput.iv[start + (i / 2)].alt);
 	}
+#endif
 }
 
+#if 0
 void KeyBindMenu::HandleEvents(const SDL_Event &Event) {
 	if (sel_controls.HandleEvents(Event))
 		SetCaption();
@@ -182,6 +191,7 @@ void KeyBindMenu::SwapKey(const SDL_Scancode &find) {
 	else
 		gInput.iv[pos].alt = find;
 }
+#endif
 
 void KeyBindMenu::SetUI() {
 	menu[CON_GAME].Clear();

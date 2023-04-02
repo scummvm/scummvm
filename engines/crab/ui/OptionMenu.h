@@ -39,6 +39,7 @@
 #include "crab/ui/ToggleButton.h"
 #include "crab/common_header.h"
 #include "crab/ui/slider.h"
+#include "crab/timer.h"
 
 namespace Crab {
 
@@ -85,8 +86,10 @@ class OptionMenu {
 	TextData countdown;
 	Timer timer;
 
+#if 0
 	// Function to draw the main menu (controls, settings, save, cancel)
 	bool HandleTabs(Button &back, const SDL_Event &Event);
+#endif
 
 public:
 	bool loaded;
@@ -103,7 +106,9 @@ public:
 
 	void Load(const std::string &filename);
 	void Draw(Button &back);
+#if 0
 	bool HandleEvents(Button &back, const SDL_Event &Event);
+#endif
 	void InternalEvents();
 
 	void SetUI();

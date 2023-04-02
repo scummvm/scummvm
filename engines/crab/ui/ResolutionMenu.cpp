@@ -65,7 +65,9 @@ void ResolutionMenu::Load(rapidxml::xml_node<char> *node) {
 				dim.push_back(d);
 				Button b;
 				b.Init(ref, inc.x * (count_slot % columns), inc.y * (count_slot / columns));
-				b.caption.text = NumberToString(d.w) + " x " + NumberToString(d.h);
+				b.caption.text = NumberToString(d.w).c_str();
+				b.caption.text += " x ";
+				b.caption.text += NumberToString(d.h).c_str();
 				element.push_back(b);
 			}
 		}
@@ -94,6 +96,7 @@ void ResolutionMenu::Draw() {
 	}
 }
 
+#if 0
 int ResolutionMenu::HandleEvents(const SDL_Event &Event) {
 	switch (state) {
 	case STATE_NORMAL:
@@ -122,6 +125,7 @@ int ResolutionMenu::HandleEvents(const SDL_Event &Event) {
 
 	return 0;
 }
+#endif
 
 void ResolutionMenu::SetUI() {
 	cancel.SetUI();

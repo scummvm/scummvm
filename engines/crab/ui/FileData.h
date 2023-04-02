@@ -42,7 +42,7 @@ namespace ui {
 class FileData {
 public:
 	std::string name, path, last_modified;
-	FileData(const boost::filesystem::path &filepath);
+	//FileData(const boost::filesystem::path &filepath);
 };
 
 class SaveFileData : public FileData {
@@ -52,14 +52,14 @@ public:
 	// This is to account for the first save slot, called "New Save", which doesn't actually have a file
 	bool blank;
 
-	SaveFileData(const boost::filesystem::path &filepath);
+	//SaveFileData(const boost::filesystem::path &filepath);
 	SaveFileData(const bool empty);
 };
 
 class ModFileData : public FileData {
 public:
 	std::string author, version, info, website, preview;
-	ModFileData(boost::filesystem::path filepath);
+	//ModFileData(boost::filesystem::path filepath);
 };
 
 // The types of data shown about the save file

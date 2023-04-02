@@ -57,7 +57,11 @@ public:
 	ChapterIntro() { show_traits = false; }
 
 	void Load(rapidxml::xml_node<char> *node);
+
+#if 0
 	bool HandleEvents(SDL_Event &Event);
+#endif
+
 	void Draw(pyrodactyl::event::Info &info, std::string &text,
 			  pyrodactyl::anim::Sprite *cur_sp, const pyrodactyl::people::PersonState &state);
 };

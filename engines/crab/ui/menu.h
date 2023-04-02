@@ -119,6 +119,7 @@ protected:
 		}
 	}
 
+#if 0
 	//------------------------------------------------------------------------
 	// Purpose: Handle keyboard input
 	//------------------------------------------------------------------------
@@ -160,6 +161,7 @@ protected:
 
 		return -1;
 	}
+#endif
 
 public:
 	// The collection of buttons in the menu
@@ -201,6 +203,7 @@ public:
 		}
 	}
 
+	#if 0
 	//------------------------------------------------------------------------
 	// Purpose: Event Handling
 	// The reason this function doesn't declare its own Event object is because
@@ -255,6 +258,7 @@ public:
 
 		return -1;
 	}
+	#endif
 
 	//------------------------------------------------------------------------
 	// Purpose: Draw the menu

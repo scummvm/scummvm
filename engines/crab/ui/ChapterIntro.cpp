@@ -27,7 +27,7 @@
  * Licensed under MIT
  *
  */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "crab/ui/ChapterIntro.h"
 
 namespace Crab {
@@ -46,15 +46,19 @@ void ChapterIntro::Load(rapidxml::xml_node<char> *node) {
 		traits.Load(node->first_node("trait"));
 }
 
+#if 0
 bool ChapterIntro::HandleEvents(SDL_Event &Event) {
 	if (traits.HandleEvents(Event))
 		show_traits = true;
 
 	return dialog.HandleEvents(Event);
 }
+#endif
 
 void ChapterIntro::Draw(pyrodactyl::event::Info &info, std::string &text,
 						pyrodactyl::anim::Sprite *cur_sp, const pyrodactyl::people::PersonState &state) {
+	warning("STUB: ChapterIntro::Draw()");
+#if 0
 	dialog.Draw(false);
 	dialog.Draw(info, text);
 
@@ -64,6 +68,7 @@ void ChapterIntro::Draw(pyrodactyl::event::Info &info, std::string &text,
 		Rect clip = cur_sp->DialogClip(state);
 		gImageManager.Draw(pos.x, pos.y, cur_sp->Img(), &clip);
 	}
+#endif
 }
 
 } // End of namespace Crab

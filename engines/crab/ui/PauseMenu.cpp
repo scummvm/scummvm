@@ -67,6 +67,7 @@ bool PauseMenu::Draw(Button &back) {
 	return false;
 }
 
+#if 0
 PauseSignal PauseMenu::HandleEvents(const SDL_Event &Event, Button &back) {
 	switch (state) {
 	case STATE_NORMAL:
@@ -126,6 +127,7 @@ PauseSignal PauseMenu::HandleEvents(const SDL_Event &Event, Button &back) {
 
 	return PS_NONE;
 }
+#endif
 
 bool PauseMenu::DisableHotkeys() {
 	return (state == STATE_SAVE && save.DisableHotkeys()) || (state == STATE_OPTION && gOptionMenu.DisableHotkeys());

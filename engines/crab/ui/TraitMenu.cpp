@@ -83,6 +83,7 @@ void TraitMenu::Draw(const pyrodactyl::people::Person *obj) {
 			i.Draw();
 }
 
+#if 0
 void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event) {
 	int choice = menu.HandleEvents(Event);
 	if (choice >= 0) {
@@ -98,6 +99,7 @@ void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const SDL_Event &E
 		}
 	}
 }
+#endif
 
 void TraitMenu::Cache(const pyrodactyl::people::Person &obj) {
 	auto e = menu.element.begin();
