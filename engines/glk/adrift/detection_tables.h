@@ -290,7 +290,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "human", "Oh, Human" },
 	{ "humbug", "Humbug" },
 	{ "hungry", "Hungry" },
-	{ "hunter", "The Hunter" },
 	{ "huntung", "Hunting Ground" },
 	{ "hyperbs", "HYPER Battle System" },
 	{ "hypertag", "Locked Door with Water Trap" },
@@ -491,9 +490,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "severance", "Severance Battle System" },
 	{ "seymoursstoopidquest", "Seymour's Stoopid Quest" },
 	{ "shablon", "Shablon" },
-	{ "shadowjack", "Jack of Shadows" },
 	{ "shadowpeak", "Shadowpeak" },
-	{ "shadow", "Shadow of the Past" },
 	{ "shadrick1", "Shadrick's Travels" },
 	{ "shadrick2", "Shadrick's Underground Adventures" },
 	{ "shanilor", "Shanilor's Tower" },
@@ -535,7 +532,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "suzygotherpowers", "How Suzy got her Powers" },
 	{ "swordincane", "Sword Concealed in Cane" },
 	{ "sword", "Sword" },
-	{ "takeone", "Take One" },
 	{ "talking", "Conversation Tree Sample" },
 	{ "target", "Target" },
 	{ "tearsoftoughman", "Tears of a Tough Man" },
@@ -742,8 +738,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	// Ectocomp 2007
 	{ "ectcvideotapedecay", "Video.Tape / Decay" },
 	{ "ectcforesthouse", "Forest House" },
-	{ "stowie", "The Stowaway" },
-	{ "witness", "Witness: Demon vs Vampire" },
+	{ "ectcstowie", "The Stowaway" },
+	{ "ectcwitness", "Witness: Demon vs Vampire" },
 
 	// Ectocomp 2008
 	{ "ectcforesthouse3", "For3st House: Sacrifice" },
@@ -775,6 +771,14 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "ectcignisfatuus", "Ignis Fatuus" },
 	{ "ectcthehouse", "The House" },
 	{ "ectcstuckpiggy", "Stuck Piggy" },
+
+	// Finish the Game Comp 2005
+	{ "ftgcshadowjack", "Jack of Shadows" },
+	{ "ftgctakeone", "Take One" },
+	{ "ftgcdemonhunter", "The Demon Hunter" },
+	{ "ftgcpathwayadrift", "Pathway to Destruction" },
+	{ "ftgcshadow", "Shadow of the Past" },
+	{ "ftgchunter", "The Hunter" },
 
 	// InsideADRIFT Spring Competition 2004
 	{ "iadcshardsofmemory", "Shards of Memory" },
@@ -1283,7 +1287,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("human", "f5a6697f301011934bd36587c28a136f", 7392),
 	DT_ENTRY0("humbug", "716cc338bfaab7574cc2618e3b104cda", 73308),
 	DT_ENTRY0("hungry", "671f8460f67dfb722d349d6d3136596e", 5529),
-	DT_ENTRY0("hunter", "d7af67a0753910bf32ec233e538ad659", 23531),
 	DT_ENTRY0("huntung", "1bebe58266fb3da3ec4edf5c895464c6", 49950),
 	DT_ENTRY0("hyperbs", "f2f0e2a778efb96c7d73bb131d7147a7", 132534),
 	DT_ENTRY0("hypertag", "87983ede01d5ecf02a8426dc652fe427", 37967),
@@ -1431,7 +1434,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("paperrack", "Demo", "c29c3672b67da01bc0e8c949e2cdc42f", 261),
 	DT_ENTRY0("partytomurder", "bd2d6d3202ff772173220b9acdf613cf", 39180),
 	DT_ENTRY0("passages", "524ca347d623936586c68536a3b4d0d3", 85728),
-	DT_ENTRY1("pathwayadrift", "Release 1", "bcf1f61393c1b8123a98ee4879ffd8a6", 20896),
 	DT_ENTRY1("pathwayadrift", "v1.2", "1ac0787c4948e540a04ccdb1f8c156f7", 20935),
 	DT_ENTRY1("pathwayadrift", "v1.21", "73cc920942af7d162538ead0d118f34c", 20926),
 	DT_ENTRY0("perfectspy", "4248dee44c099804ee2932b7b8cbea9d", 7988),
@@ -1520,8 +1522,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("severance", "7674507e99bda35cd9df46c5fd2de82f", 1864),
 	DT_ENTRY0("seymoursstoopidquest", "61f4e155b958c1c652f12ed4216ee10d", 12623),
 	DT_ENTRYL0("shablon", Common::RU_RUS, "bcb2a259e96ed2717ba7e6ce56d51750", 21271),
-	DT_ENTRY0("shadow", "f4d0a427ebec3a4c3b7029adaa3e401f", 272030),
-	DT_ENTRY0("shadowjack", "25f33d23e126ea0a86ed55833dbba8ef", 11606),
 	DT_ENTRY1("shadowpeak", "Release 1", "79a637f5b7de7e4cbdbf853d5834ab41", 92285),
 	DT_ENTRY1("shadowpeak", "Release 2", "39cdda2d8b303d0b4d292f4983af4591", 92859),
 	DT_ENTRY1("shadowpeak", "Release 3", "63cb42d7928336dacd0025a6bced32dc", 96190),
@@ -1568,7 +1568,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("suzygotherpowers", "f2d47df24e1d2a71c60a58831bc9b9fa", 40676),
 	DT_ENTRY1("sword", "Demo", "8ee854268fe8d0f1db821b6a33d1f4e3", 640),
 	DT_ENTRY1("swordincane", "Demo", "5fae53e155140692405dce9833450d20", 447),
-	DT_ENTRY0("takeone", "114caad9308b7adf9e15267a11f12632", 9547),
 	DT_ENTRY0("talking", "20cb9b81381a297c19e25a98d41921fb", 2804),
 	DT_ENTRY1("target", "Release 1", "c6bbbae5ea3f6407a55435cb4e0c20c3", 43024),
 	DT_ENTRY1("target", "Release 2", "47202ea8385188b3045c91bb55a72561", 43014),
@@ -1975,8 +1974,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	// Ectocomp 2007
 	DT_ENTRY1("ectcvideotapedecay", "Competition Release", "658e9dbe38364219b6a530332f2ed183", 10173),
 	DT_ENTRY1("ectcforesthouse", "Competition Release", "423fede762b0bfc1cb1547edce5d4aed", 8965),
-	DT_ENTRY0("stowie", "73322467bf8e29c9ea7745a095c9091e", 3785),
-	DT_ENTRY0("witness", "fce8f16deac176ee958cdcf0c5964df6", 3849),
+	DT_ENTRY0("ectcstowie", "73322467bf8e29c9ea7745a095c9091e", 3785),
+	DT_ENTRY0("ectcwitness", "fce8f16deac176ee958cdcf0c5964df6", 3849),
 
 	// Ectocomp 2008
 	DT_ENTRY0("ectcforesthouse3", "a4992f8debcd083c3d5489e2243d6929", 13492),
@@ -2008,6 +2007,14 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("ectcignisfatuus", "0414d55fc3984c158804575044809c48", 20575),
 	DT_ENTRY0("ectcthehouse", "338d24e1cabc2c398927599dc89dd986", 21925),
 	DT_ENTRY0("ectcstuckpiggy", "bf6d5cd1b5a3865ff610110459d3104f", 18506),
+
+	// Finish the Game Comp 2005
+	DT_ENTRY0("ftgcshadowjack", "25f33d23e126ea0a86ed55833dbba8ef", 11606),
+	DT_ENTRY0("ftgctakeone", "114caad9308b7adf9e15267a11f12632", 9547),
+	DT_ENTRY0("ftgcdemonhunter", "cc9c55b0f67577f4e9bbaa388a61c494", 18643),
+	DT_ENTRY1("ftgcpathwayadrift", "Competition Release", "bcf1f61393c1b8123a98ee4879ffd8a6", 20896),
+	DT_ENTRY0("ftgcshadow", "f4d0a427ebec3a4c3b7029adaa3e401f", 272030),
+	DT_ENTRY0("ftgchunter", "d7af67a0753910bf32ec233e538ad659", 23531),
 
 	// InsideADRIFT Spring Competition 2004
 	DT_ENTRY1("iadcshardsofmemory", "Competition Release 2", "9b75834354aed4b148d4ec2b8cdd66ae", 118604),
