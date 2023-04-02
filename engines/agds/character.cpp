@@ -24,6 +24,7 @@
 #include "agds/agds.h"
 #include "agds/animation.h"
 #include "agds/object.h"
+#include "agds/region.h"
 #include "agds/resourceManager.h"
 #include "common/array.h"
 #include "common/debug.h"
@@ -158,6 +159,18 @@ void Character::moveTo(const Common::String & processName, Common::Point dst, in
 	_pos = dst;
 	_visible = true;
 	direction(dir);
+
+	auto *screen = _engine->getCurrentScreen();
+	if (screen) {
+		auto objects = screen->find(dst);
+		for(auto & object: objects) {
+			auto region = object->getTrapRegion();
+			if (region && region->pointIn(dst)) {
+				debug("starting trap process");
+				_engine->runProcess(object, object->getTrapHandler());
+			}
+		}
+	}
 }
 
 void Character::animate(int direction, int speed, bool jokes) {
