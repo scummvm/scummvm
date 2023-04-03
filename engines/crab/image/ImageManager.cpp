@@ -156,6 +156,14 @@ void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Common::
 }
 
 //------------------------------------------------------------------------
+// Purpose: Draw
+//------------------------------------------------------------------------
+void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Rect *clip,
+						const TextureFlipType &flip) {
+	GetTexture(id).Draw(x, y, clip, flip);
+}
+
+//------------------------------------------------------------------------
 // Purpose: Dim the screen by drawing a 128 alpha black rectangle over it
 //------------------------------------------------------------------------
 void ImageManager::DimScreen() {
