@@ -62,11 +62,9 @@ Splash::~Splash() {
 //------------------------------------------------------------------------
 void Splash::InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) {
 	if (first_run == false) {
-		// gLoadScreen.Load();
+		gLoadScreen.Load();
 		pyrodactyl::image::gImageManager.Init();
-#if 0
 		pyrodactyl::text::gTextManager.Init();
-#endif
 		load_complete = true;
 	}
 
