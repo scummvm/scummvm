@@ -228,9 +228,12 @@ void Character::tick() {
 			_animation->tick();
 		_phase = _animation->phase();
 		if (_phase >= _frames) {
+			bool wasJokes = _jokes;
+			_jokes = false;
 			_phase = -1;
 			_frames = 0;
-			direction(_direction);
+			if (wasJokes)
+				direction(_direction);
 		}
 	}
 }
