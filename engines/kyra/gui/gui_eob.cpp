@@ -3449,8 +3449,6 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 	int newHighLightButton = 0;
 	int newHighLightText = 0;
 	int buttonStart = (_vm->gameFlags().platform == Common::kPlatformSegaCD) ? 0x801B : 0x8017;
-	int listY = (_vm->gameFlags().platform == Common::kPlatformSegaCD) ? 80 : 50;
-	int listEntryH = (_vm->gameFlags().platform == Common::kPlatformSegaCD) ? 8 : 9;
 	bool updateDesc = true;
 	bool updateList = true;
 	bool highLightClicked = (_vm->gameFlags().platform == Common::kPlatformSegaCD);
@@ -3499,7 +3497,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 				_screen->sega_getRenderer()->render(0, 1, 8, 20, 2);
 			} else {
 				_screen->set16bitShadingLevel(4);
-				_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, _vm->guiSettings()->colors.guiColorLightBlue, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
+				_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), _vm->_flags.lang == Common::Language::ZH_TWN ? 4 : 8, _vm->_flags.lang == Common::Language::ZH_TWN ? 40 : 38, _vm->guiSettings()->colors.guiColorLightBlue, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
 				_screen->set16bitShadingLevel(0);
 			}
 		}
@@ -3526,9 +3524,9 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
 			inputFlag = buttonStart + 1;
 		} else {
-			Common::Point p = _vm->getMousePos();
-			if (_vm->posWithinRect(p.x, p.y, 8, listY, 168, listY + 72)) {
-				newHighLightText = (p.y - listY) / listEntryH;
+			int entry = mapPointToEntry(_vm->getMousePos());
+			if (entry >= 0) {
+				newHighLightText = entry;
 				if (menuSpellMap[lastHighLightButton * 11] - 1 < newHighLightText)
 					newHighLightText = menuSpellMap[lastHighLightButton * 11] - 1;
 			}
@@ -4401,7 +4399,10 @@ void GUI_EoB::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFil
 
 		if (d->flags & 4) {
 			xOffs = ((b->width - _screen->getTextWidth(s)) >> 1) + 1;
-			yOffs = (b->height - 7) >> 1;
+			if (_vm->_flags.lang == Common::Language::ZH_TWN)
+				yOffs = (b->height - 14) >> 1;
+			else
+				yOffs = (b->height - 7) >> 1;
 		}
 
 		int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite;
@@ -4477,13 +4478,31 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, bool highlight) {
 	_vm->screen()->setFont(fnt);
 }
 
+int GUI_EoB::mapPointToEntry(const Common::Point &p) const {
+	if (_vm->_flags.lang == Common::ZH_TWN) {
+		if (_vm->posWithinRect(p.x, p.y, 4, 58, 168, 122))
+			return (p.y - 58) / 16 + (p.x >= 84) * 4;
+		return -1;
+	}
+	if (_vm->posWithinRect(p.x, p.y, 8, 50, 168, 122))
+		return (p.y - 50) / 9;
+
+	return -1;
+}
+
 void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight) {
 	if (bookPageIndex < 0)
 		return;
 
-	int y = bookPageIndex * 9 + 50;
+	int x = _vm->_flags.lang == Common::ZH_TWN ? 4 + (bookPageIndex / 4) * 80 : 8;
+	int y = _vm->_flags.lang == Common::ZH_TWN ? (bookPageIndex % 4) * 16 + 58 : bookPageIndex * 9 + 50;
+	int w = _vm->_flags.lang == Common::ZH_TWN ? 80 : 160;
+	int h = _vm->_flags.lang == Common::ZH_TWN ? 15 : 8;
 	int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite;
 	_screen->set16bitShadingLevel(4);
+
+	if (!spellId || _vm->_flags.lang == Common::ZH_TWN)
+		_screen->fillRect(x, y, x + w, y + h,  _vm->guiSettings()->colors.fill);
 
 	if (spellId) {
 		Common::String s;
@@ -4497,11 +4516,9 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 		}
 
 		if (noFill)
-			_screen->printText(s.c_str(), 8, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, 0);
+			_screen->printText(s.c_str(), x, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, 0);
 		else
-			_screen->printShadedText(s.c_str(), 8, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
-	} else {
-		_screen->fillRect(6, y, 168, y + 8,  _vm->guiSettings()->colors.fill);
+			_screen->printShadedText(s.c_str(), x, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
 	}
 
 	_screen->set16bitShadingLevel(0);

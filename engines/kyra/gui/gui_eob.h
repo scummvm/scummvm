@@ -81,6 +81,7 @@ protected:
 	const char *getMenuString(int id);
 	Button *initMenu(int id);
 	void releaseButtons(Button *list);
+	virtual int mapPointToEntry(const Common::Point &p) const;
 
 	int8 *_numAssignedSpellsOfType;
 	char** _saveSlotStringsTemp;

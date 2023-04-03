@@ -911,6 +911,13 @@ int GUI_EoB_SegaCD::getHighlightSlot() {
 	return res;
 }
 
+int GUI_EoB_SegaCD::mapPointToEntry(const Common::Point &p) const {
+	if (_vm->posWithinRect(p.x, p.y, 8, 80, 168, 152))
+		return (p.y - 80) / 8;
+
+	return -1;
+}
+
 void GUI_EoB_SegaCD::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight) {
 	if (bookPageIndex < 0)
 		return;
