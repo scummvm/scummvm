@@ -111,9 +111,6 @@ bool App::Init() {
 		return false;
 	}
 
-	// Initialize and load input
-	pyrodactyl::input::gInput.Init();
-
 	// Disable the SDL stock cursor and screen-saver
 	SDL_ShowCursor(SDL_DISABLE);
 	SDL_DisableScreenSaver();
@@ -121,6 +118,9 @@ bool App::Init() {
 	// Initial check for controllers on the system
 	pyrodactyl::input::gInput.AddController();
 #endif
+	// Initialize and load input
+	pyrodactyl::input::gInput.Init();
+
 	LoadSettings("res/settings.xml");
 	gScreenSettings.cur.w = 1920;
 	gScreenSettings.cur.h = 1080;
@@ -141,7 +141,7 @@ void App::Run() {
 	int fpscount = 0, fpsval = 1, lasts = 0;
 
 	// While the user hasn't quit - This is the main game loop
-	while (CurrentStateID != GAMESTATE_EXIT) {
+	while (CurrentStateID != GAMESTATE_EXIT && !SHOULD_QUIT) {
 		// Start the frame timer
 		fps.Start();
 
@@ -168,7 +168,7 @@ void App::Run() {
 				break;
 
 			case GAMESTATE_MAIN_MENU:
-				//CurrentState = new MainMenu();
+				CurrentState = new MainMenu();
 				gScreenSettings.in_game = false;
 				break;
 
@@ -228,6 +228,11 @@ void App::Run() {
 			pyrodactyl::input::gInput.HandleController(Event);
 		}
 #endif
+		Common::Event e;
+		while (g_system->getEventManager()->pollEvent(e)) {
+
+		}
+
 
 		// Do we have to reposition our interface?
 		if (gScreenSettings.change_interface) {
@@ -266,7 +271,7 @@ void App::Run() {
 			SDL_Delay((1000u / gScreenSettings.fps) - fps.Ticks());
 #endif
 			uint32 delay = (1000u / gScreenSettings.fps) - fps.Ticks();
-			warning("Delay by %d ms", delay);
+			//warning("Delay by %d ms", delay);
 			g_system->delayMillis(delay);
 		}
 	}
