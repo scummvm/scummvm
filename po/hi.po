@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-02 20:21+0000\n"
-"PO-Revision-Date: 2023-04-01 06:29+0000\n"
+"PO-Revision-Date: 2023-04-03 16:43+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -4827,9 +4827,8 @@ msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr ""
 
 #: engines/cge2/metaengine.cpp:55
-#, fuzzy
 msgid "Enable Text to Speech for Objects and Options"
-msgstr "खेल का पूरा नाम"
+msgstr "Objects और Options के लिए text to speech इनेबल करें"
 
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
@@ -4840,9 +4839,8 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
 #: engines/cge2/metaengine.cpp:67 engines/dreamweb/metaengine.cpp:73
-#, fuzzy
 msgid "Enable Text to Speech for Subtitles"
-msgstr "खेल का पूरा नाम"
+msgstr "Subtitles के लिए टेक्स्ट तो स्पीच इनेबल करें"
 
 #: engines/cge2/metaengine.cpp:68 engines/dreamweb/metaengine.cpp:74
 msgid "Use TTS to read the subtitles (if TTS is available)"
@@ -4932,9 +4930,8 @@ msgid "Enter"
 msgstr ""
 
 #: engines/dragons/metaengine.cpp:220
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "ग्राफिक्स"
+msgstr "Debug ग्राफिक्स"
 
 #: engines/drascula/saveload.cpp:46
 msgid ""
@@ -4984,27 +4981,24 @@ msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:68
-#, fuzzy
 msgid "Disable demo mode"
-msgstr "रद्द करदो"
+msgstr "Demo Mode डिसएबल करें"
 
 #: engines/freescape/metaengine.cpp:69
 msgid "Never activate demo mode"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:79
-#, fuzzy
 msgid "Disable sensors"
-msgstr "रद्द करदो"
+msgstr "सेंसर डिसएबल करें"
 
 #: engines/freescape/metaengine.cpp:80
 msgid "Sensors will not shoot the player"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:90
-#, fuzzy
 msgid "Disable falling"
-msgstr "रद्द करदो"
+msgstr "गिरना डिसएबल करें"
 
 #: engines/freescape/metaengine.cpp:91
 msgid "Player cannot fall over edges"
@@ -5324,9 +5318,8 @@ msgid "Reserved"
 msgstr ""
 
 #: engines/groovie/script.cpp:660
-#, fuzzy
 msgid "Failed to save game"
-msgstr "खेल का पूरा नाम"
+msgstr "गेम सेव नहीं हो पाया"
 
 #: engines/groovie/script.cpp:849 engines/lab/savegame.cpp:237
 msgid "Would you like to save or restore a game?"
@@ -5353,14 +5346,12 @@ msgid "Debug info and level selection becomes available"
 msgstr ""
 
 #: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
-#, fuzzy
 msgid "Move up"
-msgstr "नीचे देखो"
+msgstr "ऊपर को चलें"
 
 #: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
-#, fuzzy
 msgid "Move down"
-msgstr "नीचे देखो"
+msgstr "नीचे को चलें"
 
 #: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
 msgid "Move left"
@@ -5399,33 +5390,28 @@ msgid "Enable Gore Mode when available"
 msgstr ""
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
 msgid "Forward"
-msgstr "नीचे देखो"
+msgstr "आगे"
 
 #: engines/hpl1/metaengine.cpp:82
 msgid "Backward"
 msgstr ""
 
 #: engines/hpl1/metaengine.cpp:83 engines/mm/mm1/metaengine.cpp:93
-#, fuzzy
 msgid "Strafe Left"
-msgstr "बाएं"
+msgstr "बाएं Strafe करें"
 
 #: engines/hpl1/metaengine.cpp:84 engines/mm/mm1/metaengine.cpp:94
-#, fuzzy
 msgid "Strafe Right"
-msgstr "दाहिने"
+msgstr "दाहिने strafe करें"
 
 #: engines/hpl1/metaengine.cpp:85
-#, fuzzy
 msgid "Lean Left"
-msgstr "बाएं"
+msgstr "बाएं lean करें"
 
 #: engines/hpl1/metaengine.cpp:86
-#, fuzzy
 msgid "Lean Right"
-msgstr "दाहिने"
+msgstr "दाहिने lean करें"
 
 #: engines/hpl1/metaengine.cpp:88
 msgid "Jump"
@@ -5442,10 +5428,8 @@ msgid "Interact Mode"
 msgstr ""
 
 #: engines/hpl1/metaengine.cpp:93
-#, fuzzy
-#| msgid "Look down"
 msgid "Look Mode"
-msgstr "नीचे देखें"
+msgstr "नीचे देखें Mode"
 
 #: engines/hpl1/metaengine.cpp:94
 msgid "Holster"
@@ -5468,9 +5452,8 @@ msgid "Glowstick"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:33
-#, fuzzy
 msgid "Enable original cheats"
-msgstr "खेल का पूरा नाम"
+msgstr "ओरिजिनल चीट्स इनेबल करें"
 
 #: engines/hypno/metaengine.cpp:34
 msgid "Allow cheats using the C key."
@@ -5485,9 +5468,8 @@ msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:55
-#, fuzzy
 msgid "Enable infinite ammo cheat"
-msgstr "खेल का पूरा नाम"
+msgstr "Infinite ammo चीट् इनेबल करें"
 
 #: engines/hypno/metaengine.cpp:56
 msgid "Player ammo will never decrease."
@@ -5502,9 +5484,8 @@ msgid "All levels will be available to play."
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:77
-#, fuzzy
 msgid "Enable restored content"
-msgstr "खेल का पूरा नाम"
+msgstr "Restored content इनेबल करें"
 
 #: engines/hypno/metaengine.cpp:78
 msgid "Add additional content that is not enabled the original implementation."
@@ -5522,9 +5503,8 @@ msgstr ""
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
-#, fuzzy
 msgid "Remora"
-msgstr "गेम हटाएँ (R)"
+msgstr "Remora"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
