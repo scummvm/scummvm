@@ -1081,10 +1081,16 @@ maps:
 		agar2: "\"You have done well to bring me this\nscroll. (+1000 exp) Now take it to my\nprotege Telgoran in Dusk.\""
 		agar3: "\"I have no business with you. Begone!\""
 		guards: "Town guards: you're under arrest!\n\na)Attack b)Bribe c)Run d)Surrender"
-		sentence: "High court sentence: years= "
+		sentence: "High court sentence: Years= "
 		treasure: "Town treasure, steal (Y/N)?"
 	emap04:
-		guards: "Town guards: you're under arrest!\n\nA) Attack B) Bribe C) Run D) Surrender"
+		town_guards: "Town Guards"
+		guards: "Town guards: you're under arrest!"
+		attack: "\x01""37Attack"
+		bribe: "\x01""37Bribe"
+		run: "\x01""37Run"
+		surrender: "\x01""37Surrender"
+		sentence: "High court sentence: %d years"
 
 	map05:
 		arena: "\"The Arena\""

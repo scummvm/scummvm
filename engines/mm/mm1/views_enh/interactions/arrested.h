@@ -19,32 +19,39 @@
  *
  */
 
-#ifndef MM1_VIEWS_MAPS_ARRESTED_H
-#define MM1_VIEWS_MAPS_ARRESTED_H
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_ARRESTED_H
+#define MM1_VIEWS_ENH_INTERACTIONS_ARRESTED_H
 
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views_enh/interactions/interaction.h"
 #include "mm/mm1/game/arrested.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-class Arrested : public TextView, public MM1::Game::Arrested {
-private:
+class Arrested : public Interaction, public MM1::Game::Arrested {
+protected:
 	void surrender(int numYears = 2);
+
+	/**
+	 * Handles any action/press
+	 */
+	void viewAction() override;
 
 public:
 	Arrested();
-	virtual ~Arrested() {}
 
+	/**
+	 * Handles focus
+	 */
 	bool msgFocus(const FocusMessage &msg) override;
-	void draw() override;
+
 	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
-} // namespace Maps
-} // namespace Views
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

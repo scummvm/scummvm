@@ -19,35 +19,37 @@
  *
  */
 
-#include "mm/mm1/views/maps/arrested.h"
-#include "mm/mm1/maps/map04.h"
+#include "mm/mm1/views_enh/interactions/Arrested.h"
 #include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
+
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-Arrested::Arrested() : TextView("Arrested") {
-	_bounds = getLineBounds(20, 24);
+Arrested::Arrested() : Interaction("Arrested", 26), Game::Arrested() {
+	_title = STRING["maps.emap04.town_guards"];
 }
 
 bool Arrested::msgFocus(const FocusMessage &msg) {
-	return TextView::msgFocus(msg);
+	addText(STRING["maps.emap04.guards"]);
+	clearButtons();
+	addButton(STRING["maps.emap04.attack"], 'A');
+	addButton(STRING["maps.emap04.bribe"], 'B');
+	addButton(STRING["maps.emap04.run"], 'R');
+	addButton(STRING["maps.emap04.surrender"], 'S');
+
+	return true;
 }
 
-void Arrested::draw() {
-	clearSurface();
-	Sound::sound(SOUND_2);
-
-	writeString(0, 1, STRING["maps.map04.guards"]);
+void Arrested::viewAction() {
+	// If already chosen option, then any click closes dialog
+	if (_buttons.empty())
+		close();
 }
 
 bool Arrested::msgKeypress(const KeypressMessage &msg) {
-	if (endDelay())
-		return true;
-
 	switch (msg.keycode) {
 	case Common::KEYCODE_a:
 		attack();
@@ -55,14 +57,14 @@ bool Arrested::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_b:
 		bribe();
 		break;
-	case Common::KEYCODE_c:
+	case Common::KEYCODE_r:
 		run();
 		break;
-	case Common::KEYCODE_d:
+	case Common::KEYCODE_s:
 		surrender();
 		break;
 	default:
-		break;
+		return Interaction::msgKeypress(msg);
 	}
 
 	return true;
@@ -72,15 +74,15 @@ void Arrested::surrender(int numYears) {
 	Game::Arrested::surrender(numYears);
 
 	// Display sentence
-	clearSurface();
-	Sound::sound(SOUND_2);
-	writeString(0, 1, STRING["maps.map04.sentence"]);
-	writeNumber(numYears);
+	Common::String str = Common::String::format(
+		STRING["maps.emap04.sentence"].c_str(), numYears);
 
-	delaySeconds(3);
+	SoundMessage msg(str);
+	msg._delaySeconds = 3;
+	send(msg);
 }
 
-} // namespace Maps
-} // namespace Views
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

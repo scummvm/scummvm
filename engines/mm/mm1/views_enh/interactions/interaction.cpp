@@ -30,6 +30,8 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
+#define BTN_SIZE 10
+
 Interaction::Interaction(const Common::String &name, int portrait) : PartyView(name) {
 	_bounds = Common::Rect(8, 8, 224, 140);
 	_frame.load("frame.fac");
@@ -61,13 +63,52 @@ void Interaction::draw() {
 	_frame.draw(&s, 0, Common::Point(8, 8));
 	_portrait.draw(&s, _portraitFrameNum, Common::Point(15, 14));
 
+	setReduced(false);
 	if (!_title.empty()) {
 		size_t strWidth = getStringWidth(_title);
 		writeString(125 - strWidth / 2, 20, _title);
 	}
 
+	// Write any text lines
 	for (uint i = 0; i < _lines.size(); ++i) {
 		writeLine(i, _lines[i], ALIGN_MIDDLE);
+	}
+
+	// Write out any buttons
+	if (!_buttons.empty()) {
+		_textPos = Common::Point(0, (8 + _lines.size()) * 8);
+		setReduced(true);
+
+		// Create a blank button
+		Graphics::ManagedSurface btnSmall(BTN_SIZE, BTN_SIZE);
+		btnSmall.blitFrom(g_globals->_blankButton, Common::Rect(0, 0, 20, 20),
+			Common::Rect(0, 0, BTN_SIZE, BTN_SIZE));
+
+		for (uint i = 0; i < _buttons.size(); ++i, _textPos.x += 10) {
+			InteractionButton &btn = _buttons[i];
+
+			int itemWidth = BTN_SIZE + 5 + getStringWidth(_buttons[i]._text);
+			if ((_textPos.x + itemWidth) > _innerBounds.width()) {
+				_textPos.x = 0;
+				_textPos.y += BTN_SIZE + 2;
+			}
+			Common::Point pt = _textPos;
+
+			// Display button and write character in the middle
+			s.blitFrom(btnSmall, Common::Point(pt.x + _bounds.borderSize(),
+				pt.y + _bounds.borderSize()));
+
+			writeString(pt.x + (BTN_SIZE / 2) + 1, pt.y,
+				Common::String::format("%c", _buttons[i]._c), ALIGN_MIDDLE);
+
+			// Write text to the right of the button
+			writeString(pt.x + BTN_SIZE + 5, pt.y, _buttons[i]._text);
+
+			// Set up bounds for the area covered by the button & text
+			btn._bounds = Common::Rect(pt.x, pt.y,
+				pt.x + BTN_SIZE + 5 + itemWidth, pt.y + BTN_SIZE);
+			btn._bounds.translate(_innerBounds.left, _innerBounds.top);
+		}
 	}
 }
 
@@ -117,6 +158,18 @@ bool Interaction::msgAction(const ActionMessage &msg) {
 
 bool Interaction::msgMouseDown(const MouseDownMessage &msg) {
 	if (!PartyView::msgMouseDown(msg)) {
+		// Check if a button was pressed
+		for (uint i = 0; i < _buttons.size(); ++i) {
+			const auto &btn = _buttons[i];
+			if (_buttons[i]._bounds.contains(msg._pos)) {
+				msgKeypress(KeypressMessage(Common::KeyState(
+					(Common::KeyCode)(Common::KEYCODE_a + btn._c - 'A'), btn._c
+				)));
+				return true;
+			}
+		}
+
+		// Fall back on treating click as a standard acknowledgement
 		viewAction();
 	}
 

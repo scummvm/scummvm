@@ -49,6 +49,7 @@
 #include "mm/mm1/views_enh/which_character.h"
 #include "mm/mm1/views_enh/which_item.h"
 #include "mm/mm1/views_enh/who_will_try.h"
+#include "mm/mm1/views_enh/interactions/arrested.h"
 #include "mm/mm1/views_enh/interactions/resistances.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/locations/blacksmith_items.h"
@@ -67,6 +68,7 @@ namespace ViewsEnh {
 
 struct Dialogs {
 private:
+	ViewsEnh::Interactions::Arrested _arrested;
 	ViewsEnh::Interactions::Resistances _resistances;
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Locations::Blacksmith _blacksmith;

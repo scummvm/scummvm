@@ -31,6 +31,14 @@ namespace ViewsEnh {
 namespace Interactions {
 
 class Interaction : public PartyView {
+	struct InteractionButton {
+		Common::String _text;
+		char _c = '\0';
+		Common::Rect _bounds;
+		InteractionButton() {}
+		InteractionButton(const Common::String &text, char c) :
+			_text(text), _c(c) {}
+	};
 private:
 	Shared::Xeen::SpriteResource _frame;
 	Shared::Xeen::SpriteResource _portrait;
@@ -39,6 +47,8 @@ private:
 protected:
 	Common::String _title;
 	Common::StringArray _lines;
+	Common::Array<InteractionButton> _buttons;
+
 	bool _animated = true;
 	int _portraitNum = 0;
 protected:
@@ -57,6 +67,20 @@ protected:
 	 * Adds text for display
 	 */
 	void addText(const Common::String &str);
+
+	/**
+	 * Clear the buttons
+	 */
+	void clearButtons() {
+		_buttons.clear();
+	}
+
+	/**
+	 * Adds a button
+	 */
+	void addButton(const Common::String &str, char c) {
+		_buttons.push_back(InteractionButton(str, c));
+	}
 
 	/**
 	 * Write out a line

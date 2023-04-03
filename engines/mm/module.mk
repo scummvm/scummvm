@@ -36,6 +36,7 @@ MODULE_OBJS += \
 	mm1/data/text_parser.o \
 	mm1/data/trap.o \
 	mm1/data/treasure.o \
+	mm1/game/arrested.o \
 	mm1/game/game_logic.o \
 	mm1/game/combat.o \
 	mm1/game/encounter.o \
@@ -168,6 +169,7 @@ MODULE_OBJS += \
 	mm1/views_enh/which_item.o \
 	mm1/views_enh/who_will_try.o \
 	mm1/views_enh/yes_no.o \
+	mm1/views_enh/interactions/arrested.o \
 	mm1/views_enh/interactions/interaction.o \
 	mm1/views_enh/interactions/resistances.o \
 	mm1/views_enh/interactions/statue.o \
