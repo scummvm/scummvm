@@ -28,6 +28,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "common/events.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -380,8 +382,14 @@ void LoseGame::readData(Common::SeekableReadStream &stream) {
 
 void LoseGame::execute() {
 	g_nancy->_sound->stopAndUnloadSpecificSounds();
-	g_nancy->setState(NancyState::kMainMenu);
-	NancySceneState.resetStateToInit();
+	
+	// We're not using original menus yet, so just quit the game and go back to the launcher
+	// g_nancy->setState(NancyState::kMainMenu); 
+	
+	Common::Event ev;
+	ev.type = Common::EVENT_RETURN_TO_LAUNCHER;
+	g_system->getEventManager()->pushEvent(ev);
+
 	_isDone = true;
 }
 
@@ -411,7 +419,6 @@ void WinGame::execute() {
 	g_nancy->_sound->stopAndUnloadSpecificSounds();
 	g_nancy->setState(NancyState::kCredits, NancyState::kMainMenu);
 
-	NancySceneState.resetStateToInit();
 	_isDone = true;
 }
 
