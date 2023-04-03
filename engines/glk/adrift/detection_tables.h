@@ -2011,7 +2011,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	// Finish the Game Comp 2005
 	DT_ENTRY0("ftgcshadowjack", "25f33d23e126ea0a86ed55833dbba8ef", 11606),
 	DT_ENTRY0("ftgctakeone", "114caad9308b7adf9e15267a11f12632", 9547),
-	DT_ENTRY0("ftgcdemonhunter", "cc9c55b0f67577f4e9bbaa388a61c494", 18643),
+	DT_ENTRY1("ftgcdemonhunter", "Competition Release", "2af5b32810e6960881122732f48d3ccf", 18644),
 	DT_ENTRY1("ftgcpathwayadrift", "Competition Release", "bcf1f61393c1b8123a98ee4879ffd8a6", 20896),
 	DT_ENTRY0("ftgcshadow", "f4d0a427ebec3a4c3b7029adaa3e401f", 272030),
 	DT_ENTRY0("ftgchunter", "d7af67a0753910bf32ec233e538ad659", 23531),
