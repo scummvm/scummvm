@@ -70,6 +70,7 @@ public:
 	void Init(const ItemSlot &ref, const Vector2i &inc, const unsigned int &rows,
 			  const unsigned int &cols, const bool &keyboard);
 
+	void HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #if 0
 	void HandleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #endif

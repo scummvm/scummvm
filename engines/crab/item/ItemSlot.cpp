@@ -116,6 +116,17 @@ void ItemSlot::Draw() {
 #endif
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle user input
+//------------------------------------------------------------------------
+ButtonAction ItemSlot::HandleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
+	ButtonAction ac = StateButton::HandleEvents(Event, XOffset, YOffset);
+	if (ac == BUAC_LCLICK || ac == BUAC_RCLICK)
+		unread = false;
+
+	return ac;
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle user input
