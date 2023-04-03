@@ -963,8 +963,14 @@ void EoBCoreEngine::setHandItem(Item itemIndex) {
 	}
 
 	if (_screen->curDimIndex() == 7 && itemIndex) {
-		printFullItemName(itemIndex);
-		_txt->printMessage(_takenStrings[0]);
+		if (_flags.lang == Common::Language::ZH_TWN) {
+			_txt->printMessage(_takenStrings[0]);
+			printFullItemName(itemIndex);
+			_txt->printMessage("\r");
+		} else {
+			printFullItemName(itemIndex);
+			_txt->printMessage(_takenStrings[0]);
+		}
 	}
 
 	_itemInHand = itemIndex;
