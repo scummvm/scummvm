@@ -57,7 +57,7 @@
 {
 	{
 		"adibou2",
-		"ADIBOU Version Decouverte",
+		"ADIBOU Version Decouverte 2.11",
 		AD_ENTRY1s("intro.stk", "558c14327b79ed39214b49d567a75e33", 8737856),
 		FR_FRA,
 		kPlatformWindows,
@@ -144,7 +144,7 @@
 {
 	{
 		"adibou2",
-		"ADIBOU 2",
+		"ADDY JR 2.20 Environment",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		DE_DEU,
 		kPlatformWindows,
