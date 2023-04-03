@@ -46,6 +46,7 @@ Renderer *CreateGfxOpenGLShader(int screenW, int screenH, Common::RenderMode ren
 }
 
 OpenGLShaderRenderer::OpenGLShaderRenderer(int screenW, int screenH, Common::RenderMode renderMode) : Renderer(screenW, screenH, renderMode) {
+	_verts = nullptr;
 	_triangleShader = nullptr;
 	_triangleVBO = 0;
 
