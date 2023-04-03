@@ -215,7 +215,7 @@ void MohawkEngine_Riven::doFrame() {
 	}
 
 	processInput();
-	
+
 	_stack->onFrame();
 
 	if (!_scriptMan->runningQueuedScripts()) {
