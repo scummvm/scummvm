@@ -255,7 +255,7 @@ static const char *const kEoB2ItemMisuseStringsDOSChinese[3] = {
 static const StringListProvider kEoB2ItemMisuseStringsDOSChineseProvider = { ARRAYSIZE(kEoB2ItemMisuseStringsDOSChinese), kEoB2ItemMisuseStringsDOSChinese };
 
 static const char *const kEoB2TakenStringsDOSChinese[1] = {
-	" taken.\r"
+	"\xae\xb3\xa8\xfa", /* "拿取"; */
 };
 
 static const StringListProvider kEoB2TakenStringsDOSChineseProvider = { ARRAYSIZE(kEoB2TakenStringsDOSChinese), kEoB2TakenStringsDOSChinese };
