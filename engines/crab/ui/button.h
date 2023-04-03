@@ -118,6 +118,7 @@ public:
 
 	void Draw(const int &XOffset = 0, const int &YOffset = 0, Rect *clip = NULL);
 
+	ButtonAction HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #if 0
 	ButtonAction HandleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0);
 #endif
