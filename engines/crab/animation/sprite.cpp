@@ -336,6 +336,70 @@ void Sprite::DrawPopup(pyrodactyl::ui::ParagraphData &pop, const Rect &camera) {
 	popup.Draw(x, y, pop, camera);
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle the movement in a level for the player only
+//------------------------------------------------------------------------
+void Sprite::HandleEvents(Info &info, const Rect &camera, const SpriteConstant &sc, const Common::Event &Event) {
+	int num = 0;
+	info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
+	++num;
+	float player_speed = static_cast<float>(num);
+
+	// This is for Diablo style hold-mouse-button-in-direction-of-movement
+	// This is only used if - point and click movement isn't being used, cursor is not inside the hud, the cursor is a normal cursor and the mouse is pressed
+	if (!ai_data.dest.active && !gMouse.inside_hud && !gMouse.hover && gMouse.Pressed()) {
+		// To find where the click is w.r.t sprite, we need to see where it is being drawn
+		int x = pos.x - camera.x - anim_set.AnchorX(dir), y = pos.y - camera.y - anim_set.AnchorY(dir);
+
+		// Just use the bound rectangle dimensions
+		Rect b = BoundRect();
+		int w = b.w, h = b.h;
+
+		// X axis
+		if (gMouse.motion.x > x + w)
+			XVel(player_speed * sc.walk_vel_mod.x);
+		else if (gMouse.motion.x < x)
+			XVel(-player_speed * sc.walk_vel_mod.x);
+		else
+			XVel(0.0f);
+
+		// Y axis
+		if (gMouse.motion.y > y + h)
+			YVel(player_speed * sc.walk_vel_mod.y);
+		else if (gMouse.motion.y < y)
+			YVel(-player_speed * sc.walk_vel_mod.y);
+		else
+			YVel(0.0f);
+	} else // Keyboard movement
+	{
+		// Disable destination as soon as player presses a direction key
+		// X axis
+		if (gInput.State(IG_LEFT)) {
+			ai_data.dest.active = false;
+			XVel(-player_speed * sc.walk_vel_mod.x);
+		} else if (gInput.State(IG_RIGHT)) {
+			ai_data.dest.active = false;
+			XVel(player_speed * sc.walk_vel_mod.x);
+		} else if (!ai_data.dest.active)
+			XVel(0.0f);
+
+		// Y axis
+		if (gInput.State(IG_UP)) {
+			ai_data.dest.active = false;
+			YVel(-player_speed * sc.walk_vel_mod.y);
+		} else if (gInput.State(IG_DOWN)) {
+			ai_data.dest.active = false;
+			YVel(player_speed * sc.walk_vel_mod.y);
+		} else if (!ai_data.dest.active)
+			YVel(0.0f);
+	}
+
+	UpdateMove(input.HandleEvents(Event));
+
+	// This is to prevent one frame of drawing with incorrect parameters
+	Animate(info);
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle the movement in a level for the player only
