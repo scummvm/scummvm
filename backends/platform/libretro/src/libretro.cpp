@@ -148,18 +148,10 @@ static void set_audio_buffer_status() {
 }
 
 static void increase_performance() {
-	struct retro_message_ext retro_msg;
-	retro_msg.type = RETRO_MESSAGE_TYPE_NOTIFICATION;
-	retro_msg.target = RETRO_MESSAGE_TARGET_OSD;
-	retro_msg.duration = 3000;
-	retro_msg.msg = "";
-
 	if (!(performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES)) {
 		performance_switch |= PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES;
 		if (consecutive_screen_updates) {
-			retro_msg.msg = "Auto performance tuner: 'Show consecutive screen updates' disabled";
 			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Show consecutive screen updates' disabled.\n");
-			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
 			return;
 		}
 	}
@@ -167,9 +159,7 @@ static void increase_performance() {
 	if (!(performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES)) {
 		performance_switch |= PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
 		if (!timing_inaccuracies_enabled) {
-			retro_msg.msg = "Auto performance tuner: 'Allow Timing Inaccuracies' enabled";
 			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
-			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
 			return;
 		}
 	}
@@ -177,9 +167,7 @@ static void increase_performance() {
 	if (!(performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
 		performance_switch |= PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
 		if (reduce_framerate_type != REDUCE_FRAMERATE_SHIFT_AUTO) {
-			retro_msg.msg = "Auto performance tuner: 'Auto reduce framerate' enabled";
 			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Auto reduce framerate' enabled.\n");
-			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
 			return;
 		}
 	}
@@ -769,7 +757,7 @@ void retro_run(void) {
 				if ((performance_switch & PERF_SWITCH_ON) && !(performance_switch & PERF_SWITCH_OVER)) {
 					frameskip_events++;
 					if (frameskip_events > PERF_SWITCH_FRAMESKIP_EVENTS) {
-					increase_performance();
+						increase_performance();
 						frameskip_events = 0;
 					}
 				}
