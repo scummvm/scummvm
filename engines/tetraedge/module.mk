@@ -3,6 +3,7 @@ MODULE := engines/tetraedge
 MODULE_OBJS := \
 	tetraedge.o \
 	to_lua.o \
+	game/amerzone_game.o \
 	game/application.o \
 	game/billboard.o \
 	game/bonus_menu.o \
@@ -78,6 +79,7 @@ MODULE_OBJS := \
 	te/te_lua_gui_lua_callbacks.o \
 	te/te_lua_script.o \
 	te/te_lua_thread.o \
+	te/te_marker.o \
 	te/te_material.o \
 	te/te_matricies_stack.o \
 	te/te_matrix4x4.o \
@@ -118,6 +120,8 @@ MODULE_OBJS := \
 	te/te_vector2s32.o \
 	te/te_vector3f32.o \
 	te/te_visual_fade.o \
+	te/te_warp.o \
+	te/te_warp_marker.o \
 	te/te_xml_parser.o \
 	te/te_xml_gui.o \
 	metaengine.o

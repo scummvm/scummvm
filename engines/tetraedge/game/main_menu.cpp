@@ -127,6 +127,11 @@ void MainMenu::enter() {
 	// TODO: confirmation (menus/confirm/confirmNotSound.lua)
 	// if TeSoundManager is not valid.
 
+	// Hide the Facebook button since we don't support it anyway..
+	TeButtonLayout *fbButton = buttonLayout("facebookButton");
+	if (fbButton)
+		fbButton->setVisible(false);
+
 	_confirmingTuto = false;
 	TeLayout *panel = layout("panel");
 

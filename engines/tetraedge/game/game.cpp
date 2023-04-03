@@ -28,6 +28,7 @@
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
+#include "tetraedge/game/cellphone.h"
 #include "tetraedge/game/character.h"
 #include "tetraedge/game/in_game_scene.h"
 #include "tetraedge/game/game.h"

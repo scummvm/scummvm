@@ -31,6 +31,7 @@
 #include "engines/dialogs.h"
 #include "graphics/palette.h"
 
+#include "tetraedge/game/amerzone_game.h"
 #include "tetraedge/game/syberia_game.h"
 #include "tetraedge/game/application.h"
 #include "tetraedge/game/character.h"
@@ -98,8 +99,12 @@ TeCore *TetraedgeEngine::getCore() {
 }
 
 Game *TetraedgeEngine::getGame() {
-	if (_game == nullptr)
-		_game = new SyberiaGame();
+	if (_game == nullptr) {
+		if (gameType() == kAmerzone)
+			_game = new AmerzoneGame();
+		else
+			_game = new SyberiaGame();
+	}
 	return _game;
 }
 

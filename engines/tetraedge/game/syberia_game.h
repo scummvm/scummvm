@@ -25,23 +25,15 @@
 #include "common/types.h"
 #include "common/serializer.h"
 #include "common/str.h"
-#include "common/random.h"
 
-#include "tetraedge/game/documents_browser.h"
-#include "tetraedge/game/inventory.h"
-#include "tetraedge/game/inventory_menu.h"
 #include "tetraedge/game/in_game_scene.h"
 #include "tetraedge/game/game.h"
-#include "tetraedge/game/notifier.h"
 #include "tetraedge/game/cellphone.h"
 #include "tetraedge/game/game_sound.h"
 #include "tetraedge/game/objectif.h"
-#include "tetraedge/game/question2.h"
-#include "tetraedge/game/dialog2.h"
-#include "tetraedge/te/te_lua_gui.h"
-#include "tetraedge/te/te_music.h"
 #include "tetraedge/te/te_checkbox_layout.h"
 #include "tetraedge/te/te_vector2s32.h"
+#include "tetraedge/te/te_vector3f32.h"
 
 namespace Tetraedge {
 

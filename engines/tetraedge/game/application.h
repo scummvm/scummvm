@@ -112,6 +112,8 @@ public:
 	TeLayout &backLayout() { return _backLayout; }
 	LocFile &loc() { return _loc; }
 	bool ratioStretched() const { return _ratioStretched; }
+	bool compassLook() const { return _compassLook; }
+	bool inverseLook() const { return _inverseLook; }
 
 private:
 	void drawBack();
@@ -178,6 +180,8 @@ private:
 	bool _tutoActivated;
 	bool _drawShadows;
 	bool _ratioStretched;
+	bool _compassLook;
+	bool _inverseLook;
 
 	int _difficulty;
 
