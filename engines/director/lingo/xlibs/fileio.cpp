@@ -19,66 +19,73 @@
  *
  */
 
+/*************************************
+ *
+ * USED IN:
+ * Standard Director Xtra
+ *
+ *************************************/
+
 /*
-  --FileIO, Tool, 1.5.0 , 31mar92
-  --© 1989-1992 MacroMind, Inc.
-  --by John Thompson and Al McNeil
-  ---------------------------------------------------------------------
-  ---------------------------------------------------------------------
-  --=METHODS=--
-  --
-  ISS mNew, mode, fileNameOrType  --Creates a new instance of the XObject.
-  --  Mode can be :
-  --    "read"  - Read "fileName"
-  --    "?read"   - Select and Read "fileType"
-  --    "write"   - Write "fileName"
-  --    "?write"  - Select and Write "fileName"
-  --    "append"  - Append "fileName"
-  --    "?append" - Select and Append "fileName"
-  --  FileType for ?read can be :
-  --    "TEXT" - standard file type
-  --    "trak" - cd track type
-  --    etc... - Any four character combination.
-  --
-  X mDispose  --Disposes of XObject instance.
-  S mName --Returns the name of the XObject.
-  /IXX  mWrite, countPtr, bufferPtr --Writes out a set of chars. Returns error code.
-  II  mWriteChar, charNum --Writes a single character. Returns error code.
-  IS  mWriteString, string  --Writes out a string of chars. Returns error code.
-  /IXX  mRead, countPtr, bufferPtr  --Reads into buffer. Returns error code.
-  I mReadChar   --Returns a single character.
-  S mReadWord   --Returns the next word of an input file.
-  S mReadLine --Returns the next line of an input file.
-  S mReadFile --Returns the remainder of the file.
-  --
-  SSS mReadToken, breakString, skipString
-  --      --breakstring designates character (or token) that signals to stop reading.
-  --      --skipstring designates what characters (or tokens) not to read.
-  I mGetPosition  --Returns the file position.
-  II  mSetPosition, newPos  --Sets the file position. Returns error code.
-  I mGetLength  --Returns the number of chars in the file.
-  ISS mSetFinderInfo, typeString, creatorString --Sets the finder info. Returns error code.
-  S mGetFinderInfo  --Gets the finder info.
-  S mFileName --Returns the name of the file.
-  S mNativeFileName --Returns the name of the file.
-  I mDelete   --Delete the file and dispose of me.
-  I     mStatus  --Returns result code of the last file io activity
-  --
-  SI  +mError, errorCode  --Returns error message string.
-  -- Possible error codes:
-  --  -33 :: File directory full
-  --  -34 :: Volume full
-  --  -35 :: Volume not found
-  --  -36 :: I/O Error
-  --  -37 :: Bad file name
-  --  -38 :: File not open
-  --  -42 :: Too many files open
-  --  -43 :: File not found
-  --  -56 :: No such drive
-  --  -65 :: No disk in drive
-  --  -120 :: Directory not found
-  V     mReadPICT
-*/
+ * --FileIO, Tool, 1.5.0 , 31mar92
+ * --© 1989-1992 MacroMind, Inc.
+ * --by John Thompson and Al McNeil
+ * ---------------------------------------------------------------------
+ * ---------------------------------------------------------------------
+ * --=METHODS=--
+ * --
+ * ISS mNew, mode, fileNameOrType  --Creates a new instance of the XObject.
+ * --  Mode can be :
+ * --    "read"  - Read "fileName"
+ * --    "?read"   - Select and Read "fileType"
+ * --    "write"   - Write "fileName"
+ * --    "?write"  - Select and Write "fileName"
+ * --    "append"  - Append "fileName"
+ * --    "?append" - Select and Append "fileName"
+ * --  FileType for ?read can be :
+ * --    "TEXT" - standard file type
+ * --    "trak" - cd track type
+ * --    etc... - Any four character combination.
+ * --
+ * X mDispose  --Disposes of XObject instance.
+ * S mName --Returns the name of the XObject.
+ * /IXX  mWrite, countPtr, bufferPtr --Writes out a set of chars. Returns error code.
+ * II  mWriteChar, charNum --Writes a single character. Returns error code.
+ * IS  mWriteString, string  --Writes out a string of chars. Returns error code.
+ * /IXX  mRead, countPtr, bufferPtr  --Reads into buffer. Returns error code.
+ * I mReadChar   --Returns a single character.
+ * S mReadWord   --Returns the next word of an input file.
+ * S mReadLine --Returns the next line of an input file.
+ * S mReadFile --Returns the remainder of the file.
+ * --
+ * SSS mReadToken, breakString, skipString
+ * --      --breakstring designates character (or token) that signals to stop reading.
+ * --      --skipstring designates what characters (or tokens) not to read.
+ * I mGetPosition  --Returns the file position.
+ * II  mSetPosition, newPos  --Sets the file position. Returns error code.
+ * I mGetLength  --Returns the number of chars in the file.
+ * ISS mSetFinderInfo, typeString, creatorString --Sets the finder info. Returns error code.
+ * S mGetFinderInfo  --Gets the finder info.
+ * S mFileName --Returns the name of the file.
+ * S mNativeFileName --Returns the name of the file.
+ * I mDelete   --Delete the file and dispose of me.
+ * I     mStatus  --Returns result code of the last file io activity
+ * --
+ * SI  +mError, errorCode  --Returns error message string.
+ * -- Possible error codes:
+ * --  -33 :: File directory full
+ * --  -34 :: Volume full
+ * --  -35 :: Volume not found
+ * --  -36 :: I/O Error
+ * --  -37 :: Bad file name
+ * --  -38 :: File not open
+ * --  -42 :: Too many files open
+ * --  -43 :: File not found
+ * --  -56 :: No such drive
+ * --  -65 :: No disk in drive
+ * --  -120 :: Directory not found
+ * V     mReadPICT
+ */
 
 #include "gui/filebrowser-dialog.h"
 
