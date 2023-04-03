@@ -47,7 +47,7 @@ void Viewport::init() {
 }
 
 void Viewport::handleInput(NancyInput &input) {
-	Time playTime = g_nancy->getTotalPlayTime();
+	Time systemTime = g_system->getMillis();
 	byte direction = 0;
 
 	// Make cursor sticky when scrolling the viewport
@@ -150,7 +150,7 @@ void Viewport::handleInput(NancyInput &input) {
 		const Nancy::State::Scene::SceneSummary &summary = NancySceneState.getSceneSummary();
 		Time movementDelta = NancySceneState.getMovementTimeDelta(direction & kMoveFast);
 
-		if (playTime > _nextMovementTime) {
+		if (systemTime > _nextMovementTime) {
 			if (direction & kLeft) {
 				setNextFrame();
 			}
@@ -167,7 +167,7 @@ void Viewport::handleInput(NancyInput &input) {
 				scrollDown(summary.verticalScrollDelta);
 			}
 
-			_nextMovementTime = playTime + movementDelta;
+			_nextMovementTime = systemTime + movementDelta;
 		}
 	}
 
