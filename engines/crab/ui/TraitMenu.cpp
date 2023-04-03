@@ -83,6 +83,22 @@ void TraitMenu::Draw(const pyrodactyl::people::Person *obj) {
 			i.Draw();
 }
 
+void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const Common::Event &Event) {
+	int choice = menu.HandleEvents(Event);
+	if (choice >= 0) {
+		for (auto i = menu.element.begin(); i != menu.element.end(); ++i)
+			i->State(false);
+
+		menu.element.at(choice).State(true);
+		select = choice;
+
+		if (obj != nullptr) {
+			if (select > -1 && select < obj->trait.size())
+				obj->trait.at(select).unread = false;
+		}
+	}
+}
+
 #if 0
 void TraitMenu::HandleEvents(pyrodactyl::people::Person *obj, const SDL_Event &Event) {
 	int choice = menu.HandleEvents(Event);

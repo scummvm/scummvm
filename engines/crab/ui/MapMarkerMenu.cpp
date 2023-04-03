@@ -78,6 +78,27 @@ void MapMarkerMenu::Draw(const Element &pos, const Vector2i &player_pos, const R
 		i.HoverInfoOnlyDraw(offset_m.x, offset_m.y);
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle Events
+//------------------------------------------------------------------------
+void MapMarkerMenu::HandleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const Common::Event &Event) {
+	if (player_pos.x >= camera.x && player_pos.y >= camera.y)
+		player.HandleEvents(Event, pos.x + player_pos.x - camera.x + offset.player.x, pos.y + player_pos.y - camera.y + offset.player.y);
+
+	int choice = menu.HandleEvents(Event, pos.x - camera.x + offset.marker.x, pos.y - camera.y + offset.marker.y);
+	if (choice != -1) {
+		int c = 0;
+		for (auto &i : menu.element) {
+			if (c == choice) // For an already selected marker, clicking it toggles the selection state
+				i.State(!i.State());
+			else
+				i.State(false);
+
+			++c;
+		}
+	}
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle Events

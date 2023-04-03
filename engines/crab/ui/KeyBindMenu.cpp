@@ -143,6 +143,37 @@ void KeyBindMenu::SetCaption() {
 #endif
 }
 
+void KeyBindMenu::HandleEvents(const Common::Event &Event) {
+	warning("STUB: KeyBindMenu::HandleEvents()");
+
+	/*
+	if (sel_controls.HandleEvents(Event))
+		SetCaption();
+
+	switch (state) {
+	case STATE_NORMAL:
+		choice = menu[sel_controls.cur].HandleEvents(Event);
+		if (choice >= 0) {
+			prompt.Swap(menu[sel_controls.cur].element.at(choice).caption);
+			state = STATE_KEY;
+			break;
+		}
+
+		break;
+	case STATE_KEY:
+		if (Event.type == SDL_KEYDOWN) {
+			SwapKey(Event.key.keysym.scancode);
+			SetCaption();
+			menu[sel_controls.cur].element.at(choice).caption.col = prompt.col_prev;
+			state = STATE_NORMAL;
+		}
+		break;
+	default:
+		break;
+	}
+	*/
+}
+
 #if 0
 void KeyBindMenu::HandleEvents(const SDL_Event &Event) {
 	if (sel_controls.HandleEvents(Event))

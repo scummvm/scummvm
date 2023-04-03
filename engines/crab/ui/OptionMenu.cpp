@@ -154,6 +154,88 @@ void OptionMenu::Draw(Button &back) {
 	}
 }
 
+bool OptionMenu::HandleEvents(Button &back, const Common::Event &Event) {
+	if (state < STATE_ENTER_W) {
+		bg.Draw();
+
+		switch (state) {
+		case STATE_GENERAL:
+			general.HandleEvents(Event);
+			break;
+		case STATE_KEYBOARD:
+			keybind.HandleEvents(Event);
+			break;
+		case STATE_GRAPHICS: {
+			int result = gfx.HandleEvents(Event);
+			if (result == 1) {
+				state = STATE_CONFIRM;
+				timer.Start();
+				gScreenSettings.SetResolution();
+				gfx.SetInfo();
+			} else if (result == 2)
+				state = STATE_ENTER_W;
+		} break;
+		default:
+			break;
+		}
+
+		return HandleTabs(back, Event);
+	} else {
+		questionbox.Draw();
+
+		switch (state) {
+		case STATE_ENTER_W:
+			if (prompt_w.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
+				gScreenSettings.cur.w = StringToNumber<int>(prompt_w.text);
+				state = STATE_ENTER_H;
+			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
+				gScreenSettings.RestoreBackup();
+				gfx.SetInfo();
+				state = STATE_GRAPHICS;
+			}
+			break;
+		case STATE_ENTER_H:
+			if (prompt_h.HandleEvents(Event, true) || accept.HandleEvents(Event) == BUAC_LCLICK) {
+				gScreenSettings.cur.h = StringToNumber<int>(prompt_h.text);
+				state = STATE_CONFIRM;
+				timer.Start();
+				gScreenSettings.SetResolution();
+				gfx.SetInfo();
+			} else if (cancel.HandleEvents(Event) == BUAC_LCLICK) {
+				gScreenSettings.RestoreBackup();
+				gfx.SetInfo();
+				state = STATE_GRAPHICS;
+			}
+
+			break;
+		case STATE_CONFIRM:
+			if (accept.HandleEvents(Event)) {
+				state = STATE_GRAPHICS;
+				timer.Stop();
+			} else if (cancel.HandleEvents(Event)) {
+				gScreenSettings.RestoreBackup();
+				gScreenSettings.SetResolution();
+				gfx.SetInfo();
+				state = STATE_GRAPHICS;
+			}
+			break;
+		default:
+			break;
+		}
+
+		accept.Draw();
+		cancel.Draw();
+	}
+
+	return false;
+}
+
+bool OptionMenu::HandleTabs(Button &back, const Common::Event &Event) {
+	warning("STUB: OptionMenu::HandleTabs()");
+
+	return false;
+}
+
 #if 0
 bool OptionMenu::HandleEvents(Button &back, const SDL_Event &Event) {
 	if (state < STATE_ENTER_W) {

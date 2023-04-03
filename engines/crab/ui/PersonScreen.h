@@ -67,6 +67,7 @@ public:
 	void Load(const std::string &filename);
 	void Cache(pyrodactyl::event::Info &info, const std::string &id, pyrodactyl::level::Level &level);
 
+	void HandleEvents(pyrodactyl::event::Info &info, const std::string &id, const Common::Event &Event);
 #if 0
 	void HandleEvents(pyrodactyl::event::Info &info, const std::string &id, const SDL_Event &Event);
 #endif

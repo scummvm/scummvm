@@ -77,6 +77,7 @@ public:
 	void Load(rapidxml::xml_node<char> *node);
 	void Draw(Button &bu_map);
 
+	bool HandleEvents(Button &bu_map, std::string &map_title, const Common::Event &Event);
 #if 0
 	bool HandleEvents(Button &bu_map, std::string &map_title, const SDL_Event &Event);
 #endif

@@ -122,6 +122,11 @@ bool GameSaveMenu::HandleEvents(const SDL_Event &Event) {
 }
 #endif
 
+bool GameSaveMenu::HandleEvents(const Common::Event &Event) {
+	warning("STUB: GameSaveMenu::HandleEvents()");
+	return false;
+}
+
 void GameSaveMenu::Draw() {
 	bg.Draw();
 	menu.Draw();

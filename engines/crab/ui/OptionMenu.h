@@ -86,8 +86,9 @@ class OptionMenu {
 	TextData countdown;
 	Timer timer;
 
-#if 0
 	// Function to draw the main menu (controls, settings, save, cancel)
+	bool HandleTabs(Button &back, const Common::Event &Event);
+#if 0
 	bool HandleTabs(Button &back, const SDL_Event &Event);
 #endif
 
@@ -106,6 +107,7 @@ public:
 
 	void Load(const std::string &filename);
 	void Draw(Button &back);
+	bool HandleEvents(Button &back, const Common::Event &Event);
 #if 0
 	bool HandleEvents(Button &back, const SDL_Event &Event);
 #endif

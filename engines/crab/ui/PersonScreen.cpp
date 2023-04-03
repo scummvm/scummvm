@@ -58,6 +58,13 @@ void PersonScreen::Load(const std::string &filename) {
 	}
 }
 
+void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const std::string &id, const Common::Event &Event) {
+	if (info.PersonValid(id))
+		menu.HandleEvents(&info.PersonGet(id), Event);
+	else
+		menu.HandleEvents(nullptr, Event);
+}
+
 #if 0
 void PersonScreen::HandleEvents(pyrodactyl::event::Info &info, const std::string &id, const SDL_Event &Event) {
 	if (info.PersonValid(id))

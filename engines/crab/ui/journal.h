@@ -98,6 +98,7 @@ public:
 	void Draw(const std::string &id);
 
 	// Return true if "go to map" is selected
+	bool HandleEvents(const std::string &id, const Common::Event &Event);
 #if 0
 	bool HandleEvents(const std::string &id, const SDL_Event &Event);
 #endif

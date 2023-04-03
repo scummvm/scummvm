@@ -124,6 +124,25 @@ void Journal::Draw(const std::string &id) {
 		}
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle user input
+//------------------------------------------------------------------------
+bool Journal::HandleEvents(const std::string &id, const Common::Event &Event) {
+	int choice = category.HandleEvents(Event);
+	if (choice >= 0 && choice < category.element.size())
+		Select(id, choice);
+
+	// Check if select is valid
+	if (select >= 0 && select < JE_TOTAL) {
+		// Always find valid journal group first
+		for (auto &jo : journal)
+			if (jo.id == id)
+				return jo.menu[select].HandleEvents(bu_map, marker_title, Event);
+	}
+
+	return false;
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle user input
