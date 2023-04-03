@@ -184,15 +184,6 @@ static void increase_performance() {
 		}
 	}
 
-	if (!(performance_switch & PERF_SWITCH_ENABLE_AUTO_FRAMESKIP)) {
-		performance_switch |= PERF_SWITCH_ENABLE_AUTO_FRAMESKIP;
-		if (frameskip_type != 2) {
-			retro_msg.msg = "Auto performance tuner: 'Auto frameskip' enabled";
-			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Auto frameskip' enabled.\n");
-			environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &retro_msg);
-		}
-	}
-
 	performance_switch |= PERF_SWITCH_OVER;
 }
 
@@ -737,14 +728,6 @@ void retro_run(void) {
 		delayMillis call in ScummVM thread.
 		*/
 		do {
-			/* Performance counter */
-			if ((performance_switch & PERF_SWITCH_ON) && !(performance_switch & PERF_SWITCH_OVER) && (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN) && !(audio_status & AUDIO_STATUS_MUTE)) {
-				frameskip_events++;
-				if (frameskip_events > PERF_SWITCH_FRAMESKIP_EVENTS) {
-					increase_performance();
-					frameskip_events = 0;
-				}
-			}
 
 			/* Framerate reduction using sound buffer size */
 			if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_AUTO || (performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
@@ -766,7 +749,7 @@ void retro_run(void) {
 			}
 
 			/* Determine frameskip need based on settings */
-			if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ENABLE_AUTO_FRAMESKIP))
+			if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ON))
 				skip_frame = (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN);
 			else if (frameskip_type == 1)
 				skip_frame = !(current_frame % frameskip_no == 0);
@@ -782,6 +765,14 @@ void retro_run(void) {
 				log_cb(RETRO_LOG_DEBUG, "%d frame(s) skipped\n",frameskip_counter);
 				skip_frame = false;
 				frameskip_counter = 0;
+				/* Performance counter */
+				if ((performance_switch & PERF_SWITCH_ON) && !(performance_switch & PERF_SWITCH_OVER)) {
+					frameskip_events++;
+					if (frameskip_events > PERF_SWITCH_FRAMESKIP_EVENTS) {
+					increase_performance();
+						frameskip_events = 0;
+					}
+				}
 
 			/* Keep on skipping frames if flagged */
 			} else if (skip_frame)
