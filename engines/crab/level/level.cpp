@@ -87,6 +87,33 @@ void Level::CalcProperties(Info &info) {
 		i->CalcProperties(info);
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle the level movement
+//------------------------------------------------------------------------
+void Level::HandleEvents(Info &info, const Common::Event &Event) {
+	if (!gMouse.inside_hud) {
+		if (Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) {
+			// Only go to path if our mouse is a normal walking cursor
+			if (!gMouse.hover) {
+				// The destination coordinate is set by adding camera position to click position
+				Vector2i dest = gMouse.button;
+				dest.x += camera.x;
+				dest.y += camera.y;
+
+				Rect b = objects[player_index].BoundRect();
+				b.w /= 2;
+				b.h /= 2;
+				b.x = dest.x - b.w / 2;
+				b.y = dest.y - b.h / 2;
+
+				objects[player_index].SetDestPathfinding(dest, !terrain.InsideNoWalk(dest));
+			}
+		}
+	}
+
+	objects[player_index].HandleEvents(info, camera, sc_default, Event);
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle the level movement

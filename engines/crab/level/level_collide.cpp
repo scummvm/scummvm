@@ -43,6 +43,42 @@ using namespace pyrodactyl::input;
 using namespace pyrodactyl::event;
 using namespace pyrodactyl::music;
 
+//------------------------------------------------------------------------
+// Purpose: See if player clicked on a sprite they are colliding with
+//------------------------------------------------------------------------
+bool Level::ContainsClick(const std::string &id, const Common::Event &Event) {
+	// If mouse is moved and is hovering on the specified sprite (id), set hover = true
+	if (Event.type == Common::EVENT_MOUSEMOVE) {
+		for (auto &i : objects) {
+			Rect r = i.PosRect();
+
+			if (r.Contains(gMouse.motion.x + camera.x, gMouse.motion.y + camera.y)) {
+				// This is to show the sprite's name on top of their head
+				i.hover = true;
+
+				// This is to update the mouse cursor only if we're in talking range of a sprite
+				if (i.ID() == id)
+					gMouse.hover = true;
+			} else
+				i.hover = false;
+		}
+
+		return false;
+	} else if (gMouse.Pressed()) {
+		for (auto &i : objects) {
+			if (i.ID() == id) {
+				Rect r = i.PosRect();
+				if (r.Contains(gMouse.button.x + camera.x, gMouse.button.y + camera.y)) {
+					gMouse.hover = true;
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: See if player clicked on a sprite they are colliding with
