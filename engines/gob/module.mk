@@ -44,6 +44,7 @@ MODULE_OBJS := \
 	inter_v1.o \
 	inter_geisha.o \
 	inter_v2.o \
+	inter_adibou1.o \
 	inter_bargon.o \
 	inter_fascin.o \
 	inter_littlered.o \

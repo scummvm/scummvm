@@ -637,7 +637,7 @@ Common::Error GobEngine::initGameParts() {
 	case kGameTypeAdibou1:
 		_init     = new Init_v2(this);
 		_video    = new Video_v2(this);
-		_inter    = new Inter_v2(this);
+		_inter    = new Inter_Adibou1(this);
 		_mult     = new Mult_v2(this);
 		_draw     = new Draw_v2(this);
 		_map      = new Map_v2(this);
