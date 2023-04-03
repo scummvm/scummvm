@@ -75,6 +75,7 @@ struct FightInput {
 
 	void Load(rapidxml::xml_node<char> *node);
 
+	FightAnimationType HandleEvents(const Common::Event &Event);
 #if 0
 	FightAnimationType HandleEvents(const SDL_Event &Event);
 #endif
