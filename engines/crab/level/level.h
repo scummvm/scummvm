@@ -177,14 +177,16 @@ public:
 	// Used to see if a sprite collides with a rectangle
 	void CalcTrigCollide(pyrodactyl::event::Info &info);
 
-#if 0
 	// See if a player clicked on the sprite in contact
+	bool ContainsClick(const std::string &id, const Common::Event &Event);
+#if 0
 	bool ContainsClick(const std::string &id, const SDL_Event &Event);
 #endif
 
 	// Get index of a sprite in the object array
 	pyrodactyl::anim::Sprite *GetSprite(const std::string &id);
 
+	void HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
 #if 0
 	void HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif
