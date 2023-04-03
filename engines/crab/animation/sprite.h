@@ -207,8 +207,9 @@ public:
 	// Set sprite destination
 	void SetDestPathfinding(const Vector2i &dest, bool reachable = true);
 
-#if 0
 	// Used for sprite movement controlled by player input (usually the player sprite)
+	void HandleEvents(pyrodactyl::event::Info &info, const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc, const Common::Event &Event);
+#if 0
 	void HandleEvents(pyrodactyl::event::Info &info, const Rect &camera, const pyrodactyl::ai::SpriteConstant &sc, const SDL_Event &Event);
 #endif
 
