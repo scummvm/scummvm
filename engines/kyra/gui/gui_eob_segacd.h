@@ -35,6 +35,9 @@ public:
 	GUI_EoB_SegaCD(EoBEngine *vm);
 	~GUI_EoB_SegaCD() override;
 
+protected:
+	int mapPointToEntry(const Common::Point &p) const override;
+
 private:
 	void drawCampMenu() override;
 	void initMemorizePrayMenu(int spellType) override;
