@@ -54,6 +54,9 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 		_screen->fillRect(290, 180, 318, 194, guiSettings()->colors.fill);
 		_screen->printShadedText("\xbf\xef?" /* 選? */, 292, 181, guiSettings()->colors.guiColorYellow, guiSettings()->colors.fill, guiSettings()->colors.guiColorBlack, -1);
 		_screen->setFont(of);
+
+		_screen->fillRect(3, 170, 290, 198, guiSettings()->colors.fill);
+		_screen->fillRect(4, 171, 289, 197, guiSettings()->colors.guiColorBlack);
 	}
 	gui_drawCompass(true);
 
