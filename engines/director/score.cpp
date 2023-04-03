@@ -1080,6 +1080,8 @@ void Score::screenShot() {
 
 	const char *buildNumber = getenv("BUILD_NUMBER");
 
+	warning("build Number is: %s", buildNumber);
+
 	// If we are running inside of buildbot
 	if (buildNumber) {
 		// ./dumps/theapartment/25/xn--Main Menu-zd0e-19.png
