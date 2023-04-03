@@ -22,6 +22,7 @@
 #include "engines/advancedDetector.h"
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/dialogs.h"
 
@@ -37,6 +38,8 @@ public:
 	int getMaximumSaveSlot() const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
+
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 
 	void registerDefaultSettings(const Common::String &target) const override;
 	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
@@ -67,6 +70,13 @@ Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 }
 
 int NancyMetaEngine::getMaximumSaveSlot() const { return 8; }
+
+void NancyMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	// Second Chance autosaves trigger when a scene changes, but before
+	// it is drawn, so we need to refresh the screen before we take a screenshot
+	Nancy::g_nancy->_graphicsManager->draw();
+	AdvancedMetaEngine::getSavegameThumbnail(thumb);
+}
 
 void NancyMetaEngine::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.setInt("music_volume", 54 * 255 / 100, target);
