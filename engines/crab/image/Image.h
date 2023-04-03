@@ -34,6 +34,7 @@
 #include "image/png.h"
 #include "crab/ScreenSettings.h"
 #include "crab/filesystem.h"
+#include "crab/Rectangle.h"
 #include "crab/common_header.h"
 
 namespace Crab {
@@ -91,6 +92,7 @@ public:
 
 	// Draw the openGL texture
 	void Draw(const int &x, const int &y, Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
+	void Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip = FLIP_NONE);
 
 	// Delete the openGL texture
 	void Delete();

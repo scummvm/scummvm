@@ -178,6 +178,10 @@ void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 
 }
 
+void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip) {
+	g_engine->_renderSurface->blitFrom(*texture, Common::Point(x, y));
+}
+
 //------------------------------------------------------------------------
 // Purpose: Delete texture data
 //------------------------------------------------------------------------

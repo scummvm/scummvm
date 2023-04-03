@@ -99,6 +99,8 @@ public:
 
 	void Draw(const int &x, const int &y, const ImageKey &id,
 			  Common::Rect *clip = NULL, const TextureFlipType &flip = FLIP_NONE);
+	void Draw(const int &x, const int &y, const ImageKey &id,
+			  Rect *clip, const TextureFlipType &flip = FLIP_NONE);
 
 	void DimScreen();
 	void BlackScreen();

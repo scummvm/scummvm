@@ -87,7 +87,7 @@ void SectionHeader::Draw(const std::string &str, const int &XOffset, const int &
 		gImageManager.Draw(left.x + XOffset, left.y + YOffset, img);
 
 	if (draw_r)
-		gImageManager.Draw(right.x + XOffset, right.y + YOffset, img, NULL, FLIP_X);
+		gImageManager.Draw(right.x + XOffset, right.y + YOffset, img, (Rect*)NULL, FLIP_X);
 
 	TextData::Draw(str, XOffset, YOffset);
 }
