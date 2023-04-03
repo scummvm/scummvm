@@ -66,6 +66,14 @@ void ItemCollection::Init(const std::string &char_id) {
 		item[char_id].Init(ref, inc, rows, cols, usekeyboard);
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle events
+//------------------------------------------------------------------------
+void ItemCollection::HandleEvents(const std::string &char_id, const Common::Event &Event) {
+	if (item.count(char_id) > 0)
+		item[char_id].HandleEvents(Event);
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle events

@@ -69,6 +69,18 @@ void ItemMenu::SaveState(rapidxml::xml_document<> &doc, rapidxml::xml_node<char>
 		i->SaveState(doc, root);
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handles drag n' drop - return type is Boolean because we only need to communicate stat changes
+//------------------------------------------------------------------------
+void ItemMenu::HandleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
+	int result = Menu<ItemSlot>::HandleEvents(Event);
+	if (result != -1) {
+		select_index = result;
+		for (unsigned int i = 0; i < element.size(); ++i)
+			element.at(i).State(i == select_index);
+	}
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handles drag n' drop - return type is Boolean because we only need to communicate stat changes
