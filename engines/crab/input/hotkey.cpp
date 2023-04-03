@@ -55,6 +55,12 @@ bool HotKey::HandleEvents(const SDL_Event &Event) {
 }
 #endif
 
+bool HotKey::HandleEvents(const Common::Event &Event) {
+	warning("STUB: HotKey::HandleEvents()");
+
+	return false;
+}
+
 const char *HotKey::Name() {
 	warning("STUB: HotKey::Name()");
 
