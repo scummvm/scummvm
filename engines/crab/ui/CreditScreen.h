@@ -114,6 +114,7 @@ public:
 	void Load(const std::string &filename);
 	void Reset();
 
+	bool HandleEvents(Common::Event &Event);
 #if 0
 	bool HandleEvents(SDL_Event &Event);
 #endif

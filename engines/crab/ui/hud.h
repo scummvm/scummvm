@@ -100,6 +100,7 @@ public:
 
 	void Load(const std::string &filename, pyrodactyl::level::TalkNotify &tn, pyrodactyl::level::PlayerDestMarker &pdm);
 
+	HUDSignal HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event);
 #if 0
 	HUDSignal HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event);
 #endif

@@ -56,6 +56,35 @@ void Slider::Load(rapidxml::xml_node<char> *node, const int &Min, const int &Max
 	CreateBackup();
 }
 
+bool Slider::HandleEvents(const Common::Event &Event) {
+	// A person is moving the knob
+	if (knob.HandleEvents(Event) == BUAC_GRABBED) {
+		int dx = gMouse.motion.x - bar.x;
+
+		if (dx < 0)
+			dx = 0;
+		else if (dx > (bar.w - knob.w))
+			dx = (bar.w - knob.w);
+
+		knob.x = bar.x + dx;
+		knob.y = bar.y;
+
+		value = min + (((max - min) * (knob.x - bar.x)) / (bar.w - knob.w));
+		return true;
+	}
+
+	// If a person clicks on the slider bar, the knob needs to travel there
+	if ((Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) && bar.Contains(gMouse.button.x, gMouse.button.y)) {
+		knob.x = gMouse.button.x;
+		knob.y = bar.y;
+
+		value = min + (((max - min) * (knob.x - bar.x)) / (bar.w - knob.w));
+		return true;
+	}
+
+	return false;
+}
+
 #if 0
 bool Slider::HandleEvents(const SDL_Event &Event) {
 	// A person is moving the knob

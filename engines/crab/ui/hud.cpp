@@ -125,6 +125,23 @@ void HUD::InternalEvents(bool ShowMap) {
 	}
 }
 
+HUDSignal HUD::HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
+	gMouse.inside_hud = bg.Contains(gMouse.motion.x, gMouse.motion.y);
+
+	int choice = menu.HandleEvents(Event);
+
+	if (choice == HS_JOURNAL)
+		info.unread.journal = false;
+	else if (choice == HS_INV)
+		info.unread.inventory = false;
+	else if (choice == HS_CHAR)
+		info.unread.trait = false;
+	else if (choice == HS_MAP)
+		info.unread.map = false;
+
+	return static_cast<HUDSignal>(choice);
+}
+
 #if 0
 HUDSignal HUD::HandleEvents(pyrodactyl::event::Info &info, const SDL_Event &Event) {
 	gMouse.inside_hud = bg.Contains(gMouse.motion.x, gMouse.motion.y);

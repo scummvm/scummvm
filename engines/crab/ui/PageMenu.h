@@ -200,6 +200,28 @@ public:
 		UpdateInfo();
 	}
 
+	int HandleEvents(const Common::Event &Event) {
+		using namespace pyrodactyl::input;
+
+		if (current_page > 0 && prev.HandleEvents(Event) == BUAC_LCLICK) {
+			current_page--;
+			UpdateInfo();
+
+			if (current_page < 0)
+				current_page = 0;
+		}
+
+		if (current_page < menu.size() - 1 && next.HandleEvents(Event) == BUAC_LCLICK) {
+			current_page++;
+			UpdateInfo();
+
+			if (current_page >= menu.size())
+				current_page = menu.size() - 1;
+		}
+
+		return menu.at(current_page).HandleEvents(Event);
+	}
+
 #if 0
 	int HandleEvents(const SDL_Event &Event) {
 		using namespace pyrodactyl::input;

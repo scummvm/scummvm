@@ -62,6 +62,19 @@ public:
 		Menu::Draw(XOffset, YOffset);
 	}
 
+	int HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
+		int result = Menu::HandleEvents(Event, XOffset, YOffset);
+
+		if (result >= 0) {
+			select = result;
+
+			for (int i = 0; i < element.size(); ++i)
+				element.at(i).state = (i == result);
+		}
+
+		return result;
+	}
+
 #if 0
 	int HandleEvents(const SDL_Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
 		int result = Menu::HandleEvents(Event, XOffset, YOffset);

@@ -99,6 +99,16 @@ void Inventory::Draw(Person &obj, const int &money_val) {
 	money.Draw();
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle events
+//------------------------------------------------------------------------
+void Inventory::HandleEvents(const std::string &char_id, const Common::Event &Event) {
+	warning("STUB: Inventory::HandleEvents()");
+
+	//collection.HandleEvents(char_id, Event);
+	//money.HandleEvents(Event);
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle events

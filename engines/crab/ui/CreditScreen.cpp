@@ -104,6 +104,19 @@ void CreditScreen::Load(const std::string &filename) {
 	}
 }
 
+bool CreditScreen::HandleEvents(Common::Event &Event) {
+	if (slow.HandleEvents(Event) == BUAC_LCLICK)
+		speed.cur = speed.slow;
+	else if (fast.HandleEvents(Event) == BUAC_LCLICK)
+		speed.cur = speed.fast;
+	else if (pause.HandleEvents(Event) == BUAC_LCLICK)
+		speed.cur = 0.0f;
+	else if (reverse.HandleEvents(Event) == BUAC_LCLICK)
+		speed.cur = speed.reverse;
+
+	return (back.HandleEvents(Event) == BUAC_LCLICK);
+}
+
 #if 0
 bool CreditScreen::HandleEvents(SDL_Event &Event) {
 	if (slow.HandleEvents(Event) == BUAC_LCLICK)

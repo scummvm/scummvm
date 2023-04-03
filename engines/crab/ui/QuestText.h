@@ -81,6 +81,8 @@ public:
 
 	// Reset the value of current page
 	void Reset() { current_page = 0; }
+
+	void HandleEvents(pyrodactyl::event::Quest &q, const Common::Event &Event);
 #if 0
 	void HandleEvents(pyrodactyl::event::Quest &q, const SDL_Event &Event);
 #endif

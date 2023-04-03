@@ -203,6 +203,64 @@ public:
 		}
 	}
 
+	//------------------------------------------------------------------------
+	// Purpose: Event Handling
+	// The reason this function doesn't declare its own Event object is because
+	// a menu might not be the only object in a game state
+	//------------------------------------------------------------------------
+	int HandleEvents(const Common::Event &Event, const int &XOffset = 0, const int &YOffset = 0) {
+		// The keyboard/joystick event handling bit
+		/*
+		if (use_keyboard) {
+			int result = HandleKeyboard(Event);
+
+			// We have accepted a menu option using the keyboard
+			if (result != -1) {
+				// Reset the menu state
+				Reset();
+				return result;
+			}
+		}
+		*/
+
+		// Check if we have moved or clicked the mouse
+		if (Common::isMouseEvent(Event)) {
+			// Since the player is moving the mouse, we have to recalculate hover index at every opportunity
+			hover_index = -1;
+			latest_input = MOUSE;
+		}
+
+		// The mouse and hotkey event handling bit
+		int i = 0;
+		for (auto it = element.begin(); it != element.end(); ++it, ++i) {
+			// We clicked on a button using the mouse
+			if (it->HandleEvents(Event, XOffset, YOffset) == BUAC_LCLICK) {
+				// Reset the menu state
+				Reset();
+				return i;
+			}
+
+			// We did not click a button, however we did hover over the button
+			// However if we are use keyboard to browse through the menu, hovering is forgotten until we move the mouse again
+			if (it->hover_mouse && latest_input == MOUSE) {
+				hover_index = i;
+
+				// The latest input is the mouse, which means we have to forget the keyboard hover states
+				for (auto e = element.begin(); e != element.end(); ++e)
+					e->hover_key = false;
+			}
+		}
+
+		/*
+		if (latest_input == KEYBOARD) {
+			// The latest input is the keyboard, which means we have to forget the mouse hover states
+			for (auto it = element.begin(); it != element.end(); ++it)
+				it->hover_mouse = false;
+		}
+		*/
+		return -1;
+	}
+
 	#if 0
 	//------------------------------------------------------------------------
 	// Purpose: Event Handling
