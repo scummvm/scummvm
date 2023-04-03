@@ -76,8 +76,12 @@ void Big5Font::loadPrefixedRaw(Common::ReadStream &input, int height) {
 		// Big-endian because it's not really a u16 but a big5 sequence.
 		uint16 ch = input.readUint16BE();
 		ChineseTraditionalGlyph glyph;
+		if (input.eos())
+			break;
 		if (ch == 0xffff)
 			break;
+		if (!(ch & 0x8000))
+			continue;
 		memset(&glyph.bitmap, 0, sizeof(glyph.bitmap));
 		memset(&glyph.outline, 0, sizeof(glyph.outline));
 		input.read(&glyph.bitmap, (kChineseTraditionalWidth / 8) * _chineseTraditionalHeight);
