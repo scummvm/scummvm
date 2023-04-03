@@ -39,6 +39,15 @@ void FightInput::Load(rapidxml::xml_node<char> *node) {
 	LoadNum(state, "state", node);
 }
 
+FightAnimationType FightInput::HandleEvents(const Common::Event &Event) {
+	if (gInput.State(IG_ATTACK))
+		return FA_ATTACK;
+	else if (gInput.State(IG_BLOCK))
+		return FA_BLOCK;
+
+	return FA_IDLE;
+}
+
 #if 0
 FightAnimationType FightInput::HandleEvents(const SDL_Event &Event) {
 	if (gInput.State(IG_ATTACK))
