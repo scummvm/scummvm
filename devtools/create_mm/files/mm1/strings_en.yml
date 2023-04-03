@@ -1052,13 +1052,16 @@ maps:
 		blacksmith_inside: "A young gnome materializes, asking,\n\"Would you be wanting my services(Y/N)?\""
 		inn_inside: "An eerie silence pervades the deserted\ninn. suddenly, a ghostly apparition\nappears, asking, \"Sign in (Y/N)?\""
 		market_inside: "A faint outline of a man appears,\nsaying, \"Need some feed (Y/N)?\""
-		temple_inside: "Bright lights swirl throughout the room.a horrifying voice shrieks,\n\"Need help (Y/N)?\""
+		temple_inside: "Bright lights swirl throughout the room.A horrifying voice shrieks,\n\"Need help (Y/N)?\""
 		training_inside: "Several empty suits of armor approach\nasking, \"Need training (Y/N)?\""
 
 		telgoran1: "An elf dressed in robes approaches...\n\n"
 		telgoran2: "\"Friends, I am telgoran. This scroll you\nhave brought me will be very helpful\n(+2500 exp) Here's 1500 gold for your\nservices. I'll tell you a secret, if\ntreasure is what you want...\""
 		telgoran3: "\"The brothers you must find...\nPortsmith and Algary are combined.\"" 
 		telgoran4: "\"You're not the couriers!\""
+	emap03:
+		blacksmith_inside: "A young gnome materializes, asking,\n\"Would you be wanting my services (Y/N)?\""
+		temple_inside: "Bright lights swirl throughout the room. A horrifying voice shrieks,\n\"Need help (Y/N)?\""
 
 	map04:
 		blacksmith: "\"Current Trends Ironworks\""
@@ -1070,16 +1073,24 @@ maps:
 
 		blacksmith_inside: "A boistrous half-orc proclaims,\n\"We carry the very latest,\nbrowse (Y/N)?\""
 		inn_inside: "Adjusting his spectacles, an elderly\ngnome eyes the party and asks,\n\"Signing in (Y/N)?\""
-		market_inside: "The chef says,\"i only serve the best!\nHungry (Y/N)?\""
+		market_inside: "The chef says,\"I only serve the best!\nHungry (Y/N)?\""
 		training_inside: "Three huge armor clad knights bark in\nunison, \"Want a good workout (Y/N)?\""
 		temple_inside: "Several fat clerics welcome you.\nNeed help (Y/N)?"
 
 		agar1: "The wizard Agar speaks:\n\n"
 		agar2: "\"You have done well to bring me this\nscroll. (+1000 exp) Now take it to my\nprotege Telgoran in Dusk.\""
-		agar3: "\"I have no business with you. begone!\""
+		agar3: "\"I have no business with you. Begone!\""
 		guards: "Town guards: you're under arrest!\n\na)Attack b)Bribe c)Run d)Surrender"
-		sentence: "High court sentence: years= "
+		sentence: "High court sentence: Years= "
 		treasure: "Town treasure, steal (Y/N)?"
+	emap04:
+		town_guards: "Town Guards"
+		guards: "Town guards: you're under arrest!"
+		attack: "\x01""37Attack"
+		bribe: "\x01""37Bribe"
+		run: "\x01""37Run"
+		surrender: "\x01""37Surrender"
+		sentence: "High court sentence: %d years"
 
 	map05:
 		arena: "\"The Arena\""

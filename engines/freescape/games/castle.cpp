@@ -56,24 +56,55 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filen
 	return (new Common::MemoryReadStream(encryptedBuffer, size));
 }
 
+extern byte kEGADefaultPaletteData[16][3];
+
 void CastleEngine::loadAssetsDOSFullGame() {
+	Common::File file;
 	Common::SeekableReadStream *stream = nullptr;
 
-	stream = decryptFile("CMLE");
-	loadMessagesVariableSize(stream, 0x11, 164);
-	delete stream;
+	if (_renderMode == Common::kRenderEGA) {
+		_viewArea = Common::Rect(39, 31, 278, 150);
 
-	stream = decryptFile("CMEDF");
-	load8bitBinary(stream, 0, 16);
-	for (auto &it : _areaMap)
-		it._value->addStructure(_areaMap[255]);
-	delete stream;
+		file.open("CMOE.DAT");
+		_title = load8bitBinImage(&file, 0x0);
+		_title->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
 
+		file.close();
+
+		file.open("CME.DAT");
+		_border = load8bitBinImage(&file, 0x0);
+		_border->setPalette((byte *)&kEGADefaultPaletteData, 0, 16);
+
+		file.close();
+
+		stream = decryptFile("CMLE");
+		loadMessagesVariableSize(stream, 0x11, 164);
+		delete stream;
+
+		stream = decryptFile("CMEDF");
+		load8bitBinary(stream, 0, 16);
+		for (auto &it : _areaMap)
+			it._value->addStructure(_areaMap[255]);
+		delete stream;
+	} else
+		error("Not implemented yet");
 	// CPC
 	// file = gameDir.createReadStreamForMember("cm.bin");
 	// if (file == nullptr)
 	//	error("Failed to open cm.bin");
 	// load8bitBinary(file, 0x791a, 16);
+}
+
+void CastleEngine::titleScreen() {
+	if (isAmiga() || isAtariST()) // These releases has their own screens
+		return;
+
+	if (_title) {
+		drawTitle();
+		_gfx->flipBuffer();
+		g_system->updateScreen();
+		g_system->delayMillis(3000);
+	}
 }
 
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -96,6 +127,28 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->clear(_currentArea->_skyColor);
 	} else
 		_gfx->_keyColor = 255;
+}
+
+void CastleEngine::drawUI() {
+	_gfx->setViewport(_fullscreenViewArea);
+
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
+	surface->fillRect(_fullscreenViewArea, gray);
+	drawCrossair(surface);
+
+	if (!_uiTexture)
+		_uiTexture = _gfx->createTexture(surface);
+	else
+		_uiTexture->update(surface);
+
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _uiTexture);
+
+	surface->free();
+	delete surface;
+
+	_gfx->setViewport(_viewArea);
 }
 
 Common::Error CastleEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {

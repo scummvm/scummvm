@@ -23,11 +23,10 @@
 #define NANCY_STATE_LOGO_H
 
 #include "common/singleton.h"
+#include "video/avi_decoder.h"
 
 #include "engines/nancy/commontypes.h"
-
 #include "engines/nancy/state/state.h"
-
 #include "engines/nancy/ui/fullscreenimage.h"
 
 namespace Nancy {
@@ -36,7 +35,7 @@ namespace State {
 
 class Logo : public State, public Common::Singleton<Logo> {
 public:
-	Logo() : _state(kInit), _startTicks(0) { }
+	Logo() : _state(kInit), _startTicks(0), _videoObj(1) { }
 
 	// State API
 	void process() override;
@@ -44,12 +43,14 @@ public:
 
 private:
 	void init();
+	void playIntroVideo();
 	void startSound();
 	void run();
 	void stop();
 
 	enum State {
 		kInit,
+		kPlayIntroVideo,
 		kStartSound,
 		kRun,
 		kStop
@@ -59,6 +60,8 @@ private:
 	uint _startTicks;
 	UI::FullScreenImage _logoImage;
 	SoundDescription _msnd;
+	Video::AVIDecoder _tvdVideoDecoder;
+	RenderObject _videoObj;
 };
 
 #define NancyLogoState Nancy::State::Logo::instance()

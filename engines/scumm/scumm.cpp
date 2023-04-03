@@ -2330,10 +2330,6 @@ Common::Error ScummEngine::go() {
 	}
 
 	while (!shouldQuit()) {
-		// Randomize the PRNG by calling it at regular intervals. This ensures
-		// that it will be in a different state each time you run the program.
-		_rnd.getRandomNumber(2);
-
 		// Determine how long to wait before the next loop iteration should start
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE

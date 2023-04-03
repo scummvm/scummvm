@@ -563,7 +563,7 @@ void Combat::writeOption(uint col, uint row, char c, const Common::String &msg) 
 	const int y = r.top;
 	const int textY = y + (BTN_SIZE - 8) / 2 + 1;
 
-	// Create an 16x16 blank button
+	// Create a blank button
 	Graphics::ManagedSurface btnSmall(BTN_SIZE, BTN_SIZE);
 	btnSmall.blitFrom(g_globals->_blankButton, Common::Rect(0, 0, 20, 20),
 		Common::Rect(0, 0, BTN_SIZE, BTN_SIZE));

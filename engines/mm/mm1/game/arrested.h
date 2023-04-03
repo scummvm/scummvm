@@ -19,32 +19,26 @@
  *
  */
 
-#ifndef MM1_VIEWS_MAPS_ARRESTED_H
-#define MM1_VIEWS_MAPS_ARRESTED_H
+#ifndef MM1_GAMES_ARRESTED_H
+#define MM1_GAMES_ARRESTED_H
 
-#include "mm/mm1/views/text_view.h"
-#include "mm/mm1/game/arrested.h"
+#include "mm/mm1/game/game_logic.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace Game {
 
-class Arrested : public TextView, public MM1::Game::Arrested {
-private:
+class Arrested : public GameLogic {
+protected:
+	void attack();
+	void bribe();
+	void run();
 	void surrender(int numYears = 2);
 
-public:
-	Arrested();
-	virtual ~Arrested() {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
+	Arrested() {}
 };
 
-} // namespace Maps
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
 

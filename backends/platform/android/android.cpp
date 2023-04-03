@@ -470,6 +470,10 @@ void OSystem_Android::initBackend() {
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("filtering", false);
 	ConfMan.registerDefault("autosave_period", 0);
+	// slow down a bit virtual mouse speed (typical default seems to be "3") - eg. when controlling the virtual mouse cursor with DPAD keys
+	// Also see declaration of support for feature kFeatureKbdMouseSpeed bellow
+	ConfMan.registerDefault("kbdmouse_speed", 2);
+	ConfMan.registerDefault("joystick_deadzone", 3);
 
 	// explicitly set this, since fullscreen cannot be changed from GUI
 	// and for Android it should be persisted (and ConfMan.hasKey("fullscreen") check should return true for it)
@@ -623,7 +627,9 @@ bool OSystem_Android::hasFeature(Feature f) {
 		return false;
 	if (f == kFeatureVirtualKeyboard ||
 			f == kFeatureOpenUrl ||
-			f == kFeatureClipboardSupport) {
+			f == kFeatureClipboardSupport ||
+			f == kFeatureKbdMouseSpeed ||
+			f == kFeatureJoystickDeadzone) {
 		return true;
 	}
 	/* Even if we are using the 2D graphics manager,

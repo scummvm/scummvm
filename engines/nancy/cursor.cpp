@@ -33,7 +33,8 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
 
 	chunkStream->seek(0);
-	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * 4;
+	uint numCursorTypes = g_nancy->getGameType() <= kGameTypeNancy1 ? 4 : 5;
+	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * numCursorTypes;
 	_cursors.resize(numCursors);
 
 	for (uint i = 0; i < numCursors; ++i) {
@@ -64,6 +65,8 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		return;
 	}
 
+	Nancy::GameType gameType = g_nancy->getGameType();
+
 	if (type == _curCursorType && itemID == _curItemID) {
 		return;
 	} else {
@@ -75,13 +78,23 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 
 	switch (type) {
 	case kNormalArrow:
-		_curCursorID = 4;
+		if (gameType <= kGameTypeNancy1) {
+			_curCursorID = 4;
+		} else {
+			_curCursorID = 5;
+		}
+		
 		break;
 	case kHotspotArrow:
-		_curCursorID = 5;
+		if (gameType <= kGameTypeNancy1) {
+			_curCursorID = 5;
+		} else {
+			_curCursorID = 6;
+		}
+
 		break;
 	case kExit:
-		if (g_nancy->getGameType() != kGameTypeVampire) {
+		if (gameType != kGameTypeVampire) {
 			_curCursorID = 3;
 			break;
 		}
@@ -97,7 +110,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			hasItem = true;
 		}
 
-		_curCursorID = itemID * 4 + itemsOffset + type;
+		_curCursorID = itemID * (gameType <= kGameTypeNancy1? 4 : 5) + itemsOffset + type;
 	}
 	}
 

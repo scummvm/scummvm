@@ -779,11 +779,12 @@ Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, bool forPuppet, Dis
 	if (looping) {
 		if (hasLoopBounds()) {
 			// FIXME: determine the correct behaviour for non-consecutive loop bounds
-			if (_loopEnd < _loopStart) {
+			if (_loopEnd <= _loopStart) {
 				warning("SNDDecoder::getAudioStream: Looping sound has non-consecutive bounds, using entire sample");
 				return new Audio::LoopingAudioStream(stream, 0);
 			} else {
 				// Return an automatically looping stream.
+				debugC(5, kDebugSound, "DirectorSound::getAudioStream(): returning a loop at positions start: %i, end: %i", _loopStart, _loopEnd);
 				return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
 			}
 		} else {

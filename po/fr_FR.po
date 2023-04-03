@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-03-29 23:13+0000\n"
+"POT-Creation-Date: 2023-04-02 20:21+0000\n"
 "PO-Revision-Date: 2023-03-31 13:26+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -142,7 +142,7 @@ msgstr ""
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3478
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3474
 #: engines/toon/toon.cpp:1502
 msgid "Yes"
 msgstr "Oui"
@@ -155,7 +155,7 @@ msgstr "Oui"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3478
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3474
 #: engines/toon/toon.cpp:1502
 msgid "No"
 msgstr "Non"
@@ -4596,7 +4596,7 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "Le chargement ou sauvegarde rapide du jeu n'est pas possible à cet endroit"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2797
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2793
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4607,7 +4607,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2784
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2780
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4618,7 +4618,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2813
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2809
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -5724,19 +5724,19 @@ msgstr ""
 "Les informations de débogage et la sélection des niveaux deviennent "
 "disponibles"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:170
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:167
 msgid "Move up"
 msgstr "Déplacement haut"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:176
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:173
 msgid "Move down"
 msgstr "Déplacement bas"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:182
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:179
 msgid "Move left"
 msgstr "Déplacement gauche"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:188
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:185
 msgid "Move right"
 msgstr "Déplacement droite"
 
@@ -6905,15 +6905,15 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Nom de fichier invalide pour la sauvegarde"
 
-#: engines/nancy/input.cpp:156
+#: engines/nancy/input.cpp:153
 msgid "Left Click Interact"
 msgstr "Interaction Clic gauche"
 
-#: engines/nancy/input.cpp:163
+#: engines/nancy/input.cpp:160
 msgid "Right Click Interact"
 msgstr "Interaction Clic droit"
 
-#: engines/nancy/input.cpp:194
+#: engines/nancy/input.cpp:191
 msgid "Fast move modifier"
 msgstr "Modificateur Mouvement rapide"
 
@@ -7506,7 +7506,7 @@ msgid "Querying games..."
 msgstr "Interrogation des jeux..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:60 engines/scumm/scumm.cpp:3484
+#: engines/scumm/dialog-sessionselector.cpp:60 engines/scumm/scumm.cpp:3480
 msgid "Join"
 msgstr "Rejoindre"
 
@@ -8438,7 +8438,7 @@ msgstr ""
 "Cette version de Monkey Island 1 n'a pas été produite avec toutes\n"
 "les ressources nécessaires pour le MT-32. AdLib sera utilisé."
 
-#: engines/scumm/scumm.cpp:3373
+#: engines/scumm/scumm.cpp:3369
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -8449,11 +8449,11 @@ msgstr ""
 "répertoire 'Maniac' à l'intérieur du répertoire du jeu Day of the Tentacle, "
 "et le jeu doit être ajouté à ScummVM."
 
-#: engines/scumm/scumm.cpp:3484
+#: engines/scumm/scumm.cpp:3480
 msgid "Would you like to host or join a network play session?"
 msgstr "Voulez-vous héberger ou rejoindre une partie de jeu en réseau ?"
 
-#: engines/scumm/scumm.cpp:3484
+#: engines/scumm/scumm.cpp:3480
 msgid "Host"
 msgstr "Héberger"
 

@@ -235,7 +235,6 @@ struct StaticData {
 	Common::String ringingText;
 
 	// Debug strings
-	Common::Array<Common::String> itemNames;
 	Common::Array<Common::String> eventFlagNames;
 
 	void readData(Common::SeekableReadStream &stream, Common::Language language);
