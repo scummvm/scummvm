@@ -177,6 +177,18 @@ public:
 		ScanDir();
 	}
 
+	bool HandleEvents(const Common::Event &Event) {
+		int choice = menu.HandleEvents(Event);
+		if (choice >= 0) {
+			menu.Reset();
+			selected = slot_info[menu.Index() + choice].path;
+			Reset();
+			return true;
+		}
+
+		return false;
+	}
+
 #if 0
 	bool HandleEvents(const SDL_Event &Event) {
 		int choice = menu.HandleEvents(Event);

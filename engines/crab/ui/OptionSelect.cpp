@@ -64,6 +64,29 @@ void OptionSelect::Draw() {
 		next.Draw();
 }
 
+bool OptionSelect::HandleEvents(const Common::Event &Event) {
+	using namespace pyrodactyl::input;
+
+	if (cur > 0) {
+		// Don't check for keyboard inputs for now
+		if (prev.HandleEvents(Event) == BUAC_LCLICK) {
+			cur--;
+			return true;
+		}
+	}
+
+	if (cur < option.text.size() - 1) {
+
+		// Don't check for keyboard inputs for now
+		if (next.HandleEvents(Event) == BUAC_LCLICK) {
+			cur++;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 #if 0
 bool OptionSelect::HandleEvents(const SDL_Event &Event) {
 	using namespace pyrodactyl::input;

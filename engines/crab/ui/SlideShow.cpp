@@ -84,6 +84,22 @@ void SlideShow::Draw() {
 		next.Draw();
 }
 
+void SlideShow::HandleEvents(const Common::Event &Event) {
+	using namespace pyrodactyl::input;
+
+	if (index > 0)
+		if (prev.HandleEvents(Event) == BUAC_LCLICK) {
+			index--;
+			Refresh();
+		}
+
+	if (index < path.size() - 1)
+		if (next.HandleEvents(Event) == BUAC_LCLICK) {
+			index++;
+			Refresh();
+		}
+}
+
 #if 0
 void SlideShow::HandleEvents(const SDL_Event &Event) {
 	using namespace pyrodactyl::input;

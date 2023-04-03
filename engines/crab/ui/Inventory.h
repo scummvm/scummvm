@@ -72,6 +72,7 @@ public:
 	void Load(const std::string &filename);
 	void Draw(pyrodactyl::people::Person &obj, const int &money_val);
 
+	void HandleEvents(const std::string &char_id, const Common::Event &Event);
 #if 0
 	void HandleEvents(const std::string &char_id, const SDL_Event &Event);
 #endif

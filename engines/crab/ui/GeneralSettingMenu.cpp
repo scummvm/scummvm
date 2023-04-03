@@ -66,6 +66,30 @@ void GeneralSettingMenu::Load(rapidxml::xml_node<char> *node) {
 		i.state = (i.val == gScreenSettings.text_speed);
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle user input
+//------------------------------------------------------------------------
+void GeneralSettingMenu::HandleEvents(const Common::Event &Event) {
+	if (vol_music.HandleEvents(Event))
+		gMusicManager.VolMusic(vol_music.Value());
+
+	if (vol_effects.HandleEvents(Event))
+		gMusicManager.VolEffects(vol_effects.Value());
+
+	// No need to change screen here
+	if (save_on_exit.HandleEvents(Event))
+		gScreenSettings.save_on_exit = !gScreenSettings.save_on_exit;
+
+	if (mouse_trap.HandleEvents(Event)) {
+		gScreenSettings.mouse_trap = !gScreenSettings.mouse_trap;
+		gScreenSettings.SetMouseTrap();
+	}
+
+	int result = text_speed.HandleEvents(Event);
+	if (result >= 0)
+		gScreenSettings.text_speed = text_speed.element.at(result).val;
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle user input

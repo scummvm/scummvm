@@ -46,6 +46,13 @@ void ChapterIntro::Load(rapidxml::xml_node<char> *node) {
 		traits.Load(node->first_node("trait"));
 }
 
+bool ChapterIntro::HandleEvents(Common::Event &Event) {
+	if (traits.HandleEvents(Event))
+		show_traits = true;
+
+	return dialog.HandleEvents(Event);
+}
+
 #if 0
 bool ChapterIntro::HandleEvents(SDL_Event &Event) {
 	if (traits.HandleEvents(Event))

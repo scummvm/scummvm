@@ -58,6 +58,7 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node);
 
+	bool HandleEvents(Common::Event &Event);
 #if 0
 	bool HandleEvents(SDL_Event &Event);
 #endif
