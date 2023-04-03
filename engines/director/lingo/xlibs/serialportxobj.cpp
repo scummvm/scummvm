@@ -19,6 +19,13 @@
  *
  */
 
+/*************************************
+ *
+ * USED IN:
+ * Standard Macromedia Director XObject
+ *
+ *************************************/
+
 /*
  * Use the SerialPort XObject to send and receive data over the Macintosh’s
  * two standard serial ports (commonly called the modem and printer ports).

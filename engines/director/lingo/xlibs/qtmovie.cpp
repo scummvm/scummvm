@@ -25,9 +25,10 @@
  * L-Zone (Mac II)
  *
  *************************************/
+
 /*
-  QTMovie OpenMovie, windowType, fileName, location, options...
-*/
+ * QTMovie OpenMovie, windowType, fileName, location, options...
+ */
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

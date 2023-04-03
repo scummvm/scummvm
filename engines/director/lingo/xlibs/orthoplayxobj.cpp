@@ -19,6 +19,13 @@
  *
  */
 
+/*************************************
+ *
+ * USED IN:
+ * Standard Macromedia XObject
+ *
+ *************************************/
+
 /*
  * Macromedia provides several XObjects for controlling some common devices that
  * play video and audio source material:

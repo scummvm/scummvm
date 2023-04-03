@@ -26,6 +26,10 @@
  *
  *************************************/
 
+/*
+ * ersion 2.0.3  Copyright © 1988-90 Farallon Computing, Inc.
+ */
+
 #include "director/director.h"
 #include "director/sound.h"
 #include "director/window.h"
@@ -123,4 +127,3 @@ void FPlayXObj::b_fsound(int nargs) {
 }
 
 } // End of namespace Director
-

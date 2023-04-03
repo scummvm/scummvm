@@ -27,12 +27,12 @@
  *************************************/
 
 /*
-	-- LabelDrv XObject. Version 1.1 6/5/95 greg yachuk
-	LabelDrv
-	I      mNew          --Creates a new instance of the XObject
-	X      mDispose      --Disposes of XObject instance.
-	XSS    mSetRange     --Sets the drive letters to begin and end the search for the label. Default is C..Z.
-	SS     mGetDrive     --Return the drive letter where the specified label is mounted.
+ * -- LabelDrv XObject. Version 1.1 6/5/95 greg yachuk
+ * LabelDrv
+ * I      mNew          --Creates a new instance of the XObject
+ * X      mDispose      --Disposes of XObject instance.
+ * XSS    mSetRange     --Sets the drive letters to begin and end the search for the label. Default is C..Z.
+ * SS     mGetDrive     --Return the drive letter where the specified label is mounted.
 */
 
 #include "director/director.h"

@@ -19,7 +19,14 @@
  *
  */
 
-/**
+/*************************************
+ *
+ * USED IN:
+ * teamxtreme2-win
+ *
+ *************************************/
+
+/*
  *  -- BlitPict effects factory. 29Jun94 RNB
  * BlitPict
  * I                mNew                --Creates a new instance of the XObject
@@ -32,8 +39,6 @@
  * SOIIII           mCopy               --Initializes from an existing object
  * IIIIIOIIIIIIII   mDraw               --Draws to a destinitation
  * IIIIIIIIIIII     mSparkle            --Draws a sparkle from a bitmap
- *
- * USED IN: teamxtreme2-win
  */
 
 #include "director/director.h"

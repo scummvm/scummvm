@@ -26,34 +26,34 @@
  *
  *************************************/
 /*
-  -- JITDraw3 External Factory. 16Feb93 PTM
-  JITDraw3
-  I      mNew                --Creates a new instance of the XObject
-  X      mDispose            --Disposes of XObject instance
-  S      mName               --Returns the XObject name (JITDraw3)
-  I      mCheckRegistration
-  I      mCheckIfCDROM
-  S      mUserName
-  S      mUserCompany
-  IS      mSetSignature
-  S      mGetSignature
-  S      mPreRegister
-  II     mBookMark1
-  II     mBookMark2
-  II     mBookMark3
-  II     mBookMark4
-  II     mBookMark5
-  II     mBookMark6
-  I              mAddDrawButton
-  I              mRemoveDrawButton
-  I              mGotoDraw
-  I              mLoadDraw
-  I              mIsDrawLoaded
-  ISS    mMsgOkCancel
-  ISS    mMsgOk
-  ISS    mMsgYesNo
-  I    mOrder
-*/
+ * -- JITDraw3 External Factory. 16Feb93 PTM
+ * JITDraw3
+ * I      mNew                --Creates a new instance of the XObject
+ * X      mDispose            --Disposes of XObject instance
+ * S      mName               --Returns the XObject name (JITDraw3)
+ * I      mCheckRegistration
+ * I      mCheckIfCDROM
+ * S      mUserName
+ * S      mUserCompany
+ * IS      mSetSignature
+ * S      mGetSignature
+ * S      mPreRegister
+ * II     mBookMark1
+ * II     mBookMark2
+ * II     mBookMark3
+ * II     mBookMark4
+ * II     mBookMark5
+ * II     mBookMark6
+ * I              mAddDrawButton
+ * I              mRemoveDrawButton
+ * I              mGotoDraw
+ * I              mLoadDraw
+ * I              mIsDrawLoaded
+ * ISS    mMsgOkCancel
+ * ISS    mMsgOk
+ * ISS    mMsgYesNo
+ * I    mOrder
+ */
 
 #include "common/system.h"
 #include "common/translation.h"

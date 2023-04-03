@@ -26,13 +26,13 @@
  *
  *************************************/
 /*
-  -- Picter, a simple demo XObject, v1.0
-  I           mNew
-  XIII        mGpal, h, l, s
-  XIIIIII     mLine, y1, y2, y3, y4, y5, c
-  II          mGetDate, value
-  X           mClear
-*/
+ * -- Picter, a simple demo XObject, v1.0
+ * I           mNew
+ * XIII        mGpal, h, l, s
+ * XIIIIII     mLine, y1, y2, y3, y4, y5, c
+ * II          mGetDate, value
+ * X           mClear
+ */
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

@@ -25,6 +25,7 @@
 * Dracula's Secret
 *
 *************************************/
+
 /*
  * -- FEIMasks External Factory.
  * FEIMasks
@@ -33,6 +34,7 @@
  * S      mName               --Returns the XObject name (FEIMask)
  * III    mMaskID             -- h,v
  */
+
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"

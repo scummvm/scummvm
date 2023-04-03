@@ -19,7 +19,14 @@
  *
  */
 
-/**
+/*************************************
+ *
+ * USED IN:
+ * teamxtreme2-win
+ *
+ *************************************/
+
+/*
  * -- BatQt quicktime factory. 9Aug94 RNB
  * BatQt
  * I      mNew                    --Creates a new instance of the XObject
@@ -43,8 +50,6 @@
  * II     mRemoveCallback         -- Removes a callback for the movie
  * I      mResetCallbacks         -- Resets the sent status of the callbacks
  * XS     mSetBatch               -- Applies a set of batch commands
- *
- * USED IN: teamxtreme2-win
  */
 
 #include "director/director.h"

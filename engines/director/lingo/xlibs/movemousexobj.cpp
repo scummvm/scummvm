@@ -26,9 +26,19 @@
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/xlibs/movemousexobj.h"
 
-namespace Director {
+/*************************************
+ *
+ * USED IN:
+ * MediaBook Sampler CD/XObject Studio
+ *
+ *************************************/
 
-// MoveMouse 0.1 - (c) Andrew Green 1993 for Mac
+/*
+ * MoveMouse 0.1 - (c) Andrew Green 1993 for Mac
+ */
+
+
+namespace Director {
 
 const char *MoveMouseXObj::xlibName = "MoveMouse";
 const char *MoveMouseXObj::fileNames[] = {

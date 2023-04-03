@@ -19,80 +19,87 @@
  *
  */
 
+/*************************************
+ *
+ * USED IN:
+ * The Apartment
+ *
+ *************************************/
+
 /*
-  --PopMenu, Tool, 1.0, 4/1/90
-  --© 1989, 1990 MacroMind, Inc.
-  -- by Jeff Tanner
-  ------------------------------------------------
-  ------------------------------------------------
-  --  IMPORTANT NOTE:  In Lingo, build PopMenus after using
-  --    the command installMenu.  On the Mac, Pop-up menus are
-  --    extensions of the menu bar.  When the command installMenu
-  --    is called, this will remove all menus currently on
-  --    the menubar (including pop-up menus) and only install those
-  --    menus defined in the text window referenced by the
-  --    castNum parameter.  If installMenu is used after
-  --    creating PopMenus, these PopMenus must be disposed of
-  --    and then recreated.
-  ------------------------------------------------
-  --  MENULIST NOTE: In Lingo, there are several ways
-  --      to build the menu list for a PopUp menu.
-  --
-  --      - a menulist can be a continuous string
-  --          with items seperated by semicolons.
-  --          example: "item1;item2;item3"
-  --
-  --      - a menulist can be a set of strings, each
-  --          representing an item, separated by
-  --          &return& and ending with &return
-  --          example: "item1"&return&"item2"&return
-  --
-  --      - a menulist could come from a cast member with
-  --          each menu item separated by a carrage return.
-  --          example: set menulist to the text of cast A31
-  ------------------------------------------------
-  --  MENUITEM NOTE: Use only alphanumeric characters,
-  --      0 - 9 and A - Z.  Avoid dashes.  Indicate
-  --      style by "item1;item2<B;item3<U"
-  --      To change an item's style, add < followed by a
-  --      character at the end of the menu item text:
-  --          <B  Bold
-  --          <U  Underlined
-  --          <I  Italics
-  --          <S  Shadowed
-  --          <O  Outlined
-  ------------------------------------------------
-  ------------------------------------------------
-  --=METHODS=--
-  XSI     mNew, menuList, menuID --Creates a new instance of the XObject.
-  --   menuItemList - "item1;item2<B;item3<U"
-  --      Separate all items with semicolons.
-  --      Maximum character length of menulist is 256.
-  --   menuID - to avoid resourse conflict with Director,
-  --      use a menu ID between 100 and 1000.
-  --
-  X   mDispose --Disposes of the XObject instance.
-  S   mName --Returns the name of the XObject.
-  ------------------------------------------------
-  ------------------------------------------------
-  XS  mAppendMenu, menuList --Adds items to menuList.
-  XI  mDisableItem, itemNum --Disables item in pop up menu.
-  XI  mEnableItem, itemNum --Enables item in pop up menu.
-  SI  mGetItem, itemNum --Returns item in pop up menu.
-  I   mGetMenuID --Returns the assigned Menu ID number.
-  ------------------------------------------------
-  ------------------------------------------------
-  IIII    mPopNum, Left, Top, itemNum --Returns selected item's number.
-  SIII    mPopText, Left, Top, itemNum --Returns selected item's text.
-  ------------------------------------------------
-  ------------------------------------------------
-  XIS mSetItem, itemNum, newItemText --Sets changes to an item in pop up menu
-  XI  mSetItemMark, markNum --Sets marker for pop up menu: default is check.
-  XI  mSmart, TrueOrFalse --Remembers last selection if itemNum is 0
-  XII mSetItemIcon, itemNum, iconID --Attaches an icon to menu item, id# 257 - 511
-  ------------------------------------------------
-  ------------------------------------------------
-*/
+ * --PopMenu, Tool, 1.0, 4/1/90
+ * --© 1989, 1990 MacroMind, Inc.
+ * -- by Jeff Tanner
+ * ------------------------------------------------
+ * ------------------------------------------------
+ * --  IMPORTANT NOTE:  In Lingo, build PopMenus after using
+ * --    the command installMenu.  On the Mac, Pop-up menus are
+ * --    extensions of the menu bar.  When the command installMenu
+ * --    is called, this will remove all menus currently on
+ * --    the menubar (including pop-up menus) and only install those
+ * --    menus defined in the text window referenced by the
+ * --    castNum parameter.  If installMenu is used after
+ * --    creating PopMenus, these PopMenus must be disposed of
+ * --    and then recreated.
+ * ------------------------------------------------
+ * --  MENULIST NOTE: In Lingo, there are several ways
+ * --      to build the menu list for a PopUp menu.
+ * --
+ * --      - a menulist can be a continuous string
+ * --          with items seperated by semicolons.
+ * --          example: "item1;item2;item3"
+ * --
+ * --      - a menulist can be a set of strings, each
+ * --          representing an item, separated by
+ * --          &return& and ending with &return
+ * --          example: "item1"&return&"item2"&return
+ * --
+ * --      - a menulist could come from a cast member with
+ * --          each menu item separated by a carrage return.
+ * --          example: set menulist to the text of cast A31
+ * ------------------------------------------------
+ * --  MENUITEM NOTE: Use only alphanumeric characters,
+ * --      0 - 9 and A - Z.  Avoid dashes.  Indicate
+ * --      style by "item1;item2<B;item3<U"
+ * --      To change an item's style, add < followed by a
+ * --      character at the end of the menu item text:
+ * --          <B  Bold
+ * --          <U  Underlined
+ * --          <I  Italics
+ * --          <S  Shadowed
+ * --          <O  Outlined
+ * ------------------------------------------------
+ * ------------------------------------------------
+ * --=METHODS=--
+ * XSI     mNew, menuList, menuID --Creates a new instance of the XObject.
+ * --   menuItemList - "item1;item2<B;item3<U"
+ * --      Separate all items with semicolons.
+ * --      Maximum character length of menulist is 256.
+ * --   menuID - to avoid resourse conflict with Director,
+ * --      use a menu ID between 100 and 1000.
+ * --
+ * X   mDispose --Disposes of the XObject instance.
+ * S   mName --Returns the name of the XObject.
+ * ------------------------------------------------
+ * ------------------------------------------------
+ * XS  mAppendMenu, menuList --Adds items to menuList.
+ * XI  mDisableItem, itemNum --Disables item in pop up menu.
+ * XI  mEnableItem, itemNum --Enables item in pop up menu.
+ * SI  mGetItem, itemNum --Returns item in pop up menu.
+ * I   mGetMenuID --Returns the assigned Menu ID number.
+ * ------------------------------------------------
+ * ------------------------------------------------
+ * IIII    mPopNum, Left, Top, itemNum --Returns selected item's number.
+ * SIII    mPopText, Left, Top, itemNum --Returns selected item's text.
+ * ------------------------------------------------
+ * ------------------------------------------------
+ * XIS mSetItem, itemNum, newItemText --Sets changes to an item in pop up menu
+ * XI  mSetItemMark, markNum --Sets marker for pop up menu: default is check.
+ * XI  mSmart, TrueOrFalse --Remembers last selection if itemNum is 0
+ * XII mSetItemIcon, itemNum, iconID --Attaches an icon to menu item, id# 257 - 511
+ * ------------------------------------------------
+ * ------------------------------------------------
+ */
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

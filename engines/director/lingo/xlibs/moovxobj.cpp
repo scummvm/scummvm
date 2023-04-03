@@ -27,22 +27,22 @@
  *************************************/
 
 /*
-  moovXobj: Creative Multimedia, 1993 <<gzr>>
-  --moovXobj 10.22.93 <<gzr>>
-  moovXobj
-  I       mNew                            --Creates a new instance of the XObject.
-  X       mDispose                        --Disposes of XObject instance.
-  S       mName                           --Returns the XObject name (moovobj).
-  I       mMovieInit                      --Initialize QTW.
-  I       mMovieKill                      --Dispose of QTW.
-  I       mFondler                        --Movie idle task.
-  ISII    mPlayMovie name,left,top        --Play movie at designated location.
-  I       mPauseMovie                     --Pause active movie.
-  II      mSoundMovie                     --Turn movie sound on or off.
-  I       mStopMovie                      --Stops active movie.
-  I       mMovieDone                      --Returns true if movie done.
-
-  ScummVM Note: mMovieDone returns true when the movie is _not_ done.
+ * moovXobj: Creative Multimedia, 1993 <<gzr>>
+ * --moovXobj 10.22.93 <<gzr>>
+ * moovXobj
+ * I       mNew                            --Creates a new instance of the XObject.
+ * X       mDispose                        --Disposes of XObject instance.
+ * S       mName                           --Returns the XObject name (moovobj).
+ * I       mMovieInit                      --Initialize QTW.
+ * I       mMovieKill                      --Dispose of QTW.
+ * I       mFondler                        --Movie idle task.
+ * ISII    mPlayMovie name,left,top        --Play movie at designated location.
+ * I       mPauseMovie                     --Pause active movie.
+ * II      mSoundMovie                     --Turn movie sound on or off.
+ * I       mStopMovie                      --Stops active movie.
+ * I       mMovieDone                      --Returns true if movie done.
+ *
+ * ScummVM Note: mMovieDone returns true when the movie is _not_ done.
  */
 
 #include "video/qt_decoder.h"

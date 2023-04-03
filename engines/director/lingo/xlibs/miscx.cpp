@@ -26,7 +26,9 @@
  * AMBER: Journeys Beyond
  *
  *************************************/
-/* -- Misc_X, Misc Utilities XObject v2.0
+
+/*
+ * -- Misc_X, Misc Utilities XObject v2.0
  * Misc_X
  * I      mNew
  * X      mDispose

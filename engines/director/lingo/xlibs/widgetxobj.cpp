@@ -19,16 +19,21 @@
  *
  */
 
+/*************************************
+ *
+ * USED IN:
+ * Alice: An Interactive Museum
+ *
+ *************************************/
+
 /*
  * Widget External Factory
- * Used in: "Alice: An Interactive Museum"
  *
  * Widget
  * I      mNew                --Creates a new instance of the XObject
  * X      mDispose            --Disposes of XObject instance
  * S      mGetPro             --
  * I      mAskQuit            --
- *
  */
 
 #include "director/director.h"

@@ -22,6 +22,13 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/registercomponent.h"
 
+/*************************************
+ *
+ * USED IN:
+ *
+ * Star Trek: The Next Generation Interactive Technical Manual
+ *************************************/
+
 namespace Director {
 
 const char *RegisterComponent::xlibName = "RegisterComponent";

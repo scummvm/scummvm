@@ -26,6 +26,13 @@
 
 /*************************************
  *
+ * USED IN:
+ * overringunder: Over-Ring-Under
+ *
+ *************************************/
+
+/*************************************
+ *
  * Developer Stack 1.3r
  * Issue date 11/05/88
  *
@@ -92,13 +99,7 @@
   */
 
 
-/*************************************
- *
- * XCMD: SetVolume
- *
- * USED IN:
- * overringunder: Over-Ring-Under
- *
+/*
  * This XCMD sets the current volume level of the Macintosh.
  *
  * This XCMD is ©1988 by Steve Drazga and all rights are reserved.

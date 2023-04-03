@@ -19,7 +19,14 @@
  *
  */
 
-/**
+/*************************************
+ *
+ * USED IN:
+ * teamxtreme2-win
+ *
+ *************************************/
+
+/*
  * Findsys
  * I      mNew                --Creates a new instance of the XObject
  * X      mDispose            --Disposes of XObject instance
@@ -29,8 +36,6 @@
  * --     string beginning with the word 'Error:<description>'
  * -- The Windows directory is where you should write Preferences files etc.
  * -- Mark_Carolan@aapda.com.au Compuserve 100242,1154
- *
- * USED IN: teamxtreme2-win
  */
 
 #include "director/director.h"

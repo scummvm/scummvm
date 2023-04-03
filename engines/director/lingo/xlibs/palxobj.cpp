@@ -19,7 +19,15 @@
  *
  */
 
-/* Quicktime movies and PICT castmembers continually display
+/*************************************
+ *
+ * USED IN:
+ * Majestic-mac
+ *
+ *************************************/
+
+/*
+ * Quicktime movies and PICT castmembers continually display
  * in wrong colors after an 8 palette switch
  * this XObject can be used to patch this problem
  * use mPatchIt message on the same frame as the palette switch

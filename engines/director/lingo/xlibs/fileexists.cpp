@@ -25,10 +25,11 @@
  * Yearn2Learn: The Flintstones Coloring Book
  *
  *************************************/
+
 /*
  * © 1989,1990 Apple Computer, Inc., v.1.1, by Anup Murarka
  * FileExists(pathname «, “noDialog”:errGlobal»)
-*/
+ */
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

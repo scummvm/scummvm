@@ -25,61 +25,63 @@
  * The Daedalus Encounter
  *
  *************************************/
-/* -! Category compactDisc
-* -! Title AppleCD SC
-* -! Protocol Ortho-Play 1.6.1
-* --© 1990,1991 MacroMind, Inc. Alan McNeil
-* ------------------------------------------------------
-* --AppleCD SC, version 2.5.6
-* --Mar  7 1994
-* --including AppleCD SC Plus volume control
-* ------------------------------------------------------
-* X  mNew
-* X  mDispose
-* --
-* I  mGetMaxNodes
-* SI  mGetNodeTitle NodeNum
-* II  mSelectNode NodeNum
-* --
-* I  mService
-* I  mGetValue
-* I  mCancel
-* S  mExplain
-* I  mIdle
-* --
-* X  mReadStatus
-* X  mReadPos
-* XI mSearchTo position
-* X  mPlay
-* X  mStill
-* X  mStop
-* X  mScanForward
-* X  mScanReverse
-* X  mEject
-* --
-* I  mGetFirstTrack
-* I  mGetLastTrack
-* II  mGetFirstFrame tracknum
-* II  mGetLastFrame tracknum
-* I  mGetTrack
-* XII mAudioEnable number number
-* I  mGetFrameResolution
-* --
-* II mSetInPoint frame
-* II mSetOutPoint frame
-* II mSetDuration frames
-* --
-* X  mPlayCue
-* X  mPlaySegment
-* --
-* S    mTitle
-* SI   mTrackName tracknum
-* IS   mSetTitle string
-* IIS  mSetTrackName tracknum string
-* II   mGetTrackType tracknum
-* III  mSetVolume leftVolume rightVolume
-* II   mGetVolume leftFlag
-* --
+
+/*
+   -! Category compactDisc
+ * -! Title AppleCD SC
+ * -! Protocol Ortho-Play 1.6.1
+ * --© 1990,1991 MacroMind, Inc. Alan McNeil
+ * ------------------------------------------------------
+ * --AppleCD SC, version 2.5.6
+ * --Mar  7 1994
+ * --including AppleCD SC Plus volume control
+ * ------------------------------------------------------
+ * X  mNew
+ * X  mDispose
+ * --
+ * I  mGetMaxNodes
+ * SI  mGetNodeTitle NodeNum
+ * II  mSelectNode NodeNum
+ * --
+ * I  mService
+ * I  mGetValue
+ * I  mCancel
+ * S  mExplain
+ * I  mIdle
+ * --
+ * X  mReadStatus
+ * X  mReadPos
+ * XI mSearchTo position
+ * X  mPlay
+ * X  mStill
+ * X  mStop
+ * X  mScanForward
+ * X  mScanReverse
+ * X  mEject
+ * --
+ * I  mGetFirstTrack
+ * I  mGetLastTrack
+ * II  mGetFirstFrame tracknum
+ * II  mGetLastFrame tracknum
+ * I  mGetTrack
+ * XII mAudioEnable number number
+ * I  mGetFrameResolution
+ * --
+ * II mSetInPoint frame
+ * II mSetOutPoint frame
+ * II mSetDuration frames
+ * --
+ * X  mPlayCue
+ * X  mPlaySegment
+ * --
+ * S    mTitle
+ * SI   mTrackName tracknum
+ * IS   mSetTitle string
+ * IIS  mSetTrackName tracknum string
+ * II   mGetTrackType tracknum
+ * III  mSetVolume leftVolume rightVolume
+ * II   mGetVolume leftFlag
+ * --
  */
 
 #include "director/director.h"

@@ -25,10 +25,11 @@
  * Yearn2Learn: The Flintstones Coloring Book
  *
  *************************************/
+
 /*
  * v1.0, ©1989, 1990 Eric Carlson, Apple Computer, Inc.
  * VolumeList(«“nodialog:ErrMsg”»)
-*/
+ */
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

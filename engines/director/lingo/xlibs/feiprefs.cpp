@@ -25,6 +25,7 @@
 * Dracula's Secret
 *
 *************************************/
+
 /*
  * -- FEIPrefs External Factory.
  * FEIPrefs
@@ -37,7 +38,6 @@
  * ISSI    mPrefReadInteger    -- Section,Entry,Default
  * SSSS    mPrefReadString    -- Section,Entry,Default
  */
-
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

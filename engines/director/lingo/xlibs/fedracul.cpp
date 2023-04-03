@@ -25,6 +25,7 @@
 * Dracula's Secret
 *
 *************************************/
+
 /*
  * -- FEDracul External Factory.
  * FEDracul
@@ -42,11 +43,11 @@
  * I     mProgramStartup
  * II    mProgramShutdown
  */
+
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/xlibs/fedracul.h"
-
 
 namespace Director {
 

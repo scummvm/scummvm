@@ -19,6 +19,13 @@
  *
  */
 
+/*************************************
+ *
+ * USED IN:
+ * Standard Macromedia Director XObject
+ *
+ *************************************/
+
 /*
  * mNew, portObject, baudRate, playerType  creates a
  *    new instance and returns error code

@@ -19,7 +19,14 @@
  *
  */
 
-/**
+/*************************************
+*
+* USED IN:
+* jman-win
+*
+*************************************/
+
+/*
  *  -- AVI External Factory. 02oct92 JT
  * DPWAVI
  * X  +mStartup -- First time init
@@ -27,9 +34,6 @@
  * XI     mNew qtPacket -- create a window
  * X      mDispose -- close and dispose window
  * XII    mVerb msg, qtPacker -- do something
- *
- *
- * USED IN: jman-win
  */
 
 #include "director/director.h"

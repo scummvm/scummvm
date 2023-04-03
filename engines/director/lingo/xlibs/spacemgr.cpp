@@ -19,6 +19,57 @@
  *
  */
 
+/**************************************************
+ *
+ * USED IN:
+ * DEVO Presents: Adventures of the Smart Patrol
+ *
+ **************************************************/
+
+/*
+ * -- SpaceMgr XObject. Copyright 1995 Inscape v1.0b1 10March95 BDL
+ * SpaceMgr
+ * I      mNew                                                                --Creates a new instance
+ * X      mDispose                                                            --Disposes XObject instance
+ * I                  mLastError                                                                                      --Last error code
+ * I                  mMemUsed                                                                                                --RAM occupied by this object and data
+ * S                  mListData                                                                                               --List all data
+ * I      mSortAll                                                            --Sort internal arrays
+ * IS     mCheckForDups, bool                 --Set to true to check for Duplicate items before adding an element
+ * IS     mParseText, text                            --Parse Text into a space structure
+ * S                  mGetCurData                                                                                     --List Current data
+ * ISSSS      mSetCurData, sc, s, n, v                                --pass in names of elements to make current
+ * ISS                mAddSpaceCollection, name, data --Add a Space Collection
+ * IS                 mRemoveSpaceCollection, name            --Remove a Space Collection
+ * IS                 mSetCurSpaceCollection, name            --Set current SpaceCollection
+ * S                  mGetCurSpaceCollection                                  --Get current SpaceCollection
+ * SS                 mGetSpaceCollection, name                               --Get SpaceCollection with name
+ * ISS                mAddSpace, name, data                                           --Add a Space
+ * IS                 mRemoveSpace, name                                                      --Remove a Space
+ * IS                 mSetCurSpace, name                                                      --Set current Space
+ * S                  mGetCurSpace                                                                            --Get current Space
+ * SS                 mGetSpace, name                                                                 --Get Space with name
+ * ISS                mAddNode, name, data                                            --Add a Node
+ * IS                 mRemoveNode, name                                                               --Remove a Node
+ * IS                 mSetCurNode, name                                                               --Set current Node
+ * S                  mGetCurNode                                                                                     --Get current Node
+ * SS                 mGetNode, name                                                                  --Get Node with name
+ * ISS                mAddView, name, data                                            --Add a View
+ * IS                 mRemoveView, name                                                               --Remove a View
+ * IS                 mSetCurView, name                                                               --Set current View
+ * S                  mGetCurView                                                                                     --Get current View
+ * SS                 mGetView, name                                                                  --Get View with name
+ * ISS                mAddLocalLink, name, data                               --Add a link to the current view
+ * IS                 mRemoveLocalLink, name                                  --Remove a link from the current View
+ * I                  mRemoveLocalLinks                                                               --Remove all links from the current View
+ * SS                 mGetLocalLink, name                                                     --Get link with name from the current view
+ * S                  mGetLocalLinks                                                                  --Get all links from the current view
+ * ISS                mAddGlobalLink, name, data                      --Add a global link
+ * IS                 mRemoveGlobalLink, name                                 --Remove a global link
+ * SS                 mGetGlobalLink, name                                            --Get global link with name
+ * S                  mGetGlobalLinks                                                                 --Get list of all global links
+ */
+
 #include "common/system.h"
 #include "common/tokenizer.h"
 
@@ -29,56 +80,6 @@
 #include "director/util.h"
 
 namespace Director {
-
-/**************************************************
- *
- * USED IN:
- * DEVO Presents: Adventures of the Smart Patrol
- *
- **************************************************/
-/*
--- SpaceMgr XObject. Copyright 1995 Inscape v1.0b1 10March95 BDL
-SpaceMgr
-I      mNew                                                                --Creates a new instance
-X      mDispose                                                            --Disposes XObject instance
-I                  mLastError                                                                                      --Last error code
-I                  mMemUsed                                                                                                --RAM occupied by this object and data
-S                  mListData                                                                                               --List all data
-I      mSortAll                                                            --Sort internal arrays
-IS     mCheckForDups, bool                 --Set to true to check for Duplicate items before adding an element
-IS     mParseText, text                            --Parse Text into a space structure
-S                  mGetCurData                                                                                     --List Current data
-ISSSS      mSetCurData, sc, s, n, v                                --pass in names of elements to make current
-ISS                mAddSpaceCollection, name, data --Add a Space Collection
-IS                 mRemoveSpaceCollection, name            --Remove a Space Collection
-IS                 mSetCurSpaceCollection, name            --Set current SpaceCollection
-S                  mGetCurSpaceCollection                                  --Get current SpaceCollection
-SS                 mGetSpaceCollection, name                               --Get SpaceCollection with name
-ISS                mAddSpace, name, data                                           --Add a Space
-IS                 mRemoveSpace, name                                                      --Remove a Space
-IS                 mSetCurSpace, name                                                      --Set current Space
-S                  mGetCurSpace                                                                            --Get current Space
-SS                 mGetSpace, name                                                                 --Get Space with name
-ISS                mAddNode, name, data                                            --Add a Node
-IS                 mRemoveNode, name                                                               --Remove a Node
-IS                 mSetCurNode, name                                                               --Set current Node
-S                  mGetCurNode                                                                                     --Get current Node
-SS                 mGetNode, name                                                                  --Get Node with name
-ISS                mAddView, name, data                                            --Add a View
-IS                 mRemoveView, name                                                               --Remove a View
-IS                 mSetCurView, name                                                               --Set current View
-S                  mGetCurView                                                                                     --Get current View
-SS                 mGetView, name                                                                  --Get View with name
-ISS                mAddLocalLink, name, data                               --Add a link to the current view
-IS                 mRemoveLocalLink, name                                  --Remove a link from the current View
-I                  mRemoveLocalLinks                                                               --Remove all links from the current View
-SS                 mGetLocalLink, name                                                     --Get link with name from the current view
-S                  mGetLocalLinks                                                                  --Get all links from the current view
-ISS                mAddGlobalLink, name, data                      --Add a global link
-IS                 mRemoveGlobalLink, name                                 --Remove a global link
-SS                 mGetGlobalLink, name                                            --Get global link with name
-S                  mGetGlobalLinks                                                                 --Get list of all global links
-*/
 
 const char *SpaceMgr::xlibName = "SpaceMgr";
 const char *SpaceMgr::fileNames[] = {

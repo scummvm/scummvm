@@ -27,21 +27,21 @@
  *************************************/
 
 /*
-	-- SoundJam Copyright © Canter Technology 1995
-	SoundJam
-	II   mNew, numberOfChannels
-	ISI  mDefineFileSound, fullPathName, numberOfBeats
-	III  mDefineCastSound, castMemberNumber, numberOfBeats
-	II   mUndefineSound, soundID
-	III  mReadSome, soundID, byteCount
-	II   mStartSound, soundID
-	II   mSwitchNew, soundID
-	II   mSwitchParallel, soundID
-	I    mHasSwitchHappened
-	X    mToggleMute
-	X    mStop
-	X    mDispose
-*/
+ * -- SoundJam Copyright © Canter Technology 1995
+ * SoundJam
+ * II   mNew, numberOfChannels
+ * ISI  mDefineFileSound, fullPathName, numberOfBeats
+ * III  mDefineCastSound, castMemberNumber, numberOfBeats
+ * II   mUndefineSound, soundID
+ * III  mReadSome, soundID, byteCount
+ * II   mStartSound, soundID
+ * II   mSwitchNew, soundID
+ * II   mSwitchParallel, soundID
+ * I    mHasSwitchHappened
+ * X    mToggleMute
+ * X    mStop
+ * X    mDispose
+ */
 
 #include "director/director.h"
 #include "director/window.h"
@@ -199,4 +199,3 @@ void SoundJam::m_stop(int nargs) {
 }
 
 } // End of namespace Director
-

@@ -19,14 +19,21 @@
  *
  */
 
-/* RearWindow is a Mac only XObject. Its purpose is to cover the screen
+/*************************************
+ *
+ * USED IN:
+ * Alice: An Interactive Museum
+ *
+ *************************************/
+
+/*
+ * RearWindow is a Mac only XObject. Its purpose is to cover the screen
  * with either a 1-bit pattern, indexed color, direct(RGB) color, bitmappedCastMember
  * or PICT file picture.
  *
  * It does this when the Stage size is smaller than the monitor screen.
  *
  * Implemented as a no-op, since ScummVM doesn't handle desktop backgrounds.
- *
  */
 
 #include "director/director.h"

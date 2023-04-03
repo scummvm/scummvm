@@ -36,12 +36,13 @@ namespace Director {
  * DEVO Presents: Adventures of the Smart Patrol
  *
  **************************************************/
+
 /*
--- AskUser XObject. Copyright 1996 Inscape v1.0 24May96 BDL
-AskUser
-I      mNew                                                                --Creates a new instance
-X      mDispose                                                            --Disposes XObject instance
-SSSS               mAsk                                                                                          --Data to display in the message box.
+ * -- AskUser XObject. Copyright 1996 Inscape v1.0 24May96 BDL
+ * AskUser
+ * I      mNew                                                                --Creates a new instance
+ * X      mDispose                                                            --Disposes XObject instance
+ * SSSS               mAsk                                                                                          --Data to display in the message box.
 */
 
 const char *AskUser::xlibName = "AskUser";
@@ -94,7 +95,7 @@ void AskUser::m_ask(int nargs) {
 		g_lingo->dropStack(nargs);
 		g_lingo->push(Datum("Ok"));
 		return;
-	}	
+	}
 	Datum text = g_lingo->pop();
 	Datum caption = g_lingo->pop(); // ScummVM doesn't have a title for message boxes, not used
 	Datum mbType = g_lingo->pop();

@@ -25,59 +25,60 @@
  * מיץ פטל (Mitz Petel)
  *
  *************************************/
+
 /* -- Draw XObject version 1.0 beta
-Draw
--- (c) 1995 - Daniele Russo
--- New York University - Center for Digital Multimedia
-I        mNew                --Creates a new instance of the XObject.
---
-I        mDispose            --Disposes of an XObject instance.
---
-IIIII    mLine               --Draws a line.
---
-IIIII    mLineBrush          --Draws a line using a pen.
---
-IIIIII   mLineBrushTrans     --Draws a line using a transparent, multicolored pen.
---
-IIIIIII  mLineBrushCol       --Draws a line using a transparent pen.
---
-III      mFilterBMP          --Gets a picture containing all the pixels in an
---                             image excluding those which are of a particular color.
---                             The image to filter must be on the clipboard (as a BITMAP).
---
-III      mFilterDIB          --As above, but the image must be a DIB.
---
-III      mFilterBMP128       --Gets a picture containing all the pixels in an
---                             image whose color is within the lower/upper
---                             128. The image to filter must be on the clipboard
---                             (as a BITMAP).
---
-III      mFilterDIB128       --As above, but the image must be a DIB.
---
-III      mFilterBMPMakeGhostImage
---                             Gets a picture which has all the pixels that don't
---                             have the background color changed to a given color,
---                             specified by the caller. The image to filter must be
---                             on the clipboard (as a BITMAP).
---
-III      mFilterDIBMakeGhostImage
---                             As above, but the image must be a DIB.
---
-I        mEmptyClipboard     --Empties the clipboard. This method MUST be called
---                             after using the result of mFilterBMP and mFilterBMP128.
---
-IIII     mFill               --Fills an area starting at a specified pixel
---                             and defined by all the adjacent pixels with
---                             the same color.
---
-III      mGetColor           --Gets the color of a pixel on the stage. The
---                             result is the index of the color in Director's
---                             palette.
---
-IIIIII   mDrawRect           -- Draws a rectangle of a specified color.
---
-IIIIII   mDrawFrame          -- Draws a frame using a dotted pen.
-*/
+ * Draw
+ * -- (c) 1995 - Daniele Russo
+ * -- New York University - Center for Digital Multimedia
+ * I        mNew                --Creates a new instance of the XObject.
+ * --
+ * I        mDispose            --Disposes of an XObject instance.
+ * --
+ * IIIII    mLine               --Draws a line.
+ * --
+ * IIIII    mLineBrush          --Draws a line using a pen.
+ * --
+ * IIIIII   mLineBrushTrans     --Draws a line using a transparent, multicolored pen.
+ * --
+ * IIIIIII  mLineBrushCol       --Draws a line using a transparent pen.
+ * --
+ * III      mFilterBMP          --Gets a picture containing all the pixels in an
+ * --                             image excluding those which are of a particular color.
+ * --                             The image to filter must be on the clipboard (as a BITMAP).
+ * --
+ * III      mFilterDIB          --As above, but the image must be a DIB.
+ * --
+ * III      mFilterBMP128       --Gets a picture containing all the pixels in an
+ * --                             image whose color is within the lower/upper
+ * --                             128. The image to filter must be on the clipboard
+ * --                             (as a BITMAP).
+ * --
+ * III      mFilterDIB128       --As above, but the image must be a DIB.
+ * --
+ * III      mFilterBMPMakeGhostImage
+ * --                             Gets a picture which has all the pixels that don't
+ * --                             have the background color changed to a given color,
+ * --                             specified by the caller. The image to filter must be
+ * --                             on the clipboard (as a BITMAP).
+ * --
+ * III      mFilterDIBMakeGhostImage
+ * --                             As above, but the image must be a DIB.
+ * --
+ * I        mEmptyClipboard     --Empties the clipboard. This method MUST be called
+ * --                             after using the result of mFilterBMP and mFilterBMP128.
+ * --
+ * IIII     mFill               --Fills an area starting at a specified pixel
+ * --                             and defined by all the adjacent pixels with
+ * --                             the same color.
+ * --
+ * III      mGetColor           --Gets the color of a pixel on the stage. The
+ * --                             result is the index of the color in Director's
+ * --                             palette.
+ * --
+ * IIIIII   mDrawRect           -- Draws a rectangle of a specified color.
+ * --
+ * IIIIII   mDrawFrame          -- Draws a frame using a dotted pen.
+ */
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

@@ -25,6 +25,7 @@
 * Total Distortion
 *
 *************************************/
+
 /*
  * -- Dialogs XObject. Written by Scott Kildall. Copyright (c) Red Eye  Software, December 11th, 1994.
  * Compuserve:72703,451 AOL:KILDALL  APPLELINK:S.KILDALL

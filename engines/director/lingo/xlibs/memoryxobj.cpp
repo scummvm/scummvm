@@ -19,35 +19,41 @@
  *
  */
 
-/* Memory is a Mac only XObject.
+/*************************************
+ *
+ * USED IN:
+ * Chop Suey (win)
+ *
+ *************************************/
+
+/*
+ * Memory is a Mac only XObject.
  *
  * Implemented as a no-op, since ScummVM doesn't need to handle memory clears.
  *
  *
-	-- Memory XObject
-	-- December 18th, 1992
-	-- Written by Scott Kildall
-	-- 1992 by Macromedia, Inc
-	-- All rights reserved
-	--
-	I mNew
-	X mClear
-	X mCompact
-	X mPurge
-	I mAvailBytes
-	I mAvailBlock
-	I mStackSpace
-	I mGetVM
-	I mGetAddressing
-	I mGetCache
-	XI mSetCache
-	I mGetPhysicalRAM
-	I mGetMMU
-	I mGetLogicalPage
-	I mGetLogicalRAM
-	I mGetLowMemory
-
-	USED BY: Chop Suey (win)
+ * -- Memory XObject
+ * -- December 18th, 1992
+ * -- Written by Scott Kildall
+ * -- 1992 by Macromedia, Inc
+ * -- All rights reserved
+ * --
+ * I mNew
+ * X mClear
+ * X mCompact
+ * X mPurge
+ * I mAvailBytes
+ * I mAvailBlock
+ * I mStackSpace
+ * I mGetVM
+ * I mGetAddressing
+ * I mGetCache
+ * XI mSetCache
+ * I mGetPhysicalRAM
+ * I mGetMMU
+ * I mGetLogicalPage
+ * I mGetLogicalRAM
+ * I mGetLowMemory
  */
 
 #include "director/director.h"

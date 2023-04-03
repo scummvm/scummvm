@@ -19,6 +19,13 @@
  *
  */
 
+/*************************************
+*
+* USED IN:
+* jman-win
+*
+*************************************/
+
 /**
  *  -- QuickTime for Windows Player External Factory. 02oct92 JT
  * DPWQTW
@@ -27,8 +34,6 @@
  * XI     mNew qtPacket -- create a window
  * X      mDispose -- close and dispose window
  * XII    mVerb msg, qtPacker -- do something
- *
- * USED IN: jman-win
  */
 
 #include "director/director.h"

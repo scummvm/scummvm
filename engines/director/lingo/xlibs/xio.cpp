@@ -25,14 +25,16 @@
  * מיץ פטל (Mitz Petel)
  *
  *************************************/
-/* -- Xio - Functions for file manipulation 10Aug96 Moty Aharobnovitz
-xio
-I	mNew			--Creates a new instance of the XObject
-X	mDispose		--Disposes of XObject instance
-IS  mUnlock    --Given a correct code, enables usage of the Xobject
-IS  mDeleteFile  --Removes a file from the file system
-ISS  mCopyFile   --Copies a file from source to dest
-*/
+
+/*
+ * -- Xio - Functions for file manipulation 10Aug96 Moty Aharobnovitz
+ * xio
+ * I	mNew			--Creates a new instance of the XObject
+ * X	mDispose		--Disposes of XObject instance
+ * IS  mUnlock    --Given a correct code, enables usage of the Xobject
+ * IS  mDeleteFile  --Removes a file from the file system
+ * ISS  mCopyFile   --Copies a file from source to dest
+ */
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

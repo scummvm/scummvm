@@ -28,30 +28,31 @@
  * Return to Jurassic (Win)
  *
  *************************************/
+
 /*
--- Ednox External Factory. 22Nov93 PTM
-ednox
-I      mNew                --Creates a new instance of the XObject
-X      mDispose            --Disposes of XObject instance
-S      mName               --Returns the XObject name (Widget)
-I      mStatus             --Returns an integer status code
-SI     mError, code        --Returns an error string
-S      mLastError          --Returns last error string
-SSI    playSoundX       --Play an external sound, return status string
-S      clearSoundX      --Stop an external sound, return status string
-S      checkSoundX      --check an external sound,see if it is still playing
-SS      drawBkgndX,hBkgnd   --draw background image, from resource bitmap
-SS     SaveX, hStrIn    --Save string into a file(file name will be prompted
-SSSI    GetPathX,hSection,hStrIn,mMacMode, Retrieve the installed path name from the win.ini and return
-S      RestoreX     --Restore string from a file(file name will be prompted
-SS      SetDriveX,hStrIn    --Set the current path name
-SSS    IsCDX,hDrive,hStrIn --Check for the correct CD
-S      EnableTaskSwitch    --enable task switch
-S      DisableTaskSwitch   --Disable task switch
-SSS    getDocumentName,hdir,hext --Get strings of file in specific directory
-SSS    getDocumentFile,hDir,hFile --Get string from a file
-SSSS   saveDocumentFile,hDir,hFile,hStrIn --save string into a file
-SSS    deleteDocumentFile,hDir,hFile  -- delete a file from the directory
+ * -- Ednox External Factory. 22Nov93 PTM
+ * ednox
+ * I      mNew                --Creates a new instance of the XObject
+ * X      mDispose            --Disposes of XObject instance
+ * S      mName               --Returns the XObject name (Widget)
+ * I      mStatus             --Returns an integer status code
+ * SI     mError, code        --Returns an error string
+ * S      mLastError          --Returns last error string
+ * SSI    playSoundX       --Play an external sound, return status string
+ * S      clearSoundX      --Stop an external sound, return status string
+ * S      checkSoundX      --check an external sound,see if it is still playing
+ * SS      drawBkgndX,hBkgnd   --draw background image, from resource bitmap
+ * SS     SaveX, hStrIn    --Save string into a file(file name will be prompted
+ * SSSI    GetPathX,hSection,hStrIn,mMacMode, Retrieve the installed path name from the win.ini and return
+ * S      RestoreX     --Restore string from a file(file name will be prompted
+ * SS      SetDriveX,hStrIn    --Set the current path name
+ * SSS    IsCDX,hDrive,hStrIn --Check for the correct CD
+ * S      EnableTaskSwitch    --enable task switch
+ * S      DisableTaskSwitch   --Disable task switch
+ * SSS    getDocumentName,hdir,hext --Get strings of file in specific directory
+ * SSS    getDocumentFile,hDir,hFile --Get string from a file
+ * SSSS   saveDocumentFile,hDir,hFile,hStrIn --save string into a file
+ * SSS    deleteDocumentFile,hDir,hFile  -- delete a file from the directory
 */
 
 #include "director/director.h"

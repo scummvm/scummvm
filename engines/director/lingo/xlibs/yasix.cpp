@@ -25,7 +25,10 @@
  * Yearn2Learn: The Flintstones Coloring Book
  *
  *************************************/
-/* v0.2, ©1992 Clark Brady, 317/839-0442 - YASIX - Yet Another System Information XFCN */
+
+/*
+ * v0.2, ©1992 Clark Brady, 317/839-0442 - YASIX - Yet Another System Information XFCN
+ */
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
