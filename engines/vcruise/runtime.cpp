@@ -385,6 +385,34 @@ SoundInstance::SoundInstance()
 SoundInstance::~SoundInstance() {
 }
 
+RandomAmbientSound::RandomAmbientSound() : volume(0), balance(0), frequency(0), sceneChangesRemaining(0) {
+}
+
+void RandomAmbientSound::write(Common::WriteStream *stream) const {
+	stream->writeUint32BE(name.size());
+	stream->writeString(name);
+
+	stream->writeUint32BE(volume);
+	stream->writeSint32BE(balance);
+
+	stream->writeUint32BE(frequency);
+	stream->writeUint32BE(sceneChangesRemaining);
+}
+
+void RandomAmbientSound::read(Common::ReadStream *stream) {
+	uint nameLen = stream->readUint32BE();
+	if (stream->eos() || stream->err())
+		nameLen = 0;
+
+	name = stream->readString(0, nameLen);
+
+	volume = stream->readUint32BE();
+	balance = stream->readSint32BE();
+
+	frequency = stream->readUint32BE();
+	sceneChangesRemaining = stream->readUint32BE();
+}
+
 TriggeredOneShot::TriggeredOneShot() : soundID(0), uniqueSlot(0) {
 }
 
@@ -538,6 +566,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 	stream->writeUint32BE(inventory.size());
 	stream->writeUint32BE(sounds.size());
 	stream->writeUint32BE(triggeredOneShots.size());
+	stream->writeUint32BE(randomAmbientSounds.size());
 
 	stream->writeUint32BE(variables.size());
 	stream->writeUint32BE(timers.size());
@@ -550,6 +579,9 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 
 	for (const TriggeredOneShot &triggeredOneShot : triggeredOneShots)
 		triggeredOneShot.write(stream);
+
+	for (const RandomAmbientSound &randomAmbientSound : randomAmbientSounds)
+		randomAmbientSound.write(stream);
 
 	for (const Common::HashMap<uint32, int32>::Node &var : variables) {
 		stream->writeUint32BE(var._key);
@@ -600,6 +632,10 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	uint numSounds = stream->readUint32BE();
 	uint numOneShots = stream->readUint32BE();
 
+	uint numRandomAmbientSounds = 0;
+	if (saveVersion >= 3)
+		numRandomAmbientSounds = stream->readUint32BE();
+
 	uint numVars = stream->readUint32BE();
 	uint numTimers = stream->readUint32BE();
 
@@ -642,7 +678,7 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, const Common::FSNode &rootFSNode, VCruiseGameID gameID)
 	: _system(system), _mixer(mixer), _roomNumber(1), _screenNumber(0), _direction(0), _haveHorizPanAnimations(false), _loadedRoomNumber(0), _activeScreenNumber(0),
 	  _gameState(kGameStateBoot), _gameID(gameID), _havePendingScreenChange(false), _forceScreenChange(false), _havePendingReturnToIdleState(false), _havePendingCompletionCheck(false),
-	  _scriptNextInstruction(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _musicTrack(0), _panoramaDirectionFlags(0),
+	  _havePendingPlayAmbientSounds(false), _ambientSoundFinishTime(0), _scriptNextInstruction(0), _escOn(false), _debugMode(false), _fastAnimationMode(false), _musicTrack(0), _panoramaDirectionFlags(0),
 	  _loadedAnimation(0), _animPendingDecodeFrame(0), _animDisplayingFrame(0), _animFirstFrame(0), _animLastFrame(0), _animStopFrame(0),
 	  _animStartTime(0), _animFramesDecoded(0), _animDecoderState(kAnimDecoderStateStopped),
 	  _animPlayWhileIdle(false), _idleIsOnInteraction(false), _idleHaveClickInteraction(false), _idleHaveDragInteraction(false), _idleInteractionID(0), _haveIdleStaticAnimation(false),
@@ -843,6 +879,11 @@ bool Runtime::runIdle() {
 
 		changeToScreen(_roomNumber, _screenNumber);
 		return true;
+	}
+
+	if (_havePendingPlayAmbientSounds) {
+		_havePendingPlayAmbientSounds = false;
+		triggerAmbientSounds();
 	}
 
 	if (_havePendingReturnToIdleState) {
@@ -1852,6 +1893,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 		_havePendingReturnToIdleState = true;
 		_haveIdleStaticAnimation = false;
+		_havePendingPlayAmbientSounds = true;
 
 		recordSaveGameSnapshot();
 	}
@@ -2456,6 +2498,47 @@ bool Runtime::computeEffectiveVolumeAndBalance(SoundInstance &snd) {
 	return changed;
 }
 
+void Runtime::triggerAmbientSounds() {
+	if (_randomAmbientSounds.size() == 0)
+		return;
+
+	uint32 timestamp = g_system->getMillis();
+
+	if (timestamp < _ambientSoundFinishTime)
+		return;
+
+	// This has been mostly confirmed to match Reah's behavior, including not decrementing sound scene change
+	// counters if an existing sound was playing when this is checked.
+	for (uint i = 0; i < _randomAmbientSounds.size(); i++) {
+		if (_randomAmbientSounds[i].sceneChangesRemaining == 0) {
+			// Found a sound to play
+			RandomAmbientSound sound = Common::move(_randomAmbientSounds[i]);
+			_randomAmbientSounds.remove_at(i);
+
+			if (sound.frequency > 0)
+				sound.sceneChangesRemaining = sound.frequency - 1;
+
+			StackInt_t soundID = 0;
+			SoundInstance *cachedSound = nullptr;
+			resolveSoundByName(sound.name, soundID, cachedSound);
+
+			if (cachedSound) {
+				triggerSound(false, *cachedSound, sound.volume, sound.balance, false, false);
+				if (cachedSound->cache)
+					_ambientSoundFinishTime = timestamp + static_cast<uint>(cachedSound->cache->stream->getLength().msecs());
+			}
+
+			// Requeue at the end
+			_randomAmbientSounds.push_back(Common::move(sound));
+			return;
+		}
+	}
+
+	// No ambient sound was ready
+	for (RandomAmbientSound &snd : _randomAmbientSounds)
+		snd.sceneChangesRemaining--;
+}
+
 AnimationDef Runtime::stackArgsToAnimDef(const StackInt_t *args) const {
 	AnimationDef def;
 	def.animNum = args[0];
@@ -2952,6 +3035,8 @@ void Runtime::recordSaveGameSnapshot() {
 	snapshot->listenerX = _listenerX;
 	snapshot->listenerY = _listenerY;
 	snapshot->listenerAngle = _listenerAngle;
+
+	snapshot->randomAmbientSounds = _randomAmbientSounds;
 }
 
 void Runtime::restoreSaveGameSnapshot() {
@@ -3002,6 +3087,8 @@ void Runtime::restoreSaveGameSnapshot() {
 	_listenerX = _saveGame->listenerX;
 	_listenerY = _saveGame->listenerY;
 	_listenerAngle = _saveGame->listenerAngle;
+
+	_randomAmbientSounds = _saveGame->randomAmbientSounds;
 
 	for (const SaveGameSnapshot::Sound &sound : _saveGame->sounds) {
 		Common::SharedPtr<SoundInstance> si(new SoundInstance());
@@ -3653,14 +3740,20 @@ void Runtime::scriptOpStopAL(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpAddXSound(ScriptArg_t arg) {
-	TAKE_STACK_INT(4);
+	TAKE_STACK_INT_NAMED(3, sndParamArgs);
+	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	warning("AddXSound not implemented yet");
-	(void)stackArgs;
+	RandomAmbientSound sound;
+	sound.name = sndNameArgs[0];
+	sound.volume = sndParamArgs[0];
+	sound.balance = sndParamArgs[1];
+	sound.frequency = sndParamArgs[2];
+
+	_randomAmbientSounds.push_back(sound);
 }
 
 void Runtime::scriptOpClrXSound(ScriptArg_t arg) {
-	warning("ClrXSound not implemented yet");
+	_randomAmbientSounds.clear();
 }
 
 void Runtime::scriptOpStopSndLA(ScriptArg_t arg) {

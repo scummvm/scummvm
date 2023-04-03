@@ -229,6 +229,21 @@ struct SoundInstance {
 	uint32 endTime;
 };
 
+struct RandomAmbientSound {
+	RandomAmbientSound();
+
+	Common::String name;
+
+	uint volume;
+	int32 balance;
+
+	uint frequency;
+	uint sceneChangesRemaining;
+
+	void write(Common::WriteStream *stream) const;
+	void read(Common::ReadStream *stream);
+};
+
 struct TriggeredOneShot {
 	TriggeredOneShot();
 
@@ -317,7 +332,7 @@ struct SaveGameSnapshot {
 	LoadGameOutcome read(Common::ReadStream *stream);
 
 	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 2;
+	static const uint kSaveGameCurrentVersion = 3;
 	static const uint kSaveGameEarliestSupportedVersion = 2;
 
 	struct InventoryItem {
@@ -371,6 +386,7 @@ struct SaveGameSnapshot {
 	Common::Array<InventoryItem> inventory;
 	Common::Array<Sound> sounds;
 	Common::Array<TriggeredOneShot> triggeredOneShots;
+	Common::Array<RandomAmbientSound> randomAmbientSounds;
 
 	Common::HashMap<uint32, int32> variables;
 	Common::HashMap<uint, uint32> timers;
@@ -623,6 +639,7 @@ private:
 	void updateSounds(uint32 timestamp);
 	void update3DSounds();
 	bool computeEffectiveVolumeAndBalance(SoundInstance &snd);
+	void triggerAmbientSounds();
 
 	AnimationDef stackArgsToAnimDef(const StackInt_t *args) const;
 	void pushAnimDef(const AnimationDef &animDef);
@@ -823,6 +840,9 @@ private:
 	bool _havePendingCompletionCheck;
 	GameState _gameState;
 
+	bool _havePendingPlayAmbientSounds;
+	uint32 _ambientSoundFinishTime;
+
 	bool _escOn;
 	bool _debugMode;
 	bool _fastAnimationMode;
@@ -900,6 +920,7 @@ private:
 	SoundParams3D _pendingSoundParams3D;
 
 	Common::Array<TriggeredOneShot> _triggeredOneShots;
+	Common::Array<RandomAmbientSound> _randomAmbientSounds;
 
 	int32 _listenerX;
 	int32 _listenerY;
