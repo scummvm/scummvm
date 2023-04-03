@@ -47,13 +47,10 @@ void ImageData::Load(rapidxml::xml_node<char> *node, const bool &echo) {
 
 void ImageData::Draw(const int &XOffset, const int &YOffset) {
 	warning("ImaageData::Draw()");
-
-#if 0
 	if (crop)
 		gImageManager.Draw(x + XOffset, y + YOffset, key, &clip);
 	else
 		gImageManager.Draw(x + XOffset, y + YOffset, key);
-#endif
 }
 
 } // End of namespace Crab

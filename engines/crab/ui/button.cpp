@@ -103,7 +103,6 @@ void Button::Reset() {
 void Button::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
 	warning("STUB: Button::Draw()");
 
-#if 0
 	if (visible) {
 		if (mousepressed) {
 			gImageManager.Draw(x + XOffset, y + YOffset, img.select, clip);
@@ -120,7 +119,6 @@ void Button::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
 			caption.Draw(false, XOffset, YOffset);
 		}
 	}
-#endif
 }
 
 void Button::ImageCaptionOnlyDraw(const int &XOffset, const int &YOffset, Rect *clip) {
