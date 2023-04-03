@@ -111,7 +111,9 @@ const int InputManager::Equals(const InputType &val, const SDL_Event &Event) {
 // Purpose: Load from file
 //------------------------------------------------------------------------
 void InputManager::Init() {
-	warning("STUB: InputManager::Init()");
+
+	const std::string DEFAULT_FILENAME = "res/controls.xml";
+	Load(DEFAULT_FILENAME);
 
 #if 0
 	const std::string DEFAULT_FILENAME = "res/controls.xml";
