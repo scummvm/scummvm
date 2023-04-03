@@ -7684,11 +7684,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("rainbowfish1", "", "REGENBOOG", "dec72b4b6f8e97f1ea24361794bf0bdf", 116715, Common::NL_NLD, 702),
 	WINGAME1_l("rainbowfish1", "", "Regenboog.exe", "88d4c24f6d4b78a73ce5b07693eddbc8", 1820762, Common::NL_NLD, 702),
 
-	MACGAME1("rainbowfish2", "", "Rainbow Fish and the Whale", "dec72b4b6f8e97f1ea24361794bf0bdf", 116715, 702),
-	MACGAME1_l("rainbowfish2", "", "Wal", "dec72b4b6f8e97f1ea24361794bf0bdf", 116715, Common::DE_DEU, 702),
-	WINGAME1("rainbowfish2", "", "Rainbow2.exe", "06f5ec786e7f2e94e36571f651810fb4", 1817774, 702),
-	WINGAME1_l("rainbowfish2", "", "Arcobaleno.exe", "06f5ec786e7f2e94e36571f651810fb4", 1817774, Common::IT_ITA, 702),
-	WINGAME1_l("rainbowfish2", "", "wal.exe", "06f5ec786e7f2e94e36571f651810fb4", 1817774, Common::DE_DEU, 702),
+	MACGAME1("rainbowfish2", "",   "Rainbow Fish and the Whale", "r:dec72b4b6f8e97f1ea24361794bf0bdf", 116459, 702),
+	MACGAME1_l("rainbowfish2", "", "Wal",						 "r:dec72b4b6f8e97f1ea24361794bf0bdf", 116459, Common::DE_DEU, 702),
+	WINGAME1("rainbowfish2", "",   "Rainbow2.exe",				 "d:06f5ec786e7f2e94e36571f651810fb4", 1817774, 702),
+	WINGAME1_l("rainbowfish2", "", "Arcobaleno.exe",			 "d:06f5ec786e7f2e94e36571f651810fb4", 1817774, Common::IT_ITA, 702),
+	WINGAME1_l("rainbowfish2", "", "wal.exe",					 "d:06f5ec786e7f2e94e36571f651810fb4", 1817774, Common::DE_DEU, 702),
 
 	WINGAME1t_l("ravecard2001", "", "RAVECARD2001.exe", "1f74104a44a6d8b1decfdc8f16c22639", 3010820, Common::DE_DEU, 702),
 
