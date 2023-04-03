@@ -714,7 +714,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 				settings["last_window_width"] = w;
 				settings["last_window_height"] = h;
-				settings.erase("window_size");
+				settings.erase("window-size");
 			END_OPTION
 #endif
 
