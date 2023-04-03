@@ -53,6 +53,15 @@ void ToggleButton::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
 		gImageManager.Draw(x + offset.x, y + offset.y, off);
 }
 
+ButtonAction ToggleButton::HandleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
+	ButtonAction action = Button::HandleEvents(Event, XOffset, YOffset);
+
+	if (action == BUAC_LCLICK)
+		state = !state;
+
+	return action;
+}
+
 #if 0
 ButtonAction ToggleButton::HandleEvents(const SDL_Event &Event, const int &XOffset, const int &YOffset) {
 	ButtonAction action = Button::HandleEvents(Event, XOffset, YOffset);
@@ -63,5 +72,7 @@ ButtonAction ToggleButton::HandleEvents(const SDL_Event &Event, const int &XOffs
 	return action;
 }
 #endif
+
+
 
 } // End of namespace Crab

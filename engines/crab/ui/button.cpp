@@ -147,6 +147,56 @@ void Button::HoverInfoOnlyDraw(const int &XOffset, const int &YOffset, Rect *cli
 	}
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle input and stuff
+//------------------------------------------------------------------------
+ButtonAction Button::HandleEvents(const Common::Event &Event, const int &XOffset, const int &YOffset) {
+	Rect dim = *this;
+	dim.x += XOffset;
+	dim.y += YOffset;
+
+	if (visible) {
+		if (dim.Contains(gMouse.motion.x, gMouse.motion.y)) {
+			hover_mouse = true;
+
+			if (!hover_prev) {
+				hover_prev = true;
+				gMusicManager.PlayEffect(se_hover, 0);
+			}
+		} else {
+			hover_prev = false;
+			hover_mouse = false;
+		}
+
+		if (Event.type == Common::EVENT_MOUSEMOVE) {
+			if (canmove && mousepressed) {
+				x += gMouse.rel.x;
+				y += gMouse.rel.y;
+				return BUAC_GRABBED;
+			}
+		} else if (Event.type == Common::EVENT_LBUTTONDOWN || Event.type == Common::EVENT_RBUTTONDOWN) {
+			// The gMouse button pressed, then released, comprises of a click action
+			if (dim.Contains(gMouse.button.x, gMouse.button.y))
+				mousepressed = true;
+		} else if ((Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP) && mousepressed) {
+			Reset();
+			if (dim.Contains(gMouse.button.x, gMouse.button.y)) {
+				mousepressed = false;
+				if (Event.type == Common::EVENT_LBUTTONUP) {
+					gMusicManager.PlayEffect(se_click, 0);
+					return BUAC_LCLICK;
+				} else if (Event.type == Common::EVENT_RBUTTONUP)
+					return BUAC_RCLICK;
+			}
+		} else if (hotkey.HandleEvents(Event)) {
+			gMusicManager.PlayEffect(se_click, 0);
+			return BUAC_LCLICK;
+		}
+	}
+
+	return BUAC_IGNORE;
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle input and stuff
