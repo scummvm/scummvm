@@ -61,6 +61,8 @@ public:
 
 	void Load(const std::string &filename);
 
+	int HandleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
+					 const std::string &cur_id, PersonHandler &oh, const Common::Event &Event);
 #if 0
 	int HandleEvents(pyrodactyl::event::Info &info, pyrodactyl::event::ConversationData &dat,
 					 const std::string &cur_id, PersonHandler &oh, const SDL_Event &Event);

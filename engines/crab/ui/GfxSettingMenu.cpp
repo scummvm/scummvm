@@ -86,6 +86,42 @@ void GfxSettingMenu::Draw() {
 	resolution.Draw();
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle input
+//------------------------------------------------------------------------
+int GfxSettingMenu::HandleEvents(const Common::Event &Event) {
+	if (fullscreen.HandleEvents(Event)) {
+		// Setting video flags is necessary when toggling fullscreen
+		gScreenSettings.fullscreen = !gScreenSettings.fullscreen;
+		gScreenSettings.SetFullscreen();
+	}
+
+	// Vsync doesn't need to set the change value
+	if (vsync.HandleEvents(Event)) {
+		gScreenSettings.vsync = !gScreenSettings.vsync;
+		gScreenSettings.SetVsync();
+	}
+
+	// Quality and resolution can only be changed in the main menu
+	if (!gScreenSettings.in_game) {
+		if (quality.HandleEvents(Event))
+			gScreenSettings.quality = !gScreenSettings.quality;
+	}
+
+	// Window border doesn't matter if you are in fullscreen
+	if (border.HandleEvents(Event) && !gScreenSettings.fullscreen) {
+		gScreenSettings.border = !gScreenSettings.border;
+		gScreenSettings.SetWindowBorder();
+	}
+
+	if (brightness.HandleEvents(Event)) {
+		gScreenSettings.gamma = static_cast<float>(brightness.Value()) / 100.0f;
+		gScreenSettings.SetGamma();
+	}
+
+	return resolution.HandleEvents(Event);
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle input

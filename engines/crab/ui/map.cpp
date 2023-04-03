@@ -180,6 +180,81 @@ void Map::Validate() {
 	scroll.element.at(DIRECTION_UP).visible = !(camera.y == 0);
 }
 
+//------------------------------------------------------------------------
+// Purpose: Move
+//------------------------------------------------------------------------
+void Map::Move(const Common::Event &Event) {
+	// Reset the velocity to avoid weirdness
+	vel.x = 0;
+	vel.y = 0;
+
+	// We don't use the result, but this keeps the button states up to date
+	scroll.HandleEvents(Event);
+
+	switch (Event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN: {
+		bool click = false;
+		int count = 0;
+		for (auto &i : scroll.element) {
+			if (i.Contains(gMouse.button)) {
+				if (count == DIRECTION_UP)
+					vel.y = -1 * speed;
+				else if (count == DIRECTION_DOWN)
+					vel.y = speed;
+				else if (count == DIRECTION_RIGHT)
+					vel.x = speed;
+				else if (count == DIRECTION_LEFT)
+					vel.x = -1 * speed;
+
+				click = true;
+			}
+			count++;
+		}
+
+		if (!click) {
+			pan = true;
+			vel.x = 0;
+			vel.y = 0;
+		} else
+			pan = false;
+	} break;
+
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
+		pan = false;
+		break;
+
+	case Common::EVENT_MOUSEMOVE:
+		if (pan) {
+			camera.x -= gMouse.rel.x;
+			camera.y -= gMouse.rel.y;
+			Validate();
+		}
+		break;
+	default:
+		warning("STUB: Map keyboard processing");
+#if 0
+		// Move the map camera if player presses the direction keys
+		if (gInput.Equals(IU_UP, Event) == SDL_PRESSED)
+			vel.y = -1 * speed;
+		else if (gInput.Equals(IU_DOWN, Event) == SDL_PRESSED)
+			vel.y = speed;
+		else if (gInput.Equals(IU_RIGHT, Event) == SDL_PRESSED)
+			vel.x = speed;
+		else if (gInput.Equals(IU_LEFT, Event) == SDL_PRESSED)
+			vel.x = -1 * speed;
+		// Stop moving when we release a key (but only in that direction)
+		else if (gInput.Equals(IU_UP, Event) == SDL_RELEASED || gInput.Equals(IU_DOWN, Event) == SDL_RELEASED)
+			vel.y = 0;
+		else if (gInput.Equals(IU_LEFT, Event) == SDL_RELEASED || gInput.Equals(IU_RIGHT, Event) == SDL_RELEASED)
+			vel.x = 0;
+		break;
+	}
+#endif
+	}
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Move
@@ -265,6 +340,26 @@ void Map::InternalEvents(pyrodactyl::event::Info &info) {
 		i.visible = i.x >= camera.x && i.y >= camera.y;
 
 	marker.InternalEvents(pos, player_pos, camera, bounds);
+}
+
+//------------------------------------------------------------------------
+// Purpose: Handle Events
+//------------------------------------------------------------------------
+bool Map::HandleEvents(pyrodactyl::event::Info &info, const Common::Event &Event) {
+	int choice = travel.HandleEvents(Event, -1 * camera.x, -1 * camera.y);
+	if (choice >= 0) {
+		cur_loc = travel.element.at(choice).loc;
+		pan = false;
+		return true;
+	}
+
+	marker.HandleEvents(pos, player_pos, camera, Event);
+
+	Move(Event);
+	if (bu_overlay.HandleEvents(Event) == BUAC_LCLICK)
+		overlay = bu_overlay.state;
+
+	return false;
 }
 
 #if 0

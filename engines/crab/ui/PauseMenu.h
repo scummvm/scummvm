@@ -85,6 +85,7 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node);
 
+	PauseSignal HandleEvents(const Common::Event &Event, Button &back);
 #if 0
 	PauseSignal HandleEvents(const SDL_Event &Event, Button &back);
 #endif

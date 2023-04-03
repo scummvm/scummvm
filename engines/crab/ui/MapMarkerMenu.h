@@ -86,6 +86,8 @@ public:
 	void Load(rapidxml::xml_node<char> *node);
 
 	void Draw(const Element &pos, const Vector2i &player_pos, const Rect &camera);
+
+	void HandleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const Common::Event &Event);
 #if 0
 	void HandleEvents(const Element &pos, const Vector2i &player_pos, const Rect &camera, const SDL_Event &Event);
 #endif

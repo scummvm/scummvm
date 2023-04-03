@@ -113,6 +113,24 @@ void PersonHandler::Draw(pyrodactyl::event::Info &info, pyrodactyl::event::GameE
 #endif
 }
 
+bool PersonHandler::HandleCommonEvents(const Common::Event &Event) {
+	opinion[OPI_LIKE].HandleEvents(Event);
+	opinion[OPI_RESPECT].HandleEvents(Event);
+	opinion[OPI_FEAR].HandleEvents(Event);
+
+	if (jb.HandleEvents(Event) == BUAC_LCLICK) {
+		// User wants to open their journal
+		show_journal = true;
+		return true;
+	}
+
+	return false;
+}
+
+bool PersonHandler::HandleDlboxEvents(const Common::Event &Event) {
+	return dlbox.HandleEvents(Event);
+}
+
 #if 0
 bool PersonHandler::HandleCommonEvents(const SDL_Event &Event) {
 	opinion[OPI_LIKE].HandleEvents(Event);

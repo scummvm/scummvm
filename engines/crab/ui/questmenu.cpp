@@ -148,6 +148,39 @@ void QuestMenu::Draw(Button &bu_map) {
 	}
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle user input
+//------------------------------------------------------------------------
+bool QuestMenu::HandleEvents(Button &bu_map, std::string &map_title, const Common::Event &Event) {
+	int res = menu.HandleEvents(Event);
+	if (res != -1) {
+		if (sel_bu >= 0 && sel_page >= 0)
+			menu.Image(sel_bu, sel_page, img_n);
+
+		sel_bu = res;
+		sel_page = menu.CurrentPage();
+		sel_quest = menu.Index() + sel_bu;
+
+		quest.at(sel_quest).unread = false;
+		text.Reset();
+
+		menu.Image(sel_bu, sel_page, img_s);
+	}
+
+	if (sel_quest >= 0 && sel_quest < quest.size()) {
+		if (quest.at(sel_quest).marker)
+			if (bu_map.HandleEvents(Event) == BUAC_LCLICK) {
+				// The title of the quest selected by the "show in map" button
+				map_title = quest.at(sel_quest).title;
+				return true;
+			}
+
+		text.HandleEvents(quest.at(sel_quest), Event);
+	}
+
+	return false;
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle user input

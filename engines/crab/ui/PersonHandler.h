@@ -89,11 +89,14 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node);
 
-#if 0
 	// Handle events for the three opinion bars and journal - used in both dialog box and reply events
-	bool HandleCommonEvents(const SDL_Event &Event);
+	bool HandleCommonEvents(const Common::Event &Event);
 
 	// Handle events for the dialog box
+	bool HandleDlboxEvents(const Common::Event &Event);
+
+#if 0
+	bool HandleCommonEvents(const SDL_Event &Event);
 	bool HandleDlboxEvents(const SDL_Event &Event);
 #endif
 

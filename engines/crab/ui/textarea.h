@@ -68,6 +68,7 @@ public:
 
 	void Load(rapidxml::xml_node<char> *node);
 
+	bool HandleEvents(const Common::Event &Event, bool numbers_only = false);
 #if 0
 	bool HandleEvents(const SDL_Event &Event, bool numbers_only = false);
 #endif

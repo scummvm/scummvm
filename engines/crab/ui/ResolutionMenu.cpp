@@ -96,6 +96,35 @@ void ResolutionMenu::Draw() {
 	}
 }
 
+int ResolutionMenu::HandleEvents(const Common::Event &Event) {
+	switch (state) {
+	case STATE_NORMAL:
+		if (change.HandleEvents(Event) == BUAC_LCLICK)
+			state = STATE_CHANGE;
+		break;
+	case STATE_CHANGE: {
+		int choice = Menu::HandleEvents(Event);
+		if (choice >= 0) {
+			gScreenSettings.cur = dim[choice];
+			state = STATE_NORMAL;
+			return 1;
+		}
+
+		if (custom.HandleEvents(Event) == BUAC_LCLICK) {
+			state = STATE_NORMAL;
+			return 2;
+		}
+
+		if (cancel.HandleEvents(Event) == BUAC_LCLICK)
+			state = STATE_NORMAL;
+	} break;
+	default:
+		break;
+	}
+
+	return 0;
+}
+
 #if 0
 int ResolutionMenu::HandleEvents(const SDL_Event &Event) {
 	switch (state) {

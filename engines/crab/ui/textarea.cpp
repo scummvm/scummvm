@@ -54,6 +54,12 @@ void TextArea::Load(rapidxml::xml_node<char> *node) {
 	}
 }
 
+bool TextArea::HandleEvents(const Common::Event &Event, bool numbers_only) {
+	warning("STUB: TextArea::HandleEvents()");
+	return false;
+}
+
+
 #if 0
 bool TextArea::HandleEvents(const SDL_Event &Event, bool numbers_only) {
 	// If a key was pressed

@@ -61,6 +61,44 @@ void ReplyMenu::Load(const std::string &filename) {
 	}
 }
 
+int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string &cur_id, PersonHandler &oh, const Common::Event &Event) {
+	// After that, check if the user has clicked on any reply option
+	int choice = Menu<ReplyButton>::HandleEvents(Event);
+	if (choice >= 0 && choice < dat.reply.size()) {
+		bool play_sound = false;
+
+		// Loop through any opinion changes required
+		for (auto &i : dat.reply[element.at(choice).index].change) {
+			if (i.id == cur_id) {
+				// This is a special case because we also need to update the opinion bars
+				oh.OpinionChange(info, i.id, OPI_LIKE, i.val[OPI_LIKE]);
+				oh.OpinionChange(info, i.id, OPI_RESPECT, i.val[OPI_RESPECT]);
+				oh.OpinionChange(info, i.id, OPI_FEAR, i.val[OPI_FEAR]);
+				play_sound = true;
+			} else {
+				info.OpinionChange(i.id, OPI_LIKE, i.val[OPI_LIKE]);
+				info.OpinionChange(i.id, OPI_RESPECT, i.val[OPI_RESPECT]);
+				info.OpinionChange(i.id, OPI_FEAR, i.val[OPI_FEAR]);
+				play_sound = true;
+			}
+		}
+
+#if 0
+		// Right now we play sound randomly
+		if (play_sound) {
+			if (gRandom.Num() % 2 == 1)
+				info.sound.rep_dec = true;
+			else
+				info.sound.rep_inc = true;
+		}
+#endif
+
+		return dat.reply[element.at(choice).index].nextid;
+	}
+
+	return -1;
+}
+
 #if 0
 int ReplyMenu::HandleEvents(Info &info, ConversationData &dat, const std::string &cur_id, PersonHandler &oh, const SDL_Event &Event) {
 	// After that, check if the user has clicked on any reply option
