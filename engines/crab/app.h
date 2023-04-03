@@ -32,14 +32,14 @@
 #define CRAB_APP_H
 
 #include "crab/crab.h"
-//#include "crab/image/ImageManager.h"
-//#include "crab/music/MusicManager.h"
+#include "crab/image/ImageManager.h"
+#include "crab/music/MusicManager.h"
 #include "crab/common_header.h"
-//#include "crab/game.h"
+#include "crab/game.h"
 #include "crab/gamestates.h"
 #include "crab/gamestate_container.h"
 #include "crab/ScreenSettings.h"
-//#include "crab/mainmenu.h"
+#include "crab/mainmenu.h"
 #include "crab/splash.h"
 #include "crab/timer.h"
 

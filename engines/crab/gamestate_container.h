@@ -45,7 +45,7 @@ namespace Crab {
 //------------------------------------------------------------------------
 class GameState {
 public:
-	virtual void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) = 0;
+	//virtual void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) = 0;
 	virtual void InternalEvents(bool &ShouldChangeState, GameStateID &NewStateID) = 0;
 	virtual void Draw() = 0;
 	virtual void SetUI() = 0;
