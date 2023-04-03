@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views_enh/interactions/Arrested.h"
+#include "mm/mm1/views_enh/interactions/arrested.h"
 #include "mm/mm1/globals.h"
 
 
