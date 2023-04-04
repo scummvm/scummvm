@@ -63,6 +63,14 @@ int Inventory::free() const {
 	return free;
 }
 
+bool Inventory::has(int index) const {
+	if (index >= 0 && index < kMaxSize) {
+		auto & entry = _entries[index];
+		return entry.hasObject;
+	}
+	return {};
+}
+
 ObjectPtr Inventory::get(int index) {
 	if (index >= 0 && index < kMaxSize) {
 		auto & entry = _entries[index];
