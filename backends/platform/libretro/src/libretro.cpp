@@ -195,6 +195,13 @@ static void increase_accuracy() {
 	}
 }
 
+void reset_performance_tuner() {
+	if (performance_switch & PERF_SWITCH_ON) {
+		performance_switch = PERF_SWITCH_ON;
+		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: reset.\n");
+	}
+}
+
 static void update_variables(void) {
 	struct retro_variable var;
 

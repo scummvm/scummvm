@@ -321,6 +321,7 @@ Common::List<Common::Event> _events;
 
 extern bool timing_inaccuracies_is_enabled(void);
 extern bool consecutive_screen_updates_is_enabled(void);
+extern void reset_performance_tuner(void);
 
 class OSystem_RETRO : public EventsBaseBackend, public PaletteManager {
 public:
@@ -409,6 +410,10 @@ public:
 			ConfMan.setBool("original_gui", false);
 			log_cb(RETRO_LOG_INFO, "\"original_gui\" setting forced to false\n");
 		}
+	}
+
+	virtual void engineDone() {
+		reset_performance_tuner();
 	}
 
 	virtual bool hasFeature(Feature f) {
