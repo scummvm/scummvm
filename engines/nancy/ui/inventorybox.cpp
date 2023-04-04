@@ -246,7 +246,11 @@ void InventoryBox::Curtains::setAnimationFrame(uint frame) {
 	Common::Point destPoint;
 
 	if (frame > (uint)(g_nancy->getStaticData().numCurtainAnimationFrames - 1)) {
-		setVisible(false);
+		// TVD keeps the last frame visible
+		if (g_nancy->getGameType() > kGameTypeVampire) {
+			setVisible(false);
+		}
+
 		return;
 	} else {
 		setVisible(true);
