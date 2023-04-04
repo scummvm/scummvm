@@ -429,7 +429,7 @@ void Lobby::login(const char *userName, const char *password) {
 	loginRequestParameters.setVal("user", new Common::JSONValue(_userName));
 	loginRequestParameters.setVal("pass", new Common::JSONValue((Common::String)password));
 	loginRequestParameters.setVal("game", new Common::JSONValue((Common::String)_gameName));
-	loginRequestParameters.setVal("version", new Common::JSONValue(gScummVMVersionLite));
+	loginRequestParameters.setVal("version", new Common::JSONValue(gScummVMFullVersion));
 	loginRequestParameters.setVal("competitive_mods", new Common::JSONValue(ConfMan.getBool("enable_competitive_mods")));
 
 	send(loginRequestParameters);
