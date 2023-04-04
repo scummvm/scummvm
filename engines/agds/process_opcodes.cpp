@@ -1520,11 +1520,10 @@ void Process::moveCharacter(bool usermove) {
 		auto region = _engine->loadRegion(regionName);
 		if (region) {
 			character->moveTo(_object->getName(), region->center, direction);
+			suspend();
 		}
 	} else
 		warning("character %s could not be found", id.c_str());
-	if (_status == kStatusPassive)
-		suspend();
 }
 
 void Process::moveCharacterUserMove() {
@@ -1568,20 +1567,29 @@ void Process::hideCharacter() {
 		warning("character %s could not be found", name.c_str());
 }
 
-void Process::leaveCharacter() {
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("leaveCharacter %s %s", arg1.c_str(), arg2.c_str());
-	RegionPtr region = _engine->loadRegion(arg2);
-	debug("region: %s", region->toString().c_str());
+void Process::leaveCharacter(const Common::String &name, const Common::String &regionName, int dir) {
+	debug("leaveCharacter %s %s %d", name.c_str(), regionName.c_str(), dir);
+	Character *character = _engine->getCharacter(name);
+	if (character) {
+		RegionPtr region = _engine->loadRegion(regionName);
+		debug("region: %s", region->toString().c_str());
+		character->moveTo(getName(), region->center, dir);
+	} else
+		warning("character %s could not be found", name.c_str());
 	_engine->enableSystemUser(true); //called from update_music_screen_sound_curtain
 }
+
+void Process::leaveCharacter() {
+	Common::String regionName = popString();
+	Common::String name = popString();
+	leaveCharacter(name, regionName, -1);
+}
+
 void Process::leaveCharacterEx() {
-	int arg3 = pop();
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("leaveCharacterEx %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
-	_engine->enableSystemUser(true); //called from update_music_screen_sound_curtain
+	int dir = pop();
+	Common::String regionName = popString();
+	Common::String name = popString();
+	leaveCharacter(name, regionName, dir);
 }
 
 void Process::setCharacter() {
@@ -1658,8 +1666,9 @@ void Process::stopCharacter() {
 		if (direction != -1) {
 			character->direction(direction);
 			debug("no suspend here, stub");
+			character->stop(getName());
+			suspend();
 		}
-		character->stop();
 	} else
 		warning("could not find character %s", name.c_str());
 }

@@ -126,6 +126,7 @@ private:
 	ProcessExitCode resume();
 	void setupAnimation(Animation *animation);
 	void attachInventoryObjectToMouse(bool flag);
+	void leaveCharacter(const Common::String &name, const Common::String &regionName, int dir);
 
 public:
 	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);

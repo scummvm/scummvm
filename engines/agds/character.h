@@ -110,7 +110,8 @@ public:
 	void animate(const Common::String &processName, Common::Point pos, int direction, int speed);
 	void animate(int direction, int speed, bool jokes);
 
-	void stop();
+	void stop(const Common::String &processName);
+	void leave(const Common::String &processName);
 
 	int getPhase() const {
 		return _jokes? _phase: -1;

@@ -207,9 +207,15 @@ void Character::animate(const Common::String & processName, Common::Point pos, i
 	animate(direction, speed, true);
 }
 
-void Character::stop() {
-	debug("character %s: stop", _object->getName().c_str());
+void Character::stop(const Common::String &processName) {
+	debug("character %s: stop, process: %s", _object->getName().c_str(), processName.c_str());
+	_processName = processName;
 	_stopped = true;
+}
+
+void Character::leave(const Common::String &processName) {
+	debug("character %s: leave, process: %s", _object->getName().c_str(), processName.c_str());
+	_processName = processName;
 }
 
 void Character::tick() {
