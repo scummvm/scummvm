@@ -189,8 +189,6 @@ void Character::animate(int direction, int speed, bool jokes) {
 	_animation = animation;
 	_animation->speed(speed);
 	_animation->rewind();
-	if (!_jokes)
-		_animation->tick(); //load first frame
 	_phase = 0;
 	_frames = _animation->frames();
 	_jokes = jokes;
