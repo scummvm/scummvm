@@ -56,8 +56,8 @@ void Help::process() {
 	case kRun:
 		run();
 		break;
-	case kWaitForSound:
-		waitForSound();
+	case kWait:
+		wait();
 		break;
 	}
 }
@@ -111,13 +111,13 @@ void Help::run() {
 	if (_button->_isClicked) {
 		_button->_isClicked = false;
 		g_nancy->_sound->playSound("BUOK");
-		_state = kWaitForSound;
+		_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+		_state = kWait;
 	}
 }
 
-void Help::waitForSound() {
-	if (!g_nancy->_sound->isSoundPlaying("BUOK")) {
-		g_nancy->_sound->stopSound("BUOK");
+void Help::wait() {
+	if (g_system->getMillis() > _buttonPressActivationTime) {
 		g_nancy->setToPreviousState();
 	}
 }

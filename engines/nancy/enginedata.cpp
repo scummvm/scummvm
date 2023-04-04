@@ -73,8 +73,7 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	s.skip(0x1A, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x1C, kGameTypeNancy1);
 	s.syncAsSint16LE(playerTimeMinuteLength);
-
-	s.skip(2);
+	s.syncAsUint16LE(buttonPressTimeDelay);
 	s.syncAsByte(overrideMovementTimeDeltas);
 	s.syncAsSint16LE(slowMovementTimeDelta);
 	s.syncAsSint16LE(fastMovementTimeDelta);

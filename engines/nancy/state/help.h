@@ -40,7 +40,7 @@ namespace State {
 
 class Help : public State, public Common::Singleton<Help> {
 public:
-	enum State { kInit, kBegin, kRun, kWaitForSound };
+	enum State { kInit, kBegin, kRun, kWait };
 	Help();
 	virtual ~Help();
 
@@ -53,11 +53,12 @@ private:
 	void init();
 	void begin();
 	void run();
-	void waitForSound();
+	void wait();
 
 	State _state;
 	UI::FullScreenImage _image;
 	UI::Button *_button;
+	Time _buttonPressActivationTime;
 };
 
 #define NancyHelpState Nancy::State::Help::instance()

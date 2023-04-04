@@ -717,9 +717,14 @@ void Scene::handleInput() {
 		_menuButton->handleInput(input);
 
 		if (_menuButton->_isClicked) {
-			_menuButton->_isClicked = false;
-			g_nancy->_sound->playSound("BUOK");
-			requestStateChange(NancyState::kMainMenu);
+			if (_buttonPressActivationTime == 0) {
+				g_nancy->_sound->playSound("BUOK");
+				_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+			} else if (g_system->getMillis() > _buttonPressActivationTime) {
+				_menuButton->_isClicked = false;
+				requestStateChange(NancyState::kMainMenu);
+				_buttonPressActivationTime = 0;
+			}
 		}
 	}
 	
@@ -727,9 +732,14 @@ void Scene::handleInput() {
 		_helpButton->handleInput(input);
 
 		if (_helpButton->_isClicked) {
-			_helpButton->_isClicked = false;
-			g_nancy->_sound->playSound("BUOK");
-			requestStateChange(NancyState::kHelp);
+			if (_buttonPressActivationTime == 0) {
+				g_nancy->_sound->playSound("BUOK");
+				_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+			} else if (g_system->getMillis() > _buttonPressActivationTime) {
+				_helpButton->_isClicked = false;
+				requestStateChange(NancyState::kHelp);
+				_buttonPressActivationTime = 0;
+			}
 		}
 	}
 }

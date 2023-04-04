@@ -51,6 +51,7 @@ struct BSUM {
 	uint16 verticalEdgesSize;
 
 	uint16 playerTimeMinuteLength;
+	uint16 buttonPressTimeDelay;
 	byte overrideMovementTimeDeltas;
 	uint16 slowMovementTimeDelta;
 	uint16 fastMovementTimeDelta;

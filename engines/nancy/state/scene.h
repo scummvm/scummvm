@@ -251,6 +251,7 @@ private:
 
 	UI::Button *_menuButton;
 	UI::Button *_helpButton;
+	Time _buttonPressActivationTime;
 
 	UI::ViewportOrnaments *_viewportOrnaments;
 	UI::TextboxOrnaments *_textboxOrnaments;
