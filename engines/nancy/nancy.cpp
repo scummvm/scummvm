@@ -219,8 +219,6 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 		break;
 	}
 
-	_graphicsManager->clearObjects();
-
 	if (overridePrevious != NancyState::kNone) {
 		_gameFlow.prevState = overridePrevious;
 	} else {
@@ -228,22 +226,7 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 	}
 
 	_gameFlow.curState = state;
-
-	bool shouldDestroyLastState = false;
-
-	State::State *s = getStateObject(_gameFlow.prevState);
-	if (s) {
-		shouldDestroyLastState = s->onStateExit(_gameFlow.curState);
-	}
-
-	s = getStateObject(_gameFlow.curState);
-	if (s) {
-		s->onStateEnter(_gameFlow.prevState);
-	}
-
-	if (shouldDestroyLastState) {
-		destroyState(_gameFlow.prevState);
-	}
+	_gameFlow.changingState = true;
 }
 
 void NancyEngine::setToPreviousState() {
@@ -274,12 +257,34 @@ Common::Error NancyEngine::run() {
 		_cursorManager->setCursorType(CursorManager::kNormalArrow);
 		_input->processEvents();
 
-		State::State *s = getStateObject(_gameFlow.curState);
+		State::State *s;
+
+		if (_gameFlow.changingState) {
+			s = getStateObject(_gameFlow.curState);
+			if (s) {
+				s->onStateEnter(_gameFlow.curState);
+			}
+
+			_gameFlow.changingState = false;
+		}
+
+		s = getStateObject(_gameFlow.curState);
 		if (s) {
 			s->process();
 		}
-
+		
 		_graphicsManager->draw();
+		
+		if (_gameFlow.changingState) { 
+			_graphicsManager->clearObjects();
+			
+			s = getStateObject(_gameFlow.prevState);
+			if (s) {
+				if(s->onStateExit(_gameFlow.prevState)) {
+					destroyState(_gameFlow.prevState);
+				}
+			}
+		}
 
 		_system->updateScreen();
 		_system->delayMillis(16);

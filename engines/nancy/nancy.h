@@ -133,6 +133,7 @@ private:
 	struct GameFlow {
 		NancyState::NancyState curState = NancyState::kNone;
 		NancyState::NancyState prevState = NancyState::kNone;
+		bool changingState = true;
 	};
 
 	void bootGameEngine();
