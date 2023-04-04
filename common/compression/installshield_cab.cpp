@@ -113,141 +113,140 @@ bool InstallShieldCabinet::open(const String &baseName) {
 	// Store the base name so we can generate file names
 	_baseName = baseName;
 
-	bool hasHeaderFile = false;
 	uint fileIndex = 0;
 	ScopedPtr<SeekableReadStream> file;
 
-	for (uint i = 1; hasHeaderFile == false; ++i) {
-		// First, try to open a header (.hdr) file
-		file.reset(SearchMan.createReadStreamForMember(getHeaderName()));
-		if (file) {
-			hasHeaderFile = true;
-		} else {
-			// No header file is present, so we have to iterate through
-			// all .cab volumes to get the file list
-			file.reset(SearchMan.createReadStreamForMember(getVolumeName(i)));
-			hasHeaderFile = false;
-		}
-
-		if (!file) {
-			if (i == 1) {
-				close();
-				return false;
-			}
-			return true;
+	// First, open all the .cab files and read their headers
+	uint volume = 1;
+	for (;;) {
+		file.reset(SearchMan.createReadStreamForMember(getVolumeName(volume++)));
+		if (!file.get()) {
+			break;
 		}
 
 		_volumeHeaders.push_back(VolumeHeader());
-		VolumeHeader &volumeHeader = _volumeHeaders.back();
-		if (!readVolumeHeader(file.get(), volumeHeader)) {
-			close();
-			return false;
-		}
-
-		_version = volumeHeader.version;
-
-		file->seek(volumeHeader.cabDescriptorOffset);
-
-		file->skip(12);
-		uint32 fileTableOffset = file->readUint32LE();
-		file->skip(4);
-		uint32 fileTableSize = file->readUint32LE();
-		uint32 fileTableSize2 = file->readUint32LE();
-		uint32 directoryCount = file->readUint32LE();
-		file->skip(8);
-		uint32 fileCount = file->readUint32LE();
-
-		if (fileTableSize != fileTableSize2)
-			warning("file table sizes do not match");
-
-		// We're ignoring file groups and components since we
-		// should not need them. Moving on to the files...
-
-		if (_version >= 6) {
-			uint32 fileTableOffset2 = file->readUint32LE();
-
-			for (uint32 j = 0; j < fileCount; j++) {
-				file->seek(volumeHeader.cabDescriptorOffset + fileTableOffset + fileTableOffset2 + j * 0x57);
-				FileEntry entry;
-				entry.flags = file->readUint16LE();
-				entry.uncompressedSize = file->readUint32LE();
-				file->skip(4);
-				entry.compressedSize = file->readUint32LE();
-				file->skip(4);
-				entry.offset = file->readUint32LE();
-				file->skip(36);
-				uint32 nameOffset = file->readUint32LE();
-				/* uint32 directoryIndex = */ file->readUint16LE();
-				file->skip(12);
-				/* entry.linkPrev = */ file->readUint32LE();
-				/* entry.linkNext = */ file->readUint32LE();
-				/* entry.linkFlags = */ file->readByte();
-				entry.volume = file->readUint16LE();
-
-				// Make sure the entry has a name and data inside the cab
-				if (nameOffset == 0 || entry.offset == 0 || (entry.flags & 8))
-					continue;
-
-				// Then let's get the string
-				file->seek(volumeHeader.cabDescriptorOffset + fileTableOffset + nameOffset);
-				String fileName = file->readString();
-				_map[fileName] = entry;
-			}
-		} else {
-			file->seek(volumeHeader.cabDescriptorOffset + fileTableOffset);
-			uint32 fileTableCount = directoryCount + fileCount;
-			Array<uint32> fileTableOffsets;
-			fileTableOffsets.resize(fileTableCount);
-			for (uint32 j = 0; j < fileTableCount; j++)
-				fileTableOffsets[j] = file->readUint32LE();
-
-			for (uint32 j = directoryCount; j < fileCount + directoryCount; j++) {
-				file->seek(volumeHeader.cabDescriptorOffset + fileTableOffset + fileTableOffsets[j]);
-				uint32 nameOffset = file->readUint32LE();
-				/* uint32 directoryIndex = */ file->readUint32LE();
-
-				// First read in data needed by us to get at the file data
-				FileEntry entry;
-				entry.flags = file->readUint16LE();
-				entry.uncompressedSize = file->readUint32LE();
-				entry.compressedSize = file->readUint32LE();
-				file->skip(20);
-				entry.offset = file->readUint32LE();
-				entry.volume = i;
-
-				// Then let's get the string
-				file->seek(volumeHeader.cabDescriptorOffset + fileTableOffset + nameOffset);
-				String fileName = file->readString();
-
-				// Check if the file is split across volumes
-				if (fileIndex == volumeHeader.lastFileIndex &&
-					entry.compressedSize != volumeHeader.lastFileSizeCompressed) {
-					
-					entry.flags |= kSplit;
-				}
-
-				++fileIndex;
-
-				if (!_map.contains(fileName))
-					_map[fileName] = entry;
-			}
-		}
+		readVolumeHeader(file.get(), _volumeHeaders.back());
 	}
 
-	uint volume = 1;
-	if (hasHeaderFile) {
-		// Remove the header file header from the array
-		_volumeHeaders.clear();
+	// Try to open a header (.hdr) file to get the file list
+	file.reset(SearchMan.createReadStreamForMember(getHeaderName()));
+	if (!file) {
+		// No header file is present, file list is in first .cab file
+		file.reset(SearchMan.createReadStreamForMember(getVolumeName(1)));
+	}
 
-		// Load the actual volume headers into the array
-		for (;;) {
-			file.reset(SearchMan.createReadStreamForMember(getVolumeName(volume++)));
-			if (!file.get()) {
-				break;
+	if (!file) {
+		close();
+		return false;
+	}
+
+	VolumeHeader headerHeader;
+	if (!readVolumeHeader(file.get(), headerHeader)) {
+		close();
+		return false;
+	}
+
+	_version = headerHeader.version;
+
+	file->seek(headerHeader.cabDescriptorOffset);
+
+	file->skip(12);
+	uint32 fileTableOffset = file->readUint32LE();
+	file->skip(4);
+	uint32 fileTableSize = file->readUint32LE();
+	uint32 fileTableSize2 = file->readUint32LE();
+	uint32 directoryCount = file->readUint32LE();
+	file->skip(8);
+	uint32 fileCount = file->readUint32LE();
+
+	if (fileTableSize != fileTableSize2)
+		warning("file table sizes do not match");
+
+	// We're ignoring file groups and components since we
+	// should not need them. Moving on to the files...
+
+	if (_version >= 6) {
+		uint32 fileTableOffset2 = file->readUint32LE();
+
+		for (uint32 j = 0; j < fileCount; j++) {
+			file->seek(headerHeader.cabDescriptorOffset + fileTableOffset + fileTableOffset2 + j * 0x57);
+			FileEntry entry;
+			entry.flags = file->readUint16LE();
+			entry.uncompressedSize = file->readUint32LE();
+			file->skip(4);
+			entry.compressedSize = file->readUint32LE();
+			file->skip(4);
+			entry.offset = file->readUint32LE();
+			file->skip(36);
+			uint32 nameOffset = file->readUint32LE();
+			/* uint32 directoryIndex = */ file->readUint16LE();
+			file->skip(12);
+			/* entry.linkPrev = */ file->readUint32LE();
+			/* entry.linkNext = */ file->readUint32LE();
+			/* entry.linkFlags = */ file->readByte();
+			entry.volume = file->readUint16LE();
+
+			// Make sure the entry has a name and data inside the cab
+			if (nameOffset == 0 || entry.offset == 0 || (entry.flags & 8))
+				continue;
+
+			// Then let's get the string
+			file->seek(headerHeader.cabDescriptorOffset + fileTableOffset + nameOffset);
+			String fileName = file->readString();
+			_map[fileName] = entry;
+		}
+	} else {
+		file->seek(headerHeader.cabDescriptorOffset + fileTableOffset);
+		uint32 fileTableCount = directoryCount + fileCount;
+		Array<uint32> fileTableOffsets;
+		fileTableOffsets.resize(fileTableCount);
+		for (uint32 j = 0; j < fileTableCount; j++)
+			fileTableOffsets[j] = file->readUint32LE();
+
+		for (uint32 j = directoryCount; j < fileCount + directoryCount; j++) {
+			file->seek(headerHeader.cabDescriptorOffset + fileTableOffset + fileTableOffsets[j]);
+			uint32 nameOffset = file->readUint32LE();
+			/* uint32 directoryIndex = */ file->readUint32LE();
+
+			// First read in data needed by us to get at the file data
+			FileEntry entry;
+			entry.flags = file->readUint16LE();
+			entry.uncompressedSize = file->readUint32LE();
+			entry.compressedSize = file->readUint32LE();
+			file->skip(20);
+			entry.offset = file->readUint32LE();
+			entry.volume = 0;
+
+			for (uint i = 1; i < _volumeHeaders.size() + 1; ++i) {
+				// Check which volume the file is in
+				VolumeHeader &volumeHeader = _volumeHeaders[i - 1];
+				if (fileIndex >= volumeHeader.firstFileIndex && fileIndex <= volumeHeader.lastFileIndex) {
+					entry.volume = i;
+
+					// Check if the file is split across volumes
+					if (fileIndex == volumeHeader.lastFileIndex &&
+						entry.compressedSize != headerHeader.lastFileSizeCompressed) {
+						
+						entry.flags |= kSplit;
+					}
+
+					break;
+				}
 			}
 
-			_volumeHeaders.push_back(VolumeHeader());
-			readVolumeHeader(file.get(), _volumeHeaders.back());
+			// Then let's get the string
+			file->seek(headerHeader.cabDescriptorOffset + fileTableOffset + nameOffset);
+			String fileName = file->readString();
+
+			if (entry.volume == 0) {
+				warning("Couldn't find the volume for file %s", fileName.c_str());
+				close();
+				return false;
+			}
+
+			++fileIndex;
+
+			_map[fileName] = entry;
 		}
 	}
 
@@ -382,6 +381,7 @@ bool InstallShieldCabinet::readVolumeHeader(SeekableReadStream *volumeStream, In
 	// Read the version-specific part of the header
 	if (inVolumeHeader.version == 5) {
 		inVolumeHeader.dataOffset = volumeStream->readUint32LE();
+		volumeStream->skip(4);
 		inVolumeHeader.firstFileIndex = volumeStream->readUint32LE();
 		inVolumeHeader.lastFileIndex = volumeStream->readUint32LE();
 		inVolumeHeader.firstFileOffset = volumeStream->readUint32LE();
@@ -390,9 +390,6 @@ bool InstallShieldCabinet::readVolumeHeader(SeekableReadStream *volumeStream, In
 		inVolumeHeader.lastFileOffset = volumeStream->readUint32LE();
 		inVolumeHeader.lastFileSizeUncompressed = volumeStream->readUint32LE();
 		inVolumeHeader.lastFileSizeCompressed = volumeStream->readUint32LE();
-
-		if (inVolumeHeader.lastFileOffset == 0)
-			inVolumeHeader.lastFileOffset = UINT_MAX;
 	} else {
 		inVolumeHeader.dataOffset = volumeStream->readUint32LE();
 		volumeStream->skip(4);
