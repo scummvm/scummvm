@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-02 20:21+0000\n"
+"POT-Creation-Date: 2023-04-04 19:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3412,6 +3412,14 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:62
 #: backends/platform/sdl/switch/switch.cpp:61
 msgid "Right Stick Y"
+msgstr ""
+
+#: backends/keymapper/hardware-input.cpp:281
+msgid "Hat X"
+msgstr ""
+
+#: backends/keymapper/hardware-input.cpp:282
+msgid "Hat Y"
 msgstr ""
 
 #: backends/keymapper/remap-widget.cpp:295
