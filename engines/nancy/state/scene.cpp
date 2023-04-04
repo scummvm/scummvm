@@ -153,7 +153,7 @@ void Scene::process() {
 	}
 }
 
-void Scene::onStateEnter() {
+void Scene::onStateEnter(const NancyState::NancyState prevState) {
 	if (_state != kInit) {
 		registerGraphics();
 		_actionManager.onPause(false);
@@ -174,11 +174,18 @@ void Scene::onStateEnter() {
 	}
 }
 
-void Scene::onStateExit() {
+bool Scene::onStateExit(const NancyState::NancyState nextState) {
 	_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
 	_actionManager.onPause(true);
 	pauseSceneSpecificSounds();
 	_gameStateRequested = NancyState::kNone;
+
+	// Re-register the clock so the open/close animation can continue playing inside Map
+	if (nextState == NancyState::kMap && g_nancy->getGameType() == kGameTypeVampire) {
+		_clock->registerGraphics();
+	}
+	
+	return false;
 }
 
 void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, int8 paletteID) {

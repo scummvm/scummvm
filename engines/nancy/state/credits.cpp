@@ -49,6 +49,24 @@ void Credits::process() {
 	}
 }
 
+void Credits::onStateEnter(const NancyState::NancyState prevState) {
+	// Handle returning from the GMM
+	if (prevState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound(_creditsData->sound, false);
+	}
+}
+
+bool Credits::onStateExit(const NancyState::NancyState nextState) {
+	// Handle the GMM being called
+	if (nextState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound(_creditsData->sound, true);
+
+		return false;
+	} else {
+		return true;
+	}
+}
+
 void Credits::init() {
 	_creditsData = g_nancy->_creditsData;
 	assert(_creditsData);

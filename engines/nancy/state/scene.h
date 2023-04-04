@@ -120,8 +120,8 @@ public:
 
 	// State API
 	void process() override;
-	void onStateEnter() override;
-	void onStateExit() override;
+	void onStateEnter(const NancyState::NancyState prevState) override;
+	bool onStateExit(const NancyState::NancyState nextState) override;
 
 	void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, int8 paletteID = -1);
 	void changeScene(const SceneChangeDescription &sceneDescription);

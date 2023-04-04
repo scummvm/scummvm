@@ -54,8 +54,30 @@ void Logo::process() {
 	}
 }
 
-void Logo::onStateExit() {
-	destroy();
+void Logo::onStateEnter(const NancyState::NancyState prevState) {
+	// Handle returning from the GMM
+	if (prevState == NancyState::kPause) {
+		if (_state == kPlayIntroVideo) {
+			_tvdVideoDecoder.pauseVideo(false);
+		} else if (_state == kRun) {
+			g_nancy->_sound->pauseSound("MSND", false);
+		}
+	}
+}
+
+bool Logo::onStateExit(const NancyState::NancyState nextState) {
+	// Handle the GMM being called
+	if (nextState == NancyState::kPause) {
+		if (_state == kPlayIntroVideo) {
+			_tvdVideoDecoder.pauseVideo(true);
+		} else if (_state == kRun) {
+			g_nancy->_sound->pauseSound("MSND", true);
+		}
+
+		return false;
+	} else {
+		return true;
+	}
 }
 
 void Logo::init() {

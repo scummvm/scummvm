@@ -229,29 +229,25 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 
 	_gameFlow.curState = state;
 
+	bool shouldDestroyLastState = false;
+
 	State::State *s = getStateObject(_gameFlow.prevState);
 	if (s) {
-		s->onStateExit();
+		shouldDestroyLastState = s->onStateExit(_gameFlow.curState);
 	}
 
 	s = getStateObject(_gameFlow.curState);
 	if (s) {
-		s->onStateEnter();
+		s->onStateEnter(_gameFlow.prevState);
+	}
+
+	if (shouldDestroyLastState) {
+		destroyState(_gameFlow.prevState);
 	}
 }
 
 void NancyEngine::setToPreviousState() {
-	State::State *s = getStateObject(_gameFlow.curState);
-	if (s) {
-		s->onStateExit();
-	}
-
-	s = getStateObject(_gameFlow.prevState);
-	if (s) {
-		s->onStateEnter();
-	}
-
-	SWAP<NancyState::NancyState>(_gameFlow.curState, _gameFlow.prevState);
+	setState(_gameFlow.prevState);
 }
 
 void NancyEngine::setMouseEnabled(bool enabled) {
@@ -308,9 +304,9 @@ Common::Error NancyEngine::run() {
 void NancyEngine::pauseEngineIntern(bool pause) {
 	State::State *s = getStateObject(_gameFlow.curState);
 	if (pause) {
-		s->onStateExit();
+		s->onStateExit(NancyState::kPause);
 	} else {
-		s->onStateEnter();
+		s->onStateEnter(NancyState::kPause);
 	}
 }
 
@@ -409,6 +405,43 @@ State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 		return &State::MainMenu::instance();
 	default:
 		return nullptr;
+	}
+}
+
+void NancyEngine::destroyState(NancyState::NancyState state) const {
+	switch (state) {
+	case NancyState::kLogo:
+		if (State::Logo::hasInstance()) {
+			State::Logo::instance().destroy();
+		}
+		break;
+	case NancyState::kCredits:
+		if (State::Credits::hasInstance()) {
+			State::Credits::instance().destroy();
+		}
+		break;
+	case NancyState::kMap:
+		if (State::Map::hasInstance()) {
+			State::Map::instance().destroy();
+		}
+		break;
+	case NancyState::kHelp:
+		if (State::Help::hasInstance()) {
+			State::Help::instance().destroy();
+		}
+		break;
+	case NancyState::kScene:
+		if (State::Scene::hasInstance()) {
+			State::Scene::instance().destroy();
+		}
+		break;
+	case NancyState::kMainMenu:
+		if (State::MainMenu::hasInstance()) {
+			State::MainMenu::instance().destroy();
+		}
+		break;
+	default:
+		break;
 	}
 }
 

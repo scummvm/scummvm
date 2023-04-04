@@ -62,6 +62,23 @@ void Help::process() {
 	}
 }
 
+void Help::onStateEnter(const NancyState::NancyState prevState) {
+	if (prevState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound("MSND", false);
+	}
+}
+
+bool Help::onStateExit(const NancyState::NancyState nextState) {
+	// Handle the GMM being called
+	if (nextState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound("MSND", true);
+		
+		return false;
+	} else {
+		return true;
+	}
+}
+
 void Help::init() {
 	HELP *helpData = g_nancy->_helpData;
 	assert(helpData);
