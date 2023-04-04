@@ -190,7 +190,7 @@
 {
 	{
 		"adibou2",
-		"ADIBÙ 2",
+		"ADIBÙ 2.13 Environment",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		IT_ITA,
 		kPlatformWindows,
