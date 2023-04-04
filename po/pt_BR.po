@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-02 20:21+0000\n"
+"POT-Creation-Date: 2023-04-04 19:16+0000\n"
 "PO-Revision-Date: 2023-03-23 18:34+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3610,6 +3610,14 @@ msgstr "Analógico Direito X"
 #: backends/platform/sdl/switch/switch.cpp:61
 msgid "Right Stick Y"
 msgstr "Analógico Direito Y"
+
+#: backends/keymapper/hardware-input.cpp:281
+msgid "Hat X"
+msgstr ""
+
+#: backends/keymapper/hardware-input.cpp:282
+msgid "Hat Y"
+msgstr ""
 
 #: backends/keymapper/remap-widget.cpp:295
 #: backends/keymapper/remap-widget.cpp:325
