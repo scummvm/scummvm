@@ -81,9 +81,9 @@ struct retro_core_option_v2_category option_cats_it[] = {
 		"Impostazioni per il salto dei fotogrammi"
 	},
 	{
-		"performance",
+		"timing",
 		NULL,
-		"Impostazioni relative alle performance"
+		"Impostazioni relative al timing"
 	},
 	{ NULL, NULL, NULL },
 };
@@ -198,17 +198,17 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
-		"scummvm_auto_performance_tuner",
-		"Regolazione automatica performance",
+		"scummvm_consecutive_screen_updates",
+		"Disabilita aggiornamenti schermo consecutivi",
 		NULL,
-		"Cambio automatico delle impostazioni di performance e salto dei fotogrammi se vengono rilevate performance scadenti durante il gioco. 'Consenti inaccuratezze di timing' e 'Salto dei fotogrammi Auto' saranno temporaneamente abilitati in sequenza per la sola sessione di gioco, se necessario. Le singole impostazioni salvate non saranno modificate.",
+		"Mentre libretro si basa su FPS costante, ScummVM può aggiornare lo schermo indipentendemente dal framerate impostato. Di default tutti gli aggiornamenti schermo consecutivi di ScummVM vengono catturati e processati nella stessa chiamata a retro_run, migliorando l'accuratezza (es. effetti nei titoli dell'intro di Legend of Kyrandia) ma aumentando il tempo di esecuzione di quel loop retro_run. Se questa opzione è abilitata solo l'ultimo aggiornamento schermo di una serie consecutiva sarà mostrato. Se 'Consenti inaccuratezze di timing' è abilitato, questa impostazione sarà ignorata e abilitata internamente.",
 		NULL,
 		NULL,
-		{
+                {
 			{NULL, NULL},
 		},
 		NULL
-	},
+        },
 	{
 		"scummvm_allow_timing_inaccuracies",
 		"Consenti inaccuratezze di timing",
@@ -237,9 +237,20 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		},
 		NULL
         },
+	{
+		"scummvm_auto_performance_tuner",
+		"Regolazione automatica performance",
+		NULL,
+		"Cambio automatico delle impostazioni di timing e salto dei fotogrammi se vengono rilevate performance scadenti durante il gioco. Le impostazioni di timing/frameskip saranno temporaneamente cambiate in sequenza, se saranno rilevati audio buffer underrun e per la sola sessione di gioco, e ripristinati in sequenza in caso di recupero del buffer audio. Le singole impostazioni salvate non saranno modificate ma saranno ignorati.",
+		NULL,
+		NULL,
+		{
+			{NULL, NULL},
+		},
+		NULL
+	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
-
 struct retro_core_options_v2 options_it = {
 	option_cats_it,
 	option_defs_it

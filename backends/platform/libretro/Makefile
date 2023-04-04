@@ -37,7 +37,7 @@ RM_REC    = rm -rf
 # Raspberry Pi 3 (64 bit)
 ifeq ($(platform), rpi3_64)
    TARGET   = $(TARGET_NAME)_libretro.so
-   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -DARM
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -DARM -DDEFAULT_PERF_TUNER
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS  += -fPIC -mcpu=cortex-a53 -mtune=cortex-a53 -fomit-frame-pointer -ffast-math
    CXXFLAGS = $(CFLAGS) -frtti -std=c++11
@@ -90,7 +90,7 @@ endif
 # QNX
 else ifeq ($(platform), qnx)
    TARGET  := $(TARGET_NAME)_libretro_$(platform).so
-   DEFINES += -fPIC -DSYSTEM_NOT_SUPPORTING_D_TYPE
+   DEFINES += -fPIC -DSYSTEM_NOT_SUPPORTING_D_TYPE -DDEFAULT_PERF_TUNER
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CC = qcc -Vgcc_ntoarmv7le
    CXX = QCC -Vgcc_ntoarmv7le
@@ -101,7 +101,7 @@ else ifeq ($(platform), qnx)
 # Genode
 else ifeq ($(platform), genode)
    TARGET  := libretro.so
-   DEFINES += -fPIC -DSYSTEM_NOT_SUPPORTING_D_TYPE -DFRONTEND_SUPPORTS_RGB565
+   DEFINES += -fPIC -DSYSTEM_NOT_SUPPORTING_D_TYPE -DFRONTEND_SUPPORTS_RGB565 -DDEFAULT_PERF_TUNER
    C_PKGS   = libc
    CXX_PKGS = stdcxx genode-base
    CFLAGS   += -D__GENODE__ $(shell pkg-config --cflags $(C_PKGS))
@@ -130,7 +130,7 @@ else ifeq ($(platform), wii)
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT) rcs
-   DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__ -I$(DEVKITPRO)/libogc/include
+   DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__ -I$(DEVKITPRO)/libogc/include -DDEFAULT_PERF_TUNER
    STATIC_LINKING=1
 
 # Nintendo Switch (libnx)
@@ -175,7 +175,7 @@ else ifeq ($(platform), ctr)
    DEFINES += -DARM11 -D_3DS -I$(CTRULIB)/include
    DEFINES += -march=armv6k -mtune=mpcore -mfloat-abi=hard
    DEFINES += -Wall -mword-relocations
-   DEFINES += -fomit-frame-pointer -ffast-math
+   DEFINES += -fomit-frame-pointer -ffast-math -DDEFAULT_PERF_TUNER
    CXXFLAGS += -std=gnu++11 -fpermissive
    USE_VORBIS = 0
    USE_THEORADEC = 0
@@ -201,7 +201,7 @@ else ifeq ($(platform), gcw0)
    AR = /opt/gcw0-toolchain/usr/bin/mipsel-linux-ar cru
    RANLIB = /opt/gcw0-toolchain/usr/bin/mipsel-linux-ranlib
    DEFINES += -DDINGUX -fomit-frame-pointer -ffast-math -march=mips32 -mtune=mips32r2 -mhard-float -fPIC
-   DEFINES += -ffunction-sections -fdata-sections
+   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER
    LDFLAGS += -shared -Wl,--gc-sections -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS += -std=gnu99
    CXXFLAGS += -std=c++11
@@ -222,7 +222,7 @@ else ifeq ($(platform), miyoo)
    AR = /opt/miyoo/usr/bin/arm-linux-ar cru
    RANLIB = /opt/miyoo/usr/bin/arm-linux-ranlib
    DEFINES += -DDINGUX -fomit-frame-pointer -ffast-math -march=armv5te -mtune=arm926ej-s -fPIC
-   DEFINES += -ffunction-sections -fdata-sections
+   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER
    LDFLAGS += -shared -Wl,--gc-sections -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    USE_VORBIS = 0
    USE_THEORADEC = 0
@@ -241,7 +241,7 @@ else ifeq ($(platform), miyoomini)
    AR = /usr/bin/arm-linux-gnueabihf-ar cru
    RANLIB = /usr/bin/arm-linux-gnueabihf-ranlib
    DEFINES += -fomit-frame-pointer -ffast-math -marm -march=armv7ve+simd -mtune=cortex-a7 -fPIC
-   DEFINES += -ffunction-sections -fdata-sections
+   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER
    LDFLAGS += -shared -Wl,--gc-sections -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    USE_VORBIS = 0
    USE_THEORADEC = 0
@@ -253,7 +253,7 @@ else ifeq ($(platform), miyoomini)
 # ARM v7
 else ifneq (,$(findstring armv7,$(platform)))
    TARGET := $(TARGET_NAME)_libretro.so
-   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -marm -DARM
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DUSE_CXX11 -marm -DARM -DDEFAULT_PERF_TUNER
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    USE_VORBIS = 0
    USE_THEORADEC = 0
@@ -278,7 +278,7 @@ endif
 # ARM v8
 else ifneq (,$(findstring armv8,$(platform)))
    TARGET := $(TARGET_NAME)_libretro.so
-   DEFINES += -fPIC -D_ARM_ASSEM_ -DARM -marm -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -march=armv8-a+crc
+   DEFINES += -fPIC -D_ARM_ASSEM_ -DARM -marm -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -march=armv8-a+crc -DDEFAULT_PERF_TUNER
    LDFLAGS += -shared -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    CFLAGS   += -fPIC
    HAVE_NEON = 1

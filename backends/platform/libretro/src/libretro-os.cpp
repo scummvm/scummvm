@@ -320,6 +320,8 @@ static Common::String s_saveDir;
 Common::List<Common::Event> _events;
 
 extern bool timing_inaccuracies_is_enabled(void);
+extern bool consecutive_screen_updates_is_enabled(void);
+extern void reset_performance_tuner(void);
 
 class OSystem_RETRO : public EventsBaseBackend, public PaletteManager {
 public:
@@ -408,6 +410,10 @@ public:
 			ConfMan.setBool("original_gui", false);
 			log_cb(RETRO_LOG_INFO, "\"original_gui\" setting forced to false\n");
 		}
+	}
+
+	virtual void engineDone() {
+		reset_performance_tuner();
 	}
 
 	virtual bool hasFeature(Feature f) {
@@ -502,16 +508,6 @@ public:
 		const uint8_t *src = (const uint8_t *)buf;
 		uint8_t *pix = (uint8_t *)_gameScreen.getPixels();
 		copyRectToSurface(pix, _gameScreen.pitch, src, pitch, x, y, w, h, _gameScreen.format.bytesPerPixel);
-
-		/* In a series of consecutive updateScreen calls, additionally switch directly to main thread when
-		(and if) first copyRectToScreen is called between two updateScreen. This reduces audio crackling.
-		Consecutive copyRectToScreen other than first are covered by thread switch triggered by pollEvent or delayMillis. */
-		if (! timing_inaccuracies_is_enabled()) {
-			if (!(_threadSwitchCaller & THREAD_SWITCH_RECT) && (_threadSwitchCaller & THREAD_SWITCH_UPDATE)) {
-				retro_switch_to_main_thread();
-				_threadSwitchCaller |= THREAD_SWITCH_RECT;
-			}
-		}
 	}
 
 	virtual void updateScreen() {
@@ -552,10 +548,9 @@ public:
 
 		/* Switch directly to main thread in case of consecutive updateScreen, to avoid losing frames.
 		Non consecutive updateScreen are covered by thread switches triggered by pollEvent or delayMillis. */
-		if (! timing_inaccuracies_is_enabled()) {
+		if (! timing_inaccuracies_is_enabled() && consecutive_screen_updates_is_enabled()) {
 			if (_threadSwitchCaller & THREAD_SWITCH_UPDATE) {
 				retro_switch_to_main_thread();
-				_threadSwitchCaller &= ~THREAD_SWITCH_RECT;
 			} else {
 				_threadSwitchCaller = THREAD_SWITCH_UPDATE;
 			}

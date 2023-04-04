@@ -83,9 +83,9 @@ struct retro_core_option_v2_category option_cats_us[] = {
 		"Configure frameskip settings"
 	},
 	{
-		"performance",
-		"Performance",
-		"Configure performance settings"
+		"timing",
+		"Timing",
+		"Configure timing settings"
 	},
 	{ NULL, NULL, NULL },
 };
@@ -263,18 +263,18 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"0"
 	},
 	{
-		"scummvm_auto_performance_tuner",
-		"Auto performance tuner",
+		"scummvm_consecutive_screen_updates",
+		"Disable consecutive screen updates",
 		NULL,
-		"In-game automatic change of performance/frameskip settings if low performances are detected. 'Allow Timing Inaccuracies' and 'Auto Frameskip' will be temporarily set on in sequence, if necessary, for the current game session only. Single saved settings will not be affected.",
+		"While libretro is FPS bounded, ScummVM can update the screen independently from the refresh rate set. By default all consecutive ScummVM screen updates will be captured and processed within the same retro_run call, improving accuracy (e.g. see titles effects in Legend of Kyrandia intro) but increasing the execution time of that retro_run loop. If this setting is enabled only last screen update of a consecutive series will be shown. If 'Allow Timing Inaccuracies' is enabled, this setting will be overridden and enabled internally.",
 		NULL,
-		"performance",
+		"timing",
 		{
 			{"disabled", NULL},
 			{"enabled", NULL},
 			{NULL, NULL},
 		},
-		"enabled"
+		"disabled"
 	},
 	{
 		"scummvm_allow_timing_inaccuracies",
@@ -282,17 +282,13 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"Allow timing inaccuracies that reduces CPU requirements. Though most timing deviations are imperceptible, in some cases it may introduce audio sync/timing issues, hence this option should be enabled only if full speed cannot be reached otherwise.",
 		NULL,
-		"performance",
+		"timing",
 		{
 			{"disabled", NULL},
 			{"enabled", NULL},
 			{NULL, NULL},
 		},
-#if defined(DINGUX) || defined(_3DS)
-		"enabled"
-#else
 		"disabled"
-#endif
 	},
 	{
 		"scummvm_reduce_framerate_type",
@@ -300,7 +296,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"Reduces current framerate to reduce CPU requirements. 'Auto' mode temporarily reduces the framerate as needed when audio buffer underrun is detected, while the in the other modes the reduction is constant.",
 		NULL,
-		"performance",
+		"timing",
 		{
 			{ "disabled", NULL },
 			{ "auto", "Auto" },
@@ -309,6 +305,24 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 			{ NULL, NULL },
 		},
 		"disabled"
+	},
+	{
+		"scummvm_auto_performance_tuner",
+		"Auto performance tuner",
+		NULL,
+		"In-game automatic change of timing/frameskip settings if low performances are detected. Timing/frameskip settings will be changed in sequence, if audio buffer underruns are detected and for the current game session only, and restored in sequence if audio buffers recovers. Single saved settings will not be affected but will be overridden in-game.",
+		NULL,
+		NULL,
+		{
+			{"disabled", NULL},
+			{"enabled", NULL},
+			{NULL, NULL},
+		},
+#if defined(DEFAULT_PERF_TUNER)
+		"enabled"
+#else
+		"disabled"
+#endif
 	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
