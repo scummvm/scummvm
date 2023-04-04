@@ -144,9 +144,12 @@ bool Win32ResExtractor::extractResource(int id, CachedCursor *cc) {
 
 	// Convert from the paletted format to the SCUMM palette
 	const byte *srcBitmap = cursor->getSurface();
+	const byte *srcMask = cursor->getMask();
 
 	for (int i = 0; i < cursor->getWidth() * cursor->getHeight(); i++) {
-		if (srcBitmap[i] == cursor->getKeyColor()) // Transparent
+		const bool isTransparent = (srcMask ? (srcMask[i] != kCursorMaskOpaque) : (srcBitmap[i] == cursor->getKeyColor()));
+
+		if (isTransparent)
 			cc->bitmap[i] = 255;
 		else if (srcBitmap[i] == 0)                // Black
 			cc->bitmap[i] = 253;
