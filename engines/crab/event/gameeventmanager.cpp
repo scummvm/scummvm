@@ -93,6 +93,92 @@ void Manager::Load(rapidxml::xml_node<char> *node, ParagraphData &popup) {
 	}
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle events
+//------------------------------------------------------------------------
+void Manager::HandleEvents(Info &info, const std::string &player_id, Common::Event &Event, HUD &hud, Level &level, std::vector<EventResult> &result) {
+	// If an event is already being performed
+	if (event_map.count(info.CurLocID()) > 0 && event_map[info.CurLocID()].EventInProgress(active_seq)) {
+		switch (cur_event->type) {
+		case EVENT_DIALOG:
+			if (oh.show_journal) {
+				info.journal.HandleEvents(player_id, Event);
+
+				if (hud.back.HandleEvents(Event) == BUAC_LCLICK || hud.pausekey.HandleEvents(Event))
+					oh.show_journal = false;
+			} else {
+				// If journal button is select from within an event, go to the entry corresponding to that person's name
+				if (oh.HandleCommonEvents(Event)) {
+					if (info.PersonValid(cur_event->title)) {
+						Person &p = info.PersonGet(cur_event->title);
+						if (p.alt_journal_name)
+							info.journal.Open(player_id, JE_PEOPLE, p.journal_name);
+						else
+							info.journal.Open(player_id, JE_PEOPLE, p.name);
+					}
+				}
+
+				if (oh.HandleDlboxEvents(Event)) {
+					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+					oh.show_journal = false;
+				}
+			}
+			break;
+		case EVENT_ANIM:
+			// Skip animation if key pressed or mouse pressed
+			if (Event.type == Common::EVENT_LBUTTONUP || Event.type == Common::EVENT_RBUTTONUP)
+				event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+			break;
+		case EVENT_REPLY:
+			if (oh.show_journal) {
+				info.journal.HandleEvents(player_id, Event);
+
+				if (hud.back.HandleEvents(Event) == BUAC_LCLICK || hud.pausekey.HandleEvents(Event))
+					oh.show_journal = false;
+			} else {
+				// If journal button is select from within an event, go to the entry corresponding to that person's name
+				if (oh.HandleCommonEvents(Event))
+					if (info.PersonValid(cur_event->title))
+						info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
+
+				int choice = reply.HandleEvents(info, gEventStore.con.at(cur_event->special), cur_event->title, oh, Event);
+				if (choice >= 0) {
+					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq, choice);
+					oh.show_journal = false;
+				}
+			}
+			break;
+		case EVENT_TEXT:
+			// If journal button is select from within an event, go to the entry corresponding to that person's name
+			if (oh.HandleCommonEvents(Event))
+				if (info.PersonValid(cur_event->title))
+					info.journal.Open(player_id, JE_PEOPLE, info.PersonGet(cur_event->title).name);
+
+			if (textin.HandleEvents(Event))
+				event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+			break;
+		case EVENT_SPLASH:
+			if (intro.show_traits) {
+				per.HandleEvents(info, cur_event->title, Event);
+
+				if (hud.back.HandleEvents(Event) == BUAC_LCLICK || hud.pausekey.HandleEvents(Event))
+					intro.show_traits = false;
+			} else {
+				if (intro.HandleEvents(Event))
+					event_map[info.CurLocID()].NextEvent(active_seq, info, player_id, result, end_seq);
+
+				if (intro.show_traits)
+					per.Cache(info, level.PlayerID(), level);
+			}
+			break;
+		default:
+			break;
+		}
+
+		EndSequence(info.CurLocID());
+	}
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle events
