@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.content.Context;
 //import android.util.Log;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.KeyCharacterMap;
 import android.view.MotionEvent;
@@ -64,8 +63,8 @@ public class ScummVMEventsBase implements
 	public static final int TOUCH_MODE_GAMEPAD = 2;
 	public static final int TOUCH_MODE_MAX = 3;
 
-	public static final int JOYSTICK_AXIS_MAX = 32767;
-	public static final float JOYSTICK_AXIS_HAT_SCALE = 0.33f;
+	public static final int JOYSTICK_AXIS_MAX = 32767; // matches the definition in common/events of "const int16 JOYAXIS_MAX = 32767;"
+	public static final float JOYSTICK_AXIS_HAT_SCALE = 0.66f; // ie. 2/3 to be applied to JOYSTICK_AXIS_MAX
 
 	final protected Context _context;
 	final protected ScummVM _scummvm;
@@ -391,11 +390,12 @@ public class ScummVMEventsBase implements
 			//        We delegate these keypresses to ScummVM's keymapper as JOYSTICK_BUTTON_DPAD presses. 
 			//        (JOYSTICK_BUTTON_DPAD_UP, JOYSTICK_BUTTON_DPAD_DOWN, JOYSTICK_BUTTON_DPAD_LEFT, JOYSTICK_BUTTON_DPAD_RIGHT and JOYSTICK_BUTTON_DPAD_CENTER)
 			//        By default mapped to virtual mouse (VMOUSE).
-			//        As virtual mouse, cursor may be too fast/hard to control, so it's recommended to set and use a VMOUSESLOW binding too.
-			//        TODO Maybe add a checkbox in backend to toggle virtual mouse slow/fast, so that the user does not have to press two buttons
-			//        at the same time. (Simultaneous button pressing may work on physical TV remote controls, but may not work on apps for remote controls)
+			//        As virtual mouse, cursor may be too fast/hard to control, so it's recommended to set and use a VMOUSESLOW binding too,
+			//         (Simultaneous button pressing may work on physical TV remote controls, but may not work on apps for remote controls)
+			//        or adjust the Pointer Speed setting from the "Control" tab.
 			// NOTE 2 Modern gamepads/ game controllers treat the "DPAD" cross buttons as HATs that produce movement events
 			// and *not* DPAD_UP/DOWN/LEFT/RIGHT button press events. Hence, for those controllers these DPAD key events won't be triggered.
+			// Those are handled in ScummVMEventsModern class within its onGenericMotionEvent() implementation.
 			//
 			// fall-through
 		case KeyEvent.KEYCODE_BUTTON_A:

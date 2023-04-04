@@ -52,6 +52,19 @@ static inline T scalef(T in, float numerator, float denominator) {
 
 static const int kQueuedInputEventDelay = 50;
 
+// analog joystick axis id (for internal use) - Should match the logic in ScummVMEventsModern.java
+enum {
+	// auxilliary movement axis bitflags
+	JE_JOY_AXIS_X_bf        = 0x01, // (0x01 << 0)
+	JE_JOY_AXIS_Y_bf        = 0x02, // (0x01 << 1)
+	JE_JOY_AXIS_HAT_X_bf    = 0x04, // (0x01 << 2)
+	JE_JOY_AXIS_HAT_Y_bf    = 0x08, // (0x01 << 3)
+	JE_JOY_AXIS_Z_bf        = 0x10, // (0x01 << 4)
+	JE_JOY_AXIS_RZ_bf       = 0x20, // (0x01 << 5)
+	JE_JOY_AXIS_LTRIGGER_bf = 0x40, // (0x01 << 6)
+	JE_JOY_AXIS_RTRIGGER_bf = 0x80  // (0x01 << 7)
+};
+
 // event type
 enum {
 	JE_SYS_KEY = 0,
@@ -1281,21 +1294,69 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case AMOTION_EVENT_ACTION_MOVE:
 			e.type = Common::EVENT_JOYAXIS_MOTION;
 
-			e.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_X;
-			e.joystick.position = CLIP<int32>(arg2, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
-			pushEvent(e);
+			switch (arg4) {
+			case JE_JOY_AXIS_X_bf:
+				e.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_X;
+				e.joystick.position = CLIP<int32>(arg2, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+				pushEvent(e);
+				break;
 
-			e.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_Y;
-			e.joystick.position = CLIP<int32>(arg3, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
-			pushEvent(e);
+			case JE_JOY_AXIS_Y_bf:
+				e.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_Y;
+				e.joystick.position = CLIP<int32>(arg2, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+				pushEvent(e);
+				break;
 
+			case JE_JOY_AXIS_HAT_X_bf:
+				e.joystick.axis = Common::JOYSTICK_AXIS_HAT_X;
+				e.joystick.position = CLIP<int32>(arg2, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+				pushEvent(e);
+				break;
+
+			case JE_JOY_AXIS_HAT_Y_bf:
+				e.joystick.axis = Common::JOYSTICK_AXIS_HAT_Y;
+				e.joystick.position = CLIP<int32>(arg2, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+				pushEvent(e);
+				break;
+
+			case JE_JOY_AXIS_Z_bf:
+				e.joystick.axis = Common::JOYSTICK_AXIS_RIGHT_STICK_X;
+				e.joystick.position = CLIP<int32>(arg2, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+				pushEvent(e);
+				break;
+
+			case JE_JOY_AXIS_RZ_bf:
+				e.joystick.axis = Common::JOYSTICK_AXIS_RIGHT_STICK_Y;
+				e.joystick.position = CLIP<int32>(arg2, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
+				pushEvent(e);
+				break;
+
+			case JE_JOY_AXIS_LTRIGGER_bf:
+				e.joystick.axis = Common::JOYSTICK_AXIS_LEFT_TRIGGER;
+				e.joystick.position = CLIP<int32>(arg2, 0, Common::JOYAXIS_MAX);
+				pushEvent(e);
+				break;
+
+			case JE_JOY_AXIS_RTRIGGER_bf:
+				e.joystick.axis = Common::JOYSTICK_AXIS_RIGHT_TRIGGER;
+				e.joystick.position = CLIP<int32>(arg2, 0, Common::JOYAXIS_MAX);
+				pushEvent(e);
+				break;
+
+			default:
+				// unsupported axis case
+				break;
+			}
 			break;
+
 		case AKEY_EVENT_ACTION_DOWN:
 			e.type = Common::EVENT_JOYBUTTON_DOWN;
 			break;
+
 		case AKEY_EVENT_ACTION_UP:
 			e.type = Common::EVENT_JOYBUTTON_UP;
 			break;
+
 		default:
 			LOGE("unhandled jaction on joystick: %d", arg1);
 			return;
