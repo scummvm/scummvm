@@ -150,26 +150,20 @@ static void set_audio_buffer_status() {
 static void increase_performance() {
 	if (!(performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES)) {
 		performance_switch |= PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES;
-		if (consecutive_screen_updates) {
-			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Show consecutive screen updates' disabled.\n");
-			return;
-		}
+		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Disable consecutive screen updates' enabled.\n");
+		return;
 	}
 
 	if (!(performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES)) {
 		performance_switch |= PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
-		if (!timing_inaccuracies_enabled) {
-			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
-			return;
-		}
+		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' enabled.\n");
+		return;
 	}
 
 	if (!(performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
 		performance_switch |= PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
-		if (reduce_framerate_type != REDUCE_FRAMERATE_SHIFT_AUTO) {
-			log_cb(RETRO_LOG_INFO, "Auto performance tuner: 'Auto reduce framerate' enabled.\n");
-			return;
-		}
+		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Auto reduce framerate' enabled.\n");
+		return;
 	}
 
 	performance_switch |= PERF_SWITCH_OVER;
