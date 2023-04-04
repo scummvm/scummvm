@@ -50,9 +50,9 @@ bool Monsters::load() {
 		mon._numberOfAttacks = getNextValue(line);
 		mon._speed = getNextValue(line);
 		mon._experience = getNextValue(line);
-		mon._field18 = getNextValue(line);
+		mon._loot = getNextValue(line);
 		mon._resistUndead = getNextValue(line);
-		mon._field1a = getNextValue(line);
+		mon._resistances = getNextValue(line);
 		mon._bonusOnTouch = getNextValue(line);
 		mon._specialAbility = getNextValue(line);
 		mon._specialThreshold = getNextValue(line);
