@@ -1082,7 +1082,7 @@ void Score::screenShot() {
 
 	warning("build Number is: %s", buildNumber);
 
-	const char *buildNumber2 = getenv("BUILDBOT_BUILDNUMBER");
+	const char *buildNumber2 = getenv("ASAN_OPTIONS");
 
 	warning("build Number2 is: %s", buildNumber2);
 
