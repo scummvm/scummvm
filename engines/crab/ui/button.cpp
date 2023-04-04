@@ -101,8 +101,6 @@ void Button::Reset() {
 // Purpose: Draw
 //------------------------------------------------------------------------
 void Button::Draw(const int &XOffset, const int &YOffset, Rect *clip) {
-	warning("STUB: Button::Draw()");
-
 	if (visible) {
 		if (mousepressed) {
 			gImageManager.Draw(x + XOffset, y + YOffset, img.select, clip);
