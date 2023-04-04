@@ -58,17 +58,11 @@ public:
 		GLfloat y;
 	};
 
-	/*Coord *_coords;
-
-	void copyToCoordArray(uint idx, const Math::Vector2d &src) {
-		assert(idx < kCoordsArraySize);
-		_coords[idx].x = src.getValue(0); _coords[idx].y = src.getValue(1);
-	}*/
-
 	OpenGL::Shader *_triangleShader;
 	OpenGL::Shader *_bitmapShader;
 	GLuint _triangleVBO;
 	GLuint _bitmapVBO;
+	int _variableStippleArray[64];
 
 	virtual void init() override;
 	virtual void clear(uint8 color) override;

@@ -1,8 +1,17 @@
 OUTPUT
 
+uniform UBOOL useStipple;
+uniform int stipple[64];
+
 varying vec4 var_color;
 
 void main()
 {
-    outColor = var_color;
+	if (UBOOL_TEST(useStipple)) {
+		ivec2 coord = ivec2(gl_FragCoord.xy - 0.5);
+		if (stipple[int(mod(coord.x, 8) + mod(coord.y, 8) * 8)] == 0)
+			discard;
+	}
+
+	outColor = var_color;
 }
