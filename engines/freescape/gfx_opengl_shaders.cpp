@@ -186,6 +186,7 @@ void OpenGLShaderRenderer::renderPlayerShoot(byte color, const Common::Point pos
 	identity(3, 3) = 1.0;
 
 	_triangleShader->use();
+	_triangleShader->setUniform("useStipple", false);
 	_triangleShader->setUniform("mvpMatrix", identity);
 
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
@@ -281,30 +282,32 @@ void OpenGLShaderRenderer::polygonOffset(bool enabled) {
 }
 
 void OpenGLShaderRenderer::setStippleData(byte *data) {
+	_triangleShader->use();
 	if (!data)
 		return;
 
-	//_variableStippleArray = data;
-	//for (int i = 0; i < 128; i++)
-	//	_variableStippleArray[i] = data[(i / 16) % 4];
+	for (int i = 0; i < 8; i++) {
+		byte b = data[i];
+		for (int j = 0; j < 8; j++) {
+			//debug("%d", 8*i + j);
+			_variableStippleArray[8*i + j] = b & 0x1;
+			b = b >> 1;
+		}
+	}
+	_triangleShader->setUniform("stipple", 64, (const int*)&_variableStippleArray);
 }
 
 void OpenGLShaderRenderer::useStipple(bool enabled) {
-	/*if (enabled) {
+	_triangleShader->use();
+	if (enabled) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(0.0f, -1.0f);
-		glEnable(GL_POLYGON_STIPPLE);
-		if (_renderMode == Common::kRenderZX  ||
-			_renderMode == Common::kRenderCPC ||
-			_renderMode == Common::kRenderCGA)
-			glPolygonStipple(_variableStippleArray);
-		else
-			glPolygonStipple(_defaultStippleArray);
+		_triangleShader->setUniform("useStipple", true);
 	} else {
 		glPolygonOffset(0, 0);
 		glDisable(GL_POLYGON_OFFSET_FILL);
-		glDisable(GL_POLYGON_STIPPLE);
-	}*/
+		_triangleShader->setUniform("useStipple", false);
+	}
 }
 
 void OpenGLShaderRenderer::useColor(uint8 r, uint8 g, uint8 b) {
@@ -350,7 +353,6 @@ Graphics::Surface *OpenGLShaderRenderer::getScreenshot() {
 	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
 	flipVertical(s);
 	return s;
-	return nullptr;
 }
 
 } // End of namespace Freescape
