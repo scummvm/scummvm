@@ -209,7 +209,7 @@ void DXADecoder::DXAVideoTrack::decode12(int size) {
 						  ((*dat & 0x0F) << shiftTbl[type-10].sh2);
 					dat++;
 				} else {
-					diffMap = *(unsigned short*)dat;
+					diffMap = READ_BE_UINT16(dat);
 					dat += 2;
 				}
 
