@@ -131,6 +131,17 @@ public:
 		}
 	}
 
+	bool setUniform(const Common::String &uniform, const int size, const int *array) {
+		GLint pos = getUniformLocation(uniform);
+		if (pos != -1) {
+			use();
+			GL_CALL(glUniform1iv(pos, size, array));
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// Different name to avoid overload ambiguity
 	bool setUniform1f(const Common::String &uniform, float f) {
 		GLint pos = getUniformLocation(uniform);
