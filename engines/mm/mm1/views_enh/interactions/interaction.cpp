@@ -34,8 +34,11 @@ namespace Interactions {
 
 Interaction::Interaction(const Common::String &name, int portrait) : PartyView(name) {
 	_bounds = Common::Rect(8, 8, 224, 140);
-	_frame.load("frame.fac");
-	_portrait.load(Common::String::format("face%02d.fac", portrait));
+
+	if (portrait != -1) {
+		_frame.load("frame.fac");
+		_portrait.load(Common::String::format("face%02d.fac", portrait));
+	}
 }
 
 void Interaction::addText(const Common::String &str) {
@@ -60,8 +63,11 @@ void Interaction::draw() {
   	PartyView::draw();
 
 	Graphics::ManagedSurface s = getSurface();
-	_frame.draw(&s, 0, Common::Point(8, 8));
-	_portrait.draw(&s, _portraitFrameNum, Common::Point(15, 14));
+
+	if (!_frame.empty()) {
+		_frame.draw(&s, 0, Common::Point(8, 8));
+		_portrait.draw(&s, _portraitFrameNum, Common::Point(15, 14));
+	}
 
 	setReduced(false);
 	if (!_title.empty()) {

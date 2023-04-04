@@ -1128,6 +1128,8 @@ maps:
 		enter_code: "Covered with flashing lights the wall\nspeaks: \"Please enter access code:\"\n"
 		good_code: "\"Thank you, fields deactivated.\""
 		zap: "zap!"
+	emap08:
+		access_code: "Access Code"
 
 	map09:
 		accuracy: "The prism of precision grants those\nwho are worthy +4 accuracy!"

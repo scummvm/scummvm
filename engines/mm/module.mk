@@ -169,8 +169,10 @@ MODULE_OBJS += \
 	mm1/views_enh/which_item.o \
 	mm1/views_enh/who_will_try.o \
 	mm1/views_enh/yes_no.o \
+	mm1/views_enh/interactions/access_code.o \
 	mm1/views_enh/interactions/arrested.o \
 	mm1/views_enh/interactions/interaction.o \
+	mm1/views_enh/interactions/interaction_query.o \
 	mm1/views_enh/interactions/resistances.o \
 	mm1/views_enh/interactions/statue.o \
 	mm1/views_enh/locations/blacksmith.o \
