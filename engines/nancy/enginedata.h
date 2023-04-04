@@ -41,6 +41,7 @@ struct BSUM {
 	// UI
 	Common::Rect mapButtonHotspot;
 	Common::Rect textboxScreenPosition;
+	Common::Rect inventoryBoxScreenPosition;
 	Common::Rect menuButtonSrc;
 	Common::Rect helpButtonSrc;
 	Common::Rect menuButtonDest;
@@ -76,7 +77,7 @@ struct INV {
 	uint16 scrollbarMaxScroll;
 
 	Common::Array<Common::Rect> curtainAnimationSrcs;
-	Common::Rect inventoryScreenPosition;
+	Common::Rect curtainsScreenPosition;
 	uint16 curtainsFrameTime;
 
 	Common::String inventoryBoxIconsImageName;

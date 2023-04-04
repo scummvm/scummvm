@@ -58,8 +58,7 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	s.skip(0x10, kGameTypeVampire, kGameTypeNancy1);
 	s.skip(0x20, kGameTypeNancy2, kGameTypeNancy3);
 	readRect(*chunkStream, textboxScreenPosition);
-
-	s.skip(0x10);
+	readRect(*chunkStream, inventoryBoxScreenPosition);
 	readRect(*chunkStream, menuButtonSrc);
 	readRect(*chunkStream, helpButtonSrc);
 	readRect(*chunkStream, menuButtonDest);
@@ -111,13 +110,17 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 
 	readRectArray(s, curtainAnimationSrcs, numFrames * 2);
 
-	readRect(s, inventoryScreenPosition);
+	readRect(s, curtainsScreenPosition);
 	s.syncAsUint16LE(curtainsFrameTime);
 
 	readFilename(s, inventoryBoxIconsImageName);
 	readFilename(s, inventoryCursorsImageName);
 
-	s.skip(0x18);
+	s.skip(0x4); // inventory box icons surface w/h
+	s.skip(0x4); // inventory cursors surface w/h
+
+	s.skip(0x10); // unknown rect, same size as a hotspot
+
 	byte itemName[20];
 	uint itemNameLength = g_nancy->getGameType() == kGameTypeVampire ? 15 : 20;
 
