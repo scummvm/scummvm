@@ -495,8 +495,14 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
 
-			for (int i = 0; i < 16; ++i)
+			for (int i = 0; i < 16; ++i) {
 				pSnd->_usedChannels[i] = 0xFF;
+				pSnd->_chan[i]._dontMap = false;
+				pSnd->_chan[i]._dontRemap = false;
+				pSnd->_chan[i]._prio = -1;
+				pSnd->_chan[i]._voices = -1;
+				pSnd->_chan[i]._mute = 0;
+			}
 			for (int i = 0; i < track->channelCount; ++i) {
 				// skip digital channel
 				if (i == track->digitalChannelNr) {
@@ -513,11 +519,19 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				// independent of the channel mapping.
 				// For more info on the flags see the comment in
 				// SoundResource::SoundResource().
-				pSnd->_chan[chan.number]._dontMap = (chan.flags & 1);
-				pSnd->_chan[chan.number]._dontRemap = (chan.flags & 2);
-				pSnd->_chan[chan.number]._prio = chan.prio;
-				pSnd->_chan[chan.number]._voices = chan.poly;
-				pSnd->_chan[chan.number]._mute = (chan.flags & 4) ? 1 : 0;
+				pSnd->_chan[chan.number]._dontMap |= (bool)(chan.flags & 1);
+				// Flag 2 prevents the channel number from being remapped
+				// to a different free channel on the MIDI device.
+				// It's possible for a MIDI track to define the same channel
+				// multiple times with different values for dontRemap.
+				// This can be a problem if it is a dedicated percussion
+				// channel, so always err on the side of caution.
+				pSnd->_chan[chan.number]._dontRemap |= (bool)(chan.flags & 2);
+				if (pSnd->_chan[chan.number]._prio == -1)
+					pSnd->_chan[chan.number]._prio = chan.prio;
+				if (pSnd->_chan[chan.number]._voices == -1)
+					pSnd->_chan[chan.number]._voices = chan.poly;
+				pSnd->_chan[chan.number]._mute |= ((chan.flags & 4) ? 1 : 0);
 				// FIXME: Most MIDI tracks use the first 10 bytes for
 				// fixed MIDI commands. SSCI skips those the first iteration,
 				// but _does_ update channel state (including volume) with
