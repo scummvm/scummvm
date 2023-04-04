@@ -218,7 +218,7 @@ void Character::leave(const Common::String &processName) {
 	_processName = processName;
 }
 
-void Character::tick() {
+void Character::tick(bool reactivate) {
 	if (active() && _animation) {
 		auto screen = _engine->getCurrentScreen();
 		auto scale = screen? screen->getZScale(_pos.y): 1;
@@ -238,7 +238,7 @@ void Character::tick() {
 			}
 		}
 	}
-	if (!_stopped && !_processName.empty())
+	if (reactivate && !_processName.empty())
 		_engine->reactivate(_processName, "Character::tick");
 }
 

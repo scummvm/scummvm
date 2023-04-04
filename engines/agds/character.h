@@ -133,7 +133,7 @@ public:
 		return _jokes? _jokesDirection: _direction;
 	}
 
-	void tick();
+	void tick(bool reactivate);
 	void paint(Graphics::Surface & backbuffer, Common::Point pos) const;
 
 	int getDirectionForMovement(Common::Point delta);

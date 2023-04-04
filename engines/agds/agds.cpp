@@ -423,7 +423,7 @@ void AGDSEngine::tick() {
 	if (!dialogActive) {
 		tickInventory();
 		if (_currentCharacter)
-			_currentCharacter->tick();
+			_currentCharacter->tick(!_textLayout.valid());
 	}
 	runProcesses();
 }
