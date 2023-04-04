@@ -213,27 +213,27 @@ void Character::stop() {
 }
 
 void Character::tick() {
-	if (!active() || !_animation)
-		return;
+	if (active() && _animation) {
+		auto screen = _engine->getCurrentScreen();
+		auto scale = screen? screen->getZScale(_pos.y): 1;
+		_animation->scale(scale);
 
-	auto screen = _engine->getCurrentScreen();
-	auto scale = screen? screen->getZScale(_pos.y): 1;
-	_animation->scale(scale);
-
-	// debug("character %d/%d", _phase, _frames);
-	if (_phase >= 0 && _phase < _frames) {
-		if (_jokes)
-			_animation->tick();
-		_phase = _animation->phase();
-		if (_phase >= _frames) {
-			bool wasJokes = _jokes;
-			_jokes = false;
-			_phase = -1;
-			_frames = 0;
-			if (wasJokes)
-				direction(_direction);
+		if (_phase >= 0 && _phase < _frames) {
+			if (_jokes)
+				_animation->tick();
+			_phase = _animation->phase();
+			if (_phase >= _frames) {
+				bool wasJokes = _jokes;
+				_jokes = false;
+				_phase = -1;
+				_frames = 0;
+				if (wasJokes)
+					direction(_direction);
+			}
 		}
 	}
+	if (!_stopped && !_processName.empty())
+		_engine->reactivate(_processName, "Character::tick");
 }
 
 

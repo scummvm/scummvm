@@ -190,10 +190,6 @@ void Screen::tick() {
 			_animations.erase(_animations.begin() + i);
 		}
 	}
-
-	Character * character = _engine->currentCharacter();
-	if (character)
-		character->tick();
 }
 
 void Screen::paint(Graphics::Surface &backbuffer) const {
