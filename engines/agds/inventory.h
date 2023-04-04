@@ -80,6 +80,7 @@ public:
 	bool remove(const Common::String &name);
 	void removeGaps();
 
+	bool has(int index) const;
 	ObjectPtr get(int index);
 	int find(const Common::String &name) const;
 	ObjectPtr find(const Common::Point pos) const;

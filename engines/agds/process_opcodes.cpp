@@ -1344,9 +1344,8 @@ void Process::inventoryHasObjectByName() {
 
 void Process::inventoryHasObject() {
 	int index = pop();
-	debug("inventoryHasObject %d", index);
-	bool hasObject = _engine->inventory().get(index);
-	debug("\t->%d", hasObject);
+	bool hasObject = _engine->inventory().has(index);
+	debug("inventoryHasObject %d -> %d", index, hasObject);
 	push(hasObject);
 }
 
