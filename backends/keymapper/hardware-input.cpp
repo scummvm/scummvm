@@ -278,6 +278,8 @@ const AxisTableEntry defaultJoystickAxes[] = {
 	{ "JOY_LEFT_STICK_Y",  JOYSTICK_AXIS_LEFT_STICK_Y,  kAxisTypeFull, _s("Left Stick Y")  },
 	{ "JOY_RIGHT_STICK_X", JOYSTICK_AXIS_RIGHT_STICK_X, kAxisTypeFull, _s("Right Stick X") },
 	{ "JOY_RIGHT_STICK_Y", JOYSTICK_AXIS_RIGHT_STICK_Y, kAxisTypeFull, _s("Right Stick Y") },
+	{ "JOY_HAT_X",         JOYSTICK_AXIS_HAT_X,         kAxisTypeFull, _s("Hat X")         },
+	{ "JOY_HAT_Y",         JOYSTICK_AXIS_HAT_Y,         kAxisTypeFull, _s("Hat Y")         },
 	{ nullptr,             0,                           kAxisTypeFull, nullptr             }
 };
 
