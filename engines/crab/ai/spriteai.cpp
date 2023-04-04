@@ -91,23 +91,23 @@ void Sprite::MoveToDestPathfinding(pyrodactyl::event::Info &info, const SpriteCo
 //------------------------------------------------------------------------
 // Purpose: Move towards a location without any path finding
 //------------------------------------------------------------------------
-bool Sprite::MoveToLoc(Vector2i &dest, const float &vel, const SpriteConstant &sc) {
+bool Sprite::MoveToLoc(Vector2i &dest, const float &velocity, const SpriteConstant &sc) {
 	// Use the bound rectangle dimensions
 	Rect b = BoundRect();
 
 	// X axis
 	if (b.x + b.w < dest.x)
-		XVel(vel * sc.walk_vel_mod.x);
+		XVel(velocity * sc.walk_vel_mod.x);
 	else if (b.x > dest.x)
-		XVel(-vel * sc.walk_vel_mod.x);
+		XVel(-velocity * sc.walk_vel_mod.x);
 	else
 		XVel(0.0f);
 
 	// Y axis
 	if (b.y + b.h < dest.y)
-		YVel(vel * sc.walk_vel_mod.y);
+		YVel(velocity * sc.walk_vel_mod.y);
 	else if (b.y > dest.y)
-		YVel(-vel * sc.walk_vel_mod.y);
+		YVel(-velocity * sc.walk_vel_mod.y);
 	else
 		YVel(0.0f);
 
@@ -115,7 +115,7 @@ bool Sprite::MoveToLoc(Vector2i &dest, const float &vel, const SpriteConstant &s
 }
 
 // Move toward the location using pathfinding.
-bool Sprite::MoveToLocPathfinding(Vector2i &dest, const float &vel, const SpriteConstant &sc) {
+bool Sprite::MoveToLocPathfinding(Vector2i &dest, const float &velocity, const SpriteConstant &sc) {
 	// Rect b = BoundRect();
 
 	Vector2i immediateDest = pathing.GetImmediateDest();
@@ -128,20 +128,20 @@ bool Sprite::MoveToLocPathfinding(Vector2i &dest, const float &vel, const Sprite
 		float deltaTime = 1.0f / (float)gScreenSettings.fps;
 
 		// Project how far we will travel next frame.
-		Vector2f velVec = Vector2f(sc.walk_vel_mod.x * vel * deltaTime, sc.walk_vel_mod.y * vel * deltaTime);
+		Vector2f velVec = Vector2f(sc.walk_vel_mod.x * velocity * deltaTime, sc.walk_vel_mod.y * velocity * deltaTime);
 
 		if (vecTo.Magnitude() > velVec.Magnitude()) {
 			vecTo.Normalize();
 
-			XVel(vecTo.x * sc.walk_vel_mod.x * vel);
-			YVel(vecTo.y * sc.walk_vel_mod.y * vel);
+			XVel(vecTo.x * sc.walk_vel_mod.x * velocity);
+			YVel(vecTo.y * sc.walk_vel_mod.y * velocity);
 		} else {
 			XVel(0.0f);
 			YVel(0.0f);
 		}
 	} else {
 		Vector2i loc = pathing.GetImmediateDest();
-		MoveToLoc(loc, vel, sc);
+		MoveToLoc(loc, velocity, sc);
 	}
 
 	// return(MoveToLoc(pathing.GetImmediateDest(), vel, sc) || (XVel() == 0.0f && YVel() == 0.0f));
@@ -190,10 +190,10 @@ void Sprite::Flee(pyrodactyl::event::Info &info, std::vector<pyrodactyl::level::
 			int num = 0;
 			info.StatGet(id, pyrodactyl::stat::STAT_SPEED, num);
 			++num;
-			float vel = static_cast<float>(num);
+			float velocity = static_cast<float>(num);
 
 			// MoveToLoc(ai_data.dest, vel, sc);
-			MoveToLocPathfinding(ai_data.dest, vel, sc);
+			MoveToLocPathfinding(ai_data.dest, velocity, sc);
 		}
 	} break;
 	case FLEESTATE_DISAPPEAR:
