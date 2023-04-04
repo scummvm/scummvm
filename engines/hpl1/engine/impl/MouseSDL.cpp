@@ -40,7 +40,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cMouseSDL::cMouseSDL(iLowLevelInput *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics) : iMouse("SDL Portable Mouse") {
+cMouseSDL::cMouseSDL(LowLevelInput *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics) : iMouse("SDL Portable Mouse") {
 	mfMaxPercent = 0.7f;
 	mfMinPercent = 0.1f;
 	mlBufferSize = 6;

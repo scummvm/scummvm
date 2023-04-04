@@ -39,7 +39,7 @@ namespace hpl {
 
 class iKeyboard;
 class iMouse;
-class iLowLevelInput;
+class LowLevelInput;
 class iInputDevice;
 class iAction;
 
@@ -54,7 +54,7 @@ typedef tInputDeviceList::iterator tInputDeviceListIt;
 
 class cInput : public iUpdateable {
 public:
-	cInput(iLowLevelInput *apLowLevelInput);
+	cInput(LowLevelInput *apLowLevelInput);
 	~cInput();
 
 	/**
@@ -133,13 +133,13 @@ public:
 	 */
 	iAction *InputToAction(const tString &asName);
 
-	iLowLevelInput *GetLowLevel() { return mpLowLevelInput; }
+	LowLevelInput *GetLowLevel() { return mpLowLevelInput; }
 
 private:
 	tActionMap m_mapActions;
 	tInputDeviceList mlstInputDevices;
 
-	iLowLevelInput *mpLowLevelInput;
+	LowLevelInput *mpLowLevelInput;
 
 	iMouse *mpMouse;
 	iKeyboard *mpKeyboard;

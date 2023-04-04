@@ -36,20 +36,20 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-iLowLevelInput::iLowLevelInput(iLowLevelGraphics *apLowLevelGraphics) {
+LowLevelInput::LowLevelInput(iLowLevelGraphics *apLowLevelGraphics) {
 	_lowLevelGraphics = apLowLevelGraphics;
 	LockInput(true);
 }
 
 //-----------------------------------------------------------------------
 
-void iLowLevelInput::LockInput(bool abX) {
+void LowLevelInput::LockInput(bool abX) {
 	g_system->lockMouse(abX);
 }
 
 //-----------------------------------------------------------------------
 
-void iLowLevelInput::BeginInputUpdate() {
+void LowLevelInput::BeginInputUpdate() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		_events.push_back(event);
@@ -58,19 +58,19 @@ void iLowLevelInput::BeginInputUpdate() {
 
 //-----------------------------------------------------------------------
 
-void iLowLevelInput::EndInputUpdate() {
+void LowLevelInput::EndInputUpdate() {
 	_events.clear();
 }
 
 //-----------------------------------------------------------------------
 
-iMouse *iLowLevelInput::CreateMouse() {
+iMouse *LowLevelInput::CreateMouse() {
 	return hplNew(cMouseSDL, (this, _lowLevelGraphics));
 }
 
 //-----------------------------------------------------------------------
 
-iKeyboard *iLowLevelInput::CreateKeyboard() {
+iKeyboard *LowLevelInput::CreateKeyboard() {
 	return hplNew(cKeyboardSDL, (this));
 }
 

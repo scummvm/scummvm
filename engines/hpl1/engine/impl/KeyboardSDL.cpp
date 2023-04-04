@@ -34,7 +34,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cKeyboardSDL::cKeyboardSDL(iLowLevelInput *apLowLevelInputSDL) : iKeyboard("SDL Portable Keyboard") {
+cKeyboardSDL::cKeyboardSDL(LowLevelInput *apLowLevelInputSDL) : iKeyboard("SDL Portable Keyboard") {
 	_lowLevelSystem = apLowLevelInputSDL;
 
 	_downKeys.set_size(eKey_LastEnum);

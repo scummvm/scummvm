@@ -48,7 +48,7 @@ static iLowLevelGraphics *createLowLevelGfx() {
 LowLevelGameSetup::LowLevelGameSetup() {
 	_lowLevelSystem = hplNew(LowLevelSystem, ());
 	_lowLevelGraphics = createLowLevelGfx();
-	_lowLevelInput = hplNew(iLowLevelInput, (_lowLevelGraphics));
+	_lowLevelInput = hplNew(LowLevelInput, (_lowLevelGraphics));
 	_lowLevelResources = hplNew(LowLevelResources, (_lowLevelGraphics));
 	_lowLevelSound = hplNew(cLowLevelSoundOpenAL, ());
 	_lowLevelPhysics = hplNew(cLowLevelPhysicsNewton, ());

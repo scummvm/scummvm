@@ -37,12 +37,12 @@ class iMouse;
 class iKeyboard;
 class iLowLevelGraphics;
 
-class iLowLevelInput {
+class LowLevelInput {
 	friend class cKeyboardSDL;
 	friend class cMouseSDL;
 
 public:
-	iLowLevelInput(iLowLevelGraphics *graphics);
+	LowLevelInput(iLowLevelGraphics *graphics);
 	/**
 	 * Lock all input to current window.
 	 * \param abX

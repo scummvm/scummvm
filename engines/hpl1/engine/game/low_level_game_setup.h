@@ -57,7 +57,7 @@ public:
 private:
 	LowLevelSystem *_lowLevelSystem;
 	iLowLevelGraphics *_lowLevelGraphics;
-	iLowLevelInput *_lowLevelInput;
+	LowLevelInput *_lowLevelInput;
 	LowLevelResources *_lowLevelResources;
 	iLowLevelSound *_lowLevelSound;
 	iLowLevelPhysics *_lowLevelPhysics;
