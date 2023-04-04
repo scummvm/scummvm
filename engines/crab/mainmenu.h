@@ -124,6 +124,7 @@ public:
 	MainMenu();
 	~MainMenu() {}
 
+	void HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
 #if 0
 	void HandleEvents(SDL_Event &Event, bool &ShouldChangeState, GameStateID &NewStateID);
 #endif
