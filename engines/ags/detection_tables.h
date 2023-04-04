@@ -1140,6 +1140,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "eikos2", "La Légende d'Eikos chapitre 2 : Réveil dans la Nuit" },
 	{ "electrokit", "Maaikes Elektrokit" },
 	{ "elegantmurdermystery", "The Elegant Murder Mystery" },
+	{ "elevation", "Elevation" },
 	{ "elevator", "The Elevator" },
 	{ "elevatorriseabyss", "The Elevator - Rise from the Abyss!" },
 	{ "elfer", "Elfer" },
@@ -1497,6 +1498,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "indycomingofage", "Indiana Jones - Coming of Age" },
 	{ "indycrownofsolomon", "Indiana Jones and the Crown of Solomon" },
 	{ "indycrystalcursor", "Indiana Jones and the Window of the Crystal Cursor" },
+	{ "indyeyedestiny", "Indiana Jones and the Eye of Destiny" },
 	{ "indygoldofgenghiskhan", "Indiana Jones and the Gold of Genghis Khan" },
 	{ "indynouvelan", "Indiana Jones et les aventuriers du nouvel an" },
 	{ "indypassageofsaints", "Indiana Jones and the Passage of Saints" },
@@ -2942,6 +2944,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thefrozenshore", "The Frozen Shore" },
 	{ "thefurtheststation", "The Furthest Station" },
 	{ "thegardenofhades", "The Garden of Hades" },
+	{ "thegift", "The Gift" },
 	{ "theglasssplinters", "The Glass Splinters" },
 	{ "thegourmet", "The Gourmet" },
 	{ "thegreatcasserolecaper", "The Great Casserole Caper" },
@@ -4385,6 +4388,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_LANG("indycrownofsolomon", "CoSdemo2.1.exe", "f120690b506dd63cd7d1112ea6af2f77", 6069990, Common::ES_ESP),  //Spanish
 	DEMO_ENTRY_LANG("indycrownofsolomon", "CoSdemo2.1.exe", "06a03fe35791b0578068ab1873455463", 6903169, Common::FI_FIN),  //Finnish
 	DEMO_ENTRY_EN("indycrystalcursor", "cursoid.exe", "06a03fe35791b0578068ab1873455463", 12136127),
+	DEMO_ENTRY_EN("indyeyedestiny", "Trap.exe", "618d7dce9631229b4579340b964c6810", 3619133),
 	DEMO_ENTRY_EN("indysevencities", "Seven Cities.exe", "c9cd3e2cdd295c33e62cfa97b14461e9", 12561314),  //v1.2.1.1
 	DEMO_ENTRY_EN("infectionep2", "Infection_Ep_II_AGS.exe", "a524cbb1c51589903c4043b98917f1d9", 23691417),
 	DEMO_ENTRY_EN("inferno", "inf.exe", "97d700529f5cc826f230c27acf81adfd", 8783105),
@@ -5564,6 +5568,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("eikos2", "eikos2.exe", "0564de07d3fd5c16e6947a647061913c", 1038284323, Common::FR_FRA),
 	GAME_ENTRY("electrokit", "electrctGUI.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8941606),  //Eng-Dutch
 	GAME_ENTRY_EN("elegantmurdermystery", "DH.exe", "0b7529a76f38283d6e850b8d56526fc1", 2098899),
+	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.ags", "bf06b9759714464c095e1c1e597f1e86", 4362276, "Beta"),  // Linux
+	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.exe", "2f2bc0b9c539d20529c0e343315d5f65", 7471160, "Beta"),  // Windows
 	GAME_ENTRY_EN("elevator", "Elevator.exe", "f10516e88ec858700804ee69d041aead", 29506915),
 	GAME_ENTRY_EN("elevatorriseabyss", "T_E_R.exe", "f120690b506dd63cd7d1112ea6af2f77", 13366126),
 	GAME_ENTRY_LANG("elfer", "socer.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1911767, Common::DE_DEU),
@@ -7719,6 +7725,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thefurtheststation", "TheFurthestStation.exe", "82da2565c456dcfb265ded6fe3189c0b", 17582750),
 	GAME_ENTRY_EN("thegardenofhades", "hades.exe", "d304c4f27f336963c16578274264d174", 991101514),
 	GAME_ENTRY_EN("thegardenofhades", "hades.ags", "7c6fe05a214e42dbbf9f2f1d173918ab", 988042294),
+	GAME_ENTRY_EN("thegift", "GIFT.ags", "2bb1b2a9feae34ccf8f3f6c1f51c8972", 1643933),
 	GAME_ENTRY_EN("theglasssplinters", "Splinters.exe", "615e73fc1874e92d60a1996c2330ea36", 5249293),
 	GAME_ENTRY_EN("thegourmet", "The Gourmet.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 49995478),
 	GAME_ENTRY_EN("thegourmet", "The Gourmet.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 49995756),
