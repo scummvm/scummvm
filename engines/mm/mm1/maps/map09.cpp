@@ -111,7 +111,7 @@ void Map09::special07() {
 		}
 	}
 
-	g_events->send(SoundMessage(0, 1, STRING["maps.map09.speed"]));
+	g_events->send(SoundMessage(0, 1, STRING["maps.map09.agility"]));
 }
 
 void Map09::special08() {

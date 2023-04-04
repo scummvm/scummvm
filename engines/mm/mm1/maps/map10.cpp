@@ -97,10 +97,10 @@ void Map10::special01() {
 }
 
 void Map10::special02() {
-	send(SoundMessage(STRING["maps.map10.poof"]));
 	int idx = g_maps->_mapPos.x;
 	g_maps->_mapPos = Common::Point(MAP_DEST_X[idx], MAP_DEST_Y[idx]);
 	g_maps->changeMap(MAP_DEST_ID[idx], MAP_DEST_SECTION[idx]);
+	send(SoundMessage(STRING["maps.map10.poof"]));
 }
 
 void Map10::special17() {

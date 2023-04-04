@@ -63,8 +63,8 @@ void Map11::special() {
 			g_maps->_mapPos.y = getRandomNumber(15);
 		}
 
-		send(SoundMessage(STRING["maps.map11.poof"]));
 		updateGame();
+		send(SoundMessage(STRING["maps.map11.poof"]));
 	}
 }
 
