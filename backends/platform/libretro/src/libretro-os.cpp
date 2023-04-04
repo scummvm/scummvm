@@ -508,16 +508,6 @@ public:
 		const uint8_t *src = (const uint8_t *)buf;
 		uint8_t *pix = (uint8_t *)_gameScreen.getPixels();
 		copyRectToSurface(pix, _gameScreen.pitch, src, pitch, x, y, w, h, _gameScreen.format.bytesPerPixel);
-
-		/* In a series of consecutive updateScreen calls, additionally switch directly to main thread when
-		(and if) first copyRectToScreen is called between two updateScreen. This reduces audio crackling.
-		Consecutive copyRectToScreen other than first are covered by thread switch triggered by pollEvent or delayMillis. */
-		if (! timing_inaccuracies_is_enabled() && consecutive_screen_updates_is_enabled()) {
-			if (!(_threadSwitchCaller & THREAD_SWITCH_RECT) && (_threadSwitchCaller & THREAD_SWITCH_UPDATE)) {
-				retro_switch_to_main_thread();
-				_threadSwitchCaller |= THREAD_SWITCH_RECT;
-			}
-		}
 	}
 
 	virtual void updateScreen() {

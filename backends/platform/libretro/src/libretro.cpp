@@ -755,7 +755,7 @@ void retro_run(void) {
 					reduce_framerate_countdown--;
 				else
 					reduce_framerate_shift = 0;
-			} else if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_HALF) {
+			} else if ((reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_HALF) || (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE)) {
 				reduce_framerate_shift = 1;
 			} else if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_QUARTER) {
 				reduce_framerate_shift = 2;
