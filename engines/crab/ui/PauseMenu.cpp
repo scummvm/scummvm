@@ -81,11 +81,11 @@ PauseSignal PauseMenu::HandleEvents(const Common::Event &Event, Button &back) {
 				return PS_RESUME;
 			case 1:
 				state = STATE_SAVE;
-				save.ScanDir();
+				//save.ScanDir();
 				break;
 			case 2:
 				state = STATE_LOAD;
-				gLoadMenu.ScanDir();
+				//gLoadMenu.ScanDir();
 				break;
 			case 3:
 				state = STATE_OPTION;

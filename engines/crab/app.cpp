@@ -173,7 +173,7 @@ void App::Run() {
 				break;
 
 			case GAMESTATE_NEW_GAME:
-			//	CurrentState = new Game();
+				CurrentState = new Game();
 				gScreenSettings.in_game = true;
 				break;
 
@@ -228,9 +228,10 @@ void App::Run() {
 			pyrodactyl::input::gInput.HandleController(Event);
 		}
 #endif
-		Common::Event e;
 		while (g_system->getEventManager()->pollEvent(e)) {
 
+			// Do state Event handling
+			CurrentState->HandleEvents(e, ShouldChangeState, NextStateID);
 		}
 
 

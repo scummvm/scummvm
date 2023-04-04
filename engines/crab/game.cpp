@@ -154,6 +154,161 @@ bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
 	return false;
 }
 
+//------------------------------------------------------------------------
+// Purpose: Handle events
+//------------------------------------------------------------------------
+void Game::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
+	gMouse.HandleEvents(Event);
+
+//	if (GameDebug)
+//		debug_console.HandleEvents(Event);
+
+	if (!debug_console.RestrictInput()) {
+		if (state == STATE_LOSE_MENU) {
+			switch (hud.gom.HandleEvents(Event)) {
+			case 0:
+				state = STATE_LOSE_LOAD;
+				break;
+			case 1:
+				Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
+				break;
+			default:
+				break;
+			}
+		} else if (state == STATE_LOSE_LOAD) {
+			if (gLoadMenu.HandleEvents(Event)) {
+				ShouldChangeState = true;
+				NewStateID = GAMESTATE_LOAD_GAME;
+				return;
+			}
+
+			if (hud.pausekey.HandleEvents(Event) || hud.back.HandleEvents(Event) == BUAC_LCLICK)
+				state = STATE_LOSE_MENU;
+		} else {
+			if (!gem.EventInProgress() && !hud.pause.DisableHotkeys()) {
+				switch (hud.HandleEvents(info, Event)) {
+				case HS_MAP:
+					ToggleState(STATE_MAP);
+					break;
+				case HS_PAUSE:
+					ToggleState(STATE_PAUSE);
+					break;
+				case HS_CHAR:
+					ToggleState(STATE_CHARACTER);
+					gem.per.Cache(info, level.PlayerID(), level);
+					break;
+				case HS_JOURNAL:
+					ToggleState(STATE_JOURNAL);
+					break;
+				case HS_INV:
+					ToggleState(STATE_INVENTORY);
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (state == STATE_GAME) {
+				if (gem.EventInProgress()) {
+					gem.HandleEvents(info, level.PlayerID(), Event, hud, level, event_res);
+					if (ApplyResult())
+						Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
+				} else {
+					// Update the talk key state
+					info.TalkKeyDown = gInput.State(IG_TALK) || level.ContainsClick(info.LastPerson(), Event);
+
+					level.HandleEvents(info, Event);
+
+					if (!game_over.Empty() && game_over.Evaluate(info)) {
+						state = STATE_LOSE_MENU;
+						hud.gom.Reset();
+						return;
+					}
+
+#if 0
+					if (gInput.Equals(IG_QUICKSAVE, Event) == SDL_RELEASED) {
+						CreateSaveGame(SAVEGAME_QUICK);
+						return;
+					} else if (gInput.Equals(IG_QUICKLOAD, Event) == SDL_RELEASED && !info.IronMan()) {
+						ShouldChangeState = true;
+						NewStateID = GAMESTATE_LOAD_GAME;
+						gLoadMenu.SelectedPath(FullPath(savefile.quick));
+						return;
+					}
+#endif
+
+					if (hud.pausekey.HandleEvents(Event))
+						ToggleState(STATE_PAUSE);
+				}
+			} else if (state == STATE_PAUSE) {
+				switch (hud.pause.HandleEvents(Event, hud.back)) {
+				case PS_RESUME:
+					ToggleState(STATE_GAME);
+					hud.SetTooltip();
+					break;
+
+				case PS_SAVE:
+					CreateSaveGame(SAVEGAME_NORMAL);
+					ToggleState(STATE_GAME);
+					hud.SetTooltip();
+					break;
+				case PS_LOAD:
+					ShouldChangeState = true;
+					NewStateID = GAMESTATE_LOAD_GAME;
+					return;
+
+				case PS_HELP:
+					ToggleState(STATE_HELP);
+					break;
+
+				case PS_QUIT_MENU:
+					CreateSaveGame(SAVEGAME_EXIT);
+					Quit(ShouldChangeState, NewStateID, GAMESTATE_MAIN_MENU);
+					break;
+
+				case PS_QUIT_GAME:
+					CreateSaveGame(SAVEGAME_EXIT);
+					Quit(ShouldChangeState, NewStateID, GAMESTATE_EXIT);
+					break;
+				default:
+					break;
+				}
+			} else {
+				if (hud.back.HandleEvents(Event) == BUAC_LCLICK)
+					ToggleState(STATE_GAME);
+
+				switch (state) {
+				case STATE_MAP:
+					if (map.HandleEvents(info, Event)) {
+						// We need to load the new level
+						LoadLevel(map.cur_loc);
+						ToggleState(STATE_GAME);
+					}
+					break;
+				case STATE_JOURNAL:
+					if (info.journal.HandleEvents(level.PlayerID(), Event)) {
+						// This means we selected the "find on map" button, so we need to:
+						// switch to the world map, and highlight the appropriate quest marker
+						map.SelectDest(info.journal.marker_title);
+						ToggleState(STATE_MAP);
+					}
+					break;
+				case STATE_CHARACTER:
+					gem.per.HandleEvents(info, level.PlayerID(), Event);
+					break;
+				case STATE_INVENTORY:
+					info.inv.HandleEvents(level.PlayerID(), Event);
+					break;
+				case STATE_HELP:
+					gHelpScreen.HandleEvents(Event);
+				default:
+					break;
+				}
+			}
+		}
+	}
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Handle events

@@ -151,6 +151,139 @@ MainMenu::MainMenu() {
 	gFilePath.current_r = gFilePath.mainmenu_r;
 }
 
+//------------------------------------------------------------------------
+// Purpose: Event/input handling Events
+//------------------------------------------------------------------------
+void MainMenu::HandleEvents(Common::Event &Event, bool &ShouldChangeState, GameStateID &NewStateID) {
+	gMouse.HandleEvents(Event);
+
+	if (state != STATE_CREDITS) {
+		int choice = me_main.HandleEvents(Event);
+		if (choice >= 0) {
+			for (unsigned i = 0; i < me_main.element.size(); ++i)
+				me_main.element.at(i).State(i == choice);
+
+			switch (choice) {
+			case 0:
+				if (gLoadMenu.SelectNewestFile()) {
+					ChangeState(STATE_NORMAL);
+					ShouldChangeState = true;
+					NewStateID = GAMESTATE_LOAD_GAME;
+				}
+				break;
+			case 1:
+				ChangeState(STATE_DIFF);
+				break;
+			case 2:
+				ChangeState(STATE_LOAD);
+				gLoadMenu.ScanDir();
+				break;
+			case 3:
+				ChangeState(STATE_OPTIONS);
+				break;
+			case 4:
+				ChangeState(STATE_MOD);
+				break;
+			case 5:
+				ChangeState(STATE_HELP);
+				break;
+			case 6:
+				ChangeState(STATE_CREDITS);
+				credits.Reset();
+				break;
+			case 7:
+				ShouldChangeState = true;
+				NewStateID = GAMESTATE_EXIT;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+#if 0
+	if (gInput.Equals(IU_BACK, Event) == SDL_PRESSED || (back.HandleEvents(Event) && (state != STATE_SAVENAME && state != STATE_CREDITS))) {
+		if (state == STATE_SAVENAME)
+			ChangeState(STATE_DIFF);
+		else if (state != STATE_NORMAL)
+			ChangeState(STATE_NORMAL);
+	}
+#endif
+
+	switch (state) {
+#ifdef UNREST_DEMO
+	case STATE_NORMAL:
+		if (steam.HandleEvents(Event) == BUAC_LCLICK) {
+			// Open steam in browser window
+			OpenURL("https://store.steampowered.com/app/292400/");
+		}
+
+		if (direct.HandleEvents(Event) == BUAC_LCLICK) {
+			// Open humble widget in browser window
+			OpenURL("https://www.humblebundle.com/store/unrest/Udg6Ytd8Dfw");
+		}
+		break;
+#endif
+	case STATE_OPTIONS:
+		if (gOptionMenu.HandleEvents(back, Event))
+			ChangeState(STATE_NORMAL);
+		break;
+
+	case STATE_CREDITS:
+		if (credits.HandleEvents(Event))
+			ChangeState(STATE_NORMAL);
+		break;
+
+	case STATE_LOAD:
+		if (gLoadMenu.HandleEvents(Event)) {
+			ChangeState(STATE_NORMAL);
+			ShouldChangeState = true;
+			NewStateID = GAMESTATE_LOAD_GAME;
+			return;
+		}
+		break;
+
+	case STATE_DIFF: {
+		int choice = diff.menu.HandleEvents(Event);
+
+		// First menu option is Non-iron man, second is iron man
+		// For the second choice, we must display a prompt to choose the name of the save game
+		if (choice == 0) {
+			gTemp.ironman = false;
+			ShouldChangeState = true;
+			NewStateID = GAMESTATE_NEW_GAME;
+		} else if (choice == 1)
+			ChangeState(STATE_SAVENAME);
+	} break;
+
+	case STATE_SAVENAME:
+		if (save.HandleEvents(Event) || accept.HandleEvents(Event)) {
+			if (save.text != "") {
+				gTemp.filename = save.text.c_str();
+				gTemp.ironman = true;
+				ShouldChangeState = true;
+				NewStateID = GAMESTATE_NEW_GAME;
+			} else
+				debug("Please enter a valid filename for the iron man save.");
+		} else if (cancel.HandleEvents(Event))
+			ChangeState(STATE_DIFF);
+
+		break;
+
+	case STATE_MOD:
+		if (mod.HandleEvents(Event))
+			ChangeState(STATE_NORMAL);
+		break;
+
+	case STATE_HELP:
+		gHelpScreen.HandleEvents(Event);
+		break;
+
+	default:
+		break;
+	}
+}
+
 #if 0
 //------------------------------------------------------------------------
 // Purpose: Event/input handling Events
