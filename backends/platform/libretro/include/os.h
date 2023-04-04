@@ -54,7 +54,6 @@
 #define THREAD_SWITCH_POLL              (1 << 0)
 #define THREAD_SWITCH_DELAY             (1 << 1)
 #define THREAD_SWITCH_UPDATE            (1 << 2)
-#define THREAD_SWITCH_RECT              (1 << 3)
 
 // Preliminary scan results
 #define TEST_GAME_OK_TARGET_FOUND        0

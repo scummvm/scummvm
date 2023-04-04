@@ -551,7 +551,6 @@ public:
 		if (! timing_inaccuracies_is_enabled() && consecutive_screen_updates_is_enabled()) {
 			if (_threadSwitchCaller & THREAD_SWITCH_UPDATE) {
 				retro_switch_to_main_thread();
-				_threadSwitchCaller &= ~THREAD_SWITCH_RECT;
 			} else {
 				_threadSwitchCaller = THREAD_SWITCH_UPDATE;
 			}
