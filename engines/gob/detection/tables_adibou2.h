@@ -144,7 +144,7 @@
 {
 	{
 		"adibou2",
-		"ADDY JR 2.20 Environment",
+		"ADDY JR 2.20 Basisprogramm",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		DE_DEU,
 		kPlatformWindows,
@@ -190,7 +190,7 @@
 {
 	{
 		"adibou2",
-		"ADIBÙ 2.13 Environment",
+		"ADIBÙ 2.13 Ambiente",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		IT_ITA,
 		kPlatformWindows,
