@@ -1362,6 +1362,9 @@ void AGDSEngine::stopProcess(const Common::String & name) {
 }
 
 void AGDSEngine::currentInventoryObject(const ObjectPtr & object) {
+	if (_currentInventoryObject)
+		warning("setting current inventory object to %s, old: %s", object? object->getName().c_str(): "none",
+			_currentInventoryObject? _currentInventoryObject->getName().c_str(): "none");
 	_currentInventoryObject = object;
 }
 

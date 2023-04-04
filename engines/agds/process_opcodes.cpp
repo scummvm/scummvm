@@ -306,7 +306,8 @@ void Process::loadMouse() {
 }
 
 void Process::resetMousePointer() {
-	_engine->currentInventoryObject(ObjectPtr());
+	debug("resetMousePointer");
+	_engine->popCurrentInventoryObject();
 }
 
 void Process::getRandomNumber() {
