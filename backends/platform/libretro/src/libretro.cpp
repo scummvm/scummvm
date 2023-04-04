@@ -80,7 +80,7 @@ char cmd_params_num;
 int adjusted_RES_W = 0;
 int adjusted_RES_H = 0;
 
-static uint32 current_frame = 0;
+static uint32 current_frame = 1;
 static uint8 frameskip_no;
 static uint8 frameskip_type;
 static uint8 frameskip_threshold;
@@ -97,6 +97,9 @@ static bool can_dupe = false;
 static uint8 audio_status = 0;
 
 static unsigned retro_audio_buff_occupancy = 0;
+
+static uint32 perf_ref_frame = 0;
+static uint32 perf_ref_audio_buff_occupancy = 0;
 
 float frame_rate;
 static uint16 samples_per_frame = 0;                // length in samples per frame
@@ -167,6 +170,29 @@ static void increase_performance() {
 	}
 
 	performance_switch |= PERF_SWITCH_OVER;
+}
+
+static void increase_accuracy() {
+	performance_switch &= ~PERF_SWITCH_OVER;
+
+	if (performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE) {
+		performance_switch &= ~PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
+		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Auto reduce framerate' disabled.\n");
+		return;
+	}
+
+	if (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES) {
+		performance_switch &= ~PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
+		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Allow Timing Inaccuracies' disabled.\n");
+		return;
+	}
+
+
+	if (performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES) {
+		performance_switch &= ~PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES;
+		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Disable consecutive screen updates' disabled.\n");
+		return;
+	}
 }
 
 static void update_variables(void) {
@@ -716,7 +742,7 @@ void retro_run(void) {
 				if ((audio_status & AUDIO_STATUS_BUFFER_UNDERRUN) && !(audio_status & AUDIO_STATUS_MUTE)) {
 					if (reduce_framerate_shift < REDUCE_FRAMERATE_SHIFT_MAX)
 						reduce_framerate_shift++;
-					reduce_framerate_countdown = REDUCE_FRAMERATE_TAIL;
+					reduce_framerate_countdown = REDUCE_FRAMERATE_REST;
 				}
 				if (reduce_framerate_countdown)
 					reduce_framerate_countdown--;
@@ -747,18 +773,33 @@ void retro_run(void) {
 				log_cb(RETRO_LOG_DEBUG, "%d frame(s) skipped\n",frameskip_counter);
 				skip_frame = false;
 				frameskip_counter = 0;
+			/* Keep on skipping frames if flagged */
+			} else if (skip_frame) {
+				frameskip_counter++;
 				/* Performance counter */
 				if ((performance_switch & PERF_SWITCH_ON) && !(performance_switch & PERF_SWITCH_OVER)) {
 					frameskip_events++;
 					if (frameskip_events > PERF_SWITCH_FRAMESKIP_EVENTS) {
 						increase_performance();
 						frameskip_events = 0;
+						perf_ref_frame = current_frame - 1;
+						perf_ref_audio_buff_occupancy = 0;
 					}
 				}
+			}
 
-			/* Keep on skipping frames if flagged */
-			} else if (skip_frame)
-				frameskip_counter++;
+			/* Performance tuner reset if average buffer occupacy is above the required threshold again */
+			if (!skip_frame && (performance_switch & PERF_SWITCH_ON) && performance_switch > PERF_SWITCH_ON) {
+				perf_ref_audio_buff_occupancy += retro_audio_buff_occupancy;
+				if ((current_frame - perf_ref_frame) % (PERF_SWITCH_RESET_REST) == 0) {
+					uint32 avg_audio_buff_occupancy = perf_ref_audio_buff_occupancy / (current_frame - perf_ref_frame);
+					if (avg_audio_buff_occupancy > PERF_SWITCH_RESET_THRESHOLD || avg_audio_buff_occupancy == retro_audio_buff_occupancy)
+						increase_accuracy();
+					perf_ref_frame = current_frame - 1;
+					perf_ref_audio_buff_occupancy = 0;
+					frameskip_events = 0;
+				}
+			}
 
 			/* Switch to ScummVM thread, unless frameskipping is ongoing */
 			if (!skip_frame)
