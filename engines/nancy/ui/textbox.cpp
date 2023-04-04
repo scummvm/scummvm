@@ -67,8 +67,8 @@ void Textbox::init() {
 
 	RenderObject::init();
 
-	// zOrder bumped by 1 to avoid overlap with the inventory box curtains in The Vampire Diaries
-	_scrollbar = new Scrollbar(	10,
+	// zOrder bumped by 2 to avoid overlap with the inventory box curtains in The Vampire Diaries
+	_scrollbar = new Scrollbar(	11,
 								tbox->scrollbarSrcBounds,
 								tbox->scrollbarDefaultPos,
 								tbox->scrollbarMaxScroll - tbox->scrollbarDefaultPos.y);

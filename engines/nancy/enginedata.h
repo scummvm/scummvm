@@ -76,6 +76,9 @@ struct INV {
 	Common::Point scrollbarDefaultPos;
 	uint16 scrollbarMaxScroll;
 
+	Common::Array<Common::Rect> ornamentSrcs;
+	Common::Array<Common::Rect> ornamentDests;
+
 	Common::Array<Common::Rect> curtainAnimationSrcs;
 	Common::Rect curtainsScreenPosition;
 	uint16 curtainsFrameTime;

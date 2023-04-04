@@ -104,7 +104,8 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 	s.syncAsUint16LE(scrollbarDefaultPos.y);
 	s.syncAsUint16LE(scrollbarMaxScroll);
 
-	s.skip(0xC0);
+	readRectArray(s, ornamentSrcs, 6, kGameTypeVampire, kGameTypeNancy1);
+	readRectArray(s, ornamentDests, 6, kGameTypeVampire, kGameTypeNancy1);
 
 	uint numFrames = g_nancy->getStaticData().numCurtainAnimationFrames;
 

@@ -59,6 +59,7 @@ namespace UI {
 class Button;
 class ViewportOrnaments;
 class TextboxOrnaments;
+class InventoryBoxOrnaments;
 class Clock;
 }
 
@@ -253,6 +254,7 @@ private:
 
 	UI::ViewportOrnaments *_viewportOrnaments;
 	UI::TextboxOrnaments *_textboxOrnaments;
+	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;
 	UI::Clock *_clock;
 
 	// Data

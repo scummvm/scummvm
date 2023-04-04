@@ -108,6 +108,7 @@ Scene::Scene() :
 		_helpButton(nullptr),
 		_viewportOrnaments(nullptr),
 		_textboxOrnaments(nullptr),
+		_inventoryBoxOrnaments(nullptr),
 		_clock(nullptr),
 		_actionManager(),
 		_difficulty(0),
@@ -119,6 +120,7 @@ Scene::~Scene()  {
 	delete _menuButton;
 	delete _viewportOrnaments;
 	delete _textboxOrnaments;
+	delete _inventoryBoxOrnaments;
 	delete _clock;
 	delete _lightning;
 }
@@ -361,6 +363,11 @@ void Scene::registerGraphics() {
 	if (_textboxOrnaments) {
 		_textboxOrnaments->registerGraphics();
 		_textboxOrnaments->setVisible(true);
+	}
+
+	if (_inventoryBoxOrnaments) {
+		_inventoryBoxOrnaments->registerGraphics();
+		_inventoryBoxOrnaments->setVisible(true);
 	}
 
 	if (_clock) {
@@ -747,6 +754,9 @@ void Scene::initStaticData() {
 
 		_textboxOrnaments = new UI::TextboxOrnaments(9);
 		_textboxOrnaments->init();
+
+		_inventoryBoxOrnaments = new UI::InventoryBoxOrnaments(9);
+		_inventoryBoxOrnaments->init();
 
 		_clock = new UI::Clock();
 		_clock->init();

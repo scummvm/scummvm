@@ -70,7 +70,7 @@ private:
 	class Curtains : public RenderObject {
 	public:
 		Curtains() :
-			RenderObject(9),
+			RenderObject(10),
 			_soundTriggered(false),
 			_areOpen(false),
 			_curFrame(0) {}
