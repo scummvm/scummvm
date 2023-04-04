@@ -159,10 +159,10 @@ void Map06::special06() {
 }
 
 void Map06::special07() {
-	send(SoundMessage(17, 1, STRING["maps.poof"]));
 	g_maps->_mapPos.x = 10;
 	g_maps->_mapPos.y = 11;
 	updateGame();
+	send(SoundMessage(17, 1, STRING["maps.poof"]));
 }
 
 void Map06::special09() {

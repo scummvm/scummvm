@@ -59,9 +59,7 @@ protected:
 	/**
 	 * Handles any action/press
 	 */
-	virtual void viewAction() {
-		leave();
-	}
+	virtual void viewAction() {}
 
 	/**
 	 * Adds text for display

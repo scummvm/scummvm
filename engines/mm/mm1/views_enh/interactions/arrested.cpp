@@ -43,12 +43,6 @@ bool Arrested::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
-void Arrested::viewAction() {
-	// If already chosen option, then any click closes dialog
-	if (_buttons.empty())
-		close();
-}
-
 bool Arrested::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_a:

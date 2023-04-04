@@ -34,11 +34,6 @@ class Arrested : public Interaction, public MM1::Game::Arrested {
 protected:
 	void surrender(int numYears = 2);
 
-	/**
-	 * Handles any action/press
-	 */
-	void viewAction() override;
-
 public:
 	Arrested();
 

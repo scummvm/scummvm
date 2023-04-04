@@ -1095,7 +1095,7 @@ maps:
 	map05:
 		arena: "\"The Arena\""
 		arena_inside: "Around the room there are several\nbalconies filled with cheering peasants\nA man asks \"Will you participate (Y/N)?\""
-		portal: "A shimmering blue and white portal\nappears! enter (Y/N)?"
+		portal: "A shimmering blue and white portal\nappears! Enter (Y/N)?"
 		message1: "Scrawled on the wall, a message reads:\n"
 		message2: "The jail above has many cells."
 		message3: "Don't turn around!"
@@ -1108,7 +1108,7 @@ maps:
 		portal: "Shimmering blue and white portal,\nenter (Y/N)?"
 		acid: "Splash! A pool of acid!"
 		button: "Button on the wall, press it (Y/N)?"
-		banner: "A banner reads:\ncorridor of endless encounters!"
+		banner: "A banner reads:\nCorridor of Endless Encounters!"
 		wizard: "A crazed wizard exclaims,\n\"Encounter the 13, win the prize!\""
 		slide: "A slide!"
 

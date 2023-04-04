@@ -91,9 +91,9 @@ void Map07::special02() {
 		}
 	}
 
-	send(SoundMessage(0, 1, STRING["maps.map07.gate"]));
 	g_maps->_mapPos.y--;
 	updateGame();
+	send(SoundMessage(0, 1, STRING["maps.map07.gate"]));
 }
 
 void Map07::special03() {
