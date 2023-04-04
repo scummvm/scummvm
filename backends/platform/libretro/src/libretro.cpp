@@ -280,9 +280,9 @@ static void update_variables(void) {
 	var.key = "scummvm_consecutive_screen_updates";
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
 		if (strcmp(var.value, "enabled") == 0) {
-			consecutive_screen_updates = true;
-		} else
 			consecutive_screen_updates = false;
+		} else
+			consecutive_screen_updates = true;
 	}
 
 	set_audio_buffer_status();
