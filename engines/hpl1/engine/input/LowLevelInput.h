@@ -28,32 +28,42 @@
 #ifndef HPL_LOWLEVELINPUT_H
 #define HPL_LOWLEVELINPUT_H
 
+#include "common/array.h"
+#include "common/events.h"
+
 namespace hpl {
 
 class iMouse;
 class iKeyboard;
+class iLowLevelGraphics;
 
 class iLowLevelInput {
-public:
-	virtual ~iLowLevelInput() {}
+	friend class cKeyboardSDL;
+	friend class cMouseSDL;
 
+public:
+	iLowLevelInput(iLowLevelGraphics *graphics);
 	/**
 	 * Lock all input to current window.
 	 * \param abX
 	 * \return
 	 */
-	virtual void LockInput(bool abX) = 0;
+	void LockInput(bool abX);
 	/**
 	 * Called by cInput
 	 */
-	virtual void BeginInputUpdate() = 0;
+	void BeginInputUpdate();
 	/**
 	 * called by cInput
 	 */
-	virtual void EndInputUpdate() = 0;
+	void EndInputUpdate();
 
-	virtual iMouse *CreateMouse() = 0;
-	virtual iKeyboard *CreateKeyboard() = 0;
+	iMouse *CreateMouse();
+	iKeyboard *CreateKeyboard();
+
+private:
+	Common::Array<Common::Event> _events;
+	iLowLevelGraphics *_lowLevelGraphics;
 };
 
 } // namespace hpl

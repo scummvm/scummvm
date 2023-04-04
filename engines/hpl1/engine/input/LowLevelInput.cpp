@@ -25,36 +25,31 @@
  * This file is part of HPL1 Engine.
  */
 
-#include "hpl1/engine/impl/LowLevelInputSDL.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "hpl1/engine/impl/KeyboardSDL.h"
 #include "hpl1/engine/impl/MouseSDL.h"
+#include "hpl1/engine/input/LowLevelInput.h"
 #include "hpl1/engine/system/low_level_system.h"
 
 namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cLowLevelInputSDL::cLowLevelInputSDL(iLowLevelGraphics *apLowLevelGraphics) {
+iLowLevelInput::iLowLevelInput(iLowLevelGraphics *apLowLevelGraphics) {
 	_lowLevelGraphics = apLowLevelGraphics;
 	LockInput(true);
 }
 
 //-----------------------------------------------------------------------
 
-cLowLevelInputSDL::~cLowLevelInputSDL() {
-}
-
-//-----------------------------------------------------------------------
-
-void cLowLevelInputSDL::LockInput(bool abX) {
+void iLowLevelInput::LockInput(bool abX) {
 	g_system->lockMouse(abX);
 }
 
 //-----------------------------------------------------------------------
 
-void cLowLevelInputSDL::BeginInputUpdate() {
+void iLowLevelInput::BeginInputUpdate() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		_events.push_back(event);
@@ -63,19 +58,19 @@ void cLowLevelInputSDL::BeginInputUpdate() {
 
 //-----------------------------------------------------------------------
 
-void cLowLevelInputSDL::EndInputUpdate() {
+void iLowLevelInput::EndInputUpdate() {
 	_events.clear();
 }
 
 //-----------------------------------------------------------------------
 
-iMouse *cLowLevelInputSDL::CreateMouse() {
+iMouse *iLowLevelInput::CreateMouse() {
 	return hplNew(cMouseSDL, (this, _lowLevelGraphics));
 }
 
 //-----------------------------------------------------------------------
 
-iKeyboard *cLowLevelInputSDL::CreateKeyboard() {
+iKeyboard *iLowLevelInput::CreateKeyboard() {
 	return hplNew(cKeyboardSDL, (this));
 }
 

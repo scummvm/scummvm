@@ -25,16 +25,16 @@
  * This file is part of HPL1 Engine.
  */
 
-#include "hpl1/engine/impl/KeyboardSDL.h"
-
+#include "common/keyboard.h"
 #include "common/system.h"
-#include "hpl1/engine/impl/LowLevelInputSDL.h"
+#include "hpl1/engine/impl/KeyboardSDL.h"
+#include "hpl1/engine/input/LowLevelInput.h"
 
 namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cKeyboardSDL::cKeyboardSDL(cLowLevelInputSDL *apLowLevelInputSDL) : iKeyboard("SDL Portable Keyboard") {
+cKeyboardSDL::cKeyboardSDL(iLowLevelInput *apLowLevelInputSDL) : iKeyboard("SDL Portable Keyboard") {
 	_lowLevelSystem = apLowLevelInputSDL;
 
 	_downKeys.set_size(eKey_LastEnum);
