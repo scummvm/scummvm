@@ -198,18 +198,6 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
-		"scummvm_auto_performance_tuner",
-		"Regolazione automatica performance",
-		NULL,
-		"Cambio automatico delle impostazioni di performance e salto dei fotogrammi se vengono rilevate performance scadenti durante il gioco. 'Consenti inaccuratezze di timing' e 'Salto dei fotogrammi Auto' saranno temporaneamente abilitati in sequenza per la sola sessione di gioco, se necessario. Le singole impostazioni salvate non saranno modificate.",
-		NULL,
-		NULL,
-		{
-			{NULL, NULL},
-		},
-		NULL
-	},
-	{
 		"scummvm_consecutive_screen_updates",
 		"Mostra aggiornamenti schermo consecutivi",
 		NULL,
@@ -249,9 +237,20 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		},
 		NULL
         },
+	{
+		"scummvm_auto_performance_tuner",
+		"Regolazione automatica performance",
+		NULL,
+		"Cambio automatico delle impostazioni di timing e salto dei fotogrammi se vengono rilevate performance scadenti durante il gioco. Le impostazioni di timing/frameskip saranno temporaneamente cambiate in sequenza, se saranno rilevati audio buffer underrun e per la sola sessione di gioco, e ripristinati in sequenza in caso di recupero del buffer audio. Le singole impostazioni salvate non saranno modificate ma saranno ignorati.",
+		NULL,
+		NULL,
+		{
+			{NULL, NULL},
+		},
+		NULL
+	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
-
 struct retro_core_options_v2 options_it = {
 	option_cats_it,
 	option_defs_it

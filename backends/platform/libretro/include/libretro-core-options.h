@@ -263,20 +263,6 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		"0"
 	},
 	{
-		"scummvm_auto_performance_tuner",
-		"Auto performance tuner",
-		NULL,
-		"In-game automatic change of performance/frameskip settings if low performances are detected. 'Allow Timing Inaccuracies' and 'Auto Frameskip' will be temporarily set on in sequence, if necessary, for the current game session only. Single saved settings will not be affected.",
-		NULL,
-		"performance",
-		{
-			{"disabled", NULL},
-			{"enabled", NULL},
-			{NULL, NULL},
-		},
-		"enabled"
-	},
-	{
 		"scummvm_consecutive_screen_updates",
 		"Show consecutive screen updates",
 		NULL,
@@ -302,11 +288,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 			{"enabled", NULL},
 			{NULL, NULL},
 		},
-#if defined(DINGUX) || defined(_3DS)
-		"enabled"
-#else
 		"disabled"
-#endif
 	},
 	{
 		"scummvm_reduce_framerate_type",
@@ -323,6 +305,24 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 			{ NULL, NULL },
 		},
 		"disabled"
+	},
+	{
+		"scummvm_auto_performance_tuner",
+		"Auto performance tuner",
+		NULL,
+		"In-game automatic change of timing/frameskip settings if low performances are detected. Timing/frameskip settings will be changed in sequence, if audio buffer underruns are detected and for the current game session only, and restored in sequence if audio buffers recovers. Single saved settings will not be affected but will be overridden in-game.",
+		NULL,
+		NULL,
+		{
+			{"disabled", NULL},
+			{"enabled", NULL},
+			{NULL, NULL},
+		},
+#if defined(DEFAULT_PERF_TUNER)
+		"enabled"
+#else
+		"disabled"
+#endif
 	},
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL },
 };
