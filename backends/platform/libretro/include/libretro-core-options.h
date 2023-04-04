@@ -83,9 +83,9 @@ struct retro_core_option_v2_category option_cats_us[] = {
 		"Configure frameskip settings"
 	},
 	{
-		"performance",
-		"Performance",
-		"Configure performance settings"
+		"timing",
+		"Timing",
+		"Configure timing settings"
 	},
 	{ NULL, NULL, NULL },
 };
@@ -268,7 +268,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"While libretro is FPS bounded, ScummVM can update the screen independently from the refresh rate set. If this option is enabled, all consecutive ScummVM screen updates will be captured and processed within the same retro_run call, improving accuracy (e.g. see titles effects in Legend of Kyrandia intro) but increasing the execution time of that retro_run loop. Otherwise only last screen update of a consecutive series will be shown. If 'Allow Timing Inaccuracies' is enabled, this setting will be ignored and disabled.",
 		NULL,
-		"performance",
+		"timing",
 		{
 			{"disabled", NULL},
 			{"enabled", NULL},
@@ -282,7 +282,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"Allow timing inaccuracies that reduces CPU requirements. Though most timing deviations are imperceptible, in some cases it may introduce audio sync/timing issues, hence this option should be enabled only if full speed cannot be reached otherwise.",
 		NULL,
-		"performance",
+		"timing",
 		{
 			{"disabled", NULL},
 			{"enabled", NULL},
@@ -296,7 +296,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
 		NULL,
 		"Reduces current framerate to reduce CPU requirements. 'Auto' mode temporarily reduces the framerate as needed when audio buffer underrun is detected, while the in the other modes the reduction is constant.",
 		NULL,
-		"performance",
+		"timing",
 		{
 			{ "disabled", NULL },
 			{ "auto", "Auto" },

@@ -81,9 +81,9 @@ struct retro_core_option_v2_category option_cats_it[] = {
 		"Impostazioni per il salto dei fotogrammi"
 	},
 	{
-		"performance",
+		"timing",
 		NULL,
-		"Impostazioni relative alle performance"
+		"Impostazioni relative al timing"
 	},
 	{ NULL, NULL, NULL },
 };
