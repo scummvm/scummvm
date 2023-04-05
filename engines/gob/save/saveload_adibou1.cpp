@@ -42,6 +42,8 @@ SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
 
 SaveLoad_Adibou1::~SaveLoad_Adibou1() {
 	delete _bouHandler;
+	delete _drawingHandler;
+	delete _constructionHandler;
 }
 
 SaveLoad_Adibou1::SpriteHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
