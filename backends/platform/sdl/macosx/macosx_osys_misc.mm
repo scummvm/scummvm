@@ -27,11 +27,13 @@
 #include "common/file.h"
 
 #include "backends/platform/sdl/macosx/macosx.h"
+#include "backends/platform/sdl/macosx/macosx-compat.h"
 #include "base/version.h"
 
 #include <Foundation/NSBundle.h>
 #include <Foundation/NSFileManager.h>
 #include <Foundation/NSArray.h>
+#include <Foundation/NSPathUtilities.h>
 #include <Foundation/NSUserDefaults.h>
 #include <AppKit/NSPasteboard.h>
 
