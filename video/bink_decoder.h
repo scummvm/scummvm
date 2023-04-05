@@ -153,7 +153,7 @@ private:
 		uint16 getWidth() const override { return _width; }
 		uint16 getHeight() const  override{ return _height; }
 		Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
-		bool setOutputPixelFormat(const Graphics::PixelFormat &format) { _pixelFormat = format; return true; }
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _pixelFormat = format; return true; }
 		int getCurFrame() const override { return _curFrame; }
 		int getFrameCount() const override { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame() override { return _surface; }
