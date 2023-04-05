@@ -109,13 +109,15 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool GameMessages::msgAction(const ActionMessage &msg) {
+	auto focusedView = g_events->focusedView();
+
 	if (g_globals->_party.isPartyDead()) {
 		// Party is dead, so now that players have read whatever
 		// message was displayed, switch to the Dead screen
 		g_events->clearViews();
 		addView("Dead");
 
-	} else if (g_events->focusedView()) {
+	} else if (focusedView == this) {
 		if (endDelay())
 			return true;
 
@@ -130,7 +132,7 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 		case KEYBIND_SELECT:
 			if (_keyCallback) {
 				_keyCallback(Common::KeyState(Common::KEYCODE_RETURN));
-			} else {
+			} else if (_ynCallback) {
 				close();
 				_ynCallback();
 			}
@@ -138,6 +140,9 @@ bool GameMessages::msgAction(const ActionMessage &msg) {
 		default:
 			break;
 		}
+	} else if (msg._action == KEYBIND_SELECT) {
+		clearSurface();
+		return true;
 	}
 
 	return false;
