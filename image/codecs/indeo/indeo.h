@@ -540,7 +540,7 @@ protected:
 	 * Select the preferred format to use, for codecs where this is faster than converting
 	 * the image afterwards. Returns true if supported, and false otherwise.
 	 */
-	bool setOutputPixelFormat(const Graphics::PixelFormat &format) { _pixelFormat = format; return true; }
+	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _pixelFormat = format; return true; }
 
 	/**
 	 * Decode the Indeo picture header.
