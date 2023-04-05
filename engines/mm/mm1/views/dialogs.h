@@ -127,6 +127,7 @@ private:
 	Views::Maps::MaidenPrisoner _maidenPrisoner;
 	Views::Maps::ManPrisoner _manPrisoner;
 	Views::Maps::MutatedPrisoner _mutatedPrisoner;
+	Views::Maps::VirginPrisoner _virginPrisoner;
 	Views::Maps::DogStatue _dogStatue;
 	Views::Maps::Ghost _ghost;
 	Views::Maps::Giant _giant;

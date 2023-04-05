@@ -90,6 +90,16 @@ public:
 	}
 };
 
+class VirginPrisoner : public TextView {
+public:
+	VirginPrisoner();
+	virtual ~VirginPrisoner() {
+	}
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+};
+
 } // namespace Maps
 } // namespace Views
 } // namespace MM1

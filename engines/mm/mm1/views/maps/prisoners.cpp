@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/maps/prisoners.h"
+#include "mm/mm1/maps/map11.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
@@ -134,6 +135,46 @@ MaidenPrisoner::MaidenPrisoner() :
 void MaidenPrisoner::flee() {
 	MM1::Maps::Map &map = *g_maps->_currentMap;
 	map._walls[48] &= 0x7f;
+}
+
+/*------------------------------------------------------------------------*/
+
+VirginPrisoner::VirginPrisoner() : TextView("VirginPrisoner") {
+	setBounds(getLineBounds(20, 24));
+}
+
+void VirginPrisoner::draw() {
+	clearSurface();
+	writeString(0, 1, STRING["maps.map11.virgin"]);
+}
+
+bool VirginPrisoner::msgKeypress(const KeypressMessage &msg) {
+	switch (msg.keycode) {
+	case Common::KEYCODE_a:
+		g_events->close();
+		g_events->send(SoundMessage(STRING["maps.map11.tip1"]));
+		break;
+	case Common::KEYCODE_b:
+		g_events->close();
+		static_cast<MM1::Maps::Map11 *>(g_maps->_currentMap)->challenge();
+		break;
+	case Common::KEYCODE_c:
+		g_events->close();
+		break;
+	default:
+		return TextView::msgKeypress(msg);
+	}
+
+	return true;
+}
+
+bool VirginPrisoner::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ESCAPE) {
+		g_events->close();
+		return true;
+	} else {
+		return TextView::msgAction(msg);
+	}
 }
 
 } // namespace Maps

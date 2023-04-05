@@ -100,26 +100,7 @@ void Map11::special03() {
 
 void Map11::special04() {
 	g_maps->clearSpecial();
-
-	send(SoundMessage(STRING["maps.map11.virgin"],
-		[](const Common::KeyState &ks) {
-			switch (ks.keycode) {
-			case Common::KEYCODE_a:
-				g_events->close();
-				g_events->send(SoundMessage(STRING["maps.map11.tip1"]));
-				break;
-			case Common::KEYCODE_b:
-				static_cast<MM1::Maps::Map11 *>(g_maps->_currentMap)->challenge();
-				break;
-			case Common::KEYCODE_c:
-			case Common::KEYCODE_ESCAPE:
-				g_events->close();
-				break;
-			default:
-				break;
-			}
-		}
-	));
+	g_events->addView("VirginPrisoner");
 }
 
 void Map11::special05() {
@@ -175,7 +156,6 @@ void Map11::selectDial(int dialIndex) {
 
 void Map11::challenge() {
 	Game::Encounter &enc = g_globals->_encounters;
-	g_events->close();
 
 	enc.clearMonsters();
 	enc.addMonster(10, 12);
