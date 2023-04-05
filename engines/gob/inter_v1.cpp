@@ -848,7 +848,31 @@ void Inter_v1::o1_if(OpFuncParams &params) {
 		WRITE_VAR(285, 0);
 	}
 
+	int pos = _vm->_game->_script->pos();
 	boolRes = _vm->_game->_script->evalBool();
+
+	// Skipping copy protection screen of Adibou 1 applications
+	if (!_vm->_copyProtection &&
+		_vm->getGameType() == kGameTypeAdibou1 &&
+		(pos == 162 ||
+		 pos == 165 ||
+		 pos == 170 ||
+		 pos == 173 ||
+		 pos == 167 ||
+		 pos == 182 ||
+		 pos == 185 ||
+		 pos == 188) &&
+		(_vm->isCurrentTot("C51INTRO.tot") ||
+		 _vm->isCurrentTot("C61INTRO.tot") ||
+		 _vm->isCurrentTot("L51INTRO.tot") ||
+		 _vm->isCurrentTot("L61INTRO.tot"))) {
+		if (pos == 162 || pos == 165 || pos == 170 || pos == 173)
+			boolRes = false; // First, bypass the copy protection screen
+		else
+			boolRes = true; // Then bypass the check of the copy protection test result
+		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
+	}
+
 	if (boolRes) {
 		if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
 			params.doReturn = true;
