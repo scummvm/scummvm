@@ -511,18 +511,6 @@ Common::Error GobEngine::initGameParts() {
 		_resourceSizeWorkaround = true;
 		break;
 
-	case kGameTypeAJWorld:
-		_init     = new Init_v2(this);
-		_video    = new Video_v2(this);
-		_inter    = new Inter_v2(this);
-		_mult     = new Mult_v2(this);
-		_draw     = new Draw_v2(this);
-		_map      = new Map_v2(this);
-		_goblin   = new Goblin_v2(this);
-		_scenery  = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_AJWorld(this, _targetName.c_str());
-		break;
-
 	case kGameTypeGob3:
 		_init     = new Init_v3(this);
 		_video    = new Video_v2(this);

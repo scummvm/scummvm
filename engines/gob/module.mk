@@ -110,7 +110,6 @@ MODULE_OBJS := \
 	save/saveload_adibou1.o \
 	save/saveload_geisha.o \
 	save/saveload_fascin.o \
-	save/saveload_ajworld.o \
 	save/saveload_inca2.o \
 	save/saveload_playtoons.o \
 	save/saveconverter.o \

@@ -262,33 +262,6 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for A.J.'s World of Discovery. */
-class SaveLoad_AJWorld : public SaveLoad {
-public:
-	SaveLoad_AJWorld(GobEngine *vm, const char *targetName);
-	~SaveLoad_AJWorld() override;
-
-	SaveMode getSaveMode(const char *fileName) const override;
-
-protected:
-	struct SaveFile {
-		const char *sourceName;
-		SaveMode mode;
-		SaveHandler *handler;
-		const char *description;
-	};
-
-	static SaveFile _saveFiles[];
-
-	TempSpriteHandler *_tempSpriteHandler;
-
-	SaveHandler *getHandler(const char *fileName) const override;
-	const char *getDescription(const char *fileName) const override;
-
-	const SaveFile *getSaveFile(const char *fileName) const;
-	SaveFile *getSaveFile(const char *fileName);
-};
-
 /** Save/Load class for Adibou 1 */
 class SaveLoad_Adibou1 : public SaveLoad {
 public:
@@ -352,6 +325,7 @@ protected:
 	GameFileHandler *_bouHandler;
 	GameFileHandler *_constructionHandler;
 	SpriteHandler   *_drawingHandler;
+	TempSpriteHandler *_menuHandler;
 
 	SaveHandler *getHandler(const char *fileName) const override;
 	const char *getDescription(const char *fileName) const override;
