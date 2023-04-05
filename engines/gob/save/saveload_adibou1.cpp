@@ -30,6 +30,7 @@ SaveLoad_Adibou1::SaveFile SaveLoad_Adibou1::_saveFiles[] = {
 	{ "bou.inf", kSaveModeSave, nullptr, "adibou1"},
 	{ "dessin.inf", kSaveModeSave, nullptr, "paint game drawing"},
 	{ "const.inf", kSaveModeSave, nullptr, "construction game"},
+	{ "menu.inf", kSaveModeSave, nullptr, "temporary sprite"}
 };
 
 SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
@@ -38,12 +39,14 @@ SaveLoad_Adibou1::SaveLoad_Adibou1(GobEngine *vm, const char *targetName) :
 	_saveFiles[0].handler = _bouHandler = new GameFileHandler(vm, targetName, "bouinf");
 	_saveFiles[1].handler = _drawingHandler = new SpriteHandler(vm, targetName, "drawing");
 	_saveFiles[2].handler = _constructionHandler = new GameFileHandler(vm, targetName, "construction");
+	_saveFiles[3].handler = _menuHandler = new TempSpriteHandler(vm);;
 }
 
 SaveLoad_Adibou1::~SaveLoad_Adibou1() {
 	delete _bouHandler;
 	delete _drawingHandler;
 	delete _constructionHandler;
+	delete _menuHandler;
 }
 
 SaveLoad_Adibou1::SpriteHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :

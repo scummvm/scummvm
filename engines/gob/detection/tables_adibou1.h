@@ -100,7 +100,7 @@
 		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeAJWorld,
+	kGameTypeAdibou1,
 	kFeaturesAdLib,
 	0, 0, 0
 },
@@ -118,7 +118,7 @@
 		ADGF_UNSTABLE,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
-	kGameTypeAJWorld,
+	kGameTypeAdibou1,
 	kFeaturesNone,
 	0, 0, 0
 },
