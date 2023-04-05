@@ -1406,7 +1406,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ilearn",				"iLearn" },
 	{ "imagineers",			"The Imagineers" },
 	{ "imaginopolis",		"Microsoft Imaginopolis" },
-	{ "incoming",			"iNCOMING" },
+	{ "incoming",			"iNCOMING from iNSCAPE" },
 	{ "iona",				"Iona Software Demo CD" },
 	{ "ipc",				"About InterActive Publishing" },
 	{ "jsa",				"JumpStart Advanced: How Does Your Child Learn Best?" },
@@ -4106,33 +4106,40 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t_l("illustratorsamerica", "", "IIA.EXE",  "77a83014d697fbb3f908739b03e8341a", 771599,
 										   "MENU.Dxr", "215b90c31bdf2dd19104534d11af3328", 6195040, Common::JA_JPN, 403),
 
-	MACDEMO1("imagineers", "Portfolio", "The Imagineers Demo", "f00c61f30719f8ed5f64ddff2e3c7268", 482302, 404),
+	MACDEMO1("imagineers", "Portfolio", "The Imagineers Demo", "r:f00c61f30719f8ed5f64ddff2e3c7268", 482046, 404),
 
 	WINGAME1("imaginopolis", "1995 Demo", "MSKIDS.EXE", "f99d634a7880364990da8564010b95e2", 3394725, 400),
 
-	MACGAME1("imesceneryfish", "ECD", "Scenery and Fish", "e60d4b832a771b0064a703938f82dfb3", 2804, 404),
-	WINGAME2("imesceneryfish", "ECD", "runme.exe",		  "47b17c219097afb877fd9bc15455e4d4", 738415,
-									  "main.dir",		  "0b20d6b771b4f5fd50e823c3773aecdd", 3526788, 404),
+	MACGAME1("imesceneryfish", "ECD", "Scenery and Fish", "r:e60d4b832a771b0064a703938f82dfb3", 2548, 404),
+	WINGAME2("imesceneryfish", "ECD", "runme.exe",		  "d:47b17c219097afb877fd9bc15455e4d4", 738415,
+									  "main.dir",		  "d:0b20d6b771b4f5fd50e823c3773aecdd", 3526788, 404),
 
 	MACGAME1("imision369", "v2.1", "ImIsion 369", "5830ee2b9ecc97ce8026d00e0977f555", 296780, 404),
 
 	// Play as either Shirley (disc 1) or Dolan (disc 2)
-	MACGAME2("improv", "Shirley", "IMPROV (PowerPC)", "096e0aacbc1670c80a354c3c49b3fabe", 60324,
-								  "INTRO.DIR",		  "62695e977e1a29647e630f70349a3690", 2926976, 400),
-	MACGAME2("improv", "Dolan",   "IMPROV (PowerPC)", "096e0aacbc1670c80a354c3c49b3fabe", 60324,
-								  "INTRO.DIR",		  "dd667e45e402729581c70f278140f3a5", 3400832, 400),
-	WINGAME2("improv", "Shirley", "IMPROV.EXE",		  "097276acd3caee9bc79b85af79278643", 730079,
-								  "INTRO.DIR",		  "37f2d3c0b6f805e7a0f3a3ea62f8297c", 44532, 400),
-	WINGAME2("improv", "Dolan",   "IMPROV.EXE",		  "097276acd3caee9bc79b85af79278643", 730079,
-								  "INTRO.DIR",		  "075c3c7bd7c059280ca86c6b906bf97b", 46366, 400),
+	MACGAME2("improv", "Shirley", "IMPROV/IMPROV (PowerPC)", "r:096e0aacbc1670c80a354c3c49b3fabe", 60068,
+								  "INTRO.DIR",				 "d:62695e977e1a29647e630f70349a3690", 2926976, 404),
+	MACGAME2("improv", "Shirley", "IMPROV/IMPROV (PowerPC)", "r:096e0aacbc1670c80a354c3c49b3fabe", 60068,
+								  "INTRO.DIR",				 "d:ff43a964a95a10a776e4b53b16bf7b55", 2926792, 404),
+	MACGAME2("improv", "Dolan",   "IMPROV/IMPROV (PowerPC)", "r:096e0aacbc1670c80a354c3c49b3fabe", 60068,
+								  "INTRO.DIR",				 "d:dd667e45e402729581c70f278140f3a5", 3400832, 404),
+	MACGAME2("improv", "Dolan",   "IMPROV/IMPROV (PowerPC)", "r:096e0aacbc1670c80a354c3c49b3fabe", 60068,
+								  "INTRO.DIR",				 "d:f164ed8fa4d7d87a9052c90e2c0110fb", 3400640, 404),
+	WINGAME2("improv", "Shirley", "IMPROV/IMPROV.EXE",		 "d:097276acd3caee9bc79b85af79278643", 730079,
+								  "INTRO.DIR",				 "d:37f2d3c0b6f805e7a0f3a3ea62f8297c", 44532, 404),
+	WINGAME2("improv", "Dolan",   "IMPROV/IMPROV.EXE",		 "d:097276acd3caee9bc79b85af79278643", 730079,
+								  "INTRO.DIR",				 "d:075c3c7bd7c059280ca86c6b906bf97b", 46366, 404),
 
 	// Non-interactive preview of Dark Eye and Smart Patrol from the Bad Day CD
-	WINGAME1("incoming", "Preview", "INCOMING.EXE", "7c40db466105d08a53bb41023abdaa6a", 743550, 404),
+	MACGAME1("incoming", "Preview 1", "iNCOMING",			 "r:1c2e5371b835680e7c1ca8bcea008bef", 483490, 404),
+	WINGAME2("incoming", "Preview 1", "INCOMING.EXE",		 "d:7c40db466105d08a53bb41023abdaa6a", 743550,
+									  "DKYASP/DKYASP.DIR",	 "d:2162f333a6666a9da2cd6e2cbc63be15", 1465376, 404),
 	// Non-interactive preview of Bad Day and Smart Patrol from The Dark Eye v1.0.3 CD
-	MACGAME1("incoming", "Preview", "iNCOMING", "01be45e7241194dad07938e7059b88e3", 483467, 404),
-	WINGAME1t("incoming", "Preview", "INCOMING.EXE", "66bfffe0023556b08bd71a42dc7ce9c7", 743518, 404),
+	MACGAME1("incoming", "Preview 2", "iNCOMING",			 "r:01be45e7241194dad07938e7059b88e3", 483467, 404),
+	WINGAME2("incoming", "Preview 2", "INCOMING.EXE",		 "t:66bfffe0023556b08bd71a42dc7ce9c7", 743518,
+									  "BDMASP/BDMASP.DIR",	 "t:99c30ed43c06f8df9df22f458eabee91", 1234328, 404),
 
-	MACGAME1("insidemacgames", "Volume 1", "IMG CD-ROM", "2e2becf3549673a8107c0d2028a08fc1", 353787, 400),
+	MACGAME1("insidemacgames", "Volume 1", "IMG CD-ROM", "r:2e2becf3549673a8107c0d2028a08fc1", 353531, 400),
 
 	// Also launches three other projectors on disc, including some D3 and D5
 	MACGAME1("interactivemagic", "", "Mac Interactive Magic", "337c94c66b435e075a2d7f94b3cffc49", 483490, 404),
@@ -4148,7 +4155,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 							  "INTRO.DIR", 	  "1917276c6c3af2efdb740a36903ae7e7", 2063096, Common::JA_JPN, 404),
 
 	// Original filename is チュートリアル
-	MACDEMO1_l("inposition", "Tutorial", "Tutorial", "77f4098988d5386794d1530065f514cd", 305533, Common::JA_JPN, 400),
+	MACDEMO1_l("inposition", "Tutorial", "Tutorial", "r:77f4098988d5386794d1530065f514cd", 305277, Common::JA_JPN, 400),
 
 	// Original filename is 'いぬちゃんのうたＣＤデモ'
 	MACGAME1_l("inuchancd", "", "xn--n8jyc6a7frd6opgo41v280bt08wva9a", "8ea9e9a699c61edddffd79ddd0c994d7", 290398, Common::JA_JPN, 402),
@@ -4168,13 +4175,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("inuchanmovieparody", "", "xn--m9j7ec1b4l0b5m5841bd8bdu0d01meq88a", "8ea9e9a699c61edddffd79ddd0c994d7", 290398, Common::JA_JPN, 402),
 
 	// Original Mac filename is Grandes Inventos™
-	MACGAME1_l("inventos", "", "Grandes Inventos", "bcd3c718db258701496b3c5bcb827ef2", 483774, Common::ES_ESP, 404),
-	WINGAME1_l("inventos", "", "INVENTOS.EXE", "667c71ae2c24cae2e7e4e82b52d5a7bc", 750295, Common::ES_ESP, 404),
+	MACGAME1_l("inventos", "", "xn--Grandes Inventos-e79i", "r:bcd3c718db258701496b3c5bcb827ef2", 483518, Common::ES_ESP, 404),
+	WINGAME1_l("inventos", "", "INVENTOS.EXE",				"d:667c71ae2c24cae2e7e4e82b52d5a7bc", 750295, Common::ES_ESP, 404),
 
 	// Demos and product catalog from Iona Software, Ltd.
-	MACDEMO1("iona", "'96", "IONA DEMO", "547fefcd6bda748214be2068a7bcdead", 292216, 404),
-	WINDEMO2("iona", "'96", "DEMO.EXE", "95a3aeb1017546da820a8d3c95d3c4e4", 1946711,
-							"MAIN.DIR", "71eacbde48a94043390d7dab58b8bb52", 1812168, 404),
+	MACDEMO1("iona", "'96", "IONA DEMO", "r:547fefcd6bda748214be2068a7bcdead", 291960, 404),
+	WINDEMO2("iona", "'96", "DEMO.EXE",  "d:95a3aeb1017546da820a8d3c95d3c4e4", 1946711,
+							"MAIN.DIR",  "d:71eacbde48a94043390d7dab58b8bb52", 1812168, 404),
 	// Iona + Edmark catalog
 	WINDEMO2t("iona", "'96+Edmark", "DEMO.EXE",		"103e0c6cce7f5f1f61580dc6913f273c", 1060457,
 									"EDMOVIES/BBH", "3ada3c95704cafcbee5c96e7d2216c4c", 3051912, 404),
@@ -4200,8 +4207,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// found on PC Format CD-ROM Collection 19
 	WINDEMO1t("it1d", "Demo", "INTHE1ST.EXE", "685717457c3219012eda7403579f94c9", 2576067, 400),
 
-	MACGAME1("iwave", "Issue 1", "!", "ae7178ba5dd9dcd15fb7a27cd99089b2", 484389, 400),
-	WINGAME1("iwave", "Issue 1", "IWAVE.EXE", "67aa1f75dc23e071e5325be04e9738a6", 690955, 400),
+	MACGAME1("iwave", "Issue 1", "!",		  "r:ae7178ba5dd9dcd15fb7a27cd99089b2", 484133, 404),
+	WINGAME1("iwave", "Issue 1", "IWAVE.EXE", "d:67aa1f75dc23e071e5325be04e9738a6", 690955, 404),
 
 	// Note: There are four versions of the binary included on the disc.
 	// French version was distributed by Ubi Soft
