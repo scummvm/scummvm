@@ -37,7 +37,7 @@ class Interaction : public PartyView {
 		Common::Rect _bounds;
 		InteractionButton() {}
 		InteractionButton(const Common::String &text, char c) :
-			_text(text), _c(c) {}
+			_text(text), _c(toupper(c)) {}
 	};
 private:
 	Shared::Xeen::SpriteResource _frame;

@@ -1165,12 +1165,17 @@ maps:
 		pit: "Pit of bubbling lava!"
 		levitation: "Levitation saves you."
 		virgin: "A luscious virgin shackled to the wall!\na) Kiss her  b) Release her  c) Leave"
-		tip1: "Try setting 1b,2j"
+		tip1: "Try setting 1B,2J"
 		tip2: "This cavern is random until the dials\nare set."
-		dial: "Stabilization dial #%c set (a-z)?"
+		dial: "Stabilization dial #%c set (A-Z)?"
 		poof: "Poof! You've been teleported..."
 		ladder: "A ladder going up, take it (Y/N)?"
-
+	emap11:
+		virgin: "A luscious virgin shackled to the wall!"
+		option_a: "Kiss her"
+		option_b: "Release her"
+		option_c: "Leave"
+	
 	map12:
 		ladder_up: "Ladder up, climb (Y/N)?"
 		polyhedron1: "Atop a crystal pyramid spins a glowing\npolyhedron. Stop it on side (1-9)?"

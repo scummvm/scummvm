@@ -173,6 +173,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/arrested.o \
 	mm1/views_enh/interactions/interaction.o \
 	mm1/views_enh/interactions/interaction_query.o \
+	mm1/views_enh/interactions/prisoners.o \
 	mm1/views_enh/interactions/resistances.o \
 	mm1/views_enh/interactions/statue.o \
 	mm1/views_enh/locations/blacksmith.o \
