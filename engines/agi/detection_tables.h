@@ -1004,6 +1004,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE_L("Naturette 1 (French v1.2)", "d3665622cc41aeb9c7ecf4fa43f20e53", Common::FR_FRA),
 	FANMADE_FO("Naturette 2: Daughter of the Moon (v1.0)", "bdf76a45621c7f56d1c9d40292c6137a", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE_FO("Naturette 3: Adventure in Treeworld (v1.0a)", "6dbb0e7fc75fec442e6d9e5a06f1530e", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
+	FANMADE_FO("Naturette 3: Adventure in Treeworld (v1.0c)", "f6d4950e22fac1951b221df15d3b1e9a", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
 	FANMADE_FO("Naturette 4: From a Planet to Another Planet (Not Finished)", "13be8cd9cf35aeff0a39b8757057fbc8", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	// FIXME: Actually Naturette 4 has both English and French language support built into it. How to add that information?
 	FANMADE_FO("Naturette 4: From a Planet to Another Planet (2007-10-05)", "8253706b6ef5423a79413b216760297c", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),	// AGIPAL
