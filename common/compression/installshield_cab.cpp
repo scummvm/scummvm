@@ -225,7 +225,8 @@ bool InstallShieldCabinet::open(const String &baseName) {
 
 					// Check if the file is split across volumes
 					if (fileIndex == volumeHeader.lastFileIndex &&
-						entry.compressedSize != headerHeader.lastFileSizeCompressed) {
+						entry.compressedSize != headerHeader.lastFileSizeCompressed &&
+						headerHeader.lastFileSizeCompressed != 0) {
 						
 						entry.flags |= kSplit;
 					}
