@@ -290,7 +290,7 @@ void OpenGLShaderRenderer::setStippleData(byte *data) {
 		byte b = data[i];
 		for (int j = 0; j < 8; j++) {
 			//debug("%d", 8*i + j);
-			_variableStippleArray[8*i + j] = b & 0x1;
+			_variableStippleArray[i + 8*j] = b & 0x1;
 			b = b >> 1;
 		}
 	}
