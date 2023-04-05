@@ -69,7 +69,7 @@ public:
 	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
 
 private:
-	enum Flags { kSplit = 1, kCompressed = 4 };
+	enum Flags { kSplit = 1, kObfuscated = 2, kCompressed = 4, kInvalid = 8 };
 
 	struct FileEntry {
 		uint32 uncompressedSize;
@@ -187,7 +187,7 @@ bool InstallShieldCabinet::open(const String &baseName) {
 			entry.volume = file->readUint16LE();
 
 			// Make sure the entry has a name and data inside the cab
-			if (nameOffset == 0 || entry.offset == 0 || (entry.flags & 8))
+			if (nameOffset == 0 || entry.offset == 0 || (entry.flags & kInvalid))
 				continue;
 
 			// Then let's get the string
@@ -216,6 +216,10 @@ bool InstallShieldCabinet::open(const String &baseName) {
 			file->skip(20);
 			entry.offset = file->readUint32LE();
 			entry.volume = 0;
+
+			// Make sure the entry has a name and data inside the cab
+			if (nameOffset == 0 || entry.offset == 0 || (entry.flags & kInvalid))
+				continue;
 
 			for (uint i = 1; i < _volumeHeaders.size() + 1; ++i) {
 				// Check which volume the file is in
@@ -284,6 +288,11 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 		return nullptr;
 
 	const FileEntry &entry = _map[name];
+
+    if (entry.flags & kObfuscated) {
+        warning("Cannot extract obfuscated file %s", name.c_str());
+        return nullptr;
+    }
 
 	ScopedPtr<SeekableReadStream> stream(SearchMan.createReadStreamForMember(getVolumeName((entry.volume))));
 	if (!stream) {
