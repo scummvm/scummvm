@@ -46,6 +46,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Absturz in Ultima VI beim Öffnen der neuen Zauberbuch-Oberfläche behoben.
    - Fehlerhafte Farbdarstellung bei Charakteren und der Benutzeroberfläche in Ultima VI korrigiert.
    - Absturz in Ultima VI behoben, der auftritt, wenn Wände betrachtet werden.
+   - Verschiedene Fehler korrigiert, die zu Abstürzen geführt haben.
+   - Die Genauigkeit des Verhaltens von Gegnern und Projektilen wurde verbessert.
 
  Voyeur:
    - Unterstützung für die deutsche Fan-Übersetzung hinzugefügt.
