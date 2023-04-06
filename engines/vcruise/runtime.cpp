@@ -289,7 +289,23 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 		Common::SharedPtr<SfxPlaylist> playlist;
 
 		for (const Common::INIFile::KeyValue &keyValue : playlistsSection->keys) {
-			const Common::String &key = keyValue.key;
+			const Common::String &baseKey = keyValue.key;
+
+			// Strip inline comments
+			uint keyValidLength = 0;
+			for (uint i = 0; i < baseKey.size(); i++) {
+				char c = baseKey[i];
+				if ((c & 0x80) == 0 && ((c & 0x7f) <= ' '))
+					continue;
+
+				if (c == ';')
+					break;
+
+				keyValidLength = i + 1;
+			}
+
+			Common::String key = baseKey.substr(0, keyValidLength);
+
 
 			if (key.size() == 0)
 				continue;
