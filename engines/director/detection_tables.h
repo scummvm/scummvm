@@ -474,6 +474,7 @@ static const PlainGameDescriptor directorGames[] = {
 	// Multimedia or reference products
 	{ "9worlds",			"Nine Worlds hosted by Patrick Stewart" },
 	{ "aamn",				"Anatomy & Anaesthesia of the Mandibular Nerve" },
+	{ "acadia",				"The Acadia CD-ROM" },
 	{ "adamcmp",			"A.D.A.M. Comprehensive" },
 	{ "adamess",			"A.D.A.M. Essentials" },
 	{ "adamstd",			"A.D.A.M. Standard" },
@@ -486,6 +487,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "artintact",			"the complete artintact komplett" },
 	{ "artmarcopatrito",	"The Art of Marco Patrito" },
 	{ "aruba",				"Aruba Interactive" },
+	{ "arubavr",			"Aruba: A Virtual Tour" },
 	{ "athletics",			"International Athletics" },
 	{ "babylon5int",		"Babylon 5 Interactive" },
 	{ "babylon5guide",		"The Official Guide to Babylon 5" },
@@ -586,6 +588,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "planetstrass",		"Pl@net" },
 	{ "potala",             "1000 Years Potala" },
 	{ "princetonsat98",		"The Princeton Review: Inside the SAT '98" },
+	{ "renaissance",		"The Renaissance: Winds of Change" },
 	{ "revwar",				"Revolutionary War Picture CD" },
 	{ "rodneyab",			"Rodney's Art Brain" },
 	{ "saguaro",            "Saguaro & the City: Investigate the Sonoran Desert with an Interactive CD ROM" },
@@ -804,6 +807,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// French titles
 	{ "1contre100",			"1 contre 100" },
+	{ "adiboubobos",		"Adibou: Aventure dans le corps humain - 3. Mes petits bobos" },
 	{ "adibouhumain",		"Adibou: Aventure dans le corps humain" },
 	{ "adiboumots",			"Adibou: Joue avec les mots et les nombres (5-6 ans)" },
 	{ "affaires1",			"Affaires à suivre: L'Île diabolique" },
@@ -6671,6 +6675,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("abductthis", "", "Abduct This!", "41fa2186d635be3094403c75b5f44d4b", 115391, 600),
 	WINGAME1t("abductthis", "", "abduct32.exe", "eef786210abfb8e140e843dc707e5025", 3644633, 600),
 
+	// TODO: unconfirmed version (TRAC #13302)
+	WINGAME1("acadia", "", "Acadia.exe", "t:947fda59fdcd99aa8bd97291a6562526", 1516555, 600),
+
 	MACGAME1("afiles", "", "The A-Files",	"63e8b9f6744efefbb8a004a2b76e2b1d", 118530, 602),
 	WINGAME2("afiles", "", "Projector.exe", "4c850adf7c36a9a3dea64c880eaf25c0", 1515545,
 						   "intro.dir",		"8030f92799c85ab5a6fd1c23f4ce6734", 396047, 602),
@@ -6691,6 +6698,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("anony", "", "Anony", "65063397536553c4f6ff2a6c07194bf7", 1845815, Common::JA_JPN, 602),
 	WINGAME1t_l("anony", "", "ANONY.EXE", "83a8b0577877f3ca90ef2df6e6e287ae", 2029722, Common::JA_JPN, 602),
+
+	// TODO: unconfirmed version (TRAC #13310)
+	WINGAME1("arubavr", "", "Virtual Aruba.exe", "t:0524d0d370123c6ffc78442fb217bf8e", 2595642, 600),
 
 	MACGAME1_l("aslss", "", "ASL", "aa9d5cab48b17f563110dc271c6663b4", 1133578, Common::JA_JPN, 601),
 
@@ -8205,6 +8215,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("recfantome", "", "Speel.exe", "2942c9272bb0f41e53f5d103af16195c", 3443389,
 								 "fantome.ico", "d357185c51154ed60bb05aea3689dc60", 2238, Common::NL_NLD, 800),
 
+	// TRAC report #13300
+	WINGAME1("renaissance", "", "Renaissance.exe", "d:0c81c84ca4966313ad27d47daba44537", 2587334, 850),
+
 	// Playable demo for Meteor Madness and Tremor Trouble
 	MACGAME1("rh", "", "RHDemo", "08c9ea94f6469e71ae0c71987bbf6323", 155737, 850),
 	WINGAME1("rh", "", "RHDemo.exe", "c163f36141579ee374f7b4b2bddee95a", 2250046, 850),
@@ -8509,6 +8522,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2_l("1contre100", "", "start.exe", "00541c08177b6d55a3df893bcfccc843", 2764454,
 								 "main.dxr",  "c2bf555f6209e51a1c8cce29c8e6534f", 43315121, Common::FR_FRA, 1010),
+
+	// TRAC report #14382
+	WINGAME1_l("adiboubobos", "", "Casse-Virus.exe", "t:8be9bfb3aa0c3f7d6a20980721149998", 5270940, Common::FR_FRA, 1010),
 
 	WINGAME1_l("adibouhumain", "", "Adibou_CH.exe", "t:d955b857b9e506d1e3141ca4d81b59d5", 2633827, Common::FR_FRA, 1010),
 
