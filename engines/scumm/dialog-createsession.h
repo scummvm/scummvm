@@ -19,43 +19,25 @@
  *
  */
 
-#ifndef SCUMM_DIALOG_SESSION_SELECTOR_H
-#define SCUMM_DIALOG_SESSION_SELECTOR_H
+#ifndef SCUMM_DIALOG_CREATE_SESSION_H
+#define SCUMM_DIALOG_CREATE_SESSION_H
 
 #include "gui/dialog.h"
 #include "gui/widgets/edittext.h"
-#include "gui/widgets/list.h"
-#include "common/fs.h"
-#include "common/hashmap.h"
-#include "common/stack.h"
-#include "common/str.h"
 
 #include "scumm/he/intern_he.h"
-#include "scumm/he/net/net_main.h"
-#include "scumm/he/net/net_defines.h"
 
 namespace Scumm {
 
-class StaticTextWidget;
-
-class SessionSelectorDialog : public Dialog {
+class CreateSessionDialog : public Dialog {
 public:
-	SessionSelectorDialog(Scumm::ScummEngine_v90he *vm);
+	CreateSessionDialog();
 
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-	void handleTickle() override;
 
 private:
-	ScummEngine_v90he *_vm;
-
-	uint32 _timestamp;
-
-	GUI::Widget *_joinButton;
-	GUI::StaticTextWidget *_queryProgressText;
-
+	GUI::EditTextWidget *_sessionName;
 	GUI::EditTextWidget *_playerName;
-
-	GUI::ListWidget *_list;
 };
 
 

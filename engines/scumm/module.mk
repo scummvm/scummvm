@@ -168,6 +168,7 @@ MODULE_OBJS += \
 
 ifdef USE_ENET
 MODULE_OBJS += \
+	dialog-createsession.o \
 	dialog-sessionselector.o \
 	he/net/net_main.o
 

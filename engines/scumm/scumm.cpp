@@ -93,6 +93,7 @@
 #ifdef USE_ENET
 #include "scumm/he/net/net_main.h"
 #include "scumm/dialog-sessionselector.h"
+#include "scumm/dialog-createsession.h"
 #ifdef USE_LIBCURL
 #include "scumm/he/net/net_lobby.h"
 #endif
@@ -3479,10 +3480,15 @@ bool ScummEngine::displayMessageYesNo(const char *message, ...) {
 int ScummEngine_v90he::networkSessionDialog() {
 	GUI::MessageDialog dialog(_("Would you like to host or join a network play session?"), _("Host"), _("Join"));
 	int res = runDialog(dialog);
-	if (res == GUI::kMessageOK)
+	if (res == GUI::kMessageOK) {
 		// Hosting session.
-		return -1;
-
+		CreateSessionDialog createDialog;
+		if (runDialog(createDialog)) {
+			return -1;
+		} else {
+			return -2;
+		}
+	}
 	// Joining a session
 	SessionSelectorDialog sessionDialog(this);
 	return runDialog(sessionDialog);
