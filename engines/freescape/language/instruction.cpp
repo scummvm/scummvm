@@ -94,7 +94,12 @@ void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, b
 	if (!obj->_conditionSource.empty()) {
 		_firstSound = true;
 		_objExecutingCodeSize = obj->getSize();
-		debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
+		if (collided)
+			debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource.c_str());
+		else if (shot)
+			debugC(1, kFreescapeDebugCode, "Executing with shot flag: %s", obj->_conditionSource.c_str());
+		else
+			error("Neither shot or collided flag is set!");
 		executeCode(obj->_condition, shot, collided, false); // TODO: check this last parameter
 	}
 }
@@ -124,7 +129,7 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 	int codeSize = code.size();
 	while (ip <= codeSize - 1) {
 		FCLInstruction &instruction = code[ip];
-		debugC(1, kFreescapeDebugCode, "Executing ip: %d in code with size: %d", ip, codeSize);
+		debugC(1, kFreescapeDebugCode, "Executing ip: %d with type %d in code with size: %d", ip, instruction.getType(), codeSize);
 		switch (instruction.getType()) {
 		default:
 			if (!isCastle())
