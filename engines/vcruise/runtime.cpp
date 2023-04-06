@@ -2382,9 +2382,7 @@ void Runtime::stopSound(SoundInstance &sound) {
 	if (!sound.cache)
 		return;
 
-	if (sound.cache->player)
-		sound.cache->player->stop();
-
+	sound.cache->player.reset();
 	sound.cache.reset();
 	sound.endTime = 0;
 }
@@ -3097,8 +3095,12 @@ void Runtime::recordSaveGameSnapshot() {
 		saveSound.balance = sound.balance;
 
 		// Skip ramp
-		if (sound.rampRatePerMSec != 0)
+		if (sound.rampRatePerMSec != 0) {
+			if (sound.rampTerminateOnCompletion)
+				continue;	// Don't even save this
+
 			saveSound.volume = sound.rampEndVolume;
+		}
 
 		saveSound.is3D = sound.is3D;
 		saveSound.isLooping = sound.isLooping;
