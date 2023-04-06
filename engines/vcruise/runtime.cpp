@@ -639,7 +639,6 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	uint numRandomAmbientSounds = 0;
 	if (saveVersion >= 3)
 		numRandomAmbientSounds = stream->readUint32BE();
-	debug(5, "TODO: numRandomAmbientSounds: %d - not currently used", numRandomAmbientSounds);
 
 	uint numVars = stream->readUint32BE();
 	uint numTimers = stream->readUint32BE();
