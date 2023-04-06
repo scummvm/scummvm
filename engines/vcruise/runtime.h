@@ -662,6 +662,7 @@ private:
 	void inventoryAddItem(uint item);
 	void inventoryRemoveItem(uint item);
 	void drawInventory(uint slot);
+	void drawCompass();
 	void resetInventoryHighlights();
 
 	Common::String getFileNameForItemGraphic(uint itemID) const;

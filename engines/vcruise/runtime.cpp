@@ -891,6 +891,7 @@ bool Runtime::runIdle() {
 		_havePendingReturnToIdleState = false;
 
 		returnToIdleState();
+		drawCompass();
 		return true;
 	}
 
@@ -931,9 +932,10 @@ bool Runtime::runIdle() {
 			detectPanoramaMouseMovement(osEvent.timestamp);
 
 			bool changedState = dischargeIdleMouseMove();
-			if (changedState)
+			if (changedState) {
+				drawCompass();
 				return true;
-
+			}
 		} else if (osEvent.type == kOSEventTypeLButtonUp) {
 			PanoramaState oldPanoramaState = _panoramaState;
 			_panoramaState = kPanoramaStateInactive;
@@ -943,8 +945,10 @@ bool Runtime::runIdle() {
 
 			if (_lmbReleaseWasClick) {
 				bool changedState = dischargeIdleClick();
-				if (changedState)
+				if (changedState) {
+					drawCompass();
 					return true;
+				}
 			}
 
 			// If the released from panorama mode, pick up any interactions at the new mouse location, and change the mouse back
@@ -956,13 +960,17 @@ bool Runtime::runIdle() {
 				_idleIsOnInteraction = false;
 
 				bool changedState = dischargeIdleMouseMove();
-				if (changedState)
+				if (changedState) {
+					drawCompass();
 					return true;
+				}
 			}
 		} else if (osEvent.type == kOSEventTypeLButtonDown) {
 			bool changedState = dischargeIdleMouseDown();
-			if (changedState)
+			if (changedState) {
+				drawCompass();
 				return true;
+			}
 		}
 	}
 
@@ -1500,6 +1508,8 @@ void Runtime::terminateScript() {
 		if (checkCompletionConditions())
 			return;
 	}
+
+	drawCompass();
 
 	if (_havePendingScreenChange)
 		changeToScreen(_roomNumber, _screenNumber);
@@ -2882,6 +2892,73 @@ void Runtime::drawInventory(uint slot) {
 	commitSectionToScreen(_traySection, sliceRect);
 }
 
+void Runtime::drawCompass() {
+	bool haveHorizontalRotate = false;
+	bool haveUp = false;
+	bool haveDown = false;
+	bool haveLocation = false;
+
+	switch (_gameState) {
+	case kGameStateIdle:
+	case kGameStateGyroIdle:
+	case kGameStateGyroAnimation:
+		haveHorizontalRotate = _haveHorizPanAnimations;
+		haveUp = _havePanUpFromDirection[_direction];
+		haveDown = _havePanDownFromDirection[_direction];
+		break;
+	case kGameStatePanLeft:
+	case kGameStatePanRight:
+		haveHorizontalRotate = _haveHorizPanAnimations;
+		break;
+	default:
+		break;
+	}
+
+	haveLocation = (haveUp || haveDown || haveHorizontalRotate);
+
+	const Common::Rect blackoutRects[4] = {
+		Common::Rect(0, 40, 36, 62),  // Left
+		Common::Rect(52, 40, 88, 62), // Right
+		Common::Rect(35, 12, 53, 38), // Up
+		Common::Rect(35, 56, 54, 78), // Down
+	};
+
+	const bool drawSections[4] = {haveHorizontalRotate, haveHorizontalRotate, haveUp, haveDown};
+
+	Common::Rect compassRect = Common::Rect(0, 0, _trayCompassGraphic->w, _trayCompassGraphic->h);
+
+	int16 vertOffset = (_traySection.rect.height() - compassRect.height()) / 2;
+	const int horizOffset = 0;
+
+	compassRect.translate(horizOffset, vertOffset);
+
+	_traySection.surf->blitFrom(*_trayCompassGraphic, Common::Point(compassRect.left, compassRect.top));
+
+	const uint32 blackColor = _traySection.surf->format.ARGBToColor(255, 0, 0, 0);
+
+	for (uint i = 0; i < 4; i++) {
+		if (!drawSections[i]) {
+			Common::Rect blackoutRect = blackoutRects[i];
+			blackoutRect.translate(horizOffset, vertOffset);
+
+			_traySection.surf->fillRect(blackoutRect, blackColor);
+		}
+	}
+
+	Common::Rect lowerRightRect = Common::Rect(_traySection.rect.right - 88, 0, _traySection.rect.right, 88);
+
+	if (haveLocation) {
+		if (_gameID == GID_REAH)
+			_traySection.surf->blitFrom(*_trayCornerGraphic, Common::Point(lowerRightRect.left, lowerRightRect.top));
+	} else {
+		if (_gameID == GID_REAH)
+			_traySection.surf->blitFrom(*_trayBackgroundGraphic, lowerRightRect, lowerRightRect);
+	}
+
+	commitSectionToScreen(_traySection, compassRect);
+	commitSectionToScreen(_traySection, lowerRightRect);
+}
+
 void Runtime::resetInventoryHighlights() {
 	for (uint slot = 0; slot < kNumInventorySlots; slot++) {
 		InventoryItem &item = _inventory[slot];
@@ -3324,7 +3401,6 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 		isRight = true;
 	}
 
-
 	uint cursorID = 0;
 	if (_haveHorizPanAnimations) {
 		uint panCursor = kPanCursorDraggableHoriz;
@@ -3338,6 +3414,7 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 	}
 
 	changeToCursor(_cursors[cursorID]);
+	drawCompass();
 }
 
 void Runtime::scriptOpAnimF(ScriptArg_t arg) {
