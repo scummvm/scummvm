@@ -445,6 +445,11 @@ public:
 	void setSoundType(Audio::Mixer::SoundType soundType);
 
 	/**
+	 * Add an audio track from a stream.
+	 */
+	bool addStreamTrack(Audio::SeekableAudioStream *stream);
+
+	/**
 	 * Add an audio track from a stream file.
 	 *
 	 * This calls SeekableAudioStream::openStreamFile() internally
@@ -815,6 +820,7 @@ protected:
 	class StreamFileAudioTrack : public SeekableAudioTrack {
 	public:
 		StreamFileAudioTrack(Audio::Mixer::SoundType soundType);
+		StreamFileAudioTrack(Audio::SeekableAudioStream *stream, Audio::Mixer::SoundType soundType);
 		~StreamFileAudioTrack();
 
 		/**
