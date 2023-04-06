@@ -3202,6 +3202,9 @@ void Runtime::restoreSaveGameSnapshot() {
 
 	_havePendingScreenChange = true;
 	_forceScreenChange = true;
+
+	for (uint slot = 0; slot < kNumInventorySlots; slot++)
+		drawInventory(slot);
 }
 
 void Runtime::saveGame(Common::WriteStream *stream) const {
