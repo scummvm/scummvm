@@ -33,15 +33,19 @@ enum {
 
 CreateSessionDialog::CreateSessionDialog() : Dialog("CreateSession") {
 
+	// I18N: Creates new online session for multiplayer
 	new GUI::StaticTextWidget(this, "CreateSession.CreateSessionTitle", _("Create a new game session"));
 
+	// I18N: Name of the online game session
 	new GUI::StaticTextWidget(this, "CreateSession.SessionNameLabel", _("Game Name:"));
 	_sessionName = new GUI::EditTextWidget(this, "CreateSession.SessionName", ConfMan.get("game_session_name"));
 
+	// I18N: The user's name for online
 	new GUI::StaticTextWidget(this, "CreateSession.PlayerNameLabel", _("Your Name:"));
 	_playerName = new GUI::EditTextWidget(this, "CreateSession.PlayerName", ConfMan.get("network_player_name"));
 
 	new GUI::ButtonWidget(this, "CreateSession.Cancel", _("Cancel"), Common::U32String(), kCancelCmd, Common::ASCII_ESCAPE);
+	// I18N: Button, start hosting online multiplayer game
 	new GUI::ButtonWidget(this, "CreateSession.Host", _("Host"), Common::U32String(), kHostCmd, Common::ASCII_RETURN);
 }
 

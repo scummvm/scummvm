@@ -3481,7 +3481,7 @@ int ScummEngine_v90he::networkSessionDialog() {
 	GUI::MessageDialog dialog(_("Would you like to host or join a network play session?"), _("Host"), _("Join"));
 	int res = runDialog(dialog);
 	if (res == GUI::kMessageOK) {
-		// Hosting session.
+		// Hosting a session.
 		CreateSessionDialog createDialog;
 		if (runDialog(createDialog)) {
 			return -1;
