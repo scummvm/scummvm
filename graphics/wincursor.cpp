@@ -235,24 +235,31 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 		for (uint32 x = 0; x < _width; x++) {
 			byte &surfaceByte = _surface[y * _width + x];
 			if (src[x / 8] & (1 << (7 - x % 8))) {
+				const byte *paletteEntry = &_palette[surfaceByte * 3];
+
+				// Per WDDM spec, white with 1 in the AND mask is inverted, any other color with 1 is transparent.
+				// Riven depends on this behavior for proper cursor transparency, since it uses cursors where the
+				// transparent pixels have a non-zero non-black color.
+				const bool isTransparent = (paletteEntry[0] != 255 || paletteEntry[1] != 255 || paletteEntry[2] != 255);
+
 				if (_mask) {
 					byte &maskByte = _mask[y * _width + x];
-					if (surfaceByte == 0) {
-						// Transparent
+
+					if (isTransparent) {
 						maskByte = 0;
 					} else {
 						// Inverted, if the backend supports invert then emit an inverted pixel, otherwise opaque
-						maskByte = supportInvert ? 2 : 1;
+						maskByte = supportInvert ? kCursorMaskInvert : kCursorMaskOpaque;
 					}
 				} else {
 					// Don't support mask or invert, leave this as opaque if it's XOR so it's visible
-					if (surfaceByte == 0)
+					if (isTransparent)
 						surfaceByte = _keyColor;
 				}
 			} else {
 				// Opaque pixel
 				if (_mask)
-					_mask[y * _width + x] = 1;
+					_mask[y * _width + x] = kCursorMaskOpaque;
 			}
 		}
 
