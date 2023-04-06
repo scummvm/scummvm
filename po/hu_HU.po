@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-05 21:31+0000\n"
-"PO-Revision-Date: 2023-04-01 12:35+0000\n"
+"PO-Revision-Date: 2023-04-06 08:35+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -3587,11 +3587,11 @@ msgstr "Jobb Kar Y"
 
 #: backends/keymapper/hardware-input.cpp:281
 msgid "Hat X"
-msgstr ""
+msgstr "Kalap X"
 
 #: backends/keymapper/hardware-input.cpp:282
 msgid "Hat Y"
-msgstr ""
+msgstr "Kalap Y"
 
 #: backends/keymapper/remap-widget.cpp:295
 #: backends/keymapper/remap-widget.cpp:325
@@ -5742,21 +5742,19 @@ msgstr "Pisztolytáska"
 
 #: engines/hpl1/metaengine.cpp:100
 msgid "Notebook"
-msgstr ""
+msgstr "Jegyzettömb"
 
 #: engines/hpl1/metaengine.cpp:101
 msgid "Personal Notes"
-msgstr ""
+msgstr "Személyes Jegyzetek"
 
 #: engines/hpl1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "Repülés elõre"
+msgstr "Zseblámpa"
 
 #: engines/hpl1/metaengine.cpp:103
 msgid "Glowstick"
-msgstr ""
+msgstr "Világító rúd"
 
 #: engines/hypno/metaengine.cpp:33
 msgid "Enable original cheats"
@@ -5803,26 +5801,22 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "Tűz"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "Kar"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
-#, fuzzy
-#| msgid "Remove"
 msgid "Remora"
-msgstr "Eltávolít"
+msgstr "Remora"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Side Step"
-msgstr "Siklás balra"
+msgstr "Oldallépés"
 
 #: engines/kyra/detection_tables.h:73
 msgid "Missing language specific game code and/or resources."
@@ -6234,115 +6228,101 @@ msgstr "Escape"
 
 #: engines/mm/mm1/metaengine.cpp:48
 msgid "View Party Member 1"
-msgstr ""
+msgstr "Csapattárs 1 Megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:49
 msgid "View Party Member 2"
-msgstr ""
+msgstr "Csapattárs 2 Megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:50
 msgid "View Party Member 3"
-msgstr ""
+msgstr "Csapattárs 3 Megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:51
 msgid "View Party Member 4"
-msgstr ""
+msgstr "Csapattárs 4 Megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:52
 msgid "View Party Member 5"
-msgstr ""
+msgstr "Csapattárs 5 Megtekintése"
 
 #: engines/mm/mm1/metaengine.cpp:53
 msgid "View Party Member 6"
-msgstr ""
+msgstr "Csapattárs 6 Megtekintése"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:61
-#, fuzzy
-#| msgid "Unlock"
 msgid "Block"
-msgstr "Felold"
+msgstr "Blokk"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:63
 msgid "Cast"
-msgstr ""
+msgstr "Varázsol"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:65
 msgid "Exchange"
-msgstr ""
+msgstr "Csere"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:67
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "Jobb"
+msgstr "Harc"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/mm/mm1/metaengine.cpp:110
-#, fuzzy
-#| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "Preferenciák"
+msgstr "Gyors Hivatkozás"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
 msgid "Retreat"
-msgstr ""
+msgstr "Visszavonulás"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
 msgid "Shoot"
-msgstr ""
+msgstr "Lövés"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:78
 msgid "Delay"
-msgstr ""
+msgstr "Kivár"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:80 engines/mm/mm1/metaengine.cpp:101
 msgid "Protect"
-msgstr ""
+msgstr "Védés"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:88
-#, fuzzy
-#| msgid "Move Forward"
 msgid "Forwards"
-msgstr "Mozgás elõre"
+msgstr "Előrefelé"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:90
-#, fuzzy
-#| msgid "Move Backward"
 msgid "Backwards"
-msgstr "Menj Hátrafelé"
+msgstr "Hátrafelé"
 
 #: engines/mm/mm1/metaengine.cpp:98
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle Minimap"
-msgstr "Harc Váltása"
+msgstr "Minitérkép Váltás"
 
 #: engines/mm/mm1/metaengine.cpp:99
 msgid "Reorder Party"
-msgstr ""
+msgstr "Csapat Átrendezés"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "Keresés:"
+msgstr "Keresés"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:107
 msgid "Bash"
-msgstr ""
+msgstr "Ütés"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:109 engines/scumm/help.cpp:144
@@ -6350,31 +6330,29 @@ msgid "Unlock"
 msgstr "Felold"
 
 #: engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Next location"
 msgid "Goto location"
-msgstr "Következő hely"
+msgstr "Ugrás a helyre"
 
 #: engines/mm/mm1/metaengine.cpp:127 engines/mm/mm1/metaengine.cpp:132
 msgid "Might and Magic 1 - Menus"
-msgstr ""
+msgstr "Might and Magic 1 - Menük"
 
 #: engines/mm/mm1/metaengine.cpp:133 engines/mm/mm1/metaengine.cpp:139
 #: engines/mm/mm1/metaengine.cpp:145
 msgid "Might and Magic 1 - Party"
-msgstr ""
+msgstr "Might and Magic 1 - Csapat"
 
 #: engines/mm/mm1/metaengine.cpp:138
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "Might and Magic 1 - Harc"
 
 #: engines/mm/mm1/metaengine.cpp:144
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "Might and Magic 1"
 
 #: engines/mm/mm1/metaengine.cpp:146
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - Csalások"
 
 #: engines/mm/shared/utils/engine_data.cpp:277
 #: engines/ultima/shared/engine/data_archive.cpp:80
@@ -8643,22 +8621,21 @@ msgstr ""
 "állománynak. Kérlek tömörítsd ki"
 
 #: engines/tetraedge/metaengine.cpp:33
-#, fuzzy
-#| msgid "Correct aspect ratio for games"
 msgid "Correct movie aspect ratio"
-msgstr "A játékok megfelelő képaránya"
+msgstr "A film megfelelő képaránya"
 
 #: engines/tetraedge/metaengine.cpp:34
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
 msgstr ""
+"Syberia jelenetek 16:9 arányú lejátszása, teljes képernyőre nyújtás helyett"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "Hiányzó jelenetek visszaállítása"
 
 #: engines/tetraedge/metaengine.cpp:45
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "Néhány jelenet visszaállítása eredetire a Windows kiadásban"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
@@ -8927,31 +8904,29 @@ msgid "Wall collision off"
 msgstr "Fali ütközés ki"
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgid "Language not detected"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "Nyelv nincs észlelve"
+msgstr "Nyelv kiválasztása"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
 msgid "Voices: None"
-msgstr ""
+msgstr "Hangok: Nincs"
 
 #: engines/twine/parser/text.cpp:40
 msgctxt "Options menu"
 msgid "Voices: English"
-msgstr ""
+msgstr "Hangok: Angol"
 
 #: engines/twine/parser/text.cpp:41
 msgctxt "Options menu"
 msgid "Voices: French"
-msgstr ""
+msgstr "Hangok: Francia"
 
 #: engines/twine/parser/text.cpp:42
 msgctxt "Options menu"
 msgid "Voices: German"
-msgstr ""
+msgstr "Hangok: Német"
 
 #: engines/ultima/metaengine.cpp:55
 msgid "Enable frame skipping"
@@ -9066,18 +9041,17 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"A Crusader bevezető filmfájlja hiányzik – ellenőrizd hogy a FLICS és a SOUND "
+"könyvtárak másolásra kerültek-e a CD-ről. További utasítások a wikin "
+"találhatók: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/metaengine.cpp:50
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "Átmenetek:"
+msgstr "Gyorsabb animációk"
 
 #: engines/vcruise/metaengine.cpp:51
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Speeds up animations."
-msgstr "Beszéd Beállítások"
+msgstr "Felgyorsítja az animációkat."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."
