@@ -2730,6 +2730,12 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 
 			if (success && (_saveTemporaryState || _game.version == 8) && VAR_GAME_LOADED != 0xFF)
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : GAME_PROPER_LOAD;
+
+			// If we are here, it means that we are loading a game from the ScummVM menu;
+			// let's call the exit save/load script (only used in v6) to restore the cursor
+			// properly.
+			if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
+				runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
 		}
 
 		if (!success) {
@@ -2941,6 +2947,15 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 }
 
 void ScummEngine_v6::scummLoop_handleSaveLoad() {
+	// When launching a savegame from the launcher it may happen (if the game was
+	// saved within the original GUI) that the cursor can remain invisible until
+	// an event changes it. The original save dialog calls the exit save/load script
+	// to reinstate the cursor correctly, so we do that manually for this edge case.
+	if (_loadFromLauncher && VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0) {
+		_loadFromLauncher = false;
+		runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
+	}
+
 	ScummEngine::scummLoop_handleSaveLoad();
 
 	if (_videoModeChanged) {
