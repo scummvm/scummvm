@@ -56,6 +56,7 @@ SessionSelectorDialog::SessionSelectorDialog(Scumm::ScummEngine_v90he *vm)
 	_list->setEditable(false);
 	_list->setNumberingMode(GUI::kListNumberingOff);
 
+	// I18N: The user's name for online
 	new GUI::StaticTextWidget(this, "SessionSelector.PlayerNameLabel", _("Your Name:"));
 	_playerName = new GUI::EditTextWidget(this, "SessionSelector.PlayerName", ConfMan.get("network_player_name"));
 
