@@ -136,6 +136,8 @@ Runtime::StackValue &Runtime::StackValue::operator=(const StackValue &other) {
 	if (other.type == StackValue::kString)
 		new (&value) ValueUnion(other.value.s);
 
+	type = other.type;
+
 	return *this;
 }
 
@@ -147,6 +149,8 @@ Runtime::StackValue &Runtime::StackValue::operator=(StackValue &&other) {
 
 	if (other.type == StackValue::kString)
 		new (&value) ValueUnion(Common::move(other.value.s));
+
+	type = other.type;
 
 	return *this;
 }
@@ -1273,8 +1277,6 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 			outAnimationEnded = true;
 			return;
 		}
-
-		debug(4, "Decoding animation frame %u", _animPendingDecodeFrame);
 
 		const Graphics::Surface *surface = _animDecoder->decodeNextFrame();
 		if (!surface) {
@@ -3275,7 +3277,7 @@ LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 		}                                                                      \
 		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)]; \
 		for (uint i = 0; i < (n); i++) {                                       \
-			if (stackArgsPtr[i].type != StackValue::kNumber)                   \
+			if (stackArgsPtr[i].type != StackValue::kString)                   \
 				error("Expected op argument %u to be a string", i);            \
 			arrayName[i] = Common::move(stackArgsPtr[i].value.s);              \
 		}                                                                      \
