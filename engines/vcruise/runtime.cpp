@@ -650,6 +650,7 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	inventory.resize(numInventory);
 	sounds.resize(numSounds);
 	triggeredOneShots.resize(numOneShots);
+	randomAmbientSounds.resize(numRandomAmbientSounds);
 
 	for (uint i = 0; i < numInventory; i++)
 		inventory[i].read(stream);
@@ -659,6 +660,9 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 
 	for (uint i = 0; i < numOneShots; i++)
 		triggeredOneShots[i].read(stream);
+
+	for (uint i = 0; i < numRandomAmbientSounds; i++)
+		randomAmbientSounds[i].read(stream);
 
 	for (uint i = 0; i < numVars; i++) {
 		uint32 key = stream->readUint32BE();
