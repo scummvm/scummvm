@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/savefile.h"
 
 #include "scumm/he/intern_he.h"
@@ -491,6 +492,9 @@ int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
 
 	case 1030:
 		// Get Computer Name (online play only)
+		if (ConfMan.hasKey("network_player_name")) {
+			res = _vm->setupStringArrayFromString(ConfMan.get("network_player_name").c_str());
+		}
 		break;
 
 	// These cases are outside #ifdef USE_ENET intentionally
@@ -691,6 +695,11 @@ int LogicHEfootball2002::netInitLanGame(int32 *args) {
 		// Stop querying sessions if we haven't already
 		_vm->_net->stopQuerySessions();
 		// And host our new game.
+		// If there's a custom game name, use that instead.
+		if (ConfMan.hasKey("game_session_name")) {
+			Common::String gameSessionName = ConfMan.get("game_session_name");
+			return _vm->_net->hostGame(const_cast<char *>(gameSessionName.c_str()), userName);
+		}
 		res = _vm->_net->hostGame(sessionName, userName);
 	} else {
 		res = _vm->_net->joinSession(_requestedSessionIndex);
