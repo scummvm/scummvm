@@ -76,7 +76,7 @@
 {
 	{
 		"adibou1",
-		"ADI Jr.",
+		"ADI Jr. 4-6 Jahre",
 		AD_ENTRY1s("intro.stk", "4d4c23da4cd7e080cb1769b49ace1805", 4731020),
 		DE_DEU,
 		kPlatformDOS,
