@@ -3511,7 +3511,14 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	_direction = stackArgs[kAnimDefStackArgs + 1];
 	_havePendingScreenChange = true;
 
-	changeToCursor(_cursors[kCursorArrow]);
+	
+	uint cursorID = kCursorArrow;
+	if (_scriptEnv.panInteractionID == kPanUpInteraction)
+		cursorID = _panCursors[kPanCursorDraggableUp | kPanCursorDirectionUp];
+	else if (_scriptEnv.panInteractionID == kPanDownInteraction)
+		cursorID = _panCursors[kPanCursorDraggableDown | kPanCursorDirectionDown];
+
+	changeToCursor(_cursors[cursorID]);
 }
 
 void Runtime::scriptOpStatic(ScriptArg_t arg) {
