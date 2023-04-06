@@ -24,11 +24,11 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 
+#include "watchmaker/init/nl_parse.h"
+#include "watchmaker/extraLS.h"
+#include "watchmaker/globvar.h"
 #include "watchmaker/ll/ll_system.h"
 #include "watchmaker/types.h"
-#include "watchmaker/globvar.h"
-#include "watchmaker/extraLS.h"
-#include "watchmaker/init/nl_parse.h"
 
 namespace Watchmaker {
 
@@ -46,21 +46,19 @@ uint16 Credits_numNames = 0;
 int LoadExternalText(Init *init, char *et) {
 	char line[1000];
 	int len, num;
-	error("TODO: LoadExternalText");
-#if 0
-	FILE *ff;
 
 	if (!et) return false;
 	if (et[0] == '\0') return true;
 
-	if ((ff = fopen(et, "rt")) == nullptr)
+	auto stream = openFile(et);
+	if (!stream)
 		return false;
 
 	CurText = TextBucket;
 	memset(TextBucket, 0, TEXT_BUCKET_SIZE);
 	SentenceNum = SysSentNum = TooltipSentNum = ObjNameNum = ExtraLSNum = 1;
 
-	while ((fgets(line, 1000, ff)) != nullptr) {
+	while (stream->readLine(line, 1000) != nullptr) {
 		if ((line[0] == '/') && (line[1] == '/')) continue;
 
 		if ((len = strlen(line)) > 260)
@@ -119,8 +117,8 @@ int LoadExternalText(Init *init, char *et) {
 		}
 	}
 
-	fclose(ff);
-#endif
+	delete stream;
+
 	return true;
 }
 
