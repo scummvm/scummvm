@@ -89,6 +89,9 @@ void unlockSuperBlitter() {
 		syncSuperBlitter();
 }
 
+// see atari-graphics.cpp
+extern bool g_unalignedPitch;
+
 namespace Graphics {
 
 constexpr size_t ALIGN = 16;	// 16 bytes
@@ -103,7 +106,9 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 	h = height;
 	format = f;
 	// align pitch to a 16-byte boundary for a possible C2P conversion
-	pitch = (w * format.bytesPerPixel + ALIGN - 1) & (-ALIGN);
+	pitch = g_unalignedPitch
+		? w * format.bytesPerPixel
+		: (w * format.bytesPerPixel + ALIGN - 1) & (-ALIGN);
 
 	if (width && height) {
 		if (hasSuperVidel()) {

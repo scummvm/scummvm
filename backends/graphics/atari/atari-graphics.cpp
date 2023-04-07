@@ -39,6 +39,8 @@
 #include "graphics/blit.h"
 #include "gui/ThemeEngine.h"
 
+bool g_unalignedPitch = false;
+
 #define SCREEN_ACTIVE
 
 AtariGraphicsManager::AtariGraphicsManager() {
@@ -293,6 +295,21 @@ void AtariGraphicsManager::fillScreen(uint32 col) {
 void AtariGraphicsManager::updateScreen() {
 	//debug("updateScreen");
 
+	if (_checkUnalignedPitch) {
+		const Common::ConfigManager::Domain *activeDomain = ConfMan.getActiveDomain();
+		if (activeDomain) {
+			// FIXME: Some engines are too bound to linear surfaces that it is very
+			// hard to repair them. So instead of polluting the engine with
+			// Surface::init() & delete[] Surface::getPixels() just use this hack.
+			Common::String engineId = activeDomain->getValOrDefault("engineid");
+			if (engineId == "parallaction") {
+				g_unalignedPitch = true;
+			}
+		}
+
+		_checkUnalignedPitch = false;
+	}
+
 	// updates outOfScreen OR srcRect/dstRect (only if visible/needed)
 	_cursor.update(isOverlayVisible() ? _screenOverlaySurface : _screenSurface,
 				   _workScreen->cursorPositionChanged || _workScreen->cursorSurfaceChanged);
@@ -447,6 +464,9 @@ void AtariGraphicsManager::hideOverlay() {
 	_workScreen = _oldWorkScreen;
 	_oldWorkScreen = nullptr;
 	_cursor.swap();
+
+	// FIXME: perhaps there's a better way but this will do for now
+	_checkUnalignedPitch = true;
 
 	_overlayVisible = false;
 }

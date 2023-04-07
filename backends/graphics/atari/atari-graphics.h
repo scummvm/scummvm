@@ -241,6 +241,8 @@ private:
 	bool _overlayVisible = false;
 	Graphics::Surface _overlaySurface;
 
+	bool _checkUnalignedPitch = false;
+
 	struct Cursor {
 		void update(const Graphics::Surface &screen, bool isModified);
 
