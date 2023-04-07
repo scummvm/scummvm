@@ -3,6 +3,7 @@ MODULE := graphics
 MODULE_OBJS := \
 	big5.o \
 	blit.o \
+	blit-alpha.o \
 	blit-scale.o \
 	cursorman.o \
 	font.o \
