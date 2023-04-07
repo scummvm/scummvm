@@ -80,13 +80,13 @@ AtariMixerManager::AtariMixerManager() : MixerManager() {
 	while (_samples * 16 > _outputRate * 2)
 		_samples >>= 1;
 
-	ConfMan.registerDefault("output_samples", (int)_samples);
+	ConfMan.registerDefault("audio_buffer_size", (int)_samples);
 
-	int samples = ConfMan.getInt("output_samples");
+	int samples = ConfMan.getInt("audio_buffer_size");
 	if (samples > 0)
 		_samples = samples;
 
-	ConfMan.setInt("output_samples", (int)_samples);
+	ConfMan.setInt("audio_buffer_size", (int)_samples);
 	debug("sample buffer size: %d", _samples);
 
 	ConfMan.flushToDisk();
@@ -183,7 +183,7 @@ bool AtariMixerManager::notifyEvent(const Common::Event &event) {
 }
 
 void AtariMixerManager::update() {
-	if (_audioSuspended && !_muted) {
+	if (_audioSuspended) {
 		return;
 	}
 
@@ -211,7 +211,7 @@ void AtariMixerManager::update() {
 	if (_atariInitialized && buf != nullptr) {
 		assert(_mixer);
 		// generates stereo 16-bit samples
-		int processed = _mixer->mixCallback(_samplesBuf, _samples * 4);
+		int processed = _mixer->mixCallback(_samplesBuf, _muted ? 0 : _samples * 4);
 		if (processed > 0) {
 			memcpy(buf, _samplesBuf, processed * 4);
 		} else {
