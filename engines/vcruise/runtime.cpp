@@ -399,7 +399,7 @@ SoundCache::~SoundCache() {
 
 SoundInstance::SoundInstance()
 	: id(0), rampStartVolume(0), rampEndVolume(0), rampRatePerMSec(0), rampStartTime(0), rampTerminateOnCompletion(false),
-	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), isSpeech(false), x(0), y(0), endTime(0) {
+	  volume(0), balance(0), effectiveBalance(0), effectiveVolume(0), is3D(false), isLooping(false), isSpeech(false), isSilencedLoop(false), x(0), y(0), endTime(0) {
 }
 
 SoundInstance::~SoundInstance() {
@@ -2360,6 +2360,21 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 
 
 	computeEffectiveVolumeAndBalance(snd);
 
+	if (volume == 0 && looping) {
+		if (snd.cache) {
+			if (snd.cache->player)
+				snd.cache->player.reset();
+
+			snd.cache.reset();
+		}
+
+		snd.isSilencedLoop = true;
+		snd.endTime = 0;
+		return;
+	}
+
+	snd.isSilencedLoop = false;
+
 	SoundCache *cache = loadCache(snd);
 
 	// Reset if looping state changes
@@ -2369,12 +2384,11 @@ void Runtime::triggerSound(bool looping, SoundInstance &snd, uint volume, int32 
 		cache->stream->rewind();
 	}
 
-	if (!cache->loopingStream && looping)
-		cache->player.reset();
-
 	// Construct looping stream if needed and none exists
-	if (looping && !cache->loopingStream)
+	if (looping && !cache->loopingStream) {
+		cache->player.reset();
 		cache->loopingStream.reset(new Audio::LoopingAudioStream(cache->stream.get(), 0, DisposeAfterUse::NO, true));
+	}
 
 	const Audio::Mixer::SoundType soundType = (isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType);
 
@@ -2405,6 +2419,9 @@ void Runtime::triggerSoundRamp(SoundInstance &snd, uint durationMSec, uint newVo
 	snd.rampTerminateOnCompletion = terminateOnCompletion;
 	snd.rampStartTime = g_system->getMillis();
 	snd.rampRatePerMSec = 65536;
+
+	if (!snd.isLooping && newVolume == 0)
+		snd.rampTerminateOnCompletion = true;
 
 	if (durationMSec)
 		snd.rampRatePerMSec = 65536 / durationMSec;
@@ -2453,6 +2470,23 @@ void Runtime::updateSounds(uint32 timestamp) {
 		if (snd.endTime && snd.endTime <= timestamp) {
 			snd.cache.reset();
 			snd.endTime = 0;
+		}
+
+		if (snd.isLooping) {
+			if (snd.volume == 0) {
+				if (!snd.isSilencedLoop) {
+					if (snd.cache) {
+						snd.cache->player.reset();
+						snd.cache.reset();
+					}
+					snd.isSilencedLoop = true;
+				}
+			} else {
+				if (snd.isSilencedLoop) {
+					triggerSound(true, snd, snd.volume, snd.balance, snd.is3D, snd.isSpeech);
+					assert(snd.isSilencedLoop == false);
+				}
+			}
 		}
 	}
 }

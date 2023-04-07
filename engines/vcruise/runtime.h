@@ -221,6 +221,7 @@ struct SoundInstance {
 	bool is3D;
 	bool isLooping;
 	bool isSpeech;
+	bool isSilencedLoop;	// Loop is still playing but reached 0 volume so the player was unloaded
 	int32 x;
 	int32 y;
 
