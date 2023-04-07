@@ -1308,11 +1308,6 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 			_animPendingDecodeFrame = _animFirstFrame;
 		}
 
-		if (useStopFrame && _animDisplayingFrame == _animStopFrame) {
-			outAnimationEnded = true;
-			return;
-		}
-
 		const Graphics::Surface *surface = _animDecoder->decodeNextFrame();
 		if (!surface) {
 			outAnimationEnded = true;
@@ -1370,6 +1365,11 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 				outAnimationEnded = true;
 				return;
 			}
+		}
+
+		if (useStopFrame && _animDisplayingFrame == _animStopFrame) {
+			outAnimationEnded = true;
+			return;
 		}
 	}
 }
