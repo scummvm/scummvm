@@ -284,12 +284,8 @@ static void update_variables(void) {
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
 		if (strcmp(var.value, "disabled") == 0)
 			reduce_framerate_type = 0;
-		else if (strcmp(var.value, "auto") == 0)
+		else
 			reduce_framerate_type = REDUCE_FRAMERATE_SHIFT_AUTO;
-		else if (strcmp(var.value, "half") == 0)
-			reduce_framerate_type = REDUCE_FRAMERATE_SHIFT_HALF;
-		else if (strcmp(var.value, "quarter") == 0)
-			reduce_framerate_type = REDUCE_FRAMERATE_SHIFT_QUARTER;
 	}
 
 	var.key = "scummvm_auto_performance_tuner";
@@ -745,7 +741,7 @@ void retro_run(void) {
 		do {
 
 			/* Framerate reduction using sound buffer size */
-			if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_AUTO || (performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
+			if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_AUTO || (performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE) || (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE)) {
 				if ((audio_status & AUDIO_STATUS_BUFFER_UNDERRUN) && !(audio_status & AUDIO_STATUS_MUTE)) {
 					if (reduce_framerate_shift < REDUCE_FRAMERATE_SHIFT_MAX)
 						reduce_framerate_shift++;
@@ -755,10 +751,6 @@ void retro_run(void) {
 					reduce_framerate_countdown--;
 				else
 					reduce_framerate_shift = 0;
-			} else if ((reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_HALF) || (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE)) {
-				reduce_framerate_shift = 1;
-			} else if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_QUARTER) {
-				reduce_framerate_shift = 2;
 			} else {
 				reduce_framerate_shift = 0;
 			}

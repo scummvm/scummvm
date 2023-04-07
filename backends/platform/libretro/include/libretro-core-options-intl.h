@@ -225,14 +225,10 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		"scummvm_reduce_framerate_type",
 		"Riduzione del framerate",
 		NULL,
-		"Riduce il framerate corrente per abbassare le richieste di CPU. La modalità 'Auto' riduce temporaneamente il framerate quando Reduces current framerate to reduce CPU requirements. 'Auto' mode temporarily reduces the framerate as needed when audio buffer underrun is detected, while the in the other modes the reduction is constant.",
+		"Riduce temporaneamente il framerate quando viene rilevato un audio buffer underrun.",
 		NULL,
 		NULL,
 		{
-			{ "disabled", NULL },
-			{ "auto", "Auto" },
-			{ "half", "1/2 del framerate attuale" },
-			{ "quarter", "1/4 del framerate attuale" },
 			{ NULL, NULL },
 		},
 		NULL

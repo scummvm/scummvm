@@ -47,8 +47,6 @@
 #define REDUCE_FRAMERATE_REST           REFRESH_RATE / 2
 #define REDUCE_FRAMERATE_SHIFT_MAX      2
 #define REDUCE_FRAMERATE_SHIFT_AUTO     1
-#define REDUCE_FRAMERATE_SHIFT_HALF     2
-#define REDUCE_FRAMERATE_SHIFT_QUARTER  3
 
 // Thread switch caller
 #define THREAD_SWITCH_POLL              (1 << 0)
