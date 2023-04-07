@@ -22,7 +22,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 #define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 
-#include <unistd.h>
 #include "watchmaker/game.h"
 #include "watchmaker/windows_hacks.h"
 #include "watchmaker/classes/do_system.h"

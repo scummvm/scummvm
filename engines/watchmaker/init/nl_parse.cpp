@@ -24,7 +24,6 @@
 #include "watchmaker/init/nl_parse.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include <cstdarg>
 
 namespace Watchmaker {
 

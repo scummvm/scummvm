@@ -1,6 +1,4 @@
 
-#include <cstdlib>
-#include <unistd.h>
 #include "common/stream.h"
 #include "watchmaker/3d/animation.h"
 #include "watchmaker/3d/math/llmath.h"

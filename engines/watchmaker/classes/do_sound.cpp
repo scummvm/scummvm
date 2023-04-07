@@ -21,7 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 
-#include <cmath>
 #include "watchmaker/classes/do_sound.h"
 #include "watchmaker/utils.h"
 #include "watchmaker/types.h"

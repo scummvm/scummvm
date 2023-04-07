@@ -19,7 +19,6 @@
  *
  */
 
-#include <cmath>
 #include "watchmaker/ll/ll_mesh.h"
 #include "watchmaker/types.h"
 #include "watchmaker/t3d.h"

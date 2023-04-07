@@ -19,7 +19,6 @@
  *
  */
 
-#include <cmath>
 #include "watchmaker/walk/ball.h"
 #include "watchmaker/globvar.h"
 #include "watchmaker/define.h"
