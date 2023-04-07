@@ -586,6 +586,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 	stream->writeUint32BE(inventory.size());
 	stream->writeUint32BE(sounds.size());
 	stream->writeUint32BE(triggeredOneShots.size());
+	stream->writeUint32BE(sayCycles.size());
 	stream->writeUint32BE(randomAmbientSounds.size());
 
 	stream->writeUint32BE(variables.size());
@@ -599,6 +600,11 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 
 	for (const TriggeredOneShot &triggeredOneShot : triggeredOneShots)
 		triggeredOneShot.write(stream);
+
+	for (const Common::HashMap<uint32, uint>::Node &cycle : sayCycles) {
+		stream->writeUint32BE(cycle._key);
+		stream->writeUint32BE(cycle._value);
+	}
 
 	for (const RandomAmbientSound &randomAmbientSound : randomAmbientSounds)
 		randomAmbientSound.write(stream);
@@ -629,7 +635,6 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 
 	if (saveVersion < kSaveGameEarliestSupportedVersion)
 		return kLoadGameOutcomeSaveIsTooOld;
-
 	
 	roomNumber = stream->readUint32BE();
 	screenNumber = stream->readUint32BE();
@@ -651,6 +656,10 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	uint numInventory = stream->readUint32BE();
 	uint numSounds = stream->readUint32BE();
 	uint numOneShots = stream->readUint32BE();
+
+	uint numSayCycles = 0;
+	if (saveVersion >= 4)
+		numSayCycles = stream->readUint32BE();
 
 	uint numRandomAmbientSounds = 0;
 	if (saveVersion >= 3)
@@ -675,6 +684,13 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 
 	for (uint i = 0; i < numOneShots; i++)
 		triggeredOneShots[i].read(stream);
+
+	for (uint i = 0; i < numSayCycles; i++) {
+		uint32 key = stream->readUint32BE();
+		uint value = stream->readUint32BE();
+
+		sayCycles[key] = value;
+	}
 
 	for (uint i = 0; i < numRandomAmbientSounds; i++)
 		randomAmbientSounds[i].read(stream);
@@ -3132,6 +3148,7 @@ void Runtime::recordSaveGameSnapshot() {
 	snapshot->pendingSoundParams3D = _pendingSoundParams3D;
 
 	snapshot->triggeredOneShots = _triggeredOneShots;
+	snapshot->sayCycles = _sayCycles;
 
 	snapshot->listenerX = _listenerX;
 	snapshot->listenerY = _listenerY;
@@ -3184,6 +3201,7 @@ void Runtime::restoreSaveGameSnapshot() {
 	_pendingSoundParams3D = _saveGame->pendingSoundParams3D;
 
 	_triggeredOneShots = _saveGame->triggeredOneShots;
+	_sayCycles = _saveGame->sayCycles;
 
 	_listenerX = _saveGame->listenerX;
 	_listenerY = _saveGame->listenerY;
@@ -4086,15 +4104,42 @@ void Runtime::scriptOpSay1(ScriptArg_t arg) {
 	TAKE_STACK_INT_NAMED(2, sndParamArgs);
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	warning("Say1 cycles are not implemented yet, playing first sound in the cycle");
-
-	StackInt_t soundID = 0;
-	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
-
 	// uint unk = sndParamArgs[0];
 	uint cycleLength = sndParamArgs[1];
 	debug(5, "Say1 cycle length: %u", cycleLength);
+
+	Common::String soundIDStr = sndNameArgs[0];
+
+	if (soundIDStr.size() < 4)
+		error("Say1 sound name was invalid");
+
+	uint32 cycleID = 0;
+	
+	for (uint i = 0; i < 4; i++) {
+		char d = soundIDStr[i];
+		if (d < '0' || d > '9')
+			error("Invalid sound ID for say1");
+
+		cycleID = cycleID * 10 + (d - '0');
+	}
+
+	uint &cyclePosRef = _sayCycles[static_cast<uint32>(cycleID)];
+
+	uint32 cycledSoundID = (cyclePosRef + cycleID);
+	cyclePosRef++;
+
+	if (cyclePosRef == cycleLength)
+		cyclePosRef = 0;
+
+	soundIDStr = soundIDStr.substr(4);
+	for (uint i = 0; i < 4; i++) {
+		soundIDStr.insertChar(static_cast<char>((cycledSoundID % 10) + '0'), 0);
+		cycledSoundID /= 10;
+	}
+
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByName(soundIDStr, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(false, *cachedSound, 100, 0, false, true);

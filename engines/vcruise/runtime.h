@@ -332,7 +332,7 @@ struct SaveGameSnapshot {
 	LoadGameOutcome read(Common::ReadStream *stream);
 
 	static const uint kSaveGameIdentifier = 0x53566372;
-	static const uint kSaveGameCurrentVersion = 3;
+	static const uint kSaveGameCurrentVersion = 4;
 	static const uint kSaveGameEarliestSupportedVersion = 2;
 
 	struct InventoryItem {
@@ -386,6 +386,7 @@ struct SaveGameSnapshot {
 	Common::Array<InventoryItem> inventory;
 	Common::Array<Sound> sounds;
 	Common::Array<TriggeredOneShot> triggeredOneShots;
+	Common::HashMap<uint32, uint> sayCycles;
 	Common::Array<RandomAmbientSound> randomAmbientSounds;
 
 	Common::HashMap<uint32, int32> variables;
@@ -921,6 +922,7 @@ private:
 	SoundParams3D _pendingSoundParams3D;
 
 	Common::Array<TriggeredOneShot> _triggeredOneShots;
+	Common::HashMap<uint32, uint> _sayCycles;
 	Common::Array<RandomAmbientSound> _randomAmbientSounds;
 
 	int32 _listenerX;
