@@ -1954,6 +1954,7 @@ void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
 
 		_havePendingReturnToIdleState = true;
 		_haveIdleStaticAnimation = false;
+		_idleCurrentStaticAnimation.clear();
 		_havePendingPlayAmbientSounds = true;
 
 		recordSaveGameSnapshot();
@@ -3619,6 +3620,14 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	TAKE_STACK_INT(kAnimDefStackArgs);
 
+	// FIXME: What does this actually do?
+	// It looks like this sets the last frame of an animation as the current scene graphic, but
+	// in some cases that's wrong.  For instance, after solving the temple puzzle in Reah, viewing
+	// the rock on the left (screen 0c4 in room 20) runs ":PLANAS_SKALA static" after the rock
+	// symbol displays.  However, :PLANAS_SKALA shows the rock with no symbol.
+	//
+	// Another problem occurs when viewing the rotor puzzle in the citadel, described below for now.
+#if 0
 	// QUIRK/BUG WORKAROUND: Static animations don't override other static animations!
 	//
 	// In Reah Room05, the script for 0b8 (NGONG) sets the static animation to :NNAWA_NGONG and then
@@ -3635,6 +3644,8 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	if (animDef.animName == _idleCurrentStaticAnimation)
 		return;
 
+	// FIXME: _idleCurrentStaticAnimation must be cleared sometime!  Maybe on loading a save.
+
 	changeAnimation(animDef, animDef.lastFrame, false, _animSpeedStaticAnim);
 
 	_havePendingReturnToIdleState = true;
@@ -3643,6 +3654,7 @@ void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	_idleCurrentStaticAnimation = animDef.animName;
 
 	_gameState = kGameStateWaitingForAnimation;
+#endif
 }
 
 void Runtime::scriptOpVarLoad(ScriptArg_t arg) {

@@ -617,8 +617,8 @@ private:
 	void findWaves();
 	Common::SharedPtr<SoundInstance> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
 	SoundCache *loadCache(SoundInstance &sound);
-	void resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, SoundInstance *&outWave);
-	void resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, SoundInstance *&outWave);
+	void resolveSoundByName(const Common::String &soundName, bool resolveSoundByName, StackInt_t &outSoundID, SoundInstance *&outWave);
+	void resolveSoundByNameOrID(const StackValue &stackValue, bool resolveSoundByName, StackInt_t &outSoundID, SoundInstance *&outWave);
 
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void returnToIdleState();
