@@ -466,6 +466,35 @@ public:
 	void flipHorizontal(const Common::Rect &r);
 
 	/**
+	 * Writes a color key to the alpha channel of the surface
+	 * @param rKey  the red component of the color key
+	 * @param gKey  the green component of the color key
+	 * @param bKey  the blue component of the color key
+	 * @param overwriteAlpha if true, all other alpha will be set fully opaque
+	 */
+	bool applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha = false);
+
+	/**
+	 * Writes a color key to the alpha channel of the surface
+	 * @param rKey  the red component of the color key
+	 * @param gKey  the green component of the color key
+	 * @param bKey  the blue component of the color key
+	 * @param overwriteAlpha if true, all other alpha will be set fully opaque
+	 * @param rNew  the red component to replace the color key with
+	 * @param gNew  the green component to replace the color key with
+	 * @param bNew  the blue component to replace the color key with
+	 */
+	bool applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha,
+	                   uint8 rNew, uint8 gNew, uint8 bNew);
+
+	/**
+	 * Sets alpha channel for all pixels to specified value
+	 * @param alpha  value of the alpha channel to set
+	 * @param skipTransparent  if set to true, then do not touch pixels with alpha=0
+	 */
+	bool setAlpha(uint8 alpha, bool skipTransparent = false);
+
+	/**
 	 * Scale the data to the given size.
 	 *
 	 * The client code must call @ref free on the returned surface and then delete

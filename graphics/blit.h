@@ -176,6 +176,20 @@ bool rotoscaleBlitBilinear(byte *dst, const byte *src,
 						   const Graphics::PixelFormat &fmt,
 						   const TransformStruct &transform,
 						   const Common::Point &newHotspot);
+
+bool applyColorKey(byte *dst, const byte *src,
+                   const uint dstPitch, const uint srcPitch,
+                   const uint w, const uint h,
+                   const Graphics::PixelFormat &format, const bool overwriteAlpha,
+                   const uint8 rKey, const uint8 gKey, const uint8 bKey,
+                   const uint8 rNew, const uint8 gNew, const uint8 bNew);
+
+bool setAlpha(byte *dst, const byte *src,
+              const uint dstPitch, const uint srcPitch,
+              const uint w, const uint h,
+              const Graphics::PixelFormat &format,
+              const bool skipTransparent, const uint8 alpha);
+
 /** @} */
 } // End of namespace Graphics
 

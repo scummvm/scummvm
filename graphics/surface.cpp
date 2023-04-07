@@ -426,6 +426,22 @@ void Surface::flipHorizontal(const Common::Rect &r) {
 	}
 }
 
+bool Surface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha) {
+	return Graphics::applyColorKey((byte *)pixels, (const byte *)pixels, pitch, pitch, w, h, format,
+	                               overwriteAlpha, rKey, gKey, bKey, rKey, gKey, bKey);
+}
+
+bool Surface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool overwriteAlpha,
+                            uint8 rNew, uint8 gNew, uint8 bNew) {
+	return Graphics::applyColorKey((byte *)pixels, (const byte *)pixels, pitch, pitch, w, h, format,
+	                               overwriteAlpha, rKey, gKey, bKey, rNew, gNew, bNew);
+}
+
+bool Surface::setAlpha(uint8 alpha, bool skipTransparent) {
+	return Graphics::setAlpha((byte *)pixels, (const byte *)pixels, pitch, pitch, w, h, format,
+	                          skipTransparent, alpha);
+}
+
 Graphics::Surface *Surface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
 	Graphics::Surface *target = new Graphics::Surface();
 

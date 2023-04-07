@@ -185,8 +185,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	}
 
 	if (needsColorKey) {
-		Graphics::TransparentSurface trans(*_surface);
-		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
+		_surface->applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
 	}
 
 	_alphaType = hasTransparencyType(_surface);
