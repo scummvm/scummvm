@@ -100,7 +100,7 @@ Common::Error CineEngine::run() {
 	initGraphics(320, 200);
 
 	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
-		if (!existExtractedCDAudioFiles()
+		if (!existExtractedCDAudioFiles(19)  // tracks <19 are not used
 		    && !isDataAndCDAudioReadFromSameCD()) {
 			warnMissingExtractedCDAudio();
 		}
