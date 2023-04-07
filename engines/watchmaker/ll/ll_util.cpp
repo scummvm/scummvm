@@ -23,8 +23,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_vsprintf
 
-#include <cstring>
-#include <stdarg.h>
 #include "watchmaker/ll/ll_util.h"
 #include "watchmaker/ll/ll_anim.h"
 #include "watchmaker/ll/ll_diary.h"

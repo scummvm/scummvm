@@ -19,9 +19,6 @@
  *
  */
 
-#include <cstring>
-#include <cstdio>
-
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 
 #include "watchmaker/init/nl_parse.h"

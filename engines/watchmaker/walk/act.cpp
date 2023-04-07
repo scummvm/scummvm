@@ -19,7 +19,6 @@
  *
  */
 
-#include <cmath>
 #include "watchmaker/walk/act.h"
 #include "watchmaker/t3d.h"
 #include "watchmaker/globvar.h"

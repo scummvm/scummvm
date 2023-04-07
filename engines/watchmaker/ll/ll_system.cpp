@@ -36,7 +36,6 @@
 #include "watchmaker/types.h"
 #include "watchmaker/utils.h"
 #include "watchmaker/windows_hacks.h"
-#include <cstdlib>
 
 namespace Watchmaker {
 

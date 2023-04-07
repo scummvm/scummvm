@@ -39,7 +39,6 @@
 #include "watchmaker/walk/act.h"
 #include "watchmaker/ll/ll_system.h"
 #include "watchmaker/windows_hacks.h"
-#include <cstdlib>
 
 #define WM_SAVEFILE_VERSION     0x17 // Don't know what changed though.
 

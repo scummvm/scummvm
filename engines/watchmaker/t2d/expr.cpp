@@ -21,9 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 
-#include <cstring>
-#include <cstdlib>
-#include <ctime>
 #include "watchmaker/t2d/expr.h"
 #include "watchmaker/windows_hacks.h"
 #include "watchmaker/globvar.h"

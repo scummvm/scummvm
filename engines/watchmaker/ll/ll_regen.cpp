@@ -19,7 +19,6 @@
  *
  */
 
-#include <cstring>
 #include "watchmaker/ll/ll_regen.h"
 #include "watchmaker/render.h"
 #include "watchmaker/struct.h"

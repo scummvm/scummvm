@@ -23,7 +23,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 #define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 
-#include <stdarg.h>
 #include "watchmaker/t2d/t2d.h"
 #include "watchmaker/globvar.h"
 #include "watchmaker/message.h"
