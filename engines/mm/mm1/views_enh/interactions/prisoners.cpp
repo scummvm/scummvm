@@ -134,9 +134,9 @@ void MaidenPrisoner::flee() {
 
 VirginPrisoner::VirginPrisoner() : Interaction("VirginPrisoner", 2) {
 	addText(STRING["maps.emap11.virgin"]);
-	addButton(STRING["maps.emap11.option_a"], 'A');
-	addButton(STRING["maps.emap11.option_b"], 'B');
-	addButton(STRING["maps.emap11.option_c"], 'C');
+	addButton(STRING["maps.emap11.virgin_a"], 'A');
+	addButton(STRING["maps.emap11.virgin_b"], 'B');
+	addButton(STRING["maps.emap11.virgin_c"], 'C');
 }
 
 bool VirginPrisoner::msgKeypress(const KeypressMessage &msg) {

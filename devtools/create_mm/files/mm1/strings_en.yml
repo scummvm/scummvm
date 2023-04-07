@@ -1172,10 +1172,16 @@ maps:
 		ladder: "A ladder going up, take it (Y/N)?"
 	emap11:
 		virgin: "A luscious virgin shackled to the wall!"
-		option_a: "Kiss her"
-		option_b: "Release her"
-		option_c: "Leave"
-	
+		virgin_a: "Kiss her"
+		virgin_b: "Release her"
+		virgin_c: "Leave"
+		god_a: "Challenge"
+		god_b: "A Riddle"
+		god_c: "A Clue"
+		volcano_god: "Volcano God"
+		god_text: "The volcano god bellows,\n\"What do you seek here?\""
+		question: "Who was brave yet failed?""
+
 	map12:
 		ladder_up: "Ladder up, climb (Y/N)?"
 		polyhedron1: "Atop a crystal pyramid spins a glowing\npolyhedron. Stop it on side (1-9)?"

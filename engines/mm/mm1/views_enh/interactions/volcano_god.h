@@ -19,42 +19,42 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_INTERACTIONS_INTERACTION_QUERY_H
-#define MM1_VIEWS_ENH_INTERACTIONS_INTERACTION_QUERY_H
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_VOLCANO_GOD_H
+#define MM1_VIEWS_ENH_INTERACTIONS_VOLCANO_GOD_H
 
-#include "mm/mm1/views_enh/interactions/interaction.h"
-#include "mm/mm1/views_enh/text_entry.h"
+#include "mm/mm1/views_enh/interactions/interaction_query.h"
+#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-class InteractionQuery : public Interaction {
+class VolcanoGod : public InteractionQuery {
 private:
-	TextEntry _textEntry;
-	int _maxChars = 0;
+	enum Mode {
+		CHOOSE_OPTION, ENTER_RESPONSE
+	};
+	Mode _mode = CHOOSE_OPTION;
+
+	void setMode(Mode newMode);
+	void challenge();
+	void riddle();
+	void clue();
 
 protected:
-	bool _showEntry = false;
-	Common::String _answer;
-
 	/**
 	 * Answer entered
 	 */
-	virtual void answerEntered() = 0;
+	void answerEntered() override;
 
 public:
-	InteractionQuery(const Common::String &name,
-		int maxChars, int portrait = -1);
-
+	VolcanoGod();
+	virtual ~VolcanoGod() {
+	}
 	bool msgFocus(const FocusMessage &msg) override;
-	void draw() override;
-
-	/**
-	 * Passed the entered text
-	 */
-	void answerEntry(const Common::String &answer);
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Interactions
