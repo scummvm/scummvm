@@ -64,7 +64,6 @@ void AudioPlayer::play(byte volume, int8 balance) {
 		_exhausted = false;
 		_mixer->playStream(_soundType, &_handle, this, -1, volume, balance, DisposeAfterUse::NO);
 	}
-
 }
 
 void AudioPlayer::setVolume(byte volume) {
