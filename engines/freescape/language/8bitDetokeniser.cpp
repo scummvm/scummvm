@@ -54,7 +54,8 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		 0, 0, 0, 0, 0, 0, 2, 2,
 		 1};
 
-	detokenisedStream += Common::String::format("CONDITION FLAG: %x\n", tokenisedCondition[0]);
+	if (sizeOfTokenisedContent > 0)
+		detokenisedStream += Common::String::format("CONDITION FLAG: %x\n", tokenisedCondition[0]);
 	Token::Type newConditional = Token::UNKNOWN;
 	Token::Type oldConditional = Token::UNKNOWN;
 
@@ -79,8 +80,11 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 			branch.setBranches(conditionalInstructions, nullptr);
 			instructions.push_back(branch);
 
-			if (bytePointer > 0)
+			if (bytePointer > 0) {
 				detokenisedStream += "ENDIF\n";
+				// Allocate the next vector of instructions
+				conditionalInstructions = new FCLInstructionVector();
+			}
 
 			if (oldConditional == Token::SHOTQ)
 				detokenisedStream += "IF SHOT? THEN\n";
@@ -90,9 +94,6 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 				detokenisedStream += "IF COLLIDED? THEN\n";
 			else
 				error("Invalid conditional: %x", oldConditional);
-
-			// Allocate the next vector of instructions
-			conditionalInstructions = new FCLInstructionVector();
 		}
 
 		// get the actual operation
@@ -419,17 +420,6 @@ Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition,
 		// throw in a newline
 		detokenisedStream += "\n";
 	}
-
-	// if (!conditionalInstructions)
-	//	conditionalInstructions = new FCLInstructionVector();
-
-	// conditionalInstructions->push_back(currentInstruction);
-
-	FCLInstruction branch;
-	branch = FCLInstruction(oldConditional);
-
-	branch.setBranches(conditionalInstructions, nullptr);
-	instructions.push_back(branch);
 
 	return detokenisedStream;
 }

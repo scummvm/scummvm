@@ -108,6 +108,7 @@ Scene::Scene() :
 		_helpButton(nullptr),
 		_viewportOrnaments(nullptr),
 		_textboxOrnaments(nullptr),
+		_inventoryBoxOrnaments(nullptr),
 		_clock(nullptr),
 		_actionManager(),
 		_difficulty(0),
@@ -119,6 +120,7 @@ Scene::~Scene()  {
 	delete _menuButton;
 	delete _viewportOrnaments;
 	delete _textboxOrnaments;
+	delete _inventoryBoxOrnaments;
 	delete _clock;
 	delete _lightning;
 }
@@ -151,7 +153,7 @@ void Scene::process() {
 	}
 }
 
-void Scene::onStateEnter() {
+void Scene::onStateEnter(const NancyState::NancyState prevState) {
 	if (_state != kInit) {
 		registerGraphics();
 		_actionManager.onPause(false);
@@ -172,11 +174,18 @@ void Scene::onStateEnter() {
 	}
 }
 
-void Scene::onStateExit() {
+bool Scene::onStateExit(const NancyState::NancyState nextState) {
 	_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
 	_actionManager.onPause(true);
 	pauseSceneSpecificSounds();
 	_gameStateRequested = NancyState::kNone;
+
+	// Re-register the clock so the open/close animation can continue playing inside Map
+	if (nextState == NancyState::kMap && g_nancy->getGameType() == kGameTypeVampire) {
+		_clock->registerGraphics();
+	}
+	
+	return false;
 }
 
 void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, int8 paletteID) {
@@ -361,6 +370,11 @@ void Scene::registerGraphics() {
 	if (_textboxOrnaments) {
 		_textboxOrnaments->registerGraphics();
 		_textboxOrnaments->setVisible(true);
+	}
+
+	if (_inventoryBoxOrnaments) {
+		_inventoryBoxOrnaments->registerGraphics();
+		_inventoryBoxOrnaments->setVisible(true);
 	}
 
 	if (_clock) {
@@ -703,9 +717,14 @@ void Scene::handleInput() {
 		_menuButton->handleInput(input);
 
 		if (_menuButton->_isClicked) {
-			_menuButton->_isClicked = false;
-			g_nancy->_sound->playSound("BUOK");
-			requestStateChange(NancyState::kMainMenu);
+			if (_buttonPressActivationTime == 0) {
+				g_nancy->_sound->playSound("BUOK");
+				_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+			} else if (g_system->getMillis() > _buttonPressActivationTime) {
+				_menuButton->_isClicked = false;
+				requestStateChange(NancyState::kMainMenu);
+				_buttonPressActivationTime = 0;
+			}
 		}
 	}
 	
@@ -713,9 +732,14 @@ void Scene::handleInput() {
 		_helpButton->handleInput(input);
 
 		if (_helpButton->_isClicked) {
-			_helpButton->_isClicked = false;
-			g_nancy->_sound->playSound("BUOK");
-			requestStateChange(NancyState::kHelp);
+			if (_buttonPressActivationTime == 0) {
+				g_nancy->_sound->playSound("BUOK");
+				_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+			} else if (g_system->getMillis() > _buttonPressActivationTime) {
+				_helpButton->_isClicked = false;
+				requestStateChange(NancyState::kHelp);
+				_buttonPressActivationTime = 0;
+			}
 		}
 	}
 }
@@ -747,6 +771,9 @@ void Scene::initStaticData() {
 
 		_textboxOrnaments = new UI::TextboxOrnaments(9);
 		_textboxOrnaments->init();
+
+		_inventoryBoxOrnaments = new UI::InventoryBoxOrnaments(9);
+		_inventoryBoxOrnaments->init();
 
 		_clock = new UI::Clock();
 		_clock->init();

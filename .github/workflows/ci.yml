@@ -46,7 +46,7 @@ jobs:
           # use a fork of vcpkg with the previous working setup from March 2022
           # with the the January 2023 fix for msys-libtool's url cherry-picked.
           vcpkgGitURL: 'https://github.com/sluicebox/vcpkg.git'
-          vcpkgGitCommitId: f28c1edaffcb027da40b120112c89033d4303dcc
+          vcpkgGitCommitId: 47c0c6e2cb7e70edf5799bb48560d7ddbeb6250d
           vcpkgTriplet: '${{ matrix.triplet }}'
           vcpkgArguments: '${{ matrix.vcpkgPackages }}'
 #      - name: Upload libs

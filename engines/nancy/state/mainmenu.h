@@ -38,7 +38,7 @@ public:
 
 	// State API
 	void process() override;
-	void onStateExit() override;
+	bool onStateExit(const NancyState::NancyState nextState) override;
 
 private:
 	void init();

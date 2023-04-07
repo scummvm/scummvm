@@ -25,12 +25,12 @@
  * This file is part of HPL1 Engine.
  */
 
-#include "hpl1/engine/impl/MouseSDL.h"
 #include "common/bitarray.h"
 #include "common/events.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
-#include "hpl1/engine/impl/LowLevelInputSDL.h"
+#include "hpl1/engine/impl/MouseSDL.h"
 #include "hpl1/engine/input/InputTypes.h"
+#include "hpl1/engine/input/LowLevelInput.h"
 
 namespace hpl {
 
@@ -40,7 +40,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cMouseSDL::cMouseSDL(cLowLevelInputSDL *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics) : iMouse("SDL Portable Mouse") {
+cMouseSDL::cMouseSDL(LowLevelInput *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics) : iMouse("SDL Portable Mouse") {
 	mfMaxPercent = 0.7f;
 	mfMinPercent = 0.1f;
 	mlBufferSize = 6;

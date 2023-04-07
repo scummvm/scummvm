@@ -268,8 +268,6 @@ void cGame::GameInit(LowLevelGameSetup *apGameSetup, cSetupVarContainer &aVars) 
 	// Since game is not done:
 	mbGameIsDone = false;
 
-	mbRenderOnce = false;
-
 	mfUpdateTime = 0;
 	mfGameTime = 0;
 
@@ -318,10 +316,6 @@ cGame::~cGame() {
 
 int glClearUpdateCheck = 0;
 void cGame::Run() {
-	// Log line that ends user init.
-	Log("--------------------------------------------------------\n\n");
-
-	bool bDone = false;
 	double fNumOfTimes = 0;
 	double fMediumTime = 0;
 
@@ -332,22 +326,12 @@ void cGame::Run() {
 	// Loop the game... fix the var...
 	unsigned long lTempTime = GetApplicationTime();
 
-	// reset the mouse, really reset the damn thing :P
-	for (int i = 0; i < 10; i++)
-		// mpInput->GetMouse()->Reset();
-
-		Log("Game Running\n");
-	Log("--------------------------------------------------------\n");
-
 	mfFrameTime = 0;
 	unsigned long lTempFrameTime = GetApplicationTime();
 
 	bool mbIsUpdated = true;
 
-	// cMemoryManager::SetLogCreation(true);
-
 	while (!mbGameIsDone && !g_engine->shouldQuit()) {
-		// Log("-----------------\n");
 		//////////////////////////
 		// Update logic.
 		while (mpLogicTimer->WantUpdate() && !mbGameIsDone) {
@@ -375,20 +359,9 @@ void cGame::Run() {
 		}*/
 
 		// Draw graphics!
-		if (mbRenderOnce && bDone)
-			continue;
-		if (mbRenderOnce)
-			bDone = true;
-
-		if (mbIsUpdated) {
+		if (mbIsUpdated)
 			mpScene->UpdateRenderList(mfFrameTime);
-			if (mbLimitFPS == false)
-				mbIsUpdated = false;
-		}
-
 		if (mbLimitFPS == false || mbIsUpdated) {
-			// LogUpdate("----------- RENDER GFX START --------------\n");
-
 			mbIsUpdated = false;
 
 			// Get the the from the last frame.
@@ -399,30 +372,17 @@ void cGame::Run() {
 			// unsigned long lFTime = GetApplicationTime();
 			mpUpdater->OnDraw();
 			mpScene->Render(mpUpdater, mfFrameTime);
-			// if(mpScene->GetDrawScene()) LogUpdate("FrameTime: %d ms\n", GetApplicationTime() - lFTime);
 
 			// Update fps counter.
 			mpFPSCounter->AddFrame();
 
 			// Update the screen.
 			mpGraphics->GetLowLevel()->SwapBuffers();
-			// Log("Swap done: %d\n", GetApplicationTime());
-			// if(mbRenderOnce)
-			{
-				mpGraphics->GetRenderer3D()->FetchOcclusionQueries();
-				mpUpdater->OnPostBufferSwap();
-			}
+			mpGraphics->GetRenderer3D()->FetchOcclusionQueries();
+			mpUpdater->OnPostBufferSwap();
 
 			fNumOfTimes++;
 		}
-
-		// if(cMemoryManager::GetLogCreation())
-		//{
-		// cMemoryManager::SetLogCreation(false);
-		// Log("----\nCreations made: %d\n------\n",cMemoryManager::GetCreationCount());
-		//}
-
-		// g_system->delayMillis(10);
 	}
 	Log("--------------------------------------------------------\n\n");
 

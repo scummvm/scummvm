@@ -29,6 +29,8 @@
 
 #include "engines/nancy/state/credits.h"
 
+#include "common/events.h"
+
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Credits);
 }
@@ -44,6 +46,24 @@ void Credits::process() {
 	case kRun:
 		run();
 		break;
+	}
+}
+
+void Credits::onStateEnter(const NancyState::NancyState prevState) {
+	// Handle returning from the GMM
+	if (prevState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound(_creditsData->sound, false);
+	}
+}
+
+bool Credits::onStateExit(const NancyState::NancyState nextState) {
+	// Handle the GMM being called
+	if (nextState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound(_creditsData->sound, true);
+
+		return false;
+	} else {
+		return true;
 	}
 }
 
@@ -80,7 +100,14 @@ void Credits::run() {
 		g_nancy->_sound->stopSound(_creditsData->sound);
 		g_nancy->setMouseEnabled(true);
 		_fullTextSurface.free();
-		g_nancy->setState(NancyState::kMainMenu);
+		
+		// We don't yet support the original menus, so we close the game and go back to the launcher
+		// g_nancy->setState(NancyState::kMainMenu);
+
+		Common::Event ev;
+		ev.type = Common::EVENT_RETURN_TO_LAUNCHER;
+		g_system->getEventManager()->pushEvent(ev);
+
 		return;
 	}
 

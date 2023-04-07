@@ -1165,11 +1165,22 @@ maps:
 		pit: "Pit of bubbling lava!"
 		levitation: "Levitation saves you."
 		virgin: "A luscious virgin shackled to the wall!\na) Kiss her  b) Release her  c) Leave"
-		tip1: "Try setting 1b,2j"
+		tip1: "Try setting 1B,2J"
 		tip2: "This cavern is random until the dials\nare set."
-		dial: "Stabilization dial #%c set (a-z)?"
+		dial: "Stabilization dial #%c set (A-Z)?"
 		poof: "Poof! You've been teleported..."
 		ladder: "A ladder going up, take it (Y/N)?"
+	emap11:
+		virgin: "A luscious virgin shackled to the wall!"
+		virgin_a: "Kiss her"
+		virgin_b: "Release her"
+		virgin_c: "Leave"
+		god_a: "Challenge"
+		god_b: "A Riddle"
+		god_c: "A Clue"
+		volcano_god: "Volcano God"
+		god_text: "The volcano god bellows,\n\"What do you seek here?\""
+		question: "Who was brave yet failed?""
 
 	map12:
 		ladder_up: "Ladder up, climb (Y/N)?"
@@ -1194,7 +1205,7 @@ maps:
 
 	map14:
 		words: "Carved on a block of ice are the words:\nStart at 15-7 and walk to Doom!"
-		passage: "A secret passage to Ddoom, take it (Y/N)?"
+		passage: "A secret passage to Doom, take it (Y/N)?"
 		pool: "The pool of health grants those who are\nworthy +4 endurance!"
 		surrounded: "You've been surrounded by the Dark Riderand his men! He challenges you to a duel...accept (Y/N)?"
 		castle: "The fabeled Castle Doom!\nWill you enter (Y/N)?"
@@ -1206,6 +1217,8 @@ maps:
 		percella1: "I am Percella the druid and i have what\nyou need. But promise me that you won't\nhelp that demonic menace. Accept (Y/N)?"
 		percella2: "Then meet my pets!"
 		its_hot: "It's hot!"
+	emap15:
+		body: "The dragon's body disappears, except for a shiny tooth!"
 
 	map16:
 		loser: "Loser!\n"

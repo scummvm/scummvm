@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-04 19:16+0000\n"
-"PO-Revision-Date: 2023-03-23 18:34+0000\n"
+"POT-Creation-Date: 2023-04-06 10:03+0000\n"
+"PO-Revision-Date: 2023-04-06 08:35+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -144,7 +144,7 @@ msgstr ""
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3474
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3489
 #: engines/toon/toon.cpp:1502
 msgid "Yes"
 msgstr "Sim"
@@ -157,7 +157,7 @@ msgstr "Sim"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3474
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3489
 #: engines/toon/toon.cpp:1502
 msgid "No"
 msgstr "Não"
@@ -1594,14 +1594,12 @@ msgid "ScummVM config path: "
 msgstr "Config. do ScummVM: "
 
 #: gui/options.cpp:2504
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "Config. do ScummVM: "
+msgstr "Registros do ScummVM: "
 
 #: gui/options.cpp:2509
 msgid "View"
-msgstr ""
+msgstr "Exibir"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2519 gui/options.cpp:3260
@@ -1700,10 +1698,8 @@ msgid "Seed for initializing all random number generators"
 msgstr "Código para inicializar a geração de todos os números aleatórios"
 
 #: gui/options.cpp:2640
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Menu de Depuração"
+msgstr "Nível de Depuração:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2644 gui/options.cpp:2792
@@ -1713,7 +1709,7 @@ msgstr "Nenhum"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2650
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (tudo)"
 
 #: gui/options.cpp:2654
 msgid "Enable Discord integration"
@@ -3572,10 +3568,8 @@ msgid "D-pad Right"
 msgstr "D-pad para Direita"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "D-pad para Esquerda"
+msgstr "D-pad Centralizado"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
@@ -3613,11 +3607,11 @@ msgstr "Analógico Direito Y"
 
 #: backends/keymapper/hardware-input.cpp:281
 msgid "Hat X"
-msgstr ""
+msgstr "Coordenada X"
 
 #: backends/keymapper/hardware-input.cpp:282
 msgid "Hat Y"
-msgstr ""
+msgstr "Coordenada Y"
 
 #: backends/keymapper/remap-widget.cpp:295
 #: backends/keymapper/remap-widget.cpp:325
@@ -4599,7 +4593,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2809
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2815
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -5411,12 +5405,12 @@ msgstr "Arquivo rs incorreto."
 msgid "Save file created by different version."
 msgstr "Arquivo de jogo salvo criado por uma versão diferente."
 
-#: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1488
+#: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1492
 #: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:582
 msgid "Failed to load saved game from file."
 msgstr "Falha ao carregar jogo salvo a partir do arquivo."
 
-#: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1407
+#: engines/gob/inter_v2.cpp:1562 engines/gob/inter_v7.cpp:1407
 #: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:595
 msgid "Failed to save game to file."
 msgstr "Falha ao salvar jogo em arquivo."
@@ -7442,7 +7436,7 @@ msgid "Querying games..."
 msgstr "Consultando jogos..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:60 engines/scumm/scumm.cpp:3480
+#: engines/scumm/dialog-sessionselector.cpp:60 engines/scumm/scumm.cpp:3495
 msgid "Join"
 msgstr "Juntar-se"
 
@@ -8372,7 +8366,7 @@ msgstr ""
 "recursos necessários para usar música MT-32. Será utilizado AdLib em seu "
 "lugar."
 
-#: engines/scumm/scumm.cpp:3369
+#: engines/scumm/scumm.cpp:3384
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -8383,11 +8377,11 @@ msgstr ""
 "'Maniac' dentro do diretório do jogo Tentacle, e o jogo precisa ser "
 "adicionado ao ScummVM."
 
-#: engines/scumm/scumm.cpp:3480
+#: engines/scumm/scumm.cpp:3495
 msgid "Would you like to host or join a network play session?"
 msgstr "Gostaria de hospedar ou participar de uma sessão de jogo em rede?"
 
-#: engines/scumm/scumm.cpp:3480
+#: engines/scumm/scumm.cpp:3495
 msgid "Host"
 msgstr "Hospedar"
 
@@ -8981,31 +8975,29 @@ msgid "Wall collision off"
 msgstr "Colisão com parede desativada"
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgid "Language not detected"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "Idioma não detectado"
+msgstr "Seleção de idioma"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
 msgid "Voices: None"
-msgstr ""
+msgstr "Vozes: Não"
 
 #: engines/twine/parser/text.cpp:40
 msgctxt "Options menu"
 msgid "Voices: English"
-msgstr ""
+msgstr "Vozes: Inglês"
 
 #: engines/twine/parser/text.cpp:41
 msgctxt "Options menu"
 msgid "Voices: French"
-msgstr ""
+msgstr "Vozes: Francês"
 
 #: engines/twine/parser/text.cpp:42
 msgctxt "Options menu"
 msgid "Voices: German"
-msgstr ""
+msgstr "Vozes: Alemão"
 
 #: engines/ultima/metaengine.cpp:55
 msgid "Enable frame skipping"
@@ -9127,16 +9119,12 @@ msgstr ""
 "https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/metaengine.cpp:50
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "Transições:"
+msgstr "Animações mais rápidas"
 
 #: engines/vcruise/metaengine.cpp:51
-#, fuzzy
-#| msgid "Speech Options"
 msgid "Speeds up animations."
-msgstr "Opções de Fala"
+msgstr "Acelera as animações."
 
 #: engines/vcruise/vcruise.cpp:76
 msgid "This game requires JPEG support, which was not compiled in."

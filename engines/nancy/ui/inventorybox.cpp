@@ -49,7 +49,7 @@ InventoryBox::~InventoryBox() {
 void InventoryBox::init() {
 	_order.clear();
 
-	moveTo(g_nancy->_inventoryData->inventoryScreenPosition);
+	moveTo(g_nancy->_bootSummary->inventoryBoxScreenPosition);
 	g_nancy->_resource->loadImage(g_nancy->_inventoryData->inventoryBoxIconsImageName, _iconsSurface);
 
 	_fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((g_nancy->getStaticData().numItems / 4) + 1), g_nancy->_graphicsManager->getScreenPixelFormat());
@@ -192,7 +192,7 @@ void InventoryBox::onScrollbarMove() {
 }
 
 void InventoryBox::Curtains::init() {
-	moveTo(g_nancy->_inventoryData->inventoryScreenPosition);
+	moveTo(g_nancy->_inventoryData->curtainsScreenPosition);
 	Common::Rect bounds = _screenPosition;
 	bounds.moveTo(0, 0);
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
@@ -246,7 +246,11 @@ void InventoryBox::Curtains::setAnimationFrame(uint frame) {
 	Common::Point destPoint;
 
 	if (frame > (uint)(g_nancy->getStaticData().numCurtainAnimationFrames - 1)) {
-		setVisible(false);
+		// TVD keeps the last frame visible
+		if (g_nancy->getGameType() > kGameTypeVampire) {
+			setVisible(false);
+		}
+
 		return;
 	} else {
 		setVisible(true);

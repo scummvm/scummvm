@@ -43,7 +43,15 @@ public:
 	void init() override;
 };
 
-} // End of namespace Nancy
+class InventoryBoxOrnaments : public Nancy::RenderObject {
+public:
+	InventoryBoxOrnaments(uint16 zOrder) : RenderObject(zOrder) {}
+	virtual ~InventoryBoxOrnaments() {}
+
+	void init() override;
+};
+
+} // End of namespace UI
 } // End of namespace Nancy
 
 

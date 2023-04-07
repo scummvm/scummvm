@@ -34,9 +34,9 @@ class InteractionQuery : public Interaction {
 private:
 	TextEntry _textEntry;
 	int _maxChars = 0;
-	bool _showEntry = false;
 
 protected:
+	bool _showEntry = false;
 	Common::String _answer;
 
 	/**

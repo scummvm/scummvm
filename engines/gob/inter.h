@@ -448,8 +448,6 @@ protected:
 	void o2_writeData(OpFuncParams &params);
 	void o2_loadInfogramesIns(OpGobParams &params);
 	void o2_playInfogrames(OpGobParams &params);
-	void o2_gob0x0B(OpGobParams &params);
-	void o2_gob1001(OpGobParams &params);
 	void o2_startInfogrames(OpGobParams &params);
 	void o2_stopInfogrames(OpGobParams &params);
 	void o2_handleGoblins(OpGobParams &params);
@@ -530,6 +528,23 @@ protected:
 
 	void oLittleRed_keyFunc(OpFuncParams &params);
 	void oLittleRed_playComposition(OpFuncParams &params);
+};
+
+class Inter_Adibou1 : public Inter_v2 {
+public:
+	Inter_Adibou1(GobEngine *vm);
+	~Inter_Adibou1() override {}
+
+protected:
+	void setupOpcodesDraw() override;
+	void setupOpcodesFunc() override;
+	void setupOpcodesGob() override;
+
+	void oAdibou1_writeSprite(OpGobParams &params);
+	void oAdibou1_readSprite(OpGobParams &params);
+	void oAdibou1_fillAreaAtPoint(OpGobParams &params);
+	void oAdibou1_getAppliNameFromId(OpGobParams &params);
+	void oAdibou1_listApplications(OpGobParams &params);
 };
 
 class Inter_v3 : public Inter_v2 {

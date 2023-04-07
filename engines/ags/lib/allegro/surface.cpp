@@ -451,7 +451,8 @@ BITMAP *create_bitmap_ex(int color_depth, int width, int height) {
 	default:
 		error("Invalid color depth");
 	}
-
+	width = MAX(width, 0);
+	height = MAX(height, 0);
 	BITMAP *bitmap = new Surface(width, height, format);
 	return bitmap;
 }

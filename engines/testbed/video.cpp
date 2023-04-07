@@ -52,9 +52,6 @@ Common::Error Videotests::videoTest(const Common::FSNode &node) {
 }
 
 Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Common::String &name) {
-	Graphics::PixelFormat pixelformat = Graphics::PixelFormat::createFormatCLUT8();
-	initGraphics(640, 480, &pixelformat);
-
 	Video::VideoDecoder *video = new Video::QuickTimeDecoder();
 	if (!video->loadStream(stream)) {
 		warning("Cannot open video %s", name.c_str());
@@ -63,12 +60,28 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 		return Common::kReadingFailed;
 	}
 
-	const byte *palette = video->getPalette();
+	Common::List<Graphics::PixelFormat> supportedFormatsList = g_system->getSupportedFormats();
+	Graphics::PixelFormat pixelformat = supportedFormatsList.front();
+	warning("Best pixel format: %s", pixelformat.toString().c_str());
+	warning("Video pixel format: %s", video->getPixelFormat().toString().c_str());
 
-	if (!palette) {
-		palette = Video::quickTimeDefaultPalette256;
+	if (video->getPixelFormat().isCLUT8()) {
+		pixelformat = Graphics::PixelFormat::createFormatCLUT8();
+	} else {
+		if (pixelformat.isCLUT8() && video->setDitheringPalette(Video::quickTimeDefaultPalette256)) {
+			pixelformat = Graphics::PixelFormat::createFormatCLUT8();
+		} else {
+			pixelformat = supportedFormatsList.front();
+
+			if (!video->setOutputPixelFormat(pixelformat)) {
+				// TODO: Search for the pixel format in supportedFormatsList?
+				pixelformat = video->getPixelFormat();
+			}
+		}
 	}
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+	warning("Actual pixel format: %s", pixelformat.toString().c_str());
+	initGraphics(640, 480, &pixelformat);
 
 	video->start();
 
@@ -77,20 +90,31 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 			uint32 pos = video->getTime();
 			debug(5, "video time: %d", pos);
 
+			if (pixelformat.isCLUT8() && video->hasDirtyPalette()) {
+				g_system->getPaletteManager()->setPalette(video->getPalette(), 0, 256);
+			}
+
 			const Graphics::Surface *frame = video->decodeNextFrame();
 			if (frame) {
-				Graphics::Surface *conv = frame->convertTo(pixelformat, 0, 0, palette, 256);
+				const Graphics::Surface *surf = frame;
+				Graphics::Surface *conv = nullptr;
+
+				if (frame->format != pixelformat) {
+					surf = conv = frame->convertTo(pixelformat, video->getPalette());
+				}
 
 				int x = 0, y = 0;
 
-				if (conv->w < g_system->getWidth() && conv->h < g_system->getHeight()) {
-					x = (g_system->getWidth() - conv->w) >> 1;
-					y = (g_system->getHeight() - conv->h) >> 1;
+				if (surf->w < g_system->getWidth() && surf->h < g_system->getHeight()) {
+					x = (g_system->getWidth() - surf->w) >> 1;
+					y = (g_system->getHeight() - surf->h) >> 1;
 				}
-				g_system->copyRectToScreen(conv->getPixels(), conv->pitch, x, y, MIN<uint16>(conv->w, 640), MIN<uint16>(conv->h, 480));
+				g_system->copyRectToScreen(surf->getPixels(), surf->pitch, x, y, MIN<uint16>(surf->w, 640), MIN<uint16>(surf->h, 480));
 
-				conv->free();
-				delete conv;
+				if (conv) {
+					conv->free();
+					delete conv;
+				}
 			}
 
 			Common::Event event;

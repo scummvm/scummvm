@@ -88,13 +88,14 @@ protected:
 private:
 	class VPXVideoTrack : public VideoTrack {
 	public:
-		VPXVideoTrack(const Graphics::PixelFormat &format, const mkvparser::Track *const pTrack);
+		VPXVideoTrack(const mkvparser::Track *const pTrack);
 		~VPXVideoTrack();
 
 		bool endOfTrack() const;
-		uint16 getWidth() const { return _displaySurface.w; }
-		uint16 getHeight() const { return _displaySurface.h; }
-		Graphics::PixelFormat getPixelFormat() const { return _displaySurface.format; }
+		uint16 getWidth() const { return _width; }
+		uint16 getHeight() const { return _height; }
+		Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) { _pixelFormat = format; return true; }
 		int getCurFrame() const { return _curFrame; }
 		uint32 getNextFrameStartTime() const { return (uint32)(_nextFrameStartTime * 1000); }
 		const Graphics::Surface *decodeNextFrame();
@@ -106,8 +107,11 @@ private:
 		bool _endOfVideo;
 		double _nextFrameStartTime;
 
+		uint16 _width;
+		uint16 _height;
+		Graphics::PixelFormat _pixelFormat;
+
 		Graphics::Surface _surface;
-		Graphics::Surface _displaySurface;
 		Common::Queue<Graphics::Surface> _displayQueue;
 
 		vpx_codec_ctx_t *_codec = nullptr;

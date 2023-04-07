@@ -43,11 +43,11 @@ namespace hpl {
 
 #define MAX_KEY_PRESSES (20)
 
-class cLowLevelInputSDL;
+class LowLevelInput;
 
 class cKeyboardSDL : public iKeyboard {
 public:
-	cKeyboardSDL(cLowLevelInputSDL *apLowLevelInputSDL);
+	cKeyboardSDL(LowLevelInput *apLowLevelInputSDL);
 
 	void Update();
 
@@ -66,7 +66,7 @@ private:
 	eKeyModifier _modifiers;
 	Common::BitArray _downKeys;
 	Common::Queue<cKeyPress> _pressedKeys;
-	cLowLevelInputSDL *_lowLevelSystem;
+	LowLevelInput *_lowLevelSystem;
 };
 
 } // namespace hpl

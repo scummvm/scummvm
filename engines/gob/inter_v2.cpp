@@ -140,13 +140,11 @@ void Inter_v2::setupOpcodesGob() {
 	OPCODEGOB(  2, o2_stopInfogrames);
 
 	OPCODEGOB( 10, o2_playInfogrames);
-	OPCODEGOB( 11, o2_gob0x0B);
 
 	OPCODEGOB(100, o2_handleGoblins);
 
 	OPCODEGOB(500, o2_playProtracker);
 	OPCODEGOB(501, o2_stopProtracker);
-	OPCODEGOB(1001, o2_gob1001);
 }
 
 void Inter_v2::checkSwitchTable(uint32 &offset) {
@@ -381,7 +379,7 @@ void Inter_v2::o2_initMult() {
 	_vm->_draw->_spriteBottom = _vm->_mult->_animHeight;
 	_vm->_draw->_destSpriteX = 0;
 	_vm->_draw->_destSpriteY = 0;
-	_vm->_draw->spriteOperation(0);
+	_vm->_draw->spriteOperation(DRAW_BLITSURF);
 
 	debugC(4, kDebugGraphics, "o2_initMult: x = %d, y = %d, w = %d, h = %d",
 		  _vm->_mult->_animLeft, _vm->_mult->_animTop,
@@ -1464,7 +1462,13 @@ void Inter_v2::o2_checkData(OpFuncParams &params) {
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d", file.c_str(), size);
 
 	WRITE_VAR_OFFSET(varOff, (size == -1) ? -1 : 50);
-	WRITE_VAR(16, (uint32) size);
+	// WORKAROUND: the "current hotspot" variable (also VAR(16)) is sometimes corrupted here before being read.
+	// We skip writing the file size into VAR(16) here as a workaround (the value is not used anyway).
+	// In some versions of Adibou 1, this sometimes triggers the "quit" action instead of starting
+	// a chosen Read/Count application.
+	// Note: a similar issue has been found in Adibou 2, see o7_checkData().
+	if (_vm->getGameType() != kGameTypeAdibou1  || !_vm->isCurrentTot("KID.TOT"))
+		WRITE_VAR(16, (uint32) size);
 }
 
 void Inter_v2::o2_readData(OpFuncParams &params) {
@@ -1590,16 +1594,6 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 
 	_vm->_sound->infogramesLoadSong(fileName);
 	_vm->_sound->infogramesPlay();
-}
-
-void Inter_v2::o2_gob0x0B(OpGobParams &params) {
-	_vm->_game->_script->skip(4);
-	warning("STUB: Adibou1 o2_gob0x0B");
-}
-
-void Inter_v2::o2_gob1001(OpGobParams &params) {
-	_vm->_game->_script->skip(2);
-	warning("STUB: Adibou1 o2_gob1001");
 }
 
 void Inter_v2::o2_startInfogrames(OpGobParams &params) {

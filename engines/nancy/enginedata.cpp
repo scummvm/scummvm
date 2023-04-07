@@ -58,8 +58,7 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	s.skip(0x10, kGameTypeVampire, kGameTypeNancy1);
 	s.skip(0x20, kGameTypeNancy2, kGameTypeNancy3);
 	readRect(*chunkStream, textboxScreenPosition);
-
-	s.skip(0x10);
+	readRect(*chunkStream, inventoryBoxScreenPosition);
 	readRect(*chunkStream, menuButtonSrc);
 	readRect(*chunkStream, helpButtonSrc);
 	readRect(*chunkStream, menuButtonDest);
@@ -74,8 +73,7 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) {
 	s.skip(0x1A, kGameTypeVampire, kGameTypeVampire);
 	s.skip(0x1C, kGameTypeNancy1);
 	s.syncAsSint16LE(playerTimeMinuteLength);
-
-	s.skip(2);
+	s.syncAsUint16LE(buttonPressTimeDelay);
 	s.syncAsByte(overrideMovementTimeDeltas);
 	s.syncAsSint16LE(slowMovementTimeDelta);
 	s.syncAsSint16LE(fastMovementTimeDelta);
@@ -105,19 +103,24 @@ INV::INV(Common::SeekableReadStream *chunkStream) {
 	s.syncAsUint16LE(scrollbarDefaultPos.y);
 	s.syncAsUint16LE(scrollbarMaxScroll);
 
-	s.skip(0xC0);
+	readRectArray(s, ornamentSrcs, 6, kGameTypeVampire, kGameTypeNancy1);
+	readRectArray(s, ornamentDests, 6, kGameTypeVampire, kGameTypeNancy1);
 
 	uint numFrames = g_nancy->getStaticData().numCurtainAnimationFrames;
 
 	readRectArray(s, curtainAnimationSrcs, numFrames * 2);
 
-	readRect(s, inventoryScreenPosition);
+	readRect(s, curtainsScreenPosition);
 	s.syncAsUint16LE(curtainsFrameTime);
 
 	readFilename(s, inventoryBoxIconsImageName);
 	readFilename(s, inventoryCursorsImageName);
 
-	s.skip(0x18);
+	s.skip(0x4); // inventory box icons surface w/h
+	s.skip(0x4); // inventory cursors surface w/h
+
+	s.skip(0x10); // unknown rect, same size as a hotspot
+
 	byte itemName[20];
 	uint itemNameLength = g_nancy->getGameType() == kGameTypeVampire ? 15 : 20;
 

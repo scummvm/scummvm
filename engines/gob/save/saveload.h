@@ -305,9 +305,53 @@ protected:
 		const char *description;
 	};
 
+	class SpriteHandler : public TempSpriteHandler {
+	public:
+		SpriteHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
+		~SpriteHandler() override;
+
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
+
+	private:
+		class File : public SlotFileStatic {
+		public:
+			File(GobEngine *vm, const Common::String &base, const Common::String &ext);
+			~File() override;
+		};
+
+		File _file;
+	};
+
+	class GameFileHandler : public SaveHandler {
+	public:
+		GameFileHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
+		~GameFileHandler() override;
+
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
+		bool deleteFile() override;
+
+	private:
+		// Save from raw pointer if ptrRaw != nullptr, else save from game variables
+		bool save(const byte *ptrRaw, int16 dataVar, int32 size, int32 offset);
+
+		class File : public SlotFileStatic {
+		public:
+			File(GobEngine *vm, const Common::String &base, const Common::String &ext);
+			~File() override;
+		};
+
+		File _file;
+	};
+
 	static SaveFile _saveFiles[];
 
-	FakeFileHandler *_bouHandler;
+	GameFileHandler *_bouHandler;
+	GameFileHandler *_constructionHandler;
+	SpriteHandler   *_drawingHandler;
 
 	SaveHandler *getHandler(const char *fileName) const override;
 	const char *getDescription(const char *fileName) const override;

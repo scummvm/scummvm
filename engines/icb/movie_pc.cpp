@@ -65,7 +65,6 @@ bool MovieManager::registerMovie(const char *fileName, bool8 fade, bool8 loop) {
 		g_theMusicManager->StopMusic();
 
 	_binkDecoder = new Video::BinkDecoder();
-	_binkDecoder->setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
 
 	Common::SeekableReadStream *stream = openDiskFileForBinaryStreamRead(fileName);
 	if (!stream) {
@@ -74,6 +73,9 @@ bool MovieManager::registerMovie(const char *fileName, bool8 fade, bool8 loop) {
 	if (!_binkDecoder->loadStream(stream)) {
 		return false;
 	}
+
+	_binkDecoder->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24));
+
 	if (_binkDecoder->getWidth() != SCREEN_WIDTH) {
 		_x = (SCREEN_WIDTH / 2) - (_binkDecoder->getWidth() / 2);
 	}

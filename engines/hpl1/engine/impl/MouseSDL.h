@@ -38,11 +38,11 @@ struct Event;
 namespace hpl {
 
 class iLowLevelGraphics;
-class cLowLevelInputSDL;
+class LowLevelInput;
 
 class cMouseSDL : public iMouse {
 public:
-	cMouseSDL(cLowLevelInputSDL *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics);
+	cMouseSDL(LowLevelInput *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics);
 
 	bool ButtonIsDown(eMButton);
 
@@ -80,7 +80,7 @@ private:
 	float mfMaxPercent;
 	float mfMinPercent;
 	int mlBufferSize;
-	cLowLevelInputSDL *_lowLevelInputSDL;
+	LowLevelInput *_lowLevelInputSDL;
 	iLowLevelGraphics *_lowLevelGraphics;
 };
 

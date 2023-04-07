@@ -144,7 +144,7 @@
 {
 	{
 		"adibou2",
-		"ADDY JR 2.20 Environment",
+		"ADDY JR 2.20 Basisprogramm",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		DE_DEU,
 		kPlatformWindows,
@@ -159,7 +159,7 @@
 {
 	{
 		"adibou2",
-		"ADI Jr. (Packard Bell OEM)",
+		"ADI Junior 2",
 		AD_ENTRY1s("intro.stk", "80588ad3b5510bb44d3f40d6b07b81e7", 956328),
 		DE_DEU,
 		kPlatformWindows,
@@ -190,7 +190,7 @@
 {
 	{
 		"adibou2",
-		"ADIBÙ 2.13 Environment",
+		"ADIBÙ 2.13 Ambiente",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		IT_ITA,
 		kPlatformWindows,

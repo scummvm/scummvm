@@ -51,8 +51,10 @@
 #include "mm/mm1/views_enh/who_will_try.h"
 #include "mm/mm1/views_enh/interactions/access_code.h"
 #include "mm/mm1/views_enh/interactions/arrested.h"
+#include "mm/mm1/views_enh/interactions/prisoners.h"
 #include "mm/mm1/views_enh/interactions/resistances.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
+#include "mm/mm1/views_enh/interactions/volcano_god.h"
 #include "mm/mm1/views_enh/locations/blacksmith_items.h"
 #include "mm/mm1/views_enh/locations/blacksmith.h"
 #include "mm/mm1/views_enh/locations/inn.h"
@@ -73,6 +75,16 @@ private:
 	ViewsEnh::Interactions::Arrested _arrested;
 	ViewsEnh::Interactions::Resistances _resistances;
 	ViewsEnh::Interactions::Statue _statue;
+	ViewsEnh::Interactions::VolcanoGod _volcanoGod;
+
+	ViewsEnh::Interactions::ChildPrisoner _childPrisoner;
+	ViewsEnh::Interactions::CloakedPrisoner _cloakedPrisoner;
+	ViewsEnh::Interactions::DemonPrisoner _demonPrisoner;
+	ViewsEnh::Interactions::MaidenPrisoner _maidenPrisoner;
+	ViewsEnh::Interactions::ManPrisoner _manPrisoner;
+	ViewsEnh::Interactions::MutatedPrisoner _mutatedPrisoner;
+	ViewsEnh::Interactions::VirginPrisoner _virginPrisoner;
+
 	ViewsEnh::Locations::Blacksmith _blacksmith;
 	ViewsEnh::Locations::BlacksmithItems _blacksmithItems;
 	ViewsEnh::Locations::Inn _inn;

@@ -19,31 +19,24 @@
  *
  */
 
-#include "mm/mm1/views/maps/prisoners.h"
+#include "mm/mm1/views_enh/interactions/prisoners.h"
 #include "mm/mm1/maps/map11.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-Prisoner::Prisoner(const Common::String &name, const Common::String &line1,
+Prisoner::Prisoner(const Common::String &name, int portrait, const Common::String &line1,
 		byte flag, Alignment freeAlignment, Alignment leaveAlignment) :
-		TextView(name), _line1(line1), _flag(flag),
+		Interaction(name, portrait), _flag(flag),
 		_freeAlignment(freeAlignment), _leaveAlignment(leaveAlignment) {
-	_bounds = getLineBounds(17, 24);
-}
-
-void Prisoner::draw() {
-	clearSurface();
-	writeString(0, 0, _line1);
-	writeString(0, 3, STRING["maps.prisoners.options1"]);
-	_textPos.x = 10;
-	writeString(STRING["maps.prisoners.options2"]);
-	_textPos.x = 10;
-	writeString(STRING["maps.prisoners.options3"]);
+	addText(line1);
+	addButton(STRING["maps.prisoners.options1"], '1');
+	addButton(STRING["maps.prisoners.options2"], '2');
+	addButton(STRING["maps.prisoners.options3"], '3');
 }
 
 bool Prisoner::msgKeypress(const KeypressMessage &msg) {
@@ -103,32 +96,32 @@ void Prisoner::timeout() {
 /*------------------------------------------------------------------------*/
 
 ChildPrisoner::ChildPrisoner() :
-		Prisoner("ChildPrisoner", STRING["maps.prisoners.child"],
+		Prisoner("ChildPrisoner", 1, STRING["maps.prisoners.child"],
 		CHARFLAG1_4, GOOD, EVIL) {
 }
 
 ManPrisoner::ManPrisoner() :
-	Prisoner("ManPrisoner", STRING["maps.prisoners.man"],
+	Prisoner("ManPrisoner", 1, STRING["maps.prisoners.man"],
 	CHARFLAG1_20, EVIL, GOOD) {
 }
 
 CloakedPrisoner::CloakedPrisoner() :
-	Prisoner("CloakedPrisoner", STRING["maps.prisoners.cloaked"],
+	Prisoner("CloakedPrisoner", 1, STRING["maps.prisoners.cloaked"],
 		CHARFLAG1_40, EVIL, GOOD) {
 }
 
 DemonPrisoner::DemonPrisoner() :
-	Prisoner("DemonPrisoner", STRING["maps.prisoners.demon"],
+	Prisoner("DemonPrisoner", 1, STRING["maps.prisoners.demon"],
 		CHARFLAG1_10, EVIL, GOOD) {
 }
 
 MutatedPrisoner::MutatedPrisoner() :
-	Prisoner("MutatedPrisoner", STRING["maps.prisoners.mutated"],
+	Prisoner("MutatedPrisoner", 1, STRING["maps.prisoners.mutated"],
 		CHARFLAG1_2, GOOD, EVIL) {
 }
 
 MaidenPrisoner::MaidenPrisoner() :
-	Prisoner("MaidenPrisoner", STRING["maps.prisoners.maiden"],
+	Prisoner("MaidenPrisoner", 1, STRING["maps.prisoners.maiden"],
 		CHARFLAG1_8, GOOD, EVIL) {
 }
 
@@ -139,13 +132,11 @@ void MaidenPrisoner::flee() {
 
 /*------------------------------------------------------------------------*/
 
-VirginPrisoner::VirginPrisoner() : TextView("VirginPrisoner") {
-	setBounds(getLineBounds(20, 24));
-}
-
-void VirginPrisoner::draw() {
-	clearSurface();
-	writeString(0, 1, STRING["maps.map11.virgin"]);
+VirginPrisoner::VirginPrisoner() : Interaction("VirginPrisoner", 2) {
+	addText(STRING["maps.emap11.virgin"]);
+	addButton(STRING["maps.emap11.virgin_a"], 'A');
+	addButton(STRING["maps.emap11.virgin_b"], 'B');
+	addButton(STRING["maps.emap11.virgin_c"], 'C');
 }
 
 bool VirginPrisoner::msgKeypress(const KeypressMessage &msg) {
@@ -162,7 +153,7 @@ bool VirginPrisoner::msgKeypress(const KeypressMessage &msg) {
 		g_events->close();
 		break;
 	default:
-		return TextView::msgKeypress(msg);
+		return Interaction::msgKeypress(msg);
 	}
 
 	return true;
@@ -173,11 +164,11 @@ bool VirginPrisoner::msgAction(const ActionMessage &msg) {
 		g_events->close();
 		return true;
 	} else {
-		return TextView::msgAction(msg);
+		return Interaction::msgAction(msg);
 	}
 }
 
-} // namespace Maps
-} // namespace Views
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

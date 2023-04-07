@@ -49,7 +49,8 @@ public:
 	virtual ~Map() = default;
 
 	void process() override;
-	void onStateExit() override;
+	void onStateEnter(const NancyState::NancyState prevState) override;
+	bool onStateExit(const NancyState::NancyState nextState) override;
 
 	const SoundDescription &getSound();
 
@@ -66,8 +67,8 @@ protected:
 		void playVideo() { _decoder.start(); }
 		void unloadVideo() { _decoder.close(); }
 
-	private:
 		AVFDecoder _decoder;
+	private:
 	};
 
 	virtual void init() = 0;
@@ -119,7 +120,7 @@ private:
 	void run() override;
 	void registerGraphics() override;
 
-	void onStateExit() override;
+	bool onStateExit(const NancyState::NancyState nextState) override;
 
 	MapGlobe _globe;
 	UI::ViewportOrnaments _ornaments;
@@ -136,7 +137,7 @@ private:
 	void run() override;
 	void registerGraphics() override;
 
-	void onStateExit() override;
+	bool onStateExit(const NancyState::NancyState next) override;
 
 	UI::Button *_button;
 };

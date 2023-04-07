@@ -171,7 +171,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 		if (trackType == mkvparser::Track::kVideo && _vTrack < 0) {
 			_vTrack = pTrack->GetNumber();
 
-			_videoTrack = new VPXVideoTrack(getDefaultHighColorFormat(), pTrack);
+			_videoTrack = new VPXVideoTrack(pTrack);
 
 			addTrack(_videoTrack);
 		}
@@ -310,15 +310,18 @@ void MKVDecoder::readNextPacket() {
 	}
 }
 
-MKVDecoder::VPXVideoTrack::VPXVideoTrack(const Graphics::PixelFormat &format, const mkvparser::Track *const pTrack) {
+MKVDecoder::VPXVideoTrack::VPXVideoTrack(const mkvparser::Track *const pTrack) {
 	const mkvparser::VideoTrack *const pVideoTrack = static_cast<const mkvparser::VideoTrack *>(pTrack);
 
-	const long long width = pVideoTrack->GetWidth();
-	const long long height = pVideoTrack->GetHeight();
+	_width = pVideoTrack->GetWidth();
+	_height = pVideoTrack->GetHeight();
+	_pixelFormat = g_system->getScreenFormat();
 
-	debug(1, "VideoTrack: %lld x %lld", width, height);
+	// Default to a 32bpp format, if in 8bpp mode
+	if (_pixelFormat.bytesPerPixel == 1)
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
-	_displaySurface.create(width, height, format);
+	debug(1, "VideoTrack: %d x %d", _width, _height);
 
 	_endOfVideo = false;
 	_nextFrameStartTime = 0.0;
@@ -332,7 +335,6 @@ MKVDecoder::VPXVideoTrack::VPXVideoTrack(const Graphics::PixelFormat &format, co
 }
 
 MKVDecoder::VPXVideoTrack::~VPXVideoTrack() {
-	_displaySurface.free();
 	// The last frame is not freed in decodeNextFrame(), clear it hear instead.
 	_surface.free();
 	delete _codec;

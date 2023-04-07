@@ -396,6 +396,10 @@ Graphics::PixelFormat ThreeDOMovieDecoder::StreamVideoTrack::getPixelFormat() co
 	return _codec->getPixelFormat();
 }
 
+bool ThreeDOMovieDecoder::StreamVideoTrack::setOutputPixelFormat(const Graphics::PixelFormat &format) {
+	return _codec->setOutputPixelFormat(format);
+}
+
 void ThreeDOMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadStream *stream, uint32 videoTimeStamp) {
 	_surface = _codec->decodeFrame(*stream);
 	_curFrame++;

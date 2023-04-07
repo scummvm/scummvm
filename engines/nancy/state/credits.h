@@ -42,7 +42,8 @@ public:
 
 	// State API
 	void process() override;
-	void onStateExit() override { destroy(); };
+	void onStateEnter(const NancyState::NancyState prevState) override;
+	bool onStateExit(const NancyState::NancyState nextState) override;
 
 protected:
 	void init();

@@ -39,42 +39,28 @@
 
 namespace Image {
 
-Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height, uint bitsPerPixel) : _ModPred(0), _corrector_type(0) {
+Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height, uint bitsPerPixel) : _surface(nullptr), _ModPred(0), _corrector_type(0) {
 	_iv_frame[0].the_buf = 0;
 	_iv_frame[1].the_buf = 0;
 
+	_width = width;
+	_height = height;
 	_pixelFormat = g_system->getScreenFormat();
 
-	if (_pixelFormat.bytesPerPixel == 1) {
-		switch (bitsPerPixel) {
-		case 15:
-			_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0);
-			break;
-		case 16:
-			_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-			break;
-		case 24:
-			_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
-			break;
-		case 32:
-			_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-			break;
-		default:
-			error("Invalid color depth");
-			break;
-		}
-	}
-
-	_surface = new Graphics::Surface;
-	_surface->create(width, height, _pixelFormat);
+	// Default to a 32bpp format, if in 8bpp mode
+	if (_pixelFormat.bytesPerPixel == 1)
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
 	buildModPred();
 	allocFrames();
 }
 
 Indeo3Decoder::~Indeo3Decoder() {
-	_surface->free();
-	delete _surface;
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+		_surface = nullptr;
+	}
 
 	delete[] _iv_frame[0].the_buf;
 	delete[] _ModPred;
@@ -134,8 +120,8 @@ void Indeo3Decoder::buildModPred() {
 }
 
 void Indeo3Decoder::allocFrames() {
-	int32 luma_width   = (_surface->w + 3) & (~3);
-	int32 luma_height  = (_surface->h + 3) & (~3);
+	int32 luma_width   = (_width + 3) & (~3);
+	int32 luma_height  = (_height + 3) & (~3);
 
 	int32 chroma_width  = ((luma_width  >> 2) + 3) & (~3);
 	int32 chroma_height = ((luma_height >> 2) + 3) & (~3);
@@ -209,6 +195,11 @@ const Graphics::Surface *Indeo3Decoder::decodeFrame(Common::SeekableReadStream &
 	} else {
 		_cur_frame = _iv_frame;
 		_ref_frame = _iv_frame + 1;
+	}
+
+	if (!_surface) {
+		_surface = new Graphics::Surface;
+		_surface->create(_width, _height, _pixelFormat);
 	}
 
 	if (flags3 == 0x80)

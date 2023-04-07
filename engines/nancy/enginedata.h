@@ -41,6 +41,7 @@ struct BSUM {
 	// UI
 	Common::Rect mapButtonHotspot;
 	Common::Rect textboxScreenPosition;
+	Common::Rect inventoryBoxScreenPosition;
 	Common::Rect menuButtonSrc;
 	Common::Rect helpButtonSrc;
 	Common::Rect menuButtonDest;
@@ -50,6 +51,7 @@ struct BSUM {
 	uint16 verticalEdgesSize;
 
 	uint16 playerTimeMinuteLength;
+	uint16 buttonPressTimeDelay;
 	byte overrideMovementTimeDeltas;
 	uint16 slowMovementTimeDelta;
 	uint16 fastMovementTimeDelta;
@@ -75,8 +77,11 @@ struct INV {
 	Common::Point scrollbarDefaultPos;
 	uint16 scrollbarMaxScroll;
 
+	Common::Array<Common::Rect> ornamentSrcs;
+	Common::Array<Common::Rect> ornamentDests;
+
 	Common::Array<Common::Rect> curtainAnimationSrcs;
-	Common::Rect inventoryScreenPosition;
+	Common::Rect curtainsScreenPosition;
 	uint16 curtainsFrameTime;
 
 	Common::String inventoryBoxIconsImageName;

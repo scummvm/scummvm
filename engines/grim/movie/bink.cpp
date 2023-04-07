@@ -44,7 +44,6 @@ MoviePlayer *CreateBinkPlayer(bool demo) {
 
 BinkPlayer::BinkPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_videoDecoder = new Video::BinkDecoder();
-	_videoDecoder->setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0));
 	_subtitleIndex = _subtitles.begin();
 }
 
@@ -205,7 +204,10 @@ bool BinkPlayer::loadFile(const Common::String &filename) {
 
 	Common::SeekableReadStream *bink = nullptr;
 	bink = new Common::SeekableSubReadStream(stream, startBinkPos, stream->size(), DisposeAfterUse::YES);
-	return _videoDecoder->loadStream(bink);
+	if (!_videoDecoder->loadStream(bink))
+		return false;
+	_videoDecoder->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0));
+	return true;
 }
 
 } // end of namespace Grim

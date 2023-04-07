@@ -688,7 +688,7 @@ void Game::capturePush(int16 left, int16 top, int16 width, int16 height) {
 	_vm->_draw->_destSpriteX = 0;
 	_vm->_draw->_destSpriteY = 0;
 	_vm->_draw->_transparency = 0;
-	_vm->_draw->spriteOperation(0);
+	_vm->_draw->spriteOperation(DRAW_BLITSURF);
 	_captureCount++;
 }
 
@@ -710,7 +710,7 @@ void Game::capturePop(char doDraw) {
 		_vm->_draw->_destSurface = Draw::kBackSurface;
 		_vm->_draw->_spriteLeft = _vm->_draw->_destSpriteX & 0xF;
 		_vm->_draw->_spriteTop = 0;
-		_vm->_draw->spriteOperation(0);
+		_vm->_draw->spriteOperation(DRAW_BLITSURF);
 	}
 	_vm->_draw->freeSprite(Draw::kCaptureSurface + _captureCount);
 }

@@ -219,8 +219,6 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 		break;
 	}
 
-	_graphicsManager->clearObjects();
-
 	if (overridePrevious != NancyState::kNone) {
 		_gameFlow.prevState = overridePrevious;
 	} else {
@@ -228,30 +226,11 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 	}
 
 	_gameFlow.curState = state;
-
-	State::State *s = getStateObject(_gameFlow.prevState);
-	if (s) {
-		s->onStateExit();
-	}
-
-	s = getStateObject(_gameFlow.curState);
-	if (s) {
-		s->onStateEnter();
-	}
+	_gameFlow.changingState = true;
 }
 
 void NancyEngine::setToPreviousState() {
-	State::State *s = getStateObject(_gameFlow.curState);
-	if (s) {
-		s->onStateExit();
-	}
-
-	s = getStateObject(_gameFlow.prevState);
-	if (s) {
-		s->onStateEnter();
-	}
-
-	SWAP<NancyState::NancyState>(_gameFlow.curState, _gameFlow.prevState);
+	setState(_gameFlow.prevState);
 }
 
 void NancyEngine::setMouseEnabled(bool enabled) {
@@ -278,12 +257,34 @@ Common::Error NancyEngine::run() {
 		_cursorManager->setCursorType(CursorManager::kNormalArrow);
 		_input->processEvents();
 
-		State::State *s = getStateObject(_gameFlow.curState);
+		State::State *s;
+
+		if (_gameFlow.changingState) {
+			s = getStateObject(_gameFlow.curState);
+			if (s) {
+				s->onStateEnter(_gameFlow.curState);
+			}
+
+			_gameFlow.changingState = false;
+		}
+
+		s = getStateObject(_gameFlow.curState);
 		if (s) {
 			s->process();
 		}
-
+		
 		_graphicsManager->draw();
+		
+		if (_gameFlow.changingState) { 
+			_graphicsManager->clearObjects();
+			
+			s = getStateObject(_gameFlow.prevState);
+			if (s) {
+				if(s->onStateExit(_gameFlow.prevState)) {
+					destroyState(_gameFlow.prevState);
+				}
+			}
+		}
 
 		_system->updateScreen();
 		_system->delayMillis(16);
@@ -308,9 +309,9 @@ Common::Error NancyEngine::run() {
 void NancyEngine::pauseEngineIntern(bool pause) {
 	State::State *s = getStateObject(_gameFlow.curState);
 	if (pause) {
-		s->onStateExit();
+		s->onStateExit(NancyState::kPause);
 	} else {
-		s->onStateEnter();
+		s->onStateEnter(NancyState::kPause);
 	}
 }
 
@@ -409,6 +410,43 @@ State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 		return &State::MainMenu::instance();
 	default:
 		return nullptr;
+	}
+}
+
+void NancyEngine::destroyState(NancyState::NancyState state) const {
+	switch (state) {
+	case NancyState::kLogo:
+		if (State::Logo::hasInstance()) {
+			State::Logo::instance().destroy();
+		}
+		break;
+	case NancyState::kCredits:
+		if (State::Credits::hasInstance()) {
+			State::Credits::instance().destroy();
+		}
+		break;
+	case NancyState::kMap:
+		if (State::Map::hasInstance()) {
+			State::Map::instance().destroy();
+		}
+		break;
+	case NancyState::kHelp:
+		if (State::Help::hasInstance()) {
+			State::Help::instance().destroy();
+		}
+		break;
+	case NancyState::kScene:
+		if (State::Scene::hasInstance()) {
+			State::Scene::instance().destroy();
+		}
+		break;
+	case NancyState::kMainMenu:
+		if (State::MainMenu::hasInstance()) {
+			State::MainMenu::instance().destroy();
+		}
+		break;
+	default:
+		break;
 	}
 }
 

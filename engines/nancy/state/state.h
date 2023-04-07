@@ -22,6 +22,9 @@
 #ifndef NANCY_STATE_STATE_H
 #define NANCY_STATE_STATE_H
 
+#include "engines/nancy/commontypes.h"
+#include "common/singleton.h"
+
 namespace Nancy {
 namespace State {
 
@@ -32,8 +35,10 @@ public:
 	virtual ~State() {};
 
 	virtual void process() = 0;
-	virtual void onStateEnter() {}
-	virtual void onStateExit() {}
+	virtual void onStateEnter(const NancyState::NancyState prevState) {}
+
+	// Return true when the state needs to be destroyed
+	virtual bool onStateExit(const NancyState::NancyState nextState) { return false; }
 };
 
 } // End of namespace State

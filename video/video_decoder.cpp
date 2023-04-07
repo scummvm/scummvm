@@ -48,12 +48,7 @@ VideoDecoder::VideoDecoder() {
 	_nextVideoTrack = 0;
 	_mainAudioTrack = 0;
 	_canSetDither = true;
-
-	// Find the best format for output
-	_defaultHighColorFormat = g_system->getScreenFormat();
-
-	if (_defaultHighColorFormat.bytesPerPixel == 1)
-		_defaultHighColorFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	_canSetDefaultFormat = true;
 }
 
 void VideoDecoder::close() {
@@ -79,6 +74,7 @@ void VideoDecoder::close() {
 	_nextVideoTrack = 0;
 	_mainAudioTrack = 0;
 	_canSetDither = true;
+	_canSetDefaultFormat = true;
 }
 
 bool VideoDecoder::loadFile(const Common::Path &filename) {
@@ -208,6 +204,7 @@ Graphics::PixelFormat VideoDecoder::getPixelFormat() const {
 const Graphics::Surface *VideoDecoder::decodeNextFrame() {
 	_needsUpdate = false;
 	_canSetDither = false;
+	_canSetDefaultFormat = false;
 
 	readNextPacket();
 
@@ -541,6 +538,23 @@ bool VideoDecoder::setDitheringPalette(const byte *palette) {
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo && ((VideoTrack *)*it)->canDither()) {
 			((VideoTrack *)*it)->setDither(palette);
 			result = true;
+		}
+	}
+
+	return result;
+}
+
+bool VideoDecoder::setOutputPixelFormat(const Graphics::PixelFormat &format) {
+	// If a frame was already decoded, we can't set it now.
+	if (!_canSetDefaultFormat)
+		return false;
+
+	bool result = false;
+
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++) {
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo) {
+			if (((VideoTrack *)*it)->setOutputPixelFormat(format))
+				result = true;
 		}
 	}
 

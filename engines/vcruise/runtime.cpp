@@ -136,6 +136,8 @@ Runtime::StackValue &Runtime::StackValue::operator=(const StackValue &other) {
 	if (other.type == StackValue::kString)
 		new (&value) ValueUnion(other.value.s);
 
+	type = other.type;
+
 	return *this;
 }
 
@@ -147,6 +149,8 @@ Runtime::StackValue &Runtime::StackValue::operator=(StackValue &&other) {
 
 	if (other.type == StackValue::kString)
 		new (&value) ValueUnion(Common::move(other.value.s));
+
+	type = other.type;
 
 	return *this;
 }
@@ -285,7 +289,23 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 		Common::SharedPtr<SfxPlaylist> playlist;
 
 		for (const Common::INIFile::KeyValue &keyValue : playlistsSection->keys) {
-			const Common::String &key = keyValue.key;
+			const Common::String &baseKey = keyValue.key;
+
+			// Strip inline comments
+			uint keyValidLength = 0;
+			for (uint i = 0; i < baseKey.size(); i++) {
+				char c = baseKey[i];
+				if ((c & 0x80) == 0 && ((c & 0x7f) <= ' '))
+					continue;
+
+				if (c == ';')
+					break;
+
+				keyValidLength = i + 1;
+			}
+
+			Common::String key = baseKey.substr(0, keyValidLength);
+
 
 			if (key.size() == 0)
 				continue;
@@ -566,6 +586,7 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 	stream->writeUint32BE(inventory.size());
 	stream->writeUint32BE(sounds.size());
 	stream->writeUint32BE(triggeredOneShots.size());
+	stream->writeUint32BE(sayCycles.size());
 	stream->writeUint32BE(randomAmbientSounds.size());
 
 	stream->writeUint32BE(variables.size());
@@ -579,6 +600,11 @@ void SaveGameSnapshot::write(Common::WriteStream *stream) const {
 
 	for (const TriggeredOneShot &triggeredOneShot : triggeredOneShots)
 		triggeredOneShot.write(stream);
+
+	for (const Common::HashMap<uint32, uint>::Node &cycle : sayCycles) {
+		stream->writeUint32BE(cycle._key);
+		stream->writeUint32BE(cycle._value);
+	}
 
 	for (const RandomAmbientSound &randomAmbientSound : randomAmbientSounds)
 		randomAmbientSound.write(stream);
@@ -609,7 +635,6 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 
 	if (saveVersion < kSaveGameEarliestSupportedVersion)
 		return kLoadGameOutcomeSaveIsTooOld;
-
 	
 	roomNumber = stream->readUint32BE();
 	screenNumber = stream->readUint32BE();
@@ -632,10 +657,13 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	uint numSounds = stream->readUint32BE();
 	uint numOneShots = stream->readUint32BE();
 
+	uint numSayCycles = 0;
+	if (saveVersion >= 4)
+		numSayCycles = stream->readUint32BE();
+
 	uint numRandomAmbientSounds = 0;
 	if (saveVersion >= 3)
 		numRandomAmbientSounds = stream->readUint32BE();
-	debug(5, "TODO: numRandomAmbientSounds: %d - not currently used", numRandomAmbientSounds);
 
 	uint numVars = stream->readUint32BE();
 	uint numTimers = stream->readUint32BE();
@@ -646,6 +674,7 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 	inventory.resize(numInventory);
 	sounds.resize(numSounds);
 	triggeredOneShots.resize(numOneShots);
+	randomAmbientSounds.resize(numRandomAmbientSounds);
 
 	for (uint i = 0; i < numInventory; i++)
 		inventory[i].read(stream);
@@ -655,6 +684,16 @@ LoadGameOutcome SaveGameSnapshot::read(Common::ReadStream *stream) {
 
 	for (uint i = 0; i < numOneShots; i++)
 		triggeredOneShots[i].read(stream);
+
+	for (uint i = 0; i < numSayCycles; i++) {
+		uint32 key = stream->readUint32BE();
+		uint value = stream->readUint32BE();
+
+		sayCycles[key] = value;
+	}
+
+	for (uint i = 0; i < numRandomAmbientSounds; i++)
+		randomAmbientSounds[i].read(stream);
 
 	for (uint i = 0; i < numVars; i++) {
 		uint32 key = stream->readUint32BE();
@@ -891,6 +930,7 @@ bool Runtime::runIdle() {
 		_havePendingReturnToIdleState = false;
 
 		returnToIdleState();
+		drawCompass();
 		return true;
 	}
 
@@ -931,9 +971,10 @@ bool Runtime::runIdle() {
 			detectPanoramaMouseMovement(osEvent.timestamp);
 
 			bool changedState = dischargeIdleMouseMove();
-			if (changedState)
+			if (changedState) {
+				drawCompass();
 				return true;
-
+			}
 		} else if (osEvent.type == kOSEventTypeLButtonUp) {
 			PanoramaState oldPanoramaState = _panoramaState;
 			_panoramaState = kPanoramaStateInactive;
@@ -943,8 +984,10 @@ bool Runtime::runIdle() {
 
 			if (_lmbReleaseWasClick) {
 				bool changedState = dischargeIdleClick();
-				if (changedState)
+				if (changedState) {
+					drawCompass();
 					return true;
+				}
 			}
 
 			// If the released from panorama mode, pick up any interactions at the new mouse location, and change the mouse back
@@ -956,13 +999,17 @@ bool Runtime::runIdle() {
 				_idleIsOnInteraction = false;
 
 				bool changedState = dischargeIdleMouseMove();
-				if (changedState)
+				if (changedState) {
+					drawCompass();
 					return true;
+				}
 			}
 		} else if (osEvent.type == kOSEventTypeLButtonDown) {
 			bool changedState = dischargeIdleMouseDown();
-			if (changedState)
+			if (changedState) {
+				drawCompass();
 				return true;
+			}
 		}
 	}
 
@@ -1266,8 +1313,6 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 			return;
 		}
 
-		debug(4, "Decoding animation frame %u", _animPendingDecodeFrame);
-
 		const Graphics::Surface *surface = _animDecoder->decodeNextFrame();
 		if (!surface) {
 			outAnimationEnded = true;
@@ -1500,6 +1545,8 @@ void Runtime::terminateScript() {
 		if (checkCompletionConditions())
 			return;
 	}
+
+	drawCompass();
 
 	if (_havePendingScreenChange)
 		changeToScreen(_roomNumber, _screenNumber);
@@ -2367,9 +2414,7 @@ void Runtime::stopSound(SoundInstance &sound) {
 	if (!sound.cache)
 		return;
 
-	if (sound.cache->player)
-		sound.cache->player->stop();
-
+	sound.cache->player.reset();
 	sound.cache.reset();
 	sound.endTime = 0;
 }
@@ -2882,6 +2927,73 @@ void Runtime::drawInventory(uint slot) {
 	commitSectionToScreen(_traySection, sliceRect);
 }
 
+void Runtime::drawCompass() {
+	bool haveHorizontalRotate = false;
+	bool haveUp = false;
+	bool haveDown = false;
+	bool haveLocation = false;
+
+	switch (_gameState) {
+	case kGameStateIdle:
+	case kGameStateGyroIdle:
+	case kGameStateGyroAnimation:
+		haveHorizontalRotate = _haveHorizPanAnimations;
+		haveUp = _havePanUpFromDirection[_direction];
+		haveDown = _havePanDownFromDirection[_direction];
+		break;
+	case kGameStatePanLeft:
+	case kGameStatePanRight:
+		haveHorizontalRotate = _haveHorizPanAnimations;
+		break;
+	default:
+		break;
+	}
+
+	haveLocation = (haveUp || haveDown || haveHorizontalRotate);
+
+	const Common::Rect blackoutRects[4] = {
+		Common::Rect(0, 40, 36, 62),  // Left
+		Common::Rect(52, 40, 88, 62), // Right
+		Common::Rect(35, 12, 53, 38), // Up
+		Common::Rect(35, 56, 54, 78), // Down
+	};
+
+	const bool drawSections[4] = {haveHorizontalRotate, haveHorizontalRotate, haveUp, haveDown};
+
+	Common::Rect compassRect = Common::Rect(0, 0, _trayCompassGraphic->w, _trayCompassGraphic->h);
+
+	int16 vertOffset = (_traySection.rect.height() - compassRect.height()) / 2;
+	const int horizOffset = 0;
+
+	compassRect.translate(horizOffset, vertOffset);
+
+	_traySection.surf->blitFrom(*_trayCompassGraphic, Common::Point(compassRect.left, compassRect.top));
+
+	const uint32 blackColor = _traySection.surf->format.ARGBToColor(255, 0, 0, 0);
+
+	for (uint i = 0; i < 4; i++) {
+		if (!drawSections[i]) {
+			Common::Rect blackoutRect = blackoutRects[i];
+			blackoutRect.translate(horizOffset, vertOffset);
+
+			_traySection.surf->fillRect(blackoutRect, blackColor);
+		}
+	}
+
+	Common::Rect lowerRightRect = Common::Rect(_traySection.rect.right - 88, 0, _traySection.rect.right, 88);
+
+	if (haveLocation) {
+		if (_gameID == GID_REAH)
+			_traySection.surf->blitFrom(*_trayCornerGraphic, Common::Point(lowerRightRect.left, lowerRightRect.top));
+	} else {
+		if (_gameID == GID_REAH)
+			_traySection.surf->blitFrom(*_trayBackgroundGraphic, lowerRightRect, lowerRightRect);
+	}
+
+	commitSectionToScreen(_traySection, compassRect);
+	commitSectionToScreen(_traySection, lowerRightRect);
+}
+
 void Runtime::resetInventoryHighlights() {
 	for (uint slot = 0; slot < kNumInventorySlots; slot++) {
 		InventoryItem &item = _inventory[slot];
@@ -3015,8 +3127,12 @@ void Runtime::recordSaveGameSnapshot() {
 		saveSound.balance = sound.balance;
 
 		// Skip ramp
-		if (sound.rampRatePerMSec != 0)
+		if (sound.rampRatePerMSec != 0) {
+			if (sound.rampTerminateOnCompletion)
+				continue;	// Don't even save this
+
 			saveSound.volume = sound.rampEndVolume;
+		}
 
 		saveSound.is3D = sound.is3D;
 		saveSound.isLooping = sound.isLooping;
@@ -3032,6 +3148,7 @@ void Runtime::recordSaveGameSnapshot() {
 	snapshot->pendingSoundParams3D = _pendingSoundParams3D;
 
 	snapshot->triggeredOneShots = _triggeredOneShots;
+	snapshot->sayCycles = _sayCycles;
 
 	snapshot->listenerX = _listenerX;
 	snapshot->listenerY = _listenerY;
@@ -3084,6 +3201,7 @@ void Runtime::restoreSaveGameSnapshot() {
 	_pendingSoundParams3D = _saveGame->pendingSoundParams3D;
 
 	_triggeredOneShots = _saveGame->triggeredOneShots;
+	_sayCycles = _saveGame->sayCycles;
 
 	_listenerX = _saveGame->listenerX;
 	_listenerY = _saveGame->listenerY;
@@ -3125,6 +3243,9 @@ void Runtime::restoreSaveGameSnapshot() {
 
 	_havePendingScreenChange = true;
 	_forceScreenChange = true;
+
+	for (uint slot = 0; slot < kNumInventorySlots; slot++)
+		drawInventory(slot);
 }
 
 void Runtime::saveGame(Common::WriteStream *stream) const {
@@ -3195,7 +3316,7 @@ LoadGameOutcome Runtime::loadGame(Common::ReadStream *stream) {
 		}                                                                      \
 		const StackValue *stackArgsPtr = &this->_scriptStack[stackSize - (n)]; \
 		for (uint i = 0; i < (n); i++) {                                       \
-			if (stackArgsPtr[i].type != StackValue::kNumber)                   \
+			if (stackArgsPtr[i].type != StackValue::kString)                   \
 				error("Expected op argument %u to be a string", i);            \
 			arrayName[i] = Common::move(stackArgsPtr[i].value.s);              \
 		}                                                                      \
@@ -3324,7 +3445,6 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 		isRight = true;
 	}
 
-
 	uint cursorID = 0;
 	if (_haveHorizPanAnimations) {
 		uint panCursor = kPanCursorDraggableHoriz;
@@ -3338,6 +3458,7 @@ void Runtime::scriptOpAnimR(ScriptArg_t arg) {
 	}
 
 	changeToCursor(_cursors[cursorID]);
+	drawCompass();
 }
 
 void Runtime::scriptOpAnimF(ScriptArg_t arg) {
@@ -3434,7 +3555,14 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 	_direction = stackArgs[kAnimDefStackArgs + 1];
 	_havePendingScreenChange = true;
 
-	changeToCursor(_cursors[kCursorArrow]);
+	
+	uint cursorID = kCursorArrow;
+	if (_scriptEnv.panInteractionID == kPanUpInteraction)
+		cursorID = _panCursors[kPanCursorDraggableUp | kPanCursorDirectionUp];
+	else if (_scriptEnv.panInteractionID == kPanDownInteraction)
+		cursorID = _panCursors[kPanCursorDraggableDown | kPanCursorDirectionDown];
+
+	changeToCursor(_cursors[cursorID]);
 }
 
 void Runtime::scriptOpStatic(ScriptArg_t arg) {
@@ -3976,15 +4104,42 @@ void Runtime::scriptOpSay1(ScriptArg_t arg) {
 	TAKE_STACK_INT_NAMED(2, sndParamArgs);
 	TAKE_STACK_STR_NAMED(1, sndNameArgs);
 
-	warning("Say1 cycles are not implemented yet, playing first sound in the cycle");
-
-	StackInt_t soundID = 0;
-	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
-
 	// uint unk = sndParamArgs[0];
 	uint cycleLength = sndParamArgs[1];
 	debug(5, "Say1 cycle length: %u", cycleLength);
+
+	Common::String soundIDStr = sndNameArgs[0];
+
+	if (soundIDStr.size() < 4)
+		error("Say1 sound name was invalid");
+
+	uint32 cycleID = 0;
+	
+	for (uint i = 0; i < 4; i++) {
+		char d = soundIDStr[i];
+		if (d < '0' || d > '9')
+			error("Invalid sound ID for say1");
+
+		cycleID = cycleID * 10 + (d - '0');
+	}
+
+	uint &cyclePosRef = _sayCycles[static_cast<uint32>(cycleID)];
+
+	uint32 cycledSoundID = (cyclePosRef + cycleID);
+	cyclePosRef++;
+
+	if (cyclePosRef == cycleLength)
+		cyclePosRef = 0;
+
+	soundIDStr = soundIDStr.substr(4);
+	for (uint i = 0; i < 4; i++) {
+		soundIDStr.insertChar(static_cast<char>((cycledSoundID % 10) + '0'), 0);
+		cycledSoundID /= 10;
+	}
+
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByName(soundIDStr, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(false, *cachedSound, 100, 0, false, true);

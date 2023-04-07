@@ -50,12 +50,15 @@ public:
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream) override;
 	Graphics::PixelFormat getPixelFormat() const override;
+	bool setOutputPixelFormat(const Graphics::PixelFormat &format) override { _pixelFormat = format; return true; }
 
 	static bool isIndeo3(Common::SeekableReadStream &stream);
 
 private:
 	Graphics::Surface *_surface;
 
+	uint16 _width;
+	uint16 _height;
 	Graphics::PixelFormat _pixelFormat;
 
 	static const int _corrector_type_0[24];

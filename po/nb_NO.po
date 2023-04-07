@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-04 19:16+0000\n"
+"POT-Creation-Date: 2023-04-06 10:03+0000\n"
 "PO-Revision-Date: 2023-03-08 14:02+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -143,7 +143,7 @@ msgstr ""
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3474
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3489
 #: engines/toon/toon.cpp:1502
 msgid "Yes"
 msgstr "Ja"
@@ -156,7 +156,7 @@ msgstr "Ja"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3474
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3489
 #: engines/toon/toon.cpp:1502
 msgid "No"
 msgstr "Nei"
@@ -4584,7 +4584,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2809
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2815
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -5403,12 +5403,12 @@ msgstr "Feil rs-fil."
 msgid "Save file created by different version."
 msgstr "Lagringsfil opprettet i en annen versjon."
 
-#: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1488
+#: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1492
 #: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:582
 msgid "Failed to load saved game from file."
 msgstr "Kunne ikke laste inn lagret spill fra lagringsfil."
 
-#: engines/gob/inter_v2.cpp:1558 engines/gob/inter_v7.cpp:1407
+#: engines/gob/inter_v2.cpp:1562 engines/gob/inter_v7.cpp:1407
 #: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:595
 msgid "Failed to save game to file."
 msgstr "Kunne ikke lagre spill til lagringsfil."
@@ -7463,7 +7463,7 @@ msgid "Querying games..."
 msgstr "Sjekker spill ..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:60 engines/scumm/scumm.cpp:3480
+#: engines/scumm/dialog-sessionselector.cpp:60 engines/scumm/scumm.cpp:3495
 msgid "Join"
 msgstr "Bli med"
 
@@ -8391,7 +8391,7 @@ msgstr ""
 "Denne spesifikke utgaven av Monkey Island 1 mangler noen av\n"
 "de påkrevde ressursene for å støtte MT-32. Bruker AdLib i stedet."
 
-#: engines/scumm/scumm.cpp:3369
+#: engines/scumm/scumm.cpp:3384
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -8401,11 +8401,11 @@ msgstr ""
 "må Maniac Mansion-filene ligge i «Maniac» mappa inni Tentacle-spillmappa, og "
 "spillet må være lagt til i ScummVM."
 
-#: engines/scumm/scumm.cpp:3480
+#: engines/scumm/scumm.cpp:3495
 msgid "Would you like to host or join a network play session?"
 msgstr "Ønsker du å være vert for eller bli med i en nettverksbasert spilløkt?"
 
-#: engines/scumm/scumm.cpp:3480
+#: engines/scumm/scumm.cpp:3495
 msgid "Host"
 msgstr "Vert"
 

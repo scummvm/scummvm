@@ -178,8 +178,6 @@ public:
 	void SetFPSUpdateRate(float afSec);
 	float GetFPSUpdateRate();
 
-	void SetRenderOnce(bool abX) { mbRenderOnce = abX; }
-
 	float GetFrameTime() { return mfFrameTime; }
 
 	float GetUpdateTime() { return mfUpdateTime; }
@@ -191,8 +189,6 @@ public:
 
 private:
 	bool mbGameIsDone;
-
-	bool mbRenderOnce;
 
 	float mfFrameTime;
 

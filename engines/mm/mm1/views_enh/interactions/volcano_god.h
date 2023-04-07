@@ -19,46 +19,47 @@
  *
  */
 
-/*
- * Copyright (C) 2006-2010 - Frictional Games
- *
- * This file is part of HPL1 Engine.
- */
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_VOLCANO_GOD_H
+#define MM1_VIEWS_ENH_INTERACTIONS_VOLCANO_GOD_H
 
-#ifndef HPL_LOWLEVELINPUT_SDL_H
-#define HPL_LOWLEVELINPUT_SDL_H
+#include "mm/mm1/views_enh/interactions/interaction_query.h"
+#include "mm/mm1/data/character.h"
 
-#include "common/array.h"
-#include "common/events.h"
-#include "hpl1/engine/input/LowLevelInput.h"
+namespace MM {
+namespace MM1 {
+namespace ViewsEnh {
+namespace Interactions {
 
-namespace hpl {
+class VolcanoGod : public InteractionQuery {
+private:
+	enum Mode {
+		CHOOSE_OPTION, ENTER_RESPONSE
+	};
+	Mode _mode = CHOOSE_OPTION;
 
-class iLowLevelGraphics;
-class iMouse;
-class iKeyboard;
+	void setMode(Mode newMode);
+	void challenge();
+	void riddle();
+	void clue();
 
-class cLowLevelInputSDL : public iLowLevelInput {
-	friend class cKeyboardSDL;
-	friend class cMouseSDL;
+protected:
+	/**
+	 * Answer entered
+	 */
+	void answerEntered() override;
 
 public:
-	cLowLevelInputSDL(iLowLevelGraphics *apLowLevelGraphics);
-	~cLowLevelInputSDL();
-
-	void LockInput(bool abX);
-
-	void BeginInputUpdate();
-	void EndInputUpdate();
-
-	iMouse *CreateMouse();
-	iKeyboard *CreateKeyboard();
-
-private:
-	Common::Array<Common::Event> _events;
-	iLowLevelGraphics *_lowLevelGraphics;
+	VolcanoGod();
+	virtual ~VolcanoGod() {
+	}
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
-} // namespace hpl
+} // namespace Interactions
+} // namespace ViewsEnh
+} // namespace MM1
+} // namespace MM
 
-#endif // HPL_LOWLEVELINPUT_SDL_H
+#endif

@@ -65,13 +65,13 @@ int MoviePlayer::load(const Common::String &filename, int flags, int image) {
 	if (_video->isVideoLoaded())
 		_video->close();
 
-	// Ensure that Bink will use our PixelFormat
-	_video->setDefaultHighColorFormat(g_system->getScreenFormat());
-
 	if (!_video->loadFile(filename)) {
 		warning("Failed to load video file %s", filename.c_str());
 		return -1;
 	}
+
+	// Ensure that Bink will use our PixelFormat
+	_video->setOutputPixelFormat(g_system->getScreenFormat());
 
 	_video->start();
 

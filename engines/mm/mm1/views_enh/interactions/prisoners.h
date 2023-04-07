@@ -19,31 +19,29 @@
  *
  */
 
-#ifndef MM1_VIEWS_MAPS_PRISONERS_H
-#define MM1_VIEWS_MAPS_PRISONERS_H
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_PRISONERS_H
+#define MM1_VIEWS_ENH_INTERACTIONS_PRISONERS_H
 
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views_enh/interactions/interaction.h"
 #include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-class Prisoner : public TextView {
+class Prisoner : public Interaction {
 private:
-	Common::String _line1;
 	byte _flag;
 	Alignment _freeAlignment;
 	Alignment _leaveAlignment;
 protected:
 	virtual void flee() {}
 public:
-	Prisoner(const Common::String &name, const Common::String &line1,
+	Prisoner(const Common::String &name, int portrait, const Common::String &line1,
 		byte flag, Alignment freeAlignment, Alignment leaveAlignment);
 	virtual ~Prisoner() {}
 
-	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void timeout() override;
 };
@@ -90,18 +88,17 @@ public:
 	}
 };
 
-class VirginPrisoner : public TextView {
+class VirginPrisoner : public Interaction {
 public:
 	VirginPrisoner();
 	virtual ~VirginPrisoner() {
 	}
-	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 };
 
-} // namespace Maps
-} // namespace Views
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

@@ -162,6 +162,7 @@ private:
 		uint16 getWidth() const override;
 		uint16 getHeight() const override;
 		Graphics::PixelFormat getPixelFormat() const override;
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override;
 		const Graphics::Surface *decodeNextFrame() override { return _surface; }
 
 		virtual void newFrame(uint32 frameDelay) override;

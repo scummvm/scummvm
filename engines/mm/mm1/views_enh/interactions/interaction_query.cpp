@@ -43,6 +43,7 @@ void InteractionQuery::draw() {
 	if (!_showEntry)
 		return;
 
+	assert(_buttons.empty());
 	int xp = (_innerBounds.width() / 2) - (_maxChars * 8 / 2);
 	int yp = (8 + _lines.size()) * 8;
 

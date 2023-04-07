@@ -41,7 +41,6 @@ FMVScreen::FMVScreen(Gfx::Driver *gfx, Cursor *cursor) :
 	_bitmap->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	_decoder = new Video::BinkDecoder();
-	_decoder->setDefaultHighColorFormat(_bitmap->getBestPixelFormat());
 	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
@@ -82,6 +81,7 @@ void FMVScreen::play(const Common::String &name) {
 	if (!_decoder->isVideoLoaded()) {
 		error("Could not open %s", name.c_str());
 	}
+	_decoder->setOutputPixelFormat(_bitmap->getBestPixelFormat());
 	_decoder->start();
 }
 

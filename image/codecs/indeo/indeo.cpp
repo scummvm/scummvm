@@ -463,36 +463,25 @@ IVI45DecContext::IVI45DecContext() : _gb(nullptr), _frameNum(0), _frameType(0),
 
 /*------------------------------------------------------------------------*/
 
-IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height, uint bitsPerPixel) : Codec() {
+IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height, uint bitsPerPixel) : Codec(), _surface(nullptr) {
+	_width = width;
+	_height = height;
+	_bitsPerPixel = bitsPerPixel;
 	_pixelFormat = g_system->getScreenFormat();
 
-	if (_pixelFormat.bytesPerPixel == 1) {
-		switch (bitsPerPixel) {
-		case 15:
-			_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0);
-			break;
-		case 16:
-			_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-			break;
-		case 24:
-			_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
-			break;
-		case 32:
-			_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-			break;
-		default:
-			error("Invalid color depth");
-			break;
-		}
-	}
+	// Default to a 32bpp format, if in 8bpp mode
+	if (_pixelFormat.bytesPerPixel == 1)
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
-	_surface.create(width, height, _pixelFormat);
-	_surface.fillRect(Common::Rect(0, 0, width, height), (bitsPerPixel == 32) ? 0xff : 0);
 	_ctx._bRefBuf = 3; // buffer 2 is used for scalability mode
 }
 
 IndeoDecoderBase::~IndeoDecoderBase() {
-	_surface.free();
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+		_surface = nullptr;
+	}
 	IVIPlaneDesc::freeBuffers(_ctx._planes);
 	if (_ctx._mbVlc._custTab._table)
 		_ctx._mbVlc._custTab.freeVlc();
@@ -506,6 +495,12 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 	int result;
 	AVFrame frameData;
 	AVFrame *frame = &frameData;
+
+	if (!_surface) {
+		_surface = new Graphics::Surface;
+		_surface->create(_width, _height, _pixelFormat);
+		_surface->fillRect(Common::Rect(0, 0, _width, _height), (_bitsPerPixel == 32) ? 0xff : 0);
+	}
 
 	// Decode the header
 	if (decodePictureHeader() < 0)
@@ -562,7 +557,7 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 	if (!isNonNullFrame())
 		return 0;
 
-	assert(_ctx._planes[0]._width <= _surface.w && _ctx._planes[0]._height <= _surface.h);
+	assert(_ctx._planes[0]._width <= _surface->w && _ctx._planes[0]._height <= _surface->h);
 	result = frame->setDimensions(_ctx._planes[0]._width, _ctx._planes[0]._height);
 	if (result < 0)
 		return result;
@@ -583,7 +578,7 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 	outputPlane(&_ctx._planes[1], frame->_data[2], frame->_linesize[2]);
 
 	// Merge the planes into the final surface
-	YUVToRGBMan.convert410(&_surface, Graphics::YUVToRGBManager::kScaleITU,
+	YUVToRGBMan.convert410(_surface, Graphics::YUVToRGBManager::kScaleITU,
 		frame->_data[0], frame->_data[1], frame->_data[2], frame->_width, frame->_height,
 		frame->_width, frame->_width);
 

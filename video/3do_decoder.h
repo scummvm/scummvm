@@ -75,6 +75,7 @@ private:
 		uint16 getWidth() const override { return _width; }
 		uint16 getHeight() const override { return _height; }
 		Graphics::PixelFormat getPixelFormat() const override;
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override;
 		int getCurFrame() const override { return _curFrame; }
 		int getFrameCount() const override { return _frameCount; }
 		void setNextFrameStartTime(uint32 nextFrameStartTime) { _nextFrameStartTime = nextFrameStartTime; }

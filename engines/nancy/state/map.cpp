@@ -75,10 +75,30 @@ void Map::process() {
 	}
 }
 
-void Map::onStateExit() {
-	g_nancy->_graphicsManager->clearObjects();
-	_viewport.unloadVideo();
-	_state = kLoad;
+void Map::onStateEnter(const NancyState::NancyState prevState) {
+	// Unpause sound and video when coming back from the GMM
+	if (prevState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound(getSound(), false);
+		if (_viewport._decoder.getFrameCount() > 1) {
+			_viewport._decoder.pauseVideo(false);
+		}
+	}
+}
+
+bool Map::onStateExit(const NancyState::NancyState nextState) {
+	// Only pause when going to the GMM
+	if (nextState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound(getSound(), true);
+		if (_viewport._decoder.getFrameCount() > 1) {
+			_viewport._decoder.pauseVideo(true);
+		}
+	} else {
+		g_nancy->_graphicsManager->clearObjects();
+		_viewport.unloadVideo();
+		_state = kLoad;
+	}
+
+	return false;
 }
 
 const SoundDescription &Map::getSound() {
@@ -93,6 +113,13 @@ void Map::load() {
 	_background._drawSurface.blitFrom(*screen);
 	_background.moveTo(_background._drawSurface.getBounds());
 	_background.setVisible(true);
+
+	// The clock may become invisible after the map is opened, resulting in the left half appearing still open
+	// This is a slightly hacky solution but it works
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		Common::Rect r(52, 100);
+		_background._drawSurface.blitFrom(NancySceneState.getFrame()._drawSurface, r, r);
+	}
 }
 
 void Map::registerGraphics() {
@@ -225,16 +252,18 @@ void TVDMap::load() {
 	_state = kRun;
 }
 
-void TVDMap::onStateExit() {
-	if (_pickedLocationID != -1) {
-		NancySceneState.changeScene(_mapData->locations[_pickedLocationID].scenes[NancySceneState.getPlayerTOD() == kPlayerDay ? 0 : 1]);
+bool TVDMap::onStateExit(const NancyState::NancyState nextState) {
+	if (nextState != NancyState::kPause) {
+		if (_pickedLocationID != -1) {
+			NancySceneState.changeScene(_mapData->locations[_pickedLocationID].scenes[NancySceneState.getPlayerTOD() == kPlayerDay ? 0 : 1]);
 
-		g_nancy->_sound->playSound("BUOK");
-	} else {
-		g_nancy->_sound->stopSound(getSound());
+			g_nancy->_sound->playSound("BUOK");
+		} else {
+			g_nancy->_sound->stopSound(getSound());
+		}
 	}
 
-	Map::onStateExit();
+	return Map::onStateExit(nextState);
 }
 
 void TVDMap::run() {
@@ -421,17 +450,19 @@ void Nancy1Map::registerGraphics() {
 	_button->registerGraphics();
 }
 
-void Nancy1Map::onStateExit() {
-	if (_pickedLocationID != -1) {
-		NancySceneState.changeScene(_mapData->locations[_pickedLocationID].scenes[_mapID]);
+bool Nancy1Map::onStateExit(const NancyState::NancyState nextState) {
+	if (nextState != NancyState::kPause) {
+		if (_pickedLocationID != -1) {
+			NancySceneState.changeScene(_mapData->locations[_pickedLocationID].scenes[_mapID]);
 
-		g_nancy->_sound->playSound("BUOK");
+			g_nancy->_sound->playSound("BUOK");
+		}
+
+		g_nancy->_sound->stopSound(getSound());
+		g_nancy->_sound->playSound("GLOB");
 	}
 
-	g_nancy->_sound->stopSound(getSound());
-	g_nancy->_sound->playSound("GLOB");
-
-	Map::onStateExit();
+	return Map::onStateExit(nextState);
 }
 
 } // End of namespace State

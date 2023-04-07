@@ -49,8 +49,8 @@ void MainMenu::process() {
 	}
 }
 
-void MainMenu::onStateExit() {
-	destroy();
+bool MainMenu::onStateExit(const NancyState::NancyState nextState) {
+	return true;
 }
 
 void MainMenu::init() {

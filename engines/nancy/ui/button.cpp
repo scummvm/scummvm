@@ -41,7 +41,7 @@ Button::Button(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::R
 }
 
 void Button::handleInput(NancyInput &input) {
-	if (!_isClicked && _screenPosition.contains(input.mousePos)) {
+	if (_screenPosition.contains(input.mousePos)) {
 		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {

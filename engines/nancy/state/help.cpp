@@ -56,9 +56,26 @@ void Help::process() {
 	case kRun:
 		run();
 		break;
-	case kWaitForSound:
-		waitForSound();
+	case kWait:
+		wait();
 		break;
+	}
+}
+
+void Help::onStateEnter(const NancyState::NancyState prevState) {
+	if (prevState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound("MSND", false);
+	}
+}
+
+bool Help::onStateExit(const NancyState::NancyState nextState) {
+	// Handle the GMM being called
+	if (nextState == NancyState::kPause) {
+		g_nancy->_sound->pauseSound("MSND", true);
+		
+		return false;
+	} else {
+		return true;
 	}
 }
 
@@ -94,13 +111,13 @@ void Help::run() {
 	if (_button->_isClicked) {
 		_button->_isClicked = false;
 		g_nancy->_sound->playSound("BUOK");
-		_state = kWaitForSound;
+		_buttonPressActivationTime = g_system->getMillis() + g_nancy->_bootSummary->buttonPressTimeDelay;
+		_state = kWait;
 	}
 }
 
-void Help::waitForSound() {
-	if (!g_nancy->_sound->isSoundPlaying("BUOK")) {
-		g_nancy->_sound->stopSound("BUOK");
+void Help::wait() {
+	if (g_system->getMillis() > _buttonPressActivationTime) {
 		g_nancy->setToPreviousState();
 	}
 }

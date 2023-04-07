@@ -357,16 +357,6 @@ public:
 	virtual const Graphics::Surface *decodeNextFrame();
 
 	/**
-	 * Set the default high color format for videos that convert from YUV.
-	 *
-	 * By default, VideoDecoder will attempt to use the screen format
-	 * if it's >8bpp and use a 32bpp format when not.
-	 *
-	 * This must be set before calling loadStream().
-	 */
-	void setDefaultHighColorFormat(const Graphics::PixelFormat &format) { _defaultHighColorFormat = format; }
-
-	/**
 	 * Set the video to decode frames in reverse.
 	 *
 	 * By default, VideoDecoder will decode forward.
@@ -382,7 +372,7 @@ public:
 	 * Tell the video to dither to a palette.
 	 *
 	 * By default, VideoDecoder will return surfaces in native, or in the case
-	 * of YUV-based videos, the format set by setDefaultHighColorFormat().
+	 * of YUV-based videos, the format set by setOutputPixelFormat().
 	 * For video formats or codecs that support it, this will start outputting
 	 * its surfaces in 8bpp with this palette.
 	 *
@@ -396,6 +386,17 @@ public:
 	 * @return true on success, false otherwise
 	 */
 	bool setDitheringPalette(const byte *palette);
+
+	/**
+	 * Set the default high color format for videos that convert from YUV.
+	 *
+	 * This should be called after loadStream(), but before a decodeNextFrame()
+	 * call. This is enforced.
+	 *
+	 * @param format The preferred output pixel format
+	 * @return true on success, false otherwise
+	 */
+	bool setOutputPixelFormat(const Graphics::PixelFormat &format);
 
 	/////////////////////////////////////////
 	// Audio Control
@@ -576,6 +577,11 @@ protected:
 		 * Get the pixel format of this track
 		 */
 		virtual Graphics::PixelFormat getPixelFormat() const = 0;
+
+		/**
+		 * Set the default high color format for videos that convert from YUV.
+		 */
+		virtual bool setOutputPixelFormat(const Graphics::PixelFormat &format) { return false; }
 
 		/**
 		 * Get the current frame of this track
@@ -877,11 +883,6 @@ protected:
 	bool endOfVideoTracks() const;
 
 	/**
-	 * Get the default high color format
-	 */
-	Graphics::PixelFormat getDefaultHighColorFormat() const { return _defaultHighColorFormat; }
-
-	/**
 	 * Set _nextVideoTrack to the video track with the lowest start time for the next frame.
 	 *
 	 * @return _nextVideoTrack
@@ -954,11 +955,9 @@ private:
 	mutable bool _dirtyPalette;
 	const byte *_palette;
 
-	// Enforcement of not being able to set dither
+	// Enforcement of not being able to set dither or set the default format
 	bool _canSetDither;
-
-	// Default PixelFormat settings
-	Graphics::PixelFormat _defaultHighColorFormat;
+	bool _canSetDefaultFormat;
 
 protected:
 	// Internal helper functions

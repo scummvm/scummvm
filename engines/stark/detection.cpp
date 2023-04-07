@@ -373,6 +373,19 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO_NONE
 	},
 
+	// The Longest Journey
+	// Hungarian fan-made applied to German DVD version
+	// Trac report #14384
+	{
+		"tlj", "Fanmade",
+		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
+				   "chapters.ini",	"790b51a88b5493bff5168a77738e0e84", 451),
+		Common::HU_HUN,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
 	AD_TABLE_END_MARKER
 };
 
