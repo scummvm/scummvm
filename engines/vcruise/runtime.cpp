@@ -1308,7 +1308,7 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 			_animPendingDecodeFrame = _animFirstFrame;
 		}
 
-		if (useStopFrame && _animPendingDecodeFrame == _animStopFrame) {
+		if (useStopFrame && _animDisplayingFrame == _animStopFrame) {
 			outAnimationEnded = true;
 			return;
 		}
