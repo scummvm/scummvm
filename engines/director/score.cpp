@@ -1081,7 +1081,7 @@ void Score::screenShot() {
 		warning("Screenshot requested, but PNG support is not compiled in");
 
 		return;
-#endif
+#else
 
 
 	Graphics::Surface rawSurface = _window->getSurface()->rawSurface();
@@ -1148,6 +1148,8 @@ void Score::screenShot() {
 
 	newSurface->free();
 	delete newSurface;
+
+#endif // USE_PNG
 }
 
 uint16 Score::getSpriteIDFromPos(Common::Point pos) {
