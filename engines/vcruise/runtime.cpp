@@ -1842,7 +1842,7 @@ SoundCache *Runtime::loadCache(SoundInstance &sound) {
 	return cachedSound.get();
 }
 
-void Runtime::resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, SoundInstance *&outWave) {
+void Runtime::resolveSoundByName(const Common::String &soundName, bool load, StackInt_t &outSoundID, SoundInstance *&outWave) {
 	Common::String sndName = soundName;
 
 	uint soundID = 0;
@@ -1861,15 +1861,17 @@ void Runtime::resolveSoundByName(const Common::String &soundName, StackInt_t &ou
 		}
 	}
 
-	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator waveIt = _waves.find(sndName);
+	if (load) {
+		Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator waveIt = _waves.find(sndName);
 
-	if (waveIt != _waves.end()) {
-		Common::SharedPtr<SoundInstance> snd = loadWave(sndName, soundID, waveIt->_value);
-		outWave = snd.get();
+		if (waveIt != _waves.end()) {
+			Common::SharedPtr<SoundInstance> snd = loadWave(sndName, soundID, waveIt->_value);
+			outWave = snd.get();
+		}
 	}
 }
 
-void Runtime::resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, SoundInstance *&outWave) {
+void Runtime::resolveSoundByNameOrID(const StackValue &stackValue, bool load, StackInt_t &outSoundID, SoundInstance *&outWave) {
 	outSoundID = 0;
 	outWave = nullptr;
 
@@ -1886,7 +1888,7 @@ void Runtime::resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &o
 	}
 
 	if (stackValue.type == StackValue::kString)
-		resolveSoundByName(stackValue.value.s, outSoundID, outWave);
+		resolveSoundByName(stackValue.value.s, load, outSoundID, outWave);
 }
 
 void Runtime::changeToScreen(uint roomNumber, uint screenNumber) {
@@ -2445,6 +2447,7 @@ void Runtime::stopSound(SoundInstance &sound) {
 	sound.cache->player.reset();
 	sound.cache.reset();
 	sound.endTime = 0;
+	sound.isSilencedLoop = false;
 }
 
 void Runtime::updateSounds(uint32 timestamp) {
@@ -2614,7 +2617,7 @@ void Runtime::triggerAmbientSounds() {
 
 			StackInt_t soundID = 0;
 			SoundInstance *cachedSound = nullptr;
-			resolveSoundByName(sound.name, soundID, cachedSound);
+			resolveSoundByName(sound.name, true, soundID, cachedSound);
 
 			if (cachedSound) {
 				triggerSound(false, *cachedSound, sound.volume, sound.balance, false, false);
@@ -3805,7 +3808,7 @@ void Runtime::scriptOpSoundS1(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(false, *cachedSound, 100, 0, false, false);
@@ -3817,7 +3820,7 @@ void Runtime::scriptOpSoundS2(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(false, *cachedSound, sndParamArgs[0], 0, false, false);
@@ -3829,7 +3832,7 @@ void Runtime::scriptOpSoundS3(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(false, *cachedSound, sndParamArgs[0], sndParamArgs[1], false, false);
@@ -3840,7 +3843,7 @@ void Runtime::scriptOpSoundL1(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(true, *cachedSound, 100, 0, false, false);
@@ -3852,7 +3855,7 @@ void Runtime::scriptOpSoundL2(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(true, *cachedSound, sndParamArgs[0], 0, false, false);
@@ -3864,7 +3867,7 @@ void Runtime::scriptOpSoundL3(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(true, *cachedSound, sndParamArgs[0], sndParamArgs[1], false, false);
@@ -3876,7 +3879,7 @@ void Runtime::scriptOp3DSoundL2(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound) {
 		setSound3DParameters(*cachedSound, sndParamArgs[1], sndParamArgs[2], _pendingSoundParams3D);
@@ -3890,7 +3893,7 @@ void Runtime::scriptOp3DSoundL3(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound) {
 		setSound3DParameters(*cachedSound, sndParamArgs[2], sndParamArgs[3], _pendingSoundParams3D);
@@ -3904,7 +3907,7 @@ void Runtime::scriptOp3DSoundS2(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound) {
 		setSound3DParameters(*cachedSound, sndParamArgs[1], sndParamArgs[2], _pendingSoundParams3D);
@@ -3938,10 +3941,14 @@ void Runtime::scriptOpStopSndLA(ScriptArg_t arg) {
 }
 
 void Runtime::scriptOpStopSndLO(ScriptArg_t arg) {
-	TAKE_STACK_INT(1);
+	TAKE_STACK_VAR(1);
 
-	warning("StopSndLO not implemented yet");
-	(void)stackArgs;
+	StackInt_t soundID = 0;
+	SoundInstance *cachedSound = nullptr;
+	resolveSoundByNameOrID(stackArgs[0], false, soundID, cachedSound);
+
+	if (cachedSound)
+		stopSound(*cachedSound);
 }
 
 void Runtime::scriptOpRange(ScriptArg_t arg) {
@@ -4077,7 +4084,7 @@ void Runtime::scriptOpVolumeUp3(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
+	resolveSoundByNameOrID(sndIDArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSoundRamp(*cachedSound, sndParamArgs[0] * 100, sndParamArgs[1], false);
@@ -4089,7 +4096,7 @@ void Runtime::scriptOpVolumeDn2(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
+	resolveSoundByNameOrID(sndIDArgs[0], true, soundID, cachedSound);
 
 	// FIXME: Just do this instantly
 	if (cachedSound)
@@ -4102,7 +4109,7 @@ void Runtime::scriptOpVolumeDn3(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
+	resolveSoundByNameOrID(sndIDArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSoundRamp(*cachedSound, sndParamArgs[0] * 100, sndParamArgs[1], false);
@@ -4114,7 +4121,7 @@ void Runtime::scriptOpVolumeDn4(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByNameOrID(sndIDArgs[0], soundID, cachedSound);
+	resolveSoundByNameOrID(sndIDArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSoundRamp(*cachedSound, sndParamArgs[0] * 100, sndParamArgs[1], sndParamArgs[2] != 0);
@@ -4187,7 +4194,7 @@ void Runtime::scriptOpSay1(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(soundIDStr, soundID, cachedSound);
+	resolveSoundByName(soundIDStr, true, soundID, cachedSound);
 
 	if (cachedSound)
 		triggerSound(false, *cachedSound, 100, 0, false, true);
@@ -4199,7 +4206,7 @@ void Runtime::scriptOpSay3(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound) {
 		TriggeredOneShot oneShot;
@@ -4223,7 +4230,7 @@ void Runtime::scriptOpSay3Get(ScriptArg_t arg) {
 
 	StackInt_t soundID = 0;
 	SoundInstance *cachedSound = nullptr;
-	resolveSoundByName(sndNameArgs[0], soundID, cachedSound);
+	resolveSoundByName(sndNameArgs[0], true, soundID, cachedSound);
 
 	if (cachedSound) {
 		TriggeredOneShot oneShot;
