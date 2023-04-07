@@ -93,9 +93,6 @@ bool AtariGraphicsManager::hasFeature(OSystem::Feature f) const {
 		//debug("hasFeature(kFeatureCursorPalette): %d", isOverlayVisible());
 		//return isOverlayVisible();
 		return true;
-	case OSystem::Feature::kFeatureVSync:
-		//debug("hasFeature(kFeatureVSync): %d", _vsync);
-		return true;
 	default:
 		return false;
 	}
@@ -107,10 +104,6 @@ void AtariGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		//debug("setFeatureState(kFeatureAspectRatioCorrection): %d", enable);
 		_oldAspectRatioCorrection = _aspectRatioCorrection;
 		_aspectRatioCorrection = enable;
-		break;
-	case OSystem::Feature::kFeatureVSync:
-		debug("setFeatureState(kFeatureVSync): %d", enable);
-		_guiVsync = std::make_pair(enable, true);
 		break;
 	default:
 		[[fallthrough]];
@@ -126,17 +119,6 @@ bool AtariGraphicsManager::getFeatureState(OSystem::Feature f) const {
 		//debug("getFeatureState(kFeatureCursorPalette): %d", isOverlayVisible());
 		//return isOverlayVisible();
 		return true;
-	case OSystem::Feature::kFeatureVSync:
-		//debug("getFeatureState(kFeatureVSync): based on mode %d", (int)_currentState.mode);
-		switch (_currentState.mode) {
-		case GraphicsMode::DirectRendering:
-		case GraphicsMode::SingleBuffering:
-			return _guiVsync.second ? _guiVsync.first : ConfMan.getBool("vsync");
-		case GraphicsMode::DoubleBuffering:
-			return true;
-		case GraphicsMode::TripleBuffering:
-			return false;
-		}
 	default:
 		return false;
 	}
@@ -228,8 +210,6 @@ OSystem::TransactionError AtariGraphicsManager::endGFXTransaction() {
 
 	_currentState = _pendingState;
 
-	debug("endGFXTransaction: vsync: %d (based on mode %d)", getFeatureState(OSystem::Feature::kFeatureVSync), (int)_currentState.mode);
-
 	return OSystem::kTransactionSuccess;
 }
 
@@ -258,10 +238,7 @@ void AtariGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, i
 
 		_dirtyScreenRect = Common::Rect(x, y, x + w, y + h);
 
-		auto vsync = _guiVsync;
-		_guiVsync = std::make_pair(false, true);
 		updateScreen();
-		_guiVsync = vsync;
 	}
 }
 
@@ -277,10 +254,7 @@ void AtariGraphicsManager::unlockScreen() {
 	} else {
 		_dirtyScreenRect = Common::Rect(_screenSurface.w, _screenSurface.h);
 
-		auto vsync = _guiVsync;
-		_guiVsync = std::make_pair(false, true);
 		updateScreen();
-		_guiVsync = vsync;
 	}
 }
 
@@ -341,35 +315,20 @@ void AtariGraphicsManager::updateScreen() {
 		screenUpdated = updateBuffered(_chunkySurface, _screenSurface, _workScreen->dirtyRects);
 		assert(_workScreen == _buffer[BACK_BUFFER1]);
 
-		if (_currentState.mode == GraphicsMode::DoubleBuffering) {
-			// apply dirty rects from previous frame
-			if (!_buffer[FRONT_BUFFER]->dirtyRects.empty()) {
-				screenUpdated |= updateBuffered(_chunkySurface, _screenSurface, _buffer[FRONT_BUFFER]->dirtyRects);
-				// clear the least recent dirty rects
-				_buffer[FRONT_BUFFER]->dirtyRects.clear();
-			}
+		// apply dirty rects from previous frame
+		if (!_buffer[BACK_BUFFER2]->dirtyRects.empty()) {
+			screenUpdated |= updateBuffered(_chunkySurface, _screenSurface, _buffer[BACK_BUFFER2]->dirtyRects);
+			// clear the least recent dirty rects
+			_buffer[BACK_BUFFER2]->dirtyRects.clear();
+		}
 
-			if (screenUpdated) {
-				ScreenInfo *tmp = _buffer[FRONT_BUFFER];
-				_buffer[FRONT_BUFFER] = _buffer[BACK_BUFFER1];
-				_buffer[BACK_BUFFER1] = tmp;
-			}
-		} else if (_currentState.mode == GraphicsMode::TripleBuffering) {
-			// apply dirty rects from previous frame
-			if (!_buffer[BACK_BUFFER2]->dirtyRects.empty()) {
-				screenUpdated |= updateBuffered(_chunkySurface, _screenSurface, _buffer[BACK_BUFFER2]->dirtyRects);
-				// clear the least recent dirty rects
-				_buffer[BACK_BUFFER2]->dirtyRects.clear();
-			}
+		// render into BACK_BUFFER1 and/or BACK_BUFFER2 and set the most recent one
+		if (screenUpdated) {
+			_buffer[FRONT_BUFFER] = _buffer[BACK_BUFFER1];
 
-			// render into BACK_BUFFER1 and/or BACK_BUFFER2 and set the most recent one
-			if (screenUpdated) {
-				_buffer[FRONT_BUFFER] = _buffer[BACK_BUFFER1];
-
-				ScreenInfo *tmp = _buffer[BACK_BUFFER1];
-				_buffer[BACK_BUFFER1] = _buffer[BACK_BUFFER2];
-				_buffer[BACK_BUFFER2] = tmp;
-			}
+			ScreenInfo *tmp = _buffer[BACK_BUFFER1];
+			_buffer[BACK_BUFFER1] = _buffer[BACK_BUFFER2];
+			_buffer[BACK_BUFFER2] = tmp;
 		}
 
 		// finish blitting before setting new screen address
@@ -414,9 +373,6 @@ void AtariGraphicsManager::updateScreen() {
 		}
 		_oldAspectRatioCorrection = _aspectRatioCorrection;
 	}
-
-	if (!isOverlayVisible() && (getFeatureState(OSystem::Feature::kFeatureVSync) & screenUpdated))
-		waitForVbl();
 #endif
 	//debug("end of updateScreen");
 }
@@ -681,13 +637,6 @@ void AtariGraphicsManager::setVidelResolution() const {
 	}
 }
 
-void AtariGraphicsManager::waitForVbl() const {
-	extern volatile uint32 vbl_counter;
-	uint32 counter = vbl_counter;
-
-	while (counter == vbl_counter);
-}
-
 bool AtariGraphicsManager::updateDirect() {
 	bool &cursorPositionChanged = _workScreen->cursorPositionChanged;
 	bool &cursorSurfaceChanged  = _workScreen->cursorSurfaceChanged;
@@ -759,7 +708,7 @@ bool AtariGraphicsManager::updateDirect() {
 
 bool AtariGraphicsManager::updateBuffered(const Graphics::Surface &srcSurface, Graphics::Surface &dstSurface, const DirtyRects &dirtyRects) {
 	// workscreen related setting; these are used even if called repeatedly
-	// for double and triple buffering
+	// for triple buffering
 	bool &cursorPositionChanged = _workScreen->cursorPositionChanged;
 	bool &cursorSurfaceChanged  = _workScreen->cursorSurfaceChanged;
 	Common::Rect &oldCursorRect = _workScreen->oldCursorRect;

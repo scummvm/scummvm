@@ -62,10 +62,9 @@ public:
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
 		static const OSystem::GraphicsMode graphicsModes[] = {
-			{"direct", "Direct rendering", 0},
-			{"single", "Single buffering", 1},
-			{"double", "Double buffering", 2},
-			{"triple", "Triple buffering", 3},
+			{"direct", "Direct rendering", (int)GraphicsMode::DirectRendering},
+			{"single", "Single buffering", (int)GraphicsMode::SingleBuffering},
+			{"triple", "Triple buffering", (int)GraphicsMode::TripleBuffering},
 			{nullptr, nullptr, 0 }
 		};
 		return graphicsModes;

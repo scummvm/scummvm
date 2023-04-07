@@ -53,7 +53,7 @@ less hungry games even a CT2/DFB@50 MHz or the AfterBurner040 could be enough).
   change is the exclusion of the 16bpp games (those are mostly hi-res anyway)
   but games in 640x480@8bpp work nicely.
 
-- Direct rendering and single/double/triple buffering support.
+- Direct rendering and single/triple buffering support.
 
 - Custom (and optimal) drawing routines (especially for the cursor).
 
@@ -99,20 +99,14 @@ Graphics modes
 This topic is more complex than it looks. ScummVM renders game graphics using
 rectangles and this port offers following options to render them:
 
-Direct rendering (vsync on/off) - present only with the SuperVidel
-Single buffering (vsync on/off)
-Double buffering (vsync always on, the checkbox is ignored)
-Triple buffering (vsync always off, the checkbox is ignored)
+Direct rendering (present only with the SuperVidel)
+Single buffering
+Triple buffering
 
 Direct rendering:
 ~~~~~~~~~~~~~~~~~
 
-This is direct writing of the pixels into (SuperVidel's) screen buffer. Since
-the updates are supplied as rectangles and not the whole screen there's no way
-to implement direct writing *and* double/triple buffering. Vsync() only
-synchronizes the point when the rendering process begins - if it takes more
-than the time reserved for the vertical blank interrupt (what happens
-with most of the games), you'll see screen tearing.
+This is direct writing of the pixels into (SuperVidel's) screen buffer.
 
 Pros:
 
@@ -143,9 +137,7 @@ This is very similar to the previous mode with the difference that the engine
 uses an intermediate buffer for storing the rectangles but yet it remembers
 which ones they were. It works also on plain Videl and applies the chunky to
 planar process to each one of the rectangles separately, avoiding fullscreen
-updates (but if such is needed, there is an optimized code path for it). Vsync()
-is used the same way as in the previous mode, i.e. screen tearing is still
-possible.
+updates (but if such is needed, there is an optimized code path for it).
 
 Pros:
 
@@ -161,51 +153,18 @@ Cons:
 SuperBlitter used: yes, for rectangle blitting to screen and cursor restoration.
 Sometimes also for generic copying between buffers (see above).
 
-Double buffering:
-~~~~~~~~~~~~~~~~~
-
-The most common rendering mode. It extends the idea of single buffering - it
-renders into two buffers, one is visible while the other one is used for
-updating. At the end of the update process the two buffers are swapped, so the
-newly updated one is displayed. By definition, Vsync() must be always enabled
-(the buffers are swapped in the vertical blank handler) otherwise you'd see
-screen tearing.
-
-Pros:
-
-- stable frame rate, leading to fixed e.g. 30 FPS rendering for the whole time
-  if game takes, say, 1.7 - 1.9 frames per update
-
-- no screen tearing in any situation
-
-Cons:
-
-- if there is too many smaller rectangles, it can be less efficient than
-  single buffering
-
-- frame rate is set to 60/30/15/etc FPS so you can see big irregular jumps
-  between 30 and 15 FPS for example; this is happening when screen updates take
-  variable amount of time but since Vsync() is always called, the rendering
-  pipeline has to wait until the next frame even if only 1% of the frame time
-  has been used.
-
-SuperBlitter used: yes, for rectangle blitting to screen and cursor restoration.
-Sometimes also for generic copying between buffers (see above).
-
 Triple buffering:
 ~~~~~~~~~~~~~~~~~
 
-Best of both worlds - screen tearing is avoided thanks to using of multiple
-buffers and the rendering pipeline doesn't have to wait until Vsync() (therefore
-this flag is ignored).
-
-Please note that Atari backend uses "true" triple buffering as described in
+This is the "true" triple buffering as described in
 https://en.wikipedia.org/wiki/Multiple_buffering#Triple_buffering and not "swap
 chain" as described in https://en.wikipedia.org/wiki/Swap_chain. The latter
 would be slightly slower as three buffers would need to be updated instead of
 two.
 
 Pros:
+
+- no screen tearing
 
 - best compromise between performance and visual experience
 
@@ -219,8 +178,7 @@ Cons:
 - slightly irregular frame rate (depends solely on the game's complexity)
 
 - in case of extremely fast rendering, one or more frames are dropped in favor
-  of showing only the most recent one (unlikely; double buffer guaranties that
-  every frame is shown, no matter how insignificant)
+  of showing only the most recent one
 
 SuperBlitter used: yes, for rectangle blitting to screen and cursor restoration.
 Sometimes also for generic copying between buffers (see above).
@@ -315,14 +273,6 @@ Please note that it is not that bad, you surely can play The Secret of Monkey
 Island with AdLib enabled (but the CD/talkie versions sound better and
 are cheaper to play ;)).
 
-Vsync in GUI
-~~~~~~~~~~~~
-
-Carefully with the vsync option. It can easily cripple direct/single buffer
-rendering by 10-15 FPS if not used with caution. That happens if a game takes,
-say, 1.2 frames per update (so causing screen tearing anyway and rendering the
-option useless) but Vsync() forces it to wait 2 full frames instead.
-
 Slow GUI
 ~~~~~~~~
 
@@ -373,9 +323,6 @@ Future plans
 
 - add support for the TT030; this would be easily possible when I rewrite the
   renderer with a more flexible resolution switching
-
-- ignore (queue) updateScreen() calls to avoid aggressive drawing / buffer
-  switching from some engines; update every X ms instead
 
 - don't hardcode some of the buffers for cacheing purposes, determine the size
   based on amount of free RAM

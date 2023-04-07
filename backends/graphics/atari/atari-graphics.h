@@ -25,7 +25,6 @@
 #include "backends/graphics/graphics.h"
 
 #include <mint/osbind.h>
-#include <utility>	// std::pair
 #include <vector>
 
 #include "common/events.h"
@@ -106,10 +105,9 @@ protected:
 	void freeSurfaces();
 
 	enum class GraphicsMode : int {
-		DirectRendering,
-		SingleBuffering,
-		DoubleBuffering,
-		TripleBuffering
+		DirectRendering = 0,
+		SingleBuffering = 1,
+		TripleBuffering = 3
 	};
 
 	struct GraphicsState {
@@ -141,7 +139,6 @@ private:
 	};
 
 	void setVidelResolution() const;
-	void waitForVbl() const;
 
 	bool updateDirect();
 	bool updateBuffered(const Graphics::Surface &srcSurface, Graphics::Surface &dstSurface, const DirtyRects &dirtyRects);
@@ -191,7 +188,6 @@ private:
 	bool _vgaMonitor = true;
 	bool _aspectRatioCorrection = false;
 	bool _oldAspectRatioCorrection = false;
-	std::pair<bool, bool> _guiVsync;	// poor man's std::optional (first - value, second - has_value)
 
 	GraphicsState _currentState{ (GraphicsMode)getDefaultGraphicsMode() };
 
