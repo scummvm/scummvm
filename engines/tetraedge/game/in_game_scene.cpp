@@ -138,10 +138,11 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 		float yscale = 1.0f;
 
 		// Originally this is only done in Syberia 2, but
-		// should be fine to calculate in Syberia 1.
+		// should be fine to calculate in Syberia 1, as long
+		// as the root layout is loaded.
 		TeLayout *bglayout = _bgGui.layoutChecked("background");
 		TeSpriteLayout *rootlayout = Game::findSpriteLayoutByName(bglayout, "root");
-		if (rootlayout) {
+		if (rootlayout && rootlayout->_tiledSurfacePtr && rootlayout->_tiledSurfacePtr->tiledTexture()) {
 			TeVector2s32 bgSize = rootlayout->_tiledSurfacePtr->tiledTexture()->totalSize();
 			xscale = 800.0f / bgSize._x;
 			yscale = 600.0f / bgSize._y;
