@@ -719,6 +719,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Police Quest 1 (PC) 2.0G 12/3/87; with Hebrew translation
 	GAME_LVFPN("pq1", "2.0G 1987-12-03", "PQ1.WAG", "59e1b2fb6d025968b8ed7388f107c7b5", -1, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_PQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
+	// Police Quest 1 (PC) 2.0G 12/3/87; with Spanish translation (TRAC #14369)
+	GAME_LPS("pq1", "2.0G 1987-12-03", "5d151f2f4c4e0675534d49b13529da3f", 360, Common::ES_ESP, 0x2917, GID_PQ1, Common::kPlatformDOS),
+
 	// Police Quest 1 (CoCo3 360k) [AGI 2.023]
 	GAME_PS("pq1", "", "28a077041f75aab78f66804800940085", 375, 0x2440, GID_PQ1, Common::kPlatformCoCo3),
 
