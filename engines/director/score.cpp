@@ -1119,8 +1119,9 @@ void Score::screenShot() {
 		if (prevbuild > 0) {
 			Common::FSNode fs(filename);
 			Image::PNGDecoder decoder;
+			Common::SeekableReadStream *stream = fs.createReadStream();
 
-			if (decoder.loadStream(*fs.createReadStream())) {
+			if (decoder.loadStream(*stream)) {
 				Common::String oldMd5 = computeSurfaceMd5(decoder.getSurface());
 				Common::String newMd5 = computeSurfaceMd5(newSurface);
 
@@ -1128,12 +1129,15 @@ void Score::screenShot() {
 					warning("Screenshot is equal to previous one, skipping: %s", filename.c_str());
 					newSurface->free();
 					delete newSurface;
+					delete stream;
 
 					return;
 				}
 			} else {
 				warning("Error loading previous screenshot %s", filename.c_str());
 			}
+
+			delete stream;
 		}
 	}
 
