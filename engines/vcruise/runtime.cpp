@@ -212,8 +212,7 @@ void Runtime::GyroState::reset() {
 	isWaitingForAnimation = false;
 }
 
-
-SfxPlaylistEntry::SfxPlaylistEntry() : frame(0), balance(0), volume(0) {
+SfxPlaylistEntry::SfxPlaylistEntry() : frame(0), balance(0), volume(0), isUpdate(false) {
 }
 
 SfxPlaylist::SfxPlaylist() {
@@ -366,9 +365,16 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 					continue;
 				}
 
-				SoundMap_t::const_iterator soundIt = this->sounds.find(tokens[1]);
+				bool isUpdate = false;
+				Common::String soundName = tokens[1];
+				if (soundName.size() >= 1 && soundName[0] == '*') {
+					soundName = soundName.substr(1);
+					isUpdate = true;
+				}
+
+				SoundMap_t::const_iterator soundIt = this->sounds.find(soundName);
 				if (soundIt == this->sounds.end()) {
-					warning("Playlist entry referenced non-existent sound: %s", tokens[1].c_str());
+					warning("Playlist entry referenced non-existent sound: %s", soundName.c_str());
 					continue;
 				}
 
@@ -377,6 +383,7 @@ void SfxData::load(Common::SeekableReadStream &stream, Audio::Mixer *mixer) {
 				plEntry.frame = frameNum;
 				plEntry.volume = volume;
 				plEntry.sample = soundIt->_value;
+				plEntry.isUpdate = isUpdate;
 
 				playlist->entries.push_back(plEntry);
 			} else {
@@ -1334,9 +1341,13 @@ void Runtime::continuePlayingAnimation(bool loop, bool useStopFrame, bool &outAn
 				if (playlistEntry.frame == decodeFrameInPlaylist) {
 					VCruise::AudioPlayer &audioPlayer = *playlistEntry.sample->audioPlayer;
 
-					audioPlayer.stop();
-					playlistEntry.sample->audioStream->seek(0);
-					audioPlayer.play(playlistEntry.volume, playlistEntry.frame);
+					if (playlistEntry.isUpdate) {
+						audioPlayer.setVolumeAndBalance(playlistEntry.volume, playlistEntry.balance);
+					} else {
+						audioPlayer.stop();
+						playlistEntry.sample->audioStream->seek(0);
+						audioPlayer.play(playlistEntry.volume, playlistEntry.balance);
+					}
 
 					// No break, it's possible for there to be multiple sounds in the same frame
 				}
