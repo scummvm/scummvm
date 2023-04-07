@@ -2536,7 +2536,10 @@ bool Runtime::computeEffectiveVolumeAndBalance(SoundInstance &snd) {
 		int32 dx = snd.x - _listenerX;
 		int32 dy = snd.y - _listenerY;
 
-		uint distance = static_cast<uint>(sqrt(dx * dx + dy * dy));
+		double dxf = dx;
+		double dyf = dy;
+
+		uint distance = static_cast<uint>(sqrt(dxf * dxf + dyf * dyf));
 
 		if (distance >= snd.params3D.maxRange)
 			effectiveVolume = 0;
