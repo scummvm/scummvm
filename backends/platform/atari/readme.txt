@@ -84,13 +84,13 @@ toggle.
 24585, 19668, 16390, 12292, 9834, 8195 (the lower the value, the faster the
 mixing but also in worse quality). Default is 24585 Hz (16-bit, stereo).
 
-"output_samples" in scummvm.ini: number of samples to preload. Default is 2048
-which equals to about 83ms of audio lag and seems to be about right for most
-games on my CT60@66 MHz.
+"audio_buffer_size" in scummvm.ini: number of samples to preload. Default is
+2048 which equals to about 83ms of audio lag and seems to be about right for
+most games on my CT60@66 MHz.
 
 If you want to play with those two values, the rule of thumb is: (lag in ms) =
-(output_samples / output_rate) * 1000. But it's totally OK just to double the
-samples value to get rid of stuttering in a heavier game.
+(audio_buffer_size / output_rate) * 1000. But it's totally OK just to double
+the samples value to get rid of stuttering in a heavier game.
 
 
 Graphics modes
@@ -287,11 +287,12 @@ CD music slows everything down
 Some games use separate audio *and* video streams (files). Even if the CPU is
 able to handle both, the bottleneck becomes ... disk access. This is visible in
 The Curse Of Monkey Island for example -- there's audible stuttering during the
-intro sequence (and during the game as well). Increasing "output_samples" makes
-the rendering literally crawling! Why? Because disk I/O is busy with loading
-even *more* sample data so there's less time for video loading and rendering.
-Try to put "musdisk1.bun" and "musdisk2.bun" into a ramdisk (i.e. u:/ram in
-FreeMiNT), you'll be pleasantly surprised with the performance boost gained.
+intro sequence (and during the game as well). Increasing "audio_buffer_size"
+makes the rendering literally crawling! Why? Because disk I/O is busy with
+loading even *more* sample data so there's less time for video loading and
+rendering. Try to put "musdisk1.bun" and "musdisk2.bun" into a ramdisk (i.e.
+u:/ram in FreeMiNT), you'll be pleasantly surprised with the performance boost
+gained.
 
 "Mute" vs. "Mute all" in GUI vs. "No music" in GUI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -364,8 +365,8 @@ Future plans
 
 - avoid loading music/speech files (and thus slowing down everything) if muted
 
-- cached audio/video streams (i.e. don't load only "output_samples" number of
-  samples but cache, say, 1 second so disk i/o wont be so stressed)
+- cached audio/video streams (i.e. don't load only "audio_buffer_size" number
+  of samples but cache, say, 1 second so disk i/o wont be so stressed)
 
 - using LDG or Thorsten Otto's sharedlibs: https://tho-otto.de/sharedlibs.php
   for game engine plugins to relieve the huge binary size
