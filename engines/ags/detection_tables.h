@@ -5569,7 +5569,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("electrokit", "electrctGUI.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8941606),  //Eng-Dutch
 	GAME_ENTRY_EN("elegantmurdermystery", "DH.exe", "0b7529a76f38283d6e850b8d56526fc1", 2098899),
 	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.ags", "bf06b9759714464c095e1c1e597f1e86", 4362276, "Beta"),  // Linux
+	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.ags", "3063ec0d8db8305d1dc61d7862650f11", 4363999, "Beta"),
 	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.exe", "2f2bc0b9c539d20529c0e343315d5f65", 7471160, "Beta"),  // Windows
+	GAME_ENTRY_EN_PLATFORM("elevation", "Elevation.exe", "2f2bc0b9c539d20529c0e343315d5f65", 7472883, "Beta"),
 	GAME_ENTRY_EN("elevator", "Elevator.exe", "f10516e88ec858700804ee69d041aead", 29506915),
 	GAME_ENTRY_EN("elevatorriseabyss", "T_E_R.exe", "f120690b506dd63cd7d1112ea6af2f77", 13366126),
 	GAME_ENTRY_LANG("elfer", "socer.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1911767, Common::DE_DEU),
@@ -7726,6 +7728,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thegardenofhades", "hades.exe", "d304c4f27f336963c16578274264d174", 991101514),
 	GAME_ENTRY_EN("thegardenofhades", "hades.ags", "7c6fe05a214e42dbbf9f2f1d173918ab", 988042294),
 	GAME_ENTRY_EN("thegift", "GIFT.ags", "2bb1b2a9feae34ccf8f3f6c1f51c8972", 1643933),
+	GAME_ENTRY_EN("thegift", "GIFT.exe", "ae2e93ae61a612dd8cad1290bd5f7443", 4755889),
 	GAME_ENTRY_EN("theglasssplinters", "Splinters.exe", "615e73fc1874e92d60a1996c2330ea36", 5249293),
 	GAME_ENTRY_EN("thegourmet", "The Gourmet.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 49995478),
 	GAME_ENTRY_EN("thegourmet", "The Gourmet.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 49995756),
