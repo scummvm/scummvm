@@ -151,6 +151,12 @@ static void set_audio_buffer_status() {
 }
 
 static void increase_performance() {
+	if (!(performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
+		performance_switch |= PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
+		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Auto reduce framerate' enabled.\n");
+		return;
+	}
+
 	if (!(performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES)) {
 		performance_switch |= PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES;
 		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Disable consecutive screen updates' enabled.\n");
@@ -163,23 +169,11 @@ static void increase_performance() {
 		return;
 	}
 
-	if (!(performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE)) {
-		performance_switch |= PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
-		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Auto reduce framerate' enabled.\n");
-		return;
-	}
-
 	performance_switch |= PERF_SWITCH_OVER;
 }
 
 static void increase_accuracy() {
 	performance_switch &= ~PERF_SWITCH_OVER;
-
-	if (performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE) {
-		performance_switch &= ~PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
-		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Auto reduce framerate' disabled.\n");
-		return;
-	}
 
 	if (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES) {
 		performance_switch &= ~PERF_SWITCH_ENABLE_TIMING_INACCURACIES;
@@ -191,6 +185,12 @@ static void increase_accuracy() {
 	if (performance_switch & PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES) {
 		performance_switch &= ~PERF_SWITCH_DISABLE_CONSECUTIVE_SCREEN_UPDATES;
 		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Disable consecutive screen updates' disabled.\n");
+		return;
+	}
+
+	if (performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE) {
+		performance_switch &= ~PERF_SWITCH_ENABLE_REDUCE_FRAMERATE;
+		log_cb(RETRO_LOG_DEBUG, "Auto performance tuner: 'Auto reduce framerate' disabled.\n");
 		return;
 	}
 }
@@ -739,22 +739,6 @@ void retro_run(void) {
 		delayMillis call in ScummVM thread.
 		*/
 		do {
-
-			/* Framerate reduction using sound buffer size */
-			if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_AUTO || (performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE) || (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE)) {
-				if ((audio_status & AUDIO_STATUS_BUFFER_UNDERRUN) && !(audio_status & AUDIO_STATUS_MUTE)) {
-					if (reduce_framerate_shift < REDUCE_FRAMERATE_SHIFT_MAX)
-						reduce_framerate_shift++;
-					reduce_framerate_countdown = REDUCE_FRAMERATE_REST;
-				}
-				if (reduce_framerate_countdown)
-					reduce_framerate_countdown--;
-				else
-					reduce_framerate_shift = 0;
-			} else {
-				reduce_framerate_shift = 0;
-			}
-
 			/* Determine frameskip need based on settings */
 			if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ON))
 				skip_frame = (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN);
@@ -807,6 +791,21 @@ void retro_run(void) {
 			/* Retrieve audio */
 			samples_count = 0;
 			if (audio_video_enable & 2) {
+				/* Framerate reduction using sound buffer size */
+				if (reduce_framerate_type == REDUCE_FRAMERATE_SHIFT_AUTO || (performance_switch & PERF_SWITCH_ENABLE_REDUCE_FRAMERATE) || (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE)) {
+					if ((audio_status & AUDIO_STATUS_BUFFER_UNDERRUN) && !(audio_status & AUDIO_STATUS_MUTE)) {
+						if (reduce_framerate_shift < REDUCE_FRAMERATE_SHIFT_MAX)
+							reduce_framerate_shift++;
+						reduce_framerate_countdown = REDUCE_FRAMERATE_REST;
+					}
+					if (reduce_framerate_countdown)
+						reduce_framerate_countdown--;
+					else
+						reduce_framerate_shift = 0;
+				} else {
+					reduce_framerate_shift = 0;
+				}
+
 				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size << reduce_framerate_shift);
 			}
 			audio_status = samples_count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
