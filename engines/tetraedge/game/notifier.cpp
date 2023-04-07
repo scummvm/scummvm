@@ -76,8 +76,10 @@ void Notifier::launchNextnotifier() {
 }
 
 void Notifier::load() {
-	_gui.load("menus/Notifier.lua");
-	TeLayout *notifierLayout = _gui.layoutChecked("notifier");
+	const char *luaPath = g_engine->gameType() == TetraedgeEngine::kAmerzone ? "GUI/Notify.lua" : "menus/Notifier.lua";
+	_gui.load(luaPath);
+	const char *layoutName = g_engine->gameType() == TetraedgeEngine::kAmerzone ? "notify" : "notifier";
+	TeLayout *notifierLayout = _gui.layoutChecked(layoutName);
 	Game *game = g_engine->getGame();
 	game->addNoScale2Child(notifierLayout);
 	notifierLayout->setVisible(false);

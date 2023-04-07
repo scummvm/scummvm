@@ -22,7 +22,10 @@
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
 #include "tetraedge/game/amerzone_game.h"
+#include "tetraedge/game/lua_binds.h"
 #include "tetraedge/te/te_input_mgr.h"
+#include "tetraedge/te/te_sound_manager.h"
+#include "tetraedge/te/te_warp.h"
 
 namespace Tetraedge {
 
@@ -55,11 +58,59 @@ void AmerzoneGame::draw() {
 }
 
 void AmerzoneGame::enter() {
+	Application *app = g_engine->getApplication();
 	// TODO:
 	//_puzzleDisjoncteur.setState(5);
 	_inGameGui.load("GUI/InGame.lua");
 
-	error("TODO: Implement AmerzoneGame::enter");
+	TeLayout *inGame = _inGameGui.layoutChecked("inGame");
+	// Note:
+	app->frontOrientationLayout().addChild(inGame);
+	_inventoryMenu.load();
+	app->frontOrientationLayout().addChild(&_inventoryMenu);
+
+	TeButtonLayout *invbtn = _inGameGui.buttonLayoutChecked("inventoryButton");
+	invbtn->onMouseClickValidated().add(this, &AmerzoneGame::onInventoryButtonValidated);
+	TeButtonLayout *helpbtn = _inGameGui.buttonLayoutChecked("helpButton");
+	helpbtn->onMouseClickValidated().add(this, &AmerzoneGame::onHelpButtonValidated);
+	if (app->permanentHelp()) {
+		helpbtn->setVisible(false);
+	}
+	TeButtonLayout *skipvidbtn = _inGameGui.buttonLayoutChecked("skipVideoButton");
+	skipvidbtn->setVisible(false);
+	skipvidbtn->onMouseClickValidated().add(this, &AmerzoneGame::onSkipVideoButtonValidated);
+	TeSpriteLayout *vid = _inGameGui.spriteLayoutChecked("video");
+	vid->_tiledSurfacePtr->_frameAnim.onStop().add(this, &Game::onVideoFinished);
+	vid->setVisible(false);
+	_dialog2.load();
+	app->frontOrientationLayout().addChild(&_dialog2);
+	_question2.load();
+
+	TeInputMgr *inputMgr = g_engine->getInputMgr();
+	inputMgr->_mouseMoveSignal.add(this, &AmerzoneGame::onMouseMove);
+	inputMgr->_mouseLUpSignal.add(this, &AmerzoneGame::onMouseLeftUp);
+	inputMgr->_mouseLDownSignal.add(this, &AmerzoneGame::onMouseLeftDown);
+
+	_orientationX = 0;
+	_orientationY = 0;
+	_isInDrag = false;
+	_speedX = 0;
+	_speedY = 0;
+
+	_notifier.load();
+	_warpX = new TeWarp();
+	_warpX->setRotation(app->frontOrientationLayout().rotation());
+	_warpX->init();
+	_warpX->setVisible(true, false);
+	_luaContext.create();
+	_luaScript.attachToContext(&_luaContext);
+
+	warning("TODO: Finish AmerzoneGame::enter");
+
+	_playedTimer.start();
+	_edgeButtonRolloverCount = 0;
+
+	initLoadedBackupData();
 }
 
 void AmerzoneGame::finishGame() {
@@ -71,11 +122,36 @@ void AmerzoneGame::finishGame() {
 }
 
 void AmerzoneGame::initLoadedBackupData() {
-
+	_luaContext.destroy();
+	_luaContext.create();
+	_luaContext.addBindings(LuaBinds::LuaOpenBinds);
+	//if (!_loadName.empty()) {
+	//}
+	error("TODO: finish AmerzoneGame::initLoadedBackupData");
 }
 
 void AmerzoneGame::leave(bool flag) {
 	error("TODO: Implement AmerzoneGame::leave");
+}
+
+bool AmerzoneGame::onHelpButtonValidated() {
+	g_engine->getSoundManager()->playFreeSound("Sounds/SFX/Clic_prec-suiv.ogg", 1.0f, "sfx");
+
+	bool active = true;
+	TeWarp::debug = TeWarp::debug == false;
+	if (!TeWarp::debug && !g_engine->getApplication()->permanentHelp())
+		active = false;
+
+	_warpY->activeMarkers(active);
+	return false;
+}
+
+bool AmerzoneGame::onMouseLeftUp(const Common::Point &pt) {
+	error("TODO: Implement AmerzoneGame::onMouseLeftUp");
+}
+
+bool AmerzoneGame::onMouseLeftDown(const Common::Point &pt) {
+	error("TODO: Implement AmerzoneGame::onMouseLeftDown");
 }
 
 void AmerzoneGame::setAngleX(float angle) {

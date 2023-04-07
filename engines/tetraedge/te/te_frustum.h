@@ -19,31 +19,33 @@
  *
  */
 
-#ifndef TETRAEDGE_TE_TE_WARP_MARKER_H
-#define TETRAEDGE_TE_TE_WARP_MARKER_H
+#ifndef TETRAEDGE_TE_TE_FRUSTUM_H
+#define TETRAEDGE_TE_TE_FRUSTUM_H
 
-#include "common/str.h"
-#include "tetraedge/te/te_marker.h"
-#include "tetraedge/te/te_signal.h"
+#include "tetraedge/te/te_camera.h"
+#include "tetraedge/te/te_vector3f32.h"
+#include "tetraedge/te/te_matrix4x4.h"
 
 namespace Tetraedge {
 
-// Note: Only used in Amerzone
-class TeWarpMarker {
+class TeFrustum {
 public:
-	TeWarpMarker();
-	~TeWarpMarker();
+	TeFrustum();
 
-	TeMarker *marker() { return _marker; }
-	void marker(TeMarker *marker);
-	bool onMarkerButtonValidated();
+	void computeNormal(unsigned int val);
+	void extractPlanAdd(const TeMatrix4x4 &matrix, uint param_2, uint param_3);
+	void extractPlanSub(const TeMatrix4x4 &matrix, uint param_2, uint param_3);
+	bool pointIsIn(const TeVector3f32 &pt);
+	bool sphereIsIn(const TeVector3f32 &vec, float f);
+	bool triangleIsIn(const TeVector3f32 *vertexes);
+	void update(TeCamera *camera);
 
 private:
-	TeMarker *_marker;
-	Common::String _name;
-	TeSignal1Param<const Common::String &> _markerButtonSignal;
+	float planeLen(int num) const;
+	float _m[24];
+
 };
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_TE_TE_WARP_MARKER_H
+#endif // TETRAEDGE_TE_TE_FRUSTUM_H

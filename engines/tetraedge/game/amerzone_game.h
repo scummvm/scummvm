@@ -54,6 +54,10 @@ private:
 	void speedX(float speed);
 	void speedY(float speed);
 
+	bool onHelpButtonValidated();
+	bool onMouseLeftUp(const Common::Point &pt);
+	bool onMouseLeftDown(const Common::Point &pt);
+
 	TeTimer _dragTimer;
 	float _orientationX;
 	float _orientationY;

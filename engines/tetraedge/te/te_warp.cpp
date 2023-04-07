@@ -19,14 +19,39 @@
  *
  */
 
+#include "tetraedge/tetraedge.h"
+#include "tetraedge/game/application.h"
 #include "tetraedge/te/te_warp.h"
+#include "tetraedge/te/te_input_mgr.h"
 
 namespace Tetraedge {
 
-TeWarp::TeWarp() {
+/*static*/
+bool TeWarp::debug = false;
+
+TeWarp::TeWarp() : _visible1(false) {
+}
+
+void TeWarp::activeMarkers(bool active) {
+	_markersActive = active;
+	for (auto &warpMarker : _warpMarkers)
+		warpMarker->marker()->active(active);
+}
+
+void TeWarp::init() {
+	// This mostly sets up the camera.. maybe nothing to do?
+	warning("TODO: Implement TeWarp::init");
+}
+
+bool TeWarp::onMouseLeftDown(const Common::Point &pt) {
+	error("TODO: Implement TeWarp::onMouseLeftDown");
 }
 
 void TeWarp::update() {
+	if (!_visible1 || !_file.isOpen())
+		return;
+	Application *app = g_engine->getApplication();
+	_frustum.update(app->mainWindowCamera());
 	error("TODO: Implement TeWarp::update");
 }
 
@@ -36,6 +61,22 @@ void TeWarp::setMouseLeftUpForMakers() {
 	//	marker->marker()->sprite()->setEnable(true)
 	//}
 	error("TODO: Implement TeWarp::setMouseLeftUpForMakers");
+}
+
+void TeWarp::setVisible(bool v1, bool v2) {
+	if (_visible1 == v1)
+		return;
+
+	_visible1 = v1;
+	TeInputMgr *inputMgr = g_engine->getInputMgr();
+	if (v1) {
+		inputMgr->_mouseLDownSignal.add(this, &TeWarp::onMouseLeftDown);
+	} else {
+		if (v2) {
+			error("TODO: Implement TeWarp::setVisible for v2==true");
+		}
+		inputMgr->_mouseLDownSignal.remove(this, &TeWarp::onMouseLeftDown);
+	}
 }
 
 void TeWarp::rotateCamera(const TeQuaternion &rot) {

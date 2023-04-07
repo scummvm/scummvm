@@ -1387,7 +1387,7 @@ void SyberiaGame::update() {
 
 		Common::Point mousePos = g_engine->getInputMgr()->lastMousePos();
 		if (_lastUpdateMousePos != mousePos) {
-			onMouseMove();
+			onMouseMove(mousePos);
 			_lastUpdateMousePos = mousePos;
 		}
 		if (_saveRequested) {

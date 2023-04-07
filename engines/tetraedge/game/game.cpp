@@ -198,7 +198,7 @@ static const char cursorsTable[][2][80] = {
 };
 #endif
 
-bool Game::onMouseMove() {
+bool Game::onMouseMove(const Common::Point &pt) {
 	if (!_entered)
 		return false;
 

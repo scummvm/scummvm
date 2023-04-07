@@ -114,6 +114,7 @@ public:
 	bool ratioStretched() const { return _ratioStretched; }
 	bool compassLook() const { return _compassLook; }
 	bool inverseLook() const { return _inverseLook; }
+	bool permanentHelp() const { return _permanentHelp; }
 
 private:
 	void drawBack();
@@ -182,6 +183,7 @@ private:
 	bool _ratioStretched;
 	bool _compassLook;
 	bool _inverseLook;
+	bool _permanentHelp;
 
 	int _difficulty;
 

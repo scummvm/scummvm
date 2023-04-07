@@ -123,7 +123,7 @@ public:
 	virtual bool onFinishedLoadingBackup(const Common::String &val) { return false; }
 	bool onInventoryButtonValidated();
 	bool onLockVideoButtonValidated();
-	bool onMouseMove();
+	bool onMouseMove(const Common::Point &pt);
 	bool onSkipVideoButtonValidated();
 	virtual bool onVideoFinished() = 0;
 

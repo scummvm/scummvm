@@ -34,7 +34,12 @@ void TeMarker::active(bool val) {
 void TeMarker::update(TeCamera *camera) {
 	if (!_visible)
 		return;
-	error("TODO: Finish TeMarker::update");
+	TeVector3f32 transformLoc = camera->transformCoord(_loc);
+	if (transformLoc.z() < 0) {
+		error("TODO: Finish TeMarker::update");
+	} else {
+		error("TODO: Finish TeMarker::update");
+	}
 }
 
 void TeMarker::visible(bool vis) {

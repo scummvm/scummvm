@@ -56,8 +56,10 @@ void InventoryMenu::load() {
 	addChild(_gui.layoutChecked("inventoryMenu"));
 	_gui.buttonLayoutChecked("quitButton")->onMouseClickValidated()
 				.add(this, &InventoryMenu::onQuitButton);
-	_gui.buttonLayoutChecked("quitBackground")->onMouseClickValidated()
-				.add(this, &InventoryMenu::onQuitButton);
+	// Quit background is only in Syberia 1 and 2 (not amerzone)
+	TeButtonLayout *quitBackground = _gui.buttonLayout("quitBackground");
+	if (quitBackground)
+		quitBackground->onMouseClickValidated().add(this, &InventoryMenu::onQuitButton);
 	_gui.buttonLayoutChecked("mainMenuButton")->onMouseClickValidated()
 				.add(this, &InventoryMenu::onMainMenuButton);
 	_gui.buttonLayoutChecked("documentsButton")->onMouseClickValidated()

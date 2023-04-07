@@ -208,6 +208,9 @@ bool TeLuaGUI::load(const Common::FSNode &node) {
 	_luaContext.registerCFunction("TeRotationLinearAnimation", rotationLinearAnimationBindings);
 	_luaContext.registerCFunction("TeScrollingLayout", scrollingLayoutBindings);
 	_luaContext.registerCFunction("TeExtendedTextLayout", extendedTextLayoutBindings);
+	// TODO: We replaced the video layout from Amerzone with a sprite layout.  Probably
+	// works ok?
+	_luaContext.registerCFunction("TeVideoLayout", spriteLayoutBindings);
 	_luaContext.setInRegistry("__TeLuaGUIThis", this);
 	_luaScript.attachToContext(&_luaContext);
 	_luaScript.load(node);

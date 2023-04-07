@@ -22,31 +22,45 @@
 #ifndef TETRAEDGE_TE_TE_WARP_H
 #define TETRAEDGE_TE_TE_WARP_H
 
+#include "common/file.h"
+
 #include "tetraedge/te/te_3d_object2.h"
 #include "tetraedge/te/te_camera.h"
+#include "tetraedge/te/te_frustum.h"
 #include "tetraedge/te/te_quaternion.h"
 #include "tetraedge/te/te_warp_marker.h"
 
 namespace Tetraedge {
 
 // Note: Only used in Amerzone
-class TeWarp : Te3DObject2 {
+class TeWarp : public Te3DObject2 {
 public:
 	class AnimData {
 	};
 
 	TeWarp();
 
+	void activeMarkers(bool active);
+	void init();
 	void update();
 	void rotateCamera(const TeQuaternion &rot);
 	void setMarkersOpacity(float opacity);
 	void setMouseLeftUpForMakers();
 	void setFov(float fov);
+	void setVisible(bool v1, bool v2);
+
+	static bool debug;
 
 private:
+	bool onMouseLeftDown(const Common::Point &pt);
+
+	Common::File _file;
 	Common::String _warpPath;
 	TeCamera _camera;
 	bool _markersActive;
+	bool _visible1;
+
+	TeFrustum _frustum;
 
 	Common::Array<TeWarpMarker *> _warpMarkers;
 
