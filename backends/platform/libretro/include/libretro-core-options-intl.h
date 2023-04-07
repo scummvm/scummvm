@@ -222,18 +222,6 @@ struct retro_core_option_v2_definition option_defs_it[] = {
 		NULL
 	},
 	{
-		"scummvm_reduce_framerate_type",
-		"Riduzione del framerate",
-		NULL,
-		"Riduce temporaneamente il framerate quando viene rilevato un audio buffer underrun.",
-		NULL,
-		NULL,
-		{
-			{ NULL, NULL },
-		},
-		NULL
-        },
-	{
 		"scummvm_auto_performance_tuner",
 		"Regolazione automatica performance",
 		NULL,
