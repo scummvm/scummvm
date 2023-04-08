@@ -137,7 +137,6 @@ void Map21::special02() {
 			g_maps->_currentMap->updateGame();
 		},
 		[]() {
-			MM1::Maps::Map &map = *g_maps->_currentMap;
 			g_maps->_mapPos.y++;
 			g_maps->_currentMap->updateGame();
 		}
