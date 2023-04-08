@@ -502,9 +502,9 @@ void PaintDialog(WGame &game) {
 	if ((bDialogActive == FALSE) || (CurDialog == dNULL) || (bDialogMenuActive == FALSE))
 		return ;
 
-	DisplayDDBitmap(*game._renderer, ConsoleD1, 7, 366, 0, 0, 0, 0);
+	game._renderer->_2dStuff.displayDDBitmap(ConsoleD1, 7, 366, 0, 0, 0, 0);
 	DisplayD3DRect(*game._renderer, 15, 373, 187, 211, 18, 25, 18, 128);
-	DisplayDDBitmap(*game._renderer, ConsoleD2, 223, 515, 0, 0, 0, 0);
+	game._renderer->_2dStuff.displayDDBitmap(ConsoleD2, 223, 515, 0, 0, 0, 0);
 	DisplayD3DRect(*game._renderer, 223 + 6, 515 + 6, 536, 62, 18, 25, 18, 128);
 	DisplayD3DRect(*game._renderer, 223 + 546, 515 + 22, 16, 30, 18, 25, 18, 128);
 	DisplayD3DRect(*game._renderer, 223 + 542, 515 + 18, 4, 38, 18, 25, 18, 128);
@@ -532,16 +532,16 @@ void PaintDialog(WGame &game) {
 		}
 		if (CurDlgItem == a) tc = RED_FONT;
 
-		DisplayDDText(*game._renderer, Sentence[init.DlgMenu[a].titolo], FontKind::Standard, tc, tx, ty, 0, 0, 0, 0);
+		game._renderer->_2dStuff.displayDDText(Sentence[init.DlgMenu[a].titolo], FontKind::Standard, tc, tx, ty, 0, 0, 0, 0);
 	}
 
 
 //	disegno le frecce
 	if (Diag2Base > 0)
-		DisplayDDBitmap(*game._renderer, ConsoleFrecciaSu, 223 + 550, 515 + 0, 0, 0, 0, 0);
+		game._renderer->_2dStuff.displayDDBitmap(ConsoleFrecciaSu, 223 + 550, 515 + 0, 0, 0, 0, 0);
 
 	if ((Diag2Base + 1 + MAX_DIAG2_ITEMS) <= ca2)
-		DisplayDDBitmap(*game._renderer, ConsoleFrecciaGiu, 223 + 550, 515 + 56, 0, 0, 0, 0);
+		game._renderer->_2dStuff.displayDDBitmap(ConsoleFrecciaGiu, 223 + 550, 515 + 56, 0, 0, 0, 0);
 }
 
 } // End of namespace Watchmaker

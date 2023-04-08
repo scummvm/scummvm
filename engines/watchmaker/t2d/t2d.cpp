@@ -837,10 +837,10 @@ void PaintT2D(Renderer &renderer) {
 
 			if (w->bm[i].tnum & T2D_BM2TEXT_MASK) {
 				j = ((w->bm[i].tnum & T2D_BM2TEXT_MASK) >> T2D_BM2TEXT_SHIFT);
-				DisplayDDText(renderer, w->text[j].text, w->text[j].font, w->text[j].color,
+				renderer._2dStuff.displayDDText(w->text[j].text, w->text[j].font, w->text[j].color,
 				              w->bm[i].px + w->px, w->bm[i].py + w->py, w->bm[i].ox, w->bm[i].oy, w->bm[i].dx, w->bm[i].dy);
 			} else
-				DisplayDDBitmap(renderer, w->bm[i].tnum, w->bm[i].px + w->px, w->bm[i].py + w->py, w->bm[i].ox, w->bm[i].oy, w->bm[i].dx, w->bm[i].dy);
+				renderer._2dStuff.displayDDBitmap(w->bm[i].tnum, w->bm[i].px + w->px, w->bm[i].py + w->py, w->bm[i].ox, w->bm[i].oy, w->bm[i].dx, w->bm[i].dy);
 		}
 	}
 

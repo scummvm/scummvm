@@ -49,9 +49,6 @@ struct GameRect {
 extern struct SD3DRect D3DRectsList[];
 extern struct SD3DTriangle D3DTrianglesList[];
 extern struct SD3DBitmap D3DBitmapsList[];
-extern struct SDDBitmap DDBitmapsList[];
-extern struct SDDText DDTextsList[];
-extern struct SDDText RendText[];
 
 // 2D INTERFACE
 extern int32 MainDx, MainDy, MainBpp;

@@ -63,6 +63,7 @@ MODULE_OBJS = \
 	walk/walk.o \
 	walk/walkutil.o \
 	\
+	2d_stuff.o \
 	console.o \
 	extraLS.o \
 	file_utils.o \

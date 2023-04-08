@@ -242,7 +242,7 @@ void Render3DEnvironment(WGame &game) {
 
 	rRenderScene();                                                                             // Stampa triangoli
 
-	Add2DStuff(game);                                                                               // Aggiunge layer 2D
+	game._renderer->add2DStuff(); // Aggiunge layer 2D
 	game._renderer->showFrame();    // Visualizza il frame
 }
 

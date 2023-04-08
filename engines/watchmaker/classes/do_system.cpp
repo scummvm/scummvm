@@ -304,7 +304,7 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 			ye = 0;
 			if ((c->py + c->dy) > end_y) ye = (c->py + c->dy) - end_y;
 
-			DisplayDDBitmap_NoFit(*game._renderer, c->tnum, c->px, c->py - TitoliCoda_Y, 0, ys, c->dx, c->dy - ys - ye);
+			game._renderer->_2dStuff.displayDDBitmap_NoFit(c->tnum, c->px, c->py - TitoliCoda_Y, 0, ys, c->dx, c->dy - ys - ye);
 		}
 	}//for
 
@@ -472,7 +472,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 		}
 
 		if (c->tnum != -1)
-			DisplayDDBitmap_NoFit(*game._renderer, c->tnum, c->px, c->py, 0, 0, c->dx, c->dy);
+			game._renderer->_2dStuff.displayDDBitmap_NoFit(c->tnum, c->px, c->py, 0, 0, c->dx, c->dy);
 	}//for
 
 	if (TitoliCoda_NumDeleted == TitoliCoda_NumEntries) {
@@ -505,11 +505,11 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 void PaintIntroText(Renderer &renderer) {
 	if (T1t) {
 		DisplayD3DRect(renderer, rT1.px, rT1.py, rT1.dx, rT1.dy, rT1.r, rT1.g, rT1.b, rT1.a);
-		DisplayDDText(renderer, T1t, FontKind::Computer, CYAN_FONT, T1.px, T1.py, 0, 0, 0, 0);
+		renderer._2dStuff.displayDDText(T1t, FontKind::Computer, CYAN_FONT, T1.px, T1.py, 0, 0, 0, 0);
 	}
 	if (T2t) {
 		DisplayD3DRect(renderer, rT2.px, rT2.py, rT2.dx, rT2.dy, rT2.r, rT2.g, rT2.b, rT2.a);
-		DisplayDDText(renderer, T2t, FontKind::Computer, CYAN_FONT, T2.px, T2.py, 0, 0, 0, 0);
+		renderer._2dStuff.displayDDText(T2t, FontKind::Computer, CYAN_FONT, T2.px, T2.py, 0, 0, 0, 0);
 	}
 }
 
@@ -952,7 +952,7 @@ void doSystem(WGame &game) {
 					if (RoomInfo.t_next_letter < 0) RoomInfo.t_next_letter = 0;
 					RoomInfo.letter_ptr ++;
 				}
-				DisplayDDBitmap_NoFit(*game._renderer, RoomInfo.tnum, RoomInfo.px, RoomInfo.py, 0, 0, RoomInfo._dx, RoomInfo._dy);
+				game._renderer->_2dStuff.displayDDBitmap_NoFit(RoomInfo.tnum, RoomInfo.px, RoomInfo.py, 0, 0, RoomInfo._dx, RoomInfo._dy);
 				break;
 			case EFFECT_FADEIN_T1:
 			case EFFECT_FADEOUT_T1:
@@ -965,7 +965,7 @@ void doSystem(WGame &game) {
 				UpdateIntroText(TheMessage->bparam, TheMessage->wparam1, TheMessage->lparam[1], TheMessage->lparam[0]);
 				break;
 			case EFFECT_DISPLAY_NEWLOGIMG:
-				DisplayDDBitmap(*game._renderer, NewLogImage, 800 - 60 - 8, 4,  0, 0, 0, 0);
+				game._renderer->_2dStuff.displayDDBitmap(NewLogImage, 800 - 60 - 8, 4,  0, 0, 0, 0);
 				break;
 
 			}

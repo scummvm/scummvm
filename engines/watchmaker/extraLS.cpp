@@ -101,7 +101,7 @@ void CheckExtraLocalizationStrings(Renderer &renderer, uint32 id) {
 		extraLS_currentID = newID;
 	}
 
-	if (extraLS_BMP) DisplayDDBitmap(renderer, extraLS_BMP, extraLS_bmpPosX, extraLS_bmpPosY, 0, 0, 0, 0);
+	if (extraLS_BMP) renderer._2dStuff.displayDDBitmap(extraLS_BMP, extraLS_bmpPosX, extraLS_bmpPosY, 0, 0, 0, 0);
 }
 
 } // End of namespace Watchmaker
