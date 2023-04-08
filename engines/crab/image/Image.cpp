@@ -122,6 +122,19 @@ bool Image::Load(rapidxml::xml_node<char> *node, const char *name) {
 //------------------------------------------------------------------------
 void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFlipType &flip) {
 
+	Common::Rect srcRect;
+	if (clip != NULL) {
+		srcRect = *clip;
+	} else {
+		srcRect = Common::Rect{x, y, w + x, h + y};
+	}
+
+	Common::Rect destRect {x, y, w + x, h + y};
+	if (clip != NULL) {
+		destRect.right = clip->right;
+		destRect.bottom = clip->bottom;
+	}
+
 	g_engine->_renderSurface->blitFrom(*texture, Common::Point(x, y));
 	//g_engine->_renderSurface->copyRectToSurface(texture->getPixels(), texture->pitch, x, y, texture->w, texture->h);
 #if 0
@@ -179,7 +192,31 @@ void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 }
 
 void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &flip) {
-	g_engine->_renderSurface->blitFrom(*texture, Common::Point(x, y));
+	Common::Rect srcRect {0, 0, w + 0, h + 0};
+	Common::Rect destRect {x, y, w + x, h + y};
+
+	if (clip) {
+		srcRect = {clip->x, clip->y, clip->x + clip->w, clip->y + clip->h};
+		destRect.right = clip->w + x;
+		destRect.bottom = clip->h + y;
+	}
+
+	Graphics::Surface *s = new Graphics::Surface();
+	s->copyFrom(texture->getSubArea(srcRect));
+
+	switch(flip) {
+		case FLIP_NONE:
+		break;
+
+		case FLIP_X:
+		s->flipHorizontal(Common::Rect(s->w, s->h));
+		break;
+
+		default:
+		warning("Flipped texture: %d", flip);
+	}
+
+	g_engine->_renderSurface->blitFrom(s, Common::Rect(s->w, s->h), destRect);
 }
 
 //------------------------------------------------------------------------
