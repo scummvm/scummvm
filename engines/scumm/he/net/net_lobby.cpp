@@ -527,6 +527,13 @@ void Lobby::sendGameResults(int userId, int arrayIndex, int unknown) {
 		return;
 	}
 
+	// Because the new netcode uses userIds 1 and 2 to determine between
+	// host and opponent, we need to replace it to represent the correct user.
+	if (userId == 1)
+		userId = _userId;
+	else
+		userId = _playerId;
+
 	Common::JSONObject setProfileRequest;
 	setProfileRequest.setVal("cmd", new Common::JSONValue("game_results"));
 	setProfileRequest.setVal("user", new Common::JSONValue((long long int)userId));
