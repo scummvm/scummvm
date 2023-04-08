@@ -80,7 +80,7 @@ char cmd_params_num;
 int adjusted_RES_W = 0;
 int adjusted_RES_H = 0;
 
-static uint32 current_frame = 1;
+static uint32 current_frame = 0;
 static uint8 frameskip_no;
 static uint8 frameskip_type;
 static uint8 frameskip_threshold;
@@ -715,7 +715,7 @@ void retro_run(void) {
 			if ((frameskip_type == 2) || (performance_switch & PERF_SWITCH_ON))
 				skip_frame = (audio_status & AUDIO_STATUS_BUFFER_UNDERRUN);
 			else if (frameskip_type == 1){
-				skip_frame = !((current_frame - 1) % frameskip_no == 0);
+				skip_frame = !(current_frame % frameskip_no == 0);
 }
 			else if (frameskip_type == 3)
 				skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
@@ -739,7 +739,7 @@ void retro_run(void) {
 					if (frameskip_events > PERF_SWITCH_FRAMESKIP_EVENTS) {
 						increase_performance();
 						frameskip_events = 0;
-						perf_ref_frame = current_frame - 1;
+						perf_ref_frame = current_frame;
 						perf_ref_audio_buff_occupancy = 0;
 					}
 				}
@@ -749,7 +749,7 @@ void retro_run(void) {
 			if (!skip_frame && (performance_switch & PERF_SWITCH_ON) && performance_switch > PERF_SWITCH_ON) {
 				perf_ref_audio_buff_occupancy += retro_audio_buff_occupancy;
 				if ((current_frame - perf_ref_frame) % (PERF_SWITCH_RESET_REST) == 0) {
-					uint32 avg_audio_buff_occupancy = perf_ref_audio_buff_occupancy / (current_frame - perf_ref_frame);
+					uint32 avg_audio_buff_occupancy = perf_ref_audio_buff_occupancy / (current_frame + 1 - perf_ref_frame);
 					if (avg_audio_buff_occupancy > PERF_SWITCH_RESET_THRESHOLD || avg_audio_buff_occupancy == retro_audio_buff_occupancy)
 						increase_accuracy();
 					perf_ref_frame = current_frame - 1;
