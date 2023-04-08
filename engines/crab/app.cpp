@@ -257,9 +257,9 @@ void App::Run() {
 				pyrodactyl::text::gTextManager.Draw(0, 0, NumberToString(fpsval), 0);
 		}
 #endif
-		const Graphics::ManagedSurface *s = g_engine->_renderSurface;
-		g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
-		g_system->updateScreen();
+		//const Graphics::ManagedSurface *s = g_engine->_renderSurface;
+		//g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, s->w, s->h);
+		g_engine->_screen->update();
 
 #if 0
 		// Update the screen

@@ -135,7 +135,9 @@ void Image::Draw(const int &x, const int &y, Common::Rect *clip, const TextureFl
 		destRect.bottom = clip->bottom;
 	}
 
-	g_engine->_renderSurface->blitFrom(*texture, Common::Point(x, y));
+	// TODO: Do proper clipping
+	g_engine->_screen->blitFrom(*texture, Common::Point(x, y));
+	//g_engine->_renderSurface->blitFrom(*texture, Common::Point(x, y));
 	//g_engine->_renderSurface->copyRectToSurface(texture->getPixels(), texture->pitch, x, y, texture->w, texture->h);
 #if 0
 	// Set rendering space and render to screen
@@ -216,7 +218,8 @@ void Image::Draw(const int &x, const int &y, Rect *clip, const TextureFlipType &
 		warning("Flipped texture: %d", flip);
 	}
 
-	g_engine->_renderSurface->blitFrom(s, Common::Rect(s->w, s->h), destRect);
+	g_engine->_screen->blitFrom(s, Common::Rect(s->w, s->h), destRect);
+	//g_engine->_renderSurface->blitFrom(s, Common::Rect(s->w, s->h), destRect);
 }
 
 //------------------------------------------------------------------------
