@@ -475,6 +475,7 @@ void retro_init(void) {
 
 	audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
 	update_variables();
+	audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
 
 	cmd_params_num = 1;
 	strcpy(cmd_params[0], "scummvm\0");
@@ -686,6 +687,23 @@ void retro_run(void) {
 		return;
 	}
 
+	bool updated = false;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated){
+		update_variables();
+	}
+
+	if (audio_status & AUDIO_STATUS_UPDATE_LATENCY){
+		uint32 audio_latency;
+		float frame_time_msec = 1000.0f / frame_rate;
+
+		audio_latency = (uint32)((8.0f * frame_time_msec) + 0.5f);
+		audio_latency = (audio_latency + 0x1F) & ~0x1F;
+
+		/* This can only be called from within retro_run() */
+		environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY, &audio_latency);
+		audio_status &= ~AUDIO_STATUS_UPDATE_LATENCY;
+	}
+
 	/* Setting RA's video or audio driver to null will disable video/audio bits */
 	int audio_video_enable = 0;
 	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &audio_video_enable);
@@ -797,26 +815,6 @@ void retro_run(void) {
 
 		poll_cb();
 		retroProcessMouse(input_cb, retro_device, gampad_cursor_speed, gamepad_acceleration_time, analog_response_is_quadratic, analog_deadzone, mouse_speed);
-	}
-
-	bool updated = false;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated){
-		update_variables();
-	}
-
-	if (audio_status & AUDIO_STATUS_UPDATE_LATENCY){
-		uint32 audio_latency;
-		if (frameskip_type > 1 || (performance_switch & PERF_SWITCH_ON) || reduce_framerate_type) {
-			float frame_time_msec = 1000.0f / frame_rate;
-
-			audio_latency = (uint32)((8.0f * frame_time_msec) + 0.5f);
-			audio_latency = (audio_latency + 0x1F) & ~0x1F;
-		} else {
-			audio_latency = 0;
-		}
-		/* This can only be called from within retro_run() */
-		environ_cb(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY, &audio_latency);
-		audio_status &= ~AUDIO_STATUS_UPDATE_LATENCY;
 	}
 }
 
