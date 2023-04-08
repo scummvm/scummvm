@@ -107,7 +107,6 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, Networkin
 	}
 
 	if (success) {
-		debug(9, "%s", json->stringify(true).c_str()); // TODO: remove when done testing against cloud.scummvm.org
 		_token = oauth.getVal("access_token")->asString();
 		if (requiresRefreshToken) {
 			_refreshToken = oauth.getVal("refresh_token")->asString();
