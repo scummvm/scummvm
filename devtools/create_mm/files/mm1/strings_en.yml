@@ -1236,6 +1236,16 @@ maps:
 		correct: "Correct!"
 		islands: "Atop this peak 5 islands can be seen\nto the southeast"
 		wave: "A tidal wave sweeps the party away!"
+	emap17:
+		options:
+			1: "Red Thorac"
+			2: "Blue Ogram"
+			3: "Green Bagar"
+			4: "Yellow Limra"
+			5: "Purple Sagran"
+			6: "Orange Oolak"
+			7: "Black Dresidion"
+			8: "White Dilithium"
 
 	map18:
 		passage: "Cavernous passage to Erliquin,\ntake it (Y/N)?"

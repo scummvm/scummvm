@@ -80,7 +80,7 @@ void Map17::special00() {
 void Map17::special01() {
 	SoundMessage msg(STRING["maps.map17.bridge"],
 		[]() {
-			g_events->send("ColorQuestions", GameMessage("DISPLAY"));
+			g_events->addView("ColorQuestions");
 		}
 	);
 

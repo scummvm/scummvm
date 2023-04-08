@@ -46,10 +46,17 @@ bool ColorQuestions::msgFocus(const FocusMessage &msg) {
 }
 
 void ColorQuestions::draw() {
-	clearSurface();
+	ScrollView::draw();
 
-	writeString(0, 0, STRING["maps.map17.color"]);
-	writeString(0, 2, STRING["maps.map17.options"]);
+	setReduced(false);
+	writeLine(0, STRING["maps.map17.color"]);
+
+	setReduced(true);
+	for (int option = 0; option < 8; ++option) {
+		Common::String prefix = Common::String::format("%c) ", '1' + option);
+		writeLine(option / 2 + 1, prefix, ALIGN_RIGHT, 20 + 105 * (option % 2));
+		writeString(STRING[Common::String::format("maps.emap17.options.%d", option + 1)]);
+	}
 
 	if (_showingResponse) {
 		const Character &c = g_globals->_party[_charIndex];
