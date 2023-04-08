@@ -167,6 +167,8 @@ void ImageManager::Draw(const int &x, const int &y, const ImageKey &id, Rect *cl
 // Purpose: Dim the screen by drawing a 128 alpha black rectangle over it
 //------------------------------------------------------------------------
 void ImageManager::DimScreen() {
+	warning("STUB: ImageManger::DimScreen()");
+
 #if 0
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 128);
@@ -175,6 +177,8 @@ void ImageManager::DimScreen() {
 }
 
 void ImageManager::BlackScreen() {
+	warning("STUB: ImageManger::BlackScreen()");
+
 #if 0
 	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
