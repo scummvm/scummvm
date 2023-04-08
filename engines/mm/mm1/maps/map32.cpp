@@ -91,17 +91,15 @@ void Map32::special02() {
 		send("View", DrawGraphicMessage(65 + 6));
 		send(SoundMessage(
 			STRING["maps.map32.castle"],
-			[](const Common::KeyState &ks) {
+			[]() {
 				Map32 &map = *static_cast<Map32 *>(g_maps->_currentMap);
-				if (ks.keycode == Common::KEYCODE_y) {
-					g_events->close();
-					map[VAL2] = 0xff;
-					map.updateGame();
-				} else if (ks.keycode == Common::KEYCODE_n) {
-					g_events->close();
-					map[VAL2]++;
-					map.updateGame();
-				}
+				map[VAL2] = 0xff;
+				map.updateGame();
+			},
+			[]() {
+				Map32 &map = *static_cast<Map32 *>(g_maps->_currentMap);
+				map[VAL2]++;
+				map.updateGame();
 			}
 		));
 	}

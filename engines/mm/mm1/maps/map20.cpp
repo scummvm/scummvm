@@ -104,18 +104,15 @@ void Map20::special02() {
 
 		send(SoundMessage(
 			STRING["maps.map20.castle"],
-			[](const Common::KeyState &ks) {
+			[]() {
 				Map20 &map = *static_cast<Map20 *>(g_maps->_currentMap);
-				if (ks.keycode == Common::KEYCODE_y) {
-					g_events->focusedView()->close();
-					map[CASTLE_STATE] = 0xff;
-					map.goToCastle();
-
-				} else if (ks.keycode == Common::KEYCODE_n) {
-					g_events->focusedView()->close();
-					map[CASTLE_STATE]++;
-					map.updateGame();
-				}
+				map[CASTLE_STATE] = 0xff;
+				map.goToCastle();
+			},
+			[]() {
+				Map20 &map = *static_cast<Map20 *>(g_maps->_currentMap);
+				map[CASTLE_STATE]++;
+				map.updateGame();
 			}
 		));
 	}

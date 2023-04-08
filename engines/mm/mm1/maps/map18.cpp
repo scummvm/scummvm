@@ -76,17 +76,15 @@ void Map18::special01() {
 		send("View", DrawGraphicMessage(65 + 6));
 		send(SoundMessage(
 			STRING["maps.map18.castle_south"],
-			[](const Common::KeyState &ks) {
+			[]() {
 				Map18 &map = *static_cast<Map18 *>(g_maps->_currentMap);
-				if (ks.keycode == Common::KEYCODE_y) {
-					g_events->close();
-					map[VAL1] = 0xff;
-					map.updateGame();
-				} else if (ks.keycode == Common::KEYCODE_n) {
-					g_events->close();
-					map[VAL1]++;
-					map.updateGame();
-				}
+				map[VAL1] = 0xff;
+				map.updateGame();
+			},
+			[]() {
+				Map18 &map = *static_cast<Map18 *>(g_maps->_currentMap);
+				map[VAL1]++;
+				map.updateGame();
 			}
 		));
 	}
@@ -105,17 +103,15 @@ void Map18::special02() {
 		send("View", DrawGraphicMessage(65 + 6));
 		send(SoundMessage(
 			STRING["maps.map18.castle_north"],
-			[](const Common::KeyState &ks) {
+			[]() {
 				Map18 &map = *static_cast<Map18 *>(g_maps->_currentMap);
-				if (ks.keycode == Common::KEYCODE_y) {
-					g_events->close();
-					map[VAL2] = 0xff;
-					map.updateGame();
-				} else if (ks.keycode == Common::KEYCODE_n) {
-					g_events->close();
-					map[VAL2]++;
-					map.updateGame();
-				}
+				map[VAL2] = 0xff;
+				map.updateGame();
+			},
+			[]() {
+				Map18 &map = *static_cast<Map18 *>(g_maps->_currentMap);
+				map[VAL2]++;
+				map.updateGame();
 			}
 		));
 	}
