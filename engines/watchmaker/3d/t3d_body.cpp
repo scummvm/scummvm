@@ -545,6 +545,8 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 #endif
 //----------------END OF VERTEX PRE-LIGHTING---------------------
 
+	populatePortalLists();
+
 	warning("LoaderFlags late = %08X", LoaderFlags);
 	//decodeLoaderFlags(LoaderFlags);
 	if (!(LoaderFlags & T3D_NOBOUNDS)) {                                                        // Carica Bounds
