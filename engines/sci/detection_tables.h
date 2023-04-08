@@ -1658,6 +1658,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND },
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
 
+	// King's Quest 4 - English DOS (5 1/4" disks)
+	// Game version 1.003.006
+	// SCI interpreter version 0.000.409
+	// Released: January 24, 1989 (Information from QAFILE file)
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "5051546e5f87aa6103289c8001a94234", 9240},
+		{"resource.001", 0, "91a2aebafb234c486744bd69b145ac43", 184255},
+		{"resource.002", 0, "91a2aebafb234c486744bd69b145ac43", 338296},
+		{"resource.003", 0, "91a2aebafb234c486744bd69b145ac43", 334522},
+		{"resource.004", 0, "91a2aebafb234c486744bd69b145ac43", 310026},
+		{"resource.005", 0, "91a2aebafb234c486744bd69b145ac43", 282391},
+		{"resource.006", 0, "91a2aebafb234c486744bd69b145ac43", 323541},
+		{"resource.007", 0, "91a2aebafb234c486744bd69b145ac43", 333089},
+		{"resource.008", 0, "91a2aebafb234c486744bd69b145ac43", 272995},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 	// King's Quest 4 - English DOS (3 1/2" disks)
 	// Game version 1.003.006
 	// SCI interpreter version 0.000.409
