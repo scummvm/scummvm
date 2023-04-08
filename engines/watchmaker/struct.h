@@ -405,7 +405,7 @@ struct SString {
 	char text[MAX_STRING_LEN] = {};
 	uint16  x = 0, y = 0, dx = 0;
 
-	SString() = default;
+	constexpr SString() = default;
 	SString(const char *text, uint16 x = 0, uint16 y = 0, uint16 dx = 0) : x(x), y(y), dx(dx) {
 		if (text != nullptr) {
 			memcpy(this->text, text, strlen(text));
