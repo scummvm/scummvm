@@ -87,6 +87,8 @@ void Map14::special00() {
 			[]() {
 				if (g_events->getRandomNumber(3) == 3) {
 					g_maps->_mapPos = Common::Point(15, 10);
+					g_maps->_currentMap->updateGame();
+
 				} else {
 					Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
 					map.encounter();

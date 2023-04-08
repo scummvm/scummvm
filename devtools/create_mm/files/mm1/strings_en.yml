@@ -1207,7 +1207,7 @@ maps:
 		words: "Carved on a block of ice are the words:\nStart at 15-7 and walk to Doom!"
 		passage: "A secret passage to Doom, take it (Y/N)?"
 		pool: "The pool of health grants those who are\nworthy +4 endurance!"
-		surrounded: "You've been surrounded by the Dark Riderand his men! He challenges you to a duel...accept (Y/N)?"
+		surrounded: "You've been surrounded by the Dark Rider\nand his men! He challenges you to a duel... accept (Y/N)?"
 		castle: "The fabeled Castle Doom!\nWill you enter (Y/N)?"
 
 	map15:
