@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-08 16:08+0000\n"
+"POT-Creation-Date: 2023-04-08 18:28+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -563,7 +563,7 @@ msgid "Platform:"
 msgstr "플랫폼:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2019 gui/options.cpp:2192
-#: backends/graphics/atari/atari-graphics.cpp:609
+#: backends/graphics/atari/atari-graphics.cpp:559
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "그래픽"
@@ -3402,7 +3402,7 @@ msgstr ""
 msgid "Choose a new folder"
 msgstr "불러올 파일을 선택"
 
-#: backends/graphics/atari/atari-graphics.cpp:613
+#: backends/graphics/atari/atari-graphics.cpp:563
 #: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle aspect ratio correction"
 msgstr "화면 종횡비 보정 전환"
