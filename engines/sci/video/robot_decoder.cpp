@@ -372,6 +372,7 @@ void RobotDecoder::initStream(const GuiResourceId robotId) {
 	_robotId = robotId;
 
 	const uint16 id = stream->readUint16LE();
+	// TODO: id 0x3d for PQ:SWAT demo?
 	if (id != 0x16) {
 		error("Invalid robot file %s", fileName.c_str());
 	}
