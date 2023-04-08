@@ -494,9 +494,8 @@ bool DataLoad(WGame &game, const Common::String &FileName, uint8 slot) {
 	bPorteEsternoBloccate = stream->readByte();
 	bSezioneLabirinto = stream->readByte();
 
-	for (int i = 0; i < MAX_MODIFIED_MESH; i++) {
-		MMList[i] = SMeshModifier(*stream);
-	}
+	_vm->loadMeshModifiers(*stream);
+
 	for (int i = 0; i < MAX_PLAYERS; i++) {
 		PlayerStand[i] = SPlayerStand(*stream);
 	}

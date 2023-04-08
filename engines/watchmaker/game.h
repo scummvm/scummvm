@@ -49,11 +49,14 @@ public:
 	}
 };
 
+class MeshModifiers;
+
 class WGame {
 	bool g_bReady, g_bActive;
 	bool g_bSkipActive = false;
 	const char *CharName[32];
 	uint32 LoadChar;
+	MeshModifiers *_meshModifiers;
 
 public:
 	Common::RandomSource *_rnd;
@@ -99,6 +102,10 @@ public:
 	bool CheckAndLoadMoglieSupervisoreModel(int32 c);
 
 	void GameLoop();
+
+	// TODO: These might belong elsewhere after some refactoring:
+	void addMeshModifier(const Common::String &name, int16 com, void *p);
+	void loadMeshModifiers(Common::SeekableReadStream &stream);
 };
 
 extern WGame *_vm;

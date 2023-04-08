@@ -1761,7 +1761,7 @@ void ProcessAnims(WGame &game) {
 					h->sub[a].ptr->CurFrame = CurFrame = LastFrame;
 					if (!(CurFlags & T3D_MESH_CHARACTER)) {
 						UpdateBoundingBox(h->sub[a].ptr);
-						AddMeshModifier(h->sub[a].ptr->name, MM_ANIM_BLOCK, game.init.Anim[an].name[a].rawArray());
+						_vm->addMeshModifier(h->sub[a].ptr->name, MM_ANIM_BLOCK, game.init.Anim[an].name[a].rawArray());
 					}
 				} else
 					h->sub[a].ptr->CurFrame = -3;

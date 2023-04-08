@@ -191,6 +191,7 @@ bool WGame::CheckAndLoadMoglieSupervisoreModel(int32 c) {
 // TODO: This needs some heavy refactoring.
 WGame::WGame() : workDirs(WATCHMAKER_CFG_NAME) {
 	_vm = this;
+	_meshModifiers = new MeshModifiers();
 	configLoaderFlags(); // TODO: This should probably happen before the constructor
 
 	// if LoaderFlags & T3D_DEBUGMODE
@@ -217,6 +218,7 @@ WGame::WGame() : workDirs(WATCHMAKER_CFG_NAME) {
 WGame::~WGame() {
 	delete _renderer;
 	delete sdl;
+	delete _meshModifiers;
 	_vm = nullptr;
 }
 
@@ -507,7 +509,7 @@ void WGame::UpdateAll() {
 	for (i = 0; i < NumLoadedFiles; i++) {
 		if (LoadedFiles[i].b) {
 			HideRoomMeshes(init, LoadedFiles[i].b);
-			ApplyAllMeshModifiers(*this, LoadedFiles[i].b);
+			_meshModifiers->applyAllMeshModifiers(*this, LoadedFiles[i].b);
 		}
 	}
 	UpdateAllClocks(*this);
@@ -692,6 +694,15 @@ void WGame::CleanUpAndPostQuit() {
 
 	exit(0);
 #endif
+}
+
+void WGame::addMeshModifier(const Common::String &name, int16 com, void *p) {
+	_meshModifiers->addMeshModifier(name, com, p);
+}
+
+void WGame::loadMeshModifiers(Common::SeekableReadStream &stream) {
+	delete _meshModifiers;
+	_meshModifiers = new MeshModifiers(stream);
 }
 
 } // End of namespace Watchmaker

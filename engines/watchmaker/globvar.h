@@ -89,7 +89,6 @@ struct InvVars {
 extern char ObjectUnderCursor[];
 extern t3dV3F mPos;
 
-extern struct SMeshModifier MMList[];
 extern struct SPlayerStand PlayerStand[];
 
 // SENTENCES

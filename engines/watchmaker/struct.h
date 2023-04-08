@@ -401,35 +401,6 @@ struct SPDALog : public SerializableAsset {
 	}
 };
 
-struct SMeshModifier {
-	Common::String meshName;
-	int32      Flags = 0;
-	uint32      AddFlags = 0;
-	uint32      RemoveFlags = 0;
-	uint32      AddMatFlags = 0;
-	uint32      RemoveMatFlags = 0;
-	int32      MatFrame = 0;
-	uint16      BndLevel = 0;
-	int8       HaloesStatus = 0;
-	Common::String animName;
-	SMeshModifier() = default;
-	SMeshModifier(Common::SeekableReadStream &stream) {
-		char stringBuffer[T3D_NAMELEN] = {};
-		stream.read(stringBuffer, T3D_NAMELEN);
-		meshName = stringBuffer;
-		Flags = stream.readSint32LE();
-		AddFlags = stream.readUint32LE();
-		RemoveFlags = stream.readUint32LE();
-		AddMatFlags = stream.readUint32LE();
-		RemoveMatFlags = stream.readUint32LE();
-		MatFrame = stream.readSint32LE();
-		BndLevel = stream.readUint16LE();
-		HaloesStatus = stream.readByte(); // TODO: Signed.
-		stream.read(stringBuffer, T3D_NAMELEN);
-		animName = stringBuffer;
-	}
-};
-
 struct SString {
 	char text[MAX_STRING_LEN] = {};
 	uint16  x = 0, y = 0, dx = 0;
