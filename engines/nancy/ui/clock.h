@@ -23,6 +23,8 @@
 #define NANCY_UI_CLOCK_H
 
 #include "engines/nancy/renderobject.h"
+#include "engines/nancy/enginedata.h"
+#include "engines/nancy/time.h"
 
 #include "engines/nancy/ui/animatedbutton.h"
 
@@ -48,7 +50,7 @@ public:
 protected:
 	class ClockGlobe : public AnimatedButton {
 	public:
-		ClockGlobe(uint zOrder, Clock *owner) : AnimatedButton(zOrder), _owner(owner), _closeTime(0) {}
+		ClockGlobe(uint zOrder, Clock *owner) : AnimatedButton(zOrder), _owner(owner), _closeTime(0), _timeToKeepOpen(0) {}
 		virtual ~ClockGlobe() = default;
 
 		void init() override;

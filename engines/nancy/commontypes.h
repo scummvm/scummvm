@@ -124,8 +124,8 @@ struct SceneChangeDescription {
 
 // Describes a single flag change or comparison
 struct FlagDescription {
-	int16 label;
-	byte flag;
+	int16 label = -1;
+	byte flag = 0;
 };
 
 // Describes a hotspot

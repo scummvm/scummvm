@@ -146,7 +146,7 @@ void PlaySecondaryMovie::updateGraphics() {
 		
 		_needsRedraw = true;
 
-		for (auto f : _frameFlags) {
+		for (auto &f : _frameFlags) {
 			if (_decoder.getCurFrame() == f.frameID) {
 				NancySceneState.setEventFlag(f.flagDesc);
 			}

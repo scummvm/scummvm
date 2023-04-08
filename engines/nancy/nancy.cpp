@@ -308,10 +308,13 @@ Common::Error NancyEngine::run() {
 
 void NancyEngine::pauseEngineIntern(bool pause) {
 	State::State *s = getStateObject(_gameFlow.curState);
-	if (pause) {
-		s->onStateExit(NancyState::kPause);
-	} else {
-		s->onStateEnter(NancyState::kPause);
+
+	if (s) {
+		if (pause) {
+			s->onStateExit(NancyState::kPause);
+		} else {
+			s->onStateEnter(NancyState::kPause);
+		}
 	}
 }
 
