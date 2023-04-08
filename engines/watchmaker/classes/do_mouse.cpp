@@ -243,7 +243,7 @@ void doMouseButton(WGame &game) {
 //?                 CharStop( ocCURPLAYER );
 	}
 //			Rimuove tutti gli eventi del personaggio
-	RemoveEvent(&Game, EventClass::MC_PLAYER, ME_ALL);
+	game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 	if (CurObj) {                        // se ho cliccato su un oggetto valido
 		if (TheMessage->event == ME_MLEFT)   // se ho cliccato con sinistro
 			Event(EventClass::MC_PLAYER, ME_PLAYERGOTOEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, bFirstPerson, &CurObj, nullptr, nullptr);

@@ -293,19 +293,19 @@ t3dMESH *LinkMeshToStr(Init &init, const Common::String &str) {
 /* -----------------18/12/00 18.02-------------------
  *                  UpdateRoomInfo
  * --------------------------------------------------*/
-void UpdateRoomInfo(Init &init) {
+void UpdateRoomInfo(WGame &game) {
 	uint8 cr;
 
 	if (!t3dCurRoom) return;
 
-	cr = (uint8)getRoomFromStr(init, t3dCurRoom->name);
+	cr = (uint8)getRoomFromStr(game.init, t3dCurRoom->name);
 	if (!cr) return;
 
 //	se � diversa dalla precedente...
-	if (strcmp(RoomInfo.name, init.Room[cr].desc)) {
-		RemoveEvent_bparam(&Game, EventClass::MC_SYSTEM, ME_STARTEFFECT, EFFECT_ROOMINFO);
-		RemoveEvent_bparam(&Game, EventClass::MC_SYSTEM, ME_CONTINUEEFFECT, EFFECT_ROOMINFO);
-		RemoveEvent_bparam(&Game, EventClass::MC_SYSTEM, ME_STOPEFFECT, EFFECT_ROOMINFO);
+	if (strcmp(RoomInfo.name, game.init.Room[cr].desc)) {
+		game._messageSystem.removeEvent_bparam(EventClass::MC_SYSTEM, ME_STARTEFFECT, EFFECT_ROOMINFO);
+		game._messageSystem.removeEvent_bparam(EventClass::MC_SYSTEM, ME_CONTINUEEFFECT, EFFECT_ROOMINFO);
+		game._messageSystem.removeEvent_bparam(EventClass::MC_SYSTEM, ME_STOPEFFECT, EFFECT_ROOMINFO);
 		Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_ROOMINFO, nullptr, nullptr, nullptr);
 	}
 }
@@ -334,7 +334,7 @@ void UpdateRoomVisibility(WGame &game) {
 		init.Room[cr].flags |= ROOM_VISIBLE;
 
 	if (bShowRoomDescriptions)
-		UpdateRoomInfo(init);
+		UpdateRoomInfo(game);
 //	if( !( Room[cr].flags & ROOM_OLDVISIBLE ) )
 //		Event( EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND*3, 0, EFFECT_ROOMINFO, NULL, NULL, NULL );
 

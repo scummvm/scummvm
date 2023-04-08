@@ -81,7 +81,7 @@ void doDialog(WGame &game) {
 		if ((TheMessage->wparam1 == dR000) && bShowRoomDescriptions) {
 			t3dCurTime = 240;
 			strcpy(RoomInfo.name, "");
-			UpdateRoomInfo(init);
+			UpdateRoomInfo(game);
 		}
 
 		// I make darrell disappear
@@ -311,7 +311,7 @@ void doDialog(WGame &game) {
 
 		CurDialog = TheMessage->wparam1;
 		CurDlgItem = TheMessage->wparam2;
-		RemoveEvent(&Game, EventClass::MC_DIALOG, ME_ALL);
+		game._messageSystem.removeEvent(EventClass::MC_DIALOG, ME_ALL);
 //			Se c'e' un enddialog attivo
 		if ((CurDlgItem == mQUIT) && (init.Dialog[CurDialog].flags & (DIALOG_END1 | DIALOG_END2 | DIALOG_END3))) {
 			if (init.Dialog[CurDialog].flags & DIALOG_END_RAND)

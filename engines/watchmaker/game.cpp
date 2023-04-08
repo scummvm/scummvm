@@ -49,6 +49,8 @@ namespace Watchmaker {
 
 const char *WATCHMAKER_CFG_NAME = "wm.cfg";
 
+WGame *_vm = nullptr;
+
 // TODO: Unglobalize
 const char *CharName_Strings[] = {
 	"",
@@ -188,6 +190,7 @@ bool WGame::CheckAndLoadMoglieSupervisoreModel(int32 c) {
 
 // TODO: This needs some heavy refactoring.
 WGame::WGame() : workDirs(WATCHMAKER_CFG_NAME) {
+	_vm = this;
 	configLoaderFlags(); // TODO: This should probably happen before the constructor
 
 	// if LoaderFlags & T3D_DEBUGMODE
@@ -214,6 +217,7 @@ WGame::WGame() : workDirs(WATCHMAKER_CFG_NAME) {
 WGame::~WGame() {
 	delete _renderer;
 	delete sdl;
+	_vm = nullptr;
 }
 
 Common::SharedPtr<Common::SeekableReadStream> WGame::resolveFile(const char *path, bool noFastFile) {

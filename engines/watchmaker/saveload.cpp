@@ -148,7 +148,7 @@ bool DataSave(const char *SaveName, uint8 slot) {
 
 	PlayerPos[CurPlayer + ocDARRELL] = 0;
 	PlayerGotoPos[CurPlayer + ocDARRELL] = 0;
-	RemoveEvent(&Game, EventClass::MC_PLAYER, ME_ALL);
+	game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 	CharStop(ocCURPLAYER);
 
 //	nascondo l'altro giocatore, cos� quando riparte il gioco StartDiary() vede che e' nascosto e controlla se deve essere visualizzato
@@ -349,7 +349,7 @@ bool DataLoad(WGame &game, const Common::String &FileName, uint8 slot) {
 		if (Character[i])
 			CharStop(i);
 
-	InitMessageSystem();
+	game._messageSystem.init();
 	ClearUseWith();
 	ClearText();
 

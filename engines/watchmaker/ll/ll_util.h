@@ -41,7 +41,7 @@ int32 GetBndLevel(char *roomname);
 void GetDDBitmapExtends(Renderer &renderer, struct SRect *r, struct SDDBitmap *b);
 void DisplayDDBitmap(Renderer &, int32 tnum, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy);
 void DisplayDDBitmap_NoFit(Renderer &renderer, int32 tnum, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy);
-void UpdateRoomInfo(Init &init);
+void UpdateRoomInfo(WGame &game);
 bool CheckRect(Renderer &renderer, struct SRect p, int32 cmx, int32 cmy);
 void DisplayD3DTriangle(Renderer &, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r, uint8 g, uint8 b, uint8 al);
 void DisplayD3DRect(Renderer &, int32 px, int32 py, int32 dx, int32 dy, uint8 r, uint8 g, uint8 b, uint8 al);
