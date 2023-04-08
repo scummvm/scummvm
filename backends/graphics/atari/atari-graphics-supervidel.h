@@ -70,7 +70,7 @@ public:
 		return graphicsModes;
 	}
 
-protected:
+private:
 	AtariMemAlloc getStRamAllocFunc() const override {
 		return [](size_t bytes) {
 			uintptr ptr = Mxalloc(bytes, MX_STRAM);
@@ -85,7 +85,6 @@ protected:
 		return [](void *ptr) { Mfree((uintptr)ptr & 0x00FFFFFF); };
 	}
 
-private:
 	static long hasSvRamBoosted() {
 		register long ret __asm__ ("d0") = 0;
 

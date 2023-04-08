@@ -93,14 +93,6 @@ protected:
 	typedef void* (*AtariMemAlloc)(size_t bytes);
 	typedef void (*AtariMemFree)(void *ptr);
 
-	virtual AtariMemAlloc getStRamAllocFunc() const {
-		return [](size_t bytes) { return (void*)Mxalloc(bytes, MX_STRAM); };
-	}
-
-	virtual AtariMemFree getStRamFreeFunc() const {
-		return [](void *ptr) { Mfree(ptr); };
-	}
-
 	void allocateSurfaces();
 	void freeSurfaces();
 
@@ -131,6 +123,13 @@ private:
 		SCREEN_HEIGHT = 480
 	};
 
+	virtual AtariMemAlloc getStRamAllocFunc() const {
+		return [](size_t bytes) { return (void*)Mxalloc(bytes, MX_STRAM); };
+	}
+	virtual AtariMemFree getStRamFreeFunc() const {
+		return [](void *ptr) { Mfree(ptr); };
+	}
+
 	// use std::vector as its clear() doesn't reset capacity
 	using DirtyRects = std::vector<Common::Rect>;
 
@@ -141,13 +140,7 @@ private:
 	void setVidelResolution() const;
 
 	bool updateDirect();
-	bool updateBuffered(const Graphics::Surface &srcSurface, Graphics::Surface &dstSurface, const DirtyRects &dirtyRects);
-
-	void allocateAtariSurface(Graphics::Surface &surface,
-							  int width, int height, const Graphics::PixelFormat &format,
-							  const AtariMemAlloc &allocFunc);
-
-	void freeAtariSurface(byte *ptr, const AtariMemFree &freeFunc);
+	bool updateBuffered(const Graphics::Surface &srcSurface, const DirtyRects &dirtyRects);
 
 	virtual void copyRectToSurface(Graphics::Surface &dstSurface,
 								   const Graphics::Surface &srcSurface, int destX, int destY,
@@ -161,26 +154,24 @@ private:
 	}
 	virtual void alignRect(const Graphics::Surface &srcSurface, Common::Rect &rect) const {}
 
-	void addDirtyRect(const Graphics::Surface &surface, DirtyRects &rects, Common::Rect rect) const;
-
 	void cursorPositionChanged() {
 		if (_overlayVisible) {
-			_buffer[OVERLAY_BUFFER]->cursorPositionChanged = true;
+			_screen[OVERLAY_BUFFER]->cursorPositionChanged = true;
 		} else {
-			_buffer[FRONT_BUFFER]->cursorPositionChanged
-				= _buffer[BACK_BUFFER1]->cursorPositionChanged
-				= _buffer[BACK_BUFFER2]->cursorPositionChanged
+			_screen[FRONT_BUFFER]->cursorPositionChanged
+				= _screen[BACK_BUFFER1]->cursorPositionChanged
+				= _screen[BACK_BUFFER2]->cursorPositionChanged
 				= true;
 		}
 	}
 
 	void cursorSurfaceChanged() {
 		if (_overlayVisible) {
-			_buffer[OVERLAY_BUFFER]->cursorSurfaceChanged = true;
+			_screen[OVERLAY_BUFFER]->cursorSurfaceChanged = true;
 		} else {
-			_buffer[FRONT_BUFFER]->cursorSurfaceChanged
-				= _buffer[BACK_BUFFER1]->cursorSurfaceChanged
-				= _buffer[BACK_BUFFER2]->cursorSurfaceChanged
+			_screen[FRONT_BUFFER]->cursorSurfaceChanged
+				= _screen[BACK_BUFFER1]->cursorSurfaceChanged
+				= _screen[BACK_BUFFER2]->cursorSurfaceChanged
 				= true;
 		}
 	}
@@ -207,33 +198,51 @@ private:
 		BUFFER_COUNT
 	};
 
-	struct ScreenInfo {
-		ScreenInfo(byte *p_)
-			: p(p_) {
-		}
+	struct Screen {
+		Screen(AtariGraphicsManager *manager, int width, int height, const Graphics::PixelFormat &format);
+		~Screen();
 
-		void reset() {
+		void reset(int width, int height) {
 			cursorPositionChanged = true;
 			cursorSurfaceChanged = false;
-			dirtyRects.clear();
+			clearDirtyRects();
 			oldCursorRect = Common::Rect();
+
+			// erase old screen
+			surf.fillRect(Common::Rect(surf.w, surf.h), 0);
+			// set new dimensions
+			surf.pitch = width;
+			surf.w = width;
+			surf.h = height;
 		}
 
-		byte *p;
+		void addDirtyRect(Common::Rect rect);
+
+		void clearDirtyRects() {
+			dirtyRects.clear();
+			_fullRedraw = false;
+		}
+
+		const bool &fullRedrawPending = _fullRedraw;
+
+		Graphics::Surface surf;
 		bool cursorPositionChanged = true;
 		bool cursorSurfaceChanged = false;
-		DirtyRects dirtyRects = DirtyRects(100);	// reserve 100 rects
+		DirtyRects dirtyRects = DirtyRects(512);	// reserve 512 rects
 		Common::Rect oldCursorRect;
-	};
-	ScreenInfo *_buffer[BUFFER_COUNT] = {};
-	ScreenInfo *_workScreen = nullptr;
-	ScreenInfo *_oldWorkScreen = nullptr;	// used in hideOverlay()
 
-	Graphics::Surface _screenSurface;
-	Common::Rect _dirtyScreenRect;	// direct rendering only
+	private:
+		static constexpr size_t ALIGN = 16;	// 16 bytes
+
+		bool _fullRedraw = false;
+		AtariGraphicsManager *_manager;
+	};
+	Screen *_screen[BUFFER_COUNT] = {};
+	Screen *_workScreen = nullptr;
+	Screen *_oldWorkScreen = nullptr;	// used in hideOverlay()
+
 	Graphics::Surface _chunkySurface;
 
-	Graphics::Surface _screenOverlaySurface;
 	bool _overlayVisible = false;
 	Graphics::Surface _overlaySurface;
 
