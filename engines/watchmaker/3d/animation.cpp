@@ -236,15 +236,11 @@ int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
 				bone->Trasl = t3dCalloc<t3dV3F>(nf);
 
 				for (k = 0; k < nf; k++) {
-					bone->Euler[k].x = stream->readFloatLE();
-					bone->Euler[k].y = stream->readFloatLE();
-					bone->Euler[k].z = stream->readFloatLE();
+					bone->Euler[k] = t3dV3F(*stream);
 				}
 
 				for (k = 0; k < nf; k++) {
-					bone->Trasl[k].x = stream->readFloatLE();
-					bone->Trasl[k].y = stream->readFloatLE();
-					bone->Trasl[k].z = stream->readFloatLE();
+					bone->Trasl[k] = t3dV3F(*stream);
 				}
 			}
 			if (stream->readByte()) {
