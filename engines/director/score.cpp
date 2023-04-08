@@ -1141,7 +1141,7 @@ void Score::screenShot() {
 			Image::PNGDecoder decoder;
 			Common::SeekableReadStream *stream = fs.createReadStream();
 
-			if (decoder.loadStream(*stream)) {
+			if (stream && decoder.loadStream(*stream)) {
 				Common::String oldMd5 = computeSurfaceMd5(decoder.getSurface());
 				Common::String newMd5 = computeSurfaceMd5(newSurface);
 
