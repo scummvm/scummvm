@@ -475,7 +475,6 @@ void retro_init(void) {
 
 	audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
 	update_variables();
-	audio_status |= AUDIO_STATUS_UPDATE_LATENCY;
 
 	cmd_params_num = 1;
 	strcpy(cmd_params[0], "scummvm\0");
@@ -727,7 +726,6 @@ void retro_run(void) {
 }
 			else if (frameskip_type == 3)
 				skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
-
 
 			/* No frame skipping if
 			- no incoming audio (e.g. GUI)
