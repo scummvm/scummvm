@@ -89,6 +89,7 @@ Common::Error CrabEngine::run() {
 	Graphics::PixelFormat *format = new Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	initGraphics(1920, 1080, format);
 	_renderSurface = new Graphics::ManagedSurface(1920, 1080, *format);
+	_screen = new Graphics::Screen(1920, 1080, *format);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
