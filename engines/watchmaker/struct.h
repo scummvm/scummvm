@@ -415,8 +415,8 @@ struct SString {
 
 struct SRect {
 	int32  x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-	SRect() = default;
-	SRect(int32 x1, int32 y1, int32 x2, int32 y2): x1(x1), y1(y1), x2(x2), y2(y2) {}
+	constexpr SRect() = default;
+	constexpr SRect(int32 x1, int32 y1, int32 x2, int32 y2): x1(x1), y1(y1), x2(x2), y2(y2) {}
 };
 
 struct SD3DRect {

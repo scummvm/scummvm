@@ -37,13 +37,13 @@ uint32 extraLS_currentID = 0;
 int32 extraLS_bmpPosX = 0;
 int32 extraLS_bmpPosY = 0;
 
-struct SRect Console3Save           = { 228 + 22, 11 + 15, 277 + 22, 30 + 15 };
-struct SRect Console3Load           = { 340 + 22, 11 + 15, 396 + 22, 30 + 15 };
-struct SRect Console3Options    = { 444 + 22, 11 + 15, 527 + 22, 30 + 15 };
-struct SRect Console3Quit           = { 565 + 22, 11 + 15, 613 + 22, 30 + 15 };
-struct SRect Console3Close      = { 665 + 22, 11 + 15, 724 + 22, 30 + 15 };
-
 void CheckExtraLocalizationStrings(Renderer &renderer, uint32 id) {
+	static constexpr SRect Console3Save    = { 228 + 22, 11 + 15, 277 + 22, 30 + 15 };
+	static constexpr SRect Console3Load    = { 340 + 22, 11 + 15, 396 + 22, 30 + 15 };
+	static constexpr SRect Console3Options = { 444 + 22, 11 + 15, 527 + 22, 30 + 15 };
+	static constexpr SRect Console3Quit    = { 565 + 22, 11 + 15, 613 + 22, 30 + 15 };
+	static constexpr SRect Console3Close   = { 665 + 22, 11 + 15, 724 + 22, 30 + 15 };
+
 	uint32 newID = 0;
 
 	if (!bShowExtraLocalizationStrings) {
