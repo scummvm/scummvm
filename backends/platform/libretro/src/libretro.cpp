@@ -737,7 +737,7 @@ void retro_run(void) {
 
 			/* Reset frameskip counter if not flagged */
 			if ((!skip_frame && frameskip_counter) || frameskip_counter >= FRAMESKIP_MAX) {
-				log_cb(RETRO_LOG_DEBUG, "%d frame(s) skipped\n",frameskip_counter);
+				log_cb(RETRO_LOG_DEBUG, "%d frame(s) skipped (%ld)\n", frameskip_counter, current_frame);
 				skip_frame = false;
 				frameskip_counter = 0;
 			/* Keep on skipping frames if flagged */
