@@ -1083,7 +1083,6 @@ void Score::screenShot() {
 		return;
 #else
 
-
 	Graphics::Surface rawSurface = _window->getSurface()->rawSurface();
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
@@ -1100,20 +1099,41 @@ void Score::screenShot() {
 		// The filename is in the form:
 		// ./dumps/theapartment/25/xn--Main Menu-zd0e-19.png
 
-		// Now we try to find any previous dump
-		int prevbuild = atoi(buildNumber) - 1;
+		int prevbuild;
 
-		while (prevbuild > 0) {
-			filename = Common::String::format("%s/%s/%d/%s-%d.png", ConfMan.get("screenshotpath").c_str(),
-				g_director->getTargetName().c_str(), prevbuild, prefix.c_str(), g_director->_framesRan);
+		Common::String buildDir = Common::String::format("%s/%s", ConfMan.get("screenshotpath").c_str(),
+			g_director->getTargetName().c_str());
 
-			Common::FSNode fs(filename);
+		// We run for the first time, let's find the previous build with screenshots
+		if (_previousBuildBotBuild == -1) {
+			Common::FSNode dir(buildDir);
 
-			if (fs.exists())
-				break;
+			// We check if the directory was previously created. If not, there is nothing to search for
+			if (!dir.exists())
+				prevbuild = 0;
+			else
+				prevbuild = atoi(buildNumber) - 1;
 
-			prevbuild--;
+			// Now we try to find any previous dump
+			while (prevbuild > 0) {
+				filename = Common::String::format("%s/%d/%s-%d.png", buildDir.c_str(), prevbuild, prefix.c_str(), g_director->_framesRan);
+
+				// We are running for the first time, we got the filename, so quit
+				if (!dir.exists())
+					break;
+
+				Common::FSNode fs(filename);
+
+				if (fs.exists())
+					break;
+
+				prevbuild--;
+			}
+		} else {
+			prevbuild = _previousBuildBotBuild;
 		}
+
+		_previousBuildBotBuild = prevbuild;
 
 		// We found previous screenshot. Let's compare it
 		if (prevbuild > 0) {
@@ -1139,6 +1159,9 @@ void Score::screenShot() {
 
 			delete stream;
 		}
+
+		// Regenerate file name with the correct build number
+		filename = Common::String::format("%s/%s/%s-%d.png", buildDir.c_str(), buildNumber, prefix.c_str(), g_director->_framesRan);
 	}
 
 	Common::DumpFile screenshotFile;
