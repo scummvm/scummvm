@@ -228,7 +228,10 @@ void CloudConnectionWizard::refreshStepQuickMode1(bool displayAsStopped) {
 	}
 
 	if (_label2) {
-		Common::U32String address = LocalServer.getAddress();
+		Common::U32String address;
+#ifdef USE_SDL_NET
+		address = LocalServer.getAddress();
+#endif // USE_SDL_NET
 		_label2->setLabel(serverIsRunning ? address : _("Not running"));
 	}
 }
@@ -519,6 +522,7 @@ void CloudConnectionWizard::manualModeStorageConnectionCallback(Networking::Erro
 				_s("OK"),
 				_s("Incorrect JSON.") // see "cloud/basestorage.cpp"
 			};
+			(void)knownErrorMessages;
 
 			_errorMessage = _(response.response.c_str());
 		} else {
