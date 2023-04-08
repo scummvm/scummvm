@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-07 22:39+0000\n"
+"POT-Creation-Date: 2023-04-08 07:56+0000\n"
 "PO-Revision-Date: 2023-04-08 07:13+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4731,11 +4731,11 @@ msgstr "Betöltés mindenképp"
 msgid "Failed to initialize resources"
 msgstr "Nem sikerült inicializálni az erõforrásokat"
 
-#: engines/bladerunner/bladerunner.cpp:1166
+#: engines/bladerunner/bladerunner.cpp:1168
 msgid "A required game resource was not found"
 msgstr "A szükséges játékforrás nem található"
 
-#: engines/bladerunner/bladerunner.cpp:2748
+#: engines/bladerunner/bladerunner.cpp:2750
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4745,7 +4745,7 @@ msgstr ""
 "de az eredeti tartalom módban játszol. Az üzemmódot a visszaállított vágott "
 "tartalomra állítom be, amíg teljesen ki nem lépsz a játékból."
 
-#: engines/bladerunner/bladerunner.cpp:2750
+#: engines/bladerunner/bladerunner.cpp:2752
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4755,7 +4755,7 @@ msgstr ""
 "visszaállított vágott tartalom módban játszol. Az üzemmódot eredeti tartalom "
 "módra állítom be, amíg teljesen ki nem lépsz a játékból."
 
-#: engines/bladerunner/bladerunner.cpp:2752
+#: engines/bladerunner/bladerunner.cpp:2754
 msgid "Continue"
 msgstr "Folytatás"
 

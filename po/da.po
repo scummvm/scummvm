@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-07 22:39+0000\n"
+"POT-Creation-Date: 2023-04-08 07:56+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -4771,11 +4771,11 @@ msgstr "Tilføj alligevel"
 msgid "Failed to initialize resources"
 msgstr "Kunne ikke initialisere ressourcer"
 
-#: engines/bladerunner/bladerunner.cpp:1166
+#: engines/bladerunner/bladerunner.cpp:1168
 msgid "A required game resource was not found"
 msgstr "En krævede spilressource blev ikke fundet"
 
-#: engines/bladerunner/bladerunner.cpp:2748
+#: engines/bladerunner/bladerunner.cpp:2750
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4785,7 +4785,7 @@ msgstr ""
 "i Original Content-tilstand. Tilstanden justeres til Restored Cut Content-"
 "tilstand i denne session, indtil du afslutter spillet helt."
 
-#: engines/bladerunner/bladerunner.cpp:2750
+#: engines/bladerunner/bladerunner.cpp:2752
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4795,7 +4795,7 @@ msgstr ""
 "Restored Cut Content-tilstand. Tilstanden justeres til Original Content-"
 "tilstand i denne session, indtil du afslutter spillet helt."
 
-#: engines/bladerunner/bladerunner.cpp:2752
+#: engines/bladerunner/bladerunner.cpp:2754
 msgid "Continue"
 msgstr "Fortsæt"
 
