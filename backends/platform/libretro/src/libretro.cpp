@@ -729,8 +729,11 @@ void retro_run(void) {
 				skip_frame = (retro_audio_buff_occupancy < frameskip_threshold);
 
 
-			/* No frame skipping if there is no incoming audio (e.g. GUI) or if frontend does not support frame skipping*/
-			skip_frame = skip_frame && !(audio_status & AUDIO_STATUS_MUTE)  && can_dupe;
+			/* No frame skipping if
+			- no incoming audio (e.g. GUI)
+			- frontend does not support frame skipping
+			- doing a THREAD_SWITCH_UPDATE loop*/
+			skip_frame = skip_frame && !(audio_status & AUDIO_STATUS_MUTE)  && can_dupe && !(getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 			/* Reset frameskip counter if not flagged */
 			if ((!skip_frame && frameskip_counter) || frameskip_counter >= FRAMESKIP_MAX) {
