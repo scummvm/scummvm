@@ -93,7 +93,6 @@ static uint8 reduce_framerate_countdown = 0;
 
 static bool consecutive_screen_updates = false;
 
-static bool can_dupe = false;
 static uint8 audio_status = 0;
 
 static unsigned retro_audio_buff_occupancy = 0;
@@ -467,7 +466,6 @@ void retro_init(void) {
 	else
 		log_cb = NULL;
 
-	environ_cb(RETRO_ENVIRONMENT_GET_CAN_DUPE, &can_dupe);
 	struct retro_audio_buffer_status_callback buf_status_cb;
 	buf_status_cb.callback = retro_audio_buff_status_cb;
 	audio_status = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, &buf_status_cb) ? (audio_status | AUDIO_STATUS_BUFFER_SUPPORT) : (audio_status & ~AUDIO_STATUS_BUFFER_SUPPORT);
@@ -729,9 +727,8 @@ void retro_run(void) {
 
 			/* No frame skipping if
 			- no incoming audio (e.g. GUI)
-			- frontend does not support frame skipping
 			- doing a THREAD_SWITCH_UPDATE loop*/
-			skip_frame = skip_frame && !(audio_status & AUDIO_STATUS_MUTE)  && can_dupe && !(getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
+			skip_frame = skip_frame && !(audio_status & AUDIO_STATUS_MUTE) && !(getThreadSwitchCaller() & THREAD_SWITCH_UPDATE);
 
 			/* Reset frameskip counter if not flagged */
 			if ((!skip_frame && frameskip_counter) || frameskip_counter >= FRAMESKIP_MAX) {
@@ -781,8 +778,6 @@ void retro_run(void) {
 			if ((audio_video_enable & 1) && !skip_frame) {
 				const Graphics::Surface &screen = getScreen();
 				video_cb(screen.getPixels(), screen.w, screen.h, screen.pitch);
-			} else {
-				video_cb(NULL, 0, 0, 0); // Set to NULL to skip frame rendering
 			}
 
 #if defined(_3DS)
