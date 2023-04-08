@@ -19,44 +19,34 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP17_H
-#define MM1_MAPS_MAP17_H
+#ifndef MM1_VIEWS_ENH_COLOR_QUESTIONS_H
+#define MM1_VIEWS_ENH_COLOR_QUESTIONS_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
-namespace Maps {
+namespace ViewsEnh {
 
-class Map17 : public Map {
-	typedef void (Map17:: *SpecialFn)();
+class ColorQuestions : public ScrollView {
 private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
+	int _charIndex = 0;
+	bool _showingResponse = false;
 
-	const SpecialFn SPECIAL_FN[9] = {
-		&Map17::special00,
-		&Map17::special01,
-		&Map17::special02,
-		&Map17::special03,
-		&Map17::special03,
-		&Map17::special03,
-		&Map17::special03,
-		&Map17::special03,
-		&Map17::special03
-	};
+	void moveToNextChar();
 public:
-	Map17() : Map(17, "areaa4", 0x103, 2) {}
+	ColorQuestions();
+	virtual ~ColorQuestions() {
+	}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+	void timeout() override;
 };
 
-} // namespace Maps
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

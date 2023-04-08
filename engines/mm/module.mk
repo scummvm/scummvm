@@ -106,6 +106,7 @@ MODULE_OBJS += \
 	mm1/views/character_manage.o \
 	mm1/views/character_view_combat.o \
 	mm1/views/characters.o \
+	mm1/views/color_questions.o \
 	mm1/views/combat.o \
 	mm1/views/create_characters.o \
 	mm1/views/dead.o \
@@ -137,6 +138,7 @@ MODULE_OBJS += \
 	mm1/views_enh/character_select.o \
 	mm1/views_enh/character_view.o \
 	mm1/views_enh/characters.o \
+	mm1/views_enh/color_questions.o \
 	mm1/views_enh/combat.o \
 	mm1/views_enh/confirm.o \
 	mm1/views_enh/create_characters.o \

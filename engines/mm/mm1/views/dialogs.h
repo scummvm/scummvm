@@ -27,6 +27,7 @@
 #include "mm/mm1/views/bash.h"
 #include "mm/mm1/views/characters.h"
 #include "mm/mm1/views/character_view_combat.h"
+#include "mm/mm1/views/color_questions.h"
 #include "mm/mm1/views/combat.h"
 #include "mm/mm1/views/create_characters.h"
 #include "mm/mm1/views/dead.h"
@@ -94,6 +95,7 @@ private:
 	Views::CharacterInfo _characterInfo;
 	Views::Characters _characters;
 	Views::CharacterViewCombat _characterViewCombat;
+	Views::ColorQuestions _colorQuestions;
 	Views::Combat _combat;
 	Views::CreateCharacters _createCharacters;
 	Views::Dead _dead;
