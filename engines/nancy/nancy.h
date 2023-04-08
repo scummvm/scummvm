@@ -41,14 +41,13 @@ class Serializer;
  * This is the namespace of the Nancy engine.
  *
  * Status of this engine:
- * Nancy Drew: Secrets can kill is completable,
- * with a few minor graphical glitches;
- * The Vampire Diaries boots, but crashes almost immediately;
- * every other game is untested but definitely unplayable
+ * The Vampire Diaries and Nancy Drew: Secrets can Kill are completable.
+ * Every other game is untested but definitely unplayable
  *
  * Games using this engine:
  *	- The Vampire Diaries (1996)
  *	- Almost every mainline Nancy Drew game by HeR Interactive,
+ *		beginnning with Nancy Drew: Secrets can Kill (1998)
  *		up to and including Nancy Drew: Sea of Darkness (2015)
  */
 namespace Nancy {
