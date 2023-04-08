@@ -86,7 +86,6 @@ void HUD::Load(const std::string &filename, pyrodactyl::level::TalkNotify &tn, p
 void HUD::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 	warning("STUB: HUD::Draw()");
 
-#if 0
 	bg.Draw();
 	menu.Draw();
 
@@ -109,7 +108,7 @@ void HUD::Draw(pyrodactyl::event::Info &info, const std::string &id) {
 		gImageManager.Draw(menu.element.at(HS_MAP).x + menu.element.at(HS_MAP).w - clip.w / 2,
 						   menu.element.at(HS_MAP).y - clip.h / 2, notify_anim, &clip);
 	}
-#endif
+//#endif
 }
 
 void HUD::InternalEvents(bool ShowMap) {
