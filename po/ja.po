@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-08 14:20+0000\n"
+"POT-Creation-Date: 2023-04-08 16:08+0000\n"
 "PO-Revision-Date: 2023-04-08 07:13+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -149,134 +149,134 @@ msgstr "ローカルサーバーを停止する"
 msgid "Run local webserver"
 msgstr "ローカルサーバーを起動する"
 
-#: gui/cloudconnectionwizard.cpp:232 gui/options.cpp:2731 gui/options.cpp:3665
+#: gui/cloudconnectionwizard.cpp:235 gui/options.cpp:2731 gui/options.cpp:3665
 msgid "Not running"
 msgstr "停止中"
 
-#: gui/cloudconnectionwizard.cpp:247
+#: gui/cloudconnectionwizard.cpp:250
 msgid "Quick Mode: Step 2"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:251
+#: gui/cloudconnectionwizard.cpp:254
 msgid "Now, open this link in your browser:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:252 gui/cloudconnectionwizard.cpp:299
+#: gui/cloudconnectionwizard.cpp:255 gui/cloudconnectionwizard.cpp:302
 #: gui/message.cpp:218 gui/message.cpp:222
 msgid "Open URL"
 msgstr "URLを開く"
 
-#: gui/cloudconnectionwizard.cpp:254
+#: gui/cloudconnectionwizard.cpp:257
 msgid "It will automatically pass the data to ScummVM,"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:255
+#: gui/cloudconnectionwizard.cpp:258
 msgid "and warn you should there be any errors."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:259
+#: gui/cloudconnectionwizard.cpp:262
 msgid "Local Webserver address: "
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:275
+#: gui/cloudconnectionwizard.cpp:278
 msgid "Quick Mode: Success"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:279
+#: gui/cloudconnectionwizard.cpp:282
 #, fuzzy
 #| msgid "Connect your cloud storage account"
 msgid "You cloud storage has been connected!"
 msgstr "クラウドストーレジを接続する"
 
-#: gui/cloudconnectionwizard.cpp:280 gui/cloudconnectionwizard.cpp:367
+#: gui/cloudconnectionwizard.cpp:283 gui/cloudconnectionwizard.cpp:370
 msgid "Finish"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:293
+#: gui/cloudconnectionwizard.cpp:296
 msgid "Manual Mode: Step 1"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:298
+#: gui/cloudconnectionwizard.cpp:301
 #, fuzzy
 #| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
 msgstr "１。このリンクを開いて："
 
-#: gui/cloudconnectionwizard.cpp:301
+#: gui/cloudconnectionwizard.cpp:304
 msgid "When it fails to pass JSON code to ScummVM,"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:302
+#: gui/cloudconnectionwizard.cpp:305
 msgid "find it on Troubleshooting section of the page,"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:303
+#: gui/cloudconnectionwizard.cpp:306
 msgid "and go to the next step here."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:318
+#: gui/cloudconnectionwizard.cpp:321
 msgid "Manual Mode: Step 2"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:323
+#: gui/cloudconnectionwizard.cpp:326
 msgid "Copy JSON code from browser here and press Next:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:325
+#: gui/cloudconnectionwizard.cpp:328
 msgid "Paste"
 msgstr "貼り付け"
 
-#: gui/cloudconnectionwizard.cpp:325
+#: gui/cloudconnectionwizard.cpp:328
 msgid "Paste code from clipboard"
 msgstr "クリップボードから貼り付ける"
 
-#: gui/cloudconnectionwizard.cpp:341
+#: gui/cloudconnectionwizard.cpp:344
 msgid "Manual Mode: Something went wrong"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:345
+#: gui/cloudconnectionwizard.cpp:348
 #, fuzzy
 #| msgid "Storage connected."
 msgid "Cloud storage was not connected."
 msgstr "ストーレジ接続済み。"
 
-#: gui/cloudconnectionwizard.cpp:346
+#: gui/cloudconnectionwizard.cpp:349
 msgid "Make sure JSON code was copied correctly and retry."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:347
+#: gui/cloudconnectionwizard.cpp:350
 msgid "It it doesn't work, try from the beginning."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:348
+#: gui/cloudconnectionwizard.cpp:351
 msgid "Error message: "
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:362
+#: gui/cloudconnectionwizard.cpp:365
 msgid "Manual Mode: Success"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:366
+#: gui/cloudconnectionwizard.cpp:369
 #, fuzzy
 #| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
 msgstr "クラウドストーレジを接続する"
 
-#: gui/cloudconnectionwizard.cpp:390
+#: gui/cloudconnectionwizard.cpp:393
 #, fuzzy
 #| msgid "Backend"
 msgid "Back"
 msgstr "バックエンド"
 
-#: gui/cloudconnectionwizard.cpp:398 gui/saveload-dialog.cpp:831
+#: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:831
 msgid "Next"
 msgstr "次"
 
-#: gui/cloudconnectionwizard.cpp:461
+#: gui/cloudconnectionwizard.cpp:464
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "すでに別のストレージが使用されています。切断してもよろしいですか?"
 
-#: gui/cloudconnectionwizard.cpp:461 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:464 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:136
 #: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:417 gui/launcher.cpp:446
 #: gui/launcher.cpp:489 gui/options.cpp:3367 gui/options.cpp:3741
@@ -290,7 +290,7 @@ msgstr "すでに別のストレージが使用されています。切断して
 msgid "Yes"
 msgstr "はい"
 
-#: gui/cloudconnectionwizard.cpp:461 gui/downloaddialog.cpp:118
+#: gui/cloudconnectionwizard.cpp:464 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:136
 #: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:417 gui/launcher.cpp:446
 #: gui/launcher.cpp:489 gui/options.cpp:3367 gui/options.cpp:3741
@@ -303,16 +303,16 @@ msgstr "はい"
 msgid "No"
 msgstr "いいえ"
 
-#: gui/cloudconnectionwizard.cpp:470 gui/options.cpp:3376
+#: gui/cloudconnectionwizard.cpp:473 gui/options.cpp:3376
 msgid "Wait until current Storage finishes up and try again."
 msgstr "ストレージへのアップロード完了後に再実施してください。"
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
-#: gui/cloudconnectionwizard.cpp:498
+#: gui/cloudconnectionwizard.cpp:501
 msgid "JSON code contents is malformed."
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:519 gui/downloaddialog.cpp:146
+#: gui/cloudconnectionwizard.cpp:522 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:545 gui/launcher.cpp:549
 #: gui/massadd.cpp:90 gui/options.cpp:2345 gui/predictivedialog.cpp:69
@@ -336,20 +336,20 @@ msgstr ""
 msgid "OK"
 msgstr "OK"
 
-#: gui/cloudconnectionwizard.cpp:520
+#: gui/cloudconnectionwizard.cpp:523
 #, fuzzy
 #| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
 msgstr "正しくないrsファイルです。"
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
-#: gui/cloudconnectionwizard.cpp:526
+#: gui/cloudconnectionwizard.cpp:530
 #, fuzzy
 #| msgid "Interact"
 msgid "Interrupted."
 msgstr "作用"
 
-#: gui/cloudconnectionwizard.cpp:576 gui/options.cpp:3358
+#: gui/cloudconnectionwizard.cpp:580 gui/options.cpp:3358
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
