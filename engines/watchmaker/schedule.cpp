@@ -39,9 +39,7 @@
 
 namespace Watchmaker {
 
-// locals
 #define MAXWAITINGMSGS  30
-int maxmsg;
 message WaitingMsg[MAXWAITINGMSGS];
 
 /* -----------------18/03/98 16.41-------------------
@@ -54,9 +52,9 @@ void AddWaitingMsgs(uint16 flags) {
 
 	for (a = 0; a < MAXWAITINGMSGS; a++)
 		if (WaitingMsg[a].classe != EventClass::MC_IDLE && (WaitingMsg[a].flags < MP_WAITA)) {
-			Event(WaitingMsg[a].classe, WaitingMsg[a].event, WaitingMsg[a].flags,
-			      WaitingMsg[a].wparam1, WaitingMsg[a].wparam2,
-			      WaitingMsg[a].bparam, &WaitingMsg[a].lparam[0], &WaitingMsg[a].lparam[1], &WaitingMsg[a].lparam[2]);
+			_vm->_messageSystem.doEvent(WaitingMsg[a].classe, WaitingMsg[a].event, WaitingMsg[a].flags,
+					WaitingMsg[a].wparam1, WaitingMsg[a].wparam2,
+					WaitingMsg[a].bparam, &WaitingMsg[a].lparam[0], &WaitingMsg[a].lparam[1], &WaitingMsg[a].lparam[2]);
 			memset(&WaitingMsg[a], 0, sizeof(WaitingMsg[a]));
 		}
 }
@@ -123,10 +121,7 @@ const char *eventToString(EventClass classe) {
 	}
 }
 
-/* -----------------08/02/99 10.10-------------------
- *                      Event
- * --------------------------------------------------*/
-void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wparam2,
+void MessageSystem::doEvent(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wparam2,
            uint8 bparam, void *p0, void *p1, void *p2) {
 	pqueue *lq;
 	message *lm;
@@ -135,7 +130,7 @@ void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wp
 	if (classe == EventClass::MC_IDLE && !event)
 		return ;
 
-	lq = &(_vm->_messageSystem.Game); // TODO: Instead refactor this to be doEvent, like in the trecision-engine.
+	lq = &Game;
 
 	// se deve andare in attesa
 	if (flags >= MP_WAITA) {
@@ -197,7 +192,8 @@ void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wp
 	if (lq->tail == MAX_MESSAGES) lq->tail = 0;
 	lq->len++;
 
-	if (lq->len > maxmsg) maxmsg = lq->len;
+	if (lq->len > _maxmsg)
+		_maxmsg = lq->len;
 }
 
 /* -----------------08/02/99 10.11-------------------
@@ -223,7 +219,9 @@ void MessageSystem::scheduler() {
  * --------------------------------------------------*/
 void ProcessTheMessage(WGame &game) {
 SUPEREVENT:
-	//warning("Event: %s - %d", eventToString(TheMessage->classe), TheMessage->event);
+	if (TheMessage->classe != EventClass::MC_IDLE)
+		warning("doEvent: %s - %d", eventToString(TheMessage->classe), TheMessage->event);
+
 	switch (TheMessage->classe) {
 	case EventClass::MC_IDLE:
 		break;
@@ -282,8 +280,8 @@ void ReEvent() {
 	if (TheMessage == nullptr)
 		return ;
 
-	Event(TheMessage->classe, TheMessage->event, TheMessage->flags, TheMessage->wparam1, TheMessage->wparam2,
-	      TheMessage->bparam, &TheMessage->lparam[0], &TheMessage->lparam[1], &TheMessage->lparam[2]);
+	_vm->_messageSystem.doEvent(TheMessage->classe, TheMessage->event, TheMessage->flags, TheMessage->wparam1, TheMessage->wparam2,
+			TheMessage->bparam, &TheMessage->lparam[0], &TheMessage->lparam[1], &TheMessage->lparam[2]);
 }
 
 /* -----------------08/02/99 10.11-------------------

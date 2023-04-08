@@ -113,11 +113,11 @@ void doDialog(WGame &game) {
 //DebugFile("DLG: StartDialog %d",CurDialog);
 //			Se sono in un fullmotion
 		if ((init.Dialog[CurDialog].flags & DIALOG_RTV2) && (init.Dialog[CurDialog].ItemIndex[mRTV2]))
-			Event(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, mRTV2, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, mRTV2, 0, nullptr, nullptr, nullptr);
 		else if ((init.Dialog[CurDialog].flags & DIALOG_RTV3) && (init.Dialog[CurDialog].ItemIndex[mRTV3]))
-			Event(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, mRTV3, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, mRTV3, 0, nullptr, nullptr, nullptr);
 		else if ((init.Dialog[CurDialog].flags & DIALOG_RTV) || (init.Dialog[CurDialog].ItemIndex[mRTV]))
-			Event(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, mRTV, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, mRTV, 0, nullptr, nullptr, nullptr);
 //			Se c'e' un predialog attivo
 		else if (init.Dialog[CurDialog].flags & (DIALOG_PRE1 | DIALOG_PRE2 | DIALOG_PRE3 | DIALOG_PRE4)) {
 			if (init.Dialog[CurDialog].flags & DIALOG_PRE_RAND)
@@ -128,7 +128,7 @@ void doDialog(WGame &game) {
 			else r = 3;
 
 			if (init.Dialog[CurDialog].ItemIndex[mPREDIALOG1 + r])
-				Event(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, (int16)(mPREDIALOG1 + r), 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, (int16)(mPREDIALOG1 + r), 0, nullptr, nullptr, nullptr);
 			else
 				bDialogMenuActive = true;
 		} else
@@ -148,7 +148,7 @@ void doDialog(WGame &game) {
 //				DebugLogFile("IC %d %d %d | %d %d %d",ic->com,ic->param1,ic->param2,CurDialog,CurDlgItem,TheMessage->lparam[0]);
 			switch (ic->com) {
 			case IC_NULL:                                                              // Esce dal dialogo
-				Event(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 				break;
 			case IC_SET_PLAYER:                                                        // non fa niente
 				break;
@@ -237,14 +237,16 @@ void doDialog(WGame &game) {
 			case IC_INTRO_TEXT1:
 				ic1 = ic->param1;
 				ic2 = ic->param2;
-				Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, FRAME_PER_SECOND, EFFECT_FADEOUT_T1, &ic1, nullptr, nullptr);
-				if (ic2) Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_WAITA, FRAME_PER_SECOND, FRAME_PER_SECOND, EFFECT_MOVEIN_T1, &ic1, nullptr, &ic2);
+				_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, FRAME_PER_SECOND, EFFECT_FADEOUT_T1, &ic1, nullptr, nullptr);
+				if (ic2)
+					_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_WAITA, FRAME_PER_SECOND, FRAME_PER_SECOND, EFFECT_MOVEIN_T1, &ic1, nullptr, &ic2);
 				break;
 			case IC_INTRO_TEXT2:
 				ic1 = ic->param1;
 				ic2 = ic->param2;
-				Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, FRAME_PER_SECOND, EFFECT_FADEOUT_T2, &ic1, nullptr, nullptr);
-				if (ic2) Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_WAITA, FRAME_PER_SECOND, FRAME_PER_SECOND, EFFECT_MOVEIN_T2, &ic1, nullptr, &ic2);
+				_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, FRAME_PER_SECOND, EFFECT_FADEOUT_T2, &ic1, nullptr, nullptr);
+				if (ic2)
+					_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_WAITA, FRAME_PER_SECOND, FRAME_PER_SECOND, EFFECT_MOVEIN_T2, &ic1, nullptr, &ic2);
 				break;
 
 			case IC_TIME_ANIM:
@@ -291,14 +293,14 @@ void doDialog(WGame &game) {
 				DebugSent = 0;
 				break;
 			case IC_TIME_FADOUT:
-				Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, ic->param1, 1, EFFECT_FADOUT, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, ic->param1, 1, EFFECT_FADOUT, nullptr, nullptr, nullptr);
 				TheMessage->flags |= MP_WAITA;
 				ReEvent();
 				return ;
 			}
 			ic = &init.DlgItem[init.Dialog[CurDialog].ItemIndex[CurDlgItem]].item[CurPlayer][TheMessage->lparam[0]];
 		}
-		Event(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, (int16)CurDlgItem, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, (int16)CurDlgItem, 0, nullptr, nullptr, nullptr);
 		break;
 
 	case ME_DIALOGEND:
@@ -321,7 +323,7 @@ void doDialog(WGame &game) {
 			else r = 2;
 
 			if (init.Dialog[CurDialog].ItemIndex[mENDDIALOG1 + r]) {
-				Event(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)(CurDialog), (int16)(mENDDIALOG1 + r), 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)(CurDialog), (int16)(mENDDIALOG1 + r), 0, nullptr, nullptr, nullptr);
 				return ;
 			}
 		}
@@ -348,7 +350,7 @@ void doDialog(WGame &game) {
 			TimeAnim = aNULL;
 			bPlayerInAnim = false;
 			if (NextDlg != dNULL)
-				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, NextDlg, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, NextDlg, 0, 0, nullptr, nullptr, nullptr);
 			else {
 				extern uint8 t3dLastCameraIndex;
 
@@ -440,10 +442,10 @@ void UpdateDialogMenu(WGame &game, int16 dmx, int16 dmy, uint8 db) {
 		CurMenu = CurDlgItem;
 		Diag2Base = 0;
 	} else if ((db == ME_MLEFT) && (CurDlgItem) && (CurDlgItem != -1)) { // TODO: The original didn't have a check for -1 here
-		Event(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, (int16)CurDlgItem, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, (int16)CurDlgItem, 0, nullptr, nullptr, nullptr);
 		UsedDlgMenu[CurPlayer][CurObj][CurDlgItem] = 1;
 	} else if ((db == ME_MRIGHT) && (CurMenu == mMAIN))
-		Event(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, (int16)mQUIT, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, (int16)mQUIT, 0, nullptr, nullptr, nullptr);
 	else if (db == ME_MRIGHT) {
 		CurMenu = mMAIN;
 		Diag2Base = 0;

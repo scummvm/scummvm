@@ -659,7 +659,7 @@ void InitMain(WGame &game) {
 //	InitMessageSystem();
 	ProcessTime(game);
 
-	Event(EventClass::MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+	_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 
 	if (!rClearBuffers(rCLEARBACKBUFFER | rCLEARZBUFFER))   // Cancella buffers
 		warning("Unable to clear backbuffers");
@@ -1019,7 +1019,7 @@ void doSystem(WGame &game) {
 		if ((int32)TheTime > TheMessage->lparam[0]) {
 			StopObjAnim(game, TheMessage->wparam1);
 			CharStop(TheMessage->wparam1);
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, (int16)TheMessage->wparam2, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, (int16)TheMessage->wparam2, 0, 0, nullptr, nullptr, nullptr);
 			//DebugString("Idle %d at %d",TheMessage->wparam1,TheMessage->lparam[0]);
 		} else {
 			TheMessage->flags |= MP_WAIT_RETRACE;

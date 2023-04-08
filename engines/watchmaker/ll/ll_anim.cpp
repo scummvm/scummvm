@@ -126,16 +126,16 @@ void ProcessATFDO(WGame &game, int32 in) {
 
 	switch (in) {
 	case fFADIN:
-		Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, 0, EFFECT_FADIN, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, 0, EFFECT_FADIN, nullptr, nullptr, nullptr);
 		break;
 	case fFADOUT:
-		Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, 0, EFFECT_FADOUT, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, 0, EFFECT_FADOUT, nullptr, nullptr, nullptr);
 		break;
 	case fFADOUTWAIT2:
-		Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, FRAME_PER_SECOND * 2, EFFECT_FADOUT, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, FRAME_PER_SECOND * 2, EFFECT_FADOUT, nullptr, nullptr, nullptr);
 		break;
 	case fFADOUTWAIT5:
-		Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, FRAME_PER_SECOND * 5, EFFECT_FADOUT, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND, FRAME_PER_SECOND * 5, EFFECT_FADOUT, nullptr, nullptr, nullptr);
 		break;
 	case fPUSH_ROOM:
 		strcpy(PushedRoomName, t3dCurRoom->name.c_str());
@@ -149,7 +149,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 	case fPOP_ROOM_dR015:
 		ChangeRoom(game, PushedRoomName, PushedRoomPos, 0);
 		Character[CurPlayer + ocDARRELL]->Flags &= ~T3D_CHARACTER_HIDE;
-		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR015, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR015, 0, 0, nullptr, nullptr, nullptr);
 		break;
 	case fSET_MOGLIE_GYM:
 		i = ocMOGLIESUPERVISORE;
@@ -219,7 +219,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 		break;
 	case fUSCITAPOZZO:
 		if (IconInInv(init, i1dAUDIOCASSETTA) || IconInInv(init, i28WALKMANNASTRO) || IconInInv(init, i28WALKMANOK))
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR1a4, 0, 0, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR1a4, 0, 0, NULL, NULL, NULL);
 		break;
 	case f22STOPWAVES:
 		if ((m = LinkMeshToStr(init, "p22-water01"))) ChangeMeshFlags(m, -1, T3D_MESH_WAVESTEXTURE);
@@ -240,14 +240,14 @@ void ProcessATFDO(WGame &game, int32 in) {
 		in = aTO1PERSON;
 		bLockCamera = true;
 		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\055\000", 0);
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, &in, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, &in, nullptr);
 		bNoFirstPersonSwitch = true;
 		bNoPlayerSwitch = true;
 		break;
 	case f23ESCELIFT:
 		bLockCamera = false;
 		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\057\000", 0);
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
 		bNoFirstPersonSwitch = false;
 		bNoPlayerSwitch = false;
 		break;
@@ -276,26 +276,26 @@ void ProcessATFDO(WGame &game, int32 in) {
 		in = aTO1PERSON;
 		bLockCamera = true;
 		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\051\052\000", 0);
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, &in, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, &in, nullptr);
 		bNoFirstPersonSwitch = true;
 		bNoPlayerSwitch = true;
 		break;
 	case f2OESCELIFT:
 		bLockCamera = false;
 		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\054\000", 0);
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
 		bNoFirstPersonSwitch = false;
 		bNoPlayerSwitch = false;
 		break;
 	case f2QENTRALAB:
 		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\051\052\000", 0);
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
-		Event(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_PORTAL, a2Q14, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_PORTAL, a2Q14, 0, 0, nullptr, nullptr, nullptr);
 		break;
 	case f2QESCELAB:
 		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\051\052\000", 0);
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
-		Event(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_PORTAL, a2Q14, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_PORTAL, a2Q14, 0, 0, nullptr, nullptr, nullptr);
 		break;
 
 	case f36MSD:
@@ -360,7 +360,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 #if 0
 		StopPlayingGame(game);
 #endif
-		Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tMAINMENU, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tMAINMENU, nullptr, nullptr, nullptr);
 	}
 	break;
 	case f35LIGHTS: {
@@ -411,8 +411,8 @@ void ProcessATFDO(WGame &game, int32 in) {
 
 	case f41WALK:
 		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\064\000", 0);
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
-		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_ACT, dR411, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_ACT, dR411, 0, 0, nullptr, nullptr, nullptr);
 		break;
 		break;
 
@@ -447,7 +447,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 
 	case f45STARTTIMER:
 		i = TheTime + 1000 * 20;
-		Event(EventClass::MC_SYSTEM, ME_PLAYERTIMER, MP_WAIT_RETRACE, (int16)(CurPlayer + ocDARRELL), (int16)dR452, 0, &i, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_PLAYERTIMER, MP_WAIT_RETRACE, (int16)(CurPlayer + ocDARRELL), (int16)dR452, 0, &i, nullptr, nullptr);
 //			Event( EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL );  //preferisco farlo rimanere in terza (ndFox)
 		break;
 	case f45STOPTIMER:
@@ -456,7 +456,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 
 	case f41STARTTIMER:
 		i = TheTime + 1000 * 20;
-		Event(EventClass::MC_SYSTEM, ME_PLAYERTIMER, MP_WAIT_RETRACE, (int16)(CurPlayer + ocDARRELL), (int16)dR0010, 0, &i, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_PLAYERTIMER, MP_WAIT_RETRACE, (int16)(CurPlayer + ocDARRELL), (int16)dR0010, 0, &i, nullptr, nullptr);
 		break;
 	case f41STOPTIMER:
 		game._messageSystem.removeEvent(EventClass::MC_SYSTEM, ME_PLAYERTIMER);
@@ -475,7 +475,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 
 	case f49CHECK:
 		if ((init.Obj[o49AMPOLLAAZZURRO].anim[CurPlayer] == aNULL) && (init.Obj[o49AMPOLLAVERDE].anim[CurPlayer] == aNULL) && (init.Obj[o49AMPOLLAGIALLO].anim[CurPlayer] == aNULL))
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR491, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR491, 0, 0, nullptr, nullptr, nullptr);
 		break;
 
 	case f4ASETBND44:
@@ -556,22 +556,22 @@ void ProcessATFDO(WGame &game, int32 in) {
 			if (!(init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM1].flags & PDA_ON)) {
 				init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM1].flags |= (PDA_ON | PDA_UPDATE);
 				init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM1].time = t3dCurTime;
-				Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
 			}
 			if (!(init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM2].flags & PDA_ON)) {
 				init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM2].flags |= (PDA_ON | PDA_UPDATE);
 				init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM2].time = t3dCurTime;
-				Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
 			}
 			if (!(init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM3].flags & PDA_ON)) {
 				init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM3].flags |= (PDA_ON | PDA_UPDATE);
 				init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM3].time = t3dCurTime;
-				Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
 			}
 			if (!(init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM4].flags & PDA_ON)) {
 				init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM4].flags |= (PDA_ON | PDA_UPDATE);
 				init.PDALog[lPDA3_MENU15_CONCLUSIONS_ITEM4].time = t3dCurTime;
-				Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
 			}
 		}
 		break;
@@ -814,10 +814,10 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		UpdateObjMesh(init, in);
 		break;
 	case ATFD_OFF:
-		Event(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)in, mQUIT, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)in, mQUIT, 0, nullptr, nullptr, nullptr);
 		break;
 	case ATFD_ON:
-		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_ANIM, (int16)in, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_ANIM, (int16)in, 0, 0, nullptr, nullptr, nullptr);
 		break;
 	case ATFI_OFF:
 		KillIcon(init, (uint8)in);
@@ -1130,7 +1130,7 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		break;
 
 	case ATF_START_T2D:
-		Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, (uint8)in, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, (uint8)in, nullptr, nullptr, nullptr);
 		break;
 
 	case ATFO_CANIMD:
@@ -1270,7 +1270,7 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		init.InvObj[obj].action[CurPlayer] = init.InvObj[obj].action[CurPlayer ^ 1] = (in >= TEXT1) ? init.InvObj[obj].text[in - TEXT1] : in;
 		break;
 	case ATFD_ON_DLG:
-		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, (int16)in, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, (int16)in, 0, 0, nullptr, nullptr, nullptr);
 		break;
 	case ATFS_PSX_STAIRS:
 		if (h->sub[in - 1].ptr) StartStepSound(game, &h->sub[in - 1].ptr->Trasl, SOUND_PSX | SOUND_STAIRS);
@@ -1295,7 +1295,7 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		if (!(init.PDALog[in].flags & PDA_ON)) {
 			init.PDALog[in].flags |= (PDA_ON | PDA_UPDATE);
 			init.PDALog[in].time = t3dCurTime;
-			Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
 		}
 		break;
 	case ATFC_ENABLE_SHADOWS:
@@ -1305,7 +1305,7 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		if (Character[in]) Character[in]->Flags &= ~T3D_CHARACTER_CASTREALTIMESHADOWS;
 		break;
 	case ATFD_ON_WAITTEXT:
-		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_LINK, (int16)in, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_LINK, (int16)in, 0, 0, nullptr, nullptr, nullptr);
 		break;
 	case ATF_SET_NOSKIP:
 		bNotSkippableSent = in;
@@ -1389,19 +1389,19 @@ void StartAnim(WGame &game, int32 an) {
 
 	if ((an == aTO1PERSON) && (bFirstPerson == 0) && !(InvStatus & INV_ON)) {
 		if (bMovingCamera)
-			Event(EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_WAIT_CAMERA, 0, 0, init.Obj[CurObj].pos, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_WAIT_CAMERA, 0, 0, init.Obj[CurObj].pos, nullptr, nullptr, nullptr);
 		else
-			Event(EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_DEFAULT, 0, 0, init.Obj[CurObj].pos, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_DEFAULT, 0, 0, init.Obj[CurObj].pos, nullptr, nullptr, nullptr);
 		return;
 	} else if ((an == aTO3PERSON) && (bFirstPerson) && (!bMovingCamera) && !(InvStatus & INV_ON)) {
-		Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_WAIT_CAMERA, 0, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_WAIT_CAMERA, 0, 0, 0, nullptr, nullptr, nullptr);
 		return;
 	} else if (bFirstPerson && ((init.Anim[an].obj < ocDARRELL) || (init.Anim[an].obj > oCAMERAMAX))) {
-		Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
-		Event(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_CAMERA, (int16)an, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_CAMERA, (int16)an, 0, 0, nullptr, nullptr, nullptr);
 		return ;
 	} else if ((bMovingCamera) && (!bDialogActive) && ((init.Anim[an].obj < ocDARRELL) || (init.Anim[an].obj > oCAMERAMAX))) {
-		Event(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_CAMERA, (int16)an, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_CAMERA, (int16)an, 0, 0, nullptr, nullptr, nullptr);
 		return ;
 	}
 
@@ -1588,7 +1588,7 @@ void StopAnim(WGame &game, int32 an) {
 					h->sub[a].ptr->BlendPercent = 255;
 
 				t = TheTime + PLAYER_IDLE_TIME;
-				Event(EventClass::MC_PLAYER, ME_PLAYERIDLE, MP_WAIT_RETRACE, (int16)(CurPlayer + ocDARRELL), 0, 0, &t, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERIDLE, MP_WAIT_RETRACE, (int16)(CurPlayer + ocDARRELL), 0, 0, &t, nullptr, nullptr);
 				bPlayerInAnim = false;
 			}
 			if (!(h->sub[a].flags & ANIM_BLOCK) && !(init.Anim[an].flags & ANIM_BLOCK) && !(init.Anim[an].flags & ANIM_BLOCK_PLAYER))

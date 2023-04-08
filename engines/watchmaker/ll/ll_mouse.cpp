@@ -90,7 +90,7 @@ void ProcessMouse(WGame &game) {
 		mHide = 0;
 		mCounter = 0;
 		game._messageSystem.removeEvent(EventClass::MC_MOUSE, ME_MOUSEUPDATE);
-		Event(EventClass::MC_MOUSE, ME_MOUSEUPDATE, MP_DEFAULT, (int16)mPosx, (int16)mPosy, 0, &mMoveX, &mMoveY, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_MOUSE, ME_MOUSEUPDATE, MP_DEFAULT, (int16)mPosx, (int16)mPosy, 0, &mMoveX, &mMoveY, NULL);
 	}
 	mMoveX = mMoveY = 0;
 
@@ -153,7 +153,7 @@ void HandleMouseChanges() {
 	if (bLPressed != bLPressedPrev) {
 		// se ha rilasciato e non ha mosso il mouse
 		if ((!bLPressed) && (!bSkipped) && ((mMove < 10) || (!(InvStatus & INV_MODE2) && !bFirstPerson && !bT2DActive))) {
-			Event(EventClass::MC_MOUSE, ME_MLEFT, MP_DEFAULT, (int16)mPosx, (int16)mPosy, bRPressed, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_MOUSE, ME_MLEFT, MP_DEFAULT, (int16)mPosx, (int16)mPosy, bRPressed, NULL, NULL, NULL);
 			bSkipped = FALSE;
 		} else if (bLPressed && (mMove >= 10) && (InvStatus & INV_MODE2) && (bSomeOneSpeak)) {
 			bSkipTalk = TRUE;
@@ -165,7 +165,7 @@ void HandleMouseChanges() {
 	// Button 1 pressed or released
 	if (bRPressed != bRPressedPrev) {
 		if ((!bRPressed) && ((mMove < 10) || (!bFirstPerson && !bT2DActive)))
-			Event(EventClass::MC_MOUSE, ME_MRIGHT, MP_DEFAULT, (int16)mPosx, (int16)mPosy, bLPressed, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_MOUSE, ME_MRIGHT, MP_DEFAULT, (int16)mPosx, (int16)mPosy, bLPressed, NULL, NULL, NULL);
 		mMove = 0;
 	}
 	bLPressedPrev = bLPressed;

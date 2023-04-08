@@ -616,7 +616,7 @@ void ProcessCamera(WGame &game) {
 			AddWaitingMsgs(MP_WAIT_CAMERA);
 		}
 		if (bFirstPerson)
-			Event(EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 //		Fa partire animazione di link portali se l'ho attraversato con i tasti
 		for (i = 0; i < (int16)t3dCurRoom->NumMeshes(); i++) {
 			if (t3dCurRoom->MeshTable[i].PortalList == PortalCrossed) {
@@ -659,7 +659,7 @@ void ProcessCamera(WGame &game) {
 		) {
 //			DebugLogFile("BECCATO222");
 			CharStop(ocCURPLAYER);
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR48KRENNSPARA, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR48KRENNSPARA, 0, 0, nullptr, nullptr, nullptr);
 		}
 
 //		per sicurezza faccio sparire la bottiglia

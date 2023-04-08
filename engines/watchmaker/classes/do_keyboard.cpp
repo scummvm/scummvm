@@ -235,11 +235,11 @@ void ProcessKeyboard(WGame &game) {
 	// Hack: Skip intro:
 	if ((CurDialog == dR000) || (CurDialog == dR111) || (CurDialog == dR211)) {
 		NextDlg = dNULL;
-		Event(EventClass::MC_DIALOG, ME_DIALOGEND_SKIPINTRO, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND_SKIPINTRO, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
 	}
 	// Skip Loghi
 	if (CurDialog == dRLOGHI)
-		Event(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
 	// End hack
 
 	t3dF32 TurnSpeed, Speed = 1.0f, dist;
@@ -263,16 +263,16 @@ void ProcessKeyboard(WGame &game) {
 			// Skip Intro
 			if ((CurDialog == dR000) || (CurDialog == dR111) || (CurDialog == dR211)) {
 				NextDlg = dNULL;
-				Event(EventClass::MC_DIALOG, ME_DIALOGEND_SKIPINTRO, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND_SKIPINTRO, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
 			}
 
 			// Skip Loghi
 			if (CurDialog == dRLOGHI)
-				Event(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
 
 			// Skip MorteWM
 			if (CurDialog == dR391)
-				Event(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGEND, MP_DEFAULT, (int16)CurDialog, mQUIT, 0, NULL, NULL, NULL);
 
 			// Skip durante i crediti, quitta
 			if (bTitoliCodaScrolling || bTitoliCodaStatic)
@@ -342,7 +342,7 @@ void ProcessKeyboard(WGame &game) {
 			bSkipTalk = TRUE;
 
 		if (KeyUp(Common::KEYCODE_h))
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dPROVA, 0, 0, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dPROVA, 0, 0, NULL, NULL, NULL);
 
 		if (KeyUp(Common::KEYCODE_e))
 			StartAnim(game, aFOX);
@@ -531,7 +531,7 @@ void ProcessKeyboard(WGame &game) {
 			bShowExtraLocalizationStrings ^= 1;
 
 		if (KeyUp(Common::KEYCODE_p))
-			Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tPDA, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tPDA, NULL, NULL, NULL);
 	}
 
 	if (KeyUp(Common::KEYCODE_F8) && PlayerCanSwitch(game._gameVars, 1) && !(InvStatus & INV_ON))
@@ -541,11 +541,11 @@ void ProcessKeyboard(WGame &game) {
 		if (CurPlayer == DARRELL) a = ocVICTORIA;
 		else a = ocDARRELL;
 		if (a == (ocDARRELL + CurPlayer)) return ;
-		Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND / 3, 0, EFFECT_FADOUT, NULL, NULL, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND / 3, 0, EFFECT_FADOUT, NULL, NULL, NULL);
 		if (bMovingCamera)
-			Event(EventClass::MC_SYSTEM, ME_CHANGEPLAYER, MP_WAITA | MP_WAIT_CAMERA, (int16)a, 0, 0, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_CHANGEPLAYER, MP_WAITA | MP_WAIT_CAMERA, (int16)a, 0, 0, NULL, NULL, NULL);
 		else
-			Event(EventClass::MC_SYSTEM, ME_CHANGEPLAYER, MP_WAITA, (int16)a, 0, 0, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_CHANGEPLAYER, MP_WAITA, (int16)a, 0, 0, NULL, NULL, NULL);
 	}
 
 	if ((bPlayerInAnim) || (bNotSkippableWalk) || (bDialogActive)) {
@@ -562,15 +562,15 @@ void ProcessKeyboard(WGame &game) {
 
 	if (KeyUp(Common::KEYCODE_F1) && !(InvStatus & INV_ON) && (bT2DActive == tNULL) && PlayerCanSave()) {
 		rGrabVideo("temp.tmp", 1);
-		Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_SAVE, 0, tOPTIONS, NULL, NULL, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_SAVE, 0, tOPTIONS, NULL, NULL, NULL);
 	}
 	if (KeyUp(Common::KEYCODE_F2) && !(InvStatus & INV_ON) && (bT2DActive == tNULL)) {
 		rGrabVideo("temp.tmp", 1);
-		Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_LOAD, 0, tOPTIONS, NULL, NULL, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_LOAD, 0, tOPTIONS, NULL, NULL, NULL);
 	}
 	if (KeyUp(Common::KEYCODE_F3) && !(InvStatus & INV_ON) && (bT2DActive == tNULL)) {
 		rGrabVideo("temp.tmp", 1);
-		Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_OPTIONS, 0, tOPTIONS, NULL, NULL, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_OPTIONS, 0, tOPTIONS, NULL, NULL, NULL);
 	}
 
 
@@ -593,7 +593,7 @@ void ProcessKeyboard(WGame &game) {
 					dist = t3dVectAngle(&cd, &Player->Dir);
 					if ((dist < 60.0f) && (dist > -60.0f)) {
 						CurObj = b;
-						Event(EventClass::MC_MOUSE, ME_MRIGHT, MP_DEFAULT, 0, 0, 0, &CurObj, NULL, NULL);
+						_vm->_messageSystem.doEvent(EventClass::MC_MOUSE, ME_MRIGHT, MP_DEFAULT, 0, 0, 0, &CurObj, NULL, NULL);
 					}
 				}
 			}
@@ -604,13 +604,13 @@ void ProcessKeyboard(WGame &game) {
 		if (bSomeOneSpeak) bSkipTalk = TRUE;
 
 		if ((bFirstPerson == 0) && (!bMovingCamera) && (!bNoFirstPersonSwitch)/* && !( InvStatus & INV_ON )*/)
-			Event(EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 		else if ((!bMovingCamera) && (!bNoFirstPersonSwitch)/* && !( InvStatus & INV_ON )*/)
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 	}
 
 	if (KeyUp(Common::KEYCODE_TAB) && !bLockCamera)              // Fa uscire l'inventario
-		Event(EventClass::MC_INVENTORY, ME_INVSWITCH, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_INVENTORY, ME_INVSWITCH, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 
 	if (KeyDown(Common::KEYCODE_LEFT) && !(InvStatus & INV_ON) && !(bFirstPerson)) {      // Ruota a Destra
 		AngleY = (-1) * TurnSpeed / 180.0f * T3D_PI;
@@ -663,7 +663,7 @@ void ProcessKeyboard(WGame &game) {
 		HandleFirstPersonView();
 
 	if (bFirstPerson) {
-		Event(EventClass::MC_MOUSE, ME_MOUSEUPDATE, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_MOUSE, ME_MOUSEUPDATE, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 		AngleX = AngleY = AngleSpeed = 0.0f;
 		if (Player)
 			Player->Flags |= T3D_CHARACTER_HIDE;

@@ -43,13 +43,13 @@ bool CheckRoomPuzzle(WGame &game, uint8 ev) {
 		ClearText();
 		ClearUseWith();
 
-		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dGIARDINIERE_INTERRUPT2, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dGIARDINIERE_INTERRUPT2, 0, 0, nullptr, nullptr, nullptr);
 		return true;
 	} else if ((game._gameVars.getCurRoomId() == r2G) && (WhichRoomChar(game.init, ocCUSTODE) == r2G) && ((CurObj != o2Gp2H) && (CurObj != ocCUSTODE))) {
 		ClearText();
 		ClearUseWith();
 
-		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUSTODE_INTERRUPT5, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUSTODE_INTERRUPT5, 0, 0, nullptr, nullptr, nullptr);
 		return true;
 	}
 	return false;
@@ -167,7 +167,7 @@ void doExamine(WGame &game, int32 obj) {
 		if (!(init.PDALog[log_item].flags & PDA_ON)) {
 			init.PDALog[log_item].flags |= (PDA_ON | PDA_UPDATE);
 			init.PDALog[log_item].time = t3dCurTime;
-			Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_DISPLAY_NEWLOGIMG, nullptr, nullptr, nullptr);
 		}
 		sent = TRUE;
 	}
@@ -222,10 +222,10 @@ void doAction(WGame &game) {
 			CurMousePointer = MousePointerPlus;
 		} else if (init.Obj[CurObj].flags & CHARACTER) {
 			if (bFirstPerson) {
-				Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
-				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, init.Obj[CurObj].goroom, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, init.Obj[CurObj].goroom, 0, 0, nullptr, nullptr, nullptr);
 			} else
-				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, init.Obj[CurObj].goroom, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, init.Obj[CurObj].goroom, 0, 0, nullptr, nullptr, nullptr);
 		} else if (init.Obj[CurObj].flags & TAKE)
 			doTake(game, CurObj);
 		else if (init.Obj[CurObj].flags & ROOM)

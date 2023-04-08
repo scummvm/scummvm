@@ -123,7 +123,7 @@ void UpdateChar(WGame &game, int32 oc, t3dF32 Speed, t3dF32 Rot) {
 		return;
 	}
 
-	Event(EventClass::MC_MOUSE, ME_MOUSEHIDE, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
+	_vm->_messageSystem.doEvent(EventClass::MC_MOUSE, ME_MOUSEHIDE, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 	if (Char && Speed)
 		CharNextFrame(game, oc);
 
@@ -172,7 +172,7 @@ void UpdateChar(WGame &game, int32 oc, t3dF32 Speed, t3dF32 Rot) {
 			SlideChar(oc);
 
 		game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 	}
 }
 
@@ -663,8 +663,8 @@ bool CharGotoPosition(WGame &game, int32 oc, uint8 pos, uint8 back, int32 anim) 
 		game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 
 		if (bFirstPerson)
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
 	} else if ((cp = PlayerGotoPos[oc] = GetLightPosition(&tmp, pos)) == 0) return FALSE;
 
 	FloorHit = 1;
@@ -735,7 +735,7 @@ uint8 CharNextFrame(WGame &game, int32 oc) {
 	} else {
 		if (Player == Char) {
 			an = TheTime + PLAYER_IDLE_TIME;
-			Event(EventClass::MC_PLAYER, ME_PLAYERIDLE, MP_WAIT_RETRACE, (int16)(CurPlayer + ocDARRELL), 0, 0, &an, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERIDLE, MP_WAIT_RETRACE, (int16)(CurPlayer + ocDARRELL), 0, 0, &an, nullptr, nullptr);
 			PlayerPos[CurPlayer + ocDARRELL] = PlayerGotoPos[CurPlayer + ocDARRELL];
 			PlayerGotoPos[CurPlayer + ocDARRELL] = 0;
 		}

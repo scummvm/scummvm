@@ -80,7 +80,7 @@ void doMouseButton(WGame &game) {
 	if (InvStatus & INV_ON) {
 		if ((InvStatus & INV_ON) && (InvStatus & INV_MODE1) && PlayerCanCall(game._gameVars)) {
 			if (CheckRect(renderer, game._gameRect._callOtherPlayerRect, TheMessage->wparam1, TheMessage->wparam2)) {
-				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dRCALLOTHERPLAYER, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dRCALLOTHERPLAYER, 0, 0, nullptr, nullptr, nullptr);
 				return;
 			}
 		}
@@ -118,11 +118,11 @@ void doMouseButton(WGame &game) {
 				} else if (CheckRect(renderer, game._gameRect._quitGameRect, TheMessage->wparam1, TheMessage->wparam2))
 					CloseSys(game);
 				else if (CheckRect(renderer, game._gameRect._invSaveRect, TheMessage->wparam1, TheMessage->wparam2) && !(InvStatus & INV_MODE4) && PlayerCanSave())
-					Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_SAVE, 0, tOPTIONS, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_SAVE, 0, tOPTIONS, nullptr, nullptr, nullptr);
 				else if (CheckRect(renderer, game._gameRect._invLoadRect, TheMessage->wparam1, TheMessage->wparam2) && !(InvStatus & INV_MODE4))
-					Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_LOAD, 0, tOPTIONS, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_LOAD, 0, tOPTIONS, nullptr, nullptr, nullptr);
 				else if (CheckRect(renderer, game._gameRect._invOptionsRect, TheMessage->wparam1, TheMessage->wparam2) && !(InvStatus & INV_MODE4))
-					Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_OPTIONS, 0, tOPTIONS, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_OPTIONS, 0, tOPTIONS, nullptr, nullptr, nullptr);
 				else {
 					ClearUseWith();
 					if ((CheckRect(renderer, game._gameRect._playerInvRect, TheMessage->wparam1, TheMessage->wparam2)) || (InvStatus & INV_MODE4)) {
@@ -152,11 +152,11 @@ void doMouseButton(WGame &game) {
 		}
 
 		if (TheMessage->event == ME_MRIGHT)
-			Event(EventClass::MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &CurInvObj, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &CurInvObj, nullptr, nullptr);
 		else if (bUseWith & UW_ON)
-			Event(EventClass::MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &CurInvObj, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &CurInvObj, nullptr, nullptr);
 		else
-			Event(EventClass::MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &CurInvObj, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &CurInvObj, nullptr, nullptr);
 
 		//if( ( InvStatus & INV_MODE2 ) && CheckRect(BigIconRect,TheMessage->wparam1,TheMessage->wparam2) )
 		//CurInvObj = iNULL;
@@ -232,13 +232,13 @@ void doMouseButton(WGame &game) {
 
 //				Se ho cliccato in un altro portale dice di contiunare la camminata
 		if ((NextPortalObj) && (NextPortalAnim))
-			Event(EventClass::MC_MOUSE, TheMessage->event, MP_WAIT_ANIM, 0, 0, 0, &NextPortalObj, nullptr, &bFastWalk);
+			_vm->_messageSystem.doEvent(EventClass::MC_MOUSE, TheMessage->event, MP_WAIT_ANIM, 0, 0, 0, &NextPortalObj, nullptr, &bFastWalk);
 		else if (NextPortalObj)
-			Event(EventClass::MC_MOUSE, TheMessage->event, MP_WAIT_PORTAL, 0, 0, 0, &NextPortalObj, nullptr, &bFastWalk);
+			_vm->_messageSystem.doEvent(EventClass::MC_MOUSE, TheMessage->event, MP_WAIT_PORTAL, 0, 0, 0, &NextPortalObj, nullptr, &bFastWalk);
 
 //				Se sono in prima torno in terza, a meno che l'oggetto non mi obblighi a restare in prima
 		if (bFirstPerson && !bNoFirstPersonSwitch && (!CurObj || (CurObj && (!(init.Obj[CurObj].flags & NOSWITCH) || (Player->Walk.Check & LONGPATH)))))
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 //?             else if( bFirstPerson )
 //?                 CharStop( ocCURPLAYER );
 	}
@@ -246,16 +246,16 @@ void doMouseButton(WGame &game) {
 	game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 	if (CurObj) {                        // se ho cliccato su un oggetto valido
 		if (TheMessage->event == ME_MLEFT)   // se ho cliccato con sinistro
-			Event(EventClass::MC_PLAYER, ME_PLAYERGOTOEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, bFirstPerson, &CurObj, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTOEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, bFirstPerson, &CurObj, nullptr, nullptr);
 		else if (TheMessage->event == ME_MRIGHT) {   // se ho cliccato con destro
 			if ((init.Obj[CurObj].flags & USEWITH)  && !(bUseWith)) {      // se ho cliccato su un oggetto usacon
 				Player->Walk.NumSteps = 0;          // Simula un PlayerStop
-				Event(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, bFirstPerson, &CurObj, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, bFirstPerson, &CurObj, nullptr, nullptr);
 			} else
-				Event(EventClass::MC_PLAYER, ME_PLAYERGOTOACTION, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, bFirstPerson, &CurObj, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTOACTION, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, bFirstPerson, &CurObj, nullptr, nullptr);
 		}
 	} else                              // se non ho cliccato su niente
-		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, bFirstPerson, nullptr, &NextPortalAnim, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, bFirstPerson, nullptr, &NextPortalAnim, nullptr);
 }
 
 void doMouseUpdate(WGame &game) {
@@ -303,8 +303,8 @@ void doMouseUpdate(WGame &game) {
 	else {
 		if (bClock33) {
 			if ((Comb33[0] == 7) && (Comb33[1] == 2) && (Comb33[2] == 9) && (Comb33[3] == 11) && IconInInv(init, i19FOGLIO1)) {
-				Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
-				Event(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_CAMERA, a336, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_CAMERA, a336, 0, 0, nullptr, nullptr, nullptr);
 
 				if (!(init.Obj[o33LANCETTAHSX].flags & EXTRA2)) {
 					IncCurTime(game, 15);
