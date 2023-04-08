@@ -43,7 +43,7 @@ t3dMESH::t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&Recei
 	this->DefaultAnim.NumBones = this->DefaultAnim.NumFrames = 0;
 	this->Anim.NumBones = this->Anim.NumFrames = 0;
 
-	char stringBuffer[T3D_NAMELEN] = {};
+	char stringBuffer[T3D_NAMELEN + 1] = {};
 	stream.read(stringBuffer, T3D_NAMELEN); // Legge nome mesh
 	this->name = stringBuffer;
 	stream.read(stringBuffer, T3D_NAMELEN); // Legge nome portale
