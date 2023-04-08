@@ -745,7 +745,7 @@ void retro_run(void) {
 				frameskip_counter++;
 				/* Performance counter */
 				if ((performance_switch & PERF_SWITCH_ON) && !(performance_switch & PERF_SWITCH_OVER)) {
-					frameskip_events++;
+					frameskip_events += frameskip_counter;
 					if (frameskip_events > PERF_SWITCH_FRAMESKIP_EVENTS) {
 						increase_performance();
 						frameskip_events = 0;
