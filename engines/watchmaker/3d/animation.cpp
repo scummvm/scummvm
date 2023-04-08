@@ -568,15 +568,14 @@ t3dBODY *LoadShadowMeshes(WGame &game, const char *pname, t3dBODY *Body) {
 /* -----------------30/12/98 11.27-------------------
  *                  t3dLoadCharacter
  * --------------------------------------------------*/
-t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, t3dCHARACTER *b, uint16 num) {
+t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	warning("LoadCharacter(%s)", pname);
 	uint8   Mirror = 1;
 	uint16  n = 0, f, i;
 	t3dV3F tmp;
 	//  gVertex *v;
 
-	b = new t3dCHARACTER[1] {};
-	b->Body = nullptr;
+	t3dCHARACTER *b = new t3dCHARACTER[1] {};
 	b->Body = t3dLoadRoom(game, pname, b->Body, &n, (T3D_NOLIGHTMAPS | T3D_NORECURSION | T3D_NOVOLUMETRICLIGHTS | T3D_NOCAMERAS | T3D_STATIC_SET0 | T3D_STATIC_SET1));
 	if (!b->Body) return nullptr;
 	b->Mesh = &b->Body->MeshTable[0];

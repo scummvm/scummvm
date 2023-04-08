@@ -172,7 +172,7 @@ bool WGame::CheckAndLoadMoglieSupervisoreModel(int32 c) {
 		LoaderFlags |= T3D_STATIC_SET1;
 		LoaderFlags |= T3D_STATIC_SET0;
 		rSetLoaderFlags(LoaderFlags);
-		if (!(Character[c] = t3dLoadCharacter(*this, CharName[c], Character[c], (uint16)c))) {
+		if (!(Character[c] = t3dLoadCharacter(*this, CharName[c], (uint16)c))) {
 			warning("Error loading %s", CharName[c]);
 			return false;
 		}
@@ -311,8 +311,8 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 					warning("Error loading Icons");
 					return false;
 				}
-			if (!(Lanc33[0] = t3dLoadCharacter(*this, "Lanc33a.t3d", Lanc33[0], 99)) || !(Lanc33[1] = t3dLoadCharacter(*this, "Lanc33b.t3d", Lanc33[1], 99)) ||
-			        !(Lanc33[2] = t3dLoadCharacter(*this, "Lanc33c.t3d", Lanc33[2], 99)) || !(Lanc33[3] = t3dLoadCharacter(*this, "Lanc33d.t3d", Lanc33[3], 99))) {
+			if (!(Lanc33[0] = t3dLoadCharacter(*this, "Lanc33a.t3d", 99)) || !(Lanc33[1] = t3dLoadCharacter(*this, "Lanc33b.t3d", 99)) ||
+			        !(Lanc33[2] = t3dLoadCharacter(*this, "Lanc33c.t3d", 99)) || !(Lanc33[3] = t3dLoadCharacter(*this, "Lanc33d.t3d", 99))) {
 				warning("Error loading Lanc33");
 				return false;
 			}
@@ -341,7 +341,7 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 						}
 					}
 					warning("About to load %s", CharName[i + 1]);
-					if (!(Character[i + 1] = t3dLoadCharacter(*this, CharName[i + 1], Character[i + 1], i))) {
+					if (!(Character[i + 1] = t3dLoadCharacter(*this, CharName[i + 1], i))) {
 						warning("Error loading %s", CharName[i + 1]);
 						return false;
 					}
@@ -387,39 +387,39 @@ bool WGame::LoadAndSetup(const Common::String &name, uint8 lite) {
 
 	if (bGolfActive) {
 //		extern t3dS32 SkySurface;
-		if (!(Character[1] = t3dLoadCharacter(*this, "Gopher1.t3d", Character[1], 99))) {
+		if (!(Character[1] = t3dLoadCharacter(*this, "Gopher1.t3d", 99))) {
 			warning("Error loading Gopher1");
 			return false;
 		}
-		if (!(Character[2] = t3dLoadCharacter(*this, "Gopher2.t3d", Character[2], 99))) {
+		if (!(Character[2] = t3dLoadCharacter(*this, "Gopher2.t3d", 99))) {
 			warning("Error loading Gopher2");
 			return false;
 		}
-		if (!(Character[3] = t3dLoadCharacter(*this, "Gopher3.t3d", Character[3], 99))) {
+		if (!(Character[3] = t3dLoadCharacter(*this, "Gopher3.t3d", 99))) {
 			warning("Error loading Gopher3");
 			return false;
 		}
-		if (!(GopherMark[0] = t3dLoadCharacter(*this, "Mark1.t3d", GopherMark[0], 99))) {
+		if (!(GopherMark[0] = t3dLoadCharacter(*this, "Mark1.t3d", 99))) {
 			warning("Error loading Mark1");
 			return false;
 		}
-		if (!(GopherMark[1] = t3dLoadCharacter(*this, "Mark2.t3d", GopherMark[1], 99))) {
+		if (!(GopherMark[1] = t3dLoadCharacter(*this, "Mark2.t3d", 99))) {
 			warning("Error loading Mark2");
 			return false;
 		}
-		if (!(GopherMark[2] = t3dLoadCharacter(*this, "Mark3.t3d", GopherMark[2], 99))) {
+		if (!(GopherMark[2] = t3dLoadCharacter(*this, "Mark3.t3d", 99))) {
 			warning("Error loading Mark3");
 			return false;
 		}
-		if (!(Palla50 = t3dLoadCharacter(*this, "Palla.t3d", Palla50, 99))) {
+		if (!(Palla50 = t3dLoadCharacter(*this, "Palla.t3d", 99))) {
 			warning("Error loading Palla50");
 			return false;
 		}
-		if (!(Freccia50 = t3dLoadCharacter(*this, "Freccia.t3d", Freccia50, 99))) {
+		if (!(Freccia50 = t3dLoadCharacter(*this, "Freccia.t3d", 99))) {
 			warning("Error loading Freccia50");
 			return false;
 		}
-		if (!(Explode50 = t3dLoadCharacter(*this, "Explode.t3d", Explode50, 99))) {
+		if (!(Explode50 = t3dLoadCharacter(*this, "Explode.t3d", 99))) {
 			warning("Error loading Explode50");
 			return false;
 		}
