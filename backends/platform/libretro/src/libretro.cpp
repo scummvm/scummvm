@@ -87,16 +87,13 @@ static uint8 frameskip_threshold;
 static uint32 frameskip_counter = 0;
 static uint8 frameskip_events = 0;
 
-static uint8 reduce_framerate_type = 0;
-static uint8 reduce_framerate_shift = 0;
-static uint8 reduce_framerate_countdown = 0;
-
 static bool consecutive_screen_updates = false;
 
 static uint8 audio_status = 0;
 
 static unsigned retro_audio_buff_occupancy = 0;
 
+static uint8 performance_switch = 0;
 static uint32 perf_ref_frame = 0;
 static uint32 perf_ref_audio_buff_occupancy = 0;
 
@@ -105,8 +102,6 @@ static uint16 samples_per_frame = 0;                // length in samples per fra
 static size_t samples_per_frame_buffer_size = 0;
 
 static int16_t *sound_buffer = NULL;       // pointer to output buffer
-
-static uint8 performance_switch = 0;
 
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 	samples_per_frame = sample_rate / frame_rate;
