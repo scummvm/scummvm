@@ -790,7 +790,8 @@ void retro_run(void) {
 				audio_buffer_init(SAMPLE_RATE, (uint16) frame_rate);
 			}
 #endif
-			audio_batch_cb((audio_status & AUDIO_STATUS_MUTE) ? NULL : (int16_t *) sound_buffer, samples_count); // Set to NULL to skip sound rendering
+			if (!(audio_status & AUDIO_STATUS_MUTE))
+				audio_batch_cb((int16_t *) sound_buffer, samples_count);
 
 			current_frame++;
 
