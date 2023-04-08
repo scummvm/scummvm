@@ -452,64 +452,168 @@ bool t3dSetSpecialAnimFrame(WGame &game, const char *name, t3dMESH *mesh, int32 
 	return true;
 }
 
-/* -----------------15/09/98 12.23-------------------
- *                  ModifyMesh
- * --------------------------------------------------*/
-void ModifyMesh(WGame &game, t3dMESH *mesh) {
+void MeshModifiers::modifyMesh(WGame &game, t3dMESH *mesh) {
 	struct SMeshModifier *mm;
 	int16 i;
 
-	if (!mesh || (mesh->Flags & T3D_MESH_CHARACTER)) return;
+	if (!mesh || (mesh->Flags & T3D_MESH_CHARACTER))
+		return;
 
-//	Cerca se esite un modificatore per questa mesh
+	// Check if there is a modifier for this mesh
 	mm = &MMList[0];
 	for (i = 0; i < MAX_MODIFIED_MESH; i++, mm++)
 		if ((!mm->meshName.empty()) && (mm->meshName.equalsIgnoreCase(mesh->name)))
 			break;
 
-//	Se non ci sono modificatori per questa mesh o si rifericono a un body
-	if ((i >= MAX_MODIFIED_MESH) || (mm->Flags & (MM_SET_BND_LEVEL | MM_SET_HALOES)))
-		return ;
+	// If there are no modifiers for this mesh or they refer to a body
+	if ((i >= MAX_MODIFIED_MESH) || (mm->getFlags() & (MM_SET_BND_LEVEL | MM_SET_HALOES)))
+		return;
 
-	warning("MM %s: addflags %X, removeflags %X, anim |%s|", mesh->name.c_str(), mm->AddFlags, mm->RemoveFlags, mm->animName.c_str());
-//	Aggiorna Flags
-	if (mm->Flags & MM_REMOVE_FLAGS)
-		mesh->Flags &= ~mm->RemoveFlags;
-	if (mm->Flags & MM_ADD_FLAGS)
-		mesh->Flags |= mm->AddFlags;
+	mm->modifyMesh(game, mesh);
+}
 
-//	Aggiorna Materiali
-	if (mm->Flags & MM_REMOVE_MAT_FLAGS)
-		mesh->FList[0].getMaterial()->Flags &= ~mm->RemoveMatFlags;
-	if (mm->Flags & MM_ADD_MAT_FLAGS)
-		mesh->FList[0].getMaterial()->Flags |= mm->AddMatFlags;
-	if (mm->Flags & MM_SET_MAT_FRAME)
-		mesh->setMovieFrame(mm->MatFrame); // This did NOT check for existing face/material before setting before.
+void SMeshModifier::modifyMesh(WGame &game, t3dMESH *mesh) {
+	warning("MM %s: addflags %X, removeflags %X, anim |%s|", mesh->name.c_str(), this->AddFlags, this->RemoveFlags, this->animName.c_str());
+	// Update Flags
+	if (this->Flags & MM_REMOVE_FLAGS)
+		mesh->Flags &= ~this->RemoveFlags;
+	if (this->Flags & MM_ADD_FLAGS)
+		mesh->Flags |= this->AddFlags;
 
-//	Aggiorna Anim
-	if ((mm->Flags & MM_ANIM_BLOCK) && (!mm->animName.empty()) && (!mesh->CurFrame)) {
-		t3dSetSpecialAnimFrame(game, mm->animName.c_str(), mesh, -1);
+	// Update Materials
+	if (this->Flags & MM_REMOVE_MAT_FLAGS)
+		mesh->FList[0].getMaterial()->Flags &= ~this->RemoveMatFlags;
+	if (this->Flags & MM_ADD_MAT_FLAGS)
+		mesh->FList[0].getMaterial()->Flags |= this->AddMatFlags;
+	if (this->Flags & MM_SET_MAT_FRAME)
+		mesh->setMovieFrame(this->MatFrame); // This did NOT check for existing face/material before setting before.
+
+	// Update Anim
+	if ((this->Flags & MM_ANIM_BLOCK) && (!this->animName.empty()) && (!mesh->CurFrame)) {
+		t3dSetSpecialAnimFrame(game, this->animName.c_str(), mesh, -1);
 		t3dCalcMeshBones(mesh, 1);
 		UpdateBoundingBox(mesh);
 	}
 }
 
-/* -----------------22/06/00 10.35-------------------
- *              ApplyAllMeshModifiers
+/* -----------------15/09/98 12.04-------------------
+ *                  AddMeshModifier
  * --------------------------------------------------*/
-void ApplyAllMeshModifiers(WGame &game, t3dBODY *b) {
-//	Cerca se esite un modificatore per questo body
+void MeshModifiers::addMeshModifier(const Common::String &name, int16 com, void *p) {
+	struct SMeshModifier *mm;
+	uint32 Flags;
+	int16 i;
+
+	warning("Not sure this is right"); // Used to check for nullptr, not 0 length.
+	if (name.empty() || !p)
+		return;
+
+	//	DebugLogFile("AddMM |%s| %d",name,com);
+
+	// Check if a modifier already exists for this mesh
+	mm = &MMList[0];
+	for (i = 0; i < MAX_MODIFIED_MESH; i++, mm++)
+		if ((!mm->meshName.empty()) && mm->meshName.equalsIgnoreCase(name))
+			break;
+
+	// If it's a new modifier look for a free place
+	if (i >= MAX_MODIFIED_MESH) {
+		mm = &MMList[0];
+		for (i = 0; i < MAX_MODIFIED_MESH; i++, mm++)
+			if (mm->meshName.empty())
+				break;
+		if (i >= MAX_MODIFIED_MESH) {
+			warning("Troppi Mesh modifier per %s: MAX %d", name.c_str(), MAX_MODIFIED_MESH);
+			return;
+		}
+
+		*mm = SMeshModifier(name.c_str(), com, p);
+	} else {
+		mm->configure(name.c_str(), com, p);
+	}
+}
+
+SMeshModifier::SMeshModifier(Common::SeekableReadStream &stream) {
+	char stringBuffer[T3D_NAMELEN] = {};
+	stream.read(stringBuffer, T3D_NAMELEN);
+	meshName = stringBuffer;
+	Flags = stream.readSint32LE();
+	AddFlags = stream.readUint32LE();
+	RemoveFlags = stream.readUint32LE();
+	AddMatFlags = stream.readUint32LE();
+	RemoveMatFlags = stream.readUint32LE();
+	MatFrame = stream.readSint32LE();
+	BndLevel = stream.readUint16LE();
+	HaloesStatus = stream.readByte(); // TODO: Signed.
+	stream.read(stringBuffer, T3D_NAMELEN);
+	animName = stringBuffer;
+}
+
+SMeshModifier::SMeshModifier(const char *name, int16 com, void *p) {
+	configure(name, com, p);
+}
+
+void SMeshModifier::configure(const char *name, int16 com, void *p) {
+	this->Flags |= com;
+	switch (com) {
+	case MM_ADD_FLAGS:
+		Flags = *((uint32 *)p);
+		this->RemoveFlags &= ~Flags;
+		this->AddFlags |= Flags;
+		break;
+
+	case MM_REMOVE_FLAGS:
+		Flags = *((uint32 *)p);
+		this->AddFlags &= ~Flags;
+		this->RemoveFlags |= Flags;
+		break;
+
+	case MM_ADD_MAT_FLAGS:
+		Flags = *((uint32 *)p);
+		this->RemoveMatFlags &= ~Flags;
+		this->AddMatFlags |= Flags;
+		break;
+
+	case MM_REMOVE_MAT_FLAGS:
+		Flags = *((uint32 *)p);
+		this->AddMatFlags &= ~Flags;
+		this->RemoveMatFlags |= Flags;
+		break;
+
+	case MM_SET_MAT_FRAME:
+		this->MatFrame = *((int32 *)p);
+		break;
+
+	case MM_ANIM_BLOCK:
+		if (this->animName.empty())
+			this->animName = (char *)p;
+		else
+			this->animName.clear();
+		break;
+
+	case MM_SET_BND_LEVEL:
+		this->BndLevel = *((uint16 *)p);
+		break;
+
+	case MM_SET_HALOES:
+		this->HaloesStatus = *((int8 *)p);
+		break;
+	}
+}
+
+void MeshModifiers::applyAllMeshModifiers(WGame &game, t3dBODY *b) {
+	// Check if there is a modifier for this body
 	struct SMeshModifier *mm = &MMList[0];
 	for (int32 j = 0; j < MAX_MODIFIED_MESH; j++, mm++)
 		if ((!mm->meshName.empty()) && b->name.equalsIgnoreCase(mm->meshName)) {
-			if (mm->Flags & MM_SET_BND_LEVEL)
-				b->CurLevel = mm->BndLevel;
+			if (mm->getFlags() & MM_SET_BND_LEVEL)
+				b->CurLevel = mm->getBndLevel();
 
-			if (mm->Flags & MM_SET_HALOES) {
+			if (mm->getFlags() & MM_SET_HALOES) {
 				for (auto &l : b->LightTable) {
 					if (!(l.Type & T3D_LIGHT_FLARE)) continue;
 
-					if (mm->HaloesStatus > 0)
+					if (mm->getHaloesStatus() > 0)
 						l.Type |= T3D_LIGHT_LIGHTON;
 					else
 						l.Type &= ~T3D_LIGHT_LIGHTON;
@@ -517,8 +621,9 @@ void ApplyAllMeshModifiers(WGame &game, t3dBODY *b) {
 			}
 		}
 
-	for (int32 i = 0; i < (int32)b->NumMeshes(); i++)
-		ModifyMesh(game, &b->MeshTable[i]);
+	for (int32 i = 0; i < (int32)b->NumMeshes(); i++) {
+		modifyMesh(game, &b->MeshTable[i]);
+	}
 }
 
 /* -----------------29/03/99 14.33-------------------
@@ -652,88 +757,6 @@ void UpdateCharHead(int32 oc, t3dV3F *dir) {
 	}
 }
 
-
-/* -----------------15/09/98 12.04-------------------
- *                  AddMeshModifier
- * --------------------------------------------------*/
-void AddMeshModifier(const Common::String &name, int16 com, void *p) {
-	struct SMeshModifier *mm;
-	uint32 Flags;
-	int16 i;
-
-	warning("Not sure this is right"); // Used to check for nullptr, not 0 length.
-	if (name.empty() || !p) return;
-
-//	DebugLogFile("AddMM |%s| %d",name,com);
-
-//	Cerca se esiste gia' un modificatore per questa mesh
-	mm = &MMList[0];
-	for (i = 0; i < MAX_MODIFIED_MESH; i++, mm++)
-		if ((!mm->meshName.empty()) && mm->meshName.equalsIgnoreCase(name))
-			break;
-
-//	Se e' un nuovo modificatore cerca un posto libero
-	if (i >= MAX_MODIFIED_MESH) {
-		mm = &MMList[0];
-		for (i = 0; i < MAX_MODIFIED_MESH; i++, mm++)
-			if (mm->meshName.empty())
-				break;
-		if (i >= MAX_MODIFIED_MESH) {
-			warning("Troppi Mesh modifier per %s: MAX %d", name.c_str(), MAX_MODIFIED_MESH);
-			return ;
-		}
-//		memset( mm, 0, sizeof( struct SMeshModifier ) );
-		mm->meshName = name;
-	}
-
-	mm->Flags |= com;
-	switch (com) {
-	case MM_ADD_FLAGS:
-		Flags = *((uint32 *)p);
-		mm->RemoveFlags &= ~Flags;
-		mm->AddFlags |= Flags;
-		break;
-
-	case MM_REMOVE_FLAGS:
-		Flags = *((uint32 *)p);
-		mm->AddFlags &= ~Flags;
-		mm->RemoveFlags |= Flags;
-		break;
-
-	case MM_ADD_MAT_FLAGS:
-		Flags = *((uint32 *)p);
-		mm->RemoveMatFlags &= ~Flags;
-		mm->AddMatFlags |= Flags;
-		break;
-
-	case MM_REMOVE_MAT_FLAGS:
-		Flags = *((uint32 *)p);
-		mm->AddMatFlags &= ~Flags;
-		mm->RemoveMatFlags |= Flags;
-		break;
-
-	case MM_SET_MAT_FRAME:
-		mm->MatFrame = *((int32 *)p);
-		break;
-
-	case MM_ANIM_BLOCK:
-		if (mm->animName.empty())
-			mm->animName = (char *)p;
-		else
-			mm->animName.clear();
-		break;
-
-	case MM_SET_BND_LEVEL:
-		mm->BndLevel = *((uint16 *)p);
-		break;
-
-	case MM_SET_HALOES:
-		mm->HaloesStatus = *((int8 *)p);
-		break;
-	}
-}
-
-
 /* -----------------22/06/00 12.15-------------------
  *                  ChangeMeshFlags
  * --------------------------------------------------*/
@@ -742,10 +765,10 @@ void ChangeMeshFlags(t3dMESH *m, int8 add, uint32 newflags) {
 
 	if (add > 0) {
 		m->Flags |= newflags;
-		AddMeshModifier(m->name, MM_ADD_FLAGS, &newflags);
+		_vm->addMeshModifier(m->name, MM_ADD_FLAGS, &newflags);
 	} else {
 		m->Flags &= ~newflags;
-		AddMeshModifier(m->name, MM_REMOVE_FLAGS, &newflags);
+		_vm->addMeshModifier(m->name, MM_REMOVE_FLAGS, &newflags);
 	}
 
 }
@@ -765,7 +788,7 @@ void ChangeHaloesStatus(t3dBODY *b, int8 op) {
 		else
 			l.Type &= ~T3D_LIGHT_LIGHTON;
 	}
-	AddMeshModifier(b->name.c_str(), MM_SET_HALOES, &op);
+	_vm->addMeshModifier(b->name.c_str(), MM_SET_HALOES, &op);
 }
 
 /* -----------------01/06/00 11.12-------------------
@@ -793,9 +816,9 @@ void UpdateObjMesh(Init &init, int32 in) {
 			newflags = T3D_MESH_HIDDEN;
 			if (init.Obj[in].meshlink[a][0] != '\0') {
 				if ((init.Obj[in].flags & ON) && !(init.Obj[in].flags & HIDE))
-					AddMeshModifier((char *)init.Obj[in].meshlink[a], MM_REMOVE_FLAGS, &newflags);
+					_vm->addMeshModifier((char *)init.Obj[in].meshlink[a], MM_REMOVE_FLAGS, &newflags);
 				else
-					AddMeshModifier((char *)init.Obj[in].meshlink[a], MM_ADD_FLAGS, &newflags);
+					_vm->addMeshModifier((char *)init.Obj[in].meshlink[a], MM_ADD_FLAGS, &newflags);
 			}
 		}
 	}//for
@@ -817,7 +840,7 @@ void SetMeshMaterialMovieFrame(t3dMESH *m, int8 op, int32 newframe) {
 
 	newframe = m->getMovieFrame();
 
-	AddMeshModifier(m->name, MM_SET_MAT_FRAME, &newframe);
+	_vm->addMeshModifier(m->name, MM_SET_MAT_FRAME, &newframe);
 }
 
 /* -----------------22/06/00 12.15-------------------
@@ -828,10 +851,10 @@ void ChangeMeshMaterialFlag(t3dMESH *m, int8 add, uint32 newflag) {
 
 	if (add > 0) {
 		m->FList[0].getMaterial()->addProperty(newflag);
-		AddMeshModifier(m->name, MM_ADD_MAT_FLAGS, &newflag);
+		_vm->addMeshModifier(m->name, MM_ADD_MAT_FLAGS, &newflag);
 	} else {
 		m->FList[0].getMaterial()->clearFlag(newflag);
-		AddMeshModifier(m->name, MM_REMOVE_MAT_FLAGS, &newflag);
+		_vm->addMeshModifier(m->name, MM_REMOVE_MAT_FLAGS, &newflag);
 	}
 }
 

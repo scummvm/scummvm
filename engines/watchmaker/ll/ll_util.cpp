@@ -463,7 +463,7 @@ bool SetBndLevel(WGame &game, const char *roomname, int32 lev) {
 	if (t == t3dCurRoom)
 		CurFloorY = t->PanelHeight[t->CurLevel];
 
-	AddMeshModifier(t->name, MM_SET_BND_LEVEL, &lev);
+	_vm->addMeshModifier(t->name, MM_SET_BND_LEVEL, &lev);
 	UpdateRoomVisibility(game);
 
 	DebugLogFile("SETBND: %s, %d", t->name.c_str(), lev);

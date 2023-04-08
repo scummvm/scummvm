@@ -167,7 +167,6 @@ char ObjectUnderCursor[MAX_STRING_LEN];
 t3dV3F mPos;
 
 // 3D MESH MODIFIER
-struct SMeshModifier MMList[MAX_MODIFIED_MESH];
 struct SPlayerStand PlayerStand[MAX_PLAYERS];
 
 // CHARACTERS VARS
