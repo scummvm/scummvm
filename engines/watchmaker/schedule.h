@@ -28,9 +28,6 @@
 
 namespace Watchmaker {
 
-void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wparam2,
-           uint8 bparam, void *p0, void *p1, void *p2);
-
 void ProcessTheMessage(WGame &game);
 void ReEvent();
 void DeleteWaitingMsgs(uint16 flags);
@@ -42,12 +39,14 @@ public:
 	void removeEvent(EventClass classe, uint8 event);
 	void removeEvent_bparam(EventClass classe, uint8 event, uint8 bparam);
 	void scheduler(); // TODO: Rename
+	void doEvent(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wparam2, uint8 bparam, void *p0, void *p1, void *p2);
 	message GameMessage[MAX_MESSAGES];
 	pqueue Game;
 	// message *TheMessage; // TODO: Replace the global variable with this
 	message idlemessage  = {EventClass::MC_IDLE, 0, MP_DEFAULT};
 	uint8 SuperEventActivate;
 private:
+	int _maxmsg = 0;
 	void initQueue(pqueue *lq);
 };
 

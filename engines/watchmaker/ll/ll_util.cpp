@@ -306,7 +306,7 @@ void UpdateRoomInfo(WGame &game) {
 		game._messageSystem.removeEvent_bparam(EventClass::MC_SYSTEM, ME_STARTEFFECT, EFFECT_ROOMINFO);
 		game._messageSystem.removeEvent_bparam(EventClass::MC_SYSTEM, ME_CONTINUEEFFECT, EFFECT_ROOMINFO);
 		game._messageSystem.removeEvent_bparam(EventClass::MC_SYSTEM, ME_STOPEFFECT, EFFECT_ROOMINFO);
-		Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_ROOMINFO, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND * 3, 0, EFFECT_ROOMINFO, nullptr, nullptr, nullptr);
 	}
 }
 
@@ -345,13 +345,13 @@ void UpdateRoomVisibility(WGame &game) {
 	if (!(LoaderFlags & T3D_DEBUGMODE)) {
 //		Prima volta che entra nella r46
 		if ((cr == r46) && !(init.Room[cr].flags & ROOM_VISITED))
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR212, 0, 0, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR212, 0, 0, NULL, NULL, NULL);
 //		Prima volta che entra nella r47
 		if ((cr == r47) && !(init.Room[cr].flags & ROOM_VISITED))
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR471, 0, 0, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR471, 0, 0, NULL, NULL, NULL);
 //		Prima volta che entra nella r48
 		if ((cr == r48) && !(init.Room[cr].flags & ROOM_VISITED))
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR481, 0, 0, NULL, NULL, NULL);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR481, 0, 0, NULL, NULL, NULL);
 	}
 #if 0
 //	Se ha cambiato stanza cambia anche l'environment

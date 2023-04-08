@@ -44,14 +44,14 @@ void doInvScrUseWith(WGame &game) {
 
 	//messo fuori perche' andava in conflitto con l'usacon dell'icona
 	if ((UseWith[USED] == i29FOTOPROGETTO) && (UseWith[WITH] == ocCUSTODE)) {
-		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR005, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR005, 0, 0, nullptr, nullptr, nullptr);
 		return;
 	}
 
 	//messo fuori perche' se non parte l'RTV deve dire la frase
 	if ((UseWith[USED] == i1cMEDAGLIONI2) && (UseWith[WITH] == o1CBOCCA)) {
 		if (init.Dialog[dR1A5].flags & DIALOG_DONE) {
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR1C3, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR1C3, 0, 0, nullptr, nullptr, nullptr);
 			return;
 		} else {
 			PlayerSpeak(game, init.InvObj[i1cMEDAGLIONI2].text[1]);
@@ -80,14 +80,14 @@ void doInvScrUseWith(WGame &game) {
 	switch (UseWith[USED]) {
 	case i41OGGETTO:
 		if (UseWith[WITH] == ocCUSTODE)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR002, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR002, 0, 0, nullptr, nullptr, nullptr);
 		else
 			sent = TRUE;
 		break;
 
 	case i14OCCHIALI:
 		if (UseWith[WITH] == ocCUSTODE)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR003, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR003, 0, 0, nullptr, nullptr, nullptr);
 		else
 			sent = TRUE;
 		break;
@@ -122,14 +122,14 @@ void doInvScrUseWith(WGame &game) {
 	case i25MEDAGLIONI4:
 		if (UseWith[WITH] == o1CBOCCA) {
 			sa = a1C2;
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_ANIM, dR1C1, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_ANIM, dR1C1, 0, 0, nullptr, nullptr, nullptr);
 		} else
 			sent = TRUE;
 		break;
 	case i1cMEDAGLIONI3:
 		if (UseWith[WITH] == o1CBOCCA) {
 			sa = a1C2;
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_ANIM, dR1C2, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_ANIM, dR1C2, 0, 0, nullptr, nullptr, nullptr);
 		} else
 			sent = TRUE;
 		break;
@@ -199,13 +199,13 @@ void doInvScrUseWith(WGame &game) {
 					init.Dialog[dR009].flags |= DIALOG_RTV3;
 				init.InvObj[i2lBOTTIGLIAVINO].flags |= EXTRA2;
 			}
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR009, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR009, 0, 0, nullptr, nullptr, nullptr);
 		}
 		break;
 
 	case i34LASTRE:
 		if (UseWith[WITH] == ocSUPERVISORE)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR007, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR007, 0, 0, nullptr, nullptr, nullptr);
 		else
 			sent = TRUE;
 		break;
@@ -214,7 +214,7 @@ void doInvScrUseWith(WGame &game) {
 		if (UseWith[WITH] == ocSERVETTA) {
 			if (CurPlayer == VICTORIA) {
 //					PlayerSpeak( init.InvObj[i22BRACCIALE].text[1] );
-				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR001, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR001, 0, 0, nullptr, nullptr, nullptr);
 			} else {
 				PlayerSpeak(game, init.InvObj[i22BRACCIALE].text[0]);
 			}
@@ -227,20 +227,20 @@ void doInvScrUseWith(WGame &game) {
 				PlayerSpeak(game, init.InvObj[i29FOTOJUDE1].text[0]);
 
 			if (CurPlayer == VICTORIA)
-				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR291, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR291, 0, 0, nullptr, nullptr, nullptr);
 		} else   sent = TRUE;
 		break;
 
 	case i29STAMPAINGRANAGGIO:
 		if (UseWith[WITH] == ocCUSTODE)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR006, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR006, 0, 0, nullptr, nullptr, nullptr);
 		else
 			sent = TRUE;
 		break;
 
 	case i31ANELLOBRONZO:
 		if (UseWith[WITH] == ocCUSTODE)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR004, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR004, 0, 0, nullptr, nullptr, nullptr);
 		else
 			sent = TRUE;
 		break;
@@ -248,14 +248,14 @@ void doInvScrUseWith(WGame &game) {
 	case i1aLUCCHETTO:
 		if (UseWith[WITH] == oXT1AFINESTRA) {
 //				morte Cacciatore
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR1A5, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR1A5, 0, 0, nullptr, nullptr, nullptr);
 		} else
 			sent = TRUE;
 		break;
 
 	case i48CHIAVIMANETTE:
 		if (UseWith[WITH] == o48MANETTE)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR483, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR483, 0, 0, nullptr, nullptr, nullptr);
 		else
 			sent = TRUE;
 		break;

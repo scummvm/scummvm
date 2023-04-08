@@ -153,9 +153,9 @@ bool PlayerSpeak(WGame &game, int32 n) {
 	bSkipTalk = FALSE;
 
 	if (speechn)
-		Event(EventClass::MC_STRING, ME_PLAYERCONTINUESPEAK_WAITWAVE, MP_WAIT_RETRACE, 0, 0, 0, &speechn, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_STRING, ME_PLAYERCONTINUESPEAK_WAITWAVE, MP_WAIT_RETRACE, 0, 0, 0, &speechn, nullptr, nullptr);
 	else
-		Event(EventClass::MC_STRING, ME_PLAYERCONTINUESPEAK, MP_WAIT_RETRACE, 0, 0, 0, &EndSpeakTime, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_STRING, ME_PLAYERCONTINUESPEAK, MP_WAIT_RETRACE, 0, 0, 0, &EndSpeakTime, nullptr, nullptr);
 	return TRUE;
 }
 

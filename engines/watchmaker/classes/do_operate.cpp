@@ -240,7 +240,7 @@ void doOperate(WGame &game, int32 obj) {
 
 	case  oXT14BASAMENTO:
 		if ((WhichAnimChar(init, ocGIARDINIERE) == aGIA141) || (WhichAnimChar(init, ocGIARDINIERE) == aGIA142))
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dGIARDINIERE_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dGIARDINIERE_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -251,7 +251,7 @@ void doOperate(WGame &game, int32 obj) {
 	case o13MOBILE:
 	case o13CREDENZA:
 		if (WhichRoomChar(init, ocCUSTODE) == r13)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUSTODE_INTERRUPT3, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUSTODE_INTERRUPT3, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -260,7 +260,7 @@ void doOperate(WGame &game, int32 obj) {
 
 	case o13SCALPELLO:
 		if (WhichRoomChar(init, ocCUSTODE) == r13)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUSTODE_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUSTODE_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -341,16 +341,16 @@ void doOperate(WGame &game, int32 obj) {
 		Comb19[2] = obj;
 		if ((Comb19[1] == o19T22) && (Comb19[2] == o19T26) && !(init.Obj[o37BACHECA].flags & EXTRA)) {
 			Comb19[0] = Comb19[1] = Comb19[2] = 0;
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
-			Event(EventClass::MC_STRING, ME_PLAYERSPEAK, MP_WAIT_CAMERA, init.Obj[o19SCACCHIERA].text[0], 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_STRING, ME_PLAYERSPEAK, MP_WAIT_CAMERA, init.Obj[o19SCACCHIERA].text[0], 0, 0, nullptr, nullptr, nullptr);
 			break;
 		}
 
 		if ((Comb19[0] == o19T22) && (Comb19[1] == o19T26) && (Comb19[2] == o19T40)) {
 			init.Obj[o19SCACCHIERA].anim[CurPlayer] = init.Obj[o19SCACCHIERA].anim[CurPlayer ^ 1] = a193;
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 			CurObj = o19SCACCHIERA;
-			Event(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_WAIT_CAMERA, 0, 0, bFirstPerson, &CurObj, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_WAIT_CAMERA, 0, 0, bFirstPerson, &CurObj, nullptr, nullptr);
 		}
 		break;
 
@@ -417,21 +417,24 @@ void doOperate(WGame &game, int32 obj) {
 	case o23CTASTO1:
 		bNoFirstPersonSwitch = FALSE;
 		ChangeRoom(game, "r21-a.t3d", 46, a2111);
-		if (obj == o23ATASTO1) Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
+		if (obj == o23ATASTO1)
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
 		break;
 	case o23ATASTO2:
 	case o23BTASTO2:
 	case o23CTASTO2:
 		bNoFirstPersonSwitch = FALSE;
 		ChangeRoom(game, "r26-b.t3d", 46, a268);
-		if (obj == o23BTASTO2) Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
+		if (obj == o23BTASTO2)
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
 		break;
 	case o23ATASTO3:
 	case o23BTASTO3:
 	case o23CTASTO3:
 		bNoFirstPersonSwitch = FALSE;
 		ChangeRoom(game, "r2c.t3d", 46, a2C10);
-		if (obj == o23CTASTO3) Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
+		if (obj == o23CTASTO3)
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
 		break;
 	case o25TASTOPIUFORNO:
 		if (init.Obj[o25TASTOOFFFORNO].flags & ON) {
@@ -489,7 +492,7 @@ void doOperate(WGame &game, int32 obj) {
 	case o25FORNOCH:
 	case o25FORNOAP:
 		if (WhichRoomChar(init, ocCUOCO) == r25)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUOCO_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUOCO_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -498,7 +501,7 @@ void doOperate(WGame &game, int32 obj) {
 
 	case o25MOBILETTO:
 		if (WhichRoomChar(init, ocCUOCO) == r25)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUOCO_INTERRUPT2, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dCUOCO_INTERRUPT2, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -507,7 +510,7 @@ void doOperate(WGame &game, int32 obj) {
 
 	case o25SCAFFALEMAGAZZINO:
 		if (WhichRoomChar(init, ocDOMESTICA) == r25)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dDOMESTICA_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dDOMESTICA_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -519,7 +522,7 @@ void doOperate(WGame &game, int32 obj) {
 	case o28ANTEDXCH:
 	case o28ANTESXCH:
 		if (WhichRoomChar(init, ocDOMESTICA) == r28)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dDOMESTICA_INTERRUPT2, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dDOMESTICA_INTERRUPT2, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -528,10 +531,10 @@ void doOperate(WGame &game, int32 obj) {
 
 	case o29COMPUTER:
 		if (WhichRoomChar(init, ocSUPERVISORE) == r29)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dSUPERVISORE_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dSUPERVISORE_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
 		else {
 			if (init.Obj[obj].flags & EXTRA)
-				Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tSCANNER, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tSCANNER, nullptr, nullptr, nullptr);
 			else
 				sent = TRUE;
 		}
@@ -541,7 +544,7 @@ void doOperate(WGame &game, int32 obj) {
 	case o29PORTAFOTOCONJUDE:
 	case o29SCANNER:
 		if (WhichRoomChar(init, ocSUPERVISORE) == r29)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dSUPERVISORE_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dSUPERVISORE_INTERRUPT1, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -550,7 +553,7 @@ void doOperate(WGame &game, int32 obj) {
 
 	case o29PORTA:
 		if (WhichRoomChar(init, ocSUPERVISORE) == r29)
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dSUPERVISORE_INTERRUPT3, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dSUPERVISORE_INTERRUPT3, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -597,9 +600,9 @@ void doOperate(WGame &game, int32 obj) {
 	case o2DE:
 		if ((Comb2D[0] == o2D1) && (Comb2D[1] == o2D2) && (Comb2D[2] == o2D4) && (Comb2D[3] == o2D8) && (Comb2D[4] == o2D0)) {
 			init.Obj[o2DTASTIERINO].anim[CurPlayer] = init.Obj[o2DTASTIERINO].anim[CurPlayer ^ 1] = a2D11;
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 			CurObj = o2DTASTIERINO;
-			Event(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_WAIT_CAMERA, 0, 0, bFirstPerson, &CurObj, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_WAIT_CAMERA, 0, 0, bFirstPerson, &CurObj, nullptr, nullptr);
 			StartSound(game, w2D10);
 		} else
 			StartSound(game, w2D9B);
@@ -642,7 +645,8 @@ void doOperate(WGame &game, int32 obj) {
 	case o2OETASTOU:
 		bNoFirstPersonSwitch = FALSE;
 		ChangeRoom(game, "r2h.t3d", 43, a2H7);
-		if (obj == o2OATASTOU) Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
+		if (obj == o2OATASTOU)
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
 		break;
 	case o2OATASTO0:
 	case o2OBTASTO0:
@@ -651,7 +655,8 @@ void doOperate(WGame &game, int32 obj) {
 	case o2OETASTO0:
 		bNoFirstPersonSwitch = FALSE;
 		ChangeRoom(game, "r2m-a.t3d", 43, a2M1);
-		if (obj == o2OBTASTO0) Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
+		if (obj == o2OBTASTO0)
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
 		break;
 	case o2OATASTO1:
 	case o2OBTASTO1:
@@ -660,7 +665,8 @@ void doOperate(WGame &game, int32 obj) {
 	case o2OETASTO1:
 		bNoFirstPersonSwitch = FALSE;
 		ChangeRoom(game, "r2b-a.t3d", 43, a2B14);
-		if (obj == o2OCTASTO1) Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
+		if (obj == o2OCTASTO1)
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
 		break;
 	case o2OATASTO2:
 	case o2OBTASTO2:
@@ -669,7 +675,8 @@ void doOperate(WGame &game, int32 obj) {
 	case o2OETASTO2:
 		bNoFirstPersonSwitch = FALSE;
 		ChangeRoom(game, "r2p.t3d", 43, a2P6);
-		if (obj == o2ODTASTO2) Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
+		if (obj == o2ODTASTO2)
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
 		break;
 	case o2OATASTO3:
 	case o2OBTASTO3:
@@ -678,12 +685,13 @@ void doOperate(WGame &game, int32 obj) {
 	case o2OETASTO3:
 		bNoFirstPersonSwitch = FALSE;
 		ChangeRoom(game, "r2c.t3d", 43, a2C9);
-		if (obj == o2OETASTO3) Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
+		if (obj == o2OETASTO3)
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, TRUE, nullptr, nullptr, nullptr);
 		break;
 
 	case o2Pp2D:
 		if ((init.Obj[o24BOCCIOLO].flags & EXTRA) && !(init.Dialog[dR2P1].flags & DIALOG_DONE))
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR2P1, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR2P1, 0, 0, nullptr, nullptr, nullptr);
 		else if (init.Obj[obj].anim[CurPlayer])
 			sa = init.Obj[obj].anim[CurPlayer];
 		else
@@ -732,9 +740,9 @@ void doOperate(WGame &game, int32 obj) {
 	case o2QE:
 		if (IconInInv(init, i29FOTOJUDE1) && (Comb2Q[1] == o2Q9) && (Comb2Q[2] == o2Q7) && (Comb2Q[3] == o2Q9) && (Comb2Q[4] == o2Q5)) {
 			init.Obj[o2QTASTIERINO].anim[CurPlayer] = init.Obj[o2QTASTIERINO].anim[CurPlayer ^ 1] = a2Q11;
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 			CurObj = o2QTASTIERINO;
-			Event(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_WAIT_CAMERA, 0, 0, bFirstPerson, &CurObj, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_WAIT_CAMERA, 0, 0, bFirstPerson, &CurObj, nullptr, nullptr);
 			StartSound(game, w2Q10);
 		} else
 			StartSound(game, w2Q9B);
@@ -759,8 +767,8 @@ void doOperate(WGame &game, int32 obj) {
 			if (++Comb31[obj - o31LEVETTA1] > 7) Comb31[obj - o31LEVETTA1] = 0;
 			UpdateSpecial(game, r31);
 			if ((Comb31[0] == 1) && (Comb31[1] == 6) && (Comb31[2] == 3) && (Comb31[3] == 5) && (Comb31[4] == 7)) {
-				Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
-				Event(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_CAMERA, a319, 0, bFirstPerson, &CurObj, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_CAMERA, a319, 0, bFirstPerson, &CurObj, nullptr, nullptr);
 			}
 		} else
 			sa = a3110;
@@ -770,8 +778,10 @@ void doOperate(WGame &game, int32 obj) {
 		if (!t3dCurRoom->name.equalsIgnoreCase(PlayerStand[CurPlayer ^ 1].roomName))
 			sa = a323;
 		else {
-			if (CurPlayer == DARRELL) Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR321_DAR, 0, 0, nullptr, nullptr, nullptr);
-			if (CurPlayer == VICTORIA) Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR321_VIC, 0, 0, nullptr, nullptr, nullptr);
+			if (CurPlayer == DARRELL)
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR321_DAR, 0, 0, nullptr, nullptr, nullptr);
+			if (CurPlayer == VICTORIA)
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR321_VIC, 0, 0, nullptr, nullptr, nullptr);
 			sa = aNULL;
 			sent = FALSE;
 		}
@@ -861,14 +871,14 @@ void doOperate(WGame &game, int32 obj) {
 		if ((Comb42[0] == 0) && (Comb42[1] == 1) && (Comb42[2] == 0) && (Comb42[3] == 1) &&
 		        (Comb42[4] == 1) && (Comb42[5] == 1) && (Comb42[6] == 1) && (Comb42[7] == 1) &&
 		        (Comb42[8] == 0) && (Comb42[9] == 0) && (Comb42[10] == 1) && (Comb42[11] == 0) && IconInInv(init, i41OGGETTO)) {
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 			if (!(init.Dialog[dR421_fine].flags & DIALOG_DONE)) {
 				if (CurPlayer == DARRELL)
-					Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR421_DAR, 0, 0, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR421_DAR, 0, 0, nullptr, nullptr, nullptr);
 				if (CurPlayer == VICTORIA)
-					Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR421_VIC, 0, 0, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR421_VIC, 0, 0, nullptr, nullptr, nullptr);
 			} else
-				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR42_porta, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR42_porta, 0, 0, nullptr, nullptr, nullptr);
 		}
 		break;
 	case o42TASTO01GIU:
@@ -892,22 +902,22 @@ void doOperate(WGame &game, int32 obj) {
 		if ((Comb42[0] == 0) && (Comb42[1] == 1) && (Comb42[2] == 0) && (Comb42[3] == 1) &&
 		        (Comb42[4] == 1) && (Comb42[5] == 1) && (Comb42[6] == 1) && (Comb42[7] == 1) &&
 		        (Comb42[8] == 0) && (Comb42[9] == 0) && (Comb42[10] == 1) && (Comb42[11] == 0) && IconInInv(init, i41OGGETTO)) {
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 			if (!(init.Dialog[dR421_fine].flags & DIALOG_DONE)) {
 				if (CurPlayer == DARRELL)
-					Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR421_DAR, 0, 0, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR421_DAR, 0, 0, nullptr, nullptr, nullptr);
 				if (CurPlayer == VICTORIA)
-					Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR421_VIC, 0, 0, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR421_VIC, 0, 0, nullptr, nullptr, nullptr);
 			} else
-				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR42_porta, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_CAMERA, dR42_porta, 0, 0, nullptr, nullptr, nullptr);
 		}
 		break;
 
 	case o48KRENNSVENUTO:
 		if (!(init.Dialog[dR48_chiavi].flags & DIALOG_DONE))
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR48_chiavi, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR48_chiavi, 0, 0, nullptr, nullptr, nullptr);
 		else
-			Event(EventClass::MC_STRING, ME_PLAYERSPEAK, MP_DEFAULT, init.Obj[o48KRENNSVENUTO].examine[VICTORIA], 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_STRING, ME_PLAYERSPEAK, MP_DEFAULT, init.Obj[o48KRENNSVENUTO].examine[VICTORIA], 0, 0, nullptr, nullptr, nullptr);
 		break;
 
 	case o44LEVAORE:
@@ -929,7 +939,7 @@ void doOperate(WGame &game, int32 obj) {
 		UpdateSpecial(game, r45);
 		if ((Comb45[0] == 8) && (Comb45[1] == 1) && (Comb45[2] == 10) && (Comb45[3] == 5) && (Comb45[4] == 3)) {
 			StartSound(game, wB451);
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 			SetMeshMaterialMovieFrame(LinkMeshToStr(init, "o45-ingranaggiBEK02"), 0, 1);
 			SetMeshMaterialMovieFrame(LinkMeshToStr(init, "o45-ingranaggiBEK03"), 0, 1);
 			SetMeshMaterialMovieFrame(LinkMeshToStr(init, "o45-ingranaggiBEK04"), 0, 1);
@@ -961,7 +971,7 @@ void doOperate(WGame &game, int32 obj) {
 		}
 		if ((Comb45[0] == 0) && (Comb45[1] == 0) && (Comb45[2] == 0) && (Comb45[3] == 0) && (Comb45[4] == 0)) {
 			StartSound(game, wB451);
-			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 			SetMeshMaterialMovieFrame(LinkMeshToStr(init, "o45-ingranaggiBEK02"), 0, 0xFFFF);
 			SetMeshMaterialMovieFrame(LinkMeshToStr(init, "o45-ingranaggiBEK03"), 0, 0xFFFF);
 			SetMeshMaterialMovieFrame(LinkMeshToStr(init, "o45-ingranaggiBEK04"), 0, 0xFFFF);
@@ -989,7 +999,7 @@ void doOperate(WGame &game, int32 obj) {
 			game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_PLAYERTIMER);
 
 			if (init.Dialog[dR471].flags & DIALOG_DONE)
-				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR451, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR451, 0, 0, nullptr, nullptr, nullptr);
 		}
 		break;
 

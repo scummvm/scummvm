@@ -138,9 +138,9 @@ void doPlayer(WGame &game) {
 				AddWaitingMsgs(MP_WAIT_ACT);
 
 			if (TheMessage->event == ME_PLAYERGOTOEXAMINE)
-				Event(EventClass::MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &TheMessage->lparam[0], nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &TheMessage->lparam[0], nullptr, nullptr);
 			else if (TheMessage->event == ME_PLAYERGOTOACTION)
-				Event(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &TheMessage->lparam[0], nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &TheMessage->lparam[0], nullptr, nullptr);
 			else if ((TheMessage->event == ME_PLAYERGOTO) && (TheMessage->lparam[1]))
 				StartAnim(game, TheMessage->lparam[1]);
 
@@ -213,9 +213,9 @@ void ProcessCharacters(WGame &game) {
 
 //				controllo da che parte far partire l'RTV
 				if ((dist >= 0.0f) && (dist < 30.f))
-					Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dRUN_R1a1_RIGHT, 0, 0, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dRUN_R1a1_RIGHT, 0, 0, nullptr, nullptr, nullptr);
 				else
-					Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dRUN_R1a1_CENTER, 0, 0, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dRUN_R1a1_CENTER, 0, 0, nullptr, nullptr, nullptr);
 			}
 		}
 	}
@@ -225,12 +225,12 @@ void ProcessCharacters(WGame &game) {
 		if (Player->Mesh->Trasl.x < CacciatoreXleft) {
 			bCacciatore = FALSE;
 			CharStop(ocCURPLAYER);
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR0014_left, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR0014_left, 0, 0, nullptr, nullptr, nullptr);
 		}
 		if ((Player->Mesh->Trasl.x > CacciatoreXright) && (Player->Mesh->Trasl.z > CacciatoreZright)) {
 			bCacciatore = FALSE;
 			CharStop(ocCURPLAYER);
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR0014_right, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR0014_right, 0, 0, nullptr, nullptr, nullptr);
 		}
 	}
 
@@ -243,7 +243,7 @@ void ProcessCharacters(WGame &game) {
 	    && (!bDialogActive)) {
 		if (Player->Mesh->Trasl.x > r47CoordX) {
 			CharStop(ocCURPLAYER);
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR482, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR482, 0, 0, nullptr, nullptr, nullptr);
 		}
 	}
 
@@ -277,7 +277,7 @@ void ProcessCharacters(WGame &game) {
 		if (beccato) {
 //			DebugLogFile("BECCATO");
 			CharStop(ocCURPLAYER);
-			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR48KRENNSPARA, 0, 0, nullptr, nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR48KRENNSPARA, 0, 0, nullptr, nullptr, nullptr);
 		}
 	}
 
@@ -440,7 +440,7 @@ void ChangePlayer(WGame &game, uint8 oc) {
 
 //	Inizia il Fade
 //	Event( EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, FRAME_PER_SECOND/3, 0, EFFECT_FADIN, NULL, NULL, NULL );
-	Event(EventClass::MC_CAMERA, ME_CAMERAPLAYER, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+	_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERAPLAYER, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 }
 
 /* -----------------30/10/00 18.26-------------------

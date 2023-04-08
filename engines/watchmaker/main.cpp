@@ -114,7 +114,7 @@ int WMakerMain() {
 			return 1;
 		}
 
-		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dRLOGHI, 0, 0, nullptr, nullptr, nullptr);
+		_vm->_messageSystem.doEvent(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dRLOGHI, 0, 0, nullptr, nullptr, nullptr);
 	}
 #if 0
 	ShowWindow(hWnd, SW_SHOWNORMAL);

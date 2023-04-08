@@ -43,7 +43,7 @@ void doInvInvUseWith(WGame &game) {
 	case i00TELEFONO:
 	case i00TELEFONOVIC:
 		if ((UseWith[WITH] == i28WALKMANOK) && (init.InvObj[i28WALKMANOK].flags & EXTRA)) {
-			Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tPDA, &UseWith[WITH], nullptr, nullptr);
+			_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tPDA, &UseWith[WITH], nullptr, nullptr);
 			sent = FALSE;
 		}
 		break;

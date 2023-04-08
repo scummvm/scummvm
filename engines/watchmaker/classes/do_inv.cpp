@@ -225,7 +225,7 @@ void doInventory(WGame &game) {
 				ReplaceSaveLoadTexture(CurInvObj);
 				break;
 			} else if ((InvStatus & INV_MODE2) && ((CurInvObj == i00TELEFONO) || (CurInvObj == i00TELEFONOVIC))) {
-				Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tPDA, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tPDA, nullptr, nullptr, nullptr);
 				break;
 			}
 			BigInvObj = CurInvObj;
@@ -264,7 +264,7 @@ void doInventory(WGame &game) {
 			CurMousePointer = MousePointerPlus;
 		} else if (CurInvObj) {
 			if (init.InvObj[CurInvObj].anim[CurPlayer]) {
-				Event(EventClass::MC_INVENTORY, ME_INVOFF, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+				_vm->_messageSystem.doEvent(EventClass::MC_INVENTORY, ME_INVOFF, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 				StartAnim(game, init.InvObj[CurInvObj].anim[CurPlayer]);
 				break;
 			} else {
@@ -272,7 +272,7 @@ void doInventory(WGame &game) {
 				if (CurInvObj == i28WALKMANOK) {
 					if (init.InvObj[CurInvObj].flags & EXTRA)       an = a289_noinctime;
 					else                                                                        an = a289;
-					Event(EventClass::MC_INVENTORY, ME_INVOFF, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
+					_vm->_messageSystem.doEvent(EventClass::MC_INVENTORY, ME_INVOFF, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);
 					StartAnim(game, an);
 				}
 			}
