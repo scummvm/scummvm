@@ -113,26 +113,23 @@ void Game::Init(const std::string &filename) {
 }
 
 bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
-	warning("STUB: Game::LoadLevel()");
-
-#if 0
-	if (gFilePath.level.count(id) > 0) {
+	if (gFilePath.level.contains(id.c_str())) {
 		gLoadScreen.Draw();
 
 		// Load the assets local to this level
 		// If the filename is same as the previous one, skip loading
-		if (gFilePath.current_r != gFilePath.level[id].asset) {
-			gFilePath.current_r = gFilePath.level[id].asset;
-			gImageManager.LoadMap(gFilePath.level[id].asset);
+		if (gFilePath.current_r != gFilePath.level[id.c_str()].asset) {
+			gFilePath.current_r = gFilePath.level[id.c_str()].asset;
+			gImageManager.LoadMap(gFilePath.level[id.c_str()].asset);
 		}
 
 		// Load the level itself
 		level.pop = pop_default;
-		level.Load(gFilePath.level[id].layout, info, game_over, player_x, player_y);
+		level.Load(gFilePath.level[id.c_str()].layout.c_str(), info, game_over, player_x, player_y);
 
 		// Set the current location
 		info.CurLocID(id);
-		info.CurLocName(gFilePath.level[id].name);
+		info.CurLocName(gFilePath.level[id.c_str()].name.c_str());
 		map.player_pos = level.map_loc;
 
 		// Update and center the world map to the player current position
@@ -149,7 +146,6 @@ bool Game::LoadLevel(const std::string &id, int player_x, int player_y) {
 		info.journal.Init(level.PlayerID());
 		return true;
 	}
-#endif
 
 	return false;
 }
@@ -505,7 +501,6 @@ void Game::Draw() {
 		level.Draw(info);
 	else
 		gImageManager.BlackScreen();
-
 	switch (state) {
 	case STATE_GAME:
 		if (gem.EventInProgress())
@@ -561,7 +556,6 @@ void Game::Draw() {
 
 	if (GameDebug)
 		debug_console.Draw(info);
-
 	gMouse.Draw();
 }
 
