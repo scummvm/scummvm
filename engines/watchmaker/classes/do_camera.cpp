@@ -344,7 +344,7 @@ void doCamera(WGame &game) {
 		bFirstPerson = true;
 
 		CharStop(ocCURPLAYER);
-		RemoveEvent(&Game, EventClass::MC_PLAYER, ME_ALL);
+		game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 		ClearText();
 
 		LastCamera = t3dCurCamera;
@@ -392,7 +392,7 @@ void doCamera(WGame &game) {
 
 //			Avanza al primo frame del percorso
 		NextCameraStep(game);
-		RemoveEvent(&Game, EventClass::MC_PLAYER, ME_PLAYERIDLE);
+		game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_PLAYERIDLE);
 
 //			Sistema posizione del mouse e posizione della testa
 		{

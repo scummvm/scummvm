@@ -103,7 +103,7 @@ int WMakerMain() {
         g_bReady = true;*/
 
 	t3dAllocMemoryPool(1000000);                                // Alloca memory-pool
-	InitMessageSystem();
+	game->_messageSystem.init();
 
 	if (LoaderFlags & T3D_DEBUGMODE) {
 		if (!game->StartPlayingGame("")) {

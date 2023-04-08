@@ -339,7 +339,7 @@ void UpdatePlayerStand(WGame &game, uint8 oc) {
 	}
 
 //	Ferma il primo personaggio e salva le posizioni
-	RemoveEvent(&Game, EventClass::MC_PLAYER, ME_ALL);
+	game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 //	Salva informazioni
 	{
 //		DebugLogFile("NO");

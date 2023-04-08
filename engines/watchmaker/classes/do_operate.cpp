@@ -986,7 +986,7 @@ void doOperate(WGame &game, int32 obj) {
 			StartSound(game, wB451);
 			SetBndLevel(game, nullptr, 0);
 			SetBndLevel(game, "r47.t3d", 1);
-			RemoveEvent(&Game, EventClass::MC_PLAYER, ME_PLAYERTIMER);
+			game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_PLAYERTIMER);
 
 			if (init.Dialog[dR471].flags & DIALOG_DONE)
 				Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dR451, 0, 0, nullptr, nullptr, nullptr);

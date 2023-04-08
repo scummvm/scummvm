@@ -310,7 +310,7 @@ void doInventory(WGame &game) {
 
 		PlayerPos[CurPlayer + ocDARRELL] = 0;
 		PlayerGotoPos[CurPlayer + ocDARRELL] = 0;
-		RemoveEvent(&Game, EventClass::MC_PLAYER, ME_ALL);
+		game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 		CharStop(ocCURPLAYER);
 
 		if (TheMessage->event == ME_INVOFF)

@@ -24,7 +24,6 @@
 
 #include "watchmaker/types.h"
 #include "watchmaker/struct.h"
-#include "watchmaker/game.h"
 #include "watchmaker/message.h"
 
 namespace Watchmaker {
@@ -32,14 +31,25 @@ namespace Watchmaker {
 void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wparam2,
            uint8 bparam, void *p0, void *p1, void *p2);
 
-void InitMessageSystem();
-void Scheduler();
 void ProcessTheMessage(WGame &game);
 void ReEvent();
 void DeleteWaitingMsgs(uint16 flags);
 void AddWaitingMsgs(uint16 flags);
-void RemoveEvent(pqueue *lq, EventClass classe, uint8 event);
-void RemoveEvent_bparam(pqueue *lq, EventClass classe, uint8 event, uint8 bparam);
+
+class MessageSystem {
+public:
+	void init();
+	void removeEvent(EventClass classe, uint8 event);
+	void removeEvent_bparam(EventClass classe, uint8 event, uint8 bparam);
+	void scheduler(); // TODO: Rename
+	message GameMessage[MAX_MESSAGES];
+	pqueue Game;
+	// message *TheMessage; // TODO: Replace the global variable with this
+	message idlemessage  = {EventClass::MC_IDLE, 0, MP_DEFAULT};
+	uint8 SuperEventActivate;
+private:
+	void initQueue(pqueue *lq);
+};
 
 } // End of namespace Watchmaker
 

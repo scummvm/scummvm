@@ -23,7 +23,8 @@
 #define WATCHMAKER_GAME_H
 
 #include "common/random.h"
-#include "fonts.h"
+#include "watchmaker/fonts.h"
+#include "watchmaker/schedule.h"
 #include "watchmaker/3d/loader.h"
 #include "watchmaker/game_options.h"
 #include "watchmaker/ll/ll_ffile.h"
@@ -64,6 +65,7 @@ public:
 	GameVars _gameVars;
 	GameRect _gameRect;
 	Fonts _fonts;
+	MessageSystem _messageSystem;
 	WGame();
 	~WGame();
 
@@ -98,6 +100,8 @@ public:
 
 	void GameLoop();
 };
+
+extern WGame *_vm;
 
 } // End of namespace Watchmaker
 

@@ -526,7 +526,7 @@ void ProcessTime(WGame &game) {
 //	QueryPerformanceFrequency(&pf);QueryPerformanceCounter(&pt);
 //	DebugFile("%d %d %d",pf.LowPart,pt.LowPart,TheTime);
 
-	if ((TheTime >= NextRefresh) && ((Game.len < 1) || (NumTimes > 7))) {
+	if ((TheTime >= NextRefresh) && ((game._messageSystem.Game.len < 1) || (NumTimes > 7))) {
 		if (!bGolfActive) {
 			ProcessKeyboard(game);
 			ProcessMouse(game);
@@ -673,7 +673,7 @@ void InitMain(WGame &game) {
  * --------------------------------------------------*/
 void NextMessage(WGame &game) {
 	ProcessTime(game);
-	Scheduler();
+	game._messageSystem.scheduler();
 
 	if (TheMessage) {
 		if ((TheMessage->classe == EventClass::MC_SYSTEM) && (TheMessage->event == ME_QUIT))

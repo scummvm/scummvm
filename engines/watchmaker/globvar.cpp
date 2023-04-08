@@ -76,13 +76,7 @@ char CurDebugString[MAX_STRING_LEN];
 char TextLines[MAX_TEXT_LINES][MAX_TEXT_CHARS];
 
 // MESSAGE SYSTEM
-message GameMessage[MAX_MESSAGES];
-pqueue Game;
 message *TheMessage;
-message idlemessage  = {EventClass::MC_IDLE, 0, MP_DEFAULT};
-message quitgamemessage = {EventClass::MC_SYSTEM, ME_QUIT, MP_DEFAULT};
-message supereventmessage;
-uint8 SuperEventActivate;
 
 // GAME VARS
 int32 CurObj;

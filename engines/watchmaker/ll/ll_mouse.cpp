@@ -89,7 +89,7 @@ void ProcessMouse(WGame &game) {
 	if (mMoveX || mMoveY) {
 		mHide = 0;
 		mCounter = 0;
-		RemoveEvent(&Game, EventClass::MC_MOUSE, ME_MOUSEUPDATE);
+		game._messageSystem.removeEvent(EventClass::MC_MOUSE, ME_MOUSEUPDATE);
 		Event(EventClass::MC_MOUSE, ME_MOUSEUPDATE, MP_DEFAULT, (int16)mPosx, (int16)mPosy, 0, &mMoveX, &mMoveY, NULL);
 	}
 	mMoveX = mMoveY = 0;

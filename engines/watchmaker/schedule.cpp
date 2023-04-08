@@ -65,11 +65,10 @@ void AddWaitingMsgs(uint16 flags) {
  *                  DeleteWaitingMsgs
  * --------------------------------------------------*/
 void DeleteWaitingMsgs(uint16 flags) {
-	int8 a;
-	for (a = 0; a < MAXWAITINGMSGS; a++)
+	for (int a = 0; a < MAXWAITINGMSGS; a++)
 		WaitingMsg[a].flags &= ~flags;
 
-	for (a = 0; a < MAXWAITINGMSGS; a++)
+	for (int a = 0; a < MAXWAITINGMSGS; a++)
 		if (WaitingMsg[a].classe != EventClass::MC_IDLE && (WaitingMsg[a].flags < MP_WAITA))
 			memset(&WaitingMsg[a], 0, sizeof(WaitingMsg[a]));
 }
@@ -90,33 +89,25 @@ bool _GetMessage(pqueue *lq) {
 	return true;
 }
 
-
-/* -----------------08/02/99 10.10-------------------
- *                  InitQueue
- * --------------------------------------------------*/
-void InitQueue(pqueue *lq) {
+void MessageSystem::initQueue(pqueue *lq) {
 	lq->head = 0;
 	lq->tail = 0;
 	lq->len  = 0;
 }
 
-/* -----------------08/02/99 10.10-------------------
- *                  InitMessageSystem
- * --------------------------------------------------*/
-void InitMessageSystem() {
-	uint16 i;
-
+void MessageSystem::init() {
 	TheTime = 0;
-	InitQueue(&Game);
-	for (i = 0; i < MAX_MESSAGES; i++)
+	initQueue(&Game);
+	for (int i = 0; i < MAX_MESSAGES; i++) {
 		Game.event[i] = &GameMessage[i];
+	}
 
-	for (i = 0; i < MAXWAITINGMSGS; i++)
+	for (int i = 0; i < MAXWAITINGMSGS; i++) {
 		memset(&WaitingMsg[i], 0, sizeof(WaitingMsg[i]));
+	}
 }
 
 const char *eventToString(EventClass classe) {
-
 	switch (classe) {
 		case EventClass::MC_IDLE: return "MC_IDLE";
 		case EventClass::MC_MOUSE: return "MC_MOUSE";
@@ -144,7 +135,7 @@ void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wp
 	if (classe == EventClass::MC_IDLE && !event)
 		return ;
 
-	lq = &Game;
+	lq = &(_vm->_messageSystem.Game); // TODO: Instead refactor this to be doEvent, like in the trecision-engine.
 
 	// se deve andare in attesa
 	if (flags >= MP_WAITA) {
@@ -212,7 +203,7 @@ void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wp
 /* -----------------08/02/99 10.11-------------------
  *                  Scheduler
  * --------------------------------------------------*/
-void Scheduler() {
+void MessageSystem::scheduler() {
 	static uint8 Counter;
 
 	TheMessage = nullptr;
@@ -278,8 +269,8 @@ SUPEREVENT:
 		break;
 	}
 
-	if (SuperEventActivate) {
-		SuperEventActivate = false;
+	if (game._messageSystem.SuperEventActivate) {
+		game._messageSystem.SuperEventActivate = false;
 		goto SUPEREVENT;
 	}
 }
@@ -298,7 +289,8 @@ void ReEvent() {
 /* -----------------08/02/99 10.11-------------------
  *                  RemoveEvent
  * --------------------------------------------------*/
-void RemoveEvent(pqueue *lq, EventClass classe, uint8 event) {
+void MessageSystem::removeEvent(EventClass classe, uint8 event) {
+	pqueue *lq = &Game;
 	uint8 pos, b, c;
 
 	for (pos = lq->head; pos != lq->tail; pos = (pos == MAX_MESSAGES - 1) ? 0 : pos + 1) {
@@ -323,8 +315,9 @@ void RemoveEvent(pqueue *lq, EventClass classe, uint8 event) {
  *                  RemoveEvent_bparam
  * --------------------------------------------------*/
 //come RemoveEvent(), solo che controllo anche bparam
-void RemoveEvent_bparam(pqueue *lq, EventClass classe, uint8 event, uint8 bparam) {
+void MessageSystem::removeEvent_bparam(EventClass classe, uint8 event, uint8 bparam) {
 	uint8 pos, b, c;
+	pqueue *lq = &Game;
 
 	for (pos = lq->head; pos != lq->tail; pos = (pos == MAX_MESSAGES - 1) ? 0 : pos + 1) {
 		if ((lq->event[pos]->classe == classe) && ((event == ME_ALL) || (lq->event[pos]->event == event)) && (lq->event[pos]->bparam == bparam)) {

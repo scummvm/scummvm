@@ -451,7 +451,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 //			Event( EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL );  //preferisco farlo rimanere in terza (ndFox)
 		break;
 	case f45STOPTIMER:
-		RemoveEvent(&Game, EventClass::MC_SYSTEM, ME_PLAYERTIMER);
+		game._messageSystem.removeEvent(EventClass::MC_SYSTEM, ME_PLAYERTIMER);
 		break;
 
 	case f41STARTTIMER:
@@ -459,7 +459,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 		Event(EventClass::MC_SYSTEM, ME_PLAYERTIMER, MP_WAIT_RETRACE, (int16)(CurPlayer + ocDARRELL), (int16)dR0010, 0, &i, nullptr, nullptr);
 		break;
 	case f41STOPTIMER:
-		RemoveEvent(&Game, EventClass::MC_SYSTEM, ME_PLAYERTIMER);
+		game._messageSystem.removeEvent(EventClass::MC_SYSTEM, ME_PLAYERTIMER);
 		break;
 
 	case fDISABLESAVE:
@@ -1478,7 +1478,7 @@ void StartAnim(WGame &game, int32 an) {
 //		Copia la posizione iniziale della bone0 se e' l'omino
 		if (h->sub[a].ptr->Flags & T3D_MESH_CHARACTER) {
 			if (h->sub[a].ptr == Player->Mesh) {
-				RemoveEvent(&Game, EventClass::MC_PLAYER, ME_ALL);
+				game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 				CharSetPosition(ocCURPLAYER, cp, nullptr);
 				Player->Walk.NumPathNodes = Player->Walk.CurrentStep = Player->Walk.NumSteps = 0;
 				Player->Walk.CurAction = aNULL;
@@ -1821,7 +1821,7 @@ void StopPlayingGame(WGame &game) {
 		if (Character[i])
 			CharStop(i);
 
-	InitMessageSystem();
+	game._messageSystem.init();
 	ClearUseWith();
 	ClearText();
 //

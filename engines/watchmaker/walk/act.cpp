@@ -171,7 +171,7 @@ void UpdateChar(WGame &game, int32 oc, t3dF32 Speed, t3dF32 Rot) {
 		} else
 			SlideChar(oc);
 
-		RemoveEvent(&Game, EventClass::MC_PLAYER, ME_ALL);
+		game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 	}
 }
@@ -660,7 +660,7 @@ bool CharGotoPosition(WGame &game, int32 oc, uint8 pos, uint8 back, int32 anim) 
 	if ((oc == ocCURPLAYER) || (oc == ocDARRELL && !CurPlayer) || (oc == ocVICTORIA && CurPlayer)) {
 		if ((PlayerPos[CurPlayer + ocDARRELL] == pos) || (PlayerGotoPos[CurPlayer + ocDARRELL] == pos)) return FALSE;
 		if ((cp = PlayerGotoPos[CurPlayer + ocDARRELL] = GetLightPosition(&tmp, pos)) == 0) return FALSE;
-		RemoveEvent(&Game, EventClass::MC_PLAYER, ME_ALL);
+		game._messageSystem.removeEvent(EventClass::MC_PLAYER, ME_ALL);
 
 		if (bFirstPerson)
 			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);

@@ -115,13 +115,7 @@ extern int32 Comb2D[], Comb2Q[], Comb19[], Comb1D[], Forno25, Frigo25, Comb31[],
 extern uint8 bMoglieGym, bMoglieSangue, bNoPlayerSwitch;
 
 // MESSAGE SYSTEM
-extern message GameMessage[];
-extern pqueue Game;
 extern message *TheMessage;
-extern message idlemessage;
-extern message quitgamemessage;
-extern message supereventmessage;
-extern uint8 SuperEventActivate;
 
 // GAME VARS
 extern int32 CurObj;
