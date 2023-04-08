@@ -227,7 +227,7 @@ public:
 	NancyMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(Nancy::NancyGameDescription), nancyGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
-		_guiOptions = GUIO2(GUIO_NOMIDI, GUIO_NOASPECT);
+		_guiOptions = GUIO4(GUIO_NOMIDI, GUIO_NOASPECT, GUIO_GAMEOPTIONS1, GUIO_GAMEOPTIONS2);
 	}
 
 	const char *getName() const override {

@@ -1,2 +1,2 @@
 engines/nancy/input.cpp
-engines/nancy/dialogs.cpp
+engines/nancy/metaengine.cpp
