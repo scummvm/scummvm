@@ -31,15 +31,15 @@ namespace Watchmaker {
 struct t3dV2F {
 	t3dF32  x = 0.0f, y = 0.0f;                           // 2d Vector
 public:
-	t3dV2F() {}
-	t3dV2F(float x, float y, float z) : x(x), y(y) {}
+	constexpr t3dV2F() = default;
+	constexpr t3dV2F(float x, float y, float z) : x(x), y(y) {}
 };
 
 struct t3dV3F {
 	t3dF32  x = 0.0f, y = 0.0f, z = 0.0f;                        // 3d vector
 public:
-	t3dV3F() {}
-	t3dV3F(float x, float y, float z) : x(x), y(y), z(z) {}
+	constexpr t3dV3F() = default;
+	constexpr t3dV3F(float x, float y, float z) : x(x), y(y), z(z) {}
 	t3dV3F(const Math::Vector3d &vector) {
 		x = vector.x();
 		y = vector.y();
