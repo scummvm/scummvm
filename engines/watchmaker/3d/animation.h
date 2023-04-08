@@ -35,7 +35,7 @@ uint8 GetFullLightDirection(t3dV3F *dest, uint8 pos);
 void FixupAnim(t3dMESH *mesh, unsigned char pos, const char *room);
 t3dBODY *LoadShadowMeshes(WGame &game, const char *pname, t3dBODY *Body);
 int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag);
-t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, t3dCHARACTER *b, uint16 num);
+t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num);
 void ReleasePreloadedAnims();
 uint8 CompareLightPosition(char *roomname, uint8 pos1, t3dV3F *pos2, t3dF32 acceptable_dist);
 
