@@ -11006,6 +11006,28 @@ static const uint16 laurabow2CDPatchFixBugsWithMeat[] = {
 	PATCH_END
 };
 
+// The dinosaur bone in room 480 has a broken verb handler. Clicking on the bone
+//  itself doesn't work, instead the player has to click on the surrounding area
+//  to look at it or pick it up. bone:doVerb calls dinoBones:doVerb but doesn't
+//  pass the verb parameter. We fix this by increasing the &rest parameter.
+//  
+// Applies to: All versions
+// Responsible method: bone:doVerb
+static const uint16 laurabow2SignatureFixDinosaurBone[] = {
+	SIG_MAGICDWORD,
+	0x76,                               // push0
+	0x59, 0x02,                         // &rest 02 [ excludes verb parameter ]
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa dinoBones
+	0x4a, 0x04,                         // send 04 [ dinoBones doVerb: &rest ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixDinosaurBone[] = {
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01 [ includes verb parameter ]
+	PATCH_END
+};
+
 // LB2 CD ends act 5 in the middle of the finale music instead of waiting for
 //  it to complete. This is a script bug and occurs in Sierra's interpreter.
 //
@@ -11342,6 +11364,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   454, "CD/Floppy: fix coffin lockup 2/2",               1, laurabow2SignatureMummyCoffinLid2,              laurabow2PatchMummyCoffinLid2 },
 	{  true,   454, "CD: fix coffin closing cel",                     1, laurabow2CDSignatureMummyCoffinClosingCel,      laurabow2CDPatchMummyCoffinClosingCel },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
+	{  true,   480, "CD/Floppy: fix dinosaur bone",                   1, laurabow2SignatureFixDinosaurBone,              laurabow2PatchFixDinosaurBone },
 	{ false,   500, "CD: fix museum actor loops",                     3, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
 	{  true,   520, "CD/Floppy: act 5 trigger",                       1, laurabow2SignatureAct5Trigger,                  laurabow2PatchAct5Trigger },
