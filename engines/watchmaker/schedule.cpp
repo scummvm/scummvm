@@ -39,36 +39,31 @@
 
 namespace Watchmaker {
 
-#define MAXWAITINGMSGS  30
-message WaitingMsg[MAXWAITINGMSGS];
+void MessageSystem::addWaitingMsgs(uint16 flags) {
+	for (int8 a = 0; a < MAXWAITINGMSGS; a++) {
+		_waitingMsg[a].flags &= ~flags;
+	}
 
-/* -----------------18/03/98 16.41-------------------
- *                  AddWaitingMsgs
- * --------------------------------------------------*/
-void AddWaitingMsgs(uint16 flags) {
-	int8 a;
-	for (a = 0; a < MAXWAITINGMSGS; a++)
-		WaitingMsg[a].flags &= ~flags;
-
-	for (a = 0; a < MAXWAITINGMSGS; a++)
-		if (WaitingMsg[a].classe != EventClass::MC_IDLE && (WaitingMsg[a].flags < MP_WAITA)) {
-			_vm->_messageSystem.doEvent(WaitingMsg[a].classe, WaitingMsg[a].event, WaitingMsg[a].flags,
-					WaitingMsg[a].wparam1, WaitingMsg[a].wparam2,
-					WaitingMsg[a].bparam, &WaitingMsg[a].lparam[0], &WaitingMsg[a].lparam[1], &WaitingMsg[a].lparam[2]);
-			memset(&WaitingMsg[a], 0, sizeof(WaitingMsg[a]));
+	for (int8 a = 0; a < MAXWAITINGMSGS; a++) {
+		if (_waitingMsg[a].classe != EventClass::MC_IDLE && (_waitingMsg[a].flags < MP_WAITA)) {
+			_vm->_messageSystem.doEvent(_waitingMsg[a].classe, _waitingMsg[a].event, _waitingMsg[a].flags,
+										_waitingMsg[a].wparam1, _waitingMsg[a].wparam2,
+										_waitingMsg[a].bparam, &_waitingMsg[a].lparam[0], &_waitingMsg[a].lparam[1], &_waitingMsg[a].lparam[2]);
+			memset(&_waitingMsg[a], 0, sizeof(_waitingMsg[a]));
 		}
+	}
 }
 
 /* -----------------25/09/98 16.33-------------------
  *                  DeleteWaitingMsgs
  * --------------------------------------------------*/
-void DeleteWaitingMsgs(uint16 flags) {
+void MessageSystem::deleteWaitingMsgs(uint16 flags) {
 	for (int a = 0; a < MAXWAITINGMSGS; a++)
-		WaitingMsg[a].flags &= ~flags;
+		_waitingMsg[a].flags &= ~flags;
 
 	for (int a = 0; a < MAXWAITINGMSGS; a++)
-		if (WaitingMsg[a].classe != EventClass::MC_IDLE && (WaitingMsg[a].flags < MP_WAITA))
-			memset(&WaitingMsg[a], 0, sizeof(WaitingMsg[a]));
+		if (_waitingMsg[a].classe != EventClass::MC_IDLE && (_waitingMsg[a].flags < MP_WAITA))
+			memset(&_waitingMsg[a], 0, sizeof(_waitingMsg[a]));
 }
 
 /* -----------------08/02/99 10.09-------------------
@@ -82,7 +77,7 @@ bool _GetMessage(pqueue *lq) {
 	lq->len--;
 
 	if (TheMessage->flags & MP_CLEARA)
-		AddWaitingMsgs(MP_WAITA);
+		_vm->_messageSystem.addWaitingMsgs(MP_WAITA);
 
 	return true;
 }
@@ -101,7 +96,7 @@ void MessageSystem::init() {
 	}
 
 	for (int i = 0; i < MAXWAITINGMSGS; i++) {
-		memset(&WaitingMsg[i], 0, sizeof(WaitingMsg[i]));
+		memset(&_waitingMsg[i], 0, sizeof(_waitingMsg[i]));
 	}
 }
 
@@ -136,25 +131,31 @@ void MessageSystem::doEvent(EventClass classe, uint8 event, uint16 flags, int16 
 	if (flags >= MP_WAITA) {
 		int8 a;
 		for (a = 0; a < MAXWAITINGMSGS; a++)
-			if (WaitingMsg[a].classe == EventClass::MC_IDLE)
+			if (_waitingMsg[a].classe == EventClass::MC_IDLE)
 				break;
 		if (a < MAXWAITINGMSGS) {
-			WaitingMsg[a].classe     = classe;
-			WaitingMsg[a].event     = event;
-			WaitingMsg[a].flags     = flags;
-			WaitingMsg[a].wparam1   = wparam1;
-			WaitingMsg[a].wparam2   = wparam2;
-			WaitingMsg[a].bparam    = bparam;
-			if (p0 != nullptr) WaitingMsg[a].lparam[0] = *(int32 *)p0;
-			else    WaitingMsg[a].lparam[0] = 0;
-			if (p1 != nullptr) WaitingMsg[a].lparam[1] = *(int32 *)p1;
-			else    WaitingMsg[a].lparam[1] = 0;
-			if (p2 != nullptr) WaitingMsg[a].lparam[2] = *(int32 *)p2;
-			else    WaitingMsg[a].lparam[2] = 0;
+			_waitingMsg[a].classe     = classe;
+			_waitingMsg[a].event     = event;
+			_waitingMsg[a].flags     = flags;
+			_waitingMsg[a].wparam1   = wparam1;
+			_waitingMsg[a].wparam2   = wparam2;
+			_waitingMsg[a].bparam    = bparam;
+			if (p0 != nullptr)
+				_waitingMsg[a].lparam[0] = *(int32 *)p0;
+			else
+				_waitingMsg[a].lparam[0] = 0;
+			if (p1 != nullptr)
+				_waitingMsg[a].lparam[1] = *(int32 *)p1;
+			else
+				_waitingMsg[a].lparam[1] = 0;
+			if (p2 != nullptr)
+				_waitingMsg[a].lparam[2] = *(int32 *)p2;
+			else
+				_waitingMsg[a].lparam[2] = 0;
 			return;
 		} else {
 			for (a = 0; a < MAXWAITINGMSGS; a++)
-				warning("%d: %d %d %d %d", a, WaitingMsg[a].classe, WaitingMsg[a].event, WaitingMsg[a].flags, WaitingMsg[a].lparam[1]);
+				warning("%d: %d %d %d %d", a, _waitingMsg[a].classe, _waitingMsg[a].event, _waitingMsg[a].flags, _waitingMsg[a].lparam[1]);
 
 			warning("ERRORE! CODA WAITING PIENA! - messy %d %d MAX %d", classe, event, MAXWAITINGMSGS);
 			return;
@@ -305,8 +306,8 @@ void MessageSystem::removeEvent(EventClass classe, uint8 event) {
 	}
 
 	for (b = 0; b < MAXWAITINGMSGS; b++)
-		if ((WaitingMsg[b].classe == classe) && ((event == ME_ALL) || (WaitingMsg[b].event == event)))
-			memset(&WaitingMsg[b], 0, sizeof(WaitingMsg[b]));
+		if ((_waitingMsg[b].classe == classe) && ((event == ME_ALL) || (_waitingMsg[b].event == event)))
+			memset(&_waitingMsg[b], 0, sizeof(_waitingMsg[b]));
 }
 
 /* -----------------18/12/00 16.32-------------------
@@ -331,8 +332,8 @@ void MessageSystem::removeEvent_bparam(EventClass classe, uint8 event, uint8 bpa
 	}
 
 	for (b = 0; b < MAXWAITINGMSGS; b++)
-		if ((WaitingMsg[b].classe == classe) && ((event == ME_ALL) || (WaitingMsg[b].event == event)) && (WaitingMsg[b].bparam == bparam))
-			memset(&WaitingMsg[b], 0, sizeof(WaitingMsg[b]));
+		if ((_waitingMsg[b].classe == classe) && ((event == ME_ALL) || (_waitingMsg[b].event == event)) && (_waitingMsg[b].bparam == bparam))
+			memset(&_waitingMsg[b], 0, sizeof(_waitingMsg[b]));
 }
 
 /* -----------------08/02/99 10.11-------------------

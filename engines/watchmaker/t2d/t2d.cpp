@@ -2356,7 +2356,7 @@ void doT2DMouse(WGame &game) {
 				if ((bSomeOneSpeak) && ((TheMessage->event == ME_MLEFT) || (TheMessage->event == ME_MRIGHT))) {
 					bSkipTalk = TRUE;
 					ClearText();
-					DeleteWaitingMsgs(MP_WAIT_LINK);
+					_vm->_messageSystem.deleteWaitingMsgs(MP_WAIT_LINK);
 					return;
 				}
 

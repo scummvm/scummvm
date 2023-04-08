@@ -135,7 +135,7 @@ void doPlayer(WGame &game) {
 				Player->Walk.NumPathNodes = Player->Walk.CurrentStep = Player->Walk.NumSteps = bNotSkippableWalk = 0;
 
 			if ((!bDialogActive) || (TimeWalk == CurPlayer + ocDARRELL) || (TimeWalk == ocBOTH))
-				AddWaitingMsgs(MP_WAIT_ACT);
+				_vm->_messageSystem.addWaitingMsgs(MP_WAIT_ACT);
 
 			if (TheMessage->event == ME_PLAYERGOTOEXAMINE)
 				_vm->_messageSystem.doEvent(EventClass::MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, TheMessage->wparam1, TheMessage->wparam2, 0, &TheMessage->lparam[0], nullptr, nullptr);
@@ -169,7 +169,7 @@ void ProcessCharacters(WGame &game) {
 		if (Character[i] && (Character[i] != Player) && (Character[i]->Walk.NumSteps))
 			if (!CharNextFrame(game, i))
 				if ((bDialogActive) && (TimeWalk == i))
-					AddWaitingMsgs(MP_WAIT_ACT);
+					_vm->_messageSystem.addWaitingMsgs(MP_WAIT_ACT);
 
 	for (i = 0; i < T3D_MAX_CHARACTERS; i++) {
 		c = Character[i];
