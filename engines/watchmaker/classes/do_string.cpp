@@ -176,7 +176,7 @@ void doString(WGame &game) {
 			bSkipTalk = false;
 			bAnimWaitText = false;
 			ClearText();
-			if (!bDialogActive) AddWaitingMsgs(MP_WAIT_LINK);
+			if (!bDialogActive) _vm->_messageSystem.addWaitingMsgs(MP_WAIT_LINK);
 		} else {
 			TheMessage->flags |= MP_WAIT_RETRACE;
 			ReEvent();
@@ -197,7 +197,7 @@ void doString(WGame &game) {
 			bSkipTalk = false;
 			bAnimWaitText = false;
 			ClearText();
-			if (!bDialogActive) AddWaitingMsgs(MP_WAIT_LINK);
+			if (!bDialogActive) _vm->_messageSystem.addWaitingMsgs(MP_WAIT_LINK);
 		} else {
 			TheMessage->flags |= MP_WAIT_RETRACE;
 			ReEvent();

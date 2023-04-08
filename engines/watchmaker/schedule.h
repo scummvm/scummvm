@@ -30,8 +30,10 @@ namespace Watchmaker {
 
 void ProcessTheMessage(WGame &game);
 void ReEvent();
-void DeleteWaitingMsgs(uint16 flags);
-void AddWaitingMsgs(uint16 flags);
+void deleteWaitingMsgs(uint16 flags);
+void addWaitingMsgs(uint16 flags);
+
+#define MAXWAITINGMSGS  30
 
 class MessageSystem {
 public:
@@ -39,7 +41,11 @@ public:
 	void removeEvent(EventClass classe, uint8 event);
 	void removeEvent_bparam(EventClass classe, uint8 event, uint8 bparam);
 	void scheduler(); // TODO: Rename
+
 	void doEvent(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wparam2, uint8 bparam, void *p0, void *p1, void *p2);
+	void addWaitingMsgs(uint16 flags);
+	void deleteWaitingMsgs(uint16 flags);
+
 	message GameMessage[MAX_MESSAGES];
 	pqueue Game;
 	// message *TheMessage; // TODO: Replace the global variable with this
@@ -47,6 +53,7 @@ public:
 	uint8 SuperEventActivate;
 private:
 	int _maxmsg = 0;
+	message _waitingMsg[MAXWAITINGMSGS];
 	void initQueue(pqueue *lq);
 };
 

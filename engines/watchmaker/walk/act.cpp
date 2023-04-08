@@ -297,9 +297,9 @@ void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 
 	}
 	bNotSkippableWalk = TRUE;
 	BuildStepList(oc, dp, back);
-	DeleteWaitingMsgs(MP_WAIT_PORTAL);
-	DeleteWaitingMsgs(MP_WAIT_ANIM);
-	DeleteWaitingMsgs(MP_WAIT_ACT);
+	_vm->_messageSystem.deleteWaitingMsgs(MP_WAIT_PORTAL);
+	_vm->_messageSystem.deleteWaitingMsgs(MP_WAIT_ANIM);
+	_vm->_messageSystem.deleteWaitingMsgs(MP_WAIT_ACT);
 }
 
 /* -----------------01/07/98 16.10-------------------
@@ -643,9 +643,9 @@ bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint
 	t3dVectCopy(&Char->Pos, &Char->Mesh->Trasl);
 	FindPath(oc, t3dCurCamera);    // Calc path
 	if (CheckPathNodes(oc)) BuildStepList(oc, dp, back);
-	DeleteWaitingMsgs(MP_WAIT_PORTAL);
-	DeleteWaitingMsgs(MP_WAIT_ANIM);
-	DeleteWaitingMsgs(MP_WAIT_ACT);
+	_vm->_messageSystem.deleteWaitingMsgs(MP_WAIT_PORTAL);
+	_vm->_messageSystem.deleteWaitingMsgs(MP_WAIT_ANIM);
+	_vm->_messageSystem.deleteWaitingMsgs(MP_WAIT_ACT);
 	if (Char->Walk.NumSteps >= 2) return TRUE;
 	else return FALSE;
 }

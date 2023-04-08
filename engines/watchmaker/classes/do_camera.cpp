@@ -265,7 +265,7 @@ void NextCameraStep(WGame &game) {
 			bMovingCamera = false;
 			DestCamera = nullptr;
 			t3dVectFill(&OldCameraTarget, 0.0f);
-//			AddWaitingMsgs( MP_WAIT_CAMERA );
+//			_vm->_messageSystem.addWaitingMsgs( MP_WAIT_CAMERA );
 
 			GetCameraTarget(init, &t3dCurCamera->Target);
 			game._renderer->setCurCameraViewport(t3dCurCamera->Fov, bSuperView);
@@ -286,7 +286,7 @@ void NextCameraStep(WGame &game) {
 		CurCameraStep = NumCameraSteps = 0;
 		bMovingCamera = false;
 		DestCamera = nullptr;
-		AddWaitingMsgs(MP_WAIT_CAMERA);
+		_vm->_messageSystem.addWaitingMsgs(MP_WAIT_CAMERA);
 
 //		if( (bFirstPerson) && ( ( CurRoom == r32 ) && ( PlayerPos[CurPlayer+ocDARRELL] == 6 ) ) )
 //			PlayerSpeak( Obj[o32OROLOGIO].action[CurPlayer+ocDARRELL] );
@@ -606,14 +606,14 @@ void ProcessCamera(WGame &game) {
 		bForceDirectCamera = TRUE;
 		t3dCurCameraIndex = 255;
 		t3dLastCameraIndex = 255;
-		AddWaitingMsgs(MP_WAIT_PORTAL);
+		_vm->_messageSystem.addWaitingMsgs(MP_WAIT_PORTAL);
 //		DebugLogFile("PortalCrossed %s",PortalCrossed->Name);
 //		PortalCrossed = nullptr;
 		if (bMovingCamera) {
 			CurCameraStep = NumCameraSteps = 0;
 			bMovingCamera = FALSE;
 			DestCamera = nullptr;
-			AddWaitingMsgs(MP_WAIT_CAMERA);
+			_vm->_messageSystem.addWaitingMsgs(MP_WAIT_CAMERA);
 		}
 		if (bFirstPerson)
 			_vm->_messageSystem.doEvent(EventClass::MC_CAMERA, ME_CAMERA3TO1, MP_DEFAULT, 0, 0, 0, nullptr, nullptr, nullptr);

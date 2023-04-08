@@ -542,7 +542,7 @@ void ProcessTime(WGame &game) {
 				ProcessGopherCamera(game);
 		}
 //		Aggiunge eventi che devo essere lanciati alla fine del frame
-		AddWaitingMsgs(MP_WAIT_RETRACE);
+		_vm->_messageSystem.addWaitingMsgs(MP_WAIT_RETRACE);
 //		Azzera il numero di eventi inviati tra un refresh e l'altro
 		NumTimes = 0;
 
@@ -821,14 +821,14 @@ void doSystem(WGame &game) {
 				TheMessage->lparam[0] = LastT1;
 				ReEvent();
 			} else
-				AddWaitingMsgs(MP_WAITA);
+				_vm->_messageSystem.addWaitingMsgs(MP_WAITA);
 			break;
 		case EFFECT_FADEOUT_T2:
 			if (T2t) {
 				TheMessage->lparam[0] = LastT2;
 				ReEvent();
 			} else
-				AddWaitingMsgs(MP_WAITA);
+				_vm->_messageSystem.addWaitingMsgs(MP_WAITA);
 			break;
 
 		case EFFECT_MOVEIN_T1:
@@ -846,7 +846,7 @@ void doSystem(WGame &game) {
 				ReEvent();
 				LastT1 = TheMessage->lparam[0];
 			} else
-				DeleteWaitingMsgs(MP_WAITA);
+				_vm->_messageSystem.deleteWaitingMsgs(MP_WAITA);
 			break;
 		case EFFECT_MOVEIN_T2:
 			T2t = nullptr;
@@ -863,7 +863,7 @@ void doSystem(WGame &game) {
 				ReEvent();
 				LastT2 = TheMessage->lparam[0];
 			} else
-				DeleteWaitingMsgs(MP_WAITA);
+				_vm->_messageSystem.deleteWaitingMsgs(MP_WAITA);
 			break;
 		case EFFECT_ROOMINFO: {
 			int32 width, height, bpp, time;

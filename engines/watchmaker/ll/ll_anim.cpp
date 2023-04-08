@@ -777,7 +777,7 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		for (a = 0, obj = h->LoopMask; a < MAX_SUBANIMS; a++)
 			if (!bAnimWaitText && h->sub[a].ptr && (h->sub[a].ptr->CurFrame >= 0) && !(obj & (1 << a)))
 				if ((h->sub[a].ptr->Flags & T3D_MESH_CHARACTER) && (bDialogActive)) {
-					AddWaitingMsgs(MP_WAIT_LINK);
+					_vm->_messageSystem.addWaitingMsgs(MP_WAIT_LINK);
 					h->sub[a].ptr->CurFrame = h->LoopEnd;
 					h->sub[a].ptr->BlendPercent = 0;
 					h->CurFrame = h->LoopEnd;
@@ -1611,11 +1611,11 @@ void StopAnim(WGame &game, int32 an) {
 //	Se sono in un dialogo controlla che sia finita l'animazione di Time
 	else if (bDialogActive) {
 		if (an == TimeAnim)
-			AddWaitingMsgs(MP_WAIT_ANIM);
+			_vm->_messageSystem.addWaitingMsgs(MP_WAIT_ANIM);
 	}
 //	Altrimenti aggiungo tutte le anim
 	else
-		AddWaitingMsgs(MP_WAIT_ANIM);
+		_vm->_messageSystem.addWaitingMsgs(MP_WAIT_ANIM);
 
 }
 
