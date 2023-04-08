@@ -42,10 +42,6 @@
 #define PERF_SWITCH_RESET_THRESHOLD                     60
 #define PERF_SWITCH_RESET_REST                          REFRESH_RATE * 30
 
-// Reduce framerate
-#define REDUCE_FRAMERATE_REST           REFRESH_RATE / 2
-#define REDUCE_FRAMERATE_SHIFT_MAX      2
-
 // Thread switch caller
 #define THREAD_SWITCH_POLL              (1 << 0)
 #define THREAD_SWITCH_DELAY             (1 << 1)

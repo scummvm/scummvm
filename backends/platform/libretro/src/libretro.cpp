@@ -115,11 +115,11 @@ static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 	samples_per_frame_buffer_size = samples_per_frame << 1 * sizeof(int16_t);
 
 	if (sound_buffer)
-		sound_buffer = (int16_t *)realloc(sound_buffer, samples_per_frame_buffer_size << REDUCE_FRAMERATE_SHIFT_MAX);
+		sound_buffer = (int16_t *)realloc(sound_buffer, samples_per_frame_buffer_size);
 	else
-		sound_buffer = (int16_t *)malloc(samples_per_frame_buffer_size << REDUCE_FRAMERATE_SHIFT_MAX);
+		sound_buffer = (int16_t *)malloc(samples_per_frame_buffer_size);
 	if (sound_buffer)
-		memset(sound_buffer, 0, samples_per_frame_buffer_size << REDUCE_FRAMERATE_SHIFT_MAX);
+		memset(sound_buffer, 0, samples_per_frame_buffer_size);
 	else
 		log_cb(RETRO_LOG_ERROR, "audio_buffer_init error.\n");
 
@@ -775,21 +775,7 @@ void retro_run(void) {
 			/* Retrieve audio */
 			samples_count = 0;
 			if (audio_video_enable & 2) {
-				/* Framerate reduction using sound buffer size */
-				if ((audio_status & (AUDIO_STATUS_BUFFER_SUPPORT | AUDIO_STATUS_MUTE | AUDIO_STATUS_BUFFER_UNDERRUN)) == (AUDIO_STATUS_BUFFER_SUPPORT | AUDIO_STATUS_BUFFER_UNDERRUN)) {
-					if (reduce_framerate_shift < REDUCE_FRAMERATE_SHIFT_MAX)
-						reduce_framerate_shift++;
-					reduce_framerate_countdown = REDUCE_FRAMERATE_REST;
-				}
-
-				if (reduce_framerate_countdown)
-					reduce_framerate_countdown--;
-				else if (getThreadSwitchCaller() & THREAD_SWITCH_UPDATE)
-					reduce_framerate_shift = REDUCE_FRAMERATE_SHIFT_MAX;
-				else
-					reduce_framerate_shift = 0;
-
-				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size << reduce_framerate_shift);
+				samples_count = ((Audio::MixerImpl *)g_system->getMixer())->mixCallback((byte *) sound_buffer, samples_per_frame_buffer_size);
 			}
 			audio_status = samples_count ? (audio_status & ~AUDIO_STATUS_MUTE) : (audio_status | AUDIO_STATUS_MUTE);
 
