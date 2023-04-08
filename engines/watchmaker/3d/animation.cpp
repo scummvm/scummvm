@@ -24,18 +24,17 @@
 
 #include "watchmaker/3d/animation.h"
 #include "watchmaker/3d/geometry.h"
-#include "watchmaker/t3d.h"
-#include "watchmaker/types.h"
-#include "watchmaker/3d/t3d_body.h"
-#include "watchmaker/3d/t3d_mesh.h"
-#include "watchmaker/t3d.h"
-#include "watchmaker/types.h"
 #include "watchmaker/3d/loader.h"
 #include "watchmaker/3d/math/llmath.h"
+#include "watchmaker/3d/t3d_body.h"
+#include "watchmaker/3d/t3d_mesh.h"
+#include "watchmaker/file_utils.h"
+#include "watchmaker/game.h"
 #include "watchmaker/ll/ll_system.h"
+#include "watchmaker/t3d.h"
+#include "watchmaker/types.h"
 #include "watchmaker/utils.h"
 #include "watchmaker/windows_hacks.h"
-#include "watchmaker/game.h"
 
 /* -----------------16/12/98 10.32-------------------
  *              PRELOADEDANIMS
@@ -164,7 +163,6 @@ int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
 	t3dBONE *b;
 	t3dV3F t;
 	t3dF32 c;
-	char name[100];
 
 //	Prova a vedere se l'ho gia' precaricata
 	for (CurPreloadedAnim = 0; CurPreloadedAnim < MAX_PRELOADED_ANIMS; CurPreloadedAnim++)
@@ -200,34 +198,28 @@ int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
 		p->name = s;
 
 //		Carica la nuova animazione
-		memset(name, 0, sizeof(name));
-		strcpy(&name[0], game.workDirs._a3dDir.c_str());
-		strcat(&name[0], &s[0]);
-		len = strlen(name);
-		name[len - 3] = 'a';
-		name[len - 2] = '3';
-		name[len - 1] = 'd';
+		Common::String name = game.workDirs._a3dDir + replaceExtension(s, "a3d");
 
 		{
-			auto stream = game.resolveFile(name);
+			auto stream = game.resolveFile(name.c_str());
 			if (!stream) {
-				warning("File %s not found", name);
+				warning("File %s not found", name.c_str());
 				return -1;
 			}
 
 			if ((i = stream->readByte()) != A3DFILEVERSION) {
-				warning("%s file incompatible: current version: %d.\tFile version: %d", name, A3DFILEVERSION, i);
+				warning("%s file incompatible: current version: %d.\tFile version: %d", name.c_str(), A3DFILEVERSION, i);
 				return -1;
 			}
 
 			nb = stream->readSint16LE();
 			nf = stream->readSint16LE();
 			if (nf == 0) {
-				warning("%s has N0 frames!", name);
+				warning("%s has N0 frames!", name.c_str());
 				return -1;
 			}
 			if (nb >= MAX_BONES) {
-				warning("%s has too many bones (%d, MAX is %d)!", name, j, MAX_BONES);
+				warning("%s has too many bones (%d, MAX is %d)!", name.c_str(), j, MAX_BONES);
 				return -1;
 			}
 			p->NumBones = nb;
