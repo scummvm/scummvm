@@ -48,6 +48,7 @@ MODULE_OBJS += \
 	mm1/game/spells_monsters.o \
 	mm1/game/use_item.o \
 	mm1/game/view_base.o \
+	mm1/game/wheel_spin.o \
 	mm1/gfx/dta.o \
 	mm1/gfx/gfx.o \
 	mm1/gfx/screen_decoder.o \
@@ -125,6 +126,7 @@ MODULE_OBJS += \
 	mm1/views/text_view.o \
 	mm1/views/trap.o \
 	mm1/views/unlock.o \
+	mm1/views/wheel_spin.o \
 	mm1/views_enh/spells/cast_spell.o \
 	mm1/views_enh/spells/spellbook.o \
 	mm1/views_enh/button_container.o \
@@ -165,6 +167,7 @@ MODULE_OBJS += \
 	mm1/views_enh/trade.o \
 	mm1/views_enh/trap.o \
 	mm1/views_enh/unlock.o \
+	mm1/views_enh/wheel_spin.o \
 	mm1/views_enh/which_character.o \
 	mm1/views_enh/which_item.o \
 	mm1/views_enh/who_will_try.o \

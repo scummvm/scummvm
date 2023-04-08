@@ -19,44 +19,43 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP16_H
-#define MM1_MAPS_MAP16_H
-
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views_enh/wheel_spin.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
-namespace Maps {
+namespace ViewsEnh {
 
-class Map16 : public Map {
-	typedef void (Map16:: *SpecialFn)();
-private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
+WheelSpin::WheelSpin() : ScrollView("WheelSpin") {
+	setBounds(Common::Rect(0, 90, 234, 200));
+}
 
-	const SpecialFn SPECIAL_FN[8] = {
-		&Map16::special00,
-		&Map16::special01,
-		&Map16::special02,
-		&Map16::special03,
-		&Map16::special03,
-		&Map16::special03,
-		&Map16::special03,
-		&Map16::special03
-	};
-public:
-	Map16() : Map(16, "areaa3", 0xb02, 2) {}
+bool WheelSpin::msgFocus(const FocusMessage &msg) {
+	TextView::msgFocus(msg);
+	spin();
+	return true;
+}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
-};
+void WheelSpin::draw() {
+	ScrollView::draw();
 
-} // namespace Maps
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		const Character &c = g_globals->_party[i];
+		writeLine(i, c._name, ALIGN_LEFT, 0);
+		writeLine(i, _results[i], ALIGN_LEFT, 100);
+	}
+}
+
+bool WheelSpin::msgKeypress(const KeypressMessage &msg) {
+	close();
+	return true;
+}
+
+bool WheelSpin::msgAction(const ActionMessage &msg) {
+	close();
+	return true;
+}
+
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
-
-#endif

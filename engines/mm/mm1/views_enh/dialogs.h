@@ -46,6 +46,7 @@
 #include "mm/mm1/views_enh/trade.h"
 #include "mm/mm1/views_enh/trap.h"
 #include "mm/mm1/views_enh/unlock.h"
+#include "mm/mm1/views_enh/wheel_spin.h"
 #include "mm/mm1/views_enh/which_character.h"
 #include "mm/mm1/views_enh/which_item.h"
 #include "mm/mm1/views_enh/who_will_try.h"
@@ -116,6 +117,7 @@ private:
 	ViewsEnh::Trade _trade;
 	ViewsEnh::Trap _trap;
 	ViewsEnh::Unlock _unlock;
+	ViewsEnh::WheelSpin _wheelSpin;
 	ViewsEnh::WhichCharacter _whichCharacter;
 	ViewsEnh::WhichItem _whichItem;
 	ViewsEnh::WhoWillTry _whoWillTry;

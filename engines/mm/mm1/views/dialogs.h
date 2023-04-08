@@ -44,6 +44,7 @@
 #include "mm/mm1/views/search.h"
 #include "mm/mm1/views/trap.h"
 #include "mm/mm1/views/unlock.h"
+#include "mm/mm1/views/wheel_spin.h"
 #include "mm/mm1/views/locations/blacksmith.h"
 #include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/locations/market.h"
@@ -90,6 +91,7 @@ struct Dialogs {
 private:
 	Views::AreYouReady _areYouReady;
 	Views::Bash _bash;
+	Views::CharacterInfo _characterInfo;
 	Views::Characters _characters;
 	Views::CharacterViewCombat _characterViewCombat;
 	Views::Combat _combat;
@@ -106,7 +108,7 @@ private:
 	Views::Title _title;
 	Views::Trap _trap;
 	Views::Unlock _unlock;
-	Views::CharacterInfo _characterInfo;
+	Views::WheelSpin _wheelSpin;
 
 	Views::Locations::Blacksmith _blacksmith;
 	Views::Locations::Inn _inn;

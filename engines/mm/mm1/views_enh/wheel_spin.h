@@ -19,43 +19,29 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP16_H
-#define MM1_MAPS_MAP16_H
+#ifndef MM1_VIEWS_ENH_WHEEL_SPIN_H
+#define MM1_VIEWS_ENH_WHEEL_SPIN_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views_enh/scroll_view.h"
+#include "mm/mm1/game/wheel_spin.h"
 
 namespace MM {
 namespace MM1 {
-namespace Maps {
+namespace ViewsEnh {
 
-class Map16 : public Map {
-	typedef void (Map16:: *SpecialFn)();
-private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
-
-	const SpecialFn SPECIAL_FN[8] = {
-		&Map16::special00,
-		&Map16::special01,
-		&Map16::special02,
-		&Map16::special03,
-		&Map16::special03,
-		&Map16::special03,
-		&Map16::special03,
-		&Map16::special03
-	};
+class WheelSpin : public ScrollView, public MM1::Game::WheelSpin {
 public:
-	Map16() : Map(16, "areaa3", 0xb02, 2) {}
+	WheelSpin();
+	virtual ~WheelSpin() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+
 };
 
-} // namespace Maps
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

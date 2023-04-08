@@ -19,43 +19,28 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP16_H
-#define MM1_MAPS_MAP16_H
+#ifndef MM1_GAME_WHEEL_SPIN_H
+#define MM1_GAME_WHEEL_SPIN_H
 
-#include "mm/mm1/maps/map.h"
+#include "common/str-array.h"
+#include "mm/mm1/game/game_logic.h"
 
 namespace MM {
 namespace MM1 {
-namespace Maps {
+namespace Game {
 
-class Map16 : public Map {
-	typedef void (Map16:: *SpecialFn)();
-private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
-
-	const SpecialFn SPECIAL_FN[8] = {
-		&Map16::special00,
-		&Map16::special01,
-		&Map16::special02,
-		&Map16::special03,
-		&Map16::special03,
-		&Map16::special03,
-		&Map16::special03,
-		&Map16::special03
-	};
+class WheelSpin : public GameLogic {
+protected:
+	Common::StringArray _results;
 public:
-	Map16() : Map(16, "areaa3", 0xb02, 2) {}
-
 	/**
-	 * Handles all special stuff that happens on the map
+	 * Spins the wheel for the party, and loads _results with
+	 * the result for each character
 	 */
-	void special() override;
+	void spin();
 };
 
-} // namespace Maps
+} // namespace Game
 } // namespace MM1
 } // namespace MM
 
