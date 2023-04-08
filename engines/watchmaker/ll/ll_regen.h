@@ -28,7 +28,6 @@ class WGame;
 
 void ResetScreenBuffer();
 void AfterRender(WGame &game);
-void Add2DStuff(WGame &game);
 void Add3DStuff(WGame &game);
 
 } // End of namespace Watchmaker

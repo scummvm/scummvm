@@ -23,12 +23,13 @@
 #define WATCHMAKER_RENDERER_H
 
 #include "math/matrix4.h"
-#include "watchmaker/utils.h"
-#include "watchmaker/sdl_wrapper.h"
-#include "watchmaker/types.h"
-#include "watchmaker/struct.h"
-#include "watchmaker/work_dirs.h"
+#include "watchmaker/2d_stuff.h"
 #include "watchmaker/rect.h"
+#include "watchmaker/sdl_wrapper.h"
+#include "watchmaker/struct.h"
+#include "watchmaker/types.h"
+#include "watchmaker/utils.h"
+#include "watchmaker/work_dirs.h"
 
 namespace Watchmaker {
 
@@ -45,6 +46,8 @@ class Renderer {
 	WorkDirs *_workDirs;
 	WGame *_game;
 public:
+	TwoDeeStuff _2dStuff;
+
 	Fonts *_fonts = nullptr;
 	Rect _viewport;
 	Renderer(WGame *game, sdl_wrapper *wrapper);
@@ -87,6 +90,8 @@ public:
 
 	bool setProjectionMatrix(float width, float height, float fAspect, float fNearPlane, float fFarPlane);
 	Math::Vector3d screenSpaceToCameraSpace(float x, float y);
+
+	void add2DStuff();
 private:
 	sdl_wrapper *sdl;
 	// aspect correction

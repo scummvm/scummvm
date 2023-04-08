@@ -226,7 +226,7 @@ void PaintText(WGame &game) {
 					break;
 				}
 			}
-			DisplayDDText(*game._renderer, TextLines[i], FontKind::Standard, color, TheString.x + dx, TheString.y + i * 12, 0, 0, 0, 0);
+			game._renderer->_2dStuff.displayDDText(TextLines[i], FontKind::Standard, color, TheString.x + dx, TheString.y + i * 12, 0, 0, 0, 0);
 		}
 	}
 }
@@ -244,22 +244,22 @@ void PaintInventory(WGame &game) {
 			DisplayD3DRect(renderer, 27, 77, 188, 490, 18, 25, 18, 128);
 			DisplayD3DRect(renderer, 13, 124, 14, 49, 18, 25, 18, 128);
 			DisplayD3DRect(renderer, 215, 472, 12, 50, 18, 25, 18, 128);
-			DisplayDDBitmap(renderer, Console1, 3, 73, 0, 0, 0, 0);
+			renderer._2dStuff.displayDDBitmap(Console1, 3, 73, 0, 0, 0, 0);
 
 			if (InvLen[CurPlayer] > MAX_SHOWN_ICONS) {
 				if (InvBase[CurPlayer] > 0)
-					DisplayDDBitmap(renderer, ConsoleFrecciaSu, 3 + 14, 73 + 66, 0, 0, 0, 0);
+					renderer._2dStuff.displayDDBitmap(ConsoleFrecciaSu, 3 + 14, 73 + 66, 0, 0, 0, 0);
 
 				if (InvBase[CurPlayer] < (InvLen[CurPlayer] - MAX_SHOWN_ICONS))
-					DisplayDDBitmap(renderer, ConsoleFrecciaGiu, 3 + 206, 73 + 416, 0, 0, 0, 0);
+					renderer._2dStuff.displayDDBitmap(ConsoleFrecciaGiu, 3 + 206, 73 + 416, 0, 0, 0, 0);
 			}
 		}
 
 		if ((InvStatus & INV_MODE1) && PlayerCanCall(game._gameVars)) {
 			if (CurPlayer == VICTORIA)
-				DisplayDDBitmap(renderer, Console5, 22, 13, 0, 0, 0, 0);
+				renderer._2dStuff.displayDDBitmap(Console5, 22, 13, 0, 0, 0, 0);
 			else
-				DisplayDDBitmap(renderer, Console6, 22, 13, 0, 0, 0, 0);
+				renderer._2dStuff.displayDDBitmap(Console6, 22, 13, 0, 0, 0, 0);
 		}
 
 		if ((InvStatus & INV_MODE2) || (bT2DActive == tOPTIONS)) {
@@ -274,18 +274,18 @@ void PaintInventory(WGame &game) {
 			}
 
 			if (CurPlayer == DARRELL)
-				DisplayDDBitmap(renderer, Console3, 22 + console_3_4_xoffs, 13, ox, 0, 0, 0);
+				renderer._2dStuff.displayDDBitmap(Console3, 22 + console_3_4_xoffs, 13, ox, 0, 0, 0);
 			else
-				DisplayDDBitmap(renderer, Console4, 22 + console_3_4_xoffs, 13, ox, 0, 0, 0);
+				renderer._2dStuff.displayDDBitmap(Console4, 22 + console_3_4_xoffs, 13, ox, 0, 0, 0);
 
 			if (!PlayerCanSave())
-				DisplayDDBitmap(renderer, ConsoleNoSave, 227 + 22 + console_3_4_xoffs, 13,  0, 0, 0, 0);
+				renderer._2dStuff.displayDDBitmap(ConsoleNoSave, 227 + 22 + console_3_4_xoffs, 13,  0, 0, 0, 0);
 
 			if ((bT2DActive != tOPTIONS) && (!PlayerCanSwitch(game._gameVars, 0))) {
 				if (CurPlayer == DARRELL)
-					DisplayDDBitmap(renderer, ConsoleNoSwitchDar, 61 + 22 + console_3_4_xoffs, 13,  0, 0, 0, 0);
+					renderer._2dStuff.displayDDBitmap(ConsoleNoSwitchDar, 61 + 22 + console_3_4_xoffs, 13,  0, 0, 0, 0);
 				else
-					DisplayDDBitmap(renderer, ConsoleNoSwitchVic, 61 + 22 + console_3_4_xoffs, 13,  0, 0, 0, 0);
+					renderer._2dStuff.displayDDBitmap(ConsoleNoSwitchVic, 61 + 22 + console_3_4_xoffs, 13,  0, 0, 0, 0);
 			}
 		}
 
@@ -293,16 +293,16 @@ void PaintInventory(WGame &game) {
 			for (a = 0; a < MAX_SHOWN_ICONS; a++) {
 				if (ci = Inv[CurPlayer][InvBase[CurPlayer] + a]) {
 					if (CurInvObj == ci)
-						DisplayDDText(renderer, ObjName[init.InvObj[ci].name], FontKind::Standard, RED_FONT, INV_MARG_SX, INV_MARG_UP + ICON_DY * a, 0, 0, 0, 0);
+						renderer._2dStuff.displayDDText(ObjName[init.InvObj[ci].name], FontKind::Standard, RED_FONT, INV_MARG_SX, INV_MARG_UP + ICON_DY * a, 0, 0, 0, 0);
 					else
-						DisplayDDText(renderer, ObjName[init.InvObj[ci].name], FontKind::Standard, WHITE_FONT, INV_MARG_SX, INV_MARG_UP + ICON_DY * a, 0, 0, 0, 0);
+						renderer._2dStuff.displayDDText(ObjName[init.InvObj[ci].name], FontKind::Standard, WHITE_FONT, INV_MARG_SX, INV_MARG_UP + ICON_DY * a, 0, 0, 0, 0);
 				}
 			}
 		}
 	} else if ((bUseWith & UW_ON) && (bUseWith & UW_USEDI)) {
 		DisplayD3DRect(renderer, game._gameRect._useIconRect.x1 + 3, game._gameRect._useIconRect.y1 + 3, 63, 63, 22, 31, 22, 75);
-		DisplayDDBitmap(renderer, IconsPics[UseWith[USED]], game._gameRect._useIconRect.x1 + 3, game._gameRect._useIconRect.y1 + 3,  0, 0, 0, 0);
-		DisplayDDBitmap(renderer, Console2, game._gameRect._useIconRect.x1, game._gameRect._useIconRect.y1,  0, 0, 0, 0);
+		renderer._2dStuff.displayDDBitmap(IconsPics[UseWith[USED]], game._gameRect._useIconRect.x1 + 3, game._gameRect._useIconRect.y1 + 3,  0, 0, 0, 0);
+		renderer._2dStuff.displayDDBitmap(Console2, game._gameRect._useIconRect.x1, game._gameRect._useIconRect.y1,  0, 0, 0, 0);
 	}
 	PaintDialog(game);
 }

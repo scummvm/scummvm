@@ -274,64 +274,39 @@ void AddPaintRect(int32 tnum, int32 px, int32 py, int32 ox, int32 oy, int32 dx, 
 	PaintRect[a].dy    = (dy);
 }
 
-/* -----------------27/10/98 17.14-------------------
- *                  Add2DStuff
- * --------------------------------------------------*/
-void Add2DStuff(WGame &game) {
-	struct SDDBitmap *b;
-	struct SDDText *t, *r;
-	int32 cmx, cmy;
-	int32 a, c;
-	Renderer &renderer = *game._renderer;
-
-	// Reset paint structure
-	memset(PaintRect, 0, sizeof(PaintRect));
+void Renderer::add2DStuff() {
 	// Insert pre-calculated images and texts
-	memcpy(PaintRect, DDBitmapsList, sizeof(struct SDDBitmap)*MAX_DD_BITMAPS);
+	_2dStuff.writeBitmapListTo(PaintRect);
 
-	// Destroys pre-rendered writings that are no longer needed
-	for (c = 0, r = &RendText[0]; c < MAX_REND_TEXTS; c++, r++) {
-		if (!r->text[0]) continue;
-
-		for (a = 0, t = &DDTextsList[0]; a < MAX_DD_TEXTS; a++, t++) {
-			if (!t->text[0]) continue;
-
-			if (!strcmp(t->text, r->text) && (t->color == r->color) && (t->font == r->font))
-				break;
-		}
-		// If it should no longer be displayed
-		if (a >= MAX_DD_TEXTS) {
-			rReleaseBitmap(r->tnum);
-			memset(r, 0, sizeof(struct SDDText));
-		}
-	}
+	_2dStuff.garbageCollectPreRenderedText();
 
 	// Put mouse over everything
 	if ((!mHide) && (CurDialog <= dSUPERVISORE) && (!bTitoliCodaStatic) && (!bTitoliCodaScrolling)) {
+		int32 cmx = mPosx - mHotspotX;
+		int32 cmy = mPosy - mHotspotY;
 
-		cmx = mPosx - mHotspotX;
-		cmy = mPosy - mHotspotY;
-		if (cmx >= MousePointerLim.x2) cmx = MousePointerLim.x2 - 1;
-		else if (cmx <= MousePointerLim.x1) cmx = MousePointerLim.x1 + 1;
-		if (cmy >= MousePointerLim.y2) cmy = MousePointerLim.y2 - 1;
-		else if (cmy <= MousePointerLim.y1) cmy = MousePointerLim.y1 + 1;
+		if (cmx >= MousePointerLim.x2)
+			cmx = MousePointerLim.x2 - 1;
+		else if (cmx <= MousePointerLim.x1)
+			cmx = MousePointerLim.x1 + 1;
+
+		if (cmy >= MousePointerLim.y2)
+			cmy = MousePointerLim.y2 - 1;
+		else if (cmy <= MousePointerLim.y1)
+			cmy = MousePointerLim.y1 + 1;
 
 		// Draw the current mouse pointer
 		if (CurMousePointer > 0)
-			AddPaintRect(CurMousePointer, (cmx), (cmy), 0, 0, renderer.getBitmapDimX(CurMousePointer), renderer.getBitmapDimY(CurMousePointer));
+			AddPaintRect(CurMousePointer, (cmx), (cmy), 0, 0, this->getBitmapDimX(CurMousePointer), this->getBitmapDimY(CurMousePointer));
 	}
 
-	Regen(game);
+	Regen(*_game);
 
-	for (a = 0, b = &DDBitmapsList[0]; a < MAX_DD_BITMAPS; a++, b++)
-		b->tnum = b->px = b->py = b->ox = b->oy = b->dx = b->dy = 0;
-	for (a = 0, t = &DDTextsList[0]; a < MAX_DD_TEXTS; a++, t++) {
-		memset(t->text, 0, sizeof(t->text));
-		t->tnum = 0;
-	}
+	_2dStuff.clearBitmapList();
+	_2dStuff.clearTextList();
 
 	//check
-	CheckExtraLocalizationStrings(*game._renderer, 0);
+	CheckExtraLocalizationStrings(*this, 0);
 }
 
 /* -----------------27/10/98 17.14-------------------

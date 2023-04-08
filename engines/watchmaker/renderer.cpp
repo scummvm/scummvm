@@ -40,7 +40,7 @@
 
 namespace Watchmaker {
 
-Renderer::Renderer(WGame *game, sdl_wrapper *wrapper) : sdl(wrapper), _game(game) {
+Renderer::Renderer(WGame *game, sdl_wrapper *wrapper) : _2dStuff(this), sdl(wrapper), _game(game) {
 	_workDirs = &game->workDirs;
 }
 

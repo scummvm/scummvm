@@ -676,136 +676,6 @@ void DisplayD3DRect(Renderer &renderer, int32 px, int32 py, int32 dx, int32 dy, 
 	D3DRectsList[a].a = al;
 }
 
-/* -----------------24/04/98 10.33-------------------
- *                  DisplayDDBitmap
- * --------------------------------------------------*/
-void DisplayDDBitmap(Renderer &renderer, int32 tnum, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy) {
-	int32 a;
-	for (a = 0; a < MAX_DD_BITMAPS; a++)
-		if (!DDBitmapsList[a].tnum)
-			break;
-
-	if (a >= MAX_DD_BITMAPS) {
-		warning("Too many DD Bitmaps!");
-		return ;
-	}
-
-	DDBitmapsList[a].tnum  = tnum;
-	DDBitmapsList[a].px    = renderer.rFitX(px);
-	DDBitmapsList[a].py    = renderer.rFitY(py);
-	DDBitmapsList[a].ox    = renderer.rFitX(px + ox) - renderer.rFitX(px);
-	DDBitmapsList[a].oy    = renderer.rFitY(py + oy) - renderer.rFitY(py);
-	DDBitmapsList[a].dx    = renderer.rFitX(px + dx) - renderer.rFitX(px);
-	DDBitmapsList[a].dy    = renderer.rFitY(py + dy) - renderer.rFitY(py);
-	if (dx <= 0) DDBitmapsList[a].dx += renderer.getBitmapDimX(tnum) - DDBitmapsList[a].ox;
-	if (dy <= 0) DDBitmapsList[a].dy += renderer.getBitmapDimY(tnum) - DDBitmapsList[a].oy;
-}
-
-/* -----------------22/11/00 12.15-------------------
- *                  DisplayDDBitmap_NoFit
- * --------------------------------------------------*/
-void DisplayDDBitmap_NoFit(Renderer &renderer, int32 tnum, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy) {
-	int32 a;
-	for (a = 0; a < MAX_DD_BITMAPS; a++)
-		if (!DDBitmapsList[a].tnum)
-			break;
-
-	if (a >= MAX_DD_BITMAPS) {
-		warning("Too many DD Bitmaps!");
-		return ;
-	}
-
-	DDBitmapsList[a].tnum  = tnum;
-	DDBitmapsList[a].px    = (px);
-	DDBitmapsList[a].py    = (py);
-	DDBitmapsList[a].ox    = (px + ox) - (px);
-	DDBitmapsList[a].oy    = (py + oy) - (py);
-	DDBitmapsList[a].dx    = (px + dx) - (px);
-	DDBitmapsList[a].dy    = (py + dy) - (py);
-	if (dx <= 0) DDBitmapsList[a].dx += renderer.getBitmapDimX(tnum) - DDBitmapsList[a].ox;
-	if (dy <= 0) DDBitmapsList[a].dy += renderer.getBitmapDimY(tnum) - DDBitmapsList[a].oy;
-}
-
-/* -----------------15/11/00 12.16-------------------
- *                  RendDDText
- * --------------------------------------------------*/
-int32 RendDDText(Renderer &renderer, char *text, FontKind font, FontColor color) {
-	struct SDDText *r;
-	int32 c, tdx, tdy;
-	char info[100];
-
-	if ((!text) || (text[0] == '\0')) return -1;
-
-	for (c = 0, r = &RendText[0]; c < MAX_REND_TEXTS; c++, r++) {
-		if (r->text[0]) continue;
-//		Prende dimesioni della scritta da renderizzare
-		renderer._fonts->getTextDim(text, font, &tdx, &tdy);
-//		Crea una surface che la contenga
-		r->tnum = rCreateSurface(tdx, tdy, rBITMAPSURFACE);
-		renderer.clearBitmap(r->tnum, 0, 0, tdx, tdy, 0, 0, 0);
-//		Renderizza la scritta nella surface
-//DebugLogWindow("Creo testo %s | %d %d",text,tdx,tdy );
-		renderer.printText(text, r->tnum,  font, color, 0, 0);
-		strcpy(info, "text: ");
-		strncat(info, text, 15);
-//DebugLogWindow("Creato %s",info);
-		rSetBitmapName(r->tnum, info);
-		strcpy(r->text, text);
-		r->color = color;
-		r->font = font;
-		return r->tnum;
-	}
-
-	return -1;
-}
-
-/* -----------------24/04/98 10.33-------------------
- *                  DisplayDDText
- * --------------------------------------------------*/
-void DisplayDDText(Renderer &renderer, char *text, FontKind font, FontColor color, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy) {
-	struct SDDText *t, *r;
-	int32 a, c;
-
-	if ((!text) || (text[0] == '\0')) return;
-
-	for (a = 0; a < MAX_DD_TEXTS; a++)
-		if (!DDTextsList[a].text[0])
-			break;
-
-	if (a >= MAX_DD_TEXTS) {
-		warning("Too many DD Texts!");
-		return ;
-	}
-
-	strcpy(DDTextsList[a].text, text);
-	DDTextsList[a].tnum  = -1;
-	DDTextsList[a].font  = font;
-	DDTextsList[a].color = color;
-
-	t = &DDTextsList[a];
-//	Prova a cercare tra le scritte prenrenderizzate
-	for (c = 0, r = &RendText[0]; c < MAX_REND_TEXTS; c++, r++) {
-		if (!r->text[0]) continue;
-
-		if (!strcmp(t->text, r->text) && (t->color == r->color) && (t->font == r->font)) {
-			DisplayDDBitmap(renderer, r->tnum, px, py, ox, oy, dx, dy);
-			break;
-		}
-	}
-//	se non ho prerenderizzato la scritta, la renderizzo ora
-	if (c >= MAX_REND_TEXTS) {
-		/*      if( ( r->tnum = RendDDText( t->text, t->font, t->color ) ) > 0 )
-		//          Aggiunge il bitmap con la scritta pre-renderizzata da visualizzare
-		            DisplayDDBitmap( r->tnum, px, py, ox, oy, dx, dy );*/
-
-		int32 tn;
-		if ((tn = RendDDText(renderer, t->text, t->font, t->color)) > 0)
-//          Aggiunge il bitmap con la scritta pre-renderizzata da visualizzare
-			DisplayDDBitmap(renderer, tn, px, py, ox, oy, dx, dy);
-	}
-}
-
-
 /* -----------------15/01/99 18.15-------------------
  *              GetDDBitmapExtends
  * --------------------------------------------------*/
@@ -834,7 +704,7 @@ void DebugVideo(Renderer &renderer, int32 px, int32 py, const char *format, ...)
 	vsprintf(str, format, args);
 	va_end(args);
 
-	DisplayDDText(renderer, str, FontKind::Standard, WHITE_FONT, px, py, 0, 0, 0, 0);
+	renderer._2dStuff.displayDDText(str, FontKind::Standard, WHITE_FONT, px, py, 0, 0, 0, 0);
 //	rPrintText( str, 0, StandardFont.Color[WHITE_FONT], StandardFont.Table, px, py );
 }
 

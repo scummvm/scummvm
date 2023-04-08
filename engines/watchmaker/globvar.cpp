@@ -47,9 +47,6 @@ GameRect::GameRect() {
 struct SD3DRect D3DRectsList[MAX_D3D_RECTS];
 struct SD3DTriangle D3DTrianglesList[MAX_D3D_TRIANGLES];
 struct SD3DBitmap D3DBitmapsList[MAX_D3D_BITMAPS];
-struct SDDBitmap DDBitmapsList[MAX_DD_BITMAPS];
-struct SDDText DDTextsList[MAX_DD_TEXTS];
-struct SDDText RendText[MAX_REND_TEXTS];
 
 // 2D INTERFACE
 int32 MainDx, MainDy, MainBpp;
