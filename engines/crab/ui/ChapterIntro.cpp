@@ -64,8 +64,6 @@ bool ChapterIntro::HandleEvents(SDL_Event &Event) {
 
 void ChapterIntro::Draw(pyrodactyl::event::Info &info, std::string &text,
 						pyrodactyl::anim::Sprite *cur_sp, const pyrodactyl::people::PersonState &state) {
-	warning("STUB: ChapterIntro::Draw()");
-#if 0
 	dialog.Draw(false);
 	dialog.Draw(info, text);
 
@@ -75,7 +73,6 @@ void ChapterIntro::Draw(pyrodactyl::event::Info &info, std::string &text,
 		Rect clip = cur_sp->DialogClip(state);
 		gImageManager.Draw(pos.x, pos.y, cur_sp->Img(), &clip);
 	}
-#endif
 }
 
 } // End of namespace Crab
