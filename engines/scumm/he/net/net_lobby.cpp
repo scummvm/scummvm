@@ -957,13 +957,16 @@ void Lobby::handleGameSession(int sessionId) {
 }
 
 void Lobby::gameStarted(int hoster, int player, int playerNameArray) {
+	// NOTE: Due to how the new netcode works, hoster always returns 1 and player always returns 2.
+	// This will break things if the actual host and opponent ids are not 1 and 2 respectively,
+	// so we're using the stored variables here instead of what the game gave us.
 	if (ConfMan.getBool("enable_competitive_mods")) {
 		// Only if we're online and in Prince Rupert
 		if (_vm->_game.id == GID_BASEBALL2001 && _vm->readVar(399) == 1 && _vm->readVar(686) == 1) {
 			// Request teams for this client and opponent
 			Common::JSONObject getTeamsRequest;
 			getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
-			getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)player));
+			getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)_playerId));
 			send(getTeamsRequest);
 		}
 	}
@@ -971,17 +974,12 @@ void Lobby::gameStarted(int hoster, int player, int playerNameArray) {
 	char playerName[16];
 	_vm->getStringFromArray(playerNameArray, playerName, sizeof(playerName));
 
-	if (hoster != _userId) {
-		warning("LOBBY: Got game started op but the hoster wasn't us!");
-		return;
-	}
-
 	// Don't accept anymore sessions.
 	_vm->_net->disableSessionJoining();
 
 	Common::JSONObject gameStartedRequest;
 	gameStartedRequest.setVal("cmd", new Common::JSONValue("game_started"));
-	gameStartedRequest.setVal("user", new Common::JSONValue((long long int)player));
+	gameStartedRequest.setVal("user", new Common::JSONValue((long long int)_playerId));
 
 	send(gameStartedRequest);
 }
