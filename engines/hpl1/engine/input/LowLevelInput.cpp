@@ -64,8 +64,8 @@ void LowLevelInput::EndInputUpdate() {
 
 //-----------------------------------------------------------------------
 
-iMouse *LowLevelInput::CreateMouse() {
-	return hplNew(iMouse, (this, _lowLevelGraphics));
+Mouse *LowLevelInput::CreateMouse() {
+	return hplNew(Mouse, (this, _lowLevelGraphics));
 }
 
 //-----------------------------------------------------------------------

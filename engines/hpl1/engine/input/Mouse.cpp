@@ -40,7 +40,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-iMouse::iMouse(LowLevelInput *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics) : iInputDevice("Mouse", eInputDeviceType_Mouse) {
+Mouse::Mouse(LowLevelInput *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics) : iInputDevice("Mouse", eInputDeviceType_Mouse) {
 	mfMaxPercent = 0.7f;
 	mfMinPercent = 0.1f;
 	mlBufferSize = 6;
@@ -88,7 +88,7 @@ static void setMouseState(const int state, Common::BitArray &states) {
 	}
 }
 
-void iMouse::processEvent(const Common::Event &ev) {
+void Mouse::processEvent(const Common::Event &ev) {
 	if (!Common::isMouseEvent(ev))
 		return;
 	if (ev.type == Common::EVENT_MOUSEMOVE) {
@@ -99,20 +99,20 @@ void iMouse::processEvent(const Common::Event &ev) {
 	_relMousePos = cVector2f(ev.relMouse.x, ev.relMouse.y);
 }
 
-void iMouse::Update() {
+void Mouse::Update() {
 	for (const Common::Event &ev : _lowLevelInputSDL->_events)
 		processEvent(ev);
 }
 
 //-----------------------------------------------------------------------
 
-bool iMouse::ButtonIsDown(eMButton mButton) {
+bool Mouse::ButtonIsDown(eMButton mButton) {
 	return _buttonState.get(mButton);
 }
 
 //-----------------------------------------------------------------------
 
-cVector2f iMouse::GetAbsPosition() {
+cVector2f Mouse::GetAbsPosition() {
 	cVector2f vPos = _absMousePos;
 
 	return vPos;
@@ -120,7 +120,7 @@ cVector2f iMouse::GetAbsPosition() {
 
 //-----------------------------------------------------------------------
 
-cVector2f iMouse::GetRelPosition() {
+cVector2f Mouse::GetRelPosition() {
 	cVector2f vPos = _relMousePos;
 	_relMousePos = cVector2f(0, 0);
 	return vPos;
@@ -128,14 +128,14 @@ cVector2f iMouse::GetRelPosition() {
 
 //-----------------------------------------------------------------------
 
-void iMouse::Reset() {
+void Mouse::Reset() {
 	error("call to unimplemented function Mouse::Reset");
 }
 
 //-----------------------------------------------------------------------
 
-void iMouse::SetSmoothProperties(float afMinPercent,
-								 float afMaxPercent, unsigned int alBufferSize) {
+void Mouse::SetSmoothProperties(float afMinPercent,
+								float afMaxPercent, unsigned int alBufferSize) {
 	mfMaxPercent = afMaxPercent;
 	mfMinPercent = afMinPercent;
 	mlBufferSize = alBufferSize;

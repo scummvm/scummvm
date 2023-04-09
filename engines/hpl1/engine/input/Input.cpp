@@ -146,7 +146,7 @@ Keyboard *cInput::GetKeyboard() {
 
 //-----------------------------------------------------------------------
 
-iMouse *cInput::GetMouse() {
+Mouse *cInput::GetMouse() {
 	return mpMouse;
 }
 

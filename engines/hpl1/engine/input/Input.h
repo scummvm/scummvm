@@ -38,7 +38,7 @@
 namespace hpl {
 
 class Keyboard;
-class iMouse;
+class Mouse;
 class LowLevelInput;
 class iInputDevice;
 class iAction;
@@ -105,7 +105,7 @@ public:
 	 *
 	 * \return currently used mouse
 	 */
-	iMouse *GetMouse();
+	Mouse *GetMouse();
 
 	/**
 	 * Get action from map.
@@ -141,7 +141,7 @@ private:
 
 	LowLevelInput *mpLowLevelInput;
 
-	iMouse *mpMouse;
+	Mouse *mpMouse;
 	Keyboard *mpKeyboard;
 };
 } // namespace hpl

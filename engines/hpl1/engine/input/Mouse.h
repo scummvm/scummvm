@@ -42,10 +42,10 @@ namespace hpl {
 class LowLevelInput;
 class iLowLevelGraphics;
 
-class iMouse : public iInputDevice {
+class Mouse : public iInputDevice {
 public:
-	iMouse(LowLevelInput *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics);
-	~iMouse() {}
+	Mouse(LowLevelInput *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics);
+	~Mouse() {}
 
 	/**
 	 * Check if a mouse button is down
