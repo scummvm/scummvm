@@ -37,7 +37,7 @@
 
 namespace hpl {
 
-class iKeyboard;
+class Keyboard;
 class iMouse;
 class LowLevelInput;
 class iInputDevice;
@@ -99,7 +99,7 @@ public:
 	 *
 	 * \return currently used keyboard
 	 */
-	iKeyboard *GetKeyboard();
+	Keyboard *GetKeyboard();
 
 	/**
 	 *
@@ -142,7 +142,7 @@ private:
 	LowLevelInput *mpLowLevelInput;
 
 	iMouse *mpMouse;
-	iKeyboard *mpKeyboard;
+	Keyboard *mpKeyboard;
 };
 } // namespace hpl
 

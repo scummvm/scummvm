@@ -34,11 +34,11 @@
 namespace hpl {
 
 class iMouse;
-class iKeyboard;
+class Keyboard;
 class iLowLevelGraphics;
 
 class LowLevelInput {
-	friend class iKeyboard;
+	friend class Keyboard;
 	friend class cMouseSDL;
 
 public:
@@ -59,7 +59,7 @@ public:
 	void EndInputUpdate();
 
 	iMouse *CreateMouse();
-	iKeyboard *CreateKeyboard();
+	Keyboard *CreateKeyboard();
 
 private:
 	Common::Array<Common::Event> _events;

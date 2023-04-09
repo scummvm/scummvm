@@ -33,7 +33,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-iKeyboard::iKeyboard(LowLevelInput *lowLevelInput) : iInputDevice("Keyboard", eInputDeviceType_Keyboard) {
+Keyboard::Keyboard(LowLevelInput *lowLevelInput) : iInputDevice("Keyboard", eInputDeviceType_Keyboard) {
 	_lowLevelSystem = lowLevelInput;
 
 	_downKeys.set_size(eKey_LastEnum);
@@ -327,7 +327,7 @@ static eKeyModifier convertModifiers(const int mods) {
 	return out;
 }
 
-void iKeyboard::processEvent(const Common::Event &ev) {
+void Keyboard::processEvent(const Common::Event &ev) {
 	if (ev.type != Common::EVENT_KEYDOWN && ev.type != Common::EVENT_KEYUP)
 		return;
 
@@ -340,7 +340,7 @@ void iKeyboard::processEvent(const Common::Event &ev) {
 		_downKeys.unset(key);
 }
 
-void iKeyboard::Update() {
+void Keyboard::Update() {
 	_pressedKeys.clear();
 	for (const Common::Event &ev : _lowLevelSystem->_events)
 		processEvent(ev);
@@ -348,37 +348,37 @@ void iKeyboard::Update() {
 
 //-----------------------------------------------------------------------
 
-bool iKeyboard::KeyIsDown(eKey key) {
+bool Keyboard::KeyIsDown(eKey key) {
 	return _downKeys.get(key);
 }
 
 //-----------------------------------------------------------------------
 
-cKeyPress iKeyboard::GetKey() {
+cKeyPress Keyboard::GetKey() {
 	return _pressedKeys.pop();
 }
 
 //-----------------------------------------------------------------------
 
-bool iKeyboard::KeyIsPressed() {
+bool Keyboard::KeyIsPressed() {
 	return _pressedKeys.empty() == false;
 }
 
 //-----------------------------------------------------------------------
 
-eKeyModifier iKeyboard::GetModifier() {
+eKeyModifier Keyboard::GetModifier() {
 	return _modifiers;
 }
 
 //-----------------------------------------------------------------------
 
-tString iKeyboard::KeyToString(eKey) {
+tString Keyboard::KeyToString(eKey) {
 	return "None";
 }
 
 //-----------------------------------------------------------------------
 
-eKey iKeyboard::StringToKey(tString) {
+eKey Keyboard::StringToKey(tString) {
 	return eKey_NONE;
 }
 

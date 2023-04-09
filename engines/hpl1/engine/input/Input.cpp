@@ -140,7 +140,7 @@ bool cInput::DoubleTriggerd(tString asName, float afLimit) {
 
 //-----------------------------------------------------------------------
 
-iKeyboard *cInput::GetKeyboard() {
+Keyboard *cInput::GetKeyboard() {
 	return mpKeyboard;
 }
 

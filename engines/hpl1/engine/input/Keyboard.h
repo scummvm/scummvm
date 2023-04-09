@@ -42,9 +42,9 @@ namespace hpl {
 
 class LowLevelInput;
 
-class iKeyboard : public iInputDevice {
+class Keyboard : public iInputDevice {
 public:
-	iKeyboard(LowLevelInput *);
+	Keyboard(LowLevelInput *);
 
 	/**
 	 *

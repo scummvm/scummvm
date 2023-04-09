@@ -70,8 +70,8 @@ iMouse *LowLevelInput::CreateMouse() {
 
 //-----------------------------------------------------------------------
 
-iKeyboard *LowLevelInput::CreateKeyboard() {
-	return hplNew(iKeyboard, (this));
+Keyboard *LowLevelInput::CreateKeyboard() {
+	return hplNew(Keyboard, (this));
 }
 
 //-----------------------------------------------------------------------
