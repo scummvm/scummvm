@@ -103,11 +103,11 @@ static const SludgeGameDescription gameDescriptions[] = {
 	{
 		{
 			"outoforder",
-			"",
+			"v1.0",
 			AD_ENTRY2s("gamedata",         "4d72dbad0ff170169cd7e4e7e389a90d", 21122647,
 					   "out-of-order.xpm", "407086751ac167884c6585c4cad5b664", 2601),
 			Common::EN_ANY,
-			Common::kPlatformUnknown,
+			Common::kPlatformLinux,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
@@ -117,11 +117,11 @@ static const SludgeGameDescription gameDescriptions[] = {
 	{
 		{
 			"outoforder",
-			"",
+			"v1.0",
 			AD_ENTRY2s("gamedata",         "4d72dbad0ff170169cd7e4e7e389a90d", 21122647,
 					   "Out Of Order.exe", "ebc386dd0cb77df68dd12d72742eb310", 68608),
 			Common::EN_ANY,
-			Common::kPlatformUnknown,
+			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
