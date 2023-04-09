@@ -20,7 +20,6 @@
  */
 
 #include "hpl1/engine/game/low_level_game_setup.h"
-#include "hpl1/engine/impl/KeyboardSDL.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 #include "hpl1/engine/impl/LowLevelPhysicsNewton.h"
 #include "hpl1/engine/impl/LowLevelSoundOpenAL.h"

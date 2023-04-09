@@ -93,7 +93,6 @@ MODULE_OBJS := \
 	engine/impl/CGProgram.o \
 	engine/impl/CharacterBodyNewton.o \
 	engine/impl/CollideShapeNewton.o \
-	engine/impl/KeyboardSDL.o \
 	engine/impl/LowLevelGraphicsSDL.o \
 	engine/impl/LowLevelPhysicsNewton.o \
 	engine/impl/LowLevelSoundOpenAL.o \

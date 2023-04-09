@@ -28,50 +28,67 @@
 #ifndef HPL_KEYBOARD_H
 #define HPL_KEYBOARD_H
 
+#include "common/bitarray.h"
+#include "common/keyboard.h"
+#include "common/queue.h"
 #include "hpl1/engine/input/InputDevice.h"
 #include "hpl1/engine/input/InputTypes.h"
 
+namespace Common {
+struct Event;
+}
+
 namespace hpl {
 
-//------------------------------
+class LowLevelInput;
 
 class iKeyboard : public iInputDevice {
 public:
-	iKeyboard(tString asName);
-	virtual ~iKeyboard() {}
+	iKeyboard(LowLevelInput *);
 
 	/**
 	 *
 	 * \param aKey The key to check
 	 * \return true if pressed else false
 	 */
-	virtual bool KeyIsDown(eKey aKey) = 0;
+	bool KeyIsDown(eKey aKey);
 	/**
 	 * Can be checked many times to see all key presses
 	 * \return key that is currently pressed. eKey_NONE is no key.
 	 */
-	virtual cKeyPress GetKey() = 0;
+	cKeyPress GetKey();
 	/**
 	 *
 	 * \return If ANY key is pressed
 	 */
-	virtual bool KeyIsPressed() = 0;
+	bool KeyIsPressed();
 	/**
 	 * \return The current modifiers.
 	 */
-	virtual eKeyModifier GetModifier() = 0;
+	eKeyModifier GetModifier();
 	/**
 	 * \todo Implement!
 	 * \param eKey The key to change to string.
 	 * \return The name of the key as a string.
 	 */
-	virtual tString KeyToString(eKey) = 0;
+	tString KeyToString(eKey);
 	/**
 	 * \todo Implement!
 	 * \param tString NAme of the key
 	 * \return enum of the key.
 	 */
-	virtual eKey StringToKey(tString) = 0;
+	eKey StringToKey(tString);
+
+	void Update();
+
+private:
+	void processEvent(const Common::Event &ev);
+	eKey AsciiToKey(int alChar);
+
+	eKeyModifier _modifiers;
+	Common::BitArray _downKeys;
+	Common::Queue<cKeyPress> _pressedKeys;
+	LowLevelInput *_lowLevelSystem;
 };
 
 } // namespace hpl

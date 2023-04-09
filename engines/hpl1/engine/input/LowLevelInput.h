@@ -38,7 +38,7 @@ class iKeyboard;
 class iLowLevelGraphics;
 
 class LowLevelInput {
-	friend class cKeyboardSDL;
+	friend class iKeyboard;
 	friend class cMouseSDL;
 
 public:

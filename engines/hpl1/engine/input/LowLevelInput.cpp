@@ -27,8 +27,8 @@
 
 #include "common/events.h"
 #include "common/system.h"
-#include "hpl1/engine/impl/KeyboardSDL.h"
 #include "hpl1/engine/impl/MouseSDL.h"
+#include "hpl1/engine/input/Keyboard.h"
 #include "hpl1/engine/input/LowLevelInput.h"
 #include "hpl1/engine/system/low_level_system.h"
 
@@ -71,7 +71,7 @@ iMouse *LowLevelInput::CreateMouse() {
 //-----------------------------------------------------------------------
 
 iKeyboard *LowLevelInput::CreateKeyboard() {
-	return hplNew(cKeyboardSDL, (this));
+	return hplNew(iKeyboard, (this));
 }
 
 //-----------------------------------------------------------------------
