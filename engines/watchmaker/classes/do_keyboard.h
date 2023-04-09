@@ -29,7 +29,7 @@ namespace Watchmaker {
 void doClock33(WGame &game, int obj, struct t3dV3F *mp);
 void ProcessKeyboard(WGame &game);
 void ProcessKBInput();
-extern unsigned char KeyTable[256];
+extern unsigned char KeyTable[];
 
 } // End of namespace Watchmaker
 

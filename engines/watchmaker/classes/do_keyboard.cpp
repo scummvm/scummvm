@@ -51,7 +51,7 @@ char bFastAnim = 0;
 int32 PlayAnim = 351;
 char bBilinear = 1;
 char bForceDebug = 0;
-unsigned char KeyTable[256];
+unsigned char KeyTable[Common::KEYCODE_LAST];
 
 uint16 bnd_lev;
 
