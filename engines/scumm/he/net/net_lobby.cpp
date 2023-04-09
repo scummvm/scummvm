@@ -59,6 +59,11 @@ void Lobby::doNetworkOnceAFrame() {
 	if (ready) {
 		receiveData();
 	}
+
+	if (_inArea && !_inGame) {
+		// Update games playing
+		_vm->writeVar(110, _gamesPlaying);
+	}
 }
 
 void Lobby::send(Common::JSONObject data) {
