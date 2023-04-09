@@ -61,7 +61,7 @@ void ColorQuestions::draw() {
 		for (int option = 0; option < 8; ++option) {
 			Common::String prefix = Common::String::format("%c) ", '1' + option);
 			writeString(20 + 105 * (option % 2), 10 + (option / 2) * 8, prefix, ALIGN_RIGHT);
-			writeString(STRING[Common::String::format("maps.emap17.options.%d", option + 1)]);
+			writeString(STRING[Common::String::format("colors.%d", option + 1)]);
 		}
 
 	} else {

@@ -928,6 +928,15 @@ monster_actions:
 	steals_something: "steals something"
 	takes_food: "takes food"
 	turned_to_stone: "is turned to stone"
+colors:
+	0: "Red Thorac"
+	1: "Blue Ogram"
+	2: "Green Bagar"
+	3: "Yellow Limra"
+	4: "Purple Sagran"
+	5: "Orange Oolak"
+	6: "Black Dresidion"
+	7: "White Dilithium"
 maps:
 	poof: "Poof!"
 	sign: "A sign above the door reads:\n"
@@ -1236,16 +1245,6 @@ maps:
 		correct: "Correct!"
 		islands: "Atop this peak 5 islands can be seen\nto the southeast"
 		wave: "A tidal wave sweeps the party away!"
-	emap17:
-		options:
-			1: "Red Thorac"
-			2: "Blue Ogram"
-			3: "Green Bagar"
-			4: "Yellow Limra"
-			5: "Purple Sagran"
-			6: "Orange Oolak"
-			7: "Black Dresidion"
-			8: "White Dilithium"
 
 	map18:
 		passage: "Cavernous passage to Erliquin,\ntake it (Y/N)?"
@@ -1319,8 +1318,8 @@ maps:
 		poison: "Arghhh... poison!"
 		today_spells: "Today spells!"
 		today_might: "Today might!"
-		fountain: "A fountain speaks:\n\"will the party drink (Y/N)?\""
-		chest: "You found a chest upon which an\ninscription reads: Property of xx!xx!\nInside you found a ruby whistle, 2000\ngold and a note:\nThe stronghold lies at b-3,14-2\nBlow twice to enter."
+		fountain: "A fountain speaks:\n\"Will the party drink (Y/N)?\""
+		chest: "You found a chest upon which an\ninscription reads: Property of Xx!xx!\nInside you found a ruby whistle, 2000\ngold and a note:\nThe stronghold lies at B-3,14-2\nBlow twice to enter."
 		roadsign: "Roadsign: Sorpigal S.17, W.1, N.2"
 
 	map23:
@@ -1337,15 +1336,9 @@ maps:
 		look_out: "Look out!"
 		gypsy: "A toothless gypsy seer asks, \"Who would\nlike to hear their sign (1-6)?\""
 		your_sign_is: "\"Your sign is the %s\""
-		signs:
-			0: "Red Thorac"
-			1: "Blue Ogram"
-			2: "Green Bagar"
-			3: "Yellow Limra"
-			4: "Purple Sagran"
-			5: "Orange Oolak"
-			6: "Black Dresidion"
-			7: "White Dilithium"
+	emap23:
+		statues: "Statues block the path, smash them (Y/N)?"
+		gypsy_title: "Gypsy"
 
 	map24:
 		wyverns: "Wyverns attack from above!"
