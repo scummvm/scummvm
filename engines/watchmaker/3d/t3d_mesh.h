@@ -62,7 +62,8 @@ struct t3dMESH {
 	uint8                 LastBlendPercent = 0;           // last blend animation percentage
 	uint32                ExpressionFrame = 0;            // current expression frames
 	uint32                LastExpressionFrame = 0;        // last expression frames
-	int32               *WaterBuffer1, *WaterBuffer2;   // pointers to ripple buffer
+	int32				  *WaterBuffer1 = nullptr;	  // pointers to ripple buffer
+	int32 				  *WaterBuffer2 = nullptr;	  // pointers to ripple buffer
 	t3dF32                WavesSpeed;                 // waves speed
 	t3dF32                YSpeed;                     // waves y speed
 	t3dF32                XInc, YInc;                 // waves movements
