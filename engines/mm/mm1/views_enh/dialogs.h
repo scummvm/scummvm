@@ -33,6 +33,7 @@
 #include "mm/mm1/views_enh/combat.h"
 #include "mm/mm1/views_enh/confirm.h"
 #include "mm/mm1/views_enh/create_characters.h"
+#include "mm/mm1/views_enh/dead.h"
 #include "mm/mm1/views_enh/encounter.h"
 #include "mm/mm1/views_enh/exchange.h"
 #include "mm/mm1/views_enh/game.h"
@@ -105,6 +106,7 @@ private:
 	ViewsEnh::Combat _combat;
 	ViewsEnh::Confirm _confirm;
 	ViewsEnh::CreateCharacters _createCharacters;
+	ViewsEnh::Dead _dead;
 	ViewsEnh::Encounter _encounter;
 	ViewsEnh::Exchange _exchange;
 	ViewsEnh::Game _game;

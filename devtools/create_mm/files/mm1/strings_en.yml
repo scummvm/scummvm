@@ -83,12 +83,12 @@ dialogs:
 		start_over: "'esc' start over"
 		name: "name:"
 	dead:
-		1: "the shadow of death"
+		1: "The shadow of death"
 		2: "has fallen upon your party!"
-		3: "fortunately, you may renew"
+		3: "Fortunately, you may renew"
 		4: "your quest from the last"
 		5: "inn in which you stayed"
-		6: "by pressing 'enter'"	
+		6: "by pressing 'Enter'"	
 	inn:
 		title: "(%c) Inn of "
 		to_view: "to view"

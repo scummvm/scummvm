@@ -142,6 +142,7 @@ MODULE_OBJS += \
 	mm1/views_enh/combat.o \
 	mm1/views_enh/confirm.o \
 	mm1/views_enh/create_characters.o \
+	mm1/views_enh/dead.o \
 	mm1/views_enh/dialogs.o \
 	mm1/views_enh/encounter.o \
 	mm1/views_enh/exchange.o \
