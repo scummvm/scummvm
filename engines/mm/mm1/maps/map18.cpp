@@ -140,19 +140,16 @@ void Map18::special06() {
 }
 
 void Map18::special07() {
-	send(SoundMessage(STRING["maps.map18.gates"]));
-
 	bool hasWonGame = false;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-		g_globals->_currCharacter = &c;
-
-		if (c._flags[13] & CHARFLAG13_80)
-			hasWonGame = true;
+		const Character &c = g_globals->_party[i];
+		hasWonGame |= (c._flags[13] & CHARFLAG13_80) != 0;
 	}
 
 	if (hasWonGame)
 		g_events->addView("WonGame");
+	else
+		send(SoundMessage(STRING["maps.map18.gates"]));
 }
 
 void Map18::special08() {

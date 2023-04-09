@@ -19,25 +19,22 @@
  *
  */
 
-#include "mm/mm1/views/maps/won_game.h"
+#include "mm/mm1/views_enh/won_game.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
 
-WonGame::WonGame() : TextView("WonGame") {
-	Common::Rect r = getLineBounds(5, 11);
-	r.right = 30 * 8;
-	_bounds = r;
+WonGame::WonGame() : ScrollView("WonGame") {
+	setBounds(Common::Rect(0, 0, 234, 144));
 }
 
 void WonGame::draw() {
-	clearSurface();
-	writeString(0, 0, STRING["maps.map18.gates"]);
-	writeString(0, 1, STRING["maps.map18.congratulations"]);
+	ScrollView::draw();
+	writeLine(0, STRING["maps.map18.gates"], ALIGN_MIDDLE);
+	writeLine(1, STRING["maps.map18.congratulations"], ALIGN_MIDDLE);
 	Sound::sound(SOUND_3);
 }
 
@@ -51,7 +48,6 @@ bool WonGame::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
-} // namespace Maps
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM

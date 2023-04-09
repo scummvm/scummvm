@@ -52,6 +52,7 @@
 #include "mm/mm1/views_enh/which_character.h"
 #include "mm/mm1/views_enh/which_item.h"
 #include "mm/mm1/views_enh/who_will_try.h"
+#include "mm/mm1/views_enh/won_game.h"
 #include "mm/mm1/views_enh/interactions/access_code.h"
 #include "mm/mm1/views_enh/interactions/arrested.h"
 #include "mm/mm1/views_enh/interactions/prisoners.h"
@@ -125,6 +126,7 @@ private:
 	ViewsEnh::WhichCharacter _whichCharacter;
 	ViewsEnh::WhichItem _whichItem;
 	ViewsEnh::WhoWillTry _whoWillTry;
+	ViewsEnh::WonGame _wonGame;
 	Views::Bash _bash;
 public:
 	Dialogs() {}

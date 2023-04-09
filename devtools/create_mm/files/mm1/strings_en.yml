@@ -1250,14 +1250,19 @@ maps:
 	map18:
 		passage: "Cavernous passage to Erliquin,\ntake it (Y/N)?"
 		cave: "A cave, enter (Y/N)?"
-		castle_north: "Castle blackridge north, enter (Y/N)?"
-		castle_south: "Castle blackridge south, enter (Y/N)?"
+		castle_north: "Castle Blackridge North, enter (Y/N)?"
+		castle_south: "Castle Blackridge South, enter (Y/N)?"
 		ruins: "Ancient ruins of a deserted wizards lair\nshow signs of recent use, enter (Y/N)?"
-		gates: "The gates to another world!\n"
-		congratulations: "Congratulations distinguished \ntravelers! The gates are now\nopen to you, in order to pass\nthrough you must first find\n<ight and Magic Book Two !!!"
+		gates: "The Gates to Another World!\n"
+		congratulations: "Congratulations distinguished \ntravelers! The gates are now\nopen to you, in order to pass\nthrough you must first find\nMight and Magic Book Two !!!"
 		sign1: "A sign pointing S. reads: Blackridge N."
 		sign2: "A sign pointing E. reads: Blackridge S."
 		sign3: "A sign pointing E. reads: Erliquin"
+	emap18:
+		ruins: "Ancient ruins of a deserted wizard's lair show signs of recent use, enter (Y/N)?"
+		sign1: "A sign pointing S. reads:\nBlackridge N."
+		sign2: "A sign pointing E. reads:\nBlackridge S."
+		congratulations: "Congratulations distinguished \ntravelers! The gates are now\nopen to you. In order to pass\nthrough you must first find\nMight and Magic Book Two !!!"
 
 	map19:
 		ice_princess: "An a throne adorned with precious gems\nthe ice princess speaks,\n\"Conqueror of worlds, maker of dreams\nThe greatest force of all, yet elusive\nit seems.\"\n\nAnswer:> "
