@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">OK</string>
+  <string name="quit">Έξοδος</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Ακύρωση</string>
+  <string name="customkeyboardview_keycode_delete">Σβήσιμο</string>
+  <string name="customkeyboardview_keycode_shift">Πλήκτρο Shift</string>
+  <string name="customkeyboardview_keycode_enter">Enter</string>
+</resources>

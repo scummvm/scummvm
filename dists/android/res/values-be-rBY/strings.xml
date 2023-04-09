@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">OK</string>
+  <string name="quit">Выхад</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Адмена</string>
+  <string name="customkeyboardview_keycode_delete">Выдаліць</string>
+  <string name="customkeyboardview_keycode_shift">Shift</string>
+  <string name="customkeyboardview_keycode_enter">Увод</string>
+</resources>
