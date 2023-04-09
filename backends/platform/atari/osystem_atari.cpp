@@ -128,9 +128,11 @@ void OSystem_Atari::initBackend() {
 
 	// AtariGraphicsManager needs _eventManager ready
 	AtariGraphicsManager *atariGraphicsManager;
+#ifdef USE_SUPERVIDEL
 	if (hasSuperVidel())
 		atariGraphicsManager = new AtariSuperVidelManager();
 	else
+#endif
 		atariGraphicsManager = new AtariVidelManager();
 	_graphicsManager = atariGraphicsManager;
 

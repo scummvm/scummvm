@@ -65,7 +65,7 @@ MODULE_OBJS += \
 	scaler/downscalerARM.o
 endif
 
-ifdef USE_SV_BLITTER
+ifdef ATARI
 MODULE_OBJS += \
 	blit-atari.o
 endif

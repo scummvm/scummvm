@@ -24,8 +24,8 @@
 
 namespace Graphics {
 
-// see graphics/blit-atari.cpp, Atari Falcon's SuperVidel addon allows accelerated blitting
-#ifndef USE_SV_BLITTER
+// see graphics/blit-atari.cpp
+#ifndef ATARI
 // Function to blit a rect
 void copyBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,

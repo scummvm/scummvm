@@ -25,7 +25,6 @@
 #include <cstdlib>	// malloc
 #include <cstring>	// memcpy, memset
 #include <mint/cookie.h>
-#include <mint/falcon.h>
 
 #include <mint/trap14.h>
 #define ct60_vm(mode, value) (long)trap_14_wwl((short)0xc60e, (short)(mode), (long)(value))
@@ -55,6 +54,7 @@
 // bits 31:0 - data (write only)
 #define SV_BLITTER_FIFO           ((volatile long*)0x80010080)
 
+#ifdef USE_SV_BLITTER
 static bool isSuperBlitterLocked;
 
 static void syncSuperBlitter() {
@@ -68,25 +68,32 @@ static void syncSuperBlitter() {
 	// while busy blitting...
 	while (*SV_BLITTER_CONTROL & 1);
 }
+#endif
 
+#ifdef USE_MOVE16
 static inline bool hasMove16() {
 	long val;
 	static bool hasMove16 = Getcookie(C__CPU, &val) == C_FOUND && val >= 40;
 	return hasMove16;
 }
+#endif
 
 void lockSuperBlitter() {
+#ifdef USE_SV_BLITTER
 	assert(!isSuperBlitterLocked);
 
 	isSuperBlitterLocked = true;
+#endif
 }
 
 void unlockSuperBlitter() {
+#ifdef USE_SV_BLITTER
 	assert(isSuperBlitterLocked);
 
 	isSuperBlitterLocked = false;
 	if (hasSuperVidel())
 		syncSuperBlitter();
+#endif
 }
 
 // see atari-graphics.cpp
@@ -111,6 +118,7 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 		: (w * format.bytesPerPixel + ALIGN - 1) & (-ALIGN);
 
 	if (width && height) {
+#ifdef USE_SV_BLITTER
 		if (hasSuperVidel()) {
 			pixels = (void *)ct60_vmalloc(height * pitch);
 
@@ -119,6 +127,9 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 
 			assert((uintptr)pixels >= 0xA0000000);
 		} else {
+#else
+		{
+#endif
 			// align buffer to a 16-byte boundary for move16 or C2P conversion
 			void *pixelsUnaligned = ::malloc(sizeof(uintptr) + (height * pitch) + ALIGN - 1);
 
@@ -136,9 +147,12 @@ void Surface::create(int16 width, int16 height, const PixelFormat &f) {
 }
 
 void Surface::free() {
+#ifdef USE_SV_BLITTER
 	if (((uintptr)pixels & 0xFF000000) >= 0xA0000000)
 		ct60_vmfree(pixels);
-	else if (pixels)
+	else
+#endif
+	if (pixels)
 		::free((void *)*((uintptr *)pixels - 1));
 
 	pixels = nullptr;
@@ -154,6 +168,7 @@ void copyBlit(byte *dst, const byte *src,
 	if (dst == src)
 		return;
 
+#ifdef USE_SV_BLITTER
 	if (((uintptr)src & 0xFF000000) >= 0xA0000000 && ((uintptr)dst & 0xFF000000) >= 0xA0000000) {
 		if (superVidelFwVersion >= 9) {
 			*SV_BLITTER_FIFO = (long)src;				// SV_BLITTER_SRC1
@@ -181,7 +196,10 @@ void copyBlit(byte *dst, const byte *src,
 		}
 
 		syncSuperBlitter();
-	} else if (dstPitch == srcPitch && dstPitch == (w * bytesPerPixel)) {
+	} else
+#endif
+	if (dstPitch == srcPitch && dstPitch == (w * bytesPerPixel)) {
+#ifdef USE_MOVE16
 		if (hasMove16() && ((uintptr)src & (ALIGN - 1)) == 0 && ((uintptr)dst & (ALIGN - 1)) == 0) {
 			__asm__ volatile(
 			"	move.l	%2,d0\n"
@@ -241,9 +259,13 @@ void copyBlit(byte *dst, const byte *src,
 				: "d0", "d1", "cc" AND_MEMORY
 			);
 		} else {
+#else
+		{
+#endif
 			memcpy(dst, src, dstPitch * h);
 		}
 	} else {
+#ifdef USE_MOVE16
 		if (hasMove16() && ((uintptr)src & (ALIGN - 1)) == 0 && ((uintptr)dst & (ALIGN - 1)) == 0
 				&& (srcPitch & (ALIGN - 1)) == 0 && (dstPitch & (ALIGN - 1)) == 0) {
 			__asm__ volatile(
@@ -314,6 +336,9 @@ void copyBlit(byte *dst, const byte *src,
 				: "d0", "d1", "a0", "a1", "cc" AND_MEMORY
 			);
 		} else {
+#else
+		{
+#endif
 			for (uint i = 0; i < h; ++i) {
 				memcpy(dst, src, w * bytesPerPixel);
 				dst += dstPitch;

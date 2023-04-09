@@ -22,6 +22,8 @@
 #ifndef BACKENDS_GRAPHICS_ATARI_SUPERVIDEL_H
 #define BACKENDS_GRAPHICS_ATARI_SUPERVIDEL_H
 
+#ifdef USE_SUPERVIDEL
+
 #include "backends/graphics/atari/atari-graphics.h"
 
 #include <mint/osbind.h>
@@ -108,5 +110,7 @@ private:
 		return ret;
 	}
 };
+
+#endif	// USE_SUPERVIDEL
 
 #endif
