@@ -36,6 +36,12 @@ struct KeybindingRecord {
 	const char *_joy;
 };
 
+static const KeybindingRecord MINIMAL_KEYS[] = {
+	// I18N: ESC key
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
+
 static const KeybindingRecord MENU_KEYS[] = {
 	// I18N: ESC key
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr },
@@ -128,6 +134,11 @@ static const KeysRecord MENU_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
+static const KeysRecord MINIMAL_RECORDS[] = {
+	{ "mm1_minimal", _s("Might and Magic 1 - Minimal Keys"), MINIMAL_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
 static const KeysRecord PARTY_MENU_RECORDS[] = {
 	{ "mm1", _s("Might and Magic 1 - Menus"), MENU_KEYS },
 	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
@@ -147,8 +158,9 @@ static const KeysRecord NORMAL_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord *MODE_RECORDS[5] = {
+static const KeysRecord *MODE_RECORDS[6] = {
 	MENU_RECORDS,
+	MINIMAL_RECORDS,
 	PARTY_MENU_RECORDS,
 	NORMAL_RECORDS,
 	COMBAT_MENU_RECORDS,

@@ -38,6 +38,13 @@ void TextEntry::display(int x, int y, int maxLen,
 	addView(this);
 }
 
+bool TextEntry::msgFocus(const FocusMessage &msg) {
+	TextView::msgFocus(msg);
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MINIMAL);
+
+	return true;
+}
+
 void TextEntry::draw() {
 	drawText();
 	writeChar('_');

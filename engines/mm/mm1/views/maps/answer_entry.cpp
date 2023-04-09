@@ -35,9 +35,13 @@ AnswerEntry::AnswerEntry(const Common::String &name,
 }
 
 bool AnswerEntry::msgFocus(const FocusMessage &msg) {
-	_answer = "";
+	TextView::msgFocus(msg);
+
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MINIMAL);
 	Sound::sound(SOUND_2);
-	return TextView::msgFocus(msg);
+	_answer = "";
+
+	return true;
 }
 
 void AnswerEntry::draw() {
@@ -48,7 +52,11 @@ void AnswerEntry::draw() {
 
 bool AnswerEntry::msgKeypress(const KeypressMessage &msg) {
 	if (!isDelayActive()) {
-		if (msg.keycode == Common::KEYCODE_SPACE ||
+		if (msg.keycode == Common::KEYCODE_RETURN) {
+			answerEntered();
+			return true;
+
+		} else if (msg.keycode == Common::KEYCODE_SPACE ||
 			(msg.keycode >= Common::KEYCODE_0 &&
 				msg.keycode <= Common::KEYCODE_z)) {
 			_answer += toupper(msg.ascii);
@@ -64,15 +72,6 @@ bool AnswerEntry::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
-}
-
-bool AnswerEntry::msgAction(const ActionMessage &msg) {
-	if (!isDelayActive() && msg._action == KEYBIND_SELECT) {
-		answerEntered();
-		return true;
-	}
-
-	return false;
 }
 
 } // namespace Maps
