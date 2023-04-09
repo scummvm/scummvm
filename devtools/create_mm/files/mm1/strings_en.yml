@@ -1265,12 +1265,16 @@ maps:
 		congratulations: "Congratulations distinguished \ntravelers! The gates are now\nopen to you. In order to pass\nthrough you must first find\nMight and Magic Book Two !!!"
 
 	map19:
-		ice_princess: "An a throne adorned with precious gems\nthe ice princess speaks,\n\"Conqueror of worlds, maker of dreams\nThe greatest force of all, yet elusive\nit seems.\"\n\nAnswer:> "
+		ice_princess: "On a throne adorned with precious gems\nthe ice princess speaks,\n\"Conqueror of worlds, maker of dreams\nThe greatest force of all, yet elusive\nit seems.\"\n\nAnswer:> "
 		incorrect: "Wrong, you're too young to understand."
 		correct: "Correct!"
 		carving: "Carved on a tree: \"9-9 Raven's Lair\""
 		cave: "There's a cave here, enter (Y/N)?"
 		stairs_down: "A descending staircase is the entrance\nto a warriors stronghold, go in (Y/N)?"
+	emap19:
+		title: "Ice Princess"
+		ice_princess: "On a throne adorned with precious gems\nthe ice princess speaks,\n\"Conqueror of worlds, maker of dreams\nThe greatest force of all, yet elusive\nit seems.\""
+		stairs_down: "A descending staircase is the entrance to a warrior's stronghold, go in (Y/N)?"
 
 	map20:
 		passage: "Passage to Portsmith, take it (Y/N)?"

@@ -19,33 +19,33 @@
  *
  */
 
-#include "mm/mm1/views/maps/ice_princess.h"
-#include "mm/mm1/maps/map19.h"
-#include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_ICE_PRINCESS_H
+#define MM1_VIEWS_ENH_INTERACTIONS_ICE_PRINCESS_H
+
+#include "mm/mm1/views_enh/interactions/interaction_query.h"
+#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-IcePrincess::IcePrincess() :
-		AnswerEntry("IcePrincess", Common::Point(9, 7), 10) {
-	_bounds = getLineBounds(17, 24);
-}
+class IcePrincess : public InteractionQuery {
+private:
+protected:
+	/**
+	 * Answer entered
+	 */
+	void answerEntered() override;
 
-void IcePrincess::draw() {
-	clearSurface();
-	writeString(0, 1, STRING["maps.map19.ice_princess"]);
-	AnswerEntry::draw();
-}
+public:
+	IcePrincess();
+	virtual ~IcePrincess() {}
+};
 
-void IcePrincess::answerEntered() {
-	MM1::Maps::Map19 &map = *static_cast<MM1::Maps::Map19 *>(g_maps->_currentMap);
-	map.riddleAnswer(_answer);
-}
-
-} // namespace Maps
-} // namespace Views
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
+
+#endif

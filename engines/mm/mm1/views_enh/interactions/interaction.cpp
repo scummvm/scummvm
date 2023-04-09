@@ -77,7 +77,7 @@ void Interaction::draw() {
 
 	// Write any text lines
 	for (uint i = 0; i < _lines.size(); ++i) {
-		writeLine(i, _lines[i], ALIGN_MIDDLE);
+		writeString(0, (6 + i) * 9 - 5, _lines[i], ALIGN_MIDDLE);
 	}
 
 	// Write out any buttons

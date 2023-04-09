@@ -19,25 +19,18 @@
  *
  */
 
-#include "mm/mm1/views/maps/ice_princess.h"
+#include "mm/mm1/views_enh/interactions/ice_princess.h"
 #include "mm/mm1/maps/map19.h"
 #include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Maps {
+namespace ViewsEnh {
+namespace Interactions {
 
-IcePrincess::IcePrincess() :
-		AnswerEntry("IcePrincess", Common::Point(9, 7), 10) {
-	_bounds = getLineBounds(17, 24);
-}
-
-void IcePrincess::draw() {
-	clearSurface();
-	writeString(0, 1, STRING["maps.map19.ice_princess"]);
-	AnswerEntry::draw();
+IcePrincess::IcePrincess() : InteractionQuery("IcePrincess", 10, 19) {
+	_title = STRING["maps.emap19.title"];
+	addText(STRING["maps.emap19.ice_princess"]);
 }
 
 void IcePrincess::answerEntered() {
@@ -45,7 +38,7 @@ void IcePrincess::answerEntered() {
 	map.riddleAnswer(_answer);
 }
 
-} // namespace Maps
-} // namespace Views
+} // namespace Interactions
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
