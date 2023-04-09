@@ -110,6 +110,8 @@ void ColorQuestions::timeout() {
 		g_maps->_mapPos.y = 2;
 		g_maps->_currentMap->updateGame();
 
+		g_globals->_party.checkPartyDead();
+
 	} else {
 		// Prompt response for next party member
 		redraw();
