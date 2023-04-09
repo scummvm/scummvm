@@ -162,20 +162,38 @@ int t3dAccessFile(char *name) {
 }
 
 bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name) {
-	auto stream = openFile(name);
-	warning("TODO: t3dGetFileDate is currently super-inefficient");
-	if (stream)
-		return true;
+	warning("TODO: t3dGetFileDate is currently super-inefficient: %s", name);
+	return checkFileExists(name);
+}
+
+Common::String adjustPath(const Common::String &path) {
+	Common::String adjustedPath;
+	if (path.hasPrefix("./")) {
+		adjustedPath = path.substr(2, path.size());
+	} else {
+		adjustedPath = path;
+	}
+	return adjustedPath;
+}
+
+bool checkFileExists(const Common::String &filename) {
+	Common::String adjustedPath = adjustPath(filename);
+
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, adjustedPath);
+
+	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
+		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(adjustedPath, '/'))) {
+			return true;
+		}
+	}
+
 	return false;
 }
 
 Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &filename, int offset, int size) {
-	Common::String adjustedPath;
-	if (filename.hasPrefix("./")) {
-		adjustedPath = filename.substr(2, filename.size());
-	} else {
-		adjustedPath = filename;
-	}
+	Common::String adjustedPath = adjustPath(filename);
+
 	Common::SeekableReadStream *file = nullptr;
 	// Try directly from SearchMan first
 	Common::ArchiveMemberList files;
