@@ -31,7 +31,7 @@ namespace ViewsEnh {
 #define CORRECT_ANSWERS 511
 
 ColorQuestions::ColorQuestions() : ScrollView("ColorQuestions") {
-	setBounds(Common::Rect(0, 144, 234, 200));
+	setBounds(Common::Rect(0, 88, 234, 144));
 }
 
 bool ColorQuestions::msgFocus(const FocusMessage &msg) {
@@ -46,6 +46,11 @@ bool ColorQuestions::msgFocus(const FocusMessage &msg) {
 }
 
 void ColorQuestions::draw() {
+	// Highlight next character to answer question
+	g_globals->_currCharacter = &g_globals->_party[_charIndex];
+	g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
+
+	// Draw view
 	ScrollView::draw();
 	setReduced(false);
 
