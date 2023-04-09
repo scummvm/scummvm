@@ -21,10 +21,12 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 
 #include "gob/dataio.h"
 #include "gob/detection/detection.h"
 #include "gob/detection/tables.h"
+#include "gob/obsolete.h" // Obsolete ID table.
 #include "gob/gob.h"
 
 static const DebugChannelDef debugFlagList[] = {
@@ -46,6 +48,10 @@ static const DebugChannelDef debugFlagList[] = {
 class GobMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	GobMetaEngineDetection();
+
+	PlainGameDescriptor findGame(const char *gameId) const override {
+		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
+	}
 
 	const char *getName() const override {
 		return "gob";

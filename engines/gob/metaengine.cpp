@@ -20,8 +20,10 @@
  */
 
 #include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 
 #include "gob/gob.h"
+#include "gob/obsolete.h"
 
 // For struct GOBGameDescription.
 #include "gob/detection/detection.h"
@@ -33,6 +35,11 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
+
+	Common::Error createInstance(OSystem *syst, Engine **engine) override {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
