@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_INTERACTIONS_ICE_PRINCESS_H
-#define MM1_VIEWS_ENH_INTERACTIONS_ICE_PRINCESS_H
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_TRIVIA_H
+#define MM1_VIEWS_ENH_INTERACTIONS_TRIVIA_H
 
 #include "mm/mm1/views_enh/interactions/interaction_query.h"
 #include "mm/mm1/data/character.h"
@@ -30,7 +30,9 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-class IcePrincess : public InteractionQuery {
+class Trivia : public InteractionQuery {
+private:
+	Common::String _question, _correctAnswer;
 protected:
 	/**
 	 * Answer entered
@@ -38,8 +40,10 @@ protected:
 	void answerEntered() override;
 
 public:
-	IcePrincess();
-	virtual ~IcePrincess() {}
+	Trivia();
+	virtual ~Trivia() {}
+
+	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace Interactions

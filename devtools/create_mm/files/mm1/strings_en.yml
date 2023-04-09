@@ -1310,6 +1310,8 @@ maps:
 		correct: "Correct! +50 gems"
 		incorrect: "Wrong!"
 		answer: "Answer:> .............."
+	emap21:
+		title: "Trivia Island"
 
 	map22:
 		ambush: "Ambush!"

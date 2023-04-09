@@ -19,32 +19,49 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_INTERACTIONS_ICE_PRINCESS_H
-#define MM1_VIEWS_ENH_INTERACTIONS_ICE_PRINCESS_H
-
-#include "mm/mm1/views_enh/interactions/interaction_query.h"
-#include "mm/mm1/data/character.h"
+#include "mm/mm1/views_enh/interactions/trivia.h"
+#include "mm/mm1/maps/map21.h"
+#include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-class IcePrincess : public InteractionQuery {
-protected:
-	/**
-	 * Answer entered
-	 */
-	void answerEntered() override;
+Trivia::Trivia() : InteractionQuery("Trivia", 14) {
+	_title = STRING["maps.emap21.title"];
+}
 
-public:
-	IcePrincess();
-	virtual ~IcePrincess() {}
-};
+bool Trivia::msgGame(const GameMessage &msg) {
+	if (msg._name == "TRIVIA") {
+		_question = STRING[Common::String::format(
+			"maps.map21.questions.%d", msg._value)];
+		_correctAnswer = STRING[Common::String::format(
+			"maps.map21.answers.%d", msg._value)];
+
+		addText(_question);
+		open();
+		return true;
+	}
+
+	return false;
+}
+
+void Trivia::answerEntered() {
+	if (_answer.equalsIgnoreCase(_correctAnswer)) {
+		send(InfoMessage(STRING["maps.map21.correct"]));
+		g_globals->_party[0]._gems += 50;
+		Sound::sound(SOUND_3);
+
+	} else {
+		g_maps->_mapPos.x = 15;
+		g_maps->_currentMap->updateGame();
+		send(InfoMessage(STRING["maps.map21.incorrect"]));
+	}
+}
 
 } // namespace Interactions
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
-
-#endif
