@@ -92,7 +92,7 @@
 
 {
 	{
-		"ajworld",
+		"adibou1",
 		"",
 		AD_ENTRY1s("intro.stk", "e453bea7b28a67c930764d945f64d898", 3913628),
 		EN_ANY,
@@ -110,7 +110,7 @@
 
 {
 	{
-		"ajworld",
+		"adibou1",
 		"",
 		AD_ENTRY1s("intro.stk", "71e7db034890885ac96dd1be43a21c38", 556834),
 		EN_ANY,
