@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-08 20:58+0000\n"
-"PO-Revision-Date: 2023-04-08 07:13+0000\n"
+"PO-Revision-Date: 2023-04-09 03:18+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -98,41 +98,35 @@ msgstr "Auswählen"
 
 #: gui/cloudconnectionwizard.cpp:175
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Cloud-Verbindungsassistent"
 
 #: gui/cloudconnectionwizard.cpp:178
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "Schnellladen"
+msgstr "Schneller Modus"
 
 #: gui/cloudconnectionwizard.cpp:179
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Schneller Modus"
+msgstr "Manueller Modus"
 
 #: gui/cloudconnectionwizard.cpp:182
 msgid "Will ask you to run Local Webserver"
-msgstr ""
+msgstr "Wird dich darum bitten, den lokalen Webserver zu starten"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires Local Webserver feature"
-msgstr "Startet den lokalen Webserver"
+msgstr "Benötigt das lokale Webserver-Feature"
 
 #: gui/cloudconnectionwizard.cpp:200
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Schneller Modus: Schritt 1"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "In this mode, Local Webserver must be running,"
-msgstr ""
+msgstr "In diesem Modus muss der lokale Webserver laufen,"
 
 #: gui/cloudconnectionwizard.cpp:206
 msgid "so your browser could forward data to ScummVM"
-msgstr ""
+msgstr "damit dein Browser die Daten zu ScummVM weiterleiten kann"
 
 #: gui/cloudconnectionwizard.cpp:226 gui/options.cpp:3657
 msgid "Stop server"
@@ -156,11 +150,11 @@ msgstr "Nicht gestartet"
 
 #: gui/cloudconnectionwizard.cpp:250
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Schneller Modus: Schritt 2"
 
 #: gui/cloudconnectionwizard.cpp:254
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Öffne jetzt diesen Link in deinem Browser:"
 
 #: gui/cloudconnectionwizard.cpp:255 gui/cloudconnectionwizard.cpp:302
 #: gui/message.cpp:218 gui/message.cpp:222
@@ -169,59 +163,55 @@ msgstr "URL öffnen"
 
 #: gui/cloudconnectionwizard.cpp:257
 msgid "It will automatically pass the data to ScummVM,"
-msgstr ""
+msgstr "Die Daten werden automatisch zu ScummVM weitergeleitet,"
 
 #: gui/cloudconnectionwizard.cpp:258
 msgid "and warn you should there be any errors."
-msgstr ""
+msgstr "bei einem Fehler wirst du benachrichtigt."
 
 #: gui/cloudconnectionwizard.cpp:262
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Adresse des lokalen Webservers: "
 
 #: gui/cloudconnectionwizard.cpp:278
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Schneller Modus: Erfolg"
 
 #: gui/cloudconnectionwizard.cpp:282
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "You cloud storage has been connected!"
-msgstr "Verbinden Sie Ihr Konto Ihres Cloud-Anbieters"
+msgstr "Dein Cloud-Speicher wurde erfolgreich verbunden!"
 
 #: gui/cloudconnectionwizard.cpp:283 gui/cloudconnectionwizard.cpp:370
 msgid "Finish"
-msgstr ""
+msgstr "Abschließen"
 
 #: gui/cloudconnectionwizard.cpp:296
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Manueller Modus: Schritt 1"
 
 #: gui/cloudconnectionwizard.cpp:301
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. Besuchen Sie:"
+msgstr "Öffne diesen Link in deinem Browser:"
 
 #: gui/cloudconnectionwizard.cpp:304
 msgid "When it fails to pass JSON code to ScummVM,"
-msgstr ""
+msgstr "Wenn der JSON-Code nich zu ScummVM übertragen werden kann,"
 
 #: gui/cloudconnectionwizard.cpp:305
 msgid "find it on Troubleshooting section of the page,"
-msgstr ""
+msgstr "prüfe den Abschnitt zur Fehlerbehebung der Seite"
 
 #: gui/cloudconnectionwizard.cpp:306
 msgid "and go to the next step here."
-msgstr ""
+msgstr "und gehe zum nächsten Schritt."
 
 #: gui/cloudconnectionwizard.cpp:321
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Manueller Modus: Schritt 2"
 
 #: gui/cloudconnectionwizard.cpp:326
 msgid "Copy JSON code from browser here and press Next:"
-msgstr ""
+msgstr "Füge den JSON-Code des Browsers hier ein und klicke auf Weiter:"
 
 #: gui/cloudconnectionwizard.cpp:328
 msgid "Paste"
@@ -233,41 +223,37 @@ msgstr "Aus Zwischenablage einfügen"
 
 #: gui/cloudconnectionwizard.cpp:344
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Manueller Modus: Ein Fehler ist aufgetreten"
 
 #: gui/cloudconnectionwizard.cpp:348
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "Cloud-Speicher verbunden."
+msgstr "Cloud-Speicher nicht verbunden."
 
 #: gui/cloudconnectionwizard.cpp:349
 msgid "Make sure JSON code was copied correctly and retry."
 msgstr ""
+"Stelle sicher, dass der JSON-Code korrekt kopiert wurde und versuche es "
+"erneut."
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "It it doesn't work, try from the beginning."
-msgstr ""
+msgstr "Wenn das nicht funktioniert, starte wieder am Anfang."
 
 #: gui/cloudconnectionwizard.cpp:351
 msgid "Error message: "
-msgstr ""
+msgstr "Fehlermeldung: "
 
 #: gui/cloudconnectionwizard.cpp:365
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Manueller Modus: Erfolg"
 
 #: gui/cloudconnectionwizard.cpp:369
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Verbinden Sie Ihr Konto Ihres Cloud-Anbieters"
+msgstr "Dein Cloud-Speicher wurde erfolgreich verbunden!"
 
 #: gui/cloudconnectionwizard.cpp:393
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "Backend"
+msgstr "Zurück"
 
 #: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:831
 msgid "Next"
@@ -313,7 +299,7 @@ msgstr ""
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:501
 msgid "JSON code contents is malformed."
-msgstr ""
+msgstr "JSON-Code ist fehlerhaft."
 
 #: gui/cloudconnectionwizard.cpp:522 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -340,17 +326,13 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/cloudconnectionwizard.cpp:523
-#, fuzzy
-#| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
-msgstr "Fehlerhafte rs-Datei."
+msgstr "JSON-Fehler."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Interagieren"
+msgstr "Abgebrochen."
 
 #: gui/cloudconnectionwizard.cpp:580 gui/options.cpp:3358
 msgid ""
@@ -1964,26 +1946,19 @@ msgid "Active cloud storage"
 msgstr "Aktiver Cloud-Speicher"
 
 #: gui/options.cpp:2687
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Die Cloud ist noch nicht aktiv. Benutzernamen überprüfen und aktivieren:"
+"Der Cloud-Speicher ist noch nicht aktiv. Benutzernamen überprüfen und "
+"aktivieren:"
 
 #: gui/options.cpp:2689
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Die Cloud ist noch nicht aktiv. Benutzernamen überprüfen und aktivieren:"
+"Der Cloud-Speicher ist noch nicht aktiv. Benutzernamen überprüfen und "
+"aktivieren:"
 
 #: gui/options.cpp:2690
 msgid "Enable storage"
@@ -2080,24 +2055,17 @@ msgid "Stop using this storage on this device"
 msgstr "Diesen Cloud-Speicher nicht mehr auf diesem Gerät verwenden"
 
 #: gui/options.cpp:2719
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "Dieser Cloud-Speicher ist noch nicht verbunden! Zum Verbinden"
+msgstr "Dieser Cloud-Speicher ist noch nicht verbunden!"
 
 #: gui/options.cpp:2721
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "Dieser Cloud-Speicher ist noch nicht verbunden! Zum Verbinden"
+msgstr "Dieser Cloud-Speicher ist noch nicht verbunden!"
 
 #: gui/options.cpp:2722
-#, fuzzy
-#| msgid "3. Connect"
 msgid "Connect"
-msgstr "3. Verbinden"
+msgstr "Verbinden"
 
 #: gui/options.cpp:2722
 msgid "Connect your cloud storage account"
