@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-09 05:49+0000\n"
-"PO-Revision-Date: 2023-04-05 10:46+0000\n"
+"PO-Revision-Date: 2023-04-09 09:32+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -97,41 +97,35 @@ msgstr "Aceptar"
 
 #: gui/cloudconnectionwizard.cpp:175
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Asistente de conexión a la nube"
 
 #: gui/cloudconnectionwizard.cpp:178
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "Carga rápida"
+msgstr "Modo rápido"
 
 #: gui/cloudconnectionwizard.cpp:179
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Modo rápido"
+msgstr "Modo manual"
 
 #: gui/cloudconnectionwizard.cpp:182
 msgid "Will ask you to run Local Webserver"
-msgstr ""
+msgstr "Solicitará la ejecución de un servidor local"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires Local Webserver feature"
-msgstr "Arranca el servidor local"
+msgstr "Necesita un servidor local"
 
 #: gui/cloudconnectionwizard.cpp:200
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Modo rápido: paso 1"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "In this mode, Local Webserver must be running,"
-msgstr ""
+msgstr "En este modo debes tener en marcha un servidor web"
 
 #: gui/cloudconnectionwizard.cpp:206
 msgid "so your browser could forward data to ScummVM"
-msgstr ""
+msgstr "para que tu navegador pueda enviar datos a ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:226 gui/options.cpp:3657
 msgid "Stop server"
@@ -155,11 +149,11 @@ msgstr "Detenido"
 
 #: gui/cloudconnectionwizard.cpp:250
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Modo rápido: paso 2"
 
 #: gui/cloudconnectionwizard.cpp:254
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Abre este enlace en tu navegador:"
 
 #: gui/cloudconnectionwizard.cpp:255 gui/cloudconnectionwizard.cpp:302
 #: gui/message.cpp:218 gui/message.cpp:222
@@ -168,59 +162,55 @@ msgstr "Abre la dirección URL"
 
 #: gui/cloudconnectionwizard.cpp:257
 msgid "It will automatically pass the data to ScummVM,"
-msgstr ""
+msgstr "Se transmitirán datos automáticamente a ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:258
 msgid "and warn you should there be any errors."
-msgstr ""
+msgstr "y se te notificará en caso de que haya errores."
 
 #: gui/cloudconnectionwizard.cpp:262
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Dirección de servidor local: "
 
 #: gui/cloudconnectionwizard.cpp:278
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Modo rápido: completado"
 
 #: gui/cloudconnectionwizard.cpp:282
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "You cloud storage has been connected!"
-msgstr "Conecta con tu cuenta de almacenamiento en la nube"
+msgstr "¡Se ha conectado con tu almacenamiento en la nube!"
 
 #: gui/cloudconnectionwizard.cpp:283 gui/cloudconnectionwizard.cpp:370
 msgid "Finish"
-msgstr ""
+msgstr "Terminar"
 
 #: gui/cloudconnectionwizard.cpp:296
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Modo manual: paso 1"
 
 #: gui/cloudconnectionwizard.cpp:301
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. Entra aquí:"
+msgstr "Abre este enlace en tu navegador:"
 
 #: gui/cloudconnectionwizard.cpp:304
 msgid "When it fails to pass JSON code to ScummVM,"
-msgstr ""
+msgstr "Cuando dé error al enviar código JSON a ScummVM, búscalo"
 
 #: gui/cloudconnectionwizard.cpp:305
 msgid "find it on Troubleshooting section of the page,"
-msgstr ""
+msgstr "en la sección de resolución de problemas/«Troubleshooting»"
 
 #: gui/cloudconnectionwizard.cpp:306
 msgid "and go to the next step here."
-msgstr ""
+msgstr "de la página y ve al siguiente paso del asistente."
 
 #: gui/cloudconnectionwizard.cpp:321
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Modo manual: paso 2"
 
 #: gui/cloudconnectionwizard.cpp:326
 msgid "Copy JSON code from browser here and press Next:"
-msgstr ""
+msgstr "Copia aquí el código JSON del navegador y pulsa en Siguiente:"
 
 #: gui/cloudconnectionwizard.cpp:328
 msgid "Paste"
@@ -232,41 +222,35 @@ msgstr "Pega el código desde el portapapeles"
 
 #: gui/cloudconnectionwizard.cpp:344
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Modo manual: algo ha fallado"
 
 #: gui/cloudconnectionwizard.cpp:348
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "Almacenamiento conectado."
+msgstr "No se pudo conectar al almacenamiento."
 
 #: gui/cloudconnectionwizard.cpp:349
 msgid "Make sure JSON code was copied correctly and retry."
-msgstr ""
+msgstr "Comprueba que el código JSON esté bien copiado y vuelve a intentarlo."
 
 #: gui/cloudconnectionwizard.cpp:350
 msgid "It it doesn't work, try from the beginning."
-msgstr ""
+msgstr "En caso de que no funcione, empieza desde el principio."
 
 #: gui/cloudconnectionwizard.cpp:351
 msgid "Error message: "
-msgstr ""
+msgstr "Mensaje de error: "
 
 #: gui/cloudconnectionwizard.cpp:365
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Modo manual: terminado"
 
 #: gui/cloudconnectionwizard.cpp:369
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Conecta con tu cuenta de almacenamiento en la nube"
+msgstr "¡Almacenamiento conectado!"
 
 #: gui/cloudconnectionwizard.cpp:393
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "Back-end"
+msgstr "Volver"
 
 #: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:831
 msgid "Next"
@@ -310,7 +294,7 @@ msgstr "Espera a que el almacenamiento actual finalice y prueba otra vez."
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:501
 msgid "JSON code contents is malformed."
-msgstr ""
+msgstr "El código JSON no es válido."
 
 #: gui/cloudconnectionwizard.cpp:522 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -337,17 +321,13 @@ msgid "OK"
 msgstr "Aceptar"
 
 #: gui/cloudconnectionwizard.cpp:523
-#, fuzzy
-#| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
-msgstr "Archivo rs incorrecto."
+msgstr "JSON incorrecto."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:530
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Interactuar"
+msgstr "Proceso interrumpido."
 
 #: gui/cloudconnectionwizard.cpp:580 gui/options.cpp:3358
 msgid ""
@@ -1958,27 +1938,18 @@ msgid "Active cloud storage"
 msgstr "Almacenamiento en la nube activo"
 
 #: gui/options.cpp:2687
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. El almacenamiento no está activado todavía. Verifica que el nombre de "
+"El almacenamiento no está activado todavía. Verifica que el nombre de "
 "usuario es correcto y actívalo:"
 
 #: gui/options.cpp:2689
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. El almacenamiento no está activado todavía. Verifica que el nombre de "
+"El almacenamiento no está activado todavía. Verifica que el nombre de "
 "usuario es correcto y actívalo:"
 
 #: gui/options.cpp:2690
@@ -2087,24 +2058,17 @@ msgid "Stop using this storage on this device"
 msgstr "Deja de utilizar este almacenamiento en este dispositivo"
 
 #: gui/options.cpp:2719
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "¡Este almacenamiento no está conectado todavía! Para conectar,"
+msgstr "¡Este almacenamiento no está conectado todavía!"
 
 #: gui/options.cpp:2721
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "¡Este almacenamiento no está conectado todavía! Para conectar,"
+msgstr "¡Este almacenamiento no está conectado todavía!"
 
 #: gui/options.cpp:2722
-#, fuzzy
-#| msgid "3. Connect"
 msgid "Connect"
-msgstr "3. Conectar"
+msgstr "Conectar"
 
 #: gui/options.cpp:2722
 msgid "Connect your cloud storage account"
@@ -6559,10 +6523,8 @@ msgid "Might and Magic 1 - Menus"
 msgstr "Might and Magic 1 - Menús"
 
 #: engines/mm/mm1/metaengine.cpp:138
-#, fuzzy
-#| msgid "Might and Magic 1 - Menus"
 msgid "Might and Magic 1 - Minimal Keys"
-msgstr "Might and Magic 1 - Menús"
+msgstr "Might and Magic 1 - Teclas básicas"
 
 #: engines/mm/mm1/metaengine.cpp:144 engines/mm/mm1/metaengine.cpp:150
 #: engines/mm/mm1/metaengine.cpp:156
@@ -7623,25 +7585,19 @@ msgstr ""
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Create a new game session"
-msgstr "Guarda una nueva partida"
+msgstr "Crear una sesión nueva"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Name:"
-msgstr "Menú del juego"
+msgstr "Nombre de partida:"
 
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
-#, fuzzy
-#| msgid "Name:"
 msgid "Your Name:"
-msgstr "Nombre:"
+msgstr "Tu nombre:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3496
