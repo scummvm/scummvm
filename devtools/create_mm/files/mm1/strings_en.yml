@@ -1279,13 +1279,15 @@ maps:
 	map20:
 		passage: "Passage to Portsmith, take it (Y/N)?"
 		cave: "A cave, enter (Y/N)?"
-		castle: "Castle white wolf, enter (Y/N)?"
+		castle: "Castle White Wolf, enter (Y/N)?"
 		whistle: "Your ruby whistle begins to glow,\nblow it (0-9 times)?"
 		stairs_down: "Stairs going down, enter (Y/N)?"
 		temple: "An ancient temple converted to a\nstronghold has no apparent entrance."
 		peak: "Atop this peak looking:\n\nN= A cave beyond white wolf.\nE= Large beasts above wyvern peaks!\nS= Distant uncharted isles.\nW= A pirate ship beyond korin bluffs."
 		sign1: "A sign pointing N. reads: White Wolf"
 		sign2: "A sign pointing S. reads: Portsmith"
+	emap20:
+		peak: "Atop this peak looking:\n\nN= A cave beyond White Wolf.\nE= Large beasts above Wyvern Peaks!\nS= Distant uncharted isles.\nW= A pirate ship beyond Korin Bluffs."
 
 	map21:
 		trivia_island: "Trivia Island! 500 gold, enter (Y/N)?"
