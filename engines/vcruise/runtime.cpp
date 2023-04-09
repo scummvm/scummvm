@@ -3620,6 +3620,11 @@ void Runtime::scriptOpAnim(ScriptArg_t arg) {
 void Runtime::scriptOpStatic(ScriptArg_t arg) {
 	TAKE_STACK_INT(kAnimDefStackArgs);
 
+	debug(10, "scriptOpStatic() kAnimDefStackArgs: %d", kAnimDefStackArgs);
+	for (uint i = 0; i < kAnimDefStackArgs; i++) {
+		debug(10, "\tstackArgs[%d]: %d", i, stackArgs[i]);
+	}
+
 	// FIXME: What does this actually do?
 	// It looks like this sets the last frame of an animation as the current scene graphic, but
 	// in some cases that's wrong.  For instance, after solving the temple puzzle in Reah, viewing
