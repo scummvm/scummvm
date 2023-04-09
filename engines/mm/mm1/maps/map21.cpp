@@ -132,9 +132,9 @@ void Map21::special02() {
 				}
 			}
 
-			g_events->send(SoundMessage(STRING["maps.map21.not_enough_gold"]));
 			g_maps->_mapPos.y++;
 			g_maps->_currentMap->updateGame();
+			g_events->send(SoundMessage(STRING["maps.map21.not_enough_gold"]));
 		},
 		[]() {
 			g_maps->_mapPos.y++;

@@ -48,9 +48,7 @@ void AnswerEntry::draw() {
 
 bool AnswerEntry::msgKeypress(const KeypressMessage &msg) {
 	if (!isDelayActive()) {
-		if (msg.keycode == Common::KEYCODE_RETURN) {
-			answerEntered();
-		} else if (msg.keycode == Common::KEYCODE_SPACE ||
+		if (msg.keycode == Common::KEYCODE_SPACE ||
 			(msg.keycode >= Common::KEYCODE_0 &&
 				msg.keycode <= Common::KEYCODE_z)) {
 			_answer += toupper(msg.ascii);
@@ -66,6 +64,15 @@ bool AnswerEntry::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return true;
+}
+
+bool AnswerEntry::msgAction(const ActionMessage &msg) {
+	if (!isDelayActive() && msg._action == KEYBIND_SELECT) {
+		answerEntered();
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace Maps
