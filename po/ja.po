@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-09 05:49+0000\n"
+"POT-Creation-Date: 2023-04-09 10:54+0000\n"
 "PO-Revision-Date: 2023-04-08 07:13+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -61,10 +61,10 @@ msgstr "上へ"
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
 #: gui/massadd.cpp:93 gui/options.cpp:2343 gui/predictivedialog.cpp:68
-#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:213
+#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:212
 #: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:64
-#: gui/saveload-dialog.cpp:457 gui/saveload-dialog.cpp:528
-#: gui/saveload-dialog.cpp:830 gui/saveload-dialog.cpp:1223
+#: gui/saveload-dialog.cpp:455 gui/saveload-dialog.cpp:526
+#: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1220
 #: gui/shaderbrowser-dialog.cpp:81 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:595 engines/engine.cpp:739
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
@@ -268,7 +268,7 @@ msgstr "クラウドストーレジを接続する"
 msgid "Back"
 msgstr "バックエンド"
 
-#: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:831
+#: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:829
 msgid "Next"
 msgstr "次"
 
@@ -278,8 +278,8 @@ msgstr "すでに別のストレージが使用されています。切断して
 
 #: gui/cloudconnectionwizard.cpp:464 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:136
-#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:417 gui/launcher.cpp:446
-#: gui/launcher.cpp:489 gui/options.cpp:3367 gui/options.cpp:3741
+#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
+#: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
@@ -292,8 +292,8 @@ msgstr "はい"
 
 #: gui/cloudconnectionwizard.cpp:464 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:136
-#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:417 gui/launcher.cpp:446
-#: gui/launcher.cpp:489 gui/options.cpp:3367 gui/options.cpp:3741
+#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
+#: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -314,9 +314,9 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:522 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:545 gui/launcher.cpp:549
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:543 gui/launcher.cpp:547
 #: gui/massadd.cpp:90 gui/options.cpp:2345 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1224 engines/engine.cpp:542 engines/engine.cpp:565
+#: gui/saveload-dialog.cpp:1221 engines/engine.cpp:542 engines/engine.cpp:565
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1811
@@ -361,7 +361,7 @@ msgstr ""
 msgid "Select directory where to download game data"
 msgstr "ゲームデータのダウンロード先を選択"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:290
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:288
 msgid "Select directory with game data"
 msgstr "ゲームデータのディレクトリーを選択"
 
@@ -395,7 +395,7 @@ msgid ""
 "files with it?"
 msgstr "接続が制限されているようです。ダウンロードしてもよろしいですか?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:591
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:589
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "指定されたディレクトリーが開けませんでした!"
 
@@ -492,7 +492,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "進む"
 
-#: gui/editgamedialog.cpp:131 engines/dialogs.cpp:276
+#: gui/editgamedialog.cpp:131 engines/dialogs.cpp:274
 msgid "Game"
 msgstr "ゲーム"
 
@@ -582,11 +582,11 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "グローバルグラフィック設定を上書き"
 
-#: gui/editgamedialog.cpp:212 gui/options.cpp:2226 engines/dialogs.cpp:317
+#: gui/editgamedialog.cpp:212 gui/options.cpp:2226 engines/dialogs.cpp:315
 msgid "Keymaps"
 msgstr "キーマップ"
 
-#: gui/editgamedialog.cpp:219 gui/options.cpp:2233 engines/dialogs.cpp:324
+#: gui/editgamedialog.cpp:219 gui/options.cpp:2233 engines/dialogs.cpp:322
 msgid "Backend"
 msgstr "バックエンド"
 
@@ -599,7 +599,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "バックエンドのグローバル設定を上書き"
 
-#: gui/editgamedialog.cpp:238 gui/options.cpp:2247 engines/dialogs.cpp:292
+#: gui/editgamedialog.cpp:238 gui/options.cpp:2247 engines/dialogs.cpp:290
 msgid "Audio"
 msgstr "オーディオ"
 
@@ -702,11 +702,11 @@ msgctxt "lowres"
 msgid "Save Path:"
 msgstr "セーブのフォルダー："
 
-#: gui/editgamedialog.cpp:338 engines/dialogs.cpp:339
+#: gui/editgamedialog.cpp:338 engines/dialogs.cpp:337
 msgid "Achievements"
 msgstr "実績"
 
-#: gui/editgamedialog.cpp:342 engines/dialogs.cpp:343
+#: gui/editgamedialog.cpp:342 engines/dialogs.cpp:341
 msgid "Statistics"
 msgstr "統計"
 
@@ -1009,103 +1009,103 @@ msgstr "機種"
 msgid "Select Group by"
 msgstr "グループを選択"
 
-#: gui/launcher.cpp:217 gui/launcher.cpp:807
+#: gui/launcher.cpp:216 gui/launcher.cpp:803
 msgid "Group:"
 msgstr "グループ:"
 
-#: gui/launcher.cpp:219
+#: gui/launcher.cpp:218
 msgid "Select a criteria to group the entries"
 msgstr "エントリーのグループ化基準を選択"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:249 engines/dialogs.cpp:96
+#: gui/launcher.cpp:247 engines/dialogs.cpp:95
 msgid "~Q~uit"
 msgstr "終了(~Q~)"
 
-#: gui/launcher.cpp:249 backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "Quit ScummVM"
 msgstr "ScummVMを終了"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:253
+#: gui/launcher.cpp:251
 msgid "A~b~out"
 msgstr "ScummVMについて(~b~)"
 
-#: gui/launcher.cpp:253 backends/platform/sdl/macosx/appmenu_osx.mm:246
+#: gui/launcher.cpp:251 backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "About ScummVM"
 msgstr "ScummVMについて"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:255
+#: gui/launcher.cpp:253
 msgid "Global ~O~ptions..."
 msgstr "グローバル設定(~O~)..."
 
-#: gui/launcher.cpp:255
+#: gui/launcher.cpp:253
 msgid "Change global ScummVM options"
 msgstr "全般のScummVMの設定を変える"
 
-#: gui/launcher.cpp:255
+#: gui/launcher.cpp:253
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "総合設定(~O~)..."
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:260
+#: gui/launcher.cpp:258
 msgid "~A~dd Game..."
 msgstr "ゲームを追加(~A~)..."
 
-#: gui/launcher.cpp:260
+#: gui/launcher.cpp:258
 msgid "Add games to the list"
 msgstr "リストにゲームを追加する"
 
-#: gui/launcher.cpp:260
+#: gui/launcher.cpp:258
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "ゲームを追加(~A~)..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:264
+#: gui/launcher.cpp:262
 msgid "~R~emove Game"
 msgstr "ゲームを削除(~R~)"
 
-#: gui/launcher.cpp:264
+#: gui/launcher.cpp:262
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "リストからゲームを削除する。ゲームのデータファイルは削除されません"
 
-#: gui/launcher.cpp:264
+#: gui/launcher.cpp:262
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "ゲームを削除(~R~)"
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:267
+#: gui/launcher.cpp:265
 msgid "Mass Add..."
 msgstr "一括に追加..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:268
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "一括に追加..."
 
-#: gui/launcher.cpp:278 gui/launcher.cpp:776 gui/shaderbrowser-dialog.cpp:62
+#: gui/launcher.cpp:276 gui/launcher.cpp:773 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
 msgid "Search in game list"
 msgstr "ゲームリストを検索する"
 
-#: gui/launcher.cpp:282 gui/launcher.cpp:798 gui/shaderbrowser-dialog.cpp:66
+#: gui/launcher.cpp:280 gui/launcher.cpp:794 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
 msgid "Search:"
 msgstr "検索："
 
-#: gui/launcher.cpp:293 engines/dialogs.cpp:99 engines/engine.cpp:903
+#: gui/launcher.cpp:291 engines/dialogs.cpp:98 engines/engine.cpp:903
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:741
 msgid "Load game:"
 msgstr "ゲームをロード："
 
-#: gui/launcher.cpp:293 engines/dialogs.cpp:99 engines/engine.cpp:903
+#: gui/launcher.cpp:291 engines/dialogs.cpp:98 engines/engine.cpp:903
 #: engines/mm/xeen/saves.cpp:259 engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
@@ -1113,121 +1113,121 @@ msgstr "ゲームをロード："
 msgid "Load"
 msgstr "ロート"
 
-#: gui/launcher.cpp:405
+#: gui/launcher.cpp:403
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr "このフォルダーはダウンロード中の為使えません！"
 
-#: gui/launcher.cpp:416
+#: gui/launcher.cpp:414
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr "一括にゲームを追加してもよろしいですか？大量に追加することもあります。"
 
-#: gui/launcher.cpp:446
+#: gui/launcher.cpp:444
 msgid "Do you really want to remove this game configuration?"
 msgstr "このゲームはリストから削除してもよろしいですか？"
 
-#: gui/launcher.cpp:488
+#: gui/launcher.cpp:486
 msgid "Do you want to load saved game?"
 msgstr "セーブデータをロードしますか？"
 
-#: gui/launcher.cpp:545
+#: gui/launcher.cpp:543
 msgid "This game does not support loading games from the launcher."
 msgstr "このゲームはランチャーからロードができません。"
 
-#: gui/launcher.cpp:549
+#: gui/launcher.cpp:547
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "選択されたゲームを実行できるエンジンは見つかりませんでした！"
 
-#: gui/launcher.cpp:610
+#: gui/launcher.cpp:608
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "選択されたフォルダー内ゲームが認識できませんでした！"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:626
+#: gui/launcher.cpp:624
 msgid "Unknown variant"
 msgstr "未認識バージョン"
 
-#: gui/launcher.cpp:632
+#: gui/launcher.cpp:630
 msgid "Pick the game:"
 msgstr "ゲームを選択してください："
 
-#: gui/launcher.cpp:847 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:843 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "リストで表示"
 
-#: gui/launcher.cpp:848 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:844 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "グリッドで表示"
 
-#: gui/launcher.cpp:1072
+#: gui/launcher.cpp:1067
 msgid "~S~tart"
 msgstr "開始(~S~)"
 
-#: gui/launcher.cpp:1072
+#: gui/launcher.cpp:1067
 msgid "Start selected game"
 msgstr "選択したゲームを開始する"
 
-#: gui/launcher.cpp:1075
+#: gui/launcher.cpp:1070
 msgid "~L~oad..."
 msgstr "ロード(~L~)..."
 
-#: gui/launcher.cpp:1075
+#: gui/launcher.cpp:1070
 msgid "Load saved game for selected game"
 msgstr "選択されたゲームのセーブデータをロードする"
 
-#: gui/launcher.cpp:1077
+#: gui/launcher.cpp:1072
 msgid "Record..."
 msgstr "記録..."
 
-#: gui/launcher.cpp:1083
+#: gui/launcher.cpp:1078
 msgid "~G~ame Options..."
 msgstr "ゲーム設定(~G~)..."
 
-#: gui/launcher.cpp:1083
+#: gui/launcher.cpp:1078
 msgid "Change game options"
 msgstr "ゲームの設定を変える"
 
-#: gui/launcher.cpp:1083
+#: gui/launcher.cpp:1078
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "ゲーム設定(~G~)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1172 gui/launcher.cpp:1361
+#: gui/launcher.cpp:1167 gui/launcher.cpp:1356
 msgid "Unknown Engine"
 msgstr "不明なエンジン"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1189 gui/launcher.cpp:1378
+#: gui/launcher.cpp:1184 gui/launcher.cpp:1373
 msgid "Unknown Publisher"
 msgstr "不明な販売元"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1206 gui/launcher.cpp:1395
+#: gui/launcher.cpp:1201 gui/launcher.cpp:1390
 msgid "No Series"
 msgstr "シリーズなし"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1220 gui/launcher.cpp:1409
+#: gui/launcher.cpp:1215 gui/launcher.cpp:1404
 msgid "Language not detected"
 msgstr "検出されない言語"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1234 gui/launcher.cpp:1423
+#: gui/launcher.cpp:1229 gui/launcher.cpp:1418
 msgid "Platform not detected"
 msgstr "検出されない機種"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1434 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1429 gui/widgets/groupedlist.cpp:80
 msgid "All"
 msgstr "すべて"
 
-#: gui/launcher.cpp:1581
+#: gui/launcher.cpp:1576
 msgid "Icons per row:"
 msgstr "1行のアイコン："
 
@@ -1258,19 +1258,19 @@ msgstr ""
 "新しくゲーム%d件をリストに追加しました。他にゲーム%d件が既に追加されていま"
 "す..."
 
-#: gui/onscreendialog.cpp:100 gui/onscreendialog.cpp:102
+#: gui/onscreendialog.cpp:95 gui/onscreendialog.cpp:97
 msgid "Stop"
 msgstr "停止"
 
-#: gui/onscreendialog.cpp:105
+#: gui/onscreendialog.cpp:100
 msgid "Edit record description"
 msgstr "記録の詳細を編集"
 
-#: gui/onscreendialog.cpp:107
+#: gui/onscreendialog.cpp:102
 msgid "Switch to Game"
 msgstr "ゲームへ切り替え"
 
-#: gui/onscreendialog.cpp:109
+#: gui/onscreendialog.cpp:104
 msgid "Fast replay"
 msgstr "高速再生"
 
@@ -2253,26 +2253,26 @@ msgstr "#  次"
 msgid "add"
 msgstr "追加"
 
-#: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:184
+#: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:183
 msgid "Delete char"
 msgstr "一文字削除"
 
-#: gui/predictivedialog.cpp:112 gui/predictivedialog.cpp:188
+#: gui/predictivedialog.cpp:111 gui/predictivedialog.cpp:186
 msgid "<"
 msgstr "＜"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
-#: gui/predictivedialog.cpp:114 gui/predictivedialog.cpp:599
+#: gui/predictivedialog.cpp:113 gui/predictivedialog.cpp:597
 msgid "*  Pre"
 msgstr "*  予測"
 
 #. I18N: 'Num' means Numbers
-#: gui/predictivedialog.cpp:602
+#: gui/predictivedialog.cpp:600
 msgid "*  Num"
 msgstr "*  数字"
 
 #. I18N: 'Abc' means Latin alphabet input
-#: gui/predictivedialog.cpp:605
+#: gui/predictivedialog.cpp:603
 msgid "*  Abc"
 msgstr "*  Abc"
 
@@ -2280,8 +2280,8 @@ msgstr "*  Abc"
 msgid "Recorder or Playback Gameplay"
 msgstr "ゲームプレイの記録と再生"
 
-#: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:213
-#: gui/saveload-dialog.cpp:461 gui/saveload-dialog.cpp:528
+#: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
+#: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
 #: engines/engine.cpp:588
 msgid "Delete"
 msgstr "削除"
@@ -2298,21 +2298,21 @@ msgstr "再生"
 msgid "Edit"
 msgstr "編集"
 
-#: gui/recorderdialog.cpp:143 gui/recorderdialog.cpp:302
-#: gui/recorderdialog.cpp:309
+#: gui/recorderdialog.cpp:142 gui/recorderdialog.cpp:301
+#: gui/recorderdialog.cpp:308
 msgid "Author: "
 msgstr "製作者： "
 
-#: gui/recorderdialog.cpp:145 gui/recorderdialog.cpp:303
-#: gui/recorderdialog.cpp:310
+#: gui/recorderdialog.cpp:144 gui/recorderdialog.cpp:302
+#: gui/recorderdialog.cpp:309
 msgid "Notes: "
 msgstr "メモ： "
 
-#: gui/recorderdialog.cpp:212
+#: gui/recorderdialog.cpp:211
 msgid "Do you really want to delete this record?"
 msgstr "記録を削除してもよろしいですか？"
 
-#: gui/recorderdialog.cpp:229
+#: gui/recorderdialog.cpp:228
 msgid "Unknown Author"
 msgstr "不明な製作者"
 
@@ -2333,55 +2333,55 @@ msgstr "バックグラウンドで実行する"
 msgid "%s (%s %S / %s %S, %s / %s files)"
 msgstr "%s (%s %S / %s %S, %s / %s files)"
 
-#: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
+#: gui/saveload-dialog.cpp:450 gui/saveload-dialog.cpp:630
 msgid "No date saved"
 msgstr "日付未記録"
 
-#: gui/saveload-dialog.cpp:453 gui/saveload-dialog.cpp:633
+#: gui/saveload-dialog.cpp:451 gui/saveload-dialog.cpp:631
 msgid "No time saved"
 msgstr "時間未記録"
 
-#: gui/saveload-dialog.cpp:454 gui/saveload-dialog.cpp:634
+#: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No playtime saved"
 msgstr "再生時間未記録"
 
-#: gui/saveload-dialog.cpp:527
+#: gui/saveload-dialog.cpp:525
 msgid "Do you really want to delete this saved game?"
 msgstr "セーブデータを削除してもよろしいですか？"
 
-#: gui/saveload-dialog.cpp:659 gui/saveload-dialog.cpp:1174
+#: gui/saveload-dialog.cpp:657 gui/saveload-dialog.cpp:1171
 msgid "Date: "
 msgstr "日付： "
 
-#: gui/saveload-dialog.cpp:663 gui/saveload-dialog.cpp:1180
+#: gui/saveload-dialog.cpp:661 gui/saveload-dialog.cpp:1177
 msgid "Time: "
 msgstr "時間： "
 
-#: gui/saveload-dialog.cpp:669 gui/saveload-dialog.cpp:1188
+#: gui/saveload-dialog.cpp:667 gui/saveload-dialog.cpp:1185
 msgid "Playtime: "
 msgstr "再生時間： "
 
-#: gui/saveload-dialog.cpp:682 gui/saveload-dialog.cpp:768
+#: gui/saveload-dialog.cpp:680 gui/saveload-dialog.cpp:766
 msgid "Untitled saved game"
 msgstr "無名のセーブ"
 
-#: gui/saveload-dialog.cpp:834
+#: gui/saveload-dialog.cpp:832
 msgid "Prev"
 msgstr "前"
 
-#: gui/saveload-dialog.cpp:1035
+#: gui/saveload-dialog.cpp:1033
 msgid "New Save"
 msgstr "新セーブ"
 
-#: gui/saveload-dialog.cpp:1035
+#: gui/saveload-dialog.cpp:1033
 msgid "Create a new saved game"
 msgstr "新しいセーブデータを作成する"
 
-#: gui/saveload-dialog.cpp:1167
+#: gui/saveload-dialog.cpp:1164
 msgid "Name: "
 msgstr "名前： "
 
-#: gui/saveload-dialog.cpp:1243
+#: gui/saveload-dialog.cpp:1240
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "セーブデータ%dの詳細を入力してください："
@@ -2480,7 +2480,7 @@ msgstr ""
 "設定は、後から「オプション」→「その他」で\n"
 "変更可能です。"
 
-#: gui/widget.cpp:448 gui/widget.cpp:450 gui/widget.cpp:456 gui/widget.cpp:458
+#: gui/widget.cpp:448 gui/widget.cpp:450 gui/widget.cpp:455 gui/widget.cpp:457
 msgid "Clear value"
 msgstr "クリア"
 
@@ -2784,40 +2784,40 @@ msgstr "実績がアンロックされました!"
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "違法コピーの痕跡が検出されました。このソフトはサポートできません"
 
-#: engines/dialogs.cpp:68
+#: engines/dialogs.cpp:67
 msgid "~R~esume"
 msgstr "再開(~R~)"
 
-#: engines/dialogs.cpp:70
+#: engines/dialogs.cpp:69
 msgid "~L~oad"
 msgstr "ロード(~L~)"
 
-#: engines/dialogs.cpp:74 backends/platform/3ds/options-dialog.cpp:45
+#: engines/dialogs.cpp:73 backends/platform/3ds/options-dialog.cpp:45
 msgid "~S~ave"
 msgstr "セーブ(~S~)"
 
-#: engines/dialogs.cpp:78
+#: engines/dialogs.cpp:77
 msgid "~O~ptions"
 msgstr "設定(~O~)"
 
-#: engines/dialogs.cpp:83
+#: engines/dialogs.cpp:82
 msgid "~H~elp"
 msgstr "ヘルプ(~H~)"
 
-#: engines/dialogs.cpp:87
+#: engines/dialogs.cpp:86
 msgid "~A~bout"
 msgstr "情報(~A~)"
 
-#: engines/dialogs.cpp:90 engines/dialogs.cpp:166
+#: engines/dialogs.cpp:89 engines/dialogs.cpp:165
 msgid "~R~eturn to Launcher"
 msgstr "メインメニューに戻る(~R~)"
 
-#: engines/dialogs.cpp:92 engines/dialogs.cpp:168
+#: engines/dialogs.cpp:91 engines/dialogs.cpp:167
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "メインメニューに戻る(~R~)"
 
-#: engines/dialogs.cpp:100 engines/engine.cpp:932 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:99 engines/engine.cpp:932 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2837,7 +2837,7 @@ msgstr "メインメニューに戻る(~R~)"
 msgid "Save game:"
 msgstr "ゲームをセーブ："
 
-#: engines/dialogs.cpp:100 engines/engine.cpp:932 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:99 engines/engine.cpp:932 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2860,7 +2860,7 @@ msgstr "ゲームをセーブ："
 msgid "Save"
 msgstr "セーブ"
 
-#: engines/dialogs.cpp:130
+#: engines/dialogs.cpp:129
 msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
@@ -2869,18 +2869,18 @@ msgstr ""
 "申し訳ありませんが、現在このエンジンではゲーム内ヘルプを提供していません。詳"
 "細はREADMEを参照してください。"
 
-#: engines/dialogs.cpp:214 engines/pegasus/pegasus.cpp:417
+#: engines/dialogs.cpp:212 engines/pegasus/pegasus.cpp:417
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr "ゲーム%sのセーブに失敗しました! 詳細はREADMEを参照してください。"
 
-#: engines/dialogs.cpp:354
+#: engines/dialogs.cpp:352
 msgid "~O~K"
 msgstr "OK(~O~)"
 
-#: engines/dialogs.cpp:355
+#: engines/dialogs.cpp:353
 msgid "~C~ancel"
 msgstr "キャンセル(~C~)"
 

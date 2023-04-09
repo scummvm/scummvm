@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-09 05:49+0000\n"
+"POT-Creation-Date: 2023-04-09 10:54+0000\n"
 "PO-Revision-Date: 2023-04-09 09:32+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -61,10 +61,10 @@ msgstr "Arriba"
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
 #: gui/massadd.cpp:93 gui/options.cpp:2343 gui/predictivedialog.cpp:68
-#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:213
+#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:212
 #: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:64
-#: gui/saveload-dialog.cpp:457 gui/saveload-dialog.cpp:528
-#: gui/saveload-dialog.cpp:830 gui/saveload-dialog.cpp:1223
+#: gui/saveload-dialog.cpp:455 gui/saveload-dialog.cpp:526
+#: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1220
 #: gui/shaderbrowser-dialog.cpp:81 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:595 engines/engine.cpp:739
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
@@ -252,7 +252,7 @@ msgstr "¡Almacenamiento conectado!"
 msgid "Back"
 msgstr "Volver"
 
-#: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:831
+#: gui/cloudconnectionwizard.cpp:401 gui/saveload-dialog.cpp:829
 msgid "Next"
 msgstr "Siguiente"
 
@@ -262,8 +262,8 @@ msgstr "Ya hay otro almacenamiento activo. ¿Quieres interrumpirlo?"
 
 #: gui/cloudconnectionwizard.cpp:464 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:136
-#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:417 gui/launcher.cpp:446
-#: gui/launcher.cpp:489 gui/options.cpp:3367 gui/options.cpp:3741
+#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
+#: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
 #: base/main.cpp:595 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
@@ -276,8 +276,8 @@ msgstr "Sí"
 
 #: gui/cloudconnectionwizard.cpp:464 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:136
-#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:417 gui/launcher.cpp:446
-#: gui/launcher.cpp:489 gui/options.cpp:3367 gui/options.cpp:3741
+#: gui/fluidsynth-dialog.cpp:217 gui/launcher.cpp:415 gui/launcher.cpp:444
+#: gui/launcher.cpp:487 gui/options.cpp:3367 gui/options.cpp:3741
 #: engines/buried/buried.cpp:584 engines/director/events.cpp:91
 #: engines/director/lingo/xlibs/jitdraw3.cpp:145 engines/grim/grim.cpp:359
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -298,9 +298,9 @@ msgstr "El código JSON no es válido."
 
 #: gui/cloudconnectionwizard.cpp:522 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:545 gui/launcher.cpp:549
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:543 gui/launcher.cpp:547
 #: gui/massadd.cpp:90 gui/options.cpp:2345 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1224 engines/engine.cpp:542 engines/engine.cpp:565
+#: gui/saveload-dialog.cpp:1221 engines/engine.cpp:542 engines/engine.cpp:565
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1811
@@ -341,7 +341,7 @@ msgstr ""
 msgid "Select directory where to download game data"
 msgstr "Selecciona el directorio donde descargar los archivos de juego"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:290
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:288
 msgid "Select directory with game data"
 msgstr "Selecciona el directorio con los datos del juego"
 
@@ -377,7 +377,7 @@ msgstr ""
 "Parece que estás usando una conexión limitada. ¿Seguro que quieres descargar "
 "archivos?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:591
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:589
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "¡ScummVM no ha podido abrir el directorio!"
 
@@ -474,7 +474,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "Aplicar"
 
-#: gui/editgamedialog.cpp:131 engines/dialogs.cpp:276
+#: gui/editgamedialog.cpp:131 engines/dialogs.cpp:274
 msgid "Game"
 msgstr "Juego"
 
@@ -566,11 +566,11 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Opciones gráficas generales"
 
-#: gui/editgamedialog.cpp:212 gui/options.cpp:2226 engines/dialogs.cpp:317
+#: gui/editgamedialog.cpp:212 gui/options.cpp:2226 engines/dialogs.cpp:315
 msgid "Keymaps"
 msgstr "Asignaciones"
 
-#: gui/editgamedialog.cpp:219 gui/options.cpp:2233 engines/dialogs.cpp:324
+#: gui/editgamedialog.cpp:219 gui/options.cpp:2233 engines/dialogs.cpp:322
 msgid "Backend"
 msgstr "Back-end"
 
@@ -583,7 +583,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Opciones generales del back-end"
 
-#: gui/editgamedialog.cpp:238 gui/options.cpp:2247 engines/dialogs.cpp:292
+#: gui/editgamedialog.cpp:238 gui/options.cpp:2247 engines/dialogs.cpp:290
 msgid "Audio"
 msgstr "Sonido"
 
@@ -686,11 +686,11 @@ msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Partidas:"
 
-#: gui/editgamedialog.cpp:338 engines/dialogs.cpp:339
+#: gui/editgamedialog.cpp:338 engines/dialogs.cpp:337
 msgid "Achievements"
 msgstr "Logros"
 
-#: gui/editgamedialog.cpp:342 engines/dialogs.cpp:343
+#: gui/editgamedialog.cpp:342 engines/dialogs.cpp:341
 msgid "Statistics"
 msgstr "Estadísticas"
 
@@ -995,103 +995,103 @@ msgstr "Plataforma"
 msgid "Select Group by"
 msgstr "Seleccionar grupo por..."
 
-#: gui/launcher.cpp:217 gui/launcher.cpp:807
+#: gui/launcher.cpp:216 gui/launcher.cpp:803
 msgid "Group:"
 msgstr "Agrupar por:"
 
-#: gui/launcher.cpp:219
+#: gui/launcher.cpp:218
 msgid "Select a criteria to group the entries"
 msgstr "Selecciona los criterios con los que se deben agrupar los elementos"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:249 engines/dialogs.cpp:96
+#: gui/launcher.cpp:247 engines/dialogs.cpp:95
 msgid "~Q~uit"
 msgstr "~S~alir"
 
-#: gui/launcher.cpp:249 backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "Quit ScummVM"
 msgstr "Salir de ScummVM"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:253
+#: gui/launcher.cpp:251
 msgid "A~b~out"
 msgstr "Acerca ~d~e..."
 
-#: gui/launcher.cpp:253 backends/platform/sdl/macosx/appmenu_osx.mm:246
+#: gui/launcher.cpp:251 backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "About ScummVM"
 msgstr "Acerca de ScummVM"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:255
+#: gui/launcher.cpp:253
 msgid "Global ~O~ptions..."
 msgstr "~O~pciones globales..."
 
-#: gui/launcher.cpp:255
+#: gui/launcher.cpp:253
 msgid "Change global ScummVM options"
 msgstr "Cambia las opciones generales de ScummVM"
 
-#: gui/launcher.cpp:255
+#: gui/launcher.cpp:253
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~O~pc. globales..."
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:260
+#: gui/launcher.cpp:258
 msgid "~A~dd Game..."
 msgstr "~A~ñadir juego..."
 
-#: gui/launcher.cpp:260
+#: gui/launcher.cpp:258
 msgid "Add games to the list"
 msgstr "Añade juegos a la lista"
 
-#: gui/launcher.cpp:260
+#: gui/launcher.cpp:258
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~A~ñadir..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:264
+#: gui/launcher.cpp:262
 msgid "~R~emove Game"
 msgstr "E~l~iminar juego"
 
-#: gui/launcher.cpp:264
+#: gui/launcher.cpp:262
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Elimina el juego de la lista. Los archivos no serán borrados."
 
-#: gui/launcher.cpp:264
+#: gui/launcher.cpp:262
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "E~l~iminar"
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:267
+#: gui/launcher.cpp:265
 msgid "Mass Add..."
 msgstr "Añadir varios..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:268
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Añad. varios"
 
-#: gui/launcher.cpp:278 gui/launcher.cpp:776 gui/shaderbrowser-dialog.cpp:62
+#: gui/launcher.cpp:276 gui/launcher.cpp:773 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
 msgid "Search in game list"
 msgstr "Buscar en la lista de juegos"
 
-#: gui/launcher.cpp:282 gui/launcher.cpp:798 gui/shaderbrowser-dialog.cpp:66
+#: gui/launcher.cpp:280 gui/launcher.cpp:794 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
 msgid "Search:"
 msgstr "Buscar:"
 
-#: gui/launcher.cpp:293 engines/dialogs.cpp:99 engines/engine.cpp:903
+#: gui/launcher.cpp:291 engines/dialogs.cpp:98 engines/engine.cpp:903
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:741
 msgid "Load game:"
 msgstr "Cargar juego:"
 
-#: gui/launcher.cpp:293 engines/dialogs.cpp:99 engines/engine.cpp:903
+#: gui/launcher.cpp:291 engines/dialogs.cpp:98 engines/engine.cpp:903
 #: engines/mm/xeen/saves.cpp:259 engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
@@ -1099,13 +1099,13 @@ msgstr "Cargar juego:"
 msgid "Load"
 msgstr "Cargar"
 
-#: gui/launcher.cpp:405
+#: gui/launcher.cpp:403
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "¡Este directorio se está utilizando para una descarga y todavía no puede "
 "usarse!"
 
-#: gui/launcher.cpp:416
+#: gui/launcher.cpp:414
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -1113,111 +1113,111 @@ msgstr ""
 "¿Seguro que quieres ejecutar la detección masiva? Puede que se añada un gran "
 "número de juegos."
 
-#: gui/launcher.cpp:446
+#: gui/launcher.cpp:444
 msgid "Do you really want to remove this game configuration?"
 msgstr "¿Seguro que quieres eliminar la configuración de este juego?"
 
-#: gui/launcher.cpp:488
+#: gui/launcher.cpp:486
 msgid "Do you want to load saved game?"
 msgstr "¿Quieres cargar la partida guardada?"
 
-#: gui/launcher.cpp:545
+#: gui/launcher.cpp:543
 msgid "This game does not support loading games from the launcher."
 msgstr "Este juego no permite cargar partidas desde el iniciador."
 
-#: gui/launcher.cpp:549
+#: gui/launcher.cpp:547
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "¡ScummVM no ha encontrado ningún motor capaz de ejecutar el juego!"
 
-#: gui/launcher.cpp:610
+#: gui/launcher.cpp:608
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "¡ScummVM no ha encontrado ningún juego en el directorio!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:626
+#: gui/launcher.cpp:624
 msgid "Unknown variant"
 msgstr "Variante desconocida"
 
-#: gui/launcher.cpp:632
+#: gui/launcher.cpp:630
 msgid "Pick the game:"
 msgstr "Elige el juego:"
 
-#: gui/launcher.cpp:847 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:843 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Modo lista"
 
-#: gui/launcher.cpp:848 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:844 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Modo mosaico"
 
-#: gui/launcher.cpp:1072
+#: gui/launcher.cpp:1067
 msgid "~S~tart"
 msgstr "~J~ugar"
 
-#: gui/launcher.cpp:1072
+#: gui/launcher.cpp:1067
 msgid "Start selected game"
 msgstr "Ejecuta el juego seleccionado"
 
-#: gui/launcher.cpp:1075
+#: gui/launcher.cpp:1070
 msgid "~L~oad..."
 msgstr "~C~argar..."
 
-#: gui/launcher.cpp:1075
+#: gui/launcher.cpp:1070
 msgid "Load saved game for selected game"
 msgstr "Carga una partida del juego seleccionado"
 
-#: gui/launcher.cpp:1077
+#: gui/launcher.cpp:1072
 msgid "Record..."
 msgstr "Grabar..."
 
-#: gui/launcher.cpp:1083
+#: gui/launcher.cpp:1078
 msgid "~G~ame Options..."
 msgstr "Opciones del j~u~ego..."
 
-#: gui/launcher.cpp:1083
+#: gui/launcher.cpp:1078
 msgid "Change game options"
 msgstr "Cambia las opciones del juego"
 
-#: gui/launcher.cpp:1083
+#: gui/launcher.cpp:1078
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "Opc. j~u~ego..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1172 gui/launcher.cpp:1361
+#: gui/launcher.cpp:1167 gui/launcher.cpp:1356
 msgid "Unknown Engine"
 msgstr "Motor desconocido"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1189 gui/launcher.cpp:1378
+#: gui/launcher.cpp:1184 gui/launcher.cpp:1373
 msgid "Unknown Publisher"
 msgstr "Distribuidora desconocida"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1206 gui/launcher.cpp:1395
+#: gui/launcher.cpp:1201 gui/launcher.cpp:1390
 msgid "No Series"
 msgstr "No hay series"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1220 gui/launcher.cpp:1409
+#: gui/launcher.cpp:1215 gui/launcher.cpp:1404
 msgid "Language not detected"
 msgstr "Idioma no detectado"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1234 gui/launcher.cpp:1423
+#: gui/launcher.cpp:1229 gui/launcher.cpp:1418
 msgid "Platform not detected"
 msgstr "Plataforma no detectada"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1434 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1429 gui/widgets/groupedlist.cpp:80
 msgid "All"
 msgstr "Todo"
 
-#: gui/launcher.cpp:1581
+#: gui/launcher.cpp:1576
 msgid "Icons per row:"
 msgstr "Iconos por fila:"
 
@@ -1247,19 +1247,19 @@ msgstr ""
 "Se han encontrado %d juegos nuevos y se han ignorado %d juegos (ya "
 "añadidos)..."
 
-#: gui/onscreendialog.cpp:100 gui/onscreendialog.cpp:102
+#: gui/onscreendialog.cpp:95 gui/onscreendialog.cpp:97
 msgid "Stop"
 msgstr "Detener"
 
-#: gui/onscreendialog.cpp:105
+#: gui/onscreendialog.cpp:100
 msgid "Edit record description"
 msgstr "Editar la descripción de la grabación"
 
-#: gui/onscreendialog.cpp:107
+#: gui/onscreendialog.cpp:102
 msgid "Switch to Game"
 msgstr "Volver al juego"
 
-#: gui/onscreendialog.cpp:109
+#: gui/onscreendialog.cpp:104
 msgid "Fast replay"
 msgstr "Repetición rápida"
 
@@ -2261,26 +2261,26 @@ msgstr "#  siguiente"
 msgid "add"
 msgstr "añadir"
 
-#: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:184
+#: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:183
 msgid "Delete char"
 msgstr "Borrar"
 
-#: gui/predictivedialog.cpp:112 gui/predictivedialog.cpp:188
+#: gui/predictivedialog.cpp:111 gui/predictivedialog.cpp:186
 msgid "<"
 msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
-#: gui/predictivedialog.cpp:114 gui/predictivedialog.cpp:599
+#: gui/predictivedialog.cpp:113 gui/predictivedialog.cpp:597
 msgid "*  Pre"
 msgstr "*  Pre"
 
 #. I18N: 'Num' means Numbers
-#: gui/predictivedialog.cpp:602
+#: gui/predictivedialog.cpp:600
 msgid "*  Num"
 msgstr "*  Núm"
 
 #. I18N: 'Abc' means Latin alphabet input
-#: gui/predictivedialog.cpp:605
+#: gui/predictivedialog.cpp:603
 msgid "*  Abc"
 msgstr "*  Abc"
 
@@ -2288,8 +2288,8 @@ msgstr "*  Abc"
 msgid "Recorder or Playback Gameplay"
 msgstr "Grabar o reproducir vídeos"
 
-#: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:213
-#: gui/saveload-dialog.cpp:461 gui/saveload-dialog.cpp:528
+#: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
+#: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
 #: engines/engine.cpp:588
 msgid "Delete"
 msgstr "Eliminar"
@@ -2306,21 +2306,21 @@ msgstr "Reproducción"
 msgid "Edit"
 msgstr "Editar"
 
-#: gui/recorderdialog.cpp:143 gui/recorderdialog.cpp:302
-#: gui/recorderdialog.cpp:309
+#: gui/recorderdialog.cpp:142 gui/recorderdialog.cpp:301
+#: gui/recorderdialog.cpp:308
 msgid "Author: "
 msgstr "Autor: "
 
-#: gui/recorderdialog.cpp:145 gui/recorderdialog.cpp:303
-#: gui/recorderdialog.cpp:310
+#: gui/recorderdialog.cpp:144 gui/recorderdialog.cpp:302
+#: gui/recorderdialog.cpp:309
 msgid "Notes: "
 msgstr "Notas: "
 
-#: gui/recorderdialog.cpp:212
+#: gui/recorderdialog.cpp:211
 msgid "Do you really want to delete this record?"
 msgstr "¿Seguro que quieres borrar esta grabación?"
 
-#: gui/recorderdialog.cpp:229
+#: gui/recorderdialog.cpp:228
 msgid "Unknown Author"
 msgstr "Autor desconocido"
 
@@ -2341,55 +2341,55 @@ msgstr "Ejecutar en segundo plano"
 msgid "%s (%s %S / %s %S, %s / %s files)"
 msgstr "%s (%s %S / %s %S, %s / %s archivos)"
 
-#: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
+#: gui/saveload-dialog.cpp:450 gui/saveload-dialog.cpp:630
 msgid "No date saved"
 msgstr "No hay fecha guardada"
 
-#: gui/saveload-dialog.cpp:453 gui/saveload-dialog.cpp:633
+#: gui/saveload-dialog.cpp:451 gui/saveload-dialog.cpp:631
 msgid "No time saved"
 msgstr "No hay hora guardada"
 
-#: gui/saveload-dialog.cpp:454 gui/saveload-dialog.cpp:634
+#: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No playtime saved"
 msgstr "No hay tiempo guardado"
 
-#: gui/saveload-dialog.cpp:527
+#: gui/saveload-dialog.cpp:525
 msgid "Do you really want to delete this saved game?"
 msgstr "¿Seguro que quieres borrar esta partida?"
 
-#: gui/saveload-dialog.cpp:659 gui/saveload-dialog.cpp:1174
+#: gui/saveload-dialog.cpp:657 gui/saveload-dialog.cpp:1171
 msgid "Date: "
 msgstr "Fecha: "
 
-#: gui/saveload-dialog.cpp:663 gui/saveload-dialog.cpp:1180
+#: gui/saveload-dialog.cpp:661 gui/saveload-dialog.cpp:1177
 msgid "Time: "
 msgstr "Hora: "
 
-#: gui/saveload-dialog.cpp:669 gui/saveload-dialog.cpp:1188
+#: gui/saveload-dialog.cpp:667 gui/saveload-dialog.cpp:1185
 msgid "Playtime: "
 msgstr "Tiempo: "
 
-#: gui/saveload-dialog.cpp:682 gui/saveload-dialog.cpp:768
+#: gui/saveload-dialog.cpp:680 gui/saveload-dialog.cpp:766
 msgid "Untitled saved game"
 msgstr "Partida sin nombre"
 
-#: gui/saveload-dialog.cpp:834
+#: gui/saveload-dialog.cpp:832
 msgid "Prev"
 msgstr "Anterior"
 
-#: gui/saveload-dialog.cpp:1035
+#: gui/saveload-dialog.cpp:1033
 msgid "New Save"
 msgstr "Guardar"
 
-#: gui/saveload-dialog.cpp:1035
+#: gui/saveload-dialog.cpp:1033
 msgid "Create a new saved game"
 msgstr "Guarda una nueva partida"
 
-#: gui/saveload-dialog.cpp:1167
+#: gui/saveload-dialog.cpp:1164
 msgid "Name: "
 msgstr "Nombre: "
 
-#: gui/saveload-dialog.cpp:1243
+#: gui/saveload-dialog.cpp:1240
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Introduce una descripción para el espacio %d:"
@@ -2493,7 +2493,7 @@ msgstr ""
 "Puedes cambiar esta opción más adelante\n"
 "en la pestaña Otras del menú de opciones."
 
-#: gui/widget.cpp:448 gui/widget.cpp:450 gui/widget.cpp:456 gui/widget.cpp:458
+#: gui/widget.cpp:448 gui/widget.cpp:450 gui/widget.cpp:455 gui/widget.cpp:457
 msgid "Clear value"
 msgstr "Limpiar contenido"
 
@@ -2808,40 +2808,40 @@ msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Copia de juego ilegítima detectada. No proporcionamos soporte en estos casos"
 
-#: engines/dialogs.cpp:68
+#: engines/dialogs.cpp:67
 msgid "~R~esume"
 msgstr "~R~eanudar"
 
-#: engines/dialogs.cpp:70
+#: engines/dialogs.cpp:69
 msgid "~L~oad"
 msgstr "~C~argar"
 
-#: engines/dialogs.cpp:74 backends/platform/3ds/options-dialog.cpp:45
+#: engines/dialogs.cpp:73 backends/platform/3ds/options-dialog.cpp:45
 msgid "~S~ave"
 msgstr "~G~uardar"
 
-#: engines/dialogs.cpp:78
+#: engines/dialogs.cpp:77
 msgid "~O~ptions"
 msgstr "~O~pciones"
 
-#: engines/dialogs.cpp:83
+#: engines/dialogs.cpp:82
 msgid "~H~elp"
 msgstr "~A~yuda"
 
-#: engines/dialogs.cpp:87
+#: engines/dialogs.cpp:86
 msgid "~A~bout"
 msgstr "Acerca ~d~e"
 
-#: engines/dialogs.cpp:90 engines/dialogs.cpp:166
+#: engines/dialogs.cpp:89 engines/dialogs.cpp:165
 msgid "~R~eturn to Launcher"
 msgstr "~V~olver al iniciador"
 
-#: engines/dialogs.cpp:92 engines/dialogs.cpp:168
+#: engines/dialogs.cpp:91 engines/dialogs.cpp:167
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~V~olver al iniciador"
 
-#: engines/dialogs.cpp:100 engines/engine.cpp:932 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:99 engines/engine.cpp:932 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2861,7 +2861,7 @@ msgstr "~V~olver al iniciador"
 msgid "Save game:"
 msgstr "Guardar partida:"
 
-#: engines/dialogs.cpp:100 engines/engine.cpp:932 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:99 engines/engine.cpp:932 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2884,7 +2884,7 @@ msgstr "Guardar partida:"
 msgid "Save"
 msgstr "Guardar"
 
-#: engines/dialogs.cpp:130
+#: engines/dialogs.cpp:129
 msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
@@ -2893,7 +2893,7 @@ msgstr ""
 "Aún no hay ayuda disponible para este juego. Consulta el archivo README para "
 "encontrar información básica e instrucciones para obtener más ayuda."
 
-#: engines/dialogs.cpp:214 engines/pegasus/pegasus.cpp:417
+#: engines/dialogs.cpp:212 engines/pegasus/pegasus.cpp:417
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
@@ -2902,11 +2902,11 @@ msgstr ""
 "Fallo al guardar la partida (%s). Consulte el archivo README con información "
 "básica y como obtener más ayuda."
 
-#: engines/dialogs.cpp:354
+#: engines/dialogs.cpp:352
 msgid "~O~K"
 msgstr "~S~í"
 
-#: engines/dialogs.cpp:355
+#: engines/dialogs.cpp:353
 msgid "~C~ancel"
 msgstr "~C~ancelar"
 
