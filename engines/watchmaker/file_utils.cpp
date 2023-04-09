@@ -22,6 +22,8 @@
 #include "watchmaker/file_utils.h"
 #include "watchmaker/t3d.h"
 
+namespace Watchmaker {
+
 Common::String readT3dString(Common::SeekableReadStream &stream) {
 	char strbuf[T3D_NAMELEN + 1] = {};
 	for (int i = 0; i < T3D_NAMELEN; i++) {
@@ -48,3 +50,5 @@ Common::String replaceExtension(const char *str, const Common::String &extension
 		return baseStr.substr(0, separator + 1) + extension;
 	}
 }
+
+} // End of namespace Watchmaker
