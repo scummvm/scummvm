@@ -1342,13 +1342,15 @@ maps:
 
 	map24:
 		wyverns: "Wyverns attack from above!"
-		wyvern_eye: "One of the wyvern's eyes begins to glow!Take it (Y/N)?"
+		wyvern_eye: "One of the wyvern's eyes begins to glow!\nTake it (Y/N)?"
 		roadsign: "Roadsign: Sorpigal N.22, W.2, N.2"
 		kilburn: "The exiled Lord Kilburn speaks:\n\"Take this map and explore the desert.\nReport your findings to the other lords.\nThen they will understand!\" Accept(Y/N)?"
 		backpacks_full: "*** Backpacks full!"
 		lair: "A wyvern's lair, investigate (Y/N)?"
 		sign: "Painted in a black and white pattern,\na sign reads: The first part is female."
 		hermit: "The hermit says: \"Trade wares (Y/N)?\""
+	emap24:
+		kilburn: "The exiled Lord Kilburn speaks: \"Take this map and explore the desert. Report your findings to the other lords. Then they will understand!\" Accept (Y/N)?"
 
 	map25:
 		slab: "A large slab of coral blocks a passage!\n"
@@ -1365,7 +1367,7 @@ maps:
 		scorpion: "Suddenly, a gargantuan scorpion attacks!"
 		trading_post: "A small tribe of desert nomads have\nestablished a trading post here.\nTrade item (Y/N)?"
 		nothing_to_trade: "Your leader has nothing to trade!"
-		kilburn: "Kilburn, c-3 6-14"
+		kilburn: "Kilburn, C-3 6-14"
 
 	map27:
 		pool: "The pool of wisdom grants those who are\nworthy +4 personality."
