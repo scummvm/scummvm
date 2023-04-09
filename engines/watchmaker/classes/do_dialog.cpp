@@ -439,7 +439,7 @@ void UpdateDialogMenu(WGame &game, int16 dmx, int16 dmy, uint8 db) {
 	if ((db == ME_MLEFT) && (CurDlgItem) && (init.DlgMenu[CurDlgItem].parent == mMAIN)) {
 		CurMenu = CurDlgItem;
 		Diag2Base = 0;
-	} else if ((db == ME_MLEFT) && (CurDlgItem)) {
+	} else if ((db == ME_MLEFT) && (CurDlgItem) && (CurDlgItem != -1)) { // TODO: The original didn't have a check for -1 here
 		Event(EventClass::MC_DIALOG, ME_DIALOGCONTINUE, MP_DEFAULT, (int16)CurDialog, (int16)CurDlgItem, 0, nullptr, nullptr, nullptr);
 		UsedDlgMenu[CurPlayer][CurObj][CurDlgItem] = 1;
 	} else if ((db == ME_MRIGHT) && (CurMenu == mMAIN))
