@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">OK</string>
+  <string name="quit">Sair</string>
+  <string name="customkeyboardview_keycode_cancel">Cancelar</string>
+  <string name="customkeyboardview_keycode_delete">Eliminar</string>
+  <string name="customkeyboardview_keycode_enter">Centrado</string>
+</resources>

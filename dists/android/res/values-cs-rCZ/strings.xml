@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">OK</string>
+  <string name="quit">Ukončit</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Zrušit</string>
+  <string name="customkeyboardview_keycode_delete">Smazat</string>
+  <string name="customkeyboardview_keycode_enter">Enter</string>
+</resources>

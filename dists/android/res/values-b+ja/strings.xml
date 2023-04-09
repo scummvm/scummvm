@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">OK</string>
+  <string name="quit">終了</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">キャンセル</string>
+  <string name="customkeyboardview_keycode_delete">削除</string>
+  <string name="customkeyboardview_keycode_shift">シフト</string>
+  <string name="customkeyboardview_keycode_enter">Enter</string>
+</resources>

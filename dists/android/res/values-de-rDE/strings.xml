@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">OK</string>
+  <string name="quit">Beenden</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Abbrechen</string>
+  <string name="customkeyboardview_keycode_delete">Löschen</string>
+  <string name="customkeyboardview_keycode_shift">Umschalt-Taste</string>
+  <string name="customkeyboardview_keycode_enter">Enter</string>
+</resources>
