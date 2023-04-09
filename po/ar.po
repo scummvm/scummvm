@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-09 10:56+0000\n"
+"POT-Creation-Date: 2023-04-09 12:59+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -6893,27 +6893,23 @@ msgstr "انقر بزر الماوس الأيمن تفاعل"
 msgid "Fast move modifier"
 msgstr "معدل التحرك السريع"
 
-#: engines/nancy/dialogs.cpp:40
+#: engines/nancy/metaengine.cpp:35
 msgid "Player Speech"
 msgstr "خطاب اللاعب"
 
-#: engines/nancy/dialogs.cpp:40
+#: engines/nancy/metaengine.cpp:36
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr "تفعيل كلام اللاعب. يعمل فقط إذا تم تمكين الكلام في إعدادات الصوت."
 
-#: engines/nancy/dialogs.cpp:41
+#: engines/nancy/metaengine.cpp:46
 msgid "Character Speech"
 msgstr "خطاب الشخصية"
 
-#: engines/nancy/dialogs.cpp:41
+#: engines/nancy/metaengine.cpp:47
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr "تفعيل خطاب NPC. يعمل فقط إذا تم تمكين الكلام في إعدادات الصوت."
-
-#: engines/nancy/dialogs.cpp:43
-msgid "Speech Options"
-msgstr "خيارات الكلام"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9876,6 +9872,9 @@ msgstr ""
 "أو حزمة GNU FreeFont. ستحتاج إلى جميع الخطوط من حزمة الخطوط التي تختارها ، "
 "مثل LiberationMono و LiberationSans و LiberationSerif أو FreeMono و FreeSans "
 "و FreeSerif على التوالي."
+
+#~ msgid "Speech Options"
+#~ msgstr "خيارات الكلام"
 
 #~ msgctxt "lowres"
 #~ msgid "2. Get the code and enter it here:"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-09 10:56+0000\n"
+"POT-Creation-Date: 2023-04-09 12:59+0000\n"
 "PO-Revision-Date: 2023-04-05 10:46+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -6970,31 +6970,27 @@ msgstr "Взаємодія правим кліком"
 msgid "Fast move modifier"
 msgstr "Управління швидким пересуванням"
 
-#: engines/nancy/dialogs.cpp:40
+#: engines/nancy/metaengine.cpp:35
 msgid "Player Speech"
 msgstr "Озвучка гравця"
 
-#: engines/nancy/dialogs.cpp:40
+#: engines/nancy/metaengine.cpp:36
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 "Ввімкнути озвучку гравця. Працює тільки коли озвучку також ввімкнено у "
 "налаштуваннях."
 
-#: engines/nancy/dialogs.cpp:41
+#: engines/nancy/metaengine.cpp:46
 msgid "Character Speech"
 msgstr "Озвучка героїв"
 
-#: engines/nancy/dialogs.cpp:41
+#: engines/nancy/metaengine.cpp:47
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 "Ввімкнути озвучку героїв гри. Працює тільки коли озвучку також ввімкнено у "
 "налаштуваннях."
-
-#: engines/nancy/dialogs.cpp:43
-msgid "Speech Options"
-msgstr "Налаштування озвучки"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -9985,6 +9981,9 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid "Speech Options"
+#~ msgstr "Налаштування озвучки"
 
 #~ msgctxt "lowres"
 #~ msgid "2. Get the code and enter it here:"

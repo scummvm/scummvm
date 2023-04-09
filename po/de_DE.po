@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-04-09 10:56+0000\n"
+"POT-Creation-Date: 2023-04-09 12:59+0000\n"
 "PO-Revision-Date: 2023-04-09 03:18+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -7020,31 +7020,27 @@ msgstr "Rechtsklick"
 msgid "Fast move modifier"
 msgstr "Modifikator für schnelle Bewegung"
 
-#: engines/nancy/dialogs.cpp:40
+#: engines/nancy/metaengine.cpp:35
 msgid "Player Speech"
 msgstr "Sprachausgabe"
 
-#: engines/nancy/dialogs.cpp:40
+#: engines/nancy/metaengine.cpp:36
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 "Aktiviert die Sprachausgabe. Funktioniert nur, wenn die Sprachausgabe auch "
 "in den Audio-Einstellungen aktiviert ist."
 
-#: engines/nancy/dialogs.cpp:41
+#: engines/nancy/metaengine.cpp:46
 msgid "Character Speech"
 msgstr "Charakter-Sprachausgabe"
 
-#: engines/nancy/dialogs.cpp:41
+#: engines/nancy/metaengine.cpp:47
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
 "Aktiviere Sprachausgabe für NPCs. Funktionier nur, wenn die Sprachausgabe in "
 "den Audio-Einstellungen aktiviert ist."
-
-#: engines/nancy/dialogs.cpp:43
-msgid "Speech Options"
-msgstr "Sprachausgabe-Optionen"
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
@@ -10106,6 +10102,9 @@ msgstr ""
 "FreeFont-Paket herunterladen. Sie benötigen jeweils alle Schriftarten des "
 "gewählten Paketes, beispielsweise LiberationMono, LiberationSans und "
 "LiberationSerif oder FreeMono, FreeSans und FreeSerif."
+
+#~ msgid "Speech Options"
+#~ msgstr "Sprachausgabe-Optionen"
 
 #~ msgctxt "lowres"
 #~ msgid "2. Get the code and enter it here:"
