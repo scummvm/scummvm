@@ -2118,8 +2118,8 @@ void cMainMenu::SetInputToAction(const tString &asActionName, cMainMenuWidget_Te
 void cMainMenu::InitCheckInput() {
 	cInput *pInput = mpInit->mpGame->GetInput();
 
-	for (int i = 0; i < eKey_LastEnum; ++i) {
-		mvKeyPressed[i] = pInput->GetKeyboard()->KeyIsDown((eKey)i);
+	for (int i = 0; i < Common::KEYCODE_LAST; ++i) {
+		mvKeyPressed[i] = pInput->GetKeyboard()->KeyIsDown(static_cast<Common::KeyCode>(i));
 	}
 
 	for (int i = 0; i < eMButton_LastEnum; ++i) {
@@ -2134,8 +2134,8 @@ bool cMainMenu::CheckForInput() {
 
 	////////////////////
 	// Keyboard
-	for (int i = 0; i < eKey_LastEnum; ++i) {
-		if (pInput->GetKeyboard()->KeyIsDown((eKey)i)) {
+	for (int i = 0; i < Common::KEYCODE_LAST; ++i) {
+		if (pInput->GetKeyboard()->KeyIsDown(static_cast<Common::KeyCode>(i))) {
 			if (mvKeyPressed[i] == false)
 				return true;
 		} else {

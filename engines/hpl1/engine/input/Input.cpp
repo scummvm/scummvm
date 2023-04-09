@@ -25,10 +25,10 @@
  * This file is part of HPL1 Engine.
  */
 
-#include "hpl1/engine/input/Input.h"
 #include "hpl1/engine/input/Action.h"
 #include "hpl1/engine/input/ActionKeyboard.h"
 #include "hpl1/engine/input/ActionMouseButton.h"
+#include "hpl1/engine/input/Input.h"
 #include "hpl1/engine/input/Keyboard.h"
 #include "hpl1/engine/input/LowLevelInput.h"
 #include "hpl1/engine/input/Mouse.h"
@@ -174,8 +174,8 @@ void cInput::DestroyAction(tString asName) {
 bool cInput::CheckForInput() {
 	//////////////////////
 	// Keyboard
-	for (int i = 0; i < eKey_LastEnum; ++i) {
-		if (mpKeyboard->KeyIsDown((eKey)i))
+	for (int i = 0; i < Common::KEYCODE_LAST; ++i) {
+		if (mpKeyboard->KeyIsDown(static_cast<Common::KeyCode>(i)))
 			return true;
 	}
 
@@ -196,9 +196,10 @@ iAction *cInput::InputToAction(const tString &asName) {
 
 	//////////////////////
 	// Keyboard
-	for (int i = 0; i < eKey_LastEnum; ++i) {
-		if (mpKeyboard->KeyIsDown((eKey)i)) {
-			pAction = hplNew(cActionKeyboard, (asName, this, (eKey)i));
+	for (int i = 0; i < Common::KEYCODE_LAST; ++i) {
+		Common::KeyCode key = static_cast<Common::KeyCode>(i);
+		if (mpKeyboard->KeyIsDown(key)) {
+			pAction = hplNew(cActionKeyboard, (asName, this, key));
 			break;
 		}
 	}

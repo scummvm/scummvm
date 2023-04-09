@@ -64,7 +64,7 @@ public:
 	bool mbToggleCrouch;
 
 private:
-	iAction *ActionFromTypeAndVal(const tString &asName, const tString &asType, const tString &asVal);
+	iAction *ActionFromTypeAndVal(const tString &asName, const tString &asType, int input);
 	void TypeAndValFromAction(iAction *apAction, tString *apType, tString *apVal);
 
 	int mlNumOfActions;

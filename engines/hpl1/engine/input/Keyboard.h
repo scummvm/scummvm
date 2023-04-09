@@ -51,12 +51,12 @@ public:
 	 * \param aKey The key to check
 	 * \return true if pressed else false
 	 */
-	bool KeyIsDown(eKey aKey);
+	bool KeyIsDown(Common::KeyCode aKey);
 	/**
 	 * Can be checked many times to see all key presses
 	 * \return key that is currently pressed. eKey_NONE is no key.
 	 */
-	cKeyPress GetKey();
+	Common::KeyState GetKey();
 	/**
 	 *
 	 * \return If ANY key is pressed
@@ -65,29 +65,28 @@ public:
 	/**
 	 * \return The current modifiers.
 	 */
-	eKeyModifier GetModifier();
+	int GetModifier();
 	/**
 	 * \todo Implement!
 	 * \param eKey The key to change to string.
 	 * \return The name of the key as a string.
 	 */
-	tString KeyToString(eKey);
+	tString KeyToString(Common::KeyCode eKey);
 	/**
 	 * \todo Implement!
 	 * \param tString NAme of the key
 	 * \return enum of the key.
 	 */
-	eKey StringToKey(tString);
+	Common::KeyCode StringToKey(tString);
 
 	void Update();
 
 private:
 	void processEvent(const Common::Event &ev);
-	eKey AsciiToKey(int alChar);
 
-	eKeyModifier _modifiers;
+	int _modifiers;
 	Common::BitArray _downKeys;
-	Common::Queue<cKeyPress> _pressedKeys;
+	Common::Queue<Common::KeyState> _pressedKeys;
 	LowLevelInput *_lowLevelSystem;
 };
 
