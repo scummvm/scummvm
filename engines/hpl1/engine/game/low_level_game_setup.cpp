@@ -23,7 +23,6 @@
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 #include "hpl1/engine/impl/LowLevelPhysicsNewton.h"
 #include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
-#include "hpl1/engine/impl/MouseSDL.h"
 #include "hpl1/engine/impl/low_level_graphics_tgl.h"
 #include "hpl1/engine/input/LowLevelInput.h"
 #include "hpl1/engine/resources/low_level_resources.h"

@@ -100,7 +100,6 @@ MODULE_OBJS := \
 	engine/impl/MeshLoaderColladaHelpers.o \
 	engine/impl/MeshLoaderColladaLoader.o \
 	engine/impl/MeshLoaderMSH.o \
-	engine/impl/MouseSDL.o \
 	engine/impl/OcclusionQueryOGL.o \
 	engine/impl/OpenALSoundChannel.o \
 	engine/impl/OpenALSoundData.o \

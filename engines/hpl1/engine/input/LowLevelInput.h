@@ -39,7 +39,7 @@ class iLowLevelGraphics;
 
 class LowLevelInput {
 	friend class Keyboard;
-	friend class cMouseSDL;
+	friend class iMouse;
 
 public:
 	LowLevelInput(iLowLevelGraphics *graphics);
