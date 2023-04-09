@@ -47,25 +47,25 @@ bool ColorQuestions::msgFocus(const FocusMessage &msg) {
 
 void ColorQuestions::draw() {
 	ScrollView::draw();
-
 	setReduced(false);
-	writeLine(0, STRING["maps.map17.color"]);
 
-	setReduced(true);
-	for (int option = 0; option < 8; ++option) {
-		Common::String prefix = Common::String::format("%c) ", '1' + option);
-		writeLine(option / 2 + 1, prefix, ALIGN_RIGHT, 20 + 105 * (option % 2));
-		writeString(STRING[Common::String::format("maps.emap17.options.%d", option + 1)]);
-	}
+	if (!_showingResponse) {
+		writeString(0, 0, STRING["maps.map17.color"]);
 
-	if (_showingResponse) {
+		setReduced(true);
+		for (int option = 0; option < 8; ++option) {
+			Common::String prefix = Common::String::format("%c) ", '1' + option);
+			writeString(20 + 105 * (option % 2), 10 + (option / 2) * 8, prefix, ALIGN_RIGHT);
+			writeString(STRING[Common::String::format("maps.emap17.options.%d", option + 1)]);
+		}
+
+	} else {
 		const Character &c = g_globals->_party[_charIndex];
 
 		Common::String result = STRING[c.hasBadCondition() ?
 			"maps.map17.wrong" : "maps.map17.correct"];
-		writeString(16, 6, result);
+		writeLine(1, result, ALIGN_MIDDLE);
 	}
-
 }
 
 bool ColorQuestions::msgKeypress(const KeypressMessage &msg) {
@@ -76,7 +76,7 @@ bool ColorQuestions::msgKeypress(const KeypressMessage &msg) {
 		Maps::Map17 &map = *static_cast<Maps::Map17 *>(g_maps->_currentMap);
 		map[COLOR] = msg.ascii - '1';
 
-		Character &c = *g_globals->_currCharacter;
+		Character &c = g_globals->_party[_charIndex];
 		int color = c._flags[2] & 0xf;
 
 		// If a color hasn't been designated yet from talking to Gypsy,
@@ -91,6 +91,7 @@ bool ColorQuestions::msgKeypress(const KeypressMessage &msg) {
 		// Show the response
 		_showingResponse = true;
 		redraw();
+		delaySeconds(2);
 
 		return true;
 	}
