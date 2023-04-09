@@ -44,13 +44,31 @@ enum MonsterStatusFlag {
 	MONFLAG_PARALYZED = 0x80, MONFLAG_DEAD = 0xff
 };
 
+enum MonsterLoot {
+	DROPS_GEMS = 0x1,   // if 1 - a monster can drop gems
+    GOLD_DROP = 0xfe>>1 // _loot>>1  - gold value that a monster drops
+};
+
 enum MonsterResistUndead {
 	MAGIC_RESISTANCE = 0x7f,
 	IS_UNDEAD = 0x80
 };
 
-enum Fiedl1A {
-	FIELD1A_80 = 0x80
+enum MonsterBonusOnTouch {
+	TOUCH_BONUS_VALUE = 0x7f,
+	HAS_BONUS = 0x80
+};
+
+enum MonsterResistances {
+	MONRES_ASLEEP = 1, MONRES_FEAR = 2, MONRES_PARALYSIS = 4,
+	MONRES_ENERGY = 8, MONRES_COLD = 0x10,
+	MONRES_ELECTRICITY = 0x20, MONRES_FIRE = 0x40,
+	MONRES_PHYSICAL_ATTACK = 0x80,
+};
+
+enum MonsterSpecialAbility {
+	HAS_RANGED_ATTACK = 0x80, // 1 if has ranged attack, 0 if has special attack
+	ATTACK_VALUE = 0x7f // damage for ranged attack.  Special attack id for special attack 
 };
 
 enum MonsterCounter {
@@ -69,12 +87,12 @@ struct Monster {
 	byte _numberOfAttacks;
 	byte _speed;
 	uint16 _experience;
-	byte _field18;
+	byte _loot;
 	byte _resistUndead;
-	byte _field1a;
+	byte _resistances;
 	byte _bonusOnTouch;
 	byte _specialAbility;
-	byte _specialThreshold;
+	byte _specialThreshold; // % of luck of special attack
 	byte _counterFlags;
 	byte _imgNum;
 
