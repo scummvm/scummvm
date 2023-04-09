@@ -24,10 +24,14 @@
 
 #include "common/stream.h"
 
+namespace Watchmaker {
+
 Common::String readT3dString(Common::SeekableReadStream &stream);
 // TODO: This can probably just be replaced with .hasSuffixIgnoreCase
 bool hasFileExtension(const Common::String &str, const Common::String &extension);
 bool hasFileExtension(const char *str, Common::String extension);
 Common::String replaceExtension(const char *str, const Common::String &extension);
+
+} // End of namespace Watchmaker
 
 #endif // WATCHMAKER_FILE_UTILS_H

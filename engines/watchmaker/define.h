@@ -22,6 +22,8 @@
 #ifndef WATCHMAKER_DEFINE_H
 #define WATCHMAKER_DEFINE_H
 
+namespace Watchmaker {
+
 // Main Chars
 #define DARRELL                 0
 #define VICTORIA                1
@@ -4747,5 +4749,7 @@
 /* -----------------17/03/98 10.21-------------------
  *                      END.
  * --------------------------------------------------*/
+
+} // End of namespace Watchmaker
 
 #endif // WATCHMAKER_DEFINE_H
