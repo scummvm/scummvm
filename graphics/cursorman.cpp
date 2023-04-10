@@ -70,7 +70,7 @@ void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, in
 
 	Surface surf;
 	// we wont touch 'buf' ...
-	surf.init(w, h, w, const_cast<void *>(buf), pixelFormat);
+	surf.init(w, h, w * pixelFormat.bytesPerPixel, const_cast<void *>(buf), pixelFormat);
 
 	pushCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
 }
@@ -133,7 +133,7 @@ void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX,
 
 	Surface surf;
 	// we wont touch 'buf' ...
-	surf.init(w, h, w, const_cast<void *>(buf), pixelFormat);
+	surf.init(w, h, w * pixelFormat.bytesPerPixel, const_cast<void *>(buf), pixelFormat);
 
 	replaceCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
 }
@@ -154,13 +154,13 @@ void CursorManager::replaceCursor(const Surface &surf, int hotspotX, int hotspot
 	if (cur->_size < size) {
 		// Don't use Surface::create() here because that doesn't guarantee
 		// linearity of the surface buffer (i.e. pitch must be the same as
-		// width).
+		// width * bytesPerPixel).
 		delete[] (byte *)cur->_surf.getPixels();
 		cur->_surf.setPixels(new byte[size]);
 		cur->_size = size;
 	}
 
-	cur->_surf.pitch = surf.w;
+	cur->_surf.pitch = surf.w * surf.format.bytesPerPixel;
 	cur->_surf.w = surf.w;
 	cur->_surf.h = surf.h;
 	cur->_surf.format = surf.format;
@@ -181,7 +181,7 @@ void CursorManager::replaceCursor(const Surface &surf, int hotspotX, int hotspot
 	cur->_keycolor = keycolor;
 	cur->_dontScale = dontScale;
 
-	g_system->setMouseCursor(cur->_surf.getPixels(), surf.w, surf.h, hotspotX, hotspotY, keycolor, dontScale, &surf.format, mask);
+	g_system->setMouseCursor(cur->_surf.getPixels(), surf.w, surf.h, hotspotX, hotspotY, keycolor, dontScale, &cur->_surf.format, mask);
 }
 
 void CursorManager::replaceCursor(const Graphics::Cursor *cursor) {
@@ -288,8 +288,8 @@ CursorManager::Cursor::Cursor(const Surface &surf, int hotspotX, int hotspotY, u
 #endif
 	_size = surf.w * surf.h * surf.format.bytesPerPixel;
 
-	// make sure that the width == pitch
-	_surf.init(surf.w, surf.h, surf.w, new byte[_size], surf.format);
+	// make sure that the width * bytesPerPixel == pitch
+	_surf.init(surf.w, surf.h, surf.w * surf.format.bytesPerPixel, new byte[_size], surf.format);
 	if (surf.getPixels() && _surf.getPixels())
 		_surf.copyRectToSurface(surf, 0, 0, Common::Rect(surf.w, surf.h));
 
