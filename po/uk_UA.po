@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-09 22:06+0000\n"
-"PO-Revision-Date: 2023-04-05 10:46+0000\n"
+"PO-Revision-Date: 2023-04-10 09:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -99,41 +99,35 @@ msgstr "Вибрати"
 
 #: gui/cloudconnectionwizard.cpp:175
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Візард для залучення з хмарою"
 
 #: gui/cloudconnectionwizard.cpp:178
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "Швидке завантаження"
+msgstr "Швидкий режим"
 
 #: gui/cloudconnectionwizard.cpp:179
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Швидкий режим"
+msgstr "Ручний режим"
 
 #: gui/cloudconnectionwizard.cpp:182
 msgid "Will ask you to run Local Webserver"
-msgstr ""
+msgstr "Вас буде попрошено запустити локальний веб-сервер"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires Local Webserver feature"
-msgstr "Запускає локальний веб-сервер"
+msgstr "Потребує локального веб-серверу"
 
 #: gui/cloudconnectionwizard.cpp:200
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Швидкий Режим: Крок 1"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "In this mode, Local Webserver must be running,"
-msgstr ""
+msgstr "В цьому режимі має бути запущено локльний веб-сервер,"
 
 #: gui/cloudconnectionwizard.cpp:206
 msgid "so your browser could forward data to ScummVM"
-msgstr ""
+msgstr "тож ваш переглядач зможе передати дані до ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:226 gui/options.cpp:3657
 msgid "Stop server"
@@ -157,7 +151,7 @@ msgstr "Вимкнено"
 
 #: gui/cloudconnectionwizard.cpp:250
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Швидкий Режим: Крок 2"
 
 #: gui/cloudconnectionwizard.cpp:254
 msgid "Now, open this link in your browser:"
