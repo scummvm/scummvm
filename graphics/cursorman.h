@@ -26,7 +26,7 @@
 #include "common/stack.h"
 #include "common/singleton.h"
 #include "graphics/cursor.h"
-#include "graphics/surface.h"
+#include "graphics/pixelformat.h"
 
 namespace Graphics {
 
@@ -85,29 +85,7 @@ public:
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
-	void pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = nullptr);
-
-	/**
-	 * Push a new cursor onto the stack, and set it in the backend.
-	 *
-	 * A local copy of the cursor data will be made, so the original surface
-	 * can be safely freed afterwards.
-	 *
-	 * @param surf		New cursor surface.
-	 * @param hotspotX	Hotspot X coordinate.
-	 * @param hotspotY	Hotspot Y coordinate.
-	 * @param keycolor	Color value for the transparent color. This cannot exceed
-	 *                  the maximum color value as defined by format.
-	 *                  Does nothing if mask is set.
-	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
-	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
-	 * @param mask      Optional pointer to cursor mask containing values from the CursorMaskValue enum.
-	 *
-	 * @note It is acceptable for the surface to be empty. It is sometimes
-	 *       useful to push a "dummy" cursor and modify it later. The
-	 *       cursor will be added to the stack, but not to the backend.
-	 */
-	void pushCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const byte *mask = nullptr);
+	void pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL);
 
 	/**
 	 * Pop a cursor from the stack, and restore the previous one to the
@@ -139,25 +117,6 @@ public:
 	 * @param mask      Optional pointer to cursor mask containing values from the CursorMaskValue enum.
 	 */
 	void replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = nullptr, const byte *mask = nullptr);
-
-	/**
-	 * Replace the current cursor on the stack.
-	 *
-	 * If the stack is empty, the cursor is pushed instead. This is a slightly
-	 * more optimized way of popping the old cursor before pushing the new one.
-	 *
-	 * @param surf		New cursor surface.
-	 * @param mask		New cursor mask data.
-	 * @param hotspotX	Hotspot X coordinate.
-	 * @param hotspotY	Hotspot Y coordinate.
-	 * @param keycolor	Color value for the transparent color. This cannot exceed
-	 *                  the maximum color value as defined by format.
-	 *                  Does nothing if mask is set.
-	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
-	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
-	 * @param mask      Optional pointer to cursor mask containing values from the CursorMaskValue enum.
-	 */
-	void replaceCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const byte *mask = nullptr);
 
 	/**
 	 * Replace the current cursor on the stack.
@@ -256,20 +215,23 @@ private:
 	~CursorManager();
 
 	struct Cursor {
-		Surface _surf;
+		byte *_data;
 		byte *_mask;
 		bool _visible;
+		uint _width;
+		uint _height;
 		int _hotspotX;
 		int _hotspotY;
 		uint32 _keycolor;
+		Graphics::PixelFormat _format;
 		bool _dontScale;
 
 		uint _size;
 
-		// _surf set to default by Graphics::Surface default constructor
-		Cursor() : _mask(0), _visible(false), _hotspotX(0), _hotspotY(0), _keycolor(0), _dontScale(false), _size(0) {}
+		// _format set to default by Graphics::PixelFormat default constructor
+		Cursor() : _data(0), _mask(0), _visible(false), _width(0), _height(0), _hotspotX(0), _hotspotY(0), _keycolor(0), _dontScale(false), _size(0) {}
 
-		Cursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask);
+		Cursor(const void *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask);
 		~Cursor();
 	};
 
