@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-04-10 06:37+0000\n"
-"PO-Revision-Date: 2023-04-10 09:18+0000\n"
+"PO-Revision-Date: 2023-04-10 14:43+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7189,7 +7189,7 @@ msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:4475
 msgid "This demo uses an unimplemented version of Robot videos"
-msgstr ""
+msgstr "本デモでは、未実装版のRobot動画を使用しています"
 
 #: engines/sci/detection_tables.h:4530
 msgid "Incomplete game detected. You have to copy data from all the CDs."
