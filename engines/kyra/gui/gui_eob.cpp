@@ -3934,7 +3934,10 @@ bool GUI_EoB::restParty() {
 					crs[i] = 0;
 					injured--;
 
-					_vm->_txt->printMessage(Common::String::format(_vm->_menuStringsRest2[2], _vm->_characters[i].name, _vm->_characters[injured].name).c_str());
+					if (_vm->_flags.lang == Common::Language::ZH_TWN && i == injured)
+						_vm->_txt->printMessage(Common::String::format(_vm->_menuStringsRest2[5], _vm->_characters[injured].name).c_str());
+					else
+						_vm->_txt->printMessage(Common::String::format(_vm->_menuStringsRest2[2], _vm->_characters[i].name, _vm->_characters[injured].name).c_str());
 
 					_vm->delay(80);
 
