@@ -65,6 +65,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{       "png", "libpng16.lib",              "libpng16d.lib", nullptr,                                           nullptr },
 		{       "gif", "gif.lib",                   nullptr,         nullptr,                                           nullptr },
 		{      "faad", "faad.lib",                  nullptr,         nullptr,                                           "libfaad.lib" },
+		{    "mikmod", "mikmod.lib",                nullptr,         nullptr,                                           nullptr },
 		{     "mpeg2", "mpeg2.lib",                 nullptr,         nullptr,                                           "libmpeg2.lib" },
 		{ "theoradec", "theora.lib",                nullptr,         nullptr,                                           "libtheora_static.lib" },
 		{       "vpx", "vpx.lib",                   nullptr,         nullptr,                                           nullptr },

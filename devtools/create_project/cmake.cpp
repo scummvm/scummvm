@@ -48,6 +48,7 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		LibraryProps("sdlnet", "SDL2_net", kSDLVersion2).Libraries("SDL2_net"),
 		LibraryProps("flac", "flac").Libraries("FLAC"),
 		LibraryProps("mad", "mad").Libraries("mad"),
+		LibraryProps("mikmod", "mikmod").Libraries("mikmod"),
 		LibraryProps("ogg", "ogg").Libraries("ogg"),
 		LibraryProps("vorbis", "vorbisfile vorbis").Libraries("vorbisfile vorbis"),
 		LibraryProps("tremor", "vorbisidec").Libraries("vorbisidec"),
