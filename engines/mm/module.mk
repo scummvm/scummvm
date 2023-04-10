@@ -36,6 +36,7 @@ MODULE_OBJS += \
 	mm1/data/text_parser.o \
 	mm1/data/trap.o \
 	mm1/data/treasure.o \
+	mm1/game/arenko.o \
 	mm1/game/arrested.o \
 	mm1/game/game_logic.o \
 	mm1/game/combat.o \
@@ -71,6 +72,7 @@ MODULE_OBJS += \
 	mm1/views/maps/alamar.o \
 	mm1/views/maps/alien.o \
 	mm1/views/maps/answer_entry.o \
+	mm1/views/maps/arenko.o \
 	mm1/views/maps/arrested.o \
 	mm1/views/maps/chess.o \
 	mm1/views/maps/dog_statue.o \
@@ -177,6 +179,7 @@ MODULE_OBJS += \
 	mm1/views_enh/won_game.o \
 	mm1/views_enh/yes_no.o \
 	mm1/views_enh/interactions/access_code.o \
+	mm1/views_enh/interactions/arenko.o \
 	mm1/views_enh/interactions/arrested.o \
 	mm1/views_enh/interactions/gypsy.o \
 	mm1/views_enh/interactions/ice_princess.o \

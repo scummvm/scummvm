@@ -56,6 +56,7 @@
 #include "mm/mm1/views/maps/access_code.h"
 #include "mm/mm1/views/maps/alamar.h"
 #include "mm/mm1/views/maps/alien.h"
+#include "mm/mm1/views/maps/arenko.h"
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/chess.h"
 #include "mm/mm1/views/maps/dog_statue.h"
@@ -123,6 +124,7 @@ private:
 	Views::Maps::AccessCode _accessCode;
 	Views::Maps::Alamar _alamar;
 	Views::Maps::Alien _alien;
+	Views::Maps::Arenko _arenko;
 	Views::Maps::Arrested _arrested;
 	Views::Maps::Chess _chess;
 	Views::Maps::ChildPrisoner _childPrisoner;

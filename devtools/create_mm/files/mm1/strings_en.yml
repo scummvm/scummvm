@@ -1394,6 +1394,12 @@ maps:
 		cursed: "Cursed"
 		keep_climbing: "Keep climbing."
 		sign: "Roadsign: Algary S.9"
+	emap28:
+		arenko_title: "Arenko"
+		well_done: "Well done! What is your pleasure?"
+		gold: "Gold"
+		gems: "Gems"
+		item: "Item"
 
 	map29:
 		algary: "Algary, enter (Y/N)?"
