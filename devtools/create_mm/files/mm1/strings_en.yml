@@ -1418,7 +1418,7 @@ maps:
 		hourglass: "At the center of the land that time\nforgot stands an hourglass,turn it(Y/N)?"
 		unworthy: "Not worthy!"
 		worthy: "Your actions reflect your views %d of 6\n+"
-		giant: "Statue of a giant holding the scale of\njudgement. who will climb on (1-6)?"
+		giant: "Statue of a giant holding the Scale of\nJudgement. Who will climb on (1-6)?"
 		experience: "experience"
 		attributes:
 			0: "intellect"
@@ -1428,6 +1428,9 @@ maps:
 			4: "speed"
 			5: "accuracy"
 			6: "luck"
+	emap30:
+		hourglass: "At the center of the land that time forgot stands an hourglass, turn it (Y/N)?"
+		giant_title: "Giant"
 
 	map31:
 		device: "Strange alien device grants those who\nare worthy +4 intellect!"
