@@ -160,11 +160,11 @@ jobs:
           - platform: ubuntu-latest
             sdlConfig: sdl2-config
             cxx: ccache g++
-            aptPackages: 'liba52-dev libcurl4-openssl-dev libfaad-dev libflac-dev libfluidsynth-dev libfreetype6-dev libfribidi-dev libgif-dev libgtk-3-dev libjpeg-turbo8-dev libmad0-dev libmpeg2-4-dev libogg-dev libpng-dev libsdl2-dev libsdl2-net-dev libsndio-dev libspeechd-dev libtheora-dev libunity-dev libvorbis-dev libvpx-dev zlib1g-dev'
+            aptPackages: 'liba52-dev libcurl4-openssl-dev libfaad-dev libflac-dev libfluidsynth-dev libfreetype6-dev libfribidi-dev libgif-dev libgtk-3-dev libjpeg-turbo8-dev libmad0-dev libmikmod-dev libmpeg2-4-dev libogg-dev libpng-dev libsdl2-dev libsdl2-net-dev libsndio-dev libspeechd-dev libtheora-dev libunity-dev libvorbis-dev libvpx-dev zlib1g-dev'
           - platform: ubuntu-20.04
             sdlConfig: sdl-config
             cxx: ccache g++-4.8
-            aptPackages: 'g++-4.8 liba52-dev libcurl4-openssl-dev libfaad-dev libflac-dev libfluidsynth-dev libfreetype6-dev libfribidi-dev libgif-dev libgtk-3-dev libjpeg-turbo8-dev libmad0-dev libmpeg2-4-dev libogg-dev libpng-dev libsdl-net1.2-dev libsdl1.2-dev libsndio-dev libspeechd-dev libtheora-dev libunity-dev libvorbis-dev libvpx-dev zlib1g-dev'
+            aptPackages: 'g++-4.8 liba52-dev libcurl4-openssl-dev libfaad-dev libflac-dev libfluidsynth-dev libfreetype6-dev libfribidi-dev libgif-dev libgtk-3-dev libjpeg-turbo8-dev libmad0-dev libmikmod-dev libmpeg2-4-dev libogg-dev libpng-dev libsdl-net1.2-dev libsdl1.2-dev libsndio-dev libspeechd-dev libtheora-dev libunity-dev libvorbis-dev libvpx-dev zlib1g-dev'
     env:
       SDL_CONFIG: ${{ matrix.sdlConfig }}
     defaults:
