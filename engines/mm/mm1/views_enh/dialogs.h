@@ -61,6 +61,7 @@
 #include "mm/mm1/views_enh/interactions/giant.h"
 #include "mm/mm1/views_enh/interactions/gypsy.h"
 #include "mm/mm1/views_enh/interactions/ice_princess.h"
+#include "mm/mm1/views_enh/interactions/lion.h"
 #include "mm/mm1/views_enh/interactions/prisoners.h"
 #include "mm/mm1/views_enh/interactions/resistances.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
@@ -90,6 +91,7 @@ private:
 	ViewsEnh::Interactions::Giant _giant;
 	ViewsEnh::Interactions::Gypsy _gypsy;
 	ViewsEnh::Interactions::IcePrincess _icePrincess;
+	ViewsEnh::Interactions::Lion _lion;
 	ViewsEnh::Interactions::Resistances _resistances;
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Interactions::Trivia _trivia;

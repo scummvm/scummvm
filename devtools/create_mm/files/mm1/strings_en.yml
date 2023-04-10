@@ -1448,21 +1448,24 @@ maps:
 	map32:
 		castle: "King alamar's castle, enter (Y/N)?"
 		door: "A diamond door!"
-		key: " Use your key (Y/N)?"
+		key: "Use your key (Y/N)?"
 		statue: "Statue of a lion growls, \"Password?\"\nResponse:> .........."
 		password: "is the password for today,\nleave the area and change it i may!\""
 		heratio: "Heratio harper sings:"
 		music: "Distant harp music..."
 		passwords:
-			0: "musical"
-			1: "tones"
-			2: "together"
-			3: "clerics"
-			4: "south"
-			5: "deem"
-			6: "worthy"
+			0: "Musical"
+			1: "Tones"
+			2: "Together"
+			3: "Clerics"
+			4: "South"
+			5: "Deem"
+			6: "Worthy"
 		trespassing: "Trespassing!"
 		correct: "Correct! you may pass."
+	emap32:
+		statue: "Statue of a lion growls, \"Password?\"\n"
+		statue_title: "Lion Statue"
 
 	map33:
 		building: "The fabled building of gold,\nenter (Y/N)?"

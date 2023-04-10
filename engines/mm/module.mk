@@ -188,6 +188,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/ice_princess.o \
 	mm1/views_enh/interactions/interaction.o \
 	mm1/views_enh/interactions/interaction_query.o \
+	mm1/views_enh/interactions/lion.o \
 	mm1/views_enh/interactions/prisoners.o \
 	mm1/views_enh/interactions/resistances.o \
 	mm1/views_enh/interactions/statue.o \
