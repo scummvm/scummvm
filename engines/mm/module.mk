@@ -181,6 +181,7 @@ MODULE_OBJS += \
 	mm1/views_enh/interactions/access_code.o \
 	mm1/views_enh/interactions/arenko.o \
 	mm1/views_enh/interactions/arrested.o \
+	mm1/views_enh/interactions/chess.o \
 	mm1/views_enh/interactions/gypsy.o \
 	mm1/views_enh/interactions/ice_princess.o \
 	mm1/views_enh/interactions/interaction.o \

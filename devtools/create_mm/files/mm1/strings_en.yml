@@ -1408,6 +1408,9 @@ maps:
 		begone: "Og says, \"Begone!\""
 		chess: "Painted on these grounds is a black &\nwhite checkered motif covered with\nidols similar to the ones you carry.\na large being approaches...\nOg speaks, \"Queen to queens level 3\"\n\nResponse: "
 		restored_sight: "You have restored my sight! (+25000 exp)\nI see an important prisoner in a castle\non Mt. Doom! he has your sight.\n\nOg curses as the idols vanish!"
+	emap29:
+		og_title: "Og"
+		og: "Painted on these grounds is a black &\nwhite checkered motif covered with idols similar to the ones you carry. A large being approaches... Og speaks, \"Queen to queens level 3\""
 
 	map30:
 		passage: "Passage to Dusk, enter (Y/N)?"

@@ -56,6 +56,7 @@
 #include "mm/mm1/views_enh/interactions/access_code.h"
 #include "mm/mm1/views_enh/interactions/arenko.h"
 #include "mm/mm1/views_enh/interactions/arrested.h"
+#include "mm/mm1/views_enh/interactions/chess.h"
 #include "mm/mm1/views_enh/interactions/gypsy.h"
 #include "mm/mm1/views_enh/interactions/ice_princess.h"
 #include "mm/mm1/views_enh/interactions/prisoners.h"
@@ -82,6 +83,7 @@ private:
 	ViewsEnh::Interactions::AccessCode _accessCode;
 	ViewsEnh::Interactions::Arenko _arenko;
 	ViewsEnh::Interactions::Arrested _arrested;
+	ViewsEnh::Interactions::Chess _chess;
 	ViewsEnh::Interactions::Gypsy _gypsy;
 	ViewsEnh::Interactions::IcePrincess _icePrincess;
 	ViewsEnh::Interactions::Resistances _resistances;

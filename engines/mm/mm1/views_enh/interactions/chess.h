@@ -19,55 +19,31 @@
  *
  */
 
+#ifndef MM1_VIEWS_ENH_INTERACTIONS_CHESS_H
+#define MM1_VIEWS_ENH_INTERACTIONS_CHESS_H
+
 #include "mm/mm1/views_enh/interactions/interaction_query.h"
-#include "mm/mm1/views_enh/text_entry.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 namespace Interactions {
 
-InteractionQuery::InteractionQuery(const Common::String &name,
-		int maxChars, int portrait) : Interaction(name, portrait),
-		_maxChars(maxChars) {
-}
+class Chess : public InteractionQuery {
+protected:
+	/**
+	 * Answer entered
+	 */
+	void answerEntered() override;
 
-bool InteractionQuery::msgFocus(const FocusMessage &msg) {
-	Interaction::msgFocus(msg);
-	_showEntry = dynamic_cast<TextEntry *>(msg._priorView) == nullptr;
-	return true;
-}
-
-void InteractionQuery::draw() {
-	Interaction::draw();
-	if (!_showEntry)
-		return;
-
-	assert(_buttons.empty());
-	int xp = 30; // (_innerBounds.width() / 2) - (_maxChars * 8 / 2);
-	int yp = (8 + _lines.size()) * 9 - 5;
-
-	_textEntry.display(xp, yp, _maxChars, false,
-		[]() {
-			auto *view = static_cast<InteractionQuery *>(g_events->focusedView());
-			view->answerEntry("");
-		},
-		[](const Common::String &answer) {
-			auto *view = static_cast<InteractionQuery *>(g_events->focusedView());
-			view->answerEntry(answer);
-		}
-	);
-}
-
-void InteractionQuery::answerEntry(const Common::String &answer) {
-	close();
-
-	_answer = answer;
-	answerEntered();
-}
-
+public:
+	Chess();
+	virtual ~Chess() {}
+};
 
 } // namespace Interactions
 } // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
+
+#endif
