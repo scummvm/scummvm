@@ -69,7 +69,7 @@ void DXADecoder::readSoundData(Common::SeekableReadStream *stream) {
 
 		addStreamTrack(Audio::makeWAVStream(stream->readStream(size), DisposeAfterUse::YES));
 	} else if (tag != MKTAG('N','U','L','L')) {
-		stream->skip(-4);
+		stream->seek(-4, SEEK_CUR);
 	}
 }
 
