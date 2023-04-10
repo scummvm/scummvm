@@ -5,6 +5,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Neue Spiele:
    - Unterstützung für die macOS-Versionen von Syberia und Syberia II hinzugefügt.
+   - Unterstützung für The Vampire Diaries und Nancy Drew: Secrets Can Kill hinzugefügt.
 
  Neue Plattformen:
    - Vollständig erneute Portierung für libretro hinzugefügt.
