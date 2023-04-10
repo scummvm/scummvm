@@ -447,12 +447,13 @@ static const char *const kEoB2MenuStringsPrefsDOSChinese[4] = {
 
 static const StringListProvider kEoB2MenuStringsPrefsDOSChineseProvider = { ARRAYSIZE(kEoB2MenuStringsPrefsDOSChinese), kEoB2MenuStringsPrefsDOSChinese };
 
-static const char *const kEoB2MenuStringsRest2DOSChinese[5] = {
+static const char *const kEoB2MenuStringsRest2DOSChinese[6] = {
 	"\x25\x73\xbe\xc7\xb7\x7c\xa4\x46\x25\x73\x2e\x0d", /* "%s學會了%s.\r"; */	
 	"\x25\x73\xa4\x77\xb0\x4f\xbe\xd0\xa6\xed\x25\x73\xaa\xba\xaa\x6b\xb3\x4e\x2e\x0d", /* "%s已記憶住%s的法術.\r"; */
 	"\x25\x73\xac\x49\xae\x69\xaa\x76\xc0\xf8\xb3\x4e\xa8\xd3\xaa\x76\xc0\xf8\x25\x73\xaa\xba\xb6\xcb\xb6\xd5\x2e", /* "%s施展治療術來治療%s的傷勢."; */
 	"\xa4\x77\xa5\xf0\xae\xa7\xaa\xba\xae\xc9\xb6\xa1\x3a\x20\x25\x2d\x34\x64", /* "已休息的時間: %-4d"; */
-	"\r%s\r"
+	"\r%s\r",
+	"\x25\x73\xac\x49\xae\x69\xaa\x76\xc0\xf8\xb3\x4e\xa8\xd3\xaa\x76\xc0\xf8\xa6\xdb\xa4\x76\xaa\xba\xb6\xcb\xb6\xd5\x2e", /* "%s施展治療術來治療自己的傷勢."; */
 };
 
 static const StringListProvider kEoB2MenuStringsRest2DOSChineseProvider = { ARRAYSIZE(kEoB2MenuStringsRest2DOSChinese), kEoB2MenuStringsRest2DOSChinese };
