@@ -54,6 +54,7 @@
 #include "mm/mm1/views_enh/who_will_try.h"
 #include "mm/mm1/views_enh/won_game.h"
 #include "mm/mm1/views_enh/interactions/access_code.h"
+#include "mm/mm1/views_enh/interactions/alien.h"
 #include "mm/mm1/views_enh/interactions/arenko.h"
 #include "mm/mm1/views_enh/interactions/arrested.h"
 #include "mm/mm1/views_enh/interactions/chess.h"
@@ -82,6 +83,7 @@ namespace ViewsEnh {
 struct Dialogs {
 private:
 	ViewsEnh::Interactions::AccessCode _accessCode;
+	ViewsEnh::Interactions::Alien _alien;
 	ViewsEnh::Interactions::Arenko _arenko;
 	ViewsEnh::Interactions::Arrested _arrested;
 	ViewsEnh::Interactions::Chess _chess;

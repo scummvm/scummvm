@@ -1438,6 +1438,12 @@ maps:
 		flash: "A bright flash!"
 		varnlings: "\"Varnlings take heed! our prisoner has\nescaped and may be disguised as a noble.\nFind his counterpart to expose him!\""
 		poof: "Poof!"
+	emap31:
+		alien_title: "Alien"
+		alien: "Scattered remains of a metallic craft!\nAn alien grunts, \"Eep op oop!\"\nReaction?"
+		option_a: "Hostile"
+		option_b: "Neutral"
+		option_c: "Friendly"
 
 	map32:
 		castle: "King alamar's castle, enter (Y/N)?"
