@@ -47,6 +47,10 @@ ResourceManager::~ResourceManager() {
 }
 
 bool ResourceManager::isArchivePresent(ArchiveIndex type) {
+	// Demo version
+	if (_isDemo)
+		return Common::File::exists(archiveDemoPath);
+
 	switch (type) {
 	default:
 	case kArchiveAll:

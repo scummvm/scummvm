@@ -262,7 +262,14 @@ void Entities::saveCompartments(Common::Serializer &s) {
 // Setup
 //////////////////////////////////////////////////////////////////////////
 void Entities::setup(bool isFirstChapter, EntityIndex entityIndex) {
-	setupChapter(isFirstChapter ? kChapter1 : kChapterAll);
+	// TODO This check and code (for demo case) may be removed in the future
+	if (_engine->isDemo()) {
+		setupChapter(kChapter3);
+		// TODO Should this be set for the demo?
+		//isFirstChapter = false;
+	} else {
+		setupChapter(isFirstChapter ? kChapter1 : kChapterAll);
+	}
 
 	bool flag_4 = false;
 
@@ -300,8 +307,7 @@ void Entities::setupChapter(ChapterIndex chapter) {
 
 	// we skip the header when doing entity setup
 	for (uint i = 1; i < _entities.size(); i++) {
-		// Special case of chapters (prevents infinite loop as we will be called from Chapters functions when changing chapters)
-		if (i == kEntityChapters && chapter >= 2)
+		if (i == kEntityChapters && chapter >= 2 && !_engine->isDemo())
 			continue;
 
 		_entities[i]->setup(chapter);
