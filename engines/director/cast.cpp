@@ -1094,7 +1094,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 	if (debugChannelSet(5, kDebugLoading) && stream.size() < 2048)
 		stream.hexdump(stream.size());
 
-	uint32 castSize, castInfoSize, size3, castType, castSizeToRead;
+	uint32 castDataSize, castInfoSize,  castType, castDataSizeToRead, castDataOffset, castInfoOffset;
 	byte flags1 = 0, unk1 = 0, unk2 = 0, unk3 = 0;
 
 	// D2-3 cast members should be loaded in loadCastDataVWCR
@@ -1103,7 +1103,6 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		size1 = stream.readUint16();
 		sizeToRead = size1 +16; // 16 is for bounding rects
 		size2 = stream.readUint32();
-		size3 = 0;
 		castType = stream.readByte();
 		unk1 = stream.readByte();
 		unk2 = stream.readByte();
@@ -1112,44 +1111,38 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 #endif
 
 	if (_version >= kFileVer400 && _version < kFileVer500) {
-		castSize = stream.readUint16();
-		castSizeToRead = castSize;
+		castDataSize = stream.readUint16();
+		castDataSizeToRead = castDataSize;
 		castInfoSize = stream.readUint32();
-		size3 = 0;
 
 		// these bytes are common but included in cast size
 		castType = stream.readByte();
-		castSizeToRead -= 1;
-		if (castSizeToRead) {
+		castDataSizeToRead -= 1;
+		if (castDataSizeToRead) {
 			flags1 = stream.readByte();
-			castSizeToRead -= 1;
+			castDataSizeToRead -= 1;
 		}
+		castDataOffset = stream.pos();
+		castInfoOffset = stream.pos() + castDataSizeToRead;
 	} else if (_version >= kFileVer500 && _version < kFileVer600) {
 		castType = stream.readUint32();
-		size3 = stream.readUint32();
 		castInfoSize = stream.readUint32();
-		castSize = stream.readUint32();
-		if (castType == 1) {
-			if (size3 == 0)
-				return;
-			for (uint32 skip = 0; skip < (castSize - 4) / 4; skip++)
-				stream.readUint32();
-		}
-
-		castSizeToRead = stream.size();
+		castDataSize = stream.readUint32();
+		castDataSizeToRead = castDataSize;
+		castInfoOffset = stream.pos();
+		castDataOffset = stream.pos() + castInfoSize;
 	} else {
 		error("Cast::loadCastData: unsupported Director version (%d)", _version);
 	}
 
-	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x castSize: %d castInfoSize: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
-		id, castType, castSize, castInfoSize, castInfoSize, size3, unk1, unk2, unk3);
+	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x castDataSize: %d castInfoSize: %d (%x) unk1: %d unk2: %d unk3: %d",
+		id, castType, castDataSize, castInfoSize, castInfoSize, unk1, unk2, unk3);
 
 	// read the cast member itself
-
-	byte *data = (byte *)calloc(castSizeToRead, 1);
-	stream.read(data, castSizeToRead);
-
-	Common::MemoryReadStreamEndian castStream(data, castSizeToRead, stream.isBE());
+	byte *data = (byte *)calloc(castDataSizeToRead, 1);
+	stream.seek(castDataOffset);
+	stream.read(data, castDataSizeToRead);
+	Common::MemoryReadStreamEndian castStream(data, castDataSizeToRead, stream.isBE());
 
 	if (_loadedCast->contains(id)) {
 		warning("Cast::loadCastData(): Multiple cast members with ID %d, overwriting", id);
@@ -1225,13 +1218,14 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 	free(data);
 
 	// read the cast member info
-
-	if (castInfoSize && _version < kFileVer500) {
-		loadCastInfo(stream, id);
+	if (castInfoSize) {
+		data = (byte *)calloc(castInfoSize, 1);
+		stream.seek(castInfoOffset);
+		stream.read(data, castInfoSize);
+		Common::MemoryReadStreamEndian castInfoStream(data, castInfoSize, stream.isBE());
+		loadCastInfo(castInfoStream, id);
+		free(data);
 	}
-
-	if (size3)
-		warning("Cast::loadCastData(): size3: %x", size3);
 }
 
 struct LingoContextEntry {
