@@ -346,18 +346,18 @@ void SoundEntry::setSubtitles(Common::String filename) {
 void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.isLoading()) {
 		// load the fields
-		uint32 blocksLeft;
+		uint32 blocksLeft = 0;
 
 		s.syncAsUint32LE(_status);
 		s.syncAsUint32LE(_tag);
 		s.syncAsUint32LE(blocksLeft);
 		s.syncAsUint32LE(_startTime);
-		uint32 unused;
+		uint32 unused = 0;
 		s.syncAsUint32LE(unused);
 		s.syncAsUint32LE(unused);
 		s.syncAsUint32LE(_entity);
 
-		uint32 activateDelay;
+		uint32 activateDelay = 0;
 		s.syncAsUint32LE(activateDelay);
 		s.syncAsUint32LE(_priority);
 

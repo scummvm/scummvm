@@ -1115,14 +1115,14 @@ void SceneManager::postProcessScene() {
 		// If several entities are there, choose one to sound "Excuse me"
 		EntityPosition entityPosition = getEntityData(kEntityPlayer)->entityPosition;
 		if (getEntityData(kEntityPlayer)->car == kCar9 && (entityPosition == kPosition_4 || entityPosition == kPosition_3)) {
-			EntityIndex entities[39];
+			EntityIndex entities[40] = {(EntityIndex)0};
 
 			// Init entities
 			entities[0] = kEntityPlayer;
 
 			uint progress = 0;
 
-			for (uint i = 1; i < 40 /* number of entities */; i++) {
+			for (uint i = 1; i < 40 /* number of entities */; ++i) {
 				CarIndex car = getEntityData((EntityIndex)i)->car;
 				EntityPosition position = getEntityData((EntityIndex)i)->entityPosition;
 

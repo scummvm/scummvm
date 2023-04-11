@@ -474,7 +474,7 @@ public:
 		void saveLoadWithSerializer(Common::Serializer &s) override {
 			if (s.isLoading()) {
 				for (uint i = 0; i < 128; i++) {
-					uint32 val;
+					uint32 val = 0;
 					s.syncAsUint32LE(val);
 					getOrSetValueName(i, NULL, &val);
 				}
