@@ -424,7 +424,10 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 			}
 			clearSelection();
 			break;
+		} else {
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
 		}
+		break;
 #endif
 
 	default:
