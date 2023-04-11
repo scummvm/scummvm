@@ -125,12 +125,12 @@
 	0, 0, 0
 },
 
-// -- German: ADDY --
+// -- German: Addy --
 
 {
 	{
 		"adi4",
-		"ADDY 4 Grundschule Basisprogramm",
+		"Addy 4 Grundschule Basisprogramm",
 		AD_ENTRY1s("intro.stk", "d2f0fb8909e396328dc85c0e29131ba8", 5847588),
 		DE_DEU,
 		kPlatformWindows,
@@ -144,7 +144,7 @@
 {
 	{
 		"adi4",
-		"ADDY 4.01 Sekundarstufe Basisprogramm",
+		"Addy 4 4.01 Sekundarstufe Basisprogramm",
 		AD_ENTRY1s("intro.stk", "367340e59c461b4fa36651cd74e32c4e", 5847378),
 		DE_DEU,
 		kPlatformWindows,
@@ -158,7 +158,7 @@
 {
 	{
 		"adi4",
-		"ADDY 4.21",
+		"Addy 4.21",
 		AD_ENTRY1s("intro.stk", "534f0b674cd4830df94a9c32c4ea7225", 6878034),
 		DE_DEU,
 		kPlatformWindows,
