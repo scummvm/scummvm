@@ -55,7 +55,6 @@
  * to properly work in exports (i.e. release tar balls etc.).
  */
 const char gScummVMVersion[] = SCUMMVM_VERSION SCUMMVM_REVISION;
-const char gScummVMVersionLite[] = SCUMMVM_VERSION;
 #if defined(__amigaos4__) || defined(__MORPHOS__)
 static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" AMIGA_DATE ")";
 #endif
