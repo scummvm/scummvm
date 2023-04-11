@@ -137,6 +137,10 @@ const char gScummVMFeatures[] = ""
 	"FluidSynth "
 #endif
 
+#ifdef USE_MIKMOD
+	"MikMod "
+#endif
+
 #ifdef USE_THEORADEC
 	"Theora "
 #endif
