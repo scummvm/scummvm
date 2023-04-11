@@ -546,7 +546,7 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 		return true;
 	}
 
-	byte typeID = atoi(argv[1]) + 10;
+	byte typeID = atoi(argv[1]);
 
 	Common::Array<Common::String> list;
 	g_nancy->_resource->list((argc == 2 ? "ciftree" : argv[2]), list, ResourceManager::kResTypeScript);
