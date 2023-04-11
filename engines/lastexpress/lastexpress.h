@@ -101,6 +101,8 @@ public:
 
 	bool isDemo() const;
 
+	Common::String getTargetName() const;
+
 	// Frame Counter
 	// TODO: all callers could use _system->getMillis() directly without extra conversions
 	uint32 getFrameCounter() const;

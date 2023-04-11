@@ -91,6 +91,10 @@ LastExpressEngine::~LastExpressEngine() {
 	_gameDescription = nullptr;
 }
 
+Common::String LastExpressEngine::getTargetName() const {
+	return _targetName;
+}
+
 // TODO: which error should we return when some game files are missing/corrupted?
 Common::Error LastExpressEngine::run() {
 	// Initialize the graphics
