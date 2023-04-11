@@ -20,6 +20,7 @@
  */
 
 #include "lastexpress/lastexpress.h"
+#include "lastexpress/game/savegame.h"
 #include "engines/advancedDetector.h"
 
 namespace LastExpress {
@@ -29,6 +30,12 @@ public:
 	const char *getName() const override {
 		return "lastexpress";
 	}
+
+	bool hasFeature(MetaEngineFeature f) const override;
+
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 
 protected:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
@@ -41,6 +48,24 @@ Common::Error LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engi
 
 bool LastExpressEngine::isDemo() const {
 	return (bool)(_gameDescription->flags & ADGF_DEMO);
+}
+
+bool LastExpressMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return f == kSupportsListSaves
+	    || f == kSupportsLoadingDuringStartup
+	    || f == kSupportsDeleteSave;
+}
+
+SaveStateList LastExpressMetaEngine::listSaves(const char *target) const {
+	return LastExpress::SaveLoad::list(this, target);
+}
+
+int LastExpressMetaEngine::getMaximumSaveSlot() const {
+	return LastExpress::SaveLoad::kMaximumSaveSlots - 1;
+}
+
+void LastExpressMetaEngine::removeSaveState(const char *target, int slot) const {
+	LastExpress::SaveLoad::remove(target, (LastExpress::GameId)slot);
 }
 
 } // End of namespace LastExpress

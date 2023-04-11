@@ -48,7 +48,7 @@
 
 #include "common/rational.h"
 
-#define getNextGameId() (GameId)((_gameId + 1) % 6)
+#define getNextGameId() (GameId)((_gameId + 1) % SaveLoad::kMaximumSaveSlots)
 
 namespace LastExpress {
 
@@ -303,7 +303,7 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 
 	// If no blue savegame exists, this might be the first time we start the game, so we show the full intro
 	if (!getFlags()->mouseRightClick) {
-		if (!SaveLoad::isSavegameValid(kGameBlue) && _engine->getResourceManager()->loadArchive(kArchiveCd1)) {
+		if (!SaveLoad::isSavegameValid(_engine->getTargetName(), kGameBlue) && _engine->getResourceManager()->loadArchive(kArchiveCd1)) {
 
 			if (!_hasShownIntro) {
 				// Show Broderbrund logo
@@ -448,7 +448,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 			cd = (getProgress().chapter > kChapter3) ? kArchiveCd3 : kArchiveCd2;
 
 		// Show tooltips & buttons to start a game, continue a game or load the proper cd
-		if (ResourceManager::isArchivePresent(cd)) {
+		if (_engine->getResourceManager()->isArchivePresent(cd)) {
 			if (_isGameStarted) {
 				showFrame(kOverlayEggButtons, kButtonContinue, true);
 
@@ -562,7 +562,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 			break;
 		}
 
-		if (!SaveLoad::isSavegameValid(getNextGameId())) {
+		if (!SaveLoad::isSavegameValid(_engine->getTargetName(), getNextGameId())) {
 			showFrame(kOverlayTooltip, kTooltipStartAnotherGame, true);
 			break;
 		}
@@ -829,7 +829,6 @@ void Menu::setLogicEventHandlers() {
 // Game-related
 //////////////////////////////////////////////////////////////////////////
 void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
-
 	bool useSameIndex = true;
 
 	if (getGlobalTimer()) {
@@ -853,7 +852,7 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 			break;
 		}
 
-		if (ResourceManager::isArchivePresent(index)) {
+		if (_engine->getResourceManager()->isArchivePresent(index)) {
 			setGlobalTimer(0);
 			useSameIndex = false;
 
@@ -867,8 +866,8 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 	}
 
 	// Create a new savegame if needed
-	if (!SaveLoad::isSavegamePresent(_gameId))
-		getSaveLoad()->create(_gameId);
+	if (!SaveLoad::isSavegamePresent(_engine->getTargetName(), _gameId))
+		getSaveLoad()->create(_engine->getTargetName(), _gameId);
 
 	if (doSavegame)
 		getSaveLoad()->saveGame(kSavegameTypeEvent2, kEntityPlayer, kEventNone);
@@ -878,7 +877,7 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 	}
 
 	// Init savegame & menu values
-	_lastIndex = getSaveLoad()->init(_gameId, true);
+	_lastIndex = getSaveLoad()->init(_engine->getTargetName(), _gameId, true);
 	_lowerTime = getSaveLoad()->getTime(_lastIndex);
 
 	if (useSameIndex)
@@ -928,12 +927,12 @@ void Menu::startGame() {
 // Switch to the next savegame
 void Menu::switchGame() {
 
-	// Switch back to blue game is the current game is not started
-	_gameId = SaveLoad::isSavegameValid(_gameId) ? getNextGameId() : kGameBlue;
+	// Switch back to blue game if the current game is not started
+	_gameId = SaveLoad::isSavegameValid(_engine->getTargetName(), _gameId) ? getNextGameId() : kGameBlue;
 
 	// Initialize savegame if needed
-	if (!SaveLoad::isSavegamePresent(_gameId))
-		getSaveLoad()->create(_gameId);
+	if (!SaveLoad::isSavegamePresent(_engine->getTargetName(), _gameId))
+		getSaveLoad()->create(_engine->getTargetName(), _gameId);
 
 	getState()->time = kTimeNone;
 

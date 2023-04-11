@@ -573,7 +573,7 @@ enum CityIndex {
 // Savegame ID
 //////////////////////////////////////////////////////////////////////////
 enum GameId {
-	kGameBlue,
+	kGameBlue = 0,
 	kGameRed,
 	kGameGreen,
 	kGamePurple,

@@ -76,6 +76,8 @@
 #include "common/serializer.h"
 #include "common/memstream.h"
 
+#include "engines/savestate.h"
+
 namespace LastExpress {
 
 // our own hack until compression code will be confirmed stable
@@ -146,13 +148,15 @@ private:
 
 class SaveLoad {
 public:
+	static const int kMaximumSaveSlots = 6; // blue, red, green, purple, teal, gold
+
 	SaveLoad(LastExpressEngine *engine);
 	~SaveLoad();
 
 	// Init
-	void create(GameId id);
+	void create(const Common::String &target, GameId id);
 	void clear(bool clearStream = false);
-	uint32 init(GameId id, bool resetHeaders);
+	uint32 init(const Common::String &target, GameId id, bool resetHeaders);
 
 	// Save & Load
 	void loadLastGame();
@@ -162,9 +166,17 @@ public:
 	void loadVolumeBrightness();
 	void saveVolumeBrightness();
 
+	static SaveStateList list(const MetaEngine *metaEngine, const Common::String &target);
+	static void remove(const Common::String &target, GameId slot);
+
+	// Opening save files
+	static Common::String getFilename(const Common::String &target, GameId slot);
+	static Common::InSaveFile *openForLoading(const Common::String &target, GameId slot);
+	static Common::OutSaveFile *openForSaving(const Common::String &target, GameId slot);
+
 	// Getting information
-	static bool isSavegamePresent(GameId id);
-	static bool isSavegameValid(GameId id);
+	static bool isSavegamePresent(const Common::String &target, GameId id);
+	static bool isSavegameValid(const Common::String &target, GameId id);
 
 	bool isGameFinished(uint32 menuIndex, uint32 savegameIndex);
 
@@ -195,7 +207,7 @@ private:
 			keepIndex = 0;
 			brightness = 3;
 			volume = 7;
-			field_1C = 9;
+			field_1C = 9; // Note: In demo's original save "BLUE.EGG" this value is 0x19
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) override {
@@ -281,7 +293,7 @@ private:
 			if (time < kTimeStartGame || time > kTimeCityConstantinople)
 				return false;
 
-			if (offset <= 0 || offset & 15)
+			if (offset <= 0 || offset & 0xF)
 				return false;
 
 			/* No check for < 0, as it cannot happen normaly */
@@ -308,15 +320,10 @@ private:
 
 	SavegameEntryHeader *getEntry(uint32 index);
 
-	// Opening save files
-	static Common::String getFilename(GameId id);
-	static Common::InSaveFile  *openForLoading(GameId id);
-	static Common::OutSaveFile *openForSaving(GameId id);
-
 	// Savegame stream
 	void initStream();
-	void loadStream(GameId id);
-	void flushStream(GameId id);
+	void loadStream(const Common::String &target, GameId id);
+	void flushStream(const Common::String &target, GameId id);
 
 	// Misc
 	EntityIndex _entity;
