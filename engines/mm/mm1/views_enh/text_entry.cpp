@@ -37,6 +37,13 @@ void TextEntry::display(int x, int y, int maxLen,
 	addView(this);
 }
 
+bool TextEntry::msgFocus(const FocusMessage &msg) {
+	TextView::msgFocus(msg);
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MINIMAL);
+
+	return true;
+}
+
 void TextEntry::draw() {
 	drawText();
 	writeChar('_');
@@ -50,7 +57,12 @@ void TextEntry::drawText() {
 }
 
 bool TextEntry::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_BACKSPACE &&
+	if (msg.keycode == Common::KEYCODE_RETURN && !_text.empty()) {
+		drawText();
+		close();
+		_enterFn(_text);
+
+	} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
 			!_text.empty()) {
 		_text.deleteLastChar();
 		redraw();
@@ -78,23 +90,10 @@ bool TextEntry::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool TextEntry::msgAction(const ActionMessage &msg) {
-	switch (msg._action) {
-	case KEYBIND_ESCAPE:
+	if (msg._action == KEYBIND_ESCAPE) {
 		drawText();
 		close();
 		_abortFn();
-		break;
-
-	case KEYBIND_SELECT:
-		if (!_text.empty()) {
-			drawText();
-			close();
-			_enterFn(_text);
-		}
-		break;
-
-	default:
-		break;
 	}
 
 	return true;

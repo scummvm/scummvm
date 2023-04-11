@@ -32,7 +32,8 @@ namespace Views {
 class GameMessages : public TextView {
 private:
 	Common::Array<Line> _lines;
-	YNCallback _ynCallback = nullptr;
+	YNCallback _yCallback = nullptr;
+	YNCallback _nCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
 public:
 	GameMessages(UIElement *owner);

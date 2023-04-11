@@ -15,6 +15,8 @@
 #endif
 
 #include <stdlib.h>
+#undef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 
 typedef SOCKET ENetSocket;

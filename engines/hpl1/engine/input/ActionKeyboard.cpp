@@ -32,29 +32,14 @@
 #include "hpl1/engine/system/low_level_system.h"
 namespace hpl {
 //////////////////////////////////////////////////////////////////////////
-// CONSTRUCTORS
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
-cActionKeyboard::cActionKeyboard(tString asName, cInput *apInput, int aKey) : iAction(asName) {
-	// Split key and modifier
-	mKey = (eKey)(aKey & eKey_MASK);
-	mMod = (eKeyModifier)(aKey & eKeyModifier_MASK);
-	mpInput = apInput;
-}
-
-//-----------------------------------------------------------------------
-
-//////////////////////////////////////////////////////////////////////////
 // PUBLIC METHODS
 //////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------
 
 bool cActionKeyboard::IsTriggerd() {
-	return mpInput->GetKeyboard()->KeyIsDown(mKey) &&
-		   ((mpInput->GetKeyboard()->GetModifier() & mMod) > 0 || mMod == eKeyModifier_NONE);
+	return mpInput->GetKeyboard()->KeyIsDown(_key.keycode) &&
+		   ((mpInput->GetKeyboard()->GetModifier() & _key.flags) > 0 || _key.flags == 0);
 }
 //-----------------------------------------------------------------------
 
@@ -69,16 +54,16 @@ float cActionKeyboard::GetValue() {
 
 tString cActionKeyboard::GetInputName() {
 	tString tsKey = "";
-	if (mMod & eKeyModifier_SHIFT) {
+	if (_key.flags & Common::KBD_SHIFT) {
 		tsKey += "Shift ";
 	}
-	if (mMod & eKeyModifier_ALT) {
+	if (_key.flags & Common::KBD_ALT) {
 		tsKey += "Alt ";
 	}
-	if (mMod & eKeyModifier_CTRL) {
+	if (_key.flags & Common::KBD_CTRL) {
 		tsKey += "Control ";
 	}
-	if (mMod & eKeyModifier_META) {
+	if (_key.flags & Common::KBD_META) {
 #ifdef __APPLE__
 		tsKey += "Command ";
 #else
@@ -86,408 +71,405 @@ tString cActionKeyboard::GetInputName() {
 #endif
 	}
 
-	switch (mKey) {
-	case eKey_BACKSPACE:
+	switch (_key.keycode) {
+	case Common::KEYCODE_BACKSPACE:
 		tsKey += "BackSpace";
 		break;
-	case eKey_TAB:
+	case Common::KEYCODE_TAB:
 		tsKey += "Tab";
 		break;
-	case eKey_CLEAR:
+	case Common::KEYCODE_CLEAR:
 		tsKey += "Clear";
 		break;
-	case eKey_RETURN:
+	case Common::KEYCODE_RETURN:
 		tsKey += "Return";
 		break;
-	case eKey_PAUSE:
+	case Common::KEYCODE_PAUSE:
 		tsKey += "Pause";
 		break;
-	case eKey_ESCAPE:
+	case Common::KEYCODE_ESCAPE:
 		tsKey += "Escape";
 		break;
-	case eKey_SPACE:
+	case Common::KEYCODE_SPACE:
 		tsKey += "Space";
 		break;
-	case eKey_EXCLAIM:
+	case Common::KEYCODE_EXCLAIM:
 		tsKey += "Exclaim";
 		break;
-	case eKey_QUOTEDBL:
+	case Common::KEYCODE_QUOTEDBL:
 		tsKey += "DblQoute";
 		break;
-	case eKey_HASH:
+	case Common::KEYCODE_HASH:
 		tsKey += "Hash";
 		break;
-	case eKey_DOLLAR:
+	case Common::KEYCODE_DOLLAR:
 		tsKey += "Dollar";
 		break;
-	case eKey_AMPERSAND:
+	case Common::KEYCODE_AMPERSAND:
 		tsKey += "Ampersand";
 		break;
-	case eKey_QUOTE:
+	case Common::KEYCODE_QUOTE:
 		tsKey += "Quote";
 		break;
-	case eKey_LEFTPAREN:
+	case Common::KEYCODE_LEFTPAREN:
 		tsKey += "LeftParent";
 		break;
-	case eKey_RIGHTPAREN:
+	case Common::KEYCODE_RIGHTPAREN:
 		tsKey += "RightParent";
 		break;
-	case eKey_ASTERISK:
+	case Common::KEYCODE_ASTERISK:
 		tsKey += "Asterisk";
 		break;
-	case eKey_PLUS:
+	case Common::KEYCODE_PLUS:
 		tsKey += "Plus";
 		break;
-	case eKey_COMMA:
+	case Common::KEYCODE_COMMA:
 		tsKey += "Comma";
 		break;
-	case eKey_MINUS:
+	case Common::KEYCODE_MINUS:
 		tsKey += "Minus";
 		break;
-	case eKey_PERIOD:
+	case Common::KEYCODE_PERIOD:
 		tsKey += "Period";
 		break;
-	case eKey_SLASH:
+	case Common::KEYCODE_SLASH:
 		tsKey += "Slash";
 		break;
-	case eKey_0:
+	case Common::KEYCODE_0:
 		tsKey += "0";
 		break;
-	case eKey_1:
+	case Common::KEYCODE_1:
 		tsKey += "1";
 		break;
-	case eKey_2:
+	case Common::KEYCODE_2:
 		tsKey += "2";
 		break;
-	case eKey_3:
+	case Common::KEYCODE_3:
 		tsKey += "3";
 		break;
-	case eKey_4:
+	case Common::KEYCODE_4:
 		tsKey += "4";
 		break;
-	case eKey_5:
+	case Common::KEYCODE_5:
 		tsKey += "5";
 		break;
-	case eKey_6:
+	case Common::KEYCODE_6:
 		tsKey += "6";
 		break;
-	case eKey_7:
+	case Common::KEYCODE_7:
 		tsKey += "7";
 		break;
-	case eKey_8:
+	case Common::KEYCODE_8:
 		tsKey += "8";
 		break;
-	case eKey_9:
+	case Common::KEYCODE_9:
 		tsKey += "9";
 		break;
-	case eKey_COLON:
+	case Common::KEYCODE_COLON:
 		tsKey += "Colon";
 		break;
-	case eKey_SEMICOLON:
+	case Common::KEYCODE_SEMICOLON:
 		tsKey += "SemiColon";
 		break;
-	case eKey_LESS:
+	case Common::KEYCODE_LESS:
 		tsKey += "Less";
 		break;
-	case eKey_EQUALS:
+	case Common::KEYCODE_EQUALS:
 		tsKey += "Equals";
 		break;
-	case eKey_GREATER:
+	case Common::KEYCODE_GREATER:
 		tsKey += "Greater";
 		break;
-	case eKey_QUESTION:
+	case Common::KEYCODE_QUESTION:
 		tsKey += "Question";
 		break;
-	case eKey_AT:
+	case Common::KEYCODE_AT:
 		tsKey += "At";
 		break;
-	case eKey_LEFTBRACKET:
+	case Common::KEYCODE_LEFTBRACKET:
 		tsKey += "LeftBracket";
 		break;
-	case eKey_BACKSLASH:
+	case Common::KEYCODE_BACKSLASH:
 		tsKey += "BackSlash";
 		break;
-	case eKey_RIGHTBRACKET:
+	case Common::KEYCODE_RIGHTBRACKET:
 		tsKey += "RightBracket";
 		break;
-	case eKey_CARET:
+	case Common::KEYCODE_CARET:
 		tsKey += "Caret";
 		break;
-	case eKey_UNDERSCORE:
+	case Common::KEYCODE_UNDERSCORE:
 		tsKey += "Underscore";
 		break;
-	case eKey_BACKQUOTE:
+	case Common::KEYCODE_BACKQUOTE:
 		tsKey += "BackQuote";
 		break;
-	case eKey_a:
+	case Common::KEYCODE_a:
 		tsKey += "A";
 		break;
-	case eKey_b:
+	case Common::KEYCODE_b:
 		tsKey += "B";
 		break;
-	case eKey_c:
+	case Common::KEYCODE_c:
 		tsKey += "C";
 		break;
-	case eKey_d:
+	case Common::KEYCODE_d:
 		tsKey += "D";
 		break;
-	case eKey_e:
+	case Common::KEYCODE_e:
 		tsKey += "E";
 		break;
-	case eKey_f:
+	case Common::KEYCODE_f:
 		tsKey += "F";
 		break;
-	case eKey_g:
+	case Common::KEYCODE_g:
 		tsKey += "G";
 		break;
-	case eKey_h:
+	case Common::KEYCODE_h:
 		tsKey += "H";
 		break;
-	case eKey_i:
+	case Common::KEYCODE_i:
 		tsKey += "I";
 		break;
-	case eKey_j:
+	case Common::KEYCODE_j:
 		tsKey += "J";
 		break;
-	case eKey_k:
+	case Common::KEYCODE_k:
 		tsKey += "K";
 		break;
-	case eKey_l:
+	case Common::KEYCODE_l:
 		tsKey += "L";
 		break;
-	case eKey_m:
+	case Common::KEYCODE_m:
 		tsKey += "M";
 		break;
-	case eKey_n:
+	case Common::KEYCODE_n:
 		tsKey += "N";
 		break;
-	case eKey_o:
+	case Common::KEYCODE_o:
 		tsKey += "O";
 		break;
-	case eKey_p:
+	case Common::KEYCODE_p:
 		tsKey += "P";
 		break;
-	case eKey_q:
+	case Common::KEYCODE_q:
 		tsKey += "Q";
 		break;
-	case eKey_r:
+	case Common::KEYCODE_r:
 		tsKey += "R";
 		break;
-	case eKey_s:
+	case Common::KEYCODE_s:
 		tsKey += "S";
 		break;
-	case eKey_t:
+	case Common::KEYCODE_t:
 		tsKey += "T";
 		break;
-	case eKey_u:
+	case Common::KEYCODE_u:
 		tsKey += "U";
 		break;
-	case eKey_v:
+	case Common::KEYCODE_v:
 		tsKey += "V";
 		break;
-	case eKey_w:
+	case Common::KEYCODE_w:
 		tsKey += "W";
 		break;
-	case eKey_x:
+	case Common::KEYCODE_x:
 		tsKey += "X";
 		break;
-	case eKey_y:
+	case Common::KEYCODE_y:
 		tsKey += "Y";
 		break;
-	case eKey_z:
+	case Common::KEYCODE_z:
 		tsKey += "Z";
 		break;
-	case eKey_DELETE:
+	case Common::KEYCODE_DELETE:
 		tsKey += "Delete";
 		break;
-	case eKey_KP0:
+	case Common::KEYCODE_KP0:
 		tsKey += "Kp0";
 		break;
-	case eKey_KP1:
+	case Common::KEYCODE_KP1:
 		tsKey += "Kp1";
 		break;
-	case eKey_KP2:
+	case Common::KEYCODE_KP2:
 		tsKey += "Kp2";
 		break;
-	case eKey_KP3:
+	case Common::KEYCODE_KP3:
 		tsKey += "Kp3";
 		break;
-	case eKey_KP4:
+	case Common::KEYCODE_KP4:
 		tsKey += "Kp4";
 		break;
-	case eKey_KP5:
+	case Common::KEYCODE_KP5:
 		tsKey += "Kp5";
 		break;
-	case eKey_KP6:
+	case Common::KEYCODE_KP6:
 		tsKey += "Kp6";
 		break;
-	case eKey_KP7:
+	case Common::KEYCODE_KP7:
 		tsKey += "Kp7";
 		break;
-	case eKey_KP8:
+	case Common::KEYCODE_KP8:
 		tsKey += "Kp8";
 		break;
-	case eKey_KP9:
+	case Common::KEYCODE_KP9:
 		tsKey += "Kp9";
 		break;
-	case eKey_KP_PERIOD:
+	case Common::KEYCODE_KP_PERIOD:
 		tsKey += "Period";
 		break;
-	case eKey_KP_DIVIDE:
+	case Common::KEYCODE_KP_DIVIDE:
 		tsKey += "Divide";
 		break;
-	case eKey_KP_MULTIPLY:
+	case Common::KEYCODE_KP_MULTIPLY:
 		tsKey += "Multiply";
 		break;
-	case eKey_KP_MINUS:
+	case Common::KEYCODE_KP_MINUS:
 		tsKey += "Minus";
 		break;
-	case eKey_KP_PLUS:
+	case Common::KEYCODE_KP_PLUS:
 		tsKey += "Plus";
 		break;
-	case eKey_KP_ENTER:
+	case Common::KEYCODE_KP_ENTER:
 		tsKey += "Enter";
 		break;
-	case eKey_KP_EQUALS:
+	case Common::KEYCODE_KP_EQUALS:
 		tsKey += "Equals";
 		break;
-	case eKey_UP:
+	case Common::KEYCODE_UP:
 		tsKey += "Up";
 		break;
-	case eKey_DOWN:
+	case Common::KEYCODE_DOWN:
 		tsKey += "Down";
 		break;
-	case eKey_RIGHT:
+	case Common::KEYCODE_RIGHT:
 		tsKey += "Right";
 		break;
-	case eKey_LEFT:
+	case Common::KEYCODE_LEFT:
 		tsKey += "Left";
 		break;
-	case eKey_INSERT:
+	case Common::KEYCODE_INSERT:
 		tsKey += "Insert";
 		break;
-	case eKey_HOME:
+	case Common::KEYCODE_HOME:
 		tsKey += "Home";
 		break;
-	case eKey_END:
+	case Common::KEYCODE_END:
 		tsKey += "End";
 		break;
-	case eKey_PAGEUP:
+	case Common::KEYCODE_PAGEUP:
 		tsKey += "PageUp";
 		break;
-	case eKey_PAGEDOWN:
+	case Common::KEYCODE_PAGEDOWN:
 		tsKey += "PageDown";
 		break;
-	case eKey_F1:
+	case Common::KEYCODE_F1:
 		tsKey += "F1";
 		break;
-	case eKey_F2:
+	case Common::KEYCODE_F2:
 		tsKey += "F2";
 		break;
-	case eKey_F3:
+	case Common::KEYCODE_F3:
 		tsKey += "F3";
 		break;
-	case eKey_F4:
+	case Common::KEYCODE_F4:
 		tsKey += "F4";
 		break;
-	case eKey_F5:
+	case Common::KEYCODE_F5:
 		tsKey += "F5";
 		break;
-	case eKey_F6:
+	case Common::KEYCODE_F6:
 		tsKey += "F6";
 		break;
-	case eKey_F7:
+	case Common::KEYCODE_F7:
 		tsKey += "F7";
 		break;
-	case eKey_F8:
+	case Common::KEYCODE_F8:
 		tsKey += "F8";
 		break;
-	case eKey_F9:
+	case Common::KEYCODE_F9:
 		tsKey += "F9";
 		break;
-	case eKey_F10:
+	case Common::KEYCODE_F10:
 		tsKey += "F10";
 		break;
-	case eKey_F11:
+	case Common::KEYCODE_F11:
 		tsKey += "F11";
 		break;
-	case eKey_F12:
+	case Common::KEYCODE_F12:
 		tsKey += "F12";
 		break;
-	case eKey_F13:
+	case Common::KEYCODE_F13:
 		tsKey += "F13";
 		break;
-	case eKey_F14:
+	case Common::KEYCODE_F14:
 		tsKey += "F14";
 		break;
-	case eKey_F15:
+	case Common::KEYCODE_F15:
 		tsKey += "F15";
 		break;
-	case eKey_NUMLOCK:
+	case Common::KEYCODE_NUMLOCK:
 		tsKey += "NumLock";
 		break;
-	case eKey_CAPSLOCK:
+	case Common::KEYCODE_CAPSLOCK:
 		tsKey += "CapsLock";
 		break;
-	case eKey_SCROLLOCK:
+	case Common::KEYCODE_SCROLLOCK:
 		tsKey += "ScrollLock";
 		break;
-	case eKey_RSHIFT:
+	case Common::KEYCODE_RSHIFT:
 		tsKey += "RightShift";
 		break;
-	case eKey_LSHIFT:
+	case Common::KEYCODE_LSHIFT:
 		tsKey += "LeftShift";
 		break;
-	case eKey_RCTRL:
+	case Common::KEYCODE_RCTRL:
 		tsKey += "RightControl";
 		break;
-	case eKey_LCTRL:
+	case Common::KEYCODE_LCTRL:
 		tsKey += "LeftControl";
 		break;
-	case eKey_RALT:
+	case Common::KEYCODE_RALT:
 		tsKey += "RightAlt";
 		break;
-	case eKey_LALT:
+	case Common::KEYCODE_LALT:
 		tsKey += "LeftAlt";
 		break;
-	case eKey_RMETA:
+	case Common::KEYCODE_RMETA:
 		tsKey += "RightMeta";
 		break;
-	case eKey_LMETA:
+	case Common::KEYCODE_LMETA:
 		tsKey += "LeftMeta";
 		break;
-	case eKey_LSUPER:
+	case Common::KEYCODE_LSUPER:
 		tsKey += "LeftSuper";
 		break;
-	case eKey_RSUPER:
+	case Common::KEYCODE_RSUPER:
 		tsKey += "RightSuper";
 		break;
-	case eKey_MODE:
+	case Common::KEYCODE_MODE:
 		tsKey += "Mode";
 		break;
-	case eKey_HELP:
+	case Common::KEYCODE_HELP:
 		tsKey += "Help";
 		break;
-	case eKey_PRINT:
+	case Common::KEYCODE_PRINT:
 		tsKey += "Print";
 		break;
-	case eKey_SYSREQ:
+	case Common::KEYCODE_SYSREQ:
 		tsKey += "SysReq";
 		break;
-	case eKey_BREAK:
+	case Common::KEYCODE_BREAK:
 		tsKey += "Break";
 		break;
-	case eKey_MENU:
+	case Common::KEYCODE_MENU:
 		tsKey += "Menu";
 		break;
-	case eKey_POWER:
+	case Common::KEYCODE_POWER:
 		tsKey += "Power";
 		break;
-	case eKey_EURO:
+	case Common::KEYCODE_EURO:
 		tsKey += "Euro";
-		break;
-	case eKey_NONE:
-		tsKey += "None";
 		break;
 	default:
 		break;

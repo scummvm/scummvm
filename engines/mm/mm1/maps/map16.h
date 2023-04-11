@@ -53,11 +53,6 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
-
-	/**
-	 * Spins the wheel and grants each party member a result
-	 */
-	void wheelSpin();
 };
 
 } // namespace Maps

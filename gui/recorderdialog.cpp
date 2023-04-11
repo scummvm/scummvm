@@ -81,7 +81,6 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	_playbackButton->setEnabled(false);
 
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
-	_gfxWidget->useThemeTransparency(false);
 
 	addThumbnailContainerButtonsAndText();
 }

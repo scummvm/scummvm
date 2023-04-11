@@ -59,6 +59,7 @@ endif
 dist-generic: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p ./dist-generic/scummvm/data
 	mkdir -p ./dist-generic/scummvm/doc
+	rm -f ./dist-generic/scummvm/$(EXECUTABLE)
 	cp $(EXECUTABLE) ./dist-generic/scummvm
 ifeq ($(BACKEND), atari)
 	m68k-atari-mint-flags -S ./dist-generic/scummvm/$(EXECUTABLE)
@@ -510,6 +511,10 @@ endif
 
 ifdef USE_FAAD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfaad.a
+endif
+
+ifdef USE_MIKMOD
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmikmod.a
 endif
 
 ifdef USE_MPEG2

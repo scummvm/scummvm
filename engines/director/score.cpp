@@ -1083,7 +1083,6 @@ void Score::screenShot() {
 		return;
 #else
 
-
 	Graphics::Surface rawSurface = _window->getSurface()->rawSurface();
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
@@ -1100,12 +1099,24 @@ void Score::screenShot() {
 		// The filename is in the form:
 		// ./dumps/theapartment/25/xn--Main Menu-zd0e-19.png
 
-		// Now we try to find any previous dump
-		int prevbuild = atoi(buildNumber) - 1;
+		Common::String buildDir = Common::String::format("%s/%s", ConfMan.get("screenshotpath").c_str(),
+			g_director->getTargetName().c_str());
 
+		// We run for the first time, let's check if we had the directory previously
+		if (_previousBuildBotBuild == -1) {
+			Common::FSNode dir(buildDir);
+
+			if (!dir.exists())
+				_previousBuildBotBuild = 0; // We will skip attempts to search screenshots
+			else
+				_previousBuildBotBuild = atoi(buildNumber) - 1;
+		}
+
+		int prevbuild = _previousBuildBotBuild;
+
+		// Now we try to find any previous dump
 		while (prevbuild > 0) {
-			filename = Common::String::format("%s/%s/%d/%s-%d.png", ConfMan.get("screenshotpath").c_str(),
-				g_director->getTargetName().c_str(), prevbuild, prefix.c_str(), g_director->_framesRan);
+			filename = Common::String::format("%s/%d/%s-%d.png", buildDir.c_str(), prevbuild, prefix.c_str(), g_director->_framesRan);
 
 			Common::FSNode fs(filename);
 
@@ -1115,13 +1126,13 @@ void Score::screenShot() {
 			prevbuild--;
 		}
 
-		// We found previous screenshot. Let's compare it
+		// We found a previous screenshot. Let's compare it
 		if (prevbuild > 0) {
 			Common::FSNode fs(filename);
 			Image::PNGDecoder decoder;
 			Common::SeekableReadStream *stream = fs.createReadStream();
 
-			if (decoder.loadStream(*stream)) {
+			if (stream && decoder.loadStream(*stream)) {
 				Common::String oldMd5 = computeSurfaceMd5(decoder.getSurface());
 				Common::String newMd5 = computeSurfaceMd5(newSurface);
 
@@ -1139,6 +1150,12 @@ void Score::screenShot() {
 
 			delete stream;
 		}
+
+		// We are here because we either have nothing to compare with or
+		// the screenshot was different from the previous one.
+		//
+		// Regenerate file name with the correct build number
+		filename = Common::String::format("%s/%s/%s-%d.png", buildDir.c_str(), buildNumber, prefix.c_str(), g_director->_framesRan);
 	}
 
 	Common::DumpFile screenshotFile;

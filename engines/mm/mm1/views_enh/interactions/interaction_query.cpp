@@ -44,11 +44,10 @@ void InteractionQuery::draw() {
 		return;
 
 	assert(_buttons.empty());
-	int xp = (_innerBounds.width() / 2) - (_maxChars * 8 / 2);
-	int yp = (8 + _lines.size()) * 8;
+	int xp = 30; // (_innerBounds.width() / 2) - (_maxChars * 8 / 2);
+	int yp = (8 + _lines.size()) * 9 - 5;
 
-	_textEntry.display(xp + _innerBounds.left, yp + _innerBounds.top,
-		_maxChars, false,
+	_textEntry.display(xp, yp, _maxChars, false,
 		[]() {
 			auto *view = static_cast<InteractionQuery *>(g_events->focusedView());
 			view->answerEntry("");

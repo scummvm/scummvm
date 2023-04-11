@@ -36,11 +36,17 @@ WonGame::WonGame() : TextView("WonGame") {
 
 void WonGame::draw() {
 	clearSurface();
+	writeString(0, 0, STRING["maps.map18.gates"]);
 	writeString(0, 1, STRING["maps.map18.congratulations"]);
 	Sound::sound(SOUND_3);
 }
 
 bool WonGame::msgKeypress(const KeypressMessage &msg) {
+	close();
+	return true;
+}
+
+bool WonGame::msgAction(const ActionMessage &msg) {
 	close();
 	return true;
 }

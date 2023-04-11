@@ -128,9 +128,10 @@ typedef void (*YNCallback)();
 typedef void (*KeyCallback)(const Common::KeyState &keyState);
 struct InfoMessage : public Message {
 	LineArray _lines;
-	YNCallback _ynCallback = nullptr;
+	YNCallback _yCallback = nullptr;
+	YNCallback _nCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
-	YNCallback &_timeoutCallback = _ynCallback;
+	YNCallback &_timeoutCallback = _yCallback;
 	bool _largeMessage = false;
 	bool _sound = false;
 	int _delaySeconds = 0;
@@ -142,12 +143,12 @@ struct InfoMessage : public Message {
 		int x2, int y2, const Common::String &str2);
 
 	InfoMessage(const Common::String &str,
-		YNCallback ynCallback);
+		YNCallback yCallback, YNCallback nCallback = nullptr);
 	InfoMessage(int x, int y, const Common::String &str,
-		YNCallback ynCallback);
+		YNCallback yCallback, YNCallback nCallback = nullptr);
 	InfoMessage(int x1, int y1, const Common::String &str1,
 		int x2, int y2, const Common::String &str2,
-		YNCallback ynCallback);
+		YNCallback ynCallback, YNCallback nCallback = nullptr);
 
 	InfoMessage(const Common::String &str,
 		KeyCallback keyCallback);
@@ -171,14 +172,15 @@ public:
 		int x2, int y2, const Common::String &str2) :
 		InfoMessage(x1, y1, str1, x2, y2, str2) { _sound = true; }
 
-	SoundMessage(const Common::String &str, YNCallback ynCallback);
+	SoundMessage(const Common::String &str, YNCallback yCallback,
+		YNCallback nCallback = nullptr);
 	SoundMessage(int x, int y, const Common::String &str,
-		YNCallback ynCallback) :
-		InfoMessage(x, y, str, ynCallback) { _sound = true; }
+		YNCallback yCallback, YNCallback nCallback = nullptr) :
+		InfoMessage(x, y, str, yCallback, nCallback) { _sound = true; }
 	SoundMessage(int x1, int y1, const Common::String &str1,
 		int x2, int y2, const Common::String &str2,
-		YNCallback ynCallback) :
-		InfoMessage(x1, y1, str1, x2, y2, str2, ynCallback) { _sound = true; }
+		YNCallback yCallback, YNCallback nCallback = nullptr) :
+		InfoMessage(x1, y1, str1, x2, y2, str2, yCallback, nCallback) { _sound = true; }
 
 	SoundMessage(const Common::String &str, KeyCallback keyCallback);
 	SoundMessage(int x, int y, const Common::String &str,

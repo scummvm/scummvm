@@ -23,6 +23,7 @@
 #define SCUMM_DIALOG_SESSION_SELECTOR_H
 
 #include "gui/dialog.h"
+#include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
 #include "common/fs.h"
 #include "common/hashmap.h"
@@ -51,6 +52,8 @@ private:
 
 	GUI::Widget *_joinButton;
 	GUI::StaticTextWidget *_queryProgressText;
+
+	GUI::EditTextWidget *_playerName;
 
 	GUI::ListWidget *_list;
 };

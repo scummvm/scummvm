@@ -58,6 +58,7 @@
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
+#include "gui/cloudconnectionwizard.h"
 #include "gui/downloaddialog.h"
 #include "gui/downloadpacksdialog.h"
 #endif
@@ -129,12 +130,11 @@ enum {
 	kDownloadStorageCmd = 'dlst',
 	kRunServerCmd = 'rnsv',
 	kCloudTabContainerReflowCmd = 'ctcr',
+	kOpenCloudConnectionWizardCmd = 'OpCW',
 	kServerPortClearCmd = 'spcl',
 	kChooseRootDirCmd = 'chrp',
 	kRootPathClearCmd = 'clrp',
-	kConnectStorageCmd = 'Cnnt',
 	kOpenUrlStorageCmd = 'OpUr',
-	kPasteCodeStorageCmd = 'PsCd',
 	kDisconnectStorageCmd = 'DcSt',
 	kEnableStorageCmd = 'EnSt'
 };
@@ -2149,13 +2149,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 
 	_connectingStorage = false;
 	_storageWizardNotConnectedHint = nullptr;
-	_storageWizardOpenLinkHint = nullptr;
-	_storageWizardLink = nullptr;
-	_storageWizardCodeHint = nullptr;
-	_storageWizardCodeBox = nullptr;
-	_storageWizardPasteButton = nullptr;
 	_storageWizardConnectButton = nullptr;
-	_storageWizardConnectionStatusHint = nullptr;
 	_redrawCloudTab = false;
 #endif
 #ifdef USE_SDL_NET
@@ -2641,7 +2635,7 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	_debugLevelPopUp = new PopUpWidget(boss, prefix + "DebugLevelPopup");
 
 	// I18N: Debug level -1, no messages
-	_debugLevelPopUp->appendEntry(_("None"), -1);
+	_debugLevelPopUp->appendEntry(_("None"), (uint32)-1);
 
 	for (int i = 0; i < 11; i++)
 		_debugLevelPopUp->appendEntry(Common::U32String::format("%d", i), i);
@@ -2690,9 +2684,9 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 	_storagePopUp->setSelected(_selectedStorageIndex);
 
 	if (lowres)
-		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _c("4. Storage is not yet enabled. Verify that username is correct and enable it:", "lowres"));
+		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _c("Storage is not yet enabled. Verify that username is correct and enable it:", "lowres"));
 	else
-		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _("4. Storage is not yet enabled. Verify that username is correct and enable it:"));
+		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", _("Storage is not yet enabled. Verify that username is correct and enable it:"));
 	_storageEnableButton = new ButtonWidget(boss, prefix + "StorageEnableButton", _("Enable storage"), _("Confirm you want to use this account for this storage"), kEnableStorageCmd);
 
 	_storageUsernameDesc = new StaticTextWidget(boss, prefix + "StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
@@ -2722,19 +2716,10 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 	_storageDisconnectButton = new ButtonWidget(boss, prefix + "DisconnectButton", _("Disconnect"), _("Stop using this storage on this device"), kDisconnectStorageCmd);
 
 	if (lowres)
-		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", _c("This storage is not connected yet! To connect,", "lowres"));
+		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", _c("This storage is not connected yet!", "lowres"));
 	else
-		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", _("This storage is not connected yet! To connect,"));
-	_storageWizardOpenLinkHint = new StaticTextWidget(boss, prefix + "StorageWizardOpenLinkHint", _("1. Open this link:"));
-	_storageWizardLink = new ButtonWidget(boss, prefix + "StorageWizardLink", Common::U32String("https://cloud.scummvm.org/"), _("Open URL"), kOpenUrlStorageCmd);
-	if (lowres)
-		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", _c("2. Get the code and enter it here:", "lowres"));
-	else
-		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", _("2. Get the code and enter it here:"));
-	_storageWizardCodeBox = new EditTextWidget(boss, prefix + "StorageWizardCodeBox", Common::U32String(), Common::U32String(), 0, 0, ThemeEngine::kFontStyleConsole);
-	_storageWizardPasteButton = new ButtonWidget(boss, prefix + "StorageWizardPasteButton", _("Paste"), _("Paste code from clipboard"), kPasteCodeStorageCmd);
-	_storageWizardConnectButton = new ButtonWidget(boss, prefix + "StorageWizardConnectButton", _("3. Connect"), _("Connect your cloud storage account"), kConnectStorageCmd);
-	_storageWizardConnectionStatusHint = new StaticTextWidget(boss, prefix + "StorageWizardConnectionStatusHint", Common::U32String("..."));
+		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", _("This storage is not connected yet!"));
+	_storageWizardConnectButton = new ButtonWidget(boss, prefix + "StorageWizardConnectButton", _("Connect"), _("Connect your cloud storage account"), kOpenCloudConnectionWizardCmd);
 
 	setupCloudTab();
 }
@@ -2943,8 +2928,8 @@ void GlobalOptionsDialog::apply() {
 	else
 		_autosavePeriodPopUp->setSelected(0);
 
-	if (gDebugLevel != (int)_debugLevelPopUp->getSelectedTag()) {
-		gDebugLevel = _debugLevelPopUp->getSelectedTag();
+	if (gDebugLevel != (int32)(_debugLevelPopUp->getSelectedTag())) {
+		gDebugLevel = (int32)(_debugLevelPopUp->getSelectedTag());
 
 		warning("Debug level set to %d", gDebugLevel);
 	}
@@ -3320,9 +3305,14 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		setupCloudTab();
 		break;
 	}
+	case kOpenCloudConnectionWizardCmd: {
+		CloudConnectionWizard wizard;
+		wizard.runModal();
+		setupCloudTab();
+		reflowLayout();
+		break;
+	}
 	case kStoragePopUpCmd: {
-		if (_storageWizardCodeBox)
-			_storageWizardCodeBox->setEditString(Common::U32String());
 		// update container's scrollbar
 		reflowLayout();
 		break;
@@ -3370,61 +3360,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
-	case kPasteCodeStorageCmd: {
-		if (g_system->hasTextInClipboard()) {
-			Common::U32String message = g_system->getTextFromClipboard();
-			if (!message.empty()) {
-				_storageWizardCodeBox->setEditString(message);
-				_redrawCloudTab = true;
-			}
-		}
-		break;
-	}
-	case kConnectStorageCmd: {
-		Common::String code = "";
-		if (_storageWizardCodeBox)
-			code = _storageWizardCodeBox->getEditString().encode();
-		if (code.size() == 0)
-			return;
-
-		if (CloudMan.isWorking()) {
-			bool cancel = true;
-
-			MessageDialog alert(_("Another Storage is working now. Do you want to interrupt it?"), _("Yes"), _("No"));
-			if (alert.runModal() == GUI::kMessageOK) {
-				if (CloudMan.isDownloading())
-					CloudMan.cancelDownload();
-				if (CloudMan.isSyncing())
-					CloudMan.cancelSync();
-
-				// I believe it still would return `true` here, but just in case
-				if (CloudMan.isWorking()) {
-					MessageDialog alert2(_("Wait until current Storage finishes up and try again."));
-					alert2.runModal();
-				} else {
-					cancel = false;
-				}
-			}
-
-			if (cancel) {
-				return;
-			}
-		}
-
-		if (_storageWizardConnectionStatusHint)
-			_storageWizardConnectionStatusHint->setLabel(_("Connecting..."));
-		CloudMan.connectStorage(
-			_selectedStorageIndex, code,
-			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageConnectionCallback)
-		);
-		_connectingStorage = true;
-		_redrawCloudTab = true;
-		break;
-	}
 	case kDisconnectStorageCmd: {
-		if (_storageWizardCodeBox)
-			_storageWizardCodeBox->setEditString(Common::U32String());
-
 		if (_selectedStorageIndex == CloudMan.getStorageIndex() && CloudMan.isWorking()) {
 			bool cancel = true;
 
@@ -3682,27 +3618,9 @@ void GlobalOptionsDialog::setupCloudTab() {
 	shown = (!shownConnectedInfo && shown);
 	bool wizardEnabled = !_connectingStorage;
 	if (_storageWizardNotConnectedHint) _storageWizardNotConnectedHint->setVisible(shown);
-	if (_storageWizardOpenLinkHint) _storageWizardOpenLinkHint->setVisible(shown);
-	if (_storageWizardLink) {
-		_storageWizardLink->setVisible(shown);
-		_storageWizardLink->setEnabled(g_system->hasFeature(OSystem::kFeatureOpenUrl) && wizardEnabled);
-	}
-	if (_storageWizardCodeHint) _storageWizardCodeHint->setVisible(shown);
-	if (_storageWizardCodeBox) {
-		_storageWizardCodeBox->setVisible(shown);
-		_storageWizardCodeBox->setEnabled(wizardEnabled);
-	}
-	if (_storageWizardPasteButton) {
-		_storageWizardPasteButton->setVisible(shown && g_system->hasFeature(OSystem::kFeatureClipboardSupport));
-		_storageWizardPasteButton->setEnabled(wizardEnabled);
-	}
 	if (_storageWizardConnectButton) {
 		_storageWizardConnectButton->setVisible(shown);
 		_storageWizardConnectButton->setEnabled(wizardEnabled);
-	}
-	if (_storageWizardConnectionStatusHint) {
-		_storageWizardConnectionStatusHint->setVisible(shown && _storageWizardConnectionStatusHint->getLabel() != "...");
-		_storageWizardConnectionStatusHint->setEnabled(wizardEnabled);
 	}
 
 	if (!shownConnectedInfo) {
@@ -3714,13 +3632,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 		shiftUp = y - shiftUp;
 
 		shiftWidget(_storageWizardNotConnectedHint, "GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint", 0, -shiftUp);
-		shiftWidget(_storageWizardOpenLinkHint, "GlobalOptions_Cloud_Container.StorageWizardOpenLinkHint", 0, -shiftUp);
-		shiftWidget(_storageWizardLink, "GlobalOptions_Cloud_Container.StorageWizardLink", 0, -shiftUp);
-		shiftWidget(_storageWizardCodeHint, "GlobalOptions_Cloud_Container.StorageWizardCodeHint", 0, -shiftUp);
-		shiftWidget(_storageWizardCodeBox, "GlobalOptions_Cloud_Container.StorageWizardCodeBox", 0, -shiftUp);
-		shiftWidget(_storageWizardPasteButton, "GlobalOptions_Cloud_Container.StorageWizardPasteButton", 0, -shiftUp);
 		shiftWidget(_storageWizardConnectButton, "GlobalOptions_Cloud_Container.StorageWizardConnectButton", 0, -shiftUp);
-		shiftWidget(_storageWizardConnectionStatusHint, "GlobalOptions_Cloud_Container.StorageWizardConnectionStatusHint", 0, -shiftUp);
 	}
 }
 
@@ -3791,25 +3703,6 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 #endif // USE_SDL_NET
 
 #ifdef USE_LIBCURL
-void GlobalOptionsDialog::storageConnectionCallback(Networking::ErrorResponse response) {
-	Common::U32String message("...");
-	if (!response.failed && !response.interrupted) {
-		// success
-		g_system->displayMessageOnOSD(_("Storage connected."));
-	} else {
-		message = _("Failed to connect storage.");
-		if (response.failed) {
-			message = _("Failed to connect storage: ") + _(response.response.c_str());
-		}
-	}
-
-	if (_storageWizardConnectionStatusHint)
-		_storageWizardConnectionStatusHint->setLabel(message);
-
-	_redrawCloudTab = true;
-	_connectingStorage = false;
-}
-
 void GlobalOptionsDialog::storageSavesSyncedCallback(Cloud::Storage::BoolResponse response) {
 	_redrawCloudTab = true;
 }

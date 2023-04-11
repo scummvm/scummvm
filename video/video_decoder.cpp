@@ -741,6 +741,11 @@ VideoDecoder::StreamFileAudioTrack::StreamFileAudioTrack(Audio::Mixer::SoundType
 	_stream = 0;
 }
 
+VideoDecoder::StreamFileAudioTrack::StreamFileAudioTrack(Audio::SeekableAudioStream *stream, Audio::Mixer::SoundType soundType) :
+		SeekableAudioTrack(soundType) {
+	_stream = stream;
+}
+
 VideoDecoder::StreamFileAudioTrack::~StreamFileAudioTrack() {
 	delete _stream;
 }
@@ -788,6 +793,16 @@ void VideoDecoder::addTrack(Track *track, bool isExternal) {
 	// Start the track if we're playing
 	if (isPlaying() && track->getTrackType() == Track::kTrackTypeAudio)
 		((AudioTrack *)track)->start();
+}
+
+bool VideoDecoder::addStreamTrack(Audio::SeekableAudioStream *stream) {
+	// Only allow adding external tracks if a video is already loaded
+	if (!isVideoLoaded())
+		return false;
+
+	StreamFileAudioTrack *track = new StreamFileAudioTrack(stream, getSoundType());
+	addTrack(track, true);
+	return true;
 }
 
 bool VideoDecoder::addStreamFileTrack(const Common::String &baseName) {

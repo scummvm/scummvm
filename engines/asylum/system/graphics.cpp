@@ -57,7 +57,7 @@ bool GraphicResource::load(ResourceId id) {
 
 void GraphicResource::clear() {
 	for (uint32 i = 0; i < _frames.size(); i++) {
-		delete[] (byte*)_frames[i].surface.getPixels();
+		_frames[i].surface.free();
 	}
 
 	_frames.clear();
@@ -141,9 +141,10 @@ void GraphicResource::init(byte *data, int32 size) {
 		uint16 width  = READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
 
-		_frames[i].surface.init(width, height, width, new byte[width * height], Graphics::PixelFormat::createFormatCLUT8());
-
-		memcpy(_frames[i].surface.getPixels(), dataPtr, (size_t)(width * height));
+		if (width > 0 && height > 0) {
+			_frames[i].surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+			_frames[i].surface.copyRectToSurface(dataPtr, width, 0, 0, width, height);
+		}
 	}
 }
 

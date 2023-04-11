@@ -118,31 +118,27 @@ void Map21::special02() {
 
 	send(SoundMessage(
 		STRING["maps.map21.trivia_island"],
-		[](const Common::KeyState &ks) {
-			if (ks.keycode == Common::KEYCODE_y) {
-				MM1::Maps::Map &map = *g_maps->_currentMap;
-				g_events->close();
+		[]() {
+			MM1::Maps::Map &map = *g_maps->_currentMap;
 
-				for (uint i = 0; i < g_globals->_party.size(); ++i) {
-					Character &c = g_globals->_party[i];
-					g_globals->_currCharacter = &c;
-					if (g_globals->_currCharacter->_gold >= TRIVIA_COST) {
-						c._gold -= 500;
-						g_maps->clearSpecial();
-						map[TRIVIA_ENABLED]++;
-						return;
-					}
+			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+				Character &c = g_globals->_party[i];
+				g_globals->_currCharacter = &c;
+				if (g_globals->_currCharacter->_gold >= TRIVIA_COST) {
+					c._gold -= 500;
+					g_maps->clearSpecial();
+					map[TRIVIA_ENABLED]++;
+					return;
 				}
-
-				g_events->send(SoundMessage(STRING["maps.map21.not_enough_gold"]));
-				g_maps->_mapPos.y++;
-				g_maps->_currentMap->updateGame();
-
-			} else if (ks.keycode == Common::KEYCODE_n) {
-				g_events->close();
-				g_maps->_mapPos.y++;
-				g_maps->_currentMap->updateGame();
 			}
+
+			g_maps->_mapPos.y++;
+			g_maps->_currentMap->updateGame();
+			g_events->send(SoundMessage(STRING["maps.map21.not_enough_gold"]));
+		},
+		[]() {
+			g_maps->_mapPos.y++;
+			g_maps->_currentMap->updateGame();
 		}
 	));
 }

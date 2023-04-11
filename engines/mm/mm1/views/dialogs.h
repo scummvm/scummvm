@@ -27,6 +27,7 @@
 #include "mm/mm1/views/bash.h"
 #include "mm/mm1/views/characters.h"
 #include "mm/mm1/views/character_view_combat.h"
+#include "mm/mm1/views/color_questions.h"
 #include "mm/mm1/views/combat.h"
 #include "mm/mm1/views/create_characters.h"
 #include "mm/mm1/views/dead.h"
@@ -44,6 +45,7 @@
 #include "mm/mm1/views/search.h"
 #include "mm/mm1/views/trap.h"
 #include "mm/mm1/views/unlock.h"
+#include "mm/mm1/views/wheel_spin.h"
 #include "mm/mm1/views/locations/blacksmith.h"
 #include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/locations/market.h"
@@ -54,6 +56,7 @@
 #include "mm/mm1/views/maps/access_code.h"
 #include "mm/mm1/views/maps/alamar.h"
 #include "mm/mm1/views/maps/alien.h"
+#include "mm/mm1/views/maps/arenko.h"
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/chess.h"
 #include "mm/mm1/views/maps/dog_statue.h"
@@ -90,8 +93,10 @@ struct Dialogs {
 private:
 	Views::AreYouReady _areYouReady;
 	Views::Bash _bash;
+	Views::CharacterInfo _characterInfo;
 	Views::Characters _characters;
 	Views::CharacterViewCombat _characterViewCombat;
+	Views::ColorQuestions _colorQuestions;
 	Views::Combat _combat;
 	Views::CreateCharacters _createCharacters;
 	Views::Dead _dead;
@@ -106,7 +111,7 @@ private:
 	Views::Title _title;
 	Views::Trap _trap;
 	Views::Unlock _unlock;
-	Views::CharacterInfo _characterInfo;
+	Views::WheelSpin _wheelSpin;
 
 	Views::Locations::Blacksmith _blacksmith;
 	Views::Locations::Inn _inn;
@@ -119,6 +124,7 @@ private:
 	Views::Maps::AccessCode _accessCode;
 	Views::Maps::Alamar _alamar;
 	Views::Maps::Alien _alien;
+	Views::Maps::Arenko _arenko;
 	Views::Maps::Arrested _arrested;
 	Views::Maps::Chess _chess;
 	Views::Maps::ChildPrisoner _childPrisoner;

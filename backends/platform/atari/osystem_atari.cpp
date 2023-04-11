@@ -171,9 +171,8 @@ void OSystem_Atari::delayMillis(uint msecs) {
 }
 
 void OSystem_Atari::getTimeAndDate(TimeDate &td, bool skipRecord) const {
-	debug("getTimeAndDate");
+	//debug("getTimeAndDate");
 	time_t curTime = time(0);
-	// TODO: if too slow (e.g. when calling RandomSource::RandomSource()), rewrite
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;
 	td.tm_min = t.tm_min;

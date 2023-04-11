@@ -54,6 +54,11 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Ice Princess riddle answer
+	 */
+	void riddleAnswer(const Common::String &answer);
 };
 
 } // namespace Maps

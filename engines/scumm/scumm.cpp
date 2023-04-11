@@ -93,6 +93,7 @@
 #ifdef USE_ENET
 #include "scumm/he/net/net_main.h"
 #include "scumm/dialog-sessionselector.h"
+#include "scumm/dialog-createsession.h"
 #ifdef USE_LIBCURL
 #include "scumm/he/net/net_lobby.h"
 #endif
@@ -2367,7 +2368,29 @@ Common::Error ScummEngine::go() {
 			delta = ceil(delta / 3.0) * 3;
 		}
 
-		// In COMI we put no speed limit while on the main menu.
+		// The following delta value substitutions are aimed at removing
+		// any frame rate limit to main menu rooms in which you can type
+		// custom names for save states. We do this in order to avoid
+		// lag and/or lose keyboard inputs.
+
+		if (_enableEnhancements) {
+			// INDY3:
+			if (_game.id == GID_INDY3 && _currentRoom == 14) {
+				delta = 3;
+			}
+
+			// LOOM (EGA & FM-TOWNS):
+			if (_game.id == GID_LOOM && _game.version == 3 && _currentRoom == 70) {
+				delta = 3; // Enough not to flash the cursor too quickly and to remove lag...
+			}
+
+			// ZAK (FM-Towns):
+			if (_game.id == GID_ZAK && _game.version == 3 && _currentRoom == 50) {
+				delta = 3; // Enough not to flash the cursor too quickly and to remove lag...
+			}
+		}
+
+		// COMI (not marked as enhancement because without this the menu shows issues):
 		if (_game.version == 8 && _currentRoom == 92) {
 			delta = 0;
 		}
@@ -3494,10 +3517,15 @@ bool ScummEngine::displayMessageYesNo(const char *message, ...) {
 int ScummEngine_v90he::networkSessionDialog() {
 	GUI::MessageDialog dialog(_("Would you like to host or join a network play session?"), _("Host"), _("Join"));
 	int res = runDialog(dialog);
-	if (res == GUI::kMessageOK)
-		// Hosting session.
-		return -1;
-
+	if (res == GUI::kMessageOK) {
+		// Hosting a session.
+		CreateSessionDialog createDialog;
+		if (runDialog(createDialog)) {
+			return -1;
+		} else {
+			return -2;
+		}
+	}
 	// Joining a session
 	SessionSelectorDialog sessionDialog(this);
 	return runDialog(sessionDialog);

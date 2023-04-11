@@ -35,7 +35,6 @@ MODULE_OBJS = \
   console.o \
   cursor.o \
   decompress.o \
-  dialogs.o \
   enginedata.o \
   font.o \
   graphics.o \

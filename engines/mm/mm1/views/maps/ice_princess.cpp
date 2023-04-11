@@ -29,9 +29,6 @@ namespace MM1 {
 namespace Views {
 namespace Maps {
 
-#define VAL1 123
-#define ANSWER_OFFSET 167
-
 IcePrincess::IcePrincess() :
 		AnswerEntry("IcePrincess", Common::Point(9, 7), 10) {
 	_bounds = getLineBounds(17, 24);
@@ -44,44 +41,8 @@ void IcePrincess::draw() {
 }
 
 void IcePrincess::answerEntered() {
-	MM1::Maps::Map &map = *g_maps->_currentMap;
-	Common::String properAnswer;
-	map[VAL1] = _answer.size();
-	close();
-
-	for (int i = 0; i < 4; ++i)
-		properAnswer += (map[ANSWER_OFFSET + i] & 0x7f) + 64;
-
-	if (_answer.equalsIgnoreCase(properAnswer)) {
-		InfoMessage msg(
-			16, 2, STRING["maps.map19.correct"],
-			[]() {
-				g_maps->clearSpecial();
-
-				for (uint i = 0; i < g_globals->_party.size(); ++i) {
-					g_globals->_currCharacter = &g_globals->_party[i];
-					if (g_globals->_currCharacter->_backpack.indexOf(DIAMOND_KEY_ID) != -1) {
-						g_globals->_treasure._items[2] = 237;
-						g_events->addAction(KEYBIND_SEARCH);
-						return;
-					}
-				}
-
-				g_globals->_treasure._items[2] = 240;
-				g_events->addAction(KEYBIND_SEARCH);
-			}
-		);
-
-		msg._delaySeconds = 2;
-		send(msg);
-		Sound::sound(SOUND_3);
-		Sound::sound(SOUND_3);
-
-	} else {
-		g_maps->_mapPos.x = 15;
-		g_events->send("Game", GameMessage("UPDATE"));
-		send(SoundMessage(STRING["maps.map19.incorrect"]));
-	}
+	MM1::Maps::Map19 &map = *static_cast<MM1::Maps::Map19 *>(g_maps->_currentMap);
+	map.riddleAnswer(_answer);
 }
 
 } // namespace Maps

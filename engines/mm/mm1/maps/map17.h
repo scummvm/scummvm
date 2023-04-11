@@ -54,11 +54,6 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
-
-	/**
-	 * Ask a given party member a question
-	 */
-	void askQuestion(uint partyIndex = 0);
 };
 
 } // namespace Maps

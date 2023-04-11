@@ -29,9 +29,11 @@
 #include "mm/mm1/views_enh/character_inventory.h"
 #include "mm/mm1/views_enh/character_select.h"
 #include "mm/mm1/views_enh/characters.h"
+#include "mm/mm1/views_enh/color_questions.h"
 #include "mm/mm1/views_enh/combat.h"
 #include "mm/mm1/views_enh/confirm.h"
 #include "mm/mm1/views_enh/create_characters.h"
+#include "mm/mm1/views_enh/dead.h"
 #include "mm/mm1/views_enh/encounter.h"
 #include "mm/mm1/views_enh/exchange.h"
 #include "mm/mm1/views_enh/game.h"
@@ -46,14 +48,24 @@
 #include "mm/mm1/views_enh/trade.h"
 #include "mm/mm1/views_enh/trap.h"
 #include "mm/mm1/views_enh/unlock.h"
+#include "mm/mm1/views_enh/wheel_spin.h"
 #include "mm/mm1/views_enh/which_character.h"
 #include "mm/mm1/views_enh/which_item.h"
 #include "mm/mm1/views_enh/who_will_try.h"
+#include "mm/mm1/views_enh/won_game.h"
 #include "mm/mm1/views_enh/interactions/access_code.h"
+#include "mm/mm1/views_enh/interactions/alien.h"
+#include "mm/mm1/views_enh/interactions/arenko.h"
 #include "mm/mm1/views_enh/interactions/arrested.h"
+#include "mm/mm1/views_enh/interactions/chess.h"
+#include "mm/mm1/views_enh/interactions/giant.h"
+#include "mm/mm1/views_enh/interactions/gypsy.h"
+#include "mm/mm1/views_enh/interactions/ice_princess.h"
+#include "mm/mm1/views_enh/interactions/lion.h"
 #include "mm/mm1/views_enh/interactions/prisoners.h"
 #include "mm/mm1/views_enh/interactions/resistances.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
+#include "mm/mm1/views_enh/interactions/trivia.h"
 #include "mm/mm1/views_enh/interactions/volcano_god.h"
 #include "mm/mm1/views_enh/locations/blacksmith_items.h"
 #include "mm/mm1/views_enh/locations/blacksmith.h"
@@ -72,9 +84,17 @@ namespace ViewsEnh {
 struct Dialogs {
 private:
 	ViewsEnh::Interactions::AccessCode _accessCode;
+	ViewsEnh::Interactions::Alien _alien;
+	ViewsEnh::Interactions::Arenko _arenko;
 	ViewsEnh::Interactions::Arrested _arrested;
+	ViewsEnh::Interactions::Chess _chess;
+	ViewsEnh::Interactions::Giant _giant;
+	ViewsEnh::Interactions::Gypsy _gypsy;
+	ViewsEnh::Interactions::IcePrincess _icePrincess;
+	ViewsEnh::Interactions::Lion _lion;
 	ViewsEnh::Interactions::Resistances _resistances;
 	ViewsEnh::Interactions::Statue _statue;
+	ViewsEnh::Interactions::Trivia _trivia;
 	ViewsEnh::Interactions::VolcanoGod _volcanoGod;
 
 	ViewsEnh::Interactions::ChildPrisoner _childPrisoner;
@@ -99,9 +119,11 @@ private:
 	ViewsEnh::CharacterInventory _characterInventory;
 	ViewsEnh::CharacterSelect _characterSelect;
 	ViewsEnh::Characters _characters;
+	ViewsEnh::ColorQuestions _colorQuestions;
 	ViewsEnh::Combat _combat;
 	ViewsEnh::Confirm _confirm;
 	ViewsEnh::CreateCharacters _createCharacters;
+	ViewsEnh::Dead _dead;
 	ViewsEnh::Encounter _encounter;
 	ViewsEnh::Exchange _exchange;
 	ViewsEnh::Game _game;
@@ -116,9 +138,11 @@ private:
 	ViewsEnh::Trade _trade;
 	ViewsEnh::Trap _trap;
 	ViewsEnh::Unlock _unlock;
+	ViewsEnh::WheelSpin _wheelSpin;
 	ViewsEnh::WhichCharacter _whichCharacter;
 	ViewsEnh::WhichItem _whichItem;
 	ViewsEnh::WhoWillTry _whoWillTry;
+	ViewsEnh::WonGame _wonGame;
 	Views::Bash _bash;
 public:
 	Dialogs() {}

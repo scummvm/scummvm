@@ -48,7 +48,7 @@ void UploadFileClientHandler::handle(Client *client) {
 	while (true) {
 		switch (_state) {
 		case UFH_READING_CONTENT:
-			if (client->readContent(nullptr)) {
+			if (client->readFirstContent(nullptr)) {
 				_state = UFH_READING_BLOCK_HEADERS;
 				continue;
 			}

@@ -83,12 +83,12 @@ dialogs:
 		start_over: "'esc' start over"
 		name: "name:"
 	dead:
-		1: "the shadow of death"
+		1: "The shadow of death"
 		2: "has fallen upon your party!"
-		3: "fortunately, you may renew"
+		3: "Fortunately, you may renew"
 		4: "your quest from the last"
 		5: "inn in which you stayed"
-		6: "by pressing 'enter'"	
+		6: "by pressing 'Enter'"	
 	inn:
 		title: "(%c) Inn of "
 		to_view: "to view"
@@ -928,6 +928,15 @@ monster_actions:
 	steals_something: "steals something"
 	takes_food: "takes food"
 	turned_to_stone: "is turned to stone"
+colors:
+	0: "Red Thorac"
+	1: "Blue Ogram"
+	2: "Green Bagar"
+	3: "Yellow Limra"
+	4: "Purple Sagran"
+	5: "Orange Oolak"
+	6: "Black Dresidion"
+	7: "White Dilithium"
 maps:
 	poof: "Poof!"
 	sign: "A sign above the door reads:\n"
@@ -957,6 +966,11 @@ maps:
 		options3: "3) Leave without disturbing."
 		flees: "The prisoner flees!"
 		cowers: "The prisoner cowers!"
+	eprisoners:
+		title: "Prisoner"
+		options1: "Set the prisoner free.\n"
+		options2: "Torment the prisoner.\n"
+		options3: "Leave without disturbing."
 
 	map00:
 		blacksmith: "\"B and B Blacksmithing\""
@@ -1207,7 +1221,7 @@ maps:
 		words: "Carved on a block of ice are the words:\nStart at 15-7 and walk to Doom!"
 		passage: "A secret passage to Doom, take it (Y/N)?"
 		pool: "The pool of health grants those who are\nworthy +4 endurance!"
-		surrounded: "You've been surrounded by the Dark Riderand his men! He challenges you to a duel...accept (Y/N)?"
+		surrounded: "You've been surrounded by the Dark Rider\nand his men! He challenges you to a duel... accept (Y/N)?"
 		castle: "The fabeled Castle Doom!\nWill you enter (Y/N)?"
 
 	map15:
@@ -1240,33 +1254,44 @@ maps:
 	map18:
 		passage: "Cavernous passage to Erliquin,\ntake it (Y/N)?"
 		cave: "A cave, enter (Y/N)?"
-		castle_north: "Castle blackridge north, enter (Y/N)?"
-		castle_south: "Castle blackridge south, enter (Y/N)?"
+		castle_north: "Castle Blackridge North, enter (Y/N)?"
+		castle_south: "Castle Blackridge South, enter (Y/N)?"
 		ruins: "Ancient ruins of a deserted wizards lair\nshow signs of recent use, enter (Y/N)?"
-		gates: "The gates to another world!\n"
-		congratulations: "Congratulations distinguished \ntravelers! The gates are now\nopen to you, in order to pass\nthrough you must first find\n<ight and Magic Book Two !!!"
+		gates: "The Gates to Another World!\n"
+		congratulations: "Congratulations distinguished \ntravelers! The gates are now\nopen to you, in order to pass\nthrough you must first find\nMight and Magic Book Two !!!"
 		sign1: "A sign pointing S. reads: Blackridge N."
 		sign2: "A sign pointing E. reads: Blackridge S."
 		sign3: "A sign pointing E. reads: Erliquin"
+	emap18:
+		ruins: "Ancient ruins of a deserted wizard's lair show signs of recent use, enter (Y/N)?"
+		sign1: "A sign pointing S. reads:\nBlackridge N."
+		sign2: "A sign pointing E. reads:\nBlackridge S."
+		congratulations: "Congratulations distinguished \ntravelers! The gates are now\nopen to you. In order to pass\nthrough you must first find\nMight and Magic Book Two !!!"
 
 	map19:
-		ice_princess: "An a throne adorned with precious gems\nthe ice princess speaks,\n\"Conqueror of worlds, maker of dreams\nThe greatest force of all, yet elusive\nit seems.\"\n\nAnswer:> "
+		ice_princess: "On a throne adorned with precious gems\nthe ice princess speaks,\n\"Conqueror of worlds, maker of dreams\nThe greatest force of all, yet elusive\nit seems.\"\n\nAnswer:> "
 		incorrect: "Wrong, you're too young to understand."
 		correct: "Correct!"
 		carving: "Carved on a tree: \"9-9 Raven's Lair\""
 		cave: "There's a cave here, enter (Y/N)?"
 		stairs_down: "A descending staircase is the entrance\nto a warriors stronghold, go in (Y/N)?"
+	emap19:
+		title: "Ice Princess"
+		ice_princess: "On a throne adorned with precious gems\nthe ice princess speaks,\n\"Conqueror of worlds, maker of dreams\nThe greatest force of all, yet elusive\nit seems.\""
+		stairs_down: "A descending staircase is the entrance to a warrior's stronghold, go in (Y/N)?"
 
 	map20:
 		passage: "Passage to Portsmith, take it (Y/N)?"
 		cave: "A cave, enter (Y/N)?"
-		castle: "Castle white wolf, enter (Y/N)?"
+		castle: "Castle White Wolf, enter (Y/N)?"
 		whistle: "Your ruby whistle begins to glow,\nblow it (0-9 times)?"
 		stairs_down: "Stairs going down, enter (Y/N)?"
 		temple: "An ancient temple converted to a\nstronghold has no apparent entrance."
 		peak: "Atop this peak looking:\n\nN= A cave beyond white wolf.\nE= Large beasts above wyvern peaks!\nS= Distant uncharted isles.\nW= A pirate ship beyond korin bluffs."
 		sign1: "A sign pointing N. reads: White Wolf"
 		sign2: "A sign pointing S. reads: Portsmith"
+	emap20:
+		peak: "Atop this peak looking:\n\nN= A cave beyond White Wolf.\nE= Large beasts above Wyvern Peaks!\nS= Distant uncharted isles.\nW= A pirate ship beyond Korin Bluffs."
 
 	map21:
 		trivia_island: "Trivia Island! 500 gold, enter (Y/N)?"
@@ -1289,6 +1314,8 @@ maps:
 		correct: "Correct! +50 gems"
 		incorrect: "Wrong!"
 		answer: "Answer:> .............."
+	emap21:
+		title: "Trivia Island"
 
 	map22:
 		ambush: "Ambush!"
@@ -1296,8 +1323,8 @@ maps:
 		poison: "Arghhh... poison!"
 		today_spells: "Today spells!"
 		today_might: "Today might!"
-		fountain: "A fountain speaks:\n\"will the party drink (Y/N)?\""
-		chest: "You found a chest upon which an\ninscription reads: Property of xx!xx!\nInside you found a ruby whistle, 2000\ngold and a note:\nThe stronghold lies at b-3,14-2\nBlow twice to enter."
+		fountain: "A fountain speaks:\n\"Will the party drink (Y/N)?\""
+		chest: "You found a chest upon which an\ninscription reads: Property of Xx!xx!\nInside you found a ruby whistle, 2000\ngold and a note:\nThe stronghold lies at B-3,14-2\nBlow twice to enter."
 		roadsign: "Roadsign: Sorpigal S.17, W.1, N.2"
 
 	map23:
@@ -1314,25 +1341,21 @@ maps:
 		look_out: "Look out!"
 		gypsy: "A toothless gypsy seer asks, \"Who would\nlike to hear their sign (1-6)?\""
 		your_sign_is: "\"Your sign is the %s\""
-		signs:
-			0: "Red Thorac"
-			1: "Blue Ogram"
-			2: "Green Bagar"
-			3: "Yellow Limra"
-			4: "Purple Sagran"
-			5: "Orange Oolak"
-			6: "Black Dresidion"
-			7: "White Dilithium"
+	emap23:
+		statues: "Statues block the path, smash them (Y/N)?"
+		gypsy_title: "Gypsy"
 
 	map24:
 		wyverns: "Wyverns attack from above!"
-		wyvern_eye: "One of the wyvern's eyes begins to glow!Take it (Y/N)?"
+		wyvern_eye: "One of the wyvern's eyes begins to glow!\nTake it (Y/N)?"
 		roadsign: "Roadsign: Sorpigal N.22, W.2, N.2"
 		kilburn: "The exiled Lord Kilburn speaks:\n\"Take this map and explore the desert.\nReport your findings to the other lords.\nThen they will understand!\" Accept(Y/N)?"
 		backpacks_full: "*** Backpacks full!"
 		lair: "A wyvern's lair, investigate (Y/N)?"
 		sign: "Painted in a black and white pattern,\na sign reads: The first part is female."
 		hermit: "The hermit says: \"Trade wares (Y/N)?\""
+	emap24:
+		kilburn: "The exiled Lord Kilburn speaks: \"Take this map and explore the desert. Report your findings to the other lords. Then they will understand!\" Accept (Y/N)?"
 
 	map25:
 		slab: "A large slab of coral blocks a passage!\n"
@@ -1349,7 +1372,7 @@ maps:
 		scorpion: "Suddenly, a gargantuan scorpion attacks!"
 		trading_post: "A small tribe of desert nomads have\nestablished a trading post here.\nTrade item (Y/N)?"
 		nothing_to_trade: "Your leader has nothing to trade!"
-		kilburn: "Kilburn, c-3 6-14"
+		kilburn: "Kilburn, C-3 6-14"
 
 	map27:
 		pool: "The pool of wisdom grants those who are\nworthy +4 personality."
@@ -1376,6 +1399,12 @@ maps:
 		cursed: "Cursed"
 		keep_climbing: "Keep climbing."
 		sign: "Roadsign: Algary S.9"
+	emap28:
+		arenko_title: "Arenko"
+		well_done: "Well done! What is your pleasure?"
+		gold: "Gold"
+		gems: "Gems"
+		item: "Item"
 
 	map29:
 		algary: "Algary, enter (Y/N)?"
@@ -1384,6 +1413,9 @@ maps:
 		begone: "Og says, \"Begone!\""
 		chess: "Painted on these grounds is a black &\nwhite checkered motif covered with\nidols similar to the ones you carry.\na large being approaches...\nOg speaks, \"Queen to queens level 3\"\n\nResponse: "
 		restored_sight: "You have restored my sight! (+25000 exp)\nI see an important prisoner in a castle\non Mt. Doom! he has your sight.\n\nOg curses as the idols vanish!"
+	emap29:
+		og_title: "Og"
+		og: "Painted on these grounds is a black &\nwhite checkered motif covered with idols similar to the ones you carry. A large being approaches... Og speaks, \"Queen to queens level 3\""
 
 	map30:
 		passage: "Passage to Dusk, enter (Y/N)?"
@@ -1391,7 +1423,7 @@ maps:
 		hourglass: "At the center of the land that time\nforgot stands an hourglass,turn it(Y/N)?"
 		unworthy: "Not worthy!"
 		worthy: "Your actions reflect your views %d of 6\n+"
-		giant: "Statue of a giant holding the scale of\njudgement. who will climb on (1-6)?"
+		giant: "Statue of a giant holding the Scale of\nJudgement. Who will climb on (1-6)?"
 		experience: "experience"
 		attributes:
 			0: "intellect"
@@ -1401,6 +1433,9 @@ maps:
 			4: "speed"
 			5: "accuracy"
 			6: "luck"
+	emap30:
+		hourglass: "At the center of the land that time forgot stands an hourglass, turn it (Y/N)?"
+		giant_title: "Giant"
 
 	map31:
 		device: "Strange alien device grants those who\nare worthy +4 intellect!"
@@ -1408,39 +1443,48 @@ maps:
 		flash: "A bright flash!"
 		varnlings: "\"Varnlings take heed! our prisoner has\nescaped and may be disguised as a noble.\nFind his counterpart to expose him!\""
 		poof: "Poof!"
+	emap31:
+		alien_title: "Alien"
+		alien: "Scattered remains of a metallic craft!\nAn alien grunts, \"Eep op oop!\"\nReaction?"
+		option_a: "Hostile"
+		option_b: "Neutral"
+		option_c: "Friendly"
 
 	map32:
 		castle: "King alamar's castle, enter (Y/N)?"
 		door: "A diamond door!"
-		key: " Use your key (Y/N)?"
+		key: "Use your key (Y/N)?"
 		statue: "Statue of a lion growls, \"Password?\"\nResponse:> .........."
 		password: "is the password for today,\nleave the area and change it i may!\""
 		heratio: "Heratio harper sings:"
 		music: "Distant harp music..."
 		passwords:
-			0: "musical"
-			1: "tones"
-			2: "together"
-			3: "clerics"
-			4: "south"
-			5: "deem"
-			6: "worthy"
+			0: "Musical"
+			1: "Tones"
+			2: "Together"
+			3: "Clerics"
+			4: "South"
+			5: "Deem"
+			6: "Worthy"
 		trespassing: "Trespassing!"
 		correct: "Correct! you may pass."
+	emap32:
+		statue: "Statue of a lion growls, \"Password?\"\n"
+		statue_title: "Lion Statue"
 
 	map33:
 		building: "The fabled building of gold,\nenter (Y/N)?"
 		slime: "Ectoplasmic slime slushes beneath you!\n"
 		tombstones: "Toppled tombstones abound!"
-		coffin: "Unearthed coffin! examine (Y/N)?"
-		crypt: "Open crypt! examine (Y/N)?"
+		coffin: "Unearthed coffin! Examine (Y/N)?"
+		crypt: "Open crypt! Examine (Y/N)?"
 		corpse: "Half buried corpse asks for help!\nAssist (Y/N)?"
 		meeting: "Dragon City, town meeting...\nDisrupt (Y/N)?"
 		quicksand: "Quicksand!"
 		thanks: "Thanks! It ain't easy being a corpse!\nTake these..."
 
 	map34:
-		statue: "A gruesome statue says:\n\"start at 15-7 and walk to doom!\""
+		statue: "A gruesome statue says:\n\"Start at 15-7 and walk to Doom!\""
 		banner: "A banner reads:\nThe endless spiral!!!"
 		sign: "A sign above the door reads:\nMonster breeding grounds, keep out!"
 		machine: "A loud machine pulsates rhythmically."
@@ -1453,11 +1497,12 @@ maps:
 		message6: "Etched in gold:\nMessage interleave '8,5,3,9,1,4,6,2,7'"
 		message7: "Written on the wall:\nJump three times to reach center."
 		door: "A golden door repels you!"
-		alamar1: "Suspended in a forcefield is the body\nof a man enclosed in an iron suit.\nTelepathic communication:\"I am the true\nKing Alamar, imprisoned by a demonic\nalien being! Confront him with this eye\nof goros and you shall see his true\nself."
-		alamar2: "The fate of the realm is at stake.\""
+		alamar: "Suspended in a forcefield is the body\nof a man enclosed in an iron suit.\nTelepathic communication: \"I am the true\nKing Alamar, imprisoned by a demonic\nalien being! Confront him with this Eye\nof Goros and you shall see his true\nself. The fate of the realm is at stake\""
+	emap34:
+		alamar1: "Suspended in a forcefield is the body\nof a man enclosed in an iron suit. Telepathic communication: \"I am the true King Alamar, imprisoned by a demonic alien being! Confront him with this eye of goros and you shall see his true self."
 
 	map35:
-		exit: "Exit castle, (Y/N)?"
+		exit: "Exit castle (Y/N)?"
 		merchant_pass: "Castle guards exclaim\n\"No merchants pass! Begone peasants.\""
 		quests:
 			0: "Find the ancient ruins in the\nquivering forest"

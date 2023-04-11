@@ -21,6 +21,7 @@
 
 #include "graphics/cursorman.h"
 
+#include "common/rect.h"
 #include "common/system.h"
 #include "common/stack.h"
 
@@ -59,15 +60,31 @@ bool CursorManager::showMouse(bool visible) {
 }
 
 void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+	PixelFormat pixelFormat;
+#ifdef USE_RGB_COLOR
+	if (format)
+		pixelFormat = *format;
+	else
+#endif
+		pixelFormat = PixelFormat::createFormatCLUT8();
+
+	Surface surf;
+	// we wont touch 'buf' ...
+	surf.init(w, h, w * pixelFormat.bytesPerPixel, const_cast<void *>(buf), pixelFormat);
+
+	pushCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
+}
+
+void CursorManager::pushCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {
 	if (!g_system->hasFeature(OSystem::kFeatureCursorMask))
 		mask = nullptr;
 
-	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
+	Cursor *cur = new Cursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
 
 	cur->_visible = isVisible();
 	_cursorStack.push(cur);
 
-	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
+	g_system->setMouseCursor(cur->_surf.getPixels(), cur->_surf.w, cur->_surf.h, hotspotX, hotspotY, keycolor, dontScale, &cur->_surf.format, mask);
 }
 
 void CursorManager::popCursor() {
@@ -79,7 +96,7 @@ void CursorManager::popCursor() {
 
 	if (!_cursorStack.empty()) {
 		cur = _cursorStack.top();
-		g_system->setMouseCursor(cur->_data, cur->_width, cur->_height, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_dontScale, &cur->_format, cur->_mask);
+		g_system->setMouseCursor(cur->_surf.getPixels(), cur->_surf.w, cur->_surf.h, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_dontScale, &cur->_surf.format, cur->_mask);
 	} else {
 		g_system->setMouseCursor(nullptr, 0, 0, 0, 0, 0);
 	}
@@ -106,57 +123,65 @@ void CursorManager::popAllCursors() {
 }
 
 void CursorManager::replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+	PixelFormat pixelFormat;
+#ifdef USE_RGB_COLOR
+	if (format)
+		pixelFormat = *format;
+	else
+#endif
+		pixelFormat = PixelFormat::createFormatCLUT8();
+
+	Surface surf;
+	// we wont touch 'buf' ...
+	surf.init(w, h, w * pixelFormat.bytesPerPixel, const_cast<void *>(buf), pixelFormat);
+
+	replaceCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
+}
+
+void CursorManager::replaceCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {
 	if (!g_system->hasFeature(OSystem::kFeatureCursorMask))
 		mask = nullptr;
 
 	if (_cursorStack.empty()) {
-		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
+		pushCursor(surf, hotspotX, hotspotY, keycolor, dontScale, mask);
 		return;
 	}
 
 	Cursor *cur = _cursorStack.top();
 
-#ifdef USE_RGB_COLOR
-	uint size;
-	if (!format)
-		size = w * h;
-	else
-		size = w * h * format->bytesPerPixel;
-#else
-	uint size = w * h;
-#endif
+	const uint size = surf.w * surf.h * surf.format.bytesPerPixel;
 
 	if (cur->_size < size) {
-		delete[] cur->_data;
-		cur->_data = new byte[size];
+		// Don't use Surface::create() here because that doesn't guarantee
+		// linearity of the surface buffer (i.e. pitch must be the same as
+		// width * bytesPerPixel).
+		delete[] (byte *)cur->_surf.getPixels();
+		cur->_surf.setPixels(new byte[size]);
 		cur->_size = size;
 	}
 
-	if (buf && cur->_data)
-		memcpy(cur->_data, buf, size);
+	cur->_surf.pitch = surf.w * surf.format.bytesPerPixel;
+	cur->_surf.w = surf.w;
+	cur->_surf.h = surf.h;
+	cur->_surf.format = surf.format;
+
+	if (surf.getPixels() && cur->_surf.getPixels())
+		cur->_surf.copyRectToSurface(surf, 0, 0, Common::Rect(surf.w, surf.h));
 
 	delete[] cur->_mask;
 	cur->_mask = nullptr;
 
 	if (mask) {
-		cur->_mask = new byte[w * h];
-		memcpy(cur->_mask, mask, w * h);
+		cur->_mask = new byte[surf.w * surf.h];
+		memcpy(cur->_mask, mask, surf.w * surf.h);
 	}
 
-	cur->_width = w;
-	cur->_height = h;
 	cur->_hotspotX = hotspotX;
 	cur->_hotspotY = hotspotY;
 	cur->_keycolor = keycolor;
 	cur->_dontScale = dontScale;
-#ifdef USE_RGB_COLOR
-	if (format)
-		cur->_format = *format;
-	else
-		cur->_format = Graphics::PixelFormat::createFormatCLUT8();
-#endif
 
-	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, dontScale, format, mask);
+	g_system->setMouseCursor(cur->_surf.getPixels(), surf.w, surf.h, hotspotX, hotspotY, keycolor, dontScale, &cur->_surf.format, mask);
 }
 
 void CursorManager::replaceCursor(const Graphics::Cursor *cursor) {
@@ -254,31 +279,27 @@ void CursorManager::lock(bool locked) {
 	_locked = locked;
 }
 
-CursorManager::Cursor::Cursor(const void *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+CursorManager::Cursor::Cursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask) {
 #ifdef USE_RGB_COLOR
-	if (!format)
-		_format = Graphics::PixelFormat::createFormatCLUT8();
-	 else
-		_format = *format;
-	_size = w * h * _format.bytesPerPixel;
-	const uint32 keycolor_mask = (((uint32) -1) >> (sizeof(uint32) * 8 - _format.bytesPerPixel * 8));
+	const uint32 keycolor_mask = (((uint32) -1) >> (sizeof(uint32) * 8 - surf.format.bytesPerPixel * 8));
 	_keycolor = keycolor & keycolor_mask;
 #else
-	_format = Graphics::PixelFormat::createFormatCLUT8();
-	_size = w * h;
 	_keycolor = keycolor & 0xFF;
 #endif
-	_data = new byte[_size];
-	if (data && _data)
-		memcpy(_data, data, _size);
+	_size = surf.w * surf.h * surf.format.bytesPerPixel;
+
+	// make sure that the width * bytesPerPixel == pitch
+	_surf.init(surf.w, surf.h, surf.w * surf.format.bytesPerPixel, new byte[_size], surf.format);
+	if (surf.getPixels() && _surf.getPixels())
+		_surf.copyRectToSurface(surf, 0, 0, Common::Rect(surf.w, surf.h));
+
 	if (mask) {
-		_mask = new byte[w * h];
+		_mask = new byte[surf.w * surf.h];
 		if (_mask)
-			memcpy(_mask, mask, w * h);
+			memcpy(_mask, mask, surf.w * surf.h);
 	} else
 		_mask = nullptr;
-	_width = w;
-	_height = h;
+
 	_hotspotX = hotspotX;
 	_hotspotY = hotspotY;
 	_dontScale = dontScale;
@@ -286,7 +307,7 @@ CursorManager::Cursor::Cursor(const void *data, uint w, uint h, int hotspotX, in
 }
 
 CursorManager::Cursor::~Cursor() {
-	delete[] _data;
+	delete[] (byte *)_surf.getPixels();
 	delete[] _mask;
 }
 

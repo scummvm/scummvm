@@ -24,7 +24,35 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
-#include "engines/nancy/dialogs.h"
+
+#include "common/translation.h"
+#include "common/config-manager.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GUIO_GAMEOPTIONS1,
+		{
+			_s("Player Speech"),
+			_s("Enable player speech. Only works if speech is enabled in the Audio settings."),
+			"player_speech",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GUIO_GAMEOPTIONS2,
+		{
+			_s("Character Speech"),
+			_s("Enable NPC speech. Only works if speech is enabled in the Audio settings."),
+			"character_speech",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class NancyMetaEngine : public AdvancedMetaEngine {
 public:
@@ -42,7 +70,8 @@ public:
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 
 	void registerDefaultSettings(const Common::String &target) const override;
-	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 };
 
 Common::KeymapArray NancyMetaEngine::initKeymaps(const char *target) const {
@@ -88,8 +117,8 @@ void NancyMetaEngine::registerDefaultSettings(const Common::String &target) cons
 	ConfMan.setBool("character_speech", true, target);
 }
 
-GUI::OptionsContainerWidget *NancyMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
-	return new Nancy::NancyOptionsWidget(boss, name, target);
+const ADExtraGuiOptionsMap *NancyMetaEngine::getAdvancedExtraGuiOptions() const {
+	return optionsList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(NANCY)

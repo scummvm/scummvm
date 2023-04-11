@@ -457,7 +457,7 @@ public:
 	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		blitKeyBitmap(step.blitSrc, Common::Point(x, y), true);
+		blitManagedSurface(step.blitSrc, Common::Point(x, y));
 	}
 
 	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step) {
@@ -508,7 +508,7 @@ public:
 	 */
 	virtual void blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) = 0;
 
-	virtual void blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) = 0;
+	virtual void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p) = 0;
 
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing

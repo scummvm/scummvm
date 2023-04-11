@@ -155,6 +155,7 @@ struct SfxPlaylistEntry {
 	Common::SharedPtr<SfxSound> sample;
 	int8 balance;
 	uint8 volume;
+	bool isUpdate;
 };
 
 struct SfxPlaylist {
@@ -221,6 +222,7 @@ struct SoundInstance {
 	bool is3D;
 	bool isLooping;
 	bool isSpeech;
+	bool isSilencedLoop;	// Loop is still playing but reached 0 volume so the player was unloaded
 	int32 x;
 	int32 y;
 
@@ -615,8 +617,8 @@ private:
 	void findWaves();
 	Common::SharedPtr<SoundInstance> loadWave(const Common::String &soundName, uint soundID, const Common::ArchiveMemberPtr &archiveMemberPtr);
 	SoundCache *loadCache(SoundInstance &sound);
-	void resolveSoundByName(const Common::String &soundName, StackInt_t &outSoundID, SoundInstance *&outWave);
-	void resolveSoundByNameOrID(const StackValue &stackValue, StackInt_t &outSoundID, SoundInstance *&outWave);
+	void resolveSoundByName(const Common::String &soundName, bool resolveSoundByName, StackInt_t &outSoundID, SoundInstance *&outWave);
+	void resolveSoundByNameOrID(const StackValue &stackValue, bool resolveSoundByName, StackInt_t &outSoundID, SoundInstance *&outWave);
 
 	void changeToScreen(uint roomNumber, uint screenNumber);
 	void returnToIdleState();

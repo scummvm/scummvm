@@ -58,6 +58,10 @@ protected:
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
 	GoogleDriveStorage(Common::String code, Networking::ErrorCallback cb);
+
+	/** This constructor extracts tokens from JSON acquired via OAuth code flow. */
+	GoogleDriveStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb);
+
 	virtual ~GoogleDriveStorage();
 
 	/**

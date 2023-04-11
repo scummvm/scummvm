@@ -56,6 +56,10 @@ SessionSelectorDialog::SessionSelectorDialog(Scumm::ScummEngine_v90he *vm)
 	_list->setEditable(false);
 	_list->setNumberingMode(GUI::kListNumberingOff);
 
+	// I18N: The user's name for online
+	new GUI::StaticTextWidget(this, "SessionSelector.PlayerNameLabel", _("Your Name:"));
+	_playerName = new GUI::EditTextWidget(this, "SessionSelector.PlayerName", ConfMan.get("network_player_name"));
+
 	// I18N: Join online multiplayer game
 	_joinButton = new GUI::ButtonWidget(this, "SessionSelector.Join", _("Join"), Common::U32String(), kOkCmd, Common::ASCII_RETURN);
 	_joinButton->setEnabled(false);
@@ -72,6 +76,10 @@ void SessionSelectorDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd
 	case GUI::kListItemDoubleClickedCmd:
 	case kOkCmd:
 		if (_list->getSelected() > -1) {
+			// Save our name.
+			ConfMan.set("network_player_name", _playerName->getEditString());
+			ConfMan.flushToDisk();
+
 			setResult(_list->getSelected());
 			close();
 		}

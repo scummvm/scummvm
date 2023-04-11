@@ -601,14 +601,16 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// Try to load the SUBTITLES.MIX first, before Startup.MIX
 	// allows overriding any identically named resources (such as the original font files and as a bonus also the TRE files for the UI and dialogue menu)
 	_subtitles = new Subtitles(this);
-	if (MIXArchive::exists("SUBTITLES.MIX")) {
-		bool r = openArchive("SUBTITLES.MIX");
-		if (!r)
-			return false;
+	if (!_isNonInteractiveDemo) {
+		if (MIXArchive::exists("SUBTITLES.MIX")) {
+			bool r = openArchive("SUBTITLES.MIX");
+			if (!r)
+				return false;
 
-		_subtitles->init();
-	} else {
-		debug("Download SUBTITLES.MIX from ScummVM's website to enable subtitles");
+			_subtitles->init();
+		} else {
+			debug("Download SUBTITLES.MIX from ScummVM's website to enable subtitles");
+		}
 	}
 
 	_audioMixer = new AudioMixer(this);

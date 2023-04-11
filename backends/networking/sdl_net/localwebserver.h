@@ -37,6 +37,12 @@
 #include "common/singleton.h"
 #include "common/scummsys.h"
 
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+#include "backends/networking/sdl_net/handlers/connectcloudhandler.h"
+#endif // USE_LIBCURL
+#endif // USE_CLOUD
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -69,6 +75,11 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	UploadFileHandler _uploadFileHandler;
 	ListAjaxHandler _listAjaxHandler;
 	FilesAjaxPageHandler _filesAjaxPageHandler;
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+	ConnectCloudHandler _connectCloudHandler;
+#endif // USE_LIBCURL
+#endif // USE_CLOUD
 	ResourceHandler _resourceHandler;
 	uint32 _idlingFrames;
 	Common::Mutex _handleMutex;
@@ -97,6 +108,12 @@ public:
 	IndexPageHandler &indexPageHandler();
 	bool isRunning();
 	static uint32 getPort();
+
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+	void setStorageConnectionCallback(Networking::ErrorCallback cb) { _connectCloudHandler.setStorageConnectionCallback(cb); }
+#endif // USE_LIBCURL
+#endif // USE_CLOUD
 
 	static void setClientGetHandler(Client &client, Common::String response, long code = 200, const char *mimeType = nullptr);
 	static void setClientGetHandler(Client &client, Common::SeekableReadStream *responseStream, long code = 200, const char *mimeType = nullptr);

@@ -75,7 +75,7 @@ void Gypsy::draw() {
 	} else {
 		Common::String line = Common::String::format(
 			STRING["maps.map23.your_sign_is"].c_str(),
-			STRING[Common::String::format("maps.map23.signs.%d",
+			STRING[Common::String::format("colors.%d",
 				_character->_flags[4] & CHARFLAG4_SIGN)].c_str()
 		);
 

@@ -36,9 +36,9 @@ void TeMarker::update(TeCamera *camera) {
 		return;
 	TeVector3f32 transformLoc = camera->transformCoord(_loc);
 	if (transformLoc.z() < 0) {
-		error("TODO: Finish TeMarker::update");
+		error("TODO: Finish TeMarker::update (z < 0)");
 	} else {
-		error("TODO: Finish TeMarker::update");
+		error("TODO: Finish TeMarker::update (z >= 0)");
 	}
 }
 

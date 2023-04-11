@@ -367,7 +367,7 @@ void PlayPrimaryVideoChan0::execute() {
 		break;
 	case kActionTrigger:
 		// process flags structs
-		for (auto flags : _flagsStructs) {
+		for (auto &flags : _flagsStructs) {
 			if (flags.conditions.isSatisfied()) {
 				flags.flagToSet.set();
 			}

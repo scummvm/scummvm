@@ -28,6 +28,7 @@
 #ifndef HPL_ACTIONKEYBOARD_H
 #define HPL_ACTIONKEYBOARD_H
 
+#include "common/keyboard.h"
 #include "hpl1/engine/input/Action.h"
 #include "hpl1/engine/input/InputTypes.h"
 
@@ -37,7 +38,7 @@ class cInput;
 
 class cActionKeyboard : public iAction {
 public:
-	cActionKeyboard(tString asName, cInput *apInput, int aKey);
+	cActionKeyboard(tString asName, cInput *apInput, Common::KeyState key) : iAction(asName), _key(key), mpInput(apInput) {}
 
 	bool IsTriggerd();
 	float GetValue();
@@ -46,12 +47,11 @@ public:
 
 	tString GetInputType() { return "Keyboard"; }
 
-	eKey GetKey() { return mKey; }
-	eKeyModifier GetModifier() { return mMod; }
+	Common::KeyCode GetKey() { return _key.keycode; }
+	int GetModifier() { return _key.flags; }
 
 private:
-	eKey mKey;
-	eKeyModifier mMod;
+	Common::KeyState _key;
 	cInput *mpInput;
 };
 

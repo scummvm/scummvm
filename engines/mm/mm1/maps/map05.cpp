@@ -129,23 +129,21 @@ void Map05::special08() {
 void Map05::special09() {
 	send(SoundMessage(
 		0, 1, STRING["maps.map05.arena_inside"],
-		[](const Common::KeyState &keyState) {
+		[]() {
 			Map05 &map = *static_cast<Map05 *>(g_maps->_currentMap);
-			if (keyState.keycode == Common::KEYCODE_y) {
-				g_events->close();
-				map[MAP_47] = 2;
-				map[MAP_33] = 6;
-				map[MAP_MAX_MONSTERS] = 15;
-				g_globals->_encounters._encounterType = Game::FORCE_SURPRISED;
-				g_globals->_encounters.execute();
-
-			} else if (keyState.keycode == Common::KEYCODE_n) {
-				g_events->close();
-				map[MAP_47] = 1;
-				map[MAP_33] = 4;
-				map[MAP_MAX_MONSTERS] = 10;
-				g_globals->_treasure.clear();
-			}
+			map[MAP_47] = 2;
+			map[MAP_33] = 6;
+			map[MAP_MAX_MONSTERS] = 15;
+			g_globals->_encounters._encounterType = Game::FORCE_SURPRISED;
+			g_globals->_encounters.execute();
+		},
+		[]() {
+			Map05 &map = *static_cast<Map05 *>(g_maps->_currentMap);
+			g_events->close();
+			map[MAP_47] = 1;
+			map[MAP_33] = 4;
+			map[MAP_MAX_MONSTERS] = 10;
+			g_globals->_treasure.clear();
 		}
 	));
 }

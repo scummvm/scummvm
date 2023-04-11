@@ -1667,6 +1667,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND },
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
 
+	// King's Quest 4 - English DOS (5 1/4" disks)
+	// Game version 1.003.006
+	// SCI interpreter version 0.000.409
+	// Released: January 24, 1989 (Information from QAFILE file)
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "5051546e5f87aa6103289c8001a94234", 9240},
+		{"resource.001", 0, "91a2aebafb234c486744bd69b145ac43", 184255},
+		{"resource.002", 0, "91a2aebafb234c486744bd69b145ac43", 338296},
+		{"resource.003", 0, "91a2aebafb234c486744bd69b145ac43", 334522},
+		{"resource.004", 0, "91a2aebafb234c486744bd69b145ac43", 310026},
+		{"resource.005", 0, "91a2aebafb234c486744bd69b145ac43", 282391},
+		{"resource.006", 0, "91a2aebafb234c486744bd69b145ac43", 323541},
+		{"resource.007", 0, "91a2aebafb234c486744bd69b145ac43", 333089},
+		{"resource.008", 0, "91a2aebafb234c486744bd69b145ac43", 272995},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 	// King's Quest 4 - English DOS (3 1/2" disks)
 	// Game version 1.003.006
 	// SCI interpreter version 0.000.409
@@ -4453,11 +4470,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Police Quest: SWAT - English DOS/Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "0.001.200"
-	{"pqswat", "Demo", {
+	// Currently unsupported, since this demo uses Version 4 of Robot videos,
+	// which we haven't implemented yet in RobotDecoder (bug #14388)
+	{"pqswat", _s("This demo uses an unimplemented version of Robot videos"), {
 		{"resource.map", 0, "8c96733ef94c21526792f7ca4e3f2120", 1648},
 		{"resource.000", 0, "d8892f1b8c56c8f7704325460f49b300", 3676175},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_PQSWAT_DEMO },
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSUPPORTED, GUIO_PQSWAT_DEMO },
 
 	// Police Quest: SWAT - English DOS (from GOG.com)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0c"

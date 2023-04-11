@@ -211,7 +211,6 @@ void LauncherDialog::build() {
 		_grpChooserDesc = nullptr;
 		_groupPic = new GraphicsWidget(this, _title + ".GroupPic", _("Select Group by"));
 		_groupPic->setGfxFromTheme(ThemeEngine::kImageGroup);
-		_groupPic->useThemeTransparency(true);
 	} else
 #endif
 		_grpChooserDesc = new StaticTextWidget(this, Common::String(_title + ".laGroupPopupDesc"), _("Group:"));
@@ -236,7 +235,6 @@ void LauncherDialog::build() {
 
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, _title + ".Logo");
-		_logo->useThemeTransparency(true);
 		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
 
 		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMVersionDate));
@@ -755,7 +753,6 @@ void LauncherDialog::reflowLayout() {
 
 		if (!_logo)
 			_logo = new GraphicsWidget(this, _title + ".Logo");
-		_logo->useThemeTransparency(true);
 		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
 	} else {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget(Common::String(_title + ".Version").c_str());
@@ -785,7 +782,6 @@ void LauncherDialog::reflowLayout() {
 		if (!_groupPic)
 			_groupPic = new GraphicsWidget(this, _title + ".GroupPic");
 		_groupPic->setGfxFromTheme(ThemeEngine::kImageGroup);
-		_groupPic->useThemeTransparency(true);
 
 		if (_grpChooserDesc) {
 			removeWidget(_grpChooserDesc);
@@ -854,8 +850,7 @@ ButtonWidget *LauncherDialog::createSwitchButton(const Common::String &name, con
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
 		button = new PicButtonWidget(this, name, tooltip, cmd);
-		((PicButtonWidget *)button)->useThemeTransparency(true);
-		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(image), kPicButtonStateEnabled, false);
+		((PicButtonWidget *)button)->setGfxFromTheme(image, kPicButtonStateEnabled, false);
 	} else
 #endif
 		button = new ButtonWidget(this, name, desc, tooltip, cmd);

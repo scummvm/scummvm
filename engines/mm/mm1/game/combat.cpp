@@ -351,7 +351,7 @@ void Combat::defeatedMonsters() {
 }
 
 void Combat::setTreasure() {
-	_val7 = _monsterP->_field18;
+	_val7 = _monsterP->_loot;
 	_val6 = MAX(_val6, _val7);
 
 	if (_val7 & 1)
@@ -616,7 +616,7 @@ void Combat::monsterAction() {
 	if (getRandomNumber(100) >= threshold) {
 		// Monster flees from combat
 		_monsterP->_experience = 0;
-		_monsterP->_field18 = 0;
+		_monsterP->_loot = 0;
 		_monsterP->_hp = 0;
 		_monsterP->_status = MONFLAG_DEAD;
 		removeMonster();
@@ -852,7 +852,7 @@ void Combat::attackMonster(int monsterNum) {
 	g_globals->_combatParty[_currentChar]->_checked = true;
 
 	// Can the attack succeed?
-	if (_attackAttr1._current || !(_monsterP->_field1a & FIELD1A_80)) {
+	if (_attackAttr1._current || !(_monsterP->_resistances & MONRES_PHYSICAL_ATTACK)) {
 		if (enc._monsterList[_monsterIndex]._status & (MONFLAG_ASLEEP |
 				MONFLAG_HELD | MONFLAG_WEBBED | MONFLAG_PARALYZED))
 			++_attackerLevel;
@@ -954,7 +954,7 @@ void Combat::iterateMonsters1Inner() {
 		static const byte FLAGS[8] = {
 			0x40, 0x20, 0x60, 0x10, 8, 4, 2, 1
 		};
-		affects = (_monsterP->_field1a & FLAGS[idx]) != FLAGS[idx];
+		affects = (_monsterP->_resistances & FLAGS[idx]) != FLAGS[idx];
 	}
 
 	Common::String effect;
@@ -1033,7 +1033,7 @@ void Combat::iterateMonsters2Inner() {
 			static const byte FLAGS[8] = {
 				0x40, 0x20, 0x60, 0x10, 8, 4, 2, 1
 			};
-			if ((_monsterP->_field1a & FLAGS[idx]) == FLAGS[idx])
+			if ((_monsterP->_resistances & FLAGS[idx]) == FLAGS[idx])
 				_damage >>= 2;
 		}
 

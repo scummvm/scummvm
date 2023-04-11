@@ -19,30 +19,43 @@
  *
  */
 
-#include "engines/dialogs.h"
+#include "mm/mm1/views_enh/wheel_spin.h"
+#include "mm/mm1/globals.h"
 
-#ifndef NANCY_DIALOGS_H
-#define NANCY_DIALOGS_H
+namespace MM {
+namespace MM1 {
+namespace ViewsEnh {
 
-namespace Nancy {
+WheelSpin::WheelSpin() : ScrollView("WheelSpin") {
+	setBounds(Common::Rect(0, 90, 234, 200));
+}
 
-class NancyOptionsWidget : public GUI::OptionsContainerWidget {
-public:
-	NancyOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
-	~NancyOptionsWidget() override {};
+bool WheelSpin::msgFocus(const FocusMessage &msg) {
+	TextView::msgFocus(msg);
+	spin();
+	return true;
+}
 
-	void load() override;
-	bool save() override;
+void WheelSpin::draw() {
+	ScrollView::draw();
 
-private:
-	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		const Character &c = g_globals->_party[i];
+		writeLine(i, c._name, ALIGN_LEFT, 0);
+		writeLine(i, _results[i], ALIGN_LEFT, 100);
+	}
+}
 
-	bool isInGame() const;
+bool WheelSpin::msgKeypress(const KeypressMessage &msg) {
+	close();
+	return true;
+}
 
-	GUI::CheckboxWidget *_playerSpeechCheckbox;
-	GUI::CheckboxWidget *_characterSpeechCheckbox;
-};
+bool WheelSpin::msgAction(const ActionMessage &msg) {
+	close();
+	return true;
+}
 
-} // End of namespace Nancy
-
-#endif // NANCY_DIALOGS_H
+} // namespace ViewsEnh
+} // namespace MM1
+} // namespace MM

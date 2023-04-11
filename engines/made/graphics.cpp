@@ -72,6 +72,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 		960, 961, 962, 963
 	};
 
+	uint16 pitch = surface.pitch;
 	uint16 width = surface.w;
 	uint16 height = surface.h;
 
@@ -175,11 +176,12 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 						*destPtr = lineBuf[x + y * 320];
 					destPtr++;
 				}
+				destPtr += pitch - width;
 			}
 		} else {
 			for (int y = 0; y < 4 && height > 0; y++, height--) {
 				memcpy(destPtr, &lineBuf[y * 320], width);
-				destPtr += width;
+				destPtr += pitch;
 			}
 		}
 
