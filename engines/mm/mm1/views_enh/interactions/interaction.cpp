@@ -125,7 +125,7 @@ bool Interaction::tick() {
 		redraw();
 	}
 
-	return true;
+	return PartyView::tick();
 }
 
 void Interaction::leave() {

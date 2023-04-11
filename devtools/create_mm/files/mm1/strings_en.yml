@@ -966,6 +966,11 @@ maps:
 		options3: "3) Leave without disturbing."
 		flees: "The prisoner flees!"
 		cowers: "The prisoner cowers!"
+	eprisoners:
+		title: "Prisoner"
+		options1: "Set the prisoner free.\n"
+		options2: "Torment the prisoner.\n"
+		options3: "Leave without disturbing."
 
 	map00:
 		blacksmith: "\"B and B Blacksmithing\""

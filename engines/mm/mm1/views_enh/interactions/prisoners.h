@@ -32,16 +32,26 @@ namespace Interactions {
 
 class Prisoner : public Interaction {
 private:
+	Common::String _line;
 	byte _flag;
 	Alignment _freeAlignment;
 	Alignment _leaveAlignment;
 protected:
 	virtual void flee() {}
+
+	/**
+	 * Return true if the selected character can be switched
+	 */
+	bool canSwitchChar() override {
+		return false;
+	}
+
 public:
 	Prisoner(const Common::String &name, int portrait, const Common::String &line1,
 		byte flag, Alignment freeAlignment, Alignment leaveAlignment);
 	virtual ~Prisoner() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void timeout() override;
 };
