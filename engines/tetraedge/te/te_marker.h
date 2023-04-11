@@ -38,9 +38,14 @@ public:
 	void visible(bool val);
 
 	TeButtonLayout &button() { return _button; }
+	TeVector3f32 &loc() { return _loc; }
+
+	void setSomeFloat(float f) { _someFloat = f; }
+
 private:
 	bool _visible;
 	bool _isActive;
+	float _someFloat;
 	TeVector3f32 _loc;
 	// Note: this is a TeSpriteButton in the original, updated
 	// to use the newer ButtonLayout

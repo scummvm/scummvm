@@ -115,7 +115,6 @@ private:
 	TeMatrix4x4 _projectionMatrix;
 
 	TeSignal0Param _onViewportChangedSignal;
-
 };
 
 } // end namespace Tetraedge

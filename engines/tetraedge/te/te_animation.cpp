@@ -43,7 +43,15 @@ TeAnimation::~TeAnimation() {
 void TeAnimation::cont() {
 	if (!_runTimer.running()) {
 		_runTimer.start();
-		animations()->push_back(this);
+
+		Common::Array<TeAnimation *> *anims = animations();
+		Common::Array<TeAnimation *>::iterator iter;
+		for (iter = anims->begin(); iter != anims->end(); iter++) {
+			if (*iter == this) {
+				error("anim being resumed is already in active anims");
+			}
+		}
+		anims->push_back(this);
 		update(_runTimer.getTimeFromStart() / 1000.0);
 	}
 }

@@ -37,6 +37,7 @@ public:
 
 	void animateBlackFade();
 	void animateFade();
+	void animateFadeWithZoom();
 	void captureFrame();
 	void clear() {};
 	void init();
@@ -57,6 +58,7 @@ private:
 	TeIntrusivePtr<Te3DTexture> _texturePtr;
 	TeCurveAnim2<TeSpriteLayout, TeColor> _fadeCurveAnim;
 	TeCurveAnim2<TeSpriteLayout, TeColor> _blackFadeCurveAnim;
+	TeCurveAnim2<TeSpriteLayout, TeVector3f32> _fadeZoomAnim;
 	TeImage _image;
 
 };

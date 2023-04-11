@@ -62,12 +62,7 @@ void TeCore::create() {
 	warning("TODO: TeCore::create: Finish implementing me.");
 }
 
-TeICodec *TeCore::createVideoCodec(const Common::FSNode &node) {
-	const Common::String filename = node.getName();
-	if (!filename.contains('.'))
-		return nullptr;
-	Common::String extn = filename.substr(filename.findFirstOf('.') + 1);
-	extn.toLowercase();
+TeICodec *TeCore::createVideoCodec(const Common::String &extn) {
 	// The original engine has more formats and even checks for alpha maps,
 	// but it never uses them.
 	if (TePng::matchExtension(extn)) {
@@ -81,7 +76,19 @@ TeICodec *TeCore::createVideoCodec(const Common::FSNode &node) {
 	} else if (TeImagesSequence::matchExtension(extn)) {
 		return new TeImagesSequence();
 	}
-	error("TTeCore::createVideoCodec: Unrecognised format %s", node.getName().c_str());
+	return nullptr;
+}
+
+TeICodec *TeCore::createVideoCodec(const Common::FSNode &node) {
+	const Common::String filename = node.getName();
+	if (!filename.contains('.'))
+		return nullptr;
+	Common::String extn = filename.substr(filename.findFirstOf('.') + 1);
+	extn.toLowercase();
+	TeICodec *codec = createVideoCodec(extn);
+	if (!codec)
+		error("TTeCore::createVideoCodec: Unrecognised format %s", node.getName().c_str());
+	return codec;
 }
 
 const Common::String &TeCore::fileFlagSystemFlag(const Common::String &name) const {

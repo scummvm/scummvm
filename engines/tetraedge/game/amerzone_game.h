@@ -55,8 +55,14 @@ private:
 	void speedY(float speed);
 
 	bool onHelpButtonValidated();
+	bool onAnimationFinished(const Common::String &anim);
 	bool onMouseLeftUp(const Common::Point &pt);
 	bool onMouseLeftDown(const Common::Point &pt);
+	bool onObjectClick(const Common::String &obj);
+
+	void optimizeWarpResources();
+	void startChangeWarpAnim();
+	bool onChangeWarpAnimFinished();
 
 	TeTimer _dragTimer;
 	float _orientationX;
@@ -77,6 +83,7 @@ private:
 	*/
 	TeWarp *_warpX;
 	TeWarp *_warpY;
+	TeWarp *_prevWarpY;
 };
 
 } // end namespace Tetraedge

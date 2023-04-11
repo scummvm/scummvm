@@ -38,9 +38,9 @@ void SplashScreens::enter()	{
 	if (!_entered) {
 		_entered = true;
 		_splashNo = 0;
-		const Common::Path scriptPath("menus/splashes/splash0.lua");
-		if (Common::File::exists(scriptPath)) {
-			TeLuaGUI::load(scriptPath.toString());
+		const char *scriptStr = g_engine->gameIsAmerzone() ? "GUI/PC-MacOSX/Splash0.lua" : "menus/splashes/splash0.lua";
+		if (Common::File::exists(scriptStr)) {
+			TeLuaGUI::load(scriptStr);
 			Application *app = g_engine->getApplication();
 			TeLayout *splash = layout("splash");
 			app->frontLayout().addChild(splash);
@@ -55,7 +55,8 @@ bool SplashScreens::onAlarm() {
 	app->visualFade().init();
 	app->captureFade();
 	TeLuaGUI::unload();
-	const Common::String scriptName = Common::String::format("menus/splashes/splash%d.lua", _splashNo);
+	const char *scriptStr = g_engine->gameIsAmerzone() ? "GUI/PC-MacOSX/Splash%d.lua" : "menus/splashes/splash%d.lua";
+	const Common::String scriptName = Common::String::format(scriptStr, _splashNo);
 	_splashNo++;
 
 	if (ConfMan.getBool("skip_splash")) {

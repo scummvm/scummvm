@@ -59,6 +59,7 @@ void TeVisualFade::animateBlackFade() {
 }
 
 void TeVisualFade::animateFade() {
+	double duration = g_engine->gameIsAmerzone() ? 1000 : 400;
 	_fadeCurveAnim.stop();
 	_fadeCurveAnim._runTimer.pausable(false);
 	_fadeCaptureSprite.setVisible(true);
@@ -68,10 +69,28 @@ void TeVisualFade::animateFade() {
 	curve.push_back(0.0);
 	curve.push_back(1.0);
 	_fadeCurveAnim.setCurve(curve);
-	_fadeCurveAnim._duration = 400.0;
+	_fadeCurveAnim._duration = duration;
 	_fadeCurveAnim._callbackObj = &_fadeCaptureSprite;
 	_fadeCurveAnim._callbackMethod = &TeSpriteLayout::setColor;
 	_fadeCurveAnim.play();
+}
+
+void TeVisualFade::animateFadeWithZoom() {
+	animateFade();
+	_fadeZoomAnim.stop();
+	_fadeZoomAnim._runTimer.pausable(false);
+	_fadeZoomAnim._startVal = TeVector3f32(1, 1, 1);
+	_fadeZoomAnim._endVal = TeVector3f32(3, 3, 3);
+	Common::Array<float> curve;
+	curve.push_back(0.0);
+	curve.push_back(0.33f);
+	curve.push_back(1.0);
+	curve.push_back(1.0);
+	_fadeZoomAnim.setCurve(curve);
+	_fadeZoomAnim._duration = 1000;
+	_fadeZoomAnim._callbackObj = &_fadeCaptureSprite;
+	_fadeZoomAnim._callbackMethod = &TeSpriteLayout::setScale;
+	_fadeZoomAnim.play();
 }
 
 void TeVisualFade::captureFrame() {

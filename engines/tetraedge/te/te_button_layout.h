@@ -97,6 +97,9 @@ public:
 	TeLayout *downLayout() { return _downLayout; }
 	void setIgnoreMouseEvents(bool val) { _ignoreMouseEvents = val; }
 
+	// From TeSpriteButton, a direct way to load the images.
+	void load(const Common::String &upImg, const Common::String &downImg, const Common::String &overImg);
+
 private:
 	static bool _mousePositionChangedCatched;
 	static TeTimer *getDoubleValidationProtectionTimer();
@@ -104,9 +107,10 @@ private:
 
 	bool _doubleValidationProtectionEnabled;
 	bool _ignoreMouseEvents;
+	bool _ownedLayouts;
 
-	State _currentState;
 	bool _clickPassThrough;
+	State _currentState;
 	Common::String _validationSound;
 	float _validationSoundVolume;
 

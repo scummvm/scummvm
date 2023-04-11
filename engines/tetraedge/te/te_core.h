@@ -42,6 +42,7 @@ public:
 	//void args(int argc, char **argv); // Probably not needed
 	void create();
 	TeICodec *createVideoCodec(const Common::FSNode &node);
+	TeICodec *createVideoCodec(const Common::String &extn);
 	const Common::String &fileFlagSystemFlag(const Common::String &name) const;
 	bool fileFlagSystemFlagsContains(const Common::String &name) const;
 	Common::Array<Common::String> fileFlagSystemPossibleFlags();

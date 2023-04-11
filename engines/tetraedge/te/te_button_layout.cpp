@@ -26,6 +26,7 @@
 #include "tetraedge/te/te_button_layout.h"
 #include "tetraedge/te/te_sound_manager.h"
 #include "tetraedge/te/te_input_mgr.h"
+#include "tetraedge/te/te_sprite_layout.h"
 
 namespace Tetraedge {
 
@@ -56,7 +57,7 @@ TeButtonLayout::TeButtonLayout() : _currentState(BUTTON_STATE_UP),
 _clickPassThrough(false), _validationSoundVolume(1.0),
 _ignoreMouseEvents(false), _doubleValidationProtectionEnabled(true),
 _upLayout(nullptr), _downLayout(nullptr), _rolloverLayout(nullptr),
-_disabledLayout(nullptr), _hitZoneLayout(nullptr)
+_disabledLayout(nullptr), _hitZoneLayout(nullptr), _ownedLayouts(false)
 {
 	_onMousePositionChangedMaxPriorityCallback.reset(new TeCallback1Param<TeButtonLayout, const Common::Point &>(this, &TeButtonLayout::onMousePositionChangedMaxPriority, FLT_MAX));
 
@@ -84,6 +85,18 @@ TeButtonLayout::~TeButtonLayout() {
 	inputmgr->_mouseLDownSignal.remove(_onMouseLeftDownCallback);
 	inputmgr->_mouseLUpSignal.remove(_onMouseLeftUpCallback);
 	inputmgr->_mouseLUpSignal.remove(_onMouseLeftUpMaxPriorityCallback);
+	if (_ownedLayouts) {
+		if (_upLayout)
+			delete _upLayout;
+		if (_downLayout)
+			delete _downLayout;
+		if (_rolloverLayout)
+			delete _rolloverLayout;
+		if (_hitZoneLayout)
+			delete _hitZoneLayout;
+		if (_disabledLayout)
+			delete _disabledLayout;
+	}
 }
 
 bool TeButtonLayout::isMouseIn(const TeVector2s32 &mouseloc) {
@@ -92,6 +105,32 @@ bool TeButtonLayout::isMouseIn(const TeVector2s32 &mouseloc) {
 	} else {
 		return _hitZoneLayout->isMouseIn(mouseloc);
 	}
+}
+
+void TeButtonLayout::load(const Common::String &upImg, const Common::String &downImg, const Common::String &overImg) {
+	TeSpriteLayout *upSprite = nullptr;
+	if (upImg.size()) {
+		upSprite = new TeSpriteLayout();
+		upSprite->load(upImg);
+	}
+	setUpLayout(upSprite);
+
+	TeSpriteLayout *downSprite = nullptr;
+	if (downImg.size()) {
+		downSprite = new TeSpriteLayout();
+		downSprite->load(downImg);
+	}
+	setDownLayout(downSprite);
+
+	TeSpriteLayout *overSprite = nullptr;
+	if (overImg.size()) {
+		overSprite = new TeSpriteLayout();
+		overSprite->load(overImg);
+	}
+	setRollOverLayout(overSprite);
+	setHitZone(nullptr);
+	setDisabledLayout(nullptr);
+	_ownedLayouts = true;
 }
 
 bool TeButtonLayout::onMouseLeftDown(const Common::Point &pt) {

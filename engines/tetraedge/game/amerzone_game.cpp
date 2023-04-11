@@ -19,11 +19,16 @@
  *
  */
 
+#include "common/math.h"
+
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
 #include "tetraedge/game/amerzone_game.h"
 #include "tetraedge/game/lua_binds.h"
+#include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_input_mgr.h"
+#include "tetraedge/te/te_renderer.h"
+#include "tetraedge/te/te_scene_warp.h"
 #include "tetraedge/te/te_sound_manager.h"
 #include "tetraedge/te/te_warp.h"
 
@@ -31,7 +36,7 @@ namespace Tetraedge {
 
 AmerzoneGame::AmerzoneGame() : Tetraedge::Game(), _orientationX(0.0f), _orientationY(0.0f),
 _speedX(0.0f), _speedY(0.0f), _isInDrag(false), _edgeButtonRolloverCount(0),
-_warpX(nullptr), _warpY(nullptr) {
+_warpX(nullptr), _warpY(nullptr), _prevWarpY(nullptr) {
 
 }
 
@@ -49,7 +54,65 @@ void AmerzoneGame::changeSpeedToMouseDirection() {
 }
 
 bool AmerzoneGame::changeWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
-	error("TODO: Implement AmerzoneGame::changeWarp");
+	if (_warpY) {
+		_luaScript.execute("OnWarpLeave");
+		_warpY->markerValidatedSignal().add(this, &AmerzoneGame::onObjectClick);
+		_warpY->animFinishedSignal().add(this, &AmerzoneGame::onAnimationFinished);
+		saveBackup("save.xml");
+		_music.stop();
+	}
+	_prevWarpY = _warpY;
+	_warpY = nullptr;
+
+	Application *app = g_engine->getApplication();
+	TeCore *core = g_engine->getCore();
+
+	// TODO: There is a bunch of stuff here to cache the warp zone.
+	// Just reload each time for now.
+	if (!_warpY) {
+		_warpY = new TeWarp();
+		_warpY->setRotation(app->frontOrientationLayout().rotation());
+		_warpY->init();
+		float fov = 45.0f; //TODO: g_engine->getCore()->fileFlagSystemFlagsContains("HD") ? 60.0f : 45.0f;
+		_warpY->setFov(fov);
+	}
+	_warpY->load(zone, false);
+	_warpY->setVisible(true, false);
+	TeWarp::debug = false;
+	_warpY->activeMarkers(app->permanentHelp());
+	_warpY->animFinishedSignal().add(this, &AmerzoneGame::onAnimationFinished);
+	_luaContext.removeGlobal("OnWarpEnter");
+	_luaContext.removeGlobal("OnWarpLeave");
+	_luaContext.removeGlobal("OnWarpObjectHit");
+	_luaContext.removeGlobal("OnMovieFinished");
+	_luaContext.removeGlobal("OnAnimationFinished");
+	_luaContext.removeGlobal("OnDialogFinished");
+	_luaContext.removeGlobal("OnDocumentClosed");
+	_luaContext.removeGlobal("OnPuzzleWon");
+	Common::String sceneXml = zone;
+	size_t dotpos = sceneXml.rfind('.');
+	if (dotpos != Common::String::npos)
+		sceneXml = sceneXml.substr(0, dotpos);
+	sceneXml += ".xml";
+	TeSceneWarp sceneWarp;
+	sceneWarp.load(sceneXml, _warpY, false);
+
+	_xAngleMin = FLT_MAX;
+	_xAngleMax = FLT_MAX;
+	_yAngleMax = 45.0 - _orientationY;
+	_yAngleMin = _orientationY + 55.0;
+
+	dotpos = sceneXml.rfind('.');
+	Common::String sceneLua = sceneXml.substr(0, dotpos);
+	sceneLua += ".xml";
+	_luaScript.load(core->findFile(sceneLua));
+	_luaScript.execute();
+	_luaScript.execute("OnWarpEnter");
+	if (fadeFlag) {
+        startChangeWarpAnim();
+	} else {
+        onChangeWarpAnimFinished();
+	}
 	return false;
 }
 
@@ -121,17 +184,34 @@ void AmerzoneGame::finishGame() {
 	app->mainMenu().enter();
 }
 
+// This is actually GameWarp::Load
 void AmerzoneGame::initLoadedBackupData() {
 	_luaContext.destroy();
 	_luaContext.create();
 	_luaContext.addBindings(LuaBinds::LuaOpenBinds);
-	//if (!_loadName.empty()) {
-	//}
-	error("TODO: finish AmerzoneGame::initLoadedBackupData");
+	Application *app = g_engine->getApplication();
+	if (!_loadName.empty()) {
+		error("TODO: finish AmerzoneGame::initLoadedBackupData for direct load");
+	}
+	changeWarp(app->firstWarpPath(), app->firstScene(), true);
 }
 
 void AmerzoneGame::leave(bool flag) {
 	error("TODO: Implement AmerzoneGame::leave");
+}
+
+bool AmerzoneGame::onChangeWarpAnimFinished() {
+	if (_prevWarpY) {
+		// TODO: remove callback from movement3
+		_prevWarpY->setVisible(false, true);
+		_prevWarpY->clear();
+		_prevWarpY = nullptr;
+		// TODO: set some sprite not visible here.
+		error("TODO: Finish AmerzoneGame::onChangeWarpAnimFinished");
+	}
+	_warpY->markerValidatedSignal().remove(this, &AmerzoneGame::onObjectClick);
+	optimizeWarpResources();
+	return false;
 }
 
 bool AmerzoneGame::onHelpButtonValidated() {
@@ -146,12 +226,24 @@ bool AmerzoneGame::onHelpButtonValidated() {
 	return false;
 }
 
+bool AmerzoneGame::onAnimationFinished(const Common::String &anim) {
+	error("TODO: Implement AmerzoneGame::onAnimationFinished");
+}
+
 bool AmerzoneGame::onMouseLeftUp(const Common::Point &pt) {
 	error("TODO: Implement AmerzoneGame::onMouseLeftUp");
 }
 
 bool AmerzoneGame::onMouseLeftDown(const Common::Point &pt) {
 	error("TODO: Implement AmerzoneGame::onMouseLeftDown");
+}
+
+bool AmerzoneGame::onObjectClick(const Common::String &obj) {
+	error("TODO: Implement AmerzoneGame::onObjectClick");
+}
+
+void AmerzoneGame::optimizeWarpResources() {
+	error("TODO: Implement AmerzoneGame::optimizeWarpResources");
 }
 
 void AmerzoneGame::setAngleX(float angle) {
@@ -198,6 +290,27 @@ void AmerzoneGame::speedX(float speed) {
 
 void AmerzoneGame::speedY(float speed) {
 	_speedY = CLIP(speed, -10000.0f, 10000.0f);
+}
+
+void AmerzoneGame::startChangeWarpAnim() {
+	_warpX->update();
+	_warpY->update();
+	if (_prevWarpY == nullptr) {
+		onChangeWarpAnimFinished();
+	} else {
+		TeRenderer *renderer = g_engine->getRenderer();
+		renderer->clearBuffer(TeRenderer::ColorBuffer);
+		renderer->clearBuffer(TeRenderer::DepthBuffer);
+		if (_warpX)
+			_warpX->render();
+		_prevWarpY->render();
+
+		// This is a much simpler version of what the original does
+		// as it reuses the fade code.
+		g_engine->getApplication()->captureFade();
+		_prevWarpY->unloadTextures();
+		g_engine->getApplication()->visualFade().animateFadeWithZoom();
+	}
 }
 
 void AmerzoneGame::update() {

@@ -88,10 +88,7 @@ _permanentHelp(false) {
 
 	// Note: original has an app run timer, but it's never used?
 
-	if (g_engine->gameType() == TetraedgeEngine::kAmerzone)
-		_defaultCursor = "2D/arrow6.png";
-	else
-		_defaultCursor = "pictures/cursor.png";
+	_defaultCursor = g_engine->gameIsAmerzone() ? "2D/arrow6.png" : "pictures/cursor.png";
 
 	loadOptions("options.xml");
 }
@@ -174,7 +171,7 @@ void Application::create() {
 	_loc.load(textFileNode);
 	core->addLoc(&_loc);
 
-	if (g_engine->gameType() != TetraedgeEngine::kAmerzone) {
+	if (!g_engine->gameIsAmerzone()) {
 		const Common::Path helpMenuPath("menus/help/help_");
 		Common::Path helpMenuFilePath;
 		i = 0;

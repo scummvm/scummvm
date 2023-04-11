@@ -98,7 +98,7 @@ void Dialog2::load() {
 	setSize(TeVector3f32(1.0f, 1.0f, usersz.z()));
 	size(); // refresh size? seems to do nothing with result
 	_music.repeat(false);
-	const char *luaPath = g_engine->gameType() == TetraedgeEngine::kAmerzone ? "GUI/dialog.lua" : "menus/dialog.lua";
+	const char *luaPath = g_engine->gameIsAmerzone() ? "GUI/dialog.lua" : "menus/dialog.lua";
 	_gui.load(luaPath);
 	size(); // refresh size? seems to do nothing with result
 	TeButtonLayout *dialogLockBtn = _gui.buttonLayoutChecked("dialogLockButton");

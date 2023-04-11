@@ -100,7 +100,7 @@ TeCore *TetraedgeEngine::getCore() {
 
 Game *TetraedgeEngine::getGame() {
 	if (_game == nullptr) {
-		if (gameType() == kAmerzone)
+		if (gameIsAmerzone())
 			_game = new AmerzoneGame();
 		else
 			_game = new SyberiaGame();

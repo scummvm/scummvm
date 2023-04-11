@@ -25,6 +25,7 @@
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_image.h"
 #include "tetraedge/te/te_i_codec.h"
+#include "tetraedge/te/te_scummvm_codec.h"
 
 namespace Tetraedge {
 
@@ -111,7 +112,14 @@ bool TeImage::load(const Common::FSNode &node) {
 	return true;
 }
 
-bool TeImage::load(Common::ReadStream &stream, const Common::Path &path) {
+bool TeImage::load(Common::SeekableReadStream &stream, const Common::String &type) {
+	TeCore *core = g_engine->getCore();
+	TeScummvmCodec *codec = dynamic_cast<TeScummvmCodec *>(core->createVideoCodec(type));
+	if (!codec || !codec->load(stream)) {
+		warning("TeImage::load: Failed to load stream");
+		delete codec;
+		return false;
+	}
 	error("TODO: Implement TeImage::load");
 }
 

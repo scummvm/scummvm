@@ -34,11 +34,17 @@ void TeMarker::active(bool val) {
 void TeMarker::update(TeCamera *camera) {
 	if (!_visible)
 		return;
-	TeVector3f32 transformLoc = camera->transformCoord(_loc);
+	const TeVector3f32 transformLoc = camera->transformCoord(_loc);
+	const TeVector3f32 btnSize = _button.size();
 	if (transformLoc.z() < 0) {
-		error("TODO: Finish TeMarker::update (z < 0)");
+		_button.setPosition(TeVector3f32(btnSize.x(), btnSize.y(), _someFloat));
 	} else {
-		error("TODO: Finish TeMarker::update (z >= 0)");
+		TeVector3f32 transformLoc2(transformLoc.x() + btnSize.x() / 2, transformLoc.y() + btnSize.y() / 2, _someFloat);
+		// TODO: device rotation (maybe?) is taken account of here
+		// in original, should we do that?
+		TeVector3f32 newScale(480.0f / camera->getViewportWidth(), 320.0f / camera->getViewportHeight(), 1.0);
+		_button.setScale(newScale);
+		_button.setPosition(TeVector3f32(newScale.x() * transformLoc2.x(), newScale.y() * transformLoc2.y(), newScale.z()));
 	}
 }
 

@@ -68,7 +68,7 @@ void MainMenu::enter() {
 	app->captureFade();
 
 	_entered = true;
-	const char *luaFile = (g_engine->gameType() == TetraedgeEngine::kAmerzone ? "GUI/MainMenu.lua" : "menus/mainMenu/mainMenu.lua");
+	const char *luaFile = g_engine->gameIsAmerzone() ? "GUI/MainMenu.lua" : "menus/mainMenu/mainMenu.lua";
 	load(luaFile);
 
 	TeLayout *menuLayout = layoutChecked("menu");

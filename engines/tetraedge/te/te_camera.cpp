@@ -262,8 +262,21 @@ TeMatrix4x4 TeCamera::transformationMatrix() {
 }
 
 TeVector3f32 TeCamera::transformCoord(const TeVector3f32 &pt) {
-	warning("TODO: Implement TeCamera::transformCoord");
-	return pt;
+	_rotation.normalize();
+	TeQuaternion rot;
+	rot.x() = -_rotation.x();
+	rot.y() = -_rotation.y();
+	rot.z() = -_rotation.z();
+	rot.w() = _rotation.w();
+	const TeMatrix4x4 rotMatrix = rot.toTeMatrix();
+	const TeVector3f32 transPt = (_projectionMatrix * rotMatrix) * pt;
+	const int halfVPWidth = abs((int)(_viewportW / 2));
+	const int halfVPHeight = abs((int)(_viewportH / 2));
+	TeVector3f32 retval;
+	retval.x() = halfVPWidth * (transPt.x() + 1);
+	retval.y() = halfVPHeight * (transPt.y() + 1);
+	retval.z() = transPt.z();
+	return retval;
 }
 
 TeVector3f32 TeCamera::transformPoint2Dto3D(const TeVector3f32 &pt) {

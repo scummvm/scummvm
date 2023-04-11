@@ -94,6 +94,7 @@ MODULE_OBJS := \
 	te/te_obp.o \
 	te/te_palette.o \
 	te/te_particle.o \
+	te/te_pick_mesh.o \
 	te/te_pick_mesh2.o \
 	te/te_png.o \
 	te/te_quaternion.o \
@@ -103,6 +104,8 @@ MODULE_OBJS := \
 	te/te_resource.o \
 	te/te_resource_manager.o \
 	te/te_scene.o \
+	te/te_scene_warp.o \
+	te/te_scene_warp_xml_parser.o \
 	te/te_scrolling_layout.o \
 	te/te_scummvm_codec.o \
 	te/te_sound_manager.o \
@@ -122,6 +125,7 @@ MODULE_OBJS := \
 	te/te_vector3f32.o \
 	te/te_visual_fade.o \
 	te/te_warp.o \
+	te/te_warp_bloc.o \
 	te/te_warp_marker.o \
 	te/te_xml_parser.o \
 	te/te_xml_gui.o \

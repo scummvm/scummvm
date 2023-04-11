@@ -75,7 +75,7 @@ public:
 	void getBuff(uint x, uint y, byte *pout, uint w, uint h);
 	bool isExtensionSupported(const Common::Path &path);
 	bool load(const Common::FSNode &node);
-	bool load(Common::ReadStream &stream, const Common::Path &path);
+	bool load(Common::SeekableReadStream &stream, const Common::String &type);
 	bool save(const Common::Path &path, enum SaveType type);
 	int serialize(Common::WriteStream &stream);
 	TeVector2s32 bufSize() const {

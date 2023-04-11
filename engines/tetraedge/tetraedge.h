@@ -140,6 +140,7 @@ public:
 	TeResourceManager *getResourceManager();
 	TeInputMgr *getInputMgr();
 	TetraedgeGameType gameType() const { return _gameType; }
+	bool gameIsAmerzone() const { return _gameType == kAmerzone; }
 
 	void openConfigDialog();
 	bool onKeyUp(const Common::KeyState &state);
