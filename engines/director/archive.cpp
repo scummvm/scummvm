@@ -339,7 +339,7 @@ void MacArchive::readTags() {
 			res.name = _resFork->getResName(tagArray[i], idArray[j]);
 			res.tag = tagArray[i];
 			res.index = idArray[j];
-			debug(3, "Found MacArchive resource '%s' %d: %s", tag2str(tagArray[i]), idArray[j], res.name.c_str());
+			debug(3, "MacArchive::readTags(): Found MacArchive resource '%s' %d: %s", tag2str(tagArray[i]), idArray[j], res.name.c_str());
 			if (ConfMan.getBool("dump_scripts"))
 				dumpChunk(res, out);
 		}
@@ -347,6 +347,12 @@ void MacArchive::readTags() {
 		// Don't assign a 0-entry resMap to _types.
 		if (resMap.size() > 0) {
 			 _types[tagArray[i]] = resMap;
+		}
+	}
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "MacArchive::readTags(): Resources found:");
+		for (const auto &it : _types) {
+			debugC(5, kDebugLoading, "%s: %d", tag2str(it._key), it._value.size());
 		}
 	}
 }
@@ -449,6 +455,12 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		stream->seek(startResPos);
 	}
 
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "RIFFArchive::openStream(): Resources found:");
+		for (const auto &it : _types) {
+			debugC(5, kDebugLoading, "%s: %d", tag2str(it._key), it._value.size());
+		}
+	}
 	return true;
 }
 
@@ -739,6 +751,13 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 		res.size = size;
 		res.tag = tag;
 		_resources.push_back(&res);
+	}
+
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "RIFXArchive::readMemoryMap(): Resources found:");
+		for (const auto &it : _types) {
+			debugC(5, kDebugLoading, "%s: %d", tag2str(it._key), it._value.size());
+		}
 	}
 
 	return true;
