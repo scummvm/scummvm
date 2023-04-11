@@ -35,15 +35,19 @@ namespace LastExpress {
 Clock::Clock(LastExpressEngine *engine) : _engine(engine), _frameMinutes(nullptr), _frameHour(nullptr), _frameSun(nullptr), _frameDate(nullptr) {
 	_frameMinutes = new SequenceFrame(loadSequence("eggmin.seq"), 0, true);
 	_frameHour = new SequenceFrame(loadSequence("egghour.seq"), 0, true);
-	_frameSun = new SequenceFrame(loadSequence("sun.seq"), 0, true);
-	_frameDate = new SequenceFrame(loadSequence("datenew.seq"), 0, true);
+	if (!_engine->isDemo()) {
+		_frameSun = new SequenceFrame(loadSequence("sun.seq"), 0, true);
+		_frameDate = new SequenceFrame(loadSequence("datenew.seq"), 0, true);
+	}
 }
 
 Clock::~Clock() {
 	SAFE_DELETE(_frameMinutes);
 	SAFE_DELETE(_frameHour);
-	SAFE_DELETE(_frameSun);
-	SAFE_DELETE(_frameDate);
+	if (!_engine->isDemo()) {
+		SAFE_DELETE(_frameSun);
+		SAFE_DELETE(_frameDate);
+	}
 
 	// Zero passed pointers
 	_engine = nullptr;
@@ -52,15 +56,17 @@ Clock::~Clock() {
 void Clock::clear() {
 	getScenes()->removeFromQueue(_frameMinutes);
 	getScenes()->removeFromQueue(_frameHour);
-	getScenes()->removeFromQueue(_frameSun);
-	getScenes()->removeFromQueue(_frameDate);
+	if (!_engine->isDemo()) {
+		getScenes()->removeFromQueue(_frameSun);
+		getScenes()->removeFromQueue(_frameDate);
+	}
 }
 
 void Clock::draw(uint32 time) {
 	assert(time >= kTimeCityParis && time <= kTimeCityConstantinople);
 
 	// Check that sequences have been loaded
-	if (!_frameMinutes || !_frameHour || !_frameSun || !_frameDate)
+	if (!_frameMinutes || !_frameHour || (!_engine->isDemo() && !_frameSun) || (!_engine->isDemo() && !_frameDate))
 		error("[Clock::draw] Clock sequences have not been loaded correctly");
 
 	// Clear existing frames
@@ -87,19 +93,25 @@ void Clock::draw(uint32 time) {
 	// Set sequences frames
 	_frameMinutes->setFrame(minute);
 	_frameHour->setFrame((5 * hour + minute / 12) % 60);
-	_frameSun->setFrame((5 * hour + minute / 12) % 120);
-	_frameDate->setFrame((uint16)index_date);
+	if (!_engine->isDemo()) {
+		_frameSun->setFrame((5 * hour + minute / 12) % 120);
+		_frameDate->setFrame((uint16)index_date);
+	}
 
 	// Adjust z-order and queue
 	_frameMinutes->getInfo()->location = 1;
 	_frameHour->getInfo()->location = 1;
-	_frameSun->getInfo()->location = 1;
-	_frameDate->getInfo()->location = 1;
+	if (!_engine->isDemo()) {
+		_frameSun->getInfo()->location = 1;
+		_frameDate->getInfo()->location = 1;
+	}
 
 	getScenes()->addToQueue(_frameMinutes);
 	getScenes()->addToQueue(_frameHour);
-	getScenes()->addToQueue(_frameSun);
-	getScenes()->addToQueue(_frameDate);
+	if (!_engine->isDemo()) {
+		getScenes()->addToQueue(_frameSun);
+		getScenes()->addToQueue(_frameDate);
+	}
 }
 
 } // End of namespace LastExpress
