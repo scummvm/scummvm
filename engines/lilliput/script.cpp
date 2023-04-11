@@ -1231,10 +1231,10 @@ void LilliputScript::listAllTexts() {
 					++it;
 				} while (_vm->_packedStrings[index + variantCount + it] != 0x5B);
 			}
-		} else {*/
+		} else */ if (true) {
 			decodePackedText(&_vm->_packedStrings[index + variantCount]);
 			debugC(1, kDebugScript, "Text 0x%x variant 0 : %s", i, _vm->_displayStringBuf);
-		/* }*/
+		}
 	}
 }
 
