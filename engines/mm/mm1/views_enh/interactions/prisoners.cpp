@@ -114,7 +114,7 @@ ChildPrisoner::ChildPrisoner() :
 }
 
 ManPrisoner::ManPrisoner() :
-	Prisoner("ManPrisoner", 1, STRING["maps.prisoners.man"],
+	Prisoner("ManPrisoner", 23, STRING["maps.prisoners.man"],
 	CHARFLAG1_20, EVIL, GOOD) {
 }
 

@@ -1502,7 +1502,7 @@ maps:
 		alamar1: "Suspended in a forcefield is the body\nof a man enclosed in an iron suit. Telepathic communication: \"I am the true King Alamar, imprisoned by a demonic alien being! Confront him with this eye of goros and you shall see his true self."
 
 	map35:
-		exit: "Exit castle, (Y/N)?"
+		exit: "Exit castle (Y/N)?"
 		merchant_pass: "Castle guards exclaim\n\"No merchants pass! Begone peasants.\""
 		quests:
 			0: "Find the ancient ruins in the\nquivering forest"

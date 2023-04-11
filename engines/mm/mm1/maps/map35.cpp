@@ -82,9 +82,9 @@ void Map35::special01() {
 void Map35::special02() {
 	visitedExit();
 
-	send(SoundMessage(STRING["maps.map35.slide"]));
 	g_maps->_mapPos = Common::Point(14, 9);
 	g_maps->changeMap(0xa00, 2);
+	send(SoundMessage(STRING["maps.map35.slide"]));
 }
 
 void Map35::special03() {
@@ -93,9 +93,9 @@ void Map35::special03() {
 
 void Map35::special04() {
 	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
-		send(SoundMessage(STRING["maps.map35.merchant_pass"]));
 		g_maps->_mapPos.y++;
 		updateGame();
+		send(SoundMessage(STRING["maps.map35.merchant_pass"]));
 	}
 }
 
