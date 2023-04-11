@@ -1146,6 +1146,11 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 
 	// read each entry in the reference table.
 	stream.seek(constsOffset);
+	int constsIndexSize = MAX((int)constsStoreOffset - (int)constsOffset, 0);
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "Lscr consts index:");
+		stream.hexdump(constsIndexSize);
+	}
 	for (uint16 i = 0; i < constsCount; i++) {
 		Datum constant;
 		uint32 constType = 0;
@@ -1154,6 +1159,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		} else {
 			constType = (uint32)stream.readUint16();
 		}
+
 		uint32 value = stream.readUint32();
 		switch (constType) {
 		case 1: // String type
@@ -1225,7 +1231,6 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 			warning("Unknown constant type %d", constType);
 			break;
 		}
-
 		_assemblyContext->_constants.push_back(constant);
 	}
 	free(constsStore);
@@ -1368,15 +1373,27 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 			Common::hexdump(codeStore, length, 16, startOffset);
 		}
 
-		uint16 pointer = startOffset - codeStoreOffset;
+		uint32 pointer = startOffset - codeStoreOffset;
 		Common::Array<uint32> offsetList;
 		Common::Array<uint32> jumpList;
+
+		// Size of an entry in the consts index.
+		int constEntrySize = 0;
+		if (version >= kFileVer500) {
+			// For V5 this is uint32 type + uint32 offset
+			constEntrySize = 8;
+		} else {
+			// For V4 this is uint16 type + uint32 offset
+			constEntrySize = 6;
+		}
+
 		while (pointer < startOffset + length - codeStoreOffset) {
 			uint8 opcode = codeStore[pointer];
 			pointer += 1;
 
 			if (opcode == 0x44 || opcode == 0x84) {
-				// push a constant
+				// Opcode for pushing a value from the constants table.
+				// Rewrite these to inline the constant into our bytecode.
 				offsetList.push_back(_currentAssembly->size());
 				int arg = 0;
 				if (opcode == 0x84) {
@@ -1386,11 +1403,12 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 					arg = (uint8)codeStore[pointer];
 					pointer += 1;
 				}
-				// remove struct size alignment
-				if (arg % 6) {
-					warning("Opcode 0x%02x arg %d not a multiple of 6!", opcode, arg);
+				// The argument is a byte offset to an entry in the consts index.
+				// As such, it should be an exact multiple of the entry size.
+				if (arg % constEntrySize) {
+					warning("Opcode 0x%02x arg %d not a multiple of %d", opcode, arg, constEntrySize);
 				}
-				arg /= 6;
+				arg /= constEntrySize;
 				Datum constant = _assemblyContext->_constants[arg];
 				switch (constant.type) {
 				case INT:
@@ -1468,10 +1486,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 							break;
 						case 'p':
 							// argument is some kind of denormalised offset
-							if (arg % 6) {
-								warning("Argument %d was expected to be a multiple of 6", arg);
+							if (arg % constEntrySize) {
+								warning("Argument %d was expected to be a multiple of %d", arg, constEntrySize);
 							}
-							arg /= 6;
+							arg /= constEntrySize;
 							break;
 						case 'a':
 							// argument is a function argument ID
