@@ -867,7 +867,12 @@ IMPLEMENT_FUNCTION(13, Chapters, chapter3)
 		}
 
 		// Set game time & delta
-		getState()->time = kTimeChapter3;
+		// TODO This check and code (for demo case) may be removed in the future
+		if (_engine->isDemo()){
+			getState()->time = kTime2241000;
+		} else {
+			getState()->time = kTimeChapter3;
+		}
 		getState()->timeDelta = 5;
 
 		setup_chapter3Init();

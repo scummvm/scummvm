@@ -148,12 +148,16 @@ Menu::Menu(LastExpressEngine *engine) : _engine(engine),
 	_currentTime(kTimeNone), _lowerTime(kTimeNone), _time(kTimeNone), _currentIndex(0), _index(0), _lastIndex(0), _delta(0), _handleTimeDelta(false) {
 
 	_clock = new Clock(_engine);
-	_trainLine = new TrainLine(_engine);
+	if (!_engine->isDemo()) {
+		_trainLine = new TrainLine(_engine);
+	}
 }
 
 Menu::~Menu() {
 	SAFE_DELETE(_clock);
-	SAFE_DELETE(_trainLine);
+	if (!_engine->isDemo()) {
+		SAFE_DELETE(_trainLine);
+	}
 
 	SAFE_DELETE(_seqTooltips);
 	SAFE_DELETE(_seqEggButtons);
@@ -303,7 +307,7 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 
 	// If no blue savegame exists, this might be the first time we start the game, so we show the full intro
 	if (!getFlags()->mouseRightClick) {
-		if (!SaveLoad::isSavegameValid(_engine->getTargetName(), kGameBlue) && _engine->getResourceManager()->loadArchive(kArchiveCd1)) {
+		if (!SaveLoad::isSavegameValid(_engine->getTargetName(), kGameBlue) && _engine->getResourceManager()->loadArchive(kArchiveCd1) && !_engine->isDemo()) {
 
 			if (!_hasShownIntro) {
 				// Show Broderbrund logo
@@ -534,17 +538,18 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 		}
 
 		if (clicked) {
-			showFrame(kOverlayAcorn, 1, true);
-			showFrame(kOverlayTooltip, -1, true);
-			getSound()->playSound(kEntityPlayer, "LIB047");
+			if (!_engine->isDemo()) {
+				showFrame(kOverlayAcorn, 1, true);
+				showFrame(kOverlayTooltip, -1, true);
+				getSound()->playSound(kEntityPlayer, "LIB047");
 
-			// Setup new menu screen
-			switchGame();
-			setup();
+				// Setup new menu screen
+				switchGame();
+				setup();
 
-			// Set fight state to 0
-			getFight()->resetState();
-
+				// Set fight state to 0
+				getFight()->resetState();
+			}
 			return true;
 		}
 
@@ -552,7 +557,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 
 		showFrame(kOverlayAcorn, 0, true);
 
-		if (_isGameStarted) {
+		if (_isGameStarted && !_engine->isDemo()) {
 			showFrame(kOverlayTooltip, kTooltipSwitchBlueGame, true);
 			break;
 		}
@@ -562,7 +567,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 			break;
 		}
 
-		if (!SaveLoad::isSavegameValid(_engine->getTargetName(), getNextGameId())) {
+		if (_engine->isDemo() || !SaveLoad::isSavegameValid(_engine->getTargetName(), getNextGameId())) {
 			showFrame(kOverlayTooltip, kTooltipStartAnotherGame, true);
 			break;
 		}
@@ -886,8 +891,13 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 	//if (!getGlobalTimer())
 	//	_index3 = 0;
 
-	if (!getProgress().chapter)
-		getProgress().chapter = kChapter1;
+	if (!getProgress().chapter) {
+		if (_engine->isDemo()) {
+			getProgress().chapter = kChapter3;
+		} else {
+			getProgress().chapter = kChapter1;
+		}
+	}
 
 	getState()->time = (TimeValue)getSaveLoad()->getTime(_index);
 	getProgress().chapter = getSaveLoad()->getChapter(_index);
@@ -896,7 +906,9 @@ void Menu::init(bool doSavegame, SavegameType type, uint32 value) {
 		_currentTime = (uint32)getState()->time;
 		_time = (uint32)getState()->time;
 		_clock->draw(_time);
-		_trainLine->draw(_time);
+		if (!_engine->isDemo()) {
+			_trainLine->draw(_time);
+		}
 
 		initTime(type, value);
 	}
@@ -909,7 +921,9 @@ void Menu::startGame() {
 
 	// Hide menu elements
 	_clock->clear();
-	_trainLine->clear();
+	if (!_engine->isDemo()) {
+		_trainLine->clear();
+	}
 
 	if (_lastIndex == _index) {
 		setGlobalTimer(0);
@@ -917,6 +931,11 @@ void Menu::startGame() {
 			getSaveLoad()->loadLastGame();
 		} else {
 			getLogic()->resetState();
+			// TODO This check and code (for demo case) may be removed in the future
+			if (_engine->isDemo()) {
+				getState()->time = kTime2241000;
+				getProgress().chapter = kChapter3;
+			}
 			getEntities()->setup(true, kEntityPlayer);
 		}
 	} else {
@@ -938,7 +957,9 @@ void Menu::switchGame() {
 
 	// Clear menu elements
 	_clock->clear();
-	_trainLine->clear();
+	if (!_engine->isDemo()) {
+		_trainLine->clear();
+	}
 
 	// Clear loaded savegame data
 	getSaveLoad()->clear(true);
@@ -1006,6 +1027,10 @@ void Menu::clear() {
 
 // Get the sequence name to use for the acorn highlight, depending of the currently loaded savegame
 Common::String Menu::getAcornSequenceName(GameId id) const {
+	if (_engine->isDemo()) {
+		return "aconred.seq";
+	}
+
 	Common::String name = "";
 	switch (id) {
 	default:
@@ -1252,7 +1277,9 @@ void Menu::adjustTime() {
 		getSoundQueue()->stop(kEntityChapters);
 
 	_clock->draw(_time);
-	_trainLine->draw(_time);
+	if (!_engine->isDemo()) {
+		_trainLine->draw(_time);
+	}
 	getScenes()->drawFrames(true);
 
 	adjustIndex(_time, originalTime, true);

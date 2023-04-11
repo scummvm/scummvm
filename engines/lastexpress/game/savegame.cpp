@@ -406,9 +406,14 @@ uint32 SaveLoad::init(const Common::String &target, GameId id, bool resetHeaders
 		clear();
 
 		SavegameEntryHeader *entryHeader = new SavegameEntryHeader();
-		entryHeader->time = kTimeCityParis;
-		entryHeader->chapter = kChapter1;
-
+		// TODO This check and code (for demo case) may be removed in the future 
+		if (_engine->isDemo()) {
+			entryHeader->time = kTime2241000;
+			entryHeader->chapter = kChapter3;
+		} else {
+			entryHeader->time = kTimeCityParis;
+			entryHeader->chapter = kChapter1;
+		}
 		_gameHeaders.push_back(entryHeader);
 	}
 
