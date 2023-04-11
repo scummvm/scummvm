@@ -1484,7 +1484,7 @@ maps:
 		thanks: "Thanks! It ain't easy being a corpse!\nTake these..."
 
 	map34:
-		statue: "A gruesome statue says:\n\"start at 15-7 and walk to doom!\""
+		statue: "A gruesome statue says:\n\"Start at 15-7 and walk to Doom!\""
 		banner: "A banner reads:\nThe endless spiral!!!"
 		sign: "A sign above the door reads:\nMonster breeding grounds, keep out!"
 		machine: "A loud machine pulsates rhythmically."
@@ -1497,8 +1497,9 @@ maps:
 		message6: "Etched in gold:\nMessage interleave '8,5,3,9,1,4,6,2,7'"
 		message7: "Written on the wall:\nJump three times to reach center."
 		door: "A golden door repels you!"
-		alamar1: "Suspended in a forcefield is the body\nof a man enclosed in an iron suit.\nTelepathic communication:\"I am the true\nKing Alamar, imprisoned by a demonic\nalien being! Confront him with this eye\nof goros and you shall see his true\nself."
-		alamar2: "The fate of the realm is at stake.\""
+		alamar: "Suspended in a forcefield is the body\nof a man enclosed in an iron suit.\nTelepathic communication: \"I am the true\nKing Alamar, imprisoned by a demonic\nalien being! Confront him with this Eye\nof Goros and you shall see his true\nself. The fate of the realm is at stake\""
+	emap34:
+		alamar1: "Suspended in a forcefield is the body\nof a man enclosed in an iron suit. Telepathic communication: \"I am the true King Alamar, imprisoned by a demonic alien being! Confront him with this eye of goros and you shall see his true self."
 
 	map35:
 		exit: "Exit castle, (Y/N)?"
